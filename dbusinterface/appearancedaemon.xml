@@ -1,0 +1,33 @@
+<!DOCTYPE node PUBLIC '-//freedesktop//DTD D-BUS Object Introspection 1.0//EN' 'http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd'>
+<node>
+    <interface name="com.deepin.daemon.Appearance">
+        <method name="Delete">
+            <arg type="s" direction="in"/>
+            <arg type="s" direction="in"/>
+        </method>
+        <method name="List">
+            <arg type="s" direction="in"/>
+            <arg type="s" direction="out"/>
+        </method>
+        <method name="Set">
+            <arg type="s" direction="in"/>
+            <arg type="s" direction="in"/>
+        </method>
+        <method name="Show">
+            <arg type="s" direction="in"/>
+            <arg type="s" direction="in"/>
+            <arg type="s" direction="out"/>
+        </method>
+        <method name="Thumbnail">
+            <arg type="s" direction="in"/>
+            <arg type="s" direction="in"/>
+            <arg type="s" direction="out"/>
+        </method>
+        <signal name="Changed">
+            <arg type="s"/>
+            <arg type="s"/>
+        </signal>
+        <property access="read" name="Theme" type="s"/>
+        <property access="read" name="FontSize" type="i"/>
+    </interface>
+</node>

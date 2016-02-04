@@ -1,0 +1,18 @@
+<!DOCTYPE node PUBLIC '-//freedesktop//DTD D-BUS Object Introspection 1.0//EN' 'http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd'>
+    <node>
+        <interface name="com.deepin.filemanager.Backend.Monitor.m14">
+            <method name="Cancel"/>
+            <method name="IsCancelled">
+                <arg direction="out" type="b"/>
+            </method>
+            <method name="SetRateLimit">
+                <arg direction="in" type="i"/>
+            </method>
+            <signal name="Changed">
+                <arg type="s"/>
+                <arg type="s"/>
+                <arg type="u"/>
+            </signal>
+            <property name="ID" access="read" type="u"/>
+        </interface>
+    </node>

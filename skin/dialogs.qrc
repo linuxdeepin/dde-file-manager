@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>dialogs/images/check_focus.png</file>
+        <file>dialogs/images/dark_check_checked_hover.png</file>
+        <file>dialogs/images/dark_check_checked.png</file>
+        <file>dialogs/images/dark_check.png</file>
+        <file>dialogs/images/dark_close_small_hover.png</file>
+        <file>dialogs/images/dark_close_small_normal.png</file>
+        <file>dialogs/images/dark_close_small_press.png</file>
+        <file>dialogs/images/dark_minimise_small_hover.png</file>
+        <file>dialogs/images/dark_minimise_small_normal.png</file>
+        <file>dialogs/images/dark_minimise_small_press.png</file>
+        <file>dialogs/images/dialog-warning.svg</file>
+        <file>dialogs/images/user-trash-full.png</file>
+    </qresource>
+    <qresource prefix="/qss">
+        <file>dialogs/qss/dialogs.qss</file>
+    </qresource>
+</RCC>

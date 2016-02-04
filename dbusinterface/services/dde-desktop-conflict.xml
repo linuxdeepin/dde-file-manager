@@ -1,0 +1,44 @@
+<!DOCTYPE node PUBLIC '-//freedesktop//DTD D-BUS Object Introspection 1.0//EN' 'http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd'>
+<node>
+    <interface name="com.deepin.dde.Desktop.conflict">
+    	<method name="AskRetry">
+            <arg type="s" direction="in"/>
+            <arg type="s" direction="in"/>
+            <arg type="s" direction="in"/>
+            <arg type="{ibs}" direction="out"/>
+            <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="ConflictInfo"/>
+        </method>
+    	<method name="AskDeleteConfirmation">
+            <arg type="s" direction="in"/>
+            <arg type="s" direction="in"/>
+            <arg type="s" direction="in"/>
+            <arg type="b" direction="out"/>
+        </method>
+    	<method name="AskDelete">
+            <arg type="s" direction="in"/>
+            <arg type="s" direction="in"/>
+            <arg type="s" direction="in"/>
+            <arg type="b" direction="in"/>
+            <arg type="b" direction="in"/>
+            <arg type="{ibs}" direction="out"/>
+            <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="ConflictInfo"/>
+        </method>
+        <method name="AskSkip">
+            <arg type="s" direction="in"/>
+            <arg type="s" direction="in"/>
+            <arg type="s" direction="in"/>
+            <arg type="b" direction="in"/>
+            <arg type="b" direction="in"/>
+            <arg type="{ibs}" direction="out"/>
+            <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="ConflictInfo"/>
+        </method>
+        <method name="ConflictDialog">
+            <arg type="{ibs}" direction="out"/>
+            <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="ConflictInfo"/>
+        </method>
+        <signal name="response">
+            <arg type="{ibs}"/>
+            <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="ConflictInfo"/>
+        </signal>
+    </interface>
+</node>

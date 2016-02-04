@@ -1,0 +1,26 @@
+<!DOCTYPE node PUBLIC '-//freedesktop//DTD D-BUS Object Introspection 1.0//EN' 'http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd'>
+    <node>
+        <interface name="com.deepin.filemanager.Backend.Monitor.Manager">
+            <method name="Monitor">
+                <arg direction="in" type="s"/>
+                <arg direction="in" type="u"/>
+                <arg direction="out" type="o"/>
+                <arg direction="out" type="s"/>
+            </method>
+            <method name="Unmonitor">
+                <arg direction="in" type="u"/>
+            </method>
+            <property access="read" name="FileMonitorFlagsSendMoved" type="u"/>
+            <property access="read" name="FileMonitorFlagsWatchHardLinks" type="u"/>
+            <property access="read" name="FileMonitorFlagsNone" type="u"/>
+            <property access="read" name="FileMonitorFlagsWatchMounts" type="u"/>
+            <property access="read" name="FileMonitorEventMoved" type="u"/>
+            <property access="read" name="FileMonitorEventChanged" type="u"/>
+            <property access="read" name="FileMonitorEventCreated" type="u"/>
+            <property access="read" name="FileMonitorEventDeleted" type="u"/>
+            <property access="read" name="FileMonitorEventUnmounted" type="u"/>
+            <property access="read" name="FileMonitorEventPreUnmount" type="u"/>
+            <property access="read" name="FileMonitorEventAttributeChanged" type="u"/>
+            <property access="read" name="FileMonitorEventChangesDoneHint" type="u"/>
+        </interface>
+    </node>

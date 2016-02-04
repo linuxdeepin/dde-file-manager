@@ -1,0 +1,10 @@
+<!DOCTYPE node PUBLIC '-//freedesktop//DTD D-BUS Object Introspection 1.0//EN' 'http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd'>
+    <node>
+        <interface name="com.deepin.filemanager.Backend.Watcher">
+            <signal name="Changed">
+                <arg type="s"/>
+                <arg type="u"/>
+            </signal>
+            <property type="u" name="ID" access="read"/>
+        </interface>
+    </node>

@@ -1,0 +1,13 @@
+<!DOCTYPE node PUBLIC '-//freedesktop//DTD D-BUS Object Introspection 1.0//EN' 'http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd'>
+<node>
+    <interface name="com.deepin.api.Pinyin">
+        <method name="Query">
+            <arg type="s" direction="in"></arg>
+            <arg type="as" direction="out"></arg>
+        </method>
+        <method name="QueryList">
+            <arg type="as" direction="in"></arg>
+            <arg type="s" direction="out"></arg>
+        </method>
+    </interface>
+</node>
