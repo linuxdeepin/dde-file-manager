@@ -1,0 +1,60 @@
+QFrame#DesktopFrame{
+    background-color: rgba(0, 0, 0, 0);
+}
+
+QFrame#DesktopItem {
+    background-color: rgba(0, 0, 0, 0);
+/*    border: 2px solid rgba(255, 255, 255, 100);
+    border-radius: 4px;*/
+    color:white
+}
+QLabel#Icon {
+    background-color: rgba(0, 0, 0, 0);
+/*    border: 1px solid rgba(255, 255, 255, 255);
+    border-radius: 4px;*/
+    color:white
+}
+QLabel#Name {
+    background-color: rgba(0, 0, 0, 0);
+    border: 1px solid rgba(255, 255, 255, 255);
+    border-radius: 4px;
+    color:white
+}
+
+QTextEdit#Rename{
+    border:1px solid black;
+}
+
+QFrame#Border{
+    background-color: transparent;
+    border: 2px solid rgba(0, 0, 0, 0);
+    border-radius: 4px;
+    color:white
+}
+
+QFrame#AppGroupHover{
+    background-color: rgba(255, 255, 255, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+    color:white
+}
+
+QFrame#Cut{
+    background-color: rgba(0, 0, 0, 0.35);
+    border: none;
+    color:white
+}
+
+
+QFrame#DragChecked{
+    background-color: rgba(0, 0, 0, 0);
+    border: 2px solid rgba(0, 0, 0, 0);
+    border-radius: 4px;
+    color:white
+}
+
+QLineEdit {
+    background-color: rgba(0, 0, 0, 0);
+    color:white;
+    border: None
+}

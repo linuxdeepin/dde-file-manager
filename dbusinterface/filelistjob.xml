@@ -1,0 +1,36 @@
+<!DOCTYPE node PUBLIC '-//freedesktop//DTD D-BUS Object Introspection 1.0//EN' 'http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd'>
+    <node>
+        <interface name="com.deepin.filemanager.Backend.Operations.ListJob">
+            <method name="Abort"/>
+            <method name="Execute">
+                <arg direction="out" type="a(sssssxqbbbbbbbbbb)"/>
+                <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="JobEntryInfo"/>
+            </method>
+            <signal name="EntryInfo">
+                <arg type="s"/>
+                <arg type="s"/>
+                <arg type="s"/>
+                <arg type="s"/>
+                <arg type="s"/>
+                <arg type="x"/>
+                <arg type="q"/>
+                <arg type="b"/>
+                <arg type="b"/>
+                <arg type="b"/>
+                <arg type="b"/>
+                <arg type="b"/>
+                <arg type="b"/>
+                <arg type="b"/>
+                <arg type="b"/>
+                <arg type="b"/>
+            </signal>
+            <signal name="Done">
+                <arg type="s"/>
+            </signal>
+            <signal name="ProcessedAmount">
+                <arg type="x"/>
+                <arg type="q"/>
+            </signal>
+            <signal name="Aborted"/>
+        </interface>
+    </node>

@@ -1,0 +1,19 @@
+{
+    "isMaskAlwaysOn": true,
+    "maskLogoUri" : "/home/djf/test/deepin-mask.png",
+    "maskLogoLayoutAlign" : "center",
+    "maskLogoWidth": 239,
+    "maskLogoHeight": 64,
+    "maskText" : "  深度操作系统（专业版）",
+    "maskTextLayoutAlign" : "center",
+    "maskTextColor" : "#04d5f7",
+    "maskTextFontSize": "22px",
+    "maskTextAlign": "center",
+    "maskTextWidth": 239,
+    "maskTextHeight": 40,
+    "maskLogoTextSpacing": 0,
+    "maskWidth": 239,
+    "maskHeight": 110,
+    "xRightBottom": 50,
+    "yRightBottom": 98
+}

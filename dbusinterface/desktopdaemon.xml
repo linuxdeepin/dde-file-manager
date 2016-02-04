@@ -1,0 +1,97 @@
+<!DOCTYPE node PUBLIC '-//freedesktop//DTD D-BUS Object Introspection 1.0//EN' 'http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd'>
+<node>
+    <interface name="com.deepin.dde.daemon.Desktop">
+        <method name="ActivateFile">
+            <arg type="s" direction="in"/>
+            <arg type="as" direction="in"/>
+            <arg type="b" direction="in"/>
+            <arg type="i" direction="in"/>
+        </method>
+        <method name="DestroyMenu"/>
+        <method name="GenMenuContent">
+            <arg type="as" direction="in"/>
+            <arg type="s" direction="out"/>
+        </method>
+        <method name="GetAppGroupItems">
+            <arg type="s" direction="in"/>
+            <arg type="a{s(sssssxqbbbbbbbbbb)}" direction="out"/>
+            <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="DesktopItemInfoMap"/>
+        </method>
+        <method name="GetDesktopItems">
+            <arg type="a{s(sssssxqbbbbbbbbbb)}" direction="out"/>
+            <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="DesktopItemInfoMap"/>
+        </method>
+        <method name="GetItemInfo">
+            <arg type="s" direction="in"/>
+            <arg type="(sssssxqbbbbbbbbbb)" direction="out"/>
+            <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="DesktopItemInfo"/>
+        </method>
+        <method name="HandleSelectedMenuItem">
+            <arg type="s" direction="in"/>
+        </method>
+        <method name="IsAppGroup">
+            <arg type="s" direction="in"/>
+            <arg type="b" direction="out"/>
+        </method>
+        <method name="RequestCreatingAppGroup">
+            <arg type="as" direction="in"/>
+        </method>
+        <method name="RequestMergeIntoAppGroup">
+            <arg type="as" direction="in"/>
+            <arg type="s" direction="in"/>
+        </method>
+        <signal name="RequestRename">
+            <arg type="s"/>
+        </signal>
+        <signal name="RequestDelete">
+            <arg type="as"/>
+        </signal>
+        <signal name="RequestEmptyTrash"/>
+        <signal name="RequestSort">
+            <arg type="s"/>
+        </signal>
+        <signal name="RequestCleanup"/>
+        <signal name="ReqeustAutoArrange"/>
+        <signal name="RequestCreateFile"/>
+        <signal name="RequestCreateFileFromTemplate">
+            <arg type="s"/>
+        </signal>
+        <signal name="RequestCreateDirectory"/>
+        <signal name="ItemCut">
+            <arg type="as"/>
+        </signal>
+        <signal name="RequestOpen">
+            <arg type="as"/>
+            <arg type="ai"/>
+            <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="IntList"/>
+        </signal>
+        <signal name="RequestDismissAppGroup">
+            <arg type="s"/>
+        </signal>
+        <signal name="AppGroupCreated">
+            <arg type="s"/>
+            <arg type="as"/>
+        </signal>
+        <signal name="AppGroupDeleted">
+            <arg type="s"/>
+        </signal>
+        <signal name="AppGroupMerged">
+            <arg type="s"/>
+            <arg type="as"/>
+        </signal>
+        <signal name="ItemDeleted">
+            <arg type="s"/>
+        </signal>
+        <signal name="ItemCreated">
+            <arg type="s"/>
+        </signal>
+        <signal name="ItemModified">
+            <arg type="s"/>
+        </signal>
+        <property type="i" name="ActivateFlagDisplay" access="read"/>
+        <property type="i" name="ActivateFlagRunInTerminal" access="read"/>
+        <property type="i" name="ActivateFlagRun" access="read"/>
+        <property type="i" name="RequestOpenPolicyOpen" access="read"/>
+        <property type="i" name="RequestOpenPolicySelect" access="read"/>
+    </interface>
+</node>

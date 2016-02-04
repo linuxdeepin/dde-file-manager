@@ -1,0 +1,17 @@
+<RCC>
+    <qresource prefix="/qss">
+        <file>qss/DesktopItem.qss</file>
+        <file>qss/Tablewidget.qss</file>
+    </qresource>
+    <qresource prefix="/images">
+        <file>images/computer.png</file>
+        <file>images/default.png</file>
+        <file>images/diban.svg</file>
+        <file>images/readonly.svg</file>
+        <file>images/textMask.png</file>
+        <file>images/textMask.svg</file>
+        <file>images/unreadable.svg</file>
+        <file>images/user-trash-full.png</file>
+        <file>images/system-file-manager.png</file>
+    </qresource>
+</RCC>
