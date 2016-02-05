@@ -21,6 +21,11 @@ QRect DMovableMainWindow::getAvailableRect()
     return QRect(m_borderCornerSize, m_borderCornerSize, width() - 2 * m_borderCornerSize, height() - 2 * m_borderCornerSize);
 }
 
+int DMovableMainWindow::getBorderCornerSize()
+{
+    return m_borderCornerSize;
+}
+
 void DMovableMainWindow::setBorderCornerSize(const int borderCornerSize)
 {
     m_borderCornerSize = borderCornerSize;
@@ -99,7 +104,7 @@ void DMovableMainWindow::mouseMoveEvent(QMouseEvent *event)
 }
 
 void DMovableMainWindow::resizeEvent(QResizeEvent *event){
-    setDragMovableRect(QRect(m_borderCornerSize, m_borderCornerSize,  width() - m_borderCornerSize, m_dragMovableRect.height()));
+    setDragMovableRect(QRect(m_borderCornerSize, m_borderCornerSize,  width() - 2 * m_borderCornerSize, m_dragMovableRect.height()));
     QMainWindow::resizeEvent(event);
 }
 
