@@ -12,6 +12,7 @@ public:
     ~DMovableMainWindow();
 
     QRect getAvailableRect(); // return geometry() - boderSize;
+    int getBorderCornerSize();
 
 public slots:
     void setBorderCornerSize(const int borderCornerSize);

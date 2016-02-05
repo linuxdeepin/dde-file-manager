@@ -39,8 +39,6 @@ const char kAtomNameMaximizedVert[] = "_NET_WM_STATE_MAXIMIZED_VERT";
 const char kAtomNameMoveResize[] = "_NET_WM_MOVERESIZE";
 const char kAtomNameWmState[] = "_NET_WM_STATE";
 
-const int kBorderOutterSize = 0;
-
 enum class CornerEdge {
   kInvalid = 0,
   kTop = 1,
@@ -128,23 +126,23 @@ void ChangeWindowMaximizedState(QWidget* widget, int wm_state) {
 }
 
 CornerEdge GetCornerEdge(QWidget* widget, int x, int y,
-                         int border_inner_size, int border_outter_size) {
+                         int border_inner_size) {
   const int window_width = widget->width();
   const int window_height = widget->height();
   unsigned int ce = static_cast<unsigned int>(CornerEdge::kInvalid);
 
-  if (border_outter_size <= y && y <= border_inner_size) {
+  if (0 <= y && y < border_inner_size) {
     ce = ce | static_cast<unsigned int>(CornerEdge::kTop);
   }
-  if (border_outter_size <= x && x <= border_inner_size) {
+  if (0 <= x && x < border_inner_size) {
     ce = ce | static_cast<unsigned int>(CornerEdge::kLeft);
   }
-  if (window_height - border_inner_size <= y &&
-      y <= window_height - border_outter_size) {
+  if (window_height - border_inner_size < y &&
+      y < window_height) {
     ce = ce | static_cast<unsigned int>(CornerEdge::kBottom);
   }
-  if (window_width - border_inner_size <= x &&
-      x <= window_width - border_outter_size) {
+  if (window_width - border_inner_size < x &&
+      x < window_width) {
     ce = ce | static_cast<unsigned int>(CornerEdge::kRight);
   }
   return static_cast<CornerEdge>(ce);
@@ -192,7 +190,7 @@ void MoveWindow(QWidget *widget, QMouseEvent *event, const QRect &dragableRect)
 void ResizeWindow(QWidget *widget, QMouseEvent *event, int border_inner_size)
 {
     const CornerEdge ce = GetCornerEdge(widget, event->x(), event->y(),
-                                        border_inner_size, kBorderOutterSize);
+                                        border_inner_size);
     if (ce != CornerEdge::kInvalid) {
       const int action = CornerEdge2WmGravity(ce);
       SendMoveResizeMessage(widget, action, Button1);
@@ -241,7 +239,7 @@ void ToggleMaximizedWindow(QWidget* widget) {
 }
 
 bool UpdateCursorShape(QWidget* widget, int x, int y, int border_inner_size) {
-    const CornerEdge ce = GetCornerEdge(widget, x, y, border_inner_size, kBorderOutterSize);
+    const CornerEdge ce = GetCornerEdge(widget, x, y, border_inner_size);
     const auto display = QX11Info::display();
     const WId window_id = widget->winId();
 
