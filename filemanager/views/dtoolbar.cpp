@@ -93,6 +93,10 @@ void DToolBar::initContollerToolBar()
 void DToolBar::initConnect()
 {
     connect(m_layoutButton, SIGNAL(clicked()), this, SIGNAL(requestSwitchLayout()));
+    connect(m_backButton, &DStateButton::clicked,
+            this, &DToolBar::backButtonClicked);
+    connect(m_viewSwitchButton, &DStateButton::clicked,
+            this, &DToolBar::switchLayoutMode);
 }
 
 DStateButton::ButtonState DToolBar::getLayoutbuttonState()
