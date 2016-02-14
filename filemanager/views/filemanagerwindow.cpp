@@ -143,6 +143,10 @@ void FileManagerWindow::initConnect()
     connect(m_titleBar, SIGNAL(switchMaxNormal()), this, SLOT(toggleMaxNormal()));
     connect(m_titleBar, SIGNAL(closed()), this, SLOT(close()));
     connect(m_toolbar, SIGNAL(requestSwitchLayout()), this, SLOT(toggleLayout()));
+    connect(m_toolbar, &DToolBar::backButtonClicked,
+            m_fileView, &DFileView::previous);
+    connect(m_toolbar, &DToolBar::switchLayoutMode,
+            m_fileView, &DFileView::switchListMode);
 }
 
 void FileManagerWindow::toggleMaxNormal()
