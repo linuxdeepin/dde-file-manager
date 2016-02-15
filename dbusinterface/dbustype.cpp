@@ -21,8 +21,8 @@ QDBusArgument &operator<<(QDBusArgument &argument, const FileItemInfo &obj)
     argument.beginStructure();
     argument << obj.DisplayName << obj.BaseName;
     argument << obj.URI << obj.MIME;
-    argument << obj.Icon <<  obj.IconName << obj.thumbnail << obj.Size;
-    argument << obj.FileType << obj.IsBackup << obj.IsHidden;
+    //argument << obj.Icon <<  obj.IconName << obj.thumbnail;
+    argument << obj.Size << obj.FileType << obj.IsBackup << obj.IsHidden;
     argument << obj.IsReadOnly << obj.IsSymlink;
     argument << obj.CanDelete << obj.CanExecute;
     argument << obj.CanRead << obj.CanRename;
@@ -37,8 +37,8 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, FileItemInfo &obj
     argument.beginStructure();
     argument >> obj.DisplayName >> obj.BaseName;
     argument >> obj.URI >> obj.MIME;
-    argument >> obj.Icon >> obj.IconName >> obj.thumbnail >>obj.Size;
-    argument >> obj.FileType >> obj.IsBackup >> obj.IsHidden;
+//    argument >> obj.Icon >> obj.IconName >> obj.thumbnail;
+    argument >> obj.Size >> obj.FileType >> obj.IsBackup >> obj.IsHidden;
     argument >> obj.IsReadOnly >> obj.IsSymlink;
     argument >> obj.CanDelete >> obj.CanExecute;
     argument >> obj.CanRead >> obj.CanRename;
@@ -80,4 +80,12 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, ConflictInfo &obj
     argument >> obj.userData;
     argument.endStructure();
     return argument;
+}
+
+QDebug operator<<(QDebug deg, const FileItemInfo &info)
+{
+    deg << "name:" << info.DisplayName << "url:" << info.URI << "size:"
+        << info.Size << "type:" << info.FileType;
+
+    return deg;
 }
