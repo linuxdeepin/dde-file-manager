@@ -54,7 +54,8 @@ HEADERS += \
     $$PWD/renamejob_interface.h \
     $$PWD/trashjob_interface.h \
     $$PWD/trashmonitor_interface.h \
-    $$PWD/watcherinstance_interface.h
+    $$PWD/watcherinstance_interface.h \
+    $$PWD/listjob_interface.h
 
 SOURCES += \
     $$PWD/services/conflictdaptor.cpp \
@@ -86,4 +87,5 @@ SOURCES += \
     $$PWD/renamejob_interface.cpp \
     $$PWD/trashjob_interface.cpp \
     $$PWD/trashmonitor_interface.cpp \
-    $$PWD/watcherinstance_interface.cpp
+    $$PWD/watcherinstance_interface.cpp \
+    $$PWD/listjob_interface.cpp

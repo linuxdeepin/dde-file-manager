@@ -43,6 +43,10 @@ public:
     static void registerMetaType();
 };
 
+typedef QList<FileItemInfo> FileItemInfoList;
+
+QDebug operator<<(QDebug deg, const FileItemInfo &info);
+
 
 class ConflictInfo{
 

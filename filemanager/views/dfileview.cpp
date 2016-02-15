@@ -1,4 +1,5 @@
 #include "dfileview.h"
+#include "dfilesystemmodel.h"
 
 #include <libdui/dboxwidget.h>
 
@@ -111,30 +112,50 @@ public:
 
 DFileView::DFileView(QWidget *parent) : DListView(parent)
 {
-    m_model = new QFileSystemModel(this);
-    m_delegate = new ItemDelegate(this);
-
-    setItemDelegate(m_delegate);
-    setSpacing(10);
-    setResizeMode(QListView::Adjust);
-    setCacheBuffer(50);
-    setModel(m_model);
-    setOrientation(QListView::LeftToRight, true);
-
-    m_model->setRootPath("/");
-    setRootIndex(m_model->index("/"));
-
-    connect(this, &DListView::doubleClicked,
-            this, [this](const QModelIndex &index) {
-        setRootIndex(index);
-    });
-
-    setStyleSheet("background: white");
+    initUI();
+    initDelegate();
+    initModel();
+    initConnects();
 }
 
 DFileView::~DFileView()
 {
 
+}
+
+void DFileView::initUI()
+{
+    setSpacing(10);
+    setResizeMode(QListView::Adjust);
+    setCacheBuffer(50);
+    setOrientation(QListView::LeftToRight, true);
+    setStyleSheet("background: white");
+}
+
+void DFileView::initDelegate()
+{
+    m_delegate = new ItemDelegate(this);
+
+    setItemDelegate(m_delegate);
+}
+
+void DFileView::initModel()
+{
+    setModel(new DFileSystemModel(this));
+    setRootIndex(model()->setRootPath("/"));
+}
+
+void DFileView::initConnects()
+{
+    connect(this, &DListView::doubleClicked,
+            this, [this](const QModelIndex &index) {
+        setRootIndex(index);
+    });
+}
+
+DFileSystemModel *DFileView::model() const
+{
+    return qobject_cast<DFileSystemModel*>(DListView::model());
 }
 
 void DFileView::back()
@@ -144,7 +165,7 @@ void DFileView::back()
 
 void DFileView::cd(const QString &dir)
 {
-    setRootIndex(m_model->index(dir));
+    setRootIndex(model()->index(dir));
 }
 
 void DFileView::switchListMode()
@@ -158,4 +179,3 @@ void DFileView::switchListMode()
 
     m_delegate->viewIsWrapping = isWrapping();
 }
-

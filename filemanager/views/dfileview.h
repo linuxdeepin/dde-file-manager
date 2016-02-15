@@ -5,11 +5,12 @@
 
 #include <QFrame>
 
-class QFileSystemModel;
 class ItemDelegate;
+class QFileSystemModel;
 
 DUI_USE_NAMESPACE
 
+class DFileSystemModel;
 class DFileView : public DListView
 {
     Q_OBJECT
@@ -17,7 +18,12 @@ public:
     explicit DFileView(QWidget *parent = 0);
     ~DFileView();
 
-signals:
+    void initUI();
+    void initDelegate();
+    void initModel();
+    void initConnects();
+
+    DFileSystemModel *model() const;
 
 public slots:
     void back();
@@ -27,7 +33,6 @@ public slots:
     void switchListMode();
 
 private:
-    QFileSystemModel *m_model;
     ItemDelegate *m_delegate;
 };
 
