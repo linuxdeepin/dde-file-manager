@@ -1,15 +1,17 @@
 #ifndef DEFINE_H
 #define DEFINE_H
 
-#include "logmanager.h"
+
 #include "widgets/singleton.h"
 #include "widgets/commandlinemanager.h"
 #include "global.h"
 
+#include <DLog>
 #include <QDBusInterface>
 #include <QDBusConnection>
 #include <QDBusPendingCall>
 
+using namespace Dtk::Log;
 
 #undef signals
 extern "C" {
@@ -40,17 +42,17 @@ void RegisterLogger(){
     QString value = CommandLineManager::instance()->value("logDestination");
     if (isSet){
         if (value == "stdout"){
-            LogManager::instance()->initConsoleAppender();
+            DLogManager::registerConsoleAppender();
         }else if (value == "file"){
-            LogManager::instance()->initRollingFileAppender();
+            DLogManager::registerFileAppender();
         }else{
-            LogManager::instance()->initRollingFileAppender();
+            DLogManager::registerFileAppender();
         }
     }else{
 #if !defined(QT_NO_DEBUG)
-        LogManager::instance()->initConsoleAppender();
+        DLogManager::registerConsoleAppender();
 #endif
-        LogManager::instance()->initRollingFileAppender();
+        DLogManager::registerFileAppender();
     }
 }
 

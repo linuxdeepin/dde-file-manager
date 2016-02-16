@@ -7,10 +7,10 @@
 
 FileManagerApp::FileManagerApp(QObject *parent) : QObject(parent)
 {
+    initLogger();
     initApp();
     initView();
     initController();
-    initLogger();
     initCommandline();
     initGtk();
     initConnect();

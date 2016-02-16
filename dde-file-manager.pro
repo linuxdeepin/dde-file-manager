@@ -12,14 +12,13 @@ TARGET = dde-file-manager
 TEMPLATE = app
 
 include(./widgets/widgets.pri)
-include(./cutelogger/cutelogger.pri)
 include(./dialogs/dialogs.pri)
 include(./utils/utils.pri)
 include(./filemonitor/filemonitor.pri)
 include(./dbusinterface/dbusinterface.pri)
 
 
-PKGCONFIG += x11 gtk+-2.0 xcb xcb-ewmh gsettings-qt dui
+PKGCONFIG += x11 gtk+-2.0 xcb xcb-ewmh gsettings-qt dui dtklog
 CONFIG += c++11 link_pkgconfig
 #DEFINES += QT_NO_DEBUG_OUTPUT
 DEFINES += QT_MESSAGELOGCONTEXT
