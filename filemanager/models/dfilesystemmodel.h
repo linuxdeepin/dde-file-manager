@@ -21,7 +21,7 @@ public:
 
     explicit DFileSystemModel(QObject *parent = 0);
 
-    QModelIndex index(const QString &path, int column = 0);
+    QModelIndex index(const QUrl &url, int column = 0);
     QModelIndex index(int row, int column,
                               const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
     QModelIndex parent(const QModelIndex &child) const Q_DECL_OVERRIDE;
@@ -32,16 +32,20 @@ public:
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
 
-    QModelIndex setRootPath(const QString &path);
+    bool canFetchMore(const QModelIndex & parent) const Q_DECL_OVERRIDE;
+    void fetchMore(const QModelIndex & parent) Q_DECL_OVERRIDE;
+
+    QModelIndex setRootPath(const QUrl &url);
     QString rootPath() const;
 
 private:
-    QDir m_rootDir;
     FileSystemNode *m_rootNode = Q_NULLPTR;
     QMap<QString, FileSystemNode*> m_pathToNode;
+    mutable QHash<QString, QIcon> m_typeToIcon;
 
-    inline FileSystemNode *getNodeByIndex(const QModelIndex &index) const
-    {return static_cast<FileSystemNode*>(index.internalPointer());}
+    inline FileSystemNode *getNodeByIndex(const QModelIndex &index) const;
+    QModelIndex createIndex(const FileSystemNode *node) const;
+    using QAbstractItemModel::createIndex;
 
     friend class FileSystemNode;
 };
