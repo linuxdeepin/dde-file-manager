@@ -13,9 +13,6 @@ public:
     QString BaseName;
     QString URI;
     QString MIME;
-    QString Icon;
-    QString IconName;
-    QString thumbnail;
     qlonglong Size;
     ushort FileType;
     bool IsBackup;
@@ -30,6 +27,9 @@ public:
     bool CanWrite;
 
     /*custom property*/
+    QString Icon;
+    QString IconName;
+    QString thumbnail;
     QString pinyinName;
     QString lowerPinyinName;
 

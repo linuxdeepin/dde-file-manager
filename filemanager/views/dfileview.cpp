@@ -49,6 +49,8 @@ public:
         if(!viewIsWrapping)
             return DListItemDelegate::sizeHint(option, index);
 
+        return QSize(100, 100);
+
         Q_UNUSED(option);
         Q_UNUSED(index);
 
@@ -142,7 +144,8 @@ void DFileView::initDelegate()
 void DFileView::initModel()
 {
     setModel(new DFileSystemModel(this));
-    setRootIndex(model()->setRootPath("/"));
+    model()->setRootPath(QUrl::fromLocalFile("/"));
+    cd(model()->rootPath());
 }
 
 void DFileView::initConnects()
@@ -165,7 +168,8 @@ void DFileView::back()
 
 void DFileView::cd(const QString &dir)
 {
-    setRootIndex(model()->index(dir));
+    QDir::setCurrent(dir);
+    setRootIndex(model()->index(QUrl::fromLocalFile(QDir::currentPath())));
 }
 
 void DFileView::switchListMode()
