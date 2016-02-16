@@ -56,7 +56,7 @@ public:
                                                                         abstractPath + fileInfo.BaseName + "/");
 
                           chileNode->fileInfo = std::move(fileInfo);
-                          chileNode->fileInfo.Icon = dbusController->getFileInfoInterface()->GetThemeIcon(fileInfo.BaseName, 100);
+                          chileNode->fileInfo.Icon = dbusController->getFileInfoInterface()->GetThemeIcon(fileInfo.URI, 100);
                           children[fileInfo.BaseName] = chileNode;
                           visibleChildren << fileInfo.BaseName;
                       }
