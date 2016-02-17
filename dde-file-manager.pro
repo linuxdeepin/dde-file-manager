@@ -18,7 +18,7 @@ include(./filemonitor/filemonitor.pri)
 include(./dbusinterface/dbusinterface.pri)
 
 
-PKGCONFIG += x11 gtk+-2.0 xcb xcb-ewmh gsettings-qt dui dtklog
+PKGCONFIG += x11 gtk+-2.0 xcb xcb-ewmh gsettings-qt dtklog dtkwidget
 CONFIG += c++11 link_pkgconfig
 #DEFINES += QT_NO_DEBUG_OUTPUT
 DEFINES += QT_MESSAGELOGCONTEXT
