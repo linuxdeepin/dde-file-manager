@@ -1,7 +1,7 @@
 #include "dfileview.h"
 #include "dfilesystemmodel.h"
 
-#include <libdui/dboxwidget.h>
+#include <dboxwidget.h>
 
 #include <QLabel>
 #include <QFileSystemModel>

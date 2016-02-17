@@ -1,14 +1,14 @@
 #ifndef DFILEVIEW_H
 #define DFILEVIEW_H
 
-#include <libdui/dlistview.h>
+#include <dlistview.h>
 
 #include <QFrame>
 
 class ItemDelegate;
 class QFileSystemModel;
 
-DUI_USE_NAMESPACE
+DWIDGET_USE_NAMESPACE
 
 class DFileSystemModel;
 class DFileView : public DListView
