@@ -1,5 +1,7 @@
 #include "dfileview.h"
 #include "dfilesystemmodel.h"
+#include "../app/global.h"
+#include "../controllers/filecontroller.h"
 
 #include <dboxwidget.h>
 
@@ -117,6 +119,7 @@ DFileView::DFileView(QWidget *parent) : DListView(parent)
     initUI();
     initDelegate();
     initModel();
+    initController();
     initConnects();
 }
 
@@ -148,12 +151,29 @@ void DFileView::initModel()
     cd(model()->rootPath());
 }
 
+void DFileView::initController()
+{
+    m_controller = new FileController(this);
+}
+
 void DFileView::initConnects()
 {
     connect(this, &DListView::doubleClicked,
             this, [this](const QModelIndex &index) {
         setRootIndex(index);
     });
+
+    connect(fileSignalManager, &FileSignalManager::getIcon,
+            m_controller, &FileController::getIcon);
+    connect(fileSignalManager, &FileSignalManager::getChildren,
+            m_controller, &FileController::getChildren);
+    connect(fileSignalManager, &FileSignalManager::getChildren, []{
+        qDebug () << "get children;";
+    });
+    connect(fileSignalManager, &FileSignalManager::getIconFinished,
+            model(), &DFileSystemModel::updateIcon);
+    connect(fileSignalManager, &FileSignalManager::getChildrenFinished,
+            model(), &DFileSystemModel::updateChildren);
 }
 
 DFileSystemModel *DFileView::model() const

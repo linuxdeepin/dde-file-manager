@@ -1,8 +1,5 @@
 #include "dfilesystemmodel.h"
 #include "../app/global.h"
-#include "dbusinterface/dbustype.h"
-#include "dbusinterface/listjob_interface.h"
-#include "dbusinterface/fileInfo_interface.h"
 
 #include <QDebug>
 #include <QDBusPendingCallWatcher>
@@ -18,15 +15,14 @@ public:
     bool populatedChildren = false;
 
     FileSystemNode(DFileSystemModel *model, FileSystemNode *parent,
-                   const QString &path, bool initChildren = false) :
+                   const QString &path) :
         parent(parent),
-        populatedChildren(initChildren),
         m_model(model)
     {
         model->m_pathToNode[path] = this;
 
-        if(initChildren)
-            initListJob(path);
+//        if(initChildren)
+//            initListJob(path);
     }
 
     ~FileSystemNode()
@@ -35,58 +31,12 @@ public:
         qDeleteAll(children.values());
     }
 
-    void initListJob(const QString &path)
-    {
-        FileOperationsInterface *dbusInterface = dbusController->getFileOperationsInterface();
-
-        ASYN_CALL(dbusInterface->NewListJob(path, 0), {
-                      if(watcher->isError()) {
-                          qDebug() << watcher->error().message();
-                          return;
-                      }
-
-                      getChildren(args[0].toString(),
-                                  qvariant_cast<QDBusObjectPath>(args[1]),
-                                  args[2].toString());
-                  }, this);
-    }
-
-    void getChildren(const QString &service, const QDBusObjectPath &path, const QString &interface)
-    {
-        ListJobInterface *listJob = new ListJobInterface(service, path.path(), interface);
-
-        ASYN_CALL(listJob->Execute(), {
-                      FileItemInfoList fileInfoList = (QDBusPendingReply<FileItemInfoList>(*watcher)).value();
-                      children.reserve(fileInfoList.count());
-                      visibleChildren.reserve(fileInfoList.count());
-
-                      m_model->beginInsertRows(m_model->createIndex(this), 0, fileInfoList.count() - 1);
-
-                      for(FileItemInfo &fileInfo : fileInfoList) {
-                          FileSystemNode *chileNode = new FileSystemNode(m_model, this, fileInfo.URI);
-
-                          chileNode->fileInfo = std::move(fileInfo);
-                          children[fileInfo.BaseName] = chileNode;
-                          visibleChildren << fileInfo.BaseName;
-                      }
-
-                      m_model->endInsertRows();
-                  }, this, listJob);
-    }
-
     void clearChildren()
     {
         visibleChildren.clear();
         qDeleteAll(children.values());
     }
 
-    void refreshChildren()
-    {
-        clearChildren();
-        initListJob(fileInfo.URI);
-    }
-
-private:
     DFileSystemModel *m_model;
 };
 
@@ -203,17 +153,7 @@ QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
             QIcon icon = m_typeToIcon.value(indexNode->fileInfo.MIME);
 
             if(icon.isNull()) {
-                QString iconPath = dbusController->getFileInfoInterface()->GetThemeIcon(indexNode->fileInfo.URI, 30);
-
-                if(iconPath.isEmpty()) {
-                    const QFileInfo &fileInfo = QFileInfo(QUrl(indexNode->fileInfo.URI).toLocalFile());
-                    QFileIconProvider prrovider;
-                    icon = prrovider.icon(fileInfo);
-                } else {
-                    icon = QIcon(iconPath);
-                }
-
-                m_typeToIcon[indexNode->fileInfo.MIME] = icon;
+                emit fileSignalManager->getIcon(QUrl(indexNode->fileInfo.URI));
             }
 
             return icon;
@@ -239,7 +179,8 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
         return;
 
     parentNode->populatedChildren = true;
-    parentNode->refreshChildren();
+
+    emit fileSignalManager->getChildren(QUrl(parentNode->fileInfo.URI));
 }
 
 bool DFileSystemModel::canFetchMore(const QModelIndex &parent) const
@@ -263,7 +204,7 @@ QModelIndex DFileSystemModel::setRootPath(const QUrl &url)
 
     QString path = url.toString();
 
-    m_rootNode = new FileSystemNode(this, Q_NULLPTR, path, true);
+    m_rootNode = new FileSystemNode(this, Q_NULLPTR, path);
     m_rootNode->fileInfo.URI = path;
     m_rootNode->fileInfo.BaseName = url.isLocalFile() ? url.toLocalFile() : path;
     m_rootNode->fileInfo.DisplayName = m_rootNode->fileInfo.BaseName;
@@ -274,6 +215,38 @@ QModelIndex DFileSystemModel::setRootPath(const QUrl &url)
 QString DFileSystemModel::rootPath() const
 {
     return m_rootNode ? QUrl(m_rootNode->fileInfo.URI).toLocalFile() : "";
+}
+
+void DFileSystemModel::updateChildren(const QUrl &url, const FileItemInfoList &list)
+{
+    FileSystemNode *node = getNodeByIndex(index(url));
+
+    if(!node)
+        return;
+
+    node->clearChildren();
+
+    beginInsertRows(createIndex(node), 0, list.count() - 1);
+
+    for(const FileItemInfo &fileInfo : list) {
+        FileSystemNode *chileNode = new FileSystemNode(this, node, fileInfo.URI);
+
+        chileNode->fileInfo = std::move(fileInfo);
+        node->children[fileInfo.BaseName] = chileNode;
+        node->visibleChildren << fileInfo.BaseName;
+    }
+
+    endInsertRows();
+}
+
+void DFileSystemModel::updateIcon(const QUrl &url, const QIcon &icon)
+{
+    FileSystemNode *node = getNodeByIndex(index(url));
+
+    if(!node)
+        return;
+
+    m_typeToIcon[node->fileInfo.MIME] = icon;
 }
 
 FileSystemNode *DFileSystemModel::getNodeByIndex(const QModelIndex &index) const
