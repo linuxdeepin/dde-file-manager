@@ -18,7 +18,7 @@ include(./filemonitor/filemonitor.pri)
 include(./dbusinterface/dbusinterface.pri)
 
 
-PKGCONFIG += x11 gtk+-2.0 xcb xcb-ewmh gsettings-qt dtklog dtkwidget
+PKGCONFIG += x11 gtk+-2.0 xcb xcb-ewmh gsettings-qt dtkbase dtkutil dtkwidget
 CONFIG += c++11 link_pkgconfig
 #DEFINES += QT_NO_DEBUG_OUTPUT
 DEFINES += QT_MESSAGELOGCONTEXT
@@ -64,7 +64,8 @@ HEADERS += \
     filemanager/views/dicontextbutton.h \
     filemanager/views/dstatebutton.h \
     filemanager/views/dcheckablebutton.h \
-    filemanager/models/dfilesystemmodel.h
+    filemanager/models/dfilesystemmodel.h \
+    filemanager/controllers/histroycontroller.h
 
 SOURCES += \
     filemanager/app/dbusworker.cpp \
@@ -91,6 +92,7 @@ SOURCES += \
     filemanager/views/dicontextbutton.cpp \
     filemanager/views/dstatebutton.cpp \
     filemanager/views/dcheckablebutton.cpp \
-    filemanager/models/dfilesystemmodel.cpp
+    filemanager/models/dfilesystemmodel.cpp \
+    filemanager/controllers/histroycontroller.cpp
 
 INCLUDEPATH += filemanager/models
