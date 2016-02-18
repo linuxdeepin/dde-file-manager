@@ -29,4 +29,5 @@ release
 build*
 
 *.pro.user
+*.pro.user*
 *.qm

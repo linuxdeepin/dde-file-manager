@@ -7,6 +7,7 @@
 
 class ItemDelegate;
 class QFileSystemModel;
+class FileController;
 
 DWIDGET_USE_NAMESPACE
 
@@ -21,6 +22,7 @@ public:
     void initUI();
     void initDelegate();
     void initModel();
+    void initController();
     void initConnects();
 
     DFileSystemModel *model() const;
@@ -34,6 +36,7 @@ public slots:
 
 private:
     ItemDelegate *m_delegate;
+    FileController *m_controller;
 };
 
 #endif // DFILEVIEW_H

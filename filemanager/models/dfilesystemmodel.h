@@ -2,6 +2,7 @@
 #define DFILESYSTEMMODEL_H
 
 #include "dbusinterface/fileoperations_interface.h"
+#include "dbusinterface/dbustype.h"
 
 #include <QAbstractItemModel>
 #include <QFileSystemModel>
@@ -37,6 +38,10 @@ public:
 
     QModelIndex setRootPath(const QUrl &url);
     QString rootPath() const;
+
+public slots:
+    void updateChildren(const QUrl &url, const FileItemInfoList &list);
+    void updateIcon(const QUrl &url, const QIcon &icon);
 
 private:
     FileSystemNode *m_rootNode = Q_NULLPTR;

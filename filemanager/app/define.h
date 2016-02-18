@@ -11,7 +11,7 @@
 #include <QDBusConnection>
 #include <QDBusPendingCall>
 
-using namespace Dtk::Util;
+DUTIL_USE_NAMESPACE
 
 #undef signals
 extern "C" {
