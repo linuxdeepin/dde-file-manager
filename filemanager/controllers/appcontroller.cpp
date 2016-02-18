@@ -7,6 +7,7 @@
 #include "dbuscontroller.h"
 #include "fileconflictcontroller.h"
 #include "../app/global.h"
+#include "histroycontroller.h"
 
 
 AppController::AppController(QObject *parent) : QObject(parent),
@@ -14,7 +15,8 @@ AppController::AppController(QObject *parent) : QObject(parent),
     m_moveJobController(new MoveJobController),
     m_copyJobController(new CopyJobController),
     m_renameJobController(new RenameJobController),
-    m_deleteJobController(new DeleteJobController)
+    m_deleteJobController(new DeleteJobController),
+    m_historyController(new HistroyController)
 {
 
 }
@@ -37,6 +39,11 @@ CopyJobController* AppController::getCopyJobController(){
 
 RenameJobController* AppController::getRenameJobController(){
     return m_renameJobController;
+}
+
+HistroyController *AppController::getHistroyController()
+{
+    return m_historyController;
 }
 
 AppController::~AppController()
