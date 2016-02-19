@@ -47,7 +47,7 @@ public slots:
 
 private:
     FileSystemNode *m_rootNode = Q_NULLPTR;
-    QMap<QString, FileSystemNode*> m_pathToNode;
+    QMap<QUrl, FileSystemNode*> m_urlToNode;
     mutable QHash<QString, QIcon> m_typeToIcon;
 
     inline FileSystemNode *getNodeByIndex(const QModelIndex &index) const;
