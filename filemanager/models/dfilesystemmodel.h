@@ -39,6 +39,8 @@ public:
     QModelIndex setRootPath(const QUrl &url);
     QString rootPath() const;
 
+    QUrl getUrlByIndex(const QModelIndex &index) const;
+
 public slots:
     void updateChildren(const QUrl &url, const FileItemInfoList &list);
     void updateIcon(const QUrl &url, const QIcon &icon);

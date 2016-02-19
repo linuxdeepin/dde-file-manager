@@ -4,6 +4,7 @@
 #include <dlistview.h>
 
 #include <QFrame>
+#include <QUrl>
 
 class ItemDelegate;
 class QFileSystemModel;
@@ -22,16 +23,14 @@ public:
     void initUI();
     void initDelegate();
     void initModel();
-    void initController();
     void initConnects();
 
     DFileSystemModel *model() const;
 
+    QUrl currentUrl() const;
+
 public slots:
-    void back();
-    inline void previous()
-    {cd("..");}
-    void cd(const QString &dir);
+    void cd(const QUrl &url);
     void switchListMode();
 
 private:
