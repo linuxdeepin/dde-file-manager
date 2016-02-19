@@ -1,7 +1,6 @@
 #include "dfileview.h"
 #include "dfilesystemmodel.h"
 #include "../app/global.h"
-#include "../controllers/filecontroller.h"
 
 #include <dboxwidget.h>
 
@@ -153,7 +152,7 @@ void DFileView::initModel()
 
 void DFileView::initController()
 {
-    m_controller = new FileController(this);
+
 }
 
 void DFileView::initConnects()
@@ -163,10 +162,6 @@ void DFileView::initConnects()
         setRootIndex(index);
     });
 
-    connect(fileSignalManager, &FileSignalManager::getIcon,
-            m_controller, &FileController::getIcon);
-    connect(fileSignalManager, &FileSignalManager::getChildren,
-            m_controller, &FileController::getChildren);
     connect(fileSignalManager, &FileSignalManager::getChildren, []{
         qDebug () << "get children;";
     });

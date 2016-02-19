@@ -1,8 +1,10 @@
 #include "filemanagerapp.h"
 #include <QtCore/QCoreApplication>
 #include "../views/filemanagerwindow.h"
+#include "../controllers/appcontroller.h"
 #include "../app/define.h"
 #include "../app/global.h"
+
 
 
 FileManagerApp::FileManagerApp(QObject *parent) : QObject(parent)
@@ -35,7 +37,7 @@ void FileManagerApp::initView()
 
 void FileManagerApp::initController()
 {
-
+    m_appController = new AppController(this);
 }
 
 void FileManagerApp::initLogger()

@@ -10,6 +10,7 @@ class CopyJobController;
 class RenameJobController;
 class DeleteJobController;
 class HistroyController;
+class FileController;
 
 class AppController : public QObject
 {
@@ -25,6 +26,7 @@ public:
     RenameJobController* getRenameJobController();
     DeleteJobController* getDeleteJobController();
     HistroyController* getHistroyController();
+    FileController* getFileController();
 signals:
 
 public slots:
@@ -36,6 +38,7 @@ private:
     RenameJobController* m_renameJobController;
     DeleteJobController* m_deleteJobController;
     HistroyController* m_historyController;
+    FileController* m_fileController;
 };
 
 #endif // APPCONTROLLER_H

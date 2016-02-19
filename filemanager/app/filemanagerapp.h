@@ -4,6 +4,7 @@
 #include <QObject>
 
 class FileManagerWindow;
+class AppController;
 
 class FileManagerApp : public QObject
 {
@@ -27,6 +28,7 @@ public slots:
 
 private:
     FileManagerWindow* m_fileManagerWindow=NULL;
+    AppController* m_appController = NULL;
 };
 
 #endif // FILEMANAGERAPP_H

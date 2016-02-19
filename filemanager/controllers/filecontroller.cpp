@@ -8,7 +8,15 @@
 
 FileController::FileController(QObject *parent) : QObject(parent)
 {
+    initConnect();
+}
 
+void FileController::initConnect()
+{
+    connect(fileSignalManager, &FileSignalManager::getIcon,
+            this, &FileController::getIcon);
+    connect(fileSignalManager, &FileSignalManager::getChildren,
+            this, &FileController::getChildren);
 }
 
 void FileController::getChildren(const QUrl &url)
