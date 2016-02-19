@@ -13,6 +13,7 @@ class FileController : public QObject
 
 public:
     explicit FileController(QObject *parent = 0);
+    void initConnect();
 
 public slots:
     void getChildren(const QUrl &url);

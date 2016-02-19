@@ -8,7 +8,7 @@
 #include "fileconflictcontroller.h"
 #include "../app/global.h"
 #include "histroycontroller.h"
-
+#include "filecontroller.h"
 
 AppController::AppController(QObject *parent) : QObject(parent),
     m_trashJobController(new TrashJobController),
@@ -16,7 +16,8 @@ AppController::AppController(QObject *parent) : QObject(parent),
     m_copyJobController(new CopyJobController),
     m_renameJobController(new RenameJobController),
     m_deleteJobController(new DeleteJobController),
-    m_historyController(new HistroyController)
+    m_historyController(new HistroyController),
+    m_fileController(new FileController)
 {
 
 }
