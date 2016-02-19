@@ -15,11 +15,11 @@ public:
     bool populatedChildren = false;
 
     FileSystemNode(DFileSystemModel *model, FileSystemNode *parent,
-                   const QString &path) :
+                   const QUrl &url) :
         parent(parent),
         m_model(model)
     {
-        model->m_pathToNode[path] = this;
+        model->m_urlToNode[url] = this;
 
 //        if(initChildren)
 //            initListJob(path);
@@ -27,7 +27,7 @@ public:
 
     ~FileSystemNode()
     {
-        m_model->m_pathToNode.remove(fileInfo.URI);
+        m_model->m_urlToNode.remove(QUrl(fileInfo.URI));
         qDeleteAll(children.values());
     }
 
@@ -48,7 +48,7 @@ DFileSystemModel::DFileSystemModel(QObject *parent) :
 
 QModelIndex DFileSystemModel::index(const QUrl &url, int /*column*/)
 {
-    FileSystemNode *node = m_pathToNode.value(url.toString());
+    FileSystemNode *node = m_urlToNode.value(url);
 
     if (!node)
         return QModelIndex();
@@ -206,14 +206,12 @@ QModelIndex DFileSystemModel::setRootPath(const QUrl &url)
     if(!m_rootNode)
         delete m_rootNode;
 
-    QString path = url.toString();
-
-    m_rootNode = new FileSystemNode(this, Q_NULLPTR, path);
-    m_rootNode->fileInfo.URI = path;
-    m_rootNode->fileInfo.BaseName = url.isLocalFile() ? url.toLocalFile() : path;
+    m_rootNode = new FileSystemNode(this, Q_NULLPTR, url);
+    m_rootNode->fileInfo.URI = url.toString();
+    m_rootNode->fileInfo.BaseName = url.isLocalFile() ? url.toLocalFile() : url.toString();
     m_rootNode->fileInfo.DisplayName = m_rootNode->fileInfo.BaseName;
 
-    return index(path);
+    return index(url);
 }
 
 QString DFileSystemModel::rootPath() const
@@ -243,7 +241,7 @@ void DFileSystemModel::updateChildren(const QUrl &url, const FileItemInfoList &l
     beginInsertRows(createIndex(node), 0, list.count() - 1);
 
     for(const FileItemInfo &fileInfo : list) {
-        FileSystemNode *chileNode = new FileSystemNode(this, node, fileInfo.URI);
+        FileSystemNode *chileNode = new FileSystemNode(this, node, QUrl(fileInfo.URI));
 
         chileNode->fileInfo = std::move(fileInfo);
         node->children[fileInfo.BaseName] = chileNode;
