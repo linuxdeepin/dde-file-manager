@@ -16,11 +16,16 @@ public:
         QObject(parent){}
 
 signals:
-    void getChildren(const QUrl &url) const;
-    void getChildrenFinished(const QUrl &url, const FileItemInfoList &list) const;
+    /// current display url changed
+    void currentUrlChanged(const QUrl &url);
 
-    void getIcon(const QUrl &url) const;
-    void getIconFinished(const QUrl &url, const QIcon &icon) const;
+    /// in folder files
+    void requestChildren(const QUrl &url) const;
+    void childrenChanged(const QUrl &url, const FileItemInfoList &list) const;
+
+    /// file icon
+    void requestIcon(const QUrl &url) const;
+    void iconChanged(const QUrl &url, const QIcon &icon) const;
 };
 
 #endif // FILESIGNALMANAGER_H

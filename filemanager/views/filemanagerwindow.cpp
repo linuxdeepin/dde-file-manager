@@ -13,6 +13,7 @@
 #include "dtoolbar.h"
 #include "dfileview.h"
 #include "ddetailview.h"
+#include "../app/global.h"
 
 const int FileManagerWindow::MinimumWidth = 540;
 
@@ -144,7 +145,13 @@ void FileManagerWindow::initConnect()
     connect(m_titleBar, SIGNAL(closed()), this, SLOT(close()));
     connect(m_toolbar, SIGNAL(requestSwitchLayout()), this, SLOT(toggleLayout()));
     connect(m_toolbar, &DToolBar::backButtonClicked,
-            m_fileView, &DFileView::previous);
+            this, [this] {
+        QDir dir(m_fileView->currentUrl().toLocalFile());
+
+        dir.cdUp();
+
+        emit fileSignalManager->currentUrlChanged(QUrl::fromLocalFile(dir.absolutePath()));
+    });
     connect(m_toolbar, &DToolBar::switchLayoutMode,
             m_fileView, &DFileView::switchListMode);
 }

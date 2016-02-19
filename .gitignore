@@ -31,3 +31,4 @@ build*
 *.pro.user
 *.pro.user*
 *.qm
+*.autosave

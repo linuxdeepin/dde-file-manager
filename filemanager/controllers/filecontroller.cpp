@@ -13,9 +13,9 @@ FileController::FileController(QObject *parent) : QObject(parent)
 
 void FileController::initConnect()
 {
-    connect(fileSignalManager, &FileSignalManager::getIcon,
+    connect(fileSignalManager, &FileSignalManager::requestIcon,
             this, &FileController::getIcon);
-    connect(fileSignalManager, &FileSignalManager::getChildren,
+    connect(fileSignalManager, &FileSignalManager::requestChildren,
             this, &FileController::getChildren);
 }
 
@@ -46,7 +46,7 @@ void FileController::getChildren(const QUrl &url)
     ASYN_CALL(listJob->Execute(), {
                   FileItemInfoList fileInfoList = (QDBusPendingReply<FileItemInfoList>(*watcher)).value();
 
-                  emit fileSignalManager->getChildrenFinished(url, fileInfoList);
+                  emit fileSignalManager->childrenChanged(url, fileInfoList);
               }, this, url);
 }
 
@@ -64,5 +64,5 @@ void FileController::getIcon(const QUrl &url) const
         icon = QIcon(iconPath);
     }
 
-    emit fileSignalManager->getIconFinished(url, icon);
+    emit fileSignalManager->iconChanged(url, icon);
 }

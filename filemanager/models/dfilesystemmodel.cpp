@@ -114,7 +114,8 @@ bool DFileSystemModel::hasChildren(const QModelIndex &parent) const
     const FileSystemNode *indexNode = getNodeByIndex(parent);
     Q_ASSERT(indexNode);
 
-    return indexNode->fileInfo.FileType == 2;
+    return indexNode->fileInfo.FileType == 49
+            || indexNode->fileInfo.FileType == 2;
 }
 
                 QFileIconProvider tmp_icon;
@@ -153,7 +154,7 @@ QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
             QIcon icon = m_typeToIcon.value(indexNode->fileInfo.MIME);
 
             if(icon.isNull()) {
-                emit fileSignalManager->getIcon(QUrl(indexNode->fileInfo.URI));
+                emit fileSignalManager->requestIcon(QUrl(indexNode->fileInfo.URI));
             }
 
             return icon;
@@ -180,14 +181,17 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
 
     parentNode->populatedChildren = true;
 
-    emit fileSignalManager->getChildren(QUrl(parentNode->fileInfo.URI));
+    emit fileSignalManager->requestChildren(QUrl(parentNode->fileInfo.URI));
 }
 
 bool DFileSystemModel::canFetchMore(const QModelIndex &parent) const
 {
     FileSystemNode *parentNode = getNodeByIndex(parent);
 
-    return parentNode && !parentNode->populatedChildren;
+    return parentNode
+            && (parentNode->fileInfo.FileType == 49
+                || parentNode->fileInfo.FileType == 2)
+            && !parentNode->populatedChildren;
 }
 
 QModelIndex DFileSystemModel::setRootPath(const QUrl &url)
@@ -215,6 +219,16 @@ QModelIndex DFileSystemModel::setRootPath(const QUrl &url)
 QString DFileSystemModel::rootPath() const
 {
     return m_rootNode ? QUrl(m_rootNode->fileInfo.URI).toLocalFile() : "";
+}
+
+QUrl DFileSystemModel::getUrlByIndex(const QModelIndex &index) const
+{
+    FileSystemNode *node = getNodeByIndex(index);
+
+    if(!node)
+        return QUrl();
+
+    return QUrl(node->fileInfo.URI);
 }
 
 void DFileSystemModel::updateChildren(const QUrl &url, const FileItemInfoList &list)

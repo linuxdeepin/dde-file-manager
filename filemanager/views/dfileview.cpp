@@ -118,7 +118,6 @@ DFileView::DFileView(QWidget *parent) : DListView(parent)
     initUI();
     initDelegate();
     initModel();
-    initController();
     initConnects();
 }
 
@@ -146,28 +145,21 @@ void DFileView::initDelegate()
 void DFileView::initModel()
 {
     setModel(new DFileSystemModel(this));
-    model()->setRootPath(QUrl::fromLocalFile("/"));
-    cd(model()->rootPath());
-}
-
-void DFileView::initController()
-{
-
+    setRootIndex(model()->setRootPath(QUrl::fromLocalFile("/")));
 }
 
 void DFileView::initConnects()
 {
-    connect(this, &DListView::doubleClicked,
+    connect(this, &DFileView::doubleClicked,
             this, [this](const QModelIndex &index) {
-        setRootIndex(index);
+        if(model()->hasChildren(index))
+            emit fileSignalManager->currentUrlChanged(model()->getUrlByIndex(index));
     });
-
-    connect(fileSignalManager, &FileSignalManager::getChildren, []{
-        qDebug () << "get children;";
-    });
-    connect(fileSignalManager, &FileSignalManager::getIconFinished,
+    connect(fileSignalManager, &FileSignalManager::currentUrlChanged,
+            this, &DFileView::cd);
+    connect(fileSignalManager, &FileSignalManager::iconChanged,
             model(), &DFileSystemModel::updateIcon);
-    connect(fileSignalManager, &FileSignalManager::getChildrenFinished,
+    connect(fileSignalManager, &FileSignalManager::childrenChanged,
             model(), &DFileSystemModel::updateChildren);
 }
 
@@ -176,15 +168,14 @@ DFileSystemModel *DFileView::model() const
     return qobject_cast<DFileSystemModel*>(DListView::model());
 }
 
-void DFileView::back()
+QUrl DFileView::currentUrl() const
 {
-
+    return model()->getUrlByIndex(rootIndex());
 }
 
-void DFileView::cd(const QString &dir)
+void DFileView::cd(const QUrl &url)
 {
-    QDir::setCurrent(dir);
-    setRootIndex(model()->index(QUrl::fromLocalFile(QDir::currentPath())));
+    setRootIndex(model()->index(url));
 }
 
 void DFileView::switchListMode()
