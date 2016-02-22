@@ -6,17 +6,7 @@
 FileMonitor::FileMonitor(QObject *parent) : QObject(parent)
 {
     initFileMonitorWoker();
-    m_delayMoveOutTimer = new QTimer;
-    m_delayMoveOutTimer->setInterval(100);
-    m_delayMoveOutTimer->setSingleShot(true);
-
-    m_delayAppGroupUpdatedTimer = new QTimer;
-    m_delayAppGroupUpdatedTimer->setInterval(200);
-    m_delayAppGroupUpdatedTimer->setSingleShot(true);
-
     initConnect();
-
-    emit m_fileMonitorWorker->monitorFolderChanged(desktopLocation);
 }
 
 
@@ -28,8 +18,6 @@ void FileMonitor::initFileMonitorWoker(){
 }
 
 void FileMonitor::initConnect(){
-    connect(m_delayMoveOutTimer, SIGNAL(timeout()), this, SLOT(delayHanleMoveFrom()));
-    connect(m_delayAppGroupUpdatedTimer, SIGNAL(timeout()), this, SLOT(delayHandleAppGroupCreated()));
     connect(m_fileMonitorWorker, SIGNAL(fileCreated(int,QString)), this, SLOT(handleCreated(int,QString)));
     connect(m_fileMonitorWorker, SIGNAL(fileMovedFrom(int,QString)), this, SLOT(handleMoveFrom(int,QString)));
     connect(m_fileMonitorWorker, SIGNAL(fileMovedTo(int,QString)), this, SLOT(handleMoveTo(int,QString)));
@@ -49,10 +37,8 @@ void FileMonitor::handleCreated(int cookie, QString path){
     emit fileCreated(path);
 }
 
-
 void FileMonitor::handleMoveFrom(int cookie, QString path){
     m_moveEvent.insert(cookie, path);
-    m_delayMoveOutTimer->start();
 }
 
 
@@ -70,20 +56,6 @@ void FileMonitor::handleMetaDataChanged(int cookie, QString path)
     Q_UNUSED(cookie)
     emit fileMetaDataChanged(path);
 }
-
-void FileMonitor::delayHanleMoveFrom(){
-    foreach (int cookie, m_moveEvent.keys()) {
-            QString path = m_moveEvent.value(cookie);
-            emit fileMovedOut(path);
-            m_moveEvent.remove(cookie);
-    }
-}
-
-void FileMonitor::delayHandleAppGroupCreated(){
-    qDebug() << "app group updated:" << m_appGroupPath;
-    emit appGroupUpdated(m_appGroupPath);
-}
-
 
 FileMonitor::~FileMonitor()
 {

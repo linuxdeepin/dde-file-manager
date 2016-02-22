@@ -25,8 +25,6 @@ signals:
     void fileDeleted(QString path);
     void fileMetaDataChanged(QString path);
 
-    void appGroupUpdated(QString path);
-
 public slots:
     void handleCreated(int cookie, QString path);
     void handleMoveFrom(int cookie, QString path);
@@ -34,12 +32,7 @@ public slots:
     void handleDelete(int cookie, QString path);
     void handleMetaDataChanged(int cookie, QString path);
 
-    void delayHanleMoveFrom();
-    void delayHandleAppGroupCreated();
-
 private:
-    QTimer* m_delayMoveOutTimer;
-    QTimer* m_delayAppGroupUpdatedTimer;
     FileMonitorWoker* m_fileMonitorWorker;
     QMap<int, QString> m_moveEvent;
     QString m_appGroupPath;

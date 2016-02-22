@@ -1,3 +1,12 @@
+/**
+ * Copyright (C) 2015 Deepin Technology Co., Ltd.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ **/
+
 #ifndef FILEMONITORWOKER_H
 #define FILEMONITORWOKER_H
 
@@ -7,6 +16,8 @@
 #include <stdlib.h>
 #include <sys/inotify.h>
 #include <unistd.h>
+#include <sys/ioctl.h>
+#include <fcntl.h>
 
 
 #define RichDirPrefix ".deepin_rich_dir_"
@@ -21,8 +32,24 @@ class FileMonitorWoker : public QObject
 public:
     explicit FileMonitorWoker(QObject *parent = 0);
     ~FileMonitorWoker();
-    void handleInotifyEvent(struct inotify_event* event);
+    void handleInotifyEvent(const struct inotify_event* event);
     void addWatchFolder(const QString& path);
+
+    void monitorAppGroup(const QString &path);
+
+
+    bool addPath(const QString &path);
+    bool removePath(const QString &path);
+
+    QStringList addPaths(const QStringList &paths);
+    QStringList removePaths(const QStringList &paths);
+
+
+
+    QStringList m_files, m_directories;
+
+    void fileChanged(const QString &path, bool removed);
+    void directoryChanged(const QString &path, bool removed);
 
 signals:
     void monitorFolderChanged(const QString& path);
@@ -32,14 +59,31 @@ signals:
     void fileDeleted(int cookie, QString path);
     void metaDataChanged(int cookie, QString path);
 
+    void fileChanged(QString path);
+    void directoryChanged(QString path);
+
 public slots:
     void monitor(const QString& path);
     void unMonitor(const QString& path);
 
+private slots:
+    void readFromInotify();
+
 private:
-    int m_fd;
-    QMap<QString, int> m_path_wd;
-    QMap<int, QString> m_wd_path;
+    QString getPathFromID(int id) const;
+    QStringList addPathsAction(const QStringList &paths);
+    QStringList removePathsAction(const QStringList &paths);
+
+private:
+    int m_inotifyFd;
+    int m_counter;
+
+
+    QSocketNotifier *m_notifier;
+    QHash<QString, int> m_pathToID;
+    QMultiHash<int, QString> m_idToPath;
+
+
 
 };
 
