@@ -1,6 +1,5 @@
 HEADERS += \
     $$PWD/elidelabel.h \
-    $$PWD/util.h \
     $$PWD/singleton.h \
     $$PWD/growingtextedit.h \
     $$PWD/growingelidetextedit.h \
@@ -15,7 +14,6 @@ HEADERS += \
 
 SOURCES += \
     $$PWD/elidelabel.cpp \
-    $$PWD/util.cpp \
     $$PWD/growingtextedit.cpp \
     $$PWD/growingelidetextedit.cpp \
     $$PWD/themeappicon.cpp \

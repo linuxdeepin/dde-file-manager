@@ -46,27 +46,7 @@ bool FileMonitor::isGoutputstreamTempFile(QString path){
 
 void FileMonitor::handleCreated(int cookie, QString path){
     Q_UNUSED(cookie)
-    if (isAppGroup(path)){
-        m_appGroupPath = path;
-        m_delayAppGroupUpdatedTimer->start();
-    }
-
-    bool flag1 = isAppGroup(QFileInfo(path).path());
-    bool flag2 = isInDesktop(path);
-     if (flag1 || flag2){
-         if (!isGoutputstreamTempFile(path)){
-             if (flag1){
-                 if (isDesktopAppFile(path)){
-                     qDebug() << "create app group desktop file:" << path;
-                     emit fileCreated(path);
-                 }
-             }
-             if (flag2){
-                qDebug() << "create desktop file/folder:" << path;
-                emit fileCreated(path);
-             }
-         }
-     }
+    emit fileCreated(path);
 }
 
 
@@ -77,59 +57,12 @@ void FileMonitor::handleMoveFrom(int cookie, QString path){
 
 
 void FileMonitor::handleMoveTo(int cookie, QString path){
-    if (isAppGroup(QFileInfo(path).path()) || isInDesktop(path)){
-        if (m_moveEvent.contains(cookie)){
-            QString oldPath = m_moveEvent.value(cookie);
-            if (!isGoutputstreamTempFile(oldPath)){
-                if (QFileInfo(oldPath).path() == QFileInfo(path).path()){
-                    qDebug() << "rename file from:" << oldPath << "to" << path;
-                    emit fileRenamed(oldPath, path);
-                }else{
-                    bool flag1 = isAppGroup(QFileInfo(oldPath).path());
-                    bool flag2 = isInDesktop(oldPath);
-
-                    bool flag3 = isAppGroup(QFileInfo(path).path());
-                    bool flag4 = isInDesktop(path);
-
-                    if (flag1){
-                         if (isDesktopAppFile(oldPath)){
-                             qDebug() << "move app group desktop app file out2:" << oldPath;
-                             emit fileMovedOut(oldPath);
-                         }
-                    }
-                    if (flag2){
-                        qDebug() << "move desktop file/folder out2:" << oldPath;
-                        emit fileMovedOut(oldPath);
-                    }
-
-
-                    if (flag3){
-                        if (isDesktopAppFile(path)){
-                            qDebug() << "move in2 app group desktop app file:" << path;
-                            emit fileMovedIn(path);
-                        }
-                    }
-                    if (flag4){
-                        qDebug() << "move in2 desktop file/folder :" << path;
-                        emit fileMovedIn(path);
-                    }
-                }
-                m_moveEvent.remove(cookie);
-                m_delayMoveOutTimer->start();
-            }
-        }else{
-            qDebug() << "move in file/folder:" << path;
-            emit fileMovedIn(path);
-        }
-    }
+    qDebug() << cookie << path;
 }
 
 void FileMonitor::handleDelete(int cookie, QString path){
     Q_UNUSED(cookie)
-    if (isAppGroup(QFileInfo(path).path()) || isInDesktop(path)){
-        qDebug() << "delete" << path;
-        emit fileDeleted(path);
-    }
+    emit fileDeleted(path);
 }
 
 void FileMonitor::handleMetaDataChanged(int cookie, QString path)
@@ -140,26 +73,9 @@ void FileMonitor::handleMetaDataChanged(int cookie, QString path)
 
 void FileMonitor::delayHanleMoveFrom(){
     foreach (int cookie, m_moveEvent.keys()) {
-        QString path = m_moveEvent.value(cookie);
-
-        bool flag1 = isAppGroup(QFileInfo(path).path());
-        bool flag2 =  isInDesktop(path);
-
-        if (flag1 || flag2){
-            if (!isGoutputstreamTempFile(path)){
-                if (flag1){
-                    if (isDesktopAppFile(path)){
-                        qDebug() << "move app group desktop app file out:" << path;
-                        emit fileMovedOut(path);
-                    }
-                }
-                if (flag2){
-                    qDebug() << "move desktop file/folder out:" << path;
-                    emit fileMovedOut(path);
-                }
-            }
+            QString path = m_moveEvent.value(cookie);
+            emit fileMovedOut(path);
             m_moveEvent.remove(cookie);
-        }
     }
 }
 

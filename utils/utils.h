@@ -33,5 +33,9 @@ bool isRequestThumbnail(QString url);
 QString getMimeTypeGenericIconName(QString url);
 QString getMimeTypeIconName(QString url);
 QString getMimeTypeName(QString url);
+
+
+QString getQssFromFile(QString filename);
+QString joinPath(const QString& path, const QString& fileName);
 #endif // UTILS_H
 

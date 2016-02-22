@@ -113,12 +113,11 @@ bool DFileSystemModel::hasChildren(const QModelIndex &parent) const
 
     const FileSystemNode *indexNode = getNodeByIndex(parent);
     Q_ASSERT(indexNode);
-
-    return indexNode->fileInfo.FileType == 49
-            || indexNode->fileInfo.FileType == 2;
+    qDebug() << QDir(QUrl(indexNode->fileInfo.URI).toLocalFile()).exists();
+    return QDir(QUrl(indexNode->fileInfo.URI).toLocalFile()).exists() ;
 }
 
-                QFileIconProvider tmp_icon;
+QFileIconProvider tmp_icon;
 
 QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
 {

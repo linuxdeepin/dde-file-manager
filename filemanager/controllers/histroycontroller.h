@@ -13,10 +13,12 @@ public:
     ~HistroyController();
 
     void initData();
+    void initConnect();
 
 signals:
 
 public slots:
+    void appendHistroyUrlRecords(const QUrl& url);
 
 private:
     HistoryRecord* m_histroyUrlRecords = NULL;

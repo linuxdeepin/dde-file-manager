@@ -1,32 +1,13 @@
 #include "dfileview.h"
 #include "dfilesystemmodel.h"
 #include "../app/global.h"
-
+#include "fileitem.h"
 #include <dboxwidget.h>
 
 #include <QLabel>
 #include <QFileSystemModel>
 #include <QPushButton>
 
-class IconItem : public DVBoxWidget
-{
-public:
-    explicit IconItem(QWidget *parent = 0) :
-        DVBoxWidget(parent)
-    {
-        icon = new QLabel;
-        label = new QLabel;
-
-        label->setWordWrap(true);
-
-        layout()->addWidget(icon, 0, Qt::AlignHCenter);
-        layout()->addWidget(label, 0 , Qt::AlignHCenter);
-    }
-
-public:
-    QLabel *icon;
-    QLabel *label;
-};
 
 class ItemDelegate : public DListItemDelegate
 {
@@ -51,22 +32,6 @@ public:
             return DListItemDelegate::sizeHint(option, index);
 
         return QSize(100, 100);
-
-        Q_UNUSED(option);
-        Q_UNUSED(index);
-
-        QLabel label;
-
-        label.setText(index.data().toString());
-        label.setWordWrap(true);
-        label.setMaximumWidth(100);
-        label.adjustSize();
-
-        QSize size = label.sizeHint();
-
-        size.setWidth(qMin(label.maximumWidth(), size.width()));
-
-        return QSize(100, size.height() + 60);
     }
 
     // editing
@@ -84,7 +49,7 @@ public:
 
         initStyleOption(&opt, index);
 
-        IconItem *item = new IconItem(parent);
+        FileItem *item = new FileItem("", "", parent);
 
         item->resize(option.rect.size());
 
@@ -99,15 +64,11 @@ public:
 
         initStyleOption(&opt, index);
 
-        IconItem *item = static_cast<IconItem*>(editor);
-
-        if(!item)
+        FileItem *fileItem = static_cast<FileItem*>(editor);
+        if(!fileItem)
             return;
-
-        item->icon->setPixmap(opt.icon.pixmap(QSize(60, 60)));
-        item->label->setMaximumWidth(100);
-        item->label->setText(index.data().toString());
-        item->label->adjustSize();
+        fileItem->setFileIcon(opt.icon.pixmap(QSize(60, 60)));
+        fileItem->setFileName(index.data().toString());
     }
 
     bool viewIsWrapping = true;
@@ -152,8 +113,9 @@ void DFileView::initConnects()
 {
     connect(this, &DFileView::doubleClicked,
             this, [this](const QModelIndex &index) {
-        if(model()->hasChildren(index))
+        if(model()->hasChildren(index)){
             emit fileSignalManager->currentUrlChanged(model()->getUrlByIndex(index));
+        }
     });
     connect(fileSignalManager, &FileSignalManager::currentUrlChanged,
             this, &DFileView::cd);
@@ -175,6 +137,7 @@ QUrl DFileView::currentUrl() const
 
 void DFileView::cd(const QUrl &url)
 {
+    qDebug() << url;
     setRootIndex(model()->index(url));
 }
 

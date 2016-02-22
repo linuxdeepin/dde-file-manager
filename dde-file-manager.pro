@@ -67,7 +67,8 @@ HEADERS += \
     filemanager/models/dfilesystemmodel.h \
     filemanager/controllers/histroycontroller.h \
     filemanager/controllers/filecontroller.h \
-    filemanager/app/filesignalmanager.h
+    filemanager/app/filesignalmanager.h \
+    filemanager/views/fileitem.h
 
 SOURCES += \
     filemanager/app/dbusworker.cpp \
@@ -96,6 +97,7 @@ SOURCES += \
     filemanager/views/dcheckablebutton.cpp \
     filemanager/models/dfilesystemmodel.cpp \
     filemanager/controllers/histroycontroller.cpp \
-    filemanager/controllers/filecontroller.cpp
+    filemanager/controllers/filecontroller.cpp \
+    filemanager/views/fileitem.cpp
 
 INCLUDEPATH += filemanager/models

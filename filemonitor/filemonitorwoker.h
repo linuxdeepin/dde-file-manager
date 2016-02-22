@@ -24,7 +24,6 @@ public:
     void handleInotifyEvent(struct inotify_event* event);
     void addWatchFolder(const QString& path);
 
-    void monitorAppGroup(const QString &path);
 signals:
     void monitorFolderChanged(const QString& path);
     void fileCreated(int cookie, QString path);

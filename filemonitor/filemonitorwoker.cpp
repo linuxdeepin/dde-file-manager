@@ -12,19 +12,6 @@ FileMonitorWoker::~FileMonitorWoker()
 
 }
 
-
-void FileMonitorWoker::monitorAppGroup(const QString &path){
-    QDir dir(path);
-    dir.setFilter(QDir::Dirs | QDir::Hidden | QDir::NoDotAndDotDot);
-    QFileInfoList list = dir.entryInfoList();
-    for (int i = 0; i < list.size(); ++i) {
-        QFileInfo fileInfo = list.at(i);
-        if (isAppGroup(fileInfo.absoluteFilePath())){
-            addWatchFolder(fileInfo.absoluteFilePath());
-        }
-    }
-}
-
 void FileMonitorWoker::addWatchFolder(const QString &path){
     int wd = inotify_add_watch(m_fd, path.toStdString().c_str(), IN_ALL_EVENTS);
     if (wd >= 0){
@@ -52,7 +39,6 @@ void FileMonitorWoker::monitor(const QString &path){
     }
 
     addWatchFolder(path);
-    monitorAppGroup(path);
 
     while (true) {
         numRead = read(m_fd, buffer, MAX_BUF_SIZE);

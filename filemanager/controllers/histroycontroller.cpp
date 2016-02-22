@@ -1,10 +1,12 @@
 #include "histroycontroller.h"
 #include "utils/historyrecord.h"
 #include "utils/qobjecthelper.h"
+#include "../app/global.h"
 
 HistroyController::HistroyController(QObject *parent) : QObject(parent)
 {
     initData();
+    initConnect();
 }
 
 HistroyController::~HistroyController()
@@ -16,28 +18,18 @@ void HistroyController::initData()
 {
     m_histroyUrlRecords = new HistoryRecord(this);
     m_histroySearchKeywordRecords = new HistoryRecord(this);
+}
 
-    HistoryRecord historyRecord, historyRecord2;
-    historyRecord.push("/home");
-    historyRecord.push("/home/djf");
-    historyRecord.push("/home/djf/dde-workspace");
-    historyRecord.push("/home/djf/dde-workspace/dde-desktop");
-    historyRecord.push("/home/djf/dde-workspace/dde-desktop/skin");
+void HistroyController::initConnect()
+{
+    connect(fileSignalManager, &FileSignalManager::currentUrlChanged,
+            this, &HistroyController::appendHistroyUrlRecords);
+}
 
-    qDebug() << historyRecord.first();
-    qDebug() << historyRecord.end();
-    qDebug() << historyRecord.takeAt(2);
+void HistroyController::appendHistroyUrlRecords(const QUrl &url)
+{
 
-    historyRecord.back();
-    historyRecord.back();
-    qDebug() << historyRecord.currentUrl() << historyRecord.currentIndex();
-
-    qDebug() << historyRecord << historyRecord2;
-    QString  result = QObjectHelper::qobject2json(&historyRecord);
-    QObjectHelper::json2qobject(result, &historyRecord2);
-
-
-    qDebug() << result;
-    qDebug() << historyRecord2;
+    m_histroyUrlRecords->append(url.toLocalFile());
+    qDebug() << this << url << *m_histroyUrlRecords;
 }
 

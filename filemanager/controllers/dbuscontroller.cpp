@@ -58,7 +58,7 @@ void DBusController::init(){
     m_appearanceInterface = new AppearanceDaemonInterface(Appearance_service, Appearance_path, bus, this);
     m_dockClientManagerInterface = new DBusClientManager(this);
     m_fileMonitor = new FileMonitor(this);
-    m_appController = new AppController(this);
+//    m_appController = new AppController(this);
 
     m_thumbnailTimer = new QTimer(this);
     m_thumbnailTimer->setInterval(1000);

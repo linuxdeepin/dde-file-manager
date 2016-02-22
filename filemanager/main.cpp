@@ -1,5 +1,6 @@
 #include <QApplication>
 #include <QDebug>
+#include <QUrl>
 #include "app/filemanagerapp.h"
 
 int main(int argc, char *argv[])
@@ -10,5 +11,7 @@ int main(int argc, char *argv[])
     fileManagerApp.show();
 
     int reslut = app.exec();
+
+    qDebug() << (QUrl("/home") == QUrl("file:///home"));
     qDebug() << "exits " << app.applicationName() << reslut;
 }
