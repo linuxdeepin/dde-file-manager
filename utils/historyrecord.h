@@ -46,8 +46,6 @@ public:
     QString takeAt(int i);
     QString takeFirst();
     QString takeLast();
-    void move(int from, int to);
-    void swap(int i, int j);
     int indexOf(const QString &url, int from = 0) const;
     bool contains(const QString &url) const;
 

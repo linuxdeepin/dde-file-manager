@@ -145,7 +145,7 @@ const QString &HistoryRecord::end() const
 void HistoryRecord::clear()
 {
     m_records.clear();
-    m_currentIndex = -1;
+    m_currentIndex = 0;
 }
 
 /*!
@@ -155,10 +155,8 @@ void HistoryRecord::clear()
  */
 void HistoryRecord::append(const QString &url)
 {
-    if(!m_records.contains(url)){
-        m_records.append(url);
-        m_currentIndex = m_records.indexOf(url, 0);
-    }
+    m_records.append(url);
+    setCurrentIndex(count() - 1);
 }
 
 
@@ -190,9 +188,11 @@ void HistoryRecord::removeAt(int i)
  */
 void HistoryRecord::removeFirst()
 {
-    QString url = currentUrl();
+    int oldCount = count();
     m_records.removeFirst();
-    m_currentIndex = m_records.indexOf(url, 0);
+    if (m_currentIndex >= 1 && m_currentIndex < oldCount){
+        m_currentIndex -= 1;
+    }
 }
 
 
@@ -202,9 +202,11 @@ void HistoryRecord::removeFirst()
  */
 void HistoryRecord::removeLast()
 {
-    QString url = currentUrl();
-    m_records.removeFirst();
-    m_currentIndex = m_records.indexOf(url, 0);
+    int oldCount = count();
+    m_records.removeLast();
+    if (m_currentIndex >= 1 && m_currentIndex < oldCount){
+        m_currentIndex -= 1;
+    }
 }
 
 /*!
@@ -217,9 +219,11 @@ If you don't use the return value, removeAt() is more efficient.
  */
 QString HistoryRecord::takeAt(int i)
 {
-    QString url = currentUrl();
+    int oldCount = count();
     QString removeUrl = m_records.takeAt(i);
-    m_currentIndex = m_records.indexOf(url, 0);
+    if (m_currentIndex >= 1 && m_currentIndex < oldCount){
+        m_currentIndex -= 1;
+    }
     return removeUrl;
 }
 
@@ -234,9 +238,11 @@ If you don't use the return value, removeFirst() is more efficient.
  */
 QString HistoryRecord::takeFirst()
 {
-    QString url = currentUrl();
     QString removeUrl = m_records.takeFirst();
-    m_currentIndex = m_records.indexOf(url, 0);
+    int oldCount = count();
+    if (m_currentIndex >= 1 && m_currentIndex < oldCount){
+        m_currentIndex -= 1;
+    }
     return removeUrl;
 }
 
@@ -250,34 +256,12 @@ If you don't use the return value, removeLast() is more efficient.
  */
 QString HistoryRecord::takeLast()
 {
-    QString url = currentUrl();
     QString removeUrl = m_records.takeLast();
-    m_currentIndex = m_records.indexOf(url, 0);
+    int oldCount = count();
+    if (m_currentIndex >= 1 && m_currentIndex < oldCount){
+        m_currentIndex -= 1;
+    }
     return removeUrl;
-}
-
-/*!
- * \brief HistoryRecord::move Moves the item at index position \a from to index position \a to.
- * \param from
- * \param to
- */
-void HistoryRecord::move(int from, int to)
-{
-    QString url = currentUrl();
-    m_records.move(from, to);
-    m_currentIndex = m_records.indexOf(url, 0);
-}
-
-/*!
- * \brief HistoryRecord::swap  Exchange the item at index position \a i with the item at index position \a j. This function assumes that both \a i and \j are at least 0 but less than size(). To avoid failure, test that both \a i and \a j are at least 0 and less than size().
- * \param i
- * \param j
- */
-void HistoryRecord::swap(int i, int j)
-{
-    QString url = currentUrl();
-    m_records.swap(i, j);
-    m_currentIndex = m_records.indexOf(url, 0);
 }
 
 /*!
@@ -306,9 +290,11 @@ bool HistoryRecord::contains(const QString &url) const
  */
 void HistoryRecord::back()
 {
-    if (0 < m_currentIndex && m_currentIndex < count()){
+    if (0 < m_currentIndex && m_currentIndex <= count()){
+        qDebug() << m_currentIndex;
         setCurrentIndex(m_currentIndex - 1);
         emit currentUrlChanged(currentUrl());
+        qDebug() << m_currentIndex;
     }else if (m_currentIndex == 0){
         emit frontReached();
     }
@@ -320,7 +306,8 @@ void HistoryRecord::back()
 void HistoryRecord::forward()
 {
     int endIndex = count() - 1;
-    if (0 <= m_currentIndex && m_currentIndex < endIndex){
+    qDebug() << m_currentIndex << endIndex;
+    if (0 <= m_currentIndex && m_currentIndex < (endIndex - 1)){
         setCurrentIndex(m_currentIndex + 1);
         emit currentUrlChanged(currentUrl());
     }else if (m_currentIndex == endIndex){

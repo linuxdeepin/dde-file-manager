@@ -45,7 +45,9 @@ void FileController::getChildren(const QUrl &url)
 
     ASYN_CALL(listJob->Execute(), {
                   FileItemInfoList fileInfoList = (QDBusPendingReply<FileItemInfoList>(*watcher)).value();
-
+                  foreach (FileItemInfo info, fileInfoList) {
+                      m_fileItemInfos.insert(info.URI, info);
+                  }
                   emit fileSignalManager->childrenChanged(url, fileInfoList);
               }, this, url);
 }
