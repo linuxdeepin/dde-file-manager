@@ -2,11 +2,13 @@
 #include "dfilesystemmodel.h"
 #include "../app/global.h"
 #include "fileitem.h"
+#include "filemenumanager.h"
 #include <dboxwidget.h>
 
 #include <QLabel>
 #include <QFileSystemModel>
 #include <QPushButton>
+#include <QMenu>
 
 
 class ItemDelegate : public DListItemDelegate
@@ -89,6 +91,7 @@ DFileView::~DFileView()
 
 void DFileView::initUI()
 {
+    m_fileMenuManager = new FileMenuManager(this);
     setSpacing(10);
     setResizeMode(QListView::Adjust);
     setCacheBuffer(50);
@@ -151,4 +154,13 @@ void DFileView::switchListMode()
     }
 
     m_delegate->viewIsWrapping = isWrapping();
+}
+
+void DFileView::contextMenuEvent(QContextMenuEvent *event)
+{
+    qDebug() << event;
+    QMenu* menu = m_fileMenuManager->genereteMenuByFileType("File");
+    menu->setProperty("url", "/home");
+    menu->exec(mapToGlobal(event->pos()));
+    menu->deleteLater();
 }

@@ -5,10 +5,12 @@
 
 #include <QFrame>
 #include <QUrl>
+#include <QContextMenuEvent>
 
 class ItemDelegate;
 class QFileSystemModel;
 class FileController;
+class FileMenuManager;
 
 DWIDGET_USE_NAMESPACE
 
@@ -33,9 +35,13 @@ public slots:
     void cd(const QUrl &url);
     void switchListMode();
 
+protected:
+    void contextMenuEvent(QContextMenuEvent * event);
+
 private:
     ItemDelegate *m_delegate;
     FileController *m_controller;
+    FileMenuManager* m_fileMenuManager;
 };
 
 #endif // DFILEVIEW_H
