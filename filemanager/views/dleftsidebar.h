@@ -19,11 +19,12 @@ public:
     void initDiskBar();
     void initNetWorkBar();
     void initConnect();
-
+    QString getStandardPathbyId(int id);
 
 signals:
 
 public slots:
+    void handleLocationChanged(int id);
 
 private:
     QFrame* m_homeBar = NULL;

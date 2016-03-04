@@ -294,9 +294,16 @@ void DFileView::switchListMode()
 
 void DFileView::contextMenuEvent(QContextMenuEvent *event)
 {
-    qDebug() << event;
-    QMenu* menu = m_fileMenuManager->genereteMenuByFileType("File");
-    menu->setProperty("url", "/home");
+    qDebug() << event << indexAt(event->pos());
+    QModelIndex index = indexAt(event->pos());
+    QMenu* menu;
+    if (index.isValid()){
+        menu = m_fileMenuManager->genereteMenuByFileType("File");
+        menu->setProperty("url", "/home");
+    }else{
+        menu = m_fileMenuManager->genereteMenuByFileType("Space");
+    }
     menu->exec(mapToGlobal(event->pos()));
+    menu->deleteLater();
     menu->deleteLater();
 }

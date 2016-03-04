@@ -20,6 +20,14 @@
 #define defaut_computerIcon ":/images/images/computer.png"
 #define defaut_trashIcon ":/images/images/user-trash-full.png"
 
+
+#define ComputerUrl "computer://"
+#define TrashUrl "trash://"
+#define FilePrefix "file://"
+#define Recent "recent://"
+#define TrashDir "~/.local/share/Trash/files"
+
+
 #define ASYN_CALL(Fun, Code, captured...) { \
     QDBusPendingCallWatcher * watcher = new QDBusPendingCallWatcher(Fun); \
     auto onFinished = [watcher, captured]{ \
