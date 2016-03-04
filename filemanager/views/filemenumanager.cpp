@@ -26,6 +26,7 @@ void FileMenuManager::initData()
     m_actionKeys["delete"] = tr("Delete");
     m_actionKeys["property"] = tr("Property");
 
+    m_actionKeys["newFolder"] = tr("New Folder");
     m_actionKeys["newFile"] = tr("New File");
     m_actionKeys["newDoc"] = tr("New Doc");
     m_actionKeys["selectAll"] = tr("Select all");
@@ -58,7 +59,16 @@ QMenu *FileMenuManager::genereteMenuByFileType(QString type)
 
     }else if (type == "Folder"){
 
-    }else{
+    }else if (type == "Space"){
+        actionKeys << "newFolder" << "newDoc"
+                   << "separator"
+                   << "paste"
+                   << "separator"
+                   << "selectAll"
+                   << "separator"
+                   << "property";
+    }
+    else{
         actionKeys << "open" << "openInNewWindow"
                    << "separator"
                    << "compress" << "cut" << "copy"

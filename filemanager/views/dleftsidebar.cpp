@@ -1,6 +1,10 @@
 #include "dleftsidebar.h"
 #include <QVBoxLayout>
 #include <QButtonGroup>
+#include <QStandardPaths>
+#include <QDir>
+#include <QDebug>
+#include "../app/global.h"
 #include "dcheckablebutton.h"
 
 DLeftSideBar::DLeftSideBar(QWidget *parent) : QFrame(parent)
@@ -55,8 +59,8 @@ void DLeftSideBar::initHomeBar()
     mainLayout->setContentsMargins(0, 0, 0, 0);
     m_homeBar->setLayout(mainLayout);
 
-    m_buttonGroup->addButton(m_homeButton);
-    m_buttonGroup->addButton(m_historyButton);
+    m_buttonGroup->addButton(m_homeButton, 0);
+    m_buttonGroup->addButton(m_historyButton, 1);
 }
 
 void DLeftSideBar::initCommonFolderBar()
@@ -84,12 +88,12 @@ void DLeftSideBar::initCommonFolderBar()
     mainLayout->setContentsMargins(0, 0, 0, 0);
     m_commonFolderBar->setLayout(mainLayout);
 
-    m_buttonGroup->addButton(m_desktopButton);
-    m_buttonGroup->addButton(m_videoButton);
-    m_buttonGroup->addButton(m_musicButton);
-    m_buttonGroup->addButton(m_pictureButton);
-    m_buttonGroup->addButton(m_docmentButton);
-    m_buttonGroup->addButton(m_downloadButton);
+    m_buttonGroup->addButton(m_desktopButton, 2);
+    m_buttonGroup->addButton(m_videoButton, 3);
+    m_buttonGroup->addButton(m_musicButton, 4);
+    m_buttonGroup->addButton(m_pictureButton, 5);
+    m_buttonGroup->addButton(m_docmentButton, 6);
+    m_buttonGroup->addButton(m_downloadButton, 7);
 
 }
 
@@ -110,8 +114,8 @@ void DLeftSideBar::initDiskBar()
     mainLayout->setContentsMargins(0, 0, 0, 0);
     m_diskBar->setLayout(mainLayout);
 
-    m_buttonGroup->addButton(m_computerButton);
-    m_buttonGroup->addButton(m_trashButton);
+    m_buttonGroup->addButton(m_computerButton, 8);
+    m_buttonGroup->addButton(m_trashButton, 9);
 
 }
 
@@ -122,6 +126,57 @@ void DLeftSideBar::initNetWorkBar()
 
 void DLeftSideBar::initConnect()
 {
+    connect(m_buttonGroup, SIGNAL(buttonClicked(int)), this, SLOT(handleLocationChanged(int)));
+}
 
+QString DLeftSideBar::getStandardPathbyId(int id)
+{
+    QString path;
+    switch (id) {
+    case 0:
+        path = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0);
+        break;
+    case 1:
+        path = Recent;
+        break;
+    case 2:
+        path = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).at(0);
+        break;
+    case 3:
+        path = QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).at(0);
+        break;
+    case 4:
+        path = QStandardPaths::standardLocations(QStandardPaths::MusicLocation).at(0);
+        break;
+    case 5:
+        path = QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).at(0);
+        break;
+    case 6:
+        path = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).at(0);
+        break;
+    case 7:
+        path = QStandardPaths::standardLocations(QStandardPaths::DownloadLocation).at(0);
+        break;
+    case 8:
+        path = QDir::rootPath();
+        break;
+    case 9:
+        path = TrashDir;
+        break;
+    default:
+        break;
+    }
+    return path;
+}
+
+void DLeftSideBar::handleLocationChanged(int id)
+{
+    if (id == 1){
+
+    }else{
+        QString path = getStandardPathbyId(id);
+        emit fileSignalManager->currentUrlChanged(QUrl(path));
+        qDebug() << QUrl(path);
+    }
 }
 
