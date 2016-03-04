@@ -6,7 +6,7 @@
 #include "dbusinterface/services/conflictdaptor.h"
 #include "../controllers/fileconflictcontroller.h"
 #include "dbusinterface/services/conflictdaptor.h"
-#include "widgets/util.h"
+
 
 CopyjobWorker::CopyjobWorker(QStringList files, QString destination, QObject *parent) :
     QObject(parent),

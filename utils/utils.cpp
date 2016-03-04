@@ -1,6 +1,6 @@
 #include <QMimeDatabase>
 #include <QStandardPaths>
-#include "widgets/util.h"
+#include "utils/utils.h"
 #include "utils.h"
 
 

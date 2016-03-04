@@ -1,5 +1,5 @@
 #include "dbasedialog.h"
-#include "widgets/util.h"
+#include "utils/utils.h"
 #include <QPushButton>
 #include <QLabel>
 #include <QPixmap>
