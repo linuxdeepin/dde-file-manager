@@ -22,7 +22,7 @@ public:
 
     explicit DFileSystemModel(QObject *parent = 0);
 
-    QModelIndex index(const QUrl &url, int column = 0);
+    QModelIndex index(const QString &url, int column = 0);
     QModelIndex index(int row, int column,
                               const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
     QModelIndex parent(const QModelIndex &child) const Q_DECL_OVERRIDE;
@@ -36,18 +36,18 @@ public:
     bool canFetchMore(const QModelIndex & parent) const Q_DECL_OVERRIDE;
     void fetchMore(const QModelIndex & parent) Q_DECL_OVERRIDE;
 
-    QModelIndex setRootPath(const QUrl &url);
+    QModelIndex setRootPath(const QString &url);
     QString rootPath() const;
 
-    QUrl getUrlByIndex(const QModelIndex &index) const;
+    QString getUrlByIndex(const QModelIndex &index) const;
 
 public slots:
-    void updateChildren(const QUrl &url, const FileItemInfoList &list);
-    void updateIcon(const QUrl &url, const QIcon &icon);
+    void updateChildren(const QString &url, const FileItemInfoList &list);
+    void updateIcon(const QString &url, const QIcon &icon);
 
 private:
     FileSystemNode *m_rootNode = Q_NULLPTR;
-    QMap<QUrl, FileSystemNode*> m_urlToNode;
+    QMap<QString, FileSystemNode*> m_urlToNode;
     mutable QHash<QString, QIcon> m_typeToIcon;
 
     inline FileSystemNode *getNodeByIndex(const QModelIndex &index) const;

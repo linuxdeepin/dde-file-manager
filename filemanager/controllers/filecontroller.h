@@ -3,8 +3,9 @@
 
 #include <QObject>
 #include <QMap>
-#include <QUrl>
+
 #include "dbusinterface/dbustype.h"
+
 class ListJobInterface;
 
 class FileController : public QObject
@@ -16,11 +17,11 @@ public:
     void initConnect();
 
 public slots:
-    void getChildren(const QUrl &url);
-    void getIcon(const QUrl &url) const;
+    void getChildren(const QString &url);
+    void getIcon(const QString &url) const;
 
 private:
-    QMap<QUrl, ListJobInterface*> m_urlToListJobInterface;
+    QMap<QString, ListJobInterface*> m_urlToListJobInterface;
     QMap<QString, FileItemInfo> m_fileItemInfos;
 };
 
