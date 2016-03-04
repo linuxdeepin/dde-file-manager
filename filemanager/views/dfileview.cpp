@@ -13,21 +13,27 @@
 #include <QTextEdit>
 #include <QPainter>
 
-class IconItem : public DVBoxWidget
+class IconItem : public QWidget
 {
 public:
     explicit IconItem(QWidget *parent = 0) :
-        DVBoxWidget(parent)
+        QWidget(parent)
     {
         icon = new QLabel;
         edit = new QTextEdit;
+
+        icon->setAlignment(Qt::AlignCenter);
         edit->setWordWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
         edit->setAlignment(Qt::AlignHCenter);
         edit->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         edit->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-        layout()->addWidget(icon, 0, Qt::AlignHCenter);
-        layout()->addWidget(edit);
+        QVBoxLayout *layout = new QVBoxLayout(this);
+
+        layout->setMargin(0);
+        layout->setSpacing(0);
+        layout->addWidget(icon, 0, Qt::AlignHCenter);
+        layout->addWidget(edit);
     }
 
 protected:
@@ -38,7 +44,7 @@ protected:
             return true;
         }
 
-        return DVBoxWidget::event(ee);
+        return QWidget::event(ee);
     }
 
 public:
@@ -52,9 +58,13 @@ class ItemDelegate : public QStyledItemDelegate
 public:
     ItemDelegate(DListView *parent = 0) : QStyledItemDelegate(parent)
     {
-        focus_item = new IconItem;
+        icon_size = QSize(60, 60);
+
+        focus_item = new IconItem(parent->viewport());
         focus_item->setAttribute(Qt::WA_TransparentForMouseEvents);
         focus_item->canDeferredDelete = false;
+        focus_item->icon->setFixedSize(icon_size);
+        focus_item->setFixedWidth(0);
     }
 
     inline DListView *parent() const
@@ -74,8 +84,7 @@ public:
 
         QRect icon_rect = opt.rect;
 
-        icon_rect.setHeight(60);
-        icon_rect.setWidth(60);
+        icon_rect.setSize(icon_size);
         icon_rect.moveCenter(opt.rect.center());
         icon_rect.moveTop(opt.rect.top());
 
@@ -94,11 +103,10 @@ public:
 
         if(opt.state & QStyle::State_HasFocus) {
             if(focus_index.isValid()) {
-                parent()->QListView::setIndexWidget(focus_index, 0);
+                parent()->setIndexWidget(focus_index, 0);
                 focus_item->hide();
                 focus_index = QModelIndex();
             }
-
 
             int height = 0;
 
@@ -117,8 +125,9 @@ public:
             if(height > label_rect.height()) {
                 focus_index = index;
 
+                //focus_item->edit->setFixedHeight(height);
                 setEditorData(focus_item, index);
-                parent()->QListView::setIndexWidget(index, focus_item);
+                parent()->setIndexWidget(index, focus_item);
 
                 return;
             }
@@ -153,7 +162,7 @@ public:
     QSize sizeHint(const QStyleOptionViewItem &,
                    const QModelIndex &) const Q_DECL_OVERRIDE
     {
-        return QSize(100, 100);
+        return icon_size * 1.8;
     }
 
     // editing
@@ -162,7 +171,6 @@ public:
     {
         IconItem *item = new IconItem(parent);
 
-        focus_item->hide();
         editing_index = index;
 
         connect(item, &IconItem::destroyed, this, [this] {
@@ -174,8 +182,15 @@ public:
 
     void updateEditorGeometry(QWidget * editor, const QStyleOptionViewItem & option, const QModelIndex &) const Q_DECL_OVERRIDE
     {
-        editor->setFixedWidth(option.rect.width());
         editor->move(option.rect.topLeft());
+        editor->setFixedWidth(option.rect.width());
+
+        IconItem *item = static_cast<IconItem*>(editor);
+
+        if(!item)
+            return;
+
+        item->icon->setFixedSize(icon_size);
     }
 
     void setEditorData(QWidget * editor, const QModelIndex & index) const Q_DECL_OVERRIDE
@@ -189,9 +204,12 @@ public:
 
         initStyleOption(&opt, index);
 
-        item->icon->setPixmap(opt.icon.pixmap(QSize(60, 60)));
+        item->icon->setPixmap(opt.icon.pixmap(icon_size));
         item->edit->setPlainText(index.data().toString());
         item->edit->setAlignment(Qt::AlignHCenter);
+
+        item->edit->document()->setTextWidth(icon_size.width() * 1.8);
+        item->edit->setFixedSize(item->edit->document()->size().toSize());
     }
 
     bool viewIsWrapping = true;
@@ -201,6 +219,8 @@ public:
     IconItem *focus_item;
     mutable QModelIndex focus_index;
     mutable QModelIndex editing_index;
+
+    QSize icon_size;
 };
 
 DFileView::DFileView(QWidget *parent) : DListView(parent)
