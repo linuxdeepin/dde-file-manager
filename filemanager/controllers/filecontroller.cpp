@@ -19,11 +19,11 @@ void FileController::initConnect()
             this, &FileController::getChildren);
 }
 
-void FileController::getChildren(const QUrl &url)
+void FileController::getChildren(const QString &url)
 {
     FileOperationsInterface *dbusInterface = dbusController->getFileOperationsInterface();
 
-    QDBusPendingReply<QString, QDBusObjectPath, QString> reply = dbusInterface->NewListJob(url.toString(), 0);
+    QDBusPendingReply<QString, QDBusObjectPath, QString> reply = dbusInterface->NewListJob(url, 0);
     reply.waitForFinished();
 
     if(reply.isError()) {
@@ -52,13 +52,13 @@ void FileController::getChildren(const QUrl &url)
               }, this, url);
 }
 
-void FileController::getIcon(const QUrl &url) const
+void FileController::getIcon(const QString &url) const
 {
-    QString iconPath = dbusController->getFileInfoInterface()->GetThemeIcon(url.toString(), 30);
+    QString iconPath = dbusController->getFileInfoInterface()->GetThemeIcon(url, 30);
     QIcon icon;
 
     if(iconPath.isEmpty()) {
-        const QFileInfo &fileInfo = QFileInfo(url.toLocalFile());
+        const QFileInfo &fileInfo = QFileInfo(QUrl(url).toLocalFile());
 
         QFileIconProvider prrovider;
         icon = prrovider.icon(fileInfo);

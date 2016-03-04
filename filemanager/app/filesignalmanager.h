@@ -4,7 +4,6 @@
 #include "dbusinterface/dbustype.h"
 
 #include <QObject>
-#include <QUrl>
 #include <QDebug>
 
 class FileSignalManager : public QObject
@@ -17,15 +16,15 @@ public:
 
 signals:
     /// current display url changed
-    void currentUrlChanged(const QUrl &url);
+    void currentUrlChanged(const QString &url);
 
     /// in folder files
-    void requestChildren(const QUrl &url) const;
-    void childrenChanged(const QUrl &url, const FileItemInfoList &list) const;
+    void requestChildren(const QString &url) const;
+    void childrenChanged(const QString &url, const FileItemInfoList &list) const;
 
     /// file icon
-    void requestIcon(const QUrl &url) const;
-    void iconChanged(const QUrl &url, const QIcon &icon) const;
+    void requestIcon(const QString &url) const;
+    void iconChanged(const QString &url, const QIcon &icon) const;
 };
 
 #endif // FILESIGNALMANAGER_H

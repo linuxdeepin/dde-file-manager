@@ -15,7 +15,7 @@ public:
     bool populatedChildren = false;
 
     FileSystemNode(DFileSystemModel *model, FileSystemNode *parent,
-                   const QUrl &url) :
+                   const QString &url) :
         parent(parent),
         m_model(model)
     {
@@ -27,7 +27,7 @@ public:
 
     ~FileSystemNode()
     {
-        m_model->m_urlToNode.remove(QUrl(fileInfo.URI));
+        m_model->m_urlToNode.remove(fileInfo.URI);
         qDeleteAll(children.values());
     }
 
@@ -46,7 +46,7 @@ DFileSystemModel::DFileSystemModel(QObject *parent) :
 
 }
 
-QModelIndex DFileSystemModel::index(const QUrl &url, int /*column*/)
+QModelIndex DFileSystemModel::index(const QString &url, int /*column*/)
 {
     FileSystemNode *node = m_urlToNode.value(url);
 
@@ -113,7 +113,7 @@ bool DFileSystemModel::hasChildren(const QModelIndex &parent) const
 
     const FileSystemNode *indexNode = getNodeByIndex(parent);
     Q_ASSERT(indexNode);
-    qDebug() << QDir(QUrl(indexNode->fileInfo.URI).toLocalFile()).exists();
+
     return QDir(QUrl(indexNode->fileInfo.URI).toLocalFile()).exists() ;
 }
 
@@ -153,7 +153,7 @@ QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
             QIcon icon = m_typeToIcon.value(indexNode->fileInfo.MIME);
 
             if(icon.isNull()) {
-                emit fileSignalManager->requestIcon(QUrl(indexNode->fileInfo.URI));
+                emit fileSignalManager->requestIcon(indexNode->fileInfo.URI);
             }
 
             return icon;
@@ -180,7 +180,7 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
 
     parentNode->populatedChildren = true;
 
-    emit fileSignalManager->requestChildren(QUrl(parentNode->fileInfo.URI));
+    emit fileSignalManager->requestChildren(parentNode->fileInfo.URI);
 }
 
 bool DFileSystemModel::canFetchMore(const QModelIndex &parent) const
@@ -195,8 +195,10 @@ bool DFileSystemModel::canFetchMore(const QModelIndex &parent) const
     return dir.exists() && !parentNode->populatedChildren;
 }
 
-QModelIndex DFileSystemModel::setRootPath(const QUrl &url)
+QModelIndex DFileSystemModel::setRootPath(const QString &urlStr)
 {
+    QUrl url(urlStr);
+
     if(url.isLocalFile()) {
         QDir dir(url.toLocalFile());
 
@@ -207,30 +209,28 @@ QModelIndex DFileSystemModel::setRootPath(const QUrl &url)
     if(!m_rootNode)
         delete m_rootNode;
 
-    m_rootNode = new FileSystemNode(this, Q_NULLPTR, url);
-    m_rootNode->fileInfo.URI = url.toString();
-    m_rootNode->fileInfo.BaseName = url.isLocalFile() ? url.toLocalFile() : url.toString();
-    m_rootNode->fileInfo.DisplayName = m_rootNode->fileInfo.BaseName;
+    m_rootNode = new FileSystemNode(this, Q_NULLPTR, urlStr);
+    m_rootNode->fileInfo.URI = urlStr;
 
-    return index(url);
+    return index(urlStr);
 }
 
 QString DFileSystemModel::rootPath() const
 {
-    return m_rootNode ? QUrl(m_rootNode->fileInfo.URI).toLocalFile() : "";
+    return m_rootNode ? m_rootNode->fileInfo.URI : "";
 }
 
-QUrl DFileSystemModel::getUrlByIndex(const QModelIndex &index) const
+QString DFileSystemModel::getUrlByIndex(const QModelIndex &index) const
 {
     FileSystemNode *node = getNodeByIndex(index);
 
     if(!node)
-        return QUrl();
+        return "";
 
-    return QUrl(node->fileInfo.URI);
+    return node->fileInfo.URI;
 }
 
-void DFileSystemModel::updateChildren(const QUrl &url, const FileItemInfoList &list)
+void DFileSystemModel::updateChildren(const QString &url, const FileItemInfoList &list)
 {
     FileSystemNode *node = getNodeByIndex(index(url));
 
@@ -242,7 +242,7 @@ void DFileSystemModel::updateChildren(const QUrl &url, const FileItemInfoList &l
     beginInsertRows(createIndex(node), 0, list.count() - 1);
 
     for(const FileItemInfo &fileInfo : list) {
-        FileSystemNode *chileNode = new FileSystemNode(this, node, QUrl(fileInfo.URI));
+        FileSystemNode *chileNode = new FileSystemNode(this, node, fileInfo.URI);
 
         chileNode->fileInfo = std::move(fileInfo);
         node->children[fileInfo.BaseName] = chileNode;
@@ -252,7 +252,7 @@ void DFileSystemModel::updateChildren(const QUrl &url, const FileItemInfoList &l
     endInsertRows();
 }
 
-void DFileSystemModel::updateIcon(const QUrl &url, const QIcon &icon)
+void DFileSystemModel::updateIcon(const QString &url, const QIcon &icon)
 {
     if(icon.isNull())
         return;

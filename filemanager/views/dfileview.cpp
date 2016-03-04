@@ -13,11 +13,11 @@
 #include <QTextEdit>
 #include <QPainter>
 
-class IconItem : public QWidget
+class IconItem : public DVBoxWidget
 {
 public:
     explicit IconItem(QWidget *parent = 0) :
-        QWidget(parent)
+        DVBoxWidget(parent)
     {
         icon = new QLabel;
         edit = new QTextEdit;
@@ -28,12 +28,8 @@ public:
         edit->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         edit->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-        QVBoxLayout *layout = new QVBoxLayout(this);
-
-        layout->setMargin(0);
-        layout->setSpacing(0);
-        layout->addWidget(icon, 0, Qt::AlignHCenter);
-        layout->addWidget(edit);
+        layout()->addWidget(icon, 0, Qt::AlignHCenter);
+        addWidget(edit);
     }
 
 protected:
@@ -44,7 +40,7 @@ protected:
             return true;
         }
 
-        return QWidget::event(ee);
+        return DVBoxWidget::event(ee);
     }
 
 public:
@@ -125,7 +121,6 @@ public:
             if(height > label_rect.height()) {
                 focus_index = index;
 
-                //focus_item->edit->setFixedHeight(height);
                 setEditorData(focus_item, index);
                 parent()->setIndexWidget(index, focus_item);
 
@@ -207,7 +202,6 @@ public:
         item->icon->setPixmap(opt.icon.pixmap(icon_size));
         item->edit->setPlainText(index.data().toString());
         item->edit->setAlignment(Qt::AlignHCenter);
-
         item->edit->document()->setTextWidth(icon_size.width() * 1.8);
         item->edit->setFixedSize(item->edit->document()->size().toSize());
     }
@@ -266,7 +260,7 @@ void DFileView::initDelegate()
 void DFileView::initModel()
 {
     setModel(new DFileSystemModel(this));
-    setRootIndex(model()->setRootPath(QUrl::fromLocalFile("/")));
+    setRootIndex(model()->setRootPath(QUrl::fromLocalFile("/").toString(QUrl::EncodeUnicode)));
 }
 
 void DFileView::initConnects()
@@ -290,15 +284,21 @@ DFileSystemModel *DFileView::model() const
     return qobject_cast<DFileSystemModel*>(DListView::model());
 }
 
-QUrl DFileView::currentUrl() const
+QString DFileView::currentUrl() const
 {
     return model()->getUrlByIndex(rootIndex());
 }
 
-void DFileView::cd(const QUrl &url)
+void DFileView::cd(const QString &url)
 {
-    qDebug() << url;
-    setRootIndex(model()->index(url));
+    qDebug() << "cd: current url:" << currentUrl() << "to url:" << url;
+
+    QModelIndex index = model()->index(url);
+
+    if(!index.isValid())
+        index = model()->setRootPath(url);
+
+    setRootIndex(index);
 }
 
 void DFileView::switchListMode()

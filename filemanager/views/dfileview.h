@@ -29,10 +29,10 @@ public:
 
     DFileSystemModel *model() const;
 
-    QUrl currentUrl() const;
+    QString currentUrl() const;
 
 public slots:
-    void cd(const QUrl &url);
+    void cd(const QString &url);
     void switchListMode();
 
 protected:

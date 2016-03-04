@@ -175,7 +175,7 @@ void DLeftSideBar::handleLocationChanged(int id)
 
     }else{
         QString path = getStandardPathbyId(id);
-        emit fileSignalManager->currentUrlChanged(QUrl(path));
+        emit fileSignalManager->currentUrlChanged(path);
         qDebug() << QUrl(path);
     }
 }
