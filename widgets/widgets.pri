@@ -10,7 +10,7 @@ HEADERS += \
     $$PWD/dcircleprogress.h \
     $$PWD/dobject_p.h \
     $$PWD/dobject.h \
-    $$PWD/watermaskframe.h
+    $$PWD/watermaskframe.h \
 
 SOURCES += \
     $$PWD/elidelabel.cpp \
@@ -21,5 +21,5 @@ SOURCES += \
     $$PWD/dgraphicsgloweffect.cpp \
     $$PWD/dcircleprogress.cpp \
     $$PWD/dobject.cpp \
-    $$PWD/watermaskframe.cpp
+    $$PWD/watermaskframe.cpp \
 
