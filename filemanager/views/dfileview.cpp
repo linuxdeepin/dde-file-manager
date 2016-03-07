@@ -12,6 +12,7 @@
 #include <QMenu>
 #include <QTextEdit>
 #include <QPainter>
+#include <QWheelEvent>
 
 class IconItem : public DVBoxWidget
 {
@@ -54,13 +55,29 @@ class ItemDelegate : public QStyledItemDelegate
 public:
     ItemDelegate(DListView *parent = 0) : QStyledItemDelegate(parent)
     {
-        icon_size = QSize(60, 60);
-
         focus_item = new IconItem(parent->viewport());
         focus_item->setAttribute(Qt::WA_TransparentForMouseEvents);
         focus_item->canDeferredDelete = false;
-        focus_item->icon->setFixedSize(icon_size);
+        focus_item->icon->setFixedSize(parent->iconSize());
+        /// prevent flash when first call show()
         focus_item->setFixedWidth(0);
+
+        connect(parent, &DListView::triggerEdit,
+                this, [this, parent](const QModelIndex &index) {
+            if(index == focus_index) {
+                parent->setIndexWidget(index, 0);
+                focus_item->hide();
+                focus_index = QModelIndex();
+                parent->edit(index);
+            }
+        });
+
+        connect(parent, &DListView::iconSizeChanged,
+                this, [this] {
+            m_elideMap.clear();
+            m_wordWrapMap.clear();
+            m_textHeightMap.clear();
+        });
     }
 
     inline DListView *parent() const
@@ -80,7 +97,7 @@ public:
 
         QRect icon_rect = opt.rect;
 
-        icon_rect.setSize(icon_size);
+        icon_rect.setSize(parent()->iconSize());
         icon_rect.moveCenter(opt.rect.center());
         icon_rect.moveTop(opt.rect.top());
 
@@ -157,7 +174,7 @@ public:
     QSize sizeHint(const QStyleOptionViewItem &,
                    const QModelIndex &) const Q_DECL_OVERRIDE
     {
-        return icon_size * 1.8;
+        return parent()->iconSize() * 1.8;
     }
 
     // editing
@@ -185,7 +202,7 @@ public:
         if(!item)
             return;
 
-        item->icon->setFixedSize(icon_size);
+        item->icon->setFixedSize(parent()->iconSize());
     }
 
     void setEditorData(QWidget * editor, const QModelIndex & index) const Q_DECL_OVERRIDE
@@ -199,22 +216,20 @@ public:
 
         initStyleOption(&opt, index);
 
-        item->icon->setPixmap(opt.icon.pixmap(icon_size));
+        item->icon->setPixmap(opt.icon.pixmap(parent()->iconSize()));
         item->edit->setPlainText(index.data().toString());
         item->edit->setAlignment(Qt::AlignHCenter);
-        item->edit->document()->setTextWidth(icon_size.width() * 1.8);
+        item->edit->document()->setTextWidth(parent()->iconSize().width() * 1.8);
         item->edit->setFixedSize(item->edit->document()->size().toSize());
     }
 
-    bool viewIsWrapping = true;
+    IconItem *focus_item;
+
     mutable QMap<QString, QString> m_elideMap;
     mutable QMap<QString, QString> m_wordWrapMap;
     mutable QMap<QString, int> m_textHeightMap;
-    IconItem *focus_item;
     mutable QModelIndex focus_index;
     mutable QModelIndex editing_index;
-
-    QSize icon_size;
 };
 
 DFileView::DFileView(QWidget *parent) : DListView(parent)
@@ -237,6 +252,7 @@ void DFileView::initUI()
     setResizeMode(QListView::Adjust);
     setOrientation(QListView::LeftToRight, true);
     setStyleSheet("background: white");
+    setIconSize(QSize(60, 60));
 
     setTextElideMode(Qt::ElideMiddle);
     setDragEnabled(true);
@@ -308,8 +324,6 @@ void DFileView::switchListMode()
     } else {
         setOrientation(QListView::LeftToRight, true);
     }
-
-    m_delegate->viewIsWrapping = isWrapping();
 }
 
 void DFileView::contextMenuEvent(QContextMenuEvent *event)
@@ -326,4 +340,42 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
     menu->exec(mapToGlobal(event->pos()));
     menu->deleteLater();
     menu->deleteLater();
+}
+
+void DFileView::wheelEvent(QWheelEvent *event)
+{
+    if(ctrlIsPressed) {
+        if(event->angleDelta().y() > 0) {
+            setIconSize(iconSize() * 1.1);
+        } else {
+            setIconSize(iconSize() * 0.9);
+        }
+    }
+
+    DListView::wheelEvent(event);
+}
+
+void DFileView::keyPressEvent(QKeyEvent *event)
+{
+    if(event->key() == Qt::Key_Control) {
+        ctrlIsPressed = true;
+    }
+
+    DListView::keyPressEvent(event);
+}
+
+void DFileView::keyReleaseEvent(QKeyEvent *event)
+{
+    if(event->key() == Qt::Key_Control) {
+        ctrlIsPressed = false;
+    }
+
+    DListView::keyReleaseEvent(event);
+}
+
+void DFileView::showEvent(QShowEvent *event)
+{
+    DListView::showEvent(event);
+
+    setFocus();
 }

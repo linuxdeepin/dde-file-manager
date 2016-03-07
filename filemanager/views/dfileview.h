@@ -36,12 +36,18 @@ public slots:
     void switchListMode();
 
 protected:
-    void contextMenuEvent(QContextMenuEvent * event);
+    void contextMenuEvent(QContextMenuEvent * event) Q_DECL_OVERRIDE;
+    void wheelEvent(QWheelEvent * event) Q_DECL_OVERRIDE;
+    void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
+    void keyReleaseEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
+    void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
 
 private:
     ItemDelegate *m_delegate;
     FileController *m_controller;
     FileMenuManager* m_fileMenuManager;
+
+    bool ctrlIsPressed = false;
 };
 
 #endif // DFILEVIEW_H
