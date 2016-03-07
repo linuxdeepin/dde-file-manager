@@ -11,6 +11,11 @@ FileController::FileController(QObject *parent) : QObject(parent)
     initConnect();
 }
 
+FileController::~FileController()
+{
+
+}
+
 void FileController::initConnect()
 {
     connect(fileSignalManager, &FileSignalManager::requestIcon,
@@ -31,20 +36,15 @@ void FileController::getChildren(const QString &url)
         return;
     }
 
-    ListJobInterface *listJob = m_urlToListJobInterface.value(url);
+    const QVariantList &args = reply.reply().arguments();
 
-    if(!listJob) {
-        const QVariantList &args = reply.reply().arguments();
-
-        listJob = new ListJobInterface(args[0].toString(),
-                                       qvariant_cast<QDBusObjectPath>(args[1]).path(),
-                                       args[2].toString());
-
-        m_urlToListJobInterface[url] = listJob;
-    }
+    ListJobInterface *listJob = new ListJobInterface(args[0].toString(),
+                                   qvariant_cast<QDBusObjectPath>(args[1]).path(),
+                                   args[2].toString());
 
     ASYN_CALL(listJob->Execute(), {
                   FileItemInfoList fileInfoList = (QDBusPendingReply<FileItemInfoList>(*watcher)).value();
+
                   foreach (FileItemInfo info, fileInfoList) {
                       m_fileItemInfos.insert(info.URI, info);
                   }

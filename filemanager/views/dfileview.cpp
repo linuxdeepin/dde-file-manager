@@ -258,12 +258,11 @@ void DFileView::initUI()
     setDragEnabled(true);
     setDragDropMode(QAbstractItemView::DragDrop);
     setDefaultDropAction(Qt::MoveAction);
-    setAcceptDrops(true);
     setDropIndicatorShown(true);
     setSelectionMode(QAbstractItemView::ExtendedSelection);
     setSelectionBehavior(QAbstractItemView::SelectItems);
     setSelectionRectVisible(true);
-    setEditTriggers(QAbstractItemView::EditKeyPressed);
+    setEditTriggers(QListView::EditKeyPressed);
 }
 
 void DFileView::initDelegate()
@@ -293,6 +292,8 @@ void DFileView::initConnects()
             model(), &DFileSystemModel::updateIcon);
     connect(fileSignalManager, &FileSignalManager::childrenChanged,
             model(), &DFileSystemModel::updateChildren);
+    connect(fileSignalManager, &FileSignalManager::refreshFolder,
+            model(), &DFileSystemModel::refresh);
 }
 
 DFileSystemModel *DFileView::model() const

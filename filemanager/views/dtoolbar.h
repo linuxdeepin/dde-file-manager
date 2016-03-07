@@ -29,6 +29,7 @@ signals:
     void requestSwitchLayout();
     void switchLayoutMode();
     void backButtonClicked();
+    void refreshButtonClicked();
 
 public slots:
     void setLayoutButtonState(DStateButton::ButtonState state);

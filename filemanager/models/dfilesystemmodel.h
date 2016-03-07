@@ -1,7 +1,6 @@
 #ifndef DFILESYSTEMMODEL_H
 #define DFILESYSTEMMODEL_H
 
-#include "dbusinterface/fileoperations_interface.h"
 #include "dbusinterface/dbustype.h"
 
 #include <QAbstractItemModel>
@@ -36,6 +35,15 @@ public:
     bool canFetchMore(const QModelIndex & parent) const Q_DECL_OVERRIDE;
     void fetchMore(const QModelIndex & parent) Q_DECL_OVERRIDE;
 
+    Qt::ItemFlags flags(const QModelIndex &index) const Q_DECL_OVERRIDE;
+
+    Qt::DropActions supportedDragActions() const Q_DECL_OVERRIDE;
+    Qt::DropActions supportedDropActions() const Q_DECL_OVERRIDE;
+
+    QStringList mimeTypes() const Q_DECL_OVERRIDE;
+    bool dropMimeData(const QMimeData * data, Qt::DropAction action, int row, int column, const QModelIndex & parent) Q_DECL_OVERRIDE;
+    QMimeData *mimeData(const QModelIndexList & indexes) const Q_DECL_OVERRIDE;
+
     QModelIndex setRootPath(const QString &url);
     QString rootPath() const;
 
@@ -44,6 +52,7 @@ public:
 public slots:
     void updateChildren(const QString &url, const FileItemInfoList &list);
     void updateIcon(const QString &url, const QIcon &icon);
+    void refresh(const QString &url);
 
 private:
     FileSystemNode *m_rootNode = Q_NULLPTR;
@@ -53,6 +62,8 @@ private:
     inline FileSystemNode *getNodeByIndex(const QModelIndex &index) const;
     QModelIndex createIndex(const FileSystemNode *node) const;
     using QAbstractItemModel::createIndex;
+
+    bool canFetchMore(FileSystemNode *node) const;
 
     friend class FileSystemNode;
 };

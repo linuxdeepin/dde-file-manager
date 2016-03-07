@@ -112,6 +112,8 @@ void DToolBar::initConnect()
     connect(m_searchBar, SIGNAL(returnPressed()), this, SLOT(searchBarTextEntered()));
     connect(m_tabBar, SIGNAL(tabBarClicked(int)), this, SLOT(tabBarClicked(int)));
     connect(m_upButton, SIGNAL(released()), this, SLOT(upButtonClicked()));
+    connect(m_refreshButton, &DStateButton::clicked,
+            this, &DToolBar::refreshButtonClicked);
 }
 
 DStateButton::ButtonState DToolBar::getLayoutbuttonState()

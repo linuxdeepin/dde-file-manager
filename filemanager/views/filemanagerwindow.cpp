@@ -154,6 +154,10 @@ void FileManagerWindow::initConnect()
     });
     connect(m_toolbar, &DToolBar::switchLayoutMode,
             m_fileView, &DFileView::switchListMode);
+    connect(m_toolbar, &DToolBar::refreshButtonClicked,
+            this, [this] {
+        emit fileSignalManager->refreshFolder(m_fileView->currentUrl());
+    });
 }
 
 void FileManagerWindow::toggleMaxNormal()
