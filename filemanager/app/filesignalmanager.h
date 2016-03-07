@@ -25,6 +25,9 @@ signals:
     /// file icon
     void requestIcon(const QString &url) const;
     void iconChanged(const QString &url, const QIcon &icon) const;
+
+    /// refresh folder
+    void refreshFolder(const QString &url) const;
 };
 
 #endif // FILESIGNALMANAGER_H

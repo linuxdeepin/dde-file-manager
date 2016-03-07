@@ -14,6 +14,8 @@ class FileController : public QObject
 
 public:
     explicit FileController(QObject *parent = 0);
+    ~FileController();
+
     void initConnect();
 
 public slots:
@@ -21,7 +23,6 @@ public slots:
     void getIcon(const QString &url) const;
 
 private:
-    QMap<QString, ListJobInterface*> m_urlToListJobInterface;
     QMap<QString, FileItemInfo> m_fileItemInfos;
 };
 

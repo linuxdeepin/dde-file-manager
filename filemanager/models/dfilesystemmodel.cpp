@@ -2,7 +2,6 @@
 #include "../app/global.h"
 
 #include <QDebug>
-#include <QDBusPendingCallWatcher>
 #include <QFileIconProvider>
 
 class FileSystemNode
@@ -35,6 +34,7 @@ public:
     {
         visibleChildren.clear();
         qDeleteAll(children.values());
+        children.clear();
     }
 
     DFileSystemModel *m_model;
@@ -183,6 +183,98 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
     emit fileSignalManager->requestChildren(parentNode->fileInfo.URI);
 }
 
+Qt::ItemFlags DFileSystemModel::flags(const QModelIndex &index) const
+{
+    Qt::ItemFlags flags = QAbstractItemModel::flags(index);
+    if (!index.isValid())
+        return flags;
+
+    FileSystemNode *indexNode = getNodeByIndex(index);
+
+    flags |= Qt::ItemIsDragEnabled;
+
+    if(indexNode->fileInfo.CanRename)
+        flags |= Qt::ItemIsEditable;
+
+    if ((index.column() == 0) && indexNode->fileInfo.CanWrite) {
+        if (canFetchMore(indexNode))
+            flags |= Qt::ItemIsDropEnabled;
+        else
+            flags |= Qt::ItemNeverHasChildren;
+    }
+
+    return flags;
+}
+
+Qt::DropActions DFileSystemModel::supportedDragActions() const
+{
+    return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
+}
+
+Qt::DropActions DFileSystemModel::supportedDropActions() const
+{
+    return supportedDragActions();
+}
+
+QStringList DFileSystemModel::mimeTypes() const
+{
+    return QStringList(QLatin1String("text/uri-list"));
+}
+
+bool DFileSystemModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent)
+{
+    qDebug() << "drop mime data";
+
+    Q_UNUSED(row);
+    Q_UNUSED(column);
+    if (!parent.isValid())
+        return false;
+
+    bool success = true;
+    QString to = QUrl(getUrlByIndex(parent)).toLocalFile() + QDir::separator();
+
+    QList<QUrl> urls = data->urls();
+    QList<QUrl>::const_iterator it = urls.constBegin();
+
+    switch (action) {
+    case Qt::CopyAction:
+        for (; it != urls.constEnd(); ++it) {
+            QString path = (*it).toLocalFile();
+            success = QFile::copy(path, to + QFileInfo(path).fileName()) && success;
+        }
+        break;
+    case Qt::LinkAction:
+        for (; it != urls.constEnd(); ++it) {
+            QString path = (*it).toLocalFile();
+            success = QFile::link(path, to + QFileInfo(path).fileName()) && success;
+        }
+        break;
+    case Qt::MoveAction:
+        for (; it != urls.constEnd(); ++it) {
+            QString path = (*it).toLocalFile();
+            success = QFile::rename(path, to + QFileInfo(path).fileName()) && success;
+        }
+        break;
+    default:
+        return false;
+    }
+
+    return success;
+}
+
+QMimeData *DFileSystemModel::mimeData(const QModelIndexList &indexes) const
+{
+    QList<QUrl> urls;
+    QList<QModelIndex>::const_iterator it = indexes.begin();
+    for (; it != indexes.end(); ++it)
+        if ((*it).column() == 0)
+            urls << QUrl(getUrlByIndex(*it));
+    QMimeData *data = new QMimeData();
+    data->setUrls(urls);
+
+    return data;
+}
+
 bool DFileSystemModel::canFetchMore(const QModelIndex &parent) const
 {
     FileSystemNode *parentNode = getNodeByIndex(parent);
@@ -190,9 +282,7 @@ bool DFileSystemModel::canFetchMore(const QModelIndex &parent) const
     if(!parentNode)
         return false;
 
-    QDir dir(QUrl(parentNode->fileInfo.URI).toLocalFile());
-
-    return dir.exists() && !parentNode->populatedChildren;
+    return canFetchMore(parentNode);
 }
 
 QModelIndex DFileSystemModel::setRootPath(const QString &urlStr)
@@ -270,6 +360,23 @@ void DFileSystemModel::updateIcon(const QString &url, const QIcon &icon)
     emit dataChanged(index, index, roles << FileIconRole);
 }
 
+void DFileSystemModel::refresh(const QString &url)
+{
+    FileSystemNode *node = m_urlToNode.value(url);
+
+    if(!node)
+        return;
+
+    node->populatedChildren = false;
+
+    if(!canFetchMore(node))
+        return;
+
+    node->populatedChildren = true;
+
+    emit fileSignalManager->requestChildren(url);
+}
+
 FileSystemNode *DFileSystemModel::getNodeByIndex(const QModelIndex &index) const
 {
     if (!index.isValid())
@@ -288,4 +395,11 @@ QModelIndex DFileSystemModel::createIndex(const FileSystemNode *node) const
             : 0;
 
     return createIndex(row, 0, const_cast<FileSystemNode*>(node));
+}
+
+bool DFileSystemModel::canFetchMore(FileSystemNode *node) const
+{
+    QFileInfo info(QUrl(node->fileInfo.URI).toLocalFile());
+
+    return info.isDir() && !node->populatedChildren;
 }
