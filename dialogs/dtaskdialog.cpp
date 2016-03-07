@@ -1,5 +1,5 @@
 #include "dtaskdialog.h"
-#include "widgets/util.h"
+#include "utils/utils.h"
 #include "widgets/dcircleprogress.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>

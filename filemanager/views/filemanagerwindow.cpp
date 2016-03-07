@@ -7,7 +7,7 @@
 #include <QResizeEvent>
 
 #include "utils/xutil.h"
-#include "widgets/util.h"
+
 #include "dtitlebar.h"
 #include "dleftsidebar.h"
 #include "dtoolbar.h"

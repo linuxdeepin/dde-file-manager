@@ -55,5 +55,6 @@
         <file>images/light/appbar.page.png</file>
         <file>images/dark/appbar.laptop.png</file>
         <file>images/light/appbar.laptop.png</file>
+        <file>images/dark/appbar.arrow.up.png</file>
     </qresource>
 </RCC>

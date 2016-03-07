@@ -69,7 +69,10 @@ HEADERS += \
     filemanager/controllers/filecontroller.h \
     filemanager/app/filesignalmanager.h \
     filemanager/views/fileitem.h \
-    filemanager/views/filemenumanager.h
+    filemanager/views/filemenumanager.h \
+    filemanager/views/dsearchbar.h \
+    filemanager/views/dtabbar.h \
+    filemanager/views/dtabbaritem.h
 
 SOURCES += \
     filemanager/app/dbusworker.cpp \
@@ -100,6 +103,9 @@ SOURCES += \
     filemanager/controllers/histroycontroller.cpp \
     filemanager/controllers/filecontroller.cpp \
     filemanager/views/fileitem.cpp \
-    filemanager/views/filemenumanager.cpp
+    filemanager/views/filemenumanager.cpp \
+    filemanager/views/dsearchbar.cpp \
+    filemanager/views/dtabbar.cpp \
+    filemanager/views/dtabbaritem.cpp
 
 INCLUDEPATH += filemanager/models

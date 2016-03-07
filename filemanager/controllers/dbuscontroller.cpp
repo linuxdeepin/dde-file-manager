@@ -19,7 +19,6 @@
 #include "../app/global.h"
 #include "../app/signalmanager.h"
 #include "filemonitor/filemonitor.h"
-#include "widgets/util.h"
 #include "dbusinterface/dbusclientmanager.h"
 #include "appcontroller.h"
 #include "trashjobcontroller.h"

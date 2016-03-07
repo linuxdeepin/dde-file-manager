@@ -3,6 +3,9 @@
 #include <QVBoxLayout>
 
 #include "dicontextbutton.h"
+#include "dsearchbar.h"
+#include "dtabbar.h"
+#include <QDebug>
 
 const int DToolBar::ButtonHeight = 20;
 
@@ -44,16 +47,24 @@ void DToolBar::initAddressToolBar()
 
     m_backButton = new DStateButton(":/images/images/dark/appbar.arrow.left.png", this);
     m_forwardButton = new DStateButton(":/images/images/dark/appbar.arrow.right.png", this);
+    m_upButton = new DStateButton(":/images/images/dark/appbar.arrow.up.png", this);
     m_searchButton = new DStateButton(":/images/images/dark/appbar.magnify.png", this);
     m_refreshButton = new DStateButton(":/images/images/dark/appbar.refresh.png", this);
+
+    m_stackedWidget = new QStackedWidget;
+    m_searchBar = new DSearchBar;
+    m_tabBar = new DTabBar;
+    m_stackedWidget->addWidget(m_tabBar);
+    m_stackedWidget->addWidget(m_searchBar);
 
     QHBoxLayout* mainLayout = new QHBoxLayout;
     mainLayout->addWidget(m_backButton);
     mainLayout->addWidget(m_forwardButton);
-    mainLayout->addStretch();
+    mainLayout->addWidget(m_upButton);
+    mainLayout->addWidget(m_stackedWidget);
     mainLayout->addWidget(m_searchButton);
     mainLayout->addWidget(m_refreshButton);
-    mainLayout->setContentsMargins(5, 0, 5, 0);
+    mainLayout->setContentsMargins(5, 5, 5, 5);
     m_addressToolBar->setLayout(mainLayout);
 }
 
@@ -97,6 +108,10 @@ void DToolBar::initConnect()
             this, &DToolBar::backButtonClicked);
     connect(m_viewSwitchButton, &DStateButton::clicked,
             this, &DToolBar::switchLayoutMode);
+    connect(m_searchButton, SIGNAL(released()), this, SLOT(searchBarSwitched()));
+    connect(m_searchBar, SIGNAL(returnPressed()), this, SLOT(searchBarTextEntered()));
+    connect(m_tabBar, SIGNAL(tabBarClicked(int)), this, SLOT(tabBarClicked(int)));
+    connect(m_upButton, SIGNAL(released()), this, SLOT(upButtonClicked()));
 }
 
 DStateButton::ButtonState DToolBar::getLayoutbuttonState()
@@ -107,6 +122,39 @@ DStateButton::ButtonState DToolBar::getLayoutbuttonState()
 void DToolBar::setLayoutButtonState(DStateButton::ButtonState state)
 {
     m_layoutButton->setButtonState(state);
+}
+
+void DToolBar::searchBarSwitched()
+{
+    if(m_switchState == 0)
+    {
+        m_stackedWidget->setCurrentIndex(1);
+        m_switchState = 1;
+    }
+    else
+    {
+        m_stackedWidget->setCurrentIndex(0);
+        m_switchState = 0;
+    }
+}
+
+void DToolBar::searchBarTextEntered()
+{
+    m_tabBar->setTabBarPath(m_searchBar->text());
+}
+
+void DToolBar::tabBarClicked(int index)
+{
+    m_searchBar->setText(m_tabBar->shrinkToIndex(index));
+}
+
+void DToolBar::upButtonClicked()
+{
+    int index = m_tabBar->getSelectedIndex();
+    if(index >= 1)
+        m_searchBar->setText(m_tabBar->moveToIndex(index - 1));
+    else
+        m_searchBar->setText(m_tabBar->shrinkToIndex(index));
 }
 
 
