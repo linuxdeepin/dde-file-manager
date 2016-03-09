@@ -63,7 +63,7 @@ private:
     QModelIndex createIndex(const FileSystemNode *node) const;
     using QAbstractItemModel::createIndex;
 
-    bool canFetchMore(FileSystemNode *node) const;
+    bool isDir(FileSystemNode *node) const;
 
     friend class FileSystemNode;
 };
