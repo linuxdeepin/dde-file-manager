@@ -72,7 +72,8 @@ HEADERS += \
     filemanager/views/filemenumanager.h \
     filemanager/views/dsearchbar.h \
     filemanager/views/dtabbar.h \
-    filemanager/views/dtabbaritem.h
+    filemanager/views/dtabbaritem.h \
+    filemanager/views/dfileitemdelegate.h
 
 SOURCES += \
     filemanager/app/dbusworker.cpp \
@@ -106,6 +107,7 @@ SOURCES += \
     filemanager/views/filemenumanager.cpp \
     filemanager/views/dsearchbar.cpp \
     filemanager/views/dtabbar.cpp \
-    filemanager/views/dtabbaritem.cpp
+    filemanager/views/dtabbaritem.cpp \
+    filemanager/views/dfileitemdelegate.cpp
 
 INCLUDEPATH += filemanager/models

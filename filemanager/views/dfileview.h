@@ -7,7 +7,6 @@
 #include <QUrl>
 #include <QContextMenuEvent>
 
-class ItemDelegate;
 class QFileSystemModel;
 class FileController;
 class FileMenuManager;
@@ -43,7 +42,6 @@ protected:
     void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
 
 private:
-    ItemDelegate *m_delegate;
     FileController *m_controller;
     FileMenuManager* m_fileMenuManager;
 

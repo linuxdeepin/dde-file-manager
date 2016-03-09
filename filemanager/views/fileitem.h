@@ -1,8 +1,11 @@
 #ifndef FILEITEM_H
 #define FILEITEM_H
 
-#include <QFrame>
 #include "dbusinterface/dbustype.h"
+
+#include <dboxwidget.h>
+
+#include <QFrame>
 
 class QLabel;
 class GrowingElideTextEdit;
@@ -112,5 +115,27 @@ private:
     bool m_isUserPermisson_000 = false;
     FileItemInfo m_fileItemInfo;
 };
+
+DWIDGET_USE_NAMESPACE
+
+
+QT_BEGIN_NAMESPACE
+class QTextEdit;
+QT_END_NAMESPACE
+
+class FileIconItem : public DVBoxWidget
+{
+public:
+    explicit FileIconItem(QWidget *parent = 0);
+
+protected:
+    bool event(QEvent *ee) Q_DECL_OVERRIDE;
+
+public:
+    bool canDeferredDelete = true;
+    QLabel *icon;
+    QTextEdit *edit;
+};
+
 
 #endif // FILEITEM_H
