@@ -513,3 +513,31 @@ void FileItem::paintEvent(QPaintEvent *event)
     QFrame::paintEvent(event);
 }
 
+#include <QLabel>
+#include <QTextEdit>
+
+FileIconItem::FileIconItem(QWidget *parent) :
+    DVBoxWidget(parent)
+{
+    icon = new QLabel;
+    edit = new QTextEdit;
+
+    icon->setAlignment(Qt::AlignCenter);
+    edit->setWordWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
+    edit->setAlignment(Qt::AlignHCenter);
+    edit->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    edit->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    layout()->addWidget(icon, 0, Qt::AlignHCenter);
+    addWidget(edit);
+}
+
+bool FileIconItem::event(QEvent *ee)
+{
+    if(!canDeferredDelete && ee->type() == QEvent::DeferredDelete) {
+        ee->accept();
+        return true;
+    }
+
+    return DVBoxWidget::event(ee);
+}
