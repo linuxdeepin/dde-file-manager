@@ -114,7 +114,7 @@ bool DFileSystemModel::hasChildren(const QModelIndex &parent) const
     const FileSystemNode *indexNode = getNodeByIndex(parent);
     Q_ASSERT(indexNode);
 
-    return QDir(QUrl(indexNode->fileInfo.URI).toLocalFile()).exists() ;
+    return isDir(indexNode);
 }
 
 QFileIconProvider tmp_icon;
@@ -395,7 +395,7 @@ QModelIndex DFileSystemModel::createIndex(const FileSystemNode *node) const
     return createIndex(row, 0, const_cast<FileSystemNode*>(node));
 }
 
-bool DFileSystemModel::isDir(FileSystemNode *node) const
+bool DFileSystemModel::isDir(const FileSystemNode *node) const
 {
     QFileInfo info(QUrl(node->fileInfo.URI).toLocalFile());
 

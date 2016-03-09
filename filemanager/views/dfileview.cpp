@@ -13,6 +13,7 @@
 #include <QTextEdit>
 #include <QPainter>
 #include <QWheelEvent>
+#include <QDesktopServices>
 
 class IconItem : public DVBoxWidget
 {
@@ -284,6 +285,8 @@ void DFileView::initConnects()
             this, [this](const QModelIndex &index) {
         if(model()->hasChildren(index)){
             emit fileSignalManager->currentUrlChanged(model()->getUrlByIndex(index));
+        } else {
+            QDesktopServices::openUrl(QUrl(model()->getUrlByIndex(index)));
         }
     });
     connect(fileSignalManager, &FileSignalManager::currentUrlChanged,
