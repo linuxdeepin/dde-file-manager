@@ -197,7 +197,7 @@ Qt::ItemFlags DFileSystemModel::flags(const QModelIndex &index) const
         flags |= Qt::ItemIsEditable;
 
     if ((index.column() == 0) && indexNode->fileInfo.CanWrite) {
-        if (canFetchMore(indexNode))
+        if (isDir(indexNode))
             flags |= Qt::ItemIsDropEnabled;
         else
             flags |= Qt::ItemNeverHasChildren;
@@ -282,7 +282,7 @@ bool DFileSystemModel::canFetchMore(const QModelIndex &parent) const
     if(!parentNode)
         return false;
 
-    return canFetchMore(parentNode);
+    return isDir(parentNode) && !parentNode->populatedChildren;
 }
 
 QModelIndex DFileSystemModel::setRootPath(const QString &urlStr)
@@ -367,9 +367,7 @@ void DFileSystemModel::refresh(const QString &url)
     if(!node)
         return;
 
-    node->populatedChildren = false;
-
-    if(!canFetchMore(node))
+    if(!isDir(node))
         return;
 
     node->populatedChildren = true;
@@ -397,9 +395,9 @@ QModelIndex DFileSystemModel::createIndex(const FileSystemNode *node) const
     return createIndex(row, 0, const_cast<FileSystemNode*>(node));
 }
 
-bool DFileSystemModel::canFetchMore(FileSystemNode *node) const
+bool DFileSystemModel::isDir(FileSystemNode *node) const
 {
     QFileInfo info(QUrl(node->fileInfo.URI).toLocalFile());
 
-    return info.isDir() && !node->populatedChildren;
+    return info.isDir();
 }
