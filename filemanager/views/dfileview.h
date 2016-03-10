@@ -34,6 +34,9 @@ public slots:
     void cd(const QString &url);
     void switchListMode();
 
+signals:
+    void currentUrlChanged(QString url);
+
 protected:
     void contextMenuEvent(QContextMenuEvent * event) Q_DECL_OVERRIDE;
     void wheelEvent(QWheelEvent * event) Q_DECL_OVERRIDE;

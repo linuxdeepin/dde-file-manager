@@ -86,6 +86,9 @@ QString DFileView::currentUrl() const
 
 void DFileView::cd(const QString &url)
 {
+    if(currentUrl() == url)
+        return;
+
     qDebug() << "cd: current url:" << currentUrl() << "to url:" << url;
 
     QModelIndex index = model()->index(url);
@@ -94,6 +97,8 @@ void DFileView::cd(const QString &url)
         index = model()->setRootPath(url);
 
     setRootIndex(index);
+
+    currentUrlChanged(url);
 }
 
 void DFileView::switchListMode()
