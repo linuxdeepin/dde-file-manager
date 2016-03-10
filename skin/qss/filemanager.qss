@@ -3,7 +3,7 @@
 /***********************************************************/
 QMainWindow{
     /*background-color: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:1, fx:0.5, fy:0.5, stop:0 rgba(119, 255, 255, 255), stop:1 rgba(32, 127, 155, 255));*/
-    background-color: lightgray;
+    background-color: #e9eaf0;
 }
 
 QWigdet{
@@ -13,6 +13,19 @@ QWigdet{
 QFrame#TitleBar{
     background-color: #c0c0c0;
     border-bottom: 1px solid gray;
+}
+
+QListWidget#ListWidget{
+    background-color: transparent;
+    padding-left: 0px;
+}
+
+QListWidget#ListWidget::item{
+    padding-left: 0px;
+}
+
+QListWidget#ListWidget::icon{
+    padding-left: opx;
 }
 
 QFrame#LeftSideBar{
@@ -36,11 +49,11 @@ QFrame#LeftSideDiskBar{
 
 QFrame#ToolBar{
     background-color: transparent;
+    border-bottom: 1px solid gray;
 }
 
 QFrame#AddressToolBar{
     background-color: transparent;
-    border-bottom: 1px solid gray;
 }
 
 QFrame#ControllerToolBar{

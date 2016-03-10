@@ -96,7 +96,8 @@ HEADERS += \
     filemanager/controllers/fileinfogatherer.h \
     filemanager/shutil/desktopfile.h \
     filemanager/shutil/fileutils.h \
-    filemanager/shutil/properties.h
+    filemanager/shutil/properties.h \
+    filemanager/views/dfilemanagerwindow.h
 
 SOURCES += \
     filemanager/controllers/appcontroller.cpp \
@@ -153,6 +154,7 @@ SOURCES += \
     filemanager/controllers/fileinfogatherer.cpp \
     filemanager/shutil/desktopfile.cpp \
     filemanager/shutil/fileutils.cpp \
-    filemanager/shutil/properties.cpp
+    filemanager/shutil/properties.cpp \
+    filemanager/views/dfilemanagerwindow.cpp
 
 INCLUDEPATH += filemanager/models

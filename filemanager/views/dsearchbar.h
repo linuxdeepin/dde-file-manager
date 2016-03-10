@@ -3,8 +3,10 @@
 
 #include <QLineEdit>
 #include <QListWidget>
+#include <QListView>
 #include <QMenu>
 #include <QHBoxLayout>
+#include <QCompleter>
 
 class DSearchBar : public QLineEdit
 {
@@ -12,14 +14,21 @@ class DSearchBar : public QLineEdit
 public:
     explicit DSearchBar(QWidget *parent = 0);
     ~DSearchBar();
-    QListWidget * getList();
+    QListWidget * getPopupList();
+    QAction * setClearAction();
+    QAction * removeClearAction();
+
 private:
     QListWidget * m_list;
-    QMenu * m_menu;
-    QHBoxLayout * m_menuLayout;
+    QCompleter * m_completer;
+    QAction * m_clearAction;
+    void initConnections();
 public slots:
-    void openDropDown();
-    void closeDropDown();
+    void doTextChanged(QString text);
+protected:
+    void focusInEvent(QFocusEvent *e);
+signals:
+    void searchBarFocused();
 };
 
 #endif // DSEARCHBAR_H

@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QHash>
-#include "filemanagerwindow.h"
+#include "dfilemanagerwindow.h"
 
 class WindowManager : public QObject
 {
@@ -18,7 +18,7 @@ public slots:
     void showNewWindow();
 
 private:
-     QHash<int, FileManagerWindow*> m_windows;
+     QHash<int, DFileManagerWindow*> m_windows;
      int m_count = 0;
 };
 

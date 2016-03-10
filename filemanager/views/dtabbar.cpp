@@ -5,6 +5,7 @@
 DTabBar::DTabBar(QWidget *parent) : QFrame(parent)
 {
     m_count = 3;
+    setFixedWidth(100);
 }
 
 /**
@@ -90,8 +91,7 @@ void DTabBar::setTabBarPath(const QString &text)
 {
     if(text.isEmpty() || text.at(0) != '/')
         return;
-    //if(m_currentAddress != text)
-    //{
+
     m_currentAddress = text;
     QStringList list;
     list.append(text.split("/"));
@@ -103,7 +103,6 @@ void DTabBar::setTabBarPath(const QString &text)
         addTab((QString)list.at(i));
     m_items.last()->setSelected(true);
     emit tabBarChanged(m_currentAddress);
-    //}
 }
 
 /**
