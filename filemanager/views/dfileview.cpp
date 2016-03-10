@@ -122,7 +122,7 @@ void DFileView::cd(const QString &url)
 
     setRootIndex(index);
 
-    currentUrlChanged(url);
+    emit currentUrlChanged(url);
 }
 
 void DFileView::switchListMode()

@@ -56,5 +56,30 @@
         <file>images/dark/appbar.laptop.png</file>
         <file>images/light/appbar.laptop.png</file>
         <file>images/dark/appbar.arrow.up.png</file>
+        <file>images/dark/appbar.lines.horizontal.4.png</file>
+        <file>images/dark/appbar.app.favorite.png</file>
+        <file>images/dark/appbar.iphone.png</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file>images/icons/user-trash-symbolic.svg</file>
+        <file>images/icons/user-home-symbolic.svg</file>
+        <file>images/icons/user-bookmarks-symbolic.svg</file>
+        <file>images/icons/listview_normal.png</file>
+        <file>images/icons/listview_active.png</file>
+        <file>images/icons/iconview_normal.png</file>
+        <file>images/icons/iconview_active.png</file>
+        <file>images/icons/forward_press.png</file>
+        <file>images/icons/forward_normal.png</file>
+        <file>images/icons/folder-videos-symbolic.svg</file>
+        <file>images/icons/folder-recent-symbolic.svg</file>
+        <file>images/icons/folder-publicshare-symbolic.svg</file>
+        <file>images/icons/folder-pictures-symbolic.svg</file>
+        <file>images/icons/folder-music-symbolic.svg</file>
+        <file>images/icons/folder-download-symbolic.svg</file>
+        <file>images/icons/folder-documents-symbolic.svg</file>
+        <file>images/icons/folder-desktop-symbolic.svg</file>
+        <file>images/icons/drive-removable-media-symbolic.svg</file>
+        <file>images/icons/backward_press.png</file>
+        <file>images/icons/backward_normal.png</file>
     </qresource>
 </RCC>

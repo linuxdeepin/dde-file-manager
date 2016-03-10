@@ -1,4 +1,4 @@
-#include "filemanagerwindow.h"
+#include "dfilemanagerwindow.h"
 #include <QStatusBar>
 #include <QFrame>
 #include <QVBoxLayout>
@@ -15,9 +15,9 @@
 #include "ddetailview.h"
 #include "../app/global.h"
 
-const int FileManagerWindow::MinimumWidth = 540;
+const int DFileManagerWindow::MinimumWidth = 540;
 
-FileManagerWindow::FileManagerWindow(QWidget *parent) : DMovableMainWindow(parent)
+DFileManagerWindow::DFileManagerWindow(QWidget *parent) : DMovableMainWindow(parent)
 {
     setWindowFlags(Qt::FramelessWindowHint);
     setWindowIcon(QIcon(":/images/images/system-file-manager.png"));
@@ -26,37 +26,37 @@ FileManagerWindow::FileManagerWindow(QWidget *parent) : DMovableMainWindow(paren
     initConnect();
 }
 
-FileManagerWindow::~FileManagerWindow()
+DFileManagerWindow::~DFileManagerWindow()
 {
 
 }
 
-void FileManagerWindow::initData()
+void DFileManagerWindow::initData()
 {
 
 }
 
-void FileManagerWindow::initUI()
+void DFileManagerWindow::initUI()
 {
-    resize(950, 700);
+    resize(950, 600);
     setMinimumWidth(MinimumWidth);
     moveCenter();
     initCentralWidget();
-    initStatusBar();
+    //initStatusBar();
     setCentralWidget(m_centralWidget);
     setStyleSheet(getQssFromFile(":/qss/qss/filemanager.qss"));
 }
 
-void FileManagerWindow::initTitleBar()
+void DFileManagerWindow::initTitleBar()
 {
-    m_titleBar = new DTitleBar(this);
+    m_titleBar = new DTitleBar;
     m_titleBar->setObjectName("TitleBar");
     m_titleBar->setFixedHeight(42);
     m_titleBar->setFocusPolicy(Qt::ClickFocus);
     setDragMovableHeight(m_titleBar->height());
 }
 
-void FileManagerWindow::initSplitter()
+void DFileManagerWindow::initSplitter()
 {
     initLeftSideBar();
     initRightView();
@@ -67,22 +67,28 @@ void FileManagerWindow::initSplitter()
     m_splitter->addWidget(m_rightView);
 }
 
-void FileManagerWindow::initLeftSideBar()
+void DFileManagerWindow::initLeftSideBar()
 {
     m_leftSideBar = new DLeftSideBar(this);
     m_leftSideBar->setObjectName("LeftSideBar");
-    m_leftSideBar->setMinimumWidth(100);
+    m_leftSideBar->setMinimumWidth(30);
     m_leftSideBar->setMaximumWidth(200);
     m_leftSideBar->setFixedWidth(160);
     m_leftSideBar->setFocusPolicy(Qt::ClickFocus);
 }
 
-void FileManagerWindow::initRightView()
+void DFileManagerWindow::initRightView()
 {
     initToolBar();
     initFileView();
     initDetailView();
     m_rightView = new QFrame;
+
+    QHBoxLayout * titleLayout = new QHBoxLayout;
+    titleLayout->addWidget(m_toolbar);
+    titleLayout->addWidget(m_titleBar);
+    titleLayout->setSpacing(0);
+    titleLayout->setContentsMargins(0, 0, 0, 0);
 
     QHBoxLayout* viewLayout = new QHBoxLayout;
     viewLayout->addWidget(m_fileView);
@@ -90,29 +96,33 @@ void FileManagerWindow::initRightView()
     viewLayout->setSpacing(0);
     viewLayout->setContentsMargins(0, 0, 0, 0);
 
+    m_statusBar = new QStatusBar;
+    m_statusBar->setFixedHeight(30);
+    m_statusBar->setFocusPolicy(Qt::ClickFocus);
     QVBoxLayout* mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(m_toolbar);
+    mainLayout->addLayout(titleLayout);
     mainLayout->addLayout(viewLayout);
+    mainLayout->addWidget(m_statusBar);
     mainLayout->setSpacing(0);
     mainLayout->setContentsMargins(0, 0, 0, 0);
     m_rightView->setLayout(mainLayout);
 }
 
-void FileManagerWindow::initToolBar()
+void DFileManagerWindow::initToolBar()
 {
     m_toolbar = new DToolBar(this);
     m_toolbar->setObjectName("ToolBar");
-    m_toolbar->setFixedHeight(82);
+    m_toolbar->setFixedHeight(42);
     m_toolbar->setFocusPolicy(Qt::ClickFocus);
 }
 
-void FileManagerWindow::initFileView()
+void DFileManagerWindow::initFileView()
 {
     m_fileView = new DFileView(this);
     m_fileView->setObjectName("FileView");
 }
 
-void FileManagerWindow::initDetailView()
+void DFileManagerWindow::initDetailView()
 {
     m_detailView = new DDetailView(this);
     m_detailView->setObjectName("DetailView");
@@ -120,21 +130,20 @@ void FileManagerWindow::initDetailView()
     m_detailView->hide();
 }
 
-void FileManagerWindow::initCentralWidget()
+void DFileManagerWindow::initCentralWidget()
 {
     initTitleBar();
     initSplitter();
 
     m_centralWidget = new QFrame(this);
     QVBoxLayout* mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(m_titleBar);
     mainLayout->addWidget(m_splitter);
     mainLayout->setSpacing(0);
     mainLayout->setContentsMargins(0, 0, 0, 0);
     m_centralWidget->setLayout(mainLayout);
 }
 
-void FileManagerWindow::initStatusBar()
+void DFileManagerWindow::initStatusBar()
 {
     m_statusBar = new QStatusBar(this);
     m_statusBar->setFixedHeight(30);
@@ -142,7 +151,7 @@ void FileManagerWindow::initStatusBar()
     setStatusBar(m_statusBar);
 }
 
-void FileManagerWindow::initConnect()
+void DFileManagerWindow::initConnect()
 {
     connect(m_titleBar, SIGNAL(minimuned()), this, SLOT(showMinimized()));
     connect(m_titleBar, SIGNAL(switchMaxNormal()), this, SLOT(toggleMaxNormal()));
@@ -150,11 +159,11 @@ void FileManagerWindow::initConnect()
     connect(m_toolbar, SIGNAL(requestSwitchLayout()), this, SLOT(toggleLayout()));
     connect(m_toolbar, &DToolBar::backButtonClicked,
             this, [this] {
-        QDir dir(m_fileView->currentUrl());
+        QDir dir(QUrl(m_fileView->currentUrl()).toLocalFile());
 
         dir.cdUp();
 
-        emit fileSignalManager->currentUrlChanged(dir.absolutePath());
+        emit fileSignalManager->currentUrlChanged(QUrl::fromLocalFile(dir.absolutePath()).toString(QUrl::EncodeUnicode));
     });
     connect(m_toolbar, &DToolBar::switchLayoutMode,
             m_fileView, &DFileView::switchListMode);
@@ -164,7 +173,7 @@ void FileManagerWindow::initConnect()
     });
 }
 
-void FileManagerWindow::toggleMaxNormal()
+void DFileManagerWindow::toggleMaxNormal()
 {
     if (isMaximized()){
         showNormal();
@@ -175,14 +184,14 @@ void FileManagerWindow::toggleMaxNormal()
     }
 }
 
-void FileManagerWindow::toggleLayout()
+void DFileManagerWindow::toggleLayout()
 {
     m_leftSideBar->setVisible(not m_leftSideBar->isVisible());
 }
 
-void FileManagerWindow::resizeEvent(QResizeEvent *event)
+void DFileManagerWindow::resizeEvent(QResizeEvent *event)
 {
-    if (event->size().width() <= FileManagerWindow::MinimumWidth){
+    if (event->size().width() <= DFileManagerWindow::MinimumWidth){
         if (m_toolbar->getLayoutbuttonState() == DStateButton::stateA){
             if (m_leftSideBar->isVisible() && event->size().width() < event->oldSize().width()){
                 m_leftSideBar->hide();
@@ -199,3 +208,4 @@ void FileManagerWindow::resizeEvent(QResizeEvent *event)
     }
     DMovableMainWindow::resizeEvent(event);
 }
+

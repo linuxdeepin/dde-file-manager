@@ -20,10 +20,10 @@ DCheckableButton::~DCheckableButton()
 
 void DCheckableButton::initUI()
 {
-    setFixedHeight(40);
+    setFixedHeight(30);
     m_iconLabel = new QLabel;
-    m_iconLabel->setPixmap(QPixmap(m_icon).scaledToHeight(30));
-    m_iconLabel->setFixedSize(30, 30);
+    m_iconLabel->setPixmap(QPixmap(m_icon).scaledToHeight(16));
+    m_iconLabel->setFixedSize(16, 16);
     m_textLabel = new QLabel;
     m_textLabel->setObjectName("LeftSideBarTextLabel");
     m_textLabel->setText(m_text);
@@ -34,7 +34,7 @@ void DCheckableButton::initUI()
     QHBoxLayout* mainLayout = new QHBoxLayout;
     mainLayout->addWidget(m_iconLabel);
     mainLayout->addWidget(m_textLabel);
-    mainLayout->setSpacing(0);
+    mainLayout->setSpacing(10);
     mainLayout->setContentsMargins(20, 0, 0, 0);
     setLayout(mainLayout);
 }

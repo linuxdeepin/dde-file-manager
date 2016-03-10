@@ -34,9 +34,13 @@ signals:
 public slots:
     void setLayoutButtonState(DStateButton::ButtonState state);
     void searchBarSwitched();
+    void searchBarActivated();
+    void searchBarDeactivated();
     void searchBarTextEntered();
     void tabBarClicked(int index);
     void upButtonClicked();
+    void searchBarChanged(QString path);
+    void tabBarChanged(QString path);
 private:
     QFrame* m_addressToolBar;
     DStateButton* m_backButton=NULL;
@@ -53,8 +57,7 @@ private:
     DStateButton* m_viewSwitchButton=NULL;
     DSearchBar * m_searchBar = NULL;
     DTabBar * m_tabBar = NULL;
-    QStackedWidget * m_stackedWidget = NULL;
-    int m_switchState = 0;
+    bool m_switchState = false;
 };
 
 #endif // DTOOLBAR_H

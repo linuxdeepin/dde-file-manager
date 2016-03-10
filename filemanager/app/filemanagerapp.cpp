@@ -1,6 +1,8 @@
 #include "filemanagerapp.h"
 #include <QtCore/QCoreApplication>
 #include "../views/windowmanager.h"
+#include "../views/dfilemanagerwindow.h"
+#include "../views/filemanagerwindow.h"
 #include "../controllers/appcontroller.h"
 #include "../app/define.h"
 #include "../app/global.h"
@@ -45,6 +47,11 @@ void FileManagerApp::initApp()
 void FileManagerApp::initView()
 {
     m_windowManager = new WindowManager;
+//#if DEEPIN_UI_ENABLE
+//    m_dFileMangerWindow = new DFileManagerWindow;
+//#else
+//    m_fileManagerWindow = new FileManagerWindow;
+//#endif
 }
 
 void FileManagerApp::initController()
@@ -72,5 +79,10 @@ void FileManagerApp::initConnect()
 void FileManagerApp::show()
 {
     m_windowManager->showNewWindow();
+//#if DEEPIN_UI_ENABLE
+//    m_dFileMangerWindow->show();
+//#else
+//    m_fileManagerWindow->show();
+//#endif
 }
 

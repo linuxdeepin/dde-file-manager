@@ -58,7 +58,7 @@ void DTitleBar::initUI()
     controlLayout->addStretch();
 
     QHBoxLayout* mainlayout = new QHBoxLayout;
-    mainlayout->addStretch();
+    //mainlayout->addStretch();
     mainlayout->addLayout(controlLayout);
     mainlayout->setContentsMargins(0, 0, 5, 0);
     mainlayout->setSpacing(0);
