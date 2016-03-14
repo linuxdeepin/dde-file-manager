@@ -59,30 +59,30 @@ void TrashJobController::setTrashEmptyFlag(bool flag){
 
 void TrashJobController::trashJobExcute(const QStringList &files){
     qDebug() << files;
-    QDBusPendingReply<QString, QDBusObjectPath, QString> reply = dbusController->getFileOperationsInterface()->NewTrashJob(
-                files,
-                false,
-                ConflictAdaptor::staticServerPath(),
-                m_conflictController->getObjectPath(),
-                ConflictAdaptor::staticInterfaceName()
-                );
 //    QDBusPendingReply<QString, QDBusObjectPath, QString> reply = dbusController->getFileOperationsInterface()->NewTrashJob(
 //                files,
 //                false,
-//                "",
-//                "",
-//                ""
+//                ConflictAdaptor::staticServerPath(),
+//                m_conflictController->getObjectPath(),
+//                ConflictAdaptor::staticInterfaceName()
 //                );
-    reply.waitForFinished();
-    if (!reply.isError()){
-        QString service = reply.argumentAt(0).toString();
-        QString path = qdbus_cast<QDBusObjectPath>(reply.argumentAt(1)).path();
-        m_trashJobInterface = new TrashJobInterface(service, path, QDBusConnection::sessionBus(), this);
-        connectTrashSignal();
-        m_trashJobInterface->Execute();
-    }else{
-        qCritical() << reply.error().message() << files;
-    }
+////    QDBusPendingReply<QString, QDBusObjectPath, QString> reply = dbusController->getFileOperationsInterface()->NewTrashJob(
+////                files,
+////                false,
+////                "",
+////                "",
+////                ""
+////                );
+//    reply.waitForFinished();
+//    if (!reply.isError()){
+//        QString service = reply.argumentAt(0).toString();
+//        QString path = qdbus_cast<QDBusObjectPath>(reply.argumentAt(1)).path();
+//        m_trashJobInterface = new TrashJobInterface(service, path, QDBusConnection::sessionBus(), this);
+//        connectTrashSignal();
+//        m_trashJobInterface->Execute();
+//    }else{
+//        qCritical() << reply.error().message() << files;
+//    }
 }
 
 void TrashJobController::connectTrashSignal(){
@@ -139,17 +139,17 @@ void TrashJobController::onProcessAmount(qlonglong progress, ushort info){
 }
 
 void TrashJobController::updateTrashIconByCount(uint count){
-    if (count == 0){
-        if (!m_isTrashEmpty){
-            dbusController->asyncRequestTrashIcon();
-        }
-        m_isTrashEmpty = true;
-    }else{
-        if (m_isTrashEmpty){
-            dbusController->asyncRequestTrashIcon();
-        }
-        m_isTrashEmpty = false;
-    }
+//    if (count == 0){
+//        if (!m_isTrashEmpty){
+//            dbusController->asyncRequestTrashIcon();
+//        }
+//        m_isTrashEmpty = true;
+//    }else{
+//        if (m_isTrashEmpty){
+//            dbusController->asyncRequestTrashIcon();
+//        }
+//        m_isTrashEmpty = false;
+//    }
 }
 
 
@@ -182,17 +182,17 @@ void TrashJobController::handleTrashAction(int index){
 }
 
 void TrashJobController::createEmptyTrashJob(){
-    QDBusPendingReply<QString, QDBusObjectPath, QString> reply = dbusController->getFileOperationsInterface()->NewEmptyTrashJob(false, "", "", "");
-    reply.waitForFinished();
-    if (!reply.isError()){
-        QString service = reply.argumentAt(0).toString();
-        QString path = qdbus_cast<QDBusObjectPath>(reply.argumentAt(1)).path();
-        m_emptyTrashJobInterface = new EmptyTrashJobInterface(service, path, QDBusConnection::sessionBus(), this);
-        connect(m_emptyTrashJobInterface, SIGNAL(Done()), this, SLOT(emptyTrashJobExcuteFinished()));
-        m_emptyTrashJobInterface->Execute();
-    }else{
-        qCritical() << reply.error().message();
-    }
+//    QDBusPendingReply<QString, QDBusObjectPath, QString> reply = dbusController->getFileOperationsInterface()->NewEmptyTrashJob(false, "", "", "");
+//    reply.waitForFinished();
+//    if (!reply.isError()){
+//        QString service = reply.argumentAt(0).toString();
+//        QString path = qdbus_cast<QDBusObjectPath>(reply.argumentAt(1)).path();
+//        m_emptyTrashJobInterface = new EmptyTrashJobInterface(service, path, QDBusConnection::sessionBus(), this);
+//        connect(m_emptyTrashJobInterface, SIGNAL(Done()), this, SLOT(emptyTrashJobExcuteFinished()));
+//        m_emptyTrashJobInterface->Execute();
+//    }else{
+//        qCritical() << reply.error().message();
+//    }
 }
 
 void TrashJobController::emptyTrashJobExcuteFinished(){

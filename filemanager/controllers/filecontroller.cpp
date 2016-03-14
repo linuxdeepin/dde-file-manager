@@ -26,45 +26,45 @@ void FileController::initConnect()
 
 void FileController::getChildren(const QString &url)
 {
-    FileOperationsInterface *dbusInterface = dbusController->getFileOperationsInterface();
+//    FileOperationsInterface *dbusInterface = dbusController->getFileOperationsInterface();
 
-    QDBusPendingReply<QString, QDBusObjectPath, QString> reply = dbusInterface->NewListJob(url, 0);
-    reply.waitForFinished();
+//    QDBusPendingReply<QString, QDBusObjectPath, QString> reply = dbusInterface->NewListJob(url, 0);
+//    reply.waitForFinished();
 
-    if(reply.isError()) {
-        qDebug() << reply.error().message();
-        return;
-    }
+//    if(reply.isError()) {
+//        qDebug() << reply.error().message();
+//        return;
+//    }
 
-    const QVariantList &args = reply.reply().arguments();
+//    const QVariantList &args = reply.reply().arguments();
 
-    ListJobInterface *listJob = new ListJobInterface(args[0].toString(),
-                                   qvariant_cast<QDBusObjectPath>(args[1]).path(),
-                                   args[2].toString());
+//    ListJobInterface *listJob = new ListJobInterface(args[0].toString(),
+//                                   qvariant_cast<QDBusObjectPath>(args[1]).path(),
+//                                   args[2].toString());
 
-    ASYN_CALL(listJob->Execute(), {
-                  FileItemInfoList fileInfoList = (QDBusPendingReply<FileItemInfoList>(*watcher)).value();
+//    ASYN_CALL(listJob->Execute(), {
+//                  FileItemInfoList fileInfoList = (QDBusPendingReply<FileItemInfoList>(*watcher)).value();
 
-                  foreach (FileItemInfo info, fileInfoList) {
-                      m_fileItemInfos.insert(info.URI, info);
-                  }
-                  emit fileSignalManager->childrenChanged(url, fileInfoList);
-              }, this, url);
+//                  foreach (FileItemInfo info, fileInfoList) {
+//                      m_fileItemInfos.insert(info.URI, info);
+//                  }
+//                  emit fileSignalManager->childrenChanged(url, fileInfoList);
+//              }, this, url);
 }
 
 void FileController::getIcon(const QString &url) const
 {
-    QString iconPath = dbusController->getFileInfoInterface()->GetThemeIcon(url, 30);
-    QIcon icon;
+//    QString iconPath = dbusController->getFileInfoInterface()->GetThemeIcon(url, 30);
+//    QIcon icon;
 
-    if(iconPath.isEmpty()) {
-        const QFileInfo &fileInfo = QFileInfo(QUrl(url).toLocalFile());
+//    if(iconPath.isEmpty()) {
+//        const QFileInfo &fileInfo = QFileInfo(QUrl(url).toLocalFile());
 
-        QFileIconProvider prrovider;
-        icon = prrovider.icon(fileInfo);
-    } else {
-        icon = QIcon(iconPath);
-    }
+//        QFileIconProvider prrovider;
+//        icon = prrovider.icon(fileInfo);
+//    } else {
+//        icon = QIcon(iconPath);
+//    }
 
-    emit fileSignalManager->iconChanged(url, icon);
+//    emit fileSignalManager->iconChanged(url, icon);
 }

@@ -9,7 +9,6 @@ class MoveJobController;
 class CopyJobController;
 class RenameJobController;
 class DeleteJobController;
-class HistroyController;
 class FileController;
 
 class AppController : public QObject
@@ -25,7 +24,6 @@ public:
     CopyJobController* getCopyJobController();
     RenameJobController* getRenameJobController();
     DeleteJobController* getDeleteJobController();
-    HistroyController* getHistroyController();
     FileController* getFileController();
 signals:
 
@@ -37,7 +35,6 @@ private:
     CopyJobController* m_copyJobController;
     RenameJobController* m_renameJobController;
     DeleteJobController* m_deleteJobController;
-    HistroyController* m_historyController;
     FileController* m_fileController;
 };
 

@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-class FileManagerWindow;
+class WindowManager;
 class AppController;
 
 class FileManagerApp : public QObject
@@ -13,12 +13,13 @@ public:
     explicit FileManagerApp(QObject *parent = 0);
     ~FileManagerApp();
 
+    void initLogger();
+    void initGtk();
     void initApp();
     void initView();
     void initController();
-    void initLogger();
     void initCommandline();
-    void initGtk();
+    void initTranslation();
     void initConnect();
 
 signals:
@@ -27,7 +28,7 @@ public slots:
     void show();
 
 private:
-    FileManagerWindow* m_fileManagerWindow=NULL;
+    WindowManager* m_windowManager=NULL;
     AppController* m_appController = NULL;
 };
 
