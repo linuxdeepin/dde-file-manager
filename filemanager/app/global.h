@@ -11,9 +11,9 @@
 #include <QTextOption>
 #include <QTextLayout>
 
-#define gridManager  Singleton<GridManager>::instance()
+//#define gridManager  Singleton<GridManager>::instance()
 #define signalManager  Singleton<SignalManager>::instance()
-#define dbusController Singleton<DBusController>::instance()
+//#define dbusController Singleton<DBusController>::instance()
 #define fileSignalManager Singleton<FileSignalManager>::instance()
 
 #define defaut_icon ":/images/images/default.png"

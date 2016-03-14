@@ -57,37 +57,37 @@ void CopyjobWorker::copyFiles(QStringList files, QString destination){
     if (files.length() == 0)
         return;
 
-    QDBusPendingReply<QString, QDBusObjectPath, QString> reply = \
-            dbusController->getFileOperationsInterface()->NewCopyJob(
-                files,
-                desktopLocation,
-                "",
-                0,
-                ConflictAdaptor::staticServerPath(),
-                m_conflictController->getObjectPath(),
-                ConflictAdaptor::staticInterfaceName()
-                );
+//    QDBusPendingReply<QString, QDBusObjectPath, QString> reply = \
+//            dbusController->getFileOperationsInterface()->NewCopyJob(
+//                files,
+//                desktopLocation,
+//                "",
+//                0,
+//                ConflictAdaptor::staticServerPath(),
+//                m_conflictController->getObjectPath(),
+//                ConflictAdaptor::staticInterfaceName()
+//                );
 
-    reply.waitForFinished();
-    if (!reply.isError()){
-        QString service = reply.argumentAt(0).toString();
-        QString path = qdbus_cast<QDBusObjectPath>(reply.argumentAt(1)).path();
-        qDebug() << "copy files" << files << path;
-        m_copyjobPath = path;
-        m_jobDetail.insert("jobPath", path);
-        m_jobDetail.insert("type", "copy");
-        m_conflictController->setJobDetail(m_jobDetail);
-        m_jobDataDetail.insert("destination",  QFileInfo(decodeUrl(desktopLocation)).fileName());
-        m_copyJobInterface = new CopyJobInterface(service, path, QDBusConnection::sessionBus(), this);
-        connectCopyJobSignal();
-        m_copyJobInterface->Execute();
-        m_progressTimer->start();
-        m_time->start();
-        emit signalManager->copyJobAdded(m_jobDetail);
-    }else{
-        qCritical() << reply.error().message();
-        m_progressTimer->stop();
-    }
+//    reply.waitForFinished();
+//    if (!reply.isError()){
+//        QString service = reply.argumentAt(0).toString();
+//        QString path = qdbus_cast<QDBusObjectPath>(reply.argumentAt(1)).path();
+//        qDebug() << "copy files" << files << path;
+//        m_copyjobPath = path;
+//        m_jobDetail.insert("jobPath", path);
+//        m_jobDetail.insert("type", "copy");
+//        m_conflictController->setJobDetail(m_jobDetail);
+//        m_jobDataDetail.insert("destination",  QFileInfo(decodeUrl(desktopLocation)).fileName());
+//        m_copyJobInterface = new CopyJobInterface(service, path, QDBusConnection::sessionBus(), this);
+//        connectCopyJobSignal();
+//        m_copyJobInterface->Execute();
+//        m_progressTimer->start();
+//        m_time->start();
+//        emit signalManager->copyJobAdded(m_jobDetail);
+//    }else{
+//        qCritical() << reply.error().message();
+//        m_progressTimer->stop();
+//    }
 }
 
 

@@ -28,27 +28,27 @@ void DeletejobWorker::start(){
 
 void DeletejobWorker::deleteFiles(const QStringList &files){
     qDebug() << "delete" <<files;
-    QDBusPendingReply<QString, QDBusObjectPath, QString> reply = dbusController->getFileOperationsInterface()->NewDeleteJob(files, false, "", "", "");
-    reply.waitForFinished();
-    if (!reply.isError()){
-        QString service = reply.argumentAt(0).toString();
-        QString path = qdbus_cast<QDBusObjectPath>(reply.argumentAt(1)).path();
-        qDebug() << "delete files" << files << path;
+//    QDBusPendingReply<QString, QDBusObjectPath, QString> reply = dbusController->getFileOperationsInterface()->NewDeleteJob(files, false, "", "", "");
+//    reply.waitForFinished();
+//    if (!reply.isError()){
+//        QString service = reply.argumentAt(0).toString();
+//        QString path = qdbus_cast<QDBusObjectPath>(reply.argumentAt(1)).path();
+//        qDebug() << "delete files" << files << path;
 
-        m_deletejobPath = path;
-        m_jobDetail.insert("jobPath", path);
-        m_jobDetail.insert("type", "delete");
+//        m_deletejobPath = path;
+//        m_jobDetail.insert("jobPath", path);
+//        m_jobDetail.insert("type", "delete");
 
-        m_deleteJobInterface = new DeleteJobInterface(service, path, QDBusConnection::sessionBus(), this);
-        connectDeleteJobSignal();
-        m_deleteJobInterface->Execute();
+//        m_deleteJobInterface = new DeleteJobInterface(service, path, QDBusConnection::sessionBus(), this);
+//        connectDeleteJobSignal();
+//        m_deleteJobInterface->Execute();
 
-        m_progressTimer->start();
-        m_time->start();
-        emit signalManager->deleteJobAdded(m_jobDetail);
-    }else{
-        qCritical() << reply.error().message();
-    }
+//        m_progressTimer->start();
+//        m_time->start();
+//        emit signalManager->deleteJobAdded(m_jobDetail);
+//    }else{
+//        qCritical() << reply.error().message();
+//    }
 }
 
 void DeletejobWorker::connectDeleteJobSignal(){

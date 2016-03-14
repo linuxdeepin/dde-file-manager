@@ -1,10 +1,9 @@
 #include "filemanagerapp.h"
 #include <QtCore/QCoreApplication>
-#include "../views/filemanagerwindow.h"
+#include "../views/windowmanager.h"
 #include "../controllers/appcontroller.h"
 #include "../app/define.h"
 #include "../app/global.h"
-
 
 
 FileManagerApp::FileManagerApp(QObject *parent) : QObject(parent)
@@ -23,31 +22,9 @@ FileManagerApp::~FileManagerApp()
 
 }
 
-void FileManagerApp::initApp()
-{
-    qApp->setOrganizationName("deepin");
-    qApp->setApplicationName(tr("dde-file-manager"));
-    qApp->setApplicationVersion("2016-1.0");
-}
-
-void FileManagerApp::initView()
-{
-    m_fileManagerWindow = new FileManagerWindow;
-}
-
-void FileManagerApp::initController()
-{
-    m_appController = new AppController(this);
-}
-
 void FileManagerApp::initLogger()
 {
     RegisterLogger();
-}
-
-void FileManagerApp::initCommandline()
-{
-    CommandLineManager::instance()->initOptions();
 }
 
 void FileManagerApp::initGtk()
@@ -57,6 +34,36 @@ void FileManagerApp::initGtk()
     initGtkThemeWatcher();
 }
 
+
+void FileManagerApp::initApp()
+{
+    qApp->setOrganizationName("deepin");
+    qApp->setApplicationName(tr("dde-file-manager"));
+    qApp->setApplicationVersion("2016-1.0");
+}
+
+void FileManagerApp::initView()
+{
+    m_windowManager = new WindowManager;
+}
+
+void FileManagerApp::initController()
+{
+    m_appController = new AppController(this);
+}
+
+
+
+void FileManagerApp::initCommandline()
+{
+    CommandLineManager::instance()->initOptions();
+}
+
+void FileManagerApp::initTranslation()
+{
+
+}
+
 void FileManagerApp::initConnect()
 {
 
@@ -64,6 +71,6 @@ void FileManagerApp::initConnect()
 
 void FileManagerApp::show()
 {
-    m_fileManagerWindow->show();
+    m_windowManager->showNewWindow();
 }
 

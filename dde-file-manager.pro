@@ -38,7 +38,6 @@ target.path = /usr/bin/
 INSTALLS += target
 
 HEADERS += \
-    filemanager/app/dbusworker.h \
     filemanager/app/define.h \
     filemanager/app/global.h \
     filemanager/app/signalmanager.h \
@@ -65,7 +64,6 @@ HEADERS += \
     filemanager/views/dstatebutton.h \
     filemanager/views/dcheckablebutton.h \
     filemanager/models/dfilesystemmodel.h \
-    filemanager/controllers/histroycontroller.h \
     filemanager/controllers/filecontroller.h \
     filemanager/app/filesignalmanager.h \
     filemanager/views/fileitem.h \
@@ -73,10 +71,29 @@ HEADERS += \
     filemanager/views/dsearchbar.h \
     filemanager/views/dtabbar.h \
     filemanager/views/dtabbaritem.h \
-    filemanager/views/dfileitemdelegate.h
+    filemanager/views/dfileitemdelegate.h \
+    filemanager/shutil/highlevelfileutils.h \
+    filemanager/shutil/desktopparse.h \
+    filemanager/shutil/mimeutils.h \
+    filemanager/models/fileinfo.h \
+    filemanager/models/desktopfileinfo.h \
+    filemanager/shutil/iconprovider.h \
+    filemanager/models/bookmark.h \
+    filemanager/models/imagefileinfo.h \
+    filemanager/models/recenthistory.h \
+    filemanager/models/searchhistory.h \
+    filemanager/models/fmsetting.h \
+    filemanager/models/fmstate.h \
+    filemanager/controllers/bookmarkmanager.h \
+    filemanager/controllers/recenthistorymanager.h \
+    filemanager/controllers/fmsettingmanager.h \
+    filemanager/controllers/fmstatemanager.h \
+    filemanager/controllers/basemanager.h \
+    filemanager/dialogs/dialogmanager.h \
+    filemanager/controllers/searchhistroymanager.h \
+    filemanager/views/windowmanager.h
 
 SOURCES += \
-    filemanager/app/dbusworker.cpp \
     filemanager/controllers/appcontroller.cpp \
     filemanager/controllers/copyjobcontroller.cpp \
     filemanager/controllers/copyjobworker.cpp \
@@ -101,13 +118,32 @@ SOURCES += \
     filemanager/views/dstatebutton.cpp \
     filemanager/views/dcheckablebutton.cpp \
     filemanager/models/dfilesystemmodel.cpp \
-    filemanager/controllers/histroycontroller.cpp \
     filemanager/controllers/filecontroller.cpp \
     filemanager/views/fileitem.cpp \
     filemanager/views/filemenumanager.cpp \
     filemanager/views/dsearchbar.cpp \
     filemanager/views/dtabbar.cpp \
     filemanager/views/dtabbaritem.cpp \
-    filemanager/views/dfileitemdelegate.cpp
+    filemanager/views/dfileitemdelegate.cpp \
+    filemanager/shutil/highlevelfileutils.cpp \
+    filemanager/shutil/desktopparse.cpp \
+    filemanager/shutil/mimeutils.cpp \
+    filemanager/models/fileinfo.cpp \
+    filemanager/models/desktopfileinfo.cpp \
+    filemanager/shutil/iconprovider.cpp \
+    filemanager/models/bookmark.cpp \
+    filemanager/models/imagefileinfo.cpp \
+    filemanager/models/recenthistory.cpp \
+    filemanager/models/searchhistory.cpp \
+    filemanager/models/fmsetting.cpp \
+    filemanager/models/fmstate.cpp \
+    filemanager/controllers/bookmarkmanager.cpp \
+    filemanager/controllers/recenthistorymanager.cpp \
+    filemanager/controllers/fmsettingmanager.cpp \
+    filemanager/controllers/fmstatemanager.cpp \
+    filemanager/controllers/basemanager.cpp \
+    filemanager/dialogs/dialogmanager.cpp \
+    filemanager/controllers/searchhistroymanager.cpp \
+    filemanager/views/windowmanager.cpp
 
 INCLUDEPATH += filemanager/models

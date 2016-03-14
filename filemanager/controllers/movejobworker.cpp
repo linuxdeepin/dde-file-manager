@@ -53,41 +53,41 @@ void MovejobWorker::start(){
 void MovejobWorker::moveFiles(QStringList files, QString destination){
     qDebug() << files << destination;
 
-    if (files.length() == 0)
-        return;
+//    if (files.length() == 0)
+//        return;
 
-    QDBusPendingReply<QString, QDBusObjectPath, QString> reply = \
-            dbusController->getFileOperationsInterface()->NewMoveJob(
-                files,
-                destination,
-                "",
-                0,
-                ConflictAdaptor::staticServerPath(),
-                m_conflictController->getObjectPath(),
-                ConflictAdaptor::staticInterfaceName()
-                );
+//    QDBusPendingReply<QString, QDBusObjectPath, QString> reply = \
+//            dbusController->getFileOperationsInterface()->NewMoveJob(
+//                files,
+//                destination,
+//                "",
+//                0,
+//                ConflictAdaptor::staticServerPath(),
+//                m_conflictController->getObjectPath(),
+//                ConflictAdaptor::staticInterfaceName()
+//                );
 
-//    QDBusPendingReply<QString, QDBusObjectPath, QString> reply = dbusController->getFileOperationsInterface()->NewMoveJob(files, destination, "",  0, "",  "", "");
-    reply.waitForFinished();
-    if (!reply.isError()){
-        QString service = reply.argumentAt(0).toString();
-        QString path = qdbus_cast<QDBusObjectPath>(reply.argumentAt(1)).path();
-        qDebug() << "move files" << files << path;
-        m_movejobPath = path;
-        m_jobDetail.insert("jobPath", path);
-        m_jobDetail.insert("type", "move");
-        m_conflictController->setJobDetail(m_jobDetail);
-        m_jobDataDetail.insert("destination",  QFileInfo(decodeUrl(desktopLocation)).fileName());
-        m_moveJobInterface = new MoveJobInterface(service, path, QDBusConnection::sessionBus(), this);
-        connectMoveJobSignal();
-        m_moveJobInterface->Execute();
-        m_progressTimer->start();
-        m_time->start();
-        emit signalManager->moveJobAdded(m_jobDetail);
-    }else{
-        qCritical() << reply.error().message();
-        m_progressTimer->stop();
-    }
+////    QDBusPendingReply<QString, QDBusObjectPath, QString> reply = dbusController->getFileOperationsInterface()->NewMoveJob(files, destination, "",  0, "",  "", "");
+//    reply.waitForFinished();
+//    if (!reply.isError()){
+//        QString service = reply.argumentAt(0).toString();
+//        QString path = qdbus_cast<QDBusObjectPath>(reply.argumentAt(1)).path();
+//        qDebug() << "move files" << files << path;
+//        m_movejobPath = path;
+//        m_jobDetail.insert("jobPath", path);
+//        m_jobDetail.insert("type", "move");
+//        m_conflictController->setJobDetail(m_jobDetail);
+//        m_jobDataDetail.insert("destination",  QFileInfo(decodeUrl(desktopLocation)).fileName());
+//        m_moveJobInterface = new MoveJobInterface(service, path, QDBusConnection::sessionBus(), this);
+//        connectMoveJobSignal();
+//        m_moveJobInterface->Execute();
+//        m_progressTimer->start();
+//        m_time->start();
+//        emit signalManager->moveJobAdded(m_jobDetail);
+//    }else{
+//        qCritical() << reply.error().message();
+//        m_progressTimer->stop();
+//    }
 }
 
 void MovejobWorker::connectMoveJobSignal(){
