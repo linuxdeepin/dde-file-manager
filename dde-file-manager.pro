@@ -91,7 +91,8 @@ HEADERS += \
     filemanager/controllers/basemanager.h \
     filemanager/dialogs/dialogmanager.h \
     filemanager/controllers/searchhistroymanager.h \
-    filemanager/views/windowmanager.h
+    filemanager/views/windowmanager.h \
+    filemanager/controllers/fileinfogatherer.h
 
 SOURCES += \
     filemanager/controllers/appcontroller.cpp \
@@ -144,6 +145,7 @@ SOURCES += \
     filemanager/controllers/basemanager.cpp \
     filemanager/dialogs/dialogmanager.cpp \
     filemanager/controllers/searchhistroymanager.cpp \
-    filemanager/views/windowmanager.cpp
+    filemanager/views/windowmanager.cpp \
+    filemanager/controllers/fileinfogatherer.cpp
 
 INCLUDEPATH += filemanager/models

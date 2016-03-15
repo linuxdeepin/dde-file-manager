@@ -146,11 +146,11 @@ void FileManagerWindow::initConnect()
     connect(m_toolbar, SIGNAL(requestSwitchLayout()), this, SLOT(toggleLayout()));
     connect(m_toolbar, &DToolBar::backButtonClicked,
             this, [this] {
-        QDir dir(QUrl(m_fileView->currentUrl()).toLocalFile());
+        QDir dir(m_fileView->currentUrl());
 
         dir.cdUp();
 
-        emit fileSignalManager->currentUrlChanged(QUrl::fromLocalFile(dir.absolutePath()).toString(QUrl::EncodeUnicode));
+        emit fileSignalManager->currentUrlChanged(dir.absolutePath());
     });
     connect(m_toolbar, &DToolBar::switchLayoutMode,
             m_fileView, &DFileView::switchListMode);

@@ -6,9 +6,8 @@
 
 class DesktopFileInfo : public FileInfo
 {
-    Q_OBJECT
 public:
-    explicit DesktopFileInfo(QObject *parent = 0);
+    DesktopFileInfo();
     ~DesktopFileInfo();
 
 signals:

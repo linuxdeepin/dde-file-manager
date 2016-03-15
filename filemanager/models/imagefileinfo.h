@@ -6,9 +6,8 @@
 
 class ImageFileInfo : public FileInfo
 {
-    Q_OBJECT
 public:
-    explicit ImageFileInfo(QObject *parent = 0);
+    ImageFileInfo();
     ~ImageFileInfo();
 
 signals:
