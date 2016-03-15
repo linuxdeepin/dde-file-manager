@@ -1,7 +1,7 @@
 #ifndef DFILESYSTEMMODEL_H
 #define DFILESYSTEMMODEL_H
 
-#include "dbusinterface/dbustype.h"
+#include "fileinfo.h"
 
 #include <QAbstractItemModel>
 #include <QFileSystemModel>
@@ -57,7 +57,7 @@ public:
     QString getUrlByIndex(const QModelIndex &index) const;
 
 public slots:
-    void updateChildren(const QString &url, const FileItemInfoList &list);
+    void updateChildren(const QString &url, const FileInfoList &list);
     void updateIcon(const QString &url, const QIcon &icon);
     void refresh(const QString &url);
 

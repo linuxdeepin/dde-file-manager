@@ -1,9 +1,10 @@
 #ifndef FILESIGNALMANAGER_H
 #define FILESIGNALMANAGER_H
 
-#include "dbusinterface/dbustype.h"
+#include "fileinfo.h"
 
 #include <QObject>
+#include <QDir>
 #include <QDebug>
 
 class FileSignalManager : public QObject
@@ -19,8 +20,8 @@ signals:
     void currentUrlChanged(const QString &url);
 
     /// in folder files
-    void requestChildren(const QString &url) const;
-    void childrenChanged(const QString &url, const FileItemInfoList &list) const;
+    void requestChildren(const QString &url, int filter = int(QDir::AllEntries | QDir::NoDotDot)) const;
+    void childrenChanged(const QString &url, const FileInfoList &list) const;
 
     /// file icon
     void requestIcon(const QString &url) const;

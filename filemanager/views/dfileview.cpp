@@ -51,7 +51,7 @@ void DFileView::initDelegate()
 void DFileView::initModel()
 {
     setModel(new DFileSystemModel(this));
-    setRootIndex(model()->setRootPath(QUrl::fromLocalFile("/").toString(QUrl::EncodeUnicode)));
+    setRootIndex(model()->setRootPath(QDir::currentPath()));
 }
 
 void DFileView::initConnects()
@@ -61,7 +61,7 @@ void DFileView::initConnects()
         if(model()->hasChildren(index)){
             emit fileSignalManager->currentUrlChanged(model()->getUrlByIndex(index));
         } else {
-            QDesktopServices::openUrl(QUrl(model()->getUrlByIndex(index)));
+            QDesktopServices::openUrl(QUrl::fromLocalFile(model()->getUrlByIndex(index)));
         }
     });
     connect(fileSignalManager, &FileSignalManager::currentUrlChanged,

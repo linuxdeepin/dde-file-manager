@@ -2,11 +2,8 @@
 #define FILECONTROLLER_H
 
 #include <QObject>
-#include <QMap>
 
-#include "dbusinterface/dbustype.h"
-
-class ListJobInterface;
+class FileInfoGatherer;
 
 class FileController : public QObject
 {
@@ -16,14 +13,15 @@ public:
     explicit FileController(QObject *parent = 0);
     ~FileController();
 
+    void initGatherer();
     void initConnect();
 
 public slots:
-    void getChildren(const QString &url);
     void getIcon(const QString &url) const;
 
 private:
-    QMap<QString, FileItemInfo> m_fileItemInfos;
+    FileInfoGatherer *gatherer = Q_NULLPTR;
+    QThread *gathererThread = Q_NULLPTR;
 };
 
 #endif // FILECONTROLLER_H

@@ -1,13 +1,14 @@
 #include "filecontroller.h"
 #include "../app/global.h"
-#include "dbusinterface/listjob_interface.h"
-#include "dbusinterface/fileoperations_interface.h"
-#include "dbusinterface/fileInfo_interface.h"
+#include "fileinfogatherer.h"
 
 #include <QFileIconProvider>
 
 FileController::FileController(QObject *parent) : QObject(parent)
 {
+    qRegisterMetaType<FileInfoList>("FileInfoList");
+
+    initGatherer();
     initConnect();
 }
 
@@ -16,55 +17,33 @@ FileController::~FileController()
 
 }
 
+void FileController::initGatherer()
+{
+    gatherer = new FileInfoGatherer;
+    gathererThread = new QThread(gatherer);
+
+    gatherer->moveToThread(gathererThread);
+    gathererThread->start();
+}
+
 void FileController::initConnect()
 {
     connect(fileSignalManager, &FileSignalManager::requestIcon,
             this, &FileController::getIcon);
     connect(fileSignalManager, &FileSignalManager::requestChildren,
-            this, &FileController::getChildren);
-}
-
-void FileController::getChildren(const QString &url)
-{
-//    FileOperationsInterface *dbusInterface = dbusController->getFileOperationsInterface();
-
-//    QDBusPendingReply<QString, QDBusObjectPath, QString> reply = dbusInterface->NewListJob(url, 0);
-//    reply.waitForFinished();
-
-//    if(reply.isError()) {
-//        qDebug() << reply.error().message();
-//        return;
-//    }
-
-//    const QVariantList &args = reply.reply().arguments();
-
-//    ListJobInterface *listJob = new ListJobInterface(args[0].toString(),
-//                                   qvariant_cast<QDBusObjectPath>(args[1]).path(),
-//                                   args[2].toString());
-
-//    ASYN_CALL(listJob->Execute(), {
-//                  FileItemInfoList fileInfoList = (QDBusPendingReply<FileItemInfoList>(*watcher)).value();
-
-//                  foreach (FileItemInfo info, fileInfoList) {
-//                      m_fileItemInfos.insert(info.URI, info);
-//                  }
-//                  emit fileSignalManager->childrenChanged(url, fileInfoList);
-//              }, this, url);
+            gatherer, &FileInfoGatherer::fetchFileInformation);
+    connect(gatherer, &FileInfoGatherer::updates,
+            fileSignalManager, &FileSignalManager::childrenChanged);
 }
 
 void FileController::getIcon(const QString &url) const
 {
-//    QString iconPath = dbusController->getFileInfoInterface()->GetThemeIcon(url, 30);
-//    QIcon icon;
+    QFileIconProvider prrovider;
 
-//    if(iconPath.isEmpty()) {
-//        const QFileInfo &fileInfo = QFileInfo(QUrl(url).toLocalFile());
+    QIcon icon = prrovider.icon(QFileInfo(url));
 
-//        QFileIconProvider prrovider;
-//        icon = prrovider.icon(fileInfo);
-//    } else {
-//        icon = QIcon(iconPath);
-//    }
+    if(icon.isNull())
+        icon = prrovider.icon(QFileIconProvider::File);
 
-//    emit fileSignalManager->iconChanged(url, icon);
+    emit fileSignalManager->iconChanged(url, icon);
 }

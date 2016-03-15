@@ -7,7 +7,7 @@
 class FileSystemNode
 {
 public:
-    FileItemInfo fileInfo;
+    FileInfo fileInfo;
     FileSystemNode *parent = Q_NULLPTR;
     QHash<QString, FileSystemNode*> children;
     QList<QString> visibleChildren;
@@ -18,15 +18,13 @@ public:
         parent(parent),
         m_model(model)
     {
+        fileInfo.setFile(url);
         model->m_urlToNode[url] = this;
-
-//        if(initChildren)
-//            initListJob(path);
     }
 
     ~FileSystemNode()
     {
-        m_model->m_urlToNode.remove(fileInfo.URI);
+        m_model->m_urlToNode.remove(fileInfo.absoluteFilePath());
         qDeleteAll(children.values());
     }
 
@@ -132,28 +130,28 @@ QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
     case Qt::EditRole:
     case Qt::DisplayRole:
         switch (index.column()) {
-        case 0: return indexNode->fileInfo.DisplayName;
-        case 1: return indexNode->fileInfo.DisplayName;
-        case 2: return indexNode->fileInfo.Size;
-        case 3: return indexNode->fileInfo.MIME;
-        case 4: return indexNode->fileInfo.DisplayName;
+        case 0: return indexNode->fileInfo.fileName();
+        case 1: return indexNode->fileInfo.lastModified().toString();
+        case 2: return indexNode->fileInfo.size();
+        case 3: return indexNode->fileInfo.mimeTypeName();
+        case 4: return indexNode->fileInfo.created().toString();
         default:
             qWarning("data: invalid display value column %d", index.column());
             break;
         }
         break;
     case FilePathRole:
-        return indexNode->fileInfo.URI;
+        return indexNode->fileInfo.absoluteFilePath();
         break;
     case FileNameRole:
-        return indexNode->fileInfo.BaseName;
+        return indexNode->fileInfo.fileName();
         break;
     case FileIconRole:
         if (index.column() == 0) {
-            QIcon icon = m_typeToIcon.value(indexNode->fileInfo.MIME);
+            QIcon icon = m_typeToIcon.value(indexNode->fileInfo.mimeTypeName());
 
             if(icon.isNull()) {
-                emit fileSignalManager->requestIcon(indexNode->fileInfo.URI);
+                emit fileSignalManager->requestIcon(indexNode->fileInfo.absoluteFilePath());
             }
 
             return icon;
@@ -200,7 +198,7 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
 
     parentNode->populatedChildren = true;
 
-    emit fileSignalManager->requestChildren(parentNode->fileInfo.URI);
+    emit fileSignalManager->requestChildren(parentNode->fileInfo.absoluteFilePath());
 }
 
 Qt::ItemFlags DFileSystemModel::flags(const QModelIndex &index) const
@@ -213,10 +211,10 @@ Qt::ItemFlags DFileSystemModel::flags(const QModelIndex &index) const
 
     flags |= Qt::ItemIsDragEnabled;
 
-    if(indexNode->fileInfo.CanRename)
+    if(indexNode->fileInfo.isCanRename())
         flags |= Qt::ItemIsEditable;
 
-    if ((index.column() == 0) && indexNode->fileInfo.CanWrite) {
+    if ((index.column() == 0) && indexNode->fileInfo.isWritable()) {
         if (isDir(indexNode))
             flags |= Qt::ItemIsDropEnabled;
         else
@@ -307,27 +305,19 @@ bool DFileSystemModel::canFetchMore(const QModelIndex &parent) const
 
 QModelIndex DFileSystemModel::setRootPath(const QString &urlStr)
 {
-    QUrl url(urlStr);
-
-    if(url.isLocalFile()) {
-        QDir dir(url.toLocalFile());
-
-        if(!dir.exists())
-            return QModelIndex();
-    }
-
     if(!m_rootNode)
         delete m_rootNode;
 
     m_rootNode = new FileSystemNode(this, Q_NULLPTR, urlStr);
-    m_rootNode->fileInfo.URI = urlStr;
 
     return index(urlStr);
+
+    return QModelIndex();
 }
 
 QString DFileSystemModel::rootPath() const
 {
-    return m_rootNode ? m_rootNode->fileInfo.URI : "";
+    return m_rootNode ? m_rootNode->fileInfo.absolutePath() : "";
 }
 
 QString DFileSystemModel::getUrlByIndex(const QModelIndex &index) const
@@ -337,10 +327,10 @@ QString DFileSystemModel::getUrlByIndex(const QModelIndex &index) const
     if(!node)
         return "";
 
-    return node->fileInfo.URI;
+    return node->fileInfo.absoluteFilePath();
 }
 
-void DFileSystemModel::updateChildren(const QString &url, const FileItemInfoList &list)
+void DFileSystemModel::updateChildren(const QString &url, const FileInfoList &list)
 {
     FileSystemNode *node = getNodeByIndex(index(url));
 
@@ -351,12 +341,11 @@ void DFileSystemModel::updateChildren(const QString &url, const FileItemInfoList
 
     beginInsertRows(createIndex(node, 0), 0, list.count() - 1);
 
-    for(const FileItemInfo &fileInfo : list) {
-        FileSystemNode *chileNode = new FileSystemNode(this, node, fileInfo.URI);
+    for(const FileInfo &fileInfo : list) {
+        FileSystemNode *chileNode = new FileSystemNode(this, node, fileInfo.absoluteFilePath());
 
-        chileNode->fileInfo = std::move(fileInfo);
-        node->children[fileInfo.BaseName] = chileNode;
-        node->visibleChildren << fileInfo.BaseName;
+        node->children[fileInfo.fileName()] = chileNode;
+        node->visibleChildren << fileInfo.fileName();
     }
 
     endInsertRows();
@@ -372,7 +361,7 @@ void DFileSystemModel::updateIcon(const QString &url, const QIcon &icon)
     if(!node)
         return;
 
-    m_typeToIcon[node->fileInfo.MIME] = icon;
+    m_typeToIcon[node->fileInfo.mimeTypeName()] = icon;
 
     QModelIndex index = this->index(url);
     QVector<int> roles;
@@ -409,7 +398,7 @@ FileSystemNode *DFileSystemModel::getNodeByIndex(const QModelIndex &index) const
 QModelIndex DFileSystemModel::createIndex(const FileSystemNode *node, int column) const
 {
     int row = node->parent
-            ? node->parent->visibleChildren.indexOf(node->fileInfo.BaseName)
+            ? node->parent->visibleChildren.indexOf(node->fileInfo.fileName())
             : 0;
 
     return createIndex(row, column, const_cast<FileSystemNode*>(node));
@@ -417,7 +406,5 @@ QModelIndex DFileSystemModel::createIndex(const FileSystemNode *node, int column
 
 bool DFileSystemModel::isDir(const FileSystemNode *node) const
 {
-    QFileInfo info(QUrl(node->fileInfo.URI).toLocalFile());
-
-    return info.isDir();
+    return node->fileInfo.isDir();
 }
