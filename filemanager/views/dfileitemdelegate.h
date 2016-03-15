@@ -2,8 +2,9 @@
 #define DFILEITEMDELEGATE_H
 
 #include <QStyledItemDelegate>
+#include <QHeaderView>
 
-#include <dlistview.h>
+#include "dfileview.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -13,11 +14,11 @@ class DFileItemDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
 public:
-    explicit DFileItemDelegate(DListView *parent = 0);
+    explicit DFileItemDelegate(DFileView *parent = 0);
 
-    inline DListView *parent() const
+    inline DFileView *parent() const
     {
-        return qobject_cast<DListView*>(QStyledItemDelegate::parent());
+        return qobject_cast<DFileView*>(QStyledItemDelegate::parent());
     }
 
     void paint(QPainter *painter,
@@ -29,7 +30,11 @@ public:
 
     void updateEditorGeometry(QWidget * editor, const QStyleOptionViewItem & option, const QModelIndex &) const Q_DECL_OVERRIDE;
     void setEditorData(QWidget * editor, const QModelIndex & index) const Q_DECL_OVERRIDE;
+
     void paintIconItem(QPainter *painter,
+                       const QStyleOptionViewItem &option,
+                       const QModelIndex &index) const;
+    void paintListItem(QPainter *painter,
                        const QStyleOptionViewItem &option,
                        const QModelIndex &index) const;
 

@@ -17,6 +17,12 @@ public:
         FileIconRole = Qt::DecorationRole,
         FilePathRole = Qt::UserRole + 1,
         FileNameRole = Qt::UserRole + 2,
+        FileSizeRole = Qt::UserRole + 3,
+        FileTypeRole = Qt::UserRole + 4,
+        FileOwnerRole = Qt::UserRole + 5,
+        FileLastModified = Qt::UserRole + 6,
+        FileLastRead = Qt::UserRole + 7,
+        FileCreated = Qt::UserRole + 8
     };
 
     explicit DFileSystemModel(QObject *parent = 0);
@@ -31,6 +37,7 @@ public:
     bool hasChildren(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const Q_DECL_OVERRIDE;
 
     bool canFetchMore(const QModelIndex & parent) const Q_DECL_OVERRIDE;
     void fetchMore(const QModelIndex & parent) Q_DECL_OVERRIDE;
@@ -60,7 +67,7 @@ private:
     mutable QHash<QString, QIcon> m_typeToIcon;
 
     inline FileSystemNode *getNodeByIndex(const QModelIndex &index) const;
-    QModelIndex createIndex(const FileSystemNode *node) const;
+    QModelIndex createIndex(const FileSystemNode *node, int column) const;
     using QAbstractItemModel::createIndex;
 
     bool isDir(const FileSystemNode *node) const;
