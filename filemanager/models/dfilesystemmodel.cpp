@@ -46,14 +46,14 @@ DFileSystemModel::DFileSystemModel(QObject *parent) :
 
 }
 
-QModelIndex DFileSystemModel::index(const QString &url, int /*column*/)
+QModelIndex DFileSystemModel::index(const QString &url, int column)
 {
     FileSystemNode *node = m_urlToNode.value(url);
 
     if (!node)
         return QModelIndex();
 
-    QModelIndex idx = createIndex(node);
+    QModelIndex idx = createIndex(node, column);
 
     return idx;
 }
@@ -86,7 +86,7 @@ QModelIndex DFileSystemModel::parent(const QModelIndex &child) const
     if(!indexNode || !indexNode->parent)
         return QModelIndex();
 
-    return createIndex(indexNode->parent);
+    return createIndex(indexNode->parent, 0);
 }
 
 int DFileSystemModel::rowCount(const QModelIndex &parent) const
@@ -101,9 +101,9 @@ int DFileSystemModel::rowCount(const QModelIndex &parent) const
     return parentNode->visibleChildren.count();
 }
 
-int DFileSystemModel::columnCount(const QModelIndex &) const
+int DFileSystemModel::columnCount(const QModelIndex &parent) const
 {
-    return 1;
+    return parent.column() > 0 ? 0 : 5;
 }
 
 bool DFileSystemModel::hasChildren(const QModelIndex &parent) const
@@ -131,12 +131,12 @@ QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
     switch (role) {
     case Qt::EditRole:
     case Qt::DisplayRole:
-        return indexNode->fileInfo.DisplayName;
         switch (index.column()) {
         case 0: return indexNode->fileInfo.DisplayName;
-        case 1: return indexNode->fileInfo.Size;
-        case 2: return indexNode->fileInfo.FileType;
+        case 1: return indexNode->fileInfo.DisplayName;
+        case 2: return indexNode->fileInfo.Size;
         case 3: return indexNode->fileInfo.MIME;
+        case 4: return indexNode->fileInfo.DisplayName;
         default:
             qWarning("data: invalid display value column %d", index.column());
             break;
@@ -160,9 +160,29 @@ QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
         }
         break;
     case Qt::TextAlignmentRole:
-        if (index.column() == 1)
-            return Qt::AlignRight;
+        return Qt::AlignVCenter;
         break;
+    }
+
+    return QVariant();
+}
+
+QVariant DFileSystemModel::headerData(int section, Qt::Orientation, int role) const
+{
+    if(role == Qt::DisplayRole) {
+        switch(section)
+        {
+        case 0: return tr("Name");
+        case 1: return tr("Date Modified");
+        case 2: return tr("Size");
+        case 3: return tr("Type");
+        case 4: return tr("Date Created");
+        default: return QVariant();
+        }
+    } else if(role == Qt::BackgroundRole) {
+        return QBrush(Qt::white);
+    } else if(role == Qt::ForegroundRole) {
+        return QBrush(Qt::black);
     }
 
     return QVariant();
@@ -329,7 +349,7 @@ void DFileSystemModel::updateChildren(const QString &url, const FileItemInfoList
 
     node->clearChildren();
 
-    beginInsertRows(createIndex(node), 0, list.count() - 1);
+    beginInsertRows(createIndex(node, 0), 0, list.count() - 1);
 
     for(const FileItemInfo &fileInfo : list) {
         FileSystemNode *chileNode = new FileSystemNode(this, node, fileInfo.URI);
@@ -386,13 +406,13 @@ FileSystemNode *DFileSystemModel::getNodeByIndex(const QModelIndex &index) const
     return indexNode;
 }
 
-QModelIndex DFileSystemModel::createIndex(const FileSystemNode *node) const
+QModelIndex DFileSystemModel::createIndex(const FileSystemNode *node, int column) const
 {
     int row = node->parent
             ? node->parent->visibleChildren.indexOf(node->fileInfo.BaseName)
             : 0;
 
-    return createIndex(row, 0, const_cast<FileSystemNode*>(node));
+    return createIndex(row, column, const_cast<FileSystemNode*>(node));
 }
 
 bool DFileSystemModel::isDir(const FileSystemNode *node) const

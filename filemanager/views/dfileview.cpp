@@ -40,7 +40,7 @@ void DFileView::initUI()
     setSelectionMode(QAbstractItemView::ExtendedSelection);
     setSelectionBehavior(QAbstractItemView::SelectItems);
     setSelectionRectVisible(true);
-    setEditTriggers(QListView::EditKeyPressed);
+    setEditTriggers(QListView::EditKeyPressed | QListView::SelectedClicked);
 }
 
 void DFileView::initDelegate()
@@ -84,6 +84,16 @@ QString DFileView::currentUrl() const
     return model()->getUrlByIndex(rootIndex());
 }
 
+bool DFileView::isIconViewMode()
+{
+    return orientation() == Qt::Vertical && isWrapping();
+}
+
+int DFileView::columnWidth(int column) const
+{
+    return m_headerView ? m_headerView->sectionSize(column) : 100;
+}
+
 void DFileView::cd(const QString &url)
 {
     if(currentUrl() == url)
@@ -103,9 +113,41 @@ void DFileView::cd(const QString &url)
 
 void DFileView::switchListMode()
 {
-    if(isWrapping()) {
+    if(isIconViewMode()) {
+        if(!m_headerView) {
+            m_headerView = new QHeaderView(Qt::Horizontal);
+            m_headerView->setModel(model());
+            m_headerView->setSectionsMovable(true);
+            m_headerView->setHighlightSections(true);
+            m_headerView->setSectionsClickable(true);
+            m_headerView->setSortIndicatorShown(true);
+            m_headerView->setStretchLastSection(true);
+            m_headerView->setDefaultAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+            m_headerView->setDefaultSectionSize(120);
+            m_headerView->setMinimumSectionSize(120);
+
+            if(selectionModel()) {
+                m_headerView->setSelectionModel(selectionModel());
+            }
+
+            connect(m_headerView, &QHeaderView::sectionResized,
+                    this, static_cast<void (DFileView::*)()>(&DFileView::update));
+            connect(m_headerView, &QHeaderView::sectionMoved,
+                    this, static_cast<void (DFileView::*)()>(&DFileView::update));
+        }
+
+        addHeaderWidget(m_headerView);
+
+        setIconSize(QSize(30, 30));
         setOrientation(QListView::TopToBottom, false);
     } else {
+        if(m_headerView) {
+            removeHeaderWidget(0);
+
+            m_headerView = Q_NULLPTR;
+        }
+
+        setIconSize(QSize(60, 60));
         setOrientation(QListView::LeftToRight, true);
     }
 }
@@ -124,11 +166,13 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
     menu->exec(mapToGlobal(event->pos()));
     menu->deleteLater();
     menu->deleteLater();
+
+    DFileView::contextMenuEvent(event);
 }
 
 void DFileView::wheelEvent(QWheelEvent *event)
 {
-    if(ctrlIsPressed) {
+    if(isIconViewMode() && ctrlIsPressed) {
         if(event->angleDelta().y() > 0) {
             setIconSize(iconSize() * 1.1);
         } else {

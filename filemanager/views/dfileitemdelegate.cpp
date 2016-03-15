@@ -1,12 +1,13 @@
 #include "dfileitemdelegate.h"
 #include "fileitem.h"
 #include "../app/global.h"
+#include "dfilesystemmodel.h"
 
 #include <QLabel>
 #include <QPainter>
 #include <QTextEdit>
 
-DFileItemDelegate::DFileItemDelegate(DListView *parent) :
+DFileItemDelegate::DFileItemDelegate(DFileView *parent) :
     QStyledItemDelegate(parent)
 {
     focus_item = new FileIconItem(parent->viewport());
@@ -38,12 +39,36 @@ void DFileItemDelegate::paint(QPainter *painter,
                               const QStyleOptionViewItem &option,
                               const QModelIndex &index) const
 {
-    paintIconItem(painter, option, index);
+    if(parent()->isIconViewMode()) {
+        paintIconItem(painter, option, index);
+    } else {
+        int column_count = parent()->model()->columnCount(index);
+        int column_x = parent()->columnWidth(0);
+
+        paintListItem(painter, option, index);
+
+        for(int i = 1; i < column_count; ++i) {
+            QStyleOptionViewItem opt;
+
+            opt.rect = option.rect;
+            opt.rect.setWidth(parent()->columnWidth(i));
+            opt.rect.moveLeft(column_x);
+
+            column_x += opt.rect.width();
+
+            QModelIndex tmp_index = parent()->model()->index(index.row(), i, index.parent());
+
+            paintListItem(painter, opt, tmp_index);
+        }
+    }
 }
 
 QSize DFileItemDelegate::sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const
 {
-    return parent()->iconSize() * 1.8;
+    if(parent()->isIconViewMode())
+        return parent()->iconSize() * 1.8;
+    else
+        return QSize(-1, 30);
 }
 
 QWidget *DFileItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &, const QModelIndex &index) const
@@ -100,11 +125,15 @@ void DFileItemDelegate::paintIconItem(QPainter *painter,
     QStyleOptionViewItem opt = option;
     initStyleOption(&opt, index);
 
+    /// init icon geomerty
+
     QRect icon_rect = opt.rect;
 
     icon_rect.setSize(parent()->iconSize());
     icon_rect.moveCenter(opt.rect.center());
     icon_rect.moveTop(opt.rect.top());
+
+    /// init file name geometry
 
     QRect label_rect = opt.rect;
 
@@ -114,10 +143,14 @@ void DFileItemDelegate::paintIconItem(QPainter *painter,
     QString str = index.data(Qt::DisplayRole).toString();
 
     if(str.isEmpty()) {
+        /// draw icon
+
         opt.icon.paint(painter, icon_rect);
 
         return;
     }
+
+    /// if has focus show all file name else show elide file name.
 
     if(opt.state & QStyle::State_HasFocus) {
         if(focus_index.isValid()) {
@@ -127,6 +160,8 @@ void DFileItemDelegate::paintIconItem(QPainter *painter,
         }
 
         int height = 0;
+
+        /// init file name text
 
         if(m_wordWrapMap.contains(str)) {
             str = m_wordWrapMap.value(str);
@@ -141,6 +176,8 @@ void DFileItemDelegate::paintIconItem(QPainter *painter,
         }
 
         if(height > label_rect.height()) {
+            /// use widget(FileIconItem) show file icon and file name label.
+
             focus_index = index;
 
             setEditorData(focus_item, index);
@@ -149,6 +186,8 @@ void DFileItemDelegate::paintIconItem(QPainter *painter,
             return;
         }
     } else {
+        /// init file name text
+
         if(m_elideMap.contains(str)) {
             str = m_elideMap.value(str);
         } else {
@@ -163,6 +202,8 @@ void DFileItemDelegate::paintIconItem(QPainter *painter,
         }
     }
 
+    /// draw background
+
     if((opt.state & QStyle::State_Selected) && opt.showDecorationSelected) {
         QPalette::ColorGroup cg = (opt.state & QStyle::State_Enabled)
                       ? QPalette::Normal : QPalette::Disabled;
@@ -172,6 +213,46 @@ void DFileItemDelegate::paintIconItem(QPainter *painter,
         painter->fillRect(opt.rect, backgroundColor);
     }
 
+    /// draw icon and file name label
+
     opt.icon.paint(painter, icon_rect);
     painter->drawText(label_rect, Qt::AlignHCenter, str);
+}
+
+void DFileItemDelegate::paintListItem(QPainter *painter,
+                                      const QStyleOptionViewItem &option,
+                                      const QModelIndex &index) const
+{
+    QStyleOptionViewItem opt = option;
+
+    initStyleOption(&opt, index);
+
+    /// draw background
+
+    if((opt.state & QStyle::State_Selected) && opt.showDecorationSelected) {
+        QPalette::ColorGroup cg = (opt.state & QStyle::State_Enabled)
+                      ? QPalette::Normal : QPalette::Disabled;
+        QColor backgroundColor = opt.palette.color(cg, (opt.state & QStyle::State_Selected)
+                                     ? QPalette::Highlight : QPalette::Window);
+
+        painter->fillRect(opt.rect, backgroundColor);
+    }
+
+    QRect name_rect = opt.rect;
+    QString str = index.data(Qt::DisplayRole).toString();
+
+    /// draw icon
+
+    if(!opt.icon.isNull()) {
+        QRect icon_rect = opt.rect;
+
+        icon_rect.setSize(parent()->iconSize());
+        opt.icon.paint(painter, icon_rect);
+
+        name_rect.setLeft(icon_rect.right() + 10);
+    }
+
+    /// draw file name label
+
+    painter->drawText(name_rect, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()), str);
 }

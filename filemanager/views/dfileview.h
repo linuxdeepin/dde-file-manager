@@ -8,6 +8,7 @@
 #include <QContextMenuEvent>
 
 class QFileSystemModel;
+class QHeaderView;
 class FileController;
 class FileMenuManager;
 
@@ -30,6 +31,10 @@ public:
 
     QString currentUrl() const;
 
+    bool isIconViewMode();
+
+    int columnWidth(int column) const;
+
 public slots:
     void cd(const QString &url);
     void switchListMode();
@@ -47,6 +52,7 @@ protected:
 private:
     FileController *m_controller;
     FileMenuManager* m_fileMenuManager;
+    QHeaderView *m_headerView = Q_NULLPTR;
 
     bool ctrlIsPressed = false;
 };
