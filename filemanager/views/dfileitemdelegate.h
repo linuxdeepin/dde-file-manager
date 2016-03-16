@@ -38,6 +38,8 @@ public:
                        const QStyleOptionViewItem &option,
                        const QModelIndex &index) const;
 
+    QList<QRect> paintGeomertyss(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+
     FileIconItem *focus_item;
 
     mutable QMap<QString, QString> m_elideMap;
