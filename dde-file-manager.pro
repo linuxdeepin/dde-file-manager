@@ -23,6 +23,7 @@ CONFIG += c++11 link_pkgconfig
 #DEFINES += QT_NO_DEBUG_OUTPUT
 DEFINES += QT_MESSAGELOGCONTEXT
 
+LIBS += -lmagic
 # Automating generation .qm files from .ts files
 # system($$PWD/desktop/translate_generation.sh)
 
@@ -92,7 +93,10 @@ HEADERS += \
     filemanager/dialogs/dialogmanager.h \
     filemanager/controllers/searchhistroymanager.h \
     filemanager/views/windowmanager.h \
-    filemanager/controllers/fileinfogatherer.h
+    filemanager/controllers/fileinfogatherer.h \
+    filemanager/shutil/desktopfile.h \
+    filemanager/shutil/fileutils.h \
+    filemanager/shutil/properties.h
 
 SOURCES += \
     filemanager/controllers/appcontroller.cpp \
@@ -146,6 +150,9 @@ SOURCES += \
     filemanager/dialogs/dialogmanager.cpp \
     filemanager/controllers/searchhistroymanager.cpp \
     filemanager/views/windowmanager.cpp \
-    filemanager/controllers/fileinfogatherer.cpp
+    filemanager/controllers/fileinfogatherer.cpp \
+    filemanager/shutil/desktopfile.cpp \
+    filemanager/shutil/fileutils.cpp \
+    filemanager/shutil/properties.cpp
 
 INCLUDEPATH += filemanager/models
