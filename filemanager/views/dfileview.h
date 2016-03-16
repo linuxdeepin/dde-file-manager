@@ -15,6 +15,8 @@ class FileMenuManager;
 DWIDGET_USE_NAMESPACE
 
 class DFileSystemModel;
+class DFileItemDelegate;
+
 class DFileView : public DListView
 {
     Q_OBJECT
@@ -28,6 +30,7 @@ public:
     void initConnects();
 
     DFileSystemModel *model() const;
+    DFileItemDelegate *itemDelegate() const;
 
     QString currentUrl() const;
 
@@ -54,6 +57,7 @@ protected:
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
     void keyReleaseEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
     void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
+    void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
 
 private:
     FileController *m_controller;

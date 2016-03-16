@@ -78,6 +78,11 @@ DFileSystemModel *DFileView::model() const
     return qobject_cast<DFileSystemModel*>(DListView::model());
 }
 
+DFileItemDelegate *DFileView::itemDelegate() const
+{
+    return qobject_cast<DFileItemDelegate*>(DListView::itemDelegate());
+}
+
 QString DFileView::currentUrl() const
 {
     return model()->getUrlByIndex(rootIndex());
@@ -231,4 +236,35 @@ void DFileView::showEvent(QShowEvent *event)
     DListView::showEvent(event);
 
     setFocus();
+}
+
+void DFileView::mousePressEvent(QMouseEvent *event)
+{
+    if(event->button() == Qt::LeftButton) {
+        QModelIndex index = indexAt(event->pos());
+
+        if(selectionModel()->selectedIndexes().contains(index)) {
+            setDragEnabled(true);
+        } else {
+            setDragEnabled(false);
+
+            QStyleOptionViewItem option = viewOptions();
+
+            option.rect = visualRect(index);
+
+            if(hasFocus() && index == currentIndex())
+                option.state |= QStyle::State_HasFocus;
+
+            const QList<QRect> &geometry_list = itemDelegate()->paintGeomertyss(option, index);
+
+            for(const QRect &rect : geometry_list) {
+                if(rect.contains(event->pos())) {
+                    setDragEnabled(true);
+                    break;
+                }
+            }
+        }
+    }
+
+    DListView::mousePressEvent(event);
 }

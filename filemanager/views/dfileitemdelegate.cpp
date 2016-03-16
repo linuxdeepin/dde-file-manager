@@ -116,13 +116,6 @@ void DFileItemDelegate::paintIconItem(QPainter *painter,
     icon_rect.moveCenter(opt.rect.center());
     icon_rect.moveTop(opt.rect.top());
 
-    /// init file name geometry
-
-    QRect label_rect = opt.rect;
-
-    label_rect.setTop(icon_rect.bottom() + 10);
-    painter->setFont(opt.font);
-
     QString str = index.data(Qt::DisplayRole).toString();
 
     if(str.isEmpty()) {
@@ -132,6 +125,13 @@ void DFileItemDelegate::paintIconItem(QPainter *painter,
 
         return;
     }
+
+    /// init file name geometry
+
+    QRect label_rect = opt.rect;
+
+    label_rect.setTop(icon_rect.bottom() + 10);
+    painter->setFont(opt.font);
 
     /// if has focus show all file name else show elide file name.
 
@@ -227,14 +227,12 @@ void DFileItemDelegate::paintListItem(QPainter *painter,
 
     /// draw icon
 
-    if(!opt.icon.isNull()) {
-        QRect icon_rect = option.rect;
+    QRect icon_rect = option.rect;
 
-        icon_rect.setSize(parent()->iconSize());
-        opt.icon.paint(painter, icon_rect);
+    icon_rect.setSize(parent()->iconSize());
+    opt.icon.paint(painter, icon_rect);
 
-        column_x = icon_rect.right() + 10;
-    }
+    column_x = icon_rect.right() + 10;
 
     QRect rect = option.rect;
 
@@ -267,4 +265,129 @@ void DFileItemDelegate::paintListItem(QPainter *painter,
         painter->drawText(rect, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()),
                           index.data(role).toString());
     }
+}
+
+QList<QRect> DFileItemDelegate::paintGeomertyss(const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    QList<QRect> geomertys;
+
+    if(parent()->isIconViewMode()) {
+        QStyleOptionViewItem opt = option;
+        initStyleOption(&opt, index);
+
+        /// init icon geomerty
+
+        QRect icon_rect = opt.rect;
+
+        icon_rect.setSize(parent()->iconSize());
+        icon_rect.moveCenter(opt.rect.center());
+        icon_rect.moveTop(opt.rect.top());
+
+        QString str = index.data(Qt::DisplayRole).toString();
+
+        if(str.isEmpty()) {
+            geomertys << icon_rect;
+
+            return geomertys;
+        }
+
+        /// init file name geometry
+
+        QRect label_rect = opt.rect;
+
+        label_rect.setTop(icon_rect.bottom() + 10);
+
+        /// if has focus show all file name else show elide file name.
+
+        if(opt.state & QStyle::State_HasFocus) {
+            int height = 0;
+
+            /// init file name text
+
+            if(m_wordWrapMap.contains(str)) {
+                str = m_wordWrapMap.value(str);
+                height = m_textHeightMap.value(str);
+            } else {
+                QString wordWrap_str = Global::wordWrapText(str, label_rect.width(), opt.fontMetrics,
+                                                            QTextOption::WrapAtWordBoundaryOrAnywhere, &height);
+
+                m_wordWrapMap[str] = wordWrap_str;
+                m_textHeightMap[wordWrap_str] = height;
+                str = wordWrap_str;
+            }
+
+            if(height > label_rect.height()) {
+                geomertys << QRect(label_rect.topLeft(), QSize(label_rect.width(), height));
+
+                return geomertys;
+            }
+        } else {
+            /// init file name text
+
+            if(m_elideMap.contains(str)) {
+                str = m_elideMap.value(str);
+            } else {
+                QString elide_str = Global::elideText(str, label_rect.size(),
+                                                      opt.fontMetrics,
+                                                      QTextOption::WrapAtWordBoundaryOrAnywhere,
+                                                      opt.textElideMode);
+
+                m_elideMap[str] = elide_str;
+
+                str = elide_str;
+            }
+        }
+
+        /// draw icon and file name label
+
+        geomertys << opt.fontMetrics.boundingRect(label_rect, Qt::AlignHCenter, str);
+    } else {
+        const QList<int> &columnRoleList = parent()->columnRoleList();
+
+        int column_x = 0;
+
+        /// draw icon
+
+        QRect icon_rect = option.rect;
+
+        icon_rect.setSize(parent()->iconSize());
+
+        geomertys << icon_rect;
+
+        column_x = icon_rect.right() + 10;
+
+        QRect rect = option.rect;
+
+        rect.setLeft(column_x);
+
+        column_x = parent()->columnWidth(0);
+
+        rect.setRight(column_x);
+
+        int role = columnRoleList.at(0);
+
+        /// draw file name label
+
+        geomertys << option.fontMetrics.boundingRect(rect, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()),
+                                                     index.data(role).toString());
+
+        for(int i = 1; i < columnRoleList.count(); ++i) {
+            QRect rect = option.rect;
+
+            rect.setLeft(column_x);
+
+            column_x += parent()->columnWidth(i);
+
+            rect.setRight(column_x);
+
+            int role = columnRoleList.at(i);
+
+            /// draw file name label
+
+            geomertys << option.fontMetrics.boundingRect(rect, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()),
+                                                         index.data(role).toString());
+        }
+    }
+
+    return geomertys;
 }
