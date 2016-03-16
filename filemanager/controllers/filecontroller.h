@@ -4,6 +4,7 @@
 #include <QObject>
 
 class FileInfoGatherer;
+class IconProvider;
 
 class FileController : public QObject
 {
@@ -14,6 +15,7 @@ public:
     ~FileController();
 
     void initGatherer();
+    void initIconProvider();
     void initConnect();
 
 public slots:
@@ -22,6 +24,8 @@ public slots:
 private:
     FileInfoGatherer *gatherer = Q_NULLPTR;
     QThread *gathererThread = Q_NULLPTR;
+
+    IconProvider *iconProvider = Q_NULLPTR;
 };
 
 #endif // FILECONTROLLER_H

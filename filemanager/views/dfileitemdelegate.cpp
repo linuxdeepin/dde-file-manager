@@ -42,24 +42,7 @@ void DFileItemDelegate::paint(QPainter *painter,
     if(parent()->isIconViewMode()) {
         paintIconItem(painter, option, index);
     } else {
-        int column_count = parent()->model()->columnCount(index);
-        int column_x = parent()->columnWidth(0);
-
         paintListItem(painter, option, index);
-
-        for(int i = 1; i < column_count; ++i) {
-            QStyleOptionViewItem opt;
-
-            opt.rect = option.rect;
-            opt.rect.setWidth(parent()->columnWidth(i));
-            opt.rect.moveLeft(column_x);
-
-            column_x += opt.rect.width();
-
-            QModelIndex tmp_index = parent()->model()->index(index.row(), i, index.parent());
-
-            paintListItem(painter, opt, tmp_index);
-        }
     }
 }
 
@@ -223,6 +206,10 @@ void DFileItemDelegate::paintListItem(QPainter *painter,
                                       const QStyleOptionViewItem &option,
                                       const QModelIndex &index) const
 {
+    const QList<int> &columnRoleList = parent()->columnRoleList();
+
+    int column_x = 0;
+
     QStyleOptionViewItem opt = option;
 
     initStyleOption(&opt, index);
@@ -231,28 +218,53 @@ void DFileItemDelegate::paintListItem(QPainter *painter,
 
     if((opt.state & QStyle::State_Selected) && opt.showDecorationSelected) {
         QPalette::ColorGroup cg = (opt.state & QStyle::State_Enabled)
-                      ? QPalette::Normal : QPalette::Disabled;
+                ? QPalette::Normal : QPalette::Disabled;
         QColor backgroundColor = opt.palette.color(cg, (opt.state & QStyle::State_Selected)
-                                     ? QPalette::Highlight : QPalette::Window);
+                                                   ? QPalette::Highlight : QPalette::Window);
 
         painter->fillRect(opt.rect, backgroundColor);
     }
 
-    QRect name_rect = opt.rect;
-    QString str = index.data(Qt::DisplayRole).toString();
-
     /// draw icon
 
     if(!opt.icon.isNull()) {
-        QRect icon_rect = opt.rect;
+        QRect icon_rect = option.rect;
 
         icon_rect.setSize(parent()->iconSize());
         opt.icon.paint(painter, icon_rect);
 
-        name_rect.setLeft(icon_rect.right() + 10);
+        column_x = icon_rect.right() + 10;
     }
+
+    QRect rect = option.rect;
+
+    rect.setLeft(column_x);
+
+    column_x = parent()->columnWidth(0);
+
+    rect.setRight(column_x);
+
+    int role = columnRoleList.at(0);
 
     /// draw file name label
 
-    painter->drawText(name_rect, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()), str);
+    painter->drawText(rect, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()),
+                      index.data(role).toString());
+
+    for(int i = 1; i < columnRoleList.count(); ++i) {
+        QRect rect = option.rect;
+
+        rect.setLeft(column_x);
+
+        column_x += parent()->columnWidth(i);
+
+        rect.setRight(column_x);
+
+        int role = columnRoleList.at(i);
+
+        /// draw file name label
+
+        painter->drawText(rect, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()),
+                          index.data(role).toString());
+    }
 }

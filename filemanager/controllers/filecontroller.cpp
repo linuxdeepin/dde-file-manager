@@ -1,6 +1,7 @@
 #include "filecontroller.h"
 #include "../app/global.h"
 #include "fileinfogatherer.h"
+#include "../shutil/iconprovider.h"
 
 #include <QFileIconProvider>
 
@@ -9,12 +10,16 @@ FileController::FileController(QObject *parent) : QObject(parent)
     qRegisterMetaType<FileInfoList>("FileInfoList");
 
     initGatherer();
+    initIconProvider();
     initConnect();
 }
 
 FileController::~FileController()
 {
-
+    gathererThread->terminate();
+    gathererThread->wait();
+    gathererThread->quit();
+    gatherer->deleteLater();
 }
 
 void FileController::initGatherer()
@@ -24,6 +29,11 @@ void FileController::initGatherer()
 
     gatherer->moveToThread(gathererThread);
     gathererThread->start();
+}
+
+void FileController::initIconProvider()
+{
+    iconProvider = new IconProvider(this);
 }
 
 void FileController::initConnect()
@@ -38,12 +48,7 @@ void FileController::initConnect()
 
 void FileController::getIcon(const QString &url) const
 {
-    QFileIconProvider prrovider;
-
-    QIcon icon = prrovider.icon(QFileInfo(url));
-
-    if(icon.isNull())
-        icon = prrovider.icon(QFileIconProvider::File);
+    QIcon icon = iconProvider->icon(url);
 
     emit fileSignalManager->iconChanged(url, icon);
 }
