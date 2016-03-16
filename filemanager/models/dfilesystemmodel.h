@@ -18,7 +18,7 @@ public:
         FilePathRole = Qt::UserRole + 1,
         FileNameRole = Qt::UserRole + 2,
         FileSizeRole = Qt::UserRole + 3,
-        FileTypeRole = Qt::UserRole + 4,
+        FileMimeTypeRole = Qt::UserRole + 4,
         FileOwnerRole = Qt::UserRole + 5,
         FileLastModified = Qt::UserRole + 6,
         FileLastRead = Qt::UserRole + 7,
@@ -38,6 +38,8 @@ public:
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const Q_DECL_OVERRIDE;
+
+    int headerDataToRole(QVariant data) const;
 
     bool canFetchMore(const QModelIndex & parent) const Q_DECL_OVERRIDE;
     void fetchMore(const QModelIndex & parent) Q_DECL_OVERRIDE;

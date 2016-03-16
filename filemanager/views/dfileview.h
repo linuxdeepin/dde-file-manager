@@ -34,6 +34,9 @@ public:
     bool isIconViewMode();
 
     int columnWidth(int column) const;
+    int columnCount() const;
+
+    QList<int> columnRoleList() const;
 
 public slots:
     void cd(const QString &url);
@@ -41,6 +44,9 @@ public slots:
 
 signals:
     void currentUrlChanged(QString url);
+
+private slots:
+    void moveColumnRole(int logicalIndex, int oldVisualIndex, int newVisualIndex);
 
 protected:
     void contextMenuEvent(QContextMenuEvent * event) Q_DECL_OVERRIDE;
@@ -53,6 +59,9 @@ private:
     FileController *m_controller;
     FileMenuManager* m_fileMenuManager;
     QHeaderView *m_headerView = Q_NULLPTR;
+
+    QList<int> logicalIndexs;
+    QList<int> columnRoles;
 
     bool ctrlIsPressed = false;
 };

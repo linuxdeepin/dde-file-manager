@@ -159,7 +159,14 @@ QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
         break;
     case Qt::TextAlignmentRole:
         return Qt::AlignVCenter;
-        break;
+    case FileLastModified:
+        return indexNode->fileInfo.lastModified().toString();
+    case FileSizeRole:
+        return indexNode->fileInfo.size();
+    case FileMimeTypeRole:
+        return indexNode->fileInfo.mimeTypeName();
+    case FileCreated:
+        return indexNode->fileInfo.created().toString();
     }
 
     return QVariant();
@@ -184,6 +191,26 @@ QVariant DFileSystemModel::headerData(int section, Qt::Orientation, int role) co
     }
 
     return QVariant();
+}
+
+int DFileSystemModel::headerDataToRole(QVariant data) const
+{
+    if(!data.isValid())
+        return -1;
+
+    if(data == tr("Name")) {
+        return FileNameRole;
+    } else if(data == tr("Date Modified")) {
+        return FileLastModified;
+    } else if(data == tr("Size")) {
+        return FileSizeRole;
+    } else if(data == tr("Type")) {
+        return FileMimeTypeRole;
+    } else if(data == tr("Date Created")) {
+        return FileCreated;
+    }
+
+    return -1;
 }
 
 void DFileSystemModel::fetchMore(const QModelIndex &parent)

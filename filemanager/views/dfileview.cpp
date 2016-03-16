@@ -31,7 +31,6 @@ void DFileView::initUI()
     setOrientation(QListView::LeftToRight, true);
     setStyleSheet("background: white");
     setIconSize(QSize(60, 60));
-
     setTextElideMode(Qt::ElideMiddle);
     setDragEnabled(true);
     setDragDropMode(QAbstractItemView::DragDrop);
@@ -91,7 +90,17 @@ bool DFileView::isIconViewMode()
 
 int DFileView::columnWidth(int column) const
 {
-    return m_headerView ? m_headerView->sectionSize(column) : 100;
+    return m_headerView ? m_headerView->sectionSize(logicalIndexs.value(column)) : 100;
+}
+
+int DFileView::columnCount() const
+{
+    return m_headerView ? m_headerView->count() : 1;
+}
+
+QList<int> DFileView::columnRoleList() const
+{
+    return columnRoles;
 }
 
 void DFileView::cd(const QString &url)
@@ -121,7 +130,6 @@ void DFileView::switchListMode()
             m_headerView->setHighlightSections(true);
             m_headerView->setSectionsClickable(true);
             m_headerView->setSortIndicatorShown(true);
-            m_headerView->setStretchLastSection(true);
             m_headerView->setDefaultAlignment(Qt::AlignLeft | Qt::AlignVCenter);
             m_headerView->setDefaultSectionSize(120);
             m_headerView->setMinimumSectionSize(120);
@@ -133,13 +141,19 @@ void DFileView::switchListMode()
             connect(m_headerView, &QHeaderView::sectionResized,
                     this, static_cast<void (DFileView::*)()>(&DFileView::update));
             connect(m_headerView, &QHeaderView::sectionMoved,
-                    this, static_cast<void (DFileView::*)()>(&DFileView::update));
+                    this, &DFileView::moveColumnRole);
+        }
+
+        for(int i = 0; i < m_headerView->count(); ++i) {
+            columnRoles << model()->headerDataToRole(model()->headerData(i, m_headerView->orientation(), Qt::DisplayRole));
+            logicalIndexs << i;
         }
 
         addHeaderWidget(m_headerView);
 
         setIconSize(QSize(30, 30));
         setOrientation(QListView::TopToBottom, false);
+        setSpacing(0);
     } else {
         if(m_headerView) {
             removeHeaderWidget(0);
@@ -147,9 +161,20 @@ void DFileView::switchListMode()
             m_headerView = Q_NULLPTR;
         }
 
+        columnRoles.clear();
+
         setIconSize(QSize(60, 60));
         setOrientation(QListView::LeftToRight, true);
+        setSpacing(10);
     }
+}
+
+void DFileView::moveColumnRole(int /*logicalIndex*/, int oldVisualIndex, int newVisualIndex)
+{
+    columnRoles.move(oldVisualIndex, newVisualIndex);
+    logicalIndexs.move(oldVisualIndex, newVisualIndex);
+
+    update();
 }
 
 void DFileView::contextMenuEvent(QContextMenuEvent *event)
