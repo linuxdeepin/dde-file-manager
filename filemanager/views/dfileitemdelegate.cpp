@@ -6,12 +6,14 @@
 #include <QLabel>
 #include <QPainter>
 #include <QTextEdit>
+#include <QLineEdit>
 
 DFileItemDelegate::DFileItemDelegate(DFileView *parent) :
     QStyledItemDelegate(parent)
 {
     focus_item = new FileIconItem(parent->viewport());
     focus_item->setAttribute(Qt::WA_TransparentForMouseEvents);
+    focus_item->edit->setReadOnly(true);
     focus_item->canDeferredDelete = false;
     focus_item->icon->setFixedSize(parent->iconSize());
     /// prevent flash when first call show()
@@ -56,46 +58,135 @@ QSize DFileItemDelegate::sizeHint(const QStyleOptionViewItem &, const QModelInde
 
 QWidget *DFileItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &, const QModelIndex &index) const
 {
-    FileIconItem *item = new FileIconItem(parent);
+   if(this->parent()->isIconViewMode()) {
+       FileIconItem *item = new FileIconItem(parent);
 
-    editing_index = index;
+       editing_index = index;
 
-    connect(item, &FileIconItem::destroyed, this, [this] {
-        editing_index = QModelIndex();
-    });
+       connect(item, &FileIconItem::destroyed, this, [this] {
+           editing_index = QModelIndex();
+       });
 
-    return item;
+       return item;
+   } else {
+       QLineEdit *edit = new QLineEdit(parent);
+
+       editing_index = index;
+
+       connect(edit, &QLineEdit::destroyed, this, [this] {
+           editing_index = QModelIndex();
+       });
+
+       edit->setFrame(false);
+       edit->setAttribute(Qt::WA_TranslucentBackground);
+       edit->setStyleSheet("background: transparent;");
+       edit->setContentsMargins(-3, 0, 0, 0);
+
+       return edit;
+   }
 }
 
 void DFileItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &) const
 {
-    editor->move(option.rect.topLeft());
-    editor->setFixedWidth(option.rect.width());
+    if(parent()->isIconViewMode()) {
+        editor->move(option.rect.topLeft());
+        editor->setFixedWidth(option.rect.width());
 
-    FileIconItem *item = static_cast<FileIconItem*>(editor);
+        FileIconItem *item = qobject_cast<FileIconItem*>(editor);
 
-    if(!item)
-        return;
+        if(!item)
+            return;
 
-    item->icon->setFixedSize(parent()->iconSize());
+        item->icon->setFixedSize(parent()->iconSize());
+    } else {
+        const QList<int> &columnRoleList = parent()->columnRoleList();
+
+        int column_x = 0;
+
+        /// draw icon
+
+        QRect icon_rect = option.rect;
+
+        icon_rect.setSize(parent()->iconSize());
+
+        column_x = icon_rect.right() + 10;
+
+        QRect rect = option.rect;
+
+        rect.setLeft(column_x);
+
+        column_x = parent()->columnWidth(0);
+
+        rect.setRight(column_x);
+
+        int role = columnRoleList.at(0);
+
+        if(role == DFileSystemModel::FileNameRole) {
+            editor->setGeometry(rect);
+        }
+
+        for(int i = 1; i < columnRoleList.count(); ++i) {
+            QRect rect = option.rect;
+
+            rect.setLeft(column_x);
+
+            column_x += parent()->columnWidth(i);
+
+            rect.setRight(column_x);
+
+            int role = columnRoleList.at(i);
+
+            if(role == DFileSystemModel::FileNameRole) {
+                editor->setGeometry(rect);
+                return;
+            }
+        }
+    }
 }
 
 void DFileItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
-    FileIconItem *item = static_cast<FileIconItem*>(editor);
+    if(parent()->isIconViewMode()) {
+        FileIconItem *item = qobject_cast<FileIconItem*>(editor);
 
-    if(!item)
-        return;
+        if(!item)
+            return;
 
-    QStyleOptionViewItem opt;
+        QStyleOptionViewItem opt;
 
-    initStyleOption(&opt, index);
+        initStyleOption(&opt, index);
 
-    item->icon->setPixmap(opt.icon.pixmap(parent()->iconSize()));
-    item->edit->setPlainText(index.data().toString());
-    item->edit->setAlignment(Qt::AlignHCenter);
-    item->edit->document()->setTextWidth(parent()->iconSize().width() * 1.8);
-    item->edit->setFixedSize(item->edit->document()->size().toSize());
+        item->icon->setPixmap(opt.icon.pixmap(parent()->iconSize()));
+        item->edit->setPlainText(index.data().toString());
+        item->edit->setAlignment(Qt::AlignHCenter);
+        item->edit->document()->setTextWidth(parent()->iconSize().width() * 1.8);
+        item->edit->setFixedSize(item->edit->document()->size().toSize());
+
+        if(item->edit->isReadOnly())
+            return;
+
+        int endPos = item->edit->toPlainText().lastIndexOf('.');
+
+        if(endPos == -1) {
+            item->edit->selectAll();
+        } else {
+            QTextCursor cursor = item->edit->textCursor();
+
+            cursor.setPosition(0);
+            cursor.setPosition(endPos, QTextCursor::KeepAnchor);
+
+            item->edit->setTextCursor(cursor);
+        }
+    } else {
+        QLineEdit *edit = qobject_cast<QLineEdit*>(editor);
+
+        if(!edit)
+            return;
+
+        const QString &text = index.data(DFileSystemModel::FileNameRole).toString();
+
+        edit->setText(text);
+    }
 }
 
 void DFileItemDelegate::paintIconItem(QPainter *painter,
@@ -227,14 +318,14 @@ void DFileItemDelegate::paintListItem(QPainter *painter,
 
     /// draw icon
 
-    QRect icon_rect = option.rect;
+    QRect icon_rect = opt.rect;
 
     icon_rect.setSize(parent()->iconSize());
     opt.icon.paint(painter, icon_rect);
 
     column_x = icon_rect.right() + 10;
 
-    QRect rect = option.rect;
+    QRect rect = opt.rect;
 
     rect.setLeft(column_x);
 
@@ -244,15 +335,17 @@ void DFileItemDelegate::paintListItem(QPainter *painter,
 
     int role = columnRoleList.at(0);
 
+    if(index != editing_index || role != DFileSystemModel::FileNameRole) {
     /// draw file name label
 
     painter->drawText(rect, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()),
                       index.data(role).toString());
+    }
 
     for(int i = 1; i < columnRoleList.count(); ++i) {
-        QRect rect = option.rect;
+        QRect rect = opt.rect;
 
-        rect.setLeft(column_x);
+        rect.setLeft(column_x + 5);
 
         column_x += parent()->columnWidth(i);
 
@@ -260,10 +353,12 @@ void DFileItemDelegate::paintListItem(QPainter *painter,
 
         int role = columnRoleList.at(i);
 
-        /// draw file name label
+        if(index != editing_index || role != DFileSystemModel::FileNameRole) {
+            /// draw file name label
 
-        painter->drawText(rect, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()),
-                          index.data(role).toString());
+            painter->drawText(rect, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()),
+                              index.data(role).toString());
+        }
     }
 }
 
@@ -362,4 +457,22 @@ QList<QRect> DFileItemDelegate::paintGeomertyss(const QStyleOptionViewItem &opti
     }
 
     return geomertys;
+}
+
+bool DFileItemDelegate::eventFilter(QObject *object, QEvent *event)
+{
+    if(event->type() == QEvent::Show) {
+        QLineEdit *edit = qobject_cast<QLineEdit*>(object);
+
+        if(edit) {
+            int endPos = edit->text().lastIndexOf('.');
+
+            if(endPos == -1)
+                edit->selectAll();
+            else
+                edit->setSelection(0, endPos);
+        }
+    }
+
+    return QStyledItemDelegate::eventFilter(object, event);
 }

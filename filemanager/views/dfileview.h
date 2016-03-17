@@ -37,6 +37,7 @@ public:
     bool isIconViewMode();
 
     int columnWidth(int column) const;
+    void setColumnWidth(int column, int width);
     int columnCount() const;
 
     QList<int> columnRoleList() const;

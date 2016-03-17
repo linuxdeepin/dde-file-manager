@@ -523,13 +523,18 @@ FileIconItem::FileIconItem(QWidget *parent) :
     edit = new QTextEdit;
 
     icon->setAlignment(Qt::AlignCenter);
+    icon->setFrameShape(QFrame::NoFrame);
+    icon->setStyleSheet("background: transparent");
     edit->setWordWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
     edit->setAlignment(Qt::AlignHCenter);
     edit->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     edit->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    edit->setFrameShape(QFrame::NoFrame);
 
     layout()->addWidget(icon, 0, Qt::AlignHCenter);
     addWidget(edit);
+    setFrameShape(QFrame::NoFrame);
+    setFocusProxy(edit);
 }
 
 bool FileIconItem::event(QEvent *ee)
