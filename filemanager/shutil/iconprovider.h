@@ -26,7 +26,9 @@ signals:
 public slots:
     void setTheme(const QString &themeName);
     void setCurrentTheme();
-    QIcon icon(const QString& file);
+
+    QIcon getFileIcon(const QString& file);
+    QIcon getDesktopIcon(const QString& iconName, int size);
 private:
     QIcon findIcon(const QString& file);
     QIcon findMimeIcon(const QString& file);
@@ -34,6 +36,7 @@ private:
 private:
     QHash<QString,QIcon> m_mimeIcons;
     QHash<QString,QIcon> m_folderIcons;
+    QHash<QString,QIcon> m_desktopIcons;
     QCache<QString,QIcon> m_icons;
 
     QHash<QString,QString> m_mimeGlob;

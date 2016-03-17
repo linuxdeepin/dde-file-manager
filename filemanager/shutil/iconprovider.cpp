@@ -243,16 +243,37 @@ void IconProvider::setCurrentTheme()
     QIcon::setThemeName(temp);
 }
 
-QIcon IconProvider::icon(const QString &file)
+
+QIcon IconProvider::getFileIcon(const QString &file)
 {
-    QFileInfo info(file);
-    if (info.suffix() == "desktop"){
-        DesktopFile desktopFile(file);
-        return getIconPixmap(desktopFile.getIcon());
+    return findIcon(file);
+}
+
+QIcon IconProvider::getDesktopIcon(const QString &iconName, int size)
+{
+    if (m_desktopIcons.contains(iconName)){
+        return m_desktopIcons.value(iconName);
     }else{
-        return findIcon(file);
+        QPixmap pixmap(size, size);
+        if (iconName.startsWith("data:image/")){
+            // iconPath is a string representing an inline image.
+            QStringList strs = iconName.split("base64,");
+            if (strs.length() == 2) {
+                QByteArray data = QByteArray::fromBase64(strs.at(1).toLatin1());
+                pixmap.loadFromData(data);
+            }
+            return QIcon(pixmap);
+        }else {
+            // try to read the iconPath as a icon name.
+            QString path = getThemeIconPath(iconName);
+            qDebug() << path << path.isEmpty();
+            if (path.isEmpty())
+                path = getThemeIconPath("application-default-icon");
+            return QIcon(path);
+        }
     }
 }
+
 
 QIcon IconProvider::findIcon(const QString &file)
 {

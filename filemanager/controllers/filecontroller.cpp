@@ -48,7 +48,7 @@ void FileController::initConnect()
 
 void FileController::getIcon(const QString &url) const
 {
-    QIcon icon = iconProvider->icon(url);
+    QIcon icon = iconProvider->getFileIcon(url);
 
     emit fileSignalManager->iconChanged(url, icon);
 }
