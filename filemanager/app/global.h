@@ -41,7 +41,7 @@
 
 #if QT_VERSION >= 0x050500
 #define TIMER_SINGLESHOT(Time, Code, captured...){ \
-    QTimer::singleShot(Time, [timer, captured] {Code});\
+    QTimer::singleShot(Time, [captured] {Code});\
 }
 #else
 #define TIMER_SINGLESHOT(Time, Code, captured...){ \
