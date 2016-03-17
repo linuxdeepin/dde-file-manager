@@ -11,17 +11,21 @@ QWigdet{
 }
 
 QFrame#TitleBar{
-    background-color: #c0c0c0;
+    background-color: #e9eaf0;
     border-bottom: 1px solid gray;
 }
 
 QListWidget#ListWidget{
     background-color: transparent;
+    selection-background-color: transparent;
+    selection-color: transparent;
     padding-left: 0px;
 }
 
 QListWidget#ListWidget::item{
     padding-left: 0px;
+    selection-background-color: transparent;
+    selection-color: transparent;
 }
 
 QListWidget#ListWidget::icon{
@@ -427,7 +431,58 @@ QPushButton:disabled{
     background-color: gray;
 }
 
+QPushButton#backButton{
+    background-color:white;
+    border: 1px;
+    color: black;
+    border-radius: 2px;
+}
 
+QPushButton#backButton:hover{
+    background-color:#2ca7f8;
+}
+
+QPushButton#forwardButton:hover{
+    background-color:#2ca7f8;
+}
+
+QPushButton#forwardButton{
+    background-color:white;
+    border: 1px;
+    color: black;
+    border-radius: 2px;
+}
+
+/* ******************DCrumbButton****************** */
+QFrame#DCrumbWidget{
+    background-color:white;
+}
+
+QPushButton#DCrumbButton{
+    background-color:transparent;
+    border: 1px;
+    color: black;
+    padding: 16px 20px;
+    text-align: left;
+}
+
+QPushButton#DCrumbButton:hover{
+    background-color: transparent;
+}
+
+QPushButton#DCrumbButton:checked{
+    background-color: #2ca7f8;
+    color: white;
+}
+/* ******************End of DCrumbButton****************** */
+
+/* ******************DSearchBar****************** */
+QLineEdit#DSearchBar{
+    border-radius: 2px;
+    background-color: #ffffff;
+    border: solid 1px rgba(0, 0, 0, 0.1);
+}
+/* ******************End of DSearchBar****************** */
 QPushButton#DCheckableButton{
     background-color:transparent;
     border: none;

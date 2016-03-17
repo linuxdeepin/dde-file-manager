@@ -6,6 +6,7 @@
 #include "dsearchbar.h"
 #include "dtabbar.h"
 #include "../app/global.h"
+#include "dcrumbwidget.h"
 #include <QDebug>
 
 const int DToolBar::ButtonHeight = 20;
@@ -47,7 +48,13 @@ void DToolBar::initAddressToolBar()
     m_addressToolBar->setFixedHeight(40);
 
     m_backButton = new DStateButton(":/icons/images/icons/backward_normal.png", this);
+    m_backButton->setObjectName("backButton");
+    m_backButton->setFixedWidth(25);
+    m_backButton->setFixedHeight(20);
     m_forwardButton = new DStateButton(":/icons/images/icons/forward_normal.png", this);
+    m_forwardButton->setObjectName("forwardButton");
+    m_forwardButton->setFixedWidth(25);
+    m_forwardButton->setFixedHeight(20);
     m_upButton = new DStateButton(":/images/images/dark/appbar.arrow.up.png", this);
     m_searchButton = new DStateButton(":/images/images/dark/appbar.magnify.png", this);
     m_refreshButton = new DStateButton(":/images/images/dark/appbar.refresh.png", this);
@@ -55,17 +62,19 @@ void DToolBar::initAddressToolBar()
     m_searchBar = new DSearchBar;
     m_searchBar->setPlaceholderText("Enter address");
     m_searchBar->setAlignment(Qt::AlignHCenter);
-    m_tabBar = new DTabBar;
+
+    m_crumbWidget = new DCrumbWidget;
 
     QHBoxLayout* mainLayout = new QHBoxLayout;
     mainLayout->addWidget(m_backButton);
     mainLayout->addWidget(m_forwardButton);
     mainLayout->addWidget(m_upButton);
-    mainLayout->addWidget(m_tabBar);
+    mainLayout->addWidget(m_crumbWidget);
     mainLayout->addWidget(m_searchBar);
     mainLayout->addWidget(m_searchButton);
     mainLayout->addWidget(m_refreshButton);
     mainLayout->setContentsMargins(5, 5, 5, 5);
+    mainLayout->setSpacing(0);
     m_addressToolBar->setLayout(mainLayout);
 }
 
@@ -88,9 +97,6 @@ void DToolBar::initContollerToolBar()
                                           ":/images/images/dark/appbar.list.png",
                                           this);
     QHBoxLayout* mainLayout = new QHBoxLayout;
-    //mainLayout->addWidget(m_newFolderButton);
-    //mainLayout->addWidget(m_deleteFileButton);
-    //mainLayout->addStretch();
     mainLayout->addWidget(m_layoutButton);
     mainLayout->addWidget(m_sortButton);
     mainLayout->addWidget(m_hideShowButton);
@@ -111,11 +117,12 @@ void DToolBar::initConnect()
     //search bar return pressed --> searchBarTextEntered
     connect(m_searchBar, SIGNAL(returnPressed()), this, SLOT(searchBarTextEntered()));
     //tab bar clicked --> tabBarClicked
-    connect(m_tabBar, SIGNAL(tabBarClicked(int)), this, SLOT(tabBarClicked(int)));
+    connect(m_crumbWidget, &DCrumbWidget::crumbSelected, this, &DToolBar::crumbSelected);
     //up button released --> upButtonClicked
     connect(m_upButton, SIGNAL(released()), this, SLOT(upButtonClicked()));
     connect(m_refreshButton, &DStateButton::clicked, this, &DToolBar::refreshButtonClicked);
     connect(m_searchBar, SIGNAL(searchBarFocused()), this, SLOT(searchBarActivated()));
+    connect(fileSignalManager, &FileSignalManager::currentUrlChanged, this, &DToolBar::crumbChanged);
 }
 
 DStateButton::ButtonState DToolBar::getLayoutbuttonState()
@@ -133,20 +140,20 @@ void DToolBar::searchBarSwitched()
     m_switchState = !m_switchState;
     if(m_switchState)
     {
-        m_tabBar->hide();
+        m_crumbWidget->hide();
         m_searchBar->setAlignment(Qt::AlignLeft);
         m_searchBar->clear();
     }
     else
     {
-        m_tabBar->show();
+        m_crumbWidget->show();
         m_searchBar->setAlignment(Qt::AlignHCenter);
     }
 }
 
 void DToolBar::searchBarActivated()
 {
-    m_tabBar->hide();
+    m_crumbWidget->hide();
     m_searchBar->setAlignment(Qt::AlignLeft);
     m_searchBar->clear();
     QAction * action = m_searchBar->setClearAction();
@@ -156,7 +163,7 @@ void DToolBar::searchBarActivated()
 
 void DToolBar::searchBarDeactivated()
 {
-    m_tabBar->show();
+    m_crumbWidget->show();
     m_searchBar->clear();
     m_searchBar->setAlignment(Qt::AlignHCenter);
     QAction * action = m_searchBar->removeClearAction();
@@ -174,23 +181,20 @@ void DToolBar::searchBarDeactivated()
 void DToolBar::searchBarTextEntered()
 {
     QString path = m_searchBar->text();
-    m_tabBar->setTabBarPath(path);
-    emit fileSignalManager->currentUrlChanged(QUrl::fromLocalFile(path).toString());
+    qDebug() << path;
+    m_crumbWidget->setCrumb(path);
+    emit fileSignalManager->currentUrlChanged(path);
 }
 
-/**
- * @brief DToolBar::tabBarClicked
- * @param index
- *
- * Shrink the tabs to the given index and set the
- * text to the search bar. This will be triggered
- * when one of the tabs is clicked.
- */
-void DToolBar::tabBarClicked(int index)
+void DToolBar::crumbSelected(QString path)
 {
-    QString path = m_tabBar->shrinkToIndex(index);
-    //m_searchBar->setText(m_tabBar->shrinkToIndex(index));
-    emit fileSignalManager->currentUrlChanged(QUrl::fromLocalFile(path).toString());
+    emit fileSignalManager->currentUrlChanged(path);
+}
+
+void DToolBar::crumbChanged(const QString &url)
+{
+    qDebug() << "crumb chagned";
+    m_crumbWidget->setCrumb(url);
 }
 
 /**
@@ -202,15 +206,8 @@ void DToolBar::tabBarClicked(int index)
  */
 void DToolBar::upButtonClicked()
 {
-    int index = m_tabBar->getSelectedIndex();
-    if(index < 0)
-        return;
-    QString path;
-    if(index >= 1)
-        path = m_tabBar->moveToIndex(index - 1);
-    else
-        path = m_tabBar->shrinkToIndex(index);
-    emit fileSignalManager->currentUrlChanged(QUrl::fromLocalFile(path).toString());
+    QString text = m_crumbWidget->back();
+    emit fileSignalManager->currentUrlChanged(text);
 }
 
 void DToolBar::searchBarChanged(QString path)
@@ -220,7 +217,7 @@ void DToolBar::searchBarChanged(QString path)
 
 void DToolBar::tabBarChanged(QString path)
 {
-    m_tabBar->setTabBarPath(path);
+
 }
 
 

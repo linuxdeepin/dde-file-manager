@@ -6,7 +6,9 @@
 #include <QDebug>
 #include "../app/global.h"
 #include "dcheckablebutton.h"
+#include "dhorizseparator.h"
 #include <QListWidgetItem>
+
 
 DLeftSideBar::DLeftSideBar(QWidget *parent) : QFrame(parent)
 {
@@ -23,20 +25,22 @@ DLeftSideBar::~DLeftSideBar()
 void DLeftSideBar::initData()
 {
     m_iconlist << ":/images/images/dark/appbar.lines.horizontal.4.png" //file
-               << ":/icons/images/icons/user-home-symbolic.svg" //home
                << ":/icons/images/icons/folder-recent-symbolic.svg" //recent
+               << ":/icons/images/icons/user-home-symbolic.svg" //home
                << ":/icons/images/icons/folder-desktop-symbolic.svg" //desktop
                << ":/icons/images/icons/folder-videos-symbolic.svg" //video
-               << ":/icons/images/icons/folder-music-symbolic.svg" //music
                << ":/icons/images/icons/folder-pictures-symbolic.svg" //picture
                << ":/icons/images/icons/folder-documents-symbolic.svg" //document
+               << ":/icons/images/icons/folder-download-symbolic.svg" //download
+               << ":/icons/images/icons/folder-music-symbolic.svg" //music
                << ":/icons/images/icons/user-trash-symbolic.svg" //trash
                << ":/icons/images/icons/drive-removable-media-symbolic.svg" //disk
-               << ":/icons/images/icons/user-bookmarks-symbolic.svg" //bookmarks
-               << ":/images/images/dark/appbar.iphone.png"; //my mobile
-    m_nameList << "File" << "Home" << "Recent" << "Desktop"
-               << "Videos" << "Musics" << "Pictures" << "Documents"
-               << "Trash" << "Disks" << "Bookmarks" << "My Mobile";
+               << ":/images/images/dark/appbar.iphone.png" //my mobile
+               << ":/icons/images/icons/user-bookmarks-symbolic.svg";//bookmarks
+
+    m_nameList << "File" << "Recent" << "Home"  << "Desktop"
+               << "Videos" << "Pictures" << "Documents" << "Downloads" << "Musics"
+               << "Trash" << "Disks" << "My Mobile" << "Bookmarks" ;
     m_navState = true;
 }
 
@@ -149,26 +153,60 @@ void DLeftSideBar::initNav()
     m_nav = new QFrame;
     QVBoxLayout* navLayout = new QVBoxLayout;
     m_nav->setLayout(navLayout);
+    //add file button
     m_fileButton = new DCheckableButton(":/images/images/dark/appbar.lines.horizontal.4.png", tr("File"));
     navLayout->addWidget(m_fileButton);
     navLayout->setContentsMargins(0, 0, 0, 0);
     m_buttonGroup = new QButtonGroup;
     m_buttonGroup->addButton(m_fileButton, 0);
     m_listWidget = new QListWidget;
-    m_listWidget->setGridSize(QSize(110, 30));
     m_listWidget->setObjectName("ListWidget");
 
-    for(int i = 1; i < m_iconlist.size(); i++)
+    //recent, home, desktop, video, pcitures, documents, download, musics, trash
+    for(int i = 1; i <= 9; i++)
     {
         DCheckableButton * button = new DCheckableButton(m_iconlist.at(i), m_nameList.at(i));
         QListWidgetItem * item = new QListWidgetItem(m_listWidget);
+        item->setSizeHint(QSize(110, 30));
         m_listWidget->setItemWidget(item, button);
         m_buttonGroup->addButton(button, i);
     }
+
+    //add separator line
+    QListWidgetItem * item = new QListWidgetItem(m_listWidget);
+    item->setFlags(Qt::NoItemFlags);
+    item->setSizeHint(QSize(110, 3));
+    m_listWidget->setItemWidget(item, new DHorizSeparator);
+
+    //disk, my mobile
+    for(int i = 10; i < m_iconlist.size() - 1; i++)
+    {
+        DCheckableButton * button = new DCheckableButton(m_iconlist.at(i), m_nameList.at(i));
+        QListWidgetItem * item = new QListWidgetItem(m_listWidget);
+        item->setSizeHint(QSize(110, 30));
+        m_listWidget->setItemWidget(item, button);
+        m_buttonGroup->addButton(button, i);
+    }
+
+    //add separator line
+    item = new QListWidgetItem(m_listWidget);
+    item->setFlags(Qt::NoItemFlags);
+    item->setSizeHint(QSize(110, 3));
+    m_listWidget->setItemWidget(item, new DHorizSeparator);
+
+    //add bookmark item
+    int i = m_iconlist.size() - 1;
+    DCheckableButton * button = new DCheckableButton(m_iconlist.at(i), m_nameList.at(i));
+    item = new QListWidgetItem(m_listWidget);
+    item->setSizeHint(QSize(110, 30));
+    m_listWidget->setItemWidget(item, button);
+    m_buttonGroup->addButton(button, i);
+
     for(int i = 12; i < 30; i++)
     {
         DCheckableButton * button = new DCheckableButton(":/images/images/dark/appbar.app.favorite.png", "label");
         QListWidgetItem * item = new QListWidgetItem(m_listWidget);
+        item->setSizeHint(QSize(110, 30));
         m_listWidget->setItemWidget(item, button);
         m_buttonGroup->addButton(button, i);
     }
@@ -179,20 +217,17 @@ QString DLeftSideBar::getStandardPathbyId(int id)
 {
     QString path;
     switch (id) {
-    case 0:
-        path = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0);
-        break;
     case 1:
         path = Recent;
         break;
     case 2:
-        path = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).at(0);
+        path = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0);
         break;
     case 3:
-        path = QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).at(0);
+        path = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).at(0);
         break;
     case 4:
-        path = QStandardPaths::standardLocations(QStandardPaths::MusicLocation).at(0);
+        path = QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).at(0);
         break;
     case 5:
         path = QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).at(0);
@@ -204,10 +239,13 @@ QString DLeftSideBar::getStandardPathbyId(int id)
         path = QStandardPaths::standardLocations(QStandardPaths::DownloadLocation).at(0);
         break;
     case 8:
-        path = QDir::rootPath();
+        path = QStandardPaths::standardLocations(QStandardPaths::MusicLocation).at(0);
         break;
     case 9:
         path = TrashDir;
+        break;
+    case 10:
+        path = QDir::rootPath();
         break;
     default:
         break;

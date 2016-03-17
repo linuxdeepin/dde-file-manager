@@ -14,6 +14,9 @@ DSearchBar::DSearchBar(QWidget *parent):QLineEdit(parent)
     QIcon icon(":/images/images/light/appbar.close.png");
     m_clearAction = new QAction(icon,"", this);
     initConnections();
+    setFixedHeight(20);
+    setObjectName("DSearchBar");
+    setMinimumWidth(48);
 }
 
 
