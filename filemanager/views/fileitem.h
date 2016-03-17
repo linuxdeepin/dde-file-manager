@@ -125,6 +125,8 @@ QT_END_NAMESPACE
 
 class FileIconItem : public DVBoxWidget
 {
+    Q_OBJECT
+
 public:
     explicit FileIconItem(QWidget *parent = 0);
 

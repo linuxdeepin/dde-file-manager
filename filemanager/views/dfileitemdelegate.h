@@ -47,6 +47,9 @@ public:
     mutable QMap<QString, int> m_textHeightMap;
     mutable QModelIndex focus_index;
     mutable QModelIndex editing_index;
+
+protected:
+    bool eventFilter(QObject *object, QEvent *event) Q_DECL_OVERRIDE;
 };
 
 #endif // DFILEITEMDELEGATE_H
