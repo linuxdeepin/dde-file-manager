@@ -51,7 +51,7 @@ void DFileManagerWindow::initTitleBar()
 {
     m_titleBar = new DTitleBar;
     m_titleBar->setObjectName("TitleBar");
-    m_titleBar->setFixedHeight(42);
+    m_titleBar->setFixedHeight(40);
     m_titleBar->setFocusPolicy(Qt::ClickFocus);
     setDragMovableHeight(m_titleBar->height());
 }
@@ -112,7 +112,7 @@ void DFileManagerWindow::initToolBar()
 {
     m_toolbar = new DToolBar(this);
     m_toolbar->setObjectName("ToolBar");
-    m_toolbar->setFixedHeight(42);
+    m_toolbar->setFixedHeight(40);
     m_toolbar->setFocusPolicy(Qt::ClickFocus);
 }
 

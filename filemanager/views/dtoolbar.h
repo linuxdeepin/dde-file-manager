@@ -9,6 +9,7 @@ class DIconTextButton;
 class DStateButton;
 class DSearchBar;
 class DTabBar;
+class DCrumbWidget;
 
 class DToolBar : public QFrame
 {
@@ -37,7 +38,8 @@ public slots:
     void searchBarActivated();
     void searchBarDeactivated();
     void searchBarTextEntered();
-    void tabBarClicked(int index);
+    void crumbSelected(QString path);
+    void crumbChanged(const QString &url);
     void upButtonClicked();
     void searchBarChanged(QString path);
     void tabBarChanged(QString path);
@@ -56,8 +58,8 @@ private:
     DStateButton* m_hideShowButton=NULL;
     DStateButton* m_viewSwitchButton=NULL;
     DSearchBar * m_searchBar = NULL;
-    DTabBar * m_tabBar = NULL;
     bool m_switchState = false;
+    DCrumbWidget * m_crumbWidget;
 };
 
 #endif // DTOOLBAR_H

@@ -97,7 +97,10 @@ HEADERS += \
     filemanager/shutil/desktopfile.h \
     filemanager/shutil/fileutils.h \
     filemanager/shutil/properties.h \
-    filemanager/views/dfilemanagerwindow.h
+    filemanager/views/dfilemanagerwindow.h \
+    filemanager/views/dcrumbwidget.h \
+    filemanager/views/dcrumbbutton.h \
+    filemanager/views/dhorizseparator.h
 
 SOURCES += \
     filemanager/controllers/appcontroller.cpp \
@@ -155,6 +158,9 @@ SOURCES += \
     filemanager/shutil/desktopfile.cpp \
     filemanager/shutil/fileutils.cpp \
     filemanager/shutil/properties.cpp \
-    filemanager/views/dfilemanagerwindow.cpp
+    filemanager/views/dfilemanagerwindow.cpp \
+    filemanager/views/dcrumbwidget.cpp \
+    filemanager/views/dcrumbbutton.cpp \
+    filemanager/views/dhorizseparator.cpp
 
 INCLUDEPATH += filemanager/models
