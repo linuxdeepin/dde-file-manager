@@ -98,6 +98,14 @@ int DFileView::columnWidth(int column) const
     return m_headerView ? m_headerView->sectionSize(logicalIndexs.value(column)) : 100;
 }
 
+void DFileView::setColumnWidth(int column, int width)
+{
+    if(!m_headerView)
+        return;
+
+    m_headerView->resizeSection(logicalIndexs.value(column), width);
+}
+
 int DFileView::columnCount() const
 {
     return m_headerView ? m_headerView->count() : 1;
@@ -152,6 +160,10 @@ void DFileView::switchListMode()
         for(int i = 0; i < m_headerView->count(); ++i) {
             columnRoles << model()->headerDataToRole(model()->headerData(i, m_headerView->orientation(), Qt::DisplayRole));
             logicalIndexs << i;
+
+            if(columnRoles.last() == DFileSystemModel::FileNameRole) {
+                m_headerView->resizeSection(i, width() - (m_headerView->count() - 1) * m_headerView->defaultSectionSize());
+            }
         }
 
         addHeaderWidget(m_headerView);
