@@ -272,75 +272,47 @@ QList<QRect> DFileItemDelegate::paintGeomertyss(const QStyleOptionViewItem &opti
     QList<QRect> geomertys;
 
     if(parent()->isIconViewMode()) {
-        QStyleOptionViewItem opt = option;
-        initStyleOption(&opt, index);
-
         /// init icon geomerty
 
-        QRect icon_rect = opt.rect;
+        QRect icon_rect = option.rect;
 
         icon_rect.setSize(parent()->iconSize());
-        icon_rect.moveCenter(opt.rect.center());
-        icon_rect.moveTop(opt.rect.top());
+        icon_rect.moveCenter(option.rect.center());
+        icon_rect.moveTop(option.rect.top());
+
+        geomertys << icon_rect;
 
         QString str = index.data(Qt::DisplayRole).toString();
 
         if(str.isEmpty()) {
-            geomertys << icon_rect;
-
             return geomertys;
         }
 
         /// init file name geometry
 
-        QRect label_rect = opt.rect;
+        QRect label_rect = option.rect;
 
         label_rect.setTop(icon_rect.bottom() + 10);
 
         /// if has focus show all file name else show elide file name.
+        /// init file name text
 
-        if(opt.state & QStyle::State_HasFocus) {
-            int height = 0;
-
-            /// init file name text
-
-            if(m_wordWrapMap.contains(str)) {
-                str = m_wordWrapMap.value(str);
-                height = m_textHeightMap.value(str);
-            } else {
-                QString wordWrap_str = Global::wordWrapText(str, label_rect.width(), opt.fontMetrics,
-                                                            QTextOption::WrapAtWordBoundaryOrAnywhere, &height);
-
-                m_wordWrapMap[str] = wordWrap_str;
-                m_textHeightMap[wordWrap_str] = height;
-                str = wordWrap_str;
-            }
-
-            if(height > label_rect.height()) {
-                geomertys << QRect(label_rect.topLeft(), QSize(label_rect.width(), height));
-
-                return geomertys;
-            }
+        if(m_elideMap.contains(str)) {
+            str = m_elideMap.value(str);
         } else {
-            /// init file name text
+            QString elide_str = Global::elideText(str, label_rect.size(),
+                                                  option.fontMetrics,
+                                                  QTextOption::WrapAtWordBoundaryOrAnywhere,
+                                                  option.textElideMode);
 
-            if(m_elideMap.contains(str)) {
-                str = m_elideMap.value(str);
-            } else {
-                QString elide_str = Global::elideText(str, label_rect.size(),
-                                                      opt.fontMetrics,
-                                                      QTextOption::WrapAtWordBoundaryOrAnywhere,
-                                                      opt.textElideMode);
+            m_elideMap[str] = elide_str;
 
-                m_elideMap[str] = elide_str;
-
-                str = elide_str;
-            }
+            str = elide_str;
         }
 
         /// draw icon and file name label
 
-        geomertys << opt.fontMetrics.boundingRect(label_rect, Qt::AlignHCenter, str);
+        geomertys << option.fontMetrics.boundingRect(label_rect, Qt::AlignHCenter, str);
     } else {
         const QList<int> &columnRoleList = parent()->columnRoleList();
 

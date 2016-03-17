@@ -184,20 +184,19 @@ void DFileView::moveColumnRole(int /*logicalIndex*/, int oldVisualIndex, int new
 
 void DFileView::contextMenuEvent(QContextMenuEvent *event)
 {
-    qDebug() << event << indexAt(event->pos());
-    QModelIndex index = indexAt(event->pos());
-    QMenu* menu;
-    if (index.isValid()){
+    QMenu *menu;
+
+    if (isEmptyArea(event->pos())){
+        menu = m_fileMenuManager->genereteMenuByFileType("Space");
+    }else{
         menu = m_fileMenuManager->genereteMenuByFileType("File");
         menu->setProperty("url", "/home");
-    }else{
-        menu = m_fileMenuManager->genereteMenuByFileType("Space");
     }
+
     menu->exec(mapToGlobal(event->pos()));
     menu->deleteLater();
-    menu->deleteLater();
 
-    DFileView::contextMenuEvent(event);
+    event->accept();
 }
 
 void DFileView::wheelEvent(QWheelEvent *event)
@@ -241,30 +240,35 @@ void DFileView::showEvent(QShowEvent *event)
 void DFileView::mousePressEvent(QMouseEvent *event)
 {
     if(event->button() == Qt::LeftButton) {
-        QModelIndex index = indexAt(event->pos());
+        setDragEnabled(!isEmptyArea(event->pos()));
+    } else if(event->button() == Qt::RightButton) {
+        QWidget::mousePressEvent(event);
 
-        if(selectionModel()->selectedIndexes().contains(index)) {
-            setDragEnabled(true);
-        } else {
-            setDragEnabled(false);
+        return;
+    }
 
-            QStyleOptionViewItem option = viewOptions();
+    DListView::mousePressEvent(event);
+}
 
-            option.rect = visualRect(index);
+bool DFileView::isEmptyArea(const QPoint &pos) const
+{
+    QModelIndex index = indexAt(pos);
 
-            if(hasFocus() && index == currentIndex())
-                option.state |= QStyle::State_HasFocus;
+    if(selectionModel()->selectedIndexes().contains(index)) {
+        return false;
+    } else {
+        QStyleOptionViewItem option = viewOptions();
 
-            const QList<QRect> &geometry_list = itemDelegate()->paintGeomertyss(option, index);
+        option.rect = visualRect(index);
 
-            for(const QRect &rect : geometry_list) {
-                if(rect.contains(event->pos())) {
-                    setDragEnabled(true);
-                    break;
-                }
+        const QList<QRect> &geometry_list = itemDelegate()->paintGeomertyss(option, index);
+
+        for(const QRect &rect : geometry_list) {
+            if(rect.contains(pos)) {
+                return false;
             }
         }
     }
 
-    DListView::mousePressEvent(event);
+    return true;
 }

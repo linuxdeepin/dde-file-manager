@@ -68,6 +68,8 @@ private:
     QList<int> columnRoles;
 
     bool ctrlIsPressed = false;
+
+    bool isEmptyArea(const QPoint &pos) const;
 };
 
 #endif // DFILEVIEW_H
