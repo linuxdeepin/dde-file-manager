@@ -13,6 +13,8 @@ public:
     ~SignalManager(){}
 
 signals:
+    /*searchbar signal*/
+    void searchHistoryLoaded(const QStringList &list);
     /*leftsidebar signal*/
     void destinationFolderChanged(const QString& destination);
     void historyRecordChecked();

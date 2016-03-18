@@ -6,6 +6,7 @@
 #include "../controllers/dbuscontroller.h"
 #include "utils/utils.h"
 #include "filesignalmanager.h"
+#include "../controllers/searchhistroymanager.h"
 
 #include <QFontMetrics>
 #include <QTextOption>
@@ -13,6 +14,7 @@
 
 //#define gridManager  Singleton<GridManager>::instance()
 #define signalManager  Singleton<SignalManager>::instance()
+#define searchHistoryManager  Singleton<SearchHistroyManager>::instance()
 //#define dbusController Singleton<DBusController>::instance()
 #define fileSignalManager Singleton<FileSignalManager>::instance()
 
