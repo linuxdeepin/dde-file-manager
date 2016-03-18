@@ -59,8 +59,13 @@ public:
 
     QString getUrlByIndex(const QModelIndex &index) const;
 
+    void setSortColumn(int column);
+    void setSortRole(int role);
+
+    void sort(int column, Qt::SortOrder order = Qt::AscendingOrder) Q_DECL_OVERRIDE;
+
 public slots:
-    void updateChildren(const QString &url, const QList<FileInfo *> &list);
+    void updateChildren(const QString &url, QList<FileInfo *> list);
     void refresh(const QString &url);
 
 private:
@@ -68,6 +73,9 @@ private:
     QMap<QString, FileSystemNode*> m_urlToNode;
     mutable QHash<QString, QIcon> m_typeToIcon;
     IconProvider m_iconProvider;
+
+    int m_sortRole = Qt::DisplayRole;
+    int m_sortColumn = 0;
 
     inline FileSystemNode *getNodeByIndex(const QModelIndex &index) const;
     QModelIndex createIndex(const FileSystemNode *node, int column) const;
