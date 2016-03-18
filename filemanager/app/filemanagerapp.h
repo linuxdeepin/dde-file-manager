@@ -22,6 +22,7 @@ public:
     void initApp();
     void initView();
     void initController();
+    void initManager();
     void initCommandline();
     void initTranslation();
     void initConnect();

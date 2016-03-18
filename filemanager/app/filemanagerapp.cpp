@@ -59,6 +59,11 @@ void FileManagerApp::initController()
     m_appController = new AppController(this);
 }
 
+void FileManagerApp::initManager()
+{
+
+}
+
 
 
 void FileManagerApp::initCommandline()
