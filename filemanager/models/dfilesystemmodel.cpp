@@ -361,7 +361,55 @@ QString DFileSystemModel::getUrlByIndex(const QModelIndex &index) const
     return node->fileInfo->absoluteFilePath();
 }
 
-void DFileSystemModel::updateChildren(const QString &url, const QList<FileInfo*> &list)
+void DFileSystemModel::setSortColumn(int column)
+{
+    m_sortColumn = column;
+
+    switch (m_sortColumn) {
+    case 0:
+        setSortRole(DFileSystemModel::FileNameRole);
+        break;
+    case 1:
+        setSortRole(DFileSystemModel::FileLastModified);
+        break;
+    case 2:
+        setSortRole(DFileSystemModel::FileSizeRole);
+        break;
+    case 3:
+        setSortRole(DFileSystemModel::FileMimeTypeRole);
+        break;
+    case 4:
+        setSortRole(DFileSystemModel::FileCreated);
+        break;
+    default:
+        break;
+    }
+}
+
+void DFileSystemModel::setSortRole(int role)
+{
+    m_sortRole = role;
+}
+
+void DFileSystemModel::sort(int /*column*/, Qt::SortOrder /*order*/)
+{
+
+}
+
+bool sortFileListByName(const FileInfo *info1, const FileInfo *info2)
+{
+    if(info1->isDir()) {
+        if(!info2->isDir())
+            return true;
+    } else {
+        if(info2->isDir())
+            return false;
+    }
+
+    return info1->fileName() < info2->fileName();
+}
+
+void DFileSystemModel::updateChildren(const QString &url, QList<FileInfo*> list)
 {
     FileSystemNode *node = getNodeByIndex(index(url));
 
@@ -369,6 +417,23 @@ void DFileSystemModel::updateChildren(const QString &url, const QList<FileInfo*>
         return;
 
     node->clearChildren();
+
+    switch (m_sortColumn) {
+    case DFileSystemModel::FileNameRole:
+    case Qt::DisplayRole:
+        qSort(list.begin(), list.end(), sortFileListByName);
+        break;
+    case DFileSystemModel::FileLastModified:
+        break;
+    case DFileSystemModel::FileSizeRole:
+        break;
+    case DFileSystemModel::FileMimeTypeRole:
+        break;
+    case DFileSystemModel::FileCreated:
+        break;
+    default:
+        break;
+    }
 
     beginInsertRows(createIndex(node, 0), 0, list.count() - 1);
 
