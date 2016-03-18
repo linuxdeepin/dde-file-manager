@@ -1,4 +1,5 @@
 #include "fileinfogatherer.h"
+#include "desktopfileinfo.h"
 
 #include <QDirIterator>
 
@@ -9,21 +10,19 @@ FileInfoGatherer::FileInfoGatherer(QObject *parent) : QObject(parent)
 
 void FileInfoGatherer::fetchFileInformation(const QString &path, int filter)
 {
-    FileInfoList infolist;
+    QList<FileInfo*> infolist;
 
     if(path.isEmpty()) {
         const QFileInfoList list = QDir::drives();
 
         for(const QFileInfo &info : list) {
-            FileInfo fileInfo = FileInfo(info);
+            FileInfo *fileInfo = new FileInfo(info);
 
             infolist.append(fileInfo);
-
-            emit addFileInfo(path, fileInfo);
         }
     } else {
         QDirIterator dirIt(path, QDir::Filters(filter));
-        FileInfo fileInfo;
+        FileInfo *fileInfo;
 
         while (dirIt.hasNext()) {
             dirIt.next();
@@ -31,10 +30,12 @@ void FileInfoGatherer::fetchFileInformation(const QString &path, int filter)
             if(dirIt.fileInfo().absoluteFilePath() == path)
                 continue;
 
-            fileInfo = FileInfo(dirIt.fileInfo());
-            infolist.append(fileInfo);
+            if(dirIt.fileInfo().suffix() == DESKTOP_SURRIX)
+                fileInfo = new DesktopFileInfo(dirIt.fileInfo());
+            else
+                fileInfo = new FileInfo(dirIt.fileInfo());
 
-            emit addFileInfo(path, fileInfo);
+            infolist.append(fileInfo);
         }
     }
 

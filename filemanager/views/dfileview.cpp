@@ -4,6 +4,7 @@
 #include "fileitem.h"
 #include "filemenumanager.h"
 #include "dfileitemdelegate.h"
+#include "fileinfo.h"
 
 #include <QPushButton>
 #include <QMenu>
@@ -65,8 +66,6 @@ void DFileView::initConnects()
     });
     connect(fileSignalManager, &FileSignalManager::currentUrlChanged,
             this, &DFileView::cd);
-    connect(fileSignalManager, &FileSignalManager::iconChanged,
-            model(), &DFileSystemModel::updateIcon);
     connect(fileSignalManager, &FileSignalManager::childrenChanged,
             model(), &DFileSystemModel::updateChildren);
     connect(fileSignalManager, &FileSignalManager::refreshFolder,

@@ -1,12 +1,13 @@
 #ifndef DFILESYSTEMMODEL_H
 #define DFILESYSTEMMODEL_H
 
-#include "fileinfo.h"
+#include "../shutil/iconprovider.h"
 
 #include <QAbstractItemModel>
 #include <QFileSystemModel>
 
 class FileSystemNode;
+class FileInfo;
 
 class DFileSystemModel : public QAbstractItemModel
 {
@@ -59,14 +60,14 @@ public:
     QString getUrlByIndex(const QModelIndex &index) const;
 
 public slots:
-    void updateChildren(const QString &url, const FileInfoList &list);
-    void updateIcon(const QString &url, const QIcon &icon);
+    void updateChildren(const QString &url, const QList<FileInfo *> &list);
     void refresh(const QString &url);
 
 private:
     FileSystemNode *m_rootNode = Q_NULLPTR;
     QMap<QString, FileSystemNode*> m_urlToNode;
     mutable QHash<QString, QIcon> m_typeToIcon;
+    IconProvider m_iconProvider;
 
     inline FileSystemNode *getNodeByIndex(const QModelIndex &index) const;
     QModelIndex createIndex(const FileSystemNode *node, int column) const;

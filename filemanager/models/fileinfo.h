@@ -7,6 +7,8 @@
 
 #include "utils/debugobejct.h"
 
+#define DESKTOP_SURRIX "desktop"
+
 class FileInfo
 {
 public:
@@ -14,7 +16,9 @@ public:
     FileInfo(const QString & file);
     FileInfo(const QFileInfo &fileInfo);
 
-    void setFile(const QString &file);
+    virtual ~FileInfo();
+
+    virtual void setFile(const QString &file);
 
     bool exists() const;
     static bool exists(const QString &file);
@@ -26,6 +30,9 @@ public:
 
     QString path() const;
     QString absolutePath() const;
+
+    bool isDesktopFile() const;
+    bool isImageFile() const;
 
     bool isCanRename() const;
     bool isReadable() const;
@@ -63,11 +70,15 @@ public:
 
 private:
     QFileInfo m_fileInfo;
-    QString m_mimeTypeName;
+    mutable QString m_mimeTypeName;
 };
 
 typedef QList<FileInfo> FileInfoList;
 
 Q_DECLARE_METATYPE(FileInfo)
+
+QT_BEGIN_NAMESPACE
+QDebug operator<<(QDebug deg, const FileInfo &info);
+QT_END_NAMESPACE
 
 #endif // FILEINFO_H

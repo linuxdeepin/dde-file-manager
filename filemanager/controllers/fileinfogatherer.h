@@ -3,7 +3,7 @@
 
 #include <QDir>
 
-#include "fileinfo.h"
+class FileInfo;
 
 class FileInfoGatherer : public QObject
 {
@@ -16,8 +16,8 @@ public slots:
                               int filter = int(QDir::AllEntries | QDir::NoDotDot));
 
 signals:
-    void updates(const QString &directory, const FileInfoList &infoList);
-    void addFileInfo(const QString &path, const FileInfo &info);
+    void updates(const QString &directory, const QList<FileInfo*> &infoList);
+    void addFileInfo(const QString &path, FileInfo* info);
 };
 
 #endif // FILEINFOGATHERER_H

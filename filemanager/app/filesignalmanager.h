@@ -1,11 +1,11 @@
 #ifndef FILESIGNALMANAGER_H
 #define FILESIGNALMANAGER_H
 
-#include "fileinfo.h"
-
 #include <QObject>
 #include <QDir>
 #include <QDebug>
+
+class FileInfo;
 
 class FileSignalManager : public QObject
 {
@@ -21,7 +21,7 @@ signals:
 
     /// in folder files
     void requestChildren(const QString &url, int filter = int(QDir::AllEntries | QDir::NoDotDot)) const;
-    void childrenChanged(const QString &url, const FileInfoList &list) const;
+    void childrenChanged(const QString &url, const QList<FileInfo*> &list) const;
 
     /// file icon
     void requestIcon(const QString &url) const;
