@@ -2,12 +2,13 @@
 #include "../app/global.h"
 #include "fileinfogatherer.h"
 #include "../shutil/iconprovider.h"
+#include "fileinfo.h"
 
 #include <QFileIconProvider>
 
 FileController::FileController(QObject *parent) : QObject(parent)
 {
-    qRegisterMetaType<FileInfoList>("FileInfoList");
+    qRegisterMetaType<QList<FileInfo*>>("QList<FileInfo*>");
 
     initGatherer();
     initIconProvider();

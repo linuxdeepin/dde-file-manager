@@ -12,19 +12,24 @@ FileInfo::FileInfo()
 FileInfo::FileInfo(const QString &file) :
     m_fileInfo(QFileInfo(file))
 {
-    m_mimeTypeName = mimeType(file).name();
+
 }
 
 FileInfo::FileInfo(const QFileInfo &fileInfo) :
     m_fileInfo(fileInfo)
 {
-    m_mimeTypeName = mimeType(fileInfo.absoluteFilePath()).name();
+
+}
+
+FileInfo::~FileInfo()
+{
+
 }
 
 void FileInfo::setFile(const QString &file)
 {
     m_fileInfo.setFile(file);
-    m_mimeTypeName = mimeType(file).name();
+    m_mimeTypeName.clear();
 }
 
 bool FileInfo::exists() const
@@ -67,6 +72,16 @@ QString FileInfo::path() const
 QString FileInfo::absolutePath() const
 {
     return m_fileInfo.absolutePath();
+}
+
+bool FileInfo::isDesktopFile() const
+{
+    return m_fileInfo.suffix() == DESKTOP_SURRIX;
+}
+
+bool FileInfo::isImageFile() const
+{
+    return false;
 }
 
 bool FileInfo::isCanRename() const
@@ -188,5 +203,19 @@ QDateTime FileInfo::lastRead() const
 
 QString FileInfo::mimeTypeName() const
 {
+    if(m_mimeTypeName.isNull())
+        m_mimeTypeName = mimeType(absoluteFilePath()).name();
+
     return m_mimeTypeName;
 }
+
+QT_BEGIN_NAMESPACE
+QDebug operator<<(QDebug deg, const FileInfo &info)
+{
+    deg << "file path:" << info.absoluteFilePath()
+        << "file size:" << info.size() << "mime type:"
+        << info.mimeTypeName();
+
+    return deg;
+}
+QT_END_NAMESPACE

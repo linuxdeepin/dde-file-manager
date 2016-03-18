@@ -1,5 +1,6 @@
 #include "dfilesystemmodel.h"
 #include "../app/global.h"
+#include "desktopfileinfo.h"
 
 #include <QDebug>
 #include <QFileIconProvider>
@@ -7,25 +8,27 @@
 class FileSystemNode
 {
 public:
-    FileInfo fileInfo;
+    FileInfo *fileInfo;
     FileSystemNode *parent = Q_NULLPTR;
     QHash<QString, FileSystemNode*> children;
     QList<QString> visibleChildren;
     bool populatedChildren = false;
 
     FileSystemNode(DFileSystemModel *model, FileSystemNode *parent,
-                   const QString &url) :
+                   FileInfo *info) :
+        fileInfo(info),
         parent(parent),
         m_model(model)
     {
-        fileInfo.setFile(url);
-        model->m_urlToNode[url] = this;
+        model->m_urlToNode[fileInfo->absoluteFilePath()] = this;
     }
 
     ~FileSystemNode()
     {
-        m_model->m_urlToNode.remove(fileInfo.absoluteFilePath());
+        m_model->m_urlToNode.remove(fileInfo->absoluteFilePath());
         qDeleteAll(children.values());
+
+        delete fileInfo;
     }
 
     void clearChildren()
@@ -130,43 +133,44 @@ QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
     case Qt::EditRole:
     case Qt::DisplayRole:
         switch (index.column()) {
-        case 0: return indexNode->fileInfo.fileName();
-        case 1: return indexNode->fileInfo.lastModified().toString();
-        case 2: return indexNode->fileInfo.size();
-        case 3: return indexNode->fileInfo.mimeTypeName();
-        case 4: return indexNode->fileInfo.created().toString();
+        case 0: return indexNode->fileInfo->fileName();
+        case 1: return indexNode->fileInfo->lastModified().toString();
+        case 2: return indexNode->fileInfo->size();
+        case 3: return indexNode->fileInfo->mimeTypeName();
+        case 4: return indexNode->fileInfo->created().toString();
         default:
             qWarning("data: invalid display value column %d", index.column());
             break;
         }
         break;
     case FilePathRole:
-        return indexNode->fileInfo.absoluteFilePath();
+        return indexNode->fileInfo->absoluteFilePath();
         break;
     case FileNameRole:
-        return indexNode->fileInfo.fileName();
+        return indexNode->fileInfo->fileName();
         break;
     case FileIconRole:
         if (index.column() == 0) {
-            QIcon icon = m_typeToIcon.value(indexNode->fileInfo.mimeTypeName());
+            if(indexNode->fileInfo->isDesktopFile()) {
+                DesktopFileInfo *info = dynamic_cast<DesktopFileInfo*>(indexNode->fileInfo);
 
-            if(icon.isNull()) {
-                emit fileSignalManager->requestIcon(indexNode->fileInfo.absoluteFilePath());
+                if(info)
+                    return m_iconProvider.getDesktopIcon(info->getIcon(), 256);
             }
 
-            return icon;
+            return m_iconProvider.getFileIcon(indexNode->fileInfo->absoluteFilePath());
         }
         break;
     case Qt::TextAlignmentRole:
         return Qt::AlignVCenter;
     case FileLastModified:
-        return indexNode->fileInfo.lastModified().toString();
+        return indexNode->fileInfo->lastModified().toString();
     case FileSizeRole:
-        return indexNode->fileInfo.size();
+        return indexNode->fileInfo->size();
     case FileMimeTypeRole:
-        return indexNode->fileInfo.mimeTypeName();
+        return indexNode->fileInfo->mimeTypeName();
     case FileCreated:
-        return indexNode->fileInfo.created().toString();
+        return indexNode->fileInfo->created().toString();
     }
 
     return QVariant();
@@ -225,7 +229,7 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
 
     parentNode->populatedChildren = true;
 
-    emit fileSignalManager->requestChildren(parentNode->fileInfo.absoluteFilePath());
+    emit fileSignalManager->requestChildren(parentNode->fileInfo->absoluteFilePath());
 }
 
 Qt::ItemFlags DFileSystemModel::flags(const QModelIndex &index) const
@@ -238,10 +242,10 @@ Qt::ItemFlags DFileSystemModel::flags(const QModelIndex &index) const
 
     flags |= Qt::ItemIsDragEnabled;
 
-    if(indexNode->fileInfo.isCanRename())
+    if(indexNode->fileInfo->isCanRename())
         flags |= Qt::ItemIsEditable;
 
-    if ((index.column() == 0) && indexNode->fileInfo.isWritable()) {
+    if ((index.column() == 0) && indexNode->fileInfo->isWritable()) {
         if (isDir(indexNode))
             flags |= Qt::ItemIsDropEnabled;
         else
@@ -335,7 +339,7 @@ QModelIndex DFileSystemModel::setRootPath(const QString &urlStr)
     if(!m_rootNode)
         delete m_rootNode;
 
-    m_rootNode = new FileSystemNode(this, Q_NULLPTR, urlStr);
+    m_rootNode = new FileSystemNode(this, Q_NULLPTR, new FileInfo(urlStr));
 
     return index(urlStr);
 
@@ -344,7 +348,7 @@ QModelIndex DFileSystemModel::setRootPath(const QString &urlStr)
 
 QString DFileSystemModel::rootPath() const
 {
-    return m_rootNode ? m_rootNode->fileInfo.absolutePath() : "";
+    return m_rootNode ? m_rootNode->fileInfo->absolutePath() : "";
 }
 
 QString DFileSystemModel::getUrlByIndex(const QModelIndex &index) const
@@ -354,10 +358,10 @@ QString DFileSystemModel::getUrlByIndex(const QModelIndex &index) const
     if(!node)
         return "";
 
-    return node->fileInfo.absoluteFilePath();
+    return node->fileInfo->absoluteFilePath();
 }
 
-void DFileSystemModel::updateChildren(const QString &url, const FileInfoList &list)
+void DFileSystemModel::updateChildren(const QString &url, const QList<FileInfo*> &list)
 {
     FileSystemNode *node = getNodeByIndex(index(url));
 
@@ -368,32 +372,14 @@ void DFileSystemModel::updateChildren(const QString &url, const FileInfoList &li
 
     beginInsertRows(createIndex(node, 0), 0, list.count() - 1);
 
-    for(const FileInfo &fileInfo : list) {
-        FileSystemNode *chileNode = new FileSystemNode(this, node, fileInfo.absoluteFilePath());
+    for(FileInfo * const fileInfo : list) {
+        FileSystemNode *chileNode = new FileSystemNode(this, node, fileInfo);
 
-        node->children[fileInfo.fileName()] = chileNode;
-        node->visibleChildren << fileInfo.fileName();
+        node->children[fileInfo->fileName()] = chileNode;
+        node->visibleChildren << fileInfo->fileName();
     }
 
     endInsertRows();
-}
-
-void DFileSystemModel::updateIcon(const QString &url, const QIcon &icon)
-{
-    if(icon.isNull())
-        return;
-
-    FileSystemNode *node = getNodeByIndex(index(url));
-
-    if(!node)
-        return;
-
-    m_typeToIcon[node->fileInfo.mimeTypeName()] = icon;
-
-    QModelIndex index = this->index(url);
-    QVector<int> roles;
-
-    emit dataChanged(index, index, roles << FileIconRole);
 }
 
 void DFileSystemModel::refresh(const QString &url)
@@ -425,7 +411,7 @@ FileSystemNode *DFileSystemModel::getNodeByIndex(const QModelIndex &index) const
 QModelIndex DFileSystemModel::createIndex(const FileSystemNode *node, int column) const
 {
     int row = node->parent
-            ? node->parent->visibleChildren.indexOf(node->fileInfo.fileName())
+            ? node->parent->visibleChildren.indexOf(node->fileInfo->fileName())
             : 0;
 
     return createIndex(row, column, const_cast<FileSystemNode*>(node));
@@ -433,5 +419,5 @@ QModelIndex DFileSystemModel::createIndex(const FileSystemNode *node, int column
 
 bool DFileSystemModel::isDir(const FileSystemNode *node) const
 {
-    return node->fileInfo.isDir();
+    return node->fileInfo->isDir();
 }

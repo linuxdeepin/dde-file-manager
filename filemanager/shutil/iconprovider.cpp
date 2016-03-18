@@ -99,8 +99,6 @@ QString IconProvider::getThemeIconPath(QString iconName)
 #endif
         return QString(path);
     } else {
-        qDebug() << "no info";
-
         GtkIconTheme* theme = gtk_icon_theme_get_default();
         GtkIconInfo* info = gtk_icon_theme_lookup_icon(theme, name, 48, GTK_ICON_LOOKUP_GENERIC_FALLBACK);
         if (info) {
@@ -112,7 +110,7 @@ QString IconProvider::getThemeIconPath(QString iconName)
     #endif
             return QString(path);
         } else {
-            qDebug() << "no info";
+            qDebug() << iconName << "no info";
         }
         return "";
     }
@@ -124,7 +122,7 @@ void IconProvider::gtkInit()
     gdk_error_trap_push();
 }
 
-void IconProvider::loadMimeTypes()
+void IconProvider::loadMimeTypes() const
 {
     // Open file with mime/suffix associations
     QFile mimeInfo("/usr/share/mime/globs");
@@ -244,12 +242,12 @@ void IconProvider::setCurrentTheme()
 }
 
 
-QIcon IconProvider::getFileIcon(const QString &file)
+QIcon IconProvider::getFileIcon(const QString &file) const
 {
     return findIcon(file);
 }
 
-QIcon IconProvider::getDesktopIcon(const QString &iconName, int size)
+QIcon IconProvider::getDesktopIcon(const QString &iconName, int size) const
 {
     if (m_desktopIcons.contains(iconName)){
         return m_desktopIcons.value(iconName);
@@ -262,31 +260,41 @@ QIcon IconProvider::getDesktopIcon(const QString &iconName, int size)
                 QByteArray data = QByteArray::fromBase64(strs.at(1).toLatin1());
                 pixmap.loadFromData(data);
             }
-            return QIcon(pixmap);
+
+            QIcon icon = QIcon(pixmap);
+
+            m_desktopIcons[iconName] = icon;
+
+            return icon;
         }else {
             // try to read the iconPath as a icon name.
             QString path = getThemeIconPath(iconName);
-            qDebug() << path << path.isEmpty();
+
             if (path.isEmpty())
                 path = getThemeIconPath("application-default-icon");
-            return QIcon(path);
+
+            QIcon icon = QIcon(path);
+
+            m_desktopIcons[iconName] = icon;
+
+            return icon;
         }
     }
 }
 
 
-QIcon IconProvider::findIcon(const QString &file)
+QIcon IconProvider::findIcon(const QString &file) const
 {
     // If type of file is directory, return icon of directory
 
     QFileInfo type(file);
     QString absoluteFilePath = type.absoluteFilePath();
-    qDebug() << type.fileName() << type.filePath();
+
     if (type.isDir()) {
       if (m_folderIcons.contains(type.fileName())) {
         return m_folderIcons.value(type.fileName());
       }
-      qDebug() << m_iconProvider->icon(type);
+
       return m_iconProvider->icon(type);
     }
 
