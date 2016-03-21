@@ -7,12 +7,14 @@
 #include <QPainter>
 #include <QTextEdit>
 #include <QLineEdit>
+#include <QApplication>
 
 DFileItemDelegate::DFileItemDelegate(DFileView *parent) :
     QStyledItemDelegate(parent)
 {
     focus_item = new FileIconItem(parent->viewport());
     focus_item->setAttribute(Qt::WA_TransparentForMouseEvents);
+    focus_item->setProperty("showBackground", true);
     focus_item->edit->setReadOnly(true);
     focus_item->canDeferredDelete = false;
     focus_item->icon->setFixedSize(parent->iconSize());
@@ -35,6 +37,11 @@ DFileItemDelegate::DFileItemDelegate(DFileView *parent) :
         m_wordWrapMap.clear();
         m_textHeightMap.clear();
     });
+}
+
+DFileItemDelegate::~DFileItemDelegate()
+{
+    focus_item->canDeferredDelete = true;
 }
 
 void DFileItemDelegate::paint(QPainter *painter,
@@ -79,25 +86,32 @@ QWidget *DFileItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
 
        edit->setFrame(false);
        edit->setAttribute(Qt::WA_TranslucentBackground);
-       edit->setStyleSheet("background: transparent;");
        edit->setContentsMargins(-3, 0, 0, 0);
 
        return edit;
    }
 }
 
-void DFileItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &) const
+void DFileItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     if(parent()->isIconViewMode()) {
         editor->move(option.rect.topLeft());
         editor->setFixedWidth(option.rect.width());
+        editor->setMinimumHeight(option.rect.height());
 
         FileIconItem *item = qobject_cast<FileIconItem*>(editor);
 
         if(!item)
             return;
 
-        item->icon->setFixedSize(parent()->iconSize());
+        if(parent()->iconSize().width() != item->icon->size().width()) {
+            QStyleOptionViewItem opt;
+
+            initStyleOption(&opt, index);
+
+            item->icon->setFixedSize(parent()->iconSize());
+            item->icon->setPixmap(opt.icon.pixmap(parent()->iconSize()));
+        }
     } else {
         const QList<int> &columnRoleList = parent()->columnRoleList();
 
@@ -207,7 +221,7 @@ void DFileItemDelegate::paintIconItem(QPainter *painter,
     icon_rect.moveCenter(opt.rect.center());
     icon_rect.moveTop(opt.rect.top());
 
-    QString str = index.data(Qt::DisplayRole).toString();
+    QString str = opt.text;
 
     if(str.isEmpty()) {
         /// draw icon
@@ -222,6 +236,9 @@ void DFileItemDelegate::paintIconItem(QPainter *painter,
     QRect label_rect = opt.rect;
 
     label_rect.setTop(icon_rect.bottom() + 10);
+    label_rect.setWidth(opt.rect.width() * 0.8);
+    label_rect.moveLeft(label_rect.left() + (opt.rect.width() - label_rect.width()) / 2.0);
+
     painter->setFont(opt.font);
 
     /// if has focus show all file name else show elide file name.
@@ -279,12 +296,14 @@ void DFileItemDelegate::paintIconItem(QPainter *painter,
     /// draw background
 
     if((opt.state & QStyle::State_Selected) && opt.showDecorationSelected) {
-        QPalette::ColorGroup cg = (opt.state & QStyle::State_Enabled)
-                      ? QPalette::Normal : QPalette::Disabled;
-        QColor backgroundColor = opt.palette.color(cg, (opt.state & QStyle::State_Selected)
-                                     ? QPalette::Highlight : QPalette::Window);
+        QPainterPath path;
 
-        painter->fillRect(opt.rect, backgroundColor);
+        path.addRoundedRect(opt.rect, 5, 5);
+        painter->setRenderHint(QPainter::Antialiasing);
+        painter->fillPath(path, QColor("#2da6f7"));
+        painter->setPen(Qt::white);
+    } else {
+        painter->setPen(Qt::black);
     }
 
     /// draw icon and file name label
@@ -308,12 +327,10 @@ void DFileItemDelegate::paintListItem(QPainter *painter,
     /// draw background
 
     if((opt.state & QStyle::State_Selected) && opt.showDecorationSelected) {
-        QPalette::ColorGroup cg = (opt.state & QStyle::State_Enabled)
-                ? QPalette::Normal : QPalette::Disabled;
-        QColor backgroundColor = opt.palette.color(cg, (opt.state & QStyle::State_Selected)
-                                                   ? QPalette::Highlight : QPalette::Window);
-
-        painter->fillRect(opt.rect, backgroundColor);
+        painter->fillRect(opt.rect, QColor("#2da6f7"));
+        painter->setPen(Qt::white);
+    } else {
+        painter->setPen(Qt::black);
     }
 
     /// draw icon
@@ -457,6 +474,19 @@ QList<QRect> DFileItemDelegate::paintGeomertyss(const QStyleOptionViewItem &opti
     }
 
     return geomertys;
+}
+
+void DFileItemDelegate::hideAllIIndexWidget()
+{
+    if(focus_index.isValid()) {
+        parent()->setIndexWidget(focus_index, 0);
+        focus_item->hide();
+        focus_index = QModelIndex();
+    }
+
+    if(editing_index.isValid()) {
+        parent()->setIndexWidget(editing_index, 0);
+    }
 }
 
 bool DFileItemDelegate::eventFilter(QObject *object, QEvent *event)

@@ -6,14 +6,22 @@
 #include "dfileitemdelegate.h"
 #include "fileinfo.h"
 
+#include <dthememanager.h>
+
 #include <QPushButton>
 #include <QMenu>
 #include <QWheelEvent>
 #include <QDesktopServices>
 #include "dmenu.h"
 
+DWIDGET_USE_NAMESPACE
+
 DFileView::DFileView(QWidget *parent) : DListView(parent)
 {
+    D_THEME_INIT_WIDGET(DFileView);
+
+    qDebug() << styleSheet();
+
     initUI();
     initDelegate();
     initModel();
@@ -27,12 +35,14 @@ DFileView::~DFileView()
 
 void DFileView::initUI()
 {
+    m_iconSizes << 48 << 64 << 96 << 128 << 256;
+
     m_fileMenuManager = new FileMenuManager(this);
+
     setSpacing(10);
     setResizeMode(QListView::Adjust);
     setOrientation(QListView::LeftToRight, true);
-    setStyleSheet("background: white");
-    setIconSize(QSize(60, 60));
+    setIconSize(currentIconSize());
     setTextElideMode(Qt::ElideMiddle);
     setDragEnabled(true);
     setDragDropMode(QAbstractItemView::DragDrop);
@@ -95,7 +105,7 @@ bool DFileView::isIconViewMode()
 
 int DFileView::columnWidth(int column) const
 {
-    return m_headerView ? m_headerView->sectionSize(logicalIndexs.value(column)) : 100;
+    return m_headerView ? m_headerView->sectionSize(m_logicalIndexs.value(column)) : 100;
 }
 
 void DFileView::setColumnWidth(int column, int width)
@@ -103,7 +113,7 @@ void DFileView::setColumnWidth(int column, int width)
     if(!m_headerView)
         return;
 
-    m_headerView->resizeSection(logicalIndexs.value(column), width);
+    m_headerView->resizeSection(m_logicalIndexs.value(column), width);
 }
 
 int DFileView::columnCount() const
@@ -113,7 +123,7 @@ int DFileView::columnCount() const
 
 QList<int> DFileView::columnRoleList() const
 {
-    return columnRoles;
+    return m_columnRoles;
 }
 
 void DFileView::cd(const QString &url)
@@ -136,6 +146,8 @@ void DFileView::cd(const QString &url)
 void DFileView::switchListMode()
 {
     if(isIconViewMode()) {
+        itemDelegate()->hideAllIIndexWidget();
+
         if(!m_headerView) {
             m_headerView = new QHeaderView(Qt::Horizontal);
             m_headerView->setModel(model());
@@ -160,10 +172,10 @@ void DFileView::switchListMode()
         }
 
         for(int i = 0; i < m_headerView->count(); ++i) {
-            columnRoles << model()->headerDataToRole(model()->headerData(i, m_headerView->orientation(), Qt::DisplayRole));
-            logicalIndexs << i;
+            m_columnRoles << model()->headerDataToRole(model()->headerData(i, m_headerView->orientation(), Qt::DisplayRole));
+            m_logicalIndexs << i;
 
-            if(columnRoles.last() == DFileSystemModel::FileNameRole) {
+            if(m_columnRoles.last() == DFileSystemModel::FileNameRole) {
                 m_headerView->resizeSection(i, width() - (m_headerView->count() - 1) * m_headerView->defaultSectionSize());
             }
 
@@ -184,9 +196,9 @@ void DFileView::switchListMode()
             m_headerView = Q_NULLPTR;
         }
 
-        columnRoles.clear();
+        m_columnRoles.clear();
 
-        setIconSize(QSize(60, 60));
+        setIconSize(currentIconSize());
         setOrientation(QListView::LeftToRight, true);
         setSpacing(10);
     }
@@ -194,8 +206,8 @@ void DFileView::switchListMode()
 
 void DFileView::moveColumnRole(int /*logicalIndex*/, int oldVisualIndex, int newVisualIndex)
 {
-    columnRoles.move(oldVisualIndex, newVisualIndex);
-    logicalIndexs.move(oldVisualIndex, newVisualIndex);
+    m_columnRoles.move(oldVisualIndex, newVisualIndex);
+    m_logicalIndexs.move(oldVisualIndex, newVisualIndex);
 
     update();
 }
@@ -245,21 +257,23 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
 
 void DFileView::wheelEvent(QWheelEvent *event)
 {
-    if(isIconViewMode() && ctrlIsPressed) {
+    if(isIconViewMode() && m_ctrlIsPressed) {
         if(event->angleDelta().y() > 0) {
-            setIconSize(iconSize() * 1.1);
+            enlargeIconSize();
         } else {
-            setIconSize(iconSize() * 0.9);
+            shrinkIconSize();
         }
-    }
 
-    DListView::wheelEvent(event);
+        event->accept();
+    } else {
+        DListView::wheelEvent(event);
+    }
 }
 
 void DFileView::keyPressEvent(QKeyEvent *event)
 {
     if(event->key() == Qt::Key_Control) {
-        ctrlIsPressed = true;
+        m_ctrlIsPressed = true;
     }
 
     DListView::keyPressEvent(event);
@@ -268,7 +282,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
 void DFileView::keyReleaseEvent(QKeyEvent *event)
 {
     if(event->key() == Qt::Key_Control) {
-        ctrlIsPressed = false;
+        m_ctrlIsPressed = false;
     }
 
     DListView::keyReleaseEvent(event);
@@ -315,4 +329,27 @@ bool DFileView::isEmptyArea(const QPoint &pos) const
     }
 
     return true;
+}
+
+QSize DFileView::currentIconSize() const
+{
+    int size = m_iconSizes.value(m_currentIconSizeIndex);
+
+    return QSize(size, size);
+}
+
+void DFileView::enlargeIconSize()
+{
+    if(m_currentIconSizeIndex < m_iconSizes.count() - 1)
+        ++m_currentIconSizeIndex;
+
+    setIconSize(currentIconSize());
+}
+
+void DFileView::shrinkIconSize()
+{
+    if(m_currentIconSizeIndex > 0)
+        --m_currentIconSizeIndex;
+
+    setIconSize(currentIconSize());
 }

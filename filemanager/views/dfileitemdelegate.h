@@ -15,6 +15,7 @@ class DFileItemDelegate : public QStyledItemDelegate
     Q_OBJECT
 public:
     explicit DFileItemDelegate(DFileView *parent = 0);
+    ~DFileItemDelegate();
 
     inline DFileView *parent() const
     {
@@ -40,6 +41,12 @@ public:
 
     QList<QRect> paintGeomertyss(const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
+    void hideAllIIndexWidget();
+
+protected:
+    bool eventFilter(QObject *object, QEvent *event) Q_DECL_OVERRIDE;
+
+private:
     FileIconItem *focus_item;
 
     mutable QMap<QString, QString> m_elideMap;
@@ -48,8 +55,7 @@ public:
     mutable QModelIndex focus_index;
     mutable QModelIndex editing_index;
 
-protected:
-    bool eventFilter(QObject *object, QEvent *event) Q_DECL_OVERRIDE;
+    friend class DFileView;
 };
 
 #endif // DFILEITEMDELEGATE_H

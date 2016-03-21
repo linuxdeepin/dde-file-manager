@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>light/DFileView.theme</file>
+    </qresource>
+</RCC>
