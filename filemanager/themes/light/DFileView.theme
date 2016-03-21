@@ -1,0 +1,83 @@
+QListView {
+    background: white;
+}
+
+FileIconItem[showBackground=true] {
+    background: "#2da6f7";
+    border-radius: 5px;
+}
+
+FileIconItem QLabel {
+    background: transparent;
+}
+
+FileIconItem QTextEdit {
+    background: transparent;
+    color: white;
+}
+
+FileIconItem QTextEdit[readOnly=false] {
+    background: #e6e6ec;
+    border: 1px solid rgba(44, 167, 248, 0.3);
+    border-radius: 4px;
+    color: black;
+    min-height: 42px;
+}
+
+/*QListView::item {
+    color: red;
+}
+QListView::item:alternate {
+    background: #EEEEEE;
+}
+
+QListView::item:selected {
+    border: 1px solid #6a6ea9;
+}
+
+QListView::item:selected:!active {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                stop: 0 #ABAFE5, stop: 1 #8588B2);
+}
+
+QListView::item:selected:active {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                stop: 0 #6a6ea9, stop: 1 #888dd9);
+}
+
+QListView::item:hover {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                stop: 0 #FAFBFE, stop: 1 #DCDEF1);
+}*/
+
+QHeaderView {
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                  stop:0 #f8f8f8, stop:1 rgba(255, 255, 255, 0.8));
+    border: 1px inset rgba(0, 0, 0, 0.1);
+    max-height: 20px;
+}
+
+QHeaderView::section {
+    color: #797979;
+    font-size: 12px;
+    background: transparent;
+    border: none;
+}
+
+QHeaderView::section:checked {
+
+}
+
+/* style the sort indicator
+QHeaderView::down-arrow {
+    image: url(down_arrow.png);
+}
+
+QHeaderView::up-arrow {
+    image: url(up_arrow.png);
+}
+*/
+
+QLineEdit {
+    background: transparent;
+}

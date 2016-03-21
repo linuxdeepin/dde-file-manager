@@ -65,12 +65,19 @@ private:
     FileMenuManager* m_fileMenuManager;
     QHeaderView *m_headerView = Q_NULLPTR;
 
-    QList<int> logicalIndexs;
-    QList<int> columnRoles;
+    QList<int> m_logicalIndexs;
+    QList<int> m_columnRoles;
+    QList<int> m_iconSizes;
 
-    bool ctrlIsPressed = false;
+    int m_currentIconSizeIndex = 0;
+
+    bool m_ctrlIsPressed = false;
 
     bool isEmptyArea(const QPoint &pos) const;
+
+    QSize currentIconSize() const;
+    void enlargeIconSize();
+    void shrinkIconSize();
 };
 
 #endif // DFILEVIEW_H

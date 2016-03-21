@@ -31,7 +31,8 @@ LIBS += -lmagic
 RESOURCES += \
     skin/skin.qrc \
     skin/dialogs.qrc \
-    skin/filemanager.qrc
+    skin/filemanager.qrc \
+    filemanager/themes/themes.qrc
 
 target.path = /usr/bin/
 
