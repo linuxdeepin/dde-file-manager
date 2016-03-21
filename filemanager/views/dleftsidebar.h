@@ -4,6 +4,7 @@
 #include <QFrame>
 #include <QListWidget>
 #include <QStackedWidget>
+#include <QScrollBar>
 
 class DCheckableButton;
 class QButtonGroup;

@@ -10,6 +10,7 @@
 #include <QMenu>
 #include <QWheelEvent>
 #include <QDesktopServices>
+#include "dmenu.h"
 
 DFileView::DFileView(QWidget *parent) : DListView(parent)
 {
@@ -209,6 +210,32 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
         menu = m_fileMenuManager->genereteMenuByFileType("File");
         menu->setProperty("url", "/home");
     }
+
+    menu->setAttribute(Qt::WA_TranslucentBackground, true);
+    menu->setStyleSheet("\
+    QMenu {\
+        background-color: white;\
+        color: black;\
+        border-radius: 4px;\
+        border-style: inset; \
+        border: 1px solid lightGray;\
+        padding-top: 10px;\
+        padding-bottom: 10px;\
+        padding-right: 0px;\
+    }\
+    QMenu::item{\
+        padding-top: 4px;\
+        padding-left: 15px;\
+        padding-right: 4px;\
+        padding-bottom: 4px;\
+    }\
+    QMenu::separator{\
+        padding-left: 4px;\
+        padding-right: 4px;\
+    }\
+    QMenu::item:selected {\
+        background: #2ca7f8;\
+    }");
 
     menu->exec(mapToGlobal(event->pos()));
     menu->deleteLater();

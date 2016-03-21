@@ -453,6 +453,49 @@ QPushButton#forwardButton{
     border-radius: 2px;
 }
 
+QPushButton#iconViewButton{
+    background-color:white;
+    border: 1px;
+    color: black;
+    border-radius: 2px;
+    image: url(:/icons/images/icons/iconview_normal.png);
+}
+
+QPushButton#iconViewButton:checked{
+    background-color:#2ca7f8;
+    image: url(:/icons/images/icons/iconview_active.png);
+}
+
+QPushButton#iconViewButton:unchecked{
+    background-color:white;
+    image: url(:/icons/images/icons/iconview_normal.png);
+}
+
+QPushButton#listViewButton{
+    background-color:white;
+    border: 1px;
+    color: black;
+    border-radius: 2px;
+    image: url(:/icons/images/icons/listview_normal.png);
+}
+
+QPushButton#listViewButton:checked{
+    background-color:#2ca7f8;
+    image: url(:/icons/images/icons/listview_active.png);
+}
+
+QPushButton#listViewButton:unchecked{
+    background-color:white;
+    image: url(:/icons/images/icons/listview_normal.png);
+}
+
+QPushButton#sortingButton{
+    background-color:white;
+    border: 1px;
+    color: black;
+    border-radius: 2px;
+}
+
 /* ******************DCrumbButton****************** */
 QFrame#DCrumbWidget{
     background-color:white;
@@ -482,7 +525,20 @@ QLineEdit#DSearchBar{
     background-color: #ffffff;
     border: solid 1px rgba(0, 0, 0, 0.1);
 }
-/* ******************End of DSearchBar****************** */
+/*******************End of DSearchBar****************** */
+
+/******************Menu********************************/
+QMenu#Menu{
+    border-radius: 5px;
+}
+/******************End of Menu*************************/
+
+/******************Left Side Bar************************/
+QScrollBar#DScrollBar::handle:vertical{
+    background: white;
+    min-width: 20px;
+}
+/******************End of Left Side Bar ****************/
 QPushButton#DCheckableButton{
     background-color:transparent;
     border: none;
@@ -497,12 +553,12 @@ QPushButton#DCheckableButton:hover{
 }
 
 QPushButton#DCheckableButton:checked{
-    background-color: #c0c0c0;
+    background-color: #2ca7f8;
     color: white;
 }
 
 QPushButton#DCheckableButton:pressed{
-    background-color: #c0c0c0;
+    background-color: #2ca7f8;
     color: white;
 }
 

@@ -192,12 +192,12 @@ void DFileManagerWindow::toggleLayout()
 void DFileManagerWindow::resizeEvent(QResizeEvent *event)
 {
     if (event->size().width() <= DFileManagerWindow::MinimumWidth){
-        if (m_toolbar->getLayoutbuttonState() == DStateButton::stateA){
-            if (m_leftSideBar->isVisible() && event->size().width() < event->oldSize().width()){
-                m_leftSideBar->hide();
-                m_toolbar->setLayoutButtonState(DStateButton::stateB);
-            }
-        }
+//        if (m_toolbar->getLayoutbuttonState() == DStateButton::stateA){
+//            if (m_leftSideBar->isVisible() && event->size().width() < event->oldSize().width()){
+//                m_leftSideBar->hide();
+//                m_toolbar->setLayoutButtonState(DStateButton::stateB);
+//            }
+//        }
     }else{
 //        if (m_toolbar->getLayoutbuttonState() == DStateButton::stateB){
 //            if (!m_leftSideBar->isVisible()){
