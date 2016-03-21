@@ -154,6 +154,8 @@ void DFileView::switchListMode()
                     this, static_cast<void (DFileView::*)()>(&DFileView::update));
             connect(m_headerView, &QHeaderView::sectionMoved,
                     this, &DFileView::moveColumnRole);
+            connect(m_headerView, &QHeaderView::sortIndicatorChanged,
+                    model(), &QAbstractItemModel::sort);
         }
 
         for(int i = 0; i < m_headerView->count(); ++i) {
@@ -163,6 +165,10 @@ void DFileView::switchListMode()
             if(columnRoles.last() == DFileSystemModel::FileNameRole) {
                 m_headerView->resizeSection(i, width() - (m_headerView->count() - 1) * m_headerView->defaultSectionSize());
             }
+
+            QSignalBlocker blocker(m_headerView);
+            Q_UNUSED(blocker)
+            m_headerView->setSortIndicator(i, model()->sortOrder());
         }
 
         addHeaderWidget(m_headerView);

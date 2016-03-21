@@ -27,6 +27,7 @@ public:
     };
 
     explicit DFileSystemModel(QObject *parent = 0);
+    ~DFileSystemModel();
 
     QModelIndex index(const QString &url, int column = 0);
     QModelIndex index(int row, int column,
@@ -59,8 +60,12 @@ public:
 
     QString getUrlByIndex(const QModelIndex &index) const;
 
-    void setSortColumn(int column);
-    void setSortRole(int role);
+    void setSortColumn(int column, Qt::SortOrder order = Qt::AscendingOrder);
+    void setSortRole(int role, Qt::SortOrder order = Qt::AscendingOrder);
+
+    Qt::SortOrder sortOrder() const;
+    int sortColumn() const;
+    int sortRole() const;
 
     void sort(int column, Qt::SortOrder order = Qt::AscendingOrder) Q_DECL_OVERRIDE;
 
@@ -70,18 +75,23 @@ public slots:
 
 private:
     FileSystemNode *m_rootNode = Q_NULLPTR;
+    FileSystemNode *m_lastFetchNode = Q_NULLPTR;
+
     QMap<QString, FileSystemNode*> m_urlToNode;
     mutable QHash<QString, QIcon> m_typeToIcon;
     IconProvider m_iconProvider;
 
     int m_sortRole = Qt::DisplayRole;
     int m_sortColumn = 0;
+    Qt::SortOrder m_srotOrder = Qt::AscendingOrder;
 
     inline FileSystemNode *getNodeByIndex(const QModelIndex &index) const;
     QModelIndex createIndex(const FileSystemNode *node, int column) const;
     using QAbstractItemModel::createIndex;
 
     bool isDir(const FileSystemNode *node) const;
+
+    void sort(QList<FileInfo *> &list, Qt::SortOrder order = Qt::AscendingOrder) const;
 
     friend class FileSystemNode;
 };

@@ -47,6 +47,11 @@ DFileSystemModel::DFileSystemModel(QObject *parent) :
 
 }
 
+DFileSystemModel::~DFileSystemModel()
+{
+    qDeleteAll(m_urlToNode);
+}
+
 QModelIndex DFileSystemModel::index(const QString &url, int column)
 {
     FileSystemNode *node = m_urlToNode.value(url);
@@ -229,6 +234,8 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
 
     parentNode->populatedChildren = true;
 
+    m_lastFetchNode = parentNode;
+
     emit fileSignalManager->requestChildren(parentNode->fileInfo->absoluteFilePath());
 }
 
@@ -361,52 +368,78 @@ QString DFileSystemModel::getUrlByIndex(const QModelIndex &index) const
     return node->fileInfo->absoluteFilePath();
 }
 
-void DFileSystemModel::setSortColumn(int column)
+void DFileSystemModel::setSortColumn(int column, Qt::SortOrder order)
 {
     m_sortColumn = column;
 
     switch (m_sortColumn) {
     case 0:
-        setSortRole(DFileSystemModel::FileNameRole);
+        setSortRole(DFileSystemModel::FileNameRole, order);
         break;
     case 1:
-        setSortRole(DFileSystemModel::FileLastModified);
+        setSortRole(DFileSystemModel::FileLastModified, order);
         break;
     case 2:
-        setSortRole(DFileSystemModel::FileSizeRole);
+        setSortRole(DFileSystemModel::FileSizeRole, order);
         break;
     case 3:
-        setSortRole(DFileSystemModel::FileMimeTypeRole);
+        setSortRole(DFileSystemModel::FileMimeTypeRole, order);
         break;
     case 4:
-        setSortRole(DFileSystemModel::FileCreated);
+        setSortRole(DFileSystemModel::FileCreated, order);
         break;
     default:
         break;
     }
 }
 
-void DFileSystemModel::setSortRole(int role)
+void DFileSystemModel::setSortRole(int role, Qt::SortOrder order)
 {
     m_sortRole = role;
+    m_srotOrder = order;
 }
 
-void DFileSystemModel::sort(int /*column*/, Qt::SortOrder /*order*/)
+Qt::SortOrder DFileSystemModel::sortOrder() const
 {
-
+    return m_srotOrder;
 }
 
-bool sortFileListByName(const FileInfo *info1, const FileInfo *info2)
+int DFileSystemModel::sortColumn() const
 {
-    if(info1->isDir()) {
-        if(!info2->isDir())
-            return true;
-    } else {
-        if(info2->isDir())
-            return false;
+    return m_sortColumn;
+}
+
+int DFileSystemModel::sortRole() const
+{
+    return m_sortRole;
+}
+
+void DFileSystemModel::sort(int column, Qt::SortOrder order)
+{
+    setSortColumn(column, order);
+
+    if(!m_lastFetchNode)
+        return;
+
+    QList<FileInfo*> list;
+
+    list.reserve(m_lastFetchNode->children.size());
+
+    for(const QString &fileName: m_lastFetchNode->visibleChildren) {
+        list << m_lastFetchNode->children.value(fileName)->fileInfo;
     }
 
-    return info1->fileName() < info2->fileName();
+    sort(list, order);
+
+    for(int i = 0; i < m_lastFetchNode->children.count(); ++i) {
+        m_lastFetchNode->children[m_lastFetchNode->visibleChildren.value(i)]->fileInfo = list[i];
+    }
+
+    QModelIndex parentIndex = createIndex(m_lastFetchNode, 0);
+    QModelIndex topLeftIndex = index(0, 0, parentIndex);
+    QModelIndex rightBottomIndex = index(m_lastFetchNode->visibleChildren.count(), columnCount(parentIndex), parentIndex);
+
+    emit dataChanged(topLeftIndex, rightBottomIndex);
 }
 
 void DFileSystemModel::updateChildren(const QString &url, QList<FileInfo*> list)
@@ -418,22 +451,7 @@ void DFileSystemModel::updateChildren(const QString &url, QList<FileInfo*> list)
 
     node->clearChildren();
 
-    switch (m_sortColumn) {
-    case DFileSystemModel::FileNameRole:
-    case Qt::DisplayRole:
-        qSort(list.begin(), list.end(), sortFileListByName);
-        break;
-    case DFileSystemModel::FileLastModified:
-        break;
-    case DFileSystemModel::FileSizeRole:
-        break;
-    case DFileSystemModel::FileMimeTypeRole:
-        break;
-    case DFileSystemModel::FileCreated:
-        break;
-    default:
-        break;
-    }
+    sort(list);
 
     beginInsertRows(createIndex(node, 0), 0, list.count() - 1);
 
@@ -485,4 +503,97 @@ QModelIndex DFileSystemModel::createIndex(const FileSystemNode *node, int column
 bool DFileSystemModel::isDir(const FileSystemNode *node) const
 {
     return node->fileInfo->isDir();
+}
+
+Qt::SortOrder sortOrder_global;
+
+bool sortFileListByName(const FileInfo *info1, const FileInfo *info2)
+{
+    if(info1->isDir()) {
+        if(!info2->isDir())
+            return true;
+    } else {
+        if(info2->isDir())
+            return false;
+    }
+
+    return (sortOrder_global == Qt::DescendingOrder) ^ (info1->fileName().toLower() < info2->fileName().toLower());
+}
+
+bool sortFileListBySize(const FileInfo *info1, const FileInfo *info2)
+{
+    if(info1->isDir()) {
+        if(!info2->isDir())
+            return true;
+    } else {
+        if(info2->isDir())
+            return false;
+    }
+
+    return (sortOrder_global == Qt::DescendingOrder) ^ (info1->size() < info2->size());
+}
+
+bool sortFileListByModified(const FileInfo *info1, const FileInfo *info2)
+{
+    if(info1->isDir()) {
+        if(!info2->isDir())
+            return true;
+    } else {
+        if(info2->isDir())
+            return false;
+    }
+
+    return (sortOrder_global == Qt::DescendingOrder) ^ (info1->lastModified() < info2->lastModified());
+}
+
+bool sortFileListByMime(const FileInfo *info1, const FileInfo *info2)
+{
+    if(info1->isDir()) {
+        if(!info2->isDir())
+            return true;
+    } else {
+        if(info2->isDir())
+            return false;
+    }
+
+    return (sortOrder_global == Qt::DescendingOrder) ^ (info1->mimeTypeName() < info2->mimeTypeName());
+}
+
+bool sortFileListByCreated(const FileInfo *info1, const FileInfo *info2)
+{
+    if(info1->isDir()) {
+        if(!info2->isDir())
+            return true;
+    } else {
+        if(info2->isDir())
+            return false;
+    }
+
+    return (sortOrder_global == Qt::DescendingOrder) ^ (info1->created() < info2->created());
+}
+
+void DFileSystemModel::sort(QList<FileInfo *> &list, Qt::SortOrder order) const
+{
+    sortOrder_global = order;
+
+    switch (m_sortRole) {
+    case DFileSystemModel::FileNameRole:
+    case Qt::DisplayRole:
+        qSort(list.begin(), list.end(), sortFileListByName);
+        break;
+    case DFileSystemModel::FileLastModified:
+        qSort(list.begin(), list.end(), sortFileListByModified);
+        break;
+    case DFileSystemModel::FileSizeRole:
+        qSort(list.begin(), list.end(), sortFileListBySize);
+        break;
+    case DFileSystemModel::FileMimeTypeRole:
+        qSort(list.begin(), list.end(), sortFileListByMime);
+        break;
+    case DFileSystemModel::FileCreated:
+        qSort(list.begin(), list.end(), sortFileListByCreated);
+        break;
+    default:
+        break;
+    }
 }
