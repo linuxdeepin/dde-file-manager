@@ -20,11 +20,11 @@ DTitleBar::~DTitleBar()
 
 void DTitleBar::initData()
 {
-    m_settingsIcon = new QIcon(":/images/images/dark/appbar.control.down.png");
-    m_minIcon = new QIcon(":/images/images/dark/appbar.minus.png");
-    m_maxIcon = new QIcon(":/images/images/dark/appbar.fullscreen.box.png");
-    m_normalIcon = new QIcon(":/images/images/dark/appbar.app.png");
-    m_closeIcon = new QIcon(":/images/images/dark/appbar.close.png");
+    m_settingsIcon = new QIcon(":/icons/images/icons/menu_normal.png");
+    m_minIcon = new QIcon(":/icons/images/icons/minimise_normal.png");
+    m_maxIcon = new QIcon(":/icons/images/icons/maximize_normal.png");
+    m_normalIcon = new QIcon(":/icons/images/icons/unmaximize_normal.png");
+    m_closeIcon = new QIcon(":/icons/images/icons/close_normal.png");
 }
 
 void DTitleBar::initUI()
@@ -59,7 +59,7 @@ void DTitleBar::initUI()
 
     QHBoxLayout* mainlayout = new QHBoxLayout;
     mainlayout->addLayout(controlLayout);
-    mainlayout->setContentsMargins(0, 0, 0, 0);
+    mainlayout->setContentsMargins(0, 3, 0, 0);
     mainlayout->setSpacing(0);
     setLayout(mainlayout);
 }

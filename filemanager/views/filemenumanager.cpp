@@ -1,5 +1,6 @@
 #include "filemenumanager.h"
 #include <QDebug>
+#include "dmenu.h"
 
 FileMenuManager::FileMenuManager(QObject *parent) : QObject(parent)
 {
@@ -83,6 +84,7 @@ QMenu *FileMenuManager::genereteMenuByFileType(QString type)
 QMenu *FileMenuManager::genereteMenuByKeys(const QStringList keys)
 {
     QMenu* menu = new QMenu;
+    menu->setObjectName("Menu");
     foreach (QString key, keys) {
         if (key == "separator"){
             menu->addSeparator();

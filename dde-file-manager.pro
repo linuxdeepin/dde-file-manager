@@ -101,7 +101,9 @@ HEADERS += \
     filemanager/views/dcrumbwidget.h \
     filemanager/views/dcrumbbutton.h \
     filemanager/views/dhorizseparator.h \
-    filemanager/models/ddirmodel.h
+    filemanager/models/ddirmodel.h \
+    filemanager/views/dscrollbar.h \
+    filemanager/views/dmenu.h
 
 SOURCES += \
     filemanager/controllers/appcontroller.cpp \
@@ -163,6 +165,8 @@ SOURCES += \
     filemanager/views/dcrumbwidget.cpp \
     filemanager/views/dcrumbbutton.cpp \
     filemanager/views/dhorizseparator.cpp \
-    filemanager/models/ddirmodel.cpp
+    filemanager/models/ddirmodel.cpp \
+    filemanager/views/dscrollbar.cpp \
+    filemanager/views/dmenu.cpp
 
 INCLUDEPATH += filemanager/models

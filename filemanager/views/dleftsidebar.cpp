@@ -24,7 +24,7 @@ DLeftSideBar::~DLeftSideBar()
 
 void DLeftSideBar::initData()
 {
-    m_iconlist << ":/images/images/dark/appbar.lines.horizontal.4.png" //file
+    m_iconlist << ":/icons/images/icons/sidebar_expand_normal.png" //file
                << ":/icons/images/icons/folder-recent-symbolic.svg" //recent
                << ":/icons/images/icons/user-home-symbolic.svg" //home
                << ":/icons/images/icons/folder-desktop-symbolic.svg" //desktop
@@ -55,7 +55,6 @@ void DLeftSideBar::initUI()
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->addWidget(m_stackedWidget);
-    //mainLayout->addStretch();
     mainLayout->setSpacing(0);
     mainLayout->setContentsMargins(0, 0, 0, 0);
     setLayout(mainLayout);
@@ -126,6 +125,7 @@ void DLeftSideBar::initUI()
 void DLeftSideBar::initConnect()
 {
     connect(m_buttonGroup, SIGNAL(buttonClicked(int)), this, SLOT(handleLocationChanged(int)));
+    connect(m_tightNavButtonGroup, SIGNAL(buttonClicked(int)), this, SLOT(handleLocationChanged(int)));
     connect(m_fileButton, &DCheckableButton::released, this, &DLeftSideBar::toTightNav);
     connect(m_tightNavFileButton, &DCheckableButton::released, this, &DLeftSideBar::toNormalNav);
 }
@@ -133,19 +133,27 @@ void DLeftSideBar::initConnect()
 void DLeftSideBar::initTightNav()
 {
     m_tightNav = new QFrame(this);
-    m_tightNavFileButton = new DCheckableButton(":/images/images/dark/appbar.lines.horizontal.4.png", "");
+    m_tightNavFileButton = new DCheckableButton(":/icons/images/icons/sidebar_expand_normal.png", "");
+    m_tightNavFileButton->setFixedHeight(40);
     m_tightNavButtonGroup = new QButtonGroup;
     QVBoxLayout * tightNavLayout = new QVBoxLayout;
-    tightNavLayout->setContentsMargins(0, 0, 0, 0);
-    m_tightNav->setLayout(tightNavLayout);
     tightNavLayout->addWidget(m_tightNavFileButton);
+    tightNavLayout->setContentsMargins(0, 0, 0, 0);
+    tightNavLayout->setSpacing(0);
+    m_tightNav->setLayout(tightNavLayout);
     m_tightNavButtonGroup->addButton(m_tightNavFileButton, 0);
+
+    QListWidget * list = new QListWidget;
+    list->setObjectName("ListWidget");
     for(int i = 1; i < m_iconlist.size(); i++)
     {
         DCheckableButton * button = new DCheckableButton(m_iconlist.at(i), "");
-        tightNavLayout->addWidget(button);
+        QListWidgetItem * item = new QListWidgetItem(list);
+        item->setSizeHint(QSize(30, 30));
+        list->setItemWidget(item, button);
         m_tightNavButtonGroup->addButton(button, i);
     }
+    tightNavLayout->addWidget(list);
 }
 
 void DLeftSideBar::initNav()
@@ -154,13 +162,19 @@ void DLeftSideBar::initNav()
     QVBoxLayout* navLayout = new QVBoxLayout;
     m_nav->setLayout(navLayout);
     //add file button
-    m_fileButton = new DCheckableButton(":/images/images/dark/appbar.lines.horizontal.4.png", tr("File"));
+    m_fileButton = new DCheckableButton(":/icons/images/icons/sidebar_expand_normal.png", tr("File"));
+    m_fileButton->setFixedHeight(40);
     navLayout->addWidget(m_fileButton);
+    navLayout->setSpacing(0);
     navLayout->setContentsMargins(0, 0, 0, 0);
     m_buttonGroup = new QButtonGroup;
     m_buttonGroup->addButton(m_fileButton, 0);
     m_listWidget = new QListWidget;
     m_listWidget->setObjectName("ListWidget");
+    QScrollBar * scrollbar = new QScrollBar;
+    scrollbar->setObjectName("DScrollBar");
+    m_listWidget->setVerticalScrollBar(scrollbar);
+    m_listWidget->setAutoScroll(true);
 
     //recent, home, desktop, video, pcitures, documents, download, musics, trash
     for(int i = 1; i <= 9; i++)

@@ -81,5 +81,23 @@
         <file>images/icons/drive-removable-media-symbolic.svg</file>
         <file>images/icons/backward_press.png</file>
         <file>images/icons/backward_normal.png</file>
+        <file>images/icons/unmaximize_press.png</file>
+        <file>images/icons/unmaximize_normal.png</file>
+        <file>images/icons/unmaximize_hover.png</file>
+        <file>images/icons/sidebar_expand_press.png</file>
+        <file>images/icons/sidebar_expand_normal.png</file>
+        <file>images/icons/sidebar_expand_hover.png</file>
+        <file>images/icons/minimise_press.png</file>
+        <file>images/icons/minimise_normal.png</file>
+        <file>images/icons/minimise_hover.png</file>
+        <file>images/icons/menu_press.png</file>
+        <file>images/icons/menu_normal.png</file>
+        <file>images/icons/menu_hover.png</file>
+        <file>images/icons/maximize_press.png</file>
+        <file>images/icons/maximize_normal.png</file>
+        <file>images/icons/maximize_hover.png</file>
+        <file>images/icons/close_press.png</file>
+        <file>images/icons/close_normal.png</file>
+        <file>images/icons/close_hover.png</file>
     </qresource>
 </RCC>

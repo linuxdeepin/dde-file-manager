@@ -6,6 +6,18 @@
 
 DSearchBar::DSearchBar(QWidget *parent):QLineEdit(parent)
 {
+    initUI();
+    initData();
+    initConnections();
+}
+
+void DSearchBar::initData()
+{
+    searchHistoryLoaded(searchHistoryManager->toStringList());
+}
+
+void DSearchBar::initUI()
+{
     m_list = new QListWidget;
     m_hList = new QListWidget;
     m_list->setStyleSheet("QListWidget::item:hover {background:lightGray;}");
@@ -19,12 +31,10 @@ DSearchBar::DSearchBar(QWidget *parent):QLineEdit(parent)
 
     QIcon icon(":/images/images/light/appbar.close.png");
     m_clearAction = new QAction(icon,"", this);
-    initConnections();
+
     setFixedHeight(20);
     setObjectName("DSearchBar");
     setMinimumWidth(48);
-
-    searchHistoryLoaded(searchHistoryManager->toStringList());
 }
 
 

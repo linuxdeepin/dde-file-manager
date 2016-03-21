@@ -6,6 +6,7 @@
 #include "dstatebutton.h"
 
 class DIconTextButton;
+class DCheckableButton;
 class DStateButton;
 class DSearchBar;
 class DTabBar;
@@ -24,17 +25,16 @@ public:
     void initContollerToolBar();
     void initConnect();
 
-    DStateButton::ButtonState getLayoutbuttonState();
-
 signals:
+    void requestIconView();
+    void requestListView();
+
     void requestSwitchLayout();
     void switchLayoutMode();
     void backButtonClicked();
     void refreshButtonClicked();
 
 public slots:
-    void setLayoutButtonState(DStateButton::ButtonState state);
-    void searchBarSwitched();
     void searchBarActivated();
     void searchBarDeactivated();
     void searchBarTextEntered();
@@ -42,7 +42,6 @@ public slots:
     void crumbChanged(const QString &url);
     void upButtonClicked();
     void searchBarChanged(QString path);
-    void tabBarChanged(QString path);
 private:
     QFrame* m_addressToolBar;
     DStateButton* m_backButton=NULL;
@@ -53,13 +52,13 @@ private:
     QFrame* m_contollerToolBar;
     DIconTextButton* m_newFolderButton=NULL;
     DIconTextButton* m_deleteFileButton=NULL;
-    DStateButton* m_layoutButton=NULL;
-    DStateButton* m_sortButton=NULL;
-    DStateButton* m_hideShowButton=NULL;
-    DStateButton* m_viewSwitchButton=NULL;
+    QPushButton* m_iconViewButton=NULL;
+    QPushButton* m_listViewButton=NULL;
+    DStateButton* m_sortingButton=NULL;
     DSearchBar * m_searchBar = NULL;
     bool m_switchState = false;
-    DCrumbWidget * m_crumbWidget;
+    DCrumbWidget * m_crumbWidget = NULL;
+    QButtonGroup * m_viewButtonGroup = NULL;
 };
 
 #endif // DTOOLBAR_H

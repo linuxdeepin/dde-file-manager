@@ -23,6 +23,8 @@ public:
     QAction * removeClearAction();
 
 private:
+    void initData();
+    void initUI();
     QListWidget * m_list;
     QListWidget * m_hList;
     QCompleter * m_completer;

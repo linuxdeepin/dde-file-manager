@@ -3,6 +3,7 @@
 #include <QVBoxLayout>
 
 #include "dicontextbutton.h"
+#include "dcheckablebutton.h"
 #include "dsearchbar.h"
 #include "dtabbar.h"
 #include "../app/global.h"
@@ -56,8 +57,6 @@ void DToolBar::initAddressToolBar()
     m_forwardButton->setFixedWidth(25);
     m_forwardButton->setFixedHeight(20);
     m_upButton = new DStateButton(":/images/images/dark/appbar.arrow.up.png", this);
-    m_searchButton = new DStateButton(":/images/images/dark/appbar.magnify.png", this);
-    m_refreshButton = new DStateButton(":/images/images/dark/appbar.refresh.png", this);
 
     m_searchBar = new DSearchBar;
     m_searchBar->setPlaceholderText("Enter address");
@@ -71,8 +70,6 @@ void DToolBar::initAddressToolBar()
     mainLayout->addWidget(m_upButton);
     mainLayout->addWidget(m_crumbWidget);
     mainLayout->addWidget(m_searchBar);
-    mainLayout->addWidget(m_searchButton);
-    mainLayout->addWidget(m_refreshButton);
     mainLayout->setContentsMargins(5, 5, 5, 5);
     mainLayout->setSpacing(0);
     m_addressToolBar->setLayout(mainLayout);
@@ -83,72 +80,47 @@ void DToolBar::initContollerToolBar()
     m_contollerToolBar = new QFrame;
     m_contollerToolBar->setObjectName("ContollerToolBar");
     m_contollerToolBar->setFixedHeight(40);
-    m_layoutButton = new DStateButton(":/images/images/dark/appbar.layout.body.png",
-                                      ":/images/images/dark/appbar.layout.sidebar.png",
-                                      this);
+    m_iconViewButton = new QPushButton(this);
+    m_iconViewButton->setFixedHeight(20);
+    m_iconViewButton->setFixedWidth(26);
+    m_iconViewButton->setObjectName("iconViewButton");
+    m_iconViewButton->setCheckable(true);
 
-    m_sortButton = new DStateButton(":/images/images/dark/appbar.sort.png", this);
+    m_listViewButton = new QPushButton(this);
+    m_listViewButton->setFixedHeight(20);
+    m_listViewButton->setFixedWidth(26);
+    m_listViewButton->setObjectName("listViewButton");
+    m_listViewButton->setCheckable(true);
 
-    m_hideShowButton = new DStateButton(":/images/images/dark/appbar.eye.hide.png",
-                                        ":/images/images/dark/appbar.eye.png",
+    m_viewButtonGroup = new QButtonGroup(this);
+    m_viewButtonGroup->addButton(m_iconViewButton, 0);
+    m_viewButtonGroup->addButton(m_listViewButton, 1);
+
+    m_sortingButton = new DStateButton(":/images/images/light/appbar.sort.png",
                                         this);
+    m_sortingButton->setFixedHeight(20);
+    m_sortingButton->setFixedWidth(26);
+    m_sortingButton->setObjectName("sortingButton");
 
-    m_viewSwitchButton = new DStateButton(":/images/images/dark/appbar.tiles.four.png",
-                                          ":/images/images/dark/appbar.list.png",
-                                          this);
     QHBoxLayout* mainLayout = new QHBoxLayout;
-    mainLayout->addWidget(m_layoutButton);
-    mainLayout->addWidget(m_sortButton);
-    mainLayout->addWidget(m_hideShowButton);
-    mainLayout->addWidget(m_viewSwitchButton);
+    mainLayout->addWidget(m_iconViewButton);
+    mainLayout->addWidget(m_listViewButton);
+    mainLayout->addWidget(m_sortingButton);
     mainLayout->setContentsMargins(5, 5, 5, 5);
+    mainLayout->setSpacing(0);
     m_contollerToolBar->setLayout(mainLayout);
 }
 
 void DToolBar::initConnect()
 {
-    connect(m_layoutButton, SIGNAL(clicked()), this, SIGNAL(requestSwitchLayout()));
-    connect(m_backButton, &DStateButton::clicked,
-            this, &DToolBar::backButtonClicked);
-    connect(m_viewSwitchButton, &DStateButton::clicked,
-            this, &DToolBar::switchLayoutMode);
-    //m_searchButton released --> searchBarSwitched
-    connect(m_searchButton, SIGNAL(released()), this, SLOT(searchBarSwitched()));
-    //search bar return pressed --> searchBarTextEntered
-    connect(m_searchBar, SIGNAL(returnPressed()), this, SLOT(searchBarTextEntered()));
-    //tab bar clicked --> tabBarClicked
+    connect(m_iconViewButton, &DStateButton::clicked, this, &DToolBar::requestIconView);
+    connect(m_listViewButton, &DStateButton::clicked, this, &DToolBar::requestListView);
+    connect(m_backButton, &DStateButton::clicked,this, &DToolBar::backButtonClicked);
+    connect(m_searchBar, &DSearchBar::returnPressed, this, &DToolBar::searchBarTextEntered);
     connect(m_crumbWidget, &DCrumbWidget::crumbSelected, this, &DToolBar::crumbSelected);
-    //up button released --> upButtonClicked
     connect(m_upButton, SIGNAL(released()), this, SLOT(upButtonClicked()));
-    connect(m_refreshButton, &DStateButton::clicked, this, &DToolBar::refreshButtonClicked);
     connect(m_searchBar, SIGNAL(searchBarFocused()), this, SLOT(searchBarActivated()));
     connect(fileSignalManager, &FileSignalManager::currentUrlChanged, this, &DToolBar::crumbChanged);
-}
-
-DStateButton::ButtonState DToolBar::getLayoutbuttonState()
-{
-    return m_layoutButton->getButtonState();
-}
-
-void DToolBar::setLayoutButtonState(DStateButton::ButtonState state)
-{
-    m_layoutButton->setButtonState(state);
-}
-
-void DToolBar::searchBarSwitched()
-{
-    m_switchState = !m_switchState;
-    if(m_switchState)
-    {
-        m_crumbWidget->hide();
-        m_searchBar->setAlignment(Qt::AlignLeft);
-        m_searchBar->clear();
-    }
-    else
-    {
-        m_crumbWidget->show();
-        m_searchBar->setAlignment(Qt::AlignHCenter);
-    }
 }
 
 void DToolBar::searchBarActivated()
@@ -213,11 +185,6 @@ void DToolBar::upButtonClicked()
 void DToolBar::searchBarChanged(QString path)
 {
     m_searchBar->setText(path);
-}
-
-void DToolBar::tabBarChanged(QString path)
-{
-
 }
 
 
