@@ -10,6 +10,10 @@ DWIDGET_USE_NAMESPACE
 
 class FileIconItem;
 
+QT_BEGIN_NAMESPACE
+class QTextDocument;
+QT_END_NAMESPACE
+
 class DFileItemDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
@@ -49,9 +53,10 @@ protected:
 private:
     FileIconItem *focus_item;
 
-    mutable QMap<QString, QString> m_elideMap;
-    mutable QMap<QString, QString> m_wordWrapMap;
-    mutable QMap<QString, int> m_textHeightMap;
+    mutable QHash<QString, QString> m_elideMap;
+    mutable QHash<QString, QString> m_wordWrapMap;
+    mutable QHash<QString, int> m_textHeightMap;
+    mutable QHash<QString, QTextDocument*> m_documentMap;
     mutable QModelIndex focus_index;
     mutable QModelIndex editing_index;
 

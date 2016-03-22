@@ -30,7 +30,6 @@ signals:
     void requestListView();
 
     void requestSwitchLayout();
-    void switchLayoutMode();
     void backButtonClicked();
     void refreshButtonClicked();
 
