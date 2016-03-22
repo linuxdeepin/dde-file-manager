@@ -13,6 +13,7 @@
 #include <QWheelEvent>
 #include <QDesktopServices>
 #include "dmenu.h"
+#include "dscrollbar.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -52,6 +53,8 @@ void DFileView::initUI()
     setSelectionBehavior(QAbstractItemView::SelectItems);
     setSelectionRectVisible(true);
     setEditTriggers(QListView::EditKeyPressed | QListView::SelectedClicked);
+
+    setVerticalScrollBar(new DScrollBar);
 }
 
 void DFileView::initDelegate()
@@ -226,7 +229,7 @@ void DFileView::moveColumnRole(int /*logicalIndex*/, int oldVisualIndex, int new
 
 void DFileView::contextMenuEvent(QContextMenuEvent *event)
 {
-    QMenu *menu;
+    DMenu *menu;
 
     if (isEmptyArea(event->pos())){
         menu = m_fileMenuManager->genereteMenuByFileType("Space");

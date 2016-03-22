@@ -6,9 +6,7 @@
 class DMenu : public QMenu
 {
 public:
-    DMenu();
-protected:
-    void paintEvent(QPaintEvent *e);
+    DMenu(QWidget * parent = 0);
 };
 
 #endif // DMENU_H

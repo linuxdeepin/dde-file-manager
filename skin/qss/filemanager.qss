@@ -97,58 +97,6 @@ QProgressBar QLineEdit{
     background-color: transparent;
 }
 
-/* ******************QMenu****************** */
-QMenu {
-    color: white;
-    background-color: rgb(40, 47, 63);
-    margin: 2px; 
-}
-
-QMenu::item {
-    height: 23px;
-    padding: 0px 25px 0px 20px;
-    background: rgb(40, 47, 63);
-}
-
-QMenu::item:selected {
-    background-color: rgb(69, 187, 217);
-}
-
-QMenu::icon:checked { /* appearance of a 'checked' icon */
-    background: rgb(63, 147, 168);
-    border: 1px inset gray;
-    position: absolute;
-    top: 1px;
-    right: 1px;
-    bottom: 1px;
-    left: 1px;
- }
-
-QMenu::item:disabled
-{
-    background-color: gray;
-    border: 1px inset gray;
-    position: absolute;
-    top: 1px;
-    right: 1px;
-    bottom: 1px;
-    left: 1px;
-}
-
-
-QMenu::separator {
-    height: 2px;
-    background: lightblue;
-    margin-left: 10px;
-    margin-right: 5px;
-}
-
-QMenu::indicator {
-    width: 13px;
-    height: 13px;
-}
-/* ******************QMenu****************** */
-
 /* ******************QComboBox****************** */
 QComboBox{
     color:white;
@@ -528,15 +476,62 @@ QLineEdit#DSearchBar{
 /*******************End of DSearchBar****************** */
 
 /******************Menu********************************/
-QMenu#Menu{
-    border-radius: 5px;
-}
+
 /******************End of Menu*************************/
 
 /******************Left Side Bar************************/
+QLabel#FileLabel{
+    background: transparent;
+    color: black;
+    text-align: left
+}
+
+QPushButton#FileButton{
+    background: transparent;
+    image: url(:/icons/images/icons/sidebar_expand_normal.png);
+    text-align: left
+}
+
+QPushButton#FileButton:hover{
+    background: transparent;
+    image: url(:/icons/images/icons/sidebar_expand_hover.png);
+}
+
+QPushButton#FileButton:press{
+    background: transparent;
+    image: url(:/icons/images/icons/sidebar_expand_press.png);
+}
+
+QScrollBar#DScrollBar:vertical{
+     border: 0px;
+     background: transparent;
+     width: 6px;
+}
+
+QScrollBar#DScrollBar::handle:vertical:hover{
+     background: rgba(16,16,16,0.7);
+}
+
 QScrollBar#DScrollBar::handle:vertical{
-    background: white;
-    min-width: 20px;
+     border: 0px;
+     background-color: rgba(16,16,16,0.5);
+     width: 6px;
+}
+
+QScrollBar#DScrollBar::add-line:vertical {
+      border: none;
+      background: none;
+}
+
+QScrollBar#DScrollBar::sub-line:vertical {
+      border: none;
+      background: none;
+}
+
+QScrollBar#DScrollBar::up-arrow:vertical, QScrollBar#DScrollBar::down-arrow:vertical {
+     width: 0px;
+     height: 0px;
+     background: transparent;
 }
 /******************End of Left Side Bar ****************/
 QPushButton#DCheckableButton{
@@ -568,7 +563,7 @@ QPushButton#DCheckableButton:disabled{
 
 QLabel#LeftSideBarTextLabel{
     background-color: transparent;
-    color: rgb(92, 113, 134);
+    color: black;
 }
 
 /* ******************QGroupBox****************** */
