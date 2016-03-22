@@ -165,8 +165,10 @@ void DFileManagerWindow::initConnect()
 
         emit fileSignalManager->currentUrlChanged(QUrl::fromLocalFile(dir.absolutePath()).toString(QUrl::EncodeUnicode));
     });
-    connect(m_toolbar, &DToolBar::switchLayoutMode,
-            m_fileView, &DFileView::switchListMode);
+    connect(m_toolbar, &DToolBar::requestListView,
+            m_fileView, &DFileView::switchToListMode);
+    connect(m_toolbar, &DToolBar::requestIconView,
+            m_fileView, &DFileView::switchToIconMode);
     connect(m_toolbar, &DToolBar::refreshButtonClicked,
             this, [this] {
         emit fileSignalManager->refreshFolder(m_fileView->currentUrl());

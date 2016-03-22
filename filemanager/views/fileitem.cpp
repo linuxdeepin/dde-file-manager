@@ -1,8 +1,10 @@
 #include <QTextEdit>
+#include <QTextBlock>
 
 #include <anchors.h>
 
 #include "fileitem.h"
+#include "../app/global.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -29,6 +31,22 @@ FileIconItem::FileIconItem(QWidget *parent) :
 
     setFrameShape(QFrame::NoFrame);
     setFocusProxy(edit);
+
+    connect(edit, &QTextEdit::textChanged, this, [this] {
+        QSignalBlocker blocker(edit);
+        Q_UNUSED(blocker)
+
+        QTextCursor cursor(edit->document());
+
+        cursor.movePosition(QTextCursor::Start);
+
+        do {
+            QTextBlockFormat format = cursor.blockFormat();
+
+            format.setLineHeight(TEXT_LINE_HEIGHT, QTextBlockFormat::FixedHeight);
+            cursor.setBlockFormat(format);
+        } while (cursor.movePosition(QTextCursor::NextBlock));
+    });
 }
 
 bool FileIconItem::event(QEvent *ee)

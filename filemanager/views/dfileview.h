@@ -42,9 +42,12 @@ public:
 
     QList<int> columnRoleList() const;
 
+    int selectedIndexCount() const;
+
 public slots:
     void cd(const QString &url);
-    void switchListMode();
+    void switchToListMode();
+    void switchToIconMode();
 
 signals:
     void currentUrlChanged(QString url);
@@ -59,6 +62,7 @@ protected:
     void keyReleaseEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
     void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
     void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+    void selectionChanged(const QItemSelection & selected, const QItemSelection & deselected) Q_DECL_OVERRIDE;
 
 private:
     FileController *m_controller;
@@ -70,6 +74,7 @@ private:
     QList<int> m_iconSizes;
 
     int m_currentIconSizeIndex = 0;
+    int m_selectedIndexCount = 0;
 
     bool m_ctrlIsPressed = false;
 

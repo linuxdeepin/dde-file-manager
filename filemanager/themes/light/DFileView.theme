@@ -81,3 +81,30 @@ QHeaderView::up-arrow {
 QLineEdit {
     background: transparent;
 }
+
+QMenu {
+    background-color: white;
+    color: black;
+    border-radius: 4px;
+    border-style: inset;
+    border: 1px solid lightGray;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-right: 0px;
+}
+
+QMenu::item{
+    padding-top: 4px;
+    padding-left: 15px;
+    padding-right: 4px;
+    padding-bottom: 4px;
+}
+
+QMenu::separator{
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+QMenu::item:selected {
+    background: #2ca7f8;
+}

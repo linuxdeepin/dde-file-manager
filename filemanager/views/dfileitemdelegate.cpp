@@ -7,7 +7,8 @@
 #include <QPainter>
 #include <QTextEdit>
 #include <QLineEdit>
-#include <QApplication>
+#include <QTextBlock>
+#include <QAbstractTextDocumentLayout>
 
 DFileItemDelegate::DFileItemDelegate(DFileView *parent) :
     QStyledItemDelegate(parent)
@@ -57,10 +58,13 @@ void DFileItemDelegate::paint(QPainter *painter,
 
 QSize DFileItemDelegate::sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const
 {
-    if(parent()->isIconViewMode())
-        return parent()->iconSize() * 1.8;
-    else
+    if(parent()->isIconViewMode()) {
+        int width = parent()->iconSize().width() * 1.8;
+
+        return QSize(width, width * 1.1);
+    } else {
         return QSize(-1, 30);
+    }
 }
 
 QWidget *DFileItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &, const QModelIndex &index) const
@@ -235,15 +239,13 @@ void DFileItemDelegate::paintIconItem(QPainter *painter,
 
     QRect label_rect = opt.rect;
 
-    label_rect.setTop(icon_rect.bottom() + 10);
-    label_rect.setWidth(opt.rect.width() * 0.8);
+    label_rect.setTop(icon_rect.bottom() + 2);
+    label_rect.setWidth(opt.rect.width() * 0.91);
     label_rect.moveLeft(label_rect.left() + (opt.rect.width() - label_rect.width()) / 2.0);
-
-    painter->setFont(opt.font);
 
     /// if has focus show all file name else show elide file name.
 
-    if(opt.state & QStyle::State_HasFocus) {
+    if((opt.state & QStyle::State_HasFocus) && parent()->selectedIndexCount() < 2) {
         if(focus_index.isValid()) {
             parent()->setIndexWidget(focus_index, 0);
             focus_item->hide();
@@ -258,8 +260,9 @@ void DFileItemDelegate::paintIconItem(QPainter *painter,
             str = m_wordWrapMap.value(str);
             height = m_textHeightMap.value(str);
         } else {
-            QString wordWrap_str = Global::wordWrapText(str, label_rect.width(), opt.fontMetrics,
-                                                        QTextOption::WrapAtWordBoundaryOrAnywhere, &height);
+            QString wordWrap_str = Global::wordWrapText(str, label_rect.width(),
+                                                        QTextOption::WrapAtWordBoundaryOrAnywhere,
+                                                        &height);
 
             m_wordWrapMap[str] = wordWrap_str;
             m_textHeightMap[wordWrap_str] = height;
@@ -309,7 +312,40 @@ void DFileItemDelegate::paintIconItem(QPainter *painter,
     /// draw icon and file name label
 
     opt.icon.paint(painter, icon_rect);
-    painter->drawText(label_rect, Qt::AlignHCenter, str);
+
+    QTextDocument *doc = m_documentMap.value(str);
+
+    if(!doc) {
+        doc = new QTextDocument(str, const_cast<DFileItemDelegate*>(this));
+
+        QTextCursor cursor(doc);
+        QTextOption text_option(Qt::AlignHCenter);
+
+        text_option.setWrapMode(QTextOption::NoWrap);
+        doc->setDefaultFont(painter->font());
+        doc->setDefaultTextOption(text_option);
+        doc->setTextWidth(label_rect.width());
+        cursor.movePosition(QTextCursor::Start);
+
+        do {
+            QTextBlockFormat format = cursor.blockFormat();
+
+            format.setLineHeight(TEXT_LINE_HEIGHT, QTextBlockFormat::FixedHeight);
+            cursor.setBlockFormat(format);
+        } while (cursor.movePosition(QTextCursor::NextBlock));
+
+        m_documentMap[str] = doc;
+    }
+
+    QAbstractTextDocumentLayout::PaintContext ctx;
+
+    ctx.palette.setColor(QPalette::Text, painter->pen().color());
+    ctx.clip.setSize(label_rect.size());
+
+    painter->save();
+    painter->translate(label_rect.topLeft());
+    doc->documentLayout()->draw(painter, ctx);
+    painter->restore();
 }
 
 void DFileItemDelegate::paintListItem(QPainter *painter,

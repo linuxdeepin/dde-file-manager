@@ -29,6 +29,7 @@
 #define Recent "recent://"
 #define TrashDir "~/.local/share/Trash/files"
 
+#define TEXT_LINE_HEIGHT 13
 
 #define ASYN_CALL(Fun, Code, captured...) { \
     QDBusPendingCallWatcher * watcher = new QDBusPendingCallWatcher(Fun); \
@@ -61,7 +62,6 @@ class Global
 {
 public:
     static QString wordWrapText(const QString &text, int width,
-                         const QFontMetrics &fontMetrics,
                          QTextOption::WrapMode wrapMode,
                          int *height = 0)
     {
@@ -79,7 +79,7 @@ public:
         while (line.isValid()) {
             line.setLineWidth(width);
             str += text.mid(line.textStart(), line.textLength());
-            text_height += (fontMetrics.leading() + fontMetrics.height());
+            text_height += TEXT_LINE_HEIGHT;
             line = textLayout.createLine();
 
             if(line.isValid())
@@ -101,8 +101,6 @@ public:
                       int flags = 0)
     {
         qreal height = 0;
-        int lineHeight = fontMetrics.height();
-        int interLine = fontMetrics.leading();
 
         QTextLayout textLayout(text);
         QString str;
@@ -114,9 +112,9 @@ public:
         QTextLine line = textLayout.createLine();
 
         while (line.isValid()) {
-            height += (interLine + lineHeight);
+            height += TEXT_LINE_HEIGHT;
 
-            if(height + interLine + lineHeight >= size.height()) {
+            if(height + TEXT_LINE_HEIGHT >= size.height()) {
                 str += fontMetrics.elidedText(text.mid(line.textStart() + line.textLength() + 1),
                                               mode, size.width(), flags);
                 break;
