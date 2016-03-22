@@ -43,7 +43,7 @@ void FileMenuManager::initActions()
     }
 }
 
-QMenu *FileMenuManager::genereteMenuByFileType(QString type)
+DMenu *FileMenuManager::genereteMenuByFileType(QString type)
 {
     QStringList actionKeys;
     if (type == "File"){
@@ -81,10 +81,9 @@ QMenu *FileMenuManager::genereteMenuByFileType(QString type)
     return genereteMenuByKeys(actionKeys);
 }
 
-QMenu *FileMenuManager::genereteMenuByKeys(const QStringList keys)
+DMenu *FileMenuManager::genereteMenuByKeys(const QStringList keys)
 {
-    QMenu* menu = new QMenu;
-    menu->setObjectName("Menu");
+    DMenu* menu = new DMenu;
     foreach (QString key, keys) {
         if (key == "separator"){
             menu->addSeparator();

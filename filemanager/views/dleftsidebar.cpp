@@ -8,6 +8,8 @@
 #include "dcheckablebutton.h"
 #include "dhorizseparator.h"
 #include <QListWidgetItem>
+#include "dscrollbar.h"
+#include <QLabel>
 
 
 DLeftSideBar::DLeftSideBar(QWidget *parent) : QFrame(parent)
@@ -61,67 +63,6 @@ void DLeftSideBar::initUI()
     m_stackedWidget->setCurrentIndex(1);
 }
 
-//void DLeftSideBar::initHomeBar()
-//{
-//    m_homeButton = new DCheckableButton(":/icons/images/icons/user-home-symbolic.svg", tr("Home"), this);
-//    m_recentButton = new DCheckableButton(":/icons/images/icons/folder-recent-symbolic.svg", tr("Recent"), this);
-//    m_buttonGroup->addButton(m_recentButton, 1);
-//    m_buttonGroup->addButton(m_homeButton, 2);
-//    for(int i = 1; i <= 2; i++)
-//    {
-//        QListWidgetItem * item = new QListWidgetItem(m_listWidget);
-//        m_listWidget->setItemWidget(item, m_buttonGroup->button(i));
-//        m_buttonGroup->button(i)->setIconSize(QSize(6, 6));
-//    }
-//}
-
-//void DLeftSideBar::initCommonFolderBar()
-//{
-//    m_desktopButton = new DCheckableButton(":/icons/images/icons/folder-desktop-symbolic.svg", tr("Desktop"), this);
-//    m_videoButton = new DCheckableButton(":/icons/images/icons/folder-videos-symbolic.svg", tr("Videos"), this);
-//    m_musicButton = new DCheckableButton(":/icons/images/icons/folder-music-symbolic.svg", tr("Musics"), this);
-//    m_pictureButton = new DCheckableButton(":/icons/images/icons/folder-pictures-symbolic.svg", tr("Pictures"), this);
-//    m_docmentButton = new DCheckableButton(":/icons/images/icons/folder-documents-symbolic.svg", tr("Documents"), this);
-//    m_downloadButton = new DCheckableButton(":/icons/images/icons/folder-download-symbolic.svg", tr("Downloads"), this);
-//    m_trashButton = new DCheckableButton(":/icons/images/icons/user-trash-symbolic.svg", tr("Trash"), this);
-
-//    m_buttonGroup->addButton(m_desktopButton, 3);
-//    m_buttonGroup->addButton(m_videoButton, 4);
-//    m_buttonGroup->addButton(m_pictureButton, 5);
-//    m_buttonGroup->addButton(m_docmentButton, 6);
-//    m_buttonGroup->addButton(m_downloadButton, 7);
-//    m_buttonGroup->addButton(m_musicButton, 8);
-//    m_buttonGroup->addButton(m_trashButton, 9);
-//    for(int i = 3; i <= 9; i++)
-//    {
-//        QListWidgetItem * item = new QListWidgetItem(m_listWidget);
-//        m_listWidget->setItemWidget(item, m_buttonGroup->button(i));
-//        m_buttonGroup->button(i)->setIconSize(QSize(0, 0));
-//    }
-//}
-
-//void DLeftSideBar::initDiskBar()
-//{
-//    m_computerButton = new DCheckableButton(":/icons/images/icons/drive-removable-media-symbolic.svg", tr("Disks"), this);
-//    m_favoriteButton = new DCheckableButton(":/icons/images/icons/user-bookmarks-symbolic.svg", tr("Bookmarks"), this);
-//    m_myMobileButton = new DCheckableButton(":/images/images/dark/appbar.iphone.png", tr("My Mobile"), this);
-
-//    m_buttonGroup->addButton(m_computerButton, 10);
-//    m_buttonGroup->addButton(m_favoriteButton, 11);
-//    m_buttonGroup->addButton(m_myMobileButton, 12);
-//    for(int i = 10; i <= 12; i++)
-//    {
-//        QListWidgetItem * item = new QListWidgetItem(m_listWidget);
-//        m_listWidget->setItemWidget(item, m_buttonGroup->button(i));
-//        m_buttonGroup->button(i)->setIconSize(QSize(16, 16));
-//    }
-//}
-
-//void DLeftSideBar::initNetWorkBar()
-//{
-//    m_networkBar = new QFrame(this);
-//}
-
 void DLeftSideBar::initConnect()
 {
     connect(m_buttonGroup, SIGNAL(buttonClicked(int)), this, SLOT(handleLocationChanged(int)));
@@ -133,15 +74,17 @@ void DLeftSideBar::initConnect()
 void DLeftSideBar::initTightNav()
 {
     m_tightNav = new QFrame(this);
-    m_tightNavFileButton = new DCheckableButton(":/icons/images/icons/sidebar_expand_normal.png", "");
-    m_tightNavFileButton->setFixedHeight(40);
+
+    m_tightNavFileButton = new QPushButton("", this);
+    m_tightNavFileButton->setObjectName("FileButton");
+    m_tightNavFileButton->setFixedSize(QSize(56, 42));
+
     m_tightNavButtonGroup = new QButtonGroup;
     QVBoxLayout * tightNavLayout = new QVBoxLayout;
     tightNavLayout->addWidget(m_tightNavFileButton);
-    tightNavLayout->setContentsMargins(0, 0, 0, 0);
+    tightNavLayout->setContentsMargins(0, 5, 0, 0);
     tightNavLayout->setSpacing(0);
     m_tightNav->setLayout(tightNavLayout);
-    m_tightNavButtonGroup->addButton(m_tightNavFileButton, 0);
 
     QListWidget * list = new QListWidget;
     list->setObjectName("ListWidget");
@@ -162,17 +105,24 @@ void DLeftSideBar::initNav()
     QVBoxLayout* navLayout = new QVBoxLayout;
     m_nav->setLayout(navLayout);
     //add file button
-    m_fileButton = new DCheckableButton(":/icons/images/icons/sidebar_expand_normal.png", tr("File"));
-    m_fileButton->setFixedHeight(40);
-    navLayout->addWidget(m_fileButton);
+    QHBoxLayout * fileButtonLayout = new QHBoxLayout;
+    QLabel * fileLabel = new QLabel(tr("File"));
+    fileLabel->setObjectName("FileLabel");
+    m_fileButton = new QPushButton("");
+    m_fileButton->setObjectName("FileButton");
+    m_fileButton->setFixedSize(QSize(22,22));
+    fileButtonLayout->addWidget(m_fileButton);
+    fileButtonLayout->addWidget(fileLabel);
+    fileButtonLayout->setContentsMargins(17, 15, 0, 10);
+    fileButtonLayout->setSpacing(8);
+
+    navLayout->addLayout(fileButtonLayout);
     navLayout->setSpacing(0);
     navLayout->setContentsMargins(0, 0, 0, 0);
     m_buttonGroup = new QButtonGroup;
-    m_buttonGroup->addButton(m_fileButton, 0);
     m_listWidget = new QListWidget;
     m_listWidget->setObjectName("ListWidget");
-    QScrollBar * scrollbar = new QScrollBar;
-    scrollbar->setObjectName("DScrollBar");
+    DScrollBar * scrollbar = new DScrollBar;
     m_listWidget->setVerticalScrollBar(scrollbar);
     m_listWidget->setAutoScroll(true);
 

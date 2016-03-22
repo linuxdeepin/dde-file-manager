@@ -6,6 +6,7 @@
 #include <QAction>
 #include <QMap>
 
+class DMenu;
 
 class FileMenuManager : public QObject
 {
@@ -16,8 +17,8 @@ public:
 
     void initData();
     void initActions();
-    QMenu* genereteMenuByFileType(QString type);
-    QMenu* genereteMenuByKeys(const QStringList keys);
+    DMenu* genereteMenuByFileType(QString type);
+    DMenu* genereteMenuByKeys(const QStringList keys);
 signals:
 
 public slots:

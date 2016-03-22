@@ -5,6 +5,7 @@
 #include <QListWidget>
 #include <QStackedWidget>
 #include <QScrollBar>
+#include <QPushButton>
 
 class DCheckableButton;
 class QButtonGroup;
@@ -34,8 +35,8 @@ public slots:
     void toNormalNav();
 private:
     QFrame* m_homeBar = NULL;
-    DCheckableButton* m_fileButton = NULL;
-    DCheckableButton* m_tightNavFileButton = NULL;
+    QPushButton* m_fileButton = NULL;
+    QPushButton* m_tightNavFileButton = NULL;
     DCheckableButton* m_homeButton = NULL;
     DCheckableButton* m_recentButton = NULL;
 
