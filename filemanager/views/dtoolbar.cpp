@@ -6,9 +6,9 @@
 #include "../app/fmevent.h"
 #include "../app/global.h"
 #include "dcrumbwidget.h"
-
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include "historystack.h"
 #include <QDebug>
 
 const int DToolBar::ButtonHeight = 20;
@@ -18,16 +18,17 @@ DToolBar::DToolBar(QWidget *parent) : QFrame(parent)
     initData();
     initUI();
     initConnect();
+    startup();
 }
 
 DToolBar::~DToolBar()
 {
-
+    delete m_navStack;
 }
 
 void DToolBar::initData()
 {
-
+    m_navStack = new HistoryStack(50);
 }
 
 void DToolBar::initUI()
@@ -49,30 +50,44 @@ void DToolBar::initAddressToolBar()
     m_addressToolBar->setObjectName("AddressToolBar");
     m_addressToolBar->setFixedHeight(40);
 
+    QHBoxLayout * backForwardLayout = new QHBoxLayout;
+
+
     m_backButton = new DStateButton(":/icons/images/icons/backward_normal.png", this);
     m_backButton->setObjectName("backButton");
     m_backButton->setFixedWidth(25);
     m_backButton->setFixedHeight(20);
+    m_backButton->setDisabled(true);
+    m_backButton->setFocusPolicy(Qt::NoFocus);
     m_forwardButton = new DStateButton(":/icons/images/icons/forward_normal.png", this);
     m_forwardButton->setObjectName("forwardButton");
     m_forwardButton->setFixedWidth(25);
     m_forwardButton->setFixedHeight(20);
-    m_upButton = new DStateButton(":/images/images/dark/appbar.arrow.up.png", this);
+    m_forwardButton->setDisabled(true);
+    m_forwardButton->setFocusPolicy(Qt::NoFocus);
+
+    backForwardLayout->addWidget(m_backButton);
+    backForwardLayout->addWidget(m_forwardButton);
+    backForwardLayout->setSpacing(0);
+    backForwardLayout->setContentsMargins(0, 0, 0, 0);
 
     m_searchBar = new DSearchBar;
-    m_searchBar->setPlaceholderText("Enter address");
+    m_searchBar->setPlaceholderText("Search or enter address");
     m_searchBar->setAlignment(Qt::AlignHCenter);
 
     m_crumbWidget = new DCrumbWidget;
 
+    QHBoxLayout * comboLayout = new QHBoxLayout;
+    comboLayout->addWidget(m_crumbWidget);
+    comboLayout->addWidget(m_searchBar);
+    comboLayout->setSpacing(0);
+    comboLayout->setContentsMargins(0, 0, 0, 0);
+
     QHBoxLayout* mainLayout = new QHBoxLayout;
-    mainLayout->addWidget(m_backButton);
-    mainLayout->addWidget(m_forwardButton);
-    mainLayout->addWidget(m_upButton);
-    mainLayout->addWidget(m_crumbWidget);
-    mainLayout->addWidget(m_searchBar);
+    mainLayout->addLayout(backForwardLayout);
+    mainLayout->addLayout(comboLayout);
     mainLayout->setContentsMargins(5, 5, 5, 5);
-    mainLayout->setSpacing(0);
+    mainLayout->setSpacing(10);
     m_addressToolBar->setLayout(mainLayout);
 }
 
@@ -86,6 +101,7 @@ void DToolBar::initContollerToolBar()
     m_iconViewButton->setFixedWidth(26);
     m_iconViewButton->setObjectName("iconViewButton");
     m_iconViewButton->setCheckable(true);
+    m_iconViewButton->setChecked(true);
 
     m_listViewButton = new QPushButton(this);
     m_listViewButton->setFixedHeight(20);
@@ -97,11 +113,12 @@ void DToolBar::initContollerToolBar()
     m_viewButtonGroup->addButton(m_iconViewButton, 0);
     m_viewButtonGroup->addButton(m_listViewButton, 1);
 
-    m_sortingButton = new DStateButton(":/images/images/light/appbar.sort.png",
+    m_sortingButton = new DStateButton(":/icons/images/icons/sorting_normal.png",
+                                       ":/icons/images/icons/sorting_press.png",
                                         this);
     m_sortingButton->setFixedHeight(20);
     m_sortingButton->setFixedWidth(26);
-    m_sortingButton->setObjectName("sortingButton");
+    m_sortingButton->setObjectName("SortingButton");
 
     QHBoxLayout* mainLayout = new QHBoxLayout;
     mainLayout->addWidget(m_iconViewButton);
@@ -117,11 +134,21 @@ void DToolBar::initConnect()
     connect(m_iconViewButton, &DStateButton::clicked, this, &DToolBar::requestIconView);
     connect(m_listViewButton, &DStateButton::clicked, this, &DToolBar::requestListView);
     connect(m_backButton, &DStateButton::clicked,this, &DToolBar::backButtonClicked);
+    connect(m_forwardButton, &DStateButton::clicked,this, &DToolBar::forwardButtonClicked);
     connect(m_searchBar, &DSearchBar::returnPressed, this, &DToolBar::searchBarTextEntered);
     connect(m_crumbWidget, &DCrumbWidget::crumbSelected, this, &DToolBar::crumbSelected);
-    connect(m_upButton, SIGNAL(released()), this, SLOT(upButtonClicked()));
     connect(m_searchBar, SIGNAL(searchBarFocused()), this, SLOT(searchBarActivated()));
     connect(fileSignalManager, &FileSignalManager::currentUrlChanged, this, &DToolBar::crumbChanged);
+}
+
+void DToolBar::startup()
+{
+    QString user = getenv("USER");
+    FMEvent event;
+    event.source = FMEvent::SearchLine;
+    event.dir = "/home/" + user;
+    m_crumbWidget->setCrumb(event.dir);
+    emit fileSignalManager->requestChangeCurrentUrl(event);
 }
 
 void DToolBar::searchBarActivated()
@@ -141,6 +168,7 @@ void DToolBar::searchBarDeactivated()
     m_searchBar->setAlignment(Qt::AlignHCenter);
     QAction * action = m_searchBar->removeClearAction();
     disconnect(action, &QAction::triggered, this, &DToolBar::searchBarDeactivated);
+    m_searchBar->window()->setFocus();
     connect(m_searchBar, SIGNAL(searchBarFocused()), this, SLOT(searchBarActivated()));
 }
 
@@ -168,7 +196,7 @@ void DToolBar::crumbSelected(QString path)
 {
     FMEvent event;
 
-    event.source = FMEvent::SearchLine;
+    event.source = FMEvent::CrumbButton;
     event.dir = path;
 
     emit fileSignalManager->requestChangeCurrentUrl(event);
@@ -178,9 +206,12 @@ void DToolBar::crumbChanged(const FMEvent &event)
 {
     if(event.source == FMEvent::CrumbButton)
         return;
-
-    qDebug() << "crumb chagned";
     m_crumbWidget->setCrumb(event.dir);
+
+    if(event.source == FMEvent::BackAndForwardButton)
+        return;
+    m_navStack->insert(event.dir);
+    m_backButton->setEnabled(true);
 }
 
 /**
@@ -205,6 +236,36 @@ void DToolBar::upButtonClicked()
 void DToolBar::searchBarChanged(QString path)
 {
     m_searchBar->setText(path);
+}
+
+void DToolBar::backButtonClicked()
+{
+    QString path = m_navStack->back();
+    if(path != "")
+    {
+        FMEvent event;
+        event.source = FMEvent::BackAndForwardButton;
+        event.dir = path;
+        if(m_navStack->isFirst())
+            m_backButton->setDisabled(true);
+        m_forwardButton->setEnabled(true);
+        emit fileSignalManager->requestChangeCurrentUrl(event);
+    }
+}
+
+void DToolBar::forwardButtonClicked()
+{
+    QString path = m_navStack->forward();
+    if(path != "")
+    {
+        FMEvent event;
+        event.source = FMEvent::BackAndForwardButton;
+        event.dir = path;
+        if(m_navStack->isLast())
+            m_forwardButton->setDisabled(true);
+        m_backButton->setEnabled(true);
+        emit fileSignalManager->requestChangeCurrentUrl(event);
+    }
 }
 
 

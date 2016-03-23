@@ -12,6 +12,7 @@ class DSearchBar;
 class DTabBar;
 class DCrumbWidget;
 class FMEvent;
+class HistoryStack;
 
 class DToolBar : public QFrame
 {
@@ -25,13 +26,12 @@ public:
     void initAddressToolBar();
     void initContollerToolBar();
     void initConnect();
-
+    void startup();
 signals:
     void requestIconView();
     void requestListView();
 
     void requestSwitchLayout();
-    void backButtonClicked();
     void refreshButtonClicked();
 
 public slots:
@@ -42,6 +42,8 @@ public slots:
     void crumbChanged(const FMEvent &event);
     void upButtonClicked();
     void searchBarChanged(QString path);
+    void backButtonClicked();
+    void forwardButtonClicked();
 private:
     QFrame* m_addressToolBar;
     DStateButton* m_backButton=NULL;
@@ -59,6 +61,7 @@ private:
     bool m_switchState = false;
     DCrumbWidget * m_crumbWidget = NULL;
     QButtonGroup * m_viewButtonGroup = NULL;
+    HistoryStack * m_navStack = NULL;
 };
 
 #endif // DTOOLBAR_H

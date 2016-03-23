@@ -34,12 +34,20 @@ void DStateButton::setAStateIcon()
 {
     m_buttonState = ButtonState::stateA;
     setIcon(QIcon(m_aStateIcon));
+    setStyleSheet("background-color:white;\
+                  border: 1px;\
+                  color: black;\
+                  border-radius: 2px; }");
 }
 
 void DStateButton::setBStateIcon()
 {
     m_buttonState = ButtonState::stateB;
     setIcon(QIcon(m_bStateIcon));
+    setStyleSheet("background-color:#2ca7f8;\
+                  border: 1px;\
+                  color: black;\
+                  border-radius: 2px; }");
 }
 
 void DStateButton::toogleStateICon()
