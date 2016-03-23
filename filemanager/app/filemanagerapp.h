@@ -14,7 +14,8 @@ class FileManagerApp : public QObject
 {
     Q_OBJECT
 public:
-    explicit FileManagerApp(QObject *parent = 0);
+    static FileManagerApp *instance();
+
     ~FileManagerApp();
 
     void initLogger();
@@ -27,12 +28,14 @@ public:
     void initTranslation();
     void initConnect();
 
-signals:
+    AppController *getAppController() const;
 
 public slots:
     void show();
 
 private:
+    explicit FileManagerApp(QObject *parent = 0);
+
     WindowManager* m_windowManager=NULL;
     FileManagerWindow* m_fileManagerWindow=NULL;
     DFileManagerWindow * m_dFileMangerWindow=NULL;

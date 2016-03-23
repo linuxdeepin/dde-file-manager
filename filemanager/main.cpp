@@ -14,8 +14,8 @@ int main(int argc, char *argv[])
 
     DThemeManager::instance()->setTheme("light");
 
-    FileManagerApp fileManagerApp;
-    fileManagerApp.show();
+    FileManagerApp *fileManagerApp = FileManagerApp::instance();
+    fileManagerApp->show();
 
     int reslut = app.exec();
 

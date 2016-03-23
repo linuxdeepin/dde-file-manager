@@ -1,13 +1,14 @@
 #include "dtoolbar.h"
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-
 #include "dicontextbutton.h"
 #include "dcheckablebutton.h"
 #include "dsearchbar.h"
 #include "dtabbar.h"
+#include "../app/fmevent.h"
 #include "../app/global.h"
 #include "dcrumbwidget.h"
+
+#include <QHBoxLayout>
+#include <QVBoxLayout>
 #include <QDebug>
 
 const int DToolBar::ButtonHeight = 20;
@@ -154,19 +155,32 @@ void DToolBar::searchBarTextEntered()
 {
     QString path = m_searchBar->text();
     qDebug() << path;
-    m_crumbWidget->setCrumb(path);
-    emit fileSignalManager->currentUrlChanged(path);
+
+    FMEvent event;
+
+    event.source = FMEvent::SearchLine;
+    event.dir = path;
+
+    emit fileSignalManager->requestChangeCurrentUrl(event);
 }
 
 void DToolBar::crumbSelected(QString path)
 {
-    emit fileSignalManager->currentUrlChanged(path);
+    FMEvent event;
+
+    event.source = FMEvent::SearchLine;
+    event.dir = path;
+
+    emit fileSignalManager->requestChangeCurrentUrl(event);
 }
 
-void DToolBar::crumbChanged(const QString &url)
+void DToolBar::crumbChanged(const FMEvent &event)
 {
+    if(event.source == FMEvent::CrumbButton)
+        return;
+
     qDebug() << "crumb chagned";
-    m_crumbWidget->setCrumb(url);
+    m_crumbWidget->setCrumb(event.dir);
 }
 
 /**
@@ -179,7 +193,13 @@ void DToolBar::crumbChanged(const QString &url)
 void DToolBar::upButtonClicked()
 {
     QString text = m_crumbWidget->back();
-    emit fileSignalManager->currentUrlChanged(text);
+
+    FMEvent event;
+
+    event.source = FMEvent::UpButton;
+    event.dir = text;
+
+    emit fileSignalManager->requestChangeCurrentUrl(event);
 }
 
 void DToolBar::searchBarChanged(QString path)
