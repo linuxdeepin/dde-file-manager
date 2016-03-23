@@ -69,13 +69,7 @@ void DFileView::initModel()
 void DFileView::initConnects()
 {
     connect(this, &DFileView::doubleClicked,
-            this, [this](const QModelIndex &index) {
-        if(model()->hasChildren(index)){
-            emit fileSignalManager->currentUrlChanged(model()->getUrlByIndex(index));
-        } else {
-            QDesktopServices::openUrl(QUrl::fromLocalFile(model()->getUrlByIndex(index)));
-        }
-    });
+            this, &DFileView::openIndex);
     connect(fileSignalManager, &FileSignalManager::currentUrlChanged,
             this, &DFileView::cd);
     connect(fileSignalManager, &FileSignalManager::childrenChanged,
@@ -225,19 +219,42 @@ void DFileView::moveColumnRole(int /*logicalIndex*/, int oldVisualIndex, int new
     update();
 }
 
+void DFileView::onMenuActionTrigger(const QAction *action)
+{
+    QMenu *menu = qobject_cast<QMenu*>(sender());
+
+    if(!menu)
+        return;
+
+    FileMenuManager::MenuAction key = (FileMenuManager::MenuAction)action->data().toInt();
+
+    switch (key) {
+    case FileMenuManager::Open: {
+        const QModelIndex index = qvariant_cast<QModelIndex>(menu->property("index"));
+
+        openIndex(index);
+
+        break;
+    }
+    default:
+        break;
+    }
+}
+
 void DFileView::contextMenuEvent(QContextMenuEvent *event)
 {
     DMenu *menu;
 
     if (isEmptyArea(event->pos())){
         menu = FileMenuManager::createViewSpaceAreaMenu();
-        menu->setProperty("url", rootIndex().data(DFileSystemModel::FilePathRole));
+        menu->setProperty("index", rootIndex());
     }else{
         menu = FileMenuManager::createFileMenu();
-        menu->setProperty("url", indexAt(event->pos()).data(DFileSystemModel::FilePathRole));
+        menu->setProperty("index", indexAt(event->pos()));
     }
 
-    menu->setAttribute(Qt::WA_TranslucentBackground, true);
+    connect(menu, &DMenu::triggered, this, &DFileView::onMenuActionTrigger);
+
     menu->exec(mapToGlobal(event->pos()));
     menu->deleteLater();
 
@@ -348,4 +365,13 @@ void DFileView::shrinkIconSize()
         --m_currentIconSizeIndex;
 
     setIconSize(currentIconSize());
+}
+
+void DFileView::openIndex(const QModelIndex &index)
+{
+    if(model()->hasChildren(index)){
+        emit fileSignalManager->currentUrlChanged(model()->getUrlByIndex(index));
+    } else {
+        QDesktopServices::openUrl(QUrl::fromLocalFile(model()->getUrlByIndex(index)));
+    }
 }
