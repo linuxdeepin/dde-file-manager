@@ -2,8 +2,6 @@
 #define GLOBAL_H
 
 #include "widgets/singleton.h"
-#include "signalmanager.h"
-#include "../controllers/dbuscontroller.h"
 #include "utils/utils.h"
 #include "filesignalmanager.h"
 #include "../controllers/searchhistroymanager.h"
@@ -13,7 +11,6 @@
 #include <QTextLayout>
 
 //#define gridManager  Singleton<GridManager>::instance()
-#define signalManager  Singleton<SignalManager>::instance()
 #define searchHistoryManager  Singleton<SearchHistroyManager>::instance()
 //#define dbusController Singleton<DBusController>::instance()
 #define fileSignalManager Singleton<FileSignalManager>::instance()

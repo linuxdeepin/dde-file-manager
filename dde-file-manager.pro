@@ -15,8 +15,6 @@ include(./widgets/widgets.pri)
 include(./dialogs/dialogs.pri)
 include(./utils/utils.pri)
 include(./filemonitor/filemonitor.pri)
-include(./dbusinterface/dbusinterface.pri)
-
 
 PKGCONFIG += x11 gtk+-2.0 xcb xcb-ewmh gsettings-qt dtkbase dtkutil dtkwidget
 CONFIG += c++11 link_pkgconfig
@@ -42,20 +40,16 @@ INSTALLS += target
 HEADERS += \
     filemanager/app/define.h \
     filemanager/app/global.h \
-    filemanager/app/signalmanager.h \
     filemanager/controllers/appcontroller.h \
     filemanager/controllers/copyjobcontroller.h \
     filemanager/controllers/copyjobworker.h \
-    filemanager/controllers/dbuscontroller.h \
     filemanager/controllers/deletejobcontroller.h \
     filemanager/controllers/deletejobworker.h \
-    filemanager/controllers/fileconflictcontroller.h \
     filemanager/controllers/movejobcontroller.h \
     filemanager/controllers/movejobworker.h \
     filemanager/controllers/renamejobcontroller.h \
     filemanager/controllers/trashjobcontroller.h \
     filemanager/app/filemanagerapp.h \
-    filemanager/views/filemanagerwindow.h \
     filemanager/views/dmovablemainwindow.h \
     filemanager/views/dtitlebar.h \
     filemanager/views/dleftsidebar.h \
@@ -110,17 +104,14 @@ SOURCES += \
     filemanager/controllers/appcontroller.cpp \
     filemanager/controllers/copyjobcontroller.cpp \
     filemanager/controllers/copyjobworker.cpp \
-    filemanager/controllers/dbuscontroller.cpp \
     filemanager/controllers/deletejobcontroller.cpp \
     filemanager/controllers/deletejobworker.cpp \
-    filemanager/controllers/fileconflictcontroller.cpp \
     filemanager/controllers/movejobcontroller.cpp \
     filemanager/controllers/movejobworker.cpp \
     filemanager/controllers/renamejobcontroller.cpp \
     filemanager/controllers/trashjobcontroller.cpp \
     filemanager/main.cpp \
     filemanager/app/filemanagerapp.cpp \
-    filemanager/views/filemanagerwindow.cpp \
     filemanager/views/dmovablemainwindow.cpp \
     filemanager/views/dtitlebar.cpp \
     filemanager/views/dleftsidebar.cpp \

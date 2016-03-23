@@ -29,7 +29,7 @@ void DScrollBar::enterEvent(QEvent *e)
     setStyleSheet("QScrollBar#DScrollBar:vertical{\
                   border: 0px;\
                   background: transparent;\
-                  width: 6px;\}");
+                  width: 6px;}");
     QScrollBar::enterEvent(e);
 }
 
@@ -39,7 +39,7 @@ void DScrollBar::leaveEvent(QEvent *e)
     setStyleSheet("QScrollBar#DScrollBar:vertical{\
                   border: 0px;\
                   background: transparent;\
-                  width: 4px;\}");
+                  width: 4px;}");
     QScrollBar::leaveEvent(e);
 }
 
@@ -71,5 +71,5 @@ void DScrollBar::hidden()
     setStyleSheet("QScrollBar#DScrollBar:vertical{\
                   border: 0px;\
                   background: transparent;\
-                  width: 4px;\}");
+                  width: 4px;}");
 }

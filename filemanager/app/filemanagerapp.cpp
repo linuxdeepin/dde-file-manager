@@ -2,7 +2,6 @@
 #include <QtCore/QCoreApplication>
 #include "../views/windowmanager.h"
 #include "../views/dfilemanagerwindow.h"
-#include "../views/filemanagerwindow.h"
 #include "../controllers/appcontroller.h"
 #include "../app/define.h"
 #include "../app/global.h"

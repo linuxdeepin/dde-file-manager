@@ -7,7 +7,6 @@
 #include <QString>
 #include <QTime>
 #include <QMap>
-#include "dbusinterface/dbustype.h"
 
 class CopyJobInterface;
 class FileConflictController;
@@ -46,7 +45,6 @@ public slots:
     void handleTimeout();
     void handleFinished();
     void handleTaskAborted(const QMap<QString, QString>& jobDetail);
-    void handleResponse(ConflictInfo obj);
     void stopTimer();
     void restartTimer();
 private:

@@ -39,7 +39,6 @@ public slots:
     void emptyTrashJobExcuteFinished();
 
     void asyncRequestTrashCount();
-    void asyncRequestTrashCountFinihsed(QDBusPendingCallWatcher *call);
 
 private:
     TrashMonitorInterface* m_trashMonitorInterface=NULL;

@@ -1,6 +1,4 @@
 #include "deletejobworker.h"
-#include "dbusinterface/deletejob_interface.h"
-#include "dbusinterface/fileoperations_interface.h"
 #include "dialogs/confirmdeletedialog.h"
 #include "../app/global.h"
 
@@ -18,8 +16,7 @@ void DeletejobWorker::initConnect(){
     connect(this, SIGNAL(startJob()), this, SLOT(start()));
     connect(this, SIGNAL(finished()), this, SLOT(handleFinished()));
     connect(m_progressTimer, SIGNAL(timeout()), this, SLOT(handleTimeout()));
-    connect(signalManager, SIGNAL(abortDeleteTask(QMap<QString,QString>)),
-            this, SLOT(handleTaskAborted(QMap<QString,QString>)));
+
 }
 
 void DeletejobWorker::start(){
@@ -52,49 +49,21 @@ void DeletejobWorker::deleteFiles(const QStringList &files){
 }
 
 void DeletejobWorker::connectDeleteJobSignal(){
-    if (m_deleteJobInterface){
-        connect(m_deleteJobInterface, SIGNAL(Done()), this, SLOT(deleteJobExcuteFinished()));
-        connect(m_deleteJobInterface, SIGNAL(Aborted()), this, SLOT(deleteJobAbortFinished()));
-        connect(m_deleteJobInterface, SIGNAL(Deleting(QString)), this, SLOT(onDeletingFile(QString)));
-        connect(m_deleteJobInterface, SIGNAL(TotalAmount(qlonglong,ushort)),
-                this, SLOT(setTotalAmount(qlonglong,ushort)));
-        connect(m_deleteJobInterface, SIGNAL(ProcessedAmount(qlonglong,ushort)),
-                this, SLOT(onDeletingProcessAmount(qlonglong,ushort)));
-        connect(m_deleteJobInterface, SIGNAL(ProcessedPercent(qlonglong)),
-                this, SLOT(onProcessedPercent(qlonglong)));
-    }
+
 }
 
 void DeletejobWorker::disconnectDeleteJobSignal(){
-    if (m_deleteJobInterface){
-        disconnect(m_deleteJobInterface, SIGNAL(Done()), this, SLOT(deleteJobExcuteFinished()));
-        disconnect(m_deleteJobInterface, SIGNAL(Aborted()), this, SLOT(deleteJobAbortFinished()));
-        disconnect(m_deleteJobInterface, SIGNAL(Deleting(QString)), this, SLOT(onDeletingFile(QString)));
-        disconnect(m_deleteJobInterface, SIGNAL(TotalAmount(qlonglong,ushort)),
-                this, SLOT(setTotalAmount(qlonglong,ushort)));
-        disconnect(m_deleteJobInterface, SIGNAL(ProcessedAmount(qlonglong,ushort)),
-                this, SLOT(onDeletingProcessAmount(qlonglong,ushort)));
-        disconnect(m_deleteJobInterface, SIGNAL(ProcessedPercent(qlonglong)),
-                this, SLOT(onProcessedPercent(qlonglong)));
-    }
+
 }
 
 
 void DeletejobWorker::deleteJobExcuteFinished(){
-    disconnectDeleteJobSignal();
-    m_deleteJobInterface->deleteLater();
-    m_deleteJobInterface = NULL;
-    m_deletefiles.clear();
-    m_progressTimer->stop();
-    emit finished();
+
     qDebug() << "delete job finished";
 }
 
 void DeletejobWorker::deleteJobAbort(){
-    if (m_deleteJobInterface){
-        m_progressTimer->stop();
-        m_deleteJobInterface->Abort();
-    }
+
 }
 
 void DeletejobWorker::deleteJobAbortFinished(){
@@ -104,15 +73,10 @@ void DeletejobWorker::deleteJobAbortFinished(){
 
 
 void DeletejobWorker::onDeletingFile(QString file){
-    emit signalManager->deletingFileChaned(file);
     qDebug() << "onDeletingFile" << file;
 
     m_jobDataDetail.insert("file", QFileInfo(decodeUrl(file)).fileName());
     qDebug() << "onCopyingFile" << file;
-    if (m_jobDetail.contains("jobPath")){
-        emit signalManager->deleteJobDataUpdated(m_jobDetail, m_jobDataDetail);
-    }
-
 }
 
 void DeletejobWorker::setTotalAmount(qlonglong amount, ushort type){
@@ -153,13 +117,10 @@ void DeletejobWorker::handleTimeout(){
 
     m_jobDataDetail.insert("speed", speedString);
     m_jobDataDetail.insert("remainTime", QString("%1 s").arg(QString::number(remainTime)));
-    emit signalManager->deleteJobDataUpdated(m_jobDetail, m_jobDataDetail);
 }
 
 void DeletejobWorker::handleFinished(){
-    if (m_jobDetail.contains("jobPath")){
-        emit signalManager->deleteJobRemoved(m_jobDetail);
-    }
+
 }
 
 void DeletejobWorker::handleTaskAborted(const QMap<QString, QString> &jobDetail){

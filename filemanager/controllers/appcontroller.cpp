@@ -4,8 +4,6 @@
 #include "copyjobcontroller.h"
 #include "renamejobcontroller.h"
 #include "deletejobcontroller.h"
-#include "dbuscontroller.h"
-#include "fileconflictcontroller.h"
 #include "../app/global.h"
 #include "filecontroller.h"
 
