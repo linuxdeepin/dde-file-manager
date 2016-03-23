@@ -10,10 +10,13 @@
 #include "filemonitorwoker.h"
 #include "utils/utils.h"
 
-FileMonitorWoker::FileMonitorWoker(QObject *parent) : QObject(parent)
+FileMonitorWoker::FileMonitorWoker(QObject *parent) :
+    QObject(parent)
 {
-    connect(this, SIGNAL(monitorFolderChanged(QString)), this, SLOT(monitor(QString)));
     m_counter = 0;
+
+    connect(this, SIGNAL(monitorFolderChanged(QString)),
+            this, SLOT(monitor(QString)));
 }
 
 FileMonitorWoker::~FileMonitorWoker()
@@ -320,13 +323,14 @@ void FileMonitorWoker::directoryChanged(const QString &path, bool removed)
 QString FileMonitorWoker::getPathFromID(int id) const
 {
     QHash<int, QString>::const_iterator i = m_idToPath.find(id);
-    qDebug() << m_idToPath;
+
     while (i != m_idToPath.constEnd() && i.key() == id) {
         if ((i + 1) == m_idToPath.constEnd() || (i + 1).key() != id) {
             return i.value();
         }
         ++i;
     }
+
     return QString();
 }
 

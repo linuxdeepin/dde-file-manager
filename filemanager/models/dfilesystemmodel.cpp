@@ -1,6 +1,9 @@
 #include "dfilesystemmodel.h"
 #include "../app/global.h"
 #include "desktopfileinfo.h"
+#include "../app/filemanagerapp.h"
+#include "../controllers/appcontroller.h"
+#include "filemonitor/filemonitor.h"
 
 #include <QDebug>
 #include <QFileIconProvider>
@@ -44,7 +47,10 @@ public:
 DFileSystemModel::DFileSystemModel(QObject *parent) :
     QAbstractItemModel(parent)
 {
-
+    connect(fileMonitor, &FileMonitor::fileCreated,
+            this, [this](const QString &file) {
+        qDebug() << "creatored file" << file;
+    });
 }
 
 DFileSystemModel::~DFileSystemModel()
@@ -233,6 +239,12 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
         return;
 
     parentNode->populatedChildren = true;
+
+
+    fileMonitor->addMonitorPath(parentNode->fileInfo->absoluteFilePath());
+
+    if(m_lastFetchNode)
+        fileMonitor->removeMonitorPath(m_lastFetchNode->fileInfo->absoluteFilePath());
 
     m_lastFetchNode = parentNode;
 

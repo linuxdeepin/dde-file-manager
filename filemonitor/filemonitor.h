@@ -1,7 +1,8 @@
 #ifndef FileMonitor_H
 #define FileMonitor_H
 
-#include <QtCore>
+#include <QObject>
+#include <QMap>
 
 class FileMonitorWoker;
 
@@ -17,6 +18,9 @@ public:
 
     static bool isGoutputstreamTempFile(QString path);
 
+    void addMonitorPath(const QString &path);
+    void removeMonitorPath(const QString &path);
+
 signals:
     void fileCreated(QString path);
     void fileMovedIn(QString path);
@@ -25,7 +29,7 @@ signals:
     void fileDeleted(QString path);
     void fileMetaDataChanged(QString path);
 
-public slots:
+private slots:
     void handleCreated(int cookie, QString path);
     void handleMoveFrom(int cookie, QString path);
     void handleMoveTo(int cookie, QString path);
@@ -34,7 +38,9 @@ public slots:
 
 private:
     FileMonitorWoker* m_fileMonitorWorker;
+    QThread* m_fileThread;
     QMap<int, QString> m_moveEvent;
+    QMap<QString, int> m_pathMonitorConuter;
     QString m_appGroupPath;
 };
 

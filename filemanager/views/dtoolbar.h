@@ -11,6 +11,7 @@ class DStateButton;
 class DSearchBar;
 class DTabBar;
 class DCrumbWidget;
+class FMEvent;
 
 class DToolBar : public QFrame
 {
@@ -38,7 +39,7 @@ public slots:
     void searchBarDeactivated();
     void searchBarTextEntered();
     void crumbSelected(QString path);
-    void crumbChanged(const QString &url);
+    void crumbChanged(const FMEvent &event);
     void upButtonClicked();
     void searchBarChanged(QString path);
 private:

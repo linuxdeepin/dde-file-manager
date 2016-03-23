@@ -10,10 +10,11 @@
 #include <QTextOption>
 #include <QTextLayout>
 
-//#define gridManager  Singleton<GridManager>::instance()
 #define searchHistoryManager  Singleton<SearchHistroyManager>::instance()
-//#define dbusController Singleton<DBusController>::instance()
 #define fileSignalManager Singleton<FileSignalManager>::instance()
+#define fileManagerApp FileManagerApp::instance()
+#define appController fileManagerApp->getAppController()
+#define fileMonitor appController->getFileMonitor()
 
 #define defaut_icon ":/images/images/default.png"
 #define defaut_computerIcon ":/images/images/computer.png"

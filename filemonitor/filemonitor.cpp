@@ -2,7 +2,6 @@
 #include "filemonitorwoker.h"
 #include "utils/utils.h"
 
-
 FileMonitor::FileMonitor(QObject *parent) : QObject(parent)
 {
     initFileMonitorWoker();
@@ -12,9 +11,9 @@ FileMonitor::FileMonitor(QObject *parent) : QObject(parent)
 
 void FileMonitor::initFileMonitorWoker(){
     m_fileMonitorWorker = new FileMonitorWoker;
-    QThread* fileThread = new QThread;
-    m_fileMonitorWorker->moveToThread(fileThread);
-    fileThread->start();
+    m_fileThread = new QThread(this);
+    m_fileMonitorWorker->moveToThread(m_fileThread);
+    m_fileThread->start();
 }
 
 void FileMonitor::initConnect(){
@@ -30,6 +29,36 @@ bool FileMonitor::isGoutputstreamTempFile(QString path){
         return true;
     }
     return false;
+}
+
+void FileMonitor::addMonitorPath(const QString &path)
+{
+    if(!m_pathMonitorConuter.contains(path)) {
+        QMetaObject::invokeMethod(m_fileMonitorWorker, "monitor",
+                                  Qt::QueuedConnection,
+                                  Q_ARG(QString, path));
+    }
+
+    m_pathMonitorConuter[path] = m_pathMonitorConuter.value(path, 0) + 1;
+}
+
+void FileMonitor::removeMonitorPath(const QString &path)
+{
+    if(m_pathMonitorConuter.contains(path)) {
+        int count = m_pathMonitorConuter.value(path);
+
+        --count;
+
+        if(count == 0) {
+            QMetaObject::invokeMethod(m_fileMonitorWorker, "unMonitor",
+                                      Qt::QueuedConnection,
+                                      Q_ARG(QString, path));
+
+            m_pathMonitorConuter.remove(path);
+        } else {
+            m_pathMonitorConuter[path] = count;
+        }
+    }
 }
 
 void FileMonitor::handleCreated(int cookie, QString path){
@@ -59,6 +88,9 @@ void FileMonitor::handleMetaDataChanged(int cookie, QString path)
 
 FileMonitor::~FileMonitor()
 {
-
+    m_fileThread->terminate();
+    m_fileThread->wait();
+    m_fileThread->quit();
+    m_fileMonitorWorker->deleteLater();
 }
 

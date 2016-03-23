@@ -98,7 +98,8 @@ HEADERS += \
     filemanager/views/dhorizseparator.h \
     filemanager/models/ddirmodel.h \
     filemanager/views/dscrollbar.h \
-    filemanager/views/dmenu.h
+    filemanager/views/dmenu.h \
+    filemanager/app/fmevent.h
 
 SOURCES += \
     filemanager/controllers/appcontroller.cpp \
@@ -159,6 +160,7 @@ SOURCES += \
     filemanager/views/dhorizseparator.cpp \
     filemanager/models/ddirmodel.cpp \
     filemanager/views/dscrollbar.cpp \
-    filemanager/views/dmenu.cpp
+    filemanager/views/dmenu.cpp \
+    filemanager/app/fmevent.cpp
 
 INCLUDEPATH += filemanager/models

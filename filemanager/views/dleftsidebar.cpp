@@ -1,14 +1,16 @@
 #include "dleftsidebar.h"
+#include "../app/global.h"
+#include "../app/fmevent.h"
+#include "dcheckablebutton.h"
+#include "dhorizseparator.h"
+#include "dscrollbar.h"
+
 #include <QVBoxLayout>
 #include <QButtonGroup>
 #include <QStandardPaths>
 #include <QDir>
 #include <QDebug>
-#include "../app/global.h"
-#include "dcheckablebutton.h"
-#include "dhorizseparator.h"
 #include <QListWidgetItem>
-#include "dscrollbar.h"
 #include <QLabel>
 
 
@@ -222,8 +224,12 @@ void DLeftSideBar::handleLocationChanged(int id)
     if (id == 1){
 
     }else{
-        QString path = getStandardPathbyId(id);
-        emit fileSignalManager->currentUrlChanged(path);
+        FMEvent event;
+
+        event.dir = getStandardPathbyId(id);
+        event.source = FMEvent::FileView;
+
+        emit fileSignalManager->requestChangeCurrentUrl(event);
     }
 }
 

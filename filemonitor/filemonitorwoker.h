@@ -82,9 +82,6 @@ private:
     QSocketNotifier *m_notifier;
     QHash<QString, int> m_pathToID;
     QMultiHash<int, QString> m_idToPath;
-
-
-
 };
 
 #endif // FILEMONITORWOKER_H

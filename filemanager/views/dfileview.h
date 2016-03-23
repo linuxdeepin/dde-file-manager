@@ -11,6 +11,7 @@ class QFileSystemModel;
 class QHeaderView;
 class FileController;
 class FileMenuManager;
+class FMEvent;
 
 DWIDGET_USE_NAMESPACE
 
@@ -45,7 +46,7 @@ public:
     int selectedIndexCount() const;
 
 public slots:
-    void cd(const QString &url);
+    void cd(const FMEvent &event);
     void switchToListMode();
     void switchToIconMode();
 

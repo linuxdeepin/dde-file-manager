@@ -1,10 +1,13 @@
 #include "dfileview.h"
 #include "dfilesystemmodel.h"
 #include "../app/global.h"
+#include "../app/fmevent.h"
 #include "fileitem.h"
 #include "filemenumanager.h"
 #include "dfileitemdelegate.h"
 #include "fileinfo.h"
+#include "dmenu.h"
+#include "dscrollbar.h"
 
 #include <dthememanager.h>
 
@@ -12,8 +15,6 @@
 #include <QMenu>
 #include <QWheelEvent>
 #include <QDesktopServices>
-#include "dmenu.h"
-#include "dscrollbar.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -70,7 +71,7 @@ void DFileView::initConnects()
 {
     connect(this, &DFileView::doubleClicked,
             this, &DFileView::openIndex);
-    connect(fileSignalManager, &FileSignalManager::currentUrlChanged,
+    connect(fileSignalManager, &FileSignalManager::requestChangeCurrentUrl,
             this, &DFileView::cd);
     connect(fileSignalManager, &FileSignalManager::childrenChanged,
             model(), &DFileSystemModel::updateChildren);
@@ -126,21 +127,23 @@ int DFileView::selectedIndexCount() const
     return m_selectedIndexCount;
 }
 
-void DFileView::cd(const QString &url)
+void DFileView::cd(const FMEvent &event)
 {
-    if(currentUrl() == url)
+    if(currentUrl() == event.dir)
         return;
 
-    qDebug() << "cd: current url:" << currentUrl() << "to url:" << url;
+    qDebug() << "cd: current url:" << currentUrl() << "to url:" << event;
 
-    QModelIndex index = model()->index(url);
+    QModelIndex index = model()->index(event.dir);
 
     if(!index.isValid())
-        index = model()->setRootPath(url);
+        index = model()->setRootPath(event.dir);
 
     setRootIndex(index);
 
-    emit currentUrlChanged(url);
+    emit currentUrlChanged(event.dir);
+
+    fileSignalManager->currentUrlChanged(event);
 }
 
 void DFileView::switchToListMode()
@@ -370,7 +373,12 @@ void DFileView::shrinkIconSize()
 void DFileView::openIndex(const QModelIndex &index)
 {
     if(model()->hasChildren(index)){
-        emit fileSignalManager->currentUrlChanged(model()->getUrlByIndex(index));
+        FMEvent event;
+
+        event.dir = model()->getUrlByIndex(index);
+        event.source = FMEvent::FileView;
+
+        emit fileSignalManager->requestChangeCurrentUrl(event);
     } else {
         QDesktopServices::openUrl(QUrl::fromLocalFile(model()->getUrlByIndex(index)));
     }

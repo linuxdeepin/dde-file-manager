@@ -6,6 +6,7 @@
 #include <QDebug>
 
 class FileInfo;
+class FMEvent;
 
 class FileSignalManager : public QObject
 {
@@ -16,8 +17,10 @@ public:
         QObject(parent){}
 
 signals:
+    /// change currentUrl
+    void requestChangeCurrentUrl(const FMEvent &event);
     /// current display url changed
-    void currentUrlChanged(const QString &url);
+    void currentUrlChanged(const FMEvent &event);
 
     /// in folder files
     void requestChildren(const QString &url, int filter = int(QDir::AllEntries | QDir::NoDotDot)) const;

@@ -18,6 +18,13 @@ FileManagerApp::FileManagerApp(QObject *parent) : QObject(parent)
     initConnect();
 }
 
+FileManagerApp *FileManagerApp::instance()
+{
+    static FileManagerApp app;
+
+    return &app;
+}
+
 FileManagerApp::~FileManagerApp()
 {
 
@@ -78,6 +85,11 @@ void FileManagerApp::initTranslation()
 void FileManagerApp::initConnect()
 {
 
+}
+
+AppController *FileManagerApp::getAppController() const
+{
+    return m_appController;
 }
 
 void FileManagerApp::show()

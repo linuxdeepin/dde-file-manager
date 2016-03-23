@@ -10,6 +10,7 @@ class CopyJobController;
 class RenameJobController;
 class DeleteJobController;
 class FileController;
+class FileMonitor;
 
 class AppController : public QObject
 {
@@ -19,15 +20,14 @@ public:
     ~AppController();
 
     void initConnect();
-    TrashJobController* getTrashJobController();
-    MoveJobController* getMoveJobController();
-    CopyJobController* getCopyJobController();
-    RenameJobController* getRenameJobController();
-    DeleteJobController* getDeleteJobController();
-    FileController* getFileController();
-signals:
 
-public slots:
+    TrashJobController* getTrashJobController() const;
+    MoveJobController* getMoveJobController() const;
+    CopyJobController* getCopyJobController() const;
+    RenameJobController* getRenameJobController() const;
+    DeleteJobController* getDeleteJobController() const;
+    FileController* getFileController() const;
+    FileMonitor *getFileMonitor() const;
 
 private:
     TrashJobController* m_trashJobController;
@@ -36,6 +36,7 @@ private:
     RenameJobController* m_renameJobController;
     DeleteJobController* m_deleteJobController;
     FileController* m_fileController;
+    FileMonitor *m_fileMonitor;
 };
 
 #endif // APPCONTROLLER_H

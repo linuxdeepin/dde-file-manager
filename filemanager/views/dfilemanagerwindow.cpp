@@ -1,19 +1,19 @@
 #include "dfilemanagerwindow.h"
-#include <QStatusBar>
-#include <QFrame>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QSplitter>
-#include <QResizeEvent>
-
 #include "utils/xutil.h"
-
 #include "dtitlebar.h"
 #include "dleftsidebar.h"
 #include "dtoolbar.h"
 #include "dfileview.h"
 #include "ddetailview.h"
 #include "../app/global.h"
+#include "../app/fmevent.h"
+
+#include <QStatusBar>
+#include <QFrame>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QSplitter>
+#include <QResizeEvent>
 
 const int DFileManagerWindow::MinimumWidth = 540;
 
@@ -159,11 +159,16 @@ void DFileManagerWindow::initConnect()
     connect(m_toolbar, SIGNAL(requestSwitchLayout()), this, SLOT(toggleLayout()));
     connect(m_toolbar, &DToolBar::backButtonClicked,
             this, [this] {
-        QDir dir(QUrl(m_fileView->currentUrl()).toLocalFile());
+        QDir dir(m_fileView->currentUrl());
 
         dir.cdUp();
 
-        emit fileSignalManager->currentUrlChanged(QUrl::fromLocalFile(dir.absolutePath()).toString(QUrl::EncodeUnicode));
+        FMEvent event;
+
+        event.dir = dir.absolutePath();
+        event.source = FMEvent::BackAndForwardButton;
+
+        emit fileSignalManager->requestChangeCurrentUrl(event);
     });
     connect(m_toolbar, &DToolBar::requestListView,
             m_fileView, &DFileView::switchToListMode);
