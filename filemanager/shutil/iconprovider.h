@@ -6,6 +6,7 @@
 #include <QCache>
 #include <QHash>
 #include <QFileIconProvider>
+#include <QGSettings>
 #include "mimeutils.h"
 
 class IconProvider : public QObject
@@ -17,15 +18,20 @@ public:
 
     static QPixmap getIconPixmap(QString iconPath, int width=48, int height=48);
     static QString getThemeIconPath(QString iconName);
+    void initConnect();
     void gtkInit();
+    QString getCurrentTheme();
     void loadMimeTypes() const;
     QByteArray getThumb(const QString& imageFile);
 
 signals:
+    void themeChanged(const QString& theme);
 
 public slots:
+
     void setTheme(const QString &themeName);
     void setCurrentTheme();
+    void handleWmValueChanged(const QString &key);
 
     QIcon getFileIcon(const QString& file) const;
     QIcon getDesktopIcon(const QString& iconName, int size) const;
@@ -45,6 +51,7 @@ private:
 
     MimeUtils* m_mimeUtilsPtr;
     QFileIconProvider* m_iconProvider;
+    QGSettings* m_gsettings;
 };
 
 #endif // ICONPROVIDER_H
