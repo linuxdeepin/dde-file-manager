@@ -8,25 +8,40 @@
 
 class DMenu;
 
-class FileMenuManager : public QObject
+class FileMenuManager
 {
-    Q_OBJECT
 public:
-    explicit FileMenuManager(QObject *parent = 0);
-    ~FileMenuManager();
+    enum MenuAction {
+        Open,
+        OpenInNewWindow,
+        OpenWith,
+        Compress,
+        Decompress,
+        Cut,
+        Copy,
+        Paste,
+        Rename,
+        Delete,
+        Property,
+        NewFolder,
+        NewFile,
+        NewDoc,
+        SelectAll,
+        Separator
+    };
 
-    void initData();
-    void initActions();
-    DMenu* genereteMenuByFileType(QString type);
-    DMenu* genereteMenuByKeys(const QStringList keys);
-signals:
-
-public slots:
-    void handleAction(QAction* action);
+    static DMenu *createFileMenu();
+    static DMenu *createViewSpaceAreaMenu();
 
 private:
-    QMap<QString, QString> m_actionKeys;
-    QMap<QString, QAction*> m_actions;
+    FileMenuManager();
+
+    static QMap<MenuAction, QString> m_actionKeys;
+    static QMap<MenuAction, QAction*> m_actions;
+
+    static void initData();
+    static void initActions();
+    static DMenu *genereteMenuByKeys(const QList<MenuAction> keys);
 };
 
 #endif // FILEMENUMANAGER_H

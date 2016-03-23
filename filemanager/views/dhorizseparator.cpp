@@ -1,7 +1,8 @@
 #include "dhorizseparator.h"
 #include <QPainter>
 
-DHorizSeparator::DHorizSeparator(QWidget *parent)
+DHorizSeparator::DHorizSeparator(QWidget *parent) :
+    QWidget(parent)
 {
     setFixedHeight(2);
 }

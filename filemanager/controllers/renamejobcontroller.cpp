@@ -1,6 +1,4 @@
 #include "renamejobcontroller.h"
-#include "dbusinterface/renamejob_interface.h"
-#include "dbusinterface/fileoperations_interface.h"
 #include "../app/global.h"
 
 
@@ -10,7 +8,7 @@ RenameJobController::RenameJobController(QObject *parent) : QObject(parent)
 }
 
 void RenameJobController::initConnect(){
-    connect(signalManager, SIGNAL(renameJobCreated(QString,QString)), this, SLOT(rename(QString,QString)));
+
 }
 
 void RenameJobController::rename(QString url, QString newName){
@@ -31,23 +29,7 @@ void RenameJobController::rename(QString url, QString newName){
 
 void RenameJobController::renameJobExcuteFinished(QString message){
     qDebug() << "rename job return" << message;
-    if (message.length() == 0){
-        disconnect(m_renameJobInterface, SIGNAL(Done(QString)), this, SLOT(renameJobExcuteFinished(QString)));
-        m_renameJobInterface->deleteLater();
-        m_renameJobInterface = NULL;
-        qDebug() << "rename job finished" << message;
-    }else{
-        QJsonParseError* error = new QJsonParseError();
-        QJsonObject messageObj = QJsonDocument::fromJson(QByteArray(message.toStdString().c_str()), error).object();
-        qDebug() << messageObj << error->errorString();
-        if (messageObj.contains("Code")){
-            if (messageObj.value("Code").toInt() == 2){
-                emit signalManager->renameDialogShowed(m_newName);
-            }else{
-                qDebug() << messageObj;
-            }
-        }
-    }
+
 }
 
 RenameJobController::~RenameJobController()

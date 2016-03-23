@@ -1,91 +1,86 @@
 #include "filemenumanager.h"
-#include <QDebug>
 #include "dmenu.h"
 
-FileMenuManager::FileMenuManager(QObject *parent) : QObject(parent)
+QMap<FileMenuManager::MenuAction, QString> FileMenuManager::m_actionKeys;
+QMap<FileMenuManager::MenuAction, QAction*> FileMenuManager::m_actions;
+
+DMenu *FileMenuManager::createFileMenu()
 {
-    initData();
-    initActions();
+    QList<MenuAction> actionKeys;
+
+    actionKeys << Open << OpenInNewWindow
+               << Separator
+               << Compress << Cut << Copy
+               << Separator
+               << Rename << Delete
+               << Separator
+               << Property;
+
+    return genereteMenuByKeys(actionKeys);
 }
 
-FileMenuManager::~FileMenuManager()
+DMenu *FileMenuManager::createViewSpaceAreaMenu()
+{
+    QList<MenuAction> actionKeys;
+
+    actionKeys << NewFolder << NewDoc
+               << Separator
+               << Paste
+               << Separator
+               << SelectAll
+               << Separator
+               << Property;
+
+    return genereteMenuByKeys(actionKeys);
+}
+
+FileMenuManager::FileMenuManager()
 {
 
 }
 
 void FileMenuManager::initData()
 {
-    m_actionKeys["open"] = tr("Open");
-    m_actionKeys["openInNewWindow"] = tr("Open in new window");
-    m_actionKeys["openWidth"] = tr("Open with");
-    m_actionKeys["compress"] = tr("Compress");
-    m_actionKeys["decompress"] = tr("Decompress");
-    m_actionKeys["cut"] = tr("Cut");
-    m_actionKeys["copy"] = tr("Copy");
-    m_actionKeys["paste"] = tr("Paste");
-    m_actionKeys["rename"] = tr("Rename");
-    m_actionKeys["delete"] = tr("Delete");
-    m_actionKeys["property"] = tr("Property");
+    m_actionKeys[Open] = QObject::tr("Open");
+    m_actionKeys[OpenInNewWindow] = QObject::tr("Open in new window");
+    m_actionKeys[OpenWith] = QObject::tr("Open with");
+    m_actionKeys[Compress] = QObject::tr("Compress");
+    m_actionKeys[Decompress] = QObject::tr("Decompress");
+    m_actionKeys[Cut] = QObject::tr("Cut");
+    m_actionKeys[Copy] = QObject::tr("Copy");
+    m_actionKeys[Paste] = QObject::tr("Paste");
+    m_actionKeys[Rename] = QObject::tr("Rename");
+    m_actionKeys[Delete] = QObject::tr("Delete");
+    m_actionKeys[Property] = QObject::tr("Property");
 
-    m_actionKeys["newFolder"] = tr("New Folder");
-    m_actionKeys["newFile"] = tr("New File");
-    m_actionKeys["newDoc"] = tr("New Doc");
-    m_actionKeys["selectAll"] = tr("Select all");
+    m_actionKeys[NewFolder] = QObject::tr("New Folder");
+    m_actionKeys[NewFile] = QObject::tr("New File");
+    m_actionKeys[NewDoc] = QObject::tr("New Doc");
+    m_actionKeys[SelectAll] = QObject::tr("Select all");
 }
 
 void FileMenuManager::initActions()
 {
-    foreach (QString key, m_actionKeys.keys()) {
-        QAction* action = new QAction(this);
-        action->setText(m_actionKeys.value(key));
+    foreach (MenuAction key, m_actionKeys.keys()) {
+        QAction* action = new QAction(m_actionKeys.value(key), 0);
+
         action->setData(key);
+
         m_actions.insert(key, action);
     }
 }
 
-DMenu *FileMenuManager::genereteMenuByFileType(QString type)
+DMenu *FileMenuManager::genereteMenuByKeys(const QList<MenuAction> keys)
 {
-    QStringList actionKeys;
-    if (type == "File"){
-        actionKeys << "open" << "openInNewWindow"
-                   << "separator"
-                   << "compress" << "cut" << "copy"
-                   << "separator"
-                   << "rename" << "delete"
-                   << "separator"
-                   << "property";
-    }else if (type == "DesktopFile"){
-
-    }else if (type == "CompressFile"){
-
-    }else if (type == "Folder"){
-
-    }else if (type == "Space"){
-        actionKeys << "newFolder" << "newDoc"
-                   << "separator"
-                   << "paste"
-                   << "separator"
-                   << "selectAll"
-                   << "separator"
-                   << "property";
+    if(m_actions.isEmpty()) {
+        initData();
+        initActions();
     }
-    else{
-        actionKeys << "open" << "openInNewWindow"
-                   << "separator"
-                   << "compress" << "cut" << "copy"
-                   << "separator"
-                   << "rename" << "delete"
-                   << "separator"
-                   << "property";
-    }
-    return genereteMenuByKeys(actionKeys);
-}
 
-DMenu *FileMenuManager::genereteMenuByKeys(const QStringList keys)
-{
     DMenu* menu = new DMenu;
-    foreach (QString key, keys) {
-        if (key == "separator"){
+
+    foreach (MenuAction key, keys) {
+        if (key == Separator){
             menu->addSeparator();
         }else{
             if (m_actions.contains(key)){
@@ -93,11 +88,6 @@ DMenu *FileMenuManager::genereteMenuByKeys(const QStringList keys)
             }
         }
     }
-    connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(handleAction(QAction*)));
-    return menu;
-}
 
-void FileMenuManager::handleAction(QAction *action)
-{
-    qDebug() << sender()->property("url") << action->data();
+    return menu;
 }

@@ -97,7 +97,7 @@ bool DCrumbWidget::hasPath(QString path)
     return m_path.contains(path);
 }
 
-bool DCrumbWidget::isInHome(QString path)
+bool DCrumbWidget::isInHome(QString /*path*/)
 {
     return m_path.contains("/home");
 }

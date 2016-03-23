@@ -38,8 +38,6 @@ void DFileView::initUI()
 {
     m_iconSizes << 48 << 64 << 96 << 128 << 256;
 
-    m_fileMenuManager = new FileMenuManager(this);
-
     setSpacing(5);
     setResizeMode(QListView::Adjust);
     setOrientation(QListView::LeftToRight, true);
@@ -232,13 +230,13 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
     DMenu *menu;
 
     if (isEmptyArea(event->pos())){
-        menu = m_fileMenuManager->genereteMenuByFileType("Space");
+        menu = FileMenuManager::createViewSpaceAreaMenu();
+        menu->setProperty("url", rootIndex().data(DFileSystemModel::FilePathRole));
     }else{
-        menu = m_fileMenuManager->genereteMenuByFileType("File");
-        menu->setProperty("url", "/home");
+        menu = FileMenuManager::createFileMenu();
+        menu->setProperty("url", indexAt(event->pos()).data(DFileSystemModel::FilePathRole));
     }
 
-    menu->setStyleSheet(this->styleSheet());
     menu->setAttribute(Qt::WA_TranslucentBackground, true);
     menu->exec(mapToGlobal(event->pos()));
     menu->deleteLater();

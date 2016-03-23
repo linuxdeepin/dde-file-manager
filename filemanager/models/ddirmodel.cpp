@@ -13,7 +13,7 @@ QVariant DDirModel::data(const QModelIndex &index, int role) const
     return m_dirModel->data(index, role);
 }
 
-int DDirModel::rowCount(const QModelIndex &parent) const
+int DDirModel::rowCount(const QModelIndex &/*parent*/) const
 {
     return QStringListModel::rowCount();
 }

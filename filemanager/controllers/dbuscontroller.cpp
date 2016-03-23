@@ -17,7 +17,6 @@
 #include "widgets/themeappicon.h"
 
 #include "../app/global.h"
-#include "../app/signalmanager.h"
 #include "filemonitor/filemonitor.h"
 #include "dbusinterface/dbusclientmanager.h"
 #include "appcontroller.h"

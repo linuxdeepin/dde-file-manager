@@ -25,7 +25,6 @@ static void requrestUpdateIcons()
     auto a = gtk_icon_theme_get_example_icon_name(gs);
     if (a != NULL) g_free(a);
     //can not passing QObject to the callback function,so use signal
-    emit signalManager->gtkIconThemeChanged();
 }
 
 void initGtkThemeWatcher()

@@ -5,7 +5,7 @@ SearchHistory::SearchHistory(QObject *parent) : DebugObejct(parent)
 
 }
 
-SearchHistory::SearchHistory(QDateTime time, QString keyword, QObject *parent)
+SearchHistory::SearchHistory(QDateTime time, QString keyword, QObject */*parent*/)
 {
     m_time = time;
     m_keyword = keyword;
