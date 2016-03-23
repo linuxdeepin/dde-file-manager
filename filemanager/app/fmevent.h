@@ -15,12 +15,11 @@ public:
         SearchLine,
         Unknow
     };
-
+    FMEvent();
     int windowId = -1;
     EventSource source = Unknow;
     QString dir;
 
-    FMEvent();
 };
 
 QT_BEGIN_NAMESPACE

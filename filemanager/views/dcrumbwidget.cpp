@@ -42,7 +42,7 @@ void DCrumbWidget::addCrumb(const QStringList &list)
 
 void DCrumbWidget::setCrumb(const QString &path)
 {
-    if(path.isEmpty() || path.at(0) != '/' || hasPath(path))
+    if(path.isEmpty() || path.at(0) != '/')
         return;
     m_path = path;
     QStringList list;
@@ -61,6 +61,7 @@ void DCrumbWidget::setCrumb(const QString &path)
     }
     clear();
     addCrumb(list);
+    repaint();
 }
 
 void DCrumbWidget::clear()

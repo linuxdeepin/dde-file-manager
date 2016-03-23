@@ -99,7 +99,8 @@ HEADERS += \
     filemanager/models/ddirmodel.h \
     filemanager/views/dscrollbar.h \
     filemanager/views/dmenu.h \
-    filemanager/app/fmevent.h
+    filemanager/app/fmevent.h \
+    filemanager/views/historystack.h
 
 SOURCES += \
     filemanager/controllers/appcontroller.cpp \
@@ -161,6 +162,7 @@ SOURCES += \
     filemanager/models/ddirmodel.cpp \
     filemanager/views/dscrollbar.cpp \
     filemanager/views/dmenu.cpp \
-    filemanager/app/fmevent.cpp
+    filemanager/app/fmevent.cpp \
+    filemanager/views/historystack.cpp
 
 INCLUDEPATH += filemanager/models

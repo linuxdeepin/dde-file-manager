@@ -437,8 +437,15 @@ QPushButton#listViewButton:unchecked{
     image: url(:/icons/images/icons/listview_normal.png);
 }
 
-QPushButton#sortingButton{
+QPushButton#SortingButton{
     background-color:white;
+    border: 1px;
+    color: black;
+    border-radius: 2px;
+}
+
+QPushButton#SortingButton:checked{
+    background-color:#2ca7f8;
     border: 1px;
     color: black;
     border-radius: 2px;
@@ -472,6 +479,7 @@ QLineEdit#DSearchBar{
     border-radius: 2px;
     background-color: #ffffff;
     border: solid 1px rgba(0, 0, 0, 0.1);
+    padding-left:10px;
 }
 /*******************End of DSearchBar****************** */
 
@@ -592,7 +600,7 @@ QPushButton{
 
 
 QPushButton:hover{
-    background-color: rgb(69, 187, 217);
+    background-color: #2ca7f8;
     color: white;
     border: 1px;
 }

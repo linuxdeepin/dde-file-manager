@@ -99,5 +99,7 @@
         <file>images/icons/close_press.png</file>
         <file>images/icons/close_normal.png</file>
         <file>images/icons/close_hover.png</file>
+        <file>images/icons/sorting_press.png</file>
+        <file>images/icons/sorting_normal.png</file>
     </qresource>
 </RCC>

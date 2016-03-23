@@ -63,7 +63,6 @@ QAction * DSearchBar::removeClearAction()
 void DSearchBar::initConnections()
 {
     connect(this, SIGNAL(textEdited(QString)), this, SLOT(doTextChanged(QString)));
-    //connect(fileSignalManager, &FileSignalManager::searchHistoryLoaded, this, &DSearchBar::searchHistoryLoaded);
     connect(this, &DSearchBar::returnPressed, this, &DSearchBar::historySaved);
 }
 
