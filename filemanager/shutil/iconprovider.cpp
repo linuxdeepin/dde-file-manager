@@ -27,6 +27,9 @@ IconProvider::IconProvider(QObject *parent) : QObject(parent)
 {
     m_mimeUtilsPtr = new MimeUtils;
     m_iconProvider = new QFileIconProvider;
+    m_gsettings = new QGSettings("com.deepin.wrap.gnome.desktop.wm.preferences",
+                                 "/com/deepin/wrap/gnome/desktop/wm/preferences/");
+    initConnect();
     setCurrentTheme();
 }
 
@@ -116,10 +119,26 @@ QString IconProvider::getThemeIconPath(QString iconName)
     }
 }
 
+void IconProvider::initConnect()
+{
+    connect(m_gsettings, SIGNAL(changed(QString)),
+            this, SLOT(handleWmValueChanged(QString)));
+}
+
 void IconProvider::gtkInit()
 {
     gtk_init(NULL, NULL);
     gdk_error_trap_push();
+}
+
+QString IconProvider::getCurrentTheme()
+{
+    QString temp = m_gsettings->get("theme").toString();
+    if (!temp.isEmpty()){
+        return temp;
+    }else{
+        return QIcon::themeName();
+    }
 }
 
 void IconProvider::loadMimeTypes() const
@@ -205,40 +224,21 @@ void IconProvider::setTheme(const QString &themeName)
 
 void IconProvider::setCurrentTheme()
 {
-    QString temp;
-    if(temp.isNull())
-    {
-        //get theme from system (works for gnome/kde)
-        temp = QIcon::themeName();
+    QString temp = getCurrentTheme();
+    setTheme(temp);
+}
 
-        //Qt doesn't detect the theme very well for non-DE systems,
-        //so try reading the '~/.gtkrc-2.0' or '~/.config/gtk-3.0/settings.ini'
-
-        if(temp == "hicolor")
-        {
-            //check for gtk-2.0 settings
-            if(QFile::exists(QDir::homePath() + "/" + ".gtkrc-2.0"))
-            {
-                QSettings gtkFile(QDir::homePath() + "/.gtkrc-2.0",QSettings::IniFormat,this);
-                temp = gtkFile.value("gtk-icon-theme-name").toString().remove("\"");
-            }
-            else
-            {
-                //try gtk-3.0
-                QSettings gtkFile(QDir::homePath() + "/.config/gtk-3.0/settings.ini",QSettings::IniFormat,this);
-                temp = gtkFile.value("gtk-fallback-icon-theme").toString().remove("\"");
-            }
-
-            //fallback
-            if(temp.isNull())
-            {
-                if(QFile::exists("/usr/share/icons/gnome")) temp = "gnome";
-                else if(QFile::exists("/usr/share/icons/oxygen")) temp = "oxygen";
-                else temp = "hicolor";
-            }
+void IconProvider::handleWmValueChanged(const QString &key)
+{
+    if (key == "theme"){
+        QString theme = getCurrentTheme();
+        if (QIcon::themeName() == theme){
+            return;
         }
+        qDebug() << "Theme change from" << QIcon::themeName() << "to" << theme;
+        setTheme(theme);
+        emit themeChanged(theme);
     }
-    QIcon::setThemeName(temp);
 }
 
 
