@@ -54,6 +54,7 @@ signals:
 
 private slots:
     void moveColumnRole(int logicalIndex, int oldVisualIndex, int newVisualIndex);
+    void onMenuActionTrigger(const QAction *action);
 
 protected:
     void contextMenuEvent(QContextMenuEvent * event) Q_DECL_OVERRIDE;
@@ -83,6 +84,7 @@ private:
     QSize currentIconSize() const;
     void enlargeIconSize();
     void shrinkIconSize();
+    void openIndex(const QModelIndex &index);
 };
 
 #endif // DFILEVIEW_H
