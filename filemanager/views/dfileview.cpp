@@ -22,8 +22,6 @@ DFileView::DFileView(QWidget *parent) : DListView(parent)
 {
     D_THEME_INIT_WIDGET(DFileView);
 
-    qDebug() << styleSheet();
-
     initUI();
     initDelegate();
     initModel();
@@ -140,6 +138,7 @@ void DFileView::cd(const FMEvent &event)
         index = model()->setRootPath(event.dir);
 
     setRootIndex(index);
+    model()->setActiveIndex(index);
 
     emit currentUrlChanged(event.dir);
 
@@ -268,9 +267,9 @@ void DFileView::wheelEvent(QWheelEvent *event)
 {
     if(isIconViewMode() && m_ctrlIsPressed) {
         if(event->angleDelta().y() > 0) {
-            enlargeIconSize();
+            enlargeIcon();
         } else {
-            shrinkIconSize();
+            shrinkIcon();
         }
 
         event->accept();
@@ -354,7 +353,7 @@ QSize DFileView::currentIconSize() const
     return QSize(size, size);
 }
 
-void DFileView::enlargeIconSize()
+void DFileView::enlargeIcon()
 {
     if(m_currentIconSizeIndex < m_iconSizes.count() - 1)
         ++m_currentIconSizeIndex;
@@ -362,7 +361,7 @@ void DFileView::enlargeIconSize()
     setIconSize(currentIconSize());
 }
 
-void DFileView::shrinkIconSize()
+void DFileView::shrinkIcon()
 {
     if(m_currentIconSizeIndex > 0)
         --m_currentIconSizeIndex;

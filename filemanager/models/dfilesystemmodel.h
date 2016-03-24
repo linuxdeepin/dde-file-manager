@@ -62,6 +62,7 @@ public:
 
     void setSortColumn(int column, Qt::SortOrder order = Qt::AscendingOrder);
     void setSortRole(int role, Qt::SortOrder order = Qt::AscendingOrder);
+    void setActiveIndex(const QModelIndex &index);
 
     Qt::SortOrder sortOrder() const;
     int sortColumn() const;
@@ -73,17 +74,21 @@ public slots:
     void updateChildren(const QString &url, QList<FileInfo *> list);
     void refresh(const QString &url);
 
+private slots:
+    void onFileCreated(const QString &path);
+    void onFileDeleted(const QString &path);
+    void onFileRenamed(const QString &oldPath, const QString &newPath);
+
 private:
     FileSystemNode *m_rootNode = Q_NULLPTR;
-    FileSystemNode *m_lastFetchNode = Q_NULLPTR;
 
-    QMap<QString, FileSystemNode*> m_urlToNode;
-    mutable QHash<QString, QIcon> m_typeToIcon;
+    QHash<QString, FileSystemNode*> m_urlToNode;
     IconProvider m_iconProvider;
 
     int m_sortRole = Qt::DisplayRole;
     int m_sortColumn = 0;
     Qt::SortOrder m_srotOrder = Qt::AscendingOrder;
+    QModelIndex m_activeIndex;
 
     inline FileSystemNode *getNodeByIndex(const QModelIndex &index) const;
     QModelIndex createIndex(const FileSystemNode *node, int column) const;

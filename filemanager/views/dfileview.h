@@ -83,8 +83,8 @@ private:
     bool isEmptyArea(const QPoint &pos) const;
 
     QSize currentIconSize() const;
-    void enlargeIconSize();
-    void shrinkIconSize();
+    void enlargeIcon();
+    void shrinkIcon();
     void openIndex(const QModelIndex &index);
 };
 
