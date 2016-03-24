@@ -33,6 +33,8 @@ bool FileMonitor::isGoutputstreamTempFile(QString path){
 
 void FileMonitor::addMonitorPath(const QString &path)
 {
+    qDebug() << "add monitor, path:" << path;
+
     if(!m_pathMonitorConuter.contains(path)) {
         QMetaObject::invokeMethod(m_fileMonitorWorker, "monitor",
                                   Qt::QueuedConnection,
@@ -44,6 +46,8 @@ void FileMonitor::addMonitorPath(const QString &path)
 
 void FileMonitor::removeMonitorPath(const QString &path)
 {
+    qDebug() << "remove monitor, path:" << path;
+
     if(m_pathMonitorConuter.contains(path)) {
         int count = m_pathMonitorConuter.value(path);
 
@@ -70,9 +74,15 @@ void FileMonitor::handleMoveFrom(int cookie, QString path){
     m_moveEvent.insert(cookie, path);
 }
 
-
 void FileMonitor::handleMoveTo(int cookie, QString path){
     qDebug() << cookie << path;
+
+    const QString &moveFrom = m_moveEvent.value(cookie);
+
+    if(moveFrom.isEmpty())
+        return;
+
+    emit fileRenamed(moveFrom, path);
 }
 
 void FileMonitor::handleDelete(int cookie, QString path){

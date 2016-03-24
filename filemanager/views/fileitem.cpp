@@ -28,6 +28,7 @@ FileIconItem::FileIconItem(QWidget *parent) :
     AnchorsBase::setAnchor(icon, Qt::AnchorHorizontalCenter, this, Qt::AnchorHorizontalCenter);
     AnchorsBase::setAnchor(edit, Qt::AnchorTop, icon, Qt::AnchorBottom);
     AnchorsBase::setAnchor(edit, Qt::AnchorHorizontalCenter, icon, Qt::AnchorHorizontalCenter);
+    AnchorsBase::getAnchorBaseByWidget(edit)->setTopMargin(-3);
 
     setFrameShape(QFrame::NoFrame);
     setFocusProxy(edit);

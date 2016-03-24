@@ -313,39 +313,43 @@ void DFileItemDelegate::paintIconItem(QPainter *painter,
 
     opt.icon.paint(painter, icon_rect);
 
-    QTextDocument *doc = m_documentMap.value(str);
+    if(str.indexOf("\n") >=0 && !str.endsWith("\n")) {
+        QTextDocument *doc = m_documentMap.value(str);
 
-    if(!doc) {
-        doc = new QTextDocument(str, const_cast<DFileItemDelegate*>(this));
+        if(!doc) {
+            doc = new QTextDocument(str, const_cast<DFileItemDelegate*>(this));
 
-        QTextCursor cursor(doc);
-        QTextOption text_option(Qt::AlignHCenter);
+            QTextCursor cursor(doc);
+            QTextOption text_option(Qt::AlignHCenter);
 
-        text_option.setWrapMode(QTextOption::NoWrap);
-        doc->setDefaultFont(painter->font());
-        doc->setDefaultTextOption(text_option);
-        doc->setTextWidth(label_rect.width());
-        cursor.movePosition(QTextCursor::Start);
+            text_option.setWrapMode(QTextOption::NoWrap);
+            doc->setDefaultFont(painter->font());
+            doc->setDefaultTextOption(text_option);
+            doc->setTextWidth(label_rect.width());
+            cursor.movePosition(QTextCursor::Start);
 
-        do {
-            QTextBlockFormat format = cursor.blockFormat();
+            do {
+                QTextBlockFormat format = cursor.blockFormat();
 
-            format.setLineHeight(TEXT_LINE_HEIGHT, QTextBlockFormat::FixedHeight);
-            cursor.setBlockFormat(format);
-        } while (cursor.movePosition(QTextCursor::NextBlock));
+                format.setLineHeight(TEXT_LINE_HEIGHT, QTextBlockFormat::FixedHeight);
+                cursor.setBlockFormat(format);
+            } while (cursor.movePosition(QTextCursor::NextBlock));
 
-        m_documentMap[str] = doc;
+            m_documentMap[str] = doc;
+        }
+
+        QAbstractTextDocumentLayout::PaintContext ctx;
+
+        ctx.palette.setColor(QPalette::Text, painter->pen().color());
+        ctx.clip.setSize(label_rect.size());
+
+        painter->save();
+        painter->translate(opt.rect.left(), label_rect.top() - 3);
+        doc->documentLayout()->draw(painter, ctx);
+        painter->restore();
+    } else {
+        painter->drawText(label_rect, Qt::AlignHCenter, str);
     }
-
-    QAbstractTextDocumentLayout::PaintContext ctx;
-
-    ctx.palette.setColor(QPalette::Text, painter->pen().color());
-    ctx.clip.setSize(label_rect.size());
-
-    painter->save();
-    painter->translate(label_rect.topLeft());
-    doc->documentLayout()->draw(painter, ctx);
-    painter->restore();
 }
 
 void DFileItemDelegate::paintListItem(QPainter *painter,
