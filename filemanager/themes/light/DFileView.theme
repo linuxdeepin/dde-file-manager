@@ -62,6 +62,7 @@ QHeaderView::section {
     font-size: 12px;
     background: transparent;
     border: none;
+    border-right: 1px inset rgba(0, 0, 0, 0.1);
 }
 
 QHeaderView::section:checked {
