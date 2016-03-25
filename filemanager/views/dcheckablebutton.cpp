@@ -21,6 +21,7 @@ DCheckableButton::~DCheckableButton()
 void DCheckableButton::initUI()
 {
     setFixedHeight(30);
+    setFocusPolicy(Qt::NoFocus);
     QIcon icon(m_icon);
     m_iconLabel = new QLabel;
     m_iconLabel->setPixmap(icon.pixmap(16,16));

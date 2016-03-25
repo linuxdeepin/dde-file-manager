@@ -22,8 +22,8 @@ void DTitleBar::initData()
 {
     m_settingsIcon = new QIcon(":/icons/images/icons/menu_normal.png");
     m_minIcon = new QIcon(":/icons/images/icons/minimise_normal.png");
-    m_maxIcon = new QIcon(":/icons/images/icons/maximize_normal.png");
-    m_normalIcon = new QIcon(":/icons/images/icons/unmaximize_normal.png");
+    m_normalIcon = new QIcon(":/icons/images/icons/maximize_normal.png");
+    m_maxIcon= new QIcon(":/icons/images/icons/unmaximize_normal.png");
     m_closeIcon = new QIcon(":/icons/images/icons/close_normal.png");
 }
 
@@ -32,19 +32,23 @@ void DTitleBar::initUI()
     m_settingButton = new QPushButton(this);
     m_settingButton->setIcon(*m_settingsIcon);
     m_settingButton->setIconSize(QSize(QSize(ButtonHeight, ButtonHeight)));
+    m_settingButton->setFocusPolicy(Qt::NoFocus);
 
     m_minButton = new QPushButton(this);
     m_minButton->setIconSize(QSize(ButtonHeight, ButtonHeight));
     m_minButton->setIcon(*m_minIcon);
+    m_minButton->setFocusPolicy(Qt::NoFocus);
 
     m_maxNormalButton = new QPushButton(this);
     m_maxNormalButton->setIconSize(QSize(ButtonHeight, ButtonHeight));
+    m_maxNormalButton->setFocusPolicy(Qt::NoFocus);
     setNormalIcon();
 
     m_closeButton = new QPushButton(this);
     m_closeButton->setObjectName("close");
     m_closeButton->setIconSize(QSize(ButtonHeight, ButtonHeight));
     m_closeButton->setIcon(*m_closeIcon);
+    m_closeButton->setFocusPolicy(Qt::NoFocus);
 
     QHBoxLayout* buttonLayout = new QHBoxLayout;
     buttonLayout->addWidget(m_settingButton);

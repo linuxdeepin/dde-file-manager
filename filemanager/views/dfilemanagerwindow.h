@@ -48,6 +48,7 @@ public slots:
 
 protected:
     void resizeEvent(QResizeEvent* event);
+    void keyPressEvent(QKeyEvent *e);
 
 private:
     QFrame* m_centralWidget;

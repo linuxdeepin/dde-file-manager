@@ -27,6 +27,8 @@ public:
     void initContollerToolBar();
     void initConnect();
     void startup();
+    DSearchBar * m_searchBar = NULL;
+
 signals:
     void requestIconView();
     void requestListView();
@@ -57,7 +59,7 @@ private:
     QPushButton* m_iconViewButton=NULL;
     QPushButton* m_listViewButton=NULL;
     DStateButton* m_sortingButton=NULL;
-    DSearchBar * m_searchBar = NULL;
+
     bool m_switchState = false;
     DCrumbWidget * m_crumbWidget = NULL;
     QButtonGroup * m_viewButtonGroup = NULL;

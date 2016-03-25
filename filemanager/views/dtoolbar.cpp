@@ -102,12 +102,14 @@ void DToolBar::initContollerToolBar()
     m_iconViewButton->setObjectName("iconViewButton");
     m_iconViewButton->setCheckable(true);
     m_iconViewButton->setChecked(true);
+    m_iconViewButton->setFocusPolicy(Qt::NoFocus);
 
     m_listViewButton = new QPushButton(this);
     m_listViewButton->setFixedHeight(20);
     m_listViewButton->setFixedWidth(26);
     m_listViewButton->setObjectName("listViewButton");
     m_listViewButton->setCheckable(true);
+    m_listViewButton->setFocusPolicy(Qt::NoFocus);
 
     m_viewButtonGroup = new QButtonGroup(this);
     m_viewButtonGroup->addButton(m_iconViewButton, 0);
@@ -119,6 +121,7 @@ void DToolBar::initContollerToolBar()
     m_sortingButton->setFixedHeight(20);
     m_sortingButton->setFixedWidth(26);
     m_sortingButton->setObjectName("SortingButton");
+    m_sortingButton->setFocusPolicy(Qt::NoFocus);
 
     QHBoxLayout* mainLayout = new QHBoxLayout;
     mainLayout->addWidget(m_iconViewButton);
@@ -137,8 +140,10 @@ void DToolBar::initConnect()
     connect(m_forwardButton, &DStateButton::clicked,this, &DToolBar::forwardButtonClicked);
     connect(m_searchBar, &DSearchBar::returnPressed, this, &DToolBar::searchBarTextEntered);
     connect(m_crumbWidget, &DCrumbWidget::crumbSelected, this, &DToolBar::crumbSelected);
-    connect(m_searchBar, SIGNAL(searchBarFocused()), this, SLOT(searchBarActivated()));
+    connect(m_searchBar, &DSearchBar::searchBarFocused, this, &DToolBar::searchBarActivated);
     connect(fileSignalManager, &FileSignalManager::currentUrlChanged, this, &DToolBar::crumbChanged);
+    connect(m_searchBar, SIGNAL(searchBarFocused()), this, SLOT(searchBarActivated()));
+    connect(m_searchBar->getClearAction(), &QAction::triggered, this, &DToolBar::searchBarDeactivated);
 }
 
 void DToolBar::startup()
@@ -151,14 +156,16 @@ void DToolBar::startup()
     emit fileSignalManager->requestChangeCurrentUrl(event);
 }
 
+
+
 void DToolBar::searchBarActivated()
 {
+    qDebug() << "active";
     m_crumbWidget->hide();
     m_searchBar->setAlignment(Qt::AlignLeft);
     m_searchBar->clear();
-    QAction * action = m_searchBar->setClearAction();
-    connect(action, &QAction::triggered, this, &DToolBar::searchBarDeactivated);
-    disconnect(m_searchBar, SIGNAL(searchBarFocused()), this, SLOT(searchBarActivated()));
+    m_searchBar->setActive(true);
+    m_searchBar->setClearAction();
 }
 
 void DToolBar::searchBarDeactivated()
@@ -166,10 +173,9 @@ void DToolBar::searchBarDeactivated()
     m_crumbWidget->show();
     m_searchBar->clear();
     m_searchBar->setAlignment(Qt::AlignHCenter);
-    QAction * action = m_searchBar->removeClearAction();
-    disconnect(action, &QAction::triggered, this, &DToolBar::searchBarDeactivated);
+    m_searchBar->setActive(false);
+    m_searchBar->removeClearAction();
     m_searchBar->window()->setFocus();
-    connect(m_searchBar, SIGNAL(searchBarFocused()), this, SLOT(searchBarActivated()));
 }
 
 
@@ -207,7 +213,8 @@ void DToolBar::crumbChanged(const FMEvent &event)
     if(event.source == FMEvent::CrumbButton)
         return;
     m_crumbWidget->setCrumb(event.dir);
-
+    if(m_searchBar->isActive())
+        m_searchBar->setText(event.dir);
     if(event.source == FMEvent::BackAndForwardButton)
         return;
     m_navStack->insert(event.dir);
