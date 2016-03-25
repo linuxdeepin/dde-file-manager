@@ -8,6 +8,7 @@
 #include "fileinfo.h"
 #include "dmenu.h"
 #include "dscrollbar.h"
+#include "../dialogs/propertydialog.h"
 
 #include <dthememanager.h>
 
@@ -235,6 +236,24 @@ void DFileView::onMenuActionTrigger(const QAction *action)
         const QModelIndex index = qvariant_cast<QModelIndex>(menu->property("index"));
 
         openIndex(index);
+        break;
+    }
+    case FileMenuManager::Property: {
+        PropertyDialog *dialog = new PropertyDialog;
+
+        dialog->setAttribute(Qt::WA_DeleteOnClose);
+        dialog->setWindowFlags(dialog->windowFlags()
+                               &~ Qt::WindowMaximizeButtonHint
+                               &~ Qt::WindowMinimizeButtonHint
+                               &~ Qt::WindowSystemMenuHint);
+        dialog->setTitle("");
+        dialog->resize(QSize(320, 480));
+
+        QRect dialog_geometry = dialog->geometry();
+
+        dialog_geometry.moveCenter(window()->geometry().center());
+        dialog->move(dialog_geometry.topLeft());
+        dialog->show();
 
         break;
     }
