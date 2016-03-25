@@ -101,7 +101,8 @@ HEADERS += \
     filemanager/views/dmenu.h \
     filemanager/app/fmevent.h \
     filemanager/views/historystack.h\
-    filemanager/shutil/fileio.h
+    filemanager/shutil/fileio.h \
+    filemanager/dialogs/propertydialog.h
 
 SOURCES += \
     filemanager/controllers/appcontroller.cpp \
@@ -165,6 +166,7 @@ SOURCES += \
     filemanager/views/dmenu.cpp \
     filemanager/app/fmevent.cpp \
     filemanager/views/historystack.cpp\
-    filemanager/shutil/fileio.cpp
+    filemanager/shutil/fileio.cpp \
+    filemanager/dialogs/propertydialog.cpp
 
 INCLUDEPATH += filemanager/models
