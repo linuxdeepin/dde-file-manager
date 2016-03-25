@@ -417,6 +417,13 @@ void DFileSystemModel::setSortRole(int role, Qt::SortOrder order)
 void DFileSystemModel::setActiveIndex(const QModelIndex &index)
 {
     m_activeIndex = index;
+
+    FileSystemNode *node = getNodeByIndex(index);
+
+    if(!node || node->populatedChildren)
+        return;
+
+    node->visibleChildren.clear();
 }
 
 Qt::SortOrder DFileSystemModel::sortOrder() const
@@ -450,27 +457,32 @@ void DFileSystemModel::sort(int column, Qt::SortOrder order)
     if(!node)
         return;
 
+    const QString &node_absoluteFilePath = node->fileInfo->absoluteFilePath();
+
     for(FileSystemNode *url_node : m_urlToNode) {
         if(node == url_node)
             continue;
 
         url_node->populatedChildren = false;
+
+        if(node_absoluteFilePath.startsWith(url_node->fileInfo->absoluteFilePath()))
+            continue;
+
         url_node->visibleChildren.clear();
     }
 
-
     QList<FileInfo*> list;
 
-    list.reserve(node->children.size());
+    list.reserve(node->visibleChildren.size());
 
-    for(const QString &fileName: node->visibleChildren) {
+    for(const QString &fileName : node->visibleChildren) {
         list << node->children.value(fileName)->fileInfo;
     }
 
-    sort(list, order);
+    sort(list);
 
-    for(int i = 0; i < node->children.count(); ++i) {
-        node->children[node->visibleChildren.value(i)]->fileInfo = list[i];
+    for(int i = 0; i < node->visibleChildren.count(); ++i) {
+        node->visibleChildren[i] = list[i]->fileName();
     }
 
     QModelIndex parentIndex = createIndex(node, 0);
@@ -696,9 +708,9 @@ bool sortFileListByCreated(const FileInfo *info1, const FileInfo *info2)
     return (sortOrder_global == Qt::DescendingOrder) ^ (info1->created() < info2->created());
 }
 
-void DFileSystemModel::sort(QList<FileInfo *> &list, Qt::SortOrder order) const
+void DFileSystemModel::sort(QList<FileInfo *> &list) const
 {
-    sortOrder_global = order;
+    sortOrder_global = m_srotOrder;
 
     switch (m_sortRole) {
     case DFileSystemModel::FileNameRole:

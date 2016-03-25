@@ -96,7 +96,7 @@ private:
 
     bool isDir(const FileSystemNode *node) const;
 
-    void sort(QList<FileInfo *> &list, Qt::SortOrder order = Qt::AscendingOrder) const;
+    void sort(QList<FileInfo *> &list) const;
 
     friend class FileSystemNode;
 };
