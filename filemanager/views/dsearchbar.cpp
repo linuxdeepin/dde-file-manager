@@ -14,6 +14,7 @@ DSearchBar::DSearchBar(QWidget *parent):QLineEdit(parent)
 void DSearchBar::initData()
 {
     searchHistoryLoaded(searchHistoryManager->toStringList());
+    m_isActive = false;
 }
 
 void DSearchBar::initUI()
@@ -35,6 +36,8 @@ void DSearchBar::initUI()
     setFixedHeight(20);
     setObjectName("DSearchBar");
     setMinimumWidth(48);
+
+    setFocusPolicy(Qt::ClickFocus);
 }
 
 
@@ -58,6 +61,16 @@ QAction * DSearchBar::removeClearAction()
 {
     removeAction(m_clearAction);
     return m_clearAction;
+}
+
+bool DSearchBar::isActive()
+{
+    return m_isActive;
+}
+
+void DSearchBar::setActive(bool active)
+{
+    m_isActive = active;
 }
 
 void DSearchBar::initConnections()
@@ -115,5 +128,51 @@ void DSearchBar::historySaved()
 void DSearchBar::focusInEvent(QFocusEvent *e)
 {
     QLineEdit::focusInEvent(e);
-    emit searchBarFocused();
+    if(!m_isActive)
+        emit searchBarFocused();
+}
+
+void DSearchBar::keyPressEvent(QKeyEvent *e)
+{
+    //press right key to deselect the text
+    if(e->key() == Qt::Key_Right)
+    {
+        deselect();
+        return;
+    }
+    if(e->key() == Qt::Key_Return)
+    {
+        deselect();
+        QLineEdit::keyPressEvent(e);
+        return;
+    }
+    QString selected = selectedText();
+    if(selected != "")
+    {
+        QString temp = text().remove(selected);
+        setText(temp);
+        qDebug() << selected << text();
+    }
+    QLineEdit::keyPressEvent(e);
+    if(m_list->count() == 1 && e->key() != Qt::Key_Delete && e->key() != Qt::Key_Backspace)
+    {
+        QString t = m_list->item(0)->text();
+        if(t.contains(text()))
+        {
+            QStringList list = t.split(text());
+            QString rightText = list.at(1);
+            if(rightText != "")
+            {
+                setText(t);
+                int start = t.indexOf(rightText);
+                int end = t.length() - 1;
+                setSelection(start, end);
+            }
+        }
+    }
+}
+
+QAction *DSearchBar::getClearAction()
+{
+    return m_clearAction;
 }

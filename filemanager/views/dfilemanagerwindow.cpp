@@ -14,6 +14,8 @@
 #include <QHBoxLayout>
 #include <QSplitter>
 #include <QResizeEvent>
+#include "dsearchbar.h"
+#include <QThread>
 
 const int DFileManagerWindow::MinimumWidth = 540;
 
@@ -214,5 +216,12 @@ void DFileManagerWindow::resizeEvent(QResizeEvent *event)
 //        }
     }
     DMovableMainWindow::resizeEvent(event);
+}
+
+void DFileManagerWindow::keyPressEvent(QKeyEvent *e)
+{
+    m_toolbar->m_searchBar->setFocus();
+    m_toolbar->m_searchBar->keyPressEvent(e);
+    DMovableMainWindow::keyPressEvent(e);
 }
 

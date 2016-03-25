@@ -21,7 +21,10 @@ public:
     QListWidget * getPopupList();
     QAction * setClearAction();
     QAction * removeClearAction();
-
+    bool isActive();
+    void setActive(bool active);
+    void keyPressEvent(QKeyEvent *e);
+    QAction * getClearAction();
 private:
     void initData();
     void initUI();
@@ -33,6 +36,7 @@ private:
     QStringListModel * m_stringListMode;
     QStringList m_historyList;
     DDirModel * m_dirModel;
+    bool m_isActive;
     void initConnections();
 public slots:
     void doTextChanged(QString text);
@@ -40,6 +44,7 @@ public slots:
     void historySaved();
 protected:
     void focusInEvent(QFocusEvent *e);
+
 signals:
     void searchBarFocused();
 };
