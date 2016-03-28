@@ -1,5 +1,6 @@
 QListView {
     background: white;
+    border: none;
 }
 
 FileIconItem[showBackground=true] {
