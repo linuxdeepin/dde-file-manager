@@ -149,8 +149,8 @@ QComboBox:disabled{
 /* ******************QStatusBar****************** */
 QStatusBar {
     color: white;
-    background-color: #c0c0c0;
-    border-top: 1px solid gray;
+    background-color: white;
+    border: none;
 }
 
 QStatusBar QLabel#datatimelabel{

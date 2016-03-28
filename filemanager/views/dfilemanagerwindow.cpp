@@ -99,8 +99,10 @@ void DFileManagerWindow::initRightView()
     viewLayout->setContentsMargins(0, 0, 0, 0);
 
     m_statusBar = new QStatusBar;
-    m_statusBar->setFixedHeight(30);
+    m_statusBar->setFixedHeight(20);
     m_statusBar->setFocusPolicy(Qt::ClickFocus);
+    m_statusBar->setAttribute(Qt::WA_TranslucentBackground);
+
     QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->addLayout(titleLayout);
     mainLayout->addLayout(viewLayout);
