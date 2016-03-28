@@ -70,6 +70,9 @@ public:
 
     void sort(int column, Qt::SortOrder order = Qt::AscendingOrder) Q_DECL_OVERRIDE;
 
+    FileInfo *fileInfo(const QModelIndex &index) const;
+    FileInfo *fileInfo(const QString &url) const;
+
 public slots:
     void updateChildren(const QString &url, QList<FileInfo *> list);
     void refresh(const QString &url);

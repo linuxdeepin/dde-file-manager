@@ -239,7 +239,10 @@ void DFileView::onMenuActionTrigger(const QAction *action)
         break;
     }
     case FileMenuManager::Property: {
-        PropertyDialog *dialog = new PropertyDialog;
+        const QModelIndex index = qvariant_cast<QModelIndex>(menu->property("index"));
+        const QIcon &icon = qvariant_cast<QIcon>(model()->data(index, DFileSystemModel::FileIconRole));
+
+        PropertyDialog *dialog = new PropertyDialog(model()->fileInfo(index), icon);
 
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         dialog->setWindowFlags(dialog->windowFlags()
@@ -247,7 +250,7 @@ void DFileView::onMenuActionTrigger(const QAction *action)
                                &~ Qt::WindowMinimizeButtonHint
                                &~ Qt::WindowSystemMenuHint);
         dialog->setTitle("");
-        dialog->resize(QSize(320, 480));
+        dialog->setFixedSize(QSize(320, 480));
 
         QRect dialog_geometry = dialog->geometry();
 

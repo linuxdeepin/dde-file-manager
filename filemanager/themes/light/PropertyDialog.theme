@@ -1,0 +1,16 @@
+PropertyDialog {
+    background: #f5f5f8;
+}
+
+PropertyDialog QTextEdit {
+    background: transparent;
+    color: black;
+}
+
+PropertyDialog QTextEdit[readOnly=false] {
+    background: #e6e6ec;
+    border: 1px solid rgba(44, 167, 248, 0.3);
+    border-radius: 4px;
+    color: black;
+    min-height: 42px;
+}
