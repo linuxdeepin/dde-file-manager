@@ -5,7 +5,14 @@
 
 QT_BEGIN_NAMESPACE
 class QLabel;
+class QTextEdit;
 QT_END_NAMESPACE
+
+DWIDGET_BEGIN_NAMESPACE
+class DExpandGroup;
+DWIDGET_END_NAMESPACE
+
+class FileInfo;
 
 DWIDGET_USE_NAMESPACE
 
@@ -14,10 +21,14 @@ class PropertyDialog : public DWidget
     Q_OBJECT
 
 public:
-    explicit PropertyDialog(QWidget *parent = 0);
+    explicit PropertyDialog(FileInfo *info, const QIcon &icon,
+                            QWidget *parent = 0);
 
 private:
     QLabel *m_icon;
+    QTextEdit *m_edit;
+
+    DExpandGroup *addExpandWidget(const QStringList &titleList);
 };
 
 #endif // PROPERTYDIALOG_H

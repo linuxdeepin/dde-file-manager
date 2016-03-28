@@ -492,6 +492,20 @@ void DFileSystemModel::sort(int column, Qt::SortOrder order)
     emit dataChanged(topLeftIndex, rightBottomIndex);
 }
 
+FileInfo *DFileSystemModel::fileInfo(const QModelIndex &index) const
+{
+    FileSystemNode *node = getNodeByIndex(index);
+
+    return node ? node->fileInfo : Q_NULLPTR;
+}
+
+FileInfo *DFileSystemModel::fileInfo(const QString &url) const
+{
+    FileSystemNode *node = m_urlToNode.value(url);
+
+    return node ? node->fileInfo : Q_NULLPTR;
+}
+
 void DFileSystemModel::updateChildren(const QString &url, QList<FileInfo*> list)
 {
     FileSystemNode *node = getNodeByIndex(index(url));
