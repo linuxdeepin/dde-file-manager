@@ -1,10 +1,10 @@
 #include "filemenumanager.h"
-#include "dmenu.h"
+#include "dfilemenu.h"
 
 QMap<FileMenuManager::MenuAction, QString> FileMenuManager::m_actionKeys;
-QMap<FileMenuManager::MenuAction, QAction*> FileMenuManager::m_actions;
+QMap<FileMenuManager::MenuAction, DAction*> FileMenuManager::m_actions;
 
-DMenu *FileMenuManager::createFileMenu()
+DFileMenu *FileMenuManager::createFileMenu()
 {
     QList<MenuAction> actionKeys;
 
@@ -19,7 +19,7 @@ DMenu *FileMenuManager::createFileMenu()
     return genereteMenuByKeys(actionKeys);
 }
 
-DMenu *FileMenuManager::createViewSpaceAreaMenu()
+DFileMenu *FileMenuManager::createViewSpaceAreaMenu()
 {
     QList<MenuAction> actionKeys;
 
@@ -62,7 +62,7 @@ void FileMenuManager::initData()
 void FileMenuManager::initActions()
 {
     foreach (MenuAction key, m_actionKeys.keys()) {
-        QAction* action = new QAction(m_actionKeys.value(key), 0);
+        DAction* action = new DAction(m_actionKeys.value(key), 0);
 
         action->setData(key);
 
@@ -70,14 +70,14 @@ void FileMenuManager::initActions()
     }
 }
 
-DMenu *FileMenuManager::genereteMenuByKeys(const QList<MenuAction> keys)
+DFileMenu *FileMenuManager::genereteMenuByKeys(const QList<MenuAction> keys)
 {
     if(m_actions.isEmpty()) {
         initData();
         initActions();
     }
 
-    DMenu* menu = new DMenu;
+    DFileMenu* menu = new DFileMenu;
 
     foreach (MenuAction key, keys) {
         if (key == Separator){

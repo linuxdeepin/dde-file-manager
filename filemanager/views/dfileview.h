@@ -13,6 +13,10 @@ class FileController;
 class FileMenuManager;
 class FMEvent;
 
+DWIDGET_BEGIN_NAMESPACE
+class DAction;
+DWIDGET_END_NAMESPACE
+
 DWIDGET_USE_NAMESPACE
 
 class DFileSystemModel;
@@ -55,7 +59,7 @@ signals:
 
 private slots:
     void moveColumnRole(int logicalIndex, int oldVisualIndex, int newVisualIndex);
-    void onMenuActionTrigger(const QAction *action);
+    void onMenuActionTrigger(const DAction *action);
 
 protected:
     void contextMenuEvent(QContextMenuEvent * event) Q_DECL_OVERRIDE;
