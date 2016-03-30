@@ -13,7 +13,7 @@ public:
     ~WindowManager();
 
 signals:
-    void start(const QString &src, const QString &dest);
+    void start(const QString &src);
 public slots:
     void showNewWindow();
     void progressPercent(int value);

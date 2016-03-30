@@ -75,7 +75,6 @@ void DFileManagerWindow::initLeftSideBar()
     m_leftSideBar->setObjectName("LeftSideBar");
     m_leftSideBar->setMinimumWidth(30);
     m_leftSideBar->setMaximumWidth(200);
-    m_leftSideBar->setFixedWidth(160);
     m_leftSideBar->setFocusPolicy(Qt::ClickFocus);
 }
 

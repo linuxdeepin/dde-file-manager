@@ -6,9 +6,14 @@
 #include <QStackedWidget>
 #include <QScrollBar>
 #include <QPushButton>
+#include <QGraphicsView>
 
 class DCheckableButton;
 class QButtonGroup;
+class BMListWidget;
+class DBookmarkItem;
+class DBookmarkScene;
+class DBookmarkItemGroup;
 
 class DLeftSideBar : public QFrame
 {
@@ -18,10 +23,6 @@ public:
     ~DLeftSideBar();
     void initData();
     void initUI();
-//    void initHomeBar();
-//    void initCommonFolderBar();
-//    void initDiskBar();
-//    void initNetWorkBar();
     void initConnect();
     void initTightNav();
     void initNav();
@@ -30,7 +31,7 @@ public:
 signals:
 
 public slots:
-    void handleLocationChanged(int id);
+    void handleLocationChanged(const QString &url);
     void toTightNav();
     void toNormalNav();
 private:
@@ -57,13 +58,20 @@ private:
 
     QButtonGroup* m_buttonGroup;
     QButtonGroup* m_tightNavButtonGroup;
-    QListWidget * m_listWidget = NULL;
+    BMListWidget * m_listWidget = NULL;
+    BMListWidget * m_listWidgetTight = NULL;
     QStringList m_iconlist;
+    QStringList m_iconlistChecked;
     QStringList m_nameList;
     QFrame * m_tightNav = NULL;
     QFrame * m_nav = NULL;
     QStackedWidget * m_stackedWidget = NULL;
     bool m_navState = false;
+
+    DBookmarkScene * m_scene;
+    DBookmarkScene * m_tightScene;
+    DBookmarkItemGroup * m_itemGroup;
+    DBookmarkItemGroup * m_itemGroupTight;
 };
 
 #endif // DLEFTSIDEBAR_H
