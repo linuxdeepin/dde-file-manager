@@ -6,7 +6,7 @@
 #include "filemenumanager.h"
 #include "dfileitemdelegate.h"
 #include "fileinfo.h"
-#include "dmenu.h"
+#include "dfilemenu.h"
 #include "dscrollbar.h"
 #include "../dialogs/propertydialog.h"
 
@@ -222,9 +222,9 @@ void DFileView::moveColumnRole(int /*logicalIndex*/, int oldVisualIndex, int new
     update();
 }
 
-void DFileView::onMenuActionTrigger(const QAction *action)
+void DFileView::onMenuActionTrigger(const DAction *action)
 {
-    QMenu *menu = qobject_cast<QMenu*>(sender());
+    DMenu *menu = qobject_cast<DMenu*>(sender());
 
     if(!menu)
         return;
@@ -267,7 +267,7 @@ void DFileView::onMenuActionTrigger(const QAction *action)
 
 void DFileView::contextMenuEvent(QContextMenuEvent *event)
 {
-    DMenu *menu;
+    DFileMenu *menu = new DFileMenu;
 
     if (isEmptyArea(event->pos())){
         menu = FileMenuManager::createViewSpaceAreaMenu();
@@ -277,7 +277,7 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
         menu->setProperty("index", indexAt(event->pos()));
     }
 
-    connect(menu, &DMenu::triggered, this, &DFileView::onMenuActionTrigger);
+    connect(menu, &DFileMenu::triggered, this, &DFileView::onMenuActionTrigger);
 
     menu->exec(mapToGlobal(event->pos()));
     menu->deleteLater();

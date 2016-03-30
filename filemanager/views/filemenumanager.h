@@ -2,11 +2,13 @@
 #define FILEMENUMANAGER_H
 
 #include <QObject>
-#include <QMenu>
-#include <QAction>
 #include <QMap>
 
-class DMenu;
+#include <DAction>
+
+DWIDGET_USE_NAMESPACE
+
+class DFileMenu;
 
 class FileMenuManager
 {
@@ -30,18 +32,18 @@ public:
         Separator
     };
 
-    static DMenu *createFileMenu();
-    static DMenu *createViewSpaceAreaMenu();
+    static DFileMenu *createFileMenu();
+    static DFileMenu *createViewSpaceAreaMenu();
 
 private:
     FileMenuManager();
 
     static QMap<MenuAction, QString> m_actionKeys;
-    static QMap<MenuAction, QAction*> m_actions;
+    static QMap<MenuAction, DAction*> m_actions;
 
     static void initData();
     static void initActions();
-    static DMenu *genereteMenuByKeys(const QList<MenuAction> keys);
+    static DFileMenu *genereteMenuByKeys(const QList<MenuAction> keys);
 };
 
 #endif // FILEMENUMANAGER_H
