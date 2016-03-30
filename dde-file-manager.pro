@@ -103,7 +103,15 @@ HEADERS += \
     filemanager/shutil/fileio.h \
     filemanager/dialogs/propertydialog.h \
     filemanager/controllers/filejob.h \
-    filemanager/views/dfilemenu.h
+    filemanager/views/dfilemenu.h \
+    filemanager/views/dhoverbutton.h \
+    filemanager/views/bmlistwidget.h \
+    filemanager/views/bmlistwidgetitem.h \
+    filemanager/views/dbookmarkscene.h \
+    filemanager/views/dbookmarkitem.h \
+    filemanager/views/dbookmarkitemgroup.h \
+    filemanager/views/dbookmarkrootitem.h \
+    filemanager/views/dbookmarkview.h
 
 SOURCES += \
     filemanager/controllers/appcontroller.cpp \
@@ -169,6 +177,14 @@ SOURCES += \
     filemanager/shutil/fileio.cpp \
     filemanager/dialogs/propertydialog.cpp \
     filemanager/controllers/filejob.cpp \
-    filemanager/views/dfilemenu.cpp
+    filemanager/views/dfilemenu.cpp \
+    filemanager/views/dhoverbutton.cpp \
+    filemanager/views/bmlistwidget.cpp \
+    filemanager/views/bmlistwidgetitem.cpp \
+    filemanager/views/dbookmarkscene.cpp \
+    filemanager/views/dbookmarkitem.cpp \
+    filemanager/views/dbookmarkitemgroup.cpp \
+    filemanager/views/dbookmarkrootitem.cpp \
+    filemanager/views/dbookmarkview.cpp
 
 INCLUDEPATH += filemanager/models

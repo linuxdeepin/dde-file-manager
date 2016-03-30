@@ -31,7 +31,7 @@ void DCrumbWidget::addCrumb(const QStringList &list)
             button = new DCrumbButton(m_group.buttons().size(), text, this);
         else
             button = new DCrumbButton(m_group.buttons().size(),
-                                      QIcon(":/icons/images/icons/user-home-symbolic.svg"),text, this);
+                                      QIcon(":/icons/images/icons/home_normal_16px.svg"),text, this);
         button->setFocusPolicy(Qt::NoFocus);
         m_buttonLayout->addWidget(button);
         m_group.addButton(button, button->getIndex());

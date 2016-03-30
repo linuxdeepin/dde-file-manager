@@ -22,13 +22,13 @@ void WindowManager::showNewWindow()
 //    FileJob * job = new FileJob;
 //    QThread * thread = new QThread;
 //    job->moveToThread(thread);
-//    connect(this, &WindowManager::start, job, &FileJob::doJob);
+//    connect(this, &WindowManager::start, job, &FileJob::doMoveToTrash);
 //    connect(job, &FileJob::progressPercent, this, &WindowManager::progressPercent);
 //    connect(job, &FileJob::result, this, &WindowManager::result);
 //    connect(job, &FileJob::error, this, &WindowManager::error);
 //    thread->start();
 //    QThread::sleep(1);
-//    emit start("/home/wang/test1", "/home/wang/test2");
+//    emit start("/home/wang/你好");
 }
 
 void WindowManager::progressPercent(int value)

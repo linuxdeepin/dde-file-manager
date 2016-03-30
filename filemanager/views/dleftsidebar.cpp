@@ -12,6 +12,13 @@
 #include <QDebug>
 #include <QListWidgetItem>
 #include <QLabel>
+#include "dhoverbutton.h"
+#include "bmlistwidget.h"
+#include "bmlistwidgetitem.h"
+#include "dbookmarkitem.h"
+#include "dbookmarkscene.h"
+#include "dbookmarkitemgroup.h"
+#include "dbookmarkrootitem.h"
 
 
 DLeftSideBar::DLeftSideBar(QWidget *parent) : QFrame(parent)
@@ -28,20 +35,35 @@ DLeftSideBar::~DLeftSideBar()
 
 void DLeftSideBar::initData()
 {
-    m_iconlist << ":/icons/images/icons/sidebar_expand_normal.png" //file
-               << ":/icons/images/icons/folder-recent-symbolic.svg" //recent
-               << ":/icons/images/icons/user-home-symbolic.svg" //home
-               << ":/icons/images/icons/folder-desktop-symbolic.svg" //desktop
-               << ":/icons/images/icons/folder-videos-symbolic.svg" //video
-               << ":/icons/images/icons/folder-music-symbolic.svg" //music
-               << ":/icons/images/icons/folder-pictures-symbolic.svg" //picture
-               << ":/icons/images/icons/folder-documents-symbolic.svg" //document
-               << ":/icons/images/icons/folder-download-symbolic.svg" //download
+    m_iconlist << ":/icons/images/icons/file_normal_16px.svg" //file
+               << ":/icons/images/icons/recent_normal_16px.svg" //recent
+               << ":/icons/images/icons/home_normal_16px.svg" //home
+               << ":/icons/images/icons/desktop_normal_16px.svg" //desktop
+               << ":/icons/images/icons/videos_normal_16px.svg" //video
+               << ":/icons/images/icons/music_normal_16px.svg" //music
+               << ":/icons/images/icons/pictures_normal_16px.svg" //picture
+               << ":/icons/images/icons/documents_normal_16px.svg" //document
+               << ":/icons/images/icons/download_normal_16px.svg" //download
 
-               << ":/icons/images/icons/user-trash-symbolic.svg" //trash
-               << ":/icons/images/icons/drive-removable-media-symbolic.svg" //disk
-               << ":/images/images/dark/appbar.iphone.png" //my mobile
-               << ":/icons/images/icons/user-bookmarks-symbolic.svg";//bookmarks
+               << ":/icons/images/icons/trash_normal_16px.svg" //trash
+               << ":/icons/images/icons/disk_normal_16px.svg" //disk
+               << ":/icons/images/icons/phone_normal_16px.svg" //my mobile
+               << ":/icons/images/icons/phone_normal_16px.svg";//bookmarks
+
+    m_iconlistChecked << ":/icons/images/icons/file_checked_16px.svg" //file
+               << ":/icons/images/icons/recent_checked_16px.svg" //recent
+               << ":/icons/images/icons/home_checked_16px.svg" //home
+               << ":/icons/images/icons/desktop_checked_16px.svg" //desktop
+               << ":/icons/images/icons/videos_checked_16px.svg" //video
+               << ":/icons/images/icons/music_checked_16px.svg" //music
+               << ":/icons/images/icons/pictures_checked_16px.svg" //picture
+               << ":/icons/images/icons/documents_checked_16px.svg" //document
+               << ":/icons/images/icons/download_checked_16px.svg" //download
+
+               << ":/icons/images/icons/trash_checked_16px.svg" //trash
+               << ":/icons/images/icons/disk_checked_16px.svg" //disk
+               << ":/icons/images/icons/phone_checked_16px.svg" //my mobile
+               << ":/icons/images/icons/phone_checked_16px.svg";//bookmarks
 
     m_nameList << "File" << "Recent" << "Home"  << "Desktop"
                << "Videos" << "Musics" << "Pictures" << "Documents" << "Downloads"
@@ -68,40 +90,49 @@ void DLeftSideBar::initUI()
 
 void DLeftSideBar::initConnect()
 {
-    connect(m_buttonGroup, SIGNAL(buttonClicked(int)), this, SLOT(handleLocationChanged(int)));
-    connect(m_tightNavButtonGroup, SIGNAL(buttonClicked(int)), this, SLOT(handleLocationChanged(int)));
     connect(m_fileButton, &DCheckableButton::released, this, &DLeftSideBar::toTightNav);
     connect(m_tightNavFileButton, &DCheckableButton::released, this, &DLeftSideBar::toNormalNav);
+    connect(m_tightScene->getGroup(), &DBookmarkItemGroup::url, this, &DLeftSideBar::handleLocationChanged);
+    connect(m_scene->getGroup(), &DBookmarkItemGroup::url, this, &DLeftSideBar::handleLocationChanged);
 }
 
 void DLeftSideBar::initTightNav()
 {
     m_tightNav = new QFrame(this);
-
+    QHBoxLayout * fileButtonLayout = new QHBoxLayout;
     m_tightNavFileButton = new QPushButton("", this);
     m_tightNavFileButton->setObjectName("FileButton");
-    m_tightNavFileButton->setFixedSize(QSize(56, 42));
+    m_tightNavFileButton->setToolTip("File");
+    m_tightNavFileButton->setFixedSize(QSize(16, 16));
     m_tightNavFileButton->setFocusPolicy(Qt::NoFocus);
+    fileButtonLayout->addWidget(m_tightNavFileButton);
+    fileButtonLayout->setContentsMargins(0, 15, 0, 10);
+    fileButtonLayout->setSpacing(0);
 
-    m_tightNavButtonGroup = new QButtonGroup;
     QVBoxLayout * tightNavLayout = new QVBoxLayout;
-    tightNavLayout->addWidget(m_tightNavFileButton);
-    tightNavLayout->setContentsMargins(0, 5, 0, 0);
+    tightNavLayout->addLayout(fileButtonLayout);
+    tightNavLayout->setContentsMargins(0, 0, 0, 0);
     tightNavLayout->setSpacing(0);
     m_tightNav->setLayout(tightNavLayout);
 
-    QListWidget * list = new QListWidget;
-    list->setFocusPolicy(Qt::NoFocus);
-    list->setObjectName("ListWidget");
+    QGraphicsView * m_view = new QGraphicsView;
+    m_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_view->setVerticalScrollBar(new DScrollBar);
+    m_view->setObjectName("Bookmark");
+    m_tightScene = new DBookmarkScene;
+    m_tightScene->setSceneRect(-30, -250, 60, 500);
+    m_view->setScene(m_tightScene);
+
     for(int i = 1; i < m_iconlist.size(); i++)
     {
-        DCheckableButton * button = new DCheckableButton(m_iconlist.at(i), "");
-        QListWidgetItem * item = new QListWidgetItem(list);
-        item->setSizeHint(QSize(30, 30));
-        list->setItemWidget(item, button);
-        m_tightNavButtonGroup->addButton(button, i);
+        DBookmarkItem * item = new DBookmarkItem;
+        item->boundImageToHover(m_iconlistChecked.at(i));
+        item->boundImageToPress(m_iconlistChecked.at(i));
+        item->boundImageToRelease(m_iconlist.at(i));
+        item->setUrl(getStandardPathbyId(i));
+        m_tightScene->addItem(item);
     }
-    tightNavLayout->addWidget(list);
+    tightNavLayout->addWidget(m_view);
 }
 
 void DLeftSideBar::initNav()
@@ -115,73 +146,37 @@ void DLeftSideBar::initNav()
     fileLabel->setObjectName("FileLabel");
     m_fileButton = new QPushButton("");
     m_fileButton->setObjectName("FileButton");
-    m_fileButton->setFixedSize(QSize(22,22));
+    m_fileButton->setFixedSize(QSize(16,16));
     m_fileButton->setFocusPolicy(Qt::NoFocus);
     fileButtonLayout->addWidget(m_fileButton);
     fileButtonLayout->addWidget(fileLabel);
-    fileButtonLayout->setContentsMargins(17, 15, 0, 10);
+    fileButtonLayout->setContentsMargins(16, 15, 0, 10);
     fileButtonLayout->setSpacing(8);
 
     navLayout->addLayout(fileButtonLayout);
     navLayout->setSpacing(0);
     navLayout->setContentsMargins(0, 0, 0, 0);
-    m_buttonGroup = new QButtonGroup;
-    m_listWidget = new QListWidget;
-    m_listWidget->setFocusPolicy(Qt::NoFocus);
-    m_listWidget->setObjectName("ListWidget");
-    DScrollBar * scrollbar = new DScrollBar;
-    m_listWidget->setVerticalScrollBar(scrollbar);
-    m_listWidget->setAutoScroll(true);
 
-    //recent, home, desktop, video, pcitures, documents, download, musics, trash
-    for(int i = 1; i <= 9; i++)
+    QGraphicsView * m_view = new QGraphicsView;
+    m_view->setAcceptDrops(true);
+    m_view->setVerticalScrollBar(new DScrollBar);
+    m_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_view->setObjectName("Bookmark");
+    m_scene = new DBookmarkScene;
+    m_scene->setSceneRect(-100, -250, 200, 500);
+    m_view->setScene(m_scene);
+
+    for(int i = 1; i < m_iconlist.size(); i++)
     {
-        DCheckableButton * button = new DCheckableButton(m_iconlist.at(i), m_nameList.at(i));
-        QListWidgetItem * item = new QListWidgetItem(m_listWidget);
-        item->setSizeHint(QSize(110, 30));
-        m_listWidget->setItemWidget(item, button);
-        m_buttonGroup->addButton(button, i);
+        DBookmarkItem * item = new DBookmarkItem;
+        item->boundImageToHover(m_iconlistChecked.at(i));
+        item->boundImageToPress(m_iconlistChecked.at(i));
+        item->boundImageToRelease(m_iconlist.at(i));
+        item->setText(m_nameList.at(i));
+        item->setUrl(getStandardPathbyId(i));
+        m_scene->addItem(item);
     }
-
-    //add separator line
-    QListWidgetItem * item = new QListWidgetItem(m_listWidget);
-    item->setFlags(Qt::NoItemFlags);
-    item->setSizeHint(QSize(110, 3));
-    m_listWidget->setItemWidget(item, new DHorizSeparator);
-
-    //disk, my mobile
-    for(int i = 10; i < m_iconlist.size() - 1; i++)
-    {
-        DCheckableButton * button = new DCheckableButton(m_iconlist.at(i), m_nameList.at(i));
-        QListWidgetItem * item = new QListWidgetItem(m_listWidget);
-        item->setSizeHint(QSize(110, 30));
-        m_listWidget->setItemWidget(item, button);
-        m_buttonGroup->addButton(button, i);
-    }
-
-    //add separator line
-    item = new QListWidgetItem(m_listWidget);
-    item->setFlags(Qt::NoItemFlags);
-    item->setSizeHint(QSize(110, 3));
-    m_listWidget->setItemWidget(item, new DHorizSeparator);
-
-    //add bookmark item
-    int i = m_iconlist.size() - 1;
-    DCheckableButton * button = new DCheckableButton(m_iconlist.at(i), m_nameList.at(i));
-    item = new QListWidgetItem(m_listWidget);
-    item->setSizeHint(QSize(110, 30));
-    m_listWidget->setItemWidget(item, button);
-    m_buttonGroup->addButton(button, i);
-
-//    for(int i = 12; i < 30; i++)
-//    {
-//        DCheckableButton * button = new DCheckableButton(":/images/images/dark/appbar.app.favorite.png", "label");
-//        QListWidgetItem * item = new QListWidgetItem(m_listWidget);
-//        item->setSizeHint(QSize(110, 30));
-//        m_listWidget->setItemWidget(item, button);
-//        m_buttonGroup->addButton(button, i);
-//    }
-    navLayout->addWidget(m_listWidget);
+    navLayout->addWidget(m_view);
 }
 
 QString DLeftSideBar::getStandardPathbyId(int id)
@@ -224,18 +219,14 @@ QString DLeftSideBar::getStandardPathbyId(int id)
     return path;
 }
 
-void DLeftSideBar::handleLocationChanged(int id)
+void DLeftSideBar::handleLocationChanged(const QString &url)
 {
-    if (id == 1){
+    FMEvent event;
 
-    }else{
-        FMEvent event;
+    event.dir = url;
+    event.source = FMEvent::FileView;
 
-        event.dir = getStandardPathbyId(id);
-        event.source = FMEvent::FileView;
-
-        emit fileSignalManager->requestChangeCurrentUrl(event);
-    }
+    emit fileSignalManager->requestChangeCurrentUrl(event);
 }
 
 void DLeftSideBar::toTightNav()
