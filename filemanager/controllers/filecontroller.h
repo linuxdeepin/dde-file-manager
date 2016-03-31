@@ -20,6 +20,7 @@ public:
 
 public slots:
     void getIcon(const QString &url) const;
+    void onFetchFileInformation(const QString &url, int filter);
 
 private:
     FileInfoGatherer *gatherer = Q_NULLPTR;

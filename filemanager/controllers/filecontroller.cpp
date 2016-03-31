@@ -42,7 +42,7 @@ void FileController::initConnect()
     connect(fileSignalManager, &FileSignalManager::requestIcon,
             this, &FileController::getIcon);
     connect(fileSignalManager, &FileSignalManager::requestChildren,
-            gatherer, &FileInfoGatherer::fetchFileInformation);
+            this, &FileController::onFetchFileInformation);
     connect(gatherer, &FileInfoGatherer::updates,
             fileSignalManager, &FileSignalManager::childrenChanged);
 }
@@ -52,4 +52,13 @@ void FileController::getIcon(const QString &url) const
     QIcon icon = iconProvider->getFileIcon(url);
 
     emit fileSignalManager->iconChanged(url, icon);
+}
+
+void FileController::onFetchFileInformation(const QString &url, int filter)
+{
+    QUrl tmp_url(url);
+
+    if(tmp_url.scheme().isEmpty()) {
+        gatherer->fetchFileInformation(url, filter);
+    }
 }
