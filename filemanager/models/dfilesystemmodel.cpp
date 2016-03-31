@@ -483,7 +483,7 @@ void DFileSystemModel::sort(int column, Qt::SortOrder order)
     sort(list);
 
     for(int i = 0; i < node->visibleChildren.count(); ++i) {
-        node->visibleChildren[i] = list[i]->fileName();
+        node->visibleChildren[i] = list[i]->absoluteFilePath();
     }
 
     QModelIndex parentIndex = createIndex(node, 0);
@@ -548,8 +548,8 @@ void DFileSystemModel::updateChildren(const QString &url, QList<FileInfo*> list)
             chileNode = new FileSystemNode(this, node, fileInfo);
         }
 
-        node->children[fileInfo->fileName()] = chileNode;
-        node->visibleChildren << fileInfo->fileName();
+        node->children[fileInfo->absoluteFilePath()] = chileNode;
+        node->visibleChildren << fileInfo->absoluteFilePath();
     }
 
     endInsertRows();
@@ -578,7 +578,7 @@ void DFileSystemModel::onFileCreated(const QString &path)
 
     FileSystemNode *parentNode = m_urlToNode.value(info.absolutePath());
 
-    if(parentNode && parentNode->populatedChildren && !parentNode->visibleChildren.contains(info.fileName())) {
+    if(parentNode && parentNode->populatedChildren && !parentNode->visibleChildren.contains(info.absoluteFilePath())) {
         beginInsertRows(createIndex(parentNode, 0), 0, 0);
 
         FileSystemNode *node = m_urlToNode.value(path);
@@ -589,8 +589,8 @@ void DFileSystemModel::onFileCreated(const QString &path)
             m_urlToNode[path] = node;
         }
 
-        parentNode->children[info.fileName()] = node;
-        parentNode->visibleChildren.insert(0, info.fileName());
+        parentNode->children[info.absoluteFilePath()] = node;
+        parentNode->visibleChildren.insert(0, info.absoluteFilePath());
 
         endInsertRows();
     }
@@ -608,12 +608,12 @@ void DFileSystemModel::onFileDeleted(const QString &path)
     FileSystemNode *parentNode = m_urlToNode.value(info.absolutePath());
 
     if(parentNode && parentNode->populatedChildren) {
-        int index = parentNode->visibleChildren.indexOf(info.fileName());
+        int index = parentNode->visibleChildren.indexOf(info.absoluteFilePath());
 
         beginRemoveRows(createIndex(parentNode, 0), index, index);
 
         parentNode->visibleChildren.removeAt(index);
-        parentNode->children.remove(info.fileName());
+        parentNode->children.remove(info.absoluteFilePath());
 
         endRemoveRows();
 
@@ -660,7 +660,7 @@ FileSystemNode *DFileSystemModel::getNodeByIndex(const QModelIndex &index) const
 QModelIndex DFileSystemModel::createIndex(const FileSystemNode *node, int column) const
 {
     int row = node->parent
-            ? node->parent->visibleChildren.indexOf(node->fileInfo->fileName())
+            ? node->parent->visibleChildren.indexOf(node->fileInfo->absoluteFilePath())
             : 0;
 
     return createIndex(row, column, const_cast<FileSystemNode*>(node));
