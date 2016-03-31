@@ -72,6 +72,8 @@ public:
 
     FileInfo *fileInfo(const QModelIndex &index) const;
     FileInfo *fileInfo(const QString &url) const;
+    FileInfo *parentFileInfo(const QModelIndex &index) const;
+    FileInfo *parentFileInfo(const QString &url) const;
 
 public slots:
     void updateChildren(const QString &url, QList<FileInfo *> list);

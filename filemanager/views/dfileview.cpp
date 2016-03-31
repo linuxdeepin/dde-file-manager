@@ -222,24 +222,19 @@ void DFileView::moveColumnRole(int /*logicalIndex*/, int oldVisualIndex, int new
     update();
 }
 
-void DFileView::onMenuActionTrigger(const DAction *action)
+void DFileView::onMenuActionTrigger(const DAction *action, const QModelIndex &index)
 {
-    DMenu *menu = qobject_cast<DMenu*>(sender());
-
-    if(!menu)
+    if(!action)
         return;
 
     FileMenuManager::MenuAction key = (FileMenuManager::MenuAction)action->data().toInt();
 
     switch (key) {
     case FileMenuManager::Open: {
-        const QModelIndex index = qvariant_cast<QModelIndex>(menu->property("index"));
-
         openIndex(index);
         break;
     }
     case FileMenuManager::Property: {
-        const QModelIndex index = qvariant_cast<QModelIndex>(menu->property("index"));
         const QIcon &icon = qvariant_cast<QIcon>(model()->data(index, DFileSystemModel::FileIconRole));
 
         PropertyDialog *dialog = new PropertyDialog(model()->fileInfo(index), icon);
@@ -267,19 +262,20 @@ void DFileView::onMenuActionTrigger(const DAction *action)
 
 void DFileView::contextMenuEvent(QContextMenuEvent *event)
 {
-    DFileMenu *menu = new DFileMenu;
+    DFileMenu *menu;
+    QModelIndex index;
 
     if (isEmptyArea(event->pos())){
-        menu = FileMenuManager::createViewSpaceAreaMenu();
-        menu->setProperty("index", rootIndex());
+        index = rootIndex();
+
+        menu = FileMenuManager::createViewSpaceAreaMenu(Global::getDisableActionList(model()->getUrlByIndex(index)));
     }else{
-        menu = FileMenuManager::createFileMenu();
-        menu->setProperty("index", indexAt(event->pos()));
+        index = indexAt(event->pos());
+
+        menu = FileMenuManager::createFileMenu(Global::getDisableActionList(model()->getUrlByIndex(index)));
     }
 
-    connect(menu, &DFileMenu::triggered, this, &DFileView::onMenuActionTrigger);
-
-    menu->exec(mapToGlobal(event->pos()));
+    onMenuActionTrigger(menu->exec(mapToGlobal(event->pos())), index);
     menu->deleteLater();
 
     event->accept();

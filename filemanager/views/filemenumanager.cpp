@@ -100,11 +100,16 @@ DFileMenu *FileMenuManager::createRecentViewSpaceAreaMenu(const QVector<MenuActi
                << Property;
 
     QMap<MenuAction, QVector<MenuAction> > subMenu;
-    QVector<MenuAction> sortBySubActionKeys;
+    QVector<MenuAction> subActionKeys;
 
-    sortBySubActionKeys << Name << Size << Type << CreatedDate << LastModifiedDate;
+    subActionKeys << IconView << ListView;
 
-    subMenu[SortBy] = sortBySubActionKeys;
+    subMenu[DisplayAs] = subActionKeys;
+    subActionKeys.clear();
+
+    subActionKeys << Name << Size << Type << CreatedDate << LastModifiedDate;
+
+    subMenu[SortBy] = subActionKeys;
 
     return genereteMenuByKeys(actionKeys, disableList, false, subMenu);
 }
@@ -323,6 +328,8 @@ void FileMenuManager::initData()
     m_actionKeys[Help] = QObject::tr("Help");
     m_actionKeys[About] = QObject::tr("About");
     m_actionKeys[Exit] = QObject::tr("Exit");
+    m_actionKeys[IconView] = QObject::tr("Icon View");
+    m_actionKeys[ListView] = QObject::tr("List View");
 }
 
 void FileMenuManager::initActions()

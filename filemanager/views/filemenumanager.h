@@ -48,7 +48,9 @@ public:
         LastModifiedDate,
         Help,
         About,
-        Exit
+        Exit,
+        IconView,
+        ListView
     };
 
     static DFileMenu *createFileMenu(const QVector<MenuAction> &disableList = QVector<MenuAction>());
