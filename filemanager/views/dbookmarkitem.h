@@ -47,16 +47,25 @@ public:
     void setHoverBackgroundEnable(bool b);
     void setUrl(const QString &url);
     QString getUrl();
+    void setCheckable(bool b);
     void setChecked(bool b);
     bool isChecked();
     void setItemGroup(DBookmarkItemGroup * group);
     void setWidth(double w);
     void setHeight(double h);
+    void setDefaultItem(bool v);
+    bool isDefaultItem();
+    QPixmap toPixmap() const;
 signals:
 
     void clicked();
     void doubleClicked();
     void url(const QString &url);
+
+    void dragEntered();
+    void dragLeft();
+    void dropped();
+    void dragFinished(const QPointF &point, DBookmarkItem * item);
 
 protected:
     void keyPressEvent(QKeyEvent *event);
@@ -68,9 +77,12 @@ protected:
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent * event);
     void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
+    void dragLeaveEvent(QGraphicsSceneDragDropEvent *event);
+    void dragMoveEvent(QGraphicsSceneDragDropEvent *event);
     void dropEvent(QGraphicsSceneDragDropEvent *event);
 private:
-
+    bool m_isDefault;
+    bool m_checkable;
     bool m_checked;
     bool m_pressed;
     bool m_hovered;

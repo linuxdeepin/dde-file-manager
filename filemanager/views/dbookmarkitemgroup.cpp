@@ -12,6 +12,11 @@ void DBookmarkItemGroup::addItem(DBookmarkItem *item)
     item->setItemGroup(this);
 }
 
+void DBookmarkItemGroup::removeItem(DBookmarkItem *item)
+{
+    m_items.removeOne(item);
+}
+
 void DBookmarkItemGroup::deselectAll()
 {
     for(int i = 0; i < m_items.size(); i++)

@@ -47,8 +47,35 @@ void DLeftSideBar::initData()
 
                << ":/icons/images/icons/trash_normal_16px.svg" //trash
                << ":/icons/images/icons/disk_normal_16px.svg" //disk
-               << ":/icons/images/icons/phone_normal_16px.svg" //my mobile
-               << ":/icons/images/icons/phone_normal_16px.svg";//bookmarks
+               << ":/icons/images/icons/phone_normal_16px.svg"; //my mobile
+
+    m_bigIconlist << ":/icons/images/icons/file_normal_22px.svg" //file
+                  << ":/icons/images/icons/recent_normal_22px.svg" //recent
+                  << ":/icons/images/icons/home_normal_22px.svg" //home
+                  << ":/icons/images/icons/desktop_normal_22px.svg" //desktop
+                  << ":/icons/images/icons/videos_normal_22px.svg" //video
+                  << ":/icons/images/icons/music_normal_22px.svg" //music
+                  << ":/icons/images/icons/pictures_normal_22px.svg" //picture
+                  << ":/icons/images/icons/documents_normal_22px.svg" //document
+                  << ":/icons/images/icons/download_normal_22px.svg" //download
+
+                  << ":/icons/images/icons/trash_normal_22px.svg" //trash
+                  << ":/icons/images/icons/disk_normal_22px.svg" //disk
+                  << ":/icons/images/icons/phone_normal_22px.svg"; //my mobile
+
+    m_bigIconlistChecked << ":/icons/images/icons/file_checked_22px.svg" //file
+                         << ":/icons/images/icons/recent_checked_22px.svg" //recent
+                         << ":/icons/images/icons/home_checked_22px.svg" //home
+                         << ":/icons/images/icons/desktop_checked_22px.svg" //desktop
+                         << ":/icons/images/icons/videos_checked_22px.svg" //video
+                         << ":/icons/images/icons/music_checked_22px.svg" //music
+                         << ":/icons/images/icons/pictures_checked_22px.svg" //picture
+                         << ":/icons/images/icons/documents_checked_22px.svg" //document
+                         << ":/icons/images/icons/download_checked_22px.svg" //download
+
+                         << ":/icons/images/icons/trash_checked_22px.svg" //trash
+                         << ":/icons/images/icons/disk_checked_22px.svg" //disk
+                         << ":/icons/images/icons/phone_checked_22px.svg"; //my mobile
 
     m_iconlistChecked << ":/icons/images/icons/file_checked_16px.svg" //file
                << ":/icons/images/icons/recent_checked_16px.svg" //recent
@@ -62,13 +89,13 @@ void DLeftSideBar::initData()
 
                << ":/icons/images/icons/trash_checked_16px.svg" //trash
                << ":/icons/images/icons/disk_checked_16px.svg" //disk
-               << ":/icons/images/icons/phone_checked_16px.svg" //my mobile
-               << ":/icons/images/icons/phone_checked_16px.svg";//bookmarks
+               << ":/icons/images/icons/phone_checked_16px.svg"; //my mobile
 
     m_nameList << "File" << "Recent" << "Home"  << "Desktop"
                << "Videos" << "Musics" << "Pictures" << "Documents" << "Downloads"
-               << "Trash" << "Disks" << "My Mobile" << "Bookmarks" ;
+               << "Trash" << "Disks" << "My Mobile";
     m_navState = true;
+    setAcceptDrops(true);
 }
 
 void DLeftSideBar::initUI()
@@ -94,6 +121,12 @@ void DLeftSideBar::initConnect()
     connect(m_tightNavFileButton, &DCheckableButton::released, this, &DLeftSideBar::toNormalNav);
     connect(m_tightScene->getGroup(), &DBookmarkItemGroup::url, this, &DLeftSideBar::handleLocationChanged);
     connect(m_scene->getGroup(), &DBookmarkItemGroup::url, this, &DLeftSideBar::handleLocationChanged);
+    connect(m_scene, &DBookmarkScene::dragEntered, this, &DLeftSideBar::doDragEnter);
+    connect(m_scene, &DBookmarkScene::dragLeft, this, &DLeftSideBar::doDragLeave);
+    connect(m_tightScene, &DBookmarkScene::dragEntered, this, &DLeftSideBar::doDragEnter);
+    connect(m_tightScene, &DBookmarkScene::dragLeft, this, &DLeftSideBar::doDragLeave);
+    connect(m_scene, &DBookmarkScene::dropped, this, &DLeftSideBar::doDragLeave);
+    connect(m_tightScene, &DBookmarkScene::dropped, this, &DLeftSideBar::doDragLeave);
 }
 
 void DLeftSideBar::initTightNav()
@@ -101,9 +134,9 @@ void DLeftSideBar::initTightNav()
     m_tightNav = new QFrame(this);
     QHBoxLayout * fileButtonLayout = new QHBoxLayout;
     m_tightNavFileButton = new QPushButton("", this);
-    m_tightNavFileButton->setObjectName("FileButton");
+    m_tightNavFileButton->setObjectName("TightFileButton");
     m_tightNavFileButton->setToolTip("File");
-    m_tightNavFileButton->setFixedSize(QSize(16, 16));
+    m_tightNavFileButton->setFixedSize(QSize(22, 22));
     m_tightNavFileButton->setFocusPolicy(Qt::NoFocus);
     fileButtonLayout->addWidget(m_tightNavFileButton);
     fileButtonLayout->setContentsMargins(0, 15, 0, 10);
@@ -116,20 +149,22 @@ void DLeftSideBar::initTightNav()
     m_tightNav->setLayout(tightNavLayout);
 
     QGraphicsView * m_view = new QGraphicsView;
+    m_view->setAlignment(Qt::AlignTop);
     m_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_view->setVerticalScrollBar(new DScrollBar);
     m_view->setObjectName("Bookmark");
     m_tightScene = new DBookmarkScene;
-    m_tightScene->setSceneRect(-30, -250, 60, 500);
+    m_tightScene->setSceneRect(0, 0, 60, 500);
     m_view->setScene(m_tightScene);
 
     for(int i = 1; i < m_iconlist.size(); i++)
     {
         DBookmarkItem * item = new DBookmarkItem;
-        item->boundImageToHover(m_iconlistChecked.at(i));
-        item->boundImageToPress(m_iconlistChecked.at(i));
-        item->boundImageToRelease(m_iconlist.at(i));
+        item->boundImageToHover(m_bigIconlistChecked.at(i));
+        item->boundImageToPress(m_bigIconlistChecked.at(i));
+        item->boundImageToRelease(m_bigIconlist.at(i));
         item->setUrl(getStandardPathbyId(i));
+        item->setDefaultItem(true);
         m_tightScene->addItem(item);
     }
     tightNavLayout->addWidget(m_view);
@@ -150,7 +185,7 @@ void DLeftSideBar::initNav()
     m_fileButton->setFocusPolicy(Qt::NoFocus);
     fileButtonLayout->addWidget(m_fileButton);
     fileButtonLayout->addWidget(fileLabel);
-    fileButtonLayout->setContentsMargins(16, 15, 0, 10);
+    fileButtonLayout->setContentsMargins(17.5, 15, 0, 10);
     fileButtonLayout->setSpacing(8);
 
     navLayout->addLayout(fileButtonLayout);
@@ -162,8 +197,9 @@ void DLeftSideBar::initNav()
     m_view->setVerticalScrollBar(new DScrollBar);
     m_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_view->setObjectName("Bookmark");
+    m_view->setAlignment(Qt::AlignTop);
     m_scene = new DBookmarkScene;
-    m_scene->setSceneRect(-100, -250, 200, 500);
+    m_scene->setSceneRect(0, 0, 200, 500);
     m_view->setScene(m_scene);
 
     for(int i = 1; i < m_iconlist.size(); i++)
@@ -174,6 +210,7 @@ void DLeftSideBar::initNav()
         item->boundImageToRelease(m_iconlist.at(i));
         item->setText(m_nameList.at(i));
         item->setUrl(getStandardPathbyId(i));
+        item->setDefaultItem(true);
         m_scene->addItem(item);
     }
     navLayout->addWidget(m_view);
@@ -239,6 +276,22 @@ void DLeftSideBar::toNormalNav()
 {
     m_stackedWidget->setCurrentIndex(1);
     this->setFixedWidth(160);
+}
+
+void DLeftSideBar::doDragEnter()
+{
+    setStyleSheet("QFrame#LeftSideBar{\
+                  background-color: transparent;\
+                  border: 1px solid #2ca7f8\
+              }");
+}
+
+void DLeftSideBar::doDragLeave()
+{
+    setStyleSheet("QFrame#LeftSideBar{\
+                  background-color: transparent;\
+                  border: 1px solid transparent\
+              }");
 }
 
 
