@@ -131,5 +131,39 @@
         <file>images/icons/bookmarks_checked_16px.svg</file>
         <file>images/icons/bookmarks_hover_16px.svg</file>
         <file>images/icons/bookmarks_normal_16px.svg</file>
+        <file>images/icons/file_normal_22px.svg</file>
+        <file>images/icons/recent_normal_22px.svg</file>
+        <file>images/icons/desktop_normal_22px.svg</file>
+        <file>images/icons/disk_normal_22px.svg</file>
+        <file>images/icons/pictures_normal_22px.svg</file>
+        <file>images/icons/download_normal_22px.svg</file>
+        <file>images/icons/recent_checked_22px.svg</file>
+        <file>images/icons/recent_hover_22px.svg</file>
+        <file>images/icons/trash_normal_22px.svg</file>
+        <file>images/icons/disk_active_22px.svg</file>
+        <file>images/icons/documents_normal_22px.svg</file>
+        <file>images/icons/phone_normal_22px.svg</file>
+        <file>images/icons/home_normal_22px.svg</file>
+        <file>images/icons/videos_normal_22px.svg</file>
+        <file>images/icons/music_normal_22px.svg</file>
+        <file>images/icons/file_checked_22px.svg</file>
+        <file>images/icons/file_hover_22px.svg</file>
+        <file>images/icons/videos_checked_22px.svg</file>
+        <file>images/icons/videos_hover_22px.svg</file>
+        <file>images/icons/pictures_checked_22px.svg</file>
+        <file>images/icons/pictures_hover_22px.svg</file>
+        <file>images/icons/home_checked_22px.svg</file>
+        <file>images/icons/home_hover_22px.svg</file>
+        <file>images/icons/phone_checked_22px.svg</file>
+        <file>images/icons/phone_hover_22px.svg</file>
+        <file>images/icons/download_checked_22px.svg</file>
+        <file>images/icons/download_hover_22px.svg</file>
+        <file>images/icons/music_checked_22px.svg</file>
+        <file>images/icons/music_hover_22px.svg</file>
+        <file>images/icons/trash_checked_22px.svg</file>
+        <file>images/icons/trash_hover_22px.svg</file>
+        <file>images/icons/documents_hover_22px.svg</file>
+        <file>images/icons/desktop_checked_22px.svg</file>
+        <file>images/icons/desktop_hover_22px.svg</file>
     </qresource>
 </RCC>

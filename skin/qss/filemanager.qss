@@ -34,6 +34,7 @@ QListWidget#ListWidget::icon{
 
 QFrame#LeftSideBar{
     background-color: transparent;
+    border: 1px solid transparent;
 }
 
 QFrame#LeftSideHomeBar{
@@ -492,6 +493,22 @@ QLabel#FileLabel{
     background: transparent;
     color: black;
     text-align: left;
+}
+
+QPushButton#TightFileButton{
+    background: transparent;
+    image: url(:/icons/images/icons/file_normal_22px.svg);
+    text-align: left;
+}
+
+QPushButton#TightFileButton:hover{
+    background: transparent;
+    image: url(:/icons/images/icons/file_hover_22px.svg);
+}
+
+QPushButton#TightFileButton:press{
+    background: transparent;
+    image: url(:/icons/images/icons/file_hover_22px.svg);
 }
 
 QPushButton#FileButton{

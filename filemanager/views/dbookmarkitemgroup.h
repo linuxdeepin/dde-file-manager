@@ -12,6 +12,7 @@ class DBookmarkItemGroup : public QObject
 public:
     DBookmarkItemGroup();
     void addItem(DBookmarkItem * item);
+    void removeItem(DBookmarkItem * item);
     void deselectAll();
     QList<DBookmarkItem *> items();
 private:

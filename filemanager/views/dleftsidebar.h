@@ -34,6 +34,8 @@ public slots:
     void handleLocationChanged(const QString &url);
     void toTightNav();
     void toNormalNav();
+    void doDragEnter();
+    void doDragLeave();
 private:
     QFrame* m_homeBar = NULL;
     QPushButton* m_fileButton = NULL;
@@ -61,7 +63,9 @@ private:
     BMListWidget * m_listWidget = NULL;
     BMListWidget * m_listWidgetTight = NULL;
     QStringList m_iconlist;
+    QStringList m_bigIconlist;
     QStringList m_iconlistChecked;
+    QStringList m_bigIconlistChecked;
     QStringList m_nameList;
     QFrame * m_tightNav = NULL;
     QFrame * m_nav = NULL;
