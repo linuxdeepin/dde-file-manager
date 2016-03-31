@@ -5,6 +5,8 @@
 #include "utils/utils.h"
 #include "filesignalmanager.h"
 #include "../controllers/searchhistroymanager.h"
+#include "../views/filemenumanager.h"
+#include "fileinfo.h"
 
 #include <QFontMetrics>
 #include <QTextOption>
@@ -130,6 +132,31 @@ public:
         textLayout.endLayout();
 
         return str;
+    }
+
+    static QVector<FileMenuManager::MenuAction> getDisableActionList(const QString &url)
+    {
+        const FileInfo fileInfo(url);
+        QVector<FileMenuManager::MenuAction> disableList;
+
+        if(!fileInfo.isCanRename())
+            disableList << FileMenuManager::Rename;
+
+        if(!fileInfo.isReadable())
+            disableList << FileMenuManager::Open << FileMenuManager::OpenWith
+                        << FileMenuManager::OpenInNewWindow << FileMenuManager::Copy;
+
+        const FileInfo parentInfo(fileInfo.absolutePath());
+
+        if(!fileInfo.isWritable())
+            disableList << FileMenuManager::Paste << FileMenuManager::NewDocument
+                        << FileMenuManager::NewFile << FileMenuManager::NewFolder;
+
+        if(!fileInfo.isWritable() || (parentInfo.exists() && !parentInfo.isWritable()))
+            disableList << FileMenuManager::Cut << FileMenuManager::Remove
+                        << FileMenuManager::Delete << FileMenuManager::CompleteDeletion;
+
+        return disableList;
     }
 };
 

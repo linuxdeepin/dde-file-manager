@@ -53,7 +53,8 @@ DFileSystemModel::DFileSystemModel(QObject *parent) :
 DFileSystemModel::~DFileSystemModel()
 {
     for(FileSystemNode *node : m_urlToNode) {
-        fileMonitor->removeMonitorPath(node->fileInfo->absoluteFilePath());
+        if(node->fileInfo->isDir())
+            fileMonitor->removeMonitorPath(node->fileInfo->absoluteFilePath());
 
         delete node;
     }
@@ -506,6 +507,20 @@ FileInfo *DFileSystemModel::fileInfo(const QString &url) const
     return node ? node->fileInfo : Q_NULLPTR;
 }
 
+FileInfo *DFileSystemModel::parentFileInfo(const QModelIndex &index) const
+{
+    FileSystemNode *node = getNodeByIndex(index);
+
+    return node ? node->parent->fileInfo : Q_NULLPTR;
+}
+
+FileInfo *DFileSystemModel::parentFileInfo(const QString &url) const
+{
+    FileSystemNode *node = m_urlToNode.value(url);
+
+    return node ? node->parent->fileInfo : Q_NULLPTR;
+}
+
 void DFileSystemModel::updateChildren(const QString &url, QList<FileInfo*> list)
 {
     FileSystemNode *node = getNodeByIndex(index(url));
@@ -585,9 +600,10 @@ void DFileSystemModel::onFileDeleted(const QString &path)
 {
     qDebug() << "file deleted:" << path;
 
-    fileMonitor->removeMonitorPath(path);
-
     QFileInfo info(path);
+
+    if(info.isDir())
+        fileMonitor->removeMonitorPath(path);
 
     FileSystemNode *parentNode = m_urlToNode.value(info.absolutePath());
 

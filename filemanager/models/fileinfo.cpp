@@ -86,13 +86,6 @@ bool FileInfo::isImageFile() const
 
 bool FileInfo::isCanRename() const
 {
-    if(m_fileInfo.isDir()) {
-        QDir dir = m_fileInfo.absoluteDir();
-
-        return dir.cdUp() ? QFileInfo(dir.absolutePath()).isWritable()
-                          : m_fileInfo.isWritable();
-    }
-
     return QFileInfo(m_fileInfo.absolutePath()).isWritable();
 }
 
