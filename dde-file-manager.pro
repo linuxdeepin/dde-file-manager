@@ -41,14 +41,6 @@ HEADERS += \
     filemanager/app/define.h \
     filemanager/app/global.h \
     filemanager/controllers/appcontroller.h \
-    filemanager/controllers/copyjobcontroller.h \
-    filemanager/controllers/copyjobworker.h \
-    filemanager/controllers/deletejobcontroller.h \
-    filemanager/controllers/deletejobworker.h \
-    filemanager/controllers/movejobcontroller.h \
-    filemanager/controllers/movejobworker.h \
-    filemanager/controllers/renamejobcontroller.h \
-    filemanager/controllers/trashjobcontroller.h \
     filemanager/app/filemanagerapp.h \
     filemanager/views/dmovablemainwindow.h \
     filemanager/views/dtitlebar.h \
@@ -115,14 +107,6 @@ HEADERS += \
 
 SOURCES += \
     filemanager/controllers/appcontroller.cpp \
-    filemanager/controllers/copyjobcontroller.cpp \
-    filemanager/controllers/copyjobworker.cpp \
-    filemanager/controllers/deletejobcontroller.cpp \
-    filemanager/controllers/deletejobworker.cpp \
-    filemanager/controllers/movejobcontroller.cpp \
-    filemanager/controllers/movejobworker.cpp \
-    filemanager/controllers/renamejobcontroller.cpp \
-    filemanager/controllers/trashjobcontroller.cpp \
     filemanager/main.cpp \
     filemanager/app/filemanagerapp.cpp \
     filemanager/views/dmovablemainwindow.cpp \

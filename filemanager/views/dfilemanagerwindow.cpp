@@ -156,31 +156,11 @@ void DFileManagerWindow::initStatusBar()
 
 void DFileManagerWindow::initConnect()
 {
-    connect(m_titleBar, SIGNAL(minimuned()), this, SLOT(showMinimized()));
-    connect(m_titleBar, SIGNAL(switchMaxNormal()), this, SLOT(toggleMaxNormal()));
-    connect(m_titleBar, SIGNAL(closed()), this, SLOT(close()));
-    connect(m_toolbar, SIGNAL(requestSwitchLayout()), this, SLOT(toggleLayout()));
-    connect(m_toolbar, &DToolBar::backButtonClicked,
-            this, [this] {
-        QDir dir(m_fileView->currentUrl());
-
-        dir.cdUp();
-
-        FMEvent event;
-
-        event.dir = dir.absolutePath();
-        event.source = FMEvent::BackAndForwardButton;
-
-        emit fileSignalManager->requestChangeCurrentUrl(event);
-    });
-    connect(m_toolbar, &DToolBar::requestListView,
-            m_fileView, &DFileView::switchToListMode);
-    connect(m_toolbar, &DToolBar::requestIconView,
-            m_fileView, &DFileView::switchToIconMode);
-    connect(m_toolbar, &DToolBar::refreshButtonClicked,
-            this, [this] {
-        emit fileSignalManager->refreshFolder(m_fileView->currentUrl());
-    });
+    connect(m_titleBar, &DTitleBar::minimuned, this, &DFileManagerWindow::showMinimized);
+    connect(m_titleBar, &DTitleBar::switchMaxNormal, this, &DFileManagerWindow::toggleMaxNormal);
+    connect(m_titleBar, &DTitleBar::closed, this, &DFileManagerWindow::close);
+    connect(m_toolbar, &DToolBar::requestListView, m_fileView, &DFileView::switchToListMode);
+    connect(m_toolbar, &DToolBar::requestIconView, m_fileView, &DFileView::switchToIconMode);
 }
 
 void DFileManagerWindow::toggleMaxNormal()
@@ -194,28 +174,9 @@ void DFileManagerWindow::toggleMaxNormal()
     }
 }
 
-void DFileManagerWindow::toggleLayout()
-{
-    m_leftSideBar->setVisible(not m_leftSideBar->isVisible());
-}
 
 void DFileManagerWindow::resizeEvent(QResizeEvent *event)
 {
-    if (event->size().width() <= DFileManagerWindow::MinimumWidth){
-//        if (m_toolbar->getLayoutbuttonState() == DStateButton::stateA){
-//            if (m_leftSideBar->isVisible() && event->size().width() < event->oldSize().width()){
-//                m_leftSideBar->hide();
-//                m_toolbar->setLayoutButtonState(DStateButton::stateB);
-//            }
-//        }
-    }else{
-//        if (m_toolbar->getLayoutbuttonState() == DStateButton::stateB){
-//            if (!m_leftSideBar->isVisible()){
-//                m_leftSideBar->show();
-//            }
-
-//        }
-    }
     DMovableMainWindow::resizeEvent(event);
 }
 
