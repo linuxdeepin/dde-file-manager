@@ -24,7 +24,13 @@ public slots:
 
 signals:
     void updates(const QString &directory, const QList<FileInfo*> &infoList);
-    void addFileInfo(const QString &path, FileInfo* info);
+    void fileCreated(const QString &path);
+
+private slots:
+    void addOpenedFile(const QString &url);
+
+private:
+    QList<QString> openedFileList;
 };
 
 #endif // RECENTHISTORYMANAGER_H

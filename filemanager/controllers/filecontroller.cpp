@@ -1,11 +1,15 @@
 #include "filecontroller.h"
 #include "../app/global.h"
+#include "../app/filemanagerapp.h"
 #include "fileinfogatherer.h"
 #include "recenthistorymanager.h"
 #include "../shutil/iconprovider.h"
+#include "../../filemonitor/filemonitor.h"
 #include "fileinfo.h"
+#include "appcontroller.h"
 
 #include <QFileIconProvider>
+#include <QDesktopServices>
 
 FileController::FileController(QObject *parent) : QObject(parent)
 {
@@ -14,7 +18,9 @@ FileController::FileController(QObject *parent) : QObject(parent)
     initGatherer();
     initRecentManager();
     initIconProvider();
-    initConnect();
+
+    /// call later
+    QMetaObject::invokeMethod(this, "initConnect", Qt::QueuedConnection);
 }
 
 FileController::~FileController()
@@ -56,6 +62,8 @@ void FileController::initConnect()
             fileSignalManager, &FileSignalManager::childrenChanged);
     connect(bookmarkManager, &BookMarkManager::updates,
             fileSignalManager, &FileSignalManager::childrenChanged);
+    connect(recentManager, &RecentHistoryManager::fileCreated,
+            fileMonitor, &FileMonitor::fileCreated);
 }
 
 void FileController::getIcon(const QString &url) const
@@ -73,9 +81,17 @@ void FileController::onFetchFileInformation(const QString &url, int filter)
         gatherer->fetchFileInformation(url, filter);
     } else if(scheme == RECENT_SCHEME) {
         recentManager->fetchFileInformation(url, filter);
-    }
-    else if(scheme == BOOKMARK_SCHEME)
-    {
+    } else if(scheme == BOOKMARK_SCHEME) {
         bookmarkManager->fetchFileInformation(url, filter);
     }
+}
+
+bool FileController::openFile(const QString &url) const
+{
+    bool isOk = QDesktopServices::openUrl(QUrl::fromLocalFile(url));
+
+    if(isOk)
+        emit fileSignalManager->fileOpened(url);
+
+    return isOk;
 }

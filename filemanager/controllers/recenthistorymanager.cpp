@@ -1,13 +1,16 @@
 #include "recenthistorymanager.h"
 #include "fileinfo.h"
 #include "desktopfileinfo.h"
+#include "../app/global.h"
+#include "../app/filesignalmanager.h"
 
 #include <QUrl>
 #include <QDirIterator>
 
 RecentHistoryManager::RecentHistoryManager(QObject *parent) : BaseManager(parent)
 {
-
+    connect(fileSignalManager, &FileSignalManager::fileOpened,
+            this, &RecentHistoryManager::addOpenedFile);
 }
 
 RecentHistoryManager::~RecentHistoryManager()
@@ -26,39 +29,31 @@ void RecentHistoryManager::save()
 }
 
 void RecentHistoryManager::fetchFileInformation(const QString &url,
-                                                int filter)
+                                                int /*filter*/)
 {
-    const QString path = QUrl(url).path();
-
     QList<FileInfo*> infolist;
 
-    if(path.isEmpty()) {
-        const QFileInfoList list = QDir::drives();
-
-        for(const QFileInfo &info : list) {
-            FileInfo *fileInfo = new FileInfo(info);
-
-            infolist.append(fileInfo);
-        }
-    } else {
-        QDirIterator dirIt(path, QDir::Filters(filter));
+    for (const QString &filePath : openedFileList) {
         FileInfo *fileInfo;
 
-        while (dirIt.hasNext()) {
-            dirIt.next();
+        if(filePath.endsWith(DESKTOP_SURRIX))
+            fileInfo = new DesktopFileInfo(filePath);
+        else
+            fileInfo = new FileInfo(filePath);
 
-            if(dirIt.fileInfo().absoluteFilePath() == path)
-                continue;
-
-            if(dirIt.fileInfo().suffix() == DESKTOP_SURRIX)
-                fileInfo = new DesktopFileInfo(dirIt.fileInfo());
-            else
-                fileInfo = new FileInfo(dirIt.fileInfo());
-
-            infolist.append(fileInfo);
-        }
+        infolist.append(fileInfo);
     }
 
-    emit updates(path, infolist);
+    emit updates(url, infolist);
+}
+
+void RecentHistoryManager::addOpenedFile(const QString &url)
+{
+    if(openedFileList.contains(url))
+        return;
+
+    openedFileList << url;
+
+    emit fileCreated(RECENT_ROOT + QFileInfo(url).fileName());
 }
 

@@ -15,5 +15,5 @@ int main(int argc, char *argv[])
     DThemeManager::instance()->setTheme("light");
     fileManagerApp->show();
 
-    app.exec();
+    return app.exec();
 }

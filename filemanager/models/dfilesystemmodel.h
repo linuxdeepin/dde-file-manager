@@ -103,6 +103,10 @@ private:
 
     void sort(QList<FileInfo *> &list) const;
 
+    FileSystemNode *createNode(FileSystemNode *parent, FileInfo *info);
+    void deleteNode(FileSystemNode *node);
+    void deleteNodeByUrl(const QString &url);
+
     friend class FileSystemNode;
 };
 
