@@ -69,7 +69,7 @@ void FileController::onFetchFileInformation(const QString &url, int filter)
 
     if(scheme.isEmpty()) {
         gatherer->fetchFileInformation(url, filter);
-    } else if(scheme == TRASH_SCHEME) {
+    } else if(scheme == RECENT_SCHEME) {
         recentManager->fetchFileInformation(url, filter);
     }
 }

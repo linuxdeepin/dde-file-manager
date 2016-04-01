@@ -523,8 +523,6 @@ FileInfo *DFileSystemModel::parentFileInfo(const QString &url) const
 
 void DFileSystemModel::updateChildren(const QString &url, QList<FileInfo*> list)
 {
-    qDebug() << url << list.count();
-
     FileSystemNode *node = getNodeByIndex(index(url));
 
     if(!node)

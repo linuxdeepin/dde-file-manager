@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QFileInfo>
+#include <QUrl>
 #include <QMimeType>
 
 #include "utils/debugobejct.h"
@@ -27,6 +28,7 @@ public:
     QString filePath() const;
     QString absoluteFilePath() const;
     QString fileName() const;
+    QString displayName() const;
 
     QString path() const;
     QString absolutePath() const;
@@ -68,10 +70,12 @@ public:
 
     QString mimeTypeName() const;
 
+    const QFileInfo &genuineFileInfo() const;
+
 private:
-    QFileInfo m_fileInfo;
+    QFileInfo m_genuineFileInfo;
+    QUrl m_fileUrl;
     mutable QString m_mimeTypeName;
-    QString m_fileScheme;
 };
 
 typedef QList<FileInfo> FileInfoList;
