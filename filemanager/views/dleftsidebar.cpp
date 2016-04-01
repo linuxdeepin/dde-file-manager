@@ -221,7 +221,7 @@ QString DLeftSideBar::getStandardPathbyId(int id)
     QString path;
     switch (id) {
     case 1:
-        path = Recent;
+        path = RECENT_ROOT;
         break;
     case 2:
         path = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0);
@@ -245,7 +245,7 @@ QString DLeftSideBar::getStandardPathbyId(int id)
         path = QStandardPaths::standardLocations(QStandardPaths::DownloadLocation).at(0);
         break;
     case 9:
-        path = TrashDir;
+        path = TRASH_ROOT;
         break;
     case 10:
         path = QDir::rootPath();

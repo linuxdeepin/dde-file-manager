@@ -12,10 +12,6 @@ public:
 
     virtual void load();
     virtual void save();
-
-signals:
-
-public slots:
 };
 
 #endif // BASEMANAGER_H

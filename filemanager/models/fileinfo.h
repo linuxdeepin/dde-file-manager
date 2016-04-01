@@ -71,6 +71,7 @@ public:
 private:
     QFileInfo m_fileInfo;
     mutable QString m_mimeTypeName;
+    QString m_fileScheme;
 };
 
 typedef QList<FileInfo> FileInfoList;

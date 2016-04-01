@@ -24,10 +24,15 @@
 
 
 #define ComputerUrl "computer://"
-#define TrashUrl "trash://"
-#define FilePrefix "file://"
-#define Recent "recent://"
 #define TrashDir "~/.local/share/Trash/files"
+
+#define TRASH_SCHEME "trash"
+#define RECENT_SCHEME "recent"
+#define BOOKMARK_SCHEME "bookmark"
+
+#define TRASH_ROOT TRASH_SCHEME":///"
+#define RECENT_ROOT RECENT_SCHEME":///"
+#define BOOKMARK_ROOT BOOKMARK_SCHEME ":///"
 
 #define TEXT_LINE_HEIGHT 13
 
