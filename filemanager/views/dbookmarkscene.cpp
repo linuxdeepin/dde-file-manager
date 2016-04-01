@@ -18,7 +18,7 @@ DBookmarkScene::DBookmarkScene()
 
 void DBookmarkScene::addItem(DBookmarkItem *item)
 {
-    double h = height();
+//    double h = height();
     double w = width();
     item->setPos(w/2, 15 + BOOKMARK_ITEM_HEIGHT * (items().size() - 1));
     item->setBounds(-w/2, -BOOKMARK_ITEM_HEIGHT/2, w, BOOKMARK_ITEM_HEIGHT);
@@ -65,12 +65,13 @@ void DBookmarkScene::insert(int index, DBookmarkItem *item)
 
 void DBookmarkScene::insert(DBookmarkItem *before, DBookmarkItem *item)
 {
-
+    Q_UNUSED(before)
+    Q_UNUSED(item)
 }
 
 void DBookmarkScene::remove(int index)
 {
-
+    Q_UNUSED(index)
 }
 
 void DBookmarkScene::clear(DBookmarkItem *item)
@@ -121,6 +122,8 @@ DBookmarkItemGroup *DBookmarkScene::getGroup()
 
 void DBookmarkScene::changed(const QList<QRectF> &region)
 {
+    Q_UNUSED(region)
+
     qDebug() << "scene changed";
 }
 
@@ -174,7 +177,7 @@ void DBookmarkScene::increaseSize()
     if(m_totalHeight > sceneRect().height() - BOOKMARK_ITEM_HEIGHT)
     {
         double w = sceneRect().width();
-        double h = sceneRect().height();
+//        double h = sceneRect().height();
         setSceneRect(0, 0, w, m_totalHeight + BOOKMARK_ITEM_HEIGHT * 2);
         views().at(0)->setGeometry(0, 0, w, m_totalHeight + BOOKMARK_ITEM_HEIGHT * 2);
     }

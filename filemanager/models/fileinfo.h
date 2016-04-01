@@ -72,6 +72,8 @@ public:
 
     const QFileInfo &genuineFileInfo() const;
 
+    QUrl fileUrl() const;
+
 private:
     QFileInfo m_genuineFileInfo;
     QUrl m_fileUrl;

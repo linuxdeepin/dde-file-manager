@@ -11,30 +11,24 @@
 class FileSystemNode
 {
 public:
-    FileInfo *fileInfo;
+    FileInfo *fileInfo = Q_NULLPTR;
     FileSystemNode *parent = Q_NULLPTR;
     QHash<QString, FileSystemNode*> children;
     QList<QString> visibleChildren;
     bool populatedChildren = false;
 
-    FileSystemNode(DFileSystemModel *model, FileSystemNode *parent,
+    FileSystemNode(FileSystemNode *parent,
                    FileInfo *info) :
         fileInfo(info),
-        parent(parent),
-        m_model(model)
+        parent(parent)
     {
-        model->m_urlToNode[fileInfo->absoluteFilePath()] = this;
+
     }
 
     ~FileSystemNode()
     {
-        m_model->m_urlToNode.remove(fileInfo->absoluteFilePath());
-        qDeleteAll(children.values());
-
         delete fileInfo;
     }
-
-    DFileSystemModel *m_model;
 };
 
 DFileSystemModel::DFileSystemModel(QObject *parent) :
@@ -363,8 +357,9 @@ QModelIndex DFileSystemModel::setRootPath(const QString &urlStr)
 
     m_rootNode = m_urlToNode.value(urlStr);
 
-    if(!m_rootNode)
-        m_rootNode = new FileSystemNode(this, Q_NULLPTR, new FileInfo(urlStr));
+    if(!m_rootNode) {
+        m_rootNode = createNode(Q_NULLPTR, new FileInfo(urlStr));
+    }
 
     return index(urlStr);
 }
@@ -417,9 +412,18 @@ void DFileSystemModel::setSortRole(int role, Qt::SortOrder order)
 
 void DFileSystemModel::setActiveIndex(const QModelIndex &index)
 {
+    FileSystemNode *old_node = getNodeByIndex(m_activeIndex);
+
     m_activeIndex = index;
 
     FileSystemNode *node = getNodeByIndex(index);
+
+    if(old_node && !old_node->fileInfo->fileUrl().scheme().isEmpty()) {
+        deleteNode(old_node);
+
+        if(old_node == m_rootNode)
+            m_rootNode = node;
+    }
 
     if(!node || node->populatedChildren)
         return;
@@ -525,8 +529,10 @@ void DFileSystemModel::updateChildren(const QString &url, QList<FileInfo*> list)
 {
     FileSystemNode *node = getNodeByIndex(index(url));
 
-    if(!node)
+    if(!node) {
+        qDeleteAll(list);
         return;
+    }
 
     node->children.clear();
     node->visibleChildren.clear();
@@ -536,17 +542,7 @@ void DFileSystemModel::updateChildren(const QString &url, QList<FileInfo*> list)
     beginInsertRows(createIndex(node, 0), 0, list.count() - 1);
 
     for(FileInfo * const fileInfo : list) {
-        FileSystemNode *chileNode = m_urlToNode.value(fileInfo->absoluteFilePath());
-
-        if(chileNode) {
-            if(chileNode->fileInfo)
-                delete chileNode->fileInfo;
-
-            chileNode->fileInfo = fileInfo;
-            chileNode->parent = node;
-        } else {
-            chileNode = new FileSystemNode(this, node, fileInfo);
-        }
+        FileSystemNode *chileNode = createNode(node, fileInfo);
 
         node->children[fileInfo->absoluteFilePath()] = chileNode;
         node->visibleChildren << fileInfo->absoluteFilePath();
@@ -584,7 +580,7 @@ void DFileSystemModel::onFileCreated(const QString &path)
         FileSystemNode *node = m_urlToNode.value(path);
 
         if(!node) {
-            node = new FileSystemNode(this, parentNode, new FileInfo(info));
+            node = createNode(parentNode, new FileInfo(info));
 
             m_urlToNode[path] = node;
         }
@@ -625,16 +621,12 @@ void DFileSystemModel::onFileDeleted(const QString &path)
         if(hasChildren(createIndex(node, 0))) {
             for(const QString &url : m_urlToNode.keys()) {
                 if(path.startsWith(url)) {
-                    delete m_urlToNode[url];
-
-                    m_urlToNode.remove(url);
+                    deleteNodeByUrl(url);
                 }
             }
         }
 
-        delete node;
-
-        m_urlToNode.remove(path);
+        deleteNode(node);
     }
 }
 
@@ -649,7 +641,7 @@ void DFileSystemModel::onFileRenamed(const QString &oldPath, const QString &newP
 FileSystemNode *DFileSystemModel::getNodeByIndex(const QModelIndex &index) const
 {
     if (!index.isValid())
-        return m_rootNode;
+        return Q_NULLPTR;
 
     FileSystemNode *indexNode = static_cast<FileSystemNode*>(index.internalPointer());
     Q_ASSERT(indexNode);
@@ -762,4 +754,44 @@ void DFileSystemModel::sort(QList<FileInfo *> &list) const
     default:
         break;
     }
+}
+
+FileSystemNode *DFileSystemModel::createNode(FileSystemNode *parent, FileInfo *info)
+{
+    Q_ASSERT(info);
+
+    FileSystemNode *node = m_urlToNode.value(info->absoluteFilePath());
+
+    if(node) {
+        if(node->fileInfo != info) {
+            delete node->fileInfo;
+            node->fileInfo = info;
+        }
+
+        node->parent = parent;
+    } else {
+        node = new FileSystemNode(parent, info);
+
+        m_urlToNode[info->absoluteFilePath()] = node;
+    }
+
+    return node;
+}
+
+void DFileSystemModel::deleteNode(FileSystemNode *node)
+{
+    for(FileSystemNode *children : node->children) {
+        if(children->parent == node) {
+            children->parent = m_urlToNode.value(children->fileInfo->absolutePath());
+        }
+    }
+
+    delete node;
+
+    m_urlToNode.remove(m_urlToNode.key(node));
+}
+
+void DFileSystemModel::deleteNodeByUrl(const QString &url)
+{
+    delete m_urlToNode.take(url);
 }

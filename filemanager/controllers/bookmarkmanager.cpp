@@ -100,6 +100,8 @@ void BookMarkManager::removeBookmark(const QString &name, const QString &url)
 
 void BookMarkManager::fetchFileInformation(const QString &url, int filter)
 {
+    Q_UNUSED(filter)
+
     const QString path = QUrl(url).path();
 
     QList<FileInfo*> infolist;

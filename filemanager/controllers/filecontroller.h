@@ -18,11 +18,12 @@ public:
     void initGatherer();
     void initRecentManager();
     void initIconProvider();
-    void initConnect();
+    Q_SLOT void initConnect();
 
 public slots:
     void getIcon(const QString &url) const;
     void onFetchFileInformation(const QString &url, int filter);
+    bool openFile(const QString &url) const;
 
 private:
     FileInfoGatherer *gatherer = Q_NULLPTR;

@@ -32,6 +32,9 @@ signals:
 
     /// refresh folder
     void refreshFolder(const QString &url) const;
+
+    /// open file signal
+    void fileOpened(const QString &url) const;
 };
 
 #endif // FILESIGNALMANAGER_H

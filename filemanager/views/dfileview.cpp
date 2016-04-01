@@ -2,6 +2,9 @@
 #include "dfilesystemmodel.h"
 #include "../app/global.h"
 #include "../app/fmevent.h"
+#include "../app/filemanagerapp.h"
+#include "../controllers/appcontroller.h"
+#include "../controllers/filecontroller.h"
 #include "fileitem.h"
 #include "filemenumanager.h"
 #include "dfileitemdelegate.h"
@@ -397,6 +400,6 @@ void DFileView::openIndex(const QModelIndex &index)
 
         emit fileSignalManager->requestChangeCurrentUrl(event);
     } else {
-        QDesktopServices::openUrl(QUrl::fromLocalFile(model()->getUrlByIndex(index)));
+        appController->getFileController()->openFile(model()->getUrlByIndex(index));
     }
 }

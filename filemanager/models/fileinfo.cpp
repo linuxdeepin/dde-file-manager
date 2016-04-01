@@ -270,6 +270,11 @@ const QFileInfo &FileInfo::genuineFileInfo() const
     return m_genuineFileInfo;
 }
 
+QUrl FileInfo::fileUrl() const
+{
+    return m_fileUrl;
+}
+
 QT_BEGIN_NAMESPACE
 QDebug operator<<(QDebug deg, const FileInfo &info)
 {
