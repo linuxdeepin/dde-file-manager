@@ -18,13 +18,6 @@ FileManagerApp::FileManagerApp(QObject *parent) : QObject(parent)
     initConnect();
 }
 
-FileManagerApp *FileManagerApp::instance()
-{
-    static FileManagerApp app;
-
-    return &app;
-}
-
 FileManagerApp::~FileManagerApp()
 {
 
@@ -95,10 +88,5 @@ AppController *FileManagerApp::getAppController() const
 void FileManagerApp::show()
 {
     m_windowManager->showNewWindow();
-//#if DEEPIN_UI_ENABLE
-//    m_dFileMangerWindow->show();
-//#else
-//    m_fileManagerWindow->show();
-//#endif
 }
 

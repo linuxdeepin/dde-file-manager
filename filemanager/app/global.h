@@ -7,14 +7,15 @@
 #include "../controllers/searchhistroymanager.h"
 #include "../views/filemenumanager.h"
 #include "fileinfo.h"
+#include "filemanagerapp.h"
 
 #include <QFontMetrics>
 #include <QTextOption>
 #include <QTextLayout>
 
+#define fileManagerApp Singleton<FileManagerApp>::instance()
 #define searchHistoryManager  Singleton<SearchHistroyManager>::instance()
 #define fileSignalManager Singleton<FileSignalManager>::instance()
-#define fileManagerApp FileManagerApp::instance()
 #define appController fileManagerApp->getAppController()
 #define fileMonitor appController->getFileMonitor()
 

@@ -44,7 +44,6 @@ signals:
 
 public slots:
     void toggleMaxNormal();
-    void toggleLayout();
 
 protected:
     void resizeEvent(QResizeEvent* event);
