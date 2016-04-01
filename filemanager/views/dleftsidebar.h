@@ -8,12 +8,19 @@
 #include <QPushButton>
 #include <QGraphicsView>
 
+#define LEFTSIDEBAR_MIN 60
+#define LEFTSIDEBAR_MAX 200
+#define LEFTSIDEBAR_NORMAL 160
+#define LEFTSIDEBAR_THRES 70
+
+class BookMark;
 class DCheckableButton;
 class QButtonGroup;
 class BMListWidget;
 class DBookmarkItem;
 class DBookmarkScene;
 class DBookmarkItemGroup;
+
 
 class DLeftSideBar : public QFrame
 {
@@ -27,9 +34,11 @@ public:
     void initTightNav();
     void initNav();
     QString getStandardPathbyId(int id);
+protected:
+    void resizeEvent(QResizeEvent *e);
 
 signals:
-
+    void moveSplitter(int pos, int index);
 public slots:
     void handleLocationChanged(const QString &url);
     void toTightNav();
@@ -37,6 +46,8 @@ public slots:
     void doDragEnter();
     void doDragLeave();
 private:
+    void loadBookmark();
+    bool m_isTight = false;
     QFrame* m_homeBar = NULL;
     QPushButton* m_fileButton = NULL;
     QPushButton* m_tightNavFileButton = NULL;

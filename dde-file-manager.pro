@@ -103,7 +103,9 @@ HEADERS += \
     filemanager/views/dbookmarkitem.h \
     filemanager/views/dbookmarkitemgroup.h \
     filemanager/views/dbookmarkrootitem.h \
-    filemanager/views/dbookmarkview.h
+    filemanager/views/dbookmarkview.h \
+    filemanager/controllers/trashmanager.h \
+    filemanager/views/dsplitter.h
 
 SOURCES += \
     filemanager/controllers/appcontroller.cpp \
@@ -169,6 +171,8 @@ SOURCES += \
     filemanager/views/dbookmarkitem.cpp \
     filemanager/views/dbookmarkitemgroup.cpp \
     filemanager/views/dbookmarkrootitem.cpp \
-    filemanager/views/dbookmarkview.cpp
+    filemanager/views/dbookmarkview.cpp \
+    filemanager/controllers/trashmanager.cpp \
+    filemanager/views/dsplitter.cpp
 
 INCLUDEPATH += filemanager/models

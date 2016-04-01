@@ -6,6 +6,7 @@
 #include <QGraphicsView>
 #include <QMimeData>
 #include <QDir>
+#include "../app/global.h"
 
 DBookmarkScene::DBookmarkScene()
 {
@@ -129,7 +130,15 @@ void DBookmarkScene::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
     QGraphicsScene::dragEnterEvent(event);
     clear(m_rootItem->getDummyItem());
 
-    QDir dir(event->mimeData()->text());
+    if(!event->mimeData()->hasUrls())
+        return;
+    QList<QUrl> urls = event->mimeData()->urls();
+    QUrl firstUrl = urls.at(0);
+    QDir dir;
+    if(firstUrl.isLocalFile())
+        dir.setPath(firstUrl.toLocalFile());
+    else
+        dir.setPath(firstUrl.toString());
 
     if(dir.exists())
     {
@@ -155,6 +164,7 @@ void DBookmarkScene::doDragFinished(const QPointF &point, DBookmarkItem *item)
     qDebug() << rect << point;
     if(!rect.contains(p))
     {
+        bookmarkManager->removeBookmark(item->text(), item->getUrl());
         remove(item);
     }
 }

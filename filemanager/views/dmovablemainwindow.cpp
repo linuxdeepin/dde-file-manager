@@ -110,16 +110,16 @@ void DMovableMainWindow::resizeEvent(QResizeEvent *event){
 
 bool DMovableMainWindow::eventFilter(QObject *obj, QEvent *event)
 {
-    if (event->type() == QEvent::HoverMove){
-        QRect availableRect = getAvailableRect();
-        QPoint currentPos = mapFromGlobal(QCursor::pos());
-        if (availableRect.contains(currentPos)){
-            QtX11::utils::setNormalCursor(this);
-        }else{
-            QtX11::utils::UpdateCursorShape(this, currentPos.x(), currentPos.y(), m_borderCornerSize);
-        }
-    }else if (event->type() == QEvent::HoverLeave){
-        QtX11::utils::setNormalCursor(this);
-    }
+//    if (event->type() == QEvent::HoverMove){
+//        QRect availableRect = getAvailableRect();
+//        QPoint currentPos = mapFromGlobal(QCursor::pos());
+//        if (availableRect.contains(currentPos)){
+//            QtX11::utils::setNormalCursor(this);
+//        }else{
+//            QtX11::utils::UpdateCursorShape(this, currentPos.x(), currentPos.y(), m_borderCornerSize);
+//        }
+//    }else if (event->type() == QEvent::HoverLeave){
+//        QtX11::utils::setNormalCursor(this);
+//    }
     return QMainWindow::eventFilter(obj, event);
 }
