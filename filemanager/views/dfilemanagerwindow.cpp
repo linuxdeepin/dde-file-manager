@@ -7,6 +7,7 @@
 #include "ddetailview.h"
 #include "../app/global.h"
 #include "../app/fmevent.h"
+#include "dsplitter.h"
 
 #include <QStatusBar>
 #include <QFrame>
@@ -17,7 +18,7 @@
 #include "dsearchbar.h"
 #include <QThread>
 
-const int DFileManagerWindow::MinimumWidth = 540;
+const int DFileManagerWindow::MinimumWidth = 0;
 
 DFileManagerWindow::DFileManagerWindow(QWidget *parent) : DMovableMainWindow(parent)
 {
@@ -63,18 +64,20 @@ void DFileManagerWindow::initSplitter()
     initLeftSideBar();
     initRightView();
 
-    m_splitter = new QSplitter(Qt::Horizontal, this);
-    m_splitter->setFixedWidth(5);
+    m_splitter = new DSplitter(Qt::Horizontal, this);
     m_splitter->addWidget(m_leftSideBar);
     m_splitter->addWidget(m_rightView);
+    m_splitter->setChildrenCollapsible(false);
+
+    connect(m_leftSideBar, &DLeftSideBar::moveSplitter, m_splitter, &DSplitter::moveSplitter);
 }
 
 void DFileManagerWindow::initLeftSideBar()
 {
     m_leftSideBar = new DLeftSideBar(this);
     m_leftSideBar->setObjectName("LeftSideBar");
-    m_leftSideBar->setMinimumWidth(30);
     m_leftSideBar->setMaximumWidth(200);
+    m_leftSideBar->setMinimumWidth(60);
     m_leftSideBar->setFocusPolicy(Qt::ClickFocus);
 }
 
@@ -173,7 +176,6 @@ void DFileManagerWindow::toggleMaxNormal()
         m_titleBar->setMaxIcon();
     }
 }
-
 
 void DFileManagerWindow::resizeEvent(QResizeEvent *event)
 {

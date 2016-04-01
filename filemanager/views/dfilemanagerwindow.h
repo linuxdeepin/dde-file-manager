@@ -15,6 +15,7 @@ class QHBoxLayout;
 class QVBoxLayout;
 class QSplitter;
 class QResizeEvent;
+class DSplitter;
 
 class DFileManagerWindow : public DMovableMainWindow
 {
@@ -60,7 +61,7 @@ private:
     QStatusBar* m_statusBar = NULL;
     QVBoxLayout* m_mainLayout;
     QVBoxLayout* m_viewLayout;
-    QSplitter* m_splitter;
+    DSplitter* m_splitter;
 };
 
 #endif // DFILEMANAGERWINDOW_H

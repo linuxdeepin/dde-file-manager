@@ -54,6 +54,8 @@ void FileController::initConnect()
             fileSignalManager, &FileSignalManager::childrenChanged);
     connect(recentManager, &RecentHistoryManager::updates,
             fileSignalManager, &FileSignalManager::childrenChanged);
+    connect(bookmarkManager, &BookMarkManager::updates,
+            fileSignalManager, &FileSignalManager::childrenChanged);
 }
 
 void FileController::getIcon(const QString &url) const
@@ -71,5 +73,9 @@ void FileController::onFetchFileInformation(const QString &url, int filter)
         gatherer->fetchFileInformation(url, filter);
     } else if(scheme == RECENT_SCHEME) {
         recentManager->fetchFileInformation(url, filter);
+    }
+    else if(scheme == BOOKMARK_SCHEME)
+    {
+        bookmarkManager->fetchFileInformation(url, filter);
     }
 }

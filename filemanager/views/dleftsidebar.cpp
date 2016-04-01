@@ -61,7 +61,8 @@ void DLeftSideBar::initData()
 
                   << ":/icons/images/icons/trash_normal_22px.svg" //trash
                   << ":/icons/images/icons/disk_normal_22px.svg" //disk
-                  << ":/icons/images/icons/phone_normal_22px.svg"; //my mobile
+                  << ":/icons/images/icons/phone_normal_22px.svg" //my mobile
+                  << ":/icons/images/icons/bookmarks_normal_22px.svg"; //bookmarks
 
     m_bigIconlistChecked << ":/icons/images/icons/file_checked_22px.svg" //file
                          << ":/icons/images/icons/recent_checked_22px.svg" //recent
@@ -75,7 +76,8 @@ void DLeftSideBar::initData()
 
                          << ":/icons/images/icons/trash_checked_22px.svg" //trash
                          << ":/icons/images/icons/disk_checked_22px.svg" //disk
-                         << ":/icons/images/icons/phone_checked_22px.svg"; //my mobile
+                         << ":/icons/images/icons/phone_checked_22px.svg" //my mobile
+                         << ":/icons/images/icons/bookmarks_checked_22px.svg"; //bookmarks
 
     m_iconlistChecked << ":/icons/images/icons/file_checked_16px.svg" //file
                << ":/icons/images/icons/recent_checked_16px.svg" //recent
@@ -93,7 +95,7 @@ void DLeftSideBar::initData()
 
     m_nameList << "File" << "Recent" << "Home"  << "Desktop"
                << "Videos" << "Musics" << "Pictures" << "Documents" << "Downloads"
-               << "Trash" << "Disks" << "My Mobile";
+               << "Trash" << "Disks" << "My Mobile" << "Bookmarks";
     m_navState = true;
     setAcceptDrops(true);
 }
@@ -113,6 +115,8 @@ void DLeftSideBar::initUI()
     mainLayout->setContentsMargins(0, 0, 0, 0);
     setLayout(mainLayout);
     m_stackedWidget->setCurrentIndex(1);
+
+    loadBookmark();
 }
 
 void DLeftSideBar::initConnect()
@@ -157,7 +161,7 @@ void DLeftSideBar::initTightNav()
     m_tightScene->setSceneRect(0, 0, 60, 500);
     m_view->setScene(m_tightScene);
 
-    for(int i = 1; i < m_iconlist.size(); i++)
+    for(int i = 1; i < m_bigIconlist.size(); i++)
     {
         DBookmarkItem * item = new DBookmarkItem;
         item->boundImageToHover(m_bigIconlistChecked.at(i));
@@ -247,13 +251,24 @@ QString DLeftSideBar::getStandardPathbyId(int id)
     case 9:
         path = TRASH_ROOT;
         break;
-    case 10:
-        path = QDir::rootPath();
+    case 12:
+        path = BOOKMARK_ROOT;
         break;
     default:
         break;
     }
     return path;
+}
+
+void DLeftSideBar::resizeEvent(QResizeEvent *e)
+{
+    QRect rect = geometry();
+    qDebug() <<"resize = " << rect;
+    if(rect.width() < 70 && !m_isTight)
+        toTightNav();
+    else if(rect.width() > 70 && m_isTight)
+        toNormalNav();
+    QFrame::resizeEvent(e);
 }
 
 void DLeftSideBar::handleLocationChanged(const QString &url)
@@ -269,13 +284,16 @@ void DLeftSideBar::handleLocationChanged(const QString &url)
 void DLeftSideBar::toTightNav()
 {
     m_stackedWidget->setCurrentIndex(0);
-    this->setFixedWidth(60);
+    m_isTight = true;
+    emit moveSplitter(LEFTSIDEBAR_MIN, 1);
 }
 
 void DLeftSideBar::toNormalNav()
 {
+    qDebug() << "to normal";
     m_stackedWidget->setCurrentIndex(1);
-    this->setFixedWidth(160);
+    m_isTight = false;
+    emit moveSplitter(LEFTSIDEBAR_NORMAL, 1);
 }
 
 void DLeftSideBar::doDragEnter()
@@ -291,7 +309,26 @@ void DLeftSideBar::doDragLeave()
     setStyleSheet("QFrame#LeftSideBar{\
                   background-color: transparent;\
                   border: 1px solid transparent\
-              }");
+    }");
 }
+
+void DLeftSideBar::loadBookmark()
+{
+    QList<BookMark *> m_list = bookmarkManager->getBookmarks();
+    qDebug() << m_list;
+    for(int i = 0; i < m_list.size(); i++)
+    {
+        BookMark * bm = m_list.at(i);
+        DBookmarkItem * item = new DBookmarkItem;
+        item->boundImageToHover(":/icons/images/icons/bookmarks_hover_16px.svg");
+        item->boundImageToPress(":/icons/images/icons/bookmarks_checked_16px.svg");
+        item->boundImageToRelease(":/icons/images/icons/bookmarks_normal_16px.svg");
+        item->setText(bm->getName());
+        item->setUrl(bm->getUrl());
+        m_scene->addItem(item);
+    }
+}
+
+
 
 

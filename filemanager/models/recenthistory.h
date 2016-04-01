@@ -10,7 +10,6 @@ class RecentHistory : public DebugObejct
 public:
     explicit RecentHistory(QObject *parent = 0);
     ~RecentHistory();
-
 signals:
 
 public slots:

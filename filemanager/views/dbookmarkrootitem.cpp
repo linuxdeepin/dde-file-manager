@@ -4,6 +4,7 @@
 #include "dbookmarkitem.h"
 #include <QMimeData>
 #include <QDir>
+#include "../app/global.h"
 
 DBookmarkRootItem::DBookmarkRootItem(DBookmarkScene *scene)
 {
@@ -15,10 +16,11 @@ DBookmarkRootItem::DBookmarkRootItem(DBookmarkScene *scene)
     setCheckable(false);
     setPressBackgroundColor(QColor(0,0,0,0));
     connect(this, &DBookmarkRootItem::dropped, scene, &DBookmarkScene::dropped);
-
+    setDefaultItem(true);
     m_dummyItem = new DBookmarkItem;
     m_dummyItem->setAcceptDrops(false);
     m_dummyItem->setReleaseBackgroundColor(Qt::lightGray);
+    m_dummyItem->setPressBackgroundColor(Qt::lightGray);
     m_dummyItem->boundImageToRelease(":/icons/images/icons/bookmarks_normal_16px.svg");
 }
 
@@ -29,8 +31,16 @@ DBookmarkItem *DBookmarkRootItem::getDummyItem()
 
 void DBookmarkRootItem::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
-    QDir dir(event->mimeData()->text());
 
+    if(!event->mimeData()->hasUrls())
+        return;
+    QList<QUrl> urls = event->mimeData()->urls();
+    QUrl firstUrl = urls.at(0);
+    QDir dir;
+    if(firstUrl.isLocalFile())
+        dir.setPath(firstUrl.toLocalFile());
+    else
+        dir.setPath(firstUrl.toString());
     if(dir.exists())
     {
         DBookmarkItem * item = new DBookmarkItem;
@@ -39,8 +49,9 @@ void DBookmarkRootItem::dropEvent(QGraphicsSceneDragDropEvent *event)
         item->boundImageToRelease(":/icons/images/icons/bookmarks_normal_16px.svg");
         item->setText(dir.dirName());
         item->setUrl(dir.path());
-        m_scene->clear(m_dummyItem);
         m_scene->insert(11, item);
+        bookmarkManager->writeIntoBookmark(dir.dirName(), dir.path());
     }
+    m_scene->clear(m_dummyItem);
     emit dropped();
 }
