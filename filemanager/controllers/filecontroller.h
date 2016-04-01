@@ -5,6 +5,7 @@
 
 class FileInfoGatherer;
 class IconProvider;
+class RecentHistoryManager;
 
 class FileController : public QObject
 {
@@ -15,6 +16,7 @@ public:
     ~FileController();
 
     void initGatherer();
+    void initRecentManager();
     void initIconProvider();
     void initConnect();
 
@@ -24,6 +26,7 @@ public slots:
 
 private:
     FileInfoGatherer *gatherer = Q_NULLPTR;
+    RecentHistoryManager *recentManager = Q_NULLPTR;
     QThread *gathererThread = Q_NULLPTR;
 
     IconProvider *iconProvider = Q_NULLPTR;

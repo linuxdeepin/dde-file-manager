@@ -3,6 +3,7 @@
 #include <QDateTime>
 #include <QDir>
 #include <QMimeDatabase>
+#include <QUrl>
 
 FileInfo::FileInfo()
 {
@@ -12,7 +13,7 @@ FileInfo::FileInfo()
 FileInfo::FileInfo(const QString &file) :
     m_fileInfo(QFileInfo(file))
 {
-
+    m_fileScheme = QUrl(file).scheme();
 }
 
 FileInfo::FileInfo(const QFileInfo &fileInfo) :
@@ -30,6 +31,7 @@ void FileInfo::setFile(const QString &file)
 {
     m_fileInfo.setFile(file);
     m_mimeTypeName.clear();
+    m_fileScheme = QUrl(file).scheme();
 }
 
 bool FileInfo::exists() const

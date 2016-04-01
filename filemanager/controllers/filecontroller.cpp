@@ -1,6 +1,7 @@
 #include "filecontroller.h"
 #include "../app/global.h"
 #include "fileinfogatherer.h"
+#include "recenthistorymanager.h"
 #include "../shutil/iconprovider.h"
 #include "fileinfo.h"
 
@@ -11,6 +12,7 @@ FileController::FileController(QObject *parent) : QObject(parent)
     qRegisterMetaType<QList<FileInfo*>>("QList<FileInfo*>");
 
     initGatherer();
+    initRecentManager();
     initIconProvider();
     initConnect();
 }
@@ -32,6 +34,11 @@ void FileController::initGatherer()
     gathererThread->start();
 }
 
+void FileController::initRecentManager()
+{
+    recentManager = new RecentHistoryManager;
+}
+
 void FileController::initIconProvider()
 {
     iconProvider = new IconProvider(this);
@@ -45,6 +52,8 @@ void FileController::initConnect()
             this, &FileController::onFetchFileInformation);
     connect(gatherer, &FileInfoGatherer::updates,
             fileSignalManager, &FileSignalManager::childrenChanged);
+    connect(recentManager, &RecentHistoryManager::updates,
+            fileSignalManager, &FileSignalManager::childrenChanged);
 }
 
 void FileController::getIcon(const QString &url) const
@@ -56,9 +65,11 @@ void FileController::getIcon(const QString &url) const
 
 void FileController::onFetchFileInformation(const QString &url, int filter)
 {
-    QUrl tmp_url(url);
+    const QString &scheme = QUrl(url).scheme();
 
-    if(tmp_url.scheme().isEmpty()) {
+    if(scheme.isEmpty()) {
         gatherer->fetchFileInformation(url, filter);
+    } else if(scheme == TRASH_SCHEME) {
+        recentManager->fetchFileInformation(url, filter);
     }
 }
