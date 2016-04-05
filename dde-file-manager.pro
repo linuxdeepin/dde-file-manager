@@ -60,7 +60,6 @@ HEADERS += \
     filemanager/views/dtabbar.h \
     filemanager/views/dtabbaritem.h \
     filemanager/views/dfileitemdelegate.h \
-    filemanager/shutil/highlevelfileutils.h \
     filemanager/shutil/desktopparse.h \
     filemanager/shutil/mimeutils.h \
     filemanager/models/fileinfo.h \
@@ -92,7 +91,6 @@ HEADERS += \
     filemanager/views/dscrollbar.h \
     filemanager/app/fmevent.h \
     filemanager/views/historystack.h\
-    filemanager/shutil/fileio.h \
     filemanager/dialogs/propertydialog.h \
     filemanager/controllers/filejob.h \
     filemanager/views/dfilemenu.h \
@@ -135,7 +133,6 @@ SOURCES += \
     filemanager/views/dtabbar.cpp \
     filemanager/views/dtabbaritem.cpp \
     filemanager/views/dfileitemdelegate.cpp \
-    filemanager/shutil/highlevelfileutils.cpp \
     filemanager/shutil/desktopparse.cpp \
     filemanager/shutil/mimeutils.cpp \
     filemanager/models/fileinfo.cpp \
@@ -167,7 +164,6 @@ SOURCES += \
     filemanager/views/dscrollbar.cpp \
     filemanager/app/fmevent.cpp \
     filemanager/views/historystack.cpp\
-    filemanager/shutil/fileio.cpp \
     filemanager/dialogs/propertydialog.cpp \
     filemanager/controllers/filejob.cpp \
     filemanager/views/dfilemenu.cpp \
