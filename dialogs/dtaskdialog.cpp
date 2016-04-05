@@ -1,6 +1,6 @@
 #include "dtaskdialog.h"
 #include "utils/utils.h"
-#include "widgets/dcircleprogress.h"
+#include <dcircleprogress.h>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QPushButton>
@@ -359,7 +359,7 @@ void DTaskDialog::setTitle(int taskCount){
     setTitle(title);
 }
 
-void DTaskDialog::addCopyMoveTask(const QMap<QString, QString> &jobDetail){
+void DTaskDialog::addTask(const QMap<QString, QString> &jobDetail){
     if (jobDetail.contains("jobPath")){
         MoveCopyTaskWidget* moveWidget = new MoveCopyTaskWidget(jobDetail);
         moveWidget->setFixedHeight(60);
@@ -425,7 +425,7 @@ void DTaskDialog::adjustSize(){
     }
 }
 
-void DTaskDialog::removeTaskWidget(QString jobPath){
+void DTaskDialog::removeTaskByPath(QString jobPath){
     if (m_jobPathItems.contains(jobPath)){
         QListWidgetItem* item = m_jobPathItems.value(jobPath);
         m_taskListWidget->removeItemWidget(item);
@@ -455,20 +455,17 @@ void DTaskDialog::handleConflictResponse(const QMap<QString, QString> &jobDetail
 }
 
 void DTaskDialog::handleTaskClose(const QMap<QString, QString> &jobDetail){
-    removeTaskWidget(jobDetail);
+    qDebug() << jobDetail;
+    removeTask(jobDetail);
     setTitle(m_taskListWidget->count());
     if (jobDetail.contains("type")){
-        if (jobDetail.value("type") == "copy"){
-            emit abortCopyTask(jobDetail);
-        }else if (jobDetail.value("type") == "move"){
-            emit abortMoveTask(jobDetail);
-        }
+        emit abortTask(jobDetail);
     }
 }
 
-void DTaskDialog::removeTaskWidget(const QMap<QString, QString> &jobDetail){
+void DTaskDialog::removeTask(const QMap<QString, QString> &jobDetail){
     if (jobDetail.contains("jobPath")){
-        removeTaskWidget(jobDetail.value("jobPath"));
+        removeTaskByPath(jobDetail.value("jobPath"));
         adjustSize();
     }
 }
