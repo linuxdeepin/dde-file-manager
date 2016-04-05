@@ -651,7 +651,7 @@ FileSystemNode *DFileSystemModel::getNodeByIndex(const QModelIndex &index) const
 
 QModelIndex DFileSystemModel::createIndex(const FileSystemNode *node, int column) const
 {
-    int row = node->parent
+    int row = (node->parent && !node->parent->visibleChildren.isEmpty())
             ? node->parent->visibleChildren.indexOf(node->fileInfo->absoluteFilePath())
             : 0;
 
