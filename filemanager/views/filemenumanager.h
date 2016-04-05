@@ -10,14 +10,15 @@ DWIDGET_USE_NAMESPACE
 
 class DFileMenu;
 
-class FileMenuManager
+class FileMenuManager : public QObject
 {
+    Q_OBJECT
 public:
     enum MenuAction {
         Open,
         OpenInNewWindow,
         OpenWith,
-        OpenParentFolder,
+        OpenFileLocation,
         Compress,
         Decompress,
         Cut,
@@ -53,6 +54,8 @@ public:
         ListView
     };
 
+    FileMenuManager();
+
     static DFileMenu *createFileMenu(const QVector<MenuAction> &disableList = QVector<MenuAction>());
     static DFileMenu *createFolderMenu(const QVector<MenuAction> &disableList = QVector<MenuAction>());
     static DFileMenu *createViewSpaceAreaMenu(const QVector<MenuAction> &disableList = QVector<MenuAction>());
@@ -72,7 +75,7 @@ public:
     static DFileMenu *createListViewHeaderMenu(const QVector<MenuAction> &disableList = QVector<MenuAction>());
 
 private:
-    FileMenuManager();
+
 
     static QMap<MenuAction, QString> m_actionKeys;
     static QMap<MenuAction, DAction*> m_actions;
@@ -83,6 +86,16 @@ private:
                                          const QVector<MenuAction> &disableList,
                                          bool checkable = false,
                                          const QMap<MenuAction, QVector<MenuAction> > &subMenuList = QMap<MenuAction, QVector<MenuAction> >());
+    void doOpen(const QString & url);
+    void doOpenFileLocation(const QString &url);
+    void doRename(const QString &url);
+    void doDelete(const QString &url);
+    void doCompleteDeletion(const QString &url);
+public slots:
+    void actionTriggered(DAction * action);
+signals:
+    void startMoveToTrash(const QString &url);
+    void startCompleteDeletion(const QString &url);
 };
 
 #endif // FILEMENUMANAGER_H

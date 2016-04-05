@@ -62,6 +62,8 @@ void FileController::initConnect()
             fileSignalManager, &FileSignalManager::childrenChanged);
     connect(bookmarkManager, &BookMarkManager::updates,
             fileSignalManager, &FileSignalManager::childrenChanged);
+    connect(trashManager, &TrashManager::updates,
+            fileSignalManager, &FileSignalManager::childrenChanged);
     connect(recentManager, &RecentHistoryManager::fileCreated,
             fileMonitor, &FileMonitor::fileCreated);
 }
@@ -83,6 +85,8 @@ void FileController::onFetchFileInformation(const QString &url, int filter)
         recentManager->fetchFileInformation(url, filter);
     } else if(scheme == BOOKMARK_SCHEME) {
         bookmarkManager->fetchFileInformation(url, filter);
+    }else if(scheme == TRASH_SCHEME) {
+        trashManager->fetchFileInformation(url, filter);
     }
 }
 

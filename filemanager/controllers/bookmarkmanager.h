@@ -2,7 +2,6 @@
 #define BOOKMARKMANAGER_H
 
 #include <QObject>
-#include <QObject>
 #include <QList>
 #include <QJsonObject>
 #include <QFile>

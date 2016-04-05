@@ -184,8 +184,8 @@ void DFileManagerWindow::resizeEvent(QResizeEvent *event)
 
 void DFileManagerWindow::keyPressEvent(QKeyEvent *e)
 {
-    m_toolbar->m_searchBar->setFocus();
-    m_toolbar->m_searchBar->keyPressEvent(e);
+//    m_toolbar->m_searchBar->setFocus();
+//    m_toolbar->m_searchBar->keyPressEvent(e);
     DMovableMainWindow::keyPressEvent(e);
 }
 

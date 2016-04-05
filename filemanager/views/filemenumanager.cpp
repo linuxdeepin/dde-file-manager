@@ -1,5 +1,10 @@
 #include "filemenumanager.h"
 #include "dfilemenu.h"
+#include "../app/global.h"
+#include "../controllers/appcontroller.h"
+#include "../controllers/filecontroller.h"
+#include "../controllers/filejob.h"
+#include "../app/fmevent.h"
 
 QMap<FileMenuManager::MenuAction, QString> FileMenuManager::m_actionKeys;
 QMap<FileMenuManager::MenuAction, DAction*> FileMenuManager::m_actions;
@@ -14,7 +19,7 @@ DFileMenu *FileMenuManager::createFileMenu(const QVector<MenuAction> &disableLis
                << Separator
                << Compress << Separator
                << Copy << Cut
-               << Rename << Delete
+               << Rename << Delete << CompleteDeletion
                << Separator
                << Property;
 
@@ -75,7 +80,7 @@ DFileMenu *FileMenuManager::createRecentFileMenu(const QVector<MenuAction> &disa
     actionKeys.reserve(12);
 
     actionKeys << Open << OpenWith
-               << OpenParentFolder
+               << OpenFileLocation
                << Separator
                << Compress << Separator
                << Copy << Cut
@@ -295,7 +300,7 @@ void FileMenuManager::initData()
     m_actionKeys[Open] = QObject::tr("Open");
     m_actionKeys[OpenInNewWindow] = QObject::tr("Open in new window");
     m_actionKeys[OpenWith] = QObject::tr("Open with");
-    m_actionKeys[OpenParentFolder] = QObject::tr("OpenParentFolder");
+    m_actionKeys[OpenFileLocation] = QObject::tr("Open file loaction");
     m_actionKeys[Compress] = QObject::tr("Compress");
     m_actionKeys[Decompress] = QObject::tr("Decompress");
     m_actionKeys[Cut] = QObject::tr("Cut");
@@ -304,12 +309,12 @@ void FileMenuManager::initData()
     m_actionKeys[Rename] = QObject::tr("Rename");
     m_actionKeys[Remove] = QObject::tr("Remove");
     m_actionKeys[Delete] = QObject::tr("Delete");
+    m_actionKeys[CompleteDeletion] = QObject::tr("Complete deletion");
     m_actionKeys[Property] = QObject::tr("Property");
 
     m_actionKeys[NewFolder] = QObject::tr("New Folder");
     m_actionKeys[NewFile] = QObject::tr("New File");
     m_actionKeys[NewWindow] = QObject::tr("New Window");
-    m_actionKeys[SelectAll] = QObject::tr("Select all");
     m_actionKeys[SelectAll] = QObject::tr("Select All");
     m_actionKeys[ClearRecent] = QObject::tr("Clear Recent");
     m_actionKeys[ClearTrash] = QObject::tr("Clear Trash");
@@ -354,6 +359,7 @@ DFileMenu *FileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
     }
 
     DFileMenu* menu = new DFileMenu;
+    connect(menu, &DFileMenu::triggered, fileMenuManger, &FileMenuManager::actionTriggered);
 
     foreach (MenuAction key, keys) {
         if (key == Separator){
@@ -380,4 +386,119 @@ DFileMenu *FileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
     }
 
     return menu;
+}
+
+void FileMenuManager::doOpen(const QString &url)
+{
+    QDir dir(url);
+    if(dir.exists())
+    {
+        FMEvent event;
+        event.dir = url;
+        event.source = FMEvent::FileView;
+        emit fileSignalManager->requestChangeCurrentUrl(event);
+        return;
+    }
+    if(QFile::exists(url))
+    {
+        fileManagerApp->getAppController()->getFileController()->openFile(url);
+        return;
+    }
+}
+
+void FileMenuManager::doOpenFileLocation(const QString &url)
+{
+    QDir dir(url);
+    if(dir.exists())
+    {
+        if(!dir.cdUp())
+            return;
+        FMEvent event;
+        event.dir = dir.path();
+        event.source = FMEvent::FileView;
+        emit fileSignalManager->requestChangeCurrentUrl(event);
+        return;
+    }
+    QFileInfo file(url);
+    if(QFile::exists(url))
+    {
+        fileManagerApp->getAppController()->getFileController()->openFile(file.absolutePath());
+        return;
+    }
+}
+
+void FileMenuManager::doRename(const QString &url)
+{
+    //notify view to be in editing mode
+}
+
+void FileMenuManager::doDelete(const QString &url)
+{
+    FileJob * job = new FileJob;
+    QThread * thread = new QThread;
+    job->moveToThread(thread);
+    connect(this, &FileMenuManager::startMoveToTrash, job, &FileJob::doMoveToTrash);
+    connect(job, &FileJob::finished, job, &FileJob::deleteLater);
+    connect(job, &FileJob::finished, thread, &QThread::quit);
+    connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+    thread->start();
+    emit startMoveToTrash(url);
+}
+
+void FileMenuManager::doCompleteDeletion(const QString &url)
+{
+    FileJob * job = new FileJob;
+    QThread * thread = new QThread;
+    job->moveToThread(thread);
+    connect(this, &FileMenuManager::startCompleteDeletion, job, &FileJob::doDelete);
+    connect(job, &FileJob::finished, job, &FileJob::deleteLater);
+    connect(job, &FileJob::finished, thread, &QThread::quit);
+    connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+    thread->start();
+    emit startCompleteDeletion(url);
+}
+
+
+void FileMenuManager::actionTriggered(DAction *action)
+{
+    DFileMenu *menu = qobject_cast<DFileMenu *>(sender());
+    QString url = menu->getUrl();
+    switch(action->data().toInt())
+    {
+    case Open:doOpen(url);break;
+    case OpenInNewWindow:break;
+    case OpenWith:break;
+    case OpenFileLocation:doOpenFileLocation(url);break;
+    case Compress:break;
+    case Decompress:break;
+    case Cut:break;
+    case Paste:break;
+    case Rename:break;
+    case Remove:break;
+    case Delete:doDelete(url);break;
+    case CompleteDeletion:doCompleteDeletion(url);break;
+    case Property:break;
+    case NewFolder:break;
+    case NewFile:break;
+    case NewWindow:break;
+    case SelectAll:break;
+    case ClearRecent:break;
+    case ClearTrash:break;
+    case DisplayAs:break;
+    case SortBy:break;
+    case NewDocument:break;
+    case Restore:break;
+    case Mount:break;
+    case Unmount:break;
+    case Name:break;
+    case Size:break;
+    case Type:break;
+    case CreatedDate:break;
+    case LastModifiedDate:break;
+    case Help:break;
+    case About:break;
+    case Exit:break;
+    case IconView:break;
+    case ListView:break;
+    }
 }

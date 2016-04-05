@@ -168,5 +168,6 @@
         <file>images/icons/bookmarks_normal_22px.svg</file>
         <file>images/icons/bookmarks_hover_22px.svg</file>
         <file>images/icons/bookmarks_checked_22px.svg</file>
+        <file>images/icons/documents_checked_22px.svg</file>
     </qresource>
 </RCC>
