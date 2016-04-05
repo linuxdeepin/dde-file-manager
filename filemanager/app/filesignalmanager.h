@@ -35,6 +35,22 @@ signals:
 
     /// open file signal
     void fileOpened(const QString &url) const;
+
+    /*dbus to copy job dialog */
+    void jobAdded(const QMap<QString, QString>& jobDetail);
+    void jobRemoved(const QMap<QString, QString>& jobDetail);
+
+    void jobDataUpdated(const QMap<QString, QString>& jobDetail,
+                           const QMap<QString, QString>& data);
+
+    void abortTask(const QMap<QString, QString>& jobDetail);
+
+//    /*copy/move job conflict dialog show */
+//    void conflictDialogShowed(const QMap<QString, QString>& jobDetail);
+//    void conflictRepsonseConfirmed(const QMap<QString, QString>& jobDetail, const QMap<QString, QVariant>& response);
+
+//    void conflictTimerStoped(const QMap<QString, QString>& jobDetail);
+//    void conflictTimerReStarted(const QMap<QString, QString>& jobDetail);
 };
 
 #endif // FILESIGNALMANAGER_H
