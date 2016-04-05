@@ -2,7 +2,6 @@
 #include "movejobcontroller.h"
 #include "trashjobcontroller.h"
 #include "copyjobcontroller.h"
-#include "renamejobcontroller.h"
 #include "deletejobcontroller.h"
 #include "../app/global.h"
 #include "filecontroller.h"

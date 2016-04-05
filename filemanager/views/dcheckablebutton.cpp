@@ -11,9 +11,9 @@ DCheckableButton::DCheckableButton(const QString &normal,
                                    const QString &text,
                                    QWidget *parent):
     QPushButton(parent),
+    m_text(text),
     m_normal(normal),
-    m_hover(hover),
-    m_text(text)
+    m_hover(hover)
 {
     setFlat(true);
     setCheckable(true);
@@ -82,7 +82,7 @@ void DCheckableButton::dragEnterEvent(QDragEnterEvent *e)
 
 void DCheckableButton::dropEvent(QDropEvent *e)
 {
-
+    Q_UNUSED(e)
 }
 
 void DCheckableButton::mousePressEvent(QMouseEvent *e)
@@ -99,7 +99,7 @@ void DCheckableButton::mousePressEvent(QMouseEvent *e)
 
 void DCheckableButton::mouseReleaseEvent(QMouseEvent *e)
 {
-
+    Q_UNUSED(e)
 }
 
 

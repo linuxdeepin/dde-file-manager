@@ -105,7 +105,14 @@ HEADERS += \
     filemanager/views/dbookmarkrootitem.h \
     filemanager/views/dbookmarkview.h \
     filemanager/controllers/trashmanager.h \
-    filemanager/views/dsplitter.h
+    filemanager/views/dsplitter.h \
+    filemanager/controllers/copyjobcontroller.h \
+    filemanager/controllers/copyjobworker.h \
+    filemanager/controllers/deletejobcontroller.h \
+    filemanager/controllers/deletejobworker.h \
+    filemanager/controllers/movejobcontroller.h \
+    filemanager/controllers/movejobworker.h \
+    filemanager/controllers/trashjobcontroller.h
 
 SOURCES += \
     filemanager/controllers/appcontroller.cpp \
@@ -173,6 +180,13 @@ SOURCES += \
     filemanager/views/dbookmarkrootitem.cpp \
     filemanager/views/dbookmarkview.cpp \
     filemanager/controllers/trashmanager.cpp \
-    filemanager/views/dsplitter.cpp
+    filemanager/views/dsplitter.cpp \
+    filemanager/controllers/copyjobcontroller.cpp \
+    filemanager/controllers/copyjobworker.cpp \
+    filemanager/controllers/deletejobcontroller.cpp \
+    filemanager/controllers/deletejobworker.cpp \
+    filemanager/controllers/movejobcontroller.cpp \
+    filemanager/controllers/movejobworker.cpp \
+    filemanager/controllers/trashjobcontroller.cpp
 
 INCLUDEPATH += filemanager/models
