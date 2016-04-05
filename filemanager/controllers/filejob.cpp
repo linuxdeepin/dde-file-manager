@@ -21,6 +21,7 @@ void FileJob::doCopy(const QString &source, const QString &destination)
     }
     else
         copyFile(source, destination);
+    emit finished();
 }
 
 void FileJob::doDelete(const QString &source)
@@ -30,6 +31,7 @@ void FileJob::doDelete(const QString &source)
         deleteDir(source);
     else
         deleteFile(source);
+    emit finished();
 }
 
 void FileJob::doMoveToTrash(const QString &source)
@@ -39,6 +41,7 @@ void FileJob::doMoveToTrash(const QString &source)
         moveDirToTrash(source);
     else
         moveFileToTrash(source);
+    emit finished();
 }
 
 void FileJob::paused()
@@ -233,6 +236,7 @@ bool FileJob::moveFileToTrash(const QString &file)
         newName += delTime;
     if(!localFile.rename(newName))
     {
+        //Todo: find reason
         qDebug() << "Unable to trash file:" << localFile.fileName();
         return false;
     }

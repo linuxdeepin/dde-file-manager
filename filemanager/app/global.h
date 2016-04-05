@@ -6,6 +6,7 @@
 #include "filesignalmanager.h"
 #include "../controllers/searchhistroymanager.h"
 #include "../controllers/bookmarkmanager.h"
+#include "../controllers/trashmanager.h"
 #include "../views/filemenumanager.h"
 #include "fileinfo.h"
 #include "filemanagerapp.h"
@@ -17,6 +18,8 @@
 #define fileManagerApp Singleton<FileManagerApp>::instance()
 #define searchHistoryManager  Singleton<SearchHistroyManager>::instance()
 #define bookmarkManager  Singleton<BookMarkManager>::instance()
+#define trashManager  Singleton<TrashManager>::instance()
+#define fileMenuManger  Singleton<FileMenuManager>::instance()
 #define fileSignalManager Singleton<FileSignalManager>::instance()
 #define appController fileManagerApp->getAppController()
 #define fileMonitor appController->getFileMonitor()

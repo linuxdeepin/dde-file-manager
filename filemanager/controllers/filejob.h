@@ -19,6 +19,7 @@ signals:
     void progressPercent(int value);
     void error(QString content);
     void result(QString content);
+    void finished();
 public slots:
     void doCopy(const QString &source, const QString &destination);
     void doDelete(const QString &source);

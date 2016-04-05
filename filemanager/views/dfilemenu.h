@@ -11,6 +11,10 @@ class DFileMenu : public DMenu
 
 public:
     explicit DFileMenu(DMenu * parent = 0);
+    void setUrl(const QString &url);
+    QString getUrl();
+private:
+    QString m_url;
 };
 
 #endif // DFILEMENU_H

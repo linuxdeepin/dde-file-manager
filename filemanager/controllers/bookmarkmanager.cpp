@@ -102,8 +102,6 @@ void BookMarkManager::fetchFileInformation(const QString &url, int filter)
 {
     Q_UNUSED(filter)
 
-    const QString path = QUrl(url).path();
-
     QList<FileInfo*> infolist;
 
     for(int i = 0; i < m_bookmarks.size(); i++)
@@ -112,5 +110,5 @@ void BookMarkManager::fetchFileInformation(const QString &url, int filter)
         infolist.append(new FileInfo(bm->getUrl()));
     }
 
-    emit updates(path, infolist);
+    emit updates(url, infolist);
 }

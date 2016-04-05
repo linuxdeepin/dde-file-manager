@@ -212,19 +212,25 @@ void DBookmarkItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 
 void DBookmarkItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 {
-    event->acceptProposedAction();
+    m_hovered = true;
+    event->accept();
     emit dragEntered();
+    QGraphicsItem::dragEnterEvent(event);
 }
 
 void DBookmarkItem::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
 {
     Q_UNUSED(event)
+    m_hovered = false;
     emit dragLeft();
+    QGraphicsItem::dragLeaveEvent(event);
 }
 
 void DBookmarkItem::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
 {
-    event->acceptProposedAction();
+    m_hovered = true;
+    event->accept();
+    qDebug() << "item drag move";
 }
 
 void DBookmarkItem::dropEvent(QGraphicsSceneDragDropEvent *event)

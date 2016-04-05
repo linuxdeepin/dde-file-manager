@@ -276,6 +276,7 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
         index = indexAt(event->pos());
 
         menu = FileMenuManager::createFileMenu(Global::getDisableActionList(model()->getUrlByIndex(index)));
+        menu->setUrl(model()->getUrlByIndex(currentIndex()));
     }
 
     onMenuActionTrigger(menu->exec(mapToGlobal(event->pos())), index);

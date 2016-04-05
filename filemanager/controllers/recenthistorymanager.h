@@ -2,7 +2,16 @@
 #define RECENTHISTORYMANAGER_H
 
 #include <QObject>
+#include <QList>
+#include <QJsonObject>
+#include <QFile>
+#include <stdlib.h>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QByteArray>
+#include <QDateTime>
 #include <QDir>
+#include <QUrl>
 
 #include "basemanager.h"
 
@@ -17,6 +26,10 @@ public:
 
     void load() Q_DECL_OVERRIDE;
     void save() Q_DECL_OVERRIDE;
+
+private:
+    void loadJson(const QJsonObject &json);
+    void writeJson(QJsonObject &json);
 
 public slots:
     void fetchFileInformation(const QString &url,
