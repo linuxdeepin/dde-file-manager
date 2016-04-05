@@ -42,6 +42,8 @@ void BMListWidget::dragEnterEvent(QDragEnterEvent *event)
 
 void BMListWidget::dropEvent(QDropEvent *event)
 {
+    Q_UNUSED(event)
+
     qDebug() << "list drop";
 }
 

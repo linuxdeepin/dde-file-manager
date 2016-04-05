@@ -9,6 +9,8 @@ BMListWidgetItem::BMListWidgetItem(BMListWidget * widget,
                                    const QString &hover)
     :QListWidgetItem(widget)
 {
+    Q_UNUSED(text)
+
     m_url = url;
     m_normal = normal;
     m_hover = hover;

@@ -47,10 +47,10 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
     Q_UNUSED(option);
     Q_UNUSED(widget);
     double w = m_width;
-    double h = m_height;
+//    double h = m_height;
     QColor textColor;
     double leftPadding = 18;
-    double topPadding = 4;
+//    double topPadding = 4;
     if(m_pressed || (m_checked && m_checkable))
     {
         if(m_pressBackgroundEnabled)
@@ -218,6 +218,7 @@ void DBookmarkItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 
 void DBookmarkItem::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
 {
+    Q_UNUSED(event)
     emit dragLeft();
 }
 
