@@ -18,7 +18,8 @@
 #include <QPushButton>
 #include <QMenu>
 #include <QWheelEvent>
-#include <QDesktopServices>
+#include <QLineEdit>
+#include <QTextEdit>
 
 DWIDGET_USE_NAMESPACE
 
@@ -147,6 +148,16 @@ void DFileView::cd(const FMEvent &event)
     emit currentUrlChanged(event.dir);
 
     fileSignalManager->currentUrlChanged(event);
+}
+
+void DFileView::edit(const FMEvent &event)
+{
+    if(currentUrl() == event.dir)
+        return;
+
+    const QModelIndex &index = model()->index(event.dir);
+
+    edit(index);
 }
 
 void DFileView::switchToListMode()
@@ -332,6 +343,12 @@ void DFileView::mousePressEvent(QMouseEvent *event)
     } else if(event->button() == Qt::RightButton) {
         QWidget::mousePressEvent(event);
 
+        const QModelIndex &index = indexAt(event->pos());
+
+        if(index.isValid()) {
+            setCurrentIndex(index);
+        }
+
         return;
     }
 
@@ -343,6 +360,42 @@ void DFileView::selectionChanged(const QItemSelection &selected, const QItemSele
     m_selectedIndexCount = selected.indexes().count();
 
     DListView::selectionChanged(selected, deselected);
+}
+
+void DFileView::commitData(QWidget *editor)
+{
+    if(!editor)
+        return;
+
+    const FileInfo *fileInfo = model()->fileInfo(itemDelegate()->editingIndex());
+
+    if(!fileInfo)
+        return;
+
+    QLineEdit *lineEdit = qobject_cast<QLineEdit*>(editor);
+
+    if(lineEdit) {
+        appController->getFileController()->renameFile(fileInfo->absoluteFilePath(),
+                                                       fileInfo->absolutePath() + "/"
+                                                       + lineEdit->text());
+
+        return;
+    }
+
+    FileIconItem *item = qobject_cast<FileIconItem*>(editor);
+
+    if(item) {
+        appController->getFileController()->renameFile(fileInfo->absoluteFilePath(),
+                                                       fileInfo->absolutePath() + "/"
+                                                       + item->edit->toPlainText());
+    }
+}
+
+void DFileView::focusInEvent(QFocusEvent *event)
+{
+    DListView::focusInEvent(event);
+
+    itemDelegate()->commitDataAndCloseActiveEditor();
 }
 
 bool DFileView::isEmptyArea(const QPoint &pos) const

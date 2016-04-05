@@ -494,7 +494,6 @@ QList<QRect> DFileItemDelegate::paintGeomertyss(const QStyleOptionViewItem &opti
 
         geomertys << option.fontMetrics.boundingRect(rect, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()),
                                                      index.data(role).toString());
-
         for(int i = 1; i < columnRoleList.count(); ++i) {
             QRect rect = option.rect;
 
@@ -527,6 +526,19 @@ void DFileItemDelegate::hideAllIIndexWidget()
     if(editing_index.isValid()) {
         parent()->setIndexWidget(editing_index, 0);
     }
+}
+
+void DFileItemDelegate::commitDataAndCloseActiveEditor()
+{
+    QWidget *editor = parent()->indexWidget(editing_index);
+
+    QMetaObject::invokeMethod(this, "_q_commitDataAndCloseEditor",
+                              Qt::QueuedConnection, Q_ARG(QWidget*, editor));
+}
+
+QModelIndex DFileItemDelegate::editingIndex() const
+{
+    return editing_index;
 }
 
 bool DFileItemDelegate::eventFilter(QObject *object, QEvent *event)

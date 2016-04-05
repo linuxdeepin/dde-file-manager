@@ -72,6 +72,26 @@ bool FileIconItem::eventFilter(QObject *obj, QEvent *ee)
         if(obj == icon || obj == edit) {
             resize(width(), icon->height() + edit->height());
         }
+    } else if(ee->type() == QEvent::KeyPress) {
+        if(obj != edit) {
+           return QFrame::eventFilter(obj, ee);
+        }
+
+        QKeyEvent *event = static_cast<QKeyEvent*>(ee);
+
+        if(event->key() != Qt::Key_Enter && event->key() != Qt::Key_Return) {
+            return QFrame::eventFilter(obj, ee);
+        }
+
+        if(!(event->modifiers() & Qt::ShiftModifier)) {
+            ee->accept();
+            parentWidget()->setFocus();
+
+            return true;
+        } else {
+            event->accept();
+            return false;
+        }
     }
 
     return QFrame::eventFilter(obj, ee);

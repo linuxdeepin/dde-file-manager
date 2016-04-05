@@ -46,6 +46,9 @@ public:
     QList<QRect> paintGeomertyss(const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
     void hideAllIIndexWidget();
+    void commitDataAndCloseActiveEditor();
+
+    QModelIndex editingIndex() const;
 
 protected:
     bool eventFilter(QObject *object, QEvent *event) Q_DECL_OVERRIDE;

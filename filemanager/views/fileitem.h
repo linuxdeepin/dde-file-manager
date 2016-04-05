@@ -24,6 +24,7 @@ private:
     QTextEdit *edit;
 
     friend class DFileItemDelegate;
+    friend class DFileView;
 };
 
 #endif // FILEITEM_H

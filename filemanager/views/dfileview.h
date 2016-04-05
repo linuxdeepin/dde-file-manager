@@ -49,8 +49,11 @@ public:
 
     int selectedIndexCount() const;
 
+    using DListView::edit;
+
 public slots:
     void cd(const FMEvent &event);
+    void edit(const FMEvent &event);
     void switchToListMode();
     void switchToIconMode();
 
@@ -68,6 +71,8 @@ protected:
     void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
     void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void selectionChanged(const QItemSelection & selected, const QItemSelection & deselected) Q_DECL_OVERRIDE;
+    void commitData(QWidget * editor) Q_DECL_OVERRIDE;
+    void focusInEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
 
 private:
     FileController *m_controller;

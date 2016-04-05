@@ -99,3 +99,10 @@ bool FileController::openFile(const QString &url) const
 
     return isOk;
 }
+
+bool FileController::renameFile(const QString &oldUrl, const QString &newUrl) const
+{
+    QFile file(oldUrl);
+
+    return file.rename(newUrl);
+}
