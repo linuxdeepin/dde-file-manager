@@ -2,13 +2,15 @@
 #define DTASKDIALOG_H
 
 #include "dmovabledialog.h"
-#include "widgets/dcircleprogress.h"
+#include <dcircleprogress.h>
 #include <QLabel>
 #include <QListWidget>
 #include <QResizeEvent>
 #include <QListWidgetItem>
 #include <QButtonGroup>
 #include <QCheckBox>
+
+DWIDGET_USE_NAMESPACE
 
 class MoveCopyTaskWidget : public QFrame
 {
@@ -81,20 +83,18 @@ public:
     void initUI();
     void initConnect();
 signals:
-    void abortCopyTask(const QMap<QString, QString>& jobDetail);
-    void abortMoveTask(const QMap<QString, QString>& jobDetail);
-    void abortDeleteTask(const QMap<QString, QString>& jobDetail);
+    void abortTask(const QMap<QString, QString>& jobDetail);
     void conflictRepsonseConfirmed(const QMap<QString, QString>& jobDetail, const QMap<QString, QVariant>& response);
     void conflictShowed(const QMap<QString, QString>& jobDetail);
     void conflictHided(const QMap<QString, QString>& jobDetail);
 public slots:
     void setTitle(QString title);
     void setTitle(int taskCount);
-    void addCopyMoveTask(const QMap<QString, QString>& jobDetail);
+    void addTask(const QMap<QString, QString>& jobDetail);
     void addConflictTask(const QMap<QString, QString>& jobDetail);
     void handleTaskClose(const QMap<QString, QString>& jobDetail);
-    void removeTaskWidget(const QMap<QString, QString>& jobDetail);
-    void removeTaskWidget(QString jobPath);
+    void removeTask(const QMap<QString, QString>& jobDetail);
+    void removeTaskByPath(QString jobPath);
     void handleUpdateTaskWidget(const QMap<QString, QString>& jobDetail,
                                 const QMap<QString, QString>& data);
     void adjustSize();
