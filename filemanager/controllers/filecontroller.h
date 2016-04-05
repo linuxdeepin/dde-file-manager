@@ -22,8 +22,11 @@ public:
 
 public slots:
     void getIcon(const QString &url) const;
-    void onFetchFileInformation(const QString &url, int filter);
     bool openFile(const QString &url) const;
+    bool renameFile(const QString &oldUrl, const QString &newUrl) const;
+
+private slots:
+    void onFetchFileInformation(const QString &url, int filter);
 
 private:
     FileInfoGatherer *gatherer = Q_NULLPTR;
