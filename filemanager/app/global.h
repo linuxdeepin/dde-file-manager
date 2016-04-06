@@ -3,10 +3,6 @@
 
 #include "widgets/singleton.h"
 #include "utils/utils.h"
-#include "filesignalmanager.h"
-#include "../controllers/searchhistroymanager.h"
-#include "../controllers/bookmarkmanager.h"
-#include "../controllers/trashmanager.h"
 #include "../views/filemenumanager.h"
 #include "fileinfo.h"
 #include "filemanagerapp.h"
@@ -14,6 +10,12 @@
 #include <QFontMetrics>
 #include <QTextOption>
 #include <QTextLayout>
+
+class SearchHistroyManager;
+class BookMarkManager;
+class TrashManager;
+class FileMenuManager;
+class FileSignalManager;
 
 #define fileManagerApp Singleton<FileManagerApp>::instance()
 #define searchHistoryManager  Singleton<SearchHistroyManager>::instance()
@@ -72,6 +74,16 @@
 class Global
 {
 public:
+    enum SortRole {
+        FileNameRole = Qt::UserRole + 2,
+        FileSizeRole = Qt::UserRole + 3,
+        FileMimeTypeRole = Qt::UserRole + 4,
+        FileOwnerRole = Qt::UserRole + 5,
+        FileLastModified = Qt::UserRole + 6,
+        FileLastRead = Qt::UserRole + 7,
+        FileCreated = Qt::UserRole + 8
+    };
+
     static QString wordWrapText(const QString &text, int width,
                          QTextOption::WrapMode wrapMode,
                          int *height = 0)

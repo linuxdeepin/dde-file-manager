@@ -56,6 +56,7 @@ public slots:
     void edit(const FMEvent &event);
     void switchToListMode();
     void switchToIconMode();
+    void sort(int windowId, int role);
 
 signals:
     void currentUrlChanged(QString url);

@@ -5,10 +5,12 @@
 #include "dtabbar.h"
 #include "../app/fmevent.h"
 #include "../app/global.h"
+#include "../app/filesignalmanager.h"
 #include "dcrumbwidget.h"
+#include "historystack.h"
+
 #include <QHBoxLayout>
 #include <QVBoxLayout>
-#include "historystack.h"
 #include <QDebug>
 
 const int DToolBar::ButtonHeight = 20;

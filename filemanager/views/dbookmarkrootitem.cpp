@@ -1,10 +1,14 @@
 #include "dbookmarkrootitem.h"
-#include <QDebug>
 #include "dbookmarkscene.h"
 #include "dbookmarkitem.h"
+
+#include "../app/global.h"
+
+#include "../controllers/bookmarkmanager.h"
+
+#include <QDebug>
 #include <QMimeData>
 #include <QDir>
-#include "../app/global.h"
 
 DBookmarkRootItem::DBookmarkRootItem(DBookmarkScene *scene)
 {

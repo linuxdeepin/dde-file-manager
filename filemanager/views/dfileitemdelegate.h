@@ -1,10 +1,10 @@
 #ifndef DFILEITEMDELEGATE_H
 #define DFILEITEMDELEGATE_H
 
+#include "dfileview.h"
+
 #include <QStyledItemDelegate>
 #include <QHeaderView>
-
-#include "dfileview.h"
 
 DWIDGET_USE_NAMESPACE
 

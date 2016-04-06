@@ -1,12 +1,16 @@
 #include "dbookmarkscene.h"
 #include "dbookmarkitem.h"
-#include <QDebug>
 #include "dbookmarkrootitem.h"
 #include "dbookmarkitemgroup.h"
+
+#include "../app/global.h"
+
+#include "../controllers/bookmarkmanager.h"
+
+#include <QDebug>
 #include <QGraphicsView>
 #include <QMimeData>
 #include <QDir>
-#include "../app/global.h"
 
 DBookmarkScene::DBookmarkScene()
 {

@@ -1,12 +1,18 @@
 #include "filecontroller.h"
-#include "../app/global.h"
-#include "../app/filemanagerapp.h"
 #include "fileinfogatherer.h"
 #include "recenthistorymanager.h"
-#include "../shutil/iconprovider.h"
-#include "../../filemonitor/filemonitor.h"
 #include "fileinfo.h"
 #include "appcontroller.h"
+#include "bookmarkmanager.h"
+#include "trashmanager.h"
+
+#include "../app/global.h"
+#include "../app/filemanagerapp.h"
+#include "../app/filesignalmanager.h"
+
+#include "../shutil/iconprovider.h"
+
+#include "../../filemonitor/filemonitor.h"
 
 #include <QFileIconProvider>
 #include <QDesktopServices>

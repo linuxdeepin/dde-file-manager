@@ -1,12 +1,13 @@
 #include "filemanagerapp.h"
-#include <QtCore/QCoreApplication>
 #include "../views/windowmanager.h"
 #include "../views/dfilemanagerwindow.h"
 #include "../controllers/appcontroller.h"
 #include "../app/define.h"
 #include "../app/global.h"
 #include "dialogs/dtaskdialog.h"
+#include "filesignalmanager.h"
 
+#include <QtCore/QCoreApplication>
 
 FileManagerApp::FileManagerApp(QObject *parent) : QObject(parent)
 {

@@ -1,10 +1,13 @@
 #include "filemenumanager.h"
 #include "dfilemenu.h"
+
 #include "../app/global.h"
+#include "../app/fmevent.h"
+#include "../app/filesignalmanager.h"
+
 #include "../controllers/appcontroller.h"
 #include "../controllers/filecontroller.h"
 #include "../controllers/filejob.h"
-#include "../app/fmevent.h"
 
 QMap<FileMenuManager::MenuAction, QString> FileMenuManager::m_actionKeys;
 QMap<FileMenuManager::MenuAction, DAction*> FileMenuManager::m_actions;
@@ -430,6 +433,16 @@ void FileMenuManager::doOpenFileLocation(const QString &url)
 void FileMenuManager::doRename(const QString &url)
 {
     //notify view to be in editing mode
+
+    FMEvent event;
+
+    event.dir = url;
+    event.source = FMEvent::Menu;
+
+    /// TODO
+    event.windowId = -1;
+
+    emit fileSignalManager->requestRename(event);
 }
 
 void FileMenuManager::doDelete(const QString &url)
