@@ -11,6 +11,10 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = dde-file-manager
 TEMPLATE = app
 
+isEmpty(PREFIX){
+    PREFIX = /usr
+}
+
 include(./widgets/widgets.pri)
 include(./dialogs/dialogs.pri)
 include(./utils/utils.pri)
@@ -31,11 +35,6 @@ RESOURCES += \
     skin/dialogs.qrc \
     skin/filemanager.qrc \
     filemanager/themes/themes.qrc
-
-target.path = /usr/bin/
-
-
-INSTALLS += target
 
 HEADERS += \
     filemanager/app/define.h \
@@ -186,3 +185,11 @@ SOURCES += \
     filemanager/controllers/trashjobcontroller.cpp
 
 INCLUDEPATH += filemanager/models
+
+target.path = /usr/bin/
+
+
+desktop.path = $${PREFIX}/share/applications/
+desktop.files = dde-file-manager.desktop
+
+INSTALLS += target desktop
