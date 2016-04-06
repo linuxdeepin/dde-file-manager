@@ -8,9 +8,10 @@
 #include "../app/filesignalmanager.h"
 #include "dcrumbwidget.h"
 #include "historystack.h"
-
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include "historystack.h"
+#include "dhoverbutton.h"
 #include <QDebug>
 
 const int DToolBar::ButtonHeight = 20;
@@ -99,16 +100,16 @@ void DToolBar::initContollerToolBar()
     m_contollerToolBar->setObjectName("ContollerToolBar");
     m_contollerToolBar->setFixedHeight(40);
     m_iconViewButton = new QPushButton(this);
+    m_iconViewButton->setGeometry(QRect(0,0,26,20));
     m_iconViewButton->setFixedHeight(20);
-    m_iconViewButton->setFixedWidth(26);
     m_iconViewButton->setObjectName("iconViewButton");
     m_iconViewButton->setCheckable(true);
     m_iconViewButton->setChecked(true);
     m_iconViewButton->setFocusPolicy(Qt::NoFocus);
 
     m_listViewButton = new QPushButton(this);
+    m_listViewButton->setGeometry(QRect(0,0,26,20));
     m_listViewButton->setFixedHeight(20);
-    m_listViewButton->setFixedWidth(26);
     m_listViewButton->setObjectName("listViewButton");
     m_listViewButton->setCheckable(true);
     m_listViewButton->setFocusPolicy(Qt::NoFocus);
@@ -117,13 +118,14 @@ void DToolBar::initContollerToolBar()
     m_viewButtonGroup->addButton(m_iconViewButton, 0);
     m_viewButtonGroup->addButton(m_listViewButton, 1);
 
-    m_sortingButton = new DStateButton(":/icons/images/icons/sorting_normal.png",
-                                       ":/icons/images/icons/sorting_press.png",
+    m_sortingButton = new DHoverButton(":/icons/images/icons/expanded_view_normal.svg",
+                                       ":/icons/images/icons/expanded_view_checked.svg",
                                         this);
     m_sortingButton->setFixedHeight(20);
     m_sortingButton->setFixedWidth(26);
     m_sortingButton->setObjectName("SortingButton");
     m_sortingButton->setFocusPolicy(Qt::NoFocus);
+    m_sortingButton->setMenu(FileMenuManager::createToolBarSortMenu());
 
     QHBoxLayout* mainLayout = new QHBoxLayout;
     mainLayout->addWidget(m_iconViewButton);

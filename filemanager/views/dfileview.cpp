@@ -86,6 +86,8 @@ void DFileView::initConnects()
             model(), &DFileSystemModel::refresh);
     connect(fileSignalManager, &FileSignalManager::requestRename,
             this, static_cast<void (DFileView::*)(const FMEvent&)>(&DFileView::edit));
+    connect(fileSignalManager, &FileSignalManager::requestViewSort,
+            this, &DFileView::sort);
 }
 
 DFileSystemModel *DFileView::model() const

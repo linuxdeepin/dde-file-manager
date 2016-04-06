@@ -236,16 +236,19 @@ QPushButton#iconViewButton{
     color: black;
     border-radius: 2px;
     image: url(:/icons/images/icons/icon_view_normal.svg);
+    icon-size: 16px 16px;
 }
 
 QPushButton#iconViewButton:checked{
     background-color:#2ca7f8;
     image: url(:/icons/images/icons/icon_view_checked.svg);
+    icon-size: 16px 16px;
 }
 
 QPushButton#iconViewButton:unchecked{
     background-color:white;
     image: url(:/icons/images/icons/icon_view_normal.svg);
+    icon-size: 16px 16px;
 }
 
 QPushButton#listViewButton{
@@ -254,16 +257,19 @@ QPushButton#listViewButton{
     color: black;
     border-radius: 2px;
     image: url(:/icons/images/icons/list_view_normal.svg);
+    icon-size: 16px 16px;
 }
 
 QPushButton#listViewButton:checked{
     background-color:#2ca7f8;
     image: url(:/icons/images/icons/list_view_checked.svg);
+    icon-size: 16px 16px;
 }
 
 QPushButton#listViewButton:unchecked{
     background-color:white;
     image: url(:/icons/images/icons/list_view_normal.svg);
+    icon-size: 16px 16px;
 }
 
 QPushButton#SortingButton{
@@ -273,7 +279,7 @@ QPushButton#SortingButton{
     border-radius: 2px;
 }
 
-QPushButton#SortingButton:checked{
+QPushButton#SortingButton:hover{
     background-color:#2ca7f8;
     border: 1px;
     color: black;

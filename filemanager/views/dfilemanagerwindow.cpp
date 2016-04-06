@@ -42,7 +42,7 @@ void DFileManagerWindow::initData()
 
 void DFileManagerWindow::initUI()
 {
-    resize(950, 600);
+    resize(DEFAULT_WINDOWS_WIDTH, DEFAULT_WINDOWS_HEIGHT);
     setMinimumWidth(MinimumWidth);
     moveCenter();
     initCentralWidget();
@@ -76,8 +76,8 @@ void DFileManagerWindow::initLeftSideBar()
 {
     m_leftSideBar = new DLeftSideBar(this);
     m_leftSideBar->setObjectName("LeftSideBar");
-    m_leftSideBar->setMaximumWidth(200);
-    m_leftSideBar->setMinimumWidth(60);
+    m_leftSideBar->setMaximumWidth(LEFTSIDEBAR_MAX_WIDTH);
+    m_leftSideBar->setMinimumWidth(LEFTSIDEBAR_MIN_WIDTH);
     m_leftSideBar->setFocusPolicy(Qt::ClickFocus);
 }
 
@@ -88,7 +88,7 @@ void DFileManagerWindow::initRightView()
     initDetailView();
     m_rightView = new QFrame;
 
-    qDebug()<<"m_titleBar->();"<<m_titleBar->buttonAreaWidth();
+    m_titleFrame = new QFrame;
     QHBoxLayout * titleLayout = new QHBoxLayout;
     titleLayout->setMargin(0);
     titleLayout->setSpacing(0);
@@ -102,6 +102,10 @@ void DFileManagerWindow::initRightView()
     titleLayout->setSpacing(0);
     titleLayout->setContentsMargins(0, 0, 0, 0);
 
+    m_titleFrame->setLayout(titleLayout);
+
+    m_titleFrame->setFixedHeight(TITLE_FIXED_HEIGHT);
+
     QHBoxLayout* viewLayout = new QHBoxLayout;
     viewLayout->addWidget(m_fileView);
     viewLayout->addWidget(m_detailView);
@@ -114,7 +118,7 @@ void DFileManagerWindow::initRightView()
     m_statusBar->setAttribute(Qt::WA_TranslucentBackground);
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
-    mainLayout->addLayout(titleLayout);
+    mainLayout->addWidget(m_titleFrame);
     mainLayout->addLayout(viewLayout);
     mainLayout->addWidget(m_statusBar);
     mainLayout->setSpacing(0);
@@ -177,7 +181,8 @@ void DFileManagerWindow::initConnect()
 
 
 void DFileManagerWindow::resizeEvent(QResizeEvent *event)
-{
+{  
+    m_titleFrame->setMaximumWidth(rect().width() - LEFTSIDEBAR_MAX_WIDTH);
     DMovableMainWindow::resizeEvent(event);
 }
 

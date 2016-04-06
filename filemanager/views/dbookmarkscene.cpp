@@ -2,15 +2,14 @@
 #include "dbookmarkitem.h"
 #include "dbookmarkrootitem.h"
 #include "dbookmarkitemgroup.h"
-
 #include "../app/global.h"
-
 #include "../controllers/bookmarkmanager.h"
-
 #include <QDebug>
 #include <QGraphicsView>
 #include <QMimeData>
 #include <QDir>
+#include "../app/fmevent.h"
+#include "../app/filesignalmanager.h"
 
 DBookmarkScene::DBookmarkScene()
 {
@@ -18,6 +17,8 @@ DBookmarkScene::DBookmarkScene()
     m_rootItem = new DBookmarkRootItem(this);
     m_itemGroup->addItem(m_rootItem);
     QGraphicsScene::addItem(m_rootItem);
+    connect(fileSignalManager, &FileSignalManager::currentUrlChanged,
+            this, &DBookmarkScene::currentUrlChanged);
 }
 
 void DBookmarkScene::addItem(DBookmarkItem *item)
@@ -173,6 +174,23 @@ void DBookmarkScene::doDragFinished(const QPointF &point, DBookmarkItem *item)
     {
         bookmarkManager->removeBookmark(item->text(), item->getUrl());
         remove(item);
+    }
+}
+
+void DBookmarkScene::currentUrlChanged(const FMEvent &event)
+{
+    qDebug() << event.dir << event.source;
+    if(event.source == FMEvent::FileView)
+    {
+        for(int i = 0; i < m_items.size(); i++)
+        {
+            if(event.dir == m_items.at(i)->getUrl())
+            {
+                m_itemGroup->deselectAll();
+                m_items.at(i)->setChecked(true);
+                break;
+            }
+        }
     }
 }
 

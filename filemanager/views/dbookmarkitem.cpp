@@ -6,6 +6,8 @@
 #include <QApplication>
 #include <QStyleOptionGraphicsItem>
 #include <QGraphicsScene>
+#include "dfilemenu.h"
+#include "filemenumanager.h"
 
 DBookmarkItem::DBookmarkItem()
 {
@@ -124,18 +126,21 @@ void DBookmarkItem::boundImageToHover(QString imagePath)
 
 void DBookmarkItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    if(m_isDraggable)
+    if(event->button() == Qt::LeftButton)
     {
-        m_xPress = event->pos().x();
-        m_yPress = event->pos().y();
-    }
-    m_pressed = true;
-    emit clicked();
-    if(m_group)
-    {
-        qDebug() << "fdsfsdf";
-        m_group->deselectAll();
-        setChecked(true);
+        if(m_isDraggable)
+        {
+            m_xPress = event->pos().x();
+            m_yPress = event->pos().y();
+        }
+        m_pressed = true;
+        emit clicked();
+        if(m_group)
+        {
+            qDebug() << "fdsfsdf";
+            m_group->deselectAll();
+            setChecked(true);
+        }
     }
     update();
 }
@@ -196,11 +201,11 @@ QPixmap DBookmarkItem::toPixmap() const
 void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event);
-    m_pressed = false;
-    if(m_group)
+    if(m_group && m_pressed)
     {
         emit m_group->url(m_url);
     }
+    m_pressed = false;
     update();
 }
 
@@ -263,6 +268,15 @@ void DBookmarkItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
     Q_UNUSED(event);
+    DFileMenu *menu;
+    if(m_isDefault)
+        menu = FileMenuManager::createDefaultBookMarkMenu();
+    else
+        menu = FileMenuManager::createCustomBookMarkMenu();
+    menu->setUrl(m_url);
+    menu->deleteLater();
+    menu->exec(QCursor::pos());
+    event->accept();
 }
 
 void DBookmarkItem::setDraggable(bool b)

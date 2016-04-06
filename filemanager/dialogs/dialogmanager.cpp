@@ -54,7 +54,6 @@ void DialogManager::handleDataUpdated()
         emit fileSignalManager->jobDataUpdated(jobDetail, jobDataDetail);
         emit fileSignalManager->conflictDialogShowed(jobDetail);
     }
-
 }
 
 void DialogManager::handleConflictRepsonseConfirmed(const QMap<QString, QString> &jobDetail, const QMap<QString, QVariant> &response)
