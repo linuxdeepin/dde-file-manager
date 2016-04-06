@@ -42,7 +42,6 @@ HEADERS += \
     filemanager/controllers/appcontroller.h \
     filemanager/app/filemanagerapp.h \
     filemanager/views/dmovablemainwindow.h \
-    filemanager/views/dtitlebar.h \
     filemanager/views/dleftsidebar.h \
     filemanager/views/dtoolbar.h \
     filemanager/views/dfileview.h \
@@ -116,7 +115,6 @@ SOURCES += \
     filemanager/main.cpp \
     filemanager/app/filemanagerapp.cpp \
     filemanager/views/dmovablemainwindow.cpp \
-    filemanager/views/dtitlebar.cpp \
     filemanager/views/dleftsidebar.cpp \
     filemanager/views/dtoolbar.cpp \
     filemanager/views/dfileview.cpp \
