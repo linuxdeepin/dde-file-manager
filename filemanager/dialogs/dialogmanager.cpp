@@ -9,7 +9,7 @@ DialogManager::DialogManager(QObject *parent) : QObject(parent)
 {
     initTaskDialog();
     initConnect();
-    handleDataUpdated();
+//    handleDataUpdated();
 }
 
 DialogManager::~DialogManager()
