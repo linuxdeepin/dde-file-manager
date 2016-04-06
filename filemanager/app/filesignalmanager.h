@@ -19,46 +19,58 @@ public:
         QObject(parent){}
 
 signals:
-    /// change currentUrl
+    /* change currentUrl*/
     void requestChangeCurrentUrl(const FMEvent &event);
-    /// current display url changed
+
+    /* current display url changed*/
     void currentUrlChanged(const FMEvent &event);
 
-    /// in folder files
+    /* in folder files */
     void requestChildren(const QString &url, int filter = int(QDir::AllEntries | QDir::NoDotDot)) const;
     void childrenChanged(const QString &url, const QList<FileInfo*> &list) const;
 
-    /// file icon
+    /* file icon*/
     void requestIcon(const QString &url) const;
     void iconChanged(const QString &url, const QIcon &icon) const;
 
-    /// refresh folder
+    /* refresh folder*/
     void refreshFolder(const QString &url) const;
 
-    /// open file signal
+    /* open file signal*/
     void fileOpened(const QString &url) const;
 
-    /*dbus to copy job dialog */
+    /*add copy/move/delete job to taskdialog when copy/move/delete job created*/
     void jobAdded(const QMap<QString, QString>& jobDetail);
+
+    /*remove copy/move/delete job to taskdialog when copy/move/delete job finished*/
     void jobRemoved(const QMap<QString, QString>& jobDetail);
 
+    /*update copy/move/delete job taskdialog ui*/
     void jobDataUpdated(const QMap<QString, QString>& jobDetail,
                            const QMap<QString, QString>& data);
 
+    /*abort copy/move/delete job taskdialog from ui*/
     void abortTask(const QMap<QString, QString>& jobDetail);
 
-//    /*copy/move job conflict dialog show */
-//    void conflictDialogShowed(const QMap<QString, QString>& jobDetail);
-//    void conflictRepsonseConfirmed(const QMap<QString, QString>& jobDetail, const QMap<QString, QVariant>& response);
+    /*copy/move job conflict dialog show */
+    void conflictDialogShowed(const QMap<QString, QString>& jobDetail);
 
-//    void conflictTimerStoped(const QMap<QString, QString>& jobDetail);
-//    void conflictTimerReStarted(const QMap<QString, QString>& jobDetail);
+    /*conflictTimer in move/copy job  stop when conflict dialog showed*/
+    void conflictTimerStoped(const QMap<QString, QString>& jobDetail);
 
-    /// file rename
+    /*conflictTimer in move/copy job restart when conflict dialog showed*/
+    void conflictTimerReStarted(const QMap<QString, QString>& jobDetail);
+
+    /*copy/move job conflict response confirmed from ui*/
+    void conflictRepsonseConfirmed(const QMap<QString, QString>& jobDetail, const QMap<QString, QVariant>& response);
+
+    /* file rename */
     void requestRename(const FMEvent &event);
 
-    /// view sort
+    /* view sort */
     void requestViewSort(int windowId, Global::SortRole role);
+
+
 };
 
 #endif // FILESIGNALMANAGER_H

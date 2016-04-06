@@ -4,13 +4,10 @@
 #include <QObject>
 
 class WindowManager;
-#define DEEPIN_UI_ENABLE 1
-
 class FileManagerWindow;
 class DFileManagerWindow;
 class AppController;
-class DTaskDialog;
-class QTimer;
+class DialogManager;
 
 class FileManagerApp : public QObject
 {
@@ -23,7 +20,7 @@ public:
     void initGtk();
     void initApp();
     void initView();
-    void initTaskDialog();
+    void initDialogManager();
     void initController();
     void initManager();
     void initCommandline();
@@ -34,15 +31,13 @@ public:
 
 public slots:
     void show();
-    void handleDataUpdated();
 
 private:
     WindowManager* m_windowManager = NULL;
     FileManagerWindow* m_fileManagerWindow = NULL;
     DFileManagerWindow * m_dFileMangerWindow = NULL;
     AppController* m_appController = NULL;
-    DTaskDialog* m_taskDialog = NULL;
-    QTimer* m_timer;
+    DialogManager* m_dialogManager = NULL;
 };
 
 #endif // FILEMANAGERAPP_H

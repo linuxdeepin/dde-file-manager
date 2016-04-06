@@ -360,7 +360,7 @@ void DTaskDialog::setTitle(int taskCount){
 }
 
 void DTaskDialog::addTask(const QMap<QString, QString> &jobDetail){
-    if (jobDetail.contains("jobPath")){
+    if (jobDetail.contains("jobId")){
         MoveCopyTaskWidget* moveWidget = new MoveCopyTaskWidget(jobDetail);
         moveWidget->setFixedHeight(60);
         connect(moveWidget, SIGNAL(closed(QMap<QString,QString>)),
@@ -377,7 +377,7 @@ void DTaskDialog::addTask(const QMap<QString, QString> &jobDetail){
         item->setSizeHint(QSize(item->sizeHint().width(), 60));
         m_taskListWidget->addItem(item);
         m_taskListWidget->setItemWidget(item, moveWidget);
-        m_jobPathItems.insert(jobDetail.value("jobPath"), item);
+        m_jobIdItems.insert(jobDetail.value("jobId"), item);
         setTitle(m_taskListWidget->count());
         adjustSize();
         show();
@@ -385,7 +385,7 @@ void DTaskDialog::addTask(const QMap<QString, QString> &jobDetail){
 }
 
 void DTaskDialog::addConflictTask(const QMap<QString, QString> &jobDetail){
-    if (jobDetail.contains("jobPath")){
+    if (jobDetail.contains("jobId")){
         MoveCopyTaskWidget* moveWidget = new MoveCopyTaskWidget(jobDetail);
         moveWidget->setFixedHeight(85);
         connect(moveWidget, SIGNAL(closed(QMap<QString,QString>)),
@@ -402,7 +402,7 @@ void DTaskDialog::addConflictTask(const QMap<QString, QString> &jobDetail){
         item->setSizeHint(QSize(item->sizeHint().width(), 85));
         m_taskListWidget->addItem(item);
         m_taskListWidget->setItemWidget(item, moveWidget);
-        m_jobPathItems.insert(jobDetail.value("jobPath"), item);
+        m_jobIdItems.insert(jobDetail.value("jobId"), item);
         setTitle(m_taskListWidget->count());
         adjustSize();
         show();
@@ -425,12 +425,12 @@ void DTaskDialog::adjustSize(){
     }
 }
 
-void DTaskDialog::removeTaskByPath(QString jobPath){
-    if (m_jobPathItems.contains(jobPath)){
-        QListWidgetItem* item = m_jobPathItems.value(jobPath);
+void DTaskDialog::removeTaskByPath(QString jobId){
+    if (m_jobIdItems.contains(jobId)){
+        QListWidgetItem* item = m_jobIdItems.value(jobId);
         m_taskListWidget->removeItemWidget(item);
         m_taskListWidget->takeItem(m_taskListWidget->row(item));
-        m_jobPathItems.remove(jobPath);
+        m_jobIdItems.remove(jobId);
         setTitle(m_taskListWidget->count());
         if (m_taskListWidget->count() == 0){
             hide();
@@ -440,10 +440,10 @@ void DTaskDialog::removeTaskByPath(QString jobPath){
 
 void DTaskDialog::showConflictDiloagByJob(const QMap<QString, QString> &jobDetail){
     qDebug() << jobDetail;
-    if (jobDetail.contains("jobPath")){
-        QString jobPath = jobDetail.value("jobPath");
-        if (m_jobPathItems.contains(jobPath)){
-            QListWidgetItem* item = m_jobPathItems.value(jobPath);
+    if (jobDetail.contains("jobId")){
+        QString jobId = jobDetail.value("jobId");
+        if (m_jobIdItems.contains(jobId)){
+            QListWidgetItem* item = m_jobIdItems.value(jobId);
             MoveCopyTaskWidget* w = static_cast<MoveCopyTaskWidget*>(m_taskListWidget->itemWidget(item));
             w->showConflict();
         }
@@ -464,18 +464,18 @@ void DTaskDialog::handleTaskClose(const QMap<QString, QString> &jobDetail){
 }
 
 void DTaskDialog::removeTask(const QMap<QString, QString> &jobDetail){
-    if (jobDetail.contains("jobPath")){
-        removeTaskByPath(jobDetail.value("jobPath"));
+    if (jobDetail.contains("jobId")){
+        removeTaskByPath(jobDetail.value("jobId"));
         adjustSize();
     }
 }
 
 void DTaskDialog::handleUpdateTaskWidget(const QMap<QString, QString> &jobDetail,
                                          const QMap<QString, QString> &data){
-    if (jobDetail.contains("jobPath")){
-        QString jobPath = jobDetail.value("jobPath");
-        if (m_jobPathItems.contains(jobPath)){
-            QListWidgetItem* item = m_jobPathItems.value(jobPath);
+    if (jobDetail.contains("jobId")){
+        QString jobId = jobDetail.value("jobId");
+        if (m_jobIdItems.contains(jobId)){
+            QListWidgetItem* item = m_jobIdItems.value(jobId);
             MoveCopyTaskWidget* w = static_cast<MoveCopyTaskWidget*>(m_taskListWidget->itemWidget(item));
             w->updateMessage(data);
         }
@@ -485,7 +485,7 @@ void DTaskDialog::handleUpdateTaskWidget(const QMap<QString, QString> &jobDetail
 
 void DTaskDialog::closeEvent(QCloseEvent *event){
     qDebug() << "close===========";
-    foreach (QListWidgetItem* item, m_jobPathItems.values()) {
+    foreach (QListWidgetItem* item, m_jobIdItems.values()) {
         if (item){
             if (m_taskListWidget->itemWidget(item)){
                 MoveCopyTaskWidget* w = static_cast<MoveCopyTaskWidget*>(m_taskListWidget->itemWidget(item));

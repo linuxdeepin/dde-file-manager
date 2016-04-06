@@ -94,7 +94,7 @@ public slots:
     void addConflictTask(const QMap<QString, QString>& jobDetail);
     void handleTaskClose(const QMap<QString, QString>& jobDetail);
     void removeTask(const QMap<QString, QString>& jobDetail);
-    void removeTaskByPath(QString jobPath);
+    void removeTaskByPath(QString jobId);
     void handleUpdateTaskWidget(const QMap<QString, QString>& jobDetail,
                                 const QMap<QString, QString>& data);
     void adjustSize();
@@ -112,7 +112,7 @@ private:
     QPushButton* m_titleBarMinimizeButton;
     QPushButton* m_titleBarCloseButton;
     QListWidget* m_taskListWidget=NULL;
-    QMap<QString, QListWidgetItem*> m_jobPathItems;
+    QMap<QString, QListWidgetItem*> m_jobIdItems;
 };
 
 #endif // DTASKDIALOG_H
