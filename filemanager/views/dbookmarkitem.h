@@ -87,6 +87,7 @@ private:
     bool m_pressed;
     bool m_hovered;
     bool m_backgroundEnabled;
+    bool m_isMenuOpened;
 
     QColor m_hoverBackgroundColor;
     QColor m_releaseBackgroundColor;

@@ -20,6 +20,7 @@ DBookmarkItem::DBookmarkItem()
     m_yPos = 0;
     m_xOffsetImage = 0;
     m_yOffsetImage = 0;
+    m_isMenuOpened = false;
     m_checked = false;
     m_checkable = true;
     m_isDefault = false;
@@ -261,13 +262,18 @@ void DBookmarkItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 void DBookmarkItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event);
-    m_hovered = false;
-    update();
+    if(!m_isMenuOpened)
+    {
+        m_hovered = false;
+        update();
+    }
 }
 
 void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
     Q_UNUSED(event);
+    qDebug() <<"menu begin";
+    m_isMenuOpened = true;
     DFileMenu *menu;
     if(m_isDefault)
         menu = FileMenuManager::createDefaultBookMarkMenu();
@@ -276,6 +282,10 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     menu->setUrl(m_url);
     menu->deleteLater();
     menu->exec(QCursor::pos());
+    qDebug() <<"menu done";
+    m_isMenuOpened = false;
+    m_hovered = false;
+    update();
     event->accept();
 }
 
