@@ -1,8 +1,12 @@
 #include "dsearchbar.h"
+#include "ddirmodel.h"
+
+#include "../app/global.h"
+
+#include "../controllers/searchhistroymanager.h"
+
 #include <QDirModel>
 #include <QDebug>
-#include "ddirmodel.h"
-#include "../app/global.h"
 
 DSearchBar::DSearchBar(QWidget *parent):QLineEdit(parent)
 {

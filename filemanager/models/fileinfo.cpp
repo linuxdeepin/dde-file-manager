@@ -1,4 +1,5 @@
 #include "fileinfo.h"
+
 #include "../app/global.h"
 
 #include <QDateTime>

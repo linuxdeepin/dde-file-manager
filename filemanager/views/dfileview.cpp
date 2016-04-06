@@ -1,16 +1,20 @@
 #include "dfileview.h"
 #include "dfilesystemmodel.h"
-#include "../app/global.h"
-#include "../app/fmevent.h"
-#include "../app/filemanagerapp.h"
-#include "../controllers/appcontroller.h"
-#include "../controllers/filecontroller.h"
 #include "fileitem.h"
 #include "filemenumanager.h"
 #include "dfileitemdelegate.h"
 #include "fileinfo.h"
 #include "dfilemenu.h"
 #include "dscrollbar.h"
+
+#include "../app/global.h"
+#include "../app/fmevent.h"
+#include "../app/filemanagerapp.h"
+#include "../app/filesignalmanager.h"
+
+#include "../controllers/appcontroller.h"
+#include "../controllers/filecontroller.h"
+
 #include "../dialogs/propertydialog.h"
 
 #include <dthememanager.h>
@@ -80,6 +84,8 @@ void DFileView::initConnects()
             model(), &DFileSystemModel::updateChildren);
     connect(fileSignalManager, &FileSignalManager::refreshFolder,
             model(), &DFileSystemModel::refresh);
+    connect(fileSignalManager, &FileSignalManager::requestRename,
+            this, static_cast<void (DFileView::*)(const FMEvent&)>(&DFileView::edit));
 }
 
 DFileSystemModel *DFileView::model() const
@@ -152,9 +158,6 @@ void DFileView::cd(const FMEvent &event)
 
 void DFileView::edit(const FMEvent &event)
 {
-    if(currentUrl() == event.dir)
-        return;
-
     const QModelIndex &index = model()->index(event.dir);
 
     edit(index);
@@ -226,6 +229,15 @@ void DFileView::switchToIconMode()
     setIconSize(currentIconSize());
     setOrientation(QListView::LeftToRight, true);
     setSpacing(5);
+}
+
+void DFileView::sort(int windowId, int role)
+{
+    /// TODO
+
+    Q_UNUSED(windowId)
+
+    model()->sort(m_columnRoles.indexOf(role));
 }
 
 void DFileView::moveColumnRole(int /*logicalIndex*/, int oldVisualIndex, int newVisualIndex)

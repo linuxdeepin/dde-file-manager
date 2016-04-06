@@ -1,9 +1,19 @@
 #include "dleftsidebar.h"
 #include "../app/global.h"
 #include "../app/fmevent.h"
+#include "../app/filesignalmanager.h"
 #include "dcheckablebutton.h"
 #include "dhorizseparator.h"
 #include "dscrollbar.h"
+#include "../controllers/bookmarkmanager.h"
+
+#include "dhoverbutton.h"
+#include "bmlistwidget.h"
+#include "bmlistwidgetitem.h"
+#include "dbookmarkitem.h"
+#include "dbookmarkscene.h"
+#include "dbookmarkitemgroup.h"
+#include "dbookmarkrootitem.h"
 
 #include <QVBoxLayout>
 #include <QButtonGroup>
@@ -12,13 +22,6 @@
 #include <QDebug>
 #include <QListWidgetItem>
 #include <QLabel>
-#include "dhoverbutton.h"
-#include "bmlistwidget.h"
-#include "bmlistwidgetitem.h"
-#include "dbookmarkitem.h"
-#include "dbookmarkscene.h"
-#include "dbookmarkitemgroup.h"
-#include "dbookmarkrootitem.h"
 
 
 DLeftSideBar::DLeftSideBar(QWidget *parent) : QFrame(parent)

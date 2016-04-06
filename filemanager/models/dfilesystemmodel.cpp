@@ -1,8 +1,12 @@
 #include "dfilesystemmodel.h"
-#include "../app/global.h"
 #include "desktopfileinfo.h"
+
+#include "../app/global.h"
 #include "../app/filemanagerapp.h"
+#include "../app/filesignalmanager.h"
+
 #include "../controllers/appcontroller.h"
+
 #include "filemonitor/filemonitor.h"
 
 #include <QDebug>

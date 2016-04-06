@@ -1,7 +1,8 @@
 #include "dfileitemdelegate.h"
 #include "fileitem.h"
-#include "../app/global.h"
 #include "dfilesystemmodel.h"
+
+#include "../app/global.h"
 
 #include <QLabel>
 #include <QPainter>

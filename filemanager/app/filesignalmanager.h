@@ -1,6 +1,8 @@
 #ifndef FILESIGNALMANAGER_H
 #define FILESIGNALMANAGER_H
 
+#include "global.h"
+
 #include <QObject>
 #include <QDir>
 #include <QDebug>
@@ -51,6 +53,12 @@ signals:
 
 //    void conflictTimerStoped(const QMap<QString, QString>& jobDetail);
 //    void conflictTimerReStarted(const QMap<QString, QString>& jobDetail);
+
+    /// file rename
+    void requestRename(const FMEvent &event);
+
+    /// view sort
+    void requestViewSort(int windowId, Global::SortRole role);
 };
 
 #endif // FILESIGNALMANAGER_H

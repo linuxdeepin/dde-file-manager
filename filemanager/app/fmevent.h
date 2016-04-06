@@ -13,13 +13,15 @@ public:
         UpButton,
         FileView,
         SearchLine,
+        Menu,
         Unknow
     };
+
     FMEvent();
+
     int windowId = -1;
     EventSource source = Unknow;
     QString dir;
-
 };
 
 QT_BEGIN_NAMESPACE
