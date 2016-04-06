@@ -2,9 +2,8 @@
 #define DFILEMANAGERWINDOW_H
 
 #include "dmovablemainwindow.h"
+#include <dtitlebar.h>
 
-
-class DTitleBar;
 class DLeftSideBar;
 class DToolBar;
 class DFileView;
@@ -16,6 +15,8 @@ class QVBoxLayout;
 class QSplitter;
 class QResizeEvent;
 class DSplitter;
+
+DWIDGET_USE_NAMESPACE
 
 class DFileManagerWindow : public DMovableMainWindow
 {
@@ -44,7 +45,7 @@ public:
 signals:
 
 public slots:
-    void toggleMaxNormal();
+
 
 protected:
     void resizeEvent(QResizeEvent* event);
@@ -52,7 +53,7 @@ protected:
 
 private:
     QFrame* m_centralWidget;
-    DTitleBar* m_titleBar = NULL;
+    DTitlebar* m_titleBar = NULL;
     DLeftSideBar* m_leftSideBar = NULL;
     QFrame* m_rightView = NULL;
     DToolBar* m_toolbar = NULL;

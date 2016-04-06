@@ -1,6 +1,5 @@
 #include "dfilemanagerwindow.h"
 #include "utils/xutil.h"
-#include "dtitlebar.h"
 #include "dleftsidebar.h"
 #include "dtoolbar.h"
 #include "dfileview.h"
@@ -17,6 +16,8 @@
 #include <QResizeEvent>
 #include "dsearchbar.h"
 #include <QThread>
+
+
 
 const int DFileManagerWindow::MinimumWidth = 0;
 
@@ -52,10 +53,9 @@ void DFileManagerWindow::initUI()
 
 void DFileManagerWindow::initTitleBar()
 {
-    m_titleBar = new DTitleBar;
-    m_titleBar->setObjectName("TitleBar");
-    m_titleBar->setFixedHeight(40);
-    m_titleBar->setFocusPolicy(Qt::ClickFocus);
+    m_titleBar = new DTitlebar;
+    m_titleBar->layout()->setContentsMargins(0, 0, 0, 0);
+    m_titleBar->setWindowFlags(m_titleBar->windowFlags());
     setDragMovableHeight(m_titleBar->height());
 }
 
@@ -88,9 +88,17 @@ void DFileManagerWindow::initRightView()
     initDetailView();
     m_rightView = new QFrame;
 
+    qDebug()<<"m_titleBar->();"<<m_titleBar->buttonAreaWidth();
     QHBoxLayout * titleLayout = new QHBoxLayout;
+    titleLayout->setMargin(0);
+    titleLayout->setSpacing(0);
     titleLayout->addWidget(m_toolbar);
     titleLayout->addWidget(m_titleBar);
+    // TODO: why, fixed me by Iceyer
+    QWidget *empty = new QWidget;
+    empty->setFixedSize(0,1);
+    m_titleBar->setCustomWidget(empty, Qt::AlignLeft, false);
+
     titleLayout->setSpacing(0);
     titleLayout->setContentsMargins(0, 0, 0, 0);
 
@@ -159,23 +167,14 @@ void DFileManagerWindow::initStatusBar()
 
 void DFileManagerWindow::initConnect()
 {
-    connect(m_titleBar, &DTitleBar::minimuned, this, &DFileManagerWindow::showMinimized);
-    connect(m_titleBar, &DTitleBar::switchMaxNormal, this, &DFileManagerWindow::toggleMaxNormal);
-    connect(m_titleBar, &DTitleBar::closed, this, &DFileManagerWindow::close);
+    connect(m_titleBar, &DTitlebar::minimumClicked, this, &DFileManagerWindow::showMinimized);
+    connect(m_titleBar, &DTitlebar::maximumClicked, this, &DFileManagerWindow::showMaximized);
+    connect(m_titleBar, &DTitlebar::restoreClicked, this, &DFileManagerWindow::showNormal);
+    connect(m_titleBar, &DTitlebar::closeClicked, this, &DFileManagerWindow::close);
     connect(m_toolbar, &DToolBar::requestListView, m_fileView, &DFileView::switchToListMode);
     connect(m_toolbar, &DToolBar::requestIconView, m_fileView, &DFileView::switchToIconMode);
 }
 
-void DFileManagerWindow::toggleMaxNormal()
-{
-    if (isMaximized()){
-        showNormal();
-        m_titleBar->setNormalIcon();
-    }else{
-        showMaximized();
-        m_titleBar->setMaxIcon();
-    }
-}
 
 void DFileManagerWindow::resizeEvent(QResizeEvent *event)
 {
