@@ -7,7 +7,7 @@ DStateButton::DStateButton(const QString &iconA, const QString &iconB, QWidget *
 {
     m_buttonState = ButtonState::stateA;
     setIcon(QIcon(m_aStateIcon));
-    setIconSize(QSize(30, 30));
+    setIconSize(QSize(16, 16));
     connect(this, SIGNAL(clicked()), this, SLOT(toogleStateICon()));
 }
 
@@ -17,7 +17,7 @@ DStateButton::DStateButton(const QString &iconA, QWidget *parent):
 {
     m_buttonState = ButtonState::stateA;
     setIcon(QIcon(m_aStateIcon));
-    setIconSize(QSize(30, 30));
+    setIconSize(QSize(16, 16));
 }
 
 DStateButton::~DStateButton()

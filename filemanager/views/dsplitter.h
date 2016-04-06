@@ -9,7 +9,9 @@ class DSplitter : public QSplitter
 public:
     DSplitter(Qt::Orientation orientation, QWidget* parent = 0);
     void moveSplitter(int pos, int index);
-
+protected:
+    void mousePressEvent(QMouseEvent *e);
+    void mouseReleaseEvent(QMouseEvent *e);
 };
 
 #endif // DSPLITTER_H

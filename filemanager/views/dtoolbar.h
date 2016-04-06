@@ -13,6 +13,7 @@ class DTabBar;
 class DCrumbWidget;
 class FMEvent;
 class HistoryStack;
+class DHoverButton;
 
 class DToolBar : public QFrame
 {
@@ -58,7 +59,7 @@ private:
     DIconTextButton* m_deleteFileButton=NULL;
     QPushButton* m_iconViewButton=NULL;
     QPushButton* m_listViewButton=NULL;
-    DStateButton* m_sortingButton=NULL;
+    DHoverButton* m_sortingButton=NULL;
 
     bool m_switchState = false;
     DCrumbWidget * m_crumbWidget = NULL;

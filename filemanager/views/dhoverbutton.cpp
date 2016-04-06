@@ -1,16 +1,49 @@
 #include "dhoverbutton.h"
-#include <QDebug>
-#include <QLabel>
+#include "filemenumanager.h"
+#include "dfilemenu.h"
 #include <QHBoxLayout>
+#include <QDebug>
 
 DHoverButton::DHoverButton(const QString &normal, const QString &hover, QWidget *parent)
+    :QPushButton(parent)
 {
-    Q_UNUSED(normal)
-    Q_UNUSED(hover)
-    Q_UNUSED(parent)
+    QIcon n(normal);
+    m_normal = n;
+    QIcon h(hover);
+    m_hover = h;
+    initUI();
+}
+
+void DHoverButton::setMenu(DFileMenu *menu)
+{
+    m_menu = menu;
+}
+
+void DHoverButton::enterEvent(QEvent *e)
+{
+    m_iconLabel->setPixmap(m_hover.pixmap(16,16));
+}
+
+void DHoverButton::leaveEvent(QEvent *e)
+{
+    m_iconLabel->setPixmap(m_normal.pixmap(16,16));
+}
+
+void DHoverButton::mousePressEvent(QMouseEvent *e)
+{
+    if(m_menu)
+        m_menu->exec(mapToGlobal(rect().bottomLeft()));
 }
 
 void DHoverButton::initUI()
 {
+    m_iconLabel = new QLabel;
+    m_iconLabel->setPixmap(m_normal.pixmap(16,16));
+    m_iconLabel->setFixedSize(16, 16);
 
+    QHBoxLayout* mainLayout = new QHBoxLayout;
+    mainLayout->addWidget(m_iconLabel);
+    mainLayout->setSpacing(10);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+    setLayout(mainLayout);
 }

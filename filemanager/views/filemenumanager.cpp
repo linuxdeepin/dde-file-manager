@@ -407,6 +407,16 @@ void FileMenuManager::doOpen(const QString &url)
         fileManagerApp->getAppController()->getFileController()->openFile(url);
         return;
     }
+    const QString &scheme = QUrl(url).scheme();
+    if(scheme == RECENT_SCHEME ||
+       scheme == BOOKMARK_SCHEME ||
+       scheme == TRASH_SCHEME)
+    {
+        FMEvent event;
+        event.dir = url;
+        event.source = FMEvent::FileView;
+        emit fileSignalManager->requestChangeCurrentUrl(event);
+    }
 }
 
 void FileMenuManager::doOpenFileLocation(const QString &url)
@@ -445,6 +455,12 @@ void FileMenuManager::doRename(const QString &url)
     emit fileSignalManager->requestRename(event);
 }
 
+/**
+ * @brief FileMenuManager::doDelete
+ * @param url
+ *
+ * Trash file or directory with the given url address.
+ */
 void FileMenuManager::doDelete(const QString &url)
 {
     FileJob * job = new FileJob;
@@ -458,6 +474,12 @@ void FileMenuManager::doDelete(const QString &url)
     emit startMoveToTrash(url);
 }
 
+/**
+ * @brief FileMenuManager::doCompleteDeletion
+ * @param url
+ *
+ * Permanently delete file or directory with the given url.
+ */
 void FileMenuManager::doCompleteDeletion(const QString &url)
 {
     FileJob * job = new FileJob;
@@ -471,12 +493,38 @@ void FileMenuManager::doCompleteDeletion(const QString &url)
     emit startCompleteDeletion(url);
 }
 
+void FileMenuManager::doSorting(MenuAction action)
+{
+    qDebug() << action << Name;
+    switch(action)
+    {
+    case Name:
+        emit fileSignalManager->requestViewSort(0, Global::FileNameRole);
+        break;
+    case Size:
+        emit fileSignalManager->requestViewSort(0, Global::FileSizeRole);
+        break;
+    case Type:
+        fileSignalManager->requestViewSort(0, Global::FileSizeRole);
+        break;
+    case CreatedDate:
+        emit fileSignalManager->requestViewSort(0, Global::FileLastModified);
+        break;
+    case LastModifiedDate:
+        emit fileSignalManager->requestViewSort(0, Global::FileCreated);
+        break;
+    default:
+        qDebug() << "unkown action type";
+    }
+}
+
 
 void FileMenuManager::actionTriggered(DAction *action)
 {
     DFileMenu *menu = qobject_cast<DFileMenu *>(sender());
     QString url = menu->getUrl();
-    switch(action->data().toInt())
+    MenuAction type = (MenuAction)action->data().toInt();
+    switch(type)
     {
     case Open:doOpen(url);break;
     case OpenInNewWindow:break;
@@ -503,15 +551,17 @@ void FileMenuManager::actionTriggered(DAction *action)
     case Restore:break;
     case Mount:break;
     case Unmount:break;
-    case Name:break;
-    case Size:break;
-    case Type:break;
-    case CreatedDate:break;
-    case LastModifiedDate:break;
+    case Name:doSorting(type);break;
+    case Size:doSorting(type);break;
+    case Type:doSorting(type);break;
+    case CreatedDate:doSorting(type);break;
+    case LastModifiedDate:doSorting(type);break;
     case Help:break;
     case About:break;
     case Exit:break;
     case IconView:break;
     case ListView:break;
+    default:
+        qDebug() << "unknown action type";
     }
 }

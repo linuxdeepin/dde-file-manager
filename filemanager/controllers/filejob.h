@@ -3,6 +3,9 @@
 
 #include <QObject>
 
+#define TRANSFER_RATE 5
+#define MSEC_FOR_DISPLAY 1000
+
 class FileJob : public QObject
 {
     Q_OBJECT
@@ -15,6 +18,8 @@ public:
     };
 
     explicit FileJob(QObject *parent = 0);
+    void setJobId(const QString &id);
+    QString getJobId();
 signals:
     void progressPercent(int value);
     void error(QString content);
@@ -27,9 +32,11 @@ public slots:
     void paused();
     void started();
     void cancelled();
+    void jobUpdated();
 private:
     Status m_status;
     QString m_trashLoc;
+    QString m_id;
     bool copyFile(const QString &srcFile, const QString &tarFile);
     bool copyDir(const QString &srcPath, const QString &tarPath);
     bool deleteFile(const QString &file);

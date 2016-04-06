@@ -1,15 +1,28 @@
 #include "filejob.h"
+#include "../app/global.h"
 #include <QFile>
 #include <QThread>
 #include <QDir>
 #include <QDebug>
 #include <QDateTime>
+#include <QTimer>
 
 FileJob::FileJob(QObject *parent) : QObject(parent)
 {
     m_status = FileJob::Started;
     QString user = getenv("USER");
     m_trashLoc = "/home/" + user + "/.local/share/Trash";
+    m_id = QDateTime::currentDateTime().toString();
+}
+
+void FileJob::setJobId(const QString &id)
+{
+    m_id = id;
+}
+
+QString FileJob::getJobId()
+{
+    return m_id;
 }
 
 void FileJob::doCopy(const QString &source, const QString &destination)
@@ -59,17 +72,37 @@ void FileJob::cancelled()
     m_status = FileJob::Cancelled;
 }
 
+void FileJob::jobUpdated()
+{
+//    QMap<QString, QString> jobDataDetail;
+//    jobDataDetail.insert("speed", "1M/s");
+//    jobDataDetail.insert("remainTime", QString("%1 s").arg(QString::number(10)));
+//    jobDataDetail.insert("file", "111111111111");
+//    jobDataDetail.insert("progress", "20");
+//    jobDataDetail.insert("destination", "home");
+}
+
 bool FileJob::copyFile(const QString &srcFile, const QString &tarFile)
 {
+    QTimer * timer = new QTimer(this);
+    timer->setInterval(MSEC_FOR_DISPLAY);
+    connect(timer, &QTimer::timeout, this, &FileJob::jobUpdated);
     QFile from(srcFile);
-    if(!from.exists())
+    QFile to(tarFile);
+    if(!from.open(QIODevice::ReadOnly))
     {
         emit error("Source file doesn't exist!");
+        timer->deleteLater();
         return false;
     }
-    QFile to(tarFile);
-    from.open(QIODevice::ReadOnly);
-    to.open(QIODevice::WriteOnly);
+
+    if(!to.open(QIODevice::WriteOnly))
+    {
+        emit error("Target file doesn't exist!");
+        timer->deleteLater();
+        return false;
+    }
+    timer->start();
     qint64 index = 0;
     qint64 size = from.size();
     while(true)
@@ -84,7 +117,7 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarFile)
                 from.seek(index);
                 to.seek(index);
                 index += 1024 * 64;
-                emit progressPercent((int)(index *100 / size));
+                emit progressPercent((int)(index *100 / size));               
                 break;
             }
             case FileJob::Paused:

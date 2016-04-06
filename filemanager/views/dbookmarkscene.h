@@ -8,6 +8,7 @@
 class DBookmarkItem;
 class DBookmarkRootItem;
 class DBookmarkItemGroup;
+class FMEvent;
 
 class DBookmarkScene : public QGraphicsScene
 {
@@ -33,6 +34,7 @@ signals:
     void dropped();
 public slots:
     void doDragFinished(const QPointF &point, DBookmarkItem *item);
+    void currentUrlChanged(const FMEvent &event);
 private:
     void increaseSize();
     DBookmarkRootItem * m_rootItem;

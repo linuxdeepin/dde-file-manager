@@ -91,6 +91,7 @@ private:
     void doRename(const QString &url);
     void doDelete(const QString &url);
     void doCompleteDeletion(const QString &url);
+    void doSorting(MenuAction action);
 public slots:
     void actionTriggered(DAction * action);
 signals:

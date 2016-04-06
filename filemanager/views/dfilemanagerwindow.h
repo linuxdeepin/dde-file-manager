@@ -4,6 +4,13 @@
 #include "dmovablemainwindow.h"
 #include <dtitlebar.h>
 
+#define DEFAULT_WINDOWS_WIDTH 950
+#define DEFAULT_WINDOWS_HEIGHT 600
+#define LEFTSIDEBAR_MAX_WIDTH 200
+#define LEFTSIDEBAR_MIN_WIDTH 60
+#define TITLE_FIXED_HEIGHT 40
+
+class DTitleBar;
 class DLeftSideBar;
 class DToolBar;
 class DFileView;
@@ -63,6 +70,7 @@ private:
     QVBoxLayout* m_mainLayout;
     QVBoxLayout* m_viewLayout;
     DSplitter* m_splitter;
+    QFrame * m_titleFrame = NULL;
 };
 
 #endif // DFILEMANAGERWINDOW_H
