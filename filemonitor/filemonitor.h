@@ -44,8 +44,6 @@ private:
     FileMonitorWoker* m_fileMonitorWorker;
     QThread* m_fileThread;
     QMap<int, QString> m_moveEvent;
-    QMap<QString, int> m_pathMonitorConuter;
-    QString m_appGroupPath;
 };
 
 #endif // FileMonitor_H
