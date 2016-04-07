@@ -25,9 +25,9 @@ signals:
     /* current display url changed*/
     void currentUrlChanged(const FMEvent &event);
 
-    /* in folder files */
-    void requestChildren(const QString &url, int filter = int(QDir::AllEntries | QDir::NoDotDot)) const;
-    void childrenChanged(const QString &url, const QList<FileInfo*> &list) const;
+    /// in folder files
+    void requestChildren(const FMEvent &event, QDir::Filters filter = QDir::AllEntries | QDir::NoDotDot) const;
+    void childrenChanged(const FMEvent &event, const QList<AbstractFileInfo*> &list) const;
 
     /* file icon*/
     void requestIcon(const QString &url) const;
@@ -36,6 +36,7 @@ signals:
     /* refresh folder*/
     void refreshFolder(const QString &url) const;
 
+    void requestOpenFile(const QString &url) const;
     /* open file signal*/
     void fileOpened(const QString &url) const;
 
@@ -69,8 +70,6 @@ signals:
 
     /* view sort */
     void requestViewSort(int windowId, Global::SortRole role);
-
-
 };
 
 #endif // FILESIGNALMANAGER_H

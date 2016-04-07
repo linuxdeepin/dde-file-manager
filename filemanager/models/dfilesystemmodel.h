@@ -1,13 +1,11 @@
 #ifndef DFILESYSTEMMODEL_H
 #define DFILESYSTEMMODEL_H
 
-#include "../shutil/iconprovider.h"
-
 #include <QAbstractItemModel>
 #include <QFileSystemModel>
 
 class FileSystemNode;
-class FileInfo;
+class AbstractFileInfo;
 
 class DFileSystemModel : public QAbstractItemModel
 {
@@ -23,7 +21,8 @@ public:
         FileOwnerRole = Qt::UserRole + 5,
         FileLastModified = Qt::UserRole + 6,
         FileLastRead = Qt::UserRole + 7,
-        FileCreated = Qt::UserRole + 8
+        FileCreated = Qt::UserRole + 8,
+        FileDisplayNameRole = Qt::UserRole + 9
     };
 
     explicit DFileSystemModel(QObject *parent = 0);
@@ -70,13 +69,13 @@ public:
 
     void sort(int column, Qt::SortOrder order = Qt::AscendingOrder) Q_DECL_OVERRIDE;
 
-    FileInfo *fileInfo(const QModelIndex &index) const;
-    FileInfo *fileInfo(const QString &url) const;
-    FileInfo *parentFileInfo(const QModelIndex &index) const;
-    FileInfo *parentFileInfo(const QString &url) const;
+    AbstractFileInfo *fileInfo(const QModelIndex &index) const;
+    AbstractFileInfo *fileInfo(const QString &url) const;
+    AbstractFileInfo *parentFileInfo(const QModelIndex &index) const;
+    AbstractFileInfo *parentFileInfo(const QString &url) const;
 
 public slots:
-    void updateChildren(const QString &url, QList<FileInfo *> list);
+    void updateChildren(const QString &url, QList<AbstractFileInfo*> list);
     void refresh(const QString &url);
 
 private slots:
@@ -88,7 +87,6 @@ private:
     FileSystemNode *m_rootNode = Q_NULLPTR;
 
     QHash<QString, FileSystemNode*> m_urlToNode;
-    IconProvider m_iconProvider;
 
     int m_sortRole = Qt::DisplayRole;
     int m_sortColumn = 0;
@@ -101,9 +99,9 @@ private:
 
     bool isDir(const FileSystemNode *node) const;
 
-    void sort(QList<FileInfo *> &list) const;
+    void sort(QList<AbstractFileInfo*> &list) const;
 
-    FileSystemNode *createNode(FileSystemNode *parent, FileInfo *info);
+    FileSystemNode *createNode(FileSystemNode *parent, AbstractFileInfo *info);
     void deleteNode(FileSystemNode *node);
     void deleteNodeByUrl(const QString &url);
 

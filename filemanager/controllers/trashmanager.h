@@ -8,7 +8,7 @@
 #include <QFile>
 #include <QFileInfo>
 
-class FileInfo;
+class AbstractFileInfo;
 
 class TrashManager  : public BaseManager
 {
@@ -18,9 +18,9 @@ public:
     void load();
     void save();
 private:
-    QList<FileInfo*> m_fileInfos;
+    QList<AbstractFileInfo*> m_fileInfos;
 signals:
-    void updates(const QString &directory, const QList<FileInfo*> &infoList);
+    void updates(const QString &directory, const QList<AbstractFileInfo*> &infoList);
 
 public slots:
     void fetchFileInformation(const QString &url,

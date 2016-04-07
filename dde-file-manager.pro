@@ -77,7 +77,6 @@ HEADERS += \
     filemanager/dialogs/dialogmanager.h \
     filemanager/controllers/searchhistroymanager.h \
     filemanager/views/windowmanager.h \
-    filemanager/controllers/fileinfogatherer.h \
     filemanager/shutil/desktopfile.h \
     filemanager/shutil/fileutils.h \
     filemanager/shutil/properties.h \
@@ -108,7 +107,10 @@ HEADERS += \
     filemanager/controllers/deletejobworker.h \
     filemanager/controllers/movejobcontroller.h \
     filemanager/controllers/movejobworker.h \
-    filemanager/controllers/trashjobcontroller.h
+    filemanager/controllers/trashjobcontroller.h \
+    filemanager/models/abstractfileinfo.h \
+    filemanager/controllers/fileservices.h \
+    filemanager/controllers/abstractfilecontroller.h
 
 SOURCES += \
     filemanager/controllers/appcontroller.cpp \
@@ -149,7 +151,6 @@ SOURCES += \
     filemanager/dialogs/dialogmanager.cpp \
     filemanager/controllers/searchhistroymanager.cpp \
     filemanager/views/windowmanager.cpp \
-    filemanager/controllers/fileinfogatherer.cpp \
     filemanager/shutil/desktopfile.cpp \
     filemanager/shutil/fileutils.cpp \
     filemanager/shutil/properties.cpp \
@@ -180,7 +181,10 @@ SOURCES += \
     filemanager/controllers/deletejobworker.cpp \
     filemanager/controllers/movejobcontroller.cpp \
     filemanager/controllers/movejobworker.cpp \
-    filemanager/controllers/trashjobcontroller.cpp
+    filemanager/controllers/trashjobcontroller.cpp \
+    filemanager/models/abstractfileinfo.cpp \
+    filemanager/controllers/fileservices.cpp \
+    filemanager/controllers/abstractfilecontroller.cpp
 
 INCLUDEPATH += filemanager/models
 

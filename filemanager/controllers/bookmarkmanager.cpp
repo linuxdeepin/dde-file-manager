@@ -1,6 +1,15 @@
 #include "bookmarkmanager.h"
 #include "fileinfo.h"
 
+#include <QJsonObject>
+#include <QFile>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QByteArray>
+#include <QDateTime>
+#include <QUrl>
+
+#include <stdlib.h>
 
 BookMarkManager::BookMarkManager(QObject *parent) : BaseManager(parent)
 {
@@ -102,7 +111,7 @@ void BookMarkManager::fetchFileInformation(const QString &url, int filter)
 {
     Q_UNUSED(filter)
 
-    QList<FileInfo*> infolist;
+    QList<AbstractFileInfo*> infolist;
 
     for(int i = 0; i < m_bookmarks.size(); i++)
     {

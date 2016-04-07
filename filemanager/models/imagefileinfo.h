@@ -9,10 +9,6 @@ class ImageFileInfo : public FileInfo
 public:
     ImageFileInfo();
     ~ImageFileInfo();
-
-signals:
-
-public slots:
 };
 
 #endif // IMAGEFILEINFO_H

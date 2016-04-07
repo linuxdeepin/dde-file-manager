@@ -1,21 +1,12 @@
 #ifndef RECENTHISTORYMANAGER_H
 #define RECENTHISTORYMANAGER_H
 
-#include <QObject>
 #include <QList>
-#include <QJsonObject>
-#include <QFile>
-#include <stdlib.h>
-#include <QJsonDocument>
-#include <QJsonArray>
-#include <QByteArray>
-#include <QDateTime>
 #include <QDir>
-#include <QUrl>
 
 #include "basemanager.h"
 
-class FileInfo;
+class AbstractFileInfo;
 
 class RecentHistoryManager : public BaseManager
 {
@@ -36,7 +27,7 @@ public slots:
                               int filter = int(QDir::AllEntries | QDir::NoDotDot));
 
 signals:
-    void updates(const QString &directory, const QList<FileInfo*> &infoList);
+    void updates(const QString &directory, const QList<AbstractFileInfo*> &infoList);
     void fileCreated(const QString &path);
 
 private slots:

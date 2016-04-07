@@ -32,6 +32,8 @@ void TrashManager::save()
 
 void TrashManager::fetchFileInformation(const QString &url, int filter)
 {
+    Q_UNUSED(filter)
+
     qDebug() << m_fileInfos.size();
     emit updates(url, m_fileInfos);
 }

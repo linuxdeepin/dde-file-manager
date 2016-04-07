@@ -1,21 +1,12 @@
 #ifndef BOOKMARKMANAGER_H
 #define BOOKMARKMANAGER_H
 
-#include <QObject>
-#include <QList>
-#include <QJsonObject>
-#include <QFile>
-#include <stdlib.h>
-#include <QJsonDocument>
-#include <QJsonArray>
-#include <QByteArray>
-#include <QDateTime>
-#include <QDir>
-#include <QUrl>
 #include "basemanager.h"
 #include "bookmark.h"
 
-class FileInfo;
+#include <QDir>
+
+class AbstractFileInfo;
 
 class BookMarkManager : public BaseManager
 {
@@ -32,7 +23,7 @@ private:
     QList<BookMark *> m_bookmarks;
 
 signals:
-    void updates(const QString &directory, const QList<FileInfo*> &infoList);
+    void updates(const QString &directory, const QList<AbstractFileInfo*> &infoList);
 
 public slots:
     void writeIntoBookmark(const QString &name, const QString &url);

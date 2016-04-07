@@ -2,11 +2,18 @@
 #define GLOBAL_H
 
 #include "widgets/singleton.h"
-#include "utils/utils.h"
-#include "../views/filemenumanager.h"
-#include "fileinfo.h"
+#include "abstractfileinfo.h"
 #include "filemanagerapp.h"
+
+#include "utils/utils.h"
+
+#include "../views/filemenumanager.h"
+
 #include "../dialogs/dialogmanager.h"
+
+#include "../controllers/fileservices.h"
+
+#include "../models/abstractfileinfo.h"
 
 #include <QFontMetrics>
 #include <QTextOption>
@@ -27,11 +34,12 @@ class FileSignalManager;
 #define dialogManager Singleton<DialogManager>::instance()
 #define appController fileManagerApp->getAppController()
 #define fileMonitor appController->getFileMonitor()
+#define iconProvider Singleton<IconProvider>::instance()
+#define fileService FileServices::instance()
 
 #define defaut_icon ":/images/images/default.png"
 #define defaut_computerIcon ":/images/images/computer.png"
 #define defaut_trashIcon ":/images/images/user-trash-full.png"
-
 
 #define ComputerUrl "computer://"
 #define TrashDir "~/.local/share/Trash/files"
@@ -161,25 +169,28 @@ public:
 
     static QVector<FileMenuManager::MenuAction> getDisableActionList(const QString &url)
     {
-        const FileInfo fileInfo(url);
+        AbstractFileInfo *fileInfo = fileService->createFileInfo(url);
         QVector<FileMenuManager::MenuAction> disableList;
 
-        if(!fileInfo.isCanRename())
+        if(!fileInfo->isCanRename())
             disableList << FileMenuManager::Rename;
 
-        if(!fileInfo.isReadable())
+        if(!fileInfo->isReadable())
             disableList << FileMenuManager::Open << FileMenuManager::OpenWith
                         << FileMenuManager::OpenInNewWindow << FileMenuManager::Copy;
 
-        const FileInfo parentInfo(fileInfo.absolutePath());
+        AbstractFileInfo *parentInfo = fileService->createFileInfo(fileInfo->absolutePath());
 
-        if(!fileInfo.isWritable())
+        if(!fileInfo->isWritable())
             disableList << FileMenuManager::Paste << FileMenuManager::NewDocument
                         << FileMenuManager::NewFile << FileMenuManager::NewFolder;
 
-        if(!fileInfo.isWritable() || (parentInfo.exists() && !parentInfo.isWritable()))
+        if(!fileInfo->isWritable() || (parentInfo->exists() && !parentInfo->isWritable()))
             disableList << FileMenuManager::Cut << FileMenuManager::Remove
                         << FileMenuManager::Delete << FileMenuManager::CompleteDeletion;
+
+        delete fileInfo;
+        delete parentInfo;
 
         return disableList;
     }

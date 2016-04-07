@@ -1,5 +1,9 @@
 #include "desktopfileinfo.h"
+
+#include "../app/global.h"
+
 #include "../shutil/properties.h"
+#include "../shutil/iconprovider.h"
 
 #include <QSettings>
 
@@ -43,9 +47,9 @@ QString DesktopFileInfo::getExec() const
     return exec;
 }
 
-QString DesktopFileInfo::getIcon() const
+QString DesktopFileInfo::getIconName() const
 {
-    return icon;
+    return iconName;
 }
 
 QString DesktopFileInfo::getType() const
@@ -58,6 +62,11 @@ QStringList DesktopFileInfo::getCategories() const
     return categories;
 }
 
+QIcon DesktopFileInfo::fileIcon() const
+{
+    return iconProvider->getDesktopIcon(getIconName(), 256);
+}
+
 void DesktopFileInfo::init(const QString &fileName)
 {
     QSettings settings(fileName, QSettings::IniFormat);
@@ -68,7 +77,7 @@ void DesktopFileInfo::init(const QString &fileName)
 
     name = desktop.value("Name", settings.value("Name")).toString();
     exec = desktop.value("Exec", settings.value("Exec")).toString();
-    icon = desktop.value("Icon", settings.value("Icon")).toString();
+    iconName = desktop.value("Icon", settings.value("Icon")).toString();
     type = desktop.value("Type", settings.value("Type", "Application")).toString();
     categories = desktop.value("Categories", settings.value("Categories").toString()).toString().remove(" ").split(";");
     mimeType = desktop.value("MimeType", settings.value("MimeType").toString()).toString().remove(" ").split(";");
