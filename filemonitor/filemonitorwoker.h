@@ -32,24 +32,9 @@ class FileMonitorWoker : public QObject
 public:
     explicit FileMonitorWoker(QObject *parent = 0);
     ~FileMonitorWoker();
-    void handleInotifyEvent(const struct inotify_event* event);
-    void addWatchFolder(const QString& path);
 
-    void monitorAppGroup(const QString &path);
+    void initInotify();
 
-
-    bool addPath(const QString &path);
-    bool removePath(const QString &path);
-
-    QStringList addPaths(const QStringList &paths);
-    QStringList removePaths(const QStringList &paths);
-
-
-
-    QStringList m_files, m_directories;
-
-    void fileChanged(const QString &path, bool removed);
-    void directoryChanged(const QString &path, bool removed);
 
 signals:
     void monitorFolderChanged(const QString& path);
@@ -63,11 +48,21 @@ signals:
     void directoryChanged(QString path);
 
 public slots:
-    void monitor(const QString& path);
-    void unMonitor(const QString& path);
+
+    bool addPath(const QString &path);
+    bool removePath(const QString &path);
 
 private slots:
     void readFromInotify();
+
+private:
+    QStringList addPaths(const QStringList &paths);
+    QStringList removePaths(const QStringList &paths);
+
+    void fileChanged(const QString &path, bool removed);
+    void directoryChanged(const QString &path, bool removed);
+
+    void handleInotifyEvent(const struct inotify_event* event);
 
 private:
     QString getPathFromID(int id) const;
@@ -76,8 +71,8 @@ private:
 
 private:
     int m_inotifyFd;
-    int m_counter;
-
+    QStringList m_files;
+    QStringList m_directories;
 
     QSocketNotifier *m_notifier;
     QHash<QString, int> m_pathToID;

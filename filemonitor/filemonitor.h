@@ -15,6 +15,7 @@ public:
 
     void initConnect();
     void initFileMonitorWoker();
+    void monitorTrash();
 
     static bool isGoutputstreamTempFile(QString path);
 
@@ -22,12 +23,15 @@ public:
     void removeMonitorPath(const QString &path);
 
 signals:
+    void requestMonitorPath(const QString &path);
+    void requestRemoveMonitorPath(const QString &path);
     void fileCreated(QString path);
     void fileMovedIn(QString path);
     void fileMovedOut(QString out);
     void fileRenamed(QString oldPath, QString newPath);
     void fileDeleted(QString path);
     void fileMetaDataChanged(QString path);
+
 
 private slots:
     void handleCreated(int cookie, QString path);
