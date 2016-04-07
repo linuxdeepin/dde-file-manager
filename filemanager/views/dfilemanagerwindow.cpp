@@ -6,7 +6,9 @@
 #include "ddetailview.h"
 #include "../app/global.h"
 #include "../app/fmevent.h"
+#include "dsearchbar.h"
 #include "dsplitter.h"
+#include "utils/xutil.h"
 
 #include <QStatusBar>
 #include <QFrame>
@@ -14,7 +16,6 @@
 #include <QHBoxLayout>
 #include <QSplitter>
 #include <QResizeEvent>
-#include "dsearchbar.h"
 #include <QThread>
 
 
@@ -177,6 +178,11 @@ void DFileManagerWindow::initConnect()
     connect(m_titleBar, &DTitlebar::closeClicked, this, &DFileManagerWindow::close);
     connect(m_toolbar, &DToolBar::requestListView, m_fileView, &DFileView::switchToListMode);
     connect(m_toolbar, &DToolBar::requestIconView, m_fileView, &DFileView::switchToIconMode);
+}
+
+void DFileManagerWindow::showMinimized()
+{
+    QtX11::utils::ShowMinimizedWindow(this);
 }
 
 

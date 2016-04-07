@@ -52,7 +52,7 @@ public:
 signals:
 
 public slots:
-
+    void showMinimized();
 
 protected:
     void resizeEvent(QResizeEvent* event);
