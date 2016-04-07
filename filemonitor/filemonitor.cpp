@@ -1,11 +1,13 @@
 #include "filemonitor.h"
 #include "filemonitorwoker.h"
 #include "utils/utils.h"
+#include <QDir>
 
 FileMonitor::FileMonitor(QObject *parent) : QObject(parent)
 {
     initFileMonitorWoker();
     initConnect();
+    monitorTrash();
 }
 
 
@@ -16,12 +18,21 @@ void FileMonitor::initFileMonitorWoker(){
     m_fileThread->start();
 }
 
+void FileMonitor::monitorTrash()
+{
+    /*free desktop trash standard*/
+    QString trashUrl = QDir::homePath() + "/.local/share/Trash/files";
+    addMonitorPath(trashUrl);
+}
+
 void FileMonitor::initConnect(){
     connect(m_fileMonitorWorker, SIGNAL(fileCreated(int,QString)), this, SLOT(handleCreated(int,QString)));
     connect(m_fileMonitorWorker, SIGNAL(fileMovedFrom(int,QString)), this, SLOT(handleMoveFrom(int,QString)));
     connect(m_fileMonitorWorker, SIGNAL(fileMovedTo(int,QString)), this, SLOT(handleMoveTo(int,QString)));
     connect(m_fileMonitorWorker, SIGNAL(fileDeleted(int,QString)), this, SLOT(handleDelete(int,QString)));
     connect(m_fileMonitorWorker, SIGNAL(metaDataChanged(int,QString)), this, SLOT(handleMetaDataChanged(int,QString)));
+    connect(this, &FileMonitor::requestMonitorPath, m_fileMonitorWorker, &FileMonitorWoker::addPath);
+    connect(this, &FileMonitor::requestRemoveMonitorPath, m_fileMonitorWorker, &FileMonitorWoker::removePath);
 }
 
 bool FileMonitor::isGoutputstreamTempFile(QString path){
@@ -36,11 +47,8 @@ void FileMonitor::addMonitorPath(const QString &path)
     qDebug() << "add monitor, path:" << path;
 
     if(!m_pathMonitorConuter.contains(path)) {
-        QMetaObject::invokeMethod(m_fileMonitorWorker, "monitor",
-                                  Qt::QueuedConnection,
-                                  Q_ARG(QString, path));
+        emit requestMonitorPath(path);
     }
-
     m_pathMonitorConuter[path] = m_pathMonitorConuter.value(path, 0) + 1;
 }
 
@@ -50,14 +58,9 @@ void FileMonitor::removeMonitorPath(const QString &path)
 
     if(m_pathMonitorConuter.contains(path)) {
         int count = m_pathMonitorConuter.value(path);
-
         --count;
-
         if(count == 0) {
-            QMetaObject::invokeMethod(m_fileMonitorWorker, "unMonitor",
-                                      Qt::QueuedConnection,
-                                      Q_ARG(QString, path));
-
+            emit requestRemoveMonitorPath(path);
             m_pathMonitorConuter.remove(path);
         } else {
             m_pathMonitorConuter[path] = count;

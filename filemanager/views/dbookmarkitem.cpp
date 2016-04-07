@@ -138,7 +138,6 @@ void DBookmarkItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
         emit clicked();
         if(m_group)
         {
-            qDebug() << "fdsfsdf";
             m_group->deselectAll();
             setChecked(true);
         }
