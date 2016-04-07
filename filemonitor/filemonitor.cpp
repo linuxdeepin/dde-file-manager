@@ -44,22 +44,23 @@ bool FileMonitor::isGoutputstreamTempFile(QString path){
 
 void FileMonitor::addMonitorPath(const QString &path)
 {
-    qDebug() << "add monitor, path:" << path;
+//    qDebug() << "add monitor, path:" << path;
 
     if (QDir(path).exists()){
         emit requestMonitorPath(path);
     }else{
-        qDebug() << "The path is invalid:" << path;
+        qWarning() << "The path is invalid:" << path;
     }
 }
 
 void FileMonitor::removeMonitorPath(const QString &path)
 {
-    qDebug() << "remove monitor, path:" << path;
+//    qDebug() << "remove monitor, path:" << path;
+
     if (QDir(path).exists()){
         emit requestRemoveMonitorPath(path);
     }else{
-        qDebug() << "The path is invalid:" << path;
+        qWarning() << "The path is invalid:" << path;
     }
 }
 

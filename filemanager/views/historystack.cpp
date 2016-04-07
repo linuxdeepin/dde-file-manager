@@ -14,7 +14,6 @@ void HistoryStack::insert(QString path)
         if(m_index == m_list.size())
         {
             m_list.append(path);
-            qDebug() <<"append";
         }
         else
         {
