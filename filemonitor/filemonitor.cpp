@@ -46,25 +46,20 @@ void FileMonitor::addMonitorPath(const QString &path)
 {
     qDebug() << "add monitor, path:" << path;
 
-    if(!m_pathMonitorConuter.contains(path)) {
+    if (QDir(path).exists()){
         emit requestMonitorPath(path);
+    }else{
+        qDebug() << "The path is invalid:" << path;
     }
-    m_pathMonitorConuter[path] = m_pathMonitorConuter.value(path, 0) + 1;
 }
 
 void FileMonitor::removeMonitorPath(const QString &path)
 {
     qDebug() << "remove monitor, path:" << path;
-
-    if(m_pathMonitorConuter.contains(path)) {
-        int count = m_pathMonitorConuter.value(path);
-        --count;
-        if(count == 0) {
-            emit requestRemoveMonitorPath(path);
-            m_pathMonitorConuter.remove(path);
-        } else {
-            m_pathMonitorConuter[path] = count;
-        }
+    if (QDir(path).exists()){
+        emit requestRemoveMonitorPath(path);
+    }else{
+        qDebug() << "The path is invalid:" << path;
     }
 }
 
