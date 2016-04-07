@@ -81,7 +81,7 @@ void DFileView::initConnects()
     connect(fileSignalManager, &FileSignalManager::requestChangeCurrentUrl,
             this, &DFileView::cd);
     connect(fileSignalManager, &FileSignalManager::childrenChanged,
-            model(), &DFileSystemModel::updateChildren);
+            this, &DFileView::onChildrenChanged);
     connect(fileSignalManager, &FileSignalManager::refreshFolder,
             model(), &DFileSystemModel::refresh);
     connect(fileSignalManager, &FileSignalManager::requestRename,
@@ -140,7 +140,7 @@ int DFileView::selectedIndexCount() const
 
 void DFileView::cd(const FMEvent &event)
 {
-    if(currentUrl() == event.dir)
+    if(currentUrl() == event.dir || event.dir.isEmpty())
         return;
 
     qDebug() << "cd: current url:" << currentUrl() << "to url:" << event;
@@ -248,6 +248,11 @@ void DFileView::moveColumnRole(int /*logicalIndex*/, int oldVisualIndex, int new
     m_logicalIndexs.move(oldVisualIndex, newVisualIndex);
 
     update();
+}
+
+void DFileView::onChildrenChanged(const FMEvent &event, const QList<AbstractFileInfo *> &list)
+{
+    model()->updateChildren(event.dir, list);
 }
 
 void DFileView::onMenuActionTrigger(const DAction *action, const QModelIndex &index)
@@ -382,7 +387,7 @@ void DFileView::commitData(QWidget *editor)
     if(!editor)
         return;
 
-    const FileInfo *fileInfo = model()->fileInfo(itemDelegate()->editingIndex());
+    const AbstractFileInfo *fileInfo = model()->fileInfo(itemDelegate()->editingIndex());
 
     if(!fileInfo)
         return;
@@ -469,6 +474,6 @@ void DFileView::openIndex(const QModelIndex &index)
 
         emit fileSignalManager->requestChangeCurrentUrl(event);
     } else {
-        appController->getFileController()->openFile(model()->getUrlByIndex(index));
+        emit fileSignalManager->requestOpenFile(model()->getUrlByIndex(index));
     }
 }

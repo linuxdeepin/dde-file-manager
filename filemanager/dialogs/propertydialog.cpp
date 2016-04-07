@@ -13,7 +13,7 @@
 #include <QFormLayout>
 #include <QDateTime>
 
-QWidget *createBasicInfoWidget(const FileInfo *info)
+QWidget *createBasicInfoWidget(const AbstractFileInfo *info)
 {
     QWidget *widget = new QWidget;
     QFormLayout *layout = new QFormLayout;
@@ -29,7 +29,7 @@ QWidget *createBasicInfoWidget(const FileInfo *info)
     return widget;
 }
 
-QWidget *createAuthorityManagermentWidget(FileInfo *info)
+QWidget *createAuthorityManagermentWidget(AbstractFileInfo *info)
 {
     QWidget *widget = new QWidget;
     QFormLayout *layout = new QFormLayout;
@@ -77,7 +77,7 @@ QWidget *createAuthorityManagermentWidget(FileInfo *info)
     return widget;
 }
 
-PropertyDialog::PropertyDialog(FileInfo *info, const QIcon &icon, QWidget */*parent*/)
+PropertyDialog::PropertyDialog(AbstractFileInfo *info, const QIcon &icon, QWidget */*parent*/)
     : DWidget(0)
     , m_icon(new QLabel)
     , m_edit(new QTextEdit)

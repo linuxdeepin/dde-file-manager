@@ -5,6 +5,8 @@
 
 #include <QObject>
 
+#define DESKTOP_SURRIX "desktop"
+
 class DesktopFileInfo : public FileInfo
 {
 public:
@@ -18,14 +20,16 @@ public:
 
     QString getName() const;
     QString getExec() const;
-    QString getIcon() const;
+    QString getIconName() const;
     QString getType() const;
     QStringList getCategories() const;
+
+    QIcon fileIcon() const Q_DECL_OVERRIDE;
 
 private:
     QString name;
     QString exec;
-    QString icon;
+    QString iconName;
     QString type;
     QStringList categories;
     QStringList mimeType;

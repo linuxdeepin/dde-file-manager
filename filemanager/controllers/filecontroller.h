@@ -1,39 +1,26 @@
 #ifndef FILECONTROLLER_H
 #define FILECONTROLLER_H
 
-#include <QObject>
+#include "abstractfilecontroller.h"
 
 class FileInfoGatherer;
 class IconProvider;
 class RecentHistoryManager;
+class AbstractFileInfo;
 
-class FileController : public QObject
+class FileController : public AbstractFileController
 {
     Q_OBJECT
 
 public:
     explicit FileController(QObject *parent = 0);
-    ~FileController();
 
-    void initGatherer();
-    void initRecentManager();
-    void initIconProvider();
-    Q_SLOT void initConnect();
+    AbstractFileInfo *createFileInfo(const QString &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
+    const QList<AbstractFileInfo*> getChildren(const QString &fileUrl, QDir::Filters filter, bool &accepted) const Q_DECL_OVERRIDE;
 
 public slots:
-    void getIcon(const QString &url) const;
-    bool openFile(const QString &url) const;
+    bool openFile(const QString &fileUrl, bool &accepted) const;
     bool renameFile(const QString &oldUrl, const QString &newUrl) const;
-
-private slots:
-    void onFetchFileInformation(const QString &url, int filter);
-
-private:
-    FileInfoGatherer *gatherer = Q_NULLPTR;
-    RecentHistoryManager *recentManager = Q_NULLPTR;
-    QThread *gathererThread = Q_NULLPTR;
-
-    IconProvider *iconProvider = Q_NULLPTR;
 };
 
 #endif // FILECONTROLLER_H

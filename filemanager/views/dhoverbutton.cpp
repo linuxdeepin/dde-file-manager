@@ -21,16 +21,22 @@ void DHoverButton::setMenu(DFileMenu *menu)
 
 void DHoverButton::enterEvent(QEvent *e)
 {
+    Q_UNUSED(e)
+
     m_iconLabel->setPixmap(m_hover.pixmap(16,16));
 }
 
 void DHoverButton::leaveEvent(QEvent *e)
 {
+    Q_UNUSED(e)
+
     m_iconLabel->setPixmap(m_normal.pixmap(16,16));
 }
 
 void DHoverButton::mousePressEvent(QMouseEvent *e)
 {
+    Q_UNUSED(e)
+
     if(m_menu)
         m_menu->exec(mapToGlobal(rect().bottomLeft()));
 }

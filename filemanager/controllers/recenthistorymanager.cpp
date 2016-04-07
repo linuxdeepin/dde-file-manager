@@ -1,11 +1,20 @@
 #include "recenthistorymanager.h"
-#include "fileinfo.h"
 #include "desktopfileinfo.h"
+#include "abstractfileinfo.h"
+
 #include "../app/global.h"
 #include "../app/filesignalmanager.h"
 
-#include <QUrl>
 #include <QDirIterator>
+#include <QJsonObject>
+#include <QFile>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QByteArray>
+#include <QDateTime>
+#include <QUrl>
+
+#include <stdlib.h>
 
 RecentHistoryManager::RecentHistoryManager(QObject *parent) : BaseManager(parent)
 {
@@ -78,15 +87,10 @@ void RecentHistoryManager::writeJson(QJsonObject &json)
 void RecentHistoryManager::fetchFileInformation(const QString &url,
                                                 int /*filter*/)
 {
-    QList<FileInfo*> infolist;
+    QList<AbstractFileInfo*> infolist;
 
     for (const QString &filePath : openedFileList) {
-        FileInfo *fileInfo;
-
-        if(filePath.endsWith(DESKTOP_SURRIX))
-            fileInfo = new DesktopFileInfo(filePath);
-        else
-            fileInfo = new FileInfo(filePath);
+        AbstractFileInfo *fileInfo = fileService->createFileInfo(filePath);
 
         infolist.append(fileInfo);
     }

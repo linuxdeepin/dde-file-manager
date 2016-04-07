@@ -7,11 +7,14 @@
 #include <QUrl>
 #include <QContextMenuEvent>
 
-class QFileSystemModel;
-class QHeaderView;
 class FileController;
 class FileMenuManager;
 class FMEvent;
+
+QT_BEGIN_NAMESPACE
+class QFileSystemModel;
+class QHeaderView;
+QT_END_NAMESPACE
 
 DWIDGET_BEGIN_NAMESPACE
 class DAction;
@@ -21,6 +24,7 @@ DWIDGET_USE_NAMESPACE
 
 class DFileSystemModel;
 class DFileItemDelegate;
+class AbstractFileInfo;
 
 class DFileView : public DListView
 {
@@ -63,6 +67,7 @@ signals:
 
 private slots:
     void moveColumnRole(int logicalIndex, int oldVisualIndex, int newVisualIndex);
+    void onChildrenChanged(const FMEvent &event, const QList<AbstractFileInfo*> &list);
 
 protected:
     void contextMenuEvent(QContextMenuEvent * event) Q_DECL_OVERRIDE;

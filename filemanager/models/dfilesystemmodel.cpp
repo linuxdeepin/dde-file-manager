@@ -4,6 +4,7 @@
 #include "../app/global.h"
 #include "../app/filemanagerapp.h"
 #include "../app/filesignalmanager.h"
+#include "../app/fmevent.h"
 
 #include "../controllers/appcontroller.h"
 
@@ -15,14 +16,14 @@
 class FileSystemNode
 {
 public:
-    FileInfo *fileInfo = Q_NULLPTR;
+    AbstractFileInfo *fileInfo = Q_NULLPTR;
     FileSystemNode *parent = Q_NULLPTR;
     QHash<QString, FileSystemNode*> children;
     QList<QString> visibleChildren;
     bool populatedChildren = false;
 
     FileSystemNode(FileSystemNode *parent,
-                   FileInfo *info) :
+                   AbstractFileInfo *info) :
         fileInfo(info),
         parent(parent)
     {
@@ -142,7 +143,7 @@ QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
     case Qt::EditRole:
     case Qt::DisplayRole:
         switch (index.column()) {
-        case 0: return indexNode->fileInfo->fileName();
+        case 0: return indexNode->fileInfo->displayName();
         case 1: return indexNode->fileInfo->lastModified().toString();
         case 2: return indexNode->fileInfo->size();
         case 3: return indexNode->fileInfo->mimeTypeName();
@@ -154,20 +155,13 @@ QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
         break;
     case FilePathRole:
         return indexNode->fileInfo->absoluteFilePath();
-        break;
+    case FileDisplayNameRole:
+        return indexNode->fileInfo->displayName();
     case FileNameRole:
         return indexNode->fileInfo->fileName();
-        break;
     case FileIconRole:
         if (index.column() == 0) {
-            if(indexNode->fileInfo->isDesktopFile()) {
-                DesktopFileInfo *info = dynamic_cast<DesktopFileInfo*>(indexNode->fileInfo);
-
-                if(info)
-                    return m_iconProvider.getDesktopIcon(info->getIcon(), 256);
-            }
-
-            return m_iconProvider.getFileIcon(indexNode->fileInfo->absoluteFilePath());
+            return indexNode->fileInfo->fileIcon();
         }
         break;
     case Qt::TextAlignmentRole:
@@ -240,7 +234,11 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
 
     parentNode->populatedChildren = true;
 
-    emit fileSignalManager->requestChildren(parentNode->fileInfo->absoluteFilePath());
+    FMEvent event;
+
+    event.dir = parentNode->fileInfo->absoluteFilePath();
+
+    emit fileSignalManager->requestChildren(event);
 }
 
 Qt::ItemFlags DFileSystemModel::flags(const QModelIndex &index) const
@@ -355,14 +353,13 @@ QModelIndex DFileSystemModel::setRootPath(const QString &urlStr)
 
         fileMonitor->removeMonitorPath(m_rootPath);
 
-        m_rootNode->populatedChildren = false;
-        m_rootNode->visibleChildren.clear();
+        deleteNode((m_rootNode));
     }
 
     m_rootNode = m_urlToNode.value(urlStr);
 
     if(!m_rootNode) {
-        m_rootNode = createNode(Q_NULLPTR, new FileInfo(urlStr));
+        m_rootNode = createNode(Q_NULLPTR, fileService->createFileInfo(urlStr));
     }
 
     return index(urlStr);
@@ -416,18 +413,9 @@ void DFileSystemModel::setSortRole(int role, Qt::SortOrder order)
 
 void DFileSystemModel::setActiveIndex(const QModelIndex &index)
 {
-    FileSystemNode *old_node = getNodeByIndex(m_activeIndex);
-
     m_activeIndex = index;
 
     FileSystemNode *node = getNodeByIndex(index);
-
-    if(old_node && !old_node->fileInfo->fileUrl().scheme().isEmpty()) {
-        deleteNode(old_node);
-
-        if(old_node == m_rootNode)
-            m_rootNode = node;
-    }
 
     if(!node || node->populatedChildren)
         return;
@@ -480,7 +468,7 @@ void DFileSystemModel::sort(int column, Qt::SortOrder order)
         url_node->visibleChildren.clear();
     }
 
-    QList<FileInfo*> list;
+    QList<AbstractFileInfo*> list;
 
     list.reserve(node->visibleChildren.size());
 
@@ -501,35 +489,35 @@ void DFileSystemModel::sort(int column, Qt::SortOrder order)
     emit dataChanged(topLeftIndex, rightBottomIndex);
 }
 
-FileInfo *DFileSystemModel::fileInfo(const QModelIndex &index) const
+AbstractFileInfo *DFileSystemModel::fileInfo(const QModelIndex &index) const
 {
     FileSystemNode *node = getNodeByIndex(index);
 
     return node ? node->fileInfo : Q_NULLPTR;
 }
 
-FileInfo *DFileSystemModel::fileInfo(const QString &url) const
+AbstractFileInfo *DFileSystemModel::fileInfo(const QString &url) const
 {
     FileSystemNode *node = m_urlToNode.value(url);
 
     return node ? node->fileInfo : Q_NULLPTR;
 }
 
-FileInfo *DFileSystemModel::parentFileInfo(const QModelIndex &index) const
+AbstractFileInfo *DFileSystemModel::parentFileInfo(const QModelIndex &index) const
 {
     FileSystemNode *node = getNodeByIndex(index);
 
     return node ? node->parent->fileInfo : Q_NULLPTR;
 }
 
-FileInfo *DFileSystemModel::parentFileInfo(const QString &url) const
+AbstractFileInfo *DFileSystemModel::parentFileInfo(const QString &url) const
 {
     FileSystemNode *node = m_urlToNode.value(url);
 
     return node ? node->parent->fileInfo : Q_NULLPTR;
 }
 
-void DFileSystemModel::updateChildren(const QString &url, QList<FileInfo*> list)
+void DFileSystemModel::updateChildren(const QString &url, QList<AbstractFileInfo*> list)
 {
     FileSystemNode *node = getNodeByIndex(index(url));
 
@@ -545,7 +533,7 @@ void DFileSystemModel::updateChildren(const QString &url, QList<FileInfo*> list)
 
     beginInsertRows(createIndex(node, 0), 0, list.count() - 1);
 
-    for(FileInfo * const fileInfo : list) {
+    for(AbstractFileInfo * const fileInfo : list) {
         FileSystemNode *chileNode = createNode(node, fileInfo);
 
         node->children[fileInfo->absoluteFilePath()] = chileNode;
@@ -567,7 +555,11 @@ void DFileSystemModel::refresh(const QString &url)
 
     node->populatedChildren = true;
 
-    emit fileSignalManager->requestChildren(url);
+    FMEvent event;
+
+    event.dir = url;
+
+    emit fileSignalManager->requestChildren(event);
 }
 
 void DFileSystemModel::onFileCreated(const QString &path)
@@ -584,7 +576,7 @@ void DFileSystemModel::onFileCreated(const QString &path)
         FileSystemNode *node = m_urlToNode.value(path);
 
         if(!node) {
-            node = createNode(parentNode, new FileInfo(info));
+            node = createNode(parentNode, fileService->createFileInfo(info.absoluteFilePath()));
 
             m_urlToNode[path] = node;
         }
@@ -669,7 +661,7 @@ bool DFileSystemModel::isDir(const FileSystemNode *node) const
 
 Qt::SortOrder sortOrder_global;
 
-bool sortFileListByName(const FileInfo *info1, const FileInfo *info2)
+bool sortFileListByName(const AbstractFileInfo *info1, const AbstractFileInfo *info2)
 {
     if(info1->isDir()) {
         if(!info2->isDir())
@@ -682,7 +674,7 @@ bool sortFileListByName(const FileInfo *info1, const FileInfo *info2)
     return (sortOrder_global == Qt::DescendingOrder) ^ (info1->fileName().toLower() < info2->fileName().toLower());
 }
 
-bool sortFileListBySize(const FileInfo *info1, const FileInfo *info2)
+bool sortFileListBySize(const AbstractFileInfo *info1, const AbstractFileInfo *info2)
 {
     if(info1->isDir()) {
         if(!info2->isDir())
@@ -695,7 +687,7 @@ bool sortFileListBySize(const FileInfo *info1, const FileInfo *info2)
     return (sortOrder_global == Qt::DescendingOrder) ^ (info1->size() < info2->size());
 }
 
-bool sortFileListByModified(const FileInfo *info1, const FileInfo *info2)
+bool sortFileListByModified(const AbstractFileInfo *info1, const AbstractFileInfo *info2)
 {
     if(info1->isDir()) {
         if(!info2->isDir())
@@ -708,7 +700,7 @@ bool sortFileListByModified(const FileInfo *info1, const FileInfo *info2)
     return (sortOrder_global == Qt::DescendingOrder) ^ (info1->lastModified() < info2->lastModified());
 }
 
-bool sortFileListByMime(const FileInfo *info1, const FileInfo *info2)
+bool sortFileListByMime(const AbstractFileInfo *info1, const AbstractFileInfo *info2)
 {
     if(info1->isDir()) {
         if(!info2->isDir())
@@ -721,7 +713,7 @@ bool sortFileListByMime(const FileInfo *info1, const FileInfo *info2)
     return (sortOrder_global == Qt::DescendingOrder) ^ (info1->mimeTypeName() < info2->mimeTypeName());
 }
 
-bool sortFileListByCreated(const FileInfo *info1, const FileInfo *info2)
+bool sortFileListByCreated(const AbstractFileInfo *info1, const AbstractFileInfo *info2)
 {
     if(info1->isDir()) {
         if(!info2->isDir())
@@ -734,7 +726,7 @@ bool sortFileListByCreated(const FileInfo *info1, const FileInfo *info2)
     return (sortOrder_global == Qt::DescendingOrder) ^ (info1->created() < info2->created());
 }
 
-void DFileSystemModel::sort(QList<FileInfo *> &list) const
+void DFileSystemModel::sort(QList<AbstractFileInfo*> &list) const
 {
     sortOrder_global = m_srotOrder;
 
@@ -760,7 +752,7 @@ void DFileSystemModel::sort(QList<FileInfo *> &list) const
     }
 }
 
-FileSystemNode *DFileSystemModel::createNode(FileSystemNode *parent, FileInfo *info)
+FileSystemNode *DFileSystemModel::createNode(FileSystemNode *parent, AbstractFileInfo *info)
 {
     Q_ASSERT(info);
 
@@ -784,6 +776,8 @@ FileSystemNode *DFileSystemModel::createNode(FileSystemNode *parent, FileInfo *i
 
 void DFileSystemModel::deleteNode(FileSystemNode *node)
 {
+    m_urlToNode.remove(m_urlToNode.key(node));
+
     for(FileSystemNode *children : node->children) {
         if(children->parent == node) {
             children->parent = m_urlToNode.value(children->fileInfo->absolutePath());
@@ -791,8 +785,6 @@ void DFileSystemModel::deleteNode(FileSystemNode *node)
     }
 
     delete node;
-
-    m_urlToNode.remove(m_urlToNode.key(node));
 }
 
 void DFileSystemModel::deleteNodeByUrl(const QString &url)

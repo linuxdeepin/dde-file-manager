@@ -12,7 +12,7 @@ DWIDGET_BEGIN_NAMESPACE
 class DExpandGroup;
 DWIDGET_END_NAMESPACE
 
-class FileInfo;
+class AbstractFileInfo;
 
 DWIDGET_USE_NAMESPACE
 
@@ -21,7 +21,7 @@ class PropertyDialog : public DWidget
     Q_OBJECT
 
 public:
-    explicit PropertyDialog(FileInfo *info, const QIcon &icon,
+    explicit PropertyDialog(AbstractFileInfo *info, const QIcon &icon,
                             QWidget *parent = 0);
 
 private:
