@@ -5,6 +5,10 @@
 #include <QMap>
 
 #include <DAction>
+#include <QApplication>
+#include <QClipboard>
+#include <QMimeData>
+#include <QUrl>
 
 DWIDGET_USE_NAMESPACE
 
@@ -92,11 +96,14 @@ private:
     void doDelete(const QString &url);
     void doCompleteDeletion(const QString &url);
     void doSorting(MenuAction action);
+    void doCopy(const QString &url);
+    void doPaste(const QString &url);
 public slots:
     void actionTriggered(DAction * action);
 signals:
     void startMoveToTrash(const QString &url);
     void startCompleteDeletion(const QString &url);
+    void startCopy(const QList<QUrl> &files, const QString &dst);
 };
 
 #endif // FILEMENUMANAGER_H

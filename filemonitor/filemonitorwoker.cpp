@@ -230,7 +230,7 @@ QStringList FileMonitorWoker::removePathsAction(const QStringList &paths)
 
 void FileMonitorWoker::readFromInotify()
 {
-     qDebug() << "QInotifyFileSystemWatcherEngine::readFromInotify";
+     //qDebug() << "QInotifyFileSystemWatcherEngine::readFromInotify";
 
     int buffSize = 0;
     ioctl(m_inotifyFd, FIONREAD, (char *) &buffSize);
@@ -374,7 +374,7 @@ void FileMonitorWoker::handleInotifyEvent(const inotify_event *event)
         qDebug() << event->mask << path;
         emit metaDataChanged(event->cookie, path);
     }else{
-        qDebug() << "unknown event";
+        //qDebug() << "unknown event";
     }
 }
 
