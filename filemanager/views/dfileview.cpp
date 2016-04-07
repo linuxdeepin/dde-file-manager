@@ -155,7 +155,7 @@ void DFileView::cd(const FMEvent &event)
 
     emit currentUrlChanged(event.dir);
 
-    fileSignalManager->currentUrlChanged(event);
+    emit fileSignalManager->currentUrlChanged(event);
 }
 
 void DFileView::edit(const FMEvent &event)

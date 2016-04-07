@@ -47,31 +47,6 @@ void FileMonitorWoker::initInotify()
     connect(m_notifier, SIGNAL(activated(int)), this, SLOT(readFromInotify()));
 }
 
-
-//void FileMonitorWoker::monitor(const QString &path)
-//{
-//    qDebug() << path;
-//    m_inotifyFd = -1;
-//#ifdef IN_CLOEXEC
-//    m_inotifyFd = inotify_init1(IN_CLOEXEC);
-//#endif
-//    if (m_inotifyFd == -1) {
-//        m_inotifyFd = inotify_init();
-//        if(m_inotifyFd == -1) {
-//            qDebug() << "Fail to initialize inotify";
-//            return;
-//        }
-
-//    }
-//    m_notifier = new QSocketNotifier(m_inotifyFd, QSocketNotifier::Read, this);
-
-//    fcntl(m_inotifyFd, F_SETFD, FD_CLOEXEC);
-//    connect(m_notifier, SIGNAL(activated(int)), this, SLOT(readFromInotify()));
-
-
-//    addPath(path);
-//}
-
 bool FileMonitorWoker::addPath(const QString &path)
 {
     qDebug() << path;
@@ -230,8 +205,6 @@ QStringList FileMonitorWoker::removePathsAction(const QStringList &paths)
 
 void FileMonitorWoker::readFromInotify()
 {
-     //qDebug() << "QInotifyFileSystemWatcherEngine::readFromInotify";
-
     int buffSize = 0;
     ioctl(m_inotifyFd, FIONREAD, (char *) &buffSize);
     QVarLengthArray<char, 4096> buffer(buffSize);
@@ -355,31 +328,25 @@ void FileMonitorWoker::handleInotifyEvent(const inotify_event *event)
          return;
     }
     if (event->mask & IN_CREATE) {
-        qDebug() << "IN_CREATE" << path;
+//        qDebug() << "IN_CREATE" << path;
         emit fileCreated(event->cookie, path);
         addPath(path);
     }else if (event->mask & IN_MOVED_FROM) {
-        qDebug() << "IN_MOVED_FROM" << path;
+//        qDebug() << "IN_MOVED_FROM" << path;
         emit fileMovedFrom(event->cookie, path);
         removePath(path);
     }else if (event->mask & IN_MOVED_TO) {
-        qDebug() << "IN_MOVED_TO" << path;
+//        qDebug() << "IN_MOVED_TO" << path;
         emit fileMovedTo(event->cookie, path);
         addPath(path);
     }else if (event->mask & IN_DELETE) {
-        qDebug() << "IN_DELETE" << path;
+//        qDebug() << "IN_DELETE" << path;
         emit fileDeleted(event->cookie, path);
         removePath(path);
     }else if (event->mask & IN_ATTRIB) {
-        qDebug() << event->mask << path;
+//        qDebug() << event->mask << path;
         emit metaDataChanged(event->cookie, path);
     }else{
         //qDebug() << "unknown event";
     }
 }
-
-//void FileMonitorWoker::unMonitor(const QString &path)
-//{
-//    removePath(path);
-//    return;
-//}
