@@ -297,6 +297,7 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
         index = rootIndex();
 
         menu = FileMenuManager::createViewSpaceAreaMenu(Global::getDisableActionList(model()->getUrlByIndex(index)));
+        menu->setUrl(currentUrl());
     }else{
         index = indexAt(event->pos());
 

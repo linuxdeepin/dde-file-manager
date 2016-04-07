@@ -6,6 +6,7 @@
 #include "../views/filemenumanager.h"
 #include "fileinfo.h"
 #include "filemanagerapp.h"
+#include "../dialogs/dialogmanager.h"
 
 #include <QFontMetrics>
 #include <QTextOption>
@@ -23,6 +24,7 @@ class FileSignalManager;
 #define trashManager  Singleton<TrashManager>::instance()
 #define fileMenuManger  Singleton<FileMenuManager>::instance()
 #define fileSignalManager Singleton<FileSignalManager>::instance()
+#define dialogManager Singleton<DialogManager>::instance()
 #define appController fileManagerApp->getAppController()
 #define fileMonitor appController->getFileMonitor()
 

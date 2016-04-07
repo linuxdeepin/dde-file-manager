@@ -295,7 +295,8 @@ DFileMenu *FileMenuManager::createListViewHeaderMenu(const QVector<FileMenuManag
 
 FileMenuManager::FileMenuManager()
 {
-
+    qRegisterMetaType<QMap<QString, QString>>("QMap<QString, QString>");
+    qRegisterMetaType<QList<QUrl>>("QList<QUrl>");
 }
 
 void FileMenuManager::initData()
@@ -518,6 +519,38 @@ void FileMenuManager::doSorting(MenuAction action)
     }
 }
 
+void FileMenuManager::doCopy(const QString &url)
+{
+    QClipboard * clipBoard = QApplication::clipboard();
+    QUrl qurl(url);
+    QMimeData *mimeData = new QMimeData;
+    QList<QUrl> list;
+    list.append(qurl);
+    mimeData->setUrls(list);
+    clipBoard->setMimeData(mimeData);
+}
+
+void FileMenuManager::doPaste(const QString &url)
+{
+    const QClipboard *clipboard = QApplication::clipboard();
+    const QMimeData *mimeData = clipboard->mimeData();
+
+    if(mimeData->hasUrls())
+    {
+        QList<QUrl> urls = mimeData->urls();
+        FileJob * job = new FileJob;
+        dialogManager->addJob(job);
+        QThread * thread = new QThread;
+        job->moveToThread(thread);
+        connect(this, &FileMenuManager::startCopy, job, &FileJob::doCopy);
+        connect(job, &FileJob::finished, job, &FileJob::deleteLater);
+        connect(job, &FileJob::finished, thread, &QThread::quit);
+        connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+        thread->start();
+        emit startCopy(urls, url);
+    }
+}
+
 
 void FileMenuManager::actionTriggered(DAction *action)
 {
@@ -533,7 +566,8 @@ void FileMenuManager::actionTriggered(DAction *action)
     case Compress:break;
     case Decompress:break;
     case Cut:break;
-    case Paste:break;
+    case Copy:doCopy(url);break;
+    case Paste:doPaste(url);break;
     case Rename:break;
     case Remove:break;
     case Delete:doDelete(url);break;

@@ -451,6 +451,7 @@ void DTaskDialog::showConflictDiloagByJob(const QMap<QString, QString> &jobDetai
 }
 
 void DTaskDialog::handleConflictResponse(const QMap<QString, QString> &jobDetail, const QMap<QString, QVariant> &response){
+
     emit conflictRepsonseConfirmed(jobDetail, response);
 }
 

@@ -54,7 +54,7 @@ void FileManagerApp::initView()
 
 void FileManagerApp::initDialogManager()
 {
-    m_dialogManager = new DialogManager;
+    //m_dialogManager = new DialogManager;
 }
 
 void FileManagerApp::initController()
