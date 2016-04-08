@@ -327,7 +327,7 @@ bool FileJob::copyDir(const QString &srcPath, const QString &tarPath)
         return false;
     }
     QDir sourceDir(srcPath);
-    QDir targetDir(tarPath);
+    QDir targetDir(tarPath + "/" + sourceDir.dirName());
     if(!targetDir.exists())
     {
         if(!targetDir.mkdir(targetDir.absolutePath()))
@@ -342,7 +342,7 @@ bool FileJob::copyDir(const QString &srcPath, const QString &tarPath)
 
         if(fileInfo.isDir())
         {
-            if(!copyDir(fileInfo.filePath(), targetDir.filePath(fileInfo.fileName())))
+            if(!copyDir(fileInfo.filePath(), targetDir.absolutePath()))
                 return false;
         }
         else
@@ -353,7 +353,7 @@ bool FileJob::copyDir(const QString &srcPath, const QString &tarPath)
             }
             else
             {
-                if(!copyFile(fileInfo.filePath(), targetDir.filePath(fileInfo.fileName())))
+                if(!copyFile(fileInfo.filePath(), targetDir.absolutePath()))
                 {
                     return false;
                 }
