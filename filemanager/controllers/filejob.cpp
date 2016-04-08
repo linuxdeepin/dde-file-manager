@@ -41,12 +41,22 @@ QString FileJob::checkDuplicateName(const QString &name)
     while (file.exists())
     {
         if(num == 1)
-            destUrl = QString("%1/%2(copy).%3").arg(startInfo.absolutePath()).
-                    arg(startInfo.baseName()).arg(startInfo.completeSuffix());
+        {
+            if(startInfo.isDir())
+                destUrl = QString("%1/%2(copy)").arg(startInfo.absolutePath()).
+                        arg(startInfo.fileName());
+            else
+                destUrl = QString("%1/%2(copy).%3").arg(startInfo.absolutePath()).
+                        arg(startInfo.baseName()).arg(startInfo.completeSuffix());
+        }
         else
         {
-            destUrl = QString("%1/%2(copy %3).%4").arg(startInfo.absolutePath()).
-                    arg(startInfo.baseName()).arg(num).arg(startInfo.completeSuffix());
+            if(startInfo.isDir())
+                destUrl = QString("%1/%2(copy %3)").arg(startInfo.absolutePath()).
+                        arg(startInfo.fileName()).arg(num);
+            else
+                destUrl = QString("%1/%2(copy %3).%4").arg(startInfo.absolutePath()).
+                        arg(startInfo.baseName()).arg(num).arg(startInfo.completeSuffix());
         }
         num++;
         file.setFileName(destUrl);
@@ -67,13 +77,13 @@ void FileJob::doCopy(const QList<QUrl> &files, const QString &destination)
     for(int i = 0; i < files.size(); i++)
     {
         QUrl url = files.at(i);
-        QDir srcDir(url.path());
+        QDir srcDir(url.toLocalFile());
         if(srcDir.exists())
         {
-            copyDir(url.path(), destination);
+            copyDir(url.toLocalFile(), destination);
         }
         else
-            copyFile(url.path(), destination);
+            copyFile(url.toLocalFile(), destination);
     }
     if(m_isJobAdded)
         jobRemoved();
@@ -324,41 +334,67 @@ bool FileJob::copyDir(const QString &srcPath, const QString &tarPath)
 {
     if(m_status == FileJob::Cancelled)
     {
-        emit result("cancelled");
         return false;
     }
     QDir sourceDir(srcPath);
     QDir targetDir(tarPath + "/" + sourceDir.dirName());
-    if(!targetDir.exists())
+    QFileInfo sf(srcPath);
+    QFileInfo tf(tarPath + "/" + sourceDir.dirName());
+    m_srcFileName = sf.fileName();
+    m_tarFileName = tf.dir().dirName();
+    m_srcPath = srcPath;
+    m_tarPath = targetDir.absolutePath();
+    m_status = Started;
+
+    if(targetDir.exists())
     {
-        if(!targetDir.mkdir(targetDir.absolutePath()))
-            return false;
+        jobConflicted();
     }
-
-    QFileInfoList fileInfoList = sourceDir.entryInfoList();
-    foreach(QFileInfo fileInfo, fileInfoList)
+    while(true)
     {
-        if(fileInfo.fileName() == "." || fileInfo.fileName() == "..")
-            continue;
-
-        if(fileInfo.isDir())
+        switch(m_status)
         {
-            if(!copyDir(fileInfo.filePath(), targetDir.absolutePath()))
-                return false;
-        }
-        else
+        case Started:
         {
-            if(targetDir.exists(fileInfo.fileName()))
+            m_tarPath = checkDuplicateName(m_tarPath);
+            targetDir.setPath(m_tarPath);
+            if(!targetDir.exists())
             {
-                //TODO: rename or skip
-            }
-            else
-            {
-                if(!copyFile(fileInfo.filePath(), targetDir.absolutePath()))
-                {
+                if(!targetDir.mkdir(targetDir.absolutePath()))
                     return false;
+            }
+            m_status = Run;
+            break;
+        }
+        case Run:
+        {
+            QFileInfoList fileInfoList = sourceDir.entryInfoList();
+            foreach(QFileInfo fileInfo, fileInfoList)
+            {
+                if(fileInfo.fileName() == "." || fileInfo.fileName() == "..")
+                    continue;
+
+                if(fileInfo.isDir())
+                {
+                    if(!copyDir(fileInfo.filePath(), targetDir.absolutePath()))
+                        return false;
+                }
+                else
+                {
+                    if(!copyFile(fileInfo.filePath(), targetDir.absolutePath()))
+                    {
+                        return false;
+                    }
                 }
             }
+            return true;
+            break;
+        }
+        case Paused:
+            QThread::msleep(100);
+            break;
+        case Cancelled:
+            return false;
         }
     }
     return true;

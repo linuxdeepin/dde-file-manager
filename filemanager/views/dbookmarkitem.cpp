@@ -277,7 +277,9 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
         menu = FileMenuManager::createDefaultBookMarkMenu();
     else
         menu = FileMenuManager::createCustomBookMarkMenu();
-    menu->setDir(m_url);
+    QList<QString> urls;
+    urls.append(m_url);
+    menu->setUrls(urls);
     menu->deleteLater();
     menu->exec(QCursor::pos());
     m_isMenuOpened = false;

@@ -19,6 +19,8 @@ DBookmarkScene::DBookmarkScene()
     QGraphicsScene::addItem(m_rootItem);
     connect(fileSignalManager, &FileSignalManager::currentUrlChanged,
             this, &DBookmarkScene::currentUrlChanged);
+    connect(fileSignalManager, &FileSignalManager::requestBookmarkRemove,
+            this, &DBookmarkScene::bookmarkRemoved);
 }
 
 void DBookmarkScene::addItem(DBookmarkItem *item)
@@ -190,6 +192,18 @@ void DBookmarkScene::currentUrlChanged(const FMEvent &event)
                 m_items.at(i)->setChecked(true);
                 break;
             }
+        }
+    }
+}
+
+void DBookmarkScene::bookmarkRemoved(const QString &url)
+{
+    for(int i = 0; i < m_items.size(); i++)
+    {
+        if(url == m_items.at(i)->getUrl())
+        {
+            remove(m_items.at(i));
+            break;
         }
     }
 }

@@ -89,6 +89,8 @@ void DFileView::initConnects()
             this, static_cast<void (DFileView::*)(const FMEvent&)>(&DFileView::edit));
     connect(fileSignalManager, &FileSignalManager::requestViewSort,
             this, &DFileView::sort);
+    connect(fileSignalManager, &FileSignalManager::requestViewSelectAll,
+            this, &DFileView::allSelected);
 }
 
 DFileSystemModel *DFileView::model() const
@@ -299,6 +301,14 @@ void DFileView::onChildrenChanged(const FMEvent &event, const QList<AbstractFile
     model()->updateChildren(event.fileUrl(), list);
 }
 
+void DFileView::allSelected(int windowId)
+{
+    if(windowId != WindowManager::getWindowId(window()))
+        return;
+
+    selectAll();
+}
+
 void DFileView::onMenuActionTrigger(const DAction *action, const QModelIndex &index)
 {
     if(!action)
@@ -346,14 +356,16 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
         index = rootIndex();
 
         menu = FileMenuManager::createViewSpaceAreaMenu(FileMenuManager::getDisableActionList(model()->getUrlByIndex(index)));
-        menu->setDir(currentUrl());
+        QList<QString> urls;
+        urls.append(currentUrl());
+        menu->setUrls(urls);
+        menu->setWindowId(m_windowId);
     } else {
         index = indexAt(event->pos());
 
-        menu = FileMenuManager::createViewSpaceAreaMenu(FileMenuManager::getDisableActionList(model()->getUrlByIndex(index)));
-
+        menu = FileMenuManager::createFileMenu(FileMenuManager::getDisableActionList(model()->getUrlByIndex(index)));
+        menu->setWindowId(m_windowId);
         menu->setUrls(selectedUrls());
-        menu->setDir(currentUrl());
     }
 
     onMenuActionTrigger(menu->exec(mapToGlobal(event->pos())), index);

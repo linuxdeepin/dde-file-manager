@@ -471,7 +471,7 @@ void FileMenuManager::doOpenFileLocation(const QString &url)
     }
 }
 
-void FileMenuManager::doRename(const QString &url)
+void FileMenuManager::doRename(const QString &url, int windowId)
 {
     //notify view to be in editing mode
 
@@ -479,9 +479,7 @@ void FileMenuManager::doRename(const QString &url)
 
     event = url;
     event = FMEvent::Menu;
-
-    /// TODO
-    event = -1;
+    event = windowId;
 
     emit fileSignalManager->requestRename(event);
 }
@@ -497,8 +495,9 @@ void FileMenuManager::doDelete(const QList<QString> &urls)
     FileJob * job = new FileJob;
     QThread * thread = new QThread;
     job->moveToThread(thread);
+    dialogManager->addJob(job);
     connect(this, &FileMenuManager::startMoveToTrash, job, &FileJob::doMoveToTrash);
-    connect(job, &FileJob::finished, job, &FileJob::deleteLater);
+    connect(job, &FileJob::finished, dialogManager, &DialogManager::removeJob);
     connect(job, &FileJob::finished, thread, &QThread::quit);
     connect(thread, &QThread::finished, thread, &QThread::deleteLater);
     thread->start();
@@ -521,8 +520,9 @@ void FileMenuManager::doCompleteDeletion(const QList<QString> &urls)
     FileJob * job = new FileJob;
     QThread * thread = new QThread;
     job->moveToThread(thread);
+    dialogManager->addJob(job);
     connect(this, &FileMenuManager::startCompleteDeletion, job, &FileJob::doDelete);
-    connect(job, &FileJob::finished, job, &FileJob::deleteLater);
+    connect(job, &FileJob::finished, dialogManager, &DialogManager::removeJob);
     connect(job, &FileJob::finished, thread, &QThread::quit);
     connect(thread, &QThread::finished, thread, &QThread::deleteLater);
     thread->start();
@@ -570,7 +570,7 @@ void FileMenuManager::doCopy(const QList<QString> &urls)
     {
         QString path = urls.at(i);
         ba.append("\n");
-        ba.append(QUrl::fromLocalFile(path).toString());
+        ba.append(urls.at(i));
         urlList.append(QUrl(path));
     }
     mimeData->setText("copy");
@@ -581,45 +581,49 @@ void FileMenuManager::doCopy(const QList<QString> &urls)
 
 void FileMenuManager::doPaste(const QString &url)
 {
-    QDir dir(url);
+    QUrl localUrl(url);
+    QDir dir(localUrl.toLocalFile());
     //Make sure the target directory exists.
     if(!dir.exists())
         return;
     const QClipboard *clipboard = QApplication::clipboard();
     const QMimeData *mimeData = clipboard->mimeData();
 
-    if(mimeData->hasUrls())
+    if(!mimeData->data("x-special/gnome-copied-files").isEmpty())
     {
-        if(mimeData->text() == "copy")
+        QByteArray ba = mimeData->data("x-special/gnome-copied-files");
+        QTextStream text(&ba);
+        QString type = text.readLine();
+        if(type == "cut")
         {
-            QList<QUrl> urls = mimeData->urls();
-            FileJob * job = new FileJob;
-            dialogManager->addJob(job);
-            QThread * thread = new QThread;
-            job->moveToThread(thread);
-            connect(this, &FileMenuManager::startCopy, job, &FileJob::doCopy);
-            connect(job, &FileJob::finished, job, &FileJob::deleteLater);
-            connect(job, &FileJob::finished, thread, &QThread::quit);
-            connect(thread, &QThread::finished, thread, &QThread::deleteLater);
-            thread->start();
-            emit startCopy(urls, url);
-        }
-        else if(mimeData->text() == "cut")
-        {
-            //Todo: paste on different physical device.
-            QList<QUrl> urls = mimeData->urls();
-            for(int i = 0; i < urls.size(); i++)
+            while(!text.atEnd())
             {
-                QUrl qurl = urls.at(i);
+                QUrl qurl(text.readLine());
                 QFileInfo fileInfo(qurl.path());
                 QFile file(qurl.path());
                 file.rename(dir.absolutePath() + "/" + fileInfo.fileName());
             }
         }
-    }
-    else if(!mimeData->data("x-special/gnome-copied-files").isEmpty())
-    {
+        else if(type == "copy")
+        {
+            QList<QUrl> urls;
+            while(!text.atEnd())
+            {
+                QUrl qurl(text.readLine());
+                urls.append(qurl);
+            }
 
+            FileJob * job = new FileJob;
+            dialogManager->addJob(job);
+            QThread * thread = new QThread;
+            job->moveToThread(thread);
+            connect(this, &FileMenuManager::startCopy, job, &FileJob::doCopy);         
+            connect(job, &FileJob::finished, dialogManager, &DialogManager::removeJob);
+            connect(job, &FileJob::finished, thread, &QThread::quit);
+            connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+            thread->start();
+            emit startCopy(urls, localUrl.toLocalFile());
+        }
     }
 }
 
@@ -634,7 +638,7 @@ void FileMenuManager::doCut(const QList<QString> &urls)
     {
         QString path = urls.at(i);
         ba.append("\n");
-        ba.append(QUrl::fromLocalFile(path).toString());
+        ba.append(urls.at(i));
         urlList.append(QUrl(path));
     }
     mimeData->setText("cut");
@@ -643,38 +647,104 @@ void FileMenuManager::doCut(const QList<QString> &urls)
     QApplication::clipboard()->setMimeData(mimeData);
 }
 
+void FileMenuManager::doNewFolder(const QString &url)
+{
+    QUrl localUrl(url);
+    //Todo:: check if mkdir is ok
+    QDir dir(localUrl.toLocalFile());
+    dir.mkdir(FileMenuManager::checkDuplicateName(dir.absolutePath() + "/New Folder"));
+}
+
+void FileMenuManager::doNewDocument(const QString &url)
+{
+
+}
+
+void FileMenuManager::doNewFile(const QString &url)
+{
+    QUrl localUrl(url);
+    //Todo:: check if mkdir is ok
+    QDir dir(localUrl.toLocalFile());
+    QString name = FileMenuManager::checkDuplicateName(dir.absolutePath() + "/New File");
+    QFile file(name);
+    if(file.open(QIODevice::WriteOnly))
+    {
+        file.close();
+    }
+}
+
+void FileMenuManager::doSelectAll(int windowId)
+{
+    fileSignalManager->requestViewSelectAll(windowId);
+}
+
+void FileMenuManager::doRemove(const QString &url)
+{
+    QUrl localUrl(url);
+    fileSignalManager->requestBookmarkRemove(localUrl.toLocalFile());
+}
+
+QString FileMenuManager::checkDuplicateName(const QString &name)
+{
+    QString destUrl = name;
+    QFile file(destUrl);
+    QFileInfo startInfo(destUrl);
+    int num = 1;
+    while (file.exists())
+    {
+        num++;
+        destUrl = QString("%1/%2 %3").arg(startInfo.absolutePath()).
+                arg(startInfo.fileName()).arg(num);
+        file.setFileName(destUrl);
+    }
+    return destUrl;
+}
+
 
 void FileMenuManager::actionTriggered(DAction *action)
 {
     DFileMenu *menu = qobject_cast<DFileMenu *>(sender());
     QList<QString> urls = menu->getUrls();
-    QString dir = menu->getDir();
     MenuAction type = (MenuAction)action->data().toInt();
+    QString dir;
+    if(urls.size() > 0)
+        dir = urls.at(0);
     switch(type)
     {
     case Open:
-        if(urls.size() > 0)
-        {
-            doOpen(urls.at(0));
-        }
+        doOpen(dir);
         break;
     case OpenInNewWindow:break;
     case OpenWith:break;
-    case OpenFileLocation:doOpenFileLocation(dir);break;
+    case OpenFileLocation:
+        doOpenFileLocation(dir);
+        break;
     case Compress:break;
     case Decompress:break;
     case Cut:doCut(urls);break;
     case Copy:doCopy(urls);break;
-    case Paste:doPaste(dir);break;
-    case Rename:break;
-    case Remove:break;
+    case Paste:
+        doPaste(dir);
+        break;
+    case Rename:
+        doRename(dir, menu->getWindowId());
+        break;
+    case Remove:
+        doRemove(dir);
+        break;
     case Delete:doDelete(urls);break;
     case CompleteDeletion:doCompleteDeletion(urls);break;
     case Property:break;
-    case NewFolder:break;
-    case NewFile:break;
+    case NewFolder:
+        doNewFolder(dir);
+        break;
+    case NewFile:
+        doNewFile(dir);
+        break;
     case NewWindow:break;
-    case SelectAll:break;
+    case SelectAll:
+        doSelectAll(menu->getWindowId());
+        break;
     case ClearRecent:break;
     case ClearTrash:break;
     case DisplayAs:break;

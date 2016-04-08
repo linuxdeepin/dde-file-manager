@@ -35,6 +35,7 @@ signals:
 public slots:
     void doDragFinished(const QPointF &point, DBookmarkItem *item);
     void currentUrlChanged(const FMEvent &event);
+    void bookmarkRemoved(const QString &url);
 private:
     void increaseSize();
     DBookmarkRootItem * m_rootItem;
