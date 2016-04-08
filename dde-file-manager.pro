@@ -110,7 +110,8 @@ HEADERS += \
     filemanager/controllers/trashjobcontroller.h \
     filemanager/models/abstractfileinfo.h \
     filemanager/controllers/fileservices.h \
-    filemanager/controllers/abstractfilecontroller.h
+    filemanager/controllers/abstractfilecontroller.h \
+    filemanager/models/recentfileinfo.h
 
 SOURCES += \
     filemanager/controllers/appcontroller.cpp \
@@ -184,7 +185,8 @@ SOURCES += \
     filemanager/controllers/trashjobcontroller.cpp \
     filemanager/models/abstractfileinfo.cpp \
     filemanager/controllers/fileservices.cpp \
-    filemanager/controllers/abstractfilecontroller.cpp
+    filemanager/controllers/abstractfilecontroller.cpp \
+    filemanager/models/recentfileinfo.cpp
 
 INCLUDEPATH += filemanager/models
 

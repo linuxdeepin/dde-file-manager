@@ -294,6 +294,35 @@ DFileMenu *FileMenuManager::createListViewHeaderMenu(const QVector<FileMenuManag
     return genereteMenuByKeys(actionKeys, disableList, true);
 }
 
+QVector<FileMenuManager::MenuAction> FileMenuManager::getDisableActionList(const QString &fileUrl)
+{
+    AbstractFileInfo *fileInfo = fileService->createFileInfo(fileUrl);
+    QVector<FileMenuManager::MenuAction> disableList;
+
+    if(!fileInfo->isCanRename())
+        disableList << FileMenuManager::Rename;
+
+    if(!fileInfo->isReadable())
+        disableList << FileMenuManager::Open << FileMenuManager::OpenWith
+                    << FileMenuManager::OpenInNewWindow << FileMenuManager::Copy;
+
+    AbstractFileInfo *parentInfo = fileService->createFileInfo(fileInfo->scheme() + "://"
+                                                               + fileInfo->absolutePath());
+
+    if(!fileInfo->isWritable())
+        disableList << FileMenuManager::Paste << FileMenuManager::NewDocument
+                    << FileMenuManager::NewFile << FileMenuManager::NewFolder;
+
+    if(!fileInfo->isWritable() || (parentInfo->exists() && !parentInfo->isWritable()))
+        disableList << FileMenuManager::Cut << FileMenuManager::Remove
+                    << FileMenuManager::Delete << FileMenuManager::CompleteDeletion;
+
+    delete fileInfo;
+    delete parentInfo;
+
+    return disableList;
+}
+
 FileMenuManager::FileMenuManager()
 {
     qRegisterMetaType<QMap<QString, QString>>("QMap<QString, QString>");
@@ -399,8 +428,8 @@ void FileMenuManager::doOpen(const QString &url)
     if(dir.exists())
     {
         FMEvent event;
-        event.dir = url;
-        event.source = FMEvent::FileView;
+        event = url;
+        event = FMEvent::FileView;
         emit fileSignalManager->requestChangeCurrentUrl(event);
         return;
     }
@@ -415,8 +444,8 @@ void FileMenuManager::doOpen(const QString &url)
        scheme == TRASH_SCHEME)
     {
         FMEvent event;
-        event.dir = url;
-        event.source = FMEvent::FileView;
+        event = url;
+        event = FMEvent::FileView;
         emit fileSignalManager->requestChangeCurrentUrl(event);
     }
 }
@@ -429,15 +458,15 @@ void FileMenuManager::doOpenFileLocation(const QString &url)
         if(!dir.cdUp())
             return;
         FMEvent event;
-        event.dir = dir.path();
-        event.source = FMEvent::FileView;
+        event = dir.path();
+        event = FMEvent::FileView;
         emit fileSignalManager->requestChangeCurrentUrl(event);
         return;
     }
     QFileInfo file(url);
     if(file.exists(url))
     {
-        emit fileSignalManager->requestOpenFile(file.absolutePath());
+        emit fileSignalManager->requestOpenFile(QUrl::fromLocalFile(file.absolutePath()).toString());
         return;
     }
 }
@@ -448,11 +477,11 @@ void FileMenuManager::doRename(const QString &url)
 
     FMEvent event;
 
-    event.dir = url;
-    event.source = FMEvent::Menu;
+    event = url;
+    event = FMEvent::Menu;
 
     /// TODO
-    event.windowId = -1;
+    event = -1;
 
     emit fileSignalManager->requestRename(event);
 }

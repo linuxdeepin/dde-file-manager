@@ -6,6 +6,7 @@
 #include "fileinfo.h"
 #include "dfilemenu.h"
 #include "dscrollbar.h"
+#include "windowmanager.h"
 
 #include "../app/global.h"
 #include "../app/fmevent.h"
@@ -71,7 +72,7 @@ void DFileView::initDelegate()
 void DFileView::initModel()
 {
     setModel(new DFileSystemModel(this));
-    setRootIndex(model()->setRootPath(QDir::currentPath()));
+    setRootIndex(model()->setRootPath("file://" + QDir::currentPath()));
 }
 
 void DFileView::initConnects()
@@ -149,29 +150,58 @@ int DFileView::selectedIndexCount() const
     return m_selectedIndexList.count();
 }
 
+int DFileView::windowId() const
+{
+    if(m_windowId == -1)
+        m_windowId = WindowManager::getWindowId(window());
+
+    return m_windowId;
+}
+
 void DFileView::cd(const FMEvent &event)
 {
-    if(currentUrl() == event.dir || event.dir.isEmpty())
+    if(event.windowId() != windowId())
+        return;
+
+    QString fileUrl = event.fileUrl();
+
+    if(fileUrl.isEmpty())
+        return;
+
+    if(QUrl(fileUrl).scheme().isEmpty())
+        fileUrl = "file://" + event.fileUrl();
+
+    if(currentUrl() == fileUrl)
         return;
 
     qDebug() << "cd: current url:" << currentUrl() << "to url:" << event;
 
-    QModelIndex index = model()->index(event.dir);
+    QModelIndex index = model()->index(fileUrl);
 
     if(!index.isValid())
-        index = model()->setRootPath(event.dir);
+        index = model()->setRootPath(fileUrl);
 
     setRootIndex(index);
     model()->setActiveIndex(index);
 
-    emit currentUrlChanged(event.dir);
-
+    emit currentUrlChanged(fileUrl);
     emit fileSignalManager->currentUrlChanged(event);
 }
 
 void DFileView::edit(const FMEvent &event)
 {
-    const QModelIndex &index = model()->index(event.dir);
+    if(event.windowId() != WindowManager::getWindowId(window()))
+        return;
+
+    QString fileUrl = event.fileUrl();
+
+    if(fileUrl.isEmpty())
+        return;
+
+    if(QUrl(fileUrl).scheme().isEmpty())
+        fileUrl = "file://" + event.fileUrl();
+
+    const QModelIndex &index = model()->index(fileUrl);
 
     edit(index);
 }
@@ -263,7 +293,10 @@ void DFileView::moveColumnRole(int /*logicalIndex*/, int oldVisualIndex, int new
 
 void DFileView::onChildrenChanged(const FMEvent &event, const QList<AbstractFileInfo *> &list)
 {
-    model()->updateChildren(event.dir, list);
+    if(event.windowId() != WindowManager::getWindowId(window()))
+        return;
+
+    model()->updateChildren(event.fileUrl(), list);
 }
 
 void DFileView::onMenuActionTrigger(const DAction *action, const QModelIndex &index)
@@ -312,11 +345,13 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
     if (isEmptyArea(event->pos())){
         index = rootIndex();
 
-        menu = FileMenuManager::createViewSpaceAreaMenu(Global::getDisableActionList(model()->getUrlByIndex(index)));
+        menu = FileMenuManager::createViewSpaceAreaMenu(FileMenuManager::getDisableActionList(model()->getUrlByIndex(index)));
         menu->setDir(currentUrl());
-    }else{
+    } else {
         index = indexAt(event->pos());
-        menu = FileMenuManager::createFileMenu(Global::getDisableActionList(model()->getUrlByIndex(index)));
+
+        menu = FileMenuManager::createViewSpaceAreaMenu(FileMenuManager::getDisableActionList(model()->getUrlByIndex(index)));
+
         menu->setUrls(selectedUrls());
         menu->setDir(currentUrl());
     }
@@ -372,8 +407,6 @@ void DFileView::mousePressEvent(QMouseEvent *event)
     if(event->button() == Qt::LeftButton) {
         setDragEnabled(!isEmptyArea(event->pos()));
     } else if(event->button() == Qt::RightButton && selectedIndexCount() < 2) {
-        qDebug() << selectedIndexCount();
-
         QWidget::mousePressEvent(event);
 
         const QModelIndex &index = indexAt(event->pos());
@@ -408,9 +441,9 @@ void DFileView::commitData(QWidget *editor)
     QLineEdit *lineEdit = qobject_cast<QLineEdit*>(editor);
 
     if(lineEdit) {
-        appController->getFileController()->renameFile(fileInfo->absoluteFilePath(),
-                                                       fileInfo->absolutePath() + "/"
-                                                       + lineEdit->text());
+        fileService->renameFile(fileInfo->fileUrl(),
+                                fileInfo->scheme() + "://" + fileInfo->absolutePath()
+                                + "/" + lineEdit->text());
 
         return;
     }
@@ -418,9 +451,9 @@ void DFileView::commitData(QWidget *editor)
     FileIconItem *item = qobject_cast<FileIconItem*>(editor);
 
     if(item) {
-        appController->getFileController()->renameFile(fileInfo->absoluteFilePath(),
-                                                       fileInfo->absolutePath() + "/"
-                                                       + item->edit->toPlainText());
+        fileService->renameFile(fileInfo->fileUrl(),
+                                fileInfo->scheme() + "://" + fileInfo->absolutePath()
+                                + "/" + item->edit->toPlainText());
     }
 }
 
@@ -482,8 +515,9 @@ void DFileView::openIndex(const QModelIndex &index)
     if(model()->hasChildren(index)){
         FMEvent event;
 
-        event.dir = model()->getUrlByIndex(index);
-        event.source = FMEvent::FileView;
+        event = model()->getUrlByIndex(index);
+        event = FMEvent::FileView;
+        event = windowId();
 
         emit fileSignalManager->requestChangeCurrentUrl(event);
     } else {

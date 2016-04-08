@@ -3,24 +3,24 @@
 #include "trashjobcontroller.h"
 #include "copyjobcontroller.h"
 #include "deletejobcontroller.h"
-#include "../app/global.h"
 #include "filecontroller.h"
+#include "recenthistorymanager.h"
+
 #include "filemonitor/filemonitor.h"
 
+#include "../app/global.h"
+
+
 AppController::AppController(QObject *parent) : QObject(parent),
-    m_fileController(new FileController(this)),
     m_fileMonitor(new FileMonitor)
 {
-
+    new FileController(this);
+    new RecentHistoryManager(this);
 }
 
-void AppController::initConnect(){
-
-}
-
-FileController *AppController::getFileController() const
+void AppController::initConnect()
 {
-    return m_fileController;
+
 }
 
 FileMonitor *AppController::getFileMonitor() const

@@ -11,7 +11,9 @@
 
 #include <stdlib.h>
 
-BookMarkManager::BookMarkManager(QObject *parent) : BaseManager(parent)
+BookMarkManager::BookMarkManager(QObject *parent)
+    : AbstractFileController(parent)
+    , BaseManager()
 {
     load();
 }

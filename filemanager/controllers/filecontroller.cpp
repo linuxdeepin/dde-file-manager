@@ -20,9 +20,7 @@ AbstractFileInfo *FileController::createFileInfo(const QString &fileUrl, bool &a
 {
     QUrl url(fileUrl);
 
-    if(url.scheme().isEmpty()) {
-        url = QUrl::fromLocalFile(fileUrl);
-    } else if(!url.isLocalFile()) {
+    if(!url.isLocalFile()) {
         accepted = false;
 
         return Q_NULLPTR;
@@ -31,18 +29,16 @@ AbstractFileInfo *FileController::createFileInfo(const QString &fileUrl, bool &a
     accepted = true;
 
     if(fileUrl.endsWith(QString(".") + DESKTOP_SURRIX))
-        return new DesktopFileInfo(url.toLocalFile());
+        return new DesktopFileInfo(fileUrl);
     else
-        return new FileInfo(url.toLocalFile());
+        return new FileInfo(fileUrl);
 }
 
 const QList<AbstractFileInfo*> FileController::getChildren(const QString &fileUrl, QDir::Filters filter, bool &accepted) const
 {
     QUrl url(fileUrl);
 
-    if(url.scheme().isEmpty()) {
-        url = QUrl::fromLocalFile(fileUrl);
-    } else if(!url.isLocalFile()) {
+    if(!url.isLocalFile()) {
         accepted = false;
     }
 
@@ -50,7 +46,7 @@ const QList<AbstractFileInfo*> FileController::getChildren(const QString &fileUr
 
     QList<AbstractFileInfo*> infolist;
 
-    const QString &path = url.toLocalFile();
+    const QString &path = url.path();
 
     if(path.isEmpty()) {
         const QFileInfoList list = QDir::drives();
@@ -86,9 +82,7 @@ bool FileController::openFile(const QString &fileUrl, bool &accepted) const
 {
     QUrl url(fileUrl);
 
-    if(url.scheme().isEmpty()) {
-        url = QUrl::fromLocalFile(fileUrl);
-    } else if(!url.isLocalFile()) {
+    if(!url.isLocalFile()) {
         accepted = false;
 
         return false;
@@ -99,9 +93,19 @@ bool FileController::openFile(const QString &fileUrl, bool &accepted) const
     return QDesktopServices::openUrl(url);
 }
 
-bool FileController::renameFile(const QString &oldUrl, const QString &newUrl) const
+bool FileController::renameFile(const QString &oldUrl, const QString &newUrl, bool &accepted) const
 {
-    QFile file(oldUrl);
+    QUrl url(oldUrl);
 
-    return file.rename(newUrl);
+    if(!url.isLocalFile()) {
+        accepted = false;
+
+        return false;
+    }
+
+    accepted = true;
+
+    QFile file(url.toLocalFile());
+
+    return file.rename(QUrl(newUrl).toLocalFile());
 }

@@ -1,10 +1,11 @@
 #ifndef FMSTATEMANAGER_H
 #define FMSTATEMANAGER_H
 
-#include <QObject>
 #include "basemanager.h"
 
-class FMStateManager : public BaseManager
+#include <QObject>
+
+class FMStateManager : public QObject, public BaseManager
 {
     Q_OBJECT
 public:

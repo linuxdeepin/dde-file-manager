@@ -2,6 +2,8 @@
 #include "fileinfo.h"
 
 TrashManager::TrashManager(QObject *parent)
+    : QObject(parent)
+    , BaseManager()
 {
     Q_UNUSED(parent)
     load();

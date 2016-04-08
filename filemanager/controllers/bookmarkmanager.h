@@ -3,12 +3,13 @@
 
 #include "basemanager.h"
 #include "bookmark.h"
+#include "abstractfilecontroller.h"
 
 #include <QDir>
 
 class AbstractFileInfo;
 
-class BookMarkManager : public BaseManager
+class BookMarkManager : public AbstractFileController, public BaseManager
 {
     Q_OBJECT
 public:

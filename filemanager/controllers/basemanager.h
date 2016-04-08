@@ -1,13 +1,10 @@
 #ifndef BASEMANAGER_H
 #define BASEMANAGER_H
 
-#include <QObject>
-
-class BaseManager : public QObject
+class BaseManager
 {
-    Q_OBJECT
 public:
-    explicit BaseManager(QObject *parent = 0);
+    explicit BaseManager();
     ~BaseManager();
 
     virtual void load();

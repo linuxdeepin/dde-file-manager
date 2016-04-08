@@ -78,12 +78,9 @@ public:
     static DFileMenu *createToolBarSortMenu(const QVector<MenuAction> &disableList = QVector<MenuAction>());
     static DFileMenu *createListViewHeaderMenu(const QVector<MenuAction> &disableList = QVector<MenuAction>());
 
-    static QList<QString> m_cutItems;
+    static QVector<FileMenuManager::MenuAction> getDisableActionList(const QString &fileUrl);
+
 private:
-
-    static QMap<MenuAction, QString> m_actionKeys;
-    static QMap<MenuAction, DAction*> m_actions;
-
     static void initData();
     static void initActions();
     static DFileMenu *genereteMenuByKeys(const QVector<MenuAction> &keys,
@@ -100,8 +97,13 @@ private:
     void doPaste(const QString &url);
     void doCut(const QList<QString> & urls);
 
+    static QList<QString> m_cutItems;
+    static QMap<MenuAction, QString> m_actionKeys;
+    static QMap<MenuAction, DAction*> m_actions;
+
 public slots:
     void actionTriggered(DAction * action);
+
 signals:
     void startMoveToTrash(const QList<QUrl> &files);
     void startCompleteDeletion(const QList<QUrl> &files);

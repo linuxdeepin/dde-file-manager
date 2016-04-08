@@ -2,6 +2,7 @@
 #define FMEVENT_H
 
 #include <QString>
+#include <QSharedData>
 
 class FMEvent
 {
@@ -17,11 +18,51 @@ public:
         Unknow
     };
 
-    FMEvent();
+    class FMEventData : public QSharedData
+    {
+    private:
+        int windowId = -1;
+        EventSource source = Unknow;
+        QString fileUrl;
 
-    int windowId = -1;
-    EventSource source = Unknow;
-    QString dir;
+        friend class FMEvent;
+    };
+
+    FMEvent(int wId = -1, EventSource source = Unknow, const QString &fileUrl = "");
+
+    inline FMEvent(const FMEvent &other)
+        : data(other.data)
+    {}
+
+    inline FMEvent(FMEvent &&other) Q_DECL_NOEXCEPT
+    {qSwap(data, other.data);}
+
+    inline FMEvent &operator =(const FMEvent &other)
+    {data = other.data; return *this;}
+
+    inline FMEvent &operator =(FMEvent &&other) Q_DECL_NOEXCEPT
+    {qSwap(data, other.data); return *this;}
+
+    inline FMEvent &operator =(EventSource source)
+    {data->source = source; return *this;}
+
+    inline FMEvent &operator =(int wId)
+    {data->windowId = wId; return *this;}
+
+    inline FMEvent &operator =(const QString &fileUrl)
+    {data->fileUrl = fileUrl; return *this;}
+
+    inline int windowId() const
+    {return data->windowId;}
+
+    inline EventSource source() const
+    {return data->source;}
+
+    inline const QString &fileUrl() const
+    {return data->fileUrl;}
+
+private:
+    QSharedDataPointer<FMEventData> data;
 };
 
 QT_BEGIN_NAMESPACE

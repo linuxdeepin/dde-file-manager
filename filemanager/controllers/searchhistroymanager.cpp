@@ -1,8 +1,18 @@
 #include "searchhistroymanager.h"
 #include "searchhistory.h"
 
+#include <QList>
+#include <QJsonObject>
+#include <QFile>
+#include <stdlib.h>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QByteArray>
+#include <QDateTime>
 
-SearchHistroyManager::SearchHistroyManager(QObject *parent) : BaseManager(parent)
+SearchHistroyManager::SearchHistroyManager(QObject *parent)
+    : QObject(parent)
+    , BaseManager()
 {
     m_stringList.clear();
     load();

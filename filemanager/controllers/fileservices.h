@@ -25,14 +25,18 @@ public:
     static void unsetFileUrlHandler(AbstractFileController *controller);
     static void clearFileUrlHandler(const QString &scheme, const QString &path);
 
-    bool openFile(const QString &fileUrl);
+    bool openFile(const QString &fileUrl) const;
+    bool renameFile(const QString &oldUrl, const QString &newUrl) const;
+
     AbstractFileInfo *createFileInfo(const QString &fileUrl) const;
+
     void getChildren(const FMEvent &event, QDir::Filters filters) const;
 
 signals:
     void childrenUpdated(const FMEvent &event, const QList<AbstractFileInfo*> &list) const;
-    void childrenAdded(const QString &fileUrl);
-    void childrenRemoved(const QString &fileUrl);
+    void childrenAdded(const QString &fileUrl) const;
+    void childrenRemoved(const QString &fileUrl) const;
+    void fileOpened(const QString &fileUrl) const;
 
 private:
     explicit FileServices();

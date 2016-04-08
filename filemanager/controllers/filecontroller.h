@@ -19,8 +19,8 @@ public:
     const QList<AbstractFileInfo*> getChildren(const QString &fileUrl, QDir::Filters filter, bool &accepted) const Q_DECL_OVERRIDE;
 
 public slots:
-    bool openFile(const QString &fileUrl, bool &accepted) const;
-    bool renameFile(const QString &oldUrl, const QString &newUrl) const;
+    bool openFile(const QString &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
+    bool renameFile(const QString &oldUrl, const QString &newUrl, bool &accepted) const Q_DECL_OVERRIDE;
 };
 
 #endif // FILECONTROLLER_H

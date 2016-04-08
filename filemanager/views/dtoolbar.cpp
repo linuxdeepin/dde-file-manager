@@ -153,10 +153,10 @@ void DToolBar::initConnect()
 void DToolBar::startup()
 {
     QString user = getenv("USER");
-    FMEvent event;
-    event.source = FMEvent::SearchLine;
-    event.dir = "/home/" + user;
-    m_crumbWidget->setCrumb(event.dir);
+    FMEvent event(-1, FMEvent::SearchLine);
+    event = "/home/" + user;
+    m_crumbWidget->setCrumb(event.fileUrl());
+
     emit fileSignalManager->requestChangeCurrentUrl(event);
 }
 
@@ -196,8 +196,8 @@ void DToolBar::searchBarTextEntered()
 
     FMEvent event;
 
-    event.source = FMEvent::SearchLine;
-    event.dir = path;
+    event = FMEvent::SearchLine;
+    event = path;
 
     emit fileSignalManager->requestChangeCurrentUrl(event);
 }
@@ -206,22 +206,22 @@ void DToolBar::crumbSelected(QString path)
 {
     FMEvent event;
 
-    event.source = FMEvent::CrumbButton;
-    event.dir = path;
+    event = FMEvent::CrumbButton;
+    event = path;
 
     emit fileSignalManager->requestChangeCurrentUrl(event);
 }
 
 void DToolBar::crumbChanged(const FMEvent &event)
 {
-    if(event.source == FMEvent::CrumbButton)
+    if(event.source() == FMEvent::CrumbButton)
         return;
-    m_crumbWidget->setCrumb(event.dir);
+    m_crumbWidget->setCrumb(event.fileUrl());
     if(m_searchBar->isActive())
-        m_searchBar->setText(event.dir);
-    if(event.source == FMEvent::BackAndForwardButton)
+        m_searchBar->setText(event.fileUrl());
+    if(event.source() == FMEvent::BackAndForwardButton)
         return;
-    m_navStack->insert(event.dir);
+    m_navStack->insert(event.fileUrl());
     m_backButton->setEnabled(true);
 }
 
@@ -238,8 +238,8 @@ void DToolBar::upButtonClicked()
 
     FMEvent event;
 
-    event.source = FMEvent::UpButton;
-    event.dir = text;
+    event = FMEvent::UpButton;
+    event = text;
 
     emit fileSignalManager->requestChangeCurrentUrl(event);
 }
@@ -255,8 +255,8 @@ void DToolBar::backButtonClicked()
     if(path != "")
     {
         FMEvent event;
-        event.source = FMEvent::BackAndForwardButton;
-        event.dir = path;
+        event = FMEvent::BackAndForwardButton;
+        event = path;
         if(m_navStack->isFirst())
             m_backButton->setDisabled(true);
         m_forwardButton->setEnabled(true);
@@ -270,8 +270,8 @@ void DToolBar::forwardButtonClicked()
     if(path != "")
     {
         FMEvent event;
-        event.source = FMEvent::BackAndForwardButton;
-        event.dir = path;
+        event = FMEvent::BackAndForwardButton;
+        event = path;
         if(m_navStack->isLast())
             m_forwardButton->setDisabled(true);
         m_backButton->setEnabled(true);

@@ -1,6 +1,6 @@
 #include "basemanager.h"
 
-BaseManager::BaseManager(QObject *parent) : QObject(parent)
+BaseManager::BaseManager()
 {
 
 }

@@ -14,48 +14,44 @@ FileInfo::FileInfo()
 
 }
 
-FileInfo::FileInfo(const QString &file)
-    : AbstractFileInfo()
+FileInfo::FileInfo(const QString &fileUrl)
+    : AbstractFileInfo(fileUrl)
 {
-    QUrl url(file);
 
-    if(url.scheme().isEmpty())
-        url = QUrl::fromLocalFile(file);
+}
 
-    AbstractFileInfo::setUrl(url);
+FileInfo::FileInfo(const QUrl &fileUrl)
+    : AbstractFileInfo(fileUrl)
+{
+
 }
 
 FileInfo::FileInfo(const QFileInfo &fileInfo)
-    : AbstractFileInfo()
+    : AbstractFileInfo(QUrl::fromLocalFile(fileInfo.absoluteFilePath()))
 {
-    AbstractFileInfo::setUrl(QUrl::fromLocalFile(fileInfo.absoluteFilePath()));
+
 }
 
-void FileInfo::setFile(const QString &file)
+void FileInfo::setFile(const QString &fileUrl)
 {
-    QUrl url(file);
-
-    if(url.scheme().isEmpty())
-        url = QUrl::fromLocalFile(file);
-
-    setUrl(url);
+    setUrl(fileUrl);
 }
 
-bool FileInfo::exists(const QString &file)
+bool FileInfo::exists(const QString &fileUrl)
 {
-    QUrl url(file);
+    QUrl url(fileUrl);
 
     if(url.scheme().isEmpty())
-        url = QUrl::fromLocalFile(file);
+        url = QUrl::fromLocalFile(fileUrl);
 
     return QFileInfo::exists(url.toLocalFile());
 }
 
-QMimeType FileInfo::mimeType(const QString &file)
+QMimeType FileInfo::mimeType(const QString &filePath)
 {
     QMimeDatabase db;
 
-    return db.mimeTypeForFile(file);
+    return db.mimeTypeForFile(filePath);
 }
 
 bool FileInfo::isCanRename() const

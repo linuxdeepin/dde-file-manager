@@ -14,13 +14,14 @@ class FileInfo : public AbstractFileInfo
 {
 public:
     FileInfo();
-    FileInfo(const QString & file);
+    FileInfo(const QString& fileUrl);
+    FileInfo(const QUrl& fileUrl);
     FileInfo(const QFileInfo &fileInfo);
 
-    virtual void setFile(const QString &file);
+    virtual void setFile(const QString &fileUrl);
 
-    static bool exists(const QString &file);
-    static QMimeType mimeType(const QString &file);
+    static bool exists(const QString &fileUrl);
+    static QMimeType mimeType(const QString &filePath);
 
     bool isCanRename() const Q_DECL_OVERRIDE;
 
