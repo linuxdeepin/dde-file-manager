@@ -105,6 +105,17 @@ QString DFileView::currentUrl() const
     return model()->getUrlByIndex(rootIndex());
 }
 
+QList<QString> DFileView::selectedUrls() const
+{
+    QList<QString> list;
+
+    for(const QModelIndex &index : m_selectedIndexList) {
+        list << model()->getUrlByIndex(index);
+    }
+
+    return list;
+}
+
 bool DFileView::isIconViewMode()
 {
     return orientation() == Qt::Vertical && isWrapping();
@@ -135,7 +146,7 @@ QList<int> DFileView::columnRoleList() const
 
 int DFileView::selectedIndexCount() const
 {
-    return m_selectedIndexCount;
+    return m_selectedIndexList.count();
 }
 
 void DFileView::cd(const FMEvent &event)
@@ -302,12 +313,12 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
         index = rootIndex();
 
         menu = FileMenuManager::createViewSpaceAreaMenu(Global::getDisableActionList(model()->getUrlByIndex(index)));
-        menu->setUrl(currentUrl());
+        menu->setDir(currentUrl());
     }else{
         index = indexAt(event->pos());
-
         menu = FileMenuManager::createFileMenu(Global::getDisableActionList(model()->getUrlByIndex(index)));
-        menu->setUrl(model()->getUrlByIndex(currentIndex()));
+        menu->setUrls(selectedUrls());
+        menu->setDir(currentUrl());
     }
 
     onMenuActionTrigger(menu->exec(mapToGlobal(event->pos())), index);
@@ -360,7 +371,9 @@ void DFileView::mousePressEvent(QMouseEvent *event)
 {
     if(event->button() == Qt::LeftButton) {
         setDragEnabled(!isEmptyArea(event->pos()));
-    } else if(event->button() == Qt::RightButton) {
+    } else if(event->button() == Qt::RightButton && selectedIndexCount() < 2) {
+        qDebug() << selectedIndexCount();
+
         QWidget::mousePressEvent(event);
 
         const QModelIndex &index = indexAt(event->pos());
@@ -377,7 +390,7 @@ void DFileView::mousePressEvent(QMouseEvent *event)
 
 void DFileView::selectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
 {
-    m_selectedIndexCount = selected.indexes().count();
+    m_selectedIndexList = selectionModel()->selectedIndexes();
 
     DListView::selectionChanged(selected, deselected);
 }

@@ -11,10 +11,13 @@ class DFileMenu : public DMenu
 
 public:
     explicit DFileMenu(DMenu * parent = 0);
-    void setUrl(const QString &url);
-    QString getUrl();
+    void setUrls(const QList<QString> &urls);
+    QList<QString> getUrls();
+    void setDir(const QString &dir);
+    QString getDir();
 private:
-    QString m_url;
+    QList<QString> m_urls;
+    QString m_dir;
 };
 
 #endif // DFILEMENU_H

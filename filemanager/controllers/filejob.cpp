@@ -80,24 +80,37 @@ void FileJob::doCopy(const QList<QUrl> &files, const QString &destination)
     emit finished();
 }
 
-void FileJob::doDelete(const QString &source)
+void FileJob::doDelete(const QList<QUrl> &files)
 {
-    QDir dir(source);
-    if(dir.exists())
-        deleteDir(source);
-    else
-        deleteFile(source);
+    for(int i = 0; i < files.size(); i++)
+    {
+        QUrl url = files.at(i);
+        QDir dir(url.path());
+        if(dir.exists())
+            deleteDir(url.path());
+        else
+            deleteFile(url.path());
+    }
     emit finished();
 }
 
-void FileJob::doMoveToTrash(const QString &source)
+void FileJob::doMoveToTrash(const QList<QUrl> &files)
 {
-    QDir dir(source);
-    if(dir.exists())
-        moveDirToTrash(source);
-    else
-        moveFileToTrash(source);
+    for(int i = 0; i < files.size(); i++)
+    {
+        QUrl url = files.at(i);
+        QDir dir(url.path());
+        if(dir.exists())
+            moveDirToTrash(url.path());
+        else
+            moveFileToTrash(url.path());
+    }
     emit finished();
+}
+
+void FileJob::doCut(const QList<QUrl> &files, const QString &destination)
+{
+
 }
 
 void FileJob::paused()
@@ -203,7 +216,6 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir)
         }
 
     bool isGreater = false;
-    bool isJobAdded = false;
     char block[DATA_BLOCK_SIZE];
     qint64 thres = 0;
     bool startToDisplay = false;
@@ -296,14 +308,10 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir)
             case FileJob::Cancelled:
                 from.close();
                 to.close();
-                if(isJobAdded)
-                    jobAborted();
                 return false;
             default:
                 from.close();
                 to.close();
-                if(isJobAdded)
-                    jobAborted();
                 return false;
          }
 

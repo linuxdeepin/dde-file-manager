@@ -11,6 +11,7 @@
 
 QMap<FileMenuManager::MenuAction, QString> FileMenuManager::m_actionKeys;
 QMap<FileMenuManager::MenuAction, DAction*> FileMenuManager::m_actions;
+QList<QString> FileMenuManager::m_cutItems;
 
 DFileMenu *FileMenuManager::createFileMenu(const QVector<MenuAction> &disableList)
 {
@@ -462,7 +463,7 @@ void FileMenuManager::doRename(const QString &url)
  *
  * Trash file or directory with the given url address.
  */
-void FileMenuManager::doDelete(const QString &url)
+void FileMenuManager::doDelete(const QList<QString> &urls)
 {
     FileJob * job = new FileJob;
     QThread * thread = new QThread;
@@ -472,7 +473,12 @@ void FileMenuManager::doDelete(const QString &url)
     connect(job, &FileJob::finished, thread, &QThread::quit);
     connect(thread, &QThread::finished, thread, &QThread::deleteLater);
     thread->start();
-    emit startMoveToTrash(url);
+    QList<QUrl> qurls;
+    for(int i = 0; i < urls.size(); i++)
+    {
+        qurls << QUrl(urls.at(i));
+    }
+    emit startMoveToTrash(qurls);
 }
 
 /**
@@ -481,7 +487,7 @@ void FileMenuManager::doDelete(const QString &url)
  *
  * Permanently delete file or directory with the given url.
  */
-void FileMenuManager::doCompleteDeletion(const QString &url)
+void FileMenuManager::doCompleteDeletion(const QList<QString> &urls)
 {
     FileJob * job = new FileJob;
     QThread * thread = new QThread;
@@ -491,7 +497,12 @@ void FileMenuManager::doCompleteDeletion(const QString &url)
     connect(job, &FileJob::finished, thread, &QThread::quit);
     connect(thread, &QThread::finished, thread, &QThread::deleteLater);
     thread->start();
-    emit startCompleteDeletion(url);
+    QList<QUrl> qurls;
+    for(int i = 0; i < urls.size(); i++)
+    {
+        qurls << QUrl(urls.at(i));
+    }
+    emit startCompleteDeletion(qurls);
 }
 
 void FileMenuManager::doSorting(MenuAction action)
@@ -519,59 +530,117 @@ void FileMenuManager::doSorting(MenuAction action)
     }
 }
 
-void FileMenuManager::doCopy(const QString &url)
+void FileMenuManager::doCopy(const QList<QString> &urls)
 {
-    QClipboard * clipBoard = QApplication::clipboard();
-    QUrl qurl(url);
+    m_cutItems.clear();
+    QList<QUrl> urlList;
     QMimeData *mimeData = new QMimeData;
-    QList<QUrl> list;
-    list.append(qurl);
-    mimeData->setUrls(list);
-    clipBoard->setMimeData(mimeData);
+    QByteArray ba;
+    ba.append("copy");
+    for(int i = 0; i < urls.size(); i++)
+    {
+        QString path = urls.at(i);
+        ba.append("\n");
+        ba.append(QUrl::fromLocalFile(path).toString());
+        urlList.append(QUrl(path));
+    }
+    mimeData->setText("copy");
+    mimeData->setUrls(urlList);
+    mimeData->setData("x-special/gnome-copied-files", ba);
+    QApplication::clipboard()->setMimeData(mimeData);
 }
 
 void FileMenuManager::doPaste(const QString &url)
 {
+    QDir dir(url);
+    //Make sure the target directory exists.
+    if(!dir.exists())
+        return;
     const QClipboard *clipboard = QApplication::clipboard();
     const QMimeData *mimeData = clipboard->mimeData();
 
     if(mimeData->hasUrls())
     {
-        QList<QUrl> urls = mimeData->urls();
-        FileJob * job = new FileJob;
-        dialogManager->addJob(job);
-        QThread * thread = new QThread;
-        job->moveToThread(thread);
-        connect(this, &FileMenuManager::startCopy, job, &FileJob::doCopy);
-        connect(job, &FileJob::finished, job, &FileJob::deleteLater);
-        connect(job, &FileJob::finished, thread, &QThread::quit);
-        connect(thread, &QThread::finished, thread, &QThread::deleteLater);
-        thread->start();
-        emit startCopy(urls, url);
+        if(mimeData->text() == "copy")
+        {
+            QList<QUrl> urls = mimeData->urls();
+            FileJob * job = new FileJob;
+            dialogManager->addJob(job);
+            QThread * thread = new QThread;
+            job->moveToThread(thread);
+            connect(this, &FileMenuManager::startCopy, job, &FileJob::doCopy);
+            connect(job, &FileJob::finished, job, &FileJob::deleteLater);
+            connect(job, &FileJob::finished, thread, &QThread::quit);
+            connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+            thread->start();
+            emit startCopy(urls, url);
+        }
+        else if(mimeData->text() == "cut")
+        {
+            //Todo: paste on different physical device.
+            QList<QUrl> urls = mimeData->urls();
+            for(int i = 0; i < urls.size(); i++)
+            {
+                QUrl qurl = urls.at(i);
+                QFileInfo fileInfo(qurl.path());
+                QFile file(qurl.path());
+                file.rename(dir.absolutePath() + "/" + fileInfo.fileName());
+            }
+        }
     }
+    else if(!mimeData->data("x-special/gnome-copied-files").isEmpty())
+    {
+
+    }
+}
+
+void FileMenuManager::doCut(const QList<QString> &urls)
+{
+    m_cutItems = urls;
+    QList<QUrl> urlList;
+    QMimeData *mimeData = new QMimeData;
+    QByteArray ba;
+    ba.append("cut");
+    for(int i = 0; i < urls.size(); i++)
+    {
+        QString path = urls.at(i);
+        ba.append("\n");
+        ba.append(QUrl::fromLocalFile(path).toString());
+        urlList.append(QUrl(path));
+    }
+    mimeData->setText("cut");
+    mimeData->setUrls(urlList);
+    mimeData->setData("x-special/gnome-copied-files", ba);
+    QApplication::clipboard()->setMimeData(mimeData);
 }
 
 
 void FileMenuManager::actionTriggered(DAction *action)
 {
     DFileMenu *menu = qobject_cast<DFileMenu *>(sender());
-    QString url = menu->getUrl();
+    QList<QString> urls = menu->getUrls();
+    QString dir = menu->getDir();
     MenuAction type = (MenuAction)action->data().toInt();
     switch(type)
     {
-    case Open:doOpen(url);break;
+    case Open:
+        if(urls.size() > 0)
+        {
+            doOpen(urls.at(0));
+        }
+        break;
     case OpenInNewWindow:break;
     case OpenWith:break;
-    case OpenFileLocation:doOpenFileLocation(url);break;
+    case OpenFileLocation:doOpenFileLocation(dir);break;
     case Compress:break;
     case Decompress:break;
-    case Cut:break;
-    case Copy:doCopy(url);break;
-    case Paste:doPaste(url);break;
+    case Cut:doCut(urls);break;
+    case Copy:doCopy(urls);break;
+    case Paste:doPaste(dir);break;
     case Rename:break;
     case Remove:break;
-    case Delete:doDelete(url);break;
-    case CompleteDeletion:doCompleteDeletion(url);break;
+    case Delete:doDelete(urls);break;
+    case CompleteDeletion:doCompleteDeletion(urls);break;
     case Property:break;
     case NewFolder:break;
     case NewFile:break;
