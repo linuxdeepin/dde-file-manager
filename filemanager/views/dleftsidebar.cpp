@@ -65,7 +65,7 @@ void DLeftSideBar::initData()
                   << ":/icons/images/icons/trash_normal_22px.svg" //trash
                   << ":/icons/images/icons/disk_normal_22px.svg" //disk
                   << ":/icons/images/icons/phone_normal_22px.svg" //my mobile
-                  << ":/icons/images/icons/bookmarks_normal_22px.svg"; //bookmarks
+                  << ":/icons/images/icons/favourite_normal.svg"; //bookmarks
 
     m_bigIconlistChecked << ":/icons/images/icons/file_checked_22px.svg" //file
                          << ":/icons/images/icons/recent_checked_22px.svg" //recent
@@ -80,7 +80,7 @@ void DLeftSideBar::initData()
                          << ":/icons/images/icons/trash_checked_22px.svg" //trash
                          << ":/icons/images/icons/disk_checked_22px.svg" //disk
                          << ":/icons/images/icons/phone_checked_22px.svg" //my mobile
-                         << ":/icons/images/icons/bookmarks_checked_22px.svg"; //bookmarks
+                         << ":/icons/images/icons/favourite_checked.svg"; //bookmarks
 
     m_iconlistChecked << ":/icons/images/icons/file_checked_16px.svg" //file
                << ":/icons/images/icons/recent_checked_16px.svg" //recent

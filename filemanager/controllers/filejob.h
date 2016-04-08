@@ -37,8 +37,9 @@ signals:
     void finished();
 public slots:
     void doCopy(const QList<QUrl> &files, const QString &destination);
-    void doDelete(const QString &source);
-    void doMoveToTrash(const QString &source);
+    void doDelete(const QList<QUrl> &files);
+    void doMoveToTrash(const QList<QUrl> &files);
+    void doCut(const QList<QUrl> &files, const QString &destination);
     void paused();
     void started();
     void cancelled();

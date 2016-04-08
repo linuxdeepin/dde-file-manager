@@ -42,6 +42,7 @@ public:
     DFileItemDelegate *itemDelegate() const;
 
     QString currentUrl() const;
+    QList<QString> selectedUrls() const;
 
     bool isIconViewMode();
 
@@ -90,9 +91,10 @@ private:
     QList<int> m_iconSizes;
 
     int m_currentIconSizeIndex = 0;
-    int m_selectedIndexCount = 0;
 
     bool m_ctrlIsPressed = false;
+
+    QModelIndexList m_selectedIndexList;
 
     bool isEmptyArea(const QPoint &pos) const;
 

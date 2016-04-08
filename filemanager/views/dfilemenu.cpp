@@ -6,12 +6,23 @@ DFileMenu::DFileMenu(DMenu *parent)
 
 }
 
-void DFileMenu::setUrl(const QString &url)
+void DFileMenu::setUrls(const QList<QString> &urls)
 {
-    m_url = url;
+    m_urls = urls;
 }
 
-QString DFileMenu::getUrl()
+QList<QString> DFileMenu::getUrls()
 {
-    return m_url;
+    return m_urls;
 }
+
+void DFileMenu::setDir(const QString &dir)
+{
+    m_dir = dir;
+}
+
+QString DFileMenu::getDir()
+{
+    return m_dir;
+}
+

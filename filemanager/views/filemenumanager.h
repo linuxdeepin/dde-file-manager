@@ -78,8 +78,8 @@ public:
     static DFileMenu *createToolBarSortMenu(const QVector<MenuAction> &disableList = QVector<MenuAction>());
     static DFileMenu *createListViewHeaderMenu(const QVector<MenuAction> &disableList = QVector<MenuAction>());
 
+    static QList<QString> m_cutItems;
 private:
-
 
     static QMap<MenuAction, QString> m_actionKeys;
     static QMap<MenuAction, DAction*> m_actions;
@@ -90,19 +90,21 @@ private:
                                          const QVector<MenuAction> &disableList,
                                          bool checkable = false,
                                          const QMap<MenuAction, QVector<MenuAction> > &subMenuList = QMap<MenuAction, QVector<MenuAction> >());
-    void doOpen(const QString & url);
+    void doOpen(const QString &url);
     void doOpenFileLocation(const QString &url);
     void doRename(const QString &url);
-    void doDelete(const QString &url);
-    void doCompleteDeletion(const QString &url);
+    void doDelete(const QList<QString> & urls);
+    void doCompleteDeletion(const QList<QString> & urls);
     void doSorting(MenuAction action);
-    void doCopy(const QString &url);
+    void doCopy(const QList<QString> & urls);
     void doPaste(const QString &url);
+    void doCut(const QList<QString> & urls);
+
 public slots:
     void actionTriggered(DAction * action);
 signals:
-    void startMoveToTrash(const QString &url);
-    void startCompleteDeletion(const QString &url);
+    void startMoveToTrash(const QList<QUrl> &files);
+    void startCompleteDeletion(const QList<QUrl> &files);
     void startCopy(const QList<QUrl> &files, const QString &dst);
 };
 

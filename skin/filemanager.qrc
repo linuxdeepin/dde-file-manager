@@ -169,5 +169,8 @@
         <file>images/icons/bookmarks_hover_22px.svg</file>
         <file>images/icons/bookmarks_checked_22px.svg</file>
         <file>images/icons/documents_checked_22px.svg</file>
+        <file>images/icons/favourite_normal.svg</file>
+        <file>images/icons/favourite_checked.svg</file>
+        <file>images/icons/favourite_hover.svg</file>
     </qresource>
 </RCC>
