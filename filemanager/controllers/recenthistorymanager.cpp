@@ -69,17 +69,13 @@ bool RecentHistoryManager::openFile(const QString &fileUrl, bool &accepted) cons
 {
     QUrl url(fileUrl);
 
-    if(url.scheme() != RECENT_SCHEME) {
-        accepted = false;
+    accepted = false;
 
+    if(url.scheme() != RECENT_SCHEME) {
         return false;
     }
 
-    AbstractFileInfo *info = fileService->createFileInfo(fileUrl);
-
-    accepted = true;
-
-    return fileService->openFile(info->fileUrl());
+    return fileService->openFile("file://" + url.path());
 }
 
 const QList<AbstractFileInfo *> RecentHistoryManager::getChildren(const QString &fileUrl, QDir::Filters filter, bool &accepted) const
@@ -97,13 +93,9 @@ const QList<AbstractFileInfo *> RecentHistoryManager::getChildren(const QString 
     }
 
     for (const QString &filePath : openedFileList) {
-        qDebug() << filePath;
-
         QUrl url(filePath);
 
         url.setScheme(RECENT_SCHEME);
-
-        qDebug() << url.toString(QUrl::DecodeReserved) << url;
 
         AbstractFileInfo *fileInfo = new RecentFileInfo(url.toString());
 
