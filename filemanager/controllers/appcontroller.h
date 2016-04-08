@@ -15,11 +15,10 @@ public:
     ~AppController();
 
     void initConnect();
-    FileController* getFileController() const;
+
     FileMonitor* getFileMonitor() const;
 
 private:
-    FileController* m_fileController;
     FileMonitor* m_fileMonitor;
 };
 

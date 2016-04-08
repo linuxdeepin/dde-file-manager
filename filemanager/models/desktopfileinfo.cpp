@@ -13,16 +13,16 @@ DesktopFileInfo::DesktopFileInfo() :
 
 }
 
-DesktopFileInfo::DesktopFileInfo(const QString &file) :
-    FileInfo(file)
+DesktopFileInfo::DesktopFileInfo(const QString &fileUrl) :
+    FileInfo(fileUrl)
 {
-    init(file);
+    init(fileUrl);
 }
 
 DesktopFileInfo::DesktopFileInfo(const QFileInfo &fileInfo) :
     FileInfo(fileInfo)
 {
-    init(fileInfo.absoluteFilePath());
+    init("file://" + fileInfo.absoluteFilePath());
 }
 
 DesktopFileInfo::~DesktopFileInfo()
@@ -30,11 +30,11 @@ DesktopFileInfo::~DesktopFileInfo()
 
 }
 
-void DesktopFileInfo::setFile(const QString &file)
+void DesktopFileInfo::setFile(const QString &fileUrl)
 {
-    FileInfo::setFile(file);
+    FileInfo::setFile(fileUrl);
 
-    init(file);
+    init(fileUrl);
 }
 
 QString DesktopFileInfo::getName() const
@@ -67,20 +67,37 @@ QIcon DesktopFileInfo::fileIcon() const
     return iconProvider->getDesktopIcon(getIconName(), 256);
 }
 
-void DesktopFileInfo::init(const QString &fileName)
+QMap<QString, QVariant> DesktopFileInfo::getDesktopFileInfo(const QString &fileUrl)
 {
-    QSettings settings(fileName, QSettings::IniFormat);
+    QUrl url(fileUrl);
+
+    QMap<QString, QVariant> map;
+    QSettings settings(url.path(), QSettings::IniFormat);
 
     settings.beginGroup("Desktop Entry");
     // Loads .desktop file (read from 'Desktop Entry' group)
-    Properties desktop(fileName, "Desktop Entry");
+    Properties desktop(url.path(), "Desktop Entry");
 
-    name = desktop.value("Name", settings.value("Name")).toString();
-    exec = desktop.value("Exec", settings.value("Exec")).toString();
-    iconName = desktop.value("Icon", settings.value("Icon")).toString();
-    type = desktop.value("Type", settings.value("Type", "Application")).toString();
-    categories = desktop.value("Categories", settings.value("Categories").toString()).toString().remove(" ").split(";");
-    mimeType = desktop.value("MimeType", settings.value("MimeType").toString()).toString().remove(" ").split(";");
+    map["Name"] = desktop.value("Name", settings.value("Name"));
+    map["Exec"] = desktop.value("Exec", settings.value("Exec"));
+    map["Icon"] = desktop.value("Icon", settings.value("Icon"));
+    map["Type"] = desktop.value("Type", settings.value("Type", "Application"));
+    map["Categories"] = desktop.value("Categories", settings.value("Categories")).toString().remove(" ").split(";");
+    map["MimeType"] = desktop.value("MimeType", settings.value("MimeType")).toString().remove(" ").split(";");
+
+    return map;
+}
+
+void DesktopFileInfo::init(const QString &fileUrl)
+{
+    const QMap<QString, QVariant> &map = getDesktopFileInfo(fileUrl);
+
+    name = map.value("Name").toString();
+    exec = map.value("Exec").toString();
+    iconName = map.value("Icon").toString();
+    type = map.value("Type").toString();
+    categories = map.value("Categories").toStringList();
+    mimeType = map.value("MimeType").toStringList();
     // Fix categories
     if (categories.first().compare("") == 0) {
       categories.removeFirst();

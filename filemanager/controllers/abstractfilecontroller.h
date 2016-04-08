@@ -14,6 +14,7 @@ public:
     explicit AbstractFileController(QObject *parent = 0);
 
     virtual bool openFile(const QString &fileUrl, bool &accepted) const;
+    virtual bool renameFile(const QString &oldFile, const QString &newFile, bool &accepted) const;
     virtual const QList<AbstractFileInfo*> getChildren(const QString &fileUrl, QDir::Filters filter, bool &accepted) const;
     virtual AbstractFileInfo *createFileInfo(const QString &fileUrl, bool &accepted) const;
 

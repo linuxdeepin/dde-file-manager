@@ -4,6 +4,9 @@
 #include "../controllers/filejob.h"
 #include <QDebug>
 
+QHash<const QWidget*, int> WindowManager::m_windows;
+int WindowManager::m_count = 0;
+
 WindowManager::WindowManager(QObject *parent) : QObject(parent)
 {
 
@@ -17,8 +20,12 @@ WindowManager::~WindowManager()
 void WindowManager::showNewWindow()
 {
     DFileManagerWindow* window = new DFileManagerWindow;
+
+    connect(window, &DFileManagerWindow::destroyed,
+            this, &WindowManager::onWindowDestroyed);
+    m_windows.insert(window, m_count++);
+
     window->show();
-    m_windows.insert(m_windows.count() + 1, window);
 }
 
 void WindowManager::progressPercent(int value)
@@ -34,4 +41,14 @@ void WindowManager::error(QString content)
 void WindowManager::result(QString content)
 {
     qDebug() << "result = " << content;
+}
+
+int WindowManager::getWindowId(const QWidget *window)
+{
+    return m_windows.value(window, -1);
+}
+
+void WindowManager::onWindowDestroyed(const QObject *obj)
+{
+    m_windows.remove(static_cast<const QWidget*>(obj));
 }

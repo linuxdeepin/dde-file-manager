@@ -7,10 +7,6 @@
 #include <QUrl>
 #include <QContextMenuEvent>
 
-class FileController;
-class FileMenuManager;
-class FMEvent;
-
 QT_BEGIN_NAMESPACE
 class QFileSystemModel;
 class QHeaderView;
@@ -22,6 +18,9 @@ DWIDGET_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE
 
+class FileController;
+class FileMenuManager;
+class FMEvent;
 class DFileSystemModel;
 class DFileItemDelegate;
 class AbstractFileInfo;
@@ -53,6 +52,8 @@ public:
     QList<int> columnRoleList() const;
 
     int selectedIndexCount() const;
+
+    int windowId() const;
 
     using DListView::edit;
 
@@ -91,6 +92,7 @@ private:
     QList<int> m_iconSizes;
 
     int m_currentIconSizeIndex = 0;
+    mutable int m_windowId = -1;
 
     bool m_ctrlIsPressed = false;
 

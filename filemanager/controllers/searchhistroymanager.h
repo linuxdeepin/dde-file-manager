@@ -2,19 +2,12 @@
 #define SEARCHHISTROYMANAGER_H
 
 #include <QObject>
-#include <QList>
-#include <QJsonObject>
-#include <QFile>
-#include <stdlib.h>
-#include <QJsonDocument>
-#include <QJsonArray>
-#include <QByteArray>
-#include <QDateTime>
+
 #include "basemanager.h"
 
 class SearchHistory;
 
-class SearchHistroyManager : public BaseManager
+class SearchHistroyManager : public QObject, public BaseManager
 {
     Q_OBJECT
 public:
@@ -31,7 +24,6 @@ private:
 
 public slots:
     void writeIntoSearchHistory(QString keyword);
-
 };
 
 #endif // SEARCHHISTROYMANAGER_H

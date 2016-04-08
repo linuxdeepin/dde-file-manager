@@ -166,34 +166,6 @@ public:
 
         return str;
     }
-
-    static QVector<FileMenuManager::MenuAction> getDisableActionList(const QString &url)
-    {
-        AbstractFileInfo *fileInfo = fileService->createFileInfo(url);
-        QVector<FileMenuManager::MenuAction> disableList;
-
-        if(!fileInfo->isCanRename())
-            disableList << FileMenuManager::Rename;
-
-        if(!fileInfo->isReadable())
-            disableList << FileMenuManager::Open << FileMenuManager::OpenWith
-                        << FileMenuManager::OpenInNewWindow << FileMenuManager::Copy;
-
-        AbstractFileInfo *parentInfo = fileService->createFileInfo(fileInfo->absolutePath());
-
-        if(!fileInfo->isWritable())
-            disableList << FileMenuManager::Paste << FileMenuManager::NewDocument
-                        << FileMenuManager::NewFile << FileMenuManager::NewFolder;
-
-        if(!fileInfo->isWritable() || (parentInfo->exists() && !parentInfo->isWritable()))
-            disableList << FileMenuManager::Cut << FileMenuManager::Remove
-                        << FileMenuManager::Delete << FileMenuManager::CompleteDeletion;
-
-        delete fileInfo;
-        delete parentInfo;
-
-        return disableList;
-    }
 };
 
 #endif // GLOBAL_H

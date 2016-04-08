@@ -1,6 +1,5 @@
 #include "recenthistorymanager.h"
-#include "desktopfileinfo.h"
-#include "abstractfileinfo.h"
+#include "recentfileinfo.h"
 
 #include "../app/global.h"
 #include "../app/filesignalmanager.h"
@@ -16,11 +15,16 @@
 
 #include <stdlib.h>
 
-RecentHistoryManager::RecentHistoryManager(QObject *parent) : BaseManager(parent)
+RecentHistoryManager::RecentHistoryManager(QObject *parent)
+    : AbstractFileController(parent)
+    , BaseManager()
 {
     connect(fileSignalManager, &FileSignalManager::fileOpened,
             this, &RecentHistoryManager::addOpenedFile);
-    load();
+
+    RecentHistoryManager::load();
+
+    FileServices::setFileUrlHandler(RECENT_SCHEME, "", this);
 }
 
 RecentHistoryManager::~RecentHistoryManager()
@@ -61,6 +65,71 @@ void RecentHistoryManager::save()
     file.write(jsonDoc.toJson());
 }
 
+bool RecentHistoryManager::openFile(const QString &fileUrl, bool &accepted) const
+{
+    QUrl url(fileUrl);
+
+    if(url.scheme() != RECENT_SCHEME) {
+        accepted = false;
+
+        return false;
+    }
+
+    AbstractFileInfo *info = fileService->createFileInfo(fileUrl);
+
+    accepted = true;
+
+    return fileService->openFile(info->fileUrl());
+}
+
+const QList<AbstractFileInfo *> RecentHistoryManager::getChildren(const QString &fileUrl, QDir::Filters filter, bool &accepted) const
+{
+    Q_UNUSED(filter)
+
+    QUrl url(fileUrl);
+
+    QList<AbstractFileInfo*> infolist;
+
+    if(url.path() != "/" || url.scheme() != RECENT_SCHEME) {
+        accepted = false;
+
+        return infolist;
+    }
+
+    for (const QString &filePath : openedFileList) {
+        qDebug() << filePath;
+
+        QUrl url(filePath);
+
+        url.setScheme(RECENT_SCHEME);
+
+        qDebug() << url.toString(QUrl::DecodeReserved) << url;
+
+        AbstractFileInfo *fileInfo = new RecentFileInfo(url.toString());
+
+        infolist.append(fileInfo);
+    }
+
+    accepted = true;
+
+    return infolist;
+}
+
+AbstractFileInfo *RecentHistoryManager::createFileInfo(const QString &fileUrl, bool &accepted) const
+{
+    QUrl url(fileUrl);
+
+    if(url.scheme() != RECENT_SCHEME) {
+        accepted = false;
+
+        return Q_NULLPTR;
+    }
+
+    accepted = true;
+
+    return new RecentFileInfo(url.toString());
+}
+
 void RecentHistoryManager::loadJson(const QJsonObject &json)
 {
     QJsonArray jsonArray = json["RecentHistory"].toArray();
@@ -84,20 +153,6 @@ void RecentHistoryManager::writeJson(QJsonObject &json)
     json["RecentHistory"] = localArray;
 }
 
-void RecentHistoryManager::fetchFileInformation(const QString &url,
-                                                int /*filter*/)
-{
-    QList<AbstractFileInfo*> infolist;
-
-    for (const QString &filePath : openedFileList) {
-        AbstractFileInfo *fileInfo = fileService->createFileInfo(filePath);
-
-        infolist.append(fileInfo);
-    }
-
-    emit updates(url, infolist);
-}
-
 void RecentHistoryManager::addOpenedFile(const QString &url)
 {
     if(openedFileList.contains(url))
@@ -106,7 +161,7 @@ void RecentHistoryManager::addOpenedFile(const QString &url)
     openedFileList << url;
 
 
-    emit fileCreated(RECENT_ROOT + QFileInfo(url).fileName());
+    //emit fileCreated(RECENT_ROOT + QFileInfo(url).fileName());
 
     save();
 }

@@ -15,6 +15,16 @@ bool AbstractFileController::openFile(const QString &fileUrl, bool &accepted) co
     return false;
 }
 
+bool AbstractFileController::renameFile(const QString &oldFile, const QString &newFile, bool &accepted) const
+{
+    Q_UNUSED(oldFile)
+    Q_UNUSED(newFile)
+
+    accepted = false;
+
+    return false;
+}
+
 const QList<AbstractFileInfo*> AbstractFileController::getChildren(const QString &fileUrl, QDir::Filters filter, bool &accepted) const
 {
     Q_UNUSED(fileUrl)

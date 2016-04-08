@@ -10,7 +10,7 @@
 
 class AbstractFileInfo;
 
-class TrashManager  : public BaseManager
+class TrashManager : public QObject, public BaseManager
 {
     Q_OBJECT
 public:

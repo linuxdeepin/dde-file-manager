@@ -11,12 +11,12 @@ class DesktopFileInfo : public FileInfo
 {
 public:
     DesktopFileInfo();
-    DesktopFileInfo(const QString & file);
+    DesktopFileInfo(const QString & fileUrl);
     DesktopFileInfo(const QFileInfo &fileInfo);
 
     ~DesktopFileInfo();
 
-    void setFile(const QString &file) Q_DECL_OVERRIDE;
+    void setFile(const QString &fileUrl) Q_DECL_OVERRIDE;
 
     QString getName() const;
     QString getExec() const;
@@ -26,6 +26,8 @@ public:
 
     QIcon fileIcon() const Q_DECL_OVERRIDE;
 
+    static QMap<QString, QVariant> getDesktopFileInfo(const QString &fileUrl);
+
 private:
     QString name;
     QString exec;
@@ -34,7 +36,7 @@ private:
     QStringList categories;
     QStringList mimeType;
 
-    void init(const QString &fileName);
+    void init(const QString &fileUrl);
 };
 
 #endif // DESKTOPFILEINFO_H

@@ -6,6 +6,7 @@
 
 class FileSystemNode;
 class AbstractFileInfo;
+class DFileView;
 
 class DFileSystemModel : public QAbstractItemModel
 {
@@ -25,10 +26,12 @@ public:
         FileDisplayNameRole = Qt::UserRole + 9
     };
 
-    explicit DFileSystemModel(QObject *parent = 0);
+    explicit DFileSystemModel(DFileView *parent = 0);
     ~DFileSystemModel();
 
-    QModelIndex index(const QString &url, int column = 0);
+    DFileView *parent() const;
+
+    QModelIndex index(const QString &fileUrl, int column = 0);
     QModelIndex index(int row, int column,
                               const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
     QModelIndex parent(const QModelIndex &child) const Q_DECL_OVERRIDE;
@@ -54,7 +57,7 @@ public:
     bool dropMimeData(const QMimeData * data, Qt::DropAction action, int row, int column, const QModelIndex & parent) Q_DECL_OVERRIDE;
     QMimeData *mimeData(const QModelIndexList & indexes) const Q_DECL_OVERRIDE;
 
-    QModelIndex setRootPath(const QString &url);
+    QModelIndex setRootPath(const QString &fileUrl);
     QString rootPath() const;
 
     QString getUrlByIndex(const QModelIndex &index) const;
@@ -70,17 +73,17 @@ public:
     void sort(int column, Qt::SortOrder order = Qt::AscendingOrder) Q_DECL_OVERRIDE;
 
     AbstractFileInfo *fileInfo(const QModelIndex &index) const;
-    AbstractFileInfo *fileInfo(const QString &url) const;
+    AbstractFileInfo *fileInfo(const QString &fileUrl) const;
     AbstractFileInfo *parentFileInfo(const QModelIndex &index) const;
-    AbstractFileInfo *parentFileInfo(const QString &url) const;
+    AbstractFileInfo *parentFileInfo(const QString &fileUrl) const;
 
 public slots:
     void updateChildren(const QString &url, QList<AbstractFileInfo*> list);
-    void refresh(const QString &url);
+    void refresh(const QString &fileUrl);
 
 private slots:
-    void onFileCreated(const QString &path);
-    void onFileDeleted(const QString &path);
+    void onFileCreated(const QString &fileUrl);
+    void onFileDeleted(const QString &fileUrl);
     void onFileRenamed(const QString &oldPath, const QString &newPath);
 
 private:
@@ -90,6 +93,7 @@ private:
 
     int m_sortRole = Qt::DisplayRole;
     int m_sortColumn = 0;
+
     Qt::SortOrder m_srotOrder = Qt::AscendingOrder;
     QModelIndex m_activeIndex;
 

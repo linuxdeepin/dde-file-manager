@@ -65,7 +65,7 @@ signals:
     /*copy/move job conflict response confirmed from ui*/
     void conflictRepsonseConfirmed(const QMap<QString, QString>& jobDetail, const QMap<QString, QVariant>& response);
 
-    /* file rename */
+    /*request rename to DFileView*/
     void requestRename(const FMEvent &event);
 
     /* view sort */

@@ -33,6 +33,10 @@ FileServices::FileServices()
     connect(this, &FileServices::childrenUpdated,
             fileSignalManager, &FileSignalManager::childrenChanged,
             Qt::QueuedConnection);
+    connect(fileSignalManager, &FileSignalManager::requestOpenFile,
+            this, &FileServices::openFile);
+    connect(this, &FileServices::fileOpened,
+            fileSignalManager, &FileSignalManager::fileOpened);
 }
 
 FileServices *FileServices::instance()
@@ -67,10 +71,25 @@ void FileServices::clearFileUrlHandler(const QString &scheme, const QString &pat
     m_controllerHash.remove(HandlerType(scheme, path));
 }
 
-bool FileServices::openFile(const QString &fileUrl)
+bool FileServices::openFile(const QString &fileUrl) const
 {
     TRAVERSE({
                  bool ok = controller->openFile(fileUrl, accepted);
+
+                 if(accepted) {
+                     emit fileOpened(fileUrl);
+
+                     return ok;
+                 }
+             })
+
+    return false;
+}
+
+bool FileServices::renameFile(const QString &fileUrl, const QString &newUrl) const
+{
+    TRAVERSE({
+                 bool ok = controller->renameFile(fileUrl, newUrl, accepted);
 
                  if(accepted)
                     return ok;
@@ -85,7 +104,7 @@ AbstractFileInfo *FileServices::createFileInfo(const QString &fileUrl) const
                  AbstractFileInfo *info = controller->createFileInfo(fileUrl, accepted);
 
                  if(accepted)
-                     return std::move(info);
+                     return info;
              })
 
     return Q_NULLPTR;
@@ -93,7 +112,7 @@ AbstractFileInfo *FileServices::createFileInfo(const QString &fileUrl) const
 
 void FileServices::getChildren(const FMEvent &event, QDir::Filters filters) const
 {
-    const QString &fileUrl = event.dir;
+    const QString &fileUrl = event.fileUrl();
 
     TRAVERSE({
                  const QList<AbstractFileInfo*> &&list = controller->getChildren(fileUrl, filters, accepted);
@@ -110,9 +129,6 @@ QList<AbstractFileController*> FileServices::getHandlerTypeByUrl(const QString &
                                                                  bool ignorePath, bool ignoreScheme)
 {
     QUrl url(fileUrl);
-
-    if(url.scheme().isEmpty())
-        url = QUrl::fromLocalFile(fileUrl);
 
     return m_controllerHash.values(HandlerType(ignoreScheme ? "" : url.scheme(),
                                                ignorePath ? "" : url.path()));

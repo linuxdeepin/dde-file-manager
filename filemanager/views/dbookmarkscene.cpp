@@ -180,11 +180,11 @@ void DBookmarkScene::doDragFinished(const QPointF &point, DBookmarkItem *item)
 void DBookmarkScene::currentUrlChanged(const FMEvent &event)
 {
 //    qDebug() << event.dir << event.source;
-    if(event.source == FMEvent::FileView)
+    if(event.source() == FMEvent::FileView)
     {
         for(int i = 0; i < m_items.size(); i++)
         {
-            if(event.dir == m_items.at(i)->getUrl())
+            if(event.fileUrl() == m_items.at(i)->getUrl())
             {
                 m_itemGroup->deselectAll();
                 m_items.at(i)->setChecked(true);

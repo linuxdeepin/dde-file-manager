@@ -1,11 +1,14 @@
 #include "dleftsidebar.h"
-#include "../app/global.h"
-#include "../app/fmevent.h"
-#include "../app/filesignalmanager.h"
 #include "dcheckablebutton.h"
 #include "dhorizseparator.h"
 #include "dscrollbar.h"
+#include "windowmanager.h"
+
 #include "../controllers/bookmarkmanager.h"
+
+#include "../app/global.h"
+#include "../app/fmevent.h"
+#include "../app/filesignalmanager.h"
 
 #include "dhoverbutton.h"
 #include "bmlistwidget.h"
@@ -278,8 +281,9 @@ void DLeftSideBar::handleLocationChanged(const QString &url)
 {
     FMEvent event;
 
-    event.dir = url;
-    event.source = FMEvent::FileView;
+    event = url;
+    event = FMEvent::FileView;
+    event = WindowManager::getWindowId(window());
 
     emit fileSignalManager->requestChangeCurrentUrl(event);
 }

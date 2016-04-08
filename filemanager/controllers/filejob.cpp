@@ -110,7 +110,8 @@ void FileJob::doMoveToTrash(const QList<QUrl> &files)
 
 void FileJob::doCut(const QList<QUrl> &files, const QString &destination)
 {
-
+    Q_UNUSED(files)
+    Q_UNUSED(destination)
 }
 
 void FileJob::paused()
