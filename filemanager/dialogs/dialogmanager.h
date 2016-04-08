@@ -23,8 +23,7 @@ public slots:
     void handleDataUpdated();
     void handleConflictRepsonseConfirmed(const QMap<QString, QString> &jobDetail, const QMap<QString, QVariant> &response);
     void addJob(FileJob * job);
-    void removeJob(FileJob * job);
-
+    void removeJob();
 private:
     DTaskDialog* m_taskDialog = NULL;
     QMap<QString, FileJob*> m_jobs;

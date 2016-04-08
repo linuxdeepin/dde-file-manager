@@ -42,9 +42,12 @@ void DialogManager::addJob(FileJob *job)
     m_jobs.insert(job->getJobId(), job);
 }
 
-void DialogManager::removeJob(FileJob *job)
+
+void DialogManager::removeJob()
 {
+    FileJob *job = qobject_cast<FileJob *>(sender());
     m_jobs.remove(job->getJobId());
+    job->deleteLater();
 }
 
 void DialogManager::handleDataUpdated()

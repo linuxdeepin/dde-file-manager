@@ -70,6 +70,12 @@ signals:
 
     /* view sort */
     void requestViewSort(int windowId, Global::SortRole role);
+
+    /* view select all */
+    void requestViewSelectAll(int windowId);
+
+    /* view select all */
+    void requestBookmarkRemove(const QString &url);
 };
 
 #endif // FILESIGNALMANAGER_H

@@ -15,9 +15,12 @@ public:
     QList<QString> getUrls();
     void setDir(const QString &dir);
     QString getDir();
+    void setWindowId(int windowId);
+    int getWindowId();
 private:
     QList<QString> m_urls;
     QString m_dir;
+    int m_windowId = -1;
 };
 
 #endif // DFILEMENU_H

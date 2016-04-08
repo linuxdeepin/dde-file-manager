@@ -26,3 +26,13 @@ QString DFileMenu::getDir()
     return m_dir;
 }
 
+void DFileMenu::setWindowId(int windowId)
+{
+    m_windowId = windowId;
+}
+
+int DFileMenu::getWindowId()
+{
+    return m_windowId;
+}
+
