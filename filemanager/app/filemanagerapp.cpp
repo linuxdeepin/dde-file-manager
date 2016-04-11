@@ -6,18 +6,21 @@
 #include "../app/global.h"
 #include "filesignalmanager.h"
 #include "../dialogs/dialogmanager.h"
+#include "widgets/commandlinemanager.h"
+#include <QLocalServer>
+#include <QLocalSocket>
+#include <QDataStream>
 
 
 #include <QtCore/QCoreApplication>
 
 FileManagerApp::FileManagerApp(QObject *parent) : QObject(parent)
 {
-    initLogger();
+
     initApp();
     initView();
     initDialogManager();
     initController();
-    initCommandline();
     initGtk();
     initConnect();
 }
@@ -27,16 +30,11 @@ FileManagerApp::~FileManagerApp()
 
 }
 
-void FileManagerApp::initLogger()
-{
-    RegisterLogger();
-}
-
 void FileManagerApp::initGtk()
 {
     gtk_init(NULL, NULL);
     gdk_error_trap_push();
-    initGtkThemeWatcher();
+//    initGtkThemeWatcher();
 }
 
 
@@ -67,11 +65,6 @@ void FileManagerApp::initManager()
 
 }
 
-void FileManagerApp::initCommandline()
-{
-    CommandLineManager::instance()->initOptions();
-}
-
 void FileManagerApp::initTranslation()
 {
 
@@ -91,5 +84,4 @@ void FileManagerApp::show()
 {
     m_windowManager->showNewWindow();
 }
-
 

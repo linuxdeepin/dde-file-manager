@@ -29,6 +29,8 @@ public:
 
     void addOption(const QCommandLineOption& option);
     void addOptions(const QList<QCommandLineOption> & options);
+    QStringList positionalArguments() const;
+    QStringList unknownOptionNames() const;
 
 private:
     explicit CommandLineManager();

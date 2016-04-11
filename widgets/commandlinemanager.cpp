@@ -22,10 +22,7 @@ void CommandLineManager::process(){
 
 void CommandLineManager::initOptions(){
     QCommandLineOption logOption(QStringList() << "l" << "log", "enable log to destination [stdout|file].", "logDestination", "file");
-//    QCommandLineOption animationOption(QStringList() << "a" << "animation", "enable/disable animation [on|off]", "isAnimationOn", "on");
-//    CommandLineManager::instance()->addOption(pOption);
     CommandLineManager::instance()->addOption(logOption);
-//    CommandLineManager::instance()->addOption(animationOption);
     CommandLineManager::instance()->process();
 }
 
@@ -38,6 +35,16 @@ void CommandLineManager::addOptions(const QList<QCommandLineOption> &options){
     foreach (QCommandLineOption option, options) {
         addOption(option);
     }
+}
+
+QStringList CommandLineManager::positionalArguments() const
+{
+    return m_commandParser->positionalArguments();
+}
+
+QStringList CommandLineManager::unknownOptionNames() const
+{
+    return m_commandParser->unknownOptionNames();
 }
 
 void CommandLineManager::parserOptions(){
