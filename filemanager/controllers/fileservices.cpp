@@ -34,17 +34,6 @@ FileServices::FileServices()
     qRegisterMetaType<QDir::Filters>("QDir::Filters");
     qRegisterMetaType<QList<AbstractFileInfo*>>("QList<AbstractFileInfo*>");
 
-    connect(fileSignalManager, &FileSignalManager::requestChildren,
-            this, &FileServices::getChildren, Qt::QueuedConnection);
-    connect(this, &FileServices::childrenUpdated,
-            fileSignalManager, &FileSignalManager::childrenChanged,
-            Qt::QueuedConnection);
-    connect(fileSignalManager, &FileSignalManager::requestOpenFile,
-            this, &FileServices::openFile, Qt::QueuedConnection);
-    connect(this, &FileServices::fileOpened,
-            fileSignalManager, &FileSignalManager::fileOpened
-            , Qt::QueuedConnection);
-
     m_thread->start();
 }
 

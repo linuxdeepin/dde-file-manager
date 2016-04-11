@@ -1,7 +1,6 @@
 #include "recenthistorymanager.h"
 #include "recentfileinfo.h"
 
-#include "../app/global.h"
 #include "../app/filesignalmanager.h"
 
 #include "../controllers/fileservices.h"
@@ -15,13 +14,13 @@
 #include <QDateTime>
 #include <QUrl>
 
-#include <stdlib.h>
+#define fileService FileServices::instance()
 
 RecentHistoryManager::RecentHistoryManager(QObject *parent)
     : AbstractFileController(parent)
     , BaseManager()
 {
-    connect(fileSignalManager, &FileSignalManager::fileOpened,
+    connect(fileService, &FileServices::fileOpened,
             this, &RecentHistoryManager::addOpenedFile);
 
     RecentHistoryManager::load();

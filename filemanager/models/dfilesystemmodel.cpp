@@ -374,6 +374,8 @@ bool DFileSystemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
     QList<QUrl> urls = data->urls();
     QList<QUrl>::const_iterator it = urls.constBegin();
 
+    qDebug() << urls;
+
     switch (action) {
     case Qt::CopyAction:
         for (; it != urls.constEnd(); ++it) {
@@ -669,7 +671,7 @@ void DFileSystemModel::onFileCreated(const QString &fileUrl)
         for(; row < parentNode->visibleChildren.count(); ++row) {
             const AbstractFileInfo *tmp_info = parentNode->children.value(parentNode->visibleChildren.value(row))->fileInfo;
 
-            if(sortFun(info, tmp_info)) {
+            if(sortFun(info, tmp_info) && m_srotOrder == Qt::AscendingOrder) {
                 break;
             }
         }
