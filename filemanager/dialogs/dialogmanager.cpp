@@ -35,6 +35,7 @@ void DialogManager::initConnect()
     connect(m_taskDialog, &DTaskDialog::conflictHided, fileSignalManager, &FileSignalManager::conflictTimerReStarted);
     connect(m_taskDialog, &DTaskDialog::conflictRepsonseConfirmed, fileSignalManager, &FileSignalManager::conflictRepsonseConfirmed);
     connect(m_taskDialog, &DTaskDialog::conflictRepsonseConfirmed, this, &DialogManager::handleConflictRepsonseConfirmed);
+    connect(m_taskDialog, &DTaskDialog::abortTask, this, &DialogManager::abortJob);
 }
 
 void DialogManager::addJob(FileJob *job)
@@ -48,6 +49,14 @@ void DialogManager::removeJob()
     FileJob *job = qobject_cast<FileJob *>(sender());
     m_jobs.remove(job->getJobId());
     job->deleteLater();
+}
+
+void DialogManager::abortJob(const QMap<QString, QString> &jobDetail)
+{
+    QString jobId = jobDetail.value("jobId");
+    FileJob * job = m_jobs.value(jobId);
+    job->setApplyToAll(true);
+    job->setStatus(FileJob::Cancelled);
 }
 
 void DialogManager::handleDataUpdated()
@@ -83,7 +92,10 @@ void DialogManager::handleConflictRepsonseConfirmed(const QMap<QString, QString>
         switch(code)
         {
         case 0:job->setStatus(FileJob::Started);break;
-        case 1:job->setStatus(FileJob::Started);break;
+        case 1:
+            job->setStatus(FileJob::Started);
+            job->setReplace(true);
+            break;
         case 2:job->setStatus(FileJob::Cancelled);break;
         default:
             qDebug() << "unknown code"<<code;

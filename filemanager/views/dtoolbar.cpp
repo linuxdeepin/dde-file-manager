@@ -15,6 +15,9 @@
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include "historystack.h"
+#include "dhoverbutton.h"
+#include "windowmanager.h"
 #include <QDebug>
 
 const int DToolBar::ButtonHeight = 20;
@@ -209,8 +212,11 @@ void DToolBar::crumbSelected(QString path)
 {
     FMEvent event;
 
+    event = WindowManager::getWindowId(window());
     event = FMEvent::CrumbButton;
-    event = path;
+    event = QUrl::fromLocalFile(path).toString();
+
+    qDebug() << QUrl::fromLocalFile(path).toString();
 
     emit fileSignalManager->requestChangeCurrentUrl(event);
 }
@@ -219,9 +225,10 @@ void DToolBar::crumbChanged(const FMEvent &event)
 {
     if(event.source() == FMEvent::CrumbButton)
         return;
-    m_crumbWidget->setCrumb(event.fileUrl());
+    QUrl qurl(event.fileUrl());
+    m_crumbWidget->setCrumb(qurl.toLocalFile());
     if(m_searchBar->isActive())
-        m_searchBar->setText(event.fileUrl());
+        m_searchBar->setText(qurl.toLocalFile());
     if(event.source() == FMEvent::BackAndForwardButton)
         return;
     m_navStack->insert(event.fileUrl());
@@ -258,6 +265,7 @@ void DToolBar::backButtonClicked()
     if(path != "")
     {
         FMEvent event;
+        event = WindowManager::getWindowId(window());
         event = FMEvent::BackAndForwardButton;
         event = path;
         if(m_navStack->isFirst())
@@ -273,6 +281,7 @@ void DToolBar::forwardButtonClicked()
     if(path != "")
     {
         FMEvent event;
+        event = WindowManager::getWindowId(window());
         event = FMEvent::BackAndForwardButton;
         event = path;
         if(m_navStack->isLast())

@@ -5,6 +5,15 @@
 
 #include "utils/utils.h"
 
+#include "../views/filemenumanager.h"
+
+#include "../dialogs/dialogmanager.h"
+
+#include "../controllers/fileservices.h"
+
+#include "../models/abstractfileinfo.h"
+#include "../../deviceinfo/devicelistener.h"
+
 #include <QFontMetrics>
 #include <QTextOption>
 #include <QTextLayout>
@@ -19,6 +28,7 @@
 #define appController fileManagerApp->getAppController()
 #define iconProvider Singleton<IconProvider>::instance()
 #define fileService FileServices::instance()
+#define deviceListener Singleton<DeviceListener>::instance()
 
 #define defaut_icon ":/images/images/default.png"
 #define defaut_computerIcon ":/images/images/computer.png"

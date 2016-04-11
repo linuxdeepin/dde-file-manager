@@ -9,6 +9,7 @@ class DBookmarkItem;
 class DBookmarkRootItem;
 class DBookmarkItemGroup;
 class FMEvent;
+class DeviceInfo;
 
 class DBookmarkScene : public QGraphicsScene
 {
@@ -36,11 +37,15 @@ public slots:
     void doDragFinished(const QPointF &point, DBookmarkItem *item);
     void currentUrlChanged(const FMEvent &event);
     void bookmarkRemoved(const QString &url);
+    void bookmarkMounted(int fd);
+    void deviceAdded(DeviceInfo &deviceInfos);
+    void deviceRemoved(DeviceInfo &deviceInfos);
 private:
     void increaseSize();
     DBookmarkRootItem * m_rootItem;
     DBookmarkItemGroup * m_itemGroup;
     QList<DBookmarkItem *> m_items;
+    DBookmarkItem * hasBookmarkItem(const QString &path);
     double m_totalHeight = 0;
 };
 

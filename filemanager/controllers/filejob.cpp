@@ -69,6 +69,11 @@ void FileJob::setApplyToAll(bool v)
     m_applyToAll = v;
 }
 
+void FileJob::setReplace(bool v)
+{
+    m_isReplaced = v;
+}
+
 void FileJob::doCopy(const QList<QUrl> &files, const QString &destination)
 {
     //pre-calculate total size
@@ -88,6 +93,7 @@ void FileJob::doCopy(const QList<QUrl> &files, const QString &destination)
     if(m_isJobAdded)
         jobRemoved();
     emit finished();
+    qDebug() << "Copy is done!";
 }
 
 void FileJob::doDelete(const QList<QUrl> &files)
@@ -102,6 +108,7 @@ void FileJob::doDelete(const QList<QUrl> &files)
             deleteFile(url.path());
     }
     emit finished();
+    qDebug() << "Complete deletion is done!";
 }
 
 void FileJob::doMoveToTrash(const QList<QUrl> &files)
@@ -116,6 +123,7 @@ void FileJob::doMoveToTrash(const QList<QUrl> &files)
             moveFileToTrash(url.path());
     }
     emit finished();
+    qDebug() << "Move to Trash is done!";
 }
 
 void FileJob::doCut(const QList<QUrl> &files, const QString &destination)
@@ -236,7 +244,15 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir)
         {
             case FileJob::Started:
             {
-                m_tarPath = checkDuplicateName(m_tarPath);
+                if(!m_isReplaced)
+                {
+                    m_tarPath = checkDuplicateName(m_tarPath);
+                }
+                else
+                {
+                    if(!m_applyToAll)
+                        m_isReplaced = false;
+                }
                 if(!from.open(QIODevice::ReadOnly))
                 {
                     //Operation failed
@@ -345,18 +361,28 @@ bool FileJob::copyDir(const QString &srcPath, const QString &tarPath)
     m_srcPath = srcPath;
     m_tarPath = targetDir.absolutePath();
     m_status = Started;
-
-    if(targetDir.exists())
-    {
-        jobConflicted();
-    }
+    //We only check the conflict of the files when
+    //they are not in the same folder
+    if(sf.absolutePath() != tf.absolutePath())
+        if(targetDir.exists() && !m_applyToAll)
+        {
+            jobConflicted();
+        }
     while(true)
     {
         switch(m_status)
         {
         case Started:
         {
-            m_tarPath = checkDuplicateName(m_tarPath);
+            if(!m_isReplaced)
+            {
+                m_tarPath = checkDuplicateName(m_tarPath);
+            }
+            else
+            {
+                if(!m_applyToAll)
+                    m_isReplaced = false;
+            }
             targetDir.setPath(m_tarPath);
             if(!targetDir.exists())
             {

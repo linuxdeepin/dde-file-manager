@@ -5,6 +5,8 @@
 #include "windowmanager.h"
 
 #include "../controllers/bookmarkmanager.h"
+#include "../../deviceinfo/devicelistener.h"
+#include "../../deviceinfo/deviceinfo.h"
 
 #include "../app/global.h"
 #include "../app/fmevent.h"
@@ -121,7 +123,7 @@ void DLeftSideBar::initUI()
     mainLayout->setContentsMargins(0, 0, 0, 0);
     setLayout(mainLayout);
     m_stackedWidget->setCurrentIndex(1);
-
+    loadDevices();
     loadBookmark();
 }
 
@@ -334,6 +336,25 @@ void DLeftSideBar::loadBookmark()
         item->setUrl(bm->getUrl());
         m_scene->addItem(item);
     }
+}
+
+void DLeftSideBar::loadDevices()
+{
+    QList<DeviceInfo *> m_list = deviceListener->loadDeivces();
+    for(int i = 0; i < m_list.size(); i++)
+    {
+        DeviceInfo * bm = m_list.at(i);
+        DBookmarkItem * item = new DBookmarkItem;
+        item->boundImageToHover(":/icons/images/icons/disk_hover_16px.svg");
+        item->boundImageToPress(":/icons/images/icons/disk_checked_16px.svg");
+        item->boundImageToRelease(":/icons/images/icons/disk_normal_16px.svg");
+        item->setText(bm->getLabel());
+        item->setUrl(bm->getMountPath());
+        item->setDeviceLabel(bm->getDeviceLabel());
+        item->setSysPath(bm->getSysPath());
+        m_scene->addItem(item);
+    }
+    m_scene->bookmarkMounted(0);
 }
 
 

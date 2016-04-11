@@ -198,6 +198,36 @@ QPixmap DBookmarkItem::toPixmap() const
     return pixmap;
 }
 
+bool DBookmarkItem::isMounted()
+{
+    return m_isMounted;
+}
+
+void DBookmarkItem::setMounted(bool v)
+{
+    m_isMounted = v;
+}
+
+void DBookmarkItem::setDeviceLabel(const QString &label)
+{
+    m_deviceLabel = label;
+}
+
+QString DBookmarkItem::getDeviceLabel()
+{
+    return m_deviceLabel;
+}
+
+void DBookmarkItem::setSysPath(const QString &path)
+{
+    m_sysPath = path;
+}
+
+QString DBookmarkItem::getSysPath()
+{
+    return m_sysPath;
+}
+
 void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event);
