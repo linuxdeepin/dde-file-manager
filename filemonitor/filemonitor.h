@@ -15,7 +15,6 @@ public:
 
     void initConnect();
     void initFileMonitorWoker();
-    void monitorTrash();
 
     static bool isGoutputstreamTempFile(QString path);
 

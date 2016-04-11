@@ -6,13 +6,10 @@
 #include "filecontroller.h"
 #include "recenthistorymanager.h"
 
-#include "filemonitor/filemonitor.h"
-
 #include "../app/global.h"
 
 
-AppController::AppController(QObject *parent) : QObject(parent),
-    m_fileMonitor(new FileMonitor)
+AppController::AppController(QObject *parent) : QObject(parent)
 {
     new FileController(this);
     new RecentHistoryManager(this);
@@ -21,11 +18,6 @@ AppController::AppController(QObject *parent) : QObject(parent),
 void AppController::initConnect()
 {
 
-}
-
-FileMonitor *AppController::getFileMonitor() const
-{
-    return m_fileMonitor;
 }
 
 AppController::~AppController()

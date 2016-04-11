@@ -176,6 +176,19 @@ QDateTime AbstractFileInfo::lastRead() const
     return data->fileInfo.lastRead();
 }
 
+QString AbstractFileInfo::fileParentUrl(const QString &fileUrl)
+{
+    QUrl url(fileUrl);
+
+    QString path = url.path();
+
+    int i = path.lastIndexOf('/');
+
+    url.setPath(path.remove(i, path.length() - i + 1));
+
+    return url.toString();
+}
+
 QT_BEGIN_NAMESPACE
 QDebug operator<<(QDebug deg, const AbstractFileInfo &info)
 {

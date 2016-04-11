@@ -3,15 +3,18 @@
 #include "dcheckablebutton.h"
 #include "dsearchbar.h"
 #include "dtabbar.h"
+#include "dcrumbwidget.h"
+#include "historystack.h"
+#include "dhoverbutton.h"
+
 #include "../app/fmevent.h"
 #include "../app/global.h"
 #include "../app/filesignalmanager.h"
-#include "dcrumbwidget.h"
-#include "historystack.h"
+
+#include "../views/filemenumanager.h"
+
 #include <QHBoxLayout>
 #include <QVBoxLayout>
-#include "historystack.h"
-#include "dhoverbutton.h"
 #include <QDebug>
 
 const int DToolBar::ButtonHeight = 20;

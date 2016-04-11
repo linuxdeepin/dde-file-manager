@@ -15,11 +15,6 @@ public:
     ~AppController();
 
     void initConnect();
-
-    FileMonitor* getFileMonitor() const;
-
-private:
-    FileMonitor* m_fileMonitor;
 };
 
 #endif // APPCONTROLLER_H

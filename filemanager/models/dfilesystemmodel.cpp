@@ -3,17 +3,20 @@
 
 #include "../views/dfileview.h"
 
-#include "../app/global.h"
 #include "../app/filemanagerapp.h"
-#include "../app/filesignalmanager.h"
 #include "../app/fmevent.h"
 
 #include "../controllers/appcontroller.h"
+#include "../controllers/fileservices.h"
 
 #include "filemonitor/filemonitor.h"
 
 #include <QDebug>
 #include <QFileIconProvider>
+#include <QDateTime>
+#include <QMimeData>
+
+#define fileService FileServices::instance()
 
 class FileSystemNode
 {
@@ -41,21 +44,22 @@ public:
 DFileSystemModel::DFileSystemModel(DFileView *parent) :
     QAbstractItemModel(parent)
 {
-    connect(fileMonitor, &FileMonitor::fileCreated,
-            this, &DFileSystemModel::onFileCreated);
-
-    connect(fileMonitor, &FileMonitor::fileDeleted,
-            this, &DFileSystemModel::onFileDeleted);
-
-    connect(fileMonitor, &FileMonitor::fileRenamed,
-            this, &DFileSystemModel::onFileRenamed);
+    connect(fileService, &FileServices::childrenAdded,
+            this, &DFileSystemModel::onFileCreated,
+            Qt::QueuedConnection);
+    connect(fileService, &FileServices::childrenRemoved,
+            this, &DFileSystemModel::onFileDeleted,
+            Qt::QueuedConnection);
+    connect(fileService, &FileServices::childrenUpdated,
+            this, &DFileSystemModel::updateChildren,
+            Qt::QueuedConnection);
 }
 
 DFileSystemModel::~DFileSystemModel()
 {
     for(FileSystemNode *node : m_urlToNode) {
         if(node->fileInfo->isDir())
-            fileMonitor->removeMonitorPath(node->fileInfo->absoluteFilePath());
+            fileService->removeUrlMonitor(node->fileInfo->fileUrl());
 
         delete node;
     }
@@ -237,7 +241,7 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
     if(!parentNode || parentNode->populatedChildren)
         return;
 
-    fileMonitor->addMonitorPath(parentNode->fileInfo->absoluteFilePath());
+    fileService->addUrlMonitor(parentNode->fileInfo->fileUrl());
 
     parentNode->populatedChildren = true;
 
@@ -246,7 +250,7 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
     event = this->parent()->windowId();
     event = parentNode->fileInfo->fileUrl();
 
-    emit fileSignalManager->requestChildren(event);
+    fileService->getChildren(event);
 }
 
 Qt::ItemFlags DFileSystemModel::flags(const QModelIndex &index) const
@@ -359,7 +363,7 @@ QModelIndex DFileSystemModel::setRootPath(const QString &fileUrl)
         if(fileUrl == m_rootFileUrl)
             return createIndex(m_rootNode, 0);
 
-        fileMonitor->removeMonitorPath(m_rootNode->fileInfo->absoluteFilePath());
+        fileService->removeUrlMonitor(m_rootNode->fileInfo->fileUrl());
 
         deleteNode((m_rootNode));
     }
@@ -525,9 +529,12 @@ AbstractFileInfo *DFileSystemModel::parentFileInfo(const QString &fileUrl) const
     return node ? node->parent->fileInfo : Q_NULLPTR;
 }
 
-void DFileSystemModel::updateChildren(const QString &url, QList<AbstractFileInfo*> list)
+void DFileSystemModel::updateChildren(const FMEvent &event, QList<AbstractFileInfo*> list)
 {
-    FileSystemNode *node = getNodeByIndex(index(url));
+    if(event.windowId() != parent()->windowId())
+        return;
+
+    FileSystemNode *node = getNodeByIndex(index(event.fileUrl()));
 
     if(!node) {
         qDeleteAll(list);
@@ -568,16 +575,14 @@ void DFileSystemModel::refresh(const QString &fileUrl)
     event = this->parent()->windowId();
     event = fileUrl;
 
-    emit fileSignalManager->requestChildren(event);
+    fileService->getChildren(event);
 }
 
 void DFileSystemModel::onFileCreated(const QString &fileUrl)
 {
     qDebug() << "file creatored" << fileUrl;
 
-    QFileInfo info(fileUrl);
-
-    FileSystemNode *parentNode = m_urlToNode.value(fileUrl);
+    FileSystemNode *parentNode = m_urlToNode.value(AbstractFileInfo::fileParentUrl(fileUrl));
 
     if(parentNode && parentNode->populatedChildren && !parentNode->visibleChildren.contains(fileUrl)) {
         beginInsertRows(createIndex(parentNode, 0), 0, 0);
@@ -601,12 +606,14 @@ void DFileSystemModel::onFileDeleted(const QString &fileUrl)
 {
     qDebug() << "file deleted:" << fileUrl;
 
-    QFileInfo info(fileUrl);
+    AbstractFileInfo *info = fileService->createFileInfo(fileUrl);
 
-    if(info.isDir())
-        fileMonitor->removeMonitorPath(fileUrl);
+    if(info->isDir())
+        fileService->removeUrlMonitor(fileUrl);
 
-    FileSystemNode *parentNode = m_urlToNode.value(fileUrl);
+    delete info;
+
+    FileSystemNode *parentNode = m_urlToNode.value(AbstractFileInfo::fileParentUrl(fileUrl));
 
     if(parentNode && parentNode->populatedChildren) {
         int index = parentNode->visibleChildren.indexOf(fileUrl);
@@ -633,14 +640,6 @@ void DFileSystemModel::onFileDeleted(const QString &fileUrl)
 
         deleteNode(node);
     }
-}
-
-void DFileSystemModel::onFileRenamed(const QString &oldPath, const QString &newPath)
-{
-    qDebug() << "file renamed, old path:" << oldPath << "new path:" << newPath;
-
-    onFileDeleted(oldPath);
-    onFileCreated(newPath);
 }
 
 FileSystemNode *DFileSystemModel::getNodeByIndex(const QModelIndex &index) const

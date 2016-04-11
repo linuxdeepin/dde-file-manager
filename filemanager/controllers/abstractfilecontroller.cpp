@@ -25,6 +25,24 @@ bool AbstractFileController::renameFile(const QString &oldFile, const QString &n
     return false;
 }
 
+bool AbstractFileController::addUrlMonitor(const QString &url, bool &accepted) const
+{
+    Q_UNUSED(url)
+
+    accepted = false;
+
+    return false;
+}
+
+bool AbstractFileController::removeUrlMonitor(const QString &url, bool &accepted) const
+{
+    Q_UNUSED(url)
+
+    accepted = false;
+
+    return false;
+}
+
 const QList<AbstractFileInfo*> AbstractFileController::getChildren(const QString &fileUrl, QDir::Filters filter, bool &accepted) const
 {
     Q_UNUSED(fileUrl)

@@ -8,6 +8,11 @@
 #include "../controllers/appcontroller.h"
 #include "../controllers/filecontroller.h"
 #include "../controllers/filejob.h"
+#include "../controllers/fileservices.h"
+
+#include "../models/abstractfileinfo.h"
+
+#include "../dialogs/dialogmanager.h"
 
 QMap<FileMenuManager::MenuAction, QString> FileMenuManager::m_actionKeys;
 QMap<FileMenuManager::MenuAction, DAction*> FileMenuManager::m_actions;
@@ -662,7 +667,7 @@ void FileMenuManager::doNewFolder(const QString &url)
 
 void FileMenuManager::doNewDocument(const QString &url)
 {
-
+    Q_UNUSED(url)
 }
 
 void FileMenuManager::doNewFile(const QString &url)

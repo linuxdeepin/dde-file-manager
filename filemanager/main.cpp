@@ -1,16 +1,19 @@
+#include "app/global.h"
+#include "app/logutil.h"
+#include "app/filemanagerapp.h"
+#include "app/singleapplication.h"
+
+#include "widgets/commandlinemanager.h"
+
+#include <dthememanager.h>
+#include <dwindow.h>
+
 #include <QApplication>
 #include <QDebug>
 #include <QUrl>
 #include <QLabel>
-#include <dthememanager.h>
-#include <dwindow.h>
 #include <QLocalSocket>
-#include "app/global.h"
-#include "../app/singleapplication.h"
-#include "app/logutil.h"
-#include "widgets/commandlinemanager.h"
 #include <QJsonObject>
-
 
 DWIDGET_USE_NAMESPACE
 

@@ -9,6 +9,7 @@
 
 class FileInfo;
 class FMEvent;
+class AbstractFileInfo;
 
 class FileSignalManager : public QObject
 {
