@@ -2,6 +2,8 @@
 #include "widgets/commandlinemanager.h"
 #include <QJsonDocument>
 #include <QJsonObject>
+#include "global.h"
+#include "filesignalmanager.h"
 
 SingleApplication::SingleApplication(int &argc, char **argv, int): QApplication(argc, argv)
 {
@@ -76,5 +78,11 @@ void SingleApplication::readData()
 {
     qDebug() << sender();
     qDebug() << static_cast<QLocalSocket*>(sender())->bytesAvailable();
-    qDebug() << static_cast<QLocalSocket*>(sender())->readAll();
+
+    QJsonParseError* error = new QJsonParseError();
+    QJsonObject messageObj = QJsonDocument::fromJson(QByteArray(static_cast<QLocalSocket*>(sender())->readAll()), error).object();
+    qDebug() << messageObj << error->errorString();
+    if (messageObj.contains("url")){
+        emit fileSignalManager->requestOpenNewWindowByUrl(messageObj.value("url").toString());
+    }
 }

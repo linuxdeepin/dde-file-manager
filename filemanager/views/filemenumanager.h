@@ -88,6 +88,7 @@ private:
                                          bool checkable = false,
                                          const QMap<MenuAction, QVector<MenuAction> > &subMenuList = QMap<MenuAction, QVector<MenuAction> >());
     void doOpen(const QString &url);
+    void doOpenNewWindow(const QString& url);
     void doOpenFileLocation(const QString &url);
     void doRename(const QString &url, int windowId);
     void doDelete(const QList<QString> & urls);

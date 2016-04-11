@@ -76,6 +76,9 @@ signals:
 
     /* view select all */
     void requestBookmarkRemove(const QString &url);
+
+    /*requst open new window by given url*/
+    void requestOpenNewWindowByUrl(const QString& url);
 };
 
 #endif // FILESIGNALMANAGER_H
