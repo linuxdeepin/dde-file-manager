@@ -27,20 +27,12 @@ signals:
     /* current display url changed*/
     void currentUrlChanged(const FMEvent &event);
 
-    /// in folder files
-    void requestChildren(const FMEvent &event, QDir::Filters filter = QDir::AllEntries | QDir::NoDotDot) const;
-    void childrenChanged(const FMEvent &event, const QList<AbstractFileInfo*> &list) const;
-
     /* file icon*/
     void requestIcon(const QString &url) const;
     void iconChanged(const QString &url, const QIcon &icon) const;
 
     /* refresh folder*/
     void refreshFolder(const QString &url) const;
-
-    void requestOpenFile(const QString &url) const;
-    /* open file signal*/
-    void fileOpened(const QString &url) const;
 
     /*add copy/move/delete job to taskdialog when copy/move/delete job created*/
     void jobAdded(const QMap<QString, QString>& jobDetail);

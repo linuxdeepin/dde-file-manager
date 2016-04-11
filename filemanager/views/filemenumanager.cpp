@@ -440,7 +440,7 @@ void FileMenuManager::doOpen(const QString &url)
     }
     if(QFile::exists(url))
     {
-        emit fileSignalManager->requestOpenFile(url);
+        fileService->openFile(url);
         return;
     }
     const QString &scheme = QUrl(url).scheme();
@@ -476,7 +476,7 @@ void FileMenuManager::doOpenFileLocation(const QString &url)
     QFileInfo file(url);
     if(file.exists(url))
     {
-        emit fileSignalManager->requestOpenFile(QUrl::fromLocalFile(file.absolutePath()).toString());
+        fileService->openFile(QUrl::fromLocalFile(file.absolutePath()).toString());
         return;
     }
 }

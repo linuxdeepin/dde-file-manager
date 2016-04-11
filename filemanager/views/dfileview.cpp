@@ -524,6 +524,6 @@ void DFileView::openIndex(const QModelIndex &index)
 
         emit fileSignalManager->requestChangeCurrentUrl(event);
     } else {
-        emit fileSignalManager->requestOpenFile(model()->getUrlByIndex(index));
+        emit fileService->openFile(model()->getUrlByIndex(index));
     }
 }

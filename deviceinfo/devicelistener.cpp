@@ -57,6 +57,9 @@ bool DeviceListener::isTargetDevice(udev_device *dev)
     udev_device *par = udev_device_get_parent(dev);
     const char *par_is_removable = udev_device_get_sysattr_value(par, "removable");
 
+    Q_UNUSED(is_removable)
+    Q_UNUSED(par_is_removable)
+
     // qDebug() << path << dev_path << is_removable << is_partition << par_is_removable;
 
     if (is_partition) { // && ((is_removable && *is_removable == '1') || (par_is_removable && *par_is_removable == 1))) {
@@ -68,7 +71,9 @@ bool DeviceListener::isTargetDevice(udev_device *dev)
 
 QString DeviceListener::mountpoint(udev_device *dev)
 {
+    Q_UNUSED(dev);
 
+    return QString();
 }
 
 QString DeviceListener::deviceLabel(udev_device *dev)
