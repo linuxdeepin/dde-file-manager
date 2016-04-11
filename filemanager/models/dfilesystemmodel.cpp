@@ -582,7 +582,14 @@ void DFileSystemModel::onFileCreated(const QString &fileUrl)
 {
     qDebug() << "file creatored" << fileUrl;
 
-    FileSystemNode *parentNode = m_urlToNode.value(AbstractFileInfo::fileParentUrl(fileUrl));
+    AbstractFileInfo *info = fileService->createFileInfo(fileUrl);
+
+    if(!info)
+        return;
+
+    FileSystemNode *parentNode = m_urlToNode.value(info->parentUrl());
+
+    delete info;
 
     if(parentNode && parentNode->populatedChildren && !parentNode->visibleChildren.contains(fileUrl)) {
         beginInsertRows(createIndex(parentNode, 0), 0, 0);
@@ -608,12 +615,15 @@ void DFileSystemModel::onFileDeleted(const QString &fileUrl)
 
     AbstractFileInfo *info = fileService->createFileInfo(fileUrl);
 
+    if(!info)
+        return;
+
     if(info->isDir())
         fileService->removeUrlMonitor(fileUrl);
 
-    delete info;
+    FileSystemNode *parentNode = m_urlToNode.value(info->parentUrl());
 
-    FileSystemNode *parentNode = m_urlToNode.value(AbstractFileInfo::fileParentUrl(fileUrl));
+    delete info;
 
     if(parentNode && parentNode->populatedChildren) {
         int index = parentNode->visibleChildren.indexOf(fileUrl);

@@ -114,7 +114,8 @@ HEADERS += \
     filemanager/controllers/abstractfilecontroller.h \
     filemanager/models/recentfileinfo.h \
     filemanager/app/singleapplication.h \
-    filemanager/app/logutil.h
+    filemanager/app/logutil.h \
+    filemanager/models/trashfileinfo.h
 
 SOURCES += \
     filemanager/controllers/appcontroller.cpp \
@@ -191,7 +192,8 @@ SOURCES += \
     filemanager/controllers/abstractfilecontroller.cpp \
     filemanager/models/recentfileinfo.cpp \
     filemanager/app/singleapplication.cpp \
-    filemanager/app/logutil.cpp
+    filemanager/app/logutil.cpp \
+    filemanager/models/trashfileinfo.cpp
 
 INCLUDEPATH += filemanager/models
 

@@ -19,7 +19,6 @@ public:
     AbstractFileInfo *createFileInfo(const QString &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
     const QList<AbstractFileInfo*> getChildren(const QString &fileUrl, QDir::Filters filter, bool &accepted) const Q_DECL_OVERRIDE;
 
-public slots:
     bool openFile(const QString &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
     bool renameFile(const QString &oldUrl, const QString &newUrl, bool &accepted) const Q_DECL_OVERRIDE;
     bool addUrlMonitor(const QString &url, bool &accepted) const Q_DECL_OVERRIDE;

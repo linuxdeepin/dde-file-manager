@@ -318,16 +318,16 @@ void FileMonitorWoker::handleInotifyEvent(const inotify_event *event)
     path = joinPath(path, event->name);
 
     if (event->mask & IN_CREATE) {
-//        qDebug() << "IN_CREATE" << path;
+        qDebug() << "IN_CREATE" << path;
         emit fileCreated(event->cookie, path);
     }else if (event->mask & IN_MOVED_FROM) {
-//        qDebug() << "IN_MOVED_FROM" << path;
+        qDebug() << "IN_MOVED_FROM" << path;
         emit fileMovedFrom(event->cookie, path);
     }else if (event->mask & IN_MOVED_TO) {
-//        qDebug() << "IN_MOVED_TO" << path;
+        qDebug() << "IN_MOVED_TO" << path;
         emit fileMovedTo(event->cookie, path);
     }else if (event->mask & IN_DELETE) {
-//        qDebug() << "IN_DELETE" << path;
+        qDebug() << "IN_DELETE" << path;
         emit fileDeleted(event->cookie, path);
     }else if (event->mask & IN_ATTRIB) {
 //        qDebug() << event->mask << path;
