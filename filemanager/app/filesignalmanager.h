@@ -10,6 +10,7 @@
 class FileInfo;
 class FMEvent;
 class AbstractFileInfo;
+class DeviceInfo;
 
 class FileSignalManager : public QObject
 {
@@ -80,6 +81,14 @@ signals:
 
     /*requst open new window by given url*/
     void requestOpenNewWindowByUrl(const QString& url);
+    /* device mounted */
+    void deviceMounted(int i);
+
+    /* device added */
+    void deviceAdded(DeviceInfo &deviceInfos);
+
+    /* device removed */
+    void deviceRemoved(DeviceInfo &deviceInfos);
 };
 
 #endif // FILESIGNALMANAGER_H

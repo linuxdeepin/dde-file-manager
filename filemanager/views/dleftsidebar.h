@@ -47,6 +47,7 @@ public slots:
     void doDragLeave();
 private:
     void loadBookmark();
+    void loadDevices();
     bool m_isTight = false;
     QFrame* m_homeBar = NULL;
     QPushButton* m_fileButton = NULL;

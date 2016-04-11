@@ -24,6 +24,7 @@ public slots:
     void handleConflictRepsonseConfirmed(const QMap<QString, QString> &jobDetail, const QMap<QString, QVariant> &response);
     void addJob(FileJob * job);
     void removeJob();
+    void abortJob(const QMap<QString, QString> &jobDetail);
 private:
     DTaskDialog* m_taskDialog = NULL;
     QMap<QString, FileJob*> m_jobs;

@@ -30,6 +30,7 @@ public:
     QString getJobId();
     QString checkDuplicateName(const QString &name);
     void setApplyToAll(bool v);
+    void setReplace(bool v);
 signals:
     void progressPercent(int value);
     void error(QString content);
@@ -61,6 +62,7 @@ private:
     qint64 lastMsec;
     qint64 currentMsec;
     bool m_applyToAll = false;
+    bool m_isReplaced = false;
 
     void jobUpdated();
     void jobAdded();

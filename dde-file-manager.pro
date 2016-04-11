@@ -19,8 +19,9 @@ include(./widgets/widgets.pri)
 include(./dialogs/dialogs.pri)
 include(./utils/utils.pri)
 include(./filemonitor/filemonitor.pri)
+include(./deviceinfo/deviceinfo.pri)
 
-PKGCONFIG += x11 gtk+-2.0 xcb xcb-ewmh gsettings-qt dtkbase dtkutil dtkwidget
+PKGCONFIG += x11 gtk+-2.0 xcb xcb-ewmh gsettings-qt dtkbase dtkutil dtkwidget libudev
 CONFIG += c++11 link_pkgconfig
 #DEFINES += QT_NO_DEBUG_OUTPUT
 DEFINES += QT_MESSAGELOGCONTEXT

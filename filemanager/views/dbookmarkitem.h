@@ -56,6 +56,12 @@ public:
     void setDefaultItem(bool v);
     bool isDefaultItem();
     QPixmap toPixmap() const;
+    bool isMounted();
+    void setMounted(bool v);
+    void setDeviceLabel(const QString &label);
+    QString getDeviceLabel();
+    void setSysPath(const QString &path);
+    QString getSysPath();
 signals:
 
     void clicked();
@@ -120,6 +126,10 @@ private:
     QFont m_font;
     QString m_url;
     DBookmarkItemGroup * m_group = NULL;
+
+    bool m_isMounted = false;
+    QString m_deviceLabel;
+    QString m_sysPath;
 };
 
 #endif // DBOOKMARKITEM_H

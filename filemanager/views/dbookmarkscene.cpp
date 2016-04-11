@@ -10,6 +10,7 @@
 #include <QDir>
 #include "../app/fmevent.h"
 #include "../app/filesignalmanager.h"
+#include "../../deviceinfo/deviceinfo.h"
 
 DBookmarkScene::DBookmarkScene()
 {
@@ -21,6 +22,9 @@ DBookmarkScene::DBookmarkScene()
             this, &DBookmarkScene::currentUrlChanged);
     connect(fileSignalManager, &FileSignalManager::requestBookmarkRemove,
             this, &DBookmarkScene::bookmarkRemoved);
+    connect(fileSignalManager, &FileSignalManager::deviceAdded, this, &DBookmarkScene::deviceAdded);
+    connect(fileSignalManager, &FileSignalManager::deviceRemoved, this, &DBookmarkScene::deviceRemoved);
+    connect(fileSignalManager, &FileSignalManager::deviceMounted, this, &DBookmarkScene::bookmarkMounted);
 }
 
 void DBookmarkScene::addItem(DBookmarkItem *item)
@@ -208,6 +212,64 @@ void DBookmarkScene::bookmarkRemoved(const QString &url)
     }
 }
 
+void DBookmarkScene::bookmarkMounted(int fd)
+{
+    qDebug() << "bookmark mounted";
+    QStringList mtabMounts;
+    QFile mtab("/etc/mtab");
+    mtab.open(QFile::ReadOnly);
+    QTextStream stream(&mtab);
+    do mtabMounts.append(stream.readLine());
+    while (!stream.atEnd());
+    mtab.close();
+
+    foreach(DBookmarkItem * item, m_items)
+    {
+        item->setMounted(false);
+        item->setReleaseBackgroundColor(Qt::transparent);
+    }
+
+    foreach(QString item, mtabMounts)
+    {
+        QString str = item.split(" ").at(0);
+        DBookmarkItem * bookmarkItem = hasBookmarkItem(str);
+        qDebug() << str;
+        if(bookmarkItem)
+        {
+            bookmarkItem->setMounted(true);
+            bookmarkItem->setReleaseBackgroundColor(Qt::yellow);
+            bookmarkItem->setUrl(item.split(" ").at(1));
+            bookmarkItem->update();
+        }
+    }
+}
+
+void DBookmarkScene::deviceAdded(DeviceInfo &deviceInfos)
+{
+    DBookmarkItem * item = new DBookmarkItem;
+    item->boundImageToHover(":/icons/images/icons/disk_hover_16px.svg");
+    item->boundImageToPress(":/icons/images/icons/disk_hover_16px.svg");
+    item->boundImageToRelease(":/icons/images/icons/disk_normal_16px.svg");
+    item->setText(deviceInfos.getDeviceLabel());
+    item->setUrl(deviceInfos.getMountPath());
+    item->setDeviceLabel(deviceInfos.getDeviceLabel());
+    item->setSysPath(deviceInfos.getSysPath());
+    this->insert(11, item);
+}
+
+void DBookmarkScene::deviceRemoved(DeviceInfo &deviceInfos)
+{
+    QString localPath = deviceInfos.getSysPath();
+    foreach(DBookmarkItem * item, m_items)
+    {
+        if(item->getSysPath() == localPath)
+        {
+            remove(item);
+            return;
+        }
+    }
+}
+
 void DBookmarkScene::increaseSize()
 {
     if(m_totalHeight > sceneRect().height() - BOOKMARK_ITEM_HEIGHT)
@@ -217,4 +279,19 @@ void DBookmarkScene::increaseSize()
         setSceneRect(0, 0, w, m_totalHeight + BOOKMARK_ITEM_HEIGHT * 2);
         views().at(0)->setGeometry(0, 0, w, m_totalHeight + BOOKMARK_ITEM_HEIGHT * 2);
     }
+}
+
+DBookmarkItem *DBookmarkScene::hasBookmarkItem(const QString &path)
+{
+    QString localPath = path;
+    foreach(DBookmarkItem * item, m_items)
+    {
+        qDebug() << item->getSysPath() << path;
+        QString str = localPath.replace("/dev","");
+        if(item->getSysPath().contains(str))
+        {
+            return item;
+        }
+    }
+    return NULL;
 }
