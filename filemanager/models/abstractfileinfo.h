@@ -30,18 +30,8 @@ public:
     inline AbstractFileInfo &operator =(const AbstractFileInfo &other)
     {data = other.data; return *this;}
 
-    inline void setUrl(const QString &url)
-    {
-        data->url = url;
-        data->fileInfo.setFile(QUrl(url).path());
-    }
-
-    virtual void setUrl(const QUrl &url)
-    {
-        data->url = url.toString();
-        data->fileInfo.setFile(url.path());
-    }
-
+    virtual void setUrl(const QString &url);
+    virtual void setUrl(const QUrl &url);
     virtual bool exists() const;
 
     virtual QString filePath() const;
@@ -96,7 +86,7 @@ public:
 
     virtual QIcon fileIcon() const = 0;
 
-    static QString fileParentUrl(const QString &fileUrl);
+    virtual QString parentUrl() const;
 
 protected:
     QSharedDataPointer<FileInfoData> data;

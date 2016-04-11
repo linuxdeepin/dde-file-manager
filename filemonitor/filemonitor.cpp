@@ -50,18 +50,21 @@ void FileMonitor::handleCreated(int cookie, QString path){
 }
 
 void FileMonitor::handleMoveFrom(int cookie, QString path){
-    m_moveEvent.insert(cookie, path);
+    qDebug() << cookie << path;
+    //m_moveEvent.insert(cookie, path);
+    emit fileDeleted(path);
 }
 
 void FileMonitor::handleMoveTo(int cookie, QString path){
     qDebug() << cookie << path;
 
-    const QString &moveFrom = m_moveEvent.value(cookie);
+//    const QString &moveFrom = m_moveEvent.value(cookie);
 
-    if(moveFrom.isEmpty())
-        return;
+//    if(moveFrom.isEmpty())
+//        return;
 
-    emit fileRenamed(moveFrom, path);
+//    emit fileRenamed(moveFrom, path);
+    emit fileCreated(path);
 }
 
 void FileMonitor::handleDelete(int cookie, QString path){

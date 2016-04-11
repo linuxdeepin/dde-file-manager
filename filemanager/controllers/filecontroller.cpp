@@ -22,8 +22,6 @@ FileController::FileController(QObject *parent)
             this, &FileController::onFileCreated);
     connect(fileMonitor, &FileMonitor::fileDeleted,
             this, &FileController::onFileRemove);
-    connect(fileMonitor, &FileMonitor::fileRenamed,
-            this, &FileController::onFileRename);
 }
 
 AbstractFileInfo *FileController::createFileInfo(const QString &fileUrl, bool &accepted) const

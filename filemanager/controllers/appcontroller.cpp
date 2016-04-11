@@ -5,6 +5,7 @@
 #include "deletejobcontroller.h"
 #include "filecontroller.h"
 #include "recenthistorymanager.h"
+#include "trashmanager.h"
 
 #include "../app/global.h"
 
@@ -13,6 +14,7 @@ AppController::AppController(QObject *parent) : QObject(parent)
 {
     new FileController(this);
     new RecentHistoryManager(this);
+    new TrashManager(this);
 }
 
 void AppController::initConnect()

@@ -34,6 +34,18 @@ AbstractFileInfo::~AbstractFileInfo()
 
 }
 
+void AbstractFileInfo::setUrl(const QString &url)
+{
+    data->url = url;
+    data->fileInfo.setFile(QUrl(url).path());
+}
+
+void AbstractFileInfo::setUrl(const QUrl &url)
+{
+    data->url = url.toString();
+    data->fileInfo.setFile(url.path());
+}
+
 bool AbstractFileInfo::exists() const
 {
     return data->fileInfo.exists();
@@ -176,17 +188,9 @@ QDateTime AbstractFileInfo::lastRead() const
     return data->fileInfo.lastRead();
 }
 
-QString AbstractFileInfo::fileParentUrl(const QString &fileUrl)
+QString AbstractFileInfo::parentUrl() const
 {
-    QUrl url(fileUrl);
-
-    QString path = url.path();
-
-    int i = path.lastIndexOf('/');
-
-    url.setPath(path.remove(i, path.length() - i + 1));
-
-    return url.toString();
+    return scheme() + "://" + absolutePath();
 }
 
 QT_BEGIN_NAMESPACE
