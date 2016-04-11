@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 
     CommandLineManager::instance()->process();
     bool isSingleInstance  = app.setSingleInstance(uniqueKey);
-    QString commandlineUrl;
+    QString commandlineUrl = QDir::homePath();
     if (CommandLineManager::instance()->positionalArguments().count() > 0){
         commandlineUrl = CommandLineManager::instance()->positionalArguments().at(0);
     }

@@ -13,12 +13,13 @@ class WindowManager : public QObject
 public:
     explicit WindowManager(QObject *parent = 0);
     ~WindowManager();
+    void initConnect();
 
 signals:
     void start(const QString &src);
 
 public slots:
-    void showNewWindow();
+    void showNewWindow(const QString& url);
 
     static int getWindowId(const QWidget *window);
 

@@ -450,6 +450,11 @@ void FileMenuManager::doOpen(const QString &url)
     }
 }
 
+void FileMenuManager::doOpenNewWindow(const QString &url)
+{
+    emit fileSignalManager->requestOpenNewWindowByUrl(url);
+}
+
 void FileMenuManager::doOpenFileLocation(const QString &url)
 {
     QDir dir(url);
@@ -714,7 +719,7 @@ void FileMenuManager::actionTriggered(DAction *action)
     case Open:
         doOpen(dir);
         break;
-    case OpenInNewWindow:break;
+    case OpenInNewWindow: doOpenNewWindow(dir); break;
     case OpenWith:break;
     case OpenFileLocation:
         doOpenFileLocation(dir);

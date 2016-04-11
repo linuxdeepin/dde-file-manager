@@ -19,7 +19,6 @@ FileManagerApp::FileManagerApp(QObject *parent) : QObject(parent)
 
     initApp();
     initView();
-    initDialogManager();
     initController();
     initGtk();
     initConnect();
@@ -34,7 +33,6 @@ void FileManagerApp::initGtk()
 {
     gtk_init(NULL, NULL);
     gdk_error_trap_push();
-//    initGtkThemeWatcher();
 }
 
 
@@ -50,10 +48,6 @@ void FileManagerApp::initView()
     m_windowManager = new WindowManager;
 }
 
-void FileManagerApp::initDialogManager()
-{
-    //m_dialogManager = new DialogManager;
-}
 
 void FileManagerApp::initController()
 {
@@ -82,6 +76,6 @@ AppController *FileManagerApp::getAppController() const
 
 void FileManagerApp::show()
 {
-    m_windowManager->showNewWindow();
+    m_windowManager->showNewWindow(QDir::homePath());
 }
 

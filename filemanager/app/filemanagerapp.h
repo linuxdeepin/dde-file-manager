@@ -20,7 +20,6 @@ public:
     void initGtk();
     void initApp();
     void initView();
-    void initDialogManager();
     void initController();
     void initManager();
     void initTranslation();
