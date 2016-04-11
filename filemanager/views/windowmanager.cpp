@@ -28,21 +28,6 @@ void WindowManager::showNewWindow()
     window->show();
 }
 
-void WindowManager::progressPercent(int value)
-{
-    qDebug() << "progress = " << value;
-}
-
-void WindowManager::error(QString content)
-{
-    qDebug() << "error = " << content;
-}
-
-void WindowManager::result(QString content)
-{
-    qDebug() << "result = " << content;
-}
-
 int WindowManager::getWindowId(const QWidget *window)
 {
     return m_windows.value(window, -1);

@@ -8,6 +8,7 @@ class FileManagerWindow;
 class DFileManagerWindow;
 class AppController;
 class DialogManager;
+class QLocalServer;
 
 class FileManagerApp : public QObject
 {
@@ -16,14 +17,12 @@ public:
     explicit FileManagerApp(QObject *parent = 0);
     ~FileManagerApp();
 
-    void initLogger();
     void initGtk();
     void initApp();
     void initView();
     void initDialogManager();
     void initController();
     void initManager();
-    void initCommandline();
     void initTranslation();
     void initConnect();
 

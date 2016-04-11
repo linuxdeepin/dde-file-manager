@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui widgets svg dbus x11extras
+QT       += core gui widgets svg dbus x11extras network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -111,7 +111,9 @@ HEADERS += \
     filemanager/models/abstractfileinfo.h \
     filemanager/controllers/fileservices.h \
     filemanager/controllers/abstractfilecontroller.h \
-    filemanager/models/recentfileinfo.h
+    filemanager/models/recentfileinfo.h \
+    filemanager/app/singleapplication.h \
+    filemanager/app/logutil.h
 
 SOURCES += \
     filemanager/controllers/appcontroller.cpp \
@@ -186,7 +188,9 @@ SOURCES += \
     filemanager/models/abstractfileinfo.cpp \
     filemanager/controllers/fileservices.cpp \
     filemanager/controllers/abstractfilecontroller.cpp \
-    filemanager/models/recentfileinfo.cpp
+    filemanager/models/recentfileinfo.cpp \
+    filemanager/app/singleapplication.cpp \
+    filemanager/app/logutil.cpp
 
 INCLUDEPATH += filemanager/models
 

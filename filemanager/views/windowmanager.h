@@ -19,14 +19,12 @@ signals:
 
 public slots:
     void showNewWindow();
-    void progressPercent(int value);
-    void error(QString content);
-    void result(QString content);
 
     static int getWindowId(const QWidget *window);
 
 private slots:
     void onWindowDestroyed(const QObject *obj);
+    inline QHash<const QWidget*, int> getWindows(){return m_windows;}
 
 private:
      static QHash<const QWidget*, int> m_windows;
