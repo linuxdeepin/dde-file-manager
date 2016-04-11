@@ -28,7 +28,7 @@ public:
     AppController *getAppController() const;
 
 public slots:
-    void show();
+    void show(const QString& url);
 
 private:
     WindowManager* m_windowManager = NULL;

@@ -6,6 +6,8 @@
 #include <QObject>
 #include <QHash>
 
+class DFileManagerWindow;
+
 class WindowManager : public QObject
 {
     Q_OBJECT
@@ -20,16 +22,17 @@ signals:
 
 public slots:
     void showNewWindow(const QString& url);
-
+    void activefirstOpenedWindow();
     static int getWindowId(const QWidget *window);
 
 private slots:
-    void onWindowDestroyed(const QObject *obj);
+    void onWindowClosed();
     inline QHash<const QWidget*, int> getWindows(){return m_windows;}
 
 private:
      static QHash<const QWidget*, int> m_windows;
      static int m_count;
+     DFileManagerWindow* m_firstOpenedWindow = NULL;
 };
 
 #endif // WINDOWMANAGER_H

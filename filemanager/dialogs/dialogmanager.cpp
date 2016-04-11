@@ -4,13 +4,15 @@
 #include "../app/global.h"
 #include "../app/filesignalmanager.h"
 #include "../controllers/filejob.h"
+#include "dialogs/messagewrongdialog.h"
+#include <ddialog.h>
 
+DWIDGET_USE_NAMESPACE
 
 DialogManager::DialogManager(QObject *parent) : QObject(parent)
 {
     initTaskDialog();
     initConnect();
-//    handleDataUpdated();
 }
 
 DialogManager::~DialogManager()
@@ -35,7 +37,11 @@ void DialogManager::initConnect()
     connect(m_taskDialog, &DTaskDialog::conflictHided, fileSignalManager, &FileSignalManager::conflictTimerReStarted);
     connect(m_taskDialog, &DTaskDialog::conflictRepsonseConfirmed, fileSignalManager, &FileSignalManager::conflictRepsonseConfirmed);
     connect(m_taskDialog, &DTaskDialog::conflictRepsonseConfirmed, this, &DialogManager::handleConflictRepsonseConfirmed);
+
     connect(m_taskDialog, &DTaskDialog::abortTask, this, &DialogManager::abortJob);
+
+    connect(fileSignalManager, &FileSignalManager::requestShowUrlWrongDialog, this, &DialogManager::showUrlWrongDialog);
+
 }
 
 void DialogManager::addJob(FileJob *job)
@@ -51,6 +57,7 @@ void DialogManager::removeJob()
     job->deleteLater();
 }
 
+
 void DialogManager::abortJob(const QMap<QString, QString> &jobDetail)
 {
     QString jobId = jobDetail.value("jobId");
@@ -59,25 +66,14 @@ void DialogManager::abortJob(const QMap<QString, QString> &jobDetail)
     job->setStatus(FileJob::Cancelled);
 }
 
-void DialogManager::handleDataUpdated()
-{
-//    connect(m_taskDialog, &DTaskDialog::conflictRepsonseConfirmed, this, &DialogManager::handleConflictRepsonseConfirmed);
-//    for(int i=0; i<10; i++){
-//        QMap<QString, QString> jobDetail;
-//        jobDetail.insert("jobId", QString("%1").arg(i));
-//        jobDetail.insert("type", "copy");
-//        emit fileSignalManager->jobAdded(jobDetail);
 
-//        QMap<QString, QString> jobDataDetail;
-//        jobDataDetail.insert("speed", "1M/s");
-//        jobDataDetail.insert("remainTime", QString("%1 s").arg(QString::number(10)));
-//        jobDataDetail.insert("file", "111111111111");
-//        jobDataDetail.insert("progress", "20");
-//        jobDataDetail.insert("destination", "home");
-//        emit fileSignalManager->jobDataUpdated(jobDetail, jobDataDetail);
-//        emit fileSignalManager->conflictDialogShowed(jobDetail);
-//    }
+void DialogManager::showUrlWrongDialog(const QString &url)
+{
+    MessageWrongDialog d(url);
+    qDebug() << url;
+    d.exec();
 }
+
 
 void DialogManager::handleConflictRepsonseConfirmed(const QMap<QString, QString> &jobDetail, const QMap<QString, QVariant> &response)
 {

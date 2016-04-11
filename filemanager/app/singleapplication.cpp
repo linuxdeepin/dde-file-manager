@@ -5,6 +5,8 @@
 #include "global.h"
 #include "filesignalmanager.h"
 
+
+
 SingleApplication::SingleApplication(int &argc, char **argv, int): QApplication(argc, argv)
 {
     m_localServer = new QLocalServer;
@@ -82,7 +84,18 @@ void SingleApplication::readData()
     QJsonParseError* error = new QJsonParseError();
     QJsonObject messageObj = QJsonDocument::fromJson(QByteArray(static_cast<QLocalSocket*>(sender())->readAll()), error).object();
     qDebug() << messageObj << error->errorString();
+
     if (messageObj.contains("url")){
-        emit fileSignalManager->requestOpenNewWindowByUrl(messageObj.value("url").toString());
+        QString url = messageObj.value("url").toString();
+        if (url.isEmpty()){
+            emit fileSignalManager->requestActiveWindow();
+        }else{
+            if (QFile::exists(url)){
+                emit fileSignalManager->requestOpenNewWindowByUrl(url);
+            }else{
+                qDebug() << "wrong" << url;
+                emit fileSignalManager->requestShowUrlWrongDialog(url);
+            }
+        }
     }
 }

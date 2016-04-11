@@ -4,7 +4,8 @@
 #include "app/singleapplication.h"
 
 #include "widgets/commandlinemanager.h"
-
+#include "../app/global.h"
+#include "../dialogs/dialogmanager.h"
 #include <dthememanager.h>
 #include <dwindow.h>
 
@@ -37,7 +38,8 @@ int main(int argc, char *argv[])
     qDebug() << isSingleInstance << commandlineUrl;
     if (isSingleInstance){
         DThemeManager::instance()->setTheme("light");
-        fileManagerApp->show();
+        fileManagerApp->show(commandlineUrl);
+        dialogManager;
         return app.exec();
     }else{
         SingleApplication::newClientProcess(uniqueKey);

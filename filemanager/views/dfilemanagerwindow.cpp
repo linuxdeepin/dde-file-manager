@@ -47,7 +47,7 @@ void DFileManagerWindow::initUI()
     setMinimumWidth(MinimumWidth);
     moveCenter();
     initCentralWidget();
-    //initStatusBar();
+//    initStatusBar();
     setCentralWidget(m_centralWidget);
     setStyleSheet(getQssFromFile(":/qss/qss/filemanager.qss"));
 }
@@ -192,10 +192,16 @@ void DFileManagerWindow::resizeEvent(QResizeEvent *event)
     DMovableMainWindow::resizeEvent(event);
 }
 
-void DFileManagerWindow::keyPressEvent(QKeyEvent *e)
+void DFileManagerWindow::keyPressEvent(QKeyEvent *event)
 {
 //    m_toolbar->m_searchBar->setFocus();
 //    m_toolbar->m_searchBar->keyPressEvent(e);
-    DMovableMainWindow::keyPressEvent(e);
+    DMovableMainWindow::keyPressEvent(event);
+}
+
+void DFileManagerWindow::closeEvent(QCloseEvent *event)
+{
+    emit aboutToClose();
+    DMovableMainWindow::closeEvent(event);
 }
 
