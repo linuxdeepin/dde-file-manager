@@ -4,6 +4,8 @@
 #include "../app/filesignalmanager.h"
 #include "../app/fmevent.h"
 
+#include "../models/abstractfileinfo.h"
+
 #include <QUrl>
 #include <QDebug>
 
@@ -24,6 +26,10 @@ QHash<AbstractFileController*, HandlerType> FileServices::m_handlerHash;
 FileServices::FileServices()
     : QObject()
 {
+    m_thread = new QThread(this);
+
+    moveToThread(m_thread);
+
     qRegisterMetaType<FMEvent>("FMEvent");
     qRegisterMetaType<QDir::Filters>("QDir::Filters");
     qRegisterMetaType<QList<AbstractFileInfo*>>("QList<AbstractFileInfo*>");
@@ -34,9 +40,12 @@ FileServices::FileServices()
             fileSignalManager, &FileSignalManager::childrenChanged,
             Qt::QueuedConnection);
     connect(fileSignalManager, &FileSignalManager::requestOpenFile,
-            this, &FileServices::openFile);
+            this, &FileServices::openFile, Qt::QueuedConnection);
     connect(this, &FileServices::fileOpened,
-            fileSignalManager, &FileSignalManager::fileOpened);
+            fileSignalManager, &FileSignalManager::fileOpened
+            , Qt::QueuedConnection);
+
+    m_thread->start();
 }
 
 FileServices *FileServices::instance()
@@ -46,16 +55,21 @@ FileServices *FileServices::instance()
     return &services;
 }
 
-void FileServices::setFileUrlHandler(const QString &scheme, const QString &path,
+void FileServices::setFileUrlHandler(const QString &scheme, const QString &host,
                                      AbstractFileController *controller)
 {
     if(m_handlerHash.contains(controller))
         return;
 
-    const HandlerType type = HandlerType(scheme, path);
+    const HandlerType type = HandlerType(scheme, host);
 
     m_handlerHash[controller] = type;
     m_controllerHash.insertMulti(type, controller);
+
+    connect(controller, &AbstractFileController::childrenAdded,
+            instance(), &FileServices::childrenAdded);
+    connect(controller, &AbstractFileController::childrenRemoved,
+            instance(), &FileServices::childrenRemoved);
 }
 
 void FileServices::unsetFileUrlHandler(AbstractFileController *controller)
@@ -64,11 +78,25 @@ void FileServices::unsetFileUrlHandler(AbstractFileController *controller)
         return;
 
     m_controllerHash.remove(m_handlerHash.value(controller), controller);
+
+    disconnect(controller, &AbstractFileController::childrenAdded,
+            instance(), &FileServices::childrenAdded);
+    disconnect(controller, &AbstractFileController::childrenRemoved,
+            instance(), &FileServices::childrenRemoved);
 }
 
-void FileServices::clearFileUrlHandler(const QString &scheme, const QString &path)
+void FileServices::clearFileUrlHandler(const QString &scheme, const QString &host)
 {
-    m_controllerHash.remove(HandlerType(scheme, path));
+    const HandlerType handler(scheme, host);
+
+    for(const AbstractFileController *controller : m_controllerHash.values(handler)) {
+        connect(controller, &AbstractFileController::childrenAdded,
+                instance(), &FileServices::childrenAdded);
+        connect(controller, &AbstractFileController::childrenRemoved,
+                instance(), &FileServices::childrenRemoved);
+    }
+
+    m_controllerHash.remove(handler);
 }
 
 bool FileServices::openFile(const QString &fileUrl) const
@@ -98,6 +126,30 @@ bool FileServices::renameFile(const QString &fileUrl, const QString &newUrl) con
     return false;
 }
 
+bool FileServices::addUrlMonitor(const QString &fileUrl) const
+{
+    TRAVERSE({
+                 bool ok = controller->addUrlMonitor(fileUrl, accepted);
+
+                 if(accepted)
+                    return ok;
+             })
+
+    return false;
+}
+
+bool FileServices::removeUrlMonitor(const QString &fileUrl) const
+{
+    TRAVERSE({
+                 bool ok = controller->removeUrlMonitor(fileUrl, accepted);
+
+                 if(accepted)
+                    return ok;
+             })
+
+     return false;
+}
+
 AbstractFileInfo *FileServices::createFileInfo(const QString &fileUrl) const
 {
     TRAVERSE({
@@ -112,6 +164,13 @@ AbstractFileInfo *FileServices::createFileInfo(const QString &fileUrl) const
 
 void FileServices::getChildren(const FMEvent &event, QDir::Filters filters) const
 {
+    if(QThread::currentThread() != m_thread) {
+        QMetaObject::invokeMethod(const_cast<FileServices*>(this), "getChildren", Qt::QueuedConnection,
+                                  Q_ARG(FMEvent, event), Q_ARG(QDir::Filters, filters));
+
+        return;
+    }
+
     const QString &fileUrl = event.fileUrl();
 
     TRAVERSE({
@@ -126,10 +185,10 @@ void FileServices::getChildren(const FMEvent &event, QDir::Filters filters) cons
 }
 
 QList<AbstractFileController*> FileServices::getHandlerTypeByUrl(const QString &fileUrl,
-                                                                 bool ignorePath, bool ignoreScheme)
+                                                                 bool ignoreHost, bool ignoreScheme)
 {
     QUrl url(fileUrl);
 
     return m_controllerHash.values(HandlerType(ignoreScheme ? "" : url.scheme(),
-                                               ignorePath ? "" : url.path()));
+                                               ignoreHost ? "" : url.path()));
 }

@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <QSharedData>
+#include <QMetaType>
 
 class FMEvent
 {

@@ -69,7 +69,6 @@ signals:
 
 private slots:
     void moveColumnRole(int logicalIndex, int oldVisualIndex, int newVisualIndex);
-    void onChildrenChanged(const FMEvent &event, const QList<AbstractFileInfo*> &list);
     void allSelected(int windowId);
 
 protected:

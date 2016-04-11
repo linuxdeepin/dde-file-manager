@@ -20,17 +20,20 @@ class FileServices : public QObject
 public:
     static FileServices *instance();
 
-    static void setFileUrlHandler(const QString &scheme, const QString &path,
+    static void setFileUrlHandler(const QString &scheme, const QString &host,
                                   AbstractFileController *controller);
     static void unsetFileUrlHandler(AbstractFileController *controller);
-    static void clearFileUrlHandler(const QString &scheme, const QString &path);
+    static void clearFileUrlHandler(const QString &scheme, const QString &host);
 
     bool openFile(const QString &fileUrl) const;
     bool renameFile(const QString &oldUrl, const QString &newUrl) const;
+    bool addUrlMonitor(const QString &url) const;
+    bool removeUrlMonitor(const QString &url) const;
 
     AbstractFileInfo *createFileInfo(const QString &fileUrl) const;
 
-    void getChildren(const FMEvent &event, QDir::Filters filters) const;
+public slots:
+    void getChildren(const FMEvent &event, QDir::Filters filters = QDir::AllEntries | QDir::NoDotDot) const;
 
 signals:
     void childrenUpdated(const FMEvent &event, const QList<AbstractFileInfo*> &list) const;
@@ -41,11 +44,13 @@ signals:
 private:
     explicit FileServices();
     static QList<AbstractFileController*> getHandlerTypeByUrl(const QString &fileUrl,
-                                                              bool ignorePath = false,
+                                                              bool ignoreHost = false,
                                                               bool ignoreScheme = false);
 
     static QMultiHash<HandlerType, AbstractFileController*> m_controllerHash;
     static QHash<AbstractFileController*, HandlerType> m_handlerHash;
+
+    QThread *m_thread;
 };
 
 #endif // FILESERVICES_H

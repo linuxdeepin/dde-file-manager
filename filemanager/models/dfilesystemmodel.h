@@ -7,6 +7,7 @@
 class FileSystemNode;
 class AbstractFileInfo;
 class DFileView;
+class FMEvent;
 
 class DFileSystemModel : public QAbstractItemModel
 {
@@ -78,13 +79,12 @@ public:
     AbstractFileInfo *parentFileInfo(const QString &fileUrl) const;
 
 public slots:
-    void updateChildren(const QString &url, QList<AbstractFileInfo*> list);
+    void updateChildren(const FMEvent &event, QList<AbstractFileInfo*> list);
     void refresh(const QString &fileUrl);
 
 private slots:
     void onFileCreated(const QString &fileUrl);
     void onFileDeleted(const QString &fileUrl);
-    void onFileRenamed(const QString &oldPath, const QString &newPath);
 
 private:
     FileSystemNode *m_rootNode = Q_NULLPTR;

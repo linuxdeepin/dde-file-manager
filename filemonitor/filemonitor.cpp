@@ -7,7 +7,6 @@ FileMonitor::FileMonitor(QObject *parent) : QObject(parent)
 {
     initFileMonitorWoker();
     initConnect();
-    monitorTrash();
 }
 
 
@@ -16,13 +15,6 @@ void FileMonitor::initFileMonitorWoker(){
     m_fileThread = new QThread(this);
     m_fileMonitorWorker->moveToThread(m_fileThread);
     m_fileThread->start();
-}
-
-void FileMonitor::monitorTrash()
-{
-    /*free desktop trash standard*/
-    QString trashUrl = QDir::homePath() + "/.local/share/Trash/files";
-    addMonitorPath(trashUrl);
 }
 
 void FileMonitor::initConnect(){
@@ -44,24 +36,12 @@ bool FileMonitor::isGoutputstreamTempFile(QString path){
 
 void FileMonitor::addMonitorPath(const QString &path)
 {
-//    qDebug() << "add monitor, path:" << path;
-
-    if (QDir(path).exists()){
-        emit requestMonitorPath(path);
-    }else{
-        qWarning() << "The path is invalid:" << path;
-    }
+    emit requestMonitorPath(path);
 }
 
 void FileMonitor::removeMonitorPath(const QString &path)
 {
-//    qDebug() << "remove monitor, path:" << path;
-
-    if (QDir(path).exists()){
-        emit requestRemoveMonitorPath(path);
-    }else{
-        qWarning() << "The path is invalid:" << path;
-    }
+    emit requestRemoveMonitorPath(path);
 }
 
 void FileMonitor::handleCreated(int cookie, QString path){

@@ -49,7 +49,6 @@ void FileMonitorWoker::initInotify()
 
 bool FileMonitorWoker::addPath(const QString &path)
 {
-    qDebug() << path;
     if (path.isEmpty()) {
         qWarning("QFileSystemWatcher::addPath: path is empty");
         return true;
@@ -312,37 +311,24 @@ void FileMonitorWoker::handleInotifyEvent(const inotify_event *event)
         id = -id;
         path = getPathFromID(id);
         if (path.isEmpty()) {
-            if(id == -1)
-            {
-                addPath(desktopLocation);
-            }
             return;
-
         }
     }
 
     path = joinPath(path, event->name);
 
-    if(path == desktopLocation)
-    {
-         return;
-    }
     if (event->mask & IN_CREATE) {
 //        qDebug() << "IN_CREATE" << path;
         emit fileCreated(event->cookie, path);
-        addPath(path);
     }else if (event->mask & IN_MOVED_FROM) {
 //        qDebug() << "IN_MOVED_FROM" << path;
         emit fileMovedFrom(event->cookie, path);
-        removePath(path);
     }else if (event->mask & IN_MOVED_TO) {
 //        qDebug() << "IN_MOVED_TO" << path;
         emit fileMovedTo(event->cookie, path);
-        addPath(path);
     }else if (event->mask & IN_DELETE) {
 //        qDebug() << "IN_DELETE" << path;
         emit fileDeleted(event->cookie, path);
-        removePath(path);
     }else if (event->mask & IN_ATTRIB) {
 //        qDebug() << event->mask << path;
         emit metaDataChanged(event->cookie, path);

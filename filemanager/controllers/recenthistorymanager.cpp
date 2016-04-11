@@ -4,6 +4,8 @@
 #include "../app/global.h"
 #include "../app/filesignalmanager.h"
 
+#include "../controllers/fileservices.h"
+
 #include <QDirIterator>
 #include <QJsonObject>
 #include <QFile>

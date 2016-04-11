@@ -15,6 +15,7 @@
 
 #include "../controllers/appcontroller.h"
 #include "../controllers/filecontroller.h"
+#include "../controllers/fileservices.h"
 
 #include "../dialogs/propertydialog.h"
 
@@ -81,8 +82,6 @@ void DFileView::initConnects()
             this, &DFileView::openIndex);
     connect(fileSignalManager, &FileSignalManager::requestChangeCurrentUrl,
             this, &DFileView::cd);
-    connect(fileSignalManager, &FileSignalManager::childrenChanged,
-            this, &DFileView::onChildrenChanged);
     connect(fileSignalManager, &FileSignalManager::refreshFolder,
             model(), &DFileSystemModel::refresh);
     connect(fileSignalManager, &FileSignalManager::requestRename,
@@ -291,14 +290,6 @@ void DFileView::moveColumnRole(int /*logicalIndex*/, int oldVisualIndex, int new
     m_logicalIndexs.move(oldVisualIndex, newVisualIndex);
 
     update();
-}
-
-void DFileView::onChildrenChanged(const FMEvent &event, const QList<AbstractFileInfo *> &list)
-{
-    if(event.windowId() != WindowManager::getWindowId(window()))
-        return;
-
-    model()->updateChildren(event.fileUrl(), list);
 }
 
 void DFileView::allSelected(int windowId)

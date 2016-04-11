@@ -2,28 +2,12 @@
 #define GLOBAL_H
 
 #include "widgets/singleton.h"
-#include "abstractfileinfo.h"
-#include "filemanagerapp.h"
 
 #include "utils/utils.h"
-
-#include "../views/filemenumanager.h"
-
-#include "../dialogs/dialogmanager.h"
-
-#include "../controllers/fileservices.h"
-
-#include "../models/abstractfileinfo.h"
 
 #include <QFontMetrics>
 #include <QTextOption>
 #include <QTextLayout>
-
-class SearchHistroyManager;
-class BookMarkManager;
-class TrashManager;
-class FileMenuManager;
-class FileSignalManager;
 
 #define fileManagerApp Singleton<FileManagerApp>::instance()
 #define searchHistoryManager  Singleton<SearchHistroyManager>::instance()
@@ -33,7 +17,6 @@ class FileSignalManager;
 #define fileSignalManager Singleton<FileSignalManager>::instance()
 #define dialogManager Singleton<DialogManager>::instance()
 #define appController fileManagerApp->getAppController()
-#define fileMonitor appController->getFileMonitor()
 #define iconProvider Singleton<IconProvider>::instance()
 #define fileService FileServices::instance()
 

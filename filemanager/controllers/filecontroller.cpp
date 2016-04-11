@@ -4,16 +4,26 @@
 
 #include "../models/desktopfileinfo.h"
 
+#include "filemonitor/filemonitor.h"
+
 #include <QDesktopServices>
 #include <QDirIterator>
 
 FileController::FileController(QObject *parent)
     : AbstractFileController(parent)
+    , fileMonitor(new FileMonitor(this))
 {
     qRegisterMetaType<QList<FileInfo*>>("QList<FileInfo*>");
 
     FileServices::setFileUrlHandler("file", "", this);
     FileServices::setFileUrlHandler("", "", this);
+
+    connect(fileMonitor, &FileMonitor::fileCreated,
+            this, &FileController::onFileCreated);
+    connect(fileMonitor, &FileMonitor::fileDeleted,
+            this, &FileController::onFileRemove);
+    connect(fileMonitor, &FileMonitor::fileRenamed,
+            this, &FileController::onFileRename);
 }
 
 AbstractFileInfo *FileController::createFileInfo(const QString &fileUrl, bool &accepted) const
@@ -108,4 +118,54 @@ bool FileController::renameFile(const QString &oldUrl, const QString &newUrl, bo
     QFile file(url.toLocalFile());
 
     return file.rename(QUrl(newUrl).toLocalFile());
+}
+
+bool FileController::addUrlMonitor(const QString &fileUrl, bool &accepted) const
+{
+    QUrl url(fileUrl);
+
+    if(!url.isLocalFile()) {
+        accepted = false;
+
+        return false;
+    }
+
+    accepted = true;
+
+    fileMonitor->addMonitorPath(url.toLocalFile());
+
+    return true;
+}
+
+bool FileController::removeUrlMonitor(const QString &fileUrl, bool &accepted) const
+{
+    QUrl url(fileUrl);
+
+    if(!url.isLocalFile()) {
+        accepted = false;
+
+        return false;
+    }
+
+    accepted = true;
+
+    fileMonitor->removeMonitorPath(url.toLocalFile());
+
+    return true;
+}
+
+void FileController::onFileCreated(const QString &filePath)
+{
+    emit childrenAdded(QUrl::fromLocalFile(filePath).toString());
+}
+
+void FileController::onFileRemove(const QString &filePath)
+{
+    emit childrenRemoved(QUrl::fromLocalFile(filePath).toString());
+}
+
+void FileController::onFileRename(const QString &oldName, const QString &newName)
+{
+    onFileRemove(oldName);
+    onFileCreated(newName);
 }

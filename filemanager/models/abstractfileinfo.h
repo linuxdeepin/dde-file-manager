@@ -96,6 +96,8 @@ public:
 
     virtual QIcon fileIcon() const = 0;
 
+    static QString fileParentUrl(const QString &fileUrl);
+
 protected:
     QSharedDataPointer<FileInfoData> data;
 };

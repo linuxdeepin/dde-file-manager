@@ -1,11 +1,15 @@
 #include "windowmanager.h"
 #include "dfilemanagerwindow.h"
-#include <QThread>
+
 #include "../controllers/filejob.h"
-#include <QDebug>
+
 #include "../app/global.h"
 #include "../app/filesignalmanager.h"
 #include "../app/fmevent.h"
+
+#include <QThread>
+#include <QDebug>
+#include <QApplication>
 
 QHash<const QWidget*, int> WindowManager::m_windows;
 int WindowManager::m_count = 0;
