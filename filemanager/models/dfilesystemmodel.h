@@ -97,6 +97,8 @@ private:
     Qt::SortOrder m_srotOrder = Qt::AscendingOrder;
     QModelIndex m_activeIndex;
 
+    bool (*sortFun)(const AbstractFileInfo*, const AbstractFileInfo*) = Q_NULLPTR;
+
     inline FileSystemNode *getNodeByIndex(const QModelIndex &index) const;
     QModelIndex createIndex(const FileSystemNode *node, int column) const;
     using QAbstractItemModel::createIndex;
@@ -106,6 +108,7 @@ private:
     void sort(QList<AbstractFileInfo*> &list) const;
 
     FileSystemNode *createNode(FileSystemNode *parent, AbstractFileInfo *info);
+
     void deleteNode(FileSystemNode *node);
     void deleteNodeByUrl(const QString &url);
 

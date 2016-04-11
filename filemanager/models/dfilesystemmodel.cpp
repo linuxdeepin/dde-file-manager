@@ -41,8 +41,76 @@ public:
     }
 };
 
-DFileSystemModel::DFileSystemModel(DFileView *parent) :
-    QAbstractItemModel(parent)
+Qt::SortOrder sortOrder_global;
+
+bool sortFileListByDisplayName(const AbstractFileInfo *info1, const AbstractFileInfo *info2)
+{
+    if(info1->isDir()) {
+        if(!info2->isDir())
+            return true;
+    } else {
+        if(info2->isDir())
+            return false;
+    }
+
+    return (sortOrder_global == Qt::DescendingOrder) ^ (info1->displayName().toLower() < info2->displayName().toLower());
+}
+
+bool sortFileListBySize(const AbstractFileInfo *info1, const AbstractFileInfo *info2)
+{
+    if(info1->isDir()) {
+        if(!info2->isDir())
+            return true;
+    } else {
+        if(info2->isDir())
+            return false;
+    }
+
+    return (sortOrder_global == Qt::DescendingOrder) ^ (info1->size() < info2->size());
+}
+
+bool sortFileListByModified(const AbstractFileInfo *info1, const AbstractFileInfo *info2)
+{
+    if(info1->isDir()) {
+        if(!info2->isDir())
+            return true;
+    } else {
+        if(info2->isDir())
+            return false;
+    }
+
+    return (sortOrder_global == Qt::DescendingOrder) ^ (info1->lastModified() < info2->lastModified());
+}
+
+bool sortFileListByMime(const AbstractFileInfo *info1, const AbstractFileInfo *info2)
+{
+    if(info1->isDir()) {
+        if(!info2->isDir())
+            return true;
+    } else {
+        if(info2->isDir())
+            return false;
+    }
+
+    return (sortOrder_global == Qt::DescendingOrder) ^ (info1->mimeTypeName() < info2->mimeTypeName());
+}
+
+bool sortFileListByCreated(const AbstractFileInfo *info1, const AbstractFileInfo *info2)
+{
+    if(info1->isDir()) {
+        if(!info2->isDir())
+            return true;
+    } else {
+        if(info2->isDir())
+            return false;
+    }
+
+    return (sortOrder_global == Qt::DescendingOrder) ^ (info1->created() < info2->created());
+}
+
+DFileSystemModel::DFileSystemModel(DFileView *parent)
+    : QAbstractItemModel(parent)
+    , sortFun(&sortFileListByDisplayName)
 {
     connect(fileService, &FileServices::childrenAdded,
             this, &DFileSystemModel::onFileCreated,
@@ -217,7 +285,7 @@ int DFileSystemModel::headerDataToRole(QVariant data) const
         return -1;
 
     if(data == tr("Name")) {
-        return FileNameRole;
+        return FileDisplayNameRole;
     } else if(data == tr("Date Modified")) {
         return FileLastModified;
     } else if(data == tr("Size")) {
@@ -398,21 +466,27 @@ void DFileSystemModel::setSortColumn(int column, Qt::SortOrder order)
 
     switch (m_sortColumn) {
     case 0:
-        setSortRole(DFileSystemModel::FileNameRole, order);
+        setSortRole(DFileSystemModel::FileDisplayNameRole, order);
+        sortFun = &sortFileListByDisplayName;
         break;
     case 1:
         setSortRole(DFileSystemModel::FileLastModified, order);
+        sortFun = &sortFileListByModified;
         break;
     case 2:
         setSortRole(DFileSystemModel::FileSizeRole, order);
+        sortFun = &sortFileListBySize;
         break;
     case 3:
         setSortRole(DFileSystemModel::FileMimeTypeRole, order);
+        sortFun = &sortFileListByMime;
         break;
     case 4:
         setSortRole(DFileSystemModel::FileCreated, order);
+        sortFun = &sortFileListByCreated;
         break;
     default:
+        sortFun = &sortFileListByDisplayName;
         break;
     }
 }
@@ -589,23 +663,35 @@ void DFileSystemModel::onFileCreated(const QString &fileUrl)
 
     FileSystemNode *parentNode = m_urlToNode.value(info->parentUrl());
 
-    delete info;
-
     if(parentNode && parentNode->populatedChildren && !parentNode->visibleChildren.contains(fileUrl)) {
-        beginInsertRows(createIndex(parentNode, 0), 0, 0);
+        int row = 0;
+
+        for(; row < parentNode->visibleChildren.count(); ++row) {
+            const AbstractFileInfo *tmp_info = parentNode->children.value(parentNode->visibleChildren.value(row))->fileInfo;
+
+            if(sortFun(info, tmp_info)) {
+                break;
+            }
+        }
+
+        beginInsertRows(createIndex(parentNode, 0), row, row);
 
         FileSystemNode *node = m_urlToNode.value(fileUrl);
 
         if(!node) {
-            node = createNode(parentNode, fileService->createFileInfo(fileUrl));
+            node = createNode(parentNode, info);
 
             m_urlToNode[fileUrl] = node;
+        } else {
+            delete info;
         }
 
         parentNode->children[fileUrl] = node;
-        parentNode->visibleChildren.insert(0, fileUrl);
+        parentNode->visibleChildren.insert(row, fileUrl);
 
         endInsertRows();
+    } else {
+        delete info;
     }
 }
 
@@ -677,81 +763,14 @@ bool DFileSystemModel::isDir(const FileSystemNode *node) const
     return node->fileInfo->isDir();
 }
 
-Qt::SortOrder sortOrder_global;
-
-bool sortFileListByName(const AbstractFileInfo *info1, const AbstractFileInfo *info2)
-{
-    if(info1->isDir()) {
-        if(!info2->isDir())
-            return true;
-    } else {
-        if(info2->isDir())
-            return false;
-    }
-
-    return (sortOrder_global == Qt::DescendingOrder) ^ (info1->fileName().toLower() < info2->fileName().toLower());
-}
-
-bool sortFileListBySize(const AbstractFileInfo *info1, const AbstractFileInfo *info2)
-{
-    if(info1->isDir()) {
-        if(!info2->isDir())
-            return true;
-    } else {
-        if(info2->isDir())
-            return false;
-    }
-
-    return (sortOrder_global == Qt::DescendingOrder) ^ (info1->size() < info2->size());
-}
-
-bool sortFileListByModified(const AbstractFileInfo *info1, const AbstractFileInfo *info2)
-{
-    if(info1->isDir()) {
-        if(!info2->isDir())
-            return true;
-    } else {
-        if(info2->isDir())
-            return false;
-    }
-
-    return (sortOrder_global == Qt::DescendingOrder) ^ (info1->lastModified() < info2->lastModified());
-}
-
-bool sortFileListByMime(const AbstractFileInfo *info1, const AbstractFileInfo *info2)
-{
-    if(info1->isDir()) {
-        if(!info2->isDir())
-            return true;
-    } else {
-        if(info2->isDir())
-            return false;
-    }
-
-    return (sortOrder_global == Qt::DescendingOrder) ^ (info1->mimeTypeName() < info2->mimeTypeName());
-}
-
-bool sortFileListByCreated(const AbstractFileInfo *info1, const AbstractFileInfo *info2)
-{
-    if(info1->isDir()) {
-        if(!info2->isDir())
-            return true;
-    } else {
-        if(info2->isDir())
-            return false;
-    }
-
-    return (sortOrder_global == Qt::DescendingOrder) ^ (info1->created() < info2->created());
-}
-
 void DFileSystemModel::sort(QList<AbstractFileInfo*> &list) const
 {
     sortOrder_global = m_srotOrder;
 
     switch (m_sortRole) {
-    case DFileSystemModel::FileNameRole:
+    case DFileSystemModel::FileDisplayNameRole:
     case Qt::DisplayRole:
-        qSort(list.begin(), list.end(), sortFileListByName);
+        qSort(list.begin(), list.end(), sortFileListByDisplayName);
         break;
     case DFileSystemModel::FileLastModified:
         qSort(list.begin(), list.end(), sortFileListByModified);
