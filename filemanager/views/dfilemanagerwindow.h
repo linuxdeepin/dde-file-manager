@@ -50,13 +50,15 @@ public:
     void initStatusBar();
     void initConnect();
 signals:
+    void aboutToClose();
 
 public slots:
     void showMinimized();
 
 protected:
     void resizeEvent(QResizeEvent* event);
-    void keyPressEvent(QKeyEvent *e);
+    void keyPressEvent(QKeyEvent *event);
+    void closeEvent(QCloseEvent* event);
 
 private:
     QFrame* m_centralWidget;

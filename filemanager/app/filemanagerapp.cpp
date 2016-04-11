@@ -74,8 +74,8 @@ AppController *FileManagerApp::getAppController() const
     return m_appController;
 }
 
-void FileManagerApp::show()
+void FileManagerApp::show(const QString &url)
 {
-    m_windowManager->showNewWindow(QDir::homePath());
+    m_windowManager->showNewWindow(url);
 }
 

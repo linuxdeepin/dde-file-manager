@@ -81,6 +81,7 @@ signals:
 
     /*requst open new window by given url*/
     void requestOpenNewWindowByUrl(const QString& url);
+
     /* device mounted */
     void deviceMounted(int i);
 
@@ -89,6 +90,13 @@ signals:
 
     /* device removed */
     void deviceRemoved(DeviceInfo &deviceInfos);
+
+    /*request active window*/
+    void requestActiveWindow();
+
+    /*request show url wrong dialog*/
+    void requestShowUrlWrongDialog(const QString& url);
+
 };
 
 #endif // FILESIGNALMANAGER_H

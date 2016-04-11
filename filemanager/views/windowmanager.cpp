@@ -27,14 +27,17 @@ WindowManager::~WindowManager()
 void WindowManager::initConnect()
 {
     connect(fileSignalManager, &FileSignalManager::requestOpenNewWindowByUrl, this, &WindowManager::showNewWindow);
+    connect(fileSignalManager, &FileSignalManager::requestActiveWindow, this, &WindowManager::activefirstOpenedWindow);
 }
 
 void WindowManager::showNewWindow(const QString &url)
 {
     DFileManagerWindow* window = new DFileManagerWindow;
-
-    connect(window, &DFileManagerWindow::destroyed,
-            this, &WindowManager::onWindowDestroyed);
+    if (!m_firstOpenedWindow){
+        m_firstOpenedWindow = window;
+    }
+    connect(window, &DFileManagerWindow::aboutToClose,
+            this, &WindowManager::onWindowClosed);
     int winId = window->winId();
     m_windows.insert(window, winId);
     qDebug() << m_windows;
@@ -48,12 +51,26 @@ void WindowManager::showNewWindow(const QString &url)
     emit fileSignalManager->requestChangeCurrentUrl(event);
 }
 
+void WindowManager::activefirstOpenedWindow()
+{
+    qDebug() << m_firstOpenedWindow;
+    if (m_firstOpenedWindow){
+        qApp->setActiveWindow(m_firstOpenedWindow);
+    }else{
+        showNewWindow(QDir::homePath());
+    }
+}
+
 int WindowManager::getWindowId(const QWidget *window)
 {
     return m_windows.value(window, -1);
 }
 
-void WindowManager::onWindowDestroyed(const QObject *obj)
+void WindowManager::onWindowClosed()
 {
-    m_windows.remove(static_cast<const QWidget*>(obj));
+    qDebug() << sender() <<  m_firstOpenedWindow;
+    if (sender() == m_firstOpenedWindow){
+        m_firstOpenedWindow = NULL;
+    }
+    m_windows.remove(static_cast<const QWidget*>(sender()));
 }

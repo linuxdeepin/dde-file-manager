@@ -4,7 +4,8 @@ HEADERS += \
     $$PWD/cleartrashdialog.h \
     $$PWD/confirmdeletedialog.h \
     $$PWD/fileconflictdialog.h \
-    $$PWD/dtaskdialog.h
+    $$PWD/dtaskdialog.h \
+    $$PWD/messagewrongdialog.h
 
 SOURCES += \
     $$PWD/dbasedialog.cpp \
@@ -12,4 +13,5 @@ SOURCES += \
     $$PWD/cleartrashdialog.cpp \
     $$PWD/confirmdeletedialog.cpp \
     $$PWD/fileconflictdialog.cpp \
-    $$PWD/dtaskdialog.cpp
+    $$PWD/dtaskdialog.cpp \
+    $$PWD/messagewrongdialog.cpp
