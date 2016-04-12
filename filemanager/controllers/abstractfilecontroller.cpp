@@ -15,10 +15,82 @@ bool AbstractFileController::openFile(const QString &fileUrl, bool &accepted) co
     return false;
 }
 
-bool AbstractFileController::renameFile(const QString &oldFile, const QString &newFile, bool &accepted) const
+bool AbstractFileController::copyFiles(const QList<QString> &urlList, bool &accepted) const
 {
-    Q_UNUSED(oldFile)
-    Q_UNUSED(newFile)
+    Q_UNUSED(urlList)
+
+    accepted = false;
+
+    return false;
+}
+
+bool AbstractFileController::renameFile(const QString &oldUrl, const QString &newUrl, bool &accepted) const
+{
+    Q_UNUSED(oldUrl)
+    Q_UNUSED(newUrl)
+
+    accepted = false;
+
+    return false;
+}
+
+bool AbstractFileController::deleteFiles(const QList<QString> &urlList, bool &accepted) const
+{
+    Q_UNUSED(urlList)
+
+    accepted = false;
+
+    return false;
+}
+
+bool AbstractFileController::moveToTrash(const QList<QString> &urlList, bool &accepted) const
+{
+    Q_UNUSED(urlList)
+
+    accepted = false;
+
+    return false;
+}
+
+bool AbstractFileController::cutFiles(const QList<QString> &urlList, bool &accepted) const
+{
+    Q_UNUSED(urlList)
+
+    accepted = false;
+
+    return false;
+}
+
+bool AbstractFileController::pasteFile(const QString &toUrl, bool &accepted) const
+{
+    Q_UNUSED(toUrl)
+
+    accepted = false;
+
+    return false;
+}
+
+bool AbstractFileController::newFolder(const QString &toUrl, bool &accepted) const
+{
+    Q_UNUSED(toUrl)
+
+    accepted = false;
+
+    return false;
+}
+
+bool AbstractFileController::newFile(const QString &toUrl, bool &accepted) const
+{
+    Q_UNUSED(toUrl)
+
+    accepted = false;
+
+    return false;
+}
+
+bool AbstractFileController::newDocument(const QString &toUrl, bool &accepted) const
+{
+    Q_UNUSED(toUrl)
 
     accepted = false;
 
@@ -37,6 +109,15 @@ bool AbstractFileController::addUrlMonitor(const QString &url, bool &accepted) c
 bool AbstractFileController::removeUrlMonitor(const QString &url, bool &accepted) const
 {
     Q_UNUSED(url)
+
+    accepted = false;
+
+    return false;
+}
+
+bool AbstractFileController::openFileLocation(const QString &fileUrl, bool &accepted) const
+{
+    Q_UNUSED(fileUrl)
 
     accepted = false;
 

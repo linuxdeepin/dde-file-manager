@@ -73,7 +73,7 @@ void DFileView::initDelegate()
 void DFileView::initModel()
 {
     setModel(new DFileSystemModel(this));
-    setRootIndex(model()->setRootPath("file://" + QDir::currentPath()));
+    setRootIndex(model()->setRootPath(QString(FILE_SCHEME) + "://" + QDir::currentPath()));
 }
 
 void DFileView::initConnects()
@@ -170,7 +170,7 @@ void DFileView::cd(const FMEvent &event)
         return;
 
     if(QUrl(fileUrl).scheme().isEmpty())
-        fileUrl = "file://" + event.fileUrl();
+        fileUrl =  QString(FILE_SCHEME) + "://" + event.fileUrl();
 
     if(currentUrl() == fileUrl)
         return;
@@ -200,7 +200,7 @@ void DFileView::edit(const FMEvent &event)
         return;
 
     if(QUrl(fileUrl).scheme().isEmpty())
-        fileUrl = "file://" + event.fileUrl();
+        fileUrl = QString(FILE_SCHEME) + "://" + event.fileUrl();
 
     const QModelIndex &index = model()->index(fileUrl);
 

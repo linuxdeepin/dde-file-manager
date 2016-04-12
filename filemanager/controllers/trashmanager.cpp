@@ -73,7 +73,7 @@ bool TrashManager::openFile(const QString &fileUrl, bool &accepted) const
 
     accepted = true;
 
-    return fileService->openFile("file://" + url.path());
+    return fileService->openFile( QString(FILE_SCHEME) + "://" + url.path());
 }
 
 bool TrashManager::addUrlMonitor(const QString &fileUrl, bool &accepted) const
