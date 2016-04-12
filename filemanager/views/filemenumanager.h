@@ -87,23 +87,7 @@ private:
                                          const QVector<MenuAction> &disableList,
                                          bool checkable = false,
                                          const QMap<MenuAction, QVector<MenuAction> > &subMenuList = QMap<MenuAction, QVector<MenuAction> >());
-    void doOpen(const QString &url);
-    void doOpenNewWindow(const QString& url);
-    void doOpenFileLocation(const QString &url);
-    void doRename(const QString &url, int windowId);
-    void doDelete(const QList<QString> & urls);
-    void doCompleteDeletion(const QList<QString> & urls);
-    void doSorting(MenuAction action);
-    void doCopy(const QList<QString> & urls);
-    void doPaste(const QString &url);
-    void doCut(const QList<QString> & urls);
-    void doNewFolder(const QString &url);
-    void doNewDocument(const QString &url);
-    void doNewFile(const QString &url);
-    void doSelectAll(int windowId);
-    void doRemove(const QString &url);
 
-    static QList<QString> m_cutItems;
     static QMap<MenuAction, QString> m_actionKeys;
     static QMap<MenuAction, DAction*> m_actions;
 
@@ -111,9 +95,7 @@ public slots:
     void actionTriggered(DAction * action);
 
 signals:
-    void startMoveToTrash(const QList<QUrl> &files);
-    void startCompleteDeletion(const QList<QUrl> &files);
-    void startCopy(const QList<QUrl> &files, const QString &dst);
+
 };
 
 #endif // FILEMENUMANAGER_H
