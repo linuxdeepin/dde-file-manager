@@ -4,10 +4,16 @@
 
 #include "../models/desktopfileinfo.h"
 
+#include "../controllers/filejob.h"
+
+#include "../app/global.h"
+#include "../app/fmevent.h"
+
 #include "filemonitor/filemonitor.h"
 
 #include <QDesktopServices>
 #include <QDirIterator>
+#include <QFileInfo>
 
 FileController::FileController(QObject *parent)
     : AbstractFileController(parent)
@@ -26,14 +32,6 @@ FileController::FileController(QObject *parent)
 
 AbstractFileInfo *FileController::createFileInfo(const QString &fileUrl, bool &accepted) const
 {
-    QUrl url(fileUrl);
-
-    if(!url.isLocalFile()) {
-        accepted = false;
-
-        return Q_NULLPTR;
-    }
-
     accepted = true;
 
     if(fileUrl.endsWith(QString(".") + DESKTOP_SURRIX))
@@ -44,17 +42,11 @@ AbstractFileInfo *FileController::createFileInfo(const QString &fileUrl, bool &a
 
 const QList<AbstractFileInfo*> FileController::getChildren(const QString &fileUrl, QDir::Filters filter, bool &accepted) const
 {
-    QUrl url(fileUrl);
-
-    if(!url.isLocalFile()) {
-        accepted = false;
-    }
-
     accepted = true;
 
     QList<AbstractFileInfo*> infolist;
 
-    const QString &path = url.path();
+    const QString &path = QUrl(fileUrl).path();
 
     if(path.isEmpty()) {
         const QFileInfoList list = QDir::drives();
@@ -88,66 +80,237 @@ const QList<AbstractFileInfo*> FileController::getChildren(const QString &fileUr
 
 bool FileController::openFile(const QString &fileUrl, bool &accepted) const
 {
-    QUrl url(fileUrl);
-
-    if(!url.isLocalFile()) {
-        accepted = false;
-
-        return false;
-    }
-
     accepted = true;
 
-    return QDesktopServices::openUrl(url);
+    return QDesktopServices::openUrl(QUrl(fileUrl));
+}
+
+bool FileController::copyFiles(const QList<QString> &urlList, bool &accepted) const
+{
+    accepted = true;
+
+    QMimeData *mimeData = new QMimeData;
+
+    QByteArray ba;
+
+    ba.append("copy");
+
+    for(const QString &url : urlList) {
+        ba.append("\n");
+        ba.append(url);
+    }
+
+    mimeData->setText("copy");
+    mimeData->setData("x-special/gnome-copied-files", ba);
+
+    QApplication::clipboard()->setMimeData(mimeData);
+
+    return true;
 }
 
 bool FileController::renameFile(const QString &oldUrl, const QString &newUrl, bool &accepted) const
 {
-    QUrl url(oldUrl);
-
-    if(!url.isLocalFile()) {
-        accepted = false;
-
-        return false;
-    }
-
     accepted = true;
 
-    QFile file(url.toLocalFile());
+    QFile file(QUrl(oldUrl).toLocalFile());
 
     return file.rename(QUrl(newUrl).toLocalFile());
 }
 
-bool FileController::addUrlMonitor(const QString &fileUrl, bool &accepted) const
+/**
+ * @brief FileController::deleteFiles
+ * @param urlList accepted
+ *
+ * Permanently delete file or directory with the given url.
+ */
+bool FileController::deleteFiles(const QList<QString> &urlList, bool &accepted) const
 {
-    QUrl url(fileUrl);
+    accepted = true;
 
-    if(!url.isLocalFile()) {
-        accepted = false;
+    FileJob job;
 
+    dialogManager->addJob(&job);
+
+    QList<QUrl> qurls;
+
+    for(const QString &url : urlList) {
+        qurls << QUrl(url);
+    }
+
+    connect(&job, &FileJob::finished, dialogManager, &DialogManager::removeJob);
+
+    job.doDelete(qurls);
+
+    return true;
+}
+
+/**
+ * @brief FileController::moveToTrash
+ * @param urlList accepted
+ *
+ * Trash file or directory with the given url address.
+ */
+bool FileController::moveToTrash(const QList<QString> &urlList, bool &accepted) const
+{
+    accepted = true;
+
+    FileJob job;
+
+    dialogManager->addJob(&job);
+
+    QList<QUrl> qurls;
+
+    for(const QString &url : urlList) {
+        qurls << QUrl(url);
+    }
+
+    connect(&job, &FileJob::finished, dialogManager, &DialogManager::removeJob);
+
+    job.doMoveToTrash(qurls);
+
+    return true;
+}
+
+bool FileController::cutFiles(const QList<QString> &urlList, bool &accepted) const
+{
+    accepted = true;
+
+    QMimeData *mimeData = new QMimeData;
+
+    QByteArray ba;
+
+    ba.append("cut");
+
+    for(const QString &url : urlList) {
+        ba.append("\n");
+        ba.append(url);
+    }
+
+    mimeData->setText("cut");
+    mimeData->setData("x-special/gnome-copied-files", ba);
+
+    QApplication::clipboard()->setMimeData(mimeData);
+
+    return true;
+}
+
+bool FileController::pasteFile(const QString &toUrl, bool &accepted) const
+{
+    accepted = true;
+
+    QUrl localUrl(toUrl);
+    QDir dir(localUrl.toLocalFile());
+    //Make sure the target directory exists.
+    if(!dir.exists())
+        return false;
+
+    const QClipboard *clipboard = QApplication::clipboard();
+    const QMimeData *mimeData = clipboard->mimeData();
+
+    if(!mimeData->data("x-special/gnome-copied-files").isEmpty()) {
+        QByteArray ba = mimeData->data("x-special/gnome-copied-files");
+        QTextStream text(&ba);
+        QString type = text.readLine();
+
+        if(type == "cut") {
+            while(!text.atEnd()) {
+                QUrl qurl(text.readLine());
+                QFileInfo fileInfo(qurl.path());
+
+                QFile::rename(fileInfo.absoluteFilePath(),
+                              dir.absolutePath() + QDir::separator() + fileInfo.fileName());
+            }
+        } else if(type == "copy") {
+            QList<QUrl> urls;
+
+            while(!text.atEnd()) {
+                urls.append(QUrl(text.readLine()));
+            }
+
+            FileJob job;
+
+            dialogManager->addJob(&job);
+
+            connect(&job, &FileJob::finished, dialogManager, &DialogManager::removeJob);
+
+            job.doCopy(urls, toUrl);
+        }
+    }
+
+    return true;
+}
+
+bool FileController::newFolder(const QString &toUrl, bool &accepted) const
+{
+    accepted = true;
+
+    QUrl localUrl(toUrl);
+    //Todo:: check if mkdir is ok
+    QDir dir(localUrl.toLocalFile());
+
+    return dir.mkdir(checkDuplicateName(dir.absolutePath() + "/New Folder"));
+}
+
+bool FileController::newFile(const QString &toUrl, bool &accepted) const
+{
+    accepted = true;
+
+    QUrl localUrl(toUrl);
+    //Todo:: check if mkdir is ok
+    QDir dir(localUrl.toLocalFile());
+    QString name = checkDuplicateName(dir.absolutePath() + "/New File");
+
+    QFile file(name);
+
+    if(file.open(QIODevice::WriteOnly)) {
+        file.close();
+    } else {
         return false;
     }
 
+    return true;
+}
+
+bool FileController::newDocument(const QString &toUrl, bool &accepted) const
+{
+    Q_UNUSED(toUrl)
+    Q_UNUSED(accepted)
+}
+
+bool FileController::addUrlMonitor(const QString &fileUrl, bool &accepted) const
+{
     accepted = true;
 
-    fileMonitor->addMonitorPath(url.toLocalFile());
+    fileMonitor->addMonitorPath(QUrl(fileUrl).toLocalFile());
 
     return true;
 }
 
 bool FileController::removeUrlMonitor(const QString &fileUrl, bool &accepted) const
 {
-    QUrl url(fileUrl);
-
-    if(!url.isLocalFile()) {
-        accepted = false;
-
-        return false;
-    }
-
     accepted = true;
 
-    fileMonitor->removeMonitorPath(url.toLocalFile());
+    fileMonitor->removeMonitorPath(QUrl(fileUrl).toLocalFile());
+
+    return true;
+}
+
+bool FileController::openFileLocation(const QString &fileUrl, bool &accepted) const
+{
+    accepted = true;
+
+    QFileInfo file(QUrl(fileUrl).toLocalFile());
+
+    if(file.exists()) {
+        FMEvent event;
+
+        event = QString(FILE_SCHEME) + "://" + file.absolutePath();
+        event = FMEvent::FileView;
+
+        fileService->openUrl(event);
+    } else {
+        return false;
+    }
 
     return true;
 }
@@ -162,8 +325,20 @@ void FileController::onFileRemove(const QString &filePath)
     emit childrenRemoved(QUrl::fromLocalFile(filePath).toString());
 }
 
-void FileController::onFileRename(const QString &oldName, const QString &newName)
+QString FileController::checkDuplicateName(const QString &name) const
 {
-    onFileRemove(oldName);
-    onFileCreated(newName);
+    QString destUrl = name;
+    QFile file(destUrl);
+    QFileInfo startInfo(destUrl);
+
+    int num = 1;
+
+    while (file.exists()) {
+        num++;
+        destUrl = QString("%1/%2 %3").arg(startInfo.absolutePath()).
+                arg(startInfo.fileName()).arg(num);
+        file.setFileName(destUrl);
+    }
+
+    return destUrl;
 }

@@ -30,7 +30,7 @@ public slots:
     void writeIntoBookmark(const QString &name, const QString &url);
     void removeBookmark(const QString &name, const QString &url);
     void fetchFileInformation(const QString &url,
-                              int filter = int(QDir::AllEntries | QDir::NoDotDot));
+                              int filter = int(QDir::AllEntries | QDir::NoDotAndDotDot));
 };
 
 #endif // BOOKMARKMANAGER_H

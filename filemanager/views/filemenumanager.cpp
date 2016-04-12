@@ -1,7 +1,10 @@
 #include "filemenumanager.h"
 #include "dfilemenu.h"
+
 #include "../app/global.h"
 #include "../app/filesignalmanager.h"
+#include "../app/fmevent.h"
+
 #include "../controllers/fileservices.h"
 
 QMap<FileMenuManager::MenuAction, QString> FileMenuManager::m_actionKeys;
@@ -422,54 +425,70 @@ void FileMenuManager::actionTriggered(DAction *action)
     DFileMenu *menu = qobject_cast<DFileMenu *>(sender());
     QList<QString> urls = menu->getUrls();
     MenuAction type = (MenuAction)action->data().toInt();
-    QString dir;
+    QString fileUrl;
+
     if(urls.size() > 0)
-        dir = urls.at(0);
+        fileUrl = urls.at(0);
+
     switch(type)
     {
-    case Open:
-        fileService->doOpen(dir);
+    case Open: {
+        FMEvent event;
+
+        event = fileUrl;
+        event = FMEvent::Menu;
+        event = menu->getWindowId();
+
+        fileService->openUrl(event);
         break;
+    }
     case OpenInNewWindow:
-        fileService->doOpenNewWindow(dir);
+        fileService->openNewWindow(fileUrl);
         break;
     case OpenWith:break;
     case OpenFileLocation:
-        fileService->doOpenFileLocation(dir);
+        fileService->openFileLocation(fileUrl);
         break;
     case Compress:break;
     case Decompress:break;
     case Cut:
-        fileService->doCut(urls);
+        fileService->cutFiles(urls);
         break;
     case Copy:
-        fileService->doCopy(urls);
+        fileService->copyFiles(urls);
         break;
     case Paste:
-        fileService->doPaste(dir);
+        fileService->pasteFile(fileUrl);
         break;
-    case Rename:
-        fileService->doRename(dir, menu->getWindowId());
+    case Rename: {
+        FMEvent event;
+
+        event = fileUrl;
+        event = FMEvent::Menu;
+        event = menu->getWindowId();
+
+        emit fileSignalManager->requestRename(event);
         break;
+    }
     case Remove:
-        fileService->doRemove(dir);
+        fileSignalManager->requestBookmarkRemove(fileUrl);
         break;
     case Delete:
-        fileService->doDelete(urls);
+        fileService->moveToTrash(urls);
         break;
     case CompleteDeletion:
-        fileService->doCompleteDeletion(urls);
+        fileService->deleteFiles(urls);
         break;
     case Property:break;
     case NewFolder:
-        fileService->doNewFolder(dir);
+        fileService->newFolder(fileUrl);
         break;
     case NewFile:
-        fileService->doNewFile(dir);
+        fileService->newFile(fileUrl);
         break;
     case NewWindow:break;
     case SelectAll:
-        fileService->doSelectAll(menu->getWindowId());
+        fileSignalManager->requestViewSelectAll(menu->getWindowId());
         break;
     case ClearRecent:break;
     case ClearTrash:break;
@@ -480,19 +499,19 @@ void FileMenuManager::actionTriggered(DAction *action)
     case Mount:break;
     case Unmount:break;
     case Name:
-        fileService->doSorting(Name);
+        emit fileSignalManager->requestViewSort(menu->getWindowId(), Global::FileNameRole);
         break;
     case Size:
-        fileService->doSorting(Size);
+        emit fileSignalManager->requestViewSort(menu->getWindowId(), Global::FileSizeRole);
         break;
     case Type:
-        fileService->doSorting(Type);
+        fileSignalManager->requestViewSort(menu->getWindowId(), Global::FileMimeTypeRole);
         break;
     case CreatedDate:
-        fileService->doSorting(CreatedDate);
+        emit fileSignalManager->requestViewSort(menu->getWindowId(), Global::FileCreated);
         break;
     case LastModifiedDate:
-        fileService->doSorting(LastModifiedDate);
+        emit fileSignalManager->requestViewSort(menu->getWindowId(), Global::FileLastModified);
         break;
     case Help:break;
     case About:break;
@@ -501,5 +520,6 @@ void FileMenuManager::actionTriggered(DAction *action)
     case ListView:break;
     default:
         qDebug() << "unknown action type";
+        break;
     }
 }

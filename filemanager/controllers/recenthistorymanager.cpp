@@ -76,7 +76,7 @@ bool RecentHistoryManager::openFile(const QString &fileUrl, bool &accepted) cons
         return false;
     }
 
-    return fileService->openFile("file://" + url.path());
+    return fileService->openFile( QString(FILE_SCHEME) + "://" + url.path());
 }
 
 const QList<AbstractFileInfo *> RecentHistoryManager::getChildren(const QString &fileUrl, QDir::Filters filter, bool &accepted) const

@@ -22,7 +22,7 @@ DesktopFileInfo::DesktopFileInfo(const QString &fileUrl) :
 DesktopFileInfo::DesktopFileInfo(const QFileInfo &fileInfo) :
     FileInfo(fileInfo)
 {
-    init("file://" + fileInfo.absoluteFilePath());
+    init( QString(FILE_SCHEME) + "://" + fileInfo.absoluteFilePath());
 }
 
 DesktopFileInfo::~DesktopFileInfo()
