@@ -6,8 +6,10 @@
 #include "../app/global.h"
 #include "../models/abstractfileinfo.h"
 #include "../controllers/filejob.h"
+
 #include <QUrl>
 #include <QDebug>
+#include <QtConcurrent/QtConcurrentRun>
 
 #define TRAVERSE(Code) \
     QList<AbstractFileController*> &&list = getHandlerTypeByUrl(fileUrl);\
@@ -23,18 +25,12 @@
 QMultiHash<HandlerType, AbstractFileController*> FileServices::m_controllerHash;
 QHash<AbstractFileController*, HandlerType> FileServices::m_handlerHash;
 
-FileServices::FileServices()
-    : QObject()
+FileServices::FileServices(QObject *parent)
+    : QObject(parent)
 {
-    m_thread = new QThread(this);
-
-    moveToThread(m_thread);
-
     qRegisterMetaType<FMEvent>("FMEvent");
     qRegisterMetaType<QDir::Filters>("QDir::Filters");
     qRegisterMetaType<QList<AbstractFileInfo*>>("QList<AbstractFileInfo*>");
-
-    m_thread->start();
 }
 
 FileServices *FileServices::instance()
@@ -153,8 +149,8 @@ AbstractFileInfo *FileServices::createFileInfo(const QString &fileUrl) const
 
 void FileServices::getChildren(const FMEvent &event, QDir::Filters filters) const
 {
-    if(QThread::currentThread() != m_thread) {
-        ASYN_CALL_SLOT(this, getChildren, event, filters);
+    if(QThread::currentThread() == qApp->thread()) {
+        QtConcurrent::run(QThreadPool::globalInstance(), this, &FileServices::getChildren, event, filters);
 
         return;
     }
