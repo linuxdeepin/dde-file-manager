@@ -66,7 +66,7 @@ signals:
     void startCopy(const QList<QUrl> &files, const QString &dst);
 
 private:
-    explicit FileServices();
+    explicit FileServices(QObject *parent = 0);
     static QList<AbstractFileController*> getHandlerTypeByUrl(const QString &fileUrl,
                                                               bool ignoreHost = false,
                                                               bool ignoreScheme = false);
