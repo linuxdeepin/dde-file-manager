@@ -154,8 +154,7 @@ AbstractFileInfo *FileServices::createFileInfo(const QString &fileUrl) const
 void FileServices::getChildren(const FMEvent &event, QDir::Filters filters) const
 {
     if(QThread::currentThread() != m_thread) {
-        QMetaObject::invokeMethod(const_cast<FileServices*>(this), "getChildren", Qt::QueuedConnection,
-                                  Q_ARG(FMEvent, event), Q_ARG(QDir::Filters, filters));
+        ASYN_CALL_SLOT(this, getChildren, event, filters);
 
         return;
     }

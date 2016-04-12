@@ -74,6 +74,27 @@
 }
 #endif
 
+#define TIMER_SINGLESHOT_CONNECT_TYPE(Obj, Time, Code, ConnectType, captured...){ \
+    QTimer *timer = new QTimer;\
+    timer->setSingleShot(true);\
+    QObject::connect(timer, &QTimer::timeout, Obj, [timer, captured] {\
+        timer->deleteLater();\
+        Code\
+    }, ConnectType);\
+    timer->start(Time);\
+}
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 4, 0)
+#define TIMER_SINGLESHOT_OBJECT(Obj, Time, Code, captured...)\
+    TIMER_SINGLESHOT(Obj, Time, Code, Qt::AutoConnection, captured)
+#else
+#define TIMER_SINGLESHOT_OBJECT(Obj, Time, Code, captured...)\
+    QTimer::singleShot(Time, Obj, [captured]{Code}});
+#endif
+
+#define ASYN_CALL_SLOT(obj, fun, args...) \
+    TIMER_SINGLESHOT_CONNECT_TYPE(obj, 0, {obj->fun(args);}, Qt::QueuedConnection, obj, args)
+
 class Global
 {
 public:
