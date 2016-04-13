@@ -496,7 +496,7 @@ bool FileJob::moveDirToTrash(const QString &dir)
         qDebug() << "Unable to trash dir:" << sourceDir.path();
         return false;
     }
-    writeTrashInfo(oldName, dir, delTime);
+    writeTrashInfo(newName, dir, delTime);
     return true;
 }
 
@@ -519,7 +519,7 @@ bool FileJob::moveFileToTrash(const QString &file)
         qDebug() << "Unable to trash file:" << localFile.fileName();
         return false;
     }
-    writeTrashInfo(oldName, file, delTime);
+    writeTrashInfo(newName, file, delTime);
     return true;
 }
 

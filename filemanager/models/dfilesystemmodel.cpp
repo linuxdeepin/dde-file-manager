@@ -334,11 +334,15 @@ Qt::ItemFlags DFileSystemModel::flags(const QModelIndex &index) const
     if(indexNode->fileInfo->isCanRename())
         flags |= Qt::ItemIsEditable;
 
-    if ((index.column() == 0) && indexNode->fileInfo->isWritable()) {
-        if (isDir(indexNode))
-            flags |= Qt::ItemIsDropEnabled;
-        else
-            flags |= Qt::ItemNeverHasChildren;
+    if ((index.column() == 0)) {
+        if(indexNode->fileInfo->isWritable()) {
+            if (isDir(indexNode))
+                flags |= Qt::ItemIsDropEnabled;
+            else
+                flags |= Qt::ItemNeverHasChildren;
+        }
+    } else {
+        flags = flags & ~Qt::ItemIsSelectable;
     }
 
     return flags;

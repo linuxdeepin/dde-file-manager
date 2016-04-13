@@ -50,11 +50,9 @@ void DialogManager::addJob(FileJob *job)
 }
 
 
-void DialogManager::removeJob()
+void DialogManager::removeJob(const QString &jobId)
 {
-    FileJob *job = qobject_cast<FileJob *>(sender());
-    m_jobs.remove(job->getJobId());
-    job->deleteLater();
+    m_jobs.remove(jobId);
 }
 
 
