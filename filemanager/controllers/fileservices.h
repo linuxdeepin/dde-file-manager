@@ -33,6 +33,9 @@ public:
     void moveToTrash(const QList<QString> &urlList) const;
     bool cutFiles(const QList<QString> &urlList) const;
     void pasteFile(const QString &toUrl) const;
+    void pasteFile(AbstractFileController::PasteType type,
+                   const QList<QString> &urlList,
+                   const QString &toUrl) const;
     bool newFolder(const QString &toUrl) const;
     bool newFile(const QString &toUrl) const;
     bool newDocument(const QString &toUrl) const;
@@ -63,10 +66,6 @@ private:
 
     static QMultiHash<HandlerType, AbstractFileController*> m_controllerHash;
     static QHash<AbstractFileController*, HandlerType> m_handlerHash;
-
-    void pasteFiles(AbstractFileController::PasteType type,
-                   const QList<QString> &urlList,
-                   const QString &toUrl) const;
 };
 
 #endif // FILESERVICES_H

@@ -185,8 +185,20 @@ void FileServices::pasteFile(const QString &toUrl) const
             urls.append(text.readLine());
         }
 
-        QtConcurrent::run(QThreadPool::globalInstance(), this, &FileServices::pasteFiles, type, urls, toUrl);
+//        pasteFile(type, urls, toUrl);
+        QtConcurrent::run(QThreadPool::globalInstance(), this, &FileServices::pasteFile, type, urls, toUrl);
     }
+}
+
+void FileServices::pasteFile(AbstractFileController::PasteType type,
+                             const QList<QString> &urlList, const QString &toUrl) const
+{
+    TRAVERSE(toUrl, {
+                 controller->pasteFile(type, urlList, toUrl, accepted);
+
+                 if(accepted)
+                 return;
+             })
 }
 
 bool FileServices::newFolder(const QString &toUrl) const
@@ -306,17 +318,6 @@ QList<AbstractFileController*> FileServices::getHandlerTypeByUrl(const QString &
 
     return m_controllerHash.values(HandlerType(ignoreScheme ? "" : url.scheme(),
                                                ignoreHost ? "" : url.path()));
-}
-
-void FileServices::pasteFiles(AbstractFileController::PasteType type,
-                              const QList<QString> &urlList, const QString &toUrl) const
-{
-    TRAVERSE(toUrl, {
-                 controller->pasteFile(type, urlList, toUrl, accepted);
-
-                 if(accepted)
-                 return;
-             })
 }
 
 void FileServices::openUrl(const FMEvent &event) const
