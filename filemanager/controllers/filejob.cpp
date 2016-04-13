@@ -85,10 +85,10 @@ void FileJob::doCopy(const QList<QUrl> &files, const QString &destination)
         QDir srcDir(url.toLocalFile());
         if(srcDir.exists())
         {
-            copyDir(url.toLocalFile(), destination);
+            copyDir(url.toLocalFile(), QUrl(destination).toLocalFile());
         }
         else
-            copyFile(url.toLocalFile(), destination);
+            copyFile(url.toLocalFile(), QUrl(destination).toLocalFile());
     }
     if(m_isJobAdded)
         jobRemoved();

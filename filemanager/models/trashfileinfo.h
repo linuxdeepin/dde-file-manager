@@ -12,8 +12,6 @@ public:
 
     bool isCanRename() const Q_DECL_OVERRIDE;
     bool isWritable() const Q_DECL_OVERRIDE;
-    bool isReadable() const Q_DECL_OVERRIDE;
-    bool isDir() const Q_DECL_OVERRIDE;
 
     QString displayName() const;
 
@@ -22,7 +20,9 @@ public:
 
     QIcon fileIcon() const Q_DECL_OVERRIDE;
 
-    QString parentUrl() const Q_DECL_OVERRIDE;
+    QString mimeTypeName() const Q_DECL_OVERRIDE;
+
+    QFile::Permissions permissions() const Q_DECL_OVERRIDE;
 
 private:
     QString desktopIconName;
