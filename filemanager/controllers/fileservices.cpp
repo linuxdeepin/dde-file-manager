@@ -99,19 +99,20 @@ bool FileServices::openFile(const QString &fileUrl) const
     return false;
 }
 
-bool FileServices::copyFiles(const QList<QString> &urlList) const
+void FileServices::copyFiles(const QList<QString> &urlList) const
 {
-    if(urlList.isEmpty())
-        return true;
+    if(QThread::currentThread() == qApp->thread()) {
+        QtConcurrent::run(QThreadPool::globalInstance(), this, &FileServices::copyFiles, urlList);
+
+        return;
+    }
 
     TRAVERSE(urlList.first(), {
-                 bool ok = controller->copyFiles(urlList, accepted);
+                 controller->copyFiles(urlList, accepted);
 
                  if(accepted)
-                     return ok;
+                     return;
              })
-
-    return false;
 }
 
 bool FileServices::renameFile(const QString &oldUrl, const QString &newUrl) const
@@ -126,41 +127,40 @@ bool FileServices::renameFile(const QString &oldUrl, const QString &newUrl) cons
     return false;
 }
 
-bool FileServices::deleteFiles(const QList<QString> &urlList) const
+void FileServices::deleteFiles(const QList<QString> &urlList) const
 {
-    if(urlList.isEmpty())
-        return true;
+    if(QThread::currentThread() == qApp->thread()) {
+        QtConcurrent::run(QThreadPool::globalInstance(), this, &FileServices::deleteFiles, urlList);
+
+        return;
+    }
 
     TRAVERSE(urlList.first(), {
-                 bool ok = controller->deleteFiles(urlList, accepted);
+                 controller->deleteFiles(urlList, accepted);
 
                  if(accepted)
-                    return ok;
+                    return;
              })
-
-    return false;
 }
 
-bool FileServices::moveToTrash(const QList<QString> &urlList) const
+void FileServices::moveToTrash(const QList<QString> &urlList) const
 {
-    if(urlList.isEmpty())
-        return true;
+    if(QThread::currentThread() == qApp->thread()) {
+        QtConcurrent::run(QThreadPool::globalInstance(), this, &FileServices::moveToTrash, urlList);
+
+        return;
+    }
 
     TRAVERSE(urlList.first(), {
-                 bool ok = controller->moveToTrash(urlList, accepted);
+                 controller->moveToTrash(urlList, accepted);
 
                  if(accepted)
-                    return ok;
+                    return;
              })
-
-    return false;
 }
 
 bool FileServices::cutFiles(const QList<QString> &urlList) const
 {
-    if(urlList.isEmpty())
-        return true;
-
     TRAVERSE(urlList.first(), {
                  bool ok = controller->cutFiles(urlList, accepted);
 
@@ -171,16 +171,20 @@ bool FileServices::cutFiles(const QList<QString> &urlList) const
     return false;
 }
 
-bool FileServices::pasteFile(const QString &toUrl) const
+void FileServices::pasteFile(const QString &toUrl) const
 {
+    if(QThread::currentThread() == qApp->thread()) {
+        QtConcurrent::run(QThreadPool::globalInstance(), this, &FileServices::pasteFile, toUrl);
+
+        return;
+    }
+
     TRAVERSE(toUrl, {
-                 bool ok = controller->pasteFile(toUrl, accepted);
+                 controller->pasteFile(toUrl, accepted);
 
                  if(accepted)
-                    return ok;
+                    return;
              })
-
-    return false;
 }
 
 bool FileServices::newFolder(const QString &toUrl) const
