@@ -185,14 +185,19 @@ void FileServices::pasteFile(const QString &toUrl) const
             urls.append(text.readLine());
         }
 
-//        pasteFile(type, urls, toUrl);
-        QtConcurrent::run(QThreadPool::globalInstance(), this, &FileServices::pasteFile, type, urls, toUrl);
+        pasteFile(type, urls, toUrl);
     }
 }
 
 void FileServices::pasteFile(AbstractFileController::PasteType type,
                              const QList<QString> &urlList, const QString &toUrl) const
 {
+    if(QThread::currentThread() == qApp->thread()) {
+        QtConcurrent::run(QThreadPool::globalInstance(), this, &FileServices::pasteFile, type, urlList, toUrl);
+
+        return;
+    }
+
     TRAVERSE(toUrl, {
                  controller->pasteFile(type, urlList, toUrl, accepted);
 

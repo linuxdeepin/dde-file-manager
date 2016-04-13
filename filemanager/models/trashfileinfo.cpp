@@ -1,8 +1,11 @@
 #include "trashfileinfo.h"
+#include "fileinfo.h"
 
 #include "../app/global.h"
 
 #include "../shutil/iconprovider.h"
+
+#include <QMimeType>
 
 TrashFileInfo::TrashFileInfo()
     : AbstractFileInfo()
@@ -32,22 +35,6 @@ bool TrashFileInfo::isWritable() const
     return false;
 }
 
-bool TrashFileInfo::isReadable() const
-{
-    if(absoluteFilePath() == "/")
-        return true;
-
-    return AbstractFileInfo::isReadable();
-}
-
-bool TrashFileInfo::isDir() const
-{
-    if(absoluteFilePath() == "/")
-        return true;
-
-    return AbstractFileInfo::isDir();
-}
-
 QString TrashFileInfo::displayName() const
 {
     return m_displayName;
@@ -62,8 +49,12 @@ void TrashFileInfo::setUrl(const QUrl &fileUrl)
 {
     AbstractFileInfo::setUrl(fileUrl);
 
-    if(fileUrl.path() != "/")
-        updateInfo();
+    QString user = getenv("USER");
+    QString pathPrefix = "/home/" + user + "/.local/share/Trash/files";
+
+    data->fileInfo.setFile(pathPrefix + fileUrl.path());
+
+    updateInfo();
 }
 
 QIcon TrashFileInfo::fileIcon() const
@@ -71,9 +62,28 @@ QIcon TrashFileInfo::fileIcon() const
     return iconProvider->getFileIcon(absoluteFilePath());
 }
 
-QString TrashFileInfo::parentUrl() const
+QString TrashFileInfo::mimeTypeName() const
 {
-    return scheme() + ":///";
+    if(data->mimeTypeName.isNull()) {
+        QString user = getenv("USER");
+        QString pathPrefix = "/home/" + user + "/.local/share/Trash/files";
+
+        data->mimeTypeName = FileInfo::mimeType(pathPrefix + this->absoluteFilePath()).name();
+    }
+
+    return data->mimeTypeName;
+}
+
+QFileDevice::Permissions TrashFileInfo::permissions() const
+{
+    QFileDevice::Permissions p = AbstractFileInfo::permissions();
+
+    p &= ~QFileDevice::WriteOwner;
+    p &= ~QFileDevice::WriteUser;
+    p &= ~QFileDevice::WriteGroup;
+    p &= ~QFileDevice::WriteOther;
+
+    return p;
 }
 
 void TrashFileInfo::updateInfo()
@@ -85,8 +95,13 @@ void TrashFileInfo::updateInfo()
 
     setting.beginGroup("Trash Info");
 
-    originalPath = setting.value("Path").toString();
-    deletionDate = setting.value("DeletionDate").toString();
+    if(absoluteFilePath() == "/home/" + user + "/.local/share/Trash/files/") {
+        originalPath = setting.value("Path").toString();
+        m_displayName = originalPath.mid(originalPath.lastIndexOf('/') + 1);
+    } else {
+        originalPath = this->absoluteFilePath();
+        m_displayName = this->fileName();
+    }
 
-    m_displayName = originalPath.mid(originalPath.lastIndexOf('/') + 1);
+    deletionDate = setting.value("DeletionDate").toString();
 }

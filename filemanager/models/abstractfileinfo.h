@@ -65,7 +65,7 @@ public:
     virtual uint groupId() const;
 
     inline bool permission(QFile::Permissions permissions) const
-    {return permissions & this->permissions();}
+    {return (permissions & this->permissions()) == permissions;}
 
     virtual QFile::Permissions permissions() const;
 

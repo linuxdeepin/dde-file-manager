@@ -34,27 +34,24 @@ const QList<AbstractFileInfo *> TrashManager::getChildren(const QString &fileUrl
 
     QUrl url(fileUrl);
 
-    QList<AbstractFileInfo*> infolist;
-
-    if(url.path() != "/" || url.scheme() != TRASH_SCHEME) {
-        accepted = false;
-
-        return infolist;
-    }
-
     accepted = true;
 
     QString user = getenv("USER");
-    QString trashPath = "/home/" + user + "/.local/share/Trash/files";
+    QString trashPath = "/home/" + user + "/.local/share/Trash/files" + url.path();
     QDir dir(trashPath);
     QList<AbstractFileInfo*> infoList;
 
     if(dir.exists()) {
         QFileInfoList fileInfoList = dir.entryInfoList(filter | QDir::NoDotAndDotDot);
 
+        QString path = url.path();
+
+        if(path != "/")
+            path.append('/');
+
         for(const QFileInfo fileInfo : fileInfoList) {
             infoList.append(new TrashFileInfo(QString(TRASH_SCHEME)
-                                              + "://" + fileInfo.absoluteFilePath()));
+                                              + "://" + path + fileInfo.fileName()));
         }
     }
 
