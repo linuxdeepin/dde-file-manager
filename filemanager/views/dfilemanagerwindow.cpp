@@ -139,6 +139,8 @@ void DFileManagerWindow::initFileView()
 {
     m_fileView = new DFileView(this);
     m_fileView->setObjectName("FileView");
+
+    setFocusProxy(m_fileView);
 }
 
 void DFileManagerWindow::initDetailView()
