@@ -108,7 +108,8 @@ HEADERS += \
     filemanager/models/recentfileinfo.h \
     filemanager/app/singleapplication.h \
     filemanager/app/logutil.h \
-    filemanager/models/trashfileinfo.h
+    filemanager/models/trashfileinfo.h \
+    filemanager/shutil/mimesappsmanager.h
 
 SOURCES += \
     filemanager/controllers/appcontroller.cpp \
@@ -179,7 +180,8 @@ SOURCES += \
     filemanager/models/recentfileinfo.cpp \
     filemanager/app/singleapplication.cpp \
     filemanager/app/logutil.cpp \
-    filemanager/models/trashfileinfo.cpp
+    filemanager/models/trashfileinfo.cpp \
+    filemanager/shutil/mimesappsmanager.cpp
 
 INCLUDEPATH += filemanager/models
 

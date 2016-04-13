@@ -15,6 +15,7 @@
 #include <QLabel>
 #include <QLocalSocket>
 #include <QJsonObject>
+#include "../shutil/mimesappsmanager.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -28,6 +29,8 @@ int main(int argc, char *argv[])
     app.setOrganizationName("deepin");
     app.setApplicationName(QObject::tr("dde-file-manager"));
     app.setApplicationVersion("v1.0");
+
+    MimesAppsManager::test();
 
     CommandLineManager::instance()->process();
     bool isSingleInstance  = app.setSingleInstance(uniqueKey);
