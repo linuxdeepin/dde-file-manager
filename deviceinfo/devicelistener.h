@@ -13,13 +13,15 @@
 #include <sys/vfs.h>
 #include <fcntl.h>
 
+#include "../filemanager/controllers/abstractfilecontroller.h"
+
 struct udev_device;
 struct udev_monitor;
 struct udev;
 
 class DeviceInfo;
 
-class DeviceListener : public QObject
+class DeviceListener : public AbstractFileController
 {
     Q_OBJECT
 public:
@@ -34,6 +36,7 @@ private:
     bool isTargetDevice(udev_device *dev);
     QString mountpoint(udev_device *dev);
     QString deviceLabel(udev_device *dev);
+    QString deviceUUID(udev_device *dev);
     DeviceInfo * addDevice(udev_device *dev);
     DeviceInfo * removeDevice(udev_device *dev);
 
@@ -45,6 +48,11 @@ public slots:
 signals:
     void deviceAdded(const DeviceInfo &deviceInfos);
     void deviceRemoved(const DeviceInfo &deviceInfos);
+
+    // AbstractFileController interface
+public:
+    const QList<AbstractFileInfo *> getChildren(const QString &fileUrl, QDir::Filters filter, bool &accepted) const;
+    AbstractFileInfo *createFileInfo(const QString &fileUrl, bool &accepted) const;
 };
 
 #endif // DEVICELISTENER_H

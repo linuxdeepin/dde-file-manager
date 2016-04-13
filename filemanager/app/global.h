@@ -41,11 +41,13 @@
 #define RECENT_SCHEME "recent"
 #define BOOKMARK_SCHEME "bookmark"
 #define FILE_SCHEME "file"
+#define COMPUTER_SCHEME "computer"
 
 #define TRASH_ROOT TRASH_SCHEME":///"
 #define RECENT_ROOT RECENT_SCHEME":///"
 #define BOOKMARK_ROOT BOOKMARK_SCHEME ":///"
 #define FILE_ROOT FILE_SCHEME ":///"
+#define COMPUTER_ROOT COMPUTER_SCHEME ":///"
 
 #define TEXT_LINE_HEIGHT 13
 

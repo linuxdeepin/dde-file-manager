@@ -259,6 +259,9 @@ QString DLeftSideBar::getStandardPathbyId(int id)
     case 9:
         path = TRASH_ROOT;
         break;
+    case 10:
+        path = COMPUTER_ROOT;
+        break;
     case 12:
         path = BOOKMARK_ROOT;
         break;

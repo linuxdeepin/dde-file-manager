@@ -233,7 +233,6 @@ void DBookmarkScene::bookmarkMounted(int fd)
     {
         QString str = item.split(" ").at(0);
         DBookmarkItem * bookmarkItem = hasBookmarkItem(str);
-        qDebug() << str;
         if(bookmarkItem)
         {
             bookmarkItem->setMounted(true);
@@ -286,7 +285,6 @@ DBookmarkItem *DBookmarkScene::hasBookmarkItem(const QString &path)
     QString localPath = path;
     foreach(DBookmarkItem * item, m_items)
     {
-        qDebug() << item->getSysPath() << path;
         QString str = localPath.replace("/dev","");
         if(item->getSysPath().contains(str))
         {
