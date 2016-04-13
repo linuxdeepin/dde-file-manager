@@ -373,31 +373,24 @@ bool DFileSystemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
         return false;
 
     bool success = true;
-    QString to = QUrl(getUrlByIndex(parent)).toLocalFile() + QDir::separator();
+    QString toUrl = getUrlByIndex(parent);
 
-    QList<QUrl> urls = data->urls();
-    QList<QUrl>::const_iterator it = urls.constBegin();
+    qDebug() << toUrl;
 
-    qDebug() << urls;
+    QList<QString> urlList;
+
+    for(const QUrl &url : data->urls()) {
+        urlList << url.toString();
+    }
 
     switch (action) {
     case Qt::CopyAction:
-        for (; it != urls.constEnd(); ++it) {
-            QString path = (*it).toLocalFile();
-            success = QFile::copy(path, to + QFileInfo(path).fileName());
-        }
+        fileService->pasteFile(AbstractFileController::CopyType, urlList, toUrl);
         break;
     case Qt::LinkAction:
-        for (; it != urls.constEnd(); ++it) {
-            QString path = (*it).toLocalFile();
-            success = QFile::link(path, to + QFileInfo(path).fileName());
-        }
         break;
     case Qt::MoveAction:
-        for (; it != urls.constEnd(); ++it) {
-            QString path = (*it).toLocalFile();
-            success = QFile::rename(path, to + QFileInfo(path).fileName());
-        }
+        fileService->pasteFile(AbstractFileController::CutType, urlList, toUrl);
         break;
     default:
         return false;
@@ -410,9 +403,11 @@ QMimeData *DFileSystemModel::mimeData(const QModelIndexList &indexes) const
 {
     QList<QUrl> urls;
     QList<QModelIndex>::const_iterator it = indexes.begin();
+
     for (; it != indexes.end(); ++it)
         if ((*it).column() == 0)
             urls << QUrl(getUrlByIndex(*it));
+
     QMimeData *data = new QMimeData();
     data->setUrls(urls);
 
