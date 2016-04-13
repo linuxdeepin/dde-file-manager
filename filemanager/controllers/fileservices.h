@@ -27,12 +27,12 @@ public:
     static void clearFileUrlHandler(const QString &scheme, const QString &host);
 
     bool openFile(const QString &fileUrl) const;
-    bool copyFiles(const QList<QString> &urlList) const;
+    void copyFiles(const QList<QString> &urlList) const;
     bool renameFile(const QString &oldUrl, const QString &newUrl) const;
-    bool deleteFiles(const QList<QString> &urlList) const;
-    bool moveToTrash(const QList<QString> &urlList) const;
+    void deleteFiles(const QList<QString> &urlList) const;
+    void moveToTrash(const QList<QString> &urlList) const;
     bool cutFiles(const QList<QString> &urlList) const;
-    bool pasteFile(const QString &toUrl) const;
+    void pasteFile(const QString &toUrl) const;
     bool newFolder(const QString &toUrl) const;
     bool newFile(const QString &toUrl) const;
     bool newDocument(const QString &toUrl) const;
