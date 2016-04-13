@@ -1,12 +1,13 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Exec=/usr/bin/dde-file-manager
+Exec=/usr/bin/dde-file-manager %u
 Icon=system-file-manager
 StartupNotify=true
 Terminal=false
 Categories=Utility;
 OnlyShowIn=Deepin;
+MimeType=inode/directory;
 
 Name=DDE File Manager
 Name[ar]=مدير الملفات
