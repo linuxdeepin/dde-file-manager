@@ -2,6 +2,7 @@
 #include "deviceinfo.h"
 #include "../filemanager/app/global.h"
 #include "../filemanager/app/filesignalmanager.h"
+#include "../filemanager/controllers/fileservices.h"
 
 DeviceListener::DeviceListener()
 {
@@ -18,6 +19,8 @@ DeviceListener::DeviceListener()
     QSocketNotifier *mountedNotifier = new QSocketNotifier(fd, QSocketNotifier::Write);
     connect(mountedNotifier, &QSocketNotifier::activated,
             fileSignalManager, &FileSignalManager::deviceMounted, Qt::QueuedConnection);
+
+    fileService->setFileUrlHandler(COMPUTER_SCHEME, "", this);
 }
 
 DeviceListener::~DeviceListener()
@@ -69,13 +72,6 @@ bool DeviceListener::isTargetDevice(udev_device *dev)
     }
 }
 
-QString DeviceListener::mountpoint(udev_device *dev)
-{
-    Q_UNUSED(dev);
-
-    return QString();
-}
-
 QString DeviceListener::deviceLabel(udev_device *dev)
 {
     udev_list_entry *l = udev_device_get_devlinks_list_entry(dev);
@@ -84,6 +80,22 @@ QString DeviceListener::deviceLabel(udev_device *dev)
     {
         QString devlink = udev_list_entry_get_name(e);
         if (devlink.startsWith("/dev/disk/by-label"))
+        {
+            return devlink.split("/").last();
+        }
+    }
+    QString devpath = udev_device_get_devpath(dev);
+    return devpath.split("/").last();
+}
+
+QString DeviceListener::deviceUUID(udev_device *dev)
+{
+    udev_list_entry *l = udev_device_get_devlinks_list_entry(dev);
+    udev_list_entry *e;
+    udev_list_entry_foreach(e, l)
+    {
+        QString devlink = udev_list_entry_get_name(e);
+        if (devlink.startsWith("/dev/disk/by-uuid"))
         {
             return devlink.split("/").last();
         }
@@ -101,16 +113,11 @@ DeviceInfo * DeviceListener::addDevice(udev_device *dev)
     QString mountPath = mountPoint(dev);
     QStorageInfo info(mountPath);
     QString label = info.displayName();
-    DeviceInfo * device = new DeviceInfo(mountPath, path, label, deviceLabel(dev));
+    QString uuid = deviceUUID(dev);
+    QString size = udev_device_get_sysattr_value(dev, "size");
+    DeviceInfo * device = new DeviceInfo(mountPath, path, label, deviceLabel(dev), uuid, size);
     m_deviceInfos.append(device);
-    qDebug() << mountPath << path << label << deviceLabel(dev);
     return device;
-    if(!mountPath.isNull())
-    {
-
-    }
-    else
-        return NULL;
 }
 
 DeviceInfo * DeviceListener::removeDevice(udev_device *dev)
@@ -159,44 +166,44 @@ void DeviceListener::deviceReceived(int)
 
 void DeviceListener::mount(const QString &path)
 {
-    QStringList r = path.split("/");
+//    QStringList r = path.split("/");
 
-    udev_device *dev = udev_device_new_from_syspath(m_udev, path.toLatin1());
-    QString label = deviceLabel(dev);
+//    udev_device *dev = udev_device_new_from_syspath(m_udev, path.toLatin1());
+//    QString label = deviceLabel(dev);
 
-    QProcess p;
-    p.start("/usr/bin/pmount", QStringList() << "/dev/" + r.last());
-    p.waitForStarted();
-    if (p.waitForFinished() && p.exitCode() == 0)
-    {
+//    QProcess p;
+//    p.start("/usr/bin/pmount", QStringList() << "/dev/" + r.last());
+//    p.waitForStarted();
+//    if (p.waitForFinished() && p.exitCode() == 0)
+//    {
 
-    }
-    else
-    {
-        qDebug() << "mount error" << p.readAllStandardError();
-    }
-    udev_device_unref(dev);
+//    }
+//    else
+//    {
+//        qDebug() << "mount error" << p.readAllStandardError();
+//    }
+//    udev_device_unref(dev);
 }
 
 void DeviceListener::unmount(const QString &path)
 {
-    QStringList r = path.split("/");
+//    QStringList r = path.split("/");
 
-    udev_device *dev = udev_device_new_from_syspath(m_udev, path.toLatin1());
-    QString label = deviceLabel(dev);
+//    udev_device *dev = udev_device_new_from_syspath(m_udev, path.toLatin1());
+//    QString label = deviceLabel(dev);
 
-    QProcess p;
-    p.start("/usr/bin/pumount", QStringList() << "/dev/" + r.last());
-    p.waitForStarted();
-    if (p.waitForFinished() && p.exitCode() == 0)
-    {
+//    QProcess p;
+//    p.start("/usr/bin/pumount", QStringList() << "/dev/" + r.last());
+//    p.waitForStarted();
+//    if (p.waitForFinished() && p.exitCode() == 0)
+//    {
 
-    }
-    else
-    {
-        qDebug() << "unmount error" << p.readAllStandardError();
-    }
-    udev_device_unref(dev);
+//    }
+//    else
+//    {
+//        qDebug() << "unmount error" << p.readAllStandardError();
+//    }
+//    udev_device_unref(dev);
 }
 
 QString DeviceListener::mountPoint(udev_device *dev)
@@ -211,4 +218,43 @@ QString DeviceListener::mountPoint(udev_device *dev)
         }
     }
     return QString();
+}
+
+const QList<AbstractFileInfo *> DeviceListener::getChildren(const QString &fileUrl, QDir::Filters filter, bool &accepted) const
+{
+    QUrl url(fileUrl);
+
+    QList<AbstractFileInfo*> infolist;
+
+    if(url.scheme() != COMPUTER_SCHEME)
+    {
+        accepted = false;
+        return infolist;
+    }
+
+    for (int i = 0; i < m_deviceInfos.size(); i++)
+    {
+        DeviceInfo * info = m_deviceInfos.at(i);
+        AbstractFileInfo *fileInfo = new DeviceInfo(info);
+        infolist.append(fileInfo);
+    }
+
+    accepted = true;
+
+    return infolist;
+}
+
+AbstractFileInfo *DeviceListener::createFileInfo(const QString &fileUrl, bool &accepted) const
+{
+    QUrl url(fileUrl);
+
+    if(url.scheme() != COMPUTER_SCHEME) {
+        accepted = false;
+
+        return Q_NULLPTR;
+    }
+
+    accepted = true;
+
+    return new DeviceInfo(url.toString());
 }
