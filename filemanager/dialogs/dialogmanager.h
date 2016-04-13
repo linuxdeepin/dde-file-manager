@@ -22,7 +22,7 @@ signals:
 public slots:
     void handleConflictRepsonseConfirmed(const QMap<QString, QString> &jobDetail, const QMap<QString, QVariant> &response);
     void addJob(FileJob * job);
-    void removeJob();
+    void removeJob(const QString &jobId);
 
     void abortJob(const QMap<QString, QString> &jobDetail);
 

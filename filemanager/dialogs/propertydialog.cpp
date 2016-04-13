@@ -29,7 +29,7 @@ QWidget *createBasicInfoWidget(const AbstractFileInfo *info)
     return widget;
 }
 
-QWidget *createAuthorityManagermentWidget(AbstractFileInfo *info)
+QWidget *createAuthorityManagermentWidget(const AbstractFileInfo *info)
 {
     QWidget *widget = new QWidget;
     QFormLayout *layout = new QFormLayout;
@@ -77,7 +77,7 @@ QWidget *createAuthorityManagermentWidget(AbstractFileInfo *info)
     return widget;
 }
 
-PropertyDialog::PropertyDialog(AbstractFileInfo *info, const QIcon &icon, QWidget */*parent*/)
+PropertyDialog::PropertyDialog(const AbstractFileInfo *info, QWidget */*parent*/)
     : DWidget(0)
     , m_icon(new QLabel)
     , m_edit(new QTextEdit)
@@ -86,10 +86,10 @@ PropertyDialog::PropertyDialog(AbstractFileInfo *info, const QIcon &icon, QWidge
 
     D_THEME_INIT_WIDGET(PropertyDialog)
 
-    m_icon->setPixmap(icon.pixmap(100, 150));
+    m_icon->setPixmap(info->fileIcon().pixmap(100, 150));
     m_icon->setFixedHeight(150);
 
-    m_edit->setPlainText(info->fileName());
+    m_edit->setPlainText(info->displayName());
     m_edit->setReadOnly(true);
     m_edit->setWordWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
     m_edit->setAlignment(Qt::AlignHCenter);

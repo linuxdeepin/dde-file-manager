@@ -17,12 +17,8 @@
 #include "../controllers/filecontroller.h"
 #include "../controllers/fileservices.h"
 
-#include "../dialogs/propertydialog.h"
-
 #include <dthememanager.h>
 
-#include <QPushButton>
-#include <QMenu>
 #include <QWheelEvent>
 #include <QLineEdit>
 #include <QTextEdit>
@@ -37,6 +33,7 @@ DFileView::DFileView(QWidget *parent) : DListView(parent)
     initDelegate();
     initModel();
     initConnects();
+    initActions();
 }
 
 DFileView::~DFileView()
@@ -58,7 +55,7 @@ void DFileView::initUI()
     setDefaultDropAction(Qt::MoveAction);
     setDropIndicatorShown(true);
     setSelectionMode(QAbstractItemView::ExtendedSelection);
-    setSelectionBehavior(QAbstractItemView::SelectItems);
+    setSelectionBehavior(QAbstractItemView::SelectRows);
     setSelectionRectVisible(true);
     setEditTriggers(QListView::EditKeyPressed | QListView::SelectedClicked);
 
@@ -92,6 +89,53 @@ void DFileView::initConnects()
             this, &DFileView::allSelected);
 }
 
+void DFileView::initActions()
+{
+    QAction *copy_action = new QAction(this);
+
+    copy_action->setAutoRepeat(false);
+    copy_action->setShortcut(QKeySequence::Copy);
+
+    connect(copy_action, &QAction::triggered,
+            this, [this] {
+        fileService->copyFiles(selectedUrls());
+    });
+
+    QAction *cut_action = new QAction(this);
+
+    cut_action->setAutoRepeat(false);
+    cut_action->setShortcut(QKeySequence::Cut);
+
+    connect(cut_action, &QAction::triggered,
+            this, [this] {
+        fileService->cutFiles(selectedUrls());
+    });
+
+    QAction *paste_action = new QAction(this);
+
+    paste_action->setShortcut(QKeySequence::Paste);
+
+    connect(paste_action, &QAction::triggered,
+            this, [this] {
+        fileService->pasteFile(currentUrl());
+    });
+
+    QAction *delete_action = new QAction(this);
+
+    delete_action->setAutoRepeat(false);
+    delete_action->setShortcut(QKeySequence::Delete);
+
+    connect(delete_action, &QAction::triggered,
+            this, [this] {
+        fileService->moveToTrash(selectedUrls());
+    });
+
+    addAction(copy_action);
+    addAction(cut_action);
+    addAction(paste_action);
+    addAction(delete_action);
+}
+
 DFileSystemModel *DFileView::model() const
 {
     return qobject_cast<DFileSystemModel*>(DListView::model());
@@ -111,7 +155,7 @@ QList<QString> DFileView::selectedUrls() const
 {
     QList<QString> list;
 
-    for(const QModelIndex &index : m_selectedIndexList) {
+    for(const QModelIndex &index : selectedIndexes()) {
         list << model()->getUrlByIndex(index);
     }
 
@@ -148,7 +192,7 @@ QList<int> DFileView::columnRoleList() const
 
 int DFileView::selectedIndexCount() const
 {
-    return m_selectedIndexList.count();
+    return selectedIndexes().count();
 }
 
 int DFileView::windowId() const
@@ -300,44 +344,6 @@ void DFileView::allSelected(int windowId)
     selectAll();
 }
 
-void DFileView::onMenuActionTrigger(const DAction *action, const QModelIndex &index)
-{
-    if(!action)
-        return;
-
-    FileMenuManager::MenuAction key = (FileMenuManager::MenuAction)action->data().toInt();
-
-    switch (key) {
-    case FileMenuManager::Open: {
-        openIndex(index);
-        break;
-    }
-    case FileMenuManager::Property: {
-        const QIcon &icon = qvariant_cast<QIcon>(model()->data(index, DFileSystemModel::FileIconRole));
-
-        PropertyDialog *dialog = new PropertyDialog(model()->fileInfo(index), icon);
-
-        dialog->setAttribute(Qt::WA_DeleteOnClose);
-        dialog->setWindowFlags(dialog->windowFlags()
-                               &~ Qt::WindowMaximizeButtonHint
-                               &~ Qt::WindowMinimizeButtonHint
-                               &~ Qt::WindowSystemMenuHint);
-        dialog->setTitle("");
-        dialog->setFixedSize(QSize(320, 480));
-
-        QRect dialog_geometry = dialog->geometry();
-
-        dialog_geometry.moveCenter(window()->geometry().center());
-        dialog->move(dialog_geometry.topLeft());
-        dialog->show();
-
-        break;
-    }
-    default:
-        break;
-    }
-}
-
 void DFileView::contextMenuEvent(QContextMenuEvent *event)
 {
     DFileMenu *menu;
@@ -351,15 +357,23 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
         urls.append(currentUrl());
         menu->setUrls(urls);
         menu->setWindowId(m_windowId);
+        menu->setFileInfo(model()->fileInfo(index));
     } else {
         index = indexAt(event->pos());
 
         menu = FileMenuManager::createFileMenu(FileMenuManager::getDisableActionList(model()->getUrlByIndex(index)));
         menu->setWindowId(m_windowId);
-        menu->setUrls(selectedUrls());
+
+        QList<QString> list = selectedUrls();
+
+        if(list.isEmpty())
+            list << model()->getUrlByIndex(index);
+
+        menu->setUrls(list);
+        menu->setFileInfo(model()->fileInfo(index));
     }
 
-    onMenuActionTrigger(menu->exec(mapToGlobal(event->pos())), index);
+    menu->exec(mapToGlobal(event->pos()));
     menu->deleteLater();
 
     event->accept();
@@ -409,26 +423,10 @@ void DFileView::mousePressEvent(QMouseEvent *event)
 {
     if(event->button() == Qt::LeftButton) {
         setDragEnabled(!isEmptyArea(event->pos()));
-    } else if(event->button() == Qt::RightButton && selectedIndexCount() < 2) {
-        QWidget::mousePressEvent(event);
-
-        const QModelIndex &index = indexAt(event->pos());
-
-        if(index.isValid()) {
-            setCurrentIndex(index);
-        }
-
-        return;
     }
 
-    DListView::mousePressEvent(event);
-}
-
-void DFileView::selectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
-{
-    m_selectedIndexList = selectionModel()->selectedIndexes();
-
-    DListView::selectionChanged(selected, deselected);
+    if(!(event->buttons() & Qt::RightButton))
+        DListView::mousePressEvent(event);
 }
 
 void DFileView::commitData(QWidget *editor)

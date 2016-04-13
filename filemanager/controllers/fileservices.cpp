@@ -99,20 +99,16 @@ bool FileServices::openFile(const QString &fileUrl) const
     return false;
 }
 
-void FileServices::copyFiles(const QList<QString> &urlList) const
+bool FileServices::copyFiles(const QList<QString> &urlList) const
 {
-    if(QThread::currentThread() == qApp->thread()) {
-        QtConcurrent::run(QThreadPool::globalInstance(), this, &FileServices::copyFiles, urlList);
-
-        return;
-    }
-
     TRAVERSE(urlList.first(), {
-                 controller->copyFiles(urlList, accepted);
+                 bool ok = controller->copyFiles(urlList, accepted);
 
                  if(accepted)
-                     return;
+                     return ok;
              })
+
+     return false;
 }
 
 bool FileServices::renameFile(const QString &oldUrl, const QString &newUrl) const
@@ -173,18 +169,24 @@ bool FileServices::cutFiles(const QList<QString> &urlList) const
 
 void FileServices::pasteFile(const QString &toUrl) const
 {
-    if(QThread::currentThread() == qApp->thread()) {
-        QtConcurrent::run(QThreadPool::globalInstance(), this, &FileServices::pasteFile, toUrl);
+    const QClipboard *clipboard = qApp->clipboard();
+    const QMimeData *mimeData = clipboard->mimeData();
 
-        return;
+    const QByteArray &data = mimeData->data("x-special/gnome-copied-files");
+
+    if(!data.isEmpty()) {
+        QTextStream text(data);
+        AbstractFileController::PasteType type = text.readLine() == "cut" ? AbstractFileController::CutType
+                                                                          : AbstractFileController::CopyType;
+
+        QList<QString> urls;
+
+        while(!text.atEnd()) {
+            urls.append(text.readLine());
+        }
+
+        QtConcurrent::run(QThreadPool::globalInstance(), this, &FileServices::pasteFiles, type, urls, toUrl);
     }
-
-    TRAVERSE(toUrl, {
-                 controller->pasteFile(toUrl, accepted);
-
-                 if(accepted)
-                    return;
-             })
 }
 
 bool FileServices::newFolder(const QString &toUrl) const
@@ -306,6 +308,16 @@ QList<AbstractFileController*> FileServices::getHandlerTypeByUrl(const QString &
                                                ignoreHost ? "" : url.path()));
 }
 
+void FileServices::pasteFiles(AbstractFileController::PasteType type,
+                              const QList<QString> &urlList, const QString &toUrl) const
+{
+    TRAVERSE(toUrl, {
+                 controller->pasteFile(type, urlList, toUrl, accepted);
+
+                 if(accepted)
+                 return;
+             })
+}
 
 void FileServices::openUrl(const FMEvent &event) const
 {

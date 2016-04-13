@@ -21,7 +21,7 @@ class PropertyDialog : public DWidget
     Q_OBJECT
 
 public:
-    explicit PropertyDialog(AbstractFileInfo *info, const QIcon &icon,
+    explicit PropertyDialog(const AbstractFileInfo *info,
                             QWidget *parent = 0);
 
 private:

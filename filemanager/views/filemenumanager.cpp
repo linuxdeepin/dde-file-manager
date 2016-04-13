@@ -7,9 +7,12 @@
 
 #include "../controllers/fileservices.h"
 
+#include "../dialogs/propertydialog.h"
+
+#include <QScreen>
+
 QMap<FileMenuManager::MenuAction, QString> FileMenuManager::m_actionKeys;
 QMap<FileMenuManager::MenuAction, DAction*> FileMenuManager::m_actions;
-
 
 DFileMenu *FileMenuManager::createFileMenu(const QVector<MenuAction> &disableList)
 {
@@ -428,7 +431,7 @@ void FileMenuManager::actionTriggered(DAction *action)
     QString fileUrl;
 
     if(urls.size() > 0)
-        fileUrl = urls.at(0);
+        fileUrl = urls.first();
 
     switch(type)
     {
@@ -479,7 +482,6 @@ void FileMenuManager::actionTriggered(DAction *action)
     case CompleteDeletion:
         fileService->deleteFiles(urls);
         break;
-    case Property:break;
     case NewFolder:
         fileService->newFolder(fileUrl);
         break;
@@ -513,6 +515,25 @@ void FileMenuManager::actionTriggered(DAction *action)
     case LastModifiedDate:
         emit fileSignalManager->requestViewSort(menu->getWindowId(), Global::FileLastModified);
         break;
+    case Property: {
+        PropertyDialog *dialog = new PropertyDialog(menu->fileInfo());
+
+        dialog->setAttribute(Qt::WA_DeleteOnClose);
+        dialog->setWindowFlags(dialog->windowFlags()
+                               &~ Qt::WindowMaximizeButtonHint
+                               &~ Qt::WindowMinimizeButtonHint
+                               &~ Qt::WindowSystemMenuHint);
+        dialog->setTitle("");
+        dialog->setFixedSize(QSize(320, 480));
+
+        QRect dialog_geometry = dialog->geometry();
+
+        dialog_geometry.moveCenter(qApp->primaryScreen()->geometry().center());
+        dialog->move(dialog_geometry.topLeft());
+        dialog->show();
+
+        break;
+    }
     case Help:break;
     case About:break;
     case Exit:break;

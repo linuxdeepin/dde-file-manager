@@ -21,7 +21,7 @@ void DFileMenu::setDir(const QString &dir)
     m_dir = dir;
 }
 
-QString DFileMenu::getDir()
+QString DFileMenu::getDir() const
 {
     return m_dir;
 }
@@ -31,8 +31,18 @@ void DFileMenu::setWindowId(int windowId)
     m_windowId = windowId;
 }
 
-int DFileMenu::getWindowId()
+int DFileMenu::getWindowId() const
 {
     return m_windowId;
+}
+
+void DFileMenu::setFileInfo(const AbstractFileInfo *info)
+{
+    m_fileInfo = info;
+}
+
+const AbstractFileInfo *DFileMenu::fileInfo() const
+{
+    return m_fileInfo;
 }
 

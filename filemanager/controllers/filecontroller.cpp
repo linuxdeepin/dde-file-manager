@@ -103,7 +103,7 @@ bool FileController::copyFiles(const QList<QString> &urlList, bool &accepted) co
     mimeData->setText("copy");
     mimeData->setData("x-special/gnome-copied-files", ba);
 
-    QApplication::clipboard()->setMimeData(mimeData);
+    qApp->clipboard()->setMimeData(mimeData);
 
     return true;
 }
@@ -137,9 +137,8 @@ bool FileController::deleteFiles(const QList<QString> &urlList, bool &accepted) 
         qurls << QUrl(url);
     }
 
-    connect(&job, &FileJob::finished, dialogManager, &DialogManager::removeJob);
-
     job.doDelete(qurls);
+    dialogManager->removeJob(job.getJobId());
 
     return true;
 }
@@ -164,9 +163,8 @@ bool FileController::moveToTrash(const QList<QString> &urlList, bool &accepted) 
         qurls << QUrl(url);
     }
 
-    connect(&job, &FileJob::finished, dialogManager, &DialogManager::removeJob);
-
     job.doMoveToTrash(qurls);
+    dialogManager->removeJob(job.getJobId());
 
     return true;
 }
@@ -189,12 +187,13 @@ bool FileController::cutFiles(const QList<QString> &urlList, bool &accepted) con
     mimeData->setText("cut");
     mimeData->setData("x-special/gnome-copied-files", ba);
 
-    QApplication::clipboard()->setMimeData(mimeData);
+    qApp->clipboard()->setMimeData(mimeData);
 
     return true;
 }
 
-bool FileController::pasteFile(const QString &toUrl, bool &accepted) const
+bool FileController::pasteFile(PasteType type, const QList<QString> &urlList,
+                               const QString &toUrl, bool &accepted) const
 {
     accepted = true;
 
@@ -204,37 +203,26 @@ bool FileController::pasteFile(const QString &toUrl, bool &accepted) const
     if(!dir.exists())
         return false;
 
-    const QClipboard *clipboard = QApplication::clipboard();
-    const QMimeData *mimeData = clipboard->mimeData();
+    if(type == CutType) {
+        for(const QString &fileUrl : urlList) {
+            QFileInfo fileInfo(QUrl(fileUrl).toLocalFile());
 
-    if(!mimeData->data("x-special/gnome-copied-files").isEmpty()) {
-        QByteArray ba = mimeData->data("x-special/gnome-copied-files");
-        QTextStream text(&ba);
-        QString type = text.readLine();
-
-        if(type == "cut") {
-            while(!text.atEnd()) {
-                QUrl qurl(text.readLine());
-                QFileInfo fileInfo(qurl.path());
-
-                QFile::rename(fileInfo.absoluteFilePath(),
-                              dir.absolutePath() + QDir::separator() + fileInfo.fileName());
-            }
-        } else if(type == "copy") {
-            QList<QUrl> urls;
-
-            while(!text.atEnd()) {
-                urls.append(QUrl(text.readLine()));
-            }
-
-            FileJob job;
-
-            dialogManager->addJob(&job);
-
-            connect(&job, &FileJob::finished, dialogManager, &DialogManager::removeJob);
-
-            job.doCopy(urls, toUrl);
+            QFile::rename(fileInfo.absoluteFilePath(),
+                          dir.absolutePath() + QDir::separator() + fileInfo.fileName());
         }
+    } else {
+        QList<QUrl> urls;
+
+        for(const QString &fileUrl : urlList) {
+            urls.append(QUrl(fileUrl));
+        }
+
+        FileJob job;
+
+        dialogManager->addJob(&job);
+
+        job.doCopy(urls, toUrl);
+        dialogManager->removeJob(job.getJobId());
     }
 
     return true;
@@ -275,6 +263,10 @@ bool FileController::newDocument(const QString &toUrl, bool &accepted) const
 {
     Q_UNUSED(toUrl)
     Q_UNUSED(accepted)
+
+    accepted = false;
+
+    return false;
 }
 
 bool FileController::addUrlMonitor(const QString &fileUrl, bool &accepted) const

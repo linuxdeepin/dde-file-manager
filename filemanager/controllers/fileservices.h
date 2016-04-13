@@ -6,11 +6,11 @@
 #include <QMultiHash>
 #include <QPair>
 #include <QDir>
-#include "../views/filemenumanager.h"
+
+#include "abstractfilecontroller.h"
 
 typedef QPair<QString,QString> HandlerType;
 
-class AbstractFileController;
 class AbstractFileInfo;
 class FMEvent;
 
@@ -27,7 +27,7 @@ public:
     static void clearFileUrlHandler(const QString &scheme, const QString &host);
 
     bool openFile(const QString &fileUrl) const;
-    void copyFiles(const QList<QString> &urlList) const;
+    bool copyFiles(const QList<QString> &urlList) const;
     bool renameFile(const QString &oldUrl, const QString &newUrl) const;
     void deleteFiles(const QList<QString> &urlList) const;
     void moveToTrash(const QList<QString> &urlList) const;
@@ -63,6 +63,10 @@ private:
 
     static QMultiHash<HandlerType, AbstractFileController*> m_controllerHash;
     static QHash<AbstractFileController*, HandlerType> m_handlerHash;
+
+    void pasteFiles(AbstractFileController::PasteType type,
+                   const QList<QString> &urlList,
+                   const QString &toUrl) const;
 };
 
 #endif // FILESERVICES_H

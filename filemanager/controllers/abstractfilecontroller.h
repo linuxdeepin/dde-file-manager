@@ -11,6 +11,11 @@ class AbstractFileController : public QObject
     Q_OBJECT
 
 public:
+    enum PasteType {
+        CutType,
+        CopyType
+    };
+
     explicit AbstractFileController(QObject *parent = 0);
 
     virtual bool openFile(const QString &fileUrl, bool &accepted) const;
@@ -19,7 +24,8 @@ public:
     virtual bool deleteFiles(const QList<QString> &urlList, bool &accepted) const;
     virtual bool moveToTrash(const QList<QString> &urlList, bool &accepted) const;
     virtual bool cutFiles(const QList<QString> &urlList, bool &accepted) const;
-    virtual bool pasteFile(const QString &toUrl, bool &accepted) const;
+    virtual bool pasteFile(PasteType type, const QList<QString> &urlList,
+                           const QString &toUrl, bool &accepted) const;
     virtual bool newFolder(const QString &toUrl, bool &accepted) const;
     virtual bool newFile(const QString &toUrl, bool &accepted) const;
     virtual bool newDocument(const QString &toUrl, bool &accepted) const;

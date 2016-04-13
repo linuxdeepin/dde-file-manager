@@ -36,6 +36,7 @@ public:
     void initDelegate();
     void initModel();
     void initConnects();
+    void initActions();
 
     DFileSystemModel *model() const;
     DFileItemDelegate *itemDelegate() const;
@@ -78,7 +79,6 @@ protected:
     void keyReleaseEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
     void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
     void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-    void selectionChanged(const QItemSelection & selected, const QItemSelection & deselected) Q_DECL_OVERRIDE;
     void commitData(QWidget * editor) Q_DECL_OVERRIDE;
     void focusInEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
 
@@ -96,15 +96,12 @@ private:
 
     bool m_ctrlIsPressed = false;
 
-    QModelIndexList m_selectedIndexList;
-
     bool isEmptyArea(const QPoint &pos) const;
 
     QSize currentIconSize() const;
     void enlargeIcon();
     void shrinkIcon();
     void openIndex(const QModelIndex &index);
-    void onMenuActionTrigger(const DAction *action, const QModelIndex &index);
 };
 
 #endif // DFILEVIEW_H
