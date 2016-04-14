@@ -117,6 +117,8 @@ DeviceInfo * DeviceListener::addDevice(udev_device *dev)
     QString label = info.displayName();
     QString uuid = deviceUUID(dev);
     QString size = udev_device_get_sysattr_value(dev, "size");
+    if(size == "0") // Todo: may not be reliable on zero size
+        return NULL;
     DeviceInfo * device = new DeviceInfo(mountPath, path, label, deviceLabel(dev), uuid, size);
     m_deviceInfos.append(device);
     m_deviceMap.insert(path, device);
