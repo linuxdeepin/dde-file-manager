@@ -184,6 +184,19 @@ public:
 
         return str;
     }
+
+    static QUrl stringToUrl(const QString &str)
+    {
+        QUrl url(str);
+
+        if(url.scheme().isEmpty()) {
+            QFileInfo info(str);
+
+            url = QUrl::fromLocalFile(info.absoluteFilePath());
+        }
+
+        return url;
+    }
 };
 
 #endif // GLOBAL_H

@@ -29,10 +29,14 @@ int main(int argc, char *argv[])
 
     CommandLineManager::instance()->process();
 
-    QString commandlineUrl = QDir::homePath();
+    QString commandlineUrl;
 
     if (CommandLineManager::instance()->positionalArguments().count() > 0){
         commandlineUrl = CommandLineManager::instance()->positionalArguments().at(0);
+
+        commandlineUrl = Global::stringToUrl(commandlineUrl).toString();
+    } else {
+        commandlineUrl = QUrl::fromLocalFile(QDir::homePath()).toString();
     }
 
     MimesAppsManager::test();
