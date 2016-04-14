@@ -12,6 +12,9 @@
 
 #include "../../deviceinfo/deviceinfo.h"
 #include "../models/bookmark.h"
+#include "../app/global.h"
+#include "windowmanager.h"
+#include "../app/fmevent.h"
 
 #include "windowmanager.h"
 
@@ -26,6 +29,7 @@ DBookmarkItem::DBookmarkItem(DeviceInfo *deviceInfo)
 {
     init();
     m_isDisk = true;
+    m_checkable = true;
     m_url = deviceInfo->getMountPath();
     m_isDefault = true;
     m_sysPath = deviceInfo->getSysPath();
@@ -60,6 +64,7 @@ void DBookmarkItem::init()
     setHoverBackgroundEnable(true);
     setTextColor(Qt::black);
     setAcceptDrops(true);
+    m_checkable = true;
 }
 
 QRectF DBookmarkItem::boundingRect() const
@@ -277,12 +282,17 @@ QString DBookmarkItem::getSysPath()
     return m_sysPath;
 }
 
+int DBookmarkItem::windowId()
+{
+    return WindowManager::getWindowId(scene()->views().at(0)->window());
+}
+
 void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event);
     if(m_group && m_pressed)
     {
-        emit m_group->url("file://" + m_url);
+        emit m_group->url(m_url);
     }
     m_pressed = false;
     update();
@@ -299,7 +309,8 @@ void DBookmarkItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
     m_hovered = true;
     event->accept();
     emit dragEntered();
-    QGraphicsItem::dragEnterEvent(event);
+    //QGraphicsItem::dragEnterEvent(event);
+    update();
 }
 
 void DBookmarkItem::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
@@ -308,21 +319,32 @@ void DBookmarkItem::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
     m_hovered = false;
     emit dragLeft();
     QGraphicsItem::dragLeaveEvent(event);
+    qDebug() << "left";
+    update();
 }
 
 void DBookmarkItem::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
 {
     m_hovered = true;
     event->accept();
-    qDebug() << "item drag move";
 }
 
 void DBookmarkItem::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
-    qDebug() << event;
-
     event->acceptProposedAction();
     emit dropped();
+    if(!event->mimeData()->hasUrls())
+        return;
+    QList<QUrl> urls = event->mimeData()->urls();
+    QList<QString> urlList;
+    for(int i = 0; i < urls.size(); i++)
+        urlList.append(urls.at(i).toString());
+
+    FMEvent e;
+    e = FMEvent::LeftSideBar;
+    e = m_url;
+    e = windowId();
+    fileService->pasteFile(AbstractFileController::CopyType, urlList, e);
 }
 
 void DBookmarkItem::keyPressEvent(QKeyEvent *event)
@@ -333,6 +355,7 @@ void DBookmarkItem::keyPressEvent(QKeyEvent *event)
 void DBookmarkItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event);
+    event->accept();
     m_hovered = true;
     update();
 }

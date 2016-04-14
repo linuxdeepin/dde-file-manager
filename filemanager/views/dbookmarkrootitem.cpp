@@ -38,22 +38,22 @@ void DBookmarkRootItem::dropEvent(QGraphicsSceneDragDropEvent *event)
     if(!event->mimeData()->hasUrls())
         return;
     QList<QUrl> urls = event->mimeData()->urls();
-    QUrl firstUrl = urls.at(0);
-    QDir dir;
-    if(firstUrl.isLocalFile())
-        dir.setPath(firstUrl.toLocalFile());
-    else
-        dir.setPath(firstUrl.toString());
-    if(dir.exists())
+    for(int i = 0; i < urls.size(); i++)
     {
-        DBookmarkItem * item = new DBookmarkItem;
-        item->boundImageToHover(":/icons/images/icons/bookmarks_hover_16px.svg");
-        item->boundImageToPress(":/icons/images/icons/bookmarks_hover_16px.svg");
-        item->boundImageToRelease(":/icons/images/icons/bookmarks_normal_16px.svg");
-        item->setText(dir.dirName());
-        item->setUrl(dir.path());
-        m_scene->insert(11, item);
-        bookmarkManager->writeIntoBookmark(dir.dirName(), dir.path());
+        QUrl firstUrl = urls.at(i);
+        QDir dir;
+        if(firstUrl.isLocalFile())
+            dir.setPath(firstUrl.toLocalFile());
+        else
+            dir.setPath(firstUrl.toString());
+        if(dir.exists())
+        {
+            BookMark * bm = bookmarkManager->writeIntoBookmark(dir.dirName(), QUrl::fromLocalFile(dir.path()).toString());
+            DBookmarkItem * item = new DBookmarkItem(bm);
+            if(m_scene->count() == DEFAULT_ITEM_COUNT)
+                m_scene->addSeparator();
+            m_scene->insert(DEFAULT_ITEM_COUNT + 1, item);
+        }
     }
     m_scene->clear(m_dummyItem);
     emit dropped();

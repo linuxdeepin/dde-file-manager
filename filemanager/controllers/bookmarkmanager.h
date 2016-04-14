@@ -27,7 +27,7 @@ signals:
     void updates(const QString &directory, const QList<AbstractFileInfo*> &infoList);
 
 public slots:
-    void writeIntoBookmark(const QString &name, const QString &url);
+    BookMark *writeIntoBookmark(const QString &name, const QString &url);
     void removeBookmark(const QString &name, const QString &url);
     void fetchFileInformation(const QString &url,
                               int filter = int(QDir::AllEntries | QDir::NoDotAndDotDot));

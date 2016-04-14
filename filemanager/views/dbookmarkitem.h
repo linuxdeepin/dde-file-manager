@@ -68,6 +68,7 @@ public:
     QString getDeviceLabel();
     void setSysPath(const QString &path);
     QString getSysPath();
+    int windowId();
 signals:
 
     void clicked();
