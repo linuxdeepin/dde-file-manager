@@ -112,7 +112,8 @@ HEADERS += \
     filemanager/shutil/mimesappsmanager.h \
     filemanager/views/dbookmarkline.h \
     filemanager/views/dsplitterhandle.h \
-    filemanager/models/zurl.h
+    filemanager/models/zurl.h\
+    filemanager/dialogs/openwithdialog.h
 
 SOURCES += \
     filemanager/controllers/appcontroller.cpp \
@@ -187,7 +188,9 @@ SOURCES += \
     filemanager/shutil/mimesappsmanager.cpp \
     filemanager/views/dbookmarkline.cpp \
     filemanager/views/dsplitterhandle.cpp \
-    filemanager/models/zurl.cpp
+    filemanager/models/zurl.cpp\
+    filemanager/dialogs/openwithdialog.cpp
+
 
 INCLUDEPATH += filemanager/models
 
@@ -198,3 +201,4 @@ desktop.path = $${PREFIX}/share/applications/
 desktop.files = dde-file-manager.desktop
 
 INSTALLS += target desktop
+

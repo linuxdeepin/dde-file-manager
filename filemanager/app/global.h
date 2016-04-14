@@ -13,6 +13,7 @@
 
 #include "../models/abstractfileinfo.h"
 #include "../../deviceinfo/devicelistener.h"
+#include "../shutil/mimesappsmanager.h"
 
 #include <QFontMetrics>
 #include <QTextOption>
@@ -29,6 +30,7 @@
 #define iconProvider Singleton<IconProvider>::instance()
 #define fileService FileServices::instance()
 #define deviceListener Singleton<DeviceListener>::instance()
+#define mimeAppsManager Singleton<MimesAppsManager>::instance()
 
 #define defaut_icon ":/images/images/default.png"
 #define defaut_computerIcon ":/images/images/computer.png"

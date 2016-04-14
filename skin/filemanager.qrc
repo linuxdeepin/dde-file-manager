@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/qss">
         <file>qss/filemanager.qss</file>
+        <file>qss/scrollbar.qss</file>
     </qresource>
     <qresource prefix="/images">
         <file>images/light/appbar.app.png</file>

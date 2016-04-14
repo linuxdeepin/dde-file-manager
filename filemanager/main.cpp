@@ -8,8 +8,8 @@
 #include "../dialogs/dialogmanager.h"
 
 #include "../shutil/mimesappsmanager.h"
-
 #include "zurl.h"
+#include "../dialogs/openwithdialog.h"
 
 #include <dthememanager.h>
 #include <dwindow.h>
@@ -29,7 +29,6 @@ int main(int argc, char *argv[])
     app.setApplicationName(QObject::tr("dde-file-manager"));
     app.setApplicationVersion("v1.0");
 
-//    MimesAppsManager();
 
     CommandLineManager::instance()->process();
 

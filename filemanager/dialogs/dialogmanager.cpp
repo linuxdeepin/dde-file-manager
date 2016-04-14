@@ -5,6 +5,9 @@
 #include "../app/filesignalmanager.h"
 #include "../controllers/filejob.h"
 #include "dialogs/messagewrongdialog.h"
+#include "../dialogs/propertydialog.h"
+#include "../dialogs/openwithdialog.h"
+#include "../models/fileinfo.h"
 #include <ddialog.h>
 
 DWIDGET_USE_NAMESPACE
@@ -41,6 +44,8 @@ void DialogManager::initConnect()
     connect(m_taskDialog, &DTaskDialog::abortTask, this, &DialogManager::abortJob);
 
     connect(fileSignalManager, &FileSignalManager::requestShowUrlWrongDialog, this, &DialogManager::showUrlWrongDialog);
+    connect(fileSignalManager, &FileSignalManager::requestShowOpenWithDialog, this, &DialogManager::showOpenWithDialog);
+    connect(fileSignalManager, &FileSignalManager::requestShowPropertyDialog, this, &DialogManager::showPropertyDialog);
 
 }
 
@@ -70,6 +75,29 @@ void DialogManager::showUrlWrongDialog(const QString &url)
     MessageWrongDialog d(url);
     qDebug() << url;
     d.exec();
+}
+
+void DialogManager::showOpenWithDialog(const QString &url)
+{
+    qDebug() << url;
+    OpenWithDialog* d = new OpenWithDialog(url);
+    d->show();
+}
+
+void DialogManager::showPropertyDialog(const QString &url)
+{
+    FileInfo info(url);
+    PropertyDialog *dialog = new PropertyDialog(&info);
+
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    dialog->setWindowFlags(dialog->windowFlags()
+                           &~ Qt::WindowMaximizeButtonHint
+                           &~ Qt::WindowMinimizeButtonHint
+                           &~ Qt::WindowSystemMenuHint);
+    dialog->setTitle("");
+    dialog->setFixedSize(QSize(320, 480));
+
+    dialog->show();
 }
 
 
