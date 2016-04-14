@@ -5,13 +5,15 @@
 #include "utils/debugobejct.h"
 #include <QString>
 #include <QDateTime>
+#include "abstractfileinfo.h"
 
-class BookMark : public DebugObejct
+class BookMark : public AbstractFileInfo
 {
-    Q_OBJECT
 public:
-    explicit BookMark(QObject *parent = 0);
-    BookMark(QDateTime time, const QString &name, const QString &url, QObject *parent = 0);
+    BookMark();
+    BookMark(BookMark * bookmark);
+    BookMark(const QString &url);
+    BookMark(QDateTime time, const QString &name, const QString &url);
     ~BookMark();
     QDateTime getDateTime();
     QString getUrl();
@@ -19,14 +21,17 @@ public:
     void setUrl(const QString &url);
     void setName(const QString &name);
     QString getName();
-signals:
-
-public slots:
 
 private:
     QString m_url;
     QDateTime m_time;
     QString m_name;
+
+    // AbstractFileInfo interface
+public:
+    bool isCanRename() const;
+    bool isDir() const;
+    QIcon fileIcon() const;
 };
 
 #endif // BOOKMARK_H

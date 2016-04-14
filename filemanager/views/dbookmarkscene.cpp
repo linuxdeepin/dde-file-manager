@@ -259,21 +259,21 @@ void DBookmarkScene::bookmarkMounted(int fd)
 
 void DBookmarkScene::deviceAdded(DeviceInfo &deviceInfos)
 {
-    DBookmarkItem * item = new DBookmarkItem(&deviceInfos);
-    this->insert(11, item);
+    //DBookmarkItem * item = new DBookmarkItem(&deviceInfos);
+    //this->insert(11, item);
 }
 
 void DBookmarkScene::deviceRemoved(DeviceInfo &deviceInfos)
 {
-    QString localPath = deviceInfos.getSysPath();
-    foreach(DBookmarkItem * item, m_items)
-    {
-        if(item->getSysPath() == localPath)
-        {
-            remove(item);
-            return;
-        }
-    }
+//    QString localPath = deviceInfos.getSysPath();
+//    foreach(DBookmarkItem * item, m_items)
+//    {
+//        if(item->getSysPath() == localPath)
+//        {
+//            remove(item);
+//            return;
+//        }
+//    }
 }
 
 void DBookmarkScene::increaseSize()

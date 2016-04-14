@@ -35,7 +35,6 @@ DBookmarkItem *DBookmarkRootItem::getDummyItem()
 
 void DBookmarkRootItem::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
-
     if(!event->mimeData()->hasUrls())
         return;
     QList<QUrl> urls = event->mimeData()->urls();
