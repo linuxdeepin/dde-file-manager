@@ -90,12 +90,7 @@ void SingleApplication::readData()
         if (url.isEmpty()){
             emit fileSignalManager->requestActiveWindow();
         }else{
-            if (QFile::exists(url)){
-                emit fileSignalManager->requestOpenNewWindowByUrl(url);
-            }else{
-                qDebug() << "wrong" << url;
-                emit fileSignalManager->requestShowUrlWrongDialog(url);
-            }
+            emit fileSignalManager->requestOpenNewWindowByUrl(url);
         }
     }
 }
