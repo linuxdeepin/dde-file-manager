@@ -111,7 +111,8 @@ HEADERS += \
     filemanager/models/trashfileinfo.h \
     filemanager/shutil/mimesappsmanager.h \
     filemanager/views/dbookmarkline.h \
-    filemanager/views/dsplitterhandle.h
+    filemanager/views/dsplitterhandle.h \
+    filemanager/models/zurl.h
 
 SOURCES += \
     filemanager/controllers/appcontroller.cpp \
@@ -185,7 +186,8 @@ SOURCES += \
     filemanager/models/trashfileinfo.cpp \
     filemanager/shutil/mimesappsmanager.cpp \
     filemanager/views/dbookmarkline.cpp \
-    filemanager/views/dsplitterhandle.cpp
+    filemanager/views/dsplitterhandle.cpp \
+    filemanager/models/zurl.cpp
 
 INCLUDEPATH += filemanager/models
 
