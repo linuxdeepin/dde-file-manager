@@ -31,6 +31,11 @@ public slots:
     void removeBookmark(const QString &name, const QString &url);
     void fetchFileInformation(const QString &url,
                               int filter = int(QDir::AllEntries | QDir::NoDotAndDotDot));
+
+    // AbstractFileController interface
+public:
+    const QList<AbstractFileInfo *> getChildren(const QString &fileUrl, QDir::Filters filter, bool &accepted) const;
+    AbstractFileInfo *createFileInfo(const QString &fileUrl, bool &accepted) const;
 };
 
 #endif // BOOKMARKMANAGER_H

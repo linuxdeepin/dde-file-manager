@@ -270,7 +270,7 @@ QString DLeftSideBar::getStandardPathbyId(int id)
     case 10:
         path = COMPUTER_ROOT;
         break;
-    case 12:
+    case 11:
         path = BOOKMARK_ROOT;
         break;
     default:
@@ -345,14 +345,7 @@ void DLeftSideBar::loadBookmark()
 
 void DLeftSideBar::loadDevices()
 {
-    QList<DeviceInfo *> m_list = deviceListener->loadDeivces();
-//    for(int i = 0; i < m_list.size(); i++)
-//    {
-//        DeviceInfo * deviceInfo = m_list.at(i);
-//        DBookmarkItem * item = new DBookmarkItem(deviceInfo);
-//        m_scene->insert(11, item);
-//    }
-//    m_scene->bookmarkMounted(0);
+    deviceListener->loadDeivces();
 }
 
 
