@@ -215,18 +215,15 @@ void DFileView::cd(const FMEvent &event)
     if(event.windowId() != windowId())
         return;
 
-    QString fileUrl = event.fileUrl();
+    const QString &fileUrl = event.fileUrl();
 
     if(fileUrl.isEmpty())
         return;
 
-    if(QUrl(fileUrl).scheme().isEmpty())
-        fileUrl =  QString(FILE_SCHEME) + "://" + event.fileUrl();
-
     if(currentUrl() == fileUrl)
         return;
 
-    qDebug() << "cd: current url:" << currentUrl() << "to url:" << event;
+    qDebug() << "cd: current url:" << currentUrl() << "to url:" << fileUrl;
 
     QModelIndex index = model()->index(fileUrl);
 
