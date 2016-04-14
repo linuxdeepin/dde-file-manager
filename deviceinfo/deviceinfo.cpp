@@ -1,6 +1,7 @@
 #include "deviceinfo.h"
 #include <QIcon>
 #include <QDebug>
+#include <QStorageInfo>
 
 DeviceInfo::DeviceInfo(DeviceInfo *deviceInfo)
     : AbstractFileInfo(deviceInfo->getMountPath())
@@ -67,7 +68,10 @@ QString DeviceInfo::getSize()
 
 QString DeviceInfo::displayName() const
 {
-    return formatSize(m_size.toLongLong());
+    QStorageInfo info(m_mountPath);
+    if(info.isValid() && info.isRoot())
+        return "Computer";
+    return formatSize(m_size.toLongLong() * BYTES_PER_BLOCK);
 }
 
 bool DeviceInfo::isCanRename() const

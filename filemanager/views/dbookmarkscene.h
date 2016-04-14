@@ -4,6 +4,7 @@
 #include <QGraphicsScene>
 
 #define BOOKMARK_ITEM_HEIGHT 30
+#define SEPARATOR_ITEM_HEIGHT 6
 
 class DBookmarkItem;
 class DBookmarkRootItem;
@@ -23,6 +24,7 @@ public:
     void clear(DBookmarkItem * item);
     void remove(DBookmarkItem * item);
     void setSceneRect(qreal x, qreal y, qreal w, qreal h);
+    void addSeparator();
     DBookmarkItemGroup * getGroup();
 protected:
     void changed(const QList<QRectF> &region);

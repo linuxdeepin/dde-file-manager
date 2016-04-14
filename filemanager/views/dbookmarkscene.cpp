@@ -11,6 +11,7 @@
 #include "../app/fmevent.h"
 #include "../app/filesignalmanager.h"
 #include "../../deviceinfo/deviceinfo.h"
+#include "dbookmarkline.h"
 
 DBookmarkScene::DBookmarkScene()
 {
@@ -29,9 +30,8 @@ DBookmarkScene::DBookmarkScene()
 
 void DBookmarkScene::addItem(DBookmarkItem *item)
 {
-//    double h = height();
     double w = width();
-    item->setPos(w/2, 15 + BOOKMARK_ITEM_HEIGHT * (items().size() - 1));
+    item->setPos(w/2, 15 + m_totalHeight);
     item->setBounds(-w/2, -BOOKMARK_ITEM_HEIGHT/2, w, BOOKMARK_ITEM_HEIGHT);
     m_itemGroup->addItem(item);
     m_items.append(item);
@@ -53,8 +53,10 @@ void DBookmarkScene::insert(int index, DBookmarkItem *item)
     }
 
     double w = width();
+    double dh = m_items.at(index)->boundHeight();
     double dx = m_items.at(index)->x();
-    double dy = m_items.at(index)->y();
+    double dy = m_items.at(index)->y() - dh/2;
+
 
     for(int i = index; i <  m_items.size(); i++)
     {
@@ -64,7 +66,7 @@ void DBookmarkScene::insert(int index, DBookmarkItem *item)
     }
 
     m_items.insert(index, item);
-    item->setPos(dx, dy);
+    item->setPos(dx, dy + BOOKMARK_ITEM_HEIGHT/2);
     item->setBounds(-w/2, -BOOKMARK_ITEM_HEIGHT/2, w, BOOKMARK_ITEM_HEIGHT);
     m_itemGroup->addItem(item);
     QGraphicsScene::addItem(item);
@@ -124,6 +126,19 @@ void DBookmarkScene::setSceneRect(qreal x, qreal y, qreal w, qreal h)
 {
     m_rootItem->setBounds(x, y, w, h);
     QGraphicsScene::setSceneRect(x, y, w, h);
+}
+
+void DBookmarkScene::addSeparator()
+{
+    double w = width();
+    DBookmarkLine * item = new DBookmarkLine;
+    item->setPos(w/2, 3 + m_totalHeight);
+    item->setBounds(-w/2, -SEPARATOR_ITEM_HEIGHT/2, w, SEPARATOR_ITEM_HEIGHT);
+    m_itemGroup->addItem(item);
+    m_items.append(item);
+    QGraphicsScene::addItem(item);
+    m_totalHeight += SEPARATOR_ITEM_HEIGHT;
+    increaseSize();
 }
 
 DBookmarkItemGroup *DBookmarkScene::getGroup()
@@ -236,7 +251,6 @@ void DBookmarkScene::bookmarkMounted(int fd)
         if(bookmarkItem)
         {
             bookmarkItem->setMounted(true);
-            bookmarkItem->setReleaseBackgroundColor(Qt::yellow);
             bookmarkItem->setUrl(item.split(" ").at(1));
             bookmarkItem->update();
         }
@@ -245,14 +259,7 @@ void DBookmarkScene::bookmarkMounted(int fd)
 
 void DBookmarkScene::deviceAdded(DeviceInfo &deviceInfos)
 {
-    DBookmarkItem * item = new DBookmarkItem;
-    item->boundImageToHover(":/icons/images/icons/disk_hover_16px.svg");
-    item->boundImageToPress(":/icons/images/icons/disk_hover_16px.svg");
-    item->boundImageToRelease(":/icons/images/icons/disk_normal_16px.svg");
-    item->setText(deviceInfos.getDeviceLabel());
-    item->setUrl(deviceInfos.getMountPath());
-    item->setDeviceLabel(deviceInfos.getDeviceLabel());
-    item->setSysPath(deviceInfos.getSysPath());
+    DBookmarkItem * item = new DBookmarkItem(&deviceInfos);
     this->insert(11, item);
 }
 
@@ -274,7 +281,6 @@ void DBookmarkScene::increaseSize()
     if(m_totalHeight > sceneRect().height() - BOOKMARK_ITEM_HEIGHT)
     {
         double w = sceneRect().width();
-//        double h = sceneRect().height();
         setSceneRect(0, 0, w, m_totalHeight + BOOKMARK_ITEM_HEIGHT * 2);
         views().at(0)->setGeometry(0, 0, w, m_totalHeight + BOOKMARK_ITEM_HEIGHT * 2);
     }

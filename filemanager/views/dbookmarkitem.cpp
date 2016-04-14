@@ -8,22 +8,40 @@
 #include <QGraphicsScene>
 #include "dfilemenu.h"
 #include "filemenumanager.h"
+#include "../../deviceinfo/deviceinfo.h"
+#include "../models/bookmark.h"
 
 DBookmarkItem::DBookmarkItem()
 {
-    m_hovered = false;
-    m_pressed = false;
-    m_backgroundEnabled = false;
-    m_isDraggable = false;
-    m_adjust = 0;
-    m_xPos = 0;
-    m_yPos = 0;
-    m_xOffsetImage = 0;
-    m_yOffsetImage = 0;
-    m_isMenuOpened = false;
-    m_checked = false;
-    m_checkable = true;
-    m_isDefault = false;
+    init();
+    m_isDefault = true;
+}
+
+DBookmarkItem::DBookmarkItem(DeviceInfo *deviceInfo)
+{
+    init();
+    m_isDisk = true;
+    m_url = deviceInfo->getMountPath();
+    m_isDefault = true;
+    m_sysPath = deviceInfo->getSysPath();
+    m_textContent = deviceInfo->displayName();
+    boundImageToHover(":/icons/images/icons/disk_hover_16px.svg");
+    boundImageToPress(":/icons/images/icons/disk_hover_16px.svg");
+    boundImageToRelease(":/icons/images/icons/disk_normal_16px.svg");
+}
+
+DBookmarkItem::DBookmarkItem(BookMark *bookmark)
+{
+    init();
+    m_url = bookmark->getUrl();
+    m_textContent = bookmark->getName();
+    boundImageToHover(":/icons/images/icons/bookmarks_hover_16px.svg");
+    boundImageToPress(":/icons/images/icons/bookmarks_checked_16px.svg");
+    boundImageToRelease(":/icons/images/icons/bookmarks_normal_16px.svg");
+}
+
+void DBookmarkItem::init()
+{
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFlag(QGraphicsItem::ItemIgnoresTransformations);
     setAcceptHoverEvents(true);
@@ -50,10 +68,8 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
     Q_UNUSED(option);
     Q_UNUSED(widget);
     double w = m_width;
-//    double h = m_height;
     QColor textColor;
     double leftPadding = 18;
-//    double topPadding = 4;
     if(m_pressed || (m_checked && m_checkable))
     {
         if(m_pressBackgroundEnabled)
@@ -107,6 +123,32 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
         painter->setFont(m_font);
         QRect rect( -w/2 + 42, m_y_axis + m_height/4, m_width - 25, m_height);
         painter->drawText(rect,Qt::TextWordWrap|Qt::AlignLeft,m_textContent);
+    }
+
+    if(m_isMounted)
+    {
+        QPixmap pressPic(":/icons/images/icons/unmount_press.svg");
+        QPixmap normalPic(":/icons/images/icons/unmount_normal.svg");
+        QPixmap hoverPic(":/icons/images/icons/unmount_press.svg");
+        if(m_pressed)
+            painter->drawPixmap(w/2 - leftPadding,
+                                -pressPic.height()/2,
+                                pressPic.width(),
+                                pressPic.height(),
+                                pressPic);
+        else if(m_hovered)
+            painter->drawPixmap(w/2 - leftPadding,
+                                -hoverPic.height()/2,
+                                hoverPic.width(),
+                                hoverPic.height(),
+                                hoverPic);
+        else
+            painter->drawPixmap(w/2 - leftPadding,
+                                -normalPic.height()/2,
+                                normalPic.width(),
+                                normalPic.height(),
+                                normalPic);
+
     }
 }
 
@@ -305,6 +347,8 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     DFileMenu *menu;
     if(m_isDefault)
         menu = FileMenuManager::createDefaultBookMarkMenu();
+    else if(m_isDisk)
+        menu = FileMenuManager::createDiskLeftBarMenu();
     else
         menu = FileMenuManager::createCustomBookMarkMenu();
     QList<QString> urls;
