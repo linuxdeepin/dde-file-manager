@@ -387,12 +387,17 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     QList<QString> urls;
     urls.append(m_url);
     menu->setUrls(urls);
-    menu->deleteLater();
+
+    QPointer<DBookmarkItem> me = this;
+
     menu->exec(QCursor::pos());
-    m_isMenuOpened = false;
-    m_hovered = false;
-    update();
-    event->accept();
+    menu->deleteLater();
+
+    if(me) {
+        m_isMenuOpened = false;
+        m_hovered = false;
+        update();
+    }
 }
 
 void DBookmarkItem::setDraggable(bool b)

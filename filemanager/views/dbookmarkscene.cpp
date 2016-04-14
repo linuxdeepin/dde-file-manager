@@ -240,6 +240,7 @@ void DBookmarkScene::bookmarkRemoved(const QString &url)
     {
         if(url == m_items.at(i)->getUrl())
         {
+            bookmarkManager->removeBookmark(m_items.at(i)->text(), m_items.at(i)->getUrl());
             remove(m_items.at(i));
             break;
         }
