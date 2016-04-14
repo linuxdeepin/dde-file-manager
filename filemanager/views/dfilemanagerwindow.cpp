@@ -190,14 +190,12 @@ void DFileManagerWindow::showMinimized()
 
 void DFileManagerWindow::resizeEvent(QResizeEvent *event)
 {  
-    m_titleFrame->setMaximumWidth(rect().width() - LEFTSIDEBAR_MAX_WIDTH);
+    m_titleFrame->setMaximumWidth(rect().width() - LEFTSIDEBAR_MIN_WIDTH);
     DMovableMainWindow::resizeEvent(event);
 }
 
 void DFileManagerWindow::keyPressEvent(QKeyEvent *event)
 {
-//    m_toolbar->m_searchBar->setFocus();
-//    m_toolbar->m_searchBar->keyPressEvent(e);
     DMovableMainWindow::keyPressEvent(event);
 }
 
