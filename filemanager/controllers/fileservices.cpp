@@ -339,6 +339,7 @@ QList<AbstractFileController*> FileServices::getHandlerTypeByUrl(const QString &
 
 void FileServices::openUrl(const FMEvent &event) const
 {
+    qDebug() << event;
     AbstractFileInfo *fileInfo = createFileInfo(event.fileUrl());
 
     if(fileInfo && fileInfo->isDir()) {

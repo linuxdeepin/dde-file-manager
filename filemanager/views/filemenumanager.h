@@ -66,7 +66,7 @@ public:
     static DFileMenu *createRecentLeftBarMenu(const QVector<MenuAction> &disableList = QVector<MenuAction>());
     static DFileMenu *createRecentFileMenu(const QVector<MenuAction> &disableList = QVector<MenuAction>());
     static DFileMenu *createRecentViewSpaceAreaMenu(const QVector<MenuAction> &disableList = QVector<MenuAction>());
-    static DFileMenu *createDefaultBookMarkMenu(const QVector<MenuAction> &disableList = QVector<MenuAction>());
+    static DFileMenu *createDefaultBookMarkMenu();
     static DFileMenu *createCustomBookMarkMenu(const QVector<MenuAction> &disableList = QVector<MenuAction>());
     static DFileMenu *createTrashLeftBarMenu(const QVector<MenuAction> &disableList = QVector<MenuAction>());
     static DFileMenu *createTrashFileMenu(const QVector<MenuAction> &disableList = QVector<MenuAction>());

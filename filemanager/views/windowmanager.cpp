@@ -38,6 +38,7 @@ void WindowManager::showNewWindow(const QString &url)
     }
     connect(window, &DFileManagerWindow::aboutToClose,
             this, &WindowManager::onWindowClosed);
+    qDebug() << "new window" << window->winId();
     int winId = window->winId();
     m_windows.insert(window, winId);
     qDebug() << m_windows;
