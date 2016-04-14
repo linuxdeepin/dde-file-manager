@@ -277,7 +277,7 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     Q_UNUSED(event);
     if(m_group && m_pressed)
     {
-        emit m_group->url(m_url);
+        emit m_group->url("file://" + m_url);
     }
     m_pressed = false;
     update();
