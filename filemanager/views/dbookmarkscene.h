@@ -27,8 +27,9 @@ public:
     void addSeparator();
     DBookmarkItemGroup * getGroup();
     int count();
+    int windowId();
+    DBookmarkItem * hasBookmarkItem(const QString &url);
 protected:
-    void changed(const QList<QRectF> &region);
     void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
     void dragLeaveEvent(QGraphicsSceneDragDropEvent *event);
     void dropEvent(QGraphicsSceneDragDropEvent *event);
@@ -44,13 +45,14 @@ public slots:
     void bookmarkMounted(int fd);
     void deviceAdded(DeviceInfo &deviceInfos);
     void deviceRemoved(DeviceInfo &deviceInfos);
+    void doBookmarkRemoved(const FMEvent &event);
+    void doBookmarkAdded(const QString &name, const FMEvent &event);
 private:
     void increaseSize();
     void decreaseSize();
     DBookmarkRootItem * m_rootItem;
     DBookmarkItemGroup * m_itemGroup;
     QList<DBookmarkItem *> m_items;
-    DBookmarkItem * hasBookmarkItem(const QString &path);
     double m_totalHeight = 0;
 };
 

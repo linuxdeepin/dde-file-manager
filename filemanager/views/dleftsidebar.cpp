@@ -289,11 +289,13 @@ void DLeftSideBar::resizeEvent(QResizeEvent *e)
     QFrame::resizeEvent(e);
 }
 
-void DLeftSideBar::handleLocationChanged(const QString &url)
+void DLeftSideBar::handleLocationChanged(const FMEvent &e)
 {
+    if(e.windowId() != WindowManager::getWindowId(window()))
+        return;
     FMEvent event;
 
-    event = url;
+    event = e.fileUrl();
     event = FMEvent::FileView;
     event = WindowManager::getWindowId(window());
 

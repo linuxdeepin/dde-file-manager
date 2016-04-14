@@ -15,6 +15,7 @@
 #include "../../deviceinfo/devicelistener.h"
 #include "../shutil/mimesappsmanager.h"
 
+
 #include <QFontMetrics>
 #include <QTextOption>
 #include <QTextLayout>

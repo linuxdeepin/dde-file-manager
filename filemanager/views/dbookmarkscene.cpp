@@ -12,6 +12,7 @@
 #include "../app/filesignalmanager.h"
 #include "../../deviceinfo/deviceinfo.h"
 #include "dbookmarkline.h"
+#include "windowmanager.h"
 
 DBookmarkScene::DBookmarkScene()
 {
@@ -21,13 +22,19 @@ DBookmarkScene::DBookmarkScene()
     QGraphicsScene::addItem(m_rootItem);
     connect(fileSignalManager, &FileSignalManager::currentUrlChanged,
             this, &DBookmarkScene::currentUrlChanged);
-    connect(fileSignalManager, &FileSignalManager::requestBookmarkRemove,
-            this, &DBookmarkScene::bookmarkRemoved);
     connect(fileSignalManager, &FileSignalManager::deviceAdded, this, &DBookmarkScene::deviceAdded);
     connect(fileSignalManager, &FileSignalManager::deviceRemoved, this, &DBookmarkScene::deviceRemoved);
     connect(fileSignalManager, &FileSignalManager::deviceMounted, this, &DBookmarkScene::bookmarkMounted);
+    connect(fileSignalManager, &FileSignalManager::requestBookmarkRemove, this, &DBookmarkScene::doBookmarkRemoved);
+    connect(fileSignalManager, &FileSignalManager::requestBookmarkAdd, this, &DBookmarkScene::doBookmarkAdded);
 }
 
+/**
+ * @brief DBookmarkScene::addItem
+ * @param item
+ *
+ * Add an item with the given item.
+ */
 void DBookmarkScene::addItem(DBookmarkItem *item)
 {
     double w = width();
@@ -42,6 +49,17 @@ void DBookmarkScene::addItem(DBookmarkItem *item)
     increaseSize();
 }
 
+/**
+ * @brief DBookmarkScene::insert
+ * @param index
+ * @param item
+ *
+ * Insert an item before the item of the given index.
+ * If the given index is the last one, the item will
+ * be added as the last item. The function will do
+ * nothing if the given index is greater than the size
+ * of the list of added items.
+ */
 void DBookmarkScene::insert(int index, DBookmarkItem *item)
 {
     if(index > m_items.size())
@@ -87,6 +105,13 @@ void DBookmarkScene::remove(int index)
     Q_UNUSED(index)
 }
 
+/**
+ * @brief DBookmarkScene::clear
+ * @param item
+ *
+ * Clear the given item from the item list.
+ * Note that the given item will not be deleted.
+ */
 void DBookmarkScene::clear(DBookmarkItem *item)
 {
     int i = m_items.indexOf(item);
@@ -104,6 +129,13 @@ void DBookmarkScene::clear(DBookmarkItem *item)
     m_totalHeight -= BOOKMARK_ITEM_HEIGHT;
 }
 
+/**
+ * @brief DBookmarkScene::remove
+ * @param item
+ *
+ * Remove the given item from the item list.
+ * Note that the item will be deleted.
+ */
 void DBookmarkScene::remove(DBookmarkItem *item)
 {
     int i = m_items.indexOf(item);
@@ -130,6 +162,13 @@ void DBookmarkScene::setSceneRect(qreal x, qreal y, qreal w, qreal h)
     QGraphicsScene::setSceneRect(x, y, w, h);
 }
 
+
+/**
+ * @brief DBookmarkScene::addSeparator
+ *
+ * Add a separator line after the last item
+ * of the item list.
+ */
 void DBookmarkScene::addSeparator()
 {
     double w = width();
@@ -143,23 +182,42 @@ void DBookmarkScene::addSeparator()
     increaseSize();
 }
 
+/**
+ * @brief DBookmarkScene::getGroup
+ * @return
+ *
+ * Return the group of all the added items.
+ */
 DBookmarkItemGroup *DBookmarkScene::getGroup()
 {
     return m_itemGroup;
 }
 
+/**
+ * @brief DBookmarkScene::count
+ * @return
+ *
+ * Return the size of the item list.
+ */
 int DBookmarkScene::count()
 {
     return m_items.size();
 }
 
-void DBookmarkScene::changed(const QList<QRectF> &region)
+int DBookmarkScene::windowId()
 {
-    Q_UNUSED(region)
-
-    qDebug() << "scene changed";
+    return WindowManager::getWindowId(views().at(0)->window());
 }
 
+/**
+ * @brief DBookmarkScene::dragEnterEvent
+ * @param event
+ *
+ * A dummy item will be temporarily added
+ * if a drag carrying valid url has occured.
+ * Note that a separator line will be added
+ * if no custom bookmark exists in the list.
+ */
 void DBookmarkScene::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 {
     emit dragEntered();
@@ -187,6 +245,13 @@ void DBookmarkScene::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
     }
 }
 
+/**
+ * @brief DBookmarkScene::dragLeaveEvent
+ * @param event
+ *
+ * The dummy item will be cleared(not be deleted)
+ * as the drag has left out of the scene area.
+ */
 void DBookmarkScene::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
 {
     emit dragLeft();
@@ -194,12 +259,27 @@ void DBookmarkScene::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
     clear(m_rootItem->getDummyItem());
 }
 
+/**
+ * @brief DBookmarkScene::dropEvent
+ * @param event
+ *
+ * The dummy item will be cleared(not be deleted)
+ * as drop event has occured.
+ */
 void DBookmarkScene::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
     QGraphicsScene::dropEvent(event);
     clear(m_rootItem->getDummyItem());
 }
 
+/**
+ * @brief DBookmarkScene::doDragFinished
+ * @param point
+ * @param item
+ *
+ * The dragged item will be removed when it's not
+ * located inside the scene area.
+ */
 void DBookmarkScene::doDragFinished(const QPointF &point, DBookmarkItem *item)
 {
     QGraphicsView * view = this->views().at(0);
@@ -211,6 +291,12 @@ void DBookmarkScene::doDragFinished(const QPointF &point, DBookmarkItem *item)
     if(!rect.contains(p))
     {
         bookmarkManager->removeBookmark(item->text(), item->getUrl());
+        FMEvent event;
+        event = FMEvent::LeftSideBar;
+        event = item->getUrl();
+        event = item->windowId();
+
+        emit fileSignalManager->requestBookmarkRemove(event);
         remove(item);
         if(count() == DEFAULT_ITEM_COUNT)
             remove(m_items.last());
@@ -219,7 +305,8 @@ void DBookmarkScene::doDragFinished(const QPointF &point, DBookmarkItem *item)
 
 void DBookmarkScene::currentUrlChanged(const FMEvent &event)
 {
-//    qDebug() << event.dir << event.source;
+    if(event.windowId() != windowId())
+        return;
     if(event.source() == FMEvent::FileView)
     {
         for(int i = 0; i < m_items.size(); i++)
@@ -234,21 +321,15 @@ void DBookmarkScene::currentUrlChanged(const FMEvent &event)
     }
 }
 
+
 void DBookmarkScene::bookmarkRemoved(const QString &url)
 {
-    for(int i = 0; i < m_items.size(); i++)
-    {
-        if(url == m_items.at(i)->getUrl())
-        {
-            bookmarkManager->removeBookmark(m_items.at(i)->text(), m_items.at(i)->getUrl());
-            remove(m_items.at(i));
-            break;
-        }
-    }
+
 }
 
 void DBookmarkScene::bookmarkMounted(int fd)
 {
+    Q_UNUSED(fd);
     qDebug() << "bookmark mounted";
     QStringList mtabMounts;
     QFile mtab("/etc/mtab");
@@ -279,12 +360,14 @@ void DBookmarkScene::bookmarkMounted(int fd)
 
 void DBookmarkScene::deviceAdded(DeviceInfo &deviceInfos)
 {
+    Q_UNUSED(deviceInfos);
     //DBookmarkItem * item = new DBookmarkItem(&deviceInfos);
     //this->insert(11, item);
 }
 
 void DBookmarkScene::deviceRemoved(DeviceInfo &deviceInfos)
 {
+    Q_UNUSED(deviceInfos);
 //    QString localPath = deviceInfos.getSysPath();
 //    foreach(DBookmarkItem * item, m_items)
 //    {
@@ -293,7 +376,44 @@ void DBookmarkScene::deviceRemoved(DeviceInfo &deviceInfos)
 //            remove(item);
 //            return;
 //        }
-//    }
+    //    }
+}
+
+
+/**
+ * @brief DBookmarkScene::bookmarkRemoved
+ * @param url
+ *
+ * Remove the custom bookmark with the given url.
+ */
+void DBookmarkScene::doBookmarkRemoved(const FMEvent &event)
+{
+    if(event.windowId() == windowId())
+        return;
+    for(int i = 0; i < m_items.size(); i++)
+    {
+        if(event.fileUrl() == m_items.at(i)->getUrl())
+        {
+            DBookmarkItem * item = m_items.at(i);
+            remove(item);
+
+            if(count() == DEFAULT_ITEM_COUNT)
+                remove(m_items.last());
+            break;
+        }
+    }
+}
+
+void DBookmarkScene::doBookmarkAdded(const QString &name, const FMEvent &event)
+{
+    if(event.windowId() == windowId())
+        return;
+
+    DBookmarkItem * item = DBookmarkItem::makeBookmark(name, event.fileUrl());
+
+    if(count() == DEFAULT_ITEM_COUNT - 1)
+        addSeparator();
+    insert(DEFAULT_ITEM_COUNT, item);
 }
 
 void DBookmarkScene::increaseSize()
@@ -302,7 +422,7 @@ void DBookmarkScene::increaseSize()
     {
         double w = sceneRect().width();
         setSceneRect(0, 0, w, m_totalHeight + BOOKMARK_ITEM_HEIGHT * 2);
-        views().at(0)->setGeometry(0, 0, w, m_totalHeight + BOOKMARK_ITEM_HEIGHT * 2);
+        views().at(0)->resize(w, m_totalHeight + BOOKMARK_ITEM_HEIGHT * 2);
     }
 }
 
@@ -316,13 +436,11 @@ void DBookmarkScene::decreaseSize()
     }
 }
 
-DBookmarkItem *DBookmarkScene::hasBookmarkItem(const QString &path)
+DBookmarkItem *DBookmarkScene::hasBookmarkItem(const QString &url)
 {
-    QString localPath = path;
     foreach(DBookmarkItem * item, m_items)
     {
-        QString str = localPath.replace("/dev","");
-        if(item->getSysPath().contains(str))
+        if(item->getUrl() == url)
         {
             return item;
         }
