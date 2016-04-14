@@ -10,12 +10,18 @@
 #define MARGIN_IMAGE_BOUND 5
 
 class DBookmarkItemGroup;
+class DeviceInfo;
+class BookMark;
 
 class DBookmarkItem : public QObject, public QGraphicsItem
 {
     Q_OBJECT
 public:
     DBookmarkItem();
+
+    DBookmarkItem(DeviceInfo * deviceInfo);
+
+    DBookmarkItem(BookMark * bookmark);
 
     QRectF boundingRect() const;
 
@@ -87,46 +93,53 @@ protected:
     void dragMoveEvent(QGraphicsSceneDragDropEvent *event);
     void dropEvent(QGraphicsSceneDragDropEvent *event);
 private:
-    bool m_isDefault;
-    bool m_checkable;
-    bool m_checked;
-    bool m_pressed;
-    bool m_hovered;
-    bool m_backgroundEnabled;
-    bool m_isMenuOpened;
+    void init();
 
-    QColor m_hoverBackgroundColor;
-    QColor m_releaseBackgroundColor;
-    QColor m_pressBackgroundColor;
+    DBookmarkItemGroup * m_group = NULL;
 
-    QColor m_textColor;
-    QColor m_backGroundColor;
-
-    int m_x_axis;
-    int m_y_axis;
-    int m_width;
-    int m_height;
-    int m_text_x;
-    int m_text_y;
+    /* default */
+    bool m_isDraggable = false;
+    bool m_pressBackgroundEnabled = false;
+    bool m_releaseBackgroundEnabled = false;
+    bool m_hoverBackgroundEnabled = false;
+    int m_xOffset = 0;
+    int m_yOffset = 0;
+    int m_xPos = 0;
+    int m_yPos = 0;
+    int m_xPress = 0;
+    int m_yPress = 0;
+    int m_xOffsetImage = 0;
+    int m_yOffsetImage = 0;
+    int m_x_axis = 0;
+    int m_y_axis = 0;
+    int m_width = 0;
+    int m_height = 0;
+    int m_text_x = 0;
+    int m_text_y = 0;
+    bool m_checkable = false;
+    bool m_checked = false;
+    bool m_pressed = false;
+    bool m_hovered = false;
+    bool m_backgroundEnabled = false;
+    bool m_isMenuOpened = false;
+    QFont m_font;
     qreal m_adjust;
+    QString m_url;
     QPixmap m_pressImage;
     QPixmap m_releaseImage;
     QPixmap m_hoverImage;
     QString m_textContent;
+    QColor m_hoverBackgroundColor;
+    QColor m_releaseBackgroundColor;
+    QColor m_pressBackgroundColor;
+    QColor m_textColor;
+    QColor m_backGroundColor;
 
-    int m_xOffset, m_yOffset;
-    int m_xPos, m_yPos;
-    int m_xPress, m_yPress;
-    int m_xOffsetImage, m_yOffsetImage;
+    /* bookmark */
+    bool m_isDefault = false;
 
-    bool m_isDraggable;
-    bool m_pressBackgroundEnabled;
-    bool m_releaseBackgroundEnabled;
-    bool m_hoverBackgroundEnabled;
-    QFont m_font;
-    QString m_url;
-    DBookmarkItemGroup * m_group = NULL;
-
+    /* device */
+    bool m_isDisk = false;
     bool m_isMounted = false;
     QString m_deviceLabel;
     QString m_sysPath;

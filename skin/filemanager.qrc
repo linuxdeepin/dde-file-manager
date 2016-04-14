@@ -172,5 +172,8 @@
         <file>images/icons/favourite_normal.svg</file>
         <file>images/icons/favourite_checked.svg</file>
         <file>images/icons/favourite_hover.svg</file>
+        <file>images/icons/unmount_hover.svg</file>
+        <file>images/icons/unmount_normal.svg</file>
+        <file>images/icons/unmount_press.svg</file>
     </qresource>
 </RCC>

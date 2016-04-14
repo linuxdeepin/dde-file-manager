@@ -7,6 +7,7 @@
 #include <QProcess>
 #include <QFile>
 #include <QStorageInfo>
+#include <QMap>
 
 #include <libudev.h>
 #include <stdio.h>
@@ -32,6 +33,7 @@ private:
     udev *m_udev;
     udev_monitor *m_udevMonitor;
     QList<DeviceInfo *> m_deviceInfos;
+    QMap<QString, DeviceInfo *> m_deviceMap;
 
     bool isTargetDevice(udev_device *dev);
     QString mountpoint(udev_device *dev);

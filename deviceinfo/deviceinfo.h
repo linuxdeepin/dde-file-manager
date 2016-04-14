@@ -4,6 +4,7 @@
 #include <QString>
 #include "../filemanager/models/abstractfileinfo.h"
 
+#define BYTES_PER_BLOCK 512
 
 class DeviceInfo : public AbstractFileInfo
 {

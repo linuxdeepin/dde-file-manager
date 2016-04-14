@@ -110,6 +110,8 @@ DeviceInfo * DeviceListener::addDevice(udev_device *dev)
         return NULL;
     }
     const char *path = udev_device_get_syspath(dev);
+    if(m_deviceMap.contains(path))
+        return NULL;
     QString mountPath = mountPoint(dev);
     QStorageInfo info(mountPath);
     QString label = info.displayName();
@@ -117,6 +119,7 @@ DeviceInfo * DeviceListener::addDevice(udev_device *dev)
     QString size = udev_device_get_sysattr_value(dev, "size");
     DeviceInfo * device = new DeviceInfo(mountPath, path, label, deviceLabel(dev), uuid, size);
     m_deviceInfos.append(device);
+    m_deviceMap.insert(path, device);
     return device;
 }
 
@@ -129,6 +132,7 @@ DeviceInfo * DeviceListener::removeDevice(udev_device *dev)
         if(info->getSysPath() == path)
         {
             m_deviceInfos.removeOne(info);
+            m_deviceMap.remove(path);
             return info;
         }
     }

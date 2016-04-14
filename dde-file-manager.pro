@@ -109,7 +109,8 @@ HEADERS += \
     filemanager/app/singleapplication.h \
     filemanager/app/logutil.h \
     filemanager/models/trashfileinfo.h \
-    filemanager/shutil/mimesappsmanager.h
+    filemanager/shutil/mimesappsmanager.h \
+    filemanager/views/dbookmarkline.h
 
 SOURCES += \
     filemanager/controllers/appcontroller.cpp \
@@ -181,7 +182,8 @@ SOURCES += \
     filemanager/app/singleapplication.cpp \
     filemanager/app/logutil.cpp \
     filemanager/models/trashfileinfo.cpp \
-    filemanager/shutil/mimesappsmanager.cpp
+    filemanager/shutil/mimesappsmanager.cpp \
+    filemanager/views/dbookmarkline.cpp
 
 INCLUDEPATH += filemanager/models
 

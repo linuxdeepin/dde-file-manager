@@ -54,8 +54,7 @@ void DLeftSideBar::initData()
                << ":/icons/images/icons/download_normal_16px.svg" //download
 
                << ":/icons/images/icons/trash_normal_16px.svg" //trash
-               << ":/icons/images/icons/disk_normal_16px.svg" //disk
-               << ":/icons/images/icons/phone_normal_16px.svg"; //my mobile
+               << ":/icons/images/icons/disk_normal_16px.svg"; //disk
 
     m_bigIconlist << ":/icons/images/icons/file_normal_22px.svg" //file
                   << ":/icons/images/icons/recent_normal_22px.svg" //recent
@@ -69,7 +68,6 @@ void DLeftSideBar::initData()
 
                   << ":/icons/images/icons/trash_normal_22px.svg" //trash
                   << ":/icons/images/icons/disk_normal_22px.svg" //disk
-                  << ":/icons/images/icons/phone_normal_22px.svg" //my mobile
                   << ":/icons/images/icons/favourite_normal.svg"; //bookmarks
 
     m_bigIconlistChecked << ":/icons/images/icons/file_checked_22px.svg" //file
@@ -84,7 +82,6 @@ void DLeftSideBar::initData()
 
                          << ":/icons/images/icons/trash_checked_22px.svg" //trash
                          << ":/icons/images/icons/disk_checked_22px.svg" //disk
-                         << ":/icons/images/icons/phone_checked_22px.svg" //my mobile
                          << ":/icons/images/icons/favourite_checked.svg"; //bookmarks
 
     m_iconlistChecked << ":/icons/images/icons/file_checked_16px.svg" //file
@@ -98,12 +95,11 @@ void DLeftSideBar::initData()
                << ":/icons/images/icons/download_checked_16px.svg" //download
 
                << ":/icons/images/icons/trash_checked_16px.svg" //trash
-               << ":/icons/images/icons/disk_checked_16px.svg" //disk
-               << ":/icons/images/icons/phone_checked_16px.svg"; //my mobile
+               << ":/icons/images/icons/disk_checked_16px.svg"; //disk
 
     m_nameList << "File" << "Recent" << "Home"  << "Desktop"
                << "Videos" << "Musics" << "Pictures" << "Documents" << "Downloads"
-               << "Trash" << "Disks" << "My Mobile" << "Bookmarks";
+               << "Trash" << "Disks" << "Bookmarks";
     m_navState = true;
     setAcceptDrops(true);
 }
@@ -214,7 +210,19 @@ void DLeftSideBar::initNav()
     m_scene->setSceneRect(0, 0, 200, 500);
     m_view->setScene(m_scene);
 
-    for(int i = 1; i < m_iconlist.size(); i++)
+    for(int i = 1; i <= 9; i++)
+    {
+        DBookmarkItem * item = new DBookmarkItem;
+        item->boundImageToHover(m_iconlistChecked.at(i));
+        item->boundImageToPress(m_iconlistChecked.at(i));
+        item->boundImageToRelease(m_iconlist.at(i));
+        item->setText(m_nameList.at(i));
+        item->setUrl(getStandardPathbyId(i));
+        item->setDefaultItem(true);
+        m_scene->addItem(item);
+    }
+    m_scene->addSeparator();
+    for(int i = 10; i <m_iconlist.size(); i++)
     {
         DBookmarkItem * item = new DBookmarkItem;
         item->boundImageToHover(m_iconlistChecked.at(i));
@@ -327,16 +335,10 @@ void DLeftSideBar::doDragLeave()
 void DLeftSideBar::loadBookmark()
 {
     QList<BookMark *> m_list = bookmarkManager->getBookmarks();
-    qDebug() << m_list;
     for(int i = 0; i < m_list.size(); i++)
     {
         BookMark * bm = m_list.at(i);
-        DBookmarkItem * item = new DBookmarkItem;
-        item->boundImageToHover(":/icons/images/icons/bookmarks_hover_16px.svg");
-        item->boundImageToPress(":/icons/images/icons/bookmarks_checked_16px.svg");
-        item->boundImageToRelease(":/icons/images/icons/bookmarks_normal_16px.svg");
-        item->setText(bm->getName());
-        item->setUrl(bm->getUrl());
+        DBookmarkItem * item = new DBookmarkItem(bm);
         m_scene->addItem(item);
     }
 }
@@ -346,16 +348,9 @@ void DLeftSideBar::loadDevices()
     QList<DeviceInfo *> m_list = deviceListener->loadDeivces();
     for(int i = 0; i < m_list.size(); i++)
     {
-        DeviceInfo * bm = m_list.at(i);
-        DBookmarkItem * item = new DBookmarkItem;
-        item->boundImageToHover(":/icons/images/icons/disk_hover_16px.svg");
-        item->boundImageToPress(":/icons/images/icons/disk_checked_16px.svg");
-        item->boundImageToRelease(":/icons/images/icons/disk_normal_16px.svg");
-        item->setText(bm->getLabel());
-        item->setUrl(bm->getMountPath());
-        item->setDeviceLabel(bm->getDeviceLabel());
-        item->setSysPath(bm->getSysPath());
-        m_scene->addItem(item);
+        DeviceInfo * deviceInfo = m_list.at(i);
+        DBookmarkItem * item = new DBookmarkItem(deviceInfo);
+        m_scene->insert(11, item);
     }
     m_scene->bookmarkMounted(0);
 }
