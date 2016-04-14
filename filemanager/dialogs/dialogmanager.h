@@ -6,6 +6,7 @@
 
 class DTaskDialog;
 class FileJob;
+class AbstractFileInfo;
 
 
 class DialogManager : public QObject
@@ -27,6 +28,8 @@ public slots:
     void abortJob(const QMap<QString, QString> &jobDetail);
 
     void showUrlWrongDialog(const QString& url);
+    void showOpenWithDialog(const QString& url);
+    void showPropertyDialog(const QString &url);
 
 private:
     DTaskDialog* m_taskDialog = NULL;

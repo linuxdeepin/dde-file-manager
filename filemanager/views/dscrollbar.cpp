@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <QWheelEvent>
 #include <QPalette>
+#include "utils/utils.h"
 
 
 DScrollBar::DScrollBar(QWidget *parent)

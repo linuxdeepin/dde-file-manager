@@ -96,7 +96,7 @@ bool FileServices::openFile(const QString &fileUrl) const
                  }
              })
 
-    return false;
+            return false;
 }
 
 bool FileServices::copyFiles(const QList<QString> &urlList) const

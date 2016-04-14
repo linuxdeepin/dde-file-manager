@@ -451,7 +451,9 @@ void FileMenuManager::actionTriggered(DAction *action)
     case OpenInNewWindow:
         fileService->openNewWindow(fileUrl);
         break;
-    case OpenWith:break;
+    case OpenWith:
+        emit fileSignalManager->requestShowOpenWithDialog(fileUrl);
+        break;
     case OpenFileLocation:
         fileService->openFileLocation(fileUrl);
         break;
@@ -526,22 +528,7 @@ void FileMenuManager::actionTriggered(DAction *action)
         emit fileSignalManager->requestViewSort(menu->getWindowId(), Global::FileLastModified);
         break;
     case Property: {
-        PropertyDialog *dialog = new PropertyDialog(menu->fileInfo());
-
-        dialog->setAttribute(Qt::WA_DeleteOnClose);
-        dialog->setWindowFlags(dialog->windowFlags()
-                               &~ Qt::WindowMaximizeButtonHint
-                               &~ Qt::WindowMinimizeButtonHint
-                               &~ Qt::WindowSystemMenuHint);
-        dialog->setTitle("");
-        dialog->setFixedSize(QSize(320, 480));
-
-        QRect dialog_geometry = dialog->geometry();
-
-        dialog_geometry.moveCenter(qApp->primaryScreen()->geometry().center());
-        dialog->move(dialog_geometry.topLeft());
-        dialog->show();
-
+        emit fileSignalManager->requestShowPropertyDialog(fileUrl);
         break;
     }
     case Help:break;

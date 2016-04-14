@@ -8,6 +8,7 @@
 #include <QMap>
 #include <QFileInfo>
 #include <QFileSystemWatcher>
+#include "desktopfile.h"
 
 
 class MimeAppsWorker: public QObject
@@ -40,14 +41,17 @@ public:
 
     static QStringList DesktopFiles;
     static QMap<QString, QStringList> MimeApps;
+    static QMap<QString, DesktopFile> DesktopObjs;
 
+    static QString getMimeTypeByFileName(const QString& fileName);
     static QString getDefaultAppByFileName(const QString& fileName);
     static QString getDefaultAppByMimeType(const QMimeType& mimeType);
     static QString getDefaultAppByMimeType(const QString& mimeType);
 
     static QStringList getApplicationsFolders();
     static QStringList getDesktopFiles();
-    static QMap<QString, QStringList> getMimeTypeApps(const QStringList& desktopFiles);
+    static QMap<QString, DesktopFile> getDesktopObjs();
+    static QMap<QString, QStringList> getMimeTypeApps();
     static bool lessByDateTime(const QFileInfo& f1,  const QFileInfo& f2);
 
 signals:

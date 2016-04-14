@@ -89,6 +89,12 @@ signals:
     /*request show url wrong dialog*/
     void requestShowUrlWrongDialog(const QString& url);
 
+    /*request show PropertyDialog*/
+    void requestShowOpenWithDialog(const QString& url);
+
+    /*request show PropertyDialog*/
+    void requestShowPropertyDialog(const QString& url);
+
     /* request select file view item*/
     void requestSelectFile(const FMEvent &event);
 };

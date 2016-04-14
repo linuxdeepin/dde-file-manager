@@ -22,6 +22,7 @@ FileManagerApp::FileManagerApp(QObject *parent) : QObject(parent)
     initController();
     initGtk();
     initConnect();
+    mimeAppsManager->getMimeTypeApps();
 }
 
 FileManagerApp::~FileManagerApp()

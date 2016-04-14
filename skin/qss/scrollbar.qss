@@ -1,0 +1,31 @@
+QScrollBar#DScrollBar:vertical{
+     border: 0px;
+     background: transparent;
+     width: 6px;
+}
+
+QScrollBar#DScrollBar::handle:vertical:hover{
+     background: rgba(16,16,16,0.7);
+}
+
+QScrollBar#DScrollBar::handle:vertical{
+     border: 0px;
+     background-color: rgba(16,16,16,0.5);
+     width: 6px;
+}
+
+QScrollBar#DScrollBar::add-line:vertical {
+      border: none;
+      background: none;
+}
+
+QScrollBar#DScrollBar::sub-line:vertical {
+      border: none;
+      background: none;
+}
+
+QScrollBar#DScrollBar::up-arrow:vertical, QScrollBar#DScrollBar::down-arrow:vertical {
+     width: 0px;
+     height: 0px;
+     background: transparent;
+}
