@@ -61,6 +61,7 @@ public:
 public slots:
     void cd(const FMEvent &event);
     void edit(const FMEvent &event);
+    void select(const FMEvent &event);
     void switchToListMode();
     void switchToIconMode();
     void sort(int windowId, int role);

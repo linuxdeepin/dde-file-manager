@@ -375,22 +375,25 @@ bool DFileSystemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
     bool success = true;
     QString toUrl = getUrlByIndex(parent);
 
-    qDebug() << toUrl;
-
     QList<QString> urlList;
 
     for(const QUrl &url : data->urls()) {
         urlList << url.toString();
     }
 
+    FMEvent event;
+
+    event = this->parent()->windowId();
+    event = toUrl;
+
     switch (action) {
     case Qt::CopyAction:
-        fileService->pasteFile(AbstractFileController::CopyType, urlList, toUrl);
+        fileService->pasteFile(AbstractFileController::CopyType, urlList, event);
         break;
     case Qt::LinkAction:
         break;
     case Qt::MoveAction:
-        fileService->pasteFile(AbstractFileController::CutType, urlList, toUrl);
+        fileService->pasteFile(AbstractFileController::CutType, urlList, event);
         break;
     default:
         return false;

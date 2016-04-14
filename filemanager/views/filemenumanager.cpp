@@ -460,9 +460,16 @@ void FileMenuManager::actionTriggered(DAction *action)
     case Copy:
         fileService->copyFiles(urls);
         break;
-    case Paste:
-        fileService->pasteFile(fileUrl);
+    case Paste: {
+        FMEvent event;
+
+        event = fileUrl;
+        event = FMEvent::Menu;
+        event = menu->getWindowId();
+
+        fileService->pasteFile(event);
         break;
+    }
     case Rename: {
         FMEvent event;
 
