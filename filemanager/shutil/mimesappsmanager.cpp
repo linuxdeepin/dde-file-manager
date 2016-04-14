@@ -5,19 +5,72 @@
 #include <QMimeDatabase>
 #include <QDirIterator>
 #include <QDateTime>
+#include <QThread>
 #include <QDebug>
 #include "desktopfile.h"
 
 
-MimesAppsManager::MimesAppsManager()
+QStringList MimesAppsManager::DesktopFiles = {};
+QMap<QString, QStringList> MimesAppsManager::MimeApps = {};
+
+MimeAppsWorker::MimeAppsWorker(QObject *parent): QObject(parent)
+{
+    m_fileSystemWatcher = new QFileSystemWatcher;
+    startWatch();
+    initConnect();
+}
+
+MimeAppsWorker::~MimeAppsWorker()
 {
 
+}
+
+void MimeAppsWorker::initConnect()
+{
+    connect(m_fileSystemWatcher, &QFileSystemWatcher::directoryChanged, this, &MimeAppsWorker::handleDirectoryChanged);
+    connect(m_fileSystemWatcher, &QFileSystemWatcher::fileChanged, this, &MimeAppsWorker::handleDirectoryChanged);
+}
+
+void MimeAppsWorker::startWatch()
+{
+    m_fileSystemWatcher->addPaths(MimesAppsManager::getDesktopFiles());
+}
+
+void MimeAppsWorker::handleDirectoryChanged()
+{
+    updateCache();
+}
+
+void MimeAppsWorker::handleFileChanged()
+{
+    updateCache();
+}
+
+void MimeAppsWorker::updateCache()
+{
+    MimesAppsManager::DesktopFiles = MimesAppsManager::getDesktopFiles();
+    MimesAppsManager::MimeApps = MimesAppsManager::getMimeTypeApps(MimesAppsManager::DesktopFiles);
+    qDebug() << MimesAppsManager::MimeApps.value("text/plain");
+    qDebug() << MimesAppsManager::DesktopFiles;
+}
+
+
+
+MimesAppsManager::MimesAppsManager(QObject *parent): QObject(parent)
+{
+    m_mimeAppsWorker = new MimeAppsWorker;
+    connect(this, &MimesAppsManager::requestUpdateCache, m_mimeAppsWorker, &MimeAppsWorker::updateCache);
+    QThread* mimeAppsThread = new QThread;
+    m_mimeAppsWorker->moveToThread(mimeAppsThread);
+    mimeAppsThread->start();
+    emit requestUpdateCache();
 }
 
 MimesAppsManager::~MimesAppsManager()
 {
 
 }
+
 
 QString MimesAppsManager::getDefaultAppByFileName(const QString& fileName){
     QMimeDatabase db;
@@ -58,35 +111,42 @@ QString MimesAppsManager::getDefaultAppByMimeType(const QString &mimeType)
 
     QString app = "";
     foreach( QString file, files) {
-        QSettings defaults(file, QSettings::IniFormat);
-        QString app;
+        if (QFile(file).exists()){
+            QSettings defaults(file, QSettings::IniFormat);
+            QString app;
 
-        app = defaults.value(QString("Added Associations/%1" ).arg(mimeType)).toString();
-        if (app.length() > 0){
-            return app;
-        }
+            app = defaults.value(QString("Added Associations/%1" ).arg(mimeType)).toString();
+            if (app.length() > 0){
+                return app;
+            }
 
-        app = defaults.value(QString("Default Applications/%1" ).arg(mimeType)).toString();
-        if (app.length() > 0){
-            return app;
-        }
+            app = defaults.value(QString("Default Applications/%1" ).arg(mimeType)).toString();
+            if (app.length() > 0){
+                return app;
+            }
 
-        app = defaults.value(QString("MIME Cache/%1" ).arg(mimeType)).toString();
-        if (app.length() > 0){
-            return app;
+            app = defaults.value(QString("MIME Cache/%1" ).arg(mimeType)).toString();
+            if (app.length() > 0){
+                return app;
+            }
         }
     }
     return app;
 }
 
+QStringList MimesAppsManager::getApplicationsFolders()
+{
+    QStringList desktopFolders;
+    desktopFolders << QString("/usr/share/applications")
+                   << QDir::homePath() + QString( "/.local/share/applications" );
+    return desktopFolders;
+}
+
 QStringList MimesAppsManager::getDesktopFiles()
 {
-      QStringList desktopFolders;
-      desktopFolders << QString("/usr/share/applications")
-                     << QDir::homePath() + QString( "/.local/share/applications" );
       QStringList desktopFiles;
 
-      foreach (QString desktopFolder, desktopFolders) {
+      foreach (QString desktopFolder, getApplicationsFolders()) {
           QDirIterator it(desktopFolder, QStringList("*.desktop"),
                           QDir::Files | QDir::NoDotAndDotDot,
                           QDirIterator::Subdirectories);
@@ -98,10 +158,10 @@ QStringList MimesAppsManager::getDesktopFiles()
       return desktopFiles;
 }
 
-QMap<QString, QStringList> MimesAppsManager::getMimeTypeApps()
+QMap<QString, QStringList> MimesAppsManager::getMimeTypeApps(const QStringList& desktopFiles)
 {
     QMap<QString, QSet<QString>> mimeAppsSet;
-    foreach (QString f, MimesAppsManager::getDesktopFiles()) {
+    foreach (QString f, desktopFiles) {
         DesktopFile desktopFile(f);
         QStringList mimeTypes = desktopFile.getMimeType();
         foreach (QString mimeType, mimeTypes) {
@@ -147,10 +207,4 @@ bool MimesAppsManager::lessByDateTime(const QFileInfo &f1, const QFileInfo &f2)
 }
 
 
-void MimesAppsManager::test()
-{
-    QMap<QString, QStringList> mimeApps = getMimeTypeApps();
-    qDebug() << mimeApps.count();
-    qDebug() << DesktopFile("/usr/share/applications/vlc.desktop").getMimeType();
-    qDebug() << mimeApps.value("audio/x-mp3");
-}
+

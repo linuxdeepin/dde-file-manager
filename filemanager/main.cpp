@@ -27,6 +27,8 @@ int main(int argc, char *argv[])
     app.setApplicationName(QObject::tr("dde-file-manager"));
     app.setApplicationVersion("v1.0");
 
+//    MimesAppsManager();
+
     CommandLineManager::instance()->process();
 
     QString commandlineUrl;
@@ -38,8 +40,6 @@ int main(int argc, char *argv[])
     } else {
         commandlineUrl = QUrl::fromLocalFile(QDir::homePath()).toString();
     }
-
-    MimesAppsManager::test();
 
     QString uniqueKey = "dde-file-manager";
 

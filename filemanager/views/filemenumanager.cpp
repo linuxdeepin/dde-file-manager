@@ -24,7 +24,7 @@ DFileMenu *FileMenuManager::createFileMenu(const QVector<MenuAction> &disableLis
                << Separator
                << Compress << Separator
                << Copy << Cut
-               << Rename << Delete << CompleteDeletion
+               << Rename << Delete
                << Separator
                << Property;
 
@@ -124,9 +124,10 @@ DFileMenu *FileMenuManager::createRecentViewSpaceAreaMenu(const QVector<MenuActi
     return genereteMenuByKeys(actionKeys, disableList, false, subMenu);
 }
 
-DFileMenu *FileMenuManager::createDefaultBookMarkMenu(const QVector<MenuAction> &disableList)
+DFileMenu *FileMenuManager::createDefaultBookMarkMenu()
 {
     QVector<MenuAction> actionKeys;
+    QVector<MenuAction> disableList;
 
     actionKeys.reserve(7);
 
@@ -137,6 +138,8 @@ DFileMenu *FileMenuManager::createDefaultBookMarkMenu(const QVector<MenuAction> 
                << Rename
                << Separator
                << Property;
+    disableList << Remove
+                << Rename;
 
     return genereteMenuByKeys(actionKeys, disableList);
 }
@@ -441,7 +444,7 @@ void FileMenuManager::actionTriggered(DAction *action)
         event = fileUrl;
         event = FMEvent::Menu;
         event = menu->getWindowId();
-
+        qDebug() << event;
         fileService->openUrl(event);
         break;
     }

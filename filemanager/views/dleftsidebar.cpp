@@ -185,7 +185,7 @@ void DLeftSideBar::initNav()
     m_nav->setLayout(navLayout);
     //add file button
     QHBoxLayout * fileButtonLayout = new QHBoxLayout;
-    QLabel * fileLabel = new QLabel(tr("File"));
+    QLabel * fileLabel = new QLabel(tr("File Manager"));
     fileLabel->setObjectName("FileLabel");
     m_fileButton = new QPushButton("");
     m_fileButton->setObjectName("FileButton");
@@ -282,7 +282,6 @@ QString DLeftSideBar::getStandardPathbyId(int id)
 void DLeftSideBar::resizeEvent(QResizeEvent *e)
 {
     QRect rect = geometry();
-    qDebug() <<"resize = " << rect;
     if(rect.width() < 70 && !m_isTight)
         toTightNav();
     else if(rect.width() > 70 && m_isTight)

@@ -6,10 +6,15 @@
 #include <QApplication>
 #include <QStyleOptionGraphicsItem>
 #include <QGraphicsScene>
+#include <QGraphicsView>
 #include "dfilemenu.h"
 #include "filemenumanager.h"
+
 #include "../../deviceinfo/deviceinfo.h"
 #include "../models/bookmark.h"
+
+#include "windowmanager.h"
+
 
 DBookmarkItem::DBookmarkItem()
 {
@@ -353,6 +358,9 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
         menu = FileMenuManager::createDiskLeftBarMenu();
     else
         menu = FileMenuManager::createCustomBookMarkMenu();
+    QWidget* window = scene()->views().at(0)->window();
+
+    menu->setWindowId(WindowManager::getWindowId(window));
     QList<QString> urls;
     urls.append(m_url);
     menu->setUrls(urls);
