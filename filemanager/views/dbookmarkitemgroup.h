@@ -5,6 +5,7 @@
 #include <QObject>
 
 class DBookmarkItem;
+class FMEvent;
 
 class DBookmarkItemGroup : public QObject
 {
@@ -18,7 +19,7 @@ public:
 private:
     QList<DBookmarkItem *> m_items;
 signals:
-    void url(const QString &url);
+    void url(const FMEvent &e);
 };
 
 #endif // DBOOKMARKITEMGROUP_H

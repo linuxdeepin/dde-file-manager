@@ -20,6 +20,7 @@ class BMListWidget;
 class DBookmarkItem;
 class DBookmarkScene;
 class DBookmarkItemGroup;
+class FMEvent;
 
 
 class DLeftSideBar : public QFrame
@@ -40,7 +41,7 @@ protected:
 signals:
     void moveSplitter(int pos, int index);
 public slots:
-    void handleLocationChanged(const QString &url);
+    void handleLocationChanged(const FMEvent &e);
     void toTightNav();
     void toNormalNav();
     void doDragEnter();

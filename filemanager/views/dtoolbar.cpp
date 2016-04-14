@@ -208,21 +208,26 @@ void DToolBar::searchBarTextEntered()
     emit fileSignalManager->requestChangeCurrentUrl(event);
 }
 
-void DToolBar::crumbSelected(QString path)
+void DToolBar::crumbSelected(const FMEvent &e)
 {
+    if(e.windowId() != WindowManager::getWindowId(window()))
+        return;
+
     FMEvent event;
 
     event = WindowManager::getWindowId(window());
     event = FMEvent::CrumbButton;
-    event = QUrl::fromLocalFile(path).toString();
+    event = QUrl::fromLocalFile(e.fileUrl()).toString();
 
-    qDebug() << QUrl::fromLocalFile(path).toString();
 
     emit fileSignalManager->requestChangeCurrentUrl(event);
 }
 
 void DToolBar::crumbChanged(const FMEvent &event)
 {
+    if(event.windowId() != WindowManager::getWindowId(window()))
+        return;
+
     if(event.source() == FMEvent::CrumbButton)
         return;
     QUrl qurl(event.fileUrl());

@@ -1,6 +1,8 @@
 #include "dcrumbwidget.h"
 #include "dcrumbbutton.h"
 #include <QDebug>
+#include "../app/fmevent.h"
+#include "windowmanager.h"
 
 DCrumbWidget::DCrumbWidget(QWidget *parent)
     : QFrame(parent)
@@ -130,6 +132,9 @@ void DCrumbWidget::buttonPressed()
     }
     if(!isRootFolder(text))
         text.remove(text.count() -1, 1);
-
-    emit crumbSelected(text);
+    FMEvent event;
+    event = text;
+    event = WindowManager::getWindowId(window());
+    event = FMEvent::CrumbButton;
+    emit crumbSelected(event);
 }

@@ -486,8 +486,15 @@ void FileMenuManager::actionTriggered(DAction *action)
         break;
     }
     case Remove:
-        fileSignalManager->requestBookmarkRemove(fileUrl);
+    {
+        FMEvent event;
+
+        event = fileUrl;
+        event = FMEvent::Menu;
+        event = menu->getWindowId();
+        fileSignalManager->requestBookmarkRemove(event);
         break;
+    }
     case Delete:
         fileService->moveToTrash(urls);
         break;

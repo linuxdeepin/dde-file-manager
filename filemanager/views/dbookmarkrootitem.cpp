@@ -3,8 +3,10 @@
 #include "dbookmarkitem.h"
 
 #include "../app/global.h"
+#include "../../filemanager/app/filesignalmanager.h"
 
 #include "../controllers/bookmarkmanager.h"
+#include "../app/fmevent.h"
 
 #include <QDebug>
 #include <QMimeData>
@@ -46,13 +48,20 @@ void DBookmarkRootItem::dropEvent(QGraphicsSceneDragDropEvent *event)
             dir.setPath(firstUrl.toLocalFile());
         else
             dir.setPath(firstUrl.toString());
-        if(dir.exists())
+        QString url = QUrl::fromLocalFile(dir.path()).toString();
+        if(dir.exists() && m_scene->hasBookmarkItem(url) == NULL)
         {
-            BookMark * bm = bookmarkManager->writeIntoBookmark(dir.dirName(), QUrl::fromLocalFile(dir.path()).toString());
+            BookMark * bm = bookmarkManager->writeIntoBookmark(dir.dirName(), url);
             DBookmarkItem * item = new DBookmarkItem(bm);
             if(m_scene->count() == DEFAULT_ITEM_COUNT)
                 m_scene->addSeparator();
             m_scene->insert(DEFAULT_ITEM_COUNT + 1, item);
+
+            FMEvent fmevent;
+            fmevent = windowId();
+            fmevent = bm->getUrl();
+            fmevent = FMEvent::LeftSideBar;
+            fileSignalManager->requestBookmarkAdd(dir.dirName(), fmevent);
         }
     }
     m_scene->clear(m_dummyItem);

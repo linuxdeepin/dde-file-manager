@@ -68,8 +68,11 @@ signals:
     /* view select all */
     void requestViewSelectAll(int windowId);
 
-    /* view select all */
-    void requestBookmarkRemove(const QString &url);
+    /* bookmark remove */
+    void requestBookmarkRemove(const FMEvent &event);
+
+    /* bookmark add */
+    void requestBookmarkAdd(const QString &name, const FMEvent &event);
 
     /*requst open new window by given url*/
     void requestOpenNewWindowByUrl(const QString& url);

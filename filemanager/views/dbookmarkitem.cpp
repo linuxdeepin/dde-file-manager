@@ -287,12 +287,28 @@ int DBookmarkItem::windowId()
     return WindowManager::getWindowId(scene()->views().at(0)->window());
 }
 
+DBookmarkItem *DBookmarkItem::makeBookmark(const QString &name, const QString &url)
+{
+    DBookmarkItem * item = new DBookmarkItem;
+    item->setDefaultItem(false);
+    item->setText(name);
+    item->setUrl(url);
+    item->boundImageToHover(":/icons/images/icons/bookmarks_hover_16px.svg");
+    item->boundImageToPress(":/icons/images/icons/bookmarks_checked_16px.svg");
+    item->boundImageToRelease(":/icons/images/icons/bookmarks_normal_16px.svg");
+    return item;
+}
+
 void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event);
     if(m_group && m_pressed)
     {
-        emit m_group->url(m_url);
+        FMEvent e;
+        e = windowId();
+        e = m_url;
+        e = FMEvent::LeftSideBar;
+        emit m_group->url(e);
     }
     m_pressed = false;
     update();

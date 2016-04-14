@@ -69,6 +69,8 @@ public:
     void setSysPath(const QString &path);
     QString getSysPath();
     int windowId();
+
+    static DBookmarkItem * makeBookmark(const QString &name, const QString &url);
 signals:
 
     void clicked();

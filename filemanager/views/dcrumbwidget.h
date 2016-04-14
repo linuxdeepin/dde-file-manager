@@ -5,6 +5,7 @@
 #include <QHBoxLayout>
 #include <QButtonGroup>
 
+class FMEvent;
 class DCrumbButton;
 
 class DCrumbWidget : public QFrame
@@ -28,7 +29,7 @@ private:
 public slots:
     void buttonPressed();
 signals:
-    void crumbSelected(QString path);
+    void crumbSelected(const FMEvent &event);
 };
 
 #endif // DCRUMBWIDGET_H
