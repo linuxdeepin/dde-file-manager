@@ -248,7 +248,7 @@ void DBookmarkScene::bookmarkMounted(int fd)
     {
         QString str = item.split(" ").at(0);
         DBookmarkItem * bookmarkItem = hasBookmarkItem(str);
-        if(bookmarkItem)
+        if(bookmarkItem && !bookmarkItem->isMounted())
         {
             bookmarkItem->setMounted(true);
             bookmarkItem->setUrl(item.split(" ").at(1));

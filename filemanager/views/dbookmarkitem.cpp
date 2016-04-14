@@ -28,6 +28,8 @@ DBookmarkItem::DBookmarkItem(DeviceInfo *deviceInfo)
     boundImageToHover(":/icons/images/icons/disk_hover_16px.svg");
     boundImageToPress(":/icons/images/icons/disk_hover_16px.svg");
     boundImageToRelease(":/icons/images/icons/disk_normal_16px.svg");
+    if(!m_url.isEmpty())
+        m_isMounted = true;
 }
 
 DBookmarkItem::DBookmarkItem(BookMark *bookmark)
