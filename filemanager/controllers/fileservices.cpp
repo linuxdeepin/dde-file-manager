@@ -101,6 +101,9 @@ bool FileServices::openFile(const QString &fileUrl) const
 
 bool FileServices::copyFiles(const QList<QString> &urlList) const
 {
+    if(urlList.isEmpty())
+        return false;
+
     TRAVERSE(urlList.first(), {
                  bool ok = controller->copyFiles(urlList, accepted);
 
@@ -125,6 +128,9 @@ bool FileServices::renameFile(const QString &oldUrl, const QString &newUrl) cons
 
 void FileServices::deleteFiles(const QList<QString> &urlList) const
 {
+    if(urlList.isEmpty())
+        return;
+
     if(QThread::currentThread() == qApp->thread()) {
         QtConcurrent::run(QThreadPool::globalInstance(), this, &FileServices::deleteFiles, urlList);
 
@@ -141,6 +147,9 @@ void FileServices::deleteFiles(const QList<QString> &urlList) const
 
 void FileServices::moveToTrash(const QList<QString> &urlList) const
 {
+    if(urlList.isEmpty())
+        return;
+
     if(QThread::currentThread() == qApp->thread()) {
         QtConcurrent::run(QThreadPool::globalInstance(), this, &FileServices::moveToTrash, urlList);
 
@@ -157,6 +166,9 @@ void FileServices::moveToTrash(const QList<QString> &urlList) const
 
 bool FileServices::cutFiles(const QList<QString> &urlList) const
 {
+    if(urlList.isEmpty())
+        return false;
+
     TRAVERSE(urlList.first(), {
                  bool ok = controller->cutFiles(urlList, accepted);
 
