@@ -179,7 +179,7 @@ bool FileServices::cutFiles(const QList<QString> &urlList) const
     return false;
 }
 
-void FileServices::pasteFile(const QString &toUrl) const
+void FileServices::pasteFile(const FMEvent &event) const
 {
     const QClipboard *clipboard = qApp->clipboard();
     const QMimeData *mimeData = clipboard->mimeData();
@@ -197,21 +197,21 @@ void FileServices::pasteFile(const QString &toUrl) const
             urls.append(text.readLine());
         }
 
-        pasteFile(type, urls, toUrl);
+        pasteFile(type, urls, event);
     }
 }
 
 void FileServices::pasteFile(AbstractFileController::PasteType type,
-                             const QList<QString> &urlList, const QString &toUrl) const
+                             const QList<QString> &urlList, const FMEvent &event) const
 {
     if(QThread::currentThread() == qApp->thread()) {
-        QtConcurrent::run(QThreadPool::globalInstance(), this, &FileServices::pasteFile, type, urlList, toUrl);
+        QtConcurrent::run(QThreadPool::globalInstance(), this, &FileServices::pasteFile, type, urlList, event);
 
         return;
     }
 
-    TRAVERSE(toUrl, {
-                 controller->pasteFile(type, urlList, toUrl, accepted);
+    TRAVERSE(event.fileUrl(), {
+                 controller->pasteFile(type, urlList, event, accepted);
 
                  if(accepted)
                  return;

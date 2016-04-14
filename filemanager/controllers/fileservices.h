@@ -32,10 +32,10 @@ public:
     void deleteFiles(const QList<QString> &urlList) const;
     void moveToTrash(const QList<QString> &urlList) const;
     bool cutFiles(const QList<QString> &urlList) const;
-    void pasteFile(const QString &toUrl) const;
+    void pasteFile(const FMEvent &event) const;
     void pasteFile(AbstractFileController::PasteType type,
                    const QList<QString> &urlList,
-                   const QString &toUrl) const;
+                   const FMEvent &event) const;
     bool newFolder(const QString &toUrl) const;
     bool newFile(const QString &toUrl) const;
     bool newDocument(const QString &toUrl) const;

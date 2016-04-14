@@ -193,11 +193,11 @@ bool FileController::cutFiles(const QList<QString> &urlList, bool &accepted) con
 }
 
 bool FileController::pasteFile(PasteType type, const QList<QString> &urlList,
-                               const QString &toUrl, bool &accepted) const
+                               const FMEvent &event, bool &accepted) const
 {
     accepted = true;
 
-    QUrl localUrl(toUrl);
+    QUrl localUrl(event.fileUrl());
     QDir dir(localUrl.toLocalFile());
     //Make sure the target directory exists.
     if(!dir.exists())
@@ -221,7 +221,7 @@ bool FileController::pasteFile(PasteType type, const QList<QString> &urlList,
 
         dialogManager->addJob(&job);
 
-        job.doCopy(urls, toUrl);
+        job.doCopy(urls, event.fileUrl());
         dialogManager->removeJob(job.getJobId());
     }
 

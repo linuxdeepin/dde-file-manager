@@ -87,6 +87,8 @@ void DFileView::initConnects()
             this, &DFileView::sort);
     connect(fileSignalManager, &FileSignalManager::requestViewSelectAll,
             this, &DFileView::allSelected);
+    connect(fileSignalManager, &FileSignalManager::requestSelectFile,
+            this, &DFileView::select);
 }
 
 void DFileView::initActions()
@@ -117,7 +119,12 @@ void DFileView::initActions()
 
     connect(paste_action, &QAction::triggered,
             this, [this] {
-        fileService->pasteFile(currentUrl());
+        FMEvent event;
+
+        event = currentUrl();
+        event = windowId();
+
+        fileService->pasteFile(event);
     });
 
     QAction *delete_action = new QAction(this);
@@ -235,7 +242,7 @@ void DFileView::cd(const FMEvent &event)
 
 void DFileView::edit(const FMEvent &event)
 {
-    if(event.windowId() != WindowManager::getWindowId(window()))
+    if(event.windowId() != windowId())
         return;
 
     QString fileUrl = event.fileUrl();
@@ -249,6 +256,17 @@ void DFileView::edit(const FMEvent &event)
     const QModelIndex &index = model()->index(fileUrl);
 
     edit(index);
+}
+
+void DFileView::select(const FMEvent &event)
+{
+    if(event.windowId() != windowId()) {
+        return;
+    }
+
+    const QModelIndex &index = model()->index(event.fileUrl());
+
+    selectionModel()->select(index, QItemSelectionModel::Select);
 }
 
 void DFileView::switchToListMode()

@@ -26,7 +26,7 @@ public:
     bool moveToTrash(const QList<QString> &urlList, bool &accepted) const Q_DECL_OVERRIDE;
     bool cutFiles(const QList<QString> &urlList, bool &accepted) const Q_DECL_OVERRIDE;
     bool pasteFile(PasteType type, const QList<QString> &urlList,
-                   const QString &toUrl, bool &accepted) const Q_DECL_OVERRIDE;
+                   const FMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
     bool newFolder(const QString &toUrl, bool &accepted) const Q_DECL_OVERRIDE;
     bool newFile(const QString &toUrl, bool &accepted) const Q_DECL_OVERRIDE;
     bool newDocument(const QString &toUrl, bool &accepted) const Q_DECL_OVERRIDE;

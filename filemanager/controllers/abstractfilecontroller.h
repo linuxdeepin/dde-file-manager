@@ -5,6 +5,7 @@
 #include <QDir>
 
 class AbstractFileInfo;
+class FMEvent;
 
 class AbstractFileController : public QObject
 {
@@ -25,7 +26,7 @@ public:
     virtual bool moveToTrash(const QList<QString> &urlList, bool &accepted) const;
     virtual bool cutFiles(const QList<QString> &urlList, bool &accepted) const;
     virtual bool pasteFile(PasteType type, const QList<QString> &urlList,
-                           const QString &toUrl, bool &accepted) const;
+                           const FMEvent &event, bool &accepted) const;
     virtual bool newFolder(const QString &toUrl, bool &accepted) const;
     virtual bool newFile(const QString &toUrl, bool &accepted) const;
     virtual bool newDocument(const QString &toUrl, bool &accepted) const;

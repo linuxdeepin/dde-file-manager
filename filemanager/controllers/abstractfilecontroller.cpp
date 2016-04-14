@@ -62,10 +62,10 @@ bool AbstractFileController::cutFiles(const QList<QString> &urlList, bool &accep
 }
 
 bool AbstractFileController::pasteFile(PasteType type, const QList<QString> &urlList,
-                                       const QString &toUrl, bool &accepted) const
+                                       const FMEvent &event, bool &accepted) const
 {
     Q_UNUSED(type)
-    Q_UNUSED(toUrl)
+    Q_UNUSED(event)
     Q_UNUSED(urlList)
 
     accepted = false;
