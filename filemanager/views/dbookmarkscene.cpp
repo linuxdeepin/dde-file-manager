@@ -109,17 +109,19 @@ void DBookmarkScene::remove(DBookmarkItem *item)
     int i = m_items.indexOf(item);
     if(i < 0)
         return;
+    double dh = item->boundHeight();
     for(int index = i; index < m_items.size(); index++)
     {
         double d1 = m_items.at(index)->x();
         double d2 = m_items.at(index)->y();
-        m_items.at(index)->setPos(d1, d2 - BOOKMARK_ITEM_HEIGHT);
+        m_items.at(index)->setPos(d1, d2 - dh);
     }
     m_items.removeOne(item);
     m_itemGroup->removeItem(item);
     QGraphicsScene::removeItem(item);
     item->deleteLater();
-    m_totalHeight -= BOOKMARK_ITEM_HEIGHT;
+    m_totalHeight -= dh;
+    decreaseSize();
 }
 
 void DBookmarkScene::setSceneRect(qreal x, qreal y, qreal w, qreal h)
@@ -144,6 +146,11 @@ void DBookmarkScene::addSeparator()
 DBookmarkItemGroup *DBookmarkScene::getGroup()
 {
     return m_itemGroup;
+}
+
+int DBookmarkScene::count()
+{
+    return m_items.size();
 }
 
 void DBookmarkScene::changed(const QList<QRectF> &region)
@@ -172,14 +179,24 @@ void DBookmarkScene::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
     if(dir.exists())
     {
         m_rootItem->getDummyItem()->setText(dir.dirName());
-        insert(11, m_rootItem->getDummyItem());
+        qDebug() << count();
+        if(count() > DEFAULT_ITEM_COUNT)
+            insert(DEFAULT_ITEM_COUNT, m_rootItem->getDummyItem());
+        else
+            insert(DEFAULT_ITEM_COUNT - 1, m_rootItem->getDummyItem());
     }
 }
 
 void DBookmarkScene::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
 {
     emit dragLeft();
-    QGraphicsScene::dragEnterEvent(event);
+    QGraphicsScene::dragLeaveEvent(event);
+    clear(m_rootItem->getDummyItem());
+}
+
+void DBookmarkScene::dropEvent(QGraphicsSceneDragDropEvent *event)
+{
+    QGraphicsScene::dropEvent(event);
     clear(m_rootItem->getDummyItem());
 }
 
@@ -195,6 +212,8 @@ void DBookmarkScene::doDragFinished(const QPointF &point, DBookmarkItem *item)
     {
         bookmarkManager->removeBookmark(item->text(), item->getUrl());
         remove(item);
+        if(count() == DEFAULT_ITEM_COUNT)
+            remove(m_items.last());
     }
 }
 
@@ -283,6 +302,16 @@ void DBookmarkScene::increaseSize()
         double w = sceneRect().width();
         setSceneRect(0, 0, w, m_totalHeight + BOOKMARK_ITEM_HEIGHT * 2);
         views().at(0)->setGeometry(0, 0, w, m_totalHeight + BOOKMARK_ITEM_HEIGHT * 2);
+    }
+}
+
+void DBookmarkScene::decreaseSize()
+{
+    if(m_totalHeight < sceneRect().height() - BOOKMARK_ITEM_HEIGHT)
+    {
+        double w = sceneRect().width();
+        views().at(0)->resize(w, m_totalHeight + BOOKMARK_ITEM_HEIGHT * 2);
+        setSceneRect(0, 0, w, m_totalHeight + BOOKMARK_ITEM_HEIGHT);
     }
 }
 

@@ -244,25 +244,25 @@ QString DLeftSideBar::getStandardPathbyId(int id)
         path = RECENT_ROOT;
         break;
     case 2:
-        path = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0);
+        path = QUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0)).toString();
         break;
     case 3:
-        path = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).at(0);
+        path = QUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).at(0)).toString();
         break;
     case 4:
-        path = QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).at(0);
+        path = QUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).at(0)).toString();
         break;
     case 5:
-        path = QStandardPaths::standardLocations(QStandardPaths::MusicLocation).at(0);
+        path = QUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::MusicLocation).at(0)).toString();
         break;
     case 6:
-        path = QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).at(0);
+        path = QUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).at(0)).toString();
         break;
     case 7:
-        path = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).at(0);
+        path = QUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).at(0)).toString();
         break;
     case 8:
-        path = QStandardPaths::standardLocations(QStandardPaths::DownloadLocation).at(0);
+        path = QUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::DownloadLocation).at(0)).toString();
         break;
     case 9:
         path = TRASH_ROOT;
@@ -334,6 +334,8 @@ void DLeftSideBar::doDragLeave()
 void DLeftSideBar::loadBookmark()
 {
     QList<BookMark *> m_list = bookmarkManager->getBookmarks();
+    if(m_list.size())
+        m_scene->addSeparator();
     for(int i = 0; i < m_list.size(); i++)
     {
         BookMark * bm = m_list.at(i);

@@ -26,10 +26,12 @@ public:
     void setSceneRect(qreal x, qreal y, qreal w, qreal h);
     void addSeparator();
     DBookmarkItemGroup * getGroup();
+    int count();
 protected:
     void changed(const QList<QRectF> &region);
     void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
     void dragLeaveEvent(QGraphicsSceneDragDropEvent *event);
+    void dropEvent(QGraphicsSceneDragDropEvent *event);
 signals:
     void urlChanged(const QString &url);
     void dragEntered();
@@ -44,6 +46,7 @@ public slots:
     void deviceRemoved(DeviceInfo &deviceInfos);
 private:
     void increaseSize();
+    void decreaseSize();
     DBookmarkRootItem * m_rootItem;
     DBookmarkItemGroup * m_itemGroup;
     QList<DBookmarkItem *> m_items;
