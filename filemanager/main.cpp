@@ -9,6 +9,8 @@
 
 #include "../shutil/mimesappsmanager.h"
 
+#include "zurl.h"
+
 #include <dthememanager.h>
 #include <dwindow.h>
 
@@ -36,9 +38,9 @@ int main(int argc, char *argv[])
     if (CommandLineManager::instance()->positionalArguments().count() > 0){
         commandlineUrl = CommandLineManager::instance()->positionalArguments().at(0);
 
-        commandlineUrl = Global::stringToUrl(commandlineUrl).toString();
+        commandlineUrl = DUrl::fromUserInput(commandlineUrl).toString();
     } else {
-        commandlineUrl = QUrl::fromLocalFile(QDir::homePath()).toString();
+        commandlineUrl = DUrl::fromLocalFile(QDir::homePath()).toString();
     }
 
     QString uniqueKey = "dde-file-manager";
