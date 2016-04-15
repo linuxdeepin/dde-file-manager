@@ -1,4 +1,4 @@
-#include "zurl.h"
+#include "durl.h"
 
 #include <QFileInfo>
 #include <QSet>
