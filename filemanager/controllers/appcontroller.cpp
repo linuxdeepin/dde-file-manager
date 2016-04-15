@@ -6,6 +6,7 @@
 #include "filecontroller.h"
 #include "recenthistorymanager.h"
 #include "trashmanager.h"
+#include "searchcontroller.h"
 
 #include "../app/global.h"
 
@@ -15,6 +16,7 @@ AppController::AppController(QObject *parent) : QObject(parent)
     new FileController(this);
     new RecentHistoryManager(this);
     new TrashManager(this);
+    new SearchController(this);
 }
 
 void AppController::initConnect()

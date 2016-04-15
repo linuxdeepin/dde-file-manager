@@ -31,6 +31,7 @@ FileServices::FileServices(QObject *parent)
     qRegisterMetaType<FMEvent>("FMEvent");
     qRegisterMetaType<QDir::Filters>("QDir::Filters");
     qRegisterMetaType<QList<AbstractFileInfo*>>("QList<AbstractFileInfo*>");
+    qRegisterMetaType<DUrl>("DUrl");
 }
 
 FileServices *FileServices::instance()

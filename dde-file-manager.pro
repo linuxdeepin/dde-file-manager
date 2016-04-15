@@ -112,7 +112,9 @@ HEADERS += \
     filemanager/views/dbookmarkline.h \
     filemanager/views/dsplitterhandle.h \
     filemanager/dialogs/openwithdialog.h \
-    filemanager/models/durl.h
+    filemanager/models/durl.h \
+    filemanager/controllers/searchcontroller.h \
+    filemanager/models/searchfileinfo.h
 
 SOURCES += \
     filemanager/controllers/appcontroller.cpp \
@@ -187,7 +189,9 @@ SOURCES += \
     filemanager/views/dbookmarkline.cpp \
     filemanager/views/dsplitterhandle.cpp \
     filemanager/dialogs/openwithdialog.cpp \
-    filemanager/models/durl.cpp
+    filemanager/models/durl.cpp \
+    filemanager/controllers/searchcontroller.cpp \
+    filemanager/models/searchfileinfo.cpp
 
 
 INCLUDEPATH += filemanager/models

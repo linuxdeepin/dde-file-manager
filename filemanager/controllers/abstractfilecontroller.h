@@ -42,8 +42,8 @@ public:
     virtual AbstractFileInfo *createFileInfo(const DUrl &fileUrl, bool &accepted) const;
 
 signals:
-    void childrenAdded(const DUrl &fileUrl);
-    void childrenRemoved(const DUrl &fileUrl);
+    void childrenAdded(const DUrl &fileUrl) const;
+    void childrenRemoved(const DUrl &fileUrl) const;
 };
 
 #endif // ABSTRACTFILECONTROLLER_H

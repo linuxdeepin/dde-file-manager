@@ -45,6 +45,7 @@
 #define BOOKMARK_SCHEME "bookmark"
 #define FILE_SCHEME "file"
 #define COMPUTER_SCHEME "computer"
+#define SEARCH_SCHEME "search"
 
 #define TRASH_ROOT TRASH_SCHEME":///"
 #define RECENT_ROOT RECENT_SCHEME":///"
