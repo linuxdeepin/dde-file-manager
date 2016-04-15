@@ -2,7 +2,7 @@
 
 #include <QDebug>
 
-FMEvent::FMEvent(int wId, FMEvent::EventSource source, const QString &fileUrl)
+FMEvent::FMEvent(int wId, FMEvent::EventSource source, const DUrl &fileUrl)
     : data(new FMEventData)
 {
     data->windowId = wId;

@@ -75,7 +75,7 @@ AppController *FileManagerApp::getAppController() const
     return m_appController;
 }
 
-void FileManagerApp::show(const QString &url)
+void FileManagerApp::show(const DUrl &url)
 {
     m_windowManager->showNewWindow(url);
 }

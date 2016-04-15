@@ -6,24 +6,15 @@ BookMark::BookMark()
 
 }
 
-BookMark::BookMark(BookMark *bookmark)
-    : AbstractFileInfo(bookmark->getUrl())
-{
-    m_url = bookmark->getUrl();
-    m_time = bookmark->getDateTime();
-    m_name = bookmark->getName();
-}
-
-BookMark::BookMark(const QString &url)
+BookMark::BookMark(const DUrl &url)
     : AbstractFileInfo(url)
 {
-    m_url = url;
+
 }
 
-BookMark::BookMark(QDateTime time, const QString &name, const QString &url)
+BookMark::BookMark(QDateTime time, const QString &name, const DUrl &url)
     :AbstractFileInfo(url)
 {
-    m_url = url;
     m_time = time;
     m_name = name;
 }
@@ -38,19 +29,9 @@ QDateTime BookMark::getDateTime()
     return m_time;
 }
 
-QString BookMark::getUrl()
-{
-    return m_url;
-}
-
 void BookMark::setDateTime(QDateTime time)
 {
     m_time = time;
-}
-
-void BookMark::setUrl(const QString &url)
-{
-    m_url = url;
 }
 
 void BookMark::setName(const QString &name)

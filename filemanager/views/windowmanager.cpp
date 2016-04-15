@@ -30,7 +30,7 @@ void WindowManager::initConnect()
     connect(fileSignalManager, &FileSignalManager::requestActiveWindow, this, &WindowManager::activefirstOpenedWindow);
 }
 
-void WindowManager::showNewWindow(const QString &url)
+void WindowManager::showNewWindow(const DUrl &url)
 {
     DFileManagerWindow* window = new DFileManagerWindow;
     if (!m_firstOpenedWindow){
@@ -58,7 +58,7 @@ void WindowManager::activefirstOpenedWindow()
     if (m_firstOpenedWindow){
         qApp->setActiveWindow(m_firstOpenedWindow);
     }else{
-        showNewWindow(QDir::homePath());
+        showNewWindow(DUrl::fromLocalFile(QDir::homePath()));
     }
 }
 

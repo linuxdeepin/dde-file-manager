@@ -5,6 +5,8 @@
 #include <QSharedData>
 #include <QMetaType>
 
+#include "durl.h"
+
 class FMEvent
 {
 public:
@@ -24,12 +26,12 @@ public:
     private:
         int windowId = -1;
         EventSource source = Unknow;
-        QString fileUrl;
+        DUrl fileUrl;
 
         friend class FMEvent;
     };
 
-    FMEvent(int wId = -1, EventSource source = Unknow, const QString &fileUrl = "");
+    FMEvent(int wId = -1, EventSource source = Unknow, const DUrl &fileUrl = DUrl());
 
     inline FMEvent(const FMEvent &other)
         : data(other.data)
@@ -50,7 +52,7 @@ public:
     inline FMEvent &operator =(int wId)
     {data->windowId = wId; return *this;}
 
-    inline FMEvent &operator =(const QString &fileUrl)
+    inline FMEvent &operator =(const DUrl &fileUrl)
     {data->fileUrl = fileUrl; return *this;}
 
     inline int windowId() const
@@ -59,7 +61,7 @@ public:
     inline EventSource source() const
     {return data->source;}
 
-    inline const QString &fileUrl() const
+    inline const DUrl &fileUrl() const
     {return data->fileUrl;}
 
 private:

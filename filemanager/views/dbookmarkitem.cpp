@@ -30,7 +30,7 @@ DBookmarkItem::DBookmarkItem(DeviceInfo *deviceInfo)
     init();
     m_isDisk = true;
     m_checkable = true;
-    m_url = deviceInfo->getMountPath();
+    m_url = DUrl::fromLocalFile(deviceInfo->getMountPath());
     m_isDefault = true;
     m_sysPath = deviceInfo->getSysPath();
     m_textContent = deviceInfo->displayName();
@@ -287,7 +287,7 @@ int DBookmarkItem::windowId()
     return WindowManager::getWindowId(scene()->views().at(0)->window());
 }
 
-DBookmarkItem *DBookmarkItem::makeBookmark(const QString &name, const QString &url)
+DBookmarkItem *DBookmarkItem::makeBookmark(const QString &name, const DUrl &url)
 {
     DBookmarkItem * item = new DBookmarkItem;
     item->setDefaultItem(false);
@@ -351,16 +351,12 @@ void DBookmarkItem::dropEvent(QGraphicsSceneDragDropEvent *event)
     emit dropped();
     if(!event->mimeData()->hasUrls())
         return;
-    QList<QUrl> urls = event->mimeData()->urls();
-    QList<QString> urlList;
-    for(int i = 0; i < urls.size(); i++)
-        urlList.append(urls.at(i).toString());
 
     FMEvent e;
     e = FMEvent::LeftSideBar;
     e = m_url;
     e = windowId();
-    fileService->pasteFile(AbstractFileController::CopyType, urlList, e);
+    fileService->pasteFile(AbstractFileController::CopyType, DUrl::fromQUrlList(event->mimeData()->urls()), e);
 }
 
 void DBookmarkItem::keyPressEvent(QKeyEvent *event)
@@ -400,7 +396,7 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     QWidget* window = scene()->views().at(0)->window();
 
     menu->setWindowId(WindowManager::getWindowId(window));
-    QList<QString> urls;
+    DUrlList urls;
     urls.append(m_url);
     menu->setUrls(urls);
 
@@ -529,12 +525,12 @@ void DBookmarkItem::setHoverBackgroundEnable(bool b)
     m_hoverBackgroundEnabled = b;
 }
 
-void DBookmarkItem::setUrl(const QString &url)
+void DBookmarkItem::setUrl(const DUrl &url)
 {
     m_url = url;
 }
 
-QString DBookmarkItem::getUrl()
+DUrl DBookmarkItem::getUrl()
 {
     return m_url;
 }

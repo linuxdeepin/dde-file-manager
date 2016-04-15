@@ -86,7 +86,7 @@ void SingleApplication::readData()
     qDebug() << messageObj << error->errorString();
 
     if (messageObj.contains("url")){
-        QString url = messageObj.value("url").toString();
+        DUrl url = DUrl(messageObj.value("url").toString());
         if (url.isEmpty()){
             emit fileSignalManager->requestActiveWindow();
         }else{

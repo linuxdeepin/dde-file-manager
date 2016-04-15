@@ -8,7 +8,11 @@ class FileManagerWindow;
 class DFileManagerWindow;
 class AppController;
 class DialogManager;
+class DUrl;
+
+QT_BEGIN_NAMESPACE
 class QLocalServer;
+QT_END_NAMESPACE
 
 class FileManagerApp : public QObject
 {
@@ -28,7 +32,7 @@ public:
     AppController *getAppController() const;
 
 public slots:
-    void show(const QString& url);
+    void show(const DUrl& url);
 
 private:
     WindowManager* m_windowManager = NULL;

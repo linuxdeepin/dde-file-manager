@@ -147,7 +147,7 @@ DUrl DUrl::fromComputerFile(const QString &filePath)
     return url;
 }
 
-QList<DUrl> DUrl::fromStringList(const QStringList &urls, QUrl::ParsingMode mode)
+DUrlList DUrl::fromStringList(const QStringList &urls, QUrl::ParsingMode mode)
 {
     QList<DUrl> urlList;
 
@@ -158,7 +158,7 @@ QList<DUrl> DUrl::fromStringList(const QStringList &urls, QUrl::ParsingMode mode
     return urlList;
 }
 
-QList<DUrl> DUrl::fromQUrlList(const QList<QUrl> &urls)
+DUrlList DUrl::fromQUrlList(const QList<QUrl> &urls)
 {
     QList<DUrl> urlList;
 
@@ -185,7 +185,7 @@ DUrl DUrl::fromUserInput(const QString &userInput, const QString &workingDirecto
     return url;
 }
 
-QStringList DUrl::toStringList(const QList<DUrl> &urls, QUrl::FormattingOptions options)
+QStringList DUrl::toStringList(const DUrlList &urls, QUrl::FormattingOptions options)
 {
     QStringList urlList;
 
@@ -196,7 +196,7 @@ QStringList DUrl::toStringList(const QList<DUrl> &urls, QUrl::FormattingOptions 
     return urlList;
 }
 
-QList<QUrl> DUrl::toQUrlList(const QList<DUrl> &urls)
+QList<QUrl> DUrl::toQUrlList(const DUrlList &urls)
 {
     QList<QUrl> urlList;
 

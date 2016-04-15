@@ -324,7 +324,7 @@ void DBookmarkScene::currentUrlChanged(const FMEvent &event)
 
 void DBookmarkScene::bookmarkRemoved(const QString &url)
 {
-
+    Q_UNUSED(url)
 }
 
 void DBookmarkScene::bookmarkMounted(int fd)
@@ -348,11 +348,11 @@ void DBookmarkScene::bookmarkMounted(int fd)
     foreach(QString item, mtabMounts)
     {
         QString str = item.split(" ").at(0);
-        DBookmarkItem * bookmarkItem = hasBookmarkItem(str);
+        DBookmarkItem * bookmarkItem = hasBookmarkItem(DUrl(str));
         if(bookmarkItem && !bookmarkItem->isMounted())
         {
             bookmarkItem->setMounted(true);
-            bookmarkItem->setUrl(item.split(" ").at(1));
+            bookmarkItem->setUrl(DUrl(item.split(" ").at(1)));
             bookmarkItem->update();
         }
     }
@@ -436,7 +436,7 @@ void DBookmarkScene::decreaseSize()
     }
 }
 
-DBookmarkItem *DBookmarkScene::hasBookmarkItem(const QString &url)
+DBookmarkItem *DBookmarkScene::hasBookmarkItem(const DUrl &url)
 {
     foreach(DBookmarkItem * item, m_items)
     {

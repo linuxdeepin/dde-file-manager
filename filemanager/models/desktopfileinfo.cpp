@@ -13,16 +13,22 @@ DesktopFileInfo::DesktopFileInfo() :
 
 }
 
-DesktopFileInfo::DesktopFileInfo(const QString &fileUrl) :
-    FileInfo(fileUrl)
+DesktopFileInfo::DesktopFileInfo(const QString &fileUrl)
+    : FileInfo(fileUrl)
 {
-    init(fileUrl);
+    init(DUrl(fileUrl));
+}
+
+DesktopFileInfo::DesktopFileInfo(const DUrl &fileUrl)
+    : FileInfo(fileUrl)
+{
+
 }
 
 DesktopFileInfo::DesktopFileInfo(const QFileInfo &fileInfo) :
     FileInfo(fileInfo)
 {
-    init( QString(FILE_SCHEME) + "://" + fileInfo.absoluteFilePath());
+    init(DUrl::fromLocalFile(fileInfo.absoluteFilePath()));
 }
 
 DesktopFileInfo::~DesktopFileInfo()
@@ -30,7 +36,7 @@ DesktopFileInfo::~DesktopFileInfo()
 
 }
 
-void DesktopFileInfo::setFile(const QString &fileUrl)
+void DesktopFileInfo::setFile(const DUrl &fileUrl)
 {
     FileInfo::setFile(fileUrl);
 
@@ -67,16 +73,14 @@ QIcon DesktopFileInfo::fileIcon() const
     return iconProvider->getDesktopIcon(getIconName(), 256);
 }
 
-QMap<QString, QVariant> DesktopFileInfo::getDesktopFileInfo(const QString &fileUrl)
+QMap<QString, QVariant> DesktopFileInfo::getDesktopFileInfo(const DUrl &fileUrl)
 {
-    QUrl url(fileUrl);
-
     QMap<QString, QVariant> map;
-    QSettings settings(url.path(), QSettings::IniFormat);
+    QSettings settings(fileUrl.path(), QSettings::IniFormat);
 
     settings.beginGroup("Desktop Entry");
     // Loads .desktop file (read from 'Desktop Entry' group)
-    Properties desktop(url.path(), "Desktop Entry");
+    Properties desktop(fileUrl.path(), "Desktop Entry");
 
     map["Name"] = desktop.value("Name", settings.value("Name"));
     map["Exec"] = desktop.value("Exec", settings.value("Exec"));
@@ -88,7 +92,7 @@ QMap<QString, QVariant> DesktopFileInfo::getDesktopFileInfo(const QString &fileU
     return map;
 }
 
-void DesktopFileInfo::init(const QString &fileUrl)
+void DesktopFileInfo::init(const DUrl &fileUrl)
 {
     const QMap<QString, QVariant> &map = getDesktopFileInfo(fileUrl);
 

@@ -13,7 +13,7 @@ TrashFileInfo::TrashFileInfo()
 
 }
 
-TrashFileInfo::TrashFileInfo(const QUrl &url)
+TrashFileInfo::TrashFileInfo(const DUrl &url)
     : AbstractFileInfo()
 {
     TrashFileInfo::setUrl(url);
@@ -22,7 +22,7 @@ TrashFileInfo::TrashFileInfo(const QUrl &url)
 TrashFileInfo::TrashFileInfo(const QString &url)
     : AbstractFileInfo()
 {
-    TrashFileInfo::setUrl(url);
+    TrashFileInfo::setUrl(DUrl(url));
 }
 
 bool TrashFileInfo::isCanRename() const
@@ -40,12 +40,7 @@ QString TrashFileInfo::displayName() const
     return m_displayName;
 }
 
-void TrashFileInfo::setUrl(const QString &fileUrl)
-{
-    setUrl(QUrl(fileUrl));
-}
-
-void TrashFileInfo::setUrl(const QUrl &fileUrl)
+void TrashFileInfo::setUrl(const DUrl &fileUrl)
 {
     AbstractFileInfo::setUrl(fileUrl);
 

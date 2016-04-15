@@ -3,18 +3,20 @@
 
 #include <QList>
 
+#include "durl.h"
+
 class HistoryStack
 {
 public:
     HistoryStack(int threshold);
-    void insert(QString path);
-    QString back();
-    QString forward();
+    void insert(DUrl url);
+    DUrl back();
+    DUrl forward();
     void setThreshold(int threshold);
     bool isFirst();
     bool isLast();
 private:
-    QList<QString> m_list;
+    QList<DUrl> m_list;
     int m_threshold;
     int m_index;
 };

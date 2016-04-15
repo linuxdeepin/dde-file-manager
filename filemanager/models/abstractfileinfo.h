@@ -4,12 +4,13 @@
 #include <QSharedDataPointer>
 #include <QFile>
 #include <QFileInfo>
-#include <QUrl>
+
+#include "durl.h"
 
 class FileInfoData :  public QSharedData
 {
 public:
-    QString url;
+    DUrl url;
     mutable QString mimeTypeName;
     QFileInfo fileInfo;
 
@@ -21,7 +22,7 @@ class AbstractFileInfo
 {
 public:
     AbstractFileInfo();
-    AbstractFileInfo(const QUrl &url);
+    AbstractFileInfo(const DUrl &url);
     AbstractFileInfo(const QString &url);
     AbstractFileInfo(const AbstractFileInfo &other);
 
@@ -30,8 +31,7 @@ public:
     inline AbstractFileInfo &operator =(const AbstractFileInfo &other)
     {data = other.data; return *this;}
 
-    virtual void setUrl(const QString &url);
-    virtual void setUrl(const QUrl &url);
+    virtual void setUrl(const DUrl &url);
     virtual bool exists() const;
 
     virtual QString filePath() const;
@@ -78,15 +78,15 @@ public:
     virtual QString mimeTypeName() const
     {return data->mimeTypeName;}
 
-    inline QString fileUrl() const
+    inline DUrl fileUrl() const
     {return data->url;}
 
     inline QString scheme() const
-    {return QUrl(fileUrl()).scheme();}
+    {return data->url.scheme();}
 
     virtual QIcon fileIcon() const = 0;
 
-    virtual QString parentUrl() const;
+    virtual DUrl parentUrl() const;
 
 protected:
     QSharedDataPointer<FileInfoData> data;

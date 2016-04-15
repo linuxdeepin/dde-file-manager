@@ -70,7 +70,7 @@ void DFileView::initDelegate()
 void DFileView::initModel()
 {
     setModel(new DFileSystemModel(this));
-    setRootIndex(model()->setRootPath(QString(FILE_SCHEME) + "://" + QDir::currentPath()));
+    setRootIndex(model()->setRootUrl(DUrl::fromLocalFile(QDir::currentPath())));
 }
 
 void DFileView::initConnects()
@@ -153,14 +153,14 @@ DFileItemDelegate *DFileView::itemDelegate() const
     return qobject_cast<DFileItemDelegate*>(DListView::itemDelegate());
 }
 
-QString DFileView::currentUrl() const
+DUrl DFileView::currentUrl() const
 {
     return model()->getUrlByIndex(rootIndex());
 }
 
-QList<QString> DFileView::selectedUrls() const
+DUrlList DFileView::selectedUrls() const
 {
-    QList<QString> list;
+    DUrlList list;
 
     for(const QModelIndex &index : selectedIndexes()) {
         list << model()->getUrlByIndex(index);
@@ -215,7 +215,7 @@ void DFileView::cd(const FMEvent &event)
     if(event.windowId() != windowId())
         return;
 
-    const QString &fileUrl = event.fileUrl();
+    const DUrl &fileUrl = event.fileUrl();
 
     if(fileUrl.isEmpty())
         return;
@@ -228,7 +228,7 @@ void DFileView::cd(const FMEvent &event)
     QModelIndex index = model()->index(fileUrl);
 
     if(!index.isValid())
-        index = model()->setRootPath(fileUrl);
+        index = model()->setRootUrl(fileUrl);
 
     setRootIndex(index);
     model()->setActiveIndex(index);
@@ -242,13 +242,10 @@ void DFileView::edit(const FMEvent &event)
     if(event.windowId() != windowId())
         return;
 
-    QString fileUrl = event.fileUrl();
+    DUrl fileUrl = event.fileUrl();
 
     if(fileUrl.isEmpty())
         return;
-
-    if(QUrl(fileUrl).scheme().isEmpty())
-        fileUrl = QString(FILE_SCHEME) + "://" + event.fileUrl();
 
     const QModelIndex &index = model()->index(fileUrl);
 
@@ -373,7 +370,7 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
         index = rootIndex();
 
         menu = FileMenuManager::createViewSpaceAreaMenu(FileMenuManager::getDisableActionList(model()->getUrlByIndex(index)));
-        QList<QString> urls;
+        DUrlList urls;
         urls.append(currentUrl());
         menu->setUrls(urls);
         menu->setWindowId(m_windowId);
@@ -384,7 +381,7 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
         menu = FileMenuManager::createFileMenu(FileMenuManager::getDisableActionList(model()->getUrlByIndex(index)));
         menu->setWindowId(m_windowId);
 
-        QList<QString> list = selectedUrls();
+        DUrlList list = selectedUrls();
 
         if(list.isEmpty())
             list << model()->getUrlByIndex(index);
@@ -463,8 +460,8 @@ void DFileView::commitData(QWidget *editor)
 
     if(lineEdit) {
         fileService->renameFile(fileInfo->fileUrl(),
-                                fileInfo->scheme() + "://" + fileInfo->absolutePath()
-                                + "/" + lineEdit->text());
+                                DUrl(fileInfo->scheme() + "://" + fileInfo->absolutePath()
+                                     + "/" + lineEdit->text()));
 
         return;
     }
@@ -473,8 +470,8 @@ void DFileView::commitData(QWidget *editor)
 
     if(item) {
         fileService->renameFile(fileInfo->fileUrl(),
-                                fileInfo->scheme() + "://" + fileInfo->absolutePath()
-                                + "/" + item->edit->toPlainText());
+                                DUrl(fileInfo->scheme() + "://" + fileInfo->absolutePath()
+                                     + "/" + item->edit->toPlainText()));
     }
 }
 

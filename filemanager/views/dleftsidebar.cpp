@@ -236,47 +236,49 @@ void DLeftSideBar::initNav()
     navLayout->addWidget(m_view);
 }
 
-QString DLeftSideBar::getStandardPathbyId(int id)
+DUrl DLeftSideBar::getStandardPathbyId(int id)
 {
-    QString path;
+    DUrl url;
+
     switch (id) {
     case 1:
-        path = RECENT_ROOT;
+        url = DUrl::fromRecentFile("/");
         break;
     case 2:
-        path = QUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0)).toString();
+        url = DUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0));
         break;
     case 3:
-        path = QUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).at(0)).toString();
+        url = DUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).at(0));
         break;
     case 4:
-        path = QUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).at(0)).toString();
+        url = DUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).at(0));
         break;
     case 5:
-        path = QUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::MusicLocation).at(0)).toString();
+        url = DUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::MusicLocation).at(0));
         break;
     case 6:
-        path = QUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).at(0)).toString();
+        url = DUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).at(0));
         break;
     case 7:
-        path = QUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).at(0)).toString();
+        url = DUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).at(0));
         break;
     case 8:
-        path = QUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::DownloadLocation).at(0)).toString();
+        url = DUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::DownloadLocation).at(0));
         break;
     case 9:
-        path = TRASH_ROOT;
+        url = DUrl::fromTrashFile("/");
         break;
     case 10:
-        path = COMPUTER_ROOT;
+        url = DUrl::fromComputerFile("/");
         break;
     case 11:
-        path = BOOKMARK_ROOT;
+        url = DUrl::fromBookMarkFile("/");
         break;
     default:
         break;
     }
-    return path;
+
+    return url;
 }
 
 void DLeftSideBar::resizeEvent(QResizeEvent *e)

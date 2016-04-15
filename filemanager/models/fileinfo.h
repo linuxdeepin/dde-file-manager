@@ -15,12 +15,12 @@ class FileInfo : public AbstractFileInfo
 public:
     FileInfo();
     FileInfo(const QString& fileUrl);
-    FileInfo(const QUrl& fileUrl);
+    FileInfo(const DUrl& fileUrl);
     FileInfo(const QFileInfo &fileInfo);
 
-    virtual void setFile(const QString &fileUrl);
+    virtual void setFile(const DUrl &fileUrl);
 
-    static bool exists(const QString &fileUrl);
+    static bool exists(const DUrl &fileUrl);
     static QMimeType mimeType(const QString &filePath);
 
     bool isCanRename() const Q_DECL_OVERRIDE;

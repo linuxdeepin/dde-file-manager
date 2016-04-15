@@ -53,8 +53,8 @@ signals:
 
     // AbstractFileController interface
 public:
-    const QList<AbstractFileInfo *> getChildren(const QString &fileUrl, QDir::Filters filter, bool &accepted) const;
-    AbstractFileInfo *createFileInfo(const QString &fileUrl, bool &accepted) const;
+    const QList<AbstractFileInfo *> getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const Q_DECL_OVERRIDE;
+    AbstractFileInfo *createFileInfo(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
 };
 
 #endif // DEVICELISTENER_H

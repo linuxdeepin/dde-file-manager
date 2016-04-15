@@ -7,6 +7,8 @@
 #include <QPainter>
 #include <QGraphicsSceneMouseEvent>
 
+#include "durl.h"
+
 #define MARGIN_IMAGE_BOUND 5
 
 class DBookmarkItemGroup;
@@ -51,8 +53,8 @@ public:
     void setPressBackgroundEnable(bool b);
     void setReleaseBackgroundEnable(bool b);
     void setHoverBackgroundEnable(bool b);
-    void setUrl(const QString &url);
-    QString getUrl();
+    void setUrl(const DUrl &url);
+    DUrl getUrl();
     void setCheckable(bool b);
     void setChecked(bool b);
     bool isChecked();
@@ -70,7 +72,7 @@ public:
     QString getSysPath();
     int windowId();
 
-    static DBookmarkItem * makeBookmark(const QString &name, const QString &url);
+    static DBookmarkItem * makeBookmark(const QString &name, const DUrl &url);
 signals:
 
     void clicked();
@@ -127,7 +129,7 @@ private:
     bool m_isMenuOpened = false;
     QFont m_font;
     qreal m_adjust;
-    QString m_url;
+    DUrl m_url;
     QPixmap m_pressImage;
     QPixmap m_releaseImage;
     QPixmap m_hoverImage;

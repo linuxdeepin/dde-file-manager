@@ -7,6 +7,8 @@
 #include <QUrl>
 #include <QContextMenuEvent>
 
+#include "durl.h"
+
 QT_BEGIN_NAMESPACE
 class QFileSystemModel;
 class QHeaderView;
@@ -41,8 +43,8 @@ public:
     DFileSystemModel *model() const;
     DFileItemDelegate *itemDelegate() const;
 
-    QString currentUrl() const;
-    QList<QString> selectedUrls() const;
+    DUrl currentUrl() const;
+    DUrlList selectedUrls() const;
 
     bool isIconViewMode();
 
@@ -67,7 +69,7 @@ public slots:
     void sort(int windowId, int role);
 
 signals:
-    void currentUrlChanged(QString url);
+    void currentUrlChanged(const DUrl &url);
 
 private slots:
     void moveColumnRole(int logicalIndex, int oldVisualIndex, int newVisualIndex);

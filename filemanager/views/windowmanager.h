@@ -7,6 +7,7 @@
 #include <QHash>
 
 class DFileManagerWindow;
+class DUrl;
 
 class WindowManager : public QObject
 {
@@ -21,7 +22,7 @@ signals:
     void start(const QString &src);
 
 public slots:
-    void showNewWindow(const QString& url);
+    void showNewWindow(const DUrl &url);
     void activefirstOpenedWindow();
     static int getWindowId(const QWidget *window);
 

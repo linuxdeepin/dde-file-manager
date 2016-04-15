@@ -14,7 +14,7 @@ DeviceInfo::DeviceInfo(DeviceInfo *deviceInfo)
     m_size = deviceInfo->getSize();
 }
 
-DeviceInfo::DeviceInfo(const QString &url)
+DeviceInfo::DeviceInfo(const DUrl &url)
     : AbstractFileInfo(url)
 {
 

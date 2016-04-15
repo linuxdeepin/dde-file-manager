@@ -28,11 +28,11 @@ signals:
     void currentUrlChanged(const FMEvent &event);
 
     /* file icon*/
-    void requestIcon(const QString &url) const;
-    void iconChanged(const QString &url, const QIcon &icon) const;
+    void requestIcon(const DUrl &url) const;
+    void iconChanged(const DUrl &url, const QIcon &icon) const;
 
     /* refresh folder*/
-    void refreshFolder(const QString &url) const;
+    void refreshFolder(const DUrl &url) const;
 
     /*add copy/move/delete job to taskdialog when copy/move/delete job created*/
     void jobAdded(const QMap<QString, QString>& jobDetail);
@@ -75,7 +75,7 @@ signals:
     void requestBookmarkAdd(const QString &name, const FMEvent &event);
 
     /*requst open new window by given url*/
-    void requestOpenNewWindowByUrl(const QString& url);
+    void requestOpenNewWindowByUrl(const DUrl& url);
 
     /* device mounted */
     void deviceMounted(int i);
@@ -90,13 +90,13 @@ signals:
     void requestActiveWindow();
 
     /*request show url wrong dialog*/
-    void requestShowUrlWrongDialog(const QString& url);
+    void requestShowUrlWrongDialog(const DUrl& url);
 
     /*request show PropertyDialog*/
-    void requestShowOpenWithDialog(const QString& url);
+    void requestShowOpenWithDialog(const DUrl& url);
 
     /*request show PropertyDialog*/
-    void requestShowPropertyDialog(const QString& url);
+    void requestShowPropertyDialog(const DUrl& url);
 
     /* request select file view item*/
     void requestSelectFile(const FMEvent &event);

@@ -4,6 +4,7 @@
 #include <QObject>
 #include <dwidget.h>
 
+#include "durl.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -14,7 +15,7 @@ class OpenWithDialog : public DWidget
 {
     Q_OBJECT
 public:
-    explicit OpenWithDialog(const QString& url, QWidget *parent = 0);
+    explicit OpenWithDialog(const DUrl& url, QWidget *parent = 0);
     ~OpenWithDialog();
 
     void initUI();
@@ -30,7 +31,7 @@ private:
     QListWidget* m_listWidget = NULL;
     QPushButton* m_cancelButton = NULL;
     QPushButton* m_chooseButton = NULL;
-    QString m_url;
+    DUrl m_url;
 };
 
 #endif // OPENWITHDIALOG_H

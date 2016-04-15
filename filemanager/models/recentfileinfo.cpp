@@ -10,7 +10,7 @@ RecentFileInfo::RecentFileInfo()
 
 }
 
-RecentFileInfo::RecentFileInfo(const QUrl &url)
+RecentFileInfo::RecentFileInfo(const DUrl &url)
     : AbstractFileInfo(url)
 {
 

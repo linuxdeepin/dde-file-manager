@@ -3,6 +3,8 @@
 
 #include <DMenu>
 
+#include "durl.h"
+
 DWIDGET_USE_NAMESPACE
 
 class AbstractFileInfo;
@@ -14,11 +16,8 @@ class DFileMenu : public DMenu
 public:
     explicit DFileMenu(DMenu * parent = 0);
 
-    void setUrls(const QList<QString> &urls);
-    QList<QString> getUrls();
-
-    void setDir(const QString &dir);
-    QString getDir() const;
+    void setUrls(const DUrlList &urls);
+    DUrlList getUrls();
 
     void setWindowId(int windowId);
     int getWindowId() const;
@@ -27,8 +26,7 @@ public:
     const AbstractFileInfo *fileInfo() const;
 
 private:
-    QList<QString> m_urls;
-    QString m_dir;
+    DUrlList m_urls;
     const AbstractFileInfo *m_fileInfo = Q_NULLPTR;
 
     int m_windowId = -1;
