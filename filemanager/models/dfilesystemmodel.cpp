@@ -539,6 +539,11 @@ void DFileSystemModel::sort(int column, Qt::SortOrder order)
         return;
     }
 
+    sort();
+}
+
+void DFileSystemModel::sort()
+{
     FileSystemNode *node = getNodeByIndex(m_activeIndex);
 
     if(!node)

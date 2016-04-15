@@ -106,7 +106,7 @@ class Global
 {
 public:
     enum SortRole {
-        FileNameRole = Qt::UserRole + 2,
+        FileDisplayNameRole = Qt::UserRole + 9,
         FileSizeRole = Qt::UserRole + 3,
         FileMimeTypeRole = Qt::UserRole + 4,
         FileOwnerRole = Qt::UserRole + 5,
