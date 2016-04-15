@@ -112,8 +112,8 @@ HEADERS += \
     filemanager/shutil/mimesappsmanager.h \
     filemanager/views/dbookmarkline.h \
     filemanager/views/dsplitterhandle.h \
-    filemanager/models/zurl.h\
-    filemanager/dialogs/openwithdialog.h
+    filemanager/dialogs/openwithdialog.h \
+    filemanager/models/durl.h
 
 SOURCES += \
     filemanager/controllers/appcontroller.cpp \
@@ -188,8 +188,8 @@ SOURCES += \
     filemanager/shutil/mimesappsmanager.cpp \
     filemanager/views/dbookmarkline.cpp \
     filemanager/views/dsplitterhandle.cpp \
-    filemanager/models/zurl.cpp\
-    filemanager/dialogs/openwithdialog.cpp
+    filemanager/dialogs/openwithdialog.cpp \
+    filemanager/models/durl.cpp
 
 
 INCLUDEPATH += filemanager/models

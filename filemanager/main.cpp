@@ -8,7 +8,7 @@
 #include "../dialogs/dialogmanager.h"
 
 #include "../shutil/mimesappsmanager.h"
-#include "zurl.h"
+#include "durl.h"
 #include "../dialogs/openwithdialog.h"
 
 #include <dthememanager.h>
