@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
         fileManagerApp->show(commandlineUrl);
         dialogManager;
 
-        return app.exec();
+        quick_exit(app.exec());
     }else{
         SingleApplication::newClientProcess(uniqueKey);
     }

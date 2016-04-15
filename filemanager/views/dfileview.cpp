@@ -225,6 +225,10 @@ void DFileView::cd(const FMEvent &event)
 
     qDebug() << "cd: current url:" << currentUrl() << "to url:" << fileUrl;
 
+    if(fileUrl.isSearchFile()) {
+        switchToListMode();
+    }
+
     QModelIndex index = model()->index(fileUrl);
 
     if(!index.isValid())

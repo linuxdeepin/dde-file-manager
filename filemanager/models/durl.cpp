@@ -3,6 +3,7 @@
 #include <QFileInfo>
 #include <QSet>
 #include <QDir>
+#include <QDebug>
 
 #define TRASH_SCHEME "trash"
 #define RECENT_SCHEME "recent"
@@ -90,6 +91,18 @@ bool DUrl::isSearchFile() const
 bool DUrl::isComputerFile() const
 {
     return scheme() == COMPUTER_SCHEME;
+}
+
+QString DUrl::toString(QUrl::FormattingOptions options) const
+{
+    if(isLocalFile() || !schemeList.contains(scheme()))
+        return QUrl::toString(options);
+
+    QUrl url(*this);
+
+    url.setScheme(FILE_SCHEME);
+
+    return url.toString(options).replace(0, 4, scheme());
 }
 
 DUrl DUrl::fromLocalFile(const QString &filePath)
@@ -255,3 +268,16 @@ void DUrl::makeAbsolute()
     }
 }
 #endif
+
+QT_BEGIN_NAMESPACE
+QDebug operator<<(QDebug deg, const DUrl &url)
+{
+    QDebugStateSaver saver(deg);
+
+    Q_UNUSED(saver)
+
+    deg.nospace() << "DUrl(" << url.toString() << ")";
+
+    return deg;
+}
+QT_END_NAMESPACE

@@ -26,6 +26,8 @@ public:
     bool isSearchFile() const;
     bool isComputerFile() const;
 
+    QString toString(FormattingOptions options = FormattingOptions( PrettyDecoded )) const;
+
     static DUrl fromLocalFile(const QString &filePath);
     static DUrl fromTrashFile(const QString &filePath);
     static DUrl fromRecentFile(const QString &filePath);
@@ -48,5 +50,9 @@ private:
 };
 
 typedef QList<DUrl> DUrlList;
+
+QT_BEGIN_NAMESPACE
+QDebug operator<<(QDebug deg, const DUrl &url);
+QT_END_NAMESPACE
 
 #endif // ZURL_H
