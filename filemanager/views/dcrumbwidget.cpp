@@ -1,12 +1,15 @@
+#include <QDebug>
+#include <QStandardPaths>
+
 #include "dcrumbwidget.h"
 #include "dcrumbbutton.h"
-#include <QDebug>
 #include "../app/fmevent.h"
 #include "windowmanager.h"
 
 DCrumbWidget::DCrumbWidget(QWidget *parent)
     : QFrame(parent)
 {
+    m_homePath = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).last();
     setObjectName("DCrumbWidget");
     m_buttonLayout = new QHBoxLayout;
     m_buttonLayout->setSpacing(0);
@@ -50,9 +53,10 @@ void DCrumbWidget::setCrumb(const QString &path)
     QStringList list;
     if(isInHome(path))
     {
-        list.append(path.split("/"));
-        list.removeAt(0);
-        list.replace(0, "/home");
+        QString tmpPath = path;
+        tmpPath.replace(m_homePath, "");
+        list.append(tmpPath.split("/"));
+        list.insert(0, m_homePath);
         list.removeAll("");
     }
     else
@@ -105,14 +109,14 @@ bool DCrumbWidget::hasPath(QString path)
     return m_path.contains(path);
 }
 
-bool DCrumbWidget::isInHome(QString /*path*/)
+bool DCrumbWidget::isInHome(QString path)
 {
-    return m_path.contains("/home");
+    return path.startsWith(m_homePath);
 }
 
 bool DCrumbWidget::isHomeFolder(QString path)
 {
-    return path == "/home";
+    return path == m_homePath;
 }
 
 bool DCrumbWidget::isRootFolder(QString path)
