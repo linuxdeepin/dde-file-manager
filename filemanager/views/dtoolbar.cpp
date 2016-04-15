@@ -197,12 +197,24 @@ void DToolBar::searchBarDeactivated()
  */
 void DToolBar::searchBarTextEntered()
 {
-    QString path = m_searchBar->text();
+    QString text = m_searchBar->text();
 
     FMEvent event;
 
+    event = WindowManager::getWindowId(window());
     event = FMEvent::SearchLine;
-    event = DUrl::fromUserInput(path);
+    event = DUrl::fromUserInput(text);
+
+    if(m_searchBar->hasScheme() || m_searchBar->isPath())
+    {
+        event = DUrl::fromUserInput(text);
+    }
+    else
+    {
+        DUrl url = DUrl::fromSearchFile(m_crumbWidget->path());
+        url.setQuery(text);
+        event = url;
+    }
 
     emit fileSignalManager->requestChangeCurrentUrl(event);
 }

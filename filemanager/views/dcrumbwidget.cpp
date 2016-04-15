@@ -95,6 +95,11 @@ QString DCrumbWidget::back()
     return m_path;
 }
 
+QString DCrumbWidget::path()
+{
+    return m_path;
+}
+
 bool DCrumbWidget::hasPath(QString path)
 {
     return m_path.contains(path);
