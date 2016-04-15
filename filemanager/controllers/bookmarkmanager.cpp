@@ -76,7 +76,7 @@ void BookMarkManager::loadJson(const QJsonObject &json)
         QString time = object["t"].toString();
         QString name = object["n"].toString();
         QString url = object["u"].toString();
-        m_bookmarks.append(new BookMark(QDateTime::fromString(time), name, url));
+        m_bookmarks.append(new BookMark(QDateTime::fromString(time), name, DUrl(url)));
     }
 }
 
@@ -88,13 +88,13 @@ void BookMarkManager::writeJson(QJsonObject &json)
         QJsonObject object;
         object["t"] = m_bookmarks.at(i)->getDateTime().toString();
         object["n"] = m_bookmarks.at(i)->getName();
-        object["u"] = m_bookmarks.at(i)->getUrl();
+        object["u"] = m_bookmarks.at(i)->getUrl().toString();
         localArray.append(object);
     }
     json["Bookmark"] = localArray;
 }
 
-BookMark * BookMarkManager::writeIntoBookmark(const QString &name, const QString &url)
+BookMark * BookMarkManager::writeIntoBookmark(const QString &name, const DUrl &url)
 {
     BookMark * bookmark = new BookMark(QDateTime::currentDateTime(), name, url);
     m_bookmarks.append(bookmark);
@@ -102,7 +102,7 @@ BookMark * BookMarkManager::writeIntoBookmark(const QString &name, const QString
     return bookmark;
 }
 
-void BookMarkManager::removeBookmark(const QString &name, const QString &url)
+void BookMarkManager::removeBookmark(const QString &name, const DUrl &url)
 {
     for(int i = 0; i < m_bookmarks.size(); i++)
     {
@@ -116,37 +116,17 @@ void BookMarkManager::removeBookmark(const QString &name, const QString &url)
     save();
 }
 
-void BookMarkManager::fetchFileInformation(const QString &url, int filter)
+const QList<AbstractFileInfo *> BookMarkManager::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
 {
+    Q_UNUSED(fileUrl)
     Q_UNUSED(filter)
 
     QList<AbstractFileInfo*> infolist;
 
-    for(int i = 0; i < m_bookmarks.size(); i++)
-    {
-        BookMark * bm = m_bookmarks.at(i);
-        infolist.append(new FileInfo(bm->getUrl()));
-    }
-
-    emit updates(url, infolist);
-}
-
-const QList<AbstractFileInfo *> BookMarkManager::getChildren(const QString &fileUrl, QDir::Filters filter, bool &accepted) const
-{
-    QUrl url(fileUrl);
-
-    QList<AbstractFileInfo*> infolist;
-
-    if(url.scheme() != BOOKMARK_SCHEME)
-    {
-        accepted = false;
-        return infolist;
-    }
-
     for (int i = 0; i < m_bookmarks.size(); i++)
     {
         BookMark * bm = m_bookmarks.at(i);
-        AbstractFileInfo *fileInfo = new BookMark(bm);
+        AbstractFileInfo *fileInfo = new BookMark(*bm);
         infolist.append(fileInfo);
     }
 
@@ -155,17 +135,9 @@ const QList<AbstractFileInfo *> BookMarkManager::getChildren(const QString &file
     return infolist;
 }
 
-AbstractFileInfo *BookMarkManager::createFileInfo(const QString &fileUrl, bool &accepted) const
+AbstractFileInfo *BookMarkManager::createFileInfo(const DUrl &fileUrl, bool &accepted) const
 {
-    QUrl url(fileUrl);
-
-    if(url.scheme() != BOOKMARK_SCHEME) {
-        accepted = false;
-
-        return Q_NULLPTR;
-    }
-
     accepted = true;
 
-    return new BookMark(url.toString());
+    return new BookMark(fileUrl);
 }

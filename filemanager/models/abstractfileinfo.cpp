@@ -9,18 +9,18 @@ AbstractFileInfo::AbstractFileInfo()
 
 }
 
-AbstractFileInfo::AbstractFileInfo(const QUrl &url)
+AbstractFileInfo::AbstractFileInfo(const DUrl &url)
     : data(new FileInfoData)
 {
-    data->url = url.toString();
+    data->url = url;
     data->fileInfo.setFile(url.path());
 }
 
 AbstractFileInfo::AbstractFileInfo(const QString &url)
     : data(new FileInfoData)
 {
-    data->url = url;
-    data->fileInfo.setFile(QUrl(url).path());
+    data->url = DUrl::fromUserInput(url);
+    data->fileInfo.setFile(data->url.path());
 }
 
 AbstractFileInfo::AbstractFileInfo(const AbstractFileInfo &other)
@@ -34,15 +34,9 @@ AbstractFileInfo::~AbstractFileInfo()
 
 }
 
-void AbstractFileInfo::setUrl(const QString &url)
+void AbstractFileInfo::setUrl(const DUrl &url)
 {
     data->url = url;
-    data->fileInfo.setFile(QUrl(url).path());
-}
-
-void AbstractFileInfo::setUrl(const QUrl &url)
-{
-    data->url = url.toString();
     data->fileInfo.setFile(url.path());
 }
 
@@ -115,10 +109,7 @@ bool AbstractFileInfo::makeAbsolute()
 {
     bool ok = data->fileInfo.makeAbsolute();
 
-    QUrl url(data->url);
-
-    url.setPath(data->fileInfo.filePath());
-    data->url = url.toString();
+    data->url.setPath(data->fileInfo.filePath());
 
     return ok;
 }
@@ -188,9 +179,13 @@ QDateTime AbstractFileInfo::lastRead() const
     return data->fileInfo.lastRead();
 }
 
-QString AbstractFileInfo::parentUrl() const
+DUrl AbstractFileInfo::parentUrl() const
 {
-    return scheme() + "://" + absolutePath();
+    DUrl url = data->url;
+
+    url.setPath(absolutePath());
+
+    return url;
 }
 
 QT_BEGIN_NAMESPACE

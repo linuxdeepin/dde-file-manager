@@ -4,6 +4,8 @@
 #include <QAbstractItemModel>
 #include <QFileSystemModel>
 
+#include "durl.h"
+
 class FileSystemNode;
 class AbstractFileInfo;
 class DFileView;
@@ -32,7 +34,7 @@ public:
 
     DFileView *parent() const;
 
-    QModelIndex index(const QString &fileUrl, int column = 0);
+    QModelIndex index(const DUrl &fileUrl, int column = 0);
     QModelIndex index(int row, int column,
                               const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
     QModelIndex parent(const QModelIndex &child) const Q_DECL_OVERRIDE;
@@ -58,10 +60,10 @@ public:
     bool dropMimeData(const QMimeData * data, Qt::DropAction action, int row, int column, const QModelIndex & parent) Q_DECL_OVERRIDE;
     QMimeData *mimeData(const QModelIndexList & indexes) const Q_DECL_OVERRIDE;
 
-    QModelIndex setRootPath(const QString &fileUrl);
-    QString rootPath() const;
+    QModelIndex setRootUrl(const DUrl &fileUrl);
+    DUrl rootUrl() const;
 
-    QString getUrlByIndex(const QModelIndex &index) const;
+    DUrl getUrlByIndex(const QModelIndex &index) const;
 
     void setSortColumn(int column, Qt::SortOrder order = Qt::AscendingOrder);
     void setSortRole(int role, Qt::SortOrder order = Qt::AscendingOrder);
@@ -75,22 +77,22 @@ public:
     void sort();
 
     AbstractFileInfo *fileInfo(const QModelIndex &index) const;
-    AbstractFileInfo *fileInfo(const QString &fileUrl) const;
+    AbstractFileInfo *fileInfo(const DUrl &fileUrl) const;
     AbstractFileInfo *parentFileInfo(const QModelIndex &index) const;
-    AbstractFileInfo *parentFileInfo(const QString &fileUrl) const;
+    AbstractFileInfo *parentFileInfo(const DUrl &fileUrl) const;
 
 public slots:
     void updateChildren(const FMEvent &event, QList<AbstractFileInfo*> list);
-    void refresh(const QString &fileUrl);
+    void refresh(const DUrl &fileUrl);
 
 private slots:
-    void onFileCreated(const QString &fileUrl);
-    void onFileDeleted(const QString &fileUrl);
+    void onFileCreated(const DUrl &fileUrl);
+    void onFileDeleted(const DUrl &fileUrl);
 
 private:
     FileSystemNode *m_rootNode = Q_NULLPTR;
 
-    QHash<QString, FileSystemNode*> m_urlToNode;
+    QHash<DUrl, FileSystemNode*> m_urlToNode;
 
     int m_sortRole = Qt::DisplayRole;
     int m_sortColumn = 0;
@@ -111,7 +113,7 @@ private:
     FileSystemNode *createNode(FileSystemNode *parent, AbstractFileInfo *info);
 
     void deleteNode(FileSystemNode *node);
-    void deleteNodeByUrl(const QString &url);
+    void deleteNodeByUrl(const DUrl &url);
 
     friend class FileSystemNode;
 };

@@ -66,7 +66,6 @@ HEADERS += \
     filemanager/shutil/iconprovider.h \
     filemanager/models/bookmark.h \
     filemanager/models/imagefileinfo.h \
-    filemanager/models/recenthistory.h \
     filemanager/models/searchhistory.h \
     filemanager/models/fmsetting.h \
     filemanager/models/fmstate.h \
@@ -142,7 +141,6 @@ SOURCES += \
     filemanager/shutil/iconprovider.cpp \
     filemanager/models/bookmark.cpp \
     filemanager/models/imagefileinfo.cpp \
-    filemanager/models/recenthistory.cpp \
     filemanager/models/searchhistory.cpp \
     filemanager/models/fmsetting.cpp \
     filemanager/models/fmstate.cpp \

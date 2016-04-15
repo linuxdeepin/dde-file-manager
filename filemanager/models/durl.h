@@ -5,13 +5,15 @@
 
 class DUrl : public QUrl
 {
+    typedef QList<DUrl> DUrlList;
+
 public:
     DUrl();
     DUrl(const QUrl &copy);
 #ifdef QT_NO_URL_CAST_FROM_STRING
     explicit ZUrl(const QString &url, ParsingMode mode = TolerantMode);
 #else
-    DUrl(const QString &url, ParsingMode mode = TolerantMode);
+    explicit DUrl(const QString &url, ParsingMode mode = TolerantMode);
 #endif
 
     void setPath(const QString &path, ParsingMode mode = DecodedMode, bool makeAbsolute = true);
@@ -30,19 +32,21 @@ public:
     static DUrl fromBookMarkFile(const QString &filePath);
     static DUrl fromSearchFile(const QString &filePath);
     static DUrl fromComputerFile(const QString &filePath);
-    static QList<DUrl> fromStringList(const QStringList &urls, ParsingMode mode = TolerantMode);
-    static QList<DUrl> fromQUrlList(const QList<QUrl> &urls);
+    static DUrlList fromStringList(const QStringList &urls, ParsingMode mode = TolerantMode);
+    static DUrlList fromQUrlList(const QList<QUrl> &urls);
     static DUrl fromUserInput(const QString &userInput);
     static DUrl fromUserInput(const QString &userInput, const QString &workingDirectory,
                               UserInputResolutionOptions options = AssumeLocalFile);
-    static QStringList toStringList(const QList<DUrl> &urls,
+    static QStringList toStringList(const DUrlList &urls,
                                     FormattingOptions options = FormattingOptions( PrettyDecoded ));
-    static QList<QUrl> toQUrlList(const QList<DUrl> &urls);
+    static QList<QUrl> toQUrlList(const DUrlList &urls);
 
     bool operator ==(const QUrl &url) const;
 
 private:
     void makeAbsolute();
 };
+
+typedef QList<DUrl> DUrlList;
 
 #endif // ZURL_H

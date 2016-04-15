@@ -8,6 +8,8 @@
 #include <QPushButton>
 #include <QGraphicsView>
 
+#include "durl.h"
+
 #define LEFTSIDEBAR_MIN 60
 #define LEFTSIDEBAR_MAX 200
 #define LEFTSIDEBAR_NORMAL 160
@@ -34,7 +36,7 @@ public:
     void initConnect();
     void initTightNav();
     void initNav();
-    QString getStandardPathbyId(int id);
+    DUrl getStandardPathbyId(int id);
 protected:
     void resizeEvent(QResizeEvent *e);
 

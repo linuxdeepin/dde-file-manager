@@ -48,7 +48,7 @@ void DBookmarkRootItem::dropEvent(QGraphicsSceneDragDropEvent *event)
             dir.setPath(firstUrl.toLocalFile());
         else
             dir.setPath(firstUrl.toString());
-        QString url = QUrl::fromLocalFile(dir.path()).toString();
+        DUrl url = DUrl::fromLocalFile(dir.path());
         if(dir.exists() && m_scene->hasBookmarkItem(url) == NULL)
         {
             BookMark * bm = bookmarkManager->writeIntoBookmark(dir.dirName(), url);

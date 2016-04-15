@@ -10,7 +10,7 @@
 #include "../shutil/iconprovider.h"
 #include "../views/dscrollbar.h"
 
-OpenWithDialog::OpenWithDialog(const QString &url, QWidget *parent) :
+OpenWithDialog::OpenWithDialog(const DUrl &url, QWidget *parent) :
     DWidget(parent)
 {
     m_url = url;
@@ -70,7 +70,7 @@ void OpenWithDialog::addItems()
     m_listWidget->addItem(recommendItem);
 
 
-    QStringList recommendApps = mimeAppsManager->MimeApps.value(MimesAppsManager::getMimeTypeByFileName(m_url));
+    QStringList recommendApps = mimeAppsManager->MimeApps.value(MimesAppsManager::getMimeTypeByFileName(m_url.toLocalFile()));
 
     foreach (QString f, recommendApps){
         QString iconName = mimeAppsManager->DesktopObjs.value(f).getIcon();

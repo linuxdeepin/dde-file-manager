@@ -23,8 +23,8 @@ class FileSystemNode
 public:
     AbstractFileInfo *fileInfo = Q_NULLPTR;
     FileSystemNode *parent = Q_NULLPTR;
-    QHash<QString, FileSystemNode*> children;
-    QList<QString> visibleChildren;
+    QHash<DUrl, FileSystemNode*> children;
+    QList<DUrl> visibleChildren;
     bool populatedChildren = false;
 
     FileSystemNode(FileSystemNode *parent,
@@ -138,7 +138,7 @@ DFileView *DFileSystemModel::parent() const
     return qobject_cast<DFileView*>(QAbstractItemModel::parent());
 }
 
-QModelIndex DFileSystemModel::index(const QString &fileUrl, int column)
+QModelIndex DFileSystemModel::index(const DUrl &fileUrl, int column)
 {
     FileSystemNode *node = m_urlToNode.value(fileUrl);
 
@@ -162,7 +162,7 @@ QModelIndex DFileSystemModel::index(int row, int column, const QModelIndex &pare
     if(!parentNode)
         return QModelIndex();
 
-    const QString &childFileUrl = parentNode->visibleChildren.value(row);
+    const DUrl &childFileUrl = parentNode->visibleChildren.value(row);
     FileSystemNode *childNode = parentNode->children.value(childFileUrl);
 
     if(!childNode)
@@ -373,13 +373,9 @@ bool DFileSystemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
         return false;
 
     bool success = true;
-    QString toUrl = getUrlByIndex(parent);
+    DUrl toUrl = getUrlByIndex(parent);
 
-    QList<QString> urlList;
-
-    for(const QUrl &url : data->urls()) {
-        urlList << url.toString();
-    }
+    DUrlList urlList = DUrl::fromQUrlList(data->urls());
 
     FMEvent event;
 
@@ -427,10 +423,10 @@ bool DFileSystemModel::canFetchMore(const QModelIndex &parent) const
     return isDir(parentNode) && !parentNode->populatedChildren;
 }
 
-QModelIndex DFileSystemModel::setRootPath(const QString &fileUrl)
+QModelIndex DFileSystemModel::setRootUrl(const DUrl &fileUrl)
 {
     if(m_rootNode) {
-        const QString m_rootFileUrl = m_rootNode->fileInfo->fileUrl();
+        const DUrl m_rootFileUrl = m_rootNode->fileInfo->fileUrl();
 
         if(fileUrl == m_rootFileUrl)
             return createIndex(m_rootNode, 0);
@@ -449,17 +445,17 @@ QModelIndex DFileSystemModel::setRootPath(const QString &fileUrl)
     return index(fileUrl);
 }
 
-QString DFileSystemModel::rootPath() const
+DUrl DFileSystemModel::rootUrl() const
 {
-    return m_rootNode ? m_rootNode->fileInfo->absolutePath() : "";
+    return m_rootNode ? m_rootNode->fileInfo->fileUrl() : DUrl();
 }
 
-QString DFileSystemModel::getUrlByIndex(const QModelIndex &index) const
+DUrl DFileSystemModel::getUrlByIndex(const QModelIndex &index) const
 {
     FileSystemNode *node = getNodeByIndex(index);
 
     if(!node)
-        return "";
+        return DUrl();
 
     return node->fileInfo->fileUrl();
 }
@@ -549,7 +545,7 @@ void DFileSystemModel::sort()
     if(!node)
         return;
 
-    const QString &node_absoluteFileUrl = node->fileInfo->fileUrl();
+    const DUrl &node_absoluteFileUrl = node->fileInfo->fileUrl();
 
     for(FileSystemNode *url_node : m_urlToNode) {
         if(node == url_node)
@@ -557,7 +553,7 @@ void DFileSystemModel::sort()
 
         url_node->populatedChildren = false;
 
-        if(node_absoluteFileUrl.startsWith(url_node->fileInfo->fileUrl()))
+        if(node_absoluteFileUrl.toString().startsWith(url_node->fileInfo->fileUrl().toString()))
             continue;
 
         url_node->visibleChildren.clear();
@@ -567,7 +563,7 @@ void DFileSystemModel::sort()
 
     list.reserve(node->visibleChildren.size());
 
-    for(const QString &fileUrl : node->visibleChildren) {
+    for(const DUrl &fileUrl : node->visibleChildren) {
         list << node->children.value(fileUrl)->fileInfo;
     }
 
@@ -591,7 +587,7 @@ AbstractFileInfo *DFileSystemModel::fileInfo(const QModelIndex &index) const
     return node ? node->fileInfo : Q_NULLPTR;
 }
 
-AbstractFileInfo *DFileSystemModel::fileInfo(const QString &fileUrl) const
+AbstractFileInfo *DFileSystemModel::fileInfo(const DUrl &fileUrl) const
 {
     FileSystemNode *node = m_urlToNode.value(fileUrl);
 
@@ -605,7 +601,7 @@ AbstractFileInfo *DFileSystemModel::parentFileInfo(const QModelIndex &index) con
     return node ? node->parent->fileInfo : Q_NULLPTR;
 }
 
-AbstractFileInfo *DFileSystemModel::parentFileInfo(const QString &fileUrl) const
+AbstractFileInfo *DFileSystemModel::parentFileInfo(const DUrl &fileUrl) const
 {
     FileSystemNode *node = m_urlToNode.value(fileUrl);
 
@@ -641,7 +637,7 @@ void DFileSystemModel::updateChildren(const FMEvent &event, QList<AbstractFileIn
     endInsertRows();
 }
 
-void DFileSystemModel::refresh(const QString &fileUrl)
+void DFileSystemModel::refresh(const DUrl &fileUrl)
 {
     FileSystemNode *node = m_urlToNode.value(fileUrl);
 
@@ -661,7 +657,7 @@ void DFileSystemModel::refresh(const QString &fileUrl)
     fileService->getChildren(event);
 }
 
-void DFileSystemModel::onFileCreated(const QString &fileUrl)
+void DFileSystemModel::onFileCreated(const DUrl &fileUrl)
 {
     qDebug() << "file creatored" << fileUrl;
 
@@ -704,7 +700,7 @@ void DFileSystemModel::onFileCreated(const QString &fileUrl)
     }
 }
 
-void DFileSystemModel::onFileDeleted(const QString &fileUrl)
+void DFileSystemModel::onFileDeleted(const DUrl &fileUrl)
 {
     qDebug() << "file deleted:" << fileUrl;
 
@@ -736,8 +732,8 @@ void DFileSystemModel::onFileDeleted(const QString &fileUrl)
             return;
 
         if(hasChildren(createIndex(node, 0))) {
-            for(const QString &url : m_urlToNode.keys()) {
-                if(fileUrl.startsWith(url)) {
+            for(const DUrl &url : m_urlToNode.keys()) {
+                if(fileUrl.toString().startsWith(url.toString())) {
                     deleteNodeByUrl(url);
                 }
             }
@@ -826,15 +822,14 @@ void DFileSystemModel::deleteNode(FileSystemNode *node)
 
     for(FileSystemNode *children : node->children) {
         if(children->parent == node) {
-            children->parent = m_urlToNode.value(children->fileInfo->scheme() + "://"
-                                                 + children->fileInfo->absolutePath());
+            children->parent = m_urlToNode.value(children->fileInfo->parentUrl());
         }
     }
 
     delete node;
 }
 
-void DFileSystemModel::deleteNodeByUrl(const QString &url)
+void DFileSystemModel::deleteNodeByUrl(const DUrl &url)
 {
     delete m_urlToNode.take(url);
 }

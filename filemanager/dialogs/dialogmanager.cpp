@@ -70,21 +70,21 @@ void DialogManager::abortJob(const QMap<QString, QString> &jobDetail)
 }
 
 
-void DialogManager::showUrlWrongDialog(const QString &url)
+void DialogManager::showUrlWrongDialog(const DUrl &url)
 {
-    MessageWrongDialog d(url);
+    MessageWrongDialog d(url.toString());
     qDebug() << url;
     d.exec();
 }
 
-void DialogManager::showOpenWithDialog(const QString &url)
+void DialogManager::showOpenWithDialog(const DUrl &url)
 {
     qDebug() << url;
     OpenWithDialog* d = new OpenWithDialog(url);
     d->show();
 }
 
-void DialogManager::showPropertyDialog(const QString &url)
+void DialogManager::showPropertyDialog(const DUrl &url)
 {
     FileInfo info(url);
     PropertyDialog *dialog = new PropertyDialog(&info);

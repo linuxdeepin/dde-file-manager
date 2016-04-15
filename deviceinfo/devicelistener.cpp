@@ -172,6 +172,7 @@ void DeviceListener::deviceReceived(int)
 
 void DeviceListener::mount(const QString &path)
 {
+    Q_UNUSED(path)
 //    QStringList r = path.split("/");
 
 //    udev_device *dev = udev_device_new_from_syspath(m_udev, path.toLatin1());
@@ -193,6 +194,7 @@ void DeviceListener::mount(const QString &path)
 
 void DeviceListener::unmount(const QString &path)
 {
+    Q_UNUSED(path)
 //    QStringList r = path.split("/");
 
 //    udev_device *dev = udev_device_new_from_syspath(m_udev, path.toLatin1());
@@ -226,17 +228,12 @@ QString DeviceListener::mountPoint(udev_device *dev)
     return QString();
 }
 
-const QList<AbstractFileInfo *> DeviceListener::getChildren(const QString &fileUrl, QDir::Filters filter, bool &accepted) const
+const QList<AbstractFileInfo *> DeviceListener::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
 {
-    QUrl url(fileUrl);
+    Q_UNUSED(fileUrl)
+    Q_UNUSED(filter)
 
     QList<AbstractFileInfo*> infolist;
-
-    if(url.scheme() != COMPUTER_SCHEME)
-    {
-        accepted = false;
-        return infolist;
-    }
 
     for (int i = 0; i < m_deviceInfos.size(); i++)
     {
@@ -250,17 +247,9 @@ const QList<AbstractFileInfo *> DeviceListener::getChildren(const QString &fileU
     return infolist;
 }
 
-AbstractFileInfo *DeviceListener::createFileInfo(const QString &fileUrl, bool &accepted) const
+AbstractFileInfo *DeviceListener::createFileInfo(const DUrl &fileUrl, bool &accepted) const
 {
-    QUrl url(fileUrl);
-
-    if(url.scheme() != COMPUTER_SCHEME) {
-        accepted = false;
-
-        return Q_NULLPTR;
-    }
-
     accepted = true;
 
-    return new DeviceInfo(url.toString());
+    return new DeviceInfo(fileUrl);
 }

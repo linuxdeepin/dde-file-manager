@@ -11,6 +11,7 @@ class DBookmarkRootItem;
 class DBookmarkItemGroup;
 class FMEvent;
 class DeviceInfo;
+class DUrl;
 
 class DBookmarkScene : public QGraphicsScene
 {
@@ -28,7 +29,7 @@ public:
     DBookmarkItemGroup * getGroup();
     int count();
     int windowId();
-    DBookmarkItem * hasBookmarkItem(const QString &url);
+    DBookmarkItem * hasBookmarkItem(const DUrl &url);
 protected:
     void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
     void dragLeaveEvent(QGraphicsSceneDragDropEvent *event);

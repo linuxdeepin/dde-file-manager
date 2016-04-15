@@ -84,7 +84,7 @@ void FileServices::clearFileUrlHandler(const QString &scheme, const QString &hos
     m_controllerHash.remove(handler);
 }
 
-bool FileServices::openFile(const QString &fileUrl) const
+bool FileServices::openFile(const DUrl &fileUrl) const
 {
     TRAVERSE(fileUrl, {
                  bool ok = controller->openFile(fileUrl, accepted);
@@ -99,7 +99,7 @@ bool FileServices::openFile(const QString &fileUrl) const
             return false;
 }
 
-bool FileServices::copyFiles(const QList<QString> &urlList) const
+bool FileServices::copyFiles(const DUrlList &urlList) const
 {
     if(urlList.isEmpty())
         return false;
@@ -114,7 +114,7 @@ bool FileServices::copyFiles(const QList<QString> &urlList) const
      return false;
 }
 
-bool FileServices::renameFile(const QString &oldUrl, const QString &newUrl) const
+bool FileServices::renameFile(const DUrl &oldUrl, const DUrl &newUrl) const
 {
     TRAVERSE(oldUrl, {
                  bool ok = controller->renameFile(oldUrl, newUrl, accepted);
@@ -126,7 +126,7 @@ bool FileServices::renameFile(const QString &oldUrl, const QString &newUrl) cons
     return false;
 }
 
-void FileServices::deleteFiles(const QList<QString> &urlList) const
+void FileServices::deleteFiles(const DUrlList &urlList) const
 {
     if(urlList.isEmpty())
         return;
@@ -145,7 +145,7 @@ void FileServices::deleteFiles(const QList<QString> &urlList) const
              })
 }
 
-void FileServices::moveToTrash(const QList<QString> &urlList) const
+void FileServices::moveToTrash(const DUrlList &urlList) const
 {
     if(urlList.isEmpty())
         return;
@@ -164,7 +164,7 @@ void FileServices::moveToTrash(const QList<QString> &urlList) const
              })
 }
 
-bool FileServices::cutFiles(const QList<QString> &urlList) const
+bool FileServices::cutFiles(const DUrlList &urlList) const
 {
     if(urlList.isEmpty())
         return false;
@@ -191,10 +191,10 @@ void FileServices::pasteFile(const FMEvent &event) const
         AbstractFileController::PasteType type = text.readLine() == "cut" ? AbstractFileController::CutType
                                                                           : AbstractFileController::CopyType;
 
-        QList<QString> urls;
+        DUrlList urls;
 
         while(!text.atEnd()) {
-            urls.append(text.readLine());
+            urls.append(DUrl(text.readLine()));
         }
 
         pasteFile(type, urls, event);
@@ -202,7 +202,7 @@ void FileServices::pasteFile(const FMEvent &event) const
 }
 
 void FileServices::pasteFile(AbstractFileController::PasteType type,
-                             const QList<QString> &urlList, const FMEvent &event) const
+                             const DUrlList &urlList, const FMEvent &event) const
 {
     if(QThread::currentThread() == qApp->thread()) {
         QtConcurrent::run(QThreadPool::globalInstance(), this, &FileServices::pasteFile, type, urlList, event);
@@ -218,7 +218,7 @@ void FileServices::pasteFile(AbstractFileController::PasteType type,
              })
 }
 
-bool FileServices::newFolder(const QString &toUrl) const
+bool FileServices::newFolder(const DUrl &toUrl) const
 {
     TRAVERSE(toUrl, {
                  bool ok = controller->newFolder(toUrl, accepted);
@@ -230,7 +230,7 @@ bool FileServices::newFolder(const QString &toUrl) const
     return false;
 }
 
-bool FileServices::newFile(const QString &toUrl) const
+bool FileServices::newFile(const DUrl &toUrl) const
 {
     TRAVERSE(toUrl, {
                  bool ok = controller->newFile(toUrl, accepted);
@@ -242,7 +242,7 @@ bool FileServices::newFile(const QString &toUrl) const
     return false;
 }
 
-bool FileServices::newDocument(const QString &toUrl) const
+bool FileServices::newDocument(const DUrl &toUrl) const
 {
     TRAVERSE(toUrl, {
                  bool ok = controller->newDocument(toUrl, accepted);
@@ -254,7 +254,7 @@ bool FileServices::newDocument(const QString &toUrl) const
     return false;
 }
 
-bool FileServices::addUrlMonitor(const QString &fileUrl) const
+bool FileServices::addUrlMonitor(const DUrl &fileUrl) const
 {
     TRAVERSE(fileUrl, {
                  bool ok = controller->addUrlMonitor(fileUrl, accepted);
@@ -266,7 +266,7 @@ bool FileServices::addUrlMonitor(const QString &fileUrl) const
     return false;
 }
 
-bool FileServices::removeUrlMonitor(const QString &fileUrl) const
+bool FileServices::removeUrlMonitor(const DUrl &fileUrl) const
 {
     TRAVERSE(fileUrl, {
                  bool ok = controller->removeUrlMonitor(fileUrl, accepted);
@@ -278,7 +278,7 @@ bool FileServices::removeUrlMonitor(const QString &fileUrl) const
     return false;
 }
 
-bool FileServices::openFileLocation(const QString &fileUrl) const
+bool FileServices::openFileLocation(const DUrl &fileUrl) const
 {
     TRAVERSE(fileUrl, {
                  bool ok = controller->openFileLocation(fileUrl, accepted);
@@ -290,12 +290,12 @@ bool FileServices::openFileLocation(const QString &fileUrl) const
     return false;
 }
 
-void FileServices::openNewWindow(const QString &fileUrl) const
+void FileServices::openNewWindow(const DUrl &fileUrl) const
 {
     emit fileSignalManager->requestOpenNewWindowByUrl(fileUrl);
 }
 
-AbstractFileInfo *FileServices::createFileInfo(const QString &fileUrl) const
+AbstractFileInfo *FileServices::createFileInfo(const DUrl &fileUrl) const
 {
     TRAVERSE(fileUrl, {
                  AbstractFileInfo *info = controller->createFileInfo(fileUrl, accepted);
@@ -315,7 +315,7 @@ void FileServices::getChildren(const FMEvent &event, QDir::Filters filters) cons
         return;
     }
 
-    const QString &fileUrl = event.fileUrl();
+    const DUrl &fileUrl = event.fileUrl();
 
     TRAVERSE(fileUrl, {
                  const QList<AbstractFileInfo*> &&list = controller->getChildren(fileUrl, filters, accepted);
@@ -328,13 +328,11 @@ void FileServices::getChildren(const FMEvent &event, QDir::Filters filters) cons
              })
 }
 
-QList<AbstractFileController*> FileServices::getHandlerTypeByUrl(const QString &fileUrl,
+QList<AbstractFileController*> FileServices::getHandlerTypeByUrl(const DUrl &fileUrl,
                                                                  bool ignoreHost, bool ignoreScheme)
 {
-    QUrl url(fileUrl);
-
-    return m_controllerHash.values(HandlerType(ignoreScheme ? "" : url.scheme(),
-                                               ignoreHost ? "" : url.path()));
+    return m_controllerHash.values(HandlerType(ignoreScheme ? "" : fileUrl.scheme(),
+                                               ignoreHost ? "" : fileUrl.path()));
 }
 
 void FileServices::openUrl(const FMEvent &event) const

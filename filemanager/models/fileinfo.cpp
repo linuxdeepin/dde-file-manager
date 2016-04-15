@@ -20,7 +20,7 @@ FileInfo::FileInfo(const QString &fileUrl)
 
 }
 
-FileInfo::FileInfo(const QUrl &fileUrl)
+FileInfo::FileInfo(const DUrl &fileUrl)
     : AbstractFileInfo(fileUrl)
 {
 
@@ -32,19 +32,14 @@ FileInfo::FileInfo(const QFileInfo &fileInfo)
 
 }
 
-void FileInfo::setFile(const QString &fileUrl)
+void FileInfo::setFile(const DUrl &fileUrl)
 {
     setUrl(fileUrl);
 }
 
-bool FileInfo::exists(const QString &fileUrl)
+bool FileInfo::exists(const DUrl &fileUrl)
 {
-    QUrl url(fileUrl);
-
-    if(url.scheme().isEmpty())
-        url = QUrl::fromLocalFile(fileUrl);
-
-    return QFileInfo::exists(url.toLocalFile());
+    return QFileInfo::exists(fileUrl.toLocalFile());
 }
 
 QMimeType FileInfo::mimeType(const QString &filePath)

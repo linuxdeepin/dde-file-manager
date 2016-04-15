@@ -7,7 +7,7 @@ class RecentFileInfo : public AbstractFileInfo
 {
 public:
     RecentFileInfo();
-    RecentFileInfo(const QUrl &url);
+    RecentFileInfo(const DUrl &url);
     RecentFileInfo(const QString &url);
 
     bool isCanRename() const Q_DECL_OVERRIDE;

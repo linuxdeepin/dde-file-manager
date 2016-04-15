@@ -19,19 +19,19 @@ public:
     void load() Q_DECL_OVERRIDE;
     void save() Q_DECL_OVERRIDE;
 
-    bool openFile(const QString &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
-    const QList<AbstractFileInfo*> getChildren(const QString &fileUrl, QDir::Filters filter, bool &accepted) const Q_DECL_OVERRIDE;
-    AbstractFileInfo *createFileInfo(const QString &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
+    bool openFile(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
+    const QList<AbstractFileInfo*> getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const Q_DECL_OVERRIDE;
+    AbstractFileInfo *createFileInfo(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
 
 private:
     void loadJson(const QJsonObject &json);
     void writeJson(QJsonObject &json);
 
 private slots:
-    void addOpenedFile(const QString &url);
+    void addOpenedFile(const DUrl &url);
 
 private:
-    QList<QString> openedFileList;
+    QList<DUrl> openedFileList;
 };
 
 #endif // RECENTHISTORYMANAGER_H

@@ -66,39 +66,31 @@ void RecentHistoryManager::save()
     file.write(jsonDoc.toJson());
 }
 
-bool RecentHistoryManager::openFile(const QString &fileUrl, bool &accepted) const
+bool RecentHistoryManager::openFile(const DUrl &fileUrl, bool &accepted) const
 {
-    QUrl url(fileUrl);
+    accepted = true;
 
-    accepted = false;
-
-    if(url.scheme() != RECENT_SCHEME) {
-        return false;
-    }
-
-    return fileService->openFile( QString(FILE_SCHEME) + "://" + url.path());
+    return fileService->openFile(DUrl::fromLocalFile(fileUrl.path()));
 }
 
-const QList<AbstractFileInfo *> RecentHistoryManager::getChildren(const QString &fileUrl, QDir::Filters filter, bool &accepted) const
+const QList<AbstractFileInfo *> RecentHistoryManager::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
 {
     Q_UNUSED(filter)
 
-    QUrl url(fileUrl);
-
     QList<AbstractFileInfo*> infolist;
 
-    if(url.path() != "/" || url.scheme() != RECENT_SCHEME) {
+    if(fileUrl.path() != "/") {
         accepted = false;
 
         return infolist;
     }
 
-    for (const QString &filePath : openedFileList) {
-        QUrl url(filePath);
+    for (const DUrl &fileUrl : openedFileList) {
+        DUrl url(fileUrl);
 
         url.setScheme(RECENT_SCHEME);
 
-        AbstractFileInfo *fileInfo = new RecentFileInfo(url.toString());
+        AbstractFileInfo *fileInfo = new RecentFileInfo(url);
 
         infolist.append(fileInfo);
     }
@@ -108,19 +100,11 @@ const QList<AbstractFileInfo *> RecentHistoryManager::getChildren(const QString 
     return infolist;
 }
 
-AbstractFileInfo *RecentHistoryManager::createFileInfo(const QString &fileUrl, bool &accepted) const
+AbstractFileInfo *RecentHistoryManager::createFileInfo(const DUrl &fileUrl, bool &accepted) const
 {
-    QUrl url(fileUrl);
-
-    if(url.scheme() != RECENT_SCHEME) {
-        accepted = false;
-
-        return Q_NULLPTR;
-    }
-
     accepted = true;
 
-    return new RecentFileInfo(url.toString());
+    return new RecentFileInfo(fileUrl);
 }
 
 void RecentHistoryManager::loadJson(const QJsonObject &json)
@@ -130,7 +114,7 @@ void RecentHistoryManager::loadJson(const QJsonObject &json)
     {
         QJsonObject object = jsonArray[i].toObject();
         QString url = object["url"].toString();
-        openedFileList.append(url);
+        openedFileList.append(DUrl(url));
     }
 }
 
@@ -140,13 +124,13 @@ void RecentHistoryManager::writeJson(QJsonObject &json)
     for(int i = 0; i < openedFileList.size(); i++)
     {
         QJsonObject object;
-        object["url"] = openedFileList.at(i);
+        object["url"] = openedFileList.at(i).toString();
         localArray.append(object);
     }
     json["RecentHistory"] = localArray;
 }
 
-void RecentHistoryManager::addOpenedFile(const QString &url)
+void RecentHistoryManager::addOpenedFile(const DUrl &url)
 {
     if(openedFileList.contains(url))
         return;

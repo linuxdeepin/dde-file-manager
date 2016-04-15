@@ -6,7 +6,7 @@ AbstractFileController::AbstractFileController(QObject *parent)
 
 }
 
-bool AbstractFileController::openFile(const QString &fileUrl, bool &accepted) const
+bool AbstractFileController::openFile(const DUrl &fileUrl, bool &accepted) const
 {
     Q_UNUSED(fileUrl)
 
@@ -15,7 +15,7 @@ bool AbstractFileController::openFile(const QString &fileUrl, bool &accepted) co
     return false;
 }
 
-bool AbstractFileController::copyFiles(const QList<QString> &urlList, bool &accepted) const
+bool AbstractFileController::copyFiles(const DUrlList &urlList, bool &accepted) const
 {
     Q_UNUSED(urlList)
 
@@ -24,7 +24,7 @@ bool AbstractFileController::copyFiles(const QList<QString> &urlList, bool &acce
     return false;
 }
 
-bool AbstractFileController::renameFile(const QString &oldUrl, const QString &newUrl, bool &accepted) const
+bool AbstractFileController::renameFile(const DUrl &oldUrl, const DUrl &newUrl, bool &accepted) const
 {
     Q_UNUSED(oldUrl)
     Q_UNUSED(newUrl)
@@ -34,7 +34,7 @@ bool AbstractFileController::renameFile(const QString &oldUrl, const QString &ne
     return false;
 }
 
-bool AbstractFileController::deleteFiles(const QList<QString> &urlList, bool &accepted) const
+bool AbstractFileController::deleteFiles(const DUrlList &urlList, bool &accepted) const
 {
     Q_UNUSED(urlList)
 
@@ -43,7 +43,7 @@ bool AbstractFileController::deleteFiles(const QList<QString> &urlList, bool &ac
     return false;
 }
 
-bool AbstractFileController::moveToTrash(const QList<QString> &urlList, bool &accepted) const
+bool AbstractFileController::moveToTrash(const DUrlList &urlList, bool &accepted) const
 {
     Q_UNUSED(urlList)
 
@@ -52,7 +52,7 @@ bool AbstractFileController::moveToTrash(const QList<QString> &urlList, bool &ac
     return false;
 }
 
-bool AbstractFileController::cutFiles(const QList<QString> &urlList, bool &accepted) const
+bool AbstractFileController::cutFiles(const DUrlList &urlList, bool &accepted) const
 {
     Q_UNUSED(urlList)
 
@@ -61,7 +61,7 @@ bool AbstractFileController::cutFiles(const QList<QString> &urlList, bool &accep
     return false;
 }
 
-bool AbstractFileController::pasteFile(PasteType type, const QList<QString> &urlList,
+bool AbstractFileController::pasteFile(PasteType type, const DUrlList &urlList,
                                        const FMEvent &event, bool &accepted) const
 {
     Q_UNUSED(type)
@@ -73,7 +73,7 @@ bool AbstractFileController::pasteFile(PasteType type, const QList<QString> &url
     return false;
 }
 
-bool AbstractFileController::newFolder(const QString &toUrl, bool &accepted) const
+bool AbstractFileController::newFolder(const DUrl &toUrl, bool &accepted) const
 {
     Q_UNUSED(toUrl)
 
@@ -82,7 +82,7 @@ bool AbstractFileController::newFolder(const QString &toUrl, bool &accepted) con
     return false;
 }
 
-bool AbstractFileController::newFile(const QString &toUrl, bool &accepted) const
+bool AbstractFileController::newFile(const DUrl &toUrl, bool &accepted) const
 {
     Q_UNUSED(toUrl)
 
@@ -91,7 +91,7 @@ bool AbstractFileController::newFile(const QString &toUrl, bool &accepted) const
     return false;
 }
 
-bool AbstractFileController::newDocument(const QString &toUrl, bool &accepted) const
+bool AbstractFileController::newDocument(const DUrl &toUrl, bool &accepted) const
 {
     Q_UNUSED(toUrl)
 
@@ -100,7 +100,7 @@ bool AbstractFileController::newDocument(const QString &toUrl, bool &accepted) c
     return false;
 }
 
-bool AbstractFileController::addUrlMonitor(const QString &url, bool &accepted) const
+bool AbstractFileController::addUrlMonitor(const DUrl &url, bool &accepted) const
 {
     Q_UNUSED(url)
 
@@ -109,7 +109,7 @@ bool AbstractFileController::addUrlMonitor(const QString &url, bool &accepted) c
     return false;
 }
 
-bool AbstractFileController::removeUrlMonitor(const QString &url, bool &accepted) const
+bool AbstractFileController::removeUrlMonitor(const DUrl &url, bool &accepted) const
 {
     Q_UNUSED(url)
 
@@ -118,7 +118,7 @@ bool AbstractFileController::removeUrlMonitor(const QString &url, bool &accepted
     return false;
 }
 
-bool AbstractFileController::openFileLocation(const QString &fileUrl, bool &accepted) const
+bool AbstractFileController::openFileLocation(const DUrl &fileUrl, bool &accepted) const
 {
     Q_UNUSED(fileUrl)
 
@@ -127,7 +127,7 @@ bool AbstractFileController::openFileLocation(const QString &fileUrl, bool &acce
     return false;
 }
 
-const QList<AbstractFileInfo*> AbstractFileController::getChildren(const QString &fileUrl, QDir::Filters filter, bool &accepted) const
+const QList<AbstractFileInfo*> AbstractFileController::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
 {
     Q_UNUSED(fileUrl)
     Q_UNUSED(filter)
@@ -137,7 +137,7 @@ const QList<AbstractFileInfo*> AbstractFileController::getChildren(const QString
     return QList<AbstractFileInfo*>();
 }
 
-AbstractFileInfo *AbstractFileController::createFileInfo(const QString &fileUrl, bool &accepted) const
+AbstractFileInfo *AbstractFileController::createFileInfo(const DUrl &fileUrl, bool &accepted) const
 {
     Q_UNUSED(fileUrl)
 

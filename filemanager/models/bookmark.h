@@ -11,27 +11,25 @@ class BookMark : public AbstractFileInfo
 {
 public:
     BookMark();
-    BookMark(BookMark * bookmark);
-    BookMark(const QString &url);
-    BookMark(QDateTime time, const QString &name, const QString &url);
+    BookMark(const DUrl &url);
+    BookMark(QDateTime time, const QString &name, const DUrl &url);
     ~BookMark();
     QDateTime getDateTime();
-    QString getUrl();
+    inline DUrl getUrl()
+    {return fileUrl();}
     void setDateTime(QDateTime time);
-    void setUrl(const QString &url);
     void setName(const QString &name);
     QString getName();
 
 private:
-    QString m_url;
     QDateTime m_time;
     QString m_name;
 
     // AbstractFileInfo interface
 public:
-    bool isCanRename() const;
-    bool isDir() const;
-    QIcon fileIcon() const;
+    bool isCanRename() const Q_DECL_OVERRIDE;
+    bool isDir() const Q_DECL_OVERRIDE;
+    QIcon fileIcon() const Q_DECL_OVERRIDE;
 };
 
 #endif // BOOKMARK_H

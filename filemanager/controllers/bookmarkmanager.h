@@ -23,19 +23,14 @@ private:
     void writeJson(QJsonObject &json);
     QList<BookMark *> m_bookmarks;
 
-signals:
-    void updates(const QString &directory, const QList<AbstractFileInfo*> &infoList);
-
 public slots:
-    BookMark *writeIntoBookmark(const QString &name, const QString &url);
-    void removeBookmark(const QString &name, const QString &url);
-    void fetchFileInformation(const QString &url,
-                              int filter = int(QDir::AllEntries | QDir::NoDotAndDotDot));
+    BookMark *writeIntoBookmark(const QString &name, const DUrl &url);
+    void removeBookmark(const QString &name, const DUrl &url);
 
     // AbstractFileController interface
 public:
-    const QList<AbstractFileInfo *> getChildren(const QString &fileUrl, QDir::Filters filter, bool &accepted) const;
-    AbstractFileInfo *createFileInfo(const QString &fileUrl, bool &accepted) const;
+    const QList<AbstractFileInfo *> getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const;
+    AbstractFileInfo *createFileInfo(const DUrl &fileUrl, bool &accepted) const;
 };
 
 #endif // BOOKMARKMANAGER_H

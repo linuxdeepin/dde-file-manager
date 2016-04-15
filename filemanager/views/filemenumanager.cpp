@@ -298,7 +298,7 @@ DFileMenu *FileMenuManager::createListViewHeaderMenu(const QVector<FileMenuManag
     return genereteMenuByKeys(actionKeys, disableList, true);
 }
 
-QVector<FileMenuManager::MenuAction> FileMenuManager::getDisableActionList(const QString &fileUrl)
+QVector<FileMenuManager::MenuAction> FileMenuManager::getDisableActionList(const DUrl &fileUrl)
 {
     AbstractFileInfo *fileInfo = fileService->createFileInfo(fileUrl);
     QVector<FileMenuManager::MenuAction> disableList;
@@ -310,8 +310,7 @@ QVector<FileMenuManager::MenuAction> FileMenuManager::getDisableActionList(const
         disableList << FileMenuManager::Open << FileMenuManager::OpenWith
                     << FileMenuManager::OpenInNewWindow << FileMenuManager::Copy;
 
-    AbstractFileInfo *parentInfo = fileService->createFileInfo(fileInfo->scheme() + "://"
-                                                               + fileInfo->absolutePath());
+    AbstractFileInfo *parentInfo = fileService->createFileInfo(fileInfo->parentUrl());
 
     if(!fileInfo->isWritable())
         disableList << FileMenuManager::Paste << FileMenuManager::NewDocument
@@ -429,9 +428,9 @@ DFileMenu *FileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
 void FileMenuManager::actionTriggered(DAction *action)
 {
     DFileMenu *menu = qobject_cast<DFileMenu *>(sender());
-    QList<QString> urls = menu->getUrls();
+    DUrlList urls = menu->getUrls();
     MenuAction type = (MenuAction)action->data().toInt();
-    QString fileUrl;
+    DUrl fileUrl;
 
     if(urls.size() > 0)
         fileUrl = urls.first();

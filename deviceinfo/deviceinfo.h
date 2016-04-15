@@ -10,7 +10,7 @@ class DeviceInfo : public AbstractFileInfo
 {
 public:
     DeviceInfo(DeviceInfo * deviceInfo);
-    DeviceInfo(const QString &url);
+    DeviceInfo(const DUrl &url);
     DeviceInfo(const QString &path,
                const QString &sysPath,
                const QString &label,
@@ -35,10 +35,10 @@ private:
 
     // AbstractFileInfo interface
 public:
-    QString displayName() const;
-    bool isCanRename() const;
-    bool isDir() const;
-    QIcon fileIcon() const;
+    QString displayName() const Q_DECL_OVERRIDE;
+    bool isCanRename() const Q_DECL_OVERRIDE;
+    bool isDir() const Q_DECL_OVERRIDE;
+    QIcon fileIcon() const Q_DECL_OVERRIDE;
 };
 
 #endif // DEVICEINFO_H

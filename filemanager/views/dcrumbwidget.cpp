@@ -133,7 +133,7 @@ void DCrumbWidget::buttonPressed()
     if(!isRootFolder(text))
         text.remove(text.count() -1, 1);
     FMEvent event;
-    event = text;
+    event = DUrl::fromLocalFile(text);
     event = WindowManager::getWindowId(window());
     event = FMEvent::CrumbButton;
     emit crumbSelected(event);

@@ -160,8 +160,8 @@ void DToolBar::startup()
 {
     QString user = getenv("USER");
     FMEvent event(-1, FMEvent::SearchLine);
-    event = "/home/" + user;
-    m_crumbWidget->setCrumb(event.fileUrl());
+    event = DUrl::fromLocalFile("/home/" + user);
+    m_crumbWidget->setCrumb(event.fileUrl().path());
 
     emit fileSignalManager->requestChangeCurrentUrl(event);
 }
@@ -198,12 +198,11 @@ void DToolBar::searchBarDeactivated()
 void DToolBar::searchBarTextEntered()
 {
     QString path = m_searchBar->text();
-    qDebug() << path;
 
     FMEvent event;
 
     event = FMEvent::SearchLine;
-    event = path;
+    event = DUrl::fromUserInput(path);
 
     emit fileSignalManager->requestChangeCurrentUrl(event);
 }
@@ -217,7 +216,7 @@ void DToolBar::crumbSelected(const FMEvent &e)
 
     event = WindowManager::getWindowId(window());
     event = FMEvent::CrumbButton;
-    event = QUrl::fromLocalFile(e.fileUrl()).toString();
+    event = e.fileUrl();
 
 
     emit fileSignalManager->requestChangeCurrentUrl(event);
@@ -254,7 +253,7 @@ void DToolBar::upButtonClicked()
     FMEvent event;
 
     event = FMEvent::UpButton;
-    event = text;
+    event = DUrl::fromUserInput(text);
 
     emit fileSignalManager->requestChangeCurrentUrl(event);
 }
@@ -266,13 +265,13 @@ void DToolBar::searchBarChanged(QString path)
 
 void DToolBar::backButtonClicked()
 {
-    QString path = m_navStack->back();
-    if(path != "")
+    DUrl url = m_navStack->back();
+    if(!url.isEmpty())
     {
         FMEvent event;
         event = WindowManager::getWindowId(window());
         event = FMEvent::BackAndForwardButton;
-        event = path;
+        event = url;
         if(m_navStack->isFirst())
             m_backButton->setDisabled(true);
         m_forwardButton->setEnabled(true);
@@ -282,13 +281,13 @@ void DToolBar::backButtonClicked()
 
 void DToolBar::forwardButtonClicked()
 {
-    QString path = m_navStack->forward();
-    if(path != "")
+    DUrl url = m_navStack->forward();
+    if(!url.isEmpty())
     {
         FMEvent event;
         event = WindowManager::getWindowId(window());
         event = FMEvent::BackAndForwardButton;
-        event = path;
+        event = url;
         if(m_navStack->isLast())
             m_forwardButton->setDisabled(true);
         m_backButton->setEnabled(true);

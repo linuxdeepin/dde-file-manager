@@ -8,6 +8,7 @@
 #include <QDir>
 
 #include "abstractfilecontroller.h"
+#include "durl.h"
 
 typedef QPair<QString,QString> HandlerType;
 
@@ -26,41 +27,41 @@ public:
     static void unsetFileUrlHandler(AbstractFileController *controller);
     static void clearFileUrlHandler(const QString &scheme, const QString &host);
 
-    bool openFile(const QString &fileUrl) const;
-    bool copyFiles(const QList<QString> &urlList) const;
-    bool renameFile(const QString &oldUrl, const QString &newUrl) const;
-    void deleteFiles(const QList<QString> &urlList) const;
-    void moveToTrash(const QList<QString> &urlList) const;
-    bool cutFiles(const QList<QString> &urlList) const;
+    bool openFile(const DUrl &fileUrl) const;
+    bool copyFiles(const DUrlList &urlList) const;
+    bool renameFile(const DUrl &oldUrl, const DUrl &newUrl) const;
+    void deleteFiles(const DUrlList &urlList) const;
+    void moveToTrash(const DUrlList &urlList) const;
+    bool cutFiles(const DUrlList &urlList) const;
     void pasteFile(const FMEvent &event) const;
     void pasteFile(AbstractFileController::PasteType type,
-                   const QList<QString> &urlList,
+                   const DUrlList &urlList,
                    const FMEvent &event) const;
-    bool newFolder(const QString &toUrl) const;
-    bool newFile(const QString &toUrl) const;
-    bool newDocument(const QString &toUrl) const;
+    bool newFolder(const DUrl &toUrl) const;
+    bool newFile(const DUrl &toUrl) const;
+    bool newDocument(const DUrl &toUrl) const;
 
-    bool addUrlMonitor(const QString &url) const;
-    bool removeUrlMonitor(const QString &url) const;
+    bool addUrlMonitor(const DUrl &url) const;
+    bool removeUrlMonitor(const DUrl &url) const;
 
-    bool openFileLocation(const QString &fileUrl) const;
+    bool openFileLocation(const DUrl &fileUrl) const;
 
-    AbstractFileInfo *createFileInfo(const QString &fileUrl) const;
+    AbstractFileInfo *createFileInfo(const DUrl &fileUrl) const;
 
 public slots:
     void getChildren(const FMEvent &event, QDir::Filters filters = QDir::AllEntries | QDir::NoDotAndDotDot) const;
-    void openNewWindow(const QString &fileUrl) const;
+    void openNewWindow(const DUrl &fileUrl) const;
     void openUrl(const FMEvent &event) const;
 
 signals:
     void childrenUpdated(const FMEvent &event, const QList<AbstractFileInfo*> &list) const;
-    void childrenAdded(const QString &fileUrl) const;
-    void childrenRemoved(const QString &fileUrl) const;
-    void fileOpened(const QString &fileUrl) const;
+    void childrenAdded(const DUrl &fileUrl) const;
+    void childrenRemoved(const DUrl &fileUrl) const;
+    void fileOpened(const DUrl &fileUrl) const;
 
 private:
     explicit FileServices(QObject *parent = 0);
-    static QList<AbstractFileController*> getHandlerTypeByUrl(const QString &fileUrl,
+    static QList<AbstractFileController*> getHandlerTypeByUrl(const DUrl &fileUrl,
                                                               bool ignoreHost = false,
                                                               bool ignoreScheme = false);
 

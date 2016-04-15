@@ -8,11 +8,10 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QMimeData>
-#include <QUrl>
-
 DWIDGET_USE_NAMESPACE
 
 class DFileMenu;
+class DUrl;
 
 class FileMenuManager : public QObject
 {
@@ -78,7 +77,7 @@ public:
     static DFileMenu *createToolBarSortMenu(const QVector<MenuAction> &disableList = QVector<MenuAction>());
     static DFileMenu *createListViewHeaderMenu(const QVector<MenuAction> &disableList = QVector<MenuAction>());
     static QString checkDuplicateName(const QString &name);
-    static QVector<FileMenuManager::MenuAction> getDisableActionList(const QString &fileUrl);
+    static QVector<FileMenuManager::MenuAction> getDisableActionList(const DUrl &fileUrl);
 
 private:
     static void initData();

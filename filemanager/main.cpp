@@ -32,14 +32,12 @@ int main(int argc, char *argv[])
 
     CommandLineManager::instance()->process();
 
-    QString commandlineUrl;
+    DUrl commandlineUrl;
 
     if (CommandLineManager::instance()->positionalArguments().count() > 0){
-        commandlineUrl = CommandLineManager::instance()->positionalArguments().at(0);
-
-        commandlineUrl = DUrl::fromUserInput(commandlineUrl).toString();
+        commandlineUrl = DUrl::fromUserInput(CommandLineManager::instance()->positionalArguments().at(0));
     } else {
-        commandlineUrl = DUrl::fromLocalFile(QDir::homePath()).toString();
+        commandlineUrl = DUrl::fromLocalFile(QDir::homePath());
     }
 
     QString uniqueKey = "dde-file-manager";
