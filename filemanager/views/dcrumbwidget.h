@@ -27,6 +27,7 @@ private:
     QHBoxLayout * m_buttonLayout;
     QButtonGroup m_group;
     QString m_path;
+    QString m_homePath;
 public slots:
     void buttonPressed();
 signals:
