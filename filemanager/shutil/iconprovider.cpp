@@ -113,7 +113,7 @@ QString IconProvider::getThemeIconPath(QString iconName)
     #endif
             return QString(path);
         } else {
-            qDebug() << iconName << "no info";
+//            qDebug() << iconName << "no info";
         }
         return "";
     }
@@ -214,6 +214,11 @@ QByteArray IconProvider::getThumb(const QString &imageFile)
     writer.setQuality(50);
     writer.write(background);
     return buffer.buffer();
+}
+
+QMap<QString, QIcon> IconProvider::getDesktopIcons()
+{
+    return m_desktopIcons;
 }
 
 

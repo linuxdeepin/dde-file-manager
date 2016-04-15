@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui widgets svg dbus x11extras network
+QT       += core gui widgets svg dbus x11extras network sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -114,7 +114,9 @@ HEADERS += \
     filemanager/dialogs/openwithdialog.h \
     filemanager/models/durl.h \
     filemanager/controllers/searchcontroller.h \
-    filemanager/models/searchfileinfo.h
+    filemanager/models/searchfileinfo.h\
+    filemanager/shutil/standardpath.h
+
 
 SOURCES += \
     filemanager/controllers/appcontroller.cpp \
@@ -191,7 +193,9 @@ SOURCES += \
     filemanager/dialogs/openwithdialog.cpp \
     filemanager/models/durl.cpp \
     filemanager/controllers/searchcontroller.cpp \
-    filemanager/models/searchfileinfo.cpp
+    filemanager/models/searchfileinfo.cpp\
+    filemanager/shutil/standardpath.cpp
+
 
 
 INCLUDEPATH += filemanager/models
