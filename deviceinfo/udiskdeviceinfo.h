@@ -5,6 +5,10 @@
 
 #include <QDBusInterface>
 #include <QString>
+#include <QDebug>
+#include <QDBusArgument>
+
+#define BOOL_SETTER(MEMBER) { bool res=(text != MEMBER); MEMBER = text; return res; }
 
 class UDiskDeviceInfo : public QObject, public AbstractFileInfo
 {
@@ -18,10 +22,18 @@ public:
             Fdd,
             Optical
     };
+
+    UDiskDeviceInfo(UDiskDeviceInfo * info);
+    UDiskDeviceInfo(const DUrl &url);
+    UDiskDeviceInfo(const QString &url);
     UDiskDeviceInfo(const QDBusObjectPath &path);
     bool mount();
     bool unmount();
     bool eject();
+
+    bool update();
+
+    QString uDiskPath();
 
     QString devFile();
     QString label();
@@ -31,16 +43,25 @@ public:
     QString mountPath();
     QString iconName();
 
-    void setDevFile(const QString &text);
-    void setLabel(const QString &text);
-    void setVendor(const QString &text);
-    void setModel(const QString &text);
-    void setFileSystem(const QString &text);
-    void setMountPath(const QString &text);
-    void setIconName(const QString &text);
+    bool setDevFile(const QString &text) BOOL_SETTER(m_devFile)
+    bool setLabel(const QString &text) BOOL_SETTER(m_label)
+    bool setVendor(const QString &text) BOOL_SETTER(m_vendor)
+    bool setModel(const QString &text) BOOL_SETTER(m_model)
+    bool setFileSystem(const QString &text) BOOL_SETTER(m_fileSystem)
+    bool setMountPath(const QString &text) BOOL_SETTER(m_mountPath)
+    bool setIconName(const QString &text) BOOL_SETTER(m_iconName)
+
+    bool setSize(qint64 text)      BOOL_SETTER(m_size)
+    bool setType(Type text)        BOOL_SETTER(m_type)
+
+    bool setIsValid(bool text)         BOOL_SETTER(m_isValid)
+    bool setIsExternal(bool text)      BOOL_SETTER(m_isExternal)
+    bool setIsMounted(bool text)       BOOL_SETTER(m_isMounted)
+    bool setIsEjectable(bool text)     BOOL_SETTER(m_isEjectable)
 
 
     qint64 size();
+    QString displayName() const;
     Type type();
     bool isValid();
     bool isExternal();
@@ -54,6 +75,10 @@ public:
     QStringList mountPoints() const;
 private:
     QDBusInterface *m_dbus;
+private:
+    QDBusInterface *m_blockIface;
+    QDBusInterface *m_driveIface;
+    QDBusObjectPath m_path;
 
     QString m_devFile;
     QString m_label;
@@ -76,6 +101,14 @@ public:
     bool isCanRename() const;
     QIcon fileIcon() const;
     bool isDir() const;
+
+signals:
+    void changed();
+    void error(const QString &msg);
+    void mounted();
+    void unmounted();
+public slots:
+    void dbusError(const QDBusError &err, const QDBusMessage &msg);
 };
 
 #endif // UDISKDEVICEINFO_H

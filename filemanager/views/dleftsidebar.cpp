@@ -350,7 +350,7 @@ void DLeftSideBar::loadBookmark()
 
 void DLeftSideBar::loadDevices()
 {
-    deviceListener->loadDeivces();
+    deviceListener->update();
 }
 
 
