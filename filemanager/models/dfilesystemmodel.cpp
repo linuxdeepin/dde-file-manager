@@ -671,11 +671,24 @@ void DFileSystemModel::onFileCreated(const DUrl &fileUrl)
     if(parentNode && parentNode->populatedChildren && !parentNode->visibleChildren.contains(fileUrl)) {
         int row = 0;
 
-        for(; row < parentNode->visibleChildren.count(); ++row) {
-            const AbstractFileInfo *tmp_info = parentNode->children.value(parentNode->visibleChildren.value(row))->fileInfo;
+        if(fileUrl.isSearchFile()) {
+            if(info->isFile()) {
+                row = parentNode->visibleChildren.count();
+            } else {
+                for(; row < parentNode->visibleChildren.count(); ++row) {
+                    const AbstractFileInfo *tmp_info = parentNode->children.value(parentNode->visibleChildren.value(row))->fileInfo;
 
-            if(sortFun(info, tmp_info) && m_srotOrder == Qt::AscendingOrder) {
-                break;
+                    if(tmp_info->isFile())
+                        break;
+                }
+            }
+        } else {
+            for(; row < parentNode->visibleChildren.count(); ++row) {
+                const AbstractFileInfo *tmp_info = parentNode->children.value(parentNode->visibleChildren.value(row))->fileInfo;
+
+                if(sortFun(info, tmp_info) && m_srotOrder == Qt::AscendingOrder) {
+                    break;
+                }
             }
         }
 

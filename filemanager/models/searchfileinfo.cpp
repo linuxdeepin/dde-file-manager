@@ -15,6 +15,7 @@ SearchFileInfo::SearchFileInfo(const DUrl &url)
         m_parentUrl = url;
         m_parentUrl.setFragment(QString());
         data->fileInfo.setFile(url.fragment());
+        data->url = DUrl::fromLocalFile(data->fileInfo.absoluteFilePath());
     } else {
         data->fileInfo = QFileInfo();
     }

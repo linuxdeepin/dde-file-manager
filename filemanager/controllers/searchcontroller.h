@@ -10,6 +10,9 @@ public:
 
     const QList<AbstractFileInfo*> getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const Q_DECL_OVERRIDE;
     AbstractFileInfo *createFileInfo(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
+
+private:
+    mutable DUrl currentUrl;
 };
 
 #endif // SEARCHCONTROLLER_H
