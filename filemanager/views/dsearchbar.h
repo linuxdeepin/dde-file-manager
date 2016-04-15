@@ -25,6 +25,8 @@ public:
     void setActive(bool active);
     void keyPressEvent(QKeyEvent *e);
     QAction * getClearAction();
+    bool hasScheme();
+    bool isPath();
 private:
     void initData();
     void initUI();

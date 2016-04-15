@@ -180,3 +180,24 @@ QAction *DSearchBar::getClearAction()
 {
     return m_clearAction;
 }
+
+bool DSearchBar::hasScheme()
+{
+    DUrl url(text());
+    if( url.isBookMarkFile() ||
+            url.isComputerFile() ||
+            url.isLocalFile() ||
+            url.isRecentFile() ||
+            url.isTrashFile())
+        return true;
+    else
+        return false;
+}
+
+bool DSearchBar::isPath()
+{
+    if(text().at(0) == '/')
+        return true;
+    else
+        return false;
+}

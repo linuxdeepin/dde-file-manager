@@ -18,6 +18,7 @@ public:
     void setCrumb(const QString &path);
     void clear();
     QString back();
+    QString path();
 private:
     bool hasPath(QString path);
     bool isInHome(QString path);
