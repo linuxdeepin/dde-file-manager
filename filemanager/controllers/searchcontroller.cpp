@@ -28,7 +28,12 @@ const QList<AbstractFileInfo *> SearchController::getChildren(const DUrl &fileUr
 
     QDirIterator it(targetPath, nameFilter, QDir::NoDotAndDotDot | filter, QDirIterator::Subdirectories);
 
+    currentUrl = fileUrl;
+
     while (it.hasNext()) {
+        if(currentUrl != fileUrl)
+            return list;
+
         QThread::msleep(50);
 
         DUrl url = fileUrl;
