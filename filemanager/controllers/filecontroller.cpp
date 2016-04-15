@@ -127,7 +127,7 @@ bool FileController::deleteFiles(const DUrlList &urlList, bool &accepted) const
 {
     accepted = true;
 
-    FileJob job;
+    FileJob job("delete");
 
     dialogManager->addJob(&job);
 
@@ -147,7 +147,7 @@ bool FileController::moveToTrash(const DUrlList &urlList, bool &accepted) const
 {
     accepted = true;
 
-    FileJob job;
+    FileJob job("delete");
 
     dialogManager->addJob(&job);
 
@@ -198,7 +198,8 @@ bool FileController::pasteFile(PasteType type, const DUrlList &urlList,
                           dir.absolutePath() + QDir::separator() + fileInfo.fileName());
         }
     } else {
-        FileJob job;
+
+        FileJob job("copy");
 
         dialogManager->addJob(&job);
 

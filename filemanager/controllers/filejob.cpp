@@ -14,12 +14,13 @@ void FileJob::setStatus(FileJob::Status status)
     m_status = status;
 }
 
-FileJob::FileJob(QObject *parent) : QObject(parent)
+FileJob::FileJob(const QString &title, QObject *parent) : QObject(parent)
 {
     m_status = FileJob::Started;
     QString user = getenv("USER");
     m_trashLoc = "/home/" + user + "/.local/share/Trash";
     m_id = QDateTime::currentDateTime().toString();
+    m_title = title;
 }
 
 void FileJob::setJobId(const QString &id)
@@ -107,6 +108,8 @@ void FileJob::doDelete(const QList<QUrl> &files)
         else
             deleteFile(url.path());
     }
+    if(m_isJobAdded)
+        jobRemoved();
     emit finished();
     qDebug() << "Complete deletion is done!";
 }
@@ -122,6 +125,8 @@ void FileJob::doMoveToTrash(const QList<QUrl> &files)
         else
             moveFileToTrash(url.path());
     }
+    if(m_isJobAdded)
+        jobRemoved();
     emit finished();
     qDebug() << "Move to Trash is done!";
 }
@@ -175,8 +180,10 @@ void FileJob::jobUpdated()
 
 void FileJob::jobAdded()
 {
+    if(m_isJobAdded)
+        return;
     m_jobDetail.insert("jobId", m_id);
-    m_jobDetail.insert("type", "copy");
+    m_jobDetail.insert("type", m_title);
     emit fileSignalManager->jobAdded(m_jobDetail);
     m_isJobAdded = true;
 }

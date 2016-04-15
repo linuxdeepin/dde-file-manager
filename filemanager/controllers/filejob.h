@@ -25,7 +25,7 @@ public:
         Conflicted,
     };
     void setStatus(Status status);
-    explicit FileJob(QObject *parent = 0);
+    explicit FileJob(const QString &title, QObject *parent = 0);
     void setJobId(const QString &id);
     QString getJobId();
     QString checkDuplicateName(const QString &name);
@@ -63,6 +63,7 @@ private:
     qint64 currentMsec;
     bool m_applyToAll = false;
     bool m_isReplaced = false;
+    QString m_title;
 
     void jobUpdated();
     void jobAdded();
