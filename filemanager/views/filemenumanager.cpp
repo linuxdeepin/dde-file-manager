@@ -520,7 +520,7 @@ void FileMenuManager::actionTriggered(DAction *action)
     case Mount:break;
     case Unmount:break;
     case Name:
-        emit fileSignalManager->requestViewSort(menu->getWindowId(), Global::FileNameRole);
+        emit fileSignalManager->requestViewSort(menu->getWindowId(), Global::FileDisplayNameRole);
         break;
     case Size:
         emit fileSignalManager->requestViewSort(menu->getWindowId(), Global::FileSizeRole);

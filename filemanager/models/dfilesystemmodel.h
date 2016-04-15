@@ -72,6 +72,7 @@ public:
     int sortRole() const;
 
     void sort(int column, Qt::SortOrder order = Qt::AscendingOrder) Q_DECL_OVERRIDE;
+    void sort();
 
     AbstractFileInfo *fileInfo(const QModelIndex &index) const;
     AbstractFileInfo *fileInfo(const QString &fileUrl) const;

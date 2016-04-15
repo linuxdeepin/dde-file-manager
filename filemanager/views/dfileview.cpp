@@ -340,7 +340,12 @@ void DFileView::sort(int windowId, int role)
 
     Q_UNUSED(windowId)
 
-    model()->sort(m_columnRoles.indexOf(role));
+    if(isIconViewMode()) {
+        model()->setSortRole(role);
+        model()->sort();
+    } else {
+        model()->sort(m_columnRoles.indexOf(role));
+    }
 }
 
 void DFileView::moveColumnRole(int /*logicalIndex*/, int oldVisualIndex, int newVisualIndex)
