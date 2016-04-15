@@ -1,28 +1,102 @@
 #include "udiskdeviceinfo.h"
 #include <QIcon>
 
+UDiskDeviceInfo::UDiskDeviceInfo(UDiskDeviceInfo *info)
+    : AbstractFileInfo(info->mountPath())
+{
+    m_size = info->size();
+    m_type = info->type();
+    m_isMounted = info->isMounted();
+}
+
+UDiskDeviceInfo::UDiskDeviceInfo(const DUrl &url)
+    : AbstractFileInfo(url)
+{
+
+}
+
+UDiskDeviceInfo::UDiskDeviceInfo(const QString &url)
+    : AbstractFileInfo(url)
+{
+
+}
+
 UDiskDeviceInfo::UDiskDeviceInfo(const QDBusObjectPath &path)
 {
-    m_dbus = new QDBusInterface("org.freedesktop.UDisks",
-                                path.path(),
-                                "org.freedesktop.UDisks.Device",
+    m_path = path;
+    m_blockIface = new QDBusInterface("org.freedesktop.UDisks2",
+                                m_path.path(),
+                                "org.freedesktop.UDisks2.Block",
                                 QDBusConnection::systemBus(),
                                 this);
+
+    QDBusObjectPath drive_object = m_blockIface->property("Drive").value<QDBusObjectPath>();
+
+    QDBusConnection::systemBus().connect("org.freedesktop.UDisks2",
+                                         m_path.path(),
+                                         "org.freedesktop.DBus.Properties","PropertiesChanged",
+                                         this,
+                                         SIGNAL(update()));
+
+    m_driveIface = new QDBusInterface("org.freedesktop.UDisks2",
+                                     drive_object.path(),
+                                     "org.freedesktop.UDisks2.Drive",
+                                     QDBusConnection::systemBus(),
+                                     this);
+
+    update();
 }
 
 bool UDiskDeviceInfo::mount()
 {
-
+    return false;
 }
 
 bool UDiskDeviceInfo::unmount()
 {
-
+    return false;
 }
 
 bool UDiskDeviceInfo::eject()
 {
+    return false;
+}
 
+bool UDiskDeviceInfo::update()
+{
+    bool res = false;
+    res = setDevFile(m_blockIface->property("Device").toByteArray().data()) || res;
+
+    res = setType(findType()) || res;
+    res = setLabel(findLabel()) || res;
+    res = setIsExternal(findIsExternal()) || res;
+    res = setIconName(findIconName()) || res;
+
+    QStringList mounts = mountPoints();
+    res = setIsMounted(mounts.count() != 0) || res;
+
+    res = setIsEjectable(m_driveIface->property("Ejectable").toBool()) || res;
+    res = setSize(m_blockIface->property("Size").toULongLong()) || res;
+    res = setVendor(m_driveIface->property("Vendor").toString()) || res;
+    res = setModel(m_driveIface->property("Model").toString()) || res;
+    res = setFileSystem(m_blockIface->property("IdType").toString()) || res;
+
+    qDebug() << "media" << m_driveIface->property("Media").toString();
+    qDebug() << "optical" << m_driveIface->property("Optical").toString();
+    qDebug() << "removable" << m_driveIface->property("MediaRemovable").toString();
+    qDebug() << "size" << m_size;
+    qDebug() << "model" << m_model;
+    qDebug() << "vendor" << m_vendor;
+    qDebug() << "filesystem" << m_fileSystem;
+
+    if (!mounts.empty())
+        res = setMountPath(mounts.first()) || res;
+    return res;
+}
+
+QString UDiskDeviceInfo::uDiskPath()
+{
+    return m_path.path();
 }
 
 QString UDiskDeviceInfo::devFile()
@@ -60,44 +134,14 @@ QString UDiskDeviceInfo::iconName()
     return m_iconName;
 }
 
-void UDiskDeviceInfo::setDevFile(const QString &text)
-{
-    m_devFile = text;
-}
-
-void UDiskDeviceInfo::setLabel(const QString &text)
-{
-    m_label = text;
-}
-
-void UDiskDeviceInfo::setVendor(const QString &text)
-{
-    m_vendor = text;
-}
-
-void UDiskDeviceInfo::setModel(const QString &text)
-{
-    m_model = text;
-}
-
-void UDiskDeviceInfo::setFileSystem(const QString &text)
-{
-    m_fileSystem = text;
-}
-
-void UDiskDeviceInfo::setMountPath(const QString &text)
-{
-    m_mountPath = text;
-}
-
-void UDiskDeviceInfo::setIconName(const QString &text)
-{
-    m_iconName = text;
-}
-
 qint64 UDiskDeviceInfo::size()
 {
     return m_size;
+}
+
+QString UDiskDeviceInfo::displayName() const
+{
+    return formatSize(m_size);
 }
 
 UDiskDeviceInfo::Type UDiskDeviceInfo::type()
@@ -127,127 +171,25 @@ bool UDiskDeviceInfo::isEjectable()
 
 UDiskDeviceInfo::Type UDiskDeviceInfo::findType()
 {
-    if (m_dbus->property("DeviceIsOpticalDisc").toBool())
-            return Optical;
-
-    const QString compatibility = m_dbus->property("DriveMediaCompatibility").toString();
-    const QString idUsage = m_dbus->property("IdUsage").toString();
-
-    if (m_dbus->property("DeviceIsDrive").toBool())
-    {
-        if (compatibility == "floppy")
-            return Fdd;
-
-        if (idUsage == "filesystem")
-            return Drive;
-
-        return Unknown;
-    }
-
-    if (m_dbus->property("DeviceIsPartition").toBool())
-    {
-        if (idUsage == "filesystem")
-            return Partition;
-
-        return Unknown;
-    }
-
+    //Todo: Find the type of the device
+    //Note that udisk only recognizes cd/dvd rom as removable device
     return Unknown;
 }
 
 QString UDiskDeviceInfo::findLabel()
 {
-    const QString idLabel = m_dbus->property("IdLabel").toString();
-
-    if (m_type ==  Fdd)
-        return tr("Floppy drive");
-
-    if (m_type ==  Optical)
-        return idLabel;
-
-
-    const QString driveVendor = m_dbus->property("DriveVendor").toString();
-    const QString driveModel  = m_dbus->property("DriveModel").toString();
-    const qulonglong size = m_dbus->property("DeviceSize").toULongLong();
-
-    QString label;
-    if (!idLabel.isEmpty())
-    {
-        label = idLabel;
-    }
-    else
-    {
-       if (!driveVendor.isEmpty())
-            label = driveVendor;
-
-       if (!driveModel.isEmpty())
-            label += QString(" - %1").arg(driveModel);
-    }
-
-    if (label.isEmpty())
-        label = m_devFile;
-
-    if (m_size)
-        label += QString(" [%3]").arg(formatSize(size));
-
-    return label;
+    const QString idLabel = m_blockIface->property("IdLabel").toString();
+    return idLabel;
 }
 
 bool UDiskDeviceInfo::findIsExternal()
 {
-    return !m_dbus->property("DeviceIsSystemInternal").toBool();
+    return !m_blockIface->property("Removable").toBool();
 }
 
 QString UDiskDeviceInfo::findIconName()
 {
-    const QString media = m_dbus->property( "DriveMedia" ).toString();
-
-    switch (m_type)
-    {
-    case Drive:
-    case Partition:
-        {
-            // handle drives
-            const QString conn = m_dbus->property( "DriveConnectionInterface" ).toString();
-
-            if (conn == "usb")
-                return "drive-removable-media-usb";
-
-            return "drive-removable-media";
-        }
-    case Fdd:
-        {
-            return "media-floppy";
-        }
-    case Optical:
-        {
-            bool isWritable = m_dbus->property( "OpticalDiscIsBlank" ).toBool() ||
-                              m_dbus->property("OpticalDiscIsAppendable").toBool();
-
-            if (isWritable)
-                return "media-optical-recordable";
-
-            if (media.startsWith("optical_dvd") ||
-                media.startsWith( "optical_hddvd"))
-                return "media-optical-dvd";
-
-            if (media.startsWith("optical_bd"))
-                return "media-optical-blu-ray";
-
-            return "media-optical";
-        }
-    case Unknown:
-        {
-            return "drive-harddisk";
-        }
-    }
-
-    return "drive-harddisk";
-}
-
-QStringList UDiskDeviceInfo::mountPoints() const
-{
-
+    return "media device";
 }
 
 bool UDiskDeviceInfo::isCanRename() const
@@ -265,9 +207,15 @@ bool UDiskDeviceInfo::isDir() const
     return true;
 }
 
+void UDiskDeviceInfo::dbusError(const QDBusError &err, const QDBusMessage &msg)
+{
+    Q_UNUSED(msg);
+    qDebug() << "dbus error" << err.message();
+    emit error(err.message());
+}
+
 QString UDiskDeviceInfo::formatSize( qint64 num ) const
 {
-
     QString total;
     const qint64 kb = 1024;
     const qint64 mb = 1024 * kb;
@@ -281,5 +229,30 @@ QString UDiskDeviceInfo::formatSize( qint64 num ) const
     else total = QString( "%1 bytes" ).arg( num );
 
     return total;
+}
+
+QStringList UDiskDeviceInfo::mountPoints() const
+{
+    QStringList points;
+    QDBusMessage message = QDBusMessage::createMethodCall("org.freedesktop.UDisks2",
+                                                          m_path.path(),
+                                                          "org.freedesktop.DBus.Properties",
+                                                          "Get");
+
+    QList<QVariant> args;
+    args << "org.freedesktop.UDisks2.Filesystem" << "MountPoints";
+    message.setArguments(args);
+
+    QDBusMessage reply = QDBusConnection::systemBus().call(message);
+
+    QList<QByteArray> l;
+    foreach (QVariant arg, reply.arguments())
+        arg.value<QDBusVariant>().variant().value<QDBusArgument>() >> l;
+
+    foreach (QByteArray p, l)
+        points.append(p);
+
+    qDebug() << "mountPoints()" << points;
+    return points;
 }
 

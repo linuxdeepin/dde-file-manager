@@ -13,6 +13,7 @@
 
 #include "../models/abstractfileinfo.h"
 #include "../../deviceinfo/devicelistener.h"
+#include "../../deviceinfo/udisklistener.h"
 #include "../shutil/mimesappsmanager.h"
 
 
@@ -30,7 +31,7 @@
 #define appController fileManagerApp->getAppController()
 #define iconProvider Singleton<IconProvider>::instance()
 #define fileService FileServices::instance()
-#define deviceListener Singleton<DeviceListener>::instance()
+#define deviceListener Singleton<UDiskListener>::instance()
 #define mimeAppsManager Singleton<MimesAppsManager>::instance()
 
 #define defaut_icon ":/images/images/default.png"
