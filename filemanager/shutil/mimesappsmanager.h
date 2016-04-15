@@ -25,6 +25,10 @@ public slots:
     void handleDirectoryChanged();
     void handleFileChanged();
     void updateCache();
+    void saveCache();
+    void writeData(const QString& path, const QByteArray& content);
+    QByteArray readData(const QString& path);
+    void loadCache();
 
 private:
     QFileSystemWatcher* m_fileSystemWatcher = NULL;
@@ -49,6 +53,8 @@ public:
     static QString getDefaultAppByMimeType(const QString& mimeType);
 
     static QStringList getApplicationsFolders();
+    static QString getMimeAppsCacheFile();
+    static QString getDesktopFilesCacheFile();
     static QStringList getDesktopFiles();
     static QMap<QString, DesktopFile> getDesktopObjs();
     static QMap<QString, QStringList> getMimeTypeApps();

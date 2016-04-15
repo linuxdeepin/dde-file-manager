@@ -24,6 +24,8 @@ public:
     void loadMimeTypes() const;
     QByteArray getThumb(const QString& imageFile);
 
+    QMap<QString,QIcon> getDesktopIcons();
+
 signals:
     void themeChanged(const QString& theme);
 

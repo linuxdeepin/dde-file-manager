@@ -6,8 +6,13 @@
 #include <QDirIterator>
 #include <QDateTime>
 #include <QThread>
+#include <QStandardPaths>
 #include <QDebug>
 #include "desktopfile.h"
+#include "standardpath.h"
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 
 
 QStringList MimesAppsManager::DesktopFiles = {};
@@ -49,8 +54,85 @@ void MimeAppsWorker::handleFileChanged()
 
 void MimeAppsWorker::updateCache()
 {
+    if (QFile(MimesAppsManager::getMimeAppsCacheFile()).exists() &&
+            QFile(MimesAppsManager::getDesktopFilesCacheFile()).exists()){
+        loadCache();
+        qDebug() << "load mime apps cache from:" << MimesAppsManager::getMimeAppsCacheFile();
+        qDebug() << "load desktop files cache from:" << MimesAppsManager::getDesktopFilesCacheFile();
+    }else{
+        MimesAppsManager::getMimeTypeApps();
+        saveCache();
+    }
+}
 
-    MimesAppsManager::getMimeTypeApps();
+void MimeAppsWorker::saveCache()
+{
+    QVariantMap ma;
+    foreach (QString key, MimesAppsManager::MimeApps.keys()) {
+        ma.insert(key, MimesAppsManager::MimeApps.value(key));
+    }
+    QJsonDocument doc(QJsonObject::fromVariantMap(ma));
+    writeData(MimesAppsManager::getMimeAppsCacheFile(), doc.toJson());
+
+    QJsonDocument desktopFileDoc(QJsonArray::fromStringList(MimesAppsManager::DesktopFiles));
+    writeData(MimesAppsManager::getDesktopFilesCacheFile(), desktopFileDoc.toJson());
+
+    loadCache();
+}
+
+void MimeAppsWorker::writeData(const QString &path, const QByteArray &content)
+{
+    QFile file(path);
+    if (file.open(QFile::WriteOnly)){
+        file.write(content);
+    }
+    file.close();
+}
+
+QByteArray MimeAppsWorker::readData(const QString &path)
+{
+    QFile file(path);
+    if(!file.open(QFile::ReadOnly))
+    {
+        qDebug() << path << "isn't exists!";
+    }
+    QByteArray content = file.readAll();
+    file.close();
+    return content;
+}
+
+void MimeAppsWorker::loadCache()
+{
+    QByteArray mimeAppsContent = readData(MimesAppsManager::getMimeAppsCacheFile());
+    QJsonParseError error;
+    QJsonDocument mimeAppsdoc=QJsonDocument::fromJson(mimeAppsContent,&error);
+    if (error.error == QJsonParseError::NoError){
+        QJsonObject obj = mimeAppsdoc.object();
+        foreach (QString key, obj.keys()) {
+            QVariantList appVariants = obj.value(key).toArray().toVariantList();
+            QStringList apps;
+            foreach(QVariant appVariant, appVariants){
+                apps.append(appVariant.toString());
+            }
+            MimesAppsManager::MimeApps.insert(key, apps);
+        }
+    }else{
+        qDebug() << "load cache file: " << MimesAppsManager::getMimeAppsCacheFile() << error.errorString();
+    }
+
+    QByteArray desktopFilesContent = readData(MimesAppsManager::getDesktopFilesCacheFile());
+    QJsonDocument desktopFiledoc=QJsonDocument::fromJson(desktopFilesContent,&error);
+    if (error.error == QJsonParseError::NoError){
+        QJsonArray array = desktopFiledoc.array();
+        QVariantList desktopFileVariants =  array.toVariantList();
+        QStringList desktopFiles;
+        foreach(QVariant desktopFileVariant, desktopFileVariants){
+            desktopFiles.append(desktopFileVariant.toString());
+        }
+        MimesAppsManager::DesktopFiles = desktopFiles;
+    }else{
+        qDebug() << "load cache file: " << MimesAppsManager::getDesktopFilesCacheFile() << error.errorString();
+    }
 
 }
 
@@ -147,6 +229,16 @@ QStringList MimesAppsManager::getApplicationsFolders()
     desktopFolders << QString("/usr/share/applications")
                    << QDir::homePath() + QString( "/.local/share/applications" );
     return desktopFolders;
+}
+
+QString MimesAppsManager::getMimeAppsCacheFile()
+{
+    return QString("%1/%2").arg(StandardPath::getCachePath(), "MimeApps.json");
+}
+
+QString MimesAppsManager::getDesktopFilesCacheFile()
+{
+    return QString("%1/%2").arg(StandardPath::getCachePath(), "DesktopFiles.json");;
 }
 
 QStringList MimesAppsManager::getDesktopFiles()
