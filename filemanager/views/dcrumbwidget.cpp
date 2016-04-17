@@ -32,11 +32,16 @@ void DCrumbWidget::addCrumb(const QStringList &list)
     {
         QString text = list.at(i);
         DCrumbButton * button;
-        if(!isHomeFolder(text))
+        if(!isHomeFolder(text)){
             button = new DCrumbButton(m_group.buttons().size(), text, this);
-        else
-            button = new DCrumbButton(m_group.buttons().size(),
-                                      QIcon(":/icons/images/icons/home_normal_16px.svg"),text, this);
+        }else{
+            button = new DCrumbIconButton(
+                    m_group.buttons().size(),
+                    QIcon(":/icons/images/icons/home_normal_16px.svg"),
+                    QIcon(":/icons/images/icons/home_hover_16px.svg"),
+                    QIcon(":/icons/images/icons/home_checked_16px.svg"),
+                    text, this);
+        }
         button->setFocusPolicy(Qt::NoFocus);
         m_buttonLayout->addWidget(button);
         m_group.addButton(button, button->getIndex());
