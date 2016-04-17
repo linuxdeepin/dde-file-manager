@@ -1,5 +1,6 @@
 #include "dcrumbbutton.h"
 #include <QPainter>
+#include <QDebug>
 
 DCrumbButton::DCrumbButton(int index, const QString &text, QWidget *parent)
     : QPushButton(text, parent)
@@ -48,4 +49,35 @@ void DCrumbButton::paintEvent(QPaintEvent *e)
     painter.drawPolygon(polygon);
     painter.end();
     QPushButton::paintEvent(e);
+}
+
+DCrumbIconButton::DCrumbIconButton(int index, const QIcon &normalIcon, const QIcon &hoverIcon, const QIcon &checkedIcon, const QString &text, QWidget *parent)
+    : DCrumbButton(index, normalIcon, text, parent)
+{
+    m_normalIcon = normalIcon;
+    m_hoverIcon = hoverIcon;
+    m_checkedIcon = checkedIcon;
+}
+
+void DCrumbIconButton::checkStateSet()
+{
+    if(isChecked()){
+        setIcon(m_checkedIcon);
+    }
+    else{
+        setIcon(m_normalIcon);
+    }
+    qDebug() << "Check state changed: " << isChecked();
+}
+
+void DCrumbIconButton::nextCheckState()
+{
+    setChecked(!isChecked());
+    if(isChecked()){
+        setIcon(m_checkedIcon);
+    }
+    else{
+        setIcon(m_normalIcon);
+    }
+    qDebug() << "Next check state changed: " << isChecked();
 }

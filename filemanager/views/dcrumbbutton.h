@@ -18,4 +18,18 @@ protected:
     void paintEvent(QPaintEvent *e);
 };
 
+class DCrumbIconButton : public DCrumbButton
+{
+    Q_OBJECT
+public:
+    DCrumbIconButton(int index, const QIcon& normalIcon, const QIcon& hoverIcon, const QIcon& checkedIcon, const QString &text, QWidget *parent = 0);
+private:
+    QIcon m_normalIcon;
+    QIcon m_hoverIcon;
+    QIcon m_checkedIcon;
+protected:
+    void checkStateSet();
+    void nextCheckState();
+};
+
 #endif // DCRUMBBUTTON_H
