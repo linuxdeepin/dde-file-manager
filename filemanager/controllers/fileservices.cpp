@@ -361,7 +361,8 @@ QList<AbstractFileController*> FileServices::getHandlerTypeByUrl(const DUrl &fil
         for(const std::function<AbstractFileController*()> &creator : m_controllerCreatorHash.values(handlerType)) {
             AbstractFileController *controller = creator();
 
-            m_controllerHash.insertMulti(handlerType, controller);
+            setFileUrlHandler(handlerType.first, handlerType.second, controller);
+
             list << controller;
         }
 
