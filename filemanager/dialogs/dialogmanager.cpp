@@ -86,8 +86,7 @@ void DialogManager::showOpenWithDialog(const DUrl &url)
 
 void DialogManager::showPropertyDialog(const DUrl &url)
 {
-    FileInfo info(url);
-    PropertyDialog *dialog = new PropertyDialog(&info);
+    PropertyDialog *dialog = new PropertyDialog(url);
 
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     dialog->setWindowFlags(dialog->windowFlags()

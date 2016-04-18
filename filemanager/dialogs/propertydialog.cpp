@@ -2,6 +2,8 @@
 
 #include "fileinfo.h"
 
+#include <../controllers/fileservices.h>
+
 #include <dseparatorhorizontal.h>
 #include <darrowlineexpand.h>
 #include <dthememanager.h>
@@ -77,19 +79,19 @@ QWidget *createAuthorityManagermentWidget(const AbstractFileInfo *info)
     return widget;
 }
 
-PropertyDialog::PropertyDialog(const AbstractFileInfo *info, QWidget */*parent*/)
+PropertyDialog::PropertyDialog(const DUrl &url, QWidget */*parent*/)
     : DWidget(0)
     , m_icon(new QLabel)
     , m_edit(new QTextEdit)
 {
-    Q_ASSERT(info);
-
     D_THEME_INIT_WIDGET(PropertyDialog)
 
-    m_icon->setPixmap(info->fileIcon().pixmap(100, 150));
+    AbstractFileInfo *fileInfo = FileServices::instance()->createFileInfo(url);
+
+    m_icon->setPixmap(fileInfo->fileIcon().pixmap(100, 150));
     m_icon->setFixedHeight(150);
 
-    m_edit->setPlainText(info->displayName());
+    m_edit->setPlainText(fileInfo->displayName());
     m_edit->setReadOnly(true);
     m_edit->setWordWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
     m_edit->setAlignment(Qt::AlignHCenter);
@@ -112,8 +114,11 @@ PropertyDialog::PropertyDialog(const AbstractFileInfo *info, QWidget */*parent*/
     DExpandGroup *expandGroup = addExpandWidget(titleList);
 
     layout->addStretch();
-    expandGroup->expand(0)->setContent(createBasicInfoWidget(info));
-    expandGroup->expand(1)->setContent(createAuthorityManagermentWidget(info));
+
+    expandGroup->expand(0)->setContent(createBasicInfoWidget(fileInfo));
+    expandGroup->expand(1)->setContent(createAuthorityManagermentWidget(fileInfo));
+
+    delete fileInfo;
 }
 
 DExpandGroup *PropertyDialog::addExpandWidget(const QStringList &titleList)

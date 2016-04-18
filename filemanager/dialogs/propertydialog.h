@@ -13,6 +13,7 @@ class DExpandGroup;
 DWIDGET_END_NAMESPACE
 
 class AbstractFileInfo;
+class DUrl;
 
 DWIDGET_USE_NAMESPACE
 
@@ -21,8 +22,7 @@ class PropertyDialog : public DWidget
     Q_OBJECT
 
 public:
-    explicit PropertyDialog(const AbstractFileInfo *info,
-                            QWidget *parent = 0);
+    explicit PropertyDialog(const DUrl &url, QWidget *parent = 0);
 
 private:
     QLabel *m_icon;
