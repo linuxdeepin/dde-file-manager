@@ -1,16 +1,13 @@
 #include "trashmanager.h"
 #include "trashfileinfo.h"
-
-#include "../app/global.h"
-
-#include "../controllers/fileservices.h"
+#include "fileservices.h"
 
 #include "../../filemonitor/filemonitor.h"
 
 TrashManager::TrashManager(QObject *parent)
     : AbstractFileController(parent)
 {
-    FileServices::setFileUrlHandler(TRASH_SCHEME, "", this);
+
 }
 
 AbstractFileInfo *TrashManager::createFileInfo(const DUrl &fileUrl, bool &accepted) const
@@ -51,7 +48,7 @@ bool TrashManager::openFile(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
 
-    return fileService->openFile(DUrl::fromLocalFile(fileUrl.path()));
+    return FileServices::instance()->openFile(DUrl::fromLocalFile(fileUrl.path()));
 }
 
 bool TrashManager::addUrlMonitor(const DUrl &fileUrl, bool &accepted) const

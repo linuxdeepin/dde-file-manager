@@ -1,6 +1,5 @@
 #include "filecontroller.h"
 #include "fileinfo.h"
-#include "fileservices.h"
 
 #include "../models/desktopfileinfo.h"
 
@@ -20,9 +19,6 @@ FileController::FileController(QObject *parent)
     , fileMonitor(new FileMonitor(this))
 {
     qRegisterMetaType<QList<FileInfo*>>("QList<FileInfo*>");
-
-    FileServices::setFileUrlHandler("file", "", this);
-    FileServices::setFileUrlHandler("", "", this);
 
     connect(fileMonitor, &FileMonitor::fileCreated,
             this, &FileController::onFileCreated);

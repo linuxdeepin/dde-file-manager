@@ -16,7 +16,7 @@ class TrashManager : public AbstractFileController
     Q_OBJECT
 
 public:
-    TrashManager(QObject *parent = 0);
+    explicit TrashManager(QObject *parent = 0);
 
     AbstractFileInfo *createFileInfo(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
     const QList<AbstractFileInfo*> getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const Q_DECL_OVERRIDE;

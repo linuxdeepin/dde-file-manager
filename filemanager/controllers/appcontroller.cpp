@@ -13,10 +13,10 @@
 
 AppController::AppController(QObject *parent) : QObject(parent)
 {
-    new FileController(this);
-    new RecentHistoryManager(this);
-    new TrashManager(this);
-    new SearchController(this);
+    FileServices::dRegisterUrlHandler<FileController>(FILE_SCHEME, "");
+    FileServices::dRegisterUrlHandler<RecentHistoryManager>(RECENT_SCHEME, "");
+    FileServices::dRegisterUrlHandler<TrashManager>(TRASH_SCHEME, "");
+    FileServices::dRegisterUrlHandler<SearchController>(SEARCH_SCHEME, "");
 }
 
 void AppController::initConnect()

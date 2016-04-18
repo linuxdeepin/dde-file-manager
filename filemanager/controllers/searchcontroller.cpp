@@ -1,17 +1,15 @@
 #include "searchcontroller.h"
-#include "fileservices.h"
 
 #include "../models/searchfileinfo.h"
 
-#include "../app/global.h"
-
 #include <QDebug>
 #include <QtConcurrent/QtConcurrentRun>
+#include <QDirIterator>
 
 SearchController::SearchController(QObject *parent)
     : AbstractFileController(parent)
 {
-    FileServices::setFileUrlHandler(SEARCH_SCHEME, "", this);
+
 }
 
 const QList<AbstractFileInfo*> SearchController::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
@@ -19,8 +17,6 @@ const QList<AbstractFileInfo*> SearchController::getChildren(const DUrl &fileUrl
     accepted = true;
 
     const QString &fragment = fileUrl.fragment();
-
-    qDebug() << fragment;
 
     if(fragment == "stop") {
         DUrl url = fileUrl;
