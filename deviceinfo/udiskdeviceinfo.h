@@ -73,12 +73,14 @@ public:
     bool findIsExternal();
     QString findIconName();
     QStringList mountPoints() const;
+    QDBusObjectPath m_path;
 private:
     QDBusInterface *m_dbus;
 private:
-    QDBusInterface *m_blockIface;
-    QDBusInterface *m_driveIface;
-    QDBusObjectPath m_path;
+    QDBusInterface *m_blockIface = NULL;
+    QDBusInterface *m_driveIface = NULL;
+    QDBusInterface *m_fsIface = NULL;
+
 
     QString m_devFile;
     QString m_label;
@@ -101,6 +103,7 @@ public:
     bool isCanRename() const;
     QIcon fileIcon() const;
     bool isDir() const;
+    DUrl parentUrl() const;
 
 signals:
     void changed();
@@ -109,6 +112,11 @@ signals:
     void unmounted();
 public slots:
     void dbusError(const QDBusError &err, const QDBusMessage &msg);
+    void propertiesChanged(const QString &interface,
+                           const QVariantMap &changedProp,
+                           const QStringList &invalidatedProp);
+
+
 };
 
 #endif // UDISKDEVICEINFO_H

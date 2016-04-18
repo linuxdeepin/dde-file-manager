@@ -43,17 +43,35 @@ UDiskDeviceInfo::UDiskDeviceInfo(const QDBusObjectPath &path)
                                      "org.freedesktop.UDisks2.Drive",
                                      QDBusConnection::systemBus(),
                                      this);
-
     update();
+    if(!m_fileSystem.isEmpty())
+        m_fsIface = new QDBusInterface("org.freedesktop.UDisks2",
+                                   m_path.path(),
+                                   "org.freedesktop.UDisks2.Filesystem",
+                                   QDBusConnection::systemBus(),
+                                   this);
+
+    QDBusConnection::systemBus().connect(m_blockIface->service(), m_blockIface->path(),
+                       "org.freedesktop.DBus.Properties", "PropertiesChanged",
+                       this, SLOT(propertiesChanged(QString,QVariantMap,QStringList)));
+
 }
 
 bool UDiskDeviceInfo::mount()
 {
+    if(m_fsIface == NULL)
+        return false;
+    QDBusMessage reply = m_fsIface->call("Mount", QVariantMap());
+    qDebug() <<  "mount" << reply.arguments().first().toString();
     return false;
 }
 
 bool UDiskDeviceInfo::unmount()
 {
+    if(m_fsIface == NULL)
+        return false;
+    QDBusMessage reply = m_fsIface->call("Unmount", QVariantMap());
+    qDebug() <<  "unmount" << reply.arguments().first().toString();
     return false;
 }
 
@@ -76,7 +94,7 @@ bool UDiskDeviceInfo::update()
     res = setIsMounted(mounts.count() != 0) || res;
 
     res = setIsEjectable(m_driveIface->property("Ejectable").toBool()) || res;
-    res = setSize(m_blockIface->property("Size").toULongLong()) || res;
+    res = setSize(m_driveIface->property("Size").toULongLong()) || res;
     res = setVendor(m_driveIface->property("Vendor").toString()) || res;
     res = setModel(m_driveIface->property("Model").toString()) || res;
     res = setFileSystem(m_blockIface->property("IdType").toString()) || res;
@@ -207,11 +225,22 @@ bool UDiskDeviceInfo::isDir() const
     return true;
 }
 
+DUrl UDiskDeviceInfo::parentUrl() const
+{
+    return DUrl::fromComputerFile("/");
+}
+
 void UDiskDeviceInfo::dbusError(const QDBusError &err, const QDBusMessage &msg)
 {
     Q_UNUSED(msg);
     qDebug() << "dbus error" << err.message();
     emit error(err.message());
+}
+
+void UDiskDeviceInfo::propertiesChanged(const QString &interface, const QVariantMap &changedProp, const QStringList &invalidatedProp)
+{
+    update();
+    emit changed();
 }
 
 QString UDiskDeviceInfo::formatSize( qint64 num ) const
