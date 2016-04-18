@@ -119,6 +119,8 @@ DFileSystemModel::DFileSystemModel(DFileView *parent)
             this, &DFileSystemModel::onFileDeleted,
             Qt::QueuedConnection);
     connect(fileService, &FileServices::childrenUpdated,
+            this, &DFileSystemModel::onFileUpdated);
+    connect(fileService, &FileServices::updateChildren,
             this, &DFileSystemModel::updateChildren,
             Qt::QueuedConnection);
 }
@@ -754,6 +756,25 @@ void DFileSystemModel::onFileDeleted(const DUrl &fileUrl)
 
         deleteNode(node);
     }
+}
+
+void DFileSystemModel::onFileUpdated(const DUrl &fileUrl)
+{
+    FileSystemNode *node = m_urlToNode.value(fileUrl);
+
+    if(!node)
+        return;
+
+    const QModelIndex &index = this->index(fileUrl);
+
+    if(!index.isValid())
+        return;
+
+    delete node->fileInfo;
+
+    node->fileInfo = fileService->createFileInfo(fileUrl);
+
+    emit dataChanged(index, index);
 }
 
 FileSystemNode *DFileSystemModel::getNodeByIndex(const QModelIndex &index) const

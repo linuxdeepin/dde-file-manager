@@ -88,6 +88,7 @@ public slots:
 private slots:
     void onFileCreated(const DUrl &fileUrl);
     void onFileDeleted(const DUrl &fileUrl);
+    void onFileUpdated(const DUrl &fileUrl);
 
 private:
     FileSystemNode *m_rootNode = Q_NULLPTR;

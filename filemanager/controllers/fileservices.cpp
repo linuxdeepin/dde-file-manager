@@ -80,6 +80,8 @@ void FileServices::clearFileUrlHandler(const QString &scheme, const QString &hos
                 instance(), &FileServices::childrenAdded);
         connect(controller, &AbstractFileController::childrenRemoved,
                 instance(), &FileServices::childrenRemoved);
+        connect(controller, &AbstractFileController::childrenUpdated,
+                instance(), &FileServices::childrenUpdated);
     }
 
     m_controllerHash.remove(handler);
@@ -322,7 +324,7 @@ void FileServices::getChildren(const FMEvent &event, QDir::Filters filters) cons
                  const QList<AbstractFileInfo*> &&list = controller->getChildren(fileUrl, filters, accepted);
 
                  if(accepted) {
-                     emit childrenUpdated(event, std::move(list));
+                     emit updateChildren(event, std::move(list));
 
                      return;
                  }

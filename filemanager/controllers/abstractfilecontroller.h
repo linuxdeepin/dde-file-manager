@@ -44,6 +44,7 @@ public:
 signals:
     void childrenAdded(const DUrl &fileUrl) const;
     void childrenRemoved(const DUrl &fileUrl) const;
+    void childrenUpdated(const DUrl &fileUrl) const;
 };
 
 #endif // ABSTRACTFILECONTROLLER_H
