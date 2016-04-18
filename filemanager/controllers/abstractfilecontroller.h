@@ -38,7 +38,7 @@ public:
 
     virtual bool openFileLocation(const DUrl &fileUrl, bool &accepted) const;
 
-    virtual const QList<AbstractFileInfo*> getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const;
+    virtual const QList<AbstractFileInfo*> getChildren(const DUrl &fileUrl, QDir::Filters filters, bool &accepted) const;
     virtual AbstractFileInfo *createFileInfo(const DUrl &fileUrl, bool &accepted) const;
 
 signals:

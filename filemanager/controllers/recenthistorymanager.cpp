@@ -3,8 +3,6 @@
 
 #include "../app/filesignalmanager.h"
 
-#include "../controllers/fileservices.h"
-
 #include <QDirIterator>
 #include <QJsonObject>
 #include <QFile>
@@ -24,8 +22,6 @@ RecentHistoryManager::RecentHistoryManager(QObject *parent)
             this, &RecentHistoryManager::addOpenedFile);
 
     RecentHistoryManager::load();
-
-    FileServices::setFileUrlHandler(RECENT_SCHEME, "", this);
 }
 
 RecentHistoryManager::~RecentHistoryManager()

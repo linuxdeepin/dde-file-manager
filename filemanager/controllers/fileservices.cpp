@@ -22,8 +22,9 @@
         Code\
     }
 
-QMultiHash<HandlerType, AbstractFileController*> FileServices::m_controllerHash;
-QHash<AbstractFileController*, HandlerType> FileServices::m_handlerHash;
+QMultiHash<const HandlerType, AbstractFileController*> FileServices::m_controllerHash;
+QHash<const AbstractFileController*, HandlerType> FileServices::m_handlerHash;
+QMultiHash<const HandlerType, std::function<AbstractFileController*()>> FileServices::m_controllerCreatorHash;
 
 FileServices::FileServices(QObject *parent)
     : QObject(parent)
@@ -47,7 +48,7 @@ void FileServices::setFileUrlHandler(const QString &scheme, const QString &host,
     if(m_handlerHash.contains(controller))
         return;
 
-    const HandlerType type = HandlerType(scheme, host);
+    const HandlerType &type = HandlerType(scheme, host);
 
     m_handlerHash[controller] = type;
     m_controllerHash.insertMulti(type, controller);
@@ -85,6 +86,7 @@ void FileServices::clearFileUrlHandler(const QString &scheme, const QString &hos
     }
 
     m_controllerHash.remove(handler);
+    m_controllerCreatorHash.remove(handler);
 }
 
 bool FileServices::openFile(const DUrl &fileUrl) const
@@ -307,7 +309,27 @@ AbstractFileInfo *FileServices::createFileInfo(const DUrl &fileUrl) const
                      return info;
              })
 
-    return Q_NULLPTR;
+            return Q_NULLPTR;
+}
+
+const QList<AbstractFileInfo*> FileServices::getChildren(const DUrl &fileUrl, QDir::Filters filters, bool *ok) const
+{
+    QList<AbstractFileInfo*> childrenList;
+
+    TRAVERSE(fileUrl, {
+                 childrenList = controller->getChildren(fileUrl, filters, accepted);
+
+                 if(accepted) {
+                     if(ok)
+                        *ok = accepted;
+                     return childrenList;
+                 }
+             })
+
+     if(ok)
+         *ok = accepted;
+
+     return childrenList;
 }
 
 void FileServices::getChildren(const FMEvent &event, QDir::Filters filters) const
@@ -320,22 +342,35 @@ void FileServices::getChildren(const FMEvent &event, QDir::Filters filters) cons
 
     const DUrl &fileUrl = event.fileUrl();
 
-    TRAVERSE(fileUrl, {
-                 const QList<AbstractFileInfo*> &&list = controller->getChildren(fileUrl, filters, accepted);
+    bool accepted = false;
 
-                 if(accepted) {
-                     emit updateChildren(event, std::move(list));
+    const QList<AbstractFileInfo*> &childrenList = getChildren(fileUrl, filters, &accepted);
 
-                     return;
-                 }
-             })
+    if(accepted)
+        emit updateChildren(event, childrenList);
 }
 
 QList<AbstractFileController*> FileServices::getHandlerTypeByUrl(const DUrl &fileUrl,
                                                                  bool ignoreHost, bool ignoreScheme)
 {
-    return m_controllerHash.values(HandlerType(ignoreScheme ? "" : fileUrl.scheme(),
-                                               ignoreHost ? "" : fileUrl.path()));
+    HandlerType handlerType(ignoreScheme ? "" : fileUrl.scheme(), ignoreHost ? "" : fileUrl.path());
+
+    if(m_controllerCreatorHash.contains(handlerType)) {
+        QList<AbstractFileController*> list = m_controllerHash.values(handlerType);
+
+        for(const std::function<AbstractFileController*()> &creator : m_controllerCreatorHash.values(handlerType)) {
+            AbstractFileController *controller = creator();
+
+            m_controllerHash.insertMulti(handlerType, controller);
+            list << controller;
+        }
+
+        m_controllerCreatorHash.remove(handlerType);
+
+        return list;
+    } else {
+        return m_controllerHash.values(handlerType);
+    }
 }
 
 void FileServices::openUrl(const FMEvent &event) const

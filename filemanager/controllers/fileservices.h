@@ -1,14 +1,17 @@
 #ifndef FILESERVICES_H
 #define FILESERVICES_H
 
+#include "abstractfilecontroller.h"
+#include "durl.h"
+
 #include <QObject>
 #include <QString>
 #include <QMultiHash>
 #include <QPair>
 #include <QDir>
+#include <QDebug>
 
-#include "abstractfilecontroller.h"
-#include "durl.h"
+#include <functional>
 
 typedef QPair<QString,QString> HandlerType;
 
@@ -20,6 +23,14 @@ class FileServices : public QObject
     Q_OBJECT
 
 public:
+    template <class T>
+    static void dRegisterUrlHandler(const QString &scheme, const QString &host)
+    {
+        m_controllerCreatorHash.insertMulti(HandlerType(scheme, host), [] {
+            return (AbstractFileController*)new T(instance());
+        });
+    }
+
     static FileServices *instance();
 
     static void setFileUrlHandler(const QString &scheme, const QString &host,
@@ -48,6 +59,8 @@ public:
 
     AbstractFileInfo *createFileInfo(const DUrl &fileUrl) const;
 
+    const QList<AbstractFileInfo*> getChildren(const DUrl &fileUrl, QDir::Filters filters, bool *ok = 0) const;
+
 public slots:
     void getChildren(const FMEvent &event, QDir::Filters filters = QDir::AllEntries | QDir::NoDotAndDotDot) const;
     void openNewWindow(const DUrl &fileUrl) const;
@@ -66,8 +79,9 @@ private:
                                                               bool ignoreHost = false,
                                                               bool ignoreScheme = false);
 
-    static QMultiHash<HandlerType, AbstractFileController*> m_controllerHash;
-    static QHash<AbstractFileController*, HandlerType> m_handlerHash;
+    static QMultiHash<const HandlerType, AbstractFileController*> m_controllerHash;
+    static QHash<const AbstractFileController*, HandlerType> m_handlerHash;
+    static QMultiHash<const HandlerType, std::function<AbstractFileController*()>> m_controllerCreatorHash;
 };
 
 #endif // FILESERVICES_H

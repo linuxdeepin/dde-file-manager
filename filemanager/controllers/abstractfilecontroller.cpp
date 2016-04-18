@@ -127,10 +127,10 @@ bool AbstractFileController::openFileLocation(const DUrl &fileUrl, bool &accepte
     return false;
 }
 
-const QList<AbstractFileInfo*> AbstractFileController::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
+const QList<AbstractFileInfo*> AbstractFileController::getChildren(const DUrl &fileUrl, QDir::Filters filters, bool &accepted) const
 {
     Q_UNUSED(fileUrl)
-    Q_UNUSED(filter)
+    Q_UNUSED(filters)
 
     accepted = false;
 
