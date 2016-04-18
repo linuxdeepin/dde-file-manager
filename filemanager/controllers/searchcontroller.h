@@ -3,8 +3,12 @@
 
 #include "abstractfilecontroller.h"
 
+#include <QSet>
+
 class SearchController : AbstractFileController
 {
+    Q_OBJECT
+
 public:
     explicit SearchController(QObject *parent = 0);
 
@@ -12,7 +16,9 @@ public:
     AbstractFileInfo *createFileInfo(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
 
 private:
-    mutable DUrl currentUrl;
+    void searchStart(const DUrl &fileUrl, QDir::Filters filter);
+
+    mutable QSet<DUrl> activeJob;
 };
 
 #endif // SEARCHCONTROLLER_H

@@ -11,7 +11,9 @@ SearchFileInfo::SearchFileInfo()
 SearchFileInfo::SearchFileInfo(const DUrl &url)
     : FileInfo(url)
 {
-    if(!url.fragment().isEmpty()) {
+    const QString &fragment = url.fragment();
+
+    if(!fragment.isEmpty() && fragment != "stop") {
         m_parentUrl = url;
         m_parentUrl.setFragment(QString());
         data->fileInfo.setFile(url.fragment());

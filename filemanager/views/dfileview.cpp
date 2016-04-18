@@ -210,6 +210,22 @@ int DFileView::windowId() const
     return m_windowId;
 }
 
+void DFileView::startKeyboardSearch(int windowId, const QString &key)
+{
+    if(windowId != this->windowId())
+        return;
+
+    keyboardSearch(key);
+}
+
+void DFileView::stopKeyboardSearch(int windowId)
+{
+    if(windowId != this->windowId())
+        return;
+
+    stopSearch();
+}
+
 void DFileView::cd(const FMEvent &event)
 {
     if(event.windowId() != windowId())
@@ -220,25 +236,8 @@ void DFileView::cd(const FMEvent &event)
     if(fileUrl.isEmpty())
         return;
 
-    if(currentUrl() == fileUrl)
-        return;
-
-    qDebug() << "cd: current url:" << currentUrl() << "to url:" << fileUrl;
-
-    if(fileUrl.isSearchFile()) {
-        switchToListMode();
-    }
-
-    QModelIndex index = model()->index(fileUrl);
-
-    if(!index.isValid())
-        index = model()->setRootUrl(fileUrl);
-
-    setRootIndex(index);
-    model()->setActiveIndex(index);
-
-    emit currentUrlChanged(fileUrl);
-    emit fileSignalManager->currentUrlChanged(event);
+    if(setCurrentUrl(fileUrl))
+        emit fileSignalManager->currentUrlChanged(event);
 }
 
 void DFileView::edit(const FMEvent &event)
@@ -545,4 +544,71 @@ void DFileView::openIndex(const QModelIndex &index)
     } else {
         emit fileService->openFile(model()->getUrlByIndex(index));
     }
+}
+
+void DFileView::keyboardSearch(const QString &search)
+{
+    if(search.isEmpty())
+        return;
+
+    stopSearch();
+
+    DUrl url;
+
+    url.setScheme(SEARCH_SCHEME);
+    url.setPath(currentUrl().path());
+    url.setQuery(search);
+
+    setCurrentUrl(url);
+}
+
+void DFileView::stopSearch()
+{
+    DUrl url = currentUrl();
+
+    if(!url.isSearchFile()) {
+        return;
+    }
+
+    url.setFragment("stop");
+
+    FMEvent event;
+
+    event = url;
+    event = FMEvent::FileView;
+    event = windowId();
+
+    FileServices::instance()->getChildren(event);
+}
+
+bool DFileView::setCurrentUrl(const DUrl &fileUrl)
+{
+    qDebug() << "cd: current url:" << currentUrl() << "to url:" << fileUrl;
+
+    const DUrl &currentUrl = this->currentUrl();
+
+    if(currentUrl == fileUrl)
+        return false;
+
+    stopSearch();
+
+    if(fileUrl.isSearchFile()) {
+        if(!fileUrl.fragment().isEmpty()) {
+            return false;
+        }
+
+        switchToListMode();
+    }
+
+    QModelIndex index = model()->index(fileUrl);
+
+    if(!index.isValid())
+        index = model()->setRootUrl(fileUrl);
+
+    setRootIndex(index);
+    model()->setActiveIndex(index);
+
+    emit currentUrlChanged(fileUrl);
+
+    return true;
 }

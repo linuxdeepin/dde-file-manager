@@ -60,6 +60,9 @@ public:
 
     using DListView::edit;
 
+    void startKeyboardSearch(int windowId, const QString &key);
+    void stopKeyboardSearch(int windowId);
+
 public slots:
     void cd(const FMEvent &event);
     void edit(const FMEvent &event);
@@ -102,9 +105,13 @@ private:
     bool isEmptyArea(const QPoint &pos) const;
 
     QSize currentIconSize() const;
+
     void enlargeIcon();
     void shrinkIcon();
     void openIndex(const QModelIndex &index);
+    void keyboardSearch(const QString & search) Q_DECL_OVERRIDE;
+    void stopSearch();
+    bool setCurrentUrl(const DUrl &fileUrl);
 };
 
 #endif // DFILEVIEW_H

@@ -6,6 +6,7 @@
 #include "../app/global.h"
 
 #include <QDebug>
+#include <QtConcurrent/QtConcurrentRun>
 
 SearchController::SearchController(QObject *parent)
     : AbstractFileController(parent)
@@ -13,12 +14,39 @@ SearchController::SearchController(QObject *parent)
     FileServices::setFileUrlHandler(SEARCH_SCHEME, "", this);
 }
 
-const QList<AbstractFileInfo *> SearchController::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
+const QList<AbstractFileInfo*> SearchController::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
 {
     accepted = true;
 
-    QList<AbstractFileInfo*> list;
+    const QString &fragment = fileUrl.fragment();
 
+    qDebug() << fragment;
+
+    if(fragment == "stop") {
+        DUrl url = fileUrl;
+
+        url.setFragment(QString());
+
+        activeJob.remove(url);
+    } else {
+        activeJob << fileUrl;
+
+        QtConcurrent::run(QThreadPool::globalInstance(), const_cast<SearchController*>(this),
+                          &SearchController::searchStart, fileUrl, filter);
+    }
+
+    return QList<AbstractFileInfo*>();
+}
+
+AbstractFileInfo *SearchController::createFileInfo(const DUrl &fileUrl, bool &accepted) const
+{
+    accepted = true;
+
+    return new SearchFileInfo(fileUrl);
+}
+
+void SearchController::searchStart(const DUrl &fileUrl, QDir::Filters filter)
+{
     const QString &targetPath = fileUrl.path();
     const QString &keyword = fileUrl.query();
 
@@ -28,11 +56,10 @@ const QList<AbstractFileInfo *> SearchController::getChildren(const DUrl &fileUr
 
     QDirIterator it(targetPath, nameFilter, QDir::NoDotAndDotDot | filter, QDirIterator::Subdirectories);
 
-    currentUrl = fileUrl;
-
     while (it.hasNext()) {
-        if(currentUrl != fileUrl)
-            return list;
+        if(!activeJob.contains(fileUrl)) {
+            return;
+        }
 
         QThread::msleep(50);
 
@@ -42,15 +69,4 @@ const QList<AbstractFileInfo *> SearchController::getChildren(const DUrl &fileUr
 
         emit childrenAdded(url);
     }
-
-    return list;
-}
-
-AbstractFileInfo *SearchController::createFileInfo(const DUrl &fileUrl, bool &accepted) const
-{
-    Q_UNUSED(fileUrl)
-
-    accepted = true;
-
-    return new SearchFileInfo(fileUrl);
 }
