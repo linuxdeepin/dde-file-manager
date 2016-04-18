@@ -70,7 +70,6 @@ void DFileView::initDelegate()
 void DFileView::initModel()
 {
     setModel(new DFileSystemModel(this));
-    setRootIndex(model()->setRootUrl(DUrl::fromLocalFile(QDir::currentPath())));
 }
 
 void DFileView::initConnects()
