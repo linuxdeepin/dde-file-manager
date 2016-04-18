@@ -36,8 +36,10 @@ int main(int argc, char *argv[])
 
     if (CommandLineManager::instance()->positionalArguments().count() > 0){
         commandlineUrl = DUrl::fromUserInput(CommandLineManager::instance()->positionalArguments().at(0));
+        qDebug() << commandlineUrl;
     } else {
         commandlineUrl = DUrl::fromLocalFile(QDir::homePath());
+        qDebug() << commandlineUrl;
     }
 
     QString uniqueKey = "dde-file-manager";
