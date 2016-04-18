@@ -661,7 +661,7 @@ void DFileSystemModel::refresh(const DUrl &fileUrl)
 
 void DFileSystemModel::onFileCreated(const DUrl &fileUrl)
 {
-//    qDebug() << "file creatored" << fileUrl;
+    qDebug() << "file creatored" << fileUrl;
 
     AbstractFileInfo *info = fileService->createFileInfo(fileUrl);
 

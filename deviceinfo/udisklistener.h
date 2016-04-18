@@ -24,10 +24,11 @@ public:
     void addDevice(UDiskDeviceInfo * device);
     void removeDevice(UDiskDeviceInfo * device);
     void update();
+    QString lastPart(const QString &path);
 public slots:
-    void deviceAdded(const QDBusObjectPath &path);
-    void deviceRemoved(const QDBusObjectPath &path);
-    void deviceChanged(const QDBusObjectPath &path);
+    void interfacesAdded(const QDBusObjectPath &path, const QMap<QString, QVariant> &interfaces);
+    void interfacesRemoved(const QDBusObjectPath &path, const QStringList &interfaces);
+    void interfacesChanged();
 private:
     QList<UDiskDeviceInfo *> m_list;
     QMap<QString, UDiskDeviceInfo *> m_map;
