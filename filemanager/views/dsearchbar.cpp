@@ -188,7 +188,8 @@ bool DSearchBar::hasScheme()
             url.isComputerFile() ||
             url.isLocalFile() ||
             url.isRecentFile() ||
-            url.isTrashFile())
+            url.isTrashFile() ||
+            url.isSearchFile())
         return true;
     else
         return false;
