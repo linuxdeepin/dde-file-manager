@@ -182,6 +182,11 @@ void DFileManagerWindow::initConnect()
     connect(m_toolbar, &DToolBar::requestIconView, m_fileView, &DFileView::switchToIconMode);
 }
 
+DUrl DFileManagerWindow::currentUrl() const
+{
+    return m_fileView->currentUrl();
+}
+
 void DFileManagerWindow::showMinimized()
 {
     QtX11::utils::ShowMinimizedWindow(this);

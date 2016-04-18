@@ -27,18 +27,24 @@ WindowManager::~WindowManager()
 void WindowManager::initConnect()
 {
     connect(fileSignalManager, &FileSignalManager::requestOpenNewWindowByUrl, this, &WindowManager::showNewWindow);
-    connect(fileSignalManager, &FileSignalManager::requestActiveWindow, this, &WindowManager::activefirstOpenedWindow);
 }
 
 void WindowManager::showNewWindow(const DUrl &url)
 {
-    DFileManagerWindow* window = new DFileManagerWindow;
-    if (!m_firstOpenedWindow){
-        m_firstOpenedWindow = window;
+    for(int i=0; i< m_windows.count(); i++){
+        QWidget* window = const_cast<QWidget *>(m_windows.keys().at(i));
+        DUrl currentUrl = static_cast<DFileManagerWindow *>(window)->currentUrl();
+        if (currentUrl == url){
+            qDebug() << currentUrl << static_cast<DFileManagerWindow *>(window);
+            qApp->setActiveWindow(static_cast<DFileManagerWindow *>(window));
+            return;
+        }
     }
+
+    DFileManagerWindow* window = new DFileManagerWindow;
     connect(window, &DFileManagerWindow::aboutToClose,
             this, &WindowManager::onWindowClosed);
-    qDebug() << "new window" << window->winId();
+    qDebug() << "new window" << window->winId() << url;
     int winId = window->winId();
     m_windows.insert(window, winId);
     qDebug() << m_windows;
@@ -52,15 +58,7 @@ void WindowManager::showNewWindow(const DUrl &url)
     emit fileSignalManager->requestChangeCurrentUrl(event);
 }
 
-void WindowManager::activefirstOpenedWindow()
-{
-    qDebug() << m_firstOpenedWindow;
-    if (m_firstOpenedWindow){
-        qApp->setActiveWindow(m_firstOpenedWindow);
-    }else{
-        showNewWindow(DUrl::fromLocalFile(QDir::homePath()));
-    }
-}
+
 
 int WindowManager::getWindowId(const QWidget *window)
 {
@@ -69,9 +67,5 @@ int WindowManager::getWindowId(const QWidget *window)
 
 void WindowManager::onWindowClosed()
 {
-    qDebug() << sender() <<  m_firstOpenedWindow;
-    if (sender() == m_firstOpenedWindow){
-        m_firstOpenedWindow = NULL;
-    }
     m_windows.remove(static_cast<const QWidget*>(sender()));
 }

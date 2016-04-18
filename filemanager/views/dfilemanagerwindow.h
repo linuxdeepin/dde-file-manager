@@ -3,6 +3,7 @@
 
 #include "dmovablemainwindow.h"
 #include <dtitlebar.h>
+#include "../models/durl.h"
 
 #define DEFAULT_WINDOWS_WIDTH 950
 #define DEFAULT_WINDOWS_HEIGHT 600
@@ -22,6 +23,8 @@ class QVBoxLayout;
 class QSplitter;
 class QResizeEvent;
 class DSplitter;
+
+
 
 DWIDGET_USE_NAMESPACE
 
@@ -49,6 +52,8 @@ public:
     void initCentralWidget();
     void initStatusBar();
     void initConnect();
+
+    DUrl currentUrl() const;
 signals:
     void aboutToClose();
 
