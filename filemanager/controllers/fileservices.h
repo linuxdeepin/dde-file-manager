@@ -54,9 +54,10 @@ public slots:
     void openUrl(const FMEvent &event) const;
 
 signals:
-    void childrenUpdated(const FMEvent &event, const QList<AbstractFileInfo*> &list) const;
+    void updateChildren(const FMEvent &event, const QList<AbstractFileInfo*> &list) const;
     void childrenAdded(const DUrl &fileUrl) const;
     void childrenRemoved(const DUrl &fileUrl) const;
+    void childrenUpdated(const DUrl &fileUrl) const;
     void fileOpened(const DUrl &fileUrl) const;
 
 private:
