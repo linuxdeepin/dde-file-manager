@@ -85,12 +85,13 @@ void SingleApplication::readData()
     QJsonObject messageObj = QJsonDocument::fromJson(QByteArray(static_cast<QLocalSocket*>(sender())->readAll()), error).object();
     qDebug() << messageObj << error->errorString();
 
+    DUrl url = DUrl::fromLocalFile(QDir::homePath());
     if (messageObj.contains("url")){
-        DUrl url = DUrl(messageObj.value("url").toString());
-        if (url.isEmpty()){
-            emit fileSignalManager->requestActiveWindow();
-        }else{
-            emit fileSignalManager->requestOpenNewWindowByUrl(url);
+        QString _url = messageObj.value("url").toString();
+        if (!_url.isEmpty()){
+            url = DUrl::fromLocalFile(_url);
         }
     }
+    qDebug() << url;
+    emit fileSignalManager->requestOpenNewWindowByUrl(url);
 }

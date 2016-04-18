@@ -8,6 +8,7 @@
 
 class DFileManagerWindow;
 class DUrl;
+class FMEvent;
 
 class WindowManager : public QObject
 {
@@ -23,7 +24,6 @@ signals:
 
 public slots:
     void showNewWindow(const DUrl &url);
-    void activefirstOpenedWindow();
     static int getWindowId(const QWidget *window);
 
 private slots:
@@ -33,7 +33,6 @@ private slots:
 private:
      static QHash<const QWidget*, int> m_windows;
      static int m_count;
-     DFileManagerWindow* m_firstOpenedWindow = NULL;
 };
 
 #endif // WINDOWMANAGER_H
