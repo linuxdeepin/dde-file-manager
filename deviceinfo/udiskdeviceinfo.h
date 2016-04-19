@@ -40,7 +40,7 @@ public:
     QString vendor();
     QString model();
     QString fileSystem();
-    QString mountPath();
+    QString mountPath() const;
     QString iconName();
 
     bool setDevFile(const QString &text) BOOL_SETTER(m_devFile)
@@ -100,10 +100,10 @@ private:
 
     QString formatSize( qint64 num ) const;
 public:
-    bool isCanRename() const;
-    QIcon fileIcon() const;
-    bool isDir() const;
-    DUrl parentUrl() const;
+    bool isCanRename() const Q_DECL_OVERRIDE;
+    QIcon fileIcon() const Q_DECL_OVERRIDE;
+    bool isDir() const Q_DECL_OVERRIDE;
+    DUrl parentUrl() const Q_DECL_OVERRIDE;
 
 signals:
     void changed();
@@ -117,6 +117,9 @@ public slots:
                            const QStringList &invalidatedProp);
 
 
+
+public:
+    QVector<MenuAction> menuActionList(MenuType type) const Q_DECL_OVERRIDE;
 };
 
 #endif // UDISKDEVICEINFO_H

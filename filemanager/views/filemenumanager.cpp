@@ -366,8 +366,12 @@ void FileMenuManager::actionTriggered(DAction *action)
     case MenuAction::SortBy:break;
     case MenuAction::NewDocument:break;
     case MenuAction::Restore:break;
-    case MenuAction::Mount:break;
-    case MenuAction::Unmount:break;
+    case MenuAction::Mount:
+        deviceListener->mount(fileUrl.query());
+        break;
+    case MenuAction::Unmount:
+        deviceListener->unmount(fileUrl.query());
+        break;
     case MenuAction::Name:
         emit fileSignalManager->requestViewSort(menu->getWindowId(), Global::FileDisplayNameRole);
         break;
