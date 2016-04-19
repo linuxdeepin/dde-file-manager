@@ -371,16 +371,21 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
     if (isEmptyArea(event->pos())){
         index = rootIndex();
 
-        menu = FileMenuManager::createViewSpaceAreaMenu(FileMenuManager::getDisableActionList(model()->getUrlByIndex(index)));
+        const AbstractFileInfo *info = model()->fileInfo(index);
+        const QVector<MenuAction> &actions = info->menuActionList(AbstractFileInfo::SpaceArea);
+
+        menu = FileMenuManager::genereteMenuByKeys(actions, FileMenuManager::getDisableActionList(model()->getUrlByIndex(index)));
         DUrlList urls;
         urls.append(currentUrl());
         menu->setUrls(urls);
         menu->setWindowId(m_windowId);
-        menu->setFileInfo(model()->fileInfo(index));
     } else {
         index = indexAt(event->pos());
 
-        menu = FileMenuManager::createFileMenu(FileMenuManager::getDisableActionList(model()->getUrlByIndex(index)));
+        const AbstractFileInfo *info = model()->fileInfo(index);
+        const QVector<MenuAction> &actions = info->menuActionList(AbstractFileInfo::Normal);
+
+        menu = FileMenuManager::genereteMenuByKeys(actions, FileMenuManager::getDisableActionList(model()->getUrlByIndex(index)));
         menu->setWindowId(m_windowId);
 
         DUrlList list = selectedUrls();
@@ -389,7 +394,6 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
             list << model()->getUrlByIndex(index);
 
         menu->setUrls(list);
-        menu->setFileInfo(model()->fileInfo(index));
     }
 
     menu->exec(mapToGlobal(event->pos()));

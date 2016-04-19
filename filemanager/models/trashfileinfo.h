@@ -23,6 +23,8 @@ public:
 
     QFile::Permissions permissions() const Q_DECL_OVERRIDE;
 
+    QVector<MenuAction> menuActionList(MenuType type) const Q_DECL_OVERRIDE;
+
 private:
     QString desktopIconName;
     QString m_displayName;

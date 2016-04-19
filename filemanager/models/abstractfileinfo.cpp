@@ -188,6 +188,36 @@ DUrl AbstractFileInfo::parentUrl() const
     return url;
 }
 
+QVector<AbstractFileInfo::MenuAction> AbstractFileInfo::menuActionList(AbstractFileInfo::MenuType type) const
+{
+    QVector<MenuAction> actionKeys;
+
+    if(type == SpaceArea) {
+        actionKeys.reserve(9);
+
+        actionKeys << OpenInNewWindow
+                   << Separator
+                   << NewFolder << NewDocument
+                   << Separator
+                   << Paste
+                   << SelectAll
+                   << Separator
+                   << Property;
+    } else {
+        actionKeys.reserve(11);
+
+        actionKeys << Open << (isDir() ? OpenInNewWindow : OpenWith)
+                   << Separator
+                   << Compress << Separator
+                   << Copy << Cut
+                   << Rename << Delete
+                   << Separator
+                   << Property;
+    }
+
+    return actionKeys;
+}
+
 QT_BEGIN_NAMESPACE
 QDebug operator<<(QDebug deg, const AbstractFileInfo &info)
 {

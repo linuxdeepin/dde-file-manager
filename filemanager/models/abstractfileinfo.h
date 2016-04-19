@@ -21,6 +21,51 @@ private:
 class AbstractFileInfo
 {
 public:
+    enum MenuAction {
+        Open,
+        OpenInNewWindow,
+        OpenWith,
+        OpenFileLocation,
+        Compress,
+        Decompress,
+        Cut,
+        Copy,
+        Paste,
+        Rename,
+        Remove,
+        Delete,
+        Property,
+        NewFolder,
+        NewFile,
+        NewWindow,
+        SelectAll,
+        Separator,
+        ClearRecent,
+        ClearTrash,
+        DisplayAs, /// sub menu
+        SortBy, /// sub menu
+        NewDocument, /// sub menu
+        Restore,
+        CompleteDeletion,
+        Mount,
+        Unmount,
+        Name,
+        Size,
+        Type,
+        CreatedDate,
+        LastModifiedDate,
+        Help,
+        About,
+        Exit,
+        IconView,
+        ListView
+    };
+
+    enum MenuType {
+        Normal,
+        SpaceArea
+    };
+
     AbstractFileInfo();
     AbstractFileInfo(const DUrl &url);
     AbstractFileInfo(const QString &url);
@@ -87,6 +132,7 @@ public:
     virtual QIcon fileIcon() const = 0;
 
     virtual DUrl parentUrl() const;
+    virtual QVector<MenuAction> menuActionList(MenuType type = Normal) const;
 
 protected:
     QSharedDataPointer<FileInfoData> data;
