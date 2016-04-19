@@ -39,7 +39,6 @@
 #define defaut_trashIcon ":/images/images/user-trash-full.png"
 
 #define ComputerUrl "computer://"
-#define TrashDir "~/.local/share/Trash/files"
 
 #define TRASH_SCHEME "trash"
 #define RECENT_SCHEME "recent"
@@ -53,6 +52,8 @@
 #define BOOKMARK_ROOT BOOKMARK_SCHEME ":///"
 #define FILE_ROOT FILE_SCHEME ":///"
 #define COMPUTER_ROOT COMPUTER_SCHEME ":///"
+
+#define TRASHURL DUrl::fromLocalFile(QDir::homePath() + "/.local/share/Trash")
 
 #define TEXT_LINE_HEIGHT 13
 

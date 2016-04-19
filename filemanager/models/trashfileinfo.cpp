@@ -44,10 +44,7 @@ void TrashFileInfo::setUrl(const DUrl &fileUrl)
 {
     AbstractFileInfo::setUrl(fileUrl);
 
-    QString user = getenv("USER");
-    QString pathPrefix = "/home/" + user + "/.local/share/Trash/files";
-
-    data->fileInfo.setFile(pathPrefix + fileUrl.path());
+    data->fileInfo.setFile(fileUrl.path());
 
     updateInfo();
 }
@@ -60,10 +57,7 @@ QIcon TrashFileInfo::fileIcon() const
 QString TrashFileInfo::mimeTypeName() const
 {
     if(data->mimeTypeName.isNull()) {
-        QString user = getenv("USER");
-        QString pathPrefix = "/home/" + user + "/.local/share/Trash/files";
-
-        data->mimeTypeName = FileInfo::mimeType(pathPrefix + this->absoluteFilePath()).name();
+        data->mimeTypeName = FileInfo::mimeType(absoluteFilePath()).name();
     }
 
     return data->mimeTypeName;
@@ -79,6 +73,14 @@ QFileDevice::Permissions TrashFileInfo::permissions() const
     p &= ~QFileDevice::WriteOther;
 
     return p;
+}
+
+DUrl TrashFileInfo::parentUrl() const
+{
+    if(this->absolutePath() == TRASHURL.path() + "/files")
+        return DUrl::fromTrashFile("/");
+
+    return AbstractFileInfo::parentUrl();
 }
 
 QVector<AbstractFileInfo::MenuAction> TrashFileInfo::menuActionList(AbstractFileInfo::MenuType type) const
@@ -110,17 +112,20 @@ QVector<AbstractFileInfo::MenuAction> TrashFileInfo::menuActionList(AbstractFile
     return actionKeys;
 }
 
+bool TrashFileInfo::restore() const
+{
+    return fileService->renameFile(DUrl::fromLocalFile(absoluteFilePath()), DUrl::fromLocalFile(originalPath));
+}
+
 void TrashFileInfo::updateInfo()
 {
-    QString user = getenv("USER");
-    QString infoPath = "/home/" + user + "/.local/share/Trash/info/";
-
-    QSettings setting(infoPath + fileName() + ".trashinfo", QSettings::IniFormat);
+    QSettings setting(TRASHURL.path() + "/info/" + fileName() + ".trashinfo", QSettings::NativeFormat);
 
     setting.beginGroup("Trash Info");
+    setting.setIniCodec("utf-8");
 
-    if(absoluteFilePath() == "/home/" + user + "/.local/share/Trash/files/") {
-        originalPath = setting.value("Path").toString();
+    if(absolutePath() == TRASHURL.path() + "/files") {
+        originalPath = QByteArray::fromPercentEncoding(setting.value("Path").toByteArray());
         m_displayName = originalPath.mid(originalPath.lastIndexOf('/') + 1);
     } else {
         originalPath = this->absoluteFilePath();
