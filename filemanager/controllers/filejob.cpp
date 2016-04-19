@@ -19,7 +19,7 @@ FileJob::FileJob(const QString &title, QObject *parent) : QObject(parent)
     m_status = FileJob::Started;
     QString user = getenv("USER");
     m_trashLoc = "/home/" + user + "/.local/share/Trash";
-    m_id = QDateTime::currentDateTime().toString();
+    m_id = QString::number(QDateTime::currentDateTime().toMSecsSinceEpoch());
     m_title = title;
 }
 
