@@ -11,61 +11,8 @@
 
 #include <QScreen>
 
-QMap<FileMenuManager::MenuAction, QString> FileMenuManager::m_actionKeys;
-QMap<FileMenuManager::MenuAction, DAction*> FileMenuManager::m_actions;
-
-DFileMenu *FileMenuManager::createFileMenu(const QVector<MenuAction> &disableList)
-{
-    QVector<MenuAction> actionKeys;
-
-    actionKeys.reserve(11);
-
-    actionKeys << Open << OpenWith
-               << Separator
-               << Compress << Separator
-               << Copy << Cut
-               << Rename << Delete
-               << Separator
-               << Property;
-
-    return genereteMenuByKeys(actionKeys, disableList);
-}
-
-DFileMenu *FileMenuManager::createFolderMenu(const QVector<MenuAction> &disableList)
-{
-    QVector<MenuAction> actionKeys;
-
-    actionKeys.reserve(11);
-
-    actionKeys << Open
-               << OpenInNewWindow
-               << Separator
-               << Compress << Separator
-               << Copy << Cut
-               << Rename << Delete
-               << Separator
-               << Property;
-
-    return genereteMenuByKeys(actionKeys, disableList);
-}
-
-DFileMenu *FileMenuManager::createViewSpaceAreaMenu(const QVector<MenuAction> &disableList)
-{
-    QVector<MenuAction> actionKeys;
-
-    actionKeys.reserve(9);
-
-    actionKeys << OpenInNewWindow
-               << Separator
-               << NewFolder << NewDocument
-               << Separator
-               << Paste
-               << SelectAll
-               << Separator
-               << Property;
-
-    return genereteMenuByKeys(actionKeys, disableList);
-}
+QMap<MenuAction, QString> FileMenuManager::m_actionKeys;
+QMap<MenuAction, DAction*> FileMenuManager::m_actions;
 
 DFileMenu *FileMenuManager::createRecentLeftBarMenu(const QVector<MenuAction> &disableList)
 {
@@ -73,55 +20,9 @@ DFileMenu *FileMenuManager::createRecentLeftBarMenu(const QVector<MenuAction> &d
 
     actionKeys.reserve(2);
 
-    actionKeys << OpenInNewWindow << ClearRecent;
+    actionKeys << MenuAction::OpenInNewWindow << MenuAction::ClearRecent;
 
     return genereteMenuByKeys(actionKeys, disableList);
-}
-
-DFileMenu *FileMenuManager::createRecentFileMenu(const QVector<MenuAction> &disableList)
-{
-    QVector<MenuAction> actionKeys;
-
-    actionKeys.reserve(12);
-
-    actionKeys << Open << OpenWith
-               << OpenFileLocation
-               << Separator
-               << Compress << Separator
-               << Copy << Cut
-               << Rename << Delete
-               << Separator
-               << Property;
-
-    return genereteMenuByKeys(actionKeys, disableList);
-}
-
-DFileMenu *FileMenuManager::createRecentViewSpaceAreaMenu(const QVector<MenuAction> &disableList)
-{
-    QVector<MenuAction> actionKeys;
-
-    actionKeys.reserve(6);
-
-    actionKeys << ClearRecent
-               << Separator
-               << DisplayAs
-               << SortBy
-               << Separator
-               << Property;
-
-    QMap<MenuAction, QVector<MenuAction> > subMenu;
-    QVector<MenuAction> subActionKeys;
-
-    subActionKeys << IconView << ListView;
-
-    subMenu[DisplayAs] = subActionKeys;
-    subActionKeys.clear();
-
-    subActionKeys << Name << Size << Type << CreatedDate << LastModifiedDate;
-
-    subMenu[SortBy] = subActionKeys;
-
-    return genereteMenuByKeys(actionKeys, disableList, false, subMenu);
 }
 
 DFileMenu *FileMenuManager::createDefaultBookMarkMenu()
@@ -131,15 +32,15 @@ DFileMenu *FileMenuManager::createDefaultBookMarkMenu()
 
     actionKeys.reserve(7);
 
-    actionKeys << Open
-               << OpenInNewWindow
-               << Separator
-               << Remove
-               << Rename
-               << Separator
-               << Property;
-    disableList << Remove
-                << Rename;
+    actionKeys << MenuAction::Open
+               << MenuAction::OpenInNewWindow
+               << MenuAction::Separator
+               << MenuAction::Remove
+               << MenuAction::Rename
+               << MenuAction::Separator
+               << MenuAction::Property;
+    disableList << MenuAction::Remove
+                << MenuAction::Rename;
 
     return genereteMenuByKeys(actionKeys, disableList);
 }
@@ -150,16 +51,16 @@ DFileMenu *FileMenuManager::createCustomBookMarkMenu(const QVector<MenuAction> &
 
     actionKeys.reserve(10);
 
-    actionKeys << Open
-               << OpenInNewWindow
-               << Separator
-               << Copy
-               << Cut
-               << Rename
-               << Separator
-               << Remove
-               << Separator
-               << Property;
+    actionKeys << MenuAction::Open
+               << MenuAction::OpenInNewWindow
+               << MenuAction::Separator
+               << MenuAction::Copy
+               << MenuAction::Cut
+               << MenuAction::Rename
+               << MenuAction::Separator
+               << MenuAction::Remove
+               << MenuAction::Separator
+               << MenuAction::Property;
 
     return genereteMenuByKeys(actionKeys, disableList);
 }
@@ -170,155 +71,104 @@ DFileMenu *FileMenuManager::createTrashLeftBarMenu(const QVector<MenuAction> &di
 
     actionKeys.reserve(4);
 
-    actionKeys << Open << OpenInNewWindow
-               << Separator << ClearTrash;
+    actionKeys << MenuAction::Open << MenuAction::OpenInNewWindow
+               << MenuAction::Separator << MenuAction::ClearTrash;
 
     return genereteMenuByKeys(actionKeys, disableList);
 }
 
-DFileMenu *FileMenuManager::createTrashFileMenu(const QVector<MenuAction> &disableList)
-{
-    QVector<MenuAction> actionKeys;
-
-    actionKeys.reserve(12);
-
-    actionKeys << Open << OpenWith
-               << Separator
-               << Compress << Separator
-               << Copy << Cut << Separator
-               << Restore << CompleteDeletion
-               << Separator
-               << Property;
-
-    return genereteMenuByKeys(actionKeys, disableList);
-}
-
-DFileMenu *FileMenuManager::createTrashFolderMenu(const QVector<MenuAction> &disableList)
-{
-    QVector<MenuAction> actionKeys;
-
-    actionKeys.reserve(12);
-
-    actionKeys << Open << OpenInNewWindow
-               << Separator
-               << Compress << Separator
-               << Copy << Cut << Separator
-               << Restore << CompleteDeletion
-               << Separator
-               << Property;
-
-    return genereteMenuByKeys(actionKeys, disableList);
-}
-
-DFileMenu *FileMenuManager::createTrashViewSpaceAreaMenu(const QVector<MenuAction> &disableList)
-{
-    QVector<MenuAction> actionKeys;
-
-    actionKeys.reserve(7);
-
-    actionKeys << OpenInNewWindow
-               << Separator
-               << Paste
-               << SelectAll
-               << ClearTrash
-               << Separator
-               << Property;
-
-    return genereteMenuByKeys(actionKeys, disableList);
-}
-
-DFileMenu *FileMenuManager::createDiskLeftBarMenu(const QVector<FileMenuManager::MenuAction> &disableList)
+DFileMenu *FileMenuManager::createDiskLeftBarMenu(const QVector<MenuAction> &disableList)
 {
     QVector<MenuAction> actionKeys;
 
     actionKeys.reserve(4);
 
-    actionKeys << Open
-               << OpenInNewWindow
-               << Separator
-               << Property;
+    actionKeys << MenuAction::Open
+               << MenuAction::OpenInNewWindow
+               << MenuAction::Separator
+               << MenuAction::Property;
 
     return genereteMenuByKeys(actionKeys, disableList);
 }
 
-DFileMenu *FileMenuManager::createDiskViewMenu(const QVector<FileMenuManager::MenuAction> &disableList)
+DFileMenu *FileMenuManager::createDiskViewMenu(const QVector<MenuAction> &disableList)
 {
     QVector<MenuAction> actionKeys;
 
     actionKeys.reserve(6);
 
-    actionKeys << Open << OpenInNewWindow
-               << Separator
-               << Mount << Unmount
-               << Separator
-               << Property;
+    actionKeys << MenuAction::Open << MenuAction::OpenInNewWindow
+               << MenuAction::Separator
+               << MenuAction::Mount << MenuAction::Unmount
+               << MenuAction::Separator
+               << MenuAction::Property;
 
     return genereteMenuByKeys(actionKeys, disableList);
 }
 
-DFileMenu *FileMenuManager::createToolBarSettingsMenu(const QVector<FileMenuManager::MenuAction> &disableList)
+DFileMenu *FileMenuManager::createToolBarSettingsMenu(const QVector<MenuAction> &disableList)
 {
     QVector<MenuAction> actionKeys;
 
     actionKeys.reserve(5);
 
-    actionKeys << NewWindow << Separator
-               << Help
-               << About
-               << Exit;
+    actionKeys << MenuAction::NewWindow << MenuAction::Separator
+               << MenuAction::Help
+               << MenuAction::About
+               << MenuAction::Exit;
 
     return genereteMenuByKeys(actionKeys, disableList);
 }
 
-DFileMenu *FileMenuManager::createToolBarSortMenu(const QVector<FileMenuManager::MenuAction> &disableList)
+DFileMenu *FileMenuManager::createToolBarSortMenu(const QVector<MenuAction> &disableList)
 {
     QVector<MenuAction> actionKeys;
 
     actionKeys.reserve(5);
 
-    actionKeys << Name << Size
-               << Type
-               << CreatedDate
-               << LastModifiedDate;
+    actionKeys << MenuAction::Name << MenuAction::Size
+               << MenuAction::Type
+               << MenuAction::CreatedDate
+               << MenuAction::LastModifiedDate;
 
     return genereteMenuByKeys(actionKeys, disableList, true);
 }
 
-DFileMenu *FileMenuManager::createListViewHeaderMenu(const QVector<FileMenuManager::MenuAction> &disableList)
+DFileMenu *FileMenuManager::createListViewHeaderMenu(const QVector<MenuAction> &disableList)
 {
     QVector<MenuAction> actionKeys;
 
     actionKeys.reserve(4);
 
-    actionKeys << Size
-               << Type
-               << CreatedDate
-               << LastModifiedDate;
+    actionKeys << MenuAction::Size
+               << MenuAction::Type
+               << MenuAction::CreatedDate
+               << MenuAction::LastModifiedDate;
 
     return genereteMenuByKeys(actionKeys, disableList, true);
 }
 
-QVector<FileMenuManager::MenuAction> FileMenuManager::getDisableActionList(const DUrl &fileUrl)
+QVector<MenuAction> FileMenuManager::getDisableActionList(const DUrl &fileUrl)
 {
     AbstractFileInfo *fileInfo = fileService->createFileInfo(fileUrl);
-    QVector<FileMenuManager::MenuAction> disableList;
+    QVector<MenuAction> disableList;
 
     if(!fileInfo->isCanRename())
-        disableList << FileMenuManager::Rename;
+        disableList << MenuAction::Rename;
 
     if(!fileInfo->isReadable())
-        disableList << FileMenuManager::Open << FileMenuManager::OpenWith
-                    << FileMenuManager::OpenInNewWindow << FileMenuManager::Copy;
+        disableList << MenuAction::Open << MenuAction::OpenWith
+                    << MenuAction::OpenInNewWindow << MenuAction::Copy;
 
     AbstractFileInfo *parentInfo = fileService->createFileInfo(fileInfo->parentUrl());
 
     if(!fileInfo->isWritable())
-        disableList << FileMenuManager::Paste << FileMenuManager::NewDocument
-                    << FileMenuManager::NewFile << FileMenuManager::NewFolder;
+        disableList << MenuAction::Paste << MenuAction::NewDocument
+                    << MenuAction::NewFile << MenuAction::NewFolder;
 
     if(!fileInfo->isWritable() || (parentInfo->exists() && !parentInfo->isWritable()))
-        disableList << FileMenuManager::Cut << FileMenuManager::Remove
-                    << FileMenuManager::Delete << FileMenuManager::CompleteDeletion;
+        disableList << MenuAction::Cut << MenuAction::Remove
+                    << MenuAction::Delete << MenuAction::CompleteDeletion;
 
     delete fileInfo;
     delete parentInfo;
@@ -334,44 +184,44 @@ FileMenuManager::FileMenuManager()
 
 void FileMenuManager::initData()
 {
-    m_actionKeys[Open] = QObject::tr("Open");
-    m_actionKeys[OpenInNewWindow] = QObject::tr("Open in new window");
-    m_actionKeys[OpenWith] = QObject::tr("Open with");
-    m_actionKeys[OpenFileLocation] = QObject::tr("Open file loaction");
-    m_actionKeys[Compress] = QObject::tr("Compress");
-    m_actionKeys[Decompress] = QObject::tr("Decompress");
-    m_actionKeys[Cut] = QObject::tr("Cut");
-    m_actionKeys[Copy] = QObject::tr("Copy");
-    m_actionKeys[Paste] = QObject::tr("Paste");
-    m_actionKeys[Rename] = QObject::tr("Rename");
-    m_actionKeys[Remove] = QObject::tr("Remove");
-    m_actionKeys[Delete] = QObject::tr("Delete");
-    m_actionKeys[CompleteDeletion] = QObject::tr("Complete deletion");
-    m_actionKeys[Property] = QObject::tr("Property");
+    m_actionKeys[MenuAction::Open] = QObject::tr("Open");
+    m_actionKeys[MenuAction::OpenInNewWindow] = QObject::tr("Open in new window");
+    m_actionKeys[MenuAction::OpenWith] = QObject::tr("Open with");
+    m_actionKeys[MenuAction::OpenFileLocation] = QObject::tr("Open file loaction");
+    m_actionKeys[MenuAction::Compress] = QObject::tr("Compress");
+    m_actionKeys[MenuAction::Decompress] = QObject::tr("Decompress");
+    m_actionKeys[MenuAction::Cut] = QObject::tr("Cut");
+    m_actionKeys[MenuAction::Copy] = QObject::tr("Copy");
+    m_actionKeys[MenuAction::Paste] = QObject::tr("Paste");
+    m_actionKeys[MenuAction::Rename] = QObject::tr("Rename");
+    m_actionKeys[MenuAction::Remove] = QObject::tr("Remove");
+    m_actionKeys[MenuAction::Delete] = QObject::tr("Delete");
+    m_actionKeys[MenuAction::CompleteDeletion] = QObject::tr("Complete deletion");
+    m_actionKeys[MenuAction::Property] = QObject::tr("Property");
 
-    m_actionKeys[NewFolder] = QObject::tr("New Folder");
-    m_actionKeys[NewFile] = QObject::tr("New File");
-    m_actionKeys[NewWindow] = QObject::tr("New Window");
-    m_actionKeys[SelectAll] = QObject::tr("Select All");
-    m_actionKeys[ClearRecent] = QObject::tr("Clear Recent");
-    m_actionKeys[ClearTrash] = QObject::tr("Clear Trash");
-    m_actionKeys[DisplayAs] = QObject::tr("Display As");
-    m_actionKeys[SortBy] = QObject::tr("Sort By");
-    m_actionKeys[NewDocument] = QObject::tr("New Document");
-    m_actionKeys[Restore] = QObject::tr("Restore");
-    m_actionKeys[CompleteDeletion] = QObject::tr("Complete Deletion");
-    m_actionKeys[Mount] = QObject::tr("Mount");
-    m_actionKeys[Unmount]= QObject::tr("Unmount");
-    m_actionKeys[Name] = QObject::tr("Name");
-    m_actionKeys[Size] = QObject::tr("Size");
-    m_actionKeys[Type] = QObject::tr("Type");
-    m_actionKeys[CreatedDate] = QObject::tr("Created Date");
-    m_actionKeys[LastModifiedDate] = QObject::tr("Last Modified Date");
-    m_actionKeys[Help] = QObject::tr("Help");
-    m_actionKeys[About] = QObject::tr("About");
-    m_actionKeys[Exit] = QObject::tr("Exit");
-    m_actionKeys[IconView] = QObject::tr("Icon View");
-    m_actionKeys[ListView] = QObject::tr("List View");
+    m_actionKeys[MenuAction::NewFolder] = QObject::tr("New Folder");
+    m_actionKeys[MenuAction::NewFile] = QObject::tr("New File");
+    m_actionKeys[MenuAction::NewWindow] = QObject::tr("New Window");
+    m_actionKeys[MenuAction::SelectAll] = QObject::tr("Select All");
+    m_actionKeys[MenuAction::ClearRecent] = QObject::tr("Clear Recent");
+    m_actionKeys[MenuAction::ClearTrash] = QObject::tr("Clear Trash");
+    m_actionKeys[MenuAction::DisplayAs] = QObject::tr("Display As");
+    m_actionKeys[MenuAction::SortBy] = QObject::tr("Sort By");
+    m_actionKeys[MenuAction::NewDocument] = QObject::tr("New Document");
+    m_actionKeys[MenuAction::Restore] = QObject::tr("Restore");
+    m_actionKeys[MenuAction::CompleteDeletion] = QObject::tr("Complete Deletion");
+    m_actionKeys[MenuAction::Mount] = QObject::tr("Mount");
+    m_actionKeys[MenuAction::Unmount]= QObject::tr("Unmount");
+    m_actionKeys[MenuAction::Name] = QObject::tr("Name");
+    m_actionKeys[MenuAction::Size] = QObject::tr("Size");
+    m_actionKeys[MenuAction::Type] = QObject::tr("Type");
+    m_actionKeys[MenuAction::CreatedDate] = QObject::tr("Created Date");
+    m_actionKeys[MenuAction::LastModifiedDate] = QObject::tr("Last Modified Date");
+    m_actionKeys[MenuAction::Help] = QObject::tr("Help");
+    m_actionKeys[MenuAction::About] = QObject::tr("About");
+    m_actionKeys[MenuAction::Exit] = QObject::tr("Exit");
+    m_actionKeys[MenuAction::IconView] = QObject::tr("Icon View");
+    m_actionKeys[MenuAction::ListView] = QObject::tr("List View");
 }
 
 void FileMenuManager::initActions()
@@ -399,7 +249,7 @@ DFileMenu *FileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
     connect(menu, &DFileMenu::triggered, fileMenuManger, &FileMenuManager::actionTriggered);
 
     foreach (MenuAction key, keys) {
-        if (key == Separator){
+        if (key == MenuAction::Separator){
             menu->addSeparator();
         }else{
             DAction *action = m_actions.value(key);
@@ -437,7 +287,7 @@ void FileMenuManager::actionTriggered(DAction *action)
 
     switch(type)
     {
-    case Open: {
+    case MenuAction::Open: {
         FMEvent event;
 
         event = fileUrl;
@@ -447,24 +297,24 @@ void FileMenuManager::actionTriggered(DAction *action)
         fileService->openUrl(event);
         break;
     }
-    case OpenInNewWindow:
+    case MenuAction::OpenInNewWindow:
         fileService->openNewWindow(fileUrl);
         break;
-    case OpenWith:
+    case MenuAction::OpenWith:
         emit fileSignalManager->requestShowOpenWithDialog(fileUrl);
         break;
-    case OpenFileLocation:
+    case MenuAction::OpenFileLocation:
         fileService->openFileLocation(fileUrl);
         break;
-    case Compress:break;
-    case Decompress:break;
-    case Cut:
+    case MenuAction::Compress:break;
+    case MenuAction::Decompress:break;
+    case MenuAction::Cut:
         fileService->cutFiles(urls);
         break;
-    case Copy:
+    case MenuAction::Copy:
         fileService->copyFiles(urls);
         break;
-    case Paste: {
+    case MenuAction::Paste: {
         FMEvent event;
 
         event = fileUrl;
@@ -474,7 +324,7 @@ void FileMenuManager::actionTriggered(DAction *action)
         fileService->pasteFile(event);
         break;
     }
-    case Rename: {
+    case MenuAction::Rename: {
         FMEvent event;
 
         event = fileUrl;
@@ -484,7 +334,7 @@ void FileMenuManager::actionTriggered(DAction *action)
         emit fileSignalManager->requestRename(event);
         break;
     }
-    case Remove:
+    case MenuAction::Remove:
     {
         FMEvent event;
 
@@ -494,54 +344,54 @@ void FileMenuManager::actionTriggered(DAction *action)
         fileSignalManager->requestBookmarkRemove(event);
         break;
     }
-    case Delete:
+    case MenuAction::Delete:
         fileService->moveToTrash(urls);
         break;
-    case CompleteDeletion:
+    case MenuAction::CompleteDeletion:
         fileService->deleteFiles(urls);
         break;
-    case NewFolder:
+    case MenuAction::NewFolder:
         fileService->newFolder(fileUrl);
         break;
-    case NewFile:
+    case MenuAction::NewFile:
         fileService->newFile(fileUrl);
         break;
-    case NewWindow:break;
-    case SelectAll:
+    case MenuAction::NewWindow:break;
+    case MenuAction::SelectAll:
         fileSignalManager->requestViewSelectAll(menu->getWindowId());
         break;
-    case ClearRecent:break;
-    case ClearTrash:break;
-    case DisplayAs:break;
-    case SortBy:break;
-    case NewDocument:break;
-    case Restore:break;
-    case Mount:break;
-    case Unmount:break;
-    case Name:
+    case MenuAction::ClearRecent:break;
+    case MenuAction::ClearTrash:break;
+    case MenuAction::DisplayAs:break;
+    case MenuAction::SortBy:break;
+    case MenuAction::NewDocument:break;
+    case MenuAction::Restore:break;
+    case MenuAction::Mount:break;
+    case MenuAction::Unmount:break;
+    case MenuAction::Name:
         emit fileSignalManager->requestViewSort(menu->getWindowId(), Global::FileDisplayNameRole);
         break;
-    case Size:
+    case MenuAction::Size:
         emit fileSignalManager->requestViewSort(menu->getWindowId(), Global::FileSizeRole);
         break;
-    case Type:
+    case MenuAction::Type:
         fileSignalManager->requestViewSort(menu->getWindowId(), Global::FileMimeTypeRole);
         break;
-    case CreatedDate:
+    case MenuAction::CreatedDate:
         emit fileSignalManager->requestViewSort(menu->getWindowId(), Global::FileCreated);
         break;
-    case LastModifiedDate:
+    case MenuAction::LastModifiedDate:
         emit fileSignalManager->requestViewSort(menu->getWindowId(), Global::FileLastModified);
         break;
-    case Property: {
+    case MenuAction::Property: {
         emit fileSignalManager->requestShowPropertyDialog(fileUrl);
         break;
     }
-    case Help:break;
-    case About:break;
-    case Exit:break;
-    case IconView:break;
-    case ListView:break;
+    case MenuAction::Help:break;
+    case MenuAction::About:break;
+    case MenuAction::Exit:break;
+    case MenuAction::IconView:break;
+    case MenuAction::ListView:break;
     default:
         qDebug() << "unknown action type";
         break;

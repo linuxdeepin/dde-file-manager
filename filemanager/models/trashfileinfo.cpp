@@ -81,6 +81,35 @@ QFileDevice::Permissions TrashFileInfo::permissions() const
     return p;
 }
 
+QVector<AbstractFileInfo::MenuAction> TrashFileInfo::menuActionList(AbstractFileInfo::MenuType type) const
+{
+    QVector<MenuAction> actionKeys;
+
+    if(type == SpaceArea) {
+        actionKeys.reserve(7);
+
+        actionKeys << MenuAction::OpenInNewWindow
+                   << MenuAction::Separator
+                   << MenuAction::Paste
+                   << MenuAction::SelectAll
+                   << MenuAction::ClearTrash
+                   << MenuAction::Separator
+                   << MenuAction::Property;
+    } else {
+        actionKeys.reserve(12);
+
+        actionKeys << MenuAction::Open << (isDir() ? OpenInNewWindow : OpenWith)
+                   << MenuAction::Separator
+                   << MenuAction::Compress << MenuAction::Separator
+                   << MenuAction::Copy << MenuAction::Cut << MenuAction::Separator
+                   << MenuAction::Restore << MenuAction::CompleteDeletion
+                   << MenuAction::Separator
+                   << MenuAction::Property;
+    }
+
+    return actionKeys;
+}
+
 void TrashFileInfo::updateInfo()
 {
     QString user = getenv("USER");

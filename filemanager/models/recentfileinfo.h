@@ -18,6 +18,8 @@ public:
 
     QIcon fileIcon() const Q_DECL_OVERRIDE;
 
+    QVector<MenuAction> menuActionList(MenuType type) const Q_DECL_OVERRIDE;
+
 private:
     QString desktopIconName;
 };
