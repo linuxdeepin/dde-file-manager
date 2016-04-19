@@ -306,8 +306,12 @@ void FileMenuManager::actionTriggered(DAction *action)
     case MenuAction::OpenFileLocation:
         fileService->openFileLocation(fileUrl);
         break;
-    case MenuAction::Compress:break;
-    case MenuAction::Decompress:break;
+    case MenuAction::Compress:
+        fileService->compressFiles(urls);
+        break;
+    case MenuAction::Decompress:
+        fileService->decompressFile(fileUrl);
+        break;
     case MenuAction::Cut:
         fileService->cutFiles(urls);
         break;
