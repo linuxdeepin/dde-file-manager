@@ -1,6 +1,7 @@
 #include "udisklistener.h"
 #include "udiskdeviceinfo.h"
 #include "../../filemanager/app/global.h"
+#include "fstab.h"
 
 UDiskListener::UDiskListener()
 {
@@ -33,6 +34,9 @@ UDiskListener::UDiskListener()
                    SLOT(interfacesRemoved(QDBusObjectPath, QStringList)));
 
     fileService->setFileUrlHandler(COMPUTER_SCHEME, "", this);
+
+    readFstab();
+    qDebug() << fstab;
 }
 
 UDiskDeviceInfo *UDiskListener::getDevice(const QDBusObjectPath &path) const
@@ -108,6 +112,14 @@ QString UDiskListener::lastPart(const QString &path)
     return path.split('/').last();
 }
 
+bool UDiskListener::isSystemDisk(const QString &path) const
+{
+    if(fstab.contains(path))
+        return true;
+    else
+        return false;
+}
+
 
 void UDiskListener::interfacesAdded(const QDBusObjectPath &path, const QMap<QString, QVariant> &interfaces)
 {
@@ -149,6 +161,45 @@ void UDiskListener::interfacesChanged()
     emit childrenUpdated(DUrl::fromComputerFile(device->mountPath()));
 }
 
+void UDiskListener::mount(const QString &path)
+{
+    for (int i = 0; i < m_list.size(); i++)
+    {
+        UDiskDeviceInfo * info = m_list.at(i);
+        if(!info->fileSystem().isEmpty() && path == info->uDiskPath())
+        {
+            info->mount();
+            break;
+        }
+    }
+}
+
+void UDiskListener::unmount(const QString &path)
+{
+    for (int i = 0; i < m_list.size(); i++)
+    {
+        UDiskDeviceInfo * info = m_list.at(i);
+        if(!info->fileSystem().isEmpty() && path == info->uDiskPath())
+        {
+            info->unmount();
+            break;
+        }
+    }
+}
+
+void UDiskListener::readFstab()
+{
+    setfsent();
+    struct fstab * fs = getfsent();
+    while(fs != NULL)
+    {
+        fstab.append(fs->fs_file);
+        fs = getfsent();
+    }
+    qDebug() << "read fstab";
+    endfsent();
+}
+
 const QList<AbstractFileInfo *> UDiskListener::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
 {
     Q_UNUSED(filter)
@@ -185,10 +236,11 @@ AbstractFileInfo *UDiskListener::createFileInfo(const DUrl &fileUrl, bool &accep
 {
     accepted = true;
     qDebug() << fileUrl;
-    QString path = fileUrl.toLocalFile();
+    QString path = fileUrl.path();
     for (int i = 0; i < m_list.size(); i++)
     {
         UDiskDeviceInfo * info = m_list.at(i);
+        qDebug() << info->mountPath() << path;
         if(!info->fileSystem().isEmpty() && info->mountPath() == path)
         {
             AbstractFileInfo *fileInfo = new UDiskDeviceInfo(info);

@@ -1,14 +1,16 @@
 #include "udiskdeviceinfo.h"
+#include "../filemanager/app/global.h"
 #include <QIcon>
 
 UDiskDeviceInfo::UDiskDeviceInfo(UDiskDeviceInfo *info)
     : AbstractFileInfo(DUrl::fromComputerFile("/"))
 {
     data->url.setFragment(info->mountPath());
-
+    data->url.setQuery(info->uDiskPath());
     m_size = info->size();
     m_type = info->type();
     m_isMounted = info->isMounted();
+    m_mountPath = info->mountPath();
 }
 
 UDiskDeviceInfo::UDiskDeviceInfo(const DUrl &url)
@@ -93,6 +95,7 @@ bool UDiskDeviceInfo::update()
     res = setIconName(findIconName()) || res;
 
     QStringList mounts = mountPoints();
+    qDebug() << mounts;
     res = setIsMounted(mounts.count() != 0) || res;
 
     res = setIsEjectable(m_driveIface->property("Ejectable").toBool()) || res;
@@ -144,7 +147,7 @@ QString UDiskDeviceInfo::fileSystem()
     return m_fileSystem;
 }
 
-QString UDiskDeviceInfo::mountPath()
+QString UDiskDeviceInfo::mountPath() const
 {
     return m_mountPath;
 }
@@ -243,6 +246,29 @@ void UDiskDeviceInfo::propertiesChanged(const QString &interface, const QVariant
 {
     update();
     emit changed();
+}
+
+QVector<AbstractFileInfo::MenuAction> UDiskDeviceInfo::menuActionList(AbstractFileInfo::MenuType type) const
+{
+    QVector<MenuAction> actionKeys;
+    if(deviceListener->isSystemDisk(mountPath()))
+    {
+        actionKeys.reserve(6);
+        actionKeys << MenuAction::Open << MenuAction::OpenInNewWindow
+                   << MenuAction::Separator
+                   << MenuAction::Property;
+    }
+    else
+    {
+        actionKeys.reserve(6);
+        actionKeys << MenuAction::Open << MenuAction::OpenInNewWindow
+                   << MenuAction::Separator
+                   << MenuAction::Mount << MenuAction::Unmount
+                   << MenuAction::Separator
+                   << MenuAction::Property;
+    }
+
+    return actionKeys;
 }
 
 QString UDiskDeviceInfo::formatSize( qint64 num ) const
