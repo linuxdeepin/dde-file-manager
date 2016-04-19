@@ -112,12 +112,12 @@ void DialogManager::handleConflictRepsonseConfirmed(const QMap<QString, QString>
         //0 = coexist, 1 = replace, 2 = skip
         switch(code)
         {
-        case 0:job->setStatus(FileJob::Started);break;
+        case 0:job->started();break;
         case 1:
-            job->setStatus(FileJob::Started);
+            job->started();
             job->setReplace(true);
             break;
-        case 2:job->setStatus(FileJob::Cancelled);break;
+        case 2:job->cancelled();break;
         default:
             qDebug() << "unknown code"<<code;
         }

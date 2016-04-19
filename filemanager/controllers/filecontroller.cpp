@@ -187,12 +187,12 @@ bool FileController::pasteFile(PasteType type, const DUrlList &urlList,
         return false;
 
     if(type == CutType) {
-        for(const DUrl &fileUrl : urlList) {
-            QFileInfo fileInfo(fileUrl.toLocalFile());
+        FileJob job("move");
 
-            QFile::rename(fileInfo.absoluteFilePath(),
-                          dir.absolutePath() + QDir::separator() + fileInfo.fileName());
-        }
+        dialogManager->addJob(&job);
+
+        job.doMove(DUrl::toQUrlList(urlList), event.fileUrl().toString());
+        dialogManager->removeJob(job.getJobId());
     } else {
 
         FileJob job("copy");
