@@ -361,16 +361,20 @@ void FileMenuManager::actionTriggered(DAction *action)
         fileSignalManager->requestViewSelectAll(menu->getWindowId());
         break;
     case MenuAction::ClearRecent:break;
-    case MenuAction::ClearTrash:break;
+    case MenuAction::ClearTrash:
+        fileService->deleteFiles(DUrlList() << TRASHURL);
+        break;
     case MenuAction::DisplayAs:break;
     case MenuAction::SortBy:break;
     case MenuAction::NewDocument:break;
-    case MenuAction::Restore:break;
     case MenuAction::Mount:
         deviceListener->mount(fileUrl.query());
         break;
     case MenuAction::Unmount:
         deviceListener->unmount(fileUrl.query());
+        break;
+    case MenuAction::Restore:
+        fileSignalManager->requestRestoreTrashFile(fileUrl);
         break;
     case MenuAction::Name:
         emit fileSignalManager->requestViewSort(menu->getWindowId(), Global::FileDisplayNameRole);

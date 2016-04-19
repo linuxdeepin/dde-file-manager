@@ -2,12 +2,22 @@
 #include "trashfileinfo.h"
 #include "fileservices.h"
 
+#include "../app/global.h"
+#include "../app/filesignalmanager.h"
+
 #include "../../filemonitor/filemonitor.h"
+
+TrashManager *firstMe = Q_NULLPTR;
 
 TrashManager::TrashManager(QObject *parent)
     : AbstractFileController(parent)
 {
+    if(!firstMe) {
+        firstMe = this;
 
+        connect(fileSignalManager, &FileSignalManager::requestRestoreTrashFile,
+                this, &TrashManager::restoreTrashFile);
+    }
 }
 
 AbstractFileInfo *TrashManager::createFileInfo(const DUrl &fileUrl, bool &accepted) const
@@ -23,21 +33,16 @@ const QList<AbstractFileInfo *> TrashManager::getChildren(const DUrl &fileUrl, Q
 
     accepted = true;
 
-    QString user = getenv("USER");
-    QString trashPath = "/home/" + user + "/.local/share/Trash/files" + fileUrl.path();
-    QDir dir(trashPath);
+    const QString &path = fileUrl.path();
+
+    QDir dir(path == "/" ? TRASHURL.toLocalFile() + "/files" : path);
     QList<AbstractFileInfo*> infoList;
 
     if(dir.exists()) {
         QFileInfoList fileInfoList = dir.entryInfoList(filter | QDir::NoDotAndDotDot);
 
-        QString path = fileUrl.path();
-
-        if(path != "/")
-            path.append('/');
-
         for(const QFileInfo fileInfo : fileInfoList) {
-            infoList.append(new TrashFileInfo(DUrl::fromTrashFile(path + fileInfo.fileName())));
+            infoList.append(new TrashFileInfo(DUrl::fromTrashFile(fileInfo.absoluteFilePath())));
         }
     }
 
@@ -53,6 +58,8 @@ bool TrashManager::openFile(const DUrl &fileUrl, bool &accepted) const
 
 bool TrashManager::addUrlMonitor(const DUrl &fileUrl, bool &accepted) const
 {
+    Q_UNUSED(fileUrl)
+
     accepted = true;
 
     if(!fileMonitor) {
@@ -64,37 +71,40 @@ bool TrashManager::addUrlMonitor(const DUrl &fileUrl, bool &accepted) const
                 this, &TrashManager::onFileRemove);
     }
 
-    QString user = getenv("USER");
-    QString trashPath = "/home/" + user + "/.local/share/Trash/files";
-
-    fileMonitor->addMonitorPath(trashPath + fileUrl.path());
+    fileMonitor->addMonitorPath(TRASHURL.toLocalFile() + "/files");
 
     return true;
 }
 
 bool TrashManager::removeUrlMonitor(const DUrl &fileUrl, bool &accepted) const
 {
+    Q_UNUSED(fileUrl)
+
     accepted = true;
 
     if(!fileMonitor)
         return true;
 
-    QString user = getenv("USER");
-    QString trashPath = "/home/" + user + "/.local/share/Trash/files";
-
-    fileMonitor->removeMonitorPath(trashPath + fileUrl.path());
+    fileMonitor->removeMonitorPath(TRASHURL.toLocalFile() + "/files");
     fileMonitor->deleteLater();
     fileMonitor = Q_NULLPTR;
 
     return true;
 }
 
-void TrashManager::onFileCreated(const QString &filePath)
+bool TrashManager::restoreTrashFile(const DUrl &fileUrl) const
+{
+    TrashFileInfo info(fileUrl);
+
+    return info.restore();
+}
+
+void TrashManager::onFileCreated(const QString &filePath) const
 {
     emit childrenAdded(DUrl::fromTrashFile(filePath));
 }
 
-void TrashManager::onFileRemove(const QString &filePath)
+void TrashManager::onFileRemove(const QString &filePath) const
 {
     emit childrenRemoved(DUrl::fromTrashFile(filePath));
 }

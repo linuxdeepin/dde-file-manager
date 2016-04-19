@@ -24,10 +24,11 @@ public:
     bool openFile(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
     bool addUrlMonitor(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
     bool removeUrlMonitor(const DUrl &url, bool &accepted) const Q_DECL_OVERRIDE;
+    bool restoreTrashFile(const DUrl &fileUrl) const;
 
 private slots:
-    void onFileCreated(const QString &filePath);
-    void onFileRemove(const QString &filePath);
+    void onFileCreated(const QString &filePath) const;
+    void onFileRemove(const QString &filePath) const;
 
 private:
     mutable FileMonitor *fileMonitor = Q_NULLPTR;

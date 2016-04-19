@@ -100,6 +100,9 @@ signals:
 
     /* request select file view item*/
     void requestSelectFile(const FMEvent &event);
+
+    /* request restore trash file*/
+    void requestRestoreTrashFile(const DUrl &url);
 };
 
 #endif // FILESIGNALMANAGER_H
