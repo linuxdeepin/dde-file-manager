@@ -153,6 +153,13 @@ MimesAppsManager::~MimesAppsManager()
 
 }
 
+QMimeType MimesAppsManager::getMimeType(const QString &fileName)
+{
+    QMimeDatabase db;
+    QMimeType mimeType = db.mimeTypeForFile(fileName);
+    return mimeType;
+}
+
 QString MimesAppsManager::getMimeTypeByFileName(const QString &fileName)
 {
     QMimeDatabase db;
