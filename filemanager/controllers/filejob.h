@@ -5,6 +5,7 @@
 #include <QMap>
 #include <QElapsedTimer>
 #include <QUrl>
+#include <QStorageInfo>
 
 #define TRANSFER_RATE 5
 #define MSEC_FOR_DISPLAY 1000
@@ -40,7 +41,7 @@ public slots:
     void doCopy(const QList<QUrl> &files, const QString &destination);
     void doDelete(const QList<QUrl> &files);
     void doMoveToTrash(const QList<QUrl> &files);
-    void doCut(const QList<QUrl> &files, const QString &destination);
+    void doMove(const QList<QUrl> &files, const QString &destination);
     void paused();
     void started();
     void cancelled();
@@ -74,6 +75,8 @@ private:
 
     bool copyFile(const QString &srcFile, const QString &tarDir);
     bool copyDir(const QString &srcPath, const QString &tarPath);
+    bool moveFile(const QString &srcFile, const QString &tarDir);
+    bool moveDir(const QString &srcFile, const QString &tarDir);
     bool deleteFile(const QString &file);
     bool deleteDir(const QString &dir);
     bool moveDirToTrash(const QString &dir);

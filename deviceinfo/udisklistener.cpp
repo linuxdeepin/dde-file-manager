@@ -151,8 +151,20 @@ void UDiskListener::interfacesChanged()
 
 const QList<AbstractFileInfo *> UDiskListener::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
 {
-    Q_UNUSED(fileUrl)
     Q_UNUSED(filter)
+
+    accepted = true;
+
+    const QString &frav = fileUrl.fragment();
+
+    if(!frav.isEmpty())
+    {
+        DUrl localUrl = DUrl::fromLocalFile(frav);
+
+        QList<AbstractFileInfo*> list = fileService->getChildren(localUrl, filter);
+
+        return list;
+    }
 
     QList<AbstractFileInfo*> infolist;
 
@@ -165,7 +177,7 @@ const QList<AbstractFileInfo *> UDiskListener::getChildren(const DUrl &fileUrl, 
             infolist.append(fileInfo);
         }
     }
-    accepted = true;
+
     return infolist;
 }
 

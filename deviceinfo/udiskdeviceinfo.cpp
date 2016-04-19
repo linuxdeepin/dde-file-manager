@@ -2,8 +2,10 @@
 #include <QIcon>
 
 UDiskDeviceInfo::UDiskDeviceInfo(UDiskDeviceInfo *info)
-    : AbstractFileInfo(info->mountPath())
+    : AbstractFileInfo(DUrl::fromComputerFile("/"))
 {
+    data->url.setFragment(info->mountPath());
+
     m_size = info->size();
     m_type = info->type();
     m_isMounted = info->isMounted();
