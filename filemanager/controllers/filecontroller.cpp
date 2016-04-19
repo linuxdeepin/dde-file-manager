@@ -81,6 +81,29 @@ bool FileController::openFile(const DUrl &fileUrl, bool &accepted) const
     return QDesktopServices::openUrl(fileUrl);
 }
 
+bool FileController::compressFiles(const DUrlList &urlList, bool &accepted) const
+{
+    accepted = true;
+    QStringList args;
+    args << "-d";
+    foreach (DUrl url, urlList) {
+        args << url.toLocalFile();
+    }
+    qDebug() << args;
+    QProcess::startDetached("file-roller", args);
+    return accepted;
+}
+
+bool FileController::decompressFile(const DUrl &fileUrl, bool &accepted) const
+{
+    accepted = true;
+    QStringList args;
+    args << "-h" << fileUrl.toLocalFile();
+    qDebug() << args;
+    QProcess::startDetached("file-roller", args);
+    return accepted;
+}
+
 bool FileController::copyFiles(const DUrlList &urlList, bool &accepted) const
 {
     accepted = true;

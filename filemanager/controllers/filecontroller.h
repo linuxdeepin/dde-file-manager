@@ -20,6 +20,8 @@ public:
     const QList<AbstractFileInfo*> getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const Q_DECL_OVERRIDE;
 
     bool openFile(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
+    bool compressFiles(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;
+    bool decompressFile(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
     bool copyFiles(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;
     bool renameFile(const DUrl &oldUrl, const DUrl &newUrl, bool &accepted) const Q_DECL_OVERRIDE;
     bool deleteFiles(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;

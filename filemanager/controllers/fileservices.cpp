@@ -14,6 +14,7 @@
 #define TRAVERSE(url, Code) \
     QList<AbstractFileController*> &&list = getHandlerTypeByUrl(url);\
     bool accepted = false;\
+    qDebug() << url;\
     for(AbstractFileController *controller : list) {\
         Code\
     }\
@@ -97,6 +98,34 @@ bool FileServices::openFile(const DUrl &fileUrl) const
                  if(accepted) {
                      emit fileOpened(fileUrl);
 
+                     return ok;
+                 }
+             })
+
+            return false;
+}
+
+bool FileServices::compressFiles(const DUrlList &urlList) const
+{
+    if (urlList.isEmpty())
+        return false;
+    TRAVERSE(urlList.first(), {
+                 bool ok = controller->compressFiles(urlList, accepted);
+
+                 if(accepted) {
+                     return ok;
+                 }
+             })
+
+            return false;
+}
+
+bool FileServices::decompressFile(const DUrl &fileUrl) const
+{
+    TRAVERSE(fileUrl, {
+                 bool ok = controller->decompressFile(fileUrl, accepted);
+
+                 if(accepted) {
                      return ok;
                  }
              })
@@ -354,7 +383,7 @@ QList<AbstractFileController*> FileServices::getHandlerTypeByUrl(const DUrl &fil
                                                                  bool ignoreHost, bool ignoreScheme)
 {
     HandlerType handlerType(ignoreScheme ? "" : fileUrl.scheme(), ignoreHost ? "" : fileUrl.path());
-
+    qDebug() << handlerType;
     if(m_controllerCreatorHash.contains(handlerType)) {
         QList<AbstractFileController*> list = m_controllerHash.values(handlerType);
 

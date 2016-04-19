@@ -208,7 +208,8 @@ QVector<AbstractFileInfo::MenuAction> AbstractFileInfo::menuActionList(AbstractF
 
         actionKeys << Open << (isDir() ? OpenInNewWindow : OpenWith)
                    << Separator
-                   << Compress << Separator
+                   << Compress << Decompress
+                   << Separator
                    << Copy << Cut
                    << Rename << Delete
                    << Separator
