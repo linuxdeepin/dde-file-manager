@@ -70,12 +70,24 @@ void OpenWithDialog::addItems()
     m_listWidget->addItem(recommendItem);
 
 
-    QStringList recommendApps = mimeAppsManager->MimeApps.value(MimesAppsManager::getMimeTypeByFileName(m_url.toLocalFile()));
+    QMimeType mimeType = mimeAppsManager->getMimeType(m_url.toLocalFile());
+
+    QStringList recommendApps = mimeAppsManager->MimeApps.value(MimesAppsManager::getMimeTypeByFileName(m_url.toLocalFile()));;
+    foreach (QString name, mimeType.aliases()) {
+        QStringList apps = mimeAppsManager->MimeApps.value(name);
+        foreach (QString app, apps) {
+            if (!recommendApps.contains(app)){
+                recommendApps.append(app);
+            }
+        }
+    }
+    qDebug() << m_url.toLocalFile() << mimeType.aliases() << recommendApps;
 
     foreach (QString f, recommendApps){
         QString iconName = mimeAppsManager->DesktopObjs.value(f).getIcon();
         QIcon icon(iconProvider->getDesktopIcon(iconName, 48));
         QListWidgetItem* item = new QListWidgetItem(icon, mimeAppsManager->DesktopObjs.value(f).getName());
+        item->setData(Qt::UserRole, f);
         m_listWidget->addItem(item);
     }
 
@@ -93,12 +105,33 @@ void OpenWithDialog::addItems()
         QString iconName = mimeAppsManager->DesktopObjs.value(f).getIcon();
         QIcon icon(iconProvider->getDesktopIcon(iconName, 48));
         QListWidgetItem* item = new QListWidgetItem(icon, mimeAppsManager->DesktopObjs.value(f).getName());
+        item->setData(Qt::UserRole, f);
         m_listWidget->addItem(item);
     }
 }
 
 void OpenWithDialog::openFileByApp()
 {
+    QString app = m_listWidget->currentItem()->data(Qt::UserRole).toString();
+    QString exe = mimeAppsManager->DesktopObjs.value(app).getExec();
 
+    QStringList split = exe.split(" ");
+    QString name = split.takeAt(0);
+    QString args = split.join(" ");
+
+    QString file = m_url.toString();
+
+    if (args.toLower().contains("%f")) {
+      args.replace("%f", file, Qt::CaseInsensitive);
+    } else if (args.toLower().contains("%u")) {
+      args.replace("%u", file, Qt::CaseInsensitive);
+    } else {
+      args.append(args.isEmpty() ? "" : " ");
+      args.append(/*"\"" + */file/* + "\""*/);
+    }
+
+    qDebug() << name << args;
+    QProcess::startDetached(name, QStringList() << args);
+    close();
 }
 

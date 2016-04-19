@@ -47,6 +47,7 @@ public:
     static QMap<QString, QStringList> MimeApps;
     static QMap<QString, DesktopFile> DesktopObjs;
 
+    static QMimeType getMimeType(const QString& fileName);
     static QString getMimeTypeByFileName(const QString& fileName);
     static QString getDefaultAppByFileName(const QString& fileName);
     static QString getDefaultAppByMimeType(const QMimeType& mimeType);
