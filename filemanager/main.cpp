@@ -16,6 +16,7 @@
 
 #include <QApplication>
 #include <QDebug>
+#include <QThreadPool>
 
 DWIDGET_USE_NAMESPACE
 
@@ -41,6 +42,8 @@ int main(int argc, char *argv[])
         commandlineUrl = DUrl::fromLocalFile(QDir::homePath());
         qDebug() << commandlineUrl;
     }
+
+    QThreadPool::globalInstance()->setMaxThreadCount(100);
 
     QString uniqueKey = "dde-file-manager";
 
