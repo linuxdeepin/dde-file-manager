@@ -25,6 +25,7 @@ signals:
 public slots:
     void showNewWindow(const DUrl &url);
     static int getWindowId(const QWidget *window);
+    static QWidget* getWindowById(int winId);
 
 private slots:
     void onWindowClosed();
