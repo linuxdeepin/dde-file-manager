@@ -14,7 +14,6 @@
 #define TRAVERSE(url, Code) \
     QList<AbstractFileController*> &&list = getHandlerTypeByUrl(url);\
     bool accepted = false;\
-    qDebug() << url;\
     for(AbstractFileController *controller : list) {\
         Code\
     }\
@@ -383,7 +382,7 @@ QList<AbstractFileController*> FileServices::getHandlerTypeByUrl(const DUrl &fil
                                                                  bool ignoreHost, bool ignoreScheme)
 {
     HandlerType handlerType(ignoreScheme ? "" : fileUrl.scheme(), ignoreHost ? "" : fileUrl.path());
-    qDebug() << handlerType;
+
     if(m_controllerCreatorHash.contains(handlerType)) {
         QList<AbstractFileController*> list = m_controllerHash.values(handlerType);
 

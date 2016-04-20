@@ -235,17 +235,23 @@ const QList<AbstractFileInfo *> UDiskListener::getChildren(const DUrl &fileUrl, 
 AbstractFileInfo *UDiskListener::createFileInfo(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
-    qDebug() << fileUrl;
-    QString path = fileUrl.path();
+
+    QString path = fileUrl.fragment();
+
+    if(path.isEmpty())
+        return new UDiskDeviceInfo(fileUrl);
+
+
     for (int i = 0; i < m_list.size(); i++)
     {
         UDiskDeviceInfo * info = m_list.at(i);
-        qDebug() << info->mountPath() << path;
+
         if(!info->fileSystem().isEmpty() && info->mountPath() == path)
         {
             AbstractFileInfo *fileInfo = new UDiskDeviceInfo(info);
             return fileInfo;
         }
     }
-    return new UDiskDeviceInfo(fileUrl);
+
+    return Q_NULLPTR;
 }
