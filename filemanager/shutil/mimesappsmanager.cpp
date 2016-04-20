@@ -233,7 +233,9 @@ QString MimesAppsManager::getDefaultAppByMimeType(const QString &mimeType)
 QStringList MimesAppsManager::getApplicationsFolders()
 {
     QStringList desktopFolders;
-    desktopFolders << QString("/usr/share/applications")
+    desktopFolders << QString("/usr/share/applications/")
+                   << QString("/usr/local/share/applications/)")
+                   << QString("/usr/share/gnome/applications/")
                    << QDir::homePath() + QString( "/.local/share/applications" );
     return desktopFolders;
 }

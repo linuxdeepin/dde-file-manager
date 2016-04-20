@@ -2,6 +2,7 @@
 
 #include <QDateTime>
 #include <QDebug>
+#include "../shutil/fileutils.h"
 
 AbstractFileInfo::AbstractFileInfo()
     : data(new FileInfoData)
@@ -207,9 +208,17 @@ QVector<AbstractFileInfo::MenuAction> AbstractFileInfo::menuActionList(AbstractF
         actionKeys.reserve(11);
 
         actionKeys << Open << (isDir() ? OpenInNewWindow : OpenWith)
-                   << Separator
-                   << Compress << Decompress
-                   << Separator
+                   << Separator;
+        if (isDir()){
+            actionKeys << Compress;
+        }else if(isFile()){
+            if (FileUtils::isArchive(absoluteFilePath())){
+                actionKeys << Decompress << DecompressHere;
+            }else{
+                actionKeys << Compress;
+            }
+        }
+        actionKeys << Separator
                    << Copy << Cut
                    << Rename << Delete
                    << Separator

@@ -21,6 +21,7 @@ public:
   static void recurseFolder(const QString &path, const QString &parent,
                             QStringList *list);
   static qint64 totalSize(const QList<QUrl> &files);
+  static bool isArchive(const QString& path);
   static QStringList getApplicationNames();
   static QList<DesktopFile> getApplications();
   static QString getRealSuffix(const QString &name);
