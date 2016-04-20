@@ -92,11 +92,18 @@ bool TrashManager::removeUrlMonitor(const DUrl &fileUrl, bool &accepted) const
     return true;
 }
 
-bool TrashManager::restoreTrashFile(const DUrl &fileUrl) const
+bool TrashManager::restoreTrashFile(const DUrlList &fileUrl) const
 {
-    TrashFileInfo info(fileUrl);
+    bool ok = true;
 
-    return info.restore();
+    TrashFileInfo info;
+
+    for(const DUrl &url : fileUrl) {
+        info.setUrl(url);
+        ok = ok && info.restore();
+    }
+
+    return ok;
 }
 
 void TrashManager::onFileCreated(const QString &filePath) const
