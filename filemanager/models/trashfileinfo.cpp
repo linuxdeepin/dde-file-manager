@@ -106,6 +106,12 @@ QVector<AbstractFileInfo::MenuAction> TrashFileInfo::menuActionList(AbstractFile
 
 bool TrashFileInfo::restore() const
 {
+    if(originalFilePath.isEmpty()) {
+        qDebug() << "OriginalFile path ie empty.";
+
+        return false;
+    }
+
     QDir dir(originalFilePath.left(originalFilePath.lastIndexOf('/')));
 
     if(dir.isAbsolute() && !dir.mkpath(dir.absolutePath())) {
@@ -123,13 +129,17 @@ void TrashFileInfo::updateInfo()
     const QString &basePath = TRASHFILEPATH;
     const QString &fileBaseName = filePath.mid(basePath.size(), filePath.indexOf('/', basePath.size() + 1) - basePath.size());
 
-    QSettings setting(TRASHINFOPATH + fileBaseName + ".trashinfo", QSettings::NativeFormat);
+    if(QFile::exists(TRASHINFOPATH + fileBaseName + ".trashinfo")) {
+        QSettings setting(TRASHINFOPATH + fileBaseName + ".trashinfo", QSettings::NativeFormat);
 
-    setting.beginGroup("Trash Info");
-    setting.setIniCodec("utf-8");
+        setting.beginGroup("Trash Info");
+        setting.setIniCodec("utf-8");
 
-    originalFilePath = QByteArray::fromPercentEncoding(setting.value("Path").toByteArray()) + filePath.mid(basePath.size() + fileBaseName.size());
-    m_displayName = originalFilePath.mid(originalFilePath.lastIndexOf('/') + 1);
+        originalFilePath = QByteArray::fromPercentEncoding(setting.value("Path").toByteArray()) + filePath.mid(basePath.size() + fileBaseName.size());
+        m_displayName = originalFilePath.mid(originalFilePath.lastIndexOf('/') + 1);
 
-    deletionDate = setting.value("DeletionDate").toString();
+        deletionDate = setting.value("DeletionDate").toString();
+    } else {
+        m_displayName = fileName();
+    }
 }
