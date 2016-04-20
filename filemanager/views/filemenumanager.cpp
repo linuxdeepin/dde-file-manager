@@ -190,6 +190,7 @@ void FileMenuManager::initData()
     m_actionKeys[MenuAction::OpenFileLocation] = QObject::tr("Open file loaction");
     m_actionKeys[MenuAction::Compress] = QObject::tr("Compress");
     m_actionKeys[MenuAction::Decompress] = QObject::tr("Decompress");
+    m_actionKeys[MenuAction::DecompressHere] = QObject::tr("Decompress to here");
     m_actionKeys[MenuAction::Cut] = QObject::tr("Cut");
     m_actionKeys[MenuAction::Copy] = QObject::tr("Copy");
     m_actionKeys[MenuAction::Paste] = QObject::tr("Paste");
@@ -311,6 +312,9 @@ void FileMenuManager::actionTriggered(DAction *action)
         break;
     case MenuAction::Decompress:
         fileService->decompressFile(fileUrl);
+        break;
+    case MenuAction::DecompressHere:
+        fileService->decompressFileHere(fileUrl);
         break;
     case MenuAction::Cut:
         fileService->cutFiles(urls);

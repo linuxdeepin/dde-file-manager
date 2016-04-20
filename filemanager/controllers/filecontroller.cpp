@@ -26,6 +26,11 @@ FileController::FileController(QObject *parent)
             this, &FileController::onFileRemove);
 }
 
+bool FileController::findExecutable(const QString &executableName, const QStringList &paths)
+{
+    return !QStandardPaths::findExecutable(executableName, paths).isEmpty();
+}
+
 AbstractFileInfo *FileController::createFileInfo(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
@@ -83,24 +88,51 @@ bool FileController::openFile(const DUrl &fileUrl, bool &accepted) const
 
 bool FileController::compressFiles(const DUrlList &urlList, bool &accepted) const
 {
-    accepted = true;
-    QStringList args;
-    args << "-d";
-    foreach (DUrl url, urlList) {
-        args << url.toLocalFile();
+    accepted = false;
+
+    if (findExecutable("file-roller")){
+        QStringList args;
+        args << "-d";
+        foreach (DUrl url, urlList) {
+            args << url.toLocalFile();
+        }
+        qDebug() << args;
+        bool result = QProcess::startDetached("file-roller", args);
+        return result;
+    }else{
+        qDebug() << "file-roller is not installed";
     }
-    qDebug() << args;
-    QProcess::startDetached("file-roller", args);
+
     return accepted;
 }
 
 bool FileController::decompressFile(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
-    QStringList args;
-    args << "-h" << fileUrl.toLocalFile();
-    qDebug() << args;
-    QProcess::startDetached("file-roller", args);
+    if (findExecutable("file-roller")){
+        QStringList args;
+        args << "-f" << fileUrl.toLocalFile();
+        qDebug() << args;
+        bool result = QProcess::startDetached("file-roller", args);
+        return result;
+    }else{
+        qDebug() << "file-roller is not installed";
+    }
+    return accepted;
+}
+
+bool FileController::decompressFileHere(const DUrl &fileUrl, bool &accepted) const
+{
+    accepted = true;
+    if (findExecutable("file-roller")){
+        QStringList args;
+        args << "-h" << fileUrl.toLocalFile();
+        qDebug() << args;
+        bool result = QProcess::startDetached("file-roller", args);
+        return result;
+    }else{
+        qDebug() << "file-roller is not installed";
+    }
     return accepted;
 }
 

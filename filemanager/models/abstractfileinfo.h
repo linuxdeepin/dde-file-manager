@@ -28,6 +28,7 @@ public:
         OpenFileLocation,
         Compress,
         Decompress,
+        DecompressHere,
         Cut,
         Copy,
         Paste,

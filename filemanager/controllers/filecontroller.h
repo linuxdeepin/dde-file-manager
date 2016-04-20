@@ -16,12 +16,15 @@ class FileController : public AbstractFileController
 public:
     explicit FileController(QObject *parent = 0);
 
+    static bool findExecutable(const QString & executableName, const QStringList & paths = QStringList());
+
     AbstractFileInfo *createFileInfo(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
     const QList<AbstractFileInfo*> getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const Q_DECL_OVERRIDE;
 
     bool openFile(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
     bool compressFiles(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;
     bool decompressFile(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
+    bool decompressFileHere(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
     bool copyFiles(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;
     bool renameFile(const DUrl &oldUrl, const DUrl &newUrl, bool &accepted) const Q_DECL_OVERRIDE;
     bool deleteFiles(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;

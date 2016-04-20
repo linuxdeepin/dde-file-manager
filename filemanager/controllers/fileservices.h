@@ -41,6 +41,7 @@ public:
     bool openFile(const DUrl &fileUrl) const;
     bool compressFiles(const DUrlList &urlList) const ;
     bool decompressFile(const DUrl &fileUrl) const;
+    bool decompressFileHere(const DUrl &fileUrl) const;
     bool copyFiles(const DUrlList &urlList) const;
     bool renameFile(const DUrl &oldUrl, const DUrl &newUrl) const;
     void deleteFiles(const DUrlList &urlList) const;

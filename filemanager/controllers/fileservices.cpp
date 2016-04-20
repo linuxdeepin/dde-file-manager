@@ -116,7 +116,7 @@ bool FileServices::compressFiles(const DUrlList &urlList) const
                  }
              })
 
-            return false;
+    return false;
 }
 
 bool FileServices::decompressFile(const DUrl &fileUrl) const
@@ -129,7 +129,20 @@ bool FileServices::decompressFile(const DUrl &fileUrl) const
                  }
              })
 
-            return false;
+    return false;
+}
+
+bool FileServices::decompressFileHere(const DUrl &fileUrl) const
+{
+    TRAVERSE(fileUrl, {
+                 bool ok = controller->decompressFileHere(fileUrl, accepted);
+
+                 if(accepted) {
+                     return ok;
+                 }
+             })
+
+    return false;
 }
 
 bool FileServices::copyFiles(const DUrlList &urlList) const
@@ -382,7 +395,6 @@ QList<AbstractFileController*> FileServices::getHandlerTypeByUrl(const DUrl &fil
                                                                  bool ignoreHost, bool ignoreScheme)
 {
     HandlerType handlerType(ignoreScheme ? "" : fileUrl.scheme(), ignoreHost ? "" : fileUrl.path());
-
     if(m_controllerCreatorHash.contains(handlerType)) {
         QList<AbstractFileController*> list = m_controllerHash.values(handlerType);
 

@@ -2,6 +2,7 @@
 #include <QDirIterator>
 #include <sys/vfs.h>
 #include <QUrl>
+#include <QMimeDatabase>
 
 /**
  * @brief Recursive removes file or directory
@@ -90,6 +91,35 @@ qint64 FileUtils::totalSize(const QList<QUrl> &files) {
     }
   }
   return total;
+}
+
+bool FileUtils::isArchive(const QString &path)
+{
+    QFileInfo f(path);
+    if (f.exists()){
+        QStringList archiveMimes;
+        archiveMimes << "application/x-7z-compressed" << "application/x-ace" << "application/x-alz"
+                    << "application/x-ar" << "application/x-arj" << "application/x-stuffit"
+                    << "application/x-bzip" << "application/x-bzip2" << "application/vnd.ms-cab-compressed"
+                    << "application/x-cbr" << "application/x-cbz" << "application/x-cpio"
+                    << "application/x-deb" << "application/x-ear" << "application/x-ms-dos-executable"
+                    << "application/x-gzip" << "application/x-cd-image" << "application/x-java-archive"
+                    << "application/x-lha" << "application/x-lha" << "application/x-lzip"
+                    << "application/x-lzma" << "application/x-lzop" << "application/x-rar"
+                    << "application/x-rpm" << "application/x-rzip" << "application/x-stuffit"
+                    << "application/x-tar" << "application/x-bzip-compressed-tar"
+                    << "application/x-compressed-tar" << "application/x-lzip-compressed-tar"
+                    << "application/x-lzma-compressed-tar" << "application/x-lzop-compressed-tar"
+                    << "application/x-7z-compressed-tar" << "application/x-xz-compressed-tar"
+                    << "application/x-tarz" << "application/x-tarz" << "application/x-compressed-tar"
+                    << "application/x-xz-compressed-tar" << "application/x-lzip-compressed-tar"
+                    << "application/x-lzma-compressed-tar" << "application/x-lzop-compressed-tar"
+                    << "application/x-war" << "application/x-xz" << "application/x-gzip"
+                    << "application/x-compress" << "application/zip" << "application/x-zoo";
+        return archiveMimes.contains(QMimeDatabase().mimeTypeForFile(f).name());
+    }else{
+        return false;
+    }
 }
 //---------------------------------------------------------------------------
 

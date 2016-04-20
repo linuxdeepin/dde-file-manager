@@ -24,6 +24,7 @@ public:
     virtual bool openFile(const DUrl &fileUrl, bool &accepted) const;
     virtual bool compressFiles(const DUrlList &urlList, bool &accepted) const;
     virtual bool decompressFile(const DUrl &fileUrl, bool &accepted) const;
+    virtual bool decompressFileHere(const DUrl &fileUrl, bool &accepted) const;
     virtual bool copyFiles(const DUrlList &urlList, bool &accepted) const;
     virtual bool renameFile(const DUrl &oldUrl, const DUrl &newUrl, bool &accepted) const;
     virtual bool deleteFiles(const DUrlList &urlList, bool &accepted) const;
