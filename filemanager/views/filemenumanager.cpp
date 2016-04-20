@@ -376,7 +376,7 @@ void FileMenuManager::actionTriggered(DAction *action)
         break;
     case MenuAction::ClearRecent:break;
     case MenuAction::ClearTrash:
-        fileService->deleteFiles(DUrlList() << TRASHURL);
+        fileService->deleteFiles(DUrlList() << DUrl::fromLocalFile(TRASHPATH));
         break;
     case MenuAction::DisplayAs:break;
     case MenuAction::SortBy:break;

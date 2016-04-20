@@ -183,8 +183,9 @@ QDateTime AbstractFileInfo::lastRead() const
 DUrl AbstractFileInfo::parentUrl() const
 {
     DUrl url = data->url;
+    const QString &path = url.path();
 
-    url.setPath(absolutePath());
+    url.setPath(path.left(path.lastIndexOf('/') + 1));
 
     return url;
 }

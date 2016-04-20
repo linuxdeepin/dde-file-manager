@@ -44,7 +44,7 @@ void TrashFileInfo::setUrl(const DUrl &fileUrl)
 {
     AbstractFileInfo::setUrl(fileUrl);
 
-    data->fileInfo.setFile(fileUrl.path());
+    data->fileInfo.setFile(TRASHFILEPATH + fileUrl.path());
 
     updateInfo();
 }
@@ -73,14 +73,6 @@ QFileDevice::Permissions TrashFileInfo::permissions() const
     p &= ~QFileDevice::WriteOther;
 
     return p;
-}
-
-DUrl TrashFileInfo::parentUrl() const
-{
-    if(this->absolutePath() == TRASHURL.path() + "/files")
-        return DUrl::fromTrashFile("/");
-
-    return AbstractFileInfo::parentUrl();
 }
 
 QVector<AbstractFileInfo::MenuAction> TrashFileInfo::menuActionList(AbstractFileInfo::MenuType type) const
@@ -114,23 +106,30 @@ QVector<AbstractFileInfo::MenuAction> TrashFileInfo::menuActionList(AbstractFile
 
 bool TrashFileInfo::restore() const
 {
-    return fileService->renameFile(DUrl::fromLocalFile(absoluteFilePath()), DUrl::fromLocalFile(originalPath));
+    QDir dir(originalFilePath.left(originalFilePath.lastIndexOf('/')));
+
+    if(dir.isAbsolute() && !dir.mkpath(dir.absolutePath())) {
+        qDebug() << "mk" << dir.absolutePath() << "failed!";
+
+        return false;
+    }
+
+    return fileService->renameFile(DUrl::fromLocalFile(absoluteFilePath()), DUrl::fromLocalFile(originalFilePath));
 }
 
 void TrashFileInfo::updateInfo()
 {
-    QSettings setting(TRASHURL.path() + "/info/" + fileName() + ".trashinfo", QSettings::NativeFormat);
+    const QString &filePath = this->absoluteFilePath();
+    const QString &basePath = TRASHFILEPATH;
+    const QString &fileBaseName = filePath.mid(basePath.size(), filePath.indexOf('/', basePath.size() + 1) - basePath.size());
+
+    QSettings setting(TRASHINFOPATH + fileBaseName + ".trashinfo", QSettings::NativeFormat);
 
     setting.beginGroup("Trash Info");
     setting.setIniCodec("utf-8");
 
-    if(absolutePath() == TRASHURL.path() + "/files") {
-        originalPath = QByteArray::fromPercentEncoding(setting.value("Path").toByteArray());
-        m_displayName = originalPath.mid(originalPath.lastIndexOf('/') + 1);
-    } else {
-        originalPath = this->absoluteFilePath();
-        m_displayName = this->fileName();
-    }
+    originalFilePath = QByteArray::fromPercentEncoding(setting.value("Path").toByteArray()) + filePath.mid(basePath.size() + fileBaseName.size());
+    m_displayName = originalFilePath.mid(originalFilePath.lastIndexOf('/') + 1);
 
     deletionDate = setting.value("DeletionDate").toString();
 }

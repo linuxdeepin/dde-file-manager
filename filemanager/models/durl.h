@@ -3,6 +3,12 @@
 
 #include <QUrl>
 
+class DUrl;
+
+QT_BEGIN_NAMESPACE
+Q_CORE_EXPORT uint qHash(const DUrl &url, uint seed = 0) Q_DECL_NOTHROW;
+QT_END_NAMESPACE
+
 class DUrl : public QUrl
 {
     typedef QList<DUrl> DUrlList;
@@ -43,10 +49,14 @@ public:
                                     FormattingOptions options = FormattingOptions( PrettyDecoded ));
     static QList<QUrl> toQUrlList(const DUrlList &urls);
 
-    bool operator ==(const QUrl &url) const;
+    bool operator ==(const DUrl &url) const;
+    friend Q_CORE_EXPORT uint qHash(const DUrl &url, uint seed) Q_DECL_NOTHROW;
 
 private:
     void makeAbsolute();
+    void updateVirtualPath();
+
+    QString m_virtualPath;
 };
 
 typedef QList<DUrl> DUrlList;
