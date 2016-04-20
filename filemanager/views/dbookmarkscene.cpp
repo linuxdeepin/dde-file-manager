@@ -17,6 +17,7 @@
 DBookmarkScene::DBookmarkScene()
 {
     m_acceptDrop = true;
+    m_totalHeight = 0;
     m_itemGroup = new DBookmarkItemGroup;
     m_rootItem = new DBookmarkRootItem(this);
     m_itemGroup->addItem(m_rootItem);
@@ -171,6 +172,7 @@ void DBookmarkScene::remove(DBookmarkItem *item)
         m_items.at(index)->setPos(d1, d2 - dh);
     }
     m_items.removeOne(item);
+    m_customItems.removeOne(item);
     m_itemGroup->removeItem(item);
     QGraphicsScene::removeItem(item);
     item->deleteLater();

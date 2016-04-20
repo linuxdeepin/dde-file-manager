@@ -561,6 +561,7 @@ bool FileJob::moveFile(const QString &srcFile, const QString &tarDir)
 bool FileJob::moveDir(const QString &srcFile, const QString &tarDir)
 {
     QDir from(srcFile);
+    QFileInfo fromInfo(srcFile);
     QDir to(tarDir);
     m_srcFileName = from.dirName();
     m_tarFileName = to.dirName();
@@ -570,7 +571,7 @@ bool FileJob::moveDir(const QString &srcFile, const QString &tarDir)
 
     //We only check the conflict of the files when
     //they are not in the same folder
-    if(from.absolutePath() == to.path())
+    if(fromInfo.absolutePath()== to.path() && to.exists(fromInfo.fileName()))
         return false;
     else
         if(to.exists(from.dirName()) && !m_applyToAll)

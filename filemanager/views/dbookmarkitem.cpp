@@ -351,7 +351,8 @@ void DBookmarkItem::dropEvent(QGraphicsSceneDragDropEvent *event)
     emit dropped();
     if(!event->mimeData()->hasUrls())
         return;
-
+    if(!m_isDefault)
+        return;
     FMEvent e;
     e = FMEvent::LeftSideBar;
     e = m_url;
