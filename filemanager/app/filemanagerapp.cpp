@@ -22,7 +22,7 @@ FileManagerApp::FileManagerApp(QObject *parent) : QObject(parent)
     initController();
     initGtk();
     initConnect();
-    mimeAppsManager->getMimeTypeApps();
+    lazyRunCacheTask();
 }
 
 FileManagerApp::~FileManagerApp()
@@ -67,7 +67,7 @@ void FileManagerApp::initTranslation()
 
 void FileManagerApp::initConnect()
 {
-
+    connect(fileSignalManager, &FileSignalManager::requestUpdateMimeAppsCache, mimeAppsManager, &MimesAppsManager::requestUpdateCache);
 }
 
 AppController *FileManagerApp::getAppController() const
@@ -78,5 +78,15 @@ AppController *FileManagerApp::getAppController() const
 void FileManagerApp::show(const DUrl &url)
 {
     m_windowManager->showNewWindow(url);
+    m_taskTimer->start();
+}
+
+void FileManagerApp::lazyRunCacheTask()
+{
+    m_taskTimer = new QTimer;
+    m_taskTimer->setSingleShot(true);
+    m_taskTimer->setInterval(2000);
+    connect(m_taskTimer, &QTimer::timeout, fileSignalManager, &FileSignalManager::requestUpdateMimeAppsCache);
+    connect(m_taskTimer, &QTimer::timeout, m_taskTimer, &QTimer::deleteLater);
 }
 

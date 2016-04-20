@@ -96,7 +96,7 @@ bool UDiskDeviceInfo::update()
     res = setIconName(findIconName()) || res;
 
     QStringList mounts = mountPoints();
-    qDebug() << mounts;
+
     res = setIsMounted(mounts.count() != 0) || res;
 
     res = setIsEjectable(m_driveIface->property("Ejectable").toBool()) || res;
@@ -105,13 +105,14 @@ bool UDiskDeviceInfo::update()
     res = setModel(m_driveIface->property("Model").toString()) || res;
     res = setFileSystem(m_blockIface->property("IdType").toString()) || res;
 
-    qDebug() << "media" << m_driveIface->property("Media").toString();
-    qDebug() << "optical" << m_driveIface->property("Optical").toString();
-    qDebug() << "removable" << m_driveIface->property("MediaRemovable").toString();
-    qDebug() << "size" << m_size;
-    qDebug() << "model" << m_model;
-    qDebug() << "vendor" << m_vendor;
-    qDebug() << "filesystem" << m_fileSystem;
+//    qDebug() << mounts;
+//    qDebug() << "media" << m_driveIface->property("Media").toString();
+//    qDebug() << "optical" << m_driveIface->property("Optical").toString();
+//    qDebug() << "removable" << m_driveIface->property("MediaRemovable").toString();
+//    qDebug() << "size" << m_size;
+//    qDebug() << "model" << m_model;
+//    qDebug() << "vendor" << m_vendor;
+//    qDebug() << "filesystem" << m_fileSystem;
 
     if (!mounts.empty())
         res = setMountPath(mounts.first()) || res;
