@@ -9,6 +9,7 @@ class DFileManagerWindow;
 class AppController;
 class DialogManager;
 class DUrl;
+class QTimer;
 
 QT_BEGIN_NAMESPACE
 class QLocalServer;
@@ -33,6 +34,7 @@ public:
 
 public slots:
     void show(const DUrl& url);
+    void lazyRunCacheTask();
 
 private:
     WindowManager* m_windowManager = NULL;
@@ -40,6 +42,7 @@ private:
     DFileManagerWindow * m_dFileMangerWindow = NULL;
     AppController* m_appController = NULL;
     DialogManager* m_dialogManager = NULL;
+    QTimer* m_taskTimer = NULL;
 };
 
 #endif // FILEMANAGERAPP_H

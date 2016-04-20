@@ -13,6 +13,9 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QApplication>
+#include "../app/global.h"
+#include "iconprovider.h"
 
 
 QStringList MimesAppsManager::DesktopFiles = {};
@@ -55,10 +58,9 @@ void MimeAppsWorker::handleFileChanged()
 void MimeAppsWorker::updateCache()
 {
     if (QFile(MimesAppsManager::getMimeAppsCacheFile()).exists() &&
-            QFile(MimesAppsManager::getDesktopFilesCacheFile()).exists()){
+            QFile(MimesAppsManager::getDesktopFilesCacheFile()).exists() &&
+            QFile(MimesAppsManager::getDesktopIconsCacheFile()).exists()){
         loadCache();
-        qDebug() << "load mime apps cache from:" << MimesAppsManager::getMimeAppsCacheFile();
-        qDebug() << "load desktop files cache from:" << MimesAppsManager::getDesktopFilesCacheFile();
     }else{
         MimesAppsManager::getMimeTypeApps();
         saveCache();
@@ -77,11 +79,20 @@ void MimeAppsWorker::saveCache()
     QJsonDocument desktopFileDoc(QJsonArray::fromStringList(MimesAppsManager::DesktopFiles));
     writeData(MimesAppsManager::getDesktopFilesCacheFile(), desktopFileDoc.toJson());
 
-    loadCache();
+
+    QVariantMap icons;
+    foreach (QString key, iconProvider->getDesktopIconPaths().keys()) {
+        icons.insert(key, iconProvider->getDesktopIconPaths().value(key));
+    }
+
+    QJsonDocument desktopFileIconDoc(QJsonObject::fromVariantMap(icons));
+    writeData(MimesAppsManager::getDesktopIconsCacheFile(), desktopFileIconDoc.toJson());
+
 }
 
 void MimeAppsWorker::writeData(const QString &path, const QByteArray &content)
 {
+    qDebug() << path;
     QFile file(path);
     if (file.open(QFile::WriteOnly)){
         file.write(content);
@@ -103,35 +114,84 @@ QByteArray MimeAppsWorker::readData(const QString &path)
 
 void MimeAppsWorker::loadCache()
 {
-    QByteArray mimeAppsContent = readData(MimesAppsManager::getMimeAppsCacheFile());
-    QJsonParseError error;
-    QJsonDocument mimeAppsdoc=QJsonDocument::fromJson(mimeAppsContent,&error);
-    if (error.error == QJsonParseError::NoError){
-        QJsonObject obj = mimeAppsdoc.object();
-        foreach (QString key, obj.keys()) {
-            QVariantList appVariants = obj.value(key).toArray().toVariantList();
-            QStringList apps;
-            foreach(QVariant appVariant, appVariants){
-                apps.append(appVariant.toString());
+    loadMimeAppsCache();
+    loadDesktopFilesCache();
+    loadDesktopIconsCache();
+}
+
+void MimeAppsWorker::loadMimeAppsCache()
+{
+    if (QFile(MimesAppsManager::getMimeAppsCacheFile()).exists()){
+        qDebug() << "load mime apps cache from:" << MimesAppsManager::getMimeAppsCacheFile();
+        QByteArray mimeAppsContent = readData(MimesAppsManager::getMimeAppsCacheFile());
+        QJsonParseError error;
+        QJsonDocument mimeAppsdoc=QJsonDocument::fromJson(mimeAppsContent,&error);
+        if (error.error == QJsonParseError::NoError){
+            QJsonObject obj = mimeAppsdoc.object();
+            foreach (QString key, obj.keys()) {
+                QVariantList appVariants = obj.value(key).toArray().toVariantList();
+                QStringList apps;
+                foreach(QVariant appVariant, appVariants){
+                    apps.append(appVariant.toString());
+                }
+                MimesAppsManager::MimeApps.insert(key, apps);
             }
-            MimesAppsManager::MimeApps.insert(key, apps);
+        }else{
+            qDebug() << "load cache file: " << MimesAppsManager::getMimeAppsCacheFile() << error.errorString();
         }
     }else{
-        qDebug() << "load cache file: " << MimesAppsManager::getMimeAppsCacheFile() << error.errorString();
+        qDebug() << MimesAppsManager::getMimeAppsCacheFile() << "isn't exists";
+    }
+}
+
+void MimeAppsWorker::loadDesktopFilesCache()
+{
+    if (QFile(MimesAppsManager::getDesktopFilesCacheFile()).exists()){
+        qDebug() << "load desktop files cache from:" << MimesAppsManager::getDesktopFilesCacheFile();
+        QByteArray desktopFilesContent = readData(MimesAppsManager::getDesktopFilesCacheFile());
+        QJsonParseError error;
+        QJsonDocument desktopFiledoc=QJsonDocument::fromJson(desktopFilesContent,&error);
+        if (error.error == QJsonParseError::NoError){
+            QJsonArray array = desktopFiledoc.array();
+            QVariantList desktopFileVariants =  array.toVariantList();
+            QStringList desktopFiles;
+            foreach(QVariant desktopFileVariant, desktopFileVariants){
+                desktopFiles.append(desktopFileVariant.toString());
+            }
+
+            foreach(QString f, desktopFiles){
+                MimesAppsManager::DesktopObjs.insert(f, DesktopFile(f));
+            }
+            MimesAppsManager::DesktopFiles = desktopFiles;
+        }else{
+            qDebug() << "load cache file: " << MimesAppsManager::getDesktopFilesCacheFile() << error.errorString();
+        }
+    }else{
+        qDebug() << MimesAppsManager::getDesktopFilesCacheFile() << "isn't exists";
     }
 
-    QByteArray desktopFilesContent = readData(MimesAppsManager::getDesktopFilesCacheFile());
-    QJsonDocument desktopFiledoc=QJsonDocument::fromJson(desktopFilesContent,&error);
-    if (error.error == QJsonParseError::NoError){
-        QJsonArray array = desktopFiledoc.array();
-        QVariantList desktopFileVariants =  array.toVariantList();
-        QStringList desktopFiles;
-        foreach(QVariant desktopFileVariant, desktopFileVariants){
-            desktopFiles.append(desktopFileVariant.toString());
+}
+
+void MimeAppsWorker::loadDesktopIconsCache()
+{
+    if (QFile(MimesAppsManager::getDesktopIconsCacheFile()).exists()){
+        qDebug() << "load desktop icons cache from:" << MimesAppsManager::getDesktopFilesCacheFile();
+        QByteArray content = readData(MimesAppsManager::getDesktopIconsCacheFile());
+        QJsonParseError error;
+        QJsonDocument doc=QJsonDocument::fromJson(content,&error);
+        if (error.error == QJsonParseError::NoError){
+            QMap<QString, QString> iconPaths;
+            QJsonObject obj = doc.object();
+            foreach (QString key, obj.keys()) {
+                QString path = obj.value(key).toString();
+                iconPaths.insert(key, path);
+            }
+            iconProvider->setDesktopIconPaths(iconPaths);
+        }else{
+            qDebug() << "load cache file: " << MimesAppsManager::getDesktopIconsCacheFile() << error.errorString();
         }
-        MimesAppsManager::DesktopFiles = desktopFiles;
     }else{
-        qDebug() << "load cache file: " << MimesAppsManager::getDesktopFilesCacheFile() << error.errorString();
+        qDebug() << MimesAppsManager::getDesktopIconsCacheFile() << "isn't exists";
     }
 
 }
@@ -145,7 +205,6 @@ MimesAppsManager::MimesAppsManager(QObject *parent): QObject(parent)
     QThread* mimeAppsThread = new QThread;
     m_mimeAppsWorker->moveToThread(mimeAppsThread);
     mimeAppsThread->start();
-    emit requestUpdateCache();
 }
 
 MimesAppsManager::~MimesAppsManager()
@@ -247,7 +306,12 @@ QString MimesAppsManager::getMimeAppsCacheFile()
 
 QString MimesAppsManager::getDesktopFilesCacheFile()
 {
-    return QString("%1/%2").arg(StandardPath::getCachePath(), "DesktopFiles.json");;
+    return QString("%1/%2").arg(StandardPath::getCachePath(), "DesktopFiles.json");
+}
+
+QString MimesAppsManager::getDesktopIconsCacheFile()
+{
+    return QString("%1/%2").arg(StandardPath::getCachePath(), "DesktopIcons.json");
 }
 
 QStringList MimesAppsManager::getDesktopFiles()
@@ -277,6 +341,7 @@ QMap<QString, DesktopFile> MimesAppsManager::getDesktopObjs()
 
 QMap<QString, QStringList> MimesAppsManager::getMimeTypeApps()
 {
+    qDebug() << "getMimeTypeApps in" << QThread::currentThread() << qApp->thread();
     DesktopFiles.clear();
     DesktopObjs.clear();
 
@@ -328,6 +393,12 @@ QMap<QString, QStringList> MimesAppsManager::getMimeTypeApps()
         }
         MimeApps.insert(key, orderApps);
     }
+
+    foreach (QString desktopFile, DesktopObjs.keys()) {
+        QString iconName = DesktopObjs.value(desktopFile).getIcon();
+        iconProvider->getDesktopIcon(iconName, 48);
+    }
+
     return MimeApps;
 }
 

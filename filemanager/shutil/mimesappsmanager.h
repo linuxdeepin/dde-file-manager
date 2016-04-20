@@ -29,6 +29,9 @@ public slots:
     void writeData(const QString& path, const QByteArray& content);
     QByteArray readData(const QString& path);
     void loadCache();
+    void loadMimeAppsCache();
+    void loadDesktopFilesCache();
+    void loadDesktopIconsCache();
 
 private:
     QFileSystemWatcher* m_fileSystemWatcher = NULL;
@@ -56,6 +59,7 @@ public:
     static QStringList getApplicationsFolders();
     static QString getMimeAppsCacheFile();
     static QString getDesktopFilesCacheFile();
+    static QString getDesktopIconsCacheFile();
     static QStringList getDesktopFiles();
     static QMap<QString, DesktopFile> getDesktopObjs();
     static QMap<QString, QStringList> getMimeTypeApps();

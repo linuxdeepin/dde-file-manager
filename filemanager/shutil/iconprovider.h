@@ -25,6 +25,7 @@ public:
     QByteArray getThumb(const QString& imageFile);
 
     QMap<QString,QIcon> getDesktopIcons();
+    QMap<QString,QString> getDesktopIconPaths();
 
 signals:
     void themeChanged(const QString& theme);
@@ -37,6 +38,9 @@ public slots:
 
     QIcon getFileIcon(const QString& file) const;
     QIcon getDesktopIcon(const QString& iconName, int size) const;
+
+    void setDesktopIconPaths(const QMap<QString,QString>& iconPaths);
+
 private:
     QIcon findIcon(const QString& file) const;
     QIcon findMimeIcon(const QString& file);
@@ -45,6 +49,7 @@ private:
     mutable QMap<QString,QIcon> m_mimeIcons;
     QMap<QString,QIcon> m_folderIcons;
     mutable QMap<QString,QIcon> m_desktopIcons;
+    mutable QMap<QString,QString> m_desktopIconPaths;
     mutable QCache<QString,QIcon> m_icons;
 
     mutable QMap<QString,QString> m_mimeGlob;

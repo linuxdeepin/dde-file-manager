@@ -103,6 +103,9 @@ signals:
 
     /* request restore trash file*/
     void requestRestoreTrashFile(const DUrlList &url);
+
+    /*request update mime cache*/
+    void requestUpdateMimeAppsCache();
 };
 
 #endif // FILESIGNALMANAGER_H

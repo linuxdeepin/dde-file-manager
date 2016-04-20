@@ -221,6 +221,11 @@ QMap<QString, QIcon> IconProvider::getDesktopIcons()
     return m_desktopIcons;
 }
 
+QMap<QString, QString> IconProvider::getDesktopIconPaths()
+{
+    return m_desktopIconPaths;
+}
+
 
 void IconProvider::setTheme(const QString &themeName)
 {
@@ -273,11 +278,16 @@ QIcon IconProvider::getDesktopIcon(const QString &iconName, int size) const
             return icon;
         }else {
             // try to read the iconPath as a icon name.
-            QString path = getThemeIconPath(iconName);
 
-            if (path.isEmpty())
-                path = getThemeIconPath("application-default-icon");
-
+            QString path;
+            if (m_desktopIconPaths.contains(iconName)){
+                path = m_desktopIconPaths.value(iconName);
+            }else{
+                path = getThemeIconPath(iconName);
+                if (path.isEmpty())
+                    path = getThemeIconPath("application-default-icon");
+                m_desktopIconPaths[iconName] = path;
+            }
             QIcon icon = QIcon(path);
 
             m_desktopIcons[iconName] = icon;
@@ -285,6 +295,11 @@ QIcon IconProvider::getDesktopIcon(const QString &iconName, int size) const
             return icon;
         }
     }
+}
+
+void IconProvider::setDesktopIconPaths(const QMap<QString, QString> &iconPaths)
+{
+    m_desktopIconPaths = iconPaths;
 }
 
 
