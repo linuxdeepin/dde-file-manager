@@ -378,7 +378,7 @@ void FileMenuManager::actionTriggered(DAction *action)
         deviceListener->unmount(fileUrl.query());
         break;
     case MenuAction::Restore:
-        fileSignalManager->requestRestoreTrashFile(fileUrl);
+        fileSignalManager->requestRestoreTrashFile(urls);
         break;
     case MenuAction::Name:
         emit fileSignalManager->requestViewSort(menu->getWindowId(), Global::FileDisplayNameRole);
