@@ -269,7 +269,7 @@ DUrl DLeftSideBar::getStandardPathbyId(int id)
         url = DUrl::fromTrashFile("/");
         break;
     case 10:
-        url = DUrl::fromComputerFile("");
+        url = DUrl::fromComputerFile("/");
         break;
     case 11:
         url = DUrl::fromBookMarkFile("/");
