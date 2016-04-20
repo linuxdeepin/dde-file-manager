@@ -123,6 +123,7 @@ bool UDiskListener::isSystemDisk(const QString &path) const
 
 void UDiskListener::interfacesAdded(const QDBusObjectPath &path, const QMap<QString, QVariant> &interfaces)
 {
+    Q_UNUSED(interfaces);
     if(path.path().startsWith("/org/freedesktop/UDisks2/block_devices"))
     {
         UDiskDeviceInfo *device = getDevice(path);
@@ -140,6 +141,7 @@ void UDiskListener::interfacesAdded(const QDBusObjectPath &path, const QMap<QStr
 
 void UDiskListener::interfacesRemoved(const QDBusObjectPath &path, const QStringList &interfaces)
 {
+    Q_UNUSED(interfaces);
     if(path.path().startsWith("/org/freedesktop/UDisks2/block_devices"))
     {
         UDiskDeviceInfo *device = getDevice(path);

@@ -164,6 +164,7 @@ void DLeftSideBar::initTightNav()
     m_tightScene = new DBookmarkScene;
     m_tightScene->setSceneRect(0, 0, 60, 500);
     m_view->setScene(m_tightScene);
+    m_tightScene->setAcceptDrop(false);
 
     for(int i = 1; i < m_bigIconlist.size(); i++)
     {
@@ -344,7 +345,7 @@ void DLeftSideBar::loadBookmark()
     {
         BookMark * bm = m_list.at(i);
         DBookmarkItem * item = new DBookmarkItem(bm);
-        m_scene->addItem(item);
+        m_scene->addBookmark(item);
     }
 }
 

@@ -24,7 +24,7 @@ private:
     QList<BookMark *> m_bookmarks;
 
 public slots:
-    BookMark *writeIntoBookmark(const QString &name, const DUrl &url);
+    BookMark *writeIntoBookmark(int index, const QString &name, const DUrl &url);
     void removeBookmark(const QString &name, const DUrl &url);
 
     // AbstractFileController interface

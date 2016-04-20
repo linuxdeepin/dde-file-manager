@@ -18,6 +18,8 @@ class DBookmarkScene : public QGraphicsScene
     Q_OBJECT
 public:
     DBookmarkScene();
+    void addBookmark(DBookmarkItem *item);
+    void insertBookmark(int index, DBookmarkItem *item);
     void addItem(DBookmarkItem *item);
     void insert(int index, DBookmarkItem *item);
     void insert(DBookmarkItem * before, DBookmarkItem *item);
@@ -30,6 +32,7 @@ public:
     int count();
     int windowId();
     DBookmarkItem * hasBookmarkItem(const DUrl &url);
+    void setAcceptDrop(bool v);
 protected:
     void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
     void dragLeaveEvent(QGraphicsSceneDragDropEvent *event);
@@ -54,7 +57,9 @@ private:
     DBookmarkRootItem * m_rootItem;
     DBookmarkItemGroup * m_itemGroup;
     QList<DBookmarkItem *> m_items;
+    QList<DBookmarkItem *> m_customItems;
     double m_totalHeight = 0;
+    bool m_acceptDrop;
 };
 
 #endif // DBOOKMARKSCENE_H

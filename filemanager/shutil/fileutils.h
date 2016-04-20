@@ -30,6 +30,7 @@ public:
       const QIcon &defaultIcon = QIcon::fromTheme("unknown"));
   static QIcon searchAppIcon(const DesktopFile &app,
       const QIcon &defaultIcon = QIcon::fromTheme("application-x-executable"));
+  static QString formatSize( qint64 num );
 };
 
 #endif // FILEUTILS_H

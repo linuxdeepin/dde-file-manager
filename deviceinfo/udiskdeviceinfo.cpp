@@ -1,5 +1,6 @@
 #include "udiskdeviceinfo.h"
 #include "../filemanager/app/global.h"
+#include "../filemanager/shutil/fileutils.h"
 #include <QIcon>
 
 UDiskDeviceInfo::UDiskDeviceInfo(UDiskDeviceInfo *info)
@@ -164,7 +165,7 @@ qint64 UDiskDeviceInfo::size()
 
 QString UDiskDeviceInfo::displayName() const
 {
-    return formatSize(m_size);
+    return FileUtils::formatSize(m_size);
 }
 
 UDiskDeviceInfo::Type UDiskDeviceInfo::type()
@@ -269,23 +270,6 @@ QVector<AbstractFileInfo::MenuAction> UDiskDeviceInfo::menuActionList(AbstractFi
     }
 
     return actionKeys;
-}
-
-QString UDiskDeviceInfo::formatSize( qint64 num ) const
-{
-    QString total;
-    const qint64 kb = 1024;
-    const qint64 mb = 1024 * kb;
-    const qint64 gb = 1024 * mb;
-    const qint64 tb = 1024 * gb;
-
-    if ( num >= tb ) total = QString( "%1 TiB" ).arg( QString::number( qreal( num ) / tb, 'f', 3 ) );
-    else if ( num >= gb ) total = QString( "%1 GiB" ).arg( QString::number( qreal( num ) / gb, 'f', 2 ) );
-    else if ( num >= mb ) total = QString( "%1 MiB" ).arg( QString::number( qreal( num ) / mb, 'f', 1 ) );
-    else if ( num >= kb ) total = QString( "%1 KiB" ).arg( QString::number( qreal( num ) / kb,'f',1 ) );
-    else total = QString( "%1 bytes" ).arg( num );
-
-    return total;
 }
 
 QStringList UDiskDeviceInfo::mountPoints() const
