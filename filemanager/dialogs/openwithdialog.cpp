@@ -4,6 +4,9 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QPushButton>
+#include <QApplication>
+#include <QDesktopWidget>
+#include <QWindow>
 #include "../shutil/mimesappsmanager.h"
 #include "../app/global.h"
 #include "../shutil/desktopfile.h"
@@ -11,7 +14,7 @@
 #include "../views/dscrollbar.h"
 
 OpenWithDialog::OpenWithDialog(const DUrl &url, QWidget *parent) :
-    DWidget(parent)
+    BaseDialog(parent)
 {
     m_url = url;
     setWindowFlags(windowFlags()
@@ -134,4 +137,3 @@ void OpenWithDialog::openFileByApp()
     QProcess::startDetached(name, QStringList() << args);
     close();
 }
-

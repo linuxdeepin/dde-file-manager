@@ -79,8 +79,8 @@ QWidget *createAuthorityManagermentWidget(const AbstractFileInfo *info)
     return widget;
 }
 
-PropertyDialog::PropertyDialog(const DUrl &url, QWidget */*parent*/)
-    : DWidget(0)
+PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
+    : BaseDialog(parent)
     , m_icon(new QLabel)
     , m_edit(new QTextEdit)
 {

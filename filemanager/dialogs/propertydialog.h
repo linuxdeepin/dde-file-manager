@@ -1,7 +1,7 @@
 #ifndef PROPERTYDIALOG_H
 #define PROPERTYDIALOG_H
 
-#include <dwidget.h>
+#include "basedialog.h"
 
 QT_BEGIN_NAMESPACE
 class QLabel;
@@ -17,7 +17,7 @@ class DUrl;
 
 DWIDGET_USE_NAMESPACE
 
-class PropertyDialog : public DWidget
+class PropertyDialog : public BaseDialog
 {
     Q_OBJECT
 
