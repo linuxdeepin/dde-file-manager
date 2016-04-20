@@ -59,6 +59,8 @@
 
 #define TEXT_LINE_HEIGHT 13
 
+#define MAX_THREAD_COUNT 100
+
 #define ASYN_CALL(Fun, Code, captured...) { \
     QDBusPendingCallWatcher * watcher = new QDBusPendingCallWatcher(Fun); \
     auto onFinished = [watcher, captured]{ \

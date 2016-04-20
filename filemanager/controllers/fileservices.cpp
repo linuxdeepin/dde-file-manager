@@ -177,6 +177,11 @@ void FileServices::deleteFiles(const DUrlList &urlList) const
     if(urlList.isEmpty())
         return;
 
+    if(QThreadPool::globalInstance()->activeThreadCount() >= MAX_THREAD_COUNT) {
+        qDebug() << "Beyond the maximum number of threads!";
+        return;
+    }
+
     if(QThread::currentThread() == qApp->thread()) {
         QtConcurrent::run(QThreadPool::globalInstance(), this, &FileServices::deleteFiles, urlList);
 
@@ -195,6 +200,11 @@ void FileServices::moveToTrash(const DUrlList &urlList) const
 {
     if(urlList.isEmpty())
         return;
+
+    if(QThreadPool::globalInstance()->activeThreadCount() >= MAX_THREAD_COUNT) {
+        qDebug() << "Beyond the maximum number of threads!";
+        return;
+    }
 
     if(QThread::currentThread() == qApp->thread()) {
         QtConcurrent::run(QThreadPool::globalInstance(), this, &FileServices::moveToTrash, urlList);
@@ -250,6 +260,11 @@ void FileServices::pasteFile(const FMEvent &event) const
 void FileServices::pasteFile(AbstractFileController::PasteType type,
                              const DUrlList &urlList, const FMEvent &event) const
 {
+    if(QThreadPool::globalInstance()->activeThreadCount() >= MAX_THREAD_COUNT) {
+        qDebug() << "Beyond the maximum number of threads!";
+        return;
+    }
+
     if(QThread::currentThread() == qApp->thread()) {
         QtConcurrent::run(QThreadPool::globalInstance(), this, &FileServices::pasteFile, type, urlList, event);
 
@@ -376,6 +391,11 @@ const QList<AbstractFileInfo*> FileServices::getChildren(const DUrl &fileUrl, QD
 void FileServices::getChildren(const FMEvent &event, QDir::Filters filters) const
 {
     if(QThread::currentThread() == qApp->thread()) {
+        QThreadPool *threadPool = QThreadPool::globalInstance();
+
+        if(threadPool->maxThreadCount() == threadPool->activeThreadCount())
+            threadPool->setMaxThreadCount(threadPool->maxThreadCount() + 10);
+
         QtConcurrent::run(QThreadPool::globalInstance(), this, &FileServices::getChildren, event, filters);
 
         return;

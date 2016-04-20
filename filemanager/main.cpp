@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
         qDebug() << commandlineUrl;
     }
 
-    QThreadPool::globalInstance()->setMaxThreadCount(100);
+    QThreadPool::globalInstance()->setMaxThreadCount(MAX_THREAD_COUNT);
 
     QString uniqueKey = "dde-file-manager";
 
