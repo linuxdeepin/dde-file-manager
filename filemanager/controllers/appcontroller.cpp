@@ -13,8 +13,9 @@
 
 AppController::AppController(QObject *parent) : QObject(parent)
 {
+    FileServices::instance()->setFileUrlHandler(RECENT_SCHEME, "", new RecentHistoryManager(this));
+
     FileServices::dRegisterUrlHandler<FileController>(FILE_SCHEME, "");
-    FileServices::dRegisterUrlHandler<RecentHistoryManager>(RECENT_SCHEME, "");
     FileServices::dRegisterUrlHandler<TrashManager>(TRASH_SCHEME, "");
     FileServices::dRegisterUrlHandler<SearchController>(SEARCH_SCHEME, "");
 }

@@ -670,8 +670,6 @@ void DFileSystemModel::onFileCreated(const DUrl &fileUrl)
 
     FileSystemNode *parentNode = m_urlToNode.value(info->parentUrl());
 
-    qDebug() << info->parentUrl();
-
     if(parentNode && parentNode->populatedChildren && !parentNode->visibleChildren.contains(fileUrl)) {
         int row = 0;
 

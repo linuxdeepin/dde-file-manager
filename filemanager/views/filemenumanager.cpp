@@ -167,7 +167,7 @@ QVector<MenuAction> FileMenuManager::getDisableActionList(const DUrl &fileUrl)
                     << MenuAction::NewFile << MenuAction::NewFolder;
 
     if(!fileInfo->isWritable() || (parentInfo->exists() && !parentInfo->isWritable())) {
-        disableList << MenuAction::Cut << MenuAction::Remove
+        disableList << MenuAction::Cut
                     << MenuAction::Delete;
 
         if(!fileUrl.isTrashFile()) {
@@ -353,14 +353,17 @@ void FileMenuManager::actionTriggered(DAction *action)
         emit fileSignalManager->requestRename(event);
         break;
     }
-    case MenuAction::Remove:
-    {
-        FMEvent event;
+    case MenuAction::Remove: {
+        if(fileUrl.isBookMarkFile()) {
+            FMEvent event;
 
-        event = fileUrl;
-        event = FMEvent::Menu;
-        event = menu->getWindowId();
-        fileSignalManager->requestBookmarkRemove(event);
+            event = fileUrl;
+            event = FMEvent::Menu;
+            event = menu->getWindowId();
+            fileSignalManager->requestBookmarkRemove(event);
+        } else if(fileUrl.isRecentFile()) {
+            fileSignalManager->requestRecentFileRemove(urls);
+        }
         break;
     }
     case MenuAction::Delete:
@@ -379,7 +382,9 @@ void FileMenuManager::actionTriggered(DAction *action)
     case MenuAction::SelectAll:
         fileSignalManager->requestViewSelectAll(menu->getWindowId());
         break;
-    case MenuAction::ClearRecent:break;
+    case MenuAction::ClearRecent:
+        fileSignalManager->requestClearRecent();
+        break;
     case MenuAction::ClearTrash:
         fileService->deleteFiles(DUrlList() << DUrl::fromLocalFile(TRASHPATH));
         break;
