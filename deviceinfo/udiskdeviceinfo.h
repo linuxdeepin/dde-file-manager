@@ -98,7 +98,7 @@ private:
     bool m_isMounted;
     bool m_isEjectable;
 
-    QString formatSize( qint64 num ) const;
+
 public:
     bool isCanRename() const Q_DECL_OVERRIDE;
     QIcon fileIcon() const Q_DECL_OVERRIDE;

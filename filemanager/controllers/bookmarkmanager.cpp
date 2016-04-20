@@ -94,10 +94,10 @@ void BookMarkManager::writeJson(QJsonObject &json)
     json["Bookmark"] = localArray;
 }
 
-BookMark * BookMarkManager::writeIntoBookmark(const QString &name, const DUrl &url)
+BookMark * BookMarkManager::writeIntoBookmark(int index, const QString &name, const DUrl &url)
 {
     BookMark * bookmark = new BookMark(QDateTime::currentDateTime(), name, url);
-    m_bookmarks.append(bookmark);
+    m_bookmarks.insert(0, bookmark);
     save();
     return bookmark;
 }

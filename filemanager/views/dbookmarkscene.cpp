@@ -16,6 +16,7 @@
 
 DBookmarkScene::DBookmarkScene()
 {
+    m_acceptDrop = true;
     m_itemGroup = new DBookmarkItemGroup;
     m_rootItem = new DBookmarkRootItem(this);
     m_itemGroup->addItem(m_rootItem);
@@ -27,6 +28,27 @@ DBookmarkScene::DBookmarkScene()
     connect(fileSignalManager, &FileSignalManager::deviceMounted, this, &DBookmarkScene::bookmarkMounted);
     connect(fileSignalManager, &FileSignalManager::requestBookmarkRemove, this, &DBookmarkScene::doBookmarkRemoved);
     connect(fileSignalManager, &FileSignalManager::requestBookmarkAdd, this, &DBookmarkScene::doBookmarkAdded);
+}
+
+void DBookmarkScene::addBookmark(DBookmarkItem *item)
+{
+    addItem(item);
+    m_customItems.append(item);
+}
+
+void DBookmarkScene::insertBookmark(int index, DBookmarkItem *item)
+{
+    if(m_customItems.size() == 0)
+    {
+        addItem(item);
+        m_customItems.append(item);
+    }
+    else
+    {
+        int len = m_items.size() - m_customItems.size();
+        insert(len + index, item);
+        m_customItems.insert(index, item);
+    }
 }
 
 /**
@@ -220,6 +242,8 @@ int DBookmarkScene::windowId()
  */
 void DBookmarkScene::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 {
+    if(!m_acceptDrop)
+        return;
     emit dragEntered();
     QGraphicsScene::dragEnterEvent(event);
     clear(m_rootItem->getDummyItem());
@@ -254,6 +278,8 @@ void DBookmarkScene::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
  */
 void DBookmarkScene::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
 {
+    if(!m_acceptDrop)
+        return;
     emit dragLeft();
     QGraphicsScene::dragLeaveEvent(event);
     clear(m_rootItem->getDummyItem());
@@ -446,4 +472,10 @@ DBookmarkItem *DBookmarkScene::hasBookmarkItem(const DUrl &url)
         }
     }
     return NULL;
+}
+
+void DBookmarkScene::setAcceptDrop(bool v)
+{
+    m_acceptDrop = v;
+    m_rootItem->setAcceptDrops(false);
 }
