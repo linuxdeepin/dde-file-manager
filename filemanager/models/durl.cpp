@@ -220,7 +220,7 @@ QList<QUrl> DUrl::toQUrlList(const DUrlList &urls)
     return urlList;
 }
 
-bool DUrl::operator ==(const QUrl &url) const
+bool DUrl::operator ==(const DUrl &url) const
 {
     bool ok = QUrl::operator ==(url);
 
@@ -266,6 +266,17 @@ void DUrl::makeAbsolute()
             QUrl::setPath(QFileInfo(this->path()).absoluteFilePath());
         }
     }
+
+    updateVirtualPath();
+}
+
+void DUrl::updateVirtualPath()
+{
+    m_virtualPath = this->path();
+
+    if(m_virtualPath.endsWith('/') && m_virtualPath.count() != 1) {
+        m_virtualPath.remove(m_virtualPath.count() - 1, 1);
+    }
 }
 #endif
 
@@ -280,4 +291,17 @@ QDebug operator<<(QDebug deg, const DUrl &url)
 
     return deg;
 }
+
+uint qHash(const DUrl &url, uint seed) Q_DECL_NOTHROW
+{
+    return qHash(url.scheme()) ^
+            qHash(url.userName()) ^
+            qHash(url.password()) ^
+            qHash(url.host()) ^
+            qHash(url.port(), seed) ^
+            qHash(url.m_virtualPath) ^
+            qHash(url.query()) ^
+            qHash(url.fragment());
+}
 QT_END_NAMESPACE
+

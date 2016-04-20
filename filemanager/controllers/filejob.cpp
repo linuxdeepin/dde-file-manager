@@ -118,15 +118,15 @@ void FileJob::doMoveToTrash(const QList<QUrl> &files)
 {
     QDir trashDir;
 
-    if(!trashDir.mkpath(TRASHURL.toLocalFile() + "/files")) {
-        qDebug() << "mk" << TRASHURL.toLocalFile() + "/info" << "failed!";
+    if(!trashDir.mkpath(TRASHFILEPATH)) {
+        qDebug() << "mk" << TRASHINFOPATH << "failed!";
         /// TODO
 
         return;
     }
 
-    if(!trashDir.mkpath(TRASHURL.toLocalFile() + "/info")) {
-        qDebug() << "mk" << TRASHURL.toLocalFile() + "/info" << "failed!";
+    if(!trashDir.mkpath(TRASHINFOPATH)) {
+        qDebug() << "mk" << TRASHINFOPATH << "failed!";
         /// TODO
 
         return;

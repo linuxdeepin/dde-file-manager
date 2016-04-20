@@ -1,3 +1,5 @@
+#include "durl.h"
+
 #include "app/global.h"
 #include "app/logutil.h"
 #include "app/filemanagerapp.h"
@@ -8,7 +10,6 @@
 #include "../dialogs/dialogmanager.h"
 
 #include "../shutil/mimesappsmanager.h"
-#include "durl.h"
 #include "../dialogs/openwithdialog.h"
 
 #include <dthememanager.h>
