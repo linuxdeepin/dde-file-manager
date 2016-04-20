@@ -115,7 +115,8 @@ HEADERS += \
     filemanager/models/durl.h \
     filemanager/controllers/searchcontroller.h \
     filemanager/models/searchfileinfo.h\
-    filemanager/shutil/standardpath.h
+    filemanager/shutil/standardpath.h \
+    filemanager/dialogs/basedialog.h
 
 
 SOURCES += \
@@ -194,7 +195,8 @@ SOURCES += \
     filemanager/models/durl.cpp \
     filemanager/controllers/searchcontroller.cpp \
     filemanager/models/searchfileinfo.cpp\
-    filemanager/shutil/standardpath.cpp
+    filemanager/shutil/standardpath.cpp \
+    filemanager/dialogs/basedialog.cpp
 
 
 

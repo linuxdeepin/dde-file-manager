@@ -65,6 +65,17 @@ int WindowManager::getWindowId(const QWidget *window)
     return m_windows.value(window, -1);
 }
 
+QWidget *WindowManager::getWindowById(int winId)
+{
+    for(int i=0; i< m_windows.count(); i++){
+        if (m_windows.values().at(i) == winId){
+            QWidget* window = const_cast<QWidget *>(m_windows.keys().at(i));
+            return window;
+        }
+    }
+    return Q_NULLPTR;
+}
+
 void WindowManager::onWindowClosed()
 {
     m_windows.remove(static_cast<const QWidget*>(sender()));

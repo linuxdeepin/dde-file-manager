@@ -8,6 +8,8 @@
 #include "../dialogs/propertydialog.h"
 #include "../dialogs/openwithdialog.h"
 #include "../models/fileinfo.h"
+#include "../app/fmevent.h"
+#include "../views/windowmanager.h"
 #include <ddialog.h>
 
 DWIDGET_USE_NAMESPACE
@@ -77,26 +79,30 @@ void DialogManager::showUrlWrongDialog(const DUrl &url)
     d.exec();
 }
 
-void DialogManager::showOpenWithDialog(const DUrl &url)
+void DialogManager::showOpenWithDialog(const FMEvent &event)
 {
-    qDebug() << url;
-    OpenWithDialog* d = new OpenWithDialog(url);
-    d->show();
+    QWidget* w = WindowManager::getWindowById(event.windowId());
+    if (w){
+        OpenWithDialog* d = new OpenWithDialog(event.fileUrl(), w);
+        d->show();
+    }
 }
 
-void DialogManager::showPropertyDialog(const DUrl &url)
+void DialogManager::showPropertyDialog(const FMEvent &event)
 {
-    PropertyDialog *dialog = new PropertyDialog(url);
+    QWidget* w = WindowManager::getWindowById(event.windowId());
+    if (w){
+        PropertyDialog *dialog = new PropertyDialog(event.fileUrl(), w);
 
-    dialog->setAttribute(Qt::WA_DeleteOnClose);
-    dialog->setWindowFlags(dialog->windowFlags()
-                           &~ Qt::WindowMaximizeButtonHint
-                           &~ Qt::WindowMinimizeButtonHint
-                           &~ Qt::WindowSystemMenuHint);
-    dialog->setTitle("");
-    dialog->setFixedSize(QSize(320, 480));
-
-    dialog->show();
+        dialog->setAttribute(Qt::WA_DeleteOnClose);
+        dialog->setWindowFlags(dialog->windowFlags()
+                               &~ Qt::WindowMaximizeButtonHint
+                               &~ Qt::WindowMinimizeButtonHint
+                               &~ Qt::WindowSystemMenuHint);
+        dialog->setTitle("");
+        dialog->setFixedSize(QSize(320, 480));
+        dialog->show();
+    }
 }
 
 

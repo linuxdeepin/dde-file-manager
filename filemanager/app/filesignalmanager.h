@@ -93,10 +93,10 @@ signals:
     void requestShowUrlWrongDialog(const DUrl& url);
 
     /*request show PropertyDialog*/
-    void requestShowOpenWithDialog(const DUrl& url);
+    void requestShowOpenWithDialog(const FMEvent &event);
 
     /*request show PropertyDialog*/
-    void requestShowPropertyDialog(const DUrl& url);
+    void requestShowPropertyDialog(const FMEvent &event);
 
     /* request select file view item*/
     void requestSelectFile(const FMEvent &event);
