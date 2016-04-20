@@ -20,12 +20,16 @@ public:
     void save() Q_DECL_OVERRIDE;
 
     bool openFile(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
+    bool copyFiles(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;
     const QList<AbstractFileInfo*> getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const Q_DECL_OVERRIDE;
     AbstractFileInfo *createFileInfo(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
 
 private:
     void loadJson(const QJsonObject &json);
     void writeJson(QJsonObject &json);
+
+    void removeRecentFiles(const DUrlList &urlList);
+    void clearRecentFiles();
 
 private slots:
     void addOpenedFile(const DUrl &url);

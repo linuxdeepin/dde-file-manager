@@ -84,10 +84,15 @@ QVector<AbstractFileInfo::MenuAction> RecentFileInfo::menuActionList(AbstractFil
                    << MenuAction::Separator
                    << MenuAction::Compress << MenuAction::Separator
                    << MenuAction::Copy << MenuAction::Cut
-                   << MenuAction::Rename << MenuAction::Delete
+                   << MenuAction::Rename << MenuAction::Remove
                    << MenuAction::Separator
                    << MenuAction::Property;
     }
 
     return actionKeys;
+}
+
+DUrl RecentFileInfo::parentUrl() const
+{
+    return DUrl::fromRecentFile("/");
 }

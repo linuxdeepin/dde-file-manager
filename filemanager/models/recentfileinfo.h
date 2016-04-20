@@ -20,6 +20,8 @@ public:
 
     QVector<MenuAction> menuActionList(MenuType type) const Q_DECL_OVERRIDE;
 
+    DUrl parentUrl() const Q_DECL_OVERRIDE;
+
 private:
     QString desktopIconName;
 };

@@ -14,14 +14,24 @@
 
 #define fileService FileServices::instance()
 
+RecentHistoryManager *firstRecent = Q_NULLPTR;
+
 RecentHistoryManager::RecentHistoryManager(QObject *parent)
     : AbstractFileController(parent)
     , BaseManager()
 {
-    connect(fileService, &FileServices::fileOpened,
-            this, &RecentHistoryManager::addOpenedFile);
+    if(!firstRecent) {
+        firstRecent = this;
 
-    RecentHistoryManager::load();
+        connect(fileService, &FileServices::fileOpened,
+                this, &RecentHistoryManager::addOpenedFile);
+        connect(fileSignalManager, &FileSignalManager::requestRecentFileRemove,
+                this, &RecentHistoryManager::removeRecentFiles);
+        connect(fileSignalManager, &FileSignalManager::requestClearRecent,
+                this, &RecentHistoryManager::clearRecentFiles);
+
+        RecentHistoryManager::load();
+    }
 }
 
 RecentHistoryManager::~RecentHistoryManager()
@@ -69,6 +79,19 @@ bool RecentHistoryManager::openFile(const DUrl &fileUrl, bool &accepted) const
     return fileService->openFile(DUrl::fromLocalFile(fileUrl.path()));
 }
 
+bool RecentHistoryManager::copyFiles(const DUrlList &urlList, bool &accepted) const
+{
+    accepted = true;
+
+    DUrlList localList;
+
+    for(const DUrl &url : urlList) {
+        localList << DUrl::fromLocalFile(url.path());
+    }
+
+    return FileServices::instance()->copyFiles(localList);
+}
+
 const QList<AbstractFileInfo *> RecentHistoryManager::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
 {
     Q_UNUSED(filter)
@@ -81,17 +104,13 @@ const QList<AbstractFileInfo *> RecentHistoryManager::getChildren(const DUrl &fi
         return infolist;
     }
 
-    for (const DUrl &fileUrl : openedFileList) {
-        DUrl url(fileUrl);
+    accepted = true;
 
-        url.setScheme(RECENT_SCHEME);
-
+    for (const DUrl &url : openedFileList) {
         AbstractFileInfo *fileInfo = new RecentFileInfo(url);
 
         infolist.append(fileInfo);
     }
-
-    accepted = true;
 
     return infolist;
 }
@@ -126,15 +145,41 @@ void RecentHistoryManager::writeJson(QJsonObject &json)
     json["RecentHistory"] = localArray;
 }
 
+void RecentHistoryManager::removeRecentFiles(const DUrlList &urlList)
+{
+    for(const DUrl &url : urlList) {
+        openedFileList.removeOne(url);
+
+        emit childrenRemoved(url);
+    }
+
+    save();
+}
+
+void RecentHistoryManager::clearRecentFiles()
+{
+    for(const DUrl &url : openedFileList) {
+        emit childrenRemoved(url);
+    }
+
+    openedFileList.clear();
+
+    save();
+}
+
 void RecentHistoryManager::addOpenedFile(const DUrl &url)
 {
-    if(openedFileList.contains(url))
+    if(!url.isLocalFile())
         return;
 
-    openedFileList << url;
+    DUrl recent_url = DUrl::fromRecentFile(url.path());
 
+    if(openedFileList.contains(recent_url))
+        return;
 
-    //emit fileCreated(RECENT_ROOT + QFileInfo(url).fileName());
+    openedFileList << recent_url;
+
+    emit childrenAdded(recent_url);
 
     save();
 }

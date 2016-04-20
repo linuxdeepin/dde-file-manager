@@ -102,10 +102,15 @@ signals:
     void requestSelectFile(const FMEvent &event);
 
     /* request restore trash file*/
-    void requestRestoreTrashFile(const DUrlList &url);
+    void requestRestoreTrashFile(const DUrlList &urlList);
 
     /*request update mime cache*/
     void requestUpdateMimeAppsCache();
+
+    /*request clear recent*/
+    void requestClearRecent();
+    /*request remove recent file*/
+    void requestRecentFileRemove(const DUrlList &urlList);
 };
 
 #endif // FILESIGNALMANAGER_H
