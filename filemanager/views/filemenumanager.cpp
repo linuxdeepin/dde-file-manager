@@ -301,9 +301,15 @@ void FileMenuManager::actionTriggered(DAction *action)
     case MenuAction::OpenInNewWindow:
         fileService->openNewWindow(fileUrl);
         break;
-    case MenuAction::OpenWith:
-        emit fileSignalManager->requestShowOpenWithDialog(fileUrl);
+    case MenuAction::OpenWith:{
+        FMEvent event;
+
+        event = fileUrl;
+        event = FMEvent::Menu;
+        event = menu->getWindowId();
+        emit fileSignalManager->requestShowOpenWithDialog(event);
         break;
+    }
     case MenuAction::OpenFileLocation:
         fileService->openFileLocation(fileUrl);
         break;
@@ -400,7 +406,11 @@ void FileMenuManager::actionTriggered(DAction *action)
         emit fileSignalManager->requestViewSort(menu->getWindowId(), Global::FileLastModified);
         break;
     case MenuAction::Property: {
-        emit fileSignalManager->requestShowPropertyDialog(fileUrl);
+        FMEvent event;
+        event = fileUrl;
+        event = FMEvent::Menu;
+        event = menu->getWindowId();
+        emit fileSignalManager->requestShowPropertyDialog(event);
         break;
     }
     case MenuAction::Help:break;

@@ -2,7 +2,7 @@
 #define OPENWITHDIALOG_H
 
 #include <QObject>
-#include <dwidget.h>
+#include "basedialog.h"
 
 #include "durl.h"
 
@@ -11,7 +11,7 @@ DWIDGET_USE_NAMESPACE
 class QListWidget;
 class QPushButton;
 
-class OpenWithDialog : public DWidget
+class OpenWithDialog : public BaseDialog
 {
     Q_OBJECT
 public:
