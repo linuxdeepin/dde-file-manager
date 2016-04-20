@@ -166,9 +166,14 @@ QVector<MenuAction> FileMenuManager::getDisableActionList(const DUrl &fileUrl)
         disableList << MenuAction::Paste << MenuAction::NewDocument
                     << MenuAction::NewFile << MenuAction::NewFolder;
 
-    if(!fileInfo->isWritable() || (parentInfo->exists() && !parentInfo->isWritable()))
+    if(!fileInfo->isWritable() || (parentInfo->exists() && !parentInfo->isWritable())) {
         disableList << MenuAction::Cut << MenuAction::Remove
-                    << MenuAction::Delete << MenuAction::CompleteDeletion;
+                    << MenuAction::Delete;
+
+        if(!fileUrl.isTrashFile()) {
+            disableList << MenuAction::CompleteDeletion;
+        }
+    }
 
     delete fileInfo;
     delete parentInfo;

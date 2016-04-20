@@ -60,7 +60,7 @@ bool TrashManager::openFile(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
 
-    return FileServices::instance()->openFile(DUrl::fromLocalFile(fileUrl.path()));
+    return FileServices::instance()->openFile(DUrl::fromLocalFile(TRASHFILEPATH + fileUrl.path()));
 }
 
 bool TrashManager::addUrlMonitor(const DUrl &fileUrl, bool &accepted) const
@@ -77,6 +77,27 @@ bool TrashManager::removeUrlMonitor(const DUrl &fileUrl, bool &accepted) const
     accepted = true;
 
     fileMonitor->removeMonitorPath(TRASHFILEPATH + fileUrl.path());
+
+    return true;
+}
+
+bool TrashManager::deleteFiles(const DUrlList &urlList, bool &accepted) const
+{
+    accepted = true;
+
+    DUrlList localList;
+
+    for(const DUrl &url : urlList) {
+        const QString &path = url.path();
+
+        localList << DUrl::fromLocalFile(TRASHFILEPATH + path);
+
+        if(path.lastIndexOf('/') > 0) {
+            localList << DUrl::fromLocalFile(TRASHINFOPATH + path);
+        }
+    }
+
+    FileServices::instance()->deleteFiles(localList);
 
     return true;
 }
