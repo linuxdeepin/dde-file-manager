@@ -24,7 +24,7 @@ public:
     bool openFile(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
     bool addUrlMonitor(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
     bool removeUrlMonitor(const DUrl &url, bool &accepted) const Q_DECL_OVERRIDE;
-    bool restoreTrashFile(const DUrl &fileUrl) const;
+    bool restoreTrashFile(const DUrlList &fileUrl) const;
 
 private slots:
     void onFileCreated(const QString &filePath) const;

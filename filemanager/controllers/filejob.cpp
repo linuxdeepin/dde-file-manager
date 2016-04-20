@@ -116,6 +116,22 @@ void FileJob::doDelete(const QList<QUrl> &files)
 
 void FileJob::doMoveToTrash(const QList<QUrl> &files)
 {
+    QDir trashDir;
+
+    if(!trashDir.mkpath(TRASHURL.toLocalFile() + "/files")) {
+        qDebug() << "mk" << TRASHURL.toLocalFile() + "/info" << "failed!";
+        /// TODO
+
+        return;
+    }
+
+    if(!trashDir.mkpath(TRASHURL.toLocalFile() + "/info")) {
+        qDebug() << "mk" << TRASHURL.toLocalFile() + "/info" << "failed!";
+        /// TODO
+
+        return;
+    }
+
     for(int i = 0; i < files.size(); i++)
     {
         QUrl url = files.at(i);
@@ -472,6 +488,7 @@ bool FileJob::copyDir(const QString &srcPath, const QString &tarPath)
             break;
         case Cancelled:
             return false;
+        default: break;
         }
     }
     return true;

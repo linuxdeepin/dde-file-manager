@@ -102,7 +102,7 @@ signals:
     void requestSelectFile(const FMEvent &event);
 
     /* request restore trash file*/
-    void requestRestoreTrashFile(const DUrl &url);
+    void requestRestoreTrashFile(const DUrlList &url);
 };
 
 #endif // FILESIGNALMANAGER_H
