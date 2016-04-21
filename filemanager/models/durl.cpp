@@ -222,29 +222,17 @@ QList<QUrl> DUrl::toQUrlList(const DUrlList &urls)
 
 bool DUrl::operator ==(const DUrl &url) const
 {
-    bool ok = QUrl::operator ==(url);
+    if(!schemeList.contains(url.scheme()))
+        return QUrl::operator ==(url);
 
-    if(ok || !schemeList.contains(url.scheme()))
-        return ok;
-
-    if(qAbs(this->toString().size() - url.toString().size()) != 1)
-        return false;
-
-    const QString &path1 = this->path();
-    const QString &path2 = url.path();
-
-    if(qAbs(path1.size() - path2.size()) != 1)
-        return false;
-
-    if(path1.size() > path2.size()) {
-        QString tmp_str = path1;
-
-        return tmp_str.remove(path2) == "/";
-    } else {
-        QString tmp_str = path2;
-
-        return tmp_str.remove(path1) == "/";
-    }
+    return  m_virtualPath == url.m_virtualPath &&
+            scheme() == url.scheme() &&
+            fragment() == url.fragment();
+            query() == url.query() &&
+            userName() == url.userName() &&
+            password() == url.password() &&
+            host() == url.host() &&
+            port() == url.port();
 }
 
 void DUrl::makeAbsolute()
