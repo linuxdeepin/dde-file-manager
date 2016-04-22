@@ -50,10 +50,13 @@ void DFileItemDelegate::paint(QPainter *painter,
                               const QStyleOptionViewItem &option,
                               const QModelIndex &index) const
 {
+    /// judgment way of the whether drag model(another way is: painter.devType() != 1)
+    bool isDragMode = ((QPaintDevice*)parent()->viewport() != painter->device());
+
     if(parent()->isIconViewMode()) {
-        paintIconItem(painter, option, index);
+        paintIconItem(isDragMode, painter, option, index);
     } else {
-        paintListItem(painter, option, index);
+        paintListItem(isDragMode, painter, option, index);
     }
 }
 
@@ -210,11 +213,11 @@ void DFileItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
     }
 }
 
-void DFileItemDelegate::paintIconItem(QPainter *painter,
+void DFileItemDelegate::paintIconItem(bool isDragMode, QPainter *painter,
                                       const QStyleOptionViewItem &option,
                                       const QModelIndex &index) const
 {
-    if(index == focus_index || index == editing_index)
+    if((index == focus_index || index == editing_index) && !isDragMode)
         return;
 
     QStyleOptionViewItem opt = option;
@@ -301,7 +304,7 @@ void DFileItemDelegate::paintIconItem(QPainter *painter,
 
     /// draw background
 
-    if((opt.state & QStyle::State_Selected) && opt.showDecorationSelected) {
+    if(!isDragMode && (opt.state & QStyle::State_Selected) && opt.showDecorationSelected) {
         QPainterPath path;
 
         path.addRoundedRect(opt.rect, 5, 5);
@@ -355,7 +358,7 @@ void DFileItemDelegate::paintIconItem(QPainter *painter,
     }
 }
 
-void DFileItemDelegate::paintListItem(QPainter *painter,
+void DFileItemDelegate::paintListItem(bool isDragMode, QPainter *painter,
                                       const QStyleOptionViewItem &option,
                                       const QModelIndex &index) const
 {
@@ -369,7 +372,7 @@ void DFileItemDelegate::paintListItem(QPainter *painter,
 
     /// draw background
 
-    if((opt.state & QStyle::State_Selected) && opt.showDecorationSelected) {
+    if(!isDragMode && (opt.state & QStyle::State_Selected) && opt.showDecorationSelected) {
         painter->fillRect(opt.rect, QColor("#2da6f7"));
         painter->setPen(Qt::white);
     } else {
@@ -401,6 +404,9 @@ void DFileItemDelegate::paintListItem(QPainter *painter,
     painter->drawText(rect, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()),
                       index.data(role).toString());
     }
+
+    if(isDragMode)
+        return;
 
     for(int i = 1; i < columnRoleList.count(); ++i) {
         QRect rect = opt.rect;
