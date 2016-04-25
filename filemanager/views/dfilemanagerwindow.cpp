@@ -45,7 +45,6 @@ void DFileManagerWindow::initUI()
 {
     resize(DEFAULT_WINDOWS_WIDTH, DEFAULT_WINDOWS_HEIGHT);
     setMinimumWidth(MinimumWidth);
-    moveCenter();
     initCentralWidget();
 //    initStatusBar();
     setCentralWidget(m_centralWidget);

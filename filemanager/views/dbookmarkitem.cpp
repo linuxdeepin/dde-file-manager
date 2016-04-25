@@ -388,7 +388,14 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     Q_UNUSED(event);
     m_isMenuOpened = true;
     DFileMenu *menu;
-    if(m_isDefault)
+
+    if (m_url.isRecentFile()){
+        menu = FileMenuManager::createRecentLeftBarMenu();
+    }
+    else if (m_url.isTrashFile()){
+    menu = FileMenuManager::createTrashLeftBarMenu();
+    }
+    else if(m_isDefault)
         menu = FileMenuManager::createDefaultBookMarkMenu();
     else if(m_isDisk)
         menu = FileMenuManager::createDiskLeftBarMenu();

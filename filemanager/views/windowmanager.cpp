@@ -50,6 +50,10 @@ void WindowManager::showNewWindow(const DUrl &url)
     qDebug() << m_windows;
     window->show();
 
+    if (m_windows.count() == 1){
+        window->moveCenter();
+    }
+
     qApp->setActiveWindow(window);
 
     FMEvent event;
