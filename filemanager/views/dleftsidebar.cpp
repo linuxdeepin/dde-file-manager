@@ -309,6 +309,7 @@ void DLeftSideBar::toTightNav()
 {
     m_stackedWidget->setCurrentIndex(0);
     m_isTight = true;
+    this->setFixedWidth(LEFTSIDEBAR_MIN_WIDTH);
     emit moveSplitter(LEFTSIDEBAR_MIN, 1);
 }
 
@@ -317,6 +318,7 @@ void DLeftSideBar::toNormalNav()
     qDebug() << "to normal";
     m_stackedWidget->setCurrentIndex(1);
     m_isTight = false;
+    this->setFixedWidth(LEFTSIDEBAR_MAX_WIDTH);
     emit moveSplitter(LEFTSIDEBAR_NORMAL, 1);
 }
 
