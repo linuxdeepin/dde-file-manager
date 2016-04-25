@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QtConcurrent/QtConcurrentRun>
 #include <QDirIterator>
+#include <QRegularExpression>
 
 SearchController::SearchController(QObject *parent)
     : AbstractFileController(parent)
@@ -46,23 +47,43 @@ void SearchController::searchStart(const DUrl &fileUrl, QDir::Filters filter)
     const QString &targetPath = fileUrl.path();
     const QString &keyword = fileUrl.query();
 
-    QStringList nameFilter;
+    QRegularExpression regular(keyword, QRegularExpression::CaseInsensitiveOption);
 
-    nameFilter << "*" + keyword + "*";
+    QList<QString> searchPathList;
 
-    QDirIterator it(targetPath, nameFilter, QDir::NoDotAndDotDot | filter, QDirIterator::Subdirectories);
+    searchPathList << targetPath;
 
-    while (it.hasNext()) {
-        if(!activeJob.contains(fileUrl)) {
-            return;
+    qDebug() << "begin search:" << fileUrl;
+
+    while(!searchPathList.isEmpty()) {
+        QDirIterator it(searchPathList.takeAt(0), QDir::NoDotAndDotDot | filter, QDirIterator::NoIteratorFlags);
+
+        while (it.hasNext()) {
+            if(!activeJob.contains(fileUrl)) {
+                qDebug() << "stop search:" << fileUrl;
+
+                return;
+            }
+
+            QFileInfo fileInfo(it.next());
+
+            fileInfo.makeAbsolute();
+
+            if(fileInfo.isDir()) {
+                searchPathList << fileInfo.filePath();
+            }
+
+            if(fileInfo.fileName().indexOf(regular) >= 0) {
+                DUrl url = fileUrl;
+
+                url.setFragment(fileInfo.filePath());
+
+                emit childrenAdded(url);
+
+                QThread::msleep(50);
+            }
         }
-
-        QThread::msleep(50);
-
-        DUrl url = fileUrl;
-
-        url.setFragment(it.next());
-
-        emit childrenAdded(url);
     }
+
+    qDebug() << "search finished:" << fileUrl;
 }
