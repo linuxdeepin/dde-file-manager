@@ -194,12 +194,12 @@ QVector<AbstractFileInfo::MenuAction> AbstractFileInfo::menuActionList(AbstractF
     if(type == SpaceArea) {
         actionKeys.reserve(9);
 
-        actionKeys << OpenInNewWindow
+        actionKeys << NewFolder
+                   << NewDocument
                    << Separator
-                   << NewFolder << NewDocument
-                   << Separator
-                   << Paste
-                   << SelectAll
+                   << DisplayAs
+                   << SortBy
+                   << OpenInTerminal
                    << Separator
                    << Property;
     } else {
@@ -217,8 +217,19 @@ QVector<AbstractFileInfo::MenuAction> AbstractFileInfo::menuActionList(AbstractF
             }
         }
         actionKeys << Separator
-                   << Copy << Cut
-                   << Rename << Delete
+                   << Cut
+                   << Copy
+                   << CreateSoftLink
+                   << SendToDesktop
+                   << Rename;
+        QPixmap tempPixmap;
+        DUrl url = data->url;
+        if (tempPixmap.load(url.toLocalFile())){
+            actionKeys << SetAsWallpaper;
+        }
+
+        actionKeys << Separator
+                   << Delete
                    << Separator
                    << Property;
     }
@@ -226,9 +237,45 @@ QVector<AbstractFileInfo::MenuAction> AbstractFileInfo::menuActionList(AbstractF
     return actionKeys;
 }
 
+
 quint8 AbstractFileInfo::supportViewMode() const
 {
     return DFileView::AllViewMode;
+}
+
+QMap<AbstractFileInfo::MenuAction, QVector<AbstractFileInfo::MenuAction> > AbstractFileInfo::subMenuActionList() const
+{
+    QMap<MenuAction, QVector<MenuAction> > actions;
+
+    QVector<MenuAction> openwithMenuActionKeys;
+    openwithMenuActionKeys << OpenWithCustom;
+    actions.insert(OpenWith, openwithMenuActionKeys);
+
+
+    QVector<MenuAction> docmentMenuActionKeys;
+    docmentMenuActionKeys << NewWord
+                          << NewExcel
+                          << NewPowerpoint
+                          << NewText;
+    actions.insert(NewDocument, docmentMenuActionKeys);
+
+    QVector<MenuAction> displayAsMenuActionKeys;
+    displayAsMenuActionKeys << IconView
+                          << ListView
+                          << ExtendView;
+
+    actions.insert(DisplayAs, displayAsMenuActionKeys);
+
+
+    QVector<MenuAction> sortByMenuActionKeys;
+    sortByMenuActionKeys << Name
+                          << Size
+                          << Type
+                          << CreatedDate
+                          << LastModifiedDate;
+    actions.insert(SortBy, sortByMenuActionKeys);
+
+    return actions;
 }
 
 QT_BEGIN_NAMESPACE

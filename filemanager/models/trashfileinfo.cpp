@@ -82,21 +82,26 @@ QVector<AbstractFileInfo::MenuAction> TrashFileInfo::menuActionList(AbstractFile
     if(type == SpaceArea) {
         actionKeys.reserve(7);
 
-        actionKeys << MenuAction::OpenInNewWindow
-                   << MenuAction::Separator
-                   << MenuAction::Paste
-                   << MenuAction::SelectAll
+        actionKeys << MenuAction::RestoreAll
                    << MenuAction::ClearTrash
+                   << MenuAction::Separator
+                   << MenuAction::DisplayAs
+                   << MenuAction::SortBy
                    << MenuAction::Separator
                    << MenuAction::Property;
     } else {
         actionKeys.reserve(12);
 
-        actionKeys << MenuAction::Open << (isDir() ? OpenInNewWindow : OpenWith)
-                   << MenuAction::Separator
-                   << MenuAction::Compress << MenuAction::Separator
-                   << MenuAction::Copy << MenuAction::Cut << MenuAction::Separator
-                   << MenuAction::Restore << MenuAction::CompleteDeletion
+        actionKeys << MenuAction::Open;
+
+        if(isDir()){
+            actionKeys << MenuAction::OpenInNewWindow;
+        }else{
+            actionKeys << MenuAction::OpenWith;
+        }
+        actionKeys << MenuAction::Separator
+                   << MenuAction::Restore
+                   << MenuAction::CompleteDeletion
                    << MenuAction::Separator
                    << MenuAction::Property;
     }

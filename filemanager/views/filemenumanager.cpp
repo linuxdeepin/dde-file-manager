@@ -22,7 +22,9 @@ DFileMenu *FileMenuManager::createRecentLeftBarMenu(const QVector<MenuAction> &d
 
     actionKeys.reserve(2);
 
-    actionKeys << MenuAction::OpenInNewWindow << MenuAction::ClearRecent;
+    actionKeys << MenuAction::OpenInNewWindow
+               << MenuAction::ClearRecent
+               << MenuAction::Property;
 
     return genereteMenuByKeys(actionKeys, disableList);
 }
@@ -34,7 +36,8 @@ DFileMenu *FileMenuManager::createDefaultBookMarkMenu()
 
     actionKeys.reserve(7);
 
-    actionKeys << MenuAction::OpenInNewWindow;
+    actionKeys << MenuAction::OpenInNewWindow
+               << MenuAction::Property;
 
     return genereteMenuByKeys(actionKeys, disableList);
 }
@@ -47,7 +50,8 @@ DFileMenu *FileMenuManager::createCustomBookMarkMenu(const QVector<MenuAction> &
 
     actionKeys << MenuAction::OpenInNewWindow
                << MenuAction::Rename
-               << MenuAction::Remove;
+               << MenuAction::Remove
+               << MenuAction::Property;
 
     return genereteMenuByKeys(actionKeys, disableList);
 }
@@ -59,7 +63,8 @@ DFileMenu *FileMenuManager::createTrashLeftBarMenu(const QVector<MenuAction> &di
     actionKeys.reserve(4);
 
     actionKeys << MenuAction::OpenInNewWindow
-               << MenuAction::ClearTrash;
+               << MenuAction::ClearTrash
+               << MenuAction::Property;
 
     return genereteMenuByKeys(actionKeys, disableList);
 }
@@ -181,6 +186,7 @@ void FileMenuManager::initData()
     m_actionKeys[MenuAction::Open] = QObject::tr("Open");
     m_actionKeys[MenuAction::OpenInNewWindow] = QObject::tr("Open in new window");
     m_actionKeys[MenuAction::OpenWith] = QObject::tr("Open with");
+    m_actionKeys[MenuAction::OpenWithCustom] = QObject::tr("Others");
     m_actionKeys[MenuAction::OpenFileLocation] = QObject::tr("Open file loaction");
     m_actionKeys[MenuAction::Compress] = QObject::tr("Compress");
     m_actionKeys[MenuAction::Decompress] = QObject::tr("Decompress");
@@ -190,7 +196,9 @@ void FileMenuManager::initData()
     m_actionKeys[MenuAction::Paste] = QObject::tr("Paste");
     m_actionKeys[MenuAction::Rename] = QObject::tr("Rename");
     m_actionKeys[MenuAction::Remove] = QObject::tr("Remove");
-    m_actionKeys[MenuAction::Delete] = QObject::tr("Delete");
+    m_actionKeys[MenuAction::CreateSoftLink] = QObject::tr("Create link");
+    m_actionKeys[MenuAction::SendToDesktop] = QObject::tr("Send to desktop");
+    m_actionKeys[MenuAction::Delete] = QObject::tr("Throw to trash");
     m_actionKeys[MenuAction::CompleteDeletion] = QObject::tr("Complete deletion");
     m_actionKeys[MenuAction::Property] = QObject::tr("Property");
 
@@ -203,7 +211,13 @@ void FileMenuManager::initData()
     m_actionKeys[MenuAction::DisplayAs] = QObject::tr("Display As");
     m_actionKeys[MenuAction::SortBy] = QObject::tr("Sort By");
     m_actionKeys[MenuAction::NewDocument] = QObject::tr("New Document");
+    m_actionKeys[MenuAction::NewWord] = QObject::tr("Word");
+    m_actionKeys[MenuAction::NewExcel] = QObject::tr("Excel");
+    m_actionKeys[MenuAction::NewPowerpoint] = QObject::tr("PowerPoint");
+    m_actionKeys[MenuAction::NewText] = QObject::tr("Text");
+    m_actionKeys[MenuAction::OpenInTerminal] = QObject::tr("Open in terminal");
     m_actionKeys[MenuAction::Restore] = QObject::tr("Restore");
+    m_actionKeys[MenuAction::RestoreAll] = QObject::tr("Restore all");
     m_actionKeys[MenuAction::CompleteDeletion] = QObject::tr("Complete Deletion");
     m_actionKeys[MenuAction::Mount] = QObject::tr("Mount");
     m_actionKeys[MenuAction::Unmount]= QObject::tr("Unmount");
@@ -215,17 +229,17 @@ void FileMenuManager::initData()
     m_actionKeys[MenuAction::Help] = QObject::tr("Help");
     m_actionKeys[MenuAction::About] = QObject::tr("About");
     m_actionKeys[MenuAction::Exit] = QObject::tr("Exit");
-    m_actionKeys[MenuAction::IconView] = QObject::tr("Icon View");
-    m_actionKeys[MenuAction::ListView] = QObject::tr("List View");
+    m_actionKeys[MenuAction::IconView] = QObject::tr("Icon");
+    m_actionKeys[MenuAction::ListView] = QObject::tr("List");
+    m_actionKeys[MenuAction::ExtendView] = QObject::tr("Extend");
+    m_actionKeys[MenuAction::SetAsWallpaper] = QObject::tr("Set as wallpaper");
 }
 
 void FileMenuManager::initActions()
 {
     foreach (MenuAction key, m_actionKeys.keys()) {
         DAction* action = new DAction(m_actionKeys.value(key), 0);
-
         action->setData(key);
-
         m_actions.insert(key, action);
     }
 }
@@ -248,7 +262,6 @@ DFileMenu *FileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
             menu->addSeparator();
         }else{
             DAction *action = m_actions.value(key);
-
             if(!action)
                 continue;
 
@@ -279,6 +292,7 @@ void FileMenuManager::actionTriggered(DAction *action)
 
     if(urls.size() > 0)
         fileUrl = urls.first();
+
 
     switch(type)
     {

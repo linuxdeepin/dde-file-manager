@@ -316,8 +316,9 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
 
         const AbstractFileInfo *info = model()->fileInfo(index);
         const QVector<MenuAction> &actions = info->menuActionList(AbstractFileInfo::SpaceArea);
+        const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList();
 
-        menu = FileMenuManager::genereteMenuByKeys(actions, FileMenuManager::getDisableActionList(model()->getUrlByIndex(index)));
+        menu = FileMenuManager::genereteMenuByKeys(actions, FileMenuManager::getDisableActionList(model()->getUrlByIndex(index)), false, subActions);
         DUrlList urls;
         urls.append(currentUrl());
         menu->setUrls(urls);
@@ -327,8 +328,9 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
 
         const AbstractFileInfo *info = model()->fileInfo(index);
         const QVector<MenuAction> &actions = info->menuActionList(AbstractFileInfo::Normal);
+        const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList();
 
-        menu = FileMenuManager::genereteMenuByKeys(actions, FileMenuManager::getDisableActionList(model()->getUrlByIndex(index)));
+        menu = FileMenuManager::genereteMenuByKeys(actions, FileMenuManager::getDisableActionList(model()->getUrlByIndex(index)), false, subActions);
         menu->setWindowId(m_windowId);
 
         DUrlList list = selectedUrls();
