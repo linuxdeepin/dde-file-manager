@@ -82,9 +82,7 @@ QVector<AbstractFileInfo::MenuAction> RecentFileInfo::menuActionList(AbstractFil
         actionKeys << MenuAction::Open << MenuAction::OpenWith
                    << MenuAction::OpenFileLocation
                    << MenuAction::Separator
-                   << MenuAction::Compress << MenuAction::Separator
-                   << MenuAction::Copy << MenuAction::Cut
-                   << MenuAction::Rename << MenuAction::Remove
+                   << MenuAction::Remove
                    << MenuAction::Separator
                    << MenuAction::Property;
     }

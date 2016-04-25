@@ -14,6 +14,7 @@ public:
         Open,
         OpenInNewWindow,
         OpenWith,
+        OpenWithCustom,
         OpenFileLocation,
         Compress,
         Decompress,
@@ -23,6 +24,8 @@ public:
         Paste,
         Rename,
         Remove,
+        CreateSoftLink,
+        SendToDesktop,
         Delete,
         Property,
         NewFolder,
@@ -35,7 +38,13 @@ public:
         DisplayAs, /// sub menu
         SortBy, /// sub menu
         NewDocument, /// sub menu
+        NewWord, /// sub menu
+        NewExcel, /// sub menu
+        NewPowerpoint, /// sub menu
+        NewText, /// sub menu
+        OpenInTerminal,
         Restore,
+        RestoreAll,
         CompleteDeletion,
         Mount,
         Unmount,
@@ -48,7 +57,9 @@ public:
         About,
         Exit,
         IconView,
-        ListView
+        ListView,
+        ExtendView,
+        SetAsWallpaper
     };
 
     enum MenuType {
@@ -122,6 +133,7 @@ public:
 
     virtual DUrl parentUrl() const;
     virtual QVector<MenuAction> menuActionList(MenuType type = Normal) const;
+    virtual QMap<MenuAction, QVector<MenuAction> > subMenuActionList() const;
 
     virtual quint8 supportViewMode() const;
 
