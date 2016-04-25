@@ -49,7 +49,7 @@ void DFileManagerWindow::initUI()
 //    initStatusBar();
     setCentralWidget(m_centralWidget);
     setStyleSheet(getQssFromFile(":/qss/qss/filemanager.qss"));
-    window()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 }
 
 void DFileManagerWindow::initTitleBar()
