@@ -140,12 +140,13 @@ DUrl DUrl::fromBookMarkFile(const QString &filePath)
     return url;
 }
 
-DUrl DUrl::fromSearchFile(const QString &filePath)
+DUrl DUrl::fromSearchFile(const QString &filePath, const QString &keyword)
 {
     DUrl url;
 
     url.setScheme(SEARCH_SCHEME, false);
     url.setPath(filePath);
+    url.setQuery(keyword);
 
     return url;
 }
@@ -227,7 +228,7 @@ bool DUrl::operator ==(const DUrl &url) const
 
     return  m_virtualPath == url.m_virtualPath &&
             scheme() == url.scheme() &&
-            fragment() == url.fragment();
+            fragment() == url.fragment() &&
             query() == url.query() &&
             userName() == url.userName() &&
             password() == url.password() &&

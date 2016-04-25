@@ -38,7 +38,7 @@ public:
     static DUrl fromTrashFile(const QString &filePath);
     static DUrl fromRecentFile(const QString &filePath);
     static DUrl fromBookMarkFile(const QString &filePath);
-    static DUrl fromSearchFile(const QString &filePath);
+    static DUrl fromSearchFile(const QString &filePath, const QString &keyword = QString());
     static DUrl fromComputerFile(const QString &filePath);
     static DUrlList fromStringList(const QStringList &urls, ParsingMode mode = TolerantMode);
     static DUrlList fromQUrlList(const QList<QUrl> &urls);
