@@ -7,18 +7,7 @@
 
 #include "durl.h"
 
-class FileInfoData :  public QSharedData
-{
-public:
-    DUrl url;
-    mutable QString mimeTypeName;
-    QFileInfo fileInfo;
-
-private:
-    friend class AbstractFileInfo;
-};
-
-class AbstractFileInfo
+class AbstractFileInfo : public QSharedData
 {
 public:
     enum MenuAction {
@@ -70,7 +59,6 @@ public:
     AbstractFileInfo();
     AbstractFileInfo(const DUrl &url);
     AbstractFileInfo(const QString &url);
-    AbstractFileInfo(const AbstractFileInfo &other);
 
     virtual ~AbstractFileInfo();
 
@@ -135,9 +123,20 @@ public:
     virtual DUrl parentUrl() const;
     virtual QVector<MenuAction> menuActionList(MenuType type = Normal) const;
 
+    virtual quint8 supportViewMode() const;
+
 protected:
-    QSharedDataPointer<FileInfoData> data;
+    struct FileInfoData
+    {
+        DUrl url;
+        mutable QString mimeTypeName;
+        QFileInfo fileInfo;
+    };
+
+    FileInfoData *data;
 };
+
+typedef QSharedDataPointer<AbstractFileInfo> AbstractFileInfoPointer;
 
 QT_BEGIN_NAMESPACE
 QDebug operator<<(QDebug deg, const AbstractFileInfo &info);

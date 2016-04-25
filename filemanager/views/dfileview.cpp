@@ -232,6 +232,11 @@ void DFileView::setIconSize(const QSize &size)
     updateViewportMargins();
 }
 
+bool DFileView::testViewMode(ViewModes modes, DFileView::ViewMode mode)
+{
+    return (modes | mode) == modes;
+}
+
 void DFileView::cd(const FMEvent &event)
 {
     if(event.windowId() != windowId())
@@ -272,72 +277,12 @@ void DFileView::select(const FMEvent &event)
     selectionModel()->select(index, QItemSelectionModel::Select);
 }
 
-void DFileView::switchToListMode()
+void DFileView::setViewMode(DFileView::ViewMode mode)
 {
-    if(!isIconViewMode())
-        return;
+    if(mode != m_defaultViewMode)
+        m_defaultViewMode = mode;
 
-    itemDelegate()->hideAllIIndexWidget();
-
-    if(!m_headerView) {
-        m_headerView = new QHeaderView(Qt::Horizontal);
-        m_headerView->setModel(model());
-        m_headerView->setHighlightSections(true);
-        m_headerView->setSectionsClickable(true);
-        m_headerView->setSortIndicatorShown(true);
-        m_headerView->setSectionResizeMode(QHeaderView::Fixed);
-        m_headerView->setSectionResizeMode(0, QHeaderView::Stretch);
-        m_headerView->setDefaultAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-        m_headerView->setDefaultSectionSize(100);
-        m_headerView->setMinimumSectionSize(200);
-        m_headerView->resizeSection(2, 50);
-
-        if(selectionModel()) {
-            m_headerView->setSelectionModel(selectionModel());
-        }
-
-        connect(m_headerView, &QHeaderView::sectionResized,
-                this, static_cast<void (DFileView::*)()>(&DFileView::update));
-        connect(m_headerView, &QHeaderView::sortIndicatorChanged,
-                model(), &QAbstractItemModel::sort);
-    }
-
-    for(int i = 0; i < m_headerView->count(); ++i) {
-        m_columnRoles << model()->headerDataToRole(model()->headerData(i, m_headerView->orientation(), Qt::DisplayRole));
-        m_logicalIndexs << i;
-
-        if(m_columnRoles.last() == DFileSystemModel::FileNameRole) {
-            m_headerView->resizeSection(i, width() - (m_headerView->count() - 1) * m_headerView->defaultSectionSize());
-        }
-
-        QSignalBlocker blocker(m_headerView);
-        Q_UNUSED(blocker)
-        m_headerView->setSortIndicator(i, model()->sortOrder());
-    }
-
-    addHeaderWidget(m_headerView);
-
-    setIconSize(QSize(30, 30));
-    setOrientation(QListView::TopToBottom, false);
-    setSpacing(0);
-}
-
-void DFileView::switchToIconMode()
-{
-    if(isIconViewMode())
-        return;
-
-    if(m_headerView) {
-        removeHeaderWidget(0);
-
-        m_headerView = Q_NULLPTR;
-    }
-
-    m_columnRoles.clear();
-
-    setIconSize(currentIconSize());
-    setOrientation(QListView::LeftToRight, true);
-    setSpacing(5);
+    switchViewMode(mode);
 }
 
 void DFileView::sort(int windowId, int role)
@@ -604,8 +549,6 @@ bool DFileView::setCurrentUrl(const DUrl &fileUrl)
         if(!fileUrl.fragment().isEmpty()) {
             return false;
         }
-
-        switchToListMode();
     }
 
     QModelIndex index = model()->index(fileUrl);
@@ -615,6 +558,24 @@ bool DFileView::setCurrentUrl(const DUrl &fileUrl)
 
     setRootIndex(index);
     model()->setActiveIndex(index);
+
+    AbstractFileInfo *info = model()->fileInfo(fileUrl);
+
+    if(info) {
+        ViewModes modes = (ViewModes)info->supportViewMode();
+
+        if(!testViewMode(modes, m_defaultViewMode)) {
+            if(testViewMode(modes, IconMode)) {
+                switchViewMode(IconMode);
+            } else if(testViewMode(modes, ListMode)) {
+                switchViewMode(ListMode);
+            } else if(testViewMode(modes, ExtendMode)) {
+                switchViewMode(ExtendMode);
+            }
+        } else {
+            switchViewMode(m_defaultViewMode);
+        }
+    }
 
     emit currentUrlChanged(fileUrl);
 
@@ -638,4 +599,82 @@ void DFileView::updateViewportMargins()
         margins.setRight(10);
         setViewportMargins(margins);
     }
+}
+
+void DFileView::switchViewMode(DFileView::ViewMode mode)
+{
+    if(m_currentViewMode == mode) {
+        return;
+    }
+
+    m_currentViewMode = mode;
+
+    switch (mode) {
+    case ListMode: {
+        itemDelegate()->hideAllIIndexWidget();
+
+        if(!m_headerView) {
+            m_headerView = new QHeaderView(Qt::Horizontal);
+            m_headerView->setModel(model());
+            m_headerView->setHighlightSections(true);
+            m_headerView->setSectionsClickable(true);
+            m_headerView->setSortIndicatorShown(true);
+            m_headerView->setSectionResizeMode(QHeaderView::Fixed);
+            m_headerView->setSectionResizeMode(0, QHeaderView::Stretch);
+            m_headerView->setDefaultAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+            m_headerView->setDefaultSectionSize(100);
+            m_headerView->setMinimumSectionSize(200);
+            m_headerView->resizeSection(2, 50);
+
+            if(selectionModel()) {
+                m_headerView->setSelectionModel(selectionModel());
+            }
+
+            connect(m_headerView, &QHeaderView::sectionResized,
+                    this, static_cast<void (DFileView::*)()>(&DFileView::update));
+            connect(m_headerView, &QHeaderView::sortIndicatorChanged,
+                    model(), &QAbstractItemModel::sort);
+        }
+
+        for(int i = 0; i < m_headerView->count(); ++i) {
+            m_columnRoles << model()->headerDataToRole(model()->headerData(i, m_headerView->orientation(), Qt::DisplayRole));
+            m_logicalIndexs << i;
+
+            if(m_columnRoles.last() == DFileSystemModel::FileNameRole) {
+                m_headerView->resizeSection(i, width() - (m_headerView->count() - 1) * m_headerView->defaultSectionSize());
+            }
+
+            QSignalBlocker blocker(m_headerView);
+            Q_UNUSED(blocker)
+            m_headerView->setSortIndicator(i, model()->sortOrder());
+        }
+
+        addHeaderWidget(m_headerView);
+
+        setIconSize(QSize(30, 30));
+        setOrientation(QListView::TopToBottom, false);
+        setSpacing(0);
+
+        break;
+    }
+    case IconMode: {
+        if(m_headerView) {
+            removeHeaderWidget(0);
+
+            m_headerView = Q_NULLPTR;
+        }
+
+        m_columnRoles.clear();
+
+        setIconSize(currentIconSize());
+        setOrientation(QListView::LeftToRight, true);
+        setSpacing(5);
+
+        break;
+    }
+    default:
+        break;
+    }
+
+    emit viewModeChanged(mode);
 }

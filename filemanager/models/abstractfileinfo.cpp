@@ -1,8 +1,11 @@
 #include "abstractfileinfo.h"
 
+#include "../views/dfileview.h"
+
+#include "../shutil/fileutils.h"
+
 #include <QDateTime>
 #include <QDebug>
-#include "../shutil/fileutils.h"
 
 AbstractFileInfo::AbstractFileInfo()
     : data(new FileInfoData)
@@ -24,15 +27,9 @@ AbstractFileInfo::AbstractFileInfo(const QString &url)
     data->fileInfo.setFile(data->url.path());
 }
 
-AbstractFileInfo::AbstractFileInfo(const AbstractFileInfo &other)
-    : data(other.data)
-{
-
-}
-
 AbstractFileInfo::~AbstractFileInfo()
 {
-
+    delete data;
 }
 
 void AbstractFileInfo::setUrl(const DUrl &url)
@@ -227,6 +224,11 @@ QVector<AbstractFileInfo::MenuAction> AbstractFileInfo::menuActionList(AbstractF
     }
 
     return actionKeys;
+}
+
+quint8 AbstractFileInfo::supportViewMode() const
+{
+    return DFileView::AllViewMode;
 }
 
 QT_BEGIN_NAMESPACE

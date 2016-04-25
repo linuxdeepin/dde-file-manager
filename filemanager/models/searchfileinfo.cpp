@@ -1,5 +1,7 @@
 #include "searchfileinfo.h"
 
+#include "../views/dfileview.h"
+
 #include <QIcon>
 
 SearchFileInfo::SearchFileInfo()
@@ -66,4 +68,12 @@ QIcon SearchFileInfo::fileIcon() const
 DUrl SearchFileInfo::parentUrl() const
 {
     return m_parentUrl;
+}
+
+quint8 SearchFileInfo::supportViewMode() const
+{
+    if(data->url.isSearchFile())
+        return DFileView::ListMode;
+
+    return FileInfo::supportViewMode();
 }
