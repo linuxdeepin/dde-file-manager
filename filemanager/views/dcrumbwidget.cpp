@@ -59,7 +59,8 @@ void DCrumbWidget::prepareCrumbs(const DUrl &path)
         else
         {
             list.append(path.toLocalFile().split("/"));
-            list.replace(0, "/");
+            if(path.isLocalFile())
+                list.replace(0, "/");
             list.removeAll("");
         }
         addCrumb(list);
@@ -304,7 +305,8 @@ void DCrumbWidget::calcCrumbPath(int index, bool fixed)
                m_group.buttons().count() > 3 &&
                len < m_group.buttons().count() - 1 && !fixed)
             {
-                calcCrumbPath(count, true);
+
+                calcCrumbPath(count - 1, true);
                 m_needArrows = true;
                 break;
             }
@@ -331,7 +333,7 @@ int DCrumbWidget::preCalcCrumb()
     {
         DCrumbButton * button = (DCrumbButton*)m_group.buttons().at(i);
         accum += button->rect().width();
-        if(accum > spaceLeft && i < 3)
+        if(accum > spaceLeft)
             return count;
         count++;
     }
