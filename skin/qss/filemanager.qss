@@ -164,6 +164,26 @@ QPushButton#forwardButton{
     border-radius: 2px;
 }
 
+QPushButton#leftArrow:hover{
+    background-color:#2ca7f8;
+}
+
+QPushButton#leftArrow{
+    background-color:white;
+    border-right: 1px;
+    color: black;
+}
+
+QPushButton#rightArrow:hover{
+    background-color:#2ca7f8;
+}
+
+QPushButton#rightArrow{
+    background-color:white;
+    border: 1px;
+    color: black;
+}
+
 QPushButton#iconViewButton{
     background-color:white;
     border: 1px;

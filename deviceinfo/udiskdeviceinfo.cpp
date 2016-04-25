@@ -100,7 +100,7 @@ bool UDiskDeviceInfo::update()
     res = setIsMounted(mounts.count() != 0) || res;
 
     res = setIsEjectable(m_driveIface->property("Ejectable").toBool()) || res;
-    res = setSize(m_driveIface->property("Size").toULongLong()) || res;
+    res = setSize(m_blockIface->property("Size").toULongLong()) || res;
     res = setVendor(m_driveIface->property("Vendor").toString()) || res;
     res = setModel(m_driveIface->property("Model").toString()) || res;
     res = setFileSystem(m_blockIface->property("IdType").toString()) || res;

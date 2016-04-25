@@ -4,9 +4,11 @@
 #include <QFrame>
 #include <QHBoxLayout>
 #include <QButtonGroup>
+#include <QPushButton>
 
 class FMEvent;
 class DCrumbButton;
+class DStateButton;
 
 class DCrumbWidget : public QFrame
 {
@@ -20,16 +22,34 @@ public:
     QString back();
     QString path();
 private:
+    void initUI();
+    void prepareCrumbs(const QString &path);
     bool hasPath(QString path);
     bool isInHome(QString path);
     bool isHomeFolder(QString path);
     bool isRootFolder(QString path);
+    void calcCrumbPath(int index, bool fixed);
+    int preCalcCrumb();
+    void createCrumbs();
+    void createArrows();
+    int nextLeftCrumbs();
+    int nextRightCrumbs();
+    bool rearchLeftEnd();
+    bool rearchRightEnd();
     QHBoxLayout * m_buttonLayout;
     QButtonGroup m_group;
     QString m_path;
     QString m_homePath;
+    DStateButton * m_leftArrow = NULL;
+    DStateButton * m_rightArrow = NULL;
+    QList<QPushButton *> m_buttons;
+    bool m_needArrows = false;
+    int m_prevCheckedId = -1;
 public slots:
     void buttonPressed();
+    void crumbModified();
+    void crumbMoveToLeft();
+    void crumbMoveToRight();
 signals:
     void crumbSelected(const FMEvent &event);
 };
