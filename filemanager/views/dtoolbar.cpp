@@ -80,10 +80,11 @@ void DToolBar::initAddressToolBar()
     backForwardLayout->setSpacing(0);
     backForwardLayout->setContentsMargins(0, 0, 0, 0);
 
+
+    QFrame * crumbAndSearch = new QFrame;
     m_searchBar = new DSearchBar;
     m_searchBar->setPlaceholderText("Search or enter address");
     m_searchBar->setAlignment(Qt::AlignHCenter);
-
     m_crumbWidget = new DCrumbWidget;
 
     QHBoxLayout * comboLayout = new QHBoxLayout;
@@ -92,9 +93,11 @@ void DToolBar::initAddressToolBar()
     comboLayout->setSpacing(0);
     comboLayout->setContentsMargins(0, 0, 0, 0);
 
+    crumbAndSearch->setLayout(comboLayout);
+
     QHBoxLayout* mainLayout = new QHBoxLayout;
     mainLayout->addLayout(backForwardLayout);
-    mainLayout->addLayout(comboLayout);
+    mainLayout->addWidget(crumbAndSearch);
     mainLayout->setContentsMargins(5, 5, 5, 5);
     mainLayout->setSpacing(10);
     m_addressToolBar->setLayout(mainLayout);
