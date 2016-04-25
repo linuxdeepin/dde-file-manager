@@ -116,7 +116,8 @@ HEADERS += \
     filemanager/controllers/searchcontroller.h \
     filemanager/models/searchfileinfo.h\
     filemanager/shutil/standardpath.h \
-    filemanager/dialogs/basedialog.h
+    filemanager/dialogs/basedialog.h \
+    filemanager/controllers/fmsortmanager.h
 
 
 SOURCES += \
@@ -196,7 +197,8 @@ SOURCES += \
     filemanager/controllers/searchcontroller.cpp \
     filemanager/models/searchfileinfo.cpp\
     filemanager/shutil/standardpath.cpp \
-    filemanager/dialogs/basedialog.cpp
+    filemanager/dialogs/basedialog.cpp \
+    filemanager/controllers/fmsortmanager.cpp
 
 
 

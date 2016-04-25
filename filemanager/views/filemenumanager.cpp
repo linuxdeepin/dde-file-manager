@@ -13,6 +13,8 @@
 
 QMap<MenuAction, QString> FileMenuManager::m_actionKeys;
 QMap<MenuAction, DAction*> FileMenuManager::m_actions;
+QVector<MenuAction> FileMenuManager::m_sortActionTypes;
+
 
 DFileMenu *FileMenuManager::createRecentLeftBarMenu(const QVector<MenuAction> &disableList)
 {
@@ -32,15 +34,7 @@ DFileMenu *FileMenuManager::createDefaultBookMarkMenu()
 
     actionKeys.reserve(7);
 
-    actionKeys << MenuAction::Open
-               << MenuAction::OpenInNewWindow
-               << MenuAction::Separator
-               << MenuAction::Remove
-               << MenuAction::Rename
-               << MenuAction::Separator
-               << MenuAction::Property;
-    disableList << MenuAction::Remove
-                << MenuAction::Rename;
+    actionKeys << MenuAction::OpenInNewWindow;
 
     return genereteMenuByKeys(actionKeys, disableList);
 }
@@ -51,16 +45,9 @@ DFileMenu *FileMenuManager::createCustomBookMarkMenu(const QVector<MenuAction> &
 
     actionKeys.reserve(10);
 
-    actionKeys << MenuAction::Open
-               << MenuAction::OpenInNewWindow
-               << MenuAction::Separator
-               << MenuAction::Copy
-               << MenuAction::Cut
+    actionKeys << MenuAction::OpenInNewWindow
                << MenuAction::Rename
-               << MenuAction::Separator
-               << MenuAction::Remove
-               << MenuAction::Separator
-               << MenuAction::Property;
+               << MenuAction::Remove;
 
     return genereteMenuByKeys(actionKeys, disableList);
 }
@@ -71,8 +58,8 @@ DFileMenu *FileMenuManager::createTrashLeftBarMenu(const QVector<MenuAction> &di
 
     actionKeys.reserve(4);
 
-    actionKeys << MenuAction::Open << MenuAction::OpenInNewWindow
-               << MenuAction::Separator << MenuAction::ClearTrash;
+    actionKeys << MenuAction::OpenInNewWindow
+               << MenuAction::ClearTrash;
 
     return genereteMenuByKeys(actionKeys, disableList);
 }
@@ -130,8 +117,9 @@ DFileMenu *FileMenuManager::createToolBarSortMenu(const QVector<MenuAction> &dis
                << MenuAction::Type
                << MenuAction::CreatedDate
                << MenuAction::LastModifiedDate;
-
-    return genereteMenuByKeys(actionKeys, disableList, true);
+    m_sortActionTypes = actionKeys;
+    DFileMenu *menu = genereteMenuByKeys(actionKeys, disableList, true);
+    return menu;
 }
 
 DFileMenu *FileMenuManager::createListViewHeaderMenu(const QVector<MenuAction> &disableList)
@@ -145,7 +133,8 @@ DFileMenu *FileMenuManager::createListViewHeaderMenu(const QVector<MenuAction> &
                << MenuAction::CreatedDate
                << MenuAction::LastModifiedDate;
 
-    return genereteMenuByKeys(actionKeys, disableList, true);
+    DFileMenu *menu = genereteMenuByKeys(actionKeys, disableList, true);
+    return menu;
 }
 
 QVector<MenuAction> FileMenuManager::getDisableActionList(const DUrl &fileUrl)
@@ -402,18 +391,23 @@ void FileMenuManager::actionTriggered(DAction *action)
         break;
     case MenuAction::Name:
         emit fileSignalManager->requestViewSort(menu->getWindowId(), Global::FileDisplayNameRole);
+        checkSortMenu(type);
         break;
     case MenuAction::Size:
         emit fileSignalManager->requestViewSort(menu->getWindowId(), Global::FileSizeRole);
+        checkSortMenu(type);
         break;
     case MenuAction::Type:
         fileSignalManager->requestViewSort(menu->getWindowId(), Global::FileMimeTypeRole);
+        checkSortMenu(type);
         break;
     case MenuAction::CreatedDate:
         emit fileSignalManager->requestViewSort(menu->getWindowId(), Global::FileCreated);
+        checkSortMenu(type);
         break;
     case MenuAction::LastModifiedDate:
         emit fileSignalManager->requestViewSort(menu->getWindowId(), Global::FileLastModified);
+        checkSortMenu(type);
         break;
     case MenuAction::Property: {
         FMEvent event;
@@ -432,4 +426,14 @@ void FileMenuManager::actionTriggered(DAction *action)
         qDebug() << "unknown action type";
         break;
     }
+}
+
+void FileMenuManager::checkSortMenu(MenuAction type)
+{
+    foreach (MenuAction actionType, m_sortActionTypes) {
+        if (m_actions.contains(actionType)){
+            m_actions.value(actionType)->setChecked(false);
+        }
+    }
+    m_actions.value(type)->setChecked(true);
 }

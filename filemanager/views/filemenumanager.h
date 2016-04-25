@@ -48,9 +48,11 @@ private:
 
     static QMap<MenuAction, QString> m_actionKeys;
     static QMap<MenuAction, DAction*> m_actions;
+    static QVector<MenuAction> m_sortActionTypes;
 
 public slots:
     void actionTriggered(DAction * action);
+    void checkSortMenu(MenuAction type);
 
 signals:
 
