@@ -6,6 +6,7 @@
 #include "../app/fmevent.h"
 #include "windowmanager.h"
 #include "dstatebutton.h"
+#include "../app/global.h"
 
 DCrumbWidget::DCrumbWidget(QWidget *parent)
     : QFrame(parent)
@@ -25,30 +26,46 @@ void DCrumbWidget::initUI()
     setFixedHeight(20);
 }
 
-void DCrumbWidget::prepareCrumbs(const QString &path)
+void DCrumbWidget::prepareCrumbs(const DUrl &path)
 {
-    if(path.isEmpty() || path.at(0) != '/')
-        return;
     m_path = path;
-    QStringList list;
-    if(isInHome(path))
+    clear();
+    if(path.isRecentFile())
     {
-        QString tmpPath = path;
-        tmpPath.replace(m_homePath, "");
-        list.append(tmpPath.split("/"));
-        list.insert(0, m_homePath);
-        list.removeAll("");
+        addRecentCrumb();
+        calcCrumbPath(0, false);
+    }
+    else if(path.isComputerFile())
+    {
+        addComputerCrumb();
+        calcCrumbPath(0, false);
+    }
+    else if(path.isTrashFile())
+    {
+        addTrashCrumb();
+        calcCrumbPath(0, false);
     }
     else
     {
-        list.append(path.split("/"));
-        list.replace(0, "/");
-        list.removeAll("");
+        QStringList list;
+        if(isInHome(path.toLocalFile()))
+        {
+            QString tmpPath = path.toLocalFile();
+            tmpPath.replace(m_homePath, "");
+            list.append(tmpPath.split("/"));
+            list.insert(0, m_homePath);
+            list.removeAll("");
+        }
+        else
+        {
+            list.append(path.toLocalFile().split("/"));
+            list.replace(0, "/");
+            list.removeAll("");
+        }
+        addCrumb(list);
+        if(m_prevCheckedId != -1)
+            m_group.button(m_prevCheckedId)->setChecked(true);
     }
-    clear();
-    addCrumb(list);
-    if(m_prevCheckedId != -1)
-        m_group.button(m_prevCheckedId)->setChecked(true);
 }
 
 void DCrumbWidget::addCrumb(const QString &text)
@@ -83,30 +100,30 @@ void DCrumbWidget::addCrumb(const QStringList &list)
     m_group.buttons().last()->setChecked(true);
 }
 
-void DCrumbWidget::setCrumb(const QString &path)
+void DCrumbWidget::setCrumb(const DUrl &path)
 {
-    if(path.isEmpty() || path.at(0) != '/')
-        return;
     m_path = path;
-    QStringList list;
-    if(isInHome(path))
+    m_needArrows = false;
+    clear();
+    if(path.isRecentFile())
     {
-        QString tmpPath = path;
-        tmpPath.replace(m_homePath, "");
-        list.append(tmpPath.split("/"));
-        list.insert(0, m_homePath);
-        list.removeAll("");
+        addRecentCrumb();
+        calcCrumbPath(0, false);
+    }
+    else if(path.isComputerFile())
+    {
+        addComputerCrumb();
+        calcCrumbPath(0, false);
+    }
+    else if(path.isTrashFile())
+    {
+        addTrashCrumb();
+        addLocalCrumbs(path);
     }
     else
     {
-        list.append(path.split("/"));
-        list.replace(0, "/");
-        list.removeAll("");
+        addLocalCrumbs(path);
     }
-    m_needArrows = false;
-    clear();
-    addCrumb(list);
-    calcCrumbPath(list.count() - 1, false);
     createCrumbs();
     repaint();
 }
@@ -131,13 +148,13 @@ void DCrumbWidget::clear()
 QString DCrumbWidget::back()
 {
     if(m_group.buttons().size() <= 1)
-        return m_path;
+        return m_path.toLocalFile();
     m_group.buttons().last()->deleteLater();
     m_group.buttons().removeLast();
     m_group.buttons().last()->setChecked(true);
 
     QString tabText;
-    QStringList list = m_path.split("/");
+    QStringList list = m_path.toLocalFile().split("/");
     list.replace(0, "/");
     list.removeAll("");
 
@@ -148,18 +165,104 @@ QString DCrumbWidget::back()
     if(tabText != "/")
         tabText.remove(tabText.length() -1 ,1);
 
-    m_path = tabText;
-    return m_path;
+    m_path.setUrl(tabText);
+    return m_path.toLocalFile();
 }
 
 QString DCrumbWidget::path()
 {
-    return m_path;
+    return m_path.toLocalFile();
+}
+
+void DCrumbWidget::addRecentCrumb()
+{
+    QString text = RECENT_ROOT;
+    DCrumbButton * button = new DCrumbIconButton(
+                m_group.buttons().size(),
+                QIcon(":/icons/images/icons/recent_normal_16px.svg"),
+                QIcon(":/icons/images/icons/recent_hover_16px.svg"),
+                QIcon(":/icons/images/icons/recent_checked_16px.svg"),
+                text, this);
+    button->setFocusPolicy(Qt::NoFocus);
+    button->adjustSize();
+    m_group.addButton(button, button->getIndex());
+    button->setChecked(true);
+    connect(button, &DCrumbButton::clicked, this, &DCrumbWidget::buttonPressed);
+}
+
+void DCrumbWidget::addComputerCrumb()
+{
+    QString text = COMPUTER_ROOT;
+    DCrumbButton * button = new DCrumbIconButton(
+                m_group.buttons().size(),
+                QIcon(":/icons/images/icons/disk_normal_16px.svg"),
+                QIcon(":/icons/images/icons/disk_hover_16px.svg"),
+                QIcon(":/icons/images/icons/disk_checked_16px.svg"),
+                text, this);
+    button->setFocusPolicy(Qt::NoFocus);
+    button->adjustSize();
+    m_group.addButton(button, button->getIndex());
+    button->setChecked(true);
+    connect(button, &DCrumbButton::clicked, this, &DCrumbWidget::buttonPressed);
+}
+
+void DCrumbWidget::addTrashCrumb()
+{
+    QString text = TRASH_ROOT;
+    DCrumbButton * button = new DCrumbIconButton(
+                m_group.buttons().size(),
+                QIcon(":/icons/images/icons/trash_normal_16px.svg"),
+                QIcon(":/icons/images/icons/trash_hover_16px.svg"),
+                QIcon(":/icons/images/icons/trash_checked_16px.svg"),
+                text, this);
+    button->setFocusPolicy(Qt::NoFocus);
+    button->adjustSize();
+    m_group.addButton(button, button->getIndex());
+    button->setChecked(true);
+    connect(button, &DCrumbButton::clicked, this, &DCrumbWidget::buttonPressed);
+}
+
+void DCrumbWidget::addHomeCrumb()
+{
+    QString text = m_homePath;
+    DCrumbButton * button = new DCrumbIconButton(
+                m_group.buttons().size(),
+                QIcon(":/icons/images/icons/home_normal_16px.svg"),
+                QIcon(":/icons/images/icons/home_hover_16px.svg"),
+                QIcon(":/icons/images/icons/home_checked_16px.svg"),
+                text, this);
+    button->setFocusPolicy(Qt::NoFocus);
+    button->adjustSize();
+    m_group.addButton(button, button->getIndex());
+    connect(button, &DCrumbButton::clicked, this, &DCrumbWidget::buttonPressed);
+}
+
+void DCrumbWidget::addLocalCrumbs(const DUrl & path)
+{
+    QStringList list;
+    qDebug() << path.path();
+    if(isInHome(path.path()))
+    {
+        QString tmpPath = path.toLocalFile();
+        tmpPath.replace(m_homePath, "");
+        list.append(tmpPath.split("/"));
+        list.insert(0, m_homePath);
+        list.removeAll("");
+    }
+    else
+    {
+        list.append(path.path().split("/"));
+        if(path.isLocalFile())
+            list.replace(0, "/");
+        list.removeAll("");
+    }
+    addCrumb(list);
+    calcCrumbPath(m_group.buttons().count() - 1, false);
 }
 
 bool DCrumbWidget::hasPath(QString path)
 {
-    return m_path.contains(path);
+    return m_path.toLocalFile().contains(path);
 }
 
 bool DCrumbWidget::isInHome(QString path)
@@ -201,7 +304,7 @@ void DCrumbWidget::calcCrumbPath(int index, bool fixed)
                m_group.buttons().count() > 3 &&
                len < m_group.buttons().count() - 1 && !fixed)
             {
-                calcCrumbPath(count - 1, true);
+                calcCrumbPath(count, true);
                 m_needArrows = true;
                 break;
             }
@@ -228,7 +331,7 @@ int DCrumbWidget::preCalcCrumb()
     {
         DCrumbButton * button = (DCrumbButton*)m_group.buttons().at(i);
         accum += button->rect().width();
-        if(accum > spaceLeft)
+        if(accum > spaceLeft && i < 3)
             return count;
         count++;
     }
@@ -244,18 +347,24 @@ void DCrumbWidget::createCrumbs()
         {
             qDebug() << "rearchLeftEnd";
             m_leftArrow->setDisabled(true);
+            m_leftArrow->hide();
             m_rightArrow->setEnabled(true);
+            m_rightArrow->show();
         }
         else if(rearchRightEnd())
         {
             qDebug() << "rearchRightEnd";
             m_leftArrow->setEnabled(true);
+            m_leftArrow->show();
             m_rightArrow->setDisabled(true);
+            m_rightArrow->hide();
         }
         else
         {
             m_leftArrow->setEnabled(true);
+            m_leftArrow->show();
             m_rightArrow->setEnabled(true);
+            m_rightArrow->show();
         }
         m_buttons.push_front(m_rightArrow);
         m_buttons.push_back(m_leftArrow);
@@ -320,23 +429,38 @@ void DCrumbWidget::buttonPressed()
 {
     DCrumbButton * button = static_cast<DCrumbButton*>(sender());
     int index = button->getIndex();
+    FMEvent event;
+    event = WindowManager::getWindowId(window());
+    event = FMEvent::CrumbButton;
     QString text;
     DCrumbButton * localButton = (DCrumbButton *)m_group.buttons().at(0);
-    if(isRootFolder(localButton->getName()))
-        text = "/";
-    else
-        text = localButton->getName() + "/";
+    qDebug() << localButton->getName();
     for(int i = 1; i <= index; i++)
     {
         DCrumbButton * button = (DCrumbButton *)m_group.buttons().at(i);
-        text += button->getName() + "/";
+        text += "/" + button->getName();
     }
-    if(!isRootFolder(text))
-        text.remove(text.count() -1, 1);
-    FMEvent event;
-    event = DUrl::fromLocalFile(text);
-    event = WindowManager::getWindowId(window());
-    event = FMEvent::CrumbButton;
+    if(localButton->getName() == RECENT_ROOT)
+    {
+        event = DUrl::fromRecentFile(text.isEmpty() ? "/":text);
+    }
+    else if(localButton->getName() == COMPUTER_ROOT)
+    {
+        event = DUrl::fromComputerFile(text.isEmpty() ? "/":text);
+    }
+    else if(localButton->getName() == TRASH_ROOT)
+    {
+        event = DUrl::fromTrashFile(text.isEmpty() ? "/":text);
+    }
+    else if(localButton->getName() == m_homePath)
+    {
+        event = DUrl::fromLocalFile(m_homePath + text);
+    }
+    else
+    {
+        event = DUrl::fromLocalFile(text.isEmpty() ? "/":text);
+    }
+
     emit crumbSelected(event);
 }
 

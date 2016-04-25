@@ -83,9 +83,9 @@ void DToolBar::initAddressToolBar()
 
     QFrame * crumbAndSearch = new QFrame;
     m_searchBar = new DSearchBar;
-    m_searchBar->setPlaceholderText("Search or enter address");
     m_searchBar->setAlignment(Qt::AlignHCenter);
     m_crumbWidget = new DCrumbWidget;
+    crumbAndSearch->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
     QHBoxLayout * comboLayout = new QHBoxLayout;
     comboLayout->addWidget(m_crumbWidget);
@@ -101,6 +101,8 @@ void DToolBar::initAddressToolBar()
     mainLayout->setContentsMargins(5, 5, 5, 5);
     mainLayout->setSpacing(10);
     m_addressToolBar->setLayout(mainLayout);
+
+//    window()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 }
 
 void DToolBar::initContollerToolBar()
@@ -127,19 +129,9 @@ void DToolBar::initContollerToolBar()
     m_viewButtonGroup->addButton(m_iconViewButton, 0);
     m_viewButtonGroup->addButton(m_listViewButton, 1);
 
-    m_sortingButton = new DHoverButton(":/icons/images/icons/expanded_view_normal.svg",
-                                       ":/icons/images/icons/expanded_view_checked.svg",
-                                        this);
-    m_sortingButton->setFixedHeight(20);
-    m_sortingButton->setFixedWidth(26);
-    m_sortingButton->setObjectName("SortingButton");
-    m_sortingButton->setFocusPolicy(Qt::NoFocus);
-    m_sortingButton->setMenu(FileMenuManager::createToolBarSortMenu());
-
     QHBoxLayout* mainLayout = new QHBoxLayout;
     mainLayout->addWidget(m_iconViewButton);
     mainLayout->addWidget(m_listViewButton);
-    mainLayout->addWidget(m_sortingButton);
     mainLayout->setContentsMargins(5, 5, 5, 5);
     mainLayout->setSpacing(0);
     m_contollerToolBar->setLayout(mainLayout);
@@ -164,7 +156,7 @@ void DToolBar::startup()
     QString user = getenv("USER");
     FMEvent event(-1, FMEvent::SearchLine);
     event = DUrl::fromLocalFile("/home/" + user);
-    m_crumbWidget->setCrumb(event.fileUrl().path());
+    m_crumbWidget->setCrumb(event.fileUrl());
 
     emit fileSignalManager->requestChangeCurrentUrl(event);
 }
@@ -173,7 +165,7 @@ void DToolBar::startup()
 
 void DToolBar::searchBarActivated()
 {
-    qDebug() << "active";
+    m_searchBar->setPlaceholderText(tr("Search or enter address"));
     m_crumbWidget->hide();
     m_searchBar->setAlignment(Qt::AlignLeft);
     m_searchBar->clear();
@@ -183,6 +175,7 @@ void DToolBar::searchBarActivated()
 
 void DToolBar::searchBarDeactivated()
 {
+    m_searchBar->setPlaceholderText("");
     m_crumbWidget->show();
     m_searchBar->clear();
     m_searchBar->setAlignment(Qt::AlignHCenter);
@@ -244,10 +237,10 @@ void DToolBar::crumbChanged(const FMEvent &event)
 
     if(event.source() == FMEvent::CrumbButton)
         return;
-    QUrl qurl(event.fileUrl());
-    m_crumbWidget->setCrumb(qurl.toLocalFile());
+
+    m_crumbWidget->setCrumb(event.fileUrl());
     if(m_searchBar->isActive())
-        m_searchBar->setText(qurl.toLocalFile());
+        m_searchBar->setText(event.fileUrl().path());
     if(event.source() == FMEvent::BackAndForwardButton)
         return;
     m_navStack->insert(event.fileUrl());

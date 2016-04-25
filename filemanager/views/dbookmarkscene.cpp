@@ -317,8 +317,7 @@ void DBookmarkScene::doDragFinished(const QPointF &point, DBookmarkItem *item)
     QRect rect(topLeft, bottomRight);
     qDebug() << rect << point;
     if(!rect.contains(p))
-    {
-        bookmarkManager->removeBookmark(item->text(), item->getUrl());
+    {    
         FMEvent event;
         event = FMEvent::LeftSideBar;
         event = item->getUrl();
@@ -416,13 +415,12 @@ void DBookmarkScene::deviceRemoved(DeviceInfo &deviceInfos)
  */
 void DBookmarkScene::doBookmarkRemoved(const FMEvent &event)
 {
-    if(event.windowId() == windowId())
-        return;
     for(int i = 0; i < m_items.size(); i++)
     {
         if(event.fileUrl() == m_items.at(i)->getUrl())
         {
             DBookmarkItem * item = m_items.at(i);
+            bookmarkManager->removeBookmark(item->text(), item->getUrl());
             remove(item);
 
             if(count() == DEFAULT_ITEM_COUNT)
