@@ -31,6 +31,15 @@ class DFileView : public DListView
 {
     Q_OBJECT
 public:
+    enum ViewMode {
+        IconMode = 0x01,
+        ListMode = 0x02,
+        ExtendMode = 0x04,
+        AllViewMode = IconMode | ListMode | ExtendMode
+    };
+
+    Q_DECLARE_FLAGS(ViewModes, ViewMode)
+
     explicit DFileView(QWidget *parent = 0);
     ~DFileView();
 
@@ -65,16 +74,22 @@ public:
 
     void setIconSize(const QSize &size);
 
+    bool testViewMode(ViewModes modes, ViewMode mode);
+
 public slots:
     void cd(const FMEvent &event);
     void edit(const FMEvent &event);
     void select(const FMEvent &event);
-    void switchToListMode();
-    void switchToIconMode();
+    inline void setViewModeToList()
+    { setViewMode(ListMode);}
+    inline void setViewModeToIcon()
+    { setViewMode(IconMode);}
+    void setViewMode(ViewMode mode);
     void sort(int windowId, int role);
 
 signals:
     void currentUrlChanged(const DUrl &url);
+    void viewModeChanged(ViewMode viewMode);
 
 private slots:
     void selectAll(int windowId);
@@ -99,6 +114,9 @@ private:
     QList<int> m_columnRoles;
     QList<int> m_iconSizes;
 
+    ViewMode m_defaultViewMode = IconMode;
+    ViewMode m_currentViewMode = IconMode;
+
     int m_currentIconSizeIndex = 0;
     mutable int m_windowId = -1;
 
@@ -115,6 +133,9 @@ private:
     void stopSearch();
     bool setCurrentUrl(const DUrl &fileUrl);
     void updateViewportMargins();
+    void switchViewMode(ViewMode mode);
+
+    using DListView::setOrientation;
 };
 
 #endif // DFILEVIEW_H

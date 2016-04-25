@@ -177,8 +177,8 @@ void DFileManagerWindow::initConnect()
     connect(m_titleBar, &DTitlebar::maximumClicked, this, &DFileManagerWindow::showMaximized);
     connect(m_titleBar, &DTitlebar::restoreClicked, this, &DFileManagerWindow::showNormal);
     connect(m_titleBar, &DTitlebar::closeClicked, this, &DFileManagerWindow::close);
-    connect(m_toolbar, &DToolBar::requestListView, m_fileView, &DFileView::switchToListMode);
-    connect(m_toolbar, &DToolBar::requestIconView, m_fileView, &DFileView::switchToIconMode);
+    connect(m_toolbar, &DToolBar::requestListView, m_fileView, &DFileView::setViewModeToList);
+    connect(m_toolbar, &DToolBar::requestIconView, m_fileView, &DFileView::setViewModeToIcon);
 }
 
 DUrl DFileManagerWindow::currentUrl() const

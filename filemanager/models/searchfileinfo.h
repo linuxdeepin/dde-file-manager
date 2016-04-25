@@ -17,6 +17,8 @@ public:
     QIcon fileIcon() const Q_DECL_OVERRIDE;
     DUrl parentUrl() const Q_DECL_OVERRIDE;
 
+    quint8 supportViewMode() const Q_DECL_OVERRIDE;
+
 private:
     DUrl m_parentUrl;
 };
