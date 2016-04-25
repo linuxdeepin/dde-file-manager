@@ -39,7 +39,7 @@ void DSearchBar::initUI()
 
     setFixedHeight(20);
     setObjectName("DSearchBar");
-    setMinimumWidth(48);
+    setMinimumWidth(1);
 
     setFocusPolicy(Qt::ClickFocus);
 }
@@ -155,7 +155,6 @@ void DSearchBar::keyPressEvent(QKeyEvent *e)
     {
         QString temp = text().remove(selected);
         setText(temp);
-        qDebug() << selected << text();
     }
     QLineEdit::keyPressEvent(e);
     if(m_list->count() == 1 && e->key() != Qt::Key_Delete && e->key() != Qt::Key_Backspace)

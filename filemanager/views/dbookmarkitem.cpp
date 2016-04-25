@@ -306,7 +306,10 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     {
         FMEvent e;
         e = windowId();
-        e = m_url;
+        if(m_url.isBookMarkFile())
+            e = DUrl::fromLocalFile(m_url.path());
+        else
+            e = m_url;
         e = FMEvent::LeftSideBar;
         emit m_group->url(e);
     }

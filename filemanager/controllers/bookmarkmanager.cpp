@@ -121,6 +121,19 @@ const QList<AbstractFileInfo *> BookMarkManager::getChildren(const DUrl &fileUrl
     Q_UNUSED(fileUrl)
     Q_UNUSED(filter)
 
+    accepted = true;
+
+    const QString &frav = fileUrl.fragment();
+
+    if(!frav.isEmpty())
+    {
+        DUrl localUrl = DUrl::fromLocalFile(frav);
+
+        QList<AbstractFileInfo*> list = fileService->getChildren(localUrl, filter);
+
+        return list;
+    }
+
     QList<AbstractFileInfo*> infolist;
 
     for (int i = 0; i < m_bookmarks.size(); i++)
@@ -129,8 +142,6 @@ const QList<AbstractFileInfo *> BookMarkManager::getChildren(const DUrl &fileUrl
         AbstractFileInfo *fileInfo = new BookMark(*bm);
         infolist.append(fileInfo);
     }
-
-    accepted = true;
 
     return infolist;
 }

@@ -49,6 +49,7 @@ void DFileManagerWindow::initUI()
 //    initStatusBar();
     setCentralWidget(m_centralWidget);
     setStyleSheet(getQssFromFile(":/qss/qss/filemanager.qss"));
+    window()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 }
 
 void DFileManagerWindow::initTitleBar()
@@ -93,7 +94,7 @@ void DFileManagerWindow::initRightView()
     titleLayout->setSpacing(0);
     titleLayout->addWidget(m_toolbar);
     titleLayout->addWidget(m_titleBar);
-    // TODO: why, fixed me by Iceyer
+
     QWidget *empty = new QWidget;
     empty->setFixedSize(0,1);
     m_titleBar->setCustomWidget(empty, Qt::AlignLeft, false);
@@ -193,7 +194,6 @@ void DFileManagerWindow::showMinimized()
 
 void DFileManagerWindow::resizeEvent(QResizeEvent *event)
 {  
-    m_titleFrame->setMaximumWidth(rect().width() - LEFTSIDEBAR_MIN_WIDTH);
     DMovableMainWindow::resizeEvent(event);
 }
 

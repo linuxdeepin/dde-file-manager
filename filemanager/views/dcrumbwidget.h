@@ -5,6 +5,7 @@
 #include <QHBoxLayout>
 #include <QButtonGroup>
 #include <QPushButton>
+#include "durl.h"
 
 class FMEvent;
 class DCrumbButton;
@@ -17,13 +18,18 @@ public:
     explicit DCrumbWidget(QWidget *parent = 0);
     void addCrumb(const QString &text);
     void addCrumb(const QStringList &list);
-    void setCrumb(const QString &path);
+    void setCrumb(const DUrl &path);
     void clear();
     QString back();
     QString path();
 private:
+    void addRecentCrumb();
+    void addComputerCrumb();
+    void addTrashCrumb();
+    void addHomeCrumb();
+    void addLocalCrumbs(const DUrl & path);
     void initUI();
-    void prepareCrumbs(const QString &path);
+    void prepareCrumbs(const DUrl &path);
     bool hasPath(QString path);
     bool isInHome(QString path);
     bool isHomeFolder(QString path);
@@ -38,7 +44,7 @@ private:
     bool rearchRightEnd();
     QHBoxLayout * m_buttonLayout;
     QButtonGroup m_group;
-    QString m_path;
+    DUrl m_path;
     QString m_homePath;
     DStateButton * m_leftArrow = NULL;
     DStateButton * m_rightArrow = NULL;
