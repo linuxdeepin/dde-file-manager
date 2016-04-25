@@ -410,7 +410,7 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 
     QPointer<DBookmarkItem> me = this;
 
-    menu->exec(QCursor::pos());
+    menu->exec();
     menu->deleteLater();
 
     if(me) {
