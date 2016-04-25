@@ -411,11 +411,11 @@ void DFileItemDelegate::paintListItem(bool isDragMode, QPainter *painter,
     for(int i = 1; i < columnRoleList.count(); ++i) {
         QRect rect = opt.rect;
 
-        rect.setLeft(column_x + 5);
+        rect.setLeft(column_x + 40);
 
         column_x += parent()->columnWidth(i);
 
-        rect.setRight(column_x);
+        rect.setRight(column_x + 35);
 
         int role = columnRoleList.at(i);
 
