@@ -85,7 +85,7 @@ void DFileView::initConnects()
     connect(fileSignalManager, &FileSignalManager::requestViewSort,
             this, &DFileView::sort);
     connect(fileSignalManager, &FileSignalManager::requestViewSelectAll,
-            this, &DFileView::allSelected);
+            this, &DFileView::selectAll);
     connect(fileSignalManager, &FileSignalManager::requestSelectFile,
             this, &DFileView::select);
 }
@@ -225,6 +225,13 @@ void DFileView::stopKeyboardSearch(int windowId)
     stopSearch();
 }
 
+void DFileView::setIconSize(const QSize &size)
+{
+    DListView::setIconSize(size);
+
+    updateViewportMargins();
+}
+
 void DFileView::cd(const FMEvent &event)
 {
     if(event.windowId() != windowId())
@@ -275,13 +282,15 @@ void DFileView::switchToListMode()
     if(!m_headerView) {
         m_headerView = new QHeaderView(Qt::Horizontal);
         m_headerView->setModel(model());
-        m_headerView->setSectionsMovable(true);
         m_headerView->setHighlightSections(true);
         m_headerView->setSectionsClickable(true);
         m_headerView->setSortIndicatorShown(true);
+        m_headerView->setSectionResizeMode(QHeaderView::Fixed);
+        m_headerView->setSectionResizeMode(0, QHeaderView::Stretch);
         m_headerView->setDefaultAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-        m_headerView->setDefaultSectionSize(120);
-        m_headerView->setMinimumSectionSize(120);
+        m_headerView->setDefaultSectionSize(100);
+        m_headerView->setMinimumSectionSize(200);
+        m_headerView->resizeSection(2, 50);
 
         if(selectionModel()) {
             m_headerView->setSelectionModel(selectionModel());
@@ -289,8 +298,6 @@ void DFileView::switchToListMode()
 
         connect(m_headerView, &QHeaderView::sectionResized,
                 this, static_cast<void (DFileView::*)()>(&DFileView::update));
-        connect(m_headerView, &QHeaderView::sectionMoved,
-                this, &DFileView::moveColumnRole);
         connect(m_headerView, &QHeaderView::sortIndicatorChanged,
                 model(), &QAbstractItemModel::sort);
     }
@@ -335,9 +342,8 @@ void DFileView::switchToIconMode()
 
 void DFileView::sort(int windowId, int role)
 {
-    /// TODO
-
-    Q_UNUSED(windowId)
+    if(this->windowId() != windowId)
+        return;
 
     if(isIconViewMode()) {
         model()->setSortRole(role);
@@ -347,20 +353,12 @@ void DFileView::sort(int windowId, int role)
     }
 }
 
-void DFileView::moveColumnRole(int /*logicalIndex*/, int oldVisualIndex, int newVisualIndex)
-{
-    m_columnRoles.move(oldVisualIndex, newVisualIndex);
-    m_logicalIndexs.move(oldVisualIndex, newVisualIndex);
-
-    update();
-}
-
-void DFileView::allSelected(int windowId)
+void DFileView::selectAll(int windowId)
 {
     if(windowId != WindowManager::getWindowId(window()))
         return;
 
-    selectAll();
+    DListView::selectAll();
 }
 
 void DFileView::contextMenuEvent(QContextMenuEvent *event)
@@ -486,6 +484,13 @@ void DFileView::focusInEvent(QFocusEvent *event)
     DListView::focusInEvent(event);
 
     itemDelegate()->commitDataAndCloseActiveEditor();
+}
+
+void DFileView::resizeEvent(QResizeEvent *event)
+{
+    updateViewportMargins();
+
+    DListView::resizeEvent(event);
 }
 
 bool DFileView::isEmptyArea(const QPoint &pos) const
@@ -614,4 +619,23 @@ bool DFileView::setCurrentUrl(const DUrl &fileUrl)
     emit currentUrlChanged(fileUrl);
 
     return true;
+}
+
+void DFileView::updateViewportMargins()
+{
+    QMargins margins = viewportMargins();
+
+    if(isIconViewMode()) {
+        int contentWidth = width();
+
+        double itemWidth = iconSize().width() * 1.95 + spacing();
+        int itemColumn = contentWidth / itemWidth;
+        int gapWidth = (contentWidth - itemWidth * itemColumn) / 2 + 2 * spacing();
+
+        setViewportMargins(gapWidth, 0, 0, 0);
+    } else {
+        margins.setLeft(10);
+        margins.setRight(10);
+        setViewportMargins(margins);
+    }
 }

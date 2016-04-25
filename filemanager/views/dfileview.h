@@ -63,6 +63,8 @@ public:
     void startKeyboardSearch(int windowId, const QString &key);
     void stopKeyboardSearch(int windowId);
 
+    void setIconSize(const QSize &size);
+
 public slots:
     void cd(const FMEvent &event);
     void edit(const FMEvent &event);
@@ -75,8 +77,7 @@ signals:
     void currentUrlChanged(const DUrl &url);
 
 private slots:
-    void moveColumnRole(int logicalIndex, int oldVisualIndex, int newVisualIndex);
-    void allSelected(int windowId);
+    void selectAll(int windowId);
 
 protected:
     void contextMenuEvent(QContextMenuEvent * event) Q_DECL_OVERRIDE;
@@ -87,6 +88,7 @@ protected:
     void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void commitData(QWidget * editor) Q_DECL_OVERRIDE;
     void focusInEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
+    void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
 
 private:
     FileController *m_controller;
@@ -112,6 +114,7 @@ private:
     void keyboardSearch(const QString & search) Q_DECL_OVERRIDE;
     void stopSearch();
     bool setCurrentUrl(const DUrl &fileUrl);
+    void updateViewportMargins();
 };
 
 #endif // DFILEVIEW_H
