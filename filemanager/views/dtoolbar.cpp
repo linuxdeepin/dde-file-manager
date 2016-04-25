@@ -240,7 +240,7 @@ void DToolBar::crumbChanged(const FMEvent &event)
 
     m_crumbWidget->setCrumb(event.fileUrl());
     if(m_searchBar->isActive())
-        m_searchBar->setText(event.fileUrl().path());
+        m_searchBar->setText(event.fileUrl().toString());
     if(event.source() == FMEvent::BackAndForwardButton)
         return;
     m_navStack->insert(event.fileUrl());
