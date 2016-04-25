@@ -394,7 +394,7 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
         menu->setUrls(list);
     }
 
-    menu->exec(mapToGlobal(event->pos()));
+    menu->exec();
     menu->deleteLater();
 
     event->accept();
