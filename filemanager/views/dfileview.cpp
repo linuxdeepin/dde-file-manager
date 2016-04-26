@@ -306,13 +306,6 @@ void DFileView::selectAll(int windowId)
     DListView::selectAll();
 }
 
-void DFileView::contextMenuEvent(QContextMenuEvent *event)
-{
-    showMenu(event->pos());
-
-    event->accept();
-}
-
 void DFileView::wheelEvent(QWheelEvent *event)
 {
     if(isIconViewMode() && m_ctrlIsPressed) {
@@ -355,12 +348,15 @@ void DFileView::showEvent(QShowEvent *event)
 
 void DFileView::mousePressEvent(QMouseEvent *event)
 {
-    if(event->button() == Qt::LeftButton) {
-        setDragEnabled(!isEmptyArea(event->pos()));
+    bool isEmptyArea = this->isEmptyArea(event->pos());
+
+    if (event->button() == Qt::LeftButton) {
+        setDragEnabled(!isEmptyArea);
     }
 
-    if(!(event->buttons() & Qt::RightButton))
-        DListView::mousePressEvent(event);
+    event->ignore();
+
+    DListView::mousePressEvent(event);
 }
 
 void DFileView::commitData(QWidget *editor)
@@ -408,39 +404,51 @@ void DFileView::resizeEvent(QResizeEvent *event)
 
 bool DFileView::event(QEvent *event)
 {
-    bool accepted = DListView::event(event);
+    if(event->type() == QEvent::MouseButtonPress) {
+        QMouseEvent *e = static_cast<QMouseEvent*>(event);
 
-    if(!accepted) {
-        if(event->type() == QEvent::MouseButtonPress) {
-            QMouseEvent *e = static_cast<QMouseEvent*>(event);
+        const QPoint &pos = viewport()->mapFrom(this, e->pos());
+        bool isEmptyArea = this->isEmptyArea(pos);
 
-            QPoint pos = e->pos();
-
-            pos.setX(pos.x() - viewportMargins().left());
-
-            if(e->button() == Qt::RightButton) {
-                showMenu(pos);
-
-                event->accept();
-            } else {
+        if (e->button() == Qt::LeftButton) {
+            if (isEmptyArea) {
                 clearSelection();
+            }
+        } else if (e->button() == Qt::RightButton) {
+            if (isEmptyArea) {
+                clearSelection();
+                showEmptyAreaMenu();
+            } else {
+                const QModelIndexList &list = selectedIndexes();
+                const QModelIndex &index = indexAt(pos);
+
+                if (!list.contains(index)) {
+                    selectionModel()->select(index, QItemSelectionModel::SelectCurrent);
+                }
+
+                showNormalMenu(index);
             }
         }
     }
 
-    return accepted;
+    return DListView::event(event);
 }
 
 bool DFileView::isEmptyArea(const QPoint &pos) const
 {
     QModelIndex index = indexAt(pos);
 
-    if(selectionModel()->selectedIndexes().contains(index)) {
+    if(index.isValid() && selectionModel()->selectedIndexes().contains(index)) {
         return false;
     } else {
+        const QRect &rect = visualRect(index);
+
+        if(!rect.contains(pos))
+            return true;
+
         QStyleOptionViewItem option = viewOptions();
 
-        option.rect = visualRect(index);
+        option.rect = rect;
 
         const QList<QRect> &geometry_list = itemDelegate()->paintGeomertyss(option, index);
 
@@ -672,40 +680,42 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
     emit viewModeChanged(mode);
 }
 
-void DFileView::showMenu(const QPoint &pos)
+void DFileView::showEmptyAreaMenu()
 {
     DFileMenu *menu;
-    QModelIndex index;
+    const QModelIndex &index = rootIndex();
 
-    if (isEmptyArea(pos)){
-        index = rootIndex();
+    const AbstractFileInfoPointer &info = model()->fileInfo(index);
+    const QVector<MenuAction> &actions = info->menuActionList(AbstractFileInfo::SpaceArea);
+    const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList();
 
-        const AbstractFileInfoPointer &info = model()->fileInfo(index);
-        const QVector<MenuAction> &actions = info->menuActionList(AbstractFileInfo::SpaceArea);
-        const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList();
+    menu = FileMenuManager::genereteMenuByKeys(actions, FileMenuManager::getDisableActionList(model()->getUrlByIndex(index)), false, subActions);
+    DUrlList urls;
+    urls.append(currentUrl());
+    menu->setUrls(urls);
+    menu->setWindowId(m_windowId);
 
-        menu = FileMenuManager::genereteMenuByKeys(actions, FileMenuManager::getDisableActionList(model()->getUrlByIndex(index)), false, subActions);
-        DUrlList urls;
-        urls.append(currentUrl());
-        menu->setUrls(urls);
-        menu->setWindowId(m_windowId);
-    } else {
-        index = indexAt(pos);
+    menu->exec();
+    menu->deleteLater();
+}
 
-        const AbstractFileInfoPointer &info = model()->fileInfo(index);
-        const QVector<MenuAction> &actions = info->menuActionList(AbstractFileInfo::Normal);
-        const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList();
+void DFileView::showNormalMenu(const QModelIndex &index)
+{
+    if(!index.isValid())
+        return;
 
-        menu = FileMenuManager::genereteMenuByKeys(actions, FileMenuManager::getDisableActionList(model()->getUrlByIndex(index)), false, subActions);
-        menu->setWindowId(m_windowId);
+    DFileMenu *menu;
 
-        DUrlList list = selectedUrls();
+    const AbstractFileInfoPointer &info = model()->fileInfo(index);
+    const QVector<MenuAction> &actions = info->menuActionList(AbstractFileInfo::Normal);
+    const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList();
 
-        if(list.isEmpty())
-            list << model()->getUrlByIndex(index);
+    menu = FileMenuManager::genereteMenuByKeys(actions, FileMenuManager::getDisableActionList(model()->getUrlByIndex(index)), false, subActions);
+    menu->setWindowId(m_windowId);
 
-        menu->setUrls(list);
-    }
+    DUrlList list = selectedUrls();
+
+    menu->setUrls(list);
 
     menu->exec();
     menu->deleteLater();
