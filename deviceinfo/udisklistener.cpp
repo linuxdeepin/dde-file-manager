@@ -202,7 +202,7 @@ void UDiskListener::readFstab()
     endfsent();
 }
 
-const QList<AbstractFileInfo *> UDiskListener::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
+const QList<AbstractFileInfoPointer> UDiskListener::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
 {
     Q_UNUSED(filter)
 
@@ -214,19 +214,19 @@ const QList<AbstractFileInfo *> UDiskListener::getChildren(const DUrl &fileUrl, 
     {
         DUrl localUrl = DUrl::fromLocalFile(frav);
 
-        QList<AbstractFileInfo*> list = fileService->getChildren(localUrl, filter);
+        QList<AbstractFileInfoPointer> list = fileService->getChildren(localUrl, filter);
 
         return list;
     }
 
-    QList<AbstractFileInfo*> infolist;
+    QList<AbstractFileInfoPointer> infolist;
 
     for (int i = 0; i < m_list.size(); i++)
     {
         UDiskDeviceInfo * info = m_list.at(i);
         if(!info->fileSystem().isEmpty())
         {
-            AbstractFileInfo *fileInfo = new UDiskDeviceInfo(info);
+            AbstractFileInfoPointer fileInfo(new UDiskDeviceInfo(info));
             infolist.append(fileInfo);
         }
     }
@@ -234,14 +234,14 @@ const QList<AbstractFileInfo *> UDiskListener::getChildren(const DUrl &fileUrl, 
     return infolist;
 }
 
-AbstractFileInfo *UDiskListener::createFileInfo(const DUrl &fileUrl, bool &accepted) const
+AbstractFileInfoPointer UDiskListener::createFileInfo(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
 
     QString path = fileUrl.fragment();
 
     if(path.isEmpty())
-        return new UDiskDeviceInfo(fileUrl);
+        return AbstractFileInfoPointer(new UDiskDeviceInfo(fileUrl));
 
 
     for (int i = 0; i < m_list.size(); i++)
@@ -250,10 +250,10 @@ AbstractFileInfo *UDiskListener::createFileInfo(const DUrl &fileUrl, bool &accep
 
         if(!info->fileSystem().isEmpty() && info->mountPath() == path)
         {
-            AbstractFileInfo *fileInfo = new UDiskDeviceInfo(info);
+            AbstractFileInfoPointer fileInfo(new UDiskDeviceInfo(info));
             return fileInfo;
         }
     }
 
-    return Q_NULLPTR;
+    return AbstractFileInfoPointer();
 }

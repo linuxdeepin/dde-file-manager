@@ -15,7 +15,7 @@
 #include <QFormLayout>
 #include <QDateTime>
 
-QWidget *createBasicInfoWidget(const AbstractFileInfo *info)
+QWidget *createBasicInfoWidget(const AbstractFileInfoPointer &info)
 {
     QWidget *widget = new QWidget;
     QFormLayout *layout = new QFormLayout;
@@ -31,7 +31,7 @@ QWidget *createBasicInfoWidget(const AbstractFileInfo *info)
     return widget;
 }
 
-QWidget *createAuthorityManagermentWidget(const AbstractFileInfo *info)
+QWidget *createAuthorityManagermentWidget(const AbstractFileInfoPointer &info)
 {
     QWidget *widget = new QWidget;
     QFormLayout *layout = new QFormLayout;
@@ -86,7 +86,7 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
 {
     D_THEME_INIT_WIDGET(PropertyDialog)
 
-    AbstractFileInfo *fileInfo = FileServices::instance()->createFileInfo(url);
+    const AbstractFileInfoPointer &fileInfo = FileServices::instance()->createFileInfo(url);
 
     m_icon->setPixmap(fileInfo->fileIcon().pixmap(100, 150));
     m_icon->setFixedHeight(150);
@@ -117,8 +117,6 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
 
     expandGroup->expand(0)->setContent(createBasicInfoWidget(fileInfo));
     expandGroup->expand(1)->setContent(createAuthorityManagermentWidget(fileInfo));
-
-    delete fileInfo;
 }
 
 DExpandGroup *PropertyDialog::addExpandWidget(const QStringList &titleList)

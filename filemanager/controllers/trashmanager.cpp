@@ -27,14 +27,14 @@ TrashManager::TrashManager(QObject *parent)
             this, &TrashManager::onFileRemove);
 }
 
-AbstractFileInfo *TrashManager::createFileInfo(const DUrl &fileUrl, bool &accepted) const
+AbstractFileInfoPointer TrashManager::createFileInfo(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
 
-    return new TrashFileInfo(fileUrl);
+    return AbstractFileInfoPointer(new TrashFileInfo(fileUrl));
 }
 
-const QList<AbstractFileInfo *> TrashManager::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
+const QList<AbstractFileInfoPointer> TrashManager::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
 {
     Q_UNUSED(filter)
 
@@ -43,13 +43,15 @@ const QList<AbstractFileInfo *> TrashManager::getChildren(const DUrl &fileUrl, Q
     const QString &path = fileUrl.path();
 
     QDir dir(TRASHFILEPATH + path);
-    QList<AbstractFileInfo*> infoList;
+    QList<AbstractFileInfoPointer> infoList;
 
     if(dir.exists()) {
         QFileInfoList fileInfoList = dir.entryInfoList(filter | QDir::NoDotAndDotDot);
 
         for(const QFileInfo fileInfo : fileInfoList) {
-            infoList.append(new TrashFileInfo(DUrl::fromTrashFile(fileInfo.absoluteFilePath().mid((TRASHFILEPATH).size()))));
+            const DUrl &fileUrl = DUrl::fromTrashFile(fileInfo.absoluteFilePath().mid((TRASHFILEPATH).size()));
+
+            infoList.append(AbstractFileInfoPointer(new TrashFileInfo(fileUrl)));
         }
     }
 

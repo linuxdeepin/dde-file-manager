@@ -5,6 +5,7 @@
 #include <QFileSystemModel>
 
 #include "durl.h"
+#include "abstractfileinfo.h"
 
 class FileSystemNode;
 class AbstractFileInfo;
@@ -76,13 +77,13 @@ public:
     void sort(int column, Qt::SortOrder order = Qt::AscendingOrder) Q_DECL_OVERRIDE;
     void sort();
 
-    AbstractFileInfo *fileInfo(const QModelIndex &index) const;
-    AbstractFileInfo *fileInfo(const DUrl &fileUrl) const;
-    AbstractFileInfo *parentFileInfo(const QModelIndex &index) const;
-    AbstractFileInfo *parentFileInfo(const DUrl &fileUrl) const;
+    const AbstractFileInfoPointer fileInfo(const QModelIndex &index) const;
+    const AbstractFileInfoPointer fileInfo(const DUrl &fileUrl) const;
+    const AbstractFileInfoPointer parentFileInfo(const QModelIndex &index) const;
+    const AbstractFileInfoPointer parentFileInfo(const DUrl &fileUrl) const;
 
 public slots:
-    void updateChildren(const FMEvent &event, QList<AbstractFileInfo*> list);
+    void updateChildren(const FMEvent &event, QList<AbstractFileInfoPointer> list);
     void refresh(const DUrl &fileUrl);
 
 private slots:
@@ -101,7 +102,7 @@ private:
     Qt::SortOrder m_srotOrder = Qt::AscendingOrder;
     QModelIndex m_activeIndex;
 
-    bool (*sortFun)(const AbstractFileInfo*, const AbstractFileInfo*) = Q_NULLPTR;
+    bool (*sortFun)(const AbstractFileInfoPointer&, const AbstractFileInfoPointer&) = Q_NULLPTR;
 
     inline FileSystemNode *getNodeByIndex(const QModelIndex &index) const;
     QModelIndex createIndex(const FileSystemNode *node, int column) const;
@@ -109,9 +110,9 @@ private:
 
     bool isDir(const FileSystemNode *node) const;
 
-    void sort(QList<AbstractFileInfo*> &list) const;
+    void sort(QList<AbstractFileInfoPointer> &list) const;
 
-    FileSystemNode *createNode(FileSystemNode *parent, AbstractFileInfo *info);
+    FileSystemNode *createNode(FileSystemNode *parent, const AbstractFileInfoPointer &info);
 
     void deleteNode(FileSystemNode *node);
     void deleteNodeByUrl(const DUrl &url);

@@ -5,8 +5,8 @@
 #include <QDir>
 
 #include "durl.h"
+#include "abstractfileinfo.h"
 
-class AbstractFileInfo;
 class FMEvent;
 
 class AbstractFileController : public QObject
@@ -41,8 +41,8 @@ public:
 
     virtual bool openFileLocation(const DUrl &fileUrl, bool &accepted) const;
 
-    virtual const QList<AbstractFileInfo*> getChildren(const DUrl &fileUrl, QDir::Filters filters, bool &accepted) const;
-    virtual AbstractFileInfo *createFileInfo(const DUrl &fileUrl, bool &accepted) const;
+    virtual const QList<AbstractFileInfoPointer> getChildren(const DUrl &fileUrl, QDir::Filters filters, bool &accepted) const;
+    virtual AbstractFileInfoPointer createFileInfo(const DUrl &fileUrl, bool &accepted) const;
 
 signals:
     void childrenAdded(const DUrl &fileUrl) const;

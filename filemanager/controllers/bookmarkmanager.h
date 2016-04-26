@@ -29,8 +29,8 @@ public slots:
 
     // AbstractFileController interface
 public:
-    const QList<AbstractFileInfo *> getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const;
-    AbstractFileInfo *createFileInfo(const DUrl &fileUrl, bool &accepted) const;
+    const QList<AbstractFileInfoPointer> getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const;
+    AbstractFileInfoPointer createFileInfo(const DUrl &fileUrl, bool &accepted) const;
 };
 
 #endif // BOOKMARKMANAGER_H
