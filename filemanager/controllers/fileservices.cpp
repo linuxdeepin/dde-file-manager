@@ -31,7 +31,7 @@ FileServices::FileServices(QObject *parent)
 {
     qRegisterMetaType<FMEvent>("FMEvent");
     qRegisterMetaType<QDir::Filters>("QDir::Filters");
-    qRegisterMetaType<QList<AbstractFileInfo*>>("QList<AbstractFileInfo*>");
+    qRegisterMetaType<QList<AbstractFileInfoPointer>>("QList<AbstractFileInfoPointer>");
     qRegisterMetaType<DUrl>("DUrl");
 }
 
@@ -356,21 +356,21 @@ void FileServices::openNewWindow(const DUrl &fileUrl) const
     emit fileSignalManager->requestOpenNewWindowByUrl(fileUrl);
 }
 
-AbstractFileInfo *FileServices::createFileInfo(const DUrl &fileUrl) const
+AbstractFileInfoPointer FileServices::createFileInfo(const DUrl &fileUrl) const
 {
     TRAVERSE(fileUrl, {
-                 AbstractFileInfo *info = controller->createFileInfo(fileUrl, accepted);
+                 const AbstractFileInfoPointer &info = controller->createFileInfo(fileUrl, accepted);
 
                  if(accepted)
                      return info;
              })
 
-            return Q_NULLPTR;
+    return AbstractFileInfoPointer();
 }
 
-const QList<AbstractFileInfo*> FileServices::getChildren(const DUrl &fileUrl, QDir::Filters filters, bool *ok) const
+const QList<AbstractFileInfoPointer> FileServices::getChildren(const DUrl &fileUrl, QDir::Filters filters, bool *ok) const
 {
-    QList<AbstractFileInfo*> childrenList;
+    QList<AbstractFileInfoPointer> childrenList;
 
     TRAVERSE(fileUrl, {
                  childrenList = controller->getChildren(fileUrl, filters, accepted);
@@ -405,7 +405,7 @@ void FileServices::getChildren(const FMEvent &event, QDir::Filters filters) cons
 
     bool accepted = false;
 
-    const QList<AbstractFileInfo*> &childrenList = getChildren(fileUrl, filters, &accepted);
+    const QList<AbstractFileInfoPointer> &childrenList = getChildren(fileUrl, filters, &accepted);
 
     if(accepted)
         emit updateChildren(event, childrenList);
@@ -436,17 +436,13 @@ QList<AbstractFileController*> FileServices::getHandlerTypeByUrl(const DUrl &fil
 
 void FileServices::openUrl(const FMEvent &event) const
 {
-    qDebug() << event;
-    AbstractFileInfo *fileInfo = createFileInfo(event.fileUrl());
+    const AbstractFileInfoPointer &fileInfo = createFileInfo(event.fileUrl());
 
     if(fileInfo && fileInfo->isDir()) {
         fileSignalManager->requestChangeCurrentUrl(event);
-        delete fileInfo;
 
         return;
     }
-
-    delete fileInfo;
 
     openFile(event.fileUrl());
 }

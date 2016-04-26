@@ -92,11 +92,11 @@ bool RecentHistoryManager::copyFiles(const DUrlList &urlList, bool &accepted) co
     return FileServices::instance()->copyFiles(localList);
 }
 
-const QList<AbstractFileInfo *> RecentHistoryManager::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
+const QList<AbstractFileInfoPointer> RecentHistoryManager::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
 {
     Q_UNUSED(filter)
 
-    QList<AbstractFileInfo*> infolist;
+    QList<AbstractFileInfoPointer> infolist;
 
     if(fileUrl.path() != "/") {
         accepted = false;
@@ -107,19 +107,17 @@ const QList<AbstractFileInfo *> RecentHistoryManager::getChildren(const DUrl &fi
     accepted = true;
 
     for (const DUrl &url : openedFileList) {
-        AbstractFileInfo *fileInfo = new RecentFileInfo(url);
-
-        infolist.append(fileInfo);
+        infolist.append(AbstractFileInfoPointer(new RecentFileInfo(url)));
     }
 
     return infolist;
 }
 
-AbstractFileInfo *RecentHistoryManager::createFileInfo(const DUrl &fileUrl, bool &accepted) const
+AbstractFileInfoPointer RecentHistoryManager::createFileInfo(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
 
-    return new RecentFileInfo(fileUrl);
+    return AbstractFileInfoPointer(new RecentFileInfo(fileUrl));
 }
 
 void RecentHistoryManager::loadJson(const QJsonObject &json)

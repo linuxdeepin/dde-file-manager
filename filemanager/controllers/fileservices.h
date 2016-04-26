@@ -60,9 +60,9 @@ public:
 
     bool openFileLocation(const DUrl &fileUrl) const;
 
-    AbstractFileInfo *createFileInfo(const DUrl &fileUrl) const;
+    AbstractFileInfoPointer createFileInfo(const DUrl &fileUrl) const;
 
-    const QList<AbstractFileInfo*> getChildren(const DUrl &fileUrl, QDir::Filters filters, bool *ok = 0) const;
+    const QList<AbstractFileInfoPointer> getChildren(const DUrl &fileUrl, QDir::Filters filters, bool *ok = 0) const;
 
 public slots:
     void getChildren(const FMEvent &event, QDir::Filters filters = QDir::AllEntries | QDir::NoDotAndDotDot) const;
@@ -70,7 +70,7 @@ public slots:
     void openUrl(const FMEvent &event) const;
 
 signals:
-    void updateChildren(const FMEvent &event, const QList<AbstractFileInfo*> &list) const;
+    void updateChildren(const FMEvent &event, const QList<AbstractFileInfoPointer> &list) const;
     void childrenAdded(const DUrl &fileUrl) const;
     void childrenRemoved(const DUrl &fileUrl) const;
     void childrenUpdated(const DUrl &fileUrl) const;

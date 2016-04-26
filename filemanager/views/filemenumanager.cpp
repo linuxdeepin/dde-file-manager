@@ -144,7 +144,7 @@ DFileMenu *FileMenuManager::createListViewHeaderMenu(const QVector<MenuAction> &
 
 QVector<MenuAction> FileMenuManager::getDisableActionList(const DUrl &fileUrl)
 {
-    AbstractFileInfo *fileInfo = fileService->createFileInfo(fileUrl);
+    const AbstractFileInfoPointer &fileInfo = fileService->createFileInfo(fileUrl);
     QVector<MenuAction> disableList;
 
     if(!fileInfo->isCanRename())
@@ -154,7 +154,7 @@ QVector<MenuAction> FileMenuManager::getDisableActionList(const DUrl &fileUrl)
         disableList << MenuAction::Open << MenuAction::OpenWith
                     << MenuAction::OpenInNewWindow << MenuAction::Copy;
 
-    AbstractFileInfo *parentInfo = fileService->createFileInfo(fileInfo->parentUrl());
+    const AbstractFileInfoPointer &parentInfo = fileService->createFileInfo(fileInfo->parentUrl());
 
     if(!fileInfo->isWritable())
         disableList << MenuAction::Paste << MenuAction::NewDocument
@@ -168,9 +168,6 @@ QVector<MenuAction> FileMenuManager::getDisableActionList(const DUrl &fileUrl)
             disableList << MenuAction::CompleteDeletion;
         }
     }
-
-    delete fileInfo;
-    delete parentInfo;
 
     return disableList;
 }

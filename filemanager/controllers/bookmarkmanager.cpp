@@ -116,7 +116,7 @@ void BookMarkManager::removeBookmark(const QString &name, const DUrl &url)
     save();
 }
 
-const QList<AbstractFileInfo *> BookMarkManager::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
+const QList<AbstractFileInfoPointer> BookMarkManager::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
 {
     Q_UNUSED(fileUrl)
     Q_UNUSED(filter)
@@ -129,26 +129,26 @@ const QList<AbstractFileInfo *> BookMarkManager::getChildren(const DUrl &fileUrl
     {
         DUrl localUrl = DUrl::fromLocalFile(frav);
 
-        QList<AbstractFileInfo*> list = fileService->getChildren(localUrl, filter);
+        QList<AbstractFileInfoPointer> list = fileService->getChildren(localUrl, filter);
 
         return list;
     }
 
-    QList<AbstractFileInfo*> infolist;
+    QList<AbstractFileInfoPointer> infolist;
 
     for (int i = 0; i < m_bookmarks.size(); i++)
     {
         BookMark * bm = m_bookmarks.at(i);
-        AbstractFileInfo *fileInfo = new BookMark(*bm);
-        infolist.append(fileInfo);
+
+        infolist.append(AbstractFileInfoPointer(new BookMark(*bm)));
     }
 
     return infolist;
 }
 
-AbstractFileInfo *BookMarkManager::createFileInfo(const DUrl &fileUrl, bool &accepted) const
+AbstractFileInfoPointer BookMarkManager::createFileInfo(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
 
-    return new BookMark(fileUrl);
+    return AbstractFileInfoPointer(new BookMark(fileUrl));
 }

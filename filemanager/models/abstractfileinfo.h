@@ -148,7 +148,7 @@ protected:
     FileInfoData *data;
 };
 
-typedef QSharedDataPointer<AbstractFileInfo> AbstractFileInfoPointer;
+typedef QExplicitlySharedDataPointer<AbstractFileInfo> AbstractFileInfoPointer;
 
 QT_BEGIN_NAMESPACE
 QDebug operator<<(QDebug deg, const AbstractFileInfo &info);

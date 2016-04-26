@@ -13,7 +13,7 @@ SearchController::SearchController(QObject *parent)
 
 }
 
-const QList<AbstractFileInfo*> SearchController::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
+const QList<AbstractFileInfoPointer> SearchController::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
 {
     accepted = true;
 
@@ -32,14 +32,14 @@ const QList<AbstractFileInfo*> SearchController::getChildren(const DUrl &fileUrl
                           &SearchController::searchStart, fileUrl, filter);
     }
 
-    return QList<AbstractFileInfo*>();
+    return QList<AbstractFileInfoPointer>();
 }
 
-AbstractFileInfo *SearchController::createFileInfo(const DUrl &fileUrl, bool &accepted) const
+AbstractFileInfoPointer SearchController::createFileInfo(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
 
-    return new SearchFileInfo(fileUrl);
+    return AbstractFileInfoPointer(new SearchFileInfo(fileUrl));
 }
 
 void SearchController::searchStart(const DUrl &fileUrl, QDir::Filters filter)

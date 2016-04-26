@@ -25,14 +25,3 @@ int DFileMenu::getWindowId() const
 {
     return m_windowId;
 }
-
-void DFileMenu::setFileInfo(const AbstractFileInfo *info)
-{
-    m_fileInfo = info;
-}
-
-const AbstractFileInfo *DFileMenu::fileInfo() const
-{
-    return m_fileInfo;
-}
-

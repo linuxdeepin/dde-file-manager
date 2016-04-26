@@ -31,21 +31,21 @@ bool FileController::findExecutable(const QString &executableName, const QString
     return !QStandardPaths::findExecutable(executableName, paths).isEmpty();
 }
 
-AbstractFileInfo *FileController::createFileInfo(const DUrl &fileUrl, bool &accepted) const
+AbstractFileInfoPointer FileController::createFileInfo(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
 
     if(fileUrl.path().endsWith(QString(".") + DESKTOP_SURRIX))
-        return new DesktopFileInfo(fileUrl);
+        return AbstractFileInfoPointer(new DesktopFileInfo(fileUrl));
     else
-        return new FileInfo(fileUrl);
+        return AbstractFileInfoPointer(new FileInfo(fileUrl));
 }
 
-const QList<AbstractFileInfo*> FileController::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
+const QList<AbstractFileInfoPointer> FileController::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
 {
     accepted = true;
 
-    QList<AbstractFileInfo*> infolist;
+    QList<AbstractFileInfoPointer> infolist;
 
     const QString &path = fileUrl.toLocalFile();
 
@@ -55,7 +55,7 @@ const QList<AbstractFileInfo*> FileController::getChildren(const DUrl &fileUrl, 
         for(const QFileInfo &info : list) {
             FileInfo *fileInfo = new FileInfo(info);
 
-            infolist.append(fileInfo);
+            infolist.append(AbstractFileInfoPointer(fileInfo));
         }
     } else {
         QDirIterator dirIt(path, filter);
@@ -72,7 +72,7 @@ const QList<AbstractFileInfo*> FileController::getChildren(const DUrl &fileUrl, 
             else
                 fileInfo = new FileInfo(dirIt.fileInfo());
 
-            infolist.append(fileInfo);
+            infolist.append(AbstractFileInfoPointer(fileInfo));
         }
     }
 

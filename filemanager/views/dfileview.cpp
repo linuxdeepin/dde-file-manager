@@ -314,7 +314,7 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
     if (isEmptyArea(event->pos())){
         index = rootIndex();
 
-        const AbstractFileInfo *info = model()->fileInfo(index);
+        const AbstractFileInfoPointer &info = model()->fileInfo(index);
         const QVector<MenuAction> &actions = info->menuActionList(AbstractFileInfo::SpaceArea);
         const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList();
 
@@ -326,7 +326,7 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
     } else {
         index = indexAt(event->pos());
 
-        const AbstractFileInfo *info = model()->fileInfo(index);
+        const AbstractFileInfoPointer &info = model()->fileInfo(index);
         const QVector<MenuAction> &actions = info->menuActionList(AbstractFileInfo::Normal);
         const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList();
 
@@ -402,7 +402,7 @@ void DFileView::commitData(QWidget *editor)
     if(!editor)
         return;
 
-    const AbstractFileInfo *fileInfo = model()->fileInfo(itemDelegate()->editingIndex());
+    const AbstractFileInfoPointer &fileInfo = model()->fileInfo(itemDelegate()->editingIndex());
 
     if(!fileInfo)
         return;
@@ -561,7 +561,7 @@ bool DFileView::setCurrentUrl(const DUrl &fileUrl)
     setRootIndex(index);
     model()->setActiveIndex(index);
 
-    AbstractFileInfo *info = model()->fileInfo(fileUrl);
+    const AbstractFileInfoPointer &info = model()->fileInfo(fileUrl);
 
     if(info) {
         ViewModes modes = (ViewModes)info->supportViewMode();

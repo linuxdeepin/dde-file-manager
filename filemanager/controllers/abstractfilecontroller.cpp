@@ -154,21 +154,21 @@ bool AbstractFileController::openFileLocation(const DUrl &fileUrl, bool &accepte
     return false;
 }
 
-const QList<AbstractFileInfo*> AbstractFileController::getChildren(const DUrl &fileUrl, QDir::Filters filters, bool &accepted) const
+const QList<AbstractFileInfoPointer> AbstractFileController::getChildren(const DUrl &fileUrl, QDir::Filters filters, bool &accepted) const
 {
     Q_UNUSED(fileUrl)
     Q_UNUSED(filters)
 
     accepted = false;
 
-    return QList<AbstractFileInfo*>();
+    return QList<AbstractFileInfoPointer>();
 }
 
-AbstractFileInfo *AbstractFileController::createFileInfo(const DUrl &fileUrl, bool &accepted) const
+AbstractFileInfoPointer AbstractFileController::createFileInfo(const DUrl &fileUrl, bool &accepted) const
 {
     Q_UNUSED(fileUrl)
 
     accepted = false;
 
-    return Q_NULLPTR;
+    return AbstractFileInfoPointer();
 }

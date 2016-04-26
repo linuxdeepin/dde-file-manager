@@ -4,6 +4,7 @@
 #include <DMenu>
 
 #include "durl.h"
+#include "abstractfileinfo.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -22,12 +23,8 @@ public:
     void setWindowId(int windowId);
     int getWindowId() const;
 
-    void setFileInfo(const AbstractFileInfo *info);
-    const AbstractFileInfo *fileInfo() const;
-
 private:
     DUrlList m_urls;
-    const AbstractFileInfo *m_fileInfo = Q_NULLPTR;
 
     int m_windowId = -1;
 };

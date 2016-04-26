@@ -1,5 +1,6 @@
 #include "dfilesystemmodel.h"
 #include "desktopfileinfo.h"
+#include "abstractfileinfo.h"
 
 #include "../views/dfileview.h"
 
@@ -21,29 +22,24 @@
 class FileSystemNode
 {
 public:
-    AbstractFileInfo *fileInfo = Q_NULLPTR;
+    AbstractFileInfoPointer fileInfo;
     FileSystemNode *parent = Q_NULLPTR;
     QHash<DUrl, FileSystemNode*> children;
     QList<DUrl> visibleChildren;
     bool populatedChildren = false;
 
     FileSystemNode(FileSystemNode *parent,
-                   AbstractFileInfo *info) :
+                   const AbstractFileInfoPointer &info) :
         fileInfo(info),
         parent(parent)
     {
 
     }
-
-    ~FileSystemNode()
-    {
-        delete fileInfo;
-    }
 };
 
 Qt::SortOrder sortOrder_global;
 
-bool sortFileListByDisplayName(const AbstractFileInfo *info1, const AbstractFileInfo *info2)
+bool sortFileListByDisplayName(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &info2)
 {
     if(info1->isDir()) {
         if(!info2->isDir())
@@ -56,7 +52,7 @@ bool sortFileListByDisplayName(const AbstractFileInfo *info1, const AbstractFile
     return (sortOrder_global == Qt::DescendingOrder) ^ (info1->displayName().toLower() < info2->displayName().toLower());
 }
 
-bool sortFileListBySize(const AbstractFileInfo *info1, const AbstractFileInfo *info2)
+bool sortFileListBySize(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &info2)
 {
     if(info1->isDir()) {
         if(!info2->isDir())
@@ -69,7 +65,7 @@ bool sortFileListBySize(const AbstractFileInfo *info1, const AbstractFileInfo *i
     return (sortOrder_global == Qt::DescendingOrder) ^ (info1->size() < info2->size());
 }
 
-bool sortFileListByModified(const AbstractFileInfo *info1, const AbstractFileInfo *info2)
+bool sortFileListByModified(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &info2)
 {
     if(info1->isDir()) {
         if(!info2->isDir())
@@ -82,7 +78,7 @@ bool sortFileListByModified(const AbstractFileInfo *info1, const AbstractFileInf
     return (sortOrder_global == Qt::DescendingOrder) ^ (info1->lastModified() < info2->lastModified());
 }
 
-bool sortFileListByMime(const AbstractFileInfo *info1, const AbstractFileInfo *info2)
+bool sortFileListByMime(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &info2)
 {
     if(info1->isDir()) {
         if(!info2->isDir())
@@ -95,7 +91,7 @@ bool sortFileListByMime(const AbstractFileInfo *info1, const AbstractFileInfo *i
     return (sortOrder_global == Qt::DescendingOrder) ^ (info1->mimeTypeName() < info2->mimeTypeName());
 }
 
-bool sortFileListByCreated(const AbstractFileInfo *info1, const AbstractFileInfo *info2)
+bool sortFileListByCreated(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &info2)
 {
     if(info1->isDir()) {
         if(!info2->isDir())
@@ -561,7 +557,7 @@ void DFileSystemModel::sort()
         url_node->visibleChildren.clear();
     }
 
-    QList<AbstractFileInfo*> list;
+    QList<AbstractFileInfoPointer> list;
 
     list.reserve(node->visibleChildren.size());
 
@@ -582,35 +578,35 @@ void DFileSystemModel::sort()
     emit dataChanged(topLeftIndex, rightBottomIndex);
 }
 
-AbstractFileInfo *DFileSystemModel::fileInfo(const QModelIndex &index) const
+const AbstractFileInfoPointer DFileSystemModel::fileInfo(const QModelIndex &index) const
 {
     FileSystemNode *node = getNodeByIndex(index);
 
-    return node ? node->fileInfo : Q_NULLPTR;
+    return node ? node->fileInfo : AbstractFileInfoPointer();
 }
 
-AbstractFileInfo *DFileSystemModel::fileInfo(const DUrl &fileUrl) const
+const AbstractFileInfoPointer DFileSystemModel::fileInfo(const DUrl &fileUrl) const
 {
     FileSystemNode *node = m_urlToNode.value(fileUrl);
 
-    return node ? node->fileInfo : Q_NULLPTR;
+    return node ? node->fileInfo : AbstractFileInfoPointer();
 }
 
-AbstractFileInfo *DFileSystemModel::parentFileInfo(const QModelIndex &index) const
+const AbstractFileInfoPointer DFileSystemModel::parentFileInfo(const QModelIndex &index) const
 {
     FileSystemNode *node = getNodeByIndex(index);
 
-    return node ? node->parent->fileInfo : Q_NULLPTR;
+    return node ? node->parent->fileInfo : AbstractFileInfoPointer();
 }
 
-AbstractFileInfo *DFileSystemModel::parentFileInfo(const DUrl &fileUrl) const
+const AbstractFileInfoPointer DFileSystemModel::parentFileInfo(const DUrl &fileUrl) const
 {
     FileSystemNode *node = m_urlToNode.value(fileUrl);
 
-    return node ? node->parent->fileInfo : Q_NULLPTR;
+    return node ? node->parent->fileInfo : AbstractFileInfoPointer();
 }
 
-void DFileSystemModel::updateChildren(const FMEvent &event, QList<AbstractFileInfo*> list)
+void DFileSystemModel::updateChildren(const FMEvent &event, QList<AbstractFileInfoPointer> list)
 {
     if(event.windowId() != parent()->windowId())
         return;
@@ -618,7 +614,6 @@ void DFileSystemModel::updateChildren(const FMEvent &event, QList<AbstractFileIn
     FileSystemNode *node = getNodeByIndex(index(event.fileUrl()));
 
     if(!node) {
-        qDeleteAll(list);
         return;
     }
 
@@ -629,7 +624,7 @@ void DFileSystemModel::updateChildren(const FMEvent &event, QList<AbstractFileIn
 
     beginInsertRows(createIndex(node, 0), 0, list.count() - 1);
 
-    for(AbstractFileInfo * const fileInfo : list) {
+    for(const AbstractFileInfoPointer &fileInfo : list) {
         FileSystemNode *chileNode = createNode(node, fileInfo);
 
         node->children[fileInfo->fileUrl()] = chileNode;
@@ -663,7 +658,7 @@ void DFileSystemModel::onFileCreated(const DUrl &fileUrl)
 {
     qDebug() << "file creatored" << fileUrl;
 
-    AbstractFileInfo *info = fileService->createFileInfo(fileUrl);
+    const AbstractFileInfoPointer &info = fileService->createFileInfo(fileUrl);
 
     if(!info)
         return;
@@ -678,7 +673,7 @@ void DFileSystemModel::onFileCreated(const DUrl &fileUrl)
                 row = parentNode->visibleChildren.count();
             } else {
                 for(; row < parentNode->visibleChildren.count(); ++row) {
-                    const AbstractFileInfo *tmp_info = parentNode->children.value(parentNode->visibleChildren.value(row))->fileInfo;
+                    const AbstractFileInfoPointer &tmp_info = parentNode->children.value(parentNode->visibleChildren.value(row))->fileInfo;
 
                     if(tmp_info->isFile())
                         break;
@@ -686,7 +681,7 @@ void DFileSystemModel::onFileCreated(const DUrl &fileUrl)
             }
         } else {
             for(; row < parentNode->visibleChildren.count(); ++row) {
-                const AbstractFileInfo *tmp_info = parentNode->children.value(parentNode->visibleChildren.value(row))->fileInfo;
+                const AbstractFileInfoPointer &tmp_info = parentNode->children.value(parentNode->visibleChildren.value(row))->fileInfo;
 
                 if(sortFun(info, tmp_info) && m_srotOrder == Qt::AscendingOrder) {
                     break;
@@ -702,16 +697,12 @@ void DFileSystemModel::onFileCreated(const DUrl &fileUrl)
             node = createNode(parentNode, info);
 
             m_urlToNode[fileUrl] = node;
-        } else {
-            delete info;
         }
 
         parentNode->children[fileUrl] = node;
         parentNode->visibleChildren.insert(row, fileUrl);
 
         endInsertRows();
-    } else {
-        delete info;
     }
 }
 
@@ -719,7 +710,7 @@ void DFileSystemModel::onFileDeleted(const DUrl &fileUrl)
 {
     qDebug() << "file deleted:" << fileUrl;
 
-    AbstractFileInfo *info = fileService->createFileInfo(fileUrl);
+    const AbstractFileInfoPointer &info = fileService->createFileInfo(fileUrl);
 
     if(!info)
         return;
@@ -728,8 +719,6 @@ void DFileSystemModel::onFileDeleted(const DUrl &fileUrl)
         fileService->removeUrlMonitor(fileUrl);
 
     FileSystemNode *parentNode = m_urlToNode.value(info->parentUrl());
-
-    delete info;
 
     if(parentNode && parentNode->populatedChildren) {
         int index = parentNode->visibleChildren.indexOf(fileUrl);
@@ -770,8 +759,6 @@ void DFileSystemModel::onFileUpdated(const DUrl &fileUrl)
     if(!index.isValid())
         return;
 
-    delete node->fileInfo;
-
     node->fileInfo = fileService->createFileInfo(fileUrl);
 
     emit dataChanged(index, index);
@@ -802,7 +789,7 @@ bool DFileSystemModel::isDir(const FileSystemNode *node) const
     return node->fileInfo->isDir();
 }
 
-void DFileSystemModel::sort(QList<AbstractFileInfo*> &list) const
+void DFileSystemModel::sort(QList<AbstractFileInfoPointer> &list) const
 {
     sortOrder_global = m_srotOrder;
 
@@ -828,7 +815,7 @@ void DFileSystemModel::sort(QList<AbstractFileInfo*> &list) const
     }
 }
 
-FileSystemNode *DFileSystemModel::createNode(FileSystemNode *parent, AbstractFileInfo *info)
+FileSystemNode *DFileSystemModel::createNode(FileSystemNode *parent, const AbstractFileInfoPointer &info)
 {
     Q_ASSERT(info);
 
@@ -836,7 +823,6 @@ FileSystemNode *DFileSystemModel::createNode(FileSystemNode *parent, AbstractFil
 
     if(node) {
         if(node->fileInfo != info) {
-            delete node->fileInfo;
             node->fileInfo = info;
         }
 

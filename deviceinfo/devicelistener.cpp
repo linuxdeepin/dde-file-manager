@@ -228,17 +228,17 @@ QString DeviceListener::mountPoint(udev_device *dev)
     return QString();
 }
 
-const QList<AbstractFileInfo *> DeviceListener::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
+const QList<AbstractFileInfoPointer> DeviceListener::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
 {
     Q_UNUSED(fileUrl)
     Q_UNUSED(filter)
 
-    QList<AbstractFileInfo*> infolist;
+    QList<AbstractFileInfoPointer> infolist;
 
     for (int i = 0; i < m_deviceInfos.size(); i++)
     {
         DeviceInfo * info = m_deviceInfos.at(i);
-        AbstractFileInfo *fileInfo = new DeviceInfo(info);
+        AbstractFileInfoPointer fileInfo(new DeviceInfo(info));
         infolist.append(fileInfo);
     }
 
@@ -247,9 +247,9 @@ const QList<AbstractFileInfo *> DeviceListener::getChildren(const DUrl &fileUrl,
     return infolist;
 }
 
-AbstractFileInfo *DeviceListener::createFileInfo(const DUrl &fileUrl, bool &accepted) const
+AbstractFileInfoPointer DeviceListener::createFileInfo(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
 
-    return new DeviceInfo(fileUrl);
+    return AbstractFileInfoPointer(new DeviceInfo(fileUrl));
 }
