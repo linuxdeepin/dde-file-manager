@@ -368,10 +368,10 @@ const AbstractFileInfoPointer FileServices::createFileInfo(const DUrl &fileUrl) 
     return AbstractFileInfoPointer();
 }
 
-const DDirIteratorPointer FileServices::createDirIterator(const DUrl &fileUrl) const
+const DDirIteratorPointer FileServices::createDirIterator(const DUrl &fileUrl, QDir::Filters filters, QDirIterator::IteratorFlags flags) const
 {
     TRAVERSE(fileUrl, {
-                 const DDirIteratorPointer iterator = controller->createDirIterator(fileUrl, accepted);
+                 const DDirIteratorPointer iterator = controller->createDirIterator(fileUrl, filters, flags, accepted);
 
                  if(accepted)
                      return iterator;

@@ -1,6 +1,8 @@
 #include "searchcontroller.h"
+#include "fileservices.h"
 
 #include "../models/searchfileinfo.h"
+#include "../models/ddiriterator.h"
 
 #include <QDebug>
 #include <QtConcurrent/QtConcurrentRun>
@@ -56,16 +58,17 @@ void SearchController::searchStart(const DUrl &fileUrl, QDir::Filters filter)
     qDebug() << "begin search:" << fileUrl;
 
     while(!searchPathList.isEmpty()) {
-        QDirIterator it(searchPathList.takeAt(0), QDir::NoDotAndDotDot | filter, QDirIterator::NoIteratorFlags);
+        DDirIteratorPointer it = FileServices::instance()->createDirIterator(DUrl::fromLocalFile(searchPathList.takeAt(0)),
+                                                                      QDir::NoDotAndDotDot | filter, QDirIterator::NoIteratorFlags);
 
-        while (it.hasNext()) {
+        while (it->hasNext()) {
             if(!activeJob.contains(fileUrl)) {
                 qDebug() << "stop search:" << fileUrl;
 
                 return;
             }
 
-            QFileInfo fileInfo(it.next());
+            QFileInfo fileInfo(it->next());
 
             fileInfo.makeAbsolute();
 

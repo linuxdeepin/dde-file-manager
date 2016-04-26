@@ -14,6 +14,25 @@
 #include <QDirIterator>
 #include <QFileInfo>
 
+class FileDirIterator : public DDirIterator
+{
+public:
+    FileDirIterator(const QString &path,
+                    QDir::Filters filter,
+                    QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags);
+
+    QString next() Q_DECL_OVERRIDE;
+    bool hasNext() const Q_DECL_OVERRIDE;
+
+    QString fileName() const Q_DECL_OVERRIDE;
+    QString filePath() const Q_DECL_OVERRIDE;
+    const AbstractFileInfoPointer fileInfo() const Q_DECL_OVERRIDE;
+    QString path() const Q_DECL_OVERRIDE;
+
+private:
+    QDirIterator iterator;
+};
+
 FileController::FileController(QObject *parent)
     : AbstractFileController(parent)
     , fileMonitor(new FileMonitor(this))
@@ -39,6 +58,15 @@ const AbstractFileInfoPointer FileController::createFileInfo(const DUrl &fileUrl
         return AbstractFileInfoPointer(new DesktopFileInfo(fileUrl));
     else
         return AbstractFileInfoPointer(new FileInfo(fileUrl));
+}
+
+const DDirIteratorPointer FileController::createDirIterator(const DUrl &fileUrl, QDir::Filters filters,
+                                                            QDirIterator::IteratorFlags flags,
+                                                            bool &accepted) const
+{
+    accepted = true;
+
+    return DDirIteratorPointer(new FileDirIterator(fileUrl.path(), filters, flags));
 }
 
 const QList<AbstractFileInfoPointer> FileController::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
@@ -364,4 +392,41 @@ QString FileController::checkDuplicateName(const QString &name) const
     }
 
     return destUrl;
+}
+
+FileDirIterator::FileDirIterator(const QString &path, QDir::Filters filter, QDirIterator::IteratorFlags flags)
+    : DDirIterator()
+    , iterator(path, filter, flags)
+{
+
+}
+
+QString FileDirIterator::next()
+{
+    return iterator.next();
+}
+
+bool FileDirIterator::hasNext() const
+{
+    return iterator.hasNext();
+}
+
+QString FileDirIterator::fileName() const
+{
+    return iterator.fileName();
+}
+
+QString FileDirIterator::filePath() const
+{
+    return iterator.filePath();
+}
+
+const AbstractFileInfoPointer FileDirIterator::fileInfo() const
+{
+    return AbstractFileInfoPointer(new FileInfo(iterator.fileInfo()));
+}
+
+QString FileDirIterator::path() const
+{
+    return iterator.filePath();
 }
