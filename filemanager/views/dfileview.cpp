@@ -356,7 +356,8 @@ void DFileView::mousePressEvent(QMouseEvent *event)
 
     event->ignore();
 
-    DListView::mousePressEvent(event);
+    if(!(event->buttons() & Qt::RightButton))
+        DListView::mousePressEvent(event);
 }
 
 void DFileView::commitData(QWidget *editor)
