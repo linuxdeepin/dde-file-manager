@@ -234,7 +234,7 @@ const QList<AbstractFileInfoPointer> UDiskListener::getChildren(const DUrl &file
     return infolist;
 }
 
-AbstractFileInfoPointer UDiskListener::createFileInfo(const DUrl &fileUrl, bool &accepted) const
+const AbstractFileInfoPointer UDiskListener::createFileInfo(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
 

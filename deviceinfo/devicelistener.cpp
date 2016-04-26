@@ -247,7 +247,7 @@ const QList<AbstractFileInfoPointer> DeviceListener::getChildren(const DUrl &fil
     return infolist;
 }
 
-AbstractFileInfoPointer DeviceListener::createFileInfo(const DUrl &fileUrl, bool &accepted) const
+const AbstractFileInfoPointer DeviceListener::createFileInfo(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
 

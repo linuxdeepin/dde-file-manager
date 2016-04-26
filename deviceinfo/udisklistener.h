@@ -39,7 +39,7 @@ private:
     QList<QString> fstab;
 public:
     const QList<AbstractFileInfoPointer> getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const;
-    AbstractFileInfoPointer createFileInfo(const DUrl &fileUrl, bool &accepted) const;
+    const AbstractFileInfoPointer createFileInfo(const DUrl &fileUrl, bool &accepted) const;
 };
 
 #endif // UDISKLISTENER_H

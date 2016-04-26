@@ -27,7 +27,7 @@ TrashManager::TrashManager(QObject *parent)
             this, &TrashManager::onFileRemove);
 }
 
-AbstractFileInfoPointer TrashManager::createFileInfo(const DUrl &fileUrl, bool &accepted) const
+const AbstractFileInfoPointer TrashManager::createFileInfo(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
 

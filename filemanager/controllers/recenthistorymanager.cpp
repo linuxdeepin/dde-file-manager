@@ -113,7 +113,7 @@ const QList<AbstractFileInfoPointer> RecentHistoryManager::getChildren(const DUr
     return infolist;
 }
 
-AbstractFileInfoPointer RecentHistoryManager::createFileInfo(const DUrl &fileUrl, bool &accepted) const
+const AbstractFileInfoPointer RecentHistoryManager::createFileInfo(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
 

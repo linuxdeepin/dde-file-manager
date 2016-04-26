@@ -117,7 +117,8 @@ HEADERS += \
     filemanager/models/searchfileinfo.h\
     filemanager/shutil/standardpath.h \
     filemanager/dialogs/basedialog.h \
-    filemanager/controllers/fmsortmanager.h
+    filemanager/controllers/fmsortmanager.h \
+    filemanager/models/ddiriterator.h
 
 
 SOURCES += \

@@ -146,7 +146,7 @@ const QList<AbstractFileInfoPointer> BookMarkManager::getChildren(const DUrl &fi
     return infolist;
 }
 
-AbstractFileInfoPointer BookMarkManager::createFileInfo(const DUrl &fileUrl, bool &accepted) const
+const AbstractFileInfoPointer BookMarkManager::createFileInfo(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
 

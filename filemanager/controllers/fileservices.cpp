@@ -356,7 +356,7 @@ void FileServices::openNewWindow(const DUrl &fileUrl) const
     emit fileSignalManager->requestOpenNewWindowByUrl(fileUrl, true);
 }
 
-AbstractFileInfoPointer FileServices::createFileInfo(const DUrl &fileUrl) const
+const AbstractFileInfoPointer FileServices::createFileInfo(const DUrl &fileUrl) const
 {
     TRAVERSE(fileUrl, {
                  const AbstractFileInfoPointer &info = controller->createFileInfo(fileUrl, accepted);
@@ -366,6 +366,18 @@ AbstractFileInfoPointer FileServices::createFileInfo(const DUrl &fileUrl) const
              })
 
     return AbstractFileInfoPointer();
+}
+
+const DDirIteratorPointer FileServices::createDirIterator(const DUrl &fileUrl) const
+{
+    TRAVERSE(fileUrl, {
+                 const DDirIteratorPointer iterator = controller->createDirIterator(fileUrl, accepted);
+
+                 if(accepted)
+                     return iterator;
+             })
+
+    return DDirIteratorPointer();
 }
 
 const QList<AbstractFileInfoPointer> FileServices::getChildren(const DUrl &fileUrl, QDir::Filters filters, bool *ok) const

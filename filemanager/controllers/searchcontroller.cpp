@@ -35,7 +35,7 @@ const QList<AbstractFileInfoPointer> SearchController::getChildren(const DUrl &f
     return QList<AbstractFileInfoPointer>();
 }
 
-AbstractFileInfoPointer SearchController::createFileInfo(const DUrl &fileUrl, bool &accepted) const
+const AbstractFileInfoPointer SearchController::createFileInfo(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
 
