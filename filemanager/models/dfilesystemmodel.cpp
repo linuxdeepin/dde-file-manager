@@ -19,16 +19,16 @@
 
 #define fileService FileServices::instance()
 
-class FileSystemNode
+class FileSystemNode : public QSharedData
 {
 public:
     AbstractFileInfoPointer fileInfo;
-    FileSystemNode *parent = Q_NULLPTR;
-    QHash<DUrl, FileSystemNode*> children;
+    FileSystemNodePointer parent;
+    QHash<DUrl, FileSystemNodePointer> children;
     QList<DUrl> visibleChildren;
     bool populatedChildren = false;
 
-    FileSystemNode(FileSystemNode *parent,
+    FileSystemNode(const FileSystemNodePointer &parent,
                    const AbstractFileInfoPointer &info) :
         fileInfo(info),
         parent(parent)
@@ -123,11 +123,9 @@ DFileSystemModel::DFileSystemModel(DFileView *parent)
 
 DFileSystemModel::~DFileSystemModel()
 {
-    for(FileSystemNode *node : m_urlToNode) {
+    for(const FileSystemNodePointer &node : m_urlToNode) {
         if(node->fileInfo->isDir())
             fileService->removeUrlMonitor(node->fileInfo->fileUrl());
-
-        delete node;
     }
 }
 
@@ -138,7 +136,7 @@ DFileView *DFileSystemModel::parent() const
 
 QModelIndex DFileSystemModel::index(const DUrl &fileUrl, int column)
 {
-    FileSystemNode *node = m_urlToNode.value(fileUrl);
+    const FileSystemNodePointer &node = m_urlToNode.value(fileUrl);
 
     if (!node)
         return QModelIndex();
@@ -153,25 +151,25 @@ QModelIndex DFileSystemModel::index(int row, int column, const QModelIndex &pare
     if (row < 0 || column < 0 || row >= rowCount(parent) || column >= columnCount(parent))
         return QModelIndex();
 
-    FileSystemNode *parentNode = parent.isValid()
-                                 ? getNodeByIndex(parent)
-                                 : m_rootNode;
+    const FileSystemNodePointer &parentNode = parent.isValid()
+                                                ? FileSystemNodePointer(getNodeByIndex(parent))
+                                                : m_rootNode;
 
     if(!parentNode)
         return QModelIndex();
 
     const DUrl &childFileUrl = parentNode->visibleChildren.value(row);
-    FileSystemNode *childNode = parentNode->children.value(childFileUrl);
+    const FileSystemNodePointer &childNode = parentNode->children.value(childFileUrl);
 
     if(!childNode)
         return QModelIndex();
 
-    return createIndex(row, column, childNode);
+    return createIndex(row, column, childNode.data());
 }
 
 QModelIndex DFileSystemModel::parent(const QModelIndex &child) const
 {
-    FileSystemNode *indexNode = getNodeByIndex(child);
+    const FileSystemNodePointer &indexNode = getNodeByIndex(child);
 
     if(!indexNode || !indexNode->parent)
         return QModelIndex();
@@ -181,8 +179,8 @@ QModelIndex DFileSystemModel::parent(const QModelIndex &child) const
 
 int DFileSystemModel::rowCount(const QModelIndex &parent) const
 {
-    FileSystemNode *parentNode = parent.isValid()
-                                 ? getNodeByIndex(parent)
+    const FileSystemNodePointer &parentNode = parent.isValid()
+                                 ? FileSystemNodePointer(getNodeByIndex(parent))
                                  : m_rootNode;
 
     if(!parentNode)
@@ -201,7 +199,7 @@ bool DFileSystemModel::hasChildren(const QModelIndex &parent) const
     if (!parent.isValid()) // drives
         return false;
 
-    const FileSystemNode *indexNode = getNodeByIndex(parent);
+    const FileSystemNodePointer &indexNode = getNodeByIndex(parent);
     Q_ASSERT(indexNode);
 
     return isDir(indexNode);
@@ -212,7 +210,7 @@ QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
     if (!index.isValid() || index.model() != this)
         return QVariant();
 
-    FileSystemNode *indexNode = getNodeByIndex(index);
+    const FileSystemNodePointer &indexNode = getNodeByIndex(index);
 
     Q_ASSERT(indexNode);
 
@@ -302,7 +300,7 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
     if(!m_rootNode)
         return;
 
-    FileSystemNode *parentNode = getNodeByIndex(parent);
+    const FileSystemNodePointer &parentNode = getNodeByIndex(parent);
 
     if(!parentNode || parentNode->populatedChildren)
         return;
@@ -325,7 +323,7 @@ Qt::ItemFlags DFileSystemModel::flags(const QModelIndex &index) const
     if (!index.isValid())
         return flags;
 
-    FileSystemNode *indexNode = getNodeByIndex(index);
+    const FileSystemNodePointer &indexNode = getNodeByIndex(index);
 
     flags |= Qt::ItemIsDragEnabled;
 
@@ -413,7 +411,7 @@ QMimeData *DFileSystemModel::mimeData(const QModelIndexList &indexes) const
 
 bool DFileSystemModel::canFetchMore(const QModelIndex &parent) const
 {
-    FileSystemNode *parentNode = getNodeByIndex(parent);
+    const FileSystemNodePointer &parentNode = getNodeByIndex(parent);
 
     if(!parentNode)
         return false;
@@ -437,7 +435,7 @@ QModelIndex DFileSystemModel::setRootUrl(const DUrl &fileUrl)
     m_rootNode = m_urlToNode.value(fileUrl);
 
     if(!m_rootNode) {
-        m_rootNode = createNode(Q_NULLPTR, fileService->createFileInfo(fileUrl));
+        m_rootNode = createNode(FileSystemNodePointer(), fileService->createFileInfo(fileUrl));
     }
 
     return index(fileUrl);
@@ -450,7 +448,7 @@ DUrl DFileSystemModel::rootUrl() const
 
 DUrl DFileSystemModel::getUrlByIndex(const QModelIndex &index) const
 {
-    FileSystemNode *node = getNodeByIndex(index);
+    const FileSystemNodePointer &node = getNodeByIndex(index);
 
     if(!node)
         return DUrl();
@@ -499,7 +497,7 @@ void DFileSystemModel::setActiveIndex(const QModelIndex &index)
 {
     m_activeIndex = index;
 
-    FileSystemNode *node = getNodeByIndex(index);
+    const FileSystemNodePointer &node = getNodeByIndex(index);
 
     if(!node || node->populatedChildren)
         return;
@@ -538,15 +536,15 @@ void DFileSystemModel::sort(int column, Qt::SortOrder order)
 
 void DFileSystemModel::sort()
 {
-    FileSystemNode *node = getNodeByIndex(m_activeIndex);
+    const FileSystemNodePointer &node = getNodeByIndex(m_activeIndex);
 
     if(!node)
         return;
 
     const DUrl &node_absoluteFileUrl = node->fileInfo->fileUrl();
 
-    for(FileSystemNode *url_node : m_urlToNode) {
-        if(node == url_node)
+    for(const FileSystemNodePointer &url_node : m_urlToNode) {
+        if(node == url_node.constData())
             continue;
 
         url_node->populatedChildren = false;
@@ -580,28 +578,28 @@ void DFileSystemModel::sort()
 
 const AbstractFileInfoPointer DFileSystemModel::fileInfo(const QModelIndex &index) const
 {
-    FileSystemNode *node = getNodeByIndex(index);
+    const FileSystemNodePointer &node = getNodeByIndex(index);
 
     return node ? node->fileInfo : AbstractFileInfoPointer();
 }
 
 const AbstractFileInfoPointer DFileSystemModel::fileInfo(const DUrl &fileUrl) const
 {
-    FileSystemNode *node = m_urlToNode.value(fileUrl);
+    const FileSystemNodePointer &node = m_urlToNode.value(fileUrl);
 
     return node ? node->fileInfo : AbstractFileInfoPointer();
 }
 
 const AbstractFileInfoPointer DFileSystemModel::parentFileInfo(const QModelIndex &index) const
 {
-    FileSystemNode *node = getNodeByIndex(index);
+    const FileSystemNodePointer &node = getNodeByIndex(index);
 
     return node ? node->parent->fileInfo : AbstractFileInfoPointer();
 }
 
 const AbstractFileInfoPointer DFileSystemModel::parentFileInfo(const DUrl &fileUrl) const
 {
-    FileSystemNode *node = m_urlToNode.value(fileUrl);
+    const FileSystemNodePointer &node = m_urlToNode.value(fileUrl);
 
     return node ? node->parent->fileInfo : AbstractFileInfoPointer();
 }
@@ -611,7 +609,7 @@ void DFileSystemModel::updateChildren(const FMEvent &event, QList<AbstractFileIn
     if(event.windowId() != parent()->windowId())
         return;
 
-    FileSystemNode *node = getNodeByIndex(index(event.fileUrl()));
+    const FileSystemNodePointer &node = getNodeByIndex(index(event.fileUrl()));
 
     if(!node) {
         return;
@@ -625,7 +623,7 @@ void DFileSystemModel::updateChildren(const FMEvent &event, QList<AbstractFileIn
     beginInsertRows(createIndex(node, 0), 0, list.count() - 1);
 
     for(const AbstractFileInfoPointer &fileInfo : list) {
-        FileSystemNode *chileNode = createNode(node, fileInfo);
+        const FileSystemNodePointer &chileNode = createNode(node, fileInfo);
 
         node->children[fileInfo->fileUrl()] = chileNode;
         node->visibleChildren << fileInfo->fileUrl();
@@ -636,7 +634,7 @@ void DFileSystemModel::updateChildren(const FMEvent &event, QList<AbstractFileIn
 
 void DFileSystemModel::refresh(const DUrl &fileUrl)
 {
-    FileSystemNode *node = m_urlToNode.value(fileUrl);
+    const FileSystemNodePointer &node = m_urlToNode.value(fileUrl);
 
     if(!node)
         return;
@@ -663,7 +661,7 @@ void DFileSystemModel::onFileCreated(const DUrl &fileUrl)
     if(!info)
         return;
 
-    FileSystemNode *parentNode = m_urlToNode.value(info->parentUrl());
+    const FileSystemNodePointer &parentNode = m_urlToNode.value(info->parentUrl());
 
     if(parentNode && parentNode->populatedChildren && !parentNode->visibleChildren.contains(fileUrl)) {
         int row = 0;
@@ -691,7 +689,7 @@ void DFileSystemModel::onFileCreated(const DUrl &fileUrl)
 
         beginInsertRows(createIndex(parentNode, 0), row, row);
 
-        FileSystemNode *node = m_urlToNode.value(fileUrl);
+        FileSystemNodePointer node = m_urlToNode.value(fileUrl);
 
         if(!node) {
             node = createNode(parentNode, info);
@@ -718,7 +716,7 @@ void DFileSystemModel::onFileDeleted(const DUrl &fileUrl)
     if(info->isDir())
         fileService->removeUrlMonitor(fileUrl);
 
-    FileSystemNode *parentNode = m_urlToNode.value(info->parentUrl());
+    const FileSystemNodePointer &parentNode = m_urlToNode.value(info->parentUrl());
 
     if(parentNode && parentNode->populatedChildren) {
         int index = parentNode->visibleChildren.indexOf(fileUrl);
@@ -730,7 +728,7 @@ void DFileSystemModel::onFileDeleted(const DUrl &fileUrl)
 
         endRemoveRows();
 
-        FileSystemNode *node = m_urlToNode.value(fileUrl);
+        const FileSystemNodePointer &node = m_urlToNode.value(fileUrl);
 
         if(!node)
             return;
@@ -749,7 +747,7 @@ void DFileSystemModel::onFileDeleted(const DUrl &fileUrl)
 
 void DFileSystemModel::onFileUpdated(const DUrl &fileUrl)
 {
-    FileSystemNode *node = m_urlToNode.value(fileUrl);
+    const FileSystemNodePointer &node = m_urlToNode.value(fileUrl);
 
     if(!node)
         return;
@@ -764,27 +762,27 @@ void DFileSystemModel::onFileUpdated(const DUrl &fileUrl)
     emit dataChanged(index, index);
 }
 
-FileSystemNode *DFileSystemModel::getNodeByIndex(const QModelIndex &index) const
+const FileSystemNodePointer DFileSystemModel::getNodeByIndex(const QModelIndex &index) const
 {
     if (!index.isValid())
-        return Q_NULLPTR;
+        return FileSystemNodePointer();
 
     FileSystemNode *indexNode = static_cast<FileSystemNode*>(index.internalPointer());
     Q_ASSERT(indexNode);
 
-    return indexNode;
+    return FileSystemNodePointer(indexNode);
 }
 
-QModelIndex DFileSystemModel::createIndex(const FileSystemNode *node, int column) const
+QModelIndex DFileSystemModel::createIndex(const FileSystemNodePointer &node, int column) const
 {
     int row = (node->parent && !node->parent->visibleChildren.isEmpty())
             ? node->parent->visibleChildren.indexOf(node->fileInfo->fileUrl())
             : 0;
 
-    return createIndex(row, column, const_cast<FileSystemNode*>(node));
+    return createIndex(row, column, const_cast<FileSystemNode*>(node.data()));
 }
 
-bool DFileSystemModel::isDir(const FileSystemNode *node) const
+bool DFileSystemModel::isDir(const FileSystemNodePointer &node) const
 {
     return node->fileInfo->isDir();
 }
@@ -815,11 +813,11 @@ void DFileSystemModel::sort(QList<AbstractFileInfoPointer> &list) const
     }
 }
 
-FileSystemNode *DFileSystemModel::createNode(FileSystemNode *parent, const AbstractFileInfoPointer &info)
+const FileSystemNodePointer DFileSystemModel::createNode(const FileSystemNodePointer &parent, const AbstractFileInfoPointer &info)
 {
     Q_ASSERT(info);
 
-    FileSystemNode *node = m_urlToNode.value(info->fileUrl());
+    const FileSystemNodePointer &node = m_urlToNode.value(info->fileUrl());
 
     if(node) {
         if(node->fileInfo != info) {
@@ -827,29 +825,29 @@ FileSystemNode *DFileSystemModel::createNode(FileSystemNode *parent, const Abstr
         }
 
         node->parent = parent;
+
+        return node;
     } else {
-        node = new FileSystemNode(parent, info);
+        FileSystemNodePointer node(new FileSystemNode(parent, info));
 
         m_urlToNode[info->fileUrl()] = node;
-    }
 
-    return node;
+        return node;
+    }
 }
 
-void DFileSystemModel::deleteNode(FileSystemNode *node)
+void DFileSystemModel::deleteNode(const FileSystemNodePointer &node)
 {
     m_urlToNode.remove(m_urlToNode.key(node));
 
-    for(FileSystemNode *children : node->children) {
+    for(const FileSystemNodePointer &children : node->children) {
         if(children->parent == node) {
-            children->parent = m_urlToNode.value(children->fileInfo->parentUrl());
+            deleteNode(children);
         }
     }
-
-    delete node;
 }
 
 void DFileSystemModel::deleteNodeByUrl(const DUrl &url)
 {
-    delete m_urlToNode.take(url);
+    m_urlToNode.take(url);
 }
