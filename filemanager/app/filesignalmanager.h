@@ -75,7 +75,7 @@ signals:
     void requestBookmarkAdd(const QString &name, const FMEvent &event);
 
     /*requst open new window by given url*/
-    void requestOpenNewWindowByUrl(const DUrl& url);
+    void requestOpenNewWindowByUrl(const DUrl& url, bool isAlwaysOpen);
 
     /* device mounted */
     void deviceMounted(int i);
