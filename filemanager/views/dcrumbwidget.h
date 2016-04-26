@@ -5,6 +5,8 @@
 #include <QHBoxLayout>
 #include <QButtonGroup>
 #include <QPushButton>
+#include <QListWidget>
+#include <QListWidgetItem>
 #include "durl.h"
 
 class FMEvent;
@@ -34,23 +36,21 @@ private:
     bool isInHome(QString path);
     bool isHomeFolder(QString path);
     bool isRootFolder(QString path);
-    void calcCrumbPath(int index, bool fixed);
-    int preCalcCrumb();
     void createCrumbs();
     void createArrows();
-    int nextLeftCrumbs();
-    int nextRightCrumbs();
-    bool rearchLeftEnd();
-    bool rearchRightEnd();
+    void checkArrows();
     QHBoxLayout * m_buttonLayout;
     QButtonGroup m_group;
     DUrl m_path;
     QString m_homePath;
     DStateButton * m_leftArrow = NULL;
     DStateButton * m_rightArrow = NULL;
+    QListWidget * m_listWidget = NULL;
     QList<QPushButton *> m_buttons;
     bool m_needArrows = false;
     int m_prevCheckedId = -1;
+    QList<QListWidgetItem*> m_items;
+    int m_crumbTotalLen = 0;
 public slots:
     void buttonPressed();
     void crumbModified();
@@ -58,6 +58,9 @@ public slots:
     void crumbMoveToRight();
 signals:
     void crumbSelected(const FMEvent &event);
+
+protected:
+    void resizeEvent(QResizeEvent *e);
 };
 
 #endif // DCRUMBWIDGET_H
