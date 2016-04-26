@@ -89,7 +89,7 @@ void DToolBar::initAddressToolBar()
 
     QHBoxLayout * comboLayout = new QHBoxLayout;
     comboLayout->addWidget(m_crumbWidget);
-    comboLayout->addWidget(m_searchBar);
+    //comboLayout->addWidget(m_searchBar);
     comboLayout->setSpacing(0);
     comboLayout->setContentsMargins(0, 0, 0, 0);
 
@@ -254,17 +254,6 @@ void DToolBar::crumbChanged(const FMEvent &event)
  * on the amount of tabs shown. This will be triggered when
  * up button is clicked.
  */
-void DToolBar::upButtonClicked()
-{
-    QString text = m_crumbWidget->back();
-
-    FMEvent event;
-
-    event = FMEvent::UpButton;
-    event = DUrl::fromUserInput(text);
-
-    emit fileSignalManager->requestChangeCurrentUrl(event);
-}
 
 void DToolBar::searchBarChanged(QString path)
 {

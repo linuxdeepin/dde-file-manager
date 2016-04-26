@@ -170,7 +170,7 @@ QPushButton#leftArrow:hover{
 
 QPushButton#leftArrow{
     background-color:white;
-    border-right: 1px;
+    border: 1px solid lightGray;
     color: black;
 }
 
@@ -180,8 +180,13 @@ QPushButton#rightArrow:hover{
 
 QPushButton#rightArrow{
     background-color:white;
-    border: 1px;
+    border: 1px solid lightGray;
     color: black;
+}
+
+QListWidget#DCrumbList{
+    background-color:white;
+    border: 1px solid lightGray;
 }
 
 QPushButton#iconViewButton{
