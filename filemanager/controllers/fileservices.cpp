@@ -353,7 +353,7 @@ bool FileServices::openFileLocation(const DUrl &fileUrl) const
 
 void FileServices::openNewWindow(const DUrl &fileUrl) const
 {
-    emit fileSignalManager->requestOpenNewWindowByUrl(fileUrl);
+    emit fileSignalManager->requestOpenNewWindowByUrl(fileUrl, true);
 }
 
 AbstractFileInfoPointer FileServices::createFileInfo(const DUrl &fileUrl) const

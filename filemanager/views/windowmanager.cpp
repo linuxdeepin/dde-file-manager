@@ -29,15 +29,17 @@ void WindowManager::initConnect()
     connect(fileSignalManager, &FileSignalManager::requestOpenNewWindowByUrl, this, &WindowManager::showNewWindow);
 }
 
-void WindowManager::showNewWindow(const DUrl &url)
+void WindowManager::showNewWindow(const DUrl &url, bool isAlwaysOpen)
 {
-    for(int i=0; i< m_windows.count(); i++){
-        QWidget* window = const_cast<QWidget *>(m_windows.keys().at(i));
-        DUrl currentUrl = static_cast<DFileManagerWindow *>(window)->currentUrl();
-        if (currentUrl == url){
-            qDebug() << currentUrl << static_cast<DFileManagerWindow *>(window);
-            qApp->setActiveWindow(static_cast<DFileManagerWindow *>(window));
-            return;
+    if (!isAlwaysOpen){
+        for(int i=0; i< m_windows.count(); i++){
+            QWidget* window = const_cast<QWidget *>(m_windows.keys().at(i));
+            DUrl currentUrl = static_cast<DFileManagerWindow *>(window)->currentUrl();
+            if (currentUrl == url){
+                qDebug() << currentUrl << static_cast<DFileManagerWindow *>(window);
+                qApp->setActiveWindow(static_cast<DFileManagerWindow *>(window));
+                return;
+            }
         }
     }
 
