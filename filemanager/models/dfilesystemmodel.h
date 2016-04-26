@@ -12,6 +12,8 @@ class AbstractFileInfo;
 class DFileView;
 class FMEvent;
 
+typedef QExplicitlySharedDataPointer<FileSystemNode> FileSystemNodePointer;
+
 class DFileSystemModel : public QAbstractItemModel
 {
     Q_OBJECT
@@ -92,9 +94,9 @@ private slots:
     void onFileUpdated(const DUrl &fileUrl);
 
 private:
-    FileSystemNode *m_rootNode = Q_NULLPTR;
+    FileSystemNodePointer m_rootNode;
 
-    QHash<DUrl, FileSystemNode*> m_urlToNode;
+    QHash<DUrl, FileSystemNodePointer> m_urlToNode;
 
     int m_sortRole = Qt::DisplayRole;
     int m_sortColumn = 0;
@@ -104,17 +106,17 @@ private:
 
     bool (*sortFun)(const AbstractFileInfoPointer&, const AbstractFileInfoPointer&) = Q_NULLPTR;
 
-    inline FileSystemNode *getNodeByIndex(const QModelIndex &index) const;
-    QModelIndex createIndex(const FileSystemNode *node, int column) const;
+    inline const FileSystemNodePointer getNodeByIndex(const QModelIndex &index) const;
+    QModelIndex createIndex(const FileSystemNodePointer &node, int column) const;
     using QAbstractItemModel::createIndex;
 
-    bool isDir(const FileSystemNode *node) const;
+    bool isDir(const FileSystemNodePointer &node) const;
 
     void sort(QList<AbstractFileInfoPointer> &list) const;
 
-    FileSystemNode *createNode(FileSystemNode *parent, const AbstractFileInfoPointer &info);
+    const FileSystemNodePointer createNode(const FileSystemNodePointer &parent, const AbstractFileInfoPointer &info);
 
-    void deleteNode(FileSystemNode *node);
+    void deleteNode(const FileSystemNodePointer &node);
     void deleteNodeByUrl(const DUrl &url);
 
     friend class FileSystemNode;
