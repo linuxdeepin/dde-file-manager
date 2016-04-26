@@ -164,11 +164,20 @@ const QList<AbstractFileInfoPointer> AbstractFileController::getChildren(const D
     return QList<AbstractFileInfoPointer>();
 }
 
-AbstractFileInfoPointer AbstractFileController::createFileInfo(const DUrl &fileUrl, bool &accepted) const
+const AbstractFileInfoPointer AbstractFileController::createFileInfo(const DUrl &fileUrl, bool &accepted) const
 {
     Q_UNUSED(fileUrl)
 
     accepted = false;
 
     return AbstractFileInfoPointer();
+}
+
+const DDirIteratorPointer AbstractFileController::createDirIterator(const DUrl &fileUrl, bool &accepted) const
+{
+    Q_UNUSED(fileUrl)
+
+    accepted = false;
+
+    return DDirIteratorPointer();
 }

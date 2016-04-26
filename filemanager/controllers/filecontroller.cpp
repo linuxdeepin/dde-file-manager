@@ -31,7 +31,7 @@ bool FileController::findExecutable(const QString &executableName, const QString
     return !QStandardPaths::findExecutable(executableName, paths).isEmpty();
 }
 
-AbstractFileInfoPointer FileController::createFileInfo(const DUrl &fileUrl, bool &accepted) const
+const AbstractFileInfoPointer FileController::createFileInfo(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
 

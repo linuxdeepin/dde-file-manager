@@ -60,7 +60,8 @@ public:
 
     bool openFileLocation(const DUrl &fileUrl) const;
 
-    AbstractFileInfoPointer createFileInfo(const DUrl &fileUrl) const;
+    const AbstractFileInfoPointer createFileInfo(const DUrl &fileUrl) const;
+    const DDirIteratorPointer createDirIterator(const DUrl &fileUrl) const;
 
     const QList<AbstractFileInfoPointer> getChildren(const DUrl &fileUrl, QDir::Filters filters, bool *ok = 0) const;
 
