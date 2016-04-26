@@ -8,6 +8,7 @@
 #include "../controllers/fileservices.h"
 
 #include "../dialogs/propertydialog.h"
+#include <QDesktopServices>
 
 #include <QScreen>
 
@@ -259,10 +260,11 @@ DFileMenu *FileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
             menu->addSeparator();
         }else{
             DAction *action = m_actions.value(key);
+
             if(!action)
                 continue;
 
-            action->setCheckable(checkable);
+            action->setCheckable(true);
             action->setDisabled(disableList.contains(key));
 
             menu->addAction(action);
@@ -280,6 +282,14 @@ DFileMenu *FileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
     return menu;
 }
 
+QString FileMenuManager::getActionString(MenuAction type)
+{
+    if (m_actionKeys.contains(type)){
+        return m_actionKeys.value(type);
+    }
+    return "";
+}
+
 void FileMenuManager::actionTriggered(DAction *action)
 {
     DFileMenu *menu = qobject_cast<DFileMenu *>(sender());
@@ -295,7 +305,6 @@ void FileMenuManager::actionTriggered(DAction *action)
     {
     case MenuAction::Open: {
         FMEvent event;
-
         event = fileUrl;
         event = FMEvent::Menu;
         event = menu->getWindowId();
@@ -400,26 +409,13 @@ void FileMenuManager::actionTriggered(DAction *action)
     case MenuAction::Restore:
         fileSignalManager->requestRestoreTrashFile(urls);
         break;
-    case MenuAction::Name:
-        emit fileSignalManager->requestViewSort(menu->getWindowId(), Global::FileDisplayNameRole);
-        checkSortMenu(type);
+    case MenuAction::OpenInTerminal:{
+        QStringList args;
+        args << "--working-directory";
+        args << fileUrl.toLocalFile();
+        QProcess::startDetached("x-terminal-emulator", args);
         break;
-    case MenuAction::Size:
-        emit fileSignalManager->requestViewSort(menu->getWindowId(), Global::FileSizeRole);
-        checkSortMenu(type);
-        break;
-    case MenuAction::Type:
-        fileSignalManager->requestViewSort(menu->getWindowId(), Global::FileMimeTypeRole);
-        checkSortMenu(type);
-        break;
-    case MenuAction::CreatedDate:
-        emit fileSignalManager->requestViewSort(menu->getWindowId(), Global::FileCreated);
-        checkSortMenu(type);
-        break;
-    case MenuAction::LastModifiedDate:
-        emit fileSignalManager->requestViewSort(menu->getWindowId(), Global::FileLastModified);
-        checkSortMenu(type);
-        break;
+    }
     case MenuAction::Property: {
         FMEvent event;
         event = fileUrl;
@@ -431,20 +427,8 @@ void FileMenuManager::actionTriggered(DAction *action)
     case MenuAction::Help:break;
     case MenuAction::About:break;
     case MenuAction::Exit:break;
-    case MenuAction::IconView:break;
-    case MenuAction::ListView:break;
     default:
         qDebug() << "unknown action type";
         break;
     }
-}
-
-void FileMenuManager::checkSortMenu(MenuAction type)
-{
-    foreach (MenuAction actionType, m_sortActionTypes) {
-        if (m_actions.contains(actionType)){
-            m_actions.value(actionType)->setChecked(false);
-        }
-    }
-    m_actions.value(type)->setChecked(true);
 }

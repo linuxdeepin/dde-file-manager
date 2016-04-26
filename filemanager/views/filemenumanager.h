@@ -41,6 +41,7 @@ public:
                                          const QVector<MenuAction> &disableList,
                                          bool checkable = false,
                                          const QMap<MenuAction, QVector<MenuAction> > &subMenuList = QMap<MenuAction, QVector<MenuAction> >());
+    static QString getActionString(MenuAction type);
 
 private:
     static void initData();
@@ -52,7 +53,6 @@ private:
 
 public slots:
     void actionTriggered(DAction * action);
-    void checkSortMenu(MenuAction type);
 
 signals:
 

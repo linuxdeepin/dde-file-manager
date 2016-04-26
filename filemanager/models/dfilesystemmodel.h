@@ -98,7 +98,7 @@ private:
 
     QHash<DUrl, FileSystemNodePointer> m_urlToNode;
 
-    int m_sortRole = Qt::DisplayRole;
+    int m_sortRole = FileDisplayNameRole;
     int m_sortColumn = 0;
 
     Qt::SortOrder m_srotOrder = Qt::AscendingOrder;

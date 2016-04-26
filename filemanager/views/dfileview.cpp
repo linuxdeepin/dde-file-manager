@@ -28,7 +28,8 @@ DWIDGET_USE_NAMESPACE
 DFileView::DFileView(QWidget *parent) : DListView(parent)
 {
     D_THEME_INIT_WIDGET(DFileView);
-
+    m_actionDisplayAsGroup = new QActionGroup(this);
+    m_actionSortByGroup = new QActionGroup(this);
     initUI();
     initDelegate();
     initModel();
@@ -57,7 +58,7 @@ void DFileView::initUI()
     setSelectionMode(QAbstractItemView::ExtendedSelection);
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setSelectionRectVisible(true);
-    setEditTriggers(QListView::EditKeyPressed | QListView::SelectedClicked);
+    setEditTriggers(QListView::EditKeyPressed);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBar(new DScrollBar);
 }
@@ -88,6 +89,9 @@ void DFileView::initConnects()
             this, &DFileView::selectAll);
     connect(fileSignalManager, &FileSignalManager::requestSelectFile,
             this, &DFileView::select);
+
+    connect(m_actionDisplayAsGroup, &QActionGroup::triggered, this, &DFileView::dislpayAsActionTriggered);
+    connect(m_actionSortByGroup, &QActionGroup::triggered, this, &DFileView::sortByActionTriggered);
 }
 
 void DFileView::initActions()
@@ -237,6 +241,7 @@ bool DFileView::testViewMode(ViewModes modes, DFileView::ViewMode mode)
     return (modes | mode) == modes;
 }
 
+
 void DFileView::cd(const FMEvent &event)
 {
     if(event.windowId() != windowId())
@@ -304,6 +309,52 @@ void DFileView::selectAll(int windowId)
         return;
 
     DListView::selectAll();
+}
+
+void DFileView::dislpayAsActionTriggered(QAction *action)
+{
+    DAction* dAction = static_cast<DAction*>(action);
+    dAction->setChecked(true);
+    MenuAction type = (MenuAction)dAction->data().toInt();
+    switch(type){
+        case MenuAction::IconView:
+            setViewMode(IconMode);
+            break;
+        case MenuAction::ListView:
+            setViewMode(ListMode);
+            break;
+        case MenuAction::ExtendView:
+            setViewMode(ExtendMode);
+            break;
+        default:
+            break;
+    }
+}
+
+void DFileView::sortByActionTriggered(QAction *action)
+{
+    DAction* dAction = static_cast<DAction*>(action);
+    dAction->setChecked(true);
+    MenuAction type = (MenuAction)dAction->data().toInt();
+    switch(type){
+        case MenuAction::Name:
+            emit fileSignalManager->requestViewSort(windowId(), Global::FileDisplayNameRole);
+            break;
+        case MenuAction::Size:
+            emit fileSignalManager->requestViewSort(windowId(), Global::FileSizeRole);
+            break;
+        case MenuAction::Type:
+            fileSignalManager->requestViewSort(windowId(), Global::FileMimeTypeRole);
+            break;
+        case MenuAction::CreatedDate:
+            emit fileSignalManager->requestViewSort(windowId(), Global::FileCreated);
+            break;
+        case MenuAction::LastModifiedDate:
+            emit fileSignalManager->requestViewSort(windowId(), Global::FileLastModified);
+            break;
+        default:
+            break;
+    }
 }
 
 void DFileView::wheelEvent(QWheelEvent *event)
@@ -690,7 +741,41 @@ void DFileView::showEmptyAreaMenu()
     const QVector<MenuAction> &actions = info->menuActionList(AbstractFileInfo::SpaceArea);
     const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList();
 
-    menu = FileMenuManager::genereteMenuByKeys(actions, FileMenuManager::getDisableActionList(model()->getUrlByIndex(index)), false, subActions);
+    menu = FileMenuManager::genereteMenuByKeys(actions, FileMenuManager::getDisableActionList(model()->getUrlByIndex(index)), true, subActions);
+
+    DFileMenu *displayAsSubMenu = static_cast<DFileMenu*>(menu->actionAt(fileMenuManger->getActionString(MenuAction::DisplayAs))->menu());
+    DFileMenu *sortBySubMenu = static_cast<DFileMenu*>(menu->actionAt(fileMenuManger->getActionString(MenuAction::SortBy))->menu());
+
+    if (displayAsSubMenu){
+        foreach (DAction* action, displayAsSubMenu->actionList()) {
+            action->setActionGroup(m_actionDisplayAsGroup);
+        }
+        if (m_currentViewMode == IconMode){
+            displayAsSubMenu->actionAt(fileMenuManger->getActionString(MenuAction::IconView))->setChecked(true);
+        }else if (m_currentViewMode == ListMode){
+            displayAsSubMenu->actionAt(fileMenuManger->getActionString(MenuAction::ListView))->setChecked(true);
+        }else if (m_currentViewMode == ExtendMode){
+            displayAsSubMenu->actionAt(fileMenuManger->getActionString(MenuAction::ExtendView))->setChecked(true);
+        }
+    }
+
+    if (sortBySubMenu){
+        foreach (DAction* action, sortBySubMenu->actionList()) {
+            action->setActionGroup(m_actionSortByGroup);
+        }
+        if (model()->sortRole() == DFileSystemModel::FileDisplayNameRole){
+            sortBySubMenu->actionAt(fileMenuManger->getActionString(MenuAction::Name))->setChecked(true);
+        }else if (model()->sortRole() == DFileSystemModel::FileSizeRole){
+            sortBySubMenu->actionAt(fileMenuManger->getActionString(MenuAction::Size))->setChecked(true);
+        }else if (model()->sortRole() == DFileSystemModel::FileMimeTypeRole){
+            sortBySubMenu->actionAt(fileMenuManger->getActionString(MenuAction::Type))->setChecked(true);
+        }else if (model()->sortRole() == DFileSystemModel::FileCreated){
+            sortBySubMenu->actionAt(fileMenuManger->getActionString(MenuAction::CreatedDate))->setChecked(true);
+        }else if (model()->sortRole() == DFileSystemModel::FileLastModified){
+            sortBySubMenu->actionAt(fileMenuManger->getActionString(MenuAction::LastModifiedDate))->setChecked(true);
+        }
+    }
+
     DUrlList urls;
     urls.append(currentUrl());
     menu->setUrls(urls);
@@ -700,24 +785,25 @@ void DFileView::showEmptyAreaMenu()
     menu->deleteLater();
 }
 
+
 void DFileView::showNormalMenu(const QModelIndex &index)
 {
     if(!index.isValid())
         return;
 
-    DFileMenu *menu;
-
-    const AbstractFileInfoPointer &info = model()->fileInfo(index);
-    const QVector<MenuAction> &actions = info->menuActionList(AbstractFileInfo::Normal);
-    const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList();
-
-    menu = FileMenuManager::genereteMenuByKeys(actions, FileMenuManager::getDisableActionList(model()->getUrlByIndex(index)), false, subActions);
-    menu->setWindowId(m_windowId);
 
     DUrlList list = selectedUrls();
+    if (list.length() == 1){
+        const AbstractFileInfoPointer &info = model()->fileInfo(index);
+        const QVector<MenuAction> &actions = info->menuActionList(AbstractFileInfo::Normal);
+        const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList();
 
-    menu->setUrls(list);
+        DFileMenu* menu = FileMenuManager::genereteMenuByKeys(actions, FileMenuManager::getDisableActionList(model()->getUrlByIndex(index)), false, subActions);
+        menu->setWindowId(m_windowId);
+        menu->setUrls(list);
+        menu->exec();
+        menu->deleteLater();
+    }else{
 
-    menu->exec();
-    menu->deleteLater();
+    }
 }

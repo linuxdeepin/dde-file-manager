@@ -5,6 +5,7 @@
 
 #include <QFrame>
 #include <QUrl>
+#include <QActionGroup>
 #include <QContextMenuEvent>
 
 #include "durl.h"
@@ -76,6 +77,7 @@ public:
 
     bool testViewMode(ViewModes modes, ViewMode mode);
 
+
 public slots:
     void cd(const FMEvent &event);
     void edit(const FMEvent &event);
@@ -93,6 +95,8 @@ signals:
 
 private slots:
     void selectAll(int windowId);
+    void dislpayAsActionTriggered(QAction * action);
+    void sortByActionTriggered(QAction * action);
 
 protected:
     void wheelEvent(QWheelEvent * event) Q_DECL_OVERRIDE;
@@ -109,6 +113,9 @@ private:
     FileController *m_controller;
     FileMenuManager* m_fileMenuManager;
     QHeaderView *m_headerView = Q_NULLPTR;
+
+    QActionGroup* m_actionDisplayAsGroup;
+    QActionGroup* m_actionSortByGroup;
 
     QList<int> m_logicalIndexs;
     QList<int> m_columnRoles;
