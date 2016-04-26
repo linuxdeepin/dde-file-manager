@@ -1,13 +1,14 @@
 #ifndef ABSTRACTFILECONTROLLER_H
 #define ABSTRACTFILECONTROLLER_H
 
-#include <QObject>
-#include <QDir>
-
 #include "durl.h"
 #include "abstractfileinfo.h"
 
 #include "../models/ddiriterator.h"
+
+#include <QObject>
+#include <QDir>
+#include <QDirIterator>
 
 class FMEvent;
 
@@ -45,7 +46,9 @@ public:
 
     virtual const QList<AbstractFileInfoPointer> getChildren(const DUrl &fileUrl, QDir::Filters filters, bool &accepted) const;
     virtual const AbstractFileInfoPointer createFileInfo(const DUrl &fileUrl, bool &accepted) const;
-    virtual const DDirIteratorPointer createDirIterator(const DUrl &fileUrl, bool &accepted) const;
+    virtual const DDirIteratorPointer createDirIterator(const DUrl &fileUrl, QDir::Filters filters,
+                                                        QDirIterator::IteratorFlags flags,
+                                                        bool &accepted) const;
 
 signals:
     void childrenAdded(const DUrl &fileUrl) const;

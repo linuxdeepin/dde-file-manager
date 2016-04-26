@@ -173,7 +173,8 @@ const AbstractFileInfoPointer AbstractFileController::createFileInfo(const DUrl 
     return AbstractFileInfoPointer();
 }
 
-const DDirIteratorPointer AbstractFileController::createDirIterator(const DUrl &fileUrl, bool &accepted) const
+const DDirIteratorPointer AbstractFileController::createDirIterator(const DUrl &fileUrl, QDir::Filters filters,
+                                                                    QDirIterator::IteratorFlags flags, bool &accepted) const
 {
     Q_UNUSED(fileUrl)
 
