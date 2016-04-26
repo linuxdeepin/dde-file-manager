@@ -95,7 +95,6 @@ private slots:
     void selectAll(int windowId);
 
 protected:
-    void contextMenuEvent(QContextMenuEvent * event) Q_DECL_OVERRIDE;
     void wheelEvent(QWheelEvent * event) Q_DECL_OVERRIDE;
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
     void keyReleaseEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
@@ -135,7 +134,8 @@ private:
     bool setCurrentUrl(const DUrl &fileUrl);
     void updateViewportMargins();
     void switchViewMode(ViewMode mode);
-    void showMenu(const QPoint &pos);
+    void showEmptyAreaMenu();
+    void showNormalMenu(const QModelIndex &index);
 
     using DListView::setOrientation;
 };
