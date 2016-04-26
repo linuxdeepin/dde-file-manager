@@ -58,7 +58,7 @@ void DFileView::initUI()
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setSelectionRectVisible(true);
     setEditTriggers(QListView::EditKeyPressed | QListView::SelectedClicked);
-
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBar(new DScrollBar);
 }
 
@@ -308,41 +308,7 @@ void DFileView::selectAll(int windowId)
 
 void DFileView::contextMenuEvent(QContextMenuEvent *event)
 {
-    DFileMenu *menu;
-    QModelIndex index;
-
-    if (isEmptyArea(event->pos())){
-        index = rootIndex();
-
-        const AbstractFileInfoPointer &info = model()->fileInfo(index);
-        const QVector<MenuAction> &actions = info->menuActionList(AbstractFileInfo::SpaceArea);
-        const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList();
-
-        menu = FileMenuManager::genereteMenuByKeys(actions, FileMenuManager::getDisableActionList(model()->getUrlByIndex(index)), false, subActions);
-        DUrlList urls;
-        urls.append(currentUrl());
-        menu->setUrls(urls);
-        menu->setWindowId(m_windowId);
-    } else {
-        index = indexAt(event->pos());
-
-        const AbstractFileInfoPointer &info = model()->fileInfo(index);
-        const QVector<MenuAction> &actions = info->menuActionList(AbstractFileInfo::Normal);
-        const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList();
-
-        menu = FileMenuManager::genereteMenuByKeys(actions, FileMenuManager::getDisableActionList(model()->getUrlByIndex(index)), false, subActions);
-        menu->setWindowId(m_windowId);
-
-        DUrlList list = selectedUrls();
-
-        if(list.isEmpty())
-            list << model()->getUrlByIndex(index);
-
-        menu->setUrls(list);
-    }
-
-    menu->exec();
-    menu->deleteLater();
+    showMenu(event->pos());
 
     event->accept();
 }
@@ -438,6 +404,31 @@ void DFileView::resizeEvent(QResizeEvent *event)
     updateViewportMargins();
 
     DListView::resizeEvent(event);
+}
+
+bool DFileView::event(QEvent *event)
+{
+    bool accepted = DListView::event(event);
+
+    if(!accepted) {
+        if(event->type() == QEvent::MouseButtonPress) {
+            QMouseEvent *e = static_cast<QMouseEvent*>(event);
+
+            QPoint pos = e->pos();
+
+            pos.setX(pos.x() - viewportMargins().left());
+
+            if(e->button() == Qt::RightButton) {
+                showMenu(pos);
+
+                event->accept();
+            } else {
+                clearSelection();
+            }
+        }
+    }
+
+    return accepted;
 }
 
 bool DFileView::isEmptyArea(const QPoint &pos) const
@@ -679,4 +670,43 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
     }
 
     emit viewModeChanged(mode);
+}
+
+void DFileView::showMenu(const QPoint &pos)
+{
+    DFileMenu *menu;
+    QModelIndex index;
+
+    if (isEmptyArea(pos)){
+        index = rootIndex();
+
+        const AbstractFileInfoPointer &info = model()->fileInfo(index);
+        const QVector<MenuAction> &actions = info->menuActionList(AbstractFileInfo::SpaceArea);
+        const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList();
+
+        menu = FileMenuManager::genereteMenuByKeys(actions, FileMenuManager::getDisableActionList(model()->getUrlByIndex(index)), false, subActions);
+        DUrlList urls;
+        urls.append(currentUrl());
+        menu->setUrls(urls);
+        menu->setWindowId(m_windowId);
+    } else {
+        index = indexAt(pos);
+
+        const AbstractFileInfoPointer &info = model()->fileInfo(index);
+        const QVector<MenuAction> &actions = info->menuActionList(AbstractFileInfo::Normal);
+        const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList();
+
+        menu = FileMenuManager::genereteMenuByKeys(actions, FileMenuManager::getDisableActionList(model()->getUrlByIndex(index)), false, subActions);
+        menu->setWindowId(m_windowId);
+
+        DUrlList list = selectedUrls();
+
+        if(list.isEmpty())
+            list << model()->getUrlByIndex(index);
+
+        menu->setUrls(list);
+    }
+
+    menu->exec();
+    menu->deleteLater();
 }

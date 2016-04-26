@@ -104,6 +104,7 @@ protected:
     void commitData(QWidget * editor) Q_DECL_OVERRIDE;
     void focusInEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
+    bool event(QEvent *event) Q_DECL_OVERRIDE;
 
 private:
     FileController *m_controller;
@@ -134,6 +135,7 @@ private:
     bool setCurrentUrl(const DUrl &fileUrl);
     void updateViewportMargins();
     void switchViewMode(ViewMode mode);
+    void showMenu(const QPoint &pos);
 
     using DListView::setOrientation;
 };
