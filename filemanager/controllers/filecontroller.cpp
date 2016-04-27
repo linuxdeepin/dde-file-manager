@@ -7,6 +7,7 @@
 
 #include "../app/global.h"
 #include "../app/fmevent.h"
+#include "../app/filesignalmanager.h"
 
 #include "filemonitor/filemonitor.h"
 
@@ -289,14 +290,17 @@ bool FileController::pasteFile(PasteType type, const DUrlList &urlList,
     return true;
 }
 
-bool FileController::newFolder(const DUrl &toUrl, bool &accepted) const
+bool FileController::newFolder(const FMEvent &event, bool &accepted) const
 {
     accepted = true;
 
     //Todo:: check if mkdir is ok
-    QDir dir(toUrl.toLocalFile());
+    QDir dir(event.fileUrl().toLocalFile());
 
-    return dir.mkdir(checkDuplicateName(dir.absolutePath() + "/New Folder"));
+    QString folderName = checkDuplicateName(dir.absolutePath() + "/New Folder");
+
+    FileJob::SelectedFiles.insert(DUrl::fromLocalFile(folderName), event.windowId());
+    return dir.mkdir(folderName);
 }
 
 bool FileController::newFile(const DUrl &toUrl, bool &accepted) const
@@ -368,7 +372,16 @@ bool FileController::openFileLocation(const DUrl &fileUrl, bool &accepted) const
 
 void FileController::onFileCreated(const QString &filePath)
 {
-    emit childrenAdded(DUrl::fromLocalFile(filePath));
+    DUrl url = DUrl::fromLocalFile(filePath);
+    emit childrenAdded(url);
+    if (FileJob::SelectedFiles.contains(url)){
+        int windowId = FileJob::SelectedFiles.value(url);
+        FMEvent event;
+        event = windowId;
+        event = url;
+        emit fileSignalManager->requestSelectFile(event);
+        FileJob::SelectedFiles.remove(url);
+    }
 }
 
 void FileController::onFileRemove(const QString &filePath)
