@@ -413,6 +413,9 @@ void FileServices::getChildren(const FMEvent &event, QDir::Filters filters) cons
         return;
     }
 
+    /// Increase current thread priority
+    QThread::currentThread()->setPriority(QThread::TimeCriticalPriority);
+
     const DUrl &fileUrl = event.fileUrl();
 
     bool accepted = false;
