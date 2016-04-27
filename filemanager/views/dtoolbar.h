@@ -43,7 +43,6 @@ public slots:
     void searchBarTextEntered();
     void crumbSelected(const FMEvent &e);
     void crumbChanged(const FMEvent &event);
-    void upButtonClicked();
     void searchBarChanged(QString path);
     void backButtonClicked();
     void forwardButtonClicked();
