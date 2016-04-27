@@ -5,6 +5,7 @@
 #include <QMap>
 #include <QElapsedTimer>
 #include <QUrl>
+#include "../models/durl.h"
 #include <QStorageInfo>
 
 #define TRANSFER_RATE 5
@@ -25,6 +26,7 @@ public:
         Run,
         Conflicted,
     };
+    static QMap<DUrl, int> SelectedFiles;
     void setStatus(Status status);
     explicit FileJob(const QString &title, QObject *parent = 0);
     void setJobId(const QString &id);

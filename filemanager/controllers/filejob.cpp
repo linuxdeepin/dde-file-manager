@@ -9,6 +9,9 @@
 #include <QDateTime>
 #include <QElapsedTimer>
 
+QMap<DUrl, int> FileJob::SelectedFiles;
+
+
 void FileJob::setStatus(FileJob::Status status)
 {
     m_status = status;

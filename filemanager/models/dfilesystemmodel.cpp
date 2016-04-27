@@ -43,7 +43,7 @@ DFileSystemModel::DFileSystemModel(DFileView *parent)
 {
     connect(fileService, &FileServices::childrenAdded,
             this, &DFileSystemModel::onFileCreated,
-            Qt::QueuedConnection);
+            Qt::DirectConnection);
     connect(fileService, &FileServices::childrenRemoved,
             this, &DFileSystemModel::onFileDeleted,
             Qt::QueuedConnection);

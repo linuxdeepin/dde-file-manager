@@ -100,9 +100,9 @@ bool AbstractFileController::pasteFile(PasteType type, const DUrlList &urlList,
     return false;
 }
 
-bool AbstractFileController::newFolder(const DUrl &toUrl, bool &accepted) const
+bool AbstractFileController::newFolder(const FMEvent &event, bool &accepted) const
 {
-    Q_UNUSED(toUrl)
+    Q_UNUSED(event)
 
     accepted = false;
 

@@ -16,6 +16,7 @@
 #include "../controllers/appcontroller.h"
 #include "../controllers/filecontroller.h"
 #include "../controllers/fileservices.h"
+#include "../controllers/filejob.h"
 
 #include "../models/dfilesystemmodel.h"
 
@@ -282,6 +283,8 @@ void DFileView::select(const FMEvent &event)
     const QModelIndex &index = model()->index(event.fileUrl());
 
     selectionModel()->select(index, QItemSelectionModel::Select);
+
+    scrollTo(index);
 }
 
 void DFileView::setViewMode(DFileView::ViewMode mode)

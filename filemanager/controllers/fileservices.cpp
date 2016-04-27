@@ -279,10 +279,10 @@ void FileServices::pasteFile(AbstractFileController::PasteType type,
              })
 }
 
-bool FileServices::newFolder(const DUrl &toUrl) const
+bool FileServices::newFolder(const FMEvent &event) const
 {
-    TRAVERSE(toUrl, {
-                 bool ok = controller->newFolder(toUrl, accepted);
+    TRAVERSE(event.fileUrl(), {
+                 bool ok = controller->newFolder(event, accepted);
 
                  if(accepted)
                     return ok;

@@ -11,6 +11,7 @@
 #include "../dialogs/propertydialog.h"
 #include "../views/windowmanager.h"
 #include "../shutil/standardpath.h"
+#include "../controllers/filejob.h"
 #include <QFileDialog>
 #include <QDesktopServices>
 
@@ -393,9 +394,15 @@ void FileMenuManager::actionTriggered(DAction *action)
         FileMenuManager::createSoftLink(menu->getWindowId(), fileUrl.toLocalFile(), StandardPath::getDesktopPath());
         break;
     }
-    case MenuAction::NewFolder:
-        fileService->newFolder(fileUrl);
+    case MenuAction::NewFolder:{
+        FMEvent event;
+
+        event = fileUrl;
+        event = FMEvent::Menu;
+        event = menu->getWindowId();
+        fileService->newFolder(event);
         break;
+    }
     case MenuAction::NewFile:
         fileService->newFile(fileUrl);
         break;
@@ -414,18 +421,29 @@ void FileMenuManager::actionTriggered(DAction *action)
     case MenuAction::NewDocument:break;
 
     case MenuAction::NewWord:{
+        QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("newDoc"), "doc");
+        FileJob::SelectedFiles.insert(DUrl::fromLocalFile(targetFile), menu->getWindowId());
         FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("newDoc"), "doc");
         break;
     }
-    case MenuAction::NewExcel:
+    case MenuAction::NewExcel:{
+        QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("newExcel"), "xls");
+        FileJob::SelectedFiles.insert(DUrl::fromLocalFile(targetFile), menu->getWindowId());
         FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("newExcel"), "xls");
         break;
-    case MenuAction::NewPowerpoint:
+    }
+    case MenuAction::NewPowerpoint:{
+        QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("newPowerPoint"), "ppt");
+        FileJob::SelectedFiles.insert(DUrl::fromLocalFile(targetFile), menu->getWindowId());
         FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("newPowerPoint"), "ppt");
         break;
-    case MenuAction::NewText:
+    }
+    case MenuAction::NewText:{
+        QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("newText"), "txt");
+        FileJob::SelectedFiles.insert(DUrl::fromLocalFile(targetFile), menu->getWindowId());
         FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("newText"), "txt");
         break;
+    }
     case MenuAction::Mount:
         deviceListener->mount(fileUrl.query());
         break;

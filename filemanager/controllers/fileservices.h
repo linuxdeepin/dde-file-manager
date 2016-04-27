@@ -51,7 +51,7 @@ public:
     void pasteFile(AbstractFileController::PasteType type,
                    const DUrlList &urlList,
                    const FMEvent &event) const;
-    bool newFolder(const DUrl &toUrl) const;
+    bool newFolder(const FMEvent &event) const;
     bool newFile(const DUrl &toUrl) const;
     bool newDocument(const DUrl &toUrl) const;
 
