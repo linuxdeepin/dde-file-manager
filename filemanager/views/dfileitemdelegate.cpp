@@ -141,11 +141,7 @@ void DFileItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
 
         rect.setRight(column_x);
 
-        int role = columnRoleList.at(0);
-
-        if(role == DFileSystemModel::FileDisplayNameRole) {
-            editor->setGeometry(rect);
-        }
+        editor->setGeometry(rect);
 
         column_x += 5;
 
@@ -157,13 +153,6 @@ void DFileItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
             column_x += parent()->columnWidth(i);
 
             rect.setRight(column_x);
-
-            int role = columnRoleList.at(i);
-
-            if(role == DFileSystemModel::FileDisplayNameRole) {
-                editor->setGeometry(rect);
-                return;
-            }
         }
     }
 }

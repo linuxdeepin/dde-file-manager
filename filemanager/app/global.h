@@ -112,16 +112,6 @@
 class Global
 {
 public:
-    enum SortRole {
-        FileDisplayNameRole = Qt::UserRole + 9,
-        FileSizeRole = Qt::UserRole + 3,
-        FileMimeTypeRole = Qt::UserRole + 4,
-        FileOwnerRole = Qt::UserRole + 5,
-        FileLastModified = Qt::UserRole + 6,
-        FileLastRead = Qt::UserRole + 7,
-        FileCreated = Qt::UserRole + 8
-    };
-
     static QString wordWrapText(const QString &text, int width,
                          QTextOption::WrapMode wrapMode,
                          int *height = 0)

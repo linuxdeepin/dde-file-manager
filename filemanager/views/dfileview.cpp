@@ -17,6 +17,8 @@
 #include "../controllers/filecontroller.h"
 #include "../controllers/fileservices.h"
 
+#include "../models/dfilesystemmodel.h"
+
 #include <dthememanager.h>
 
 #include <QWheelEvent>
@@ -179,7 +181,7 @@ bool DFileView::isIconViewMode()
 
 int DFileView::columnWidth(int column) const
 {
-    return m_headerView ? m_headerView->sectionSize(m_logicalIndexs.value(column)) : 100;
+    return m_headerView ? m_headerView->sectionSize(column) : 100;
 }
 
 void DFileView::setColumnWidth(int column, int width)
@@ -187,7 +189,7 @@ void DFileView::setColumnWidth(int column, int width)
     if(!m_headerView)
         return;
 
-    m_headerView->resizeSection(m_logicalIndexs.value(column), width);
+    m_headerView->resizeSection(column, width);
 }
 
 int DFileView::columnCount() const
@@ -299,7 +301,7 @@ void DFileView::sort(int windowId, int role)
         model()->setSortRole(role);
         model()->sort();
     } else {
-        model()->sort(m_columnRoles.indexOf(role));
+        model()->sort(role);
     }
 }
 
@@ -338,19 +340,19 @@ void DFileView::sortByActionTriggered(QAction *action)
     MenuAction type = (MenuAction)dAction->data().toInt();
     switch(type){
         case MenuAction::Name:
-            emit fileSignalManager->requestViewSort(windowId(), Global::FileDisplayNameRole);
+            emit fileSignalManager->requestViewSort(windowId(), DFileSystemModel::FileDisplayNameRole);
             break;
         case MenuAction::Size:
-            emit fileSignalManager->requestViewSort(windowId(), Global::FileSizeRole);
+            emit fileSignalManager->requestViewSort(windowId(), DFileSystemModel::FileSizeRole);
             break;
         case MenuAction::Type:
-            fileSignalManager->requestViewSort(windowId(), Global::FileMimeTypeRole);
+            fileSignalManager->requestViewSort(windowId(), DFileSystemModel::FileMimeTypeRole);
             break;
         case MenuAction::CreatedDate:
-            emit fileSignalManager->requestViewSort(windowId(), Global::FileCreated);
+            emit fileSignalManager->requestViewSort(windowId(), DFileSystemModel::FileCreatedRole);
             break;
         case MenuAction::LastModifiedDate:
-            emit fileSignalManager->requestViewSort(windowId(), Global::FileLastModified);
+            emit fileSignalManager->requestViewSort(windowId(), DFileSystemModel::FileLastModifiedRole);
             break;
         default:
             break;
@@ -683,23 +685,13 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
                 m_headerView->setSelectionModel(selectionModel());
             }
 
+            for(int i = 0; i < m_headerView->count(); ++i)
+                m_columnRoles << model()->getRoleByColumn(i);
+
             connect(m_headerView, &QHeaderView::sectionResized,
                     this, static_cast<void (DFileView::*)()>(&DFileView::update));
             connect(m_headerView, &QHeaderView::sortIndicatorChanged,
                     model(), &QAbstractItemModel::sort);
-        }
-
-        for(int i = 0; i < m_headerView->count(); ++i) {
-            m_columnRoles << model()->headerDataToRole(model()->headerData(i, m_headerView->orientation(), Qt::DisplayRole));
-            m_logicalIndexs << i;
-
-            if(m_columnRoles.last() == DFileSystemModel::FileNameRole) {
-                m_headerView->resizeSection(i, width() - (m_headerView->count() - 1) * m_headerView->defaultSectionSize());
-            }
-
-            QSignalBlocker blocker(m_headerView);
-            Q_UNUSED(blocker)
-            m_headerView->setSortIndicator(i, model()->sortOrder());
         }
 
         addHeaderWidget(m_headerView);

@@ -23,6 +23,14 @@ public:
     int getIndexByFileInfo(getFileInfoFun fun, const AbstractFileInfoPointer &info, quint8 columnType,
                                    Qt::SortOrder order = Qt::AscendingOrder) const Q_DECL_OVERRIDE;
 
+    quint8 userColumnCount() const Q_DECL_OVERRIDE;
+
+    /// userColumnType = ColumnType::UserType + user column index
+    QVariant userColumnDisplayName(quint8 userColumnType) const Q_DECL_OVERRIDE;
+
+    /// get custom column data
+    QVariant userColumnData(quint8 userColumnType) const Q_DECL_OVERRIDE;
+
 private:
     DUrl m_parentUrl;
 };

@@ -123,7 +123,15 @@ int DFileSystemModel::rowCount(const QModelIndex &parent) const
 
 int DFileSystemModel::columnCount(const QModelIndex &parent) const
 {
-    return parent.column() > 0 ? 0 : 5;
+    int columnCount = parent.column() > 0 ? 0 : 5;
+
+    const AbstractFileInfoPointer &currentFileInfo = fileInfo(m_activeIndex);
+
+    if(currentFileInfo) {
+        columnCount += currentFileInfo->userColumnCount();
+    }
+
+    return columnCount;
 }
 
 bool DFileSystemModel::hasChildren(const QModelIndex &parent) const
@@ -181,6 +189,11 @@ QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
         return indexNode->fileInfo->mimeTypeName();
     case FileCreatedRole:
         return indexNode->fileInfo->created().toString();
+    default: {
+        const AbstractFileInfoPointer &fileInfo = indexNode->fileInfo;
+
+        return fileInfo->userColumnData(AbstractFileInfo::UserType + role - FileUserRole);
+    }
     }
 
     return QVariant();
@@ -196,7 +209,14 @@ QVariant DFileSystemModel::headerData(int section, Qt::Orientation, int role) co
         case 2: return tr("Size");
         case 3: return tr("Type");
         case 4: return tr("Date Created");
-        default: return QVariant();
+        default: {
+            const AbstractFileInfoPointer &fileInfo = this->fileInfo(m_activeIndex);
+
+            if(fileInfo)
+                return fileInfo->userColumnDisplayName(AbstractFileInfo::UserType + section - 4);
+
+            return QVariant();
+        }
         }
     } else if(role == Qt::BackgroundRole) {
         return QBrush(Qt::white);
@@ -207,24 +227,22 @@ QVariant DFileSystemModel::headerData(int section, Qt::Orientation, int role) co
     return QVariant();
 }
 
-int DFileSystemModel::headerDataToRole(QVariant data) const
+int DFileSystemModel::getRoleByColumn(int column) const
 {
-    if(!data.isValid())
-        return -1;
-
-    if(data == tr("Name")) {
+    switch (column) {
+    case 0:
         return FileDisplayNameRole;
-    } else if(data == tr("Date Modified")) {
+    case 1:
         return FileLastModifiedRole;
-    } else if(data == tr("Size")) {
+    case 2:
         return FileSizeRole;
-    } else if(data == tr("Type")) {
+    case 3:
         return FileMimeTypeRole;
-    } else if(data == tr("Date Created")) {
+    case 4:
         return FileCreatedRole;
+    default:
+        return FileUserRole + column - 4;
     }
-
-    return -1;
 }
 
 void DFileSystemModel::fetchMore(const QModelIndex &parent)

@@ -21,7 +21,7 @@ public:
 signals:
 
 public slots:
-    void saveLastSortOrder(const DUrl& url, Global::SortRole role);
+    void saveLastSortOrder(const DUrl& url, int role);
 };
 
 #endif // FMSORTMANAGER_H

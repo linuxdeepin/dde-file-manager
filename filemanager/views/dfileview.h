@@ -117,7 +117,6 @@ private:
     QActionGroup* m_actionDisplayAsGroup;
     QActionGroup* m_actionSortByGroup;
 
-    QList<int> m_logicalIndexs;
     QList<int> m_columnRoles;
     QList<int> m_iconSizes;
 
