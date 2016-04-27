@@ -49,7 +49,7 @@ bool sortFileListByDisplayName(const AbstractFileInfoPointer &info1, const Abstr
             return false;
     }
 
-    return (sortOrder_global == Qt::DescendingOrder) ^ (info1->displayName().toLower() < info2->displayName().toLower());
+    return ((sortOrder_global == Qt::DescendingOrder) ^ (info1->displayName().toLower() < info2->displayName().toLower())) == 0x01;
 }
 
 bool sortFileListBySize(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &info2)
@@ -62,7 +62,7 @@ bool sortFileListBySize(const AbstractFileInfoPointer &info1, const AbstractFile
             return false;
     }
 
-    return (sortOrder_global == Qt::DescendingOrder) ^ (info1->size() < info2->size());
+    return ((sortOrder_global == Qt::DescendingOrder) ^ (info1->size() < info2->size())) == 0x01;
 }
 
 bool sortFileListByModified(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &info2)
@@ -75,7 +75,7 @@ bool sortFileListByModified(const AbstractFileInfoPointer &info1, const Abstract
             return false;
     }
 
-    return (sortOrder_global == Qt::DescendingOrder) ^ (info1->lastModified() < info2->lastModified());
+    return ((sortOrder_global == Qt::DescendingOrder) ^ (info1->lastModified() < info2->lastModified())) == 0x01;
 }
 
 bool sortFileListByMime(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &info2)
@@ -88,7 +88,7 @@ bool sortFileListByMime(const AbstractFileInfoPointer &info1, const AbstractFile
             return false;
     }
 
-    return (sortOrder_global == Qt::DescendingOrder) ^ (info1->mimeTypeName() < info2->mimeTypeName());
+    return ((sortOrder_global == Qt::DescendingOrder) ^ (info1->mimeTypeName() < info2->mimeTypeName())) == 0x01;
 }
 
 bool sortFileListByCreated(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &info2)
@@ -101,7 +101,7 @@ bool sortFileListByCreated(const AbstractFileInfoPointer &info1, const AbstractF
             return false;
     }
 
-    return (sortOrder_global == Qt::DescendingOrder) ^ (info1->created() < info2->created());
+    return ((sortOrder_global == Qt::DescendingOrder) ^ (info1->created() < info2->created())) == 0x01;
 }
 
 DFileSystemModel::DFileSystemModel(DFileView *parent)
