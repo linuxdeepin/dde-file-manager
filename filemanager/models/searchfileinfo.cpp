@@ -77,3 +77,32 @@ quint8 SearchFileInfo::supportViewMode() const
 
     return FileInfo::supportViewMode();
 }
+
+int SearchFileInfo::getIndexByFileInfo(getFileInfoFun fun, const AbstractFileInfoPointer &info,
+                                       quint8 columnType, Qt::SortOrder order) const
+{
+    Q_UNUSED(columnType)
+    Q_UNUSED(order)
+
+    /// if is file then return -1(insert last)
+
+    if(info->isFile())
+        return -1;
+
+    int index = 0;
+
+    forever {
+        const AbstractFileInfoPointer tmp_info = fun(index);
+
+        if(!tmp_info)
+            break;
+
+        if(tmp_info->isFile()) {
+            break;
+        }
+
+        ++index;
+    }
+
+    return index;
+}

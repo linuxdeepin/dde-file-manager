@@ -19,6 +19,10 @@ public:
 
     quint8 supportViewMode() const Q_DECL_OVERRIDE;
 
+    /// getFileInfoFun is get AbstractFileInfoPointer by index for caller
+    int getIndexByFileInfo(getFileInfoFun fun, const AbstractFileInfoPointer &info, quint8 columnType,
+                                   Qt::SortOrder order = Qt::AscendingOrder) const Q_DECL_OVERRIDE;
+
 private:
     DUrl m_parentUrl;
 };

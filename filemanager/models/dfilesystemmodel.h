@@ -26,9 +26,9 @@ public:
         FileSizeRole = Qt::UserRole + 3,
         FileMimeTypeRole = Qt::UserRole + 4,
         FileOwnerRole = Qt::UserRole + 5,
-        FileLastModified = Qt::UserRole + 6,
-        FileLastRead = Qt::UserRole + 7,
-        FileCreated = Qt::UserRole + 8,
+        FileLastModifiedRole = Qt::UserRole + 6,
+        FileLastReadRole = Qt::UserRole + 7,
+        FileCreatedRole = Qt::UserRole + 8,
         FileDisplayNameRole = Qt::UserRole + 9
     };
 
@@ -104,15 +104,13 @@ private:
     Qt::SortOrder m_srotOrder = Qt::AscendingOrder;
     QModelIndex m_activeIndex;
 
-    bool (*sortFun)(const AbstractFileInfoPointer&, const AbstractFileInfoPointer&) = Q_NULLPTR;
-
     inline const FileSystemNodePointer getNodeByIndex(const QModelIndex &index) const;
     QModelIndex createIndex(const FileSystemNodePointer &node, int column) const;
     using QAbstractItemModel::createIndex;
 
     bool isDir(const FileSystemNodePointer &node) const;
 
-    void sort(QList<AbstractFileInfoPointer> &list) const;
+    void sort(const AbstractFileInfoPointer &parentInfo, QList<AbstractFileInfoPointer> &list) const;
 
     const FileSystemNodePointer createNode(const FileSystemNodePointer &parent, const AbstractFileInfoPointer &info);
 
