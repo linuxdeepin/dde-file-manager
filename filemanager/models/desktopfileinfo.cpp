@@ -70,7 +70,12 @@ QStringList DesktopFileInfo::getCategories() const
 
 QIcon DesktopFileInfo::fileIcon() const
 {
-    return iconProvider->getDesktopIcon(getIconName(), 256);
+    return fileIconProvider->getDesktopIcon(getIconName(), 256);
+}
+
+QString DesktopFileInfo::displayName() const
+{
+    return name;
 }
 
 QMap<QString, QVariant> DesktopFileInfo::getDesktopFileInfo(const DUrl &fileUrl)

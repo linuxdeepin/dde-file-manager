@@ -9,6 +9,9 @@
 #include "../controllers/fileservices.h"
 
 #include "../dialogs/propertydialog.h"
+#include "../views/windowmanager.h"
+#include "../shutil/standardpath.h"
+#include <QFileDialog>
 #include <QDesktopServices>
 
 #include <QScreen>
@@ -382,6 +385,14 @@ void FileMenuManager::actionTriggered(DAction *action)
     case MenuAction::CompleteDeletion:
         fileService->deleteFiles(urls);
         break;
+    case MenuAction::CreateSoftLink:{
+        FileMenuManager::createSoftLink(menu->getWindowId(), fileUrl.toLocalFile(), QDir::homePath());
+        break;
+    }
+    case MenuAction::SendToDesktop:{
+        FileMenuManager::createSoftLink(menu->getWindowId(), fileUrl.toLocalFile(), StandardPath::getDesktopPath());
+        break;
+    }
     case MenuAction::NewFolder:
         fileService->newFolder(fileUrl);
         break;
@@ -445,5 +456,27 @@ void FileMenuManager::actionTriggered(DAction *action)
     default:
         qDebug() << "unknown action type";
         break;
+    }
+}
+
+void FileMenuManager::createSoftLink(int windowId, const QString &file, const QString &targetDir)
+{
+    QFileInfo  info(file);
+    QString baseName = info.baseName();
+    QString linkBaseName;
+    if (info.isFile()){
+        linkBaseName = QString("%1 link.%2").arg(baseName, info.suffix());
+    }else if (info.isDir()){
+        linkBaseName = QString("%1 link").arg(baseName);
+    }else if (info.isSymLink()){
+        return;
+    }
+    QString linkFile = QString("%1/%2").arg(targetDir, linkBaseName);
+    if (targetDir == StandardPath::getDesktopPath()){
+        QFile(file).link(linkFile);
+    }else{
+        QString fileName = QFileDialog::getSaveFileName(WindowManager::getWindowById(windowId), QObject::tr("Create soft link"),
+                                   linkFile);
+        QFile(file).link(fileName);
     }
 }

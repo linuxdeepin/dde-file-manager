@@ -88,7 +88,7 @@ void OpenWithDialog::addItems()
 
     foreach (QString f, recommendApps){
         QString iconName = mimeAppsManager->DesktopObjs.value(f).getIcon();
-        QIcon icon(iconProvider->getDesktopIcon(iconName, 48));
+        QIcon icon(fileIconProvider->getDesktopIcon(iconName, 48));
         QListWidgetItem* item = new QListWidgetItem(icon, mimeAppsManager->DesktopObjs.value(f).getName());
         item->setData(Qt::UserRole, f);
         m_listWidget->addItem(item);
@@ -106,7 +106,7 @@ void OpenWithDialog::addItems()
             continue;
         }
         QString iconName = mimeAppsManager->DesktopObjs.value(f).getIcon();
-        QIcon icon(iconProvider->getDesktopIcon(iconName, 48));
+        QIcon icon(fileIconProvider->getDesktopIcon(iconName, 48));
         QListWidgetItem* item = new QListWidgetItem(icon, mimeAppsManager->DesktopObjs.value(f).getName());
         item->setData(Qt::UserRole, f);
         m_listWidget->addItem(item);

@@ -19,6 +19,11 @@ QString StandardPath::getHomePath()
     return QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0);
 }
 
+QString StandardPath::getDesktopPath()
+{
+    return QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).at(0);
+}
+
 QString StandardPath::getCachePath()
 {
     QDir::home().mkpath(".cache");

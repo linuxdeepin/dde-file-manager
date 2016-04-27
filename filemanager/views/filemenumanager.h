@@ -10,6 +10,7 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QMimeData>
+#include <QDir>
 
 DWIDGET_USE_NAMESPACE
 
@@ -53,6 +54,8 @@ private:
 
 public slots:
     void actionTriggered(DAction * action);
+
+    static void createSoftLink(int windowId, const QString& file, const QString& targetDir = QDir::homePath());
 
 signals:
 
