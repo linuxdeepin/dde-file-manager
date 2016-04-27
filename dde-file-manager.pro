@@ -211,5 +211,12 @@ target.path = /usr/bin/
 desktop.path = $${PREFIX}/share/applications/
 desktop.files = dde-file-manager.desktop
 
-INSTALLS += target desktop
+templateFiles.path = $${PREFIX}/share/dde-file-manager/templates
+templateFiles.files = skin/templates/newDoc.doc \
+    skin/templates/newExcel.xls \
+    skin/templates/newPowerPoint.ppt \
+    skin/templates/newTxt.txt
+
+INSTALLS += target desktop templateFiles
+
 

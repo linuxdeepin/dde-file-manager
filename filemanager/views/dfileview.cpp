@@ -796,9 +796,9 @@ void DFileView::showNormalMenu(const QModelIndex &index)
     if (list.length() == 1){
         const AbstractFileInfoPointer &info = model()->fileInfo(index);
         const QVector<MenuAction> &actions = info->menuActionList(AbstractFileInfo::Normal);
-        const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList();
 
-        DFileMenu* menu = FileMenuManager::genereteMenuByKeys(actions, FileMenuManager::getDisableActionList(model()->getUrlByIndex(index)), false, subActions);
+
+        DFileMenu* menu = FileMenuManager::genereteMenuByKeys(actions, FileMenuManager::getDisableActionList(model()->getUrlByIndex(index)));
         menu->setWindowId(m_windowId);
         menu->setUrls(list);
         menu->exec();

@@ -3,6 +3,7 @@
 #include <sys/vfs.h>
 #include <QUrl>
 #include <QMimeDatabase>
+#include <QProcess>
 
 /**
  * @brief Recursive removes file or directory
@@ -259,11 +260,45 @@ QString FileUtils::formatSize( qint64 num )
     const qint64 gb = 1024 * mb;
     const qint64 tb = 1024 * gb;
 
-    if ( num >= tb ) total = QString( "%1 TiB" ).arg( QString::number( qreal( num ) / tb, 'f', 3 ) );
-    else if ( num >= gb ) total = QString( "%1 GiB" ).arg( QString::number( qreal( num ) / gb, 'f', 2 ) );
-    else if ( num >= mb ) total = QString( "%1 MiB" ).arg( QString::number( qreal( num ) / mb, 'f', 1 ) );
-    else if ( num >= kb ) total = QString( "%1 KiB" ).arg( QString::number( qreal( num ) / kb,'f',1 ) );
+    if ( num >= tb ) total = QString( "%1 TB" ).arg( QString::number( qreal( num ) / tb, 'f', 3 ) );
+    else if ( num >= gb ) total = QString( "%1 GB" ).arg( QString::number( qreal( num ) / gb, 'f', 2 ) );
+    else if ( num >= mb ) total = QString( "%1 MB" ).arg( QString::number( qreal( num ) / mb, 'f', 1 ) );
+    else if ( num >= kb ) total = QString( "%1 KB" ).arg( QString::number( qreal( num ) / kb,'f',1 ) );
     else total = QString( "%1 bytes" ).arg( num );
 
     return total;
+}
+
+QString FileUtils::newDocmentName(const QString &targetdir, const QString &baseName, const QString &suffix)
+{
+    int i = 0;
+    QString filePath = QString("%1/%2.%4").arg(targetdir, baseName, suffix);
+    while (true) {
+        if (QFile(filePath).exists()){
+            i++;
+            filePath = QString("%1/%2 %3.%4").arg(targetdir, baseName, QString::number(i), suffix);
+        }
+        else{
+            return filePath;
+        }
+    }
+}
+
+void FileUtils::cpTemplateFileToTargetDir(const QString& targetdir, const QString& baseName, const QString& suffix)
+{
+    QString templateFile;
+    QDirIterator it("/usr/share/dde-file-manager/templates", QDir::Files);
+    while (it.hasNext()) {
+      it.next();
+      if (it.filePath().endsWith(suffix)){
+          templateFile = it.filePath();
+          break;
+      }
+    }
+
+    QString targetFile = FileUtils::newDocmentName(targetdir, baseName, suffix);
+    QStringList args;
+    args << templateFile;
+    args << targetFile;
+    QProcess::startDetached("cp", args);
 }
