@@ -63,7 +63,7 @@ signals:
     void requestRename(const FMEvent &event);
 
     /* view sort */
-    void requestViewSort(int windowId, Global::SortRole role);
+    void requestViewSort(int windowId, int role);
 
     /* view select all */
     void requestViewSelectAll(int windowId);

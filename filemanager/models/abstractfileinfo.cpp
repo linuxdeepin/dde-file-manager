@@ -322,11 +322,18 @@ quint8 AbstractFileInfo::userColumnCount() const
     return 0;
 }
 
-QString AbstractFileInfo::userColumnDisplayName(quint8 userColumnType) const
+QVariant AbstractFileInfo::userColumnDisplayName(quint8 userColumnType) const
 {
     Q_UNUSED(userColumnType)
 
-    return QString();
+    return QVariant();
+}
+
+QVariant AbstractFileInfo::userColumnData(quint8 userColumnType) const
+{
+    Q_UNUSED(userColumnType);
+
+    return QVariant();
 }
 
 void AbstractFileInfo::sortByColumn(QList<AbstractFileInfoPointer> &fileList, quint8 columnType, Qt::SortOrder order) const

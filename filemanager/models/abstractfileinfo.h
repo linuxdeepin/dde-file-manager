@@ -156,7 +156,10 @@ public:
     virtual quint8 userColumnCount() const;
 
     /// userColumnType = ColumnType::UserType + user column index
-    virtual QString userColumnDisplayName(quint8 userColumnType) const;
+    virtual QVariant userColumnDisplayName(quint8 userColumnType) const;
+
+    /// get custom column data
+    virtual QVariant userColumnData(quint8 userColumnType) const;
 
     virtual void sortByColumn(QList<AbstractFileInfoPointer> &fileList, quint8 columnType,
                               Qt::SortOrder order = Qt::AscendingOrder) const;

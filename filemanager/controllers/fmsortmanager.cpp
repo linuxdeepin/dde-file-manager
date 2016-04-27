@@ -22,7 +22,7 @@ void fmsortmanager::save()
 
 }
 
-void fmsortmanager::saveLastSortOrder(const DUrl &url, Global::SortRole role)
+void fmsortmanager::saveLastSortOrder(const DUrl &url, int role)
 {
 
 }

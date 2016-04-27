@@ -106,3 +106,22 @@ int SearchFileInfo::getIndexByFileInfo(getFileInfoFun fun, const AbstractFileInf
 
     return index;
 }
+
+quint8 SearchFileInfo::userColumnCount() const
+{
+    return 1;
+}
+
+QVariant SearchFileInfo::userColumnDisplayName(quint8 userColumnType) const
+{
+    Q_UNUSED(userColumnType)
+
+    return QObject::tr("absolute path");
+}
+
+QVariant SearchFileInfo::userColumnData(quint8 userColumnType) const
+{
+    Q_UNUSED(userColumnType)
+
+    return absoluteFilePath();
+}
