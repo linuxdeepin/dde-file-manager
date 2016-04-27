@@ -7,6 +7,80 @@
 #include <QDateTime>
 #include <QDebug>
 
+Qt::SortOrder AbstractFileInfo::sortOrderGlobal;
+
+namespace FileSortFunction {
+bool sortFileListByDisplayName(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &info2)
+{
+    if(info1->isDir()) {
+        if(!info2->isDir())
+            return true;
+    } else {
+        if(info2->isDir())
+            return false;
+    }
+
+    return ((AbstractFileInfo::sortOrderGlobal == Qt::DescendingOrder)
+            ^ (info1->displayName().toLower() < info2->displayName().toLower())) == 0x01;
+}
+
+bool sortFileListBySize(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &info2)
+{
+    if(info1->isDir()) {
+        if(!info2->isDir())
+            return true;
+    } else {
+        if(info2->isDir())
+            return false;
+    }
+
+    return ((AbstractFileInfo::sortOrderGlobal == Qt::DescendingOrder)
+            ^ (info1->size() < info2->size())) == 0x01;
+}
+
+bool sortFileListByModified(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &info2)
+{
+    if(info1->isDir()) {
+        if(!info2->isDir())
+            return true;
+    } else {
+        if(info2->isDir())
+            return false;
+    }
+
+    return ((AbstractFileInfo::sortOrderGlobal == Qt::DescendingOrder)
+            ^ (info1->lastModified() < info2->lastModified())) == 0x01;
+}
+
+bool sortFileListByMime(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &info2)
+{
+    if(info1->isDir()) {
+        if(!info2->isDir())
+            return true;
+    } else {
+        if(info2->isDir())
+            return false;
+    }
+
+    return ((AbstractFileInfo::sortOrderGlobal == Qt::DescendingOrder)
+            ^ (info1->mimeTypeName() < info2->mimeTypeName())) == 0x01;
+}
+
+bool sortFileListByCreated(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &info2)
+{
+    if(info1->isDir()) {
+        if(!info2->isDir())
+            return true;
+    } else {
+        if(info2->isDir())
+            return false;
+    }
+
+    return ((AbstractFileInfo::sortOrderGlobal == Qt::DescendingOrder)
+            ^ (info1->created() < info2->created())) == 0x01;
+}
+} /// end namespace FileSortFunction
+
 AbstractFileInfo::AbstractFileInfo()
     : data(new FileInfoData)
 {
@@ -241,6 +315,93 @@ QVector<AbstractFileInfo::MenuAction> AbstractFileInfo::menuActionList(AbstractF
 quint8 AbstractFileInfo::supportViewMode() const
 {
     return DFileView::AllViewMode;
+}
+
+quint8 AbstractFileInfo::userColumnCount() const
+{
+    return 0;
+}
+
+QString AbstractFileInfo::userColumnDisplayName(quint8 userColumnType) const
+{
+    Q_UNUSED(userColumnType)
+
+    return QString();
+}
+
+void AbstractFileInfo::sortByColumn(QList<AbstractFileInfoPointer> &fileList, quint8 columnType, Qt::SortOrder order) const
+{
+    sortOrderGlobal = order;
+
+    switch (columnType) {
+    case DisplayNameType:
+        qSort(fileList.begin(), fileList.end(), FileSortFunction::sortFileListByDisplayName);
+        break;
+    case LastModifiedDateType:
+        qSort(fileList.begin(), fileList.end(), FileSortFunction::sortFileListByModified);
+        break;
+    case SizeType:
+        qSort(fileList.begin(), fileList.end(), FileSortFunction::sortFileListBySize);
+        break;
+    case FileMimeType:
+        qSort(fileList.begin(), fileList.end(), FileSortFunction::sortFileListByMime);
+        break;
+    case CreatedDateType:
+        qSort(fileList.begin(), fileList.end(), FileSortFunction::sortFileListByCreated);
+        break;
+    default:
+        sortByUserColumn(fileList, columnType, order);
+        break;
+    }
+}
+
+int AbstractFileInfo::getIndexByFileInfo(getFileInfoFun fun, const AbstractFileInfoPointer &info, quint8 columnType, Qt::SortOrder order) const
+{
+    std::function<bool(const AbstractFileInfoPointer&, const AbstractFileInfoPointer&)> sortFun;
+
+    sortOrderGlobal = order;
+
+    switch (columnType) {
+    case DisplayNameType:
+        sortFun = FileSortFunction::sortFileListByDisplayName;
+        break;
+    case LastModifiedDateType:
+        sortFun = FileSortFunction::sortFileListByModified;
+        break;
+    case SizeType:
+        sortFun = FileSortFunction::sortFileListBySize;
+        break;
+    case FileMimeType:
+        sortFun = FileSortFunction::sortFileListByMime;
+        break;
+    case CreatedDateType:
+        sortFun = FileSortFunction::sortFileListByCreated;
+        break;
+    default:
+        return -1;
+    }
+
+    int index = 0;
+
+    forever {
+        const AbstractFileInfoPointer &tmp_info = fun(index++);
+
+        if(!tmp_info)
+            break;
+
+        if(sortFun(info, tmp_info)) {
+            break;
+        }
+    }
+
+    return index;
+}
+
+void AbstractFileInfo::sortByUserColumn(QList<AbstractFileInfoPointer> &fileList, quint8 columnType, Qt::SortOrder order) const
+{
+    Q_UNUSED(fileList)
+    Q_UNUSED(columnType)
+    Q_UNUSED(order)
 }
 
 QMap<AbstractFileInfo::MenuAction, QVector<AbstractFileInfo::MenuAction> > AbstractFileInfo::subMenuActionList() const

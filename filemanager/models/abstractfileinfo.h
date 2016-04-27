@@ -1,11 +1,17 @@
 #ifndef ABSTRACTFILEINFO_H
 #define ABSTRACTFILEINFO_H
 
+#include <functional>
+
 #include <QSharedDataPointer>
 #include <QFile>
 #include <QFileInfo>
 
 #include "durl.h"
+
+class AbstractFileInfo;
+typedef QExplicitlySharedDataPointer<AbstractFileInfo> AbstractFileInfoPointer;
+typedef std::function<const AbstractFileInfoPointer(int)> getFileInfoFun;
 
 class AbstractFileInfo : public QSharedData
 {
@@ -65,6 +71,15 @@ public:
     enum MenuType {
         Normal,
         SpaceArea
+    };
+
+    enum ColumnType {
+        DisplayNameType = 0,
+        SizeType = 1,
+        LastModifiedDateType = 2,
+        CreatedDateType = 3,
+        FileMimeType = 4,
+        UserType = 5
     };
 
     AbstractFileInfo();
@@ -135,9 +150,27 @@ public:
     virtual QVector<MenuAction> menuActionList(MenuType type = Normal) const;
     virtual QMap<MenuAction, QVector<MenuAction> > subMenuActionList() const;
 
+    /// return DFileView::ViewMode flags
     virtual quint8 supportViewMode() const;
 
+    virtual quint8 userColumnCount() const;
+
+    /// userColumnType = ColumnType::UserType + user column index
+    virtual QString userColumnDisplayName(quint8 userColumnType) const;
+
+    virtual void sortByColumn(QList<AbstractFileInfoPointer> &fileList, quint8 columnType,
+                              Qt::SortOrder order = Qt::AscendingOrder) const;
+
+    /// getFileInfoFun is get AbstractFileInfoPointer by index for caller. if return -1 then insert file list last
+    virtual int getIndexByFileInfo(getFileInfoFun fun, const AbstractFileInfoPointer &info, quint8 columnType,
+                                   Qt::SortOrder order = Qt::AscendingOrder) const;
+
+    static Qt::SortOrder sortOrderGlobal;
+
 protected:
+    virtual void sortByUserColumn(QList<AbstractFileInfoPointer> &fileList, quint8 columnType,
+                                  Qt::SortOrder order = Qt::AscendingOrder) const;
+
     struct FileInfoData
     {
         DUrl url;
@@ -147,8 +180,6 @@ protected:
 
     FileInfoData *data;
 };
-
-typedef QExplicitlySharedDataPointer<AbstractFileInfo> AbstractFileInfoPointer;
 
 QT_BEGIN_NAMESPACE
 QDebug operator<<(QDebug deg, const AbstractFileInfo &info);

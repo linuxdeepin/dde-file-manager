@@ -177,6 +177,8 @@ const DDirIteratorPointer AbstractFileController::createDirIterator(const DUrl &
                                                                     QDirIterator::IteratorFlags flags, bool &accepted) const
 {
     Q_UNUSED(fileUrl)
+    Q_UNUSED(filters)
+    Q_UNUSED(flags)
 
     accepted = false;
 

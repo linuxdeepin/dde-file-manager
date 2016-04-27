@@ -769,9 +769,9 @@ void DFileView::showEmptyAreaMenu()
             sortBySubMenu->actionAt(fileMenuManger->getActionString(MenuAction::Size))->setChecked(true);
         }else if (model()->sortRole() == DFileSystemModel::FileMimeTypeRole){
             sortBySubMenu->actionAt(fileMenuManger->getActionString(MenuAction::Type))->setChecked(true);
-        }else if (model()->sortRole() == DFileSystemModel::FileCreated){
+        }else if (model()->sortRole() == DFileSystemModel::FileCreatedRole){
             sortBySubMenu->actionAt(fileMenuManger->getActionString(MenuAction::CreatedDate))->setChecked(true);
-        }else if (model()->sortRole() == DFileSystemModel::FileLastModified){
+        }else if (model()->sortRole() == DFileSystemModel::FileLastModifiedRole){
             sortBySubMenu->actionAt(fileMenuManger->getActionString(MenuAction::LastModifiedDate))->setChecked(true);
         }
     }
