@@ -4,6 +4,7 @@
 #include "../app/global.h"
 #include "../app/filesignalmanager.h"
 #include "../app/fmevent.h"
+#include "../shutil/fileutils.h"
 
 #include "../controllers/fileservices.h"
 
@@ -400,6 +401,20 @@ void FileMenuManager::actionTriggered(DAction *action)
     case MenuAction::DisplayAs:break;
     case MenuAction::SortBy:break;
     case MenuAction::NewDocument:break;
+
+    case MenuAction::NewWord:{
+        FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("newDoc"), "doc");
+        break;
+    }
+    case MenuAction::NewExcel:
+        FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("newExcel"), "xls");
+        break;
+    case MenuAction::NewPowerpoint:
+        FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("newPowerPoint"), "ppt");
+        break;
+    case MenuAction::NewText:
+        FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("newText"), "txt");
+        break;
     case MenuAction::Mount:
         deviceListener->mount(fileUrl.query());
         break;
