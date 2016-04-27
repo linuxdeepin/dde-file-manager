@@ -38,6 +38,7 @@ signals:
     void refreshButtonClicked();
 
 public slots:
+    void searchBarClicked();
     void searchBarActivated();
     void searchBarDeactivated();
     void searchBarTextEntered();

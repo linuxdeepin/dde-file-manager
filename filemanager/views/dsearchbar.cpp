@@ -24,7 +24,6 @@ void DSearchBar::initData()
 void DSearchBar::initUI()
 {
     m_list = new QListWidget;
-    m_hList = new QListWidget;
     m_list->setStyleSheet("QListWidget::item:hover {background:lightGray;}");
     m_list->setMouseTracking(true);
     m_completer = new QCompleter;
@@ -42,6 +41,7 @@ void DSearchBar::initUI()
     setMinimumWidth(1);
 
     setFocusPolicy(Qt::ClickFocus);
+    setClearAction();
 }
 
 
@@ -58,6 +58,7 @@ QListWidget *DSearchBar::getPopupList()
 QAction * DSearchBar::setClearAction()
 {
     addAction(m_clearAction, QLineEdit::TrailingPosition);
+    connect(m_clearAction, &QAction::triggered, this, &DSearchBar::clear);
     return m_clearAction;
 }
 
@@ -86,7 +87,6 @@ void DSearchBar::initConnections()
 void DSearchBar::doTextChanged(QString text)
 {
     m_list->clear();
-    m_hList->clear();
     QStringList stringList;
     m_completer->setCompletionPrefix(text);
     for (int i = 0; m_completer->setCurrentRow(i); i++)
@@ -103,11 +103,9 @@ void DSearchBar::doTextChanged(QString text)
         for (int i = 0; m_historyCompleter->setCurrentRow(i); i++)
             stringList << m_historyCompleter->currentCompletion();
 
-        m_hList->addItems(stringList);
-        m_historyCompleter->setPopup(m_hList);
+        m_list->addItems(stringList);
         setCompleter(m_historyCompleter);
     }
-
 }
 
 void DSearchBar::searchHistoryLoaded(const QStringList &list)
@@ -138,28 +136,48 @@ void DSearchBar::focusInEvent(QFocusEvent *e)
 
 void DSearchBar::keyPressEvent(QKeyEvent *e)
 {
-    //press right key to deselect the text
+    QString selected = selectedText();
+    if(e->key() == Qt::Key_Left || e->key() == Qt::Key_Tab)
+    {
+        if(!selected.isEmpty())
+        {
+            setCursorPosition(text().length() - selected.length());
+            deselect();
+        }
+        else if(e->key() == Qt::Key_Left)
+            QLineEdit::keyPressEvent(e);
+        return;
+    }
+    //press right key to deselect the text and jump to the left end
     if(e->key() == Qt::Key_Right)
     {
         deselect();
+        QLineEdit::keyPressEvent(e);
         return;
     }
+    //press enter to deselect the text and return
     if(e->key() == Qt::Key_Return)
     {
         deselect();
         QLineEdit::keyPressEvent(e);
         return;
     }
-    QString selected = selectedText();
+    //If any other key is detected and there is selected text,
+    //then remove the selected text.
     if(selected != "")
     {
-        QString temp = text().remove(selected);
+        QString temp = text().left(text().length() - selected.length());
         setText(temp);
+        if(e->key() != Qt::Key_Backspace && e->key() != Qt::Key_Delete)
+            QLineEdit::keyPressEvent(e);
     }
-    QLineEdit::keyPressEvent(e);
+    else
+        QLineEdit::keyPressEvent(e);
+    //If there is only one recommended line of text then do the completion
     if(m_list->count() == 1 && e->key() != Qt::Key_Delete && e->key() != Qt::Key_Backspace)
     {
         QString t = m_list->item(0)->text();
+        QString localText = text();
         if(t.contains(text()))
         {
             QStringList list = t.split(text());
@@ -167,8 +185,9 @@ void DSearchBar::keyPressEvent(QKeyEvent *e)
             if(rightText != "")
             {
                 setText(t);
-                int start = t.indexOf(rightText);
+                int start = localText.length();
                 int end = t.length() - 1;
+                qDebug() << rightText << start << end;
                 setSelection(start, end);
             }
         }
