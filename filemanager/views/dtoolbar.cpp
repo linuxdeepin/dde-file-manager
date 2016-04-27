@@ -75,6 +75,12 @@ void DToolBar::initAddressToolBar()
     m_forwardButton->setDisabled(true);
     m_forwardButton->setFocusPolicy(Qt::NoFocus);
 
+    m_searchButton = new DStateButton(":/images/images/light/appbar.magnify.png", this);
+    m_searchButton->setObjectName("searchButton");
+    m_searchButton->setFixedWidth(25);
+    m_searchButton->setFixedHeight(20);
+    m_searchButton->setFocusPolicy(Qt::NoFocus);
+
     backForwardLayout->addWidget(m_backButton);
     backForwardLayout->addWidget(m_forwardButton);
     backForwardLayout->setSpacing(0);
@@ -83,13 +89,15 @@ void DToolBar::initAddressToolBar()
 
     QFrame * crumbAndSearch = new QFrame;
     m_searchBar = new DSearchBar;
+    m_searchBar->hide();
     m_searchBar->setAlignment(Qt::AlignHCenter);
     m_crumbWidget = new DCrumbWidget;
     crumbAndSearch->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
     QHBoxLayout * comboLayout = new QHBoxLayout;
     comboLayout->addWidget(m_crumbWidget);
-    //comboLayout->addWidget(m_searchBar);
+    comboLayout->addWidget(m_searchBar);
+    comboLayout->addWidget(m_searchButton);
     comboLayout->setSpacing(0);
     comboLayout->setContentsMargins(0, 0, 0, 0);
 
@@ -101,8 +109,6 @@ void DToolBar::initAddressToolBar()
     mainLayout->setContentsMargins(5, 5, 5, 5);
     mainLayout->setSpacing(10);
     m_addressToolBar->setLayout(mainLayout);
-
-//    window()->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 }
 
 void DToolBar::initContollerToolBar()
@@ -148,7 +154,7 @@ void DToolBar::initConnect()
     connect(m_searchBar, &DSearchBar::searchBarFocused, this, &DToolBar::searchBarActivated);
     connect(fileSignalManager, &FileSignalManager::currentUrlChanged, this, &DToolBar::crumbChanged);
     connect(m_searchBar, SIGNAL(searchBarFocused()), this, SLOT(searchBarActivated()));
-    connect(m_searchBar->getClearAction(), &QAction::triggered, this, &DToolBar::searchBarDeactivated);
+    connect(m_searchButton, &DStateButton::clicked, this, &DToolBar::searchBarClicked);
 }
 
 void DToolBar::startup()
@@ -161,26 +167,34 @@ void DToolBar::startup()
     emit fileSignalManager->requestChangeCurrentUrl(event);
 }
 
+void DToolBar::searchBarClicked()
+{
+    if(m_searchBar->isHidden())
+        searchBarActivated();
+    else
+        searchBarDeactivated();
+}
+
 
 
 void DToolBar::searchBarActivated()
 {
     m_searchBar->setPlaceholderText(tr("Search or enter address"));
+    m_searchBar->show();
     m_crumbWidget->hide();
     m_searchBar->setAlignment(Qt::AlignLeft);
     m_searchBar->clear();
     m_searchBar->setActive(true);
-    m_searchBar->setClearAction();
 }
 
 void DToolBar::searchBarDeactivated()
 {
     m_searchBar->setPlaceholderText("");
+    m_searchBar->hide();
     m_crumbWidget->show();
     m_searchBar->clear();
     m_searchBar->setAlignment(Qt::AlignHCenter);
     m_searchBar->setActive(false);
-    m_searchBar->removeClearAction();
     m_searchBar->window()->setFocus();
 }
 

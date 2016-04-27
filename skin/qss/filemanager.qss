@@ -231,16 +231,16 @@ QPushButton#listViewButton:unchecked{
     icon-size: 16px 16px;
 }
 
-QPushButton#SortingButton{
+QPushButton#searchButton{
     background-color:white;
-    border: 1px;
+    border: 1px solid lightGray;
     color: black;
     border-radius: 2px;
 }
 
-QPushButton#SortingButton:hover{
+QPushButton#searchButton:hover{
     background-color:#2ca7f8;
-    border: 1px;
+    border: 1px solid lightGray;
     color: black;
     border-radius: 2px;
 }
