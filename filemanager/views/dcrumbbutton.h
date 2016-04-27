@@ -2,6 +2,7 @@
 #define DCRUMBBUTTON_H
 
 #include <QPushButton>
+#include <QListWidgetItem>
 
 class DCrumbButton : public QPushButton
 {
@@ -11,9 +12,12 @@ public:
     DCrumbButton(int index, const QIcon& icon, const QString &text, QWidget *parent = 0);
     int getIndex();
     QString getName();
+    void setItem(QListWidgetItem * item);
+    QListWidgetItem * getItem();
 private:
     int m_index;
     QString m_name;
+    QListWidgetItem * m_item;
 protected:
     void paintEvent(QPaintEvent *e);
 };

@@ -32,6 +32,16 @@ QString DCrumbButton::getName()
     return m_name;
 }
 
+void DCrumbButton::setItem(QListWidgetItem *item)
+{
+    m_item = item;
+}
+
+QListWidgetItem *DCrumbButton::getItem()
+{
+    return m_item;
+}
+
 void DCrumbButton::paintEvent(QPaintEvent *e)
 {
     QPainter painter;
