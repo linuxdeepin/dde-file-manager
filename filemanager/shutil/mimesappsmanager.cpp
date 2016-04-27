@@ -81,8 +81,8 @@ void MimeAppsWorker::saveCache()
 
 
     QVariantMap icons;
-    foreach (QString key, iconProvider->getDesktopIconPaths().keys()) {
-        icons.insert(key, iconProvider->getDesktopIconPaths().value(key));
+    foreach (QString key, fileIconProvider->getDesktopIconPaths().keys()) {
+        icons.insert(key, fileIconProvider->getDesktopIconPaths().value(key));
     }
 
     QJsonDocument desktopFileIconDoc(QJsonObject::fromVariantMap(icons));
@@ -186,7 +186,7 @@ void MimeAppsWorker::loadDesktopIconsCache()
                 QString path = obj.value(key).toString();
                 iconPaths.insert(key, path);
             }
-            iconProvider->setDesktopIconPaths(iconPaths);
+            fileIconProvider->setDesktopIconPaths(iconPaths);
         }else{
             qDebug() << "load cache file: " << MimesAppsManager::getDesktopIconsCacheFile() << error.errorString();
         }
@@ -396,7 +396,7 @@ QMap<QString, QStringList> MimesAppsManager::getMimeTypeApps()
 
     foreach (QString desktopFile, DesktopObjs.keys()) {
         QString iconName = DesktopObjs.value(desktopFile).getIcon();
-        iconProvider->getDesktopIcon(iconName, 48);
+        fileIconProvider->getDesktopIcon(iconName, 48);
     }
 
     return MimeApps;

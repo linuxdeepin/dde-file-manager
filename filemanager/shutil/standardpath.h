@@ -10,6 +10,7 @@ public:
     ~StandardPath();
 
     static QString getHomePath();
+    static QString getDesktopPath();
     static QString getCachePath();
     static QString getTrashPath();
 };

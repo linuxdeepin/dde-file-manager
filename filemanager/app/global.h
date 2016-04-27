@@ -15,7 +15,7 @@
 #include "../../deviceinfo/devicelistener.h"
 #include "../../deviceinfo/udisklistener.h"
 #include "../shutil/mimesappsmanager.h"
-
+#include "../shutil/iconprovider.h"
 
 #include <QFontMetrics>
 #include <QTextOption>
@@ -29,7 +29,7 @@
 #define fileSignalManager Singleton<FileSignalManager>::instance()
 #define dialogManager Singleton<DialogManager>::instance()
 #define appController fileManagerApp->getAppController()
-#define iconProvider Singleton<IconProvider>::instance()
+#define fileIconProvider Singleton<IconProvider>::instance()
 #define fileService FileServices::instance()
 #define deviceListener Singleton<UDiskListener>::instance()
 #define mimeAppsManager Singleton<MimesAppsManager>::instance()

@@ -122,26 +122,6 @@ QSplitter::handle:pressed {
 
 /* ******************QSplitter****************** */
 
-
-
-
-/* ******************QScrollBar****************** */
-
-QPushButton{
-    background-color: rgb(40, 47, 63);
-    border: none;
-    color: white;
-}
-
-QPushButton:pressed{
-    background-color: rgb(63, 147, 168);
-    color: white;
-}
-
-QPushButton:disabled{
-    background-color: gray;
-}
-
 QPushButton#backButton{
     background-color:white;
     border: 1px;
@@ -289,34 +269,32 @@ QLabel#FileLabel{
 }
 
 QPushButton#TightFileButton{
-    background: transparent;
+    border: none;
+    color: white;
     image: url(:/icons/images/icons/file_normal_22px.svg);
     text-align: left;
 }
 
 QPushButton#TightFileButton:hover{
-    background: transparent;
     image: url(:/icons/images/icons/file_hover_22px.svg);
 }
 
 QPushButton#TightFileButton:press{
-    background: transparent;
     image: url(:/icons/images/icons/file_hover_22px.svg);
 }
 
 QPushButton#FileButton{
-    background: transparent;
+    border: none;
+    color: white;
     image: url(:/icons/images/icons/file_normal_16px.svg);
     text-align: left;
 }
 
 QPushButton#FileButton:hover{
-    background: transparent;
     image: url(:/icons/images/icons/file_hover_16px.svg);
 }
 
 QPushButton#FileButton:press{
-    background: transparent;
     image: url(:/icons/images/icons/file_hover_16px.svg);
 }
 
@@ -389,22 +367,6 @@ QLabel#LeftSideBarTextLabel{
 /* ******************QGroupBox****************** */
 /* ******************QGroupBox****************** */
 
-/* ******************QPushButton**************** */
-QPushButton{
-    background-color: transparent;
-    color: rgb(92, 113, 134);
-}
-
-QPushButton:hover{
-    background-color: #2ca7f8;
-    color: white;
-    border: 1px;
-}
-
-QPushButton:disabled{
-    background-color: gray;
-    border: 1px;
-}
 
 /* ******************QPushButton**************** */
 

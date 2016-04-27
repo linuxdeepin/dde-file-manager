@@ -26,6 +26,7 @@ public:
     QStringList getCategories() const;
 
     QIcon fileIcon() const Q_DECL_OVERRIDE;
+    QString displayName() const Q_DECL_OVERRIDE;
 
     static QMap<QString, QVariant> getDesktopFileInfo(const DUrl &fileUrl);
 

@@ -51,7 +51,7 @@ void TrashFileInfo::setUrl(const DUrl &fileUrl)
 
 QIcon TrashFileInfo::fileIcon() const
 {
-    return iconProvider->getFileIcon(absoluteFilePath());
+    return fileIconProvider->getFileIcon(absoluteFilePath());
 }
 
 QString TrashFileInfo::mimeTypeName() const
