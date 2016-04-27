@@ -142,6 +142,7 @@ private:
     void switchViewMode(ViewMode mode);
     void showEmptyAreaMenu();
     void showNormalMenu(const QModelIndex &index);
+    void updateHeaderViewProperty();
 
     using DListView::setOrientation;
 };

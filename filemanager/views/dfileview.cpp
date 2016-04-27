@@ -614,6 +614,8 @@ bool DFileView::setCurrentUrl(const DUrl &fileUrl)
     setRootIndex(index);
     model()->setActiveIndex(index);
 
+    updateHeaderViewProperty();
+
     const AbstractFileInfoPointer &info = model()->fileInfo(fileUrl);
 
     if(info) {
@@ -670,23 +672,17 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
 
         if(!m_headerView) {
             m_headerView = new QHeaderView(Qt::Horizontal);
-            m_headerView->setModel(model());
+
+            updateHeaderViewProperty();
+
             m_headerView->setHighlightSections(true);
             m_headerView->setSectionsClickable(true);
             m_headerView->setSortIndicatorShown(true);
-            m_headerView->setSectionResizeMode(QHeaderView::Fixed);
-            m_headerView->setSectionResizeMode(0, QHeaderView::Stretch);
             m_headerView->setDefaultAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-            m_headerView->setDefaultSectionSize(100);
-            m_headerView->setMinimumSectionSize(200);
-            m_headerView->resizeSection(2, 50);
 
             if(selectionModel()) {
                 m_headerView->setSelectionModel(selectionModel());
             }
-
-            for(int i = 0; i < m_headerView->count(); ++i)
-                m_columnRoles << model()->getRoleByColumn(i);
 
             connect(m_headerView, &QHeaderView::sectionResized,
                     this, static_cast<void (DFileView::*)()>(&DFileView::update));
@@ -798,4 +794,23 @@ void DFileView::showNormalMenu(const QModelIndex &index)
     }else{
 
     }
+}
+
+void DFileView::updateHeaderViewProperty()
+{
+    if(!m_headerView)
+        return;
+
+    m_headerView->setModel(Q_NULLPTR);
+    m_headerView->setModel(model());
+    m_headerView->setSectionResizeMode(QHeaderView::Fixed);
+    m_headerView->setSectionResizeMode(0, QHeaderView::Stretch);
+    m_headerView->setDefaultSectionSize(100);
+    m_headerView->setMinimumSectionSize(200);
+    m_headerView->resizeSection(2, 50);
+
+    m_columnRoles.clear();
+
+    for (int i = 0; i < m_headerView->count(); ++i)
+        m_columnRoles << model()->getRoleByColumn(i);
 }

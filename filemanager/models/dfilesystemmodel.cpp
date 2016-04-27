@@ -18,6 +18,7 @@
 #include <QMimeData>
 
 #define fileService FileServices::instance()
+#define DEFAULT_COLUMN_COUNT 4
 
 class FileSystemNode : public QSharedData
 {
@@ -213,7 +214,7 @@ QVariant DFileSystemModel::headerData(int section, Qt::Orientation, int role) co
             const AbstractFileInfoPointer &fileInfo = this->fileInfo(m_activeIndex);
 
             if(fileInfo)
-                return fileInfo->userColumnDisplayName(AbstractFileInfo::UserType + section - 4);
+                return fileInfo->userColumnDisplayName(AbstractFileInfo::UserType + section - DEFAULT_COLUMN_COUNT);
 
             return QVariant();
         }
@@ -241,7 +242,7 @@ int DFileSystemModel::getRoleByColumn(int column) const
     case 4:
         return FileCreatedRole;
     default:
-        return FileUserRole + column - 4;
+        return FileUserRole + column - DEFAULT_COLUMN_COUNT;
     }
 }
 
