@@ -182,6 +182,7 @@ bool FileController::copyFiles(const DUrlList &urlList, bool &accepted) const
 
     mimeData->setText("copy");
     mimeData->setData("x-special/gnome-copied-files", ba);
+    mimeData->setUrls(DUrl::toQUrlList(urlList));
 
     qApp->clipboard()->setMimeData(mimeData);
 
@@ -254,6 +255,7 @@ bool FileController::cutFiles(const DUrlList &urlList, bool &accepted) const
 
     mimeData->setText("cut");
     mimeData->setData("x-special/gnome-copied-files", ba);
+    mimeData->setUrls(DUrl::toQUrlList(urlList));
 
     qApp->clipboard()->setMimeData(mimeData);
 
@@ -277,6 +279,8 @@ bool FileController::pasteFile(PasteType type, const DUrlList &urlList,
 
         job.doMove(DUrl::toQUrlList(urlList), event.fileUrl().toString());
         dialogManager->removeJob(job.getJobId());
+
+        qApp->clipboard()->clear();
     } else {
 
         FileJob job("copy");

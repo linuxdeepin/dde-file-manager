@@ -10,8 +10,9 @@
 
 #include "durl.h"
 
+
 QT_BEGIN_NAMESPACE
-class QFileSystemModel;
+class DFileSystemModel;
 class QHeaderView;
 QT_END_NAMESPACE
 
@@ -75,6 +76,11 @@ public:
 
     void setIconSize(const QSize &size);
 
+    ViewMode getDefaultViewMode();
+
+    int getSortRoles();
+
+
     bool testViewMode(ViewModes modes, ViewMode mode);
 
 
@@ -87,7 +93,7 @@ public slots:
     inline void setViewModeToIcon()
     { setViewMode(IconMode);}
     void setViewMode(ViewMode mode);
-    void sort(int windowId, int role);
+    void sort(int role);
 
 signals:
     void currentUrlChanged(const DUrl &url);

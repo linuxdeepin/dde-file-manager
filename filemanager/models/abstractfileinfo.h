@@ -59,6 +59,7 @@ public:
         Type,
         CreatedDate,
         LastModifiedDate,
+        Settings,
         Help,
         About,
         Exit,

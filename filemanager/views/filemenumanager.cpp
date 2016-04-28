@@ -14,7 +14,9 @@
 #include "../controllers/filejob.h"
 #include <QFileDialog>
 #include <QDesktopServices>
-
+#include <QApplication>
+#include <QMimeData>
+#include <QClipboard>
 #include <QScreen>
 
 QMap<MenuAction, QString> FileMenuManager::m_actionKeys;
@@ -110,7 +112,9 @@ DFileMenu *FileMenuManager::createToolBarSettingsMenu(const QVector<MenuAction> 
 
     actionKeys.reserve(5);
 
-    actionKeys << MenuAction::NewWindow << MenuAction::Separator
+    actionKeys << MenuAction::NewWindow
+               << MenuAction::Separator
+               << MenuAction::Settings
                << MenuAction::Help
                << MenuAction::About
                << MenuAction::Exit;
@@ -152,27 +156,15 @@ QVector<MenuAction> FileMenuManager::getDisableActionList(const DUrl &fileUrl)
 {
     const AbstractFileInfoPointer &fileInfo = fileService->createFileInfo(fileUrl);
     QVector<MenuAction> disableList;
-
-    if(!fileInfo->isCanRename())
-        disableList << MenuAction::Rename;
-
-    if(!fileInfo->isReadable())
-        disableList << MenuAction::Open << MenuAction::OpenWith
-                    << MenuAction::OpenInNewWindow << MenuAction::Copy;
-
     const AbstractFileInfoPointer &parentInfo = fileService->createFileInfo(fileInfo->parentUrl());
 
-    if(!fileInfo->isWritable())
-        disableList << MenuAction::Paste << MenuAction::NewDocument
-                    << MenuAction::NewFile << MenuAction::NewFolder;
 
-    if(!fileInfo->isWritable() || (parentInfo->exists() && !parentInfo->isWritable())) {
-        disableList << MenuAction::Cut
-                    << MenuAction::Delete;
+    const QClipboard *clipboard = qApp->clipboard();
+    const QMimeData *mimeData = clipboard->mimeData();
 
-        if(!fileUrl.isTrashFile()) {
-            disableList << MenuAction::CompleteDeletion;
-        }
+    qDebug() << mimeData->hasUrls() << mimeData->urls();
+    if (!mimeData->hasUrls()){
+        disableList << MenuAction::Paste;
     }
 
     return disableList;
@@ -229,6 +221,7 @@ void FileMenuManager::initData()
     m_actionKeys[MenuAction::Type] = QObject::tr("Type");
     m_actionKeys[MenuAction::CreatedDate] = QObject::tr("Created Date");
     m_actionKeys[MenuAction::LastModifiedDate] = QObject::tr("Last Modified Date");
+    m_actionKeys[MenuAction::Settings] = QObject::tr("Settings");
     m_actionKeys[MenuAction::Help] = QObject::tr("Help");
     m_actionKeys[MenuAction::About] = QObject::tr("About");
     m_actionKeys[MenuAction::Exit] = QObject::tr("Exit");
@@ -406,7 +399,6 @@ void FileMenuManager::actionTriggered(DAction *action)
     case MenuAction::NewFile:
         fileService->newFile(fileUrl);
         break;
-    case MenuAction::NewWindow:break;
     case MenuAction::SelectAll:
         fileSignalManager->requestViewSelectAll(menu->getWindowId());
         break;
@@ -468,9 +460,15 @@ void FileMenuManager::actionTriggered(DAction *action)
         emit fileSignalManager->requestShowPropertyDialog(event);
         break;
     }
+    case MenuAction::NewWindow: {
+        fileService->openNewWindow(fileUrl);
+        break;
+    }
     case MenuAction::Help:break;
     case MenuAction::About:break;
-    case MenuAction::Exit:break;
+    case MenuAction::Exit:
+        emit fileSignalManager->aboutToCloseLastActivedWindow(menu->getWindowId());
+        break;
     default:
         qDebug() << "unknown action type";
         break;

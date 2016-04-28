@@ -22,10 +22,11 @@ public:
     explicit FileManagerApp(QObject *parent = 0);
     ~FileManagerApp();
 
-    void initGtk();
+
     void initApp();
     void initView();
     void initController();
+    void initGtk();
     void initManager();
     void initTranslation();
     void initConnect();

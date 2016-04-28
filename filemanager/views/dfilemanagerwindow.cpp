@@ -6,6 +6,7 @@
 #include "ddetailview.h"
 #include "../app/global.h"
 #include "../app/fmevent.h"
+#include "dfilemenu.h"
 #include "dsearchbar.h"
 #include "dsplitter.h"
 #include "utils/xutil.h"
@@ -58,6 +59,10 @@ void DFileManagerWindow::initTitleBar()
     m_titleBar->layout()->setContentsMargins(0, 0, 0, 0);
     m_titleBar->setWindowFlags(m_titleBar->windowFlags());
     setDragMovableHeight(m_titleBar->height());
+
+    DFileMenu* menu = fileMenuManger->createToolBarSettingsMenu();
+    menu->setWindowId(window()->winId());
+    m_titleBar->setMenu(menu);
 }
 
 void DFileManagerWindow::initSplitter()
@@ -186,9 +191,29 @@ DUrl DFileManagerWindow::currentUrl() const
     return m_fileView->currentUrl();
 }
 
+int DFileManagerWindow::getFileViewMode() const
+{
+    return m_fileView->getDefaultViewMode();
+}
+
+int DFileManagerWindow::getFileViewSortRole() const
+{
+    return m_fileView->getSortRoles();
+}
+
 void DFileManagerWindow::showMinimized()
 {
     QtX11::utils::ShowMinimizedWindow(this);
+}
+
+void DFileManagerWindow::setFileViewMode(int viewMode)
+{
+    m_fileView->setViewMode(static_cast<DFileView::ViewMode>(viewMode));
+}
+
+void DFileManagerWindow::setFileViewSortRole(int sortRole)
+{
+    m_fileView->sort(sortRole);
 }
 
 

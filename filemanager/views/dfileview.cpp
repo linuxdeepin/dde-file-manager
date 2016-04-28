@@ -17,7 +17,7 @@
 #include "../controllers/filecontroller.h"
 #include "../controllers/fileservices.h"
 #include "../controllers/filejob.h"
-
+#include "../controllers/fmstatemanager.h"
 #include "../models/dfilesystemmodel.h"
 
 #include <dthememanager.h>
@@ -86,8 +86,6 @@ void DFileView::initConnects()
             model(), &DFileSystemModel::refresh);
     connect(fileSignalManager, &FileSignalManager::requestRename,
             this, static_cast<void (DFileView::*)(const FMEvent&)>(&DFileView::edit));
-    connect(fileSignalManager, &FileSignalManager::requestViewSort,
-            this, &DFileView::sort);
     connect(fileSignalManager, &FileSignalManager::requestViewSelectAll,
             this, &DFileView::selectAll);
     connect(fileSignalManager, &FileSignalManager::requestSelectFile,
@@ -239,6 +237,16 @@ void DFileView::setIconSize(const QSize &size)
     updateViewportMargins();
 }
 
+DFileView::ViewMode DFileView::getDefaultViewMode()
+{
+    return m_defaultViewMode;
+}
+
+int DFileView::getSortRoles()
+{
+    return model()->sortRole();
+}
+
 bool DFileView::testViewMode(ViewModes modes, DFileView::ViewMode mode)
 {
     return (modes | mode) == modes;
@@ -257,6 +265,10 @@ void DFileView::cd(const FMEvent &event)
 
     if(setCurrentUrl(fileUrl))
         emit fileSignalManager->currentUrlChanged(event);
+
+    if (FMStateManager::SortStates.contains(fileUrl)){
+        sort(FMStateManager::SortStates.value(fileUrl));
+    }
 }
 
 void DFileView::edit(const FMEvent &event)
@@ -295,17 +307,12 @@ void DFileView::setViewMode(DFileView::ViewMode mode)
     switchViewMode(mode);
 }
 
-void DFileView::sort(int windowId, int role)
+void DFileView::sort(int role)
 {
-    if(this->windowId() != windowId)
-        return;
+    model()->setSortRole(role);
+    model()->sort();
 
-    if(isIconViewMode()) {
-        model()->setSortRole(role);
-        model()->sort();
-    } else {
-        model()->sort(role);
-    }
+    FMStateManager::cacheSortState(currentUrl(), role);
 }
 
 void DFileView::selectAll(int windowId)
@@ -341,21 +348,22 @@ void DFileView::sortByActionTriggered(QAction *action)
     DAction* dAction = static_cast<DAction*>(action);
     dAction->setChecked(true);
     MenuAction type = (MenuAction)dAction->data().toInt();
+    qDebug() << action << type;
     switch(type){
         case MenuAction::Name:
-            emit fileSignalManager->requestViewSort(windowId(), DFileSystemModel::FileDisplayNameRole);
+            sort(DFileSystemModel::FileDisplayNameRole);
             break;
         case MenuAction::Size:
-            emit fileSignalManager->requestViewSort(windowId(), DFileSystemModel::FileSizeRole);
+            sort(DFileSystemModel::FileSizeRole);
             break;
         case MenuAction::Type:
-            fileSignalManager->requestViewSort(windowId(), DFileSystemModel::FileMimeTypeRole);
+            sort(DFileSystemModel::FileMimeTypeRole);
             break;
         case MenuAction::CreatedDate:
-            emit fileSignalManager->requestViewSort(windowId(), DFileSystemModel::FileCreatedRole);
+            sort(DFileSystemModel::FileCreatedRole);
             break;
         case MenuAction::LastModifiedDate:
-            emit fileSignalManager->requestViewSort(windowId(), DFileSystemModel::FileLastModifiedRole);
+            sort(DFileSystemModel::FileLastModifiedRole);
             break;
         default:
             break;
