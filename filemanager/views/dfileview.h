@@ -137,7 +137,7 @@ private:
     void openIndex(const QModelIndex &index);
     void keyboardSearch(const QString & search) Q_DECL_OVERRIDE;
     void stopSearch();
-    bool setCurrentUrl(const DUrl &fileUrl);
+    bool setCurrentUrl(DUrl fileUrl);
     void updateViewportMargins();
     void switchViewMode(ViewMode mode);
     void showEmptyAreaMenu();

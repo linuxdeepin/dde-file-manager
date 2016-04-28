@@ -31,6 +31,9 @@ public:
     /// get custom column data
     QVariant userColumnData(quint8 userColumnType) const Q_DECL_OVERRIDE;
 
+    bool canRedirectionFileUrl() const Q_DECL_OVERRIDE;
+    DUrl redirectedFileUrl() const Q_DECL_OVERRIDE;
+
 private:
     DUrl m_parentUrl;
 };

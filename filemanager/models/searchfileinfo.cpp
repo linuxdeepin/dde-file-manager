@@ -19,7 +19,6 @@ SearchFileInfo::SearchFileInfo(const DUrl &url)
         m_parentUrl = url;
         m_parentUrl.setFragment(QString());
         data->fileInfo.setFile(url.fragment());
-        data->url = DUrl::fromLocalFile(data->fileInfo.absoluteFilePath());
     } else {
         data->fileInfo = QFileInfo();
     }
@@ -72,10 +71,12 @@ DUrl SearchFileInfo::parentUrl() const
 
 quint8 SearchFileInfo::supportViewMode() const
 {
-    if(data->url.isSearchFile())
-        return DFileView::ListMode;
+    const QString &fragment = data->url.fragment();
 
-    return FileInfo::supportViewMode();
+    if (!fragment.isEmpty() && fragment != "stop")
+        return FileInfo::supportViewMode();
+
+    return DFileView::ListMode;
 }
 
 int SearchFileInfo::getIndexByFileInfo(getFileInfoFun fun, const AbstractFileInfoPointer &info,
@@ -124,4 +125,14 @@ QVariant SearchFileInfo::userColumnData(quint8 userColumnType) const
     Q_UNUSED(userColumnType)
 
     return absoluteFilePath();
+}
+
+bool SearchFileInfo::canRedirectionFileUrl() const
+{
+    return !m_parentUrl.isEmpty();
+}
+
+DUrl SearchFileInfo::redirectedFileUrl() const
+{
+    return DUrl::fromLocalFile(fileUrl().fragment());
 }
