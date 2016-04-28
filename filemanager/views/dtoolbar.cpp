@@ -185,6 +185,7 @@ void DToolBar::searchBarActivated()
     m_searchBar->setAlignment(Qt::AlignLeft);
     m_searchBar->clear();
     m_searchBar->setActive(true);
+    m_searchBar->setFocus();
 }
 
 void DToolBar::searchBarDeactivated()

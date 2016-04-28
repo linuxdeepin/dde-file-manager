@@ -23,15 +23,12 @@ void DSearchBar::initData()
 
 void DSearchBar::initUI()
 {
-    m_list = new QListWidget;
-    m_list->setStyleSheet("QListWidget::item:hover {background:lightGray;}");
-    m_list->setMouseTracking(true);
-    m_completer = new QCompleter;
-    m_completer->setModel(new QDirModel(m_completer));
+    m_list = new QListWidget(this);
+    m_stringListMode = new QStringListModel(this);
+    m_list->setWindowFlags(Qt::ToolTip);
 
-    m_stringListMode = new QStringListModel;
-    m_historyCompleter = new QCompleter;
-    m_historyCompleter->setModel(m_stringListMode);
+    m_dirModel = new QDirModel;
+    m_dirModel->setFilter(QDir::Dirs);
 
     QIcon icon(":/images/images/light/appbar.close.png");
     m_clearAction = new QAction(icon,"", this);
@@ -42,8 +39,23 @@ void DSearchBar::initUI()
 
     setFocusPolicy(Qt::ClickFocus);
     setClearAction();
+
+    m_list->installEventFilter(this);
 }
 
+QStringList DSearchBar::splitPath(const QString &path)
+{
+    QString pathCopy = QDir::toNativeSeparators(path);
+    QString sep = QDir::separator();
+
+    QRegExp re(QLatin1Char('[') + QRegExp::escape(sep) + QLatin1Char(']'));
+    QStringList parts = pathCopy.split(re);
+
+    if (pathCopy[0] == sep[0])
+        parts[0] = QDir::fromNativeSeparators(QString(sep[0]));
+
+    return parts;
+}
 
 DSearchBar::~DSearchBar()
 {
@@ -76,36 +88,23 @@ bool DSearchBar::isActive()
 void DSearchBar::setActive(bool active)
 {
     m_isActive = active;
+    if(text().isEmpty())
+        m_clearAction->setVisible(false);
+    else
+        m_clearAction->setVisible(true);
 }
 
 void DSearchBar::initConnections()
 {
     connect(this, SIGNAL(textEdited(QString)), this, SLOT(doTextChanged(QString)));
     connect(this, &DSearchBar::returnPressed, this, &DSearchBar::historySaved);
+    connect(this, &DSearchBar::textChanged, this, &DSearchBar::setCompleter);
+    connect(m_list, &QListWidget::itemClicked, this, &DSearchBar::completeText);
 }
 
 void DSearchBar::doTextChanged(QString text)
 {
-    m_list->clear();
-    QStringList stringList;
-    m_completer->setCompletionPrefix(text);
-    for (int i = 0; m_completer->setCurrentRow(i); i++)
-        stringList << m_completer->currentCompletion();
-    if(!stringList.isEmpty())
-    {
-        m_list->addItems(stringList);
-        m_completer->setPopup(m_list);
-        setCompleter(m_completer);
-    }
-    else
-    {
-        m_historyCompleter->setCompletionPrefix(text);
-        for (int i = 0; m_historyCompleter->setCurrentRow(i); i++)
-            stringList << m_historyCompleter->currentCompletion();
-
-        m_list->addItems(stringList);
-        setCompleter(m_historyCompleter);
-    }
+    m_text = text;
 }
 
 void DSearchBar::searchHistoryLoaded(const QStringList &list)
@@ -127,70 +126,249 @@ void DSearchBar::historySaved()
     }
 }
 
+void DSearchBar::setCompleter(const QString &text)
+{
+    qDebug() << text;
+    if(text.isEmpty())
+        m_clearAction->setVisible(false);
+    else
+        m_clearAction->setVisible(true);
+
+    if (text.isEmpty())
+    {
+        m_list->hide();
+        return;
+    }
+
+    if ((text.length() > 1) && (!m_list->isHidden()))
+    {
+        return;
+    }
+
+    m_list->clear();
+
+    if(hasScheme() || isPath())
+    {
+        QFileInfo fileInfo(text);
+        QDir dir(fileInfo.absolutePath());
+        QStringList localList = splitPath(text);
+        QStringList sl;
+        foreach(QString word, dir.entryList(QDir::AllDirs|QDir::NoDotAndDotDot, QDir::Name))
+        {
+            QString temp = localList.last();
+            if (word.contains(temp))
+            {
+                if(temp.isEmpty())
+                    sl << word;
+                else if(temp.at(0) == word.at(0))
+                    sl << word;
+            }
+        }
+        if(sl.isEmpty())
+            return;
+        m_list->addItems(sl);
+    }
+    else
+    {
+        QStringList sl;
+        foreach(QString word, m_historyList)
+        {
+            if(word.contains(text) && word.at(0) == text.at(0))
+            {
+                sl << word;
+            }
+        }
+        m_stringListMode->setStringList(sl);
+        m_list->addItems(m_stringListMode->stringList());
+        if (m_stringListMode->rowCount() == 0) {
+            return;
+        }
+    }
+
+    // Position the text edit
+    m_list->setMinimumWidth(width());
+    m_list->setMaximumWidth(width());
+    QPoint p(0, height());
+    int x = mapToGlobal(p).x();
+    int y = mapToGlobal(p).y() + 1;
+    m_list->move(x, y);
+    m_list->show();
+}
+
+void DSearchBar::completeText(QListWidgetItem *item)
+{
+    QString text = item->text();
+    setText(text);
+    m_list->hide();
+}
+
 void DSearchBar::focusInEvent(QFocusEvent *e)
 {
-    QLineEdit::focusInEvent(e);
-    if(!m_isActive)
-        emit searchBarFocused();
+
+}
+
+void DSearchBar::focusOutEvent(QFocusEvent *e)
+{
+    if(!m_list->rect().contains(m_list->mapFromGlobal(QCursor::pos())))
+    {
+        m_list->hide();
+    }
+}
+
+bool DSearchBar::event(QEvent *e)
+{
+    if(e->type() == QEvent::KeyPress)
+    {
+        QKeyEvent * keyEvent = static_cast<QKeyEvent*> (e);
+        if(keyEvent->key() == Qt::Key_Tab)
+            keyPressEvent(keyEvent);
+        else
+            return QLineEdit::event(e);
+        e->accept();
+    }
+    else
+        return QLineEdit::event(e);
+}
+
+bool DSearchBar::eventFilter(QObject *obj, QEvent *e)
+{
+    //m_list->setVisible(true);
+    qDebug() << "event";
+    if(e->type() == QEvent::FocusOut)
+    {
+        qDebug() << "focus out";
+        m_list->hide();
+        return true;
+    }
+    else if(e->type() == QEvent::KeyPress)
+    {
+        QKeyEvent * keyEvent = static_cast<QKeyEvent*> (e);
+        keyPressEvent(keyEvent);
+        return true;
+    }
+    return false;
+}
+
+void DSearchBar::keyUpDown(int key)
+{
+    int row;
+    int count = m_list->count();
+    QModelIndex currentIndex = m_list->currentIndex();
+    if(Qt::Key_Down == key)
+    {
+        row = currentIndex.row() + 1;
+        if (row >= count)
+            row = -1;
+    }
+    else if(Qt::Key_Up)
+    {
+        row = currentIndex.row() - 1;
+        if (row < -1)
+            row = count - 1;
+    }
+    else
+        return;
+
+    QModelIndex index = m_list->model()->index(row, 0);
+    m_list->setCurrentIndex(index);
+    if(row != -1)
+    {
+        QString modelText = index.model()->data(index).toString();
+        setText(modelText);
+        QStringList list = splitPath(m_text);
+        QString last = list.last();
+        list.removeLast();
+        list.append(modelText);
+        setText(list.join("/").replace(0,1,""));
+        setSelection(text().length() + last.length() - modelText.length(), text().length());
+    }
+    else
+        setText(m_text);
 }
 
 void DSearchBar::keyPressEvent(QKeyEvent *e)
 {
-    QString selected = selectedText();
-    if(e->key() == Qt::Key_Left || e->key() == Qt::Key_Tab)
+    int key = e->key();
+    if (!m_list->isHidden())
     {
-        if(!selected.isEmpty())
+        QModelIndex currentIndex = m_list->currentIndex();
+
+        switch(key)
         {
-            setCursorPosition(text().length() - selected.length());
-            deselect();
-        }
-        else if(e->key() == Qt::Key_Left)
-            QLineEdit::keyPressEvent(e);
-        return;
-    }
-    //press right key to deselect the text and jump to the left end
-    if(e->key() == Qt::Key_Right)
-    {
-        deselect();
-        QLineEdit::keyPressEvent(e);
-        return;
-    }
-    //press enter to deselect the text and return
-    if(e->key() == Qt::Key_Return)
-    {
-        deselect();
-        QLineEdit::keyPressEvent(e);
-        return;
-    }
-    //If any other key is detected and there is selected text,
-    //then remove the selected text.
-    if(selected != "")
-    {
-        QString temp = text().left(text().length() - selected.length());
-        setText(temp);
-        if(e->key() != Qt::Key_Backspace && e->key() != Qt::Key_Delete)
-            QLineEdit::keyPressEvent(e);
-    }
-    else
-        QLineEdit::keyPressEvent(e);
-    //If there is only one recommended line of text then do the completion
-    if(m_list->count() == 1 && e->key() != Qt::Key_Delete && e->key() != Qt::Key_Backspace)
-    {
-        QString t = m_list->item(0)->text();
-        QString localText = text();
-        if(t.contains(text()))
-        {
-            QStringList list = t.split(text());
-            QString rightText = list.at(1);
-            if(rightText != "")
+            case Qt::Key_Down:
+            case Qt::Key_Up:
+                keyUpDown(key);
+                break;
+            case Qt::Key_Enter:
+            case Qt::Key_Return:
             {
-                setText(t);
-                int start = localText.length();
-                int end = t.length() - 1;
-                qDebug() << rightText << start << end;
-                setSelection(start, end);
+                if (currentIndex.isValid())
+                {
+                    QString text = m_list->currentIndex().data().toString();
+                    setText(text);
+                }
+                m_list->hide();
+                break;
+            }
+            case Qt::Key_Right:
+            case Qt::Key_Tab:
+                if(selectedText().isEmpty())
+                {
+                    if(m_list->count() == 1)
+                    {
+                        QStringList list = splitPath(m_text);
+                        QString modelText = m_list->item(0)->text();
+                        QString last = list.last();
+                        list.removeLast();
+                        list.append(modelText);
+                        setText(list.join("/").replace(0,1,""));
+                        setSelection(text().length() + last.length() - modelText.length(), text().length());
+                        m_text = text();
+                    }
+                    else
+                        break;
+                }
+                m_list->hide();
+                end(false);
+                setText(text() + "/");
+                m_text = text();
+                QLineEdit::keyPressEvent(e);
+                break;
+            case Qt::Key_Delete:
+            case Qt::Key_Backspace:
+                m_list->hide();
+                QLineEdit::keyPressEvent(e);
+                break;
+            default:
+            {
+                if(e->modifiers() == Qt::NoModifier)
+                    m_list->hide();
+                QString before = text();
+                QLineEdit::keyPressEvent(e);
+                QString after = text();
+                bool textModified = (before != after);
+                if(textModified)
+                {
+                    m_list->hide();
+                    setCompleter(after);
+                }
+                if(m_list->count() == 1 && textModified)
+                {
+                    QStringList list = splitPath(m_text);
+                    QString modelText = m_list->item(0)->text();
+                    QString last = list.last();
+                    list.removeLast();
+                    list.append(modelText);
+                    setText(list.join("/").replace(0,1,""));
+                    setSelection(text().length() + last.length() - modelText.length(), text().length());
+                    m_text = text();
+                }
             }
         }
+    }
+    else
+    {
+        QLineEdit::keyPressEvent(e);
     }
 }
 
