@@ -1,6 +1,8 @@
 #ifndef BASEMANAGER_H
 #define BASEMANAGER_H
 
+#include <QByteArray>
+
 class BaseManager
 {
 public:
@@ -9,6 +11,10 @@ public:
 
     virtual void load();
     virtual void save();
+
+    static void writeCacheToFile(const QString &path, const QString &content);
+    static QString readCacheFromFile(const QString &path);
+
 };
 
 #endif // BASEMANAGER_H

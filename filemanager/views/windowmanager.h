@@ -9,6 +9,8 @@
 class DFileManagerWindow;
 class DUrl;
 class FMEvent;
+class FMStateManager;
+class FMState;
 
 class WindowManager : public QObject
 {
@@ -18,6 +20,9 @@ public:
     explicit WindowManager(QObject *parent = 0);
     ~WindowManager();
     void initConnect();
+
+    void loadWindowState(DFileManagerWindow* window);
+    void saveWindowState(DFileManagerWindow* window);
 
 signals:
     void start(const QString &src);
@@ -29,11 +34,14 @@ public slots:
 
 private slots:
     void onWindowClosed();
+    void onLastActivedWindowClosed(int winId);
     inline QHash<const QWidget*, int> getWindows(){return m_windows;}
 
 private:
      static QHash<const QWidget*, int> m_windows;
      static int m_count;
+
+     FMStateManager *m_fmStateManager = NULL;
 };
 
 #endif // WINDOWMANAGER_H

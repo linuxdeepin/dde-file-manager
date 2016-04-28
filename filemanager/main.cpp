@@ -31,7 +31,6 @@ int main(int argc, char *argv[])
     app.setApplicationName(QObject::tr("dde-file-manager"));
     app.setApplicationVersion("v1.0");
 
-
     CommandLineManager::instance()->process();
 
     DUrl commandlineUrl;

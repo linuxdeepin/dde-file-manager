@@ -275,6 +275,9 @@ QVector<AbstractFileInfo::MenuAction> AbstractFileInfo::menuActionList(AbstractF
                    << SortBy
                    << OpenInTerminal
                    << Separator
+                   << Paste
+                   << SelectAll
+                   << Separator
                    << Property;
     } else {
         actionKeys.reserve(11);

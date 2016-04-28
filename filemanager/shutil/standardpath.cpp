@@ -29,7 +29,6 @@ QString StandardPath::getCachePath()
     QDir::home().mkpath(".cache");
     QDir::home().mkpath(QString("%1/%2/").arg(".cache", qApp->applicationName()));
     QString defaultPath = QString("%1/%2/%3").arg(QDir::homePath(), ".cache", qApp->applicationName());
-    getTrashPath();
     return defaultPath;
 }
 

@@ -54,11 +54,19 @@ public:
     void initConnect();
 
     DUrl currentUrl() const;
+
+    int getFileViewMode() const;
+    int getFileViewSortRole() const;
+
+
 signals:
     void aboutToClose();
 
 public slots:
     void showMinimized();
+    void setFileViewMode(int viewMode);
+    void setFileViewSortRole(int sortRole);
+
 
 protected:
     void resizeEvent(QResizeEvent* event);

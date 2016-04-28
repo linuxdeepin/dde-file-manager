@@ -7,6 +7,7 @@
 #include "filesignalmanager.h"
 #include "../dialogs/dialogmanager.h"
 #include "widgets/commandlinemanager.h"
+#include "../models/fmstate.h"
 #include <QLocalServer>
 #include <QLocalSocket>
 #include <QDataStream>
@@ -16,7 +17,6 @@
 
 FileManagerApp::FileManagerApp(QObject *parent) : QObject(parent)
 {
-
     initApp();
     initView();
     initController();
@@ -30,18 +30,10 @@ FileManagerApp::~FileManagerApp()
 
 }
 
-void FileManagerApp::initGtk()
-{
-    gtk_init(NULL, NULL);
-    gdk_error_trap_push();
-}
-
 
 void FileManagerApp::initApp()
 {
-    qApp->setOrganizationName("deepin");
-    qApp->setApplicationName(tr("dde-file-manager"));
-    qApp->setApplicationVersion("2016-1.0");
+    qApp->setQuitOnLastWindowClosed(false);
 }
 
 void FileManagerApp::initView()
@@ -53,6 +45,12 @@ void FileManagerApp::initView()
 void FileManagerApp::initController()
 {
     m_appController = new AppController(this);
+}
+
+void FileManagerApp::initGtk()
+{
+    gtk_init(NULL, NULL);
+    gdk_error_trap_push();
 }
 
 void FileManagerApp::initManager()

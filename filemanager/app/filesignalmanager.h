@@ -62,9 +62,6 @@ signals:
     /*request rename to DFileView*/
     void requestRename(const FMEvent &event);
 
-    /* view sort */
-    void requestViewSort(int windowId, int role);
-
     /* view select all */
     void requestViewSelectAll(int windowId);
 
@@ -111,6 +108,12 @@ signals:
     void requestClearRecent();
     /*request remove recent file*/
     void requestRecentFileRemove(const DUrlList &urlList);
+
+    /*close last active window */
+    void aboutToCloseLastActivedWindow(int winId);
+
+    /*sort role changed*/
+    void requestCacheSortState();
 };
 
 #endif // FILESIGNALMANAGER_H
