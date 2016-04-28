@@ -3,14 +3,15 @@
 
 #include <QLineEdit>
 #include <QListWidget>
+#include <QListWidgetItem>
 #include <QListView>
 #include <QMenu>
 #include <QHBoxLayout>
 #include <QCompleter>
 #include <QStringListModel>
 #include <QStringList>
+#include <QDirModel>
 
-class DDirModel;
 
 class DSearchBar : public QLineEdit
 {
@@ -30,22 +31,29 @@ public:
 private:
     void initData();
     void initUI();
+    void keyUpDown(int key);
+    QStringList splitPath(const QString &path);
     QListWidget * m_list;
     QCompleter * m_completer;
     QCompleter * m_historyCompleter;
     QAction * m_clearAction;
     QStringListModel * m_stringListMode;
     QStringList m_historyList;
-    DDirModel * m_dirModel;
+    QDirModel * m_dirModel;
     bool m_isActive;
     void initConnections();
+    QString m_text;
 public slots:
     void doTextChanged(QString text);
     void searchHistoryLoaded(const QStringList &list);
     void historySaved();
+    void setCompleter(const QString &text);
+    void completeText(QListWidgetItem * item);
 protected:
     void focusInEvent(QFocusEvent *e);
-
+    void focusOutEvent(QFocusEvent *e);
+    bool event(QEvent *e);
+    bool eventFilter(QObject *obj, QEvent *e);
 signals:
     void searchBarFocused();
 };

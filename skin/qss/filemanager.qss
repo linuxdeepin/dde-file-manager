@@ -250,9 +250,8 @@ QPushButton#DCrumbButton:checked{
 
 /* ******************DSearchBar****************** */
 QLineEdit#DSearchBar{
-    border-radius: 2px;
     background-color: #ffffff;
-    border: solid 1px rgba(0, 0, 0, 0.1);
+    border: 1px solid lightGray;
     padding-left:0px;
 }
 /*******************End of DSearchBar****************** */
