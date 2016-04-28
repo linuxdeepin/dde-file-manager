@@ -168,6 +168,9 @@ public:
     virtual int getIndexByFileInfo(getFileInfoFun fun, const AbstractFileInfoPointer &info, quint8 columnType,
                                    Qt::SortOrder order = Qt::AscendingOrder) const;
 
+    virtual bool canRedirectionFileUrl() const;
+    virtual DUrl redirectedFileUrl() const;
+
     static Qt::SortOrder sortOrderGlobal;
 
 protected:

@@ -404,6 +404,16 @@ int AbstractFileInfo::getIndexByFileInfo(getFileInfoFun fun, const AbstractFileI
     return index;
 }
 
+bool AbstractFileInfo::canRedirectionFileUrl() const
+{
+    return false;
+}
+
+DUrl AbstractFileInfo::redirectedFileUrl() const
+{
+    return fileUrl();
+}
+
 void AbstractFileInfo::sortByUserColumn(QList<AbstractFileInfoPointer> &fileList, quint8 columnType, Qt::SortOrder order) const
 {
     Q_UNUSED(fileList)

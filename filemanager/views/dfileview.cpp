@@ -592,8 +592,18 @@ void DFileView::stopSearch()
     FileServices::instance()->getChildren(event);
 }
 
-bool DFileView::setCurrentUrl(const DUrl &fileUrl)
+bool DFileView::setCurrentUrl(DUrl fileUrl)
 {
+    const AbstractFileInfoPointer &info = FileServices::instance()->createFileInfo(fileUrl);
+
+    if(info->canRedirectionFileUrl()) {
+        const DUrl old_url = fileUrl;
+
+        fileUrl = info->redirectedFileUrl();
+
+        qDebug() << "url redirected, from:" << old_url << "to:" << fileUrl;
+    }
+
     qDebug() << "cd: current url:" << currentUrl() << "to url:" << fileUrl;
 
     const DUrl &currentUrl = this->currentUrl();
@@ -602,12 +612,6 @@ bool DFileView::setCurrentUrl(const DUrl &fileUrl)
         return false;
 
     stopSearch();
-
-    if(fileUrl.isSearchFile()) {
-        if(!fileUrl.fragment().isEmpty()) {
-            return false;
-        }
-    }
 
     QModelIndex index = model()->index(fileUrl);
 
@@ -618,8 +622,6 @@ bool DFileView::setCurrentUrl(const DUrl &fileUrl)
     model()->setActiveIndex(index);
 
     updateHeaderViewProperty();
-
-    const AbstractFileInfoPointer &info = model()->fileInfo(fileUrl);
 
     if(info) {
         ViewModes modes = (ViewModes)info->supportViewMode();
@@ -663,7 +665,11 @@ void DFileView::updateViewportMargins()
 
 void DFileView::switchViewMode(DFileView::ViewMode mode)
 {
-    if(m_currentViewMode == mode) {
+    if (m_currentViewMode == mode) {
+        return;
+    }
+
+    if ((model()->fileInfo(currentUrl())->supportViewMode() & mode) == 0) {
         return;
     }
 
