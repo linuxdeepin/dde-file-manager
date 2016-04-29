@@ -14,6 +14,9 @@ public:
     QRect getAvailableRect(); // return geometry() - boderSize;
     int getBorderCornerSize();
 
+signals:
+    void startMoving();
+
 public slots:
     void setBorderCornerSize(const int borderCornerSize);
     void setDragMovableHeight(const int height);

@@ -7,6 +7,7 @@ HEADERS += \
     $$PWD/commandlinemanager.h \
     $$PWD/dgraphicsgloweffect.h \
     $$PWD/watermaskframe.h \
+    $$PWD/dwindowframe.h \
 
 SOURCES += \
     $$PWD/elidelabel.cpp \
@@ -16,4 +17,5 @@ SOURCES += \
     $$PWD/commandlinemanager.cpp \
     $$PWD/dgraphicsgloweffect.cpp \
     $$PWD/watermaskframe.cpp \
+    $$PWD/dwindowframe.cpp \
 

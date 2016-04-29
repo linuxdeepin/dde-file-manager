@@ -9,6 +9,7 @@ DMovableMainWindow::DMovableMainWindow(QWidget *parent) : QMainWindow(parent)
 {
     setAttribute(Qt::WA_Hover, true);
     installEventFilter(this);
+    connect(this, SIGNAL(startMoving()), parentWidget(), SLOT(startMoving()));
 }
 
 DMovableMainWindow::~DMovableMainWindow()
@@ -70,24 +71,24 @@ void DMovableMainWindow::moveCenterByRect(QRect rect){
 
 void DMovableMainWindow::mousePressEvent(QMouseEvent *event)
 {
-    if (event->button() == Qt::LeftButton){
-        m_pressedPosition = event->pos();
-        if (m_dragMovableRect.contains(event->pos())){
-            setCursor(QCursor(Qt::SizeAllCursor));
-        }
-    }else{
-        m_pressedPosition = QPoint(0, 0);
-    }
+//    if (event->button() == Qt::LeftButton){
+//        m_pressedPosition = event->pos();
+//        if (m_dragMovableRect.contains(event->pos())){
+//            setCursor(QCursor(Qt::SizeAllCursor));
+//        }
+//    }else{
+//        m_pressedPosition = QPoint(0, 0);
+//    }
     QMainWindow::mousePressEvent(event);
 }
 
 void DMovableMainWindow::mouseReleaseEvent(QMouseEvent *event)
 {
-    if (event->button() == Qt::LeftButton){
-        if (m_dragMovableRect.contains(event->pos())){
-            setCursor(QCursor(Qt::ArrowCursor));
-        }
-    }
+//    if (event->button() == Qt::LeftButton){
+//        if (m_dragMovableRect.contains(event->pos())){
+//            setCursor(QCursor(Qt::ArrowCursor));
+//        }
+//    }
     QMainWindow::mouseReleaseEvent(event);
 }
 
@@ -95,16 +96,17 @@ void DMovableMainWindow::mouseMoveEvent(QMouseEvent *event)
 {
     if(isActiveWindow()){
         if (m_dragMovableRect.contains(event->pos())){
-            QtX11::utils::MoveWindow(this, event, m_dragMovableRect);
+            emit startMoving();
+//            QtX11::utils::MoveWindow(this->parentWidget(), event, m_dragMovableRect);
         }else{
-            QtX11::utils::ResizeWindow(this, event, m_borderCornerSize);
+//            QtX11::utils::ResizeWindow(this, event, m_borderCornerSize);
         }
     }
     QMainWindow::mouseMoveEvent(event);
 }
 
 void DMovableMainWindow::resizeEvent(QResizeEvent *event){
-    setDragMovableRect(QRect(m_borderCornerSize, m_borderCornerSize,  width() - 2 * m_borderCornerSize, m_dragMovableRect.height()));
+//    setDragMovableRect(QRect(m_borderCornerSize, m_borderCornerSize,  width() - 2 * m_borderCornerSize, m_dragMovableRect.height()));
     QMainWindow::resizeEvent(event);
 }
 

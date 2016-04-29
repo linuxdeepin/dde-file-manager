@@ -4,6 +4,8 @@
 #include "dmovablemainwindow.h"
 #include <dtitlebar.h>
 #include "../models/durl.h"
+#include "widgets/dwindowframe.h"
+#include <QMainWindow>
 
 #define DEFAULT_WINDOWS_WIDTH 950
 #define DEFAULT_WINDOWS_HEIGHT 600
@@ -23,6 +25,9 @@ class QVBoxLayout;
 class QSplitter;
 class QResizeEvent;
 class DSplitter;
+
+class DMainWindow;
+class DFileManagerWindow;
 
 
 
@@ -86,6 +91,15 @@ private:
     QVBoxLayout* m_viewLayout;
     DSplitter* m_splitter;
     QFrame * m_titleFrame = NULL;
+};
+
+class DMainWindow : public DWindowFrame{
+    Q_OBJECT
+public:
+    explicit DMainWindow(QWidget *parent = 0);
+    ~DMainWindow();
+
+    DFileManagerWindow *fileManagerWindow;
 };
 
 #endif // DFILEMANAGERWINDOW_H
