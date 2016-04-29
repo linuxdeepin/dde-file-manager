@@ -677,7 +677,9 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
         return;
     }
 
-    if ((model()->fileInfo(currentUrl())->supportViewMode() & mode) == 0) {
+    const AbstractFileInfoPointer &fileInfo = model()->fileInfo(currentUrl());
+
+    if (fileInfo && (fileInfo->supportViewMode() & mode) == 0) {
         return;
     }
 
