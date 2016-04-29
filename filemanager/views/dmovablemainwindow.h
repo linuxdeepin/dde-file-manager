@@ -15,23 +15,15 @@ public:
     int getBorderCornerSize();
 
 signals:
-    void startMoving();
+    void mouseMoved();
 
 public slots:
     void setBorderCornerSize(const int borderCornerSize);
     void setDragMovableHeight(const int height);
     void setDragMovableRect(const QRect& rect);
-    void moveCenter();
-    void moveTopRight();
-    void moveCenterByRect(QRect rect);
-    void moveTopRightByRect(QRect rect);
 
 protected:
     void mouseMoveEvent(QMouseEvent *event);
-    void mousePressEvent(QMouseEvent *event);
-    void mouseReleaseEvent(QMouseEvent *event);
-    void resizeEvent(QResizeEvent* event);
-    bool eventFilter(QObject* obj, QEvent* event);
 
 private:
     int m_borderCornerSize = 8;

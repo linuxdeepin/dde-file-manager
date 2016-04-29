@@ -18,6 +18,7 @@
 #include <QSplitter>
 #include <QResizeEvent>
 #include <QThread>
+#include <QDesktopWidget>
 
 
 
@@ -216,33 +217,66 @@ void DFileManagerWindow::setFileViewSortRole(int sortRole)
 }
 
 
-void DFileManagerWindow::resizeEvent(QResizeEvent *event)
-{  
-//    DMovableMainWindow::resizeEvent(event);
-}
 
-void DFileManagerWindow::keyPressEvent(QKeyEvent *event)
-{
-//    DMovableMainWindow::keyPressEvent(event);
-}
-
-void DFileManagerWindow::closeEvent(QCloseEvent *event)
-{
-    emit aboutToClose();
-    //    DMovableMainWindow::closeEvent(event);
-}
 
 DMainWindow::DMainWindow(QWidget *parent):
     DWindowFrame(parent)
 {
-    resize(DEFAULT_WINDOWS_WIDTH, DEFAULT_WINDOWS_HEIGHT);
-//    setMinimumWidth(MinimumWidth);
-
-    fileManagerWindow = new DFileManagerWindow(this);
-    addContenWidget(fileManagerWindow);
+    initUI();
+    initConnect();
 }
 
 DMainWindow::~DMainWindow()
 {
 
+}
+
+void DMainWindow::initUI()
+{
+    resize(DEFAULT_WINDOWS_WIDTH, DEFAULT_WINDOWS_HEIGHT);
+    m_fileManagerWindow = new DFileManagerWindow(this);
+    addContenWidget(m_fileManagerWindow);
+}
+
+void DMainWindow::initConnect()
+{
+    connect(m_fileManagerWindow, SIGNAL(mouseMoved()), this, SLOT(startMoving()));
+}
+
+
+void DMainWindow::moveCenter(){
+    QRect qr = frameGeometry();
+    QPoint cp;
+    cp = qApp->desktop()->availableGeometry().center();
+    qr.moveCenter(cp);
+    move(qr.topLeft());
+}
+
+void DMainWindow::moveTopRight(){
+    QRect pRect;
+    pRect = qApp->desktop()->availableGeometry();
+    int x = pRect.width() - width();
+    move(QPoint(x, 0));
+}
+
+void DMainWindow::moveTopRightByRect(QRect rect){
+    int x = rect.x() + rect.width() - width();
+    move(QPoint(x, 0));
+}
+
+void DMainWindow::closeEvent(QCloseEvent *event)
+{
+    emit aboutToClose();
+    DWindowFrame::closeEvent(event);
+}
+
+DFileManagerWindow *DMainWindow::fileManagerWindow() const
+{
+    return m_fileManagerWindow;
+}
+
+void DMainWindow::moveCenterByRect(QRect rect){
+    QRect qr = frameGeometry();
+    qr.moveCenter(rect.center());
+    move(qr.topLeft());
 }

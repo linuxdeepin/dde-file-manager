@@ -63,20 +63,11 @@ public:
     int getFileViewMode() const;
     int getFileViewSortRole() const;
 
-
-signals:
-    void aboutToClose();
-
 public slots:
     void showMinimized();
     void setFileViewMode(int viewMode);
     void setFileViewSortRole(int sortRole);
 
-
-protected:
-    void resizeEvent(QResizeEvent* event);
-    void keyPressEvent(QKeyEvent *event);
-    void closeEvent(QCloseEvent* event);
 
 private:
     QFrame* m_centralWidget;
@@ -98,8 +89,25 @@ class DMainWindow : public DWindowFrame{
 public:
     explicit DMainWindow(QWidget *parent = 0);
     ~DMainWindow();
+    void initUI();
+    void initConnect();
 
-    DFileManagerWindow *fileManagerWindow;
+    DFileManagerWindow *fileManagerWindow() const;
+
+signals:
+    void aboutToClose();
+
+public slots:
+    void moveCenter();
+    void moveTopRight();
+    void moveCenterByRect(QRect rect);
+    void moveTopRightByRect(QRect rect);
+
+protected:
+    void closeEvent(QCloseEvent* event);
+
+private:
+    DFileManagerWindow *m_fileManagerWindow;
 };
 
 #endif // DFILEMANAGERWINDOW_H

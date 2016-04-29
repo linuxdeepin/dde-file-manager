@@ -11,6 +11,7 @@ class DUrl;
 class FMEvent;
 class FMStateManager;
 class FMState;
+class D;
 
 class WindowManager : public QObject
 {
@@ -21,8 +22,8 @@ public:
     ~WindowManager();
     void initConnect();
 
-    void loadWindowState(DFileManagerWindow* window);
-    void saveWindowState(DFileManagerWindow* window);
+    void loadWindowState(DMainWindow* window);
+    void saveWindowState(DMainWindow* window);
 
 signals:
     void start(const QString &src);
