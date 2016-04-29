@@ -33,7 +33,9 @@ FileManagerApp::~FileManagerApp()
 
 void FileManagerApp::initApp()
 {
+#ifndef QT_DEBUG
     qApp->setQuitOnLastWindowClosed(false);
+#endif
 }
 
 void FileManagerApp::initView()
