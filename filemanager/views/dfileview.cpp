@@ -63,7 +63,7 @@ void DFileView::initUI()
     setSelectionRectVisible(true);
     setEditTriggers(QListView::EditKeyPressed);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setVerticalScrollBar(new DScrollBar);
+//    setVerticalScrollBar(new DScrollBar);
 }
 
 void DFileView::initDelegate()

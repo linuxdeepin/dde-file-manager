@@ -56,18 +56,19 @@ void WindowManager::showNewWindow(const DUrl &url, bool isAlwaysOpen)
     if (!isAlwaysOpen){
         for(int i=0; i< m_windows.count(); i++){
             QWidget* window = const_cast<QWidget *>(m_windows.keys().at(i));
-            DUrl currentUrl = static_cast<DFileManagerWindow *>(window)->currentUrl();
+            DUrl currentUrl = static_cast<DMainWindow *>(window)->fileManagerWindow->currentUrl();
             if (currentUrl == url){
-                qDebug() << currentUrl << static_cast<DFileManagerWindow *>(window);
-                qApp->setActiveWindow(static_cast<DFileManagerWindow *>(window));
+                qDebug() << currentUrl << static_cast<DMainWindow *>(window);
+                qApp->setActiveWindow(static_cast<DMainWindow *>(window));
                 return;
             }
         }
     }
 
-    DFileManagerWindow* window = new DFileManagerWindow;
-    connect(window, &DFileManagerWindow::aboutToClose,
-            this, &WindowManager::onWindowClosed);
+//    DFileManagerWindow* window = new DFileManagerWindow;
+    DMainWindow *window = new DMainWindow();
+//    connect(window, &DFileManagerWindow::aboutToClose,
+//            this, &WindowManager::onWindowClosed);
     qDebug() << "new window" << window->winId() << url;
     int winId = window->winId();
     m_windows.insert(window, winId);
@@ -75,10 +76,10 @@ void WindowManager::showNewWindow(const DUrl &url, bool isAlwaysOpen)
     window->show();
 
     if (m_windows.count() == 1){
-        loadWindowState(window);
-        window->moveCenter();
+//        loadWindowState(window);
+//        window->moveCenter();
     }
-    window->setFileViewMode(m_fmStateManager->fmState()->viewMode());
+//    window->setFileViewMode(m_fmStateManager->fmState()->viewMode());
     qApp->setActiveWindow(window);
 
     FMEvent event;

@@ -50,12 +50,12 @@ void DFileManagerWindow::initUI()
 //    initStatusBar();
     setCentralWidget(m_centralWidget);
     setStyleSheet(getQssFromFile(":/qss/qss/filemanager.qss"));
-    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+//    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 }
 
 void DFileManagerWindow::initTitleBar()
 {
-    m_titleBar = new DTitlebar;
+    m_titleBar = new DTitlebar(this);
     m_titleBar->layout()->setContentsMargins(0, 0, 0, 0);
     m_titleBar->setWindowFlags(m_titleBar->windowFlags());
     setDragMovableHeight(m_titleBar->height());
@@ -178,10 +178,10 @@ void DFileManagerWindow::initStatusBar()
 
 void DFileManagerWindow::initConnect()
 {
-    connect(m_titleBar, &DTitlebar::minimumClicked, this, &DFileManagerWindow::showMinimized);
-    connect(m_titleBar, &DTitlebar::maximumClicked, this, &DFileManagerWindow::showMaximized);
-    connect(m_titleBar, &DTitlebar::restoreClicked, this, &DFileManagerWindow::showNormal);
-    connect(m_titleBar, &DTitlebar::closeClicked, this, &DFileManagerWindow::close);
+    connect(m_titleBar, SIGNAL(minimumClicked()), parentWidget(), SLOT(showMinimized()));
+    connect(m_titleBar, SIGNAL(maximumClicked()), parentWidget(), SLOT(showMaximized()));
+    connect(m_titleBar, SIGNAL(restoreClicked()), parentWidget(), SLOT(showNormal()));
+    connect(m_titleBar, SIGNAL(closeClicked()), parentWidget(), SLOT(close()));
     connect(m_toolbar, &DToolBar::requestListView, m_fileView, &DFileView::setViewModeToList);
     connect(m_toolbar, &DToolBar::requestIconView, m_fileView, &DFileView::setViewModeToIcon);
 }
@@ -219,17 +219,31 @@ void DFileManagerWindow::setFileViewSortRole(int sortRole)
 
 void DFileManagerWindow::resizeEvent(QResizeEvent *event)
 {  
-    DMovableMainWindow::resizeEvent(event);
+//    DMovableMainWindow::resizeEvent(event);
 }
 
 void DFileManagerWindow::keyPressEvent(QKeyEvent *event)
 {
-    DMovableMainWindow::keyPressEvent(event);
+//    DMovableMainWindow::keyPressEvent(event);
 }
 
 void DFileManagerWindow::closeEvent(QCloseEvent *event)
 {
     emit aboutToClose();
-    DMovableMainWindow::closeEvent(event);
+    //    DMovableMainWindow::closeEvent(event);
 }
 
+DMainWindow::DMainWindow(QWidget *parent):
+    DWindowFrame(parent)
+{
+    resize(DEFAULT_WINDOWS_WIDTH, DEFAULT_WINDOWS_HEIGHT);
+//    setMinimumWidth(MinimumWidth);
+
+    fileManagerWindow = new DFileManagerWindow(this);
+    addContenWidget(fileManagerWindow);
+}
+
+DMainWindow::~DMainWindow()
+{
+
+}
