@@ -158,7 +158,16 @@ void DSearchBar::setCompleter(const QString &text)
 
     if(hasScheme() || isPath())
     {
-        QFileInfo fileInfo(text);
+        QFileInfo fileInfo;
+        if(isLocalFile())
+        {
+            DUrl url(text);
+            fileInfo.setFile(url.toLocalFile());
+        }
+        else
+        {
+            fileInfo.setFile(text);
+        }
         QDir dir(fileInfo.absolutePath());
         QStringList localList = splitPath(text);
         QStringList sl;
@@ -283,10 +292,20 @@ void DSearchBar::keyUpDown(int key)
         setText(modelText);
         QStringList list = splitPath(m_text);
         QString last = list.last();
-        list.removeLast();
-        list.append(modelText);
-        setText(list.join("/").replace(0,1,""));
-        setSelection(text().length() + last.length() - modelText.length(), text().length());
+        if(isPath())
+        {
+            list.removeLast();
+            list.append(modelText);
+            setText(list.join("/").replace(0,1,""));
+            setSelection(text().length() + last.length() - modelText.length(), text().length());
+        }
+        else if(isLocalFile())
+        {
+            list.removeLast();
+            list.append(modelText);
+            setText(list.join("/"));
+            setSelection(text().length() + last.length() - modelText.length(), text().length());
+        }
     }
     else
         setText(m_text);
@@ -306,9 +325,15 @@ void DSearchBar::recomended()
             setText(list.join("/").replace(0,1,""));
             setSelection(text().length() + last.length() - modelText.length(), text().length());
         }
+        else if(isLocalFile())
+        {
+            list.removeLast();
+            list.append(modelText);
+            setText(list.join("/"));
+            setSelection(text().length() + last.length() - modelText.length(), text().length());
+        }
         else
         {
-            QString tempText = text();
             setText(modelText);
             setSelection(m_text.length(), modelText.length());
         }
