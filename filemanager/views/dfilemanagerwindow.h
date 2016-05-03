@@ -52,7 +52,7 @@ public:
     void initRightView();
     void initToolBar();
     void initFileView();
-    void initDetailView();
+    void initExtendView();
 
     void initCentralWidget();
     void initStatusBar();

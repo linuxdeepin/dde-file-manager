@@ -52,16 +52,16 @@ void DBookmarkRootItem::dropEvent(QGraphicsSceneDragDropEvent *event)
         if(dir.exists() && m_scene->hasBookmarkItem(url) == NULL)
         {
             BookMark * bm = bookmarkManager->writeIntoBookmark(0, dir.dirName(), url);
-            DBookmarkItem * item = new DBookmarkItem(bm);
+//            DBookmarkItem * item = new DBookmarkItem(bm);
             if(m_scene->count() == DEFAULT_ITEM_COUNT)
                 m_scene->addSeparator();
-            m_scene->insertBookmark(0, item);
+            //m_scene->insertBookmark(0, item);
 
             FMEvent fmevent;
             fmevent = windowId();
             fmevent = bm->getUrl();
             fmevent = FMEvent::LeftSideBar;
-            fileSignalManager->requestBookmarkAdd(dir.dirName(), fmevent);
+            emit fileSignalManager->requestBookmarkAdd(dir.dirName(), fmevent);
         }
     }
     m_scene->clear(m_dummyItem);

@@ -298,6 +298,7 @@ QVector<AbstractFileInfo::MenuAction> AbstractFileInfo::menuActionList(AbstractF
                    << Copy
                    << CreateSoftLink
                    << SendToDesktop
+                   << AddToBookMark
                    << Rename;
         QPixmap tempPixmap;
         DUrl url = data->url;
