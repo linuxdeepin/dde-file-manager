@@ -90,7 +90,7 @@ void DFileManagerWindow::initRightView()
 {
     initToolBar();
     initFileView();
-    initDetailView();
+    initExtendView();
     m_rightView = new QFrame;
 
     m_titleFrame = new QFrame;
@@ -113,7 +113,6 @@ void DFileManagerWindow::initRightView()
 
     QHBoxLayout* viewLayout = new QHBoxLayout;
     viewLayout->addWidget(m_fileView);
-    viewLayout->addWidget(m_detailView);
     viewLayout->setSpacing(0);
     viewLayout->setContentsMargins(0, 0, 0, 0);
 
@@ -147,12 +146,9 @@ void DFileManagerWindow::initFileView()
     setFocusProxy(m_fileView);
 }
 
-void DFileManagerWindow::initDetailView()
+void DFileManagerWindow::initExtendView()
 {
-    m_detailView = new DDetailView(this);
-    m_detailView->setObjectName("DetailView");
-    m_detailView->setFixedWidth(200);
-    m_detailView->hide();
+
 }
 
 void DFileManagerWindow::initCentralWidget()

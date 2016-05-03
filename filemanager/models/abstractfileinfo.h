@@ -32,6 +32,7 @@ public:
         Remove,
         CreateSoftLink,
         SendToDesktop,
+        AddToBookMark,
         Delete,
         Property,
         NewFolder,

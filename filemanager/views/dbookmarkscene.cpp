@@ -432,9 +432,6 @@ void DBookmarkScene::doBookmarkRemoved(const FMEvent &event)
 
 void DBookmarkScene::doBookmarkAdded(const QString &name, const FMEvent &event)
 {
-    if(event.windowId() == windowId())
-        return;
-
     DBookmarkItem * item = DBookmarkItem::makeBookmark(name, event.fileUrl());
 
     if(count() == DEFAULT_ITEM_COUNT - 1)

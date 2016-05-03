@@ -12,6 +12,7 @@
 #include "../views/windowmanager.h"
 #include "../shutil/standardpath.h"
 #include "../controllers/filejob.h"
+#include "../controllers/bookmarkmanager.h"
 #include <QFileDialog>
 #include <QDesktopServices>
 #include <QApplication>
@@ -193,6 +194,7 @@ void FileMenuManager::initData()
     m_actionKeys[MenuAction::Remove] = QObject::tr("Remove");
     m_actionKeys[MenuAction::CreateSoftLink] = QObject::tr("Create link");
     m_actionKeys[MenuAction::SendToDesktop] = QObject::tr("Send to desktop");
+    m_actionKeys[MenuAction::AddToBookMark] = QObject::tr("Add to bookmark");
     m_actionKeys[MenuAction::Delete] = QObject::tr("Throw to trash");
     m_actionKeys[MenuAction::CompleteDeletion] = QObject::tr("Complete deletion");
     m_actionKeys[MenuAction::Property] = QObject::tr("Property");
@@ -386,6 +388,17 @@ void FileMenuManager::actionTriggered(DAction *action)
     }
     case MenuAction::SendToDesktop:{
         FileMenuManager::createSoftLink(menu->getWindowId(), fileUrl.toLocalFile(), StandardPath::getDesktopPath());
+        break;
+    }
+    case MenuAction::AddToBookMark:{
+        QString dirName = QDir(fileUrl.toLocalFile()).dirName();
+        bookmarkManager->writeIntoBookmark(0, dirName, fileUrl);
+        FMEvent event;
+        event = menu->getWindowId();
+        event = fileUrl;
+        event = FMEvent::Menu;
+        qDebug() << event << dirName;
+        emit fileSignalManager->requestBookmarkAdd(dirName, event);
         break;
     }
     case MenuAction::NewFolder:{
