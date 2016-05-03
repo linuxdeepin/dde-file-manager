@@ -54,11 +54,14 @@ private:
     DStateButton* m_upButton=NULL;
     DStateButton* m_searchButton = NULL;
     DStateButton* m_refreshButton = NULL;
+
     QFrame* m_contollerToolBar;
     DIconTextButton* m_newFolderButton=NULL;
     DIconTextButton* m_deleteFileButton=NULL;
+
     QPushButton* m_iconViewButton=NULL;
     QPushButton* m_listViewButton=NULL;
+    QPushButton* m_hierarchicalButton = NULL;
     DHoverButton* m_sortingButton=NULL;
 
     bool m_switchState = false;

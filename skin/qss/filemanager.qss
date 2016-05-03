@@ -211,6 +211,28 @@ QPushButton#listViewButton:unchecked{
     icon-size: 16px 16px;
 }
 
+QPushButton#hierarchicalButton{
+    background-color:white;
+    border: 1px;
+    color: black;
+    border-radius: 2px;
+    icon-size: 16px 16px;
+    image: url(:/icons/images/icons/hierarchical_view_normal.svg);
+
+}
+
+QPushButton#hierarchicalButton:checked{
+    background-color:#2ca7f8;
+    image: url(:/icons/images/icons/hierarchical_view_hover.svg);
+    icon-size: 16px 16px;
+}
+
+QPushButton#hierarchicalButton:unchecked{
+    background-color:white;
+    image: url(:/icons/images/icons/hierarchical_view_normal.svg);
+    icon-size: 16px 16px;
+}
+
 QPushButton#searchButton{
     background-color:white;
     border: 1px solid lightGray;
