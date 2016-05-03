@@ -323,6 +323,7 @@ void FileMenuManager::actionTriggered(DAction *action)
         break;
     }
     case MenuAction::OpenFileLocation:
+        fileUrl.setScheme(FILE_SCHEME);
         fileService->openFileLocation(fileUrl);
         break;
     case MenuAction::Compress:
