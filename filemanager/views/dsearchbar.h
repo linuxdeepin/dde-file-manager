@@ -28,11 +28,18 @@ public:
     void keyPressEvent(QKeyEvent *e);
     QAction * getClearAction();
     bool hasScheme();
+    bool isSearchFile();
+    bool isBookmarkFile();
+    bool isComputerFile();
+    bool isLocalFile();
+    bool isTrashFile();
     bool isPath();
 private:
     void initData();
     void initUI();
     void keyUpDown(int key);
+    void recomended();
+    void complete(const QString & str);
     QStringList splitPath(const QString &path);
     QListWidget * m_list;
     QCompleter * m_completer;

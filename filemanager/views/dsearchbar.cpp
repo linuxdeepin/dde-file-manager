@@ -292,6 +292,48 @@ void DSearchBar::keyUpDown(int key)
         setText(m_text);
 }
 
+void DSearchBar::recomended()
+{
+    if(m_list->count() == 1)
+    {
+        QStringList list = splitPath(m_text);
+        QString modelText = m_list->item(0)->text();
+        QString last = list.last();
+        if(isPath())
+        {
+            list.removeLast();
+            list.append(modelText);
+            setText(list.join("/").replace(0,1,""));
+            setSelection(text().length() + last.length() - modelText.length(), text().length());
+        }
+        else
+        {
+            QString tempText = text();
+            setText(modelText);
+            setSelection(m_text.length(), modelText.length());
+        }
+        m_text = text();
+    }
+}
+
+void DSearchBar::complete(const QString &str)
+{
+    QStringList list = splitPath(m_text);
+    QString modelText = str;
+    QString last = list.last();
+    if(isPath())
+    {
+        list.removeLast();
+        list.append(modelText);
+        setText(list.join("/").replace(0,1,""));
+    }
+    else
+    {
+        setText(str);
+    }
+    m_text = text();
+}
+
 void DSearchBar::keyPressEvent(QKeyEvent *e)
 {
     int key = e->key();
@@ -311,7 +353,7 @@ void DSearchBar::keyPressEvent(QKeyEvent *e)
                 if (currentIndex.isValid())
                 {
                     QString text = m_list->currentIndex().data().toString();
-                    setText(text);
+                    complete(text);
                 }
                 m_list->hide();
                 QLineEdit::keyPressEvent(e);
@@ -361,26 +403,7 @@ void DSearchBar::keyPressEvent(QKeyEvent *e)
                 if(textModified)
                 {
                     setCompleter(after);
-                }
-                if(m_list->count() == 1 && textModified)
-                {
-                    QStringList list = splitPath(m_text);
-                    QString modelText = m_list->item(0)->text();
-                    QString last = list.last();
-                    if(isPath())
-                    {
-                        list.removeLast();
-                        list.append(modelText);
-                        setText(list.join("/").replace(0,1,""));
-                        setSelection(text().length() + last.length() - modelText.length(), text().length());
-                    }
-                    else
-                    {
-                        QString tempText = text();
-                        setText(modelText);
-                        setSelection(m_text.length(), modelText.length());
-                    }
-                    m_text = text();
+                    recomended();
                 }
             }
         }
@@ -408,6 +431,36 @@ bool DSearchBar::hasScheme()
         return true;
     else
         return false;
+}
+
+bool DSearchBar::isSearchFile()
+{
+    DUrl url(text());
+    return url.isSearchFile();
+}
+
+bool DSearchBar::isBookmarkFile()
+{
+    DUrl url(text());
+    return url.isSearchFile();
+}
+
+bool DSearchBar::isComputerFile()
+{
+    DUrl url(text());
+    return url.isComputerFile();
+}
+
+bool DSearchBar::isLocalFile()
+{
+    DUrl url(text());
+    return url.isLocalFile();
+}
+
+bool DSearchBar::isTrashFile()
+{
+    DUrl url(text());
+    return url.isTrashFile();
 }
 
 bool DSearchBar::isPath()
