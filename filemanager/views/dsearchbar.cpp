@@ -289,7 +289,6 @@ void DSearchBar::keyUpDown(int key)
     if(row != -1)
     {
         QString modelText = index.model()->data(index).toString();
-        setText(modelText);
         QStringList list = splitPath(m_text);
         QString last = list.last();
         if(isPath())
@@ -351,6 +350,12 @@ void DSearchBar::complete(const QString &str)
         list.removeLast();
         list.append(modelText);
         setText(list.join("/").replace(0,1,""));
+    }
+    else if(isLocalFile())
+    {
+        list.removeLast();
+        list.append(modelText);
+        setText(list.join("/"));
     }
     else
     {
