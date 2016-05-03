@@ -19,7 +19,7 @@ void DCrumbWidget::initUI()
 {
     m_homePath = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).last();
     createArrows();
-    m_listWidget = new QListWidget(this);
+    m_listWidget = new ListWidgetPrivate(this);
     m_listWidget->setObjectName("DCrumbList");
     m_buttonLayout = new QHBoxLayout;
     m_buttonLayout->addWidget(m_leftArrow);
@@ -34,7 +34,6 @@ void DCrumbWidget::initUI()
     m_listWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);   
     setFixedHeight(20);
     setMinimumWidth(50);
-
 }
 
 void DCrumbWidget::addCrumb(const QStringList &list)
@@ -316,4 +315,19 @@ void DCrumbWidget::resizeEvent(QResizeEvent *e)
 {
     checkArrows();
     QFrame::resizeEvent(e);
+}
+
+ListWidgetPrivate::ListWidgetPrivate(DCrumbWidget *crumbWidget)
+    :QListWidget(crumbWidget)
+{
+    m_crumbWidget = crumbWidget;
+}
+
+void ListWidgetPrivate::mousePressEvent(QMouseEvent *event)
+{
+    QListWidget::mousePressEvent(event);
+    if(itemAt(event->pos()) == NULL)
+    {
+        emit m_crumbWidget->searchBarActivated();
+    }
 }

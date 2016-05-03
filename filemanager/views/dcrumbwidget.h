@@ -12,6 +12,17 @@
 class FMEvent;
 class DCrumbButton;
 class DStateButton;
+class DCrumbWidget;
+
+class ListWidgetPrivate : public QListWidget
+{
+public:
+    ListWidgetPrivate(DCrumbWidget * crumbWidget);
+private:
+    DCrumbWidget * m_crumbWidget;
+protected:
+    void mousePressEvent(QMouseEvent *event);
+};
 
 class DCrumbWidget : public QFrame
 {
@@ -45,7 +56,7 @@ private:
     QString m_homePath;
     DStateButton * m_leftArrow = NULL;
     DStateButton * m_rightArrow = NULL;
-    QListWidget * m_listWidget = NULL;
+    ListWidgetPrivate * m_listWidget = NULL;
     QList<QPushButton *> m_buttons;
     bool m_needArrows = false;
     int m_prevCheckedId = -1;
@@ -58,6 +69,7 @@ public slots:
     void crumbMoveToRight();
 signals:
     void crumbSelected(const FMEvent &event);
+    void searchBarActivated();
 
 protected:
     void resizeEvent(QResizeEvent *e);

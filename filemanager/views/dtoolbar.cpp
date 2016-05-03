@@ -131,13 +131,22 @@ void DToolBar::initContollerToolBar()
     m_listViewButton->setCheckable(true);
     m_listViewButton->setFocusPolicy(Qt::NoFocus);
 
+    m_hierarchicalButton = new QPushButton(this);
+    m_hierarchicalButton->setGeometry(QRect(0,0,26,20));
+    m_hierarchicalButton->setFixedHeight(20);
+    m_hierarchicalButton->setObjectName("hierarchicalButton");
+    m_hierarchicalButton->setCheckable(true);
+    m_hierarchicalButton->setFocusPolicy(Qt::NoFocus);
+
     m_viewButtonGroup = new QButtonGroup(this);
     m_viewButtonGroup->addButton(m_iconViewButton, 0);
     m_viewButtonGroup->addButton(m_listViewButton, 1);
+    m_viewButtonGroup->addButton(m_hierarchicalButton, 2);
 
     QHBoxLayout* mainLayout = new QHBoxLayout;
     mainLayout->addWidget(m_iconViewButton);
     mainLayout->addWidget(m_listViewButton);
+    mainLayout->addWidget(m_hierarchicalButton);
     mainLayout->setContentsMargins(5, 5, 5, 5);
     mainLayout->setSpacing(0);
     m_contollerToolBar->setLayout(mainLayout);
@@ -151,6 +160,7 @@ void DToolBar::initConnect()
     connect(m_forwardButton, &DStateButton::clicked,this, &DToolBar::forwardButtonClicked);
     connect(m_searchBar, &DSearchBar::returnPressed, this, &DToolBar::searchBarTextEntered);
     connect(m_crumbWidget, &DCrumbWidget::crumbSelected, this, &DToolBar::crumbSelected);
+    connect(m_crumbWidget, &DCrumbWidget::searchBarActivated, this, &DToolBar::searchBarActivated);
     connect(m_searchBar, &DSearchBar::searchBarFocused, this, &DToolBar::searchBarActivated);
     connect(fileSignalManager, &FileSignalManager::currentUrlChanged, this, &DToolBar::crumbChanged);
     connect(m_searchBar, SIGNAL(searchBarFocused()), this, SLOT(searchBarActivated()));
@@ -174,8 +184,6 @@ void DToolBar::searchBarClicked()
     else
         searchBarDeactivated();
 }
-
-
 
 void DToolBar::searchBarActivated()
 {
