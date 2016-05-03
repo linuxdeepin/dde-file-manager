@@ -62,6 +62,22 @@ DSearchBar::~DSearchBar()
 
 }
 
+void DSearchBar::setPopup(QListWidget *popup)
+{
+    if(popup == NULL)
+        return;
+
+    if(m_list)
+    {
+        m_list->removeEventFilter(this);
+        delete m_list;
+    }
+
+    m_list = popup;
+    m_list->installEventFilter(this);
+    m_list->setWindowFlags(Qt::ToolTip);
+}
+
 QListWidget *DSearchBar::getPopupList()
 {
     return m_list;
@@ -98,13 +114,17 @@ void DSearchBar::initConnections()
 {
     connect(this, SIGNAL(textEdited(QString)), this, SLOT(doTextChanged(QString)));
     connect(this, &DSearchBar::returnPressed, this, &DSearchBar::historySaved);
-    connect(this, &DSearchBar::textChanged, this, &DSearchBar::setCompleter);
+    //connect(this, &DSearchBar::textChanged, this, &DSearchBar::setCompleter);
     connect(m_list, &QListWidget::itemClicked, this, &DSearchBar::completeText);
 }
 
 void DSearchBar::doTextChanged(QString text)
 {
     m_text = text;
+    if(text.isEmpty())
+        m_clearAction->setVisible(false);
+    else
+        m_clearAction->setVisible(true);
 }
 
 void DSearchBar::searchHistoryLoaded(const QStringList &list)
@@ -128,20 +148,9 @@ void DSearchBar::historySaved()
 
 void DSearchBar::setCompleter(const QString &text)
 {
-    qDebug() << text;
-    if(text.isEmpty())
-        m_clearAction->setVisible(false);
-    else
-        m_clearAction->setVisible(true);
-
     if (text.isEmpty())
     {
         m_list->hide();
-        return;
-    }
-
-    if ((text.length() > 1) && (!m_list->isHidden()))
-    {
         return;
     }
 
@@ -232,11 +241,8 @@ bool DSearchBar::event(QEvent *e)
 
 bool DSearchBar::eventFilter(QObject *obj, QEvent *e)
 {
-    //m_list->setVisible(true);
-    qDebug() << "event";
     if(e->type() == QEvent::FocusOut)
     {
-        qDebug() << "focus out";
         m_list->hide();
         return true;
     }
@@ -289,7 +295,7 @@ void DSearchBar::keyUpDown(int key)
 void DSearchBar::keyPressEvent(QKeyEvent *e)
 {
     int key = e->key();
-    if (!m_list->isHidden())
+    //if (!m_list->isHidden())
     {
         QModelIndex currentIndex = m_list->currentIndex();
 
@@ -308,6 +314,7 @@ void DSearchBar::keyPressEvent(QKeyEvent *e)
                     setText(text);
                 }
                 m_list->hide();
+                QLineEdit::keyPressEvent(e);
                 break;
             }
             case Qt::Key_Right:
@@ -330,8 +337,12 @@ void DSearchBar::keyPressEvent(QKeyEvent *e)
                 }
                 m_list->hide();
                 end(false);
-                setText(text() + "/");
-                m_text = text();
+                if(isPath())
+                {
+                    setText(text() + "/");
+                    m_text = text();
+                }
+                setCompleter(m_text);
                 QLineEdit::keyPressEvent(e);
                 break;
             case Qt::Key_Delete:
@@ -349,7 +360,6 @@ void DSearchBar::keyPressEvent(QKeyEvent *e)
                 bool textModified = (before != after);
                 if(textModified)
                 {
-                    m_list->hide();
                     setCompleter(after);
                 }
                 if(m_list->count() == 1 && textModified)
@@ -357,19 +367,28 @@ void DSearchBar::keyPressEvent(QKeyEvent *e)
                     QStringList list = splitPath(m_text);
                     QString modelText = m_list->item(0)->text();
                     QString last = list.last();
-                    list.removeLast();
-                    list.append(modelText);
-                    setText(list.join("/").replace(0,1,""));
-                    setSelection(text().length() + last.length() - modelText.length(), text().length());
+                    if(isPath())
+                    {
+                        list.removeLast();
+                        list.append(modelText);
+                        setText(list.join("/").replace(0,1,""));
+                        setSelection(text().length() + last.length() - modelText.length(), text().length());
+                    }
+                    else
+                    {
+                        QString tempText = text();
+                        setText(modelText);
+                        setSelection(m_text.length(), modelText.length());
+                    }
                     m_text = text();
                 }
             }
         }
     }
-    else
-    {
-        QLineEdit::keyPressEvent(e);
-    }
+    //else
+//    {
+//        QLineEdit::keyPressEvent(e);
+//    }
 }
 
 QAction *DSearchBar::getClearAction()
@@ -393,6 +412,8 @@ bool DSearchBar::hasScheme()
 
 bool DSearchBar::isPath()
 {
+    if(text().isEmpty())
+        return false;
     if(text().at(0) == '/')
         return true;
     else

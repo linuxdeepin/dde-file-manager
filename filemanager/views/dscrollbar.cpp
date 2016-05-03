@@ -3,13 +3,14 @@
 #include <QWheelEvent>
 #include <QPalette>
 #include "utils/utils.h"
+#include <QPainter>
 
 
 DScrollBar::DScrollBar(QWidget *parent)
     :QScrollBar(parent)
 {
     setObjectName("DScrollBar");
-    m_opacity = new QGraphicsOpacityEffect;
+    m_opacity = new QGraphicsOpacityEffect(this);
     setGraphicsEffect(m_opacity);
     m_timer = new QTimer(this);
     connect(m_timer, SIGNAL(timeout()), this, SLOT(hidden()));
@@ -18,6 +19,7 @@ DScrollBar::DScrollBar(QWidget *parent)
 
 void DScrollBar::wheelEvent(QWheelEvent *e)
 {
+    qDebug() << rect() << parentWidget()->parentWidget()->rect();
     m_timer->start(1000);
     m_opacity->setOpacity(1);
     QScrollBar::wheelEvent(e);

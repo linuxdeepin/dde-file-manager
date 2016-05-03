@@ -19,6 +19,7 @@ class DSearchBar : public QLineEdit
 public:
     explicit DSearchBar(QWidget *parent = 0);
     ~DSearchBar();
+    void setPopup(QListWidget * popup);
     QListWidget * getPopupList();
     QAction * setClearAction();
     QAction * removeClearAction();
