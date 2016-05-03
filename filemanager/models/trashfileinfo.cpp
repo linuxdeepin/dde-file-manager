@@ -91,17 +91,13 @@ QVector<AbstractFileInfo::MenuAction> TrashFileInfo::menuActionList(AbstractFile
                    << MenuAction::Property;
     } else {
         actionKeys.reserve(12);
-
-        actionKeys << MenuAction::Open;
-
         if(isDir()){
-            actionKeys << MenuAction::OpenInNewWindow;
-        }else{
-            actionKeys << MenuAction::OpenWith;
+            actionKeys << MenuAction::OpenInNewWindow
+                       << MenuAction::Separator;
         }
-        actionKeys << MenuAction::Separator
-                   << MenuAction::Restore
+        actionKeys << MenuAction::Restore
                    << MenuAction::CompleteDeletion
+                   << MenuAction::Copy
                    << MenuAction::Separator
                    << MenuAction::Property;
     }

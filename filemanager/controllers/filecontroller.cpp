@@ -357,16 +357,11 @@ bool FileController::removeUrlMonitor(const DUrl &fileUrl, bool &accepted) const
 bool FileController::openFileLocation(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
-
     QFileInfo file(fileUrl.toLocalFile());
 
     if(file.exists()) {
-        FMEvent event;
-
-        event = DUrl::fromLocalFile(file.absolutePath());
-        event = FMEvent::FileView;
-
-        fileService->openUrl(event);
+        DUrl parentUrl = DUrl::fromLocalFile(file.absolutePath());
+        fileService->openNewWindow(parentUrl);
     } else {
         return false;
     }

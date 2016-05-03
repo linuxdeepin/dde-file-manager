@@ -82,7 +82,11 @@ void WindowManager::showNewWindow(const DUrl &url, bool isAlwaysOpen)
     window->fileManagerWindow()->setFileViewMode(m_fmStateManager->fmState()->viewMode());
 
     FMEvent event;
-    event = url;
+    if (!url.isEmpty()){
+        event = url;
+    }else{
+        event = DUrl::fromLocalFile(QDir::homePath());
+    }
     event = window->winId();
     emit fileSignalManager->requestChangeCurrentUrl(event);
 
