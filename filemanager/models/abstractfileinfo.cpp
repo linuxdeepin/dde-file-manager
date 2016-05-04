@@ -3,7 +3,8 @@
 #include "../views/dfileview.h"
 
 #include "../shutil/fileutils.h"
-
+#include "../controllers/pathmanager.h"
+#include "../app/global.h"
 #include <QDateTime>
 #include <QDebug>
 
@@ -134,7 +135,20 @@ QString AbstractFileInfo::fileName() const
 
 QString AbstractFileInfo::displayName() const
 {
-    return fileName();
+
+    if (systemPathManager->systemPaths().values().contains(filePath())){
+        foreach (QString key, systemPathManager->systemPaths().keys()) {
+            if (systemPathManager->systemPaths().value(key) == filePath()){
+                if (fileName() == key){
+                    return systemPathManager->getSystemPathDisplayName(key);
+                }else{
+                    return fileName();
+                }
+            }
+        }
+    }else{
+        return fileName();
+    }
 }
 
 QString AbstractFileInfo::path() const
@@ -297,9 +311,19 @@ QVector<AbstractFileInfo::MenuAction> AbstractFileInfo::menuActionList(AbstractF
                    << Cut
                    << Copy
                    << CreateSoftLink
-                   << SendToDesktop
-                   << AddToBookMark
-                   << Rename;
+                   << SendToDesktop;
+        if (systemPathManager->systemPaths().values().contains(filePath())){
+            foreach (QString key, systemPathManager->systemPaths().keys()) {
+                if (systemPathManager->systemPaths().value(key) == filePath()){
+                    if (fileName() != key){
+                        actionKeys << AddToBookMark;
+                    }
+                }
+            }
+        }else{
+            actionKeys << AddToBookMark;
+        }
+        actionKeys << Rename;
         QPixmap tempPixmap;
         DUrl url = data->url;
         if (tempPixmap.load(url.toLocalFile())){

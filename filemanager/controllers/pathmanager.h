@@ -27,14 +27,13 @@ public:
 signals:
 
 public slots:
-
-    void saveSystemPaths();
     void loadSystemPaths();
     void mkPath(const QString& path);
     void handleDirectoryChanged(const QString& path);
 
 private:
     QMap<QString, QString> m_systemPaths;
+    QMap<QString, QString> m_systemPathDisplayNames;
     QFileSystemWatcher* m_fileSystemWatcher = NULL;
 };
 
