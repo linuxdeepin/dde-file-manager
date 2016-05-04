@@ -529,6 +529,12 @@ void DWindowFrame::addContenWidget(QWidget *main)
     this->layout()->addWidget(main);
 }
 
+const QSize DWindowFrame::size()
+{
+    QSize realSize = QWidget::size();
+    return realSize - QSize(layoutMargin*2, layoutMargin*2);
+}
+
 void DWindowFrame::paintEvent(QPaintEvent* event) {
     QWidget::paintEvent(event);
     this->paintOutline();
