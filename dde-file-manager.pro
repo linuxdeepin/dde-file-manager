@@ -120,7 +120,8 @@ HEADERS += \
     filemanager/controllers/fmsortmanager.h \
     filemanager/models/ddiriterator.h \
     filemanager/views/extendview.h \
-    filemanager/controllers/pathmanager.h
+    filemanager/controllers/pathmanager.h \
+    filemanager/views/ddragwidget.h
 
 
 SOURCES += \
@@ -203,7 +204,8 @@ SOURCES += \
     filemanager/dialogs/basedialog.cpp \
     filemanager/controllers/fmsortmanager.cpp \
     filemanager/views/extendview.cpp \
-    filemanager/controllers/pathmanager.cpp
+    filemanager/controllers/pathmanager.cpp \
+    filemanager/views/ddragwidget.cpp
 
 
 

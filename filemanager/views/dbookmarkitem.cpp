@@ -17,6 +17,7 @@
 #include "../app/fmevent.h"
 
 #include "windowmanager.h"
+#include "ddragwidget.h"
 
 
 DBookmarkItem::DBookmarkItem()
@@ -221,23 +222,22 @@ void DBookmarkItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
                 return;
             }
 
-        m_drag = new QDrag((QObject*)event->widget());
+        drag = new DDragWidget((QObject*)event->widget());
         QMimeData *mimeData = new QMimeData;
-        mimeData->setText(m_textContent);
         QStyleOptionGraphicsItem opt;
-        m_drag->setPixmap(toPixmap());
-        m_drag->setMimeData(mimeData);
+        drag->setPixmap(toPixmap());
+        drag->setMimeData(mimeData);
         QPointF p = event->pos() - boundingRect().topLeft();
         QPoint point(p.x(), p.y());
-        m_drag->setHotSpot(point);
-        m_drag->exec();
-        m_drag = NULL;
-        m_pressed = false;
+        drag->setHotSpot(point);
+        drag->startDrag();
+
+        drag = NULL;
         emit dragFinished(QCursor::pos(), this);
     }
 }
 
-QPixmap DBookmarkItem::toPixmap() const
+QPixmap DBookmarkItem::toPixmap()
 {
     if (!scene()) {
         return QPixmap();
@@ -339,7 +339,6 @@ void DBookmarkItem::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
     m_hovered = false;
     emit dragLeft();
     QGraphicsItem::dragLeaveEvent(event);
-    qDebug() << "left";
     update();
 }
 
@@ -362,6 +361,13 @@ void DBookmarkItem::dropEvent(QGraphicsSceneDragDropEvent *event)
     e = m_url;
     e = windowId();
     fileService->pasteFile(AbstractFileController::CopyType, DUrl::fromQUrlList(event->mimeData()->urls()), e);
+    QGraphicsItem::dropEvent(event);
+}
+
+bool DBookmarkItem::eventFilter(QObject *obj, QEvent *e)
+{
+    qDebug() << obj << e;
+    return false;
 }
 
 void DBookmarkItem::keyPressEvent(QKeyEvent *event)
@@ -373,6 +379,7 @@ void DBookmarkItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event);
     event->accept();
+    qDebug() << "hover enter";
     m_hovered = true;
     update();
 }

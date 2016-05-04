@@ -15,6 +15,7 @@
 class DBookmarkItemGroup;
 class DeviceInfo;
 class BookMark;
+class DDragWidget;
 
 class DBookmarkItem : public QObject, public QGraphicsItem
 {
@@ -64,7 +65,7 @@ public:
     void setHeight(double h);
     void setDefaultItem(bool v);
     bool isDefaultItem();
-    QPixmap toPixmap() const;
+    QPixmap toPixmap();
     bool isMounted();
     void setMounted(bool v);
     void setDeviceLabel(const QString &label);
@@ -98,6 +99,7 @@ protected:
     void dragLeaveEvent(QGraphicsSceneDragDropEvent *event);
     void dragMoveEvent(QGraphicsSceneDragDropEvent *event);
     void dropEvent(QGraphicsSceneDragDropEvent *event);
+    bool eventFilter(QObject *obj, QEvent *e);
 private:
     void init();
 
@@ -140,7 +142,7 @@ private:
     QColor m_pressBackgroundColor;
     QColor m_textColor;
     QColor m_backGroundColor;
-    QDrag * m_drag = NULL;
+    DDragWidget * drag = NULL;
     /* bookmark */
     bool m_isDefault = false;
 
