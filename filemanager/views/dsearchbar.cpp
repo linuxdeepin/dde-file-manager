@@ -229,6 +229,7 @@ void DSearchBar::focusOutEvent(QFocusEvent *e)
     {
         m_list->hide();
     }
+    qDebug() << "focus out";
 }
 
 bool DSearchBar::event(QEvent *e)
@@ -260,6 +261,18 @@ bool DSearchBar::eventFilter(QObject *obj, QEvent *e)
         return true;
     }
     return false;
+}
+
+void DSearchBar::resizeEvent(QResizeEvent *e)
+{
+    m_list->hide();
+    QLineEdit::resizeEvent(e);
+}
+
+void DSearchBar::moveEvent(QMoveEvent *e)
+{
+    m_list->hide();
+    QLineEdit::moveEvent(e);
 }
 
 void DSearchBar::keyUpDown(int key)
