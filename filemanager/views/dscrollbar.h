@@ -21,9 +21,13 @@ public:
 private:
     QPropertyAnimation * m_animate;
     QTimer* m_timer;
+    QTimer* m_opacityTimer;
     QGraphicsOpacityEffect * m_opacity;
+    int m_count;
+    float m_level;
 public slots:
     void hidden();
+    void opacity();
 };
 
 #endif // DSCROLLBAR_H

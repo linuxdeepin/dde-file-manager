@@ -221,16 +221,17 @@ void DBookmarkItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
                 return;
             }
 
-        QDrag *drag = new QDrag((QObject*)event->widget());
+        m_drag = new QDrag((QObject*)event->widget());
         QMimeData *mimeData = new QMimeData;
         mimeData->setText(m_textContent);
         QStyleOptionGraphicsItem opt;
-        drag->setPixmap(toPixmap());
-        drag->setMimeData(mimeData);
+        m_drag->setPixmap(toPixmap());
+        m_drag->setMimeData(mimeData);
         QPointF p = event->pos() - boundingRect().topLeft();
         QPoint point(p.x(), p.y());
-        drag->setHotSpot(point);
-        drag->exec();
+        m_drag->setHotSpot(point);
+        m_drag->exec();
+        m_drag = NULL;
         m_pressed = false;
         emit dragFinished(QCursor::pos(), this);
     }

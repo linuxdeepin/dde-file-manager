@@ -364,7 +364,7 @@ void FileMenuManager::actionTriggered(DAction *action)
         break;
     }
     case MenuAction::Remove: {
-        if(fileUrl.isBookMarkFile()) {
+        if(fileUrl.isLocalFile()) {
             FMEvent event;
 
             event = fileUrl;

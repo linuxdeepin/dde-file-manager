@@ -6,6 +6,7 @@
 #include <QFont>
 #include <QPainter>
 #include <QGraphicsSceneMouseEvent>
+#include <QDrag>
 
 #include "durl.h"
 
@@ -139,7 +140,7 @@ private:
     QColor m_pressBackgroundColor;
     QColor m_textColor;
     QColor m_backGroundColor;
-
+    QDrag * m_drag = NULL;
     /* bookmark */
     bool m_isDefault = false;
 
