@@ -50,6 +50,7 @@ public:
     void setMaximumSize(int maxw, int maxh);
     void setModal(bool);
     void addContenWidget(QWidget *main);
+    const QSize size();
 
 public slots:
     void startMoving();
