@@ -211,18 +211,29 @@ SOURCES += \
 
 INCLUDEPATH += filemanager/models
 
-target.path = /usr/bin/
+BINDIR = $$PREFIX/bin
+APPSHAREDIR = $$PREFIX/share/dde-file-manager
+DEFINES += APPSHAREDIR=\\\"$$APPSHAREDIR\\\"
 
+target.path = $$BINDIR
 
 desktop.path = $${PREFIX}/share/applications/
 desktop.files = dde-file-manager.desktop
 
-templateFiles.path = $${PREFIX}/share/dde-file-manager/templates
+templateFiles.path = $$APPSHAREDIR/templates
 templateFiles.files = skin/templates/newDoc.doc \
     skin/templates/newExcel.xls \
     skin/templates/newPowerPoint.ppt \
     skin/templates/newTxt.txt
 
-INSTALLS += target desktop templateFiles
+# Automating generation .qm files from .ts files
+CONFIG(release, debug|release) {
+    system($$PWD/generate_translations.sh)
+}
+
+translations.path = $$APPSHAREDIR/translations
+translations.files = translations/*.qm
+
+INSTALLS += target desktop templateFiles translations
 
 
