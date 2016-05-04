@@ -69,12 +69,10 @@ void DSearchBar::setPopup(QListWidget *popup)
 
     if(m_list)
     {
-        m_list->removeEventFilter(this);
         delete m_list;
     }
 
     m_list = popup;
-    m_list->installEventFilter(this);
     m_list->setWindowFlags(Qt::ToolTip);
 }
 

@@ -330,7 +330,7 @@ QScrollBar#DScrollBar::handle:vertical:hover{
 
 QScrollBar#DScrollBar::handle:vertical{
      border: 0px;
-     background-color: rgba(16,16,16,0.5);
+     background-color: rgba(16,16,16,0);
      width: 6px;
 }
 

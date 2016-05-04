@@ -263,7 +263,7 @@ void DCrumbWidget::buttonPressed()
     event = FMEvent::CrumbButton;
     QString text;
     DCrumbButton * localButton = (DCrumbButton *)m_group.buttons().at(0);
-    qDebug() << localButton->getName();
+
     for(int i = 1; i <= index; i++)
     {
         DCrumbButton * button = (DCrumbButton *)m_group.buttons().at(i);

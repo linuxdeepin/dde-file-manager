@@ -10,28 +10,30 @@ DScrollBar::DScrollBar(QWidget *parent)
     :QScrollBar(parent)
 {
     setObjectName("DScrollBar");
-    m_opacity = new QGraphicsOpacityEffect(this);
-    setGraphicsEffect(m_opacity);
     m_timer = new QTimer(this);
+    m_opacityTimer = new QTimer(this);
     connect(m_timer, SIGNAL(timeout()), this, SLOT(hidden()));
+    connect(m_opacityTimer, SIGNAL(timeout()), this, SLOT(opacity()));
+    setAutoFillBackground(true);
     m_timer->start(1000);
 }
 
 void DScrollBar::wheelEvent(QWheelEvent *e)
 {
-    qDebug() << rect() << parentWidget()->parentWidget()->rect();
     m_timer->start(1000);
-    m_opacity->setOpacity(1);
+    setStyleSheet("QScrollBar#DScrollBar:handle:vertical{\
+                  border: 0px;\
+                  background: rgba(16,16,16,0.5);\
+                  width: 6px;}");
     QScrollBar::wheelEvent(e);
 }
 
 void DScrollBar::enterEvent(QEvent *e)
 {
     m_timer->stop();
-    m_opacity->setOpacity(1);
-    setStyleSheet("QScrollBar#DScrollBar:vertical{\
+    setStyleSheet("QScrollBar#DScrollBar:handle:vertical{\
                   border: 0px;\
-                  background: transparent;\
+                  background: rgba(16,16,16,0.7);\
                   width: 6px;}");
     QScrollBar::enterEvent(e);
 }
@@ -39,9 +41,9 @@ void DScrollBar::enterEvent(QEvent *e)
 void DScrollBar::leaveEvent(QEvent *e)
 {
     m_timer->start(1000);
-    setStyleSheet("QScrollBar#DScrollBar:vertical{\
+    setStyleSheet("QScrollBar#DScrollBar:handle:vertical{\
                   border: 0px;\
-                  background: transparent;\
+                  background: rgba(16,16,16,0.45);\
                   width: 4px;}");
     QScrollBar::leaveEvent(e);
 }
@@ -66,13 +68,26 @@ void DScrollBar::mouseReleaseEvent(QMouseEvent *e)
 void DScrollBar::hidden()
 {
     m_timer->stop();
-    QPropertyAnimation * anim = new QPropertyAnimation( m_opacity, "opacity" );
-    anim->setDuration( 500 );
-    anim->setStartValue( 1 );
-    anim->setEndValue( 0.0 );
-    anim->start(QPropertyAnimation::DeleteWhenStopped);
-    setStyleSheet("QScrollBar#DScrollBar:vertical{\
-                  border: 0px;\
-                  background: transparent;\
-                  width: 4px;}");
+    m_opacityTimer->start(50);
+    m_count = 20;
+    m_level = m_count;
+
+}
+
+void DScrollBar::opacity()
+{
+    if(m_count > 0)
+    {
+        m_count--;
+        m_opacityTimer->start(50);
+        QString stylesheet = "QScrollBar#DScrollBar:handle:vertical{\
+                border: 0px;\
+                background: rgba(16,16,16," + QString::number(m_count/m_level/2)+ ");" +
+                "width: 4px;}";
+        setStyleSheet(stylesheet);
+    }
+    else
+    {
+        m_opacityTimer->stop();
+    }
 }
