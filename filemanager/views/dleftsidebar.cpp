@@ -50,10 +50,10 @@ void DLeftSideBar::initData()
     m_icons["Home"] =  ":/icons/images/icons/home_normal_16px.svg";
     m_icons["Desktop"] =  ":/icons/images/icons/desktop_normal_16px.svg";
     m_icons["Videos"] =  ":/icons/images/icons/videos_normal_16px.svg";
-    m_icons["Musics"] =  ":/icons/images/icons/music_normal_16px.svg";
+    m_icons["Music"] =  ":/icons/images/icons/music_normal_16px.svg";
     m_icons["Pictures"] =  ":/icons/images/icons/pictures_normal_16px.svg";
     m_icons["Documents"] =  ":/icons/images/icons/documents_normal_16px.svg";
-    m_icons["Download"] =  ":/icons/images/icons/download_normal_16px.svg";
+    m_icons["Downloads"] =  ":/icons/images/icons/download_normal_16px.svg";
     m_icons["Trash"] =  ":/icons/images/icons/trash_normal_16px.svg";
     m_icons["Disks"] =  ":/icons/images/icons/disk_normal_16px.svg";
 
@@ -63,10 +63,10 @@ void DLeftSideBar::initData()
     m_checkedIcons["Home"] =  ":/icons/images/icons/home_checked_16px.svg";
     m_checkedIcons["Desktop"] =  ":/icons/images/icons/desktop_checked_16px.svg";
     m_checkedIcons["Videos"] =  ":/icons/images/icons/videos_checked_16px.svg";
-    m_checkedIcons["Musics"] =  ":/icons/images/icons/music_checked_16px.svg";
+    m_checkedIcons["Music"] =  ":/icons/images/icons/music_checked_16px.svg";
     m_checkedIcons["Pictures"] =  ":/icons/images/icons/pictures_checked_16px.svg";
     m_checkedIcons["Documents"] =  ":/icons/images/icons/documents_checked_16px.svg";
-    m_checkedIcons["Download"] =  ":/icons/images/icons/download_checked_16px.svg";
+    m_checkedIcons["Downloads"] =  ":/icons/images/icons/download_checked_16px.svg";
     m_checkedIcons["Trash"] =  ":/icons/images/icons/trash_checked_16px.svg";
     m_checkedIcons["Disks"] =  ":/icons/images/icons/disk_checked_16px.svg";
 
@@ -76,10 +76,10 @@ void DLeftSideBar::initData()
     m_bigIcons["Home"] =  ":/icons/images/icons/home_normal_22px.svg";
     m_bigIcons["Desktop"] =  ":/icons/images/icons/desktop_normal_22px.svg";
     m_bigIcons["Videos"] =  ":/icons/images/icons/videos_normal_22px.svg";
-    m_bigIcons["Musics"] =  ":/icons/images/icons/music_normal_22px.svg";
+    m_bigIcons["Music"] =  ":/icons/images/icons/music_normal_22px.svg";
     m_bigIcons["Pictures"] =  ":/icons/images/icons/pictures_normal_22px.svg";
     m_bigIcons["Documents"] =  ":/icons/images/icons/documents_normal_22px.svg";
-    m_bigIcons["Download"] =  ":/icons/images/icons/download_normal_22px.svg";
+    m_bigIcons["Downloads"] =  ":/icons/images/icons/download_normal_22px.svg";
     m_bigIcons["Trash"] =  ":/icons/images/icons/trash_normal_22px.svg";
     m_bigIcons["Disks"] =  ":/icons/images/icons/disk_normal_22px.svg";
 
@@ -89,10 +89,10 @@ void DLeftSideBar::initData()
     m_checkedBigIcons["Home"] =  ":/icons/images/icons/home_checked_22px.svg";
     m_checkedBigIcons["Desktop"] =  ":/icons/images/icons/desktop_checked_22px.svg";
     m_checkedBigIcons["Videos"] =  ":/icons/images/icons/videos_checked_22px.svg";
-    m_checkedBigIcons["Musics"] =  ":/icons/images/icons/music_checked_22px.svg";
+    m_checkedBigIcons["Music"] =  ":/icons/images/icons/music_checked_22px.svg";
     m_checkedBigIcons["Pictures"] =  ":/icons/images/icons/pictures_checked_22px.svg";
     m_checkedBigIcons["Documents"] =  ":/icons/images/icons/documents_checked_22px.svg";
-    m_checkedBigIcons["Download"] =  ":/icons/images/icons/download_checked_22px.svg";
+    m_checkedBigIcons["Downloads"] =  ":/icons/images/icons/download_checked_22px.svg";
     m_checkedBigIcons["Trash"] =  ":/icons/images/icons/trash_checked_22px.svg";
     m_checkedBigIcons["Disks"] =  ":/icons/images/icons/disk_checked_22px.svg";
 
@@ -100,31 +100,29 @@ void DLeftSideBar::initData()
                << "Home"
                << "Desktop"
                << "Videos"
-               << "Musics"
+               << "Music"
                << "Pictures"
                << "Documents"
-               << "Download"
+               << "Downloads"
                << "Trash"
                << "Separator"
                << "Disks";
 
     m_systemPathKeys << "Desktop"
                      << "Videos"
-                     << "Musics"
+                     << "Music"
                      << "Pictures"
                      << "Documents"
-                     << "Download";
+                     << "Downloads";
 
     m_systemBookMarks["Recent"] = tr("Recent");
     m_systemBookMarks["Home"] = tr("Home");
     m_systemBookMarks["Trash"] = tr("Trash");
     m_systemBookMarks["Disks"] = tr("Disks");
 
-    foreach (QString key, m_nameList) {
-        if (systemPathManager->systemPaths().contains(key)){
-            m_systemBookMarks[key] = systemPathManager->getSystemPathDisplayName(key);
-            qDebug() << key << m_systemBookMarks[key];
-        }
+    foreach (QString key, m_systemPathKeys) {
+        m_systemBookMarks[key] = systemPathManager->getSystemPathDisplayName(key);
+        qDebug() << key << m_systemBookMarks[key];
     }
 
     m_navState = true;
