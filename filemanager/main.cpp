@@ -19,6 +19,8 @@
 #include <QDebug>
 #include <QThreadPool>
 
+#include "../controllers/pathmanager.h"
+
 DWIDGET_USE_NAMESPACE
 
 int main(int argc, char *argv[])

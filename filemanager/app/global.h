@@ -10,12 +10,13 @@
 #include "../dialogs/dialogmanager.h"
 
 #include "../controllers/fileservices.h"
-
+#include "../controllers/pathmanager.h"
 #include "../models/abstractfileinfo.h"
 #include "../../deviceinfo/devicelistener.h"
 #include "../../deviceinfo/udisklistener.h"
 #include "../shutil/mimesappsmanager.h"
 #include "../shutil/iconprovider.h"
+
 
 #include <QFontMetrics>
 #include <QTextOption>
@@ -33,6 +34,7 @@
 #define fileService FileServices::instance()
 #define deviceListener Singleton<UDiskListener>::instance()
 #define mimeAppsManager Singleton<MimesAppsManager>::instance()
+#define systemPathManager Singleton<PathManager>::instance()
 
 #define defaut_icon ":/images/images/default.png"
 #define defaut_computerIcon ":/images/images/computer.png"
