@@ -62,7 +62,6 @@ QHeaderView {
 
 QHeaderView::section {
     color: #797979;
-    font-size: 12px;
     background: transparent;
     border: none;
 }

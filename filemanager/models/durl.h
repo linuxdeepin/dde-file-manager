@@ -49,6 +49,8 @@ public:
                                     FormattingOptions options = FormattingOptions( PrettyDecoded ));
     static QList<QUrl> toQUrlList(const DUrlList &urls);
 
+    static DUrlList childrenList(const DUrl &url);
+
     bool operator ==(const DUrl &url) const;
     friend Q_CORE_EXPORT uint qHash(const DUrl &url, uint seed) Q_DECL_NOTHROW;
 

@@ -118,7 +118,8 @@ HEADERS += \
     filemanager/shutil/standardpath.h \
     filemanager/dialogs/basedialog.h \
     filemanager/controllers/fmsortmanager.h \
-    filemanager/models/ddiriterator.h
+    filemanager/models/ddiriterator.h \
+    filemanager/views/extendview.h
 
 
 SOURCES += \
@@ -199,7 +200,8 @@ SOURCES += \
     filemanager/models/searchfileinfo.cpp\
     filemanager/shutil/standardpath.cpp \
     filemanager/dialogs/basedialog.cpp \
-    filemanager/controllers/fmsortmanager.cpp
+    filemanager/controllers/fmsortmanager.cpp \
+    filemanager/views/extendview.cpp
 
 
 

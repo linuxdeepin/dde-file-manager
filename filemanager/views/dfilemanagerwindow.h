@@ -28,6 +28,8 @@ class DSplitter;
 
 class DMainWindow;
 class DFileManagerWindow;
+class ExtendView;
+class QStackedLayout;
 
 
 
@@ -67,6 +69,9 @@ public slots:
     void showMinimized();
     void setFileViewMode(int viewMode);
     void setFileViewSortRole(int sortRole);
+    void setIconView();
+    void setListView();
+    void setExtendView();
 
 
 private:
@@ -82,6 +87,8 @@ private:
     QVBoxLayout* m_viewLayout;
     DSplitter* m_splitter;
     QFrame * m_titleFrame = NULL;
+    ExtendView* m_extendView = NULL;
+    QStackedLayout* m_viewStackLayout;
 };
 
 class DMainWindow : public DWindowFrame{

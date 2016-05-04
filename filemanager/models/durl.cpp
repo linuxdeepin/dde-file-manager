@@ -221,6 +221,23 @@ QList<QUrl> DUrl::toQUrlList(const DUrlList &urls)
     return urlList;
 }
 
+DUrl::DUrlList DUrl::childrenList(const DUrl &url)
+{
+    DUrlList children;
+    QStringList paths = url.path().split("/");
+    paths.removeAt(0);
+    QString _path;
+    foreach (QString p, paths) {
+        DUrl _url;
+        _url.setScheme(url.scheme());
+        _path += "/" + p;
+        _url.setPath(_path);
+        children.append(_url);
+    }
+
+    return children;
+}
+
 bool DUrl::operator ==(const DUrl &url) const
 {
     if(!schemeList.contains(url.scheme()))

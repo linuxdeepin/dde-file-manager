@@ -318,7 +318,7 @@ void DFileItemDelegate::paintIconItem(bool isDragMode, QPainter *painter,
             QTextOption text_option(Qt::AlignHCenter);
 
             text_option.setWrapMode(QTextOption::NoWrap);
-            doc->setDefaultFont(painter->font());
+//            doc->setDefaultFont(painter->font());
             doc->setDefaultTextOption(text_option);
             doc->setTextWidth(label_rect.width());
             cursor.movePosition(QTextCursor::Start);

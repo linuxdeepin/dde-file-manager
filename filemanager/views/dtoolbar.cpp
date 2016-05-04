@@ -131,22 +131,22 @@ void DToolBar::initContollerToolBar()
     m_listViewButton->setCheckable(true);
     m_listViewButton->setFocusPolicy(Qt::NoFocus);
 
-    m_hierarchicalButton = new QPushButton(this);
-    m_hierarchicalButton->setGeometry(QRect(0,0,26,20));
-    m_hierarchicalButton->setFixedHeight(20);
-    m_hierarchicalButton->setObjectName("hierarchicalButton");
-    m_hierarchicalButton->setCheckable(true);
-    m_hierarchicalButton->setFocusPolicy(Qt::NoFocus);
+    m_extendButton = new QPushButton(this);
+    m_extendButton->setGeometry(QRect(0,0,26,20));
+    m_extendButton->setFixedHeight(20);
+    m_extendButton->setObjectName("hierarchicalButton");
+    m_extendButton->setCheckable(true);
+    m_extendButton->setFocusPolicy(Qt::NoFocus);
 
     m_viewButtonGroup = new QButtonGroup(this);
     m_viewButtonGroup->addButton(m_iconViewButton, 0);
     m_viewButtonGroup->addButton(m_listViewButton, 1);
-    m_viewButtonGroup->addButton(m_hierarchicalButton, 2);
+    m_viewButtonGroup->addButton(m_extendButton, 2);
 
     QHBoxLayout* mainLayout = new QHBoxLayout;
     mainLayout->addWidget(m_iconViewButton);
     mainLayout->addWidget(m_listViewButton);
-    mainLayout->addWidget(m_hierarchicalButton);
+    mainLayout->addWidget(m_extendButton);
     mainLayout->setContentsMargins(5, 5, 5, 5);
     mainLayout->setSpacing(0);
     m_contollerToolBar->setLayout(mainLayout);
@@ -156,6 +156,7 @@ void DToolBar::initConnect()
 {
     connect(m_iconViewButton, &DStateButton::clicked, this, &DToolBar::requestIconView);
     connect(m_listViewButton, &DStateButton::clicked, this, &DToolBar::requestListView);
+    connect(m_extendButton, &DStateButton::clicked, this, &DToolBar::requestExtendView);
     connect(m_backButton, &DStateButton::clicked,this, &DToolBar::backButtonClicked);
     connect(m_forwardButton, &DStateButton::clicked,this, &DToolBar::forwardButtonClicked);
     connect(m_searchBar, &DSearchBar::returnPressed, this, &DToolBar::searchBarTextEntered);
