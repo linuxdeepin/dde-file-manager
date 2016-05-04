@@ -23,9 +23,12 @@ PathManager::~PathManager()
 void PathManager::initPaths()
 {
     loadSystemPaths();
-    if (m_systemPaths.isEmpty()){
-        saveSystemPaths();
-    }
+    m_systemPathDisplayNames["Desktop"] = tr("Desktop");
+    m_systemPathDisplayNames["Videos"] = tr("Videos");
+    m_systemPathDisplayNames["Music"] = tr("Music");
+    m_systemPathDisplayNames["Pictures"] = tr("Pictures");
+    m_systemPathDisplayNames["Documents"] = tr("Documents");
+    m_systemPathDisplayNames["Downloads"] = tr("Downloads");
 }
 
 void PathManager::initConnect()
@@ -48,8 +51,7 @@ QString PathManager::getSystemPath(QString key)
 
 QString PathManager::getSystemPathDisplayName(QString key)
 {
-    QString path = getSystemPath(key);
-    return QDir(path).dirName();
+    return m_systemPathDisplayNames.value(key);
 }
 
 QString PathManager::getSystemCachePath()
@@ -57,44 +59,20 @@ QString PathManager::getSystemCachePath()
     return QString("%1/%2").arg(StandardPath::getCachePath(), "systempath.json");
 }
 
-void PathManager::saveSystemPaths()
-{
-    m_systemPaths["Desktop"] = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).at(0);
-    m_systemPaths["Videos"] = QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).at(0);
-    m_systemPaths["Musics"] = QStandardPaths::standardLocations(QStandardPaths::MusicLocation).at(0);
-    m_systemPaths["Pictures"] = QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).at(0);
-    m_systemPaths["Documents"] = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).at(0);
-    m_systemPaths["Download"] = QStandardPaths::standardLocations(QStandardPaths::DownloadLocation).at(0);
-
-    QVariantMap pathCache;
-    foreach (QString key, m_systemPaths.keys()) {
-        QString path = m_systemPaths.value(key);
-        pathCache.insert(key, path);
-        mkPath(path);
-        m_fileSystemWatcher->addPath(path);
-    }
-    QJsonDocument doc(QJsonObject::fromVariantMap(pathCache));
-    writeCacheToFile(getSystemCachePath(), doc.toJson());
-
-}
 
 void PathManager::loadSystemPaths()
 {
-    QString cacheContent = readCacheFromFile(getSystemCachePath());
-    if (!cacheContent.isEmpty()){
-        QJsonParseError error;
-        QJsonDocument doc=QJsonDocument::fromJson(cacheContent.toLocal8Bit(),&error);
-        if (error.error == QJsonParseError::NoError){
-            QJsonObject obj = doc.object();
-            foreach (QString key, obj.keys()) {
-                QString path = obj.value(key).toString();
-                m_systemPaths.insert(key, path);
-                mkPath(path);
-                m_fileSystemWatcher->addPath(path);
-            }
-        }else{
-            qDebug() << "load cache file: " << getSystemCachePath() << error.errorString();
-        }
+    m_systemPaths["Desktop"] = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).at(0);
+    m_systemPaths["Videos"] = QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).at(0);
+    m_systemPaths["Music"] = QStandardPaths::standardLocations(QStandardPaths::MusicLocation).at(0);
+    m_systemPaths["Pictures"] = QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).at(0);
+    m_systemPaths["Documents"] = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).at(0);
+    m_systemPaths["Downloads"] = QStandardPaths::standardLocations(QStandardPaths::DownloadLocation).at(0);
+
+    foreach (QString key, m_systemPaths.keys()) {
+        QString path = m_systemPaths.value(key);
+        mkPath(path);
+        m_fileSystemWatcher->addPath(path);
     }
 }
 
