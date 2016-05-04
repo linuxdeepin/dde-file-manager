@@ -287,6 +287,11 @@ void DBookmarkScene::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
     clear(m_rootItem->getDummyItem());
 }
 
+void DBookmarkScene::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
+{
+    QGraphicsScene::dragMoveEvent(event);
+}
+
 /**
  * @brief DBookmarkScene::dropEvent
  * @param event
@@ -417,7 +422,6 @@ void DBookmarkScene::doBookmarkRemoved(const FMEvent &event)
 {
     for(int i = 0; i < m_items.size(); i++)
     {
-        qDebug() << event.fileUrl() << m_items.at(i)->getUrl();
         if(event.fileUrl() == m_items.at(i)->getUrl())
         {
             DBookmarkItem * item = m_items.at(i);
