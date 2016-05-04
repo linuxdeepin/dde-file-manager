@@ -33,6 +33,7 @@ public:
 signals:
     void requestIconView();
     void requestListView();
+    void requestExtendView();
 
     void requestSwitchLayout();
     void refreshButtonClicked();
@@ -61,7 +62,7 @@ private:
 
     QPushButton* m_iconViewButton=NULL;
     QPushButton* m_listViewButton=NULL;
-    QPushButton* m_hierarchicalButton = NULL;
+    QPushButton* m_extendButton = NULL;
     DHoverButton* m_sortingButton=NULL;
 
     bool m_switchState = false;

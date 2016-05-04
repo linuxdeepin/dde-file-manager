@@ -10,6 +10,7 @@
 #include "dsearchbar.h"
 #include "dsplitter.h"
 #include "utils/xutil.h"
+#include "extendview.h"
 
 #include <QStatusBar>
 #include <QFrame>
@@ -19,6 +20,7 @@
 #include <QResizeEvent>
 #include <QThread>
 #include <QDesktopWidget>
+#include <QStackedLayout>
 
 
 
@@ -111,10 +113,11 @@ void DFileManagerWindow::initRightView()
 
     m_titleFrame->setFixedHeight(TITLE_FIXED_HEIGHT);
 
-    QHBoxLayout* viewLayout = new QHBoxLayout;
-    viewLayout->addWidget(m_fileView);
-    viewLayout->setSpacing(0);
-    viewLayout->setContentsMargins(0, 0, 0, 0);
+    m_viewStackLayout = new QStackedLayout;
+    m_viewStackLayout->addWidget(m_fileView);
+    m_viewStackLayout->addWidget(m_extendView);
+    m_viewStackLayout->setSpacing(0);
+    m_viewStackLayout->setContentsMargins(0, 0, 0, 0);
 
     m_statusBar = new QStatusBar;
     m_statusBar->setFixedHeight(20);
@@ -123,7 +126,7 @@ void DFileManagerWindow::initRightView()
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->addWidget(m_titleFrame);
-    mainLayout->addLayout(viewLayout);
+    mainLayout->addLayout(m_viewStackLayout);
     mainLayout->addWidget(m_statusBar);
     mainLayout->setSpacing(0);
     mainLayout->setContentsMargins(0, 0, 0, 0);
@@ -148,7 +151,7 @@ void DFileManagerWindow::initFileView()
 
 void DFileManagerWindow::initExtendView()
 {
-
+    m_extendView = new ExtendView(this);
 }
 
 void DFileManagerWindow::initCentralWidget()
@@ -178,8 +181,9 @@ void DFileManagerWindow::initConnect()
     connect(m_titleBar, SIGNAL(maximumClicked()), parentWidget(), SLOT(showMaximized()));
     connect(m_titleBar, SIGNAL(restoreClicked()), parentWidget(), SLOT(showNormal()));
     connect(m_titleBar, SIGNAL(closeClicked()), parentWidget(), SLOT(close()));
-    connect(m_toolbar, &DToolBar::requestListView, m_fileView, &DFileView::setViewModeToList);
-    connect(m_toolbar, &DToolBar::requestIconView, m_fileView, &DFileView::setViewModeToIcon);
+    connect(m_toolbar, &DToolBar::requestIconView, this, &DFileManagerWindow::setIconView);
+    connect(m_toolbar, &DToolBar::requestListView, this, &DFileManagerWindow::setListView);
+    connect(m_toolbar, &DToolBar::requestExtendView, this, &DFileManagerWindow::setExtendView);
 }
 
 DUrl DFileManagerWindow::currentUrl() const
@@ -212,7 +216,23 @@ void DFileManagerWindow::setFileViewSortRole(int sortRole)
     m_fileView->sort(sortRole);
 }
 
+void DFileManagerWindow::setIconView()
+{
+    m_viewStackLayout->setCurrentIndex(0);
+    m_fileView->setViewModeToIcon();
+}
 
+void DFileManagerWindow::setListView()
+{
+    m_viewStackLayout->setCurrentIndex(0);
+    m_fileView->setViewModeToList();
+}
+
+void DFileManagerWindow::setExtendView()
+{
+    m_viewStackLayout->setCurrentIndex(1);
+    m_extendView->setStartUrl(m_fileView->currentUrl());
+}
 
 
 DMainWindow::DMainWindow(QWidget *parent):

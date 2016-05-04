@@ -92,8 +92,13 @@ public slots:
     { setViewMode(ListMode);}
     inline void setViewModeToIcon()
     { setViewMode(IconMode);}
+    inline void setViewModeToExtend()
+    { setViewMode(ExtendMode);}
     void setViewMode(ViewMode mode);
     void sort(int role);
+
+    bool setCurrentUrl(DUrl fileUrl);
+    void clearHeardView();
 
 signals:
     void currentUrlChanged(const DUrl &url);
@@ -143,12 +148,12 @@ private:
     void openIndex(const QModelIndex &index);
     void keyboardSearch(const QString & search) Q_DECL_OVERRIDE;
     void stopSearch();
-    bool setCurrentUrl(DUrl fileUrl);
     void updateViewportMargins();
     void switchViewMode(ViewMode mode);
     void showEmptyAreaMenu();
     void showNormalMenu(const QModelIndex &index);
-    void updateHeaderViewProperty();
+    void updateListHeaderViewProperty();
+    void updateExtendHeaderViewProperty();
 
     using DListView::setOrientation;
 };

@@ -1,5 +1,5 @@
 QFrame#ContentFrame{
-
+    font-size: 12px;
 }
 
 QFrame#ButtonFrame{
@@ -39,6 +39,7 @@ QPushButton#NormalButton{
     border-radius: 2px;
     color: white;
     text-align: center;
+    font-size: 12px;
 }
 
 QPushButton#NormalButton:hover{
@@ -59,6 +60,7 @@ QPushButton#ActionButton{
     border-bottom: none;
     color: white;
     text-align: center;
+    font-size: 12px;
 }
 
 QPushButton#ActionButton:hover{
@@ -76,6 +78,7 @@ QPushButton#ConflictButton{
     border:none;
     color: white;
     text-align: center;
+    font-size: 12px;
 }
 
 QPushButton#ConflictButton:checked{
@@ -89,6 +92,7 @@ QLabel#VLine{
 
 QCheckBox{
   color: white;
+  font-size: 12px;
 }
 
 QCheckBox::indicator {
@@ -116,12 +120,14 @@ QLabel#MessageLabel{
     padding-top: 2px;
     padding-bottom: 2px;
     color: white;
+    font-size: 12px;
 }
 
 QLabel#TipMessageLabel{
     padding-top: 2px;
     padding-bottom: 2px;
     color: #ffa530;
+    font-size: 12px;
 }
 
 QLabel#TaskTipMessageLabel{

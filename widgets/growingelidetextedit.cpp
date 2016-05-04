@@ -137,7 +137,6 @@ void GrowingElideTextEdit::showReadOnly(){
                   padding:0px;\
                   selection-color: white;\
                   selection-background-color: #61B5F8;\
-                  font-size: 12px;\
               ");
 }
 
@@ -153,7 +152,6 @@ void GrowingElideTextEdit::showEditing(){
                   padding:0px;\
                   selection-color: white;\
                   selection-background-color: #61B5F8;\
-                  font-size: 12px;\
               ");
 //    verticalScrollBar()->setValue(verticalScrollBar()->maximumHeight());
 }

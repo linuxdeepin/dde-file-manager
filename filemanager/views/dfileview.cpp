@@ -63,7 +63,7 @@ void DFileView::initUI()
     setSelectionRectVisible(true);
     setEditTriggers(QListView::EditKeyPressed);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-//    setVerticalScrollBar(new DScrollBar);
+    setVerticalScrollBar(new DScrollBar);
 }
 
 void DFileView::initDelegate()
@@ -629,7 +629,7 @@ bool DFileView::setCurrentUrl(DUrl fileUrl)
     setRootIndex(index);
     model()->setActiveIndex(index);
 
-    updateHeaderViewProperty();
+//    updateListHeaderViewProperty();
 
     if(info) {
         ViewModes modes = (ViewModes)info->supportViewMode();
@@ -650,6 +650,15 @@ bool DFileView::setCurrentUrl(DUrl fileUrl)
     emit currentUrlChanged(fileUrl);
 
     return true;
+}
+
+void DFileView::clearHeardView()
+{
+    if(m_headerView) {
+        removeHeaderWidget(0);
+
+        m_headerView = Q_NULLPTR;
+    }
 }
 
 void DFileView::updateViewportMargins()
@@ -686,13 +695,22 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
     m_currentViewMode = mode;
 
     switch (mode) {
+    case IconMode: {
+        clearHeardView();
+        m_columnRoles.clear();
+        setIconSize(currentIconSize());
+        setOrientation(QListView::LeftToRight, true);
+        setSpacing(5);
+
+        break;
+    }
     case ListMode: {
         itemDelegate()->hideAllIIndexWidget();
 
         if(!m_headerView) {
             m_headerView = new QHeaderView(Qt::Horizontal);
 
-            updateHeaderViewProperty();
+            updateListHeaderViewProperty();
 
             m_headerView->setHighlightSections(true);
             m_headerView->setSectionsClickable(true);
@@ -717,19 +735,31 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
 
         break;
     }
-    case IconMode: {
-        if(m_headerView) {
-            removeHeaderWidget(0);
+    case ExtendMode: {
+        itemDelegate()->hideAllIIndexWidget();
+        if(!m_headerView) {
+            m_headerView = new QHeaderView(Qt::Horizontal);
 
-            m_headerView = Q_NULLPTR;
+            updateExtendHeaderViewProperty();
+
+            m_headerView->setHighlightSections(true);
+            m_headerView->setSectionsClickable(true);
+            m_headerView->setSortIndicatorShown(true);
+            m_headerView->setDefaultAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+
+            if(selectionModel()) {
+                m_headerView->setSelectionModel(selectionModel());
+            }
+
+            connect(m_headerView, &QHeaderView::sectionResized,
+                    this, static_cast<void (DFileView::*)()>(&DFileView::update));
+            connect(m_headerView, &QHeaderView::sortIndicatorChanged,
+                    model(), &QAbstractItemModel::sort);
         }
-
-        m_columnRoles.clear();
-
-        setIconSize(currentIconSize());
-        setOrientation(QListView::LeftToRight, true);
-        setSpacing(5);
-
+        setColumnWidth(0, 200);
+        setIconSize(QSize(30, 30));
+        setOrientation(QListView::TopToBottom, false);
+        setSpacing(0);
         break;
     }
     default:
@@ -815,11 +845,10 @@ void DFileView::showNormalMenu(const QModelIndex &index)
     }
 }
 
-void DFileView::updateHeaderViewProperty()
+void DFileView::updateListHeaderViewProperty()
 {
     if(!m_headerView)
         return;
-
     m_headerView->setModel(Q_NULLPTR);
     m_headerView->setModel(model());
     m_headerView->setSectionResizeMode(QHeaderView::Fixed);
@@ -829,7 +858,21 @@ void DFileView::updateHeaderViewProperty()
     m_headerView->resizeSection(2, 50);
 
     m_columnRoles.clear();
-
     for (int i = 0; i < m_headerView->count(); ++i)
         m_columnRoles << model()->getRoleByColumn(i);
+}
+
+void DFileView::updateExtendHeaderViewProperty()
+{
+    if(!m_headerView)
+        return;
+    m_headerView->setModel(Q_NULLPTR);
+    m_headerView->setModel(model());
+    m_headerView->setSectionResizeMode(QHeaderView::Fixed);
+    m_headerView->setSectionResizeMode(0, QHeaderView::Stretch);
+    m_headerView->setDefaultSectionSize(100);
+    m_headerView->setMinimumSectionSize(200);
+
+    m_columnRoles.clear();
+    m_columnRoles << model()->getRoleByColumn(0);
 }
