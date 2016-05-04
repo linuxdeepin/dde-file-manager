@@ -141,7 +141,6 @@
         <file>images/icons/recent_checked_22px.svg</file>
         <file>images/icons/recent_hover_22px.svg</file>
         <file>images/icons/trash_normal_22px.svg</file>
-        <file>images/icons/disk_active_22px.svg</file>
         <file>images/icons/documents_normal_22px.svg</file>
         <file>images/icons/phone_normal_22px.svg</file>
         <file>images/icons/home_normal_22px.svg</file>
@@ -176,5 +175,6 @@
         <file>images/icons/unmount_hover.svg</file>
         <file>images/icons/unmount_normal.svg</file>
         <file>images/icons/unmount_press.svg</file>
+        <file>images/icons/disk_checked_22px.svg</file>
     </qresource>
 </RCC>
