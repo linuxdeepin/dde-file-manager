@@ -34,6 +34,8 @@ public:
   static QString formatSize( qint64 num );
   static QString newDocmentName(const QString& targetdir, const QString& baseName, const QString& suffix);
   static void cpTemplateFileToTargetDir(const QString& targetdir, const QString& baseName, const QString& suffix);
+
+  static bool openDesktopFile(const QString& path);
 };
 
 #endif // FILEUTILS_H

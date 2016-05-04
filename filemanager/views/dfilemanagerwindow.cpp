@@ -113,7 +113,7 @@ void DFileManagerWindow::initRightView()
 
     m_titleFrame->setFixedHeight(TITLE_FIXED_HEIGHT);
 
-    m_viewStackLayout = new QStackedLayout;
+    m_viewStackLayout = new QStackedLayout(this);
     m_viewStackLayout->addWidget(m_fileView);
     m_viewStackLayout->addWidget(m_extendView);
     m_viewStackLayout->setSpacing(0);
