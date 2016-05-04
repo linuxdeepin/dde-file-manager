@@ -4,6 +4,7 @@
 #include "dscrollbar.h"
 #include "windowmanager.h"
 
+#include "../controllers/pathmanager.h"
 #include "../controllers/bookmarkmanager.h"
 #include "../../deviceinfo/devicelistener.h"
 #include "../../deviceinfo/deviceinfo.h"
@@ -43,63 +44,89 @@ DLeftSideBar::~DLeftSideBar()
 
 void DLeftSideBar::initData()
 {
-    m_iconlist << ":/icons/images/icons/file_normal_16px.svg" //file
-               << ":/icons/images/icons/recent_normal_16px.svg" //recent
-               << ":/icons/images/icons/home_normal_16px.svg" //home
-               << ":/icons/images/icons/desktop_normal_16px.svg" //desktop
-               << ":/icons/images/icons/videos_normal_16px.svg" //video
-               << ":/icons/images/icons/music_normal_16px.svg" //music
-               << ":/icons/images/icons/pictures_normal_16px.svg" //picture
-               << ":/icons/images/icons/documents_normal_16px.svg" //document
-               << ":/icons/images/icons/download_normal_16px.svg" //download
 
-               << ":/icons/images/icons/trash_normal_16px.svg" //trash
-               << ":/icons/images/icons/disk_normal_16px.svg"; //disk
+    m_icons["File"] =  ":/icons/images/icons/file_normal_16px.svg";
+    m_icons["Recent"] =  ":/icons/images/icons/recent_normal_16px.svg";
+    m_icons["Home"] =  ":/icons/images/icons/home_normal_16px.svg";
+    m_icons["Desktop"] =  ":/icons/images/icons/desktop_normal_16px.svg";
+    m_icons["Videos"] =  ":/icons/images/icons/videos_normal_16px.svg";
+    m_icons["Musics"] =  ":/icons/images/icons/music_normal_16px.svg";
+    m_icons["Pictures"] =  ":/icons/images/icons/pictures_normal_16px.svg";
+    m_icons["Documents"] =  ":/icons/images/icons/documents_normal_16px.svg";
+    m_icons["Download"] =  ":/icons/images/icons/download_normal_16px.svg";
+    m_icons["Trash"] =  ":/icons/images/icons/trash_normal_16px.svg";
+    m_icons["Disks"] =  ":/icons/images/icons/disk_normal_16px.svg";
 
-    m_bigIconlist << ":/icons/images/icons/file_normal_22px.svg" //file
-                  << ":/icons/images/icons/recent_normal_22px.svg" //recent
-                  << ":/icons/images/icons/home_normal_22px.svg" //home
-                  << ":/icons/images/icons/desktop_normal_22px.svg" //desktop
-                  << ":/icons/images/icons/videos_normal_22px.svg" //video
-                  << ":/icons/images/icons/music_normal_22px.svg" //music
-                  << ":/icons/images/icons/pictures_normal_22px.svg" //picture
-                  << ":/icons/images/icons/documents_normal_22px.svg" //document
-                  << ":/icons/images/icons/download_normal_22px.svg" //download
 
-                  << ":/icons/images/icons/trash_normal_22px.svg" //trash
-                  << ":/icons/images/icons/disk_normal_22px.svg" //disk
-                  << ":/icons/images/icons/favourite_normal.svg"; //bookmarks
+    m_checkedIcons["File"] =  ":/icons/images/icons/file_checked_16px.svg";
+    m_checkedIcons["Recent"] =  ":/icons/images/icons/recent_checked_16px.svg";
+    m_checkedIcons["Home"] =  ":/icons/images/icons/home_checked_16px.svg";
+    m_checkedIcons["Desktop"] =  ":/icons/images/icons/desktop_checked_16px.svg";
+    m_checkedIcons["Videos"] =  ":/icons/images/icons/videos_checked_16px.svg";
+    m_checkedIcons["Musics"] =  ":/icons/images/icons/music_checked_16px.svg";
+    m_checkedIcons["Pictures"] =  ":/icons/images/icons/pictures_checked_16px.svg";
+    m_checkedIcons["Documents"] =  ":/icons/images/icons/documents_checked_16px.svg";
+    m_checkedIcons["Download"] =  ":/icons/images/icons/download_checked_16px.svg";
+    m_checkedIcons["Trash"] =  ":/icons/images/icons/trash_checked_16px.svg";
+    m_checkedIcons["Disks"] =  ":/icons/images/icons/disk_checked_16px.svg";
 
-    m_bigIconlistChecked << ":/icons/images/icons/file_checked_22px.svg" //file
-                         << ":/icons/images/icons/recent_checked_22px.svg" //recent
-                         << ":/icons/images/icons/home_checked_22px.svg" //home
-                         << ":/icons/images/icons/desktop_checked_22px.svg" //desktop
-                         << ":/icons/images/icons/videos_checked_22px.svg" //video
-                         << ":/icons/images/icons/music_checked_22px.svg" //music
-                         << ":/icons/images/icons/pictures_checked_22px.svg" //picture
-                         << ":/icons/images/icons/documents_checked_22px.svg" //document
-                         << ":/icons/images/icons/download_checked_22px.svg" //download
 
-                         << ":/icons/images/icons/trash_checked_22px.svg" //trash
-                         << ":/icons/images/icons/disk_checked_22px.svg" //disk
-                         << ":/icons/images/icons/favourite_checked.svg"; //bookmarks
+    m_bigIcons["File"] =  ":/icons/images/icons/file_normal_22px.svg";
+    m_bigIcons["Recent"] =  ":/icons/images/icons/recent_normal_22px.svg";
+    m_bigIcons["Home"] =  ":/icons/images/icons/home_normal_22px.svg";
+    m_bigIcons["Desktop"] =  ":/icons/images/icons/desktop_normal_22px.svg";
+    m_bigIcons["Videos"] =  ":/icons/images/icons/videos_normal_22px.svg";
+    m_bigIcons["Musics"] =  ":/icons/images/icons/music_normal_22px.svg";
+    m_bigIcons["Pictures"] =  ":/icons/images/icons/pictures_normal_22px.svg";
+    m_bigIcons["Documents"] =  ":/icons/images/icons/documents_normal_22px.svg";
+    m_bigIcons["Download"] =  ":/icons/images/icons/download_normal_22px.svg";
+    m_bigIcons["Trash"] =  ":/icons/images/icons/trash_normal_22px.svg";
+    m_bigIcons["Disks"] =  ":/icons/images/icons/disk_normal_22px.svg";
 
-    m_iconlistChecked << ":/icons/images/icons/file_checked_16px.svg" //file
-               << ":/icons/images/icons/recent_checked_16px.svg" //recent
-               << ":/icons/images/icons/home_checked_16px.svg" //home
-               << ":/icons/images/icons/desktop_checked_16px.svg" //desktop
-               << ":/icons/images/icons/videos_checked_16px.svg" //video
-               << ":/icons/images/icons/music_checked_16px.svg" //music
-               << ":/icons/images/icons/pictures_checked_16px.svg" //picture
-               << ":/icons/images/icons/documents_checked_16px.svg" //document
-               << ":/icons/images/icons/download_checked_16px.svg" //download
 
-               << ":/icons/images/icons/trash_checked_16px.svg" //trash
-               << ":/icons/images/icons/disk_checked_16px.svg"; //disk
+    m_checkedBigIcons["File"] =  ":/icons/images/icons/file_checked_22px.svg";
+    m_checkedBigIcons["Recent"] =  ":/icons/images/icons/recent_checked_22px.svg";
+    m_checkedBigIcons["Home"] =  ":/icons/images/icons/home_checked_22px.svg";
+    m_checkedBigIcons["Desktop"] =  ":/icons/images/icons/desktop_checked_22px.svg";
+    m_checkedBigIcons["Videos"] =  ":/icons/images/icons/videos_checked_22px.svg";
+    m_checkedBigIcons["Musics"] =  ":/icons/images/icons/music_checked_22px.svg";
+    m_checkedBigIcons["Pictures"] =  ":/icons/images/icons/pictures_checked_22px.svg";
+    m_checkedBigIcons["Documents"] =  ":/icons/images/icons/documents_checked_22px.svg";
+    m_checkedBigIcons["Download"] =  ":/icons/images/icons/download_checked_22px.svg";
+    m_checkedBigIcons["Trash"] =  ":/icons/images/icons/trash_checked_22px.svg";
+    m_checkedBigIcons["Disks"] =  ":/icons/images/icons/disk_checked_22px.svg";
 
-    m_nameList << "File" << "Recent" << "Home"  << "Desktop"
-               << "Videos" << "Musics" << "Pictures" << "Documents" << "Downloads"
-               << "Trash" << "Disks" << "Bookmarks";
+    m_nameList << "Recent"
+               << "Home"
+               << "Desktop"
+               << "Videos"
+               << "Musics"
+               << "Pictures"
+               << "Documents"
+               << "Download"
+               << "Trash"
+               << "Separator"
+               << "Disks";
+
+    m_systemPathKeys << "Desktop"
+                     << "Videos"
+                     << "Musics"
+                     << "Pictures"
+                     << "Documents"
+                     << "Download";
+
+    m_systemBookMarks["Recent"] = tr("Recent");
+    m_systemBookMarks["Home"] = tr("Home");
+    m_systemBookMarks["Trash"] = tr("Trash");
+    m_systemBookMarks["Disks"] = tr("Disks");
+
+    foreach (QString key, m_nameList) {
+        if (systemPathManager->systemPaths().contains(key)){
+            m_systemBookMarks[key] = systemPathManager->getSystemPathDisplayName(key);
+            qDebug() << key << m_systemBookMarks[key];
+        }
+    }
+
     m_navState = true;
     setAcceptDrops(true);
 }
@@ -166,16 +193,18 @@ void DLeftSideBar::initTightNav()
     m_view->setScene(m_tightScene);
     m_tightScene->setAcceptDrop(false);
 
-    for(int i = 1; i < m_bigIconlist.size(); i++)
-    {
-        DBookmarkItem * item = new DBookmarkItem;
-        item->boundImageToHover(m_bigIconlistChecked.at(i));
-        item->boundImageToPress(m_bigIconlistChecked.at(i));
-        item->boundImageToRelease(m_bigIconlist.at(i));
-        item->setUrl(getStandardPathbyId(i));
-        item->setDefaultItem(true);
-        m_tightScene->addItem(item);
+    foreach (QString key, m_nameList) {
+        if (key != "Separator"){
+            DBookmarkItem * item = new DBookmarkItem;
+            item->boundImageToHover(m_checkedBigIcons.value(key));
+            item->boundImageToPress(m_checkedBigIcons.value(key));
+            item->boundImageToRelease(m_bigIcons.value(key));
+            item->setUrl(getStandardPathByKey(key));
+            item->setDefaultItem(true);
+            m_tightScene->addItem(item);
+        }
     }
+
     tightNavLayout->addWidget(m_view);
 }
 
@@ -211,74 +240,41 @@ void DLeftSideBar::initNav()
     m_scene->setSceneRect(0, 0, 200, 500);
     m_view->setScene(m_scene);
 
-    for(int i = 1; i <= 9; i++)
-    {
-        DBookmarkItem * item = new DBookmarkItem;
-        item->boundImageToHover(m_iconlistChecked.at(i));
-        item->boundImageToPress(m_iconlistChecked.at(i));
-        item->boundImageToRelease(m_iconlist.at(i));
-        item->setText(m_nameList.at(i));
-        item->setUrl(getStandardPathbyId(i));
-        item->setDefaultItem(true);
-        m_scene->addItem(item);
-    }
-    m_scene->addSeparator();
-    for(int i = 10; i <m_iconlist.size(); i++)
-    {
-        DBookmarkItem * item = new DBookmarkItem;
-        item->boundImageToHover(m_iconlistChecked.at(i));
-        item->boundImageToPress(m_iconlistChecked.at(i));
-        item->boundImageToRelease(m_iconlist.at(i));
-        item->setText(m_nameList.at(i));
-        item->setUrl(getStandardPathbyId(i));
-        item->setDefaultItem(true);
-        m_scene->addItem(item);
+
+    foreach (QString key, m_nameList) {
+        if (key == "Separator"){
+            m_scene->addSeparator();
+        }else{
+            DBookmarkItem * item = new DBookmarkItem;
+            item->boundImageToHover(m_checkedIcons.value(key));
+            item->boundImageToPress(m_checkedIcons.value(key));
+            item->boundImageToRelease(m_icons.value(key));
+            item->setText(m_systemBookMarks.value(key));
+            item->setUrl(getStandardPathByKey(key));
+            item->setDefaultItem(true);
+            m_scene->addItem(item);
+        }
     }
     navLayout->addWidget(m_view);
 }
 
-DUrl DLeftSideBar::getStandardPathbyId(int id)
+DUrl DLeftSideBar::getStandardPathByKey(QString key)
 {
+
     DUrl url;
-
-    switch (id) {
-    case 1:
+    if (key == "Recent"){
         url = DUrl::fromRecentFile("/");
-        break;
-    case 2:
+    }else if (key == "Home"){
         url = DUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0));
-        break;
-    case 3:
-        url = DUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).at(0));
-        break;
-    case 4:
-        url = DUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).at(0));
-        break;
-    case 5:
-        url = DUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::MusicLocation).at(0));
-        break;
-    case 6:
-        url = DUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).at(0));
-        break;
-    case 7:
-        url = DUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).at(0));
-        break;
-    case 8:
-        url = DUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::DownloadLocation).at(0));
-        break;
-    case 9:
+    }else if (key == "Trash"){
         url = DUrl::fromTrashFile("/");
-        break;
-    case 10:
+    }else if (key == "Disks"){
         url = DUrl::fromComputerFile("/");
-        break;
-    case 11:
-        url = DUrl::fromBookMarkFile("/");
-        break;
-    default:
-        break;
+    }else if (m_systemPathKeys.contains(key)){
+        url =  DUrl::fromLocalFile(systemPathManager->getSystemPath(key));
+    }else{
+        qDebug() << "unknown key:" << key;
     }
-
     return url;
 }
 
