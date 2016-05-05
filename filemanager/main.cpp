@@ -18,6 +18,7 @@
 #include <QApplication>
 #include <QDebug>
 #include <QThreadPool>
+#include <QTranslator>
 
 #include "../controllers/pathmanager.h"
 
@@ -32,6 +33,10 @@ int main(int argc, char *argv[])
     app.setOrganizationName("deepin");
     app.setApplicationName(QObject::tr("dde-file-manager"));
     app.setApplicationVersion("v1.0");
+
+    QTranslator translator;
+    translator.load(APPSHAREDIR"/translations/dde-file-manager_" + QLocale::system().name());
+    app.installTranslator(&translator);
 
     CommandLineManager::instance()->process();
 
