@@ -335,6 +335,10 @@ QIcon IconProvider::findIcon(const QString &file) const
 
     // If there is icon for current suffix then return it
     QString suffix = FileUtils::getRealSuffix(type.fileName()); /*type.suffix();*/
+
+    if (suffix == "desktop")
+        return IconProvider::getDesktopIcon(DesktopFile(file).getIcon(), 48);
+
     if (m_mimeIcons.contains(suffix)) {
       return m_mimeIcons.value(suffix);
     }

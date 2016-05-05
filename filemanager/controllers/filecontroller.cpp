@@ -111,7 +111,6 @@ const QList<AbstractFileInfoPointer> FileController::getChildren(const DUrl &fil
 bool FileController::openFile(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
-
     if (QFileInfo(fileUrl.toLocalFile()).suffix() == "desktop"){
         return FileUtils::openDesktopFile(fileUrl.toLocalFile());
     }
