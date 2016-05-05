@@ -13,7 +13,8 @@ public:
     ~SingleApplication();
     void initConnect();
 
-    static void newClientProcess(const QString& serverName);
+    static void newClientProcess(const QString& key);
+    static QString userServerName(const QString& key);
 
 signals:
 

@@ -26,11 +26,11 @@ void SingleApplication::initConnect()
     connect(m_localServer, &QLocalServer::newConnection, this, &SingleApplication::handleConnection);
 }
 
-void SingleApplication::newClientProcess(const QString &serverName)
+void SingleApplication::newClientProcess(const QString &key)
 {
     qDebug() << "The dde-file-manager is running!";
     QLocalSocket *localSocket = new QLocalSocket;
-    localSocket->connectToServer(serverName);
+    localSocket->connectToServer(userServerName(key));
     if (localSocket->waitForConnected(1000)){
         if (localSocket->state() == QLocalSocket::ConnectedState){
             if (localSocket->isValid()){
@@ -52,11 +52,25 @@ void SingleApplication::newClientProcess(const QString &serverName)
     qDebug() << "The dde-file-manager is running end!";
 }
 
+QString SingleApplication::userServerName(const QString &key)
+{
+    QProcess userID;
+    userID.start("id", QStringList() << "-u");
+    userID.waitForFinished();
+    QByteArray id = userID.readAll();
+
+    QString userKey = QString("%1/%2/%3").arg("/var/run/user", QString(id).trimmed(), key);
+    return userKey;
+}
+
+
+
 bool SingleApplication::setSingleInstance(const QString &key)
 {
+    QString userKey = userServerName(key);
 
     QLocalSocket *localSocket = new QLocalSocket;
-    localSocket->connectToServer(key);
+    localSocket->connectToServer(userKey);
 
     // if connect success, another instance is running.
     bool result = localSocket->waitForConnected(1000);
@@ -65,8 +79,11 @@ bool SingleApplication::setSingleInstance(const QString &key)
     if (result)
         return false;
 
-    m_localServer->removeServer(key);
-    return m_localServer->listen(key);
+    m_localServer->removeServer(userKey);
+
+    bool f = m_localServer->listen(userKey);
+
+    return f;
 }
 
 void SingleApplication::handleConnection()
