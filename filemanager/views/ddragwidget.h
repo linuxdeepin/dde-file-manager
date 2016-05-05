@@ -34,10 +34,12 @@ public:
     ~DDragWidget();
     void startDrag();
     void setPixmap(const QPixmap & pixmap);
+    void setHotSpot(const QPoint &hotspot);
     bool eventFilter(QObject *obj, QEvent *e);
 private:
     PixmapWidget * m_widget;
     QTimer * m_timer;
+    QPoint m_hotspot;
 public slots:
     void timerEvent();
 };

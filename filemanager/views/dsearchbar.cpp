@@ -7,6 +7,7 @@
 
 #include <QDirModel>
 #include <QDebug>
+#include "dscrollbar.h"
 
 DSearchBar::DSearchBar(QWidget *parent):QLineEdit(parent)
 {
@@ -41,6 +42,8 @@ void DSearchBar::initUI()
     setClearAction();
 
     m_list->installEventFilter(this);
+    m_list->setVerticalScrollBar(new DScrollBar);
+    m_list->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
 QStringList DSearchBar::splitPath(const QString &path)
