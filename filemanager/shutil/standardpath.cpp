@@ -14,6 +14,11 @@ StandardPath::~StandardPath()
 
 }
 
+QString StandardPath::getAppConfigPath()
+{
+    return APPSHAREDIR;
+}
+
 QString StandardPath::getHomePath()
 {
     return QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0);

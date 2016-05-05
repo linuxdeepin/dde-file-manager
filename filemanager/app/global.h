@@ -15,7 +15,9 @@
 #include "../../deviceinfo/devicelistener.h"
 #include "../../deviceinfo/udisklistener.h"
 #include "../shutil/mimesappsmanager.h"
+#include "../shutil/mimetypedisplaymanager.h"
 #include "../shutil/iconprovider.h"
+
 
 
 #include <QFontMetrics>
@@ -35,6 +37,7 @@
 #define deviceListener Singleton<UDiskListener>::instance()
 #define mimeAppsManager Singleton<MimesAppsManager>::instance()
 #define systemPathManager Singleton<PathManager>::instance()
+#define mimeTypeDisplayManager Singleton<MimeTypeDisplayManager>::instance()
 
 #define defaut_icon ":/images/images/default.png"
 #define defaut_computerIcon ":/images/images/computer.png"

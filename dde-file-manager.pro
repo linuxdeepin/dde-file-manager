@@ -121,7 +121,8 @@ HEADERS += \
     filemanager/models/ddiriterator.h \
     filemanager/views/extendview.h \
     filemanager/controllers/pathmanager.h \
-    filemanager/views/ddragwidget.h
+    filemanager/views/ddragwidget.h \
+    filemanager/shutil/mimetypedisplaymanager.h
 
 
 SOURCES += \
@@ -205,7 +206,8 @@ SOURCES += \
     filemanager/controllers/fmsortmanager.cpp \
     filemanager/views/extendview.cpp \
     filemanager/controllers/pathmanager.cpp \
-    filemanager/views/ddragwidget.cpp
+    filemanager/views/ddragwidget.cpp \
+    filemanager/shutil/mimetypedisplaymanager.cpp
 
 
 
@@ -226,6 +228,15 @@ templateFiles.files = skin/templates/newDoc.doc \
     skin/templates/newPowerPoint.ppt \
     skin/templates/newTxt.txt
 
+
+mimetypeFiles.path = $$APPSHAREDIR/mimetypes
+mimetypeFiles.files += \
+    mimetypes/archive.mimetype \
+    mimetypes/text.mimetype \
+    mimetypes/video.mimetype \
+    mimetypes/audio.mimetype \
+    mimetypes/image.mimetype
+
 # Automating generation .qm files from .ts files
 CONFIG(release, debug|release) {
     system($$PWD/generate_translations.sh)
@@ -234,6 +245,7 @@ CONFIG(release, debug|release) {
 translations.path = $$APPSHAREDIR/translations
 translations.files = translations/*.qm
 
-INSTALLS += target desktop templateFiles translations
+INSTALLS += target desktop templateFiles translations mimetypeFiles
+
 
 
