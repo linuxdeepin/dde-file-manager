@@ -2,6 +2,7 @@
 #include "desktopfileinfo.h"
 #include "abstractfileinfo.h"
 
+#include "../app/global.h"
 #include "../views/dfileview.h"
 
 #include "../app/filemanagerapp.h"
@@ -11,6 +12,8 @@
 #include "../controllers/fileservices.h"
 
 #include "filemonitor/filemonitor.h"
+#include "../shutil/mimetypedisplaymanager.h"
+#include "../shutil/fileutils.h"
 
 #include <QDebug>
 #include <QFileIconProvider>
@@ -183,13 +186,16 @@ QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
     case Qt::TextAlignmentRole:
         return Qt::AlignVCenter;
     case FileLastModifiedRole:
-        return indexNode->fileInfo->lastModified().toString();
+        return indexNode->fileInfo->lastModified().toString("yyyy/MM/dd HH:MM:ss");
     case FileSizeRole:
-        return indexNode->fileInfo->size();
-    case FileMimeTypeRole:
-        return indexNode->fileInfo->mimeTypeName();
+        return FileUtils::formatSize(indexNode->fileInfo->size());
+    case FileMimeTypeRole:{
+        QString name = indexNode->fileInfo->mimeTypeName();
+        QString displayName = mimeTypeDisplayManager->displayName(name);
+        return displayName;
+    }
     case FileCreatedRole:
-        return indexNode->fileInfo->created().toString();
+        return indexNode->fileInfo->created().toString("yyyy/MM/dd HH:MM:ss");
     default: {
         const AbstractFileInfoPointer &fileInfo = indexNode->fileInfo;
 

@@ -272,7 +272,7 @@ QString FileUtils::formatSize( qint64 num )
     else if ( num >= gb ) total = QString( "%1 GB" ).arg( QString::number( qreal( num ) / gb, 'f', 2 ) );
     else if ( num >= mb ) total = QString( "%1 MB" ).arg( QString::number( qreal( num ) / mb, 'f', 1 ) );
     else if ( num >= kb ) total = QString( "%1 KB" ).arg( QString::number( qreal( num ) / kb,'f',1 ) );
-    else total = QString( "%1 bytes" ).arg( num );
+    else total = QString( "%1 B" ).arg( num );
 
     return total;
 }
