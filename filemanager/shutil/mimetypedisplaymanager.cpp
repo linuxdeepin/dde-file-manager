@@ -9,6 +9,7 @@ QStringList MimeTypeDisplayManager::TextMimeTypes;
 QStringList MimeTypeDisplayManager::VideoMimeTypes;
 QStringList MimeTypeDisplayManager::AudioMimeTypes;
 QStringList MimeTypeDisplayManager::ImageMimeTypes;
+QStringList MimeTypeDisplayManager::ExecutableMimeTypes;
 
 
 MimeTypeDisplayManager::MimeTypeDisplayManager(QObject *parent) : QObject(parent)
@@ -47,7 +48,7 @@ QString MimeTypeDisplayManager::displayName(const QString &mimeType)
         return m_displayNames.value("desktop");
     }else if (mimeType == "inode/directory"){
         return m_displayNames.value("directory");
-    }else if (mimeType == "application/x-executable"){
+    }else if (mimeType == "application/x-executable" || ExecutableMimeTypes.contains(mimeType)){
         return m_displayNames.value("executable");
     }else if (mimeType.startsWith("video/") || VideoMimeTypes.contains(mimeType)){
         return m_displayNames.value("video");
@@ -92,12 +93,12 @@ void MimeTypeDisplayManager::loadSupportMimeTypes()
     QString videoPath = QString("%1/%2/%3").arg(StandardPath::getAppConfigPath(), "mimetypes", "video.mimetype");
     QString audioPath = QString("%1/%2/%3").arg(StandardPath::getAppConfigPath(), "mimetypes", "audio.mimetype");
     QString imagePath = QString("%1/%2/%3").arg(StandardPath::getAppConfigPath(), "mimetypes", "image.mimetype");
+    QString executablePath = QString("%1/%2/%3").arg(StandardPath::getAppConfigPath(), "mimetypes", "executable.mimetype");
     TextMimeTypes = readlines(textPath);
     ArchiveMimeTypes = readlines(archivePath);
     VideoMimeTypes = readlines(videoPath);
     AudioMimeTypes = readlines(audioPath);
     ImageMimeTypes = readlines(imagePath);
-
-    qDebug() << TextMimeTypes;
+    ExecutableMimeTypes = readlines(executablePath);
  }
 

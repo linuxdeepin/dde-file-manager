@@ -235,7 +235,8 @@ mimetypeFiles.files += \
     mimetypes/text.mimetype \
     mimetypes/video.mimetype \
     mimetypes/audio.mimetype \
-    mimetypes/image.mimetype
+    mimetypes/image.mimetype \
+    mimetypes/executable.mimetype
 
 # Automating generation .qm files from .ts files
 CONFIG(release, debug|release) {
