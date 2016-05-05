@@ -137,10 +137,14 @@ void TrashFileInfo::updateInfo()
         setting.setIniCodec("utf-8");
 
         originalFilePath = QByteArray::fromPercentEncoding(setting.value("Path").toByteArray()) + filePath.mid(basePath.size() + fileBaseName.size());
-        m_displayName = originalFilePath.mid(originalFilePath.lastIndexOf('/') + 1);
+
+        if (originalFilePath.endsWith("desktop"))
+            m_displayName = AbstractFileInfo::displayName();
+        else
+            m_displayName = originalFilePath.mid(originalFilePath.lastIndexOf('/') + 1);
 
         deletionDate = setting.value("DeletionDate").toString();
     } else {
-        m_displayName = fileName();
+        m_displayName = AbstractFileInfo::displayName();
     }
 }

@@ -147,6 +147,9 @@ QString AbstractFileInfo::displayName() const
             }
         }
     }else{
+        if (fileName().endsWith("desktop")){
+            return DesktopFile(absoluteFilePath()).getName();
+        }
         return fileName();
     }
 }

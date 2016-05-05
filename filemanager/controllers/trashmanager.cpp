@@ -61,8 +61,9 @@ const QList<AbstractFileInfoPointer> TrashManager::getChildren(const DUrl &fileU
 bool TrashManager::openFile(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
-
-    return FileServices::instance()->openFile(DUrl::fromLocalFile(TRASHFILEPATH + fileUrl.path()));
+    qDebug() << "trash open action is disable : " << fileUrl;
+//    return FileServices::instance()->openFile(DUrl::fromLocalFile(TRASHFILEPATH + fileUrl.path()));
+    return true;
 }
 
 bool TrashManager::addUrlMonitor(const DUrl &fileUrl, bool &accepted) const
