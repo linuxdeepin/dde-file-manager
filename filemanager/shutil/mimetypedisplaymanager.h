@@ -33,6 +33,7 @@ private:
     static QStringList VideoMimeTypes;
     static QStringList AudioMimeTypes;
     static QStringList ImageMimeTypes;
+    static QStringList ExecutableMimeTypes;
 
     bool m_supportLoaded = false;
 };
