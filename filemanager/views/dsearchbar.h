@@ -62,6 +62,8 @@ protected:
     void focusOutEvent(QFocusEvent *e);
     bool event(QEvent *e);
     bool eventFilter(QObject *obj, QEvent *e);
+    void resizeEvent(QResizeEvent *e);
+    void moveEvent(QMoveEvent *e);
 signals:
     void searchBarFocused();
 };
