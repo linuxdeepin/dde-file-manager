@@ -83,7 +83,7 @@ void DialogManager::showOpenWithDialog(const FMEvent &event)
 {
     QWidget* w = WindowManager::getWindowById(event.windowId());
     if (w){
-        OpenWithDialog* d = new OpenWithDialog(event.fileUrl(), w);
+        OpenWithDialog* d = new OpenWithDialog(event.fileUrl());
         d->show();
     }
 }
@@ -92,7 +92,7 @@ void DialogManager::showPropertyDialog(const FMEvent &event)
 {
     QWidget* w = WindowManager::getWindowById(event.windowId());
     if (w){
-        PropertyDialog *dialog = new PropertyDialog(event.fileUrl(), w);
+        PropertyDialog *dialog = new PropertyDialog(event.fileUrl());
 
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         dialog->setWindowFlags(dialog->windowFlags()
