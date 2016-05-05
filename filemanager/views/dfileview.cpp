@@ -19,6 +19,7 @@
 #include "../controllers/filejob.h"
 #include "../controllers/fmstatemanager.h"
 #include "../models/dfilesystemmodel.h"
+#include "dfilemanagerwindow.h"
 
 #include <dthememanager.h>
 
@@ -336,7 +337,7 @@ void DFileView::dislpayAsActionTriggered(QAction *action)
             setViewMode(ListMode);
             break;
         case MenuAction::ExtendView:
-            setViewMode(ExtendMode);
+            static_cast<DMainWindow*>(WindowManager::getWindowById(windowId()))->fileManagerWindow()->setExtendView();
             break;
         default:
             break;

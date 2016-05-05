@@ -8,7 +8,7 @@
 #include "../app/global.h"
 #include "../app/fmevent.h"
 #include "../app/filesignalmanager.h"
-
+#include "../shutil/fileutils.h"
 #include "filemonitor/filemonitor.h"
 
 #include <QDesktopServices>
@@ -111,6 +111,10 @@ const QList<AbstractFileInfoPointer> FileController::getChildren(const DUrl &fil
 bool FileController::openFile(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
+
+    if (QFileInfo(fileUrl.toLocalFile()).suffix() == "desktop"){
+        return FileUtils::openDesktopFile(fileUrl.toLocalFile());
+    }
 
     return QDesktopServices::openUrl(fileUrl);
 }
