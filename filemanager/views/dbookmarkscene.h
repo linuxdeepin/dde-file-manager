@@ -36,6 +36,7 @@ public:
     DBookmarkItem * hasBookmarkItem(const DUrl &url);
     DBookmarkItem * itemAt(const QPointF &point);
     int indexOf(DBookmarkItem * item);
+    void setTightMode(bool v);
 protected:
     void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
     void dragLeaveEvent(QGraphicsSceneDragDropEvent *event);
@@ -55,6 +56,7 @@ public slots:
     void deviceRemoved(DeviceInfo &deviceInfos);
     void doBookmarkRemoved(const FMEvent &event);
     void doBookmarkAdded(const QString &name, const FMEvent &event);
+    void doMoveBookmark(int from, int to, const FMEvent &event);
     void rootDropped(const QPointF& point);
 private:
     void increaseSize();

@@ -116,6 +116,12 @@ void BookMarkManager::removeBookmark(const QString &name, const DUrl &url)
     save();
 }
 
+void BookMarkManager::moveBookmark(int from, int to)
+{
+    m_bookmarks.move(from, to);
+    save();
+}
+
 const QList<AbstractFileInfoPointer> BookMarkManager::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
 {
     Q_UNUSED(fileUrl)

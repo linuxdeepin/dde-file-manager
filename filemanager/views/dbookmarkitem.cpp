@@ -38,6 +38,9 @@ DBookmarkItem::DBookmarkItem(DeviceInfo *deviceInfo)
     boundImageToHover(":/icons/images/icons/disk_hover_16px.svg");
     boundImageToPress(":/icons/images/icons/disk_hover_16px.svg");
     boundImageToRelease(":/icons/images/icons/disk_normal_16px.svg");
+    boundBigImageToHover(":/icons/images/icons/disk_hover_22px.svg");
+    boundBigImageToPress(":/icons/images/icons/disk_hover_22px.svg");
+    boundBigImageToRelease(":/icons/images/icons/disk_normal_22px.svg");
     if(!m_url.isEmpty())
         m_isMounted = true;
 }
@@ -50,6 +53,9 @@ DBookmarkItem::DBookmarkItem(BookMark *bookmark)
     boundImageToHover(":/icons/images/icons/bookmarks_hover_16px.svg");
     boundImageToPress(":/icons/images/icons/bookmarks_checked_16px.svg");
     boundImageToRelease(":/icons/images/icons/bookmarks_normal_16px.svg");
+    boundBigImageToHover(":/icons/images/icons/favourite_hover.svg");
+    boundBigImageToPress(":/icons/images/icons/favourite_checked.svg");
+    boundBigImageToRelease(":/icons/images/icons/favourite_normal.svg");
 }
 
 void DBookmarkItem::init()
@@ -76,6 +82,16 @@ QRectF DBookmarkItem::boundingRect() const
                   m_height + m_adjust);
 }
 
+void DBookmarkItem::setTightMode(bool v)
+{
+    m_isTightMode = v;
+}
+
+bool DBookmarkItem::isTightModel()
+{
+    return m_isTightMode;
+}
+
 void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(option);
@@ -83,7 +99,24 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
     double w = m_width;
     QColor textColor;
     double leftPadding = 8;
-    double dy = m_height/2 - m_releaseImage.height()/2;
+    double dy;
+    QPixmap press;
+    QPixmap release;
+    QPixmap hover;
+    if(m_isTightMode)
+    {
+        press = m_pressImageBig;
+        release = m_releaseImageBig;
+        hover = m_hoverImageBig;
+        dy = m_height/2 - m_releaseImageBig.height()/2;
+    }
+    else
+    {
+        press = m_pressImage;
+        release = m_releaseImage;
+        hover = m_hoverImage;
+        dy = m_height/2 - m_releaseImage.height()/2;
+    }
     if(m_pressed || (m_checked && m_checkable))
     {
         if(m_pressBackgroundEnabled)
@@ -93,12 +126,7 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
             painter->drawRect(m_x_axis, m_y_axis, m_width, m_height);
             textColor = Qt::white;
         }
-        painter->drawPixmap(leftPadding,
-                            dy,
-                            m_releaseImage.width(),
-                            m_releaseImage.height(),
-                            m_pressImage);
-
+        painter->drawPixmap(leftPadding, dy, press.width(), press.height(), press);
     }
     else if(m_hovered)
     {
@@ -108,11 +136,7 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
             painter->setPen(QColor(0,0,0,0));
             painter->drawRect(m_x_axis, m_y_axis, m_width, m_height);
         }
-        painter->drawPixmap(leftPadding,
-                            dy,
-                            m_releaseImage.width(),
-                            m_releaseImage.height(),
-                            m_hoverImage);
+        painter->drawPixmap(leftPadding, dy,  hover.width(), hover.height(), hover);
         textColor = Qt::white;
     }
     else
@@ -123,15 +147,11 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
             painter->setBrush(m_releaseBackgroundColor);
             painter->drawRect(m_x_axis, m_y_axis, m_width, m_height);
         }
-        painter->drawPixmap(leftPadding,
-                            dy,
-                            m_releaseImage.width(),
-                            m_releaseImage.height(),
-                            m_releaseImage);
+        painter->drawPixmap(leftPadding, dy, release.width(), release.height(), release);
         textColor = Qt::black;
     }
 
-    if(!m_textContent.isNull())
+    if(!m_textContent.isNull() && !m_isTightMode)
     {
         painter->setPen(textColor);
         painter->setFont(m_font);
@@ -179,6 +199,21 @@ void DBookmarkItem::boundImageToRelease(QString imagePath)
 void DBookmarkItem::boundImageToHover(QString imagePath)
 {
     m_hoverImage.load(imagePath);
+}
+
+void DBookmarkItem::boundBigImageToPress(QString imagePath)
+{
+    m_pressImageBig.load(imagePath);
+}
+
+void DBookmarkItem::boundBigImageToRelease(QString imagePath)
+{
+    m_releaseImageBig.load(imagePath);
+}
+
+void DBookmarkItem::boundBigImageToHover(QString imagePath)
+{
+    m_hoverImageBig.load(imagePath);
 }
 
 void DBookmarkItem::mousePressEvent(QGraphicsSceneMouseEvent *event)

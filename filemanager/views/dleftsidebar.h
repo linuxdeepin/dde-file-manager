@@ -7,6 +7,7 @@
 #include <QScrollBar>
 #include <QPushButton>
 #include <QGraphicsView>
+#include <QLabel>
 
 #include "durl.h"
 
@@ -34,7 +35,6 @@ public:
     void initData();
     void initUI();
     void initConnect();
-    void initTightNav();
     void initNav();
     DUrl getStandardPathByKey(QString key);
 protected:
@@ -44,6 +44,7 @@ signals:
     void moveSplitter(int pos, int index);
 public slots:
     void handleLocationChanged(const FMEvent &e);
+    void navSwitched();
     void toTightNav();
     void toNormalNav();
     void doDragEnter();
@@ -94,6 +95,8 @@ private:
     DBookmarkItemGroup * m_itemGroupTight;
 
     QMap<QString, QString> m_systemBookMarks;
+
+    QLabel * m_fileLabel = NULL;
 };
 
 #endif // DLEFTSIDEBAR_H

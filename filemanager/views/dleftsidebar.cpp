@@ -131,79 +131,24 @@ void DLeftSideBar::initData()
 
 void DLeftSideBar::initUI()
 {
-    initTightNav();
     initNav();
-    m_stackedWidget = new QStackedWidget;
-    m_stackedWidget->addWidget(m_tightNav);
-    m_stackedWidget->addWidget(m_nav);
-
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(m_stackedWidget);
+    mainLayout->addWidget(m_nav);
     mainLayout->setSpacing(0);
     mainLayout->setContentsMargins(0, 0, 0, 0);
     setLayout(mainLayout);
-    m_stackedWidget->setCurrentIndex(1);
     loadDevices();
     loadBookmark();
 }
 
 void DLeftSideBar::initConnect()
 {
-    connect(m_fileButton, &DCheckableButton::released, this, &DLeftSideBar::toTightNav);
-    connect(m_tightNavFileButton, &DCheckableButton::released, this, &DLeftSideBar::toNormalNav);
-    connect(m_tightScene->getGroup(), &DBookmarkItemGroup::url, this, &DLeftSideBar::handleLocationChanged);
+    connect(m_fileButton, &DCheckableButton::released, this, &DLeftSideBar::navSwitched);
     connect(m_scene->getGroup(), &DBookmarkItemGroup::url, this, &DLeftSideBar::handleLocationChanged);
     connect(m_scene, &DBookmarkScene::dragEntered, this, &DLeftSideBar::doDragEnter);
     connect(m_scene, &DBookmarkScene::dragLeft, this, &DLeftSideBar::doDragLeave);
-    connect(m_tightScene, &DBookmarkScene::dragEntered, this, &DLeftSideBar::doDragEnter);
-    connect(m_tightScene, &DBookmarkScene::dragLeft, this, &DLeftSideBar::doDragLeave);
     connect(m_scene, &DBookmarkScene::dropped, this, &DLeftSideBar::doDragLeave);
-    connect(m_tightScene, &DBookmarkScene::dropped, this, &DLeftSideBar::doDragLeave);
-}
-
-void DLeftSideBar::initTightNav()
-{
-    m_tightNav = new QFrame(this);
-    QHBoxLayout * fileButtonLayout = new QHBoxLayout;
-    m_tightNavFileButton = new QPushButton("", this);
-    m_tightNavFileButton->setObjectName("TightFileButton");
-    m_tightNavFileButton->setToolTip("File");
-    m_tightNavFileButton->setFixedSize(QSize(22, 22));
-    m_tightNavFileButton->setFocusPolicy(Qt::NoFocus);
-    fileButtonLayout->addWidget(m_tightNavFileButton);
-    fileButtonLayout->setContentsMargins(0, 15, 0, 0);
-    fileButtonLayout->setSpacing(0);
-
-    QVBoxLayout * tightNavLayout = new QVBoxLayout;
-    tightNavLayout->addLayout(fileButtonLayout);
-    tightNavLayout->setContentsMargins(0, 0, 0, 0);
-    tightNavLayout->setSpacing(0);
-    m_tightNav->setLayout(tightNavLayout);
-
-    QGraphicsView * m_view = new QGraphicsView;
-    m_view->setAlignment(Qt::AlignTop);
-    m_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    m_view->setVerticalScrollBar(new DScrollBar);
-    m_view->setObjectName("Bookmark");
-    m_tightScene = new DBookmarkScene;
-    m_tightScene->setSceneRect(0, 0, 60, 500);
-    m_view->setScene(m_tightScene);
-
-    foreach (QString key, m_nameList) {
-        if (key != "Separator"){
-            DBookmarkItem * item = new DBookmarkItem;
-            item->boundImageToHover(m_checkedBigIcons.value(key));
-            item->boundImageToPress(m_checkedBigIcons.value(key));
-            item->boundImageToRelease(m_bigIcons.value(key));
-            item->setUrl(getStandardPathByKey(key));
-            item->setDefaultItem(true);
-            item->setBounds(0, 0, 40, 26);
-            m_tightScene->addItem(item);
-        }
-    }
-
-    tightNavLayout->addWidget(m_view);
 }
 
 void DLeftSideBar::initNav()
@@ -212,16 +157,16 @@ void DLeftSideBar::initNav()
     m_nav->setFixedWidth(200);
     QVBoxLayout* navLayout = new QVBoxLayout;
     m_nav->setLayout(navLayout);
-    //add file button
+
     QHBoxLayout * fileButtonLayout = new QHBoxLayout;
-    QLabel * fileLabel = new QLabel(tr("File Manager"));
-    fileLabel->setObjectName("FileLabel");
+    m_fileLabel = new QLabel(tr("File Manager"));
+    m_fileLabel->setObjectName("FileLabel");
     m_fileButton = new QPushButton("");
     m_fileButton->setObjectName("FileButton");
     m_fileButton->setFixedSize(QSize(16,16));
     m_fileButton->setFocusPolicy(Qt::NoFocus);
     fileButtonLayout->addWidget(m_fileButton);
-    fileButtonLayout->addWidget(fileLabel);
+    fileButtonLayout->addWidget(m_fileLabel);
     fileButtonLayout->setContentsMargins(17.5, 15, 0, 0);
     fileButtonLayout->setSpacing(8);
 
@@ -248,6 +193,9 @@ void DLeftSideBar::initNav()
             item->boundImageToHover(m_checkedIcons.value(key));
             item->boundImageToPress(m_checkedIcons.value(key));
             item->boundImageToRelease(m_icons.value(key));
+            item->boundBigImageToHover(m_checkedBigIcons.value(key));
+            item->boundBigImageToPress(m_checkedBigIcons.value(key));
+            item->boundBigImageToRelease(m_bigIcons.value(key));
             item->setText(m_systemBookMarks.value(key));
             item->setUrl(getStandardPathByKey(key));
             item->setDefaultItem(true);
@@ -302,21 +250,62 @@ void DLeftSideBar::handleLocationChanged(const FMEvent &e)
     emit fileSignalManager->requestChangeCurrentUrl(event);
 }
 
+void DLeftSideBar::navSwitched()
+{
+    if(!m_isTight)
+    {
+        this->setFixedWidth(LEFTSIDEBAR_MIN_WIDTH);
+        m_scene->setTightMode(true);
+        m_isTight = true;
+        m_fileLabel->setText("");
+        m_fileButton->setFixedSize(QSize(22,22));
+        m_fileButton->setStyleSheet("QPushButton#FileButton{\
+                                   border: none;\
+                                   color: white;\
+                                   image: url(:/icons/images/icons/file_normal_22px.svg);\
+                                   text-align: left;\
+                               }\
+                               QPushButton#FileButton:hover{\
+                                   image: url(:/icons/images/icons/file_hover_22px.svg);\
+                               }\
+                               QPushButton#FileButton:press{\
+                                   image: url(:/icons/images/icons/file_hover_22px.svg);\
+                               }");
+    }
+    else
+    {
+        m_isTight = false;
+        this->setFixedWidth(LEFTSIDEBAR_MAX_WIDTH);
+        m_scene->setTightMode(false);
+        m_fileLabel->setText(tr("File Manager"));
+        m_fileButton->setFixedSize(QSize(16,16));
+        m_fileButton->setStyleSheet("QPushButton#FileButton{\
+                                   border: none;\
+                                   color: white;\
+                                   image: url(:/icons/images/icons/file_normal_16px.svg);\
+                                   text-align: left;\
+                               }\
+                               QPushButton#FileButton:hover{\
+                                   image: url(:/icons/images/icons/file_hover_16px.svg);\
+                               }\
+                               QPushButton#FileButton:press{\
+                                   image: url(:/icons/images/icons/file_hover_16px.svg);\
+                               }");
+    }
+}
+
 void DLeftSideBar::toTightNav()
 {
-    m_stackedWidget->setCurrentIndex(0);
     m_isTight = true;
     this->setFixedWidth(LEFTSIDEBAR_MIN_WIDTH);
-    //emit moveSplitter(LEFTSIDEBAR_MIN, 1);
+    m_scene->setTightMode(true);
 }
 
 void DLeftSideBar::toNormalNav()
 {
-    qDebug() << "to normal";
-    m_stackedWidget->setCurrentIndex(1);
     m_isTight = false;
     this->setFixedWidth(LEFTSIDEBAR_MAX_WIDTH);
-    //emit moveSplitter(LEFTSIDEBAR_NORMAL, 1);
+    m_scene->setTightMode(false);
 }
 
 void DLeftSideBar::doDragEnter()
@@ -339,7 +328,9 @@ void DLeftSideBar::loadBookmark()
 {
     QList<BookMark *> m_list = bookmarkManager->getBookmarks();
     if(m_list.size())
+    {
         m_scene->addSeparator();
+    }
     for(int i = 0; i < m_list.size(); i++)
     {
         BookMark * bm = m_list.at(i);

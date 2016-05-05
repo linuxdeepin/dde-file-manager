@@ -71,6 +71,9 @@ signals:
     /* bookmark add */
     void requestBookmarkAdd(const QString &name, const FMEvent &event);
 
+    /* bookmark move */
+    void requestBookmarkMove(int from, int to, const FMEvent &event);
+
     /*requst open new window by given url*/
     void requestOpenNewWindowByUrl(const DUrl& url, bool isAlwaysOpen);
 

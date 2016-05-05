@@ -12,5 +12,8 @@ void DBookmarkLine::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     double w = boundWidth();
     double h = boundHeight();
     painter->setPen(Qt::lightGray);
-    painter->drawLine(0, h/2 , w, h/2);
+    if(!isTightModel())
+        painter->drawLine(0, h/2 , w, h/2);
+    else
+        painter->drawLine(0, h/2 , 40, h/2);
 }

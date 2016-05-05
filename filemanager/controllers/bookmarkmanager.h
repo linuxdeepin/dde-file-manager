@@ -26,7 +26,7 @@ private:
 public slots:
     BookMark *writeIntoBookmark(int index, const QString &name, const DUrl &url);
     void removeBookmark(const QString &name, const DUrl &url);
-
+    void moveBookmark(int from, int to);
     // AbstractFileController interface
 public:
     const QList<AbstractFileInfoPointer> getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const;
