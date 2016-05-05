@@ -854,9 +854,10 @@ void DFileView::updateListHeaderViewProperty()
     m_headerView->setModel(model());
     m_headerView->setSectionResizeMode(QHeaderView::Fixed);
     m_headerView->setSectionResizeMode(0, QHeaderView::Stretch);
-    m_headerView->setDefaultSectionSize(100);
+    m_headerView->setDefaultSectionSize(200);
     m_headerView->setMinimumSectionSize(200);
-    m_headerView->resizeSection(2, 50);
+    m_headerView->resizeSection(2, 100);
+    m_headerView->resizeSection(3, 100);
 
     m_columnRoles.clear();
     for (int i = 0; i < m_headerView->count(); ++i)
