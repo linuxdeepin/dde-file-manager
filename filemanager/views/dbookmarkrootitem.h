@@ -3,7 +3,7 @@
 
 #include "dbookmarkitem.h"
 
-#define DEFAULT_ITEM_COUNT 12
+#define DEFAULT_ITEM_COUNT 10
 
 class DBookmarkScene;
 
@@ -11,12 +11,11 @@ class DBookmarkRootItem : public DBookmarkItem
 {
 public:
     DBookmarkRootItem(DBookmarkScene * scene);
-    DBookmarkItem * getDummyItem();
 protected:
+    void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
     void dropEvent(QGraphicsSceneDragDropEvent *event);
 private:
     DBookmarkScene * m_scene;
-    DBookmarkItem * m_dummyItem;
 };
 
 #endif // DBOOKMARKROOTITEM_H

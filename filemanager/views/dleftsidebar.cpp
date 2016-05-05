@@ -172,7 +172,7 @@ void DLeftSideBar::initTightNav()
     m_tightNavFileButton->setFixedSize(QSize(22, 22));
     m_tightNavFileButton->setFocusPolicy(Qt::NoFocus);
     fileButtonLayout->addWidget(m_tightNavFileButton);
-    fileButtonLayout->setContentsMargins(0, 15, 0, 10);
+    fileButtonLayout->setContentsMargins(0, 15, 0, 0);
     fileButtonLayout->setSpacing(0);
 
     QVBoxLayout * tightNavLayout = new QVBoxLayout;
@@ -189,7 +189,6 @@ void DLeftSideBar::initTightNav()
     m_tightScene = new DBookmarkScene;
     m_tightScene->setSceneRect(0, 0, 60, 500);
     m_view->setScene(m_tightScene);
-    m_tightScene->setAcceptDrop(false);
 
     foreach (QString key, m_nameList) {
         if (key != "Separator"){
@@ -199,6 +198,7 @@ void DLeftSideBar::initTightNav()
             item->boundImageToRelease(m_bigIcons.value(key));
             item->setUrl(getStandardPathByKey(key));
             item->setDefaultItem(true);
+            item->setBounds(0, 0, 40, 26);
             m_tightScene->addItem(item);
         }
     }
@@ -209,6 +209,7 @@ void DLeftSideBar::initTightNav()
 void DLeftSideBar::initNav()
 {
     m_nav = new QFrame;
+    m_nav->setFixedWidth(200);
     QVBoxLayout* navLayout = new QVBoxLayout;
     m_nav->setLayout(navLayout);
     //add file button
@@ -221,19 +222,19 @@ void DLeftSideBar::initNav()
     m_fileButton->setFocusPolicy(Qt::NoFocus);
     fileButtonLayout->addWidget(m_fileButton);
     fileButtonLayout->addWidget(fileLabel);
-    fileButtonLayout->setContentsMargins(17.5, 15, 0, 10);
+    fileButtonLayout->setContentsMargins(17.5, 15, 0, 0);
     fileButtonLayout->setSpacing(8);
 
     navLayout->addLayout(fileButtonLayout);
     navLayout->setSpacing(0);
-    navLayout->setContentsMargins(0, 0, 0, 0);
+
 
     QGraphicsView * m_view = new QGraphicsView;
     m_view->setAcceptDrops(true);
     m_view->setVerticalScrollBar(new DScrollBar);
     m_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_view->setObjectName("Bookmark");
-    m_view->setAlignment(Qt::AlignTop);
+    m_view->setAlignment(Qt::AlignTop | Qt::AlignLeft);
     m_scene = new DBookmarkScene;
     m_scene->setSceneRect(0, 0, 200, 500);
     m_view->setScene(m_scene);
@@ -250,10 +251,12 @@ void DLeftSideBar::initNav()
             item->setText(m_systemBookMarks.value(key));
             item->setUrl(getStandardPathByKey(key));
             item->setDefaultItem(true);
+            item->setBounds(0, 0, 180, 26);
             m_scene->addItem(item);
         }
     }
     navLayout->addWidget(m_view);
+    navLayout->setContentsMargins(0, 0, 0, 0);
 }
 
 DUrl DLeftSideBar::getStandardPathByKey(QString key)
@@ -304,7 +307,7 @@ void DLeftSideBar::toTightNav()
     m_stackedWidget->setCurrentIndex(0);
     m_isTight = true;
     this->setFixedWidth(LEFTSIDEBAR_MIN_WIDTH);
-    emit moveSplitter(LEFTSIDEBAR_MIN, 1);
+    //emit moveSplitter(LEFTSIDEBAR_MIN, 1);
 }
 
 void DLeftSideBar::toNormalNav()
@@ -313,7 +316,7 @@ void DLeftSideBar::toNormalNav()
     m_stackedWidget->setCurrentIndex(1);
     m_isTight = false;
     this->setFixedWidth(LEFTSIDEBAR_MAX_WIDTH);
-    emit moveSplitter(LEFTSIDEBAR_NORMAL, 1);
+    //emit moveSplitter(LEFTSIDEBAR_NORMAL, 1);
 }
 
 void DLeftSideBar::doDragEnter()
@@ -341,6 +344,7 @@ void DLeftSideBar::loadBookmark()
     {
         BookMark * bm = m_list.at(i);
         DBookmarkItem * item = new DBookmarkItem(bm);
+        item->setBounds(0, 0, 180, 26);
         m_scene->addBookmark(item);
     }
 }

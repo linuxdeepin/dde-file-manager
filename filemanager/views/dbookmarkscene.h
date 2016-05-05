@@ -2,6 +2,8 @@
 #define DBOOKMARKSCENE_H
 
 #include <QGraphicsScene>
+#include <QGraphicsWidget>
+#include <QGraphicsLinearLayout>
 
 #define BOOKMARK_ITEM_HEIGHT 30
 #define SEPARATOR_ITEM_HEIGHT 6
@@ -21,10 +23,10 @@ public:
     void addBookmark(DBookmarkItem *item);
     void insertBookmark(int index, DBookmarkItem *item);
     void addItem(DBookmarkItem *item);
+    void addDefaultBookmark(DBookmarkItem *item);
     void insert(int index, DBookmarkItem *item);
     void insert(DBookmarkItem * before, DBookmarkItem *item);
     void remove(int index);
-    void clear(DBookmarkItem * item);
     void remove(DBookmarkItem * item);
     void setSceneRect(qreal x, qreal y, qreal w, qreal h);
     void addSeparator();
@@ -32,7 +34,8 @@ public:
     int count();
     int windowId();
     DBookmarkItem * hasBookmarkItem(const DUrl &url);
-    void setAcceptDrop(bool v);
+    DBookmarkItem * itemAt(const QPointF &point);
+    int indexOf(DBookmarkItem * item);
 protected:
     void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
     void dragLeaveEvent(QGraphicsSceneDragDropEvent *event);
@@ -44,7 +47,7 @@ signals:
     void dragLeft();
     void dropped();
 public slots:
-    void doDragFinished(const QPointF &point, DBookmarkItem *item);
+    void doDragFinished(const QPointF &point, const QPointF &scenePoint, DBookmarkItem *item);
     void currentUrlChanged(const FMEvent &event);
     void bookmarkRemoved(const QString &url);
     void bookmarkMounted(int fd);
@@ -52,6 +55,7 @@ public slots:
     void deviceRemoved(DeviceInfo &deviceInfos);
     void doBookmarkRemoved(const FMEvent &event);
     void doBookmarkAdded(const QString &name, const FMEvent &event);
+    void rootDropped(const QPointF& point);
 private:
     void increaseSize();
     void decreaseSize();
@@ -61,6 +65,11 @@ private:
     QList<DBookmarkItem *> m_customItems;
     double m_totalHeight = 0;
     bool m_acceptDrop;
+
+    QGraphicsWidget * m_defaultWidget;
+    QGraphicsWidget * m_bookmarkWidget;
+    QGraphicsLinearLayout * m_defaultLayout;
+    QGraphicsLinearLayout * m_bookmarkLayout;
 };
 
 #endif // DBOOKMARKSCENE_H

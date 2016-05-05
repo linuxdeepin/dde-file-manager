@@ -2,7 +2,7 @@
 #define DBOOKMARKITEM_H
 
 #include <QObject>
-#include <QGraphicsItem>
+#include <QGraphicsWidget>
 #include <QFont>
 #include <QPainter>
 #include <QGraphicsSceneMouseEvent>
@@ -17,7 +17,7 @@ class DeviceInfo;
 class BookMark;
 class DDragWidget;
 
-class DBookmarkItem : public QObject, public QGraphicsItem
+class DBookmarkItem : public QGraphicsWidget
 {
     Q_OBJECT
 public:
@@ -84,9 +84,10 @@ signals:
     void dragEntered();
     void dragLeft();
     void dropped();
-    void dragFinished(const QPointF &point, DBookmarkItem * item);
+    void dragFinished(const QPointF &point, const QPointF &scenePoint, DBookmarkItem * item);
 
 protected:
+    QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint) const;
     void keyPressEvent(QKeyEvent *event);
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);

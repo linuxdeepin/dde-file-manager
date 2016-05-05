@@ -10,6 +10,7 @@ void DBookmarkLine::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     Q_UNUSED(option);
     Q_UNUSED(widget);
     double w = boundWidth();
+    double h = boundHeight();
     painter->setPen(Qt::lightGray);
-    painter->drawLine(-w/2, 0 , w/2, 0);
+    painter->drawLine(0, h/2 , w, h/2);
 }

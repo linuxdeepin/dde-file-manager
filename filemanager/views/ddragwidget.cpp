@@ -5,6 +5,7 @@ DDragWidget::DDragWidget(QObject *parent)
 {
     m_widget = new PixmapWidget();
     m_widget->setAttribute(Qt::WA_TransparentForMouseEvents);
+    m_widget->setAttribute(Qt::WA_TranslucentBackground);
     m_widget->setWindowFlags(Qt::Tool | Qt::FramelessWindowHint | Qt::X11BypassWindowManagerHint );
     m_timer = new QTimer(this);
     m_timer->setInterval(20);
@@ -20,7 +21,7 @@ void DDragWidget::startDrag()
 {
     qApp->installEventFilter(this);
     m_widget->show();
-    m_widget->move(QCursor::pos() - QPoint(25, 25));
+    m_widget->move(QCursor::pos() - m_hotspot);
     m_timer->start(20);
     exec();
     m_timer->stop();
@@ -30,6 +31,11 @@ void DDragWidget::startDrag()
 void DDragWidget::setPixmap(const QPixmap &pixmap)
 {
     m_widget->setPixmap(pixmap);
+}
+
+void DDragWidget::setHotSpot(const QPoint &hotspot)
+{
+    m_hotspot = hotspot;
 }
 
 bool DDragWidget::eventFilter(QObject *obj, QEvent *e)
@@ -56,7 +62,7 @@ bool DDragWidget::eventFilter(QObject *obj, QEvent *e)
 
 void DDragWidget::timerEvent()
 {
-    m_widget->move(QCursor::pos() - QPoint(25, 25));
+    m_widget->move(QCursor::pos() - m_hotspot);
 }
 
 PixmapWidget::PixmapWidget()
