@@ -36,6 +36,8 @@ DBookmarkScene::DBookmarkScene()
     connect(fileSignalManager, &FileSignalManager::deviceMounted, this, &DBookmarkScene::bookmarkMounted);
     connect(fileSignalManager, &FileSignalManager::requestBookmarkRemove, this, &DBookmarkScene::doBookmarkRemoved);
     connect(fileSignalManager, &FileSignalManager::requestBookmarkAdd, this, &DBookmarkScene::doBookmarkAdded);
+    connect(fileSignalManager, &FileSignalManager::requestBookmarkMove, this, &DBookmarkScene::doMoveBookmark);
+
 }
 
 void DBookmarkScene::addBookmark(DBookmarkItem *item)
@@ -128,15 +130,6 @@ void DBookmarkScene::setSceneRect(qreal x, qreal y, qreal w, qreal h)
  */
 void DBookmarkScene::addSeparator()
 {
-//    double w = width();
-//    DBookmarkLine * item = new DBookmarkLine;
-//    item->setPos(w/2, 3 + m_totalHeight);
-//    item->setBounds(-w/2, -SEPARATOR_ITEM_HEIGHT/2, w, SEPARATOR_ITEM_HEIGHT);
-//    m_itemGroup->addItem(item);
-//    m_items.append(item);
-//    QGraphicsScene::addItem(item);
-//    m_totalHeight += SEPARATOR_ITEM_HEIGHT;
-//    increaseSize();
     DBookmarkLine * item = new DBookmarkLine;
     item->setBounds(0, 0, 180, SEPARATOR_ITEM_HEIGHT);
     m_itemGroup->addItem(item);
@@ -162,7 +155,7 @@ DBookmarkItemGroup *DBookmarkScene::getGroup()
  */
 int DBookmarkScene::count()
 {
-    return m_items.size();
+    return m_itemGroup->items()->size();
 }
 
 int DBookmarkScene::windowId()
@@ -263,9 +256,14 @@ void DBookmarkScene::doDragFinished(const QPointF &point, const QPointF &scenePo
         if(index == -1)
             return;
         m_defaultLayout->insertItem(index, item);
-        qDebug() << indexOf(item) << index;
-        m_itemGroup->items()->move(indexOf(item), index);
-        qDebug() << indexOf(item);
+        int from = indexOf(item);
+        bookmarkManager->moveBookmark(from - DEFAULT_ITEM_COUNT, index - DEFAULT_ITEM_COUNT);
+        m_itemGroup->items()->move(from, index);
+        FMEvent event;
+
+        event = FMEvent::LeftSideBar;
+        event = windowId();
+        emit fileSignalManager->requestBookmarkMove(from, index, event);
     }
 }
 
@@ -370,8 +368,18 @@ void DBookmarkScene::doBookmarkAdded(const QString &name, const FMEvent &event)
 {
     DBookmarkItem * item = DBookmarkItem::makeBookmark(name, event.fileUrl());
     item->setPos(0, m_defaultLayout->count() * 30);
-    item->setBounds(0, 0, 180, 26);
+    item->setBounds(0, 0, sceneRect().width() - 20, 26);
     insert(DEFAULT_ITEM_COUNT, item);
+}
+
+void DBookmarkScene::doMoveBookmark(int from, int to, const FMEvent &event)
+{
+    if(windowId() != event.windowId())
+    {
+        qDebug() << m_itemGroup->items()->size();
+        m_defaultLayout->insertItem(from,  m_itemGroup->items()->at(to));
+        m_itemGroup->items()->move(from, to);
+    }
 }
 
 void DBookmarkScene::rootDropped(const QPointF &point)
@@ -391,7 +399,8 @@ void DBookmarkScene::decreaseSize()
 
 DBookmarkItem *DBookmarkScene::hasBookmarkItem(const DUrl &url)
 {
-    foreach(DBookmarkItem * item, m_items)
+    QList<DBookmarkItem *> list = *m_itemGroup->items();
+    foreach(DBookmarkItem * item, list)
     {
         if(item->getUrl() == url)
         {
@@ -409,4 +418,13 @@ DBookmarkItem *DBookmarkScene::itemAt(const QPointF & point)
 int DBookmarkScene::indexOf(DBookmarkItem *item)
 {
     return m_itemGroup->items()->indexOf(item);
+}
+
+void DBookmarkScene::setTightMode(bool v)
+{
+    for(int i = 0; i < m_itemGroup->items()->size(); i++)
+    {
+        m_itemGroup->items()->at(i)->setTightMode(v);
+    }
+    update();
 }

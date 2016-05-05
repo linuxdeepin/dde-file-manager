@@ -28,11 +28,15 @@ public:
     DBookmarkItem(BookMark * bookmark);
 
     QRectF boundingRect() const;
-
+    void setTightMode(bool v);
+    bool isTightModel();
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     void boundImageToPress(QString imagePath);
     void boundImageToRelease(QString imagePath);
     void boundImageToHover(QString imagePath);
+    void boundBigImageToPress(QString imagePath);
+    void boundBigImageToRelease(QString imagePath);
+    void boundBigImageToHover(QString imagePath);
     void setDraggable(bool b);
     void setBounds(int x, int y, int w, int h);
     void setPressBackgroundColor(const QColor &color);
@@ -131,12 +135,16 @@ private:
     bool m_hovered = false;
     bool m_backgroundEnabled = false;
     bool m_isMenuOpened = false;
+    bool m_isTightMode = false;
     QFont m_font;
     qreal m_adjust;
     DUrl m_url;
     QPixmap m_pressImage;
     QPixmap m_releaseImage;
     QPixmap m_hoverImage;
+    QPixmap m_pressImageBig;
+    QPixmap m_releaseImageBig;
+    QPixmap m_hoverImageBig;
     QString m_textContent;
     QColor m_hoverBackgroundColor;
     QColor m_releaseBackgroundColor;

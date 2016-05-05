@@ -3,7 +3,7 @@
 
 #include "dbookmarkitem.h"
 
-#define DEFAULT_ITEM_COUNT 10
+#define DEFAULT_ITEM_COUNT 12
 
 class DBookmarkScene;
 
