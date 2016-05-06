@@ -44,13 +44,12 @@ public:
     void polish();
 
     QPoint mapToGlobal(const QPoint &) const;
-    void resize(int w, int h);
-    void setFixedSize(int w, int h);
+    void resizeContentWindow(int w, int h);
     void setMinimumSize(int w, int h);
     void setMaximumSize(int maxw, int maxh);
     void setModal(bool);
     void addContenWidget(QWidget *main);
-    const QSize size();
+    const int layoutMargin = 0;
 
 public slots:
     void startMoving();
@@ -71,7 +70,6 @@ private:
     QVBoxLayout* horizontalLayout = nullptr;
     void startResizing(const QPoint& globalPoint, const CornerEdge& ce);
 
-    const int layoutMargin = 0;
     const int resizeHandleWidth = 0;
     unsigned const int shadowRadius = 0;
     const unsigned int borderRadius = 0;
