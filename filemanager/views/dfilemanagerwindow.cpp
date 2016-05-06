@@ -184,6 +184,7 @@ void DFileManagerWindow::initConnect()
     connect(m_toolbar, &DToolBar::requestIconView, this, &DFileManagerWindow::setIconView);
     connect(m_toolbar, &DToolBar::requestListView, this, &DFileManagerWindow::setListView);
     connect(m_toolbar, &DToolBar::requestExtendView, this, &DFileManagerWindow::setExtendView);
+    connect(m_fileView, &DFileView::viewModeChanged, m_toolbar, &DToolBar::checkViewModeButton);
 }
 
 DUrl DFileManagerWindow::currentUrl() const
@@ -232,6 +233,7 @@ void DFileManagerWindow::setExtendView()
 {
     m_viewStackLayout->setCurrentIndex(1);
     m_extendView->setStartUrl(m_fileView->currentUrl());
+    m_toolbar->checkViewModeButton(DFileView::ExtendMode);
 }
 
 

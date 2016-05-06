@@ -21,10 +21,10 @@ QWidget *createBasicInfoWidget(const AbstractFileInfoPointer &info)
     QFormLayout *layout = new QFormLayout;
 
     layout->setLabelAlignment(Qt::AlignRight);
-    layout->addRow(QObject::tr("Size"), new QLabel(QString::number(info->size())));
-    layout->addRow(QObject::tr("Type"), new QLabel(info->mimeTypeName()));
-    layout->addRow(QObject::tr("Created Date"), new QLabel(info->created().toString()));
-    layout->addRow(QObject::tr("Modified Date"), new QLabel(info->lastModified().toString()));
+    layout->addRow(QObject::tr("Size"), new QLabel(info->sizeDisplayName()));
+    layout->addRow(QObject::tr("Type"), new QLabel(info->mimeTypeDisplayName()));
+    layout->addRow(QObject::tr("Created Date"), new QLabel(info->createdDisplayName()));
+    layout->addRow(QObject::tr("Modified Date"), new QLabel(info->lastModifiedDisplayName()));
 
     widget->setLayout(layout);
 
