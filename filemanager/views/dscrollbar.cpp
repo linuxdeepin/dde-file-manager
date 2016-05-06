@@ -16,6 +16,11 @@ DScrollBar::DScrollBar(QWidget *parent)
     connect(m_opacityTimer, SIGNAL(timeout()), this, SLOT(opacity()));
     setAutoFillBackground(true);
     m_timer->start(1000);
+
+    setStyleSheet("QScrollBar#DScrollBar:vertical{\
+                  border: 0px;\
+                  background: transparent;\
+                  width: 4px;}");
 }
 
 void DScrollBar::wheelEvent(QWheelEvent *e)
@@ -35,6 +40,11 @@ void DScrollBar::enterEvent(QEvent *e)
                   border: 0px;\
                   background: rgba(16,16,16,0.7);\
                   width: 6px;}");
+
+    setStyleSheet("QScrollBar#DScrollBar:vertical{\
+                  border: 0px;\
+                  background: transparent;\
+                  width: 6px;}");
     QScrollBar::enterEvent(e);
 }
 
@@ -45,6 +55,11 @@ void DScrollBar::leaveEvent(QEvent *e)
                   border: 0px;\
                   background: rgba(16,16,16,0.45);\
                   width: 4px;}");
+
+    setStyleSheet("QScrollBar#DScrollBar:vertical{\
+                  border: 0px;\
+                  background: transparent;\
+                  width: 6px;}");
     QScrollBar::leaveEvent(e);
 }
 
@@ -88,6 +103,10 @@ void DScrollBar::opacity()
     }
     else
     {
+        setStyleSheet("QScrollBar#DScrollBar:vertical{\
+                      border: 0px;\
+                      background: transparent;\
+                      width: 1px;}");
         m_opacityTimer->stop();
     }
 }
