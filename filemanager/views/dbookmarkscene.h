@@ -69,6 +69,7 @@ private:
     QList<DBookmarkItem *> m_customItems;
     double m_totalHeight = 0;
     bool m_acceptDrop;
+    bool m_isTightMode = false;
 
     QGraphicsWidget * m_defaultWidget;
     QGraphicsWidget * m_bookmarkWidget;

@@ -121,7 +121,7 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
     {
         if(m_pressBackgroundEnabled)
         {
-            painter->setPen(QColor(0,0,0,0));
+            painter->setPen(m_pressBackgroundColor);
             painter->setBrush(m_pressBackgroundColor);
             painter->drawRect(m_x_axis, m_y_axis, m_width, m_height);
             textColor = Qt::white;
@@ -143,7 +143,7 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
     {
         if(m_releaseBackgroundEnabled)
         {
-            painter->setPen(QColor(0,0,0,0));
+            painter->setPen(m_releaseBackgroundColor);
             painter->setBrush(m_releaseBackgroundColor);
             painter->drawRect(m_x_axis, m_y_axis, m_width, m_height);
         }

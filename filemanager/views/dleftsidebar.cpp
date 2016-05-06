@@ -199,7 +199,7 @@ void DLeftSideBar::initNav()
             item->setText(m_systemBookMarks.value(key));
             item->setUrl(getStandardPathByKey(key));
             item->setDefaultItem(true);
-            item->setBounds(0, 0, 180, 26);
+            item->setBounds(0, 0, 200, 26);
             m_scene->addItem(item);
         }
     }
