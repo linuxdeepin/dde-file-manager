@@ -137,7 +137,7 @@ private:
     bool m_isMenuOpened = false;
     bool m_isTightMode = false;
     QFont m_font;
-    qreal m_adjust;
+    qreal m_adjust = 0;
     DUrl m_url;
     QPixmap m_pressImage;
     QPixmap m_releaseImage;

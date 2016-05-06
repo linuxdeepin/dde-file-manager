@@ -60,8 +60,8 @@ DBookmarkItem::DBookmarkItem(BookMark *bookmark)
 
 void DBookmarkItem::init()
 {
-    setFlag(QGraphicsItem::ItemIsFocusable);
-    setFlag(QGraphicsItem::ItemIgnoresTransformations);
+    //setFlag(QGraphicsItem::ItemIsFocusable);
+    //setFlag(QGraphicsItem::ItemIgnoresTransformations);
     setAcceptHoverEvents(true);
     setReleaseBackgroundColor(QColor(238,232,205,0));
     setPressBackgroundColor(QColor(44,167,248,255));
@@ -151,12 +151,23 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
         textColor = Qt::black;
     }
 
-    if(!m_textContent.isNull() && !m_isTightMode)
+    double textTopPadding = 2;
+    if(!m_isTightMode)
     {
         painter->setPen(textColor);
         painter->setFont(m_font);
         QRect rect(leftPadding + 24, m_y_axis + m_height/4, m_width - 25, m_height);
         painter->drawText(rect,Qt::TextWordWrap|Qt::AlignLeft,m_textContent);
+    }
+    else
+    {
+        if(!m_isDefault && !m_textContent.isEmpty())
+        {
+            QString text = m_textContent.at(0);
+            painter->setPen(QColor(0x2CA7F8));
+            painter->setFont(m_font);
+            painter->drawText(leftPadding + 6, m_y_axis + m_height*3/4 - textTopPadding, text);
+        }
     }
 
     if(m_isMounted)
@@ -260,10 +271,6 @@ void DBookmarkItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
         drag = new DDragWidget((QObject*)event->widget());
         QMimeData *mimeData = new QMimeData;
-        mimeData->setText(m_textContent);
-        QList<QUrl> urls;
-        urls << QUrl(m_url);
-        mimeData->setUrls(urls);
         drag->setPixmap(toPixmap());
         drag->setMimeData(mimeData);
         drag->setHotSpot(QPoint(m_width/4, 4));
@@ -290,7 +297,10 @@ QPixmap DBookmarkItem::toPixmap()
 //    scene()->render(&painter, QRectF(), sceneBoundingRect());
 //    painter.end();
     QPixmap pixmap(":/icons/images/icons/reordering_line.svg");
-    return pixmap.scaledToWidth(200);
+    if(m_isTightMode)
+        return pixmap.scaled(60, pixmap.height(), Qt::IgnoreAspectRatio);
+    else
+        return pixmap.scaledToWidth(200);
 }
 
 bool DBookmarkItem::isMounted()
@@ -342,6 +352,8 @@ DBookmarkItem *DBookmarkItem::makeBookmark(const QString &name, const DUrl &url)
 
 QSizeF DBookmarkItem::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const
 {
+    Q_UNUSED(which);
+    Q_UNUSED(constraint);
     return QSizeF(m_width, m_height);
 }
 
@@ -431,6 +443,7 @@ void DBookmarkItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 void DBookmarkItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event);
+    event->accept();
     if(!m_isMenuOpened)
     {
         m_hovered = false;

@@ -45,12 +45,14 @@ void DBookmarkScene::addBookmark(DBookmarkItem *item)
     m_defaultLayout->addItem(item);
     connect(item, &DBookmarkItem::dragFinished, this, &DBookmarkScene::doDragFinished);
     m_itemGroup->addItem(item);
+    increaseSize();
 }
 
 void DBookmarkScene::insertBookmark(int index, DBookmarkItem *item)
 {
     m_defaultLayout->addItem(item);
     m_itemGroup->addItem(item);
+    increaseSize();
 }
 
 /**
@@ -63,12 +65,14 @@ void DBookmarkScene::addItem(DBookmarkItem *item)
 {
     m_defaultLayout->addItem(item);
     m_itemGroup->addItem(item);
+    increaseSize();
 }
 
 void DBookmarkScene::addDefaultBookmark(DBookmarkItem *item)
 {
     m_defaultLayout->addItem(item);
     m_itemGroup->addItem(item);
+    increaseSize();
 }
 
 /**
@@ -87,6 +91,7 @@ void DBookmarkScene::insert(int index, DBookmarkItem *item)
     m_defaultLayout->insertItem(index, item);
     connect(item, &DBookmarkItem::dragFinished, this, &DBookmarkScene::doDragFinished);
     m_itemGroup->addItem(item);
+    increaseSize();
 }
 
 void DBookmarkScene::insert(DBookmarkItem *before, DBookmarkItem *item)
@@ -113,6 +118,7 @@ void DBookmarkScene::remove(DBookmarkItem *item)
     m_defaultLayout->removeItem(item);
     m_itemGroup->removeItem(item);
     delete item;
+    decreaseSize();
 }
 
 void DBookmarkScene::setSceneRect(qreal x, qreal y, qreal w, qreal h)
@@ -248,10 +254,12 @@ void DBookmarkScene::doDragFinished(const QPointF &point, const QPointF &scenePo
     else
     {
         DBookmarkItem * local = itemAt(scenePoint);
-        if(local->isDefaultItem())
-            return;
         if(local == NULL)
             return;
+
+        if(local->isDefaultItem())
+            return;
+
         int index = indexOf(local);
         if(index == -1)
             return;
@@ -377,7 +385,7 @@ void DBookmarkScene::doMoveBookmark(int from, int to, const FMEvent &event)
     if(windowId() != event.windowId())
     {
         qDebug() << m_itemGroup->items()->size();
-        m_defaultLayout->insertItem(from,  m_itemGroup->items()->at(to));
+        m_defaultLayout->insertItem(to,  m_itemGroup->items()->at(from));
         m_itemGroup->items()->move(from, to);
     }
 }
@@ -389,12 +397,20 @@ void DBookmarkScene::rootDropped(const QPointF &point)
 
 void DBookmarkScene::increaseSize()
 {
-
+    QRectF rect = sceneRect();
+    if(count() * 30 > rect.height())
+    {
+        setSceneRect(rect.x(), rect.y(), rect.width(), rect.height() + 30);
+    }
 }
 
 void DBookmarkScene::decreaseSize()
 {
-
+    QRectF rect = sceneRect();
+    if(count() * 30 < rect.height())
+    {
+        setSceneRect(rect.x(), rect.y(), rect.width(), rect.height() - 30);
+    }
 }
 
 DBookmarkItem *DBookmarkScene::hasBookmarkItem(const DUrl &url)
