@@ -186,16 +186,14 @@ QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
     case Qt::TextAlignmentRole:
         return Qt::AlignVCenter;
     case FileLastModifiedRole:
-        return indexNode->fileInfo->lastModified().toString("yyyy/MM/dd HH:MM:ss");
+        return indexNode->fileInfo->lastModifiedDisplayName();
     case FileSizeRole:
-        return FileUtils::formatSize(indexNode->fileInfo->size());
+        return indexNode->fileInfo->sizeDisplayName();
     case FileMimeTypeRole:{
-        QString name = indexNode->fileInfo->mimeTypeName();
-        QString displayName = mimeTypeDisplayManager->displayName(name);
-        return displayName;
+        return indexNode->fileInfo->mimeTypeDisplayName();
     }
     case FileCreatedRole:
-        return indexNode->fileInfo->created().toString("yyyy/MM/dd HH:MM:ss");
+        return indexNode->fileInfo->createdDisplayName();
     default: {
         const AbstractFileInfoPointer &fileInfo = indexNode->fileInfo;
 
