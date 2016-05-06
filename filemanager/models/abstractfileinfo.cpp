@@ -64,7 +64,7 @@ bool sortFileListByMime(const AbstractFileInfoPointer &info1, const AbstractFile
     }
 
     return ((AbstractFileInfo::sortOrderGlobal == Qt::DescendingOrder)
-            ^ (info1->mimeTypeName() < info2->mimeTypeName())) == 0x01;
+            ^ (info1->mimeTypeDisplayName() < info2->mimeTypeDisplayName())) == 0x01;
 }
 
 bool sortFileListByCreated(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &info2)
