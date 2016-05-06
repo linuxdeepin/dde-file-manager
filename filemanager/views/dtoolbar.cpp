@@ -316,4 +316,21 @@ void DToolBar::forwardButtonClicked()
     }
 }
 
+void DToolBar::checkViewModeButton(DFileView::ViewMode mode)
+{
+    switch (mode) {
+    case DFileView::IconMode:
+        m_iconViewButton->setChecked(true);
+        break;
+    case DFileView::ListMode:
+        m_listViewButton->setChecked(true);
+        break;
+    case DFileView::ExtendMode:
+        m_extendButton->setChecked(true);
+        break;
+    default:
+        break;
+    }
+}
+
 

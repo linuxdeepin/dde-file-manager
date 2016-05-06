@@ -140,6 +140,11 @@ public:
     virtual QString mimeTypeName() const
     {return data->mimeTypeName;}
 
+    virtual QString lastModifiedDisplayName() const;
+    virtual QString createdDisplayName() const;
+    virtual QString sizeDisplayName() const;
+    virtual QString mimeTypeDisplayName() const;
+
     inline DUrl fileUrl() const
     {return data->url;}
 

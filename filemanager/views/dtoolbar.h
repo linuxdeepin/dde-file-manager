@@ -3,6 +3,7 @@
 
 #include <QFrame>
 #include <QStackedWidget>
+#include "dfileview.h"
 #include "dstatebutton.h"
 
 class DIconTextButton;
@@ -14,6 +15,7 @@ class DCrumbWidget;
 class FMEvent;
 class HistoryStack;
 class DHoverButton;
+
 
 class DToolBar : public QFrame
 {
@@ -48,6 +50,9 @@ public slots:
     void searchBarChanged(QString path);
     void backButtonClicked();
     void forwardButtonClicked();
+
+    void checkViewModeButton(DFileView::ViewMode mode);
+
 private:
     QFrame* m_addressToolBar;
     DStateButton* m_backButton=NULL;
