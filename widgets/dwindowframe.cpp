@@ -372,14 +372,9 @@ void DWindowFrame::changeEvent(QEvent *event) {
     this->setUpdatesEnabled(true);
 }
 
-void DWindowFrame::resize(int w, int h) {
+void DWindowFrame::resizeContentWindow(int w, int h) {
     QWidget::resize(w + this->layoutMargin * 2,
                     h + this->layoutMargin * 2);
-}
-
-void DWindowFrame::setFixedSize(int w, int h) {
-    QWidget::setFixedSize(w + this->layoutMargin * 2,
-                          h + this->layoutMargin * 2);
 }
 
 void DWindowFrame::applyMinimumSizeRestriction() {
@@ -527,12 +522,6 @@ void DWindowFrame::addContenWidget(QWidget *main)
     main->installEventFilter(filter);
     main->setParent(this);
     this->layout()->addWidget(main);
-}
-
-const QSize DWindowFrame::size()
-{
-    QSize realSize = QWidget::size();
-    return realSize - QSize(layoutMargin*2, layoutMargin*2);
 }
 
 void DWindowFrame::paintEvent(QPaintEvent* event) {
