@@ -84,6 +84,10 @@ public:
         UserType = 5
     };
 
+    inline static QString timeFormat(){
+        return "yyyy/MM/dd HH:MM:ss";
+    }
+
     AbstractFileInfo();
     AbstractFileInfo(const DUrl &url);
     AbstractFileInfo(const QString &url);

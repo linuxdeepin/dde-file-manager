@@ -2,6 +2,7 @@
 #define RECENTFILEINFO_H
 
 #include "abstractfileinfo.h"
+#include <QDateTime>
 
 class RecentFileInfo : public AbstractFileInfo
 {
@@ -22,8 +23,15 @@ public:
 
     DUrl parentUrl() const Q_DECL_OVERRIDE;
 
+
+
+    QString lastOpenedDisplayName() const;
+    QDateTime lastOpened() const;
+    void setLastOpened(const QDateTime &lastOpened);
+
 private:
     QString desktopIconName;
+    QDateTime m_lastOpened;
 };
 
 #endif // RECENTFILEINFO_H

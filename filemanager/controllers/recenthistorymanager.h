@@ -3,6 +3,7 @@
 
 #include <QList>
 #include <QDir>
+#include <QMap>
 
 #include "basemanager.h"
 #include "abstractfilecontroller.h"
@@ -35,7 +36,8 @@ private slots:
     void addOpenedFile(const DUrl &url);
 
 private:
-    QList<DUrl> openedFileList;
+    QList<DUrl> m_openedFileList;
+    QMap<DUrl, QDateTime> m_lastFileOpenedTime;
 };
 
 #endif // RECENTHISTORYMANAGER_H
