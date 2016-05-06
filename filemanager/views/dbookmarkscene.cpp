@@ -19,13 +19,13 @@ DBookmarkScene::DBookmarkScene()
     m_rootItem = new DBookmarkRootItem(this);
     m_defaultLayout = new QGraphicsLinearLayout;
     m_defaultLayout->setOrientation(Qt::Vertical);
-    m_defaultLayout->setSpacing(4);
+    m_defaultLayout->setSpacing(BOOKMARK_ITEM_SPACE);
 
     QGraphicsScene::addItem(m_rootItem);
-
+    m_rootItem->setContentsMargins(0,0,0,0);
     m_rootItem->setLayout(m_defaultLayout);
     m_rootItem->setPos(0, 0);
-    m_rootItem->setContentsMargins(0,0,0,0);
+
 
     m_itemGroup = new DBookmarkItemGroup;
 
@@ -43,6 +43,7 @@ DBookmarkScene::DBookmarkScene()
 void DBookmarkScene::addBookmark(DBookmarkItem *item)
 {
     m_defaultLayout->addItem(item);
+    item->setBounds(0, 0, BOOKMARK_ITEM_WIDTH, BOOKMARK_ITEM_HEIGHT - BOOKMARK_ITEM_SPACE);
     connect(item, &DBookmarkItem::dragFinished, this, &DBookmarkScene::doDragFinished);
     m_itemGroup->addItem(item);
     increaseSize();
@@ -51,6 +52,7 @@ void DBookmarkScene::addBookmark(DBookmarkItem *item)
 void DBookmarkScene::insertBookmark(int index, DBookmarkItem *item)
 {
     m_defaultLayout->addItem(item);
+    item->setBounds(0, 0, BOOKMARK_ITEM_WIDTH, BOOKMARK_ITEM_HEIGHT - BOOKMARK_ITEM_SPACE);
     m_itemGroup->addItem(item);
     increaseSize();
 }
@@ -64,6 +66,7 @@ void DBookmarkScene::insertBookmark(int index, DBookmarkItem *item)
 void DBookmarkScene::addItem(DBookmarkItem *item)
 {
     m_defaultLayout->addItem(item);
+    item->setBounds(0, 0, BOOKMARK_ITEM_WIDTH, BOOKMARK_ITEM_HEIGHT - BOOKMARK_ITEM_SPACE);
     m_itemGroup->addItem(item);
     increaseSize();
 }
@@ -71,6 +74,7 @@ void DBookmarkScene::addItem(DBookmarkItem *item)
 void DBookmarkScene::addDefaultBookmark(DBookmarkItem *item)
 {
     m_defaultLayout->addItem(item);
+    item->setBounds(0, 0, BOOKMARK_ITEM_WIDTH, BOOKMARK_ITEM_HEIGHT - BOOKMARK_ITEM_SPACE);
     m_itemGroup->addItem(item);
     increaseSize();
 }
@@ -89,6 +93,7 @@ void DBookmarkScene::addDefaultBookmark(DBookmarkItem *item)
 void DBookmarkScene::insert(int index, DBookmarkItem *item)
 {
     m_defaultLayout->insertItem(index, item);
+    item->setBounds(0, 0, BOOKMARK_ITEM_WIDTH, BOOKMARK_ITEM_HEIGHT - BOOKMARK_ITEM_SPACE);
     connect(item, &DBookmarkItem::dragFinished, this, &DBookmarkScene::doDragFinished);
     m_itemGroup->addItem(item);
     increaseSize();
@@ -137,7 +142,7 @@ void DBookmarkScene::setSceneRect(qreal x, qreal y, qreal w, qreal h)
 void DBookmarkScene::addSeparator()
 {
     DBookmarkLine * item = new DBookmarkLine;
-    item->setBounds(0, 0, 180, SEPARATOR_ITEM_HEIGHT);
+    item->setBounds(0, 0, 200, SEPARATOR_ITEM_HEIGHT);
     m_itemGroup->addItem(item);
     m_defaultLayout->addItem(item);
 }
