@@ -268,6 +268,26 @@ QDateTime AbstractFileInfo::lastRead() const
     return data->fileInfo.lastRead();
 }
 
+QString AbstractFileInfo::lastModifiedDisplayName() const
+{
+    return lastModified().toString("yyyy/MM/dd HH:MM:ss");
+}
+
+QString AbstractFileInfo::createdDisplayName() const
+{
+    return created().toString("yyyy/MM/dd HH:MM:ss");
+}
+
+QString AbstractFileInfo::sizeDisplayName() const
+{
+    return FileUtils::formatSize(size());
+}
+
+QString AbstractFileInfo::mimeTypeDisplayName() const
+{
+    return mimeTypeDisplayManager->displayName(mimeTypeName());
+}
+
 DUrl AbstractFileInfo::parentUrl() const
 {
     DUrl url = data->url;
