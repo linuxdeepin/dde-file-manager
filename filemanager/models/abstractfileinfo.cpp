@@ -270,12 +270,12 @@ QDateTime AbstractFileInfo::lastRead() const
 
 QString AbstractFileInfo::lastModifiedDisplayName() const
 {
-    return lastModified().toString("yyyy/MM/dd HH:MM:ss");
+    return lastModified().toString(timeFormat());
 }
 
 QString AbstractFileInfo::createdDisplayName() const
 {
-    return created().toString("yyyy/MM/dd HH:MM:ss");
+    return created().toString(timeFormat());
 }
 
 QString AbstractFileInfo::sizeDisplayName() const

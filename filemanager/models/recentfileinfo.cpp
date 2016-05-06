@@ -94,3 +94,20 @@ DUrl RecentFileInfo::parentUrl() const
 {
     return DUrl::fromRecentFile("/");
 }
+
+QString RecentFileInfo::lastOpenedDisplayName() const
+{
+    return m_lastOpened.toString(timeFormat());
+}
+
+QDateTime RecentFileInfo::lastOpened() const
+{
+    return m_lastOpened;
+}
+
+void RecentFileInfo::setLastOpened(const QDateTime &lastOpened)
+{
+    m_lastOpened = lastOpened;
+}
+
+

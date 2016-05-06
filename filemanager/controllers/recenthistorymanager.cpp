@@ -106,8 +106,12 @@ const QList<AbstractFileInfoPointer> RecentHistoryManager::getChildren(const DUr
 
     accepted = true;
 
-    for (const DUrl &url : openedFileList) {
-        infolist.append(AbstractFileInfoPointer(new RecentFileInfo(url)));
+    for (const DUrl &url : m_openedFileList) {
+        RecentFileInfo* info =  new RecentFileInfo(url);
+        if (m_lastFileOpenedTime.contains(url)){
+            info->setLastOpened(m_lastFileOpenedTime.value(url));
+        }
+        infolist.append(AbstractFileInfoPointer(info));
     }
 
     return infolist;
@@ -122,22 +126,30 @@ const AbstractFileInfoPointer RecentHistoryManager::createFileInfo(const DUrl &f
 
 void RecentHistoryManager::loadJson(const QJsonObject &json)
 {
+    m_openedFileList.clear();
+    m_lastFileOpenedTime.clear();
     QJsonArray jsonArray = json["RecentHistory"].toArray();
     for(int i = 0; i < jsonArray.size(); i++)
     {
         QJsonObject object = jsonArray[i].toObject();
         QString url = object["url"].toString();
-        openedFileList.append(DUrl(url));
+        qint64 mSecsSinceEpoch = object["lastOpened"].toInt();
+        DUrl durl = DUrl(url);
+        m_openedFileList.append(durl);
+        m_lastFileOpenedTime.insert(durl, QDateTime::fromMSecsSinceEpoch(mSecsSinceEpoch));
     }
 }
 
 void RecentHistoryManager::writeJson(QJsonObject &json)
 {
     QJsonArray localArray;
-    for(int i = 0; i < openedFileList.size(); i++)
+    for(int i = 0; i < m_openedFileList.size(); i++)
     {
         QJsonObject object;
-        object["url"] = openedFileList.at(i).toString();
+        object["url"] = m_openedFileList.at(i).toString();
+        if (m_lastFileOpenedTime.contains(m_openedFileList.at(i))){
+            object["lastOpened"] = m_lastFileOpenedTime.value(m_openedFileList.at(i)).toMSecsSinceEpoch();
+        }
         localArray.append(object);
     }
     json["RecentHistory"] = localArray;
@@ -146,8 +158,8 @@ void RecentHistoryManager::writeJson(QJsonObject &json)
 void RecentHistoryManager::removeRecentFiles(const DUrlList &urlList)
 {
     for(const DUrl &url : urlList) {
-        openedFileList.removeOne(url);
-
+        m_openedFileList.removeOne(url);
+        m_lastFileOpenedTime.remove(url);
         emit childrenRemoved(url);
     }
 
@@ -156,12 +168,12 @@ void RecentHistoryManager::removeRecentFiles(const DUrlList &urlList)
 
 void RecentHistoryManager::clearRecentFiles()
 {
-    for(const DUrl &url : openedFileList) {
+    for(const DUrl &url : m_openedFileList) {
         emit childrenRemoved(url);
     }
 
-    openedFileList.clear();
-
+    m_openedFileList.clear();
+    m_lastFileOpenedTime.clear();
     save();
 }
 
@@ -172,10 +184,12 @@ void RecentHistoryManager::addOpenedFile(const DUrl &url)
 
     DUrl recent_url = DUrl::fromRecentFile(url.path());
 
-    if(openedFileList.contains(recent_url))
+    m_lastFileOpenedTime.insert(recent_url, QDateTime::currentDateTime());
+
+    if(m_openedFileList.contains(recent_url))
         return;
 
-    openedFileList << recent_url;
+    m_openedFileList << recent_url;
 
     emit childrenAdded(recent_url);
 
