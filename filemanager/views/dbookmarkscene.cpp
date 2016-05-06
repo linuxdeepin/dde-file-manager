@@ -286,11 +286,11 @@ void DBookmarkScene::currentUrlChanged(const FMEvent &event)
         return;
     if(event.source() == FMEvent::FileView)
     {
+        m_itemGroup->deselectAll();
         for(int i = 0; i < m_itemGroup->items()->size(); i++)
         {
             if(event.fileUrl() == m_itemGroup->items()->at(i)->getUrl())
             {
-                m_itemGroup->deselectAll();
                 m_itemGroup->items()->at(i)->setChecked(true);
                 break;
             }
@@ -381,7 +381,7 @@ void DBookmarkScene::doBookmarkAdded(const QString &name, const FMEvent &event)
 {
     DBookmarkItem * item = DBookmarkItem::makeBookmark(name, event.fileUrl());
     item->setPos(0, m_defaultLayout->count() * 30);
-    item->setBounds(0, 0, sceneRect().width() - 20, 26);
+    item->setBounds(0, 0, BOOKMARK_ITEM_WIDTH, BOOKMARK_ITEM_HEIGHT - BOOKMARK_ITEM_SPACE);
     insert(DEFAULT_ITEM_COUNT, item);
 }
 
