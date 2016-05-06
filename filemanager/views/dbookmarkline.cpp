@@ -3,6 +3,7 @@
 DBookmarkLine::DBookmarkLine()
 {
     setDefaultItem(true);
+    setAcceptDrops(false);
 }
 
 void DBookmarkLine::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -15,5 +16,5 @@ void DBookmarkLine::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     if(!isTightModel())
         painter->drawLine(0, h/2 , w, h/2);
     else
-        painter->drawLine(0, h/2 , 40, h/2);
+        painter->drawLine(0, h/2 , 60, h/2);
 }

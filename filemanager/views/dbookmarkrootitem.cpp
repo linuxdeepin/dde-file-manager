@@ -34,3 +34,8 @@ void DBookmarkRootItem::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
     emit m_scene->dragLeft();
 }
+
+void DBookmarkRootItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+{
+
+}

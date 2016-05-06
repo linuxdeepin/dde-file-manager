@@ -98,7 +98,7 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
     Q_UNUSED(widget);
     double w = m_width;
     QColor textColor;
-    double leftPadding = 8;
+    double leftPadding = 18;
     double dy;
     QPixmap press;
     QPixmap release;
@@ -151,7 +151,7 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
         textColor = Qt::black;
     }
 
-    double textTopPadding = 2;
+    double textTopPadding = 4;
     if(!m_isTightMode)
     {
         painter->setPen(textColor);
@@ -165,7 +165,9 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
         {
             QString text = m_textContent.at(0);
             painter->setPen(QColor(0x2CA7F8));
-            painter->setFont(m_font);
+            QFont font;
+            font.setPointSize(8);
+            painter->setFont(font);
             painter->drawText(leftPadding + 6, m_y_axis + m_height*3/4 - textTopPadding, text);
         }
     }

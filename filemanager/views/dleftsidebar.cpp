@@ -181,7 +181,7 @@ void DLeftSideBar::initNav()
     m_view->setObjectName("Bookmark");
     m_view->setAlignment(Qt::AlignTop | Qt::AlignLeft);
     m_scene = new DBookmarkScene;
-    m_scene->setSceneRect(0, 0, 200, 500);
+    m_scene->setSceneRect(10, 0, 200, 500);
     m_view->setScene(m_scene);
 
 
