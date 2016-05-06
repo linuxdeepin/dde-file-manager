@@ -349,6 +349,9 @@ DBookmarkItem *DBookmarkItem::makeBookmark(const QString &name, const DUrl &url)
     item->boundImageToHover(":/icons/images/icons/bookmarks_hover_16px.svg");
     item->boundImageToPress(":/icons/images/icons/bookmarks_checked_16px.svg");
     item->boundImageToRelease(":/icons/images/icons/bookmarks_normal_16px.svg");
+    item->boundBigImageToHover(":/icons/images/icons/favourite_hover.svg");
+    item->boundBigImageToPress(":/icons/images/icons/favourite_checked.svg");
+    item->boundBigImageToRelease(":/icons/images/icons/favourite_normal.svg");
     return item;
 }
 
