@@ -115,10 +115,14 @@ protected:
     void keyReleaseEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
     void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
     void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+    void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+    void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void commitData(QWidget * editor) Q_DECL_OVERRIDE;
     void focusInEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
     bool event(QEvent *event) Q_DECL_OVERRIDE;
+
+    void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command);
 
 private:
     FileController *m_controller;
@@ -156,6 +160,9 @@ private:
     void updateExtendHeaderViewProperty();
 
     using DListView::setOrientation;
+
+    QPoint m_pressed;
+    QRect m_elasticBand;
 };
 
 #endif // DFILEVIEW_H
