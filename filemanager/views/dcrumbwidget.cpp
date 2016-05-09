@@ -74,10 +74,12 @@ void DCrumbWidget::setCrumb(const DUrl &path)
     else if(path.isComputerFile())
     {
         addComputerCrumb();
+        addLocalCrumbs(path);
     }
     else if(path.isTrashFile())
     {
         addTrashCrumb();
+        addLocalCrumbs(path);
     }
     else
     {
@@ -207,6 +209,7 @@ bool DCrumbWidget::isRootFolder(QString path)
 void DCrumbWidget::createCrumbs()
 {
     m_crumbTotalLen = 0;
+    m_items.clear();
     foreach(QAbstractButton * button, m_group.buttons())
     {
         QListWidgetItem * item = new QListWidgetItem(m_listWidget);
@@ -217,10 +220,11 @@ void DCrumbWidget::createCrumbs()
         m_items.append(item);
         m_crumbTotalLen += button->size().width();
     }
-    checkArrows();
+
     m_listWidget->scrollToItem(m_items.last(), QListWidget::PositionAtBottom);
     m_listWidget->setHorizontalScrollMode(QListWidget::ScrollPerPixel);
     m_listWidget->horizontalScrollBar()->setPageStep(m_listWidget->width());
+    checkArrows();
 }
 
 void DCrumbWidget::createArrows()
@@ -249,8 +253,23 @@ void DCrumbWidget::checkArrows()
     }
     else
     {
-        m_leftArrow->show();
-        m_rightArrow->show();
+        QListWidgetItem *head = m_listWidget->itemAt(1,1);
+        QListWidgetItem *end = m_listWidget->itemAt(m_listWidget->width() - 5,5);
+        if(head == m_items.first())
+        {
+            m_leftArrow->hide();
+            m_rightArrow->show();
+        }
+        else if(end == m_items.last())
+        {
+            m_leftArrow->show();
+            m_rightArrow->hide();
+        }
+        else
+        {
+            m_leftArrow->show();
+            m_rightArrow->show();
+        }
     }
 }
 
@@ -303,12 +322,14 @@ void DCrumbWidget::crumbMoveToLeft()
 {
     m_listWidget->horizontalScrollBar()->triggerAction(QAbstractSlider::SliderPageStepSub);
     m_listWidget->scrollToItem(m_listWidget->itemAt(0,0));
+    checkArrows();
 }
 
 void DCrumbWidget::crumbMoveToRight()
 {
     m_listWidget->horizontalScrollBar()->triggerAction(QAbstractSlider::SliderPageStepAdd);
-    m_listWidget->scrollToItem(m_listWidget->itemAt(m_listWidget->width() - 1,0));
+    m_listWidget->scrollToItem(m_listWidget->itemAt(m_listWidget->width() - 10,10));
+    checkArrows();
 }
 
 void DCrumbWidget::resizeEvent(QResizeEvent *e)
