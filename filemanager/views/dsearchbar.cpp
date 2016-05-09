@@ -115,7 +115,7 @@ void DSearchBar::initConnections()
 {
     connect(this, SIGNAL(textEdited(QString)), this, SLOT(doTextChanged(QString)));
     connect(this, &DSearchBar::returnPressed, this, &DSearchBar::historySaved);
-    //connect(this, &DSearchBar::textChanged, this, &DSearchBar::setCompleter);
+    connect(this, &DSearchBar::textChanged, this, &DSearchBar::setCompleter);
     connect(m_list, &QListWidget::itemClicked, this, &DSearchBar::completeText);
 }
 
@@ -155,6 +155,12 @@ void DSearchBar::setCompleter(const QString &text)
         return;
     }
 
+    if(m_disableCompletion)
+    {
+        m_disableCompletion = false;
+        return;
+    }
+
     m_list->clear();
 
     if(hasScheme() || isPath())
@@ -172,15 +178,18 @@ void DSearchBar::setCompleter(const QString &text)
         QDir dir(fileInfo.absolutePath());
         QStringList localList = splitPath(text);
         QStringList sl;
-        foreach(QString word, dir.entryList(QDir::AllDirs|QDir::NoDotAndDotDot, QDir::Name))
+
+        foreach(QFileInfo info, dir.entryInfoList(QDir::AllDirs|QDir::NoDotAndDotDot, QDir::Name))
         {
             QString temp = localList.last();
-            if (word.contains(temp))
+            qDebug() << temp << info.absoluteFilePath() << fileInfo.absoluteFilePath();
+            if (info.absoluteFilePath().mid(0, fileInfo.absoluteFilePath().length())
+                    == fileInfo.absoluteFilePath())
             {
                 if(temp.isEmpty())
-                    sl << word;
-                else if(temp.at(0) == word.at(0))
-                    sl << word;
+                    sl << info.fileName();
+                else if(temp.at(0) == info.fileName().at(0))
+                    sl << info.fileName();
             }
         }
         if(sl.isEmpty())
@@ -203,7 +212,7 @@ void DSearchBar::setCompleter(const QString &text)
             return;
         }
     }
-
+    recomended();
     // Position the text edit
     m_list->setMinimumWidth(width());
     m_list->setMaximumWidth(width());
@@ -216,14 +225,33 @@ void DSearchBar::setCompleter(const QString &text)
 
 void DSearchBar::completeText(QListWidgetItem *item)
 {
-    QString text = item->text();
-    setText(text);
+    m_disableCompletion = true;
+    QStringList list = splitPath(m_text);
+    QString modelText = item->text();
+    QString last = list.last();
+    if(isPath())
+    {
+        list.removeLast();
+        list.append(modelText);
+        setText(list.join("/").replace(0,1,""));
+    }
+    else if(isLocalFile())
+    {
+        list.removeLast();
+        list.append(modelText);
+        setText(list.join("/"));
+    }
+    else
+    {
+        setText(modelText);
+    }
+    m_text = text();
     m_list->hide();
 }
 
 void DSearchBar::focusInEvent(QFocusEvent *e)
 {
-
+    QLineEdit::focusInEvent(e);
 }
 
 void DSearchBar::focusOutEvent(QFocusEvent *e)
@@ -232,7 +260,7 @@ void DSearchBar::focusOutEvent(QFocusEvent *e)
     {
         m_list->hide();
     }
-    qDebug() << "focus out";
+    QLineEdit::focusOutEvent(e);
 }
 
 bool DSearchBar::event(QEvent *e)
@@ -280,6 +308,7 @@ void DSearchBar::moveEvent(QMoveEvent *e)
 
 void DSearchBar::keyUpDown(int key)
 {
+    m_disableCompletion = true;
     int row;
     int count = m_list->count();
     QModelIndex currentIndex = m_list->currentIndex();
@@ -381,81 +410,88 @@ void DSearchBar::complete(const QString &str)
 void DSearchBar::keyPressEvent(QKeyEvent *e)
 {
     int key = e->key();
-    //if (!m_list->isHidden())
-    {
-        QModelIndex currentIndex = m_list->currentIndex();
+    QModelIndex currentIndex = m_list->currentIndex();
 
-        switch(key)
+    switch(key)
+    {
+        case Qt::Key_Down:
+        case Qt::Key_Up:
+            keyUpDown(key);
+            break;
+        case Qt::Key_Enter:
+        case Qt::Key_Return:
         {
-            case Qt::Key_Down:
-            case Qt::Key_Up:
-                keyUpDown(key);
-                break;
-            case Qt::Key_Enter:
-            case Qt::Key_Return:
+            if (currentIndex.isValid())
             {
-                if (currentIndex.isValid())
-                {
-                    QString text = m_list->currentIndex().data().toString();
-                    complete(text);
-                }
-                m_list->hide();
-                QLineEdit::keyPressEvent(e);
-                break;
+                QString text = m_list->currentIndex().data().toString();
+                complete(text);
             }
-            case Qt::Key_Right:
-            case Qt::Key_Tab:
-                if(selectedText().isEmpty())
+            m_list->hide();
+            QLineEdit::keyPressEvent(e);
+            break;
+        }
+        case Qt::Key_Right:
+        case Qt::Key_Tab:
+            if(selectedText().isEmpty())
+            {
+                if(m_list->count() == 1)
                 {
-                    if(m_list->count() == 1)
+                    QStringList list = splitPath(m_text);
+                    QString modelText = m_list->item(0)->text();
+                    QString last = list.last();
+
+                    if(isPath())
                     {
-                        QStringList list = splitPath(m_text);
-                        QString modelText = m_list->item(0)->text();
-                        QString last = list.last();
                         list.removeLast();
                         list.append(modelText);
                         setText(list.join("/").replace(0,1,""));
-                        setSelection(text().length() + last.length() - modelText.length(), text().length());
-                        m_text = text();
+                    }
+                    else if(isLocalFile())
+                    {
+                        list.removeLast();
+                        list.append(modelText);
+                        setText(list.join("/"));
                     }
                     else
-                        break;
-                }
-                m_list->hide();
-                end(false);
-                if(isPath())
-                {
-                    setText(text() + "/");
+                    {
+                        setText(m_text);
+                    }
+                    setSelection(text().count() + last.count() - modelText.count(), text().count());
                     m_text = text();
                 }
-                setCompleter(m_text);
-                QLineEdit::keyPressEvent(e);
-                break;
-            case Qt::Key_Delete:
-            case Qt::Key_Backspace:
-                m_list->hide();
-                QLineEdit::keyPressEvent(e);
-                break;
-            default:
-            {
-                if(e->modifiers() == Qt::NoModifier)
-                    m_list->hide();
-                QString before = text();
-                QLineEdit::keyPressEvent(e);
-                QString after = text();
-                bool textModified = (before != after);
-                if(textModified)
+                else
                 {
-                    setCompleter(after);
-                    recomended();
+                    if(key != Qt::Key_Tab)
+                        QLineEdit::keyPressEvent(e);
+                    break;
                 }
             }
+            m_list->hide();
+            m_list->clear();
+            end(false);
+            if(isPath() || isLocalFile())
+            {
+                setText(text() + "/");
+                m_text = text();
+            }
+            if(key != Qt::Key_Tab)
+                QLineEdit::keyPressEvent(e);
+            break;
+        case Qt::Key_Delete:
+        case Qt::Key_Backspace:
+            m_list->hide();
+            if(!text().isEmpty())
+                m_disableCompletion = true;
+            QLineEdit::keyPressEvent(e);
+
+            break;
+        default:
+        {
+            if(e->modifiers() == Qt::NoModifier)
+                m_list->hide();
+            QLineEdit::keyPressEvent(e);
         }
     }
-    //else
-//    {
-//        QLineEdit::keyPressEvent(e);
-//    }
 }
 
 QAction *DSearchBar::getClearAction()

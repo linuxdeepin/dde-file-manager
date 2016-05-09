@@ -51,6 +51,7 @@ private:
     bool m_isActive;
     void initConnections();
     QString m_text;
+    bool m_disableCompletion = false;
 public slots:
     void doTextChanged(QString text);
     void searchHistoryLoaded(const QStringList &list);

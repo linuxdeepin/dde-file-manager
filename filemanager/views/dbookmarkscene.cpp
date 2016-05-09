@@ -188,7 +188,6 @@ void DBookmarkScene::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
     event->accept();
     emit dragEntered();
     QGraphicsScene::dragEnterEvent(event);
-    //clear(m_rootItem->getDummyItem());
 
     if(!event->mimeData()->hasUrls())
         return;
