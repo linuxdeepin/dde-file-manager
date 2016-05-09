@@ -256,13 +256,20 @@ void DSearchBar::focusInEvent(QFocusEvent *e)
 
 void DSearchBar::focusOutEvent(QFocusEvent *e)
 {
+    qDebug() << "focus out";
+    if(m_list->isHidden())
+    {
+        QLineEdit::focusOutEvent(e);
+        emit focusedOut();
+        return;
+    }
     if(!m_list->rect().contains(m_list->mapFromGlobal(QCursor::pos())))
     {
         m_list->hide();
+        qDebug() << "focus out";
+        QLineEdit::focusOutEvent(e);
+        emit focusedOut();
     }
-    qDebug() << "focus out";
-    QLineEdit::focusOutEvent(e);
-    emit focusedOut();
 }
 
 bool DSearchBar::event(QEvent *e)
@@ -284,13 +291,27 @@ bool DSearchBar::eventFilter(QObject *obj, QEvent *e)
 {
     if(e->type() == QEvent::FocusOut)
     {
+        if(!m_list->rect().contains(m_list->mapFromGlobal(QCursor::pos())))
+            emit focusedOut();
         m_list->hide();
+        this->window()->activateWindow();
+        setFocus();
+        return false;
+    }
+    else if(e->type() == QEvent::MouseButtonPress)
+    {
+        return true;
+    }
+    else if(e->type() == QEvent::FocusIn)
+    {
         return true;
     }
     else if(e->type() == QEvent::KeyPress)
     {
         QKeyEvent * keyEvent = static_cast<QKeyEvent*> (e);
         keyPressEvent(keyEvent);
+        this->window()->activateWindow();
+        setFocus();
         return true;
     }
     return false;
@@ -306,6 +327,12 @@ void DSearchBar::moveEvent(QMoveEvent *e)
 {
     m_list->hide();
     QLineEdit::moveEvent(e);
+}
+
+void DSearchBar::mousePressEvent(QMouseEvent *e)
+{
+    qDebug() << "mouse press";
+    QLineEdit::mousePressEvent(e);
 }
 
 void DSearchBar::keyUpDown(int key)
@@ -485,7 +512,7 @@ void DSearchBar::keyPressEvent(QKeyEvent *e)
         case Qt::Key_Delete:
         case Qt::Key_Backspace:
             m_list->hide();
-            if(!text().isEmpty())
+            if(text().length() > 1)
                 m_disableCompletion = true;
             QLineEdit::keyPressEvent(e);
 
