@@ -50,10 +50,9 @@ public slots:
     void searchBarChanged(QString path);
     void backButtonClicked();
     void forwardButtonClicked();
-
     void checkViewModeButton(DFileView::ViewMode mode);
-
 private:
+    bool m_searchState = false;
     QFrame* m_addressToolBar;
     DStateButton* m_backButton=NULL;
     DStateButton* m_forwardButton=NULL;

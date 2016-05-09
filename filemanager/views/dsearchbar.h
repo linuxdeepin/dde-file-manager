@@ -11,7 +11,9 @@
 #include <QStringListModel>
 #include <QStringList>
 #include <QDirModel>
+#include "durl.h"
 
+class FMEvent;
 
 class DSearchBar : public QLineEdit
 {
@@ -34,6 +36,7 @@ public:
     bool isLocalFile();
     bool isTrashFile();
     bool isPath();
+    void setCurrentPath(const DUrl &path);
 private:
     void initData();
     void initUI();
@@ -48,16 +51,19 @@ private:
     QStringListModel * m_stringListMode;
     QStringList m_historyList;
     QDirModel * m_dirModel;
-    bool m_isActive;
+    bool m_isActive = false;
     void initConnections();
     QString m_text;
     bool m_disableCompletion = false;
+    bool m_searchStart = false;
+    DUrl m_currentPath;
 public slots:
     void doTextChanged(QString text);
     void searchHistoryLoaded(const QStringList &list);
     void historySaved();
     void setCompleter(const QString &text);
     void completeText(QListWidgetItem * item);
+    void currentUrlChanged(const FMEvent &event);
 protected:
     void focusInEvent(QFocusEvent *e);
     void focusOutEvent(QFocusEvent *e);

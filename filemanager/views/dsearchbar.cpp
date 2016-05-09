@@ -4,10 +4,12 @@
 #include "../app/global.h"
 
 #include "../controllers/searchhistroymanager.h"
+#include "../app/filesignalmanager.h"
 
 #include <QDirModel>
 #include <QDebug>
 #include "dscrollbar.h"
+#include "../app/fmevent.h"
 
 DSearchBar::DSearchBar(QWidget *parent):QLineEdit(parent)
 {
@@ -105,6 +107,13 @@ bool DSearchBar::isActive()
 void DSearchBar::setActive(bool active)
 {
     m_isActive = active;
+    m_searchStart = false;
+    if(active)
+        connect(fileSignalManager, &FileSignalManager::currentUrlChanged,
+                this, &DSearchBar::currentUrlChanged);
+    else
+        disconnect(fileSignalManager, &FileSignalManager::currentUrlChanged,
+                this, &DSearchBar::currentUrlChanged);
     if(text().isEmpty())
         m_clearAction->setVisible(false);
     else
@@ -249,6 +258,15 @@ void DSearchBar::completeText(QListWidgetItem *item)
     m_list->hide();
 }
 
+void DSearchBar::currentUrlChanged(const FMEvent &event)
+{
+    if(event.fileUrl().isSearchFile())
+        return;
+    if(event.fileUrl() != m_currentPath)
+        emit focusedOut();
+    qDebug() << event.fileUrl() << m_currentPath;
+}
+
 void DSearchBar::focusInEvent(QFocusEvent *e)
 {
     QLineEdit::focusInEvent(e);
@@ -257,18 +275,31 @@ void DSearchBar::focusInEvent(QFocusEvent *e)
 void DSearchBar::focusOutEvent(QFocusEvent *e)
 {
     qDebug() << "focus out";
-    if(m_list->isHidden())
-    {
-        QLineEdit::focusOutEvent(e);
-        emit focusedOut();
+    if(m_searchStart)
         return;
+    if(window()->rect().contains(window()->mapFromGlobal(QCursor::pos())))
+    {
+        if(m_list->isHidden())
+        {
+            QLineEdit::focusOutEvent(e);
+            emit focusedOut();
+        }
+        else if(!m_list->rect().contains(m_list->mapFromGlobal(QCursor::pos())))
+        {
+            m_list->hide();
+            QLineEdit::focusOutEvent(e);
+            emit focusedOut();
+        }
+        else
+        {
+            m_list->hide();
+            QLineEdit::focusOutEvent(e);
+        }
     }
-    if(!m_list->rect().contains(m_list->mapFromGlobal(QCursor::pos())))
+    else
     {
         m_list->hide();
-        qDebug() << "focus out";
         QLineEdit::focusOutEvent(e);
-        emit focusedOut();
     }
 }
 
@@ -291,15 +322,22 @@ bool DSearchBar::eventFilter(QObject *obj, QEvent *e)
 {
     if(e->type() == QEvent::FocusOut)
     {
-        if(!m_list->rect().contains(m_list->mapFromGlobal(QCursor::pos())))
-            emit focusedOut();
         m_list->hide();
         this->window()->activateWindow();
         setFocus();
+
+        if(m_searchStart)
+            return false;
+        if(!m_list->rect().contains(m_list->mapFromGlobal(QCursor::pos())))
+            emit focusedOut();
+
         return false;
     }
     else if(e->type() == QEvent::MouseButtonPress)
     {
+        m_list->hide();
+        this->window()->activateWindow();
+        setFocus();
         return true;
     }
     else if(e->type() == QEvent::FocusIn)
@@ -453,12 +491,16 @@ void DSearchBar::keyPressEvent(QKeyEvent *e)
         case Qt::Key_Enter:
         case Qt::Key_Return:
         {
+            if(!(hasScheme() || isPath()))
+                m_searchStart = true;
             if (currentIndex.isValid())
             {
                 QString text = m_list->currentIndex().data().toString();
                 complete(text);
             }
+            deselect();
             m_list->hide();
+
             QLineEdit::keyPressEvent(e);
             break;
         }
@@ -583,4 +625,9 @@ bool DSearchBar::isPath()
         return true;
     else
         return false;
+}
+
+void DSearchBar::setCurrentPath(const DUrl &path)
+{
+    m_currentPath = path;
 }

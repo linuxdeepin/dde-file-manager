@@ -101,6 +101,11 @@ QString DCrumbWidget::path()
     return m_path.toLocalFile();
 }
 
+DUrl DCrumbWidget::getUrl()
+{
+    return m_path;
+}
+
 void DCrumbWidget::addRecentCrumb()
 {
     QString text = RECENT_ROOT;

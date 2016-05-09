@@ -162,9 +162,7 @@ void DToolBar::initConnect()
     connect(m_searchBar, &DSearchBar::returnPressed, this, &DToolBar::searchBarTextEntered);
     connect(m_crumbWidget, &DCrumbWidget::crumbSelected, this, &DToolBar::crumbSelected);
     connect(m_crumbWidget, &DCrumbWidget::searchBarActivated, this, &DToolBar::searchBarActivated);
-    connect(m_searchBar, &DSearchBar::searchBarFocused, this, &DToolBar::searchBarActivated);
     connect(fileSignalManager, &FileSignalManager::currentUrlChanged, this, &DToolBar::crumbChanged);
-    connect(m_searchBar, SIGNAL(searchBarFocused()), this, SLOT(searchBarActivated()));
     connect(m_searchButton, &DStateButton::clicked, this, &DToolBar::searchBarClicked);
     connect(m_searchBar, SIGNAL(focusedOut()), this, SLOT(searchBarDeactivated()));
 }
@@ -181,10 +179,16 @@ void DToolBar::startup()
 
 void DToolBar::searchBarClicked()
 {
-    if(m_searchBar->isHidden())
+    if(!m_searchState)
+    {
         searchBarActivated();
+        m_searchState = true;
+    }
     else
+    {
         searchBarDeactivated();
+        m_searchState = false;
+    }
 }
 
 void DToolBar::searchBarActivated()
@@ -196,6 +200,7 @@ void DToolBar::searchBarActivated()
     m_searchBar->clear();
     m_searchBar->setActive(true);
     m_searchBar->setFocus();
+    m_searchBar->setCurrentPath(m_crumbWidget->getUrl());
 }
 
 void DToolBar::searchBarDeactivated()
@@ -208,7 +213,6 @@ void DToolBar::searchBarDeactivated()
     m_searchBar->setActive(false);
     m_searchBar->window()->setFocus();
 }
-
 
 /**
  * @brief DToolBar::searchBarTextEntered
@@ -264,8 +268,7 @@ void DToolBar::crumbChanged(const FMEvent &event)
         return;
 
     m_crumbWidget->setCrumb(event.fileUrl());
-    if(m_searchBar->isActive())
-        m_searchBar->setText(event.fileUrl().toString());
+
     if(event.source() == FMEvent::BackAndForwardButton)
         return;
     m_navStack->insert(event.fileUrl());
