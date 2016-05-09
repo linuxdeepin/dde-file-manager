@@ -255,20 +255,22 @@ void DCrumbWidget::checkArrows()
     {
         QListWidgetItem *head = m_listWidget->itemAt(1,1);
         QListWidgetItem *end = m_listWidget->itemAt(m_listWidget->width() - 5,5);
+        m_leftArrow->show();
+        m_rightArrow->show();
         if(head == m_items.first())
         {
-            m_leftArrow->hide();
-            m_rightArrow->show();
+            m_leftArrow->setDisabled(true);
+            m_rightArrow->setEnabled(true);
         }
         else if(end == m_items.last())
         {
-            m_leftArrow->show();
-            m_rightArrow->hide();
+            m_leftArrow->setEnabled(true);
+            m_rightArrow->setDisabled(true);
         }
         else
         {
-            m_leftArrow->show();
-            m_rightArrow->show();
+            m_leftArrow->setEnabled(true);
+            m_rightArrow->setEnabled(true);
         }
     }
 }

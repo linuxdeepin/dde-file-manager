@@ -67,6 +67,7 @@ protected:
     void moveEvent(QMoveEvent *e);
 signals:
     void searchBarFocused();
+    void focusedOut();
 };
 
 #endif // DSEARCHBAR_H
