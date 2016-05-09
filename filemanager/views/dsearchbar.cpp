@@ -260,7 +260,9 @@ void DSearchBar::focusOutEvent(QFocusEvent *e)
     {
         m_list->hide();
     }
+    qDebug() << "focus out";
     QLineEdit::focusOutEvent(e);
+    emit focusedOut();
 }
 
 bool DSearchBar::event(QEvent *e)
@@ -414,6 +416,9 @@ void DSearchBar::keyPressEvent(QKeyEvent *e)
 
     switch(key)
     {
+        case Qt::Key_Escape:
+            emit focusedOut();
+            break;
         case Qt::Key_Down:
         case Qt::Key_Up:
             keyUpDown(key);

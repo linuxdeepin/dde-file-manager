@@ -166,6 +166,7 @@ void DToolBar::initConnect()
     connect(fileSignalManager, &FileSignalManager::currentUrlChanged, this, &DToolBar::crumbChanged);
     connect(m_searchBar, SIGNAL(searchBarFocused()), this, SLOT(searchBarActivated()));
     connect(m_searchButton, &DStateButton::clicked, this, &DToolBar::searchBarClicked);
+    connect(m_searchBar, SIGNAL(focusedOut()), this, SLOT(searchBarDeactivated()));
 }
 
 void DToolBar::startup()
