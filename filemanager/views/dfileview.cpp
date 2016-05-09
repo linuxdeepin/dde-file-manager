@@ -20,7 +20,6 @@
 #include "../controllers/fmstatemanager.h"
 #include "../models/dfilesystemmodel.h"
 #include "dfilemanagerwindow.h"
-
 #include <dthememanager.h>
 
 #include <QWheelEvent>
@@ -413,6 +412,8 @@ void DFileView::showEvent(QShowEvent *event)
 
 void DFileView::mousePressEvent(QMouseEvent *event)
 {
+    m_pressed = event->pos();
+
     bool isEmptyArea = this->isEmptyArea(event->pos());
 
     if (event->button() == Qt::LeftButton) {
@@ -423,6 +424,20 @@ void DFileView::mousePressEvent(QMouseEvent *event)
 
     if(!(event->buttons() & Qt::RightButton))
         DListView::mousePressEvent(event);
+}
+
+void DFileView::mouseMoveEvent(QMouseEvent *event)
+{
+    QRect rect(m_pressed, event->pos() + QPoint(horizontalOffset(), verticalOffset()));
+    m_elasticBand = rect.normalized();
+    DListView::mouseMoveEvent(event);
+}
+
+void DFileView::mouseReleaseEvent(QMouseEvent *event)
+{
+    m_pressed = QPoint(0, 0);
+    m_elasticBand = QRect();
+    DListView::mouseReleaseEvent(event);
 }
 
 void DFileView::commitData(QWidget *editor)
@@ -498,6 +513,15 @@ bool DFileView::event(QEvent *event)
     }
 
     return DListView::event(event);
+}
+
+void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command)
+{
+    DListView::setSelection(rect, command);
+    if (selectedIndexes().count() >=2 && m_elasticBand.isValid()){
+        QItemSelection itemSelection(selectedIndexes().first(), selectedIndexes().last());
+        selectionModel()->select(itemSelection, command);
+    }
 }
 
 bool DFileView::isEmptyArea(const QPoint &pos) const
