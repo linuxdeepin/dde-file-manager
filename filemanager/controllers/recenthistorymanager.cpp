@@ -98,12 +98,6 @@ const QList<AbstractFileInfoPointer> RecentHistoryManager::getChildren(const DUr
 
     QList<AbstractFileInfoPointer> infolist;
 
-    if(fileUrl.path() != "/") {
-        accepted = false;
-
-        return infolist;
-    }
-
     accepted = true;
 
     for (const DUrl &url : m_openedFileList) {

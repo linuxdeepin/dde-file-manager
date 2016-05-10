@@ -42,7 +42,7 @@ bool RecentFileInfo::isReadable() const
 
 bool RecentFileInfo::isDir() const
 {
-    return filePath() == "/";
+    return true;
 }
 
 QIcon RecentFileInfo::fileIcon() const
