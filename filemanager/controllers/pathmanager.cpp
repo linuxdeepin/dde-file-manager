@@ -91,6 +91,13 @@ void PathManager::handleDirectoryChanged(const QString &path)
     m_fileSystemWatcher->addPath(path);
 }
 
+QMap<QString, QString> PathManager::systemPathDisplayNames() const
+{
+    return m_systemPathDisplayNames;
+}
+
+
+
 QMap<QString, QString> PathManager::systemPaths() const
 {
     return m_systemPaths;

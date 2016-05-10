@@ -53,6 +53,22 @@ void DCrumbWidget::addCrumb(const QStringList &list)
                     QIcon(":/icons/images/icons/home_checked_16px.svg"),
                     text, this);
         }
+
+        QString path = list.at(0);
+        for(int j = 1; j <= i; j++)
+        {
+            path += "/" + list.at(j);
+        }
+        button->setPath(path);
+
+        if (systemPathManager->systemPaths().values().contains(path)){
+            foreach (QString key, systemPathManager->systemPaths().keys()) {
+                if (systemPathManager->systemPaths().value(key) == path){
+                       button->setText(systemPathManager->getSystemPathDisplayName(key));
+                }
+            }
+        }
+
         button->setFocusPolicy(Qt::NoFocus);
         button->adjustSize();
         m_group.addButton(button, button->getIndex());
@@ -285,18 +301,14 @@ void DCrumbWidget::checkArrows()
 void DCrumbWidget::buttonPressed()
 {
     DCrumbButton * button = static_cast<DCrumbButton*>(sender());
-    int index = button->getIndex();
+
     FMEvent event;
     event = WindowManager::getWindowId(window());
     event = FMEvent::CrumbButton;
-    QString text;
+    QString text = button->path();
     DCrumbButton * localButton = (DCrumbButton *)m_group.buttons().at(0);
 
-    for(int i = 1; i <= index; i++)
-    {
-        DCrumbButton * button = (DCrumbButton *)m_group.buttons().at(i);
-        text += "/" + button->getName();
-    }
+
     if(localButton->getName() == RECENT_ROOT)
     {
         event = DUrl::fromRecentFile(text.isEmpty() ? "/":text);
@@ -311,7 +323,7 @@ void DCrumbWidget::buttonPressed()
     }
     else if(localButton->getName() == m_homePath)
     {
-        event = DUrl::fromLocalFile(m_homePath + text);
+        event = DUrl::fromLocalFile(text);
     }
     else
     {

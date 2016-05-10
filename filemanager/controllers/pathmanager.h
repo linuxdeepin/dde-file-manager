@@ -24,6 +24,8 @@ public:
 
     QMap<QString, QString> systemPaths() const;
 
+    QMap<QString, QString> systemPathDisplayNames() const;
+
 signals:
 
 public slots:
