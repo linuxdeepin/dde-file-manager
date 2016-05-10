@@ -263,8 +263,9 @@ void DFileView::cd(const FMEvent &event)
     if(fileUrl.isEmpty())
         return;
 
-    if(setCurrentUrl(fileUrl))
-        emit fileSignalManager->currentUrlChanged(event);
+    setCurrentUrl(fileUrl);
+//    if(setCurrentUrl(fileUrl))
+//        emit fileSignalManager->currentUrlChanged(event);
 
     if (FMStateManager::SortStates.contains(fileUrl)){
         sort(FMStateManager::SortStates.value(fileUrl));
@@ -622,6 +623,8 @@ void DFileView::stopSearch()
     event = FMEvent::FileView;
     event = windowId();
 
+    qDebug() << event;
+
     FileServices::instance()->getChildren(event);
 }
 
@@ -672,7 +675,14 @@ bool DFileView::setCurrentUrl(DUrl fileUrl)
         }
     }
 
-    emit currentUrlChanged(fileUrl);
+    FMEvent event;
+
+    event = fileUrl;
+    event = FMEvent::FileView;
+    event = windowId();
+
+    emit fileSignalManager->currentUrlChanged(event);
+    //emit currentUrlChanged(fileUrl);
 
     return true;
 }

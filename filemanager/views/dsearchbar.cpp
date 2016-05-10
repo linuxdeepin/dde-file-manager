@@ -260,8 +260,11 @@ void DSearchBar::completeText(QListWidgetItem *item)
 
 void DSearchBar::currentUrlChanged(const FMEvent &event)
 {
+    qDebug() << event.fileUrl() << m_currentPath << "haha";
     if(event.fileUrl().isSearchFile())
+    {
         return;
+    }
     if(event.fileUrl() != m_currentPath)
         emit focusedOut();
     qDebug() << event.fileUrl() << m_currentPath;
