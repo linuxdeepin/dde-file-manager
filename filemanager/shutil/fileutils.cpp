@@ -4,6 +4,7 @@
 #include <QUrl>
 #include <QMimeDatabase>
 #include <QProcess>
+#include <QGSettings>
 #include <QDebug>
 
 
@@ -13,6 +14,9 @@ extern "C" {
     #include <gio/gdesktopappinfo.h>
 }
 #define signals public
+
+QString FileUtils::WallpaperKey = "pictureUri";
+
 /**
  * @brief Recursive removes file or directory
  * @param path path to file
@@ -394,4 +398,12 @@ bool FileUtils::openFileByApp(const QString &filePath, const QString &app)
     g_object_unref(appInfo);
 
     return ok;
+}
+
+bool FileUtils::setBackground(const QString &pictureFilePath)
+{
+    QGSettings* gsettings = new QGSettings("com.deepin.wrap.gnome.desktop.background",
+                                             "/com/deepin/wrap/gnome/desktop/background/");
+    gsettings->set(WallpaperKey, pictureFilePath);
+    gsettings->deleteLater();
 }

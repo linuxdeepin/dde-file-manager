@@ -495,6 +495,9 @@ void FileMenuManager::actionTriggered(DAction *action)
         case MenuAction::Exit:
             emit fileSignalManager->aboutToCloseLastActivedWindow(menu->getWindowId());
             break;
+        case MenuAction::SetAsWallpaper:
+            FileUtils::setBackground(fileUrl.toLocalFile());
+            break;
         default:
             qDebug() << "unknown action type";
             break;
