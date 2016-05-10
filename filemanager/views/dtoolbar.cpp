@@ -37,7 +37,7 @@ DToolBar::~DToolBar()
 
 void DToolBar::initData()
 {
-    m_navStack = new HistoryStack(50);
+    m_navStack = new HistoryStack(65536);
 }
 
 void DToolBar::initUI()
