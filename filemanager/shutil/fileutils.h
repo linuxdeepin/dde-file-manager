@@ -7,7 +7,6 @@
 #include "desktopfile.h"
 #include "properties.h"
 
-class ProgressWatcher;
 
 /**
  * @class FileUtils
@@ -15,6 +14,9 @@ class ProgressWatcher;
  */
 class FileUtils {
 public:
+
+  static QString WallpaperKey;
+
   static bool removeRecurse(const QString &path, const QString &name);
   static void recurseFolder(const QString &path, const QString &parent,
                             QStringList *list);
@@ -35,6 +37,8 @@ public:
 
   static bool openDesktopFile(const QString& filePath);
   static bool openFileByApp(const QString& filePath, const QString& app);
+
+  static bool setBackground(const QString& pictureFilePath);
 };
 
 #endif // FILEUTILS_H
