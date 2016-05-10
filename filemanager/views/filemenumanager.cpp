@@ -253,6 +253,7 @@ DFileMenu *FileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
     }
 
     DFileMenu* menu = new DFileMenu;
+
     connect(menu, &DFileMenu::triggered, fileMenuManger, &FileMenuManager::actionTriggered);
 
     foreach (MenuAction key, keys) {
@@ -292,200 +293,212 @@ QString FileMenuManager::getActionString(MenuAction type)
 
 void FileMenuManager::actionTriggered(DAction *action)
 {
+
     DFileMenu *menu = qobject_cast<DFileMenu *>(sender());
     DUrlList urls = menu->getUrls();
-    MenuAction type = (MenuAction)action->data().toInt();
-    DUrl fileUrl;
 
-    if(urls.size() > 0)
-        fileUrl = urls.first();
+    if (action->data().isValid()){
 
+        bool flag = false;
+        int _type = action->data().toInt(&flag);
+        MenuAction type;
+        if (flag){
+            type = (MenuAction)_type;
+        }else{
+            qDebug() << action->data().toString();;
+            return;
+        }
+        DUrl fileUrl;
 
-    switch(type)
-    {
-    case MenuAction::Open: {
-        FMEvent event;
-        event = fileUrl;
-        event = FMEvent::Menu;
-        event = menu->getWindowId();
-        qDebug() << event;
-        fileService->openUrl(event);
-        break;
-    }
-    case MenuAction::OpenInNewWindow:
-        fileService->openNewWindow(fileUrl);
-        break;
-    case MenuAction::OpenWith:{
-        FMEvent event;
+        if(urls.size() > 0)
+            fileUrl = urls.first();
 
-        event = fileUrl;
-        event = FMEvent::Menu;
-        event = menu->getWindowId();
-        emit fileSignalManager->requestShowOpenWithDialog(event);
-        break;
-    }
-    case MenuAction::OpenFileLocation:
-        fileUrl.setScheme(FILE_SCHEME);
-        fileService->openFileLocation(fileUrl);
-        break;
-    case MenuAction::Compress:
-        fileService->compressFiles(urls);
-        break;
-    case MenuAction::Decompress:
-        fileService->decompressFile(fileUrl);
-        break;
-    case MenuAction::DecompressHere:
-        fileService->decompressFileHere(fileUrl);
-        break;
-    case MenuAction::Cut:
-        fileService->cutFiles(urls);
-        break;
-    case MenuAction::Copy:
-        fileService->copyFiles(urls);
-        break;
-    case MenuAction::Paste: {
-        FMEvent event;
-
-        event = fileUrl;
-        event = FMEvent::Menu;
-        event = menu->getWindowId();
-
-        fileService->pasteFile(event);
-        break;
-    }
-    case MenuAction::Rename: {
-        FMEvent event;
-
-        event = fileUrl;
-        event = FMEvent::Menu;
-        event = menu->getWindowId();
-
-        emit fileSignalManager->requestRename(event);
-        break;
-    }
-    case MenuAction::Remove: {
-        if(fileUrl.isLocalFile()) {
+        switch(type)
+        {
+        case MenuAction::Open: {
+            FMEvent event;
+            event = fileUrl;
+            event = FMEvent::Menu;
+            event = menu->getWindowId();
+            qDebug() << event;
+            fileService->openUrl(event);
+            break;
+        }
+        case MenuAction::OpenInNewWindow:
+            fileService->openNewWindow(fileUrl);
+            break;
+        case MenuAction::OpenWithCustom:{
             FMEvent event;
 
             event = fileUrl;
             event = FMEvent::Menu;
             event = menu->getWindowId();
-            fileSignalManager->requestBookmarkRemove(event);
-        } else if(fileUrl.isRecentFile()) {
-            fileSignalManager->requestRecentFileRemove(urls);
+            emit fileSignalManager->requestShowOpenWithDialog(event);
+            break;
         }
-        break;
-    }
-    case MenuAction::Delete:
-        fileService->moveToTrash(urls);
-        break;
-    case MenuAction::CompleteDeletion:
-        fileService->deleteFiles(urls);
-        break;
-    case MenuAction::CreateSoftLink:{
-        FileMenuManager::createSoftLink(menu->getWindowId(), fileUrl.toLocalFile(), QDir::homePath());
-        break;
-    }
-    case MenuAction::SendToDesktop:{
-        FileMenuManager::createSoftLink(menu->getWindowId(), fileUrl.toLocalFile(), StandardPath::getDesktopPath());
-        break;
-    }
-    case MenuAction::AddToBookMark:{
-        QString dirName = QDir(fileUrl.toLocalFile()).dirName();
-        bookmarkManager->writeIntoBookmark(0, dirName, fileUrl);
-        FMEvent event;
-        event = menu->getWindowId();
-        event = fileUrl;
-        event = FMEvent::Menu;
-        qDebug() << event << dirName;
-        emit fileSignalManager->requestBookmarkAdd(dirName, event);
-        break;
-    }
-    case MenuAction::NewFolder:{
-        FMEvent event;
+        case MenuAction::OpenFileLocation:
+            fileUrl.setScheme(FILE_SCHEME);
+            fileService->openFileLocation(fileUrl);
+            break;
+        case MenuAction::Compress:
+            fileService->compressFiles(urls);
+            break;
+        case MenuAction::Decompress:
+            fileService->decompressFile(fileUrl);
+            break;
+        case MenuAction::DecompressHere:
+            fileService->decompressFileHere(fileUrl);
+            break;
+        case MenuAction::Cut:
+            fileService->cutFiles(urls);
+            break;
+        case MenuAction::Copy:
+            fileService->copyFiles(urls);
+            break;
+        case MenuAction::Paste: {
+            FMEvent event;
 
-        event = fileUrl;
-        event = FMEvent::Menu;
-        event = menu->getWindowId();
-        fileService->newFolder(event);
-        break;
-    }
-    case MenuAction::NewFile:
-        fileService->newFile(fileUrl);
-        break;
-    case MenuAction::SelectAll:
-        fileSignalManager->requestViewSelectAll(menu->getWindowId());
-        break;
-    case MenuAction::ClearRecent:
-        fileSignalManager->requestClearRecent();
-        break;
-    case MenuAction::ClearTrash:
-        fileService->deleteFiles(DUrlList() << DUrl::fromLocalFile(TRASHPATH));
-        break;
-    case MenuAction::DisplayAs:break;
-    case MenuAction::SortBy:break;
-    case MenuAction::NewDocument:break;
+            event = fileUrl;
+            event = FMEvent::Menu;
+            event = menu->getWindowId();
 
-    case MenuAction::NewWord:{
-        QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("newDoc"), "doc");
-        FileJob::SelectedFiles.insert(DUrl::fromLocalFile(targetFile), menu->getWindowId());
-        FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("newDoc"), "doc");
-        break;
-    }
-    case MenuAction::NewExcel:{
-        QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("newExcel"), "xls");
-        FileJob::SelectedFiles.insert(DUrl::fromLocalFile(targetFile), menu->getWindowId());
-        FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("newExcel"), "xls");
-        break;
-    }
-    case MenuAction::NewPowerpoint:{
-        QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("newPowerPoint"), "ppt");
-        FileJob::SelectedFiles.insert(DUrl::fromLocalFile(targetFile), menu->getWindowId());
-        FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("newPowerPoint"), "ppt");
-        break;
-    }
-    case MenuAction::NewText:{
-        QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("newText"), "txt");
-        FileJob::SelectedFiles.insert(DUrl::fromLocalFile(targetFile), menu->getWindowId());
-        FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("newText"), "txt");
-        break;
-    }
-    case MenuAction::Mount:
-        deviceListener->mount(fileUrl.query());
-        break;
-    case MenuAction::Unmount:
-        deviceListener->unmount(fileUrl.query());
-        break;
-    case MenuAction::Restore:
-        fileSignalManager->requestRestoreTrashFile(urls);
-        break;
-    case MenuAction::OpenInTerminal:{
-        QStringList args;
-        args << "--working-directory";
-        args << fileUrl.toLocalFile();
-        QProcess::startDetached("x-terminal-emulator", args);
-        break;
-    }
-    case MenuAction::Property: {
-        FMEvent event;
-        event = fileUrl;
-        event = FMEvent::Menu;
-        event = menu->getWindowId();
-        emit fileSignalManager->requestShowPropertyDialog(event);
-        break;
-    }
-    case MenuAction::NewWindow: {
-        fileService->openNewWindow(fileUrl);
-        break;
-    }
-    case MenuAction::Help:break;
-    case MenuAction::About:break;
-    case MenuAction::Exit:
-        emit fileSignalManager->aboutToCloseLastActivedWindow(menu->getWindowId());
-        break;
-    default:
-        qDebug() << "unknown action type";
-        break;
+            fileService->pasteFile(event);
+            break;
+        }
+        case MenuAction::Rename: {
+            FMEvent event;
+
+            event = fileUrl;
+            event = FMEvent::Menu;
+            event = menu->getWindowId();
+
+            emit fileSignalManager->requestRename(event);
+            break;
+        }
+        case MenuAction::Remove: {
+            if(fileUrl.isLocalFile()) {
+                FMEvent event;
+
+                event = fileUrl;
+                event = FMEvent::Menu;
+                event = menu->getWindowId();
+                fileSignalManager->requestBookmarkRemove(event);
+            } else if(fileUrl.isRecentFile()) {
+                fileSignalManager->requestRecentFileRemove(urls);
+            }
+            break;
+        }
+        case MenuAction::Delete:
+            fileService->moveToTrash(urls);
+            break;
+        case MenuAction::CompleteDeletion:
+            fileService->deleteFiles(urls);
+            break;
+        case MenuAction::CreateSoftLink:{
+            FileMenuManager::createSoftLink(menu->getWindowId(), fileUrl.toLocalFile(), QDir::homePath());
+            break;
+        }
+        case MenuAction::SendToDesktop:{
+            FileMenuManager::createSoftLink(menu->getWindowId(), fileUrl.toLocalFile(), StandardPath::getDesktopPath());
+            break;
+        }
+        case MenuAction::AddToBookMark:{
+            QString dirName = QDir(fileUrl.toLocalFile()).dirName();
+            bookmarkManager->writeIntoBookmark(0, dirName, fileUrl);
+            FMEvent event;
+            event = menu->getWindowId();
+            event = fileUrl;
+            event = FMEvent::Menu;
+            qDebug() << event << dirName;
+            emit fileSignalManager->requestBookmarkAdd(dirName, event);
+            break;
+        }
+        case MenuAction::NewFolder:{
+            FMEvent event;
+
+            event = fileUrl;
+            event = FMEvent::Menu;
+            event = menu->getWindowId();
+            fileService->newFolder(event);
+            break;
+        }
+        case MenuAction::NewFile:
+            fileService->newFile(fileUrl);
+            break;
+        case MenuAction::SelectAll:
+            fileSignalManager->requestViewSelectAll(menu->getWindowId());
+            break;
+        case MenuAction::ClearRecent:
+            fileSignalManager->requestClearRecent();
+            break;
+        case MenuAction::ClearTrash:
+            fileService->deleteFiles(DUrlList() << DUrl::fromLocalFile(TRASHPATH));
+            break;
+        case MenuAction::DisplayAs:break;
+        case MenuAction::SortBy:break;
+        case MenuAction::NewDocument:break;
+
+        case MenuAction::NewWord:{
+            QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("newDoc"), "doc");
+            FileJob::SelectedFiles.insert(DUrl::fromLocalFile(targetFile), menu->getWindowId());
+            FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("newDoc"), "doc");
+            break;
+        }
+        case MenuAction::NewExcel:{
+            QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("newExcel"), "xls");
+            FileJob::SelectedFiles.insert(DUrl::fromLocalFile(targetFile), menu->getWindowId());
+            FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("newExcel"), "xls");
+            break;
+        }
+        case MenuAction::NewPowerpoint:{
+            QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("newPowerPoint"), "ppt");
+            FileJob::SelectedFiles.insert(DUrl::fromLocalFile(targetFile), menu->getWindowId());
+            FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("newPowerPoint"), "ppt");
+            break;
+        }
+        case MenuAction::NewText:{
+            QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("newText"), "txt");
+            FileJob::SelectedFiles.insert(DUrl::fromLocalFile(targetFile), menu->getWindowId());
+            FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("newText"), "txt");
+            break;
+        }
+        case MenuAction::Mount:
+            deviceListener->mount(fileUrl.query());
+            break;
+        case MenuAction::Unmount:
+            deviceListener->unmount(fileUrl.query());
+            break;
+        case MenuAction::Restore:
+            fileSignalManager->requestRestoreTrashFile(urls);
+            break;
+        case MenuAction::OpenInTerminal:{
+            QStringList args;
+            args << "--working-directory";
+            args << fileUrl.toLocalFile();
+            QProcess::startDetached("x-terminal-emulator", args);
+            break;
+        }
+        case MenuAction::Property: {
+            FMEvent event;
+            event = fileUrl;
+            event = FMEvent::Menu;
+            event = menu->getWindowId();
+            emit fileSignalManager->requestShowPropertyDialog(event);
+            break;
+        }
+        case MenuAction::NewWindow: {
+            fileService->openNewWindow(fileUrl);
+            break;
+        }
+        case MenuAction::Help:break;
+        case MenuAction::About:break;
+        case MenuAction::Exit:
+            emit fileSignalManager->aboutToCloseLastActivedWindow(menu->getWindowId());
+            break;
+        default:
+            qDebug() << "unknown action type";
+            break;
+        }
     }
 }
 

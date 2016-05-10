@@ -33,7 +33,8 @@ public:
   static QString newDocmentName(const QString& targetdir, const QString& baseName, const QString& suffix);
   static void cpTemplateFileToTargetDir(const QString& targetdir, const QString& baseName, const QString& suffix);
 
-  static bool openDesktopFile(const QString& path);
+  static bool openDesktopFile(const QString& filePath);
+  static bool openFileByApp(const QString& filePath, const QString& app);
 };
 
 #endif // FILEUTILS_H
