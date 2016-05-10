@@ -31,7 +31,8 @@ void DCrumbWidget::initUI()
     setObjectName("DCrumbWidget");
     m_listWidget->setFlow(QListWidget::LeftToRight);
     m_listWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    m_listWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);   
+    m_listWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_listWidget->setFocusPolicy(Qt::NoFocus);
     setFixedHeight(20);
     setMinimumWidth(50);
 }
