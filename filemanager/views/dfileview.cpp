@@ -660,6 +660,7 @@ bool DFileView::setCurrentUrl(DUrl fileUrl)
 
     const DUrl &currentUrl = this->currentUrl();
 
+
     if(currentUrl == fileUrl)
         return false;
 
@@ -874,6 +875,7 @@ void DFileView::showNormalMenu(const QModelIndex &index)
 
 
     DUrlList list = selectedUrls();
+
     if (list.length() == 1){
         const AbstractFileInfoPointer &info = model()->fileInfo(index);
         const QVector<MenuAction> &actions = info->menuActionList(AbstractFileInfo::Normal);
@@ -898,7 +900,7 @@ void DFileView::showNormalMenu(const QModelIndex &index)
             foreach (QString app, recommendApps) {
                 DAction* action = new DAction(mimeAppsManager->DesktopObjs.value(app).getName(), 0);
                 action->setProperty("app", app);
-                action->setProperty("url", list.at(0).toLocalFile());
+                action->setProperty("url", list.at(0).path());
                 openWithMenu->addAction(action);
                 m_openWithActionGroup->addAction(action);
             }

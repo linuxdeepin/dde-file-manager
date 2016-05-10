@@ -106,7 +106,7 @@ void SingleApplication::readData()
     if (messageObj.contains("url")){
         QString _url = messageObj.value("url").toString();
         if (!_url.isEmpty()){
-            url = DUrl::fromLocalFile(_url);
+            url = DUrl::fromUserInput(_url);
         }
     }
     qDebug() << url;

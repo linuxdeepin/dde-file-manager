@@ -350,7 +350,7 @@ bool FileUtils::openDesktopFile(const QString &filePath)
 bool FileUtils::openFileByApp(const QString &filePath, const QString &app)
 {
     if (filePath.isEmpty()) {
-        qDebug() << "Failed to open desktop file with gio: desktop file path is empty";
+        qDebug() << "Failed to open desktop file with gio: file path is empty";
         return false;
     }
     if (app.isEmpty()) {
