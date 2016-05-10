@@ -15,7 +15,7 @@ DScrollBar::DScrollBar(QWidget *parent)
     connect(m_timer, SIGNAL(timeout()), this, SLOT(hidden()));
     connect(m_opacityTimer, SIGNAL(timeout()), this, SLOT(opacity()));
     setAutoFillBackground(true);
-    m_timer->start(1000);
+    //m_timer->start(1000);
 
     setStyleSheet("QScrollBar#DScrollBar:vertical{\
                   border: 0px;\
