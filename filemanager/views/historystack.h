@@ -15,6 +15,7 @@ public:
     void setThreshold(int threshold);
     bool isFirst();
     bool isLast();
+    int size();
 private:
     QList<DUrl> m_list;
     int m_threshold;
