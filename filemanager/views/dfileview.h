@@ -108,6 +108,7 @@ private slots:
     void selectAll(int windowId);
     void dislpayAsActionTriggered(QAction * action);
     void sortByActionTriggered(QAction * action);
+    void openWithActionTriggered(QAction * action);
 
 protected:
     void wheelEvent(QWheelEvent * event) Q_DECL_OVERRIDE;
@@ -129,8 +130,9 @@ private:
     FileMenuManager* m_fileMenuManager;
     QHeaderView *m_headerView = Q_NULLPTR;
 
-    QActionGroup* m_actionDisplayAsGroup;
-    QActionGroup* m_actionSortByGroup;
+    QActionGroup* m_displayAsActionGroup;
+    QActionGroup* m_sortByActionGroup;
+    QActionGroup* m_openWithActionGroup;
 
     QList<int> m_columnRoles;
     QList<int> m_iconSizes;

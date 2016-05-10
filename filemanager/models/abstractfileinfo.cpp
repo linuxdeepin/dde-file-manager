@@ -477,7 +477,6 @@ QMap<AbstractFileInfo::MenuAction, QVector<AbstractFileInfo::MenuAction> > Abstr
     QMap<MenuAction, QVector<MenuAction> > actions;
 
     QVector<MenuAction> openwithMenuActionKeys;
-    openwithMenuActionKeys << OpenWithCustom;
     actions.insert(OpenWith, openwithMenuActionKeys);
 
 
