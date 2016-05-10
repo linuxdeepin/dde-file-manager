@@ -20,19 +20,23 @@
 #include "../controllers/fmstatemanager.h"
 #include "../models/dfilesystemmodel.h"
 #include "dfilemanagerwindow.h"
+#include "../shutil/fileutils.h"
 #include <dthememanager.h>
 
 #include <QWheelEvent>
 #include <QLineEdit>
 #include <QTextEdit>
 
+
 DWIDGET_USE_NAMESPACE
+
 
 DFileView::DFileView(QWidget *parent) : DListView(parent)
 {
     D_THEME_INIT_WIDGET(DFileView);
-    m_actionDisplayAsGroup = new QActionGroup(this);
-    m_actionSortByGroup = new QActionGroup(this);
+    m_displayAsActionGroup = new QActionGroup(this);
+    m_sortByActionGroup = new QActionGroup(this);
+    m_openWithActionGroup = new QActionGroup(this);
     initUI();
     initDelegate();
     initModel();
@@ -91,8 +95,9 @@ void DFileView::initConnects()
     connect(fileSignalManager, &FileSignalManager::requestSelectFile,
             this, &DFileView::select);
 
-    connect(m_actionDisplayAsGroup, &QActionGroup::triggered, this, &DFileView::dislpayAsActionTriggered);
-    connect(m_actionSortByGroup, &QActionGroup::triggered, this, &DFileView::sortByActionTriggered);
+    connect(m_displayAsActionGroup, &QActionGroup::triggered, this, &DFileView::dislpayAsActionTriggered);
+    connect(m_sortByActionGroup, &QActionGroup::triggered, this, &DFileView::sortByActionTriggered);
+    connect(m_openWithActionGroup, &QActionGroup::triggered, this, &DFileView::openWithActionTriggered);
 }
 
 void DFileView::initActions()
@@ -263,14 +268,13 @@ void DFileView::cd(const FMEvent &event)
     if(fileUrl.isEmpty())
         return;
 
+
     if(setCurrentUrl(fileUrl))
     {
         FMEvent e = event;
         e = currentUrl();
         emit fileSignalManager->currentUrlChanged(e);
     }
-//    if(setCurrentUrl(fileUrl))
-//        emit fileSignalManager->currentUrlChanged(event);
 
     if (FMStateManager::SortStates.contains(fileUrl)){
         sort(FMStateManager::SortStates.value(fileUrl));
@@ -374,6 +378,14 @@ void DFileView::sortByActionTriggered(QAction *action)
         default:
             break;
     }
+}
+
+void DFileView::openWithActionTriggered(QAction *action)
+{
+    DAction* dAction = static_cast<DAction*>(action);
+    QString app = dAction->property("app").toString();
+    QString url = dAction->property("url").toString();
+    FileUtils::openFileByApp(url, app);
 }
 
 void DFileView::wheelEvent(QWheelEvent *event)
@@ -583,13 +595,14 @@ void DFileView::shrinkIcon()
 
 void DFileView::openIndex(const QModelIndex &index)
 {
+    qDebug() << index << model()->hasChildren(index);
     if(model()->hasChildren(index)){
         FMEvent event;
 
         event = model()->getUrlByIndex(index);
         event = FMEvent::FileView;
         event = windowId();
-
+        qDebug() << event;
         emit fileSignalManager->requestChangeCurrentUrl(event);
     } else {
         emit fileService->openFile(model()->getUrlByIndex(index));
@@ -628,8 +641,6 @@ void DFileView::stopSearch()
     event = FMEvent::FileView;
     event = windowId();
 
-    qDebug() << event;
-
     FileServices::instance()->getChildren(event);
 }
 
@@ -658,6 +669,7 @@ bool DFileView::setCurrentUrl(DUrl fileUrl)
 
     if(!index.isValid())
         index = model()->setRootUrl(fileUrl);
+
 
     setRootIndex(index);
     model()->setActiveIndex(index);
@@ -817,7 +829,7 @@ void DFileView::showEmptyAreaMenu()
 
     if (displayAsSubMenu){
         foreach (DAction* action, displayAsSubMenu->actionList()) {
-            action->setActionGroup(m_actionDisplayAsGroup);
+            action->setActionGroup(m_displayAsActionGroup);
         }
         if (m_currentViewMode == IconMode){
             displayAsSubMenu->actionAt(fileMenuManger->getActionString(MenuAction::IconView))->setChecked(true);
@@ -830,7 +842,7 @@ void DFileView::showEmptyAreaMenu()
 
     if (sortBySubMenu){
         foreach (DAction* action, sortBySubMenu->actionList()) {
-            action->setActionGroup(m_actionSortByGroup);
+            action->setActionGroup(m_sortByActionGroup);
         }
         if (model()->sortRole() == DFileSystemModel::FileDisplayNameRole){
             sortBySubMenu->actionAt(fileMenuManger->getActionString(MenuAction::Name))->setChecked(true);
@@ -865,9 +877,36 @@ void DFileView::showNormalMenu(const QModelIndex &index)
     if (list.length() == 1){
         const AbstractFileInfoPointer &info = model()->fileInfo(index);
         const QVector<MenuAction> &actions = info->menuActionList(AbstractFileInfo::Normal);
+        const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList();
 
+        DFileMenu* menu = FileMenuManager::genereteMenuByKeys(actions, FileMenuManager::getDisableActionList(model()->getUrlByIndex(index)), true, subActions);
 
-        DFileMenu* menu = FileMenuManager::genereteMenuByKeys(actions, FileMenuManager::getDisableActionList(model()->getUrlByIndex(index)));
+        DFileMenu* openWithMenu =  qobject_cast<DFileMenu*>(menu->actionAt(1)->menu());
+        if (openWithMenu){
+            QString url = info->absoluteFilePath();
+            QMimeType mimeType = mimeAppsManager->getMimeType(url);
+            QStringList recommendApps = mimeAppsManager->MimeApps.value(MimesAppsManager::getMimeTypeByFileName(url));;
+            foreach (QString name, mimeType.aliases()) {
+                QStringList apps = mimeAppsManager->MimeApps.value(name);
+                foreach (QString app, apps) {
+                    if (!recommendApps.contains(app)){
+                        recommendApps.append(app);
+                    }
+                }
+            }
+
+            foreach (QString app, recommendApps) {
+                DAction* action = new DAction(mimeAppsManager->DesktopObjs.value(app).getName(), 0);
+                action->setProperty("app", app);
+                action->setProperty("url", list.at(0).toLocalFile());
+                openWithMenu->addAction(action);
+                m_openWithActionGroup->addAction(action);
+            }
+            DAction* action = new DAction(fileMenuManger->getActionString(AbstractFileInfo::OpenWithCustom), 0);
+            action->setData((int)AbstractFileInfo::OpenWithCustom);
+            openWithMenu->addAction(action);
+        }
+
         menu->setWindowId(m_windowId);
         menu->setUrls(list);
         menu->exec();

@@ -12,6 +12,8 @@
 #include "../shutil/desktopfile.h"
 #include "../shutil/iconprovider.h"
 #include "../views/dscrollbar.h"
+#include "../shutil/fileutils.h"
+
 
 OpenWithDialog::OpenWithDialog(const DUrl &url, QWidget *parent) :
     BaseDialog(parent)
@@ -36,7 +38,8 @@ void OpenWithDialog::initUI()
     setFixedSize(400, 400);
     setTitle(tr("Open with"));
     m_listWidget = new QListWidget;
-    m_listWidget->setVerticalScrollBar(new DScrollBar);
+    m_listWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+//    m_listWidget->setVerticalScrollBar(new DScrollBar);
 
     m_cancelButton = new QPushButton(tr("Cancel"));
     m_chooseButton = new QPushButton(tr("Choose"));
@@ -116,24 +119,7 @@ void OpenWithDialog::addItems()
 void OpenWithDialog::openFileByApp()
 {
     QString app = m_listWidget->currentItem()->data(Qt::UserRole).toString();
-    QString exe = mimeAppsManager->DesktopObjs.value(app).getExec();
-
-    QStringList split = exe.split(" ");
-    QString name = split.takeAt(0);
-    QString args = split.join(" ");
-
     QString file = m_url.toString();
-
-    if (args.toLower().contains("%f")) {
-      args.replace("%f", file, Qt::CaseInsensitive);
-    } else if (args.toLower().contains("%u")) {
-      args.replace("%u", file, Qt::CaseInsensitive);
-    } else {
-      args.append(args.isEmpty() ? "" : " ");
-      args.append(/*"\"" + */file/* + "\""*/);
-    }
-
-    qDebug() << name << args;
-    QProcess::startDetached(name, QStringList() << args);
+    FileUtils::openFileByApp(file, app);
     close();
 }
