@@ -473,8 +473,7 @@ void FileMenuManager::actionTriggered(DAction *action)
             break;
         case MenuAction::OpenInTerminal:{
             QStringList args;
-            args << "--working-directory";
-            args << fileUrl.toLocalFile();
+            args << QString("--working-directory=%1").arg(fileUrl.toLocalFile());
             QProcess::startDetached("x-terminal-emulator", args);
             break;
         }
