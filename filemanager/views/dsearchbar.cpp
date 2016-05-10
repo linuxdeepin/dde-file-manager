@@ -228,7 +228,7 @@ void DSearchBar::setCompleter(const QString &text)
         }
     }
     recomended();
-    // Position the text edit
+
     m_list->setMinimumWidth(width());
     m_list->setMaximumWidth(width());
     QPoint p(0, height());
@@ -315,10 +315,12 @@ bool DSearchBar::event(QEvent *e)
     {
         QKeyEvent * keyEvent = static_cast<QKeyEvent*> (e);
         if(keyEvent->key() == Qt::Key_Tab)
+        {
             keyPressEvent(keyEvent);
+            return true;
+        }
         else
             return QLineEdit::event(e);
-        e->accept();
     }
     else
         return QLineEdit::event(e);
@@ -421,15 +423,20 @@ void DSearchBar::keyUpDown(int key)
             setText(list.join("/"));
             setSelection(text().length() + last.length() - modelText.length(), text().length());
         }
+        else
+        {
+            setText(modelText);
+            setSelection(m_text.length(), modelText.length());
+        }
     }
-    else
-        setText(m_text);
+    m_disableCompletion = true;
 }
 
 void DSearchBar::recomended()
 {
     if(m_list->count() == 1)
     {
+        m_disableCompletion = true;
         QStringList list = splitPath(m_text);
         QString modelText = m_list->item(0)->text();
         QString last = list.last();
@@ -458,6 +465,7 @@ void DSearchBar::recomended()
 
 void DSearchBar::complete(const QString &str)
 {
+    m_disableCompletion = true;
     QStringList list = splitPath(m_text);
     QString modelText = str;
     QString last = list.last();
