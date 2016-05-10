@@ -75,10 +75,10 @@ void OpenWithDialog::addItems()
     recommendItem->setFlags(Qt::NoItemFlags);
     m_listWidget->addItem(recommendItem);
 
+    QString path = m_url.path();
+    QMimeType mimeType = mimeAppsManager->getMimeType(path);
 
-    QMimeType mimeType = mimeAppsManager->getMimeType(m_url.toLocalFile());
-
-    QStringList recommendApps = mimeAppsManager->MimeApps.value(MimesAppsManager::getMimeTypeByFileName(m_url.toLocalFile()));;
+    QStringList recommendApps = mimeAppsManager->MimeApps.value(MimesAppsManager::getMimeTypeByFileName(path));;
     foreach (QString name, mimeType.aliases()) {
         QStringList apps = mimeAppsManager->MimeApps.value(name);
         foreach (QString app, apps) {
@@ -87,7 +87,7 @@ void OpenWithDialog::addItems()
             }
         }
     }
-    qDebug() << m_url.toLocalFile() << mimeType.aliases() << recommendApps;
+    qDebug() << m_url << path << mimeType.aliases() << recommendApps;
 
     foreach (QString f, recommendApps){
         QString iconName = mimeAppsManager->DesktopObjs.value(f).getIcon();
