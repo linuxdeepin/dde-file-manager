@@ -41,6 +41,16 @@ QListWidgetItem *DCrumbButton::getItem()
 {
     return m_item;
 }
+QString DCrumbButton::path() const
+{
+    return m_path;
+}
+
+void DCrumbButton::setPath(const QString &path)
+{
+    m_path = path;
+}
+
 
 void DCrumbButton::paintEvent(QPaintEvent *e)
 {

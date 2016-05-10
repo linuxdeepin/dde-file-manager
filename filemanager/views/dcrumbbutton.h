@@ -14,9 +14,13 @@ public:
     QString getName();
     void setItem(QListWidgetItem * item);
     QListWidgetItem * getItem();
+    QString path() const;
+    void setPath(const QString &path);
+
 private:
     int m_index;
     QString m_name;
+    QString m_path;
     QListWidgetItem * m_item;
 protected:
     void paintEvent(QPaintEvent *e);
