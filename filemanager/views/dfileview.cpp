@@ -263,7 +263,12 @@ void DFileView::cd(const FMEvent &event)
     if(fileUrl.isEmpty())
         return;
 
-    setCurrentUrl(fileUrl);
+    if(setCurrentUrl(fileUrl))
+    {
+        FMEvent e = event;
+        e = currentUrl();
+        emit fileSignalManager->currentUrlChanged(e);
+    }
 //    if(setCurrentUrl(fileUrl))
 //        emit fileSignalManager->currentUrlChanged(event);
 
@@ -673,15 +678,7 @@ bool DFileView::setCurrentUrl(DUrl fileUrl)
         } else {
             switchViewMode(m_defaultViewMode);
         }
-    }
-
-    FMEvent event;
-
-    event = fileUrl;
-    event = FMEvent::FileView;
-    event = windowId();
-
-    emit fileSignalManager->currentUrlChanged(event);
+    } 
     //emit currentUrlChanged(fileUrl);
 
     return true;

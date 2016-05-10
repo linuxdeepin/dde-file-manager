@@ -272,7 +272,10 @@ void DToolBar::crumbChanged(const FMEvent &event)
     if(event.source() == FMEvent::BackAndForwardButton)
         return;
     m_navStack->insert(event.fileUrl());
-    m_backButton->setEnabled(true);
+    if(m_navStack->size() > 1)
+        m_backButton->setEnabled(true);
+    else
+        m_backButton->setEnabled(false);
 }
 
 /**

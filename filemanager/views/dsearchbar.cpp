@@ -27,6 +27,7 @@ void DSearchBar::initData()
 void DSearchBar::initUI()
 {
     m_list = new QListWidget(this);
+    m_list->setFocusPolicy(Qt::NoFocus);
     m_stringListMode = new QStringListModel(this);
     m_list->setWindowFlags(Qt::ToolTip);
 
@@ -158,6 +159,11 @@ void DSearchBar::historySaved()
 
 void DSearchBar::setCompleter(const QString &text)
 {
+    if(text.isEmpty())
+        m_clearAction->setVisible(false);
+    else
+        m_clearAction->setVisible(true);
+
     if (text.isEmpty())
     {
         m_list->hide();
@@ -260,14 +266,12 @@ void DSearchBar::completeText(QListWidgetItem *item)
 
 void DSearchBar::currentUrlChanged(const FMEvent &event)
 {
-    qDebug() << event.fileUrl() << m_currentPath << "haha";
     if(event.fileUrl().isSearchFile())
     {
         return;
     }
     if(event.fileUrl() != m_currentPath)
         emit focusedOut();
-    qDebug() << event.fileUrl() << m_currentPath;
 }
 
 void DSearchBar::focusInEvent(QFocusEvent *e)
@@ -277,7 +281,6 @@ void DSearchBar::focusInEvent(QFocusEvent *e)
 
 void DSearchBar::focusOutEvent(QFocusEvent *e)
 {
-    qDebug() << "focus out";
     if(m_searchStart)
         return;
     if(window()->rect().contains(window()->mapFromGlobal(QCursor::pos())))
@@ -633,4 +636,7 @@ bool DSearchBar::isPath()
 void DSearchBar::setCurrentPath(const DUrl &path)
 {
     m_currentPath = path;
+    m_disableCompletion = true;
+    setText(path.toLocalFile());
+    setSelection(0, path.toLocalFile().length());
 }

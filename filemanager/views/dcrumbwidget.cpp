@@ -230,6 +230,7 @@ void DCrumbWidget::createCrumbs()
     m_listWidget->setHorizontalScrollMode(QListWidget::ScrollPerPixel);
     m_listWidget->horizontalScrollBar()->setPageStep(m_listWidget->width());
     checkArrows();
+    m_listWidget->scrollToItem(m_items.last(), QListWidget::PositionAtBottom);
 }
 
 void DCrumbWidget::createArrows()

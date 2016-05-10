@@ -71,3 +71,8 @@ bool HistoryStack::isLast()
 {
     return m_index == m_list.size();
 }
+
+int HistoryStack::size()
+{
+    return m_list.size();
+}
