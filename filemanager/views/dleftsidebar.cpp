@@ -154,6 +154,7 @@ void DLeftSideBar::initConnect()
 void DLeftSideBar::initNav()
 {
     m_nav = new QFrame;
+    m_nav->setFocusPolicy(Qt::NoFocus);
     m_nav->setFixedWidth(200);
     QVBoxLayout* navLayout = new QVBoxLayout;
     m_nav->setLayout(navLayout);
