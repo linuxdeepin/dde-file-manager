@@ -146,7 +146,7 @@ QString AbstractFileInfo::displayName() const
             }
         }
     } else {
-        if (fileName().endsWith("desktop")){
+        if (isDesktopFile()){
             return DesktopFile(absoluteFilePath()).getName();
         }
 
@@ -218,6 +218,11 @@ bool AbstractFileInfo::isDir() const
 bool AbstractFileInfo::isSymLink() const
 {
     return data->fileInfo.isSymLink();
+}
+
+bool AbstractFileInfo::isDesktopFile() const
+{
+    return fileName().endsWith("desktop");
 }
 
 QString AbstractFileInfo::readLink() const
@@ -321,8 +326,15 @@ QVector<AbstractFileInfo::MenuAction> AbstractFileInfo::menuActionList(AbstractF
     } else if (type == SingleFile){
 
 
-        actionKeys << Open << (isDir() ? OpenInNewWindow : OpenWith)
-                   << Separator;
+        actionKeys << Open;
+
+        if (isDir()){
+            actionKeys << OpenInNewWindow;
+        }else{
+            if (!isDesktopFile())
+                actionKeys << OpenWith;
+        }
+        actionKeys << Separator;
         if (isDir()){
             actionKeys << Compress;
         }else if(isFile()){

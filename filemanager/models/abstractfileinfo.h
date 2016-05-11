@@ -122,6 +122,8 @@ public:
     virtual bool isFile() const;
     virtual bool isDir() const;
     virtual bool isSymLink() const;
+    virtual bool isDesktopFile() const;
+
 
     virtual QString readLink() const;
     inline QString symLinkTarget() const { return readLink(); }
