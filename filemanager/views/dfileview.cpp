@@ -671,9 +671,8 @@ bool DFileView::setCurrentUrl(DUrl fileUrl)
     if(!index.isValid())
         index = model()->setRootUrl(fileUrl);
 
-
-    setRootIndex(index);
     model()->setActiveIndex(index);
+    setRootIndex(index);
 
 //    updateListHeaderViewProperty();
 
