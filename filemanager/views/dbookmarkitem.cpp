@@ -239,12 +239,6 @@ void DBookmarkItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
             m_yPress = event->pos().y();
         }
         m_pressed = true;
-        emit clicked();
-        if(m_group)
-        {
-            m_group->deselectAll();
-            setChecked(true);
-        }
     }
     update();
 }
@@ -375,6 +369,12 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             e = m_url;
         e = FMEvent::LeftSideBar;
         emit m_group->url(e);
+        emit clicked();
+        if(m_group)
+        {
+            m_group->deselectAll();
+            setChecked(true);
+        }
     }
     m_pressed = false;
     update();
