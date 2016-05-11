@@ -11,7 +11,7 @@
 
 #include "durl.h"
 
-#define LEFTSIDEBAR_MIN 60
+#define LEFTSIDEBAR_MIN 48
 #define LEFTSIDEBAR_MAX 200
 #define LEFTSIDEBAR_NORMAL 160
 #define LEFTSIDEBAR_THRES 70
