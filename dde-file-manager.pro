@@ -20,6 +20,7 @@ include(./dialogs/dialogs.pri)
 include(./utils/utils.pri)
 include(./filemonitor/filemonitor.pri)
 include(./deviceinfo/deviceinfo.pri)
+include(./dbusinterface/dbusinterface.pri)
 
 PKGCONFIG += x11 gtk+-2.0 xcb xcb-ewmh gsettings-qt dtkbase dtkutil dtkwidget libudev x11 xext
 CONFIG += c++11 link_pkgconfig
