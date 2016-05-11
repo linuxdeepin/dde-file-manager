@@ -95,6 +95,7 @@ bool RecentHistoryManager::copyFiles(const DUrlList &urlList, bool &accepted) co
 const QList<AbstractFileInfoPointer> RecentHistoryManager::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
 {
     Q_UNUSED(filter)
+    Q_UNUSED(fileUrl)
 
     QList<AbstractFileInfoPointer> infolist;
 

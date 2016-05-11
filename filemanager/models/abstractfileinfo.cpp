@@ -135,8 +135,7 @@ QString AbstractFileInfo::fileName() const
 
 QString AbstractFileInfo::displayName() const
 {
-
-    if (systemPathManager->systemPaths().values().contains(filePath())){
+    if (systemPathManager->systemPaths().values().contains(filePath())) {
         foreach (QString key, systemPathManager->systemPaths().keys()) {
             if (systemPathManager->systemPaths().value(key) == filePath()){
                 if (fileName() == key){
@@ -146,12 +145,15 @@ QString AbstractFileInfo::displayName() const
                 }
             }
         }
-    }else{
+    } else {
         if (fileName().endsWith("desktop")){
             return DesktopFile(absoluteFilePath()).getName();
         }
+
         return fileName();
     }
+
+    return QString();
 }
 
 QString AbstractFileInfo::path() const
