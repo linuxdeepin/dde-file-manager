@@ -63,6 +63,7 @@ public slots:
 private:
     void increaseSize();
     void decreaseSize();
+    void move(DBookmarkItem * from, DBookmarkItem* to);
     DBookmarkRootItem * m_rootItem;
     DBookmarkItemGroup * m_itemGroup;
     QList<DBookmarkItem *> m_items;

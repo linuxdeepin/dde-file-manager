@@ -276,6 +276,11 @@ void DToolBar::crumbChanged(const FMEvent &event)
         m_backButton->setEnabled(true);
     else
         m_backButton->setEnabled(false);
+
+    if(m_navStack->isLast())
+        m_forwardButton->setEnabled(false);
+    else
+        m_forwardButton->setEnabled(true);
 }
 
 /**
