@@ -10,9 +10,9 @@
 
 #include "durl.h"
 
+class DFileSystemModel;
 
 QT_BEGIN_NAMESPACE
-class DFileSystemModel;
 class QHeaderView;
 QT_END_NAMESPACE
 
