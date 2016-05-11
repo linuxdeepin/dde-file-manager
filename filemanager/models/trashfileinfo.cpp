@@ -89,12 +89,20 @@ QVector<AbstractFileInfo::MenuAction> TrashFileInfo::menuActionList(AbstractFile
                    << MenuAction::SortBy
                    << MenuAction::Separator
                    << MenuAction::Property;
-    } else {
+    } else if (type == SingleFile){
         actionKeys.reserve(12);
         if(isDir()){
             actionKeys << MenuAction::OpenInNewWindow
                        << MenuAction::Separator;
         }
+        actionKeys << MenuAction::Restore
+                   << MenuAction::CompleteDeletion
+                   << MenuAction::Copy
+                   << MenuAction::Separator
+                   << MenuAction::Property;
+
+    }else if (type == MultiFiles){
+        actionKeys.reserve(12);
         actionKeys << MenuAction::Restore
                    << MenuAction::CompleteDeletion
                    << MenuAction::Copy

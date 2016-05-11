@@ -316,12 +316,31 @@ void FileMenuManager::actionTriggered(DAction *action)
         switch(type)
         {
         case MenuAction::Open: {
-            FMEvent event;
-            event = fileUrl;
-            event = FMEvent::Menu;
-            event = menu->getWindowId();
-            qDebug() << event;
-            fileService->openUrl(event);
+            if (urls.size() == 1){
+                FMEvent event;
+                event = fileUrl;
+                event = FMEvent::Menu;
+                event = menu->getWindowId();
+                fileService->openUrl(event);
+            }else{
+                foreach (DUrl url, urls) {
+                    if (url.isRecentFile()){
+                        url.setScheme(FILE_SCHEME);
+                    }
+                    if (url.isLocalFile()){
+                        QFileInfo info(url.toLocalFile());
+                        if (info.isFile()){
+                            FMEvent event;
+                            event = url;
+                            event = FMEvent::Menu;
+                            event = menu->getWindowId();
+                            fileService->openUrl(event);
+                        }else if(info.isDir()){
+                            emit fileSignalManager->requestOpenNewWindowByUrl(url, true);
+                        }
+                    }
+                }
+            }
             break;
         }
         case MenuAction::OpenInNewWindow:
@@ -337,8 +356,10 @@ void FileMenuManager::actionTriggered(DAction *action)
             break;
         }
         case MenuAction::OpenFileLocation:
-            fileUrl.setScheme(FILE_SCHEME);
-            fileService->openFileLocation(fileUrl);
+            foreach (DUrl url, urls) {
+                url.setScheme(FILE_SCHEME);
+                fileService->openFileLocation(url);
+            }
             break;
         case MenuAction::Compress:
             fileService->compressFiles(urls);
@@ -395,11 +416,11 @@ void FileMenuManager::actionTriggered(DAction *action)
             fileService->deleteFiles(urls);
             break;
         case MenuAction::CreateSoftLink:{
-            FileMenuManager::createSoftLink(menu->getWindowId(), fileUrl.toLocalFile(), QDir::homePath());
+            FileUtils::createSoftLink(menu->getWindowId(), fileUrl.toLocalFile());
             break;
         }
         case MenuAction::SendToDesktop:{
-            FileMenuManager::createSoftLink(menu->getWindowId(), fileUrl.toLocalFile(), StandardPath::getDesktopPath());
+            FileUtils::sendToDesktop(urls);
             break;
         }
         case MenuAction::AddToBookMark:{
@@ -501,27 +522,5 @@ void FileMenuManager::actionTriggered(DAction *action)
             qDebug() << "unknown action type";
             break;
         }
-    }
-}
-
-void FileMenuManager::createSoftLink(int windowId, const QString &file, const QString &targetDir)
-{
-    QFileInfo  info(file);
-    QString baseName = info.baseName();
-    QString linkBaseName;
-    if (info.isFile()){
-        linkBaseName = QString("%1 link.%2").arg(baseName, info.suffix());
-    }else if (info.isDir()){
-        linkBaseName = QString("%1 link").arg(baseName);
-    }else if (info.isSymLink()){
-        return;
-    }
-    QString linkFile = QString("%1/%2").arg(targetDir, linkBaseName);
-    if (targetDir == StandardPath::getDesktopPath()){
-        QFile(file).link(linkFile);
-    }else{
-        QString fileName = QFileDialog::getSaveFileName(WindowManager::getWindowById(windowId), QObject::tr("Create soft link"),
-                                   linkFile);
-        QFile(file).link(fileName);
     }
 }

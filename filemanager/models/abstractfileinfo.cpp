@@ -318,8 +318,8 @@ QVector<AbstractFileInfo::MenuAction> AbstractFileInfo::menuActionList(AbstractF
                    << SelectAll
                    << Separator
                    << Property;
-    } else {
-        actionKeys.reserve(11);
+    } else if (type == SingleFile){
+
 
         actionKeys << Open << (isDir() ? OpenInNewWindow : OpenWith)
                    << Separator;
@@ -346,7 +346,8 @@ QVector<AbstractFileInfo::MenuAction> AbstractFileInfo::menuActionList(AbstractF
                 }
             }
         }else{
-            actionKeys << AddToBookMark;
+            if (isDir())
+                actionKeys << AddToBookMark;
         }
         actionKeys << Rename;
         QPixmap tempPixmap;
@@ -356,6 +357,18 @@ QVector<AbstractFileInfo::MenuAction> AbstractFileInfo::menuActionList(AbstractF
         }
 
         actionKeys << Separator
+                   << Delete
+                   << Separator
+                   << Property;
+    }else if(type == MultiFiles){
+        actionKeys << Open
+                   << Separator
+                   << Compress
+                   << Separator
+                   << Cut
+                   << Copy
+                   << SendToDesktop
+                   << Separator
                    << Delete
                    << Separator
                    << Property;

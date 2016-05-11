@@ -868,13 +868,14 @@ void DFileView::showNormalMenu(const QModelIndex &index)
 
 
     DUrlList list = selectedUrls();
-
+    DFileMenu* menu;
     if (list.length() == 1){
         const AbstractFileInfoPointer &info = model()->fileInfo(index);
-        const QVector<MenuAction> &actions = info->menuActionList(AbstractFileInfo::Normal);
+        const QVector<MenuAction> &actions = info->menuActionList(AbstractFileInfo::SingleFile);
         const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList();
+        const QVector<MenuAction> disableList;
 
-        DFileMenu* menu = FileMenuManager::genereteMenuByKeys(actions, FileMenuManager::getDisableActionList(model()->getUrlByIndex(index)), true, subActions);
+        menu = FileMenuManager::genereteMenuByKeys(actions, disableList, true, subActions);
 
         DFileMenu* openWithMenu =  qobject_cast<DFileMenu*>(menu->actionAt(1)->menu());
         if (openWithMenu){
@@ -901,14 +902,17 @@ void DFileView::showNormalMenu(const QModelIndex &index)
             action->setData((int)AbstractFileInfo::OpenWithCustom);
             openWithMenu->addAction(action);
         }
-
-        menu->setWindowId(m_windowId);
-        menu->setUrls(list);
-        menu->exec();
-        menu->deleteLater();
     }else{
-
+        const AbstractFileInfoPointer &info = model()->fileInfo(index);
+        const QVector<MenuAction> &actions = info->menuActionList(AbstractFileInfo::MultiFiles);
+        const QMap<MenuAction, QVector<MenuAction> > subActions;
+        const QVector<MenuAction> disableList;
+        menu = FileMenuManager::genereteMenuByKeys(actions, disableList, true, subActions);
     }
+    menu->setWindowId(m_windowId);
+    menu->setUrls(list);
+    menu->exec();
+    menu->deleteLater();
 }
 
 void DFileView::updateListHeaderViewProperty()

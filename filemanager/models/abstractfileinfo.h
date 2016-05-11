@@ -71,7 +71,8 @@ public:
     };
 
     enum MenuType {
-        Normal,
+        SingleFile,
+        MultiFiles,
         SpaceArea
     };
 
@@ -158,7 +159,7 @@ public:
     virtual QIcon fileIcon() const = 0;
 
     virtual DUrl parentUrl() const;
-    virtual QVector<MenuAction> menuActionList(MenuType type = Normal) const;
+    virtual QVector<MenuAction> menuActionList(MenuType type = SingleFile) const;
     virtual QMap<MenuAction, QVector<MenuAction> > subMenuActionList() const;
 
     /// return DFileView::ViewMode flags
