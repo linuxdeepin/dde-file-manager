@@ -334,16 +334,6 @@ QVector<AbstractFileInfo::MenuAction> AbstractFileInfo::menuActionList(AbstractF
             if (!isDesktopFile())
                 actionKeys << OpenWith;
         }
-        actionKeys << Separator;
-        if (isDir()){
-            actionKeys << Compress;
-        }else if(isFile()){
-            if (FileUtils::isArchive(absoluteFilePath())){
-                actionKeys << Decompress << DecompressHere;
-            }else{
-                actionKeys << Compress;
-            }
-        }
         actionKeys << Separator
                    << Cut
                    << Copy
@@ -368,6 +358,17 @@ QVector<AbstractFileInfo::MenuAction> AbstractFileInfo::menuActionList(AbstractF
             actionKeys << SetAsWallpaper;
         }
 
+        actionKeys << Separator;
+        if (isDir()){
+            actionKeys << Compress;
+        }else if(isFile()){
+            if (FileUtils::isArchive(absoluteFilePath())){
+                actionKeys << Decompress << DecompressHere;
+            }else{
+                actionKeys << Compress;
+            }
+        }
+
         actionKeys << Separator
                    << Delete
                    << Separator
@@ -375,11 +376,11 @@ QVector<AbstractFileInfo::MenuAction> AbstractFileInfo::menuActionList(AbstractF
     }else if(type == MultiFiles){
         actionKeys << Open
                    << Separator
-                   << Compress
-                   << Separator
                    << Cut
                    << Copy
                    << SendToDesktop
+                   << Separator
+                   << Compress
                    << Separator
                    << Delete
                    << Separator
