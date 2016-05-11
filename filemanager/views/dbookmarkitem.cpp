@@ -98,7 +98,7 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
     Q_UNUSED(widget);
     double w = m_width;
     QColor textColor;
-    double leftPadding = 18;
+    double leftPadding = 13;
     double dy;
     QPixmap press;
     QPixmap release;
@@ -413,6 +413,8 @@ void DBookmarkItem::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
 void DBookmarkItem::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
     event->acceptProposedAction();
+    m_hovered = false;
+    update();
     emit dropped();
     if(!event->mimeData()->hasUrls())
         return;
@@ -424,6 +426,7 @@ void DBookmarkItem::dropEvent(QGraphicsSceneDragDropEvent *event)
     e = windowId();
     fileService->pasteFile(AbstractFileController::CopyType, DUrl::fromQUrlList(event->mimeData()->urls()), e);
     QGraphicsItem::dropEvent(event);
+
 }
 
 bool DBookmarkItem::eventFilter(QObject *obj, QEvent *e)

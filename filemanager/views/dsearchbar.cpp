@@ -281,6 +281,8 @@ void DSearchBar::focusInEvent(QFocusEvent *e)
 
 void DSearchBar::focusOutEvent(QFocusEvent *e)
 {
+    if(e->reason() == Qt::ActiveWindowFocusReason)
+        return;
     if(m_searchStart)
         return;
     if(window()->rect().contains(window()->mapFromGlobal(QCursor::pos())))
