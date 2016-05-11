@@ -15,6 +15,7 @@ void DBookmarkItemGroup::addItem(DBookmarkItem *item)
 void DBookmarkItemGroup::insert(int index, DBookmarkItem *item)
 {
     m_items.insert(index, item);
+    item->setItemGroup(this);
 }
 
 void DBookmarkItemGroup::removeItem(DBookmarkItem *item)

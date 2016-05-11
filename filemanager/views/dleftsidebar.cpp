@@ -46,7 +46,7 @@ void DLeftSideBar::initData()
 {
 
     m_icons["File"] =  ":/icons/images/icons/file_normal_16px.svg";
-    m_icons["Recent"] =  ":/icons/images/icons/recent_normal_16px.svg";
+//    m_icons["Recent"] =  ":/icons/images/icons/recent_normal_16px.svg";
     m_icons["Home"] =  ":/icons/images/icons/home_normal_16px.svg";
     m_icons["Desktop"] =  ":/icons/images/icons/desktop_normal_16px.svg";
     m_icons["Videos"] =  ":/icons/images/icons/videos_normal_16px.svg";
@@ -59,7 +59,7 @@ void DLeftSideBar::initData()
 
 
     m_checkedIcons["File"] =  ":/icons/images/icons/file_checked_16px.svg";
-    m_checkedIcons["Recent"] =  ":/icons/images/icons/recent_checked_16px.svg";
+//    m_checkedIcons["Recent"] =  ":/icons/images/icons/recent_checked_16px.svg";
     m_checkedIcons["Home"] =  ":/icons/images/icons/home_checked_16px.svg";
     m_checkedIcons["Desktop"] =  ":/icons/images/icons/desktop_checked_16px.svg";
     m_checkedIcons["Videos"] =  ":/icons/images/icons/videos_checked_16px.svg";
@@ -72,7 +72,7 @@ void DLeftSideBar::initData()
 
 
     m_bigIcons["File"] =  ":/icons/images/icons/file_normal_22px.svg";
-    m_bigIcons["Recent"] =  ":/icons/images/icons/recent_normal_22px.svg";
+//    m_bigIcons["Recent"] =  ":/icons/images/icons/recent_normal_22px.svg";
     m_bigIcons["Home"] =  ":/icons/images/icons/home_normal_22px.svg";
     m_bigIcons["Desktop"] =  ":/icons/images/icons/desktop_normal_22px.svg";
     m_bigIcons["Videos"] =  ":/icons/images/icons/videos_normal_22px.svg";
@@ -85,7 +85,7 @@ void DLeftSideBar::initData()
 
 
     m_checkedBigIcons["File"] =  ":/icons/images/icons/file_checked_22px.svg";
-    m_checkedBigIcons["Recent"] =  ":/icons/images/icons/recent_checked_22px.svg";
+//    m_checkedBigIcons["Recent"] =  ":/icons/images/icons/recent_checked_22px.svg";
     m_checkedBigIcons["Home"] =  ":/icons/images/icons/home_checked_22px.svg";
     m_checkedBigIcons["Desktop"] =  ":/icons/images/icons/desktop_checked_22px.svg";
     m_checkedBigIcons["Videos"] =  ":/icons/images/icons/videos_checked_22px.svg";
@@ -96,7 +96,7 @@ void DLeftSideBar::initData()
     m_checkedBigIcons["Trash"] =  ":/icons/images/icons/trash_checked_22px.svg";
     m_checkedBigIcons["Disks"] =  ":/icons/images/icons/disk_checked_22px.svg";
 
-    m_nameList << "Recent"
+    m_nameList //<< "Recent"
                << "Home"
                << "Desktop"
                << "Videos"
@@ -115,7 +115,7 @@ void DLeftSideBar::initData()
                      << "Documents"
                      << "Downloads";
 
-    m_systemBookMarks["Recent"] = tr("Recent");
+    //m_systemBookMarks["Recent"] = tr("Recent");
     m_systemBookMarks["Home"] = tr("Home");
     m_systemBookMarks["Trash"] = tr("Trash");
     m_systemBookMarks["Disks"] = tr("Disks");

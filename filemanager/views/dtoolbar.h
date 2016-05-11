@@ -52,6 +52,7 @@ public slots:
     void forwardButtonClicked();
     void checkViewModeButton(DFileView::ViewMode mode);
 private:
+    void checkNavHistory(DUrl url);
     bool m_searchState = false;
     QFrame* m_addressToolBar;
     DStateButton* m_backButton=NULL;

@@ -265,22 +265,16 @@ void DToolBar::crumbChanged(const FMEvent &event)
         return;
 
     if(event.source() == FMEvent::CrumbButton)
+    {
+        checkNavHistory(event.fileUrl());
         return;
+    }
 
     m_crumbWidget->setCrumb(event.fileUrl());
 
     if(event.source() == FMEvent::BackAndForwardButton)
         return;
-    m_navStack->insert(event.fileUrl());
-    if(m_navStack->size() > 1)
-        m_backButton->setEnabled(true);
-    else
-        m_backButton->setEnabled(false);
-
-    if(m_navStack->isLast())
-        m_forwardButton->setEnabled(false);
-    else
-        m_forwardButton->setEnabled(true);
+    checkNavHistory(event.fileUrl());
 }
 
 /**
@@ -343,6 +337,20 @@ void DToolBar::checkViewModeButton(DFileView::ViewMode mode)
     default:
         break;
     }
+}
+
+void DToolBar::checkNavHistory(DUrl url)
+{
+    m_navStack->insert(url);
+    if(m_navStack->size() > 1)
+        m_backButton->setEnabled(true);
+    else
+        m_backButton->setEnabled(false);
+
+    if(m_navStack->isLast())
+        m_forwardButton->setEnabled(false);
+    else
+        m_forwardButton->setEnabled(true);
 }
 
 
