@@ -16,7 +16,7 @@
     <message>
         <location filename="../dialogs/cleartrashdialog.cpp" line="16"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">取消</translation>
     </message>
     <message>
         <location filename="../dialogs/cleartrashdialog.cpp" line="16"/>
@@ -34,7 +34,7 @@
     <message>
         <location filename="../dialogs/confirmdeletedialog.cpp" line="14"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">取消</translation>
     </message>
     <message>
         <location filename="../dialogs/confirmdeletedialog.cpp" line="14"/>
@@ -45,27 +45,27 @@
 <context>
     <name>DFileSystemModel</name>
     <message>
-        <location filename="../filemanager/models/dfilesystemmodel.cpp" line="214"/>
+        <location filename="../filemanager/models/dfilesystemmodel.cpp" line="212"/>
         <source>Name</source>
         <translation type="unfinished">名称</translation>
     </message>
     <message>
-        <location filename="../filemanager/models/dfilesystemmodel.cpp" line="215"/>
+        <location filename="../filemanager/models/dfilesystemmodel.cpp" line="213"/>
         <source>Date Modified</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../filemanager/models/dfilesystemmodel.cpp" line="216"/>
+        <location filename="../filemanager/models/dfilesystemmodel.cpp" line="214"/>
         <source>Size</source>
         <translation type="unfinished">大小</translation>
     </message>
     <message>
-        <location filename="../filemanager/models/dfilesystemmodel.cpp" line="217"/>
+        <location filename="../filemanager/models/dfilesystemmodel.cpp" line="215"/>
         <source>Type</source>
         <translation type="unfinished">类型</translation>
     </message>
     <message>
-        <location filename="../filemanager/models/dfilesystemmodel.cpp" line="218"/>
+        <location filename="../filemanager/models/dfilesystemmodel.cpp" line="216"/>
         <source>Date Created</source>
         <translation type="unfinished"></translation>
     </message>
@@ -73,9 +73,8 @@
 <context>
     <name>DLeftSideBar</name>
     <message>
-        <location filename="../filemanager/views/dleftsidebar.cpp" line="118"/>
         <source>Recent</source>
-        <translation>最近访问</translation>
+        <translation type="vanished">最近访问</translation>
     </message>
     <message>
         <location filename="../filemanager/views/dleftsidebar.cpp" line="119"/>
@@ -93,7 +92,8 @@
         <translation>磁盘</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/dleftsidebar.cpp" line="216"/>
+        <location filename="../filemanager/views/dleftsidebar.cpp" line="163"/>
+        <location filename="../filemanager/views/dleftsidebar.cpp" line="281"/>
         <source>File Manager</source>
         <translation>文件管理器</translation>
     </message>
@@ -101,22 +101,22 @@
 <context>
     <name>DTaskDialog</name>
     <message>
-        <location filename="../dialogs/dtaskdialog.cpp" line="355"/>
-        <source>There is %1 task in progress</source>
-        <translation type="unfinished"></translation>
+        <location filename="../dialogs/dtaskdialog.cpp" line="351"/>
+        <source>There is 1 task in progress</source>
+        <translation>有1个任务在进行</translation>
     </message>
     <message>
-        <location filename="../dialogs/dtaskdialog.cpp" line="357"/>
+        <location filename="../dialogs/dtaskdialog.cpp" line="353"/>
         <source>There are %1 tasks in progress</source>
-        <translation type="unfinished"></translation>
+        <translation>有%1个任务在进行</translation>
     </message>
 </context>
 <context>
     <name>DToolBar</name>
     <message>
-        <location filename="../filemanager/views/dtoolbar.cpp" line="191"/>
+        <location filename="../filemanager/views/dtoolbar.cpp" line="196"/>
         <source>Search or enter address</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索或输入地址</translation>
     </message>
 </context>
 <context>
@@ -130,47 +130,47 @@
 <context>
     <name>MimeTypeDisplayManager</name>
     <message>
-        <location filename="../filemanager/shutil/mimetypedisplaymanager.cpp" line="27"/>
+        <location filename="../filemanager/shutil/mimetypedisplaymanager.cpp" line="28"/>
         <source>directory</source>
         <translation type="unfinished">目录</translation>
     </message>
     <message>
-        <location filename="../filemanager/shutil/mimetypedisplaymanager.cpp" line="28"/>
+        <location filename="../filemanager/shutil/mimetypedisplaymanager.cpp" line="29"/>
         <source>application</source>
         <translation type="unfinished">应用程序</translation>
     </message>
     <message>
-        <location filename="../filemanager/shutil/mimetypedisplaymanager.cpp" line="29"/>
+        <location filename="../filemanager/shutil/mimetypedisplaymanager.cpp" line="30"/>
         <source>video</source>
         <translation type="unfinished">视频</translation>
     </message>
     <message>
-        <location filename="../filemanager/shutil/mimetypedisplaymanager.cpp" line="30"/>
+        <location filename="../filemanager/shutil/mimetypedisplaymanager.cpp" line="31"/>
         <source>audio</source>
         <translation type="unfinished">音频</translation>
     </message>
     <message>
-        <location filename="../filemanager/shutil/mimetypedisplaymanager.cpp" line="31"/>
+        <location filename="../filemanager/shutil/mimetypedisplaymanager.cpp" line="32"/>
         <source>image</source>
         <translation type="unfinished">图片</translation>
     </message>
     <message>
-        <location filename="../filemanager/shutil/mimetypedisplaymanager.cpp" line="32"/>
+        <location filename="../filemanager/shutil/mimetypedisplaymanager.cpp" line="33"/>
         <source>archive</source>
         <translation type="unfinished">压缩文件</translation>
     </message>
     <message>
-        <location filename="../filemanager/shutil/mimetypedisplaymanager.cpp" line="33"/>
+        <location filename="../filemanager/shutil/mimetypedisplaymanager.cpp" line="34"/>
         <source>text</source>
         <translation type="unfinished">文档</translation>
     </message>
     <message>
-        <location filename="../filemanager/shutil/mimetypedisplaymanager.cpp" line="34"/>
+        <location filename="../filemanager/shutil/mimetypedisplaymanager.cpp" line="35"/>
         <source>executable</source>
         <translation type="unfinished">可执行程序</translation>
     </message>
     <message>
-        <location filename="../filemanager/shutil/mimetypedisplaymanager.cpp" line="35"/>
+        <location filename="../filemanager/shutil/mimetypedisplaymanager.cpp" line="36"/>
         <source>unknown</source>
         <translation type="unfinished">未知</translation>
     </message>
@@ -193,78 +193,68 @@
     <message>
         <location filename="../dialogs/dtaskdialog.cpp" line="87"/>
         <source>Coexists</source>
-        <translation type="unfinished"></translation>
+        <translation>共存</translation>
     </message>
     <message>
         <location filename="../dialogs/dtaskdialog.cpp" line="87"/>
         <source>Replace</source>
-        <translation type="unfinished"></translation>
+        <translation>替换</translation>
     </message>
     <message>
         <location filename="../dialogs/dtaskdialog.cpp" line="87"/>
         <source>Skip</source>
-        <translation type="unfinished"></translation>
+        <translation>跳过</translation>
     </message>
     <message>
         <location filename="../dialogs/dtaskdialog.cpp" line="113"/>
         <source>no more ask</source>
-        <translation type="unfinished"></translation>
+        <translation>不再提示</translation>
     </message>
     <message>
         <location filename="../dialogs/dtaskdialog.cpp" line="114"/>
         <source>Ok</source>
-        <translation type="unfinished"></translation>
+        <translation>确定</translation>
     </message>
     <message>
         <location filename="../dialogs/dtaskdialog.cpp" line="155"/>
-        <source>copied</source>
-        <translation type="unfinished"></translation>
+        <source>&lt;span style=&quot;color: #3cadff&quot;&gt; %1 &lt;/span&gt; is copied to &lt;span style=&quot;color: #3cadff&quot;&gt; %2 &lt;/span&gt;</source>
+        <translation>&lt;span style=&quot;color: #3cadff&quot;&gt; %1 &lt;/span&gt;被复制到 &lt;span style=&quot;color: #3cadff&quot;&gt; %2 &lt;/span&gt;</translation>
     </message>
     <message>
-        <location filename="../dialogs/dtaskdialog.cpp" line="156"/>
-        <source>&lt;span style=&quot;color: #3cadff&quot;&gt; %1 &lt;/span&gt; is %2 to &lt;span style=&quot;color: #3cadff&quot;&gt; %3 &lt;/span&gt;</source>
-        <translation type="unfinished"></translation>
+        <location filename="../dialogs/dtaskdialog.cpp" line="161"/>
+        <source>&lt;span style=&quot;color: #3cadff&quot;&gt; %1 &lt;/span&gt; is moved to &lt;span style=&quot;color: #3cadff&quot;&gt; %2 &lt;/span&gt;</source>
+        <translation>&lt;span style=&quot;color: #3cadff&quot;&gt; %1 &lt;/span&gt;被移动到 &lt;span style=&quot;color: #3cadff&quot;&gt; %2 &lt;/span&gt;</translation>
     </message>
     <message>
-        <location filename="../dialogs/dtaskdialog.cpp" line="158"/>
         <location filename="../dialogs/dtaskdialog.cpp" line="167"/>
-        <location filename="../dialogs/dtaskdialog.cpp" line="172"/>
-        <location filename="../dialogs/dtaskdialog.cpp" line="182"/>
+        <source>&lt;span style=&quot;color: #3cadff&quot;&gt; %1 &lt;/span&gt; is deleted </source>
+        <translation>&lt;span style=&quot;color: #3cadff&quot;&gt; %1 &lt;/span&gt; 被删除</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/dtaskdialog.cpp" line="157"/>
+        <location filename="../dialogs/dtaskdialog.cpp" line="164"/>
+        <location filename="../dialogs/dtaskdialog.cpp" line="168"/>
+        <location filename="../dialogs/dtaskdialog.cpp" line="178"/>
         <source>current speed:%1 time Left:%2 </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../dialogs/dtaskdialog.cpp" line="162"/>
-        <source>moved</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../dialogs/dtaskdialog.cpp" line="163"/>
-        <source>&lt;span style=&quot;color: #3cadff&quot;&gt; %1 &lt;/span&gt;                                  is %2 to &lt;span style=&quot;color: #3cadff&quot;&gt; %3 &lt;/span&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../dialogs/dtaskdialog.cpp" line="170"/>
-        <source>&lt;span style=&quot;color: #3cadff&quot;&gt; %1 &lt;/span&gt;                                  is deleted </source>
-        <translation type="unfinished"></translation>
+        <translation>当前速度：%1 剩余时间：%2</translation>
     </message>
 </context>
 <context>
     <name>OpenWithDialog</name>
     <message>
-        <location filename="../filemanager/dialogs/openwithdialog.cpp" line="37"/>
+        <location filename="../filemanager/dialogs/openwithdialog.cpp" line="39"/>
         <source>Open with</source>
-        <translation type="unfinished">打开方式</translation>
+        <translation>打开方式</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/openwithdialog.cpp" line="41"/>
+        <location filename="../filemanager/dialogs/openwithdialog.cpp" line="44"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>取消</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/openwithdialog.cpp" line="42"/>
+        <location filename="../filemanager/dialogs/openwithdialog.cpp" line="45"/>
         <source>Choose</source>
-        <translation type="unfinished"></translation>
+        <translation>选择</translation>
     </message>
 </context>
 <context>
@@ -379,7 +369,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../filemanager/models/searchfileinfo.cpp" line="120"/>
+        <location filename="../filemanager/models/searchfileinfo.cpp" line="294"/>
         <source>absolute path</source>
         <translation type="unfinished"></translation>
     </message>
@@ -624,31 +614,31 @@
         <translation>设置为壁纸</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="430"/>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="432"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="463"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="465"/>
         <source>newDoc</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="436"/>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="438"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="469"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="471"/>
         <source>newExcel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="442"/>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="444"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="475"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="477"/>
         <source>newPowerPoint</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="448"/>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="450"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="481"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="483"/>
         <source>newText</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="508"/>
+        <location filename="../filemanager/shutil/fileutils.cpp" line="452"/>
         <source>Create soft link</source>
         <translation type="unfinished"></translation>
     </message>

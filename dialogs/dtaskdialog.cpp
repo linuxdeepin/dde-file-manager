@@ -152,23 +152,19 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data){
 
     if (m_jobDetail.contains("type")){
         if (m_jobDetail.value("type") == "copy"){
-            action = tr("copied");
-            message = tr("<span style=\"color: #3cadff\"> %1 </span> is %2 to <span style=\"color: #3cadff\"> %3 </span>")
-                    .arg(file, action, destination);
+            message = tr("<span style=\"color: #3cadff\"> %1 </span> is copied to <span style=\"color: #3cadff\"> %2 </span>")
+                    .arg(file, destination);
             tipMessage = tr("current speed:%1 time Left:%2 ")
                        .arg(speed, remainTime);
 
         }else if (m_jobDetail.value("type") == "move"){
-            action = tr("moved");
-            message = tr("<span style=\"color: #3cadff\"> %1 </span> \
-                                 is %2 to <span style=\"color: #3cadff\"> %3 </span>")
-                    .arg(file, action, destination);
+            message = tr("<span style=\"color: #3cadff\"> %1 </span> is moved to <span style=\"color: #3cadff\"> %2 </span>")
+                    .arg(file, destination);
 
             tipMessage = tr("current speed:%1 time Left:%2 ")
                        .arg(speed, remainTime);
         }else if (m_jobDetail.value("type") == "delete"){
-            message = tr("<span style=\"color: #3cadff\"> %1 </span> \
-                                 is deleted ").arg(file);
+            message = tr("<span style=\"color: #3cadff\"> %1 </span> is deleted ").arg(file);
             tipMessage = tr("current speed:%1 time Left:%2 ")
                         .arg(speed, remainTime);
         }
@@ -286,7 +282,7 @@ DTaskDialog::DTaskDialog(QWidget *parent) :
     setFixedWidth(m_defaultWidth);
     initUI();
     initConnect();
-    moveTopRight();
+    moveCenter();
 }
 
 void DTaskDialog::initUI(){
@@ -352,7 +348,7 @@ void DTaskDialog::setTitle(QString title){
 void DTaskDialog::setTitle(int taskCount){
     QString title;
     if (taskCount == 1){
-        title = tr("There is %1 task in progress").arg(QString::number(taskCount));
+        title = tr("There is 1 task in progress");
     }else{
         title = tr("There are %1 tasks in progress").arg(QString::number(taskCount));
     }
