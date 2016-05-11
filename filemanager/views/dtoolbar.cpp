@@ -236,8 +236,8 @@ void DToolBar::searchBarTextEntered()
     }
     else
     {
-        DUrl url = DUrl::fromSearchFile(m_crumbWidget->path());
-        url.setQuery(text);
+        DUrl url = DUrl::fromSearchFile(m_crumbWidget->getUrl(), text);
+
         event = url;
     }
 

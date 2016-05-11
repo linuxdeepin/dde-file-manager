@@ -14,6 +14,11 @@ class DUrl : public QUrl
     typedef QList<DUrl> DUrlList;
 
 public:
+    enum SearchAction {
+        StartSearch,
+        StopSearch
+    };
+
     DUrl();
     DUrl(const QUrl &copy);
 #ifdef QT_NO_URL_CAST_FROM_STRING
@@ -34,11 +39,23 @@ public:
 
     QString toString(FormattingOptions options = FormattingOptions( PrettyDecoded )) const;
 
+    QString searchKeyword() const;
+    SearchAction searchAction() const;
+    DUrl searchTargetUrl() const;
+
+    void setSearchKeyword(const QString &keyword);
+    void setSearchAction(SearchAction action);
+    void setSearchTargetUrl(const DUrl &url);
+
+    inline bool isStopSearch() const
+    { return searchAction() == StopSearch;}
+
     static DUrl fromLocalFile(const QString &filePath);
     static DUrl fromTrashFile(const QString &filePath);
     static DUrl fromRecentFile(const QString &filePath);
     static DUrl fromBookMarkFile(const QString &filePath);
-    static DUrl fromSearchFile(const QString &filePath, const QString &keyword = QString());
+    static DUrl fromSearchFile(const QString &filePath);
+    static DUrl fromSearchFile(const DUrl &targetUrl, const QString &keyword, SearchAction action = StartSearch);
     static DUrl fromComputerFile(const QString &filePath);
     static DUrlList fromStringList(const QStringList &urls, ParsingMode mode = TolerantMode);
     static DUrlList fromQUrlList(const QList<QUrl> &urls);

@@ -22,7 +22,7 @@ DesktopFileInfo::DesktopFileInfo(const QString &fileUrl)
 DesktopFileInfo::DesktopFileInfo(const DUrl &fileUrl)
     : FileInfo(fileUrl)
 {
-
+    init(fileUrl);
 }
 
 DesktopFileInfo::DesktopFileInfo(const QFileInfo &fileInfo) :

@@ -37,6 +37,11 @@ void FileInfo::setFile(const DUrl &fileUrl)
     setUrl(fileUrl);
 }
 
+void FileInfo::setUrl(const DUrl &url)
+{
+    setFile(url);
+}
+
 bool FileInfo::exists(const DUrl &fileUrl)
 {
     return QFileInfo::exists(fileUrl.toLocalFile());

@@ -19,6 +19,7 @@ public:
     FileInfo(const QFileInfo &fileInfo);
 
     virtual void setFile(const DUrl &fileUrl);
+    void setUrl(const DUrl &url) Q_DECL_OVERRIDE;
 
     static bool exists(const DUrl &fileUrl);
     static QMimeType mimeType(const QString &filePath);

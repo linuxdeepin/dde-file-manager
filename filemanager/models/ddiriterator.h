@@ -10,7 +10,7 @@ class DDirIterator : public QSharedData
 public:
     virtual ~DDirIterator() {};
 
-    virtual QString next() = 0;
+    virtual DUrl next() = 0;
     virtual bool hasNext() const = 0;
 
     virtual QString fileName() const = 0;

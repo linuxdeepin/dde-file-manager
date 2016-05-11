@@ -2,66 +2,240 @@
 
 #include "../views/dfileview.h"
 
+#include "../controllers/fileservices.h"
+
 #include <QIcon>
+#include <QDateTime>
 
 SearchFileInfo::SearchFileInfo()
-    : FileInfo()
+    : AbstractFileInfo()
 {
 
 }
 
 SearchFileInfo::SearchFileInfo(const DUrl &url)
-    : FileInfo(url)
+    : AbstractFileInfo(url)
 {
     const QString &fragment = url.fragment();
 
-    if(!fragment.isEmpty() && fragment != "stop") {
+    if(!fragment.isEmpty() && !url.isStopSearch()) {
         m_parentUrl = url;
         m_parentUrl.setFragment(QString());
-        data->fileInfo.setFile(url.fragment());
+
+        realFileInfo = FileServices::instance()->createFileInfo(DUrl(fragment));
     } else {
         data->fileInfo = QFileInfo();
     }
 }
 
+bool SearchFileInfo::exists() const
+{
+    return realFileInfo && realFileInfo->exists();
+}
+
+QString SearchFileInfo::filePath() const
+{
+    if (!realFileInfo)
+        return QString();
+
+    return realFileInfo->filePath();
+}
+
+QString SearchFileInfo::absoluteFilePath() const
+{
+    if (!realFileInfo)
+        return QString();
+
+    return realFileInfo->absoluteFilePath();
+}
+
+QString SearchFileInfo::fileName() const
+{
+    if (!realFileInfo)
+        return QString();
+
+    return realFileInfo->fileName();
+}
+
+QString SearchFileInfo::displayName() const
+{
+    if (!realFileInfo) {
+        return QString();
+    }
+
+    return realFileInfo->displayName();
+}
+
+QString SearchFileInfo::path() const
+{
+    if (!realFileInfo)
+        return QString();
+
+    return realFileInfo->path();
+}
+
+QString SearchFileInfo::absolutePath() const
+{
+    if (!realFileInfo)
+        return QString();
+
+    return realFileInfo->absolutePath();
+}
+
 bool SearchFileInfo::isCanRename() const
 {
-    if(m_parentUrl.isEmpty())
+    if(!realFileInfo)
         return false;
 
-    return FileInfo::isCanRename();
+    return realFileInfo->isCanRename();
 }
 
 bool SearchFileInfo::isReadable() const
 {
-    if(m_parentUrl.isEmpty())
+    if(!realFileInfo)
         return true;
 
-    return FileInfo::isReadable();
+    return realFileInfo->isReadable();
 }
 
 bool SearchFileInfo::isWritable() const
 {
-    if(m_parentUrl.isEmpty())
+    if(!realFileInfo)
         return false;
 
-    return FileInfo::isWritable();
+    return realFileInfo->isWritable();
+}
+
+bool SearchFileInfo::isExecutable() const
+{
+    return realFileInfo && realFileInfo->isExecutable();
+}
+
+bool SearchFileInfo::isHidden() const
+{
+    return realFileInfo && realFileInfo->isHidden();
+}
+
+bool SearchFileInfo::isFile() const
+{
+    return realFileInfo && realFileInfo->isFile();
 }
 
 bool SearchFileInfo::isDir() const
 {
-    if(m_parentUrl.isEmpty())
+    if(!realFileInfo)
         return true;
 
-    return FileInfo::isDir();
+    return realFileInfo->isDir();
+}
+
+bool SearchFileInfo::isSymLink() const
+{
+    return realFileInfo && realFileInfo->isSymLink();
+}
+
+QString SearchFileInfo::owner() const
+{
+    if (!realFileInfo)
+        return QString();
+
+    return realFileInfo->owner();
+}
+
+uint SearchFileInfo::ownerId() const
+{
+    if (!realFileInfo)
+        return 0;
+
+    return realFileInfo->ownerId();
+}
+
+QString SearchFileInfo::group() const
+{
+    if (!realFileInfo)
+        return QString();
+
+    return realFileInfo->group();
+}
+
+uint SearchFileInfo::groupId() const
+{
+    if (!realFileInfo)
+        return 0;
+
+    return realFileInfo->groupId();
+}
+
+qint64 SearchFileInfo::size() const
+{
+    if (!realFileInfo)
+        return 0;
+
+    return realFileInfo->size();
+}
+
+QDateTime SearchFileInfo::created() const
+{
+    if (!realFileInfo)
+        return QDateTime();
+
+    return realFileInfo->created();
+}
+
+QDateTime SearchFileInfo::lastModified() const
+{
+    if (!realFileInfo)
+        return QDateTime();
+
+    return realFileInfo->lastModified();
+}
+
+QDateTime SearchFileInfo::lastRead() const
+{
+    if (!realFileInfo)
+        return QDateTime();
+
+    return realFileInfo->lastRead();
+}
+
+QString SearchFileInfo::lastModifiedDisplayName() const
+{
+    if (!realFileInfo)
+        return QString();
+
+    return realFileInfo->lastModifiedDisplayName();
+}
+
+QString SearchFileInfo::createdDisplayName() const
+{
+    if (!realFileInfo)
+        return QString();
+
+    return realFileInfo->createdDisplayName();
+}
+
+QString SearchFileInfo::sizeDisplayName() const
+{
+    if (!realFileInfo)
+        return QString();
+
+    return realFileInfo->sizeDisplayName();
+}
+
+QString SearchFileInfo::mimeTypeDisplayName() const
+{
+    if (!realFileInfo)
+        return QString();
+
+    return realFileInfo->mimeTypeDisplayName();
 }
 
 QIcon SearchFileInfo::fileIcon() const
 {
-    if(m_parentUrl.isEmpty())
+    if(!realFileInfo)
         return QIcon();
 
-    return FileInfo::fileIcon();
+    return realFileInfo->fileIcon();
 }
 
 DUrl SearchFileInfo::parentUrl() const
@@ -73,8 +247,8 @@ quint8 SearchFileInfo::supportViewMode() const
 {
     const QString &fragment = data->url.fragment();
 
-    if (!fragment.isEmpty() && fragment != "stop")
-        return FileInfo::supportViewMode();
+    if (!fragment.isEmpty() && !data->url.isStopSearch())
+        return realFileInfo->supportViewMode();
 
     return DFileView::ListMode;
 }
@@ -129,10 +303,10 @@ QVariant SearchFileInfo::userColumnData(quint8 userColumnType) const
 
 bool SearchFileInfo::canRedirectionFileUrl() const
 {
-    return !m_parentUrl.isEmpty();
+    return realFileInfo;
 }
 
 DUrl SearchFileInfo::redirectedFileUrl() const
 {
-    return DUrl::fromLocalFile(fileUrl().fragment());
+    return realFileInfo->fileUrl();
 }
