@@ -22,7 +22,7 @@ public:
                     QDir::Filters filter,
                     QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags);
 
-    QString next() Q_DECL_OVERRIDE;
+    DUrl next() Q_DECL_OVERRIDE;
     bool hasNext() const Q_DECL_OVERRIDE;
 
     QString fileName() const Q_DECL_OVERRIDE;
@@ -416,9 +416,9 @@ FileDirIterator::FileDirIterator(const QString &path, QDir::Filters filter, QDir
 
 }
 
-QString FileDirIterator::next()
+DUrl FileDirIterator::next()
 {
-    return iterator.next();
+    return DUrl::fromLocalFile(iterator.next());
 }
 
 bool FileDirIterator::hasNext() const

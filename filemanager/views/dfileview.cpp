@@ -633,7 +633,7 @@ void DFileView::stopSearch()
         return;
     }
 
-    url.setFragment("stop");
+    url.setSearchAction(DUrl::StopSearch);
 
     FMEvent event;
 

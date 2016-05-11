@@ -19,16 +19,10 @@ const QList<AbstractFileInfoPointer> SearchController::getChildren(const DUrl &f
 {
     accepted = true;
 
-    const QString &fragment = fileUrl.fragment();
-
-    if(fragment == "stop") {
-        DUrl url = fileUrl;
-
-        url.setFragment(QString());
-
-        activeJob.remove(url);
+    if(fileUrl.isStopSearch()) {
+        activeJob.remove(fileUrl.searchTargetUrl());
     } else {
-        activeJob << fileUrl;
+        activeJob << fileUrl.searchTargetUrl();
 
         QtConcurrent::run(QThreadPool::globalInstance(), const_cast<SearchController*>(this),
                           &SearchController::searchStart, fileUrl, filter);
@@ -46,40 +40,40 @@ const AbstractFileInfoPointer SearchController::createFileInfo(const DUrl &fileU
 
 void SearchController::searchStart(const DUrl &fileUrl, QDir::Filters filter)
 {
-    const QString &targetPath = fileUrl.path();
-    const QString &keyword = fileUrl.query();
+    const DUrl &targetUrl = fileUrl.searchTargetUrl();
+    const QString &keyword = fileUrl.searchKeyword();
 
     QRegularExpression regular(keyword, QRegularExpression::CaseInsensitiveOption);
 
-    QList<QString> searchPathList;
+    QList<DUrl> searchPathList;
 
-    searchPathList << targetPath;
+    searchPathList << targetUrl;
 
     qDebug() << "begin search:" << fileUrl;
 
     while(!searchPathList.isEmpty()) {
-        DDirIteratorPointer it = FileServices::instance()->createDirIterator(DUrl::fromLocalFile(searchPathList.takeAt(0)),
+        DDirIteratorPointer it = FileServices::instance()->createDirIterator(searchPathList.takeAt(0),
                                                                       QDir::NoDotAndDotDot | filter, QDirIterator::NoIteratorFlags);
 
         while (it->hasNext()) {
-            if(!activeJob.contains(fileUrl)) {
+            if(!activeJob.contains(targetUrl)) {
                 qDebug() << "stop search:" << fileUrl;
 
                 return;
             }
 
-            QFileInfo fileInfo(it->next());
+            AbstractFileInfoPointer fileInfo = FileServices::instance()->createFileInfo(it->next());
 
-            fileInfo.makeAbsolute();
+            fileInfo->makeAbsolute();
 
-            if(fileInfo.isDir()) {
-                searchPathList << fileInfo.filePath();
+            if(fileInfo->isDir()) {
+                searchPathList << fileInfo->fileUrl();
             }
 
-            if(fileInfo.fileName().indexOf(regular) >= 0) {
+            if(fileInfo->fileName().indexOf(regular) >= 0) {
                 DUrl url = fileUrl;
 
-                url.setFragment(fileInfo.filePath());
+                url.setFragment(fileInfo->fileUrl().toString());
 
                 emit childrenAdded(url);
 

@@ -4,6 +4,7 @@
 #include <QSet>
 #include <QDir>
 #include <QDebug>
+#include <QUrlQuery>
 
 #define TRASH_SCHEME "trash"
 #define RECENT_SCHEME "recent"
@@ -105,6 +106,71 @@ QString DUrl::toString(QUrl::FormattingOptions options) const
     return url.toString(options).replace(0, 4, scheme());
 }
 
+QString DUrl::searchKeyword() const
+{
+    if(!isSearchFile())
+        return QString();
+
+    QUrlQuery query(this->query());
+
+    return query.queryItemValue("keyword");
+}
+
+DUrl::SearchAction DUrl::searchAction() const
+{
+    if(isSearchFile() && fragment() == "stop")
+        return StopSearch;
+
+    return StartSearch;
+}
+
+DUrl DUrl::searchTargetUrl() const
+{
+    if(!isSearchFile())
+        return DUrl();
+
+    QUrlQuery query(this->query());
+
+    return DUrl(query.queryItemValue("url"));
+}
+
+void DUrl::setSearchKeyword(const QString &keyword)
+{
+    if(!isSearchFile())
+        return;
+
+    QUrlQuery query(this->query());
+
+    query.removeQueryItem("keyword");
+    query.addQueryItem("keyword", keyword);
+
+    setQuery(query);
+}
+
+void DUrl::setSearchAction(DUrl::SearchAction action)
+{
+    if(!isSearchFile())
+        return;
+
+    if(action == StopSearch)
+        setFragment("stop");
+    else if(fragment() == "stop")
+        setFragment("");
+}
+
+void DUrl::setSearchTargetUrl(const DUrl &url)
+{
+    if(!isSearchFile())
+        return;
+
+    QUrlQuery query(this->query());
+
+    query.removeQueryItem("url");
+    query.addQueryItem("url", url.toString());
+
+    setQuery(query);
+}
+
 DUrl DUrl::fromLocalFile(const QString &filePath)
 {
     return QUrl::fromLocalFile(filePath);
@@ -140,13 +206,29 @@ DUrl DUrl::fromBookMarkFile(const QString &filePath)
     return url;
 }
 
-DUrl DUrl::fromSearchFile(const QString &filePath, const QString &keyword)
+DUrl DUrl::fromSearchFile(const QString &filePath)
 {
     DUrl url;
 
     url.setScheme(SEARCH_SCHEME, false);
     url.setPath(filePath);
-    url.setQuery(keyword);
+
+    return url;
+}
+
+DUrl DUrl::fromSearchFile(const DUrl &targetUrl, const QString &keyword, DUrl::SearchAction action)
+{
+    DUrl url = fromSearchFile(QString());
+
+    QUrlQuery query;
+
+    query.addQueryItem("keyword", keyword);
+    query.addQueryItem("url", targetUrl.toString());
+
+    url.setQuery(query);
+
+    if(action == StopSearch)
+        url.setFragment("stop");
 
     return url;
 }
