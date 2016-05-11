@@ -5,8 +5,10 @@
 #include <QMimeDatabase>
 #include <QProcess>
 #include <QGSettings>
+#include <QFileDialog>
 #include <QDebug>
-
+#include "../views/windowmanager.h"
+#include "standardpath.h"
 
 #undef signals
 extern "C" {
@@ -406,4 +408,65 @@ bool FileUtils::setBackground(const QString &pictureFilePath)
                                              "/com/deepin/wrap/gnome/desktop/background/");
     gsettings->set(WallpaperKey, pictureFilePath);
     gsettings->deleteLater();
+}
+
+
+QString FileUtils::getSoftLinkFileName(const QString &file, const QString &targetDir)
+{
+    QFileInfo  info(file);
+
+    if (info.exists()){
+        QString baseName = info.baseName();
+        QString linkBaseName;
+        if (info.isFile()){
+            linkBaseName = QString("%1 link.%2").arg(baseName, info.suffix());
+        }else if (info.isDir()){
+            linkBaseName = QString("%1 link").arg(baseName);
+        }else if (info.isSymLink()){
+            return QString();
+        }
+        QString linkFile = QString("%1/%2").arg(targetDir, linkBaseName);
+        return linkFile;
+    }else{
+        return QString();
+    }
+}
+
+void FileUtils::createSoftLink(const QString &file, const QString &targetDir)
+{
+    QString linkFile = getSoftLinkFileName(file, targetDir);
+    if (!linkFile.isEmpty()){
+        QFile f(file);
+        bool successed = f.link(linkFile);
+        if (!successed){
+            qDebug() << "create link file" << linkFile << f.errorString();
+        }
+    }
+
+}
+
+void FileUtils::createSoftLink(int windowId, const QString &file)
+{
+    QString linkFile = getSoftLinkFileName(file, QFileInfo(file).dir().absolutePath());
+    if (!linkFile.isEmpty()){
+        QString fileName = QFileDialog::getSaveFileName(WindowManager::getWindowById(windowId), QObject::tr("Create soft link"),
+                               linkFile);
+        QFile f(file);
+        bool successed = f.link(fileName);
+        if (!successed){
+            qDebug() << "create link file" << fileName << f.errorString();
+        }
+    }
+}
+
+void FileUtils::sendToDesktop(const DUrlList &urls)
+{
+    foreach (DUrl url, urls) {
+        sendToDesktop(url.toLocalFile());
+    }
+}
+
+void FileUtils::sendToDesktop(const QString &file)
+{
+    createSoftLink(file, StandardPath::getDesktopPath());
 }

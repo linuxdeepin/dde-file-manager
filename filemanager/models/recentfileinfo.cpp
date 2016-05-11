@@ -55,8 +55,6 @@ QVector<AbstractFileInfo::MenuAction> RecentFileInfo::menuActionList(AbstractFil
     QVector<MenuAction> actionKeys;
 
     if(type == SpaceArea) {
-        actionKeys.reserve(6);
-
         actionKeys << MenuAction::ClearRecent
                    << MenuAction::Separator
                    << MenuAction::DisplayAs
@@ -76,10 +74,17 @@ QVector<AbstractFileInfo::MenuAction> RecentFileInfo::menuActionList(AbstractFil
                       << MenuAction::CreatedDate << MenuAction::LastModifiedDate;
 
         subMenu[MenuAction::SortBy] = subActionKeys;
-    } else {
-        actionKeys.reserve(12);
+    } else if (type == SingleFile){
 
         actionKeys << MenuAction::Open << MenuAction::OpenWith
+                   << MenuAction::OpenFileLocation
+                   << MenuAction::Separator
+                   << MenuAction::Remove
+                   << MenuAction::Separator
+                   << MenuAction::Property;
+    }else if (type == MultiFiles){
+
+        actionKeys << MenuAction::Open
                    << MenuAction::OpenFileLocation
                    << MenuAction::Separator
                    << MenuAction::Remove

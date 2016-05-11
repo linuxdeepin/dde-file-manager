@@ -84,6 +84,27 @@ bool TrashManager::removeUrlMonitor(const DUrl &fileUrl, bool &accepted) const
     return true;
 }
 
+bool TrashManager::copyFiles(const DUrlList &urlList, bool &accepted) const
+{
+    accepted = true;
+
+    DUrlList localList;
+
+    for(const DUrl &url : urlList) {
+        const QString &path = url.path();
+
+        localList << DUrl::fromLocalFile(TRASHFILEPATH + path);
+
+        if(path.lastIndexOf('/') > 0) {
+            localList << DUrl::fromLocalFile(TRASHINFOPATH + path);
+        }
+    }
+
+    fileService->copyFiles(localList);
+
+    return true;
+}
+
 bool TrashManager::deleteFiles(const DUrlList &urlList, bool &accepted) const
 {
     accepted = true;
@@ -100,7 +121,7 @@ bool TrashManager::deleteFiles(const DUrlList &urlList, bool &accepted) const
         }
     }
 
-    FileServices::instance()->deleteFiles(localList);
+    fileService->deleteFiles(localList);
 
     return true;
 }
