@@ -616,13 +616,7 @@ void DFileView::keyboardSearch(const QString &search)
 
     stopSearch();
 
-    DUrl url;
-
-    url.setScheme(SEARCH_SCHEME);
-    url.setPath(currentUrl().path());
-    url.setQuery(search);
-
-    setCurrentUrl(url);
+    setCurrentUrl(DUrl::fromSearchFile(currentUrl(), search));
 }
 
 void DFileView::stopSearch()
