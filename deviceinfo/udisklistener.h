@@ -12,6 +12,8 @@
 #include <QDBusArgument>
 #include <QXmlStreamReader>
 #include <QDBusPendingReply>
+#include "../dbusinterface/diskmount_interface.h"
+
 
 class UDiskDeviceInfo;
 
@@ -32,11 +34,18 @@ public slots:
     void interfacesChanged();
     void mount(const QString &path);
     void unmount(const QString &path);
+
+    void asyncRequestDiskInfos();
+    void asyncRequestDiskInfosFinihsed(QDBusPendingCallWatcher *call);
+
 private:
     void readFstab();
     QList<UDiskDeviceInfo *> m_list;
     QMap<QString, UDiskDeviceInfo *> m_map;
     QList<QString> fstab;
+
+    DiskMountInterface* m_diskMountInterface;
+
 public:
     const QList<AbstractFileInfoPointer> getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const;
     const AbstractFileInfoPointer createFileInfo(const DUrl &fileUrl, bool &accepted) const;

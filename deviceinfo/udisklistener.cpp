@@ -37,6 +37,9 @@ UDiskListener::UDiskListener()
 
     readFstab();
     qDebug() << fstab;
+
+    m_diskMountInterface = new DiskMountInterface(DiskMountInterface::staticServerPath(), DiskMountInterface::staticInterfacePath(), QDBusConnection::sessionBus(), this);
+    asyncRequestDiskInfos();
 }
 
 UDiskDeviceInfo *UDiskListener::getDevice(const QDBusObjectPath &path) const
@@ -187,6 +190,26 @@ void UDiskListener::unmount(const QString &path)
             break;
         }
     }
+}
+
+void UDiskListener::asyncRequestDiskInfos()
+{
+    QDBusPendingReply<DiskInfoList> reply = m_diskMountInterface->ListDisk();
+    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply);
+    connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
+                        this, SLOT(asyncRequestDiskInfosFinihsed(QDBusPendingCallWatcher*)));
+}
+
+void UDiskListener::asyncRequestDiskInfosFinihsed(QDBusPendingCallWatcher *call)
+{
+    QDBusPendingReply<DiskInfoList> reply = *call;
+    if (!reply.isError()){
+        DiskInfoList diskinfos = qdbus_cast<DiskInfoList>(reply.argumentAt(0));
+        qDebug() << diskinfos.at(0);
+    }else{
+        qCritical() << reply.error().message();
+    }
+    call->deleteLater();
 }
 
 void UDiskListener::readFstab()
