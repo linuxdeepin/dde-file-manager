@@ -222,7 +222,7 @@ bool AbstractFileInfo::isSymLink() const
 
 bool AbstractFileInfo::isDesktopFile() const
 {
-    return fileName().endsWith("desktop");
+    return mimeTypeName() == "application/x-desktop";
 }
 
 QString AbstractFileInfo::readLink() const
