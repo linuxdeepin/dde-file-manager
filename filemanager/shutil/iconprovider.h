@@ -18,7 +18,8 @@ public:
     ~IconProvider();
 
     static QPixmap getIconPixmap(QString iconPath, int width=48, int height=48);
-    static QString getThemeIconPath(QString iconName);
+    static QString getThemeIconPath(QString iconName, int size=48);
+
     void initConnect();
     void gtkInit();
     QString getCurrentTheme();
@@ -50,6 +51,7 @@ private:
     mutable QMap<QString,QString> m_desktopIconPaths;
     mutable QCache<QString,QIcon> m_icons;
 
+    QList<QSize> m_iconSizes;
     QGSettings* m_gsettings;
     QMimeDatabase* m_mimeDatabase;
 };

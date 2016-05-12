@@ -83,6 +83,8 @@ public:
 
     bool testViewMode(ViewModes modes, ViewMode mode);
 
+    int horizontalOffset() const;
+
 
 public slots:
     void cd(const FMEvent &event);
@@ -126,6 +128,8 @@ protected:
 
     void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command);
 
+
+
 private:
     FileController *m_controller;
     FileMenuManager* m_fileMenuManager;
@@ -166,6 +170,7 @@ private:
 
     QPoint m_pressed;
     QRect m_elasticBand;
+    int m_horizontalOffset = 0;
 };
 
 #endif // DFILEVIEW_H

@@ -199,8 +199,8 @@ QString FileUtils::getRealSuffix(const QString &name) {
  * @return icon
  */
 QIcon FileUtils::searchMimeIcon(QString mime, const QIcon &defaultIcon) {
-  QIcon icon = QIcon::fromTheme(mime.replace("/", "-"));
-  return icon.isNull() ? defaultIcon : icon;
+  QIcon icon = QIcon::fromTheme(mime.replace("/", "-"), defaultIcon);
+  return icon;
 }
 //---------------------------------------------------------------------------
 
