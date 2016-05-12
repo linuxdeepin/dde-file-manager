@@ -135,16 +135,13 @@ QString AbstractFileInfo::fileName() const
 
 QString AbstractFileInfo::displayName() const
 {
-    if (systemPathManager->systemPaths().values().contains(filePath())) {
-        foreach (QString key, systemPathManager->systemPaths().keys()) {
-            if (systemPathManager->systemPaths().value(key) == filePath()){
-                if (fileName() == key){
-                    return systemPathManager->getSystemPathDisplayName(key);
-                }else{
-                    return fileName();
-                }
-            }
-        }
+    if (systemPathManager->isSystemPath(filePath())) {
+        QString displayName = systemPathManager->getSystemPathDisplayNameByPath(filePath());
+        if (displayName.isEmpty())
+            return fileName();
+        else
+            return displayName;
+
     } else {
         if (isDesktopFile()){
             return DesktopFile(absoluteFilePath()).getName();
@@ -325,54 +322,59 @@ QVector<AbstractFileInfo::MenuAction> AbstractFileInfo::menuActionList(AbstractF
                    << Property;
     } else if (type == SingleFile){
 
-
-        actionKeys << Open;
-
-        if (isDir()){
-            actionKeys << OpenInNewWindow;
+        if (isDir() && systemPathManager->isSystemPath(filePath())){
+            actionKeys << Open
+                       << OpenInNewWindow
+                       << Separator
+                       << Copy
+                       << CreateSoftLink
+                       << SendToDesktop
+                       << Separator
+                       << Compress
+                       << Separator
+                       << Property;
         }else{
-            if (!isDesktopFile())
-                actionKeys << OpenWith;
-        }
-        actionKeys << Separator
-                   << Cut
-                   << Copy
-                   << CreateSoftLink
-                   << SendToDesktop;
-        if (systemPathManager->systemPaths().values().contains(filePath())){
-            foreach (QString key, systemPathManager->systemPaths().keys()) {
-                if (systemPathManager->systemPaths().value(key) == filePath()){
-                    if (fileName() != key){
-                        actionKeys << AddToBookMark;
-                    }
+            actionKeys << Open;
+
+            if (isDir()){
+                actionKeys << OpenInNewWindow;
+            }else{
+                if (!isDesktopFile())
+                    actionKeys << OpenWith;
+            }
+            actionKeys << Separator
+                       << Cut
+                       << Copy
+                       << CreateSoftLink
+                       << SendToDesktop;
+            if (isDir()){
+                actionKeys << AddToBookMark;
+            }
+
+
+            actionKeys << Rename;
+            QPixmap tempPixmap;
+            DUrl url = data->url;
+            if (tempPixmap.load(url.toLocalFile())){
+                actionKeys << SetAsWallpaper;
+            }
+
+            actionKeys << Separator;
+            if (isDir()){
+                actionKeys << Compress;
+            }else if(isFile()){
+                if (FileUtils::isArchive(absoluteFilePath())){
+                    actionKeys << Decompress << DecompressHere;
+                }else{
+                    actionKeys << Compress;
                 }
             }
-        }else{
-            if (isDir())
-                actionKeys << AddToBookMark;
-        }
-        actionKeys << Rename;
-        QPixmap tempPixmap;
-        DUrl url = data->url;
-        if (tempPixmap.load(url.toLocalFile())){
-            actionKeys << SetAsWallpaper;
-        }
 
-        actionKeys << Separator;
-        if (isDir()){
-            actionKeys << Compress;
-        }else if(isFile()){
-            if (FileUtils::isArchive(absoluteFilePath())){
-                actionKeys << Decompress << DecompressHere;
-            }else{
-                actionKeys << Compress;
-            }
+            actionKeys << Separator
+                       << Delete
+                       << Separator
+                       << Property;
         }
-
-        actionKeys << Separator
-                   << Delete
-                   << Separator
-                   << Property;
     }else if(type == MultiFiles){
         actionKeys << Open
                    << Separator
@@ -383,6 +385,15 @@ QVector<AbstractFileInfo::MenuAction> AbstractFileInfo::menuActionList(AbstractF
                    << Compress
                    << Separator
                    << Delete
+                   << Separator
+                   << Property;
+    }else if(type == MultiFilesSystemPathIncluded){
+        actionKeys << Open
+                   << Separator
+                   << Copy
+                   << SendToDesktop
+                   << Separator
+                   << Compress
                    << Separator
                    << Property;
     }

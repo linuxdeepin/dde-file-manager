@@ -20,6 +20,10 @@ public:
 
     QString getSystemPath(QString key);
     QString getSystemPathDisplayName(QString key);
+    QString getSystemPathDisplayNameByPath(const QString& path);
+    QString getSystemPathIconName(QString key);
+    QString getSystemPathIconNameByPath(const QString& path);
+
     static QString getSystemCachePath();
 
     QMap<QString, QString> systemPaths() const;
@@ -38,6 +42,7 @@ public slots:
 private:
     QMap<QString, QString> m_systemPaths;
     QMap<QString, QString> m_systemPathDisplayNames;
+    QMap<QString, QString> m_systemPathIconNames;
     QFileSystemWatcher* m_fileSystemWatcher = NULL;
 };
 

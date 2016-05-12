@@ -87,6 +87,7 @@ public:
 public slots:
     void cd(const FMEvent &event);
     void edit(const FMEvent &event);
+    bool edit(const QModelIndex & index, EditTrigger trigger, QEvent * event) Q_DECL_OVERRIDE;
     void select(const FMEvent &event);
     inline void setViewModeToList()
     { setViewMode(ListMode);}
@@ -140,7 +141,7 @@ private:
     ViewMode m_defaultViewMode = IconMode;
     ViewMode m_currentViewMode = IconMode;
 
-    int m_currentIconSizeIndex = 0;
+    int m_currentIconSizeIndex = 1;
     mutable int m_windowId = -1;
 
     bool m_ctrlIsPressed = false;

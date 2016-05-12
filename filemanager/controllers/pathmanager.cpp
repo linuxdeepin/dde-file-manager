@@ -23,12 +23,22 @@ PathManager::~PathManager()
 void PathManager::initPaths()
 {
     loadSystemPaths();
+    m_systemPathDisplayNames["Home"] = tr("Home");
     m_systemPathDisplayNames["Desktop"] = tr("Desktop");
     m_systemPathDisplayNames["Videos"] = tr("Videos");
     m_systemPathDisplayNames["Music"] = tr("Music");
     m_systemPathDisplayNames["Pictures"] = tr("Pictures");
     m_systemPathDisplayNames["Documents"] = tr("Documents");
     m_systemPathDisplayNames["Downloads"] = tr("Downloads");
+
+
+    m_systemPathIconNames["Home"] = "folder-home";
+    m_systemPathIconNames["Desktop"] = "folder-desktop";
+    m_systemPathIconNames["Videos"] = "folder-videos";
+    m_systemPathIconNames["Music"] = "folder-music";
+    m_systemPathIconNames["Pictures"] = "folder-pictures";
+    m_systemPathIconNames["Documents"] = "folder-documents";
+    m_systemPathIconNames["Downloads"] = "folder-downloads";
 }
 
 void PathManager::initConnect()
@@ -51,8 +61,43 @@ QString PathManager::getSystemPath(QString key)
 
 QString PathManager::getSystemPathDisplayName(QString key)
 {
-    return m_systemPathDisplayNames.value(key);
+    if (m_systemPathDisplayNames.contains(key))
+        return m_systemPathDisplayNames.value(key);
+    return QString();
 }
+
+QString PathManager::getSystemPathDisplayNameByPath(const QString &path)
+{
+    if (isSystemPath(path)){
+        foreach (QString key, systemPaths().keys()) {
+            if (systemPaths().value(key) == path){
+                 return getSystemPathDisplayName(key);
+            }
+        }
+    }
+    return QString();
+}
+
+
+QString PathManager::getSystemPathIconName(QString key)
+{
+    if (m_systemPathIconNames.contains(key))
+        return m_systemPathIconNames.value(key);
+    return QString();
+}
+
+QString PathManager::getSystemPathIconNameByPath(const QString &path)
+{
+    if (isSystemPath(path)){
+        foreach (QString key, systemPaths().keys()) {
+            if (systemPaths().value(key) == path){
+                 return getSystemPathIconName(key);
+            }
+        }
+    }
+    return QString();
+}
+
 
 QString PathManager::getSystemCachePath()
 {
@@ -62,6 +107,7 @@ QString PathManager::getSystemCachePath()
 
 void PathManager::loadSystemPaths()
 {
+    m_systemPaths["Home"] = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0);
     m_systemPaths["Desktop"] = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).at(0);
     m_systemPaths["Videos"] = QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).at(0);
     m_systemPaths["Music"] = QStandardPaths::standardLocations(QStandardPaths::MusicLocation).at(0);
