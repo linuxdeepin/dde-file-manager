@@ -7,6 +7,7 @@
 #include <QHash>
 #include <QFileIconProvider>
 #include <QGSettings>
+#include <QMimeDatabase>
 #include "mimeutils.h"
 
 class IconProvider : public QObject
@@ -21,8 +22,6 @@ public:
     void initConnect();
     void gtkInit();
     QString getCurrentTheme();
-    void loadMimeTypes() const;
-    QByteArray getThumb(const QString& imageFile);
 
     QMap<QString,QIcon> getDesktopIcons();
     QMap<QString,QString> getDesktopIconPaths();
@@ -36,29 +35,23 @@ public slots:
     void setCurrentTheme();
     void handleWmValueChanged(const QString &key);
 
-    QIcon getFileIcon(const QString& file) const;
-    QIcon getDesktopIcon(const QString& iconName, int size) const;
+    QIcon getFileIcon(const QString& file);
+    QIcon getDesktopIcon(const QString& iconName, int size);
 
     void setDesktopIconPaths(const QMap<QString,QString>& iconPaths);
 
 private:
-    QIcon findIcon(const QString& file) const;
-    QIcon findMimeIcon(const QString& file);
+    QIcon findIcon(const QString& file);
+    QString getMimeTypeByFile(const QString &file);
 
 private:
     mutable QMap<QString,QIcon> m_mimeIcons;
-    QMap<QString,QIcon> m_folderIcons;
     mutable QMap<QString,QIcon> m_desktopIcons;
     mutable QMap<QString,QString> m_desktopIconPaths;
     mutable QCache<QString,QIcon> m_icons;
 
-    mutable QMap<QString,QString> m_mimeGlob;
-    mutable QMap<QString,QString> m_mimeGeneric;
-    QHash<QString,QByteArray> m_thumbs;
-
-    MimeUtils* m_mimeUtilsPtr;
-    QFileIconProvider* m_iconProvider;
     QGSettings* m_gsettings;
+    QMimeDatabase* m_mimeDatabase;
 };
 
 #endif // ICONPROVIDER_H

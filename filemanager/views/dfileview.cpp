@@ -296,6 +296,16 @@ void DFileView::edit(const FMEvent &event)
     edit(index);
 }
 
+bool DFileView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger trigger, QEvent *event)
+{
+    DUrl fileUrl = model()->getUrlByIndex(index);
+    if (fileUrl.isEmpty())
+        return false;
+    if (systemPathManager->isSystemPath(fileUrl.path()))
+        return false;
+    return DListView::edit(index, trigger, event);
+}
+
 void DFileView::select(const FMEvent &event)
 {
     if(event.windowId() != windowId()) {
@@ -904,7 +914,20 @@ void DFileView::showNormalMenu(const QModelIndex &index)
         }
     }else{
         const AbstractFileInfoPointer &info = model()->fileInfo(index);
-        const QVector<MenuAction> &actions = info->menuActionList(AbstractFileInfo::MultiFiles);
+
+
+        bool isSystemPathIncluded = false;
+        foreach (DUrl url, list) {
+            if (systemPathManager->isSystemPath(url.toLocalFile())){
+                isSystemPathIncluded = true;
+            }
+        }
+
+        QVector<MenuAction> actions;
+        if (isSystemPathIncluded)
+            actions = info->menuActionList(AbstractFileInfo::MultiFilesSystemPathIncluded);
+        else
+            actions = info->menuActionList(AbstractFileInfo::MultiFiles);
         const QMap<MenuAction, QVector<MenuAction> > subActions;
         const QVector<MenuAction> disableList;
         menu = FileMenuManager::genereteMenuByKeys(actions, disableList, true, subActions);

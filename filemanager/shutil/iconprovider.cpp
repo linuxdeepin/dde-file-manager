@@ -13,8 +13,11 @@
 #include <QSettings>
 #include <QDir>
 #include <QDebug>
+
 #include "fileutils.h"
 #include "desktopfile.h"
+#include "../app/global.h"
+#include "../controllers/appcontroller.h"
 
 #undef signals
 extern "C" {
@@ -25,10 +28,9 @@ extern "C" {
 
 IconProvider::IconProvider(QObject *parent) : QObject(parent)
 {
-    m_mimeUtilsPtr = new MimeUtils;
-    m_iconProvider = new QFileIconProvider;
     m_gsettings = new QGSettings("com.deepin.wrap.gnome.desktop.wm.preferences",
                                  "/com/deepin/wrap/gnome/desktop/wm/preferences/");
+    m_mimeDatabase = new QMimeDatabase;
     initConnect();
     setCurrentTheme();
 }
@@ -141,81 +143,6 @@ QString IconProvider::getCurrentTheme()
     }
 }
 
-void IconProvider::loadMimeTypes() const
-{
-    // Open file with mime/suffix associations
-    QFile mimeInfo("/usr/share/mime/globs");
-    mimeInfo.open(QIODevice::ReadOnly);
-    QTextStream out(&mimeInfo);
-
-    // Read associations
-    do {
-      QStringList line = out.readLine().split(":");
-      if (line.count() == 2) {
-        QString suffix = line.at(1);
-        suffix.remove("*.");
-        QString mimeName = line.at(0);
-        mimeName.replace("/","-");
-        m_mimeGlob.insert(suffix, mimeName);
-      }
-    } while (!out.atEnd());
-    mimeInfo.close();
-
-    // Open file with mime/generic-mime associations
-    mimeInfo.setFileName("/usr/share/mime/generic-icons");
-    mimeInfo.open(QIODevice::ReadOnly);
-    out.setDevice(&mimeInfo);
-
-    // Read associations
-    do {
-      QStringList line = out.readLine().split(":");
-      if (line.count() == 2) {
-        QString mimeName = line.at(0);
-        mimeName.replace("/","-");
-        QString icon = line.at(1);
-        m_mimeGeneric.insert(mimeName, icon);
-      }
-    } while (!out.atEnd());
-    mimeInfo.close();
-}
-
-QByteArray IconProvider::getThumb(const QString &imageFile)
-{
-    // Thumbnail image
-    QImage theThumb, background;
-    QImageReader pic(imageFile);
-    int w = pic.size().width();
-    int h = pic.size().height();
-
-    // Background
-    background = QImage(128, 128, QImage::Format_RGB32);
-    background.fill(QApplication::palette().color(QPalette::Base).rgb());
-
-    // Scale image and create its shadow template (background.png)
-    if (w > 128 || h > 128) {
-      pic.setScaledSize(QSize(123, 93));
-      QImage temp = pic.read();
-      theThumb.load(":/images/background.png");
-      QPainter painter(&theThumb);
-      painter.drawImage(QPoint(0, 0), temp);
-    } else {
-      pic.setScaledSize(QSize(64, 64));
-      theThumb = pic.read();
-    }
-
-    // Draw thumbnail picture
-    QPainter painter(&background);
-    painter.drawImage(QPoint((123 - theThumb.width()) / 2,
-                             (115 - theThumb.height()) / 2), theThumb);
-
-    // Write it to buffer
-    QBuffer buffer;
-    QImageWriter writer(&buffer, "jpg");
-    writer.setQuality(50);
-    writer.write(background);
-    return buffer.buffer();
-}
-
 QMap<QString, QIcon> IconProvider::getDesktopIcons()
 {
     return m_desktopIcons;
@@ -252,12 +179,12 @@ void IconProvider::handleWmValueChanged(const QString &key)
 }
 
 
-QIcon IconProvider::getFileIcon(const QString &file) const
+QIcon IconProvider::getFileIcon(const QString &file)
 {
     return findIcon(file);
 }
 
-QIcon IconProvider::getDesktopIcon(const QString &iconName, int size) const
+QIcon IconProvider::getDesktopIcon(const QString &iconName, int size)
 {
     if (m_desktopIcons.contains(iconName)){
         return m_desktopIcons.value(iconName);
@@ -303,104 +230,40 @@ void IconProvider::setDesktopIconPaths(const QMap<QString, QString> &iconPaths)
 }
 
 
-QIcon IconProvider::findIcon(const QString &file) const
+QIcon IconProvider::findIcon(const QString &file)
 {
     // If type of file is directory, return icon of directory
 
-    QFileInfo type(file);
-    QString absoluteFilePath = type.absoluteFilePath();
+    QFileInfo info(file);
+    QString absoluteFilePath = info.absoluteFilePath();
 
-    if (type.isDir()) {
-      if (m_folderIcons.contains(type.fileName())) {
-        return m_folderIcons.value(type.fileName());
-      }
+    QIcon theIcon;
+    QString mimeType = getMimeTypeByFile(absoluteFilePath);
 
-      return m_iconProvider->icon(type);
-    }
-
-    // If thumbnails are allowed and current file has it, show it
-    if (false) {
-      if (m_icons.contains(absoluteFilePath)) {
-        return *m_icons.object(absoluteFilePath);
-      } else if (m_thumbs.contains(absoluteFilePath)) {
-        QPixmap pic;
-        pic.loadFromData(m_thumbs.value(absoluteFilePath));
-        m_icons.insert(absoluteFilePath, new QIcon(pic), 1);
-        return *m_icons.object(absoluteFilePath);
-      }
-    }
-
-    // NOTE: Suffix is resolved using method getRealSuffix instead of suffix()
-    // method. It is because files can contain version suffix e.g. .so.1.0.0
-
-    // If there is icon for current suffix then return it
-    QString suffix = FileUtils::getRealSuffix(type.fileName()); /*type.suffix();*/
-
-    if (suffix == "desktop")
+    if (mimeType == "application/x-desktop")
         return IconProvider::getDesktopIcon(DesktopFile(file).getIcon(), 48);
 
-    if (m_mimeIcons.contains(suffix)) {
-      return m_mimeIcons.value(suffix);
-    }
 
-    // The icon
-    QIcon theIcon;
-
-    // If file has not suffix
-    if (suffix.isEmpty()) {
-
-      // If file is not executable, read mime type info from the system and create
-      // an icon for it
-      // NOTE: the icon cannot be cached because this file has not any suffix,
-      // however operation 'getMimeType' could cause slowdown
-      if (!type.isExecutable()) {
-        QString mime = m_mimeUtilsPtr->getMimeType(absoluteFilePath);
-        return FileUtils::searchMimeIcon(mime);
-      }
-
-      // If file is executable, set suffix to exec and find/create icon for it
-      suffix = "exec";
-      if (m_mimeIcons.contains(suffix)) {
-        theIcon = m_mimeIcons.value(suffix);
-      } else {
-        theIcon = QIcon::fromTheme("application-x-executable", theIcon);
-      }
-    }
-    // If file has unknown suffix (icon hasn't been assigned)
-    else {
-
-      // Load mime/suffix associations if they aren't loaded yet
-      if (m_mimeGlob.count() == 0) loadMimeTypes();
-
-      // Retrieve mime type for current suffix, if suffix is not present in list
-      // from '/usr/share/mime/globs', its mime has to be detected manually
-      QString mimeType = m_mimeGlob.value(suffix.toLower(), "");
-      if (mimeType.isEmpty()) {
-        mimeType = m_mimeUtilsPtr->getMimeType(absoluteFilePath);
-        m_mimeGlob.insert(suffix.toLower(), mimeType);
-      }
-
-      // Load the icon
-      theIcon = FileUtils::searchMimeIcon(mimeType);
-    }
-
-    // Insert icon to the list of icons
-    m_mimeIcons.insert(suffix, theIcon);
-    return theIcon;
-}
-
-QIcon IconProvider::findMimeIcon(const QString &file)
-{
-    QFileInfo type(file);
-    // Retrieve mime and search cache for it
-    QString mime = m_mimeUtilsPtr->getMimeType(type.absoluteFilePath());
-    if (m_mimeIcons.contains(mime)) {
-      return m_mimeIcons.value(mime);
+    if (m_mimeIcons.contains(mimeType)) {
+        return m_mimeIcons.value(mimeType);
     }
 
     // Search file system for icon
-    QIcon theIcon = FileUtils::searchMimeIcon(mime);
-    m_mimeIcons.insert(mime, theIcon);
+    theIcon = FileUtils::searchMimeIcon(mimeType);
+    m_mimeIcons.insert(mimeType, theIcon);
+
     return theIcon;
 }
 
+
+QString IconProvider::getMimeTypeByFile(const QString &file)
+{
+    QString mimeTypeName;
+    if (systemPathManager->isSystemPath(file)){
+        mimeTypeName = systemPathManager->getSystemPathIconNameByPath(file);
+    }else{
+        QMimeType mimeType = m_mimeDatabase->mimeTypeForFile(file);
+        mimeTypeName = mimeType.name();
+    }
+    return mimeTypeName;
+}

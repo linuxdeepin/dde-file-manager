@@ -73,6 +73,7 @@ public:
     enum MenuType {
         SingleFile,
         MultiFiles,
+        MultiFilesSystemPathIncluded,
         SpaceArea
     };
 
