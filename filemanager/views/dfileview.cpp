@@ -257,6 +257,11 @@ bool DFileView::testViewMode(ViewModes modes, DFileView::ViewMode mode)
     return (modes | mode) == modes;
 }
 
+int DFileView::horizontalOffset() const
+{
+    return m_horizontalOffset;
+}
+
 
 void DFileView::cd(const FMEvent &event)
 {
@@ -720,7 +725,9 @@ void DFileView::updateViewportMargins()
         int itemColumn = contentWidth / itemWidth;
         int gapWidth = (contentWidth - itemWidth * itemColumn) / 2 + 2 * spacing();
 
+//        m_horizontalOffset = -gapWidth;
         setViewportMargins(gapWidth, 0, 0, 0);
+
     } else {
         margins.setLeft(10);
         margins.setRight(10);

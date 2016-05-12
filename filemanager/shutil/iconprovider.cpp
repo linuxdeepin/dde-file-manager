@@ -31,6 +31,7 @@ IconProvider::IconProvider(QObject *parent) : QObject(parent)
     m_gsettings = new QGSettings("com.deepin.wrap.gnome.desktop.wm.preferences",
                                  "/com/deepin/wrap/gnome/desktop/wm/preferences/");
     m_mimeDatabase = new QMimeDatabase;
+    m_iconSizes << QSize(48, 48) << QSize(64, 64) << QSize(96, 96) << QSize(128, 128) << QSize(256, 256);
     initConnect();
     setCurrentTheme();
 }
@@ -77,35 +78,35 @@ QPixmap IconProvider::getIconPixmap(QString iconPath, int width, int height)
     return pixmap;
 }
 
-QString IconProvider::getThemeIconPath(QString iconName)
+QString IconProvider::getThemeIconPath(QString iconName, int size)
 {
     QByteArray bytes = iconName.toUtf8();
     const char *name = bytes.constData();
 
 //    GtkIconTheme* theme = gtk_icon_theme_get_default();
 
-    GtkSettings* gs = gtk_settings_get_default();
-    char* aname = NULL;
-    g_object_get(gs, "gtk-icon-theme-name", &aname, NULL);
+//    GtkSettings* gs = gtk_settings_get_default();
+//    char* aname = NULL;
+//    g_object_get(gs, "gtk-icon-theme-name", &aname, NULL);
 
-    auto theme = gtk_icon_theme_new();
-    gtk_icon_theme_set_custom_theme(theme, aname);
+//    auto theme = gtk_icon_theme_new();
+//    gtk_icon_theme_set_custom_theme(theme, aname);
 
-    g_free(aname);
+//    g_free(aname);
 
-    GtkIconInfo* info = gtk_icon_theme_lookup_icon(theme, name, 48, GTK_ICON_LOOKUP_GENERIC_FALLBACK);
-    g_object_unref(theme);
-    if (info) {
-        char* path = g_strdup(gtk_icon_info_get_filename(info));
-#if GTK_MAJOR_VERSION >= 3
-        g_object_unref(info);
-#elif GTK_MAJOR_VERSION == 2
-        gtk_icon_info_free(info);
-#endif
-        return QString(path);
-    } else {
+//    GtkIconInfo* info = gtk_icon_theme_lookup_icon(theme, name, size, GTK_ICON_LOOKUP_GENERIC_FALLBACK);
+//    g_object_unref(theme);
+//    if (info) {
+//        char* path = g_strdup(gtk_icon_info_get_filename(info));
+//#if GTK_MAJOR_VERSION >= 3
+//        g_object_unref(info);
+//#elif GTK_MAJOR_VERSION == 2
+//        gtk_icon_info_free(info);
+//#endif
+//        return QString(path);
+//    } else {
         GtkIconTheme* theme = gtk_icon_theme_get_default();
-        GtkIconInfo* info = gtk_icon_theme_lookup_icon(theme, name, 48, GTK_ICON_LOOKUP_GENERIC_FALLBACK);
+        GtkIconInfo* info = gtk_icon_theme_lookup_icon(theme, name, size, GTK_ICON_LOOKUP_GENERIC_FALLBACK);
         if (info) {
             char* path = g_strdup(gtk_icon_info_get_filename(info));
     #if GTK_MAJOR_VERSION >= 3
@@ -118,8 +119,9 @@ QString IconProvider::getThemeIconPath(QString iconName)
 //            qDebug() << iconName << "no info";
         }
         return "";
-    }
+//    }
 }
+
 
 void IconProvider::initConnect()
 {
@@ -238,18 +240,21 @@ QIcon IconProvider::findIcon(const QString &file)
     QString absoluteFilePath = info.absoluteFilePath();
 
     QIcon theIcon;
+
     QString mimeType = getMimeTypeByFile(absoluteFilePath);
 
     if (mimeType == "application/x-desktop")
         return IconProvider::getDesktopIcon(DesktopFile(file).getIcon(), 48);
 
-
     if (m_mimeIcons.contains(mimeType)) {
         return m_mimeIcons.value(mimeType);
     }
 
-    // Search file system for icon
-    theIcon = FileUtils::searchMimeIcon(mimeType);
+    QString path = getThemeIconPath(mimeType.replace("/", "-"), 256);
+    theIcon = QIcon(path);
+
+//    theIcon = FileUtils::searchMimeIcon(mimeType);
+
     m_mimeIcons.insert(mimeType, theIcon);
 
     return theIcon;

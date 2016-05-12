@@ -308,6 +308,7 @@ void DFileItemDelegate::paintIconItem(bool isDragMode, QPainter *painter,
 
     opt.icon.paint(painter, icon_rect);
 
+
     if(str.indexOf("\n") >=0 && !str.endsWith("\n")) {
         QTextDocument *doc = m_documentMap.value(str);
 
