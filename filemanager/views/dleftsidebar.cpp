@@ -127,6 +127,8 @@ void DLeftSideBar::initData()
 
     m_navState = true;
     setAcceptDrops(true);
+
+
 }
 
 void DLeftSideBar::initUI()
@@ -149,6 +151,10 @@ void DLeftSideBar::initConnect()
     connect(m_scene, &DBookmarkScene::dragEntered, this, &DLeftSideBar::doDragEnter);
     connect(m_scene, &DBookmarkScene::dragLeft, this, &DLeftSideBar::doDragLeave);
     connect(m_scene, &DBookmarkScene::dropped, this, &DLeftSideBar::doDragLeave);
+    connect(deviceListener, &UDiskListener::volumeAdded, m_scene, &DBookmarkScene::volumeAdded);
+    connect(deviceListener, &UDiskListener::volumeRemoved, m_scene, &DBookmarkScene::volumeRemoved);
+    connect(deviceListener, &UDiskListener::mountAdded, m_scene, &DBookmarkScene::mountAdded);
+    connect(deviceListener, &UDiskListener::mountRemoved, m_scene, &DBookmarkScene::mountRemoved);
 }
 
 void DLeftSideBar::initNav()
@@ -219,7 +225,7 @@ DUrl DLeftSideBar::getStandardPathByKey(QString key)
     }else if (key == "Trash"){
         url = DUrl::fromTrashFile("/");
     }else if (key == "Disks"){
-        url = DUrl::fromComputerFile("/");
+        url = DUrl::fromLocalFile("/");
     }else if (m_systemPathKeys.contains(key)){
         url =  DUrl::fromLocalFile(systemPathManager->getSystemPath(key));
     }else{

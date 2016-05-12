@@ -10,7 +10,7 @@
 #include "dfilemenu.h"
 #include "filemenumanager.h"
 
-#include "../../deviceinfo/deviceinfo.h"
+#include "../../deviceinfo/udiskdeviceinfo.h"
 #include "../models/bookmark.h"
 #include "../app/global.h"
 #include "windowmanager.h"
@@ -26,14 +26,14 @@ DBookmarkItem::DBookmarkItem()
     m_isDefault = true;
 }
 
-DBookmarkItem::DBookmarkItem(DeviceInfo *deviceInfo)
+DBookmarkItem::DBookmarkItem(UDiskDeviceInfo * deviceInfo)
 {
     init();
     m_isDisk = true;
     m_checkable = true;
-    m_url = DUrl::fromLocalFile(deviceInfo->getMountPath());
+    m_url = DUrl::fromLocalFile(deviceInfo->getMountPoint());
     m_isDefault = true;
-    m_sysPath = deviceInfo->getSysPath();
+    m_sysPath = deviceInfo->getDiskInfo().ID;
     m_textContent = deviceInfo->displayName();
     boundImageToHover(":/icons/images/icons/disk_hover_16px.svg");
     boundImageToPress(":/icons/images/icons/disk_hover_16px.svg");
@@ -177,25 +177,15 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
         QPixmap pressPic(":/icons/images/icons/unmount_press.svg");
         QPixmap normalPic(":/icons/images/icons/unmount_normal.svg");
         QPixmap hoverPic(":/icons/images/icons/unmount_press.svg");
-        if(m_pressed)
-            painter->drawPixmap(w/2 - leftPadding,
-                                -pressPic.height()/2,
-                                pressPic.width(),
-                                pressPic.height(),
-                                pressPic);
+        if(m_pressed || (m_checked && m_checkable))
+            painter->drawPixmap(w - 20, pressPic.height()/2,
+                                pressPic.width(), pressPic.height(), pressPic);
         else if(m_hovered)
-            painter->drawPixmap(w/2 - leftPadding,
-                                -hoverPic.height()/2,
-                                hoverPic.width(),
-                                hoverPic.height(),
-                                hoverPic);
+            painter->drawPixmap(w - 20, hoverPic.height()/2,
+                                hoverPic.width(), hoverPic.height(), hoverPic);
         else
-            painter->drawPixmap(w/2 - leftPadding,
-                                -normalPic.height()/2,
-                                normalPic.width(),
-                                normalPic.height(),
-                                normalPic);
-
+            painter->drawPixmap(w - 20, normalPic.height()/2,
+                                normalPic.width(), normalPic.height(), normalPic);
     }
 }
 
@@ -471,10 +461,10 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     else if (m_url.isTrashFile()){
     menu = FileMenuManager::createTrashLeftBarMenu();
     }
+    else if(m_isDisk)
+        menu = FileMenuManager::createDiskViewMenu();
     else if(m_isDefault)
         menu = FileMenuManager::createDefaultBookMarkMenu();
-    else if(m_isDisk)
-        menu = FileMenuManager::createDiskLeftBarMenu();
     else
         menu = FileMenuManager::createCustomBookMarkMenu();
     QWidget* window = scene()->views().at(0)->window();

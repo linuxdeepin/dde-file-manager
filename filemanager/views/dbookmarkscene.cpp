@@ -10,9 +10,10 @@
 #include <QDir>
 #include "../app/fmevent.h"
 #include "../app/filesignalmanager.h"
-#include "../../deviceinfo/deviceinfo.h"
+#include "../../deviceinfo/udiskdeviceinfo.h"
 #include "dbookmarkline.h"
 #include "windowmanager.h"
+#include "dbusinterface/dbustype.h"
 
 DBookmarkScene::DBookmarkScene()
 {
@@ -31,9 +32,6 @@ DBookmarkScene::DBookmarkScene()
 
     connect(fileSignalManager, &FileSignalManager::currentUrlChanged,
             this, &DBookmarkScene::currentUrlChanged);
-    connect(fileSignalManager, &FileSignalManager::deviceAdded, this, &DBookmarkScene::deviceAdded);
-    connect(fileSignalManager, &FileSignalManager::deviceRemoved, this, &DBookmarkScene::deviceRemoved);
-    connect(fileSignalManager, &FileSignalManager::deviceMounted, this, &DBookmarkScene::bookmarkMounted);
     connect(fileSignalManager, &FileSignalManager::requestBookmarkRemove, this, &DBookmarkScene::doBookmarkRemoved);
     connect(fileSignalManager, &FileSignalManager::requestBookmarkAdd, this, &DBookmarkScene::doBookmarkAdded);
     connect(fileSignalManager, &FileSignalManager::requestBookmarkMove, this, &DBookmarkScene::doMoveBookmark);
@@ -323,27 +321,6 @@ void DBookmarkScene::bookmarkMounted(int fd)
     }
 }
 
-void DBookmarkScene::deviceAdded(DeviceInfo &deviceInfos)
-{
-    Q_UNUSED(deviceInfos);
-    //DBookmarkItem * item = new DBookmarkItem(&deviceInfos);
-    //this->insert(11, item);
-}
-
-void DBookmarkScene::deviceRemoved(DeviceInfo &deviceInfos)
-{
-    Q_UNUSED(deviceInfos);
-//    QString localPath = deviceInfos.getSysPath();
-//    foreach(DBookmarkItem * item, m_items)
-//    {
-//        if(item->getSysPath() == localPath)
-//        {
-//            remove(item);
-//            return;
-//        }
-    //    }
-}
-
 
 /**
  * @brief DBookmarkScene::bookmarkRemoved
@@ -368,7 +345,7 @@ void DBookmarkScene::doBookmarkRemoved(const FMEvent &event)
 void DBookmarkScene::doBookmarkAdded(const QString &name, const FMEvent &event)
 {
     DBookmarkItem * item = DBookmarkItem::makeBookmark(name, event.fileUrl());
-    insert(DEFAULT_ITEM_COUNT, item);
+    insert(DEFAULT_ITEM_COUNT + m_diskCount, item);
     item->setTightMode(m_isTightMode);
 }
 
@@ -383,6 +360,38 @@ void DBookmarkScene::doMoveBookmark(int from, int to, const FMEvent &event)
 }
 
 void DBookmarkScene::rootDropped(const QPointF &point)
+{
+
+}
+
+void DBookmarkScene::volumeAdded(UDiskDeviceInfo *device)
+{
+
+}
+
+void DBookmarkScene::volumeRemoved(UDiskDeviceInfo *device)
+{
+    DBookmarkItem * item = m_diskItems.value(device->getDiskInfo().ID);
+    if(item)
+    {
+        remove(item);
+        m_diskItems.remove(device->getDiskInfo().ID);
+        m_diskCount--;
+    }
+}
+
+void DBookmarkScene::mountAdded(UDiskDeviceInfo *device)
+{
+    if(m_diskItems.value(device->getDiskInfo().ID))
+        return;
+    DBookmarkItem * item = new DBookmarkItem(device);
+    insert(DEFAULT_ITEM_COUNT + m_diskCount -1, item);
+    item->setTightMode(m_isTightMode);
+    m_diskItems.insert(device->getDiskInfo().ID, item);
+    m_diskCount++;
+}
+
+void DBookmarkScene::mountRemoved(UDiskDeviceInfo *device)
 {
 
 }

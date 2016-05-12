@@ -1,45 +1,16 @@
 #include "udisklistener.h"
-#include "udiskdeviceinfo.h"
+
 #include "../../filemanager/app/global.h"
 #include "fstab.h"
 
 UDiskListener::UDiskListener()
 {
-    QDBusConnection system = QDBusConnection::systemBus();
-
-    if (!system.isConnected())
-        return;
-
-
-    if (!QDBusInterface("org.freedesktop.UDisks2",
-                           "/org/freedesktop/UDisks2",
-                           "org.freedesktop.UDisks2", system).isValid())
-    {
-        qDebug() << "org.freedesktop.UDisks2 - not exists - ";
-        return;
-    }
-
-    system.connect("org.freedesktop.UDisks2",
-                       "/org/freedesktop/UDisks2",
-                       "org.freedesktop.DBus.ObjectManager",
-                       "InterfacesAdded",
-                       this,
-                       SLOT(interfacesAdded(QDBusObjectPath,QMap<QString,QVariant>)));
-
-    system.connect("org.freedesktop.UDisks2",
-                   "/org/freedesktop/UDisks2",
-                   "org.freedesktop.DBus.ObjectManager",
-                   "InterfacesRemoved",
-                   this,
-                   SLOT(interfacesRemoved(QDBusObjectPath, QStringList)));
-
     fileService->setFileUrlHandler(COMPUTER_SCHEME, "", this);
-
     readFstab();
-    qDebug() << fstab;
-
-    m_diskMountInterface = new DiskMountInterface(DiskMountInterface::staticServerPath(), DiskMountInterface::staticInterfacePath(), QDBusConnection::sessionBus(), this);
-    asyncRequestDiskInfos();
+    m_diskMountInterface = new DiskMountInterface(DiskMountInterface::staticServerPath(),
+                                                  DiskMountInterface::staticInterfacePath(),
+                                                  QDBusConnection::sessionBus(), this);
+    connect(m_diskMountInterface, &DiskMountInterface::Changed, this, &UDiskListener::changed);
 }
 
 UDiskDeviceInfo *UDiskListener::getDevice(const QDBusObjectPath &path) const
@@ -52,62 +23,20 @@ UDiskDeviceInfo *UDiskListener::getDevice(const QDBusObjectPath &path) const
 
 void UDiskListener::addDevice(UDiskDeviceInfo *device)
 {
-    m_map.insert(device->uDiskPath(), device);
+    m_map.insert(device->getDiskInfo().ID, device);
     m_list.append(device);
-    connect(device, &UDiskDeviceInfo::changed, this, &UDiskListener::interfacesChanged);
 }
 
 void UDiskListener::removeDevice(UDiskDeviceInfo *device)
 {
     m_list.removeOne(device);
-    m_map.remove(device->uDiskPath());   
-    device->deleteLater();
+    m_map.remove(device->getDiskInfo().ID);
+    delete device;
 }
 
 void UDiskListener::update()
 {
-    qDebug() << "update called";
-
-    QList<QDBusObjectPath> paths;
-    QDBusMessage call = QDBusMessage::createMethodCall("org.freedesktop.UDisks2",
-                                                       "/org/freedesktop/UDisks2/block_devices",
-                                                       "org.freedesktop.DBus.Introspectable",
-                                                       "Introspect");
-    QDBusPendingReply<QString> reply = QDBusConnection::systemBus().call(call);
-
-    if (!reply.isValid())
-    {
-        qDebug() << "error: " << reply.error().name();
-        return;
-    }
-
-    QXmlStreamReader xml(reply.value());
-    while (!xml.atEnd())
-    {
-        xml.readNext();
-        if (xml.tokenType() == QXmlStreamReader::StartElement && xml.name().toString() == "node" )
-        {
-            QString name = xml.attributes().value("name").toString();
-            if(!name.isEmpty())
-                paths << QDBusObjectPath("/org/freedesktop/UDisks2/block_devices/" + name);
-        }
-    }
-
-    foreach (QDBusObjectPath i, paths)
-    {
-        qDebug() << i.path();
-        if (m_map.contains(i.path()))
-        {
-            UDiskDeviceInfo *device = getDevice(i);
-            if (device)
-                removeDevice(device);
-        }
-        else
-        {
-            UDiskDeviceInfo *device = new UDiskDeviceInfo(i);
-            addDevice(device);
-        }
-    }
+    asyncRequestDiskInfos();
 }
 
 QString UDiskListener::lastPart(const QString &path)
@@ -123,73 +52,24 @@ bool UDiskListener::isSystemDisk(const QString &path) const
         return false;
 }
 
-
-void UDiskListener::interfacesAdded(const QDBusObjectPath &path, const QMap<QString, QVariant> &interfaces)
+UDiskDeviceInfo *UDiskListener::hasDeviceInfo(const QString &id)
 {
-    Q_UNUSED(interfaces);
-    if(path.path().startsWith("/org/freedesktop/UDisks2/block_devices"))
-    {
-        UDiskDeviceInfo *device = getDevice(path);
-        if (device)
-            return;
-        device = new UDiskDeviceInfo(path);
-        addDevice(device);
-        if(!device->fileSystem().isEmpty())
-        {
-            emit childrenAdded(DUrl::fromComputerFile(device->mountPath()));
-            qDebug() << device->uDiskPath() << device->mountPath();
-        }
-    }
-}
-
-void UDiskListener::interfacesRemoved(const QDBusObjectPath &path, const QStringList &interfaces)
-{
-    Q_UNUSED(interfaces);
-    if(path.path().startsWith("/org/freedesktop/UDisks2/block_devices"))
-    {
-        UDiskDeviceInfo *device = getDevice(path);
-        if (device)
-        {
-            if(!device->fileSystem().isEmpty())
-            {
-                emit childrenRemoved(DUrl::fromComputerFile(device->mountPath()));
-                qDebug() << device->uDiskPath() << device->mountPath();
-            }
-            removeDevice(device);
-        }
-    }
+    return m_map.value(id);
 }
 
 void UDiskListener::interfacesChanged()
 {
-    UDiskDeviceInfo * device = qobject_cast<UDiskDeviceInfo *>(sender());
-    emit childrenUpdated(DUrl::fromComputerFile(device->mountPath()));
+
 }
 
 void UDiskListener::mount(const QString &path)
 {
-    for (int i = 0; i < m_list.size(); i++)
-    {
-        UDiskDeviceInfo * info = m_list.at(i);
-        if(!info->fileSystem().isEmpty() && path == info->uDiskPath())
-        {
-            info->mount();
-            break;
-        }
-    }
+    m_diskMountInterface->Mount(path);
 }
 
 void UDiskListener::unmount(const QString &path)
 {
-    for (int i = 0; i < m_list.size(); i++)
-    {
-        UDiskDeviceInfo * info = m_list.at(i);
-        if(!info->fileSystem().isEmpty() && path == info->uDiskPath())
-        {
-            info->unmount();
-            break;
-        }
-    }
+    m_diskMountInterface->Unmount(path);
 }
 
 void UDiskListener::asyncRequestDiskInfos()
@@ -205,11 +85,53 @@ void UDiskListener::asyncRequestDiskInfosFinihsed(QDBusPendingCallWatcher *call)
     QDBusPendingReply<DiskInfoList> reply = *call;
     if (!reply.isError()){
         DiskInfoList diskinfos = qdbus_cast<DiskInfoList>(reply.argumentAt(0));
-        qDebug() << diskinfos.at(0);
+        foreach(DiskInfo info, diskinfos)
+        {
+            UDiskDeviceInfo *device = new UDiskDeviceInfo(info);
+            addDevice(device);
+            mountAdded(device);
+        }
     }else{
         qCritical() << reply.error().message();
     }
     call->deleteLater();
+}
+
+void UDiskListener::changed(int in0, const QString &in1)
+{
+    qDebug() << in0 << in1;
+    switch(in0)
+    {
+    case EventTypeVolumeAdded:
+        //emit volumeAdded(in1);
+        break;
+    case EventTypeVolumeRemoved:
+    {
+        UDiskDeviceInfo * device = hasDeviceInfo(in1);
+        if(device)
+        {
+            emit volumeRemoved(device);
+            removeDevice(device);
+        }
+        break;
+    }
+    case EventTypeMountAdded:
+    {
+        if(hasDeviceInfo(in1) == NULL)
+        {
+            DiskInfo info = m_diskMountInterface->QueryDisk(in1);
+            UDiskDeviceInfo *device = new UDiskDeviceInfo(info);
+            addDevice(device);
+            emit mountAdded(device);
+        }
+        break;
+    }
+    case EventTypeMountRemoved:
+        //emit mountRemoved(in1);
+        break;
+    default:
+        qDebug() << "Unknown event type.";
+    }
 }
 
 void UDiskListener::readFstab()
@@ -247,11 +169,8 @@ const QList<AbstractFileInfoPointer> UDiskListener::getChildren(const DUrl &file
     for (int i = 0; i < m_list.size(); i++)
     {
         UDiskDeviceInfo * info = m_list.at(i);
-        if(!info->fileSystem().isEmpty())
-        {
-            AbstractFileInfoPointer fileInfo(new UDiskDeviceInfo(info));
-            infolist.append(fileInfo);
-        }
+        AbstractFileInfoPointer fileInfo(new UDiskDeviceInfo(info));
+        infolist.append(fileInfo);
     }
 
     return infolist;
@@ -271,7 +190,7 @@ const AbstractFileInfoPointer UDiskListener::createFileInfo(const DUrl &fileUrl,
     {
         UDiskDeviceInfo * info = m_list.at(i);
 
-        if(!info->fileSystem().isEmpty() && info->mountPath() == path)
+        if(info->getMountPoint() == path)
         {
             AbstractFileInfoPointer fileInfo(new UDiskDeviceInfo(info));
             return fileInfo;

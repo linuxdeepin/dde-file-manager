@@ -13,7 +13,7 @@
 #define MARGIN_IMAGE_BOUND 5
 
 class DBookmarkItemGroup;
-class DeviceInfo;
+class UDiskDeviceInfo;
 class BookMark;
 class DDragWidget;
 
@@ -23,7 +23,7 @@ class DBookmarkItem : public QGraphicsWidget
 public:
     DBookmarkItem();
 
-    DBookmarkItem(DeviceInfo * deviceInfo);
+    DBookmarkItem(UDiskDeviceInfo * deviceInfo);
 
     DBookmarkItem(BookMark * bookmark);
 
