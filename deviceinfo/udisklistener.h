@@ -13,7 +13,13 @@
 #include <QXmlStreamReader>
 #include <QDBusPendingReply>
 #include "../dbusinterface/diskmount_interface.h"
+#include "udiskdeviceinfo.h"
 
+
+#define EventTypeVolumeAdded 1
+#define EventTypeVolumeRemoved 2
+#define EventTypeMountAdded 3
+#define EventTypeMountRemoved 4
 
 class UDiskDeviceInfo;
 
@@ -28,16 +34,20 @@ public:
     void update();
     QString lastPart(const QString &path);
     bool isSystemDisk(const QString &path) const;
+    UDiskDeviceInfo * hasDeviceInfo(const QString &id);
+signals:
+    void volumeAdded(UDiskDeviceInfo * device);
+    void volumeRemoved(UDiskDeviceInfo * device);
+    void mountAdded(UDiskDeviceInfo * device);
+    void mountRemoved(UDiskDeviceInfo * device);
 public slots:
-    void interfacesAdded(const QDBusObjectPath &path, const QMap<QString, QVariant> &interfaces);
-    void interfacesRemoved(const QDBusObjectPath &path, const QStringList &interfaces);
     void interfacesChanged();
     void mount(const QString &path);
     void unmount(const QString &path);
 
     void asyncRequestDiskInfos();
     void asyncRequestDiskInfosFinihsed(QDBusPendingCallWatcher *call);
-
+    void changed(int in0, const QString &in1);
 private:
     void readFstab();
     QList<UDiskDeviceInfo *> m_list;

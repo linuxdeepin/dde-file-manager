@@ -14,8 +14,9 @@ class DBookmarkItem;
 class DBookmarkRootItem;
 class DBookmarkItemGroup;
 class FMEvent;
-class DeviceInfo;
+class UDiskDeviceInfo;
 class DUrl;
+class DiskInfo;
 
 class DBookmarkScene : public QGraphicsScene
 {
@@ -54,20 +55,26 @@ public slots:
     void currentUrlChanged(const FMEvent &event);
     void bookmarkRemoved(const QString &url);
     void bookmarkMounted(int fd);
-    void deviceAdded(DeviceInfo &deviceInfos);
-    void deviceRemoved(DeviceInfo &deviceInfos);
     void doBookmarkRemoved(const FMEvent &event);
     void doBookmarkAdded(const QString &name, const FMEvent &event);
     void doMoveBookmark(int from, int to, const FMEvent &event);
     void rootDropped(const QPointF& point);
+
+    void volumeAdded(UDiskDeviceInfo * device);
+    void volumeRemoved(UDiskDeviceInfo * device);
+    void mountAdded(UDiskDeviceInfo * device);
+    void mountRemoved(UDiskDeviceInfo * device);
 private:
     void increaseSize();
     void decreaseSize();
     void move(DBookmarkItem * from, DBookmarkItem* to);
+    int m_bookmarkCount = 0;
+    int m_diskCount = 0;
     DBookmarkRootItem * m_rootItem;
     DBookmarkItemGroup * m_itemGroup;
     QList<DBookmarkItem *> m_items;
     QList<DBookmarkItem *> m_customItems;
+    QMap<QString, DBookmarkItem *> m_diskItems;
     double m_totalHeight = 0;
     bool m_acceptDrop;
     bool m_isTightMode = false;

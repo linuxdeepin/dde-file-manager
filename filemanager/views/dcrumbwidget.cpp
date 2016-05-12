@@ -55,6 +55,8 @@ void DCrumbWidget::addCrumb(const QStringList &list)
         }
 
         QString path = list.at(0);
+        if(path == "/")
+            path = "";
         for(int j = 1; j <= i; j++)
         {
             path += "/" + list.at(j);
@@ -307,7 +309,7 @@ void DCrumbWidget::buttonPressed()
     event = FMEvent::CrumbButton;
     QString text = button->path();
     DCrumbButton * localButton = (DCrumbButton *)m_group.buttons().at(0);
-
+    qDebug() << text;
 
     if(localButton->getName() == RECENT_ROOT)
     {
