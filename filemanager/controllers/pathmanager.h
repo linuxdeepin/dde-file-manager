@@ -26,6 +26,8 @@ public:
 
     QMap<QString, QString> systemPathDisplayNames() const;
 
+    bool isSystemPath(const QString& path);
+
 signals:
 
 public slots:

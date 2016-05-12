@@ -96,6 +96,11 @@ QMap<QString, QString> PathManager::systemPathDisplayNames() const
     return m_systemPathDisplayNames;
 }
 
+bool PathManager::isSystemPath(const QString &path)
+{
+    return m_systemPaths.values().contains(path);
+}
+
 
 
 QMap<QString, QString> PathManager::systemPaths() const
