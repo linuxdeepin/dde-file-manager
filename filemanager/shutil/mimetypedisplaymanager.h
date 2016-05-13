@@ -15,6 +15,8 @@ public:
     void initConnect();
 
     QString displayName(const QString& mimeType);
+    QString defaultIcon(const QString& mimeType);
+
 
     static QStringList readlines(const QString& path);
     static void loadSupportMimeTypes();
@@ -25,9 +27,8 @@ public slots:
 
 private:
 
-
-
     QMap<QString, QString> m_displayNames;
+    QMap<QString, QString> m_defaultIconNames;
     static QStringList ArchiveMimeTypes;
     static QStringList TextMimeTypes;
     static QStringList VideoMimeTypes;

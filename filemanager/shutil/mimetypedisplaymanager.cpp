@@ -34,6 +34,18 @@ void MimeTypeDisplayManager::initData()
     m_displayNames["text"] = tr("text");
     m_displayNames["executable"] = tr("executable");
     m_displayNames["unknown"] = tr("unknown");
+
+
+    m_defaultIconNames["directory"] = "inode/directory";
+    m_defaultIconNames["desktop"] = "application-default-icon";
+    m_defaultIconNames["video"] = "video";
+    m_defaultIconNames["audio"] = "music";
+    m_defaultIconNames["image"] = "image";
+    m_defaultIconNames["archive"] = "application-x-archive";
+    m_defaultIconNames["text"] = "text-plain";
+    m_defaultIconNames["executable"] = "application-x-executable";
+    m_defaultIconNames["unknown"] = "application-default-icon";
+
     loadSupportMimeTypes();
 }
 
@@ -62,6 +74,29 @@ QString MimeTypeDisplayManager::displayName(const QString &mimeType)
         return m_displayNames.value("archive");
     }else{
         return m_displayNames.value("unknown");
+    }
+}
+
+QString MimeTypeDisplayManager::defaultIcon(const QString &mimeType)
+{
+    if (mimeType == "application/x-desktop"){
+        return m_defaultIconNames.value("desktop");
+    }else if (mimeType == "inode/directory"){
+        return m_defaultIconNames.value("directory");
+    }else if (mimeType == "application/x-executable" || ExecutableMimeTypes.contains(mimeType)){
+        return m_defaultIconNames.value("executable");
+    }else if (mimeType.startsWith("video/") || VideoMimeTypes.contains(mimeType)){
+        return m_defaultIconNames.value("video");
+    }else if (mimeType.startsWith("audio/") || AudioMimeTypes.contains(mimeType)){
+        return m_defaultIconNames.value("audio");
+    }else if (mimeType.startsWith("image/") || ImageMimeTypes.contains(mimeType)){
+        return m_defaultIconNames.value("image");
+    }else if (mimeType.startsWith("text/") || TextMimeTypes.contains(mimeType)){
+        return m_defaultIconNames.value("text");
+    }else if (ArchiveMimeTypes.contains(mimeType)){
+        return m_defaultIconNames.value("archive");
+    }else{
+        return m_defaultIconNames.value("unknown");
     }
 }
 

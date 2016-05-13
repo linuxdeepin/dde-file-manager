@@ -250,12 +250,19 @@ QIcon IconProvider::findIcon(const QString &file)
         return m_mimeIcons.value(mimeType);
     }
 
-    QString path = getThemeIconPath(mimeType.replace("/", "-"), 256);
+    QString _mimeType = mimeType;
+    QString iconName = _mimeType.replace("/", "-");
+    QString path = getThemeIconPath(iconName, 256);
+
+    if (path.isEmpty()){
+        path = getThemeIconPath(mimeTypeDisplayManager->defaultIcon(mimeType));
+    }
+
     theIcon = QIcon(path);
 
 //    theIcon = FileUtils::searchMimeIcon(mimeType);
 
-    m_mimeIcons.insert(mimeType, theIcon);
+    m_mimeIcons.insert(getMimeTypeByFile(absoluteFilePath), theIcon);
 
     return theIcon;
 }
