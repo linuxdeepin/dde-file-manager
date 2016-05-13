@@ -7,8 +7,8 @@
 #include "widgets/dwindowframe.h"
 #include <QMainWindow>
 
-#define DEFAULT_WINDOWS_WIDTH 950
-#define DEFAULT_WINDOWS_HEIGHT 600
+#define DEFAULT_WINDOWS_WIDTH 960
+#define DEFAULT_WINDOWS_HEIGHT 540
 #define LEFTSIDEBAR_MAX_WIDTH 200
 #define LEFTSIDEBAR_MIN_WIDTH 48
 #define TITLE_FIXED_HEIGHT 40
