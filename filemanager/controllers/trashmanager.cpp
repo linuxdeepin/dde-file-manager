@@ -127,7 +127,7 @@ bool TrashManager::deleteFiles(const DUrlList &urlList, const FMEvent &event, bo
     return true;
 }
 
-bool TrashManager::restoreTrashFile(const DUrlList &fileUrl) const
+bool TrashManager::restoreTrashFile(const DUrlList &fileUrl, const FMEvent &event) const
 {
     bool ok = true;
 
@@ -135,7 +135,7 @@ bool TrashManager::restoreTrashFile(const DUrlList &fileUrl) const
 
     for(const DUrl &url : fileUrl) {
         info.setUrl(url);
-        ok = ok && info.restore();
+        info.restore(event);
     }
 
     return ok;

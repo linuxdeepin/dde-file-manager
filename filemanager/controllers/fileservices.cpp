@@ -164,11 +164,22 @@ bool FileServices::copyFiles(const DUrlList &urlList) const
      return false;
 }
 
-bool FileServices::renameFile(const DUrl &oldUrl, const DUrl &newUrl) const
+bool FileServices::renameFile(const DUrl &oldUrl, const DUrl &newUrl, const FMEvent &event) const
 {
+    FileInfo f(newUrl);
+    if (f.isCanRename() && f.exists(newUrl)){
+        DDialog d(WindowManager::getWindowById(event.windowId()));;
+        d.setMessage(tr("\"%1\" already exists, please select a different name.").arg(f.displayName()));
+        QStringList buttonTexts;
+        buttonTexts << tr("Confirm");
+        d.addButtons(buttonTexts);
+        d.setDefaultButton(0);
+        d.setIcon(QIcon(":/images/dialogs/images/dialog-warning.svg"));
+        d.exec();
+        return false;
+    }
     TRAVERSE(oldUrl, {
                  bool ok = controller->renameFile(oldUrl, newUrl, accepted);
-
                  if(accepted)
                     return ok;
              })
