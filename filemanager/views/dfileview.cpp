@@ -422,6 +422,14 @@ void DFileView::keyPressEvent(QKeyEvent *event)
 {
     if(event->key() == Qt::Key_Control) {
         m_ctrlIsPressed = true;
+    }else if (event->modifiers() == Qt::SHIFT && event->key() == Qt::Key_Delete){
+        if (selectedUrls().size() > 0){
+            FMEvent fmevent;
+            fmevent = selectedUrls();
+            fmevent = FMEvent::FileView;
+            fmevent = windowId();
+            fileService->deleteFiles(selectedUrls(), fmevent);
+        }
     }
 
     DListView::keyPressEvent(event);

@@ -212,7 +212,7 @@ QIcon IconProvider::getDesktopIcon(const QString &iconName, int size)
             if (m_desktopIconPaths.contains(iconName)){
                 path = m_desktopIconPaths.value(iconName);
             }else{
-                path = getThemeIconPath(iconName);
+                path = getThemeIconPath(iconName, size);
                 if (path.isEmpty())
                     path = getThemeIconPath("application-default-icon");
                 m_desktopIconPaths[iconName] = path;

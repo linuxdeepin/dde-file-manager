@@ -27,6 +27,7 @@ public:
         int windowId = -1;
         EventSource source = Unknow;
         DUrl fileUrl;
+        DUrlList fileUrlList;
 
         friend class FMEvent;
     };
@@ -55,6 +56,9 @@ public:
     inline FMEvent &operator =(const DUrl &fileUrl)
     {data->fileUrl = fileUrl; return *this;}
 
+    inline FMEvent &operator =(const DUrlList &list)
+    {data->fileUrlList = list; return *this;}
+
     inline int windowId() const
     {return data->windowId;}
 
@@ -63,6 +67,9 @@ public:
 
     inline const DUrl &fileUrl() const
     {return data->fileUrl;}
+
+    inline const DUrlList &fileUrlList() const
+    {return data->fileUrlList;}
 
 private:
     QSharedDataPointer<FMEventData> data;

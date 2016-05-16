@@ -61,10 +61,10 @@ bool AbstractFileController::renameFile(const DUrl &oldUrl, const DUrl &newUrl, 
     return false;
 }
 
-bool AbstractFileController::deleteFiles(const DUrlList &urlList, bool &accepted) const
+bool AbstractFileController::deleteFiles(const DUrlList &urlList, const FMEvent &event, bool &accepted) const
 {
     Q_UNUSED(urlList)
-
+    Q_UNUSED(event)
     accepted = false;
 
     return false;
