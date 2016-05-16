@@ -30,7 +30,7 @@ public:
     virtual bool decompressFileHere(const DUrl &fileUrl, bool &accepted) const;
     virtual bool copyFiles(const DUrlList &urlList, bool &accepted) const;
     virtual bool renameFile(const DUrl &oldUrl, const DUrl &newUrl, bool &accepted) const;
-    virtual bool deleteFiles(const DUrlList &urlList, bool &accepted) const;
+    virtual bool deleteFiles(const DUrlList &urlList, const FMEvent &event, bool &accepted) const;
     virtual bool moveToTrash(const DUrlList &urlList, bool &accepted) const;
     virtual bool cutFiles(const DUrlList &urlList, bool &accepted) const;
     virtual bool pasteFile(PasteType type, const DUrlList &urlList,

@@ -30,7 +30,7 @@ public:
     bool decompressFileHere(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
     bool copyFiles(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;
     bool renameFile(const DUrl &oldUrl, const DUrl &newUrl, bool &accepted) const Q_DECL_OVERRIDE;
-    bool deleteFiles(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;
+    bool deleteFiles(const DUrlList &urlList, const FMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
     bool moveToTrash(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;
     bool cutFiles(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;
     bool pasteFile(PasteType type, const DUrlList &urlList,

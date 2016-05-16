@@ -412,9 +412,14 @@ void FileMenuManager::actionTriggered(DAction *action)
         case MenuAction::Delete:
             fileService->moveToTrash(urls);
             break;
-        case MenuAction::CompleteDeletion:
-            fileService->deleteFiles(urls);
+        case MenuAction::CompleteDeletion:{
+            FMEvent event;
+            event = urls;
+            event = FMEvent::Menu;
+            event = menu->getWindowId();
+            fileService->deleteFiles(urls, event);
             break;
+        }
         case MenuAction::CreateSoftLink:{
             FileUtils::createSoftLink(menu->getWindowId(), fileUrl.toLocalFile());
             break;
@@ -452,9 +457,14 @@ void FileMenuManager::actionTriggered(DAction *action)
         case MenuAction::ClearRecent:
             fileSignalManager->requestClearRecent();
             break;
-        case MenuAction::ClearTrash:
-            fileService->deleteFiles(DUrlList() << DUrl::fromLocalFile(TRASHPATH));
+        case MenuAction::ClearTrash:{
+            FMEvent event;
+            event = urls;
+            event = FMEvent::Menu;
+            event = menu->getWindowId();
+            fileService->deleteFiles(DUrlList() << DUrl::fromLocalFile(TRASHPATH), event);
             break;
+        }
         case MenuAction::DisplayAs:break;
         case MenuAction::SortBy:break;
         case MenuAction::NewDocument:break;

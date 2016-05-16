@@ -207,7 +207,7 @@ bool FileController::renameFile(const DUrl &oldUrl, const DUrl &newUrl, bool &ac
  *
  * Permanently delete file or directory with the given url.
  */
-bool FileController::deleteFiles(const DUrlList &urlList, bool &accepted) const
+bool FileController::deleteFiles(const DUrlList &urlList, const FMEvent &event, bool &accepted) const
 {
     accepted = true;
 

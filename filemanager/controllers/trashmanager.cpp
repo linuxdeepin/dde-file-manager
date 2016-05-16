@@ -105,7 +105,8 @@ bool TrashManager::copyFiles(const DUrlList &urlList, bool &accepted) const
     return true;
 }
 
-bool TrashManager::deleteFiles(const DUrlList &urlList, bool &accepted) const
+
+bool TrashManager::deleteFiles(const DUrlList &urlList, const FMEvent &event, bool &accepted) const
 {
     accepted = true;
 
@@ -121,7 +122,7 @@ bool TrashManager::deleteFiles(const DUrlList &urlList, bool &accepted) const
         }
     }
 
-    fileService->deleteFiles(localList);
+    fileService->deleteFiles(localList, event);
 
     return true;
 }
