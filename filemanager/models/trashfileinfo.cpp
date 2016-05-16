@@ -113,7 +113,7 @@ QVector<AbstractFileInfo::MenuAction> TrashFileInfo::menuActionList(AbstractFile
     return actionKeys;
 }
 
-bool TrashFileInfo::restore() const
+bool TrashFileInfo::restore(const FMEvent &event) const
 {
     if(originalFilePath.isEmpty()) {
         qDebug() << "OriginalFile path ie empty.";
@@ -128,8 +128,7 @@ bool TrashFileInfo::restore() const
 
         return false;
     }
-
-    return fileService->renameFile(DUrl::fromLocalFile(absoluteFilePath()), DUrl::fromLocalFile(originalFilePath));
+    return fileService->renameFile(DUrl::fromLocalFile(absoluteFilePath()), DUrl::fromLocalFile(originalFilePath), event);
 }
 
 void TrashFileInfo::updateInfo()

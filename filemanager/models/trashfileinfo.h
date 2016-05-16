@@ -2,6 +2,7 @@
 #define TRASHFILEINFO_H
 
 #include "abstractfileinfo.h"
+#include "../app/fmevent.h"
 
 class TrashFileInfo : public AbstractFileInfo
 {
@@ -25,7 +26,7 @@ public:
 
     QVector<MenuAction> menuActionList(MenuType type) const Q_DECL_OVERRIDE;
 
-    bool restore() const;
+    bool restore(const FMEvent &event) const;
 
 private:
     QString desktopIconName;

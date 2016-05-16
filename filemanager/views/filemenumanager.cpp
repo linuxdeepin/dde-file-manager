@@ -499,9 +499,14 @@ void FileMenuManager::actionTriggered(DAction *action)
         case MenuAction::Unmount:
             deviceListener->unmount(fileUrl.query());
             break;
-        case MenuAction::Restore:
-            fileSignalManager->requestRestoreTrashFile(urls);
+        case MenuAction::Restore:{
+            FMEvent event;
+            event = urls;
+            event = FMEvent::Menu;
+            event = menu->getWindowId();
+            fileSignalManager->requestRestoreTrashFile(urls, event);
             break;
+        }
         case MenuAction::OpenInTerminal:{
             QStringList args;
             args << QString("--working-directory=%1").arg(fileUrl.toLocalFile());

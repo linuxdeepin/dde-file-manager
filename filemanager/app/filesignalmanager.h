@@ -102,7 +102,7 @@ signals:
     void requestSelectFile(const FMEvent &event);
 
     /* request restore trash file*/
-    void requestRestoreTrashFile(const DUrlList &urlList);
+    void requestRestoreTrashFile(const DUrlList &urlList, const FMEvent &event);
 
     /*request update mime cache*/
     void requestUpdateMimeAppsCache();

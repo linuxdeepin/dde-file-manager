@@ -26,7 +26,7 @@ public:
     bool removeUrlMonitor(const DUrl &url, bool &accepted) const Q_DECL_OVERRIDE;
     bool copyFiles(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;
     bool deleteFiles(const DUrlList &urlList, const FMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
-    bool restoreTrashFile(const DUrlList &fileUrl) const;
+    bool restoreTrashFile(const DUrlList &fileUrl, const FMEvent &event) const;
 
 private slots:
     void onFileCreated(const QString &filePath) const;

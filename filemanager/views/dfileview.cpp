@@ -493,10 +493,17 @@ void DFileView::commitData(QWidget *editor)
 
     QLineEdit *lineEdit = qobject_cast<QLineEdit*>(editor);
 
+
+    FMEvent event;
+    event = fileInfo->fileUrl();
+    event = windowId();
+    event = FMEvent::FileView;
+
+
     if(lineEdit) {
         fileService->renameFile(fileInfo->fileUrl(),
                                 DUrl(fileInfo->scheme() + "://" + fileInfo->absolutePath()
-                                     + "/" + lineEdit->text()));
+                                     + "/" + lineEdit->text()), event);
 
         return;
     }
@@ -506,7 +513,7 @@ void DFileView::commitData(QWidget *editor)
     if(item) {
         fileService->renameFile(fileInfo->fileUrl(),
                                 DUrl(fileInfo->scheme() + "://" + fileInfo->absolutePath()
-                                     + "/" + item->edit->toPlainText()));
+                                     + "/" + item->edit->toPlainText()), event);
     }
 }
 
