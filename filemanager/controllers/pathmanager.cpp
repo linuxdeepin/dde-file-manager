@@ -23,7 +23,6 @@ PathManager::~PathManager()
 void PathManager::initPaths()
 {
     loadSystemPaths();
-    m_systemPathDisplayNames["Home"] = tr("Home");
     m_systemPathDisplayNames["Desktop"] = tr("Desktop");
     m_systemPathDisplayNames["Videos"] = tr("Videos");
     m_systemPathDisplayNames["Music"] = tr("Music");
