@@ -105,11 +105,12 @@ void FileJob::doDelete(const QList<QUrl> &files)
     for(int i = 0; i < files.size(); i++)
     {
         QUrl url = files.at(i);
-        QDir dir(url.path());
-        if(dir.exists())
-            deleteDir(url.path());
-        else
+        QFileInfo info(url.path());
+        if (info.isFile() || info.isSymLink()){
             deleteFile(url.path());
+        }else{
+            deleteDir(url.path());
+        }
     }
     if(m_isJobAdded)
         jobRemoved();
@@ -650,18 +651,18 @@ bool FileJob::deleteDir(const QString &dir)
         if(fileInfo.fileName() == "." || fileInfo.fileName() == "..")
             continue;
 
-        if(fileInfo.isDir() || fileInfo.isSymLink())
-        {
-            if(!deleteDir(fileInfo.filePath()))
-                return false;
-        }
-        else
+        if(fileInfo.isFile() || fileInfo.isSymLink())
         {
             if(!deleteFile(fileInfo.filePath()))
             {
                 emit error("Unable to remove file");
                 return false;
             }
+        }
+        else
+        {
+            if(!deleteDir(fileInfo.filePath()))
+                return false;
         }
     }
 
@@ -707,11 +708,11 @@ bool FileJob::moveFileToTrash(const QString &file)
         return false;
     }
     QFile localFile(file);
-    QString oldName = localFile.fileName();
-    QString newName = m_trashLoc + "/files/" + baseName(localFile.fileName());
-    QString delTime = QDateTime::currentDateTime().toString( "yyyyMMddThh:mm:ss" );
+    QString path = m_trashLoc + "/files/";
+    QString newName = path + baseName(localFile.fileName());
+    QString delTime = QString::number(QDateTime::currentDateTime().toMSecsSinceEpoch());
     if(QFile::exists(newName))
-        newName += delTime;
+        newName = path + delTime + "_" + baseName(localFile.fileName());
     if(!localFile.rename(newName))
     {
         //Todo: find reason
@@ -749,4 +750,4 @@ QString FileJob::baseName( QString path )
     free( dupPath );
 
     return basePth;
-};
+}

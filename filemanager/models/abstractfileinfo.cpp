@@ -35,6 +35,11 @@ bool sortFileListBySize(const AbstractFileInfoPointer &info1, const AbstractFile
             return false;
     }
 
+    if (info1->isDir() && info2->isDir() && (info1->size() == info2->size()))
+        return sortFileListByDisplayName(info1, info2);
+    else if (info1->isFile() && info2->isFile() && (info1->size() == info2->size()))
+        return sortFileListByDisplayName(info1, info2);
+
     return ((AbstractFileInfo::sortOrderGlobal == Qt::DescendingOrder)
             ^ (info1->size() < info2->size())) == 0x01;
 }
@@ -48,6 +53,11 @@ bool sortFileListByModified(const AbstractFileInfoPointer &info1, const Abstract
         if(info2->isDir())
             return false;
     }
+
+    if (info1->isDir() && info2->isDir() && (info1->lastModified() == info2->lastModified()))
+        return sortFileListByDisplayName(info1, info2);
+    else if (info1->isFile() && info2->isFile() && (info1->lastModified() == info2->lastModified()))
+        return sortFileListByDisplayName(info1, info2);
 
     return ((AbstractFileInfo::sortOrderGlobal == Qt::DescendingOrder)
             ^ (info1->lastModified() < info2->lastModified())) == 0x01;
@@ -63,6 +73,11 @@ bool sortFileListByMime(const AbstractFileInfoPointer &info1, const AbstractFile
             return false;
     }
 
+    if (info1->isDir() && info2->isDir() && (info1->mimeTypeDisplayName() == info2->mimeTypeDisplayName()))
+        return sortFileListByDisplayName(info1, info2);
+    else if (info1->isFile() && info2->isFile() && (info1->mimeTypeDisplayName() == info2->mimeTypeDisplayName()))
+        return sortFileListByDisplayName(info1, info2);
+
     return ((AbstractFileInfo::sortOrderGlobal == Qt::DescendingOrder)
             ^ (info1->mimeTypeDisplayName() < info2->mimeTypeDisplayName())) == 0x01;
 }
@@ -76,6 +91,11 @@ bool sortFileListByCreated(const AbstractFileInfoPointer &info1, const AbstractF
         if(info2->isDir())
             return false;
     }
+
+    if (info1->isDir() && info2->isDir() && (info1->created() == info2->created()))
+        return sortFileListByDisplayName(info1, info2);
+    else if (info1->isFile() && info2->isFile() && (info1->created() == info2->created()))
+        return sortFileListByDisplayName(info1, info2);
 
     return ((AbstractFileInfo::sortOrderGlobal == Qt::DescendingOrder)
             ^ (info1->created() < info2->created())) == 0x01;
