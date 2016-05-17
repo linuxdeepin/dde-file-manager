@@ -218,6 +218,7 @@ void FileMenuManager::initData()
     m_actionKeys[MenuAction::CompleteDeletion] = QObject::tr("Complete Deletion");
     m_actionKeys[MenuAction::Mount] = QObject::tr("Mount");
     m_actionKeys[MenuAction::Unmount]= QObject::tr("Unmount");
+    m_actionKeys[MenuAction::Eject]= QObject::tr("Eject");
     m_actionKeys[MenuAction::Name] = QObject::tr("Name");
     m_actionKeys[MenuAction::Size] = QObject::tr("Size");
     m_actionKeys[MenuAction::Type] = QObject::tr("Type");
@@ -505,8 +506,10 @@ void FileMenuManager::actionTriggered(DAction *action)
             event = FMEvent::Menu;
             event = menu->getWindowId();
             fileSignalManager->requestRestoreTrashFile(urls, event);
-            break;
         }
+        case MenuAction::Eject:
+            deviceListener->eject(fileUrl.query());
+            break;
         case MenuAction::OpenInTerminal:{
             QStringList args;
             args << QString("--working-directory=%1").arg(fileUrl.toLocalFile());

@@ -179,16 +179,7 @@ void DToolBar::startup()
 
 void DToolBar::searchBarClicked()
 {
-    if(!m_searchState)
-    {
-        searchBarActivated();
-        m_searchState = true;
-    }
-    else
-    {
-        searchBarDeactivated();
-        m_searchState = false;
-    }
+    searchBarActivated();
 }
 
 void DToolBar::searchBarActivated()
@@ -201,6 +192,7 @@ void DToolBar::searchBarActivated()
     m_searchBar->setActive(true);
     m_searchBar->setFocus();
     m_searchBar->setCurrentPath(m_crumbWidget->getUrl());
+    m_searchButton->hide();
 }
 
 void DToolBar::searchBarDeactivated()
@@ -212,6 +204,7 @@ void DToolBar::searchBarDeactivated()
     m_searchBar->setAlignment(Qt::AlignHCenter);
     m_searchBar->setActive(false);
     m_searchBar->window()->setFocus();
+    m_searchButton->show();
 }
 
 /**

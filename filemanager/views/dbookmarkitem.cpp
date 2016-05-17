@@ -41,8 +41,7 @@ DBookmarkItem::DBookmarkItem(UDiskDeviceInfo * deviceInfo)
     boundBigImageToHover(":/icons/images/icons/disk_hover_22px.svg");
     boundBigImageToPress(":/icons/images/icons/disk_hover_22px.svg");
     boundBigImageToRelease(":/icons/images/icons/disk_normal_22px.svg");
-    if(!m_url.isEmpty())
-        m_isMounted = true;
+    m_isMounted = deviceInfo->getDiskInfo().CanUnmount;
 }
 
 DBookmarkItem::DBookmarkItem(BookMark *bookmark)
@@ -297,6 +296,7 @@ bool DBookmarkItem::isMounted()
 void DBookmarkItem::setMounted(bool v)
 {
     m_isMounted = v;
+    update();
 }
 
 void DBookmarkItem::setDeviceLabel(const QString &label)
@@ -470,6 +470,7 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     QWidget* window = scene()->views().at(0)->window();
 
     menu->setWindowId(WindowManager::getWindowId(window));
+    m_url.setQuery(m_sysPath);
     DUrlList urls;
     urls.append(m_url);
     menu->setUrls(urls);

@@ -55,6 +55,7 @@ public:
         CompleteDeletion,
         Mount,
         Unmount,
+        Eject,
         Name,
         Size,
         Type,

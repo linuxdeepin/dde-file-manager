@@ -57,11 +57,6 @@ UDiskDeviceInfo *UDiskListener::hasDeviceInfo(const QString &id)
     return m_map.value(id);
 }
 
-void UDiskListener::interfacesChanged()
-{
-
-}
-
 void UDiskListener::mount(const QString &path)
 {
     m_diskMountInterface->Mount(path);
@@ -70,6 +65,11 @@ void UDiskListener::mount(const QString &path)
 void UDiskListener::unmount(const QString &path)
 {
     m_diskMountInterface->Unmount(path);
+}
+
+void UDiskListener::eject(const QString &path)
+{
+    m_diskMountInterface->Eject(path);
 }
 
 void UDiskListener::asyncRequestDiskInfos()
@@ -87,8 +87,17 @@ void UDiskListener::asyncRequestDiskInfosFinihsed(QDBusPendingCallWatcher *call)
         DiskInfoList diskinfos = qdbus_cast<DiskInfoList>(reply.argumentAt(0));
         foreach(DiskInfo info, diskinfos)
         {
-            UDiskDeviceInfo *device = new UDiskDeviceInfo(info);
-            addDevice(device);
+            UDiskDeviceInfo *device;
+            if(m_map.value(info.ID))
+            {
+                device = m_map.value(info.ID);
+                device->setDiskInfo(info);
+            }
+            else
+            {
+                device = new UDiskDeviceInfo(info);
+                addDevice(device);
+            }
             mountAdded(device);
         }
     }else{
@@ -104,6 +113,7 @@ void UDiskListener::changed(int in0, const QString &in1)
     {
     case EventTypeVolumeAdded:
         //emit volumeAdded(in1);
+        qDebug() << "volume added";
         break;
     case EventTypeVolumeRemoved:
     {
@@ -117,18 +127,31 @@ void UDiskListener::changed(int in0, const QString &in1)
     }
     case EventTypeMountAdded:
     {
-        if(hasDeviceInfo(in1) == NULL)
+        UDiskDeviceInfo *device = hasDeviceInfo(in1);
+        DiskInfo info = m_diskMountInterface->QueryDisk(in1);
+        if(device == NULL)
         {
-            DiskInfo info = m_diskMountInterface->QueryDisk(in1);
-            UDiskDeviceInfo *device = new UDiskDeviceInfo(info);
+            device = new UDiskDeviceInfo(info);
             addDevice(device);
-            emit mountAdded(device);
         }
+        else
+        {
+            device->setDiskInfo(info);
+        }
+        emit mountAdded(device);
         break;
     }
     case EventTypeMountRemoved:
-        //emit mountRemoved(in1);
+    {
+        UDiskDeviceInfo *device = hasDeviceInfo(in1);
+        if(device)
+        {
+            DiskInfo info = m_diskMountInterface->QueryDisk(in1);
+            device->setDiskInfo(info);
+            emit mountRemoved(device);
+        }
         break;
+    }
     default:
         qDebug() << "Unknown event type.";
     }
