@@ -10,6 +10,7 @@
 #include <QDebug>
 #include "dscrollbar.h"
 #include "../app/fmevent.h"
+#include "windowmanager.h"
 
 DSearchBar::DSearchBar(QWidget *parent):QLineEdit(parent)
 {
@@ -90,7 +91,7 @@ QListWidget *DSearchBar::getPopupList()
 QAction * DSearchBar::setClearAction()
 {
     addAction(m_clearAction, QLineEdit::TrailingPosition);
-    connect(m_clearAction, &QAction::triggered, this, &DSearchBar::clear);
+    connect(m_clearAction, &QAction::triggered, this, &DSearchBar::clearText);
     return m_clearAction;
 }
 
@@ -272,6 +273,20 @@ void DSearchBar::currentUrlChanged(const FMEvent &event)
     }
     if(event.fileUrl() != m_currentPath)
         emit focusedOut();
+}
+
+void DSearchBar::clearText()
+{
+    clear();
+    m_searchStart = false;
+    FMEvent event;
+
+    event = WindowManager::getWindowId(window());
+    event = FMEvent::SearchLine;
+    event = m_currentPath;
+
+
+    emit fileSignalManager->requestChangeCurrentUrl(event);
 }
 
 void DSearchBar::focusInEvent(QFocusEvent *e)

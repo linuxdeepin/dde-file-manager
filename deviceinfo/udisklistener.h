@@ -41,10 +41,9 @@ signals:
     void mountAdded(UDiskDeviceInfo * device);
     void mountRemoved(UDiskDeviceInfo * device);
 public slots:
-    void interfacesChanged();
     void mount(const QString &path);
     void unmount(const QString &path);
-
+    void eject(const QString &path);
     void asyncRequestDiskInfos();
     void asyncRequestDiskInfosFinihsed(QDBusPendingCallWatcher *call);
     void changed(int in0, const QString &in1);

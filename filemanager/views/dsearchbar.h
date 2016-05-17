@@ -64,6 +64,7 @@ public slots:
     void setCompleter(const QString &text);
     void completeText(QListWidgetItem * item);
     void currentUrlChanged(const FMEvent &event);
+    void clearText();
 protected:
     void focusInEvent(QFocusEvent *e);
     void focusOutEvent(QFocusEvent *e);

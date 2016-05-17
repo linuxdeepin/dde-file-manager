@@ -383,7 +383,10 @@ void DBookmarkScene::volumeRemoved(UDiskDeviceInfo *device)
 void DBookmarkScene::mountAdded(UDiskDeviceInfo *device)
 {
     if(m_diskItems.value(device->getDiskInfo().ID))
+    {
+        DBookmarkItem * item = m_diskItems.value(device->getDiskInfo().ID);
         return;
+    }
     DBookmarkItem * item = new DBookmarkItem(device);
     insert(DEFAULT_ITEM_COUNT + m_diskCount -1, item);
     item->setTightMode(m_isTightMode);
@@ -393,7 +396,12 @@ void DBookmarkScene::mountAdded(UDiskDeviceInfo *device)
 
 void DBookmarkScene::mountRemoved(UDiskDeviceInfo *device)
 {
-
+    if(m_diskItems.value(device->getDiskInfo().ID))
+    {
+        DBookmarkItem * item = m_diskItems.value(device->getDiskInfo().ID);
+        item->setMounted(false);
+        return;
+    }
 }
 
 void DBookmarkScene::increaseSize()

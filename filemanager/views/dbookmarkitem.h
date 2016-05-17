@@ -107,7 +107,7 @@ protected:
     bool eventFilter(QObject *obj, QEvent *e);
 private:
     void init();
-
+    UDiskDeviceInfo * m_deviceInfo = NULL;
     DBookmarkItemGroup * m_group = NULL;
 
     /* default */
