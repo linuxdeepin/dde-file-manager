@@ -385,6 +385,8 @@ void DBookmarkScene::mountAdded(UDiskDeviceInfo *device)
     if(m_diskItems.value(device->getDiskInfo().ID))
     {
         DBookmarkItem * item = m_diskItems.value(device->getDiskInfo().ID);
+        item->setDeviceInfo(device);
+        item->setMounted(true);
         return;
     }
     DBookmarkItem * item = new DBookmarkItem(device);
