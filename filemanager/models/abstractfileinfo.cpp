@@ -274,7 +274,16 @@ QFileDevice::Permissions AbstractFileInfo::permissions() const
 
 qint64 AbstractFileInfo::size() const
 {
-    return data->fileInfo.size();
+    if (isFile()){
+        return data->fileInfo.size();
+    }else{
+        return filesCount();
+    }
+}
+
+qint64 AbstractFileInfo::filesCount() const
+{
+    return FileUtils::filesCount(data->fileInfo.absoluteFilePath());
 }
 
 QDateTime AbstractFileInfo::created() const
@@ -304,7 +313,11 @@ QString AbstractFileInfo::createdDisplayName() const
 
 QString AbstractFileInfo::sizeDisplayName() const
 {
-    return FileUtils::formatSize(size());
+    if (isFile()){
+        return FileUtils::formatSize(size());
+    }else{
+        return QObject::tr("%1 item(s)").arg(size());
+    }
 }
 
 QString AbstractFileInfo::mimeTypeDisplayName() const

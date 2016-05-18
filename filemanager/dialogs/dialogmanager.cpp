@@ -62,6 +62,11 @@ void DialogManager::removeJob(const QString &jobId)
     m_jobs.remove(jobId);
 }
 
+void DialogManager::showTaskDialog()
+{
+    m_taskDialog->show();
+}
+
 
 void DialogManager::abortJob(const QMap<QString, QString> &jobDetail)
 {

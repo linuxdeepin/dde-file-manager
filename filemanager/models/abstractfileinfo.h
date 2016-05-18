@@ -141,6 +141,7 @@ public:
     virtual QFile::Permissions permissions() const;
 
     virtual qint64 size() const;
+    virtual qint64 filesCount() const;
 
     virtual QDateTime created() const;
     virtual QDateTime lastModified() const;

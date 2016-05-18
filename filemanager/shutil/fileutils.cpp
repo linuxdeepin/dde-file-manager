@@ -83,6 +83,46 @@ void FileUtils::recurseFolder(const QString &path, const QString &parent,
     else list->append(current);
   }
 }
+
+qint64 FileUtils::filesCount(const QString &dir)
+{
+    QDir d(dir);
+    QStringList entryList = d.entryList(QDir::AllEntries | QDir::System
+                | QDir::NoDotAndDotDot | QDir::NoSymLinks
+                | QDir::Hidden);
+    return entryList.size();
+}
+
+qint64 FileUtils::totalSize(const QString &targetFile)
+{
+    qint64 total = 0;
+    QFileInfo targetInfo(targetFile);
+    if (targetInfo.exists()){
+        if (targetInfo.isDir()){
+            QDir d(targetFile);
+            QFileInfoList entryInfoList = d.entryInfoList(QDir::AllEntries | QDir::System
+                        | QDir::NoDotAndDotDot | QDir::NoSymLinks
+                        | QDir::Hidden);
+            foreach (QFileInfo file, entryInfoList) {
+                if (file.isFile()){
+                    total += file.size();
+                }
+                else {
+                    QDirIterator it(file.absoluteFilePath(), QDir::AllEntries | QDir::System
+                                  | QDir::NoDotAndDotDot | QDir::NoSymLinks
+                                  | QDir::Hidden, QDirIterator::Subdirectories);
+                    while (it.hasNext()) {
+                        it.next();
+                        total += it.fileInfo().size();
+                    }
+                }
+            }
+        }else{
+            total += targetInfo.size();
+        }
+    }
+    return total;
+}
 //---------------------------------------------------------------------------
 
 /**

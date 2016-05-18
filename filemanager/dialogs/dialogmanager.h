@@ -26,6 +26,8 @@ public slots:
     void addJob(FileJob * job);
     void removeJob(const QString &jobId);
 
+    void showTaskDialog();
+
     void abortJob(const QMap<QString, QString> &jobDetail);
 
     void showUrlWrongDialog(const DUrl &url);
