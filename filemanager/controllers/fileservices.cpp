@@ -168,14 +168,7 @@ bool FileServices::renameFile(const DUrl &oldUrl, const DUrl &newUrl, const FMEv
 {
     FileInfo f(newUrl);
     if (f.isCanRename() && f.exists(newUrl)){
-        DDialog d(WindowManager::getWindowById(event.windowId()));;
-        d.setMessage(tr("\"%1\" already exists, please select a different name.").arg(f.displayName()));
-        QStringList buttonTexts;
-        buttonTexts << tr("Confirm");
-        d.addButtons(buttonTexts);
-        d.setDefaultButton(0);
-        d.setIcon(QIcon(":/images/dialogs/images/dialog-warning.svg"));
-        d.exec();
+        dialogManager->showRenameNameSameErrorDialog(f.displayName(), event);
         return false;
     }
     TRAVERSE(oldUrl, {
@@ -198,31 +191,7 @@ void FileServices::deleteFiles(const DUrlList &urlList, const FMEvent &event) co
     }
 
     if(QThread::currentThread() == qApp->thread()) {    
-        DDialog d(WindowManager::getWindowById(event.windowId()));
-        if (urlList.first().isLocalFile() && event.source() == FMEvent::Menu){
-            d.setTitle(tr("Are you sure to empty trash?"));
-        }else if (urlList.first().isLocalFile() && event.source() == FMEvent::FileView && urlList.size() == 1){
-            FileInfo f(urlList.first());
-            d.setTitle(tr("Are you sure to delete %1?").arg(f.displayName()));
-        }else if (urlList.first().isLocalFile() && event.source() == FMEvent::FileView && urlList.size() > 1){
-            d.setTitle(tr("Are you sure to delete %1 items?").arg(urlList.size()));
-        }else if (urlList.first().isTrashFile() && event.source() == FMEvent::Menu){
-            d.setTitle(tr("Are you sure to delete %1 items?").arg(urlList.size()));
-        }else if (urlList.first().isTrashFile() && event.source() == FMEvent::FileView && urlList.size() == 1 ){
-            TrashFileInfo f(urlList.first());
-            d.setTitle(tr("Are you sure to delete %1?").arg(f.displayName()));
-        }else if (urlList.first().isTrashFile() && event.source() == FMEvent::FileView && urlList.size() > 1 ){
-            d.setTitle(tr("Are you sure to delete %1 items?").arg(urlList.size()));
-        }else{
-            d.setTitle(tr("Are you sure to delete %1 items?").arg(urlList.size()));
-        }
-        d.setMessage(tr("This action cannot be restored"));
-        QStringList buttonTexts;
-        buttonTexts << tr("Cancel") << tr("Empty");
-        d.addButtons(buttonTexts);
-        d.setDefaultButton(1);
-        d.setIcon(QIcon(":/images/images/user-trash-full.png"));
-        int result = d.exec();
+        int result = dialogManager->showDeleteFilesClearTrashDialog(event);
         if (result == 1){
             QtConcurrent::run(QThreadPool::globalInstance(), this, &FileServices::deleteFiles, urlList, event);
         }

@@ -366,21 +366,13 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         QDir dir(m_url.path());
         if(!dir.exists())
         {
-            DDialog d(WindowManager::getWindowById(windowId()));
-            d.setTitle(tr("Sorry, unable to locate your bookmark directory, remove it?"));
-            QStringList buttonTexts;
-            buttonTexts << tr("Cancel") << tr("Remove bookmark");
-            d.addButtons(buttonTexts);
-            d.setDefaultButton(1);
-            IconProvider provider;
-            d.setIcon(provider.getDesktopIcon("folder", 48));
-            int result = d.exec();
+            FMEvent event;
+            event = m_url;
+            event = FMEvent::LeftSideBar;
+            event = windowId();
+            int result = dialogManager->showRemoveBookMarkDialog(event);
             if (result == DDialog::Accepted)
             {
-                FMEvent event;
-                event = m_url;
-                event = FMEvent::LeftSideBar;
-                event = windowId();
                 fileSignalManager->requestBookmarkRemove(event);
             }
         }
