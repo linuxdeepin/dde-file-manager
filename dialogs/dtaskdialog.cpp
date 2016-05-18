@@ -377,6 +377,7 @@ void DTaskDialog::addTask(const QMap<QString, QString> &jobDetail){
         setTitle(m_taskListWidget->count());
         adjustSize();
         show();
+        QTimer::singleShot(100, this, &DTaskDialog::raise);
     }
 }
 
@@ -402,6 +403,7 @@ void DTaskDialog::addConflictTask(const QMap<QString, QString> &jobDetail){
         setTitle(m_taskListWidget->count());
         adjustSize();
         show();
+        QTimer::singleShot(100, this, &DTaskDialog::raise);
     }
 }
 
