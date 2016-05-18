@@ -31,6 +31,9 @@ public slots:
     void abortJob(const QMap<QString, QString> &jobDetail);
 
     void showUrlWrongDialog(const DUrl &url);
+    int showRenameNameSameErrorDialog(const QString& name, const FMEvent &event);
+    int showDeleteFilesClearTrashDialog(const FMEvent &event);
+    int showRemoveBookMarkDialog(const FMEvent &event);
     void showOpenWithDialog(const FMEvent &event);
     void showPropertyDialog(const FMEvent &event);
 

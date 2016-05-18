@@ -10,6 +10,7 @@
 #include "../models/fileinfo.h"
 #include "../app/fmevent.h"
 #include "../views/windowmanager.h"
+#include "../models/trashfileinfo.h"
 #include <ddialog.h>
 
 DWIDGET_USE_NAMESPACE
@@ -82,6 +83,73 @@ void DialogManager::showUrlWrongDialog(const DUrl &url)
     MessageWrongDialog d(url.toString());
     qDebug() << url;
     d.exec();
+}
+
+int DialogManager::showRenameNameSameErrorDialog(const QString &name, const FMEvent &event)
+{
+    DDialog d(WindowManager::getWindowById(event.windowId()));;
+    d.setMessage(tr("\"%1\" already exists, please select a different name.").arg(name));
+    QStringList buttonTexts;
+    buttonTexts << tr("Confirm");
+    d.addButtons(buttonTexts);
+    d.setDefaultButton(0);
+    d.setIcon(QIcon(":/images/dialogs/images/dialog-warning.svg"));
+    int code = d.exec();
+    return code;
+}
+
+int DialogManager::showDeleteFilesClearTrashDialog(const FMEvent &event)
+{
+    QString ClearTrash = tr("Are you sure to empty trash?");
+    QString DeleteFileName = tr("Are you sure to delete %1?");
+    QString DeleteFileItems = tr("Are you sure to delete %1 items?");
+
+    DUrlList urlList = event.fileUrlList();
+
+    QStringList buttonTexts;
+    buttonTexts << tr("Cancel") << tr("Delete");
+
+    DDialog d(WindowManager::getWindowById(event.windowId()));
+    if (urlList.first() == DUrl::fromTrashFile("/") && event.source() == FMEvent::Menu && urlList.size() == 1){
+        buttonTexts[1]= tr("Empty");
+        d.setTitle(ClearTrash);
+    }else if (urlList.first().isLocalFile() && event.source() == FMEvent::FileView && urlList.size() == 1){
+        FileInfo f(urlList.first());
+        d.setTitle(DeleteFileName.arg(f.displayName()));
+    }else if (urlList.first().isLocalFile() && event.source() == FMEvent::FileView && urlList.size() > 1){
+        d.setTitle(DeleteFileItems.arg(urlList.size()));
+    }else if (urlList.first().isTrashFile() && event.source() == FMEvent::Menu && urlList.size() == 1){
+        TrashFileInfo f(urlList.first());
+        d.setTitle(DeleteFileName.arg(f.displayName()));
+    }else if (urlList.first().isTrashFile() && event.source() == FMEvent::Menu && urlList.size() > 1){
+        d.setTitle(DeleteFileItems.arg(urlList.size()));
+    }else if (urlList.first().isTrashFile() && event.source() == FMEvent::FileView && urlList.size() == 1 ){
+        TrashFileInfo f(urlList.first());
+        d.setTitle(DeleteFileName.arg(f.displayName()));
+    }else if (urlList.first().isTrashFile() && event.source() == FMEvent::FileView && urlList.size() > 1 ){
+        d.setTitle(DeleteFileItems.arg(urlList.size()));
+    }else{
+        d.setTitle(DeleteFileItems.arg(urlList.size()));
+    }
+    d.setMessage(tr("This action cannot be restored"));
+    d.addButtons(buttonTexts);
+    d.setDefaultButton(1);
+    d.setIcon(QIcon(":/images/images/user-trash-full.png"));
+    int code = d.exec();
+    return code;
+}
+
+int DialogManager::showRemoveBookMarkDialog(const FMEvent &event)
+{
+    DDialog d(WindowManager::getWindowById(event.windowId()));
+    d.setTitle(tr("Sorry, unable to locate your bookmark directory, remove it?"));
+    QStringList buttonTexts;
+    buttonTexts << tr("Cancel") << tr("Remove bookmark");
+    d.addButtons(buttonTexts);
+    d.setDefaultButton(1);
+    d.setIcon(fileIconProvider->getDesktopIcon("folder", 256));
+    int code = d.exec();
+    return code;
 }
 
 void DialogManager::showOpenWithDialog(const FMEvent &event)
