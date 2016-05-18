@@ -11,6 +11,7 @@
 #include "dsplitter.h"
 #include "utils/xutil.h"
 #include "extendview.h"
+#include "dstatusbar.h"
 
 #include <QStatusBar>
 #include <QFrame>
@@ -50,7 +51,7 @@ void DFileManagerWindow::initUI()
     resize(DEFAULT_WINDOWS_WIDTH, DEFAULT_WINDOWS_HEIGHT);
     setMinimumWidth(MinimumWidth);
     initCentralWidget();
-//    initStatusBar();
+    //initStatusBar();
     setCentralWidget(m_centralWidget);
     setStyleSheet(getQssFromFile(":/qss/qss/filemanager.qss"));
 }
@@ -119,15 +120,12 @@ void DFileManagerWindow::initRightView()
     m_viewStackLayout->setSpacing(0);
     m_viewStackLayout->setContentsMargins(0, 0, 0, 0);
 
-    m_statusBar = new QStatusBar;
-    m_statusBar->setFixedHeight(20);
-    m_statusBar->setFocusPolicy(Qt::ClickFocus);
-    m_statusBar->setAttribute(Qt::WA_TranslucentBackground);
+    m_statusBar = new DStatusBar(this);
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->addWidget(m_titleFrame);
     mainLayout->addLayout(m_viewStackLayout);
-    mainLayout->addWidget(m_statusBar);
+    mainLayout->addWidget(m_statusBar, Qt::AlignCenter);
     mainLayout->setSpacing(0);
     mainLayout->setContentsMargins(0, 0, 0, 0);
     m_rightView->setLayout(mainLayout);
@@ -169,10 +167,10 @@ void DFileManagerWindow::initCentralWidget()
 
 void DFileManagerWindow::initStatusBar()
 {
-    m_statusBar = new QStatusBar(this);
+    m_statusBar = new DStatusBar(this);
     m_statusBar->setFixedHeight(30);
     m_statusBar->setFocusPolicy(Qt::ClickFocus);
-    setStatusBar(m_statusBar);
+    //setStatusBar(m_statusBar);
 }
 
 void DFileManagerWindow::initConnect()
