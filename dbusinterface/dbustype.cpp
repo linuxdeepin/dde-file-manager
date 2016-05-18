@@ -24,7 +24,7 @@ QDBusArgument &operator<<(QDBusArgument &argument, const DiskInfo &obj)
     argument << obj.ID << obj.Name;
     argument << obj.Type << obj.Path;
     argument << obj.MountPoint << obj.Icon;
-    argument << obj.CanEject << obj.CanUnmount;
+    argument << obj.CanUnmount << obj.CanEject;
     argument << obj.Used << obj.Total;
     argument.endStructure();
     return argument;
@@ -37,7 +37,7 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, DiskInfo &obj)
     argument >> obj.ID >> obj.Name;
     argument >> obj.Type >> obj.Path;
     argument >> obj.MountPoint >>  obj.Icon;
-    argument >> obj.CanEject >> obj.CanUnmount;
+    argument >> obj.CanUnmount >> obj.CanEject;
     argument >> obj.Used >> obj.Total;
     argument.endStructure();
     return argument;
@@ -53,8 +53,8 @@ QDebug operator<<(QDebug dbg, const DiskInfo &info)
     dbg.nospace() << "Path: " << info.Path << ",";
     dbg.nospace() << "MountPoint: " << info.MountPoint << ",";
     dbg.nospace() << "Icon: " << info.Icon << ",";
-    dbg.nospace() << "CanEject: " << info.CanEject << ",";
     dbg.nospace() << "CanUnmount: " << info.CanUnmount << ",";
+    dbg.nospace() << "CanEject: " << info.CanEject << ",";
     dbg.nospace() << "Used: " << info.Used<< ",";
     dbg.nospace() << "Total: " << info.Total<< ",";
     dbg.nospace() << ")";
