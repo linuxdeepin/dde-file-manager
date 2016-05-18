@@ -17,6 +17,8 @@ TrashManager::TrashManager(QObject *parent)
 
         connect(fileSignalManager, &FileSignalManager::requestRestoreTrashFile,
                 this, &TrashManager::restoreTrashFile);
+        connect(fileSignalManager, &FileSignalManager::requestRestoreAllTrashFile,
+                this, &TrashManager::restoreAllTrashFile);
     }
 
     fileMonitor = new FileMonitor(const_cast<TrashManager*>(this));
@@ -140,6 +142,22 @@ bool TrashManager::restoreTrashFile(const DUrlList &fileUrl, const FMEvent &even
     }
 
     return ok;
+}
+
+bool TrashManager::restoreAllTrashFile(const FMEvent &event)
+{
+    DUrl fileUrl = event.fileUrlList().at(0);
+    const QString &path = fileUrl.path();
+
+    QDir dir(TRASHFILEPATH + path);
+    DUrlList urlList;
+    if(dir.exists()) {
+        QStringList entryList = dir.entryList(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System);
+        for(const QString name : entryList) {
+            urlList << DUrl::fromTrashFile(QString("/%1").arg(name));
+        }
+        restoreTrashFile(urlList, event);
+    }
 }
 
 void TrashManager::onFileCreated(const QString &filePath) const

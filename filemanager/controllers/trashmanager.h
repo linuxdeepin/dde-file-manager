@@ -27,6 +27,7 @@ public:
     bool copyFiles(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;
     bool deleteFiles(const DUrlList &urlList, const FMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
     bool restoreTrashFile(const DUrlList &fileUrl, const FMEvent &event) const;
+    bool restoreAllTrashFile(const FMEvent &event);
 
 private slots:
     void onFileCreated(const QString &filePath) const;
