@@ -123,7 +123,8 @@ HEADERS += \
     filemanager/views/extendview.h \
     filemanager/controllers/pathmanager.h \
     filemanager/views/ddragwidget.h \
-    filemanager/shutil/mimetypedisplaymanager.h
+    filemanager/shutil/mimetypedisplaymanager.h \
+    filemanager/views/dstatusbar.h
 
 
 SOURCES += \
@@ -208,7 +209,8 @@ SOURCES += \
     filemanager/views/extendview.cpp \
     filemanager/controllers/pathmanager.cpp \
     filemanager/views/ddragwidget.cpp \
-    filemanager/shutil/mimetypedisplaymanager.cpp
+    filemanager/shutil/mimetypedisplaymanager.cpp \
+    filemanager/views/dstatusbar.cpp
 
 
 

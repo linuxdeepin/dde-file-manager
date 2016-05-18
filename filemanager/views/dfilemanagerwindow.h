@@ -31,6 +31,8 @@ class DFileManagerWindow;
 class ExtendView;
 class QStackedLayout;
 
+class DStatusBar;
+
 
 
 DWIDGET_USE_NAMESPACE
@@ -82,7 +84,7 @@ private:
     DToolBar* m_toolbar = NULL;
     DFileView* m_fileView = NULL;
     DDetailView* m_detailView = NULL;
-    QStatusBar* m_statusBar = NULL;
+    DStatusBar* m_statusBar = NULL;
     QVBoxLayout* m_mainLayout;
     QVBoxLayout* m_viewLayout;
     DSplitter* m_splitter;

@@ -120,6 +120,9 @@ signals:
 
     /* error dialog from disk listener*/
     void showDiskErrorDialog(const QString &id, const QString &errorText);
+
+    /* status bar items count */
+    void statusBarItemsSelected(const FMEvent &event, int number);
 };
 
 #endif // FILESIGNALMANAGER_H

@@ -85,7 +85,7 @@ public:
 
     int horizontalOffset() const;
 
-
+    void setSelectedItemCount(int count);
 public slots:
     void cd(const FMEvent &event);
     void edit(const FMEvent &event);

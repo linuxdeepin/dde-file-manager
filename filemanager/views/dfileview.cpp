@@ -262,6 +262,13 @@ int DFileView::horizontalOffset() const
     return m_horizontalOffset;
 }
 
+void DFileView::setSelectedItemCount(int count)
+{
+    FMEvent event;
+    event = windowId();
+    emit fileSignalManager->statusBarItemsSelected(event, count);
+}
+
 
 void DFileView::cd(const FMEvent &event)
 {
@@ -542,10 +549,12 @@ bool DFileView::event(QEvent *event)
         if (e->button() == Qt::LeftButton) {
             if (isEmptyArea) {
                 clearSelection();
+                setSelectedItemCount(0);
             }
         } else if (e->button() == Qt::RightButton) {
             if (isEmptyArea) {
                 clearSelection();
+                setSelectedItemCount(0);
                 showEmptyAreaMenu();
             } else {
                 const QModelIndexList &list = selectedIndexes();
@@ -570,6 +579,7 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
         QItemSelection itemSelection(selectedIndexes().first(), selectedIndexes().last());
         selectionModel()->select(itemSelection, command);
     }
+    setSelectedItemCount(selectedIndexes().count());
 }
 
 bool DFileView::isEmptyArea(const QPoint &pos) const
