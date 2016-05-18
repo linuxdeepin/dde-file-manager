@@ -73,6 +73,7 @@ private:
     DCheckableButton * m_favoriteButton = NULL;
     DCheckableButton * m_myMobileButton = NULL;
     QFrame* m_networkBar = NULL;
+    QGraphicsView * m_view = NULL;
 
     QButtonGroup* m_buttonGroup;
     QButtonGroup* m_tightNavButtonGroup;

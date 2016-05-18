@@ -61,6 +61,17 @@ DBookmarkItem::DBookmarkItem(BookMark *bookmark)
     boundBigImageToRelease(":/icons/images/icons/favourite_normal.svg");
 }
 
+void DBookmarkItem::setDeviceInfo(UDiskDeviceInfo *deviceInfo)
+{
+    m_isDisk = true;
+    m_checkable = true;
+    m_url = DUrl::fromLocalFile(deviceInfo->getMountPoint());
+    m_isDefault = true;
+    m_sysPath = deviceInfo->getDiskInfo().ID;
+    m_textContent = deviceInfo->displayName();
+    m_isMounted = deviceInfo->getDiskInfo().CanUnmount;
+}
+
 void DBookmarkItem::init()
 {
     //setFlag(QGraphicsItem::ItemIsFocusable);
@@ -363,8 +374,9 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         }
         m_pressed = false;
         update();
+
         QDir dir(m_url.path());
-        if(!dir.exists())
+        if(!dir.exists() && !m_isDefault)
         {
             FMEvent event;
             event = m_url;

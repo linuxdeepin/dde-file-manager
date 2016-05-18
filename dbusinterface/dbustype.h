@@ -15,8 +15,8 @@ public:
     QString Path;
     QString MountPoint;
     QString Icon;
-    bool CanEject;
     bool CanUnmount;
+    bool CanEject;
     qulonglong Used;
     qulonglong Total;
 
