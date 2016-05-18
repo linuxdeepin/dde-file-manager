@@ -26,7 +26,7 @@ public:
     DBookmarkItem(UDiskDeviceInfo * deviceInfo);
 
     DBookmarkItem(BookMark * bookmark);
-
+    void setDeviceInfo(UDiskDeviceInfo * deviceInfo);
     QRectF boundingRect() const;
     void setTightMode(bool v);
     bool isTightModel();

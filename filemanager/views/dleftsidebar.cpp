@@ -142,6 +142,8 @@ void DLeftSideBar::initUI()
     setLayout(mainLayout);
     loadDevices();
     loadBookmark();
+
+    m_view->centerOn(0,0);
 }
 
 void DLeftSideBar::initConnect()
@@ -181,7 +183,7 @@ void DLeftSideBar::initNav()
     navLayout->setSpacing(0);
 
 
-    QGraphicsView * m_view = new QGraphicsView;
+    m_view = new QGraphicsView;
     m_view->setAcceptDrops(true);
     m_view->setVerticalScrollBar(new DScrollBar);
     m_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
