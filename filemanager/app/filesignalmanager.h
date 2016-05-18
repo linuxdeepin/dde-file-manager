@@ -117,6 +117,9 @@ signals:
 
     /*sort role changed*/
     void requestCacheSortState();
+
+    /* error dialog from disk listener*/
+    void showDiskErrorDialog(const QString &id, const QString &errorText);
 };
 
 #endif // FILESIGNALMANAGER_H
