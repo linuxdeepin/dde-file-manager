@@ -49,7 +49,8 @@ void DialogManager::initConnect()
     connect(fileSignalManager, &FileSignalManager::requestShowUrlWrongDialog, this, &DialogManager::showUrlWrongDialog);
     connect(fileSignalManager, &FileSignalManager::requestShowOpenWithDialog, this, &DialogManager::showOpenWithDialog);
     connect(fileSignalManager, &FileSignalManager::requestShowPropertyDialog, this, &DialogManager::showPropertyDialog);
-
+    connect(fileSignalManager, &FileSignalManager::showDiskErrorDialog,
+            this, &DialogManager::showDiskErrorDialog);
 }
 
 void DialogManager::addJob(FileJob *job)
@@ -178,6 +179,16 @@ void DialogManager::showPropertyDialog(const FMEvent &event)
     }
 }
 
+void DialogManager::showDiskErrorDialog(const QString & id, const QString & errorText)
+{
+    DDialog d;
+    d.setTitle(id + ":" + errorText);
+    QStringList buttonTexts;
+    buttonTexts << tr("Ok");
+    d.addButtons(buttonTexts);
+    d.setDefaultButton(0);
+    d.exec();
+}
 
 void DialogManager::handleConflictRepsonseConfirmed(const QMap<QString, QString> &jobDetail, const QMap<QString, QVariant> &response)
 {

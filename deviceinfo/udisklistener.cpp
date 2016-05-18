@@ -1,6 +1,7 @@
 #include "udisklistener.h"
 
 #include "../../filemanager/app/global.h"
+#include "../../filemanager/app/filesignalmanager.h"
 #include "fstab.h"
 
 UDiskListener::UDiskListener()
@@ -11,6 +12,8 @@ UDiskListener::UDiskListener()
                                                   DiskMountInterface::staticInterfacePath(),
                                                   QDBusConnection::sessionBus(), this);
     connect(m_diskMountInterface, &DiskMountInterface::Changed, this, &UDiskListener::changed);
+    connect(m_diskMountInterface, &DiskMountInterface::Error,
+            fileSignalManager, &FileSignalManager::showDiskErrorDialog);
 }
 
 UDiskDeviceInfo *UDiskListener::getDevice(const QDBusObjectPath &path) const

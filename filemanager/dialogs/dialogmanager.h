@@ -36,7 +36,7 @@ public slots:
     int showRemoveBookMarkDialog(const FMEvent &event);
     void showOpenWithDialog(const FMEvent &event);
     void showPropertyDialog(const FMEvent &event);
-
+    void showDiskErrorDialog(const QString &id, const QString &errorText);
 private:
     DTaskDialog* m_taskDialog = NULL;
     QMap<QString, FileJob*> m_jobs;
