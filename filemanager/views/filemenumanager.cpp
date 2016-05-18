@@ -506,6 +506,12 @@ void FileMenuManager::actionTriggered(DAction *action)
             event = FMEvent::Menu;
             event = menu->getWindowId();
             fileSignalManager->requestRestoreTrashFile(urls, event);
+        }case MenuAction::RestoreAll:{
+            FMEvent event;
+            event = urls;
+            event = FMEvent::Menu;
+            event = menu->getWindowId();
+            fileSignalManager->requestRestoreAllTrashFile(event);
         }
         case MenuAction::Eject:
             deviceListener->eject(fileUrl.query());

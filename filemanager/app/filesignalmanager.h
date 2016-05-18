@@ -104,6 +104,9 @@ signals:
     /* request restore trash file*/
     void requestRestoreTrashFile(const DUrlList &urlList, const FMEvent &event);
 
+    /* request restore trash file*/
+    void requestRestoreAllTrashFile(const FMEvent &event);
+
     /*request update mime cache*/
     void requestUpdateMimeAppsCache();
 
