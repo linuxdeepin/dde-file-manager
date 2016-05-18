@@ -18,7 +18,11 @@
 
 #include "windowmanager.h"
 #include "ddragwidget.h"
+#include "ddialog.h"
+#include "../shutil/iconprovider.h"
+#include "../app/filesignalmanager.h"
 
+DWIDGET_USE_NAMESPACE
 
 DBookmarkItem::DBookmarkItem()
 {
@@ -351,23 +355,47 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     Q_UNUSED(event);
     if(m_group && m_pressed)
     {
-        FMEvent e;
-        e = windowId();
-        if(m_url.isBookMarkFile())
-            e = DUrl::fromLocalFile(m_url.path());
-        else
-            e = m_url;
-        e = FMEvent::LeftSideBar;
-        emit m_group->url(e);
         emit clicked();
         if(m_group)
         {
             m_group->deselectAll();
             setChecked(true);
         }
+        m_pressed = false;
+        update();
+        QDir dir(m_url.path());
+        if(!dir.exists())
+        {
+            DDialog d(WindowManager::getWindowById(windowId()));
+            d.setTitle(tr("Sorry, unable to locate your bookmark directory, remove it?"));
+            QStringList buttonTexts;
+            buttonTexts << tr("Cancel") << tr("Remove bookmark");
+            d.addButtons(buttonTexts);
+            d.setDefaultButton(1);
+            IconProvider provider;
+            d.setIcon(provider.getDesktopIcon("folder", 48));
+            int result = d.exec();
+            if (result == DDialog::Accepted)
+            {
+                FMEvent event;
+                event = m_url;
+                event = FMEvent::LeftSideBar;
+                event = windowId();
+                fileSignalManager->requestBookmarkRemove(event);
+            }
+        }
+        else
+        {
+            FMEvent e;
+            e = windowId();
+            if(m_url.isBookMarkFile())
+                e = DUrl::fromLocalFile(m_url.path());
+            else
+                e = m_url;
+            e = FMEvent::LeftSideBar;
+            emit m_group->url(e);
+        }
     }
-    m_pressed = false;
-    update();
 }
 
 void DBookmarkItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
