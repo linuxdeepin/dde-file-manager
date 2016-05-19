@@ -14,3 +14,107 @@ PropertyDialog QTextEdit[readOnly=false] {
     color: black;
     min-height: 42px;
 }
+
+
+QLabel#GroupTitleLabel{
+    color: #b4b4b4;
+    font-size: 12px;
+}
+
+
+QLabel#SectionKeyLabel{
+    color: #b4b4b4;
+    font-size: 12px;
+}
+
+
+QLabel#SectionValueLabel{
+    color: #222222;
+    font-size: 12px;
+}
+
+QListWidget{
+    border: none;
+}
+
+QCheckBox::indicator:unchecked {
+    image: url(:/images/images/light/checkbox-unchecked.png);
+}
+
+QCheckBox::indicator:checked {
+    image: url(:/images/images/light/checkbox-checked.png);
+}
+
+
+
+QCheckBox#OpenWithItem {
+    spacing: 5px;
+    color: #222222;
+    font-size: 12px;
+    text-align: center;
+}
+
+QCheckBox#OpenWithItem:pressed{
+    color: #4b4b4b;
+}
+
+
+QCheckBox#OpenWithItem::indicator {
+    width: 16px;
+    height: 16px;
+}
+
+
+QCheckBox#OpenWithItem::indicator:unchecked {
+    image: url(:/images/images/light/checkbox-unchecked-transparent.png);
+}
+
+QCheckBox#OpenWithItem::indicator:checked {
+    image: url(:/images/images/light/appbar.check.png);
+}
+
+
+QPushButton#OtherButton{
+    color: #222222;
+    font-size: 12px;
+    background-color: white;
+    padding-left: 26px;
+    border: none;
+}
+
+QPushButton#OtherButton:pressed{
+    color: #4b4b4b;
+}
+
+
+QScrollBar#DScrollBar:vertical{
+     border: 0px;
+     background: transparent;
+     width: 6px;
+}
+
+QScrollBar#DScrollBar::handle:vertical:hover{
+     background: rgba(16,16,16,0.7);
+}
+
+QScrollBar#DScrollBar::handle:vertical{
+     border: 0px;
+     background-color: rgba(16,16,16,0);
+     width: 6px;
+}
+
+QScrollBar#DScrollBar::add-line:vertical {
+      border: none;
+      background: none;
+}
+
+QScrollBar#DScrollBar::sub-line:vertical {
+      border: none;
+      background: none;
+}
+
+QScrollBar#DScrollBar::up-arrow:vertical, QScrollBar#DScrollBar::down-arrow:vertical {
+     width: 0px;
+     height: 0px;
+     background: transparent;
+}

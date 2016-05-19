@@ -60,6 +60,10 @@
         <file>images/dark/appbar.lines.horizontal.4.png</file>
         <file>images/dark/appbar.app.favorite.png</file>
         <file>images/dark/appbar.iphone.png</file>
+        <file>images/light/checkbox-checked.png</file>
+        <file>images/light/checkbox-unchecked.png</file>
+        <file>images/light/appbar.check.png</file>
+        <file>images/light/checkbox-unchecked-transparent.png</file>
     </qresource>
     <qresource prefix="/icons">
         <file>images/icons/desktop_checked_16px.svg</file>

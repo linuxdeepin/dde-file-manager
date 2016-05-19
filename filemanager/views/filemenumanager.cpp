@@ -222,8 +222,8 @@ void FileMenuManager::initData()
     m_actionKeys[MenuAction::Name] = QObject::tr("Name");
     m_actionKeys[MenuAction::Size] = QObject::tr("Size");
     m_actionKeys[MenuAction::Type] = QObject::tr("Type");
-    m_actionKeys[MenuAction::CreatedDate] = QObject::tr("Created Date");
-    m_actionKeys[MenuAction::LastModifiedDate] = QObject::tr("Last Modified Date");
+    m_actionKeys[MenuAction::CreatedDate] = QObject::tr("Time created");
+    m_actionKeys[MenuAction::LastModifiedDate] = QObject::tr("Time modified");
     m_actionKeys[MenuAction::Settings] = QObject::tr("Settings");
     m_actionKeys[MenuAction::Help] = QObject::tr("Help");
     m_actionKeys[MenuAction::About] = QObject::tr("About");
