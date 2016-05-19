@@ -126,6 +126,11 @@ signals:
 
     /* status bar items count */
     void statusBarItemsSelected(const FMEvent &event, int number);
+
+    /* request of renaming bookmark*/
+    void requestBookmarkRename(const FMEvent &event);
+
+    void bookmarkRenamed(const QString &oldname, const QString &newname, const FMEvent &event);
 };
 
 #endif // FILESIGNALMANAGER_H
