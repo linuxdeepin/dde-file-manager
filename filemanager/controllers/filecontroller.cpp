@@ -304,7 +304,7 @@ bool FileController::newFolder(const FMEvent &event, bool &accepted) const
     //Todo:: check if mkdir is ok
     QDir dir(event.fileUrl().toLocalFile());
 
-    QString folderName = checkDuplicateName(dir.absolutePath() + "/New Folder");
+    QString folderName = checkDuplicateName(dir.absolutePath() + "/" + tr("New Folder"));
 
     FileJob::SelectedFiles.insert(DUrl::fromLocalFile(folderName), event.windowId());
     return dir.mkdir(folderName);
@@ -316,7 +316,7 @@ bool FileController::newFile(const DUrl &toUrl, bool &accepted) const
 
     //Todo:: check if mkdir is ok
     QDir dir(toUrl.toLocalFile());
-    QString name = checkDuplicateName(dir.absolutePath() + "/New File");
+    QString name = checkDuplicateName(dir.absolutePath() + "/" + tr("New File"));
 
     QFile file(name);
 
