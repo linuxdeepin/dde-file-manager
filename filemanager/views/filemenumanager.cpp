@@ -394,6 +394,12 @@ void FileMenuManager::actionTriggered(DAction *action)
             event = FMEvent::Menu;
             event = menu->getWindowId();
 
+            if(menu->getMenuSource() == DFileMenu::LeftSideBar)
+            {
+                emit fileSignalManager->requestBookmarkRename(event);
+                break;
+            }
+
             emit fileSignalManager->requestRename(event);
             break;
         }

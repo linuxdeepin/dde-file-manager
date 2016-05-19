@@ -124,7 +124,8 @@ HEADERS += \
     filemanager/controllers/pathmanager.h \
     filemanager/views/ddragwidget.h \
     filemanager/shutil/mimetypedisplaymanager.h \
-    filemanager/views/dstatusbar.h
+    filemanager/views/dstatusbar.h \
+    filemanager/views/dbookmarktextitem.h
 
 
 SOURCES += \
@@ -210,7 +211,8 @@ SOURCES += \
     filemanager/controllers/pathmanager.cpp \
     filemanager/views/ddragwidget.cpp \
     filemanager/shutil/mimetypedisplaymanager.cpp \
-    filemanager/views/dstatusbar.cpp
+    filemanager/views/dstatusbar.cpp \
+    filemanager/views/dbookmarktextitem.cpp
 
 
 

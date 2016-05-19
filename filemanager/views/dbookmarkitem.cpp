@@ -21,6 +21,8 @@
 #include "ddialog.h"
 #include "../shutil/iconprovider.h"
 #include "../app/filesignalmanager.h"
+#include "../controllers/bookmarkmanager.h"
+
 
 DWIDGET_USE_NAMESPACE
 
@@ -74,8 +76,6 @@ void DBookmarkItem::setDeviceInfo(UDiskDeviceInfo *deviceInfo)
 
 void DBookmarkItem::init()
 {
-    //setFlag(QGraphicsItem::ItemIsFocusable);
-    //setFlag(QGraphicsItem::ItemIgnoresTransformations);
     setAcceptHoverEvents(true);
     setReleaseBackgroundColor(QColor(238,232,205,0));
     setPressBackgroundColor(QColor(44,167,248,255));
@@ -86,6 +86,24 @@ void DBookmarkItem::init()
     setTextColor(Qt::black);
     setAcceptDrops(true);
     m_checkable = true;
+}
+
+void DBookmarkItem::editFinished()
+{
+    if(m_lineEdit->text().isEmpty())
+        return;
+    else
+    {
+        FMEvent event;
+        event = windowId();
+        event = m_url;
+        bookmarkManager->renameBookmark(m_textContent, m_lineEdit->text(), m_url);
+        fileSignalManager->bookmarkRenamed(m_textContent, m_lineEdit->text(), event);
+        m_textContent = m_lineEdit->text();
+        m_lineEdit->setVisible(false);
+    }
+    m_lineEdit->removeEventFilter(this);
+    m_widget->deleteLater();
 }
 
 QRectF DBookmarkItem::boundingRect() const
@@ -110,6 +128,7 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
 {
     Q_UNUSED(option);
     Q_UNUSED(widget);
+    painter->setClipRect(option->exposedRect);
     double w = m_width;
     QColor textColor;
     double leftPadding = 13;
@@ -354,6 +373,21 @@ DBookmarkItem *DBookmarkItem::makeBookmark(const QString &name, const DUrl &url)
     return item;
 }
 
+void DBookmarkItem::editMode()
+{
+    m_lineEdit = new QLineEdit;
+    m_lineEdit->setStyleSheet("background-color: white;\
+                               border: none;");
+    connect(m_lineEdit, &QLineEdit::returnPressed, this, &DBookmarkItem::editFinished);
+    m_widget = scene()->addWidget(m_lineEdit);
+    m_lineEdit->setGeometry(37 + geometry().x(), geometry().y(), m_width - 37, m_height + 1);
+    m_lineEdit->setText(m_textContent);
+    m_lineEdit->setSelection(0, m_textContent.length());
+    m_lineEdit->setFocus();
+    m_lineEdit->show();
+    m_lineEdit->installEventFilter(this);
+}
+
 QSizeF DBookmarkItem::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const
 {
     Q_UNUSED(which);
@@ -453,7 +487,12 @@ void DBookmarkItem::dropEvent(QGraphicsSceneDragDropEvent *event)
 
 bool DBookmarkItem::eventFilter(QObject *obj, QEvent *e)
 {
-    qDebug() << obj << e;
+    //qDebug() << obj << e;
+    if(e->type() == QEvent::FocusOut)
+    {
+        editFinished();
+        return false;
+    }
     return false;
 }
 
@@ -506,6 +545,8 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     DUrlList urls;
     urls.append(m_url);
     menu->setUrls(urls);
+    if(!m_isDefault)
+        menu->setMenuSource(DFileMenu::LeftSideBar);
 
     QPointer<DBookmarkItem> me = this;
 
@@ -595,6 +636,7 @@ int DBookmarkItem::boundHeight()
 void DBookmarkItem::setText(const QString & text)
 {
     m_textContent = text;
+    update();
 }
 
 QString DBookmarkItem::text()
