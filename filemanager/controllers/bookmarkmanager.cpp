@@ -116,6 +116,20 @@ void BookMarkManager::removeBookmark(const QString &name, const DUrl &url)
     save();
 }
 
+void BookMarkManager::renameBookmark(const QString &oldname, const QString &newname, const DUrl &url)
+{
+    for(int i = 0; i < m_bookmarks.size(); i++)
+    {
+        BookMark * bookmark = m_bookmarks.at(i);
+        if(bookmark->getName() == oldname && bookmark->getUrl() == url)
+        {
+            bookmark->setName(newname);
+            break;
+        }
+    }
+    save();
+}
+
 void BookMarkManager::moveBookmark(int from, int to)
 {
     m_bookmarks.move(from, to);

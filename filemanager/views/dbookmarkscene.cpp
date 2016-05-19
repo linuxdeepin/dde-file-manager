@@ -27,7 +27,6 @@ DBookmarkScene::DBookmarkScene()
     m_rootItem->setLayout(m_defaultLayout);
     m_rootItem->setPos(0, 0);
 
-
     m_itemGroup = new DBookmarkItemGroup;
 
     connect(fileSignalManager, &FileSignalManager::currentUrlChanged,
@@ -35,7 +34,8 @@ DBookmarkScene::DBookmarkScene()
     connect(fileSignalManager, &FileSignalManager::requestBookmarkRemove, this, &DBookmarkScene::doBookmarkRemoved);
     connect(fileSignalManager, &FileSignalManager::requestBookmarkAdd, this, &DBookmarkScene::doBookmarkAdded);
     connect(fileSignalManager, &FileSignalManager::requestBookmarkMove, this, &DBookmarkScene::doMoveBookmark);
-
+    connect(fileSignalManager, &FileSignalManager::requestBookmarkRename, this, &DBookmarkScene::bookmarkRename);
+    connect(fileSignalManager, &FileSignalManager::bookmarkRenamed, this, &DBookmarkScene::doBookmarkRenamed);
 }
 
 void DBookmarkScene::addBookmark(DBookmarkItem *item)
@@ -337,6 +337,35 @@ void DBookmarkScene::doBookmarkRemoved(const FMEvent &event)
             DBookmarkItem * item = m_itemGroup->items()->at(i);
             bookmarkManager->removeBookmark(item->text(), item->getUrl());
             remove(item);
+            break;
+        }
+    }
+}
+
+void DBookmarkScene::bookmarkRename(const FMEvent &event)
+{
+    if(windowId() != event.windowId())
+        return;
+
+    for(int i = 0; i < m_itemGroup->items()->size(); i++)
+    {
+        if(event.fileUrl() == m_itemGroup->items()->at(i)->getUrl())
+        {
+            DBookmarkItem * item = m_itemGroup->items()->at(i);
+            item->editMode();
+            break;
+        }
+    }
+}
+
+void DBookmarkScene::doBookmarkRenamed(const QString &oldname, const QString &newname,const FMEvent &event)
+{
+    for(int i = 0; i < m_itemGroup->items()->size(); i++)
+    {
+        if(event.fileUrl() == m_itemGroup->items()->at(i)->getUrl())
+        {
+            DBookmarkItem * item = m_itemGroup->items()->at(i);
+            item->setText(newname);
             break;
         }
     }
