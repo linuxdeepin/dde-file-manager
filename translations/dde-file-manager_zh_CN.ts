@@ -179,6 +179,19 @@
     </message>
 </context>
 <context>
+    <name>FileController</name>
+    <message>
+        <location filename="../filemanager/controllers/filecontroller.cpp" line="307"/>
+        <source>New Folder</source>
+        <translation>新建文件夹</translation>
+    </message>
+    <message>
+        <location filename="../filemanager/controllers/filecontroller.cpp" line="319"/>
+        <source>New File</source>
+        <translation>新建文本</translation>
+    </message>
+</context>
+<context>
     <name>MessageWrongDialog</name>
     <message>
         <location filename="../dialogs/messagewrongdialog.cpp" line="12"/>
@@ -575,22 +588,23 @@
     <message>
         <location filename="../filemanager/views/filemenumanager.cpp" line="211"/>
         <source>Word</source>
-        <translation></translation>
+        <translatorcomment>新建Excel</translatorcomment>
+        <translation>新建Word</translation>
     </message>
     <message>
         <location filename="../filemanager/views/filemenumanager.cpp" line="212"/>
         <source>Excel</source>
-        <translation></translation>
+        <translation>新建Excel</translation>
     </message>
     <message>
         <location filename="../filemanager/views/filemenumanager.cpp" line="213"/>
         <source>PowerPoint</source>
-        <translation></translation>
+        <translation>新建PowerPoint</translation>
     </message>
     <message>
         <location filename="../filemanager/views/filemenumanager.cpp" line="214"/>
         <source>Text</source>
-        <translation></translation>
+        <translation>新建文本</translation>
     </message>
     <message>
         <location filename="../filemanager/views/filemenumanager.cpp" line="215"/>
@@ -681,25 +695,25 @@
         <location filename="../filemanager/views/filemenumanager.cpp" line="474"/>
         <location filename="../filemanager/views/filemenumanager.cpp" line="476"/>
         <source>newDoc</source>
-        <translation type="unfinished"></translation>
+        <translation>新建word文档</translation>
     </message>
     <message>
         <location filename="../filemanager/views/filemenumanager.cpp" line="480"/>
         <location filename="../filemanager/views/filemenumanager.cpp" line="482"/>
         <source>newExcel</source>
-        <translation type="unfinished"></translation>
+        <translation>新建Excel文档</translation>
     </message>
     <message>
         <location filename="../filemanager/views/filemenumanager.cpp" line="486"/>
         <location filename="../filemanager/views/filemenumanager.cpp" line="488"/>
         <source>newPowerPoint</source>
-        <translation type="unfinished"></translation>
+        <translation>新建PowerPoint文档</translation>
     </message>
     <message>
         <location filename="../filemanager/views/filemenumanager.cpp" line="492"/>
         <location filename="../filemanager/views/filemenumanager.cpp" line="494"/>
         <source>newText</source>
-        <translation type="unfinished"></translation>
+        <translation>新建文本</translation>
     </message>
     <message>
         <location filename="../filemanager/shutil/fileutils.cpp" line="492"/>
