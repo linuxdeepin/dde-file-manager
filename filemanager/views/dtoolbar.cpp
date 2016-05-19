@@ -42,6 +42,7 @@ void DToolBar::initData()
 
 void DToolBar::initUI()
 {
+    setFocusPolicy(Qt::NoFocus);
     initAddressToolBar();
     initContollerToolBar();
 

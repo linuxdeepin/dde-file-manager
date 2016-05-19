@@ -114,6 +114,7 @@ public slots:
 
 protected:
     void closeEvent(QCloseEvent* event);
+    void timerEvent(QTimerEvent* event);
 
 private:
     DFileManagerWindow *m_fileManagerWindow;

@@ -90,13 +90,13 @@ void DBookmarkItem::init()
 
 void DBookmarkItem::editFinished()
 {
+    FMEvent event;
+    event = windowId();
+    event = m_url;
     if(m_lineEdit->text().isEmpty())
         return;
     else
     {
-        FMEvent event;
-        event = windowId();
-        event = m_url;
         bookmarkManager->renameBookmark(m_textContent, m_lineEdit->text(), m_url);
         fileSignalManager->bookmarkRenamed(m_textContent, m_lineEdit->text(), event);
         m_textContent = m_lineEdit->text();
@@ -104,6 +104,8 @@ void DBookmarkItem::editFinished()
     }
     m_lineEdit->removeEventFilter(this);
     m_widget->deleteLater();
+
+    emit fileSignalManager->requestFoucsOnFileView(event);
 }
 
 QRectF DBookmarkItem::boundingRect() const

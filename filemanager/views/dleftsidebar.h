@@ -37,6 +37,8 @@ public:
     void initConnect();
     void initNav();
     DUrl getStandardPathByKey(QString key);
+    QGraphicsView *view() const;
+
 protected:
     void resizeEvent(QResizeEvent *e);
 
