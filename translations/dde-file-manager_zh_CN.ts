@@ -50,8 +50,12 @@
         <translation>名称</translation>
     </message>
     <message>
-        <location filename="../filemanager/models/dfilesystemmodel.cpp" line="213"/>
         <source>Date Modified</source>
+        <translation type="vanished">修改时间</translation>
+    </message>
+    <message>
+        <location filename="../filemanager/models/dfilesystemmodel.cpp" line="213"/>
+        <source>Time modified</source>
         <translation>修改时间</translation>
     </message>
     <message>
@@ -66,8 +70,12 @@
     </message>
     <message>
         <location filename="../filemanager/models/dfilesystemmodel.cpp" line="216"/>
-        <source>Date Created</source>
+        <source>Time created</source>
         <translation>创建时间</translation>
+    </message>
+    <message>
+        <source>Date Created</source>
+        <translation type="vanished">创建时间</translation>
     </message>
 </context>
 <context>
@@ -92,10 +100,24 @@
         <translation>磁盘</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/dleftsidebar.cpp" line="169"/>
-        <location filename="../filemanager/views/dleftsidebar.cpp" line="287"/>
+        <location filename="../filemanager/views/dleftsidebar.cpp" line="171"/>
+        <location filename="../filemanager/views/dleftsidebar.cpp" line="289"/>
         <source>File Manager</source>
         <translation>文件管理器</translation>
+    </message>
+</context>
+<context>
+    <name>DStatusBar</name>
+    <message>
+        <location filename="../filemanager/views/dstatusbar.cpp" line="11"/>
+        <location filename="../filemanager/views/dstatusbar.cpp" line="34"/>
+        <source>%1 item selected</source>
+        <translation>选中 %1 项内容</translation>
+    </message>
+    <message>
+        <location filename="../filemanager/views/dstatusbar.cpp" line="30"/>
+        <source>%1 items selected</source>
+        <translation>选中 %1 项内容</translation>
     </message>
 </context>
 <context>
@@ -122,60 +144,65 @@
 <context>
     <name>DialogManager</name>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="91"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="92"/>
         <source>&quot;%1&quot; already exists, please select a different name.</source>
         <translation>文件 &quot;%1&quot; 已被占用，请使用其他名称。</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="93"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="94"/>
         <source>Confirm</source>
         <translation>确定</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="103"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="104"/>
         <source>Are you sure to empty trash?</source>
         <translation>您确定要清空回收站？</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="104"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="105"/>
         <source>Are you sure to delete %1?</source>
         <translation>您确定要删除 %1？</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="105"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="106"/>
         <source>Are you sure to delete %1 items?</source>
         <translation>您确定要彻底删除选中的%1项内容？</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="110"/>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="147"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="111"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="148"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="110"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="111"/>
         <source>Delete</source>
         <translation>删除</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="114"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="115"/>
         <source>Empty</source>
         <translation>清空</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="134"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="135"/>
         <source>This action cannot be restored</source>
         <translation>此操作不可以恢复</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="145"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="146"/>
         <source>Sorry, unable to locate your bookmark directory, remove it?</source>
         <translation>抱歉， 找不到您的书签目录， 是否移除？</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="147"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="148"/>
         <source>Remove bookmark</source>
         <translation>移除书签</translation>
+    </message>
+    <message>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="187"/>
+        <source>Ok</source>
+        <translation>确定</translation>
     </message>
 </context>
 <context>
@@ -365,73 +392,101 @@
 <context>
     <name>PropertyDialog</name>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="113"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="139"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="141"/>
         <source>Basic Info</source>
         <translation>基本信息</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="113"/>
-        <source>Authority Management</source>
-        <translation>权限管理</translation>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="139"/>
+        <source>Open with</source>
+        <translation>打开方式</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="113"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="220"/>
+        <source>Allow to execute as program</source>
+        <translation>允许以程序执行</translation>
+    </message>
+    <message>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="287"/>
+        <source>Others</source>
+        <translation>其它</translation>
+    </message>
+    <message>
+        <source>Authority Management</source>
+        <translation type="vanished">权限管理</translation>
+    </message>
+    <message>
         <source>Opens</source>
-        <translation>打开方式</translation>
+        <translation type="vanished">打开方式</translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="24"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="209"/>
         <location filename="../filemanager/views/filemenumanager.cpp" line="223"/>
         <source>Size</source>
         <translation>大小</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="25"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="210"/>
+        <source>File amount</source>
+        <translation>文件个数</translation>
+    </message>
+    <message>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="211"/>
         <location filename="../filemanager/views/filemenumanager.cpp" line="224"/>
         <source>Type</source>
         <translation>类型</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="26"/>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="225"/>
         <source>Created Date</source>
+        <translation type="vanished">创建时间</translation>
+    </message>
+    <message>
+        <source>Modified Date</source>
+        <translation type="vanished">修改时间</translation>
+    </message>
+    <message>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="212"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="225"/>
+        <source>Time created</source>
         <translation>创建时间</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="27"/>
-        <source>Modified Date</source>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="213"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="226"/>
+        <source>Time modified</source>
         <translation>修改时间</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="45"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="325"/>
         <source>WriteRead</source>
         <translation>可读写</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="45"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="325"/>
         <source>ReadOnly</source>
         <translation>只读</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="45"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="325"/>
         <source>WriteOnly</source>
         <translation>只写</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="73"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="353"/>
         <source>Owner</source>
         <translation>所有者</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="74"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="354"/>
         <source>Group</source>
         <translation>群组</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="75"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="355"/>
         <source>Other</source>
         <translation>其他</translation>
     </message>
@@ -647,9 +702,8 @@
         <translation>名称</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="226"/>
         <source>Last Modified Date</source>
-        <translation>修改时间</translation>
+        <translation type="vanished">修改时间</translation>
     </message>
     <message>
         <location filename="../filemanager/views/filemenumanager.cpp" line="227"/>

@@ -270,12 +270,12 @@ QString MimesAppsManager::getDefaultAppByMimeType(const QString &mimeType)
             QSettings defaults(file, QSettings::IniFormat);
             QString app;
 
-            app = defaults.value(QString("Added Associations/%1" ).arg(mimeType)).toString();
+            app = defaults.value(QString("Default Applications/%1" ).arg(mimeType)).toString();
             if (app.length() > 0){
                 return app;
             }
 
-            app = defaults.value(QString("Default Applications/%1" ).arg(mimeType)).toString();
+            app = defaults.value(QString("Added Associations/%1" ).arg(mimeType)).toString();
             if (app.length() > 0){
                 return app;
             }

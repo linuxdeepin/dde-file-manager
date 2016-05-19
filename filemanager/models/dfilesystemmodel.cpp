@@ -210,10 +210,10 @@ QVariant DFileSystemModel::headerData(int section, Qt::Orientation, int role) co
         switch(section)
         {
         case 0: return tr("Name");
-        case 1: return tr("Date Modified");
+        case 1: return tr("Time modified");
         case 2: return tr("Size");
         case 3: return tr("Type");
-        case 4: return tr("Date Created");
+        case 4: return tr("Time created");
         default: {
             const AbstractFileInfoPointer &fileInfo = this->fileInfo(m_activeIndex);
 
