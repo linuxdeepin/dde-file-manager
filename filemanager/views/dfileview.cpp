@@ -26,6 +26,7 @@
 #include <QWheelEvent>
 #include <QLineEdit>
 #include <QTextEdit>
+#include <QTimer>
 
 
 DWIDGET_USE_NAMESPACE
@@ -40,8 +41,9 @@ DFileView::DFileView(QWidget *parent) : DListView(parent)
     initUI();
     initDelegate();
     initModel();
-    initConnects();
     initActions();
+    initKeyboardSearchTimer();
+    initConnects();
 }
 
 DFileView::~DFileView()
@@ -98,6 +100,9 @@ void DFileView::initConnects()
     connect(m_displayAsActionGroup, &QActionGroup::triggered, this, &DFileView::dislpayAsActionTriggered);
     connect(m_sortByActionGroup, &QActionGroup::triggered, this, &DFileView::sortByActionTriggered);
     connect(m_openWithActionGroup, &QActionGroup::triggered, this, &DFileView::openWithActionTriggered);
+    connect(m_keyboardSearchTimer, &QTimer::timeout, this, &DFileView::clearKeyBoardSearchKeys);
+
+    connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &DFileView::handleSelectionChanged);
 }
 
 void DFileView::initActions()
@@ -150,6 +155,12 @@ void DFileView::initActions()
     addAction(cut_action);
     addAction(paste_action);
     addAction(delete_action);
+}
+
+void DFileView::initKeyboardSearchTimer()
+{
+    m_keyboardSearchTimer = new QTimer(this);
+    m_keyboardSearchTimer->setInterval(100);
 }
 
 DFileSystemModel *DFileView::model() const
@@ -272,6 +283,7 @@ void DFileView::setSelectedItemCount(int count)
 
 void DFileView::cd(const FMEvent &event)
 {
+    setFocus();
     if(event.windowId() != windowId())
         return;
 
@@ -579,7 +591,6 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
         QItemSelection itemSelection(selectedIndexes().first(), selectedIndexes().last());
         selectionModel()->select(itemSelection, command);
     }
-    setSelectedItemCount(selectedIndexes().count());
 }
 
 bool DFileView::isEmptyArea(const QPoint &pos) const
@@ -651,12 +662,15 @@ void DFileView::openIndex(const QModelIndex &index)
 
 void DFileView::keyboardSearch(const QString &search)
 {
-    if(search.isEmpty())
-        return;
-
-    stopSearch();
-
-    setCurrentUrl(DUrl::fromSearchFile(currentUrl(), search));
+    m_keyboardSearchKeys.append(search);
+    m_keyboardSearchTimer->start();
+    QModelIndexList matchModelIndexList = model()->match(rootIndex(), 0, m_keyboardSearchKeys, -1, Qt::MatchFlags(Qt::MatchStartsWith|Qt::MatchWrap |
+                                                                                                                  Qt::MatchCaseSensitive | Qt::MatchRecursive));
+    if (matchModelIndexList.count() > 0){
+        QModelIndex index = matchModelIndexList.at(0);
+        selectionModel()->select(index, QItemSelectionModel::SelectCurrent);
+        scrollTo(index);
+    }
 }
 
 void DFileView::stopSearch()
@@ -737,6 +751,19 @@ void DFileView::clearHeardView()
 
         m_headerView = Q_NULLPTR;
     }
+}
+
+void DFileView::clearKeyBoardSearchKeys()
+{
+    m_keyboardSearchKeys.clear();
+    m_keyboardSearchTimer->stop();
+}
+
+void DFileView::handleSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
+{
+    Q_UNUSED(selected)
+    Q_UNUSED(deselected)
+    setSelectedItemCount(selectedIndexes().count());
 }
 
 void DFileView::updateViewportMargins()

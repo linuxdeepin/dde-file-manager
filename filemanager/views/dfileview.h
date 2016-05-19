@@ -14,6 +14,7 @@ class DFileSystemModel;
 
 QT_BEGIN_NAMESPACE
 class QHeaderView;
+class QTimer;
 QT_END_NAMESPACE
 
 DWIDGET_BEGIN_NAMESPACE
@@ -50,6 +51,7 @@ public:
     void initModel();
     void initConnects();
     void initActions();
+    void initKeyboardSearchTimer();
 
     DFileSystemModel *model() const;
     DFileItemDelegate *itemDelegate() const;
@@ -102,6 +104,9 @@ public slots:
 
     bool setCurrentUrl(DUrl fileUrl);
     void clearHeardView();
+
+    void clearKeyBoardSearchKeys();
+    void handleSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
 
 signals:
     void currentUrlChanged(const DUrl &url);
@@ -171,6 +176,9 @@ private:
     QPoint m_pressed;
     QRect m_elasticBand;
     int m_horizontalOffset = 0;
+
+    QTimer* m_keyboardSearchTimer;
+    QString m_keyboardSearchKeys;
 };
 
 #endif // DFILEVIEW_H
