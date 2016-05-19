@@ -130,7 +130,11 @@ signals:
     /* request of renaming bookmark*/
     void requestBookmarkRename(const FMEvent &event);
 
+    /*book mark rename*/
     void bookmarkRenamed(const QString &oldname, const QString &newname, const FMEvent &event);
+
+    /*focus back to DFileView*/
+    void requestFoucsOnFileView(const FMEvent &event);
 };
 
 #endif // FILESIGNALMANAGER_H

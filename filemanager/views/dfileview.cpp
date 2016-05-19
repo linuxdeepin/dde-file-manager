@@ -103,6 +103,7 @@ void DFileView::initConnects()
     connect(m_keyboardSearchTimer, &QTimer::timeout, this, &DFileView::clearKeyBoardSearchKeys);
 
     connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &DFileView::handleSelectionChanged);
+    connect(fileSignalManager, &FileSignalManager::requestFoucsOnFileView, this, &DFileView::setFoucsOnFileView);
 }
 
 void DFileView::initActions()
@@ -284,6 +285,7 @@ void DFileView::setSelectedItemCount(int count)
 void DFileView::cd(const FMEvent &event)
 {
     setFocus();
+    clearSelection();
     if(event.windowId() != windowId())
         return;
 
@@ -665,11 +667,15 @@ void DFileView::keyboardSearch(const QString &search)
     m_keyboardSearchKeys.append(search);
     m_keyboardSearchTimer->start();
     QModelIndexList matchModelIndexList = model()->match(rootIndex(), 0, m_keyboardSearchKeys, -1, Qt::MatchFlags(Qt::MatchStartsWith|Qt::MatchWrap |
-                                                                                                                  Qt::MatchCaseSensitive | Qt::MatchRecursive));
-    if (matchModelIndexList.count() > 0){
-        QModelIndex index = matchModelIndexList.at(0);
-        selectionModel()->select(index, QItemSelectionModel::SelectCurrent);
-        scrollTo(index);
+                                                                                                   Qt::MatchCaseSensitive | Qt::MatchRecursive));
+    foreach (const QModelIndex& index, matchModelIndexList) {
+        QString absolutePath = FileInfo(model()->getUrlByIndex(index).path()).absolutePath();
+        if (absolutePath == currentUrl().path()){
+            clearSelection();
+            selectionModel()->select(index, QItemSelectionModel::SelectCurrent);
+            scrollTo(index);
+            return;
+        }
     }
 }
 
@@ -764,6 +770,12 @@ void DFileView::handleSelectionChanged(const QItemSelection &selected, const QIt
     Q_UNUSED(selected)
     Q_UNUSED(deselected)
     setSelectedItemCount(selectedIndexes().count());
+}
+
+void DFileView::setFoucsOnFileView(const FMEvent &event)
+{
+    if (event.windowId() == windowId())
+        setFocus();
 }
 
 void DFileView::updateViewportMargins()

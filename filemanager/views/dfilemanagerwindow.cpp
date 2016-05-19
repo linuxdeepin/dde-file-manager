@@ -86,7 +86,6 @@ void DFileManagerWindow::initLeftSideBar()
     m_leftSideBar = new DLeftSideBar(this);
     m_leftSideBar->setObjectName("LeftSideBar");
     m_leftSideBar->setFixedWidth(LEFTSIDEBAR_MAX_WIDTH);
-    m_leftSideBar->setFocusPolicy(Qt::ClickFocus);
 }
 
 void DFileManagerWindow::initRightView()
@@ -136,7 +135,6 @@ void DFileManagerWindow::initToolBar()
     m_toolbar = new DToolBar(this);
     m_toolbar->setObjectName("ToolBar");
     m_toolbar->setFixedHeight(40);
-    m_toolbar->setFocusPolicy(Qt::ClickFocus);
 }
 
 void DFileManagerWindow::initFileView()
@@ -240,6 +238,7 @@ DMainWindow::DMainWindow(QWidget *parent):
 {
     initUI();
     initConnect();
+//    startTimer(4000);
 }
 
 DMainWindow::~DMainWindow()
@@ -249,9 +248,11 @@ DMainWindow::~DMainWindow()
 
 void DMainWindow::initUI()
 {
+    setFocusPolicy(Qt::NoFocus);
     resize(DEFAULT_WINDOWS_WIDTH, DEFAULT_WINDOWS_HEIGHT);
     m_fileManagerWindow = new DFileManagerWindow(this);
     addContenWidget(m_fileManagerWindow);
+
 }
 
 void DMainWindow::initConnect()
@@ -284,6 +285,12 @@ void DMainWindow::closeEvent(QCloseEvent *event)
 {
     emit aboutToClose();
     DWindowFrame::closeEvent(event);
+}
+
+void DMainWindow::timerEvent(QTimerEvent *event)
+{
+    Q_UNUSED(event)
+    qDebug() << qApp->focusWidget();
 }
 
 DFileManagerWindow *DMainWindow::fileManagerWindow() const

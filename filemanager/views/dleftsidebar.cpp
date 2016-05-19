@@ -133,6 +133,7 @@ void DLeftSideBar::initData()
 
 void DLeftSideBar::initUI()
 {
+    setFocusPolicy(Qt::NoFocus);
     initNav();
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
@@ -352,6 +353,10 @@ void DLeftSideBar::loadBookmark()
 void DLeftSideBar::loadDevices()
 {
     deviceListener->update();
+}
+QGraphicsView *DLeftSideBar::view() const
+{
+    return m_view;
 }
 
 

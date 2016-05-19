@@ -107,6 +107,7 @@ public slots:
 
     void clearKeyBoardSearchKeys();
     void handleSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+    void setFoucsOnFileView(const FMEvent& event);
 
 signals:
     void currentUrlChanged(const DUrl &url);
