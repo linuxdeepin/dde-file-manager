@@ -56,6 +56,8 @@ public slots:
     void bookmarkRemoved(const QString &url);
     void bookmarkMounted(int fd);
     void doBookmarkRemoved(const FMEvent &event);
+    void bookmarkRename(const FMEvent &event);
+    void doBookmarkRenamed(const QString &oldname, const QString &newname, const FMEvent &event);
     void doBookmarkAdded(const QString &name, const FMEvent &event);
     void doMoveBookmark(int from, int to, const FMEvent &event);
     void rootDropped(const QPointF& point);

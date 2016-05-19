@@ -26,6 +26,7 @@ private:
 public slots:
     BookMark *writeIntoBookmark(int index, const QString &name, const DUrl &url);
     void removeBookmark(const QString &name, const DUrl &url);
+    void renameBookmark(const QString &oldname, const QString &newname, const DUrl &url);
     void moveBookmark(int from, int to);
     // AbstractFileController interface
 public:

@@ -3,10 +3,15 @@
 
 #include <QObject>
 #include <QGraphicsWidget>
+#include <QGraphicsTextItem>
 #include <QFont>
 #include <QPainter>
 #include <QGraphicsSceneMouseEvent>
 #include <QDrag>
+#include <QLineEdit>
+#include <QGraphicsProxyWidget>
+#include <QGraphicsTextItem>
+#include "dbookmarktextitem.h"
 
 #include "durl.h"
 
@@ -77,8 +82,8 @@ public:
     void setSysPath(const QString &path);
     QString getSysPath();
     int windowId();
-
     static DBookmarkItem * makeBookmark(const QString &name, const DUrl &url);
+    void editMode();
 signals:
 
     void clicked();
@@ -107,6 +112,8 @@ protected:
     bool eventFilter(QObject *obj, QEvent *e);
 private:
     void init();
+    QLineEdit * m_lineEdit;
+    QGraphicsProxyWidget * m_widget = NULL;
     UDiskDeviceInfo * m_deviceInfo = NULL;
     DBookmarkItemGroup * m_group = NULL;
 
@@ -160,6 +167,8 @@ private:
     bool m_isMounted = false;
     QString m_deviceLabel;
     QString m_sysPath;
+public slots:
+    void editFinished();
 };
 
 #endif // DBOOKMARKITEM_H
