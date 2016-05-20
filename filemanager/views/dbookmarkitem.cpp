@@ -93,9 +93,7 @@ void DBookmarkItem::editFinished()
     FMEvent event;
     event = windowId();
     event = m_url;
-    if(m_lineEdit->text().isEmpty())
-        return;
-    else
+    if(!m_lineEdit->text().isEmpty() && m_lineEdit->text() != m_textContent)
     {
         bookmarkManager->renameBookmark(m_textContent, m_lineEdit->text(), m_url);
         fileSignalManager->bookmarkRenamed(m_textContent, m_lineEdit->text(), event);
@@ -476,7 +474,7 @@ void DBookmarkItem::dropEvent(QGraphicsSceneDragDropEvent *event)
     emit dropped();
     if(!event->mimeData()->hasUrls())
         return;
-    if(!m_isDefault)
+    if(m_isDisk)
         return;
     FMEvent e;
     e = FMEvent::LeftSideBar;
@@ -484,7 +482,6 @@ void DBookmarkItem::dropEvent(QGraphicsSceneDragDropEvent *event)
     e = windowId();
     fileService->pasteFile(AbstractFileController::CopyType, DUrl::fromQUrlList(event->mimeData()->urls()), e);
     QGraphicsItem::dropEvent(event);
-
 }
 
 bool DBookmarkItem::eventFilter(QObject *obj, QEvent *e)
