@@ -153,7 +153,6 @@ private:
     ViewMode m_currentViewMode = IconMode;
 
     int m_currentIconSizeIndex = 1;
-    mutable int m_windowId = -1;
 
     bool m_ctrlIsPressed = false;
 
