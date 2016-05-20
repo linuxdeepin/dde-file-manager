@@ -207,7 +207,8 @@ void DCrumbWidget::addLocalCrumbs(const DUrl & path)
             list.replace(0, "/");
         list.removeAll("");
     }
-    addCrumb(list);
+    if (!list.isEmpty())
+        addCrumb(list);
 }
 
 bool DCrumbWidget::hasPath(QString path)
@@ -245,11 +246,13 @@ void DCrumbWidget::createCrumbs()
         m_crumbTotalLen += button->size().width();
     }
 
-    m_listWidget->scrollToItem(m_items.last(), QListWidget::PositionAtBottom);
-    m_listWidget->setHorizontalScrollMode(QListWidget::ScrollPerPixel);
-    m_listWidget->horizontalScrollBar()->setPageStep(m_listWidget->width());
-    checkArrows();
-    m_listWidget->scrollToItem(m_items.last(), QListWidget::PositionAtBottom);
+    if (!m_items.isEmpty()){
+        m_listWidget->scrollToItem(m_items.last(), QListWidget::PositionAtBottom);
+        m_listWidget->setHorizontalScrollMode(QListWidget::ScrollPerPixel);
+        m_listWidget->horizontalScrollBar()->setPageStep(m_listWidget->width());
+        checkArrows();
+        m_listWidget->scrollToItem(m_items.last(), QListWidget::PositionAtBottom);
+    }
 }
 
 void DCrumbWidget::createArrows()

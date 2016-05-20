@@ -64,6 +64,11 @@
         <file>images/light/checkbox-unchecked.png</file>
         <file>images/light/appbar.check.png</file>
         <file>images/light/checkbox-unchecked-transparent.png</file>
+        <file>images/light/pencil_hover.svg</file>
+        <file>images/light/pencil_normal.svg</file>
+        <file>images/light/pencil_press.svg</file>
+        <file>images/light/select_deactive.png</file>
+        <file>images/light/select.png</file>
     </qresource>
     <qresource prefix="/icons">
         <file>images/icons/desktop_checked_16px.svg</file>

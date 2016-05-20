@@ -104,6 +104,8 @@ void DFileView::initConnects()
 
     connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &DFileView::handleSelectionChanged);
     connect(fileSignalManager, &FileSignalManager::requestFoucsOnFileView, this, &DFileView::setFoucsOnFileView);
+
+    connect(itemDelegate(), &DFileItemDelegate::commitData, this, &DFileView::handleCommitData);
 }
 
 void DFileView::initActions()
@@ -502,7 +504,7 @@ void DFileView::mouseReleaseEvent(QMouseEvent *event)
     DListView::mouseReleaseEvent(event);
 }
 
-void DFileView::commitData(QWidget *editor)
+void DFileView::handleCommitData(QWidget *editor)
 {
     if(!editor)
         return;
@@ -522,6 +524,9 @@ void DFileView::commitData(QWidget *editor)
 
 
     if(lineEdit) {
+        if (fileInfo->fileName() == lineEdit->text()){
+            return;
+        }
         fileService->renameFile(fileInfo->fileUrl(),
                                 DUrl(fileInfo->scheme() + "://" + fileInfo->absolutePath()
                                      + "/" + lineEdit->text()), event);
@@ -532,6 +537,9 @@ void DFileView::commitData(QWidget *editor)
     FileIconItem *item = qobject_cast<FileIconItem*>(editor);
 
     if(item) {
+        if (fileInfo->fileName() == item->edit->toPlainText()){
+            return;
+        }
         fileService->renameFile(fileInfo->fileUrl(),
                                 DUrl(fileInfo->scheme() + "://" + fileInfo->absolutePath()
                                      + "/" + item->edit->toPlainText()), event);

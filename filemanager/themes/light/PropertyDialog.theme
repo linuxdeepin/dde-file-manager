@@ -66,11 +66,11 @@ QCheckBox#OpenWithItem::indicator {
 
 
 QCheckBox#OpenWithItem::indicator:unchecked {
-    image: url(:/images/images/light/checkbox-unchecked-transparent.png);
+    image: url(:/images/images/light/select_deactive.png);
 }
 
 QCheckBox#OpenWithItem::indicator:checked {
-    image: url(:/images/images/light/appbar.check.png);
+    image: url(:/images/images/light/select.png);
 }
 
 

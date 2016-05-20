@@ -81,5 +81,6 @@ QHeaderView::up-arrow {
 */
 
 QLineEdit {
-    background: transparent;
+    background: #2DA6F7;
+    color:white;
 }
