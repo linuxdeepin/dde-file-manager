@@ -666,9 +666,9 @@ void DFileView::keyboardSearch(const QString &search)
 {
     m_keyboardSearchKeys.append(search);
     m_keyboardSearchTimer->start();
-    QModelIndexList matchModelIndexList = model()->match(rootIndex(), 0, m_keyboardSearchKeys, -1, Qt::MatchFlags(Qt::MatchStartsWith|Qt::MatchWrap |
+    QModelIndexList matchModelIndexListCaseSensitive = model()->match(rootIndex(), 0, m_keyboardSearchKeys, -1, Qt::MatchFlags(Qt::MatchStartsWith|Qt::MatchWrap |
                                                                                                    Qt::MatchCaseSensitive | Qt::MatchRecursive));
-    foreach (const QModelIndex& index, matchModelIndexList) {
+    foreach (const QModelIndex& index, matchModelIndexListCaseSensitive) {
         QString absolutePath = FileInfo(model()->getUrlByIndex(index).path()).absolutePath();
         if (absolutePath == currentUrl().path()){
             clearSelection();
@@ -677,6 +677,19 @@ void DFileView::keyboardSearch(const QString &search)
             return;
         }
     }
+
+    QModelIndexList matchModelIndexListNoCaseSensitive = model()->match(rootIndex(), 0, m_keyboardSearchKeys, -1, Qt::MatchFlags(Qt::MatchStartsWith|Qt::MatchWrap |
+                                                                                                   Qt::MatchRecursive));
+    foreach (const QModelIndex& index, matchModelIndexListNoCaseSensitive) {
+        QString absolutePath = FileInfo(model()->getUrlByIndex(index).path()).absolutePath();
+        if (absolutePath == currentUrl().path()){
+            clearSelection();
+            selectionModel()->select(index, QItemSelectionModel::SelectCurrent);
+            scrollTo(index);
+            return;
+        }
+    }
+
 }
 
 void DFileView::stopSearch()
