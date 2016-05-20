@@ -24,6 +24,7 @@ void fmsortmanager::save()
 
 void fmsortmanager::saveLastSortOrder(const DUrl &url, int role)
 {
-
+    Q_UNUSED(url);
+    Q_UNUSED(role);
 }
 

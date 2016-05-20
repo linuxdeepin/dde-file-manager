@@ -14,7 +14,6 @@ public:
 protected:
     void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
     void dropEvent(QGraphicsSceneDragDropEvent *event);
-    void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
 private:
     DBookmarkScene * m_scene;
 };

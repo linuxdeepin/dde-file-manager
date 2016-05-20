@@ -47,14 +47,6 @@ void DBookmarkScene::addBookmark(DBookmarkItem *item)
     increaseSize();
 }
 
-void DBookmarkScene::insertBookmark(int index, DBookmarkItem *item)
-{
-    m_defaultLayout->addItem(item);
-    item->setBounds(0, 0, BOOKMARK_ITEM_WIDTH, BOOKMARK_ITEM_HEIGHT - BOOKMARK_ITEM_SPACE);
-    m_itemGroup->addItem(item);
-    increaseSize();
-}
-
 /**
  * @brief DBookmarkScene::addItem
  * @param item
@@ -363,7 +355,8 @@ void DBookmarkScene::doBookmarkRenamed(const QString &oldname, const QString &ne
 {
     for(int i = 0; i < m_itemGroup->items()->size(); i++)
     {
-        if(event.fileUrl() == m_itemGroup->items()->at(i)->getUrl())
+        DBookmarkItem * item = m_itemGroup->items()->at(i);
+        if(event.fileUrl() == item->getUrl() && item->text() == oldname)
         {
             DBookmarkItem * item = m_itemGroup->items()->at(i);
             item->setText(newname);
@@ -389,14 +382,9 @@ void DBookmarkScene::doMoveBookmark(int from, int to, const FMEvent &event)
     }
 }
 
-void DBookmarkScene::rootDropped(const QPointF &point)
-{
-
-}
-
 void DBookmarkScene::volumeAdded(UDiskDeviceInfo *device)
 {
-
+    Q_UNUSED(device);
 }
 
 void DBookmarkScene::volumeRemoved(UDiskDeviceInfo *device)

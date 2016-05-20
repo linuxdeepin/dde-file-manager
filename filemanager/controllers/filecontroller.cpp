@@ -210,6 +210,7 @@ bool FileController::renameFile(const DUrl &oldUrl, const DUrl &newUrl, bool &ac
  */
 bool FileController::deleteFiles(const DUrlList &urlList, const FMEvent &event, bool &accepted) const
 {
+    Q_UNUSED(event);
     accepted = true;
 
     FileJob job("delete");

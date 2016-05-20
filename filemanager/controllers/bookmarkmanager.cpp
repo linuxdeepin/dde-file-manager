@@ -97,7 +97,7 @@ void BookMarkManager::writeJson(QJsonObject &json)
 BookMark * BookMarkManager::writeIntoBookmark(int index, const QString &name, const DUrl &url)
 {
     BookMark * bookmark = new BookMark(QDateTime::currentDateTime(), name, url);
-    m_bookmarks.insert(0, bookmark);
+    m_bookmarks.insert(index, bookmark);
     save();
     return bookmark;
 }

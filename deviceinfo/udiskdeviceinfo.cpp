@@ -27,11 +27,6 @@ UDiskDeviceInfo::UDiskDeviceInfo(const QString &url)
 
 }
 
-UDiskDeviceInfo::UDiskDeviceInfo(const QDBusObjectPath &path)
-{
-
-}
-
 UDiskDeviceInfo::UDiskDeviceInfo(const DiskInfo &diskInfo)
 {
     m_diskInfo = diskInfo;
@@ -137,6 +132,7 @@ DUrl UDiskDeviceInfo::parentUrl() const
 
 QVector<AbstractFileInfo::MenuAction> UDiskDeviceInfo::menuActionList(AbstractFileInfo::MenuType type) const
 {
+    Q_UNUSED(type);
     QVector<MenuAction> actionKeys;
     if(deviceListener->isSystemDisk(getMountPoint()))
     {

@@ -11,7 +11,6 @@
 #include <QLineEdit>
 #include <QGraphicsProxyWidget>
 #include <QGraphicsTextItem>
-#include "dbookmarktextitem.h"
 
 #include "durl.h"
 

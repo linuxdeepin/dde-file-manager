@@ -2,7 +2,6 @@
 #include "dicontextbutton.h"
 #include "dcheckablebutton.h"
 #include "dsearchbar.h"
-#include "dtabbar.h"
 #include "dcrumbwidget.h"
 #include "historystack.h"
 #include "dhoverbutton.h"

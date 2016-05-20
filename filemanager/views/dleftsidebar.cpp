@@ -14,8 +14,6 @@
 #include "../app/filesignalmanager.h"
 
 #include "dhoverbutton.h"
-#include "bmlistwidget.h"
-#include "bmlistwidgetitem.h"
 #include "dbookmarkitem.h"
 #include "dbookmarkscene.h"
 #include "dbookmarkitemgroup.h"

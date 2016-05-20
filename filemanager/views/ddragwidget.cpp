@@ -40,9 +40,7 @@ void DDragWidget::setHotSpot(const QPoint &hotspot)
 
 bool DDragWidget::eventFilter(QObject *obj, QEvent *e)
 {
-//    if (!obj->isWidgetType())
-//        return false;
-
+    Q_UNUSED(obj);
     if(e->type() == QEvent::MouseButtonRelease)
     {
         m_timer->stop();
@@ -90,13 +88,9 @@ void PixmapWidget::dragMoveEvent(QDragMoveEvent *e)
 
 void PixmapWidget::paintEvent(QPaintEvent *e)
 {
+    Q_UNUSED(e);
     QPainter painter;
     painter.begin(this);
     painter.drawPixmap(0,0, m_pixmap);
     painter.end();
-}
-
-void PixmapWidget::moveEvent(QMoveEvent *e)
-{
-
 }

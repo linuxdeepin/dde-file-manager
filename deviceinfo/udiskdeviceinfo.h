@@ -17,7 +17,6 @@ public:
     UDiskDeviceInfo(UDiskDeviceInfo * info);
     UDiskDeviceInfo(const DUrl &url);
     UDiskDeviceInfo(const QString &url);
-    UDiskDeviceInfo(const QDBusObjectPath &path);
     UDiskDeviceInfo(const DiskInfo &diskInfo);
     ~UDiskDeviceInfo();
     void setDiskInfo(const DiskInfo &diskInfo);

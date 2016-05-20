@@ -160,6 +160,7 @@ bool TrashManager::restoreAllTrashFile(const FMEvent &event)
 
         restoreTrashFile(urlList, event);
     }
+    return true;
 }
 
 void TrashManager::onFileCreated(const QString &filePath) const
