@@ -537,17 +537,23 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
         menu = FileMenuManager::createDefaultBookMarkMenu();
     else
         menu = FileMenuManager::createCustomBookMarkMenu();
-    QWidget* window = scene()->views().at(0)->window();
 
-    menu->setWindowId(WindowManager::getWindowId(window));
+    QPointer<DBookmarkItem> me = this;
+
     m_url.setQuery(m_sysPath);
     DUrlList urls;
     urls.append(m_url);
-    menu->setUrls(urls);
-    if(!m_isDefault)
-        menu->setMenuSource(DFileMenu::LeftSideBar);
 
-    QPointer<DBookmarkItem> me = this;
+    FMEvent fmEvent;
+    fmEvent = m_url;
+    fmEvent = urls;
+    fmEvent = windowId();
+    fmEvent = FMEvent::LeftSideBar;
+
+    menu->setEvent(fmEvent);
+//    menu->setWindowId(windowId());
+//    menu->setUrls(urls);
+//    menu->setMenuSource(DFileMenu::LeftSideBar);
 
     menu->exec();
     menu->deleteLater();

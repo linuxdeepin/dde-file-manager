@@ -197,8 +197,9 @@ bool FileController::renameFile(const DUrl &oldUrl, const DUrl &newUrl, bool &ac
     accepted = true;
 
     QFile file(oldUrl.toLocalFile());
+    bool result = file.rename(newUrl.toLocalFile());
 
-    return file.rename(newUrl.toLocalFile());
+    return result;
 }
 
 /**

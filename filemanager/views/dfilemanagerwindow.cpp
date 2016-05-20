@@ -64,7 +64,11 @@ void DFileManagerWindow::initTitleBar()
     setDragMovableHeight(m_titleBar->height());
 
     DFileMenu* menu = fileMenuManger->createToolBarSettingsMenu();
-    menu->setWindowId(window()->winId());
+
+    FMEvent event;
+    event = window()->winId();
+    menu->setEvent(event);
+
     m_titleBar->setMenu(menu);
 }
 

@@ -146,6 +146,7 @@ bool TrashManager::restoreTrashFile(const DUrlList &fileUrl, const FMEvent &even
 
 bool TrashManager::restoreAllTrashFile(const FMEvent &event)
 {
+
     DUrl fileUrl = event.fileUrlList().at(0);
     const QString &path = fileUrl.path();
 
@@ -156,6 +157,7 @@ bool TrashManager::restoreAllTrashFile(const FMEvent &event)
         for(const QString name : entryList) {
             urlList << DUrl::fromTrashFile(QString("/%1").arg(name));
         }
+
         restoreTrashFile(urlList, event);
     }
 }

@@ -3,35 +3,16 @@
 DFileMenu::DFileMenu(DMenu *parent)
     : DMenu(parent)
 {
-    m_source = Unknow;
+
 }
 
-void DFileMenu::setUrls(const DUrlList &urls)
+
+FMEvent DFileMenu::event() const
 {
-    m_urls = urls;
+    return m_event;
 }
 
-DUrlList DFileMenu::getUrls()
+void DFileMenu::setEvent(const FMEvent &event)
 {
-    return m_urls;
-}
-
-void DFileMenu::setWindowId(int windowId)
-{
-    m_windowId = windowId;
-}
-
-int DFileMenu::getWindowId() const
-{
-    return m_windowId;
-}
-
-void DFileMenu::setMenuSource(DFileMenu::MenuSource source)
-{
-    m_source = source;
-}
-
-DFileMenu::MenuSource DFileMenu::getMenuSource()
-{
-    return m_source;
+    m_event = event;
 }

@@ -227,10 +227,7 @@ int DFileView::selectedIndexCount() const
 
 int DFileView::windowId() const
 {
-    if(m_windowId == -1)
-        m_windowId = WindowManager::getWindowId(window());
-
-    return m_windowId;
+    return window()->winId();
 }
 
 void DFileView::startKeyboardSearch(int windowId, const QString &key)
@@ -443,18 +440,22 @@ void DFileView::wheelEvent(QWheelEvent *event)
 
 void DFileView::keyPressEvent(QKeyEvent *event)
 {
-    if(event->key() == Qt::Key_Control) {
+    qDebug() << event->modifiers() << event->key();
+    if (event->modifiers() == Qt::NoModifier){
+
+    }else if (event->modifiers() == Qt::ControlModifier){
         m_ctrlIsPressed = true;
-    }else if (event->modifiers() == Qt::SHIFT && event->key() == Qt::Key_Delete){
-        if (selectedUrls().size() > 0){
-            FMEvent fmevent;
-            fmevent = selectedUrls();
-            fmevent = FMEvent::FileView;
-            fmevent = windowId();
-            fileService->deleteFiles(selectedUrls(), fmevent);
+    }else if (event->modifiers() == Qt::ShiftModifier){
+        if (event->key() == Qt::Key_Delete){
+            if (selectedUrls().size() > 0){
+                FMEvent fmevent;
+                fmevent = selectedUrls();
+                fmevent = FMEvent::FileView;
+                fmevent = windowId();
+                fileService->deleteFiles(selectedUrls(), fmevent);
+            }
         }
     }
-
     DListView::keyPressEvent(event);
 }
 
@@ -955,8 +956,14 @@ void DFileView::showEmptyAreaMenu()
 
     DUrlList urls;
     urls.append(currentUrl());
-    menu->setUrls(urls);
-    menu->setWindowId(m_windowId);
+
+    FMEvent event;
+    event = currentUrl();
+    event = urls;
+    event = windowId();
+    event = FMEvent::FileView;
+    menu->setEvent(event);
+
 
     menu->exec();
     menu->deleteLater();
@@ -1024,8 +1031,14 @@ void DFileView::showNormalMenu(const QModelIndex &index)
         const QVector<MenuAction> disableList;
         menu = FileMenuManager::genereteMenuByKeys(actions, disableList, true, subActions);
     }
-    menu->setWindowId(m_windowId);
-    menu->setUrls(list);
+
+    FMEvent event;
+    event = model()->getUrlByIndex(index);
+    event = list;
+    event = windowId();
+    event = FMEvent::FileView;
+    menu->setEvent(event);
+
     menu->exec();
     menu->deleteLater();
 }

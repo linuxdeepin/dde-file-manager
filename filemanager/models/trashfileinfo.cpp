@@ -128,6 +128,7 @@ bool TrashFileInfo::restore(const FMEvent &event) const
 
         return false;
     }
+
     return fileService->renameFile(DUrl::fromLocalFile(absoluteFilePath()), DUrl::fromLocalFile(originalFilePath), event);
 }
 
