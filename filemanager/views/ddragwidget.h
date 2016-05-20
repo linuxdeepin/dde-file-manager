@@ -22,7 +22,6 @@ protected:
     void dragEnterEvent(QDragEnterEvent *e);
     void dragMoveEvent(QDragMoveEvent *e);
     void paintEvent(QPaintEvent *e);
-    void moveEvent(QMoveEvent *e);
     QPixmap m_pixmap;
 };
 

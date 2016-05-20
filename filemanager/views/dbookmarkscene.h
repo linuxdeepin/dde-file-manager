@@ -24,7 +24,6 @@ class DBookmarkScene : public QGraphicsScene
 public:
     DBookmarkScene();
     void addBookmark(DBookmarkItem *item);
-    void insertBookmark(int index, DBookmarkItem *item);
     void addItem(DBookmarkItem *item);
     void addDefaultBookmark(DBookmarkItem *item);
     void insert(int index, DBookmarkItem *item);
@@ -60,7 +59,6 @@ public slots:
     void doBookmarkRenamed(const QString &oldname, const QString &newname, const FMEvent &event);
     void doBookmarkAdded(const QString &name, const FMEvent &event);
     void doMoveBookmark(int from, int to, const FMEvent &event);
-    void rootDropped(const QPointF& point);
 
     void volumeAdded(UDiskDeviceInfo * device);
     void volumeRemoved(UDiskDeviceInfo * device);

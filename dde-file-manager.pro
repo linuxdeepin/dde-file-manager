@@ -57,8 +57,6 @@ HEADERS += \
     filemanager/views/fileitem.h \
     filemanager/views/filemenumanager.h \
     filemanager/views/dsearchbar.h \
-    filemanager/views/dtabbar.h \
-    filemanager/views/dtabbaritem.h \
     filemanager/views/dfileitemdelegate.h \
     filemanager/shutil/desktopparse.h \
     filemanager/shutil/mimeutils.h \
@@ -93,8 +91,6 @@ HEADERS += \
     filemanager/controllers/filejob.h \
     filemanager/views/dfilemenu.h \
     filemanager/views/dhoverbutton.h \
-    filemanager/views/bmlistwidget.h \
-    filemanager/views/bmlistwidgetitem.h \
     filemanager/views/dbookmarkscene.h \
     filemanager/views/dbookmarkitem.h \
     filemanager/views/dbookmarkitemgroup.h \
@@ -124,8 +120,7 @@ HEADERS += \
     filemanager/controllers/pathmanager.h \
     filemanager/views/ddragwidget.h \
     filemanager/shutil/mimetypedisplaymanager.h \
-    filemanager/views/dstatusbar.h \
-    filemanager/views/dbookmarktextitem.h
+    filemanager/views/dstatusbar.h
 
 
 SOURCES += \
@@ -145,8 +140,6 @@ SOURCES += \
     filemanager/views/fileitem.cpp \
     filemanager/views/filemenumanager.cpp \
     filemanager/views/dsearchbar.cpp \
-    filemanager/views/dtabbar.cpp \
-    filemanager/views/dtabbaritem.cpp \
     filemanager/views/dfileitemdelegate.cpp \
     filemanager/shutil/desktopparse.cpp \
     filemanager/shutil/mimeutils.cpp \
@@ -181,8 +174,6 @@ SOURCES += \
     filemanager/controllers/filejob.cpp \
     filemanager/views/dfilemenu.cpp \
     filemanager/views/dhoverbutton.cpp \
-    filemanager/views/bmlistwidget.cpp \
-    filemanager/views/bmlistwidgetitem.cpp \
     filemanager/views/dbookmarkscene.cpp \
     filemanager/views/dbookmarkitem.cpp \
     filemanager/views/dbookmarkitemgroup.cpp \
@@ -211,8 +202,7 @@ SOURCES += \
     filemanager/controllers/pathmanager.cpp \
     filemanager/views/ddragwidget.cpp \
     filemanager/shutil/mimetypedisplaymanager.cpp \
-    filemanager/views/dstatusbar.cpp \
-    filemanager/views/dbookmarktextitem.cpp
+    filemanager/views/dstatusbar.cpp
 
 
 
