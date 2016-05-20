@@ -228,6 +228,7 @@ void DBookmarkScene::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
 void DBookmarkScene::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
     qDebug() << "scene drop";
+    emit dragLeft();
     QGraphicsScene::dropEvent(event);
 }
 
