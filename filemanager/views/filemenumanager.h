@@ -23,6 +23,8 @@ class FileMenuManager : public QObject
 {
     Q_OBJECT
 
+    Q_ENUM(MenuAction)
+
 public:
     FileMenuManager();
 
