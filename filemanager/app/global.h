@@ -17,7 +17,7 @@
 #include "../shutil/mimesappsmanager.h"
 #include "../shutil/mimetypedisplaymanager.h"
 #include "../shutil/iconprovider.h"
-
+#include "../controllers/appcontroller.h"
 
 
 #include <QFontMetrics>
