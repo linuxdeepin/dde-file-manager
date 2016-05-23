@@ -58,7 +58,7 @@ QString UDiskDeviceInfo::getName()
     return m_diskInfo.Name;
 }
 
-QString UDiskDeviceInfo::getType()
+QString UDiskDeviceInfo::getType() const
 {
     return m_diskInfo.Type;
 }
@@ -110,6 +110,18 @@ QString UDiskDeviceInfo::displayName() const
     return FileUtils::formatSize(m_diskInfo.Total * 1024);
 }
 
+UDiskDeviceInfo::MediaType UDiskDeviceInfo::getMediaType() const
+{
+    if(getType() == "native")
+        return native;
+    else if(getType() == "removable")
+        return removable;
+    else if(getType() == "network")
+        return network;
+    else
+        return unknown;
+}
+
 bool UDiskDeviceInfo::isCanRename() const
 {
     return false;
@@ -133,23 +145,45 @@ DUrl UDiskDeviceInfo::parentUrl() const
 QVector<AbstractFileInfo::MenuAction> UDiskDeviceInfo::menuActionList(AbstractFileInfo::MenuType type) const
 {
     Q_UNUSED(type);
+
     QVector<MenuAction> actionKeys;
-    if(deviceListener->isSystemDisk(getMountPoint()))
+
+    actionKeys.reserve(6);
+
+    actionKeys << MenuAction::Open << MenuAction::OpenInNewWindow
+               << MenuAction::Separator;
+
+    switch(getMediaType())
     {
-        actionKeys.reserve(6);
-        actionKeys << MenuAction::Open << MenuAction::OpenInNewWindow
-                   << MenuAction::Separator
-                   << MenuAction::Property;
+        case native:
+        {
+            if(m_diskInfo.CanEject || m_diskInfo.CanUnmount)
+                actionKeys << MenuAction::Unmount;
+            else
+                actionKeys << MenuAction::Mount;
+            break;
+        }
+        case removable:
+        {
+            if(m_diskInfo.CanEject || m_diskInfo.CanUnmount)
+                actionKeys << MenuAction::Eject;
+            else
+                actionKeys << MenuAction::Mount;
+            break;
+        }
+        case network:
+        {
+            if(m_diskInfo.CanEject || m_diskInfo.CanUnmount)
+                actionKeys << MenuAction::Unmount;
+            else
+                actionKeys << MenuAction::Mount;
+            break;
+        }
+        default:
+            break;
     }
-    else
-    {
-        actionKeys.reserve(6);
-        actionKeys << MenuAction::Open << MenuAction::OpenInNewWindow
-                   << MenuAction::Separator
-                   << MenuAction::Mount << MenuAction::Unmount
-                   << MenuAction::Separator
-                   << MenuAction::Property;
-    }
+
+    actionKeys << MenuAction::Separator << MenuAction::Property;
 
     return actionKeys;
 }

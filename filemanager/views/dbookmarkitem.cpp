@@ -41,6 +41,7 @@ DBookmarkItem::DBookmarkItem(UDiskDeviceInfo * deviceInfo)
     m_isDefault = true;
     m_sysPath = deviceInfo->getDiskInfo().ID;
     m_textContent = deviceInfo->displayName();
+    m_deviceInfo = deviceInfo;
     boundImageToHover(":/icons/images/icons/disk_hover_16px.svg");
     boundImageToPress(":/icons/images/icons/disk_hover_16px.svg");
     boundImageToRelease(":/icons/images/icons/disk_normal_16px.svg");
@@ -72,6 +73,7 @@ void DBookmarkItem::setDeviceInfo(UDiskDeviceInfo *deviceInfo)
     m_sysPath = deviceInfo->getDiskInfo().ID;
     m_textContent = deviceInfo->displayName();
     m_isMounted = deviceInfo->getDiskInfo().CanUnmount;
+    m_deviceInfo = deviceInfo;
 }
 
 void DBookmarkItem::init()
@@ -126,7 +128,6 @@ bool DBookmarkItem::isTightModel()
 
 void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    Q_UNUSED(option);
     Q_UNUSED(widget);
     painter->setClipRect(option->exposedRect);
     double w = m_width;
@@ -310,14 +311,6 @@ QPixmap DBookmarkItem::toPixmap()
     if (!scene()) {
         return QPixmap();
     }
-
-//    QRectF r = boundingRect();
-//    QPixmap pixmap(r.width(), r.height());
-//    pixmap.fill(QColor(0, 0, 0, 0));
-//    QPainter painter(&pixmap);
-//    painter.drawRect(r);
-//    scene()->render(&painter, QRectF(), sceneBoundingRect());
-//    painter.end();
     QPixmap pixmap(":/icons/images/icons/reordering_line.svg");
     if(m_isTightMode)
         return pixmap.scaled(60, pixmap.height(), Qt::IgnoreAspectRatio);
@@ -404,6 +397,9 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     if(m_group && m_pressed)
     {
         emit clicked();
+        //mount if not mounted
+        if(m_isDisk && !m_deviceInfo->getDiskInfo().CanUnmount)
+            deviceListener->mount(m_deviceInfo->getDiskInfo().ID);
         if(m_group)
         {
             m_group->deselectAll();
@@ -450,7 +446,6 @@ void DBookmarkItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
     m_hovered = true;
     event->accept();
     emit dragEntered();
-    //QGraphicsItem::dragEnterEvent(event);
     update();
 }
 
@@ -532,10 +527,15 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
         menu = FileMenuManager::createRecentLeftBarMenu();
     }
     else if (m_url.isTrashFile()){
-    menu = FileMenuManager::createTrashLeftBarMenu();
+        menu = FileMenuManager::createTrashLeftBarMenu();
     }
-    else if(m_isDisk)
-        menu = FileMenuManager::createDiskViewMenu();
+    else if(m_isDisk && m_deviceInfo)
+    {
+        qDebug() << m_deviceInfo->getType();
+        menu = FileMenuManager::genereteMenuByKeys(
+                    m_deviceInfo->menuActionList(AbstractFileInfo::SingleFile),
+                    QVector<MenuAction>());
+    }
     else if(m_isDefault)
         menu = FileMenuManager::createDefaultBookMarkMenu();
     else
@@ -554,9 +554,6 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     fmEvent = FMEvent::LeftSideBar;
 
     menu->setEvent(fmEvent);
-//    menu->setWindowId(windowId());
-//    menu->setUrls(urls);
-//    menu->setMenuSource(DFileMenu::LeftSideBar);
 
     menu->exec();
     menu->deleteLater();

@@ -13,6 +13,14 @@ class UDiskDeviceInfo : public QObject ,public AbstractFileInfo
 {
     Q_OBJECT
 public:
+    enum MediaType
+    {
+        unknown,
+        native,
+        removable,
+        network,
+    };
+
     UDiskDeviceInfo();
     UDiskDeviceInfo(UDiskDeviceInfo * info);
     UDiskDeviceInfo(const DUrl &url);
@@ -23,7 +31,7 @@ public:
     DiskInfo getDiskInfo();
     QString getId();
     QString getName();
-    QString getType();
+    QString getType() const;
     QString getPath();
     QString getMountPoint() const;
     QString getIcon();
@@ -33,7 +41,7 @@ public:
     qulonglong getTotal();
     qint64 size();
     QString displayName() const;
-
+    MediaType getMediaType() const;
 private:
     DiskInfo m_diskInfo;
 
