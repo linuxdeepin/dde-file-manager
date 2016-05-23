@@ -4,6 +4,7 @@ DBookmarkLine::DBookmarkLine()
 {
     setDefaultItem(true);
     setAcceptDrops(false);
+    setObjectName("DBookmarkLine");
 }
 
 void DBookmarkLine::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
