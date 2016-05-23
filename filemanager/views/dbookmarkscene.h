@@ -23,9 +23,7 @@ class DBookmarkScene : public QGraphicsScene
     Q_OBJECT
 public:
     DBookmarkScene();
-    void addBookmark(DBookmarkItem *item);
     void addItem(DBookmarkItem *item);
-    void addDefaultBookmark(DBookmarkItem *item);
     void insert(int index, DBookmarkItem *item);
     void insert(DBookmarkItem * before, DBookmarkItem *item);
     void remove(int index);
@@ -68,8 +66,7 @@ private:
     void increaseSize();
     void decreaseSize();
     void move(DBookmarkItem * from, DBookmarkItem* to);
-    int m_bookmarkCount = 0;
-    int m_diskCount = 0;
+    int m_defaultCount = 0;
     DBookmarkRootItem * m_rootItem;
     DBookmarkItemGroup * m_itemGroup;
     QList<DBookmarkItem *> m_items;
