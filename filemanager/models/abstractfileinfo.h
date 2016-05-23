@@ -9,12 +9,14 @@
 
 #include "durl.h"
 
+
 class AbstractFileInfo;
 typedef QExplicitlySharedDataPointer<AbstractFileInfo> AbstractFileInfoPointer;
 typedef std::function<const AbstractFileInfoPointer(int)> getFileInfoFun;
 
 class AbstractFileInfo : public QSharedData
 {
+
 public:
     enum MenuAction {
         Open,
