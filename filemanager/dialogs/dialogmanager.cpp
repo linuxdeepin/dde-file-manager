@@ -166,16 +166,19 @@ void DialogManager::showPropertyDialog(const FMEvent &event)
 {
     QWidget* w = WindowManager::getWindowById(event.windowId());
     if (w){
-        PropertyDialog *dialog = new PropertyDialog(event.fileUrl());
+        foreach (const DUrl& url, event.fileUrlList()) {
+            PropertyDialog *dialog = new PropertyDialog(url);
 
-        dialog->setAttribute(Qt::WA_DeleteOnClose);
-        dialog->setWindowFlags(dialog->windowFlags()
-                               &~ Qt::WindowMaximizeButtonHint
-                               &~ Qt::WindowMinimizeButtonHint
-                               &~ Qt::WindowSystemMenuHint);
-        dialog->setTitle("");
-        dialog->setFixedSize(QSize(320, 480));
-        dialog->show();
+            dialog->setAttribute(Qt::WA_DeleteOnClose);
+            dialog->setWindowFlags(dialog->windowFlags()
+                                   &~ Qt::WindowMaximizeButtonHint
+                                   &~ Qt::WindowMinimizeButtonHint
+                                   &~ Qt::WindowSystemMenuHint);
+            dialog->setTitle("");
+            dialog->setFixedSize(QSize(320, 480));
+            dialog->show();
+            QTimer::singleShot(100, dialog, &PropertyDialog::raise);
+        }
     }
 }
 

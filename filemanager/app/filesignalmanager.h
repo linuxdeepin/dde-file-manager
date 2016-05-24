@@ -31,9 +31,6 @@ signals:
     void requestIcon(const DUrl &url) const;
     void iconChanged(const DUrl &url, const QIcon &icon) const;
 
-    /* refresh folder*/
-    void refreshFolder(const DUrl &url) const;
-
     /*add copy/move/delete job to taskdialog when copy/move/delete job created*/
     void jobAdded(const QMap<QString, QString>& jobDetail);
 
@@ -135,6 +132,18 @@ signals:
 
     /*focus back to DFileView*/
     void requestFoucsOnFileView(const FMEvent &event);
+
+    /*ctrl + F*/
+    void requestSearchCtrlF(const FMEvent &event);
+
+    /*ctrl + L*/
+    void requestSearchCtrlL(const FMEvent &event);
+
+    /*alt + left*/
+    void requestBack(const FMEvent &event);
+
+    /*alt + right*/
+    void requestForward(const FMEvent &event);
 };
 
 #endif // FILESIGNALMANAGER_H

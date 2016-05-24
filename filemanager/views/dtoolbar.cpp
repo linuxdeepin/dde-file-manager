@@ -162,15 +162,19 @@ void DToolBar::initConnect()
     connect(m_searchBar, &DSearchBar::returnPressed, this, &DToolBar::searchBarTextEntered);
     connect(m_crumbWidget, &DCrumbWidget::crumbSelected, this, &DToolBar::crumbSelected);
     connect(m_crumbWidget, &DCrumbWidget::searchBarActivated, this, &DToolBar::searchBarActivated);
-    connect(fileSignalManager, &FileSignalManager::currentUrlChanged, this, &DToolBar::crumbChanged);
     connect(m_searchButton, &DStateButton::clicked, this, &DToolBar::searchBarClicked);
     connect(m_searchBar, SIGNAL(focusedOut()), this, SLOT(searchBarDeactivated()));
+    connect(fileSignalManager, &FileSignalManager::currentUrlChanged, this, &DToolBar::crumbChanged);
+    connect(fileSignalManager, &FileSignalManager::requestBack, this, &DToolBar::handleHotkeyBack);
+    connect(fileSignalManager, &FileSignalManager::requestForward, this, &DToolBar::handleHotkeyForward);
+    connect(fileSignalManager, &FileSignalManager::requestSearchCtrlF, this, &DToolBar::handleHotkeyCtrlF);
+    connect(fileSignalManager, &FileSignalManager::requestSearchCtrlL, this, &DToolBar::handleHotkeyCtrlL);
 }
 
 void DToolBar::startup()
 {
     QString user = getenv("USER");
-    FMEvent event(-1, FMEvent::SearchLine);
+    FMEvent event(-1, FMEvent::SearchBar);
     event = DUrl::fromLocalFile("/home/" + user);
     m_crumbWidget->setCrumb(event.fileUrl());
 
@@ -205,6 +209,11 @@ void DToolBar::searchBarDeactivated()
     m_searchBar->setActive(false);
     m_searchBar->window()->setFocus();
     m_searchButton->show();
+
+    FMEvent event;
+    event = window()->winId();
+    event = FMEvent::SearchBar;
+    emit fileSignalManager->requestFoucsOnFileView(event);
 }
 
 /**
@@ -220,7 +229,7 @@ void DToolBar::searchBarTextEntered()
     FMEvent event;
 
     event = WindowManager::getWindowId(window());
-    event = FMEvent::SearchLine;
+    event = FMEvent::SearchBar;
     event = DUrl::fromUserInput(text);
 
     if(m_searchBar->hasScheme() || m_searchBar->isPath())
@@ -329,6 +338,35 @@ void DToolBar::checkViewModeButton(DFileView::ViewMode mode)
         break;
     default:
         break;
+    }
+}
+
+void DToolBar::handleHotkeyBack(const FMEvent &event)
+{
+    if (event.windowId() == window()->winId()){
+        backButtonClicked();
+    }
+}
+
+void DToolBar::handleHotkeyForward(const FMEvent &event)
+{
+    if (event.windowId() == window()->winId()){
+        forwardButtonClicked();
+    }
+}
+
+void DToolBar::handleHotkeyCtrlF(const FMEvent &event)
+{
+    if (event.windowId() == window()->winId()){
+        searchBarActivated();
+        m_searchBar->setText("");
+    }
+}
+
+void DToolBar::handleHotkeyCtrlL(const FMEvent &event)
+{
+    if (event.windowId() == window()->winId()){
+        searchBarActivated();
     }
 }
 

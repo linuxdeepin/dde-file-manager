@@ -87,7 +87,8 @@ public:
 
 public slots:
     void updateChildren(const FMEvent &event, QList<AbstractFileInfoPointer> list);
-    void refresh(const DUrl &fileUrl);
+    void refresh(const DUrl &fileUrl, QDir::Filters filters = QDir::AllEntries | QDir::NoDotAndDotDot);
+    void toggleHiddenFiles(const DUrl &fileUrl);
 
 private slots:
     void onFileCreated(const DUrl &fileUrl);
@@ -101,7 +102,7 @@ private:
 
     int m_sortRole = FileDisplayNameRole;
     int m_sortColumn = 0;
-
+    QDir::Filters m_filters = QDir::AllEntries | QDir::NoDotAndDotDot;
     Qt::SortOrder m_srotOrder = Qt::AscendingOrder;
     QModelIndex m_activeIndex;
 

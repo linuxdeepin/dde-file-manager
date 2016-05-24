@@ -269,7 +269,7 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
     event = this->parent()->windowId();
     event = parentNode->fileInfo->fileUrl();
 
-    fileService->getChildren(event);
+    fileService->getChildren(event, m_filters);
 }
 
 Qt::ItemFlags DFileSystemModel::flags(const QModelIndex &index) const
@@ -581,7 +581,7 @@ void DFileSystemModel::updateChildren(const FMEvent &event, QList<AbstractFileIn
     endInsertRows();
 }
 
-void DFileSystemModel::refresh(const DUrl &fileUrl)
+void DFileSystemModel::refresh(const DUrl &fileUrl, QDir::Filters filters)
 {
     const FileSystemNodePointer &node = m_urlToNode.value(fileUrl);
 
@@ -598,8 +598,21 @@ void DFileSystemModel::refresh(const DUrl &fileUrl)
     event = this->parent()->windowId();
     event = fileUrl;
 
-    fileService->getChildren(event);
+    fileService->getChildren(event, filters);
 }
+
+
+void DFileSystemModel::toggleHiddenFiles(const DUrl &fileUrl)
+{
+    if (m_filters == (QDir::AllEntries | QDir::NoDotAndDotDot)){
+        m_filters = QDir::AllEntries | QDir::Hidden |QDir::NoDotAndDotDot;
+        refresh(fileUrl, m_filters);
+    }else if (m_filters == (QDir::AllEntries | QDir::Hidden |QDir::NoDotAndDotDot)){
+        m_filters = QDir::AllEntries |QDir::NoDotAndDotDot;
+        refresh(fileUrl, m_filters);
+    }
+}
+
 
 void DFileSystemModel::onFileCreated(const DUrl &fileUrl)
 {

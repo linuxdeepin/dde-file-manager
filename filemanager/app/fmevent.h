@@ -16,7 +16,7 @@ public:
         BackAndForwardButton,
         UpButton,
         FileView,
-        SearchLine,
+        SearchBar,
         Menu,
         Unknow
     };
