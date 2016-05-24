@@ -107,6 +107,9 @@ qint64 UDiskDeviceInfo::size()
 
 QString UDiskDeviceInfo::displayName() const
 {
+    if (!m_diskInfo.Name.isEmpty()){
+        return m_diskInfo.Name;
+    }
     return FileUtils::formatSize(m_diskInfo.Total * 1024);
 }
 
@@ -150,7 +153,7 @@ QVector<AbstractFileInfo::MenuAction> UDiskDeviceInfo::menuActionList(AbstractFi
 
     actionKeys.reserve(6);
 
-    actionKeys << MenuAction::Open << MenuAction::OpenInNewWindow
+    actionKeys << MenuAction::OpenDisk << MenuAction::OpenDiskInNewWindow
                << MenuAction::Separator;
 
     switch(getMediaType())

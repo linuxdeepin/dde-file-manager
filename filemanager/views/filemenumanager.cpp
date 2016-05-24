@@ -185,6 +185,8 @@ void FileMenuManager::initData()
 {
     m_actionKeys[MenuAction::Open] = QObject::tr("Open");
     m_actionKeys[MenuAction::OpenInNewWindow] = QObject::tr("Open in new window");
+    m_actionKeys[MenuAction::OpenDisk] = QObject::tr("Open");
+    m_actionKeys[MenuAction::OpenDiskInNewWindow] = QObject::tr("Open in new window");
     m_actionKeys[MenuAction::OpenWith] = QObject::tr("Open with");
     m_actionKeys[MenuAction::OpenWithCustom] = QObject::tr("Others");
     m_actionKeys[MenuAction::OpenFileLocation] = QObject::tr("Open file loaction");
@@ -317,9 +319,18 @@ void FileMenuManager::actionTriggered(DAction *action)
             appController->actionOpen(event);
             break;
         }
-        case MenuAction::OpenInNewWindow:
+        case MenuAction::OpenDisk: {
+            appController->actionOpenDisk(event);
+            break;
+        }
+        case MenuAction::OpenInNewWindow:{
             appController->actionOpenInNewWindow(event);
             break;
+        }
+        case MenuAction::OpenDiskInNewWindow:{
+            appController->actionOpenDiskInNewWindow(event);
+            break;
+        }
         case MenuAction::OpenWithCustom:{
             appController->actionOpenWithCustom(event);
             break;
@@ -438,7 +449,10 @@ void FileMenuManager::actionTriggered(DAction *action)
             appController->actionNewWindow(event);
             break;
         }
-        case MenuAction::Help:break;
+        case MenuAction::Help:{
+            appController->actionHelp(event);
+            break;
+        }
         case MenuAction::About:break;
         case MenuAction::Exit:
             appController->actionExit(event);

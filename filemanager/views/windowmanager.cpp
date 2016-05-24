@@ -72,14 +72,13 @@ void WindowManager::showNewWindow(const DUrl &url, bool isAlwaysOpen)
 
     qDebug() << "new window" << window->winId() << url;
     m_windows.insert(window, window->winId());
-    window->show();
 
+    loadWindowState(window);
     if (m_windows.count() == 1){
-        loadWindowState(window);
         window->moveCenter();
     }
-
     window->fileManagerWindow()->setFileViewMode(m_fmStateManager->fmState()->viewMode());
+    window->show();
 
     FMEvent event;
     if (!url.isEmpty()){

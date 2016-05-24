@@ -561,8 +561,8 @@ QMap<AbstractFileInfo::MenuAction, QVector<AbstractFileInfo::MenuAction> > Abstr
 
     QVector<MenuAction> displayAsMenuActionKeys;
     displayAsMenuActionKeys << IconView
-                          << ListView
-                          << ExtendView;
+                          << ListView;
+//                          << ExtendView;
 
     actions.insert(DisplayAs, displayAsMenuActionKeys);
 

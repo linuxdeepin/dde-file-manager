@@ -19,6 +19,7 @@
 #include "filejob.h"
 #include "../views/windowmanager.h"
 #include <QProcess>
+#include <QStorageInfo>
 
 
 AppController::AppController(QObject *parent) : QObject(parent)
@@ -56,10 +57,51 @@ void AppController::actionOpen(const FMEvent &event)
     }
 }
 
+void AppController::actionOpenDisk(const FMEvent &event)
+{
+    const DUrl& fileUrl = event.fileUrl();
+    if (!QStorageInfo(fileUrl.toLocalFile()).isValid()){
+        m_fmEvent = event;
+        setEventKey(Open);
+        actionMount(event);
+        deviceListener->addSubscriber(this);
+    }else{
+        actionOpen(event);
+    }
+
+}
+
+
+void AppController::asycOpenDisk(const QString &path)
+{
+    m_fmEvent = DUrl(path);
+    actionOpen(m_fmEvent);
+}
+
 void AppController::actionOpenInNewWindow(const FMEvent &event)
 {
     const DUrl& fileUrl = event.fileUrl();
     fileService->openNewWindow(fileUrl);
+}
+
+void AppController::actionOpenDiskInNewWindow(const FMEvent &event)
+{
+    qDebug() << event;
+    const DUrl& fileUrl = event.fileUrl();
+    if (!QStorageInfo(fileUrl.toLocalFile()).isValid()){
+        m_fmEvent = event;
+        actionMount(event);
+        setEventKey(OpenNewWindow);
+        deviceListener->addSubscriber(this);
+    }else{
+        actionOpenInNewWindow(event);
+    }
+}
+
+void AppController::asycOpenDiskInNewWindow(const QString &path)
+{
+    m_fmEvent = DUrl(path);
+    actionOpenInNewWindow(m_fmEvent);
 }
 
 void AppController::actionOpenWithCustom(const FMEvent &event)
@@ -281,7 +323,9 @@ void AppController::actionNewWindow(const FMEvent &event)
 
 void AppController::actionHelp(const FMEvent &event)
 {
-    Q_UNUSED(event)
+    QStringList args;
+    args << "dde-file-manager";
+    QProcess::startDetached("dman", args);
 }
 
 void AppController::actionAbout(const FMEvent &event)
@@ -319,7 +363,7 @@ void AppController::actionExitCurrentWindow(const FMEvent &event)
 
 void AppController::actionShowHotkeyHelp(const FMEvent &event)
 {
-
+    Q_UNUSED(event)
 }
 
 void AppController::actionBack(const FMEvent &event)
@@ -330,6 +374,21 @@ void AppController::actionBack(const FMEvent &event)
 void AppController::actionForward(const FMEvent &event)
 {
     emit fileSignalManager->requestForward(event);
+}
+
+void AppController::doSubscriberAction(const QString &path)
+{
+    switch (eventKey()) {
+    case Open:
+        asycOpenDisk(path);
+        break;
+    case OpenNewWindow:
+        asycOpenDiskInNewWindow(path);
+        break;
+    default:
+        break;
+    }
+    deviceListener->removeSubscriber(this);
 }
 
 AppController::~AppController()

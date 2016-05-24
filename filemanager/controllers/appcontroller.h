@@ -3,15 +3,23 @@
 
 
 #include <QObject>
+#include "subscriber.h"
+#include "../app/fmevent.h"
 
 class FileController;
 class FileMonitor;
-class FMEvent;
 
-class AppController : public QObject
+
+class AppController : public QObject, public Subscriber
 {
     Q_OBJECT
 public:
+
+    enum ActionType {
+        Open,
+        OpenNewWindow
+    };
+
     explicit AppController(QObject *parent = 0);
     ~AppController();
 
@@ -19,7 +27,13 @@ public:
 
 public slots:
     void actionOpen(const FMEvent& event);
+    void actionOpenDisk(const FMEvent& event);
+    void asycOpenDisk(const QString& path);
+
     void actionOpenInNewWindow(const FMEvent& event);
+    void actionOpenDiskInNewWindow(const FMEvent& event);
+    void asycOpenDiskInNewWindow(const QString& event);
+
     void actionOpenWithCustom(const FMEvent& event);
     void actionOpenFileLocation(const FMEvent& event);
     void actionCompress(const FMEvent& event);
@@ -65,6 +79,13 @@ public slots:
     void actionShowHotkeyHelp(const FMEvent& event);
     void actionBack(const FMEvent& event);
     void actionForward(const FMEvent& event);
+
+    // Subscriber interface
+public:
+    void doSubscriberAction(const QString &path);
+
+private:
+    FMEvent m_fmEvent;
 };
 
 #endif // APPCONTROLLER_H

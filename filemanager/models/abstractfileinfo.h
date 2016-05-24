@@ -20,7 +20,9 @@ class AbstractFileInfo : public QSharedData
 public:
     enum MenuAction {
         Open,
+        OpenDisk,
         OpenInNewWindow,
+        OpenDiskInNewWindow,
         OpenWith,
         OpenWithCustom,
         OpenFileLocation,

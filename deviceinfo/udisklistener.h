@@ -22,19 +22,25 @@
 #define EventTypeMountRemoved 4
 
 class UDiskDeviceInfo;
+class Subscriber;
+
 
 class UDiskListener : public AbstractFileController
 {
     Q_OBJECT
 public:
     UDiskListener();
-    UDiskDeviceInfo * getDevice(const QDBusObjectPath &path) const;
+    UDiskDeviceInfo * getDevice(const QString &path);
     void addDevice(UDiskDeviceInfo * device);
     void removeDevice(UDiskDeviceInfo * device);
     void update();
     QString lastPart(const QString &path);
     bool isSystemDisk(const QString &path) const;
     UDiskDeviceInfo * hasDeviceInfo(const QString &id);
+
+    void addSubscriber(Subscriber* sub);
+    void removeSubscriber(Subscriber* sub);
+
 signals:
     void volumeAdded(UDiskDeviceInfo * device);
     void volumeRemoved(UDiskDeviceInfo * device);
@@ -42,6 +48,7 @@ signals:
     void mountRemoved(UDiskDeviceInfo * device);
 public slots:
     void mount(const QString &path);
+    DiskInfo queryDisk(const QString& path);
     void unmount(const QString &path);
     void eject(const QString &path);
     void asyncRequestDiskInfos();
@@ -52,6 +59,8 @@ private:
     QList<UDiskDeviceInfo *> m_list;
     QMap<QString, UDiskDeviceInfo *> m_map;
     QList<QString> fstab;
+
+    QList<Subscriber*> m_subscribers;
 
     DiskMountInterface* m_diskMountInterface;
 public:
