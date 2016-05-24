@@ -282,7 +282,7 @@ void DSearchBar::clearText()
     FMEvent event;
 
     event = WindowManager::getWindowId(window());
-    event = FMEvent::SearchLine;
+    event = FMEvent::SearchBar;
     event = m_currentPath;
 
 

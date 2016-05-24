@@ -90,6 +90,7 @@ public:
     void setSelectedItemCount(int count);
 public slots:
     void cd(const FMEvent &event);
+    void cdUp(const FMEvent &event);
     void edit(const FMEvent &event);
     bool edit(const QModelIndex & index, EditTrigger trigger, QEvent * event) Q_DECL_OVERRIDE;
     void select(const FMEvent &event);
@@ -180,6 +181,8 @@ private:
 
     QTimer* m_keyboardSearchTimer;
     QString m_keyboardSearchKeys;
+
+
 };
 
 #endif // DFILEVIEW_H

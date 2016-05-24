@@ -17,7 +17,7 @@
 #include "../app/filesignalmanager.h"
 #include "fileservices.h"
 #include "filejob.h"
-
+#include "../views/windowmanager.h"
 #include <QProcess>
 
 
@@ -37,7 +37,6 @@ void AppController::initConnect()
 void AppController::actionOpen(const FMEvent &event)
 {
     const DUrlList& urls = event.fileUrlList();
-
     if (urls.size() == 1){
         fileService->openUrl(event);
     }else{
@@ -55,7 +54,6 @@ void AppController::actionOpen(const FMEvent &event)
             }
         }
     }
-
 }
 
 void AppController::actionOpenInNewWindow(const FMEvent &event)
@@ -301,6 +299,37 @@ void AppController::actionSetAsWallpaper(const FMEvent &event)
 {
     const DUrl& fileUrl = event.fileUrl();
     FileUtils::setBackground(fileUrl.toLocalFile());
+}
+
+void AppController::actionctrlL(const FMEvent &event)
+{
+    emit fileSignalManager->requestSearchCtrlL(event);
+}
+
+void AppController::actionctrlF(const FMEvent &event)
+{
+    emit fileSignalManager->requestSearchCtrlF(event);
+}
+
+void AppController::actionExitCurrentWindow(const FMEvent &event)
+{
+    int windowId = event.windowId();
+    WindowManager::getWindowById(windowId)->close();
+}
+
+void AppController::actionShowHotkeyHelp(const FMEvent &event)
+{
+
+}
+
+void AppController::actionBack(const FMEvent &event)
+{
+    emit fileSignalManager->requestBack(event);
+}
+
+void AppController::actionForward(const FMEvent &event)
+{
+    emit fileSignalManager->requestForward(event);
 }
 
 AppController::~AppController()

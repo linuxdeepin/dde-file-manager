@@ -27,7 +27,6 @@ public:
     QAction * removeClearAction();
     bool isActive();
     void setActive(bool active);
-    void keyPressEvent(QKeyEvent *e);
     QAction * getClearAction();
     bool hasScheme();
     bool isSearchFile();
@@ -66,6 +65,7 @@ public slots:
     void currentUrlChanged(const FMEvent &event);
     void clearText();
 protected:
+    void keyPressEvent(QKeyEvent *e);
     void focusInEvent(QFocusEvent *e);
     void focusOutEvent(QFocusEvent *e);
     bool event(QEvent *e);

@@ -56,6 +56,15 @@ public slots:
     void actionAbout(const FMEvent& event);
     void actionExit(const FMEvent& event);
     void actionSetAsWallpaper(const FMEvent& event);
+
+
+    void actionctrlL(const FMEvent& event);
+    void actionctrlF(const FMEvent& event);
+
+    void actionExitCurrentWindow(const FMEvent& event);
+    void actionShowHotkeyHelp(const FMEvent& event);
+    void actionBack(const FMEvent& event);
+    void actionForward(const FMEvent& event);
 };
 
 #endif // APPCONTROLLER_H

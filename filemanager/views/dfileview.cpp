@@ -88,8 +88,7 @@ void DFileView::initConnects()
             this, &DFileView::openIndex);
     connect(fileSignalManager, &FileSignalManager::requestChangeCurrentUrl,
             this, &DFileView::cd);
-    connect(fileSignalManager, &FileSignalManager::refreshFolder,
-            model(), &DFileSystemModel::refresh);
+
     connect(fileSignalManager, &FileSignalManager::requestRename,
             this, static_cast<void (DFileView::*)(const FMEvent&)>(&DFileView::edit));
     connect(fileSignalManager, &FileSignalManager::requestViewSelectAll,
@@ -306,6 +305,13 @@ void DFileView::cd(const FMEvent &event)
     }
 }
 
+void DFileView::cdUp(const FMEvent &event)
+{
+    const DUrl& parentUrl = DUrl::parentUrl(currentUrl());
+    const_cast<FMEvent&>(event) = parentUrl;
+    cd(event);
+}
+
 void DFileView::edit(const FMEvent &event)
 {
     if(event.windowId() != windowId())
@@ -441,19 +447,66 @@ void DFileView::wheelEvent(QWheelEvent *event)
 void DFileView::keyPressEvent(QKeyEvent *event)
 {
     qDebug() << event->modifiers() << event->key();
-    if (event->modifiers() == Qt::NoModifier){
+    const DUrlList& urls = selectedUrls();
+    FMEvent fmevent;
+    fmevent = urls;
+    if (urls.size() == 1){
+        fmevent = urls.at(0);
+    }
+    fmevent = FMEvent::FileView;
+    fmevent = windowId();
 
+    if (event->modifiers() == Qt::NoModifier){
+        if (event->key() == Qt::Key_Return){
+            appController->actionOpen(fmevent);
+        }else if (event->key() == Qt::Key_Backspace){
+            cdUp(fmevent);
+        }else if (event->key() == Qt::Key_F1){
+            appController->actionHelp(fmevent);
+        }
     }else if (event->modifiers() == Qt::ControlModifier){
         m_ctrlIsPressed = true;
+        if (event->key() == Qt::Key_Down){
+            appController->actionOpen(fmevent);
+        }else if (event->key() == Qt::Key_Up){
+            cdUp(fmevent);
+        }else if (event->key() == Qt::Key_F){
+            fmevent = currentUrl();
+            appController->actionctrlF(fmevent);
+        }else if (event->key() == Qt::Key_L){
+            fmevent = currentUrl();
+            appController->actionctrlL(fmevent);
+        }else if (event->key() == Qt::Key_N){
+            appController->actionNewWindow(fmevent);
+        }else if (event->key() == Qt::Key_H){
+            model()->toggleHiddenFiles(currentUrl());
+        }else if (event->key() == Qt::Key_I){
+            appController->actionProperty(fmevent);
+        }
     }else if (event->modifiers() == Qt::ShiftModifier){
         if (event->key() == Qt::Key_Delete){
             if (selectedUrls().size() > 0){
-                FMEvent fmevent;
-                fmevent = selectedUrls();
-                fmevent = FMEvent::FileView;
-                fmevent = windowId();
                 fileService->deleteFiles(selectedUrls(), fmevent);
             }
+        }
+    }else if (event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier)){
+        qDebug() << event->modifiers();
+        if (event->key() == Qt::Key_N){
+            fmevent = currentUrl();
+            clearSelection();
+            appController->actionNewFolder(fmevent);
+        }if (event->key() == Qt::Key_Question){
+            fmevent = currentUrl();
+            appController->actionShowHotkeyHelp(fmevent);
+        }
+    }else if (event->modifiers() == Qt::AltModifier){
+        fmevent = currentUrl();
+        if (event->key() == Qt::Key_F4){
+            appController->actionExitCurrentWindow(fmevent);
+        }else if (event->key() == Qt::Key_Left){
+            appController->actionBack(fmevent);
+        }else if (event->key() == Qt::Key_Right){
+            appController->actionForward(fmevent);
         }
     }
     DListView::keyPressEvent(event);

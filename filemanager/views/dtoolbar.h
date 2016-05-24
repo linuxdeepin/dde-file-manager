@@ -51,6 +51,11 @@ public slots:
     void backButtonClicked();
     void forwardButtonClicked();
     void checkViewModeButton(DFileView::ViewMode mode);
+
+    void handleHotkeyBack(const FMEvent &event);
+    void handleHotkeyForward(const FMEvent &event);
+    void handleHotkeyCtrlF(const FMEvent &event);
+    void handleHotkeyCtrlL(const FMEvent &event);
 private:
     void checkNavHistory(DUrl url);
     bool m_searchState = false;

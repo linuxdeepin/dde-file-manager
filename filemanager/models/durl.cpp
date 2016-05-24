@@ -320,6 +320,25 @@ DUrl::DUrlList DUrl::childrenList(const DUrl &url)
     return children;
 }
 
+DUrl DUrl::parentUrl(const DUrl &url)
+{
+    DUrl _url;
+    _url.setScheme(url.scheme());
+    QStringList paths = url.path().split("/");
+    paths.removeAt(0);
+    paths.removeLast();
+    QString _path;
+    foreach (QString p, paths) {
+        _path += "/" + p;
+    }
+    if (_path.isEmpty()){
+        _path += "/";
+    }
+    _url.setPath(_path);
+
+    return _url;
+}
+
 bool DUrl::operator ==(const DUrl &url) const
 {
     if(!schemeList.contains(url.scheme()))
