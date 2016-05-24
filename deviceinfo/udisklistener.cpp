@@ -3,6 +3,7 @@
 #include "../../filemanager/app/global.h"
 #include "../../filemanager/app/filesignalmanager.h"
 #include "fstab.h"
+#include "../controllers/subscriber.h"
 
 UDiskListener::UDiskListener()
 {
@@ -16,10 +17,10 @@ UDiskListener::UDiskListener()
             fileSignalManager, &FileSignalManager::showDiskErrorDialog);
 }
 
-UDiskDeviceInfo *UDiskListener::getDevice(const QDBusObjectPath &path) const
+UDiskDeviceInfo *UDiskListener::getDevice(const QString &path)
 {
-    if (m_map.contains(path.path()))
-        return m_map[path.path()];
+    if (m_map.contains(path))
+        return m_map[path];
     else
         return NULL;
 }
@@ -60,9 +61,33 @@ UDiskDeviceInfo *UDiskListener::hasDeviceInfo(const QString &id)
     return m_map.value(id);
 }
 
+void UDiskListener::addSubscriber(Subscriber *sub)
+{
+    if (!m_subscribers.contains(sub)){
+        m_subscribers.append(sub);
+    }
+}
+
+void UDiskListener::removeSubscriber(Subscriber *sub)
+{
+    if (m_subscribers.contains(sub)){
+        m_subscribers.removeOne(sub);
+    }
+}
+
 void UDiskListener::mount(const QString &path)
 {
-    m_diskMountInterface->Mount(path);
+    QDBusPendingReply<> reply = m_diskMountInterface->Mount(path);
+    reply.waitForFinished();
+    if (reply.isValid() && reply.isFinished()){
+        qDebug() << "mount" << path << "successed";
+    }
+}
+
+DiskInfo UDiskListener::queryDisk(const QString &path)
+{
+    DiskInfo info = m_diskMountInterface->QueryDisk(path);
+    return info;
 }
 
 void UDiskListener::unmount(const QString &path)
@@ -90,6 +115,7 @@ void UDiskListener::asyncRequestDiskInfosFinihsed(QDBusPendingCallWatcher *call)
         DiskInfoList diskinfos = qdbus_cast<DiskInfoList>(reply.argumentAt(0));
         foreach(DiskInfo info, diskinfos)
         {
+            qDebug() << info;
             UDiskDeviceInfo *device;
             if(m_map.value(info.ID))
             {
@@ -142,6 +168,11 @@ void UDiskListener::changed(int in0, const QString &in1)
             device->setDiskInfo(info);
         }
         emit mountAdded(device);
+
+        foreach (Subscriber* sub, m_subscribers) {
+            sub->doSubscriberAction(info.MountPoint);
+        }
+
         break;
     }
     case EventTypeMountRemoved:

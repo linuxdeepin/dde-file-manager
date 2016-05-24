@@ -532,6 +532,7 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     else if(m_isDisk && m_deviceInfo)
     {
         qDebug() << m_deviceInfo->getType();
+        m_url.setQuery(m_sysPath);
         menu = FileMenuManager::genereteMenuByKeys(
                     m_deviceInfo->menuActionList(AbstractFileInfo::SingleFile),
                     QVector<MenuAction>());
@@ -543,7 +544,7 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 
     QPointer<DBookmarkItem> me = this;
 
-    m_url.setQuery(m_sysPath);
+
     DUrlList urls;
     urls.append(m_url);
 
