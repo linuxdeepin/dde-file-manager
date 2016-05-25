@@ -12,6 +12,7 @@
 #include "../views/windowmanager.h"
 #include "../models/trashfileinfo.h"
 #include <ddialog.h>
+#include <DAboutDialog>
 
 DWIDGET_USE_NAMESPACE
 
@@ -51,6 +52,8 @@ void DialogManager::initConnect()
     connect(fileSignalManager, &FileSignalManager::requestShowPropertyDialog, this, &DialogManager::showPropertyDialog);
     connect(fileSignalManager, &FileSignalManager::showDiskErrorDialog,
             this, &DialogManager::showDiskErrorDialog);
+    connect(fileSignalManager, &FileSignalManager::showAboutDialog,
+            this, &DialogManager::showAboutDialog);
 }
 
 void DialogManager::addJob(FileJob *job)
@@ -191,6 +194,22 @@ void DialogManager::showDiskErrorDialog(const QString & id, const QString & erro
     d.addButtons(buttonTexts);
     d.setDefaultButton(0);
     d.exec();
+}
+
+void DialogManager::showAboutDialog(const FMEvent &event)
+{
+    QWidget* w = WindowManager::getWindowById(event.windowId());
+    DAboutDialog *dialog = new DAboutDialog("",
+                        "",
+                        tr("File Manager"),
+                        tr("1.0"),
+                        tr("File Manager is a file management tool independently "
+                           "developed by Deepin Technology, featured with searching, "
+                           "copying, trash, compression/decompression, file property "
+                           "and other file management functions. "),w);
+    const QPoint global = w->mapToGlobal(w->rect().center());
+    dialog->move(global.x() - dialog->width() / 2, global.y() - dialog->height() / 2);
+    dialog->show();
 }
 
 void DialogManager::handleConflictRepsonseConfirmed(const QMap<QString, QString> &jobDetail, const QMap<QString, QVariant> &response)
