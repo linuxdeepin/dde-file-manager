@@ -125,7 +125,8 @@ QPushButton#backButton{
     background-color:white;
     border: 1px;
     color: black;
-    border-radius: 2px;
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
 }
 
 QPushButton#backButton:hover{
@@ -140,7 +141,8 @@ QPushButton#forwardButton{
     background-color:white;
     border: 1px;
     color: black;
-    border-radius: 2px;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
 }
 
 QPushButton#leftArrow:hover{
@@ -172,7 +174,8 @@ QPushButton#iconViewButton{
     background-color:white;
     border: 1px;
     color: black;
-    border-radius: 2px;
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
     image: url(:/icons/images/icons/icon_view_normal.svg);
     icon-size: 16px 16px;
 }
@@ -193,7 +196,8 @@ QPushButton#listViewButton{
     background-color:white;
     border: 1px;
     color: black;
-    border-radius: 2px;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
     image: url(:/icons/images/icons/list_view_normal.svg);
     icon-size: 16px 16px;
 }
