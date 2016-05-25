@@ -144,6 +144,9 @@ signals:
 
     /*alt + right*/
     void requestForward(const FMEvent &event);
+
+    /* about dialog */
+    void showAboutDialog(const FMEvent &event);
 };
 
 #endif // FILESIGNALMANAGER_H

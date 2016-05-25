@@ -20,7 +20,7 @@
 #include "../views/windowmanager.h"
 #include <QProcess>
 #include <QStorageInfo>
-
+#include <DAboutDialog>
 
 AppController::AppController(QObject *parent) : QObject(parent)
 {
@@ -331,6 +331,7 @@ void AppController::actionHelp(const FMEvent &event)
 void AppController::actionAbout(const FMEvent &event)
 {
     Q_UNUSED(event)
+    emit fileSignalManager->showAboutDialog(event);
 }
 
 void AppController::actionExit(const FMEvent &event)

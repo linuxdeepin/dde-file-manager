@@ -37,6 +37,7 @@ public slots:
     void showOpenWithDialog(const FMEvent &event);
     void showPropertyDialog(const FMEvent &event);
     void showDiskErrorDialog(const QString &id, const QString &errorText);
+    void showAboutDialog(const FMEvent &event);
 private:
     DTaskDialog* m_taskDialog = NULL;
     QMap<QString, FileJob*> m_jobs;

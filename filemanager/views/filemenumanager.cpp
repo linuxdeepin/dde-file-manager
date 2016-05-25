@@ -453,7 +453,9 @@ void FileMenuManager::actionTriggered(DAction *action)
             appController->actionHelp(event);
             break;
         }
-        case MenuAction::About:break;
+        case MenuAction::About:
+            appController->actionAbout(event);
+            break;
         case MenuAction::Exit:
             appController->actionExit(event);
             break;
