@@ -431,6 +431,7 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
                 e = m_url;
             e = FMEvent::LeftSideBar;
             emit m_group->url(e);
+            scene()->views().at(0)->ensureVisible(this, -10, 0);
         }
     }
 }
