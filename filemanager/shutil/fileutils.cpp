@@ -6,6 +6,7 @@
 #include <QProcess>
 #include <QGSettings>
 #include <QFileDialog>
+#include <QCryptographicHash>
 #include <QDebug>
 #include "../views/windowmanager.h"
 #include "standardpath.h"
@@ -509,4 +510,13 @@ void FileUtils::sendToDesktop(const DUrlList &urls)
 void FileUtils::sendToDesktop(const QString &file)
 {
     createSoftLink(file, StandardPath::getDesktopPath());
+}
+
+QString FileUtils::md5(const QString &file)
+{
+    QFile f(file);
+    if (f.open(QFile::ReadOnly)) {
+        return QString(QCryptographicHash::hash(f.readAll(), QCryptographicHash::Md5).toHex());
+    }
+    return QString();
 }

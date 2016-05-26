@@ -121,7 +121,8 @@ HEADERS += \
     filemanager/views/ddragwidget.h \
     filemanager/shutil/mimetypedisplaymanager.h \
     filemanager/views/dstatusbar.h \
-    filemanager/controllers/subscriber.h
+    filemanager/controllers/subscriber.h \
+    filemanager/shutil/thumbnailmanager.h
 
 
 SOURCES += \
@@ -204,7 +205,8 @@ SOURCES += \
     filemanager/views/ddragwidget.cpp \
     filemanager/shutil/mimetypedisplaymanager.cpp \
     filemanager/views/dstatusbar.cpp \
-    filemanager/controllers/subscriber.cpp
+    filemanager/controllers/subscriber.cpp \
+    filemanager/shutil/thumbnailmanager.cpp
 
 
 
