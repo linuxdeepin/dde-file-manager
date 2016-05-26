@@ -19,6 +19,7 @@
 #include <QDebug>
 #include <QThreadPool>
 #include <QTranslator>
+#include <QImageReader>
 
 #include "../controllers/pathmanager.h"
 

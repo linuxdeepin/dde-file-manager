@@ -38,6 +38,7 @@ public slots:
 
     QIcon getFileIcon(const QString& file);
     QIcon getDesktopIcon(const QString& iconName, int size);
+    QIcon getThumbnailIcon(const QString& file);
 
     void setDesktopIconPaths(const QMap<QString,QString>& iconPaths);
 
@@ -50,6 +51,7 @@ private:
     mutable QMap<QString,QIcon> m_desktopIcons;
     mutable QMap<QString,QString> m_desktopIconPaths;
     mutable QCache<QString,QIcon> m_icons;
+    mutable QMap<QString,QIcon> m_thumbnailIcons;
 
     QList<QSize> m_iconSizes;
     QGSettings* m_gsettings;

@@ -13,6 +13,7 @@
 #include <QSettings>
 #include <QDir>
 #include <QDebug>
+#include <QImageReader>
 
 #include "fileutils.h"
 #include "desktopfile.h"
@@ -226,6 +227,24 @@ QIcon IconProvider::getDesktopIcon(const QString &iconName, int size)
     }
 }
 
+QIcon IconProvider::getThumbnailIcon(const QString &file)
+{
+    QString thumbailPath = thumbnailManager->thumbnail(file);
+    if (!thumbailPath.isEmpty()){
+        return QIcon(thumbailPath);
+    }else{
+        QFileInfo info(file);
+        QIcon icon;
+        if (info.size() > 1024 * 256){
+            thumbnailManager->addThumbnailTask(file);
+        }
+        else
+            icon = QIcon(file);
+        return icon;
+    }
+}
+
+
 void IconProvider::setDesktopIconPaths(const QMap<QString, QString> &iconPaths)
 {
     m_desktopIconPaths = iconPaths;
@@ -245,6 +264,11 @@ QIcon IconProvider::findIcon(const QString &file)
 
     if (mimeType == "application/x-desktop")
         return IconProvider::getDesktopIcon(DesktopFile(file).getIcon(), 48);
+    else if (QImageReader::supportedMimeTypes().contains(mimeType.toLocal8Bit())){
+        theIcon = getThumbnailIcon(absoluteFilePath);
+        if (!theIcon.isNull())
+            return getThumbnailIcon(absoluteFilePath);
+    }
 
     if (m_mimeIcons.contains(mimeType)) {
         return m_mimeIcons.value(mimeType);

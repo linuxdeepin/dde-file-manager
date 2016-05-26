@@ -18,7 +18,7 @@
 #include "../shutil/mimetypedisplaymanager.h"
 #include "../shutil/iconprovider.h"
 #include "../controllers/appcontroller.h"
-
+#include "../shutil/thumbnailmanager.h"
 
 #include <QFontMetrics>
 #include <QTextOption>
@@ -38,6 +38,7 @@
 #define mimeAppsManager Singleton<MimesAppsManager>::instance()
 #define systemPathManager Singleton<PathManager>::instance()
 #define mimeTypeDisplayManager Singleton<MimeTypeDisplayManager>::instance()
+#define thumbnailManager Singleton<ThumbnailManager>::instance()
 
 #define defaut_icon ":/images/images/default.png"
 #define defaut_computerIcon ":/images/images/computer.png"
