@@ -17,14 +17,18 @@ public:
     void mouseMoveEvent(QMouseEvent *e);
     void mousePressEvent(QMouseEvent *e);
     void mouseReleaseEvent(QMouseEvent *e);
-
+    void showEvent(QShowEvent *e);
 private:
+
     QPropertyAnimation * m_animate;
     QTimer* m_timer;
     QTimer* m_opacityTimer;
     QGraphicsOpacityEffect * m_opacity;
     int m_count;
     float m_level;
+    QString m_handleStyle;
+    QString m_hoverHandleStyle;
+    QString m_style;
 public slots:
     void hidden();
     void opacity();
