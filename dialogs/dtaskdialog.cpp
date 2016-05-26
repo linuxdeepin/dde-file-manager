@@ -25,9 +25,8 @@ MoveCopyTaskWidget::MoveCopyTaskWidget(const QMap<QString, QString> &jobDetail, 
 }
 
 void MoveCopyTaskWidget::initUI(){
-    qDebug() << this << "==========";
     m_cirleWidget = new DCircleProgress;
-    m_cirleWidget->setStyleSheet("color: white;font-size: 8px;");
+    m_cirleWidget->setObjectName("DCircleProgress");
     m_cirleWidget->setFixedSize(32, 32);
     m_cirleWidget->setBackgroundColor(QColor(20, 20, 20));
     m_cirleWidget->setChunkColor(QColor("#3cadff"));
@@ -57,7 +56,8 @@ void MoveCopyTaskWidget::initUI(){
 
     QFrame* lineLabel = new QFrame;
     lineLabel->setFixedHeight(1);
-    lineLabel->setStyleSheet("background-color: rgba(255, 255, 255, 0.2)");
+    lineLabel->setObjectName("LineLabel");
+
     QVBoxLayout* rightLayout = new QVBoxLayout;
     rightLayout->addLayout(messageBoxLayout);
     if ((m_buttonFrame)){
@@ -305,7 +305,7 @@ void DTaskDialog::initUI(){
 
     QFrame* lineLabel = new QFrame;
     lineLabel->setFixedHeight(1);
-    lineLabel->setStyleSheet("background-color: rgba(255, 255, 255, 0.2);");
+    lineLabel->setObjectName("LineLabel");
 
     m_taskListWidget = new QListWidget;
     m_taskListWidget->setSelectionMode(QListWidget::NoSelection);
@@ -334,11 +334,16 @@ void DTaskDialog::initUI(){
     contentlayout->setContentsMargins(5, 5, 5, 5);
     setLayout(contentlayout);
 
-    setStyleSheet(getQssFromFile(":/qss/dialogs/qss/dialogs.qss"));
+//    setStyleSheet(getQssFromFile(":/qss/dialogs/qss/dark.qss"));
 }
 
 void DTaskDialog::initConnect(){
     connect(m_titleBarCloseButton, SIGNAL(clicked()), this, SLOT(close()));
+}
+
+QListWidget *DTaskDialog::getTaskListWidget()
+{
+    return m_taskListWidget;
 }
 
 void DTaskDialog::setTitle(QString title){
@@ -483,7 +488,6 @@ void DTaskDialog::handleUpdateTaskWidget(const QMap<QString, QString> &jobDetail
 
 
 void DTaskDialog::closeEvent(QCloseEvent *event){
-    qDebug() << "close===========";
     foreach (QListWidgetItem* item, m_jobIdItems.values()) {
         if (item){
             if (m_taskListWidget->itemWidget(item)){

@@ -13,6 +13,7 @@
 #include "../models/trashfileinfo.h"
 #include <ddialog.h>
 #include <DAboutDialog>
+#include <dscrollbar.h>
 
 DWIDGET_USE_NAMESPACE
 
@@ -30,6 +31,8 @@ DialogManager::~DialogManager()
 void DialogManager::initTaskDialog()
 {
     m_taskDialog = new DTaskDialog;
+    m_taskDialog->getTaskListWidget()->setVerticalScrollBar(new DScrollBar);
+    m_taskDialog->setStyleSheet(getQssFromFile(":/qss/dialogs/qss/light.qss"));
 }
 
 void DialogManager::initConnect()
@@ -193,14 +196,16 @@ void DialogManager::showDiskErrorDialog(const QString & id, const QString & erro
     buttonTexts << tr("Ok");
     d.addButtons(buttonTexts);
     d.setDefaultButton(0);
+    d.setIcon(QIcon(":/images/dialogs/images/dialog-warning.svg"));
     d.exec();
 }
 
 void DialogManager::showAboutDialog(const FMEvent &event)
 {
     QWidget* w = WindowManager::getWindowById(event.windowId());
-    DAboutDialog *dialog = new DAboutDialog("",
-                        "",
+    QString icon(":/icons/images/system-file-manager.png");
+    DAboutDialog *dialog = new DAboutDialog(icon,
+                        icon,
                         tr("File Manager"),
                         tr("1.0"),
                         tr("File Manager is a file management tool independently "

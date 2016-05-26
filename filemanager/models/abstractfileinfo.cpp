@@ -140,17 +140,26 @@ bool AbstractFileInfo::exists() const
 
 QString AbstractFileInfo::filePath() const
 {
-    return data->fileInfo.filePath();
+    if (data->filePath.isNull() || data->filePath.isEmpty()){
+        data->filePath = data->fileInfo.filePath();
+    }
+    return data->filePath;
 }
 
 QString AbstractFileInfo::absoluteFilePath() const
 {
-    return data->fileInfo.absoluteFilePath();
+    if (data->absoluteFilePath.isNull() || data->absoluteFilePath.isEmpty()){
+        data->absoluteFilePath = data->fileInfo.absoluteFilePath();
+    }
+    return data->absoluteFilePath;
 }
 
 QString AbstractFileInfo::fileName() const
 {
-    return data->fileInfo.fileName();
+    if (data->fileName.isNull() || data->fileName.isEmpty()){
+        data->fileName = data->fileInfo.fileName();
+    }
+    return data->fileName;
 }
 
 QString AbstractFileInfo::displayName() const
@@ -175,12 +184,18 @@ QString AbstractFileInfo::displayName() const
 
 QString AbstractFileInfo::path() const
 {
-    return data->fileInfo.path();
+    if (data->path.isNull() || data->path.isEmpty()){
+        data->path = data->fileInfo.path();
+    }
+    return data->path;
 }
 
 QString AbstractFileInfo::absolutePath() const
 {
-    return data->fileInfo.absolutePath();
+    if (data->absolutePath.isNull() || data->absolutePath.isEmpty()){
+        data->absolutePath = data->fileInfo.absolutePath();
+    }
+    return data->absolutePath;
 }
 
 bool AbstractFileInfo::isReadable() const
@@ -275,7 +290,10 @@ QFileDevice::Permissions AbstractFileInfo::permissions() const
 qint64 AbstractFileInfo::size() const
 {
     if (isFile()){
-        return data->fileInfo.size();
+        if (data->size == -1){
+            data->size = data->fileInfo.size();
+        }
+        return data->size;
     }else{
         return filesCount();
     }
@@ -288,12 +306,18 @@ qint64 AbstractFileInfo::filesCount() const
 
 QDateTime AbstractFileInfo::created() const
 {
-    return data->fileInfo.created();
+    if (data->created.isNull()){
+        data->created = data->fileInfo.created();
+    }
+    return data->created;
 }
 
 QDateTime AbstractFileInfo::lastModified() const
 {
-    return data->fileInfo.lastModified();
+    if (data->lastModified.isNull()){
+        data->lastModified = data->fileInfo.lastModified();
+    }
+    return data->lastModified;
 }
 
 QDateTime AbstractFileInfo::lastRead() const

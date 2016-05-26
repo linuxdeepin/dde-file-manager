@@ -12,8 +12,20 @@
         <file>dialogs/images/dark_minimise_small_press.png</file>
         <file>dialogs/images/dialog-warning.svg</file>
         <file>dialogs/images/user-trash-full.png</file>
+        <file>dialogs/images/light/checkbox-checked-hover.png</file>
+        <file>dialogs/images/light/checkbox-checked.png</file>
+        <file>dialogs/images/light/checkbox-focus.png</file>
+        <file>dialogs/images/light/checkbox-hover.png</file>
+        <file>dialogs/images/light/checkbox-unchecked.png</file>
+        <file>dialogs/images/light/window_close_hover.png</file>
+        <file>dialogs/images/light/window_close_normal.png</file>
+        <file>dialogs/images/light/window_close_press.png</file>
+        <file>dialogs/images/light/window_min_hover.png</file>
+        <file>dialogs/images/light/window_min_normal.png</file>
+        <file>dialogs/images/light/window_min_press.png</file>
     </qresource>
     <qresource prefix="/qss">
-        <file>dialogs/qss/dialogs.qss</file>
+        <file>dialogs/qss/dark.qss</file>
+        <file>dialogs/qss/light.qss</file>
     </qresource>
 </RCC>
