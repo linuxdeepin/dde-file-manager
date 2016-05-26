@@ -82,6 +82,9 @@ public:
     explicit DTaskDialog(QWidget *parent = 0);
     void initUI();
     void initConnect();
+
+    QListWidget* getTaskListWidget();
+
 signals:
     void abortTask(const QMap<QString, QString>& jobDetail);
     void conflictRepsonseConfirmed(const QMap<QString, QString>& jobDetail, const QMap<QString, QVariant>& response);

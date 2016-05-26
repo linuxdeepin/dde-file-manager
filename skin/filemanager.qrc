@@ -186,5 +186,6 @@
         <file>images/icons/unmount_press.svg</file>
         <file>images/icons/disk_checked_22px.svg</file>
         <file>images/icons/reordering_line.svg</file>
+        <file>images/system-file-manager.png</file>
     </qresource>
 </RCC>

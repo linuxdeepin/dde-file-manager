@@ -7,6 +7,15 @@ QFrame#ButtonFrame{
     border-radius: 2px;
 }
 
+QWidget#DCircleProgress QLabel{
+    color: white;
+    font-size: 8px;
+}
+
+QFrame#LineLabel{
+    background-color: rgba(255, 255, 255, 0.2)
+}
+
 QPushButton#MinimizeButton{
     border-image: url(":/images/dialogs/images/dark_minimise_small_normal.png")
 }

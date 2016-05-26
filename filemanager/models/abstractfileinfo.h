@@ -6,6 +6,7 @@
 #include <QSharedDataPointer>
 #include <QFile>
 #include <QFileInfo>
+#include <QDateTime>
 
 #include "durl.h"
 
@@ -203,6 +204,18 @@ protected:
         DUrl url;
         mutable QString mimeTypeName;
         QFileInfo fileInfo;
+
+        bool exists;
+        QString filePath;
+        QString absoluteFilePath;
+        QString fileName;
+        QString displayName;
+        QString path;
+        QString absolutePath;
+
+        qint64 size = -1;
+        QDateTime created;
+        QDateTime lastModified;
     };
 
     FileInfoData *data;
