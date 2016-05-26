@@ -302,6 +302,7 @@ void FileMenuManager::actionTriggered(DAction *action)
 {
     DFileMenu *menu = qobject_cast<DFileMenu *>(sender());
     FMEvent event = menu->event();
+    event = FMEvent::Menu;
     if (action->data().isValid()){
         bool flag = false;
         int _type = action->data().toInt(&flag);
