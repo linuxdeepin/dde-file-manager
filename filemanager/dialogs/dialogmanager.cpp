@@ -116,6 +116,7 @@ int DialogManager::showDeleteFilesClearTrashDialog(const FMEvent &event)
     QStringList buttonTexts;
     buttonTexts << tr("Cancel") << tr("Delete");
 
+    qDebug() << event;
     DDialog d(WindowManager::getWindowById(event.windowId()));
     if (urlList.first() == DUrl::fromTrashFile("/") && event.source() == FMEvent::Menu && urlList.size() == 1){
         buttonTexts[1]= tr("Empty");
