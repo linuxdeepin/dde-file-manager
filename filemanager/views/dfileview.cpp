@@ -139,7 +139,7 @@ void DFileView::initActions()
 
         event = currentUrl();
         event = windowId();
-
+        event = FMEvent::FileView;
         fileService->pasteFile(event);
     });
 
@@ -150,7 +150,18 @@ void DFileView::initActions()
 
     connect(delete_action, &QAction::triggered,
             this, [this] {
-        fileService->moveToTrash(selectedUrls());
+        if (selectedUrls().count() > 0){
+            if (selectedUrls().at(0).isTrashFile()){
+                FMEvent event;
+                event = currentUrl();
+                event = selectedUrls();
+                event = windowId();
+                event = FMEvent::FileView;
+                fileService->deleteFiles(selectedUrls(), event);
+            }else{
+                fileService->moveToTrash(selectedUrls());
+            }
+        }
     });
 
     addAction(copy_action);
