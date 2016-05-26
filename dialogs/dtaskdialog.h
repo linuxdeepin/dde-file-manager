@@ -10,6 +10,7 @@
 #include <QButtonGroup>
 #include <QCheckBox>
 
+
 DWIDGET_USE_NAMESPACE
 
 class MoveCopyTaskWidget : public QFrame

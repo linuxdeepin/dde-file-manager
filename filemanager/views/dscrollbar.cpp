@@ -58,6 +58,7 @@ void DScrollBar::wheelEvent(QWheelEvent *e)
 
 void DScrollBar::enterEvent(QEvent *e)
 {
+    qDebug() << e;
     m_timer->stop();
     setStyleSheet(m_style + m_hoverHandleStyle);
     QScrollBar::enterEvent(e);
@@ -66,7 +67,7 @@ void DScrollBar::enterEvent(QEvent *e)
 void DScrollBar::leaveEvent(QEvent *e)
 {
     m_timer->start(1000);
-    setStyleSheet(m_style + m_handleStyle);
+    setStyleSheet(m_style + m_hoverHandleStyle);
     QScrollBar::leaveEvent(e);
 }
 
