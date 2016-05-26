@@ -31,7 +31,6 @@ DialogManager::~DialogManager()
 void DialogManager::initTaskDialog()
 {
     m_taskDialog = new DTaskDialog;
-    m_taskDialog->getTaskListWidget()->setVerticalScrollBar(new DScrollBar);
     m_taskDialog->setStyleSheet(getQssFromFile(":/qss/dialogs/qss/light.qss"));
 }
 
