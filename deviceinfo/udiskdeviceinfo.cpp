@@ -145,7 +145,7 @@ DUrl UDiskDeviceInfo::parentUrl() const
     return DUrl::fromComputerFile("/");
 }
 
-QVector<AbstractFileInfo::MenuAction> UDiskDeviceInfo::menuActionList(AbstractFileInfo::MenuType type) const
+QVector<MenuAction> UDiskDeviceInfo::menuActionList(AbstractFileInfo::MenuType type) const
 {
     Q_UNUSED(type);
 

@@ -314,158 +314,29 @@ void FileMenuManager::actionTriggered(DAction *action)
             return;
         }
 
-        switch(type)
-        {
-        case MenuAction::Open: {
-            appController->actionOpen(event);
-            break;
-        }
-        case MenuAction::OpenDisk: {
-            appController->actionOpenDisk(event);
-            break;
-        }
-        case MenuAction::OpenInNewWindow:{
-            appController->actionOpenInNewWindow(event);
-            break;
-        }
-        case MenuAction::OpenDiskInNewWindow:{
-            appController->actionOpenDiskInNewWindow(event);
-            break;
-        }
-        case MenuAction::OpenWithCustom:{
-            appController->actionOpenWithCustom(event);
-            break;
-        }
-        case MenuAction::OpenFileLocation:
-            appController->actionOpenFileLocation(event);
-            break;
-        case MenuAction::Compress:
-            appController->actionCompress(event);
-            break;
-        case MenuAction::Decompress:
-            appController->actionDecompress(event);
-            break;
-        case MenuAction::DecompressHere:
-            appController->actionDecompressHere(event);
-            break;
-        case MenuAction::Cut:
-            appController->actionCut(event);
-            break;
-        case MenuAction::Copy:
-            appController->actionCopy(event);
-            break;
-        case MenuAction::Paste: {
-            appController->actionPaste(event);
-            break;
-        }
-        case MenuAction::Rename: {
-            appController->actionRename(event);
-            break;
-        }
-        case MenuAction::Remove: {
-            appController->actionRemove(event);
-            break;
-        }
-        case MenuAction::Delete:
-            appController->actionDelete(event);
-            break;
-        case MenuAction::CompleteDeletion:{
-            appController->actionCompleteDeletion(event);
-            break;
-        }
-        case MenuAction::CreateSoftLink:{
-            appController->actionCreateSoftLink(event);
-            break;
-        }
-        case MenuAction::SendToDesktop:{
-            appController->actionSendToDesktop(event);
-            break;
-        }
-        case MenuAction::AddToBookMark:{
-            appController->actionAddToBookMark(event);
-            break;
-        }
-        case MenuAction::NewFolder:{
-            appController->actionNewFolder(event);
-            break;
-        }
-        case MenuAction::NewFile:
-            appController->actionNewFile(event);
-            break;
-        case MenuAction::SelectAll:
-            appController->actionSelectAll(event);
-            break;
-        case MenuAction::ClearRecent:
-            appController->actionClearRecent(event);
-            break;
-        case MenuAction::ClearTrash:{
-            appController->actionClearTrash(event);
-            break;
-        }
-        case MenuAction::DisplayAs:break;
-        case MenuAction::SortBy:break;
-        case MenuAction::NewDocument:break;
+        QMetaEnum metaEnum = QMetaEnum::fromType<MenuAction>();
+        QString key = metaEnum.valueToKey(type);
+        QString methodKey = QString("action%1").arg(key);
+        QString methodSignature = QString("action%1(FMEvent)").arg(key);
+        std::string methodString = methodKey.toStdString();
+        std::string methodSignatureString = methodSignature.toStdString();
+        const char* methodName = methodString.c_str();
+        const char* methodSignatureName = methodSignatureString.c_str();
 
-        case MenuAction::NewWord:{
-            appController->actionNewWord(event);
-            break;
-        }
-        case MenuAction::NewExcel:{
-            appController->actionNewExcel(event);
-            break;
-        }
-        case MenuAction::NewPowerpoint:{
-            appController->actionNewPowerpoint(event);
-            break;
-        }
-        case MenuAction::NewText:{
-            appController->actionNewText(event);
-            break;
-        }
-        case MenuAction::Mount:
-            appController->actionMount(event);
-            break;
-        case MenuAction::Unmount:
-            appController->actionUnmount(event);
-            break;
-        case MenuAction::Restore:{
-            appController->actionRestore(event);
-            break;
-        }case MenuAction::RestoreAll:{
-            appController->actionRestoreAll(event);
-            break;
-        }
-        case MenuAction::Eject:
-            appController->actionEject(event);
-            break;
-        case MenuAction::OpenInTerminal:{
-            appController->actionOpenInTerminal(event);
-            break;
-        }
-        case MenuAction::Property: {
-            appController->actionProperty(event);
-            break;
-        }
-        case MenuAction::NewWindow: {
-            appController->actionNewWindow(event);
-            break;
-        }
-        case MenuAction::Help:{
-            appController->actionHelp(event);
-            break;
-        }
-        case MenuAction::About:
-            appController->actionAbout(event);
-            break;
-        case MenuAction::Exit:
-            appController->actionExit(event);
-            break;
-        case MenuAction::SetAsWallpaper:
-            appController->actionSetAsWallpaper(event);
-            break;
-        default:
-            qDebug() << "unknown action type";
-            break;
+        const QMetaObject* metaObject = appController->metaObject();
+//        QStringList methods;
+//        for(int i = metaObject->methodOffset(); i < metaObject->methodCount(); ++i){
+//            methods << QString::fromLatin1(metaObject->method(i).methodSignature());
+//        }
+//        qDebug() << methods;
+//        qDebug() << methodKey << methodName;
+        if (metaObject->indexOfSlot(methodSignatureName) != -1){
+            QMetaObject::invokeMethod(appController,
+                                      methodName,
+                                      Qt::DirectConnection,
+                                      Q_ARG(FMEvent, event));
+        }else{
+            qWarning() << "Appcontroller has no method:" << methodSignature;
         }
     }
 }

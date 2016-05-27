@@ -122,7 +122,8 @@ HEADERS += \
     filemanager/shutil/mimetypedisplaymanager.h \
     filemanager/views/dstatusbar.h \
     filemanager/controllers/subscriber.h \
-    filemanager/shutil/thumbnailmanager.h
+    filemanager/shutil/thumbnailmanager.h \
+    filemanager/models/menuactiontype.h
 
 
 SOURCES += \
@@ -206,7 +207,8 @@ SOURCES += \
     filemanager/shutil/mimetypedisplaymanager.cpp \
     filemanager/views/dstatusbar.cpp \
     filemanager/controllers/subscriber.cpp \
-    filemanager/shutil/thumbnailmanager.cpp
+    filemanager/shutil/thumbnailmanager.cpp \
+    filemanager/models/menuactiontype.cpp
 
 
 

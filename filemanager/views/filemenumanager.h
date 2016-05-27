@@ -17,15 +17,12 @@ DWIDGET_USE_NAMESPACE
 class DFileMenu;
 class DUrl;
 
-typedef AbstractFileInfo::MenuAction MenuAction;
-
 class FileMenuManager : public QObject
 {
     Q_OBJECT
 
-    Q_ENUM(MenuAction)
-
 public:
+
     FileMenuManager();
 
     static DFileMenu *createRecentLeftBarMenu(const QVector<MenuAction> &disableList = QVector<MenuAction>());

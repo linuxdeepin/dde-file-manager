@@ -9,72 +9,17 @@
 #include <QDateTime>
 
 #include "durl.h"
-
+#include "menuactiontype.h"
 
 class AbstractFileInfo;
 typedef QExplicitlySharedDataPointer<AbstractFileInfo> AbstractFileInfoPointer;
 typedef std::function<const AbstractFileInfoPointer(int)> getFileInfoFun;
+typedef MenuActionType::MenuAction MenuAction;
 
 class AbstractFileInfo : public QSharedData
 {
 
 public:
-    enum MenuAction {
-        Open,
-        OpenDisk,
-        OpenInNewWindow,
-        OpenDiskInNewWindow,
-        OpenWith,
-        OpenWithCustom,
-        OpenFileLocation,
-        Compress,
-        Decompress,
-        DecompressHere,
-        Cut,
-        Copy,
-        Paste,
-        Rename,
-        Remove,
-        CreateSoftLink,
-        SendToDesktop,
-        AddToBookMark,
-        Delete,
-        Property,
-        NewFolder,
-        NewFile,
-        NewWindow,
-        SelectAll,
-        Separator,
-        ClearRecent,
-        ClearTrash,
-        DisplayAs, /// sub menu
-        SortBy, /// sub menu
-        NewDocument, /// sub menu
-        NewWord, /// sub menu
-        NewExcel, /// sub menu
-        NewPowerpoint, /// sub menu
-        NewText, /// sub menu
-        OpenInTerminal,
-        Restore,
-        RestoreAll,
-        CompleteDeletion,
-        Mount,
-        Unmount,
-        Eject,
-        Name,
-        Size,
-        Type,
-        CreatedDate,
-        LastModifiedDate,
-        Settings,
-        Help,
-        About,
-        Exit,
-        IconView,
-        ListView,
-        ExtendView,
-        SetAsWallpaper
-    };
 
     enum MenuType {
         SingleFile,

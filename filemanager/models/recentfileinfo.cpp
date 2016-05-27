@@ -50,7 +50,7 @@ QIcon RecentFileInfo::fileIcon() const
     return fileIconProvider->getFileIcon(absoluteFilePath());
 }
 
-QVector<AbstractFileInfo::MenuAction> RecentFileInfo::menuActionList(AbstractFileInfo::MenuType type) const
+QVector<MenuAction> RecentFileInfo::menuActionList(AbstractFileInfo::MenuType type) const
 {
     QVector<MenuAction> actionKeys;
 

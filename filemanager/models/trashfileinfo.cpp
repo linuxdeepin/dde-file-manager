@@ -75,7 +75,7 @@ QFileDevice::Permissions TrashFileInfo::permissions() const
     return p;
 }
 
-QVector<AbstractFileInfo::MenuAction> TrashFileInfo::menuActionList(AbstractFileInfo::MenuType type) const
+QVector<MenuAction> TrashFileInfo::menuActionList(AbstractFileInfo::MenuType type) const
 {
     QVector<MenuAction> actionKeys;
 

@@ -359,100 +359,101 @@ DUrl AbstractFileInfo::parentUrl() const
     return url;
 }
 
-QVector<AbstractFileInfo::MenuAction> AbstractFileInfo::menuActionList(AbstractFileInfo::MenuType type) const
+QVector<MenuAction> AbstractFileInfo::menuActionList(AbstractFileInfo::MenuType type) const
 {
+
     QVector<MenuAction> actionKeys;
 
     if(type == SpaceArea) {
         actionKeys.reserve(9);
 
-        actionKeys << NewFolder
-                   << NewDocument
-                   << Separator
-                   << DisplayAs
-                   << SortBy
-                   << OpenInTerminal
-                   << Separator
-                   << Paste
-                   << SelectAll
-                   << Separator
-                   << Property;
+        actionKeys << MenuAction::NewFolder
+                   << MenuAction::NewDocument
+                   << MenuAction::Separator
+                   << MenuAction::DisplayAs
+                   << MenuAction::SortBy
+                   << MenuAction::OpenInTerminal
+                   << MenuAction::Separator
+                   << MenuAction::Paste
+                   << MenuAction::SelectAll
+                   << MenuAction::Separator
+                   << MenuAction::Property;
     } else if (type == SingleFile){
 
         if (isDir() && systemPathManager->isSystemPath(filePath())){
-            actionKeys << Open
-                       << OpenInNewWindow
-                       << Separator
-                       << Copy
-                       << CreateSoftLink
-                       << SendToDesktop
-                       << Separator
-                       << Compress
-                       << Separator
-                       << Property;
+            actionKeys << MenuAction::Open
+                       << MenuAction::OpenInNewWindow
+                       << MenuAction::Separator
+                       << MenuAction::Copy
+                       << MenuAction::CreateSoftLink
+                       << MenuAction::SendToDesktop
+                       << MenuAction::Separator
+                       << MenuAction::Compress
+                       << MenuAction::Separator
+                       << MenuAction::Property;
         }else{
-            actionKeys << Open;
+            actionKeys << MenuAction::Open;
 
             if (isDir()){
-                actionKeys << OpenInNewWindow;
+                actionKeys << MenuAction::OpenInNewWindow;
             }else{
                 if (!isDesktopFile())
-                    actionKeys << OpenWith;
+                    actionKeys << MenuAction::OpenWith;
             }
-            actionKeys << Separator
-                       << Cut
-                       << Copy
-                       << CreateSoftLink
-                       << SendToDesktop;
+            actionKeys << MenuAction::Separator
+                       << MenuAction::Cut
+                       << MenuAction::Copy
+                       << MenuAction::CreateSoftLink
+                       << MenuAction::SendToDesktop;
             if (isDir()){
-                actionKeys << AddToBookMark;
+                actionKeys << MenuAction::AddToBookMark;
             }
 
 
-            actionKeys << Rename;
+            actionKeys << MenuAction::Rename;
             QPixmap tempPixmap;
             DUrl url = data->url;
             if (tempPixmap.load(url.toLocalFile())){
-                actionKeys << SetAsWallpaper;
+                actionKeys << MenuAction::SetAsWallpaper;
             }
 
-            actionKeys << Separator;
+            actionKeys << MenuAction::Separator;
             if (isDir()){
-                actionKeys << Compress;
+                actionKeys << MenuAction::Compress;
             }else if(isFile()){
                 if (FileUtils::isArchive(absoluteFilePath())){
-                    actionKeys << Decompress << DecompressHere;
+                    actionKeys << MenuAction::Decompress << MenuAction::DecompressHere;
                 }else{
-                    actionKeys << Compress;
+                    actionKeys << MenuAction::Compress;
                 }
             }
 
-            actionKeys << Separator
-                       << Delete
-                       << Separator
-                       << Property;
+            actionKeys << MenuAction::Separator
+                       << MenuAction::Delete
+                       << MenuAction::Separator
+                       << MenuAction::Property;
         }
     }else if(type == MultiFiles){
-        actionKeys << Open
-                   << Separator
-                   << Cut
-                   << Copy
-                   << SendToDesktop
-                   << Separator
-                   << Compress
-                   << Separator
-                   << Delete
-                   << Separator
-                   << Property;
+        actionKeys << MenuAction::Open
+                   << MenuAction::Separator
+                   << MenuAction::Cut
+                   << MenuAction::Copy
+                   << MenuAction::SendToDesktop
+                   << MenuAction::Separator
+                   << MenuAction::Compress
+                   << MenuAction::Separator
+                   << MenuAction::Delete
+                   << MenuAction::Separator
+                   << MenuAction::Property;
     }else if(type == MultiFilesSystemPathIncluded){
-        actionKeys << Open
-                   << Separator
-                   << Copy
-                   << SendToDesktop
-                   << Separator
-                   << Compress
-                   << Separator
-                   << Property;
+        actionKeys << MenuAction::Open
+                   << MenuAction::Separator
+                   << MenuAction::Copy
+                   << MenuAction::SendToDesktop
+                   << MenuAction::Separator
+                   << MenuAction::Compress
+                   << MenuAction::Separator
+                   << MenuAction::Property;
     }
 
     return actionKeys;
@@ -568,36 +569,36 @@ void AbstractFileInfo::sortByUserColumn(QList<AbstractFileInfoPointer> &fileList
     Q_UNUSED(order)
 }
 
-QMap<AbstractFileInfo::MenuAction, QVector<AbstractFileInfo::MenuAction> > AbstractFileInfo::subMenuActionList() const
+QMap<MenuAction, QVector<MenuAction> > AbstractFileInfo::subMenuActionList() const
 {
     QMap<MenuAction, QVector<MenuAction> > actions;
 
     QVector<MenuAction> openwithMenuActionKeys;
-    actions.insert(OpenWith, openwithMenuActionKeys);
+    actions.insert(MenuAction::OpenWith, openwithMenuActionKeys);
 
 
     QVector<MenuAction> docmentMenuActionKeys;
-    docmentMenuActionKeys << NewWord
-                          << NewExcel
-                          << NewPowerpoint
-                          << NewText;
-    actions.insert(NewDocument, docmentMenuActionKeys);
+    docmentMenuActionKeys << MenuAction::NewWord
+                          << MenuAction::NewExcel
+                          << MenuAction::NewPowerpoint
+                          << MenuAction::NewText;
+    actions.insert(MenuAction::NewDocument, docmentMenuActionKeys);
 
     QVector<MenuAction> displayAsMenuActionKeys;
-    displayAsMenuActionKeys << IconView
-                          << ListView;
-//                          << ExtendView;
+    displayAsMenuActionKeys << MenuAction::IconView
+                          << MenuAction::ListView;
+//                          << MenuAction::ExtendView;
 
-    actions.insert(DisplayAs, displayAsMenuActionKeys);
+    actions.insert(MenuAction::DisplayAs, displayAsMenuActionKeys);
 
 
     QVector<MenuAction> sortByMenuActionKeys;
-    sortByMenuActionKeys << Name
-                          << Size
-                          << Type
-                          << CreatedDate
-                          << LastModifiedDate;
-    actions.insert(SortBy, sortByMenuActionKeys);
+    sortByMenuActionKeys << MenuAction::Name
+                          << MenuAction::Size
+                          << MenuAction::Type
+                          << MenuAction::CreatedDate
+                          << MenuAction::LastModifiedDate;
+    actions.insert(MenuAction::SortBy, sortByMenuActionKeys);
 
     return actions;
 }
