@@ -1071,8 +1071,8 @@ void DFileView::showNormalMenu(const QModelIndex &index)
                 openWithMenu->addAction(action);
                 m_openWithActionGroup->addAction(action);
             }
-            DAction* action = new DAction(fileMenuManger->getActionString(AbstractFileInfo::OpenWithCustom), 0);
-            action->setData((int)AbstractFileInfo::OpenWithCustom);
+            DAction* action = new DAction(fileMenuManger->getActionString(MenuAction::OpenWithCustom), 0);
+            action->setData((int)MenuAction::OpenWithCustom);
             openWithMenu->addAction(action);
         }
     }else{

@@ -22,7 +22,8 @@
 #include "../shutil/iconprovider.h"
 #include "../app/filesignalmanager.h"
 #include "../controllers/bookmarkmanager.h"
-
+#include "../controllers/appcontroller.h"
+#include "../app/filemanagerapp.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -398,8 +399,20 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     {
         emit clicked();
         //mount if not mounted
-        if(m_isDisk && !m_deviceInfo->getDiskInfo().CanUnmount)
-            deviceListener->mount(m_deviceInfo->getDiskInfo().ID);
+        if(m_isDisk && !m_deviceInfo->getDiskInfo().CanUnmount){
+            m_url.setQuery(m_sysPath);
+            DUrlList urls;
+            urls.append(m_url);
+
+            FMEvent fmEvent;
+            fmEvent = m_url;
+            fmEvent = urls;
+            fmEvent = windowId();
+            fmEvent = FMEvent::LeftSideBar;
+
+            appController->actionOpenDisk(fmEvent);
+//            deviceListener->mount(m_deviceInfo->getDiskInfo().ID);
+        }
         if(m_group)
         {
             m_group->deselectAll();
@@ -430,7 +443,12 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             else
                 e = m_url;
             e = FMEvent::LeftSideBar;
-            emit m_group->url(e);
+
+            if (m_isDisk && !m_deviceInfo->getDiskInfo().CanUnmount){
+
+            }else{
+                emit m_group->url(e);
+            }
             scene()->views().at(0)->ensureVisible(this, -10, 0);
         }
     }

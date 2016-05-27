@@ -8,6 +8,7 @@
 #include <QDebug>
 #include <QDBusArgument>
 #include "dbusinterface/dbustype.h"
+#include "../models/menuactiontype.h"
 
 class UDiskDeviceInfo : public QObject ,public AbstractFileInfo
 {
