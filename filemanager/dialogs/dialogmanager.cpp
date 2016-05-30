@@ -14,6 +14,7 @@
 #include <ddialog.h>
 #include <DAboutDialog>
 #include <dscrollbar.h>
+#include <QDesktopWidget>
 
 DWIDGET_USE_NAMESPACE
 
@@ -56,6 +57,42 @@ void DialogManager::initConnect()
             this, &DialogManager::showDiskErrorDialog);
     connect(fileSignalManager, &FileSignalManager::showAboutDialog,
             this, &DialogManager::showAboutDialog);
+}
+
+QPoint DialogManager::getPerportyPos(int dialogWidth, int dialogHeight, int count, int index)
+{
+    int desktopWidth = qApp->desktop()->geometry().width();
+    int desktopHeight = qApp->desktop()->geometry().height();
+    int SpaceWidth = 20;
+    int SpaceHeight = 100;
+    int row, x , y;
+
+
+    if (count % 4 == 0){
+        row = count / 4;
+
+    }else{
+        row = count / 4 + 1;
+
+    }
+
+    int dialogsWidth;
+    if (count / 4 > 0){
+        dialogsWidth = dialogWidth * 4  + SpaceWidth * 3;
+    }else{
+        dialogsWidth = dialogWidth * (count % 4)  + SpaceWidth * (count % 4 - 1);
+    }
+
+    int dialogsHeight = dialogHeight + SpaceHeight * (row - 1);
+
+    x =  (desktopWidth - dialogsWidth) / 2 + (dialogWidth + SpaceWidth) * (index % 4);
+
+    y = (desktopHeight - dialogsHeight) / 2 + (index / 4) * SpaceHeight;
+
+    qDebug() << desktopHeight <<  dialogsHeight << dialogHeight << y;
+
+    return QPoint(x, y);
+
 }
 
 void DialogManager::addJob(FileJob *job)
@@ -172,7 +209,10 @@ void DialogManager::showPropertyDialog(const FMEvent &event)
 {
     QWidget* w = WindowManager::getWindowById(event.windowId());
     if (w){
-        foreach (const DUrl& url, event.fileUrlList()) {
+        const DUrlList& urlList  = event.fileUrlList();
+        int count = urlList.count();
+        foreach (const DUrl& url, urlList) {
+            int index = urlList.indexOf(url);
             PropertyDialog *dialog = new PropertyDialog(url);
 
             dialog->setAttribute(Qt::WA_DeleteOnClose);
@@ -182,7 +222,10 @@ void DialogManager::showPropertyDialog(const FMEvent &event)
                                    &~ Qt::WindowSystemMenuHint);
             dialog->setTitle("");
             dialog->setFixedSize(QSize(320, 480));
+            QPoint pos = getPerportyPos(dialog->size().width(), dialog->size().height(), count, index);
+
             dialog->show();
+            dialog->move(pos);
             QTimer::singleShot(100, dialog, &PropertyDialog::raise);
         }
     }
