@@ -140,10 +140,23 @@ void UDiskListener::changed(int in0, const QString &in1)
     qDebug() << in0 << in1;
     switch(in0)
     {
-    case EventTypeVolumeAdded:
+    case EventTypeVolumeAdded:{
         //emit volumeAdded(in1);
         qDebug() << "volume added";
+        UDiskDeviceInfo *device = hasDeviceInfo(in1);
+        DiskInfo info = m_diskMountInterface->QueryDisk(in1);
+        if(device == NULL)
+        {
+            device = new UDiskDeviceInfo(info);
+            addDevice(device);
+        }
+        else
+        {
+            device->setDiskInfo(info);
+        }
+        emit mountAdded(device);
         break;
+    }
     case EventTypeVolumeRemoved:
     {
         UDiskDeviceInfo * device = hasDeviceInfo(in1);
