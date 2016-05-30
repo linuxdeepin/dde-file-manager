@@ -19,6 +19,7 @@ public:
     ~DialogManager();
     void initTaskDialog();
     void initConnect();
+    QPoint getPerportyPos(int dialogWidth, int dialogHeight, int count, int index);
 signals:
 
 public slots:
