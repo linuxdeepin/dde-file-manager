@@ -598,10 +598,15 @@ void DFileView::handleCommitData(QWidget *editor)
         if (fileInfo->fileName() == lineEdit->text()){
             return;
         }
-        fileService->renameFile(fileInfo->fileUrl(),
-                                DUrl(fileInfo->scheme() + "://" + fileInfo->absolutePath()
-                                     + "/" + lineEdit->text()), event);
 
+        DUrl old_url = fileInfo->fileUrl();
+        DUrl new_url = DUrl(fileInfo->scheme() + "://" + fileInfo->absolutePath()
+                            + "/" + lineEdit->text());
+
+        /// later rename file.
+        TIMER_SINGLESHOT(0, {
+                             fileService->renameFile(old_url, new_url, event);
+                         }, old_url, new_url, event)
         return;
     }
 
