@@ -105,6 +105,7 @@ void DFileView::initConnects()
     connect(fileSignalManager, &FileSignalManager::requestFoucsOnFileView, this, &DFileView::setFoucsOnFileView);
 
     connect(itemDelegate(), &DFileItemDelegate::commitData, this, &DFileView::handleCommitData);
+    connect(model(), &DFileSystemModel::dataChanged, this, &DFileView::handleDataChanged);
 }
 
 void DFileView::initActions()
@@ -287,7 +288,11 @@ void DFileView::setSelectedItemCount(int count)
 {
     FMEvent event;
     event = windowId();
-    emit fileSignalManager->statusBarItemsSelected(event, count);
+    if (count == 0){
+        emit fileSignalManager->statusBarItemsCounted(event, this->count());
+    }else{
+        emit fileSignalManager->statusBarItemsSelected(event, count);
+    }
 }
 
 
@@ -309,6 +314,7 @@ void DFileView::cd(const FMEvent &event)
         FMEvent e = event;
         e = currentUrl();
         emit fileSignalManager->currentUrlChanged(e);
+//        updateStatusBar();
     }
 
     if (FMStateManager::SortStates.contains(fileUrl)){
@@ -625,6 +631,14 @@ void DFileView::resizeEvent(QResizeEvent *event)
     DListView::resizeEvent(event);
 }
 
+void DFileView::paintEvent(QPaintEvent *event)
+{
+    DListView::paintEvent(event);
+    if (selectedIndexes().count() == 0){
+        updateStatusBar();
+    }
+}
+
 bool DFileView::event(QEvent *event)
 {
     if(event->type() == QEvent::MouseButtonPress) {
@@ -636,12 +650,10 @@ bool DFileView::event(QEvent *event)
         if (e->button() == Qt::LeftButton) {
             if (isEmptyArea) {
                 clearSelection();
-                setSelectedItemCount(0);
             }
         } else if (e->button() == Qt::RightButton) {
             if (isEmptyArea) {
                 clearSelection();
-                setSelectedItemCount(0);
                 showEmptyAreaMenu();
             } else {
                 const QModelIndexList &list = selectedIndexes();
@@ -862,6 +874,24 @@ void DFileView::setFoucsOnFileView(const FMEvent &event)
 {
     if (event.windowId() == windowId())
         setFocus();
+}
+
+void DFileView::clearSelection()
+{
+    QListView::clearSelection();
+}
+
+void DFileView::handleDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
+{
+    DListView::dataChanged(topLeft, bottomRight, roles);
+}
+
+void DFileView::updateStatusBar()
+{
+    FMEvent fmEvent;
+    fmEvent = windowId();
+    if (rootIndex().isValid())
+        emit fileSignalManager->statusBarItemsCounted(fmEvent, count());
 }
 
 void DFileView::updateViewportMargins()

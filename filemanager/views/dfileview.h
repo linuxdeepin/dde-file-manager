@@ -110,6 +110,11 @@ public slots:
     void handleSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
     void setFoucsOnFileView(const FMEvent& event);
 
+    void clearSelection();
+
+    void handleDataChanged(const QModelIndex & topLeft, const QModelIndex & bottomRight, const QVector<int> & roles = QVector<int>());
+    void updateStatusBar();
+
 signals:
     void currentUrlChanged(const DUrl &url);
     void viewModeChanged(ViewMode viewMode);
@@ -132,6 +137,7 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void focusInEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
+    void paintEvent(QPaintEvent* event) Q_DECL_OVERRIDE;
     bool event(QEvent *event) Q_DECL_OVERRIDE;
 
     void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command);
