@@ -17,6 +17,11 @@ private:
     QLabel * m_label;
 public slots:
     void itemSelected(const FMEvent &event, int number);
+    void itemCounted(const FMEvent &event, int number);
+
+private:
+    QString m_counted;
+    QString m_selected;
 };
 
 #endif // DSTATUSBAR_H

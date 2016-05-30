@@ -122,6 +122,7 @@ signals:
     void showDiskErrorDialog(const QString &id, const QString &errorText);
 
     /* status bar items count */
+    void statusBarItemsCounted(const FMEvent &event, int number);
     void statusBarItemsSelected(const FMEvent &event, int number);
 
     /* request of renaming bookmark*/
