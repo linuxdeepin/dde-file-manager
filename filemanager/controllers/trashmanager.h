@@ -29,6 +29,8 @@ public:
     bool restoreTrashFile(const DUrlList &fileUrl, const FMEvent &event) const;
     bool restoreAllTrashFile(const FMEvent &event);
 
+    static bool isEmpty();
+
 private slots:
     void onFileCreated(const QString &filePath) const;
     void onFileRemove(const QString &filePath) const;

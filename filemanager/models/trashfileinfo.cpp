@@ -146,6 +146,7 @@ void TrashFileInfo::updateInfo()
 
         originalFilePath = QByteArray::fromPercentEncoding(setting.value("Path").toByteArray()) + filePath.mid(basePath.size() + fileBaseName.size());
 
+
         if (originalFilePath.endsWith("desktop"))
             m_displayName = AbstractFileInfo::displayName();
         else
