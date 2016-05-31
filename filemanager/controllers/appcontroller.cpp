@@ -40,7 +40,6 @@ void AppController::actionOpen(const FMEvent &event)
     const DUrlList& urls = event.fileUrlList();
     if (urls.size() == 1){
         fileService->openUrl(event);
-        qDebug() << event;
     }else{
         foreach (DUrl url, urls) {
             if (url.isRecentFile()){
@@ -49,6 +48,7 @@ void AppController::actionOpen(const FMEvent &event)
             if (url.isLocalFile()){
                 QFileInfo info(url.toLocalFile());
                 if (info.isFile()){
+                    const_cast<FMEvent&>(event) = url;
                     fileService->openUrl(event);
                 }else if(info.isDir()){
                     emit fileSignalManager->requestOpenNewWindowByUrl(url, true);
