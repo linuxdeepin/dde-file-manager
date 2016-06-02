@@ -77,6 +77,29 @@ QString MimeTypeDisplayManager::displayName(const QString &mimeType)
     }
 }
 
+MimeTypeDisplayManager::MimeDisplayNameOrder MimeTypeDisplayManager::displayNameOrder(const QString &mimeType)
+{
+    if (mimeType == "application/x-desktop"){
+        return DesktopApplication;
+    }else if (mimeType == "inode/directory"){
+        return Directory;
+    }else if (mimeType == "application/x-executable" || ExecutableMimeTypes.contains(mimeType)){
+        return Executable;
+    }else if (mimeType.startsWith("video/") || VideoMimeTypes.contains(mimeType)){
+        return Video;
+    }else if (mimeType.startsWith("audio/") || AudioMimeTypes.contains(mimeType)){
+        return Audio;
+    }else if (mimeType.startsWith("image/") || ImageMimeTypes.contains(mimeType)){
+        return Image;
+    }else if (mimeType.startsWith("text/") || TextMimeTypes.contains(mimeType)){
+        return Text;
+    }else if (ArchiveMimeTypes.contains(mimeType)){
+        return Archive;
+    }else{
+        return Unknown;
+    }
+}
+
 QString MimeTypeDisplayManager::defaultIcon(const QString &mimeType)
 {
     if (mimeType == "application/x-desktop"){
