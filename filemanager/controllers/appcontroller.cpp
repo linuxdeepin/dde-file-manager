@@ -158,7 +158,7 @@ void AppController::actionPaste(const FMEvent &event)
 
 void AppController::actionRename(const FMEvent &event)
 {
-    if(event.source() == FMEvent::LeftSideBar)
+    if(event.parentSource() == FMEvent::LeftSideBar)
     {
         emit fileSignalManager->requestBookmarkRename(event);
         return;

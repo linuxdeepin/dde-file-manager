@@ -26,6 +26,7 @@ public:
     private:
         int windowId = -1;
         EventSource source = Unknow;
+        EventSource parentSource = Unknow;
         DUrl fileUrl;
         DUrlList fileUrlList;
 
@@ -48,7 +49,11 @@ public:
     {qSwap(data, other.data); return *this;}
 
     inline FMEvent &operator =(EventSource source)
-    {data->source = source; return *this;}
+    {
+        data->parentSource = data->source;
+        data->source = source;
+        return *this;
+    }
 
     inline FMEvent &operator =(int wId)
     {data->windowId = wId; return *this;}
@@ -64,6 +69,9 @@ public:
 
     inline EventSource source() const
     {return data->source;}
+
+    inline EventSource parentSource() const
+    {return data->parentSource;}
 
     inline const DUrl &fileUrl() const
     {return data->fileUrl;}
