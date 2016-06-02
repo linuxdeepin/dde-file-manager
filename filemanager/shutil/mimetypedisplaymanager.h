@@ -7,7 +7,23 @@
 class MimeTypeDisplayManager : public QObject
 {
     Q_OBJECT
+
 public:
+
+    enum MimeDisplayNameOrder{
+        Unknown,
+        Executable,
+        DesktopApplication,
+        Archive,
+        Audio,
+        Video,
+        Image,
+        Text,
+        Directory
+    };
+
+    Q_ENUM(MimeDisplayNameOrder)
+
     explicit MimeTypeDisplayManager(QObject *parent = 0);
     ~MimeTypeDisplayManager();
 
@@ -15,6 +31,7 @@ public:
     void initConnect();
 
     QString displayName(const QString& mimeType);
+    MimeDisplayNameOrder displayNameOrder(const QString& mimeType);
     QString defaultIcon(const QString& mimeType);
 
 
