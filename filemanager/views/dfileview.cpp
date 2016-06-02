@@ -482,6 +482,26 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             cdUp(fmevent);
         }else if (event->key() == Qt::Key_F1){
             appController->actionHelp(fmevent);
+        }else if (event->key() == Qt::Key_Left){
+            if (selectedIndexes().count() > 0){
+                QModelIndex index = selectedIndexes().last();
+                if (index.row() - 1 >= 0){
+                    QModelIndex cindex = index.sibling(index.row() - 1, index.column());
+                    selectionModel()->setCurrentIndex(cindex, QItemSelectionModel::SelectCurrent);
+                }
+                return;
+            }
+        }else if (event->key() == Qt::Key_Right){
+            if (selectedIndexes().count() > 0){
+                QModelIndex index = selectedIndexes().last();
+                if ((index.row() + 1) < count()){
+                    QModelIndex cindex = index.sibling((index.row() + 1), index.column());
+                    if (cindex.isValid()){
+                        selectionModel()->setCurrentIndex(cindex, QItemSelectionModel::SelectCurrent);
+                    }
+               }
+               return;
+            }
         }
     }else if (event->modifiers() == Qt::ControlModifier){
         m_ctrlIsPressed = true;
