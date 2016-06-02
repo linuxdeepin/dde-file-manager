@@ -365,6 +365,8 @@ void DFileView::select(const FMEvent &event)
     selectionModel()->select(index, QItemSelectionModel::Select);
 
     scrollTo(index);
+
+    appController->actionRename(event);
 }
 
 void DFileView::setViewMode(DFileView::ViewMode mode)
