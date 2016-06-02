@@ -161,7 +161,7 @@ private:
 
     int m_currentIconSizeIndex = 1;
 
-    bool m_ctrlIsPressed = false;
+    static bool CtrlIsPressed;
 
     bool isEmptyArea(const QPoint &pos) const;
 
