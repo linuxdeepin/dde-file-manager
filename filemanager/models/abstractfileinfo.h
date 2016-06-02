@@ -104,6 +104,7 @@ public:
     virtual QString createdDisplayName() const;
     virtual QString sizeDisplayName() const;
     virtual QString mimeTypeDisplayName() const;
+    virtual int mimeTypeDisplayNameOrder() const;
 
     inline DUrl fileUrl() const
     {return data->url;}
