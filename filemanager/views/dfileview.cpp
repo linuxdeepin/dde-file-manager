@@ -31,6 +31,8 @@
 
 DWIDGET_USE_NAMESPACE
 
+bool DFileView::CtrlIsPressed = false;
+
 
 DFileView::DFileView(QWidget *parent) : DListView(parent)
 {
@@ -450,7 +452,7 @@ void DFileView::openWithActionTriggered(QAction *action)
 
 void DFileView::wheelEvent(QWheelEvent *event)
 {
-    if(isIconViewMode() && m_ctrlIsPressed) {
+    if(isIconViewMode() && CtrlIsPressed) {
         if(event->angleDelta().y() > 0) {
             enlargeIcon();
         } else {
@@ -504,7 +506,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             }
         }
     }else if (event->modifiers() == Qt::ControlModifier){
-        m_ctrlIsPressed = true;
+        CtrlIsPressed = true;
         if (event->key() == Qt::Key_Down){
             appController->actionOpen(fmevent);
         }else if (event->key() == Qt::Key_Up){
@@ -557,10 +559,9 @@ void DFileView::keyPressEvent(QKeyEvent *event)
 
 void DFileView::keyReleaseEvent(QKeyEvent *event)
 {
-    if(event->key() == Qt::Key_Control) {
-        m_ctrlIsPressed = false;
+    if (event->key() == Qt::Key_Control){
+        CtrlIsPressed = false;
     }
-
     DListView::keyReleaseEvent(event);
 }
 
@@ -651,7 +652,6 @@ void DFileView::handleCommitData(QWidget *editor)
 void DFileView::focusInEvent(QFocusEvent *event)
 {
     DListView::focusInEvent(event);
-
     itemDelegate()->commitDataAndCloseActiveEditor();
 }
 
