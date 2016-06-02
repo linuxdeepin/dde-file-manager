@@ -134,10 +134,10 @@ bool TrashManager::restoreTrashFile(const DUrlList &fileUrl, const FMEvent &even
 {
     bool ok = true;
 
-    TrashFileInfo info;
-
     for(const DUrl &url : fileUrl) {
+        TrashFileInfo info;
         info.setUrl(url);
+        const_cast<FMEvent &>(event) = url;
         info.restore(event);
     }
 
@@ -161,6 +161,19 @@ bool TrashManager::restoreAllTrashFile(const FMEvent &event)
         restoreTrashFile(urlList, event);
     }
     return true;
+}
+
+bool TrashManager::isEmpty()
+{
+    QDir dir(TRASHFILEPATH);
+    QStringList entryList = dir.entryList(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System);
+    if (dir.exists() && entryList.count() == 0){
+        return true;
+    }
+    if (!dir.exists()){
+        return true;
+    }
+    return false;
 }
 
 void TrashManager::onFileCreated(const QString &filePath) const
