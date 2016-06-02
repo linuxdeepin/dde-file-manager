@@ -14,7 +14,9 @@
 #include "../controllers/filejob.h"
 #include "../controllers/bookmarkmanager.h"
 #include "../controllers/appcontroller.h"
+#include "../controllers/trashmanager.h"
 #include "../app/filemanagerapp.h"
+
 #include <QFileDialog>
 #include <QDesktopServices>
 #include <QApplication>
@@ -75,9 +77,14 @@ DFileMenu *FileMenuManager::createTrashLeftBarMenu(const QVector<MenuAction> &di
 
     actionKeys.reserve(4);
 
-    actionKeys << MenuAction::OpenInNewWindow
-               << MenuAction::ClearTrash
-               << MenuAction::Property;
+    actionKeys << MenuAction::OpenInNewWindow;
+    actionKeys << MenuAction::ClearTrash;
+    actionKeys<< MenuAction::Property;
+
+    if (TrashManager::isEmpty()){
+        const_cast<QVector<MenuAction>&>(disableList) << MenuAction::ClearTrash
+                                                      << MenuAction::Property;
+    }
 
     return genereteMenuByKeys(actionKeys, disableList);
 }
@@ -167,9 +174,16 @@ QVector<MenuAction> FileMenuManager::getDisableActionList(const DUrl &fileUrl)
     const QClipboard *clipboard = qApp->clipboard();
     const QMimeData *mimeData = clipboard->mimeData();
 
-    qDebug() << mimeData->hasUrls() << mimeData->urls();
+    qDebug() << mimeData->hasUrls() << mimeData->urls() << fileUrl;
     if (!mimeData->hasUrls()){
         disableList << MenuAction::Paste;
+    }
+    qDebug() << TrashManager::isEmpty() << fileUrl.isTrashFile() << (fileUrl.path() == "/");
+    if (TrashManager::isEmpty() && fileUrl.isTrashFile() && (fileUrl.path() == "/")){
+        disableList << MenuAction::RestoreAll;
+        disableList << MenuAction::ClearTrash;
+        disableList << MenuAction::Property;
+        disableList << MenuAction::SortBy;
     }
 
     return disableList;
