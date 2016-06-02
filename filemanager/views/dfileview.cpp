@@ -527,6 +527,10 @@ void DFileView::keyPressEvent(QKeyEvent *event)
         }else if (event->key() == Qt::Key_Right){
             appController->actionForward(fmevent);
         }
+    }else if (event->modifiers() == Qt::KeypadModifier){
+        if (event->key() == Qt::Key_Enter){
+            appController->actionOpen(fmevent);
+        }
     }
     DListView::keyPressEvent(event);
 }
