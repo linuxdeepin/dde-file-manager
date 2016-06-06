@@ -73,10 +73,11 @@ QSize DFileItemDelegate::sizeHint(const QStyleOptionViewItem &, const QModelInde
 
 QWidget *DFileItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &, const QModelIndex &index) const
 {
-   if(this->parent()->isIconViewMode()) {
+    editing_index = index;
+
+    if (this->parent()->isIconViewMode()) {
        FileIconItem *item = new FileIconItem(parent);
 
-       editing_index = index;
 
        connect(item, &FileIconItem::destroyed, this, [this] {
            editing_index = QModelIndex();
@@ -85,8 +86,6 @@ QWidget *DFileItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
        return item;
    } else {
        QLineEdit *edit = new QLineEdit(parent);
-
-       editing_index = index;
 
        connect(edit, &QLineEdit::destroyed, this, [this] {
            editing_index = QModelIndex();
