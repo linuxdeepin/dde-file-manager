@@ -541,10 +541,10 @@ int AbstractFileInfo::getIndexByFileInfo(getFileInfoFun fun, const AbstractFileI
         return -1;
     }
 
-    int index = 0;
+    int index = -1;
 
     forever {
-        const AbstractFileInfoPointer &tmp_info = fun(index++);
+        const AbstractFileInfoPointer &tmp_info = fun(++index);
 
         if(!tmp_info)
             break;
