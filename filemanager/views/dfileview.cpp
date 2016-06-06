@@ -478,8 +478,10 @@ void DFileView::keyPressEvent(QKeyEvent *event)
     fmevent = windowId();
 
     if (event->modifiers() == Qt::NoModifier){
-        if (event->key() == Qt::Key_Return){
-            appController->actionOpen(fmevent);
+        if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter){
+            if (!itemDelegate()->editingIndex().isValid()) {
+                appController->actionOpen(fmevent);
+            }
         }else if (event->key() == Qt::Key_Backspace){
             cdUp(fmevent);
         }else if (event->key() == Qt::Key_F1){
