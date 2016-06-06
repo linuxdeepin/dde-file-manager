@@ -54,7 +54,7 @@ DFileSystemModel::DFileSystemModel(DFileView *parent)
             this, &DFileSystemModel::onFileUpdated);
     connect(fileService, &FileServices::updateChildren,
             this, &DFileSystemModel::updateChildren,
-            Qt::QueuedConnection);
+            Qt::DirectConnection);
 }
 
 DFileSystemModel::~DFileSystemModel()
