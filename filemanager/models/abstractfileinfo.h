@@ -7,6 +7,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QDateTime>
+#include <QMap>
 
 #include "durl.h"
 #include "menuactiontype.h"
@@ -165,6 +166,25 @@ protected:
     };
 
     FileInfoData *data;
+
+private:
+    struct FileMetaData
+    {
+        bool isReadable;
+        bool isWritable;
+        bool isExecutable;
+
+        QFile::Permissions permissions;
+    };
+
+    inline const FileMetaData &metaData() const
+    {
+        return metaDataCacheMap[data->url];
+    }
+
+    void updateFileMetaData();
+
+    static QMap<DUrl, FileMetaData> metaDataCacheMap;
 };
 
 QT_BEGIN_NAMESPACE

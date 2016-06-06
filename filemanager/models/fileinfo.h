@@ -18,9 +18,6 @@ public:
     FileInfo(const DUrl& fileUrl);
     FileInfo(const QFileInfo &fileInfo);
 
-    virtual void setFile(const DUrl &fileUrl);
-    void setUrl(const DUrl &url) Q_DECL_OVERRIDE;
-
     static bool exists(const DUrl &fileUrl);
     static QMimeType mimeType(const QString &filePath);
 
@@ -32,6 +29,8 @@ public:
 
 private:
     using AbstractFileInfo::setUrl;
+
+    static QMap<DUrl, bool> canRenameCacheMap;
 };
 
 Q_DECLARE_METATYPE(FileInfo)

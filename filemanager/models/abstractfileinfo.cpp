@@ -102,6 +102,8 @@ bool sortFileListByCreated(const AbstractFileInfoPointer &info1, const AbstractF
 }
 } /// end namespace FileSortFunction
 
+QMap<DUrl, AbstractFileInfo::FileMetaData> AbstractFileInfo::metaDataCacheMap;
+
 AbstractFileInfo::AbstractFileInfo()
     : data(new FileInfoData)
 {
@@ -113,6 +115,8 @@ AbstractFileInfo::AbstractFileInfo(const DUrl &url)
 {
     data->url = url;
     data->fileInfo.setFile(url.path());
+
+    updateFileMetaData();
 }
 
 AbstractFileInfo::AbstractFileInfo(const QString &url)
@@ -120,6 +124,8 @@ AbstractFileInfo::AbstractFileInfo(const QString &url)
 {
     data->url = DUrl::fromUserInput(url);
     data->fileInfo.setFile(data->url.path());
+
+    updateFileMetaData();
 }
 
 AbstractFileInfo::~AbstractFileInfo()
@@ -131,6 +137,8 @@ void AbstractFileInfo::setUrl(const DUrl &url)
 {
     data->url = url;
     data->fileInfo.setFile(url.path());
+
+    updateFileMetaData();
 }
 
 bool AbstractFileInfo::exists() const
@@ -200,17 +208,17 @@ QString AbstractFileInfo::absolutePath() const
 
 bool AbstractFileInfo::isReadable() const
 {
-    return data->fileInfo.isReadable();
+    return metaData().isReadable;
 }
 
 bool AbstractFileInfo::isWritable() const
 {
-    return data->fileInfo.isWritable();
+    return metaData().isWritable;
 }
 
 bool AbstractFileInfo::isExecutable() const
 {
-    return data->fileInfo.isExecutable();
+    return metaData().isExecutable;
 }
 
 bool AbstractFileInfo::isHidden() const
@@ -284,7 +292,7 @@ uint AbstractFileInfo::groupId() const
 
 QFileDevice::Permissions AbstractFileInfo::permissions() const
 {
-    return data->fileInfo.permissions();
+    return metaData().permissions;
 }
 
 qint64 AbstractFileInfo::size() const
@@ -572,6 +580,21 @@ void AbstractFileInfo::sortByUserColumn(QList<AbstractFileInfoPointer> &fileList
     Q_UNUSED(fileList)
     Q_UNUSED(columnType)
     Q_UNUSED(order)
+}
+
+void AbstractFileInfo::updateFileMetaData()
+{
+    if (metaDataCacheMap.contains(this->data->url))
+        return;
+
+    FileMetaData data;
+
+    data.isExecutable = this->data->fileInfo.isExecutable();
+    data.isReadable = this->data->fileInfo.isReadable();
+    data.isWritable = this->data->fileInfo.isWritable();
+    data.permissions = this->data->fileInfo.permissions();
+
+    metaDataCacheMap[this->data->url] = data;
 }
 
 QMap<MenuAction, QVector<MenuAction> > AbstractFileInfo::subMenuActionList() const

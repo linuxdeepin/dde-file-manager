@@ -36,9 +36,9 @@ DesktopFileInfo::~DesktopFileInfo()
 
 }
 
-void DesktopFileInfo::setFile(const DUrl &fileUrl)
+void DesktopFileInfo::setUrl(const DUrl &fileUrl)
 {
-    FileInfo::setFile(fileUrl);
+    AbstractFileInfo::setUrl(fileUrl);
 
     init(fileUrl);
 }

@@ -17,7 +17,7 @@ public:
 
     ~DesktopFileInfo();
 
-    void setFile(const DUrl &fileUrl) Q_DECL_OVERRIDE;
+    void setUrl(const DUrl &fileUrl) Q_DECL_OVERRIDE;
 
     QString getName() const;
     QString getExec() const;
