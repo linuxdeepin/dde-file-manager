@@ -8,6 +8,8 @@
 #include <QDir>
 #include <QMimeDatabase>
 
+QMap<DUrl, bool> FileInfo::canRenameCacheMap;
+
 FileInfo::FileInfo()
     : AbstractFileInfo()
 {
@@ -32,16 +34,6 @@ FileInfo::FileInfo(const QFileInfo &fileInfo)
 
 }
 
-void FileInfo::setFile(const DUrl &fileUrl)
-{
-    setUrl(fileUrl);
-}
-
-void FileInfo::setUrl(const DUrl &url)
-{
-    setFile(url);
-}
-
 bool FileInfo::exists(const DUrl &fileUrl)
 {
     return QFileInfo::exists(fileUrl.toLocalFile());
@@ -56,8 +48,15 @@ QMimeType FileInfo::mimeType(const QString &filePath)
 
 bool FileInfo::isCanRename() const
 {
-    return QFileInfo(absolutePath()).isWritable()
+    if (canRenameCacheMap.contains(fileUrl()))
+        return canRenameCacheMap[fileUrl()];
+
+    bool canRename = FileInfo(absolutePath()).isWritable()
             && isWritable();
+
+    canRenameCacheMap[fileUrl()] = canRename;
+
+    return canRename;
 }
 
 QString FileInfo::mimeTypeName() const
