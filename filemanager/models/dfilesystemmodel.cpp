@@ -653,7 +653,6 @@ void DFileSystemModel::onFileCreated(const DUrl &fileUrl)
 
         endInsertRows();
     }
-    sort();
 }
 
 void DFileSystemModel::onFileDeleted(const DUrl &fileUrl)
