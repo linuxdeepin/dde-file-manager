@@ -252,7 +252,7 @@ void DLeftSideBar::handleLocationChanged(const FMEvent &e)
     FMEvent event;
 
     event = e.fileUrl();
-    event = FMEvent::FileView;
+    event = FMEvent::LeftSideBar;
     event = WindowManager::getWindowId(window());
 
     emit fileSignalManager->requestChangeCurrentUrl(event);

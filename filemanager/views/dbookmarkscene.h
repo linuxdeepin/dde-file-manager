@@ -63,9 +63,11 @@ public slots:
     void mountAdded(UDiskDeviceInfo * device);
     void mountRemoved(UDiskDeviceInfo * device);
 private:
+    bool isBelowLastItem(const QPointF &point);
     void increaseSize();
     void decreaseSize();
-    void move(DBookmarkItem * from, DBookmarkItem* to);
+    void moveBefore(DBookmarkItem * from, DBookmarkItem* to);
+    void moveAfter(DBookmarkItem * from, DBookmarkItem* to);
     int m_defaultCount = 0;
     DBookmarkRootItem * m_rootItem;
     DBookmarkItemGroup * m_itemGroup;
