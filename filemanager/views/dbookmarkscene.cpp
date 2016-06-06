@@ -241,12 +241,15 @@ void DBookmarkScene::doDragFinished(const QPointF &point, const QPointF &scenePo
     {
         DBookmarkItem * local = itemAt(scenePoint);
         if(local == NULL)
+        {
+            local = m_itemGroup->items()->last();
+            if(isBelowLastItem(scenePoint))
+                moveAfter(item, local);
             return;
-
+        }
         if(local->isDefaultItem())
             return;
-
-        move(item, local);
+        moveBefore(item, local);
     }
     emit dragLeft();
 }
@@ -254,6 +257,8 @@ void DBookmarkScene::doDragFinished(const QPointF &point, const QPointF &scenePo
 void DBookmarkScene::currentUrlChanged(const FMEvent &event)
 {
     if(event.windowId() != windowId())
+        return;
+    if(event.source() == FMEvent::LeftSideBar)
         return;
     m_itemGroup->deselectAll();
     for(int i = 0; i < m_itemGroup->items()->size(); i++)
@@ -411,6 +416,16 @@ void DBookmarkScene::mountRemoved(UDiskDeviceInfo *device)
     }
 }
 
+bool DBookmarkScene::isBelowLastItem(const QPointF &point)
+{
+    DBookmarkItem *item = m_itemGroup->items()->last();
+    qDebug() << item->geometry().bottomLeft().y() << point.y();
+    if(!item->isDefaultItem() && item->geometry().bottomLeft().y() < point.y())
+        return true;
+    else
+        return false;
+}
+
 void DBookmarkScene::increaseSize()
 {
     QRectF rect = sceneRect();
@@ -429,7 +444,7 @@ void DBookmarkScene::decreaseSize()
     }
 }
 
-void DBookmarkScene::move(DBookmarkItem *from, DBookmarkItem *to)
+void DBookmarkScene::moveBefore(DBookmarkItem *from, DBookmarkItem *to)
 {
     int indexFrom = m_itemGroup->items()->indexOf(from);
     int indexTo = m_itemGroup->items()->indexOf(to);
@@ -441,6 +456,24 @@ void DBookmarkScene::move(DBookmarkItem *from, DBookmarkItem *to)
     {
         indexTo -= 1;
     }
+
+    m_defaultLayout->insertItem(indexTo, from);
+    bookmarkManager->moveBookmark(indexFrom - m_defaultCount, indexTo - m_defaultCount);
+    m_itemGroup->items()->move(indexFrom, indexTo);
+
+    FMEvent event;
+    event = FMEvent::LeftSideBar;
+    event = windowId();
+    emit fileSignalManager->requestBookmarkMove(indexFrom, indexTo, event);
+}
+
+void DBookmarkScene::moveAfter(DBookmarkItem *from, DBookmarkItem *to)
+{
+    int indexFrom = m_itemGroup->items()->indexOf(from);
+    int indexTo = m_itemGroup->items()->indexOf(to);
+
+    if(indexFrom == -1 || indexTo == -1)
+        return;
 
     m_defaultLayout->insertItem(indexTo, from);
     bookmarkManager->moveBookmark(indexFrom - m_defaultCount, indexTo - m_defaultCount);
@@ -468,6 +501,8 @@ DBookmarkItem *DBookmarkScene::hasBookmarkItem(const DUrl &url)
 DBookmarkItem *DBookmarkScene::itemAt(const QPointF & point)
 {
     DBookmarkItem * item =  (DBookmarkItem *)QGraphicsScene::itemAt(point, QTransform());
+    if(item->objectName() == "BMRootItem")
+        return NULL;
     if(item)
         return item;
     else

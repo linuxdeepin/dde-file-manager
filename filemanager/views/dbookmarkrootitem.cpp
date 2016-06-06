@@ -22,6 +22,7 @@ DBookmarkRootItem::DBookmarkRootItem(DBookmarkScene *scene)
     setDefaultItem(true);
     setAcceptDrops(true);
     setAcceptHoverEvents(false);
+    setObjectName("BMRootItem");
 }
 
 void DBookmarkRootItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
