@@ -117,7 +117,7 @@ void DWindowFrame::polish() {
         this->shadowEffect->setBlurRadius(this->shadowRadius);
         this->shadowEffect->setColor(this->borderColor);
         this->shadowEffect->setOffset(this->shadowOffsetX, this->shadowOffsetY);
-        this->setGraphicsEffect(this->shadowEffect);
+//        this->setGraphicsEffect(this->shadowEffect);
     }
 #endif
 
