@@ -148,6 +148,9 @@ signals:
 
     /* about dialog */
     void showAboutDialog(const FMEvent &event);
+
+    /*loading indcator show*/
+    void loadingIndicatorShowed(const FMEvent &event, bool loading);
 };
 
 #endif // FILESIGNALMANAGER_H
