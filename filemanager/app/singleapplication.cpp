@@ -5,7 +5,7 @@
 #include "global.h"
 #include "filesignalmanager.h"
 
-
+QString SingleApplication::UserID = "1000";
 
 SingleApplication::SingleApplication(int &argc, char **argv, int): QApplication(argc, argv)
 {
@@ -54,13 +54,18 @@ void SingleApplication::newClientProcess(const QString &key)
 
 QString SingleApplication::userServerName(const QString &key)
 {
+    QString userKey = QString("%1/%2/%3").arg("/var/run/user", userID(), key);
+    return userKey;
+}
+
+QString SingleApplication::userID()
+{
     QProcess userID;
     userID.start("id", QStringList() << "-u");
     userID.waitForFinished();
     QByteArray id = userID.readAll();
-
-    QString userKey = QString("%1/%2/%3").arg("/var/run/user", QString(id).trimmed(), key);
-    return userKey;
+    UserID = QString(id).trimmed();
+    return UserID;
 }
 
 

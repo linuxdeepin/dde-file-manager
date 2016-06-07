@@ -74,6 +74,7 @@ void DFileView::initUI()
     setEditTriggers(QListView::EditKeyPressed);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBar(new DScrollBar);
+//    setSelectionRectVisible(false);
 }
 
 void DFileView::initDelegate()
@@ -697,11 +698,11 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
 
 void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command)
 {
-    DListView::setSelection(rect, command);
-    if (selectedIndexes().count() >=2 && m_elasticBand.isValid()){
-        QItemSelection itemSelection(selectedIndexes().first(), selectedIndexes().last());
-        selectionModel()->select(itemSelection, command);
-    }
+   DListView::setSelection(rect, command);
+   if (selectedIndexes().count() >=2 && m_elasticBand.isValid()){
+       QItemSelection itemSelection(selectedIndexes().first(), selectedIndexes().last());
+       selectionModel()->select(itemSelection, command);
+   }
 }
 
 bool DFileView::isEmptyArea(const QPoint &pos) const

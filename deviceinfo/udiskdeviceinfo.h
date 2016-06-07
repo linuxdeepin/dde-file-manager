@@ -18,6 +18,8 @@ public:
     {
         unknown,
         native,
+        phone,
+        iphone,
         removable,
         network,
     };
@@ -34,7 +36,7 @@ public:
     QString getName();
     QString getType() const;
     QString getPath();
-    QString getMountPoint() const;
+    QString getMountPoint();
     QString getIcon();
     bool canEject();
     bool canUnmount();

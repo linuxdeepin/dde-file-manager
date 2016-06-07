@@ -4,6 +4,7 @@
 #include <dlistview.h>
 
 #include <QFrame>
+#include <QLabel>
 #include <QUrl>
 #include <QActionGroup>
 #include <QContextMenuEvent>
@@ -182,6 +183,8 @@ private:
 
     QTimer* m_keyboardSearchTimer;
     QString m_keyboardSearchKeys;
+
+    QRect m_selectRect;
 };
 
 #endif // DFILEVIEW_H

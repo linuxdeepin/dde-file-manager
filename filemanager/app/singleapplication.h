@@ -15,6 +15,8 @@ public:
 
     static void newClientProcess(const QString& key);
     static QString userServerName(const QString& key);
+    static QString userID();
+    static QString UserID;
 
 signals:
 
@@ -25,6 +27,7 @@ public slots:
 
 private:
     QLocalServer* m_localServer;
+
 };
 
 #endif // SINGLEAPPLICATION_H

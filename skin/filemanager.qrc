@@ -277,5 +277,7 @@
         <file>images/icons/disk_checked_22px.svg</file>
         <file>images/icons/reordering_line.svg</file>
         <file>images/system-file-manager.png</file>
+        <file>images/icons/selectend.png</file>
+        <file>images/icons/selectstart.png</file>
     </qresource>
 </RCC>

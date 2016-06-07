@@ -60,9 +60,10 @@ void AppController::actionOpen(const FMEvent &event)
 
 void AppController::actionOpenDisk(const FMEvent &event)
 {
-    qDebug() << event;
+
     const DUrl& fileUrl = event.fileUrl();
     if (!QStorageInfo(fileUrl.toLocalFile()).isValid()){
+        qDebug() << event;
         m_fmEvent = event;
         setEventKey(Open);
         actionMount(event);

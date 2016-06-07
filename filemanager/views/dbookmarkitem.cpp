@@ -36,20 +36,13 @@ DBookmarkItem::DBookmarkItem()
 DBookmarkItem::DBookmarkItem(UDiskDeviceInfo * deviceInfo)
 {
     init();
-    m_isDisk = true;
-    m_checkable = true;
-    m_url = DUrl::fromLocalFile(deviceInfo->getMountPoint());
-    m_isDefault = true;
-    m_sysPath = deviceInfo->getDiskInfo().ID;
-    m_textContent = deviceInfo->displayName();
-    m_deviceInfo = deviceInfo;
+    setDeviceInfo(deviceInfo);
     boundImageToHover(":/icons/images/icons/disk_hover_16px.svg");
     boundImageToPress(":/icons/images/icons/disk_hover_16px.svg");
     boundImageToRelease(":/icons/images/icons/disk_normal_16px.svg");
     boundBigImageToHover(":/icons/images/icons/disk_hover_22px.svg");
     boundBigImageToPress(":/icons/images/icons/disk_hover_22px.svg");
     boundBigImageToRelease(":/icons/images/icons/disk_normal_22px.svg");
-    m_isMounted = deviceInfo->getDiskInfo().CanUnmount;
 }
 
 DBookmarkItem::DBookmarkItem(BookMark *bookmark)
@@ -398,21 +391,7 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     if(m_group && m_pressed)
     {
         emit clicked();
-        //mount if not mounted
-        if(m_isDisk && !m_deviceInfo->getDiskInfo().CanUnmount){
-            m_url.setQuery(m_sysPath);
-            DUrlList urls;
-            urls.append(m_url);
 
-            FMEvent fmEvent;
-            fmEvent = m_url;
-            fmEvent = urls;
-            fmEvent = windowId();
-            fmEvent = FMEvent::LeftSideBar;
-
-            appController->actionOpenDisk(fmEvent);
-//            deviceListener->mount(m_deviceInfo->getDiskInfo().ID);
-        }
         if(m_group)
         {
             m_group->deselectAll();
@@ -443,9 +422,24 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             else
                 e = m_url;
             e = FMEvent::LeftSideBar;
+            qDebug() << m_isDisk << m_deviceInfo;
 
-            if (m_isDisk && !m_deviceInfo->getDiskInfo().CanUnmount){
-
+            if (m_isDisk){
+                if (m_deviceInfo){
+                    DiskInfo info = m_deviceInfo->getDiskInfo();
+                    qDebug() << info << m_url << m_isMounted;
+                    if (!m_isMounted){
+                        m_url.setQuery(m_sysPath);
+                        e = m_url;
+                        DUrlList urls;
+                        urls.append(m_url);
+                        e = urls;
+                        appController->actionOpenDisk(e);
+                    }else{
+                        qDebug() << e;
+                        emit m_group->url(e);
+                    }
+                }
             }else{
                 emit m_group->url(e);
             }
