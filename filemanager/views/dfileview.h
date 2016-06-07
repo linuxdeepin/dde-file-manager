@@ -86,8 +86,6 @@ public:
 
     int horizontalOffset() const;
 
-    void setSelectedItemCount(int count);
-
 public slots:
     void cd(const FMEvent &event);
     void cdUp(const FMEvent &event);
@@ -107,7 +105,7 @@ public slots:
     void clearHeardView();
 
     void clearKeyBoardSearchKeys();
-    void handleSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+    void handleSelectionChanged();
     void setFoucsOnFileView(const FMEvent& event);
 
     void clearSelection();
@@ -137,7 +135,6 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void focusInEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
-    void paintEvent(QPaintEvent* event) Q_DECL_OVERRIDE;
     bool event(QEvent *event) Q_DECL_OVERRIDE;
     void dragMoveEvent(QDragMoveEvent *event) Q_DECL_OVERRIDE;
     void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command) Q_DECL_OVERRIDE;
@@ -185,8 +182,6 @@ private:
 
     QTimer* m_keyboardSearchTimer;
     QString m_keyboardSearchKeys;
-
-
 };
 
 #endif // DFILEVIEW_H
