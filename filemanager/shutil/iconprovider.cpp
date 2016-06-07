@@ -236,22 +236,22 @@ QIcon IconProvider::findIcon(const QString &absoluteFilePath, const QString &mim
 {
     // If type of file is directory, return icon of directory
     QIcon theIcon;
-
+    QString _mimeType = mimeType;
     if (mimeType == "application/x-desktop")
         return IconProvider::getDesktopIcon(DesktopFile(absoluteFilePath).getIcon(), 48);
     else if (QImageReader::supportedMimeTypes().contains(mimeType.toLocal8Bit())){
         theIcon = thumbnailManager->thumbnailIcon(absoluteFilePath);
-
         if (!theIcon.isNull())
             return theIcon;
+    }else if (systemPathManager->isSystemPath(absoluteFilePath)){
+        _mimeType = systemPathManager->getSystemPathIconNameByPath(absoluteFilePath);
     }
 
-    theIcon = m_mimeIcons.value(mimeType);
+    theIcon = m_mimeIcons.value(_mimeType);
 
     if (!theIcon.isNull())
         return theIcon;
 
-    QString _mimeType = mimeType;
     QString iconName = _mimeType.replace("/", "-");
     QString path = getThemeIconPath(iconName, 256);
 
@@ -261,9 +261,7 @@ QIcon IconProvider::findIcon(const QString &absoluteFilePath, const QString &mim
 
     theIcon = QIcon(path);
 
-//    theIcon = FileUtils::searchMimeIcon(mimeType);
-
-    m_mimeIcons.insert(mimeType, theIcon);
+    m_mimeIcons.insert(_mimeType, theIcon);
 
     return theIcon;
 }
