@@ -82,12 +82,12 @@ public:
 
     int getSortRoles();
 
-
     bool testViewMode(ViewModes modes, ViewMode mode);
 
     int horizontalOffset() const;
 
     void setSelectedItemCount(int count);
+
 public slots:
     void cd(const FMEvent &event);
     void cdUp(const FMEvent &event);
@@ -139,10 +139,8 @@ protected:
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
     void paintEvent(QPaintEvent* event) Q_DECL_OVERRIDE;
     bool event(QEvent *event) Q_DECL_OVERRIDE;
-
-    void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command);
-
-
+    void dragMoveEvent(QDragMoveEvent *event) Q_DECL_OVERRIDE;
+    void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command) Q_DECL_OVERRIDE;
 
 private:
     FileController *m_controller;
