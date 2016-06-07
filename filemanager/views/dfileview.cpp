@@ -106,6 +106,8 @@ void DFileView::initConnects()
     connect(m_keyboardSearchTimer, &QTimer::timeout, this, &DFileView::clearKeyBoardSearchKeys);
 
     connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &DFileView::handleSelectionChanged);
+    connect(model(), &DFileSystemModel::rowsInserted, this, &DFileView::handleSelectionChanged);
+    connect(model(), &DFileSystemModel::rowsRemoved, this, &DFileView::handleSelectionChanged);
     connect(fileSignalManager, &FileSignalManager::requestFoucsOnFileView, this, &DFileView::setFoucsOnFileView);
 
     connect(itemDelegate(), &DFileItemDelegate::commitData, this, &DFileView::handleCommitData);
@@ -287,18 +289,6 @@ int DFileView::horizontalOffset() const
 {
     return m_horizontalOffset;
 }
-
-void DFileView::setSelectedItemCount(int count)
-{
-    FMEvent event;
-    event = windowId();
-    if (count == 0){
-        emit fileSignalManager->statusBarItemsCounted(event, this->count());
-    }else{
-        emit fileSignalManager->statusBarItemsSelected(event, count);
-    }
-}
-
 
 void DFileView::cd(const FMEvent &event)
 {
@@ -666,14 +656,6 @@ void DFileView::resizeEvent(QResizeEvent *event)
     DListView::resizeEvent(event);
 }
 
-void DFileView::paintEvent(QPaintEvent *event)
-{
-    DListView::paintEvent(event);
-    if (selectedIndexes().count() == 0){
-        updateStatusBar();
-    }
-}
-
 bool DFileView::event(QEvent *event)
 {
     if(event->type() == QEvent::MouseButtonPress) {
@@ -905,11 +887,17 @@ void DFileView::clearKeyBoardSearchKeys()
     m_keyboardSearchTimer->stop();
 }
 
-void DFileView::handleSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
+void DFileView::handleSelectionChanged()
 {
-    Q_UNUSED(selected)
-    Q_UNUSED(deselected)
-    setSelectedItemCount(selectedIndexes().count());
+    FMEvent event;
+    event = windowId();
+    int count = selectedIndexCount();
+
+    if (count == 0){
+        emit fileSignalManager->statusBarItemsCounted(event, this->count());
+    }else{
+        emit fileSignalManager->statusBarItemsSelected(event, count);
+    }
 }
 
 void DFileView::setFoucsOnFileView(const FMEvent &event)
