@@ -4,6 +4,10 @@
 #include <QStatusBar>
 #include <QHBoxLayout>
 #include <QLabel>
+#include "dpicturesequenceview.h"
+
+
+DWIDGET_USE_NAMESPACE
 
 class FMEvent;
 
@@ -12,16 +16,25 @@ class DStatusBar : public QFrame
     Q_OBJECT
 public:
     DStatusBar(QWidget * parent = 0);
-private:
-    QHBoxLayout * m_layout;
-    QLabel * m_label;
+
+    void initUI();
+    void initConnect();
+
 public slots:
     void itemSelected(const FMEvent &event, int number);
     void itemCounted(const FMEvent &event, int number);
+    void showLoadingIncator(const FMEvent &event, bool loading);
+
+protected:
+    void resizeEvent(QResizeEvent* event);
 
 private:
     QString m_counted;
     QString m_selected;
+
+    QHBoxLayout * m_layout;
+    QLabel * m_label;
+    DPictureSequenceView* m_loadingIndicator;
 };
 
 #endif // DSTATUSBAR_H

@@ -81,6 +81,7 @@ void DCrumbWidget::addCrumb(const QStringList &list)
 
 void DCrumbWidget::setCrumb(const DUrl &path)
 {
+    qDebug() << path;
     if(path.isSearchFile())
         return;
     m_path = path;
