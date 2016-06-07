@@ -7,6 +7,7 @@
 #include "dfilemenu.h"
 #include "dscrollbar.h"
 #include "windowmanager.h"
+#include "dfilemanagerwindow.h"
 
 #include "../app/global.h"
 #include "../app/fmevent.h"
@@ -18,16 +19,17 @@
 #include "../controllers/fileservices.h"
 #include "../controllers/filejob.h"
 #include "../controllers/fmstatemanager.h"
+
 #include "../models/dfilesystemmodel.h"
-#include "dfilemanagerwindow.h"
+
 #include "../shutil/fileutils.h"
+
 #include <dthememanager.h>
 
 #include <QWheelEvent>
 #include <QLineEdit>
 #include <QTextEdit>
 #include <QTimer>
-
 
 DWIDGET_USE_NAMESPACE
 
@@ -702,6 +704,13 @@ bool DFileView::event(QEvent *event)
     }
 
     return DListView::event(event);
+}
+
+void DFileView::dragMoveEvent(QDragMoveEvent *event)
+{
+    if (dragDropMode() == InternalMove
+        && (event->source() != this || !(event->possibleActions() & Qt::MoveAction)))
+        QAbstractItemView::dragMoveEvent(event);
 }
 
 void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command)
