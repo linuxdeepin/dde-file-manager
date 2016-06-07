@@ -512,11 +512,7 @@ void FileUtils::sendToDesktop(const QString &file)
     createSoftLink(file, StandardPath::getDesktopPath());
 }
 
-QString FileUtils::md5(const QString &file)
+QString FileUtils::md5(const QString &data)
 {
-    QFile f(file);
-    if (f.open(QFile::ReadOnly)) {
-        return QString(QCryptographicHash::hash(f.readAll(), QCryptographicHash::Md5).toHex());
-    }
-    return QString();
+    return QCryptographicHash::hash(data.toLocal8Bit(), QCryptographicHash::Md5).toHex();
 }
