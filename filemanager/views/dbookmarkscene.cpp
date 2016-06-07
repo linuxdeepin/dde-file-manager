@@ -393,24 +393,25 @@ void DBookmarkScene::volumeRemoved(UDiskDeviceInfo *device)
 
 void DBookmarkScene::mountAdded(UDiskDeviceInfo *device)
 {
-    if(m_diskItems.value(device->getDiskInfo().ID))
+    DBookmarkItem * item = m_diskItems.value(device->getDiskInfo().ID);
+    qDebug() << item;
+    if(item)
     {
-        DBookmarkItem * item = m_diskItems.value(device->getDiskInfo().ID);
         item->setDeviceInfo(device);
         item->setMounted(true);
-        return;
+    }else{
+        item = new DBookmarkItem(device);
+        insert(m_defaultCount -1, item);
+        item->setTightMode(m_isTightMode);
+        m_diskItems.insert(device->getDiskInfo().ID, item);
     }
-    DBookmarkItem * item = new DBookmarkItem(device);
-    insert(m_defaultCount -1, item);
-    item->setTightMode(m_isTightMode);
-    m_diskItems.insert(device->getDiskInfo().ID, item);
 }
 
 void DBookmarkScene::mountRemoved(UDiskDeviceInfo *device)
 {
-    if(m_diskItems.value(device->getDiskInfo().ID))
+    DBookmarkItem * item = m_diskItems.value(device->getDiskInfo().ID);
+    if(item)
     {
-        DBookmarkItem * item = m_diskItems.value(device->getDiskInfo().ID);
         item->setMounted(false);
         return;
     }

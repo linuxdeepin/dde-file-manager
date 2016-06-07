@@ -138,69 +138,33 @@ void UDiskListener::asyncRequestDiskInfosFinihsed(QDBusPendingCallWatcher *call)
 void UDiskListener::changed(int in0, const QString &in1)
 {
     qDebug() << in0 << in1;
-    switch(in0)
+
+    UDiskDeviceInfo *device = hasDeviceInfo(in1);
+    DiskInfo info = m_diskMountInterface->QueryDisk(in1);
+
+    qDebug() << device << info;
+    if(device == NULL && !info.ID.isEmpty())
     {
-    case EventTypeVolumeAdded:{
-        //emit volumeAdded(in1);
-        qDebug() << "volume added";
-        UDiskDeviceInfo *device = hasDeviceInfo(in1);
-        DiskInfo info = m_diskMountInterface->QueryDisk(in1);
-        if(device == NULL)
-        {
-            device = new UDiskDeviceInfo(info);
-            addDevice(device);
-        }
-        else
-        {
-            device->setDiskInfo(info);
-        }
+        device = new UDiskDeviceInfo(info);
+        addDevice(device);
         emit mountAdded(device);
-        break;
-    }
-    case EventTypeVolumeRemoved:
+    }else if (device && !info.ID.isEmpty())
     {
-        UDiskDeviceInfo * device = hasDeviceInfo(in1);
-        if(device)
-        {
-            emit volumeRemoved(device);
-            removeDevice(device);
+        device->setDiskInfo(info);
+        if (info.CanUnmount){
+            emit mountAdded(device);
+        }else{
+            emit mountRemoved(device);
         }
-        break;
-    }
-    case EventTypeMountAdded:
-    {
-        UDiskDeviceInfo *device = hasDeviceInfo(in1);
-        DiskInfo info = m_diskMountInterface->QueryDisk(in1);
-        if(device == NULL)
-        {
-            device = new UDiskDeviceInfo(info);
-            addDevice(device);
-        }
-        else
-        {
-            device->setDiskInfo(info);
-        }
-        emit mountAdded(device);
 
         foreach (Subscriber* sub, m_subscribers) {
+            qDebug() << info.MountPoint;
             sub->doSubscriberAction(info.MountPoint);
         }
 
-        break;
-    }
-    case EventTypeMountRemoved:
-    {
-        UDiskDeviceInfo *device = hasDeviceInfo(in1);
-        if(device)
-        {
-            DiskInfo info = m_diskMountInterface->QueryDisk(in1);
-            device->setDiskInfo(info);
-            emit mountRemoved(device);
-        }
-        break;
-    }
-    default:
-        qDebug() << "Unknown event type.";
+    }else if (device && info.ID.isEmpty()){
+        emit volumeRemoved(device);
+        removeDevice(device);
     }
 }
 

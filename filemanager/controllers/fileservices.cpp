@@ -434,9 +434,9 @@ void FileServices::getChildren(const FMEvent &event, QDir::Filters filters) cons
 
     const QList<AbstractFileInfoPointer> &childrenList = getChildren(fileUrl, filters, &accepted);
 
-    if (childrenList.count() > 200){
-        emit fileSignalManager->loadingIndicatorShowed(event, true);
-    }
+
+    emit fileSignalManager->loadingIndicatorShowed(event, true);
+
 
     if(accepted)
         emit updateChildren(event, childrenList);

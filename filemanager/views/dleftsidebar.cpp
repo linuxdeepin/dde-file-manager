@@ -254,7 +254,7 @@ void DLeftSideBar::handleLocationChanged(const FMEvent &e)
     event = e.fileUrl();
     event = FMEvent::LeftSideBar;
     event = WindowManager::getWindowId(window());
-
+    qDebug() << event;
     emit fileSignalManager->requestChangeCurrentUrl(event);
 }
 

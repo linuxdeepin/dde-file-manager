@@ -2,6 +2,8 @@
 #include "../filemanager/app/global.h"
 #include "../filemanager/shutil/fileutils.h"
 #include <QIcon>
+#include "../app/singleapplication.h"
+
 
 UDiskDeviceInfo::UDiskDeviceInfo()
 {
@@ -68,11 +70,23 @@ QString UDiskDeviceInfo::getPath()
     return m_diskInfo.Path;
 }
 
-
-QString UDiskDeviceInfo::getMountPoint() const
+QString UDiskDeviceInfo::getMountPoint()
 {
-    DUrl url(m_diskInfo.MountPoint);
-    return url.toLocalFile();
+    qDebug() << m_diskInfo;
+
+    QString path = QString("/run/user/%1/gvfs").arg(SingleApplication::UserID);
+
+    if (m_diskInfo.Type == "iphone"){
+        m_diskInfo.MountPoint = QString("%1/afc:host=%2").arg(path, m_diskInfo.ID);
+    }else if (m_diskInfo.ID.startsWith("mtp://")){
+        QStringList ids = m_diskInfo.ID.split("/");
+        QString key = QUrl::toPercentEncoding(ids[2]);
+        m_diskInfo.MountPoint = QString("%1/mtp:host=%2").arg(path, key);
+    }else if (m_diskInfo.Type == "network"){
+        QStringList ids = m_diskInfo.ID.split("/");
+        m_diskInfo.MountPoint = QString("%1/smb-share:server=%2,share=%3").arg(path, ids[2], ids[3]);
+    }
+    return m_diskInfo.MountPoint.replace("file://", "");
 }
 
 QString UDiskDeviceInfo::getIcon()
@@ -121,6 +135,10 @@ UDiskDeviceInfo::MediaType UDiskDeviceInfo::getMediaType() const
         return removable;
     else if(getType() == "network")
         return network;
+    else if(getType() == "phone")
+        return phone;
+    else if(getType() == "iphone")
+        return iphone;
     else
         return unknown;
 }
@@ -177,6 +195,19 @@ QVector<MenuAction> UDiskDeviceInfo::menuActionList(AbstractFileInfo::MenuType t
         case network:
         {
             if(m_diskInfo.CanEject || m_diskInfo.CanUnmount)
+                actionKeys << MenuAction::Unmount;
+            else
+                actionKeys << MenuAction::Mount;
+            break;
+        }
+        case phone:{
+            if(m_diskInfo.CanUnmount)
+                actionKeys << MenuAction::Unmount;
+            else
+                actionKeys << MenuAction::Mount;
+            break;
+        }case iphone:{
+            if(m_diskInfo.CanUnmount)
                 actionKeys << MenuAction::Unmount;
             else
                 actionKeys << MenuAction::Mount;
