@@ -26,35 +26,54 @@ QString ThumbnailManager::getThumbnailPath(const QString &name)
     return QString("%1/%2").arg(getThumbnailCachePath(), name);
 }
 
-QString ThumbnailManager::thumbnail(const QString &fpath)
+QIcon ThumbnailManager::thumbnailIcon(const QString &fpath)
 {
-    return m_thumbnails.value(fpath, "");
-}
+    QIcon icon = m_thumbnailsIcon.value(fpath);
 
-void ThumbnailManager::addThumbnailTask(const QString &fpath)
-{
-    QtConcurrent::run(m_threadPool, this, &ThumbnailManager::actionThumbnailTask, fpath);
-}
+    if (!icon.isNull())
+        return icon;
 
-void ThumbnailManager::actionThumbnailTask(const QString &fpath)
-{
-    if (m_thumbnails.contains(fpath)){
-        return;
-    }
     QFileInfo info(fpath);
-    if (info.exists()){
+
+    if (info.size() > 1024 * 256) {
         QString md5 = FileUtils::md5(fpath);
         QString thumbnailPath = QString("%1.png").arg(getThumbnailPath(md5));
-        if (m_taskSet.contains(md5)){
-            return;
+
+        if (QFile(thumbnailPath).exists()) {
+            icon = QIcon(thumbnailPath);
+
+            m_thumbnailsIcon[fpath] = icon;
+        } else {
+            addThumbnailTask(fpath, thumbnailPath);
         }
-        if (!QFile(thumbnailPath).exists()){
-            qDebug() << thumbnailPath;
-            QPixmap pixmap(fpath);
-            QPixmap thumbnail = pixmap.scaled(256, 256, Qt::KeepAspectRatio);
-            thumbnail.save(thumbnailPath);
-            m_taskSet.insert(thumbnailPath);
-        }
-        m_thumbnails.insert(fpath, thumbnailPath);
+    } else {
+        icon = QIcon(fpath);
+
+        m_thumbnailsIcon[fpath] = icon;
+    }
+
+    return icon;
+}
+
+void ThumbnailManager::addThumbnailTask(const QString &fpath, const QString &thumbnailPath)
+{
+    QtConcurrent::run(m_threadPool, this, &ThumbnailManager::actionThumbnailTask, fpath, thumbnailPath);
+}
+
+void ThumbnailManager::actionThumbnailTask(const QString &fpath, const QString &thumbnailPath)
+{
+    if (m_thumbnailsIcon.contains(fpath)){
+        return;
+    }
+
+    m_thumbnailsIcon[fpath] = QIcon();
+
+    QFileInfo info(fpath);
+
+    if (info.exists()){
+        QPixmap pixmap(fpath);
+        QPixmap thumbnail = pixmap.scaled(256, 256, Qt::KeepAspectRatio);
+        thumbnail.save(thumbnailPath);
+        m_thumbnailsIcon[fpath] = QIcon(thumbnail);
     }
 }

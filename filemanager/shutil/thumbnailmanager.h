@@ -16,16 +16,14 @@ public:
     static QString getThumbnailCachePath();
     static QString getThumbnailPath(const QString& name);
 
-    QString thumbnail(const QString& fpath);
-
-signals:
+    QIcon thumbnailIcon(const QString &fpath);
 
 public slots:
-    void addThumbnailTask(const QString& fpath);
-    void actionThumbnailTask(const QString& fpath);
+    void addThumbnailTask(const QString& fpath, const QString &thumbnailPath);
+    void actionThumbnailTask(const QString& fpath, const QString &thumbnailPath);
+
 private:
-    QMap<QString, QString> m_thumbnails;
-    QSet<QString> m_taskSet;
+    QMap<QString, QIcon> m_thumbnailsIcon;
     QThreadPool* m_threadPool;
 };
 

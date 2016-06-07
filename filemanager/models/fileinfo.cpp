@@ -69,5 +69,5 @@ QString FileInfo::mimeTypeName() const
 
 QIcon FileInfo::fileIcon() const
 {
-    return fileIconProvider->getFileIcon(absoluteFilePath());
+    return fileIconProvider->getFileIcon(absoluteFilePath(), mimeTypeName());
 }

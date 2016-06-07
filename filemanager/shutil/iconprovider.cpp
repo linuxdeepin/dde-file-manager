@@ -182,9 +182,9 @@ void IconProvider::handleWmValueChanged(const QString &key)
 }
 
 
-QIcon IconProvider::getFileIcon(const QString &file)
+QIcon IconProvider::getFileIcon(const QString &absoluteFilePath, const QString &mimeType)
 {
-    return findIcon(file);
+    return findIcon(absoluteFilePath, mimeType);
 }
 
 QIcon IconProvider::getDesktopIcon(const QString &iconName, int size)
@@ -227,52 +227,29 @@ QIcon IconProvider::getDesktopIcon(const QString &iconName, int size)
     }
 }
 
-QIcon IconProvider::getThumbnailIcon(const QString &file)
-{
-    QString thumbailPath = thumbnailManager->thumbnail(file);
-    if (!thumbailPath.isEmpty()){
-        return QIcon(thumbailPath);
-    }else{
-        QFileInfo info(file);
-        QIcon icon;
-        if (info.size() > 1024 * 256){
-            thumbnailManager->addThumbnailTask(file);
-        }
-        else
-            icon = QIcon(file);
-        return icon;
-    }
-}
-
-
 void IconProvider::setDesktopIconPaths(const QMap<QString, QString> &iconPaths)
 {
     m_desktopIconPaths = iconPaths;
 }
 
-
-QIcon IconProvider::findIcon(const QString &file)
+QIcon IconProvider::findIcon(const QString &absoluteFilePath, const QString &mimeType)
 {
     // If type of file is directory, return icon of directory
-
-    QFileInfo info(file);
-    QString absoluteFilePath = info.absoluteFilePath();
-
     QIcon theIcon;
 
-    QString mimeType = getMimeTypeByFile(absoluteFilePath);
-
     if (mimeType == "application/x-desktop")
-        return IconProvider::getDesktopIcon(DesktopFile(file).getIcon(), 48);
+        return IconProvider::getDesktopIcon(DesktopFile(absoluteFilePath).getIcon(), 48);
     else if (QImageReader::supportedMimeTypes().contains(mimeType.toLocal8Bit())){
-        theIcon = getThumbnailIcon(absoluteFilePath);
+        theIcon = thumbnailManager->thumbnailIcon(absoluteFilePath);
+
         if (!theIcon.isNull())
-            return getThumbnailIcon(absoluteFilePath);
+            return theIcon;
     }
 
-    if (m_mimeIcons.contains(mimeType)) {
-        return m_mimeIcons.value(mimeType);
-    }
+    theIcon = m_mimeIcons.value(mimeType);
+
+    if (!theIcon.isNull())
+        return theIcon;
 
     QString _mimeType = mimeType;
     QString iconName = _mimeType.replace("/", "-");
@@ -286,7 +263,7 @@ QIcon IconProvider::findIcon(const QString &file)
 
 //    theIcon = FileUtils::searchMimeIcon(mimeType);
 
-    m_mimeIcons.insert(getMimeTypeByFile(absoluteFilePath), theIcon);
+    m_mimeIcons.insert(mimeType, theIcon);
 
     return theIcon;
 }

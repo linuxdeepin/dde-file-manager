@@ -36,14 +36,13 @@ public slots:
     void setCurrentTheme();
     void handleWmValueChanged(const QString &key);
 
-    QIcon getFileIcon(const QString& file);
+    QIcon getFileIcon(const QString& absoluteFilePath, const QString &mimeType);
     QIcon getDesktopIcon(const QString& iconName, int size);
-    QIcon getThumbnailIcon(const QString& file);
 
     void setDesktopIconPaths(const QMap<QString,QString>& iconPaths);
 
 private:
-    QIcon findIcon(const QString& file);
+    QIcon findIcon(const QString& absoluteFilePath, const QString &mimeType);
     QString getMimeTypeByFile(const QString &file);
 
 private:

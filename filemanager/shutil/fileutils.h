@@ -50,7 +50,7 @@ public:
     static void sendToDesktop(const DUrlList& urls);
     static void sendToDesktop(const QString& file);
 
-    static QString md5(const QString& file);
+    static QString md5(const QString& data);
 
 };
 
