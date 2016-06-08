@@ -63,9 +63,9 @@ void DCrumbWidget::addCrumb(const QStringList &list)
         }
         button->setPath(path);
 
-        if (systemPathManager->systemPaths().values().contains(path)){
-            foreach (QString key, systemPathManager->systemPaths().keys()) {
-                if (systemPathManager->systemPaths().value(key) == path){
+        if (systemPathManager->systemPathsMap().values().contains(path)){
+            foreach (QString key, systemPathManager->systemPathsMap().keys()) {
+                if (systemPathManager->systemPathsMap().value(key) == path){
                        button->setText(systemPathManager->getSystemPathDisplayName(key));
                 }
             }

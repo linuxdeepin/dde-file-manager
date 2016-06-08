@@ -5,9 +5,11 @@
 #include <QIcon>
 #include <QCache>
 #include <QHash>
+#include <QSet>
 #include <QFileIconProvider>
 #include <QGSettings>
 #include <QMimeDatabase>
+
 #include "mimeutils.h"
 
 class IconProvider : public QObject
@@ -36,7 +38,8 @@ public slots:
     void setCurrentTheme();
     void handleWmValueChanged(const QString &key);
 
-    QIcon getFileIcon(const QString& absoluteFilePath, const QString &mimeType);
+    inline QIcon getFileIcon(const QString& absoluteFilePath, const QString &mimeType)
+    { return findIcon(absoluteFilePath, mimeType);}
     QIcon getDesktopIcon(const QString& iconName, int size);
 
     void setDesktopIconPaths(const QMap<QString,QString>& iconPaths);
@@ -46,12 +49,13 @@ private:
     QString getMimeTypeByFile(const QString &file);
 
 private:
-    mutable QMap<QString,QIcon> m_mimeIcons;
+    mutable QHash<QString,QIcon> m_mimeIcons;
     mutable QMap<QString,QIcon> m_desktopIcons;
     mutable QMap<QString,QString> m_desktopIconPaths;
     mutable QCache<QString,QIcon> m_icons;
     mutable QMap<QString,QIcon> m_thumbnailIcons;
 
+    QSet<QString> m_supportImageMimeTypesSet;
     QList<QSize> m_iconSizes;
     QGSettings* m_gsettings;
     QMimeDatabase* m_mimeDatabase;

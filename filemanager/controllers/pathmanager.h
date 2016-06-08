@@ -3,11 +3,13 @@
 
 #include <QObject>
 #include <QMap>
+#include <QSet>
 #include <QFileSystemWatcher>
+
 #include "basemanager.h"
 #include "../models/durl.h"
 
-class PathManager : public QObject ,public BaseManager
+class PathManager : public QObject, public BaseManager
 {
     Q_OBJECT
 
@@ -26,13 +28,11 @@ public:
 
     static QString getSystemCachePath();
 
-    QMap<QString, QString> systemPaths() const;
+    QMap<QString, QString> systemPathsMap() const;
+    QMap<QString, QString> systemPathDisplayNamesMap() const;
 
-    QMap<QString, QString> systemPathDisplayNames() const;
-
-    bool isSystemPath(const QString& path);
-
-signals:
+    inline bool isSystemPath(const QString& path)
+    { return m_systemPathsSet.contains(path);}
 
 public slots:
     void loadSystemPaths();
@@ -40,9 +40,10 @@ public slots:
     void handleDirectoryChanged(const QString& path);
 
 private:
-    QMap<QString, QString> m_systemPaths;
-    QMap<QString, QString> m_systemPathDisplayNames;
-    QMap<QString, QString> m_systemPathIconNames;
+    QMap<QString, QString> m_systemPathsMap;
+    QMap<QString, QString> m_systemPathDisplayNamesMap;
+    QMap<QString, QString> m_systemPathIconNamesMap;
+    QSet<QString> m_systemPathsSet;
     QFileSystemWatcher* m_fileSystemWatcher = NULL;
 };
 
