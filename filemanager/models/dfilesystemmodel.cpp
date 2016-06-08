@@ -564,6 +564,10 @@ void DFileSystemModel::updateChildren(const FMEvent &event, QList<AbstractFileIn
         return;
     }
 
+    for (const DUrl url : node->visibleChildren) {
+        deleteNodeByUrl(url);
+    }
+
     node->children.clear();
     node->visibleChildren.clear();
 
