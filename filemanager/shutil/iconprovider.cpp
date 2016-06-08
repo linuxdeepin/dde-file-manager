@@ -233,17 +233,8 @@ void IconProvider::setDesktopIconPaths(const QMap<QString, QString> &iconPaths)
 
 QIcon IconProvider::findIcon(const QString &absoluteFilePath, const QString &mimeType)
 {
+    QIcon theIcon;
     QString _mimeType = mimeType;
-
-    if (systemPathManager->isSystemPath(absoluteFilePath)) {
-        _mimeType = systemPathManager->getSystemPathIconNameByPath(absoluteFilePath);
-    }
-
-    // If type of file is directory, return icon of directory
-    QIcon theIcon = m_mimeIcons.value(_mimeType);
-
-    if (!theIcon.isNull())
-        return theIcon;
 
     if (m_supportImageMimeTypesSet.contains(mimeType)) {
         theIcon = thumbnailManager->thumbnailIcon(absoluteFilePath);
@@ -252,7 +243,15 @@ QIcon IconProvider::findIcon(const QString &absoluteFilePath, const QString &mim
             return theIcon;
     } else if (mimeType == "application/x-desktop") {
         return IconProvider::getDesktopIcon(DesktopFile(absoluteFilePath).getIcon(), 48);
+    } else if (systemPathManager->isSystemPath(absoluteFilePath)) {
+        _mimeType = systemPathManager->getSystemPathIconNameByPath(absoluteFilePath);
     }
+
+    // If type of file is directory, return icon of directory
+    theIcon = m_mimeIcons.value(_mimeType);
+
+    if (!theIcon.isNull())
+        return theIcon;
 
     QString iconName = _mimeType;
     QString path = getThemeIconPath(iconName.replace("/", "-"), 256);
