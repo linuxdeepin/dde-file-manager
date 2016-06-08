@@ -61,7 +61,7 @@ bool FileInfo::isCanRename() const
 
 QString FileInfo::mimeTypeName() const
 {
-    if(data->mimeTypeName.isEmpty())
+    if(data->mimeTypeName.isNull())
         data->mimeTypeName = mimeType(absoluteFilePath()).name();
 
     return data->mimeTypeName;

@@ -33,6 +33,11 @@ IconProvider::IconProvider(QObject *parent) : QObject(parent)
                                  "/com/deepin/wrap/gnome/desktop/wm/preferences/");
     m_mimeDatabase = new QMimeDatabase;
     m_iconSizes << QSize(48, 48) << QSize(64, 64) << QSize(96, 96) << QSize(128, 128) << QSize(256, 256);
+
+    for (const QByteArray &mime : QImageReader::supportedMimeTypes()) {
+        m_supportImageMimeTypesSet << mime;
+    }
+
     initConnect();
     setCurrentTheme();
 }
@@ -181,12 +186,6 @@ void IconProvider::handleWmValueChanged(const QString &key)
     }
 }
 
-
-QIcon IconProvider::getFileIcon(const QString &absoluteFilePath, const QString &mimeType)
-{
-    return findIcon(absoluteFilePath, mimeType);
-}
-
 QIcon IconProvider::getDesktopIcon(const QString &iconName, int size)
 {
     if (m_desktopIcons.contains(iconName)){
@@ -234,28 +233,31 @@ void IconProvider::setDesktopIconPaths(const QMap<QString, QString> &iconPaths)
 
 QIcon IconProvider::findIcon(const QString &absoluteFilePath, const QString &mimeType)
 {
-    // If type of file is directory, return icon of directory
-    QIcon theIcon;
     QString _mimeType = mimeType;
-    if (mimeType == "application/x-desktop")
-        return IconProvider::getDesktopIcon(DesktopFile(absoluteFilePath).getIcon(), 48);
-    else if (QImageReader::supportedMimeTypes().contains(mimeType.toLocal8Bit())){
-        theIcon = thumbnailManager->thumbnailIcon(absoluteFilePath);
-        if (!theIcon.isNull())
-            return theIcon;
-    }else if (systemPathManager->isSystemPath(absoluteFilePath)){
+
+    if (systemPathManager->isSystemPath(absoluteFilePath)) {
         _mimeType = systemPathManager->getSystemPathIconNameByPath(absoluteFilePath);
     }
 
-    theIcon = m_mimeIcons.value(_mimeType);
+    // If type of file is directory, return icon of directory
+    QIcon theIcon = m_mimeIcons.value(_mimeType);
 
     if (!theIcon.isNull())
         return theIcon;
 
-    QString iconName = _mimeType.replace("/", "-");
-    QString path = getThemeIconPath(iconName, 256);
+    if (m_supportImageMimeTypesSet.contains(mimeType)) {
+        theIcon = thumbnailManager->thumbnailIcon(absoluteFilePath);
 
-    if (path.isEmpty()){
+        if (!theIcon.isNull())
+            return theIcon;
+    } else if (mimeType == "application/x-desktop") {
+        return IconProvider::getDesktopIcon(DesktopFile(absoluteFilePath).getIcon(), 48);
+    }
+
+    QString iconName = _mimeType;
+    QString path = getThemeIconPath(iconName.replace("/", "-"), 256);
+
+    if (path.isEmpty()) {
         path = getThemeIconPath(mimeTypeDisplayManager->defaultIcon(mimeType));
     }
 

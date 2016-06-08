@@ -23,21 +23,21 @@ PathManager::~PathManager()
 void PathManager::initPaths()
 {
     loadSystemPaths();
-    m_systemPathDisplayNames["Desktop"] = tr("Desktop");
-    m_systemPathDisplayNames["Videos"] = tr("Videos");
-    m_systemPathDisplayNames["Music"] = tr("Music");
-    m_systemPathDisplayNames["Pictures"] = tr("Pictures");
-    m_systemPathDisplayNames["Documents"] = tr("Documents");
-    m_systemPathDisplayNames["Downloads"] = tr("Downloads");
+    m_systemPathDisplayNamesMap["Desktop"] = tr("Desktop");
+    m_systemPathDisplayNamesMap["Videos"] = tr("Videos");
+    m_systemPathDisplayNamesMap["Music"] = tr("Music");
+    m_systemPathDisplayNamesMap["Pictures"] = tr("Pictures");
+    m_systemPathDisplayNamesMap["Documents"] = tr("Documents");
+    m_systemPathDisplayNamesMap["Downloads"] = tr("Downloads");
 
 
-    m_systemPathIconNames["Home"] = "folder-home";
-    m_systemPathIconNames["Desktop"] = "folder-desktop";
-    m_systemPathIconNames["Videos"] = "folder-videos";
-    m_systemPathIconNames["Music"] = "folder-music";
-    m_systemPathIconNames["Pictures"] = "folder-pictures";
-    m_systemPathIconNames["Documents"] = "folder-documents";
-    m_systemPathIconNames["Downloads"] = "folder-downloads";
+    m_systemPathIconNamesMap["Home"] = "folder-home";
+    m_systemPathIconNamesMap["Desktop"] = "folder-desktop";
+    m_systemPathIconNamesMap["Videos"] = "folder-videos";
+    m_systemPathIconNamesMap["Music"] = "folder-music";
+    m_systemPathIconNamesMap["Pictures"] = "folder-pictures";
+    m_systemPathIconNamesMap["Documents"] = "folder-documents";
+    m_systemPathIconNamesMap["Downloads"] = "folder-downloads";
 }
 
 void PathManager::initConnect()
@@ -47,10 +47,10 @@ void PathManager::initConnect()
 
 QString PathManager::getSystemPath(QString key)
 {
-    if (m_systemPaths.isEmpty()){
+    if (m_systemPathsMap.isEmpty()){
         initPaths();
     }
-    QString path = m_systemPaths.value(key);
+    QString path = m_systemPathsMap.value(key);
     if (!QDir(path).exists()){
         bool flag = QDir::home().mkpath(path);
         qDebug() << "mkpath" << path << flag;
@@ -60,16 +60,16 @@ QString PathManager::getSystemPath(QString key)
 
 QString PathManager::getSystemPathDisplayName(QString key)
 {
-    if (m_systemPathDisplayNames.contains(key))
-        return m_systemPathDisplayNames.value(key);
+    if (m_systemPathDisplayNamesMap.contains(key))
+        return m_systemPathDisplayNamesMap.value(key);
     return QString();
 }
 
 QString PathManager::getSystemPathDisplayNameByPath(const QString &path)
 {
     if (isSystemPath(path)){
-        foreach (QString key, systemPaths().keys()) {
-            if (systemPaths().value(key) == path){
+        foreach (QString key, systemPathsMap().keys()) {
+            if (systemPathsMap().value(key) == path){
                  return getSystemPathDisplayName(key);
             }
         }
@@ -80,16 +80,16 @@ QString PathManager::getSystemPathDisplayNameByPath(const QString &path)
 
 QString PathManager::getSystemPathIconName(QString key)
 {
-    if (m_systemPathIconNames.contains(key))
-        return m_systemPathIconNames.value(key);
+    if (m_systemPathIconNamesMap.contains(key))
+        return m_systemPathIconNamesMap.value(key);
     return QString();
 }
 
 QString PathManager::getSystemPathIconNameByPath(const QString &path)
 {
     if (isSystemPath(path)){
-        foreach (QString key, systemPaths().keys()) {
-            if (systemPaths().value(key) == path){
+        foreach (QString key, systemPathsMap().keys()) {
+            if (systemPathsMap().value(key) == path){
                  return getSystemPathIconName(key);
             }
         }
@@ -106,18 +106,21 @@ QString PathManager::getSystemCachePath()
 
 void PathManager::loadSystemPaths()
 {
-    m_systemPaths["Home"] = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0);
-    m_systemPaths["Desktop"] = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).at(0);
-    m_systemPaths["Videos"] = QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).at(0);
-    m_systemPaths["Music"] = QStandardPaths::standardLocations(QStandardPaths::MusicLocation).at(0);
-    m_systemPaths["Pictures"] = QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).at(0);
-    m_systemPaths["Documents"] = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).at(0);
-    m_systemPaths["Downloads"] = QStandardPaths::standardLocations(QStandardPaths::DownloadLocation).at(0);
+    m_systemPathsMap["Home"] = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0);
+    m_systemPathsMap["Desktop"] = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).at(0);
+    m_systemPathsMap["Videos"] = QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).at(0);
+    m_systemPathsMap["Music"] = QStandardPaths::standardLocations(QStandardPaths::MusicLocation).at(0);
+    m_systemPathsMap["Pictures"] = QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).at(0);
+    m_systemPathsMap["Documents"] = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).at(0);
+    m_systemPathsMap["Downloads"] = QStandardPaths::standardLocations(QStandardPaths::DownloadLocation).at(0);
 
-    foreach (QString key, m_systemPaths.keys()) {
-        QString path = m_systemPaths.value(key);
+    m_systemPathsSet.reserve(m_systemPathsMap.size());
+
+    foreach (QString key, m_systemPathsMap.keys()) {
+        QString path = m_systemPathsMap.value(key);
         mkPath(path);
         m_fileSystemWatcher->addPath(path);
+        m_systemPathsSet << path;
     }
 }
 
@@ -136,21 +139,14 @@ void PathManager::handleDirectoryChanged(const QString &path)
     m_fileSystemWatcher->addPath(path);
 }
 
-QMap<QString, QString> PathManager::systemPathDisplayNames() const
+QMap<QString, QString> PathManager::systemPathDisplayNamesMap() const
 {
-    return m_systemPathDisplayNames;
+    return m_systemPathDisplayNamesMap;
 }
 
-bool PathManager::isSystemPath(const QString &path)
+QMap<QString, QString> PathManager::systemPathsMap() const
 {
-    return m_systemPaths.values().contains(path);
-}
-
-
-
-QMap<QString, QString> PathManager::systemPaths() const
-{
-    return m_systemPaths;
+    return m_systemPathsMap;
 }
 
 
