@@ -76,14 +76,14 @@ QString UDiskDeviceInfo::getMountPoint()
 
     QString path = QString("/run/user/%1/gvfs").arg(SingleApplication::UserID);
 
-    if (m_diskInfo.Type == "iphone"){
+    if (m_diskInfo.MountPoint.startsWith("afc://")){
         m_diskInfo.MountPoint = QString("%1/afc:host=%2").arg(path, m_diskInfo.ID);
-    }else if (m_diskInfo.ID.startsWith("mtp://")){
-        QStringList ids = m_diskInfo.ID.split("/");
+    }else if (m_diskInfo.MountPoint.startsWith("mtp://")){
+        QStringList ids = m_diskInfo.MountPoint.split("/");
         QString key = QUrl::toPercentEncoding(ids[2]);
         m_diskInfo.MountPoint = QString("%1/mtp:host=%2").arg(path, key);
-    }else if (m_diskInfo.Type == "network"){
-        QStringList ids = m_diskInfo.ID.split("/");
+    }else if (m_diskInfo.MountPoint.startsWith("smb://")){
+        QStringList ids = m_diskInfo.MountPoint.split("/");
         m_diskInfo.MountPoint = QString("%1/smb-share:server=%2,share=%3").arg(path, ids[2], ids[3]);
     }
     return m_diskInfo.MountPoint.replace("file://", "");
@@ -174,47 +174,14 @@ QVector<MenuAction> UDiskDeviceInfo::menuActionList(AbstractFileInfo::MenuType t
     actionKeys << MenuAction::OpenDisk << MenuAction::OpenDiskInNewWindow
                << MenuAction::Separator;
 
-    switch(getMediaType())
-    {
-        case native:
-        {
-            if(m_diskInfo.CanEject || m_diskInfo.CanUnmount)
-                actionKeys << MenuAction::Unmount;
-            else
-                actionKeys << MenuAction::Mount;
-            break;
-        }
-        case removable:
-        {
-            if(m_diskInfo.CanEject || m_diskInfo.CanUnmount)
-                actionKeys << MenuAction::Eject;
-            else
-                actionKeys << MenuAction::Mount;
-            break;
-        }
-        case network:
-        {
-            if(m_diskInfo.CanEject || m_diskInfo.CanUnmount)
-                actionKeys << MenuAction::Unmount;
-            else
-                actionKeys << MenuAction::Mount;
-            break;
-        }
-        case phone:{
-            if(m_diskInfo.CanUnmount)
-                actionKeys << MenuAction::Unmount;
-            else
-                actionKeys << MenuAction::Mount;
-            break;
-        }case iphone:{
-            if(m_diskInfo.CanUnmount)
-                actionKeys << MenuAction::Unmount;
-            else
-                actionKeys << MenuAction::Mount;
-            break;
-        }
-        default:
-            break;
+    if(m_diskInfo.CanEject){
+        actionKeys << MenuAction::Eject;
+    }
+
+    if (m_diskInfo.CanUnmount){
+        actionKeys << MenuAction::Unmount;
+    }else{
+        actionKeys << MenuAction::Mount;
     }
 
     actionKeys << MenuAction::Separator << MenuAction::Property;
