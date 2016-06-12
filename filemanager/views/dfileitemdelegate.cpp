@@ -556,3 +556,13 @@ bool DFileItemDelegate::eventFilter(QObject *object, QEvent *event)
 
     return QStyledItemDelegate::eventFilter(object, event);
 }
+
+void DFileItemDelegate::initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const
+{
+    QStyledItemDelegate::initStyleOption(option, index);
+
+    if (parent()->isSelected(index))
+        option->state |= QStyle::State_Selected;
+    else
+        option->state &= QStyle::State_Selected;
+}

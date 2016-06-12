@@ -31,6 +31,10 @@ LIBS += -lmagic
 # Automating generation .qm files from .ts files
 # system($$PWD/desktop/translate_generation.sh)
 
+CONFIG(debug, debug|release) {
+#    LIBS += -lprofiler
+#    DEFINES += ENABLE_PPROF
+}
 
 RESOURCES += \
     skin/skin.qrc \
@@ -123,7 +127,8 @@ HEADERS += \
     filemanager/views/dstatusbar.h \
     filemanager/controllers/subscriber.h \
     filemanager/shutil/thumbnailmanager.h \
-    filemanager/models/menuactiontype.h
+    filemanager/models/menuactiontype.h \
+    filemanager/models/dfileselectionmodel.h
 
 
 SOURCES += \
@@ -208,7 +213,8 @@ SOURCES += \
     filemanager/views/dstatusbar.cpp \
     filemanager/controllers/subscriber.cpp \
     filemanager/shutil/thumbnailmanager.cpp \
-    filemanager/models/menuactiontype.cpp
+    filemanager/models/menuactiontype.cpp \
+    filemanager/models/dfileselectionmodel.cpp
 
 
 
