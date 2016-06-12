@@ -60,7 +60,7 @@ public:
     DUrl currentUrl() const;
     DUrlList selectedUrls() const;
 
-    bool isIconViewMode();
+    bool isIconViewMode() const;
 
     int columnWidth(int column) const;
     void setColumnWidth(int column, int width);
@@ -89,9 +89,10 @@ public:
 
     bool isSelected(const QModelIndex &index) const;
     QModelIndexList selectedIndexes() const Q_DECL_OVERRIDE;
+    QModelIndex indexAt(const QPoint &point) const Q_DECL_OVERRIDE;
 
-
-    void addSelectedIndex(const QModelIndex &index);
+    inline QSize itemSizeHint() const
+    { return m_itemSizeHint;}
 
 public slots:
     void cd(const FMEvent &event);
@@ -141,10 +142,10 @@ protected:
     void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void focusInEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
-    void focusOutEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
     bool event(QEvent *event) Q_DECL_OVERRIDE;
     void dragMoveEvent(QDragMoveEvent *event) Q_DECL_OVERRIDE;
+    void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags flags) Q_DECL_OVERRIDE;
 
 private:
     FileController *m_controller;
@@ -163,8 +164,6 @@ private:
 
     int m_currentIconSizeIndex = 1;
 
-    static bool CtrlIsPressed;
-
     bool isEmptyArea(const QPoint &pos) const;
 
     QSize currentIconSize() const;
@@ -180,6 +179,7 @@ private:
     void showNormalMenu(const QModelIndex &index);
     void updateListHeaderViewProperty();
     void updateExtendHeaderViewProperty();
+    void updateItemSizeHint();
 
     using DListView::setOrientation;
 
@@ -189,6 +189,8 @@ private:
 
     QTimer* m_keyboardSearchTimer;
     QString m_keyboardSearchKeys;
+
+    QSize m_itemSizeHint;
 };
 
 #endif // DFILEVIEW_H

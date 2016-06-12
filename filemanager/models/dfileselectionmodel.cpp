@@ -5,12 +5,16 @@
 DFileSelectionModel::DFileSelectionModel(QAbstractItemModel *model)
     : QItemSelectionModel(model)
 {
+    m_timer.setSingleShot(true);
+
     connect(&m_timer, &QTimer::timeout, this, &DFileSelectionModel::updateSelecteds);
 }
 
 DFileSelectionModel::DFileSelectionModel(QAbstractItemModel *model, QObject *parent)
     : QItemSelectionModel(model, parent)
 {
+    m_timer.setSingleShot(true);
+
     connect(&m_timer, &QTimer::timeout, this, &DFileSelectionModel::updateSelecteds);
 }
 
@@ -76,7 +80,7 @@ void DFileSelectionModel::select(const QItemSelection &selection, QItemSelection
     m_currentCommand = command;
     m_selection = newSelection;
 
-    m_timer.start(300);
+    m_timer.start(200);
 }
 
 void DFileSelectionModel::updateSelecteds()

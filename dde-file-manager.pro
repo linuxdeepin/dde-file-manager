@@ -216,7 +216,8 @@ SOURCES += \
     filemanager/shutil/thumbnailmanager.cpp \
     filemanager/models/menuactiontype.cpp \
     filemanager/models/dfileselectionmodel.cpp \
-    filemanager/dialogs/closealldialogindicator.cpp
+    filemanager/dialogs/closealldialogindicator.cpp \
+    filemanager/app/global.cpp
 
 
 
