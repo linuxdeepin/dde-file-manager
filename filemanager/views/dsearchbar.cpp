@@ -128,6 +128,7 @@ void DSearchBar::initConnections()
     connect(this, &DSearchBar::returnPressed, this, &DSearchBar::historySaved);
     connect(this, &DSearchBar::textChanged, this, &DSearchBar::setCompleter);
     connect(m_list, &QListWidget::itemClicked, this, &DSearchBar::completeText);
+    connect(qApp, &QApplication::focusChanged, this, &DSearchBar::handleApplicationChanged);
 }
 
 void DSearchBar::doTextChanged(QString text)
@@ -198,7 +199,7 @@ void DSearchBar::setCompleter(const QString &text)
         foreach(QFileInfo info, dir.entryInfoList(QDir::AllDirs|QDir::NoDotAndDotDot, QDir::Name))
         {
             QString temp = localList.last();
-            qDebug() << temp << info.absoluteFilePath() << fileInfo.absoluteFilePath();
+//            qDebug() << temp << info.absoluteFilePath() << fileInfo.absoluteFilePath();
             if (info.absoluteFilePath().mid(0, fileInfo.absoluteFilePath().length())
                     == fileInfo.absoluteFilePath())
             {
@@ -287,6 +288,20 @@ void DSearchBar::clearText()
 
 
     emit fileSignalManager->requestChangeCurrentUrl(event);
+}
+
+void DSearchBar::hideCompleter()
+{
+    m_list->hide();
+}
+
+void DSearchBar::handleApplicationChanged(QWidget *old, QWidget *now)
+{
+    if (old == this && now == NULL){
+        m_list->hide();
+    }else if (old == NULL && now == this){
+        m_list->show();
+    }
 }
 
 void DSearchBar::focusInEvent(QFocusEvent *e)

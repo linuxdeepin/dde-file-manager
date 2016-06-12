@@ -510,7 +510,6 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             }
         }
     }else if (event->modifiers() == Qt::ControlModifier){
-        CtrlIsPressed = true;
         if (event->key() == Qt::Key_Down){
             appController->actionOpen(fmevent);
         }else if (event->key() == Qt::Key_Up){
@@ -527,6 +526,8 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             model()->toggleHiddenFiles(currentUrl());
         }else if (event->key() == Qt::Key_I){
             appController->actionProperty(fmevent);
+        }else if (event->key() == Qt::Key_Control){
+            CtrlIsPressed = true;
         }
     }else if (event->modifiers() == Qt::ShiftModifier){
         if (event->key() == Qt::Key_Delete){
@@ -657,6 +658,14 @@ void DFileView::focusInEvent(QFocusEvent *event)
 {
     DListView::focusInEvent(event);
     itemDelegate()->commitDataAndCloseActiveEditor();
+}
+
+void DFileView::focusOutEvent(QFocusEvent *event)
+{
+    if (event->reason() == Qt::OtherFocusReason){
+        CtrlIsPressed = false;
+    }
+    DListView::focusOutEvent(event);
 }
 
 void DFileView::resizeEvent(QResizeEvent *event)
