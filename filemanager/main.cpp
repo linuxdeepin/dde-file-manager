@@ -23,7 +23,7 @@
 
 #include "../controllers/pathmanager.h"
 
-#ifdef PPROF
+#ifdef ENABLE_PPROF
 #include <gperftools/profiler.h>
 #endif
 
@@ -75,8 +75,9 @@ int main(int argc, char *argv[])
 
 #ifdef ENABLE_PPROF
         int request = app.exec();
+
         ProfilerStop();
-        return request;
+        quick_exit(request);
 #else
         quick_exit(app.exec());
 #endif

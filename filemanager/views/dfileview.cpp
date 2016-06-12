@@ -34,7 +34,8 @@
 
 DWIDGET_USE_NAMESPACE
 
-bool DFileView::CtrlIsPressed = false;
+#define ICON_VIEW_SPACING 5
+#define LIST_VIEW_SPACING 0
 
 DFileView::DFileView(QWidget *parent) : DListView(parent)
 {
@@ -59,7 +60,7 @@ void DFileView::initUI()
 {
     m_iconSizes << 48 << 64 << 96 << 128 << 256;
 
-    setSpacing(5);
+    setSpacing(ICON_VIEW_SPACING);
     setResizeMode(QListView::Adjust);
     setOrientation(QListView::LeftToRight, true);
     setIconSize(currentIconSize());
@@ -210,7 +211,7 @@ DUrlList DFileView::selectedUrls() const
     return list;
 }
 
-bool DFileView::isIconViewMode()
+bool DFileView::isIconViewMode() const
 {
     return orientation() == Qt::Vertical && isWrapping();
 }
@@ -269,6 +270,7 @@ void DFileView::setIconSize(const QSize &size)
     DListView::setIconSize(size);
 
     updateViewportMargins();
+    updateItemSizeHint();
 }
 
 DFileView::ViewMode DFileView::getDefaultViewMode()
@@ -299,6 +301,38 @@ bool DFileView::isSelected(const QModelIndex &index) const
 QModelIndexList DFileView::selectedIndexes() const
 {
     return static_cast<DFileSelectionModel*>(selectionModel())->selectedIndexes();
+}
+
+QModelIndex DFileView::indexAt(const QPoint &point) const
+{
+    QPoint p = point;
+    QSize item_size = itemSizeHint();
+
+    int index = -1;
+
+    p.setY(p.y() + verticalScrollBar()->value());
+
+    if (p.y() % (item_size.height() + spacing() * 2) <= spacing())
+        return QModelIndex();
+
+
+    if (item_size.width() == -1) {
+        index = p.y() / (item_size.height() + LIST_VIEW_SPACING * 2);
+    } else {
+        if (p.x() % (item_size.width() + ICON_VIEW_SPACING * 2) <= ICON_VIEW_SPACING)
+            return QModelIndex();
+
+        int line_index = p.y() / (item_size.height() + ICON_VIEW_SPACING * 2);
+        int line_count = viewport()->width() / (item_size.width() + ICON_VIEW_SPACING);
+        int row_index = p.x() / (item_size.width() + ICON_VIEW_SPACING * 2);
+
+        if (row_index >= line_count)
+            return QModelIndex();
+
+        index = line_index * line_count + row_index;
+    }
+
+    return rootIndex().child(index, 0);
 }
 
 void DFileView::cd(const FMEvent &event)
@@ -455,7 +489,7 @@ void DFileView::openWithActionTriggered(QAction *action)
 
 void DFileView::wheelEvent(QWheelEvent *event)
 {
-    if(isIconViewMode() && CtrlIsPressed) {
+    if(isIconViewMode() && Global::keyCtrlIsPressed()) {
         if(event->angleDelta().y() > 0) {
             enlargeIcon();
         } else {
@@ -526,8 +560,6 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             model()->toggleHiddenFiles(currentUrl());
         }else if (event->key() == Qt::Key_I){
             appController->actionProperty(fmevent);
-        }else if (event->key() == Qt::Key_Control){
-            CtrlIsPressed = true;
         }
     }else if (event->modifiers() == Qt::ShiftModifier){
         if (event->key() == Qt::Key_Delete){
@@ -564,9 +596,6 @@ void DFileView::keyPressEvent(QKeyEvent *event)
 
 void DFileView::keyReleaseEvent(QKeyEvent *event)
 {
-    if (event->key() == Qt::Key_Control){
-        CtrlIsPressed = false;
-    }
     DListView::keyReleaseEvent(event);
 }
 
@@ -660,14 +689,6 @@ void DFileView::focusInEvent(QFocusEvent *event)
     itemDelegate()->commitDataAndCloseActiveEditor();
 }
 
-void DFileView::focusOutEvent(QFocusEvent *event)
-{
-    if (event->reason() == Qt::OtherFocusReason){
-        CtrlIsPressed = false;
-    }
-    DListView::focusOutEvent(event);
-}
-
 void DFileView::resizeEvent(QResizeEvent *event)
 {
     updateViewportMargins();
@@ -684,7 +705,7 @@ bool DFileView::event(QEvent *event)
         bool isEmptyArea = this->isEmptyArea(pos);
 
         if (e->button() == Qt::LeftButton) {
-            if (isEmptyArea && !CtrlIsPressed) {
+            if (isEmptyArea && !Global::keyCtrlIsPressed()) {
                 clearSelection();
             }
         } else if (e->button() == Qt::RightButton) {
@@ -712,6 +733,99 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
     if (dragDropMode() == InternalMove
         && (event->source() != this || !(event->possibleActions() & Qt::MoveAction)))
         QAbstractItemView::dragMoveEvent(event);
+}
+
+void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags flags)
+{
+    if (Global::keyShiftIsPressed()) {
+        const QModelIndex &index = indexAt(rect.bottomRight());
+
+        if (!index.isValid())
+            return;
+
+        const QModelIndex &lastSelectedIndex = indexAt(rect.topLeft());
+
+        if (!lastSelectedIndex.isValid())
+            return;
+
+        selectionModel()->select(QItemSelection(lastSelectedIndex, index), QItemSelectionModel::ClearAndSelect);
+
+        return;
+    }
+
+    if (flags == (QItemSelectionModel::Current|QItemSelectionModel::Rows|QItemSelectionModel::ClearAndSelect)) {
+        int sign_horizontal = rect.left() < rect.right() ? 1 : -1;
+        int sign_verizontal = rect.top() < rect.bottom() ? 1 : -1;
+        int offset_horizontal = itemSizeHint().width() * sign_horizontal;
+        int offset_verizontal = itemSizeHint().height() * sign_verizontal;
+
+        QModelIndex index1;
+        QModelIndex index2;
+
+        for (int i = rect.left(); (rect.right() - i) * sign_horizontal > 0; i += offset_horizontal) {
+            for (int j = rect.top(); (rect.bottom() - j) * sign_verizontal > 0; j += offset_verizontal) {
+                index1 = indexAt(QPoint(i, j));
+
+                if (index1.isValid())
+                    goto find_index2;
+            }
+
+            index1 = indexAt(QPoint(i, rect.bottom()));
+
+            if (index1.isValid())
+                goto find_index2;
+        }
+
+        for (int j = rect.top(); (rect.bottom() - j) * sign_verizontal > 0; j += offset_verizontal) {
+            index1 = indexAt(QPoint(rect.right(), j));
+
+            if (index1.isValid())
+                goto find_index2;
+        }
+
+        index1 = indexAt(QPoint(rect.right(), rect.bottom()));
+
+        if (index1.isValid())
+            goto find_index2;
+
+        return;
+find_index2:
+
+        for (int i = rect.right(); (i - rect.left()) * sign_horizontal > 0; i -= offset_horizontal) {
+            for (int j = rect.bottom(); (j - rect.top()) * sign_verizontal > 0; j -= offset_verizontal) {
+                index2 = indexAt(QPoint(i, j));
+
+                if (index2.isValid())
+                    goto selection;
+            }
+
+            index2 = indexAt(QPoint(i, rect.top()));
+
+            if (index2.isValid())
+                goto selection;
+        }
+
+        for (int j = rect.bottom(); (j - rect.top()) * sign_verizontal > 0; j -= offset_verizontal) {
+            index2 = indexAt(QPoint(rect.left(), j));
+
+            if (index2.isValid())
+                goto selection;
+        }
+
+        index2 = indexAt(QPoint(rect.left(), rect.top()));
+
+        if (index2.isValid())
+            goto selection;
+
+        return;
+selection:
+
+        selectionModel()->select(QItemSelection(index1, index2), flags);
+
+        return;
+    }
+
+    DListView::setSelection(rect, flags);
 }
 
 bool DFileView::isEmptyArea(const QPoint &pos) const
@@ -941,9 +1055,9 @@ void DFileView::updateViewportMargins()
     if(isIconViewMode()) {
         int contentWidth = width();
 
-        double itemWidth = iconSize().width() * 1.95 + spacing();
+        double itemWidth = iconSize().width() * 1.95 + ICON_VIEW_SPACING;
         int itemColumn = contentWidth / itemWidth;
-        int gapWidth = (contentWidth - itemWidth * itemColumn) / 2 + 2 * spacing();
+        int gapWidth = (contentWidth - itemWidth * itemColumn) / 2 + 2 * ICON_VIEW_SPACING;
 
 //        m_horizontalOffset = -gapWidth;
         setViewportMargins(gapWidth, 0, 0, 0);
@@ -975,7 +1089,7 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
         m_columnRoles.clear();
         setIconSize(currentIconSize());
         setOrientation(QListView::LeftToRight, true);
-        setSpacing(5);
+        setSpacing(ICON_VIEW_SPACING);
 
         break;
     }
@@ -1006,7 +1120,7 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
 
         setIconSize(QSize(30, 30));
         setOrientation(QListView::TopToBottom, false);
-        setSpacing(0);
+        setSpacing(LIST_VIEW_SPACING);
 
         break;
     }
@@ -1034,12 +1148,14 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
         setColumnWidth(0, 200);
         setIconSize(QSize(30, 30));
         setOrientation(QListView::TopToBottom, false);
-        setSpacing(0);
+        setSpacing(LIST_VIEW_SPACING);
         break;
     }
     default:
         break;
     }
+
+    updateItemSizeHint();
 
     emit viewModeChanged(mode);
 }
@@ -1208,4 +1324,15 @@ void DFileView::updateExtendHeaderViewProperty()
 
     m_columnRoles.clear();
     m_columnRoles << model()->getRoleByColumn(0);
+}
+
+void DFileView::updateItemSizeHint()
+{
+    if(isIconViewMode()) {
+        int width = iconSize().width() * 1.8;
+
+        m_itemSizeHint = QSize(width, width * 1.1);
+    } else {
+        m_itemSizeHint = QSize(-1, 30);
+    }
 }

@@ -62,13 +62,7 @@ void DFileItemDelegate::paint(QPainter *painter,
 
 QSize DFileItemDelegate::sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const
 {
-    if(parent()->isIconViewMode()) {
-        int width = parent()->iconSize().width() * 1.8;
-
-        return QSize(width, width * 1.1);
-    } else {
-        return QSize(-1, 30);
-    }
+    return parent()->itemSizeHint();
 }
 
 QWidget *DFileItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &, const QModelIndex &index) const
