@@ -41,6 +41,8 @@ void DStatusBar::initUI()
                   background-color: white;\
               }");
     setLayout(m_layout);
+
+    m_sizeGrip = new QSizeGrip(this);
 }
 
 void DStatusBar::initConnect()
@@ -92,5 +94,6 @@ void DStatusBar::showLoadingIncator(const FMEvent &event, bool loading)
 void DStatusBar::resizeEvent(QResizeEvent *event)
 {
     m_loadingIndicator->move((event->size().width() - m_loadingIndicator->width()) / 2, 0);
+    m_sizeGrip->move(event->size().width() - 10, event->size().height() - 10);
     QFrame::resizeEvent(event);
 }

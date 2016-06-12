@@ -147,7 +147,7 @@ void DLeftSideBar::initUI()
 
 void DLeftSideBar::initConnect()
 {
-    connect(m_fileButton, &DCheckableButton::released, this, &DLeftSideBar::navSwitched);
+//    connect(m_fileButton, &DCheckableButton::released, this, &DLeftSideBar::navSwitched);
     connect(m_scene->getGroup(), &DBookmarkItemGroup::url, this, &DLeftSideBar::handleLocationChanged);
     connect(m_scene, &DBookmarkScene::dragEntered, this, &DLeftSideBar::doDragEnter);
     connect(m_scene, &DBookmarkScene::dragLeft, this, &DLeftSideBar::doDragLeave);

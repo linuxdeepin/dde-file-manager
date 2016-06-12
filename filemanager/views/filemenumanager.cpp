@@ -126,7 +126,7 @@ DFileMenu *FileMenuManager::createToolBarSettingsMenu(const QVector<MenuAction> 
 
     actionKeys << MenuAction::NewWindow
                << MenuAction::Separator
-               << MenuAction::Settings
+//               << MenuAction::Settings
                << MenuAction::Help
                << MenuAction::About
                << MenuAction::Exit;

@@ -137,7 +137,7 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
 
     QStringList titleList;
     if (fileInfo->isFile()){
-        titleList = QStringList() << tr("Basic Info") << tr("Open with");
+        titleList = QStringList() << tr("Basic Info") /*<< tr("Open with")*/;
     }else{
         titleList = QStringList() << tr("Basic Info");
     }
@@ -152,8 +152,8 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
 
 
     if (fileInfo->isFile()){
-        m_OpenWithListWidget = createOpenWithListWidget(fileInfo);
-        expandGroup->expand(1)->setContent(m_OpenWithListWidget);
+//        m_OpenWithListWidget = createOpenWithListWidget(fileInfo);
+//        expandGroup->expand(1)->setContent(m_OpenWithListWidget);
     }
     else if (fileInfo->isDir()){
         startComputerFolderSize(fileInfo->absoluteFilePath());
