@@ -47,6 +47,7 @@ public slots:
     void paused();
     void started();
     void cancelled();
+    void handleJobFinished();
 private:
     Status m_status;
     QString m_trashLoc;
