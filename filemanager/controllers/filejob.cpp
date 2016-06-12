@@ -24,6 +24,7 @@ FileJob::FileJob(const QString &title, QObject *parent) : QObject(parent)
     m_trashLoc = "/home/" + user + "/.local/share/Trash";
     m_id = QString::number(QDateTime::currentDateTime().toMSecsSinceEpoch());
     m_title = title;
+    connect(this, &FileJob::finished, this, &FileJob::handleJobFinished);
 }
 
 void FileJob::setJobId(const QString &id)
@@ -214,6 +215,12 @@ void FileJob::cancelled()
     m_status = FileJob::Cancelled;
 }
 
+void FileJob::handleJobFinished()
+{
+    m_bytesCopied = m_totalSize;
+    jobUpdated();
+}
+
 void FileJob::jobUpdated()
 {
     QMap<QString, QString> jobDataDetail;
@@ -223,15 +230,20 @@ void FileJob::jobUpdated()
         jobDataDetail.insert("remainTime", QString("%1 s").arg(QString::number(remainTime)));
     }
     QString speed;
-    if(m_bytesPerSec > ONE_MB_SIZE)
-    {
-        m_bytesPerSec = m_bytesPerSec / ONE_MB_SIZE;
-        speed = QString("%1 MB/s").arg(QString::number(m_bytesPerSec));
-    }
-    else
-    {
-        m_bytesPerSec = m_bytesPerSec / ONE_KB_SIZE;
-        speed = QString("%1 KB/s").arg(QString::number(m_bytesPerSec));
+
+    if (m_bytesCopied == m_totalSize){
+        speed = QString("0 MB/s");
+    }else{
+        if(m_bytesPerSec > ONE_MB_SIZE)
+        {
+            m_bytesPerSec = m_bytesPerSec / ONE_MB_SIZE;
+            speed = QString("%1 MB/s").arg(QString::number(m_bytesPerSec));
+        }
+        else
+        {
+            m_bytesPerSec = m_bytesPerSec / ONE_KB_SIZE;
+            speed = QString("%1 KB/s").arg(QString::number(m_bytesPerSec));
+        }
     }
     jobDataDetail.insert("speed", speed);
     jobDataDetail.insert("file", m_srcFileName);

@@ -475,6 +475,13 @@ void DTaskDialog::removeTask(const QMap<QString, QString> &jobDetail){
     }
 }
 
+void DTaskDialog::delayRemoveTask(const QMap<QString, QString> &jobDetail)
+{
+    QTimer::singleShot(2000, this, [=](){
+        removeTask(jobDetail);
+    });
+}
+
 void DTaskDialog::handleUpdateTaskWidget(const QMap<QString, QString> &jobDetail,
                                          const QMap<QString, QString> &data){
     if (jobDetail.contains("jobId")){
