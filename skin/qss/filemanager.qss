@@ -315,11 +315,11 @@ QPushButton#FileButton{
 }
 
 QPushButton#FileButton:hover{
-    image: url(:/icons/images/icons/file_hover_16px.svg);
+    /*image: url(:/icons/images/icons/file_hover_16px.svg);*/
 }
 
 QPushButton#FileButton:press{
-    image: url(:/icons/images/icons/file_hover_16px.svg);
+    /*image: url(:/icons/images/icons/file_hover_16px.svg);*/
 }
 
 
