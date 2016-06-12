@@ -46,6 +46,7 @@ void DMovableMainWindow::mouseMoveEvent(QMouseEvent *event)
     if(isActiveWindow()){
         if (m_dragMovableRect.contains(event->pos())){
             emit mouseMoved();
+            setFocus();
         }
     }
     QMainWindow::mouseMoveEvent(event);
