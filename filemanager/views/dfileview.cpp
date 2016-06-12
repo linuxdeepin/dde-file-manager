@@ -181,7 +181,7 @@ void DFileView::initActions()
 void DFileView::initKeyboardSearchTimer()
 {
     m_keyboardSearchTimer = new QTimer(this);
-    m_keyboardSearchTimer->setInterval(100);
+    m_keyboardSearchTimer->setInterval(500);
 }
 
 DFileSystemModel *DFileView::model() const
