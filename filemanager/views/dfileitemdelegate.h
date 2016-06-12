@@ -52,6 +52,8 @@ public:
 
 protected:
     bool eventFilter(QObject *object, QEvent *event) Q_DECL_OVERRIDE;
+    void initStyleOption(QStyleOptionViewItem *option,
+                         const QModelIndex &index) const Q_DECL_OVERRIDE;
 
 private:
     FileIconItem *focus_item;

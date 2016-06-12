@@ -8,6 +8,7 @@
 #include "dscrollbar.h"
 #include "windowmanager.h"
 #include "dfilemanagerwindow.h"
+#include "dfileselectionmodel.h"
 
 #include "../app/global.h"
 #include "../app/fmevent.h"
@@ -34,7 +35,6 @@
 DWIDGET_USE_NAMESPACE
 
 bool DFileView::CtrlIsPressed = false;
-
 
 DFileView::DFileView(QWidget *parent) : DListView(parent)
 {
@@ -74,7 +74,6 @@ void DFileView::initUI()
     setEditTriggers(QListView::EditKeyPressed);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBar(new DScrollBar);
-//    setSelectionRectVisible(false);
 }
 
 void DFileView::initDelegate()
@@ -85,6 +84,7 @@ void DFileView::initDelegate()
 void DFileView::initModel()
 {
     setModel(new DFileSystemModel(this));
+    setSelectionModel(new DFileSelectionModel(model(), this));
 }
 
 void DFileView::initConnects()
@@ -291,6 +291,16 @@ int DFileView::horizontalOffset() const
     return m_horizontalOffset;
 }
 
+bool DFileView::isSelected(const QModelIndex &index) const
+{
+    return static_cast<DFileSelectionModel*>(selectionModel())->isSelected(index);
+}
+
+QModelIndexList DFileView::selectedIndexes() const
+{
+    return static_cast<DFileSelectionModel*>(selectionModel())->selectedIndexes();
+}
+
 void DFileView::cd(const FMEvent &event)
 {
     setFocus();
@@ -460,7 +470,6 @@ void DFileView::wheelEvent(QWheelEvent *event)
 
 void DFileView::keyPressEvent(QKeyEvent *event)
 {
-    qDebug() << event->modifiers() << event->key();
     const DUrlList& urls = selectedUrls();
     FMEvent fmevent;
     fmevent = urls;
@@ -666,7 +675,7 @@ bool DFileView::event(QEvent *event)
         bool isEmptyArea = this->isEmptyArea(pos);
 
         if (e->button() == Qt::LeftButton) {
-            if (isEmptyArea) {
+            if (isEmptyArea && !CtrlIsPressed) {
                 clearSelection();
             }
         } else if (e->button() == Qt::RightButton) {
@@ -694,15 +703,6 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
     if (dragDropMode() == InternalMove
         && (event->source() != this || !(event->possibleActions() & Qt::MoveAction)))
         QAbstractItemView::dragMoveEvent(event);
-}
-
-void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command)
-{
-   DListView::setSelection(rect, command);
-   if (selectedIndexes().count() >=2 && m_elasticBand.isValid()){
-       QItemSelection itemSelection(selectedIndexes().first(), selectedIndexes().last());
-       selectionModel()->select(itemSelection, command);
-   }
 }
 
 bool DFileView::isEmptyArea(const QPoint &pos) const

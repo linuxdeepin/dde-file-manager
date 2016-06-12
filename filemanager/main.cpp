@@ -23,10 +23,18 @@
 
 #include "../controllers/pathmanager.h"
 
+#ifdef PPROF
+#include <gperftools/profiler.h>
+#endif
+
 DWIDGET_USE_NAMESPACE
 
 int main(int argc, char *argv[])
 {
+#ifdef ENABLE_PPROF
+    ProfilerStart("pprof.prof");
+#endif
+
     LogUtil::registerLogger();
 
     SingleApplication app(argc, argv);
@@ -65,7 +73,13 @@ int main(int argc, char *argv[])
         fileManagerApp->show(commandlineUrl);
         dialogManager;
 
+#ifdef ENABLE_PPROF
+        int request = app.exec();
+        ProfilerStop();
+        return request;
+#else
         quick_exit(app.exec());
+#endif
     }else{
         SingleApplication::newClientProcess(uniqueKey);
     }

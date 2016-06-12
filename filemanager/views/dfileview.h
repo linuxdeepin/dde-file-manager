@@ -87,6 +87,12 @@ public:
 
     int horizontalOffset() const;
 
+    bool isSelected(const QModelIndex &index) const;
+    QModelIndexList selectedIndexes() const Q_DECL_OVERRIDE;
+
+
+    void addSelectedIndex(const QModelIndex &index);
+
 public slots:
     void cd(const FMEvent &event);
     void cdUp(const FMEvent &event);
@@ -138,7 +144,6 @@ protected:
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
     bool event(QEvent *event) Q_DECL_OVERRIDE;
     void dragMoveEvent(QDragMoveEvent *event) Q_DECL_OVERRIDE;
-    void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command) Q_DECL_OVERRIDE;
 
 private:
     FileController *m_controller;
@@ -183,8 +188,6 @@ private:
 
     QTimer* m_keyboardSearchTimer;
     QString m_keyboardSearchKeys;
-
-    QRect m_selectRect;
 };
 
 #endif // DFILEVIEW_H
