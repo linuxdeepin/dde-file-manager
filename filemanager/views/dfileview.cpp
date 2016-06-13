@@ -323,7 +323,7 @@ QModelIndex DFileView::indexAt(const QPoint &point) const
             return QModelIndex();
 
         int line_index = p.y() / (item_size.height() + ICON_VIEW_SPACING * 2);
-        int line_count = viewport()->width() / (item_size.width() + ICON_VIEW_SPACING);
+        int line_count = viewport()->width() / (item_size.width() + ICON_VIEW_SPACING * 2);
         int row_index = p.x() / (item_size.width() + ICON_VIEW_SPACING * 2);
 
         if (row_index >= line_count)
@@ -762,22 +762,22 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
         QModelIndex index1;
         QModelIndex index2;
 
-        for (int i = rect.left(); (rect.right() - i) * sign_horizontal > 0; i += offset_horizontal) {
-            for (int j = rect.top(); (rect.bottom() - j) * sign_verizontal > 0; j += offset_verizontal) {
+        for (int j = rect.top(); (rect.bottom() - j) * sign_verizontal > 0; j += offset_verizontal) {
+            for (int i = rect.left(); (rect.right() - i) * sign_horizontal > 0; i += offset_horizontal) {
                 index1 = indexAt(QPoint(i, j));
 
                 if (index1.isValid())
                     goto find_index2;
             }
 
-            index1 = indexAt(QPoint(i, rect.bottom()));
+            index1 = indexAt(QPoint(rect.right(), j));
 
             if (index1.isValid())
                 goto find_index2;
         }
 
-        for (int j = rect.top(); (rect.bottom() - j) * sign_verizontal > 0; j += offset_verizontal) {
-            index1 = indexAt(QPoint(rect.right(), j));
+        for (int i = rect.left(); (rect.right() - i) * sign_horizontal > 0; i += offset_horizontal) {
+            index1 = indexAt(QPoint(i, rect.bottom()));
 
             if (index1.isValid())
                 goto find_index2;
@@ -791,22 +791,22 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
         return;
 find_index2:
 
-        for (int i = rect.right(); (i - rect.left()) * sign_horizontal > 0; i -= offset_horizontal) {
-            for (int j = rect.bottom(); (j - rect.top()) * sign_verizontal > 0; j -= offset_verizontal) {
+        for (int j = rect.bottom(); (j - rect.top()) * sign_verizontal > 0; j -= offset_verizontal) {
+            for (int i = rect.right(); (i - rect.left()) * sign_horizontal > 0; i -= offset_horizontal) {
                 index2 = indexAt(QPoint(i, j));
 
                 if (index2.isValid())
                     goto selection;
             }
 
-            index2 = indexAt(QPoint(i, rect.top()));
+            index2 = indexAt(QPoint(rect.left(), j));
 
             if (index2.isValid())
                 goto selection;
         }
 
-        for (int j = rect.bottom(); (j - rect.top()) * sign_verizontal > 0; j -= offset_verizontal) {
-            index2 = indexAt(QPoint(rect.left(), j));
+        for (int i = rect.right(); (i - rect.left()) * sign_horizontal > 0; i -= offset_horizontal) {
+            index2 = indexAt(QPoint(i, rect.top()));
 
             if (index2.isValid())
                 goto selection;
