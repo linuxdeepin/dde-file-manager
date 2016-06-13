@@ -7,6 +7,7 @@
 #include <QPushButton>
 #include <QListWidget>
 #include <QListWidgetItem>
+#include "deviceinfo/udiskdeviceinfo.h"
 #include "durl.h"
 
 class FMEvent;
@@ -41,12 +42,17 @@ private:
     void addComputerCrumb();
     void addTrashCrumb();
     void addHomeCrumb();
-    void addLocalCrumbs(const DUrl & path);
+
+    DCrumbButton* createDeviceCrumbButtonByType(UDiskDeviceInfo::MediaType type, const QString& mountPoint);
+
+    void addLocalCrumbs(const DUrl & url);
     void initUI();
     void prepareCrumbs(const DUrl &path);
-    bool hasPath(QString path);
-    bool isInHome(QString path);
-    bool isHomeFolder(QString path);
+    bool hasPath(const QString& path);
+    bool isInHome(const QString& path);
+    bool isHomeFolder(const QString& path);
+    bool isInDevice(const QString& path);
+    bool isDeviceFolder(const QString& path);
     bool isRootFolder(QString path);
     void createCrumbs();
     void createArrows();
