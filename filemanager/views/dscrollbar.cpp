@@ -18,7 +18,7 @@ DScrollBar::DScrollBar(QWidget *parent)
             border-radius: 2px;\
             background: transparent;\
             width: 8px;\
-            margin: 0px 2px 0 2px;\
+            margin: 4px 2px 4px 2px;\
        }\
        QScrollBar#DScrollBar::handle:vertical:hover{\
             border-radius: 2px; \

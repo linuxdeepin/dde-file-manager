@@ -59,7 +59,6 @@ public:
     void initExtendView();
 
     void initCentralWidget();
-    void initStatusBar();
     void initConnect();
 
     DUrl currentUrl() const;
