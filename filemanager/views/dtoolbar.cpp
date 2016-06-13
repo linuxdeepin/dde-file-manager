@@ -65,20 +65,20 @@ void DToolBar::initAddressToolBar()
     m_backButton = new DStateButton(":/icons/images/icons/backward_normal.png", this);
     m_backButton->setObjectName("backButton");
     m_backButton->setFixedWidth(25);
-    m_backButton->setFixedHeight(20);
+    m_backButton->setFixedHeight(18);
     m_backButton->setDisabled(true);
     m_backButton->setFocusPolicy(Qt::NoFocus);
     m_forwardButton = new DStateButton(":/icons/images/icons/forward_normal.png", this);
     m_forwardButton->setObjectName("forwardButton");
     m_forwardButton->setFixedWidth(25);
-    m_forwardButton->setFixedHeight(20);
+    m_forwardButton->setFixedHeight(18);
     m_forwardButton->setDisabled(true);
     m_forwardButton->setFocusPolicy(Qt::NoFocus);
 
     m_searchButton = new DStateButton(":/images/images/light/appbar.magnify.png", this);
     m_searchButton->setObjectName("searchButton");
     m_searchButton->setFixedWidth(25);
-    m_searchButton->setFixedHeight(20);
+    m_searchButton->setFixedHeight(18);
     m_searchButton->setFocusPolicy(Qt::NoFocus);
 
     backForwardLayout->addWidget(m_backButton);
@@ -117,22 +117,19 @@ void DToolBar::initContollerToolBar()
     m_contollerToolBar->setObjectName("ContollerToolBar");
     m_contollerToolBar->setFixedHeight(40);
     m_iconViewButton = new QPushButton(this);
-    m_iconViewButton->setGeometry(QRect(0,0,26,20));
-    m_iconViewButton->setFixedHeight(20);
+    m_iconViewButton->setFixedHeight(18);
     m_iconViewButton->setObjectName("iconViewButton");
     m_iconViewButton->setCheckable(true);
     m_iconViewButton->setChecked(true);
     m_iconViewButton->setFocusPolicy(Qt::NoFocus);
 
     m_listViewButton = new QPushButton(this);
-    m_listViewButton->setGeometry(QRect(0,0,26,20));
-    m_listViewButton->setFixedHeight(20);
+    m_listViewButton->setFixedHeight(18);
     m_listViewButton->setObjectName("listViewButton");
     m_listViewButton->setCheckable(true);
     m_listViewButton->setFocusPolicy(Qt::NoFocus);
 
 //    m_extendButton = new QPushButton(this);
-//    m_extendButton->setGeometry(QRect(0,0,26,20));
 //    m_extendButton->setFixedHeight(20);
 //    m_extendButton->setObjectName("hierarchicalButton");
 //    m_extendButton->setCheckable(true);

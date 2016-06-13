@@ -173,9 +173,9 @@ void DLeftSideBar::initNav()
     m_fileButton->setObjectName("FileButton");
     m_fileButton->setFixedSize(QSize(16,16));
     m_fileButton->setFocusPolicy(Qt::NoFocus);
-    fileButtonLayout->addWidget(m_fileButton);
-    fileButtonLayout->addWidget(m_fileLabel);
-    fileButtonLayout->setContentsMargins(11, 15, 0, 0);
+    fileButtonLayout->addWidget(m_fileButton, Qt::AlignVCenter);
+    fileButtonLayout->addWidget(m_fileLabel, Qt::AlignVCenter);
+    fileButtonLayout->setContentsMargins(13, 13, 0, 0);
     fileButtonLayout->setSpacing(8);
 
     navLayout->addLayout(fileButtonLayout);

@@ -34,7 +34,7 @@ FileManagerApp::~FileManagerApp()
 void FileManagerApp::initApp()
 {
     QFont font;
-    font.setPixelSize(14);
+    font.setPixelSize(12);
     qApp->setFont(font);
 //#ifndef QT_DEBUG
 //    qApp->setQuitOnLastWindowClosed(false);
