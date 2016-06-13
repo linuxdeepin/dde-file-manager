@@ -552,9 +552,12 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     {
         qDebug() << m_deviceInfo->getType();
         m_url.setQuery(m_sysPath);
+
+        m_deviceInfo->canUnmount();
+
         menu = FileMenuManager::genereteMenuByKeys(
                     m_deviceInfo->menuActionList(AbstractFileInfo::SingleFile),
-                    QVector<MenuAction>());
+                    m_deviceInfo->disableMenuActionList());
     }
     else if(m_isDefault)
         menu = FileMenuManager::createDefaultBookMarkMenu();

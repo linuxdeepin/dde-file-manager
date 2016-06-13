@@ -189,3 +189,12 @@ QVector<MenuAction> UDiskDeviceInfo::menuActionList(AbstractFileInfo::MenuType t
     return actionKeys;
 }
 
+QVector<MenuAction> UDiskDeviceInfo::disableMenuActionList()
+{
+    QVector<MenuAction> actionKeys;
+    if (!m_diskInfo.CanUnmount){
+        actionKeys << MenuAction::Property;
+    }
+    return actionKeys;
+}
+
