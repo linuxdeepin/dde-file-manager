@@ -101,6 +101,8 @@ void DFileView::initConnects()
             this, &DFileView::selectAll);
     connect(fileSignalManager, &FileSignalManager::requestSelectFile,
             this, &DFileView::select);
+    connect(fileSignalManager, &FileSignalManager::requestSelectRenameFile,
+            this, &DFileView::selectAndRename);
 
     connect(m_displayAsActionGroup, &QActionGroup::triggered, this, &DFileView::dislpayAsActionTriggered);
     connect(m_sortByActionGroup, &QActionGroup::triggered, this, &DFileView::sortByActionTriggered);
@@ -393,19 +395,26 @@ bool DFileView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger tr
     return DListView::edit(index, trigger, event);
 }
 
-void DFileView::select(const FMEvent &event)
+bool DFileView::select(const FMEvent &event)
 {
     if(event.windowId() != windowId()) {
-        return;
+        return false;
     }
 
     const QModelIndex &index = model()->index(event.fileUrl());
 
-    selectionModel()->select(index, QItemSelectionModel::Select);
+    setCurrentIndex(index);
 
     scrollTo(index);
 
-    appController->actionRename(event);
+    return true;
+}
+
+void DFileView::selectAndRename(const FMEvent &event)
+{
+    bool isSelected = select(event);
+    if (isSelected)
+        appController->actionRename(event);
 }
 
 void DFileView::setViewMode(DFileView::ViewMode mode)
@@ -527,7 +536,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
                 QModelIndex index = selectedIndexes().last();
                 if (index.row() - 1 >= 0){
                     QModelIndex cindex = index.sibling(index.row() - 1, index.column());
-                    selectionModel()->setCurrentIndex(cindex, QItemSelectionModel::SelectCurrent);
+                    setCurrentIndex(cindex);
                 }
                 return;
             }
@@ -537,7 +546,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
                 if ((index.row() + 1) < count()){
                     QModelIndex cindex = index.sibling((index.row() + 1), index.column());
                     if (cindex.isValid()){
-                        selectionModel()->setCurrentIndex(cindex, QItemSelectionModel::SelectCurrent);
+                        setCurrentIndex(cindex);
                     }
                }
                return;
