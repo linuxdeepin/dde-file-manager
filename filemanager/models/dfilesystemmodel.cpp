@@ -184,7 +184,14 @@ QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
         }
         break;
     case Qt::TextAlignmentRole:
-        return Qt::AlignVCenter;
+        switch(columnToRole(index.column())) {
+        case FileCreatedRole:
+        case FileLastModifiedRole:
+        case FileLastReadRole:
+            return Qt::AlignCenter;
+        default:
+            return Qt::AlignVCenter;
+        }
     case FileLastModifiedRole:
         return indexNode->fileInfo->lastModifiedDisplayName();
     case FileSizeRole:
@@ -232,7 +239,7 @@ QVariant DFileSystemModel::headerData(int section, Qt::Orientation, int role) co
     return QVariant();
 }
 
-int DFileSystemModel::getRoleByColumn(int column) const
+int DFileSystemModel::columnToRole(int column) const
 {
     switch (column) {
     case 0:
@@ -247,6 +254,24 @@ int DFileSystemModel::getRoleByColumn(int column) const
         return FileCreatedRole;
     default:
         return FileUserRole + column - DEFAULT_COLUMN_COUNT;
+    }
+}
+
+int DFileSystemModel::roleToColumn(int role) const
+{
+    switch (role) {
+    case FileDisplayNameRole:
+        return 0;
+    case FileLastModifiedRole:
+        return 1;
+    case FileSizeRole:
+        return 2;
+    case FileMimeTypeRole:
+        return 3;
+    case FileCreatedRole:
+        return 4;
+    default:
+        return role - FileUserRole + DEFAULT_COLUMN_COUNT;
     }
 }
 

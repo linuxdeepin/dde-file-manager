@@ -345,6 +345,9 @@ void DFileItemDelegate::paintListItem(bool isDragMode, QPainter *painter,
                                       const QStyleOptionViewItem &option,
                                       const QModelIndex &index) const
 {
+#define ICON_SPACING 10
+#define COLUMU_PADDING 10
+
     const QList<int> &columnRoleList = parent()->columnRoleList();
 
     int column_x = 0;
@@ -369,13 +372,13 @@ void DFileItemDelegate::paintListItem(bool isDragMode, QPainter *painter,
     icon_rect.setSize(parent()->iconSize());
     opt.icon.paint(painter, icon_rect);
 
-    column_x = icon_rect.right() + 10;
+    column_x = icon_rect.right() + ICON_SPACING;
 
     QRect rect = opt.rect;
 
     rect.setLeft(column_x);
 
-    column_x = parent()->columnWidth(0);
+    column_x = parent()->columnWidth(0) - ICON_SPACING;
 
     rect.setRight(column_x);
 
@@ -391,21 +394,25 @@ void DFileItemDelegate::paintListItem(bool isDragMode, QPainter *painter,
     if(isDragMode)
         return;
 
+    const DFileSystemModel *model = qobject_cast<const DFileSystemModel*>(index.model());
+
     for(int i = 1; i < columnRoleList.count(); ++i) {
         QRect rect = opt.rect;
 
-        rect.setLeft(column_x + 40);
+        rect.setLeft(column_x + COLUMU_PADDING);
 
         column_x += parent()->columnWidth(i);
 
-        rect.setRight(column_x + 35);
+        rect.setRight(column_x - COLUMU_PADDING);
 
         int role = columnRoleList.at(i);
 
         if(index != editing_index || role != DFileSystemModel::FileNameRole) {
             /// draw file name label
 
-            painter->drawText(rect, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()),
+            QModelIndex tmp_index = model->createIndex(index.row(), model->roleToColumn(role), index.internalId());
+
+            painter->drawText(rect, Qt::Alignment(tmp_index.data(Qt::TextAlignmentRole).toInt()),
                               index.data(role).toString());
         }
     }

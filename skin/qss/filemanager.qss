@@ -54,7 +54,6 @@ QFrame#LeftSideDiskBar{
 
 QFrame#ToolBar{
     background-color: transparent;
-    border-bottom: 1px solid lightGray;
 }
 
 QFrame#AddressToolBar{

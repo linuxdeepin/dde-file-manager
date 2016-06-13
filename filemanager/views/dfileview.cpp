@@ -37,6 +37,10 @@ DWIDGET_USE_NAMESPACE
 #define ICON_VIEW_SPACING 5
 #define LIST_VIEW_SPACING 0
 
+#define DEFAULT_HEADER_SECTION_WIDTH 140
+#define FILE_SIZE_HEADER_COLUMN_WIDTH 100
+#define FILE_TYPE_HEADER_COLUMN_WIDTH 100
+
 DFileView::DFileView(QWidget *parent) : DListView(parent)
 {
     D_THEME_INIT_WIDGET(DFileView);
@@ -1113,7 +1117,7 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
             m_headerView->setHighlightSections(true);
             m_headerView->setSectionsClickable(true);
             m_headerView->setSortIndicatorShown(true);
-            m_headerView->setDefaultAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+            m_headerView->setDefaultAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
 
             if(selectionModel()) {
                 m_headerView->setSelectionModel(selectionModel());
@@ -1310,14 +1314,21 @@ void DFileView::updateListHeaderViewProperty()
     m_headerView->setModel(model());
     m_headerView->setSectionResizeMode(QHeaderView::Fixed);
     m_headerView->setSectionResizeMode(0, QHeaderView::Stretch);
-    m_headerView->setDefaultSectionSize(200);
-    m_headerView->setMinimumSectionSize(200);
-    m_headerView->resizeSection(2, 100);
+    m_headerView->setDefaultSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
+    m_headerView->setMinimumSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
+    m_headerView->resizeSection(model()->roleToColumn(DFileSystemModel::FileSizeRole),
+                                FILE_SIZE_HEADER_COLUMN_WIDTH);
+    m_headerView->resizeSection(model()->roleToColumn(DFileSystemModel::FileMimeTypeRole),
+                                FILE_TYPE_HEADER_COLUMN_WIDTH);
     m_headerView->resizeSection(3, 100);
 
     m_columnRoles.clear();
     for (int i = 0; i < m_headerView->count(); ++i)
-        m_columnRoles << model()->getRoleByColumn(i);
+        m_columnRoles << model()->columnToRole(i);
+
+    /// hide column(default display Name Size Modified Datetime)
+    m_headerView->setSectionHidden(model()->roleToColumn(DFileSystemModel::FileMimeTypeRole), true);
+    m_headerView->setSectionHidden(model()->roleToColumn(DFileSystemModel::FileCreatedRole), true);
 }
 
 void DFileView::updateExtendHeaderViewProperty()
@@ -1328,11 +1339,11 @@ void DFileView::updateExtendHeaderViewProperty()
     m_headerView->setModel(model());
     m_headerView->setSectionResizeMode(QHeaderView::Fixed);
     m_headerView->setSectionResizeMode(0, QHeaderView::Stretch);
-    m_headerView->setDefaultSectionSize(100);
-    m_headerView->setMinimumSectionSize(200);
+    m_headerView->setDefaultSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
+    m_headerView->setMinimumSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
 
     m_columnRoles.clear();
-    m_columnRoles << model()->getRoleByColumn(0);
+    m_columnRoles << model()->columnToRole(0);
 }
 
 void DFileView::updateItemSizeHint()
