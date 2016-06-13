@@ -75,6 +75,59 @@ void UDiskListener::removeSubscriber(Subscriber *sub)
     }
 }
 
+QMap<QString, UDiskDeviceInfo *> UDiskListener::getAllDeviceInfos()
+{
+    return m_map;
+}
+
+bool UDiskListener::isDeviceFolder(const QString &path) const
+{
+    for (int i = 0; i < m_list.size(); i++)
+    {
+        UDiskDeviceInfo * info = m_list.at(i);
+        if (info->getMountPoint() == path){
+            return true;
+        }
+    }
+    return false;
+}
+
+bool UDiskListener::isInDeviceFolder(const QString &path) const
+{
+    for (int i = 0; i < m_list.size(); i++)
+    {
+        UDiskDeviceInfo * info = m_list.at(i);
+        if (path.startsWith(info->getMountPoint())){
+            return true;
+        }
+    }
+    return false;
+}
+
+UDiskDeviceInfo *UDiskListener::getDeviceByPath(const QString &path)
+{
+    for (int i = 0; i < m_list.size(); i++)
+    {
+        UDiskDeviceInfo * info = m_list.at(i);
+        if (path.startsWith(info->getMountPoint())){
+            return info;
+        }
+    }
+    return NULL;
+}
+
+UDiskDeviceInfo::MediaType UDiskListener::getDeviceMediaType(const QString &path)
+{
+    for (int i = 0; i < m_list.size(); i++)
+    {
+        UDiskDeviceInfo * info = m_list.at(i);
+        if (info->getMountPoint() == path){
+            return info->getMediaType();
+        }
+    }
+    return UDiskDeviceInfo::unknown;
+}
+
 void UDiskListener::mount(const QString &path)
 {
     QDBusPendingReply<> reply = m_diskMountInterface->Mount(path);

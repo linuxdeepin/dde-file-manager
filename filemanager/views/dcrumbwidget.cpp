@@ -9,6 +9,7 @@
 #include "dstatebutton.h"
 #include "../app/global.h"
 
+
 DCrumbWidget::DCrumbWidget(QWidget *parent)
     : QFrame(parent)
 {
@@ -39,42 +40,49 @@ void DCrumbWidget::initUI()
 
 void DCrumbWidget::addCrumb(const QStringList &list)
 {
+    qDebug() << list;
     for(int i = 0; i < list.size(); i++)
     {
         QString text = list.at(i);
         DCrumbButton * button;
-        if(!isHomeFolder(text)){
-            button = new DCrumbButton(m_group.buttons().size(), text, this);
-        }else{
+        if(isHomeFolder(text)){
             button = new DCrumbIconButton(
                     m_group.buttons().size(),
                     QIcon(":/icons/images/icons/home_normal_16px.svg"),
                     QIcon(":/icons/images/icons/home_hover_16px.svg"),
                     QIcon(":/icons/images/icons/home_checked_16px.svg"),
                     text, this);
+        }else if(isDeviceFolder(text)){
+            UDiskDeviceInfo* info = deviceListener->getDeviceByPath(text);
+            button = createDeviceCrumbButtonByType(info->getMediaType(), text);
+        }
+        else{
+            button = new DCrumbButton(m_group.buttons().size(), text, this);
         }
 
-        QString path = list.at(0);
-        if(path == "/")
-            path = "";
-        for(int j = 1; j <= i; j++)
-        {
-            path += "/" + list.at(j);
-        }
-        button->setPath(path);
+        if (button){
+            QString path = list.at(0);
+            if(path == "/")
+                path = "";
+            for(int j = 1; j <= i; j++)
+            {
+                path += "/" + list.at(j);
+            }
+            button->setPath(path);
 
-        if (systemPathManager->systemPathsMap().values().contains(path)){
-            foreach (QString key, systemPathManager->systemPathsMap().keys()) {
-                if (systemPathManager->systemPathsMap().value(key) == path){
-                       button->setText(systemPathManager->getSystemPathDisplayName(key));
+            if (systemPathManager->systemPathsMap().values().contains(path)){
+                foreach (QString key, systemPathManager->systemPathsMap().keys()) {
+                    if (systemPathManager->systemPathsMap().value(key) == path){
+                           button->setText(systemPathManager->getSystemPathDisplayName(key));
+                    }
                 }
             }
-        }
 
-        button->setFocusPolicy(Qt::NoFocus);
-        button->adjustSize();
-        m_group.addButton(button, button->getIndex());
-        connect(button, &DCrumbButton::clicked, this, &DCrumbWidget::buttonPressed);
+            button->setFocusPolicy(Qt::NoFocus);
+            button->adjustSize();
+            m_group.addButton(button, button->getIndex());
+            connect(button, &DCrumbButton::clicked, this, &DCrumbWidget::buttonPressed);
+        }
     }
     m_group.buttons().last()->setChecked(true);
 }
@@ -189,22 +197,88 @@ void DCrumbWidget::addHomeCrumb()
     connect(button, &DCrumbButton::clicked, this, &DCrumbWidget::buttonPressed);
 }
 
-void DCrumbWidget::addLocalCrumbs(const DUrl & path)
+DCrumbButton *DCrumbWidget::createDeviceCrumbButtonByType(UDiskDeviceInfo::MediaType type, const QString &mountPoint)
+{
+    DCrumbButton * button = NULL;
+    switch (type) {
+    case UDiskDeviceInfo::native:{
+        button = new DCrumbIconButton(
+                    m_group.buttons().size(),
+                    QIcon(":/icons/images/icons/disk_normal_16px.svg"),
+                    QIcon(":/icons/images/icons/disk_hover_16px.svg"),
+                    QIcon(":/icons/images/icons/disk_checked_16px.svg"),
+                    mountPoint, this);
+        break;
+    }
+    case UDiskDeviceInfo::phone:{
+        button = new DCrumbIconButton(
+                    m_group.buttons().size(),
+                    QIcon(":/icons/images/icons/disk_normal_16px.svg"),
+                    QIcon(":/icons/images/icons/disk_hover_16px.svg"),
+                    QIcon(":/icons/images/icons/disk_checked_16px.svg"),
+                    mountPoint, this);
+        break;
+    }
+    case UDiskDeviceInfo::iphone:{
+        button = new DCrumbIconButton(
+                    m_group.buttons().size(),
+                    QIcon(":/icons/images/icons/disk_normal_16px.svg"),
+                    QIcon(":/icons/images/icons/disk_hover_16px.svg"),
+                    QIcon(":/icons/images/icons/disk_checked_16px.svg"),
+                    mountPoint, this);
+        break;
+    }
+    case UDiskDeviceInfo::removable:{
+        button = new DCrumbIconButton(
+                    m_group.buttons().size(),
+                    QIcon(":/icons/images/icons/disk_normal_16px.svg"),
+                    QIcon(":/icons/images/icons/disk_hover_16px.svg"),
+                    QIcon(":/icons/images/icons/disk_checked_16px.svg"),
+                    mountPoint, this);
+        break;
+    }
+    case UDiskDeviceInfo::network:{
+        button = new DCrumbIconButton(
+                    m_group.buttons().size(),
+                    QIcon(":/icons/images/icons/disk_normal_16px.svg"),
+                    QIcon(":/icons/images/icons/disk_hover_16px.svg"),
+                    QIcon(":/icons/images/icons/disk_checked_16px.svg"),
+                    mountPoint, this);
+        break;
+    }
+    default:
+        qWarning() << "unknown type";
+        break;
+    }
+
+    return button;
+}
+
+void DCrumbWidget::addLocalCrumbs(const DUrl & url)
 {
     QStringList list;
-    qDebug() << path.path();
-    if(isInHome(path.path()))
+    QString path = url.path();
+    qDebug() << path;
+    if(isInHome(path))
     {
-        QString tmpPath = path.toLocalFile();
+        QString tmpPath = url.toLocalFile();
         tmpPath.replace(m_homePath, "");
         list.append(tmpPath.split("/"));
         list.insert(0, m_homePath);
         list.removeAll("");
+    }else if(isInDevice(path)){
+        UDiskDeviceInfo* info = deviceListener->getDeviceByPath(path);
+        QString mountPoint = info->getMountPoint();
+        QString tmpPath = url.toLocalFile();
+        tmpPath.replace(mountPoint, "");
+        list.append(tmpPath.split("/"));
+        list.insert(0, mountPoint);
+        list.removeAll("");
     }
     else
     {
-        list.append(path.path().split("/"));
-        if(path.isLocalFile())
+        list.append(path.split("/"));
+        if(url.isLocalFile())
             list.replace(0, "/");
         list.removeAll("");
     }
@@ -212,19 +286,29 @@ void DCrumbWidget::addLocalCrumbs(const DUrl & path)
         addCrumb(list);
 }
 
-bool DCrumbWidget::hasPath(QString path)
+bool DCrumbWidget::hasPath(const QString &path)
 {
     return m_path.toLocalFile().contains(path);
 }
 
-bool DCrumbWidget::isInHome(QString path)
+bool DCrumbWidget::isInHome(const QString& path)
 {
     return path.startsWith(m_homePath);
 }
 
-bool DCrumbWidget::isHomeFolder(QString path)
+bool DCrumbWidget::isHomeFolder(const QString& path)
 {
     return path == m_homePath;
+}
+
+bool DCrumbWidget::isInDevice(const QString& path)
+{
+    return deviceListener->isInDeviceFolder(path);
+}
+
+bool DCrumbWidget::isDeviceFolder(const QString &path)
+{
+    return deviceListener->isDeviceFolder(path);
 }
 
 bool DCrumbWidget::isRootFolder(QString path)
