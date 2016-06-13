@@ -4,6 +4,7 @@
 #include "basedialog.h"
 #include "../models/abstractfileinfo.h"
 #include <QLabel>
+#include <QCloseEvent>
 QT_BEGIN_NAMESPACE
 class QTextEdit;
 class QFrame;
@@ -84,9 +85,19 @@ public:
     void updateFolderSize(qint64 size);
     void startComputerFolderSize(const QString& dir);
     void toggleFileExecutable(bool isChecked);
+    DUrl getUrl();
+
+public slots:
+    void raise();
 
 signals:
     void requestStartComputerFolderSize();
+    void closed(const DUrl& url);
+    void aboutToClosed(const DUrl& url);
+    void raised();
+
+protected:
+    void closeEvent(QCloseEvent* event);
 
 private:
     DUrl m_url;

@@ -158,3 +158,22 @@ QLabel#titleLable{
 QListWidget{
     background-color: transparent;
 }
+
+
+QPushButton#AllCloseButton{
+    background-color: transparent;
+    border: none;
+    color: #01bdff;
+    text-align: center;
+    font-size: 14px;
+}
+
+QPushButton#AllCloseButton:hover{
+    background-color: transparent;
+    color: #ffa530;
+}
+
+QPushButton#AllCloseButton:pressed{
+    background-color: transparent;
+    color: #01bdff;
+}
