@@ -11,6 +11,11 @@
 #include <QTextBlock>
 #include <QAbstractTextDocumentLayout>
 
+#define ICON_SPACING 10
+#define COLUMU_PADDING 10
+#define LEFT_PADDING 10
+#define RIGHT_PADDING 10
+
 DFileItemDelegate::DFileItemDelegate(DFileView *parent) :
     QStyledItemDelegate(parent)
 {
@@ -124,13 +129,13 @@ void DFileItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
 
         icon_rect.setSize(parent()->iconSize());
 
-        column_x = icon_rect.right() + 10;
+        column_x = icon_rect.right() + ICON_SPACING;
 
         QRect rect = option.rect;
 
-        rect.setLeft(column_x);
+        rect.setLeft(column_x + LEFT_PADDING);
 
-        column_x = parent()->columnWidth(0);
+        column_x = parent()->columnWidth(0) - parent()->viewportMargins().left();
 
         rect.setRight(column_x);
 
@@ -345,9 +350,6 @@ void DFileItemDelegate::paintListItem(bool isDragMode, QPainter *painter,
                                       const QStyleOptionViewItem &option,
                                       const QModelIndex &index) const
 {
-#define ICON_SPACING 10
-#define COLUMU_PADDING 10
-
     const QList<int> &columnRoleList = parent()->columnRoleList();
 
     int column_x = 0;
@@ -365,11 +367,15 @@ void DFileItemDelegate::paintListItem(bool isDragMode, QPainter *painter,
         painter->setPen(Qt::black);
     }
 
+    opt.rect.setLeft(opt.rect.left() + LEFT_PADDING);
+    opt.rect.setRight(opt.rect.right() + RIGHT_PADDING);
+
     /// draw icon
 
     QRect icon_rect = opt.rect;
 
     icon_rect.setSize(parent()->iconSize());
+    icon_rect.moveTop(icon_rect.top() + (opt.rect.bottom() - icon_rect.bottom()) / 2);
     opt.icon.paint(painter, icon_rect);
 
     column_x = icon_rect.right() + ICON_SPACING;
@@ -378,7 +384,7 @@ void DFileItemDelegate::paintListItem(bool isDragMode, QPainter *painter,
 
     rect.setLeft(column_x);
 
-    column_x = parent()->columnWidth(0) - ICON_SPACING;
+    column_x = parent()->columnWidth(0) - parent()->viewportMargins().left();
 
     rect.setRight(column_x);
 
@@ -403,7 +409,7 @@ void DFileItemDelegate::paintListItem(bool isDragMode, QPainter *painter,
 
         column_x += parent()->columnWidth(i);
 
-        rect.setRight(column_x - COLUMU_PADDING);
+        rect.setRight(column_x - (i < columnRoleList.count() - 1 ? COLUMU_PADDING : 0));
 
         int role = columnRoleList.at(i);
 
