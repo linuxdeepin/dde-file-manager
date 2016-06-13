@@ -49,7 +49,7 @@ void DToolBar::initUI()
     mainLayout->addWidget(m_addressToolBar);
     mainLayout->addWidget(m_contollerToolBar);
     mainLayout->setSpacing(0);
-    mainLayout->setContentsMargins(0, 0, 0, 0);
+    mainLayout->setContentsMargins(14, 0, 48, 0);
     setLayout(mainLayout);
 }
 
@@ -98,7 +98,7 @@ void DToolBar::initAddressToolBar()
     comboLayout->addWidget(m_crumbWidget);
     comboLayout->addWidget(m_searchBar);
     comboLayout->addWidget(m_searchButton);
-    comboLayout->setSpacing(0);
+    comboLayout->setSpacing(10);
     comboLayout->setContentsMargins(0, 0, 0, 0);
 
     crumbAndSearch->setLayout(comboLayout);
@@ -106,7 +106,7 @@ void DToolBar::initAddressToolBar()
     QHBoxLayout* mainLayout = new QHBoxLayout;
     mainLayout->addLayout(backForwardLayout);
     mainLayout->addWidget(crumbAndSearch);
-    mainLayout->setContentsMargins(5, 5, 5, 5);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setSpacing(10);
     m_addressToolBar->setLayout(mainLayout);
 }
@@ -144,7 +144,7 @@ void DToolBar::initContollerToolBar()
     mainLayout->addWidget(m_iconViewButton);
     mainLayout->addWidget(m_listViewButton);
 //    mainLayout->addWidget(m_extendButton);
-    mainLayout->setContentsMargins(5, 5, 5, 5);
+    mainLayout->setContentsMargins(10, 0, 0, 0);
     mainLayout->setSpacing(0);
     m_contollerToolBar->setLayout(mainLayout);
 }
