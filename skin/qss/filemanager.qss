@@ -33,23 +33,23 @@ QListWidget#ListWidget::icon{
 }
 
 QFrame#LeftSideBar{
-    background-color: transparent;
+    background-color: #f9f9fa;
     border: 1px solid transparent;
 }
 
 QFrame#LeftSideHomeBar{
     background-color: transparent;
-    border-bottom: 1px solid gray;
+    border-bottom: 1px solid lightgray;
 }
 
 QFrame#LeftSideCommonFolderBar{
     background-color: transparent;
-    border-bottom: 1px solid gray;
+    border-bottom: 1px solid lightgray;
 }
 
 QFrame#LeftSideDiskBar{
     background-color: transparent;
-    border-bottom: 1px solid gray;
+    border-bottom: 1px solid lightgray;
 }
 
 QFrame#ToolBar{
@@ -123,7 +123,9 @@ QSplitter::handle:pressed {
 
 QPushButton#backButton{
     background-color:white;
-    border: 1px;
+    border-left: 1px solid lightgray;
+    border-top: 1px solid lightgray;
+    border-bottom: 1px solid lightgray;
     color: black;
     border-top-left-radius: 2px;
     border-bottom-left-radius: 2px;
@@ -139,7 +141,9 @@ QPushButton#forwardButton:hover{
 
 QPushButton#forwardButton{
     background-color:white;
-    border: 1px;
+    border-top: 1px solid lightgray;
+    border-right: 1px solid lightgray;
+    border-bottom: 1px solid lightgray;
     color: black;
     border-top-right-radius: 2px;
     border-bottom-right-radius: 2px;
@@ -172,7 +176,9 @@ QListWidget#DCrumbList{
 
 QPushButton#iconViewButton{
     background-color:white;
-    border: 1px;
+    border-left: 1px solid lightgray;
+    border-top: 1px solid lightgray;
+    border-bottom: 1px solid lightgray;
     color: black;
     border-top-left-radius: 2px;
     border-bottom-left-radius: 2px;
@@ -194,7 +200,9 @@ QPushButton#iconViewButton:unchecked{
 
 QPushButton#listViewButton{
     background-color:white;
-    border: 1px;
+    border-top: 1px solid lightgray;
+    border-right: 1px solid lightgray;
+    border-bottom: 1px solid lightgray;
     color: black;
     border-top-right-radius: 2px;
     border-bottom-right-radius: 2px;
@@ -290,6 +298,7 @@ QLabel#FileLabel{
     background: transparent;
     color: black;
     text-align: left;
+    font-size: 14px;
 }
 
 QPushButton#TightFileButton{

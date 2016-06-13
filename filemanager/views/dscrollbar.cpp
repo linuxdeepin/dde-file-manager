@@ -14,15 +14,16 @@ DScrollBar::DScrollBar(QWidget *parent)
     m_opacityTimer = new QTimer(this);
     connect(m_timer, SIGNAL(timeout()), this, SLOT(hidden()));
     connect(m_opacityTimer, SIGNAL(timeout()), this, SLOT(opacity()));
-    //setAutoFillBackground(true);
-    //m_timer->start(1000);
     m_style = "QScrollBar#DScrollBar:vertical{\
-            border: 0px;\
+            border-radius: 2px;\
             background: transparent;\
-            width: 6px;\
+            width: 8px;\
+            margin: 0px 2px 0 2px;\
        }\
        QScrollBar#DScrollBar::handle:vertical:hover{\
+            border-radius: 2px; \
             background: rgba(16,16,16,0.7);\
+            width: 4px;\
        }\
        QScrollBar#DScrollBar::add-line:vertical {\
              border: none;\
@@ -38,14 +39,14 @@ DScrollBar::DScrollBar(QWidget *parent)
             background: transparent;\
        }";
        m_handleStyle = "QScrollBar#DScrollBar::handle:vertical{\
-               border: 0px;\
-               background-color: rgba(16,16,16,0);\
-               width: 6px;\
+               border-radius: 2px ;\
+               background-color: rgba(16,16,16,0.5);\
+               width: 4px;\
           }";
        m_hoverHandleStyle = "QScrollBar#DScrollBar::handle:vertical{\
-               border: 0px;\
+               border-radius: 2px;\
                background-color: rgba(16,16,16,0.7);\
-               width: 8px;\
+               width: 4px;\
           }";
 }
 
@@ -91,6 +92,7 @@ void DScrollBar::mouseReleaseEvent(QMouseEvent *e)
 void DScrollBar::showEvent(QShowEvent *e)
 {
     setStyleSheet(m_style + m_handleStyle);
+    QScrollBar::showEvent(e);
 }
 
 void DScrollBar::hidden()
@@ -108,7 +110,7 @@ void DScrollBar::opacity()
         m_count--;
         m_opacityTimer->start(50);
         QString stylesheet = "QScrollBar#DScrollBar:handle:vertical{\
-                border: 0px;\
+                border-radius: 2px;\
                 background: rgba(16,16,16," + QString::number(m_count/m_level/2)+ ");" +
                 "width: 4px;}";
         setStyleSheet(m_style + stylesheet);
