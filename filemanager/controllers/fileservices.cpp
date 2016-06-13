@@ -168,7 +168,7 @@ bool FileServices::renameFile(const DUrl &oldUrl, const DUrl &newUrl, const FMEv
 {
     FileInfo f(newUrl);
 
-    if (f.isCanRename() && f.exists(newUrl)){
+    if (f.exists(newUrl)){
         dialogManager->showRenameNameSameErrorDialog(f.displayName(), event);
         return false;
     }

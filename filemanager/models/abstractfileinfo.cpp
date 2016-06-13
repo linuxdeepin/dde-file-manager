@@ -587,12 +587,18 @@ void AbstractFileInfo::updateFileMetaData()
     if (metaDataCacheMap.contains(this->data->url))
         return;
 
+    QFile::Permissions permissions = this->data->fileInfo.permissions();
+
+    if (permissions == 0 && !exists()) {
+        return;
+    }
+
     FileMetaData data;
 
     data.isExecutable = this->data->fileInfo.isExecutable();
     data.isReadable = this->data->fileInfo.isReadable();
     data.isWritable = this->data->fileInfo.isWritable();
-    data.permissions = this->data->fileInfo.permissions();
+    data.permissions = permissions;
 
     metaDataCacheMap[this->data->url] = data;
 }
