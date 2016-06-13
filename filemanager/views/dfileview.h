@@ -94,6 +94,8 @@ public:
     inline QSize itemSizeHint() const
     { return m_itemSizeHint;}
 
+    using DListView::viewportMargins;
+
 public slots:
     void cd(const FMEvent &event);
     void cdUp(const FMEvent &event);

@@ -41,6 +41,8 @@ DWIDGET_USE_NAMESPACE
 #define FILE_SIZE_HEADER_COLUMN_WIDTH 100
 #define FILE_TYPE_HEADER_COLUMN_WIDTH 100
 
+#define LIST_VIEW_ICON_SIZE 28
+
 DFileView::DFileView(QWidget *parent) : DListView(parent)
 {
     D_THEME_INIT_WIDGET(DFileView);
@@ -766,7 +768,7 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
         return;
     }
 
-    if (flags == (QItemSelectionModel::Current|QItemSelectionModel::Rows|QItemSelectionModel::ClearAndSelect)) {
+    if (isWrapping() && flags == (QItemSelectionModel::Current|QItemSelectionModel::Rows|QItemSelectionModel::ClearAndSelect)) {
         int sign_horizontal = rect.left() < rect.right() ? 1 : -1;
         int sign_verizontal = rect.top() < rect.bottom() ? 1 : -1;
         int offset_horizontal = itemSizeHint().width() * sign_horizontal;
@@ -1076,8 +1078,8 @@ void DFileView::updateViewportMargins()
         setViewportMargins(gapWidth, 0, 0, 0);
 
     } else {
-        margins.setLeft(10);
-        margins.setRight(10);
+        margins.setLeft(0);
+        margins.setRight(0);
         setViewportMargins(margins);
     }
 }
@@ -1131,7 +1133,7 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
 
         addHeaderWidget(m_headerView);
 
-        setIconSize(QSize(30, 30));
+        setIconSize(QSize(LIST_VIEW_ICON_SIZE, LIST_VIEW_ICON_SIZE));
         setOrientation(QListView::TopToBottom, false);
         setSpacing(LIST_VIEW_SPACING);
 
@@ -1353,6 +1355,6 @@ void DFileView::updateItemSizeHint()
 
         m_itemSizeHint = QSize(width, width * 1.1);
     } else {
-        m_itemSizeHint = QSize(-1, 30);
+        m_itemSizeHint = QSize(-1, LIST_VIEW_ICON_SIZE * 1.2);
     }
 }
