@@ -98,6 +98,9 @@ signals:
     /* request select file view item*/
     void requestSelectFile(const FMEvent &event);
 
+    /* request select file view item and rename*/
+    void requestSelectRenameFile(const FMEvent &event);
+
     /* request restore trash file*/
     void requestRestoreTrashFile(const DUrlList &urlList, const FMEvent &event);
 

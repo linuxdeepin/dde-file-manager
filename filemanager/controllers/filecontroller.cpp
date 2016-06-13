@@ -383,7 +383,7 @@ void FileController::onFileCreated(const QString &filePath)
         FMEvent event;
         event = windowId;
         event = url;
-        emit fileSignalManager->requestSelectFile(event);
+        emit fileSignalManager->requestSelectRenameFile(event);
         FileJob::SelectedFiles.remove(url);
     }
 }

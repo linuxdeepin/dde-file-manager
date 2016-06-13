@@ -174,6 +174,17 @@ bool FileServices::renameFile(const DUrl &oldUrl, const DUrl &newUrl, const FMEv
     }
     TRAVERSE(oldUrl, {
                  bool ok = controller->renameFile(oldUrl, newUrl, accepted);
+
+                 if (ok){
+                     FMEvent e = event;
+
+                     e = newUrl;
+
+                     TIMER_SINGLESHOT(200, {
+                         emit fileSignalManager->requestSelectFile(e);
+                     }, e)
+                 }
+
                  if(accepted)
                     return ok;
              })

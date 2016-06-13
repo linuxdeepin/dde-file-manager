@@ -99,7 +99,8 @@ public slots:
     void cdUp(const FMEvent &event);
     void edit(const FMEvent &event);
     bool edit(const QModelIndex & index, EditTrigger trigger, QEvent * event) Q_DECL_OVERRIDE;
-    void select(const FMEvent &event);
+    bool select(const FMEvent &event);
+    void selectAndRename(const FMEvent &event);
     inline void setViewModeToList()
     { setViewMode(ListMode);}
     inline void setViewModeToIcon()
