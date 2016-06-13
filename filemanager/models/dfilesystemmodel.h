@@ -38,6 +38,8 @@ public:
 
     DFileView *parent() const;
 
+    inline QModelIndex createIndex(int arow, int acolumn, quintptr aid) const
+    { return QAbstractItemModel::createIndex(arow, acolumn, aid);}
     QModelIndex index(const DUrl &fileUrl, int column = 0);
     QModelIndex index(int row, int column,
                               const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
@@ -50,7 +52,8 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const Q_DECL_OVERRIDE;
 
-    int getRoleByColumn(int column) const;
+    int columnToRole(int column) const;
+    int roleToColumn(int role) const;
 
     bool canFetchMore(const QModelIndex & parent) const Q_DECL_OVERRIDE;
     void fetchMore(const QModelIndex & parent) Q_DECL_OVERRIDE;
