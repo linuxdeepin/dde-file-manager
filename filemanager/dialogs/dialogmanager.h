@@ -3,12 +3,14 @@
 
 #include <QObject>
 #include <QMap>
-
+#include "../models/durl.h"
 class DTaskDialog;
 class FileJob;
 class AbstractFileInfo;
 class DUrl;
 class FMEvent;
+class PropertyDialog;
+class CloseAllDialogIndicator;
 
 class DialogManager : public QObject
 {
@@ -18,6 +20,7 @@ public:
     explicit DialogManager(QObject *parent = 0);
     ~DialogManager();
     void initTaskDialog();
+    void initCloseIndicatorDialog();
     void initConnect();
     QPoint getPerportyPos(int dialogWidth, int dialogHeight, int count, int index);
 signals:
@@ -26,9 +29,7 @@ public slots:
     void handleConflictRepsonseConfirmed(const QMap<QString, QString> &jobDetail, const QMap<QString, QVariant> &response);
     void addJob(FileJob * job);
     void removeJob(const QString &jobId);
-
     void showTaskDialog();
-
     void abortJob(const QMap<QString, QString> &jobDetail);
 
     void showUrlWrongDialog(const DUrl &url);
@@ -39,9 +40,15 @@ public slots:
     void showPropertyDialog(const FMEvent &event);
     void showDiskErrorDialog(const QString &id, const QString &errorText);
     void showAboutDialog(const FMEvent &event);
+
+    void removePropertyDialog(const DUrl& url);
+    void closeAllPropertyDialog();
 private:
     DTaskDialog* m_taskDialog = NULL;
+    CloseAllDialogIndicator* m_closeIndicatorDialog;
     QMap<QString, FileJob*> m_jobs;
+    QMap<DUrl, PropertyDialog*> m_propertyDialogs;
+
 };
 
 #endif // DIALOGMANAGER_H

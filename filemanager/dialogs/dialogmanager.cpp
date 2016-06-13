@@ -11,6 +11,7 @@
 #include "../app/fmevent.h"
 #include "../views/windowmanager.h"
 #include "../models/trashfileinfo.h"
+#include "closealldialogindicator.h"
 #include <ddialog.h>
 #include <DAboutDialog>
 #include <dscrollbar.h>
@@ -21,6 +22,7 @@ DWIDGET_USE_NAMESPACE
 DialogManager::DialogManager(QObject *parent) : QObject(parent)
 {
     initTaskDialog();
+    initCloseIndicatorDialog();
     initConnect();
 }
 
@@ -33,6 +35,12 @@ void DialogManager::initTaskDialog()
 {
     m_taskDialog = new DTaskDialog;
     m_taskDialog->setStyleSheet(getQssFromFile(":/qss/dialogs/qss/light.qss"));
+}
+
+void DialogManager::initCloseIndicatorDialog()
+{
+    m_closeIndicatorDialog = new CloseAllDialogIndicator;
+    m_closeIndicatorDialog->setStyleSheet(getQssFromFile(":/qss/dialogs/qss/light.qss"));
 }
 
 void DialogManager::initConnect()
@@ -49,6 +57,7 @@ void DialogManager::initConnect()
     connect(m_taskDialog, &DTaskDialog::conflictRepsonseConfirmed, this, &DialogManager::handleConflictRepsonseConfirmed);
 
     connect(m_taskDialog, &DTaskDialog::abortTask, this, &DialogManager::abortJob);
+    connect(m_closeIndicatorDialog, &CloseAllDialogIndicator::allClosed, this, &DialogManager::closeAllPropertyDialog);
 
     connect(fileSignalManager, &FileSignalManager::requestShowUrlWrongDialog, this, &DialogManager::showUrlWrongDialog);
     connect(fileSignalManager, &FileSignalManager::requestShowOpenWithDialog, this, &DialogManager::showOpenWithDialog);
@@ -57,6 +66,7 @@ void DialogManager::initConnect()
             this, &DialogManager::showDiskErrorDialog);
     connect(fileSignalManager, &FileSignalManager::showAboutDialog,
             this, &DialogManager::showAboutDialog);
+
 }
 
 QPoint DialogManager::getPerportyPos(int dialogWidth, int dialogHeight, int count, int index)
@@ -213,20 +223,34 @@ void DialogManager::showPropertyDialog(const FMEvent &event)
         int count = urlList.count();
         foreach (const DUrl& url, urlList) {
             int index = urlList.indexOf(url);
-            PropertyDialog *dialog = new PropertyDialog(url);
+            PropertyDialog *dialog;
+            if (m_propertyDialogs.contains(url)){
+                dialog = m_propertyDialogs.value(url);
+                dialog->raise();
+            }else{
+                dialog = new PropertyDialog(url);
+                m_propertyDialogs.insert(url, dialog);
 
-            dialog->setAttribute(Qt::WA_DeleteOnClose);
-            dialog->setWindowFlags(dialog->windowFlags()
-                                   &~ Qt::WindowMaximizeButtonHint
-                                   &~ Qt::WindowMinimizeButtonHint
-                                   &~ Qt::WindowSystemMenuHint);
-            dialog->setTitle("");
-            dialog->setFixedSize(QSize(320, 480));
-            QPoint pos = getPerportyPos(dialog->size().width(), dialog->size().height(), count, index);
+                dialog->setAttribute(Qt::WA_DeleteOnClose);
+                dialog->setWindowFlags(dialog->windowFlags()
+                                       &~ Qt::WindowMaximizeButtonHint
+                                       &~ Qt::WindowMinimizeButtonHint
+                                       &~ Qt::WindowSystemMenuHint);
+                dialog->setTitle("");
+                dialog->setFixedSize(QSize(320, 480));
+                QPoint pos = getPerportyPos(dialog->size().width(), dialog->size().height(), count, index);
 
-            dialog->show();
-            dialog->move(pos);
-            QTimer::singleShot(100, dialog, &PropertyDialog::raise);
+                dialog->show();
+                dialog->move(pos);
+
+                connect(dialog, &PropertyDialog::closed, this, &DialogManager::removePropertyDialog);
+                connect(dialog, &PropertyDialog::raised, m_closeIndicatorDialog, &CloseAllDialogIndicator::raise);
+                QTimer::singleShot(100, dialog, &PropertyDialog::raise);
+            }
+        }
+
+        if (urlList.count() >= 2){
+            m_closeIndicatorDialog->show();
         }
     }
 }
@@ -258,6 +282,24 @@ void DialogManager::showAboutDialog(const FMEvent &event)
     const QPoint global = w->mapToGlobal(w->rect().center());
     dialog->move(global.x() - dialog->width() / 2, global.y() - dialog->height() / 2);
     dialog->show();
+}
+
+void DialogManager::removePropertyDialog(const DUrl &url)
+{
+    if (m_propertyDialogs.contains(url)){
+        m_propertyDialogs.remove(url);
+    }
+    if (m_propertyDialogs.count() == 0){
+        m_closeIndicatorDialog->hide();
+    }
+}
+
+void DialogManager::closeAllPropertyDialog()
+{
+    foreach (const DUrl& url, m_propertyDialogs.keys()) {
+        m_propertyDialogs.value(url)->close();
+    }
+    m_closeIndicatorDialog->hide();
 }
 
 void DialogManager::handleConflictRepsonseConfirmed(const QMap<QString, QString> &jobDetail, const QMap<QString, QVariant> &response)

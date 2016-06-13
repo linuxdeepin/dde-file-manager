@@ -128,7 +128,8 @@ HEADERS += \
     filemanager/controllers/subscriber.h \
     filemanager/shutil/thumbnailmanager.h \
     filemanager/models/menuactiontype.h \
-    filemanager/models/dfileselectionmodel.h
+    filemanager/models/dfileselectionmodel.h \
+    filemanager/dialogs/closealldialogindicator.h
 
 
 SOURCES += \
@@ -214,7 +215,8 @@ SOURCES += \
     filemanager/controllers/subscriber.cpp \
     filemanager/shutil/thumbnailmanager.cpp \
     filemanager/models/menuactiontype.cpp \
-    filemanager/models/dfileselectionmodel.cpp
+    filemanager/models/dfileselectionmodel.cpp \
+    filemanager/dialogs/closealldialogindicator.cpp
 
 
 

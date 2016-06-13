@@ -193,6 +193,24 @@ void PropertyDialog::toggleFileExecutable(bool isChecked)
     }
 }
 
+DUrl PropertyDialog::getUrl()
+{
+    return m_url;
+}
+
+void PropertyDialog::raise()
+{
+    BaseDialog::raise();
+    emit raised();
+}
+
+void PropertyDialog::closeEvent(QCloseEvent *event)
+{
+    emit aboutToClosed(m_url);
+    BaseDialog::closeEvent(event);
+    emit closed(m_url);
+}
+
 
 DExpandGroup *PropertyDialog::addExpandWidget(const QStringList &titleList)
 {
@@ -232,6 +250,8 @@ QFrame *PropertyDialog::createBasicInfoWidget(const AbstractFileInfoPointer &inf
 
 
     QFormLayout *layout = new QFormLayout;
+    layout->setHorizontalSpacing(12);
+    layout->setVerticalSpacing(16);
     layout->setLabelAlignment(Qt::AlignRight);
     if (info->isFile()){
         layout->addRow(sizeSectionLabel, sizeLabel);
