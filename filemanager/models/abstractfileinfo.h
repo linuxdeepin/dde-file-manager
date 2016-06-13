@@ -177,9 +177,9 @@ private:
         QFile::Permissions permissions;
     };
 
-    inline const FileMetaData &metaData() const
+    inline const FileMetaData metaData() const
     {
-        return metaDataCacheMap[data->url];
+        return metaDataCacheMap.value(data->url);
     }
 
     void updateFileMetaData();
