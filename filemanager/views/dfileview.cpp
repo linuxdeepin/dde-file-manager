@@ -320,7 +320,7 @@ QModelIndex DFileView::indexAt(const QPoint &point) const
 
     p.setY(p.y() + verticalScrollBar()->value());
 
-    if (p.y() % (item_size.height() + spacing() * 2) <= spacing())
+    if (p.y() % (item_size.height() + spacing() * 2) < spacing())
         return QModelIndex();
 
 
@@ -768,14 +768,45 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
         return;
     }
 
-    if (isWrapping() && flags == (QItemSelectionModel::Current|QItemSelectionModel::Rows|QItemSelectionModel::ClearAndSelect)) {
+    if (flags == (QItemSelectionModel::Current|QItemSelectionModel::Rows|QItemSelectionModel::ClearAndSelect)) {
         int sign_horizontal = rect.left() < rect.right() ? 1 : -1;
         int sign_verizontal = rect.top() < rect.bottom() ? 1 : -1;
-        int offset_horizontal = itemSizeHint().width() * sign_horizontal;
+        int offset_horizontal = (m_currentViewMode == ListMode ? width() : itemSizeHint().width()) * sign_horizontal;
         int offset_verizontal = itemSizeHint().height() * sign_verizontal;
 
         QModelIndex index1;
         QModelIndex index2;
+
+        if (m_currentViewMode == ListMode) {
+            for (int j = rect.top(); (rect.bottom() - j) * sign_verizontal > 0; j += offset_verizontal) {
+                index1 = indexAt(QPoint(rect.left(), j));
+
+                if (index1.isValid())
+                    break;
+            }
+
+            if (!index1.isValid()) {
+                index1 = indexAt(QPoint(rect.left(), rect.bottom()));
+
+                if (!index1.isValid()) {
+                    return;
+                }
+            }
+
+            for (int j = rect.bottom(); (j - rect.top()) * sign_verizontal > 0; j -= offset_verizontal) {
+                index2 = indexAt(QPoint(rect.left(), j));
+
+                if (index2.isValid())
+                    goto selection;
+            }
+
+            index2 = indexAt(QPoint(rect.left(), rect.top()));
+
+            if (index2.isValid())
+                goto selection;
+
+            return;
+        }
 
         for (int j = rect.top(); (rect.bottom() - j) * sign_verizontal > 0; j += offset_verizontal) {
             for (int i = rect.left(); (rect.right() - i) * sign_horizontal > 0; i += offset_horizontal) {
@@ -804,8 +835,8 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
             goto find_index2;
 
         return;
-find_index2:
 
+find_index2:
         for (int j = rect.bottom(); (j - rect.top()) * sign_verizontal > 0; j -= offset_verizontal) {
             for (int i = rect.right(); (i - rect.left()) * sign_horizontal > 0; i -= offset_horizontal) {
                 index2 = indexAt(QPoint(i, j));
@@ -833,8 +864,8 @@ find_index2:
             goto selection;
 
         return;
-selection:
 
+selection:
         selectionModel()->select(QItemSelection(index1, index2), flags);
 
         return;
