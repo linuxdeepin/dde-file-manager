@@ -403,6 +403,11 @@ void DFileItemDelegate::paintListItem(bool isDragMode, QPainter *painter,
     const DFileSystemModel *model = qobject_cast<const DFileSystemModel*>(index.model());
 
     for(int i = 1; i < columnRoleList.count(); ++i) {
+        int column_width = parent()->columnWidth(i);
+
+        if (column_width <= 0)
+            continue;
+
         QRect rect = opt.rect;
 
         rect.setLeft(column_x + COLUMU_PADDING);
