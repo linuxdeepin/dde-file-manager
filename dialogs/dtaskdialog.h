@@ -1,7 +1,7 @@
 #ifndef DTASKDIALOG_H
 #define DTASKDIALOG_H
 
-#include "dmovabledialog.h"
+#include "dmoveablewidget.h"
 #include <dcircleprogress.h>
 #include <QLabel>
 #include <QListWidget>
@@ -76,7 +76,7 @@ private:
 };
 
 
-class DTaskDialog : public DMovabelDialog
+class DTaskDialog : public DMoveableWidget
 {
     Q_OBJECT
 public:

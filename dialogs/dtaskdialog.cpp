@@ -276,9 +276,8 @@ void MoveCopyTaskWidget::setTipMessage(QString tipMessage){
 
 
 DTaskDialog::DTaskDialog(QWidget *parent) :
-    DMovabelDialog(parent)
+    DMoveableWidget(parent)
 {
-    setModal(false);
     setFixedWidth(m_defaultWidth);
     initUI();
     initConnect();
@@ -504,5 +503,5 @@ void DTaskDialog::closeEvent(QCloseEvent *event){
             }
         }
     }
-    DMovabelDialog::closeEvent(event);
+    DMoveableWidget::closeEvent(event);
 }

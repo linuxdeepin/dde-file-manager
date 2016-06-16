@@ -34,6 +34,7 @@ DialogManager::~DialogManager()
 void DialogManager::initTaskDialog()
 {
     m_taskDialog = new DTaskDialog;
+    m_taskDialog->setWindowIcon(QIcon(":/images/images/system-file-manager.png"));
     m_taskDialog->setStyleSheet(getQssFromFile(":/qss/dialogs/qss/light.qss"));
 }
 

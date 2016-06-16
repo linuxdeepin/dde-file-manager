@@ -12,7 +12,7 @@
 #include <QDesktopWidget>
 
 
-DBaseDialog::DBaseDialog(QWidget *parent):DMovabelDialog(parent)
+DBaseDialog::DBaseDialog(QWidget *parent):DMoveableDialog(parent)
 {
     m_closeButton = new QPushButton(this);
     m_closeButton->setObjectName("CloseButton");
@@ -197,7 +197,7 @@ void DBaseDialog::handleKeyEnter(){
 
 void DBaseDialog::closeEvent(QCloseEvent *event){
     emit aboutToClose();
-    DMovabelDialog::closeEvent(event);
+    DMoveableDialog::closeEvent(event);
     emit closed();
 }
 
@@ -206,7 +206,7 @@ void DBaseDialog::resizeEvent(QResizeEvent *event){
     m_closeButton->move(width() - m_closeButton->width() - 4, 4);
     m_closeButton->raise();
     moveCenter();
-    DMovabelDialog::resizeEvent(event);
+    DMoveableDialog::resizeEvent(event);
 }
 
 DBaseDialog::~DBaseDialog()

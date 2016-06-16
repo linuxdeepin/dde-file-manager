@@ -78,10 +78,10 @@ private:
     bool m_acceptDrop;
     bool m_isTightMode = false;
 
-    QGraphicsWidget * m_defaultWidget;
-    QGraphicsWidget * m_bookmarkWidget;
+//    QGraphicsWidget * m_defaultWidget;
+//    QGraphicsWidget * m_bookmarkWidget;
     QGraphicsLinearLayout * m_defaultLayout;
-    QGraphicsLinearLayout * m_bookmarkLayout;
+//    QGraphicsLinearLayout * m_bookmarkLayout;
 };
 
 #endif // DBOOKMARKSCENE_H
