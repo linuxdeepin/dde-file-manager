@@ -53,6 +53,7 @@ public slots:
     void doDragLeave();
 private:
     void loadBookmark();
+    void addNetworkBookmarkItem();
     void loadDevices();
     bool m_isTight = false;
     QFrame* m_homeBar = NULL;
