@@ -30,8 +30,10 @@ public:
     void remove(DBookmarkItem * item);
     void setSceneRect(qreal x, qreal y, qreal w, qreal h);
     void addSeparator();
+    void insertSeparator(int index);
     DBookmarkItemGroup * getGroup();
     int count();
+    int getCustomBookmarkItemInsertIndex();
     int windowId();
     DBookmarkItem * hasBookmarkItem(const DUrl &url);
     DBookmarkItem * itemAt(const QPointF &point);
@@ -50,8 +52,9 @@ signals:
 public slots:
     void doDragFinished(const QPointF &point, const QPointF &scenePoint, DBookmarkItem *item);
     void currentUrlChanged(const FMEvent &event);
-    void bookmarkRemoved(const QString &url);
-    void bookmarkMounted(int fd);
+
+    void setDefaultDiskItem(DBookmarkItem* item);
+    void setNetworkDiskItem(DBookmarkItem* item);
     void doBookmarkRemoved(const FMEvent &event);
     void bookmarkRename(const FMEvent &event);
     void doBookmarkRenamed(const QString &oldname, const QString &newname, const FMEvent &event);
@@ -70,8 +73,9 @@ private:
     void moveAfter(DBookmarkItem * from, DBookmarkItem* to);
     int m_defaultCount = 0;
     DBookmarkRootItem * m_rootItem;
+    DBookmarkItem* m_defaultDiskItem;
+    DBookmarkItem* m_networkDiskItem;
     DBookmarkItemGroup * m_itemGroup;
-    QList<DBookmarkItem *> m_items;
     QList<DBookmarkItem *> m_customItems;
     QMap<QString, DBookmarkItem *> m_diskItems;
     double m_totalHeight = 0;

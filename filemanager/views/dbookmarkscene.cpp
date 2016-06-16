@@ -36,6 +36,10 @@ DBookmarkScene::DBookmarkScene()
     connect(fileSignalManager, &FileSignalManager::requestBookmarkMove, this, &DBookmarkScene::doMoveBookmark);
     connect(fileSignalManager, &FileSignalManager::requestBookmarkRename, this, &DBookmarkScene::bookmarkRename);
     connect(fileSignalManager, &FileSignalManager::bookmarkRenamed, this, &DBookmarkScene::doBookmarkRenamed);
+
+    connect(deviceListener, &UDiskListener::volumeRemoved, this, &DBookmarkScene::volumeRemoved);
+    connect(deviceListener, &UDiskListener::mountAdded, this, &DBookmarkScene::mountAdded);
+    connect(deviceListener, &UDiskListener::mountRemoved, this, &DBookmarkScene::mountRemoved);
 }
 
 /**
@@ -68,13 +72,13 @@ void DBookmarkScene::addItem(DBookmarkItem *item)
  */
 void DBookmarkScene::insert(int index, DBookmarkItem *item)
 {
-    if(item->isDefaultItem())
-        m_defaultCount++;
     m_defaultLayout->insertItem(index, item);
     item->setBounds(-1, 0, BOOKMARK_ITEM_WIDTH, BOOKMARK_ITEM_HEIGHT - BOOKMARK_ITEM_SPACE);
     connect(item, &DBookmarkItem::dragFinished, this, &DBookmarkScene::doDragFinished);
     m_itemGroup->insert(index, item);
     increaseSize();
+    if(item->isDefaultItem())
+        m_defaultCount++;
 }
 
 void DBookmarkScene::insert(DBookmarkItem *before, DBookmarkItem *item)
@@ -98,12 +102,12 @@ void DBookmarkScene::remove(int index)
  */
 void DBookmarkScene::remove(DBookmarkItem *item)
 {
-    if(item->isDefaultItem())
-        m_defaultCount--;
     m_defaultLayout->removeItem(item);
     m_itemGroup->removeItem(item);
-    delete item;
+    item->deleteLater();
     decreaseSize();
+    if(item->isDefaultItem())
+        m_defaultCount--;
 }
 
 void DBookmarkScene::setSceneRect(qreal x, qreal y, qreal w, qreal h)
@@ -125,7 +129,18 @@ void DBookmarkScene::addSeparator()
     item->setBounds(-1, 0, 200, SEPARATOR_ITEM_HEIGHT);
     m_itemGroup->addItem(item);
     m_defaultLayout->addItem(item);
-    m_defaultCount++;
+    if(item->isDefaultItem())
+        m_defaultCount++;
+}
+
+void DBookmarkScene::insertSeparator(int index)
+{
+    DBookmarkLine * item = new DBookmarkLine;
+    item->setBounds(-1, 0, 200, SEPARATOR_ITEM_HEIGHT);
+    m_itemGroup->insert(index, item);
+    m_defaultLayout->insertItem(index, item);
+    if(item->isDefaultItem())
+        m_defaultCount++;
 }
 
 /**
@@ -148,6 +163,12 @@ DBookmarkItemGroup *DBookmarkScene::getGroup()
 int DBookmarkScene::count()
 {
     return m_itemGroup->items()->size();
+}
+
+int DBookmarkScene::getCustomBookmarkItemInsertIndex()
+{
+    int defaultDiskIndex = indexOf(m_defaultDiskItem);
+    return defaultDiskIndex + m_diskItems.count() + 2;
 }
 
 int DBookmarkScene::windowId()
@@ -271,43 +292,15 @@ void DBookmarkScene::currentUrlChanged(const FMEvent &event)
     }
 }
 
-
-void DBookmarkScene::bookmarkRemoved(const QString &url)
+void DBookmarkScene::setDefaultDiskItem(DBookmarkItem *item)
 {
-    Q_UNUSED(url)
+    m_defaultDiskItem = item;
 }
 
-void DBookmarkScene::bookmarkMounted(int fd)
+void DBookmarkScene::setNetworkDiskItem(DBookmarkItem *item)
 {
-    Q_UNUSED(fd);
-    qDebug() << "bookmark mounted";
-    QStringList mtabMounts;
-    QFile mtab("/etc/mtab");
-    mtab.open(QFile::ReadOnly);
-    QTextStream stream(&mtab);
-    do mtabMounts.append(stream.readLine());
-    while (!stream.atEnd());
-    mtab.close();
-
-    foreach(DBookmarkItem * item, m_items)
-    {
-        item->setMounted(false);
-        item->setReleaseBackgroundColor(Qt::transparent);
-    }
-
-    foreach(QString item, mtabMounts)
-    {
-        QString str = item.split(" ").at(0);
-        DBookmarkItem * bookmarkItem = hasBookmarkItem(DUrl(str));
-        if(bookmarkItem && !bookmarkItem->isMounted())
-        {
-            bookmarkItem->setMounted(true);
-            bookmarkItem->setUrl(DUrl(item.split(" ").at(1)));
-            bookmarkItem->update();
-        }
-    }
+    m_networkDiskItem = item;
 }
-
 
 /**
  * @brief DBookmarkScene::bookmarkRemoved
@@ -322,8 +315,17 @@ void DBookmarkScene::doBookmarkRemoved(const FMEvent &event)
         if(event.fileUrl() == m_itemGroup->items()->at(i)->getUrl())
         {
             DBookmarkItem * item = m_itemGroup->items()->at(i);
-            bookmarkManager->removeBookmark(item->text(), item->getUrl());
             remove(item);
+            bookmarkManager->removeBookmark(item->text(), item->getUrl());
+
+            if (bookmarkManager->getBookmarks().count() == 0){
+                DBookmarkLine* lineItem = static_cast<DBookmarkLine*>(m_itemGroup->items()->at(i-1));
+                if (lineItem){
+                    if (lineItem->objectName() == "DBookmarkLine"){
+                        remove(lineItem);
+                    }
+                }
+            }
             break;
         }
     }
@@ -362,8 +364,17 @@ void DBookmarkScene::doBookmarkRenamed(const QString &oldname, const QString &ne
 void DBookmarkScene::doBookmarkAdded(const QString &name, const FMEvent &event)
 {
     DBookmarkItem * item = DBookmarkItem::makeBookmark(name, event.fileUrl());
-    insert(m_defaultCount, item);
+
+    int insertIndex  = getCustomBookmarkItemInsertIndex();
+    insert(insertIndex, item);
     item->setTightMode(m_isTightMode);
+
+    if (bookmarkManager->getBookmarks().size() == 1){
+        int networkIndex = indexOf(m_networkDiskItem);
+        insertSeparator(networkIndex);
+    }
+
+
 }
 
 void DBookmarkScene::doMoveBookmark(int from, int to, const FMEvent &event)
@@ -375,6 +386,7 @@ void DBookmarkScene::doMoveBookmark(int from, int to, const FMEvent &event)
         m_itemGroup->items()->move(from, to);
     }
 }
+
 
 void DBookmarkScene::volumeAdded(UDiskDeviceInfo *device)
 {
@@ -394,14 +406,15 @@ void DBookmarkScene::volumeRemoved(UDiskDeviceInfo *device)
 void DBookmarkScene::mountAdded(UDiskDeviceInfo *device)
 {
     DBookmarkItem * item = m_diskItems.value(device->getDiskInfo().ID);
-    qDebug() << item;
     if(item)
     {
         item->setDeviceInfo(device);
         item->setMounted(true);
     }else{
         item = new DBookmarkItem(device);
-        insert(m_defaultCount - 1, item);
+
+        insert(indexOf(m_defaultDiskItem) + 1, item);
+
         item->setTightMode(m_isTightMode);
         m_diskItems.insert(device->getDiskInfo().ID, item);
     }
@@ -459,7 +472,7 @@ void DBookmarkScene::moveBefore(DBookmarkItem *from, DBookmarkItem *to)
     }
 
     m_defaultLayout->insertItem(indexTo, from);
-    bookmarkManager->moveBookmark(indexFrom - m_defaultCount, indexTo - m_defaultCount);
+    bookmarkManager->moveBookmark(indexFrom - getCustomBookmarkItemInsertIndex(), indexTo - getCustomBookmarkItemInsertIndex());
     m_itemGroup->items()->move(indexFrom, indexTo);
 
     FMEvent event;
@@ -477,7 +490,7 @@ void DBookmarkScene::moveAfter(DBookmarkItem *from, DBookmarkItem *to)
         return;
 
     m_defaultLayout->insertItem(indexTo, from);
-    bookmarkManager->moveBookmark(indexFrom - m_defaultCount, indexTo - m_defaultCount);
+    bookmarkManager->moveBookmark(indexFrom - getCustomBookmarkItemInsertIndex(), indexTo - getCustomBookmarkItemInsertIndex());
     m_itemGroup->items()->move(indexFrom, indexTo);
 
     FMEvent event;
