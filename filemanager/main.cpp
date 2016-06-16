@@ -34,14 +34,13 @@ int main(int argc, char *argv[])
 #ifdef ENABLE_PPROF
     ProfilerStart("pprof.prof");
 #endif
-
-    LogUtil::registerLogger();
-
     SingleApplication app(argc, argv);
 
     app.setOrganizationName("deepin");
     app.setApplicationName(QObject::tr("dde-file-manager"));
     app.setApplicationVersion("v1.0");
+
+    LogUtil::registerLogger();
 
     QTranslator translator;
     translator.load(APPSHAREDIR"/translations/dde-file-manager_" + QLocale::system().name());

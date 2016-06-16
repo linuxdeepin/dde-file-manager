@@ -22,7 +22,7 @@ include(./filemonitor/filemonitor.pri)
 include(./deviceinfo/deviceinfo.pri)
 include(./dbusinterface/dbusinterface.pri)
 
-PKGCONFIG += x11 gtk+-2.0 xcb xcb-ewmh gsettings-qt dtkbase dtkutil dtkwidget libudev x11 xext
+PKGCONFIG += x11 gtk+-2.0 xcb xcb-ewmh gsettings-qt dtkbase dtkutil dtkwidget libudev x11 xext libsecret-1
 CONFIG += c++11 link_pkgconfig
 #DEFINES += QT_NO_DEBUG_OUTPUT
 DEFINES += QT_MESSAGELOGCONTEXT
@@ -129,7 +129,11 @@ HEADERS += \
     filemanager/shutil/thumbnailmanager.h \
     filemanager/models/menuactiontype.h \
     filemanager/models/dfileselectionmodel.h \
-    filemanager/dialogs/closealldialogindicator.h
+    filemanager/dialogs/closealldialogindicator.h \
+    filemanager/gvfs/gvfsmountclient.h \
+    filemanager/gvfs/mountaskpassworddialog.h \
+    filemanager/gvfs/networkmanager.h \
+    filemanager/gvfs/secrectmanager.h
 
 
 SOURCES += \
@@ -217,7 +221,11 @@ SOURCES += \
     filemanager/models/menuactiontype.cpp \
     filemanager/models/dfileselectionmodel.cpp \
     filemanager/dialogs/closealldialogindicator.cpp \
-    filemanager/app/global.cpp
+    filemanager/app/global.cpp \
+    filemanager/gvfs/gvfsmountclient.cpp \
+    filemanager/gvfs/mountaskpassworddialog.cpp \
+    filemanager/gvfs/networkmanager.cpp \
+    filemanager/gvfs/secrectmanager.cpp
 
 
 

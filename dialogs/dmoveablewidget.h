@@ -1,19 +1,18 @@
-#ifndef DMOVABLEDIALOG_H
-#define DMOVABLEDIALOG_H
+#ifndef DMOVEABLEWIDGET_H
+#define DMOVEABLEWIDGET_H
 
-
-#include <QDialog>
+#include <QWidget>
 #include <QPoint>
 class QMouseEvent;
 class QPushButton;
 class QResizeEvent;
 
-class DMoveableDialog:public QDialog
+class DMoveableWidget:public QWidget
 {
     Q_OBJECT
 public:
-    DMoveableDialog(QWidget *parent = 0);
-    ~DMoveableDialog();
+    DMoveableWidget(QWidget *parent = 0);
+    ~DMoveableWidget();
 
 public slots:
     void setMovableHeight(int height);
@@ -34,4 +33,4 @@ private:
     int m_movableHeight = 30;
 };
 
-#endif // DMOVABLEDIALOG_H
+#endif // DMOVEABLEWIDGET_H

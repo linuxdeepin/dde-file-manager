@@ -401,7 +401,7 @@ void DBookmarkScene::mountAdded(UDiskDeviceInfo *device)
         item->setMounted(true);
     }else{
         item = new DBookmarkItem(device);
-        insert(m_defaultCount -1, item);
+        insert(m_defaultCount - 1, item);
         item->setTightMode(m_isTightMode);
         m_diskItems.insert(device->getDiskInfo().ID, item);
     }

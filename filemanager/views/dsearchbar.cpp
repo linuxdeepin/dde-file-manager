@@ -300,7 +300,9 @@ void DSearchBar::handleApplicationChanged(QWidget *old, QWidget *now)
     if (old == this && now == NULL){
         m_list->hide();
     }else if (old == NULL && now == this){
-        m_list->show();
+        if (m_list->count() > 0){
+            m_list->show();
+        }
     }
 }
 

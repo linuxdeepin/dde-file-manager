@@ -9,7 +9,7 @@ class QLabel;
 class QCloseEvent;
 class QVBoxLayout;
 
-class DBaseDialog : public DMovabelDialog
+class DBaseDialog : public DMoveableDialog
 {
     Q_OBJECT
 public:
