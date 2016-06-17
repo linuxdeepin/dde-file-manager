@@ -170,9 +170,6 @@
         <file>images/icons/documents_checked_16px.svg</file>
         <file>images/icons/documents_hover_16px.svg</file>
         <file>images/icons/documents_normal_16px.svg</file>
-        <file>images/icons/download_checked_16px.svg</file>
-        <file>images/icons/download_hover_16px.svg</file>
-        <file>images/icons/download_normal_16px.svg</file>
         <file>images/icons/expanded_view_checked.svg</file>
         <file>images/icons/expanded_view_hover.svg</file>
         <file>images/icons/expanded_view_normal.svg</file>
@@ -236,7 +233,6 @@
         <file>images/icons/desktop_normal_22px.svg</file>
         <file>images/icons/disk_normal_22px.svg</file>
         <file>images/icons/pictures_normal_22px.svg</file>
-        <file>images/icons/download_normal_22px.svg</file>
         <file>images/icons/recent_checked_22px.svg</file>
         <file>images/icons/recent_hover_22px.svg</file>
         <file>images/icons/trash_normal_22px.svg</file>
@@ -255,8 +251,6 @@
         <file>images/icons/home_hover_22px.svg</file>
         <file>images/icons/phone_checked_22px.svg</file>
         <file>images/icons/phone_hover_22px.svg</file>
-        <file>images/icons/download_checked_22px.svg</file>
-        <file>images/icons/download_hover_22px.svg</file>
         <file>images/icons/music_checked_22px.svg</file>
         <file>images/icons/music_hover_22px.svg</file>
         <file>images/icons/trash_checked_22px.svg</file>
@@ -279,5 +273,41 @@
         <file>images/system-file-manager.png</file>
         <file>images/icons/selectend.png</file>
         <file>images/icons/selectstart.png</file>
+        <file>images/icons/android_checked_16px.svg</file>
+        <file>images/icons/android_checked_22px.svg</file>
+        <file>images/icons/android_hover_16px.svg</file>
+        <file>images/icons/android_hover_22px.svg</file>
+        <file>images/icons/android_normal_16px.svg</file>
+        <file>images/icons/android_normal_22px.svg</file>
+        <file>images/icons/dvd_checked_16px.svg</file>
+        <file>images/icons/dvd_hover_16px.svg</file>
+        <file>images/icons/dvd_normal_16px.svg</file>
+        <file>images/icons/dvd_normal_22px.svg</file>
+        <file>images/icons/iphone_checked_16px.svg</file>
+        <file>images/icons/iphone_checked_22px.svg</file>
+        <file>images/icons/iphone_hover_16px.svg</file>
+        <file>images/icons/iphone_hover_22px.svg</file>
+        <file>images/icons/iphone_normal_16px.svg</file>
+        <file>images/icons/iphone_normal_22px.svg</file>
+        <file>images/icons/network_checked_16px.svg</file>
+        <file>images/icons/network_checked_22px.svg</file>
+        <file>images/icons/network_hover_16px.svg</file>
+        <file>images/icons/network_hover_22px.svg</file>
+        <file>images/icons/network_normal_16px.svg</file>
+        <file>images/icons/network_normal_22px.svg</file>
+        <file>images/icons/usb_checked_16px.svg</file>
+        <file>images/icons/usb_checked_22px.svg</file>
+        <file>images/icons/usb_hover_16px.svg</file>
+        <file>images/icons/usb_hover_22px.svg</file>
+        <file>images/icons/usb_normal_16px.svg</file>
+        <file>images/icons/usb_normal_22px.svg</file>
+        <file>images/icons/dvd_checked_22px.svg</file>
+        <file>images/icons/dvd_hover_22px.svg</file>
+        <file>images/icons/downloads_hover_16px.svg</file>
+        <file>images/icons/downloads_checked_22px.svg</file>
+        <file>images/icons/downloads_checked_16px.svg</file>
+        <file>images/icons/downloads_hover_22px.svg</file>
+        <file>images/icons/downloads_normal_16px.svg</file>
+        <file>images/icons/downloads_normal_22px.svg</file>
     </qresource>
 </RCC>

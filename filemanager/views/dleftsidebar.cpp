@@ -42,64 +42,7 @@ DLeftSideBar::~DLeftSideBar()
 
 void DLeftSideBar::initData()
 {
-
-    m_icons["File"] =  ":/icons/images/icons/file_normal_16px.svg";
-//    m_icons["Recent"] =  ":/icons/images/icons/recent_normal_16px.svg";
-    m_icons["Home"] =  ":/icons/images/icons/home_normal_16px.svg";
-    m_icons["Desktop"] =  ":/icons/images/icons/desktop_normal_16px.svg";
-    m_icons["Videos"] =  ":/icons/images/icons/videos_normal_16px.svg";
-    m_icons["Music"] =  ":/icons/images/icons/music_normal_16px.svg";
-    m_icons["Pictures"] =  ":/icons/images/icons/pictures_normal_16px.svg";
-    m_icons["Documents"] =  ":/icons/images/icons/documents_normal_16px.svg";
-    m_icons["Downloads"] =  ":/icons/images/icons/download_normal_16px.svg";
-    m_icons["Trash"] =  ":/icons/images/icons/trash_normal_16px.svg";
-    m_icons["Disks"] =  ":/icons/images/icons/disk_normal_16px.svg";
-    m_icons["Network"] =  ":/icons/images/icons/disk_normal_16px.svg";
-
-
-    m_checkedIcons["File"] =  ":/icons/images/icons/file_checked_16px.svg";
-//    m_checkedIcons["Recent"] =  ":/icons/images/icons/recent_checked_16px.svg";
-    m_checkedIcons["Home"] =  ":/icons/images/icons/home_checked_16px.svg";
-    m_checkedIcons["Desktop"] =  ":/icons/images/icons/desktop_checked_16px.svg";
-    m_checkedIcons["Videos"] =  ":/icons/images/icons/videos_checked_16px.svg";
-    m_checkedIcons["Music"] =  ":/icons/images/icons/music_checked_16px.svg";
-    m_checkedIcons["Pictures"] =  ":/icons/images/icons/pictures_checked_16px.svg";
-    m_checkedIcons["Documents"] =  ":/icons/images/icons/documents_checked_16px.svg";
-    m_checkedIcons["Downloads"] =  ":/icons/images/icons/download_checked_16px.svg";
-    m_checkedIcons["Trash"] =  ":/icons/images/icons/trash_checked_16px.svg";
-    m_checkedIcons["Disks"] =  ":/icons/images/icons/disk_checked_16px.svg";
-    m_checkedIcons["Network"] =  ":/icons/images/icons/disk_checked_16px.svg";
-
-
-    m_bigIcons["File"] =  ":/icons/images/icons/file_normal_22px.svg";
-//    m_bigIcons["Recent"] =  ":/icons/images/icons/recent_normal_22px.svg";
-    m_bigIcons["Home"] =  ":/icons/images/icons/home_normal_22px.svg";
-    m_bigIcons["Desktop"] =  ":/icons/images/icons/desktop_normal_22px.svg";
-    m_bigIcons["Videos"] =  ":/icons/images/icons/videos_normal_22px.svg";
-    m_bigIcons["Music"] =  ":/icons/images/icons/music_normal_22px.svg";
-    m_bigIcons["Pictures"] =  ":/icons/images/icons/pictures_normal_22px.svg";
-    m_bigIcons["Documents"] =  ":/icons/images/icons/documents_normal_22px.svg";
-    m_bigIcons["Downloads"] =  ":/icons/images/icons/download_normal_22px.svg";
-    m_bigIcons["Trash"] =  ":/icons/images/icons/trash_normal_22px.svg";
-    m_bigIcons["Disks"] =  ":/icons/images/icons/disk_normal_22px.svg";
-    m_bigIcons["Network"] =  ":/icons/images/icons/disk_normal_22px.svg";
-
-
-    m_checkedBigIcons["File"] =  ":/icons/images/icons/file_checked_22px.svg";
-//    m_checkedBigIcons["Recent"] =  ":/icons/images/icons/recent_checked_22px.svg";
-    m_checkedBigIcons["Home"] =  ":/icons/images/icons/home_checked_22px.svg";
-    m_checkedBigIcons["Desktop"] =  ":/icons/images/icons/desktop_checked_22px.svg";
-    m_checkedBigIcons["Videos"] =  ":/icons/images/icons/videos_checked_22px.svg";
-    m_checkedBigIcons["Music"] =  ":/icons/images/icons/music_checked_22px.svg";
-    m_checkedBigIcons["Pictures"] =  ":/icons/images/icons/pictures_checked_22px.svg";
-    m_checkedBigIcons["Documents"] =  ":/icons/images/icons/documents_checked_22px.svg";
-    m_checkedBigIcons["Downloads"] =  ":/icons/images/icons/download_checked_22px.svg";
-    m_checkedBigIcons["Trash"] =  ":/icons/images/icons/trash_checked_22px.svg";
-    m_checkedBigIcons["Disks"] =  ":/icons/images/icons/disk_checked_22px.svg";
-    m_checkedBigIcons["Network"] =  ":/icons/images/icons/disk_checked_22px.svg";
-
-    m_nameList //<< "Recent"
-               << "Home"
+    m_nameList << "Home"
                << "Desktop"
                << "Videos"
                << "Music"
@@ -108,30 +51,10 @@ void DLeftSideBar::initData()
                << "Downloads"
                << "Trash"
                << "Separator"
-               << "Disks";
-
-    m_systemPathKeys << "Desktop"
-                     << "Videos"
-                     << "Music"
-                     << "Pictures"
-                     << "Documents"
-                     << "Downloads";
-
-    //m_systemBookMarks["Recent"] = tr("Recent");
-    m_systemBookMarks["Home"] = tr("Home");
-    m_systemBookMarks["Trash"] = tr("Trash");
-    m_systemBookMarks["Disks"] = tr("Disks");
-    m_systemBookMarks["Network"] = tr("Network");
-
-    foreach (QString key, m_systemPathKeys) {
-        m_systemBookMarks[key] = systemPathManager->getSystemPathDisplayName(key);
-        qDebug() << key << m_systemBookMarks[key];
-    }
+               << "Disk";
 
     m_navState = true;
     setAcceptDrops(true);
-
-
 }
 
 void DLeftSideBar::initUI()
@@ -199,45 +122,15 @@ void DLeftSideBar::initNav()
         if (key == "Separator"){
             m_scene->addSeparator();
         }else{
-            DBookmarkItem * item = new DBookmarkItem;
-            item->boundImageToHover(m_checkedIcons.value(key));
-            item->boundImageToPress(m_checkedIcons.value(key));
-            item->boundImageToRelease(m_icons.value(key));
-            item->boundBigImageToHover(m_checkedBigIcons.value(key));
-            item->boundBigImageToPress(m_checkedBigIcons.value(key));
-            item->boundBigImageToRelease(m_bigIcons.value(key));
-            item->setText(m_systemBookMarks.value(key));
-            item->setUrl(getStandardPathByKey(key));
-            item->setDefaultItem(true);
-            item->setBounds(0, 0, 200, 26);
+            DBookmarkItem * item = m_scene->createBookmarkByKey(key);
             m_scene->addItem(item);
-            if (key == "Disks"){
+            if (key == "Disk"){
                 m_scene->setDefaultDiskItem(item);
             }
         }
     }
     navLayout->addWidget(m_view);
     navLayout->setContentsMargins(0, 0, 0, 0);
-}
-
-DUrl DLeftSideBar::getStandardPathByKey(QString key)
-{
-
-    DUrl url;
-    if (key == "Recent"){
-        url = DUrl::fromRecentFile("/");
-    }else if (key == "Home"){
-        url = DUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0));
-    }else if (key == "Trash"){
-        url = DUrl::fromTrashFile("/");
-    }else if (key == "Disks"){
-        url = DUrl::fromLocalFile("/");
-    }else if (m_systemPathKeys.contains(key)){
-        url =  DUrl::fromLocalFile(systemPathManager->getSystemPath(key));
-    }else{
-        qDebug() << "unknown key:" << key;
-    }
-    return url;
 }
 
 void DLeftSideBar::resizeEvent(QResizeEvent *e)
@@ -356,18 +249,8 @@ void DLeftSideBar::loadBookmark()
 void DLeftSideBar::addNetworkBookmarkItem()
 {
     QString key = "Network";
-    DBookmarkItem * item = new DBookmarkItem;
-    item->boundImageToHover(m_checkedIcons.value(key));
-    item->boundImageToPress(m_checkedIcons.value(key));
-    item->boundImageToRelease(m_icons.value(key));
-    item->boundBigImageToHover(m_checkedBigIcons.value(key));
-    item->boundBigImageToPress(m_checkedBigIcons.value(key));
-    item->boundBigImageToRelease(m_bigIcons.value(key));
-    item->setText(m_systemBookMarks.value(key));
-//    item->setUrl(DUrl("network:///"));
-    item->setDefaultItem(true);
-    item->setBounds(0, 0, 200, 26);
     m_scene->addSeparator();
+    DBookmarkItem * item = m_scene->createBookmarkByKey(key);
     m_scene->addItem(item);
     m_scene->setNetworkDiskItem(item);
 }

@@ -36,7 +36,6 @@ public:
     void initUI();
     void initConnect();
     void initNav();
-    DUrl getStandardPathByKey(QString key);
     QGraphicsView *view() const;
 
 protected:
@@ -82,12 +81,9 @@ private:
     QButtonGroup* m_tightNavButtonGroup;
     BMListWidget * m_listWidget = NULL;
     BMListWidget * m_listWidgetTight = NULL;
-    QMap<QString, QString> m_icons;
-    QMap<QString, QString> m_checkedIcons;
-    QMap<QString, QString> m_bigIcons;
-    QMap<QString, QString> m_checkedBigIcons;
+
     QStringList m_nameList;
-    QStringList m_systemPathKeys;
+
     QFrame * m_tightNav = NULL;
     QFrame * m_nav = NULL;
     QStackedWidget * m_stackedWidget = NULL;
@@ -97,8 +93,6 @@ private:
     DBookmarkScene * m_tightScene;
     DBookmarkItemGroup * m_itemGroup;
     DBookmarkItemGroup * m_itemGroupTight;
-
-    QMap<QString, QString> m_systemBookMarks;
 
     QLabel * m_fileLabel = NULL;
 };
