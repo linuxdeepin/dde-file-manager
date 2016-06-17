@@ -19,6 +19,7 @@
 #include "../shutil/iconprovider.h"
 #include "../controllers/appcontroller.h"
 #include "../shutil/thumbnailmanager.h"
+#include "../gvfs/networkmanager.h"
 
 #include <QFontMetrics>
 #include <QTextOption>
@@ -39,6 +40,8 @@
 #define systemPathManager Singleton<PathManager>::instance()
 #define mimeTypeDisplayManager Singleton<MimeTypeDisplayManager>::instance()
 #define thumbnailManager Singleton<ThumbnailManager>::instance()
+#define networkManager Singleton<NetworkManager>::instance()
+
 
 #define defaut_icon ":/images/images/default.png"
 #define defaut_computerIcon ":/images/images/computer.png"
@@ -52,12 +55,14 @@
 #define FILE_SCHEME "file"
 #define COMPUTER_SCHEME "computer"
 #define SEARCH_SCHEME "search"
+#define NETWORK_SCHEME "network"
 
-#define TRASH_ROOT TRASH_SCHEME":///"
-#define RECENT_ROOT RECENT_SCHEME":///"
-#define BOOKMARK_ROOT BOOKMARK_SCHEME ":///"
-#define FILE_ROOT FILE_SCHEME ":///"
-#define COMPUTER_ROOT COMPUTER_SCHEME ":///"
+#define TRASH_ROOT "trash:///"
+#define RECENT_ROOT "recent:///"
+#define BOOKMARK_ROOT "bookmark:///"
+#define FILE_ROOT  "file:///"
+#define COMPUTER_ROOT "computer:///"
+#define NETWORK_ROOT "network:///"
 
 #define TRASHPATH QDir::homePath() + "/.local/share/Trash"
 #define TRASHFILEPATH TRASHPATH + "/files"

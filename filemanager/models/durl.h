@@ -36,6 +36,7 @@ public:
     bool isBookMarkFile() const;
     bool isSearchFile() const;
     bool isComputerFile() const;
+    bool isNetWorkFile() const;
 
     QString toString(FormattingOptions options = FormattingOptions( PrettyDecoded )) const;
 
@@ -57,6 +58,7 @@ public:
     static DUrl fromSearchFile(const QString &filePath);
     static DUrl fromSearchFile(const DUrl &targetUrl, const QString &keyword, SearchAction action = StartSearch);
     static DUrl fromComputerFile(const QString &filePath);
+    static DUrl fromNetworkFile(const QString &filePath);
     static DUrlList fromStringList(const QStringList &urls, ParsingMode mode = TolerantMode);
     static DUrlList fromQUrlList(const QList<QUrl> &urls);
     static DUrl fromUserInput(const QString &userInput);

@@ -153,7 +153,12 @@ void DLeftSideBar::handleLocationChanged(const FMEvent &e)
     event = FMEvent::LeftSideBar;
     event = WindowManager::getWindowId(window());
     qDebug() << event;
-    emit fileSignalManager->requestChangeCurrentUrl(event);
+
+    if (e.fileUrl().isNetWorkFile()){
+        emit fileSignalManager->requestFetchNetworks(e);
+    }else{
+        emit fileSignalManager->requestChangeCurrentUrl(event);
+    }
 }
 
 void DLeftSideBar::navSwitched()
@@ -251,6 +256,7 @@ void DLeftSideBar::addNetworkBookmarkItem()
     QString key = "Network";
     m_scene->addSeparator();
     DBookmarkItem * item = m_scene->createBookmarkByKey(key);
+    item->setUrl(DUrl("network:///"));
     m_scene->addItem(item);
     m_scene->setNetworkDiskItem(item);
 }

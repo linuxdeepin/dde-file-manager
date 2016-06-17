@@ -8,6 +8,7 @@
 #include "trashmanager.h"
 #include "searchcontroller.h"
 #include "bookmarkmanager.h"
+#include "networkcontroller.h"
 #include "deviceinfo/udisklistener.h"
 #include "../app/global.h"
 #include "../app/fmevent.h"
@@ -28,6 +29,8 @@ AppController::AppController(QObject *parent) : QObject(parent)
     FileServices::dRegisterUrlHandler<FileController>(FILE_SCHEME, "");
     FileServices::dRegisterUrlHandler<TrashManager>(TRASH_SCHEME, "");
     FileServices::dRegisterUrlHandler<SearchController>(SEARCH_SCHEME, "");
+    FileServices::dRegisterUrlHandler<NetworkController>(NETWORK_SCHEME, "");
+    networkManager;
 }
 
 void AppController::initConnect()

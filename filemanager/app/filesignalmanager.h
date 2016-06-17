@@ -24,6 +24,10 @@ signals:
     /* change currentUrl*/
     void requestChangeCurrentUrl(const FMEvent &event);
 
+    /* network nodes*/
+
+    void requestFetchNetworks(const FMEvent &event);
+
     /* current display url changed*/
     void currentUrlChanged(const FMEvent &event);
 

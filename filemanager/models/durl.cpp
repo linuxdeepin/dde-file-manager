@@ -6,19 +6,15 @@
 #include <QDebug>
 #include <QUrlQuery>
 
-#define TRASH_SCHEME "trash"
-#define RECENT_SCHEME "recent"
-#define BOOKMARK_SCHEME "bookmark"
-#define FILE_SCHEME "file"
-#define COMPUTER_SCHEME "computer"
-#define SEARCH_SCHEME "search"
+#include "../app/global.h"
 
 QSet<QString> schemeList = QSet<QString>() << QString(TRASH_SCHEME)
                                            << QString(RECENT_SCHEME)
                                            << QString(BOOKMARK_SCHEME)
                                            << QString(FILE_SCHEME)
                                            << QString(COMPUTER_SCHEME )
-                                           << QString(SEARCH_SCHEME);
+                                           << QString(SEARCH_SCHEME)
+                                           << QString(NETWORK_SCHEME);
 
 DUrl::DUrl()
     : QUrl()
@@ -92,6 +88,11 @@ bool DUrl::isSearchFile() const
 bool DUrl::isComputerFile() const
 {
     return scheme() == COMPUTER_SCHEME;
+}
+
+bool DUrl::isNetWorkFile() const
+{
+    return scheme() == NETWORK_SCHEME;
 }
 
 QString DUrl::toString(QUrl::FormattingOptions options) const
@@ -238,6 +239,16 @@ DUrl DUrl::fromComputerFile(const QString &filePath)
     DUrl url;
 
     url.setScheme(COMPUTER_SCHEME, false);
+    url.setPath(filePath);
+
+    return url;
+}
+
+DUrl DUrl::fromNetworkFile(const QString &filePath)
+{
+    DUrl url;
+
+    url.setScheme(NETWORK_SCHEME, false);
     url.setPath(filePath);
 
     return url;
