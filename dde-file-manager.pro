@@ -133,7 +133,9 @@ HEADERS += \
     filemanager/gvfs/gvfsmountclient.h \
     filemanager/gvfs/mountaskpassworddialog.h \
     filemanager/gvfs/networkmanager.h \
-    filemanager/gvfs/secrectmanager.h
+    filemanager/gvfs/secrectmanager.h \
+    filemanager/models/networkfileinfo.h \
+    filemanager/controllers/networkcontroller.h
 
 
 SOURCES += \
@@ -225,7 +227,9 @@ SOURCES += \
     filemanager/gvfs/gvfsmountclient.cpp \
     filemanager/gvfs/mountaskpassworddialog.cpp \
     filemanager/gvfs/networkmanager.cpp \
-    filemanager/gvfs/secrectmanager.cpp
+    filemanager/gvfs/secrectmanager.cpp \
+    filemanager/models/networkfileinfo.cpp \
+    filemanager/controllers/networkcontroller.cpp
 
 
 
