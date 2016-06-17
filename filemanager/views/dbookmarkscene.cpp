@@ -17,6 +17,68 @@
 
 DBookmarkScene::DBookmarkScene()
 {
+    initData();
+    initUI();
+    initConnect();
+}
+
+void DBookmarkScene::initData()
+{
+    QStringList IconKeys;
+    IconKeys << "File"
+             << "Home"
+             << "Desktop"
+             << "Videos"
+             << "Music"
+             << "Pictures"
+             << "Documents"
+             << "Downloads"
+             << "Trash"
+             << "Disk"
+             << "Usb"
+             << "Iphone"
+             << "Android"
+             << "Network";
+
+    foreach (QString key, IconKeys) {
+        QString _key = key.toLower();
+        QString smallNormal = QString(":/icons/images/icons/%1_normal_16px.svg").arg(_key);
+        QString smallHover = QString(":/icons/images/icons/%1_hover_16px.svg").arg(_key);
+        QString smallChecked = QString(":/icons/images/icons/%1_checked_16px.svg").arg(_key);
+        QString bigNormal = QString(":/icons/images/icons/%1_normal_22px.svg").arg(_key);
+        QString bigHover = QString(":/icons/images/icons/%1_hover_22px.svg").arg(_key);
+        QString bigChecked = QString(":/icons/images/icons/%1_checked_22px.svg").arg(_key);
+        m_smallIcons.insert(key, smallNormal);
+        m_smallHoverIcons.insert(key, smallHover);
+        m_smallCheckedIcons.insert(key, smallChecked);
+        m_bigIcons.insert(key, bigNormal);
+        m_bigHoverIcons.insert(key, bigHover);
+        m_bigCheckedIcons.insert(key, bigChecked);
+    }
+
+
+    m_systemPathKeys << "Desktop"
+                     << "Videos"
+                     << "Music"
+                     << "Pictures"
+                     << "Documents"
+                     << "Downloads";
+
+    m_systemBookMarks["Home"] = tr("Home");
+    m_systemBookMarks["Trash"] = tr("Trash");
+    m_systemBookMarks["Disk"] = tr("Disk");
+    m_systemBookMarks["Network"] = tr("Network");
+
+    foreach (QString key, m_systemPathKeys) {
+        m_systemBookMarks[key] = systemPathManager->getSystemPathDisplayName(key);
+        qDebug() << key << m_systemBookMarks[key];
+    }
+
+
+}
+
+void DBookmarkScene::initUI()
+{
     m_rootItem = new DBookmarkRootItem(this);
     m_defaultLayout = new QGraphicsLinearLayout;
     m_defaultLayout->setOrientation(Qt::Vertical);
@@ -28,7 +90,10 @@ DBookmarkScene::DBookmarkScene()
     m_rootItem->setPos(0, 0);
 
     m_itemGroup = new DBookmarkItemGroup;
+}
 
+void DBookmarkScene::initConnect()
+{
     connect(fileSignalManager, &FileSignalManager::currentUrlChanged,
             this, &DBookmarkScene::currentUrlChanged);
     connect(fileSignalManager, &FileSignalManager::requestBookmarkRemove, this, &DBookmarkScene::doBookmarkRemoved);
@@ -40,6 +105,41 @@ DBookmarkScene::DBookmarkScene()
     connect(deviceListener, &UDiskListener::volumeRemoved, this, &DBookmarkScene::volumeRemoved);
     connect(deviceListener, &UDiskListener::mountAdded, this, &DBookmarkScene::mountAdded);
     connect(deviceListener, &UDiskListener::mountRemoved, this, &DBookmarkScene::mountRemoved);
+}
+
+DBookmarkItem *DBookmarkScene::createBookmarkByKey(const QString &key)
+{
+    DBookmarkItem * item = new DBookmarkItem;
+    item->boundImageToHover(m_smallHoverIcons.value(key));
+    item->boundImageToPress(m_smallCheckedIcons.value(key));
+    item->boundImageToRelease(m_smallIcons.value(key));
+    item->boundBigImageToHover(m_bigHoverIcons.value(key));
+    item->boundBigImageToPress(m_bigCheckedIcons.value(key));
+    item->boundBigImageToRelease(m_bigIcons.value(key));
+    item->setText(m_systemBookMarks.value(key));
+    item->setUrl(getStandardPathByKey(key));
+    item->setDefaultItem(true);
+    return item;
+}
+
+
+DUrl DBookmarkScene::getStandardPathByKey(const QString &key)
+{
+    DUrl url;
+    if (key == "Recent"){
+        url = DUrl::fromRecentFile("/");
+    }else if (key == "Home"){
+        url = DUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0));
+    }else if (key == "Trash"){
+        url = DUrl::fromTrashFile("/");
+    }else if (key == "Disks"){
+        url = DUrl::fromLocalFile("/");
+    }else if (m_systemPathKeys.contains(key)){
+        url =  DUrl::fromLocalFile(systemPathManager->getSystemPath(key));
+    }else{
+        qDebug() << "unknown key:" << key;
+    }
+    return url;
 }
 
 /**
@@ -411,8 +511,18 @@ void DBookmarkScene::mountAdded(UDiskDeviceInfo *device)
         item->setDeviceInfo(device);
         item->setMounted(true);
     }else{
-        item = new DBookmarkItem(device);
-
+        QString key = "Disk";
+        if (device->getMediaType() == UDiskDeviceInfo::removable){
+            key = "Usb";
+        }else if (device->getMediaType() == UDiskDeviceInfo::iphone){
+            key = "Iphone";
+        }else if (device->getMediaType() == UDiskDeviceInfo::phone){
+            key = "Andriod";
+        }else if (device->getMediaType() == UDiskDeviceInfo::network){
+            key = "Network";
+        }
+        item = createBookmarkByKey(key);
+        item->setDeviceInfo(device);
         insert(indexOf(m_defaultDiskItem) + 1, item);
 
         item->setTightMode(m_isTightMode);

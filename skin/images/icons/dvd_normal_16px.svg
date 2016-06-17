@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 3.8.3 (29802) - http://www.bohemiancoding.com/sketch -->
+    <title>media_optical_symbolic_normal_16px</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="media_optical_symbolic_normal_16px">
+            <rect id="Rectangle-1" opacity="0" x="0" y="0" width="16" height="16"></rect>
+            <circle id="Oval-14" stroke="#55A3D8" cx="8" cy="8" r="6.5"></circle>
+            <path d="M8,10.5 C9.38071187,10.5 10.5,9.38071187 10.5,8 C10.5,6.61928813 9.38071187,5.5 8,5.5 C6.61928813,5.5 5.5,6.61928813 5.5,8 C5.5,9.38071187 6.61928813,10.5 8,10.5 Z" id="Oval-14" stroke="#55A3D8"></path>
+            <path d="M8,3.5 C5.51471863,3.5 3.5,5.51471863 3.5,8" id="Oval-14" stroke="#55A3D8" stroke-linecap="round" stroke-linejoin="round"></path>
+        </g>
+    </g>
+</svg>

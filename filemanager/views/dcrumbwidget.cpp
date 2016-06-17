@@ -213,36 +213,36 @@ DCrumbButton *DCrumbWidget::createDeviceCrumbButtonByType(UDiskDeviceInfo::Media
     case UDiskDeviceInfo::phone:{
         button = new DCrumbIconButton(
                     m_group.buttons().size(),
-                    QIcon(":/icons/images/icons/disk_normal_16px.svg"),
-                    QIcon(":/icons/images/icons/disk_hover_16px.svg"),
-                    QIcon(":/icons/images/icons/disk_checked_16px.svg"),
+                    QIcon(":/icons/images/icons/andriod_normal_16px.svg"),
+                    QIcon(":/icons/images/icons/andriod_hover_16px.svg"),
+                    QIcon(":/icons/images/icons/andriod_checked_16px.svg"),
                     mountPoint, this);
         break;
     }
     case UDiskDeviceInfo::iphone:{
         button = new DCrumbIconButton(
                     m_group.buttons().size(),
-                    QIcon(":/icons/images/icons/disk_normal_16px.svg"),
-                    QIcon(":/icons/images/icons/disk_hover_16px.svg"),
-                    QIcon(":/icons/images/icons/disk_checked_16px.svg"),
+                    QIcon(":/icons/images/icons/iphone_normal_16px.svg"),
+                    QIcon(":/icons/images/icons/iphone_hover_16px.svg"),
+                    QIcon(":/icons/images/icons/iphone_checked_16px.svg"),
                     mountPoint, this);
         break;
     }
     case UDiskDeviceInfo::removable:{
         button = new DCrumbIconButton(
                     m_group.buttons().size(),
-                    QIcon(":/icons/images/icons/disk_normal_16px.svg"),
-                    QIcon(":/icons/images/icons/disk_hover_16px.svg"),
-                    QIcon(":/icons/images/icons/disk_checked_16px.svg"),
+                    QIcon(":/icons/images/icons/usb_normal_16px.svg"),
+                    QIcon(":/icons/images/icons/usb_hover_16px.svg"),
+                    QIcon(":/icons/images/icons/usb_checked_16px.svg"),
                     mountPoint, this);
         break;
     }
     case UDiskDeviceInfo::network:{
         button = new DCrumbIconButton(
                     m_group.buttons().size(),
-                    QIcon(":/icons/images/icons/disk_normal_16px.svg"),
-                    QIcon(":/icons/images/icons/disk_hover_16px.svg"),
-                    QIcon(":/icons/images/icons/disk_checked_16px.svg"),
+                    QIcon(":/icons/images/icons/network_normal_16px.svg"),
+                    QIcon(":/icons/images/icons/network_hover_16px.svg"),
+                    QIcon(":/icons/images/icons/network_checked_16px.svg"),
                     mountPoint, this);
         break;
     }

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 3.8.3 (29802) - http://www.bohemiancoding.com/sketch -->
+    <title>drive_harddisk_usb_symbolic_normal_22px</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="drive_harddisk_usb_symbolic_normal_22px">
+            <rect id="Rectangle-1" opacity="0" x="0" y="0" width="22" height="22"></rect>
+            <g id="Group" transform="translate(1.000000, 2.000000)" stroke="#2CA7F8">
+                <path d="M0.5,16.5012739 C0.5,17.6057325 1.39341394,18.5 2.49936367,18.5 C3.60276806,18.5 4.5,17.6057325 4.5,16.5012739 C4.5,15.3942675 3.60276806,14.5 2.49936367,14.5 C1.39341394,14.5 0.5,15.3942675 0.5,16.5012739 Z" id="Fill-3" transform="translate(2.500000, 16.500000) rotate(-360.000000) translate(-2.500000, -16.500000) "></path>
+                <path d="M6.5,3.50127389 C6.5,4.60573248 7.39341394,5.5 8.49936367,5.5 C9.60276806,5.5 10.5,4.60573248 10.5,3.50127389 C10.5,2.39426752 9.60276806,1.5 8.49936367,1.5 C7.39341394,1.5 6.5,2.39426752 6.5,3.50127389 Z" id="Fill-3" transform="translate(8.500000, 3.500000) rotate(-360.000000) translate(-8.500000, -3.500000) "></path>
+                <path d="M4.15384615,14.8461538 L16.0000004,3" id="Path-273"></path>
+                <polygon id="Path-274" stroke-linecap="round" stroke-linejoin="round" points="13.6338266 1.24052547 18.4799805 0.548217773 17.7876728 5.39437162"></polygon>
+                <rect id="Rectangle-116" stroke-linejoin="round" transform="translate(15.236769, 10.707582) rotate(-315.000000) translate(-15.236769, -10.707582) " x="13.5664366" y="9.037249" width="3.34066572" height="3.34066572"></rect>
+                <polyline id="Path-272" stroke-linecap="round" stroke-linejoin="round" points="5.53846154 13.4615385 11.0769231 14.8461538 13.8461538 12.0769231"></polyline>
+                <polyline id="Path-273" stroke-linecap="round" stroke-linejoin="round" points="6.92307692 12.0769231 4.84615385 7.23076923 6.92307698 5"></polyline>
+            </g>
+        </g>
+    </g>
+</svg>

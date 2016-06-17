@@ -23,6 +23,16 @@ class DBookmarkScene : public QGraphicsScene
     Q_OBJECT
 public:
     DBookmarkScene();
+
+    void initData();
+    void initUI();
+    void initConnect();
+
+    DBookmarkItem * createBookmarkByKey(const QString& key);
+
+    DUrl getStandardPathByKey(const QString& key);
+
+
     void addItem(DBookmarkItem *item);
     void insert(int index, DBookmarkItem *item);
     void insert(DBookmarkItem * before, DBookmarkItem *item);
@@ -37,6 +47,7 @@ public:
     int windowId();
     DBookmarkItem * hasBookmarkItem(const DUrl &url);
     DBookmarkItem * itemAt(const QPointF &point);
+
     int indexOf(DBookmarkItem * item);
     void setTightMode(bool v);
 protected:
@@ -72,6 +83,16 @@ private:
     void moveBefore(DBookmarkItem * from, DBookmarkItem* to);
     void moveAfter(DBookmarkItem * from, DBookmarkItem* to);
     int m_defaultCount = 0;
+
+    QMap<QString, QString> m_smallIcons;
+    QMap<QString, QString> m_smallHoverIcons;
+    QMap<QString, QString> m_smallCheckedIcons;
+    QMap<QString, QString> m_bigIcons;
+    QMap<QString, QString> m_bigHoverIcons;
+    QMap<QString, QString> m_bigCheckedIcons;
+    QStringList m_systemPathKeys;
+    QMap<QString, QString> m_systemBookMarks;
+
     DBookmarkRootItem * m_rootItem;
     DBookmarkItem* m_defaultDiskItem;
     DBookmarkItem* m_networkDiskItem;
@@ -82,10 +103,9 @@ private:
     bool m_acceptDrop;
     bool m_isTightMode = false;
 
-//    QGraphicsWidget * m_defaultWidget;
-//    QGraphicsWidget * m_bookmarkWidget;
+
     QGraphicsLinearLayout * m_defaultLayout;
-//    QGraphicsLinearLayout * m_bookmarkLayout;
+
 };
 
 #endif // DBOOKMARKSCENE_H

@@ -37,12 +37,6 @@ DBookmarkItem::DBookmarkItem(UDiskDeviceInfo * deviceInfo)
 {
     init();
     setDeviceInfo(deviceInfo);
-    boundImageToHover(":/icons/images/icons/disk_hover_16px.svg");
-    boundImageToPress(":/icons/images/icons/disk_hover_16px.svg");
-    boundImageToRelease(":/icons/images/icons/disk_normal_16px.svg");
-    boundBigImageToHover(":/icons/images/icons/disk_hover_22px.svg");
-    boundBigImageToPress(":/icons/images/icons/disk_hover_22px.svg");
-    boundBigImageToRelease(":/icons/images/icons/disk_normal_22px.svg");
 }
 
 DBookmarkItem::DBookmarkItem(BookMark *bookmark)
@@ -50,12 +44,6 @@ DBookmarkItem::DBookmarkItem(BookMark *bookmark)
     init();
     m_url = bookmark->getUrl();
     m_textContent = bookmark->getName();
-    boundImageToHover(":/icons/images/icons/bookmarks_hover_16px.svg");
-    boundImageToPress(":/icons/images/icons/bookmarks_checked_16px.svg");
-    boundImageToRelease(":/icons/images/icons/bookmarks_normal_16px.svg");
-    boundBigImageToHover(":/icons/images/icons/favourite_hover.svg");
-    boundBigImageToPress(":/icons/images/icons/favourite_checked.svg");
-    boundBigImageToRelease(":/icons/images/icons/favourite_normal.svg");
 }
 
 void DBookmarkItem::setDeviceInfo(UDiskDeviceInfo *deviceInfo)
