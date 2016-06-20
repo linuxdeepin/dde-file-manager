@@ -1,6 +1,8 @@
 #include "trashfileinfo.h"
 #include "fileinfo.h"
 
+#include "../controllers/trashmanager.h"
+
 #include "../app/global.h"
 
 #include "../shutil/iconprovider.h"
@@ -111,6 +113,20 @@ QVector<MenuAction> TrashFileInfo::menuActionList(AbstractFileInfo::MenuType typ
     }
 
     return actionKeys;
+}
+
+QSet<MenuAction> TrashFileInfo::disableMenuActionList() const
+{
+    QSet<MenuAction> list;
+
+    if (TrashManager::isEmpty()) {
+        list << MenuAction::RestoreAll;
+        list << MenuAction::ClearTrash;
+        list << MenuAction::Property;
+        list << MenuAction::SortBy;
+    }
+
+    return list;
 }
 
 bool TrashFileInfo::restore(const FMEvent &event) const

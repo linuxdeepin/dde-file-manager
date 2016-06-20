@@ -118,6 +118,7 @@ public:
     virtual DUrl parentUrl() const;
     virtual QVector<MenuAction> menuActionList(MenuType type = SingleFile) const;
     virtual QMap<MenuAction, QVector<MenuAction> > subMenuActionList() const;
+    virtual QSet<MenuAction> disableMenuActionList() const;
 
     /// return DFileView::ViewMode flags
     virtual quint8 supportViewMode() const;
@@ -139,6 +140,8 @@ public:
 
     virtual bool canRedirectionFileUrl() const;
     virtual DUrl redirectedFileUrl() const;
+
+    virtual bool isEmptyFloder() const;
 
     static Qt::SortOrder sortOrderGlobal;
 
