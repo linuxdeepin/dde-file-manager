@@ -280,6 +280,7 @@ void DialogManager::showAboutDialog(const FMEvent &event)
                            "developed by Deepin Technology, featured with searching, "
                            "copying, trash, compression/decompression, file property "
                            "and other file management functions. "),w);
+    dialog->setTitle("");
     const QPoint global = w->mapToGlobal(w->rect().center());
     dialog->move(global.x() - dialog->width() / 2, global.y() - dialog->height() / 2);
     dialog->show();

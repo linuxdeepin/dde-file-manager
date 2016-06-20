@@ -55,6 +55,7 @@ protected:
     void dragLeaveEvent(QGraphicsSceneDragDropEvent *event);
     void dragMoveEvent(QGraphicsSceneDragDropEvent *event);
     void dropEvent(QGraphicsSceneDragDropEvent *event);
+    void keyPressEvent(QKeyEvent *event);
 signals:
     void urlChanged(const QString &url);
     void dragEntered();

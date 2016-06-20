@@ -153,7 +153,7 @@ DUrl DBookmarkScene::getStandardPathByKey(const QString &key)
 void DBookmarkScene::addItem(DBookmarkItem *item)
 {
     m_defaultLayout->addItem(item);
-    item->setBounds(-1, 0, BOOKMARK_ITEM_WIDTH, BOOKMARK_ITEM_HEIGHT - BOOKMARK_ITEM_SPACE);
+    item->setBounds(0, 0, BOOKMARK_ITEM_WIDTH, BOOKMARK_ITEM_HEIGHT - BOOKMARK_ITEM_SPACE);
     connect(item, &DBookmarkItem::dragFinished, this, &DBookmarkScene::doDragFinished);
     m_itemGroup->addItem(item);
     increaseSize();
@@ -175,7 +175,7 @@ void DBookmarkScene::addItem(DBookmarkItem *item)
 void DBookmarkScene::insert(int index, DBookmarkItem *item)
 {
     m_defaultLayout->insertItem(index, item);
-    item->setBounds(-1, 0, BOOKMARK_ITEM_WIDTH, BOOKMARK_ITEM_HEIGHT - BOOKMARK_ITEM_SPACE);
+    item->setBounds(0, 0, BOOKMARK_ITEM_WIDTH, BOOKMARK_ITEM_HEIGHT - BOOKMARK_ITEM_SPACE);
     connect(item, &DBookmarkItem::dragFinished, this, &DBookmarkScene::doDragFinished);
     m_itemGroup->insert(index, item);
     increaseSize();
@@ -228,7 +228,7 @@ void DBookmarkScene::setSceneRect(qreal x, qreal y, qreal w, qreal h)
 void DBookmarkScene::addSeparator()
 {
     DBookmarkLine * item = new DBookmarkLine;
-    item->setBounds(-1, 0, 200, SEPARATOR_ITEM_HEIGHT);
+    item->setBounds(0, 0, 200, SEPARATOR_ITEM_HEIGHT);
     m_itemGroup->addItem(item);
     m_defaultLayout->addItem(item);
     if(item->isDefaultItem())
@@ -238,7 +238,7 @@ void DBookmarkScene::addSeparator()
 void DBookmarkScene::insertSeparator(int index)
 {
     DBookmarkLine * item = new DBookmarkLine;
-    item->setBounds(-1, 0, 200, SEPARATOR_ITEM_HEIGHT);
+    item->setBounds(0, 0, 200, SEPARATOR_ITEM_HEIGHT);
     m_itemGroup->insert(index, item);
     m_defaultLayout->insertItem(index, item);
     if(item->isDefaultItem())
@@ -334,6 +334,16 @@ void DBookmarkScene::dropEvent(QGraphicsSceneDragDropEvent *event)
     qDebug() << "scene drop";
     emit dragLeft();
     QGraphicsScene::dropEvent(event);
+}
+
+void DBookmarkScene::keyPressEvent(QKeyEvent *event)
+{
+    if (event->modifiers() == Qt::AltModifier && event->key() == Qt::Key_Left){
+        return;
+    }else if (event->modifiers() == Qt::AltModifier && event->key() == Qt::Key_Right){
+        return;
+    }
+    QGraphicsScene::keyPressEvent(event);
 }
 
 /**
