@@ -215,7 +215,7 @@ void DFileItemDelegate::paintIconItem(bool isDragMode, QPainter *painter,
     QRect icon_rect = opt.rect;
 
     icon_rect.setSize(parent()->iconSize());
-    icon_rect.moveCenter(opt.rect.center());
+    icon_rect.moveLeft(opt.rect.left() + (opt.rect.width() - icon_rect.width()) / 2.0);
     icon_rect.moveTop(opt.rect.top());
 
     QString str = opt.text;
@@ -488,7 +488,7 @@ QList<QRect> DFileItemDelegate::paintGeomertyss(const QStyleOptionViewItem &opti
 
         geomertys << icon_rect;
 
-        column_x = icon_rect.right() + 10;
+        column_x = icon_rect.right() + ICON_SPACING;
 
         QRect rect = option.rect;
 
