@@ -537,26 +537,6 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             cdUp(fmevent);
         }else if (event->key() == Qt::Key_F1){
             appController->actionHelp(fmevent);
-        }else if (event->key() == Qt::Key_Left){
-            if (selectedIndexes().count() > 0){
-                QModelIndex index = selectedIndexes().last();
-                if (index.row() - 1 >= 0){
-                    QModelIndex cindex = index.sibling(index.row() - 1, index.column());
-                    setCurrentIndex(cindex);
-                }
-                return;
-            }
-        }else if (event->key() == Qt::Key_Right){
-            if (selectedIndexes().count() > 0){
-                QModelIndex index = selectedIndexes().last();
-                if ((index.row() + 1) < count()){
-                    QModelIndex cindex = index.sibling((index.row() + 1), index.column());
-                    if (cindex.isValid()){
-                        setCurrentIndex(cindex);
-                    }
-               }
-               return;
-            }
         }
     }else if (event->modifiers() == Qt::ControlModifier){
         if (event->key() == Qt::Key_Down){
@@ -606,6 +586,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             appController->actionOpen(fmevent);
         }
     }
+
     DListView::keyPressEvent(event);
 }
 
@@ -872,6 +853,65 @@ selection:
     }
 
     DListView::setSelection(rect, flags);
+}
+
+QModelIndex DFileView::moveCursor(QAbstractItemView::CursorAction cursorAction, Qt::KeyboardModifiers modifiers)
+{
+    QModelIndex current = currentIndex();
+
+    if (!current.isValid()) {
+        m_lastCursorIndex = DListView::moveCursor(cursorAction, modifiers);
+
+        return m_lastCursorIndex;
+    }
+
+    if (rectForIndex(current).isEmpty()) {
+        m_lastCursorIndex = model()->index(0, 0, rootIndex());
+
+        return m_lastCursorIndex;
+    }
+
+    QModelIndex index;
+
+    switch (cursorAction) {
+    case MoveLeft:
+        if (Global::keyShiftIsPressed()) {
+            index = DListView::moveCursor(cursorAction, modifiers);
+
+            if (index == m_lastCursorIndex) {
+                index = index.sibling(index.row() - 1, index.column());
+            }
+        } else {
+            index = current.sibling(current.row() - 1, current.column());
+        }
+
+        break;
+    case MoveRight:
+        if (Global::keyShiftIsPressed()) {
+            index = DListView::moveCursor(cursorAction, modifiers);
+
+            if (index == m_lastCursorIndex) {
+                index = index.sibling(index.row() + 1, index.column());
+            }
+        } else {
+            index = current.sibling(current.row() + 1, current.column());
+        }
+
+        break;
+    default:
+        index = DListView::moveCursor(cursorAction, modifiers);
+        break;
+    }
+
+    if (index.isValid()) {
+        m_lastCursorIndex = index;
+
+        return index;
+    }
+
+    m_lastCursorIndex = current;
+
+    return current;
 }
 
 bool DFileView::isEmptyArea(const QPoint &pos) const
