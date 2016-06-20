@@ -1338,7 +1338,7 @@ void DFileView::showNormalMenu(const QModelIndex &index)
         const AbstractFileInfoPointer &info = model()->fileInfo(index);
         const QVector<MenuAction> &actions = info->menuActionList(AbstractFileInfo::SingleFile);
         const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList();
-        const QVector<MenuAction> disableList;
+        const QSet<MenuAction> &disableList = FileMenuManager::getDisableActionList(list);
 
         menu = FileMenuManager::genereteMenuByKeys(actions, disableList, true, subActions);
 
@@ -1384,7 +1384,7 @@ void DFileView::showNormalMenu(const QModelIndex &index)
         else
             actions = info->menuActionList(AbstractFileInfo::MultiFiles);
         const QMap<MenuAction, QVector<MenuAction> > subActions;
-        const QVector<MenuAction> disableList;
+        const QSet<MenuAction> &disableList = FileMenuManager::getDisableActionList(list);
         menu = FileMenuManager::genereteMenuByKeys(actions, disableList, true, subActions);
     }
 

@@ -11,6 +11,7 @@
 #include <QClipboard>
 #include <QMimeData>
 #include <QDir>
+#include <QSet>
 
 DWIDGET_USE_NAMESPACE
 
@@ -25,20 +26,21 @@ public:
 
     FileMenuManager();
 
-    static DFileMenu *createRecentLeftBarMenu(const QVector<MenuAction> &disableList = QVector<MenuAction>());
+    static DFileMenu *createRecentLeftBarMenu(const QSet<MenuAction> &disableList = QSet<MenuAction>());
     static DFileMenu *createDefaultBookMarkMenu();
-    static DFileMenu *createCustomBookMarkMenu(const QVector<MenuAction> &disableList = QVector<MenuAction>());
-    static DFileMenu *createTrashLeftBarMenu(const QVector<MenuAction> &disableList = QVector<MenuAction>());
-    static DFileMenu *createDiskLeftBarMenu(const QVector<MenuAction> &disableList = QVector<MenuAction>());
-    static DFileMenu *createDiskViewMenu(const QVector<MenuAction> &disableList = QVector<MenuAction>());
-    static DFileMenu *createToolBarSettingsMenu(const QVector<MenuAction> &disableList = QVector<MenuAction>());
-    static DFileMenu *createToolBarSortMenu(const QVector<MenuAction> &disableList = QVector<MenuAction>());
-    static DFileMenu *createListViewHeaderMenu(const QVector<MenuAction> &disableList = QVector<MenuAction>());
+    static DFileMenu *createCustomBookMarkMenu(const QSet<MenuAction> &disableList = QSet<MenuAction>());
+    static DFileMenu *createTrashLeftBarMenu(const QSet<MenuAction> &disableList = QSet<MenuAction>());
+    static DFileMenu *createDiskLeftBarMenu(const QSet<MenuAction> &disableList = QSet<MenuAction>());
+    static DFileMenu *createDiskViewMenu(const QSet<MenuAction> &disableList = QSet<MenuAction>());
+    static DFileMenu *createToolBarSettingsMenu(const QSet<MenuAction> &disableList = QSet<MenuAction>());
+    static DFileMenu *createToolBarSortMenu(const QSet<MenuAction> &disableList = QSet<MenuAction>());
+    static DFileMenu *createListViewHeaderMenu(const QSet<MenuAction> &disableList = QSet<MenuAction>());
     static QString checkDuplicateName(const QString &name);
-    static QVector<MenuAction> getDisableActionList(const DUrl &fileUrl);
+    static QSet<MenuAction> getDisableActionList(const DUrl &fileUrl);
+    static QSet<MenuAction> getDisableActionList(const DUrlList &urlList);
 
     static DFileMenu *genereteMenuByKeys(const QVector<MenuAction> &keys,
-                                         const QVector<MenuAction> &disableList,
+                                         const QSet<MenuAction> &disableList,
                                          bool checkable = false,
                                          const QMap<MenuAction, QVector<MenuAction> > &subMenuList = QMap<MenuAction, QVector<MenuAction> >());
     static QString getActionString(MenuAction type);

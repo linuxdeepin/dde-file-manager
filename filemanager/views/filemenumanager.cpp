@@ -31,7 +31,7 @@ QMap<MenuAction, DAction*> FileMenuManager::m_actions;
 QVector<MenuAction> FileMenuManager::m_sortActionTypes;
 
 
-DFileMenu *FileMenuManager::createRecentLeftBarMenu(const QVector<MenuAction> &disableList)
+DFileMenu *FileMenuManager::createRecentLeftBarMenu(const QSet<MenuAction> &disableList)
 {
     QVector<MenuAction> actionKeys;
 
@@ -47,7 +47,7 @@ DFileMenu *FileMenuManager::createRecentLeftBarMenu(const QVector<MenuAction> &d
 DFileMenu *FileMenuManager::createDefaultBookMarkMenu()
 {
     QVector<MenuAction> actionKeys;
-    QVector<MenuAction> disableList;
+    QSet<MenuAction> disableList;
 
     actionKeys.reserve(7);
 
@@ -57,7 +57,7 @@ DFileMenu *FileMenuManager::createDefaultBookMarkMenu()
     return genereteMenuByKeys(actionKeys, disableList);
 }
 
-DFileMenu *FileMenuManager::createCustomBookMarkMenu(const QVector<MenuAction> &disableList)
+DFileMenu *FileMenuManager::createCustomBookMarkMenu(const QSet<MenuAction> &disableList)
 {
     QVector<MenuAction> actionKeys;
 
@@ -71,7 +71,7 @@ DFileMenu *FileMenuManager::createCustomBookMarkMenu(const QVector<MenuAction> &
     return genereteMenuByKeys(actionKeys, disableList);
 }
 
-DFileMenu *FileMenuManager::createTrashLeftBarMenu(const QVector<MenuAction> &disableList)
+DFileMenu *FileMenuManager::createTrashLeftBarMenu(const QSet<MenuAction> &disableList)
 {
     QVector<MenuAction> actionKeys;
 
@@ -82,14 +82,17 @@ DFileMenu *FileMenuManager::createTrashLeftBarMenu(const QVector<MenuAction> &di
     actionKeys<< MenuAction::Property;
 
     if (TrashManager::isEmpty()){
-        const_cast<QVector<MenuAction>&>(disableList) << MenuAction::ClearTrash
-                                                      << MenuAction::Property;
+        QSet<MenuAction> tmp_disableList = disableList;
+
+        tmp_disableList << MenuAction::ClearTrash << MenuAction::Property;
+
+        return genereteMenuByKeys(actionKeys, tmp_disableList);
     }
 
     return genereteMenuByKeys(actionKeys, disableList);
 }
 
-DFileMenu *FileMenuManager::createDiskLeftBarMenu(const QVector<MenuAction> &disableList)
+DFileMenu *FileMenuManager::createDiskLeftBarMenu(const QSet<MenuAction> &disableList)
 {
     QVector<MenuAction> actionKeys;
 
@@ -103,7 +106,7 @@ DFileMenu *FileMenuManager::createDiskLeftBarMenu(const QVector<MenuAction> &dis
     return genereteMenuByKeys(actionKeys, disableList);
 }
 
-DFileMenu *FileMenuManager::createDiskViewMenu(const QVector<MenuAction> &disableList)
+DFileMenu *FileMenuManager::createDiskViewMenu(const QSet<MenuAction> &disableList)
 {
     QVector<MenuAction> actionKeys;
 
@@ -118,7 +121,7 @@ DFileMenu *FileMenuManager::createDiskViewMenu(const QVector<MenuAction> &disabl
     return genereteMenuByKeys(actionKeys, disableList);
 }
 
-DFileMenu *FileMenuManager::createToolBarSettingsMenu(const QVector<MenuAction> &disableList)
+DFileMenu *FileMenuManager::createToolBarSettingsMenu(const QSet<MenuAction> &disableList)
 {
     QVector<MenuAction> actionKeys;
 
@@ -134,7 +137,7 @@ DFileMenu *FileMenuManager::createToolBarSettingsMenu(const QVector<MenuAction> 
     return genereteMenuByKeys(actionKeys, disableList);
 }
 
-DFileMenu *FileMenuManager::createToolBarSortMenu(const QVector<MenuAction> &disableList)
+DFileMenu *FileMenuManager::createToolBarSortMenu(const QSet<MenuAction> &disableList)
 {
     QVector<MenuAction> actionKeys;
 
@@ -149,7 +152,7 @@ DFileMenu *FileMenuManager::createToolBarSortMenu(const QVector<MenuAction> &dis
     return menu;
 }
 
-DFileMenu *FileMenuManager::createListViewHeaderMenu(const QVector<MenuAction> &disableList)
+DFileMenu *FileMenuManager::createListViewHeaderMenu(const QSet<MenuAction> &disableList)
 {
     QVector<MenuAction> actionKeys;
 
@@ -164,26 +167,32 @@ DFileMenu *FileMenuManager::createListViewHeaderMenu(const QVector<MenuAction> &
     return menu;
 }
 
-QVector<MenuAction> FileMenuManager::getDisableActionList(const DUrl &fileUrl)
+QSet<MenuAction> FileMenuManager::getDisableActionList(const DUrl &fileUrl)
 {
-    const AbstractFileInfoPointer &fileInfo = fileService->createFileInfo(fileUrl);
-    QVector<MenuAction> disableList;
-    const AbstractFileInfoPointer &parentInfo = fileService->createFileInfo(fileInfo->parentUrl());
+    DUrlList list;
 
+    list << fileUrl;
+
+    return getDisableActionList(list);
+}
+
+QSet<MenuAction> FileMenuManager::getDisableActionList(const DUrlList &urlList)
+{
+    QSet<MenuAction> disableList;
+
+    for (const DUrl &fileUrl : urlList) {
+        const AbstractFileInfoPointer &fileInfo = fileService->createFileInfo(fileUrl);
+
+        if (fileInfo) {
+            disableList += fileInfo->disableMenuActionList();
+        }
+    }
 
     const QClipboard *clipboard = qApp->clipboard();
     const QMimeData *mimeData = clipboard->mimeData();
 
-    qDebug() << mimeData->hasUrls() << mimeData->urls() << fileUrl;
     if (!mimeData->hasUrls()){
         disableList << MenuAction::Paste;
-    }
-    qDebug() << TrashManager::isEmpty() << fileUrl.isTrashFile() << (fileUrl.path() == "/");
-    if (TrashManager::isEmpty() && fileUrl.isTrashFile() && (fileUrl.path() == "/")){
-        disableList << MenuAction::RestoreAll;
-        disableList << MenuAction::ClearTrash;
-        disableList << MenuAction::Property;
-        disableList << MenuAction::SortBy;
     }
 
     return disableList;
@@ -264,7 +273,7 @@ void FileMenuManager::initActions()
 }
 
 DFileMenu *FileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
-                                               const QVector<MenuAction> &disableList,
+                                               const QSet<MenuAction> &disableList,
                                                bool checkable,
                                                const QMap<MenuAction, QVector<MenuAction> > &subMenuList)
 {

@@ -575,6 +575,16 @@ DUrl AbstractFileInfo::redirectedFileUrl() const
     return fileUrl();
 }
 
+bool AbstractFileInfo::isEmptyFloder() const
+{
+    if (!isDir())
+        return false;
+
+    DDirIteratorPointer it = FileServices::instance()->createDirIterator(fileUrl(), QDir::AllEntries | QDir::NoDotAndDotDot, QDirIterator::NoIteratorFlags);
+
+    return !it->hasNext();
+}
+
 void AbstractFileInfo::sortByUserColumn(QList<AbstractFileInfoPointer> &fileList, quint8 columnType, Qt::SortOrder order) const
 {
     Q_UNUSED(fileList)
@@ -635,6 +645,23 @@ QMap<MenuAction, QVector<MenuAction> > AbstractFileInfo::subMenuActionList() con
     actions.insert(MenuAction::SortBy, sortByMenuActionKeys);
 
     return actions;
+}
+
+QSet<MenuAction> AbstractFileInfo::disableMenuActionList() const
+{
+    QSet<MenuAction> list;
+
+    if (!isWritable()) {
+        list << MenuAction::Cut << MenuAction::Rename << MenuAction::Paste << MenuAction::Remove << MenuAction::Delete;
+    } else if (!isCanRename()) {
+        list << MenuAction::Cut << MenuAction::Rename << MenuAction::Remove << MenuAction::Delete;
+    }
+
+    if (isEmptyFloder()) {
+        list << MenuAction::SelectAll;
+    }
+
+    return list;
 }
 
 QT_BEGIN_NAMESPACE

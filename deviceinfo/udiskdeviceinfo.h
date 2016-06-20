@@ -55,7 +55,7 @@ public:
     DUrl parentUrl() const Q_DECL_OVERRIDE;
 
     QVector<MenuAction> menuActionList(MenuType type) const Q_DECL_OVERRIDE;
-    QVector<MenuAction> disableMenuActionList();
+    QSet<MenuAction> disableMenuActionList() const Q_DECL_OVERRIDE;
 };
 
 #endif // UDISKDEVICEINFO_H

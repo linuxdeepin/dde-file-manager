@@ -25,6 +25,7 @@ public:
     QFile::Permissions permissions() const Q_DECL_OVERRIDE;
 
     QVector<MenuAction> menuActionList(MenuType type) const Q_DECL_OVERRIDE;
+    QSet<MenuAction> disableMenuActionList() const Q_DECL_OVERRIDE;
 
     bool restore(const FMEvent &event) const;
 
