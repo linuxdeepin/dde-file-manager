@@ -360,7 +360,7 @@ void DFileItemDelegate::paintListItem(bool isDragMode, QPainter *painter,
 
     /// draw background
 
-    if(!isDragMode && (opt.state & QStyle::State_Selected) && opt.showDecorationSelected) {
+    if (!isDragMode && (opt.state & QStyle::State_Selected) && opt.showDecorationSelected) {
         painter->fillRect(opt.rect, QColor("#2da6f7"));
         painter->setPen(Qt::white);
     } else {
@@ -393,7 +393,7 @@ void DFileItemDelegate::paintListItem(bool isDragMode, QPainter *painter,
     if(index != editing_index || role != DFileSystemModel::FileNameRole) {
     /// draw file name label
 
-    painter->drawText(rect, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()),
+        painter->drawText(rect, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()),
                       index.data(role).toString());
     }
 
@@ -401,6 +401,12 @@ void DFileItemDelegate::paintListItem(bool isDragMode, QPainter *painter,
         return;
 
     const DFileSystemModel *model = qobject_cast<const DFileSystemModel*>(index.model());
+
+    if (!isDragMode && (opt.state & QStyle::State_Selected) && opt.showDecorationSelected) {
+        painter->setPen("#e9e9e9");
+    } else {
+        painter->setPen("#797979");
+    }
 
     for(int i = 1; i < columnRoleList.count(); ++i) {
         int column_width = parent()->columnWidth(i);
