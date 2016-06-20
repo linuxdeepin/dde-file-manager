@@ -75,7 +75,7 @@ void DToolBar::initAddressToolBar()
     m_forwardButton->setDisabled(true);
     m_forwardButton->setFocusPolicy(Qt::NoFocus);
 
-    m_searchButton = new DStateButton(":/images/images/light/appbar.magnify.png", this);
+    m_searchButton = new QPushButton(this);
     m_searchButton->setObjectName("searchButton");
     m_searchButton->setFixedWidth(25);
     m_searchButton->setFixedHeight(18);

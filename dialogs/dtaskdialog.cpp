@@ -414,18 +414,29 @@ void DTaskDialog::addConflictTask(const QMap<QString, QString> &jobDetail){
 
 void DTaskDialog::adjustSize(){
     int listHeight = 2;
+    int maxHeight = 0;
     for(int i=0; i < m_taskListWidget->count(); i++){
         QListWidgetItem* item = m_taskListWidget->item(i);
         int h = m_taskListWidget->itemWidget(item)->height();
         item->setSizeHint(QSize(item->sizeHint().width(), h));
         listHeight += h;
+        if (i == 5){
+            maxHeight = listHeight;
+        }
     }
-    if (listHeight < qApp->desktop()->availableGeometry().height() - 40){
+    if (m_taskListWidget->count() >= 6){
+        m_taskListWidget->setFixedHeight(maxHeight);
+        setFixedHeight(maxHeight + 60);
+    }else{
         m_taskListWidget->setFixedHeight(listHeight);
         setFixedHeight(listHeight + 60);
-    }else{
-        setFixedHeight(qApp->desktop()->availableGeometry().height());
     }
+//    if (listHeight < qApp->desktop()->availableGeometry().height() - 40){
+//        m_taskListWidget->setFixedHeight(listHeight);
+//        setFixedHeight(listHeight + 60);
+//    }else{
+//        setFixedHeight(qApp->desktop()->availableGeometry().height());
+//    }
 }
 
 void DTaskDialog::removeTaskByPath(QString jobId){

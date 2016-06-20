@@ -7,6 +7,7 @@
 #include "../app/filesignalmanager.h"
 
 #include <QDirModel>
+#include <QLabel>
 #include <QDebug>
 #include "dscrollbar.h"
 #include "../app/fmevent.h"
@@ -31,6 +32,11 @@ void DSearchBar::initUI()
     m_list->setFocusPolicy(Qt::NoFocus);
     m_stringListMode = new QStringListModel(this);
     m_list->setWindowFlags(Qt::ToolTip);
+    m_list->setStyleSheet("QListWidget::item{\
+                          height: 24px;\
+                          padding: 0px;\
+                          margins:10px;\
+                      };");
 
     m_dirModel = new QDirModel;
     m_dirModel->setFilter(QDir::Dirs);
@@ -212,7 +218,14 @@ void DSearchBar::setCompleter(const QString &text)
         }
         if(sl.isEmpty())
             return;
-        m_list->addItems(sl);
+
+        foreach (QString itemText, sl) {
+            QListWidgetItem* item = new QListWidgetItem(itemText);
+            item->setTextAlignment(Qt::AlignVCenter);
+            QPixmap p(":/icons/images/light/space16.png");
+            item->setIcon(QIcon(p));
+            m_list->addItem(item);
+        }
     }
     else
     {
@@ -225,18 +238,34 @@ void DSearchBar::setCompleter(const QString &text)
             }
         }
         m_stringListMode->setStringList(sl);
-        m_list->addItems(m_stringListMode->stringList());
+//        m_list->addItems(m_stringListMode->stringList());
+
+        foreach (QString itemText, m_stringListMode->stringList()) {
+            QListWidgetItem* item = new QListWidgetItem(itemText);
+            item->setTextAlignment(Qt::AlignVCenter);
+            QPixmap p(":/icons/images/light/space16.png");
+            item->setIcon(QIcon(p));
+            m_list->addItem(item);
+        }
+
         if (m_stringListMode->rowCount() == 0) {
             return;
         }
     }
     recomended();
 
+    if (m_list->count() < 10){
+        m_list->setFixedHeight(24 * m_list->count() + 8);
+    }else{
+        m_list->setFixedHeight(24 * 10);
+    }
+
+
     m_list->setMinimumWidth(width());
     m_list->setMaximumWidth(width());
     QPoint p(0, height());
     int x = mapToGlobal(p).x();
-    int y = mapToGlobal(p).y() + 1;
+    int y = mapToGlobal(p).y() + 4;
     m_list->move(x, y);
     m_list->show();
 }

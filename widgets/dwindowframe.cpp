@@ -70,7 +70,7 @@ auto cornerEdge2XCursor(const CornerEdge& ce) -> int {
         case CornerEdge::Top:
             return XC_top_side;
         case CornerEdge::TopRight:
-            return XC_top_right_corner;
+            return -1;
         case CornerEdge::Right:
             return XC_right_side;
         case CornerEdge::BottomRight:
@@ -78,11 +78,11 @@ auto cornerEdge2XCursor(const CornerEdge& ce) -> int {
         case CornerEdge::Bottom:
             return XC_bottom_side;
         case CornerEdge::BottomLeft:
-            return XC_bottom_left_corner;
+            return -1;
         case CornerEdge::Left:
             return XC_left_side;
         case CornerEdge::TopLeft:
-            return XC_top_left_corner;
+            return -1;
         default: {
             return -1;
         }

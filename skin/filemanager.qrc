@@ -309,5 +309,10 @@
         <file>images/icons/downloads_hover_22px.svg</file>
         <file>images/icons/downloads_normal_16px.svg</file>
         <file>images/icons/downloads_normal_22px.svg</file>
+        <file>images/light/space.png</file>
+        <file>images/light/space16.png</file>
+        <file>images/icons/search_hover.png</file>
+        <file>images/icons/search_normal.png</file>
+        <file>images/icons/search_pressed.png</file>
     </qresource>
 </RCC>
