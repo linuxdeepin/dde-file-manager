@@ -671,7 +671,7 @@ void DFileView::handleCommitData(QWidget *editor)
 
 
     if(lineEdit) {
-        if (fileInfo->fileName() == lineEdit->text()){
+        if (fileInfo->fileName() == lineEdit->text() || lineEdit->text().isEmpty()){
             return;
         }
 
@@ -689,7 +689,7 @@ void DFileView::handleCommitData(QWidget *editor)
     FileIconItem *item = qobject_cast<FileIconItem*>(editor);
 
     if(item) {
-        if (fileInfo->fileName() == item->edit->toPlainText()){
+        if (fileInfo->fileName() == item->edit->toPlainText() || item->edit->toPlainText().isEmpty()){
             return;
         }
         fileService->renameFile(fileInfo->fileUrl(),
