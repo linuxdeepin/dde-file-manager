@@ -78,7 +78,7 @@ void DFileView::initUI()
     setSelectionMode(QAbstractItemView::ExtendedSelection);
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setSelectionRectVisible(true);
-    setEditTriggers(QListView::EditKeyPressed);
+    setEditTriggers(QListView::EditKeyPressed | QListView::SelectedClicked);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBar(new DScrollBar);
 }
