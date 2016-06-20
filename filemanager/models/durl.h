@@ -37,6 +37,7 @@ public:
     bool isSearchFile() const;
     bool isComputerFile() const;
     bool isNetWorkFile() const;
+    bool isSMBFile() const;
 
     QString toString(FormattingOptions options = FormattingOptions( PrettyDecoded )) const;
 

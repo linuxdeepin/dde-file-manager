@@ -105,6 +105,8 @@ void DBookmarkScene::initConnect()
     connect(deviceListener, &UDiskListener::volumeRemoved, this, &DBookmarkScene::volumeRemoved);
     connect(deviceListener, &UDiskListener::mountAdded, this, &DBookmarkScene::mountAdded);
     connect(deviceListener, &UDiskListener::mountRemoved, this, &DBookmarkScene::mountRemoved);
+
+    connect(fileSignalManager, &FileSignalManager::requestChooseSmbMountedFile, this, &DBookmarkScene::chooseMountedItem);
 }
 
 DBookmarkItem *DBookmarkScene::createBookmarkByKey(const QString &key)
@@ -395,6 +397,7 @@ void DBookmarkScene::currentUrlChanged(const FMEvent &event)
 void DBookmarkScene::setDefaultDiskItem(DBookmarkItem *item)
 {
     m_defaultDiskItem = item;
+    m_defaultDiskItem->setUrl(DUrl("file:///"));
 }
 
 void DBookmarkScene::setNetworkDiskItem(DBookmarkItem *item)
@@ -505,6 +508,7 @@ void DBookmarkScene::volumeRemoved(UDiskDeviceInfo *device)
 
 void DBookmarkScene::mountAdded(UDiskDeviceInfo *device)
 {
+    qDebug() << device;
     DBookmarkItem * item = m_diskItems.value(device->getDiskInfo().ID);
     if(item)
     {
@@ -527,6 +531,13 @@ void DBookmarkScene::mountAdded(UDiskDeviceInfo *device)
 
         item->setTightMode(m_isTightMode);
         m_diskItems.insert(device->getDiskInfo().ID, item);
+
+
+        qDebug() << m_delayCheckMountedItem << m_delayCheckMountedEvent;
+        if (m_delayCheckMountedItem){
+            item->checkMountedItem(m_delayCheckMountedEvent);
+        }
+        m_delayCheckMountedItem = false;
     }
 }
 
@@ -537,6 +548,23 @@ void DBookmarkScene::mountRemoved(UDiskDeviceInfo *device)
     {
         item->setMounted(false);
         return;
+    }
+}
+
+void DBookmarkScene::chooseMountedItem(const FMEvent &event)
+{
+    qDebug() << event << m_diskItems;
+    bool checkMountItem = false;
+    foreach (QString url, m_diskItems.keys()) {
+        if (event.fileUrl() == DUrl(url)){
+            m_diskItems.value(url)->checkMountedItem(event);
+            checkMountItem = true;
+        }
+    }
+
+    if (!checkMountItem){
+        m_delayCheckMountedEvent = event;
+        m_delayCheckMountedItem = true;
     }
 }
 

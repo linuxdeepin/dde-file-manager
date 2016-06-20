@@ -72,8 +72,7 @@ QString UDiskDeviceInfo::getPath()
 
 QString UDiskDeviceInfo::getMountPoint()
 {
-    qDebug() << m_diskInfo;
-
+//    qDebug() << m_diskInfo;
     QString path = QString("/run/user/%1/gvfs").arg(SingleApplication::UserID);
 
     if (m_diskInfo.MountPoint.startsWith("afc://")){

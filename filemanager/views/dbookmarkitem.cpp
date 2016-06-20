@@ -96,6 +96,32 @@ void DBookmarkItem::editFinished()
     emit fileSignalManager->requestFoucsOnFileView(event);
 }
 
+void DBookmarkItem::checkMountedItem(const FMEvent &event)
+{
+    if (event.windowId() != windowId()){
+        return;
+    }
+
+    if (m_isDisk && m_deviceInfo){
+        qDebug() << event;
+
+        if(m_group)
+        {
+            m_group->deselectAll();
+            setChecked(true);
+        }
+        m_pressed = false;
+        update();
+
+        FMEvent e;
+        e = windowId();
+        e = m_url;
+        e = FMEvent::LeftSideBar;
+        qDebug() << m_isDisk << m_deviceInfo << m_url;
+        m_group->url(e);
+    }
+}
+
 QRectF DBookmarkItem::boundingRect() const
 {
     return QRectF(m_x_axis - m_adjust,
@@ -416,7 +442,7 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             else
                 e = m_url;
             e = FMEvent::LeftSideBar;
-            qDebug() << m_isDisk << m_deviceInfo;
+            qDebug() << m_isDisk << m_deviceInfo << m_url;
 
             if (m_isDisk){
                 if (m_deviceInfo){

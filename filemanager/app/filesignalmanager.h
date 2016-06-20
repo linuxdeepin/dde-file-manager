@@ -24,9 +24,18 @@ signals:
     /* change currentUrl*/
     void requestChangeCurrentUrl(const FMEvent &event);
 
-    /* network nodes*/
+    /* request fetch network nodes*/
 
     void requestFetchNetworks(const FMEvent &event);
+
+    /*request fetch network nodes successfully*/
+    void fetchNetworksSuccessed(const FMEvent &event);
+
+    /*request mount smb*/
+    void requestSMBMount(const FMEvent &event);
+
+    /*request choose smb mounted file*/
+    void requestChooseSmbMountedFile(const FMEvent &event);
 
     /* current display url changed*/
     void currentUrlChanged(const FMEvent &event);

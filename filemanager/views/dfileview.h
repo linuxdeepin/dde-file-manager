@@ -97,6 +97,7 @@ public:
     using DListView::viewportMargins;
 
 public slots:
+    void preHandleCd(const FMEvent &event);
     void cd(const FMEvent &event);
     void cdUp(const FMEvent &event);
     void edit(const FMEvent &event);

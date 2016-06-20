@@ -157,6 +157,7 @@ void DSearchBar::historySaved()
         m_stringListMode->setStringList(m_historyList);
         searchHistoryManager->writeIntoSearchHistory(str);
     }
+    m_list->hide();
 }
 
 void DSearchBar::setCompleter(const QString &text)
@@ -630,7 +631,9 @@ bool DSearchBar::hasScheme()
             url.isLocalFile() ||
             url.isRecentFile() ||
             url.isTrashFile() ||
-            url.isSearchFile())
+            url.isSearchFile() ||
+            url.isNetWorkFile() ||
+            url.isSMBFile())
         return true;
     else
         return false;

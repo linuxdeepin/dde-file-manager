@@ -14,7 +14,8 @@ QSet<QString> schemeList = QSet<QString>() << QString(TRASH_SCHEME)
                                            << QString(FILE_SCHEME)
                                            << QString(COMPUTER_SCHEME )
                                            << QString(SEARCH_SCHEME)
-                                           << QString(NETWORK_SCHEME);
+                                           << QString(NETWORK_SCHEME)
+                                           << QString(SMB_SCHEME);
 
 DUrl::DUrl()
     : QUrl()
@@ -93,6 +94,11 @@ bool DUrl::isComputerFile() const
 bool DUrl::isNetWorkFile() const
 {
     return scheme() == NETWORK_SCHEME;
+}
+
+bool DUrl::isSMBFile() const
+{
+    return scheme() == SMB_SCHEME;
 }
 
 QString DUrl::toString(QUrl::FormattingOptions options) const
