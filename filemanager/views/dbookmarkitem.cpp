@@ -387,16 +387,21 @@ DBookmarkItem *DBookmarkItem::makeBookmark(const QString &name, const DUrl &url)
 void DBookmarkItem::editMode()
 {
     m_lineEdit = new QLineEdit;
-    m_lineEdit->setStyleSheet("background-color: white;\
-                               border: none;");
     connect(m_lineEdit, &QLineEdit::editingFinished, this, &DBookmarkItem::editFinished);
     m_widget = scene()->addWidget(m_lineEdit);
-    m_lineEdit->setGeometry(37 + geometry().x(), geometry().y(), m_width - 37, m_height + 1);
+    m_lineEdit->setGeometry(37 + geometry().x(), geometry().y(), m_width - 39, m_height + 1);
     m_lineEdit->setText(m_textContent);
     m_lineEdit->setSelection(0, m_textContent.length());
     m_lineEdit->setFocus();
-    m_lineEdit->show();
     m_lineEdit->installEventFilter(this);
+    m_lineEdit->setStyleSheet("QLineEdit{\
+                              border-radius: 4px;\
+                              background-color: white;\
+                              border: 1px solid rgba(43, 167, 248, 0.3);\
+                              color: black;\
+                          }");
+    m_lineEdit->show();
+
 }
 
 QSizeF DBookmarkItem::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const
@@ -544,7 +549,7 @@ bool DBookmarkItem::eventFilter(QObject *obj, QEvent *e)
 
 void DBookmarkItem::keyPressEvent(QKeyEvent *event)
 {
-    Q_UNUSED(event);
+    QGraphicsItem::keyPressEvent(event);
 }
 
 void DBookmarkItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
