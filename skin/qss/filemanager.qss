@@ -245,13 +245,24 @@ QPushButton#hierarchicalButton:unchecked{
 
 QPushButton#searchButton{
     background-color:white;
+    image: url(:/icons/images/icons/search_normal.png);
     border: 1px solid lightGray;
     color: black;
     border-radius: 2px;
 }
 
+QPushButton#searchButton:pressed{
+    background-color:white;
+    image: url(:/icons/images/icons/search_pressed.png);
+    border: 1px solid lightGray;
+    color: black;
+    border-radius: 2px;
+}
+
+
 QPushButton#searchButton:hover{
     background-color:#2ca7f8;
+    image: url(:/icons/images/icons/search_hover.png);
     border: 1px solid lightGray;
     color: black;
     border-radius: 2px;

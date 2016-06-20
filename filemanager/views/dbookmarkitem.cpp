@@ -370,6 +370,7 @@ int DBookmarkItem::windowId()
 
 DBookmarkItem *DBookmarkItem::makeBookmark(const QString &name, const DUrl &url)
 {
+    qDebug() << name << url;
     DBookmarkItem * item = new DBookmarkItem;
     item->setDefaultItem(false);
     item->setText(name);

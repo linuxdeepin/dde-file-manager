@@ -39,6 +39,7 @@ void DStatusBar::initUI()
     setFocusPolicy(Qt::NoFocus);
     setStyleSheet("QFrame{\
                   background-color: white;\
+                  color: #797979;\
               }");
     setLayout(m_layout);
 

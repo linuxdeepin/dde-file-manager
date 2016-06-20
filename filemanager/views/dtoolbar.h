@@ -63,7 +63,7 @@ private:
     DStateButton* m_backButton=NULL;
     DStateButton* m_forwardButton=NULL;
     DStateButton* m_upButton=NULL;
-    DStateButton* m_searchButton = NULL;
+    QPushButton* m_searchButton = NULL;
     DStateButton* m_refreshButton = NULL;
 
     QFrame* m_contollerToolBar;
