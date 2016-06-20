@@ -149,6 +149,7 @@ protected:
     bool event(QEvent *event) Q_DECL_OVERRIDE;
     void dragMoveEvent(QDragMoveEvent *event) Q_DECL_OVERRIDE;
     void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags flags) Q_DECL_OVERRIDE;
+    QModelIndex moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers modifiers) Q_DECL_OVERRIDE;
 
 private:
     FileController *m_controller;
@@ -194,6 +195,9 @@ private:
     QString m_keyboardSearchKeys;
 
     QSize m_itemSizeHint;
+
+    /// move cursor later selecte index when pressed key shift
+    QModelIndex m_lastCursorIndex;
 };
 
 #endif // DFILEVIEW_H
