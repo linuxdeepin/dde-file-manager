@@ -721,8 +721,11 @@ bool DFileView::event(QEvent *event)
                 clearSelection();
                 showEmptyAreaMenu();
             } else {
-                const QModelIndexList &list = selectedIndexes();
+                if (!hasFocus() && this->childAt(pos)->hasFocus())
+                    return DListView::event(event);
+
                 const QModelIndex &index = indexAt(pos);
+                const QModelIndexList &list = selectedIndexes();
 
                 if (!list.contains(index)) {
                     selectionModel()->select(index, QItemSelectionModel::SelectCurrent);
