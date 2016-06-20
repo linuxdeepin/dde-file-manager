@@ -7,6 +7,8 @@
 #include <QStyleOptionGraphicsItem>
 #include <QGraphicsScene>
 #include <QGraphicsView>
+#include <QKeyEvent>
+
 #include "dfilemenu.h"
 #include "filemenumanager.h"
 
@@ -74,18 +76,22 @@ void DBookmarkItem::init()
 
 void DBookmarkItem::editFinished()
 {
+    if (!m_lineEdit)
+        return;
+
     FMEvent event;
     event = windowId();
     event = m_url;
-    if(!m_lineEdit->text().isEmpty() && m_lineEdit->text() != m_textContent)
+
+    if (!m_lineEdit->text().isEmpty() && m_lineEdit->text() != m_textContent)
     {
         bookmarkManager->renameBookmark(m_textContent, m_lineEdit->text(), m_url);
         fileSignalManager->bookmarkRenamed(m_textContent, m_lineEdit->text(), event);
         m_textContent = m_lineEdit->text();
-        m_lineEdit->setVisible(false);
     }
-    m_lineEdit->removeEventFilter(this);
+
     m_widget->deleteLater();
+    m_lineEdit = Q_NULLPTR;
 
     emit fileSignalManager->requestFoucsOnFileView(event);
 }
@@ -356,7 +362,7 @@ void DBookmarkItem::editMode()
     m_lineEdit = new QLineEdit;
     m_lineEdit->setStyleSheet("background-color: white;\
                                border: none;");
-    connect(m_lineEdit, &QLineEdit::returnPressed, this, &DBookmarkItem::editFinished);
+    connect(m_lineEdit, &QLineEdit::editingFinished, this, &DBookmarkItem::editFinished);
     m_widget = scene()->addWidget(m_lineEdit);
     m_lineEdit->setGeometry(37 + geometry().x(), geometry().y(), m_width - 37, m_height + 1);
     m_lineEdit->setText(m_textContent);
@@ -491,12 +497,21 @@ void DBookmarkItem::dropEvent(QGraphicsSceneDragDropEvent *event)
 
 bool DBookmarkItem::eventFilter(QObject *obj, QEvent *e)
 {
-    Q_UNUSED(obj);
-    if(e->type() == QEvent::FocusOut)
-    {
-        editFinished();
-        return false;
+    if (obj == m_lineEdit) {
+        if (e->type() == QEvent::FocusOut) {
+            editFinished();
+
+            return false;
+        } else if (e->type() == QEvent::KeyPress) {
+            QKeyEvent *key_event = static_cast<QKeyEvent*>(e);
+
+            if (key_event->key() == Qt::Key_Escape) {
+                m_widget->deleteLater();
+                m_lineEdit = Q_NULLPTR;
+            }
+        }
     }
+
     return false;
 }
 
