@@ -2,6 +2,7 @@
 #define GVFSMOUNTCLIENT_H
 
 #include <QObject>
+#include "../app/fmevent.h"
 
 #undef signals
 extern "C" {
@@ -17,6 +18,8 @@ public:
     explicit GvfsMountClient(QObject *parent = 0);
     ~GvfsMountClient();
 
+    void initConnect();
+
     enum MountOpState{
       MOUNT_OP_NONE,
       MOUNT_OP_ASKED,
@@ -25,6 +28,7 @@ public:
 
     static bool AskingPassword;
     static QJsonObject SMBLoginObj;
+    static FMEvent MountEvent;
 
     static void mount (GFile *file);
     static GMountOperation *new_mount_op(void);
@@ -38,8 +42,8 @@ public:
 signals:
 
 public slots:
-    void mount(const QString& path);
-
+    void mountByPath(const QString& path);
+    void mountByEvent(const FMEvent& event);
 
 };
 

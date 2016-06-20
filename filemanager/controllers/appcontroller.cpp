@@ -30,7 +30,9 @@ AppController::AppController(QObject *parent) : QObject(parent)
     FileServices::dRegisterUrlHandler<TrashManager>(TRASH_SCHEME, "");
     FileServices::dRegisterUrlHandler<SearchController>(SEARCH_SCHEME, "");
     FileServices::dRegisterUrlHandler<NetworkController>(NETWORK_SCHEME, "");
+    FileServices::dRegisterUrlHandler<NetworkController>(SMB_SCHEME, "");
     networkManager;
+    gvfsMountClient;
 }
 
 void AppController::initConnect()

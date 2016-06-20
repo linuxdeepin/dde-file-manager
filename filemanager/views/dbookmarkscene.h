@@ -4,6 +4,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsWidget>
 #include <QGraphicsLinearLayout>
+#include "../app/fmevent.h"
 
 #define BOOKMARK_ITEM_HEIGHT 30
 #define SEPARATOR_ITEM_HEIGHT 6
@@ -13,7 +14,6 @@
 class DBookmarkItem;
 class DBookmarkRootItem;
 class DBookmarkItemGroup;
-class FMEvent;
 class UDiskDeviceInfo;
 class DUrl;
 class DiskInfo;
@@ -76,6 +76,8 @@ public slots:
     void volumeRemoved(UDiskDeviceInfo * device);
     void mountAdded(UDiskDeviceInfo * device);
     void mountRemoved(UDiskDeviceInfo * device);
+
+    void chooseMountedItem(const FMEvent &event);
 private:
     bool isBelowLastItem(const QPointF &point);
     void increaseSize();
@@ -102,7 +104,8 @@ private:
     double m_totalHeight = 0;
     bool m_acceptDrop;
     bool m_isTightMode = false;
-
+    bool m_delayCheckMountedItem = false;
+    FMEvent m_delayCheckMountedEvent;
 
     QGraphicsLinearLayout * m_defaultLayout;
 

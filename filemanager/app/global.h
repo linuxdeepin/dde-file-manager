@@ -20,6 +20,7 @@
 #include "../controllers/appcontroller.h"
 #include "../shutil/thumbnailmanager.h"
 #include "../gvfs/networkmanager.h"
+#include "../gvfs/gvfsmountclient.h"
 
 #include <QFontMetrics>
 #include <QTextOption>
@@ -41,6 +42,7 @@
 #define mimeTypeDisplayManager Singleton<MimeTypeDisplayManager>::instance()
 #define thumbnailManager Singleton<ThumbnailManager>::instance()
 #define networkManager Singleton<NetworkManager>::instance()
+#define gvfsMountClient Singleton<GvfsMountClient>::instance()
 
 
 #define defaut_icon ":/images/images/default.png"
@@ -56,6 +58,7 @@
 #define COMPUTER_SCHEME "computer"
 #define SEARCH_SCHEME "search"
 #define NETWORK_SCHEME "network"
+#define SMB_SCHEME "smb"
 
 #define TRASH_ROOT "trash:///"
 #define RECENT_ROOT "recent:///"
@@ -63,6 +66,7 @@
 #define FILE_ROOT  "file:///"
 #define COMPUTER_ROOT "computer:///"
 #define NETWORK_ROOT "network:///"
+#define SMB_ROOT "smb:///"
 
 #define TRASHPATH QDir::homePath() + "/.local/share/Trash"
 #define TRASHFILEPATH TRASHPATH + "/files"

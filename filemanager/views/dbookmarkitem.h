@@ -20,6 +20,7 @@ class DBookmarkItemGroup;
 class UDiskDeviceInfo;
 class BookMark;
 class DDragWidget;
+class FMEvent;
 
 class DBookmarkItem : public QGraphicsWidget
 {
@@ -168,6 +169,7 @@ private:
     QString m_sysPath;
 public slots:
     void editFinished();
+    void checkMountedItem(const FMEvent& event);
 };
 
 #endif // DBOOKMARKITEM_H

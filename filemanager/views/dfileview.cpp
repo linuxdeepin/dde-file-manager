@@ -98,8 +98,10 @@ void DFileView::initConnects()
 {
     connect(this, &DFileView::doubleClicked,
             this, &DFileView::openIndex);
-    connect(fileSignalManager, &FileSignalManager::requestChangeCurrentUrl,
+    connect(fileSignalManager, &FileSignalManager::fetchNetworksSuccessed,
             this, &DFileView::cd);
+    connect(fileSignalManager, &FileSignalManager::requestChangeCurrentUrl,
+            this, &DFileView::preHandleCd);
 
     connect(fileSignalManager, &FileSignalManager::requestRename,
             this, static_cast<void (DFileView::*)(const FMEvent&)>(&DFileView::edit));
@@ -341,6 +343,16 @@ QModelIndex DFileView::indexAt(const QPoint &point) const
     }
 
     return rootIndex().child(index, 0);
+}
+
+void DFileView::preHandleCd(const FMEvent &event)
+{
+    qDebug() << event;
+    if (event.fileUrl().isSMBFile()){
+        emit fileSignalManager->requestFetchNetworks(event);
+        return;
+    }
+    cd(event);
 }
 
 void DFileView::cd(const FMEvent &event)
@@ -1033,6 +1045,11 @@ void DFileView::stopSearch()
 bool DFileView::setCurrentUrl(DUrl fileUrl)
 {
     const AbstractFileInfoPointer &info = FileServices::instance()->createFileInfo(fileUrl);
+
+    if (!info){
+        qDebug() << "This scheme isn't support";
+        return false;
+    }
 
     if(info->canRedirectionFileUrl()) {
         const DUrl old_url = fileUrl;
