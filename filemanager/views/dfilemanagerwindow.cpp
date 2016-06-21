@@ -58,7 +58,7 @@ void DFileManagerWindow::initUI()
 void DFileManagerWindow::initTitleBar()
 {
     m_titleBar = new DTitlebar(this);
-    m_titleBar->layout()->setContentsMargins(0, 0, 0, 0);
+    m_titleBar->layout()->setContentsMargins(0, 0, 5, 0);
     m_titleBar->setWindowFlags(m_titleBar->windowFlags());
     setDragMovableHeight(m_titleBar->height());
 
@@ -191,6 +191,11 @@ int DFileManagerWindow::getFileViewMode() const
 int DFileManagerWindow::getFileViewSortRole() const
 {
     return m_fileView->getSortRoles();
+}
+
+DTitlebar *DFileManagerWindow::getTitleBar()
+{
+    return m_titleBar;
 }
 
 void DFileManagerWindow::showMinimized()

@@ -38,17 +38,25 @@ void WindowManager::loadWindowState(DMainWindow *window)
 {
     m_fmStateManager->loadCache();
     FMState* state = m_fmStateManager->fmState();
+    int x = state->x();
+    int y = state->y();
     int width = state->width();
     int height = state->height();
-    window->resize(width, height);
+    int windowState = state->windowState();
+    window->setGeometry(x, y, width, height);
+    window->setWindowState(static_cast<Qt::WindowState>(windowState));
+    window->fileManagerWindow()->getTitleBar()->setWindowState(static_cast<Qt::WindowState>(windowState));
 }
 
 
 void WindowManager::saveWindowState(DMainWindow *window)
 {
     m_fmStateManager->fmState()->setViewMode(window->fileManagerWindow()->getFileViewMode());
+    m_fmStateManager->fmState()->setX(window->x());
+    m_fmStateManager->fmState()->setY(window->y());
     m_fmStateManager->fmState()->setWidth(window->size().width());
     m_fmStateManager->fmState()->setHeight(window->size().height());
+    m_fmStateManager->fmState()->setWindowState(window->windowState());
     m_fmStateManager->saveCache();
 }
 
@@ -74,9 +82,9 @@ void WindowManager::showNewWindow(const DUrl &url, bool isAlwaysOpen)
     m_windows.insert(window, window->winId());
 
     loadWindowState(window);
-    if (m_windows.count() == 1){
-        window->moveCenter();
-    }
+//    if (m_windows.count() == 1){
+//        window->moveCenter();
+//    }
     window->fileManagerWindow()->setFileViewMode(m_fmStateManager->fmState()->viewMode());
     window->show();
 

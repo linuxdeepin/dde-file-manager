@@ -508,6 +508,18 @@ void DWindowFrame::showMinimized() {
     XFlush(display);
 }
 
+void DWindowFrame::setWindowState(Qt::WindowStates windowState)
+{
+    if (windowState == Qt::WindowMaximized){
+        showMaximized();
+    }else if (windowState == Qt::WindowMinimized){
+        showMinimized();
+    }else if (windowState == Qt::WindowFullScreen){
+        showFullScreen();
+    }
+    QWidget::setWindowState(windowState);
+}
+
 void DWindowFrame::setModal(bool on) {
     if (on) {
         this->setWindowModality(Qt::WindowModality::ApplicationModal);

@@ -57,6 +57,7 @@ public slots:
     void showMaximized();
     void showNormal();
     void showMinimized();
+    void setWindowState(Qt::WindowStates windowState);
 
 protected:
     int shadowOffsetX = 0;
