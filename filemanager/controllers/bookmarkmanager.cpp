@@ -39,6 +39,7 @@ void BookMarkManager::load()
     QByteArray data = file.readAll();
     QJsonDocument jsonDoc(QJsonDocument::fromJson(data));
     loadJson(jsonDoc.object());
+    file.close();
 }
 
 void BookMarkManager::save()
@@ -60,6 +61,7 @@ void BookMarkManager::save()
     writeJson(object);
     QJsonDocument jsonDoc(object);
     file.write(jsonDoc.toJson());
+    file.close();
 }
 
 QList<BookMark *> BookMarkManager::getBookmarks()
@@ -118,6 +120,7 @@ void BookMarkManager::removeBookmark(const QString &name, const DUrl &url)
 
 void BookMarkManager::renameBookmark(const QString &oldname, const QString &newname, const DUrl &url)
 {
+    qDebug() << oldname << newname << url;
     for(int i = 0; i < m_bookmarks.size(); i++)
     {
         BookMark * bookmark = m_bookmarks.at(i);

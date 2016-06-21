@@ -245,7 +245,7 @@ void DLeftSideBar::loadBookmark()
     for(int i = 0; i < m_list.size(); i++)
     {
         BookMark * bm = m_list.at(i);
-        DBookmarkItem * item = DBookmarkItem::makeBookmark(bm->fileName(), bm->getUrl());
+        DBookmarkItem * item = DBookmarkItem::makeBookmark(bm->getName(), bm->getUrl());
         item->setBounds(0, 0, 180, 26);
         m_scene->addItem(item);
     }

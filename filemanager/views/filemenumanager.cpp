@@ -49,10 +49,22 @@ DFileMenu *FileMenuManager::createDefaultBookMarkMenu()
     QVector<MenuAction> actionKeys;
     QSet<MenuAction> disableList;
 
-    actionKeys.reserve(7);
+    actionKeys.reserve(2);
 
     actionKeys << MenuAction::OpenInNewWindow
                << MenuAction::Property;
+
+    return genereteMenuByKeys(actionKeys, disableList);
+}
+
+DFileMenu *FileMenuManager::createNetworkMarkMenu()
+{
+    QVector<MenuAction> actionKeys;
+    QSet<MenuAction> disableList;
+
+    actionKeys.reserve(1);
+
+    actionKeys << MenuAction::OpenInNewWindow;
 
     return genereteMenuByKeys(actionKeys, disableList);
 }
