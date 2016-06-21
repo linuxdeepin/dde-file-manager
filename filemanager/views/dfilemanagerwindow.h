@@ -66,6 +66,8 @@ public:
     int getFileViewMode() const;
     int getFileViewSortRole() const;
 
+    DTitlebar* getTitleBar();
+
 public slots:
     void showMinimized();
     void setFileViewMode(int viewMode);
