@@ -68,7 +68,8 @@ public:
 
     QList<int> columnRoleList() const;
 
-    int selectedIndexCount() const;
+    int selectedIndexCount() const
+    { return selectedIndexes().count();}
 
     int windowId() const;
 
