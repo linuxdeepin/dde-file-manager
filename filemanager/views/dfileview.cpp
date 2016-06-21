@@ -74,6 +74,13 @@ void DFileView::initUI()
     setLocalFileSettings();
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBar(new DScrollBar);
+    setSelectionRectVisible(false);
+
+    m_selectionRectWidget = new QWidget(this);
+    m_selectionRectWidget->hide();
+    m_selectionRectWidget->resize(0, 0);
+    m_selectionRectWidget->setObjectName("SelectionRect");
+    m_selectionRectWidget->raise();
 }
 
 void DFileView::initDelegate()
@@ -196,7 +203,6 @@ void DFileView::setLocalFileSettings()
     setDropIndicatorShown(true);
     setSelectionMode(QAbstractItemView::ExtendedSelection);
     setSelectionBehavior(QAbstractItemView::SelectRows);
-    setSelectionRectVisible(true);
     setEditTriggers(QListView::EditKeyPressed | QListView::SelectedClicked);
 }
 
@@ -208,7 +214,6 @@ void DFileView::setNetworkFileSetting()
     setDropIndicatorShown(false);
     setSelectionMode(QAbstractItemView::SingleSelection);
     setSelectionBehavior(QAbstractItemView::SelectItems);
-    setSelectionRectVisible(false);
     setEditTriggers(QListView::NoEditTriggers);
 }
 
@@ -651,8 +656,6 @@ void DFileView::showEvent(QShowEvent *event)
 
 void DFileView::mousePressEvent(QMouseEvent *event)
 {
-    m_pressed = event->pos();
-
     bool isEmptyArea = this->isEmptyArea(event->pos());
 
     if (event->button() == Qt::LeftButton) {
@@ -663,19 +666,34 @@ void DFileView::mousePressEvent(QMouseEvent *event)
 
     if(!(event->buttons() & Qt::RightButton))
         DListView::mousePressEvent(event);
+
+    if (isEmptyArea) {
+        m_selectionRectWidget->show();
+        m_pressedPos = viewport()->mapToParent(static_cast<QMouseEvent*>(event)->pos());
+    }
 }
 
 void DFileView::mouseMoveEvent(QMouseEvent *event)
 {
-    QRect rect(m_pressed, event->pos() + QPoint(horizontalOffset(), verticalOffset()));
-    m_elasticBand = rect.normalized();
     DListView::mouseMoveEvent(event);
+
+    if (m_selectionRectWidget->isHidden())
+        return;
+
+    const QPoint &pos = viewport()->mapToParent(static_cast<QMouseEvent*>(event)->pos());
+    QRect rect;
+
+    rect.adjust(qMin(m_pressedPos.x(), pos.x()), qMin(m_pressedPos.y(), pos.y()),
+                qMax(pos.x(), m_pressedPos.x()), qMax(pos.y(), m_pressedPos.y()));
+
+    m_selectionRectWidget->setGeometry(rect);
 }
 
 void DFileView::mouseReleaseEvent(QMouseEvent *event)
 {
-    m_pressed = QPoint(0, 0);
-    m_elasticBand = QRect();
+    m_selectionRectWidget->resize(0, 0);
+    m_selectionRectWidget->hide();
+
     DListView::mouseReleaseEvent(event);
 }
 
@@ -741,10 +759,11 @@ void DFileView::resizeEvent(QResizeEvent *event)
 
 bool DFileView::event(QEvent *event)
 {
-    if(event->type() == QEvent::MouseButtonPress) {
+    switch (event->type()) {
+    case QEvent::MouseButtonPress: {
         QMouseEvent *e = static_cast<QMouseEvent*>(event);
 
-        const QPoint &pos = viewport()->mapFrom(this, e->pos());
+        const QPoint &pos = viewport()->mapFromParent(e->pos());
         bool isEmptyArea = this->isEmptyArea(pos);
 
         if (e->button() == Qt::LeftButton) {
@@ -752,8 +771,13 @@ bool DFileView::event(QEvent *event)
                 clearSelection();
                 itemDelegate()->hideAllIIndexWidget();
             }
-        } else if (e->button() == Qt::RightButton) {
+
             if (isEmptyArea) {
+                m_selectionRectWidget->show();
+                m_pressedPos = static_cast<QMouseEvent*>(event)->pos();
+            }
+        } else if (e->button() == Qt::RightButton) {
+            if (isEmptyArea  && !selectionModel()->isSelected(indexAt(pos))) {
                 clearSelection();
                 showEmptyAreaMenu();
             } else {
@@ -770,6 +794,34 @@ bool DFileView::event(QEvent *event)
                 showNormalMenu(index);
             }
         }
+        break;
+    }
+    case QEvent::MouseMove: {
+        if (m_selectionRectWidget->isHidden())
+            break;
+
+        const QPoint &pos = static_cast<QMouseEvent*>(event)->pos();
+        QRect rect;
+
+        rect.adjust(qMin(m_pressedPos.x(), pos.x()), qMin(m_pressedPos.y(), pos.y()),
+                    qMax(pos.x(), m_pressedPos.x()), qMax(pos.y(), m_pressedPos.y()));
+
+        m_selectionRectWidget->setGeometry(rect);
+
+        rect.moveTopLeft(viewport()->mapFromParent(rect.topLeft()));
+
+        setSelection(rect, QItemSelectionModel::Current|QItemSelectionModel::Rows|QItemSelectionModel::ClearAndSelect);
+
+        break;
+    }
+    case QEvent::MouseButtonRelease: {
+        m_selectionRectWidget->resize(0, 0);
+        m_selectionRectWidget->hide();
+
+        break;
+    }
+    default:
+        break;
     }
 
     return DListView::event(event);
@@ -801,38 +853,41 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
     }
 
     if (flags == (QItemSelectionModel::Current|QItemSelectionModel::Rows|QItemSelectionModel::ClearAndSelect)) {
-        int sign_horizontal = rect.left() < rect.right() ? 1 : -1;
-        int sign_verizontal = rect.top() < rect.bottom() ? 1 : -1;
-        int offset_horizontal = (m_currentViewMode == ListMode ? width() : itemSizeHint().width()) * sign_horizontal;
-        int offset_verizontal = itemSizeHint().height() * sign_verizontal;
+        QRect tmp_rect;
+
+        tmp_rect.adjust(qMin(rect.left(), rect.right()), qMin(rect.top(), rect.bottom()),
+                        qMax(rect.left(), rect.right()), qMax(rect.top(), rect.bottom()));
+
+        int offset_horizontal = m_currentViewMode == ListMode ? width() : itemSizeHint().width();
+        int offset_verizontal = itemSizeHint().height();
 
         QModelIndex index1;
         QModelIndex index2;
 
         if (m_currentViewMode == ListMode) {
-            for (int j = rect.top(); (rect.bottom() - j) * sign_verizontal > 0; j += offset_verizontal) {
-                index1 = indexAt(QPoint(rect.left(), j));
+            for (int j = tmp_rect.top(); tmp_rect.bottom() - j > 0; j += offset_verizontal) {
+                index1 = indexAt(QPoint(tmp_rect.left(), j));
 
                 if (index1.isValid())
                     break;
             }
 
             if (!index1.isValid()) {
-                index1 = indexAt(QPoint(rect.left(), rect.bottom()));
+                index1 = indexAt(QPoint(tmp_rect.left(), tmp_rect.bottom()));
 
                 if (!index1.isValid()) {
                     return;
                 }
             }
 
-            for (int j = rect.bottom(); (j - rect.top()) * sign_verizontal > 0; j -= offset_verizontal) {
-                index2 = indexAt(QPoint(rect.left(), j));
+            for (int j = tmp_rect.bottom(); j - tmp_rect.top() > 0; j -= offset_verizontal) {
+                index2 = indexAt(QPoint(tmp_rect.left(), j));
 
                 if (index2.isValid())
                     goto selection;
             }
 
-            index2 = indexAt(QPoint(rect.left(), rect.top()));
+            index2 = indexAt(QPoint(tmp_rect.left(), tmp_rect.top()));
 
             if (index2.isValid())
                 goto selection;
@@ -840,28 +895,28 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
             return;
         }
 
-        for (int j = rect.top(); (rect.bottom() - j) * sign_verizontal > 0; j += offset_verizontal) {
-            for (int i = rect.left(); (rect.right() - i) * sign_horizontal > 0; i += offset_horizontal) {
+        for (int j = tmp_rect.top(); tmp_rect.bottom() - j > 0; j += offset_verizontal) {
+            for (int i = tmp_rect.left(); tmp_rect.right() - i > 0; i += offset_horizontal) {
                 index1 = indexAt(QPoint(i, j));
 
                 if (index1.isValid())
                     goto find_index2;
             }
 
-            index1 = indexAt(QPoint(rect.right(), j));
+            index1 = indexAt(QPoint(tmp_rect.right(), j));
 
             if (index1.isValid())
                 goto find_index2;
         }
 
-        for (int i = rect.left(); (rect.right() - i) * sign_horizontal > 0; i += offset_horizontal) {
-            index1 = indexAt(QPoint(i, rect.bottom()));
+        for (int i = tmp_rect.left(); tmp_rect.right() - i > 0; i += offset_horizontal) {
+            index1 = indexAt(QPoint(i, tmp_rect.bottom()));
 
             if (index1.isValid())
                 goto find_index2;
         }
 
-        index1 = indexAt(QPoint(rect.right(), rect.bottom()));
+        index1 = indexAt(QPoint(tmp_rect.right(), tmp_rect.bottom()));
 
         if (index1.isValid())
             goto find_index2;
@@ -869,28 +924,28 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
         return;
 
 find_index2:
-        for (int j = rect.bottom(); (j - rect.top()) * sign_verizontal > 0; j -= offset_verizontal) {
-            for (int i = rect.right(); (i - rect.left()) * sign_horizontal > 0; i -= offset_horizontal) {
+        for (int j = tmp_rect.bottom(); j - tmp_rect.top() > 0; j -= offset_verizontal) {
+            for (int i = tmp_rect.right(); i - tmp_rect.left() > 0; i -= offset_horizontal) {
                 index2 = indexAt(QPoint(i, j));
 
                 if (index2.isValid())
                     goto selection;
             }
 
-            index2 = indexAt(QPoint(rect.left(), j));
+            index2 = indexAt(QPoint(tmp_rect.left(), j));
 
             if (index2.isValid())
                 goto selection;
         }
 
-        for (int i = rect.right(); (i - rect.left()) * sign_horizontal > 0; i -= offset_horizontal) {
-            index2 = indexAt(QPoint(i, rect.top()));
+        for (int i = tmp_rect.right(); i - tmp_rect.left() > 0; i -= offset_horizontal) {
+            index2 = indexAt(QPoint(i, tmp_rect.top()));
 
             if (index2.isValid())
                 goto selection;
         }
 
-        index2 = indexAt(QPoint(rect.left(), rect.top()));
+        index2 = indexAt(QPoint(tmp_rect.left(), tmp_rect.top()));
 
         if (index2.isValid())
             goto selection;
@@ -965,10 +1020,8 @@ QModelIndex DFileView::moveCursor(QAbstractItemView::CursorAction cursorAction, 
     return current;
 }
 
-bool DFileView::isEmptyArea(const QPoint &pos) const
+bool DFileView::isEmptyArea(const QModelIndex &index, const QPoint &pos) const
 {
-    QModelIndex index = indexAt(pos);
-
     if(index.isValid() && selectionModel()->selectedIndexes().contains(index)) {
         return false;
     } else {
