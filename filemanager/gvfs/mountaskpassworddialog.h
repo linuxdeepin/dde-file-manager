@@ -7,9 +7,15 @@
 #include <QButtonGroup>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QCheckBox>
 #include <QJsonObject>
+#include <ddialog.h>
+#include <dpasswordedit.h>
+#include <dcheckbox.h>
 
-class MountAskPasswordDialog : public QDialog
+DWIDGET_USE_NAMESPACE
+
+class MountAskPasswordDialog : public DDialog
 {
     Q_OBJECT
 public:
@@ -25,6 +31,8 @@ signals:
 public slots:
     void setLoginData(const QJsonObject& obj);
     void handleConnect();
+    void togglePasswordFrame(int id);
+    void handleButtonClicked(int index, QString text);
 
 private:
     QLabel* m_messageLabel;
@@ -35,12 +43,12 @@ private:
 
     QLineEdit* m_usernameLineEdit;
     QLineEdit* m_domainLineEdit;
-    QLineEdit* m_passwordLineEdit;
+    DPasswordEdit* m_passwordLineEdit;
+
+    DCheckBox* m_passwordCheckBox;
 
     QButtonGroup* m_passwordButtonGroup;
 
-    QPushButton* m_cancelButton;
-    QPushButton* m_connectButton;
 
     QJsonObject m_loginObj;
 };

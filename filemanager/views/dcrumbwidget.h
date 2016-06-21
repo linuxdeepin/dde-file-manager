@@ -9,6 +9,7 @@
 #include <QListWidgetItem>
 #include "deviceinfo/udiskdeviceinfo.h"
 #include "durl.h"
+#include "dbusinterface/dbustype.h"
 
 class FMEvent;
 class DCrumbButton;
@@ -30,7 +31,6 @@ class DCrumbWidget : public QFrame
     Q_OBJECT
 public:
     explicit DCrumbWidget(QWidget *parent = 0);
-    void addCrumb(const QString &text);
     void addCrumb(const QStringList &list);
     void setCrumb(const DUrl &path);
     void clear();
@@ -42,6 +42,7 @@ private:
     void addComputerCrumb();
     void addTrashCrumb();
     void addHomeCrumb();
+    void addNetworkCrumb();
 
     DCrumbButton* createDeviceCrumbButtonByType(UDiskDeviceInfo::MediaType type, const QString& mountPoint);
 

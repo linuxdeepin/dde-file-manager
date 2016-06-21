@@ -108,6 +108,11 @@ void DCrumbWidget::setCrumb(const DUrl &path)
     {
         addTrashCrumb();
         addLocalCrumbs(path);
+    }else if(path.isSMBFile()){
+        addNetworkCrumb();
+        addCrumb(QStringList() << path.toString());
+    }else if(path.isNetWorkFile()){
+        addNetworkCrumb();
     }
     else
     {
@@ -197,6 +202,22 @@ void DCrumbWidget::addHomeCrumb()
     connect(button, &DCrumbButton::clicked, this, &DCrumbWidget::buttonPressed);
 }
 
+void DCrumbWidget::addNetworkCrumb()
+{
+    QString text = NETWORK_ROOT;
+    DCrumbButton * button = new DCrumbIconButton(
+                m_group.buttons().size(),
+                QIcon(":/icons/images/icons/network_normal_16px.svg"),
+                QIcon(":/icons/images/icons/network_hover_16px.svg"),
+                QIcon(":/icons/images/icons/network_checked_16px.svg"),
+                text, this);
+    button->setFocusPolicy(Qt::NoFocus);
+    button->adjustSize();
+    m_group.addButton(button, button->getIndex());
+    button->setChecked(true);
+    connect(button, &DCrumbButton::clicked, this, &DCrumbWidget::buttonPressed);
+}
+
 DCrumbButton *DCrumbWidget::createDeviceCrumbButtonByType(UDiskDeviceInfo::MediaType type, const QString &mountPoint)
 {
     DCrumbButton * button = NULL;
@@ -258,7 +279,7 @@ void DCrumbWidget::addLocalCrumbs(const DUrl & url)
 {
     QStringList list;
     QString path = url.path();
-    qDebug() << path;
+    qDebug() << path << isInDevice(path);
     if(isInHome(path))
     {
         QString tmpPath = url.toLocalFile();
@@ -269,6 +290,7 @@ void DCrumbWidget::addLocalCrumbs(const DUrl & url)
     }else if(isInDevice(path)){
         UDiskDeviceInfo* info = deviceListener->getDeviceByPath(path);
         QString mountPoint = info->getMountPoint();
+        qDebug() << mountPoint << info << info->getDiskInfo();
         QString tmpPath = url.toLocalFile();
         tmpPath.replace(mountPoint, "");
         list.append(tmpPath.split("/"));
@@ -397,7 +419,7 @@ void DCrumbWidget::buttonPressed()
     event = FMEvent::CrumbButton;
     QString text = button->path();
     DCrumbButton * localButton = (DCrumbButton *)m_group.buttons().at(0);
-    qDebug() << text;
+    qDebug() << text << localButton->getName();
 
     if(localButton->getName() == RECENT_ROOT)
     {
@@ -410,6 +432,13 @@ void DCrumbWidget::buttonPressed()
     else if(localButton->getName() == TRASH_ROOT)
     {
         event = DUrl::fromTrashFile(text.isEmpty() ? "/":text);
+    }else if(localButton->getName() == NETWORK_ROOT)
+    {
+        if (!text.isEmpty()){
+            event = DUrl(text);
+        }else{
+            event = DUrl(NETWORK_ROOT);
+        }
     }
     else if(localButton->getName() == m_homePath)
     {

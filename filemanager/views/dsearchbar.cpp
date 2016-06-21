@@ -327,11 +327,12 @@ void DSearchBar::hideCompleter()
 
 void DSearchBar::handleApplicationChanged(QWidget *old, QWidget *now)
 {
+    qDebug() << old << now;
     if (old == this && now == NULL){
         m_list->hide();
     }else if (old == NULL && now == this){
         if (m_list->count() > 0){
-            m_list->show();
+//            m_list->show();
         }
     }
 }
