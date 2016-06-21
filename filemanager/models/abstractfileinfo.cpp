@@ -582,7 +582,7 @@ bool AbstractFileInfo::isEmptyFloder() const
 
     DDirIteratorPointer it = FileServices::instance()->createDirIterator(fileUrl(), QDir::AllEntries | QDir::NoDotAndDotDot, QDirIterator::NoIteratorFlags);
 
-    return !it->hasNext();
+    return !it || !it->hasNext();
 }
 
 void AbstractFileInfo::sortByUserColumn(QList<AbstractFileInfoPointer> &fileList, quint8 columnType, Qt::SortOrder order) const

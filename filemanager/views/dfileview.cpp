@@ -348,7 +348,10 @@ QModelIndex DFileView::indexAt(const QPoint &point) const
 void DFileView::preHandleCd(const FMEvent &event)
 {
     qDebug() << event;
-    if (event.fileUrl().isSMBFile()){
+    if (event.fileUrl().isNetWorkFile()){
+        emit fileSignalManager->requestFetchNetworks(event);
+        return;
+    }else if (event.fileUrl().isSMBFile()){
         emit fileSignalManager->requestFetchNetworks(event);
         return;
     }

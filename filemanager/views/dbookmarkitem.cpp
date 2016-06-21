@@ -579,11 +579,9 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 
     if (m_url.isRecentFile()){
         menu = FileMenuManager::createRecentLeftBarMenu();
-    }
-    else if (m_url.isTrashFile()){
+    }else if (m_url.isTrashFile()){
         menu = FileMenuManager::createTrashLeftBarMenu();
-    }
-    else if(m_isDisk && m_deviceInfo)
+    }else if(m_isDisk && m_deviceInfo)
     {
         qDebug() << m_deviceInfo->getType();
         m_url.setQuery(m_sysPath);
@@ -593,8 +591,9 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
         menu = FileMenuManager::genereteMenuByKeys(
                     m_deviceInfo->menuActionList(AbstractFileInfo::SingleFile),
                     m_deviceInfo->disableMenuActionList());
-    }
-    else if(m_isDefault)
+    }else if (m_url.isNetWorkFile()){
+        menu = FileMenuManager::createNetworkMarkMenu();
+    }else if(m_isDefault)
         menu = FileMenuManager::createDefaultBookMarkMenu();
     else
         menu = FileMenuManager::createCustomBookMarkMenu();
