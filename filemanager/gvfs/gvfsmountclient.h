@@ -10,6 +10,8 @@ extern "C" {
 }
 #define signals public
 
+class MountAskPasswordDialog;
+
 class GvfsMountClient : public QObject
 {
     Q_OBJECT
@@ -29,6 +31,7 @@ public:
     static bool AskingPassword;
     static QJsonObject SMBLoginObj;
     static FMEvent MountEvent;
+    static MountAskPasswordDialog* AskPasswordDialog;
 
     static void mount (GFile *file);
     static GMountOperation *new_mount_op(void);

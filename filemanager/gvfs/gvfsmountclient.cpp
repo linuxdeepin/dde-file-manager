@@ -8,6 +8,8 @@ bool GvfsMountClient::AskingPassword = false;
 QJsonObject GvfsMountClient::SMBLoginObj = {};
 FMEvent GvfsMountClient::MountEvent = FMEvent();
 
+MountAskPasswordDialog* GvfsMountClient::AskPasswordDialog = NULL;
+
 GvfsMountClient::GvfsMountClient(QObject *parent) : QObject(parent)
 {
     initConnect();
@@ -79,6 +81,10 @@ void GvfsMountClient::mount_done_cb(GObject *object, GAsyncResult *res, gpointer
 
 void GvfsMountClient::ask_password_cb(GMountOperation *op, const char *message, const char *default_user, const char *default_domain, GAskPasswordFlags flags)
 {
+    if (AskPasswordDialog){
+        return;
+    }
+
     bool anonymous = g_mount_operation_get_anonymous(op);
     GPasswordSave passwordSave = g_mount_operation_get_password_save(op);
 
@@ -101,12 +107,13 @@ void GvfsMountClient::ask_password_cb(GMountOperation *op, const char *message, 
     obj.insert("GAskPasswordFlags", flags);
     obj.insert("passwordSave", passwordSave);
 
-    MountAskPasswordDialog* d = new MountAskPasswordDialog;
-    d->setLoginData(obj);
-    int code = d->exec();
+
+    AskPasswordDialog = new MountAskPasswordDialog;
+    AskPasswordDialog->setLoginData(obj);
+    int code = AskPasswordDialog->exec();
 
     if (code){
-        QJsonObject loginObj = d->getLoginData();
+        QJsonObject loginObj = AskPasswordDialog->getLoginData();
         QString username = loginObj.value("username").toString();
         QString domain = loginObj.value("domain").toString();
         QString password = loginObj.value("password").toString();
@@ -160,6 +167,8 @@ void GvfsMountClient::ask_password_cb(GMountOperation *op, const char *message, 
     }else{
         qDebug() << "cancel connect";
     }
+    AskPasswordDialog->deleteLater();
+    AskPasswordDialog = NULL;
 }
 
 void GvfsMountClient::mountByPath(const QString &path)

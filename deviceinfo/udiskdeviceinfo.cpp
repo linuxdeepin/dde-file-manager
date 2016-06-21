@@ -82,8 +82,43 @@ QString UDiskDeviceInfo::getMountPoint()
         QString key = QUrl::toPercentEncoding(ids[2]);
         m_diskInfo.MountPoint = QString("%1/mtp:host=%2").arg(path, key);
     }else if (m_diskInfo.MountPoint.startsWith("smb://")){
+        QString mountPath = QString("%1/smb-share:").arg(path);
         QStringList ids = m_diskInfo.MountPoint.split("/");
-        m_diskInfo.MountPoint = QString("%1/smb-share:server=%2,share=%3").arg(path, ids[2], ids[3]);
+        QString share = ids[3];
+        QString domain;
+        QString user;
+        QString ip;
+        if (ids.at(2).contains(";")){
+            domain = ids.at(2).split(";").at(0);
+            QString userIps = ids.at(2).split(";").at(1);
+            if (userIps.contains("@")){
+                user = userIps.split("@").at(0);
+                ip = userIps.split("@").at(1);
+            }
+        }else{
+            QString userIps = ids.at(2);
+            if (userIps.contains("@")){
+                user = userIps.split("@").at(0);
+                ip = userIps.split("@").at(1);
+            }else{
+                ip = userIps;
+            }
+        }
+
+        if (!domain.isEmpty()){
+            mountPath = QString("%1domain=%2,").arg(mountPath, domain);
+        }
+        if (!ip.isEmpty()){
+            mountPath = QString("%1server=%2,").arg(mountPath, ip);
+        }
+        if (!share.isEmpty()){
+            mountPath = QString("%1share=%2,").arg(mountPath, share);
+        }
+        if (!user.isEmpty()){
+            mountPath = QString("%1user=%2,").arg(mountPath, user);
+        }
+        qDebug() << domain << ip << share << user << mountPath;
+        m_diskInfo.MountPoint = mountPath.left(mountPath.length()-1);
     }
     return m_diskInfo.MountPoint.replace("file://", "");
 }
