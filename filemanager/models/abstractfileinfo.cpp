@@ -652,7 +652,9 @@ QSet<MenuAction> AbstractFileInfo::disableMenuActionList() const
     QSet<MenuAction> list;
 
     if (!isWritable()) {
-        list << MenuAction::Cut << MenuAction::Rename << MenuAction::Paste << MenuAction::Remove << MenuAction::Delete;
+        list << MenuAction::NewFolder
+             << MenuAction::NewDocument
+             << MenuAction::Cut << MenuAction::Rename << MenuAction::Paste << MenuAction::Remove << MenuAction::Delete;
     } else if (!isCanRename()) {
         list << MenuAction::Cut << MenuAction::Rename << MenuAction::Remove << MenuAction::Delete;
     }
