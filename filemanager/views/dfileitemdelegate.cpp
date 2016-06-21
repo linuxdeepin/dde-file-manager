@@ -15,6 +15,11 @@
 #define COLUMU_PADDING 10
 #define LEFT_PADDING 10
 #define RIGHT_PADDING 10
+#define ICON_MODE_RECT_RADIUS 4
+#define LIST_MODE_RECT_RADIUS 2
+#define LIST_MODE_LEFT_MARGIN 20
+#define LIST_MODE_RIGHT_MARGIN 20
+#define SELECTED_BACKGROUND_COLOR "#2da6f7"
 
 DFileItemDelegate::DFileItemDelegate(DFileView *parent) :
     QStyledItemDelegate(parent)
@@ -340,10 +345,10 @@ void DFileItemDelegate::paintIconItem(bool isDragMode, QPainter *painter,
 
             QPainterPath path;
 
-            path.addRoundedRect(rect, 5, 5);
+            path.addRoundedRect(rect, ICON_MODE_RECT_RADIUS, ICON_MODE_RECT_RADIUS);
             painter->save();
             painter->setRenderHint(QPainter::Antialiasing);
-            painter->fillPath(path, QColor("#2da6f7"));
+            painter->fillPath(path, QColor(SELECTED_BACKGROUND_COLOR));
             painter->restore();
         } else {
             painter->fillRect(label_rect, Qt::transparent);
@@ -362,10 +367,10 @@ void DFileItemDelegate::paintIconItem(bool isDragMode, QPainter *painter,
 
             QPainterPath path;
 
-            path.addRoundedRect(rect, 5, 5);
+            path.addRoundedRect(rect, ICON_MODE_RECT_RADIUS, ICON_MODE_RECT_RADIUS);
             painter->save();
             painter->setRenderHint(QPainter::Antialiasing);
-            painter->fillPath(path, QColor("#2da6f7"));
+            painter->fillPath(path, QColor(SELECTED_BACKGROUND_COLOR));
             painter->restore();
         } else {
             painter->fillRect(label_rect, Qt::transparent);
@@ -387,10 +392,21 @@ void DFileItemDelegate::paintListItem(bool isDragMode, QPainter *painter,
 
     initStyleOption(&opt, index);
 
+    opt.rect += QMargins(-LIST_MODE_LEFT_MARGIN, 0, -LIST_MODE_RIGHT_MARGIN, 0);
+
     /// draw background
 
-    if (!isDragMode && (opt.state & QStyle::State_Selected) && opt.showDecorationSelected) {
-        painter->fillRect(opt.rect, QColor("#2da6f7"));
+    bool drawBackground = !isDragMode && (opt.state & QStyle::State_Selected) && opt.showDecorationSelected;
+
+    if (drawBackground) {
+        QPainterPath path;
+
+        path.addRoundedRect(opt.rect, LIST_MODE_RECT_RADIUS, LIST_MODE_RECT_RADIUS);
+
+        painter->save();
+        painter->setRenderHint(QPainter::Antialiasing);
+        painter->fillPath(path, QColor(SELECTED_BACKGROUND_COLOR));
+        painter->restore();
         painter->setPen(Qt::white);
     } else {
         painter->setPen(Qt::black);
@@ -431,7 +447,7 @@ void DFileItemDelegate::paintListItem(bool isDragMode, QPainter *painter,
 
     const DFileSystemModel *model = qobject_cast<const DFileSystemModel*>(index.model());
 
-    if (!isDragMode && (opt.state & QStyle::State_Selected) && opt.showDecorationSelected) {
+    if (drawBackground) {
         painter->setPen("#e9e9e9");
     } else {
         painter->setPen("#797979");

@@ -5,7 +5,7 @@ QListView {
 
 FileIconItem[showBackground=true] QTextEdit {
     background: "#2da6f7";
-    border-radius: 5px;
+    border-radius: 4px;
 }
 
 FileIconItem QLabel {
