@@ -24,21 +24,21 @@
 DFileItemDelegate::DFileItemDelegate(DFileView *parent) :
     QStyledItemDelegate(parent)
 {
-    focus_item = new FileIconItem(parent->viewport());
-    focus_item->setAttribute(Qt::WA_TransparentForMouseEvents);
-    focus_item->setProperty("showBackground", true);
-    focus_item->edit->setReadOnly(true);
-    focus_item->canDeferredDelete = false;
-    focus_item->icon->setFixedSize(parent->iconSize());
+    expanded_item = new FileIconItem(parent->viewport());
+    expanded_item->setAttribute(Qt::WA_TransparentForMouseEvents);
+    expanded_item->setProperty("showBackground", true);
+    expanded_item->edit->setReadOnly(true);
+    expanded_item->canDeferredDelete = false;
+    expanded_item->icon->setFixedSize(parent->iconSize());
     /// prevent flash when first call show()
-    focus_item->setFixedWidth(0);
+    expanded_item->setFixedWidth(0);
 
     connect(parent, &DListView::triggerEdit,
             this, [this, parent](const QModelIndex &index) {
-        if(index == focus_index) {
+        if(index == expanded_index) {
             parent->setIndexWidget(index, 0);
-            focus_item->hide();
-            focus_index = QModelIndex();
+            expanded_item->hide();
+            expanded_index = QModelIndex();
             parent->edit(index);
         }
     });
@@ -53,7 +53,7 @@ DFileItemDelegate::DFileItemDelegate(DFileView *parent) :
 
 DFileItemDelegate::~DFileItemDelegate()
 {
-    focus_item->canDeferredDelete = true;
+    expanded_item->canDeferredDelete = true;
 }
 
 void DFileItemDelegate::paint(QPainter *painter,
@@ -211,7 +211,7 @@ void DFileItemDelegate::paintIconItem(bool isDragMode, QPainter *painter,
                                       const QStyleOptionViewItem &option,
                                       const QModelIndex &index) const
 {
-    if((index == focus_index || index == editing_index) && !isDragMode)
+    if((index == expanded_index || index == editing_index) && !isDragMode)
         return;
 
     QStyleOptionViewItem opt = option;
@@ -244,13 +244,10 @@ void DFileItemDelegate::paintIconItem(bool isDragMode, QPainter *painter,
     label_rect.moveLeft(label_rect.left() + TEXT_PADDING);
 
     /// if has focus show all file name else show elide file name.
+    bool singleSelected = parent()->selectedIndexCount() < 2;
 
-    if((opt.state & QStyle::State_HasFocus) && parent()->selectedIndexCount() < 2) {
-        if(focus_index.isValid()) {
-            parent()->setIndexWidget(focus_index, 0);
-            focus_item->hide();
-            focus_index = QModelIndex();
-        }
+    if((opt.state & QStyle::State_HasFocus) && singleSelected) {
+        const_cast<DFileItemDelegate*>(this)->hideExpandedIndex();
 
         int height = 0;
 
@@ -272,10 +269,10 @@ void DFileItemDelegate::paintIconItem(bool isDragMode, QPainter *painter,
         if(height > label_rect.height()) {
             /// use widget(FileIconItem) show file icon and file name label.
 
-            focus_index = index;
+            expanded_index = index;
 
-            setEditorData(focus_item, index);
-            parent()->setIndexWidget(index, focus_item);
+            setEditorData(expanded_item, index);
+            parent()->setIndexWidget(index, expanded_item);
 
             return;
         }
@@ -293,6 +290,10 @@ void DFileItemDelegate::paintIconItem(bool isDragMode, QPainter *painter,
             m_elideMap[str] = elide_str;
 
             str = elide_str;
+        }
+
+        if (!singleSelected) {
+            const_cast<DFileItemDelegate*>(this)->hideExpandedIndex();
         }
     }
 
@@ -578,15 +579,20 @@ QList<QRect> DFileItemDelegate::paintGeomertyss(const QStyleOptionViewItem &opti
     return geomertys;
 }
 
+void DFileItemDelegate::hideExpandedIndex()
+{
+    if (expanded_index.isValid()) {
+        parent()->setIndexWidget(expanded_index, 0);
+        expanded_item->hide();
+        expanded_index = QModelIndex();
+    }
+}
+
 void DFileItemDelegate::hideAllIIndexWidget()
 {
-    if(focus_index.isValid()) {
-        parent()->setIndexWidget(focus_index, 0);
-        focus_item->hide();
-        focus_index = QModelIndex();
-    }
+    hideExpandedIndex();
 
-    if(editing_index.isValid()) {
+    if (editing_index.isValid()) {
         parent()->setIndexWidget(editing_index, 0);
     }
 }
@@ -602,6 +608,21 @@ void DFileItemDelegate::commitDataAndCloseActiveEditor()
 QModelIndex DFileItemDelegate::editingIndex() const
 {
     return editing_index;
+}
+
+QModelIndex DFileItemDelegate::expandedIndex() const
+{
+    return expanded_index;
+}
+
+FileIconItem *DFileItemDelegate::expandedIndexWidget() const
+{
+    return expanded_item;
+}
+
+QWidget *DFileItemDelegate::editingIndexWidget() const
+{
+    return parent()->indexWidget(editing_index);
 }
 
 bool DFileItemDelegate::eventFilter(QObject *object, QEvent *event)

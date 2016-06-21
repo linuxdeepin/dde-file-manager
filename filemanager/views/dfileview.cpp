@@ -327,6 +327,20 @@ QModelIndexList DFileView::selectedIndexes() const
 
 QModelIndex DFileView::indexAt(const QPoint &point) const
 {
+    if (isIconViewMode()) {
+        QWidget *widget = itemDelegate()->expandedIndexWidget();
+
+        if (widget->isVisible() && widget->geometry().contains(point)) {
+            return itemDelegate()->expandedIndex();
+        }
+    }
+
+    QWidget *widget = itemDelegate()->editingIndexWidget();
+
+    if (widget && widget->geometry().contains(point)) {
+        return itemDelegate()->editingIndex();
+    }
+
     QPoint p = point;
     QSize item_size = itemSizeHint();
 
@@ -421,7 +435,7 @@ void DFileView::edit(const FMEvent &event)
 
     const QModelIndex &index = model()->index(fileUrl);
 
-    edit(index);
+    edit(index, QAbstractItemView::EditKeyPressed, 0);
 }
 
 bool DFileView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger trigger, QEvent *event)
@@ -750,7 +764,7 @@ bool DFileView::event(QEvent *event)
                 const QModelIndexList &list = selectedIndexes();
 
                 if (!list.contains(index)) {
-                    selectionModel()->select(index, QItemSelectionModel::SelectCurrent);
+                    setCurrentIndex(index);
                 }
 
                 showNormalMenu(index);

@@ -45,10 +45,15 @@ public:
 
     QList<QRect> paintGeomertyss(const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
+    void hideExpandedIndex();
     void hideAllIIndexWidget();
     void commitDataAndCloseActiveEditor();
 
     QModelIndex editingIndex() const;
+    QModelIndex expandedIndex() const;
+
+    FileIconItem *expandedIndexWidget() const;
+    QWidget *editingIndexWidget() const;
 
 protected:
     bool eventFilter(QObject *object, QEvent *event) Q_DECL_OVERRIDE;
@@ -56,13 +61,13 @@ protected:
                          const QModelIndex &index) const Q_DECL_OVERRIDE;
 
 private:
-    FileIconItem *focus_item;
+    FileIconItem *expanded_item;
 
     mutable QHash<QString, QString> m_elideMap;
     mutable QHash<QString, QString> m_wordWrapMap;
     mutable QHash<QString, int> m_textHeightMap;
     mutable QHash<QString, QTextDocument*> m_documentMap;
-    mutable QModelIndex focus_index;
+    mutable QModelIndex expanded_index;
     mutable QModelIndex editing_index;
 
     friend class DFileView;
