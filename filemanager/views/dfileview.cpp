@@ -718,6 +718,7 @@ bool DFileView::event(QEvent *event)
         if (e->button() == Qt::LeftButton) {
             if (isEmptyArea && !Global::keyCtrlIsPressed()) {
                 clearSelection();
+                itemDelegate()->hideAllIIndexWidget();
             }
         } else if (e->button() == Qt::RightButton) {
             if (isEmptyArea) {
