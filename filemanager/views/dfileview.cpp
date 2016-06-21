@@ -249,11 +249,6 @@ QList<int> DFileView::columnRoleList() const
     return m_columnRoles;
 }
 
-int DFileView::selectedIndexCount() const
-{
-    return selectedIndexes().count();
-}
-
 int DFileView::windowId() const
 {
     return window()->winId();

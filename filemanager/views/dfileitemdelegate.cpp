@@ -116,7 +116,7 @@ void DFileItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
             initStyleOption(&opt, index);
 
             item->icon->setFixedSize(parent()->iconSize());
-            item->icon->setPixmap(opt.icon.pixmap(parent()->iconSize()));
+            item->icon->setPixmap(opt.icon.pixmap(parent()->iconSize(), QIcon::Selected));
         }
     } else {
         const QList<int> &columnRoleList = parent()->columnRoleList();
@@ -167,7 +167,7 @@ void DFileItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
 
         initStyleOption(&opt, index);
 
-        item->icon->setPixmap(opt.icon.pixmap(parent()->iconSize()));
+        item->icon->setPixmap(opt.icon.pixmap(parent()->iconSize(), QIcon::Selected));
         item->edit->setPlainText(index.data().toString());
         item->edit->setAlignment(Qt::AlignHCenter);
         item->edit->document()->setTextWidth(parent()->iconSize().width() * 1.8);
@@ -232,9 +232,9 @@ void DFileItemDelegate::paintIconItem(bool isDragMode, QPainter *painter,
 
     QRect label_rect = opt.rect;
 
-    label_rect.setTop(icon_rect.bottom() + 2);
-    label_rect.setWidth(opt.rect.width() * 0.91);
-    label_rect.moveLeft(label_rect.left() + (opt.rect.width() - label_rect.width()) / 2.0);
+    label_rect.setTop(icon_rect.bottom() + TEXT_PADDING);
+    label_rect.setWidth(opt.rect.width() - 2 * TEXT_PADDING);
+    label_rect.moveLeft(label_rect.left() + TEXT_PADDING);
 
     /// if has focus show all file name else show elide file name.
 
@@ -291,21 +291,17 @@ void DFileItemDelegate::paintIconItem(bool isDragMode, QPainter *painter,
 
     /// draw background
 
-    if(!isDragMode && (opt.state & QStyle::State_Selected) && opt.showDecorationSelected) {
-        QPainterPath path;
+    bool drawBackground = !isDragMode && (opt.state & QStyle::State_Selected) && opt.showDecorationSelected;
 
-        path.addRoundedRect(opt.rect, 5, 5);
-        painter->setRenderHint(QPainter::Antialiasing);
-        painter->fillPath(path, QColor("#2da6f7"));
+    if (drawBackground) {
         painter->setPen(Qt::white);
+        opt.icon.paint(painter, icon_rect, Qt::AlignCenter, QIcon::Selected);
     } else {
         painter->setPen(Qt::black);
+        opt.icon.paint(painter, icon_rect);
     }
 
-    /// draw icon and file name label
-
-    opt.icon.paint(painter, icon_rect);
-
+    /// draw file name label
 
     if(str.indexOf("\n") >=0 && !str.endsWith("\n")) {
         QTextDocument *doc = m_documentMap.value(str);
@@ -335,13 +331,46 @@ void DFileItemDelegate::paintIconItem(bool isDragMode, QPainter *painter,
         QAbstractTextDocumentLayout::PaintContext ctx;
 
         ctx.palette.setColor(QPalette::Text, painter->pen().color());
-        ctx.clip.setSize(label_rect.size());
+
+        if (drawBackground) {
+            QRect rect = opt.rect;
+
+            rect.moveTop(label_rect.top() - TEXT_PADDING);
+            rect.setHeight(doc->size().height());
+
+            QPainterPath path;
+
+            path.addRoundedRect(rect, 5, 5);
+            painter->save();
+            painter->setRenderHint(QPainter::Antialiasing);
+            painter->fillPath(path, QColor("#2da6f7"));
+            painter->restore();
+        } else {
+            painter->fillRect(label_rect, Qt::transparent);
+        }
 
         painter->save();
-        painter->translate(opt.rect.left(), label_rect.top() - 3);
+        painter->translate(label_rect.left(), label_rect.top() - TEXT_PADDING);
         doc->documentLayout()->draw(painter, ctx);
         painter->restore();
     } else {
+        if(drawBackground) {
+            QRect rect;
+
+            painter->drawText(label_rect, Qt::AlignHCenter, str, &rect);
+            rect += QMargins(TEXT_PADDING, TEXT_PADDING, TEXT_PADDING, TEXT_PADDING);
+
+            QPainterPath path;
+
+            path.addRoundedRect(rect, 5, 5);
+            painter->save();
+            painter->setRenderHint(QPainter::Antialiasing);
+            painter->fillPath(path, QColor("#2da6f7"));
+            painter->restore();
+        } else {
+            painter->fillRect(label_rect, Qt::transparent);
+        }
+
         painter->drawText(label_rect, Qt::AlignHCenter, str);
     }
 }

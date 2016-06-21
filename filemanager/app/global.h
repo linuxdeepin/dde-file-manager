@@ -73,6 +73,7 @@
 #define TRASHINFOPATH TRASHPATH + "/info"
 
 #define TEXT_LINE_HEIGHT 18
+#define TEXT_PADDING 5
 
 #define MAX_THREAD_COUNT 1000
 

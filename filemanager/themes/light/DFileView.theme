@@ -3,7 +3,7 @@ QListView {
     border: none;
 }
 
-FileIconItem[showBackground=true] {
+FileIconItem[showBackground=true] QTextEdit {
     background: "#2da6f7";
     border-radius: 5px;
 }
