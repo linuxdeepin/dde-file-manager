@@ -1,10 +1,9 @@
 #include "dscrollbar.h"
+#include "utils/utils.h"
+
 #include <QDebug>
 #include <QWheelEvent>
 #include <QPalette>
-#include "utils/utils.h"
-#include <QPainter>
-
 
 DScrollBar::DScrollBar(QWidget *parent)
     :QScrollBar(parent)
@@ -12,18 +11,30 @@ DScrollBar::DScrollBar(QWidget *parent)
     setObjectName("DScrollBar");
     m_timer = new QTimer(this);
     m_opacityTimer = new QTimer(this);
+
+    m_timer->setInterval(1000);
+    m_timer->setSingleShot(true);
+
     connect(m_timer, SIGNAL(timeout()), this, SLOT(hidden()));
     connect(m_opacityTimer, SIGNAL(timeout()), this, SLOT(opacity()));
+    connect(this, &DScrollBar::valueChanged, this, [this] {
+        m_timer->start();
+
+        setStyleSheet(m_style + m_handleStyle);
+    });
+
     m_style = "QScrollBar#DScrollBar:vertical{\
             border-radius: 2px;\
             background: transparent;\
             width: 8px;\
             margin: 4px 2px 4px 2px;\
        }\
+       QScrollBar#DScrollBar::handle:vertical{\
+            min-height: 20px;\
+       }\
        QScrollBar#DScrollBar::handle:vertical:hover{\
             border-radius: 2px; \
             background: rgba(16,16,16,0.7);\
-            width: 4px;\
        }\
        QScrollBar#DScrollBar::add-line:vertical {\
              border: none;\
@@ -38,28 +49,23 @@ DScrollBar::DScrollBar(QWidget *parent)
             height: 0px;\
             background: transparent;\
        }";
-       m_handleStyle = "QScrollBar#DScrollBar::handle:vertical{\
+
+    m_handleStyle = "QScrollBar#DScrollBar::handle:vertical{\
                border-radius: 2px ;\
                background-color: rgba(16,16,16,0.5);\
-               width: 4px;\
+               min-height: 20px;\
           }";
-       m_hoverHandleStyle = "QScrollBar#DScrollBar::handle:vertical{\
+    m_hoverHandleStyle = "QScrollBar#DScrollBar::handle:vertical{\
                border-radius: 2px;\
                background-color: rgba(16,16,16,0.7);\
-               width: 4px;\
+               min-height: 20px;\
           }";
-}
 
-void DScrollBar::wheelEvent(QWheelEvent *e)
-{
-    m_timer->start(1000);
-    setStyleSheet(m_style + m_hoverHandleStyle);
-    QScrollBar::wheelEvent(e);
+    setStyleSheet(m_style + m_handleStyle);
 }
 
 void DScrollBar::enterEvent(QEvent *e)
 {
-    qDebug() << e;
     m_timer->stop();
     setStyleSheet(m_style + m_hoverHandleStyle);
     QScrollBar::enterEvent(e);
@@ -72,29 +78,6 @@ void DScrollBar::leaveEvent(QEvent *e)
     QScrollBar::leaveEvent(e);
 }
 
-void DScrollBar::mouseMoveEvent(QMouseEvent *e)
-{
-    QScrollBar::mouseMoveEvent(e);
-}
-
-void DScrollBar::mousePressEvent(QMouseEvent *e)
-{
-    m_timer->stop();
-    QScrollBar::mousePressEvent(e);
-}
-
-void DScrollBar::mouseReleaseEvent(QMouseEvent *e)
-{
-    m_timer->start(1000);
-    QScrollBar::mouseReleaseEvent(e);
-}
-
-void DScrollBar::showEvent(QShowEvent *e)
-{
-    setStyleSheet(m_style + m_handleStyle);
-    QScrollBar::showEvent(e);
-}
-
 void DScrollBar::hidden()
 {
     m_timer->stop();
@@ -105,19 +88,15 @@ void DScrollBar::hidden()
 
 void DScrollBar::opacity()
 {
-    if(m_count > 0)
-    {
+    if (m_count > 0) {
         m_count--;
         m_opacityTimer->start(50);
         QString stylesheet = "QScrollBar#DScrollBar:handle:vertical{\
                 border-radius: 2px;\
                 background: rgba(16,16,16," + QString::number(m_count/m_level/2)+ ");" +
-                "width: 4px;}";
+                "}";
         setStyleSheet(m_style + stylesheet);
-    }
-    else
-    {
-        setStyleSheet(m_style + m_handleStyle);
+    } else {
         m_opacityTimer->stop();
     }
 }
