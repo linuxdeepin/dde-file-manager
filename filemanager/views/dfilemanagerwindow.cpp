@@ -27,7 +27,7 @@
 
 const int DFileManagerWindow::MinimumWidth = 0;
 
-DFileManagerWindow::DFileManagerWindow(QWidget *parent) : DMovableMainWindow(parent)
+DFileManagerWindow::DFileManagerWindow(QWidget *parent) : QMainWindow(parent)
 {
     setWindowFlags(Qt::FramelessWindowHint);
     setWindowIcon(QIcon(":/images/images/system-file-manager.png"));
@@ -60,7 +60,6 @@ void DFileManagerWindow::initTitleBar()
     m_titleBar = new DTitlebar(this);
     m_titleBar->layout()->setContentsMargins(0, 0, 5, 0);
     m_titleBar->setWindowFlags(m_titleBar->windowFlags());
-    setDragMovableHeight(m_titleBar->height());
 
     DFileMenu* menu = fileMenuManger->createToolBarSettingsMenu();
 
@@ -257,7 +256,7 @@ void DMainWindow::initUI()
 
 void DMainWindow::initConnect()
 {
-    connect(m_fileManagerWindow, SIGNAL(mouseMoved()), this, SLOT(startMoving()));
+
 }
 
 
@@ -291,6 +290,27 @@ void DMainWindow::timerEvent(QTimerEvent *event)
 {
     Q_UNUSED(event)
     qDebug() << qApp->focusWidget();
+}
+
+void DMainWindow::mouseMoveEvent(QMouseEvent *event)
+{
+    if (event->y() <= m_fileManagerWindow->getTitleBar()->height() + layoutMargin)
+        emit startMoving();
+    DWindowFrame::mouseMoveEvent(event);
+}
+
+void DMainWindow::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    if (event->y() <= m_fileManagerWindow->getTitleBar()->height() + layoutMargin){
+        if (windowState() != Qt::WindowMaximized){
+            setWindowState(Qt::WindowMaximized);
+            m_fileManagerWindow->getTitleBar()->setWindowState(Qt::WindowMaximized);
+        }else{
+            showNormal();
+            m_fileManagerWindow->getTitleBar()->setWindowState(Qt::WindowMinimized);
+        }
+    }
+    DWindowFrame::mouseDoubleClickEvent(event);
 }
 
 DFileManagerWindow *DMainWindow::fileManagerWindow() const
