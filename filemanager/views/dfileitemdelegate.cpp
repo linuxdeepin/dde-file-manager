@@ -130,7 +130,7 @@ void DFileItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
 
         /// draw icon
 
-        const QRect &opt_rect = option.rect + QMargins(-LIST_MODE_LEFT_MARGIN, 0, -LIST_MODE_RIGHT_MARGIN, 0);
+        const QRect &opt_rect = option.rect + QMargins(-LIST_MODE_LEFT_MARGIN - LEFT_PADDING, 0, -LIST_MODE_RIGHT_MARGIN - RIGHT_PADDING, 0);
 
         QRect icon_rect = opt_rect;
 
@@ -140,7 +140,7 @@ void DFileItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
 
         QRect rect = opt_rect;
 
-        rect.setLeft(column_x + LEFT_PADDING);
+        rect.setLeft(column_x);
 
         column_x = parent()->columnWidth(0) - parent()->viewportMargins().left();
 
@@ -537,7 +537,9 @@ QList<QRect> DFileItemDelegate::paintGeomertyss(const QStyleOptionViewItem &opti
 
         /// draw icon
 
-        QRect icon_rect = option.rect;
+        const QRect &opt_rect = option.rect + QMargins(-LIST_MODE_LEFT_MARGIN - LEFT_PADDING, 0, -LIST_MODE_RIGHT_MARGIN - RIGHT_PADDING, 0);
+
+        QRect icon_rect = opt_rect;
 
         icon_rect.setSize(parent()->iconSize());
 
@@ -545,7 +547,7 @@ QList<QRect> DFileItemDelegate::paintGeomertyss(const QStyleOptionViewItem &opti
 
         column_x = icon_rect.right() + ICON_SPACING;
 
-        QRect rect = option.rect;
+        QRect rect = opt_rect;
 
         rect.setLeft(column_x);
 
@@ -559,8 +561,9 @@ QList<QRect> DFileItemDelegate::paintGeomertyss(const QStyleOptionViewItem &opti
 
         geomertys << option.fontMetrics.boundingRect(rect, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()),
                                                      index.data(role).toString());
+
         for(int i = 1; i < columnRoleList.count(); ++i) {
-            QRect rect = option.rect;
+            QRect rect = opt_rect;
 
             rect.setLeft(column_x);
 

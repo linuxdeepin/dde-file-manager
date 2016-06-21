@@ -173,7 +173,9 @@ private:
 
     int m_currentIconSizeIndex = 1;
 
-    bool isEmptyArea(const QPoint &pos) const;
+    inline bool isEmptyArea(const QPoint &pos) const
+    { return isEmptyArea(indexAt(pos), pos);}
+    bool isEmptyArea(const QModelIndex &index, const QPoint &pos) const;
 
     QSize currentIconSize() const;
 
@@ -192,8 +194,8 @@ private:
 
     using DListView::setOrientation;
 
-    QPoint m_pressed;
-    QRect m_elasticBand;
+    QPoint m_pressedPos;
+    QWidget *m_selectionRectWidget;
     int m_horizontalOffset = 0;
 
     QTimer* m_keyboardSearchTimer;
