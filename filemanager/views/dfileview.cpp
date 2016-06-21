@@ -71,14 +71,7 @@ void DFileView::initUI()
     setOrientation(QListView::LeftToRight, true);
     setIconSize(currentIconSize());
     setTextElideMode(Qt::ElideMiddle);
-    setDragEnabled(true);
-    setDragDropMode(QAbstractItemView::DragDrop);
-    setDefaultDropAction(Qt::MoveAction);
-    setDropIndicatorShown(true);
-    setSelectionMode(QAbstractItemView::ExtendedSelection);
-    setSelectionBehavior(QAbstractItemView::SelectRows);
-    setSelectionRectVisible(true);
-    setEditTriggers(QListView::EditKeyPressed | QListView::SelectedClicked);
+    setLocalFileSettings();
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBar(new DScrollBar);
 }
@@ -193,6 +186,30 @@ void DFileView::initKeyboardSearchTimer()
 {
     m_keyboardSearchTimer = new QTimer(this);
     m_keyboardSearchTimer->setInterval(500);
+}
+
+void DFileView::setLocalFileSettings()
+{
+    setDragEnabled(true);
+    setDragDropMode(QAbstractItemView::DragDrop);
+    setDefaultDropAction(Qt::MoveAction);
+    setDropIndicatorShown(true);
+    setSelectionMode(QAbstractItemView::ExtendedSelection);
+    setSelectionBehavior(QAbstractItemView::SelectRows);
+    setSelectionRectVisible(true);
+    setEditTriggers(QListView::EditKeyPressed | QListView::SelectedClicked);
+}
+
+void DFileView::setNetworkFileSetting()
+{
+    setDragEnabled(false);
+    setDragDropMode(QAbstractItemView::NoDragDrop);
+    setDefaultDropAction(Qt::IgnoreAction);
+    setDropIndicatorShown(false);
+    setSelectionMode(QAbstractItemView::SingleSelection);
+    setSelectionBehavior(QAbstractItemView::SelectItems);
+    setSelectionRectVisible(false);
+    setEditTriggers(QListView::NoEditTriggers);
 }
 
 DFileSystemModel *DFileView::model() const
@@ -364,6 +381,12 @@ void DFileView::cd(const FMEvent &event)
 
     if(fileUrl.isEmpty())
         return;
+
+    if (fileUrl.isNetWorkFile() || fileUrl.isSMBFile()){
+        setNetworkFileSetting();
+    }else{
+        setLocalFileSettings();
+    }
 
 
     if(setCurrentUrl(fileUrl))
@@ -1267,6 +1290,9 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
 
 void DFileView::showEmptyAreaMenu()
 {
+    if (currentUrl().isNetWorkFile() || currentUrl().isSMBFile()){
+        return;
+    }
     DFileMenu *menu;
     const QModelIndex &index = rootIndex();
 
@@ -1330,8 +1356,8 @@ void DFileView::showNormalMenu(const QModelIndex &index)
     if(!index.isValid())
         return;
 
-
     DUrlList list = selectedUrls();
+    qDebug() << list;
     DFileMenu* menu;
     if (list.length() == 1){
         const AbstractFileInfoPointer &info = model()->fileInfo(index);

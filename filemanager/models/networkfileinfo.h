@@ -27,6 +27,8 @@ public:
     NetworkNode networkNode() const;
     void setNetworkNode(const NetworkNode& networkNode);
 
+    QVector<MenuAction> menuActionList(MenuType type) const Q_DECL_OVERRIDE;
+
 private:
     NetworkNode m_networkNode;
 };

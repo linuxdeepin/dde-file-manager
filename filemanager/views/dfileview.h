@@ -54,6 +54,9 @@ public:
     void initActions();
     void initKeyboardSearchTimer();
 
+    void setLocalFileSettings();
+    void setNetworkFileSetting();
+
     DFileSystemModel *model() const;
     DFileItemDelegate *itemDelegate() const;
 

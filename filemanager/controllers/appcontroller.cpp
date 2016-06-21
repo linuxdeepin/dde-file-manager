@@ -58,6 +58,8 @@ void AppController::actionOpen(const FMEvent &event)
                 }else if(info.isDir()){
                     emit fileSignalManager->requestOpenNewWindowByUrl(url, true);
                 }
+            }else if (url.isSMBFile()){
+                emit fileSignalManager->requestOpenNewWindowByUrl(url, true);
             }
         }
     }
@@ -88,6 +90,7 @@ void AppController::asycOpenDisk(const QString &path)
 
 void AppController::actionOpenInNewWindow(const FMEvent &event)
 {
+    qDebug() << event;
     const DUrl& fileUrl = event.fileUrl();
     fileService->openNewWindow(fileUrl);
 }

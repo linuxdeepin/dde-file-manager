@@ -69,3 +69,17 @@ void NetworkFileInfo::setNetworkNode(const NetworkNode &networkNode)
     m_networkNode = networkNode;
 }
 
+QVector<MenuAction> NetworkFileInfo::menuActionList(AbstractFileInfo::MenuType type) const
+{
+    QVector<MenuAction> actionKeys;
+    if(type == SpaceArea) {
+
+    } else if (type == SingleFile){
+        actionKeys << MenuAction::Open;
+        actionKeys << MenuAction::OpenInNewWindow;
+    }else if (type == MultiFiles){
+
+    }
+    return actionKeys;
+}
+

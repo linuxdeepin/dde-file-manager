@@ -173,6 +173,10 @@ void NetworkManager::populate_networks(GFileEnumerator *enumerator, GList *detec
         else
             uri = g_file_get_uri (file);
 
+        if (!QString(uri).startsWith("smb://")){
+            continue;
+        }
+
         activatable_file = g_file_new_for_uri (uri);
 //        name = g_file_info_get_attribute_as_string (fileInfo, G_FILE_ATTRIBUTE_STANDARD_NAME);
         display_name = g_file_info_get_attribute_as_string (fileInfo, G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME);
