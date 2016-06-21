@@ -2,6 +2,7 @@
 #include <QDebug>
 #include "mountaskpassworddialog.h"
 #include "../app/filesignalmanager.h"
+#include "../views/windowmanager.h"
 
 
 bool GvfsMountClient::AskingPassword = false;
@@ -108,7 +109,7 @@ void GvfsMountClient::ask_password_cb(GMountOperation *op, const char *message, 
     obj.insert("passwordSave", passwordSave);
 
 
-    AskPasswordDialog = new MountAskPasswordDialog;
+    AskPasswordDialog = new MountAskPasswordDialog(WindowManager::getWindowById(MountEvent.windowId()));
     AskPasswordDialog->setLoginData(obj);
     int code = AskPasswordDialog->exec();
 
