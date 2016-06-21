@@ -130,13 +130,15 @@ void DFileItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
 
         /// draw icon
 
-        QRect icon_rect = option.rect;
+        const QRect &opt_rect = option.rect + QMargins(-LIST_MODE_LEFT_MARGIN, 0, -LIST_MODE_RIGHT_MARGIN, 0);
+
+        QRect icon_rect = opt_rect;
 
         icon_rect.setSize(parent()->iconSize());
 
         column_x = icon_rect.right() + ICON_SPACING;
 
-        QRect rect = option.rect;
+        QRect rect = opt_rect;
 
         rect.setLeft(column_x + LEFT_PADDING);
 
@@ -149,7 +151,7 @@ void DFileItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
         column_x += 5;
 
         for(int i = 1; i < columnRoleList.count(); ++i) {
-            QRect rect = option.rect;
+            QRect rect = opt_rect;
 
             rect.setLeft(column_x);
 
