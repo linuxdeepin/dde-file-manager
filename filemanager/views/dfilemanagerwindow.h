@@ -37,7 +37,7 @@ class DStatusBar;
 
 DWIDGET_USE_NAMESPACE
 
-class DFileManagerWindow : public DMovableMainWindow
+class DFileManagerWindow : public QMainWindow
 {
     Q_OBJECT
 public:
@@ -75,7 +75,6 @@ public slots:
     void setIconView();
     void setListView();
     void setExtendView();
-
 
 private:
     QFrame* m_centralWidget;
@@ -116,6 +115,8 @@ public slots:
 protected:
     void closeEvent(QCloseEvent* event);
     void timerEvent(QTimerEvent* event);
+    void mouseMoveEvent(QMouseEvent *event);
+    void mouseDoubleClickEvent(QMouseEvent *event);
 
 private:
     DFileManagerWindow *m_fileManagerWindow;
