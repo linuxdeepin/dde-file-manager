@@ -48,7 +48,6 @@ void FMStateManager::loadCache()
 void FMStateManager::saveCache()
 {
     QString content = QObjectHelper::qobject2json(m_fmState);
-    qDebug() << *m_fmState;
     writeCacheToFile(cacheFilePath(), content);
 }
 

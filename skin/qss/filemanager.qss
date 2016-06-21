@@ -289,6 +289,23 @@ QPushButton#DCrumbButton:checked{
     background-color: #2ca7f8;
     color: white;
 }
+
+QPushButton#DCrumbIconButton{
+    background-color:transparent;
+    border: 1px;
+    color: black;
+    padding: 0px 4px 0px 8px;
+    text-align: left;
+}
+
+QPushButton#DCrumbIconButton:hover{
+    background-color: transparent;
+}
+
+QPushButton#DCrumbIconButton:checked{
+    background-color: #2ca7f8;
+    color: white;
+}
 /* ******************End of DCrumbButton****************** */
 
 /* ******************DSearchBar****************** */

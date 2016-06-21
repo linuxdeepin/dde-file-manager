@@ -66,6 +66,9 @@ protected:
     void changeEvent(QEvent* event) override;
     void paintEvent(QPaintEvent*) override;
     void resizeEvent(QResizeEvent*) override;
+    void mousePressEvent(QMouseEvent* event) override;
+    void mouseMoveEvent(QMouseEvent* event) override;
+    void mouseReleaseEvent(QMouseEvent* event) override;
 
 private:
     QVBoxLayout* horizontalLayout = nullptr;
@@ -84,9 +87,7 @@ private:
     int userMaximumHeight = QWIDGETSIZE_MAX;
     void applyMaximumSizeRestriction();
 
-    void mousePressEvent(QMouseEvent* event) override;
-    void mouseMoveEvent(QMouseEvent* event) override;
-    void mouseReleaseEvent(QMouseEvent* event) override;
+
 
     QGraphicsDropShadowEffect* shadowEffect = nullptr;
 
