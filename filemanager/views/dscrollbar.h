@@ -9,17 +9,19 @@
 class DScrollBar : public QScrollBar
 {
     Q_OBJECT
+
 public:
     DScrollBar(QWidget * parent = 0);
-    void wheelEvent(QWheelEvent *e);
-    void enterEvent(QEvent *e);
-    void leaveEvent(QEvent *e);
-    void mouseMoveEvent(QMouseEvent *e);
-    void mousePressEvent(QMouseEvent *e);
-    void mouseReleaseEvent(QMouseEvent *e);
-    void showEvent(QShowEvent *e);
-private:
 
+public slots:
+    void hidden();
+    void opacity();
+
+protected:
+    void enterEvent(QEvent *e) Q_DECL_OVERRIDE;
+    void leaveEvent(QEvent *e) Q_DECL_OVERRIDE;
+
+private:
     QPropertyAnimation * m_animate;
     QTimer* m_timer;
     QTimer* m_opacityTimer;
@@ -29,9 +31,6 @@ private:
     QString m_handleStyle;
     QString m_hoverHandleStyle;
     QString m_style;
-public slots:
-    void hidden();
-    void opacity();
 };
 
 #endif // DSCROLLBAR_H

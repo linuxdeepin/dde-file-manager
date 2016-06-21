@@ -523,7 +523,7 @@ void DFileView::wheelEvent(QWheelEvent *event)
 
         event->accept();
     } else {
-        DListView::wheelEvent(event);
+        verticalScrollBar()->setSliderPosition(verticalScrollBar()->sliderPosition() - event->angleDelta().y());
     }
 }
 
