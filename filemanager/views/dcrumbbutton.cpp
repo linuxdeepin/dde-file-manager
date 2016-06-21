@@ -77,6 +77,7 @@ DCrumbIconButton::DCrumbIconButton(int index, const QIcon &normalIcon, const QIc
     m_normalIcon = normalIcon;
     m_hoverIcon = hoverIcon;
     m_checkedIcon = checkedIcon;
+    setObjectName("DCrumbIconButton");
 }
 
 void DCrumbIconButton::checkStateSet()
