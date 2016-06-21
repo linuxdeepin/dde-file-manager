@@ -439,10 +439,11 @@ void DFileItemDelegate::paintListItem(bool isDragMode, QPainter *painter,
     int role = columnRoleList.at(0);
 
     if(index != editing_index || role != DFileSystemModel::FileNameRole) {
-    /// draw file name label
+        /// draw file name label
+        const QString &file_name = Global::elideText(index.data(role).toString(), rect.size(),
+                                                     opt.fontMetrics, QTextOption::NoWrap, Qt::ElideRight);
 
-        painter->drawText(rect, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()),
-                      index.data(role).toString());
+        painter->drawText(rect, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()), file_name);
     }
 
     if(isDragMode)
