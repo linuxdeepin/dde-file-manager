@@ -131,6 +131,9 @@ public:
     /// get custom column data
     virtual QVariant userColumnData(quint8 userColumnType) const;
 
+    /// get custom column width
+    virtual int userColumnWidth(quint8 userColumntype) const;
+
     virtual void sortByColumn(QList<AbstractFileInfoPointer> &fileList, quint8 columnType,
                               Qt::SortOrder order = Qt::AscendingOrder) const;
 

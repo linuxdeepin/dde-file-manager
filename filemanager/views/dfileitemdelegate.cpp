@@ -413,7 +413,7 @@ void DFileItemDelegate::paintListItem(bool isDragMode, QPainter *painter,
     }
 
     opt.rect.setLeft(opt.rect.left() + LEFT_PADDING);
-    opt.rect.setRight(opt.rect.right() + RIGHT_PADDING);
+    opt.rect.setRight(opt.rect.right() - RIGHT_PADDING);
 
     /// draw icon
 
@@ -464,20 +464,21 @@ void DFileItemDelegate::paintListItem(bool isDragMode, QPainter *painter,
 
         rect.setLeft(column_x + COLUMU_PADDING);
 
+        if (rect.left() >= rect.right())
+            return;
+
         column_x += parent()->columnWidth(i);
 
-        rect.setRight(column_x - (i < columnRoleList.count() - 1 ? COLUMU_PADDING : 0));
+        rect.setRight(qMin(column_x - (i < columnRoleList.count() - 1 ? COLUMU_PADDING : 0), opt.rect.right()));
 
         int role = columnRoleList.at(i);
 
-        if(index != editing_index || role != DFileSystemModel::FileNameRole) {
-            /// draw file name label
+        QModelIndex tmp_index = model->createIndex(index.row(), model->roleToColumn(role), index.internalId());
 
-            QModelIndex tmp_index = model->createIndex(index.row(), model->roleToColumn(role), index.internalId());
+        const QString &text = Global::elideText(index.data(role).toString(), rect.size(),
+                                                opt.fontMetrics, QTextOption::NoWrap, Qt::ElideRight);
 
-            painter->drawText(rect, Qt::Alignment(tmp_index.data(Qt::TextAlignmentRole).toInt()),
-                              index.data(role).toString());
-        }
+        painter->drawText(rect, Qt::Alignment(tmp_index.data(Qt::TextAlignmentRole).toInt()), text);
     }
 }
 
@@ -562,11 +563,14 @@ QList<QRect> DFileItemDelegate::paintGeomertyss(const QStyleOptionViewItem &opti
         for(int i = 1; i < columnRoleList.count(); ++i) {
             QRect rect = opt_rect;
 
-            rect.setLeft(column_x);
+            rect.setLeft(column_x + COLUMU_PADDING);
+
+            if (rect.left() >= rect.right())
+                return geomertys;
 
             column_x += parent()->columnWidth(i);
 
-            rect.setRight(column_x);
+            rect.setRight(qMin(column_x, opt_rect.right()));
 
             int role = columnRoleList.at(i);
 
