@@ -1149,8 +1149,7 @@ void DFileView::keyboardSearch(const QString &search)
     foreach (const QModelIndex& index, matchModelIndexListCaseSensitive) {
         QString absolutePath = FileInfo(model()->getUrlByIndex(index).path()).absolutePath();
         if (absolutePath == currentUrl().path()){
-            clearSelection();
-            selectionModel()->select(index, QItemSelectionModel::SelectCurrent);
+            setCurrentIndex(index);
             scrollTo(index);
             return;
         }
@@ -1161,8 +1160,7 @@ void DFileView::keyboardSearch(const QString &search)
     foreach (const QModelIndex& index, matchModelIndexListNoCaseSensitive) {
         QString absolutePath = FileInfo(model()->getUrlByIndex(index).path()).absolutePath();
         if (absolutePath == currentUrl().path()){
-            clearSelection();
-            selectionModel()->select(index, QItemSelectionModel::SelectCurrent);
+            setCurrentIndex(index);
             scrollTo(index);
             return;
         }
