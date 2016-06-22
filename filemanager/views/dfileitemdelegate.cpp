@@ -179,7 +179,6 @@ void DFileItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
         item->edit->setPlainText(index.data().toString());
         item->edit->setAlignment(Qt::AlignHCenter);
         item->edit->document()->setTextWidth(parent()->iconSize().width() * 1.8);
-        item->edit->setFixedSize(item->edit->document()->size().toSize());
 
         if(item->edit->isReadOnly())
             return;
