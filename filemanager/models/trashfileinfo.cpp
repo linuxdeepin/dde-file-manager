@@ -129,6 +129,21 @@ QSet<MenuAction> TrashFileInfo::disableMenuActionList() const
     return list;
 }
 
+quint8 TrashFileInfo::userColumnCount() const
+{
+    return 1;
+}
+
+QVariant TrashFileInfo::userColumnData(quint8 /*userColumnType*/) const
+{
+    return originalFilePath;
+}
+
+QVariant TrashFileInfo::userColumnDisplayName(quint8 /*userColumnType*/) const
+{
+    return QObject::tr("Source Path");
+}
+
 bool TrashFileInfo::restore(const FMEvent &event) const
 {
     if(originalFilePath.isEmpty()) {

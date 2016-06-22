@@ -497,6 +497,13 @@ QVariant AbstractFileInfo::userColumnData(quint8 userColumnType) const
     return QVariant();
 }
 
+int AbstractFileInfo::userColumnWidth(quint8 userColumntype) const
+{
+    Q_UNUSED(userColumntype);
+
+    return -1;
+}
+
 void AbstractFileInfo::sortByColumn(QList<AbstractFileInfoPointer> &fileList, quint8 columnType, Qt::SortOrder order) const
 {
     sortOrderGlobal = order;

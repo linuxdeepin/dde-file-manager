@@ -21,7 +21,7 @@
 #include <QMimeData>
 
 #define fileService FileServices::instance()
-#define DEFAULT_COLUMN_COUNT 4
+#define DEFAULT_COLUMN_COUNT 5
 
 class FileSystemNode : public QSharedData
 {
@@ -127,7 +127,7 @@ int DFileSystemModel::rowCount(const QModelIndex &parent) const
 
 int DFileSystemModel::columnCount(const QModelIndex &parent) const
 {
-    int columnCount = parent.column() > 0 ? 0 : 5;
+    int columnCount = parent.column() > 0 ? 0 : DEFAULT_COLUMN_COUNT;
 
     const AbstractFileInfoPointer &currentFileInfo = fileInfo(m_activeIndex);
 
@@ -136,6 +136,28 @@ int DFileSystemModel::columnCount(const QModelIndex &parent) const
     }
 
     return columnCount;
+}
+
+int DFileSystemModel::columnWidthByRole(int role) const
+{
+    switch (role) {
+    case FileNameRole:
+    case FileDisplayNameRole:
+        return -1;
+    case FileSizeRole:
+        return 100;
+    case FileMimeTypeRole:
+        return 100;
+    default:
+        if (role >= FileUserRole) {
+            const AbstractFileInfoPointer &currentFileInfo = fileInfo(m_activeIndex);
+
+            if (currentFileInfo)
+                return currentFileInfo->userColumnWidth(role - FileUserRole);
+        }
+
+        return 140;
+    }
 }
 
 bool DFileSystemModel::hasChildren(const QModelIndex &parent) const
@@ -469,7 +491,19 @@ void DFileSystemModel::setSortRole(int role, Qt::SortOrder order)
 
 void DFileSystemModel::setActiveIndex(const QModelIndex &index)
 {
+    int old_column_count = columnCount(m_activeIndex);
+
     m_activeIndex = index;
+
+    int new_column_count = columnCount(index);
+
+    if (old_column_count < new_column_count) {
+        beginInsertColumns(index, old_column_count, new_column_count - 1);
+        endInsertColumns();
+    } else if (old_column_count > new_column_count) {
+        beginRemoveColumns(index, new_column_count, old_column_count - 1);
+        endRemoveColumns();
+    }
 
     const FileSystemNodePointer &node = getNodeByIndex(index);
 
