@@ -1546,10 +1546,17 @@ void DFileView::updateListHeaderViewProperty()
 
         int column_width = model()->columnWidth(i);
 
-        if (column_width >= 0)
+        if (column_width >= 0) {
+            if (i == 0)
+                column_width += LIST_MODE_LEFT_MARGIN + TEXT_PADDING;
+
+            if (i == m_headerView->count() - 1)
+                column_width += LIST_MODE_RIGHT_MARGIN + TEXT_PADDING;
+
             m_headerView->resizeSection(i, column_width);
-        else
+        } else {
             m_headerView->setSectionResizeMode(i, QHeaderView::Stretch);
+        }
     }
 
     /// hide column(default display Name Size Modified Datetime)
