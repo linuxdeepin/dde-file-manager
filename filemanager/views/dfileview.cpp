@@ -517,8 +517,12 @@ void DFileView::setViewMode(DFileView::ViewMode mode)
 
 void DFileView::sort(int role)
 {
-    model()->setSortRole(role);
-    model()->sort();
+    if (m_headerView) {
+        m_headerView->setSortIndicator(model()->roleToColumn(role), Qt::AscendingOrder);
+    } else {
+        model()->setSortRole(role);
+        model()->sort();
+    }
 
     FMStateManager::cacheSortState(currentUrl(), role);
 }
@@ -1533,7 +1537,7 @@ void DFileView::updateListHeaderViewProperty()
     m_headerView->setSectionResizeMode(QHeaderView::Fixed);
     m_headerView->setDefaultSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
     m_headerView->setMinimumSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
-    m_headerView->setSortIndicator(model()->roleToColumn(DFileSystemModel::FileDisplayNameRole), Qt::AscendingOrder);
+    m_headerView->setSortIndicator(model()->roleToColumn(model()->sortRole()), model()->sortOrder());
 
     m_columnRoles.clear();
 
