@@ -98,6 +98,7 @@ QWidget *DFileItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
        edit->setFrame(false);
        edit->setAttribute(Qt::WA_TranslucentBackground);
        edit->setContentsMargins(-3, 0, 0, 0);
+       edit->setContextMenuPolicy(Qt::NoContextMenu);
 
        return edit;
    }

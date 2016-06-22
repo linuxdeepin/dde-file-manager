@@ -23,6 +23,7 @@ FileIconItem::FileIconItem(QWidget *parent) :
     edit->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     edit->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     edit->setFrameShape(QFrame::NoFrame);
+    edit->setContextMenuPolicy(Qt::NoContextMenu);
     edit->installEventFilter(this);
 
     AnchorsBase::setAnchor(icon, Qt::AnchorHorizontalCenter, this, Qt::AnchorHorizontalCenter);
