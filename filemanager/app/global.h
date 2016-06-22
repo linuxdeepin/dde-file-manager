@@ -21,6 +21,7 @@
 #include "../shutil/thumbnailmanager.h"
 #include "../gvfs/networkmanager.h"
 #include "../gvfs/gvfsmountclient.h"
+#include "../gvfs/secrectmanager.h"
 
 #include <QFontMetrics>
 #include <QTextOption>
@@ -43,7 +44,7 @@
 #define thumbnailManager Singleton<ThumbnailManager>::instance()
 #define networkManager Singleton<NetworkManager>::instance()
 #define gvfsMountClient Singleton<GvfsMountClient>::instance()
-
+#define secrectManager Singleton<SecrectManager>::instance()
 
 #define defaut_icon ":/images/images/default.png"
 #define defaut_computerIcon ":/images/images/computer.png"

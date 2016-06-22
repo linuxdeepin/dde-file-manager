@@ -167,6 +167,9 @@ signals:
 
     /*loading indcator show*/
     void loadingIndicatorShowed(const FMEvent &event, bool loading);
+
+    /*request cache samba login data*/
+    void requsetCacheLoginData(const QJsonObject& obj);
 };
 
 #endif // FILESIGNALMANAGER_H

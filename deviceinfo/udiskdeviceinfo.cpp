@@ -218,6 +218,8 @@ QVector<MenuAction> UDiskDeviceInfo::menuActionList(AbstractFileInfo::MenuType t
         actionKeys << MenuAction::Mount;
     }
 
+    if (m_diskInfo.ID.startsWith("smb://"))
+        actionKeys << MenuAction::ForgetPassword;
     actionKeys << MenuAction::Separator << MenuAction::Property;
 
     return actionKeys;
