@@ -96,7 +96,7 @@ DFileMenu *FileMenuManager::createTrashLeftBarMenu(const QSet<MenuAction> &disab
     if (TrashManager::isEmpty()){
         QSet<MenuAction> tmp_disableList = disableList;
 
-        tmp_disableList << MenuAction::ClearTrash << MenuAction::Property;
+        tmp_disableList << MenuAction::ClearTrash;
 
         return genereteMenuByKeys(actionKeys, tmp_disableList);
     }

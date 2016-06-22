@@ -181,7 +181,7 @@
 <context>
     <name>DToolBar</name>
     <message>
-        <location filename="../filemanager/views/dtoolbar.cpp" line="188"/>
+        <location filename="../filemanager/views/dtoolbar.cpp" line="190"/>
         <source>Search or enter address</source>
         <translation>搜索或输入地址</translation>
     </message>
