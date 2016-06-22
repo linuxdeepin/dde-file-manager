@@ -38,6 +38,13 @@ const AbstractFileInfoPointer SearchController::createFileInfo(const DUrl &fileU
     return AbstractFileInfoPointer(new SearchFileInfo(fileUrl));
 }
 
+bool SearchController::openFileLocation(const DUrl &fileUrl, bool &accepted) const
+{
+    accepted = true;
+
+    return FileServices::instance()->openFileLocation(DUrl(fileUrl.fragment()));
+}
+
 void SearchController::searchStart(const DUrl &fileUrl, QDir::Filters filter)
 {
     const DUrl &targetUrl = fileUrl.searchTargetUrl();

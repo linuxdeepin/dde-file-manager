@@ -594,7 +594,7 @@ bool AbstractFileInfo::isEmptyFloder() const
 
     DDirIteratorPointer it = FileServices::instance()->createDirIterator(fileUrl(), QDir::AllEntries | QDir::NoDotAndDotDot, QDirIterator::NoIteratorFlags);
 
-    return !it || !it->hasNext();
+    return it && !it->hasNext();
 }
 
 void AbstractFileInfo::sortByUserColumn(QList<AbstractFileInfoPointer> &fileList, quint8 columnType, Qt::SortOrder order) const
@@ -669,10 +669,6 @@ QSet<MenuAction> AbstractFileInfo::disableMenuActionList() const
              << MenuAction::Cut << MenuAction::Rename << MenuAction::Paste << MenuAction::Remove << MenuAction::Delete;
     } else if (!isCanRename()) {
         list << MenuAction::Cut << MenuAction::Rename << MenuAction::Remove << MenuAction::Delete;
-    }
-
-    if (isEmptyFloder()) {
-        list << MenuAction::SelectAll;
     }
 
     return list;

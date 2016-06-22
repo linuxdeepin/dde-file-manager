@@ -1420,7 +1420,12 @@ void DFileView::showEmptyAreaMenu()
     const QVector<MenuAction> &actions = info->menuActionList(AbstractFileInfo::SpaceArea);
     const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList();
 
-    menu = FileMenuManager::genereteMenuByKeys(actions, FileMenuManager::getDisableActionList(model()->getUrlByIndex(index)), true, subActions);
+    QSet<MenuAction> disableList = FileMenuManager::getDisableActionList(model()->getUrlByIndex(index));
+
+    if (!count())
+        disableList << MenuAction::SelectAll;
+
+    menu = FileMenuManager::genereteMenuByKeys(actions, disableList, true, subActions);
 
     DFileMenu *displayAsSubMenu = static_cast<DFileMenu*>(menu->actionAt(fileMenuManger->getActionString(MenuAction::DisplayAs))->menu());
     DFileMenu *sortBySubMenu = static_cast<DFileMenu*>(menu->actionAt(fileMenuManger->getActionString(MenuAction::SortBy))->menu());

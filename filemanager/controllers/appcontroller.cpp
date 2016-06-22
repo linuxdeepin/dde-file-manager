@@ -125,7 +125,6 @@ void AppController::actionOpenFileLocation(const FMEvent &event)
 {
     const DUrlList& urls = event.fileUrlList();
     foreach (DUrl url, urls) {
-        url.setScheme(FILE_SCHEME);
         fileService->openFileLocation(url);
     }
 }
