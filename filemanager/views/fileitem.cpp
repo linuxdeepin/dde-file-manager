@@ -48,6 +48,9 @@ FileIconItem::FileIconItem(QWidget *parent) :
             format.setLineHeight(TEXT_LINE_HEIGHT, QTextBlockFormat::FixedHeight);
             cursor.setBlockFormat(format);
         } while (cursor.movePosition(QTextCursor::NextBlock));
+
+        if (edit->isReadOnly())
+            edit->setFixedHeight(edit->document()->size().height());
     });
 }
 
@@ -60,6 +63,11 @@ bool FileIconItem::event(QEvent *ee)
         }
     } else if(ee->type() == QEvent::Resize) {
         edit->setFixedWidth(width());
+
+        if (edit->isReadOnly())
+            edit->setFixedHeight(edit->document()->size().height());
+        else
+            edit->setFixedHeight(TEXT_LINE_HEIGHT * 3 + TEXT_PADDING * 2);
 
         resize(width(), icon->height() + edit->height());
     }
