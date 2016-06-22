@@ -11,7 +11,7 @@
 Qt::SortOrder AbstractFileInfo::sortOrderGlobal;
 
 namespace FileSortFunction {
-bool sortFileListByDisplayName(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &info2)
+bool _sortFileListByDisplayName(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &info2, Qt::SortOrder order = Qt::AscendingOrder)
 {
     if(info1->isDir()) {
         if(!info2->isDir())
@@ -21,8 +21,13 @@ bool sortFileListByDisplayName(const AbstractFileInfoPointer &info1, const Abstr
             return false;
     }
 
-    return ((AbstractFileInfo::sortOrderGlobal == Qt::AscendingOrder)
+    return ((order == Qt::DescendingOrder)
             ^ (info1->displayName().toLower() < info2->displayName().toLower())) == 0x01;
+}
+
+bool sortFileListByDisplayName(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &info2)
+{
+    return _sortFileListByDisplayName(info1, info2, AbstractFileInfo::sortOrderGlobal);
 }
 
 bool sortFileListBySize(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &info2)
@@ -36,11 +41,11 @@ bool sortFileListBySize(const AbstractFileInfoPointer &info1, const AbstractFile
     }
 
     if (info1->isDir() && info2->isDir() && (info1->size() == info2->size()))
-        return sortFileListByDisplayName(info1, info2);
+        return _sortFileListByDisplayName(info1, info2);
     else if (info1->isFile() && info2->isFile() && (info1->size() == info2->size()))
-        return sortFileListByDisplayName(info1, info2);
+        return _sortFileListByDisplayName(info1, info2);
 
-    return ((AbstractFileInfo::sortOrderGlobal == Qt::AscendingOrder)
+    return ((AbstractFileInfo::sortOrderGlobal == Qt::DescendingOrder)
             ^ (info1->size() < info2->size())) == 0x01;
 }
 
@@ -55,11 +60,11 @@ bool sortFileListByModified(const AbstractFileInfoPointer &info1, const Abstract
     }
 
     if (info1->isDir() && info2->isDir() && (info1->lastModified() == info2->lastModified()))
-        return sortFileListByDisplayName(info1, info2);
+        return _sortFileListByDisplayName(info1, info2);
     else if (info1->isFile() && info2->isFile() && (info1->lastModified() == info2->lastModified()))
-        return sortFileListByDisplayName(info1, info2);
+        return _sortFileListByDisplayName(info1, info2);
 
-    return ((AbstractFileInfo::sortOrderGlobal == Qt::AscendingOrder)
+    return ((AbstractFileInfo::sortOrderGlobal == Qt::DescendingOrder)
             ^ (info1->lastModified() < info2->lastModified())) == 0x01;
 }
 
@@ -74,11 +79,11 @@ bool sortFileListByMime(const AbstractFileInfoPointer &info1, const AbstractFile
     }
 
     if (info1->isDir() && info2->isDir() && (info1->mimeTypeDisplayName() == info2->mimeTypeDisplayName()))
-        return sortFileListByDisplayName(info1, info2);
+        return _sortFileListByDisplayName(info1, info2);
     else if (info1->isFile() && info2->isFile() && (info1->mimeTypeDisplayName() == info2->mimeTypeDisplayName()))
-        return sortFileListByDisplayName(info1, info2);
+        return _sortFileListByDisplayName(info1, info2);
 
-    return ((AbstractFileInfo::sortOrderGlobal == Qt::AscendingOrder)
+    return ((AbstractFileInfo::sortOrderGlobal == Qt::DescendingOrder)
             ^ (info1->mimeTypeDisplayNameOrder() < info2->mimeTypeDisplayNameOrder())) == 0x01;
 }
 
@@ -93,11 +98,11 @@ bool sortFileListByCreated(const AbstractFileInfoPointer &info1, const AbstractF
     }
 
     if (info1->isDir() && info2->isDir() && (info1->created() == info2->created()))
-        return sortFileListByDisplayName(info1, info2);
+        return _sortFileListByDisplayName(info1, info2);
     else if (info1->isFile() && info2->isFile() && (info1->created() == info2->created()))
-        return sortFileListByDisplayName(info1, info2);
+        return _sortFileListByDisplayName(info1, info2);
 
-    return ((AbstractFileInfo::sortOrderGlobal == Qt::AscendingOrder)
+    return ((AbstractFileInfo::sortOrderGlobal == Qt::DescendingOrder)
             ^ (info1->created() < info2->created())) == 0x01;
 }
 } /// end namespace FileSortFunction

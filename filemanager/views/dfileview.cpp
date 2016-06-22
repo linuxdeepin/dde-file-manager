@@ -1533,6 +1533,7 @@ void DFileView::updateListHeaderViewProperty()
     m_headerView->setSectionResizeMode(QHeaderView::Fixed);
     m_headerView->setDefaultSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
     m_headerView->setMinimumSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
+    m_headerView->setSortIndicator(model()->roleToColumn(DFileSystemModel::FileDisplayNameRole), Qt::AscendingOrder);
 
     m_columnRoles.clear();
 
