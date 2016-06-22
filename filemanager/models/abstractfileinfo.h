@@ -39,7 +39,7 @@ public:
     };
 
     inline static QString timeFormat(){
-        return "yyyy/MM/dd HH:MM:ss";
+        return "yyyy/MM/dd HH:mm:ss";
     }
 
     AbstractFileInfo();
