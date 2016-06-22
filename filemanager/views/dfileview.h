@@ -100,6 +100,8 @@ public:
 
     using DListView::viewportMargins;
 
+    bool isCutIndex(const QModelIndex &index) const;
+
 public slots:
     void preHandleCd(const FMEvent &event);
     void cd(const FMEvent &event);
@@ -205,6 +207,9 @@ private:
 
     /// move cursor later selecte index when pressed key shift
     QModelIndex m_lastCursorIndex;
+
+    /// cut state indexs
+    static QSet<DUrl> m_cutUrlSet;
 };
 
 #endif // DFILEVIEW_H

@@ -63,11 +63,16 @@ void DFileItemDelegate::paint(QPainter *painter,
     /// judgment way of the whether drag model(another way is: painter.devType() != 1)
     bool isDragMode = ((QPaintDevice*)parent()->viewport() != painter->device());
 
+    if (parent()->isCutIndex(index))
+        painter->setOpacity(0.3);
+
     if(parent()->isIconViewMode()) {
         paintIconItem(isDragMode, painter, option, index);
     } else {
         paintListItem(isDragMode, painter, option, index);
     }
+
+    painter->setOpacity(1);
 }
 
 QSize DFileItemDelegate::sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const
@@ -226,14 +231,6 @@ void DFileItemDelegate::paintIconItem(bool isDragMode, QPainter *painter,
     icon_rect.moveTop(opt.rect.top());
 
     QString str = opt.text;
-
-    if(str.isEmpty()) {
-        /// draw icon
-
-        opt.icon.paint(painter, icon_rect);
-
-        return;
-    }
 
     /// init file name geometry
 

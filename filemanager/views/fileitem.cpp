@@ -1,5 +1,6 @@
 #include <QTextEdit>
 #include <QTextBlock>
+#include <QGraphicsOpacityEffect>
 
 #include <anchors.h>
 
@@ -52,6 +53,23 @@ FileIconItem::FileIconItem(QWidget *parent) :
         if (edit->isReadOnly())
             edit->setFixedHeight(edit->document()->size().height());
     });
+}
+
+void FileIconItem::setOpacity(qreal opacity)
+{
+    if (opacity - 1.0 >= 0) {
+        if (opacityEffect) {
+            opacityEffect->deleteLater();
+            opacityEffect = Q_NULLPTR;
+        }
+
+        return;
+    } else if(!opacityEffect) {
+        opacityEffect = new QGraphicsOpacityEffect(this);
+        setGraphicsEffect(opacityEffect);
+    }
+
+    opacityEffect->setOpacity(opacity);
 }
 
 bool FileIconItem::event(QEvent *ee)

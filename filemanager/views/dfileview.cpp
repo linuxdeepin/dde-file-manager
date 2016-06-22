@@ -43,6 +43,8 @@ DWIDGET_USE_NAMESPACE
 
 #define LIST_VIEW_ICON_SIZE 28
 
+QSet<DUrl> DFileView::m_cutUrlSet;
+
 DFileView::DFileView(QWidget *parent) : DListView(parent)
 {
     D_THEME_INIT_WIDGET(DFileView);
@@ -124,6 +126,33 @@ void DFileView::initConnects()
 
     connect(itemDelegate(), &DFileItemDelegate::commitData, this, &DFileView::handleCommitData);
     connect(model(), &DFileSystemModel::dataChanged, this, &DFileView::handleDataChanged);
+
+    if (!m_cutUrlSet.capacity()) {
+        m_cutUrlSet.reserve(1);
+
+        connect(qApp->clipboard(), &QClipboard::dataChanged, [] {
+            DFileView::m_cutUrlSet.clear();
+
+            for (const QUrl &url : qApp->clipboard()->mimeData()->urls()) {
+                DFileView::m_cutUrlSet << url;
+            }
+        });
+    }
+
+    connect(qApp->clipboard(), &QClipboard::dataChanged, this, [this] {
+        FileIconItem *item = qobject_cast<FileIconItem*>(itemDelegate()->editingIndexWidget());
+
+        if (item)
+            item->setOpacity(isCutIndex(itemDelegate()->editingIndex()) ? 0.3 : 1);
+
+        if (itemDelegate()->expandedIndex().isValid()) {
+            item = itemDelegate()->expandedIndexWidget();
+
+            item->setOpacity(isCutIndex(itemDelegate()->expandedIndex()) ? 0.3 : 1);
+        }
+
+        update();
+    });
 }
 
 void DFileView::initActions()
@@ -374,6 +403,11 @@ QModelIndex DFileView::indexAt(const QPoint &point) const
     }
 
     return rootIndex().child(index, 0);
+}
+
+bool DFileView::isCutIndex(const QModelIndex &index) const
+{
+    return m_cutUrlSet.contains(model()->getUrlByIndex(index));
 }
 
 void DFileView::preHandleCd(const FMEvent &event)
