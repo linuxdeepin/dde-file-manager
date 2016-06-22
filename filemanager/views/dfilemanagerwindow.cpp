@@ -295,14 +295,14 @@ void DMainWindow::timerEvent(QTimerEvent *event)
 
 void DMainWindow::mouseMoveEvent(QMouseEvent *event)
 {
-    if (event->y() <= m_fileManagerWindow->getTitleBar()->height() + layoutMargin)
+    if (event->y() <= m_fileManagerWindow->getTitleBar()->height() + layoutMargin + 2)
         emit startMoving();
     DWindowFrame::mouseMoveEvent(event);
 }
 
 void DMainWindow::mouseDoubleClickEvent(QMouseEvent *event)
 {
-    if (event->y() <= m_fileManagerWindow->getTitleBar()->height() + layoutMargin){
+    if (event->y() <= m_fileManagerWindow->getTitleBar()->height() + layoutMargin + 2){
         if (windowState() != Qt::WindowMaximized){
             setWindowState(Qt::WindowMaximized);
             m_fileManagerWindow->getTitleBar()->setWindowState(Qt::WindowMaximized);

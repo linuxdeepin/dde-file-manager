@@ -80,6 +80,8 @@ public slots:
     void actionBack(const FMEvent& event);
     void actionForward(const FMEvent& event);
 
+    void actionForgetPassword(const FMEvent& event);
+
     // Subscriber interface
 public:
     void doSubscriberAction(const QString &path);
