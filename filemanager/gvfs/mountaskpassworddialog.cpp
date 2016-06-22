@@ -18,7 +18,7 @@ MountAskPasswordDialog::~MountAskPasswordDialog()
 
 void MountAskPasswordDialog::initUI()
 {
-    setFixedSize(380, 270);
+    setFixedSize(380, 278);
 
     QStringList buttonTexts;
     buttonTexts << tr("Cancel") << tr("Connect");
@@ -27,18 +27,18 @@ void MountAskPasswordDialog::initUI()
 
     m_messageLabel = new QLabel(this);
 
-    QLabel* connectTypeLabel = new QLabel(tr("Connect type"));
+    QLabel* connectTypeLabel = new QLabel(tr("Login as"));
     connectTypeLabel->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
-    connectTypeLabel->setFixedWidth(100);
+    connectTypeLabel->setFixedWidth(80);
 
     m_anonymousButtonGroup = new QButtonGroup(this);
     m_anonymousButtonGroup->setExclusive(true);
-    QPushButton* anonymousButton = new QPushButton(tr("anonymous user"));
+    QPushButton* anonymousButton = new QPushButton(tr("Anonymity"));
     anonymousButton->setObjectName("AnonymousButton");
     anonymousButton->setCheckable(true);
     anonymousButton->setFixedHeight(28);
     anonymousButton->setStyleSheet(getQssFromFile(":/qss/qss/passwordAskDialog.qss"));
-    QPushButton* registerButton = new QPushButton(tr("register user"));
+    QPushButton* registerButton = new QPushButton(tr("Registered user"));
     registerButton->setObjectName("RegisterButton");
     registerButton->setCheckable(true);
     registerButton->setFixedHeight(28);
@@ -50,19 +50,19 @@ void MountAskPasswordDialog::initUI()
 
     QLabel* usernameLable = new QLabel(tr("Username"));
     usernameLable->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
-    usernameLable->setFixedWidth(100);
+    usernameLable->setFixedWidth(80);
 
     m_usernameLineEdit = new QLineEdit;
 
     QLabel* domainLable = new QLabel(tr("Domain"));
     domainLable->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
-    domainLable->setFixedWidth(100);
+    domainLable->setFixedWidth(80);
 
     m_domainLineEdit = new QLineEdit;
 
     QLabel* passwordLable = new QLabel(tr("Password"));
     passwordLable->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
-    passwordLable->setFixedWidth(100);
+    passwordLable->setFixedWidth(80);
 
     m_passwordLineEdit = new DPasswordEdit;
 
@@ -102,13 +102,13 @@ void MountAskPasswordDialog::initUI()
     m_passwordFrame->setLayout(passwordFrameLayout);
 
 
-
     QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->addWidget(m_messageLabel, Qt::AlignCenter);
+    mainLayout->addSpacing(8);
     mainLayout->addLayout(connectTypeLayout);
     mainLayout->addWidget(m_passwordFrame);
     mainLayout->setSpacing(10);
-    mainLayout->setContentsMargins(0, 0, 0, 0);
+    mainLayout->setContentsMargins(0, 0, 20, 0);
     content->setLayout(mainLayout);
 
     addContent(content);
@@ -178,10 +178,10 @@ void MountAskPasswordDialog::togglePasswordFrame(int id)
 {
     if (id == 0){
         m_passwordFrame->hide();
-        setFixedSize(QSize(380, 140));
+        setFixedSize(QSize(380, 148));
     }else{
         m_passwordFrame->show();
-        setFixedSize(QSize(380, 270));
+        setFixedSize(QSize(380, 278));
     }
 }
 
