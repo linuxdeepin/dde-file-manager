@@ -692,20 +692,36 @@ void DFileView::showEvent(QShowEvent *event)
 
 void DFileView::mousePressEvent(QMouseEvent *event)
 {
-    bool isEmptyArea = this->isEmptyArea(event->pos());
+    if (event->button() == Qt::BackButton) {
+        FMEvent event;
 
-    if (event->button() == Qt::LeftButton) {
-        setDragEnabled(!isEmptyArea);
-    }
+        event = this->windowId();
+        event = FMEvent::FileView;
 
-    event->ignore();
+        fileSignalManager->requestBack(event);
+    } else if (event->button() == Qt::ForwardButton) {
+        FMEvent event;
 
-    if(!(event->buttons() & Qt::RightButton))
-        DListView::mousePressEvent(event);
+        event = this->windowId();
+        event = FMEvent::FileView;
 
-    if (isEmptyArea) {
-        m_selectionRectWidget->show();
-        m_pressedPos = viewport()->mapToParent(static_cast<QMouseEvent*>(event)->pos());
+        fileSignalManager->requestForward(event);
+    } else {
+        bool isEmptyArea = this->isEmptyArea(event->pos());
+
+        if (event->button() == Qt::LeftButton) {
+            setDragEnabled(!isEmptyArea);
+        }
+
+        event->ignore();
+
+        if(!(event->buttons() & Qt::RightButton))
+            DListView::mousePressEvent(event);
+
+        if (isEmptyArea) {
+            m_selectionRectWidget->show();
+            m_pressedPos = viewport()->mapToParent(static_cast<QMouseEvent*>(event)->pos());
+        }
     }
 }
 
