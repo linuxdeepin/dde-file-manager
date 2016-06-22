@@ -17,8 +17,6 @@
 #define RIGHT_PADDING 10
 #define ICON_MODE_RECT_RADIUS 4
 #define LIST_MODE_RECT_RADIUS 2
-#define LIST_MODE_LEFT_MARGIN 20
-#define LIST_MODE_RIGHT_MARGIN 20
 #define SELECTED_BACKGROUND_COLOR "#2da6f7"
 
 DFileItemDelegate::DFileItemDelegate(DFileView *parent) :
@@ -280,7 +278,7 @@ void DFileItemDelegate::paintIconItem(bool isDragMode, QPainter *painter,
             str = m_elideMap.value(str);
         } else {
             QString elide_str = Global::elideText(str, label_rect.size(),
-                                                  opt.fontMetrics,
+                                                  painter->fontMetrics(),
                                                   QTextOption::WrapAtWordBoundaryOrAnywhere,
                                                   opt.textElideMode);
 
@@ -438,7 +436,7 @@ void DFileItemDelegate::paintListItem(bool isDragMode, QPainter *painter,
     if(index != editing_index || role != DFileSystemModel::FileNameRole) {
         /// draw file name label
         const QString &file_name = Global::elideText(index.data(role).toString(), rect.size(),
-                                                     opt.fontMetrics, QTextOption::NoWrap, Qt::ElideRight);
+                                                     painter->fontMetrics(), QTextOption::NoWrap, Qt::ElideRight);
 
         painter->drawText(rect, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()), file_name);
     }
@@ -476,7 +474,7 @@ void DFileItemDelegate::paintListItem(bool isDragMode, QPainter *painter,
         QModelIndex tmp_index = model->createIndex(index.row(), model->roleToColumn(role), index.internalId());
 
         const QString &text = Global::elideText(index.data(role).toString(), rect.size(),
-                                                opt.fontMetrics, QTextOption::NoWrap, Qt::ElideRight);
+                                                painter->fontMetrics(), QTextOption::NoWrap, Qt::ElideRight);
 
         painter->drawText(rect, Qt::Alignment(tmp_index.data(Qt::TextAlignmentRole).toInt()), text);
     }

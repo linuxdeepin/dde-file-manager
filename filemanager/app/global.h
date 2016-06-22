@@ -75,6 +75,9 @@
 #define TEXT_LINE_HEIGHT 18
 #define TEXT_PADDING 5
 
+#define LIST_MODE_LEFT_MARGIN 20
+#define LIST_MODE_RIGHT_MARGIN 20
+
 #define MAX_THREAD_COUNT 1000
 
 #define ASYN_CALL(Fun, Code, captured...) { \
