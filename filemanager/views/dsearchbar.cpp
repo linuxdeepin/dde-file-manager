@@ -32,7 +32,14 @@ void DSearchBar::initUI()
     m_list->setFocusPolicy(Qt::NoFocus);
     m_stringListMode = new QStringListModel(this);
     m_list->setWindowFlags(Qt::ToolTip);
-    m_list->setStyleSheet("QListWidget::item{\
+    m_list->viewport()->setContentsMargins(4, 4, 4, 4);
+    m_list->setStyleSheet("QListWidget{\
+                          background-color: white;\
+                          border:1px solid rgba(0, 0, 0, 0.1);\
+                          border-top: 4px solid transparent;\
+                          border-radius: 4px;\
+                          }\
+                          QListWidget::item{\
                           height: 24px;\
                           padding: 0px;\
                           margins:10px;\

@@ -54,7 +54,7 @@ QListView::item:hover {
 QHeaderView {
     background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
                                   stop:0 #f8f8f8, stop:1 rgba(255, 255, 255, 0.8));
-    border: 1px inset rgba(0, 0, 0, 0.1);
+    border-bottom: 1px inset rgba(0, 0, 0, 0.1);
     /*padding-left: 50;
     padding-right: 10;*/
     max-height: 20px;
