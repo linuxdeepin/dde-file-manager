@@ -48,8 +48,6 @@ public:
     QIcon fileIcon() const Q_DECL_OVERRIDE;
     DUrl parentUrl() const Q_DECL_OVERRIDE;
 
-    quint8 supportViewMode() const Q_DECL_OVERRIDE;
-
     /// getFileInfoFun is get AbstractFileInfoPointer by index for caller
     int getIndexByFileInfo(getFileInfoFun fun, const AbstractFileInfoPointer &info, quint8 columnType,
                                    Qt::SortOrder order = Qt::AscendingOrder) const Q_DECL_OVERRIDE;
@@ -64,6 +62,11 @@ public:
 
     bool canRedirectionFileUrl() const Q_DECL_OVERRIDE;
     DUrl redirectedFileUrl() const Q_DECL_OVERRIDE;
+
+    QVector<MenuAction> menuActionList(MenuType type = SingleFile) const Q_DECL_OVERRIDE;
+    QSet<MenuAction> disableMenuActionList() const Q_DECL_OVERRIDE;
+
+    bool isEmptyFloder() const Q_DECL_OVERRIDE;
 
 private:
     DUrl m_parentUrl;

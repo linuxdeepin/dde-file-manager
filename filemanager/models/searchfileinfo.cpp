@@ -243,16 +243,6 @@ DUrl SearchFileInfo::parentUrl() const
     return m_parentUrl;
 }
 
-quint8 SearchFileInfo::supportViewMode() const
-{
-    const QString &fragment = data->url.fragment();
-
-    if (!fragment.isEmpty() && !data->url.isStopSearch())
-        return realFileInfo->supportViewMode();
-
-    return DFileView::ListMode;
-}
-
 int SearchFileInfo::getIndexByFileInfo(getFileInfoFun fun, const AbstractFileInfoPointer &info,
                                        quint8 columnType, Qt::SortOrder order) const
 {
@@ -309,4 +299,38 @@ bool SearchFileInfo::canRedirectionFileUrl() const
 DUrl SearchFileInfo::redirectedFileUrl() const
 {
     return realFileInfo->fileUrl();
+}
+
+QVector<MenuAction> SearchFileInfo::menuActionList(AbstractFileInfo::MenuType type) const
+{
+    QVector<MenuAction> actions = AbstractFileInfo::menuActionList(type);
+
+    if (type == SpaceArea)
+        return actions;
+
+    actions.insert(1, MenuAction::OpenFileLocation);
+
+    return actions;
+}
+
+QSet<MenuAction> SearchFileInfo::disableMenuActionList() const
+{
+    QSet<MenuAction> actions = AbstractFileInfo::disableMenuActionList();
+
+    actions << MenuAction::OpenInTerminal;
+
+    if (path().isEmpty())
+        actions << MenuAction::Property;
+
+    return actions;
+}
+
+bool SearchFileInfo::isEmptyFloder() const
+{
+    if (path().isEmpty())
+        return false;
+
+    const AbstractFileInfoPointer &fileInfo = FileServices::instance()->createFileInfo(DUrl(fileUrl().fragment()));
+
+    return fileInfo && fileInfo->isEmptyFloder();
 }
