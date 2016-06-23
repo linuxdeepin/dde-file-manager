@@ -346,5 +346,6 @@ bool SearchFileInfo::isEmptyFloder() const
 
 void SearchFileInfo::init()
 {
-    m_userColumnRoles << DFileSystemModel::FileUserRole + 1;
+    m_userColumnRoles.clear();
+    m_userColumnRoles << DFileSystemModel::FileUserRole + 1 << DFileSystemModel::FileSizeRole;
 }
