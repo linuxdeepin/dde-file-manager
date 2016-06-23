@@ -19,7 +19,7 @@
 #include "windowmanager.h"
 #include <QDebug>
 
-const int DToolBar::ButtonHeight = 20;
+const int DToolBar::ButtonHeight = 18;
 
 DToolBar::DToolBar(QWidget *parent) : QFrame(parent)
 {
@@ -65,20 +65,20 @@ void DToolBar::initAddressToolBar()
     m_backButton = new DStateButton(":/icons/images/icons/backward_normal.png", this);
     m_backButton->setObjectName("backButton");
     m_backButton->setFixedWidth(25);
-    m_backButton->setFixedHeight(18);
+    m_backButton->setFixedHeight(ButtonHeight);
     m_backButton->setDisabled(true);
     m_backButton->setFocusPolicy(Qt::NoFocus);
     m_forwardButton = new DStateButton(":/icons/images/icons/forward_normal.png", this);
     m_forwardButton->setObjectName("forwardButton");
     m_forwardButton->setFixedWidth(25);
-    m_forwardButton->setFixedHeight(18);
+    m_forwardButton->setFixedHeight(ButtonHeight);
     m_forwardButton->setDisabled(true);
     m_forwardButton->setFocusPolicy(Qt::NoFocus);
 
     m_searchButton = new QPushButton(this);
     m_searchButton->setObjectName("searchButton");
     m_searchButton->setFixedWidth(25);
-    m_searchButton->setFixedHeight(18);
+    m_searchButton->setFixedHeight(ButtonHeight);
     m_searchButton->setFocusPolicy(Qt::NoFocus);
 
     backForwardLayout->addWidget(m_backButton);
@@ -117,20 +117,22 @@ void DToolBar::initContollerToolBar()
     m_contollerToolBar->setObjectName("ContollerToolBar");
     m_contollerToolBar->setFixedHeight(40);
     m_iconViewButton = new QPushButton(this);
-    m_iconViewButton->setFixedHeight(18);
+    m_iconViewButton->setFixedWidth(25);
+    m_iconViewButton->setFixedHeight(ButtonHeight);
     m_iconViewButton->setObjectName("iconViewButton");
     m_iconViewButton->setCheckable(true);
     m_iconViewButton->setChecked(true);
     m_iconViewButton->setFocusPolicy(Qt::NoFocus);
 
     m_listViewButton = new QPushButton(this);
-    m_listViewButton->setFixedHeight(18);
+    m_listViewButton->setFixedWidth(25);
+    m_listViewButton->setFixedHeight(ButtonHeight);
     m_listViewButton->setObjectName("listViewButton");
     m_listViewButton->setCheckable(true);
     m_listViewButton->setFocusPolicy(Qt::NoFocus);
 
 //    m_extendButton = new QPushButton(this);
-//    m_extendButton->setFixedHeight(20);
+//    m_extendButton->setFixedHeight(ButtonHeight);
 //    m_extendButton->setObjectName("hierarchicalButton");
 //    m_extendButton->setCheckable(true);
 //    m_extendButton->setFocusPolicy(Qt::NoFocus);

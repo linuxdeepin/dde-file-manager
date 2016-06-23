@@ -98,6 +98,7 @@ void DFileManagerWindow::initRightView()
     m_rightView = new QFrame;
 
     m_titleFrame = new QFrame;
+    m_titleFrame->setObjectName("TitleBar");
     QHBoxLayout * titleLayout = new QHBoxLayout;
     titleLayout->setMargin(0);
     titleLayout->setSpacing(0);
