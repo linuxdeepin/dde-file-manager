@@ -31,6 +31,8 @@ public:
     QVariant userColumnDisplayName(int userColumnRole) const Q_DECL_OVERRIDE;
     int userColumnWidth(int userColumnRole) const Q_DECL_OVERRIDE;
 
+    bool columnDefaultVisibleForRole(int role) const Q_DECL_OVERRIDE;
+
     bool restore(const FMEvent &event) const;
 
 private:

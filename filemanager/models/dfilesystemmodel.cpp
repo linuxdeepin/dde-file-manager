@@ -138,6 +138,16 @@ int DFileSystemModel::columnCount(const QModelIndex &parent) const
     return columnCount;
 }
 
+QVariant DFileSystemModel::columnNameByRole(int role, const QModelIndex &index) const
+{
+    const AbstractFileInfoPointer &fileInfo = this->fileInfo(index.isValid() ? index : m_activeIndex);
+
+    if (fileInfo)
+        return fileInfo->userColumnDisplayName(role);
+
+    return QVariant();
+}
+
 int DFileSystemModel::columnWidthByRole(int role) const
 {
     switch (role) {
@@ -152,6 +162,19 @@ int DFileSystemModel::columnWidthByRole(int role) const
 
         return 140;
     }
+}
+
+bool DFileSystemModel::columnDefaultVisibleForRole(int role, const QModelIndex &index) const
+{
+    if (role == FileDisplayNameRole || role == FileNameRole)
+        return true;
+
+    const AbstractFileInfoPointer &fileInfo = this->fileInfo(index.isValid() ? index : m_activeIndex);
+
+    if (fileInfo)
+        return fileInfo->columnDefaultVisibleForRole(role);
+
+    return true;
 }
 
 bool DFileSystemModel::hasChildren(const QModelIndex &parent) const

@@ -210,6 +210,9 @@ private:
 
     /// cut state indexs
     static QSet<DUrl> m_cutUrlSet;
+
+    /// list mode column visible
+    QMap<QString, bool> m_columnForRoleHiddenMap;
 };
 
 #endif // DFILEVIEW_H

@@ -1573,11 +1573,13 @@ void DFileView::updateListHeaderViewProperty()
         } else {
             m_headerView->setSectionResizeMode(i, QHeaderView::Stretch);
         }
-    }
 
-    /// hide column(default display Name Size Modified Datetime)
-    m_headerView->setSectionHidden(model()->roleToColumn(DFileSystemModel::FileMimeTypeRole), true);
-    m_headerView->setSectionHidden(model()->roleToColumn(DFileSystemModel::FileCreatedRole), true);
+        const QString &column_name = model()->headerData(i, Qt::Horizontal, Qt::DisplayRole).toString();
+
+        if (!m_columnForRoleHiddenMap.contains(column_name)) {
+            m_headerView->setSectionHidden(i, !model()->columnDefaultVisibleForRole(model()->columnToRole(i)));
+        }
+    }
 }
 
 void DFileView::updateExtendHeaderViewProperty()
