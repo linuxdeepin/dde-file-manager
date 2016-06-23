@@ -177,9 +177,9 @@ QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
     switch (role) {
     case Qt::EditRole:
     case Qt::DisplayRole: {
-        const AbstractFileInfoPointer &fileInfo = indexNode->fileInfo;
+        int column_role = columnToRole(index.column());
 
-        return fileInfo->userColumnData(columnToRole(index.column()));
+        return data(index.sibling(index.row(), 0), column_role);
     }
     case FilePathRole:
         return indexNode->fileInfo->absoluteFilePath();
