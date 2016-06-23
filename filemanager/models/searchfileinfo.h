@@ -49,28 +49,28 @@ public:
     DUrl parentUrl() const Q_DECL_OVERRIDE;
 
     /// getFileInfoFun is get AbstractFileInfoPointer by index for caller
-    int getIndexByFileInfo(getFileInfoFun fun, const AbstractFileInfoPointer &info, quint8 columnType,
+    int getIndexByFileInfo(getFileInfoFun fun, const AbstractFileInfoPointer &info, int columnRole,
                                    Qt::SortOrder order = Qt::AscendingOrder) const Q_DECL_OVERRIDE;
 
-    quint8 userColumnCount() const Q_DECL_OVERRIDE;
-
-    /// userColumnType = ColumnType::UserType + user column index
-    QVariant userColumnDisplayName(quint8 userColumnType) const Q_DECL_OVERRIDE;
+    QVariant userColumnDisplayName(int userColumnRole) const Q_DECL_OVERRIDE;
 
     /// get custom column data
-    QVariant userColumnData(quint8 userColumnType) const Q_DECL_OVERRIDE;
+    QVariant userColumnData(int userColumnRole) const Q_DECL_OVERRIDE;
 
     bool canRedirectionFileUrl() const Q_DECL_OVERRIDE;
     DUrl redirectedFileUrl() const Q_DECL_OVERRIDE;
 
     QVector<MenuAction> menuActionList(MenuType type = SingleFile) const Q_DECL_OVERRIDE;
     QSet<MenuAction> disableMenuActionList() const Q_DECL_OVERRIDE;
+    int userColumnWidth(int userColumnRole) const Q_DECL_OVERRIDE;
 
     bool isEmptyFloder() const Q_DECL_OVERRIDE;
 
 private:
     DUrl m_parentUrl;
     AbstractFileInfoPointer realFileInfo;
+
+    void init();
 };
 
 #endif // SEARCHFILEINFO_H

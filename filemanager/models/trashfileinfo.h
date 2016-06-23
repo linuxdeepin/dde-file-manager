@@ -27,9 +27,9 @@ public:
     QVector<MenuAction> menuActionList(MenuType type) const Q_DECL_OVERRIDE;
     QSet<MenuAction> disableMenuActionList() const Q_DECL_OVERRIDE;
 
-    quint8 userColumnCount() const Q_DECL_OVERRIDE;
-    QVariant userColumnData(quint8 userColumnType) const Q_DECL_OVERRIDE;
-    QVariant userColumnDisplayName(quint8 userColumnType) const Q_DECL_OVERRIDE;
+    QVariant userColumnData(int userColumnRole) const Q_DECL_OVERRIDE;
+    QVariant userColumnDisplayName(int userColumnRole) const Q_DECL_OVERRIDE;
+    int userColumnWidth(int userColumnRole) const Q_DECL_OVERRIDE;
 
     bool restore(const FMEvent &event) const;
 
@@ -40,6 +40,7 @@ private:
     QString deletionDate;
 
     void updateInfo();
+    void init();
 };
 
 #endif // TRASHFILEINFO_H

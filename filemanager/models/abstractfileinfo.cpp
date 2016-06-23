@@ -2,6 +2,8 @@
 
 #include "../views/dfileview.h"
 
+#include "../models/dfilesystemmodel.h"
+
 #include "../shutil/fileutils.h"
 #include "../controllers/pathmanager.h"
 #include "../app/global.h"
@@ -112,7 +114,7 @@ QMap<DUrl, AbstractFileInfo::FileMetaData> AbstractFileInfo::metaDataCacheMap;
 AbstractFileInfo::AbstractFileInfo()
     : data(new FileInfoData)
 {
-
+    init();
 }
 
 AbstractFileInfo::AbstractFileInfo(const DUrl &url)
@@ -121,6 +123,7 @@ AbstractFileInfo::AbstractFileInfo(const DUrl &url)
     data->url = url;
     data->fileInfo.setFile(url.path());
 
+    init();
     updateFileMetaData();
 }
 
@@ -130,6 +133,7 @@ AbstractFileInfo::AbstractFileInfo(const QString &url)
     data->url = DUrl::fromUserInput(url);
     data->fileInfo.setFile(data->url.path());
 
+    init();
     updateFileMetaData();
 }
 
@@ -483,78 +487,87 @@ quint8 AbstractFileInfo::supportViewMode() const
     return DFileView::AllViewMode;
 }
 
-quint8 AbstractFileInfo::userColumnCount() const
+QVariant AbstractFileInfo::userColumnDisplayName(int userColumnRole) const
 {
-    return 0;
+    return DFileSystemModel::roleName(userColumnRole);
 }
 
-QVariant AbstractFileInfo::userColumnDisplayName(quint8 userColumnType) const
+QVariant AbstractFileInfo::userColumnData(int userColumnRole) const
 {
-    Q_UNUSED(userColumnType)
+    switch (userColumnRole) {
+    case DFileSystemModel::FileLastModifiedRole:
+        return lastModifiedDisplayName();
+    case DFileSystemModel::FileSizeRole:
+        return sizeDisplayName();
+    case DFileSystemModel::FileMimeTypeRole:
+        return mimeTypeDisplayName();
+    case DFileSystemModel::FileCreatedRole:
+        return createdDisplayName();
+    default:
+        break;
+    }
 
     return QVariant();
 }
 
-QVariant AbstractFileInfo::userColumnData(quint8 userColumnType) const
+int AbstractFileInfo::userColumnWidth(int userColumnRole) const
 {
-    Q_UNUSED(userColumnType);
-
-    return QVariant();
+    switch (userColumnRole) {
+    case DFileSystemModel::FileSizeRole:
+        return 100;
+    case DFileSystemModel::FileMimeTypeRole:
+        return 100;
+    default:
+        return 140;
+    }
 }
 
-int AbstractFileInfo::userColumnWidth(quint8 userColumntype) const
-{
-    Q_UNUSED(userColumntype);
-
-    return -1;
-}
-
-void AbstractFileInfo::sortByColumn(QList<AbstractFileInfoPointer> &fileList, quint8 columnType, Qt::SortOrder order) const
+void AbstractFileInfo::sortByColumn(QList<AbstractFileInfoPointer> &fileList, int columnRole, Qt::SortOrder order) const
 {
     sortOrderGlobal = order;
 
-    switch (columnType) {
-    case DisplayNameType:
+    switch (columnRole) {
+    case DFileSystemModel::FileDisplayNameRole:
         qSort(fileList.begin(), fileList.end(), FileSortFunction::sortFileListByDisplayName);
         break;
-    case LastModifiedDateType:
+    case DFileSystemModel::FileLastModifiedRole:
         qSort(fileList.begin(), fileList.end(), FileSortFunction::sortFileListByModified);
         break;
-    case SizeType:
+    case DFileSystemModel::FileSizeRole:
         qSort(fileList.begin(), fileList.end(), FileSortFunction::sortFileListBySize);
         break;
-    case FileMimeType:
+    case DFileSystemModel::FileMimeTypeRole:
         qSort(fileList.begin(), fileList.end(), FileSortFunction::sortFileListByMime);
         break;
-    case CreatedDateType:
+    case DFileSystemModel::FileCreatedRole:
         qSort(fileList.begin(), fileList.end(), FileSortFunction::sortFileListByCreated);
         break;
     default:
-        sortByUserColumn(fileList, columnType, order);
+        sortByUserColumn(fileList, columnRole, order);
         break;
     }
 }
 
-int AbstractFileInfo::getIndexByFileInfo(getFileInfoFun fun, const AbstractFileInfoPointer &info, quint8 columnType, Qt::SortOrder order) const
+int AbstractFileInfo::getIndexByFileInfo(getFileInfoFun fun, const AbstractFileInfoPointer &info, int columnType, Qt::SortOrder order) const
 {
     std::function<bool(const AbstractFileInfoPointer&, const AbstractFileInfoPointer&)> sortFun;
 
     sortOrderGlobal = order;
 
     switch (columnType) {
-    case DisplayNameType:
+    case DFileSystemModel::FileDisplayNameRole:
         sortFun = FileSortFunction::sortFileListByDisplayName;
         break;
-    case LastModifiedDateType:
+    case DFileSystemModel::FileLastModifiedRole:
         sortFun = FileSortFunction::sortFileListByModified;
         break;
-    case SizeType:
+    case DFileSystemModel::FileSizeRole:
         sortFun = FileSortFunction::sortFileListBySize;
         break;
-    case FileMimeType:
+    case DFileSystemModel::FileMimeTypeRole:
         sortFun = FileSortFunction::sortFileListByMime;
         break;
-    case CreatedDateType:
+    case DFileSystemModel::FileCreatedRole:
         sortFun = FileSortFunction::sortFileListByCreated;
         break;
     default:
@@ -597,7 +610,7 @@ bool AbstractFileInfo::isEmptyFloder() const
     return it && !it->hasNext();
 }
 
-void AbstractFileInfo::sortByUserColumn(QList<AbstractFileInfoPointer> &fileList, quint8 columnType, Qt::SortOrder order) const
+void AbstractFileInfo::sortByUserColumn(QList<AbstractFileInfoPointer> &fileList, int columnType, Qt::SortOrder order) const
 {
     Q_UNUSED(fileList)
     Q_UNUSED(columnType)
@@ -623,6 +636,12 @@ void AbstractFileInfo::updateFileMetaData()
     data.permissions = permissions;
 
     metaDataCacheMap[this->data->url] = data;
+}
+
+void AbstractFileInfo::init()
+{
+    m_userColumnRoles << DFileSystemModel::FileLastModifiedRole << DFileSystemModel::FileSizeRole
+                      << DFileSystemModel::FileMimeTypeRole << DFileSystemModel::FileCreatedRole;
 }
 
 QMap<MenuAction, QVector<MenuAction> > AbstractFileInfo::subMenuActionList() const
