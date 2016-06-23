@@ -273,7 +273,6 @@ void FileMenuManager::initData()
     m_actionKeys[MenuAction::ListView] = QObject::tr("List");
     m_actionKeys[MenuAction::ExtendView] = QObject::tr("Extend");
     m_actionKeys[MenuAction::SetAsWallpaper] = QObject::tr("Set as wallpaper");
-    m_actionKeys[MenuAction::ForgetPassword] = QObject::tr("Logout and unmount");
 }
 
 void FileMenuManager::initActions()

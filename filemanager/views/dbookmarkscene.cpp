@@ -67,7 +67,7 @@ void DBookmarkScene::initData()
     m_systemBookMarks["Home"] = tr("Home");
     m_systemBookMarks["Trash"] = tr("Trash");
     m_systemBookMarks["Disk"] = tr("Disk");
-    m_systemBookMarks["Network"] = tr("Computers in LAN");
+    m_systemBookMarks["Network"] = tr("Network");
 
     foreach (QString key, m_systemPathKeys) {
         m_systemBookMarks[key] = systemPathManager->getSystemPathDisplayName(key);
