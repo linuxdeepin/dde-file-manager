@@ -8,6 +8,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QKeyEvent>
+#include <QSvgRenderer>
 
 #include "dfilemenu.h"
 #include "filemenumanager.h"
@@ -280,8 +281,8 @@ void DBookmarkItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
             m_yPress = event->pos().y();
         }
         m_pressed = true;
+        update();
     }
-    update();
 }
 
 void DBookmarkItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -325,11 +326,24 @@ QPixmap DBookmarkItem::toPixmap()
     if (!scene()) {
         return QPixmap();
     }
-    QPixmap pixmap(":/icons/images/icons/reordering_line.svg");
-    if(m_isTightMode)
-        return pixmap.scaled(60, pixmap.height(), Qt::IgnoreAspectRatio);
+
+    QSvgRenderer renderer;
+
+    renderer.load(QString(":/icons/images/icons/reordering_line.svg"));
+
+    QImage image;
+    QPainter painter;
+
+    if (m_isTightMode)
+        image = QImage(60, renderer.defaultSize().height(), QImage::Format_ARGB32);
     else
-        return pixmap.scaledToWidth(200);
+        image = QImage(200, renderer.defaultSize().height() * 200.0 / renderer.defaultSize().width(), QImage::Format_ARGB32);
+
+    image.fill(Qt::transparent);
+    painter.begin(&image);
+    renderer.render(&painter, QRect(QPoint(0, 0), image.size()));
+
+    return QPixmap::fromImage(image);
 }
 
 bool DBookmarkItem::isMounted()
@@ -583,7 +597,6 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
         menu = FileMenuManager::createTrashLeftBarMenu();
     }else if(m_isDisk && m_deviceInfo)
     {
-        qDebug() << m_deviceInfo->getType();
         m_url.setQuery(m_sysPath);
 
         m_deviceInfo->canUnmount();
