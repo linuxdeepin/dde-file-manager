@@ -65,7 +65,8 @@ public:
         IconView,
         ListView,
         ExtendView,
-        SetAsWallpaper
+        SetAsWallpaper,
+        ForgetPassword
     };
 
     Q_ENUM(MenuAction)
