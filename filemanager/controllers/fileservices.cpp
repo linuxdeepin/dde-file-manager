@@ -166,10 +166,10 @@ bool FileServices::copyFiles(const DUrlList &urlList) const
 
 bool FileServices::renameFile(const DUrl &oldUrl, const DUrl &newUrl, const FMEvent &event) const
 {
-    FileInfo f(newUrl);
+    const AbstractFileInfoPointer &f = createFileInfo(newUrl);
 
-    if (f.exists(newUrl)){
-        dialogManager->showRenameNameSameErrorDialog(f.displayName(), event);
+    if (f->exists()){
+        dialogManager->showRenameNameSameErrorDialog(f->displayName(), event);
         return false;
     }
     TRAVERSE(oldUrl, {

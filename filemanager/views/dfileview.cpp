@@ -763,39 +763,33 @@ void DFileView::handleCommitData(QWidget *editor)
         return;
 
     QLineEdit *lineEdit = qobject_cast<QLineEdit*>(editor);
-
+    FileIconItem *item = qobject_cast<FileIconItem*>(editor);
 
     FMEvent event;
     event = fileInfo->fileUrl();
     event = windowId();
     event = FMEvent::FileView;
 
+    QString new_file_name = lineEdit ? lineEdit->text() : item ? item->edit->toPlainText() : "";
 
-    if(lineEdit) {
-        if (fileInfo->fileName() == lineEdit->text() || lineEdit->text().isEmpty()){
-            return;
-        }
+    new_file_name.remove('/');
+    new_file_name.remove(QChar(0));
 
-        DUrl old_url = fileInfo->fileUrl();
-        DUrl new_url = DUrl(fileInfo->scheme() + "://" + fileInfo->absolutePath()
-                            + "/" + lineEdit->text());
+    if (fileInfo->fileName() == new_file_name || new_file_name.isEmpty()) {
+        return;
+    }
 
+    DUrl old_url = fileInfo->fileUrl();
+    DUrl new_url = DUrl(fileInfo->scheme() + "://" + fileInfo->absolutePath()
+                        + "/" + QUrl::toPercentEncoding(new_file_name));
+
+    if (lineEdit) {
         /// later rename file.
         TIMER_SINGLESHOT(0, {
                              fileService->renameFile(old_url, new_url, event);
                          }, old_url, new_url, event)
-        return;
-    }
-
-    FileIconItem *item = qobject_cast<FileIconItem*>(editor);
-
-    if(item) {
-        if (fileInfo->fileName() == item->edit->toPlainText() || item->edit->toPlainText().isEmpty()){
-            return;
-        }
-        fileService->renameFile(fileInfo->fileUrl(),
-                                DUrl(fileInfo->scheme() + "://" + fileInfo->absolutePath()
-                                     + "/" + item->edit->toPlainText()), event);
+    } else {
+        fileService->renameFile(old_url, new_url, event);
     }
 }
 
