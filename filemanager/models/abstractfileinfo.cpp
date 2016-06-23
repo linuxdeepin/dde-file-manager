@@ -522,6 +522,12 @@ int AbstractFileInfo::userColumnWidth(int userColumnRole) const
     }
 }
 
+bool AbstractFileInfo::columnDefaultVisibleForRole(int role) const
+{
+    return !(role == DFileSystemModel::FileCreatedRole
+             || role == DFileSystemModel::FileSizeRole);
+}
+
 void AbstractFileInfo::sortByColumn(QList<AbstractFileInfoPointer> &fileList, int columnRole, Qt::SortOrder order) const
 {
     sortOrderGlobal = order;

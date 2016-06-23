@@ -698,7 +698,7 @@ bool FileJob::moveDirToTrash(const QString &dir)
 
     QString oldName = sourceDir.dirName();
     QString newName = m_trashLoc + "/files/" + baseName(sourceDir.dirName());
-    QString delTime = QDateTime::currentDateTime().toString( "yyyyMMddThh:mm:ss" );
+    QString delTime = QDateTime::currentDateTime().toString(Qt::ISODate);
 
     QDir tempDir(newName);
     if(tempDir.exists())
@@ -722,7 +722,7 @@ bool FileJob::moveFileToTrash(const QString &file)
     QFile localFile(file);
     QString path = m_trashLoc + "/files/";
     QString newName = path + baseName(localFile.fileName());
-    QString delTime = QString::number(QDateTime::currentDateTime().toMSecsSinceEpoch());
+    QString delTime = QDateTime::currentDateTime().toString(Qt::ISODate);
     if(QFile::exists(newName))
         newName = path + delTime + "_" + baseName(localFile.fileName());
     if(!localFile.rename(newName))

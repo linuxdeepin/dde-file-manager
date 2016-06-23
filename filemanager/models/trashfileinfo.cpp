@@ -136,6 +136,9 @@ QSet<MenuAction> TrashFileInfo::disableMenuActionList() const
 QVariant TrashFileInfo::userColumnData(int userColumnRole) const
 {
     if (userColumnRole == DFileSystemModel::FileUserRole + 1)
+        return deletionDate;
+
+    if (userColumnRole == DFileSystemModel::FileUserRole + 2)
         return originalFilePath;
 
     return AbstractFileInfo::userColumnData(userColumnRole);
@@ -144,6 +147,9 @@ QVariant TrashFileInfo::userColumnData(int userColumnRole) const
 QVariant TrashFileInfo::userColumnDisplayName(int userColumnRole) const
 {
     if (userColumnRole == DFileSystemModel::FileUserRole + 1)
+        return QObject::tr("Deletion Date");
+
+    if (userColumnRole == DFileSystemModel::FileUserRole + 2)
         return QObject::tr("Source Path");
 
     return AbstractFileInfo::userColumnDisplayName(userColumnRole);
@@ -152,9 +158,20 @@ QVariant TrashFileInfo::userColumnDisplayName(int userColumnRole) const
 int TrashFileInfo::userColumnWidth(int userColumnRole) const
 {
     if (userColumnRole == DFileSystemModel::FileUserRole + 1)
+        return 140;
+
+    if (userColumnRole == DFileSystemModel::FileUserRole + 2)
         return -1;
 
     return AbstractFileInfo::userColumnWidth(userColumnRole);
+}
+
+bool TrashFileInfo::columnDefaultVisibleForRole(int role) const
+{
+    if (role == DFileSystemModel::FileLastModifiedRole)
+        return false;
+
+    return AbstractFileInfo::columnDefaultVisibleForRole(role);
 }
 
 bool TrashFileInfo::restore(const FMEvent &event) const
@@ -196,7 +213,10 @@ void TrashFileInfo::updateInfo()
         else
             m_displayName = originalFilePath.mid(originalFilePath.lastIndexOf('/') + 1);
 
-        deletionDate = setting.value("DeletionDate").toString();
+        deletionDate = QDateTime::fromString(setting.value("DeletionDate").toString(), Qt::ISODate).toString(timeFormat());
+
+        if (deletionDate.isEmpty())
+            deletionDate = setting.value("DeletionDate").toString();
     } else {
         m_displayName = QObject::tr("Trash");
     }
@@ -204,5 +224,6 @@ void TrashFileInfo::updateInfo()
 
 void TrashFileInfo::init()
 {
-    m_userColumnRoles << DFileSystemModel::FileUserRole + 1;
+    m_userColumnRoles.prepend(DFileSystemModel::FileUserRole + 1);
+    m_userColumnRoles << DFileSystemModel::FileUserRole + 2;
 }

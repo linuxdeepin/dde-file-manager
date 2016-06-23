@@ -279,7 +279,7 @@ int SearchFileInfo::getIndexByFileInfo(getFileInfoFun fun, const AbstractFileInf
 QVariant SearchFileInfo::userColumnDisplayName(int userColumnRole) const
 {
     if (userColumnRole == DFileSystemModel::FileUserRole + 1)
-        return QObject::tr("absolute path");
+        return QObject::tr("Absolute Path");
 
     return AbstractFileInfo::userColumnDisplayName(userColumnRole);
 }

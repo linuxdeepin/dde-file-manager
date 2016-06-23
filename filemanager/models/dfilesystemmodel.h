@@ -50,7 +50,12 @@ public:
     int columnCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
     inline int columnWidth(int column) const
     { return columnWidthByRole(columnToRole(column));}
+    QVariant columnNameByRole(int role, const QModelIndex &index = QModelIndex()) const;
+
     int columnWidthByRole(int role) const;
+
+    bool columnDefaultVisibleForRole(int role, const QModelIndex &index = QModelIndex()) const;
+
     bool hasChildren(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;

@@ -125,6 +125,9 @@ public:
     /// get custom column width
     virtual int userColumnWidth(int userColumnRole) const;
 
+    /// user column default visible for role
+    virtual bool columnDefaultVisibleForRole(int role) const;
+
     virtual void sortByColumn(QList<AbstractFileInfoPointer> &fileList, int columnRole,
                               Qt::SortOrder order = Qt::AscendingOrder) const;
 
