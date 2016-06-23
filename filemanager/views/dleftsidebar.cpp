@@ -124,6 +124,9 @@ void DLeftSideBar::initNav()
         }else{
             DBookmarkItem * item = m_scene->createBookmarkByKey(key);
             m_scene->addItem(item);
+            if (key == "Home"){
+                m_scene->setHomeItem(item);
+            }
             if (key == "Disk"){
                 m_scene->setDefaultDiskItem(item);
             }
@@ -263,7 +266,11 @@ void DLeftSideBar::addNetworkBookmarkItem()
 
 void DLeftSideBar::loadDevices()
 {
-    deviceListener->update();
+    if (deviceListener->getAllDeviceInfos().count() == 0){
+        deviceListener->update();
+    }else{
+        deviceListener->load();
+    }
 }
 QGraphicsView *DLeftSideBar::view() const
 {

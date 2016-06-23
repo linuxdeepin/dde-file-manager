@@ -64,7 +64,7 @@ signals:
 public slots:
     void doDragFinished(const QPointF &point, const QPointF &scenePoint, DBookmarkItem *item);
     void currentUrlChanged(const FMEvent &event);
-
+    void setHomeItem(DBookmarkItem* item);
     void setDefaultDiskItem(DBookmarkItem* item);
     void setNetworkDiskItem(DBookmarkItem* item);
     void doBookmarkRemoved(const FMEvent &event);
@@ -77,6 +77,8 @@ public slots:
     void volumeRemoved(UDiskDeviceInfo * device);
     void mountAdded(UDiskDeviceInfo * device);
     void mountRemoved(UDiskDeviceInfo * device);
+
+    void backHome();
 
     void chooseMountedItem(const FMEvent &event);
 private:
@@ -97,6 +99,7 @@ private:
     QMap<QString, QString> m_systemBookMarks;
 
     DBookmarkRootItem * m_rootItem;
+    DBookmarkItem* m_homeItem;
     DBookmarkItem* m_defaultDiskItem;
     DBookmarkItem* m_networkDiskItem;
     DBookmarkItemGroup * m_itemGroup;
