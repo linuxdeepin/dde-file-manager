@@ -8,6 +8,7 @@
 #include <QFileDialog>
 #include <QCryptographicHash>
 #include <QDebug>
+#include <QtMath>
 #include "../views/windowmanager.h"
 #include "standardpath.h"
 
@@ -307,6 +308,35 @@ QIcon FileUtils::searchAppIcon(const DesktopFile &app,
 }
 //---------------------------------------------------------------------------
 
+QString sizeString(const QString &str)
+{
+    int begin_pos = str.indexOf('.');
+
+    if (begin_pos < 0)
+        return str;
+
+    QString size = str;
+
+    while (size.count() - 1 > begin_pos) {
+        if (!size.endsWith('0'))
+            return size;
+
+        size = size.left(size.count() - 1);
+    }
+
+    return size.left(size.count() - 1);
+}
+
+qreal dRound64(qreal num, int count = 1)
+{
+    if (count <= 0)
+        return qRound64(num);
+
+    qreal base = qPow(10, count);
+
+    return qRound64(num * base) / base;
+}
+
 QString FileUtils::formatSize( qint64 num )
 {
     QString total;
@@ -315,11 +345,17 @@ QString FileUtils::formatSize( qint64 num )
     const qint64 gb = 1024 * mb;
     const qint64 tb = 1024 * gb;
 
-    if ( num >= tb ) total = QString( "%1 TB" ).arg( QString::number( qreal( num ) / tb, 'f', 3 ) );
-    else if ( num >= gb ) total = QString( "%1 GB" ).arg( QString::number( qreal( num ) / gb, 'f', 2 ) );
-    else if ( num >= mb ) total = QString( "%1 MB" ).arg( QString::number( qreal( num ) / mb, 'f', 1 ) );
-    else if ( num >= kb ) total = QString( "%1 KB" ).arg( QString::number( qreal( num ) / kb,'f',1 ) );
-    else total = QString( "%1 B" ).arg( num );
+    if ( num >= tb ) {
+        total = QString( "%1 TB" ).arg( sizeString(QString::number( dRound64(qreal( num ) / tb), 'f', 1 )) );
+    } else if( num >= gb ) {
+        total = QString( "%1 GB" ).arg( sizeString(QString::number( dRound64(qreal( num ) / gb), 'f', 1 )) );
+    } else if( num >= mb ) {
+        total = QString( "%1 MB" ).arg( sizeString(QString::number( dRound64(qreal( num ) / mb), 'f', 1 )) );
+    } else if( num >= kb ) {
+        total = QString( "%1 KB" ).arg( sizeString(QString::number( dRound64(qreal( num ) / kb),'f',1 )) );
+    } else {
+        total = QString( "%1 B" ).arg( num );
+    }
 
     return total;
 }
