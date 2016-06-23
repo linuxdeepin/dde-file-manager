@@ -389,6 +389,7 @@ void DBookmarkScene::doDragFinished(const QPointF &point, const QPointF &scenePo
 
 void DBookmarkScene::currentUrlChanged(const FMEvent &event)
 {
+    qDebug() << event;
     if(event.windowId() != windowId())
         return;
     if(event.source() == FMEvent::LeftSideBar)
@@ -396,12 +397,21 @@ void DBookmarkScene::currentUrlChanged(const FMEvent &event)
     m_itemGroup->deselectAll();
     for(int i = 0; i < m_itemGroup->items()->size(); i++)
     {
-        if(event.fileUrl() == m_itemGroup->items()->at(i)->getUrl())
+        DUrl eventUrl = event.fileUrl();
+        eventUrl.setQuery("");
+        DUrl itemUrl = m_itemGroup->items()->at(i)->getUrl();
+        itemUrl.setQuery("");
+        if(eventUrl == itemUrl)
         {
             m_itemGroup->items()->at(i)->setChecked(true);
             break;
         }
     }
+}
+
+void DBookmarkScene::setHomeItem(DBookmarkItem *item)
+{
+    m_homeItem = item;
 }
 
 void DBookmarkScene::setDefaultDiskItem(DBookmarkItem *item)
@@ -513,6 +523,11 @@ void DBookmarkScene::volumeRemoved(UDiskDeviceInfo *device)
     {
         remove(item);
         m_diskItems.remove(device->getDiskInfo().ID);
+        if (item->isChecked()){
+            backHome();
+        }
+        qDebug() << device->getDiskInfo() << item;
+        item->deleteLater();
     }
 }
 
@@ -524,6 +539,7 @@ void DBookmarkScene::mountAdded(UDiskDeviceInfo *device)
     {
         item->setDeviceInfo(device);
         item->setMounted(true);
+        item->setUrl(DUrl::fromLocalFile(device->getMountPoint()));
     }else{
         QString key = "Disk";
         if (device->getMediaType() == UDiskDeviceInfo::removable){
@@ -537,7 +553,10 @@ void DBookmarkScene::mountAdded(UDiskDeviceInfo *device)
         }
         item = createBookmarkByKey(key);
         item->setDeviceInfo(device);
-        insert(indexOf(m_defaultDiskItem) + 1, item);
+        item->setUrl(DUrl::fromLocalFile(device->getMountPoint()));
+
+        insert(indexOf(m_defaultDiskItem) + 1 + m_diskItems.count(), item);
+
 
         item->setTightMode(m_isTightMode);
         m_diskItems.insert(device->getDiskInfo().ID, item);
@@ -557,8 +576,20 @@ void DBookmarkScene::mountRemoved(UDiskDeviceInfo *device)
     if(item)
     {
         item->setMounted(false);
+        qDebug() << device->getDiskInfo() << item;
+        if (item->isChecked()){
+            backHome();
+        }
         return;
     }
+}
+
+void DBookmarkScene::backHome()
+{
+    FMEvent event;
+    event = windowId();
+    event = DUrl::fromLocalFile(QDir::homePath());
+    emit fileSignalManager->requestChangeCurrentUrl(event);
 }
 
 void DBookmarkScene::chooseMountedItem(const FMEvent &event)

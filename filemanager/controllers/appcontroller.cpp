@@ -71,7 +71,6 @@ void AppController::actionOpenDisk(const FMEvent &event)
 
     const DUrl& fileUrl = event.fileUrl();
     if (!QStorageInfo(fileUrl.toLocalFile()).isValid()){
-        qDebug() << event;
         m_fmEvent = event;
         setEventKey(Open);
         actionMount(event);
@@ -91,14 +90,12 @@ void AppController::asycOpenDisk(const QString &path)
 
 void AppController::actionOpenInNewWindow(const FMEvent &event)
 {
-    qDebug() << event;
     const DUrl& fileUrl = event.fileUrl();
     fileService->openNewWindow(fileUrl);
 }
 
 void AppController::actionOpenDiskInNewWindow(const FMEvent &event)
 {
-    qDebug() << event;
     const DUrl& fileUrl = event.fileUrl();
     if (!QStorageInfo(fileUrl.toLocalFile()).isValid()){
         m_fmEvent = event;
