@@ -185,6 +185,6 @@ void TrashFileInfo::updateInfo()
 
         deletionDate = setting.value("DeletionDate").toString();
     } else {
-        m_displayName = AbstractFileInfo::displayName();
+        m_displayName = QObject::tr("Trash");
     }
 }

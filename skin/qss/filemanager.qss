@@ -6,13 +6,11 @@ QMainWindow{
     background-color: #e9eaf0;
 }
 
-QWigdet{
-    background-color: transparent;
-}
-
 QFrame#TitleBar{
-    background-color: #e9eaf0;
-    border-bottom: 1px solid lightGray;
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                    stop: 0 #FFFFFF,
+                                    stop: 0.98  #F8F8F8);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 QGraphicsView#Bookmark{
@@ -39,17 +37,17 @@ QFrame#LeftSideBar{
 
 QFrame#LeftSideHomeBar{
     background-color: transparent;
-    border-bottom: 1px solid lightgray;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 QFrame#LeftSideCommonFolderBar{
     background-color: transparent;
-    border-bottom: 1px solid lightgray;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 QFrame#LeftSideDiskBar{
     background-color: transparent;
-    border-bottom: 1px solid lightgray;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 QFrame#ToolBar{
@@ -103,7 +101,7 @@ QSplitter{
 }
 
 QSplitter::handle {
-    background-color:lightGray;
+    background-color:rgba(0, 0, 0, 0.1);
 }
 
 QSplitter::handle:horizontal {
@@ -122,9 +120,9 @@ QSplitter::handle:pressed {
 
 QPushButton#backButton{
     background-color:white;
-    border-left: 1px solid lightgray;
-    border-top: 1px solid lightgray;
-    border-bottom: 1px solid lightgray;
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     color: black;
     border-top-left-radius: 2px;
     border-bottom-left-radius: 2px;
@@ -140,9 +138,9 @@ QPushButton#forwardButton:hover{
 
 QPushButton#forwardButton{
     background-color:white;
-    border-top: 1px solid lightgray;
-    border-right: 1px solid lightgray;
-    border-bottom: 1px solid lightgray;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     color: black;
     border-top-right-radius: 2px;
     border-bottom-right-radius: 2px;
@@ -154,7 +152,7 @@ QPushButton#leftArrow:hover{
 
 QPushButton#leftArrow{
     background-color:white;
-    border: 1px solid lightGray;
+    border: 1px solid rgba(0, 0, 0, 0.1);
     color: black;
 }
 
@@ -164,20 +162,20 @@ QPushButton#rightArrow:hover{
 
 QPushButton#rightArrow{
     background-color:white;
-    border: 1px solid lightGray;
+    border: 1px solid rgba(0, 0, 0, 0.1);
     color: black;
 }
 
 QListWidget#DCrumbList{
     background-color:white;
-    border: 1px solid lightGray;
+    border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 QPushButton#iconViewButton{
     background-color:white;
-    border-left: 1px solid lightgray;
-    border-top: 1px solid lightgray;
-    border-bottom: 1px solid lightgray;
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     color: black;
     border-top-left-radius: 2px;
     border-bottom-left-radius: 2px;
@@ -186,6 +184,7 @@ QPushButton#iconViewButton{
 }
 
 QPushButton#iconViewButton:checked{
+    border: 1px solid #2794ff;
     background-color:#2ca7f8;
     image: url(:/icons/images/icons/icon_view_checked.svg);
     icon-size: 16px 16px;
@@ -199,9 +198,9 @@ QPushButton#iconViewButton:unchecked{
 
 QPushButton#listViewButton{
     background-color:white;
-    border-top: 1px solid lightgray;
-    border-right: 1px solid lightgray;
-    border-bottom: 1px solid lightgray;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     color: black;
     border-top-right-radius: 2px;
     border-bottom-right-radius: 2px;
@@ -210,6 +209,7 @@ QPushButton#listViewButton{
 }
 
 QPushButton#listViewButton:checked{
+    border: 1px solid #2794ff;
     background-color:#2ca7f8;
     image: url(:/icons/images/icons/list_view_checked.svg);
     icon-size: 16px 16px;
@@ -246,7 +246,7 @@ QPushButton#hierarchicalButton:unchecked{
 QPushButton#searchButton{
     background-color:white;
     image: url(:/icons/images/icons/search_normal.png);
-    border: 1px solid lightGray;
+    border: 1px solid rgba(0, 0, 0, 0.1);
     color: black;
     border-radius: 2px;
 }
@@ -254,7 +254,7 @@ QPushButton#searchButton{
 QPushButton#searchButton:pressed{
     background-color:white;
     image: url(:/icons/images/icons/search_pressed.png);
-    border: 1px solid lightGray;
+    border: 1px solid rgba(0, 0, 0, 0.1);
     color: black;
     border-radius: 2px;
 }
@@ -263,7 +263,7 @@ QPushButton#searchButton:pressed{
 QPushButton#searchButton:hover{
     background-color:#2ca7f8;
     image: url(:/icons/images/icons/search_hover.png);
-    border: 1px solid lightGray;
+    border: 1px solid rgba(0, 0, 0, 0.1);
     color: black;
     border-radius: 2px;
 }
@@ -311,7 +311,7 @@ QPushButton#DCrumbIconButton:checked{
 /* ******************DSearchBar****************** */
 QLineEdit#DSearchBar{
     background-color: #ffffff;
-    border: 1px solid lightGray;
+    border: 1px solid rgba(0, 0, 0, 0.1);
     padding-left:0px;
 }
 /*******************End of DSearchBar****************** */

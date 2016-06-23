@@ -120,6 +120,7 @@ void GvfsMountClient::ask_password_cb(GMountOperation *op, const char *message, 
 
     if (code){
         QJsonObject loginObj = AskPasswordDialog->getLoginData();
+        anonymous = loginObj.value("anonymous").toBool();
         QString username = loginObj.value("username").toString();
         QString domain = loginObj.value("domain").toString();
         QString password = loginObj.value("password").toString();
