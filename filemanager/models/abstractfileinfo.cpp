@@ -15,19 +15,19 @@ namespace FileSortFunction {
 Qt::SortOrder sortOrderGlobal;
 AbstractFileInfo::sortFunction sortFun;
 
-bool sortFileListByDisplayName(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &info2, Qt::SortOrder order)
+bool sortByString(const QString &str1, const QString &str2, Qt::SortOrder order)
 {
-    if(info1->isDir()) {
-        if(!info2->isDir())
-            return true;
-    } else {
-        if(info2->isDir())
+    if (Global::startWithHanzi(str1)) {
+        if (!Global::startWithHanzi(str2))
             return false;
+    } else if (Global::startWithHanzi(str2)) {
+        return true;
     }
 
-    return ((order == Qt::DescendingOrder) ^ (info1->displayName().toLower() < info2->displayName().toLower())) == 0x01;
+    return ((order == Qt::DescendingOrder) ^ (Global::toPinyin(str1).toLower() < Global::toPinyin(str2).toLower())) == 0x01;
 }
 
+SORT_FUN_DEFINE(displayName, DisplayName, AbstractFileInfo)
 SORT_FUN_DEFINE(size, Size, AbstractFileInfo)
 SORT_FUN_DEFINE(lastModified, Modified, AbstractFileInfo)
 SORT_FUN_DEFINE(mimeTypeDisplayNameOrder, Mime, AbstractFileInfo)
@@ -127,6 +127,16 @@ QString AbstractFileInfo::displayName() const
     }
 
     return QString();
+}
+
+QString AbstractFileInfo::pinyinName() const
+{
+    const QString &diaplayName = this->displayName();
+
+    if (data->pinyinName.isEmpty())
+        data->pinyinName = Global::toPinyin(diaplayName);
+
+    return data->pinyinName;
 }
 
 QString AbstractFileInfo::path() const
@@ -533,6 +543,8 @@ bool AbstractFileInfo::isEmptyFloder() const
 
 void AbstractFileInfo::updateFileMetaData()
 {
+    this->data->pinyinName = QString();
+
     if (metaDataCacheMap.contains(this->data->url))
         return;
 

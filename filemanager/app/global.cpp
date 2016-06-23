@@ -74,6 +74,31 @@ QString Global::elideText(const QString &text, const QSize &size, const QFontMet
     return str;
 }
 
+QString Global::toPinyin(const QString &text)
+{
+    QDBusInterface dbus_pinyin("com.deepin.api.Pinyin", "/com/deepin/api/Pinyin", "com.deepin.api.Pinyin");
+//    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(dbus_pinyin.asyncCall("Query", QString(title[0])), this);
+
+    QList<QVariant> list = dbus_pinyin.call("Query", text).arguments();
+
+    return list.first().toStringList().first();
+//    connect(watcher, &QDBusPendingCallWatcher::finished, watcher, [this, watcher, title, str]{
+//        QDBusPendingReply<QStringList> reply = *watcher;
+//        if (!reply.isError())
+//        {
+//            onAddLayoutItem(str, title, reply.value());
+//        }
+//        watcher->deleteLater();
+//    });
+}
+
+bool Global::startWithHanzi(const QString &text)
+{
+    const QVector<uint> list = text.toUcs4();
+
+    return !list.isEmpty() && list.first() >= 0x4e00 && list.first() <= 0x9fbf;
+}
+
 bool Global::keyShiftIsPressed()
 {
 #ifdef Q_OS_LINUX

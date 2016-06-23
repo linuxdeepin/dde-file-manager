@@ -144,6 +144,12 @@ public:
                       Qt::TextElideMode mode,
                       int flags = 0);
 
+    static QString toPinyin(const QString &text);
+    static bool startWithHanzi(const QString &text);
+    template<typename T>
+    static bool startWithHanzi(T)
+    { return false;}
+
     static bool keyShiftIsPressed();
     static bool keyCtrlIsPressed();
 };
