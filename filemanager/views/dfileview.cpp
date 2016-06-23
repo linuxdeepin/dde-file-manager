@@ -1347,6 +1347,7 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
             m_headerView->setSectionsClickable(true);
             m_headerView->setSortIndicatorShown(true);
             m_headerView->setDefaultAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+            m_headerView->setContextMenuPolicy(Qt::CustomContextMenu);
 
             if(selectionModel()) {
                 m_headerView->setSelectionModel(selectionModel());
@@ -1356,6 +1357,8 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
                     this, static_cast<void (DFileView::*)()>(&DFileView::update));
             connect(m_headerView, &QHeaderView::sortIndicatorChanged,
                     model(), &QAbstractItemModel::sort);
+            connect(m_headerView, &QHeaderView::customContextMenuRequested,
+                    this, &DFileView::popupHeaderViewContextMenu);
         }
 
         addHeaderWidget(m_headerView);
@@ -1563,12 +1566,6 @@ void DFileView::updateListHeaderViewProperty()
         int column_width = model()->columnWidth(i);
 
         if (column_width >= 0) {
-            if (i == 0)
-                column_width += LIST_MODE_LEFT_MARGIN + TEXT_PADDING;
-
-            if (i == m_headerView->count() - 1)
-                column_width += LIST_MODE_RIGHT_MARGIN + TEXT_PADDING;
-
             m_headerView->resizeSection(i, column_width);
         } else {
             m_headerView->setSectionResizeMode(i, QHeaderView::Stretch);
@@ -1578,8 +1575,12 @@ void DFileView::updateListHeaderViewProperty()
 
         if (!m_columnForRoleHiddenMap.contains(column_name)) {
             m_headerView->setSectionHidden(i, !model()->columnDefaultVisibleForRole(model()->columnToRole(i)));
+        } else {
+            m_headerView->setSectionHidden(i, m_columnForRoleHiddenMap.value(column_name));
         }
     }
+
+    updateEndVisibleColumnWidth();
 }
 
 void DFileView::updateExtendHeaderViewProperty()
@@ -1606,4 +1607,50 @@ void DFileView::updateItemSizeHint()
     } else {
         m_itemSizeHint = QSize(-1, LIST_VIEW_ICON_SIZE * 1.2);
     }
+}
+
+void DFileView::updateEndVisibleColumnWidth()
+{
+    int column_count = m_headerView->count();
+
+    for (int i = 0; i < column_count; ++i) {
+        if (m_headerView->isSectionHidden(i))
+            continue;
+
+        m_headerView->resizeSection(i, model()->columnWidth(i) + LIST_MODE_RIGHT_MARGIN + TEXT_PADDING);
+        break;
+    }
+
+    for (int i = column_count - 1; i > 0; --i) {
+        if (m_headerView->isSectionHidden(i))
+            continue;
+
+        m_headerView->resizeSection(i, model()->columnWidth(i) + LIST_MODE_RIGHT_MARGIN + TEXT_PADDING);
+        break;
+    }
+}
+
+void DFileView::popupHeaderViewContextMenu(const QPoint &/*pos*/)
+{
+    DMenu *menu = new DMenu();
+
+    for (int i = 1; i < m_headerView->count(); ++i) {
+        DAction *action = new DAction(menu);
+
+        action->setText(model()->columnNameByRole(model()->columnToRole(i)).toString());
+        action->setCheckable(true);
+        action->setChecked(!m_headerView->isSectionHidden(i));
+
+        connect(action, &DAction::triggered, this, [this, action, i] {
+            m_columnForRoleHiddenMap[action->text()] = action->isChecked();
+
+            m_headerView->setSectionHidden(i, action->isChecked());
+
+            updateEndVisibleColumnWidth();
+        });
+
+        menu->addAction(action);
+    }
+
+    menu->exec();
 }

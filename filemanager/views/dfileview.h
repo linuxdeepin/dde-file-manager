@@ -193,6 +193,8 @@ private:
     void updateListHeaderViewProperty();
     void updateExtendHeaderViewProperty();
     void updateItemSizeHint();
+    void updateEndVisibleColumnWidth();
+    void popupHeaderViewContextMenu(const QPoint &pos);
 
     using DListView::setOrientation;
 
