@@ -30,11 +30,34 @@ bool sortFileListBy##Name(const AbstractFileInfoPointer &info1, const AbstractFi
         if (isDir2) return false;\
     }\
     \
-    if ((isDir1 && isDir2 && (value1 == value2)) || (isFile1 && isFile2 && (value1 == value2))) {\
-        return info1->displayName().toLower() < info2->displayName().toLower();\
+    bool isStrType = typeid(value1) == typeid(QString);\
+    if (isStrType) {\
+        if (Global::startWithHanzi(value1)) {\
+            if (!Global::startWithHanzi(value2)) return false;\
+        } else if (Global::startWithHanzi(value2)) {\
+            return true;\
+        }\
     }\
     \
+    if ((isDir1 && isDir2 && (value1 == value2)) || (isFile1 && isFile2 && (value1 == value2))) {\
+        return sortByString(info1->displayName(), info2->displayName());\
+    }\
+    \
+    if (isStrType)\
+        return sortByString(value1, value2, order);\
+    \
     return ((order == Qt::DescendingOrder) ^ (value1 < value2)) == 0x01;\
+}
+
+namespace FileSortFunction {
+bool sortByString(const QString &str1, const QString &str2, Qt::SortOrder order = Qt::AscendingOrder);
+template<typename T>
+bool sortByString(T, T, Qt::SortOrder order = Qt::AscendingOrder)
+{
+    Q_UNUSED(order)
+
+    return false;
+}
 }
 
 class AbstractFileInfo;
@@ -74,6 +97,7 @@ public:
     virtual QString absoluteFilePath() const;
     virtual QString fileName() const;
     virtual QString displayName() const;
+    QString pinyinName() const;
 
     virtual QString path() const;
     virtual QString absolutePath() const;
@@ -181,6 +205,7 @@ protected:
         QString absoluteFilePath;
         QString fileName;
         QString displayName;
+        QString pinyinName;
         QString path;
         QString absolutePath;
 
