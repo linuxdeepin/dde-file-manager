@@ -481,12 +481,12 @@ QList<AbstractFileController*> FileServices::getHandlerTypeByUrl(const DUrl &fil
 void FileServices::openUrl(const FMEvent &event) const
 {
     const AbstractFileInfoPointer &fileInfo = createFileInfo(event.fileUrl());
-
     if(fileInfo && fileInfo->isDir()) {
         fileSignalManager->requestChangeCurrentUrl(event);
-
-        return;
+    }else if (deviceListener->isDeviceFolder(event.fileUrl().path())){
+        fileSignalManager->requestChangeCurrentUrl(event);
     }
-
-    openFile(event.fileUrl());
+    else{
+        openFile(event.fileUrl());
+    }
 }

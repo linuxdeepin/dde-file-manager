@@ -8,7 +8,8 @@
 UDiskListener::UDiskListener()
 {
     fileService->setFileUrlHandler(COMPUTER_SCHEME, "", this);
-    readFstab();
+
+//    readFstab();
     m_diskMountInterface = new DiskMountInterface(DiskMountInterface::staticServerPath(),
                                                   DiskMountInterface::staticInterfacePath(),
                                                   QDBusConnection::sessionBus(), this);
@@ -41,6 +42,13 @@ void UDiskListener::removeDevice(UDiskDeviceInfo *device)
 void UDiskListener::update()
 {
     asyncRequestDiskInfos();
+}
+
+void UDiskListener::load()
+{
+    foreach (UDiskDeviceInfo* device, m_list) {
+        mountAdded(device);
+    }
 }
 
 QString UDiskListener::lastPart(const QString &path)
@@ -109,8 +117,10 @@ UDiskDeviceInfo *UDiskListener::getDeviceByPath(const QString &path)
     for (int i = 0; i < m_list.size(); i++)
     {
         UDiskDeviceInfo * info = m_list.at(i);
-        if (path.startsWith(info->getMountPoint())){
-            return info;
+        if (!info->getMountPoint().isEmpty()){
+            if (path.startsWith(info->getMountPoint())){
+                return info;
+            }
         }
     }
     return NULL;
@@ -209,10 +219,11 @@ void UDiskListener::changed(int in0, const QString &in1)
         }else{
             emit mountRemoved(device);
         }
-
+        qDebug() << m_subscribers;
         foreach (Subscriber* sub, m_subscribers) {
-            qDebug() << info.MountPoint;
-            sub->doSubscriberAction(info.MountPoint);
+            QString url = DUrl::fromLocalFile(device->getMountPoint()).toString();
+            qDebug() << url;
+            sub->doSubscriberAction(url);
         }
 
     }else if (device && info.ID.isEmpty()){
