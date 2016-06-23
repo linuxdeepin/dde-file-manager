@@ -1,28 +1,14 @@
 #include "secrectmanager.h"
-#include "../app/global.h"
-#include "../app/filesignalmanager.h"
-#include "../shutil/standardpath.h"
 #include <QDebug>
 
 SecrectManager::SecrectManager(QObject *parent) : QObject(parent)
 {
-    initData();
-    initConnect();
+
 }
 
 SecrectManager::~SecrectManager()
 {
 
-}
-
-void SecrectManager::initData()
-{
-    loadCache();
-}
-
-void SecrectManager::initConnect()
-{
-    connect(fileSignalManager, &FileSignalManager::requsetCacheLoginData, this, &SecrectManager::cacheSambaLoginData);
 }
 
 const SecretSchema *SecrectManager::SMBSecretSchema()
@@ -67,52 +53,5 @@ void SecrectManager::clearPasswordByLoginObj(const QJsonObject &obj)
                           "server", obj.value("server").toString().toStdString().c_str(),
                           "protocol", obj.value("protocol").toString().toStdString().c_str(),
                           NULL);
-}
-
-QJsonObject SecrectManager::getLoginData(const QString &id)
-{
-    return m_smbLoginObjs.value(id).toObject();
-}
-
-QJsonObject SecrectManager::getLoginDatas()
-{
-    return m_smbLoginObjs;
-}
-
-void SecrectManager::cacheSambaLoginData(const QJsonObject &obj)
-{
-    QJsonValue v(obj);
-    m_smbLoginObjs.insert(obj.value("id").toString(), v);
-    saveCache();
-}
-
-void SecrectManager::loadCache()
-{
-    QString configPath = StandardPath::getCachePath();
-    QFile file(QString("%1/samba.json").arg(configPath));
-    if (!file.open(QIODevice::ReadOnly))
-    {
-        qDebug() << "Couldn't write samba file!";
-        return;
-    }
-    QByteArray data = file.readAll();
-    QJsonDocument jsonDoc(QJsonDocument::fromJson(data));
-    m_smbLoginObjs = jsonDoc.object();
-    file.close();
-    qDebug() << m_smbLoginObjs;
-}
-
-void SecrectManager::saveCache()
-{
-    QString configPath = StandardPath::getCachePath();
-    QFile file(QString("%1/samba.json").arg(configPath));
-    if (!file.open(QIODevice::WriteOnly))
-    {
-        qDebug() << "Couldn't write samba file!";
-        return;
-    }
-    QJsonDocument jsonDoc(m_smbLoginObjs);
-    file.write(jsonDoc.toJson());
-    file.close();
 }
 

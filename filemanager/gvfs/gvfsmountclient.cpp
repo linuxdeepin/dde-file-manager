@@ -71,12 +71,7 @@ void GvfsMountClient::mount_done_cb(GObject *object, GAsyncResult *res, gpointer
     }else{
         qDebug() << "g_file_mount_enclosing_volume_finish" << succeeded << AskingPassword;
         if (AskingPassword){
-            SMBLoginObj.insert("id", MountEvent.fileUrl().toString());
-            if (SMBLoginObj.value("passwordSave").toInt() == 2){
-                SMBLoginObj.remove("password");
-                emit fileSignalManager->requsetCacheLoginData(SMBLoginObj);
-            }
-            SMBLoginObj = {};
+            qDebug() << SMBLoginObj;
             AskingPassword = false;
         }else{
             qDebug() << "username" << g_mount_operation_get_username(op);

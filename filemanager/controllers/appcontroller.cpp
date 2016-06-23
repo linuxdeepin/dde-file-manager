@@ -33,7 +33,6 @@ AppController::AppController(QObject *parent) : QObject(parent)
     FileServices::dRegisterUrlHandler<NetworkController>(SMB_SCHEME, "");
     networkManager;
     gvfsMountClient;
-    secrectManager;
 }
 
 void AppController::initConnect()
@@ -387,70 +386,6 @@ void AppController::actionBack(const FMEvent &event)
 void AppController::actionForward(const FMEvent &event)
 {
     emit fileSignalManager->requestForward(event);
-}
-
-void AppController::actionForgetPassword(const FMEvent &event)
-{
-    QString path = event.fileUrl().query();
-
-    QJsonObject smbObj = secrectManager->getLoginData(path);
-    if (smbObj.empty()){
-        if (path.endsWith("/")){
-            path = path.left(path.length() - 1);
-            smbObj = secrectManager->getLoginData(path);
-
-            if (smbObj.isEmpty()){
-                QString share = path.split("/").last();
-                path = path.left(path.length() - share.length());
-                path += share.toUpper();
-                smbObj = secrectManager->getLoginData(path);
-            }
-        }else{
-            path += "/";
-            smbObj = secrectManager->getLoginData(path);
-            if (smbObj.isEmpty()){
-                QStringList _pl = path.split("/");
-                QString share = _pl.at(_pl.length() - 2);
-                path = path.left(path.length() - share.length() - 1);
-                path += share.toUpper();
-                path += "/";
-                smbObj = secrectManager->getLoginData(path);
-            }
-        }
-    }
-
-    qDebug() << path << smbObj;
-
-    if (!smbObj.empty()){
-        QStringList ids = path.split("/");
-        QString domain;
-        QString user;
-        QString server;
-        if (ids.at(2).contains(";")){
-            domain = ids.at(2).split(";").at(0);
-            QString userIps = ids.at(2).split(";").at(1);
-            if (userIps.contains("@")){
-                user = userIps.split("@").at(0);
-                server = userIps.split("@").at(1);
-            }
-        }else{
-            QString userIps = ids.at(2);
-            if (userIps.contains("@")){
-                user = userIps.split("@").at(0);
-                server = userIps.split("@").at(1);
-            }else{
-                server = userIps;
-            }
-        }
-        qDebug() <<  smbObj << server;
-        QJsonObject obj;
-        obj.insert("user", smbObj.value("username").toString());
-        obj.insert("domain", smbObj.value("domain").toString());
-        obj.insert("protocol", "smb");
-        obj.insert("server", server);
-        secrectManager->clearPasswordByLoginObj(obj);
-    }
-    actionUnmount(event);
 }
 
 void AppController::doSubscriberAction(const QString &path)

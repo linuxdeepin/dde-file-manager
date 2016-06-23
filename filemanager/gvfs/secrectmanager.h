@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QJsonObject>
+
 #undef signals
 extern "C" {
     #include <libsecret/secret.h>
@@ -16,9 +17,6 @@ public:
     explicit SecrectManager(QObject *parent = 0);
     ~SecrectManager();
 
-    void initData();
-    void initConnect();
-
     static const SecretSchema * SMBSecretSchema();
 
     static void on_password_cleared (GObject *source,
@@ -26,18 +24,12 @@ public:
                                 gpointer unused);
 
     void clearPasswordByLoginObj(const QJsonObject& obj);
-    QJsonObject getLoginData(const QString& id);
-    QJsonObject getLoginDatas();
 signals:
 
 public slots:
-    void cacheSambaLoginData(const QJsonObject& obj);
-    void loadCache();
-    void saveCache();
-
 
 private:
-    QJsonObject m_smbLoginObjs;
+    QJsonObject m_smbLoginObj;
 };
 
 #endif // SECRECTMANAGER_H
