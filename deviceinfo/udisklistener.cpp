@@ -44,12 +44,7 @@ void UDiskListener::update()
     asyncRequestDiskInfos();
 }
 
-void UDiskListener::load()
-{
-    foreach (UDiskDeviceInfo* device, m_list) {
-        mountAdded(device);
-    }
-}
+
 
 QString UDiskListener::lastPart(const QString &path)
 {
@@ -86,6 +81,11 @@ void UDiskListener::removeSubscriber(Subscriber *sub)
 QMap<QString, UDiskDeviceInfo *> UDiskListener::getAllDeviceInfos()
 {
     return m_map;
+}
+
+QList<UDiskDeviceInfo *> UDiskListener::getDeviceList()
+{
+    return m_list;
 }
 
 bool UDiskListener::isDeviceFolder(const QString &path) const

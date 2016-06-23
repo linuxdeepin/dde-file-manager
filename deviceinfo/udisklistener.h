@@ -34,7 +34,6 @@ public:
     void addDevice(UDiskDeviceInfo * device);
     void removeDevice(UDiskDeviceInfo * device);
     void update();
-    void load();
     QString lastPart(const QString &path);
     bool isSystemDisk(const QString &path) const;
     UDiskDeviceInfo * hasDeviceInfo(const QString &id);
@@ -43,6 +42,7 @@ public:
     void removeSubscriber(Subscriber* sub);
 
     QMap<QString, UDiskDeviceInfo *> getAllDeviceInfos();
+    QList<UDiskDeviceInfo *> getDeviceList();
 
     bool isDeviceFolder(const QString &path) const;
     bool isInDeviceFolder(const QString &path) const;
