@@ -26,20 +26,20 @@ DUrl::DUrl()
 DUrl::DUrl(const QUrl &copy)
     : QUrl(copy)
 {
-    makeAbsolute();
+    updateVirtualPath();
 }
 
 #ifdef QT_NO_URL_CAST_FROM_STRING
 ZUrl(const QString &url, ParsingMode mode)
     : QUrl(url, mode)
 {
-    makeAbsolute();
+    updateVirtualPath();
 }
 #else
 DUrl::DUrl(const QString &url, QUrl::ParsingMode mode)
     : QUrl(url, mode)
 {
-    makeAbsolute();
+    updateVirtualPath();
 }
 
 void DUrl::setPath(const QString &path, QUrl::ParsingMode mode, bool makeAbsolute)
@@ -47,7 +47,9 @@ void DUrl::setPath(const QString &path, QUrl::ParsingMode mode, bool makeAbsolut
     QUrl::setPath(path, mode);
 
     if(makeAbsolute)
-        this->makeAbsolute();
+        this->makeAbsolutePath();
+
+    updateVirtualPath();
 }
 
 void DUrl::setScheme(const QString &scheme, bool makeAbsolute)
@@ -55,7 +57,9 @@ void DUrl::setScheme(const QString &scheme, bool makeAbsolute)
     QUrl::setScheme(scheme);
 
     if(makeAbsolute)
-        this->makeAbsolute();
+        this->makeAbsolutePath();
+
+    updateVirtualPath();
 }
 
 void DUrl::setUrl(const QString &url, QUrl::ParsingMode parsingMode, bool makeAbsolute)
@@ -63,7 +67,7 @@ void DUrl::setUrl(const QString &url, QUrl::ParsingMode parsingMode, bool makeAb
     QUrl::setUrl(url, parsingMode);
 
     if(makeAbsolute)
-        this->makeAbsolute();
+        this->makeAbsolutePath();
 }
 
 bool DUrl::isTrashFile() const
@@ -371,7 +375,7 @@ bool DUrl::operator ==(const DUrl &url) const
             port() == url.port();
 }
 
-void DUrl::makeAbsolute()
+void DUrl::makeAbsolutePath()
 {
     if(!schemeList.contains(this->scheme()))
         return;
@@ -390,13 +394,20 @@ void DUrl::makeAbsolute()
             QUrl::setPath(QFileInfo(this->path()).absoluteFilePath());
         }
     }
+}
 
-    updateVirtualPath();
+DUrl DUrl::toAbsolutePathUrl() const
+{
+    DUrl url = *this;
+
+    url.makeAbsolutePath();
+
+    return url;
 }
 
 void DUrl::updateVirtualPath()
 {
-    m_virtualPath = this->path();
+    m_virtualPath = this->toAbsolutePathUrl().path();
 
     if(m_virtualPath.endsWith('/') && m_virtualPath.count() != 1) {
         m_virtualPath.remove(m_virtualPath.count() - 1, 1);

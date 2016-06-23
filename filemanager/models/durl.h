@@ -27,9 +27,9 @@ public:
     explicit DUrl(const QString &url, ParsingMode mode = TolerantMode);
 #endif
 
-    void setPath(const QString &path, ParsingMode mode = DecodedMode, bool makeAbsolute = true);
-    void setScheme(const QString &scheme, bool makeAbsolute = true);
-    void setUrl(const QString &url, ParsingMode parsingMode = TolerantMode, bool makeAbsolute = true);
+    void setPath(const QString &path, ParsingMode mode = DecodedMode, bool makeAbsolutePath = true);
+    void setScheme(const QString &scheme, bool makeAbsolutePath = true);
+    void setUrl(const QString &url, ParsingMode parsingMode = TolerantMode, bool makeAbsolutePath = true);
 
     bool isTrashFile() const;
     bool isRecentFile() const;
@@ -75,8 +75,10 @@ public:
     bool operator ==(const DUrl &url) const;
     friend Q_CORE_EXPORT uint qHash(const DUrl &url, uint seed) Q_DECL_NOTHROW;
 
+    void makeAbsolutePath();
+    DUrl toAbsolutePathUrl() const;
+
 private:
-    void makeAbsolute();
     void updateVirtualPath();
 
     QString m_virtualPath;
