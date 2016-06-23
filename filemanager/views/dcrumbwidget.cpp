@@ -287,6 +287,8 @@ void DCrumbWidget::addLocalCrumbs(const DUrl & url)
         list.append(tmpPath.split("/"));
         list.insert(0, m_homePath);
         list.removeAll("");
+    }else if (isRootFolder(path)){
+        list.insert(0, "/");
     }else if(isInDevice(path)){
         UDiskDeviceInfo* info = deviceListener->getDeviceByPath(path);
         QString mountPoint = info->getMountPoint();
