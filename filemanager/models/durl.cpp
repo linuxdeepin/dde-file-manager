@@ -15,7 +15,9 @@ QSet<QString> schemeList = QSet<QString>() << QString(TRASH_SCHEME)
                                            << QString(COMPUTER_SCHEME )
                                            << QString(SEARCH_SCHEME)
                                            << QString(NETWORK_SCHEME)
-                                           << QString(SMB_SCHEME);
+                                           << QString(SMB_SCHEME)
+                                           << QString(AFC_SCHEME)
+                                           << QString(MTP_SCHEME);
 
 DUrl::DUrl()
     : QUrl()
@@ -103,6 +105,16 @@ bool DUrl::isNetWorkFile() const
 bool DUrl::isSMBFile() const
 {
     return scheme() == SMB_SCHEME;
+}
+
+bool DUrl::isAFCFile() const
+{
+    return scheme() == AFC_SCHEME;
+}
+
+bool DUrl::isMTPFile() const
+{
+    return scheme() == MTP_SCHEME;
 }
 
 QString DUrl::toString(QUrl::FormattingOptions options) const
@@ -259,6 +271,26 @@ DUrl DUrl::fromNetworkFile(const QString &filePath)
     DUrl url;
 
     url.setScheme(NETWORK_SCHEME, false);
+    url.setPath(filePath);
+
+    return url;
+}
+
+DUrl DUrl::fromAFCFile(const QString &filePath)
+{
+    DUrl url;
+
+    url.setScheme(AFC_SCHEME, false);
+    url.setPath(filePath);
+
+    return url;
+}
+
+DUrl DUrl::fromMTPFile(const QString &filePath)
+{
+    DUrl url;
+
+    url.setScheme(MTP_SCHEME, false);
     url.setPath(filePath);
 
     return url;

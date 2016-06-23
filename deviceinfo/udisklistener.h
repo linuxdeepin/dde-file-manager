@@ -34,6 +34,7 @@ public:
     void addDevice(UDiskDeviceInfo * device);
     void removeDevice(UDiskDeviceInfo * device);
     void update();
+    void load();
     QString lastPart(const QString &path);
     bool isSystemDisk(const QString &path) const;
     UDiskDeviceInfo * hasDeviceInfo(const QString &id);
