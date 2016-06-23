@@ -30,7 +30,8 @@ public:
         FileLastReadRole = Qt::UserRole + 7,
         FileCreatedRole = Qt::UserRole + 8,
         FileDisplayNameRole = Qt::UserRole + 9,
-        FileUserRole = Qt::UserRole + 10
+        FileUserRole = Qt::UserRole + 10,
+        UnknowRole = Qt::UserRole + 999
     };
 
     explicit DFileSystemModel(DFileView *parent = 0);
@@ -53,7 +54,9 @@ public:
     bool hasChildren(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
-    QVariant headerData(int section, Qt::Orientation orientation, int role) const Q_DECL_OVERRIDE;
+    QVariant headerData(int column, Qt::Orientation orientation, int role) const Q_DECL_OVERRIDE;
+
+    static QString roleName(int role);
 
     int columnToRole(int column) const;
     int roleToColumn(int role) const;

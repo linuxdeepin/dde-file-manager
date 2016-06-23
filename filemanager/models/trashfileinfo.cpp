@@ -7,24 +7,28 @@
 
 #include "../shutil/iconprovider.h"
 
+#include "../models/dfilesystemmodel.h"
+
 #include <QMimeType>
 
 TrashFileInfo::TrashFileInfo()
     : AbstractFileInfo()
 {
-
+    init();
 }
 
 TrashFileInfo::TrashFileInfo(const DUrl &url)
     : AbstractFileInfo()
 {
     TrashFileInfo::setUrl(url);
+    init();
 }
 
 TrashFileInfo::TrashFileInfo(const QString &url)
     : AbstractFileInfo()
 {
     TrashFileInfo::setUrl(DUrl(url));
+    init();
 }
 
 bool TrashFileInfo::isCanRename() const
@@ -129,19 +133,28 @@ QSet<MenuAction> TrashFileInfo::disableMenuActionList() const
     return list;
 }
 
-quint8 TrashFileInfo::userColumnCount() const
+QVariant TrashFileInfo::userColumnData(int userColumnRole) const
 {
-    return 1;
+    if (userColumnRole == DFileSystemModel::FileUserRole + 1)
+        return originalFilePath;
+
+    return AbstractFileInfo::userColumnData(userColumnRole);
 }
 
-QVariant TrashFileInfo::userColumnData(quint8 /*userColumnType*/) const
+QVariant TrashFileInfo::userColumnDisplayName(int userColumnRole) const
 {
-    return originalFilePath;
+    if (userColumnRole == DFileSystemModel::FileUserRole + 1)
+        return QObject::tr("Source Path");
+
+    return AbstractFileInfo::userColumnDisplayName(userColumnRole);
 }
 
-QVariant TrashFileInfo::userColumnDisplayName(quint8 /*userColumnType*/) const
+int TrashFileInfo::userColumnWidth(int userColumnRole) const
 {
-    return QObject::tr("Source Path");
+    if (userColumnRole == DFileSystemModel::FileUserRole + 1)
+        return -1;
+
+    return AbstractFileInfo::userColumnWidth(userColumnRole);
 }
 
 bool TrashFileInfo::restore(const FMEvent &event) const
@@ -187,4 +200,9 @@ void TrashFileInfo::updateInfo()
     } else {
         m_displayName = QObject::tr("Trash");
     }
+}
+
+void TrashFileInfo::init()
+{
+    m_userColumnRoles << DFileSystemModel::FileUserRole + 1;
 }

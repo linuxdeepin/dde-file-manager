@@ -21,7 +21,7 @@
 #include <QMimeData>
 
 #define fileService FileServices::instance()
-#define DEFAULT_COLUMN_COUNT 5
+#define DEFAULT_COLUMN_COUNT 1
 
 class FileSystemNode : public QSharedData
 {
@@ -132,7 +132,7 @@ int DFileSystemModel::columnCount(const QModelIndex &parent) const
     const AbstractFileInfoPointer &currentFileInfo = fileInfo(m_activeIndex);
 
     if(currentFileInfo) {
-        columnCount += currentFileInfo->userColumnCount();
+        columnCount += currentFileInfo->userColumnRole().count();
     }
 
     return columnCount;
@@ -144,17 +144,11 @@ int DFileSystemModel::columnWidthByRole(int role) const
     case FileNameRole:
     case FileDisplayNameRole:
         return -1;
-    case FileSizeRole:
-        return 100;
-    case FileMimeTypeRole:
-        return 100;
     default:
-        if (role >= FileUserRole) {
-            const AbstractFileInfoPointer &currentFileInfo = fileInfo(m_activeIndex);
+        const AbstractFileInfoPointer &currentFileInfo = fileInfo(m_activeIndex);
 
-            if (currentFileInfo)
-                return currentFileInfo->userColumnWidth(role - FileUserRole);
-        }
+        if (currentFileInfo)
+            return currentFileInfo->userColumnWidth(role);
 
         return 140;
     }
@@ -182,18 +176,11 @@ QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
 
     switch (role) {
     case Qt::EditRole:
-    case Qt::DisplayRole:
-        switch (index.column()) {
-        case 0: return indexNode->fileInfo->displayName();
-        case 1: return indexNode->fileInfo->lastModified().toString();
-        case 2: return indexNode->fileInfo->size();
-        case 3: return indexNode->fileInfo->mimeTypeName();
-        case 4: return indexNode->fileInfo->created().toString();
-        default:
-            qWarning("data: invalid display value column %d", index.column());
-            break;
-        }
-        break;
+    case Qt::DisplayRole: {
+        const AbstractFileInfoPointer &fileInfo = indexNode->fileInfo;
+
+        return fileInfo->userColumnData(columnToRole(index.column()));
+    }
     case FilePathRole:
         return indexNode->fileInfo->absoluteFilePath();
     case FileDisplayNameRole:
@@ -226,31 +213,27 @@ QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
     default: {
         const AbstractFileInfoPointer &fileInfo = indexNode->fileInfo;
 
-        return fileInfo->userColumnData(AbstractFileInfo::UserType + role - FileUserRole);
+        return fileInfo->userColumnData(role);
     }
     }
 
     return QVariant();
 }
 
-QVariant DFileSystemModel::headerData(int section, Qt::Orientation, int role) const
+QVariant DFileSystemModel::headerData(int column, Qt::Orientation, int role) const
 {
     if(role == Qt::DisplayRole) {
-        switch(section)
-        {
-        case 0: return tr("Name");
-        case 1: return tr("Time modified");
-        case 2: return tr("Size");
-        case 3: return tr("Type");
-        case 4: return tr("Time created");
-        default: {
+        int column_role = columnToRole(column);
+
+        if (column_role == FileDisplayNameRole) {
+            return roleName(FileDisplayNameRole);
+        } else {
             const AbstractFileInfoPointer &fileInfo = this->fileInfo(m_activeIndex);
 
             if(fileInfo)
-                return fileInfo->userColumnDisplayName(AbstractFileInfo::UserType + section - DEFAULT_COLUMN_COUNT);
+                return fileInfo->userColumnDisplayName(column_role);
 
             return QVariant();
-        }
         }
     } else if(role == Qt::BackgroundRole) {
         return QBrush(Qt::white);
@@ -261,40 +244,57 @@ QVariant DFileSystemModel::headerData(int section, Qt::Orientation, int role) co
     return QVariant();
 }
 
+QString DFileSystemModel::roleName(int role)
+{
+    switch(role)
+    {
+    case FileDisplayNameRole:
+    case FileNameRole:
+        return tr("Name");
+    case FileLastModifiedRole:
+        return tr("Time modified");
+    case FileSizeRole:
+        return tr("Size");
+    case FileMimeTypeRole:
+        return tr("Type");
+    case FileCreatedRole:
+        return tr("Time created");
+    default: return QString();
+    }
+}
+
 int DFileSystemModel::columnToRole(int column) const
 {
-    switch (column) {
-    case 0:
+    if (column == 0) {
         return FileDisplayNameRole;
-    case 1:
-        return FileLastModifiedRole;
-    case 2:
-        return FileSizeRole;
-    case 3:
-        return FileMimeTypeRole;
-    case 4:
-        return FileCreatedRole;
-    default:
-        return FileUserRole + column - DEFAULT_COLUMN_COUNT;
+    } else {
+        const AbstractFileInfoPointer &fileInfo = this->fileInfo(m_activeIndex);
+
+        if(fileInfo)
+            return fileInfo->userColumnRole().value(column - 1, UnknowRole);
     }
+
+    return UnknowRole;
 }
 
 int DFileSystemModel::roleToColumn(int role) const
 {
-    switch (role) {
-    case FileDisplayNameRole:
+    if (role == FileDisplayNameRole) {
         return 0;
-    case FileLastModifiedRole:
-        return 1;
-    case FileSizeRole:
-        return 2;
-    case FileMimeTypeRole:
-        return 3;
-    case FileCreatedRole:
-        return 4;
-    default:
-        return role - FileUserRole + DEFAULT_COLUMN_COUNT;
+    } else {
+        const AbstractFileInfoPointer &fileInfo = this->fileInfo(m_activeIndex);
+
+        if(fileInfo) {
+            int column = fileInfo->userColumnRole().indexOf(role);
+
+            if (column < 0)
+                return -1;
+
+            return column + 1;
+        }
     }
+
+    return -1;
 }
 
 void DFileSystemModel::fetchMore(const QModelIndex &parent)
@@ -803,26 +803,10 @@ bool DFileSystemModel::isDir(const FileSystemNodePointer &node) const
 
 void DFileSystemModel::sort(const AbstractFileInfoPointer &parentInfo, QList<AbstractFileInfoPointer> &list) const
 {
-    switch (m_sortRole) {
-    case FileDisplayNameRole:
-    case FileNameRole:
-        parentInfo->sortByColumn(list, AbstractFileInfo::DisplayNameType, m_srotOrder);
-        break;
-    case FileSizeRole:
-        parentInfo->sortByColumn(list, AbstractFileInfo::SizeType, m_srotOrder);
-        break;
-    case FileLastModifiedRole:
-        parentInfo->sortByColumn(list, AbstractFileInfo::LastModifiedDateType, m_srotOrder);
-        break;
-    case FileCreatedRole:
-        parentInfo->sortByColumn(list, AbstractFileInfo::CreatedDateType, m_srotOrder);
-        break;
-    case FileMimeTypeRole:
-        parentInfo->sortByColumn(list, AbstractFileInfo::FileMimeType, m_srotOrder);
-        break;
-    default:
-        break;
-    }
+    if (!parentInfo)
+        return;
+
+    parentInfo->sortByColumn(list, m_sortRole, m_srotOrder);
 }
 
 const FileSystemNodePointer DFileSystemModel::createNode(const FileSystemNodePointer &parent, const AbstractFileInfoPointer &info)

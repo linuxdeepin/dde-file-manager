@@ -29,15 +29,6 @@ public:
         SpaceArea
     };
 
-    enum ColumnType {
-        DisplayNameType = 0,
-        SizeType = 1,
-        LastModifiedDateType = 2,
-        CreatedDateType = 3,
-        FileMimeType = 4,
-        UserType = 5
-    };
-
     inline static QString timeFormat(){
         return "yyyy/MM/dd HH:mm:ss";
     }
@@ -123,22 +114,22 @@ public:
     /// return DFileView::ViewMode flags
     virtual quint8 supportViewMode() const;
 
-    virtual quint8 userColumnCount() const;
+    QList<int> userColumnRole() const
+    { return m_userColumnRoles;}
 
-    /// userColumnType = ColumnType::UserType + user column index
-    virtual QVariant userColumnDisplayName(quint8 userColumnType) const;
+    virtual QVariant userColumnDisplayName(int userColumnRole) const;
 
     /// get custom column data
-    virtual QVariant userColumnData(quint8 userColumnType) const;
+    virtual QVariant userColumnData(int userColumnRole) const;
 
     /// get custom column width
-    virtual int userColumnWidth(quint8 userColumntype) const;
+    virtual int userColumnWidth(int userColumnRole) const;
 
-    virtual void sortByColumn(QList<AbstractFileInfoPointer> &fileList, quint8 columnType,
+    virtual void sortByColumn(QList<AbstractFileInfoPointer> &fileList, int columnRole,
                               Qt::SortOrder order = Qt::AscendingOrder) const;
 
     /// getFileInfoFun is get AbstractFileInfoPointer by index for caller. if return -1 then insert file list last
-    virtual int getIndexByFileInfo(getFileInfoFun fun, const AbstractFileInfoPointer &info, quint8 columnType,
+    virtual int getIndexByFileInfo(getFileInfoFun fun, const AbstractFileInfoPointer &info, int columnType,
                                    Qt::SortOrder order = Qt::AscendingOrder) const;
 
     virtual bool canRedirectionFileUrl() const;
@@ -149,7 +140,7 @@ public:
     static Qt::SortOrder sortOrderGlobal;
 
 protected:
-    virtual void sortByUserColumn(QList<AbstractFileInfoPointer> &fileList, quint8 columnType,
+    virtual void sortByUserColumn(QList<AbstractFileInfoPointer> &fileList, int columnType,
                                   Qt::SortOrder order = Qt::AscendingOrder) const;
 
     struct FileInfoData
@@ -173,6 +164,8 @@ protected:
 
     FileInfoData *data;
 
+    QList<int> m_userColumnRoles;
+
 private:
     struct FileMetaData
     {
@@ -189,6 +182,7 @@ private:
     }
 
     void updateFileMetaData();
+    void init();
 
     static QMap<DUrl, FileMetaData> metaDataCacheMap;
 };
