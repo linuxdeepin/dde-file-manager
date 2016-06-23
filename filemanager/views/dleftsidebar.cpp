@@ -269,7 +269,9 @@ void DLeftSideBar::loadDevices()
     if (deviceListener->getAllDeviceInfos().count() == 0){
         deviceListener->update();
     }else{
-        deviceListener->load();
+        foreach (UDiskDeviceInfo* device, deviceListener->getDeviceList()) {
+            m_scene->mountAdded(device);
+        }
     }
 }
 QGraphicsView *DLeftSideBar::view() const

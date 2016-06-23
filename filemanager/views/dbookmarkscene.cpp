@@ -533,7 +533,6 @@ void DBookmarkScene::volumeRemoved(UDiskDeviceInfo *device)
 
 void DBookmarkScene::mountAdded(UDiskDeviceInfo *device)
 {
-    qDebug() << device;
     DBookmarkItem * item = m_diskItems.value(device->getDiskInfo().ID);
     if(item)
     {
