@@ -131,6 +131,9 @@ void DFileView::initConnects()
         connect(qApp->clipboard(), &QClipboard::dataChanged, [] {
             DFileView::m_cutUrlSet.clear();
 
+            if (qApp->clipboard()->mimeData()->text() != "cut")
+                return;
+
             for (const QUrl &url : qApp->clipboard()->mimeData()->urls()) {
                 DFileView::m_cutUrlSet << url;
             }
