@@ -10,10 +10,12 @@
 #include <QDateTime>
 #include <QDebug>
 
-Qt::SortOrder AbstractFileInfo::sortOrderGlobal;
 
 namespace FileSortFunction {
-bool sortFileListByDisplayName(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &info2)
+Qt::SortOrder sortOrderGlobal;
+AbstractFileInfo::sortFunction sortFun;
+
+bool sortFileListByDisplayName(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &info2, Qt::SortOrder order)
 {
     if(info1->isDir()) {
         if(!info2->isDir())
@@ -23,14 +25,18 @@ bool sortFileListByDisplayName(const AbstractFileInfoPointer &info1, const Abstr
             return false;
     }
 
-    return ((AbstractFileInfo::sortOrderGlobal == Qt::DescendingOrder)
-            ^ (info1->displayName().toLower() < info2->displayName().toLower())) == 0x01;
+    return ((order == Qt::DescendingOrder) ^ (info1->displayName().toLower() < info2->displayName().toLower())) == 0x01;
 }
 
 SORT_FUN_DEFINE(size, Size)
 SORT_FUN_DEFINE(lastModified, Modified)
 SORT_FUN_DEFINE(mimeTypeDisplayNameOrder, Mime)
 SORT_FUN_DEFINE(created, Created)
+
+bool sort(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &info2)
+{
+    return sortFun(info1, info2, sortOrderGlobal);
+}
 } /// end namespace FileSortFunction
 
 QMap<DUrl, AbstractFileInfo::FileMetaData> AbstractFileInfo::metaDataCacheMap;
@@ -452,57 +458,42 @@ bool AbstractFileInfo::columnDefaultVisibleForRole(int role) const
              || role == DFileSystemModel::FileMimeTypeRole);
 }
 
-void AbstractFileInfo::sortByColumn(QList<AbstractFileInfoPointer> &fileList, int columnRole, Qt::SortOrder order) const
+AbstractFileInfo::sortFunction AbstractFileInfo::sortFunByColumn(int columnRole) const
 {
-    sortOrderGlobal = order;
-
     switch (columnRole) {
     case DFileSystemModel::FileDisplayNameRole:
-        qSort(fileList.begin(), fileList.end(), FileSortFunction::sortFileListByDisplayName);
-        break;
+        return FileSortFunction::sortFileListByDisplayName;
     case DFileSystemModel::FileLastModifiedRole:
-        qSort(fileList.begin(), fileList.end(), FileSortFunction::sortFileListByModified);
-        break;
+        return FileSortFunction::sortFileListByModified;
     case DFileSystemModel::FileSizeRole:
-        qSort(fileList.begin(), fileList.end(), FileSortFunction::sortFileListBySize);
-        break;
+        return FileSortFunction::sortFileListBySize;
     case DFileSystemModel::FileMimeTypeRole:
-        qSort(fileList.begin(), fileList.end(), FileSortFunction::sortFileListByMime);
-        break;
+        return FileSortFunction::sortFileListByMime;
     case DFileSystemModel::FileCreatedRole:
-        qSort(fileList.begin(), fileList.end(), FileSortFunction::sortFileListByCreated);
-        break;
+        return FileSortFunction::sortFileListByCreated;
     default:
-        sortByUserColumn(fileList, columnRole, order);
-        break;
+        return sortFunction();
     }
+}
+
+void AbstractFileInfo::sortByColumn(QList<AbstractFileInfoPointer> &fileList, int columnRole, Qt::SortOrder order) const
+{
+    FileSortFunction::sortOrderGlobal = order;
+    FileSortFunction::sortFun = sortFunByColumn(columnRole);
+
+    if (!FileSortFunction::sortFun)
+        return;
+
+    qSort(fileList.begin(), fileList.end(), FileSortFunction::sort);
 }
 
 int AbstractFileInfo::getIndexByFileInfo(getFileInfoFun fun, const AbstractFileInfoPointer &info, int columnType, Qt::SortOrder order) const
 {
-    std::function<bool(const AbstractFileInfoPointer&, const AbstractFileInfoPointer&)> sortFun;
+    FileSortFunction::sortOrderGlobal = order;
+    FileSortFunction::sortFun = sortFunByColumn(columnType);
 
-    sortOrderGlobal = order;
-
-    switch (columnType) {
-    case DFileSystemModel::FileDisplayNameRole:
-        sortFun = FileSortFunction::sortFileListByDisplayName;
-        break;
-    case DFileSystemModel::FileLastModifiedRole:
-        sortFun = FileSortFunction::sortFileListByModified;
-        break;
-    case DFileSystemModel::FileSizeRole:
-        sortFun = FileSortFunction::sortFileListBySize;
-        break;
-    case DFileSystemModel::FileMimeTypeRole:
-        sortFun = FileSortFunction::sortFileListByMime;
-        break;
-    case DFileSystemModel::FileCreatedRole:
-        sortFun = FileSortFunction::sortFileListByCreated;
-        break;
-    default:
+    if (!FileSortFunction::sortFun)
         return -1;
-    }
 
     int index = -1;
 
@@ -512,7 +503,7 @@ int AbstractFileInfo::getIndexByFileInfo(getFileInfoFun fun, const AbstractFileI
         if(!tmp_info)
             break;
 
-        if(sortFun(info, tmp_info)) {
+        if(FileSortFunction::sort(info, tmp_info)) {
             break;
         }
     }
@@ -538,13 +529,6 @@ bool AbstractFileInfo::isEmptyFloder() const
     DDirIteratorPointer it = FileServices::instance()->createDirIterator(fileUrl(), QDir::AllEntries | QDir::NoDotAndDotDot, QDirIterator::NoIteratorFlags);
 
     return it && !it->hasNext();
-}
-
-void AbstractFileInfo::sortByUserColumn(QList<AbstractFileInfoPointer> &fileList, int columnType, Qt::SortOrder order) const
-{
-    Q_UNUSED(fileList)
-    Q_UNUSED(columnType)
-    Q_UNUSED(order)
 }
 
 void AbstractFileInfo::updateFileMetaData()
