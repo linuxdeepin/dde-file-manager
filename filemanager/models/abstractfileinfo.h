@@ -13,7 +13,7 @@
 #include "menuactiontype.h"
 
 #define SORT_FUN_DEFINE(Value, Name) \
-bool sortFileListBy##Name(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &info2)\
+bool sortFileListBy##Name(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &info2, Qt::SortOrder order)\
 {\
     bool isDir1 = info1->isDir();\
     bool isDir2 = info2->isDir();\
@@ -34,7 +34,7 @@ bool sortFileListBy##Name(const AbstractFileInfoPointer &info1, const AbstractFi
         return info1->displayName().toLower() < info2->displayName().toLower();\
     }\
     \
-    return ((AbstractFileInfo::sortOrderGlobal == Qt::DescendingOrder) ^ (value1 < value2)) == 0x01;\
+    return ((order == Qt::DescendingOrder) ^ (value1 < value2)) == 0x01;\
 }
 
 class AbstractFileInfo;
@@ -153,6 +153,9 @@ public:
     /// user column default visible for role
     virtual bool columnDefaultVisibleForRole(int role) const;
 
+    typedef std::function<bool(const AbstractFileInfoPointer&, const AbstractFileInfoPointer&, Qt::SortOrder)> sortFunction;
+    virtual sortFunction sortFunByColumn(int columnRole) const;
+
     virtual void sortByColumn(QList<AbstractFileInfoPointer> &fileList, int columnRole,
                               Qt::SortOrder order = Qt::AscendingOrder) const;
 
@@ -165,12 +168,7 @@ public:
 
     virtual bool isEmptyFloder() const;
 
-    static Qt::SortOrder sortOrderGlobal;
-
 protected:
-    virtual void sortByUserColumn(QList<AbstractFileInfoPointer> &fileList, int columnType,
-                                  Qt::SortOrder order = Qt::AscendingOrder) const;
-
     struct FileInfoData
     {
         DUrl url;
