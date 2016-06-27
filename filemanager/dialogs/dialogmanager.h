@@ -11,6 +11,7 @@ class DUrl;
 class FMEvent;
 class PropertyDialog;
 class CloseAllDialogIndicator;
+class QTimer;
 
 class DialogManager : public QObject
 {
@@ -43,11 +44,15 @@ public slots:
 
     void removePropertyDialog(const DUrl& url);
     void closeAllPropertyDialog();
+    void updateCloseIndicator();
+    void raiseAllPropertyDialog();
+    void handleFocusChanged(QWidget* old, QWidget* now);
 private:
     DTaskDialog* m_taskDialog = NULL;
     CloseAllDialogIndicator* m_closeIndicatorDialog;
     QMap<QString, FileJob*> m_jobs;
     QMap<DUrl, PropertyDialog*> m_propertyDialogs;
+    QTimer* m_closeIndicatorTimer = NULL;
 
 };
 

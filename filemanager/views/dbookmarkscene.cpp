@@ -523,9 +523,7 @@ void DBookmarkScene::volumeRemoved(UDiskDeviceInfo *device)
     {
         remove(item);
         m_diskItems.remove(device->getDiskInfo().ID);
-        if (item->isChecked()){
-            backHome();
-        }
+        backHome();
         qDebug() << device->getDiskInfo() << item;
         item->deleteLater();
     }
@@ -546,7 +544,7 @@ void DBookmarkScene::mountAdded(UDiskDeviceInfo *device)
         }else if (device->getMediaType() == UDiskDeviceInfo::iphone){
             key = "Iphone";
         }else if (device->getMediaType() == UDiskDeviceInfo::phone){
-            key = "Andriod";
+            key = "Android";
         }else if (device->getMediaType() == UDiskDeviceInfo::network){
             key = "Network";
         }
@@ -576,9 +574,7 @@ void DBookmarkScene::mountRemoved(UDiskDeviceInfo *device)
     {
         item->setMounted(false);
         qDebug() << device->getDiskInfo() << item;
-        if (item->isChecked()){
-            backHome();
-        }
+        backHome();
         return;
     }
 }

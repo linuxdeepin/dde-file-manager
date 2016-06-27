@@ -86,6 +86,8 @@ public:
     void startComputerFolderSize(const QString& dir);
     void toggleFileExecutable(bool isChecked);
     DUrl getUrl();
+    int getFileCount();
+    qint64 getFileSize();
 
 public slots:
     void raise();
@@ -101,6 +103,8 @@ protected:
 
 private:
     DUrl m_url;
+    qint64 m_size = 0;
+    int m_fileCount = 0;
     QLabel *m_icon = NULL;
     QTextEdit *m_edit = NULL;
     QCheckBox * m_executableCheckBox = NULL;

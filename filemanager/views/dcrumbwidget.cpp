@@ -234,9 +234,9 @@ DCrumbButton *DCrumbWidget::createDeviceCrumbButtonByType(UDiskDeviceInfo::Media
     case UDiskDeviceInfo::phone:{
         button = new DCrumbIconButton(
                     m_group.buttons().size(),
-                    QIcon(":/icons/images/icons/andriod_normal_16px.svg"),
-                    QIcon(":/icons/images/icons/andriod_hover_16px.svg"),
-                    QIcon(":/icons/images/icons/andriod_checked_16px.svg"),
+                    QIcon(":/icons/images/icons/android_normal_16px.svg"),
+                    QIcon(":/icons/images/icons/android_hover_16px.svg"),
+                    QIcon(":/icons/images/icons/android_checked_16px.svg"),
                     mountPoint, this);
         break;
     }

@@ -22,6 +22,7 @@ public slots:
 protected:
     void adjustPosition(QWidget* w);
     void showEvent(QShowEvent* event);
+    void keyPressEvent(QKeyEvent* event);
 };
 
 #endif // BASEDIALOG_H

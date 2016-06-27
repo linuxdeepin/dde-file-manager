@@ -1,11 +1,11 @@
 #ifndef CLOSEALLDIALOGINDICATOR_H
 #define CLOSEALLDIALOGINDICATOR_H
 
-#include "basedialog.h"
+#include <QDialog>
 #include <QLabel>
 #include <QPushButton>
 
-class CloseAllDialogIndicator : public BaseDialog
+class CloseAllDialogIndicator : public QDialog
 {
     Q_OBJECT
 public:
@@ -19,7 +19,7 @@ signals:
     void allClosed();
 
 public slots:
-    void setTotalMessage(int size, int count);
+    void setTotalMessage(qint64 size, int count);
 
 protected:
 //    void showEvent(QShowEvent* event);

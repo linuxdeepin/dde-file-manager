@@ -94,3 +94,10 @@ void BaseDialog::showEvent(QShowEvent *event)
             setWindowState(state);
     }
 }
+
+void BaseDialog::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Escape){
+        close();
+    }
+}
