@@ -141,6 +141,7 @@ public:
     virtual QString mimeTypeName() const
     {return data->mimeTypeName;}
 
+    virtual QString lastReadDisplayName() const;
     virtual QString lastModifiedDisplayName() const;
     virtual QString createdDisplayName() const;
     virtual QString sizeDisplayName() const;
