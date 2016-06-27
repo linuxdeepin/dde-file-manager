@@ -210,7 +210,7 @@ void DFileManagerWindow::setFileViewMode(int viewMode)
 
 void DFileManagerWindow::setFileViewSortRole(int sortRole)
 {
-    m_fileView->sort(sortRole);
+    m_fileView->sortByRole(sortRole);
 }
 
 void DFileManagerWindow::setIconView()

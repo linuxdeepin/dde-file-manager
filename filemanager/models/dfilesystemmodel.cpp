@@ -483,8 +483,6 @@ DUrl DFileSystemModel::getUrlByIndex(const QModelIndex &index) const
 
 void DFileSystemModel::setSortColumn(int column, Qt::SortOrder order)
 {
-    m_sortColumn = column;
-
     setSortRole(columnToRole(column), order);
 }
 
@@ -525,7 +523,7 @@ Qt::SortOrder DFileSystemModel::sortOrder() const
 
 int DFileSystemModel::sortColumn() const
 {
-    return m_sortColumn;
+    return roleToColumn(m_sortRole);
 }
 
 int DFileSystemModel::sortRole() const
@@ -701,7 +699,7 @@ void DFileSystemModel::onFileCreated(const DUrl &fileUrl)
                                     return parentNode->children.value(parentNode->visibleChildren.value(index))->fileInfo;
                                 };
 
-        int row = parentNode->fileInfo->getIndexByFileInfo(getFileInfoFun, info, m_sortColumn, m_srotOrder);
+        int row = parentNode->fileInfo->getIndexByFileInfo(getFileInfoFun, info, m_sortRole, m_srotOrder);
 
         if(row == -1)
             row = parentNode->visibleChildren.count();
@@ -811,7 +809,7 @@ void DFileSystemModel::sort(const AbstractFileInfoPointer &parentInfo, QList<Abs
     if (!parentInfo)
         return;
 
-    parentInfo->sortByColumn(list, m_sortRole, m_srotOrder);
+    parentInfo->sortByColumnRole(list, m_sortRole, m_srotOrder);
 }
 
 const FileSystemNodePointer DFileSystemModel::createNode(const FileSystemNodePointer &parent, const AbstractFileInfoPointer &info)

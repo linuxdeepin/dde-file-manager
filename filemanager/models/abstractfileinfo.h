@@ -157,7 +157,7 @@ public:
     typedef std::function<bool(const AbstractFileInfoPointer&, const AbstractFileInfoPointer&, Qt::SortOrder)> sortFunction;
     virtual sortFunction sortFunByColumn(int columnRole) const;
 
-    virtual void sortByColumn(QList<AbstractFileInfoPointer> &fileList, int columnRole,
+    virtual void sortByColumnRole(QList<AbstractFileInfoPointer> &fileList, int columnRole,
                               Qt::SortOrder order = Qt::AscendingOrder) const;
 
     /// getFileInfoFun is get AbstractFileInfoPointer by index for caller. if return -1 then insert file list last
