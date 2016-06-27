@@ -485,25 +485,7 @@ void DFileSystemModel::setSortColumn(int column, Qt::SortOrder order)
 {
     m_sortColumn = column;
 
-    switch (m_sortColumn) {
-    case 0:
-        setSortRole(DFileSystemModel::FileDisplayNameRole, order);
-        break;
-    case 1:
-        setSortRole(DFileSystemModel::FileLastModifiedRole, order);
-        break;
-    case 2:
-        setSortRole(DFileSystemModel::FileSizeRole, order);
-        break;
-    case 3:
-        setSortRole(DFileSystemModel::FileMimeTypeRole, order);
-        break;
-    case 4:
-        setSortRole(DFileSystemModel::FileCreatedRole, order);
-        break;
-    default:
-        break;
-    }
+    setSortRole(columnToRole(column), order);
 }
 
 void DFileSystemModel::setSortRole(int role, Qt::SortOrder order)

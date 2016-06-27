@@ -32,14 +32,18 @@ public:
     int userColumnWidth(int userColumnRole) const Q_DECL_OVERRIDE;
 
     bool columnDefaultVisibleForRole(int role) const Q_DECL_OVERRIDE;
+    sortFunction sortFunByColumn(int columnRole) const Q_DECL_OVERRIDE;
 
     bool restore(const FMEvent &event) const;
+    QDateTime deletionDate() const;
+    QString sourceFilePath() const;
 
 private:
     QString desktopIconName;
     QString m_displayName;
     QString originalFilePath;
-    QString deletionDate;
+    QString displayDeletionDate;
+    QDateTime m_deletionDate;
 
     void updateInfo();
     void init();
