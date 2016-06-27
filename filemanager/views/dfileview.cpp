@@ -71,10 +71,15 @@ void DFileView::initUI()
     setOrientation(QListView::LeftToRight, true);
     setIconSize(currentIconSize());
     setTextElideMode(Qt::ElideMiddle);
-    setLocalFileSettings();
+    setDragDropMode(QAbstractItemView::DragDrop);
+    setDefaultDropAction(Qt::MoveAction);
+    setDropIndicatorShown(false);
+    setSelectionMode(QAbstractItemView::ExtendedSelection);
+    setSelectionBehavior(QAbstractItemView::SelectRows);
+    setEditTriggers(QListView::EditKeyPressed | QListView::SelectedClicked);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBar(new DScrollBar);
-    setSelectionRectVisible(false);
+    DListView::setSelectionRectVisible(false);
 
     m_selectionRectWidget = new QWidget(this);
     m_selectionRectWidget->hide();
@@ -223,28 +228,6 @@ void DFileView::initKeyboardSearchTimer()
 {
     m_keyboardSearchTimer = new QTimer(this);
     m_keyboardSearchTimer->setInterval(500);
-}
-
-void DFileView::setLocalFileSettings()
-{
-    setDragEnabled(true);
-    setDragDropMode(QAbstractItemView::DragDrop);
-    setDefaultDropAction(Qt::MoveAction);
-    setDropIndicatorShown(true);
-    setSelectionMode(QAbstractItemView::ExtendedSelection);
-    setSelectionBehavior(QAbstractItemView::SelectRows);
-    setEditTriggers(QListView::EditKeyPressed | QListView::SelectedClicked);
-}
-
-void DFileView::setNetworkFileSetting()
-{
-    setDragEnabled(false);
-    setDragDropMode(QAbstractItemView::NoDragDrop);
-    setDefaultDropAction(Qt::IgnoreAction);
-    setDropIndicatorShown(false);
-    setSelectionMode(QAbstractItemView::SingleSelection);
-    setSelectionBehavior(QAbstractItemView::SelectItems);
-    setEditTriggers(QListView::NoEditTriggers);
 }
 
 DFileSystemModel *DFileView::model() const
@@ -435,13 +418,6 @@ void DFileView::cd(const FMEvent &event)
 
     if(fileUrl.isEmpty())
         return;
-
-    if (fileUrl.isNetWorkFile() || fileUrl.isSMBFile()){
-        setNetworkFileSetting();
-    }else{
-        setLocalFileSettings();
-    }
-
 
     if(setCurrentUrl(fileUrl))
     {
@@ -714,7 +690,9 @@ void DFileView::mousePressEvent(QMouseEvent *event)
             DListView::mousePressEvent(event);
 
         if (isEmptyArea) {
-            m_selectionRectWidget->show();
+            if (canShowSElectionRect())
+                m_selectionRectWidget->show();
+
             m_pressedPos = viewport()->mapToParent(static_cast<QMouseEvent*>(event)->pos());
         }
     }
@@ -814,7 +792,9 @@ bool DFileView::event(QEvent *event)
             }
 
             if (isEmptyArea) {
-                m_selectionRectWidget->show();
+                if (canShowSElectionRect())
+                    m_selectionRectWidget->show();
+
                 m_pressedPos = static_cast<QMouseEvent*>(event)->pos();
             }
         } else if (e->button() == Qt::RightButton) {
@@ -1227,6 +1207,8 @@ bool DFileView::setCurrentUrl(DUrl fileUrl)
     } 
     //emit currentUrlChanged(fileUrl);
 
+    setSelectionMode(info->supportSelectionMode());
+
     return true;
 }
 
@@ -1280,6 +1262,21 @@ void DFileView::updateStatusBar()
     fmEvent = windowId();
     if (rootIndex().isValid())
         emit fileSignalManager->statusBarItemsCounted(fmEvent, count());
+}
+
+void DFileView::setSelectionRectVisible(bool visible)
+{
+    m_selectionRectVisible = visible;
+}
+
+bool DFileView::isSelectionRectVisible() const
+{
+    return m_selectionRectVisible;
+}
+
+bool DFileView::canShowSElectionRect() const
+{
+    return m_selectionRectVisible && selectionMode() != NoSelection && selectionMode() != SingleSelection;
 }
 
 void DFileView::updateViewportMargins()

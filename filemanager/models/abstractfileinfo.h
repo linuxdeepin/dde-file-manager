@@ -8,6 +8,7 @@
 #include <QFileInfo>
 #include <QDateTime>
 #include <QMap>
+#include <QAbstractItemView>
 
 #include "durl.h"
 #include "menuactiontype.h"
@@ -164,6 +165,8 @@ public:
 
     /// return DFileView::ViewMode flags
     virtual quint8 supportViewMode() const;
+    /// support selection mode
+    virtual QAbstractItemView::SelectionMode supportSelectionMode() const;
 
     QList<int> userColumnRoles() const
     { return m_userColumnRoles;}
@@ -193,6 +196,8 @@ public:
     virtual DUrl redirectedFileUrl() const;
 
     virtual bool isEmptyFloder() const;
+
+    virtual Qt::ItemFlags fileItemDisableFlags() const;
 
 protected:
     struct FileInfoData
