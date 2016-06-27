@@ -117,7 +117,8 @@ public slots:
     inline void setViewModeToExtend()
     { setViewMode(ExtendMode);}
     void setViewMode(ViewMode mode);
-    void sort(int role);
+    void sortByRole(int role);
+    void sortByColumn(int column);
 
     bool setCurrentUrl(DUrl fileUrl);
     void clearHeardView();

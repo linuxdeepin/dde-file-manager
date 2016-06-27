@@ -452,7 +452,7 @@ void DFileView::cd(const FMEvent &event)
     }
 
     if (FMStateManager::SortStates.contains(fileUrl)){
-        sort(FMStateManager::SortStates.value(fileUrl));
+        sortByRole(FMStateManager::SortStates.value(fileUrl));
     }
 }
 
@@ -518,7 +518,7 @@ void DFileView::setViewMode(DFileView::ViewMode mode)
     switchViewMode(mode);
 }
 
-void DFileView::sort(int role)
+void DFileView::sortByRole(int role)
 {
     if (m_headerView) {
         m_headerView->setSortIndicator(model()->roleToColumn(role), Qt::AscendingOrder);
@@ -528,6 +528,18 @@ void DFileView::sort(int role)
     }
 
     FMStateManager::cacheSortState(currentUrl(), role);
+}
+
+void DFileView::sortByColumn(int column)
+{
+    if (m_headerView) {
+        m_headerView->setSortIndicator(column, Qt::AscendingOrder);
+    } else {
+        model()->setSortColumn(column);
+        model()->sort();
+    }
+
+    FMStateManager::cacheSortState(currentUrl(), model()->columnToRole(column));
 }
 
 void DFileView::selectAll(int windowId)
@@ -561,28 +573,8 @@ void DFileView::dislpayAsActionTriggered(QAction *action)
 void DFileView::sortByActionTriggered(QAction *action)
 {
     DAction* dAction = static_cast<DAction*>(action);
-    dAction->setChecked(true);
-    MenuAction type = (MenuAction)dAction->data().toInt();
-    qDebug() << action << type;
-    switch(type){
-        case MenuAction::Name:
-            sort(DFileSystemModel::FileDisplayNameRole);
-            break;
-        case MenuAction::Size:
-            sort(DFileSystemModel::FileSizeRole);
-            break;
-        case MenuAction::Type:
-            sort(DFileSystemModel::FileMimeTypeRole);
-            break;
-        case MenuAction::CreatedDate:
-            sort(DFileSystemModel::FileCreatedRole);
-            break;
-        case MenuAction::LastModifiedDate:
-            sort(DFileSystemModel::FileLastModifiedRole);
-            break;
-        default:
-            break;
-    }
+
+    sortByColumn(m_sortByActionGroup->actions().indexOf(dAction));
 }
 
 void DFileView::openWithActionTriggered(QAction *action)
@@ -1444,17 +1436,8 @@ void DFileView::showEmptyAreaMenu()
         foreach (DAction* action, sortBySubMenu->actionList()) {
             action->setActionGroup(m_sortByActionGroup);
         }
-        if (model()->sortRole() == DFileSystemModel::FileDisplayNameRole){
-            sortBySubMenu->actionAt(fileMenuManger->getActionString(MenuAction::Name))->setChecked(true);
-        }else if (model()->sortRole() == DFileSystemModel::FileSizeRole){
-            sortBySubMenu->actionAt(fileMenuManger->getActionString(MenuAction::Size))->setChecked(true);
-        }else if (model()->sortRole() == DFileSystemModel::FileMimeTypeRole){
-            sortBySubMenu->actionAt(fileMenuManger->getActionString(MenuAction::Type))->setChecked(true);
-        }else if (model()->sortRole() == DFileSystemModel::FileCreatedRole){
-            sortBySubMenu->actionAt(fileMenuManger->getActionString(MenuAction::CreatedDate))->setChecked(true);
-        }else if (model()->sortRole() == DFileSystemModel::FileLastModifiedRole){
-            sortBySubMenu->actionAt(fileMenuManger->getActionString(MenuAction::LastModifiedDate))->setChecked(true);
-        }
+
+        sortBySubMenu->actionAt(model()->sortColumn())->setChecked(true);
     }
 
     DUrlList urls;

@@ -476,7 +476,7 @@ AbstractFileInfo::sortFunction AbstractFileInfo::sortFunByColumn(int columnRole)
     }
 }
 
-void AbstractFileInfo::sortByColumn(QList<AbstractFileInfoPointer> &fileList, int columnRole, Qt::SortOrder order) const
+void AbstractFileInfo::sortByColumnRole(QList<AbstractFileInfoPointer> &fileList, int columnRole, Qt::SortOrder order) const
 {
     FileSortFunction::sortOrderGlobal = order;
     FileSortFunction::sortFun = sortFunByColumn(columnRole);
