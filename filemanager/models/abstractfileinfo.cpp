@@ -432,6 +432,11 @@ quint8 AbstractFileInfo::supportViewMode() const
     return DFileView::AllViewMode;
 }
 
+QAbstractItemView::SelectionMode AbstractFileInfo::supportSelectionMode() const
+{
+    return QAbstractItemView::ExtendedSelection;
+}
+
 QVariant AbstractFileInfo::userColumnDisplayName(int userColumnRole) const
 {
     return DFileSystemModel::roleName(userColumnRole);
@@ -544,6 +549,11 @@ bool AbstractFileInfo::isEmptyFloder() const
     DDirIteratorPointer it = FileServices::instance()->createDirIterator(fileUrl(), QDir::AllEntries | QDir::NoDotAndDotDot, QDirIterator::NoIteratorFlags);
 
     return it && !it->hasNext();
+}
+
+Qt::ItemFlags AbstractFileInfo::fileItemDisableFlags() const
+{
+    return Qt::ItemFlags();
 }
 
 void AbstractFileInfo::updateFileMetaData()

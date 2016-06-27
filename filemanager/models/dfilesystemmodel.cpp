@@ -366,7 +366,7 @@ Qt::ItemFlags DFileSystemModel::flags(const QModelIndex &index) const
         flags = flags & ~Qt::ItemIsSelectable;
     }
 
-    return flags;
+    return flags & ~ indexNode->fileInfo->fileItemDisableFlags();
 }
 
 Qt::DropActions DFileSystemModel::supportedDragActions() const
