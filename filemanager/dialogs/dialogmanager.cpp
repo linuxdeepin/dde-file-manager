@@ -186,6 +186,7 @@ int DialogManager::showDeleteFilesClearTrashDialog(const FMEvent &event)
     }else{
         d.setTitle(DeleteFileItems.arg(urlList.size()));
     }
+    d.setMaximumWidth(480);
     d.setMessage(tr("This action cannot be restored"));
     d.addButtons(buttonTexts);
     d.setDefaultButton(1);
