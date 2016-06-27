@@ -29,6 +29,9 @@ public:
 
     QVector<MenuAction> menuActionList(MenuType type) const Q_DECL_OVERRIDE;
 
+    QAbstractItemView::SelectionMode supportSelectionMode() const Q_DECL_OVERRIDE;
+    Qt::ItemFlags fileItemDisableFlags() const Q_DECL_OVERRIDE;
+
 private:
     NetworkNode m_networkNode;
 };

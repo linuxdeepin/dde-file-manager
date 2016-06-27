@@ -54,9 +54,6 @@ public:
     void initActions();
     void initKeyboardSearchTimer();
 
-    void setLocalFileSettings();
-    void setNetworkFileSetting();
-
     DFileSystemModel *model() const;
     DFileItemDelegate *itemDelegate() const;
 
@@ -132,6 +129,10 @@ public slots:
     void handleDataChanged(const QModelIndex & topLeft, const QModelIndex & bottomRight, const QVector<int> & roles = QVector<int>());
     void updateStatusBar();
 
+    void setSelectionRectVisible(bool visible);
+    bool isSelectionRectVisible() const;
+    bool canShowSElectionRect() const;
+
 signals:
     void currentUrlChanged(const DUrl &url);
     void viewModeChanged(ViewMode viewMode);
@@ -200,7 +201,9 @@ private:
     using DListView::setOrientation;
 
     QPoint m_pressedPos;
-    QWidget *m_selectionRectWidget;
+    QWidget *m_selectionRectWidget = Q_NULLPTR;
+    bool m_selectionRectVisible = true;
+
     int m_horizontalOffset = 0;
 
     QTimer* m_keyboardSearchTimer;
