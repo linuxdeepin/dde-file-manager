@@ -11,6 +11,11 @@
 
 #include <QMimeType>
 
+namespace FileSortFunction {
+SORT_FUN_DEFINE(deletionDate, DeletionDate, TrashFileInfo)
+SORT_FUN_DEFINE(sourceFilePath, SourceFilePath, TrashFileInfo)
+}
+
 TrashFileInfo::TrashFileInfo()
     : AbstractFileInfo()
 {
@@ -136,7 +141,7 @@ QSet<MenuAction> TrashFileInfo::disableMenuActionList() const
 QVariant TrashFileInfo::userColumnData(int userColumnRole) const
 {
     if (userColumnRole == DFileSystemModel::FileUserRole + 1)
-        return deletionDate;
+        return displayDeletionDate;
 
     if (userColumnRole == DFileSystemModel::FileUserRole + 2)
         return originalFilePath;
@@ -174,6 +179,16 @@ bool TrashFileInfo::columnDefaultVisibleForRole(int role) const
     return AbstractFileInfo::columnDefaultVisibleForRole(role);
 }
 
+AbstractFileInfo::sortFunction TrashFileInfo::sortFunByColumn(int columnRole) const
+{
+    if (columnRole == DFileSystemModel::FileUserRole + 1)
+        return FileSortFunction::sortFileListByDeletionDate;
+    else if (columnRole == DFileSystemModel::FileUserRole + 2)
+        return FileSortFunction::sortFileListBySourceFilePath;
+    else
+        return AbstractFileInfo::sortFunByColumn(columnRole);
+}
+
 bool TrashFileInfo::restore(const FMEvent &event) const
 {
     if(originalFilePath.isEmpty()) {
@@ -191,6 +206,16 @@ bool TrashFileInfo::restore(const FMEvent &event) const
     }
 
     return fileService->renameFile(DUrl::fromLocalFile(absoluteFilePath()), DUrl::fromLocalFile(originalFilePath), event);
+}
+
+QDateTime TrashFileInfo::deletionDate() const
+{
+    return m_deletionDate;
+}
+
+QString TrashFileInfo::sourceFilePath() const
+{
+    return originalFilePath;
 }
 
 void TrashFileInfo::updateInfo()
@@ -213,10 +238,11 @@ void TrashFileInfo::updateInfo()
         else
             m_displayName = originalFilePath.mid(originalFilePath.lastIndexOf('/') + 1);
 
-        deletionDate = QDateTime::fromString(setting.value("DeletionDate").toString(), Qt::ISODate).toString(timeFormat());
+        m_deletionDate = QDateTime::fromString(setting.value("DeletionDate").toString(), Qt::ISODate);
+        displayDeletionDate = m_deletionDate.toString(timeFormat());
 
-        if (deletionDate.isEmpty())
-            deletionDate = setting.value("DeletionDate").toString();
+        if (displayDeletionDate.isEmpty())
+            displayDeletionDate = setting.value("DeletionDate").toString();
     } else {
         m_displayName = QObject::tr("Trash");
     }

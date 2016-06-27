@@ -28,10 +28,10 @@ bool sortFileListByDisplayName(const AbstractFileInfoPointer &info1, const Abstr
     return ((order == Qt::DescendingOrder) ^ (info1->displayName().toLower() < info2->displayName().toLower())) == 0x01;
 }
 
-SORT_FUN_DEFINE(size, Size)
-SORT_FUN_DEFINE(lastModified, Modified)
-SORT_FUN_DEFINE(mimeTypeDisplayNameOrder, Mime)
-SORT_FUN_DEFINE(created, Created)
+SORT_FUN_DEFINE(size, Size, AbstractFileInfo)
+SORT_FUN_DEFINE(lastModified, Modified, AbstractFileInfo)
+SORT_FUN_DEFINE(mimeTypeDisplayNameOrder, Mime, AbstractFileInfo)
+SORT_FUN_DEFINE(created, Created, AbstractFileInfo)
 
 bool sort(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &info2)
 {

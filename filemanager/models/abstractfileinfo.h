@@ -12,7 +12,7 @@
 #include "durl.h"
 #include "menuactiontype.h"
 
-#define SORT_FUN_DEFINE(Value, Name) \
+#define SORT_FUN_DEFINE(Value, Name, Type) \
 bool sortFileListBy##Name(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &info2, Qt::SortOrder order)\
 {\
     bool isDir1 = info1->isDir();\
@@ -21,8 +21,8 @@ bool sortFileListBy##Name(const AbstractFileInfoPointer &info1, const AbstractFi
     bool isFile1 = info1->isFile();\
     bool isFile2 = info2->isFile();\
     \
-    auto value1 = info1->Value();\
-    auto value2 = info2->Value();\
+    auto value1 = static_cast<const Type*>(info1.constData())->Value();\
+    auto value2 = static_cast<const Type*>(info2.constData())->Value();\
     \
     if (isDir1) {\
         if (!isDir2) return true;\
