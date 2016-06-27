@@ -1580,7 +1580,7 @@ void DFileView::updateListHeaderViewProperty()
         }
     }
 
-    updateEndVisibleColumnWidth();
+    updateColumnWidth();
 }
 
 void DFileView::updateExtendHeaderViewProperty()
@@ -1609,11 +1609,13 @@ void DFileView::updateItemSizeHint()
     }
 }
 
-void DFileView::updateEndVisibleColumnWidth()
+void DFileView::updateColumnWidth()
 {
     int column_count = m_headerView->count();
+    int i = 0;
+    int j = column_count - 1;
 
-    for (int i = 0; i < column_count; ++i) {
+    for (; i < column_count; ++i) {
         if (m_headerView->isSectionHidden(i))
             continue;
 
@@ -1621,12 +1623,26 @@ void DFileView::updateEndVisibleColumnWidth()
         break;
     }
 
-    for (int i = column_count - 1; i > 0; --i) {
-        if (m_headerView->isSectionHidden(i))
+    for (; j > 0; --j) {
+        if (m_headerView->isSectionHidden(j))
             continue;
 
-        m_headerView->resizeSection(i, model()->columnWidth(i) + LIST_MODE_RIGHT_MARGIN + TEXT_PADDING);
+        m_headerView->resizeSection(j, model()->columnWidth(j) + LIST_MODE_RIGHT_MARGIN + TEXT_PADDING);
         break;
+    }
+
+    if (firstVisibleColumn != i) {
+        if (firstVisibleColumn > 0)
+            m_headerView->resizeSection(firstVisibleColumn, model()->columnWidth(firstVisibleColumn));
+
+        firstVisibleColumn = i;
+    }
+
+    if (lastVisibleColumn != j) {
+        if (lastVisibleColumn > 0)
+            m_headerView->resizeSection(lastVisibleColumn, model()->columnWidth(lastVisibleColumn));
+
+        lastVisibleColumn = j;
     }
 }
 
@@ -1646,7 +1662,7 @@ void DFileView::popupHeaderViewContextMenu(const QPoint &/*pos*/)
 
             m_headerView->setSectionHidden(i, action->isChecked());
 
-            updateEndVisibleColumnWidth();
+            updateColumnWidth();
         });
 
         menu->addAction(action);

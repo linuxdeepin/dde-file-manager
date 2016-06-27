@@ -12,6 +12,31 @@
 #include "durl.h"
 #include "menuactiontype.h"
 
+#define SORT_FUN_DEFINE(Value, Name) \
+bool sortFileListBy##Name(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &info2)\
+{\
+    bool isDir1 = info1->isDir();\
+    bool isDir2 = info2->isDir();\
+    \
+    bool isFile1 = info1->isFile();\
+    bool isFile2 = info2->isFile();\
+    \
+    auto value1 = info1->Value();\
+    auto value2 = info2->Value();\
+    \
+    if (isDir1) {\
+        if (!isDir2) return true;\
+    } else {\
+        if (isDir2) return false;\
+    }\
+    \
+    if ((isDir1 && isDir2 && (value1 == value2)) || (isFile1 && isFile2 && (value1 == value2))) {\
+        return info1->displayName().toLower() < info2->displayName().toLower();\
+    }\
+    \
+    return ((AbstractFileInfo::sortOrderGlobal == Qt::DescendingOrder) ^ (value1 < value2)) == 0x01;\
+}
+
 class AbstractFileInfo;
 typedef QExplicitlySharedDataPointer<AbstractFileInfo> AbstractFileInfoPointer;
 typedef std::function<const AbstractFileInfoPointer(int)> getFileInfoFun;

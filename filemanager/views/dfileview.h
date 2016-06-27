@@ -193,7 +193,7 @@ private:
     void updateListHeaderViewProperty();
     void updateExtendHeaderViewProperty();
     void updateItemSizeHint();
-    void updateEndVisibleColumnWidth();
+    void updateColumnWidth();
     void popupHeaderViewContextMenu(const QPoint &pos);
 
     using DListView::setOrientation;
@@ -215,6 +215,9 @@ private:
 
     /// list mode column visible
     QMap<QString, bool> m_columnForRoleHiddenMap;
+
+    int firstVisibleColumn = -1;
+    int lastVisibleColumn = -1;
 };
 
 #endif // DFILEVIEW_H

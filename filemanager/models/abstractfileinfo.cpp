@@ -13,7 +13,7 @@
 Qt::SortOrder AbstractFileInfo::sortOrderGlobal;
 
 namespace FileSortFunction {
-bool _sortFileListByDisplayName(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &info2, Qt::SortOrder order = Qt::AscendingOrder)
+bool sortFileListByDisplayName(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &info2)
 {
     if(info1->isDir()) {
         if(!info2->isDir())
@@ -23,90 +23,14 @@ bool _sortFileListByDisplayName(const AbstractFileInfoPointer &info1, const Abst
             return false;
     }
 
-    return ((order == Qt::DescendingOrder)
+    return ((AbstractFileInfo::sortOrderGlobal == Qt::DescendingOrder)
             ^ (info1->displayName().toLower() < info2->displayName().toLower())) == 0x01;
 }
 
-bool sortFileListByDisplayName(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &info2)
-{
-    return _sortFileListByDisplayName(info1, info2, AbstractFileInfo::sortOrderGlobal);
-}
-
-bool sortFileListBySize(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &info2)
-{
-    if(info1->isDir()) {
-        if(!info2->isDir())
-            return true;
-    } else {
-        if(info2->isDir())
-            return false;
-    }
-
-    if (info1->isDir() && info2->isDir() && (info1->size() == info2->size()))
-        return _sortFileListByDisplayName(info1, info2);
-    else if (info1->isFile() && info2->isFile() && (info1->size() == info2->size()))
-        return _sortFileListByDisplayName(info1, info2);
-
-    return ((AbstractFileInfo::sortOrderGlobal == Qt::DescendingOrder)
-            ^ (info1->size() < info2->size())) == 0x01;
-}
-
-bool sortFileListByModified(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &info2)
-{
-    if(info1->isDir()) {
-        if(!info2->isDir())
-            return true;
-    } else {
-        if(info2->isDir())
-            return false;
-    }
-
-    if (info1->isDir() && info2->isDir() && (info1->lastModified() == info2->lastModified()))
-        return _sortFileListByDisplayName(info1, info2);
-    else if (info1->isFile() && info2->isFile() && (info1->lastModified() == info2->lastModified()))
-        return _sortFileListByDisplayName(info1, info2);
-
-    return ((AbstractFileInfo::sortOrderGlobal == Qt::DescendingOrder)
-            ^ (info1->lastModified() < info2->lastModified())) == 0x01;
-}
-
-bool sortFileListByMime(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &info2)
-{
-    if(info1->isDir()) {
-        if(!info2->isDir())
-            return true;
-    } else {
-        if(info2->isDir())
-            return false;
-    }
-
-    if (info1->isDir() && info2->isDir() && (info1->mimeTypeDisplayName() == info2->mimeTypeDisplayName()))
-        return _sortFileListByDisplayName(info1, info2);
-    else if (info1->isFile() && info2->isFile() && (info1->mimeTypeDisplayName() == info2->mimeTypeDisplayName()))
-        return _sortFileListByDisplayName(info1, info2);
-
-    return ((AbstractFileInfo::sortOrderGlobal == Qt::DescendingOrder)
-            ^ (info1->mimeTypeDisplayNameOrder() < info2->mimeTypeDisplayNameOrder())) == 0x01;
-}
-
-bool sortFileListByCreated(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &info2)
-{
-    if(info1->isDir()) {
-        if(!info2->isDir())
-            return true;
-    } else {
-        if(info2->isDir())
-            return false;
-    }
-
-    if (info1->isDir() && info2->isDir() && (info1->created() == info2->created()))
-        return _sortFileListByDisplayName(info1, info2);
-    else if (info1->isFile() && info2->isFile() && (info1->created() == info2->created()))
-        return _sortFileListByDisplayName(info1, info2);
-
-    return ((AbstractFileInfo::sortOrderGlobal == Qt::DescendingOrder)
-            ^ (info1->created() < info2->created())) == 0x01;
-}
+SORT_FUN_DEFINE(size, Size)
+SORT_FUN_DEFINE(lastModified, Modified)
+SORT_FUN_DEFINE(mimeTypeDisplayNameOrder, Mime)
+SORT_FUN_DEFINE(created, Created)
 } /// end namespace FileSortFunction
 
 QMap<DUrl, AbstractFileInfo::FileMetaData> AbstractFileInfo::metaDataCacheMap;
