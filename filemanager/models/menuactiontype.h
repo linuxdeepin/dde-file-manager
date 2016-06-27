@@ -58,6 +58,9 @@ public:
         Type,
         CreatedDate,
         LastModifiedDate,
+        DeletionDate,
+        SourcePath,
+        AbsolutePath,
         Settings,
         Help,
         About,
@@ -66,7 +69,8 @@ public:
         ListView,
         ExtendView,
         SetAsWallpaper,
-        ForgetPassword
+        ForgetPassword,
+        Unknow
     };
 
     Q_ENUM(MenuAction)

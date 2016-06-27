@@ -135,11 +135,12 @@ public:
     virtual QVector<MenuAction> menuActionList(MenuType type = SingleFile) const;
     virtual QMap<MenuAction, QVector<MenuAction> > subMenuActionList() const;
     virtual QSet<MenuAction> disableMenuActionList() const;
+    virtual MenuAction menuActionByColumnRole(int role) const;
 
     /// return DFileView::ViewMode flags
     virtual quint8 supportViewMode() const;
 
-    QList<int> userColumnRole() const
+    QList<int> userColumnRoles() const
     { return m_userColumnRoles;}
 
     virtual QVariant userColumnDisplayName(int userColumnRole) const;

@@ -274,6 +274,9 @@ void FileMenuManager::initData()
     m_actionKeys[MenuAction::ExtendView] = QObject::tr("Extend");
     m_actionKeys[MenuAction::SetAsWallpaper] = QObject::tr("Set as wallpaper");
     m_actionKeys[MenuAction::ForgetPassword] = QObject::tr("Logout and unmount");
+    m_actionKeys[MenuAction::DeletionDate] = QObject::tr("Time Deleted");
+    m_actionKeys[MenuAction::SourcePath] = QObject::tr("Source Path");
+    m_actionKeys[MenuAction::AbsolutePath] = QObject::tr("Absolute Path");
 }
 
 void FileMenuManager::initActions()

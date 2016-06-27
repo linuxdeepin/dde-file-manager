@@ -574,19 +574,26 @@ QMap<MenuAction, QVector<MenuAction> > AbstractFileInfo::subMenuActionList() con
     actions.insert(MenuAction::NewDocument, docmentMenuActionKeys);
 
     QVector<MenuAction> displayAsMenuActionKeys;
-    displayAsMenuActionKeys << MenuAction::IconView
-                          << MenuAction::ListView;
-//                          << MenuAction::ExtendView;
 
+    int support_view_mode = supportViewMode();
+
+    if (support_view_mode & DListView::IconMode == DListView::IconMode)
+        displayAsMenuActionKeys << MenuAction::IconView;
+
+    if (support_view_mode & DListView::ListMode == DListView::ListMode)
+        displayAsMenuActionKeys << MenuAction::ListView;
+
+    displayAsMenuActionKeys;
     actions.insert(MenuAction::DisplayAs, displayAsMenuActionKeys);
 
 
     QVector<MenuAction> sortByMenuActionKeys;
-    sortByMenuActionKeys << MenuAction::Name
-                          << MenuAction::Size
-                          << MenuAction::Type
-                          << MenuAction::CreatedDate
-                          << MenuAction::LastModifiedDate;
+    sortByMenuActionKeys << MenuAction::Name;
+
+    for (int role : userColumnRoles()) {
+        sortByMenuActionKeys << menuActionByColumnRole(role);
+    }
+
     actions.insert(MenuAction::SortBy, sortByMenuActionKeys);
 
     return actions;
@@ -605,6 +612,25 @@ QSet<MenuAction> AbstractFileInfo::disableMenuActionList() const
     }
 
     return list;
+}
+
+MenuAction AbstractFileInfo::menuActionByColumnRole(int role) const
+{
+    switch (role) {
+    case DFileSystemModel::FileDisplayNameRole:
+    case DFileSystemModel::FileNameRole:
+        return MenuAction::Name;
+    case DFileSystemModel::FileSizeRole:
+        return MenuAction::Size;
+    case DFileSystemModel::FileMimeTypeRole:
+        return MenuAction::Type;
+    case DFileSystemModel::FileCreatedRole:
+        return MenuAction::CreatedDate;
+    case DFileSystemModel::FileLastModifiedRole:
+        return MenuAction::LastModifiedDate;
+    default:
+        return MenuAction::Unknow;
+    }
 }
 
 QT_BEGIN_NAMESPACE
