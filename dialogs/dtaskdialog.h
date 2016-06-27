@@ -106,6 +106,8 @@ public slots:
 
     void showConflictDiloagByJob(const QMap<QString, QString>& jobDetail);
     void handleConflictResponse(const QMap<QString, QString>& jobDetail, const QMap<QString, QVariant>& response);
+
+    void handleMinimizeButtonClick();
 protected:
     void closeEvent(QCloseEvent* event);
 
