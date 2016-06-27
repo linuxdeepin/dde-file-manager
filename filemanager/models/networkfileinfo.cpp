@@ -47,7 +47,7 @@ bool NetworkFileInfo::isDir() const
 
 DUrl NetworkFileInfo::parentUrl() const
 {
-
+    return DUrl();
 }
 
 QString NetworkFileInfo::displayName() const
@@ -81,5 +81,15 @@ QVector<MenuAction> NetworkFileInfo::menuActionList(AbstractFileInfo::MenuType t
 
     }
     return actionKeys;
+}
+
+QAbstractItemView::SelectionMode NetworkFileInfo::supportSelectionMode() const
+{
+    return QAbstractItemView::SingleSelection;
+}
+
+Qt::ItemFlags NetworkFileInfo::fileItemDisableFlags() const
+{
+    return Qt::ItemIsDragEnabled | Qt::ItemIsEditable;
 }
 

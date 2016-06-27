@@ -22,6 +22,8 @@ const AbstractFileInfoPointer NetworkController::createFileInfo(const DUrl &file
 
 const QList<AbstractFileInfoPointer> NetworkController::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
 {
+    Q_UNUSED(filter)
+
     QList<AbstractFileInfoPointer> infolist;
 
     accepted = true;
