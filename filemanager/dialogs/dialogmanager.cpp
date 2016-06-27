@@ -12,6 +12,7 @@
 #include "../views/windowmanager.h"
 #include "../models/trashfileinfo.h"
 #include "closealldialogindicator.h"
+#include "utils/xutil.h"
 #include <ddialog.h>
 #include <DAboutDialog>
 #include <dscrollbar.h>
@@ -41,7 +42,11 @@ void DialogManager::initTaskDialog()
 void DialogManager::initCloseIndicatorDialog()
 {
     m_closeIndicatorDialog = new CloseAllDialogIndicator;
+    m_closeIndicatorDialog->setWindowIcon(QIcon(":/images/images/system-file-manager.png"));
     m_closeIndicatorDialog->setStyleSheet(getQssFromFile(":/qss/dialogs/qss/light.qss"));
+    m_closeIndicatorTimer = new QTimer;
+    m_closeIndicatorTimer->setInterval(100);
+    connect(m_closeIndicatorTimer, &QTimer::timeout, this, &DialogManager::updateCloseIndicator);
 }
 
 void DialogManager::initConnect()
@@ -67,6 +72,8 @@ void DialogManager::initConnect()
             this, &DialogManager::showDiskErrorDialog);
     connect(fileSignalManager, &FileSignalManager::showAboutDialog,
             this, &DialogManager::showAboutDialog);
+
+    connect(qApp, &QApplication::focusChanged, this, &DialogManager::handleFocusChanged);
 
 }
 
@@ -246,13 +253,14 @@ void DialogManager::showPropertyDialog(const FMEvent &event)
                 dialog->move(pos);
 
                 connect(dialog, &PropertyDialog::closed, this, &DialogManager::removePropertyDialog);
-                connect(dialog, &PropertyDialog::raised, m_closeIndicatorDialog, &CloseAllDialogIndicator::raise);
+//                connect(dialog, &PropertyDialog::raised, this, &DialogManager::raiseAllPropertyDialog);
                 QTimer::singleShot(100, dialog, &PropertyDialog::raise);
             }
         }
 
         if (urlList.count() >= 2){
             m_closeIndicatorDialog->show();
+            m_closeIndicatorTimer->start();
         }
     }
 }
@@ -302,7 +310,43 @@ void DialogManager::closeAllPropertyDialog()
     foreach (const DUrl& url, m_propertyDialogs.keys()) {
         m_propertyDialogs.value(url)->close();
     }
+    m_closeIndicatorTimer->stop();
     m_closeIndicatorDialog->hide();
+}
+
+void DialogManager::updateCloseIndicator()
+{
+    qint64 size = 0;
+    int fileCount = 0;
+    foreach (PropertyDialog* d, m_propertyDialogs.values()) {
+        size += d->getFileSize();
+        fileCount += d->getFileCount();
+    }
+    m_closeIndicatorDialog->setTotalMessage(size, fileCount);
+}
+
+void DialogManager::raiseAllPropertyDialog()
+{
+    foreach (PropertyDialog* d, m_propertyDialogs.values()) {
+        qDebug() << d->getUrl() << d->isVisible() << d->windowState();
+//        d->showMinimized();
+        d->showNormal();
+        QtX11::utils::ShowNormalWindow(d);
+        qobject_cast<QWidget*>(d)->showNormal();
+        d->show();
+        d->raise();
+        qDebug() << d->getUrl() << d->isVisible() << d->windowState();
+    }
+    m_closeIndicatorDialog->raise();
+}
+
+void DialogManager::handleFocusChanged(QWidget *old, QWidget *now)
+{
+    if (m_propertyDialogs.values().contains(qobject_cast<PropertyDialog*>(qApp->activeWindow()))){
+        raiseAllPropertyDialog();
+    }else if(m_closeIndicatorDialog == qobject_cast<CloseAllDialogIndicator*>(qApp->activeWindow())){
+        raiseAllPropertyDialog();
+    }
 }
 
 void DialogManager::handleConflictRepsonseConfirmed(const QMap<QString, QString> &jobDetail, const QMap<QString, QVariant> &response)

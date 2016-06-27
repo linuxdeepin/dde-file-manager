@@ -154,15 +154,19 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
     if (fileInfo->isFile()){
 //        m_OpenWithListWidget = createOpenWithListWidget(fileInfo);
 //        expandGroup->expand(1)->setContent(m_OpenWithListWidget);
+        m_fileCount = 1;
+        m_size = fileInfo->size();
     }
     else if (fileInfo->isDir()){
         startComputerFolderSize(fileInfo->absoluteFilePath());
+        m_fileCount = fileInfo->size();
     }
 }
 
 
 void PropertyDialog::updateFolderSize(qint64 size)
 {
+    m_size = size;
     m_folderSizeLabel->setText(FileUtils::formatSize(size));
 }
 
@@ -196,6 +200,16 @@ void PropertyDialog::toggleFileExecutable(bool isChecked)
 DUrl PropertyDialog::getUrl()
 {
     return m_url;
+}
+
+int PropertyDialog::getFileCount()
+{
+    return m_fileCount;
+}
+
+qint64 PropertyDialog::getFileSize()
+{
+    return m_size;
 }
 
 void PropertyDialog::raise()
