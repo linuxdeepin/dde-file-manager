@@ -132,7 +132,7 @@ int DFileSystemModel::columnCount(const QModelIndex &parent) const
     const AbstractFileInfoPointer &currentFileInfo = fileInfo(m_activeIndex);
 
     if(currentFileInfo) {
-        columnCount += currentFileInfo->userColumnRole().count();
+        columnCount += currentFileInfo->userColumnRoles().count();
     }
 
     return columnCount;
@@ -294,7 +294,7 @@ int DFileSystemModel::columnToRole(int column) const
         const AbstractFileInfoPointer &fileInfo = this->fileInfo(m_activeIndex);
 
         if(fileInfo)
-            return fileInfo->userColumnRole().value(column - 1, UnknowRole);
+            return fileInfo->userColumnRoles().value(column - 1, UnknowRole);
     }
 
     return UnknowRole;
@@ -308,7 +308,7 @@ int DFileSystemModel::roleToColumn(int role) const
         const AbstractFileInfoPointer &fileInfo = this->fileInfo(m_activeIndex);
 
         if(fileInfo) {
-            int column = fileInfo->userColumnRole().indexOf(role);
+            int column = fileInfo->userColumnRoles().indexOf(role);
 
             if (column < 0)
                 return -1;

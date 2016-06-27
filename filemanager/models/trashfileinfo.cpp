@@ -171,12 +171,23 @@ int TrashFileInfo::userColumnWidth(int userColumnRole) const
     return AbstractFileInfo::userColumnWidth(userColumnRole);
 }
 
-bool TrashFileInfo::columnDefaultVisibleForRole(int role) const
+bool TrashFileInfo::columnDefaultVisibleForRole(int userColumnRole) const
 {
-    if (role == DFileSystemModel::FileLastModifiedRole)
+    if (userColumnRole == DFileSystemModel::FileLastModifiedRole)
         return false;
 
-    return AbstractFileInfo::columnDefaultVisibleForRole(role);
+    return AbstractFileInfo::columnDefaultVisibleForRole(userColumnRole);
+}
+
+MenuAction TrashFileInfo::menuActionByColumnRole(int userColumnRole) const
+{
+    if (userColumnRole == DFileSystemModel::FileUserRole + 1)
+        return MenuAction::DeletionDate;
+
+    if (userColumnRole == DFileSystemModel::FileUserRole + 2)
+        return MenuAction::SourcePath;
+
+    return AbstractFileInfo::menuActionByColumnRole(userColumnRole);
 }
 
 AbstractFileInfo::sortFunction TrashFileInfo::sortFunByColumn(int columnRole) const
