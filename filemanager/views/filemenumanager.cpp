@@ -69,9 +69,10 @@ DFileMenu *FileMenuManager::createNetworkMarkMenu()
     return genereteMenuByKeys(actionKeys, disableList);
 }
 
-DFileMenu *FileMenuManager::createCustomBookMarkMenu(const QSet<MenuAction> &disableList)
+DFileMenu *FileMenuManager::createCustomBookMarkMenu(const DUrl &url, const QSet<MenuAction> &disableList)
 {
     QVector<MenuAction> actionKeys;
+    QSet<MenuAction> disableActionKeys;
 
     actionKeys.reserve(10);
 
@@ -80,7 +81,13 @@ DFileMenu *FileMenuManager::createCustomBookMarkMenu(const QSet<MenuAction> &dis
                << MenuAction::Remove
                << MenuAction::Property;
 
-    return genereteMenuByKeys(actionKeys, disableList);
+    if (!QDir(url.path()).exists()){
+        disableActionKeys << MenuAction::OpenInNewWindow
+                          << MenuAction::Rename
+                          << MenuAction::Property;
+    }
+
+    return genereteMenuByKeys(actionKeys, disableActionKeys);
 }
 
 DFileMenu *FileMenuManager::createTrashLeftBarMenu(const QSet<MenuAction> &disableList)

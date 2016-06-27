@@ -609,7 +609,7 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     }else if(m_isDefault)
         menu = FileMenuManager::createDefaultBookMarkMenu();
     else
-        menu = FileMenuManager::createCustomBookMarkMenu();
+        menu = FileMenuManager::createCustomBookMarkMenu(m_url);
 
     QPointer<DBookmarkItem> me = this;
 
