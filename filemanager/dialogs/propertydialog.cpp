@@ -238,13 +238,13 @@ QFrame *PropertyDialog::createBasicInfoWidget(const AbstractFileInfoPointer &inf
     SectionKeyLabel* sizeSectionLabel = new SectionKeyLabel(QObject::tr("Size"));
     SectionKeyLabel* fileAmountSectionLabel = new SectionKeyLabel(QObject::tr("File amount"));
     SectionKeyLabel* typeSectionLabel = new SectionKeyLabel(QObject::tr("Type"));
-    SectionKeyLabel* TimeCreatedSectionLabel = new SectionKeyLabel(QObject::tr("Time created"));
+    SectionKeyLabel* TimeCreatedSectionLabel = new SectionKeyLabel(QObject::tr("Time read"));
     SectionKeyLabel* TimeModifiedSectionLabel = new SectionKeyLabel(QObject::tr("Time modified"));
 
     SectionValueLabel* sizeLabel = new SectionValueLabel(info->sizeDisplayName());
     m_folderSizeLabel = new SectionValueLabel;
     SectionValueLabel* typeLabel = new SectionValueLabel(info->mimeTypeDisplayName());
-    SectionValueLabel* timeCreatedLabel = new SectionValueLabel(info->createdDisplayName());
+    SectionValueLabel* timeCreatedLabel = new SectionValueLabel(info->lastReadDisplayName());
     SectionValueLabel* timeModifiedLabel = new SectionValueLabel(info->lastModifiedDisplayName());
     SectionValueLabel* executableLabel = new SectionValueLabel(tr("Allow to execute as program"));
 

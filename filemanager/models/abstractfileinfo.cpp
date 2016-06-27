@@ -282,6 +282,11 @@ QDateTime AbstractFileInfo::lastRead() const
     return data->fileInfo.lastRead();
 }
 
+QString AbstractFileInfo::lastReadDisplayName() const
+{
+    return lastRead().toString(timeFormat());
+}
+
 QString AbstractFileInfo::lastModifiedDisplayName() const
 {
     return lastModified().toString(timeFormat());
@@ -567,7 +572,7 @@ void AbstractFileInfo::updateFileMetaData()
 void AbstractFileInfo::init()
 {
     m_userColumnRoles << DFileSystemModel::FileLastModifiedRole << DFileSystemModel::FileSizeRole
-                      << DFileSystemModel::FileMimeTypeRole << DFileSystemModel::FileCreatedRole;
+                      << DFileSystemModel::FileMimeTypeRole;
 }
 
 QMap<MenuAction, QVector<MenuAction> > AbstractFileInfo::subMenuActionList() const
@@ -589,15 +594,13 @@ QMap<MenuAction, QVector<MenuAction> > AbstractFileInfo::subMenuActionList() con
 
     int support_view_mode = supportViewMode();
 
-    if (support_view_mode & DListView::IconMode == DListView::IconMode)
+    if ((support_view_mode & DListView::IconMode) == DListView::IconMode)
         displayAsMenuActionKeys << MenuAction::IconView;
 
-    if (support_view_mode & DListView::ListMode == DListView::ListMode)
+    if ((support_view_mode & DListView::ListMode) == DListView::ListMode)
         displayAsMenuActionKeys << MenuAction::ListView;
 
-    displayAsMenuActionKeys;
     actions.insert(MenuAction::DisplayAs, displayAsMenuActionKeys);
-
 
     QVector<MenuAction> sortByMenuActionKeys;
     sortByMenuActionKeys << MenuAction::Name;
