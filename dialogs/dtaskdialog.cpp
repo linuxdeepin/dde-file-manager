@@ -8,6 +8,7 @@
 #include <QDesktopWidget>
 #include <QCloseEvent>
 #include "../views/dscrollbar.h"
+#include "../utils/xutil.h"
 
 MoveCopyTaskWidget::MoveCopyTaskWidget(const QMap<QString, QString> &jobDetail, QWidget *parent):
     QFrame(parent),
@@ -131,7 +132,6 @@ void MoveCopyTaskWidget::initConnect(){
 
 void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data){
     QString file, destination, speed, remainTime, progress;
-    QString action("copied");
     QString message, tipMessage;
     if (data.contains("file")){
         file = data.value("file");
@@ -148,6 +148,21 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data){
 
     if (data.contains("progress")){
         progress = data.value("progress");
+    }
+
+    int fileMaxWidth = 180;
+    int destinationMaxWidth = 90;
+
+    QFontMetrics fm = m_messageLabel->fontMetrics();
+
+    if (fm.width(destination) > destinationMaxWidth){
+        destination = fm.elidedText(destination, Qt::ElideMiddle, destinationMaxWidth);
+    }else{
+        fileMaxWidth = 270 - fm.width(destination);
+    }
+
+    if (fm.width(file) > fileMaxWidth){
+        file = fm.elidedText(file, Qt::ElideMiddle, fileMaxWidth);
     }
 
     if (m_jobDetail.contains("type")){
@@ -278,7 +293,7 @@ void MoveCopyTaskWidget::setTipMessage(QString tipMessage){
 DTaskDialog::DTaskDialog(QWidget *parent) :
     DMoveableWidget(parent)
 {
-    setFixedWidth(m_defaultWidth);
+    resize(m_defaultWidth, 0);
     initUI();
     initConnect();
     moveCenter();
@@ -300,7 +315,7 @@ void DTaskDialog::initUI(){
     m_titleBarMinimizeButton->setObjectName("MinimizeButton");
     m_titleBarMinimizeButton->setFixedSize(25, 25);
     m_titleBarMinimizeButton->setAttribute(Qt::WA_NoMousePropagation);
-    m_titleBarMinimizeButton->hide();
+
 
     QFrame* lineLabel = new QFrame;
     lineLabel->setFixedHeight(1);
@@ -339,6 +354,7 @@ void DTaskDialog::initUI(){
 
 void DTaskDialog::initConnect(){
     connect(m_titleBarCloseButton, SIGNAL(clicked()), this, SLOT(close()));
+    connect(m_titleBarMinimizeButton, SIGNAL(clicked()), this, SLOT(handleMinimizeButtonClick()));
 }
 
 QListWidget *DTaskDialog::getTaskListWidget()
@@ -426,10 +442,10 @@ void DTaskDialog::adjustSize(){
     }
     if (m_taskListWidget->count() >= 6){
         m_taskListWidget->setFixedHeight(maxHeight);
-        setFixedHeight(maxHeight + 60);
+        resize(width(), maxHeight + 60);
     }else{
         m_taskListWidget->setFixedHeight(listHeight);
-        setFixedHeight(listHeight + 60);
+        resize(width(), listHeight + 60);
     }
 //    if (listHeight < qApp->desktop()->availableGeometry().height() - 40){
 //        m_taskListWidget->setFixedHeight(listHeight);
@@ -437,6 +453,8 @@ void DTaskDialog::adjustSize(){
 //    }else{
 //        setFixedHeight(qApp->desktop()->availableGeometry().height());
 //    }
+
+    layout()->setSizeConstraint(QLayout::SetNoConstraint);
 }
 
 void DTaskDialog::removeTaskByPath(QString jobId){
@@ -467,6 +485,11 @@ void DTaskDialog::showConflictDiloagByJob(const QMap<QString, QString> &jobDetai
 void DTaskDialog::handleConflictResponse(const QMap<QString, QString> &jobDetail, const QMap<QString, QVariant> &response){
 
     emit conflictRepsonseConfirmed(jobDetail, response);
+}
+
+void DTaskDialog::handleMinimizeButtonClick()
+{
+    showMinimized();
 }
 
 void DTaskDialog::handleTaskClose(const QMap<QString, QString> &jobDetail){
