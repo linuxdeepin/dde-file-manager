@@ -131,7 +131,6 @@ QSet<MenuAction> TrashFileInfo::disableMenuActionList() const
     if (TrashManager::isEmpty()) {
         list << MenuAction::RestoreAll;
         list << MenuAction::ClearTrash;
-        list << MenuAction::Property;
     }
 
     return list;
