@@ -16,6 +16,8 @@ public:
     bool isFirst();
     bool isLast();
     int size();
+    void removeAt(int i);
+    int currentIndex();
 private:
     QList<DUrl> m_list;
     int m_threshold;
