@@ -6,6 +6,8 @@
 #include <Windows.h>
 #endif
 
+#include "chinese2pinyin.h"
+
 QString Global::wordWrapText(const QString &text, int width, QTextOption::WrapMode wrapMode, int *height)
 {
     QTextLayout textLayout(text);
@@ -76,28 +78,7 @@ QString Global::elideText(const QString &text, const QSize &size, const QFontMet
 
 QString Global::toPinyin(const QString &text)
 {
-    QDBusInterface dbus_pinyin("com.deepin.api.Pinyin", "/com/deepin/api/Pinyin", "com.deepin.api.Pinyin");
-//    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(dbus_pinyin.asyncCall("Query", QString(title[0])), this);
-
-    QList<QVariant> list = dbus_pinyin.call("Query", text).arguments();
-
-    if (list.isEmpty())
-        return QString();
-
-    const QStringList &str_list = list.first().toStringList();
-
-    if (str_list.isEmpty())
-        return QString();
-
-    return str_list.first();
-//    connect(watcher, &QDBusPendingCallWatcher::finished, watcher, [this, watcher, title, str]{
-//        QDBusPendingReply<QStringList> reply = *watcher;
-//        if (!reply.isError())
-//        {
-//            onAddLayoutItem(str, title, reply.value());
-//        }
-//        watcher->deleteLater();
-//    });
+    return Pinyin::Chinese2Pinyin(text);
 }
 
 bool Global::startWithHanzi(const QString &text)
