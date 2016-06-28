@@ -17,7 +17,6 @@ QGraphicsView#Bookmark{
     background-color: transparent;
     selection-background-color: transparent;
     selection-color: transparent;
-    padding-left: 0px;
 }
 
 QListWidget#ListWidget::item{

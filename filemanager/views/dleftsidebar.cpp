@@ -89,8 +89,9 @@ void DLeftSideBar::initNav()
     m_nav->setFocusPolicy(Qt::NoFocus);
     m_nav->setFixedWidth(200);
     QVBoxLayout* navLayout = new QVBoxLayout;
-    m_nav->setLayout(navLayout);
 
+    QFrame* fileFrame = new QFrame(this);
+    fileFrame->setFixedHeight(40);
     QHBoxLayout * fileButtonLayout = new QHBoxLayout;
     m_fileLabel = new QLabel(tr("File Manager"));
     m_fileLabel->setObjectName("FileLabel");
@@ -100,21 +101,18 @@ void DLeftSideBar::initNav()
     m_fileButton->setFocusPolicy(Qt::NoFocus);
     fileButtonLayout->addWidget(m_fileButton, Qt::AlignVCenter);
     fileButtonLayout->addWidget(m_fileLabel, Qt::AlignVCenter);
-    fileButtonLayout->setContentsMargins(13, 13, 0, 0);
+    fileButtonLayout->setContentsMargins(13, 0, 0, 0);
     fileButtonLayout->setSpacing(8);
-
-    navLayout->addLayout(fileButtonLayout);
-    navLayout->setSpacing(0);
-
+    fileFrame->setLayout(fileButtonLayout);
 
     m_view = new QGraphicsView;
     m_view->setAcceptDrops(true);
     m_view->setVerticalScrollBar(new DScrollBar);
     m_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_view->setObjectName("Bookmark");
-    m_view->setAlignment(Qt::AlignTop | Qt::AlignLeft);
+    m_view->setAlignment(Qt::AlignTop);
     m_scene = new DBookmarkScene;
-    m_scene->setSceneRect(10, 0, 200, 500);
+    m_scene->setSceneRect(10, 10, 200, 500);
     m_view->setScene(m_scene);
 
 
@@ -132,8 +130,11 @@ void DLeftSideBar::initNav()
             }
         }
     }
+    navLayout->addWidget(fileFrame);
     navLayout->addWidget(m_view);
+    navLayout->setSpacing(0);
     navLayout->setContentsMargins(0, 0, 0, 0);
+    m_nav->setLayout(navLayout);
 }
 
 void DLeftSideBar::resizeEvent(QResizeEvent *e)
