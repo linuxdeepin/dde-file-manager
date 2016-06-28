@@ -318,12 +318,7 @@ int AbstractFileInfo::mimeTypeDisplayNameOrder() const
 
 DUrl AbstractFileInfo::parentUrl() const
 {
-    DUrl url = data->url;
-    const QString &path = url.path();
-
-    url.setPath(path.left(path.lastIndexOf('/') + 1));
-
-    return url;
+    return DUrl::parentUrl(data->url);
 }
 
 QVector<MenuAction> AbstractFileInfo::menuActionList(AbstractFileInfo::MenuType type) const

@@ -596,6 +596,8 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             cdUp(fmevent);
         }else if (event->key() == Qt::Key_F1){
             appController->actionHelp(fmevent);
+        } else if (event->key() == Qt::Key_F5) {
+            model()->refresh();
         }
     }else if (event->modifiers() == Qt::ControlModifier){
         if (event->key() == Qt::Key_Down){
@@ -611,6 +613,12 @@ void DFileView::keyPressEvent(QKeyEvent *event)
         }else if (event->key() == Qt::Key_N){
             appController->actionNewWindow(fmevent);
         }else if (event->key() == Qt::Key_H){
+            oldSelectedUrllist = selectedUrls();
+
+            clearSelection();
+
+            connect(model(), &DFileSystemModel::childrenUpdated, this, &DFileView::onChildrenUpdated);
+
             model()->toggleHiddenFiles(currentUrl());
         }else if (event->key() == Qt::Key_I){
             appController->actionProperty(fmevent);
@@ -1041,6 +1049,20 @@ QModelIndex DFileView::moveCursor(QAbstractItemView::CursorAction cursorAction, 
     return current;
 }
 
+void DFileView::rowsAboutToBeRemoved(const QModelIndex &parent, int start, int end)
+{
+    for (const QModelIndex &index : selectedIndexes()) {
+        if (index.parent() != parent)
+            continue;
+
+        if (index.row() >= start && index.row() <= end) {
+            selectionModel()->select(index, QItemSelectionModel::Clear);
+        }
+    }
+
+    DListView::rowsAboutToBeRemoved(parent, start, end);
+}
+
 bool DFileView::isEmptyArea(const QModelIndex &index, const QPoint &pos) const
 {
     if(index.isValid() && selectionModel()->selectedIndexes().contains(index)) {
@@ -1180,12 +1202,12 @@ bool DFileView::setCurrentUrl(DUrl fileUrl)
 
     stopSearch();
 
-    QModelIndex index = model()->index(fileUrl);
+//    QModelIndex index = model()->index(fileUrl);
 
-    if(!index.isValid())
-        index = model()->setRootUrl(fileUrl);
+//    if(!index.isValid())
+    QModelIndex index = model()->setRootUrl(fileUrl);
 
-    model()->setActiveIndex(index);
+//    model()->setActiveIndex(index);
     setRootIndex(index);
 
     updateListHeaderViewProperty();
@@ -1649,4 +1671,15 @@ void DFileView::popupHeaderViewContextMenu(const QPoint &/*pos*/)
     }
 
     menu->exec();
+}
+
+void DFileView::onChildrenUpdated()
+{
+    for (const DUrl &url : oldSelectedUrllist) {
+        selectionModel()->select(model()->index(url), QItemSelectionModel::SelectCurrent);
+    }
+
+    disconnect(model(), &DFileSystemModel::childrenUpdated, this, &DFileView::onChildrenUpdated);
+
+    oldSelectedUrllist.clear();
 }

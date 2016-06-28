@@ -236,6 +236,13 @@ void DFileItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
     }
 }
 
+void DFileItemDelegate::destroyEditor(QWidget *editor, const QModelIndex &index) const
+{
+    QStyledItemDelegate::destroyEditor(editor, index);
+
+    editing_index = QModelIndex();
+}
+
 void DFileItemDelegate::paintIconItem(bool isDragMode, QPainter *painter,
                                       const QStyleOptionViewItem &option,
                                       const QModelIndex &index) const
@@ -666,6 +673,19 @@ bool DFileItemDelegate::eventFilter(QObject *object, QEvent *event)
                 edit->selectAll();
             else
                 edit->setSelection(0, endPos);
+        }
+    } else if (event->type() == QEvent::KeyPress) {
+        QKeyEvent *e = static_cast<QKeyEvent*>(event);
+
+        if (e->key() == Qt::Key_Enter) {
+            e->accept();
+
+            QLineEdit *edit = qobject_cast<QLineEdit*>(object);
+
+            if (edit)
+                edit->close();
+
+            return true;
         }
     }
 
