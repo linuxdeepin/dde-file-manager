@@ -132,7 +132,6 @@ QSet<MenuAction> TrashFileInfo::disableMenuActionList() const
         list << MenuAction::RestoreAll;
         list << MenuAction::ClearTrash;
         list << MenuAction::Property;
-        list << MenuAction::SortBy;
     }
 
     return list;
