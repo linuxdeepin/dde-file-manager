@@ -379,7 +379,8 @@ DUrl DUrl::parentUrl(const DUrl &url)
     _url.setScheme(url.scheme());
     QStringList paths = url.path().split("/");
     paths.removeAt(0);
-    paths.removeLast();
+    if (!paths.isEmpty())
+        paths.removeLast();
     QString _path;
     foreach (QString p, paths) {
         _path += "/" + p;
