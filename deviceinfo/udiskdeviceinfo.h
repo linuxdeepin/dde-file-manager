@@ -21,6 +21,7 @@ public:
         phone,
         iphone,
         removable,
+        camera,
         network,
     };
 

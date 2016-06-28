@@ -58,7 +58,7 @@ void DFileManagerWindow::initUI()
 void DFileManagerWindow::initTitleBar()
 {
     m_titleBar = new DTitlebar(this);
-    m_titleBar->layout()->setContentsMargins(0, 0, 5, 0);
+    m_titleBar->layout()->setContentsMargins(0, 0, 8, 0);
     m_titleBar->setWindowFlags(m_titleBar->windowFlags());
 
     DFileMenu* menu = fileMenuManger->createToolBarSettingsMenu();

@@ -243,6 +243,14 @@ DCrumbButton *DCrumbWidget::createDeviceCrumbButtonByType(UDiskDeviceInfo::Media
                     QIcon(":/icons/images/icons/android_checked_16px.svg"),
                     mountPoint, this);
         break;
+    }case UDiskDeviceInfo::camera:{
+        button = new DCrumbIconButton(
+                    m_group.buttons().size(),
+                    QIcon(":/icons/images/icons/android_normal_16px.svg"),
+                    QIcon(":/icons/images/icons/android_hover_16px.svg"),
+                    QIcon(":/icons/images/icons/android_checked_16px.svg"),
+                    mountPoint, this);
+        break;
     }
     case UDiskDeviceInfo::iphone:{
         button = new DCrumbIconButton(

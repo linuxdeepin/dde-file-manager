@@ -207,7 +207,7 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
         painter->setFont(m_font);
         QRect rect(leftPadding + 24, m_y_axis + m_height/4, m_width - 25, m_height);
         QFontMetrics metrics(m_font);
-        QString elidedText = metrics.elidedText(m_textContent, Qt::ElideMiddle, m_width - leftPadding - 30);
+        QString elidedText = metrics.elidedText(m_textContent, Qt::ElideMiddle, m_width - leftPadding - 60);
         painter->drawText(rect,Qt::TextWordWrap|Qt::AlignLeft,elidedText);
     }
     else
