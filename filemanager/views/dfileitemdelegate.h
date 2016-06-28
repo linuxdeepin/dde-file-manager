@@ -35,6 +35,7 @@ public:
 
     void updateEditorGeometry(QWidget * editor, const QStyleOptionViewItem & option, const QModelIndex &) const Q_DECL_OVERRIDE;
     void setEditorData(QWidget * editor, const QModelIndex & index) const Q_DECL_OVERRIDE;
+    void destroyEditor(QWidget *editor, const QModelIndex &index) const Q_DECL_OVERRIDE;
 
     void paintIconItem(bool isDragMode, QPainter *painter,
                        const QStyleOptionViewItem &option,

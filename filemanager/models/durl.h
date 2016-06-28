@@ -77,6 +77,8 @@ public:
     static DUrl parentUrl(const DUrl &url);
 
     bool operator ==(const DUrl &url) const;
+    inline bool operator !=(const DUrl &url) const
+    { return !operator ==(url);}
     friend Q_CORE_EXPORT uint qHash(const DUrl &url, uint seed) Q_DECL_NOTHROW;
 
     void makeAbsolutePath();

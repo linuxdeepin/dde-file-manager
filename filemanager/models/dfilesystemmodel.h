@@ -85,7 +85,7 @@ public:
 
     void setSortColumn(int column, Qt::SortOrder order = Qt::AscendingOrder);
     void setSortRole(int role, Qt::SortOrder order = Qt::AscendingOrder);
-    void setActiveIndex(const QModelIndex &index);
+//    void setActiveIndex(const QModelIndex &index);
 
     Qt::SortOrder sortOrder() const;
     int sortColumn() const;
@@ -101,8 +101,12 @@ public:
 
 public slots:
     void updateChildren(const FMEvent &event, QList<AbstractFileInfoPointer> list);
-    void refresh(const DUrl &fileUrl, QDir::Filters filters = QDir::AllEntries | QDir::NoDotAndDotDot);
+    /// warning: only refresh current url
+    void refresh(const DUrl &fileUrl = DUrl());
     void toggleHiddenFiles(const DUrl &fileUrl);
+
+signals:
+    void childrenUpdated(DUrl parentUrl);
 
 private slots:
     void onFileCreated(const DUrl &fileUrl);
@@ -112,12 +116,12 @@ private slots:
 private:
     FileSystemNodePointer m_rootNode;
 
-    QHash<DUrl, FileSystemNodePointer> m_urlToNode;
+//    QHash<DUrl, FileSystemNodePointer> m_urlToNode;
 
     int m_sortRole = FileDisplayNameRole;
     QDir::Filters m_filters = QDir::AllEntries | QDir::NoDotAndDotDot;
     Qt::SortOrder m_srotOrder = Qt::AscendingOrder;
-    QModelIndex m_activeIndex;
+//    QModelIndex m_activeIndex;
 
     inline const FileSystemNodePointer getNodeByIndex(const QModelIndex &index) const;
     QModelIndex createIndex(const FileSystemNodePointer &node, int column) const;
@@ -127,7 +131,7 @@ private:
 
     void sort(const AbstractFileInfoPointer &parentInfo, QList<AbstractFileInfoPointer> &list) const;
 
-    const FileSystemNodePointer createNode(const FileSystemNodePointer &parent, const AbstractFileInfoPointer &info);
+    const FileSystemNodePointer createNode(FileSystemNode *parent, const AbstractFileInfoPointer &info);
 
     void deleteNode(const FileSystemNodePointer &node);
     void deleteNodeByUrl(const DUrl &url);

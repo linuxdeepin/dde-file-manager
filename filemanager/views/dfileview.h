@@ -159,6 +159,7 @@ protected:
     void dragMoveEvent(QDragMoveEvent *event) Q_DECL_OVERRIDE;
     void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags flags) Q_DECL_OVERRIDE;
     QModelIndex moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers modifiers) Q_DECL_OVERRIDE;
+    void rowsAboutToBeRemoved(const QModelIndex & parent, int start, int end) Q_DECL_OVERRIDE;
 
 private:
     FileMenuManager* m_fileMenuManager;
@@ -196,6 +197,7 @@ private:
     void updateItemSizeHint();
     void updateColumnWidth();
     void popupHeaderViewContextMenu(const QPoint &pos);
+    void onChildrenUpdated();
 
     using DListView::setOrientation;
 
@@ -221,6 +223,8 @@ private:
 
     int firstVisibleColumn = -1;
     int lastVisibleColumn = -1;
+
+    DUrlList oldSelectedUrllist;
 };
 
 #endif // DFILEVIEW_H
