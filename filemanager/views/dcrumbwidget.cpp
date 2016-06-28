@@ -40,7 +40,7 @@ void DCrumbWidget::initUI()
 
 void DCrumbWidget::addCrumb(const QStringList &list)
 {
-    qDebug() << list;
+//    qDebug() << list;
     for(int i = 0; i < list.size(); i++)
     {
         QString text = list.at(i);
@@ -89,7 +89,7 @@ void DCrumbWidget::addCrumb(const QStringList &list)
 
 void DCrumbWidget::setCrumb(const DUrl &path)
 {
-    qDebug() << path;
+//    qDebug() << path;
     if(path.isSearchFile())
         return;
     m_path = path;
@@ -106,8 +106,12 @@ void DCrumbWidget::setCrumb(const DUrl &path)
     }
     else if(path.isTrashFile())
     {
-        addTrashCrumb();
-        addLocalCrumbs(path);
+        if (path == DUrl(TRASH_ROOT)){
+            addTrashCrumb();
+        }else{
+            addTrashCrumb();
+            addLocalCrumbs(path);
+        }
     }else if(path.isSMBFile()){
         addNetworkCrumb();
         addCrumb(QStringList() << path.toString());
@@ -279,7 +283,7 @@ void DCrumbWidget::addLocalCrumbs(const DUrl & url)
 {
     QStringList list;
     QString path = url.path();
-    qDebug() << path << isInDevice(path);
+//    qDebug() << path << isInDevice(path);
     if(isInHome(path))
     {
         QString tmpPath = url.toLocalFile();
@@ -287,7 +291,7 @@ void DCrumbWidget::addLocalCrumbs(const DUrl & url)
         list.append(tmpPath.split("/"));
         list.insert(0, m_homePath);
         list.removeAll("");
-    }else if (isRootFolder(path)){
+    }else if (url == DUrl(FILE_ROOT)){
         list.insert(0, "/");
     }else if(isInDevice(path)){
         UDiskDeviceInfo* info = deviceListener->getDeviceByPath(path);
