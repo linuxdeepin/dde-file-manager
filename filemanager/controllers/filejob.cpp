@@ -337,12 +337,14 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir)
                 if(!from.open(QIODevice::ReadOnly))
                 {
                     //Operation failed
+                    qDebug() << srcFile << "isn't read only";
                     return false;
                 }
                 to.setFileName(m_tarPath);
                 if(!to.open(QIODevice::WriteOnly))
                 {
                     //Operation failed
+                    qDebug() << tarDir << "isn't write only";
                     return false;
                 }
                 m_status = Run;
@@ -640,8 +642,10 @@ bool FileJob::moveDir(const QString &srcFile, const QString &tarDir)
 
 bool FileJob::deleteFile(const QString &file)
 {
-    if(QFile::remove(file))
+    if(QFile::remove(file)){
+        qDebug() << " delete file:" << file << "successfully";
         return true;
+    }
     else
     {
         qDebug() << "unable to delete file:" << file;

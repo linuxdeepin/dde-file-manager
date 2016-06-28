@@ -97,7 +97,10 @@ void BaseDialog::showEvent(QShowEvent *event)
 
 void BaseDialog::keyPressEvent(QKeyEvent *event)
 {
+    qDebug() << event;
     if (event->key() == Qt::Key_Escape){
+        close();
+    }else if (event->modifiers() == Qt::AltModifier && event->key() == Qt::Key_F4){
         close();
     }
 }

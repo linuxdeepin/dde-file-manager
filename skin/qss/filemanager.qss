@@ -312,6 +312,23 @@ QLineEdit#DSearchBar{
     background-color: #ffffff;
     border: 1px solid rgba(0, 0, 0, 0.1);
     padding-left:0px;
+    selection-background-color: #61B5F8;
+}
+
+QListWidget#SearchList{
+    background-color: white;
+    border:1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    border-top: 4px solid transparent;
+    border-radius: 4px;
+}
+QListWidget#SearchList::item{
+    height: 24px;
+    padding: 0px;
+    margins:10px;
+}
+QListWidget#SearchList::item:selected{
+    background: #61B5F8;
 }
 /*******************End of DSearchBar****************** */
 

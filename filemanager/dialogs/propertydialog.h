@@ -89,6 +89,8 @@ public:
     int getFileCount();
     qint64 getFileSize();
 
+    QString getNameByUrl(const DUrl &url);
+
 public slots:
     void raise();
 
