@@ -161,7 +161,6 @@ protected:
     QModelIndex moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers modifiers) Q_DECL_OVERRIDE;
 
 private:
-    FileController *m_controller;
     FileMenuManager* m_fileMenuManager;
     QHeaderView *m_headerView = Q_NULLPTR;
 
