@@ -72,7 +72,6 @@ QString UDiskDeviceInfo::getPath()
 
 QString UDiskDeviceInfo::getMountPoint()
 {
-//    qDebug() << m_diskInfo;
     QString path = QString("/run/user/%1/gvfs").arg(SingleApplication::UserID);
 
     if (m_diskInfo.MountPoint.startsWith("afc://")){
@@ -119,6 +118,10 @@ QString UDiskDeviceInfo::getMountPoint()
         }
         qDebug() << domain << ip << share << user << mountPath;
         m_diskInfo.MountPoint = mountPath.left(mountPath.length()-1);
+    }else if(m_diskInfo.MountPoint.startsWith("gphoto2://")){
+        QStringList ids = m_diskInfo.MountPoint.split("/");
+        QString key = QUrl::toPercentEncoding(ids[2]);
+        m_diskInfo.MountPoint = QString("%1/gphoto2:host=%2").arg(path, key);
     }
     return m_diskInfo.MountPoint.replace("file://", "");
 }
@@ -173,6 +176,8 @@ UDiskDeviceInfo::MediaType UDiskDeviceInfo::getMediaType() const
         return phone;
     else if(getType() == "iphone")
         return iphone;
+    else if(getType() == "camera")
+        return camera;
     else
         return unknown;
 }
