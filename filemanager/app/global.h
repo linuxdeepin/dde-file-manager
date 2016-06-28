@@ -83,6 +83,8 @@
 
 #define MAX_THREAD_COUNT 1000
 
+#define MAX_FILE_NAME_CHAR_COUNT 255
+
 #define ASYN_CALL(Fun, Code, captured...) { \
     QDBusPendingCallWatcher * watcher = new QDBusPendingCallWatcher(Fun); \
     auto onFinished = [watcher, captured]{ \
