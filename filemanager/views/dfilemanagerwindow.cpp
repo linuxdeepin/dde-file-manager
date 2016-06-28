@@ -295,8 +295,10 @@ void DMainWindow::timerEvent(QTimerEvent *event)
 
 void DMainWindow::mouseMoveEvent(QMouseEvent *event)
 {
-    if (event->y() <= m_fileManagerWindow->getTitleBar()->height() + layoutMargin + 2)
-        emit startMoving();
+    if (this->isActiveWindow()){
+        if (event->y() <= m_fileManagerWindow->getTitleBar()->height() + layoutMargin + 2)
+            emit startMoving();
+    }
     DWindowFrame::mouseMoveEvent(event);
 }
 
