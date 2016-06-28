@@ -81,7 +81,15 @@ QString Global::toPinyin(const QString &text)
 
     QList<QVariant> list = dbus_pinyin.call("Query", text).arguments();
 
-    return list.first().toStringList().first();
+    if (list.isEmpty())
+        return QString();
+
+    const QStringList &str_list = list.first().toStringList();
+
+    if (str_list.isEmpty())
+        return QString();
+
+    return str_list.first();
 //    connect(watcher, &QDBusPendingCallWatcher::finished, watcher, [this, watcher, title, str]{
 //        QDBusPendingReply<QStringList> reply = *watcher;
 //        if (!reply.isError())
