@@ -39,6 +39,28 @@ FileIconItem::FileIconItem(QWidget *parent) :
         QSignalBlocker blocker(edit);
         Q_UNUSED(blocker)
 
+        QString text = edit->toPlainText();
+        const QString old_text = text;
+
+        text.remove('/');
+        text.remove(QChar(0));
+
+        QVector<uint> list = text.toUcs4();
+
+        while (text.toUtf8().size() > MAX_FILE_NAME_CHAR_COUNT) {
+            list.removeLast();
+
+            text = QString::fromUcs4(list.data(), list.size());
+        }
+
+        if (text.count() != old_text.count()) {
+            QTextCursor cursor = edit->textCursor();
+
+            edit->setText(text);
+            edit->setTextCursor(cursor);
+            edit->setAlignment(Qt::AlignHCenter);
+        }
+
         QTextCursor cursor(edit->document());
 
         cursor.movePosition(QTextCursor::Start);
@@ -52,6 +74,8 @@ FileIconItem::FileIconItem(QWidget *parent) :
 
         if (edit->isReadOnly())
             edit->setFixedHeight(edit->document()->size().height());
+
+        cursor.movePosition(QTextCursor::EndOfWord);
     });
 }
 
