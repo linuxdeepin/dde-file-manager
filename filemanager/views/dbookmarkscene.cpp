@@ -547,6 +547,10 @@ void DBookmarkScene::mountAdded(UDiskDeviceInfo *device)
             key = "Android";
         }else if (device->getMediaType() == UDiskDeviceInfo::network){
             key = "Network";
+        }else if (device->getMediaType() == UDiskDeviceInfo::camera && device->getName() == "iPhone"){
+            key = "Iphone";
+        }else if (device->getMediaType() == UDiskDeviceInfo::camera){
+            key = "Android";
         }
         item = createBookmarkByKey(key);
         item->setDeviceInfo(device);

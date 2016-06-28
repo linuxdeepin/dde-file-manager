@@ -54,7 +54,11 @@ void DCrumbWidget::addCrumb(const QStringList &list)
                     text, this);
         }else if(isDeviceFolder(text)){
             UDiskDeviceInfo* info = deviceListener->getDeviceByPath(text);
-            button = createDeviceCrumbButtonByType(info->getMediaType(), text);
+            if (info->getMediaType() == UDiskDeviceInfo::camera && info->getName() == "iPhone"){
+                button = createDeviceCrumbButtonByType(UDiskDeviceInfo::iphone, text);
+            }else{
+                button = createDeviceCrumbButtonByType(info->getMediaType(), text);
+            }
         }
         else{
             button = new DCrumbButton(m_group.buttons().size(), text, this);
