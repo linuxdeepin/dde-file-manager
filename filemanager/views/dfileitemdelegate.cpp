@@ -98,6 +98,32 @@ QWidget *DFileItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
            editing_index = QModelIndex();
        });
 
+       connect(edit, &QLineEdit::textChanged, this, [edit] {
+           QSignalBlocker blocker(edit);
+           Q_UNUSED(blocker)
+
+           QString text = edit->text();
+           const QString old_text = text;
+
+           text.remove('/');
+           text.remove(QChar(0));
+
+           QVector<uint> list = text.toUcs4();
+
+           while (text.toUtf8().size() > MAX_FILE_NAME_CHAR_COUNT) {
+               list.removeLast();
+
+               text = QString::fromUcs4(list.data(), list.size());
+           }
+
+           if (text.count() != old_text.count()) {
+               int position = edit->cursorPosition();
+
+               edit->setText(text);
+               edit->setCursorPosition(position);
+           }
+       });
+
        edit->setFrame(false);
        edit->setAttribute(Qt::WA_TranslucentBackground);
        edit->setContentsMargins(-3, 0, 0, 0);
