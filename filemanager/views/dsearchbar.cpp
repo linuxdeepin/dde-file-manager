@@ -33,17 +33,7 @@ void DSearchBar::initUI()
     m_stringListMode = new QStringListModel(this);
     m_list->setWindowFlags(Qt::ToolTip);
     m_list->viewport()->setContentsMargins(4, 4, 4, 4);
-    m_list->setStyleSheet("QListWidget{\
-                          background-color: white;\
-                          border:1px solid rgba(0, 0, 0, 0.1);\
-                          border-top: 4px solid transparent;\
-                          border-radius: 4px;\
-                          }\
-                          QListWidget::item{\
-                          height: 24px;\
-                          padding: 0px;\
-                          margins:10px;\
-                      };");
+    m_list->setObjectName("SearchList");
 
     m_dirModel = new QDirModel;
     m_dirModel->setFilter(QDir::Dirs);
@@ -51,7 +41,7 @@ void DSearchBar::initUI()
     QIcon icon(":/images/images/light/appbar.close.png");
     m_clearAction = new QAction(icon,"", this);
 
-    setFixedHeight(20);
+    setFixedHeight(22);
     setObjectName("DSearchBar");
     setMinimumWidth(1);
 
@@ -565,92 +555,99 @@ void DSearchBar::keyPressEvent(QKeyEvent *e)
     int key = e->key();
     QModelIndex currentIndex = m_list->currentIndex();
 
-    switch(key)
-    {
-        case Qt::Key_Escape:
-            emit focusedOut();
-            break;
-        case Qt::Key_Down:
-        case Qt::Key_Up:
-            keyUpDown(key);
-            break;
-        case Qt::Key_Enter:
-        case Qt::Key_Return:
+    if (e->modifiers() != Qt::ShiftModifier){
+        switch(key)
         {
-            if(!(hasScheme() || isPath()))
-                m_searchStart = true;
-            if (currentIndex.isValid())
+            case Qt::Key_Escape:
+                emit focusedOut();
+                break;
+            case Qt::Key_Down:
+            case Qt::Key_Up:
+                keyUpDown(key);
+                break;
+            case Qt::Key_Enter:
+            case Qt::Key_Return:
             {
-                QString text = m_list->currentIndex().data().toString();
-                complete(text);
-            }
-            deselect();
-            m_list->hide();
-
-            QLineEdit::keyPressEvent(e);
-            break;
-        }
-        case Qt::Key_Right:
-        case Qt::Key_Tab:
-            if(selectedText().isEmpty())
-            {
-                if(m_list->count() == 1)
+                if(!(hasScheme() || isPath()))
+                    m_searchStart = true;
+                if (currentIndex.isValid())
                 {
-                    QStringList list = splitPath(m_text);
-                    QString modelText = m_list->item(0)->text();
-                    QString last = list.last();
+                    QString text = m_list->currentIndex().data().toString();
+                    complete(text);
+                }
+                deselect();
+                m_list->hide();
 
-                    if(isPath())
+                QLineEdit::keyPressEvent(e);
+                break;
+            }
+            case Qt::Key_Right:
+            case Qt::Key_Tab:
+                if(selectedText().isEmpty())
+                {
+                    if(m_list->count() == 1)
                     {
-                        list.removeLast();
-                        list.append(modelText);
-                        setText(list.join("/").replace(0,1,""));
-                    }
-                    else if(isLocalFile())
-                    {
-                        list.removeLast();
-                        list.append(modelText);
-                        setText(list.join("/"));
+                        QStringList list = splitPath(m_text);
+                        QString modelText = m_list->item(0)->text();
+                        QString last = list.last();
+
+                        if(isPath())
+                        {
+                            list.removeLast();
+                            list.append(modelText);
+                            setText(list.join("/").replace(0,1,""));
+                        }
+                        else if(isLocalFile())
+                        {
+                            list.removeLast();
+                            list.append(modelText);
+                            setText(list.join("/"));
+                        }
+                        else
+                        {
+                            setText(m_text);
+                        }
+                        setSelection(text().count() + last.count() - modelText.count(), text().count());
+                        m_text = text();
                     }
                     else
                     {
-                        setText(m_text);
+                        if(key != Qt::Key_Tab)
+                            QLineEdit::keyPressEvent(e);
+                        break;
                     }
-                    setSelection(text().count() + last.count() - modelText.count(), text().count());
+                }
+                m_list->hide();
+                m_list->clear();
+                end(false);
+                if(isPath() || isLocalFile())
+                {
+                    if (!text().endsWith("/")){
+                        setText(text() + "/");
+                        setCompleter(text());
+                    }
                     m_text = text();
                 }
-                else
-                {
-                    if(key != Qt::Key_Tab)
-                        QLineEdit::keyPressEvent(e);
-                    break;
-                }
-            }
-            m_list->hide();
-            m_list->clear();
-            end(false);
-            if(isPath() || isLocalFile())
-            {
-                setText(text() + "/");
-                m_text = text();
-            }
-            if(key != Qt::Key_Tab)
-                QLineEdit::keyPressEvent(e);
-            break;
-        case Qt::Key_Delete:
-        case Qt::Key_Backspace:
-            m_list->hide();
-            if(text().length() > 1)
-                m_disableCompletion = true;
-            QLineEdit::keyPressEvent(e);
-
-            break;
-        default:
-        {
-            if(e->modifiers() == Qt::NoModifier)
+                if(key != Qt::Key_Tab)
+                    QLineEdit::keyPressEvent(e);
+                break;
+            case Qt::Key_Delete:
+            case Qt::Key_Backspace:
                 m_list->hide();
-            QLineEdit::keyPressEvent(e);
+                if(text().length() > 1)
+                    m_disableCompletion = true;
+                QLineEdit::keyPressEvent(e);
+
+                break;
+            default:
+            {
+                if(e->modifiers() == Qt::NoModifier)
+                    m_list->hide();
+                QLineEdit::keyPressEvent(e);
+            }
         }
+    }else{
+        QLineEdit::keyPressEvent(e);
     }
 }
 

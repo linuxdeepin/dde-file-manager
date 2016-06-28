@@ -111,6 +111,7 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
 {
     D_THEME_INIT_WIDGET(PropertyDialog)
 
+    qDebug() << url;
     const AbstractFileInfoPointer &fileInfo = FileServices::instance()->createFileInfo(url);
 
     m_icon->setPixmap(fileInfo->fileIcon().pixmap(100, 150));
@@ -212,6 +213,12 @@ qint64 PropertyDialog::getFileSize()
     return m_size;
 }
 
+QString PropertyDialog::getNameByUrl(const DUrl &url)
+{
+    qDebug() << url.query();
+    qDebug() << deviceListener->getDevice(url.query());
+}
+
 void PropertyDialog::raise()
 {
     BaseDialog::raise();
@@ -220,6 +227,7 @@ void PropertyDialog::raise()
 
 void PropertyDialog::closeEvent(QCloseEvent *event)
 {
+    qDebug() << event;
     emit aboutToClosed(m_url);
     BaseDialog::closeEvent(event);
     emit closed(m_url);
