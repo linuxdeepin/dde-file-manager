@@ -225,6 +225,10 @@ void DToolBar::searchBarTextEntered()
 {
     QString text = m_searchBar->text();
 
+    if (text.isEmpty()) {
+        return;
+    }
+
     FMEvent event;
 
     event = WindowManager::getWindowId(window());
