@@ -39,6 +39,7 @@ public slots:
     int showRemoveBookMarkDialog(const FMEvent &event);
     void showOpenWithDialog(const FMEvent &event);
     void showPropertyDialog(const FMEvent &event);
+    void showTrashPropertyDialog(const FMEvent &event);
     void showDiskErrorDialog(const QString &id, const QString &errorText);
     void showAboutDialog(const FMEvent &event);
 
