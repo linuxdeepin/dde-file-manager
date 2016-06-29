@@ -8,6 +8,7 @@
 
 #include <QIcon>
 #include <QDateTime>
+#include <QUrlQuery>
 
 SearchFileInfo::SearchFileInfo()
     : AbstractFileInfo()
@@ -302,12 +303,20 @@ int SearchFileInfo::userColumnWidth(int userColumnRole) const
 
 bool SearchFileInfo::canRedirectionFileUrl() const
 {
-    return realFileInfo;
+    if (realFileInfo)
+        return true;
+
+    const AbstractFileInfoPointer &targetFileInfo = FileServices::instance()->createFileInfo(DUrl(QUrlQuery(data->url).queryItemValue("url")));
+
+    return targetFileInfo && !targetFileInfo->canIteratorDir();
 }
 
 DUrl SearchFileInfo::redirectedFileUrl() const
 {
-    return realFileInfo->fileUrl();
+    if (realFileInfo)
+        return realFileInfo->fileUrl();
+
+    return DUrl(QUrlQuery(data->url).queryItemValue("url"));
 }
 
 QVector<MenuAction> SearchFileInfo::menuActionList(AbstractFileInfo::MenuType type) const

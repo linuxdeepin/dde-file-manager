@@ -59,8 +59,16 @@ void SearchController::searchStart(const DUrl &fileUrl, QDir::Filters filter)
     qDebug() << "begin search:" << fileUrl;
 
     while(!searchPathList.isEmpty()) {
-        DDirIteratorPointer it = FileServices::instance()->createDirIterator(searchPathList.takeAt(0),
-                                                                      QDir::NoDotAndDotDot | filter, QDirIterator::NoIteratorFlags);
+        const DUrl &url = searchPathList.takeAt(0);
+
+        DDirIteratorPointer it = FileServices::instance()->createDirIterator(url, QDir::NoDotAndDotDot | filter,
+                                                                             QDirIterator::NoIteratorFlags);
+
+        if (!it) {
+            searchPathList.removeOne(url);
+
+            continue;
+        }
 
         while (it->hasNext()) {
             if(!activeJob.contains(targetUrl)) {
@@ -74,7 +82,10 @@ void SearchController::searchStart(const DUrl &fileUrl, QDir::Filters filter)
             fileInfo->makeAbsolute();
 
             if(fileInfo->isDir()) {
-                searchPathList << fileInfo->fileUrl();
+                const DUrl &url = fileInfo->fileUrl();
+
+                if (!searchPathList.contains(url))
+                    searchPathList << url;
             }
 
             if(fileInfo->fileName().indexOf(regular) >= 0) {

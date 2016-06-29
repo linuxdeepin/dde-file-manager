@@ -199,6 +199,8 @@ public:
 
     virtual Qt::ItemFlags fileItemDisableFlags() const;
 
+    virtual bool canIteratorDir() const;
+
 protected:
     struct FileInfoData
     {

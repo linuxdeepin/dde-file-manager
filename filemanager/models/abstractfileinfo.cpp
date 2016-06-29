@@ -551,6 +551,11 @@ Qt::ItemFlags AbstractFileInfo::fileItemDisableFlags() const
     return Qt::ItemFlags();
 }
 
+bool AbstractFileInfo::canIteratorDir() const
+{
+    return false;
+}
+
 void AbstractFileInfo::updateFileMetaData()
 {
     this->data->pinyinName = QString();
