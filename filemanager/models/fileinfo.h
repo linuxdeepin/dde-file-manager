@@ -27,6 +27,8 @@ public:
 
     QIcon fileIcon() const Q_DECL_OVERRIDE;
 
+    bool canIteratorDir() const Q_DECL_OVERRIDE;
+
 private:
     using AbstractFileInfo::setUrl;
 
