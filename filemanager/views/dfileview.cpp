@@ -426,10 +426,6 @@ void DFileView::cd(const FMEvent &event)
         emit fileSignalManager->currentUrlChanged(e);
 //        updateStatusBar();
     }
-
-    if (FMStateManager::SortStates.contains(fileUrl)){
-        sortByRole(FMStateManager::SortStates.value(fileUrl));
-    }
 }
 
 void DFileView::cdUp(const FMEvent &event)
@@ -1560,7 +1556,10 @@ void DFileView::updateListHeaderViewProperty()
     m_headerView->setSectionResizeMode(QHeaderView::Fixed);
     m_headerView->setDefaultSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
     m_headerView->setMinimumSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
-    m_headerView->setSortIndicator(model()->roleToColumn(model()->sortRole()), model()->sortOrder());
+
+    int sort_role = model()->roleToColumn(FMStateManager::SortStates.value(currentUrl(), DFileSystemModel::FileDisplayNameRole));
+
+    m_headerView->setSortIndicator(sort_role, model()->sortOrder());
 
     m_columnRoles.clear();
 
