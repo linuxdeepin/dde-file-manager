@@ -6,9 +6,15 @@
 
 #include "../models/dfilesystemmodel.h"
 
+#include "../app/global.h"
+
 #include <QIcon>
 #include <QDateTime>
 #include <QUrlQuery>
+
+namespace FileSortFunction {
+SORT_FUN_DEFINE(absoluteFilePath, FilePath, SearchFileInfo)
+}
 
 SearchFileInfo::SearchFileInfo()
     : AbstractFileInfo()
@@ -351,6 +357,14 @@ bool SearchFileInfo::isEmptyFloder() const
     const AbstractFileInfoPointer &fileInfo = FileServices::instance()->createFileInfo(DUrl(fileUrl().fragment()));
 
     return fileInfo && fileInfo->isEmptyFloder();
+}
+
+AbstractFileInfo::sortFunction SearchFileInfo::sortFunByColumn(int columnRole) const
+{
+    if (columnRole == DFileSystemModel::FileUserRole + 1)
+        return FileSortFunction::sortFileListByFilePath;
+
+    return AbstractFileInfo::sortFunByColumn(columnRole);
 }
 
 void SearchFileInfo::init()
