@@ -401,6 +401,7 @@ DBookmarkItem *DBookmarkItem::makeBookmark(const QString &name, const DUrl &url)
 void DBookmarkItem::editMode()
 {
     m_lineEdit = new QLineEdit;
+    m_lineEdit->setContextMenuPolicy(Qt::NoContextMenu);
     connect(m_lineEdit, &QLineEdit::editingFinished, this, &DBookmarkItem::editFinished);
     m_widget = scene()->addWidget(m_lineEdit);
     m_lineEdit->setGeometry(37 + geometry().x(), geometry().y(), m_width - 39, m_height + 1);
@@ -413,6 +414,7 @@ void DBookmarkItem::editMode()
                               background-color: white;\
                               border: 1px solid rgba(43, 167, 248, 0.3);\
                               color: black;\
+                              selection-background-color: #61B5F8;\
                           }");
     m_lineEdit->show();
 
