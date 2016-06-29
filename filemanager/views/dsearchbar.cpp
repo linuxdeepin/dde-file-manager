@@ -15,6 +15,7 @@
 
 DSearchBar::DSearchBar(QWidget *parent):QLineEdit(parent)
 {
+    setContextMenuPolicy(Qt::NoContextMenu);
     initUI();
     initData();
     initConnections();
