@@ -137,7 +137,8 @@ HEADERS += \
     filemanager/gvfs/secrectmanager.h \
     filemanager/models/networkfileinfo.h \
     filemanager/controllers/networkcontroller.h \
-    filemanager/dialogs/openwithotherdialog.h
+    filemanager/dialogs/openwithotherdialog.h \
+    filemanager/dialogs/trashpropertydialog.h
 
 
 SOURCES += \
@@ -232,7 +233,8 @@ SOURCES += \
     filemanager/gvfs/secrectmanager.cpp \
     filemanager/models/networkfileinfo.cpp \
     filemanager/controllers/networkcontroller.cpp \
-    filemanager/dialogs/openwithotherdialog.cpp
+    filemanager/dialogs/openwithotherdialog.cpp \
+    filemanager/dialogs/trashpropertydialog.cpp
 
 
 

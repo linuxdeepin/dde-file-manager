@@ -82,7 +82,7 @@ public:
     explicit PropertyDialog(const DUrl &url, QWidget *parent = 0);
 
 public:
-    void updateFolderSize(qint64 size);
+
     void startComputerFolderSize(const QString& dir);
     void toggleFileExecutable(bool isChecked);
     DUrl getUrl();
@@ -93,6 +93,7 @@ public:
 
 public slots:
     void raise();
+    void updateFolderSize(qint64 size);
 
 signals:
     void requestStartComputerFolderSize();

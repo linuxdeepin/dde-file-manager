@@ -108,6 +108,12 @@ signals:
     /*request show PropertyDialog*/
     void requestShowPropertyDialog(const FMEvent &event);
 
+    /*request show PropertyDialog*/
+    void requestShowTrashPropertyDialog(const FMEvent &event);
+
+    /*request show PropertyDialog*/
+    void requestShowDevicePropertyDialog(const FMEvent &event);
+
     /* request select file view item*/
     void requestSelectFile(const FMEvent &event);
 

@@ -14,6 +14,7 @@
 #include "closealldialogindicator.h"
 #include "utils/xutil.h"
 #include "openwithotherdialog.h"
+#include "trashpropertydialog.h"
 #include <ddialog.h>
 #include <DAboutDialog>
 #include <dscrollbar.h>
@@ -69,6 +70,7 @@ void DialogManager::initConnect()
     connect(fileSignalManager, &FileSignalManager::requestShowUrlWrongDialog, this, &DialogManager::showUrlWrongDialog);
     connect(fileSignalManager, &FileSignalManager::requestShowOpenWithDialog, this, &DialogManager::showOpenWithDialog);
     connect(fileSignalManager, &FileSignalManager::requestShowPropertyDialog, this, &DialogManager::showPropertyDialog);
+    connect(fileSignalManager, &FileSignalManager::requestShowTrashPropertyDialog, this, &DialogManager::showTrashPropertyDialog);
     connect(fileSignalManager, &FileSignalManager::showDiskErrorDialog,
             this, &DialogManager::showDiskErrorDialog);
     connect(fileSignalManager, &FileSignalManager::showAboutDialog,
@@ -86,27 +88,29 @@ QPoint DialogManager::getPerportyPos(int dialogWidth, int dialogHeight, int coun
     int SpaceHeight = 100;
     int row, x , y;
 
+    int numberPerRow =  desktopWidth / (dialogWidth + SpaceWidth);
 
-    if (count % 4 == 0){
-        row = count / 4;
+
+    if (count % numberPerRow == 0){
+        row = count / numberPerRow;
 
     }else{
-        row = count / 4 + 1;
+        row = count / numberPerRow + 1;
 
     }
 
     int dialogsWidth;
-    if (count / 4 > 0){
-        dialogsWidth = dialogWidth * 4  + SpaceWidth * 3;
+    if (count / numberPerRow > 0){
+        dialogsWidth = dialogWidth * numberPerRow + SpaceWidth * (numberPerRow - 1);
     }else{
-        dialogsWidth = dialogWidth * (count % 4)  + SpaceWidth * (count % 4 - 1);
+        dialogsWidth = dialogWidth * (count % numberPerRow)  + SpaceWidth * (count % numberPerRow - 1);
     }
 
     int dialogsHeight = dialogHeight + SpaceHeight * (row - 1);
 
-    x =  (desktopWidth - dialogsWidth) / 2 + (dialogWidth + SpaceWidth) * (index % 4);
+    x =  (desktopWidth - dialogsWidth) / 2 + (dialogWidth + SpaceWidth) * (index % numberPerRow);
 
-    y = (desktopHeight - dialogsHeight) / 2 + (index / 4) * SpaceHeight;
+    y = (desktopHeight - dialogsHeight) / 2 + (index / numberPerRow) * SpaceHeight;
 
     qDebug() << desktopHeight <<  dialogsHeight << dialogHeight << y;
 
@@ -240,12 +244,6 @@ void DialogManager::showPropertyDialog(const FMEvent &event)
             }else{
                 dialog = new PropertyDialog(url);
                 m_propertyDialogs.insert(url, dialog);
-
-                dialog->setAttribute(Qt::WA_DeleteOnClose);
-                dialog->setWindowFlags(dialog->windowFlags()
-                                       &~ Qt::WindowMaximizeButtonHint
-                                       &~ Qt::WindowMinimizeButtonHint
-                                       &~ Qt::WindowSystemMenuHint);
                 dialog->setTitle("");
                 dialog->setFixedSize(QSize(320, 480));
                 QPoint pos = getPerportyPos(dialog->size().width(), dialog->size().height(), count, index);
@@ -263,6 +261,15 @@ void DialogManager::showPropertyDialog(const FMEvent &event)
             m_closeIndicatorDialog->show();
             m_closeIndicatorTimer->start();
         }
+    }
+}
+
+void DialogManager::showTrashPropertyDialog(const FMEvent &event)
+{
+    QWidget* w = WindowManager::getWindowById(event.windowId());
+    if (w){
+        TrashPropertyDialog* dialog = new TrashPropertyDialog(event.fileUrl());
+        dialog->show();
     }
 }
 
