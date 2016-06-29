@@ -109,18 +109,17 @@ QWidget *DFileItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
            text.remove(QChar(0));
 
            QVector<uint> list = text.toUcs4();
+           int cursor_pos = edit->cursorPosition();
 
            while (text.toUtf8().size() > MAX_FILE_NAME_CHAR_COUNT) {
-               list.removeLast();
+               list.removeAt(--cursor_pos);
 
                text = QString::fromUcs4(list.data(), list.size());
            }
 
            if (text.count() != old_text.count()) {
-               int position = edit->cursorPosition();
-
                edit->setText(text);
-               edit->setCursorPosition(position);
+               edit->setCursorPosition(cursor_pos);
            }
        });
 
