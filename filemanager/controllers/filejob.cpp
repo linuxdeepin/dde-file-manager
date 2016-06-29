@@ -362,8 +362,13 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir)
                 qint64 inBytes = from.read(block, DATA_BLOCK_SIZE);
                 to.write(block, inBytes);
                 m_bytesCopied += inBytes;
+
+                if (m_bytesCopied % (1024 * 1024 * 16) == 0){
+                    to.flush();
+                }
                 m_bytesPerSec += inBytes;
                 currentMsec = m_timer.elapsed();
+
                 if(startToDisplay)
                 {
                     if(isGreater)
