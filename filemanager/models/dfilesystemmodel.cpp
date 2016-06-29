@@ -621,6 +621,9 @@ const AbstractFileInfoPointer DFileSystemModel::fileInfo(const DUrl &fileUrl) co
     if (!m_rootNode)
         return AbstractFileInfoPointer();
 
+    if (fileUrl == m_rootNode->fileInfo->fileUrl())
+        return m_rootNode->fileInfo;
+
 //    const FileSystemNodePointer &node = m_urlToNode.value(fileUrl);
     const FileSystemNodePointer &node = m_rootNode->children.value(fileUrl);
 
@@ -637,9 +640,13 @@ const AbstractFileInfoPointer DFileSystemModel::parentFileInfo(const QModelIndex
 const AbstractFileInfoPointer DFileSystemModel::parentFileInfo(const DUrl &fileUrl) const
 {
 //    const FileSystemNodePointer &node = m_urlToNode.value(fileUrl);
-    const FileSystemNodePointer &node = m_rootNode->children.value(fileUrl);
+//    const FileSystemNodePointer &node = m_rootNode->children.value(fileUrl);
 
-    return node ? node->parent->fileInfo : AbstractFileInfoPointer();
+//    return node ? node->parent->fileInfo : AbstractFileInfoPointer();
+    if (fileUrl == rootUrl())
+        return m_rootNode->fileInfo;
+
+    return fileService->createFileInfo(fileUrl.parentUrl(fileUrl));
 }
 
 void DFileSystemModel::updateChildren(const FMEvent &event, QList<AbstractFileInfoPointer> list)

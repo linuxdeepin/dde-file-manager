@@ -36,6 +36,9 @@ public:
 
     MenuAction menuActionByColumnRole(int userColumnRole) const Q_DECL_OVERRIDE;
 
+    bool canIteratorDir() const Q_DECL_OVERRIDE;
+    bool makeAbsolute() Q_DECL_OVERRIDE;
+
     bool restore(const FMEvent &event) const;
     QDateTime deletionDate() const;
     QString sourceFilePath() const;

@@ -434,7 +434,9 @@ void DFileView::cd(const FMEvent &event)
 
 void DFileView::cdUp(const FMEvent &event)
 {
-    const DUrl& parentUrl = DUrl::parentUrl(currentUrl());
+    AbstractFileInfoPointer fileInfo = model()->fileInfo(rootIndex());
+
+    const DUrl& parentUrl = fileInfo ? fileInfo->parentUrl() : DUrl::parentUrl(currentUrl());
     const_cast<FMEvent&>(event) = parentUrl;
     cd(event);
 }
