@@ -305,7 +305,7 @@ QFrame *PropertyDialog::createBasicInfoWidget(const AbstractFileInfoPointer &inf
 
 QListWidget *PropertyDialog::createOpenWithListWidget(const AbstractFileInfoPointer &info)
 {
-    QListWidget* listWidget = new QListWidget;
+    QListWidget* listWidget = new QListWidget(this);
     m_OpenWithButtonGroup = new QButtonGroup(listWidget);
     listWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     listWidget->setVerticalScrollBar(new DScrollBar);

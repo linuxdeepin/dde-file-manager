@@ -1,0 +1,43 @@
+QListWidget#OpenWithOtherListWidget{
+    background-color: red;
+    border:1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    border-top: 4px solid transparent;
+    border-radius: 4px;
+}
+QListWidget#OpenWithOtherListWidget::item{
+    height: 24px;
+    padding: 0px;
+    margins:10px;
+    color: black;
+}
+QListWidget#OpenWithOtherListWidget::item:selected{
+    background: #61B5F8;
+}
+
+
+QCheckBox{
+    spacing: 5px;
+    color: #222222;
+    font-size: 12px;
+    text-align: center;
+}
+
+QCheckBox:pressed{
+    color: #4b4b4b;
+}
+
+
+QCheckBox::indicator {
+    width: 16px;
+    height: 16px;
+}
+
+
+QCheckBox::indicator:unchecked {
+    image: none;
+}
+
+QCheckBox::indicator:checked {
+    image: url(:/images/images/light/select.png);
+}
