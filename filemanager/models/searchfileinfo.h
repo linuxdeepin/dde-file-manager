@@ -66,6 +66,8 @@ public:
 
     bool isEmptyFloder() const Q_DECL_OVERRIDE;
 
+    sortFunction sortFunByColumn(int columnRole) const Q_DECL_OVERRIDE;
+
 private:
     DUrl m_parentUrl;
     AbstractFileInfoPointer realFileInfo;
