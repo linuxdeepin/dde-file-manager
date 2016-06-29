@@ -6,6 +6,7 @@
 #include "../shutil/fileutils.h"
 #include "../shutil/mimesappsmanager.h"
 #include "../views/dscrollbar.h"
+#include <dexpandgroup.h>
 #include <dseparatorhorizontal.h>
 #include <darrowlineexpand.h>
 #include <dthememanager.h>
@@ -132,7 +133,7 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
     layout->setSpacing(0);
     layout->addWidget(m_icon, 0, Qt::AlignHCenter);
     layout->addWidget(m_edit, 0, Qt::AlignHCenter);
-    layout->addWidget(new DSeparatorHorizontal);
+//    layout->addWidget(new DSeparatorHorizontal);
 
     setLayout(layout);
 
@@ -148,8 +149,11 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
 
     m_basicInfoFrame = createBasicInfoWidget(fileInfo);
 
+    expandGroup->expand(0)->setExpandedSeparatorVisible(false);
     expandGroup->expand(0)->setContent(m_basicInfoFrame);
     expandGroup->expand(0)->setExpand(true);
+
+
 
 
     if (fileInfo->isFile()){

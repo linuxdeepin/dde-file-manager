@@ -307,13 +307,15 @@ void DCrumbWidget::addLocalCrumbs(const DUrl & url)
         list.insert(0, "/");
     }else if(isInDevice(path)){
         UDiskDeviceInfo* info = deviceListener->getDeviceByPath(path);
-        QString mountPoint = info->getMountPoint();
-        qDebug() << mountPoint << info << info->getDiskInfo();
-        QString tmpPath = url.toLocalFile();
-        tmpPath.replace(mountPoint, "");
-        list.append(tmpPath.split("/"));
-        list.insert(0, mountPoint);
-        list.removeAll("");
+        if (info){
+            QString mountPoint = info->getMountPoint();
+            qDebug() << mountPoint << info << info->getDiskInfo();
+            QString tmpPath = url.toLocalFile();
+            tmpPath.replace(mountPoint, "");
+            list.append(tmpPath.split("/"));
+            list.insert(0, mountPoint);
+            list.removeAll("");
+        }
     }
     else
     {
