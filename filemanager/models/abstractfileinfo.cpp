@@ -373,16 +373,16 @@ QVector<MenuAction> AbstractFileInfo::menuActionList(AbstractFileInfo::MenuType 
 
 
             actionKeys << MenuAction::Rename;
-            QPixmap tempPixmap;
-            DUrl url = data->url;
-            if (tempPixmap.load(url.toLocalFile())){
-                actionKeys << MenuAction::SetAsWallpaper;
-            }
 
-            actionKeys << MenuAction::Separator;
-            if (isDir()){
+            if (isDir()) {
                 actionKeys << MenuAction::Compress;
-            }else if(isFile()){
+            } else if(isFile()) {
+                if (mimeTypeName().startsWith("image")) {
+                    actionKeys << MenuAction::SetAsWallpaper;
+                }
+
+                actionKeys << MenuAction::Separator;
+
                 if (FileUtils::isArchive(absoluteFilePath())){
                     actionKeys << MenuAction::Decompress << MenuAction::DecompressHere;
                 }else{
