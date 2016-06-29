@@ -27,14 +27,18 @@
 <context>
     <name>CloseAllDialogIndicator</name>
     <message>
-        <location filename="../filemanager/dialogs/closealldialogindicator.cpp" line="24"/>
+        <location filename="../filemanager/dialogs/closealldialogindicator.cpp" line="29"/>
         <source>close all</source>
         <translation>关闭全部</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/closealldialogindicator.cpp" line="48"/>
-        <source>Total size %1, Total files count %2</source>
+        <location filename="../filemanager/dialogs/closealldialogindicator.cpp" line="59"/>
+        <source>Total size is %1,contains %2 files</source>
         <translation>总容量%1，总文件数量%2个</translation>
+    </message>
+    <message>
+        <source>Total size %1, Total files count %2</source>
+        <translation type="vanished">总容量%1，总文件数量%2个</translation>
     </message>
 </context>
 <context>
@@ -85,7 +89,7 @@
 <context>
     <name>DFileSystemModel</name>
     <message>
-        <location filename="../filemanager/models/dfilesystemmodel.cpp" line="241"/>
+        <location filename="../filemanager/models/dfilesystemmodel.cpp" line="293"/>
         <source>Name</source>
         <translation>名称</translation>
     </message>
@@ -94,22 +98,22 @@
         <translation type="vanished">修改时间</translation>
     </message>
     <message>
-        <location filename="../filemanager/models/dfilesystemmodel.cpp" line="242"/>
+        <location filename="../filemanager/models/dfilesystemmodel.cpp" line="295"/>
         <source>Time modified</source>
         <translation>修改时间</translation>
     </message>
     <message>
-        <location filename="../filemanager/models/dfilesystemmodel.cpp" line="243"/>
+        <location filename="../filemanager/models/dfilesystemmodel.cpp" line="297"/>
         <source>Size</source>
         <translation>大小</translation>
     </message>
     <message>
-        <location filename="../filemanager/models/dfilesystemmodel.cpp" line="244"/>
+        <location filename="../filemanager/models/dfilesystemmodel.cpp" line="299"/>
         <source>Type</source>
         <translation>类型</translation>
     </message>
     <message>
-        <location filename="../filemanager/models/dfilesystemmodel.cpp" line="245"/>
+        <location filename="../filemanager/models/dfilesystemmodel.cpp" line="301"/>
         <source>Time created</source>
         <translation>创建时间</translation>
     </message>
@@ -137,8 +141,8 @@
         <translation type="vanished">磁盘</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/dleftsidebar.cpp" line="95"/>
-        <location filename="../filemanager/views/dleftsidebar.cpp" line="191"/>
+        <location filename="../filemanager/views/dleftsidebar.cpp" line="96"/>
+        <location filename="../filemanager/views/dleftsidebar.cpp" line="195"/>
         <source>File Manager</source>
         <translation>文件管理器</translation>
     </message>
@@ -168,12 +172,12 @@
 <context>
     <name>DTaskDialog</name>
     <message>
-        <location filename="../dialogs/dtaskdialog.cpp" line="356"/>
+        <location filename="../dialogs/dtaskdialog.cpp" line="372"/>
         <source>There is 1 task in progress</source>
         <translation>有1个任务在进行</translation>
     </message>
     <message>
-        <location filename="../dialogs/dtaskdialog.cpp" line="358"/>
+        <location filename="../dialogs/dtaskdialog.cpp" line="374"/>
         <source>There are %1 tasks in progress</source>
         <translation>有%1个任务在进行</translation>
     </message>
@@ -189,78 +193,78 @@
 <context>
     <name>DialogManager</name>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="145"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="153"/>
         <source>&quot;%1&quot; already exists, please select a different name.</source>
         <translation>文件 &quot;%1&quot; 已被占用，请使用其他名称。</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="147"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="155"/>
         <source>Confirm</source>
         <translation>确定</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="157"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="165"/>
         <source>Are you sure to empty trash?</source>
         <translation>您确定要清空回收站？</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="158"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="166"/>
         <source>Are you sure to delete %1?</source>
         <translation>您确定要删除 %1？</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="159"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="167"/>
         <source>Are you sure to delete %1 items?</source>
         <translation>您确定要彻底删除选中的%1项内容？</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="164"/>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="202"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="172"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="211"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="164"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="172"/>
         <source>Delete</source>
         <translation>删除</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="169"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="177"/>
         <source>Empty</source>
         <translation>清空</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="189"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="198"/>
         <source>This action cannot be restored</source>
         <translation>此操作不可以恢复</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="200"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="209"/>
         <source>Sorry, unable to locate your bookmark directory, remove it?</source>
         <translation>抱歉， 找不到您的书签目录， 是否移除？</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="202"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="211"/>
         <source>Remove bookmark</source>
         <translation>移除书签</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="264"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="274"/>
         <source>Ok</source>
         <translation>确定</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="277"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="287"/>
         <source>File Manager</source>
         <translation>文件管理器</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="278"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="288"/>
         <source>1.0</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="279"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="289"/>
         <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions. </source>
         <translation>文件管理器是深度科技自主研发的一款管理文件的工具， 它包括搜索、复制、回收站、压缩/解压缩， 文件属性等管理文件的功能。</translation>
     </message>
@@ -398,50 +402,50 @@
 <context>
     <name>MoveCopyTaskWidget</name>
     <message>
-        <location filename="../dialogs/dtaskdialog.cpp" line="87"/>
+        <location filename="../dialogs/dtaskdialog.cpp" line="88"/>
         <source>Coexists</source>
         <translation>共存</translation>
     </message>
     <message>
-        <location filename="../dialogs/dtaskdialog.cpp" line="87"/>
+        <location filename="../dialogs/dtaskdialog.cpp" line="88"/>
         <source>Replace</source>
         <translation>替换</translation>
     </message>
     <message>
-        <location filename="../dialogs/dtaskdialog.cpp" line="87"/>
+        <location filename="../dialogs/dtaskdialog.cpp" line="88"/>
         <source>Skip</source>
         <translation>跳过</translation>
     </message>
     <message>
-        <location filename="../dialogs/dtaskdialog.cpp" line="113"/>
+        <location filename="../dialogs/dtaskdialog.cpp" line="114"/>
         <source>no more ask</source>
         <translation>不再提示</translation>
     </message>
     <message>
-        <location filename="../dialogs/dtaskdialog.cpp" line="114"/>
+        <location filename="../dialogs/dtaskdialog.cpp" line="115"/>
         <source>Ok</source>
         <translation>确定</translation>
     </message>
     <message>
-        <location filename="../dialogs/dtaskdialog.cpp" line="155"/>
+        <location filename="../dialogs/dtaskdialog.cpp" line="170"/>
         <source>&lt;span style=&quot;color: #3cadff&quot;&gt; %1 &lt;/span&gt; is copied to &lt;span style=&quot;color: #3cadff&quot;&gt; %2 &lt;/span&gt;</source>
         <translation>&lt;span style=&quot;color: #3cadff&quot;&gt; %1 &lt;/span&gt;被复制到 &lt;span style=&quot;color: #3cadff&quot;&gt; %2 &lt;/span&gt;</translation>
     </message>
     <message>
-        <location filename="../dialogs/dtaskdialog.cpp" line="161"/>
+        <location filename="../dialogs/dtaskdialog.cpp" line="176"/>
         <source>&lt;span style=&quot;color: #3cadff&quot;&gt; %1 &lt;/span&gt; is moved to &lt;span style=&quot;color: #3cadff&quot;&gt; %2 &lt;/span&gt;</source>
         <translation>&lt;span style=&quot;color: #3cadff&quot;&gt; %1 &lt;/span&gt;被移动到 &lt;span style=&quot;color: #3cadff&quot;&gt; %2 &lt;/span&gt;</translation>
     </message>
     <message>
-        <location filename="../dialogs/dtaskdialog.cpp" line="167"/>
+        <location filename="../dialogs/dtaskdialog.cpp" line="182"/>
         <source>&lt;span style=&quot;color: #3cadff&quot;&gt; %1 &lt;/span&gt; is deleted </source>
         <translation>&lt;span style=&quot;color: #3cadff&quot;&gt; %1 &lt;/span&gt; 被删除</translation>
     </message>
     <message>
-        <location filename="../dialogs/dtaskdialog.cpp" line="157"/>
-        <location filename="../dialogs/dtaskdialog.cpp" line="164"/>
-        <location filename="../dialogs/dtaskdialog.cpp" line="168"/>
-        <location filename="../dialogs/dtaskdialog.cpp" line="178"/>
+        <location filename="../dialogs/dtaskdialog.cpp" line="172"/>
+        <location filename="../dialogs/dtaskdialog.cpp" line="179"/>
+        <location filename="../dialogs/dtaskdialog.cpp" line="183"/>
+        <location filename="../dialogs/dtaskdialog.cpp" line="193"/>
         <source>current speed:%1 time Left:%2 </source>
         <translation>当前速度：%1 剩余时间：%2</translation>
     </message>
@@ -460,6 +464,24 @@
     </message>
     <message>
         <location filename="../filemanager/dialogs/openwithdialog.cpp" line="45"/>
+        <source>Choose</source>
+        <translation>选择</translation>
+    </message>
+</context>
+<context>
+    <name>OpenWithOtherDialog</name>
+    <message>
+        <location filename="../filemanager/dialogs/openwithotherdialog.cpp" line="44"/>
+        <source>Open with</source>
+        <translation>打开方式</translation>
+    </message>
+    <message>
+        <location filename="../filemanager/dialogs/openwithotherdialog.cpp" line="50"/>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <location filename="../filemanager/dialogs/openwithotherdialog.cpp" line="50"/>
         <source>Choose</source>
         <translation>选择</translation>
     </message>
@@ -500,8 +522,8 @@
 <context>
     <name>PropertyDialog</name>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="140"/>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="142"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="143"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="145"/>
         <source>Basic Info</source>
         <translation>基本信息</translation>
     </message>
@@ -510,12 +532,12 @@
         <translation type="vanished">打开方式</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="249"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="276"/>
         <source>Allow to execute as program</source>
         <translation>允许以程序执行</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="322"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="349"/>
         <source>Others</source>
         <translation>其它</translation>
     </message>
@@ -531,19 +553,19 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="238"/>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="264"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="265"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="271"/>
         <source>Size</source>
         <translation>大小</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="239"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="266"/>
         <source>File amount</source>
         <translation>文件个数</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="240"/>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="265"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="267"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="272"/>
         <source>Type</source>
         <translation>类型</translation>
     </message>
@@ -556,44 +578,48 @@
         <translation type="vanished">修改时间</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="241"/>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="266"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="273"/>
         <source>Time created</source>
         <translation>创建时间</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="242"/>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="267"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="268"/>
+        <source>Time read</source>
+        <translation>访问时间</translation>
+    </message>
+    <message>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="269"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="274"/>
         <source>Time modified</source>
         <translation>修改时间</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="360"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="387"/>
         <source>WriteRead</source>
         <translation>可读写</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="360"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="387"/>
         <source>ReadOnly</source>
         <translation>只读</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="360"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="387"/>
         <source>WriteOnly</source>
         <translation>只写</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="388"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="415"/>
         <source>Owner</source>
         <translation>所有者</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="389"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="416"/>
         <source>Group</source>
         <translation>群组</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="390"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="417"/>
         <source>Other</source>
         <translation>其他</translation>
     </message>
@@ -603,300 +629,321 @@
         <translation>深度文件管理器</translation>
     </message>
     <message>
-        <location filename="../filemanager/models/searchfileinfo.cpp" line="294"/>
         <source>absolute path</source>
-        <translation>绝对路径</translation>
+        <translation type="vanished">绝对路径</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="221"/>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="223"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="228"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="230"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="222"/>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="224"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="229"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="231"/>
         <source>Open in new window</source>
         <translation>在新窗口打开</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="225"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="232"/>
         <source>Open with</source>
         <translation>打开方式</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="226"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="233"/>
         <source>Others</source>
         <translation>其它</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="227"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="234"/>
         <source>Open file loaction</source>
         <translation>打开文件所在位置</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="228"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="235"/>
         <source>Compress</source>
         <translation>压缩</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="229"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="236"/>
         <source>Decompress</source>
         <translation>解压缩</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="230"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="237"/>
         <source>Decompress to here</source>
         <translation>解压到当前文件夹</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="231"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="238"/>
         <source>Cut</source>
         <translation>剪切</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="232"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="239"/>
         <source>Copy</source>
         <translation>复制</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="233"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="240"/>
         <source>Paste</source>
         <translation>粘贴</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="234"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="241"/>
         <source>Rename</source>
         <translation>重命名</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="235"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="242"/>
         <source>Remove</source>
         <translation>移除</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="236"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="243"/>
         <source>Create link</source>
         <translation>创建快捷方式</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="237"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="244"/>
         <source>Send to desktop</source>
         <translation>发送到桌面快捷方式</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="238"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="245"/>
         <source>Add to bookmark</source>
         <translation>添加到书签</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="239"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="246"/>
         <source>Throw to trash</source>
         <translation>移动到回收站</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="240"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="247"/>
         <source>Complete deletion</source>
         <translation>彻底删除</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="241"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="248"/>
         <source>Property</source>
         <translation>属性</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="243"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="250"/>
         <source>New Folder</source>
         <translation>新建文件夹</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="244"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="251"/>
         <source>New File</source>
         <translation>新建文件</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="245"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="252"/>
         <source>New Window</source>
         <translation>新建窗口</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="246"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="253"/>
         <source>Select All</source>
         <translation>全选</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="247"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="254"/>
         <source>Clear Recent</source>
         <translation>清除最近访问</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="248"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="255"/>
         <source>Clear Trash</source>
         <translation>清空回收站</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="249"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="256"/>
         <source>Display As</source>
         <translation>显示方式</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="250"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="257"/>
         <source>Sort By</source>
         <translation>排序方式</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="251"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="258"/>
         <source>New Document</source>
         <translation>新建文档</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="252"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="259"/>
         <source>Word</source>
         <translatorcomment>新建Excel</translatorcomment>
         <translation>新建Word</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="253"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="260"/>
         <source>Excel</source>
         <translation>新建Excel</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="254"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="261"/>
         <source>PowerPoint</source>
         <translation>新建PowerPoint</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="255"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="262"/>
         <source>Text</source>
         <translation>新建文本</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="256"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="263"/>
         <source>Open in terminal</source>
         <translation>在终端中打开</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="257"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="264"/>
         <source>Restore</source>
         <translation>还原</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="258"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="265"/>
         <source>Restore all</source>
         <translation>全部还原</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="259"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="266"/>
         <source>Complete Deletion</source>
         <translation>彻底删除</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="260"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="267"/>
         <source>Mount</source>
         <translation>挂载</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="261"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="268"/>
         <source>Unmount</source>
         <translation>卸载</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="262"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="269"/>
         <source>Eject</source>
         <translation>弹出</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="263"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="270"/>
         <source>Name</source>
         <translation>名称</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="276"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="283"/>
         <source>Logout and unmount</source>
         <translation>退出登录并卸载</translation>
+    </message>
+    <message>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="284"/>
+        <source>Time Deleted</source>
+        <translation>删除时间</translation>
     </message>
     <message>
         <source>Last Modified Date</source>
         <translation type="vanished">修改时间</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="268"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="275"/>
         <source>Settings</source>
         <translation>设置</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="269"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="276"/>
         <source>Help</source>
         <translation>帮助</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="270"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="277"/>
         <source>About</source>
         <translation>关于</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="271"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="278"/>
         <source>Exit</source>
         <translation>退出</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="272"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="279"/>
         <source>Icon</source>
         <translation>图标视图</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="273"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="280"/>
         <source>List</source>
         <translation>列表视图</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="274"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="281"/>
         <source>Extend</source>
         <translation>扩展视图</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/filemenumanager.cpp" line="275"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="282"/>
         <source>Set as wallpaper</source>
         <translation>设置为壁纸</translation>
     </message>
     <message>
-        <location filename="../filemanager/controllers/appcontroller.cpp" line="256"/>
-        <location filename="../filemanager/controllers/appcontroller.cpp" line="258"/>
+        <location filename="../filemanager/controllers/appcontroller.cpp" line="252"/>
+        <location filename="../filemanager/controllers/appcontroller.cpp" line="254"/>
         <source>newDoc</source>
         <translation>新建word文档</translation>
     </message>
     <message>
-        <location filename="../filemanager/controllers/appcontroller.cpp" line="265"/>
-        <location filename="../filemanager/controllers/appcontroller.cpp" line="267"/>
+        <location filename="../filemanager/controllers/appcontroller.cpp" line="261"/>
+        <location filename="../filemanager/controllers/appcontroller.cpp" line="263"/>
         <source>newExcel</source>
         <translation>新建Excel文档</translation>
     </message>
     <message>
-        <location filename="../filemanager/controllers/appcontroller.cpp" line="274"/>
-        <location filename="../filemanager/controllers/appcontroller.cpp" line="276"/>
+        <location filename="../filemanager/controllers/appcontroller.cpp" line="270"/>
+        <location filename="../filemanager/controllers/appcontroller.cpp" line="272"/>
         <source>newPowerPoint</source>
         <translation>新建PowerPoint文档</translation>
     </message>
     <message>
-        <location filename="../filemanager/controllers/appcontroller.cpp" line="283"/>
-        <location filename="../filemanager/controllers/appcontroller.cpp" line="285"/>
+        <location filename="../filemanager/controllers/appcontroller.cpp" line="279"/>
+        <location filename="../filemanager/controllers/appcontroller.cpp" line="281"/>
         <source>newText</source>
         <translation>新建文本</translation>
     </message>
     <message>
-        <location filename="../filemanager/shutil/fileutils.cpp" line="493"/>
+        <location filename="../filemanager/shutil/fileutils.cpp" line="529"/>
         <source>Create soft link</source>
         <translation>创建软连接</translation>
     </message>
     <message>
-        <location filename="../filemanager/models/abstractfileinfo.cpp" line="351"/>
+        <location filename="../filemanager/models/abstractfileinfo.cpp" line="305"/>
         <source>%1 item(s)</source>
         <translation>%1 项</translation>
     </message>
     <message>
-        <location filename="../filemanager/models/trashfileinfo.cpp" line="144"/>
+        <location filename="../filemanager/models/trashfileinfo.cpp" line="153"/>
+        <source>Deletion Date</source>
+        <translation>删除时间</translation>
+    </message>
+    <message>
+        <location filename="../filemanager/models/trashfileinfo.cpp" line="156"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="285"/>
         <source>Source Path</source>
         <translation>原位置</translation>
+    </message>
+    <message>
+        <location filename="../filemanager/models/trashfileinfo.cpp" line="266"/>
+        <source>Trash</source>
+        <translation>回收站</translation>
+    </message>
+    <message>
+        <location filename="../filemanager/models/searchfileinfo.cpp" line="283"/>
+        <location filename="../filemanager/views/filemenumanager.cpp" line="286"/>
+        <source>Absolute Path</source>
+        <translation>绝对路径</translation>
     </message>
 </context>
 </TS>
