@@ -1,11 +1,68 @@
 #include "trashmanager.h"
 #include "trashfileinfo.h"
 #include "fileservices.h"
+#include "fileinfo.h"
 
 #include "../app/global.h"
 #include "../app/filesignalmanager.h"
 
 #include "../../filemonitor/filemonitor.h"
+
+class TrashDirIterator : public DDirIterator
+{
+public:
+    TrashDirIterator(const DUrl &url,
+                    QDir::Filters filter,
+                    QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags);
+
+    DUrl next() Q_DECL_OVERRIDE;
+    bool hasNext() const Q_DECL_OVERRIDE;
+
+    QString fileName() const Q_DECL_OVERRIDE;
+    QString filePath() const Q_DECL_OVERRIDE;
+    const AbstractFileInfoPointer fileInfo() const Q_DECL_OVERRIDE;
+    QString path() const Q_DECL_OVERRIDE;
+
+private:
+    QDirIterator *iterator;
+};
+
+TrashDirIterator::TrashDirIterator(const DUrl &url, QDir::Filters filter,
+                                   QDirIterator::IteratorFlags flags)
+    : DDirIterator()
+{
+    iterator = new QDirIterator(TRASHFILEPATH + url.path(), filter, flags);
+}
+
+DUrl TrashDirIterator::next()
+{
+    return DUrl::fromTrashFile(DUrl::fromLocalFile(iterator->next()).path().remove(TRASHFILEPATH));
+}
+
+bool TrashDirIterator::hasNext() const
+{
+    return iterator->hasNext();
+}
+
+QString TrashDirIterator::fileName() const
+{
+    return iterator->fileName();
+}
+
+QString TrashDirIterator::filePath() const
+{
+    return iterator->filePath().remove(TRASHFILEPATH);
+}
+
+const AbstractFileInfoPointer TrashDirIterator::fileInfo() const
+{
+    return FileServices::instance()->createFileInfo(DUrl::fromTrashFile(filePath()));
+}
+
+QString TrashDirIterator::path() const
+{
+    return iterator->path().remove(TRASHFILEPATH);
+}
 
 TrashManager *firstMe = Q_NULLPTR;
 
@@ -127,6 +184,14 @@ bool TrashManager::deleteFiles(const DUrlList &urlList, const FMEvent &event, bo
     fileService->deleteFiles(localList, event);
 
     return true;
+}
+
+const DDirIteratorPointer TrashManager::createDirIterator(const DUrl &fileUrl, QDir::Filters filters,
+                                                          QDirIterator::IteratorFlags flags, bool &accepted) const
+{
+    accepted = true;
+
+    return DDirIteratorPointer(new TrashDirIterator(fileUrl, filters, flags));
 }
 
 bool TrashManager::restoreTrashFile(const DUrlList &fileUrl, const FMEvent &event) const

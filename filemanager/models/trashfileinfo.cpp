@@ -188,6 +188,16 @@ MenuAction TrashFileInfo::menuActionByColumnRole(int userColumnRole) const
     return AbstractFileInfo::menuActionByColumnRole(userColumnRole);
 }
 
+bool TrashFileInfo::canIteratorDir() const
+{
+    return true;
+}
+
+bool TrashFileInfo::makeAbsolute()
+{
+    return true;
+}
+
 AbstractFileInfo::sortFunction TrashFileInfo::sortFunByColumn(int columnRole) const
 {
     if (columnRole == DFileSystemModel::FileUserRole + 1)
