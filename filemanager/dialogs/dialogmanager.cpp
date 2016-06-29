@@ -13,6 +13,7 @@
 #include "../models/trashfileinfo.h"
 #include "closealldialogindicator.h"
 #include "utils/xutil.h"
+#include "openwithotherdialog.h"
 #include <ddialog.h>
 #include <DAboutDialog>
 #include <dscrollbar.h>
@@ -219,8 +220,8 @@ void DialogManager::showOpenWithDialog(const FMEvent &event)
 {
     QWidget* w = WindowManager::getWindowById(event.windowId());
     if (w){
-        OpenWithDialog* d = new OpenWithDialog(event.fileUrl());
-        d->show();
+        OpenWithOtherDialog* d = new OpenWithOtherDialog(event.fileUrl());
+        d->exec();
     }
 }
 
