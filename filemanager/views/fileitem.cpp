@@ -30,7 +30,6 @@ FileIconItem::FileIconItem(QWidget *parent) :
     AnchorsBase::setAnchor(icon, Qt::AnchorHorizontalCenter, this, Qt::AnchorHorizontalCenter);
     AnchorsBase::setAnchor(edit, Qt::AnchorTop, icon, Qt::AnchorBottom);
     AnchorsBase::setAnchor(edit, Qt::AnchorHorizontalCenter, icon, Qt::AnchorHorizontalCenter);
-    AnchorsBase::getAnchorBaseByWidget(edit)->setTopMargin(-3);
 
     setFrameShape(QFrame::NoFrame);
     setFocusProxy(edit);
@@ -46,22 +45,19 @@ FileIconItem::FileIconItem(QWidget *parent) :
         text.remove(QChar(0));
 
         QVector<uint> list = text.toUcs4();
+        int cursor_pos = edit->textCursor().position();
 
         while (text.toUtf8().size() > MAX_FILE_NAME_CHAR_COUNT) {
-            list.removeLast();
+            list.removeAt(--cursor_pos);
 
             text = QString::fromUcs4(list.data(), list.size());
         }
 
         if (text.count() != old_text.count()) {
-            QTextCursor cursor = edit->textCursor();
-
             edit->setText(text);
-            edit->setTextCursor(cursor);
-            edit->setAlignment(Qt::AlignHCenter);
         }
 
-        QTextCursor cursor(edit->document());
+        QTextCursor cursor = edit->textCursor();
 
         cursor.movePosition(QTextCursor::Start);
 
@@ -72,10 +68,11 @@ FileIconItem::FileIconItem(QWidget *parent) :
             cursor.setBlockFormat(format);
         } while (cursor.movePosition(QTextCursor::NextBlock));
 
+        edit->setTextCursor(cursor);
+        edit->setAlignment(Qt::AlignHCenter);
+
         if (edit->isReadOnly())
             edit->setFixedHeight(edit->document()->size().height());
-
-        cursor.movePosition(QTextCursor::EndOfWord);
     });
 }
 
