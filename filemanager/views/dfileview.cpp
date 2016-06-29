@@ -854,6 +854,21 @@ bool DFileView::event(QEvent *event)
     return DListView::event(event);
 }
 
+void DFileView::dragEnterEvent(QDragEnterEvent *event)
+{
+    for (const DUrl &url : event->mimeData()->urls()) {
+        const AbstractFileInfoPointer &fileInfo = FileServices::instance()->createFileInfo(url);
+
+        if (!fileInfo->isWritable()) {
+            event->ignore();
+
+            return;
+        }
+    }
+
+    DListView::dragEnterEvent(event);
+}
+
 void DFileView::dragMoveEvent(QDragMoveEvent *event)
 {
     if (dragDropMode() == InternalMove
