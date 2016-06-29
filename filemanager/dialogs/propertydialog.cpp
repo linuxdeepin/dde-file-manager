@@ -119,6 +119,7 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
     m_icon->setFixedHeight(150);
 
     m_edit->setPlainText(fileInfo->displayName());
+    m_edit->setContextMenuPolicy(Qt::NoContextMenu);
     m_edit->setReadOnly(true);
     m_edit->setWordWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
     m_edit->setAlignment(Qt::AlignHCenter);
