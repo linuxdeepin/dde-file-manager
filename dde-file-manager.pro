@@ -22,6 +22,7 @@ include(./filemonitor/filemonitor.pri)
 include(./deviceinfo/deviceinfo.pri)
 include(./dbusinterface/dbusinterface.pri)
 include($$PWD/chinese2pinyin/chinese2pinyin.pri)
+include($$PWD/xdnd/xdnd.pri)
 
 PKGCONFIG += x11 gtk+-2.0 xcb xcb-ewmh gsettings-qt dtkbase dtkutil dtkwidget libudev x11 xext libsecret-1
 CONFIG += c++11 link_pkgconfig
