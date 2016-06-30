@@ -198,6 +198,11 @@ DTitlebar *DFileManagerWindow::getTitleBar()
     return m_titleBar;
 }
 
+DToolBar *DFileManagerWindow::getToolBar()
+{
+    return m_toolbar;
+}
+
 void DFileManagerWindow::showMinimized()
 {
     QtX11::utils::ShowMinimizedWindow(this);
@@ -291,6 +296,12 @@ void DMainWindow::timerEvent(QTimerEvent *event)
 {
     Q_UNUSED(event)
     qDebug() << qApp->focusWidget();
+}
+
+void DMainWindow::mousePressEvent(QMouseEvent *event)
+{
+    m_fileManagerWindow->getToolBar()->getSearchBar()->hideCompleter();
+    DWindowFrame::mousePressEvent(event);
 }
 
 void DMainWindow::mouseMoveEvent(QMouseEvent *event)

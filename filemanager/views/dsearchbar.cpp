@@ -137,6 +137,9 @@ void DSearchBar::initConnections()
 
 void DSearchBar::doTextChanged(QString text)
 {
+    if (text.endsWith("/")){
+        m_disableCompletion = false;
+    }
     m_text = text;
     if(text.isEmpty())
         m_clearAction->setVisible(false);
@@ -184,7 +187,6 @@ void DSearchBar::setCompleter(const QString &text)
     }
 
     m_list->clear();
-
     if(hasScheme() || isPath())
     {
         QFileInfo fileInfo;
@@ -200,7 +202,6 @@ void DSearchBar::setCompleter(const QString &text)
         QDir dir(fileInfo.absolutePath());
         QStringList localList = splitPath(text);
         QStringList sl;
-
         foreach(QFileInfo info, dir.entryInfoList(QDir::AllDirs|QDir::NoDotAndDotDot, QDir::Name))
         {
             QString temp = localList.last();
@@ -216,7 +217,6 @@ void DSearchBar::setCompleter(const QString &text)
         }
         if(sl.isEmpty())
             return;
-
         foreach (QString itemText, sl) {
             QListWidgetItem* item = new QListWidgetItem(itemText);
             item->setTextAlignment(Qt::AlignVCenter);
@@ -610,11 +610,18 @@ void DSearchBar::keyPressEvent(QKeyEvent *e)
                         }
                         setSelection(text().count() + last.count() - modelText.count(), text().count());
                         m_text = text();
-                    }
+                    }/*else if (m_list->count() > 1){
+                        QLineEdit::keyPressEvent(e);
+                        if (cursorPosition() == text().length()){
+                            m_list->show();
+                        }
+                        break;
+                    }*/
                     else
                     {
                         if(key != Qt::Key_Tab)
                             QLineEdit::keyPressEvent(e);
+
                         break;
                     }
                 }
