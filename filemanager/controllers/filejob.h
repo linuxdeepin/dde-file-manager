@@ -84,8 +84,9 @@ private:
     bool deleteDir(const QString &dir);
     bool moveDirToTrash(const QString &dir);
     bool moveFileToTrash(const QString &file);
-    void writeTrashInfo(const QString &name, const QString &path, const QString &time);
-    QString baseName( QString path );
+    bool writeTrashInfo(const QString &fileBaseName, const QString &path, const QString &time);
+
+    QString getNotExistsTrashFileName(QString fileName);
 };
 
 #endif // FILEJOB_H

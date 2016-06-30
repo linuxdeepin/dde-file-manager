@@ -137,19 +137,24 @@ void FileJob::doMoveToTrash(const QList<QUrl> &files)
         return;
     }
 
+    bool ok = true;
+
     for(int i = 0; i < files.size(); i++)
     {
         QUrl url = files.at(i);
         QDir dir(url.path());
         if(dir.exists())
-            moveDirToTrash(url.path());
+            ok = ok && moveDirToTrash(url.path());
         else
-            moveFileToTrash(url.path());
+            ok = ok && moveFileToTrash(url.path());
     }
     if(m_isJobAdded)
         jobRemoved();
+
     emit finished();
-    qDebug() << "Move to Trash is done!";
+
+    if (ok)
+        qDebug() << "Move to Trash is done!";
 }
 
 void FileJob::doMove(const QList<QUrl> &files, const QString &destination)
@@ -706,19 +711,37 @@ bool FileJob::moveDirToTrash(const QString &dir)
     QDir sourceDir(dir);
 
     QString oldName = sourceDir.dirName();
-    QString newName = m_trashLoc + "/files/" + baseName(sourceDir.dirName());
+    QString baseName = getNotExistsTrashFileName(sourceDir.dirName());
+    QString newName = m_trashLoc + "/files/" + baseName;
     QString delTime = QDateTime::currentDateTime().toString(Qt::ISODate);
 
     QDir tempDir(newName);
-    if(tempDir.exists())
-        newName += delTime;
-    if(!sourceDir.rename(sourceDir.path(), newName))
-    {
+
+    if (!writeTrashInfo(baseName, dir, delTime))
+        return false;
+
+    if (!sourceDir.rename(sourceDir.path(), newName)) {
         qDebug() << "Unable to trash dir:" << sourceDir.path();
         return false;
     }
-    writeTrashInfo(newName, dir, delTime);
+
     return true;
+}
+
+QString FileJob::getNotExistsTrashFileName(QString fileName)
+{
+    int index = fileName.lastIndexOf('/');
+
+    if (index >= 0)
+        fileName = fileName.mid(index + 1);
+
+    fileName = fileName.toUtf8().left(200);
+
+    while (QFile::exists(TRASHFILEPATH + "/" + fileName)) {
+        fileName = QCryptographicHash::hash(fileName.toUtf8(), QCryptographicHash::Md5).toHex();
+    }
+
+    return fileName;
 }
 
 bool FileJob::moveFileToTrash(const QString &file)
@@ -728,47 +751,49 @@ bool FileJob::moveFileToTrash(const QString &file)
         emit result("cancelled");
         return false;
     }
+
     QFile localFile(file);
     QString path = m_trashLoc + "/files/";
-    QString newName = path + baseName(localFile.fileName());
+    QString baseName = getNotExistsTrashFileName(localFile.fileName());
+    QString newName = path + baseName;
     QString delTime = QDateTime::currentDateTime().toString(Qt::ISODate);
-    if(QFile::exists(newName))
-        newName = path + delTime + "_" + baseName(localFile.fileName());
-    if(!localFile.rename(newName))
+
+    if (!writeTrashInfo(baseName, file, delTime))
+        return false;
+
+    if (!localFile.rename(newName))
     {
         //Todo: find reason
         qDebug() << "Unable to trash file:" << localFile.fileName();
         return false;
     }
-    writeTrashInfo(newName, file, delTime);
+
     return true;
 }
 
-void FileJob::writeTrashInfo(const QString &name, const QString &path, const QString &time)
+bool FileJob::writeTrashInfo(const QString &fileBaseName, const QString &path, const QString &time)
 {
-    QFile metadata( m_trashLoc + "/info/" + baseName(name) + ".trashinfo" );
-    metadata.open( QIODevice::WriteOnly );
-    metadata.write(
+    QFile metadata( m_trashLoc + "/info/" + fileBaseName + ".trashinfo" );
+
+    if (!metadata.open( QIODevice::WriteOnly )) {
+        qDebug() << metadata.fileName() << "file open error:" << metadata.errorString();
+
+        return false;
+    }
+
+    qint64 size = metadata.write(
         QString(
             "[Trash Info]\n"
             "Path=%1\n"
             "DeletionDate=%2\n"
         ).arg( path ).arg( time ).toLocal8Bit()
     );
+
     metadata.close();
-}
 
-QString FileJob::baseName( QString path )
-{
-    while( path.contains( "//" ) )
-        path = path.replace( "//", "/" );
+    if (size < 0) {
+        qDebug() << "write file " << metadata.fileName() << "error:" << metadata.errorString();
+    }
 
-    if ( path.endsWith( "/" ) )
-        path.chop( 1 );
-
-    char *dupPath = strdup( path.toLocal8Bit().data() );
-    QString basePth = QString( basename( dupPath ) );
-    free( dupPath );
-
-    return basePth;
+    return size > 0;
 }
