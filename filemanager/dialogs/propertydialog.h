@@ -19,6 +19,7 @@ class DExpandGroup;
 DWIDGET_END_NAMESPACE
 
 class AbstractFileInfo;
+class UDiskDeviceInfo;
 class DUrl;
 
 DWIDGET_USE_NAMESPACE
@@ -82,7 +83,7 @@ public:
     explicit PropertyDialog(const DUrl &url, QWidget *parent = 0);
 
 public:
-
+    void initUI();
     void startComputerFolderSize(const QString& dir);
     void toggleFileExecutable(bool isChecked);
     DUrl getUrl();
@@ -113,6 +114,7 @@ private:
     QCheckBox * m_executableCheckBox = NULL;
     SectionValueLabel* m_folderSizeLabel = NULL;
     QFrame *m_basicInfoFrame = NULL;
+    QFrame *m_deviceInfoFrame = NULL;
     QFrame *m_OpenWithFrame = NULL;
     QListWidget* m_OpenWithListWidget = NULL;
     QButtonGroup* m_OpenWithButtonGroup;
@@ -121,6 +123,7 @@ private:
 
 
     QFrame *createBasicInfoWidget(const AbstractFileInfoPointer &info);
+    QFrame *createDeviceInfoWidget(UDiskDeviceInfo* info);
     QListWidget *createOpenWithListWidget(const AbstractFileInfoPointer &info);
     QFrame *createAuthorityManagermentWidget(const AbstractFileInfoPointer &info);
 
