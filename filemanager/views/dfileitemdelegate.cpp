@@ -242,6 +242,26 @@ void DFileItemDelegate::destroyEditor(QWidget *editor, const QModelIndex &index)
     editing_index = QModelIndex();
 }
 
+QString trimmedEnd(QString str)
+{
+    while (!str.isEmpty()) {
+        switch (str.at(str.count() - 1).toLatin1()) {
+        case '\t':
+        case '\n':
+        case '\r':
+        case '\v':
+        case '\f':
+        case ' ':
+            str.chop(1);
+            break;
+        default:
+            return str;
+        }
+    }
+
+    return str;
+}
+
 void DFileItemDelegate::paintIconItem(bool isDragMode, QPainter *painter,
                                       const QStyleOptionViewItem &option,
                                       const QModelIndex &index) const
@@ -288,6 +308,8 @@ void DFileItemDelegate::paintIconItem(bool isDragMode, QPainter *painter,
                                                         QTextOption::WrapAtWordBoundaryOrAnywhere,
                                                         &height);
 
+            wordWrap_str = trimmedEnd(wordWrap_str);
+
             m_wordWrapMap[str] = wordWrap_str;
             m_textHeightMap[wordWrap_str] = height;
             str = wordWrap_str;
@@ -313,6 +335,8 @@ void DFileItemDelegate::paintIconItem(bool isDragMode, QPainter *painter,
                                                   painter->fontMetrics(),
                                                   QTextOption::WrapAtWordBoundaryOrAnywhere,
                                                   opt.textElideMode);
+
+            elide_str = trimmedEnd(elide_str);
 
             m_elideMap[str] = elide_str;
 
