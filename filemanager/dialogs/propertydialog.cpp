@@ -6,6 +6,8 @@
 #include "../shutil/fileutils.h"
 #include "../shutil/mimesappsmanager.h"
 #include "../views/dscrollbar.h"
+#include "deviceinfo/deviceinfo.h"
+#include "../shutil/fileutils.h"
 #include <dexpandgroup.h>
 #include <dseparatorhorizontal.h>
 #include <darrowlineexpand.h>
@@ -36,6 +38,8 @@ SectionKeyLabel::SectionKeyLabel(const QString &text, QWidget *parent, Qt::Windo
     QLabel(text, parent, f)
 {
     setObjectName("SectionKeyLabel");
+    setFixedWidth(120);
+    setAlignment(Qt::AlignVCenter | Qt::AlignRight);
 }
 
 
@@ -43,6 +47,8 @@ SectionValueLabel::SectionValueLabel(const QString &text, QWidget *parent, Qt::W
     QLabel(text, parent, f)
 {
     setObjectName("SectionValueLabel");
+    setFixedWidth(180);
+    setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
 }
 
 
@@ -119,16 +125,66 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
                            &~ Qt::WindowSystemMenuHint);
 
     qDebug() << url;
-    const AbstractFileInfoPointer &fileInfo = FileServices::instance()->createFileInfo(url);
 
-    m_icon->setPixmap(fileInfo->fileIcon().pixmap(100, 150));
+    initUI();
+    UDiskDeviceInfo* diskInfo = deviceListener->getDevice(url.query());
+    if (diskInfo){
+        qDebug() << diskInfo->getDiskInfo();
+        QString name = diskInfo->getName();
+        m_icon->setPixmap(diskInfo->fileIcon().pixmap(100, 150));
+        m_edit->setPlainText(name);
+        m_edit->setAlignment(Qt::AlignHCenter);
+
+        m_deviceInfoFrame = createDeviceInfoWidget(diskInfo);
+
+        QStringList titleList;
+        titleList << tr("Basic Info");
+        DExpandGroup *expandGroup = addExpandWidget(titleList);
+        expandGroup->expand(0)->setExpandedSeparatorVisible(false);
+        expandGroup->expand(0)->setContent(m_deviceInfoFrame);
+        expandGroup->expand(0)->setExpand(true);
+
+    }else{
+        const AbstractFileInfoPointer &fileInfo = FileServices::instance()->createFileInfo(url);
+        m_icon->setPixmap(fileInfo->fileIcon().pixmap(100, 150));
+        m_edit->setPlainText(fileInfo->displayName());
+        m_edit->setAlignment(Qt::AlignHCenter);
+
+        m_basicInfoFrame = createBasicInfoWidget(fileInfo);
+
+        QStringList titleList;
+        if (fileInfo->isFile()){
+            titleList = QStringList() << tr("Basic Info");
+        }else{
+            titleList = QStringList() << tr("Basic Info");
+        }
+        DExpandGroup *expandGroup = addExpandWidget(titleList);
+        expandGroup->expand(0)->setExpandedSeparatorVisible(false);
+        expandGroup->expand(0)->setContent(m_basicInfoFrame);
+        expandGroup->expand(0)->setExpand(true);
+
+        if (fileInfo->isFile()){
+    //        m_OpenWithListWidget = createOpenWithListWidget(fileInfo);
+    //        expandGroup->expand(1)->setContent(m_OpenWithListWidget);
+            m_fileCount = 1;
+            m_size = fileInfo->size();
+        }
+        else if (fileInfo->isDir()){
+            startComputerFolderSize(fileInfo->absoluteFilePath());
+            m_fileCount = fileInfo->size();
+        }
+    }
+}
+
+void PropertyDialog::initUI()
+{
+    setTitle("");
+    setFixedSize(QSize(320, 480));
     m_icon->setFixedHeight(150);
 
-    m_edit->setPlainText(fileInfo->displayName());
     m_edit->setContextMenuPolicy(Qt::NoContextMenu);
     m_edit->setReadOnly(true);
     m_edit->setWordWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
-    m_edit->setAlignment(Qt::AlignHCenter);
     m_edit->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_edit->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_edit->setFrameShape(QFrame::NoFrame);
@@ -140,39 +196,7 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
     layout->setSpacing(0);
     layout->addWidget(m_icon, 0, Qt::AlignHCenter);
     layout->addWidget(m_edit, 0, Qt::AlignHCenter);
-//    layout->addWidget(new DSeparatorHorizontal);
-
     setLayout(layout);
-
-    QStringList titleList;
-    if (fileInfo->isFile()){
-        titleList = QStringList() << tr("Basic Info") /*<< tr("Open with")*/;
-    }else{
-        titleList = QStringList() << tr("Basic Info");
-    }
-    DExpandGroup *expandGroup = addExpandWidget(titleList);
-
-    layout->addStretch();
-
-    m_basicInfoFrame = createBasicInfoWidget(fileInfo);
-
-    expandGroup->expand(0)->setExpandedSeparatorVisible(false);
-    expandGroup->expand(0)->setContent(m_basicInfoFrame);
-    expandGroup->expand(0)->setExpand(true);
-
-
-
-
-    if (fileInfo->isFile()){
-//        m_OpenWithListWidget = createOpenWithListWidget(fileInfo);
-//        expandGroup->expand(1)->setContent(m_OpenWithListWidget);
-        m_fileCount = 1;
-        m_size = fileInfo->size();
-    }
-    else if (fileInfo->isDir()){
-        startComputerFolderSize(fileInfo->absoluteFilePath());
-        m_fileCount = fileInfo->size();
-    }
 }
 
 
@@ -260,7 +284,7 @@ DExpandGroup *PropertyDialog::addExpandWidget(const QStringList &titleList)
 
         group->addExpand(expand);
     }
-
+    layout->addStretch();
     return group;
 }
 
@@ -304,6 +328,33 @@ QFrame *PropertyDialog::createBasicInfoWidget(const AbstractFileInfoPointer &inf
         }
         layout->addRow(m_executableCheckBox, executableLabel);
     }
+    widget->setLayout(layout);
+
+    return widget;
+}
+
+QFrame *PropertyDialog::createDeviceInfoWidget(UDiskDeviceInfo *info)
+{
+    QFrame *widget = new QFrame;
+    SectionKeyLabel* typeSectionLabel = new SectionKeyLabel(QObject::tr("Device type"));
+    SectionKeyLabel* fileAmountSectionLabel = new SectionKeyLabel(QObject::tr("File amount"));
+    SectionKeyLabel* usedSectionLabel = new SectionKeyLabel(QObject::tr("Used space"));
+    SectionKeyLabel* totalSectionLabel = new SectionKeyLabel(QObject::tr("Total space"));
+
+    SectionValueLabel* typeLabel = new SectionValueLabel(info->deviceTypeDisplayName());
+    SectionValueLabel* fileAmountLabel = new SectionValueLabel(info->sizeDisplayName());
+    SectionValueLabel* usedLabel = new SectionValueLabel(FileUtils::formatSize(info->getUsed()));
+    SectionValueLabel* totalLabel = new SectionValueLabel(FileUtils::formatSize(info->getTotal()));
+
+    QFormLayout *layout = new QFormLayout;
+    layout->setHorizontalSpacing(12);
+    layout->setVerticalSpacing(16);
+    layout->setLabelAlignment(Qt::AlignRight);
+
+    layout->addRow(fileAmountSectionLabel, fileAmountLabel);
+    layout->addRow(typeSectionLabel, typeLabel);
+    layout->addRow(usedSectionLabel, usedLabel);
+    layout->addRow(totalSectionLabel, totalLabel);
     widget->setLayout(layout);
 
     return widget;

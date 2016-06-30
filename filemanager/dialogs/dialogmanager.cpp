@@ -72,6 +72,7 @@ void DialogManager::initConnect()
     connect(fileSignalManager, &FileSignalManager::requestShowOpenWithDialog, this, &DialogManager::showOpenWithDialog);
     connect(fileSignalManager, &FileSignalManager::requestShowPropertyDialog, this, &DialogManager::showPropertyDialog);
     connect(fileSignalManager, &FileSignalManager::requestShowTrashPropertyDialog, this, &DialogManager::showTrashPropertyDialog);
+    connect(fileSignalManager, &FileSignalManager::requestShowDevicePropertyDialog, this, &DialogManager::showDevicePropertyDialog);
     connect(fileSignalManager, &FileSignalManager::showDiskErrorDialog,
             this, &DialogManager::showDiskErrorDialog);
     connect(fileSignalManager, &FileSignalManager::showAboutDialog,
@@ -245,8 +246,6 @@ void DialogManager::showPropertyDialog(const FMEvent &event)
             }else{
                 dialog = new PropertyDialog(url);
                 m_propertyDialogs.insert(url, dialog);
-                dialog->setTitle("");
-                dialog->setFixedSize(QSize(320, 480));
                 QPoint pos = getPerportyPos(dialog->size().width(), dialog->size().height(), count, index);
 
                 dialog->show();
@@ -270,6 +269,15 @@ void DialogManager::showTrashPropertyDialog(const FMEvent &event)
     QWidget* w = WindowManager::getWindowById(event.windowId());
     if (w){
         TrashPropertyDialog* dialog = new TrashPropertyDialog(event.fileUrl());
+        dialog->show();
+    }
+}
+
+void DialogManager::showDevicePropertyDialog(const FMEvent &event)
+{
+    QWidget* w = WindowManager::getWindowById(event.windowId());
+    if (w){
+        PropertyDialog* dialog = new PropertyDialog(event.fileUrl());
         dialog->show();
     }
 }

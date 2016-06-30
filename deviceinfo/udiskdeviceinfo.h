@@ -46,6 +46,9 @@ public:
     qint64 size();
     QString displayName() const;
     MediaType getMediaType() const;
+    QString deviceTypeDisplayName() const;
+    QString sizeDisplayName();
+    qint64 filesCount();
 private:
     DiskInfo m_diskInfo;
 
