@@ -302,7 +302,11 @@ QString AbstractFileInfo::sizeDisplayName() const
     if (isFile()){
         return FileUtils::formatSize(size());
     }else{
-        return QObject::tr("%1 item(s)").arg(size());
+        if (size() <= 1){
+            return QObject::tr("%1 item").arg(size());
+        }else{
+            return QObject::tr("%1 items").arg(size());
+        }
     }
 }
 
