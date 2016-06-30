@@ -1376,6 +1376,8 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
 
     m_currentViewMode = mode;
 
+    itemDelegate()->hideAllIIndexWidget();
+
     switch (mode) {
     case IconMode: {
         clearHeardView();
