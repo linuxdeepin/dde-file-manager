@@ -67,6 +67,7 @@ public:
     int getFileViewSortRole() const;
 
     DTitlebar* getTitleBar();
+    DToolBar* getToolBar();
 
 public slots:
     void showMinimized();
@@ -115,6 +116,7 @@ public slots:
 protected:
     void closeEvent(QCloseEvent* event);
     void timerEvent(QTimerEvent* event);
+    void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void mouseDoubleClickEvent(QMouseEvent *event);
 

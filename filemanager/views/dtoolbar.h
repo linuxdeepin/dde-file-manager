@@ -30,7 +30,7 @@ public:
     void initContollerToolBar();
     void initConnect();
     void startup();
-    DSearchBar * m_searchBar = NULL;
+    DSearchBar * getSearchBar();
 
 signals:
     void requestIconView();
@@ -65,7 +65,7 @@ private:
     DStateButton* m_upButton=NULL;
     QPushButton* m_searchButton = NULL;
     DStateButton* m_refreshButton = NULL;
-
+    DSearchBar * m_searchBar = NULL;
     QFrame* m_contollerToolBar;
     DIconTextButton* m_newFolderButton=NULL;
     DIconTextButton* m_deleteFileButton=NULL;
