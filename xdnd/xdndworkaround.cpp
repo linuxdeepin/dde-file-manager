@@ -85,9 +85,11 @@ XdndWorkaround::~XdndWorkaround() {
 }
 
 bool XdndWorkaround::nativeEventFilter(const QByteArray & eventType, void * message, long * result) {
+    Q_UNUSED(result)
+
     if(Q_LIKELY(eventType == "xcb_generic_event_t")) {
         xcb_generic_event_t* event = static_cast<xcb_generic_event_t *>(message);
-        uint8_t response_type = event->response_type & uint8_t(~0x80);
+//        uint8_t response_type = event->response_type & uint8_t(~0x80);
         switch(event->response_type & ~0x80) {
         case XCB_CLIENT_MESSAGE:
             return clientMessage(reinterpret_cast<xcb_client_message_event_t*>(event));
@@ -166,12 +168,12 @@ QByteArray XdndWorkaround::windowProperty(xcb_window_t window, xcb_atom_t propAt
 // static
 void XdndWorkaround::setWindowProperty(xcb_window_t window, xcb_atom_t propAtom, xcb_atom_t typeAtom, void* data, int len, int format) {
     xcb_connection_t* conn = QX11Info::connection();
-    xcb_void_cookie_t cookie = xcb_change_property(conn, XCB_PROP_MODE_REPLACE, window, propAtom, typeAtom, format, len, data);
+    /*xcb_void_cookie_t cookie = */xcb_change_property(conn, XCB_PROP_MODE_REPLACE, window, propAtom, typeAtom, format, len, data);
 }
 
 
 bool XdndWorkaround::clientMessage(xcb_client_message_event_t* event) {
-    xcb_connection_t* conn = QX11Info::connection();
+//    xcb_connection_t* conn = QX11Info::connection();
     QByteArray event_type = atomName(event->type);
     // qDebug() << "client message:" << event_type;
 
