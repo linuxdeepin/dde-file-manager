@@ -158,7 +158,7 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data){
     if (fm.width(destination) > destinationMaxWidth){
         destination = fm.elidedText(destination, Qt::ElideMiddle, destinationMaxWidth);
     }else{
-        fileMaxWidth = 270 - fm.width(destination);
+        fileMaxWidth = 260 - fm.width(destination);
     }
 
     if (fm.width(file) > fileMaxWidth){
@@ -465,7 +465,7 @@ void DTaskDialog::removeTaskByPath(QString jobId){
         m_jobIdItems.remove(jobId);
         setTitle(m_taskListWidget->count());
         if (m_taskListWidget->count() == 0){
-            hide();
+            close();
         }
     }
 }
@@ -538,4 +538,5 @@ void DTaskDialog::closeEvent(QCloseEvent *event){
         }
     }
     DMoveableWidget::closeEvent(event);
+    emit closed();
 }
