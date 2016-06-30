@@ -653,6 +653,8 @@ void DFileItemDelegate::hideAllIIndexWidget()
 
     if (editing_index.isValid()) {
         parent()->setIndexWidget(editing_index, 0);
+
+        editing_index = QModelIndex();
     }
 }
 
