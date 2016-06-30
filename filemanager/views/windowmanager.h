@@ -24,6 +24,7 @@ public:
 
     void loadWindowState(DMainWindow* window);
     void saveWindowState(DMainWindow* window);
+    inline QHash<const QWidget*, int> getWindows(){return m_windows;}
 
 signals:
     void start(const QString &src);
@@ -36,7 +37,7 @@ public slots:
 private slots:
     void onWindowClosed();
     void onLastActivedWindowClosed(int winId);
-    inline QHash<const QWidget*, int> getWindows(){return m_windows;}
+    void quit();
 
 private:
      static QHash<const QWidget*, int> m_windows;

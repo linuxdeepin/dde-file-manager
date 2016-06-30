@@ -176,6 +176,9 @@ signals:
 
     /*request cache samba login data*/
     void requsetCacheLoginData(const QJsonObject& obj);
+
+    /*quit application if taskdialog close*/
+    void requestQuitApplication();
 };
 
 #endif // FILESIGNALMANAGER_H
