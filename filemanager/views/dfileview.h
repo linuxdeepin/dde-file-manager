@@ -86,7 +86,7 @@ public:
 
     bool testViewMode(ViewModes modes, ViewMode mode);
 
-    int horizontalOffset() const;
+    int horizontalOffset() const Q_DECL_OVERRIDE;
 
     bool isSelected(const QModelIndex &index) const;
     QModelIndexList selectedIndexes() const Q_DECL_OVERRIDE;
@@ -155,7 +155,7 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void focusInEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
-    bool event(QEvent *event) Q_DECL_OVERRIDE;
+//    bool event(QEvent *event) Q_DECL_OVERRIDE;
     void dragEnterEvent(QDragEnterEvent *event) Q_DECL_OVERRIDE;
     void dragMoveEvent(QDragMoveEvent *event) Q_DECL_OVERRIDE;
     void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags flags) Q_DECL_OVERRIDE;
@@ -189,7 +189,7 @@ private:
     void openIndex(const QModelIndex &index);
     void keyboardSearch(const QString & search) Q_DECL_OVERRIDE;
     void stopSearch();
-    void updateViewportMargins();
+    void updateHorizontalOffset();
     void switchViewMode(ViewMode mode);
     void showEmptyAreaMenu();
     void showNormalMenu(const QModelIndex &index);
