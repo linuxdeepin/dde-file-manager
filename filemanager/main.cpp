@@ -23,6 +23,8 @@
 
 #include "../controllers/pathmanager.h"
 
+#include "xdndworkaround.h"
+
 #ifdef ENABLE_PPROF
 #include <gperftools/profiler.h>
 #endif
@@ -68,6 +70,9 @@ int main(int argc, char *argv[])
 
     if (isSingleInstance){
         DThemeManager::instance()->setTheme("light");
+
+        /// fix Qt drag drop to google chrome bug
+        new XdndWorkaround();
 
         fileManagerApp->show(commandlineUrl);
         dialogManager;
