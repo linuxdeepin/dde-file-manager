@@ -408,7 +408,9 @@ void DFileView::preHandleCd(const FMEvent &event)
 
 void DFileView::cd(const FMEvent &event)
 {
-    setFocus();
+    if (!event.fileUrl().isSearchFile()){
+        setFocus();
+    }
     clearSelection();
     if(event.windowId() != windowId())
         return;
