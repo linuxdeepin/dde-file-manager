@@ -309,8 +309,8 @@ void DFileView::setIconSize(const QSize &size)
 {
     DListView::setIconSize(size);
 
-    updateViewportMargins();
     updateItemSizeHint();
+    updateHorizontalOffset();
 }
 
 DFileView::ViewMode DFileView::getDefaultViewMode()
@@ -359,26 +359,25 @@ QModelIndex DFileView::indexAt(const QPoint &point) const
         return itemDelegate()->editingIndex();
     }
 
-    QPoint p = point;
+    QPoint pos = QPoint(point.x() + horizontalOffset(), point.y() + verticalOffset());
     QSize item_size = itemSizeHint();
+
+    if (pos.y() % (item_size.height() + spacing() * 2) < spacing())
+        return QModelIndex();
 
     int index = -1;
 
-    p.setY(p.y() + verticalScrollBar()->value());
-
-    if (p.y() % (item_size.height() + spacing() * 2) < spacing())
-        return QModelIndex();
-
-
     if (item_size.width() == -1) {
-        index = p.y() / (item_size.height() + LIST_VIEW_SPACING * 2);
+        index = pos.y() / (item_size.height() + LIST_VIEW_SPACING * 2);
     } else {
-        if (p.x() % (item_size.width() + ICON_VIEW_SPACING * 2) <= ICON_VIEW_SPACING)
+        int item_width = item_size.width() + ICON_VIEW_SPACING * 2;
+
+        if (pos.x() % item_width <= ICON_VIEW_SPACING)
             return QModelIndex();
 
-        int line_index = p.y() / (item_size.height() + ICON_VIEW_SPACING * 2);
-        int line_count = viewport()->width() / (item_size.width() + ICON_VIEW_SPACING * 2);
-        int row_index = p.x() / (item_size.width() + ICON_VIEW_SPACING * 2);
+        int line_index = pos.y() / (item_size.height() + ICON_VIEW_SPACING * 2);
+        int line_count = viewport()->width() / item_width;
+        int row_index = pos.x() / item_width;
 
         if (row_index >= line_count)
             return QModelIndex();
@@ -669,39 +668,69 @@ void DFileView::showEvent(QShowEvent *event)
 
 void DFileView::mousePressEvent(QMouseEvent *event)
 {
-    if (event->button() == Qt::BackButton) {
+    switch (event->button()) {
+    case Qt::BackButton: {
         FMEvent event;
 
         event = this->windowId();
         event = FMEvent::FileView;
 
         fileSignalManager->requestBack(event);
-    } else if (event->button() == Qt::ForwardButton) {
+
+        break;
+    }
+    case Qt::ForwardButton: {
         FMEvent event;
 
         event = this->windowId();
         event = FMEvent::FileView;
 
         fileSignalManager->requestForward(event);
-    } else {
+
+        break;
+    }
+    case Qt::LeftButton: {
         bool isEmptyArea = this->isEmptyArea(event->pos());
 
-        if (event->button() == Qt::LeftButton) {
-            setDragEnabled(!isEmptyArea);
-        }
-
-        event->ignore();
-
-        if(!(event->buttons() & Qt::RightButton))
-            DListView::mousePressEvent(event);
+        setDragEnabled(!isEmptyArea);
 
         if (isEmptyArea) {
+            if (!Global::keyCtrlIsPressed()) {
+                clearSelection();
+            }
+
             if (canShowSElectionRect())
                 m_selectionRectWidget->show();
 
             m_pressedPos = viewport()->mapToParent(static_cast<QMouseEvent*>(event)->pos());
         }
+
+        break;
     }
+    case Qt::RightButton: {
+        bool isEmptyArea = this->isEmptyArea(event->pos());
+
+        const QModelIndex &index = indexAt(event->pos());
+
+        if (isEmptyArea  && !selectionModel()->isSelected(index)) {
+            clearSelection();
+            showEmptyAreaMenu();
+        } else {
+            const QModelIndexList &list = selectedIndexes();
+
+            if (!list.contains(index)) {
+                setCurrentIndex(index);
+            }
+
+            showNormalMenu(index);
+        }
+
+        break;
+    }
+    default: break;
+    }
+
+    DListView::mousePressEvent(event);
 }
 
 void DFileView::mouseMoveEvent(QMouseEvent *event)
@@ -777,82 +806,85 @@ void DFileView::focusInEvent(QFocusEvent *event)
 
 void DFileView::resizeEvent(QResizeEvent *event)
 {
-    updateViewportMargins();
-
     DListView::resizeEvent(event);
+
+    updateHorizontalOffset();
+
+    if (itemDelegate()->editingIndex().isValid())
+        doItemsLayout();
 }
 
-bool DFileView::event(QEvent *event)
-{
-    switch (event->type()) {
-    case QEvent::MouseButtonPress: {
-        QMouseEvent *e = static_cast<QMouseEvent*>(event);
+//bool DFileView::event(QEvent *event)
+//{
+//    switch (event->type()) {
+//    case QEvent::MouseButtonPress: {
+//        QMouseEvent *e = static_cast<QMouseEvent*>(event);
 
-        const QPoint &pos = viewport()->mapFromParent(e->pos());
-        bool isEmptyArea = this->isEmptyArea(pos);
+//        const QPoint &pos = viewport()->mapFromParent(e->pos());
+//        bool isEmptyArea = this->isEmptyArea(pos);
 
-        if (e->button() == Qt::LeftButton) {
-            if (isEmptyArea && !Global::keyCtrlIsPressed()) {
-                clearSelection();
-                itemDelegate()->hideAllIIndexWidget();
-            }
+//        if (e->button() == Qt::LeftButton) {
+//            if (isEmptyArea && !Global::keyCtrlIsPressed()) {
+//                clearSelection();
+//                itemDelegate()->hideAllIIndexWidget();
+//            }
 
-            if (isEmptyArea) {
-                if (canShowSElectionRect())
-                    m_selectionRectWidget->show();
+//            if (isEmptyArea) {
+//                if (canShowSElectionRect())
+//                    m_selectionRectWidget->show();
 
-                m_pressedPos = static_cast<QMouseEvent*>(event)->pos();
-            }
-        } else if (e->button() == Qt::RightButton) {
-            if (isEmptyArea  && !selectionModel()->isSelected(indexAt(pos))) {
-                clearSelection();
-                showEmptyAreaMenu();
-            } else {
-                if (!hasFocus() && this->childAt(pos)->hasFocus())
-                    return DListView::event(event);
+//                m_pressedPos = static_cast<QMouseEvent*>(event)->pos();
+//            }
+//        } else if (e->button() == Qt::RightButton) {
+//            if (isEmptyArea  && !selectionModel()->isSelected(indexAt(pos))) {
+//                clearSelection();
+//                showEmptyAreaMenu();
+//            } else {
+//                if (!hasFocus() && this->childAt(pos)->hasFocus())
+//                    return DListView::event(event);
 
-                const QModelIndex &index = indexAt(pos);
-                const QModelIndexList &list = selectedIndexes();
+//                const QModelIndex &index = indexAt(pos);
+//                const QModelIndexList &list = selectedIndexes();
 
-                if (!list.contains(index)) {
-                    setCurrentIndex(index);
-                }
+//                if (!list.contains(index)) {
+//                    setCurrentIndex(index);
+//                }
 
-                showNormalMenu(index);
-            }
-        }
-        break;
-    }
-    case QEvent::MouseMove: {
-        if (m_selectionRectWidget->isHidden())
-            break;
+//                showNormalMenu(index);
+//            }
+//        }
+//        break;
+//    }
+//    case QEvent::MouseMove: {
+//        if (m_selectionRectWidget->isHidden())
+//            break;
 
-        const QPoint &pos = static_cast<QMouseEvent*>(event)->pos();
-        QRect rect;
+//        const QPoint &pos = static_cast<QMouseEvent*>(event)->pos();
+//        QRect rect;
 
-        rect.adjust(qMin(m_pressedPos.x(), pos.x()), qMin(m_pressedPos.y(), pos.y()),
-                    qMax(pos.x(), m_pressedPos.x()), qMax(pos.y(), m_pressedPos.y()));
+//        rect.adjust(qMin(m_pressedPos.x(), pos.x()), qMin(m_pressedPos.y(), pos.y()),
+//                    qMax(pos.x(), m_pressedPos.x()), qMax(pos.y(), m_pressedPos.y()));
 
-        m_selectionRectWidget->setGeometry(rect);
+//        m_selectionRectWidget->setGeometry(rect);
 
-        rect.moveTopLeft(viewport()->mapFromParent(rect.topLeft()));
+////        rect.moveTopLeft(viewport()->mapFromParent(rect.topLeft()));
 
-        setSelection(rect, QItemSelectionModel::Current|QItemSelectionModel::Rows|QItemSelectionModel::ClearAndSelect);
+////        setSelection(rect, QItemSelectionModel::Current|QItemSelectionModel::Rows|QItemSelectionModel::ClearAndSelect);
 
-        break;
-    }
-    case QEvent::MouseButtonRelease: {
-        m_selectionRectWidget->resize(0, 0);
-        m_selectionRectWidget->hide();
+//        break;
+//    }
+//    case QEvent::MouseButtonRelease: {
+//        m_selectionRectWidget->resize(0, 0);
+//        m_selectionRectWidget->hide();
 
-        break;
-    }
-    default:
-        break;
-    }
+//        break;
+//    }
+//    default:
+//        break;
+//    }
 
-    return DListView::event(event);
-}
+//    return DListView::event(event);
+//}
 
 void DFileView::dragEnterEvent(QDragEnterEvent *event)
 {
@@ -1283,6 +1315,7 @@ void DFileView::setFoucsOnFileView(const FMEvent &event)
 
 void DFileView::clearSelection()
 {
+    itemDelegate()->hideAllIIndexWidget();
     QListView::clearSelection();
 }
 
@@ -1314,24 +1347,16 @@ bool DFileView::canShowSElectionRect() const
     return m_selectionRectVisible && selectionMode() != NoSelection && selectionMode() != SingleSelection;
 }
 
-void DFileView::updateViewportMargins()
+void DFileView::updateHorizontalOffset()
 {
-    QMargins margins = viewportMargins();
-
-    if(isIconViewMode()) {
+    if (isIconViewMode()) {
         int contentWidth = width();
+        int itemWidth = itemSizeHint().width() + ICON_VIEW_SPACING * 2;
+        int itemColumn = (contentWidth - ICON_VIEW_SPACING * 2.5) / itemWidth;
 
-        double itemWidth = iconSize().width() * 1.95 + ICON_VIEW_SPACING;
-        int itemColumn = contentWidth / itemWidth;
-        int gapWidth = (contentWidth - itemWidth * itemColumn) / 2 + 2 * ICON_VIEW_SPACING;
-
-//        m_horizontalOffset = -gapWidth;
-        setViewportMargins(gapWidth, 0, 0, 0);
-
+        m_horizontalOffset = -(contentWidth - itemWidth * itemColumn) / 2;
     } else {
-        margins.setLeft(0);
-        margins.setRight(0);
-        setViewportMargins(margins);
+        m_horizontalOffset = 0;
     }
 }
 
