@@ -13,6 +13,7 @@
 #include <QThread>
 #include <QDebug>
 #include <QApplication>
+#include <QX11Info>
 
 QHash<const QWidget*, int> WindowManager::m_windows;
 int WindowManager::m_count = 0;
@@ -75,6 +76,7 @@ void WindowManager::showNewWindow(const DUrl &url, bool isAlwaysOpen)
         }
     }
 
+    QX11Info::setAppTime(QX11Info::appUserTime());
     DMainWindow *window = new DMainWindow();
     connect(window, &DMainWindow::aboutToClose,
             this, &WindowManager::onWindowClosed);
