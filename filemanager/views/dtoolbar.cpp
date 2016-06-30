@@ -180,6 +180,11 @@ void DToolBar::startup()
     emit fileSignalManager->requestChangeCurrentUrl(event);
 }
 
+DSearchBar *DToolBar::getSearchBar()
+{
+    return m_searchBar;
+}
+
 void DToolBar::searchBarClicked()
 {
     searchBarActivated();

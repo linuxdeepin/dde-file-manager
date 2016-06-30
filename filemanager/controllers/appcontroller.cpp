@@ -336,6 +336,7 @@ void AppController::actionNewWindow(const FMEvent &event)
 
 void AppController::actionHelp(const FMEvent &event)
 {
+    Q_UNUSED(event)
     QStringList args;
     args << "dde-file-manager";
     QProcess::startDetached("dman", args);
