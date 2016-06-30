@@ -320,7 +320,12 @@ void AppController::actionOpenInTerminal(const FMEvent &event)
 
 void AppController::actionProperty(const FMEvent &event)
 {
-    emit fileSignalManager->requestShowPropertyDialog(event);
+    qDebug() << event;
+    if (event.fileUrl() == DUrl::fromTrashFile("/")){
+        emit fileSignalManager->requestShowTrashPropertyDialog(event);
+    }else{
+        emit fileSignalManager->requestShowPropertyDialog(event);
+    }
 }
 
 void AppController::actionNewWindow(const FMEvent &event)

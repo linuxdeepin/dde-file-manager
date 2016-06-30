@@ -112,6 +112,12 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
 {
     D_THEME_INIT_WIDGET(PropertyDialog)
 
+    setAttribute(Qt::WA_DeleteOnClose);
+    setWindowFlags(windowFlags()
+                           &~ Qt::WindowMaximizeButtonHint
+                           &~ Qt::WindowMinimizeButtonHint
+                           &~ Qt::WindowSystemMenuHint);
+
     qDebug() << url;
     const AbstractFileInfoPointer &fileInfo = FileServices::instance()->createFileInfo(url);
 
