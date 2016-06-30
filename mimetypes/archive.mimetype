@@ -46,3 +46,4 @@ application/x-gzip
 application/x-compress
 application/zip
 application/x-zoo
+application/vnd.debian.binary-package
