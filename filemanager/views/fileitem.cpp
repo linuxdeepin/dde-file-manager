@@ -68,6 +68,8 @@ FileIconItem::FileIconItem(QWidget *parent) :
             cursor.setBlockFormat(format);
         } while (cursor.movePosition(QTextCursor::NextBlock));
 
+        cursor.setPosition(cursor_pos);
+
         edit->setTextCursor(cursor);
         edit->setAlignment(Qt::AlignHCenter);
 
