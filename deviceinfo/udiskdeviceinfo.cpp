@@ -182,6 +182,38 @@ UDiskDeviceInfo::MediaType UDiskDeviceInfo::getMediaType() const
         return unknown;
 }
 
+QString UDiskDeviceInfo::deviceTypeDisplayName() const
+{
+    if(getType() == "native")
+        return QObject::tr("Navtive disk");
+    else if(getType() == "removable")
+        return QObject::tr("Removable disk");
+    else if(getType() == "network")
+        return QObject::tr("Network share folder");
+    else if(getType() == "phone")
+        return QObject::tr("Phone device");
+    else if(getType() == "iphone")
+        return QObject::tr("Iphone");
+    else if(getType() == "camera")
+        return QObject::tr("Camera device");
+    else
+        return QObject::tr("Unknown device");
+}
+
+QString UDiskDeviceInfo::sizeDisplayName()
+{
+    if (filesCount() <= 1){
+        return QObject::tr("%1 item").arg(filesCount());
+    }else{
+        return QObject::tr("%1 items").arg(filesCount());
+    }
+}
+
+qint64 UDiskDeviceInfo::filesCount()
+{
+    return FileUtils::filesCount(getMountPoint());
+}
+
 bool UDiskDeviceInfo::isCanRename() const
 {
     return false;
