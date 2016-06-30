@@ -32,6 +32,7 @@ void WindowManager::initConnect()
 {
     connect(fileSignalManager, &FileSignalManager::requestOpenNewWindowByUrl, this, &WindowManager::showNewWindow);
     connect(fileSignalManager, &FileSignalManager::aboutToCloseLastActivedWindow, this, &WindowManager::onLastActivedWindowClosed);
+    connect(fileSignalManager, &FileSignalManager::requestQuitApplication, this, &WindowManager::quit);
 }
 
 void WindowManager::loadWindowState(DMainWindow *window)
@@ -123,6 +124,7 @@ void WindowManager::onWindowClosed()
     if (m_windows.count() == 1){
         DMainWindow* window = static_cast<DMainWindow*>(sender());
         saveWindowState(window);
+        dialogManager->closeAllPropertyDialog();
     }
     m_windows.remove(static_cast<const QWidget*>(sender()));
 
@@ -137,4 +139,11 @@ void WindowManager::onLastActivedWindowClosed(int winId)
         }
     }
     getWindowById(winId)->close();
+}
+
+void WindowManager::quit()
+{
+    if (m_windows.count() == 0){
+        qApp->quit();
+    }
 }

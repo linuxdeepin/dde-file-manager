@@ -91,6 +91,8 @@ signals:
     void conflictRepsonseConfirmed(const QMap<QString, QString>& jobDetail, const QMap<QString, QVariant>& response);
     void conflictShowed(const QMap<QString, QString>& jobDetail);
     void conflictHided(const QMap<QString, QString>& jobDetail);
+    void closed();
+
 public slots:
     void setTitle(QString title);
     void setTitle(int taskCount);
