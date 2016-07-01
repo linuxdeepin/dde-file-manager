@@ -727,7 +727,7 @@ void DFileView::mousePressEvent(QMouseEvent *event)
             showNormalMenu(index);
         }
 
-        break;
+        return;
     }
     default: break;
     }
@@ -804,6 +804,11 @@ void DFileView::focusInEvent(QFocusEvent *event)
 {
     DListView::focusInEvent(event);
     itemDelegate()->commitDataAndCloseActiveEditor();
+
+    const DUrl &current_url = currentUrl();
+
+    if (current_url.isLocalFile())
+            QDir::setCurrent(current_url.toLocalFile());
 }
 
 void DFileView::resizeEvent(QResizeEvent *event)
@@ -1275,6 +1280,9 @@ bool DFileView::setCurrentUrl(DUrl fileUrl)
         }
     } 
     //emit currentUrlChanged(fileUrl);
+
+    if (focusWidget()->window() == window() && fileUrl.isLocalFile())
+        QDir::setCurrent(fileUrl.toLocalFile());
 
     setSelectionMode(info->supportSelectionMode());
 

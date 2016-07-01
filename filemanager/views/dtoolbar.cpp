@@ -240,12 +240,7 @@ void DToolBar::searchBarTextEntered()
     event = FMEvent::SearchBar;
     event = DUrl::fromUserInput(text);
 
-    if(m_searchBar->hasScheme() || m_searchBar->isPath())
-    {
-        event = DUrl::fromUserInput(text);
-    }
-    else
-    {
+    if (!m_searchBar->hasScheme()) {
         DUrl url = m_crumbWidget->getUrl();
 
         if (url.isSearchFile())

@@ -313,9 +313,9 @@ void AppController::actionEject(const FMEvent &event)
 void AppController::actionOpenInTerminal(const FMEvent &event)
 {
     const DUrl& fileUrl = event.fileUrl();
-    QStringList args;
-    args << QString("--working-directory=%1").arg(fileUrl.toLocalFile());
-    QProcess::startDetached("x-terminal-emulator", args);
+//    QStringList args;
+//    args << QString("--working-directory=%1").arg(fileUrl.toLocalFile());
+    QProcess::startDetached("x-terminal-emulator"/*, args*/);
 }
 
 void AppController::actionProperty(const FMEvent &event)

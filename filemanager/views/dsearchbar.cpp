@@ -192,7 +192,7 @@ void DSearchBar::setCompleter(const QString &text)
         QFileInfo fileInfo;
         if(isLocalFile())
         {
-            DUrl url(text);
+            DUrl url = DUrl::fromUserInput(text);
             fileInfo.setFile(url.toLocalFile());
         }
         else
@@ -666,7 +666,8 @@ QAction *DSearchBar::getClearAction()
 
 bool DSearchBar::hasScheme()
 {
-    DUrl url(text());
+    DUrl url = DUrl::fromUserInput(text());
+
     if( url.isBookMarkFile() ||
             url.isComputerFile() ||
             url.isLocalFile() ||
@@ -682,32 +683,27 @@ bool DSearchBar::hasScheme()
 
 bool DSearchBar::isSearchFile()
 {
-    DUrl url(text());
-    return url.isSearchFile();
+    return DUrl::fromUserInput(text()).isSearchFile();
 }
 
 bool DSearchBar::isBookmarkFile()
 {
-    DUrl url(text());
-    return url.isSearchFile();
+    return DUrl::fromUserInput(text()).isSearchFile();
 }
 
 bool DSearchBar::isComputerFile()
 {
-    DUrl url(text());
-    return url.isComputerFile();
+    return DUrl::fromUserInput(text()).isComputerFile();
 }
 
 bool DSearchBar::isLocalFile()
 {
-    DUrl url(text());
-    return url.isLocalFile();
+    return DUrl::fromUserInput(text()).isLocalFile();
 }
 
 bool DSearchBar::isTrashFile()
 {
-    DUrl url(text());
-    return url.isTrashFile();
+    return DUrl::fromUserInput(text()).isTrashFile();
 }
 
 bool DSearchBar::isPath()
