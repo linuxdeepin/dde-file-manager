@@ -23,6 +23,7 @@ public slots:
 
 protected:
 //    void showEvent(QShowEvent* event);
+    void keyPressEvent(QKeyEvent* event);
 
 private:
     QLabel* m_messageLabel;

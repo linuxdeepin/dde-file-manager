@@ -3,12 +3,14 @@
 #include <QDebug>
 #include <QDesktopWidget>
 #include <QApplication>
+#include <QKeyEvent>
 #include "../shutil/fileutils.h"
 
 CloseAllDialogIndicator::CloseAllDialogIndicator(QWidget *parent) : QDialog(parent)
 {
     setWindowFlags(Qt::FramelessWindowHint | Qt::Dialog);
     setAttribute(Qt::WA_TranslucentBackground);
+    setFocusPolicy(Qt::NoFocus);
     initUI();
     initConnect();
 }
@@ -58,5 +60,13 @@ void CloseAllDialogIndicator::setTotalMessage(qint64 size, int count)
 {
     QString message = tr("Total size is %1,contains %2 files").arg(FileUtils::formatSize(size), QString::number(count));
     m_messageLabel->setText(message);
+}
+
+void CloseAllDialogIndicator::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Escape){
+        return;
+    }
+    QDialog::keyPressEvent(event);
 }
 
