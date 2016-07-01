@@ -31,13 +31,6 @@ DUrl::DUrl(const QUrl &copy)
     updateVirtualPath();
 }
 
-#ifdef QT_NO_URL_CAST_FROM_STRING
-ZUrl(const QString &url, ParsingMode mode)
-    : QUrl(url, mode)
-{
-    updateVirtualPath();
-}
-#else
 DUrl::DUrl(const QString &url, QUrl::ParsingMode mode)
     : QUrl(url, mode)
 {
@@ -323,15 +316,20 @@ DUrl DUrl::fromUserInput(const QString &userInput)
     return fromUserInput(userInput, QString());
 }
 
-DUrl DUrl::fromUserInput(const QString &userInput, const QString &workingDirectory, QUrl::UserInputResolutionOptions options)
+DUrl DUrl::fromUserInput(const QString &userInput, QString workingDirectory, QUrl::UserInputResolutionOptions options)
 {
-    if(userInput.startsWith("~")) {
+    if (workingDirectory.isEmpty())
+        workingDirectory = QDir::currentPath();
+
+    if (userInput.startsWith("~")) {
         return QUrl::fromUserInput(QDir::homePath() + userInput.mid(1), workingDirectory, options);
+    } else if (userInput.startsWith(".")) {
+        QFileInfo fileInfo(workingDirectory + "/" + userInput);
+
+        return DUrl::fromLocalFile(fileInfo.absoluteFilePath());
+    } else {
+        return DUrl(userInput);
     }
-
-    DUrl url = QUrl::fromUserInput(userInput, workingDirectory, options);
-
-    return url;
 }
 
 QStringList DUrl::toStringList(const DUrlList &urls, QUrl::FormattingOptions options)
@@ -446,7 +444,6 @@ void DUrl::updateVirtualPath()
         m_virtualPath.remove(m_virtualPath.count() - 1, 1);
     }
 }
-#endif
 
 QT_BEGIN_NAMESPACE
 QDebug operator<<(QDebug deg, const DUrl &url)
