@@ -118,7 +118,7 @@ bool FileIconItem::event(QEvent *ee)
 
 bool FileIconItem::eventFilter(QObject *obj, QEvent *ee)
 {
-    if(ee->type() == QEvent::Resize) {
+    if (ee->type() == QEvent::Resize) {
         if(obj == icon || obj == edit) {
             resize(width(), icon->height() + edit->height());
         }
@@ -142,6 +142,8 @@ bool FileIconItem::eventFilter(QObject *obj, QEvent *ee)
             event->accept();
             return false;
         }
+    } else if (ee->type() == QEvent::FocusOut && obj == edit) {
+        emit inputFocusOut();
     }
 
     return QFrame::eventFilter(obj, ee);

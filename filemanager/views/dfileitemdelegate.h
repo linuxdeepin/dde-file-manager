@@ -71,6 +71,8 @@ private:
     mutable QModelIndex expanded_index;
     mutable QModelIndex editing_index;
 
+    void onEditWidgetFocusOut();
+
     friend class DFileView;
 };
 
