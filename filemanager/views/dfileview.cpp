@@ -126,6 +126,7 @@ void DFileView::initConnects()
     connect(model(), &DFileSystemModel::rowsInserted, this, &DFileView::handleSelectionChanged);
     connect(model(), &DFileSystemModel::rowsRemoved, this, &DFileView::handleSelectionChanged);
     connect(fileSignalManager, &FileSignalManager::requestFoucsOnFileView, this, &DFileView::setFoucsOnFileView);
+    connect(fileSignalManager, &FileSignalManager::requestFreshFileView, this, &DFileView::refreshFileView);
 
     connect(itemDelegate(), &DFileItemDelegate::commitData, this, &DFileView::handleCommitData);
     connect(model(), &DFileSystemModel::dataChanged, this, &DFileView::handleDataChanged);
@@ -1374,6 +1375,14 @@ void DFileView::setFoucsOnFileView(const FMEvent &event)
 {
     if (event.windowId() == windowId())
         setFocus();
+}
+
+void DFileView::refreshFileView(const FMEvent &event)
+{
+    if (event.windowId() != windowId()){
+        return;
+    }
+    model()->refresh();
 }
 
 void DFileView::clearSelection()

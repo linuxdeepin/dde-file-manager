@@ -123,6 +123,7 @@ public slots:
     void clearKeyBoardSearchKeys();
     void handleSelectionChanged();
     void setFoucsOnFileView(const FMEvent& event);
+    void refreshFileView(const FMEvent& event);
 
     void clearSelection();
 
