@@ -354,14 +354,14 @@ QModelIndex DFileView::indexAt(const QPoint &point) const
         if (pos.x() % item_width <= ICON_VIEW_SPACING)
             return QModelIndex();
 
-        int line_index = pos.y() / (item_size.height() + ICON_VIEW_SPACING * 2);
-        int line_count = viewport()->width() / item_width;
-        int row_index = pos.x() / item_width;
+        int row_index = pos.y() / (item_size.height() + ICON_VIEW_SPACING * 2);
+        int column_count = (width() - ICON_VIEW_SPACING * 2.5) / item_width;
+        int column_index = pos.x() / item_width;
 
-        if (row_index >= line_count)
+        if (column_index >= column_count)
             return QModelIndex();
 
-        index = line_index * line_count + row_index;
+        index = row_index * column_count + column_index;
     }
 
     return rootIndex().child(index, 0);
@@ -791,10 +791,8 @@ void DFileView::mousePressEvent(QMouseEvent *event)
 
 void DFileView::mouseMoveEvent(QMouseEvent *event)
 {
-    DListView::mouseMoveEvent(event);
-
     if (m_selectionRectWidget->isHidden())
-        return;
+        return DListView::mouseMoveEvent(event);
 
     const QPoint &pos = viewport()->mapToParent(static_cast<QMouseEvent*>(event)->pos());
     QRect rect;
@@ -803,6 +801,8 @@ void DFileView::mouseMoveEvent(QMouseEvent *event)
                 qMax(pos.x(), m_pressedPos.x()), qMax(pos.y(), m_pressedPos.y()));
 
     m_selectionRectWidget->setGeometry(rect);
+
+    setSelection(rect, QItemSelectionModel::Current|QItemSelectionModel::Rows|QItemSelectionModel::ClearAndSelect);
 }
 
 void DFileView::mouseReleaseEvent(QMouseEvent *event)
