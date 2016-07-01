@@ -90,8 +90,7 @@ qint64 FileUtils::filesCount(const QString &dir)
 {
     QDir d(dir);
     QStringList entryList = d.entryList(QDir::AllEntries | QDir::System
-                | QDir::NoDotAndDotDot | QDir::NoSymLinks
-                | QDir::Hidden);
+                | QDir::NoDotAndDotDot | QDir::Hidden);
     return entryList.size();
 }
 
