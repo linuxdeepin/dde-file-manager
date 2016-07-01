@@ -143,17 +143,17 @@ bool UDiskDeviceInfo::canUnmount()
 
 qulonglong UDiskDeviceInfo::getUsed()
 {
-    return m_diskInfo.Used;
+    return m_diskInfo.Used * 1024;
 }
 
 qulonglong UDiskDeviceInfo::getTotal()
 {
-    return m_diskInfo.Total;
+    return m_diskInfo.Total * 1024;
 }
 
 qint64 UDiskDeviceInfo::size()
 {
-    return m_diskInfo.Total;
+    return m_diskInfo.Total * 1024;
 }
 
 QString UDiskDeviceInfo::displayName() const
