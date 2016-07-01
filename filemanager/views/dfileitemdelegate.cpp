@@ -83,53 +83,53 @@ QWidget *DFileItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
     editing_index = index;
 
     if (this->parent()->isIconViewMode()) {
-       FileIconItem *item = new FileIconItem(parent);
+        FileIconItem *item = new FileIconItem(parent);
 
+        connect(item, &FileIconItem::inputFocusOut, this, &DFileItemDelegate::onEditWidgetFocusOut);
+        connect(item, &FileIconItem::destroyed, this, [this] {
+            editing_index = QModelIndex();
+        });
 
-       connect(item, &FileIconItem::destroyed, this, [this] {
-           editing_index = QModelIndex();
-       });
+        return item;
+    } else {
+        QLineEdit *edit = new QLineEdit(parent);
 
-       return item;
-   } else {
-       QLineEdit *edit = new QLineEdit(parent);
+        connect(edit, &QLineEdit::destroyed, this, [this] {
+            editing_index = QModelIndex();
+        });
 
-       connect(edit, &QLineEdit::destroyed, this, [this] {
-           editing_index = QModelIndex();
-       });
+        connect(edit, &QLineEdit::textChanged, this, [edit] {
+            QSignalBlocker blocker(edit);
+            Q_UNUSED(blocker)
 
-       connect(edit, &QLineEdit::textChanged, this, [edit] {
-           QSignalBlocker blocker(edit);
-           Q_UNUSED(blocker)
+            QString text = edit->text();
+            const QString old_text = text;
 
-           QString text = edit->text();
-           const QString old_text = text;
+            text.remove('/');
+            text.remove(QChar(0));
 
-           text.remove('/');
-           text.remove(QChar(0));
+            QVector<uint> list = text.toUcs4();
+            int cursor_pos = edit->cursorPosition();
 
-           QVector<uint> list = text.toUcs4();
-           int cursor_pos = edit->cursorPosition();
+            while (text.toUtf8().size() > MAX_FILE_NAME_CHAR_COUNT) {
+                list.removeAt(--cursor_pos);
 
-           while (text.toUtf8().size() > MAX_FILE_NAME_CHAR_COUNT) {
-               list.removeAt(--cursor_pos);
+                text = QString::fromUcs4(list.data(), list.size());
+            }
 
-               text = QString::fromUcs4(list.data(), list.size());
-           }
+            if (text.count() != old_text.count()) {
+                edit->setText(text);
+                edit->setCursorPosition(cursor_pos);
+            }
+        });
 
-           if (text.count() != old_text.count()) {
-               edit->setText(text);
-               edit->setCursorPosition(cursor_pos);
-           }
-       });
+        edit->setFrame(false);
+        edit->setAttribute(Qt::WA_TranslucentBackground);
+        edit->setContentsMargins(-3, 0, 0, 0);
+        edit->setContextMenuPolicy(Qt::NoContextMenu);
 
-       edit->setFrame(false);
-       edit->setAttribute(Qt::WA_TranslucentBackground);
-       edit->setContentsMargins(-3, 0, 0, 0);
-       edit->setContextMenuPolicy(Qt::NoContextMenu);
-
-       return edit;
-   }
+        return edit;
+    }
 }
 
 void DFileItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -713,6 +713,8 @@ bool DFileItemDelegate::eventFilter(QObject *object, QEvent *event)
             return true;
         }
     } else if (event->type() == QEvent::FocusOut) {
+        onEditWidgetFocusOut();
+
         return true;
     }
 
@@ -727,4 +729,10 @@ void DFileItemDelegate::initStyleOption(QStyleOptionViewItem *option, const QMod
         option->state |= QStyle::State_Selected;
     else
         option->state &= QStyle::State_Selected;
+}
+
+void DFileItemDelegate::onEditWidgetFocusOut()
+{
+    if (qApp->focusWidget() && qApp->focusWidget()->window() == parent()->window())
+        hideAllIIndexWidget();
 }

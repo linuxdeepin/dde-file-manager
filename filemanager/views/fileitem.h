@@ -17,6 +17,9 @@ public:
 
     void setOpacity(qreal opacity);
 
+signals:
+    void inputFocusOut();
+
 protected:
     bool event(QEvent *ee) Q_DECL_OVERRIDE;
     bool eventFilter(QObject *obj, QEvent *ee) Q_DECL_OVERRIDE;
