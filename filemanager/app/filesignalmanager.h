@@ -179,6 +179,9 @@ signals:
 
     /*quit application if taskdialog close*/
     void requestQuitApplication();
+
+    /*request fresh file view*/
+    void requestFreshFileView(const FMEvent &event);
 };
 
 #endif // FILESIGNALMANAGER_H

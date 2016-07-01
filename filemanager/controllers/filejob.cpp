@@ -79,6 +79,11 @@ void FileJob::setReplace(bool v)
     m_isReplaced = v;
 }
 
+int FileJob::getWindowId()
+{
+    return m_windowId;
+}
+
 void FileJob::doCopy(const QList<QUrl> &files, const QString &destination)
 {
     //pre-calculate total size
@@ -232,7 +237,32 @@ void FileJob::jobUpdated()
     if(m_bytesPerSec > 0)
     {
         int remainTime = (m_totalSize - m_bytesCopied) / m_bytesPerSec;
-        jobDataDetail.insert("remainTime", QString("%1 s").arg(QString::number(remainTime)));
+
+        if (remainTime < 60){
+            jobDataDetail.insert("remainTime", tr("%1 s").arg(QString::number(remainTime)));
+        }else if (remainTime >=60  && remainTime < 3600){
+            int min = remainTime / 60;
+            int second = remainTime % 60;
+            jobDataDetail.insert("remainTime", tr("%1 m %2 s").arg(QString::number(min),
+                                                                        QString::number(second)));
+        }else if (remainTime >=3600  && remainTime < 86400){
+            int hour = remainTime / 3600;
+            int min = (remainTime % 3600) / 60;
+            int second = (remainTime % 3600) % 60;
+            jobDataDetail.insert("remainTime", tr("%1 h %2 m %3 s").arg(QString::number(hour),
+                                                                             QString::number(min),
+                                                                             QString::number(second)));
+        }else{
+            int day = remainTime / 86400;
+            int left = remainTime % 86400;
+            int hour = left / 3600;
+            int min = (left % 3600) / 60;
+            int second = (left % 3600) % 60;
+            jobDataDetail.insert("remainTime", tr("%1 d %2 h %3 m %4 s").arg(QString::number(day),
+                                                                                  QString::number(hour),
+                                                                                  QString::number(min),
+                                                                                  QString::number(second)));
+        }
     }
     QString speed;
 

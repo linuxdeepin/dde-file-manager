@@ -283,6 +283,29 @@
     </message>
 </context>
 <context>
+    <name>FileJob</name>
+    <message>
+        <location filename="../filemanager/controllers/filejob.cpp" line="237"/>
+        <source>%1 s</source>
+        <translation>%1 秒</translation>
+    </message>
+    <message>
+        <location filename="../filemanager/controllers/filejob.cpp" line="241"/>
+        <source>%1 m %2 s</source>
+        <translation>%1 分 %2 秒</translation>
+    </message>
+    <message>
+        <location filename="../filemanager/controllers/filejob.cpp" line="247"/>
+        <source>%1 h %2 m %3 s</source>
+        <translation>%1 时 %2 分 %3 秒</translation>
+    </message>
+    <message>
+        <location filename="../filemanager/controllers/filejob.cpp" line="256"/>
+        <source>%1 d %2 h %3 m %4 s</source>
+        <translation>%1 天 %2 时 %3 分 %4 秒</translation>
+    </message>
+</context>
+<context>
     <name>MessageWrongDialog</name>
     <message>
         <location filename="../dialogs/messagewrongdialog.cpp" line="12"/>
@@ -522,9 +545,9 @@
 <context>
     <name>PropertyDialog</name>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="137"/>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="153"/>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="155"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="141"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="157"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="159"/>
         <source>Basic Info</source>
         <translation>基本信息</translation>
     </message>
@@ -533,12 +556,12 @@
         <translation type="vanished">打开方式</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="302"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="306"/>
         <source>Allow to execute as program</source>
         <translation>允许以程序执行</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="403"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="406"/>
         <source>Others</source>
         <translation>其它</translation>
     </message>
@@ -554,19 +577,19 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="291"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="295"/>
         <location filename="../filemanager/views/filemenumanager.cpp" line="271"/>
         <source>Size</source>
         <translation>大小</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="292"/>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="336"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="296"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="340"/>
         <source>File amount</source>
         <translation>文件个数</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="293"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="297"/>
         <location filename="../filemanager/views/filemenumanager.cpp" line="272"/>
         <source>Type</source>
         <translation>类型</translation>
@@ -585,58 +608,58 @@
         <translation>创建时间</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="294"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="298"/>
         <source>Time read</source>
         <translation>访问时间</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="295"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="299"/>
         <location filename="../filemanager/views/filemenumanager.cpp" line="274"/>
         <source>Time modified</source>
         <translation>修改时间</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="335"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="339"/>
         <source>Device type</source>
         <translation>设备类型</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="337"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="341"/>
         <source>Used space</source>
         <translation>使用空间</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="338"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="342"/>
         <source>Total space</source>
         <translation>总容量</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="441"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="444"/>
         <source>WriteRead</source>
         <translation>可读写</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="441"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="444"/>
         <source>ReadOnly</source>
         <translation>只读</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="441"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="444"/>
         <source>WriteOnly</source>
         <translation>只写</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="469"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="472"/>
         <source>Owner</source>
         <translation>所有者</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="470"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="473"/>
         <source>Group</source>
         <translation>群组</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/propertydialog.cpp" line="471"/>
+        <location filename="../filemanager/dialogs/propertydialog.cpp" line="474"/>
         <source>Other</source>
         <translation>其他</translation>
     </message>
@@ -931,7 +954,7 @@
         <translation>新建文本</translation>
     </message>
     <message>
-        <location filename="../filemanager/shutil/fileutils.cpp" line="529"/>
+        <location filename="../filemanager/shutil/fileutils.cpp" line="528"/>
         <source>Create soft link</source>
         <translation>创建软连接</translation>
     </message>
