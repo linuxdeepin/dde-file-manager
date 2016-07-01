@@ -343,8 +343,22 @@ void AppController::actionProperty(const FMEvent &event)
 
 void AppController::actionNewWindow(const FMEvent &event)
 {
-    const DUrl& fileUrl = event.fileUrl();
-    fileService->openNewWindow(fileUrl);
+    bool open_ok = false;
+
+    for (const DUrl &fileUrl : event.fileUrlList()) {
+        const AbstractFileInfoPointer &fileInfo = fileService->createFileInfo(fileUrl);
+
+        if (fileInfo->isDir()) {
+            fileService->openNewWindow(fileUrl);
+            open_ok = true;
+        }
+    }
+
+    if (!open_ok) {
+        fileService->openNewWindow(event.fileUrl());
+
+        return;
+    }
 }
 
 void AppController::actionHelp(const FMEvent &event)
