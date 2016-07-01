@@ -22,7 +22,7 @@ public:
     DUrl();
     DUrl(const QUrl &copy);
 #ifdef QT_NO_URL_CAST_FROM_STRING
-    explicit ZUrl(const QString &url, ParsingMode mode = TolerantMode);
+    explicit DUrl(const QString &url, ParsingMode mode = TolerantMode);
 #else
     explicit DUrl(const QString &url, ParsingMode mode = TolerantMode);
 #endif
@@ -67,7 +67,7 @@ public:
     static DUrlList fromStringList(const QStringList &urls, ParsingMode mode = TolerantMode);
     static DUrlList fromQUrlList(const QList<QUrl> &urls);
     static DUrl fromUserInput(const QString &userInput);
-    static DUrl fromUserInput(const QString &userInput, const QString &workingDirectory,
+    static DUrl fromUserInput(const QString &userInput, QString workingDirectory,
                               UserInputResolutionOptions options = AssumeLocalFile);
     static QStringList toStringList(const DUrlList &urls,
                                     FormattingOptions options = FormattingOptions( PrettyDecoded ));
