@@ -330,7 +330,7 @@ QVector<MenuAction> AbstractFileInfo::menuActionList(AbstractFileInfo::MenuType 
 
     QVector<MenuAction> actionKeys;
 
-    if(type == SpaceArea) {
+    if (type == SpaceArea) {
         actionKeys.reserve(9);
 
         actionKeys << MenuAction::NewFolder
@@ -344,20 +344,21 @@ QVector<MenuAction> AbstractFileInfo::menuActionList(AbstractFileInfo::MenuType 
                    << MenuAction::SelectAll
                    << MenuAction::Separator
                    << MenuAction::Property;
-    } else if (type == SingleFile){
+    } else if (type == SingleFile) {
 
-        if (isDir() && systemPathManager->isSystemPath(filePath())){
+        if (isDir() && systemPathManager->isSystemPath(filePath())) {
             actionKeys << MenuAction::Open
                        << MenuAction::OpenInNewWindow
                        << MenuAction::Separator
                        << MenuAction::Copy
                        << MenuAction::CreateSoftLink
                        << MenuAction::SendToDesktop
+                       << MenuAction::OpenInTerminal
                        << MenuAction::Separator
                        << MenuAction::Compress
                        << MenuAction::Separator
                        << MenuAction::Property;
-        }else{
+        } else {
             actionKeys << MenuAction::Open;
 
             if (isDir()){
@@ -379,7 +380,7 @@ QVector<MenuAction> AbstractFileInfo::menuActionList(AbstractFileInfo::MenuType 
             actionKeys << MenuAction::Rename;
 
             if (isDir()) {
-                actionKeys << MenuAction::Compress;
+                actionKeys << MenuAction::Compress << MenuAction::OpenInTerminal;
             } else if(isFile()) {
                 if (mimeTypeName().startsWith("image")) {
                     actionKeys << MenuAction::SetAsWallpaper;
@@ -399,7 +400,7 @@ QVector<MenuAction> AbstractFileInfo::menuActionList(AbstractFileInfo::MenuType 
                        << MenuAction::Separator
                        << MenuAction::Property;
         }
-    }else if(type == MultiFiles){
+    } else if (type == MultiFiles) {
         actionKeys << MenuAction::Open
                    << MenuAction::Separator
                    << MenuAction::Cut
@@ -411,7 +412,7 @@ QVector<MenuAction> AbstractFileInfo::menuActionList(AbstractFileInfo::MenuType 
                    << MenuAction::Delete
                    << MenuAction::Separator
                    << MenuAction::Property;
-    }else if(type == MultiFilesSystemPathIncluded){
+    } else if (type == MultiFilesSystemPathIncluded) {
         actionKeys << MenuAction::Open
                    << MenuAction::Separator
                    << MenuAction::Copy

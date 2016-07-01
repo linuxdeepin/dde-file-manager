@@ -312,10 +312,23 @@ void AppController::actionEject(const FMEvent &event)
 
 void AppController::actionOpenInTerminal(const FMEvent &event)
 {
-    const DUrl& fileUrl = event.fileUrl();
-//    QStringList args;
-//    args << QString("--working-directory=%1").arg(fileUrl.toLocalFile());
-    QProcess::startDetached("x-terminal-emulator"/*, args*/);
+    if (event.fileUrlList().isEmpty()) {
+        QProcess::startDetached("x-terminal-emulator");
+
+        return;
+    }
+
+    const QString &current_dir = QDir::currentPath();
+
+    for (const DUrl &url: event.fileUrlList()) {
+        if (url.isLocalFile()) {
+            QDir::setCurrent(url.toLocalFile());
+
+            QProcess::startDetached("x-terminal-emulator");
+        }
+    }
+
+    QDir::setCurrent(current_dir);
 }
 
 void AppController::actionProperty(const FMEvent &event)
