@@ -34,6 +34,9 @@ public:
     QString checkDuplicateName(const QString &name);
     void setApplyToAll(bool v);
     void setReplace(bool v);
+
+    int getWindowId();
+
 signals:
     void progressPercent(int value);
     void error(QString content);
@@ -55,7 +58,7 @@ private:
     QMap<QString, QString> m_jobDetail;
     qint64 m_bytesCopied;
     qint64 m_totalSize;
-    double m_bytesPerSec;
+    qint64 m_bytesPerSec;
     float m_factor;
     bool m_isJobAdded = false;
     QString m_srcFileName;
@@ -68,6 +71,7 @@ private:
     bool m_applyToAll = false;
     bool m_isReplaced = false;
     QString m_title;
+    int m_windowId = -1;
 
     void jobUpdated();
     void jobAdded();
