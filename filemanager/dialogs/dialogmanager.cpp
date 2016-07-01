@@ -78,7 +78,7 @@ void DialogManager::initConnect()
     connect(fileSignalManager, &FileSignalManager::showAboutDialog,
             this, &DialogManager::showAboutDialog);
 
-    connect(qApp, &QApplication::focusChanged, this, &DialogManager::handleFocusChanged);
+//    connect(qApp, &QApplication::focusChanged, this, &DialogManager::handleFocusChanged);
 
 }
 
@@ -253,7 +253,8 @@ void DialogManager::showPropertyDialog(const FMEvent &event)
 
                 connect(dialog, &PropertyDialog::closed, this, &DialogManager::removePropertyDialog);
 //                connect(dialog, &PropertyDialog::raised, this, &DialogManager::raiseAllPropertyDialog);
-                QTimer::singleShot(100, dialog, &PropertyDialog::raise);
+//                QTimer::singleShot(100, dialog, &PropertyDialog::raise);
+                dialog->raise();
             }
         }
 
