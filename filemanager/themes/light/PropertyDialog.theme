@@ -5,6 +5,7 @@ PropertyDialog {
 PropertyDialog QTextEdit {
     background: transparent;
     color: black;
+    padding: 0;
 }
 
 PropertyDialog QTextEdit[readOnly=false] {

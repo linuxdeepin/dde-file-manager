@@ -5,6 +5,8 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QThread>
+#include <QSvgRenderer>
+#include <QPainter>
 DWIDGET_USE_NAMESPACE
 
 TrashPropertyDialog::TrashPropertyDialog(const DUrl& url, QWidget *parent) : BaseDialog(parent)
@@ -32,7 +34,7 @@ void TrashPropertyDialog::initUI()
 
     m_iconLabel = new QLabel(this);
     m_iconLabel->setFixedSize(160, 160);
-    m_iconLabel->setPixmap(QPixmap(":/images/images/user-trash-full.png"));
+    m_iconLabel->setPixmap(QPixmap(":/images/images/trash.png"));
     m_iconLabel->setAlignment(Qt::AlignCenter);
     m_nameLable = new QLabel(tr("Trash"), this);
     m_nameLable->setAlignment(Qt::AlignCenter);

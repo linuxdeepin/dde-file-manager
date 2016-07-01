@@ -25,6 +25,21 @@
 #include <QListWidget>
 #include <QButtonGroup>
 #include <QPushButton>
+#include <QStorageInfo>
+
+
+NameTextEdit::NameTextEdit(const QString &text, QWidget *parent):
+    QTextEdit(text, parent)
+{
+    setObjectName("NameTextEdit");
+}
+
+void NameTextEdit::setPlainText(const QString &text)
+{
+    QFontMetrics font = this->fontMetrics();
+    QString t = font.elidedText(text, Qt::ElideMiddle, width());
+    QTextEdit::setPlainText(t);
+}
 
 
 GroupTitleLabel::GroupTitleLabel(const QString &text, QWidget *parent, Qt::WindowFlags f):
@@ -114,7 +129,7 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
     : BaseDialog(parent)
     , m_url(url)
     , m_icon(new QLabel)
-    , m_edit(new QTextEdit)
+    , m_edit(new NameTextEdit)
 {
     D_THEME_INIT_WIDGET(PropertyDialog)
 
@@ -131,7 +146,7 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
     if (diskInfo){
         qDebug() << diskInfo->getDiskInfo();
         QString name = diskInfo->getName();
-        m_icon->setPixmap(diskInfo->fileIcon().pixmap(100, 150));
+        m_icon->setPixmap(diskInfo->fileIcon().pixmap(128, 128));
         m_edit->setPlainText(name);
         m_edit->setAlignment(Qt::AlignHCenter);
 
@@ -144,9 +159,20 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
         expandGroup->expand(0)->setContent(m_deviceInfoFrame);
         expandGroup->expand(0)->setExpand(true);
 
+    }else if (url == DUrl::fromLocalFile("/")){
+        m_icon->setPixmap(QPixmap(":/icons/images/icons/disk_normal_22px.svg").scaled(128, 128));
+        m_edit->setPlainText(tr("Disk"));
+        m_edit->setAlignment(Qt::AlignHCenter);
+        m_localDeviceInfoFrame = createLocalDeviceInfoWidget(url);
+        QStringList titleList;
+        titleList << tr("Basic Info");
+        DExpandGroup *expandGroup = addExpandWidget(titleList);
+        expandGroup->expand(0)->setExpandedSeparatorVisible(false);
+        expandGroup->expand(0)->setContent(m_localDeviceInfoFrame);
+        expandGroup->expand(0)->setExpand(true);
     }else{
         const AbstractFileInfoPointer &fileInfo = FileServices::instance()->createFileInfo(url);
-        m_icon->setPixmap(fileInfo->fileIcon().pixmap(100, 150));
+        m_icon->setPixmap(fileInfo->fileIcon().pixmap(160, 160));
         m_edit->setPlainText(fileInfo->displayName());
         m_edit->setAlignment(Qt::AlignHCenter);
 
@@ -168,8 +194,7 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
     //        expandGroup->expand(1)->setContent(m_OpenWithListWidget);
             m_fileCount = 1;
             m_size = fileInfo->size();
-        }
-        else if (fileInfo->isDir()){
+        }else if (fileInfo->isDir()){
             startComputerFolderSize(fileInfo->absoluteFilePath());
             m_fileCount = fileInfo->size();
         }
@@ -246,12 +271,6 @@ int PropertyDialog::getFileCount()
 qint64 PropertyDialog::getFileSize()
 {
     return m_size;
-}
-
-QString PropertyDialog::getNameByUrl(const DUrl &url)
-{
-    qDebug() << url.query();
-    qDebug() << deviceListener->getDevice(url.query());
 }
 
 void PropertyDialog::raise()
@@ -333,17 +352,47 @@ QFrame *PropertyDialog::createBasicInfoWidget(const AbstractFileInfoPointer &inf
     return widget;
 }
 
+QFrame *PropertyDialog::createLocalDeviceInfoWidget(const DUrl &url)
+{
+    QStorageInfo info(url.path());
+    const AbstractFileInfoPointer &fileInfo = FileServices::instance()->createFileInfo(url);
+    QFrame *widget = new QFrame;
+    SectionKeyLabel* typeSectionLabel = new SectionKeyLabel(QObject::tr("Device type"));
+    SectionKeyLabel* fileAmountSectionLabel = new SectionKeyLabel(QObject::tr("Contains"));
+    SectionKeyLabel* freeSectionLabel = new SectionKeyLabel(QObject::tr("Free space"));
+    SectionKeyLabel* totalSectionLabel = new SectionKeyLabel(QObject::tr("Total space"));
+
+    SectionValueLabel* typeLabel = new SectionValueLabel(tr("Local disk"));
+    SectionValueLabel* fileAmountLabel = new SectionValueLabel(fileInfo->sizeDisplayName());
+    SectionValueLabel* freeLabel = new SectionValueLabel(FileUtils::formatSize(info.bytesFree()));
+    SectionValueLabel* totalLabel = new SectionValueLabel(FileUtils::formatSize(info.bytesTotal()));
+
+    QFormLayout *layout = new QFormLayout;
+    layout->setHorizontalSpacing(12);
+    layout->setVerticalSpacing(16);
+    layout->setLabelAlignment(Qt::AlignRight);
+
+    layout->addRow(typeSectionLabel, typeLabel);
+    layout->addRow(totalSectionLabel, totalLabel);
+    layout->addRow(fileAmountSectionLabel, fileAmountLabel);
+    layout->addRow(freeSectionLabel, freeLabel);
+
+    widget->setLayout(layout);
+
+    return widget;
+}
+
 QFrame *PropertyDialog::createDeviceInfoWidget(UDiskDeviceInfo *info)
 {
     QFrame *widget = new QFrame;
     SectionKeyLabel* typeSectionLabel = new SectionKeyLabel(QObject::tr("Device type"));
-    SectionKeyLabel* fileAmountSectionLabel = new SectionKeyLabel(QObject::tr("File amount"));
-    SectionKeyLabel* usedSectionLabel = new SectionKeyLabel(QObject::tr("Used space"));
+    SectionKeyLabel* fileAmountSectionLabel = new SectionKeyLabel(QObject::tr("Contains"));
+    SectionKeyLabel* freeSectionLabel = new SectionKeyLabel(QObject::tr("Free space"));
     SectionKeyLabel* totalSectionLabel = new SectionKeyLabel(QObject::tr("Total space"));
 
     SectionValueLabel* typeLabel = new SectionValueLabel(info->deviceTypeDisplayName());
     SectionValueLabel* fileAmountLabel = new SectionValueLabel(info->sizeDisplayName());
-    SectionValueLabel* usedLabel = new SectionValueLabel(FileUtils::formatSize(info->getUsed()));
+    SectionValueLabel* freeLabel = new SectionValueLabel(FileUtils::formatSize(info->getFree()));
     SectionValueLabel* totalLabel = new SectionValueLabel(FileUtils::formatSize(info->getTotal()));
 
     QFormLayout *layout = new QFormLayout;
@@ -351,10 +400,11 @@ QFrame *PropertyDialog::createDeviceInfoWidget(UDiskDeviceInfo *info)
     layout->setVerticalSpacing(16);
     layout->setLabelAlignment(Qt::AlignRight);
 
-    layout->addRow(fileAmountSectionLabel, fileAmountLabel);
     layout->addRow(typeSectionLabel, typeLabel);
-    layout->addRow(usedSectionLabel, usedLabel);
     layout->addRow(totalSectionLabel, totalLabel);
+    layout->addRow(fileAmountSectionLabel, fileAmountLabel);
+    layout->addRow(freeSectionLabel, freeLabel);
+
     widget->setLayout(layout);
 
     return widget;
@@ -477,5 +527,3 @@ QFrame *PropertyDialog::createAuthorityManagermentWidget(const AbstractFileInfoP
 
     return widget;
 }
-
-

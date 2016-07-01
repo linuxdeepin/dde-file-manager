@@ -5,8 +5,9 @@
 #include "../models/abstractfileinfo.h"
 #include <QLabel>
 #include <QCloseEvent>
+#include <QTextEdit>
+
 QT_BEGIN_NAMESPACE
-class QTextEdit;
 class QFrame;
 class QCheckBox;
 class QTimer;
@@ -23,6 +24,19 @@ class UDiskDeviceInfo;
 class DUrl;
 
 DWIDGET_USE_NAMESPACE
+
+
+class NameTextEdit: public QTextEdit
+{
+    Q_OBJECT
+
+public:
+    explicit NameTextEdit(const QString &text="", QWidget *parent=0);
+
+public slots:
+    void setPlainText(const QString & text);
+};
+
 
 class GroupTitleLabel: public QLabel
 {
@@ -90,8 +104,6 @@ public:
     int getFileCount();
     qint64 getFileSize();
 
-    QString getNameByUrl(const DUrl &url);
-
 public slots:
     void raise();
     void updateFolderSize(qint64 size);
@@ -110,10 +122,11 @@ private:
     qint64 m_size = 0;
     int m_fileCount = 0;
     QLabel *m_icon = NULL;
-    QTextEdit *m_edit = NULL;
+    NameTextEdit *m_edit = NULL;
     QCheckBox * m_executableCheckBox = NULL;
     SectionValueLabel* m_folderSizeLabel = NULL;
     QFrame *m_basicInfoFrame = NULL;
+    QFrame *m_localDeviceInfoFrame = NULL;
     QFrame *m_deviceInfoFrame = NULL;
     QFrame *m_OpenWithFrame = NULL;
     QListWidget* m_OpenWithListWidget = NULL;
@@ -123,7 +136,9 @@ private:
 
 
     QFrame *createBasicInfoWidget(const AbstractFileInfoPointer &info);
+    QFrame *createLocalDeviceInfoWidget(const DUrl& url);
     QFrame *createDeviceInfoWidget(UDiskDeviceInfo* info);
+
     QListWidget *createOpenWithListWidget(const AbstractFileInfoPointer &info);
     QFrame *createAuthorityManagermentWidget(const AbstractFileInfoPointer &info);
 

@@ -268,8 +268,8 @@ void DialogManager::showTrashPropertyDialog(const FMEvent &event)
 {
     QWidget* w = WindowManager::getWindowById(event.windowId());
     if (w){
-        TrashPropertyDialog* dialog = new TrashPropertyDialog(event.fileUrl());
-        dialog->show();
+        m_trashDialog = new TrashPropertyDialog(event.fileUrl());
+        m_trashDialog->show();
     }
 }
 
@@ -327,8 +327,13 @@ void DialogManager::closeAllPropertyDialog()
     foreach (const DUrl& url, m_propertyDialogs.keys()) {
         m_propertyDialogs.value(url)->close();
     }
-    m_closeIndicatorTimer->stop();
-    m_closeIndicatorDialog->hide();
+    if (m_closeIndicatorDialog){
+        m_closeIndicatorTimer->stop();
+        m_closeIndicatorDialog->close();
+    }
+    if (m_trashDialog){
+        m_trashDialog->close();
+    }
 }
 
 void DialogManager::updateCloseIndicator()

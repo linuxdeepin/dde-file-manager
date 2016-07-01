@@ -41,6 +41,7 @@ public:
     QString getIcon();
     bool canEject();
     bool canUnmount();
+    qulonglong getFree();
     qulonglong getUsed();
     qulonglong getTotal();
     qint64 size();

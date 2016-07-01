@@ -141,6 +141,11 @@ bool UDiskDeviceInfo::canUnmount()
     return m_diskInfo.CanUnmount;
 }
 
+qulonglong UDiskDeviceInfo::getFree()
+{
+    return (m_diskInfo.Total - m_diskInfo.Used) * 1024;
+}
+
 qulonglong UDiskDeviceInfo::getUsed()
 {
     return m_diskInfo.Used * 1024;
@@ -185,17 +190,17 @@ UDiskDeviceInfo::MediaType UDiskDeviceInfo::getMediaType() const
 QString UDiskDeviceInfo::deviceTypeDisplayName() const
 {
     if(getType() == "native")
-        return QObject::tr("Navtive disk");
+        return QObject::tr("Local disk");
     else if(getType() == "removable")
         return QObject::tr("Removable disk");
     else if(getType() == "network")
-        return QObject::tr("Network share folder");
+        return QObject::tr("Network shared directory");
     else if(getType() == "phone")
-        return QObject::tr("Phone device");
+        return QObject::tr("Android mobile device");
     else if(getType() == "iphone")
-        return QObject::tr("Iphone");
+        return QObject::tr("Apple mobile device");
     else if(getType() == "camera")
-        return QObject::tr("Camera device");
+        return QObject::tr("Camera");
     else
         return QObject::tr("Unknown device");
 }
