@@ -327,6 +327,8 @@ DUrl DUrl::fromUserInput(const QString &userInput, QString workingDirectory, QUr
         QFileInfo fileInfo(workingDirectory + "/" + userInput);
 
         return DUrl::fromLocalFile(fileInfo.absoluteFilePath());
+    } else if (userInput.startsWith("/")) {
+        return QUrl::fromUserInput(userInput, workingDirectory, options);
     } else {
         return DUrl(userInput);
     }

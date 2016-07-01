@@ -137,10 +137,8 @@ void DSearchBar::initConnections()
 
 void DSearchBar::doTextChanged(QString text)
 {
-    if (text.endsWith("/")){
-        m_disableCompletion = false;
-    }
     m_text = text;
+
     if(text.isEmpty())
         m_clearAction->setVisible(false);
     else
@@ -187,21 +185,16 @@ void DSearchBar::setCompleter(const QString &text)
     }
 
     m_list->clear();
-    if(hasScheme() || isPath())
+
+    const DUrl &url = DUrl::fromUserInput(text);
+
+    if(/*hasScheme() || */url.isLocalFile())
     {
-        QFileInfo fileInfo;
-        if(isLocalFile())
-        {
-            DUrl url = DUrl::fromUserInput(text);
-            fileInfo.setFile(url.toLocalFile());
-        }
-        else
-        {
-            fileInfo.setFile(text);
-        }
+        QFileInfo fileInfo(url.path().isEmpty() ? "/" : url.toLocalFile());
         QDir dir(fileInfo.absolutePath());
         QStringList localList = splitPath(text);
         QStringList sl;
+
         foreach(QFileInfo info, dir.entryInfoList(QDir::AllDirs|QDir::NoDotAndDotDot, QDir::Name))
         {
             QString temp = localList.last();
@@ -647,6 +640,12 @@ void DSearchBar::keyPressEvent(QKeyEvent *e)
                 QLineEdit::keyPressEvent(e);
 
                 break;
+            case Qt::Key_Slash:
+                if (e->modifiers() == Qt::NoModifier)
+                    m_disableCompletion = false;
+
+                QLineEdit::keyPressEvent(e);
+                break;
             default:
             {
                 if(e->modifiers() == Qt::NoModifier)
@@ -708,12 +707,11 @@ bool DSearchBar::isTrashFile()
 
 bool DSearchBar::isPath()
 {
-    if(text().isEmpty())
+    if (text().isEmpty())
         return false;
-    if(text().at(0) == '/')
-        return true;
-    else
-        return false;
+
+    return text().startsWith("/") || text().startsWith("./")
+            || text().startsWith("~") || text().startsWith("../");
 }
 
 void DSearchBar::setCurrentPath(const DUrl &path)
