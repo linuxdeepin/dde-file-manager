@@ -11,6 +11,7 @@ class DUrl;
 class FMEvent;
 class PropertyDialog;
 class CloseAllDialogIndicator;
+class TrashPropertyDialog;
 class QTimer;
 
 class DialogManager : public QObject
@@ -52,6 +53,7 @@ public slots:
 private:
     DTaskDialog* m_taskDialog = NULL;
     CloseAllDialogIndicator* m_closeIndicatorDialog;
+    TrashPropertyDialog* m_trashDialog;
     QMap<QString, FileJob*> m_jobs;
     QMap<DUrl, PropertyDialog*> m_propertyDialogs;
     QTimer* m_closeIndicatorTimer = NULL;

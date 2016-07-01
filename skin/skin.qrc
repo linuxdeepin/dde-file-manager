@@ -11,7 +11,7 @@
         <file>images/textMask.png</file>
         <file>images/textMask.svg</file>
         <file>images/unreadable.svg</file>
-        <file>images/user-trash-full.png</file>
         <file>images/system-file-manager.png</file>
+        <file>images/trash.png</file>
     </qresource>
 </RCC>
