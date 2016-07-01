@@ -758,20 +758,32 @@ bool FileJob::moveDirToTrash(const QString &dir)
     return true;
 }
 
-QString FileJob::getNotExistsTrashFileName(QString fileName)
+QString FileJob::getNotExistsTrashFileName(const QString &fileName)
 {
-    int index = fileName.lastIndexOf('/');
+    QByteArray name = fileName.toUtf8();
+
+    int index = name.lastIndexOf('/');
 
     if (index >= 0)
-        fileName = fileName.mid(index + 1);
+        name = name.mid(index + 1);
 
-    fileName = fileName.toUtf8().left(200);
+    index = name.lastIndexOf('.');
+    QByteArray suffix;
 
-    while (QFile::exists(TRASHFILEPATH + "/" + fileName)) {
-        fileName = QCryptographicHash::hash(fileName.toUtf8(), QCryptographicHash::Md5).toHex();
+    if (index >= 0)
+        suffix = name.mid(index);
+
+    if (suffix.size() > 200)
+        suffix = suffix.left(200);
+
+    name.chop(suffix.size());
+    name = name.left(200 - suffix.size());
+
+    while (QFile::exists(TRASHFILEPATH + "/" + name + suffix)) {
+        name = QCryptographicHash::hash(name, QCryptographicHash::Md5).toHex();
     }
 
-    return fileName;
+    return QString::fromUtf8(name + suffix);
 }
 
 bool FileJob::moveFileToTrash(const QString &file)

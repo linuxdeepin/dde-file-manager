@@ -90,7 +90,7 @@ private:
     bool moveFileToTrash(const QString &file);
     bool writeTrashInfo(const QString &fileBaseName, const QString &path, const QString &time);
 
-    QString getNotExistsTrashFileName(QString fileName);
+    QString getNotExistsTrashFileName(const QString &fileName);
 };
 
 #endif // FILEJOB_H
