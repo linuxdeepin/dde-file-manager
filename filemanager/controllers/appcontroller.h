@@ -46,7 +46,7 @@ public slots:
     void actionRemove(const FMEvent& event);
     void actionDelete(const FMEvent& event);
     void actionCompleteDeletion(const FMEvent& event);
-    void actionCreateSoftLink(const FMEvent& event);
+    void actionCreateSymLink(const FMEvent& event);
     void actionSendToDesktop(const FMEvent& event);
     void actionAddToBookMark(const FMEvent& event);
     void actionNewFolder(const FMEvent& event);

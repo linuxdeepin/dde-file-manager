@@ -374,6 +374,28 @@ bool FileController::openFileLocation(const DUrl &fileUrl, bool &accepted) const
     return true;
 }
 
+bool FileController::openInTerminal(const DUrl &fileUrl, bool &accepted) const
+{
+    accepted = true;
+
+    const QString &current_dir = QDir::currentPath();
+
+    QDir::setCurrent(fileUrl.toLocalFile());
+
+    bool ok = QProcess::startDetached("x-terminal-emulator");
+
+    QDir::setCurrent(current_dir);
+
+    return ok;
+}
+
+bool FileController::createSymlink(const DUrl &fileUrl, const DUrl &linkToUrl, bool &accepted) const
+{
+    accepted = true;
+
+    return QFile::link(fileUrl.toLocalFile(), linkToUrl.toLocalFile());
+}
+
 void FileController::onFileCreated(const QString &filePath)
 {
     DUrl url = DUrl::fromLocalFile(filePath);

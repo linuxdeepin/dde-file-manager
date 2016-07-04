@@ -241,6 +241,14 @@ QString SearchFileInfo::mimeTypeDisplayName() const
     return realFileInfo->mimeTypeDisplayName();
 }
 
+QMimeType SearchFileInfo::mimeType() const
+{
+    if (!realFileInfo)
+        return QMimeType();
+
+    return realFileInfo->mimeType();
+}
+
 QIcon SearchFileInfo::fileIcon() const
 {
     if(!realFileInfo)
@@ -341,10 +349,10 @@ QSet<MenuAction> SearchFileInfo::disableMenuActionList() const
 {
     QSet<MenuAction> actions = AbstractFileInfo::disableMenuActionList();
 
-    actions << MenuAction::OpenInTerminal;
+    actions << MenuAction::DecompressHere;
 
     if (path().isEmpty())
-        actions << MenuAction::Property;
+        actions << MenuAction::Property << MenuAction::OpenInTerminal;
 
     return actions;
 }

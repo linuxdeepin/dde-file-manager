@@ -20,7 +20,7 @@ public:
 
     QIcon fileIcon() const Q_DECL_OVERRIDE;
 
-    QString mimeTypeName() const Q_DECL_OVERRIDE;
+    QMimeType mimeType() const Q_DECL_OVERRIDE;
 
     QFile::Permissions permissions() const Q_DECL_OVERRIDE;
 

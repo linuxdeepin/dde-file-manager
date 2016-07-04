@@ -64,12 +64,12 @@ bool FileInfo::isCanRename() const
     return canRename;
 }
 
-QString FileInfo::mimeTypeName() const
+QMimeType FileInfo::mimeType() const
 {
-    if(data->mimeTypeName.isNull())
-        data->mimeTypeName = mimeType(absoluteFilePath()).name();
+    if (!data->mimeType.isValid())
+        data->mimeType = mimeType(absoluteFilePath());
 
-    return data->mimeTypeName;
+    return data->mimeType;
 }
 
 QIcon FileInfo::fileIcon() const
