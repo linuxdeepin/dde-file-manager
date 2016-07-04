@@ -733,6 +733,8 @@ void DFileItemDelegate::initStyleOption(QStyleOptionViewItem *option, const QMod
 
 void DFileItemDelegate::onEditWidgetFocusOut()
 {
-    if (qApp->focusWidget() && qApp->focusWidget()->window() == parent()->window())
+    if (qApp->focusWidget() && qApp->focusWidget()->window() == parent()->window()
+            && qApp->focusWidget() != parent()) {
         hideAllIIndexWidget();
+    }
 }
