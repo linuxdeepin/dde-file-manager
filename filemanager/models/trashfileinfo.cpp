@@ -65,13 +65,13 @@ QIcon TrashFileInfo::fileIcon() const
     return fileIconProvider->getFileIcon(absoluteFilePath(), mimeTypeName());
 }
 
-QString TrashFileInfo::mimeTypeName() const
+QMimeType TrashFileInfo::mimeType() const
 {
-    if(data->mimeTypeName.isNull()) {
-        data->mimeTypeName = FileInfo::mimeType(absoluteFilePath()).name();
+    if (!data->mimeType.isValid()) {
+        data->mimeType = FileInfo::mimeType(absoluteFilePath());
     }
 
-    return data->mimeTypeName;
+    return data->mimeType;
 }
 
 QFileDevice::Permissions TrashFileInfo::permissions() const

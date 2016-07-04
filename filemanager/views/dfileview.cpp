@@ -1568,7 +1568,10 @@ void DFileView::showEmptyAreaMenu()
             action->setActionGroup(m_sortByActionGroup);
         }
 
-        sortBySubMenu->actionAt(model()->sortColumn())->setChecked(true);
+        DAction *action = sortBySubMenu->actionAt(model()->sortColumn());
+
+        if (action)
+            action->setChecked(true);
     }
 
     DUrlList urls;
@@ -1593,21 +1596,24 @@ void DFileView::showNormalMenu(const QModelIndex &index)
         return;
 
     DUrlList list = selectedUrls();
-    qDebug() << list;
     DFileMenu* menu;
-    if (list.length() == 1){
-        const AbstractFileInfoPointer &info = model()->fileInfo(index);
+
+    const AbstractFileInfoPointer &info = model()->fileInfo(index);
+
+    if (list.length() == 1) {
         const QVector<MenuAction> &actions = info->menuActionList(AbstractFileInfo::SingleFile);
         const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList();
         const QSet<MenuAction> &disableList = FileMenuManager::getDisableActionList(list);
 
         menu = FileMenuManager::genereteMenuByKeys(actions, disableList, true, subActions);
 
-        DFileMenu* openWithMenu =  qobject_cast<DFileMenu*>(menu->actionAt(1)->menu());
-        if (openWithMenu){
-            QString url = info->absoluteFilePath();
-            QMimeType mimeType = mimeAppsManager->getMimeType(url);
-            QStringList recommendApps = mimeAppsManager->MimeApps.value(MimesAppsManager::getMimeTypeByFileName(url));;
+        DAction *openWithAction = menu->actionAt(FileMenuManager::getActionString(MenuActionType::OpenWith));
+        DFileMenu* openWithMenu = openWithAction ? qobject_cast<DFileMenu*>(openWithAction->menu()) : Q_NULLPTR;
+
+        if (openWithMenu) {
+            QMimeType mimeType = info->mimeType();
+            QStringList recommendApps = mimeAppsManager->MimeApps.value(mimeType.name());
+
             foreach (QString name, mimeType.aliases()) {
                 QStringList apps = mimeAppsManager->MimeApps.value(name);
                 foreach (QString app, apps) {
@@ -1620,21 +1626,22 @@ void DFileView::showNormalMenu(const QModelIndex &index)
             foreach (QString app, recommendApps) {
                 DAction* action = new DAction(mimeAppsManager->DesktopObjs.value(app).getName(), 0);
                 action->setProperty("app", app);
-                action->setProperty("url", list.at(0).path());
+                action->setProperty("url", info->redirectedFileUrl().toLocalFile());
                 openWithMenu->addAction(action);
                 m_openWithActionGroup->addAction(action);
             }
+
             DAction* action = new DAction(fileMenuManger->getActionString(MenuAction::OpenWithCustom), 0);
             action->setData((int)MenuAction::OpenWithCustom);
             openWithMenu->addAction(action);
         }
-    }else{
-        const AbstractFileInfoPointer &info = model()->fileInfo(index);
-
-
+    } else {
         bool isSystemPathIncluded = false;
+
         foreach (DUrl url, list) {
-            if (systemPathManager->isSystemPath(url.toLocalFile())){
+            const AbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
+
+            if (systemPathManager->isSystemPath(fileInfo->redirectedFileUrl().toLocalFile())) {
                 isSystemPathIncluded = true;
             }
         }
@@ -1650,7 +1657,8 @@ void DFileView::showNormalMenu(const QModelIndex &index)
     }
 
     FMEvent event;
-    event = model()->getUrlByIndex(index);
+
+    event = info->fileUrl();
     event = list;
     event = windowId();
     event = FMEvent::FileView;

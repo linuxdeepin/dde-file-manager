@@ -184,3 +184,22 @@ const DDirIteratorPointer AbstractFileController::createDirIterator(const DUrl &
 
     return DDirIteratorPointer();
 }
+
+bool AbstractFileController::createSymlink(const DUrl &fileUrl, const DUrl &linkToUrl, bool &accepted) const
+{
+    Q_UNUSED(fileUrl)
+    Q_UNUSED(linkToUrl)
+
+    accepted = false;
+
+    return false;
+}
+
+bool AbstractFileController::openInTerminal(const DUrl &fileUrl, bool &accepted) const
+{
+    Q_UNUSED(fileUrl)
+
+    accepted = false;
+
+    return false;
+}

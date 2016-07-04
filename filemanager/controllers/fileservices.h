@@ -44,8 +44,11 @@ public:
     bool decompressFileHere(const DUrl &fileUrl) const;
     bool copyFiles(const DUrlList &urlList) const;
     bool renameFile(const DUrl &oldUrl, const DUrl &newUrl, const FMEvent &event) const;
+    bool renameFile(const DUrl &oldUrl, const DUrl &newUrl) const;
     void deleteFiles(const DUrlList &urlList, const FMEvent &event) const;
+    bool deleteFilesSync(const DUrlList &urlList, const FMEvent &event) const;
     void moveToTrash(const DUrlList &urlList) const;
+    bool moveToTrashSync(const DUrlList &urlList) const;
     bool cutFiles(const DUrlList &urlList) const;
     void pasteFile(const FMEvent &event) const;
     void pasteFile(AbstractFileController::PasteType type,
@@ -59,6 +62,12 @@ public:
     bool removeUrlMonitor(const DUrl &url) const;
 
     bool openFileLocation(const DUrl &fileUrl) const;
+
+    bool createSymlink(const DUrl &fileUrl, const FMEvent &event) const;
+    bool createSymlink(const DUrl &fileUrl, const DUrl &linkToUrl) const;
+    bool sendToDesktop(const DUrl &fileUrl) const;
+
+    bool openInTerminal(const DUrl &fileUrl) const;
 
     const AbstractFileInfoPointer createFileInfo(const DUrl &fileUrl) const;
     const DDirIteratorPointer createDirIterator(const DUrl &fileUrl, QDir::Filters filters,
@@ -83,6 +92,7 @@ private:
     static QList<AbstractFileController*> getHandlerTypeByUrl(const DUrl &fileUrl,
                                                               bool ignoreHost = false,
                                                               bool ignoreScheme = false);
+    static QString getSymlinkFileName(const DUrl &fileUrl);
 
     static QMultiHash<const HandlerType, AbstractFileController*> m_controllerHash;
     static QHash<const AbstractFileController*, HandlerType> m_handlerHash;

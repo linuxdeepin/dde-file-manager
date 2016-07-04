@@ -50,6 +50,9 @@ public:
                                                         QDirIterator::IteratorFlags flags,
                                                         bool &accepted) const;
 
+    virtual bool createSymlink(const DUrl &fileUrl, const DUrl &linkToUrl, bool &accepted) const;
+    virtual bool openInTerminal(const DUrl &fileUrl, bool &accepted) const;
+
 signals:
     void childrenAdded(const DUrl &fileUrl) const;
     void childrenRemoved(const DUrl &fileUrl) const;

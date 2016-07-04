@@ -9,6 +9,7 @@
 #include <QDateTime>
 #include <QMap>
 #include <QAbstractItemView>
+#include <QMimeType>
 
 #include "durl.h"
 #include "menuactiontype.h"
@@ -139,8 +140,10 @@ public:
     virtual QDateTime lastModified() const;
     virtual QDateTime lastRead() const;
 
+    virtual QMimeType mimeType() const
+    { return data->mimeType;}
     virtual QString mimeTypeName() const
-    {return data->mimeTypeName;}
+    { return mimeType().name();}
 
     virtual QString lastReadDisplayName() const;
     virtual QString lastModifiedDisplayName() const;
@@ -205,7 +208,7 @@ protected:
     struct FileInfoData
     {
         DUrl url;
-        mutable QString mimeTypeName;
+        mutable QMimeType mimeType;
         QFileInfo fileInfo;
 
         bool exists;

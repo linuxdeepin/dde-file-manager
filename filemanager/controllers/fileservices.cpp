@@ -8,9 +8,12 @@
 #include "../models/abstractfileinfo.h"
 #include "../models/fileinfo.h"
 #include "../models/trashfileinfo.h"
+
 #include <QUrl>
 #include <QDebug>
 #include <QtConcurrent/QtConcurrentRun>
+#include <QFileDialog>
+
 #include <ddialog.h>
 
 DWIDGET_USE_NAMESPACE
@@ -172,20 +175,28 @@ bool FileServices::renameFile(const DUrl &oldUrl, const DUrl &newUrl, const FMEv
         dialogManager->showRenameNameSameErrorDialog(f->displayName(), event);
         return false;
     }
+
+    if (renameFile(oldUrl, newUrl)) {
+        FMEvent e = event;
+
+        e = newUrl;
+
+        TIMER_SINGLESHOT(200, {
+            emit fileSignalManager->requestSelectFile(e);
+        }, e);
+
+        return true;
+    }
+
+    return false;
+}
+
+bool FileServices::renameFile(const DUrl &oldUrl, const DUrl &newUrl) const
+{
     TRAVERSE(oldUrl, {
                  bool ok = controller->renameFile(oldUrl, newUrl, accepted);
 
-                 if (ok){
-                     FMEvent e = event;
-
-                     e = newUrl;
-
-                     TIMER_SINGLESHOT(200, {
-                         emit fileSignalManager->requestSelectFile(e);
-                     }, e)
-                 }
-
-                 if(accepted)
+                 if (accepted)
                     return ok;
              })
 
@@ -194,52 +205,70 @@ bool FileServices::renameFile(const DUrl &oldUrl, const DUrl &newUrl, const FMEv
 
 void FileServices::deleteFiles(const DUrlList &urlList, const FMEvent &event) const
 {
-    if(urlList.isEmpty())
+    if (urlList.isEmpty())
         return;
 
-    if(QThreadPool::globalInstance()->activeThreadCount() >= MAX_THREAD_COUNT) {
+    if (QThreadPool::globalInstance()->activeThreadCount() >= MAX_THREAD_COUNT) {
         qDebug() << "Beyond the maximum number of threads!";
         return;
     }
 
-    if(QThread::currentThread() == qApp->thread()) {    
+    if (QThread::currentThread() == qApp->thread()) {
         int result = dialogManager->showDeleteFilesClearTrashDialog(event);
-        if (result == 1){
-            QtConcurrent::run(QThreadPool::globalInstance(), this, &FileServices::deleteFiles, urlList, event);
+
+        if (result == 1) {
+            QtConcurrent::run(QThreadPool::globalInstance(), this, &FileServices::deleteFilesSync, urlList, event);
         }
+
         return;
     }
-    qDebug() << urlList << (QThread::currentThread() == qApp->thread());
+}
+
+bool FileServices::deleteFilesSync(const DUrlList &urlList, const FMEvent &event) const
+{
+    if (urlList.isEmpty())
+        return false;
+
     TRAVERSE(urlList.first(), {
-                 controller->deleteFiles(urlList, event, accepted);
+                 bool ok =controller->deleteFiles(urlList, event, accepted);
 
                  if(accepted)
-                    return;
+                    return ok;
              })
+
+    return false;
 }
 
 void FileServices::moveToTrash(const DUrlList &urlList) const
 {
-    if(urlList.isEmpty())
+    if (urlList.isEmpty())
         return;
 
-    if(QThreadPool::globalInstance()->activeThreadCount() >= MAX_THREAD_COUNT) {
+    if (QThreadPool::globalInstance()->activeThreadCount() >= MAX_THREAD_COUNT) {
         qDebug() << "Beyond the maximum number of threads!";
         return;
     }
 
-    if(QThread::currentThread() == qApp->thread()) {
-        QtConcurrent::run(QThreadPool::globalInstance(), this, &FileServices::moveToTrash, urlList);
+    if (QThread::currentThread() == qApp->thread()) {
+        QtConcurrent::run(QThreadPool::globalInstance(), this, &FileServices::moveToTrashSync, urlList);
 
         return;
     }
+}
+
+bool FileServices::moveToTrashSync(const DUrlList &urlList) const
+{
+    if (urlList.isEmpty())
+        return false;
 
     TRAVERSE(urlList.first(), {
-                 controller->moveToTrash(urlList, accepted);
+                 bool ok = controller->moveToTrash(urlList, accepted);
 
                  if(accepted)
-                    return;
+                    return ok;
              })
+
+    return false;
 }
 
 bool FileServices::cutFiles(const DUrlList &urlList) const
@@ -373,6 +402,47 @@ bool FileServices::openFileLocation(const DUrl &fileUrl) const
     return false;
 }
 
+bool FileServices::createSymlink(const DUrl &fileUrl, const FMEvent &event) const
+{
+    QString linkName = getSymlinkFileName(fileUrl);
+    QString linkPath = QFileDialog::getSaveFileName(WindowManager::getWindowById(event.windowId()),
+                                                    QObject::tr("Create symlink"), linkName);
+
+    return createSymlink(fileUrl, DUrl::fromLocalFile(linkPath));
+}
+
+bool FileServices::createSymlink(const DUrl &fileUrl, const DUrl &linkToUrl) const
+{
+    TRAVERSE(fileUrl, {
+                 bool ok = controller->createSymlink(fileUrl, linkToUrl, accepted);
+
+                 if(accepted)
+                     return ok;
+             })
+
+    return false;
+}
+
+bool FileServices::sendToDesktop(const DUrl &fileUrl) const
+{
+    QString linkName = getSymlinkFileName(fileUrl);
+    QString linkPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+
+    return createSymlink(fileUrl, DUrl::fromLocalFile(linkPath + "/" + linkName));
+}
+
+bool FileServices::openInTerminal(const DUrl &fileUrl) const
+{
+    TRAVERSE(fileUrl, {
+                 bool ok = controller->openInTerminal(fileUrl, accepted);
+
+                 if(accepted)
+                     return ok;
+             })
+
+    return false;
+}
+
 void FileServices::openNewWindow(const DUrl &fileUrl) const
 {
     emit fileSignalManager->requestOpenNewWindowByUrl(fileUrl, true);
@@ -476,6 +546,24 @@ QList<AbstractFileController*> FileServices::getHandlerTypeByUrl(const DUrl &fil
     } else {
         return m_controllerHash.values(handlerType);
     }
+}
+
+QString FileServices::getSymlinkFileName(const DUrl &fileUrl)
+{
+    const AbstractFileInfoPointer &fileInfo = instance()->createFileInfo(fileUrl);
+
+    QString fileName = fileInfo->fileName();
+
+    if (fileInfo->isFile()) {
+        int index = fileName.lastIndexOf('.');
+
+        if (index >= 0)
+            fileName.insert(index, " link");
+    } else {
+        return fileName + " link";
+    }
+
+    return fileName;
 }
 
 void FileServices::openUrl(const FMEvent &event) const

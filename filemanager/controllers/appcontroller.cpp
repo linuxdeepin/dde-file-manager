@@ -197,17 +197,19 @@ void AppController::actionCompleteDeletion(const FMEvent &event)
     fileService->deleteFiles(urls, event);
 }
 
-void AppController::actionCreateSoftLink(const FMEvent &event)
+void AppController::actionCreateSymLink(const FMEvent &event)
 {
-    const DUrl& fileUrl = event.fileUrl();
-    int windowId = event.windowId();
-    FileUtils::createSoftLink(windowId, fileUrl.toLocalFile());
+//    const DUrl& fileUrl = event.fileUrl();
+//    int windowId = event.windowId();
+//    FileUtils::createSoftLink(windowId, fileUrl.toLocalFile());
+    fileService->createSymlink(event.fileUrl(), event);
 }
 
 void AppController::actionSendToDesktop(const FMEvent &event)
 {
-    const DUrlList& urls = event.fileUrlList();
-    FileUtils::sendToDesktop(urls);
+//    const DUrlList& urls = event.fileUrlList();
+//    FileUtils::sendToDesktop(urls);
+    fileService->sendToDesktop(event.fileUrl());
 }
 
 void AppController::actionAddToBookMark(const FMEvent &event)
@@ -314,22 +316,14 @@ void AppController::actionEject(const FMEvent &event)
 void AppController::actionOpenInTerminal(const FMEvent &event)
 {
     if (event.fileUrlList().isEmpty()) {
-        QProcess::startDetached("x-terminal-emulator");
+        fileService->openInTerminal(event.fileUrl());
 
         return;
     }
 
-    const QString &current_dir = QDir::currentPath();
-
     for (const DUrl &url: event.fileUrlList()) {
-        if (url.isLocalFile()) {
-            QDir::setCurrent(url.toLocalFile());
-
-            QProcess::startDetached("x-terminal-emulator");
-        }
+        fileService->openInTerminal(url);
     }
-
-    QDir::setCurrent(current_dir);
 }
 
 void AppController::actionProperty(const FMEvent &event)

@@ -45,6 +45,8 @@ public:
     QString sizeDisplayName() const  Q_DECL_OVERRIDE;
     QString mimeTypeDisplayName() const  Q_DECL_OVERRIDE;
 
+    QMimeType mimeType() const Q_DECL_OVERRIDE;
+
     QIcon fileIcon() const Q_DECL_OVERRIDE;
     DUrl parentUrl() const Q_DECL_OVERRIDE;
 

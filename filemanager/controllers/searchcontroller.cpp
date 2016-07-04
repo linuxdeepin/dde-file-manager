@@ -42,7 +42,91 @@ bool SearchController::openFileLocation(const DUrl &fileUrl, bool &accepted) con
 {
     accepted = true;
 
-    return FileServices::instance()->openFileLocation(DUrl(fileUrl.fragment()));
+    return FileServices::instance()->openFileLocation(realUrl(fileUrl));
+}
+
+bool SearchController::openFile(const DUrl &fileUrl, bool &accepted) const
+{
+    accepted = true;
+
+    return FileServices::instance()->openFile(realUrl(fileUrl));
+}
+
+bool SearchController::addUrlMonitor(const DUrl &fileUrl, bool &accepted) const
+{
+    accepted = true;
+
+    return FileServices::instance()->addUrlMonitor(realUrl(fileUrl));
+}
+
+bool SearchController::removeUrlMonitor(const DUrl &url, bool &accepted) const
+{
+    accepted = true;
+
+    return FileServices::instance()->removeUrlMonitor(realUrl(url));
+}
+
+bool SearchController::copyFiles(const DUrlList &urlList, bool &accepted) const
+{
+    accepted = true;
+
+    return FileServices::instance()->copyFiles(realUrlList(urlList));
+}
+
+bool SearchController::moveToTrash(const DUrlList &urlList, bool &accepted) const
+{
+    accepted = true;
+
+    return FileServices::instance()->moveToTrashSync(realUrlList(urlList));
+}
+
+bool SearchController::cutFiles(const DUrlList &urlList, bool &accepted) const
+{
+    accepted = true;
+
+    return FileServices::instance()->cutFiles(realUrlList(urlList));
+}
+
+bool SearchController::deleteFiles(const DUrlList &urlList, const FMEvent &event, bool &accepted) const
+{
+    accepted = true;
+
+    return FileServices::instance()->deleteFilesSync(realUrlList(urlList), event);
+}
+
+bool SearchController::renameFile(const DUrl &oldUrl, const DUrl &newUrl, bool &accepted) const
+{
+    accepted = true;
+
+    return FileServices::instance()->renameFile(realUrl(oldUrl), DUrl::fromLocalFile(newUrl.path()));
+}
+
+bool SearchController::compressFiles(const DUrlList &urlList, bool &accepted) const
+{
+    accepted = true;
+
+    return FileServices::instance()->compressFiles(realUrlList(urlList));
+}
+
+bool SearchController::decompressFile(const DUrl &fileUrl, bool &accepted) const
+{
+    accepted = true;
+
+    return FileServices::instance()->decompressFile(realUrl(fileUrl));
+}
+
+bool SearchController::createSymlink(const DUrl &fileUrl, const DUrl &linkToUrl, bool &accepted) const
+{
+    accepted = true;
+
+    return FileServices::instance()->createSymlink(realUrl(fileUrl), linkToUrl);
+}
+
+bool SearchController::openInTerminal(const DUrl &fileUrl, bool &accepted) const
+{
+    accepted = true;
+
+    return FileServices::instance()->openInTerminal(realUrl(fileUrl));
 }
 
 void SearchController::searchStart(const DUrl &fileUrl, QDir::Filters filter)
@@ -101,4 +185,20 @@ void SearchController::searchStart(const DUrl &fileUrl, QDir::Filters filter)
     }
 
     qDebug() << "search finished:" << fileUrl;
+}
+
+DUrl SearchController::realUrl(const DUrl &searchUrl)
+{
+    return DUrl(searchUrl.fragment());
+}
+
+DUrlList SearchController::realUrlList(const DUrlList &searchUrls)
+{
+    DUrlList list;
+
+    for (const DUrl &url : searchUrls) {
+        list << realUrl(url);
+    }
+
+    return list;
 }
