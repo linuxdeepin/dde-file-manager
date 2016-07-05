@@ -120,7 +120,7 @@ private:
 //    QHash<DUrl, FileSystemNodePointer> m_urlToNode;
 
     int m_sortRole = FileDisplayNameRole;
-    QDir::Filters m_filters = QDir::AllEntries | QDir::NoDotAndDotDot;
+    QDir::Filters m_filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System;
     Qt::SortOrder m_srotOrder = Qt::AscendingOrder;
 //    QModelIndex m_activeIndex;
 
