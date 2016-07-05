@@ -123,8 +123,8 @@ QPushButton#backButton{
     border-top: 1px solid rgba(0, 0, 0, 0.1);
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     color: black;
-    border-top-left-radius: 2px;
-    border-bottom-left-radius: 2px;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
 }
 
 QPushButton#backButton:hover{
@@ -141,8 +141,8 @@ QPushButton#forwardButton{
     border-right: 1px solid rgba(0, 0, 0, 0.1);
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     color: black;
-    border-top-right-radius: 2px;
-    border-bottom-right-radius: 2px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
 }
 
 QPushButton#leftArrow:hover{
@@ -168,6 +168,7 @@ QPushButton#rightArrow{
 QListWidget#DCrumbList{
     background-color:white;
     border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
 }
 
 QPushButton#iconViewButton{
@@ -176,8 +177,8 @@ QPushButton#iconViewButton{
     border-top: 1px solid rgba(0, 0, 0, 0.1);
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     color: black;
-    border-top-left-radius: 2px;
-    border-bottom-left-radius: 2px;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
     image: url(:/icons/images/icons/icon_view_normal.svg);
     icon-size: 16px 16px;
 }
@@ -201,8 +202,8 @@ QPushButton#listViewButton{
     border-right: 1px solid rgba(0, 0, 0, 0.1);
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     color: black;
-    border-top-right-radius: 2px;
-    border-bottom-right-radius: 2px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
     image: url(:/icons/images/icons/list_view_normal.svg);
     icon-size: 16px 16px;
 }
@@ -270,7 +271,11 @@ QPushButton#searchButton:hover{
 /* ******************DCrumbButton****************** */
 QFrame#DCrumbWidget{
     background-color:white;
+    border-radius: 4px;
 }
+
+
+
 
 QPushButton#DCrumbButton{
     background-color:transparent;
@@ -294,7 +299,9 @@ QPushButton#DCrumbIconButton{
     border: 1px;
     color: black;
     padding: 0px 4px 0px 8px;
-    text-align: left;
+    text-align: center;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
 }
 
 QPushButton#DCrumbIconButton:hover{
@@ -313,6 +320,7 @@ QLineEdit#DSearchBar{
     border: 1px solid rgba(0, 0, 0, 0.1);
     padding-left:0px;
     selection-background-color: #61B5F8;
+    border-radius: 4px;
 }
 
 QListWidget#SearchList{

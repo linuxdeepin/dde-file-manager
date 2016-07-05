@@ -66,7 +66,7 @@ void DBookmarkItem::init()
     setAcceptHoverEvents(true);
     setReleaseBackgroundColor(QColor(238,232,205,0));
     setPressBackgroundColor(QColor(44,167,248,255));
-    setHoverBackgroundColor(Qt::lightGray);
+    setHoverBackgroundColor(QColor(0, 0, 0, 12));
     setPressBackgroundEnable(true);
     setReleaseBackgroundEnable(true);
     setHoverBackgroundEnable(true);
@@ -186,7 +186,6 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
             painter->drawRect(m_x_axis, m_y_axis, m_width, m_height);
         }
         painter->drawPixmap(leftPadding, dy,  hover.width(), hover.height(), hover);
-        textColor = Qt::white;
     }
     else
     {

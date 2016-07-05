@@ -34,7 +34,7 @@ void DCrumbWidget::initUI()
     m_listWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_listWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_listWidget->setFocusPolicy(Qt::NoFocus);
-    setFixedHeight(20);
+    setFixedHeight(24);
     setMinimumWidth(50);
 }
 
@@ -86,6 +86,9 @@ void DCrumbWidget::addCrumb(const QStringList &list)
             button->adjustSize();
             m_group.addButton(button, button->getIndex());
             connect(button, &DCrumbButton::clicked, this, &DCrumbWidget::buttonPressed);
+        }
+        if (i == 0){
+            button->setObjectName("DCrumbIconButton");
         }
     }
     m_group.buttons().last()->setChecked(true);

@@ -42,7 +42,7 @@ void DSearchBar::initUI()
     QIcon icon(":/images/images/light/appbar.close.png");
     m_clearAction = new QAction(icon,"", this);
 
-    setFixedHeight(22);
+    setFixedHeight(24);
     setObjectName("DSearchBar");
     setMinimumWidth(1);
 

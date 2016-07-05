@@ -15,6 +15,7 @@ FileIconItem QLabel {
 FileIconItem QTextEdit {
     background: transparent;
     color: white;
+    selection-background-color: #61B5F8;
 }
 
 FileIconItem QTextEdit[readOnly=false] {
@@ -72,8 +73,11 @@ QHeaderView::section:checked {
 }
 
 QLineEdit {
-    background: #2DA6F7;
+    background: #0b8ade;
     color:white;
+    selection-background-color: #70bfff;
+    padding-left: 6px;
+    border-radius: 4px;
 }
 
 DFileView QWidget#SelectionRect {
