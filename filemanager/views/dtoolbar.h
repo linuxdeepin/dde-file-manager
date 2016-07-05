@@ -23,6 +23,7 @@ class DToolBar : public QFrame
 public:
     explicit DToolBar(QWidget *parent = 0);
     ~DToolBar();
+    static const int ButtonWidth;
     static const int ButtonHeight;
     void initData();
     void initUI();

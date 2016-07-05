@@ -153,6 +153,7 @@ void DialogManager::showUrlWrongDialog(const DUrl &url)
     d.exec();
 }
 
+
 int DialogManager::showRenameNameSameErrorDialog(const QString &name, const FMEvent &event)
 {
     DDialog d(WindowManager::getWindowById(event.windowId()));;
@@ -161,10 +162,11 @@ int DialogManager::showRenameNameSameErrorDialog(const QString &name, const FMEv
     buttonTexts << tr("Confirm");
     d.addButtons(buttonTexts);
     d.setDefaultButton(0);
-    d.setIcon(QIcon(":/images/dialogs/images/dialog-warning.svg"));
+    d.setIcon(QIcon(":/images/dialogs/images/dialog_warning_64.png"));
     int code = d.exec();
     return code;
 }
+
 
 int DialogManager::showDeleteFilesClearTrashDialog(const FMEvent &event)
 {
@@ -173,12 +175,12 @@ int DialogManager::showDeleteFilesClearTrashDialog(const FMEvent &event)
     QString DeleteFileItems = tr("Are you sure to delete %1 items?");
 
     DUrlList urlList = event.fileUrlList();
-
     QStringList buttonTexts;
     buttonTexts << tr("Cancel") << tr("Delete");
 
     qDebug() << event;
     DDialog d(WindowManager::getWindowById(event.windowId()));
+    d.setIcon(QIcon(":/images/dialogs/images/user-trash-full-opened.png"));
     if (urlList.first() == DUrl::fromTrashFile("/") && event.source() == FMEvent::Menu && urlList.size() == 1){
         buttonTexts[1]= tr("Empty");
         d.setTitle(ClearTrash);
@@ -204,7 +206,6 @@ int DialogManager::showDeleteFilesClearTrashDialog(const FMEvent &event)
     d.setMessage(tr("This action cannot be restored"));
     d.addButtons(buttonTexts);
     d.setDefaultButton(1);
-    d.setIcon(QIcon(":/images/images/user-trash-full.png"));
     int code = d.exec();
     return code;
 }
@@ -217,7 +218,7 @@ int DialogManager::showRemoveBookMarkDialog(const FMEvent &event)
     buttonTexts << tr("Cancel") << tr("Remove bookmark");
     d.addButtons(buttonTexts);
     d.setDefaultButton(1);
-    d.setIcon(fileIconProvider->getDesktopIcon("folder", 256));
+    d.setIcon(fileIconProvider->getDesktopIcon("folder", 64));
     int code = d.exec();
     return code;
 }

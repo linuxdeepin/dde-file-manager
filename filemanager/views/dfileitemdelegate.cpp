@@ -11,7 +11,7 @@
 #include <QTextBlock>
 #include <QAbstractTextDocumentLayout>
 
-#define ICON_SPACING 10
+#define ICON_SPACING 16
 #define COLUMU_PADDING 10
 #define LEFT_PADDING 10
 #define RIGHT_PADDING 10
@@ -102,6 +102,7 @@ QWidget *DFileItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
         return item;
     } else {
         QLineEdit *edit = new QLineEdit(parent);
+        edit->setFixedHeight(22);
 
         connect(edit, &QLineEdit::destroyed, this, [this] {
             editing_index = QModelIndex();
@@ -134,7 +135,7 @@ QWidget *DFileItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
 
         edit->setFrame(false);
         edit->setAttribute(Qt::WA_TranslucentBackground);
-        edit->setContentsMargins(-3, 0, 0, 0);
+        edit->setContentsMargins(0, 0, 0, 0);
         edit->setContextMenuPolicy(Qt::NoContextMenu);
 
         return edit;
@@ -178,11 +179,12 @@ void DFileItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
 
         QRect rect = opt_rect;
 
-        rect.setLeft(column_x);
+        rect.setLeft(column_x - 9);
 
         column_x = parent()->columnWidth(0) - parent()->viewportMargins().left();
 
         rect.setRight(column_x);
+        rect.setTop(opt_rect.y() + (opt_rect.height() - 22)/2);
 
         editor->setGeometry(rect);
 

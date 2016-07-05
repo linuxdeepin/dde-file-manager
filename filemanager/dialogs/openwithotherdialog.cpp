@@ -64,6 +64,7 @@ void OpenWithOtherDialog::initConnect()
 QListWidget *OpenWithOtherDialog::createOpenWithListWidget(const AbstractFileInfoPointer &info)
 {
     QListWidget* listWidget = new QListWidget;
+//    listWidget->setStyleSheet("border:1px solid red");
     m_OpenWithButtonGroup = new QButtonGroup(listWidget);
     listWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     listWidget->setVerticalScrollBar(new DScrollBar);

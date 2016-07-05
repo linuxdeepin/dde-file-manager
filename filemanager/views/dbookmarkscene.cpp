@@ -112,7 +112,7 @@ void DBookmarkScene::initConnect()
 DBookmarkItem *DBookmarkScene::createBookmarkByKey(const QString &key)
 {
     DBookmarkItem * item = new DBookmarkItem;
-    item->boundImageToHover(m_smallHoverIcons.value(key));
+    item->boundImageToHover(m_smallIcons.value(key));
     item->boundImageToPress(m_smallCheckedIcons.value(key));
     item->boundImageToRelease(m_smallIcons.value(key));
     item->boundBigImageToHover(m_bigHoverIcons.value(key));

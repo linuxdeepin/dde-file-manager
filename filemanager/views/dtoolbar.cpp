@@ -19,7 +19,8 @@
 #include "windowmanager.h"
 #include <QDebug>
 
-const int DToolBar::ButtonHeight = 18;
+const int DToolBar::ButtonWidth = 26;
+const int DToolBar::ButtonHeight = 24;
 
 DToolBar::DToolBar(QWidget *parent) : QFrame(parent)
 {
@@ -64,20 +65,20 @@ void DToolBar::initAddressToolBar()
 
     m_backButton = new DStateButton(":/icons/images/icons/backward_normal.png", this);
     m_backButton->setObjectName("backButton");
-    m_backButton->setFixedWidth(25);
+    m_backButton->setFixedWidth(ButtonWidth);
     m_backButton->setFixedHeight(ButtonHeight);
     m_backButton->setDisabled(true);
     m_backButton->setFocusPolicy(Qt::NoFocus);
     m_forwardButton = new DStateButton(":/icons/images/icons/forward_normal.png", this);
     m_forwardButton->setObjectName("forwardButton");
-    m_forwardButton->setFixedWidth(25);
+    m_forwardButton->setFixedWidth(ButtonWidth);
     m_forwardButton->setFixedHeight(ButtonHeight);
     m_forwardButton->setDisabled(true);
     m_forwardButton->setFocusPolicy(Qt::NoFocus);
 
     m_searchButton = new QPushButton(this);
     m_searchButton->setObjectName("searchButton");
-    m_searchButton->setFixedWidth(25);
+    m_searchButton->setFixedWidth(ButtonWidth);
     m_searchButton->setFixedHeight(ButtonHeight);
     m_searchButton->setFocusPolicy(Qt::NoFocus);
 
@@ -117,7 +118,7 @@ void DToolBar::initContollerToolBar()
     m_contollerToolBar->setObjectName("ContollerToolBar");
     m_contollerToolBar->setFixedHeight(40);
     m_iconViewButton = new QPushButton(this);
-    m_iconViewButton->setFixedWidth(25);
+    m_iconViewButton->setFixedWidth(ButtonWidth);
     m_iconViewButton->setFixedHeight(ButtonHeight);
     m_iconViewButton->setObjectName("iconViewButton");
     m_iconViewButton->setCheckable(true);
@@ -125,7 +126,7 @@ void DToolBar::initContollerToolBar()
     m_iconViewButton->setFocusPolicy(Qt::NoFocus);
 
     m_listViewButton = new QPushButton(this);
-    m_listViewButton->setFixedWidth(25);
+    m_listViewButton->setFixedWidth(ButtonWidth);
     m_listViewButton->setFixedHeight(ButtonHeight);
     m_listViewButton->setObjectName("listViewButton");
     m_listViewButton->setCheckable(true);

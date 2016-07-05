@@ -10,8 +10,6 @@
         <file>dialogs/images/dark_minimise_small_hover.png</file>
         <file>dialogs/images/dark_minimise_small_normal.png</file>
         <file>dialogs/images/dark_minimise_small_press.png</file>
-        <file>dialogs/images/dialog-warning.svg</file>
-        <file>dialogs/images/user-trash-full.png</file>
         <file>dialogs/images/light/checkbox-checked-hover.png</file>
         <file>dialogs/images/light/checkbox-checked.png</file>
         <file>dialogs/images/light/checkbox-focus.png</file>
@@ -23,6 +21,8 @@
         <file>dialogs/images/light/window_min_hover.png</file>
         <file>dialogs/images/light/window_min_normal.png</file>
         <file>dialogs/images/light/window_min_press.png</file>
+        <file>dialogs/images/user-trash-full-opened.png</file>
+        <file>dialogs/images/dialog_warning_64.png</file>
     </qresource>
     <qresource prefix="/qss">
         <file>dialogs/qss/dark.qss</file>
