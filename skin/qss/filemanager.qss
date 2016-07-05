@@ -125,15 +125,25 @@ QPushButton#backButton{
     color: black;
     border-top-left-radius: 4px;
     border-bottom-left-radius: 4px;
+    image: url(:/icons/images/icons/backward_normal.png);
+    icon-size: 16px 16px;
 }
 
 QPushButton#backButton:hover{
+    background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                        stop: 0 #8CCFFF,
+                        stop: 1  #4BB8FF);
+    border: 1px solid #3caafd;
+    color: white;
+    image: url(:/icons/images/icons/backward_hover.png);
+    icon-size: 16px 16px;
+}
+
+QPushButton#backButton:checked{
+    border: 1px solid #2794ff;
     background-color:#2ca7f8;
 }
 
-QPushButton#forwardButton:hover{
-    background-color:#2ca7f8;
-}
 
 QPushButton#forwardButton{
     background-color:white;
@@ -143,7 +153,20 @@ QPushButton#forwardButton{
     color: black;
     border-top-right-radius: 4px;
     border-bottom-right-radius: 4px;
+    image: url(:/icons/images/icons/forward_normal.png);
+    icon-size: 16px 16px;
 }
+
+QPushButton#forwardButton:hover{
+    background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                        stop: 0 #8CCFFF,
+                        stop: 1  #4BB8FF);
+    border: 1px solid #3caafd;
+    color: white;
+    image: url(:/icons/images/icons/forward_hover.png);
+    icon-size: 16px 16px;
+}
+
 
 QPushButton#leftArrow:hover{
     background-color:#2ca7f8;
@@ -179,20 +202,29 @@ QPushButton#iconViewButton{
     color: black;
     border-top-left-radius: 4px;
     border-bottom-left-radius: 4px;
-    image: url(:/icons/images/icons/icon_view_normal.svg);
+    image: url(:/icons/images/icons/icon_view_normal.png);
     icon-size: 16px 16px;
+}
+
+QPushButton#iconViewButton:hover{
+    background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                        stop: 0 #8CCFFF,
+                        stop: 1  #4BB8FF);
+    image: url(:/icons/images/icons/icon_view_hover.png);
+    border: 1px solid #3caafd;
+    color: white;
 }
 
 QPushButton#iconViewButton:checked{
     border: 1px solid #2794ff;
     background-color:#2ca7f8;
-    image: url(:/icons/images/icons/icon_view_checked.svg);
+    image: url(:/icons/images/icons/icon_view_checked.png);
     icon-size: 16px 16px;
 }
 
 QPushButton#iconViewButton:unchecked{
     background-color:white;
-    image: url(:/icons/images/icons/icon_view_normal.svg);
+    image: url(:/icons/images/icons/icon_view_normal.png);
     icon-size: 16px 16px;
 }
 
@@ -204,20 +236,29 @@ QPushButton#listViewButton{
     color: black;
     border-top-right-radius: 4px;
     border-bottom-right-radius: 4px;
-    image: url(:/icons/images/icons/list_view_normal.svg);
+    image: url(:/icons/images/icons/list_view_normal.png);
     icon-size: 16px 16px;
+}
+
+QPushButton#listViewButton:hover{
+    background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                        stop: 0 #8CCFFF,
+                        stop: 1  #4BB8FF);
+    image: url(:/icons/images/icons/list_view_hover.png);
+    border: 1px solid #3caafd;
+    color: white;
 }
 
 QPushButton#listViewButton:checked{
     border: 1px solid #2794ff;
     background-color:#2ca7f8;
-    image: url(:/icons/images/icons/list_view_checked.svg);
+    image: url(:/icons/images/icons/list_view_checked.png);
     icon-size: 16px 16px;
 }
 
 QPushButton#listViewButton:unchecked{
     background-color:white;
-    image: url(:/icons/images/icons/list_view_normal.svg);
+    image: url(:/icons/images/icons/list_view_normal.png);
     icon-size: 16px 16px;
 }
 
@@ -248,24 +289,24 @@ QPushButton#searchButton{
     image: url(:/icons/images/icons/search_normal.png);
     border: 1px solid rgba(0, 0, 0, 0.1);
     color: black;
-    border-radius: 2px;
+    border-radius: 4px;
 }
 
 QPushButton#searchButton:pressed{
     background-color:white;
     image: url(:/icons/images/icons/search_pressed.png);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    color: black;
-    border-radius: 2px;
+    border: 1px solid #1088ff;
+    color: white;
 }
 
 
 QPushButton#searchButton:hover{
-    background-color:#2ca7f8;
+    background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                        stop: 0 #8CCFFF,
+                        stop: 1  #4BB8FF);
     image: url(:/icons/images/icons/search_hover.png);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    color: black;
-    border-radius: 2px;
+    border: 1px solid #3caafd;
+    color: white;
 }
 
 /* ******************DCrumbButton****************** */
@@ -274,15 +315,12 @@ QFrame#DCrumbWidget{
     border-radius: 4px;
 }
 
-
-
-
 QPushButton#DCrumbButton{
     background-color:transparent;
     border: 1px;
     color: black;
-    padding: 16px 20px;
-    text-align: left;
+    padding: 0px 10px 0px  10px;
+    text-align: center;
 }
 
 QPushButton#DCrumbButton:hover{
@@ -291,6 +329,7 @@ QPushButton#DCrumbButton:hover{
 
 QPushButton#DCrumbButton:checked{
     background-color: #2ca7f8;
+    border: 1px solid #1088ff;
     color: white;
 }
 
@@ -298,7 +337,7 @@ QPushButton#DCrumbIconButton{
     background-color:transparent;
     border: 1px;
     color: black;
-    padding: 0px 4px 0px 8px;
+    padding: 0px 4px 0px 4px;
     text-align: center;
     border-top-left-radius: 4px;
     border-bottom-left-radius: 4px;
@@ -317,17 +356,31 @@ QPushButton#DCrumbIconButton:checked{
 /* ******************DSearchBar****************** */
 QLineEdit#DSearchBar{
     background-color: #ffffff;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(43, 167, 248, 1);
     padding-left:0px;
     selection-background-color: #61B5F8;
     border-radius: 4px;
 }
 
+
+QPushButton#InputClearButton{
+    /*border-image: url(:/icons/images/icons/input_normalclear_normal.png);*/
+}
+
+QPushButton#InputClearButton:hover{
+    /*border-image: url(:/icons/images/icons/input_normalclear_hover.png);*/
+    border: 1px solid red;
+}
+
+QPushButton#InputClearButton:pressed{
+    /*border-image: url(:/icons/images/icons/input_normalclear_press.png);*/
+}
+
+
 QListWidget#SearchList{
     background-color: white;
-    border:1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 4px;
-    border-top: 4px solid transparent;
+    border:1px solid rgba(0, 0, 0, 50);
+    padding-top: 4px;
     border-radius: 4px;
 }
 QListWidget#SearchList::item{

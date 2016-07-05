@@ -387,16 +387,16 @@ void DCrumbWidget::createCrumbs()
 
 void DCrumbWidget::createArrows()
 {
-    m_leftArrow = new DStateButton(":/icons/images/icons/backward_normal.png");
-    m_leftArrow->setObjectName("leftArrow");
-    m_leftArrow->setFixedWidth(25);
-    m_leftArrow->setFixedHeight(20);
+    m_leftArrow = new QPushButton();
+    m_leftArrow->setObjectName("backButton");
+    m_leftArrow->setFixedWidth(26);
+    m_leftArrow->setFixedHeight(24);
     m_leftArrow->setFocusPolicy(Qt::NoFocus);
 
-    m_rightArrow = new DStateButton(":/icons/images/icons/forward_normal.png");
-    m_rightArrow->setObjectName("rightArrow");
-    m_rightArrow->setFixedWidth(25);
-    m_rightArrow->setFixedHeight(20);
+    m_rightArrow = new QPushButton();
+    m_rightArrow->setObjectName("forwardButton");
+    m_rightArrow->setFixedWidth(26);
+    m_rightArrow->setFixedHeight(24);
     m_rightArrow->setFocusPolicy(Qt::NoFocus);
     connect(m_leftArrow, &DStateButton::clicked, this, &DCrumbWidget::crumbMoveToLeft);
     connect(m_rightArrow, &DStateButton::clicked, this, &DCrumbWidget::crumbMoveToRight);
