@@ -701,7 +701,7 @@ bool FileJob::deleteDir(const QString &dir)
         return false;
     }
     QDir sourceDir(dir);
-    QFileInfoList fileInfoList = sourceDir.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden);
+    QFileInfoList fileInfoList = sourceDir.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System);
     foreach(QFileInfo fileInfo, fileInfoList)
     {
         if(fileInfo.fileName() == "." || fileInfo.fileName() == "..")
