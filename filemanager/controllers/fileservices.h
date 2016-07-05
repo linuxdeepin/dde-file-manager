@@ -76,7 +76,7 @@ public:
     const QList<AbstractFileInfoPointer> getChildren(const DUrl &fileUrl, QDir::Filters filters, bool *ok = 0) const;
 
 public slots:
-    void getChildren(const FMEvent &event, QDir::Filters filters = QDir::AllEntries | QDir::NoDotAndDotDot) const;
+    void getChildren(const FMEvent &event, QDir::Filters filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System) const;
     void openNewWindow(const DUrl &fileUrl) const;
     void openUrl(const FMEvent &event) const;
 

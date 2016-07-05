@@ -221,7 +221,7 @@ bool TrashManager::restoreAllTrashFile(const FMEvent &event)
     QDir dir(TRASHFILEPATH + path);
     DUrlList urlList;
     if(dir.exists()) {
-        QStringList entryList = dir.entryList(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System);
+        QStringList entryList = dir.entryList(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden);
         for(const QString name : entryList) {
             urlList << DUrl::fromTrashFile(QString("/%1").arg(name));
         }
@@ -234,7 +234,7 @@ bool TrashManager::restoreAllTrashFile(const FMEvent &event)
 bool TrashManager::isEmpty()
 {
     QDir dir(TRASHFILEPATH);
-    QStringList entryList = dir.entryList(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System);
+    QStringList entryList = dir.entryList(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden);
     if (dir.exists() && entryList.count() == 0){
         return true;
     }

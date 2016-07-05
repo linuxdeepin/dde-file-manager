@@ -245,7 +245,11 @@ void AppController::actionClearRecent(const FMEvent &event)
 
 void AppController::actionClearTrash(const FMEvent &event)
 {
-    fileService->deleteFiles(DUrlList() << DUrl::fromLocalFile(TRASHPATH), event);
+    DUrlList list;
+
+    list << DUrl::fromLocalFile(TRASHINFOPATH) << DUrl::fromLocalFile(TRASHFILEPATH);
+
+    fileService->deleteFiles(list, event);
 }
 
 void AppController::actionNewWord(const FMEvent &event)
