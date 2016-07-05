@@ -408,6 +408,7 @@ void DFileView::cd(const FMEvent &event)
     if (!event.fileUrl().isSearchFile()){
         setFocus();
     }
+    itemDelegate()->hideAllIIndexWidget();
     clearSelection();
     if(event.windowId() != windowId())
         return;
@@ -641,6 +642,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
         case Qt::Key_H:
             oldSelectedUrllist = urls;
 
+            itemDelegate()->hideAllIIndexWidget();
             clearSelection();
 
             connect(model(), &DFileSystemModel::childrenUpdated, this, &DFileView::onChildrenUpdated);
@@ -1405,7 +1407,6 @@ void DFileView::refreshFileView(const FMEvent &event)
 
 void DFileView::clearSelection()
 {
-    itemDelegate()->hideAllIIndexWidget();
     QListView::clearSelection();
 }
 
