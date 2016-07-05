@@ -41,7 +41,7 @@ SearchFileInfo::SearchFileInfo(const DUrl &url)
 
 bool SearchFileInfo::exists() const
 {
-    return realFileInfo && realFileInfo->exists();
+    return !realFileInfo || realFileInfo->exists();
 }
 
 QString SearchFileInfo::filePath() const
