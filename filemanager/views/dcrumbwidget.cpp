@@ -295,7 +295,7 @@ void DCrumbWidget::addLocalCrumbs(const DUrl & url)
 {
     QStringList list;
     QString path = url.path();
-//    qDebug() << path << isInDevice(path);
+    qDebug() << path << isInHome(path) << isInDevice(path);
     if(isInHome(path))
     {
         QString tmpPath = url.toLocalFile();
@@ -335,7 +335,7 @@ bool DCrumbWidget::hasPath(const QString &path)
 
 bool DCrumbWidget::isInHome(const QString& path)
 {
-    return path.startsWith(m_homePath);
+    return DUrl::childrenList(DUrl(path)).contains(DUrl(m_homePath));
 }
 
 bool DCrumbWidget::isHomeFolder(const QString& path)
