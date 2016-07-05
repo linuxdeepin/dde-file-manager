@@ -61,8 +61,8 @@ private:
     void checkNavHistory(DUrl url);
     bool m_searchState = false;
     QFrame* m_addressToolBar;
-    DStateButton* m_backButton=NULL;
-    DStateButton* m_forwardButton=NULL;
+    QPushButton* m_backButton=NULL;
+    QPushButton* m_forwardButton=NULL;
     DStateButton* m_upButton=NULL;
     QPushButton* m_searchButton = NULL;
     DStateButton* m_refreshButton = NULL;

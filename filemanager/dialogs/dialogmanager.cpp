@@ -157,7 +157,7 @@ void DialogManager::showUrlWrongDialog(const DUrl &url)
 int DialogManager::showRenameNameSameErrorDialog(const QString &name, const FMEvent &event)
 {
     DDialog d(WindowManager::getWindowById(event.windowId()));;
-    d.setMessage(tr("\"%1\" already exists, please select a different name.").arg(name));
+    d.setTitle(tr("\"%1\" already exists, please select a different name.").arg(name));
     QStringList buttonTexts;
     buttonTexts << tr("Confirm");
     d.addButtons(buttonTexts);
