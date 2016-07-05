@@ -302,7 +302,7 @@ void DialogManager::showAboutDialog(const FMEvent &event)
     DAboutDialog *dialog = new DAboutDialog(icon,
                         icon,
                         tr("File Manager"),
-                        tr("1.0"),
+                        tr("Version:1.0"),
                         tr("File Manager is a file management tool independently "
                            "developed by Deepin Technology, featured with searching, "
                            "copying, trash, compression/decompression, file property "
