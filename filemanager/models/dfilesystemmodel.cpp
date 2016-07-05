@@ -350,6 +350,7 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
         return;
 
     fileService->addUrlMonitor(parentNode->fileInfo->fileUrl());
+    fileService->addUrlMonitor(parentNode->fileInfo->parentUrl());
 
     parentNode->populatedChildren = true;
 
@@ -471,13 +472,7 @@ QModelIndex DFileSystemModel::setRootUrl(const DUrl &fileUrl)
         if(fileUrl == m_rootFileUrl)
             return createIndex(m_rootNode, 0);
 
-        const QModelIndex &index = createIndex(m_rootNode, 0);
-
-        beginRemoveRows(index, 0, rowCount(index) - 1);
-
-        deleteNode((m_rootNode));
-
-        endRemoveRows();
+        clear();
     }
 
 //    m_rootNode = m_urlToNode.value(fileUrl);
@@ -778,10 +773,13 @@ void DFileSystemModel::onFileDeleted(const DUrl &fileUrl)
     if(!info)
         return;
 
-    if(info->isDir())
-        fileService->removeUrlMonitor(fileUrl);
-
 //    const FileSystemNodePointer &parentNode = m_urlToNode.value(info->parentUrl());
+    if (fileUrl == rootUrl()) {
+        emit rootUrlDeleted();
+
+        return clear();
+    }
+
     if (info->parentUrl() != rootUrl())
         return;
 
@@ -899,5 +897,19 @@ void DFileSystemModel::deleteNode(const FileSystemNodePointer &node)
 void DFileSystemModel::deleteNodeByUrl(const DUrl &url)
 {
     fileService->removeUrlMonitor(url);
-//    m_urlToNode.take(url);
+    //    m_urlToNode.take(url);
+}
+
+void DFileSystemModel::clear()
+{
+    if (!m_rootNode)
+        return;
+
+    const QModelIndex &index = createIndex(m_rootNode, 0);
+
+    beginRemoveRows(index, 0, rowCount(index) - 1);
+
+    deleteNode((m_rootNode));
+
+    endRemoveRows();
 }

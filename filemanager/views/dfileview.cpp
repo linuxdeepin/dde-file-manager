@@ -130,6 +130,8 @@ void DFileView::initConnects()
 
     connect(itemDelegate(), &DFileItemDelegate::commitData, this, &DFileView::handleCommitData);
     connect(model(), &DFileSystemModel::dataChanged, this, &DFileView::handleDataChanged);
+    connect(model(), &DFileSystemModel::rootUrlDeleted, this, &DFileView::updateContentLabel, Qt::QueuedConnection);
+    connect(model(), &DFileSystemModel::childrenUpdated, this, &DFileView::updateContentLabel, Qt::QueuedConnection);
 
     if (!m_cutUrlSet.capacity()) {
         m_cutUrlSet.reserve(1);
@@ -425,7 +427,7 @@ void DFileView::cd(const FMEvent &event)
         FMEvent e = event;
         e = currentUrl();
         emit fileSignalManager->currentUrlChanged(e);
-//        updateStatusBar();
+        updateStatusBar();
     }
 }
 
@@ -1334,6 +1336,8 @@ bool DFileView::setCurrentUrl(DUrl fileUrl)
 
     stopSearch();
 
+    disconnect(model(), &DFileSystemModel::rowsInserted, this, &DFileView::updateContentLabel);
+
 //    QModelIndex index = model()->index(fileUrl);
 
 //    if(!index.isValid())
@@ -1341,6 +1345,10 @@ bool DFileView::setCurrentUrl(DUrl fileUrl)
 
 //    model()->setActiveIndex(index);
     setRootIndex(index);
+
+    if (!model()->canFetchMore(index)) {
+        updateContentLabel();
+    }
 
     updateListHeaderViewProperty();
 
@@ -1447,6 +1455,30 @@ bool DFileView::isSelectionRectVisible() const
 bool DFileView::canShowSElectionRect() const
 {
     return m_selectionRectVisible && selectionMode() != NoSelection && selectionMode() != SingleSelection;
+}
+
+void DFileView::setContentLabel(const QString &text)
+{
+    if (text.isEmpty()) {
+        if (m_contentLabel) {
+            m_contentLabel->deleteLater();
+            m_contentLabel = Q_NULLPTR;
+        }
+
+        return;
+    }
+
+    if (!m_contentLabel) {
+        m_contentLabel = new QLabel(this);
+
+        m_contentLabel->show();
+        m_contentLabel.setCenterIn(this);
+        m_contentLabel->setObjectName("contentLabel");
+        m_contentLabel->setStyleSheet(this->styleSheet());
+    }
+
+    m_contentLabel->setText(text);
+    m_contentLabel->adjustSize();
 }
 
 void DFileView::updateHorizontalOffset()
@@ -1833,4 +1865,22 @@ void DFileView::onChildrenUpdated()
     }
 
     oldSelectedUrllist.clear();
+}
+
+void DFileView::updateContentLabel()
+{
+    int count = this->count();
+
+    if (count <= 0) {
+        const AbstractFileInfoPointer &fileInfo = fileService->createFileInfo(currentUrl());
+
+        if (fileInfo->exists())
+            setContentLabel(tr("Floder is empty"));
+        else
+            setContentLabel(tr("File has been moved or deleted"));
+    } else {
+        setContentLabel(QString());
+    }
+
+    connect(model(), &DFileSystemModel::rowsInserted, this, &DFileView::updateContentLabel);
 }

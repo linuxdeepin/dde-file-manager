@@ -107,6 +107,7 @@ public slots:
 
 signals:
     void childrenUpdated(DUrl parentUrl);
+    void rootUrlDeleted();
 
 private slots:
     void onFileCreated(const DUrl &fileUrl);
@@ -135,6 +136,7 @@ private:
 
     void deleteNode(const FileSystemNodePointer &node);
     void deleteNodeByUrl(const DUrl &url);
+    void clear();
 
     friend class FileSystemNode;
 };

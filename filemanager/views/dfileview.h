@@ -9,6 +9,8 @@
 #include <QActionGroup>
 #include <QContextMenuEvent>
 
+#include <anchors.h>
+
 #include "durl.h"
 
 class DFileSystemModel;
@@ -141,6 +143,8 @@ public slots:
     bool isSelectionRectVisible() const;
     bool canShowSElectionRect() const;
 
+    void setContentLabel(const QString &text);
+
 signals:
     void currentUrlChanged(const DUrl &url);
     void viewModeChanged(ViewMode viewMode);
@@ -207,6 +211,7 @@ private:
     void updateColumnWidth();
     void popupHeaderViewContextMenu(const QPoint &pos);
     void onChildrenUpdated();
+    void updateContentLabel();
 
     using DListView::setOrientation;
 
@@ -234,6 +239,8 @@ private:
     int lastVisibleColumn = -1;
 
     DUrlList oldSelectedUrllist;
+
+    Anchors<QLabel> m_contentLabel = Q_NULLPTR;
 };
 
 #endif // DFILEVIEW_H
