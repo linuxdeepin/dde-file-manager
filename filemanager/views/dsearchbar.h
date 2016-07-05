@@ -11,6 +11,7 @@
 #include <QStringListModel>
 #include <QStringList>
 #include <QDirModel>
+#include <QPushButton>
 #include "durl.h"
 
 class FMEvent;
@@ -47,6 +48,7 @@ private:
     QCompleter * m_completer;
     QCompleter * m_historyCompleter;
     QAction * m_clearAction;
+    QPushButton* m_inputClearButton;
     QStringListModel * m_stringListMode;
     QStringList m_historyList;
     QDirModel * m_dirModel;

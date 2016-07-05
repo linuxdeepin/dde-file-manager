@@ -62,8 +62,8 @@ private:
     QButtonGroup m_group;
     DUrl m_path;
     QString m_homePath;
-    DStateButton * m_leftArrow = NULL;
-    DStateButton * m_rightArrow = NULL;
+    QPushButton * m_leftArrow = NULL;
+    QPushButton * m_rightArrow = NULL;
     ListWidgetPrivate * m_listWidget = NULL;
     QList<QPushButton *> m_buttons;
     bool m_needArrows = false;

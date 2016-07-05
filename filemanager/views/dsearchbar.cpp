@@ -39,8 +39,13 @@ void DSearchBar::initUI()
     m_dirModel = new QDirModel;
     m_dirModel->setFilter(QDir::Dirs);
 
-    QIcon icon(":/images/images/light/appbar.close.png");
-    m_clearAction = new QAction(icon,"", this);
+    QIcon icon(":/icons/images/icons/input_normalclear_normal.png");
+    m_clearAction = new QAction(icon, "", this);
+
+    m_inputClearButton = new QPushButton(this);
+    m_inputClearButton->setFixedSize(14, 14);
+    m_inputClearButton->setObjectName("InputClearButton");
+    m_inputClearButton->hide();
 
     setFixedHeight(24);
     setObjectName("DSearchBar");
@@ -366,6 +371,7 @@ void DSearchBar::focusOutEvent(QFocusEvent *e)
 
 bool DSearchBar::event(QEvent *e)
 {
+//    qDebug() << e;
     if(e->type() == QEvent::KeyPress)
     {
         QKeyEvent * keyEvent = static_cast<QKeyEvent*> (e);
@@ -384,6 +390,7 @@ bool DSearchBar::event(QEvent *e)
 bool DSearchBar::eventFilter(QObject *obj, QEvent *e)
 {
     Q_UNUSED(obj);
+    qDebug() << obj;
     if(e->type() == QEvent::FocusOut)
     {
         m_list->hide();
@@ -421,6 +428,7 @@ bool DSearchBar::eventFilter(QObject *obj, QEvent *e)
 
 void DSearchBar::resizeEvent(QResizeEvent *e)
 {
+    m_inputClearButton->move(width() - 16, (height() - 16)/ 2);
     m_list->hide();
     QLineEdit::resizeEvent(e);
 }

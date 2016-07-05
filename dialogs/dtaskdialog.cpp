@@ -34,7 +34,7 @@ void MoveCopyTaskWidget::initUI(){
     m_cirleWidget->setLineWidth(2);
     m_closeButton = new QPushButton;
     m_closeButton->setObjectName("CloseButton");
-    m_closeButton->setFixedSize(25, 25);
+    m_closeButton->setFixedSize(27, 23);
     m_closeButton->setAttribute(Qt::WA_NoMousePropagation);
 
     m_messageLabel = new QLabel;
@@ -308,12 +308,12 @@ void DTaskDialog::initUI(){
 
     m_titleBarCloseButton = new QPushButton(this);
     m_titleBarCloseButton->setObjectName("CloseButton");
-    m_titleBarCloseButton->setFixedSize(25, 25);
+    m_titleBarCloseButton->setFixedSize(27, 23);
     m_titleBarCloseButton->setAttribute(Qt::WA_NoMousePropagation);
 
     m_titleBarMinimizeButton = new QPushButton(this);
     m_titleBarMinimizeButton->setObjectName("MinimizeButton");
-    m_titleBarMinimizeButton->setFixedSize(25, 25);
+    m_titleBarMinimizeButton->setFixedSize(27, 23);
     m_titleBarMinimizeButton->setAttribute(Qt::WA_NoMousePropagation);
 
 
@@ -332,6 +332,7 @@ void DTaskDialog::initUI(){
     m_titleLayout->addStretch();
     m_titleLayout->addWidget(m_titleBarMinimizeButton);
     m_titleLayout->addWidget(m_titleBarCloseButton);
+    m_titleLayout->setSpacing(0);
     m_titleLayout->setContentsMargins(0, 0, 0, 0);
     QVBoxLayout* titleBoxLayout = new QVBoxLayout;
     titleBoxLayout->addLayout(m_titleLayout);

@@ -16,7 +16,7 @@ DBaseDialog::DBaseDialog(QWidget *parent):DMoveableDialog(parent)
 {
     m_closeButton = new QPushButton(this);
     m_closeButton->setObjectName("CloseButton");
-    m_closeButton->setFixedSize(25, 25);
+    m_closeButton->setFixedSize(27, 23);
     m_closeButton->setAttribute(Qt::WA_NoMousePropagation);
     m_messageLabelMaxWidth = qApp->desktop()->availableGeometry().width() / 2 -
             100 - 2 * m_closeButton->width();

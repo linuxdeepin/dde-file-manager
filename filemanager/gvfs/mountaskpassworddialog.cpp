@@ -53,18 +53,22 @@ void MountAskPasswordDialog::initUI()
     usernameLable->setFixedWidth(80);
 
     m_usernameLineEdit = new QLineEdit;
+    m_usernameLineEdit->setFixedHeight(24);
 
     QLabel* domainLable = new QLabel(tr("Domain"));
     domainLable->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
     domainLable->setFixedWidth(80);
 
     m_domainLineEdit = new QLineEdit;
+    m_domainLineEdit->setFixedHeight(24);
 
     QLabel* passwordLable = new QLabel(tr("Password"));
     passwordLable->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
     passwordLable->setFixedWidth(80);
 
     m_passwordLineEdit = new DPasswordEdit;
+    m_passwordLineEdit->setFixedHeight(24);
+
 
     m_passwordButtonGroup = new QButtonGroup(this);
     m_passwordButtonGroup->setExclusive(true);
