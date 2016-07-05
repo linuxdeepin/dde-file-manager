@@ -750,6 +750,6 @@ void DFileItemDelegate::onEditWidgetFocusOut()
     if (qApp->focusWidget() && qApp->focusWidget()->window() == parent()->window()
             && qApp->focusWidget() != parent()) {
 
-        commitDataAndCloseActiveEditor();
+        hideAllIIndexWidget();
     }
 }
