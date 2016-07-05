@@ -27,7 +27,7 @@ public:
         Paste,
         Rename,
         Remove,
-        CreateSoftLink,
+        CreateSymlink,
         SendToDesktop,
         AddToBookMark,
         Delete,

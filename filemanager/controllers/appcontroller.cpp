@@ -197,7 +197,7 @@ void AppController::actionCompleteDeletion(const FMEvent &event)
     fileService->deleteFiles(urls, event);
 }
 
-void AppController::actionCreateSymLink(const FMEvent &event)
+void AppController::actionCreateSymlink(const FMEvent &event)
 {
 //    const DUrl& fileUrl = event.fileUrl();
 //    int windowId = event.windowId();
