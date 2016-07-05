@@ -63,13 +63,13 @@ void DToolBar::initAddressToolBar()
     QHBoxLayout * backForwardLayout = new QHBoxLayout;
 
 
-    m_backButton = new DStateButton(":/icons/images/icons/backward_normal.png", this);
+    m_backButton = new QPushButton(this);
     m_backButton->setObjectName("backButton");
     m_backButton->setFixedWidth(ButtonWidth);
     m_backButton->setFixedHeight(ButtonHeight);
     m_backButton->setDisabled(true);
     m_backButton->setFocusPolicy(Qt::NoFocus);
-    m_forwardButton = new DStateButton(":/icons/images/icons/forward_normal.png", this);
+    m_forwardButton = new QPushButton(this);
     m_forwardButton->setObjectName("forwardButton");
     m_forwardButton->setFixedWidth(ButtonWidth);
     m_forwardButton->setFixedHeight(ButtonHeight);

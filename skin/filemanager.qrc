@@ -315,5 +315,20 @@
         <file>images/icons/search_hover.png</file>
         <file>images/icons/search_normal.png</file>
         <file>images/icons/search_pressed.png</file>
+        <file>images/icons/icon_view_checked.png</file>
+        <file>images/icons/icon_view_hover.png</file>
+        <file>images/icons/icon_view_normal.png</file>
+        <file>images/icons/list_view_checked.png</file>
+        <file>images/icons/list_view_hover.png</file>
+        <file>images/icons/list_view_normal.png</file>
+        <file>images/icons/unmount_active.png</file>
+        <file>images/icons/unmount_hover.png</file>
+        <file>images/icons/unmount_normal.png</file>
+        <file>images/icons/unmount_press.png</file>
+        <file>images/icons/backward_hover.png</file>
+        <file>images/icons/forward_hover.png</file>
+        <file>images/icons/input_normalclear_hover.png</file>
+        <file>images/icons/input_normalclear_normal.png</file>
+        <file>images/icons/input_normalclear_press.png</file>
     </qresource>
 </RCC>
