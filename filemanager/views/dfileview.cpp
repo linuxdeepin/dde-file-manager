@@ -678,6 +678,10 @@ void DFileView::keyPressEvent(QKeyEvent *event)
         break;
     case Qt::ControlModifier | Qt::ShiftModifier:
         if (event->key() == Qt::Key_N) {
+            if (itemDelegate()->editingIndex().isValid())
+                return;
+
+            clearSelection();
             appController->actionNewFolder(fmevent);
 
             return;
