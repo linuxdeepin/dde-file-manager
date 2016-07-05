@@ -240,7 +240,7 @@ void FileMenuManager::initData()
     m_actionKeys[MenuAction::Paste] = QObject::tr("Paste");
     m_actionKeys[MenuAction::Rename] = QObject::tr("Rename");
     m_actionKeys[MenuAction::Remove] = QObject::tr("Remove");
-    m_actionKeys[MenuAction::CreateSoftLink] = QObject::tr("Create link");
+    m_actionKeys[MenuAction::CreateSymlink] = QObject::tr("Create link");
     m_actionKeys[MenuAction::SendToDesktop] = QObject::tr("Send to desktop");
     m_actionKeys[MenuAction::AddToBookMark] = QObject::tr("Add to bookmark");
     m_actionKeys[MenuAction::Delete] = QObject::tr("Throw to trash");

@@ -351,7 +351,7 @@ QVector<MenuAction> AbstractFileInfo::menuActionList(AbstractFileInfo::MenuType 
                        << MenuAction::OpenInNewWindow
                        << MenuAction::Separator
                        << MenuAction::Copy
-                       << MenuAction::CreateSoftLink
+                       << MenuAction::CreateSymlink
                        << MenuAction::SendToDesktop
                        << MenuAction::OpenInTerminal
                        << MenuAction::Separator
@@ -370,7 +370,7 @@ QVector<MenuAction> AbstractFileInfo::menuActionList(AbstractFileInfo::MenuType 
             actionKeys << MenuAction::Separator
                        << MenuAction::Cut
                        << MenuAction::Copy
-                       << MenuAction::CreateSoftLink
+                       << MenuAction::CreateSymlink
                        << MenuAction::SendToDesktop;
             if (isDir()){
                 actionKeys << MenuAction::AddToBookMark;
