@@ -108,6 +108,7 @@ QStringList FileMonitorWoker::addPathsAction(const QStringList &paths)
                                        | IN_CREATE
                                        | IN_DELETE
                                        | IN_DELETE_SELF
+                                       | IN_MOVE_SELF
                                        )
                                     : (0
                                        | IN_ATTRIB
@@ -115,6 +116,7 @@ QStringList FileMonitorWoker::addPathsAction(const QStringList &paths)
                                        | IN_MOVE
                                        | IN_MOVE_SELF
                                        | IN_DELETE_SELF
+                                       | IN_MOVE_SELF
                                        )));
         if (wd < 0) {
             perror("QInotifyFileSystemWatcherEngine::addPaths: inotify_add_watch failed");
@@ -240,24 +242,24 @@ void FileMonitorWoker::readFromInotify()
                 continue;
         }
 
-        if ((event.mask & (IN_DELETE_SELF | IN_MOVE_SELF | IN_UNMOUNT)) != 0) {
-            m_pathToID.remove(path);
-            m_idToPath.remove(id, getPathFromID(id));
-            if (!m_idToPath.contains(id))
-                inotify_rm_watch(m_inotifyFd, event.wd);
+//        if ((event.mask & (IN_DELETE_SELF | IN_MOVE_SELF | IN_UNMOUNT)) != 0) {
+//            m_pathToID.remove(path);
+//            m_idToPath.remove(id, getPathFromID(id));
+//            if (!m_idToPath.contains(id))
+//                inotify_rm_watch(m_inotifyFd, event.wd);
 
-            if (id < 0)
-                directoryChanged(path, true);
-            else
-                fileChanged(path, true);
-        } else {
+//            if (id < 0)
+//                directoryChanged(path, true);
+//            else
+//                fileChanged(path, true);
+//        } else {
 
             if (id < 0)
                 directoryChanged(path, false);
             else
                 fileChanged(path, false);
 
-        }
+//        }
 
     }
 }
@@ -303,7 +305,7 @@ QString FileMonitorWoker::getPathFromID(int id) const
 
 void FileMonitorWoker::handleInotifyEvent(const inotify_event *event)
 {
-//    qDebug() << "counter:" <<m_counter++ << event->wd << QString::number(event->mask, 16).toUpper();
+//    qDebug() << event->wd << QString::number(event->mask, 16).toUpper();
     int id = event->wd;
     QString path = getPathFromID(id);
     if (path.isEmpty()) {
@@ -332,7 +334,10 @@ void FileMonitorWoker::handleInotifyEvent(const inotify_event *event)
     }else if (event->mask & IN_ATTRIB) {
 //        qDebug() << event->mask << path;
         emit metaDataChanged(event->cookie, path);
+    }else if (event->mask & IN_MOVE_SELF){
+        qDebug() << "IN_MOVE_SELF" << path;
+        emit fileDeleted(event->cookie, path);
     }else{
-        //qDebug() << "unknown event";
+//        qDebug() << "unknown event:" << event->mask;
     }
 }
