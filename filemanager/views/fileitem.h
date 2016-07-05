@@ -17,6 +17,8 @@ public:
 
     void setOpacity(qreal opacity);
 
+    QSize sizeHint() const Q_DECL_OVERRIDE;
+
 signals:
     void inputFocusOut();
 

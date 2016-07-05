@@ -37,6 +37,7 @@ DFileItemDelegate::DFileItemDelegate(DFileView *parent) :
             parent->setIndexWidget(index, 0);
             expanded_item->hide();
             expanded_index = QModelIndex();
+            lastAndExpandedInde = QModelIndex();
             parent->edit(index);
         }
     });
@@ -73,9 +74,17 @@ void DFileItemDelegate::paint(QPainter *painter,
     painter->setOpacity(1);
 }
 
-QSize DFileItemDelegate::sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const
+QSize DFileItemDelegate::sizeHint(const QStyleOptionViewItem &, const QModelIndex &index) const
 {
-    return parent()->itemSizeHint();
+    const QSize &size = parent()->itemSizeHint();
+
+    if (index == lastAndExpandedInde) {
+        expanded_item->setFixedWidth(size.width());
+
+        return expanded_item->size();
+    }
+
+    return size;
 }
 
 QWidget *DFileItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &, const QModelIndex &index) const
@@ -322,6 +331,10 @@ void DFileItemDelegate::paintIconItem(bool isDragMode, QPainter *painter,
 
             setEditorData(expanded_item, index);
             parent()->setIndexWidget(index, expanded_item);
+
+            if (parent()->indexOfRow(index) == parent()->rowCount() - 1) {
+                lastAndExpandedInde = index;
+            }
 
             return;
         }
@@ -644,6 +657,7 @@ void DFileItemDelegate::hideExpandedIndex()
         parent()->setIndexWidget(expanded_index, 0);
         expanded_item->hide();
         expanded_index = QModelIndex();
+        lastAndExpandedInde = QModelIndex();
     }
 }
 

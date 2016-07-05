@@ -66,6 +66,13 @@ public:
     void setColumnWidth(int column, int width);
     int columnCount() const;
 
+    int rowCount() const;
+
+    /// icon view row index count
+    int itemCountForRow() const;
+    inline int indexOfRow(const QModelIndex &index) const
+    { return index.row() / itemCountForRow();}
+
     QList<int> columnRoleList() const;
 
     int selectedIndexCount() const

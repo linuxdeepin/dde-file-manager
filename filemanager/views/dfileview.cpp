@@ -258,6 +258,24 @@ int DFileView::columnCount() const
     return m_headerView ? m_headerView->count() : 1;
 }
 
+int DFileView::rowCount() const
+{
+    int count = this->count();
+    int itemCountForRow = this->itemCountForRow();
+
+    return count / itemCountForRow + int(count % itemCountForRow > 0);
+}
+
+int DFileView::itemCountForRow() const
+{
+    if (!isIconViewMode())
+        return 1;
+
+    int itemWidth = itemSizeHint().width() + ICON_VIEW_SPACING * 2;
+
+    return (width() - ICON_VIEW_SPACING * 2.5) / itemWidth;
+}
+
 QList<int> DFileView::columnRoleList() const
 {
     return m_columnRoles;
