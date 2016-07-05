@@ -546,7 +546,8 @@ bool AbstractFileInfo::isEmptyFloder() const
     if (!isDir())
         return false;
 
-    DDirIteratorPointer it = FileServices::instance()->createDirIterator(fileUrl(), QDir::AllEntries | QDir::NoDotAndDotDot, QDirIterator::NoIteratorFlags);
+    DDirIteratorPointer it = FileServices::instance()->createDirIterator(fileUrl(), QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System,
+                                                                         QDirIterator::NoIteratorFlags);
 
     return it && !it->hasNext();
 }
