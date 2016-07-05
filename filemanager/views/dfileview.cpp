@@ -1793,7 +1793,7 @@ void DFileView::updateItemSizeHint()
 
         m_itemSizeHint = QSize(width, width * 1.1);
     } else {
-        m_itemSizeHint = QSize(-1, 30);
+        m_itemSizeHint = QSize(-1, iconSize().height() * 1.1);
     }
 }
 
