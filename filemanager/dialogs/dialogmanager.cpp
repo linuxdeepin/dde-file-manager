@@ -153,10 +153,29 @@ void DialogManager::showUrlWrongDialog(const DUrl &url)
     d.exec();
 }
 
+int DialogManager::showRunExcutableDialog(const DUrl &url)
+{
+    QString fileDisplayName = QFileInfo(url.path()).fileName();
+    QString message = tr("Do you wan to run %1 or display its content?").arg(fileDisplayName);
+    QString tipMessage = tr("It is an executable text file.");
+    QStringList buttonKeys, buttonTexts;
+    buttonKeys << "OptionCancel" << "OptionRun" << "OptionRunInTerminal" << "OptionDisplay";
+    buttonTexts << tr("Cancel") << tr("Run") << tr("Run in terminal") << tr("Display");
+    DDialog d;
+    d.setIcon(fileIconProvider->getDesktopIcon("application-x-shellscript", 256));
+    d.setTitle(message);
+    d.setMessage(tipMessage);
+    d.addButtons(buttonTexts);
+    d.setDefaultButton(2);
+    d.setFixedWidth(480);
+    int code = d.exec();
+    return code;
+}
+
 
 int DialogManager::showRenameNameSameErrorDialog(const QString &name, const FMEvent &event)
 {
-    DDialog d(WindowManager::getWindowById(event.windowId()));;
+    DDialog d(WindowManager::getWindowById(event.windowId()));
     d.setTitle(tr("\"%1\" already exists, please select a different name.").arg(name));
     QStringList buttonTexts;
     buttonTexts << tr("Confirm");
@@ -254,8 +273,7 @@ void DialogManager::showPropertyDialog(const FMEvent &event)
 
                 connect(dialog, &PropertyDialog::closed, this, &DialogManager::removePropertyDialog);
 //                connect(dialog, &PropertyDialog::raised, this, &DialogManager::raiseAllPropertyDialog);
-//                QTimer::singleShot(100, dialog, &PropertyDialog::raise);
-                dialog->raise();
+                QTimer::singleShot(100, dialog, &PropertyDialog::raise);
             }
         }
 
