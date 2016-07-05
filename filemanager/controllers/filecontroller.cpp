@@ -366,6 +366,11 @@ bool FileController::openFileLocation(const DUrl &fileUrl, bool &accepted) const
 
     if(file.exists()) {
         DUrl parentUrl = DUrl::fromLocalFile(file.absolutePath());
+        QUrlQuery query;
+
+        query.addQueryItem("selectUrl", fileUrl.toString());
+        parentUrl.setQuery(query);
+
         fileService->openNewWindow(parentUrl);
     } else {
         return false;

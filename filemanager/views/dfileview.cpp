@@ -160,6 +160,8 @@ void DFileView::initConnects()
 
         update();
     });
+
+    connect(model(), &DFileSystemModel::childrenUpdated, this, &DFileView::onChildrenUpdated);
 }
 
 void DFileView::initActions()
@@ -644,8 +646,6 @@ void DFileView::keyPressEvent(QKeyEvent *event)
 
             itemDelegate()->hideAllIIndexWidget();
             clearSelection();
-
-            connect(model(), &DFileSystemModel::childrenUpdated, this, &DFileView::onChildrenUpdated);
 
             model()->toggleHiddenFiles(fmevent.fileUrl());
 
@@ -1360,6 +1360,11 @@ bool DFileView::setCurrentUrl(DUrl fileUrl)
 
     setSelectionMode(info->supportSelectionMode());
 
+    const DUrl &defaultSelectUrl = DUrl(QUrlQuery(fileUrl.query()).queryItemValue("selectUrl"));
+
+    if (defaultSelectUrl.isValid())
+        oldSelectedUrllist << defaultSelectUrl;
+
     return true;
 }
 
@@ -1820,8 +1825,6 @@ void DFileView::onChildrenUpdated()
     for (const DUrl &url : oldSelectedUrllist) {
         selectionModel()->select(model()->index(url), QItemSelectionModel::SelectCurrent);
     }
-
-    disconnect(model(), &DFileSystemModel::childrenUpdated, this, &DFileView::onChildrenUpdated);
 
     oldSelectedUrllist.clear();
 }
