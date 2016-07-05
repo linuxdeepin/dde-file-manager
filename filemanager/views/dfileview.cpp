@@ -409,21 +409,22 @@ void DFileView::preHandleCd(const FMEvent &event)
 
 void DFileView::cd(const FMEvent &event)
 {
-    if (!event.fileUrl().isSearchFile()){
-        setFocus();
-    }
-    itemDelegate()->hideAllIIndexWidget();
-    clearSelection();
-    if(event.windowId() != windowId())
+    if (event.windowId() != windowId())
         return;
 
     const DUrl &fileUrl = event.fileUrl();
 
-    if(fileUrl.isEmpty())
+    if (fileUrl.isEmpty())
         return;
 
-    if(setCurrentUrl(fileUrl))
-    {
+    itemDelegate()->hideAllIIndexWidget();
+    clearSelection();
+
+    if (!event.fileUrl().isSearchFile()){
+        setFocus();
+    }
+
+    if (setCurrentUrl(fileUrl)) {
         FMEvent e = event;
         e = currentUrl();
         emit fileSignalManager->currentUrlChanged(e);
@@ -1369,7 +1370,7 @@ bool DFileView::setCurrentUrl(DUrl fileUrl)
     } 
     //emit currentUrlChanged(fileUrl);
 
-    if (focusWidget()->window() == window() && fileUrl.isLocalFile())
+    if (focusWidget() && focusWidget()->window() == window() && fileUrl.isLocalFile())
         QDir::setCurrent(fileUrl.toLocalFile());
 
     setSelectionMode(info->supportSelectionMode());
