@@ -8,7 +8,7 @@
 #include "../models/abstractfileinfo.h"
 #include "../models/fileinfo.h"
 #include "../models/trashfileinfo.h"
-
+#include "../shutil/fileutils.h"
 #include <QUrl>
 #include <QDebug>
 #include <QtConcurrent/QtConcurrentRun>
@@ -98,6 +98,10 @@ void FileServices::clearFileUrlHandler(const QString &scheme, const QString &hos
 
 bool FileServices::openFile(const DUrl &fileUrl) const
 {
+    if (FileUtils::isExecutableScript(fileUrl.path())){
+        int code = dialogManager->showRunExcutableDialog(fileUrl);
+        return FileUtils::openExcutableFile(fileUrl.path(), code);
+    };
     TRAVERSE(fileUrl, {
                  bool ok = controller->openFile(fileUrl, accepted);
 
@@ -569,6 +573,7 @@ QString FileServices::getSymlinkFileName(const DUrl &fileUrl)
 void FileServices::openUrl(const FMEvent &event) const
 {
     const AbstractFileInfoPointer &fileInfo = createFileInfo(event.fileUrl());
+
     if(fileInfo && fileInfo->isDir()) {
         fileSignalManager->requestChangeCurrentUrl(event);
     }else if (deviceListener->isDeviceFolder(event.fileUrl().path())){

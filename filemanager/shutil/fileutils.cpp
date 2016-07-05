@@ -8,6 +8,7 @@
 #include <QFileDialog>
 #include <QCryptographicHash>
 #include <QDebug>
+#include <QDesktopServices>
 #include <QtMath>
 #include "../views/windowmanager.h"
 #include "standardpath.h"
@@ -393,6 +394,15 @@ void FileUtils::cpTemplateFileToTargetDir(const QString& targetdir, const QStrin
     QProcess::startDetached("cp", args);
 }
 
+bool FileUtils::openFile(const QString &filePath)
+{
+    if (QFileInfo(filePath).suffix() == "desktop"){
+        return FileUtils::openDesktopFile(filePath);
+    }
+
+    return QDesktopServices::openUrl(QUrl::fromLocalFile(filePath));
+}
+
 bool FileUtils::openDesktopFile(const QString &filePath)
 {
 
@@ -556,4 +566,72 @@ QString FileUtils::md5(const QString &fpath)
     }
 
     return QCryptographicHash::hash(fpath.toLocal8Bit(), QCryptographicHash::Md5).toHex();
+}
+
+bool FileUtils::isFileExecutable(const QString &path)
+{
+    QFile file(path);
+    return (file.permissions() & QFile::ReadUser) && (file.permissions() & QFile::ExeUser);
+}
+
+QString FileUtils::getFileMimetype(const QString &path)
+{
+    GFile *file;
+    GFileInfo *info;
+    QString result;
+
+    file = g_file_new_for_path(path.toUtf8());
+    info = g_file_query_info(file, "standard::content-type", G_FILE_QUERY_INFO_NONE, NULL, NULL);
+    result = g_file_info_get_content_type(info);
+
+    g_object_unref(file);
+
+    return result;
+}
+
+bool FileUtils::isExecutableScript(const QString &path)
+{
+    QString _path = path;
+    QFileInfo info(path);
+    QString mimetype = getFileMimetype(path);
+    qDebug() << info.isSymLink() << mimetype;
+    if (info.isSymLink()){
+        _path = QFile(path).symLinkTarget();
+        mimetype = getFileMimetype(path);
+    }
+
+    if (mimetype.startsWith("text/") ||
+            (mimetype == "application/x-shellscript") ||
+            (mimetype == "application/x-executable")) {
+        return isFileExecutable(_path);
+    }
+
+    return false;
+}
+
+bool FileUtils::openExcutableFile(const QString &path, int flag)
+{
+    bool result = false;
+    switch (flag) {
+    case 0:
+
+        break;
+    case 1:
+        result = QProcess::startDetached(path);
+        break;
+    case 2:{
+        QStringList args;
+        args << "-e" << path;
+        result = QProcess::startDetached("x-terminal-emulator", args);
+        qDebug() << result;
+        break;
+    }
+    case 3:
+        result = openFile(path);
+        break;
+    default:
+        break;
+    }
+
+    return result;
 }

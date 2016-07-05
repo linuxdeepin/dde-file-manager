@@ -39,6 +39,7 @@ public:
     static QString newDocmentName(const QString& targetdir, const QString& baseName, const QString& suffix);
     static void cpTemplateFileToTargetDir(const QString& targetdir, const QString& baseName, const QString& suffix);
 
+    static bool openFile(const QString& filePath);
     static bool openDesktopFile(const QString& filePath);
     static bool openFileByApp(const QString& filePath, const QString& app);
 
@@ -52,6 +53,10 @@ public:
 
     static QString md5(const QString& data);
 
+    static bool isFileExecutable(const QString& path);
+    static QString getFileMimetype(const QString& path);
+    static bool isExecutableScript(const QString& path);
+    static bool openExcutableFile(const QString& path, int flag);
 };
 
 #endif // FILEUTILS_H
