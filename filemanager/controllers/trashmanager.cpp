@@ -8,6 +8,8 @@
 
 #include "../../filemonitor/filemonitor.h"
 
+#include <QDebug>
+
 class TrashDirIterator : public DDirIterator
 {
 public:
@@ -101,23 +103,18 @@ const QList<AbstractFileInfoPointer> TrashManager::getChildren(const DUrl &fileU
 
     const QString &path = fileUrl.path();
 
-    QDir dir(TRASHINFOPATH + path);
+    QDir dir(TRASHFILEPATH + path);
     QList<AbstractFileInfoPointer> infoList;
 
     if(dir.exists()) {
         QFileInfoList fileInfoList = dir.entryInfoList(filter | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden);
 
+        qDebug() << dir.path() << fileInfoList.count();
+
         for(const QFileInfo fileInfo : fileInfoList) {
-            QString fileBaseName = fileInfo.absoluteFilePath().mid((TRASHINFOPATH).size());
+            const DUrl &fileUrl = DUrl::fromTrashFile(fileInfo.absoluteFilePath().mid((TRASHFILEPATH).size()));
 
-            if (fileBaseName.endsWith(".trashinfo"))
-                fileBaseName.chop(10);
-
-            const DUrl &fileUrl = DUrl::fromTrashFile(fileBaseName);
-            const AbstractFileInfoPointer trashInfo(new TrashFileInfo(fileUrl));
-
-            if (trashInfo->exists() || trashInfo->isSymLink())
-                infoList.append(trashInfo);
+            infoList.append(AbstractFileInfoPointer(new TrashFileInfo(fileUrl)));
         }
     }
 
