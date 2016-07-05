@@ -70,6 +70,7 @@ private:
     mutable QHash<QString, QTextDocument*> m_documentMap;
     mutable QModelIndex expanded_index;
     mutable QModelIndex editing_index;
+    mutable QModelIndex lastAndExpandedInde;
 
     void onEditWidgetFocusOut();
 

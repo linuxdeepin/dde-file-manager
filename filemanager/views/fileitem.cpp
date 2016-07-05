@@ -95,6 +95,11 @@ void FileIconItem::setOpacity(qreal opacity)
     opacityEffect->setOpacity(opacity);
 }
 
+QSize FileIconItem::sizeHint() const
+{
+    return QSize(width(), icon->height() + edit->height());
+}
+
 bool FileIconItem::event(QEvent *ee)
 {
     if(ee->type() == QEvent::DeferredDelete) {
