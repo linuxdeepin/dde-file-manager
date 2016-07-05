@@ -17,6 +17,7 @@
 #define RIGHT_PADDING 10
 #define ICON_MODE_RECT_RADIUS 4
 #define LIST_MODE_RECT_RADIUS 2
+#define LIST_EDITER_HEIGHT 22
 #define SELECTED_BACKGROUND_COLOR "#2da6f7"
 
 DFileItemDelegate::DFileItemDelegate(DFileView *parent) :
@@ -102,7 +103,7 @@ QWidget *DFileItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
         return item;
     } else {
         QLineEdit *edit = new QLineEdit(parent);
-        edit->setFixedHeight(22);
+        edit->setFixedHeight(LIST_EDITER_HEIGHT);
 
         connect(edit, &QLineEdit::destroyed, this, [this] {
             editing_index = QModelIndex();
@@ -184,7 +185,7 @@ void DFileItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
         column_x = parent()->columnWidth(0) - parent()->viewportMargins().left();
 
         rect.setRight(column_x);
-        rect.setTop(opt_rect.y() + (opt_rect.height() - 22)/2);
+        rect.setTop(opt_rect.y() + (opt_rect.height() - LIST_EDITER_HEIGHT) / 2);
 
         editor->setGeometry(rect);
 
