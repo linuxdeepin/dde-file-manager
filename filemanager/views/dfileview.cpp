@@ -776,6 +776,7 @@ void DFileView::mousePressEvent(QMouseEvent *event)
 
         if (isEmptyArea) {
             if (!Global::keyCtrlIsPressed()) {
+                itemDelegate()->hideExpandedIndex();
                 clearSelection();
             }
 
@@ -793,6 +794,7 @@ void DFileView::mousePressEvent(QMouseEvent *event)
         const QModelIndex &index = indexAt(event->pos());
 
         if (isEmptyArea  && !selectionModel()->isSelected(index)) {
+            itemDelegate()->hideExpandedIndex();
             clearSelection();
             showEmptyAreaMenu();
         } else {
