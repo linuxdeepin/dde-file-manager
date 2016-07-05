@@ -823,13 +823,13 @@ bool FileJob::writeTrashInfo(const QString &fileBaseName, const QString &path, c
         return false;
     }
 
-    qint64 size = metadata.write(
-        QString(
-            "[Trash Info]\n"
-            "Path=%1\n"
-            "DeletionDate=%2\n"
-        ).arg( path ).arg( time ).toLocal8Bit()
-    );
+    QByteArray data;
+
+    data.append("[Trash Info]\n");
+    data.append("Path=").append(path.toUtf8().toPercentEncoding("/")).append("\n");
+    data.append("DeletionDate=").append(time).append("\n");
+
+    qint64 size = metadata.write(data);
 
     metadata.close();
 
