@@ -677,7 +677,7 @@ void DFileItemDelegate::commitDataAndCloseActiveEditor()
     QWidget *editor = parent()->indexWidget(editing_index);
 
     QMetaObject::invokeMethod(this, "_q_commitDataAndCloseEditor",
-                              Qt::QueuedConnection, Q_ARG(QWidget*, editor));
+                              Qt::DirectConnection, Q_ARG(QWidget*, editor));
 }
 
 QModelIndex DFileItemDelegate::editingIndex() const
@@ -749,6 +749,7 @@ void DFileItemDelegate::onEditWidgetFocusOut()
 {
     if (qApp->focusWidget() && qApp->focusWidget()->window() == parent()->window()
             && qApp->focusWidget() != parent()) {
-        hideAllIIndexWidget();
+
+        commitDataAndCloseActiveEditor();
     }
 }
