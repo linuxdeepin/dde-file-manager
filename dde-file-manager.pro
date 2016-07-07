@@ -243,6 +243,7 @@ INCLUDEPATH += filemanager/models
 
 BINDIR = $$PREFIX/bin
 APPSHAREDIR = $$PREFIX/share/dde-file-manager
+HELPSHAREDIR = $$PREFIX/share/dman/dde-file-manager
 DEFINES += APPSHAREDIR=\\\"$$APPSHAREDIR\\\"
 
 target.path = $$BINDIR
@@ -274,7 +275,7 @@ CONFIG(release, debug|release) {
 translations.path = $$APPSHAREDIR/translations
 translations.files = translations/*.qm
 
-INSTALLS += target desktop templateFiles translations mimetypeFiles
+help.path = $$HELPSHAREDIR
+help.files = help/*
 
-
-
+INSTALLS += target desktop templateFiles translations mimetypeFiles help
