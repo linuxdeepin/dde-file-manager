@@ -729,6 +729,10 @@ void DFileSystemModel::onFileCreated(const DUrl &fileUrl)
         return;
 
 //    const FileSystemNodePointer &parentNode = m_urlToNode.value(info->parentUrl());
+    if (fileUrl == rootUrl()) {
+        return refresh();
+    }
+
     if (info->parentUrl() != rootUrl())
         return;
 
