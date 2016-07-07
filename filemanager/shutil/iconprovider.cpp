@@ -23,9 +23,12 @@
 #undef signals
 extern "C" {
   #include <gtk/gtk.h>
+  #include <gio/gio.h>
 }
 #define signals public
 
+
+static GtkIconTheme* them = NULL;
 
 IconProvider::IconProvider(QObject *parent) : QObject(parent)
 {
@@ -47,6 +50,93 @@ IconProvider::~IconProvider()
 
 }
 
+char *IconProvider::icon_name_to_path(const char *name, int size)
+{
+    qDebug() << name;
+    if (g_path_is_absolute(name))
+            return g_strdup(name);
+
+    g_return_val_if_fail(name != NULL, NULL);
+
+    int pic_name_len = strlen(name);
+    const char* ext = strrchr(name, '.');
+    if (ext != NULL) {
+        if (g_ascii_strcasecmp(ext+1, "png") == 0 || g_ascii_strcasecmp(ext+1, "svg") == 0 || g_ascii_strcasecmp(ext+1, "jpg") == 0) {
+            pic_name_len = ext - name;
+            g_debug("desktop's Icon name should an absoulte path or an basename without extension");
+        }
+    }
+
+    // In pratice, default icon theme may not gets the right icon path when program starting.
+    if (them == NULL)
+        them = gtk_icon_theme_new();
+    char* icon_theme_name = get_icon_theme_name();
+    gtk_icon_theme_set_custom_theme(them, icon_theme_name);
+    g_free(icon_theme_name);
+
+    char* pic_name = g_strndup(name, pic_name_len);
+    GtkIconInfo* info = gtk_icon_theme_lookup_icon(them, pic_name, size, GTK_ICON_LOOKUP_GENERIC_FALLBACK);
+
+    if (info == NULL) {
+        g_warning("get gtk icon theme info failed for %s", pic_name);
+        g_free(pic_name);
+        return NULL;
+    }
+    g_free(pic_name);
+
+    char* path = g_strdup(gtk_icon_info_get_filename(info));
+
+#if GTK_MAJOR_VERSION >= 3
+    g_object_unref(info);
+#elif GTK_MAJOR_VERSION == 2
+    gtk_icon_info_free(info);
+#endif
+    g_debug("get icon from icon theme is: %s", path);
+    return path;
+}
+
+char *IconProvider::get_icon_for_file(char *giconstr, int size)
+{
+    if (giconstr == NULL) {
+        return NULL;
+    }
+
+    char* icon = NULL;
+    char** icon_names = g_strsplit(giconstr, " ", -1);
+
+    for (int i = 0; icon_names[i] != NULL && icon == NULL; ++i) {
+        qDebug() << icon_names[i];
+        icon = icon_name_to_path(icon_names[i], size);
+    }
+
+    g_strfreev(icon_names);
+
+    return icon;
+}
+
+char *IconProvider::get_icon_theme_name()
+{
+    GtkSettings* gs = gtk_settings_get_default();
+    char* name = NULL;
+    g_object_get(gs, "gtk-icon-theme-name", &name, NULL);
+    return name;
+}
+
+QString IconProvider::getFileIcon(const QString &path, int size)
+{
+    GFile* gfile = g_file_new_for_commandline_arg(path.toUtf8().constData());
+    if (gfile){
+        GFileInfo* gfileinfo = g_file_query_info(gfile, G_FILE_ATTRIBUTE_STANDARD_ICON, G_FILE_QUERY_INFO_NONE, NULL, NULL);
+        if (gfileinfo){
+            GIcon* icon = g_file_info_get_icon(gfileinfo);
+            gchar* iconString = g_icon_to_string(icon);
+            char* fileIcon = get_icon_for_file(iconString, size);
+            return QString(fileIcon);
+        }
+    }
+    return QString("");
+}
+
 QPixmap IconProvider::getIconPixmap(QString iconPath, int width, int height)
 {
     QPixmap pixmap(width, height);
@@ -62,7 +152,7 @@ QPixmap IconProvider::getIconPixmap(QString iconPath, int width, int height)
         }
     } else {
         // try to read the iconPath as a icon name.
-        QString path = getThemeIconPath(iconPath);
+        QString path =  getThemeIconPath(iconPath);
         qDebug() << path << path.isEmpty();
         if (path.isEmpty())
             path = getThemeIconPath("application-default-icon");
@@ -84,48 +174,52 @@ QPixmap IconProvider::getIconPixmap(QString iconPath, int width, int height)
     return pixmap;
 }
 
+
 QString IconProvider::getThemeIconPath(QString iconName, int size)
 {
     QByteArray bytes = iconName.toUtf8();
     const char *name = bytes.constData();
 
-//    GtkIconTheme* theme = gtk_icon_theme_get_default();
+    if (g_path_is_absolute(name))
+        return QString(g_strdup(name));
 
-//    GtkSettings* gs = gtk_settings_get_default();
-//    char* aname = NULL;
-//    g_object_get(gs, "gtk-icon-theme-name", &aname, NULL);
+    g_return_val_if_fail(name != NULL, NULL);
 
-//    auto theme = gtk_icon_theme_new();
-//    gtk_icon_theme_set_custom_theme(theme, aname);
-
-//    g_free(aname);
-
-//    GtkIconInfo* info = gtk_icon_theme_lookup_icon(theme, name, size, GTK_ICON_LOOKUP_GENERIC_FALLBACK);
-//    g_object_unref(theme);
-//    if (info) {
-//        char* path = g_strdup(gtk_icon_info_get_filename(info));
-//#if GTK_MAJOR_VERSION >= 3
-//        g_object_unref(info);
-//#elif GTK_MAJOR_VERSION == 2
-//        gtk_icon_info_free(info);
-//#endif
-//        return QString(path);
-//    } else {
-        GtkIconTheme* theme = gtk_icon_theme_get_default();
-        GtkIconInfo* info = gtk_icon_theme_lookup_icon(theme, name, size, GTK_ICON_LOOKUP_GENERIC_FALLBACK);
-        if (info) {
-            char* path = g_strdup(gtk_icon_info_get_filename(info));
-    #if GTK_MAJOR_VERSION >= 3
-            g_object_unref(info);
-    #elif GTK_MAJOR_VERSION == 2
-            gtk_icon_info_free(info);
-    #endif
-            return QString(path);
-        } else {
-//            qDebug() << iconName << "no info";
+    int pic_name_len = strlen(name);
+    const char* ext = strrchr(name, '.');
+    if (ext != NULL) {
+        if (g_ascii_strcasecmp(ext+1, "png") == 0 || g_ascii_strcasecmp(ext+1, "svg") == 0 || g_ascii_strcasecmp(ext+1, "jpg") == 0) {
+            pic_name_len = ext - name;
+            g_debug("desktop's Icon name should an absoulte path or an basename without extension");
         }
-        return "";
-//    }
+    }
+
+    // In pratice, default icon theme may not gets the right icon path when program starting.
+    if (them == NULL)
+        them = gtk_icon_theme_new();
+    char* icon_theme_name = get_icon_theme_name();
+    gtk_icon_theme_set_custom_theme(them, icon_theme_name);
+    g_free(icon_theme_name);
+
+    char* pic_name = g_strndup(name, pic_name_len);
+    GtkIconInfo* info = gtk_icon_theme_lookup_icon(them, pic_name, size, GTK_ICON_LOOKUP_GENERIC_FALLBACK);
+
+    if (info == NULL) {
+        g_warning("get gtk icon theme info failed for %s", pic_name);
+        g_free(pic_name);
+        return QString("");
+    }
+    g_free(pic_name);
+
+    char* path = g_strdup(gtk_icon_info_get_filename(info));
+
+#if GTK_MAJOR_VERSION >= 3
+    g_object_unref(info);
+#elif GTK_MAJOR_VERSION == 2
+    gtk_icon_info_free(info);
+#endif
+    g_debug("get icon from icon theme is: %s", path);
+    return QString(path);
 }
 
 
@@ -233,6 +327,7 @@ void IconProvider::setDesktopIconPaths(const QMap<QString, QString> &iconPaths)
 
 QIcon IconProvider::findIcon(const QString &absoluteFilePath, const QString &mimeType)
 {
+//    qDebug() << absoluteFilePath << FileUtils::getFileMimetype(absoluteFilePath) << getMimeTypeByFile(absoluteFilePath) << mimeType << getFileIcon(absoluteFilePath, 256);
     QIcon theIcon;
     QString _mimeType = mimeType;
 
@@ -254,6 +349,16 @@ QIcon IconProvider::findIcon(const QString &absoluteFilePath, const QString &mim
         return theIcon;
 
     QString iconName = _mimeType;
+
+    /*todo add whitelists for especial mimetype*/
+    if (iconName == "application/wps-office.docx"){
+        iconName = "wps-office-dot";
+    }else if (iconName == "application/vnd.debian.binary-package"){
+        iconName = "application-x-deb";
+    }else if (iconName == "application/vnd.ms-htmlhelp"){
+        iconName = "chmsee";
+    }
+
     QString path = getThemeIconPath(iconName.replace("/", "-"), 256);
 
     if (path.isEmpty()) {
@@ -276,6 +381,7 @@ QString IconProvider::getMimeTypeByFile(const QString &file)
     }else{
         QMimeType mimeType = m_mimeDatabase->mimeTypeForFile(file);
         mimeTypeName = mimeType.name();
+        qDebug() << mimeType.aliases();
     }
     return mimeTypeName;
 }
