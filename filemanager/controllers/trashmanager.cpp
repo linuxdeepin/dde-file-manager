@@ -109,8 +109,6 @@ const QList<AbstractFileInfoPointer> TrashManager::getChildren(const DUrl &fileU
     if(dir.exists()) {
         QFileInfoList fileInfoList = dir.entryInfoList(filter | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden);
 
-        qDebug() << dir.path() << fileInfoList.count();
-
         for(const QFileInfo fileInfo : fileInfoList) {
             const DUrl &fileUrl = DUrl::fromTrashFile(fileInfo.absoluteFilePath().mid((TRASHFILEPATH).size()));
 

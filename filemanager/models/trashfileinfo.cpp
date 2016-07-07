@@ -263,7 +263,7 @@ void TrashFileInfo::updateInfo()
         if (displayDeletionDate.isEmpty())
             displayDeletionDate = setting.value("DeletionDate").toString();
     } else {
-        m_displayName = QObject::tr("Trash");
+        m_displayName = fileName();
     }
 }
 

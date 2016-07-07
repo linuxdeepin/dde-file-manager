@@ -2,12 +2,14 @@
 #include "../app/global.h"
 #include "../app/filesignalmanager.h"
 #include "../shutil/fileutils.h"
+
 #include <QFile>
 #include <QThread>
 #include <QDir>
 #include <QDebug>
 #include <QDateTime>
 #include <QElapsedTimer>
+#include <QDirIterator>
 
 QMap<DUrl, int> FileJob::SelectedFiles;
 
@@ -115,7 +117,9 @@ void FileJob::doDelete(const QList<QUrl> &files)
         if (info.isFile() || info.isSymLink()){
             deleteFile(url.path());
         }else{
-            deleteDir(url.path());
+            if (!deleteDir(url.path())) {
+                QProcess::execute("rm -r \"" + url.path().toUtf8() + "\"");
+            }
         }
     }
     if(m_isJobAdded)
@@ -695,39 +699,38 @@ bool FileJob::deleteFile(const QString &file)
 
 bool FileJob::deleteDir(const QString &dir)
 {
-    if(m_status == FileJob::Cancelled)
-    {
+    if (m_status == FileJob::Cancelled) {
         emit result("cancelled");
         return false;
     }
-    QDir sourceDir(dir);
-    QFileInfoList fileInfoList = sourceDir.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System);
-    foreach(QFileInfo fileInfo, fileInfoList)
-    {
-        if(fileInfo.fileName() == "." || fileInfo.fileName() == "..")
-            continue;
 
-        if(fileInfo.isFile() || fileInfo.isSymLink())
-        {
-            if(!deleteFile(fileInfo.filePath()))
-            {
+    QDir sourceDir(dir);
+
+    sourceDir.setFilter(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System | QDir::AllDirs);
+
+    QDirIterator iterator(sourceDir, QDirIterator::Subdirectories);
+
+    while (iterator.hasNext()) {
+        const QFileInfo &fileInfo = iterator.next();
+
+        if (fileInfo.isFile() || fileInfo.isSymLink()) {
+            if (!deleteFile(fileInfo.filePath())) {
                 emit error("Unable to remove file");
                 return false;
             }
-        }
-        else
-        {
-            if(!deleteDir(fileInfo.filePath()))
+        } else {
+            if (!deleteDir(fileInfo.filePath()))
                 return false;
         }
     }
 
-    if(!sourceDir.rmdir(QDir::toNativeSeparators(sourceDir.path())))
-    {
+    if (!sourceDir.rmdir(QDir::toNativeSeparators(sourceDir.path()))) {
         qDebug() << "Unable to remove dir:" << sourceDir.path();
         emit("Unable to remove dir: " + sourceDir.path());
+
         return false;
     }
+
     return true;
 }
 
