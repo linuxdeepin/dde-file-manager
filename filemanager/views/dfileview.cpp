@@ -1871,9 +1871,10 @@ void DFileView::onChildrenUpdated()
 void DFileView::updateContentLabel()
 {
     int count = this->count();
+    const DUrl &currentUrl = this->currentUrl();
 
-    if (count <= 0) {
-        const AbstractFileInfoPointer &fileInfo = fileService->createFileInfo(currentUrl());
+    if (count <= 0 && currentUrl.isLocalFile()) {
+        const AbstractFileInfoPointer &fileInfo = fileService->createFileInfo(currentUrl);
 
         if (fileInfo->exists())
             setContentLabel(tr("Floder is empty"));

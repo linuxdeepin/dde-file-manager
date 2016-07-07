@@ -86,6 +86,13 @@ TrashManager::TrashManager(QObject *parent)
             this, &TrashManager::onFileCreated);
     connect(fileMonitor, &FileMonitor::fileDeleted,
             this, &TrashManager::onFileRemove);
+
+    QDir dir;
+
+    dir.mkpath(TRASHFILEPATH);
+    dir.mkpath(TRASHINFOPATH);
+
+    fileMonitor->addMonitorPath(TRASHPATH);
 }
 
 const AbstractFileInfoPointer TrashManager::createFileInfo(const DUrl &fileUrl, bool &accepted) const
@@ -244,10 +251,32 @@ bool TrashManager::isEmpty()
 
 void TrashManager::onFileCreated(const QString &filePath) const
 {
-    emit childrenAdded(DUrl::fromTrashFile(filePath.mid((TRASHFILEPATH).size())));
+    QString path;
+
+    if (QString(TRASHFILEPATH).startsWith(filePath)) {
+        path = "/";
+    } else {
+        path = filePath.mid((TRASHFILEPATH).size());
+
+        if (path.isEmpty())
+            return;
+    }
+
+    emit childrenAdded(DUrl::fromTrashFile(path));
 }
 
 void TrashManager::onFileRemove(const QString &filePath) const
 {
-    emit childrenRemoved(DUrl::fromTrashFile(filePath.mid((TRASHFILEPATH).size())));
+    QString path;
+
+    if (QString(TRASHFILEPATH).startsWith(filePath)) {
+        path = "/";
+    } else {
+        path = filePath.mid((TRASHFILEPATH).size());
+
+        if (path.isEmpty())
+            return;
+    }
+
+    emit childrenRemoved(DUrl::fromTrashFile(path));
 }
