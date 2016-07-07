@@ -72,6 +72,10 @@ void DCrumbWidget::addCrumb(const QStringList &list)
             {
                 path += "/" + list.at(j);
             }
+
+            if (!path.startsWith("/"))
+                path.prepend('/');
+
             button->setPath(path);
 
             if (systemPathManager->systemPathsMap().values().contains(path)){
