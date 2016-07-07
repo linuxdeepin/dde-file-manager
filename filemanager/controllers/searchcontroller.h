@@ -12,7 +12,7 @@ class SearchController : AbstractFileController
 public:
     explicit SearchController(QObject *parent = 0);
 
-    const QList<AbstractFileInfoPointer> getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const Q_DECL_OVERRIDE;
+    const QList<AbstractFileInfoPointer> getChildren(const DUrl &fileUrl, QDir::Filters filter, const FMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
     const AbstractFileInfoPointer createFileInfo(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
     bool openFileLocation(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
 
@@ -33,7 +33,7 @@ public:
     bool openInTerminal(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
 
 private:
-    void searchStart(const DUrl &fileUrl, QDir::Filters filter);
+    void searchStart(const DUrl &fileUrl, QDir::Filters filter, const FMEvent &event);
     static DUrl realUrl(const DUrl &searchUrl);
     static DUrlList realUrlList(const DUrlList &searchUrls);
 

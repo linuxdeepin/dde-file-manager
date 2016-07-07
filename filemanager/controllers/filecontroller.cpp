@@ -70,7 +70,7 @@ const DDirIteratorPointer FileController::createDirIterator(const DUrl &fileUrl,
     return DDirIteratorPointer(new FileDirIterator(fileUrl.path(), filters, flags));
 }
 
-const QList<AbstractFileInfoPointer> FileController::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
+const QList<AbstractFileInfoPointer> FileController::getChildren(const DUrl &fileUrl, QDir::Filters filter, const FMEvent &event, bool &accepted) const
 {
     accepted = true;
 

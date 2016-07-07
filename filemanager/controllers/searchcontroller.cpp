@@ -3,7 +3,8 @@
 
 #include "../models/searchfileinfo.h"
 #include "../models/ddiriterator.h"
-
+#include "../app/global.h"
+#include "../app/filesignalmanager.h"
 #include <QDebug>
 #include <QtConcurrent/QtConcurrentRun>
 #include <QDirIterator>
@@ -15,7 +16,7 @@ SearchController::SearchController(QObject *parent)
 
 }
 
-const QList<AbstractFileInfoPointer> SearchController::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
+const QList<AbstractFileInfoPointer> SearchController::getChildren(const DUrl &fileUrl, QDir::Filters filter, const FMEvent &event, bool &accepted) const
 {
     accepted = true;
 
@@ -25,7 +26,7 @@ const QList<AbstractFileInfoPointer> SearchController::getChildren(const DUrl &f
         activeJob << fileUrl.searchTargetUrl();
 
         QtConcurrent::run(QThreadPool::globalInstance(), const_cast<SearchController*>(this),
-                          &SearchController::searchStart, fileUrl, filter);
+                          &SearchController::searchStart, fileUrl, filter, event);
     }
 
     return QList<AbstractFileInfoPointer>();
@@ -129,7 +130,7 @@ bool SearchController::openInTerminal(const DUrl &fileUrl, bool &accepted) const
     return FileServices::instance()->openInTerminal(realUrl(fileUrl));
 }
 
-void SearchController::searchStart(const DUrl &fileUrl, QDir::Filters filter)
+void SearchController::searchStart(const DUrl &fileUrl, QDir::Filters filter, const FMEvent &event)
 {
     const DUrl &targetUrl = fileUrl.searchTargetUrl();
     const QString &keyword = fileUrl.searchKeyword();
@@ -141,6 +142,8 @@ void SearchController::searchStart(const DUrl &fileUrl, QDir::Filters filter)
     searchPathList << targetUrl;
 
     qDebug() << "begin search:" << fileUrl;
+
+    emit fileSignalManager->searchingIndicatorShowed(event, true);
 
     while(!searchPathList.isEmpty()) {
         const DUrl &url = searchPathList.takeAt(0);
@@ -183,7 +186,7 @@ void SearchController::searchStart(const DUrl &fileUrl, QDir::Filters filter)
             }
         }
     }
-
+    emit fileSignalManager->searchingIndicatorShowed(event, false);
     qDebug() << "search finished:" << fileUrl;
 }
 

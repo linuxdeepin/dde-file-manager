@@ -228,7 +228,7 @@ QString DeviceListener::mountPoint(udev_device *dev)
     return QString();
 }
 
-const QList<AbstractFileInfoPointer> DeviceListener::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
+const QList<AbstractFileInfoPointer> DeviceListener::getChildren(const DUrl &fileUrl, QDir::Filters filter, const FMEvent &event, bool &accepted) const
 {
     Q_UNUSED(fileUrl)
     Q_UNUSED(filter)
