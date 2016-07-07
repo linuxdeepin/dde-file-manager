@@ -774,13 +774,13 @@ void DFileSystemModel::onFileDeleted(const DUrl &fileUrl)
         return;
 
 //    const FileSystemNodePointer &parentNode = m_urlToNode.value(info->parentUrl());
-    if (fileUrl == rootUrl()) {
-        emit rootUrlDeleted();
+    const DUrl &rootUrl = this->rootUrl();
 
-        return clear();
+    if (fileUrl == rootUrl || (rootUrl.scheme() == fileUrl.scheme() && rootUrl.path().startsWith(fileUrl.path()))) {
+        return refresh();
     }
 
-    if (info->parentUrl() != rootUrl())
+    if (info->parentUrl() != rootUrl)
         return;
 
     const FileSystemNodePointer &parentNode = m_rootNode;
