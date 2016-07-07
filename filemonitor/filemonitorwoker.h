@@ -48,21 +48,25 @@ signals:
     void directoryChanged(QString path);
 
 public slots:
+    inline bool addPath(const QString &path)
+    { return addPaths(QStringList() << path);}
+    inline bool removePath(const QString &path)
+    { return removePaths(QStringList() << path);}
 
-    bool addPath(const QString &path);
-    bool removePath(const QString &path);
+    bool addPaths(const QStringList &list);
+    bool removePaths(const QStringList &list);
 
 private slots:
     void readFromInotify();
 
 private:
-    QStringList addPaths(const QStringList &paths);
-    QStringList removePaths(const QStringList &paths);
-
-    void fileChanged(const QString &path, bool removed);
-    void directoryChanged(const QString &path, bool removed);
+//    void fileChanged(const QString &path, bool removed);
+//    void directoryChanged(const QString &path, bool removed);
 
     void handleInotifyEvent(const struct inotify_event* event);
+
+    int addWatch(const QString &path, bool isDir);
+    int rmWatch(const QString &path);
 
 private:
     QString getPathFromID(int id) const;
@@ -71,12 +75,11 @@ private:
 
 private:
     int m_inotifyFd;
-    QStringList m_files;
-    QStringList m_directories;
 
     QSocketNotifier *m_notifier;
     QHash<QString, int> m_pathToID;
     QMultiHash<int, QString> m_idToPath;
+    QMap<QString, int> m_pathReferenceCounts;
 };
 
 #endif // FILEMONITORWOKER_H

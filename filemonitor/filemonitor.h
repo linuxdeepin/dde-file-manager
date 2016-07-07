@@ -22,8 +22,8 @@ public:
     void removeMonitorPath(const QString &path);
 
 signals:
-    void requestMonitorPath(const QString &path);
-    void requestRemoveMonitorPath(const QString &path);
+    void requestMonitorPath(const QStringList &path);
+    void requestRemoveMonitorPath(const QStringList &path);
     void fileCreated(QString path);
     void fileDeleted(QString path);
     void fileMetaDataChanged(QString path);
@@ -39,6 +39,8 @@ private:
     FileMonitorWoker* m_fileMonitorWorker;
     QThread* m_fileThread;
     QMap<int, QString> m_moveEvent;
+
+    static QStringList getPathParentList(const QString &path);
 };
 
 #endif // FileMonitor_H

@@ -23,8 +23,8 @@ void FileMonitor::initConnect(){
     connect(m_fileMonitorWorker, SIGNAL(fileMovedTo(int,QString)), this, SLOT(handleMoveTo(int,QString)));
     connect(m_fileMonitorWorker, SIGNAL(fileDeleted(int,QString)), this, SLOT(handleDelete(int,QString)));
     connect(m_fileMonitorWorker, SIGNAL(metaDataChanged(int,QString)), this, SLOT(handleMetaDataChanged(int,QString)));
-    connect(this, &FileMonitor::requestMonitorPath, m_fileMonitorWorker, &FileMonitorWoker::addPath);
-    connect(this, &FileMonitor::requestRemoveMonitorPath, m_fileMonitorWorker, &FileMonitorWoker::removePath);
+    connect(this, SIGNAL(requestMonitorPath(QStringList)), m_fileMonitorWorker, SLOT(addPaths(QStringList)));
+    connect(this, SIGNAL(requestRemoveMonitorPath(QStringList)), m_fileMonitorWorker, SLOT(removePaths(QStringList)));
 }
 
 bool FileMonitor::isGoutputstreamTempFile(QString path){
@@ -38,14 +38,14 @@ void FileMonitor::addMonitorPath(const QString &path)
 {
     qDebug() << "add file monitor:" << path;
 
-    emit requestMonitorPath(path);
+    emit requestMonitorPath(getPathParentList(path) << path);
 }
 
 void FileMonitor::removeMonitorPath(const QString &path)
 {
     qDebug() << "remove file monitor:" << path;
 
-    emit requestRemoveMonitorPath(path);
+    emit requestRemoveMonitorPath(getPathParentList(path) << path);
 }
 
 void FileMonitor::handleCreated(int cookie, QString path){
@@ -54,20 +54,12 @@ void FileMonitor::handleCreated(int cookie, QString path){
 }
 
 void FileMonitor::handleMoveFrom(int cookie, QString path){
-    qDebug() << cookie << path;
-    //m_moveEvent.insert(cookie, path);
+    Q_UNUSED(cookie)
     emit fileDeleted(path);
 }
 
 void FileMonitor::handleMoveTo(int cookie, QString path){
-    qDebug() << cookie << path;
-
-//    const QString &moveFrom = m_moveEvent.value(cookie);
-
-//    if(moveFrom.isEmpty())
-//        return;
-
-//    emit fileRenamed(moveFrom, path);
+    Q_UNUSED(cookie)
     emit fileCreated(path);
 }
 
@@ -80,6 +72,18 @@ void FileMonitor::handleMetaDataChanged(int cookie, QString path)
 {
     Q_UNUSED(cookie)
     emit fileMetaDataChanged(path);
+}
+
+QStringList FileMonitor::getPathParentList(const QString &path)
+{
+    QStringList list;
+    QDir dir(path);
+
+    while (dir.cdUp()) {
+        list << dir.absolutePath();
+    }
+
+    return list;
 }
 
 FileMonitor::~FileMonitor()
