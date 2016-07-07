@@ -37,14 +37,14 @@ DialogManager::~DialogManager()
 void DialogManager::initTaskDialog()
 {
     m_taskDialog = new DTaskDialog;
-    m_taskDialog->setWindowIcon(QIcon(":/images/images/system-file-manager.png"));
+    m_taskDialog->setWindowIcon(QIcon(":/images/images/dde-file-manager.svg"));
     m_taskDialog->setStyleSheet(getQssFromFile(":/qss/dialogs/qss/light.qss"));
 }
 
 void DialogManager::initCloseIndicatorDialog()
 {
     m_closeIndicatorDialog = new CloseAllDialogIndicator;
-    m_closeIndicatorDialog->setWindowIcon(QIcon(":/images/images/system-file-manager.png"));
+    m_closeIndicatorDialog->setWindowIcon(QIcon(":/images/images/dde-file-manager.svg"));
     m_closeIndicatorDialog->setStyleSheet(getQssFromFile(":/qss/dialogs/qss/light.qss"));
     m_closeIndicatorTimer = new QTimer;
     m_closeIndicatorTimer->setInterval(100);
@@ -317,7 +317,7 @@ void DialogManager::showDiskErrorDialog(const QString & id, const QString & erro
 void DialogManager::showAboutDialog(const FMEvent &event)
 {
     QWidget* w = WindowManager::getWindowById(event.windowId());
-    QString icon(":/icons/images/system-file-manager.png");
+    QString icon(":/images/images/dde-file-manager_96.png");
     DAboutDialog *dialog = new DAboutDialog(icon,
                         icon,
                         tr("File Manager"),

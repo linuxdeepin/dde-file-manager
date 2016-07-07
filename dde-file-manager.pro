@@ -244,6 +244,7 @@ INCLUDEPATH += filemanager/models
 BINDIR = $$PREFIX/bin
 APPSHAREDIR = $$PREFIX/share/dde-file-manager
 HELPSHAREDIR = $$PREFIX/share/dman/dde-file-manager
+ICONDIR = $$PREFIX/share/icons/hicolor/scalable/apps
 DEFINES += APPSHAREDIR=\\\"$$APPSHAREDIR\\\"
 
 target.path = $$BINDIR
@@ -275,7 +276,11 @@ CONFIG(release, debug|release) {
 translations.path = $$APPSHAREDIR/translations
 translations.files = translations/*.qm
 
+
 help.path = $$HELPSHAREDIR
 help.files = help/*
 
-INSTALLS += target desktop templateFiles translations mimetypeFiles help
+icon.path = $$ICONDIR
+icon.files = skin/images/dde-file-manager.svg
+
+INSTALLS += target desktop templateFiles translations mimetypeFiles help icon

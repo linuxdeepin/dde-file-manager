@@ -86,6 +86,7 @@ void DLeftSideBar::initConnect()
 void DLeftSideBar::initNav()
 {
     m_nav = new QFrame;
+    m_nav->setStyleSheet("border:0px solid red");
     m_nav->setFocusPolicy(Qt::NoFocus);
     m_nav->setFixedWidth(200);
     QVBoxLayout* navLayout = new QVBoxLayout;
@@ -235,7 +236,7 @@ void DLeftSideBar::doDragLeave()
 {
     setStyleSheet("QFrame#LeftSideBar{\
                   background-color: transparent;\
-                  border: 1px solid transparent\
+                  border: 0px solid transparent\
     }");
 }
 
@@ -250,7 +251,6 @@ void DLeftSideBar::loadBookmark()
     {
         BookMark * bm = m_list.at(i);
         DBookmarkItem * item = DBookmarkItem::makeBookmark(bm->getName(), bm->getUrl());
-        item->setBounds(0, 0, 180, 26);
         m_scene->addItem(item);
     }
 }

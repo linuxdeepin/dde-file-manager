@@ -2,7 +2,7 @@
 Version=1.0
 Type=Application
 Exec=/usr/bin/dde-file-manager %u
-Icon=system-file-manager
+Icon=dde-file-manager
 StartupNotify=true
 Terminal=false
 Categories=Utility;

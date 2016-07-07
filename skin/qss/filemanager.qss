@@ -31,7 +31,7 @@ QListWidget#ListWidget::icon{
 
 QFrame#LeftSideBar{
     background-color: #f9f9fa;
-    border: 1px solid transparent;
+    border: 0px solid transparent;
 }
 
 QFrame#LeftSideHomeBar{

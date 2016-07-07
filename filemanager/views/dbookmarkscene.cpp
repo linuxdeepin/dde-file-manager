@@ -228,7 +228,7 @@ void DBookmarkScene::setSceneRect(qreal x, qreal y, qreal w, qreal h)
 void DBookmarkScene::addSeparator()
 {
     DBookmarkLine * item = new DBookmarkLine;
-    item->setBounds(0, 0, 200, SEPARATOR_ITEM_HEIGHT);
+    item->setBounds(0, 0, BOOKMARK_ITEM_WIDTH, SEPARATOR_ITEM_HEIGHT);
     m_itemGroup->addItem(item);
     m_defaultLayout->addItem(item);
     if(item->isDefaultItem())
@@ -238,7 +238,7 @@ void DBookmarkScene::addSeparator()
 void DBookmarkScene::insertSeparator(int index)
 {
     DBookmarkLine * item = new DBookmarkLine;
-    item->setBounds(0, 0, 200, SEPARATOR_ITEM_HEIGHT);
+    item->setBounds(0, 0, BOOKMARK_ITEM_WIDTH, SEPARATOR_ITEM_HEIGHT);
     m_itemGroup->insert(index, item);
     m_defaultLayout->insertItem(index, item);
     if(item->isDefaultItem())

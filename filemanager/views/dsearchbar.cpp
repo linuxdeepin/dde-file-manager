@@ -390,7 +390,6 @@ bool DSearchBar::event(QEvent *e)
 bool DSearchBar::eventFilter(QObject *obj, QEvent *e)
 {
     Q_UNUSED(obj);
-    qDebug() << obj;
     if(e->type() == QEvent::FocusOut)
     {
         m_list->hide();
