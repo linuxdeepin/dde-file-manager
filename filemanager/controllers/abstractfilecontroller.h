@@ -44,7 +44,7 @@ public:
 
     virtual bool openFileLocation(const DUrl &fileUrl, bool &accepted) const;
 
-    virtual const QList<AbstractFileInfoPointer> getChildren(const DUrl &fileUrl, QDir::Filters filters, bool &accepted) const;
+    virtual const QList<AbstractFileInfoPointer> getChildren(const DUrl &fileUrl, QDir::Filters filters, const FMEvent &event, bool &accepted) const;
     virtual const AbstractFileInfoPointer createFileInfo(const DUrl &fileUrl, bool &accepted) const;
     virtual const DDirIteratorPointer createDirIterator(const DUrl &fileUrl, QDir::Filters filters,
                                                         QDirIterator::IteratorFlags flags,

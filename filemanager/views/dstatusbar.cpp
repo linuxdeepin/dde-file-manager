@@ -51,6 +51,7 @@ void DStatusBar::initConnect()
     connect(fileSignalManager, &FileSignalManager::statusBarItemsSelected, this, &DStatusBar::itemSelected);
     connect(fileSignalManager, &FileSignalManager::statusBarItemsCounted, this, &DStatusBar::itemCounted);
     connect(fileSignalManager, &FileSignalManager::loadingIndicatorShowed, this, &DStatusBar::showLoadingIncator);
+    connect(fileSignalManager, &FileSignalManager::searchingIndicatorShowed, this, &DStatusBar::showSearchingIncator);
 }
 
 void DStatusBar::itemSelected(const FMEvent &event, int number)
@@ -90,6 +91,15 @@ void DStatusBar::showLoadingIncator(const FMEvent &event, bool loading)
     m_loadingIndicator->setVisible(loading);
     if (loading)
         m_label->setText(tr("Loading..."));
+}
+
+void DStatusBar::showSearchingIncator(const FMEvent &event, bool searching)
+{
+    if(event.windowId() != WindowManager::getWindowId(window()))
+        return;
+    m_loadingIndicator->setVisible(searching);
+    if (searching)
+        m_label->setText(tr("Searching..."));
 }
 
 void DStatusBar::resizeEvent(QResizeEvent *event)

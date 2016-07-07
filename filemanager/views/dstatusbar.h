@@ -25,6 +25,7 @@ public slots:
     void itemSelected(const FMEvent &event, int number);
     void itemCounted(const FMEvent &event, int number);
     void showLoadingIncator(const FMEvent &event, bool loading);
+    void showSearchingIncator(const FMEvent &event, bool searching);
 
 protected:
     void resizeEvent(QResizeEvent* event);

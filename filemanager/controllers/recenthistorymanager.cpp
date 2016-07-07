@@ -92,7 +92,7 @@ bool RecentHistoryManager::copyFiles(const DUrlList &urlList, bool &accepted) co
     return FileServices::instance()->copyFiles(localList);
 }
 
-const QList<AbstractFileInfoPointer> RecentHistoryManager::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
+const QList<AbstractFileInfoPointer> RecentHistoryManager::getChildren(const DUrl &fileUrl, QDir::Filters filter, const FMEvent &event, bool &accepted) const
 {
     Q_UNUSED(filter)
     Q_UNUSED(fileUrl)

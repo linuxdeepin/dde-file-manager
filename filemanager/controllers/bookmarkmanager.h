@@ -30,7 +30,7 @@ public slots:
     void moveBookmark(int from, int to);
     // AbstractFileController interface
 public:
-    const QList<AbstractFileInfoPointer> getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const;
+    const QList<AbstractFileInfoPointer> getChildren(const DUrl &fileUrl, QDir::Filters filter, const FMEvent &event, bool &accepted) const;
     const AbstractFileInfoPointer createFileInfo(const DUrl &fileUrl, bool &accepted) const;
 };
 
