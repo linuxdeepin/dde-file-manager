@@ -86,13 +86,6 @@ TrashManager::TrashManager(QObject *parent)
             this, &TrashManager::onFileCreated);
     connect(fileMonitor, &FileMonitor::fileDeleted,
             this, &TrashManager::onFileRemove);
-
-    QDir dir;
-
-    dir.mkpath(TRASHFILEPATH);
-    dir.mkpath(TRASHINFOPATH);
-
-    fileMonitor->addMonitorPath(TRASHPATH);
 }
 
 const AbstractFileInfoPointer TrashManager::createFileInfo(const DUrl &fileUrl, bool &accepted) const

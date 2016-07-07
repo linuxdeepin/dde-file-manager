@@ -350,7 +350,6 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
         return;
 
     fileService->addUrlMonitor(parentNode->fileInfo->fileUrl());
-    fileService->addUrlMonitor(parentNode->fileInfo->parentUrl());
 
     parentNode->populatedChildren = true;
 
@@ -780,7 +779,7 @@ void DFileSystemModel::onFileDeleted(const DUrl &fileUrl)
 //    const FileSystemNodePointer &parentNode = m_urlToNode.value(info->parentUrl());
     const DUrl &rootUrl = this->rootUrl();
 
-    if (fileUrl == rootUrl || (rootUrl.scheme() == fileUrl.scheme() && rootUrl.path().startsWith(fileUrl.path()))) {
+    if (fileUrl == rootUrl) {
         return refresh();
     }
 

@@ -47,21 +47,45 @@ void FileMonitorWoker::initInotify()
     connect(m_notifier, SIGNAL(activated(int)), this, SLOT(readFromInotify()));
 }
 
-bool FileMonitorWoker::addPath(const QString &path)
-{
-    if (path.isEmpty()) {
-        qWarning("QFileSystemWatcher::addPath: path is empty");
-        return true;
-    }
-
-    QStringList paths = addPaths(QStringList(path));
-    return paths.isEmpty();
-}
-
-QStringList FileMonitorWoker::addPaths(const QStringList &paths)
+QStringList FileMonitorWoker::addPathsAction(const QStringList &paths)
 {
 
     QStringList p = paths;
+    QMutableListIterator<QString> it(p);
+    while (it.hasNext()) {
+        QString path = it.next();
+        QFileInfo fi(path);
+        bool isDir = fi.isDir();
+
+        if (m_pathToID.contains(path)) {
+            m_pathReferenceCounts[path] = m_pathReferenceCounts.value(path, 0) + 1;
+        }
+
+        int wd = addWatch(path, isDir);
+        if (wd < 0) {
+            perror("QInotifyFileSystemWatcherEngine::addPaths: inotify_add_watch failed");
+            continue;
+        }
+
+        it.remove();
+
+        int id = isDir ? -wd : wd;
+
+        m_pathToID.insert(path, id);
+        m_idToPath.insert(id, path);
+    }
+
+    return p;
+}
+
+bool FileMonitorWoker::addPaths(const QStringList &list)
+{
+    if (list.isEmpty()) {
+        qWarning("path list is empty");
+        return true;
+    }
+
+    QStringList p = list;
     QMutableListIterator<QString> it(p);
 
     while (it.hasNext()) {
@@ -72,89 +96,17 @@ QStringList FileMonitorWoker::addPaths(const QStringList &paths)
 
     if (p.isEmpty()) {
         qWarning("QFileSystemWatcher::addPaths: list is empty");
-        return QStringList();
-    }
-
-
-    p = addPathsAction(p);
-
-    return p;
-}
-
-
-QStringList FileMonitorWoker::addPathsAction(const QStringList &paths)
-{
-
-    QStringList p = paths;
-    QMutableListIterator<QString> it(p);
-    while (it.hasNext()) {
-        QString path = it.next();
-        QFileInfo fi(path);
-        bool isDir = fi.isDir();
-        if (isDir) {
-            if (m_directories.contains(path))
-                continue;
-        } else {
-            if (m_files.contains(path))
-                continue;
-        }
-
-        int wd = inotify_add_watch(m_inotifyFd,
-                                   QFile::encodeName(path),
-                                   (isDir
-                                    ? (0
-                                       | IN_ATTRIB
-                                       | IN_MOVE
-                                       | IN_CREATE
-                                       | IN_DELETE
-                                       | IN_DELETE_SELF
-                                       | IN_MOVE_SELF
-                                       )
-                                    : (0
-                                       | IN_ATTRIB
-                                       | IN_MODIFY
-                                       | IN_MOVE
-                                       | IN_MOVE_SELF
-                                       | IN_DELETE_SELF
-                                       | IN_MOVE_SELF
-                                       )));
-        if (wd < 0) {
-            perror("QInotifyFileSystemWatcherEngine::addPaths: inotify_add_watch failed");
-            continue;
-        }
-
-        it.remove();
-
-        int id = isDir ? -wd : wd;
-        if (id < 0) {
-            m_directories.append(path);
-        } else {
-            m_files.append(path);
-        }
-
-        m_pathToID.insert(path, id);
-        m_idToPath.insert(id, path);
-    }
-
-    return p;
-}
-
-bool FileMonitorWoker::removePath(const QString &path)
-{
-    if (path.isEmpty()) {
-        qWarning("QFileSystemWatcher::removePath: path is empty");
         return true;
     }
 
-    QStringList paths = removePaths(QStringList(path));
-    return paths.isEmpty();
+    p = addPathsAction(p);
+
+    return !p.isEmpty();
 }
 
-QStringList FileMonitorWoker::removePaths(const QStringList &paths)
+bool FileMonitorWoker::removePaths(const QStringList &list)
 {
-
-
-    QStringList p = paths;
+    QStringList p = list;
     QMutableListIterator<QString> it(p);
 
     while (it.hasNext()) {
@@ -165,17 +117,13 @@ QStringList FileMonitorWoker::removePaths(const QStringList &paths)
 
     if (p.isEmpty()) {
         qWarning("QFileSystemWatcher::removePaths: list is empty");
-        return QStringList();
+        return true;
     }
-
 
     p = removePathsAction(p);
 
-
-    return p;
+    return !p.isEmpty();
 }
-
-
 
 QStringList FileMonitorWoker::removePathsAction(const QStringList &paths)
 {
@@ -183,26 +131,24 @@ QStringList FileMonitorWoker::removePathsAction(const QStringList &paths)
     QMutableListIterator<QString> it(p);
     while (it.hasNext()) {
         QString path = it.next();
-        int id = m_pathToID.take(path);
-        QString x = m_idToPath.take(id);
-        if (x.isEmpty() || x != path)
-            continue;
 
-        int wd = id < 0 ? -id : id;
-        // qDebug() << "removing watch for path" << path << "wd" << wd;
-        inotify_rm_watch(m_inotifyFd, wd);
+        int count = m_pathReferenceCounts.value(path, 0) - 1;
+
+        if (count > 0) {
+            m_pathReferenceCounts[path] = count;
+
+            continue;
+        }
+
+        m_pathReferenceCounts.remove(path);
+
+        rmWatch(path);
 
         it.remove();
-        if (id < 0) {
-            m_directories.removeAll(path);
-        } else {
-            m_files.removeAll(path);
-        }
     }
 
     return p;
 }
-
 
 void FileMonitorWoker::readFromInotify()
 {
@@ -255,38 +201,38 @@ void FileMonitorWoker::readFromInotify()
 //        } else {
 
             if (id < 0)
-                directoryChanged(path, false);
+                directoryChanged(path);
             else
-                fileChanged(path, false);
+                fileChanged(path);
 
 //        }
 
     }
 }
 
-void FileMonitorWoker::fileChanged(const QString &path, bool removed)
-{
+//void FileMonitorWoker::fileChanged(const QString &path, bool removed)
+//{
 
-    if (!m_files.contains(path)) {
-        // the path was removed after a change was detected, but before we delivered the signal
-        return;
-    }
-    if (removed)
-        m_files.removeAll(path);
-    emit fileChanged(path);
-}
+//    if (!m_files.contains(path)) {
+//        // the path was removed after a change was detected, but before we delivered the signal
+//        return;
+//    }
+//    if (removed)
+//        m_files.removeAll(path);
+//    emit fileChanged(path);
+//}
 
-void FileMonitorWoker::directoryChanged(const QString &path, bool removed)
-{
+//void FileMonitorWoker::directoryChanged(const QString &path, bool removed)
+//{
 
-    if (!m_directories.contains(path)) {
-        // perhaps the path was removed after a change was detected, but before we delivered the signal
-        return;
-    }
-    if (removed)
-        m_directories.removeAll(path);
-    emit directoryChanged(path);
-}
+//    if (!m_directories.contains(path)) {
+//        // perhaps the path was removed after a change was detected, but before we delivered the signal
+//        return;
+//    }
+//    if (removed)
+//        m_directories.removeAll(path);
+//    emit directoryChanged(path);
+//}
 
 
 QString FileMonitorWoker::getPathFromID(int id) const
@@ -322,22 +268,102 @@ void FileMonitorWoker::handleInotifyEvent(const inotify_event *event)
     if (event->mask & IN_CREATE) {
         qDebug() << "IN_CREATE" << path;
         emit fileCreated(event->cookie, path);
-    }else if (event->mask & IN_MOVED_FROM) {
+
+        if (m_pathToID.contains(path)) {
+            addWatch(path, QFileInfo(path).isDir());
+        }
+
+        for (const QString &tmp_path : m_pathToID.keys()) {
+            if (tmp_path == path)
+                continue;
+
+            if (tmp_path.startsWith(path) && QFile::exists(tmp_path))
+                emit fileCreated(event->cookie, tmp_path);
+        }
+    }
+
+    if (event->mask & IN_MOVED_FROM) {
         qDebug() << "IN_MOVED_FROM" << path;
         emit fileMovedFrom(event->cookie, path);
-    }else if (event->mask & IN_MOVED_TO) {
+
+        for (const QString &tmp_path : m_pathToID.keys()) {
+            if (tmp_path == path)
+                continue;
+
+            if (tmp_path.startsWith(path))
+                emit fileDeleted(event->cookie, tmp_path);
+        }
+    }
+
+    if (event->mask & IN_MOVED_TO) {
         qDebug() << "IN_MOVED_TO" << path;
         emit fileMovedTo(event->cookie, path);
-    }else if (event->mask & IN_DELETE) {
+
+        if (m_pathToID.contains(path)) {
+            addWatch(path, QFileInfo(path).isDir());
+        }
+
+        if (!(event->mask & IN_CREATE)) {
+            for (const QString &tmp_path : m_pathToID.keys()) {
+                if (tmp_path == path)
+                    continue;
+
+                if (tmp_path.startsWith(path) && QFile::exists(tmp_path))
+                    emit fileCreated(event->cookie, tmp_path);
+            }
+        }
+    }
+
+    if (event->mask & IN_DELETE) {
         qDebug() << "IN_DELETE" << path;
         emit fileDeleted(event->cookie, path);
-    }else if (event->mask & IN_ATTRIB) {
+    }
+
+    if (event->mask & IN_ATTRIB) {
 //        qDebug() << event->mask << path;
         emit metaDataChanged(event->cookie, path);
-    }else if (event->mask & IN_MOVE_SELF){
+    }/*else if (event->mask & IN_MOVE_SELF){
         qDebug() << "IN_MOVE_SELF" << path;
         emit fileDeleted(event->cookie, path);
-    }else{
-//        qDebug() << "unknown event:" << event->mask;
+    }*/
+}
+
+int FileMonitorWoker::addWatch(const QString &path, bool isDir)
+{
+    int wd = inotify_add_watch(m_inotifyFd,
+                             QFile::encodeName(path),
+                             (isDir
+                              ? (0
+                                 | IN_ATTRIB
+                                 | IN_MOVE
+                                 | IN_CREATE
+                                 | IN_DELETE
+                                 | IN_DELETE_SELF
+                                 | IN_MOVE_SELF
+                                 )
+                              : (0
+                                 | IN_ATTRIB
+                                 | IN_MODIFY
+                                 | IN_MOVE
+                                 | IN_MOVE_SELF
+                                 | IN_DELETE_SELF
+                                 | IN_MOVE_SELF)));
+
+    if (wd >= 0) {
+        m_idToPath.remove(m_pathToID.value(path));
+        m_pathToID[path] = wd;
+        m_idToPath.insert(wd, path);
     }
+
+    return wd;
+}
+
+int FileMonitorWoker::rmWatch(const QString &path)
+{
+    int id = m_pathToID.take(path);
+    int wd = inotify_rm_watch(m_inotifyFd, qAbs(id));
+
+    m_idToPath.remove(id);
+
+    return wd;
 }
