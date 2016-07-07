@@ -18,7 +18,7 @@ MountAskPasswordDialog::~MountAskPasswordDialog()
 
 void MountAskPasswordDialog::initUI()
 {
-    setFixedSize(380, 278);
+    setFixedSize(380, 280);
 
     QStringList buttonTexts;
     buttonTexts << tr("Cancel") << tr("Connect");
@@ -28,6 +28,7 @@ void MountAskPasswordDialog::initUI()
     m_messageLabel = new QLabel(this);
 
     QLabel* connectTypeLabel = new QLabel(tr("Login as"));
+    connectTypeLabel->setStyleSheet(getQssFromFile(":/qss/qss/passwordAskDialog.qss"));
     connectTypeLabel->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
     connectTypeLabel->setFixedWidth(80);
 
@@ -49,24 +50,34 @@ void MountAskPasswordDialog::initUI()
     m_passwordFrame = new QFrame;
 
     QLabel* usernameLable = new QLabel(tr("Username"));
+    usernameLable->setStyleSheet(getQssFromFile(":/qss/qss/passwordAskDialog.qss"));
     usernameLable->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
     usernameLable->setFixedWidth(80);
 
-    m_usernameLineEdit = new QLineEdit;
+    m_usernameLineEdit = new DLineEdit;
+    m_usernameLineEdit->setStyleSheet(getQssFromFile(":/qss/qss/passwordAskDialog.qss"));
     m_usernameLineEdit->setFixedHeight(24);
 
     QLabel* domainLable = new QLabel(tr("Domain"));
+    domainLable->setStyleSheet(getQssFromFile(":/qss/qss/passwordAskDialog.qss"));
     domainLable->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
     domainLable->setFixedWidth(80);
 
-    m_domainLineEdit = new QLineEdit;
+    m_domainLineEdit = new DLineEdit;
+    m_domainLineEdit->setStyleSheet(getQssFromFile(":/qss/qss/passwordAskDialog.qss"));
     m_domainLineEdit->setFixedHeight(24);
 
     QLabel* passwordLable = new QLabel(tr("Password"));
+    passwordLable->setStyleSheet(getQssFromFile(":/qss/qss/passwordAskDialog.qss"));
     passwordLable->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
     passwordLable->setFixedWidth(80);
 
     m_passwordLineEdit = new DPasswordEdit;
+    QFont font;
+    font.setLetterSpacing(QFont::AbsoluteSpacing, 2);
+    font.setPixelSize(6);
+    m_passwordLineEdit->setFont(font);
+    m_passwordLineEdit->setStyleSheet(getQssFromFile(":/qss/qss/passwordAskDialog.qss"));
     m_passwordLineEdit->setFixedHeight(24);
 
 
@@ -108,7 +119,7 @@ void MountAskPasswordDialog::initUI()
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->addWidget(m_messageLabel, Qt::AlignCenter);
-    mainLayout->addSpacing(8);
+    mainLayout->addSpacing(16);
     mainLayout->addLayout(connectTypeLayout);
     mainLayout->addWidget(m_passwordFrame);
     mainLayout->setSpacing(10);
@@ -117,7 +128,7 @@ void MountAskPasswordDialog::initUI()
 
     addContent(content);
     addButtons(buttonTexts);
-    setSpacing(0);
+    setSpacing(10);
     setDefaultButton(1);
 }
 
@@ -181,16 +192,17 @@ void MountAskPasswordDialog::handleConnect()
 void MountAskPasswordDialog::togglePasswordFrame(int id)
 {
     if (id == 0){
+        setFixedSize(QSize(380, 141));
         m_passwordFrame->hide();
-        setFixedSize(QSize(380, 148));
     }else{
+        setFixedSize(QSize(380, 280));
         m_passwordFrame->show();
-        setFixedSize(QSize(380, 278));
     }
 }
 
 void MountAskPasswordDialog::handleButtonClicked(int index, QString text)
 {
+    Q_UNUSED(text)
     if (index == 1){
         handleConnect();
     }

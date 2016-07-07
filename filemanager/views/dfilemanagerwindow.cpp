@@ -30,7 +30,7 @@ const int DFileManagerWindow::MinimumWidth = 0;
 DFileManagerWindow::DFileManagerWindow(QWidget *parent) : QMainWindow(parent)
 {
     setWindowFlags(Qt::FramelessWindowHint);
-    setWindowIcon(QIcon(":/images/images/system-file-manager.png"));
+    setWindowIcon(QIcon(":/images/images/dde-file-manager.svg"));
     initData();
     initUI();
     initConnect();
@@ -254,10 +254,10 @@ DMainWindow::~DMainWindow()
 void DMainWindow::initUI()
 {
     setFocusPolicy(Qt::NoFocus);
+    setWindowIcon(QIcon(":/images/images/dde-file-manager.svg"));
     resize(DEFAULT_WINDOWS_WIDTH, DEFAULT_WINDOWS_HEIGHT);
     m_fileManagerWindow = new DFileManagerWindow(this);
     addContenWidget(m_fileManagerWindow);
-
 }
 
 void DMainWindow::initConnect()

@@ -11,9 +11,13 @@
 #include <QJsonObject>
 #include <ddialog.h>
 #include <dpasswordedit.h>
+#include <dlineedit.h>
 #include <dcheckbox.h>
 
 DWIDGET_USE_NAMESPACE
+
+
+
 
 class MountAskPasswordDialog : public DDialog
 {
@@ -41,8 +45,8 @@ private:
 
     QButtonGroup* m_anonymousButtonGroup;
 
-    QLineEdit* m_usernameLineEdit;
-    QLineEdit* m_domainLineEdit;
+    DLineEdit* m_usernameLineEdit;
+    DLineEdit* m_domainLineEdit;
     DPasswordEdit* m_passwordLineEdit;
 
     DCheckBox* m_passwordCheckBox;

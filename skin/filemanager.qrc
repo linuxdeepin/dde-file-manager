@@ -271,7 +271,6 @@
         <file>images/icons/unmount_press.svg</file>
         <file>images/icons/disk_checked_22px.svg</file>
         <file>images/icons/reordering_line.svg</file>
-        <file>images/system-file-manager.png</file>
         <file>images/icons/selectend.png</file>
         <file>images/icons/selectstart.png</file>
         <file>images/icons/android_checked_16px.svg</file>
@@ -330,5 +329,11 @@
         <file>images/icons/input_normalclear_hover.png</file>
         <file>images/icons/input_normalclear_normal.png</file>
         <file>images/icons/input_normalclear_press.png</file>
+        <file>images/icons/up.png</file>
+        <file>images/icons/down.png</file>
+        <file>images/icons/down_hover.png</file>
+        <file>images/icons/down_press.png</file>
+        <file>images/icons/up_hover.png</file>
+        <file>images/icons/up_press.png</file>
     </qresource>
 </RCC>

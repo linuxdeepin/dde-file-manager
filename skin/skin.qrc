@@ -4,14 +4,14 @@
         <file>qss/Tablewidget.qss</file>
     </qresource>
     <qresource prefix="/images">
-        <file>images/computer.png</file>
-        <file>images/default.png</file>
         <file>images/diban.svg</file>
         <file>images/readonly.svg</file>
         <file>images/textMask.png</file>
         <file>images/textMask.svg</file>
         <file>images/unreadable.svg</file>
-        <file>images/system-file-manager.png</file>
         <file>images/trash.png</file>
+        <file>images/dde-file-manager_96.png</file>
+        <file>images/dde-file-manager.png</file>
+        <file>images/dde-file-manager.svg</file>
     </qresource>
 </RCC>

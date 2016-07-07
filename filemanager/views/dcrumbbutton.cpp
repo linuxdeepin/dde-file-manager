@@ -63,7 +63,7 @@ void DCrumbButton::paintEvent(QPaintEvent *e)
     QPolygon polygon;
     polygon << QPoint(w, 2);
     polygon << QPoint(w, h - 2);
-    QPen pen(Qt::gray);
+    QPen pen(QColor(0, 0, 0, 24));
     pen.setWidthF(1);
     painter.setPen(pen);
     painter.drawPolygon(polygon);
