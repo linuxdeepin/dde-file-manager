@@ -139,9 +139,9 @@ void MountAskPasswordDialog::setLoginData(const QJsonObject &obj)
     m_messageLabel->setText(m_loginObj.value("message").toString());
 
     if (m_loginObj.value("anonymous").toBool()){
-        m_anonymousButtonGroup->button(0)->setChecked(true);
+        m_anonymousButtonGroup->button(0)->click();
     }else{
-        m_anonymousButtonGroup->button(1)->setChecked(true);
+        m_anonymousButtonGroup->button(1)->click();
     }
 
     m_usernameLineEdit->setText(m_loginObj.value("username").toString());
