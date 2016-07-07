@@ -180,8 +180,8 @@ bool TrashManager::deleteFiles(const DUrlList &urlList, const FMEvent &event, bo
 
         localList << DUrl::fromLocalFile(TRASHFILEPATH + path);
 
-        if(path.lastIndexOf('/') > 0) {
-            localList << DUrl::fromLocalFile(TRASHINFOPATH + path);
+        if (path.lastIndexOf('/') == 0) {
+            localList << DUrl::fromLocalFile(TRASHINFOPATH + path + ".trashinfo");
         }
     }
 

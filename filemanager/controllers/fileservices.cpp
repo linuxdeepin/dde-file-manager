@@ -226,6 +226,8 @@ void FileServices::deleteFiles(const DUrlList &urlList, const FMEvent &event) co
 
         return;
     }
+
+    deleteFilesSync(urlList, event);
 }
 
 bool FileServices::deleteFilesSync(const DUrlList &urlList, const FMEvent &event) const
@@ -258,6 +260,8 @@ void FileServices::moveToTrash(const DUrlList &urlList) const
 
         return;
     }
+
+    moveToTrashSync(urlList);
 }
 
 bool FileServices::moveToTrashSync(const DUrlList &urlList) const
