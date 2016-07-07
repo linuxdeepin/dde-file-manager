@@ -1868,6 +1868,8 @@ void DFileView::onChildrenUpdated()
     }
 
     oldSelectedUrllist.clear();
+
+    connect(model(), &DFileSystemModel::rowsInserted, this, &DFileView::updateContentLabel);
 }
 
 void DFileView::updateContentLabel()
@@ -1885,6 +1887,4 @@ void DFileView::updateContentLabel()
     } else {
         setContentLabel(QString());
     }
-
-    connect(model(), &DFileSystemModel::rowsInserted, this, &DFileView::updateContentLabel);
 }
