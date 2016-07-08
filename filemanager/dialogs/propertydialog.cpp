@@ -144,6 +144,9 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
 
     initUI();
     UDiskDeviceInfo* diskInfo = deviceListener->getDevice(url.query());
+    if (diskInfo == NULL){
+        diskInfo = deviceListener->getDeviceByPath(url.path());
+    }
     if (diskInfo){
         qDebug() << diskInfo->getDiskInfo();
         QString name = diskInfo->getName();
@@ -437,7 +440,7 @@ QListWidget *PropertyDialog::createOpenWithListWidget(const AbstractFileInfoPoin
         QIcon icon(fileIconProvider->getDesktopIcon(iconName, 48));
         QListWidgetItem* item = new QListWidgetItem;
 
-        QCheckBox* itemBox = new QCheckBox(mimeAppsManager->DesktopObjs.value(f).getName());
+        QCheckBox* itemBox = new QCheckBox(mimeAppsManager->DesktopObjs.value(f).getLocalName());
         itemBox->setObjectName("OpenWithItem");
         itemBox->setIcon(icon);
         itemBox->setFixedHeight(36);

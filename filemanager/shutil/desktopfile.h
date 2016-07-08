@@ -15,19 +15,21 @@ public:
   QString getFileName() const;
   QString getPureFileName() const;
   QString getName() const;
+  QString getLocalName() const;
   QString getExec() const;
   QString getIcon() const;
   QString getType() const;
   QStringList getCategories() const;
   QStringList getMimeType() const;
 private:
-  QString fileName;
-  QString name;
-  QString exec;
-  QString icon;
-  QString type;
-  QStringList categories;
-  QStringList mimeType;
+  QString m_fileName;
+  QString m_name;
+  QString m_localName;
+  QString m_exec;
+  QString m_icon;
+  QString m_type;
+  QStringList m_categories;
+  QStringList m_mimeType;
 };
 
 #endif // DESKTOPFILE_H

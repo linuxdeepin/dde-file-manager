@@ -230,15 +230,15 @@ QIcon UDiskDeviceInfo::fileIcon() const
     if(getType() == "native")
         return QIcon(svgToPixmap(":/devices/images/device/drive-harddisk.svg", 128, 128));
     else if(getType() == "removable")
-        return QIcon(svgToPixmap(":/devices/images/device/drive-harddisk-usb.svg", 128, 128));
+        return QIcon(svgToPixmap(":/devices/images/device/drive-removable-media-usb.svg", 128, 128));
     else if(getType() == "network")
-        return QIcon(svgToPixmap(":/devices/images/device/drive-harddisk.svg", 128, 128));
+        return QIcon(svgToPixmap(":/devices/images/device/drive-network.svg", 128, 128));
     else if(getType() == "phone")
-        return QIcon(svgToPixmap(":/devices/images/device/drive-harddisk.svg", 128, 128));
+        return QIcon(svgToPixmap(":/devices/images/device/android-device.svg", 128, 128));
     else if(getType() == "iphone")
-        return QIcon(svgToPixmap(":/devices/images/device/drive-harddisk.svg", 128, 128));
+        return QIcon(svgToPixmap(":/devices/images/device/ios-device.svg", 128, 128));
     else if(getType() == "camera")
-        return QIcon(svgToPixmap(":/devices/images/device/drive-harddisk.svg", 128, 128));
+        return QIcon(svgToPixmap(":/devices/images/device/camera.svg", 128, 128));
     else
         return QIcon(svgToPixmap(":/devices/images/device/drive-harddisk.svg", 128, 128));
 }
