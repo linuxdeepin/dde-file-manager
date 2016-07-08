@@ -71,7 +71,7 @@ QListWidget *OpenWithOtherDialog::createOpenWithListWidget(const AbstractFileInf
 
     QString path = info->absoluteFilePath();
     QMimeType mimeType = mimeAppsManager->getMimeType(path);
-
+    qDebug() << MimesAppsManager::getMimeTypeByFileName(path) << mimeType.aliases();
     QStringList recommendApps = mimeAppsManager->MimeApps.value(MimesAppsManager::getMimeTypeByFileName(path));;
     foreach (QString name, mimeType.aliases()) {
         QStringList apps = mimeAppsManager->MimeApps.value(name);
@@ -91,7 +91,7 @@ QListWidget *OpenWithOtherDialog::createOpenWithListWidget(const AbstractFileInf
         QIcon icon(fileIconProvider->getDesktopIcon(iconName, 48));
         QListWidgetItem* item = new QListWidgetItem;
 
-        QCheckBox* itemBox = new QCheckBox(mimeAppsManager->DesktopObjs.value(f).getName());
+        QCheckBox* itemBox = new QCheckBox(mimeAppsManager->DesktopObjs.value(f).getLocalName());
         itemBox->setStyleSheet(getQssFromFile(":/light/OpenWithOtherDialog.theme"));
         itemBox->setIcon(icon);
         itemBox->setFixedHeight(36);

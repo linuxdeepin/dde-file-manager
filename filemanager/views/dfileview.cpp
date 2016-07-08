@@ -1694,7 +1694,7 @@ void DFileView::showNormalMenu(const QModelIndex &index)
             }
 
             foreach (QString app, recommendApps) {
-                DAction* action = new DAction(mimeAppsManager->DesktopObjs.value(app).getName(), 0);
+                DAction* action = new DAction(mimeAppsManager->DesktopObjs.value(app).getLocalName(), 0);
                 action->setProperty("app", app);
                 action->setProperty("url", info->redirectedFileUrl().toLocalFile());
                 openWithMenu->addAction(action);

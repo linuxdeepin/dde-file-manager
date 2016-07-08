@@ -120,7 +120,7 @@ QString AbstractFileInfo::displayName() const
 
     } else {
         if (isDesktopFile()){
-            return DesktopFile(absoluteFilePath()).getName();
+            return DesktopFile(absoluteFilePath()).getLocalName();
         }
 
         return fileName();

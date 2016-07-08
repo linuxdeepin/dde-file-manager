@@ -33,5 +33,9 @@
         <file>images/device/media-dvd.svg</file>
         <file>images/device/media-flash.svg</file>
         <file>images/device/media-optical.svg</file>
+        <file>images/device/android-device.svg</file>
+        <file>images/device/camera.svg</file>
+        <file>images/device/drive-network.svg</file>
+        <file>images/device/ios-device.svg</file>
     </qresource>
 </RCC>

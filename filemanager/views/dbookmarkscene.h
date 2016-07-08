@@ -9,7 +9,7 @@
 #define BOOKMARK_ITEM_HEIGHT 30
 #define SEPARATOR_ITEM_HEIGHT 6
 #define BOOKMARK_ITEM_WIDTH 201
-#define BOOKMARK_ITEM_SPACE 5
+#define BOOKMARK_ITEM_SPACE 0
 
 class DBookmarkItem;
 class DBookmarkRootItem;

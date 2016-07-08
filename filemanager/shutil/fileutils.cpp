@@ -461,9 +461,9 @@ bool FileUtils::openFileByApp(const QString &filePath, const QString &app)
 
     if (!isSupportLaunchUris){
         qWarning() << "Failed to open desktop file with gio: g_app_info_supports_uris returns false";
+        openFile(filePath);
         return false;
     }
-
 
     const auto stdFilePath = filePath.toStdString();
     const char* cFilePath = stdFilePath.c_str();

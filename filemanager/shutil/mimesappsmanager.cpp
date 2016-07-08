@@ -57,14 +57,16 @@ void MimeAppsWorker::handleFileChanged()
 
 void MimeAppsWorker::updateCache()
 {
-    if (QFile(MimesAppsManager::getMimeAppsCacheFile()).exists() &&
-            QFile(MimesAppsManager::getDesktopFilesCacheFile()).exists() &&
-            QFile(MimesAppsManager::getDesktopIconsCacheFile()).exists()){
-        loadCache();
-    }else{
-        MimesAppsManager::getMimeTypeApps();
-        saveCache();
-    }
+    MimesAppsManager::getMimeTypeApps();
+//    if (QFile(MimesAppsManager::getMimeAppsCacheFile()).exists() &&
+//            QFile(MimesAppsManager::getDesktopFilesCacheFile()).exists() &&
+//            QFile(MimesAppsManager::getDesktopIconsCacheFile()).exists()){
+//        loadCache();
+//        MimesAppsManager::getMimeTypeApps();
+//    }else{
+//        MimesAppsManager::getMimeTypeApps();
+//        saveCache();
+//    }
 }
 
 void MimeAppsWorker::saveCache()
