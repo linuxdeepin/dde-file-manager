@@ -98,6 +98,7 @@ const AbstractFileInfoPointer TrashManager::createFileInfo(const DUrl &fileUrl, 
 const QList<AbstractFileInfoPointer> TrashManager::getChildren(const DUrl &fileUrl, QDir::Filters filter, const FMEvent &event, bool &accepted) const
 {
     Q_UNUSED(filter)
+    Q_UNUSED(event)
 
     accepted = true;
 
