@@ -1798,7 +1798,7 @@ void DFileView::updateItemSizeHint()
     if(isIconViewMode()) {
         int width = iconSize().width() * 1.8;
 
-        m_itemSizeHint = QSize(width, width * 1.1);
+        m_itemSizeHint = QSize(width, iconSize().height() + 2 * TEXT_PADDING + LIST_VIEW_SPACING + 3 * TEXT_LINE_HEIGHT);
     } else {
         m_itemSizeHint = QSize(-1, iconSize().height() * 1.1);
     }

@@ -31,6 +31,8 @@ FileIconItem::FileIconItem(QWidget *parent) :
     AnchorsBase::setAnchor(edit, Qt::AnchorTop, icon, Qt::AnchorBottom);
     AnchorsBase::setAnchor(edit, Qt::AnchorHorizontalCenter, icon, Qt::AnchorHorizontalCenter);
 
+    AnchorsBase::getAnchorBaseByWidget(edit)->setTopMargin(ICON_MODE_ICON_SPACING);
+
     setFrameShape(QFrame::NoFrame);
     setFocusProxy(edit);
 
@@ -115,7 +117,7 @@ bool FileIconItem::event(QEvent *ee)
         else
             edit->setFixedHeight(TEXT_LINE_HEIGHT * 3 + TEXT_PADDING * 2);
 
-        resize(width(), icon->height() + edit->height());
+        resize(width(), icon->height() + edit->height() + ICON_MODE_ICON_SPACING);
     }
 
     return QFrame::event(ee);
@@ -125,7 +127,7 @@ bool FileIconItem::eventFilter(QObject *obj, QEvent *ee)
 {
     if (ee->type() == QEvent::Resize) {
         if(obj == icon || obj == edit) {
-            resize(width(), icon->height() + edit->height());
+            resize(width(), icon->height() + edit->height() + ICON_MODE_ICON_SPACING);
         }
     } else if(ee->type() == QEvent::KeyPress) {
         if(obj != edit) {
