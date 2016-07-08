@@ -158,6 +158,7 @@ const QList<AbstractFileInfoPointer> AbstractFileController::getChildren(const D
 {
     Q_UNUSED(fileUrl)
     Q_UNUSED(filters)
+    Q_UNUSED(event)
 
     accepted = false;
 
