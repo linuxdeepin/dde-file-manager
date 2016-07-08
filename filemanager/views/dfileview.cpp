@@ -1531,10 +1531,10 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
 
             updateListHeaderViewProperty();
 
-            m_headerView->setHighlightSections(true);
+            m_headerView->setHighlightSections(false);
             m_headerView->setSectionsClickable(true);
             m_headerView->setSortIndicatorShown(true);
-            m_headerView->setDefaultAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+            m_headerView->setDefaultAlignment(Qt::AlignLeft | Qt::AlignVCenter);
             m_headerView->setContextMenuPolicy(Qt::CustomContextMenu);
 
             if(selectionModel()) {
