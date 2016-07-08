@@ -27,6 +27,7 @@
 #include "../controllers/bookmarkmanager.h"
 #include "../controllers/appcontroller.h"
 #include "../app/filemanagerapp.h"
+#include "dbookmarkmountedindicatoritem.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -59,6 +60,11 @@ void DBookmarkItem::setDeviceInfo(UDiskDeviceInfo *deviceInfo)
     m_textContent = deviceInfo->displayName();
     m_isMounted = deviceInfo->getDiskInfo().CanUnmount;
     m_deviceInfo = deviceInfo;
+
+    if (!m_mountBookmarkItem)
+        m_mountBookmarkItem = makeMountBookmark(this);
+
+    updateMountIndicator();
 }
 
 void DBookmarkItem::init()
@@ -145,28 +151,49 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
 {
     Q_UNUSED(widget);
     painter->setClipRect(option->exposedRect);
-    double w = m_width;
+//    double w = m_width;
     QColor textColor;
     double leftPadding = 13;
     double dy;
     QPixmap press;
+    QPixmap checked;
     QPixmap release;
     QPixmap hover;
     if(m_isTightMode)
     {
         press = m_pressImageBig;
+        if (m_checkedImageBig.isNull())
+            checked = press;
+        else
+            checked = m_checkedImageBig;
         release = m_releaseImageBig;
         hover = m_hoverImageBig;
+
         dy = m_height/2 - m_releaseImageBig.height()/2;
     }
     else
     {
         press = m_pressImage;
+        if (m_checkedImage.isNull())
+            checked = press;
+        else
+            checked = m_checkedImage;
         release = m_releaseImage;
         hover = m_hoverImage;
         dy = m_height/2 - m_releaseImage.height()/2;
     }
-    if(m_pressed || (m_checked && m_checkable))
+
+    if(m_hovered)
+    {
+        if(m_hoverBackgroundEnabled)
+        {
+            painter->setBrush(m_hoverBackgroundColor);
+            painter->setPen(QColor(0,0,0,0));
+            painter->drawRect(m_x_axis, m_y_axis, m_width, m_height);
+        }
+        painter->drawPixmap(leftPadding, dy,  hover.width(), hover.height(), hover);
+    }
+    else if(m_pressed)
     {
         if(m_pressBackgroundEnabled)
         {
@@ -176,16 +203,16 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
             textColor = Qt::white;
         }
         painter->drawPixmap(leftPadding, dy, press.width(), press.height(), press);
-    }
-    else if(m_hovered)
+    }else if(!m_hovered && (m_checked && m_checkable))
     {
-        if(m_hoverBackgroundEnabled)
+        if(m_pressBackgroundEnabled)
         {
-            painter->setBrush(m_hoverBackgroundColor);
-            painter->setPen(QColor(0,0,0,0));
+            painter->setPen(m_pressBackgroundColor);
+            painter->setBrush(m_pressBackgroundColor);
             painter->drawRect(m_x_axis, m_y_axis, m_width, m_height);
+            textColor = Qt::white;
         }
-        painter->drawPixmap(leftPadding, dy,  hover.width(), hover.height(), hover);
+        painter->drawPixmap(leftPadding, dy, checked.width(), checked.height(), checked);
     }
     else
     {
@@ -223,21 +250,21 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
         }
     }
 
-    if(m_isMounted)
-    {
-        QPixmap pressPic(":/icons/images/icons/unmount_press.svg");
-        QPixmap normalPic(":/icons/images/icons/unmount_normal.svg");
-        QPixmap hoverPic(":/icons/images/icons/unmount_press.svg");
-        if(m_pressed || (m_checked && m_checkable))
-            painter->drawPixmap(w - 20, pressPic.height()/2,
-                                pressPic.width(), pressPic.height(), pressPic);
-        else if(m_hovered)
-            painter->drawPixmap(w - 20, hoverPic.height()/2,
-                                hoverPic.width(), hoverPic.height(), hoverPic);
-        else
-            painter->drawPixmap(w - 20, normalPic.height()/2,
-                                normalPic.width(), normalPic.height(), normalPic);
-    }
+//    if(m_isMounted)
+//    {
+//        QPixmap pressPic(":/icons/images/icons/unmount_press.svg");
+//        QPixmap normalPic(":/icons/images/icons/unmount_normal.svg");
+//        QPixmap hoverPic(":/icons/images/icons/unmount_press.svg");
+//        if(m_pressed || (m_checked && m_checkable))
+//            painter->drawPixmap(w - 20, pressPic.height()/2,
+//                                pressPic.width(), pressPic.height(), pressPic);
+//        else if(m_hovered)
+//            painter->drawPixmap(w - 20, hoverPic.height()/2,
+//                                hoverPic.width(), hoverPic.height(), hoverPic);
+//        else
+//            painter->drawPixmap(w - 20, normalPic.height()/2,
+//                                normalPic.width(), normalPic.height(), normalPic);
+//    }
 }
 
 void DBookmarkItem::boundImageToPress(QString imagePath)
@@ -255,6 +282,16 @@ void DBookmarkItem::boundImageToHover(QString imagePath)
     m_hoverImage.load(imagePath);
 }
 
+void DBookmarkItem::boundImageToChecked(QString imagePath)
+{
+    m_checkedImage.load(imagePath);
+}
+
+QPixmap DBookmarkItem::getCheckedPixmap()
+{
+    return m_checkedImage;
+}
+
 void DBookmarkItem::boundBigImageToPress(QString imagePath)
 {
     m_pressImageBig.load(imagePath);
@@ -270,6 +307,11 @@ void DBookmarkItem::boundBigImageToHover(QString imagePath)
     m_hoverImageBig.load(imagePath);
 }
 
+void DBookmarkItem::boundBigImageToChecked(QString imagePath)
+{
+    m_checkedImageBig.load(imagePath);
+}
+
 void DBookmarkItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     if(event->button() == Qt::LeftButton)
@@ -280,6 +322,7 @@ void DBookmarkItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
             m_yPress = event->pos().y();
         }
         m_pressed = true;
+        m_hovered = false;
         update();
     }
 }
@@ -354,6 +397,7 @@ void DBookmarkItem::setMounted(bool v)
 {
     m_isMounted = v;
     update();
+    updateMountIndicator();
 }
 
 void DBookmarkItem::setDeviceLabel(const QString &label)
@@ -397,6 +441,12 @@ DBookmarkItem *DBookmarkItem::makeBookmark(const QString &name, const DUrl &url)
     return item;
 }
 
+DBookmarkMountedIndicatorItem *DBookmarkItem::makeMountBookmark(DBookmarkItem *parentItem)
+{
+    DBookmarkMountedIndicatorItem * item = new DBookmarkMountedIndicatorItem(parentItem);
+    return item;
+}
+
 void DBookmarkItem::editMode()
 {
     m_lineEdit = new QLineEdit;
@@ -417,6 +467,16 @@ void DBookmarkItem::editMode()
                           }");
     m_lineEdit->show();
 
+}
+
+void DBookmarkItem::updateMountIndicator()
+{
+    qDebug() << m_isMounted << m_mountBookmarkItem;
+    if (m_isMounted && m_mountBookmarkItem){
+        m_mountBookmarkItem->show();
+    }else{
+        m_mountBookmarkItem->hide();
+    }
 }
 
 QSizeF DBookmarkItem::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const
@@ -571,8 +631,12 @@ void DBookmarkItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event);
     event->accept();
-    m_hovered = true;
-    update();
+    if (m_checked){
+
+    }else{
+        m_hovered = true;
+        update();
+    }
 }
 
 void DBookmarkItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
@@ -684,6 +748,11 @@ bool DBookmarkItem::isHovered()
     return m_hovered;
 }
 
+void DBookmarkItem::setHovered(bool flag)
+{
+    m_hovered = flag;
+}
+
 void DBookmarkItem::setBackgroundEnable(bool flag)
 {
     m_backgroundEnabled = flag;
@@ -768,6 +837,9 @@ void DBookmarkItem::setCheckable(bool b)
 void DBookmarkItem::setChecked(bool b)
 {
     m_checked = b;
+    if (m_mountBookmarkItem){
+        m_mountBookmarkItem->setChecked(b);
+    }
     update();
 }
 
