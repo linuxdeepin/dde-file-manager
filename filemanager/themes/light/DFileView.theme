@@ -65,6 +65,7 @@ QHeaderView::section {
     color: #797979;
     background: transparent;
     border: none;
+    padding-left: 10px inset transparent;
     border-right: 1px inset rgba(0, 0, 0, 0.05);
 }
 
