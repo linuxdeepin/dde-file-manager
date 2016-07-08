@@ -160,6 +160,10 @@
         <file>images/Spinner/Spinner88.png</file>
         <file>images/Spinner/Spinner89.png</file>
         <file>images/Spinner/Spinner90.png</file>
+        <file>images/link_large.png</file>
+        <file>images/link_small.png</file>
+        <file>images/lock_large.png</file>
+        <file>images/lock_small.png</file>
     </qresource>
     <qresource prefix="/icons">
         <file>images/icons/desktop_checked_16px.svg</file>

@@ -73,6 +73,7 @@ private:
     mutable QModelIndex lastAndExpandedInde;
 
     void onEditWidgetFocusOut();
+    QList<QRect> getCornerGeometryList(const QRect &baseRect, const QSize &cornerSize) const;
 
     friend class DFileView;
 };
