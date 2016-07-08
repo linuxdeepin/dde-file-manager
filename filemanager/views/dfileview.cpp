@@ -86,6 +86,10 @@ void DFileView::initUI()
     m_selectionRectWidget->resize(0, 0);
     m_selectionRectWidget->setObjectName("SelectionRect");
     m_selectionRectWidget->raise();
+
+    linkIcon = QIcon(":/images/images/link_large.png");
+    lockIcon = QIcon(":/images/images/lock_large.png");
+    unreadableIcon = QIcon(":/images/images/unreadable.svg");
 }
 
 void DFileView::initDelegate()
@@ -397,6 +401,27 @@ bool DFileView::isCutIndex(const QModelIndex &index) const
         return m_cutUrlSet.contains(model()->getUrlByIndex(index));
 
     return m_cutUrlSet.contains(fileInfo->redirectedFileUrl());
+}
+
+QList<QIcon> DFileView::fileAdditionalIcon(const QModelIndex &index) const
+{
+    QList<QIcon> icons;
+    const AbstractFileInfoPointer &fileInfo = model()->fileInfo(index);
+
+    if (!fileInfo)
+        return icons;
+
+    if (fileInfo->isSymLink()) {
+        icons << linkIcon;
+    }
+
+    if (!fileInfo->isWritable())
+        icons << lockIcon;
+
+    if (!fileInfo->isReadable())
+        icons << unreadableIcon;
+
+    return icons;
 }
 
 void DFileView::preHandleCd(const FMEvent &event)

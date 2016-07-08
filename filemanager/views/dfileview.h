@@ -108,6 +108,8 @@ public:
 
     bool isCutIndex(const QModelIndex &index) const;
 
+    QList<QIcon> fileAdditionalIcon(const QModelIndex &index) const;
+
 public slots:
     void preHandleCd(const FMEvent &event);
     void cd(const FMEvent &event);
@@ -242,6 +244,11 @@ private:
     DUrlList oldSelectedUrllist;
 
     Anchors<QLabel> m_contentLabel = Q_NULLPTR;
+
+    /// file additional icon
+    QIcon lockIcon;
+    QIcon linkIcon;
+    QIcon unreadableIcon;
 };
 
 #endif // DFILEVIEW_H

@@ -376,6 +376,15 @@ void DFileItemDelegate::paintIconItem(bool isDragMode, QPainter *painter,
         opt.icon.paint(painter, icon_rect);
     }
 
+    /// draw file additional icon
+
+    QList<QRect> cornerGeometryList = getCornerGeometryList(icon_rect, icon_rect.size() / 3);
+    const QList<QIcon> &cornerIconList = parent()->fileAdditionalIcon(index);
+
+    for (int i = 0; i < cornerIconList.count(); ++i) {
+        cornerIconList.at(i).paint(painter, cornerGeometryList.at(i));
+    }
+
     /// draw file name label
 
     if(str.indexOf("\n") >=0 && !str.endsWith("\n")) {
@@ -503,6 +512,15 @@ void DFileItemDelegate::paintListItem(bool isDragMode, QPainter *painter,
     icon_rect.setSize(parent()->iconSize());
     icon_rect.moveTop(icon_rect.top() + (opt.rect.bottom() - icon_rect.bottom()) / 2);
     opt.icon.paint(painter, icon_rect);
+
+    /// draw file additional icon
+
+    QList<QRect> cornerGeometryList = getCornerGeometryList(icon_rect, icon_rect.size() / 2);
+    const QList<QIcon> &cornerIconList = parent()->fileAdditionalIcon(index);
+
+    for (int i = 0; i < cornerIconList.count(); ++i) {
+        cornerIconList.at(i).paint(painter, cornerGeometryList.at(i));
+    }
 
     column_x = icon_rect.right() + ICON_SPACING;
 
@@ -766,4 +784,19 @@ void DFileItemDelegate::onEditWidgetFocusOut()
 
         hideAllIIndexWidget();
     }
+}
+
+QList<QRect> DFileItemDelegate::getCornerGeometryList(const QRect &baseRect, const QSize &cornerSize) const
+{
+    QList<QRect> list;
+    int offset = baseRect.width() / 8;
+    const QSize &offset_size = cornerSize / 2;
+
+    list << QRect(QPoint(baseRect.right() - offset - offset_size.width(),
+                         baseRect.bottom() - offset - offset_size.height()), cornerSize);
+    list << QRect(QPoint(baseRect.left() + offset - offset_size.width(), list.first().top()), cornerSize);
+    list << QRect(QPoint(list.at(1).left(), baseRect.top() + offset - offset_size.height()), cornerSize);
+    list << QRect(QPoint(list.first().left(), list.at(2).top()), cornerSize);
+
+    return list;
 }
