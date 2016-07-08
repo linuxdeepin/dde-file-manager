@@ -391,7 +391,12 @@ QModelIndex DFileView::indexAt(const QPoint &point) const
 
 bool DFileView::isCutIndex(const QModelIndex &index) const
 {
-    return m_cutUrlSet.contains(model()->getUrlByIndex(index));
+    const AbstractFileInfoPointer &fileInfo = model()->fileInfo(index);
+
+    if (!fileInfo || !fileInfo->canRedirectionFileUrl())
+        return m_cutUrlSet.contains(model()->getUrlByIndex(index));
+
+    return m_cutUrlSet.contains(fileInfo->redirectedFileUrl());
 }
 
 void DFileView::preHandleCd(const FMEvent &event)
