@@ -822,10 +822,11 @@ void DFileView::mouseReleaseEvent(QMouseEvent *event)
 {
     Q_UNUSED(event)
 
+    if (m_selectionRectWidget->isHidden())
+        DListView::mouseReleaseEvent(event);
+
     m_selectionRectWidget->resize(0, 0);
     m_selectionRectWidget->hide();
-
-    //DListView::mouseReleaseEvent(event);
 }
 
 void DFileView::handleCommitData(QWidget *editor)
