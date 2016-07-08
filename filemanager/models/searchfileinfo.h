@@ -66,6 +66,8 @@ public:
     QSet<MenuAction> disableMenuActionList() const Q_DECL_OVERRIDE;
     int userColumnWidth(int userColumnRole) const Q_DECL_OVERRIDE;
 
+    MenuAction menuActionByColumnRole(int userColumnRole) const Q_DECL_OVERRIDE;
+
     bool isEmptyFloder() const Q_DECL_OVERRIDE;
 
     sortFunction sortFunByColumn(int columnRole) const Q_DECL_OVERRIDE;

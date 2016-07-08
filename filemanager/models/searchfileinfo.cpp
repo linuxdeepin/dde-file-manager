@@ -315,6 +315,14 @@ int SearchFileInfo::userColumnWidth(int userColumnRole) const
     return AbstractFileInfo::userColumnWidth(userColumnRole);
 }
 
+MenuAction SearchFileInfo::menuActionByColumnRole(int userColumnRole) const
+{
+    if (userColumnRole == DFileSystemModel::FileUserRole + 1)
+        return MenuAction::AbsolutePath;
+
+    return AbstractFileInfo::menuActionByColumnRole(userColumnRole);
+}
+
 bool SearchFileInfo::canRedirectionFileUrl() const
 {
     if (realFileInfo)
