@@ -310,7 +310,7 @@ void DialogManager::showDiskErrorDialog(const QString & id, const QString & erro
     buttonTexts << tr("Ok");
     d.addButtons(buttonTexts);
     d.setDefaultButton(0);
-    d.setIcon(QIcon(":/images/dialogs/images/dialog-warning.svg"));
+    d.setIcon(QIcon(":/images/dialogs/images/dialog_warning_64.png"));
     d.exec();
 }
 
