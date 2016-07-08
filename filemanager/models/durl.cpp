@@ -171,7 +171,7 @@ void DUrl::setSearchAction(DUrl::SearchAction action)
     if(action == StopSearch)
         setFragment("stop");
     else if(fragment() == "stop")
-        setFragment("");
+        setFragment(QString());
 }
 
 void DUrl::setSearchTargetUrl(const DUrl &url)

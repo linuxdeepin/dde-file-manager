@@ -4,8 +4,9 @@
 #include "abstractfilecontroller.h"
 
 #include <QSet>
+#include <QPair>
 
-class SearchController : AbstractFileController
+class SearchController : public AbstractFileController
 {
     Q_OBJECT
 
@@ -32,12 +33,20 @@ public:
 
     bool openInTerminal(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
 
+private slots:
+    void onFileCreated(const DUrl &fileUrl);
+    void onFileRemove(const DUrl &fileUrl);
+
 private:
     void searchStart(const DUrl &fileUrl, QDir::Filters filter, const FMEvent &event);
+    void removeJob(const DUrl &fileUrl);
+
     static DUrl realUrl(const DUrl &searchUrl);
     static DUrlList realUrlList(const DUrlList &searchUrls);
 
     mutable QSet<DUrl> activeJob;
+    QMultiMap<DUrl, DUrl> urlToTargetUrlMap;
+    QMap<QPair<DUrl, DUrl>, int> urlToTargetUrlMapInsertCount;
 };
 
 #endif // SEARCHCONTROLLER_H

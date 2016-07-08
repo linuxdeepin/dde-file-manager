@@ -13,17 +13,22 @@
 SearchController::SearchController(QObject *parent)
     : AbstractFileController(parent)
 {
-
+    connect(fileService, &FileServices::childrenAdded, this, &SearchController::onFileCreated);
+    connect(fileService, &FileServices::childrenRemoved, this, &SearchController::onFileRemove);
 }
 
 const QList<AbstractFileInfoPointer> SearchController::getChildren(const DUrl &fileUrl, QDir::Filters filter, const FMEvent &event, bool &accepted) const
 {
     accepted = true;
 
-    if(fileUrl.isStopSearch()) {
-        activeJob.remove(fileUrl.searchTargetUrl());
+    if (fileUrl.isStopSearch()) {
+        DUrl url = fileUrl;
+
+        url.setSearchAction(DUrl::StartSearch);
+
+        const_cast<SearchController*>(this)->removeJob(url);
     } else {
-        activeJob << fileUrl.searchTargetUrl();
+        activeJob << fileUrl;
 
         QtConcurrent::run(QThreadPool::globalInstance(), const_cast<SearchController*>(this),
                           &SearchController::searchStart, fileUrl, filter, event);
@@ -130,6 +135,24 @@ bool SearchController::openInTerminal(const DUrl &fileUrl, bool &accepted) const
     return FileServices::instance()->openInTerminal(realUrl(fileUrl));
 }
 
+void SearchController::onFileCreated(const DUrl &fileUrl)
+{
+    for (DUrl url : urlToTargetUrlMap.values(fileUrl)) {
+        url.setFragment(fileUrl.toString());
+
+        emit childrenAdded(url);
+    }
+}
+
+void SearchController::onFileRemove(const DUrl &fileUrl)
+{
+    for (DUrl url : urlToTargetUrlMap.values(fileUrl)) {
+        url.setFragment(fileUrl.toString());
+
+        emit childrenRemoved(url);
+    }
+}
+
 void SearchController::searchStart(const DUrl &fileUrl, QDir::Filters filter, const FMEvent &event)
 {
     const DUrl &targetUrl = fileUrl.searchTargetUrl();
@@ -158,8 +181,12 @@ void SearchController::searchStart(const DUrl &fileUrl, QDir::Filters filter, co
         }
 
         while (it->hasNext()) {
-            if(!activeJob.contains(targetUrl)) {
+            if (!activeJob.contains(fileUrl)) {
                 qDebug() << "stop search:" << fileUrl;
+
+                removeJob(targetUrl);
+
+                emit fileSignalManager->searchingIndicatorShowed(event, false);
 
                 return;
             }
@@ -177,8 +204,18 @@ void SearchController::searchStart(const DUrl &fileUrl, QDir::Filters filter, co
 
             if(fileInfo->fileName().indexOf(regular) >= 0) {
                 DUrl url = fileUrl;
+                const DUrl &realUrl = fileInfo->fileUrl();
 
-                url.setFragment(fileInfo->fileUrl().toString());
+                url.setFragment(realUrl.toString());
+
+                if (urlToTargetUrlMap.contains(realUrl, fileUrl)) {
+                    ++urlToTargetUrlMapInsertCount[QPair<DUrl, DUrl>(realUrl, fileUrl)];
+                } else {
+                    urlToTargetUrlMap.insertMulti(fileInfo->fileUrl(), fileUrl);
+                    urlToTargetUrlMapInsertCount[QPair<DUrl, DUrl>(realUrl, fileUrl)] = 0;
+                }
+
+                fileService->addUrlMonitor(realUrl);
 
                 emit childrenAdded(url);
 
@@ -186,8 +223,29 @@ void SearchController::searchStart(const DUrl &fileUrl, QDir::Filters filter, co
             }
         }
     }
+
+    removeJob(targetUrl);
+
     emit fileSignalManager->searchingIndicatorShowed(event, false);
     qDebug() << "search finished:" << fileUrl;
+}
+
+void SearchController::removeJob(const DUrl &fileUrl)
+{
+    activeJob.remove(fileUrl);
+
+    for (const DUrl &url : urlToTargetUrlMap.keys(fileUrl)) {
+        const QPair<DUrl, DUrl> &key = QPair<DUrl, DUrl>(url, fileUrl);
+        int count = urlToTargetUrlMapInsertCount.value(key, 0);
+
+        if (--count < 0) {
+            urlToTargetUrlMap.remove(url, fileUrl);
+
+            urlToTargetUrlMapInsertCount.remove(key);
+        } else {
+            urlToTargetUrlMapInsertCount[key] = count;
+        }
+    }
 }
 
 DUrl SearchController::realUrl(const DUrl &searchUrl)
