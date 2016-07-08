@@ -204,6 +204,8 @@ public:
 
     virtual bool canIteratorDir() const;
 
+    virtual DUrl getUrlByNewFileName(const QString &fileName) const;
+
 protected:
     struct FileInfoData
     {

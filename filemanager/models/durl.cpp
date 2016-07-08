@@ -438,6 +438,17 @@ DUrl DUrl::toAbsolutePathUrl() const
     return url;
 }
 
+QString DUrl::toLocalFile() const
+{
+    if (isTrashFile()) {
+        return TRASHFILEPATH + path();
+    } else if (isSearchFile()) {
+        return DUrl(fragment()).toLocalFile();
+    } else {
+        return QUrl::toLocalFile();
+    }
+}
+
 void DUrl::updateVirtualPath()
 {
     m_virtualPath = this->toAbsolutePathUrl().path();

@@ -562,6 +562,11 @@ bool AbstractFileInfo::canIteratorDir() const
     return false;
 }
 
+DUrl AbstractFileInfo::getUrlByNewFileName(const QString &fileName) const
+{
+    return DUrl(scheme() + "://" + absolutePath() + "/" + QUrl::toPercentEncoding(fileName));
+}
+
 void AbstractFileInfo::updateFileMetaData()
 {
     this->data->pinyinName = QString();

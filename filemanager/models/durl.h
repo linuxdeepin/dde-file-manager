@@ -83,6 +83,7 @@ public:
 
     void makeAbsolutePath();
     DUrl toAbsolutePathUrl() const;
+    QString toLocalFile() const;
 
 private:
     void updateVirtualPath();
