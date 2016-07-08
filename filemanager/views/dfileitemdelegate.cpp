@@ -298,7 +298,7 @@ void DFileItemDelegate::paintIconItem(bool isDragMode, QPainter *painter,
 
     QRect label_rect = opt.rect;
 
-    label_rect.setTop(icon_rect.bottom() + TEXT_PADDING);
+    label_rect.setTop(icon_rect.bottom() + TEXT_PADDING + ICON_MODE_ICON_SPACING);
     label_rect.setWidth(opt.rect.width() - 2 * TEXT_PADDING);
     label_rect.moveLeft(label_rect.left() + TEXT_PADDING);
 
@@ -588,7 +588,7 @@ QList<QRect> DFileItemDelegate::paintGeomertyss(const QStyleOptionViewItem &opti
 
         QRect label_rect = option.rect;
 
-        label_rect.setTop(icon_rect.bottom() + 10);
+        label_rect.setTop(icon_rect.bottom() + TEXT_PADDING  + ICON_MODE_ICON_SPACING);
 
         /// if has focus show all file name else show elide file name.
         /// init file name text
