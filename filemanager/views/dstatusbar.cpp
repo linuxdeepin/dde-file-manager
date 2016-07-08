@@ -100,6 +100,8 @@ void DStatusBar::showSearchingIncator(const FMEvent &event, bool searching)
     m_loadingIndicator->setVisible(searching);
     if (searching)
         m_label->setText(tr("Searching..."));
+    else
+        m_label->setText(tr(""));
 }
 
 void DStatusBar::resizeEvent(QResizeEvent *event)
