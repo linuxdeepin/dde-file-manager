@@ -791,27 +791,6 @@ void DFileView::mousePressEvent(QMouseEvent *event)
 
         break;
     }
-    case Qt::RightButton: {
-        bool isEmptyArea = this->isEmptyArea(event->pos());
-
-        const QModelIndex &index = indexAt(event->pos());
-
-        if (isEmptyArea  && !selectionModel()->isSelected(index)) {
-            itemDelegate()->hideExpandedIndex();
-            clearSelection();
-            showEmptyAreaMenu();
-        } else {
-            const QModelIndexList &list = selectedIndexes();
-
-            if (!list.contains(index)) {
-                setCurrentIndex(index);
-            }
-
-            showNormalMenu(index);
-        }
-
-        return;
-    }
     default: break;
     }
 
@@ -904,6 +883,27 @@ void DFileView::resizeEvent(QResizeEvent *event)
 
     if (itemDelegate()->editingIndex().isValid())
         doItemsLayout();
+}
+
+void DFileView::contextMenuEvent(QContextMenuEvent *event)
+{
+    bool isEmptyArea = this->isEmptyArea(event->pos());
+
+    const QModelIndex &index = indexAt(event->pos());
+
+    if (isEmptyArea  && !selectionModel()->isSelected(index)) {
+        itemDelegate()->hideExpandedIndex();
+        clearSelection();
+        showEmptyAreaMenu();
+    } else {
+        const QModelIndexList &list = selectedIndexes();
+
+        if (!list.contains(index)) {
+            setCurrentIndex(index);
+        }
+
+        showNormalMenu(index);
+    }
 }
 
 //bool DFileView::event(QEvent *event)
