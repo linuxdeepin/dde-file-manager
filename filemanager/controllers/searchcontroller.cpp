@@ -104,7 +104,7 @@ bool SearchController::renameFile(const DUrl &oldUrl, const DUrl &newUrl, bool &
 {
     accepted = true;
 
-    return FileServices::instance()->renameFile(realUrl(oldUrl), DUrl::fromLocalFile(newUrl.path()));
+    return FileServices::instance()->renameFile(realUrl(oldUrl), realUrl(newUrl));
 }
 
 bool SearchController::compressFiles(const DUrlList &urlList, bool &accepted) const

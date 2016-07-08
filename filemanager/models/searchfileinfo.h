@@ -72,6 +72,8 @@ public:
 
     sortFunction sortFunByColumn(int columnRole) const Q_DECL_OVERRIDE;
 
+    DUrl getUrlByNewFileName(const QString &fileName) const Q_DECL_OVERRIDE;
+
 private:
     DUrl m_parentUrl;
     AbstractFileInfoPointer realFileInfo;

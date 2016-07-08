@@ -383,6 +383,16 @@ AbstractFileInfo::sortFunction SearchFileInfo::sortFunByColumn(int columnRole) c
     return AbstractFileInfo::sortFunByColumn(columnRole);
 }
 
+DUrl SearchFileInfo::getUrlByNewFileName(const QString &fileName) const
+{
+    DUrl url = fileUrl();
+
+    if (realFileInfo)
+        url.setFragment(realFileInfo->getUrlByNewFileName(fileName).toString());
+
+    return url;
+}
+
 void SearchFileInfo::init()
 {
     m_userColumnRoles.clear();
