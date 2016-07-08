@@ -819,12 +819,11 @@ void DFileView::mousePressEvent(QMouseEvent *event)
             m_pressedPos = viewport()->mapToParent(static_cast<QMouseEvent*>(event)->pos());
         }
 
+        DListView::mousePressEvent(event);
         break;
     }
     default: break;
     }
-
-    DListView::mousePressEvent(event);
 }
 
 void DFileView::mouseMoveEvent(QMouseEvent *event)
