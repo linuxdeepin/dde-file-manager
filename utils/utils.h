@@ -2,6 +2,7 @@
 #define UTILS_H
 
 #include <QtCore>
+#include <QPixmap>
 
 #define desktopLocation QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).at(0)
 #define RichDirPrefix ".deepin_rich_dir_"
@@ -37,5 +38,7 @@ QString getMimeTypeName(QString url);
 
 QString getQssFromFile(QString filename);
 QString joinPath(const QString& path, const QString& fileName);
+
+QPixmap svgToPixmap(const QString& path, int w, int h);
 #endif // UTILS_H
 

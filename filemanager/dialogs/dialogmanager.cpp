@@ -56,7 +56,8 @@ void DialogManager::initConnect()
     connect(fileSignalManager, &FileSignalManager::jobAdded, m_taskDialog, &DTaskDialog::addTask);
     connect(fileSignalManager, &FileSignalManager::jobRemoved, m_taskDialog, &DTaskDialog::delayRemoveTask);
     connect(fileSignalManager, &FileSignalManager::jobDataUpdated, m_taskDialog, &DTaskDialog::handleUpdateTaskWidget);
-    connect(m_taskDialog, &DTaskDialog::abortTask, fileSignalManager, &FileSignalManager::abortTask);
+    connect(fileSignalManager, &FileSignalManager::requestAbortJob, this, &DialogManager::abortJobByDestinationUrl);
+    connect(fileSignalManager, &FileSignalManager::abortTask, m_taskDialog, &DTaskDialog::abortTask);
 
     connect(fileSignalManager, &FileSignalManager::conflictDialogShowed, m_taskDialog, &DTaskDialog::showConflictDiloagByJob);
     connect(m_taskDialog, &DTaskDialog::conflictShowed, fileSignalManager, &FileSignalManager::conflictTimerStoped);
@@ -145,6 +146,17 @@ void DialogManager::abortJob(const QMap<QString, QString> &jobDetail)
     job->setStatus(FileJob::Cancelled);
 }
 
+void DialogManager::abortJobByDestinationUrl(const DUrl &url)
+{
+    qDebug() << url;
+    foreach (QString jobId, m_jobs.keys()) {
+        FileJob* job = m_jobs.value(jobId);
+        qDebug() << jobId << job->getTargetDir();
+        if (job->getTargetDir().startsWith(url.path())){
+            job->jobAborted();
+        }
+    }
+}
 
 void DialogManager::showUrlWrongDialog(const DUrl &url)
 {

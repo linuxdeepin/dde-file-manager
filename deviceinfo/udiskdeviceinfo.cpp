@@ -3,6 +3,7 @@
 #include "../filemanager/shutil/fileutils.h"
 #include <QIcon>
 #include "../app/singleapplication.h"
+#include "utils/utils.h"
 
 
 UDiskDeviceInfo::UDiskDeviceInfo()
@@ -226,7 +227,20 @@ bool UDiskDeviceInfo::isCanRename() const
 
 QIcon UDiskDeviceInfo::fileIcon() const
 {
-    return QIcon(":/icons/images/icons/disk_normal_22px.svg");
+    if(getType() == "native")
+        return QIcon(svgToPixmap(":/devices/images/device/drive-harddisk.svg", 128, 128));
+    else if(getType() == "removable")
+        return QIcon(svgToPixmap(":/devices/images/device/drive-harddisk-usb.svg", 128, 128));
+    else if(getType() == "network")
+        return QIcon(svgToPixmap(":/devices/images/device/drive-harddisk.svg", 128, 128));
+    else if(getType() == "phone")
+        return QIcon(svgToPixmap(":/devices/images/device/drive-harddisk.svg", 128, 128));
+    else if(getType() == "iphone")
+        return QIcon(svgToPixmap(":/devices/images/device/drive-harddisk.svg", 128, 128));
+    else if(getType() == "camera")
+        return QIcon(svgToPixmap(":/devices/images/device/drive-harddisk.svg", 128, 128));
+    else
+        return QIcon(svgToPixmap(":/devices/images/device/drive-harddisk.svg", 128, 128));
 }
 
 bool UDiskDeviceInfo::isDir() const

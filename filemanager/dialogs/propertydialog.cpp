@@ -8,6 +8,7 @@
 #include "../views/dscrollbar.h"
 #include "deviceinfo/deviceinfo.h"
 #include "../shutil/fileutils.h"
+#include "utils/utils.h"
 #include <dexpandgroup.h>
 #include <dseparatorhorizontal.h>
 #include <darrowlineexpand.h>
@@ -160,7 +161,7 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
         expandGroup->expand(0)->setExpand(true);
 
     }else if (url == DUrl::fromLocalFile("/")){
-        m_icon->setPixmap(QPixmap(":/icons/images/icons/disk_normal_22px.svg").scaled(128, 128));
+        m_icon->setPixmap(svgToPixmap(":/devices/images/device/drive-harddisk-deepin.svg", 128, 128));
         m_edit->setPlainText(tr("Disk"));
         m_edit->setAlignment(Qt::AlignHCenter);
         m_localDeviceInfoFrame = createLocalDeviceInfoWidget(url);

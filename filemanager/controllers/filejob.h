@@ -24,7 +24,7 @@ public:
         Paused,
         Cancelled,
         Run,
-        Conflicted,
+        Conflicted
     };
     static QMap<DUrl, int> SelectedFiles;
     void setStatus(Status status);
@@ -36,6 +36,8 @@ public:
     void setReplace(bool v);
 
     int getWindowId();
+
+    QString getTargetDir();
 
 signals:
     void progressPercent(int value);
@@ -51,6 +53,14 @@ public slots:
     void started();
     void cancelled();
     void handleJobFinished();
+
+    void jobUpdated();
+    void jobAdded();
+    void jobRemoved();
+    void jobAborted();
+    void jobPrepared();
+    void jobConflicted();
+
 private:
     Status m_status;
     QString m_trashLoc;
@@ -68,17 +78,12 @@ private:
     QElapsedTimer m_timer;
     qint64 lastMsec;
     qint64 currentMsec;
-    bool m_applyToAll = false;
+    bool m_applyToAll  = false;
     bool m_isReplaced = false;
     QString m_title;
     int m_windowId = -1;
 
-    void jobUpdated();
-    void jobAdded();
-    void jobRemoved();
-    void jobAborted();
-    void jobPrepared();
-    void jobConflicted();
+
 
     bool copyFile(const QString &srcFile, const QString &tarDir);
     bool copyDir(const QString &srcPath, const QString &tarPath);

@@ -1,5 +1,7 @@
 #include <QMimeDatabase>
 #include <QStandardPaths>
+#include <QSvgRenderer>
+#include <QPainter>
 #include "utils/utils.h"
 #include "utils.h"
 
@@ -173,4 +175,21 @@ QString getQssFromFile(QString filename)
 QString joinPath(const QString& path, const QString& fileName){
     QString separator(QDir::separator());
     return QString("%1%2%3").arg(path, separator, fileName);
+}
+
+
+QPixmap svgToPixmap(const QString &path, int w, int h)
+{
+    QPixmap pixmap(w, h);
+    QSvgRenderer renderer(path);
+    pixmap.fill(Qt::transparent);
+
+    QPainter painter;
+    painter.begin(&pixmap);
+
+    renderer.render(&painter);
+
+    painter.end();
+
+    return pixmap;
 }

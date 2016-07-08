@@ -86,6 +86,11 @@ int FileJob::getWindowId()
     return m_windowId;
 }
 
+QString FileJob::getTargetDir()
+{
+    return m_tarPath;
+}
+
 void FileJob::doCopy(const QList<QUrl> &files, const QString &destination)
 {
     //pre-calculate total size
@@ -231,6 +236,7 @@ void FileJob::cancelled()
 
 void FileJob::handleJobFinished()
 {
+    qDebug() << m_status;
     m_bytesCopied = m_totalSize;
     jobUpdated();
 }
