@@ -21,6 +21,7 @@ class UDiskDeviceInfo;
 class BookMark;
 class DDragWidget;
 class FMEvent;
+class DBookmarkMountedIndicatorItem;
 
 class DBookmarkItem : public QGraphicsWidget
 {
@@ -39,9 +40,14 @@ public:
     void boundImageToPress(QString imagePath);
     void boundImageToRelease(QString imagePath);
     void boundImageToHover(QString imagePath);
+    void boundImageToChecked(QString imagePath);
+
+    QPixmap getCheckedPixmap();
+
     void boundBigImageToPress(QString imagePath);
     void boundBigImageToRelease(QString imagePath);
     void boundBigImageToHover(QString imagePath);
+    void boundBigImageToChecked(QString imagePath);
     void setDraggable(bool b);
     void setBounds(int x, int y, int w, int h);
     void setPressBackgroundColor(const QColor &color);
@@ -51,6 +57,7 @@ public:
     void setAdjust(qreal value);
     bool isPressed();
     bool isHovered();
+    void setHovered(bool flag);
     void setBackgroundEnable(bool flag);
     int boundX();
     int boundY();
@@ -82,8 +89,10 @@ public:
     void setSysPath(const QString &path);
     QString getSysPath();
     int windowId();
-    static DBookmarkItem * makeBookmark(const QString &name, const DUrl &url);
+    static DBookmarkItem* makeBookmark(const QString &name, const DUrl &url);
+    static DBookmarkMountedIndicatorItem* makeMountBookmark(DBookmarkItem* parentItem);
     void editMode();
+    void updateMountIndicator();
 signals:
 
     void clicked();
@@ -117,6 +126,8 @@ private:
     UDiskDeviceInfo * m_deviceInfo = NULL;
     DBookmarkItemGroup * m_group = NULL;
 
+    DBookmarkMountedIndicatorItem* m_mountBookmarkItem = NULL;
+
     /* default */
     bool m_isDraggable = false;
     bool m_pressBackgroundEnabled = false;
@@ -149,9 +160,11 @@ private:
     QPixmap m_pressImage;
     QPixmap m_releaseImage;
     QPixmap m_hoverImage;
+    QPixmap m_checkedImage;
     QPixmap m_pressImageBig;
     QPixmap m_releaseImageBig;
     QPixmap m_hoverImageBig;
+    QPixmap m_checkedImageBig;
     QString m_textContent;
     QColor m_hoverBackgroundColor;
     QColor m_releaseBackgroundColor;
