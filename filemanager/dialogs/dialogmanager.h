@@ -33,6 +33,7 @@ public slots:
     void removeJob(const QString &jobId);
     void showTaskDialog();
     void abortJob(const QMap<QString, QString> &jobDetail);
+    void abortJobByDestinationUrl(const DUrl& url);
 
     void showUrlWrongDialog(const DUrl &url);
     int showRunExcutableDialog(const DUrl& url);

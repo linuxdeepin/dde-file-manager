@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 3.8.3 (29802) - http://www.bohemiancoding.com/sketch -->
+    <title>drive-harddisk</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-1">
+            <feOffset dx="0" dy="1" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="1" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.3 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+        <linearGradient x1="50%" y1="0.410554847%" x2="50%" y2="100%" id="linearGradient-2">
+            <stop stop-color="#9DDA00" offset="0%"></stop>
+            <stop stop-color="#73C300" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="drive-harddisk">
+            <g id="Group-3" filter="url(#filter-1)" transform="translate(7.000000, 4.000000)">
+                <rect id="Rectangle-1" fill="url(#linearGradient-2)" x="0" y="0" width="34" height="35" rx="1"></rect>
+                <rect id="Rectangle-3" fill="#FFFFFF" x="0" y="30" width="34" height="6"></rect>
+                <rect id="Rectangle-1" fill="#DCDDDD" x="0" y="34" width="34" height="6" rx="1"></rect>
+                <g id="Group" transform="translate(19.000000, 35.000000)" fill="#75C500">
+                    <rect id="Rectangle-path" x="10.987" y="0.996" width="1" height="2"></rect>
+                    <rect id="Rectangle-path" x="8.987" y="0.996" width="1" height="2"></rect>
+                    <rect id="Rectangle-path" x="6.987" y="0.996" width="1" height="2"></rect>
+                    <rect id="Rectangle-path" x="4.987" y="0.996" width="1" height="2"></rect>
+                    <rect id="Rectangle-path" x="2.987" y="0.996" width="1" height="2"></rect>
+                    <rect id="Rectangle-path" x="0.987" y="0.996" width="1" height="2"></rect>
+                </g>
+                <path d="M5,38 C5.55228475,38 6,37.5522847 6,37 C6,36.4477153 5.55228475,36 5,36 C4.44771525,36 4,36.4477153 4,37 C4,37.5522847 4.44771525,38 5,38 Z" id="Oval" fill="#75C600"></path>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -15,6 +15,7 @@
 #include "windowmanager.h"
 #include "dbusinterface/dbustype.h"
 
+
 DBookmarkScene::DBookmarkScene()
 {
     initData();
@@ -524,7 +525,8 @@ void DBookmarkScene::volumeRemoved(UDiskDeviceInfo *device)
         remove(item);
         m_diskItems.remove(device->getDiskInfo().ID);
         backHome();
-        qDebug() << device->getDiskInfo() << item;
+        qDebug() << device->getDiskInfo() << item << DUrl::fromLocalFile(device->getMountPoint());
+        emit fileSignalManager->requestAbortJob(DUrl::fromLocalFile(device->getMountPoint()));
         item->deleteLater();
     }
 }
@@ -577,7 +579,8 @@ void DBookmarkScene::mountRemoved(UDiskDeviceInfo *device)
     if(item)
     {
         item->setMounted(false);
-        qDebug() << device->getDiskInfo() << item;
+        qDebug() << device->getDiskInfo() << item << DUrl::fromLocalFile(device->getMountPoint());
+        emit fileSignalManager->requestAbortJob(DUrl::fromLocalFile(device->getMountPoint()));
         backHome();
         return;
     }

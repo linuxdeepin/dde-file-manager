@@ -479,16 +479,18 @@ void DFileItemDelegate::paintListItem(bool isDragMode, QPainter *painter,
         painter->restore();
         painter->setPen(Qt::white);
     } else {
-        QPainterPath path;
-        path.addRoundedRect(opt.rect, 0, 0);
-        painter->save();
-        if (index.row() % 2 == 0){
-            painter->fillPath(path, QColor(252, 252, 252));
-        }else{
-            painter->fillPath(path, QColor(255, 255, 255));
+        if (!isDragMode){
+            QPainterPath path;
+            path.addRoundedRect(opt.rect, 0, 0);
+            painter->save();
+            if (index.row() % 2 == 0){
+                painter->fillPath(path, QColor(252, 252, 252));
+            }else{
+                painter->fillPath(path, QColor(255, 255, 255));
+            }
+            painter->restore();
+            painter->setPen(Qt::black);
         }
-        painter->restore();
-        painter->setPen(Qt::black);
     }
 
     opt.rect.setLeft(opt.rect.left() + LEFT_PADDING);

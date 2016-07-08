@@ -185,6 +185,9 @@ signals:
 
     /*request fresh file view*/
     void requestFreshFileView(const FMEvent &event);
+
+    /*request abort copy/move job*/
+    void requestAbortJob(const DUrl& url);
 };
 
 #endif // FILESIGNALMANAGER_H
