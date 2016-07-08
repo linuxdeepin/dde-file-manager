@@ -2,6 +2,7 @@
 
 #ifdef Q_OS_LINUX
 #include <X11/XKBlib.h>
+#include <QX11Info>
 #elif defined(Q_OS_WIN32)
 #include <Windows.h>
 #endif
@@ -91,11 +92,10 @@ bool Global::startWithHanzi(const QString &text)
 bool Global::keyShiftIsPressed()
 {
 #ifdef Q_OS_LINUX
-    Display *dpy = XOpenDisplay(":0");
+    Display *dpy = QX11Info::display();
     XkbStateRec sate;
 
     XkbGetState(dpy, XkbUseCoreKbd, &sate);
-    XCloseDisplay(dpy);
 
     return sate.mods & 1;
 #elif defined(Q_OS_WIN32)
@@ -108,11 +108,10 @@ bool Global::keyShiftIsPressed()
 bool Global::keyCtrlIsPressed()
 {
 #ifdef Q_OS_LINUX
-    Display *dpy = XOpenDisplay(":0");
+    Display *dpy = QX11Info::display();
     XkbStateRec sate;
 
     XkbGetState(dpy, XkbUseCoreKbd, &sate);
-    XCloseDisplay(dpy);
 
     return sate.mods & 4;
 #elif defined(Q_OS_WIN32)
