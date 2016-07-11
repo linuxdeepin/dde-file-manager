@@ -41,9 +41,14 @@ bool TrashFileInfo::isCanRename() const
     return false;
 }
 
+bool TrashFileInfo::isReadable() const
+{
+    return true;
+}
+
 bool TrashFileInfo::isWritable() const
 {
-    return false;
+    return true;
 }
 
 QString TrashFileInfo::displayName() const
