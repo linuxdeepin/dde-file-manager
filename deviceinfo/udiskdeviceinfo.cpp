@@ -124,7 +124,12 @@ QString UDiskDeviceInfo::getMountPoint()
         QString key = QUrl::toPercentEncoding(ids[2]);
         m_diskInfo.MountPoint = QString("%1/gphoto2:host=%2").arg(path, key);
     }
-    return m_diskInfo.MountPoint.replace("file://", "");
+
+    QString result = m_diskInfo.MountPoint.replace("file://", "");
+    QUrl url = QUrl::fromLocalFile(result);
+    result = url.fromEncoded(result.toLatin1()).toString();
+//    qDebug() << url.fromEncoded(result.toLatin1()).toString();
+    return result;
 }
 
 QString UDiskDeviceInfo::getIcon()
@@ -144,6 +149,9 @@ bool UDiskDeviceInfo::canUnmount()
 
 qulonglong UDiskDeviceInfo::getFree()
 {
+    if (getType() == "dvd"){
+        return QStorageInfo(getMountPoint()).bytesFree();
+    }
     return (m_diskInfo.Total - m_diskInfo.Used) * 1024;
 }
 
@@ -154,6 +162,9 @@ qulonglong UDiskDeviceInfo::getUsed()
 
 qulonglong UDiskDeviceInfo::getTotal()
 {
+    if (getType() == "dvd"){
+        return QStorageInfo(getMountPoint()).bytesTotal();
+    }
     return m_diskInfo.Total * 1024;
 }
 
@@ -184,6 +195,8 @@ UDiskDeviceInfo::MediaType UDiskDeviceInfo::getMediaType() const
         return iphone;
     else if(getType() == "camera")
         return camera;
+    else if(getType() == "dvd")
+        return dvd;
     else
         return unknown;
 }
@@ -202,6 +215,8 @@ QString UDiskDeviceInfo::deviceTypeDisplayName() const
         return QObject::tr("Apple mobile device");
     else if(getType() == "camera")
         return QObject::tr("Camera");
+    else if(getType() == "dvd")
+        return QObject::tr("Dvd");
     else
         return QObject::tr("Unknown device");
 }
@@ -239,6 +254,8 @@ QIcon UDiskDeviceInfo::fileIcon() const
         return QIcon(svgToPixmap(":/devices/images/device/ios-device.svg", 128, 128));
     else if(getType() == "camera")
         return QIcon(svgToPixmap(":/devices/images/device/camera.svg", 128, 128));
+    else if(getType() == "dvd")
+        return QIcon(svgToPixmap(":/devices/images/device/media-dvd.svg", 128, 128));
     else
         return QIcon(svgToPixmap(":/devices/images/device/drive-harddisk.svg", 128, 128));
 }
