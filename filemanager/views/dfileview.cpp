@@ -5,7 +5,6 @@
 #include "dfileitemdelegate.h"
 #include "fileinfo.h"
 #include "dfilemenu.h"
-#include "dscrollbar.h"
 #include "windowmanager.h"
 #include "dfilemanagerwindow.h"
 #include "dfileselectionmodel.h"
@@ -26,6 +25,7 @@
 #include "../shutil/fileutils.h"
 
 #include <dthememanager.h>
+#include <dscrollbar.h>
 
 #include <QWheelEvent>
 #include <QLineEdit>

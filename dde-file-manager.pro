@@ -90,7 +90,6 @@ HEADERS += \
     filemanager/views/dcrumbbutton.h \
     filemanager/views/dhorizseparator.h \
     filemanager/models/ddirmodel.h \
-    filemanager/views/dscrollbar.h \
     filemanager/app/fmevent.h \
     filemanager/views/historystack.h\
     filemanager/dialogs/propertydialog.h \
@@ -187,7 +186,6 @@ SOURCES += \
     filemanager/views/dcrumbbutton.cpp \
     filemanager/views/dhorizseparator.cpp \
     filemanager/models/ddirmodel.cpp \
-    filemanager/views/dscrollbar.cpp \
     filemanager/app/fmevent.cpp \
     filemanager/views/historystack.cpp\
     filemanager/dialogs/propertydialog.cpp \

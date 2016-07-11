@@ -7,7 +7,9 @@
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QCloseEvent>
-#include "../views/dscrollbar.h"
+
+#include <dscrollbar.h>
+
 #include "../utils/xutil.h"
 
 MoveCopyTaskWidget::MoveCopyTaskWidget(const QMap<QString, QString> &jobDetail, QWidget *parent):

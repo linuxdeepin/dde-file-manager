@@ -8,6 +8,8 @@
 #include <QCheckBox>
 #include <QPushButton>
 #include <QLabel>
+
+#include <dscrollbar.h>
 #include <dthememanager.h>
 
 #include "../app/global.h"
@@ -16,7 +18,6 @@
 #include "../app/global.h"
 #include "../shutil/desktopfile.h"
 #include "../shutil/iconprovider.h"
-#include "../views/dscrollbar.h"
 #include "../shutil/fileutils.h"
 
 
