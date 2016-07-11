@@ -62,6 +62,7 @@ public slots:
     void asyncRequestDiskInfos();
     void asyncRequestDiskInfosFinihsed(QDBusPendingCallWatcher *call);
     void changed(int in0, const QString &in1);
+    void handleError(const QString &in0, const QString &in1);
 private:
     void readFstab();
     QList<UDiskDeviceInfo *> m_list;
