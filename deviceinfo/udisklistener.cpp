@@ -14,8 +14,9 @@ UDiskListener::UDiskListener()
                                                   DiskMountInterface::staticInterfacePath(),
                                                   QDBusConnection::sessionBus(), this);
     connect(m_diskMountInterface, &DiskMountInterface::Changed, this, &UDiskListener::changed);
-    connect(m_diskMountInterface, &DiskMountInterface::Error,
-            fileSignalManager, &FileSignalManager::showDiskErrorDialog);
+    connect(m_diskMountInterface, &DiskMountInterface::Error, this, &UDiskListener::handleError);
+//    connect(m_diskMountInterface, &DiskMountInterface::Error,
+//            fileSignalManager, &FileSignalManager::showDiskErrorDialog);
 }
 
 UDiskDeviceInfo *UDiskListener::getDevice(const QString &path)
@@ -232,6 +233,23 @@ void UDiskListener::changed(int in0, const QString &in1)
     }else if (device && info.ID.isEmpty()){
         emit volumeRemoved(device);
         removeDevice(device);
+    }
+}
+
+void UDiskListener::handleError(const QString &in0, const QString &in1)
+{
+    qDebug() << in0 << in1;
+    if (m_map.contains(in0)){
+        UDiskDeviceInfo *device = m_map.value(in0);
+        QStringList args;
+        args << "-f" ;
+        if (device->canEject()){
+            args << "-e" << device->getMountPoint();
+        }else{
+            args << "-u" << device->getMountPoint();
+        }
+        bool reslut = QProcess::startDetached("gvfs-mount", args);
+        qDebug() << "gvfs-mount" << args << reslut;
     }
 }
 
