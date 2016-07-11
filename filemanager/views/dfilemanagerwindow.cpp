@@ -266,10 +266,9 @@ void DMainWindow::initConnect()
 }
 
 
-void DMainWindow::moveCenter(){
+void DMainWindow::moveCenter(const QPoint &cp){
     QRect qr = frameGeometry();
-    QPoint cp;
-    cp = qApp->desktop()->availableGeometry().center();
+
     qr.moveCenter(cp);
     move(qr.topLeft());
 }
