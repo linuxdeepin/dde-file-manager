@@ -35,6 +35,7 @@ public:
     bool cutFiles(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;
     bool pasteFile(PasteType type, const DUrlList &urlList,
                    const FMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
+    bool restoreFile(const DUrl &srcUrl, const DUrl &tarUrl, const FMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
     bool newFolder(const FMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
     bool newFile(const DUrl &toUrl, bool &accepted) const Q_DECL_OVERRIDE;
     bool newDocument(const DUrl &toUrl, bool &accepted) const Q_DECL_OVERRIDE;

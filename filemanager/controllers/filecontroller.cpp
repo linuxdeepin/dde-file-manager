@@ -304,6 +304,20 @@ bool FileController::pasteFile(PasteType type, const DUrlList &urlList,
     return true;
 }
 
+
+bool FileController::restoreFile(const DUrl &srcUrl, const DUrl &tarUrl, const FMEvent &event, bool &accepted) const
+{
+
+//    qDebug() << srcUrl << tarUrl << event;
+    FileJob job("restore");
+
+    dialogManager->addJob(&job);
+
+    job.doTrashRestore(srcUrl.path(), tarUrl.path());
+    dialogManager->removeJob(job.getJobId());
+}
+
+
 bool FileController::newFolder(const FMEvent &event, bool &accepted) const
 {
     accepted = true;

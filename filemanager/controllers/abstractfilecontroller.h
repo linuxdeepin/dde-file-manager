@@ -35,6 +35,7 @@ public:
     virtual bool cutFiles(const DUrlList &urlList, bool &accepted) const;
     virtual bool pasteFile(PasteType type, const DUrlList &urlList,
                            const FMEvent &event, bool &accepted) const;
+    virtual bool restoreFile(const DUrl &srcUrl, const DUrl &tarUrl, const FMEvent &event, bool &accepted) const;
     virtual bool newFolder(const FMEvent &event, bool &accepted) const;
     virtual bool newFile(const DUrl &toUrl, bool &accepted) const;
     virtual bool newDocument(const DUrl &toUrl, bool &accepted) const;

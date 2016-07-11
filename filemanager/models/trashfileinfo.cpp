@@ -228,8 +228,11 @@ bool TrashFileInfo::restore(const FMEvent &event) const
 
         return false;
     }
+    qDebug() << DUrl::fromLocalFile(absoluteFilePath()) << DUrl::fromLocalFile(originalFilePath);
 
-    return fileService->renameFile(DUrl::fromLocalFile(absoluteFilePath()), DUrl::fromLocalFile(originalFilePath), event);
+    DUrl srcUrl = DUrl::fromLocalFile(absoluteFilePath());
+    DUrl tarUrl = DUrl::fromLocalFile(originalFilePath);
+    fileService->restoreFile(srcUrl, tarUrl, event);
 }
 
 QDateTime TrashFileInfo::deletionDate() const

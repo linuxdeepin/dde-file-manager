@@ -338,6 +338,26 @@ void FileServices::pasteFile(AbstractFileController::PasteType type,
              })
 }
 
+void FileServices::restoreFile(const DUrl &srcUrl, const DUrl &tarUrl, const FMEvent &event) const
+{
+    if(QThreadPool::globalInstance()->activeThreadCount() >= MAX_THREAD_COUNT) {
+        qDebug() << "Beyond the maximum number of threads!";
+        return;
+    }
+
+    if(QThread::currentThread() == qApp->thread()) {
+        QtConcurrent::run(QThreadPool::globalInstance(), this, &FileServices::restoreFile, srcUrl, tarUrl, event);
+
+        return;
+    }
+    TRAVERSE(srcUrl, {
+                 controller->restoreFile(srcUrl, tarUrl, event, accepted);
+
+                 if(accepted)
+                 return;
+             })
+}
+
 bool FileServices::newFolder(const FMEvent &event) const
 {
     TRAVERSE(event.fileUrl(), {

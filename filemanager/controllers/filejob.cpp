@@ -223,6 +223,21 @@ void FileJob::doMove(const QList<QUrl> &files, const QString &destination)
     emit finished();
 }
 
+void FileJob::doTrashRestore(const QString &srcFile, const QString &tarFile)
+{
+//    qDebug() << srcFile << tarFile;
+    QList<QUrl> files;
+    files << QUrl::fromLocalFile(srcFile);
+    m_totalSize = FileUtils::totalSize(files);
+    jobPrepared();
+
+    restoreTrashFile(srcFile, tarFile);
+
+    if(m_isJobAdded)
+        jobRemoved();
+    emit finished();
+}
+
 void FileJob::paused()
 {
     m_status = FileJob::Paused;
@@ -616,6 +631,72 @@ bool FileJob::moveFile(const QString &srcFile, const QString &tarDir)
 
                 }
                 return from.rename(m_srcPath);
+            }
+            case FileJob::Paused:
+                QThread::msleep(100);
+                break;
+            case FileJob::Cancelled:
+                return false;
+            default:
+                return false;
+         }
+
+    }
+    return false;
+}
+
+bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
+{
+    QFile from(srcFile);
+    QFile to(tarFile);
+
+    QFileInfo toInfo(tarFile);
+    m_srcFileName = toInfo.fileName();
+    m_tarPath = toInfo.absoluteDir().path();
+    m_tarFileName = toInfo.absoluteDir().dirName();
+    m_status = Started;
+
+    if(toInfo.exists())
+    {
+        jobConflicted();
+    }else{
+        bool result = from.rename(tarFile);
+        return result;
+    }
+
+    while(true)
+    {
+        switch(m_status)
+        {
+            case FileJob::Started:
+            {
+                if(!m_isReplaced)
+                {
+                    m_srcPath = checkDuplicateName(m_tarPath + "/" + toInfo.fileName());
+                }
+                else
+                {
+                    m_srcPath = m_tarPath + "/" + toInfo.fileName();
+                }
+                m_status = Run;
+                break;
+            }
+            case FileJob::Run:
+            {
+                if(m_isReplaced)
+                {
+                    if(to.exists()){
+                        if (toInfo.isDir()){
+                            QDir(tarFile).removeRecursively();
+                        }else if (toInfo.isFile()){
+                            to.remove();
+//                            qDebug() << to.error() << to.errorString();
+                        }
+                    }
+                }
+                bool result = from.rename(m_srcPath);
+//                qDebug() << m_srcPath << from.error() << from.errorString();
+                return result;
             }
             case FileJob::Paused:
                 QThread::msleep(100);

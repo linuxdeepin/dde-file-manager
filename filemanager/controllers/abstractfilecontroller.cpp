@@ -100,6 +100,16 @@ bool AbstractFileController::pasteFile(PasteType type, const DUrlList &urlList,
     return false;
 }
 
+bool AbstractFileController::restoreFile(const DUrl &srcUrl, const DUrl &tarUrl, const FMEvent &event, bool &accepted) const
+{
+    Q_UNUSED(srcUrl)
+    Q_UNUSED(tarUrl)
+    Q_UNUSED(event)
+    accepted = false;
+
+    return false;
+}
+
 bool AbstractFileController::newFolder(const FMEvent &event, bool &accepted) const
 {
     Q_UNUSED(event)

@@ -178,6 +178,12 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data){
 
             tipMessage = tr("current speed:%1 time Left:%2 ")
                        .arg(speed, remainTime);
+        }else if (m_jobDetail.value("type") == "restore"){
+            message = tr("<span style=\"color: #3cadff\"> %1 </span> is restored to <span style=\"color: #3cadff\"> %2 </span>")
+                    .arg(file, destination);
+
+            tipMessage = tr("current speed:%1 time Left:%2 ")
+                       .arg(speed, remainTime);
         }else if (m_jobDetail.value("type") == "delete"){
             message = tr("<span style=\"color: #3cadff\"> %1 </span> is deleted ").arg(file);
             tipMessage = tr("current speed:%1 time Left:%2 ")
