@@ -197,7 +197,12 @@ bool FileController::renameFile(const DUrl &oldUrl, const DUrl &newUrl, bool &ac
     accepted = true;
 
     QFile file(oldUrl.toLocalFile());
-    bool result = file.rename(newUrl.toLocalFile());
+    const QString &newFilePath = newUrl.toLocalFile();
+    bool result = file.rename(newFilePath);
+
+    if (!result) {
+        result = QProcess::execute("mv \"" + file.fileName().toUtf8() + "\" \"" + newFilePath.toUtf8() + "\"") == 0;
+    }
 
     return result;
 }
