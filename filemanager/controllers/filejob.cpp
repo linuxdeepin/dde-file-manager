@@ -661,6 +661,11 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
         jobConflicted();
     }else{
         bool result = from.rename(tarFile);
+
+        if (!result) {
+            result = (QProcess::execute("mv -T \"" + from.fileName().toUtf8() + "\" \"" + tarFile.toUtf8() + "\"") == 0);
+        }
+
         return result;
     }
 
@@ -687,7 +692,11 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
                 {
                     if(to.exists()){
                         if (toInfo.isDir()){
-                            QDir(tarFile).removeRecursively();
+                            bool result = QDir(tarFile).removeRecursively();
+
+                            if (!result) {
+                                result = QProcess::execute("rm -r \"" + tarFile.toUtf8() + "\"") == 0;
+                            }
                         }else if (toInfo.isFile()){
                             to.remove();
 //                            qDebug() << to.error() << to.errorString();
@@ -695,6 +704,10 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
                     }
                 }
                 bool result = from.rename(m_srcPath);
+
+                if (!result) {
+                    result = (QProcess::execute("mv -T \"" + from.fileName().toUtf8() + "\" \"" + m_srcPath.toUtf8() + "\"") == 0);
+                }
 //                qDebug() << m_srcPath << from.error() << from.errorString();
                 return result;
             }
