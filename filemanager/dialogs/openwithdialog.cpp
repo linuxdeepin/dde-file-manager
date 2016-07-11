@@ -11,7 +11,6 @@
 #include "../app/global.h"
 #include "../shutil/desktopfile.h"
 #include "../shutil/iconprovider.h"
-#include "../views/dscrollbar.h"
 #include "../shutil/fileutils.h"
 
 

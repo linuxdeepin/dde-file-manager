@@ -1,7 +1,6 @@
 #include "dleftsidebar.h"
 #include "dcheckablebutton.h"
 #include "dhorizseparator.h"
-#include "dscrollbar.h"
 #include "windowmanager.h"
 
 #include "../controllers/pathmanager.h"
@@ -18,6 +17,8 @@
 #include "dbookmarkscene.h"
 #include "dbookmarkitemgroup.h"
 #include "dbookmarkrootitem.h"
+
+#include <dscrollbar.h>
 
 #include <QVBoxLayout>
 #include <QButtonGroup>

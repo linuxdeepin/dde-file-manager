@@ -9,7 +9,9 @@
 #include <QDirModel>
 #include <QLabel>
 #include <QDebug>
-#include "dscrollbar.h"
+
+#include <dscrollbar.h>
+
 #include "../app/fmevent.h"
 #include "windowmanager.h"
 

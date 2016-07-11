@@ -5,10 +5,11 @@
 #include <../controllers/fileservices.h>
 #include "../shutil/fileutils.h"
 #include "../shutil/mimesappsmanager.h"
-#include "../views/dscrollbar.h"
 #include "deviceinfo/deviceinfo.h"
 #include "../shutil/fileutils.h"
 #include "utils/utils.h"
+
+#include <dscrollbar.h>
 #include <dexpandgroup.h>
 #include <dseparatorhorizontal.h>
 #include <darrowlineexpand.h>
