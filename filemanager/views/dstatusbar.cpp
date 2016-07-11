@@ -23,8 +23,8 @@ void DStatusBar::initUI()
         seq.append(QString(":/images/images/Spinner/Spinner%1.png").arg(i, 2, 10, QChar('0')));
 
     m_loadingIndicator = new DPictureSequenceView(this);
-    m_loadingIndicator->setPictureSequence(seq);
-    m_loadingIndicator->setFixedSize(32, 32);
+    m_loadingIndicator->setFixedSize(18, 18);
+    m_loadingIndicator->setPictureSequence(seq, DPictureSequenceView::AutoScaleMode);
     m_loadingIndicator->setSpeed(20);
     m_loadingIndicator->hide();
 
