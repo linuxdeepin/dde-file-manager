@@ -23,6 +23,7 @@ public:
         removable,
         camera,
         network,
+        dvd
     };
 
     UDiskDeviceInfo();

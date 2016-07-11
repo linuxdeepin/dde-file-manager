@@ -815,7 +815,7 @@ bool FileJob::moveFileToTrash(const QString &file)
     if (!localFile.rename(newName))
     {
         //Todo: find reason
-        qDebug() << "Unable to trash file:" << localFile.fileName();
+        qDebug() << "Unable to trash file:" << localFile.fileName() << newName << localFile.error() << localFile.errorString();
         return false;
     }
 

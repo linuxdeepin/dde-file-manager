@@ -39,7 +39,8 @@ void DBookmarkScene::initData()
              << "Usb"
              << "Iphone"
              << "Android"
-             << "Network";
+             << "Network"
+             << "Dvd";
 
     foreach (QString key, IconKeys) {
         QString _key = key.toLower();
@@ -553,6 +554,8 @@ void DBookmarkScene::mountAdded(UDiskDeviceInfo *device)
             key = "Iphone";
         }else if (device->getMediaType() == UDiskDeviceInfo::camera){
             key = "Android";
+        }else if (device->getMediaType() == UDiskDeviceInfo::dvd){
+            key = "Dvd";
         }
         item = createBookmarkByKey(key);
         item->setDeviceInfo(device);
