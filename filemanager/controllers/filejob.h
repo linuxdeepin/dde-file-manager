@@ -49,6 +49,9 @@ public slots:
     void doDelete(const QList<QUrl> &files);
     void doMoveToTrash(const QList<QUrl> &files);
     void doMove(const QList<QUrl> &files, const QString &destination);
+
+    void doTrashRestore(const QString &srcFile, const QString& tarFile);
+
     void paused();
     void started();
     void cancelled();
@@ -88,6 +91,7 @@ private:
     bool copyFile(const QString &srcFile, const QString &tarDir);
     bool copyDir(const QString &srcPath, const QString &tarPath);
     bool moveFile(const QString &srcFile, const QString &tarDir);
+    bool restoreTrashFile(const QString &srcFile, const QString &tarFile);
     bool moveDir(const QString &srcFile, const QString &tarDir);
     bool deleteFile(const QString &file);
     bool deleteDir(const QString &dir);
