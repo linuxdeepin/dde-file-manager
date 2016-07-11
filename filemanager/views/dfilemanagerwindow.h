@@ -108,7 +108,7 @@ signals:
     void aboutToClose();
 
 public slots:
-    void moveCenter();
+    void moveCenter(const QPoint &cp);
     void moveTopRight();
     void moveCenterByRect(QRect rect);
     void moveTopRightByRect(QRect rect);

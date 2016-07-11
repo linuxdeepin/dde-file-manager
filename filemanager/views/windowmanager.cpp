@@ -14,6 +14,7 @@
 #include <QDebug>
 #include <QApplication>
 #include <QX11Info>
+#include <QScreen>
 
 QHash<const QWidget*, int> WindowManager::m_windows;
 int WindowManager::m_count = 0;
@@ -86,7 +87,20 @@ void WindowManager::showNewWindow(const DUrl &url, bool isAlwaysOpen)
 
     loadWindowState(window);
     if (m_windows.count() == 1){
-        window->moveCenter();
+        QPoint pos = QCursor::pos();
+        QRect currentScreenGeometry;
+
+        for (QScreen *screen : qApp->screens()) {
+            if (screen->geometry().contains(pos)) {
+                currentScreenGeometry = screen->geometry();
+            }
+        }
+
+        if (currentScreenGeometry.isEmpty()) {
+            currentScreenGeometry = qApp->primaryScreen()->geometry();
+        }
+
+        window->moveCenter(currentScreenGeometry.center());
     }
     window->fileManagerWindow()->setFileViewMode(m_fmStateManager->fmState()->viewMode());
     window->show();
