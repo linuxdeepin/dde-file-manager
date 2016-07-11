@@ -228,7 +228,6 @@ bool TrashFileInfo::restore(const FMEvent &event) const
 
         return false;
     }
-    qDebug() << DUrl::fromLocalFile(absoluteFilePath()) << DUrl::fromLocalFile(originalFilePath);
 
     DUrl srcUrl = DUrl::fromLocalFile(absoluteFilePath());
     DUrl tarUrl = DUrl::fromLocalFile(originalFilePath);

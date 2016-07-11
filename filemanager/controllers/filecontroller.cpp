@@ -72,6 +72,8 @@ const DDirIteratorPointer FileController::createDirIterator(const DUrl &fileUrl,
 
 const QList<AbstractFileInfoPointer> FileController::getChildren(const DUrl &fileUrl, QDir::Filters filter, const FMEvent &event, bool &accepted) const
 {
+    Q_UNUSED(event)
+
     accepted = true;
 
     QList<AbstractFileInfoPointer> infolist;
@@ -307,6 +309,9 @@ bool FileController::pasteFile(PasteType type, const DUrlList &urlList,
 
 bool FileController::restoreFile(const DUrl &srcUrl, const DUrl &tarUrl, const FMEvent &event, bool &accepted) const
 {
+    Q_UNUSED(event)
+
+    accepted = true;
 
 //    qDebug() << srcUrl << tarUrl << event;
     FileJob job("restore");
@@ -315,6 +320,8 @@ bool FileController::restoreFile(const DUrl &srcUrl, const DUrl &tarUrl, const F
 
     job.doTrashRestore(srcUrl.path(), tarUrl.path());
     dialogManager->removeJob(job.getJobId());
+
+    return true;
 }
 
 
