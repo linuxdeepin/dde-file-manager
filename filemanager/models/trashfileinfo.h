@@ -12,6 +12,7 @@ public:
     TrashFileInfo(const QString &url);
 
     bool isCanRename() const Q_DECL_OVERRIDE;
+    bool isReadable() const Q_DECL_OVERRIDE;
     bool isWritable() const Q_DECL_OVERRIDE;
 
     QString displayName() const;
