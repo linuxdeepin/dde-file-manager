@@ -40,7 +40,7 @@ void DCrumbWidget::initUI()
 
 void DCrumbWidget::addCrumb(const QStringList &list)
 {
-//    qDebug() << list;
+    qDebug() << list;
     for(int i = 0; i < list.size(); i++)
     {
         QString text = list.at(i);
@@ -92,7 +92,9 @@ void DCrumbWidget::addCrumb(const QStringList &list)
             connect(button, &DCrumbButton::clicked, this, &DCrumbWidget::buttonPressed);
         }
         if (i == 0){
-            button->setObjectName("DCrumbIconButton");
+            if (button){
+                button->setObjectName("DCrumbIconButton");
+            }
         }
     }
     m_group.buttons().last()->setChecked(true);
@@ -287,6 +289,14 @@ DCrumbButton *DCrumbWidget::createDeviceCrumbButtonByType(UDiskDeviceInfo::Media
                     QIcon(":/icons/images/icons/network_normal_16px.svg"),
                     QIcon(":/icons/images/icons/network_hover_16px.svg"),
                     QIcon(":/icons/images/icons/network_checked_16px.svg"),
+                    mountPoint, this);
+        break;
+    }case UDiskDeviceInfo::dvd:{
+        button = new DCrumbIconButton(
+                    m_group.buttons().size(),
+                    QIcon(":/icons/images/icons/dvd_normal_16px.svg"),
+                    QIcon(":/icons/images/icons/dvd_hover_16px.svg"),
+                    QIcon(":/icons/images/icons/dvd_checked_16px.svg"),
                     mountPoint, this);
         break;
     }
