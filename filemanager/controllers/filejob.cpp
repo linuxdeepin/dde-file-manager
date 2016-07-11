@@ -194,7 +194,7 @@ void FileJob::doMove(const QList<QUrl> &files, const QString &destination)
             if(srcInfo.rootPath() == tarInfo.rootPath())
             {
                 if (!moveDir(url.toLocalFile(), tarDir.path())) {
-                    QProcess::execute("mv \"" + url.path().toUtf8() + "\" \"" + tarDir.path().toUtf8() + "\"");
+                    QProcess::execute("mv -T \"" + url.path().toUtf8() + "\" \"" + tarDir.path().toUtf8() + "\"");
                 }
             }
             else
@@ -208,7 +208,7 @@ void FileJob::doMove(const QList<QUrl> &files, const QString &destination)
             if(srcInfo.rootPath() == tarInfo.rootPath())
             {
                 if (!moveFile(url.toLocalFile(), tarDir.path())) {
-                    QProcess::execute("mv \"" + url.path().toUtf8() + "\" \"" + tarDir.path().toUtf8() + "\"");
+                    QProcess::execute("mv -T \"" + url.path().toUtf8() + "\" \"" + tarDir.path().toUtf8() + "\"");
                 }
             }
             else
@@ -764,7 +764,7 @@ bool FileJob::moveDirToTrash(const QString &dir)
         return false;
 
     if (!sourceDir.rename(sourceDir.path(), newName)) {
-        if (QProcess::execute("mv \"" + sourceDir.path().toUtf8() + "\" \"" + newName.toUtf8() + "\"") != 0) {
+        if (QProcess::execute("mv -T \"" + sourceDir.path().toUtf8() + "\" \"" + newName.toUtf8() + "\"") != 0) {
             qDebug() << "Unable to trash dir:" << sourceDir.path();
             return false;
         }
@@ -820,7 +820,7 @@ bool FileJob::moveFileToTrash(const QString &file)
 
     if (!localFile.rename(newName))
     {
-        if (QProcess::execute("mv \"" + file.toUtf8() + "\" \"" + newName.toUtf8() + "\"") != 0) {
+        if (QProcess::execute("mv -T \"" + file.toUtf8() + "\" \"" + newName.toUtf8() + "\"") != 0) {
             //Todo: find reason
             qDebug() << "Unable to trash file:" << localFile.fileName();
             return false;
