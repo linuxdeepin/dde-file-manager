@@ -145,6 +145,8 @@ QWidget *DFileItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
 
 void DFileItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+    const QSize &icon_size = parent()->iconSize();
+
     if(parent()->isIconViewMode()) {
         editor->move(option.rect.topLeft());
         editor->setFixedWidth(option.rect.width());
@@ -155,13 +157,25 @@ void DFileItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
         if(!item)
             return;
 
-        if(parent()->iconSize().width() != item->icon->size().width()) {
+        if(icon_size.width() != item->icon->size().width()) {
             QStyleOptionViewItem opt;
 
             initStyleOption(&opt, index);
 
-            item->icon->setFixedSize(parent()->iconSize());
-            item->icon->setPixmap(opt.icon.pixmap(parent()->iconSize(), QIcon::Selected));
+            QPixmap pixmap = opt.icon.pixmap(icon_size, QIcon::Selected);
+            QPainter painter(&pixmap);
+
+            /// draw file additional icon
+
+            QList<QRect> cornerGeometryList = getCornerGeometryList(QRect(QPoint(0, 0), icon_size), icon_size / 3);
+            const QList<QIcon> &cornerIconList = parent()->fileAdditionalIcon(index);
+
+            for (int i = 0; i < cornerIconList.count(); ++i) {
+                cornerIconList.at(i).paint(&painter, cornerGeometryList.at(i));
+            }
+
+            item->icon->setFixedSize(icon_size);
+            item->icon->setPixmap(pixmap);
         }
     } else {
         const QList<int> &columnRoleList = parent()->columnRoleList();
@@ -174,7 +188,7 @@ void DFileItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
 
         QRect icon_rect = opt_rect;
 
-        icon_rect.setSize(parent()->iconSize());
+        icon_rect.setSize(icon_size);
 
         column_x = icon_rect.right() + ICON_SPACING;
 
@@ -215,10 +229,23 @@ void DFileItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
 
         initStyleOption(&opt, index);
 
-        item->icon->setPixmap(opt.icon.pixmap(parent()->iconSize(), QIcon::Selected));
+        const QSize &icon_size = parent()->iconSize();
+        QPixmap pixmap = opt.icon.pixmap(icon_size, QIcon::Selected);
+        QPainter painter(&pixmap);
+
+        /// draw file additional icon
+
+        QList<QRect> cornerGeometryList = getCornerGeometryList(QRect(QPoint(0, 0), icon_size), icon_size / 3);
+        const QList<QIcon> &cornerIconList = parent()->fileAdditionalIcon(index);
+
+        for (int i = 0; i < cornerIconList.count(); ++i) {
+            cornerIconList.at(i).paint(&painter, cornerGeometryList.at(i));
+        }
+
+        item->icon->setPixmap(pixmap);
         item->edit->setPlainText(index.data().toString());
         item->edit->setAlignment(Qt::AlignHCenter);
-        item->edit->document()->setTextWidth(parent()->iconSize().width() * 1.8);
+        item->edit->document()->setTextWidth(icon_size.width() * 1.8);
 
         if(item->edit->isReadOnly())
             return;
