@@ -152,6 +152,9 @@ qulonglong UDiskDeviceInfo::getFree()
     if (getType() == "dvd"){
         return QStorageInfo(getMountPoint()).bytesFree();
     }
+    if (m_diskInfo.Total == 0){
+        return QStorageInfo(getMountPoint()).bytesFree();
+    }
     return (m_diskInfo.Total - m_diskInfo.Used) * 1024;
 }
 
@@ -163,6 +166,9 @@ qulonglong UDiskDeviceInfo::getUsed()
 qulonglong UDiskDeviceInfo::getTotal()
 {
     if (getType() == "dvd"){
+        return QStorageInfo(getMountPoint()).bytesTotal();
+    }
+    if (m_diskInfo.Total == 0){
         return QStorageInfo(getMountPoint()).bytesTotal();
     }
     return m_diskInfo.Total * 1024;
