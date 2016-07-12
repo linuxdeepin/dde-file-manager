@@ -206,6 +206,10 @@ public:
 
     virtual DUrl getUrlByNewFileName(const QString &fileName) const;
 
+    virtual DUrl mimeDataUrl() const;
+    virtual Qt::DropActions supportedDragActions() const;
+    virtual Qt::DropActions supportedDropActions() const;
+
 protected:
     struct FileInfoData
     {
