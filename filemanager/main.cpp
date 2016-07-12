@@ -44,10 +44,6 @@ int main(int argc, char *argv[])
 
     LogUtil::registerLogger();
 
-    QTranslator translator;
-    translator.load(APPSHAREDIR"/translations/dde-file-manager_" + QLocale::system().name());
-    app.installTranslator(&translator);
-
     CommandLineManager::instance()->process();
 
     DUrl commandlineUrl;
@@ -69,6 +65,16 @@ int main(int argc, char *argv[])
     qDebug() << isSingleInstance << commandlineUrl;
 
     if (isSingleInstance){
+        QTranslator translator;
+
+        if (translator.load(APPSHAREDIR"/translations/dde-file-manager_" + QLocale::system().name()))
+            app.installTranslator(&translator);
+
+        QTranslator translator_qt;
+
+        if (translator_qt.load(QLibraryInfo::location(QLibraryInfo::TranslationsPath) + "/qt_" + QLocale::system().name() + ".qm"))
+            app.installTranslator(&translator_qt);
+
         DThemeManager::instance()->setTheme("light");
 
         /// fix Qt drag drop to google chrome bug
