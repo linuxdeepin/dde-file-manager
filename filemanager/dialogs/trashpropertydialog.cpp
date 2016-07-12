@@ -40,7 +40,7 @@ void TrashPropertyDialog::initUI()
     m_nameLable->setAlignment(Qt::AlignCenter);
 
     DSeparatorHorizontal* hLine = new DSeparatorHorizontal(this);
-    m_countLabel = new QLabel(tr("File amount %1").arg(QString::number(fileInfo->filesCount())), this);
+    m_countLabel = new QLabel(tr("Contains %1").arg(QString::number(fileInfo->filesCount())), this);
     m_sizeLabel = new QLabel(this);
 
     QHBoxLayout* infoLayout = new QHBoxLayout;

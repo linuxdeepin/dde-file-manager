@@ -28,7 +28,7 @@ void CloseAllDialogIndicator::initUI()
     contentFrame->setObjectName("ContentFrame");
 
     m_messageLabel = new QLabel(this);
-    m_closeButton = new QPushButton(tr("close all"), this);
+    m_closeButton = new QPushButton(tr("Close all"), this);
     m_closeButton->setObjectName("AllCloseButton");
 
     QHBoxLayout* mainLayout = new QHBoxLayout;

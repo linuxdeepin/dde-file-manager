@@ -115,7 +115,7 @@ protected:
 
 
 private:
-    int m_defaultWidth = 440;
+    int m_defaultWidth = 490;
     int m_defaultHeight = 120;
     QLabel* m_titleLabel=NULL;
     QPushButton* m_titleBarMinimizeButton;

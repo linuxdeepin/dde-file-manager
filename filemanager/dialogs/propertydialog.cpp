@@ -143,6 +143,7 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
 
     qDebug() << url;
 
+    QString basicInfo = tr("Basic info");
     initUI();
     UDiskDeviceInfo* diskInfo = deviceListener->getDevice(url.query());
     if (diskInfo == NULL){
@@ -158,7 +159,7 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
         m_deviceInfoFrame = createDeviceInfoWidget(diskInfo);
 
         QStringList titleList;
-        titleList << tr("Basic Info");
+        titleList << basicInfo;
         DExpandGroup *expandGroup = addExpandWidget(titleList);
         expandGroup->expand(0)->setExpandedSeparatorVisible(false);
         expandGroup->expand(0)->setContent(m_deviceInfoFrame);
@@ -170,7 +171,7 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
         m_edit->setAlignment(Qt::AlignHCenter);
         m_localDeviceInfoFrame = createLocalDeviceInfoWidget(url);
         QStringList titleList;
-        titleList << tr("Basic Info");
+        titleList << basicInfo;
         DExpandGroup *expandGroup = addExpandWidget(titleList);
         expandGroup->expand(0)->setExpandedSeparatorVisible(false);
         expandGroup->expand(0)->setContent(m_localDeviceInfoFrame);
@@ -185,9 +186,9 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
 
         QStringList titleList;
         if (fileInfo->isFile()){
-            titleList = QStringList() << tr("Basic Info");
+            titleList = QStringList() << basicInfo;
         }else{
-            titleList = QStringList() << tr("Basic Info");
+            titleList = QStringList() << basicInfo;
         }
         DExpandGroup *expandGroup = addExpandWidget(titleList);
         expandGroup->expand(0)->setExpandedSeparatorVisible(false);
@@ -317,7 +318,7 @@ QFrame *PropertyDialog::createBasicInfoWidget(const AbstractFileInfoPointer &inf
 {
     QFrame *widget = new QFrame;
     SectionKeyLabel* sizeSectionLabel = new SectionKeyLabel(QObject::tr("Size"));
-    SectionKeyLabel* fileAmountSectionLabel = new SectionKeyLabel(QObject::tr("File amount"));
+    SectionKeyLabel* fileAmountSectionLabel = new SectionKeyLabel(QObject::tr("Contains"));
     SectionKeyLabel* typeSectionLabel = new SectionKeyLabel(QObject::tr("Type"));
     SectionKeyLabel* TimeCreatedSectionLabel = new SectionKeyLabel(QObject::tr("Time read"));
     SectionKeyLabel* TimeModifiedSectionLabel = new SectionKeyLabel(QObject::tr("Time modified"));

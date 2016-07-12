@@ -27,7 +27,7 @@ void MountAskPasswordDialog::initUI()
 
     m_messageLabel = new QLabel(this);
 
-    QLabel* connectTypeLabel = new QLabel(tr("Login as"));
+    QLabel* connectTypeLabel = new QLabel(tr("Log in as"));
     connectTypeLabel->setStyleSheet(getQssFromFile(":/qss/qss/passwordAskDialog.qss"));
     connectTypeLabel->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
     connectTypeLabel->setFixedWidth(80);

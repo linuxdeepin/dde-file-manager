@@ -83,11 +83,11 @@ void MoveCopyTaskWidget::initButtonFrame(){
 
     QFrame* leftButtonFrame = new QFrame;
     leftButtonFrame->setFixedHeight(22);
-    leftButtonFrame->setFixedWidth(178);
+    leftButtonFrame->setFixedWidth(208);
     leftButtonFrame->setObjectName("ButtonFrame");
     QStringList buttonKeys, buttonTexts;
     buttonKeys << "Coexists" << "Replace" << "Skip";
-    buttonTexts << tr("Coexists") << tr("Replace") << tr("Skip");
+    buttonTexts << tr("Keep both") << tr("Replace") << tr("Skip");
     m_buttonGroup = new QButtonGroup;
     QHBoxLayout* buttonLayout = new QHBoxLayout;
     foreach (QString label, buttonKeys) {
@@ -97,7 +97,7 @@ void MoveCopyTaskWidget::initButtonFrame(){
         button->setAttribute(Qt::WA_NoMousePropagation);
         button->setCheckable(true);
         button->setFixedHeight(20);
-        button->setFixedWidth(58);
+        button->setFixedWidth(68);
         m_buttonGroup->addButton(button, index);
         buttonLayout->addWidget(button);
         if (index < buttonKeys.length() - 1){
@@ -112,8 +112,7 @@ void MoveCopyTaskWidget::initButtonFrame(){
     leftButtonFrame->setLayout(buttonLayout);
     m_buttonGroup->button(1)->setChecked(true);
 
-
-    m_checkBox = new QCheckBox(tr("no more ask"));
+    m_checkBox = new QCheckBox(tr("Do not ask again"));
     m_enterButton = new QPushButton(tr("Ok"));
     m_enterButton->setObjectName("NormalButton");
     m_enterButton->setFixedSize(60, 20);
@@ -167,29 +166,27 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data){
         file = fm.elidedText(file, Qt::ElideMiddle, fileMaxWidth);
     }
 
+    QString speedTime(tr("Current speed:%1 Time left:%2 "));
+
     if (m_jobDetail.contains("type")){
         if (m_jobDetail.value("type") == "copy"){
-            message = tr("<span style=\"color: #3cadff\"> %1 </span> is copied to <span style=\"color: #3cadff\"> %2 </span>")
+            message = tr("<span style=\"color: #3cadff\"> %1 </span> is being copied to <span style=\"color: #3cadff\"> %2 </span>")
                     .arg(file, destination);
-            tipMessage = tr("current speed:%1 time Left:%2 ")
-                       .arg(speed, remainTime);
+            tipMessage = speedTime.arg(speed, remainTime);
 
         }else if (m_jobDetail.value("type") == "move"){
-            message = tr("<span style=\"color: #3cadff\"> %1 </span> is moved to <span style=\"color: #3cadff\"> %2 </span>")
+            message = tr("<span style=\"color: #3cadff\"> %1 </span> is being moved to <span style=\"color: #3cadff\"> %2 </span>")
                     .arg(file, destination);
 
-            tipMessage = tr("current speed:%1 time Left:%2 ")
-                       .arg(speed, remainTime);
+            tipMessage = speedTime.arg(speed, remainTime);
         }else if (m_jobDetail.value("type") == "restore"){
-            message = tr("<span style=\"color: #3cadff\"> %1 </span> is restored to <span style=\"color: #3cadff\"> %2 </span>")
+            message = tr("<span style=\"color: #3cadff\"> %1 </span> is being restored to <span style=\"color: #3cadff\"> %2 </span>")
                     .arg(file, destination);
 
-            tipMessage = tr("current speed:%1 time Left:%2 ")
-                       .arg(speed, remainTime);
+            tipMessage = speedTime.arg(speed, remainTime);
         }else if (m_jobDetail.value("type") == "delete"){
-            message = tr("<span style=\"color: #3cadff\"> %1 </span> is deleted ").arg(file);
-            tipMessage = tr("current speed:%1 time Left:%2 ")
-                        .arg(speed, remainTime);
+            message = tr("<span style=\"color: #3cadff\"> %1 </span> is being deleted ").arg(file);
+            tipMessage = speedTime.arg(speed, remainTime);
         }
         setMessage(message);
         setTipMessage(tipMessage);
@@ -198,7 +195,7 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data){
 }
 
 void MoveCopyTaskWidget::updateTipMessage(){
-    QString tipMessage = tr("current speed:%1 time Left:%2 ")
+    QString tipMessage = tr("Current speed:%1 time left:%2 ")
                .arg(QString::number(m_speed), QString::number(m_timeLeft));
     setTipMessage(tipMessage);
 }
@@ -378,9 +375,9 @@ void DTaskDialog::setTitle(QString title){
 void DTaskDialog::setTitle(int taskCount){
     QString title;
     if (taskCount == 1){
-        title = tr("There is 1 task in progress");
+        title = tr("1 task in progress");
     }else{
-        title = tr("There are %1 tasks in progress").arg(QString::number(taskCount));
+        title = tr("%1 tasks in progress").arg(QString::number(taskCount));
     }
     setTitle(title);
 }

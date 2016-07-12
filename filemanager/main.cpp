@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
     SingleApplication app(argc, argv);
 
     app.setOrganizationName("deepin");
-    app.setApplicationName(QObject::tr("dde-file-manager"));
+    app.setApplicationName(QObject::tr("Deepin File Manager"));
     app.setApplicationVersion("v1.0");
 
     LogUtil::registerLogger();
