@@ -373,7 +373,12 @@ QModelIndex DFileView::indexAt(const QPoint &point) const
     int index = -1;
 
     if (item_size.width() == -1) {
-        index = pos.y() / (item_size.height() + LIST_VIEW_SPACING * 2);
+        int item_height = item_size.height() + LIST_VIEW_SPACING * 2;
+
+        if (pos.y() % item_height <= LIST_VIEW_SPACING)
+            return QModelIndex();
+
+        index = pos.y() / item_height;
     } else {
         int item_width = item_size.width() + ICON_VIEW_SPACING * 2;
 
@@ -839,6 +844,7 @@ void DFileView::mouseMoveEvent(QMouseEvent *event)
 
     m_selectionRectWidget->setGeometry(rect);
 
+    rect.moveTopLeft(viewport()->mapFromParent(rect.topLeft()));
     setSelection(rect, QItemSelectionModel::Current|QItemSelectionModel::Rows|QItemSelectionModel::ClearAndSelect);
 }
 
