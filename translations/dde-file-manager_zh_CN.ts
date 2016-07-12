@@ -133,12 +133,12 @@
         <translation type="vanished">文件夹为空</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/dfileview.cpp" line="1917"/>
+        <location filename="../filemanager/views/dfileview.cpp" line="1923"/>
         <source>Folder is empty</source>
         <translation>文件夹为空</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/dfileview.cpp" line="1919"/>
+        <location filename="../filemanager/views/dfileview.cpp" line="1925"/>
         <source>File has been moved or deleted</source>
         <translation>文件已被移动或删除</translation>
     </message>
@@ -1149,9 +1149,8 @@
         <translation>新建文本</translation>
     </message>
     <message>
-        <location filename="../filemanager/shutil/fileutils.cpp" line="538"/>
         <source>Create soft link</source>
-        <translation>创建软连接</translation>
+        <translation type="vanished">创建软连接</translation>
     </message>
     <message>
         <source>%1 item(s)</source>
@@ -1247,12 +1246,11 @@
     </message>
     <message>
         <location filename="../filemanager/controllers/fileservices.cpp" line="437"/>
+        <location filename="../filemanager/shutil/fileutils.cpp" line="538"/>
         <source>Create symlink</source>
-        <translation>创建快捷方式</translation>
+        <translation>创建链接</translation>
     </message>
     <message>
-        <location filename="../filemanager/models/searchfileinfo.cpp" line="297"/>
-        <location filename="../filemanager/models/trashfileinfo.cpp" line="161"/>
         <location filename="../filemanager/views/filemenumanager.cpp" line="284"/>
         <source>Path</source>
         <translation>路径</translation>
@@ -1264,9 +1262,21 @@
         <translation>删除时间</translation>
     </message>
     <message>
+        <location filename="../filemanager/models/trashfileinfo.cpp" line="161"/>
+        <source>Path</source>
+        <comment>TrashFileInfo</comment>
+        <translation>原始路径</translation>
+    </message>
+    <message>
         <location filename="../filemanager/main.cpp" line="42"/>
         <source>Deepin File Manager</source>
         <translation>深度文件管理器</translation>
+    </message>
+    <message>
+        <location filename="../filemanager/models/searchfileinfo.cpp" line="297"/>
+        <source>Path</source>
+        <comment>SearchFileInfo</comment>
+        <translation>路径</translation>
     </message>
 </context>
 <context>
