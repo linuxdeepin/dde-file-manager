@@ -1382,7 +1382,11 @@ bool DFileView::setCurrentUrl(DUrl fileUrl)
         updateContentLabel();
     }
 
-    updateListHeaderViewProperty();
+    if (m_currentViewMode == ListMode) {
+        updateListHeaderViewProperty();
+    } else {
+        model()->setSortRole(FMStateManager::SortStates.value(fileUrl, DFileSystemModel::FileDisplayNameRole));
+    }
 
     if(info) {
         ViewModes modes = (ViewModes)info->supportViewMode();
