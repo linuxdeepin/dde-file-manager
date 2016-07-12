@@ -33,7 +33,6 @@ public:
         Delete,
         Property,
         NewFolder,
-        NewFile,
         NewWindow,
         SelectAll,
         Separator,

@@ -1914,7 +1914,7 @@ void DFileView::updateContentLabel()
         const AbstractFileInfoPointer &fileInfo = fileService->createFileInfo(currentUrl);
 
         if (fileInfo->exists())
-            setContentLabel(tr("Floder is empty"));
+            setContentLabel(tr("Folder is empty"));
         else
             setContentLabel(tr("File has been moved or deleted"));
     } else {

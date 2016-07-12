@@ -233,8 +233,8 @@ void FileMenuManager::initData()
     m_actionKeys[MenuAction::OpenWithCustom] = QObject::tr("Others");
     m_actionKeys[MenuAction::OpenFileLocation] = QObject::tr("Open file loaction");
     m_actionKeys[MenuAction::Compress] = QObject::tr("Compress");
-    m_actionKeys[MenuAction::Decompress] = QObject::tr("Decompress");
-    m_actionKeys[MenuAction::DecompressHere] = QObject::tr("Decompress to here");
+    m_actionKeys[MenuAction::Decompress] = QObject::tr("Extract");
+    m_actionKeys[MenuAction::DecompressHere] = QObject::tr("Extract here");
     m_actionKeys[MenuAction::Cut] = QObject::tr("Cut");
     m_actionKeys[MenuAction::Copy] = QObject::tr("Copy");
     m_actionKeys[MenuAction::Paste] = QObject::tr("Paste");
@@ -243,19 +243,18 @@ void FileMenuManager::initData()
     m_actionKeys[MenuAction::CreateSymlink] = QObject::tr("Create link");
     m_actionKeys[MenuAction::SendToDesktop] = QObject::tr("Send to desktop");
     m_actionKeys[MenuAction::AddToBookMark] = QObject::tr("Add to bookmark");
-    m_actionKeys[MenuAction::Delete] = QObject::tr("Throw to trash");
-    m_actionKeys[MenuAction::CompleteDeletion] = QObject::tr("Complete deletion");
+    m_actionKeys[MenuAction::Delete] = QObject::tr("Throw to Trash");
+    m_actionKeys[MenuAction::CompleteDeletion] = QObject::tr("Permanently delete");
     m_actionKeys[MenuAction::Property] = QObject::tr("Property");
 
-    m_actionKeys[MenuAction::NewFolder] = QObject::tr("New Folder");
-    m_actionKeys[MenuAction::NewFile] = QObject::tr("New File");
-    m_actionKeys[MenuAction::NewWindow] = QObject::tr("New Window");
-    m_actionKeys[MenuAction::SelectAll] = QObject::tr("Select All");
-    m_actionKeys[MenuAction::ClearRecent] = QObject::tr("Clear Recent");
-    m_actionKeys[MenuAction::ClearTrash] = QObject::tr("Clear Trash");
-    m_actionKeys[MenuAction::DisplayAs] = QObject::tr("Display As");
-    m_actionKeys[MenuAction::SortBy] = QObject::tr("Sort By");
-    m_actionKeys[MenuAction::NewDocument] = QObject::tr("New Document");
+    m_actionKeys[MenuAction::NewFolder] = QObject::tr("New folder");
+    m_actionKeys[MenuAction::NewWindow] = QObject::tr("New window");
+    m_actionKeys[MenuAction::SelectAll] = QObject::tr("Select all");
+    m_actionKeys[MenuAction::ClearRecent] = QObject::tr("Clear recent history");
+    m_actionKeys[MenuAction::ClearTrash] = QObject::tr("Empty Trash");
+    m_actionKeys[MenuAction::DisplayAs] = QObject::tr("Display as");
+    m_actionKeys[MenuAction::SortBy] = QObject::tr("Sort by");
+    m_actionKeys[MenuAction::NewDocument] = QObject::tr("New document");
     m_actionKeys[MenuAction::NewWord] = QObject::tr("Word");
     m_actionKeys[MenuAction::NewExcel] = QObject::tr("Excel");
     m_actionKeys[MenuAction::NewPowerpoint] = QObject::tr("PowerPoint");
@@ -263,7 +262,6 @@ void FileMenuManager::initData()
     m_actionKeys[MenuAction::OpenInTerminal] = QObject::tr("Open in terminal");
     m_actionKeys[MenuAction::Restore] = QObject::tr("Restore");
     m_actionKeys[MenuAction::RestoreAll] = QObject::tr("Restore all");
-    m_actionKeys[MenuAction::CompleteDeletion] = QObject::tr("Complete Deletion");
     m_actionKeys[MenuAction::Mount] = QObject::tr("Mount");
     m_actionKeys[MenuAction::Unmount]= QObject::tr("Unmount");
     m_actionKeys[MenuAction::Eject]= QObject::tr("Eject");
@@ -280,10 +278,10 @@ void FileMenuManager::initData()
     m_actionKeys[MenuAction::ListView] = QObject::tr("List");
     m_actionKeys[MenuAction::ExtendView] = QObject::tr("Extend");
     m_actionKeys[MenuAction::SetAsWallpaper] = QObject::tr("Set as wallpaper");
-    m_actionKeys[MenuAction::ForgetPassword] = QObject::tr("Logout and unmount");
-    m_actionKeys[MenuAction::DeletionDate] = QObject::tr("Time Deleted");
-    m_actionKeys[MenuAction::SourcePath] = QObject::tr("Source Path");
-    m_actionKeys[MenuAction::AbsolutePath] = QObject::tr("Absolute Path");
+    m_actionKeys[MenuAction::ForgetPassword] = QObject::tr("Log out and unmount");
+    m_actionKeys[MenuAction::DeletionDate] = QObject::tr("Time deleted");
+    m_actionKeys[MenuAction::SourcePath] = QObject::tr("Source path");
+    m_actionKeys[MenuAction::AbsolutePath] = QObject::tr("Path");
 }
 
 void FileMenuManager::initActions()

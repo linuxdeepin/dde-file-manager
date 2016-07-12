@@ -188,7 +188,7 @@ int DialogManager::showRunExcutableDialog(const DUrl &url)
 int DialogManager::showRenameNameSameErrorDialog(const QString &name, const FMEvent &event)
 {
     DDialog d(WindowManager::getWindowById(event.windowId()));
-    d.setTitle(tr("\"%1\" already exists, please select a different name.").arg(name));
+    d.setTitle(tr("\"%1\" already exists, please use another name.").arg(name));
     QStringList buttonTexts;
     buttonTexts << tr("Confirm");
     d.addButtons(buttonTexts);
@@ -201,9 +201,9 @@ int DialogManager::showRenameNameSameErrorDialog(const QString &name, const FMEv
 
 int DialogManager::showDeleteFilesClearTrashDialog(const FMEvent &event)
 {
-    QString ClearTrash = tr("Are you sure to empty trash?");
-    QString DeleteFileName = tr("Are you sure to delete %1?");
-    QString DeleteFileItems = tr("Are you sure to delete %1 items?");
+    QString ClearTrash = tr("Are you sure to empty %1 item?");
+    QString DeleteFileName = tr("Permanently delete %1?");
+    QString DeleteFileItems = tr("Permanently delete %1 items?");
 
     DUrlList urlList = event.fileUrlList();
     QStringList buttonTexts;
@@ -214,7 +214,8 @@ int DialogManager::showDeleteFilesClearTrashDialog(const FMEvent &event)
     d.setIcon(QIcon(":/images/dialogs/images/user-trash-full-opened.png"));
     if (urlList.first() == DUrl::fromTrashFile("/") && event.source() == FMEvent::Menu && urlList.size() == 1){
         buttonTexts[1]= tr("Empty");
-        d.setTitle(ClearTrash);
+        const AbstractFileInfoPointer &fileInfo = FileServices::instance()->createFileInfo(urlList.first());
+        d.setTitle(ClearTrash.arg(fileInfo->filesCount()));
     }else if (urlList.first().isLocalFile() && event.source() == FMEvent::FileView && urlList.size() == 1){
         FileInfo f(urlList.first());
         d.setTitle(DeleteFileName.arg(f.displayName()));
@@ -246,7 +247,7 @@ int DialogManager::showRemoveBookMarkDialog(const FMEvent &event)
     DDialog d(WindowManager::getWindowById(event.windowId()));
     d.setTitle(tr("Sorry, unable to locate your bookmark directory, remove it?"));
     QStringList buttonTexts;
-    buttonTexts << tr("Cancel") << tr("Remove bookmark");
+    buttonTexts << tr("Cancel") << tr("Remove");
     d.addButtons(buttonTexts);
     d.setDefaultButton(1);
     d.setIcon(fileIconProvider->getDesktopIcon("folder", 64));
@@ -300,6 +301,7 @@ void DialogManager::showTrashPropertyDialog(const FMEvent &event)
 {
     QWidget* w = WindowManager::getWindowById(event.windowId());
     if (w){
+        qDebug() << event;
         m_trashDialog = new TrashPropertyDialog(event.fileUrl());
         m_trashDialog->show();
     }
