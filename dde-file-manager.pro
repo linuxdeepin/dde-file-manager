@@ -268,6 +268,9 @@ mimetypeFiles.files += \
     mimetypes/image.mimetype \
     mimetypes/executable.mimetype
 
+TRANSLATIONS += $$PWD/translations/dde-file-manager.ts \
+    $$PWD/translations/dde-file-manager_zh_CN.ts
+
 # Automating generation .qm files from .ts files
 CONFIG(release, debug|release) {
     system($$PWD/generate_translations.sh)

@@ -535,7 +535,7 @@ void FileUtils::createSoftLink(int windowId, const QString &file)
 {
     QString linkFile = getSoftLinkFileName(file, QFileInfo(file).dir().absolutePath());
     if (!linkFile.isEmpty()){
-        QString fileName = QFileDialog::getSaveFileName(WindowManager::getWindowById(windowId), QObject::tr("Create soft link"),
+        QString fileName = QFileDialog::getSaveFileName(WindowManager::getWindowById(windowId), QObject::tr("Create symlink"),
                                linkFile);
         QFile f(file);
         bool successed = f.link(fileName);

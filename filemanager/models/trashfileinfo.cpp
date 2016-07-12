@@ -158,7 +158,7 @@ QVariant TrashFileInfo::userColumnDisplayName(int userColumnRole) const
         return QObject::tr("Time deleted");
 
     if (userColumnRole == DFileSystemModel::FileUserRole + 2)
-        return QObject::tr("Path");
+        return QObject::tr("Path", "TrashFileInfo");
 
     return AbstractFileInfo::userColumnDisplayName(userColumnRole);
 }
