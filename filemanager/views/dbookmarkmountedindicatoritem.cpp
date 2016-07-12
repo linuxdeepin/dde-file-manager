@@ -29,7 +29,7 @@ void DBookmarkMountedIndicatorItem::init()
     setPressBackgroundEnable(true);
     setDraggable(false);
     setBounds(0, 0, 30, 20);
-    setPos(QPoint(160, 2));
+    setPos(QPoint(160, 5));
     hide();
 }
 

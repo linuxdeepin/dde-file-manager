@@ -93,6 +93,7 @@ QString FileJob::getTargetDir()
 
 void FileJob::doCopy(const QList<QUrl> &files, const QString &destination)
 {
+    qDebug() << "Do copy is started";
     //pre-calculate total size
     m_totalSize = FileUtils::totalSize(files);
     jobPrepared();
@@ -110,11 +111,12 @@ void FileJob::doCopy(const QList<QUrl> &files, const QString &destination)
     if(m_isJobAdded)
         jobRemoved();
     emit finished();
-    qDebug() << "Copy is done!";
+    qDebug() << "Do copy is done!";
 }
 
 void FileJob::doDelete(const QList<QUrl> &files)
 {
+    qDebug() << "Do delete is started";
     for(int i = 0; i < files.size(); i++)
     {
         QUrl url = files.at(i);
@@ -130,7 +132,7 @@ void FileJob::doDelete(const QList<QUrl> &files)
     if(m_isJobAdded)
         jobRemoved();
     emit finished();
-    qDebug() << "Complete deletion is done!";
+    qDebug() << "Do delete is done!";
 }
 
 void FileJob::doMoveToTrash(const QList<QUrl> &files)
@@ -173,6 +175,7 @@ void FileJob::doMoveToTrash(const QList<QUrl> &files)
 
 void FileJob::doMove(const QList<QUrl> &files, const QString &destination)
 {
+    qDebug() << "Do move is started";
     m_totalSize = FileUtils::totalSize(files);
     jobPrepared();
     QString tarLocal = QUrl(destination).toLocalFile();
@@ -221,11 +224,13 @@ void FileJob::doMove(const QList<QUrl> &files, const QString &destination)
     if(m_isJobAdded)
         jobRemoved();
     emit finished();
+    qDebug() << "Do move is done!";
 }
 
 void FileJob::doTrashRestore(const QString &srcFile, const QString &tarFile)
 {
 //    qDebug() << srcFile << tarFile;
+    qDebug() << "Do restore trash file is started";
     QList<QUrl> files;
     files << QUrl::fromLocalFile(srcFile);
     m_totalSize = FileUtils::totalSize(files);
@@ -236,6 +241,7 @@ void FileJob::doTrashRestore(const QString &srcFile, const QString &tarFile)
     if(m_isJobAdded)
         jobRemoved();
     emit finished();
+    qDebug() << "Do restore trash file is done!";
 }
 
 void FileJob::paused()
@@ -418,9 +424,15 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir)
             {
                 if(from.atEnd())
                 {
+                    if ((m_totalSize - m_bytesCopied) <= 1){
+                        m_bytesCopied = m_totalSize;
+                    }
                     jobUpdated();
+                    to.flush();
                     from.close();
+                    qDebug() << m_totalSize << m_bytesCopied;
                     to.close();
+                    qDebug() << m_totalSize << m_bytesCopied;
                     return true;
                 }
                 qint64 inBytes = from.read(block, DATA_BLOCK_SIZE);
@@ -429,6 +441,13 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir)
 
                 if (m_bytesCopied % (1024 * 1024 * 16) == 0){
                     to.flush();
+                    to.close();
+                    if(!to.open(QIODevice::WriteOnly | QIODevice::Append))
+                    {
+                        //Operation failed
+                        qDebug() << tarDir << "isn't write only";
+                        return false;
+                    }
                 }
                 m_bytesPerSec += inBytes;
                 currentMsec = m_timer.elapsed();
