@@ -19,9 +19,9 @@ bool sortByString(const QString &str1, const QString &str2, Qt::SortOrder order)
 {
     if (Global::startWithHanzi(str1)) {
         if (!Global::startWithHanzi(str2))
-            return false;
+            return order != Qt::AscendingOrder;
     } else if (Global::startWithHanzi(str2)) {
-        return true;
+        return order == Qt::AscendingOrder;
     }
 
     return ((order == Qt::DescendingOrder) ^ (Global::toPinyin(str1).toLower() < Global::toPinyin(str2).toLower())) == 0x01;

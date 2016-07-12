@@ -32,19 +32,11 @@ bool sortFileListBy##Name(const AbstractFileInfoPointer &info1, const AbstractFi
         if (isDir2) return false;\
     }\
     \
-    bool isStrType = typeid(value1) == typeid(QString);\
-    if (isStrType) {\
-        if (Global::startWithHanzi(value1)) {\
-            if (!Global::startWithHanzi(value2)) return false;\
-        } else if (Global::startWithHanzi(value2)) {\
-            return true;\
-        }\
-    }\
-    \
     if ((isDir1 && isDir2 && (value1 == value2)) || (isFile1 && isFile2 && (value1 == value2))) {\
         return sortByString(info1->displayName(), info2->displayName());\
     }\
     \
+    bool isStrType = typeid(value1) == typeid(QString);\
     if (isStrType)\
         return sortByString(value1, value2, order);\
     \
