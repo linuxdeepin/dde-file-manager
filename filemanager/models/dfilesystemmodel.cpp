@@ -390,12 +390,20 @@ Qt::ItemFlags DFileSystemModel::flags(const QModelIndex &index) const
 
 Qt::DropActions DFileSystemModel::supportedDragActions() const
 {
+    if (m_rootNode) {
+        return m_rootNode->fileInfo->supportedDragActions();
+    }
+
     return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
 }
 
 Qt::DropActions DFileSystemModel::supportedDropActions() const
 {
-    return supportedDragActions();
+    if (m_rootNode) {
+        return m_rootNode->fileInfo->supportedDropActions();
+    }
+
+    return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
 }
 
 QStringList DFileSystemModel::mimeTypes() const
@@ -443,9 +451,13 @@ QMimeData *DFileSystemModel::mimeData(const QModelIndexList &indexes) const
     QList<QUrl> urls;
     QList<QModelIndex>::const_iterator it = indexes.begin();
 
-    for (; it != indexes.end(); ++it)
-        if ((*it).column() == 0)
-            urls << QUrl(getUrlByIndex(*it));
+    for (; it != indexes.end(); ++it) {
+        if ((*it).column() == 0) {
+            const AbstractFileInfoPointer &fileInfo = this->fileInfo(*it);
+
+            urls << fileInfo->mimeDataUrl();
+        }
+    }
 
     QMimeData *data = new QMimeData();
     data->setUrls(urls);

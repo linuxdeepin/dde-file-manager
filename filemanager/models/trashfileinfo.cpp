@@ -203,6 +203,21 @@ bool TrashFileInfo::makeAbsolute()
     return true;
 }
 
+DUrl TrashFileInfo::mimeDataUrl() const
+{
+    return DUrl::fromLocalFile(data->fileInfo.absoluteFilePath());
+}
+
+Qt::DropActions TrashFileInfo::supportedDragActions() const
+{
+    return Qt::CopyAction;
+}
+
+Qt::DropActions TrashFileInfo::supportedDropActions() const
+{
+    return Qt::MoveAction;
+}
+
 AbstractFileInfo::sortFunction TrashFileInfo::sortFunByColumn(int columnRole) const
 {
     if (columnRole == DFileSystemModel::FileUserRole + 1)

@@ -40,6 +40,10 @@ public:
     bool canIteratorDir() const Q_DECL_OVERRIDE;
     bool makeAbsolute() Q_DECL_OVERRIDE;
 
+    DUrl mimeDataUrl() const Q_DECL_OVERRIDE;
+    Qt::DropActions supportedDragActions() const Q_DECL_OVERRIDE;
+    Qt::DropActions supportedDropActions() const Q_DECL_OVERRIDE;
+
     bool restore(const FMEvent &event) const;
     QDateTime deletionDate() const;
     QString sourceFilePath() const;

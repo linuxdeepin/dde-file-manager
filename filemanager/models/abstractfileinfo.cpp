@@ -567,6 +567,27 @@ DUrl AbstractFileInfo::getUrlByNewFileName(const QString &fileName) const
     return DUrl(scheme() + "://" + absolutePath() + "/" + QUrl::toPercentEncoding(fileName));
 }
 
+DUrl AbstractFileInfo::mimeDataUrl() const
+{
+    if (canRedirectionFileUrl())
+        return redirectedFileUrl();
+
+    return fileUrl();
+}
+
+Qt::DropActions AbstractFileInfo::supportedDragActions() const
+{
+    return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
+}
+
+Qt::DropActions AbstractFileInfo::supportedDropActions() const
+{
+    if (isWritable())
+        return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
+
+    return Qt::IgnoreAction;
+}
+
 void AbstractFileInfo::updateFileMetaData()
 {
     this->data->pinyinName = QString();
