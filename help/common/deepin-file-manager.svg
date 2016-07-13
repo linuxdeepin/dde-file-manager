@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 3.8.3 (29802) - http://www.bohemiancoding.com/sketch -->
+    <title>文件管理器-48px</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-1">
+            <feOffset dx="0" dy="1" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="1" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.2 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="文件管理器-48px">
+            <g id="Group" transform="translate(6.000000, 4.000000)">
+                <g id="Group-40" filter="url(#filter-1)">
+                    <path d="M0,12.8 L0,7.00336342 C0,6.4492211 0.428061605,5.85760251 0.944332138,5.68586174 L16.1404768,0.630764812 C17.1876884,0.282403026 18.8789385,0.281344861 19.9250656,0.630764812 L35.0595026,5.68586174 C35.578925,5.85935551 36,6.44616699 36,7.00336342 L36,12.8 L36,38.9996793 C36,39.5521411 35.544827,40 34.9995806,40 L1.00041944,40 C0.447903039,40 0,39.5505869 0,38.9996793 L0,12.8 Z" id="Rectangle-239" fill="#00B8FF"></path>
+                    <polygon id="Rectangle-241" fill="#FFD245" transform="translate(17.948870, 21.181103) rotate(-368.000000) translate(-17.948870, -21.181103) " points="2.94887033 7.68110338 32.9488703 7.68110338 32.9488703 34.6811034 2.94887033 34.6811034"></polygon>
+                    <rect id="Rectangle-241" fill="#FFFFFF" x="3" y="9" width="30" height="28"></rect>
+                    <rect id="Rectangle-239" fill="#39D4FF" opacity="0.7" x="0" y="13" width="36" height="27"></rect>
+                    <polyline id="Path-1387" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" points="15.5 28 15.5 20.5 20.5 20.5 20.5 32.5"></polyline>
+                    <circle id="Oval-231" fill="#FFFFFF" cx="18" cy="20" r="4"></circle>
+                    <circle id="Oval-231" fill="#4ED8FF" cx="18" cy="20" r="1"></circle>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
