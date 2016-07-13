@@ -44,19 +44,20 @@ UDiskDeviceInfo::~UDiskDeviceInfo()
 void UDiskDeviceInfo::setDiskInfo(const DiskInfo &diskInfo)
 {
     m_diskInfo = diskInfo;
+    data->url.setFragment(getMountPoint());
 }
 
-DiskInfo UDiskDeviceInfo::getDiskInfo()
+DiskInfo UDiskDeviceInfo::getDiskInfo() const
 {
     return m_diskInfo;
 }
 
-QString UDiskDeviceInfo::getId()
+QString UDiskDeviceInfo::getId() const
 {
     return m_diskInfo.ID;
 }
 
-QString UDiskDeviceInfo::getName()
+QString UDiskDeviceInfo::getName() const
 {
     return m_diskInfo.Name;
 }
@@ -66,7 +67,7 @@ QString UDiskDeviceInfo::getType() const
     return m_diskInfo.Type;
 }
 
-QString UDiskDeviceInfo::getPath()
+QString UDiskDeviceInfo::getPath() const
 {
     return m_diskInfo.Path;
 }
@@ -132,17 +133,17 @@ QString UDiskDeviceInfo::getMountPoint()
     return result;
 }
 
-QString UDiskDeviceInfo::getIcon()
+QString UDiskDeviceInfo::getIcon() const
 {
     return m_diskInfo.Icon;
 }
 
-bool UDiskDeviceInfo::canEject()
+bool UDiskDeviceInfo::canEject() const
 {
     return m_diskInfo.CanEject;
 }
 
-bool UDiskDeviceInfo::canUnmount()
+bool UDiskDeviceInfo::canUnmount() const
 {
     return m_diskInfo.CanUnmount;
 }
@@ -158,7 +159,7 @@ qulonglong UDiskDeviceInfo::getFree()
     return (m_diskInfo.Total - m_diskInfo.Used) * 1024;
 }
 
-qulonglong UDiskDeviceInfo::getUsed()
+qulonglong UDiskDeviceInfo::getUsed() const
 {
     return m_diskInfo.Used * 1024;
 }
@@ -174,7 +175,7 @@ qulonglong UDiskDeviceInfo::getTotal()
     return m_diskInfo.Total * 1024;
 }
 
-qint64 UDiskDeviceInfo::size()
+qint64 UDiskDeviceInfo::size() const
 {
     return m_diskInfo.Total * 1024;
 }
@@ -227,7 +228,7 @@ QString UDiskDeviceInfo::deviceTypeDisplayName() const
         return QObject::tr("Unknown device");
 }
 
-QString UDiskDeviceInfo::sizeDisplayName()
+QString UDiskDeviceInfo::sizeDisplayName() const
 {
     if (filesCount() <= 1){
         return QObject::tr("%1 item").arg(filesCount());
@@ -236,9 +237,19 @@ QString UDiskDeviceInfo::sizeDisplayName()
     }
 }
 
-qint64 UDiskDeviceInfo::filesCount()
+qint64 UDiskDeviceInfo::filesCount() const
 {
-    return FileUtils::filesCount(getMountPoint());
+    return FileUtils::filesCount(const_cast<UDiskDeviceInfo*>(this)->getMountPoint());
+}
+
+bool UDiskDeviceInfo::isReadable() const
+{
+    return true;
+}
+
+bool UDiskDeviceInfo::isWritable() const
+{
+    return true;
 }
 
 bool UDiskDeviceInfo::isCanRename() const
@@ -278,9 +289,12 @@ DUrl UDiskDeviceInfo::parentUrl() const
 
 QVector<MenuAction> UDiskDeviceInfo::menuActionList(AbstractFileInfo::MenuType type) const
 {
-    Q_UNUSED(type);
-
     QVector<MenuAction> actionKeys;
+
+    if (type == SpaceArea)
+        return actionKeys;
+
+    qDebug() << const_cast<UDiskDeviceInfo*>(this)->getMountPoint();
 
     actionKeys.reserve(6);
 
