@@ -713,13 +713,9 @@ void DFileSystemModel::refresh(const DUrl &fileUrl)
 
 void DFileSystemModel::toggleHiddenFiles(const DUrl &fileUrl)
 {
-    if (m_filters & QDir::Hidden) {
-        m_filters = QDir::AllEntries |QDir::NoDotAndDotDot | QDir::System;
-        refresh(fileUrl);
-    } else {
-        m_filters = QDir::AllEntries |QDir::NoDotAndDotDot | QDir::System | QDir::Hidden;
-        refresh(fileUrl);
-    }
+    m_filters = ~(m_filters ^ QDir::Filter(~QDir::Hidden));
+
+    refresh(fileUrl);
 }
 
 
