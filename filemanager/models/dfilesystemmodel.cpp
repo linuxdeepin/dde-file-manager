@@ -232,14 +232,7 @@ QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
         }
         break;
     case Qt::TextAlignmentRole:
-        switch(columnToRole(index.column())) {
-        case FileCreatedRole:
-        case FileLastModifiedRole:
-        case FileLastReadRole:
-            return Qt::AlignCenter;
-        default:
-            return Qt::AlignVCenter;
-        }
+        return Qt::AlignVCenter;
     case FileLastModifiedRole:
         return indexNode->fileInfo->lastModifiedDisplayName();
     case FileSizeRole:

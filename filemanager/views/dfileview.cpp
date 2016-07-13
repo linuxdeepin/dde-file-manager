@@ -1858,7 +1858,7 @@ void DFileView::updateColumnWidth()
         if (m_headerView->isSectionHidden(i))
             continue;
 
-        m_headerView->resizeSection(i, model()->columnWidth(i) + LIST_MODE_RIGHT_MARGIN + TEXT_PADDING);
+        m_headerView->resizeSection(i, model()->columnWidth(i) + LIST_MODE_LEFT_MARGIN + COLUMU_PADDING);
         break;
     }
 
@@ -1866,7 +1866,7 @@ void DFileView::updateColumnWidth()
         if (m_headerView->isSectionHidden(j))
             continue;
 
-        m_headerView->resizeSection(j, model()->columnWidth(j) + LIST_MODE_RIGHT_MARGIN + TEXT_PADDING);
+        m_headerView->resizeSection(j, model()->columnWidth(j) + LIST_MODE_RIGHT_MARGIN + COLUMU_PADDING);
         break;
     }
 

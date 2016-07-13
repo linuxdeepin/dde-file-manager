@@ -12,7 +12,6 @@
 #include <QAbstractTextDocumentLayout>
 
 #define ICON_SPACING 16
-#define COLUMU_PADDING 10
 #define LEFT_PADDING 10
 #define RIGHT_PADDING 10
 #define ICON_MODE_RECT_RADIUS 4
@@ -198,22 +197,10 @@ void DFileItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
 
         column_x = parent()->columnWidth(0) - parent()->viewportMargins().left();
 
-        rect.setRight(column_x);
+        rect.setRight(qMin(column_x - COLUMU_PADDING, opt_rect.right()));
         rect.setTop(opt_rect.y() + (opt_rect.height() - LIST_EDITER_HEIGHT) / 2);
 
         editor->setGeometry(rect);
-
-        column_x += 5;
-
-        for(int i = 1; i < columnRoleList.count(); ++i) {
-            QRect rect = opt_rect;
-
-            rect.setLeft(column_x);
-
-            column_x += parent()->columnWidth(i);
-
-            rect.setRight(column_x);
-        }
     }
 }
 
@@ -557,7 +544,7 @@ void DFileItemDelegate::paintListItem(bool isDragMode, QPainter *painter,
 
     column_x = parent()->columnWidth(0) - parent()->viewportMargins().left();
 
-    rect.setRight(column_x);
+    rect.setRight(qMin(column_x - COLUMU_PADDING, opt.rect.right()));
 
     int role = columnRoleList.at(0);
 
@@ -595,7 +582,7 @@ void DFileItemDelegate::paintListItem(bool isDragMode, QPainter *painter,
 
         column_x += parent()->columnWidth(i);
 
-        rect.setRight(qMin(column_x - (i < columnRoleList.count() - 1 ? COLUMU_PADDING : 0), opt.rect.right()));
+        rect.setRight(qMin(column_x - COLUMU_PADDING, opt.rect.right()));
 
         int role = columnRoleList.at(i);
 
@@ -677,7 +664,7 @@ QList<QRect> DFileItemDelegate::paintGeomertyss(const QStyleOptionViewItem &opti
 
         column_x = parent()->columnWidth(0);
 
-        rect.setRight(column_x);
+        rect.setRight(qMin(column_x - COLUMU_PADDING, opt_rect.right()));
 
         int role = columnRoleList.at(0);
 
@@ -696,7 +683,7 @@ QList<QRect> DFileItemDelegate::paintGeomertyss(const QStyleOptionViewItem &opti
 
             column_x += parent()->columnWidth(i);
 
-            rect.setRight(qMin(column_x, opt_rect.right()));
+            rect.setRight(qMin(column_x - COLUMU_PADDING, opt_rect.right()));
 
             int role = columnRoleList.at(i);
 
