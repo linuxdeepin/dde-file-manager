@@ -1634,14 +1634,13 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
 
 void DFileView::showEmptyAreaMenu()
 {
-    if (currentUrl().isNetWorkFile() || currentUrl().isSMBFile()){
-        return;
-    }
-    DFileMenu *menu;
     const QModelIndex &index = rootIndex();
-
     const AbstractFileInfoPointer &info = model()->fileInfo(index);
     const QVector<MenuAction> &actions = info->menuActionList(AbstractFileInfo::SpaceArea);
+
+    if (actions.isEmpty())
+        return;
+
     const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList();
 
     QSet<MenuAction> disableList = FileMenuManager::getDisableActionList(model()->getUrlByIndex(index));
@@ -1649,10 +1648,11 @@ void DFileView::showEmptyAreaMenu()
     if (!count())
         disableList << MenuAction::SelectAll;
 
-    menu = FileMenuManager::genereteMenuByKeys(actions, disableList, true, subActions);
-
-    DFileMenu *displayAsSubMenu = static_cast<DFileMenu*>(menu->actionAt(fileMenuManger->getActionString(MenuAction::DisplayAs))->menu());
-    DFileMenu *sortBySubMenu = static_cast<DFileMenu*>(menu->actionAt(fileMenuManger->getActionString(MenuAction::SortBy))->menu());
+    DFileMenu *menu = FileMenuManager::genereteMenuByKeys(actions, disableList, true, subActions);
+    DAction *tmp_action = menu->actionAt(fileMenuManger->getActionString(MenuAction::DisplayAs));
+    DFileMenu *displayAsSubMenu = static_cast<DFileMenu*>(tmp_action ? tmp_action->menu() : Q_NULLPTR);
+    tmp_action = menu->actionAt(fileMenuManger->getActionString(MenuAction::SortBy));
+    DFileMenu *sortBySubMenu = static_cast<DFileMenu*>(tmp_action ? tmp_action->menu() : Q_NULLPTR);
 
     if (displayAsSubMenu){
         foreach (DAction* action, displayAsSubMenu->actionList()) {
@@ -1700,12 +1700,17 @@ void DFileView::showNormalMenu(const QModelIndex &index)
         return;
 
     DUrlList list = selectedUrls();
+
     DFileMenu* menu;
 
     const AbstractFileInfoPointer &info = model()->fileInfo(index);
 
     if (list.length() == 1) {
         const QVector<MenuAction> &actions = info->menuActionList(AbstractFileInfo::SingleFile);
+
+        if (actions.isEmpty())
+            return;
+
         const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList();
         const QSet<MenuAction> &disableList = FileMenuManager::getDisableActionList(list);
 
@@ -1751,10 +1756,15 @@ void DFileView::showNormalMenu(const QModelIndex &index)
         }
 
         QVector<MenuAction> actions;
+
         if (isSystemPathIncluded)
             actions = info->menuActionList(AbstractFileInfo::MultiFilesSystemPathIncluded);
         else
             actions = info->menuActionList(AbstractFileInfo::MultiFiles);
+
+        if (actions.isEmpty())
+            return;
+
         const QMap<MenuAction, QVector<MenuAction> > subActions;
         const QSet<MenuAction> &disableList = FileMenuManager::getDisableActionList(list);
         menu = FileMenuManager::genereteMenuByKeys(actions, disableList, true, subActions);
@@ -1766,8 +1776,8 @@ void DFileView::showNormalMenu(const QModelIndex &index)
     event = list;
     event = windowId();
     event = FMEvent::FileView;
-    menu->setEvent(event);
 
+    menu->setEvent(event);
     menu->exec();
     menu->deleteLater();
 }
