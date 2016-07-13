@@ -15,7 +15,8 @@ UDiskDeviceInfo::UDiskDeviceInfo(UDiskDeviceInfo *info)
     : AbstractFileInfo(DUrl::fromComputerFile("/"))
 {
     m_diskInfo = info->getDiskInfo();
-    data->url.setFragment(info->getMountPoint());
+    data->url = DUrl::fromLocalFile(info->getMountPoint());
+    data->url.setQuery(info->getId());
 }
 
 UDiskDeviceInfo::UDiskDeviceInfo(const DUrl &url)
@@ -33,7 +34,8 @@ UDiskDeviceInfo::UDiskDeviceInfo(const QString &url)
 UDiskDeviceInfo::UDiskDeviceInfo(const DiskInfo &diskInfo)
 {
     m_diskInfo = diskInfo;
-    data->url.setFragment(getMountPoint());
+    data->url = DUrl::fromLocalFile(getMountPoint());
+    data->url.setQuery(getId());
 }
 
 UDiskDeviceInfo::~UDiskDeviceInfo()
@@ -44,7 +46,8 @@ UDiskDeviceInfo::~UDiskDeviceInfo()
 void UDiskDeviceInfo::setDiskInfo(const DiskInfo &diskInfo)
 {
     m_diskInfo = diskInfo;
-    data->url.setFragment(getMountPoint());
+    data->url = DUrl::fromLocalFile(getMountPoint());
+    data->url.setQuery(getId());
 }
 
 DiskInfo UDiskDeviceInfo::getDiskInfo() const
