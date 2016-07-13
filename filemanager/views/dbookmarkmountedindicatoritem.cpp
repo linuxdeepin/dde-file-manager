@@ -47,16 +47,18 @@ void DBookmarkMountedIndicatorItem::hoverEnterEvent(QGraphicsSceneHoverEvent *ev
 
 void DBookmarkMountedIndicatorItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
+    if (event->button() != Qt::LeftButton)
+        return DBookmarkItem::mouseReleaseEvent(event);
+
     setPress(false);
     setHovered(false);
     qDebug() << event << "=========" << m_parentItem->getSysPath();
     deviceListener->unmount(m_parentItem->getSysPath());
     update();
-    qDebug() << event << "/////////";
 }
 
 void DBookmarkMountedIndicatorItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
-
+    Q_UNUSED(event)
 }
 
