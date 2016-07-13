@@ -79,6 +79,7 @@
 #define TEXT_LINE_HEIGHT 18
 #define TEXT_PADDING 5
 #define ICON_MODE_ICON_SPACING 5
+#define COLUMU_PADDING 10
 // end
 
 // begin file view global define
