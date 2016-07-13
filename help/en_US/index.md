@@ -1,6 +1,6 @@
-# Deepin File Manager
+# Deepin File Manager|../common/deepin-file-manager.svg|
 
-## Overview|../common/icon_guide.svg|
+## Overview|../common/icon_overview.svg|
 
 Deepin File Manager is developped by Deepin Technology Team. As the core component to manage files in deepin, it is a powerful, easy-to-use file manager with an elegant and simple interface. Full-featured, well-designed, effecient-improved, Deepin File Manager will be a good help in your daily life and work.
 
@@ -8,30 +8,26 @@ Deepin File Manager is developped by Deepin Technology Team. As the core compone
 
 ## Guide|../common/icon_guide.svg|
 
-You can run, close and create shortcut for Deepin File Manager by the following ways.
+You can run, close and create a shortcut for Deepin File Manager by the following ways.
 
 ### Run Deepin File Manager
 
 1. Click on ![Launcher](icon/launcher-24.svg) or move the mouse pointer to the upper left corner of the screen to enter Launcher interface.
-2. Locate ![](1add image) by scrolling mouse wheel or searching by "deepin file manager" in Launcher interface.
-3. Right click on ![](), you can
+2. Locate ![File Manager](icon/deepin-file-manager.svg) by scrolling mouse wheel or searching by "deepin file manager" in Launcher interface.
+3. Right click on ![File Manager](icon/deepin-file-manager.svg), you can
 - Click on **Send to desktop** to create a desktop shortcut.
 - Click on **Send to dock** to fix the application on dock.
 - Click on **Add to startup** to add the application to startup, it will automatically run when the system starts up.
 
-> ![tips](icon/tips.svg): In Control Center, you can set Deepin File Manger as the default file manager. Specific operations refer to [Default Application Settings](dman:///dde-control-center#Default Application Settings.)
+> ![tips](icon/tips.svg): In Control Center, you can set Deepin File Manger as the default file manager. Specific operations refer to [Default Application Settings](dman:///dde-control-center#Default Application Settings).
 
 ### Exit Deepin File Manager
 
-- In Deepin File Manager interface, click on ![close](icon/close_icon.svg) to exit DDE Image Viewer.
-- Right click on ![]() on dock, select **Close all** to exit Deepin File Manager.
+- In Deepin File Manager interface, click on ![close](icon/close_icon.svg) to exit Deepin File Manager.
+- Right click on ![File Manager](icon/deepin-file-manager.svg) on dock, select **Close all** to exit Deepin File Manager.
 - Click on ![Settings](icon/icon_menu.svg) and select **Exit** to exit Deepin File Manager.
 
-### Keyboard Shortcuts
-
-Using keyboard shortcuts will highly improve user's effeciency, press ![ctrl](icon/Ctrl.svg) + ![shift](icon/Shift.svg) + ![slash](icon/Slash.svg) to view all the keyboard shortcuts.
-
-## Main Interface|../common/icon_guide.svg|
+## Main Interface|../common/icon_maininterface.svg|
 
 In Deepin File Manager main interface, user can execute many operations with all the functional bars in it. It is designed to be easy-to-use, user-friendly and efficient improving.
 
@@ -63,14 +59,14 @@ In Deepin File Manager main interface, user can execute many operations with all
         <tr>
             <td>5</td>
             <td>Status</td>
-            <td>Displays number of files or number of selected files, drag the slider to adjust the size of icons in the directory.</td>
+            <td>Displays number of files or number of selected files, user can drag the slider to adjust the size of icons in the directory.</td>
         </tr>
     </tbody>
 </table>
 
-## Basic Functions|../common/icon_guide.svg|
+## Basic Functions|../common/icon_basicfuncton.svg|
 
-Deepin File Manager is able to complete many basic functions as a file manager, user can easily organize files/folders with all the functions.
+Deepin File Manager is featured with the basic functions as a file manager, user can easily create, copy, rename or delete files/folders with it.
 
 ### New Document/Folder
 
@@ -161,7 +157,7 @@ User can view the information about a file/folder.
 
 ![0|property](png/property.png)
 
-## Common Operations|../common/icon_guide.svg|
+## Common Operations|../common/icon_commoncoperat.svg|
 
 Deepin File Manager is featured with many useful functions, such as breadcrumb bar, bookmarks, file sharing, accessing computers in LAN, opening file/folder in Terminal and so on. They are all designed to ease the commonly used operations.
 
@@ -169,19 +165,19 @@ Deepin File Manager is featured with many useful functions, such as breadcrumb b
 
 There are three sections in address bar, namely the breadcrumb bar, search bar and directory bar.
 
-By default, breadcrumb bar is displayed in the address bar. By clicking on the blank area in the address bar or click on ![search](icon/1add image), it will switch to directory/search bar, which can be used to access directory and search for target items.
+By default, breadcrumb bar is displayed in the address bar. By clicking on the blank area in the address bar or click on ![search](icon/search-noamal.svg), it will switch to directory/search bar, which can be used to access directory and search for target items.
 By inputting a directory/keywords in the directory/search bar and pressing ![enter](icon/Enter.svg), user can access the target directory/search for target items.
 
-1add image
+![0|addressbar1](png/addressbar1.png)
 
-> ![tips](icon/tips.svg): When user accesses a sub directory, all the parent directories of the sub directory will become a breadcrumb in the address bar. By clicking on the breadcrumbs, user can easily switch among the sub directory and its parent directories.
+> ![tips](icon/tips.svg): When user accesses a sub directory, all the parent directories of the sub directory will become a breadcrumb in the address bar. By clicking on the breadcrumbs, user can easily switch among the sub directories and their parent directories.
 
 ### Search Items
 
 User can search for targeted item by the searching function integrated in Deepin File Manager.
 
 1. In the address bar of Deepin File Manager, switch to search.
-2. Input keywords in the search bar and press ![enter](icon/Enter.svg) and the search results will popup in the window.
+2. Input keywords in the search bar and press ![enter](icon/Enter.svg), the search results will popup in the window.
 
 ![1|search](png/search.png)
 
@@ -203,14 +199,14 @@ User can move bookmarks within the bookmark area. In Deepin File Manager, drag a
 
 #### Delete Bookmarks
 
-User can remove bookmarks by right click on the book and select ** Remove**, or drag and drop the bookmark out of the navigation bar to remove it.
+User can remove bookmarks by right clicking on the bookmark and select ** Remove**, or drag and drop the bookmark out of the navigation bar to remove it.
 
 ### Computers in LAN
 
 User can visit computers in LAN to access files and folders.
-1. In Deepin File Manager interface, click on ![network](icon/1add image).
+1. In Deepin File Manager interface, click on ![network](icon/network_server.svg).
 2. Double click on the computer icon to access.
-3. Select to connect as ** Anonymity** or ** Registered user**. For ** Registered user**, user need to input username and password to connect.
+3. Select to connect as ** Anonymity** or ** Registered user**. For ** Registered user**, user needs to input username and password to connect.
 4. Click on ** Connect** to establish connection.
 
 ![0|network](png/network.png)
@@ -235,7 +231,7 @@ User can create links for items, and put the links in easy-to-reach folders (suc
 
 >![tips](icon/tips.svg): By selecting ** Send to desktop** for an item, user can create a link on desktop with one click.
 
-## Disk Management
+## Disk Management|../common/icon_diskmanagement.svg|
 
 In Deepin File Manager, mounted disks are displayed in disk management area in the navigation bar.
 
@@ -257,7 +253,7 @@ User can choose to unmount/eject disks.
 
 > ![tips](icon/tips.svg): User can click on ![unmount](icon/unmount_normal.svg) in the navigation bar to eject the disks.
 
-## Settings
+## Settings|../common/icon_optionsetting.svg|
 
 In Settings, user can create new window, read manual, view information on Deepin File Manager and Exit the application.
 
@@ -271,9 +267,9 @@ In ** Settings**, click on ** New window** to create a new window.
 
 ### Help
 
-1add image
-
 In ** Settings**, click on ** Help** to view this manual.
+
+![1|help](png/help.png)
 
 ### About
 
