@@ -122,7 +122,7 @@ UDiskDeviceInfo *UDiskListener::getDeviceByPath(const QString &path)
         UDiskDeviceInfo * info = m_list.at(i);
         if (!info->getMountPoint().isEmpty()){
             bool flag = DUrl(path) == DUrl(info->getMountPoint());
-            if (path.startsWith(info->getMountPoint()) && flag){
+            if (path.startsWith(info->getMountPoint()) || flag){
                 return info;
             }
         }
