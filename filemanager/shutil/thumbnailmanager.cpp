@@ -35,7 +35,7 @@ QIcon ThumbnailManager::thumbnailIcon(const QString &fpath)
 
     QFileInfo info(fpath);
 
-    if (info.size() > 1024 * 256) {
+//    if (info.size() > 1024 * 256) {
         QString md5 = FileUtils::md5(fpath);
         QString thumbnailPath = QString("%1.png").arg(getThumbnailPath(md5));
 
@@ -46,11 +46,11 @@ QIcon ThumbnailManager::thumbnailIcon(const QString &fpath)
         } else {
             addThumbnailTask(fpath, thumbnailPath);
         }
-    } else {
-        icon = QIcon(fpath);
+//    } else {
+//        icon = QIcon(fpath);
 
-        m_thumbnailsIcon[fpath] = icon;
-    }
+//        m_thumbnailsIcon[fpath] = icon;
+//    }
 
     return icon;
 }
