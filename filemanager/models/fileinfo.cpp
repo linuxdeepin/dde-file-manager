@@ -48,6 +48,9 @@ QMimeType FileInfo::mimeType(const QString &filePath)
 
 bool FileInfo::isCanRename() const
 {
+    if (systemPathManager->isSystemPath(absoluteFilePath()))
+        return false;
+
     if (canRenameCacheMap.contains(fileUrl()))
         return canRenameCacheMap[fileUrl()];
 
