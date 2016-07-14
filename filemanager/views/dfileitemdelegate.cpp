@@ -115,11 +115,13 @@ QWidget *DFileItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
             QString text = edit->text();
             const QString old_text = text;
 
+            int text_length = text.length();
+
             text.remove('/');
             text.remove(QChar(0));
 
             QVector<uint> list = text.toUcs4();
-            int cursor_pos = edit->cursorPosition();
+            int cursor_pos = edit->cursorPosition() - text_length + text.length();
 
             while (text.toUtf8().size() > MAX_FILE_NAME_CHAR_COUNT) {
                 list.removeAt(--cursor_pos);
