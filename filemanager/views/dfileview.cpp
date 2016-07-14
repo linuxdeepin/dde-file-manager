@@ -106,7 +106,10 @@ void DFileView::initModel()
 void DFileView::initConnects()
 {
     connect(this, &DFileView::doubleClicked,
-            this, &DFileView::openIndex);
+            this, [this] (const QModelIndex &index) {
+        if (!Global::keyCtrlIsPressed() && !Global::keyShiftIsPressed())
+            openIndex(index);
+    });
     connect(fileSignalManager, &FileSignalManager::fetchNetworksSuccessed,
             this, &DFileView::cd);
     connect(fileSignalManager, &FileSignalManager::requestChangeCurrentUrl,
