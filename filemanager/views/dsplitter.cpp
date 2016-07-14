@@ -2,6 +2,19 @@
 #include <QDebug>
 #include <QSizePolicy>
 
+SplitterHandle::SplitterHandle(Qt::Orientation orientation, QSplitter *parent):
+    QSplitterHandle(orientation, parent)
+{
+
+}
+
+void SplitterHandle::enterEvent(QEvent *e)
+{
+    setCursor(Qt::ArrowCursor);
+}
+
+
+
 DSplitter::DSplitter(Qt::Orientation orientation, QWidget *parent)
     :QSplitter(orientation, parent)
 {
@@ -13,13 +26,11 @@ void DSplitter::moveSplitter(int pos, int index)
     QSplitter::moveSplitter(pos, index);
 }
 
-void DSplitter::mousePressEvent(QMouseEvent *e)
+
+QSplitterHandle *DSplitter::createHandle()
 {
-    QSplitter::mousePressEvent(e);
+    return new SplitterHandle(orientation(), this);
 }
 
-void DSplitter::mouseReleaseEvent(QMouseEvent *e)
-{
-    QSplitter::mouseReleaseEvent(e);
-}
+
 

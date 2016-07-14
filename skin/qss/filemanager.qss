@@ -111,10 +111,6 @@ QSplitter::handle:vertical {
     height: 1px;
 }
 
-QSplitter::handle:pressed {
-    background-color: #2ca7f8;
-}
-
 /* ******************QSplitter****************** */
 
 QPushButton#backButton{
