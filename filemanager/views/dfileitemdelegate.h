@@ -44,7 +44,7 @@ public:
                        const QStyleOptionViewItem &option,
                        const QModelIndex &index) const;
 
-    QList<QRect> paintGeomertyss(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    QList<QRect> paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
     void hideExpandedIndex();
     void hideAllIIndexWidget();

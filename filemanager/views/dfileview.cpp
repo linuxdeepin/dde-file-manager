@@ -361,10 +361,21 @@ QModelIndex DFileView::indexAt(const QPoint &point) const
         }
     }
 
-    QWidget *widget = itemDelegate()->editingIndexWidget();
+    FileIconItem *item = qobject_cast<FileIconItem*>(itemDelegate()->editingIndexWidget());
 
-    if (widget && widget->geometry().contains(point)) {
-        return itemDelegate()->editingIndex();
+    if (item) {
+        QRect geometry = item->icon->geometry();
+
+        geometry.moveTopLeft(geometry.topLeft() + item->pos());
+
+        if (geometry.contains(point))
+            return itemDelegate()->editingIndex();
+
+        geometry = item->edit->geometry();
+        geometry.moveTopLeft(geometry.topLeft() + item->pos());
+
+        if (geometry.contains(point))
+            return itemDelegate()->editingIndex();
     }
 
     QPoint pos = QPoint(point.x() + horizontalOffset(), point.y() + verticalOffset());
@@ -396,9 +407,55 @@ QModelIndex DFileView::indexAt(const QPoint &point) const
             return QModelIndex();
 
         index = row_index * column_count + column_index;
+
+        const QModelIndex &tmp_index = rootIndex().child(index, 0);
+        QStyleOptionViewItem option = viewOptions();
+
+        option.rect = QRect(QPoint(column_index * item_width + ICON_VIEW_SPACING,
+                                    row_index * (item_size.height()  + ICON_VIEW_SPACING * 2) + ICON_VIEW_SPACING),
+                            item_size);
+
+        const QList<QRect> &list = itemDelegate()->paintGeomertys(option, tmp_index);
+
+        for (const QRect &rect : list)
+            if (rect.contains(pos))
+                return tmp_index;
+
+        return QModelIndex();
     }
 
     return rootIndex().child(index, 0);
+}
+
+QRect DFileView::visualRect(const QModelIndex &index) const
+{
+    QRect rect;
+
+    if (index.column() != 0)
+        return rect;
+
+    QSize item_size = itemSizeHint();
+
+    if (item_size.width() == -1) {
+        rect.setLeft(LIST_VIEW_SPACING);
+        rect.setRight(viewport()->width() - LIST_VIEW_SPACING - 1);
+        rect.setTop(index.row() * (item_size.height() + LIST_VIEW_SPACING * 2) + LIST_VIEW_SPACING);
+        rect.setHeight(item_size.height());
+    } else {
+        int item_width = item_size.width() + ICON_VIEW_SPACING * 2;
+        int column_count = (width() - ICON_VIEW_SPACING * 2.5) / item_width;
+        int column_index = index.row() % column_count;
+        int row_index = index.row() / column_count;
+
+        rect.setTop(row_index * (item_size.height()  + ICON_VIEW_SPACING * 2) + ICON_VIEW_SPACING);
+        rect.setLeft(column_index * item_width + ICON_VIEW_SPACING);
+        rect.setSize(item_size);
+    }
+
+    rect.moveLeft(rect.left() - horizontalOffset());
+    rect.moveTop(rect.top() - verticalOffset());
+
+    return rect;
 }
 
 bool DFileView::isCutIndex(const QModelIndex &index) const
@@ -1078,8 +1135,8 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
         tmp_rect.adjust(qMin(rect.left(), rect.right()), qMin(rect.top(), rect.bottom()),
                         qMax(rect.left(), rect.right()), qMax(rect.top(), rect.bottom()));
 
-        int offset_horizontal = m_currentViewMode == ListMode ? width() : itemSizeHint().width();
-        int offset_verizontal = itemSizeHint().height();
+        int offset_horizontal = m_currentViewMode == ListMode ? width() : iconSize().width();
+        int offset_verizontal = iconSize().height();
 
         QModelIndex index1;
         QModelIndex index2;
@@ -1268,7 +1325,7 @@ bool DFileView::isEmptyArea(const QModelIndex &index, const QPoint &pos) const
 
         option.rect = rect;
 
-        const QList<QRect> &geometry_list = itemDelegate()->paintGeomertyss(option, index);
+        const QList<QRect> &geometry_list = itemDelegate()->paintGeomertys(option, index);
 
         for(const QRect &rect : geometry_list) {
             if(rect.contains(pos)) {

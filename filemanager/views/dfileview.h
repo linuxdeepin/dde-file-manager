@@ -100,6 +100,7 @@ public:
     bool isSelected(const QModelIndex &index) const;
     QModelIndexList selectedIndexes() const Q_DECL_OVERRIDE;
     QModelIndex indexAt(const QPoint &point) const Q_DECL_OVERRIDE;
+    QRect visualRect(const QModelIndex &index) const Q_DECL_OVERRIDE;
 
     inline QSize itemSizeHint() const
     { return m_itemSizeHint;}
