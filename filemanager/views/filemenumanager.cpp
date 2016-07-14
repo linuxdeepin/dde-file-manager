@@ -208,9 +208,9 @@ QSet<MenuAction> FileMenuManager::getDisableActionList(const DUrlList &urlList)
     }
 
     const QClipboard *clipboard = qApp->clipboard();
-    const QMimeData *mimeData = clipboard->mimeData();
+    const QByteArray &data = clipboard->mimeData()->data("x-special/gnome-copied-files");
 
-    if (!mimeData->hasUrls()){
+    if (!data.startsWith("cut\n") && !data.startsWith("copy\n")){
         disableList << MenuAction::Paste;
     }
 
