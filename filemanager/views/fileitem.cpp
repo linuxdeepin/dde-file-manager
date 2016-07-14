@@ -43,11 +43,13 @@ FileIconItem::FileIconItem(QWidget *parent) :
         QString text = edit->toPlainText();
         const QString old_text = text;
 
+        int text_length = text.length();
+
         text.remove('/');
         text.remove(QChar(0));
 
         QVector<uint> list = text.toUcs4();
-        int cursor_pos = edit->textCursor().position();
+        int cursor_pos = edit->textCursor().position() - text_length + text.length();
 
         while (text.toUtf8().size() > MAX_FILE_NAME_CHAR_COUNT) {
             list.removeAt(--cursor_pos);
