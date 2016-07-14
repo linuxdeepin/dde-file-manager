@@ -497,10 +497,10 @@ void DFileView::edit(const FMEvent &event)
 bool DFileView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger trigger, QEvent *event)
 {
     DUrl fileUrl = model()->getUrlByIndex(index);
-    if (fileUrl.isEmpty())
+
+    if (fileUrl.isEmpty() || selectedIndexCount() > 1 || (trigger == SelectedClicked && Global::keyShiftIsPressed()))
         return false;
-    if (systemPathManager->isSystemPath(fileUrl.path()))
-        return false;
+
     return DListView::edit(index, trigger, event);
 }
 
