@@ -343,7 +343,10 @@ DUrl SearchFileInfo::redirectedFileUrl() const
 
 QVector<MenuAction> SearchFileInfo::menuActionList(AbstractFileInfo::MenuType type) const
 {
-    QVector<MenuAction> actions = AbstractFileInfo::menuActionList(type);
+    if (!realFileInfo)
+        return QVector<MenuAction>();
+
+    QVector<MenuAction> actions = realFileInfo->menuActionList(type);
 
     if (type == SpaceArea)
         return actions;
@@ -355,7 +358,10 @@ QVector<MenuAction> SearchFileInfo::menuActionList(AbstractFileInfo::MenuType ty
 
 QSet<MenuAction> SearchFileInfo::disableMenuActionList() const
 {
-    QSet<MenuAction> actions = AbstractFileInfo::disableMenuActionList();
+    if (!realFileInfo)
+        return QSet<MenuAction>();
+
+    QSet<MenuAction> actions = realFileInfo->disableMenuActionList();
 
     actions << MenuAction::DecompressHere;
 
