@@ -400,7 +400,10 @@ bool FileUtils::openFile(const QString &filePath)
         return FileUtils::openDesktopFile(filePath);
     }
 
-    return QDesktopServices::openUrl(QUrl::fromLocalFile(filePath));
+    bool result = QProcess::startDetached("gvfs-open", QStringList() << filePath);
+    if (!result)
+        return QDesktopServices::openUrl(QUrl::fromLocalFile(filePath));
+    return result;
 }
 
 bool FileUtils::openDesktopFile(const QString &filePath)
