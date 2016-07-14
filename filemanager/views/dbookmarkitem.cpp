@@ -453,17 +453,17 @@ void DBookmarkItem::editMode()
     m_lineEdit->setContextMenuPolicy(Qt::NoContextMenu);
     connect(m_lineEdit, &QLineEdit::editingFinished, this, &DBookmarkItem::editFinished);
     m_widget = scene()->addWidget(m_lineEdit);
-    m_lineEdit->setGeometry(37 + geometry().x(), geometry().y(), m_width - 39, m_height + 1);
+    m_lineEdit->setGeometry(37 + geometry().x(), geometry().y(), m_width - 37, m_height);
     m_lineEdit->setText(m_textContent);
     m_lineEdit->setSelection(0, m_textContent.length());
     m_lineEdit->setFocus();
     m_lineEdit->installEventFilter(this);
-    m_lineEdit->setStyleSheet("QLineEdit{\
+    m_lineEdit->setStyleSheet("QLineEdit {\
+                              background: #0b8ade;\
+                              color:white;\
+                              selection-background-color: #70bfff;\
+                              padding-left: 6px;\
                               border-radius: 4px;\
-                              background-color: white;\
-                              border: 1px solid rgba(43, 167, 248, 0.3);\
-                              color: black;\
-                              selection-background-color: #61B5F8;\
                           }");
     m_lineEdit->show();
 
