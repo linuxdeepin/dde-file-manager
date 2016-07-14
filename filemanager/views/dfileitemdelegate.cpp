@@ -17,6 +17,7 @@
 #define LIST_EDITER_HEIGHT 22
 #define LIST_MODE_EDITOR_LEFT_PADDING -9
 #define SELECTED_BACKGROUND_COLOR "#2da6f7"
+#define IconModeTextColor "#303030"
 
 DFileItemDelegate::DFileItemDelegate(DFileView *parent) :
     QStyledItemDelegate(parent)
@@ -63,6 +64,8 @@ void DFileItemDelegate::paint(QPainter *painter,
 
     if (parent()->isCutIndex(index))
         painter->setOpacity(0.3);
+
+    painter->setPen(QColor(IconModeTextColor));
 
     if(parent()->isIconViewMode()) {
         paintIconItem(isDragMode, painter, option, index);
@@ -382,12 +385,10 @@ void DFileItemDelegate::paintIconItem(bool isDragMode, QPainter *painter,
     /// draw background
 
     bool drawBackground = !isDragMode && (opt.state & QStyle::State_Selected) && opt.showDecorationSelected;
-
     if (drawBackground) {
         painter->setPen(Qt::white);
         opt.icon.paint(painter, icon_rect, Qt::AlignCenter, QIcon::Selected);
     } else {
-        painter->setPen(Qt::black);
         opt.icon.paint(painter, icon_rect);
     }
 
@@ -513,7 +514,7 @@ void DFileItemDelegate::paintListItem(bool isDragMode, QPainter *painter,
                 painter->fillPath(path, QColor(255, 255, 255));
             }
             painter->restore();
-            painter->setPen(Qt::black);
+//            painter->setPen(Qt::black);
         }
     }
 
