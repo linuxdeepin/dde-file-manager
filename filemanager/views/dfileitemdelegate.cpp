@@ -12,11 +12,10 @@
 #include <QAbstractTextDocumentLayout>
 
 #define ICON_SPACING 16
-#define LEFT_PADDING 10
-#define RIGHT_PADDING 10
 #define ICON_MODE_RECT_RADIUS 4
 #define LIST_MODE_RECT_RADIUS 2
 #define LIST_EDITER_HEIGHT 22
+#define LIST_MODE_EDITOR_LEFT_PADDING -9
 #define SELECTED_BACKGROUND_COLOR "#2da6f7"
 
 DFileItemDelegate::DFileItemDelegate(DFileView *parent) :
@@ -191,15 +190,15 @@ void DFileItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
 
         icon_rect.setSize(icon_size);
 
-        column_x = icon_rect.right() + ICON_SPACING;
+        column_x = icon_rect.right() + ICON_SPACING + 1;
 
         QRect rect = opt_rect;
 
-        rect.setLeft(column_x - 9);
+        rect.setLeft(column_x + LIST_MODE_EDITOR_LEFT_PADDING);
 
-        column_x = parent()->columnWidth(0) - parent()->viewportMargins().left();
+        column_x = parent()->columnWidth(0) - 1 - parent()->viewportMargins().left();
 
-        rect.setRight(qMin(column_x - COLUMU_PADDING, opt_rect.right()));
+        rect.setRight(qMin(column_x, opt_rect.right()));
         rect.setTop(opt_rect.y() + (opt_rect.height() - LIST_EDITER_HEIGHT) / 2);
 
         editor->setGeometry(rect);
@@ -544,9 +543,9 @@ void DFileItemDelegate::paintListItem(bool isDragMode, QPainter *painter,
 
     rect.setLeft(column_x);
 
-    column_x = parent()->columnWidth(0) - parent()->viewportMargins().left();
+    column_x = parent()->columnWidth(0) - 1 - parent()->viewportMargins().left();
 
-    rect.setRight(qMin(column_x - COLUMU_PADDING, opt.rect.right()));
+    rect.setRight(qMin(column_x, opt.rect.right()));
 
     int role = columnRoleList.at(0);
 
@@ -582,9 +581,9 @@ void DFileItemDelegate::paintListItem(bool isDragMode, QPainter *painter,
         if (rect.left() >= rect.right())
             return;
 
-        column_x += parent()->columnWidth(i);
+        column_x += parent()->columnWidth(i) - 1;
 
-        rect.setRight(qMin(column_x - COLUMU_PADDING, opt.rect.right()));
+        rect.setRight(qMin(column_x, opt.rect.right()));
 
         int role = columnRoleList.at(i);
 
@@ -664,9 +663,9 @@ QList<QRect> DFileItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
 
         rect.setLeft(column_x);
 
-        column_x = parent()->columnWidth(0);
+        column_x = parent()->columnWidth(0) - 1 - parent()->viewportMargins().left();
 
-        rect.setRight(qMin(column_x - COLUMU_PADDING, opt_rect.right()));
+        rect.setRight(qMin(column_x, opt_rect.right()));
 
         int role = columnRoleList.at(0);
 
@@ -683,9 +682,9 @@ QList<QRect> DFileItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
             if (rect.left() >= rect.right())
                 return geomertys;
 
-            column_x += parent()->columnWidth(i);
+            column_x += parent()->columnWidth(i) - 1;
 
-            rect.setRight(qMin(column_x - COLUMU_PADDING, opt_rect.right()));
+            rect.setRight(qMin(column_x, opt_rect.right()));
 
             int role = columnRoleList.at(i);
 

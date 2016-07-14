@@ -464,11 +464,11 @@ int AbstractFileInfo::userColumnWidth(int userColumnRole) const
 {
     switch (userColumnRole) {
     case DFileSystemModel::FileSizeRole:
-        return 100;
+        return 80;
     case DFileSystemModel::FileMimeTypeRole:
-        return 100;
+        return 80;
     default:
-        return 140;
+        return qApp->fontMetrics().width("0000/00/00 00:00:00");
     }
 }
 
