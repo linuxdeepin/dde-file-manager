@@ -695,6 +695,22 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             appController->actionProperty(fmevent);
 
             return;
+        case Qt::Key_Up:
+            cdUp(fmevent);
+
+            return;
+        case Qt::Key_Down:
+            appController->actionOpen(fmevent);
+
+            return;
+        case Qt::Key_Left:
+            appController->actionBack(fmevent);
+
+            return;
+        case Qt::Key_Right:
+            appController->actionForward(fmevent);
+
+            return;
         default: break;
         }
 
