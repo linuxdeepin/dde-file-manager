@@ -234,7 +234,7 @@ void DFileItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
         item->icon->setPixmap(pixmap);
         item->edit->setPlainText(index.data().toString());
         item->edit->setAlignment(Qt::AlignHCenter);
-        item->edit->document()->setTextWidth(icon_size.width() * 1.8);
+        item->edit->document()->setTextWidth(parent()->itemSizeHint().width());
 
         if(item->edit->isReadOnly())
             return;
@@ -597,7 +597,7 @@ void DFileItemDelegate::paintListItem(bool isDragMode, QPainter *painter,
     }
 }
 
-QList<QRect> DFileItemDelegate::paintGeomertyss(const QStyleOptionViewItem &option, const QModelIndex &index) const
+QList<QRect> DFileItemDelegate::paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     QList<QRect> geomertys;
 
