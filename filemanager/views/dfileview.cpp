@@ -1881,7 +1881,7 @@ void DFileView::updateListHeaderViewProperty()
         int column_width = model()->columnWidth(i);
 
         if (column_width >= 0) {
-            m_headerView->resizeSection(i, column_width);
+            m_headerView->resizeSection(i, column_width + COLUMU_PADDING * 2);
         } else {
             m_headerView->setSectionResizeMode(i, QHeaderView::Stretch);
         }
@@ -1934,7 +1934,7 @@ void DFileView::updateColumnWidth()
         if (m_headerView->isSectionHidden(i))
             continue;
 
-        m_headerView->resizeSection(i, model()->columnWidth(i) + LIST_MODE_LEFT_MARGIN + COLUMU_PADDING);
+        m_headerView->resizeSection(i, model()->columnWidth(i) + LEFT_PADDING + LIST_MODE_LEFT_MARGIN + 2 * COLUMU_PADDING);
         break;
     }
 
@@ -1942,20 +1942,20 @@ void DFileView::updateColumnWidth()
         if (m_headerView->isSectionHidden(j))
             continue;
 
-        m_headerView->resizeSection(j, model()->columnWidth(j) + LIST_MODE_RIGHT_MARGIN + COLUMU_PADDING);
+        m_headerView->resizeSection(j, model()->columnWidth(j) + RIGHT_PADDING + LIST_MODE_RIGHT_MARGIN + 2 * COLUMU_PADDING);
         break;
     }
 
     if (firstVisibleColumn != i) {
         if (firstVisibleColumn > 0)
-            m_headerView->resizeSection(firstVisibleColumn, model()->columnWidth(firstVisibleColumn));
+            m_headerView->resizeSection(firstVisibleColumn, model()->columnWidth(firstVisibleColumn) + 2 * COLUMU_PADDING);
 
         firstVisibleColumn = i;
     }
 
     if (lastVisibleColumn != j) {
         if (lastVisibleColumn > 0)
-            m_headerView->resizeSection(lastVisibleColumn, model()->columnWidth(lastVisibleColumn));
+            m_headerView->resizeSection(lastVisibleColumn, model()->columnWidth(lastVisibleColumn) + 2 * COLUMU_PADDING);
 
         lastVisibleColumn = j;
     }
