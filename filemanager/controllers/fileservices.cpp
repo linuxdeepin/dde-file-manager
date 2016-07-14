@@ -453,7 +453,9 @@ bool FileServices::createSymlink(const DUrl &fileUrl, const DUrl &linkToUrl) con
 
 bool FileServices::sendToDesktop(const DUrl &fileUrl) const
 {
-    QString linkName = getSymlinkFileName(fileUrl);
+    const AbstractFileInfoPointer &fileInfo = createFileInfo(fileUrl);
+
+    QString linkName = fileInfo ? fileInfo->fileName() : fileUrl.path();
     QString linkPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
 
     return createSymlink(fileUrl, DUrl::fromLocalFile(linkPath + "/" + linkName));
@@ -587,6 +589,8 @@ QString FileServices::getSymlinkFileName(const DUrl &fileUrl)
 
         if (index >= 0)
             fileName.insert(index, " link");
+        else
+            fileName.append(" link");
     } else {
         return fileName + " link";
     }
