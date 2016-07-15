@@ -322,14 +322,20 @@ void DialogManager::showDevicePropertyDialog(const FMEvent &event)
 
 void DialogManager::showDiskErrorDialog(const QString & id, const QString & errorText)
 {
-    DDialog d;
-    d.setTitle(id + ":" + errorText);
-    QStringList buttonTexts;
-    buttonTexts << tr("Ok");
-    d.addButtons(buttonTexts);
-    d.setDefaultButton(0);
-    d.setIcon(QIcon(":/images/dialogs/images/dialog_warning_64.png"));
-    d.exec();
+    UDiskDeviceInfo* info = deviceListener->getDevice(id);
+    if (info){
+        DDialog d;
+        d.setTitle(tr("Disk is using, you can't unmount it."));
+        QStringList buttonTexts;
+        buttonTexts << tr("Cancle") << tr("Force unmount");
+        d.addButtons(buttonTexts);
+        d.setDefaultButton(0);
+        d.setIcon(info->fileIcon(64, 64));
+        int code = d.exec();
+        if (code == 1){
+            deviceListener->forceUnmount(id);
+        }
+    }
 }
 
 void DialogManager::showAboutDialog(const FMEvent &event)

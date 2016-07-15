@@ -30,7 +30,7 @@ class UDiskListener : public AbstractFileController
     Q_OBJECT
 public:
     UDiskListener();
-    UDiskDeviceInfo * getDevice(const QString &path);
+    UDiskDeviceInfo * getDevice(const QString &id);
     void addDevice(UDiskDeviceInfo * device);
     void removeDevice(UDiskDeviceInfo * device);
     void update();
@@ -62,7 +62,7 @@ public slots:
     void asyncRequestDiskInfos();
     void asyncRequestDiskInfosFinihsed(QDBusPendingCallWatcher *call);
     void changed(int in0, const QString &in1);
-    void handleError(const QString &in0, const QString &in1);
+    void forceUnmount(const QString &id);
 private:
     void readFstab();
     QList<UDiskDeviceInfo *> m_list;
