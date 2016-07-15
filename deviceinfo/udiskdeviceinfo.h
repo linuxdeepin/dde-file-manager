@@ -57,6 +57,7 @@ public:
 
     bool isCanRename() const Q_DECL_OVERRIDE;
     QIcon fileIcon() const Q_DECL_OVERRIDE;
+    QIcon fileIcon(int width, int height);
     bool isDir() const Q_DECL_OVERRIDE;
     DUrl parentUrl() const Q_DECL_OVERRIDE;
 

@@ -262,22 +262,27 @@ bool UDiskDeviceInfo::isCanRename() const
 
 QIcon UDiskDeviceInfo::fileIcon() const
 {
+    return const_cast<UDiskDeviceInfo*>(this)->fileIcon(128, 128);
+}
+
+QIcon UDiskDeviceInfo::fileIcon(int width, int height)
+{
     if(getType() == "native")
-        return QIcon(svgToPixmap(":/devices/images/device/drive-harddisk.svg", 128, 128));
+        return QIcon(svgToPixmap(":/devices/images/device/drive-harddisk.svg", width, height));
     else if(getType() == "removable")
-        return QIcon(svgToPixmap(":/devices/images/device/drive-removable-media-usb.svg", 128, 128));
+        return QIcon(svgToPixmap(":/devices/images/device/drive-removable-media-usb.svg", width, height));
     else if(getType() == "network")
-        return QIcon(svgToPixmap(":/devices/images/device/drive-network.svg", 128, 128));
+        return QIcon(svgToPixmap(":/devices/images/device/drive-network.svg", width, height));
     else if(getType() == "phone")
-        return QIcon(svgToPixmap(":/devices/images/device/android-device.svg", 128, 128));
+        return QIcon(svgToPixmap(":/devices/images/device/android-device.svg", width, height));
     else if(getType() == "iphone")
-        return QIcon(svgToPixmap(":/devices/images/device/ios-device.svg", 128, 128));
+        return QIcon(svgToPixmap(":/devices/images/device/ios-device.svg", width, height));
     else if(getType() == "camera")
-        return QIcon(svgToPixmap(":/devices/images/device/camera.svg", 128, 128));
+        return QIcon(svgToPixmap(":/devices/images/device/camera.svg", width, height));
     else if(getType() == "dvd")
-        return QIcon(svgToPixmap(":/devices/images/device/media-dvd.svg", 128, 128));
+        return QIcon(svgToPixmap(":/devices/images/device/media-dvd.svg", width, height));
     else
-        return QIcon(svgToPixmap(":/devices/images/device/drive-harddisk.svg", 128, 128));
+        return QIcon(svgToPixmap(":/devices/images/device/drive-harddisk.svg", width, height));
 }
 
 bool UDiskDeviceInfo::isDir() const

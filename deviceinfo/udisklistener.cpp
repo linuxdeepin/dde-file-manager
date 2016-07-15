@@ -14,15 +14,15 @@ UDiskListener::UDiskListener()
                                                   DiskMountInterface::staticInterfacePath(),
                                                   QDBusConnection::sessionBus(), this);
     connect(m_diskMountInterface, &DiskMountInterface::Changed, this, &UDiskListener::changed);
-    connect(m_diskMountInterface, &DiskMountInterface::Error, this, &UDiskListener::handleError);
-//    connect(m_diskMountInterface, &DiskMountInterface::Error,
-//            fileSignalManager, &FileSignalManager::showDiskErrorDialog);
+//    connect(m_diskMountInterface, &DiskMountInterface::Error, this, &UDiskListener::handleError);
+    connect(m_diskMountInterface, &DiskMountInterface::Error,
+            fileSignalManager, &FileSignalManager::showDiskErrorDialog);
 }
 
-UDiskDeviceInfo *UDiskListener::getDevice(const QString &path)
+UDiskDeviceInfo *UDiskListener::getDevice(const QString &id)
 {
-    if (m_map.contains(path))
-        return m_map[path];
+    if (m_map.contains(id))
+        return m_map[id];
     else
         return NULL;
 }
@@ -236,11 +236,12 @@ void UDiskListener::changed(int in0, const QString &in1)
     }
 }
 
-void UDiskListener::handleError(const QString &in0, const QString &in1)
+
+void UDiskListener::forceUnmount(const QString &id)
 {
-    qDebug() << in0 << in1;
-    if (m_map.contains(in0)){
-        UDiskDeviceInfo *device = m_map.value(in0);
+    qDebug() << id;
+    if (m_map.contains(id)){
+        UDiskDeviceInfo *device = m_map.value(id);
         QStringList args;
         args << "-f" ;
         if (device->canEject()){
@@ -252,6 +253,7 @@ void UDiskListener::handleError(const QString &in0, const QString &in1)
         qDebug() << "gvfs-mount" << args << reslut;
     }
 }
+
 
 void UDiskListener::readFstab()
 {
