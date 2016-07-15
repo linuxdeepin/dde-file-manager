@@ -68,6 +68,7 @@ public slots:
     void clearText();
     void hideCompleter();
     void handleApplicationChanged(QWidget * old, QWidget * now);
+    void setText(const QString &text);
 protected:
     void keyPressEvent(QKeyEvent *e);
     void focusInEvent(QFocusEvent *e);

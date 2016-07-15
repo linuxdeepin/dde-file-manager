@@ -56,6 +56,7 @@ void DStatusBar::initConnect()
 
 void DStatusBar::itemSelected(const FMEvent &event, int number)
 {
+    qDebug() << event;
     if(event.windowId() != WindowManager::getWindowId(window()))
         return;
 
