@@ -333,8 +333,10 @@ void AppController::actionOpenInTerminal(const FMEvent &event)
 
 void AppController::actionProperty(const FMEvent &event)
 {
-    qDebug() << event;
-    if (event.fileUrl() == DUrl::fromTrashFile("/")){
+    if (event.fileUrlList().isEmpty())
+        return;
+
+    if (event.fileUrlList().first() == DUrl::fromTrashFile("/")){
         emit fileSignalManager->requestShowTrashPropertyDialog(event);
     }else{
         emit fileSignalManager->requestShowPropertyDialog(event);

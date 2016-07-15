@@ -300,10 +300,14 @@ void DialogManager::showPropertyDialog(const FMEvent &event)
 void DialogManager::showTrashPropertyDialog(const FMEvent &event)
 {
     QWidget* w = WindowManager::getWindowById(event.windowId());
-    if (w){
-        qDebug() << event;
+
+    if (w) {
         m_trashDialog = new TrashPropertyDialog(event.fileUrl());
         m_trashDialog->show();
+
+        TIMER_SINGLESHOT(100, {
+                             m_trashDialog->raise();
+                         }, this)
     }
 }
 
