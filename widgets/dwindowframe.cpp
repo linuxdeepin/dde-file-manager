@@ -90,7 +90,7 @@ auto cornerEdge2XCursor(const CornerEdge& ce) -> int {
 }
 
 DWindowFrame::DWindowFrame(QWidget* parent) : QWidget(parent),
-                                              resizeHandleWidth(5),
+                                              resizeHandleWidth(6),
                                               shadowRadius(24),
                                               layoutMargin(25),
                                               borderRadius(4) {
@@ -476,6 +476,8 @@ void DWindowFrame::showNormal() {
                SubstructureRedirectMask | SubstructureNotifyMask,
                &xev);
     XFlush(display);
+    this->setUpdatesEnabled(true); // until changeEvent
+    repaint();
 }
 
 void DWindowFrame::showMinimized() {
@@ -506,6 +508,7 @@ void DWindowFrame::showMinimized() {
     );
     XIconifyWindow(display, winId, screen);
     XFlush(display);
+    setMinimumSize(minimumSize().width(), minimumSize().height());
 }
 
 void DWindowFrame::setWindowState(Qt::WindowStates windowState)
