@@ -339,5 +339,7 @@
         <file>images/icons/down_press.png</file>
         <file>images/icons/up_hover.png</file>
         <file>images/icons/up_press.png</file>
+        <file>images/icons/backward_disabled.png</file>
+        <file>images/icons/forward_disabled.png</file>
     </qresource>
 </RCC>

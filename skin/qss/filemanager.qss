@@ -140,6 +140,14 @@ QPushButton#backButton:checked{
     background-color:#2ca7f8;
 }
 
+QPushButton#backButton:disabled{
+    background-color:white;
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    image: url(:/icons/images/icons/backward_disabled.png);
+}
+
 
 QPushButton#forwardButton{
     background-color:white;
@@ -163,6 +171,13 @@ QPushButton#forwardButton:hover{
     icon-size: 16px 16px;
 }
 
+QPushButton#forwardButton:disabled{
+    background-color:white;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    image: url(:/icons/images/icons/forward_disabled.png);
+}
 
 QPushButton#leftArrow:hover{
     background-color:#2ca7f8;
