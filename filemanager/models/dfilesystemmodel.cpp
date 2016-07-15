@@ -316,6 +316,9 @@ int DFileSystemModel::roleToColumn(int role) const
     if (role == FileDisplayNameRole) {
         return 0;
     } else {
+        if (!m_rootNode)
+            return -1;
+
 //        const AbstractFileInfoPointer &fileInfo = this->fileInfo(m_activeIndex);
         const AbstractFileInfoPointer &fileInfo = m_rootNode->fileInfo;
 

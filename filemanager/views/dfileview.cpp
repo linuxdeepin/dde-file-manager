@@ -605,14 +605,7 @@ void DFileView::sortByRole(int role)
 
 void DFileView::sortByColumn(int column)
 {
-    if (m_headerView) {
-        m_headerView->setSortIndicator(column, Qt::AscendingOrder);
-    } else {
-        model()->setSortColumn(column);
-        model()->sort();
-    }
-
-    FMStateManager::cacheSortState(currentUrl(), model()->columnToRole(column));
+    sortByRole(model()->columnToRole(column));
 }
 
 void DFileView::selectAll(int windowId)
@@ -1730,6 +1723,10 @@ void DFileView::showEmptyAreaMenu()
     tmp_action = menu->actionAt(fileMenuManger->getActionString(MenuAction::SortBy));
     DFileMenu *sortBySubMenu = static_cast<DFileMenu*>(tmp_action ? tmp_action->menu() : Q_NULLPTR);
 
+    for (QAction *action : m_displayAsActionGroup->actions()) {
+        m_displayAsActionGroup->removeAction(action);
+    }
+
     if (displayAsSubMenu){
         foreach (DAction* action, displayAsSubMenu->actionList()) {
             action->setActionGroup(m_displayAsActionGroup);
@@ -1741,6 +1738,10 @@ void DFileView::showEmptyAreaMenu()
         }else if (m_currentViewMode == ExtendMode){
             displayAsSubMenu->actionAt(fileMenuManger->getActionString(MenuAction::ExtendView))->setChecked(true);
         }
+    }
+
+    for (QAction *action : m_sortByActionGroup->actions()) {
+        m_sortByActionGroup->removeAction(action);
     }
 
     if (sortBySubMenu){
@@ -1808,6 +1809,10 @@ void DFileView::showNormalMenu(const QModelIndex &index)
                 }
             }
 
+            for (QAction *action : m_openWithActionGroup->actions()) {
+                m_openWithActionGroup->removeAction(action);
+            }
+
             foreach (QString app, recommendApps) {
                 DAction* action = new DAction(mimeAppsManager->DesktopObjs.value(app).getLocalName(), 0);
                 action->setProperty("app", app);
@@ -1869,9 +1874,9 @@ void DFileView::updateListHeaderViewProperty()
     m_headerView->setDefaultSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
     m_headerView->setMinimumSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
 
-    int sort_role = model()->roleToColumn(FMStateManager::SortStates.value(currentUrl(), DFileSystemModel::FileDisplayNameRole));
+    int sort_column = model()->roleToColumn(FMStateManager::SortStates.value(currentUrl(), DFileSystemModel::FileDisplayNameRole));
 
-    m_headerView->setSortIndicator(sort_role, model()->sortOrder());
+    m_headerView->setSortIndicator(sort_column, model()->sortOrder());
 
     m_columnRoles.clear();
 
