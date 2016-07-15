@@ -165,9 +165,6 @@ QVariant TrashFileInfo::userColumnDisplayName(int userColumnRole) const
 
 int TrashFileInfo::userColumnWidth(int userColumnRole) const
 {
-    if (userColumnRole == DFileSystemModel::FileUserRole + 1)
-        return 140;
-
     if (userColumnRole == DFileSystemModel::FileUserRole + 2)
         return -1;
 
