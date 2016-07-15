@@ -158,7 +158,7 @@ void SearchController::searchStart(const DUrl &fileUrl, QDir::Filters filter, co
     const DUrl &targetUrl = fileUrl.searchTargetUrl();
     const QString &keyword = fileUrl.searchKeyword();
 
-    QRegularExpression regular(keyword, QRegularExpression::CaseInsensitiveOption);
+    QRegularExpression regular(QRegularExpression::escape((keyword)), QRegularExpression::CaseInsensitiveOption);
 
     QList<DUrl> searchPathList;
 
