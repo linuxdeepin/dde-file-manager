@@ -892,7 +892,21 @@ void DFileView::mousePressEvent(QMouseEvent *event)
                 m_selectionRectWidget->show();
 
             m_pressedPos = viewport()->mapToParent(static_cast<QMouseEvent*>(event)->pos());
+        } else if (Global::keyCtrlIsPressed()) {
+            const QModelIndex &index = indexAt(event->pos());
+
+            if (selectionModel()->isSelected(index)) {
+                m_mouseLastPressedIndex = index;
+
+                DListView::mousePressEvent(event);
+
+                selectionModel()->select(index, QItemSelectionModel::Select);
+
+                return;
+            }
         }
+
+        m_mouseLastPressedIndex = QModelIndex();
 
         DListView::mousePressEvent(event);
         break;
@@ -927,6 +941,11 @@ void DFileView::mouseReleaseEvent(QMouseEvent *event)
 
     m_selectionRectWidget->resize(0, 0);
     m_selectionRectWidget->hide();
+
+    if (m_mouseLastPressedIndex.isValid() && Global::keyCtrlIsPressed()) {
+        if (m_mouseLastPressedIndex == indexAt(event->pos()))
+            selectionModel()->select(m_mouseLastPressedIndex, QItemSelectionModel::Deselect);
+    }
 }
 
 void DFileView::handleCommitData(QWidget *editor)

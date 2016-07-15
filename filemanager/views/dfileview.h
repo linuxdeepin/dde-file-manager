@@ -250,6 +250,8 @@ private:
     QIcon lockIcon;
     QIcon linkIcon;
     QIcon unreadableIcon;
+
+    QModelIndex m_mouseLastPressedIndex;
 };
 
 #endif // DFILEVIEW_H
