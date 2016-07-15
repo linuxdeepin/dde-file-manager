@@ -265,7 +265,10 @@ void DSearchBar::setCompleter(const QString &text)
     int x = mapToGlobal(p).x();
     int y = mapToGlobal(p).y() + 4;
     m_list->move(x, y);
-    m_list->show();
+
+    if (m_list->count() >= 1){
+        m_list->show();
+    }
 }
 
 void DSearchBar::completeText(QListWidgetItem *item)
@@ -290,7 +293,7 @@ void DSearchBar::completeText(QListWidgetItem *item)
     {
         setText(modelText);
     }
-    m_text = text();
+//    m_text = text();
     m_list->hide();
 }
 
@@ -332,6 +335,12 @@ void DSearchBar::handleApplicationChanged(QWidget *old, QWidget *now)
 //            m_list->show();
         }
     }
+}
+
+void DSearchBar::setText(const QString &text)
+{
+    m_text = text;
+    QLineEdit::setText(text);
 }
 
 void DSearchBar::focusInEvent(QFocusEvent *e)
@@ -524,7 +533,7 @@ void DSearchBar::recomended()
             setText(modelText);
             setSelection(m_text.length(), modelText.length());
         }
-        m_text = text();
+//        m_text = text();
     }
 }
 
@@ -550,7 +559,7 @@ void DSearchBar::complete(const QString &str)
     {
         setText(str);
     }
-    m_text = text();
+//    m_text = text();
 }
 
 void DSearchBar::keyPressEvent(QKeyEvent *e)
@@ -611,32 +620,24 @@ void DSearchBar::keyPressEvent(QKeyEvent *e)
                             setText(m_text);
                         }
                         setSelection(text().count() + last.count() - modelText.count(), text().count());
-                        m_text = text();
-                    }/*else if (m_list->count() > 1){
-                        QLineEdit::keyPressEvent(e);
-                        if (cursorPosition() == text().length()){
-                            m_list->show();
-                        }
-                        break;
-                    }*/
-                    else
-                    {
-                        if(key != Qt::Key_Tab)
-                            QLineEdit::keyPressEvent(e);
-
-                        break;
+//                        m_text = text();
                     }
                 }
                 m_list->hide();
                 m_list->clear();
-                end(false);
                 if(isPath() || isLocalFile())
                 {
                     if (!text().endsWith("/")){
+
                         setText(text() + "/");
                         setCompleter(text());
+                    }else{
+                        if (QFile(text()).exists() && (cursorPosition() == (text().length() - 1))){
+                            if (!m_list->isVisible()){
+                                setCompleter(text());
+                            }
+                        }
                     }
-                    m_text = text();
                 }
                 if(key != Qt::Key_Tab)
                     QLineEdit::keyPressEvent(e);
@@ -662,7 +663,8 @@ void DSearchBar::keyPressEvent(QKeyEvent *e)
                 QLineEdit::keyPressEvent(e);
             }
         }
-    }else{
+    }
+    else{
         QLineEdit::keyPressEvent(e);
     }
 }

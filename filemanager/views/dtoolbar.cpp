@@ -233,6 +233,8 @@ void DToolBar::searchBarTextEntered()
 
     if (text.isEmpty()) {
         return;
+    }else if (text.endsWith("/")){
+        text = text.left(text.length() - 1);
     }
 
     FMEvent event;
