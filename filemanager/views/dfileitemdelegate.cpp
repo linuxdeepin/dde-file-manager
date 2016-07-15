@@ -643,6 +643,7 @@ QList<QRect> DFileItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
         /// draw icon and file name label
 
         geomertys << option.fontMetrics.boundingRect(label_rect, Qt::AlignHCenter, str);
+        geomertys.last().setTop(icon_rect.bottom());
     } else {
         const QList<int> &columnRoleList = parent()->columnRoleList();
 
