@@ -373,6 +373,7 @@ QModelIndex DFileView::indexAt(const QPoint &point) const
 
         geometry = item->edit->geometry();
         geometry.moveTopLeft(geometry.topLeft() + item->pos());
+        geometry.setTop(item->icon->y() + item->icon->height() + item->y());
 
         if (geometry.contains(point))
             return itemDelegate()->editingIndex();
