@@ -14,10 +14,10 @@
 
 #include "../app/fmevent.h"
 #include "windowmanager.h"
+#include "deditorwidgetmenu.h"
 
 DSearchBar::DSearchBar(QWidget *parent):QLineEdit(parent)
 {
-    setContextMenuPolicy(Qt::NoContextMenu);
     initUI();
     initData();
     initConnections();
@@ -59,6 +59,8 @@ void DSearchBar::initUI()
     m_list->installEventFilter(this);
     m_list->setVerticalScrollBar(new DScrollBar);
     m_list->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    Q_UNUSED(new DEditorWidgetMenu(this))
 }
 
 QStringList DSearchBar::splitPath(const QString &path)

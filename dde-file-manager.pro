@@ -139,7 +139,8 @@ HEADERS += \
     filemanager/controllers/networkcontroller.h \
     filemanager/dialogs/openwithotherdialog.h \
     filemanager/dialogs/trashpropertydialog.h \
-    filemanager/views/dbookmarkmountedindicatoritem.h
+    filemanager/views/dbookmarkmountedindicatoritem.h \
+    filemanager/views/deditorwidgetmenu.h
 
 
 SOURCES += \
@@ -235,7 +236,8 @@ SOURCES += \
     filemanager/controllers/networkcontroller.cpp \
     filemanager/dialogs/openwithotherdialog.cpp \
     filemanager/dialogs/trashpropertydialog.cpp \
-    filemanager/views/dbookmarkmountedindicatoritem.cpp
+    filemanager/views/dbookmarkmountedindicatoritem.cpp \
+    filemanager/views/deditorwidgetmenu.cpp
 
 
 

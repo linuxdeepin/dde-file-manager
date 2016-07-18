@@ -1,6 +1,7 @@
 #include "dfileitemdelegate.h"
 #include "fileitem.h"
 #include "dfilesystemmodel.h"
+#include "deditorwidgetmenu.h"
 
 #include "../app/global.h"
 
@@ -101,6 +102,8 @@ QWidget *DFileItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
             editing_index = QModelIndex();
         });
 
+        Q_UNUSED(new DEditorWidgetMenu(item->edit))
+
         return item;
     } else {
         QLineEdit *edit = new QLineEdit(parent);
@@ -140,7 +143,8 @@ QWidget *DFileItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
         edit->setFrame(false);
         edit->setAttribute(Qt::WA_TranslucentBackground);
         edit->setContentsMargins(0, 0, 0, 0);
-        edit->setContextMenuPolicy(Qt::NoContextMenu);
+
+        Q_UNUSED(new DEditorWidgetMenu(edit))
 
         return edit;
     }
