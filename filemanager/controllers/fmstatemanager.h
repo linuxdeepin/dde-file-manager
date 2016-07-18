@@ -13,7 +13,7 @@ class FMStateManager : public QObject, public BaseManager
     Q_OBJECT
 
 public:
-    static QMap<DUrl, int> SortStates;
+    static QMap<DUrl, QPair<int, int>> SortStates;
 
     explicit FMStateManager(QObject *parent = 0);
     ~FMStateManager();
@@ -33,7 +33,7 @@ public slots:
     void saveCache();
     static void loadSortCache();
     static void saveSortCache();
-    static void cacheSortState(const DUrl& url, int role);
+    static void cacheSortState(const DUrl& url, int role, Qt::SortOrder order);
 
 private:
     FMState *m_fmState = NULL;

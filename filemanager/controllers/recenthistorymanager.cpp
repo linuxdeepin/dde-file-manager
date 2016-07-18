@@ -3,6 +3,8 @@
 
 #include "../app/filesignalmanager.h"
 
+#include "../shutil/standardpath.h"
+
 #include <QDirIterator>
 #include <QJsonObject>
 #include <QFile>
@@ -42,8 +44,7 @@ RecentHistoryManager::~RecentHistoryManager()
 void RecentHistoryManager::load()
 {
     //TODO: check permission and existence of the path
-    QString user = getenv("USER");
-    QString configPath = "/home/" + user + "/.cache/dde-file-manager/recentHistory.json";
+    QString configPath = QString("%1/%2").arg(StandardPath::getCachePath(), "recentHistory.json");
     QFile file(configPath);
     if (!file.open(QIODevice::ReadOnly))
     {
@@ -58,8 +59,7 @@ void RecentHistoryManager::load()
 void RecentHistoryManager::save()
 {
     //TODO: check permission and existence of the path
-    QString user = getenv("USER");
-    QString configPath = "/home/" + user + "/.cache/dde-file-manager/recentHistory.json";
+    QString configPath = QString("%1/%2").arg(StandardPath::getCachePath(), "recentHistory.json");
     QFile file(configPath);
     if (!file.open(QIODevice::WriteOnly))
     {
