@@ -164,11 +164,10 @@ bool AbstractFileController::openFileLocation(const DUrl &fileUrl, bool &accepte
     return false;
 }
 
-const QList<AbstractFileInfoPointer> AbstractFileController::getChildren(const DUrl &fileUrl, QDir::Filters filters, const FMEvent &event, bool &accepted) const
+const QList<AbstractFileInfoPointer> AbstractFileController::getChildren(const DUrl &fileUrl, QDir::Filters filters, bool &accepted) const
 {
     Q_UNUSED(fileUrl)
     Q_UNUSED(filters)
-    Q_UNUSED(event)
 
     accepted = false;
 

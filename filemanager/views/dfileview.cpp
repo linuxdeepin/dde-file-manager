@@ -171,6 +171,13 @@ void DFileView::initConnects()
     });
 
     connect(model(), &DFileSystemModel::childrenUpdated, this, &DFileView::onChildrenUpdated);
+    connect(model(), &DFileSystemModel::stateChanged, this, [this] (DFileSystemModel::State state) {
+        FMEvent event;
+
+        event = windowId();
+
+        emit fileSignalManager->loadingIndicatorShowed(event, state == DFileSystemModel::Busy);
+    });
 }
 
 void DFileView::initActions()

@@ -51,7 +51,6 @@ void DStatusBar::initConnect()
     connect(fileSignalManager, &FileSignalManager::statusBarItemsSelected, this, &DStatusBar::itemSelected);
     connect(fileSignalManager, &FileSignalManager::statusBarItemsCounted, this, &DStatusBar::itemCounted);
     connect(fileSignalManager, &FileSignalManager::loadingIndicatorShowed, this, &DStatusBar::showLoadingIncator);
-    connect(fileSignalManager, &FileSignalManager::searchingIndicatorShowed, this, &DStatusBar::showSearchingIncator);
 }
 
 void DStatusBar::itemSelected(const FMEvent &event, int number)

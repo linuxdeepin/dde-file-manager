@@ -138,7 +138,7 @@ void BookMarkManager::moveBookmark(int from, int to)
     save();
 }
 
-const QList<AbstractFileInfoPointer> BookMarkManager::getChildren(const DUrl &fileUrl, QDir::Filters filter, const FMEvent &event, bool &accepted) const
+const QList<AbstractFileInfoPointer> BookMarkManager::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
 {
     Q_UNUSED(fileUrl)
     Q_UNUSED(filter)
@@ -151,7 +151,7 @@ const QList<AbstractFileInfoPointer> BookMarkManager::getChildren(const DUrl &fi
     {
         DUrl localUrl = DUrl::fromLocalFile(frav);
 
-        QList<AbstractFileInfoPointer> list = fileService->getChildren(localUrl, filter, event);
+        QList<AbstractFileInfoPointer> list = fileService->getChildren(localUrl, filter);
 
         return list;
     }

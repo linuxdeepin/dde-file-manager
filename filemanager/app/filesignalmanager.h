@@ -174,9 +174,6 @@ signals:
     /*loading indcator show*/
     void loadingIndicatorShowed(const FMEvent &event, bool loading);
 
-    /*loading indcator show*/
-    void searchingIndicatorShowed(const FMEvent &event, bool searching);
-
     /*request cache samba login data*/
     void requsetCacheLoginData(const QJsonObject& obj);
 

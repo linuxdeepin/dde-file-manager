@@ -35,6 +35,12 @@ public:
         UnknowRole = Qt::UserRole + 999
     };
 
+    enum State {
+        Idle,
+        Busy,
+        Unknow
+    };
+
     explicit DFileSystemModel(DFileView *parent = 0);
     ~DFileSystemModel();
 
@@ -100,6 +106,8 @@ public:
     const AbstractFileInfoPointer parentFileInfo(const QModelIndex &index) const;
     const AbstractFileInfoPointer parentFileInfo(const DUrl &fileUrl) const;
 
+    State state() const;
+
 public slots:
     void updateChildren(const FMEvent &event, QList<AbstractFileInfoPointer> list);
     /// warning: only refresh current url
@@ -109,6 +117,7 @@ public slots:
 signals:
     void childrenUpdated(DUrl parentUrl);
     void rootUrlDeleted();
+    void stateChanged(State state);
 
 private slots:
     void onFileCreated(const DUrl &fileUrl);
@@ -125,6 +134,8 @@ private:
     Qt::SortOrder m_srotOrder = Qt::AscendingOrder;
 //    QModelIndex m_activeIndex;
 
+    State m_state = Idle;
+
     inline const FileSystemNodePointer getNodeByIndex(const QModelIndex &index) const;
     QModelIndex createIndex(const FileSystemNodePointer &node, int column) const;
     using QAbstractItemModel::createIndex;
@@ -138,6 +149,8 @@ private:
     void deleteNode(const FileSystemNodePointer &node);
     void deleteNodeByUrl(const DUrl &url);
     void clear();
+
+    void setState(State state);
 
     friend class FileSystemNode;
 };
