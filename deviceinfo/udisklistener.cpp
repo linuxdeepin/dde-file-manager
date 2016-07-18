@@ -268,7 +268,7 @@ void UDiskListener::readFstab()
     endfsent();
 }
 
-const QList<AbstractFileInfoPointer> UDiskListener::getChildren(const DUrl &fileUrl, QDir::Filters filter, const FMEvent &event, bool &accepted) const
+const QList<AbstractFileInfoPointer> UDiskListener::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
 {
     Q_UNUSED(filter)
 
@@ -280,7 +280,7 @@ const QList<AbstractFileInfoPointer> UDiskListener::getChildren(const DUrl &file
     {
         DUrl localUrl = DUrl::fromLocalFile(frav);
 
-        QList<AbstractFileInfoPointer> list = fileService->getChildren(localUrl, filter, event);
+        QList<AbstractFileInfoPointer> list = fileService->getChildren(localUrl, filter);
 
         return list;
     }

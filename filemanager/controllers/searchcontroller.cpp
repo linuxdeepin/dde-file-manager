@@ -17,7 +17,7 @@ SearchController::SearchController(QObject *parent)
     connect(fileService, &FileServices::childrenRemoved, this, &SearchController::onFileRemove);
 }
 
-const QList<AbstractFileInfoPointer> SearchController::getChildren(const DUrl &fileUrl, QDir::Filters filter, const FMEvent &event, bool &accepted) const
+const QList<AbstractFileInfoPointer> SearchController::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
 {
     accepted = true;
 
@@ -30,8 +30,7 @@ const QList<AbstractFileInfoPointer> SearchController::getChildren(const DUrl &f
     } else {
         activeJob << fileUrl;
 
-        QtConcurrent::run(QThreadPool::globalInstance(), const_cast<SearchController*>(this),
-                          &SearchController::searchStart, fileUrl, filter, event);
+        const_cast<SearchController*>(this)->searchStart(fileUrl, filter);
     }
 
     return QList<AbstractFileInfoPointer>();
@@ -153,7 +152,7 @@ void SearchController::onFileRemove(const DUrl &fileUrl)
     }
 }
 
-void SearchController::searchStart(const DUrl &fileUrl, QDir::Filters filter, const FMEvent &event)
+void SearchController::searchStart(const DUrl &fileUrl, QDir::Filters filter)
 {
     const DUrl &targetUrl = fileUrl.searchTargetUrl();
     const QString &keyword = fileUrl.searchKeyword();
@@ -165,8 +164,6 @@ void SearchController::searchStart(const DUrl &fileUrl, QDir::Filters filter, co
     searchPathList << targetUrl;
 
     qDebug() << "begin search:" << fileUrl;
-
-    emit fileSignalManager->searchingIndicatorShowed(event, true);
 
     while(!searchPathList.isEmpty()) {
         const DUrl &url = searchPathList.takeAt(0);
@@ -185,8 +182,6 @@ void SearchController::searchStart(const DUrl &fileUrl, QDir::Filters filter, co
                 qDebug() << "stop search:" << fileUrl;
 
                 removeJob(targetUrl);
-
-                emit fileSignalManager->searchingIndicatorShowed(event, false);
 
                 return;
             }
@@ -226,7 +221,6 @@ void SearchController::searchStart(const DUrl &fileUrl, QDir::Filters filter, co
 
     removeJob(targetUrl);
 
-    emit fileSignalManager->searchingIndicatorShowed(event, false);
     qDebug() << "search finished:" << fileUrl;
 }
 

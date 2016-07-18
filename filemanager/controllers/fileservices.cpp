@@ -98,10 +98,6 @@ void FileServices::clearFileUrlHandler(const QString &scheme, const QString &hos
 
 bool FileServices::openFile(const DUrl &fileUrl) const
 {
-    if (FileUtils::isExecutableScript(fileUrl.path())){
-        int code = dialogManager->showRunExcutableDialog(fileUrl);
-        return FileUtils::openExcutableFile(fileUrl.path(), code);
-    };
     TRAVERSE(fileUrl, {
                  bool ok = controller->openFile(fileUrl, accepted);
 
@@ -502,12 +498,12 @@ const DDirIteratorPointer FileServices::createDirIterator(const DUrl &fileUrl, Q
     return DDirIteratorPointer();
 }
 
-const QList<AbstractFileInfoPointer> FileServices::getChildren(const DUrl &fileUrl, QDir::Filters filters,  const FMEvent &event, bool *ok) const
+const QList<AbstractFileInfoPointer> FileServices::getChildren(const DUrl &fileUrl, QDir::Filters filters, bool *ok) const
 {
     QList<AbstractFileInfoPointer> childrenList;
 
     TRAVERSE(fileUrl, {
-                 childrenList = controller->getChildren(fileUrl, filters, event, accepted);
+                 childrenList = controller->getChildren(fileUrl, filters, accepted);
 
                  if(accepted) {
                      if(ok)
@@ -535,7 +531,6 @@ void FileServices::getChildren(const FMEvent &event, QDir::Filters filters) cons
         return;
     }
 
-
     /// Increase current thread priority
     QThread::currentThread()->setPriority(QThread::TimeCriticalPriority);
 
@@ -543,16 +538,10 @@ void FileServices::getChildren(const FMEvent &event, QDir::Filters filters) cons
 
     bool accepted = false;
 
-    const QList<AbstractFileInfoPointer> &childrenList = getChildren(fileUrl, filters, event, &accepted);
-
-
-
-    emit fileSignalManager->loadingIndicatorShowed(event, true);
+    const QList<AbstractFileInfoPointer> &childrenList = getChildren(fileUrl, filters, &accepted);
 
     if(accepted)
         emit updateChildren(event, childrenList);
-
-    emit fileSignalManager->loadingIndicatorShowed(event, false);
 }
 
 QList<AbstractFileController*> FileServices::getHandlerTypeByUrl(const DUrl &fileUrl,

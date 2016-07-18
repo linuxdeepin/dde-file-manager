@@ -74,7 +74,7 @@ public:
     const DDirIteratorPointer createDirIterator(const DUrl &fileUrl, QDir::Filters filters,
                                                 QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags) const;
 
-    const QList<AbstractFileInfoPointer> getChildren(const DUrl &fileUrl, QDir::Filters filters, const FMEvent &event, bool *ok = 0) const;
+    const QList<AbstractFileInfoPointer> getChildren(const DUrl &fileUrl, QDir::Filters filters, bool *ok = 0) const;
 
 public slots:
     void getChildren(const FMEvent &event, QDir::Filters filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System) const;

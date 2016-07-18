@@ -70,10 +70,8 @@ const DDirIteratorPointer FileController::createDirIterator(const DUrl &fileUrl,
     return DDirIteratorPointer(new FileDirIterator(fileUrl.path(), filters, flags));
 }
 
-const QList<AbstractFileInfoPointer> FileController::getChildren(const DUrl &fileUrl, QDir::Filters filter, const FMEvent &event, bool &accepted) const
+const QList<AbstractFileInfoPointer> FileController::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
 {
-    Q_UNUSED(event)
-
     accepted = true;
 
     QList<AbstractFileInfoPointer> infolist;
@@ -113,6 +111,13 @@ const QList<AbstractFileInfoPointer> FileController::getChildren(const DUrl &fil
 bool FileController::openFile(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
+
+    if (FileUtils::isExecutableScript(fileUrl.toLocalFile())) {
+        int code = dialogManager->showRunExcutableDialog(fileUrl);
+
+        return FileUtils::openExcutableFile(fileUrl.path(), code);
+    }
+
     return FileUtils::openFile(fileUrl.path());
 }
 

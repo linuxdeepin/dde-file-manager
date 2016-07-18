@@ -13,7 +13,7 @@ class SearchController : public AbstractFileController
 public:
     explicit SearchController(QObject *parent = 0);
 
-    const QList<AbstractFileInfoPointer> getChildren(const DUrl &fileUrl, QDir::Filters filter, const FMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
+    const QList<AbstractFileInfoPointer> getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const Q_DECL_OVERRIDE;
     const AbstractFileInfoPointer createFileInfo(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
     bool openFileLocation(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
 
@@ -38,7 +38,7 @@ private slots:
     void onFileRemove(const DUrl &fileUrl);
 
 private:
-    void searchStart(const DUrl &fileUrl, QDir::Filters filter, const FMEvent &event);
+    void searchStart(const DUrl &fileUrl, QDir::Filters filter);
     void removeJob(const DUrl &fileUrl);
 
     static DUrl realUrl(const DUrl &searchUrl);

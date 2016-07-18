@@ -56,6 +56,8 @@ DFileSystemModel::DFileSystemModel(DFileView *parent)
     connect(fileService, &FileServices::updateChildren,
             this, &DFileSystemModel::updateChildren,
             Qt::DirectConnection);
+
+    qRegisterMetaType<State>("State");
 }
 
 DFileSystemModel::~DFileSystemModel()
@@ -358,6 +360,8 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
     event = parentNode->fileInfo->fileUrl();
 
     fileService->getChildren(event, m_filters);
+
+    setState(Busy);
 }
 
 Qt::ItemFlags DFileSystemModel::flags(const QModelIndex &index) const
@@ -666,10 +670,23 @@ const AbstractFileInfoPointer DFileSystemModel::parentFileInfo(const DUrl &fileU
     return fileService->createFileInfo(fileUrl.parentUrl(fileUrl));
 }
 
+DFileSystemModel::State DFileSystemModel::state() const
+{
+    return m_state;
+}
+
 void DFileSystemModel::updateChildren(const FMEvent &event, QList<AbstractFileInfoPointer> list)
 {
     if(event.windowId() != parent()->windowId())
         return;
+
+    setState(Idle);
+
+    if (list.isEmpty()) {
+        emit childrenUpdated(event.fileUrl());
+
+        return;
+    }
 
     const FileSystemNodePointer &node = getNodeByIndex(index(event.fileUrl()));
 
@@ -934,4 +951,14 @@ void DFileSystemModel::clear()
     deleteNode((m_rootNode));
 
     endRemoveRows();
+}
+
+void DFileSystemModel::setState(DFileSystemModel::State state)
+{
+    if (m_state == state)
+        return;
+
+    m_state = state;
+
+    emit stateChanged(state);
 }
