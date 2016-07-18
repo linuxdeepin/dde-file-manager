@@ -19,6 +19,7 @@
 #include <QFileIconProvider>
 #include <QDateTime>
 #include <QMimeData>
+#include <QtConcurrent/QtConcurrent>
 
 #define fileService FileServices::instance()
 #define DEFAULT_COLUMN_COUNT 1
@@ -572,6 +573,17 @@ void DFileSystemModel::sort(int column, Qt::SortOrder order)
 
 void DFileSystemModel::sort()
 {
+    if (QThreadPool::globalInstance()->activeThreadCount() >= MAX_THREAD_COUNT) {
+        qDebug() << "Beyond the maximum number of threads!";
+        return;
+    }
+
+    if (QThread::currentThread() == qApp->thread()) {
+        QtConcurrent::run(QThreadPool::globalInstance(), this, &DFileSystemModel::sort);
+
+        return;
+    }
+
 //    const FileSystemNodePointer &node = getNodeByIndex(m_activeIndex);
     const FileSystemNodePointer &node = m_rootNode;
 
@@ -610,7 +622,8 @@ void DFileSystemModel::sort()
     QModelIndex topLeftIndex = index(0, 0, parentIndex);
     QModelIndex rightBottomIndex = index(node->visibleChildren.count(), columnCount(parentIndex), parentIndex);
 
-    emit dataChanged(topLeftIndex, rightBottomIndex);
+    QMetaObject::invokeMethod(this, "dataChanged", Qt::QueuedConnection,
+                              Q_ARG(QModelIndex, topLeftIndex), Q_ARG(QModelIndex, rightBottomIndex));
 }
 
 const AbstractFileInfoPointer DFileSystemModel::fileInfo(const QModelIndex &index) const
