@@ -93,7 +93,7 @@
 <context>
     <name>DFileSystemModel</name>
     <message>
-        <location filename="../filemanager/models/dfilesystemmodel.cpp" line="293"/>
+        <location filename="../filemanager/models/dfilesystemmodel.cpp" line="286"/>
         <source>Name</source>
         <translation>名称</translation>
     </message>
@@ -102,22 +102,22 @@
         <translation type="vanished">修改时间</translation>
     </message>
     <message>
-        <location filename="../filemanager/models/dfilesystemmodel.cpp" line="295"/>
+        <location filename="../filemanager/models/dfilesystemmodel.cpp" line="288"/>
         <source>Time modified</source>
         <translation>修改时间</translation>
     </message>
     <message>
-        <location filename="../filemanager/models/dfilesystemmodel.cpp" line="297"/>
+        <location filename="../filemanager/models/dfilesystemmodel.cpp" line="290"/>
         <source>Size</source>
         <translation>大小</translation>
     </message>
     <message>
-        <location filename="../filemanager/models/dfilesystemmodel.cpp" line="299"/>
+        <location filename="../filemanager/models/dfilesystemmodel.cpp" line="292"/>
         <source>Type</source>
         <translation>类型</translation>
     </message>
     <message>
-        <location filename="../filemanager/models/dfilesystemmodel.cpp" line="301"/>
+        <location filename="../filemanager/models/dfilesystemmodel.cpp" line="294"/>
         <source>Time created</source>
         <translation>创建时间</translation>
     </message>
@@ -133,12 +133,12 @@
         <translation type="vanished">文件夹为空</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/dfileview.cpp" line="1923"/>
+        <location filename="../filemanager/views/dfileview.cpp" line="2014"/>
         <source>Folder is empty</source>
         <translation>文件夹为空</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/dfileview.cpp" line="1925"/>
+        <location filename="../filemanager/views/dfileview.cpp" line="2016"/>
         <source>File has been moved or deleted</source>
         <translation>文件已被移动或删除</translation>
     </message>
@@ -185,12 +185,12 @@
         <translation>选中 %1 项内容</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/dstatusbar.cpp" line="93"/>
+        <location filename="../filemanager/views/dstatusbar.cpp" line="94"/>
         <source>Loading...</source>
         <translation>正在加载中...</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/dstatusbar.cpp" line="102"/>
+        <location filename="../filemanager/views/dstatusbar.cpp" line="103"/>
         <source>Searching...</source>
         <translation>正在搜索中...</translation>
     </message>
@@ -251,6 +251,7 @@
         <location filename="../filemanager/dialogs/dialogmanager.cpp" line="175"/>
         <location filename="../filemanager/dialogs/dialogmanager.cpp" line="210"/>
         <location filename="../filemanager/dialogs/dialogmanager.cpp" line="250"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="330"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
@@ -300,6 +301,16 @@
         <translation>您确定要彻底删除选中的%1项内容？</translation>
     </message>
     <message>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="328"/>
+        <source>Disk file is being used, can not unmount now</source>
+        <translation>磁盘文件被占用，无法卸载</translation>
+    </message>
+    <message>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="330"/>
+        <source>Force unmount</source>
+        <translation>强制卸载</translation>
+    </message>
+    <message>
         <source>Are you sure to permanently delete %1?</source>
         <translation type="obsolete">您确定要删除 %1？</translation>
     </message>
@@ -337,22 +348,21 @@
         <translation type="vanished">移除书签</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="324"/>
         <source>Ok</source>
-        <translation>确定</translation>
+        <translation type="vanished">确定</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="337"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="347"/>
         <source>File Manager</source>
         <translation>文件管理器</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="338"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="348"/>
         <source>Version:1.0</source>
         <translation>版本：1.0</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="339"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="349"/>
         <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions. </source>
         <translation>文件管理器是深度科技自主研发的一款管理文件的工具， 它包括搜索、复制、回收站、压缩/解压缩， 文件属性等管理文件的功能。</translation>
     </message>
@@ -360,12 +370,12 @@
 <context>
     <name>FileController</name>
     <message>
-        <location filename="../filemanager/controllers/filecontroller.cpp" line="335"/>
+        <location filename="../filemanager/controllers/filecontroller.cpp" line="331"/>
         <source>New Folder</source>
         <translation>新建文件夹</translation>
     </message>
     <message>
-        <location filename="../filemanager/controllers/filecontroller.cpp" line="347"/>
+        <location filename="../filemanager/controllers/filecontroller.cpp" line="343"/>
         <source>New File</source>
         <translation>新建文本</translation>
     </message>
@@ -1177,7 +1187,7 @@
         <translation type="vanished">本地磁盘</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="215"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="219"/>
         <source>Removable disk</source>
         <translation>可移动磁盘</translation>
     </message>
@@ -1198,55 +1208,55 @@
         <translation type="vanished">相机</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="213"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="217"/>
         <source>Local disk</source>
         <translation>本地磁盘</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="217"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="221"/>
         <source>Network shared directory</source>
         <translation>网络共享目录</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="219"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="223"/>
         <source>Android mobile device</source>
         <translation>安卓移动设备</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="221"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="225"/>
         <source>Apple mobile device</source>
         <translation>苹果移动设备</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="223"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="227"/>
         <source>Camera</source>
         <translation>相机</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="225"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="229"/>
         <source>Dvd</source>
         <translation>光驱设备</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="227"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="231"/>
         <source>Unknown device</source>
         <translation>未知设备</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="233"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="237"/>
         <location filename="../filemanager/models/abstractfileinfo.cpp" line="306"/>
         <source>%1 item</source>
         <translation>%1 项</translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="235"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="239"/>
         <location filename="../filemanager/models/abstractfileinfo.cpp" line="308"/>
         <source>%1 items</source>
         <translation>%1 项</translation>
     </message>
     <message>
         <location filename="../filemanager/controllers/fileservices.cpp" line="437"/>
-        <location filename="../filemanager/shutil/fileutils.cpp" line="538"/>
+        <location filename="../filemanager/shutil/fileutils.cpp" line="541"/>
         <source>Create symlink</source>
         <translation>创建链接</translation>
     </message>
