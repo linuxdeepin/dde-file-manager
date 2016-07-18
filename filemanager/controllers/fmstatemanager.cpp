@@ -27,12 +27,14 @@ void FMStateManager::initConnect()
 
 QString FMStateManager::cacheFilePath()
 {
-    return QString("%1/%2").arg(StandardPath::getCachePath(), "FMState.json");
+//    return QString("%1/%2").arg(StandardPath::getCachePath(), "FMState.json");
+    return getCachePath("FMState");
 }
 
 QString FMStateManager::sortCacheFilePath()
 {
-    return QString("%1/%2").arg(StandardPath::getCachePath(), "sort.json");
+//    return QString("%1/%2").arg(StandardPath::getCachePath(), "sort.json");
+    return getCachePath("sort");
 }
 
 void FMStateManager::loadCache()

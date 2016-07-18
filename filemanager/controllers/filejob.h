@@ -88,8 +88,8 @@ private:
 
 
 
-    bool copyFile(const QString &srcFile, const QString &tarDir);
-    bool copyDir(const QString &srcPath, const QString &tarPath);
+    bool copyFile(const QString &srcFile, const QString &tarDir, bool isMoved=false);
+    bool copyDir(const QString &srcPath, const QString &tarPath, bool isMoved=false);
     bool moveFile(const QString &srcFile, const QString &tarDir);
     bool restoreTrashFile(const QString &srcFile, const QString &tarFile);
     bool moveDir(const QString &srcFile, const QString &tarDir);

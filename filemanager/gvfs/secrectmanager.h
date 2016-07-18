@@ -28,6 +28,7 @@ public:
     void clearPasswordByLoginObj(const QJsonObject& obj);
     QJsonObject getLoginData(const QString& id);
     QJsonObject getLoginDatas();
+    static QString cachePath();
 signals:
 
 public slots:

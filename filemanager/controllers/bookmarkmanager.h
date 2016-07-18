@@ -18,6 +18,7 @@ public:
     void load();
     void save();
     QList<BookMark *> getBookmarks();
+    static QString cachePath();
 private:
     void loadJson(const QJsonObject &json);
     void writeJson(QJsonObject &json);

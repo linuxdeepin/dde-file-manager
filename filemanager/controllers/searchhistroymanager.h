@@ -16,6 +16,7 @@ public:
     void load();
     void save();
     QStringList toStringList();
+    static QString getSearchHistroyCachePath();
 private:
     void loadJson(const QJsonObject &json);
     void writeJson(QJsonObject &json);

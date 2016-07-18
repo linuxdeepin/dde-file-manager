@@ -1,4 +1,5 @@
 #include "basemanager.h"
+#include "../shutil/standardpath.h"
 #include <QFile>
 #include <QDebug>
 
@@ -22,6 +23,11 @@ void BaseManager::save()
 
 }
 
+QString BaseManager::getCachePath(const QString &key)
+{
+    return QString("%1/%2").arg(StandardPath::getCachePath(), QString("%1.json").arg(key));
+}
+
 void BaseManager::writeCacheToFile(const QString &path, const QString &content)
 {
     QFile file(path);
@@ -33,6 +39,7 @@ void BaseManager::writeCacheToFile(const QString &path, const QString &content)
 
 QString BaseManager::readCacheFromFile(const QString &path)
 {
+    qDebug() << path;
     QFile file(path);
     if(!file.open(QFile::ReadOnly))
     {

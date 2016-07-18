@@ -79,6 +79,11 @@ QJsonObject SecrectManager::getLoginDatas()
     return m_smbLoginObjs;
 }
 
+QString SecrectManager::cachePath()
+{
+    return QString("%1/samba.json").arg(StandardPath::getCachePath());
+}
+
 void SecrectManager::cacheSambaLoginData(const QJsonObject &obj)
 {
     QJsonValue v(obj);
@@ -88,8 +93,7 @@ void SecrectManager::cacheSambaLoginData(const QJsonObject &obj)
 
 void SecrectManager::loadCache()
 {
-    QString configPath = StandardPath::getCachePath();
-    QFile file(QString("%1/samba.json").arg(configPath));
+    QFile file(cachePath());
     if (!file.open(QIODevice::ReadOnly))
     {
         qDebug() << "Couldn't write samba file!";
@@ -104,8 +108,7 @@ void SecrectManager::loadCache()
 
 void SecrectManager::saveCache()
 {
-    QString configPath = StandardPath::getCachePath();
-    QFile file(QString("%1/samba.json").arg(configPath));
+    QFile file(cachePath());
     if (!file.open(QIODevice::WriteOnly))
     {
         qDebug() << "Couldn't write samba file!";

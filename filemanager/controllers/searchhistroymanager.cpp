@@ -1,8 +1,6 @@
 #include "searchhistroymanager.h"
 #include "searchhistory.h"
-
 #include "../shutil/standardpath.h"
-
 #include <QList>
 #include <QJsonObject>
 #include <QFile>
@@ -28,8 +26,8 @@ SearchHistroyManager::~SearchHistroyManager()
 void SearchHistroyManager::load()
 {
     //TODO: check permission and existence of the path
-    QString configPath = QString("%1/%2").arg(StandardPath::getCachePath(), "searchhistory.json");
-    QFile file(configPath);
+    QString filePath = getSearchHistroyCachePath();
+    QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly))
     {
         qDebug() << "Couldn't open search data file!";
@@ -44,8 +42,8 @@ void SearchHistroyManager::load()
 void SearchHistroyManager::save()
 {
     //TODO: check permission and existence of the path
-    QString configPath = QString("%1/%2").arg(StandardPath::getCachePath(), "searchhistory.json");
-    QFile file(configPath);
+    QString filePath = getSearchHistroyCachePath();
+    QFile file(filePath);
     if (!file.open(QIODevice::WriteOnly))
     {
         qDebug() << "Couldn't open search data file!";
@@ -67,6 +65,11 @@ QStringList SearchHistroyManager::toStringList()
         m_stringList.append(m_historyList.at(i)->getKeyword());
     }
     return m_stringList;
+}
+
+QString SearchHistroyManager::getSearchHistroyCachePath()
+{
+    return getCachePath("searchhistory");
 }
 
 void SearchHistroyManager::loadJson(const QJsonObject &json)
