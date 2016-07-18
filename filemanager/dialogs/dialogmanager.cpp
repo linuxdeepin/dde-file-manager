@@ -325,9 +325,9 @@ void DialogManager::showDiskErrorDialog(const QString & id, const QString & erro
     UDiskDeviceInfo* info = deviceListener->getDevice(id);
     if (info){
         DDialog d;
-        d.setTitle(tr("Disk is using, you can't unmount it."));
+        d.setTitle(tr("Disk file is being used, can not unmount now"));
         QStringList buttonTexts;
-        buttonTexts << tr("Cancle") << tr("Force unmount");
+        buttonTexts << tr("Cancel") << tr("Force unmount");
         d.addButtons(buttonTexts);
         d.setDefaultButton(0);
         d.setIcon(info->fileIcon(64, 64));
