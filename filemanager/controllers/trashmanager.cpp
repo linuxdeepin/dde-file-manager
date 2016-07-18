@@ -128,6 +128,26 @@ bool TrashManager::openFile(const DUrl &fileUrl, bool &accepted) const
     return true;
 }
 
+bool TrashManager::openFileLocation(const DUrl &fileUrl, bool &accepted) const
+{
+    accepted = true;
+
+    const AbstractFileInfoPointer &file = createFileInfo(fileUrl, accepted);
+
+    if (!file->exists())
+        return false;
+
+    DUrl parentUrl = file->parentUrl();
+    QUrlQuery query;
+
+    query.addQueryItem("selectUrl", fileUrl.toString());
+    parentUrl.setQuery(query);
+
+    fileService->openNewWindow(parentUrl);
+
+    return true;
+}
+
 bool TrashManager::addUrlMonitor(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
