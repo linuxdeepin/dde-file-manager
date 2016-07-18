@@ -25,6 +25,8 @@ public:
     const QList<AbstractFileInfoPointer> getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const Q_DECL_OVERRIDE;
     const AbstractFileInfoPointer createFileInfo(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
 
+    static QString cachePath();
+
 private:
     void loadJson(const QJsonObject &json);
     void writeJson(QJsonObject &json);

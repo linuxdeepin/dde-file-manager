@@ -44,8 +44,8 @@ RecentHistoryManager::~RecentHistoryManager()
 void RecentHistoryManager::load()
 {
     //TODO: check permission and existence of the path
-    QString configPath = QString("%1/%2").arg(StandardPath::getCachePath(), "recentHistory.json");
-    QFile file(configPath);
+    QString filePath = cachePath();
+    QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly))
     {
         qDebug() << "Couldn't open recent history file!";
@@ -59,8 +59,8 @@ void RecentHistoryManager::load()
 void RecentHistoryManager::save()
 {
     //TODO: check permission and existence of the path
-    QString configPath = QString("%1/%2").arg(StandardPath::getCachePath(), "recentHistory.json");
-    QFile file(configPath);
+    QString filePath = cachePath();
+    QFile file(filePath);
     if (!file.open(QIODevice::WriteOnly))
     {
         qDebug() << "Couldn't open recent history file!";
@@ -117,6 +117,11 @@ const AbstractFileInfoPointer RecentHistoryManager::createFileInfo(const DUrl &f
     accepted = true;
 
     return AbstractFileInfoPointer(new RecentFileInfo(fileUrl));
+}
+
+QString RecentHistoryManager::cachePath()
+{
+    return getCachePath("recentHistory");
 }
 
 void RecentHistoryManager::loadJson(const QJsonObject &json)

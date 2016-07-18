@@ -12,6 +12,7 @@ public:
     virtual void load();
     virtual void save();
 
+    static QString getCachePath(const QString& key);
     static void writeCacheToFile(const QString &path, const QString &content);
     static QString readCacheFromFile(const QString &path);
 

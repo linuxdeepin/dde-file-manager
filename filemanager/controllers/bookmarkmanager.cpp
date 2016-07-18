@@ -29,7 +29,7 @@ BookMarkManager::~BookMarkManager()
 void BookMarkManager::load()
 {
     //TODO: check permission and existence of the path
-    QString configPath = QString("%1/%2").arg(StandardPath::getCachePath(), "bookmark.json");
+    QString configPath = cachePath();
     QFile file(configPath);
     if (!file.open(QIODevice::ReadOnly))
     {
@@ -45,11 +45,7 @@ void BookMarkManager::load()
 void BookMarkManager::save()
 {
     //TODO: check permission and existence of the path
-    QDir dir;
-
-    dir.mkpath(StandardPath::getCachePath());
-
-    QString configPath = QString("%1/%2").arg(StandardPath::getCachePath(), "bookmark.json");
+    QString configPath = cachePath();
     QFile file(configPath);
     if (!file.open(QIODevice::WriteOnly))
     {
@@ -66,6 +62,11 @@ void BookMarkManager::save()
 QList<BookMark *> BookMarkManager::getBookmarks()
 {
     return m_bookmarks;
+}
+
+QString BookMarkManager::cachePath()
+{
+    return getCachePath("bookmark");
 }
 
 void BookMarkManager::loadJson(const QJsonObject &json)

@@ -39,5 +39,5 @@ void DBookmarkRootItem::dropEvent(QGraphicsSceneDragDropEvent *event)
 
 void DBookmarkRootItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
-
+    Q_UNUSED(event);
 }
