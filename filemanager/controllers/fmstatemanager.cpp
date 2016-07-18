@@ -4,7 +4,7 @@
 #include "../shutil/standardpath.h"
 #include "utils/qobjecthelper.h"
 
-QMap<DUrl, int> FMStateManager::SortStates;
+QMap<DUrl, QPair<int, int>> FMStateManager::SortStates;
 
 
 FMStateManager::FMStateManager(QObject *parent)
@@ -60,7 +60,10 @@ void FMStateManager::loadSortCache()
         if (error.error == QJsonParseError::NoError){
             QJsonObject obj = doc.object();
             foreach (QString key, obj.keys()) {
-                FMStateManager::SortStates.insert(DUrl(key), obj.value(key).toInt());
+                const QStringList &list = obj.value(key).toString().split(",");
+
+                if (list.count() == 2)
+                    FMStateManager::SortStates.insert(DUrl(key), qMakePair(list.first().toInt(), list.last().toInt()));
             }
         }else{
             qDebug() << "load cache file: " << sortCacheFilePath() << error.errorString();
@@ -74,7 +77,9 @@ void FMStateManager::saveSortCache()
 {
     QVariantMap sortCache;
     foreach (const DUrl& url, FMStateManager::SortStates.keys()) {
-        sortCache.insert(url.toString(), FMStateManager::SortStates.value(url));
+        const QPair<int, int> &sort = FMStateManager::SortStates.value(url);
+
+        sortCache.insert(url.toString(), QString("%1,%2").arg(sort.first).arg(sort.second));
     }
 
     QJsonDocument doc(QJsonObject::fromVariantMap(sortCache));
@@ -82,9 +87,9 @@ void FMStateManager::saveSortCache()
 
 }
 
-void FMStateManager::cacheSortState(const DUrl &url, int role)
+void FMStateManager::cacheSortState(const DUrl &url, int role, Qt::SortOrder order)
 {
-    FMStateManager::SortStates.insert(url, role);
+    FMStateManager::SortStates.insert(url, QPair<int, int>(role, order));
     FMStateManager::saveSortCache();
 }
 

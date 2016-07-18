@@ -179,9 +179,10 @@ void AppController::actionRemove(const FMEvent &event)
 {
     const DUrlList& urls = event.fileUrlList();
     const DUrl& fileUrl = event.fileUrl();
-    if(fileUrl.isLocalFile()) {
+
+    if (event.parentSource() == FMEvent::LeftSideBar) {
         fileSignalManager->requestBookmarkRemove(event);
-    } else if(fileUrl.isRecentFile()) {
+    } else if (fileUrl.isRecentFile()) {
         fileSignalManager->requestRecentFileRemove(urls);
     }
 }

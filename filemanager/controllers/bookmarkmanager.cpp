@@ -1,5 +1,6 @@
 #include "bookmarkmanager.h"
 #include "fileinfo.h"
+#include "../shutil/standardpath.h"
 #include "../app/global.h"
 
 #include <QJsonObject>
@@ -28,8 +29,7 @@ BookMarkManager::~BookMarkManager()
 void BookMarkManager::load()
 {
     //TODO: check permission and existence of the path
-    QString user = getenv("USER");
-    QString configPath = "/home/" + user + "/.cache/dde-file-manager/bookmark.json";
+    QString configPath = QString("%1/%2").arg(StandardPath::getCachePath(), "bookmark.json");
     QFile file(configPath);
     if (!file.open(QIODevice::ReadOnly))
     {
@@ -45,12 +45,11 @@ void BookMarkManager::load()
 void BookMarkManager::save()
 {
     //TODO: check permission and existence of the path
-    QString user = getenv("USER");
-    QDir dir("/home/" + user + "/.cache");
-    if(dir.exists())
-        dir.mkdir("dde-file-manager");
+    QDir dir;
 
-    QString configPath = "/home/" + user + "/.cache/dde-file-manager/bookmark.json";
+    dir.mkpath(StandardPath::getCachePath());
+
+    QString configPath = QString("%1/%2").arg(StandardPath::getCachePath(), "bookmark.json");
     QFile file(configPath);
     if (!file.open(QIODevice::WriteOnly))
     {

@@ -594,14 +594,18 @@ void DFileView::setViewMode(DFileView::ViewMode mode)
 
 void DFileView::sortByRole(int role)
 {
+    Qt::SortOrder order = (model()->sortRole() == role && model()->sortOrder() == Qt::AscendingOrder)
+                            ? Qt::DescendingOrder
+                            : Qt::AscendingOrder;
+
     if (m_headerView) {
-        m_headerView->setSortIndicator(model()->roleToColumn(role), Qt::AscendingOrder);
+        m_headerView->setSortIndicator(model()->roleToColumn(role), order);
     } else {
-        model()->setSortRole(role);
+        model()->setSortRole(role, order);
         model()->sort();
     }
 
-    FMStateManager::cacheSortState(currentUrl(), role);
+    FMStateManager::cacheSortState(currentUrl(), role, order);
 }
 
 void DFileView::sortByColumn(int column)
@@ -1480,7 +1484,9 @@ bool DFileView::setCurrentUrl(DUrl fileUrl)
     if (m_currentViewMode == ListMode) {
         updateListHeaderViewProperty();
     } else {
-        model()->setSortRole(FMStateManager::SortStates.value(fileUrl, DFileSystemModel::FileDisplayNameRole));
+        const QPair<int, int> &sort_config = FMStateManager::SortStates.value(fileUrl, QPair<int, int>(DFileSystemModel::FileDisplayNameRole, Qt::AscendingOrder));
+
+        model()->setSortRole(sort_config.first, (Qt::SortOrder)sort_config.second);
     }
 
     if(info) {
@@ -1894,9 +1900,10 @@ void DFileView::updateListHeaderViewProperty()
     m_headerView->setDefaultSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
     m_headerView->setMinimumSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
 
-    int sort_column = model()->roleToColumn(FMStateManager::SortStates.value(currentUrl(), DFileSystemModel::FileDisplayNameRole));
+    const QPair<int, int> &sort_config = FMStateManager::SortStates.value(currentUrl(), QPair<int, int>(DFileSystemModel::FileDisplayNameRole, Qt::AscendingOrder));
+    int sort_column = model()->roleToColumn(sort_config.first);
 
-    m_headerView->setSortIndicator(sort_column, model()->sortOrder());
+    m_headerView->setSortIndicator(sort_column, Qt::SortOrder(sort_config.second));
 
     m_columnRoles.clear();
 

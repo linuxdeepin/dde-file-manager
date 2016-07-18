@@ -1,6 +1,8 @@
 #include "searchhistroymanager.h"
 #include "searchhistory.h"
 
+#include "../shutil/standardpath.h"
+
 #include <QList>
 #include <QJsonObject>
 #include <QFile>
@@ -26,8 +28,7 @@ SearchHistroyManager::~SearchHistroyManager()
 void SearchHistroyManager::load()
 {
     //TODO: check permission and existence of the path
-    QString user = getenv("USER");
-    QString configPath = "/home/" + user + "/.cache/dde-file-manager/searchhistory.json";
+    QString configPath = QString("%1/%2").arg(StandardPath::getCachePath(), "searchhistory.json");
     QFile file(configPath);
     if (!file.open(QIODevice::ReadOnly))
     {
@@ -43,8 +44,7 @@ void SearchHistroyManager::load()
 void SearchHistroyManager::save()
 {
     //TODO: check permission and existence of the path
-    QString user = getenv("USER");
-    QString configPath = "/home/" + user + "/.cache/dde-file-manager/searchhistory.json";
+    QString configPath = QString("%1/%2").arg(StandardPath::getCachePath(), "searchhistory.json");
     QFile file(configPath);
     if (!file.open(QIODevice::WriteOnly))
     {
