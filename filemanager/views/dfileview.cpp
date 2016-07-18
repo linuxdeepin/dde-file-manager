@@ -572,7 +572,7 @@ bool DFileView::select(const FMEvent &event)
 
     setCurrentIndex(index);
 
-    scrollTo(index);
+    scrollTo(index, PositionAtTop);
 
     return true;
 }
@@ -1403,7 +1403,7 @@ void DFileView::keyboardSearch(const QString &search)
         QString absolutePath = FileInfo(model()->getUrlByIndex(index).path()).absolutePath();
         if (absolutePath == currentUrl().path()){
             setCurrentIndex(index);
-            scrollTo(index);
+            scrollTo(index, PositionAtTop);
             return;
         }
     }
@@ -1414,7 +1414,7 @@ void DFileView::keyboardSearch(const QString &search)
         QString absolutePath = FileInfo(model()->getUrlByIndex(index).path()).absolutePath();
         if (absolutePath == currentUrl().path()){
             setCurrentIndex(index);
-            scrollTo(index);
+            scrollTo(index, PositionAtTop);
             return;
         }
     }
@@ -2022,6 +2022,10 @@ void DFileView::onChildrenUpdated()
 {
     for (const DUrl &url : oldSelectedUrllist) {
         selectionModel()->select(model()->index(url), QItemSelectionModel::SelectCurrent);
+    }
+
+    if (!oldSelectedUrllist.isEmpty()) {
+        scrollTo(model()->index(oldSelectedUrllist.first()), PositionAtTop);
     }
 
     oldSelectedUrllist.clear();
