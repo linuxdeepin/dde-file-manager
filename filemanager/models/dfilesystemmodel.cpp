@@ -242,6 +242,8 @@ QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
     }
     case FileCreatedRole:
         return indexNode->fileInfo->createdDisplayName();
+    case FilePinyinName:
+        return indexNode->fileInfo->pinyinName();
     default: {
         const AbstractFileInfoPointer &fileInfo = indexNode->fileInfo;
 

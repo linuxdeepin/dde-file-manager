@@ -31,6 +31,7 @@ public:
         FileCreatedRole = Qt::UserRole + 8,
         FileDisplayNameRole = Qt::UserRole + 9,
         FileUserRole = Qt::UserRole + 10,
+        FilePinyinName = Qt::UserRole + 11,
         UnknowRole = Qt::UserRole + 999
     };
 
