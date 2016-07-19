@@ -28,6 +28,7 @@
 #include "../controllers/appcontroller.h"
 #include "../app/filemanagerapp.h"
 #include "dbookmarkmountedindicatoritem.h"
+#include "deditorwidgetmenu.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -83,7 +84,7 @@ void DBookmarkItem::init()
 
 void DBookmarkItem::editFinished()
 {
-    if (!m_lineEdit)
+    if (!m_lineEdit || m_eidtMenu->isVisible())
         return;
 
     FMEvent event;
@@ -450,7 +451,10 @@ DBookmarkMountedIndicatorItem *DBookmarkItem::makeMountBookmark(DBookmarkItem *p
 void DBookmarkItem::editMode()
 {
     m_lineEdit = new QLineEdit;
-    m_lineEdit->setContextMenuPolicy(Qt::NoContextMenu);
+//    m_lineEdit->setContextMenuPolicy(Qt::NoContextMenu);
+
+    m_eidtMenu = new DEditorWidgetMenu(m_lineEdit);
+
     connect(m_lineEdit, &QLineEdit::editingFinished, this, &DBookmarkItem::editFinished);
     m_widget = scene()->addWidget(m_lineEdit);
     m_lineEdit->setGeometry(37 + geometry().x(), geometry().y(), m_width - 37, m_height);

@@ -61,7 +61,18 @@ void DEditorWidgetMenu::init(QWidget *obj)
         }
 
         action_copy->setEnabled(action_cut->isEnabled());
-
+        this->setIsVisible(true);
         exec();
+        this->setIsVisible(false);
     });
 }
+bool DEditorWidgetMenu::isVisible() const
+{
+    return m_isVisible;
+}
+
+void DEditorWidgetMenu::setIsVisible(bool isVisible)
+{
+    m_isVisible = isVisible;
+}
+
