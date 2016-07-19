@@ -84,9 +84,6 @@ public:
 
     using DListView::edit;
 
-    void startKeyboardSearch(int windowId, const QString &key);
-    void stopKeyboardSearch(int windowId);
-
     void setIconSize(const QSize &size);
 
     ViewMode getDefaultViewMode();

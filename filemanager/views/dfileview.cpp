@@ -304,22 +304,6 @@ int DFileView::windowId() const
     return window()->winId();
 }
 
-void DFileView::startKeyboardSearch(int windowId, const QString &key)
-{
-    if(windowId != this->windowId())
-        return;
-
-    keyboardSearch(key);
-}
-
-void DFileView::stopKeyboardSearch(int windowId)
-{
-    if(windowId != this->windowId())
-        return;
-
-//    stopSearch();
-}
-
 void DFileView::setIconSize(const QSize &size)
 {
     DListView::setIconSize(size);
