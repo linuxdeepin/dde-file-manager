@@ -45,8 +45,6 @@ void AppController::actionOpen(const FMEvent &event)
 {
     const DUrlList& urls = event.fileUrlList();
     if (urls.size() == 1){
-        DUrl url = urls.first();
-        const_cast<FMEvent&>(event) = url;
         fileService->openUrl(event);
     }else{
         foreach (DUrl url, urls) {
