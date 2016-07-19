@@ -134,12 +134,12 @@ QString DUrl::searchKeyword() const
 
 DUrl DUrl::searchTargetUrl() const
 {
-    if(!isSearchFile())
+    if (!isSearchFile())
         return DUrl();
 
     QUrlQuery query(this->query());
 
-    return DUrl(query.queryItemValue("url"));
+    return DUrl(query.queryItemValue("url", FullyDecoded));
 }
 
 void DUrl::setSearchKeyword(const QString &keyword)
