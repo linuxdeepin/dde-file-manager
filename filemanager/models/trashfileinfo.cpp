@@ -56,6 +56,11 @@ QString TrashFileInfo::displayName() const
     return m_displayName;
 }
 
+QString TrashFileInfo::absoluteFilePath() const
+{
+    return fileUrl().toString();
+}
+
 void TrashFileInfo::setUrl(const DUrl &fileUrl)
 {
     AbstractFileInfo::setUrl(fileUrl);
@@ -67,13 +72,13 @@ void TrashFileInfo::setUrl(const DUrl &fileUrl)
 
 QIcon TrashFileInfo::fileIcon() const
 {
-    return fileIconProvider->getFileIcon(absoluteFilePath(), mimeTypeName());
+    return fileIconProvider->getFileIcon(data->fileInfo.absoluteFilePath(), mimeTypeName());
 }
 
 QMimeType TrashFileInfo::mimeType() const
 {
     if (!data->mimeType.isValid()) {
-        data->mimeType = FileInfo::mimeType(absoluteFilePath());
+        data->mimeType = FileInfo::mimeType(data->fileInfo.absoluteFilePath());
     }
 
     return data->mimeType;
@@ -241,7 +246,7 @@ bool TrashFileInfo::restore(const FMEvent &event) const
         return false;
     }
 
-    DUrl srcUrl = DUrl::fromLocalFile(absoluteFilePath());
+    DUrl srcUrl = DUrl::fromLocalFile(data->fileInfo.absoluteFilePath());
     DUrl tarUrl = DUrl::fromLocalFile(originalFilePath);
     fileService->restoreFile(srcUrl, tarUrl, event);
 
@@ -260,7 +265,7 @@ QString TrashFileInfo::sourceFilePath() const
 
 void TrashFileInfo::updateInfo()
 {
-    const QString &filePath = this->absoluteFilePath();
+    const QString &filePath = data->fileInfo.absoluteFilePath();
     const QString &basePath = TRASHFILEPATH;
     const QString &fileBaseName = filePath.mid(basePath.size(), filePath.indexOf('/', basePath.size() + 1) - basePath.size());
 
