@@ -428,11 +428,14 @@ bool FileServices::openFileLocation(const DUrl &fileUrl) const
 
 bool FileServices::createSymlink(const DUrl &fileUrl, const FMEvent &event) const
 {
-    QString linkName = getSymlinkFileName(fileUrl);
-    QString linkPath = QFileDialog::getSaveFileName(WindowManager::getWindowById(event.windowId()),
-                                                    QObject::tr("Create symlink"), linkName);
+//    QString linkName = getSymlinkFileName(fileUrl);
+//    QString linkPath = QFileDialog::getSaveFileName(WindowManager::getWindowById(event.windowId()),
+//                                                    QObject::tr("Create symlink"), linkName);
 
-    return createSymlink(fileUrl, DUrl::fromLocalFile(linkPath));
+//    return createSymlink(fileUrl, DUrl::fromLocalFile(linkPath));
+
+    int windowId = event.windowId();
+    FileUtils::createSoftLink(windowId, fileUrl.toLocalFile());
 }
 
 bool FileServices::createSymlink(const DUrl &fileUrl, const DUrl &linkToUrl) const
@@ -447,14 +450,10 @@ bool FileServices::createSymlink(const DUrl &fileUrl, const DUrl &linkToUrl) con
     return false;
 }
 
-bool FileServices::sendToDesktop(const DUrl &fileUrl) const
+bool FileServices::sendToDesktop(const FMEvent &event) const
 {
-    const AbstractFileInfoPointer &fileInfo = createFileInfo(fileUrl);
-
-    QString linkName = fileInfo ? fileInfo->fileName() : fileUrl.path();
-    QString linkPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-
-    return createSymlink(fileUrl, DUrl::fromLocalFile(linkPath + "/" + linkName));
+    const DUrlList& urls = event.fileUrlList();
+    FileUtils::sendToDesktop(urls);
 }
 
 bool FileServices::openInTerminal(const DUrl &fileUrl) const

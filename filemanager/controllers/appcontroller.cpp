@@ -207,9 +207,7 @@ void AppController::actionCreateSymlink(const FMEvent &event)
 
 void AppController::actionSendToDesktop(const FMEvent &event)
 {
-//    const DUrlList& urls = event.fileUrlList();
-//    FileUtils::sendToDesktop(urls);
-    fileService->sendToDesktop(event.fileUrl());
+    fileService->sendToDesktop(event);
 }
 
 void AppController::actionAddToBookMark(const FMEvent &event)
