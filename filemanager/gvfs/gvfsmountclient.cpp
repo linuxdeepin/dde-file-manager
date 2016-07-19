@@ -164,7 +164,7 @@ void GvfsMountClient::ask_password_cb(GMountOperation *op, const char *message, 
         else
         {
             qDebug() << "g_mount_operation_reply before";
-            g_object_set_data (G_OBJECT (op), "state", GINT_TO_POINTER (MOUNT_OP_ASKED));
+//            g_object_set_data (G_OBJECT (op), "state", GINT_TO_POINTER (MOUNT_OP_ASKED));
             g_mount_operation_reply (op, G_MOUNT_OPERATION_HANDLED);
             qDebug() << "g_mount_operation_reply end";
         }
@@ -173,6 +173,8 @@ void GvfsMountClient::ask_password_cb(GMountOperation *op, const char *message, 
 
     }else{
         qDebug() << "cancel connect";
+        g_object_set_data (G_OBJECT (op), "state", GINT_TO_POINTER (MOUNT_OP_ABORTED));
+        g_mount_operation_reply (op, G_MOUNT_OPERATION_ABORTED);
     }
     AskPasswordDialog->deleteLater();
     AskPasswordDialog = NULL;

@@ -16,6 +16,9 @@ public:
     QString filePath() const Q_DECL_OVERRIDE;
     QString absoluteFilePath() const Q_DECL_OVERRIDE;
 
+    bool isReadable() const Q_DECL_OVERRIDE;
+    bool isWritable() const Q_DECL_OVERRIDE;
+
     bool isCanRename() const Q_DECL_OVERRIDE;
     QIcon fileIcon() const Q_DECL_OVERRIDE;
     bool isDir() const Q_DECL_OVERRIDE;
