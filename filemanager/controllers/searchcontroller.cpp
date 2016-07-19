@@ -15,6 +15,7 @@ class SearchDiriterator : public DDirIterator
 {
 public:
     SearchDiriterator(const DUrl &url, QDir::Filters filter, QDirIterator::IteratorFlags flags, SearchController *parent);
+    ~SearchDiriterator();
 
     DUrl next() Q_DECL_OVERRIDE;
     bool hasNext() const Q_DECL_OVERRIDE;
@@ -29,6 +30,7 @@ private:
     AbstractFileInfoPointer currentFileInfo;
     mutable QQueue<DUrl> childrens;
 
+    DUrl fileUrl;
     DUrl targetUrl;
     QString keyword;
     QRegularExpression regular;
@@ -36,13 +38,12 @@ private:
     QDirIterator::IteratorFlags m_flags;
     mutable QList<DUrl> searchPathList;
     mutable DDirIteratorPointer it;
-
-    void searchStart(const DUrl &fileUrl, QDir::Filters filter, QDirIterator::IteratorFlags flags);
 };
 
 SearchDiriterator::SearchDiriterator(const DUrl &url, QDir::Filters filter, QDirIterator::IteratorFlags flags, SearchController *parent)
     : DDirIterator()
     , parent(parent)
+    , fileUrl(url)
     , m_filter(filter)
     , m_flags(flags)
 {
@@ -50,6 +51,11 @@ SearchDiriterator::SearchDiriterator(const DUrl &url, QDir::Filters filter, QDir
     keyword = url.searchKeyword();
     regular = QRegularExpression(QRegularExpression::escape((keyword)), QRegularExpression::CaseInsensitiveOption);
     searchPathList << targetUrl;
+}
+
+SearchDiriterator::~SearchDiriterator()
+{
+    parent->removeJob(targetUrl);
 }
 
 DUrl SearchDiriterator::next()
@@ -100,10 +106,17 @@ bool SearchDiriterator::hasNext() const
             }
 
             if (fileInfo->fileName().indexOf(regular) >= 0) {
-                DUrl url = DUrl::fromSearchFile(targetUrl, keyword);
+                DUrl url = fileUrl;
                 const DUrl &realUrl = fileInfo->fileUrl();
 
                 url.setFragment(realUrl.toString());
+
+                if (parent->urlToTargetUrlMap.contains(realUrl, fileUrl)) {
+                    ++parent->urlToTargetUrlMapInsertCount[QPair<DUrl, DUrl>(realUrl, fileUrl)];
+                } else {
+                    parent->urlToTargetUrlMap.insertMulti(fileInfo->fileUrl(), fileUrl);
+                    parent->urlToTargetUrlMapInsertCount[QPair<DUrl, DUrl>(realUrl, fileUrl)] = 0;
+                }
 
                 fileService->addUrlMonitor(realUrl);
 
@@ -272,8 +285,6 @@ void SearchController::onFileRemove(const DUrl &fileUrl)
 
 void SearchController::removeJob(const DUrl &fileUrl)
 {
-    activeJob.remove(fileUrl);
-
     for (const DUrl &url : urlToTargetUrlMap.keys(fileUrl)) {
         const QPair<DUrl, DUrl> &key = QPair<DUrl, DUrl>(url, fileUrl);
         int count = urlToTargetUrlMapInsertCount.value(key, 0);

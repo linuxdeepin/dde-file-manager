@@ -47,9 +47,10 @@ private:
     static DUrl realUrl(const DUrl &searchUrl);
     static DUrlList realUrlList(const DUrlList &searchUrls);
 
-    mutable QSet<DUrl> activeJob;
     QMultiMap<DUrl, DUrl> urlToTargetUrlMap;
     QMap<QPair<DUrl, DUrl>, int> urlToTargetUrlMapInsertCount;
+
+    friend class SearchDiriterator;
 };
 
 #endif // SEARCHCONTROLLER_H
