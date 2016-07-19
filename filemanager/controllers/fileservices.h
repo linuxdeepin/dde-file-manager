@@ -66,7 +66,7 @@ public:
 
     bool createSymlink(const DUrl &fileUrl, const FMEvent &event) const;
     bool createSymlink(const DUrl &fileUrl, const DUrl &linkToUrl) const;
-    bool sendToDesktop(const DUrl &fileUrl) const;
+    bool sendToDesktop(const FMEvent &event) const;
 
     bool openInTerminal(const DUrl &fileUrl) const;
 

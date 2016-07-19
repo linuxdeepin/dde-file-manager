@@ -506,16 +506,33 @@ QString FileUtils::getSoftLinkFileName(const QString &file, const QString &targe
 
     if (info.exists()){
         QString baseName = info.baseName();
+        QString shortcut = QObject::tr("Shortcut");
         QString linkBaseName;
-        if (info.isFile()){
-            linkBaseName = QString("%1 link.%2").arg(baseName, info.suffix());
-        }else if (info.isDir()){
-            linkBaseName = QString("%1 link").arg(baseName);
-        }else if (info.isSymLink()){
-            return QString();
+        int number = 1;
+        while (true) {
+            if (info.isFile()){
+                if (number == 1){
+                    linkBaseName = QString("%1 %2.%3").arg(baseName, shortcut, info.suffix());
+                }else{
+                    linkBaseName = QString("%1 %2%3.%4").arg(baseName, shortcut, QString::number(number), info.suffix());
+                }
+            }else if (info.isDir()){
+                if (number == 1){
+                    linkBaseName = QString("%1 %2").arg(baseName, shortcut);
+                }else{
+                    linkBaseName = QString("%1 %2%3").arg(baseName, shortcut, QString::number(number));
+                }
+            }else if (info.isSymLink()){
+                return QString();
+            }
+            QString linkFile = QString("%1/%2").arg(targetDir, linkBaseName);
+            if (QFile(linkFile).exists()){
+                number += 1;
+                continue;
+            }else{
+                return linkFile;
+            }
         }
-        QString linkFile = QString("%1/%2").arg(targetDir, linkBaseName);
-        return linkFile;
     }else{
         return QString();
     }

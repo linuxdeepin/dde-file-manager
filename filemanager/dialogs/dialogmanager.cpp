@@ -142,8 +142,10 @@ void DialogManager::abortJob(const QMap<QString, QString> &jobDetail)
 {
     QString jobId = jobDetail.value("jobId");
     FileJob * job = m_jobs.value(jobId);
-    job->setApplyToAll(true);
-    job->setStatus(FileJob::Cancelled);
+    if (job){
+        job->setApplyToAll(true);
+        job->setStatus(FileJob::Cancelled);
+    }
 }
 
 void DialogManager::abortJobByDestinationUrl(const DUrl &url)
