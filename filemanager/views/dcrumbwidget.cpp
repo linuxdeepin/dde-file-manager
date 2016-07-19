@@ -477,6 +477,10 @@ void DCrumbWidget::buttonPressed()
     }else if(localButton->getName() == NETWORK_ROOT)
     {
         if (!text.isEmpty()){
+            if (text.startsWith("/")){
+                text.remove(0, 1);
+            }
+            qDebug() << text;
             event = DUrl(text);
         }else{
             event = DUrl(NETWORK_ROOT);

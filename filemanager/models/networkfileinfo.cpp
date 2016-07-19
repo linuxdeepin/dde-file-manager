@@ -30,6 +30,16 @@ QString NetworkFileInfo::absoluteFilePath() const
     return m_networkNode.url();
 }
 
+bool NetworkFileInfo::isReadable() const
+{
+    return true;
+}
+
+bool NetworkFileInfo::isWritable() const
+{
+    return true;
+}
+
 bool NetworkFileInfo::isCanRename() const
 {
     return false;
@@ -92,4 +102,3 @@ Qt::ItemFlags NetworkFileInfo::fileItemDisableFlags() const
 {
     return Qt::ItemIsDragEnabled | Qt::ItemIsEditable;
 }
-
