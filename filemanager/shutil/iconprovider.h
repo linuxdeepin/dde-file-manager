@@ -40,7 +40,7 @@ public slots:
 
     void setTheme(const QString &themeName);
     void setCurrentTheme();
-    void handleWmValueChanged(const QString &key);
+    void handleThemeChanged(const QString &key);
 
     inline QIcon getFileIcon(const QString& absoluteFilePath, const QString &mimeType)
     { return findIcon(absoluteFilePath, mimeType);}
