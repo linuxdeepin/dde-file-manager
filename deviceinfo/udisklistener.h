@@ -47,6 +47,7 @@ public:
     bool isDeviceFolder(const QString &path) const;
     bool isInDeviceFolder(const QString &path) const;
     UDiskDeviceInfo * getDeviceByPath(const QString &path);
+    UDiskDeviceInfo * getDeviceByFilePath(const QString &path);
     UDiskDeviceInfo::MediaType getDeviceMediaType(const QString &path);
 
 signals:
