@@ -317,7 +317,7 @@ void DFileView::stopKeyboardSearch(int windowId)
     if(windowId != this->windowId())
         return;
 
-    stopSearch();
+//    stopSearch();
 }
 
 void DFileView::setIconSize(const QSize &size)
@@ -1428,25 +1428,6 @@ void DFileView::keyboardSearch(const QString &search)
 
 }
 
-void DFileView::stopSearch()
-{
-    DUrl url = currentUrl();
-
-    if(!url.isSearchFile()) {
-        return;
-    }
-
-    url.setSearchAction(DUrl::StopSearch);
-
-    FMEvent event;
-
-    event = url;
-    event = FMEvent::FileView;
-    event = windowId();
-
-    FileServices::instance()->getChildren(event);
-}
-
 bool DFileView::setCurrentUrl(DUrl fileUrl)
 {
     const AbstractFileInfoPointer &info = FileServices::instance()->createFileInfo(fileUrl);
@@ -1471,8 +1452,6 @@ bool DFileView::setCurrentUrl(DUrl fileUrl)
 
     if(currentUrl == fileUrl)
         return false;
-
-    stopSearch();
 
     disconnect(model(), &DFileSystemModel::rowsInserted, this, &DFileView::updateContentLabel);
 

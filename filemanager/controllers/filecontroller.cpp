@@ -70,44 +70,6 @@ const DDirIteratorPointer FileController::createDirIterator(const DUrl &fileUrl,
     return DDirIteratorPointer(new FileDirIterator(fileUrl.path(), filters, flags));
 }
 
-const QList<AbstractFileInfoPointer> FileController::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
-{
-    accepted = true;
-
-    QList<AbstractFileInfoPointer> infolist;
-
-    const QString &path = fileUrl.toLocalFile();
-
-    if(path.isEmpty()) {
-        const QFileInfoList list = QDir::drives();
-
-        for(const QFileInfo &info : list) {
-            FileInfo *fileInfo = new FileInfo(info);
-
-            infolist.append(AbstractFileInfoPointer(fileInfo));
-        }
-    } else {
-        QDirIterator dirIt(path, filter);
-        FileInfo *fileInfo;
-
-        while (dirIt.hasNext()) {
-            dirIt.next();
-
-            if(dirIt.fileInfo().absoluteFilePath() == path)
-                continue;
-
-            if(dirIt.fileInfo().suffix() == DESKTOP_SURRIX)
-                fileInfo = new DesktopFileInfo(dirIt.fileInfo());
-            else
-                fileInfo = new FileInfo(dirIt.fileInfo());
-
-            infolist.append(AbstractFileInfoPointer(fileInfo));
-        }
-    }
-
-    return infolist;
-}
-
 bool FileController::openFile(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;

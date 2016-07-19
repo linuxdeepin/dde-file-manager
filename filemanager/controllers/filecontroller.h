@@ -22,7 +22,6 @@ public:
     const DDirIteratorPointer createDirIterator(const DUrl &fileUrl, QDir::Filters filters,
                                                 QDirIterator::IteratorFlags flags,
                                                 bool &accepted) const Q_DECL_OVERRIDE;
-    const QList<AbstractFileInfoPointer> getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const Q_DECL_OVERRIDE;
 
     bool openFile(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
     bool compressFiles(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;

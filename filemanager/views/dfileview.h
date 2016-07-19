@@ -204,7 +204,6 @@ private:
     void shrinkIcon();
     void openIndex(const QModelIndex &index);
     void keyboardSearch(const QString & search) Q_DECL_OVERRIDE;
-    void stopSearch();
     void updateHorizontalOffset();
     void switchViewMode(ViewMode mode);
     void showEmptyAreaMenu();

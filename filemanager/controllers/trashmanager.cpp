@@ -95,30 +95,6 @@ const AbstractFileInfoPointer TrashManager::createFileInfo(const DUrl &fileUrl, 
     return AbstractFileInfoPointer(new TrashFileInfo(fileUrl));
 }
 
-const QList<AbstractFileInfoPointer> TrashManager::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
-{
-    Q_UNUSED(filter)
-
-    accepted = true;
-
-    const QString &path = fileUrl.path();
-
-    QDir dir(TRASHFILEPATH + path);
-    QList<AbstractFileInfoPointer> infoList;
-
-    if(dir.exists()) {
-        QFileInfoList fileInfoList = dir.entryInfoList(filter | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden);
-
-        for(const QFileInfo fileInfo : fileInfoList) {
-            const DUrl &fileUrl = DUrl::fromTrashFile(fileInfo.absoluteFilePath().mid((TRASHFILEPATH).size()));
-
-            infoList.append(AbstractFileInfoPointer(new TrashFileInfo(fileUrl)));
-        }
-    }
-
-    return infoList;
-}
-
 bool TrashManager::openFile(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;

@@ -2,7 +2,8 @@
 #define DFILESYSTEMMODEL_H
 
 #include <QAbstractItemModel>
-#include <QFileSystemModel>
+#include <QPointer>
+#include <QDir>
 
 #include "durl.h"
 #include "abstractfileinfo.h"
@@ -11,6 +12,7 @@ class FileSystemNode;
 class AbstractFileInfo;
 class DFileView;
 class FMEvent;
+class JobController;
 
 typedef QExplicitlySharedDataPointer<FileSystemNode> FileSystemNodePointer;
 
@@ -109,7 +111,7 @@ public:
     State state() const;
 
 public slots:
-    void updateChildren(const FMEvent &event, QList<AbstractFileInfoPointer> list);
+    void updateChildren(QList<AbstractFileInfoPointer> list);
     /// warning: only refresh current url
     void refresh(const DUrl &fileUrl = DUrl());
     void toggleHiddenFiles(const DUrl &fileUrl);
@@ -134,6 +136,8 @@ private:
     Qt::SortOrder m_srotOrder = Qt::AscendingOrder;
 //    QModelIndex m_activeIndex;
 
+    JobController *jobController = Q_NULLPTR;
+
     State m_state = Idle;
 
     inline const FileSystemNodePointer getNodeByIndex(const QModelIndex &index) const;
@@ -151,6 +155,8 @@ private:
     void clear();
 
     void setState(State state);
+    void onJobFinished();
+    void addFile(const AbstractFileInfoPointer &fileInfo);
 
     friend class FileSystemNode;
 };
