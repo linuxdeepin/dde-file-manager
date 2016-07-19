@@ -21,14 +21,16 @@ public:
     bool isVisible() const;
     void setIsVisible(bool isVisible);
 
+protected:
+    bool eventFilter(QObject *obj, QEvent *event) Q_DECL_OVERRIDE;
+
 private:
     QPointer<QLineEdit> lineEdit;
     QPointer<QTextEdit> textEdit;
 
-    void init(QWidget *obj);
-
-private:
     bool m_isVisible = false;
+
+    void init(QWidget *obj);
 };
 
 #endif // DEDITORWIDGETMENU_H

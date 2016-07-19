@@ -4,11 +4,14 @@
 
 #include <QGuiApplication>
 #include <QClipboard>
+#include <QMouseEvent>
 
 DEditorWidgetMenu::DEditorWidgetMenu(QLineEdit *parent)
     : DMenu(parent)
     , lineEdit(parent)
 {
+    parent->installEventFilter(this);
+
     init(parent);
 }
 
@@ -66,6 +69,7 @@ void DEditorWidgetMenu::init(QWidget *obj)
         this->setIsVisible(false);
     });
 }
+
 bool DEditorWidgetMenu::isVisible() const
 {
     return m_isVisible;
@@ -74,5 +78,29 @@ bool DEditorWidgetMenu::isVisible() const
 void DEditorWidgetMenu::setIsVisible(bool isVisible)
 {
     m_isVisible = isVisible;
+}
+
+bool DEditorWidgetMenu::eventFilter(QObject *obj, QEvent *event)
+{
+    if (obj == lineEdit.data()) {
+        const QMouseEvent *e = static_cast<QMouseEvent*>(event);
+
+        if (event->type() == QEvent::MouseButtonRelease) {
+            if (e->button() == Qt::RightButton) {
+                event->accept();
+
+                emit lineEdit->customContextMenuRequested(QCursor::pos());
+
+                return true;
+            }
+        } else if ((event->type() == QEvent::MouseButtonPress && e->button() == Qt::RightButton)
+                   || event->type() == QEvent::ContextMenu) {
+            event->accept();
+
+            return true;
+        }
+    }
+
+    return DMenu::eventFilter(obj, event);
 }
 
