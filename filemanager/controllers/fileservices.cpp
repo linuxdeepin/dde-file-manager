@@ -1,20 +1,25 @@
 #include "fileservices.h"
 #include "abstractfilecontroller.h"
+#include "jobcontroller.h"
 
 #include "../app/filesignalmanager.h"
 #include "../app/fmevent.h"
 #include "../app/global.h"
+
 #include "../views/windowmanager.h"
+
 #include "../models/abstractfileinfo.h"
 #include "../models/fileinfo.h"
 #include "../models/trashfileinfo.h"
+
 #include "../shutil/fileutils.h"
+
+#include <ddialog.h>
+
 #include <QUrl>
 #include <QDebug>
 #include <QtConcurrent/QtConcurrentRun>
 #include <QFileDialog>
-
-#include <ddialog.h>
 
 DWIDGET_USE_NAMESPACE
 
@@ -497,50 +502,32 @@ const DDirIteratorPointer FileServices::createDirIterator(const DUrl &fileUrl, Q
     return DDirIteratorPointer();
 }
 
-const QList<AbstractFileInfoPointer> FileServices::getChildren(const DUrl &fileUrl, QDir::Filters filters, bool *ok) const
+const QList<AbstractFileInfoPointer> FileServices::getChildren(const DUrl &fileUrl, QDir::Filters filters, bool *ok)
 {
-    QList<AbstractFileInfoPointer> childrenList;
-
     TRAVERSE(fileUrl, {
-                 childrenList = controller->getChildren(fileUrl, filters, accepted);
+                 const QList<AbstractFileInfoPointer> list = controller->getChildren(fileUrl, filters, accepted);
 
-                 if(accepted) {
-                     if(ok)
-                        *ok = accepted;
-                     return childrenList;
-                 }
+                 if (ok)
+                    *ok = accepted;
+
+                 if(accepted)
+                     return list;
              })
 
-     if(ok)
-         *ok = accepted;
+    if (ok)
+        *ok = false;
 
-     return childrenList;
+    return QList<AbstractFileInfoPointer>();
 }
 
-void FileServices::getChildren(const FMEvent &event, QDir::Filters filters) const
+JobController *FileServices::getChildrenJob(const DUrl &fileUrl, QDir::Filters filters) const
 {
-    if(QThread::currentThread() == qApp->thread()) {
-        QThreadPool *threadPool = QThreadPool::globalInstance();
+    const DDirIteratorPointer &iterator = createDirIterator(fileUrl, filters);
 
-        if(threadPool->maxThreadCount() == threadPool->activeThreadCount())
-            threadPool->setMaxThreadCount(threadPool->maxThreadCount() + 10);
+    if (iterator)
+        return new JobController(iterator, const_cast<FileServices*>(this));
 
-        QtConcurrent::run(QThreadPool::globalInstance(), this, &FileServices::getChildren, event, filters);
-
-        return;
-    }
-
-    /// Increase current thread priority
-    QThread::currentThread()->setPriority(QThread::TimeCriticalPriority);
-
-    const DUrl &fileUrl = event.fileUrl();
-
-    bool accepted = false;
-
-    const QList<AbstractFileInfoPointer> &childrenList = getChildren(fileUrl, filters, &accepted);
-
-    if(accepted)
-        emit updateChildren(event, childrenList);
+    return new JobController(fileUrl, filters, const_cast<FileServices*>(this));
 }
 
 QList<AbstractFileController*> FileServices::getHandlerTypeByUrl(const DUrl &fileUrl,

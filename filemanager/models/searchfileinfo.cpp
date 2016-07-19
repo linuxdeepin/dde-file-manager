@@ -27,7 +27,7 @@ SearchFileInfo::SearchFileInfo(const DUrl &url)
 {
     const QString &fragment = url.fragment();
 
-    if(!fragment.isEmpty() && !url.isStopSearch()) {
+    if (!fragment.isEmpty()) {
         m_parentUrl = url;
         m_parentUrl.setFragment(QString());
 

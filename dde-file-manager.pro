@@ -140,7 +140,8 @@ HEADERS += \
     filemanager/dialogs/openwithotherdialog.h \
     filemanager/dialogs/trashpropertydialog.h \
     filemanager/views/dbookmarkmountedindicatoritem.h \
-    filemanager/views/deditorwidgetmenu.h
+    filemanager/views/deditorwidgetmenu.h \
+    filemanager/controllers/jobcontroller.h
 
 
 SOURCES += \
@@ -237,7 +238,8 @@ SOURCES += \
     filemanager/dialogs/openwithotherdialog.cpp \
     filemanager/dialogs/trashpropertydialog.cpp \
     filemanager/views/dbookmarkmountedindicatoritem.cpp \
-    filemanager/views/deditorwidgetmenu.cpp
+    filemanager/views/deditorwidgetmenu.cpp \
+    filemanager/controllers/jobcontroller.cpp
 
 
 

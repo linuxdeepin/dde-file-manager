@@ -3,15 +3,17 @@
 #include "abstractfileinfo.h"
 
 #include "../app/global.h"
-#include "../views/dfileview.h"
-
 #include "../app/filemanagerapp.h"
 #include "../app/fmevent.h"
 
+#include "../views/dfileview.h"
+
 #include "../controllers/appcontroller.h"
 #include "../controllers/fileservices.h"
+#include "../controllers/jobcontroller.h"
 
 #include "filemonitor/filemonitor.h"
+
 #include "../shutil/mimetypedisplaymanager.h"
 #include "../shutil/fileutils.h"
 
@@ -53,11 +55,9 @@ DFileSystemModel::DFileSystemModel(DFileView *parent)
             Qt::DirectConnection);
     connect(fileService, &FileServices::childrenUpdated,
             this, &DFileSystemModel::onFileUpdated);
-    connect(fileService, &FileServices::updateChildren,
-            this, &DFileSystemModel::updateChildren,
-            Qt::DirectConnection);
 
     qRegisterMetaType<State>("State");
+    qRegisterMetaType<AbstractFileInfoPointer>("AbstractFileInfoPointer");
 }
 
 DFileSystemModel::~DFileSystemModel()
@@ -347,21 +347,30 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
 
     const FileSystemNodePointer &parentNode = getNodeByIndex(parent);
 
-    if(!parentNode || parentNode->populatedChildren)
+    if (!parentNode || parentNode->populatedChildren)
         return;
+
+    if (jobController) {
+        jobController->stop();
+        jobController->deleteLater();
+    }
+
+    jobController = fileService->getChildrenJob(parentNode->fileInfo->fileUrl(), m_filters);
+
+    if (!jobController)
+        return;
+
+    connect(jobController, &JobController::addChildren, this, &DFileSystemModel::addFile, Qt::QueuedConnection);
+    connect(jobController, &JobController::finished, this, &DFileSystemModel::onJobFinished);
+    connect(jobController, &JobController::childrenUpdated, this, &DFileSystemModel::updateChildren, Qt::DirectConnection);
 
     fileService->addUrlMonitor(parentNode->fileInfo->fileUrl());
 
     parentNode->populatedChildren = true;
 
-    FMEvent event;
-
-    event = this->parent()->windowId();
-    event = parentNode->fileInfo->fileUrl();
-
-    fileService->getChildren(event, m_filters);
-
     setState(Busy);
+
+    jobController->start();
 }
 
 Qt::ItemFlags DFileSystemModel::flags(const QModelIndex &index) const
@@ -675,20 +684,9 @@ DFileSystemModel::State DFileSystemModel::state() const
     return m_state;
 }
 
-void DFileSystemModel::updateChildren(const FMEvent &event, QList<AbstractFileInfoPointer> list)
+void DFileSystemModel::updateChildren(QList<AbstractFileInfoPointer> list)
 {
-    if(event.windowId() != parent()->windowId())
-        return;
-
-    setState(Idle);
-
-    if (list.isEmpty()) {
-        emit childrenUpdated(event.fileUrl());
-
-        return;
-    }
-
-    const FileSystemNodePointer &node = getNodeByIndex(index(event.fileUrl()));
+    const FileSystemNodePointer &node = m_rootNode;
 
     if(!node) {
         return;
@@ -713,8 +711,6 @@ void DFileSystemModel::updateChildren(const FMEvent &event, QList<AbstractFileIn
     }
 
     endInsertRows();
-
-    emit childrenUpdated(event.fileUrl());
 }
 
 void DFileSystemModel::refresh(const DUrl &fileUrl)
@@ -760,7 +756,7 @@ void DFileSystemModel::onFileCreated(const DUrl &fileUrl)
 
     const AbstractFileInfoPointer &info = fileService->createFileInfo(fileUrl);
 
-    if(!info)
+    if (!info)
         return;
 
 //    const FileSystemNodePointer &parentNode = m_urlToNode.value(info->parentUrl());
@@ -771,36 +767,7 @@ void DFileSystemModel::onFileCreated(const DUrl &fileUrl)
     if (info->parentUrl() != rootUrl())
         return;
 
-    const FileSystemNodePointer &parentNode = m_rootNode;
-
-    if(parentNode && parentNode->populatedChildren && !parentNode->visibleChildren.contains(fileUrl)) {
-        auto getFileInfoFun =   [&parentNode] (int index)->const AbstractFileInfoPointer {
-                                    if(index >= parentNode->visibleChildren.count())
-                                        return AbstractFileInfoPointer();
-
-                                    return parentNode->children.value(parentNode->visibleChildren.value(index))->fileInfo;
-                                };
-
-        int row = parentNode->fileInfo->getIndexByFileInfo(getFileInfoFun, info, m_sortRole, m_srotOrder);
-
-        if(row == -1)
-            row = parentNode->visibleChildren.count();
-
-        beginInsertRows(createIndex(parentNode, 0), row, row);
-
-//        FileSystemNodePointer node = m_urlToNode.value(fileUrl);
-
-//        if(!node) {
-            FileSystemNodePointer node = createNode(parentNode.data(), info);
-
-//            m_urlToNode[fileUrl] = node;
-//        }
-
-        parentNode->children[fileUrl] = node;
-        parentNode->visibleChildren.insert(row, fileUrl);
-
-        endInsertRows();
-    }
+    addFile(info);
 }
 
 void DFileSystemModel::onFileDeleted(const DUrl &fileUrl)
@@ -961,4 +928,46 @@ void DFileSystemModel::setState(DFileSystemModel::State state)
     m_state = state;
 
     emit stateChanged(state);
+}
+
+void DFileSystemModel::onJobFinished()
+{
+    setState(Idle);
+
+    emit childrenUpdated(rootUrl());
+}
+
+void DFileSystemModel::addFile(const AbstractFileInfoPointer &fileInfo)
+{
+    const FileSystemNodePointer &parentNode = m_rootNode;
+    const DUrl &fileUrl = fileInfo->fileUrl();
+
+    if (parentNode && parentNode->populatedChildren && !parentNode->visibleChildren.contains(fileUrl)) {
+        auto getFileInfoFun =   [&parentNode] (int index)->const AbstractFileInfoPointer {
+                                    if(index >= parentNode->visibleChildren.count())
+                                        return AbstractFileInfoPointer();
+
+                                    return parentNode->children.value(parentNode->visibleChildren.value(index))->fileInfo;
+                                };
+
+        int row = parentNode->fileInfo->getIndexByFileInfo(getFileInfoFun, fileInfo, m_sortRole, m_srotOrder);
+
+        if (row == -1)
+            row = parentNode->visibleChildren.count();
+
+        beginInsertRows(createIndex(parentNode, 0), row, row);
+
+//        FileSystemNodePointer node = m_urlToNode.value(fileUrl);
+
+//        if(!node) {
+            FileSystemNodePointer node = createNode(parentNode.data(), fileInfo);
+
+//            m_urlToNode[fileUrl] = node;
+//        }
+
+        parentNode->children[fileUrl] = node;
+        parentNode->visibleChildren.insert(row, fileUrl);
+
+        endInsertRows();
+    }
 }

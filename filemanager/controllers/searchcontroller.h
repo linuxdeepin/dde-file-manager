@@ -13,7 +13,6 @@ class SearchController : public AbstractFileController
 public:
     explicit SearchController(QObject *parent = 0);
 
-    const QList<AbstractFileInfoPointer> getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const Q_DECL_OVERRIDE;
     const AbstractFileInfoPointer createFileInfo(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
     bool openFileLocation(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
 
@@ -32,6 +31,10 @@ public:
     bool createSymlink(const DUrl &fileUrl, const DUrl &linkToUrl, bool &accepted) const Q_DECL_OVERRIDE;
 
     bool openInTerminal(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
+
+    const DDirIteratorPointer createDirIterator(const DUrl &fileUrl, QDir::Filters filters,
+                                                QDirIterator::IteratorFlags flags,
+                                                bool &accepted) const Q_DECL_OVERRIDE;
 
 private slots:
     void onFileCreated(const DUrl &fileUrl);

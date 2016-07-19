@@ -19,7 +19,6 @@ public:
     explicit TrashManager(QObject *parent = 0);
 
     const AbstractFileInfoPointer createFileInfo(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
-    const QList<AbstractFileInfoPointer> getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const Q_DECL_OVERRIDE;
 
     bool openFile(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
     bool openFileLocation(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;

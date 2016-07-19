@@ -132,14 +132,6 @@ QString DUrl::searchKeyword() const
     return query.queryItemValue("keyword");
 }
 
-DUrl::SearchAction DUrl::searchAction() const
-{
-    if(isSearchFile() && fragment() == "stop")
-        return StopSearch;
-
-    return StartSearch;
-}
-
 DUrl DUrl::searchTargetUrl() const
 {
     if(!isSearchFile())
@@ -161,17 +153,6 @@ void DUrl::setSearchKeyword(const QString &keyword)
     query.addQueryItem("keyword", keyword);
 
     setQuery(query);
-}
-
-void DUrl::setSearchAction(DUrl::SearchAction action)
-{
-    if(!isSearchFile())
-        return;
-
-    if(action == StopSearch)
-        setFragment("stop");
-    else if(fragment() == "stop")
-        setFragment(QString());
 }
 
 void DUrl::setSearchTargetUrl(const DUrl &url)
@@ -232,7 +213,7 @@ DUrl DUrl::fromSearchFile(const QString &filePath)
     return url;
 }
 
-DUrl DUrl::fromSearchFile(const DUrl &targetUrl, const QString &keyword, DUrl::SearchAction action)
+DUrl DUrl::fromSearchFile(const DUrl &targetUrl, const QString &keyword)
 {
     DUrl url = fromSearchFile(QString());
 
@@ -242,9 +223,6 @@ DUrl DUrl::fromSearchFile(const DUrl &targetUrl, const QString &keyword, DUrl::S
     query.addQueryItem("url", targetUrl.toString());
 
     url.setQuery(query);
-
-    if(action == StopSearch)
-        url.setFragment("stop");
 
     return url;
 }

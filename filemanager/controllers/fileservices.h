@@ -17,6 +17,7 @@ typedef QPair<QString,QString> HandlerType;
 
 class AbstractFileInfo;
 class FMEvent;
+class JobController;
 
 class FileServices : public QObject
 {
@@ -74,15 +75,15 @@ public:
     const DDirIteratorPointer createDirIterator(const DUrl &fileUrl, QDir::Filters filters,
                                                 QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags) const;
 
-    const QList<AbstractFileInfoPointer> getChildren(const DUrl &fileUrl, QDir::Filters filters, bool *ok = 0) const;
+    const QList<AbstractFileInfoPointer> getChildren(const DUrl &fileUrl, QDir::Filters filters, bool *ok = Q_NULLPTR);
+
+    JobController *getChildrenJob(const DUrl &fileUrl, QDir::Filters filters) const;
 
 public slots:
-    void getChildren(const FMEvent &event, QDir::Filters filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System) const;
     void openNewWindow(const DUrl &fileUrl) const;
     void openUrl(const FMEvent &event) const;
 
 signals:
-    void updateChildren(const FMEvent &event, const QList<AbstractFileInfoPointer> &list) const;
     void childrenAdded(const DUrl &fileUrl) const;
     void childrenRemoved(const DUrl &fileUrl) const;
     void childrenUpdated(const DUrl &fileUrl) const;

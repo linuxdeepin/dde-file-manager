@@ -36,14 +36,14 @@ bool FileMonitor::isGoutputstreamTempFile(QString path){
 
 void FileMonitor::addMonitorPath(const QString &path)
 {
-    qDebug() << "add file monitor:" << path;
+//    qDebug() << "add file monitor:" << path;
 
     emit requestMonitorPath(getPathParentList(path) << path);
 }
 
 void FileMonitor::removeMonitorPath(const QString &path)
 {
-    qDebug() << "remove file monitor:" << path;
+//    qDebug() << "remove file monitor:" << path;
 
     emit requestRemoveMonitorPath(getPathParentList(path) << path);
 }
