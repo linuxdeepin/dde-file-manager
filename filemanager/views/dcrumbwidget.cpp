@@ -323,7 +323,12 @@ void DCrumbWidget::addLocalCrumbs(const DUrl & url)
     }else if (url == DUrl(FILE_ROOT)){
         list.insert(0, "/");
     }else if(isInDevice(path)){
-        UDiskDeviceInfo* info = deviceListener->getDeviceByPath(path);
+        UDiskDeviceInfo* info;
+        if (deviceListener->isDeviceFolder(path)){
+            info = deviceListener->getDeviceByPath(path);
+        }else{
+            info = deviceListener->getDeviceByFilePath(path);
+        }
         if (info){
             QString mountPoint = info->getMountPoint();
             qDebug() << mountPoint << info << info->getDiskInfo();
