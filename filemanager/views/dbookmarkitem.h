@@ -22,6 +22,7 @@ class BookMark;
 class DDragWidget;
 class FMEvent;
 class DBookmarkMountedIndicatorItem;
+class DEditorWidgetMenu;
 
 class DBookmarkItem : public QGraphicsWidget
 {
@@ -122,6 +123,7 @@ protected:
 private:
     void init();
     QLineEdit * m_lineEdit;
+    DEditorWidgetMenu* m_eidtMenu;
     QGraphicsProxyWidget * m_widget = NULL;
     UDiskDeviceInfo * m_deviceInfo = NULL;
     DBookmarkItemGroup * m_group = NULL;
