@@ -1153,10 +1153,6 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
 
             if (index1.isValid()) {
                 goto find_index2;
-            } else {
-                clearSelection();
-
-                return;
             }
         }
 
@@ -1231,10 +1227,6 @@ find_index2:
 
             if (index2.isValid()) {
                 goto selection;
-            } else {
-                clearSelection();
-
-                return;
             }
         }
 
