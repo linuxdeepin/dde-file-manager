@@ -167,7 +167,6 @@ protected:
     void focusInEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
     void contextMenuEvent(QContextMenuEvent *event) Q_DECL_OVERRIDE;
-//    bool event(QEvent *event) Q_DECL_OVERRIDE;
     void dragEnterEvent(QDragEnterEvent *event) Q_DECL_OVERRIDE;
     void dragMoveEvent(QDragMoveEvent *event) Q_DECL_OVERRIDE;
     void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags flags) Q_DECL_OVERRIDE;
@@ -247,6 +246,11 @@ private:
     QIcon unreadableIcon;
 
     QModelIndex m_mouseLastPressedIndex;
+
+    /// file section data
+    QRect lastSelectedRect;
+    QModelIndex lastSelectedTopLeftIndex;
+    QModelIndex lastSelectedBottomRightIndex;
 };
 
 #endif // DFILEVIEW_H
