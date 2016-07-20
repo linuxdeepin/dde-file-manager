@@ -384,9 +384,6 @@ QModelIndex DFileView::indexAt(const QPoint &point) const
     if (item_size.width() == -1) {
         int item_height = item_size.height() + LIST_VIEW_SPACING * 2;
 
-        if (pos.y() % item_height <= LIST_VIEW_SPACING)
-            return QModelIndex();
-
         index = pos.y() / item_height;
     } else {
         int item_width = item_size.width() + ICON_VIEW_SPACING * 2;
@@ -888,6 +885,7 @@ void DFileView::mousePressEvent(QMouseEvent *event)
                 m_selectionRectWidget->show();
 
             m_pressedPos = viewport()->mapToParent(static_cast<QMouseEvent*>(event)->pos());
+            lastSelectedRect = QRect();
         } else if (Global::keyCtrlIsPressed()) {
             const QModelIndex &index = indexAt(event->pos());
 
@@ -1150,6 +1148,18 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
         QModelIndex index1;
         QModelIndex index2;
 
+        if (tmp_rect.topLeft() == lastSelectedRect.topLeft()) {
+            index1 == lastSelectedTopLeftIndex;
+
+            if (index1.isValid()) {
+                goto find_index2;
+            } else {
+                clearSelection();
+
+                return;
+            }
+        }
+
         if (m_currentViewMode == ListMode) {
             for (int j = tmp_rect.top(); tmp_rect.bottom() - j > 0; j += offset_verizontal) {
                 index1 = indexAt(QPoint(tmp_rect.left(), j));
@@ -1162,6 +1172,8 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
                 index1 = indexAt(QPoint(tmp_rect.left(), tmp_rect.bottom()));
 
                 if (!index1.isValid()) {
+                    clearSelection();
+
                     return;
                 }
             }
@@ -1177,6 +1189,8 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
 
             if (index2.isValid())
                 goto selection;
+
+            clearSelection();
 
             return;
         }
@@ -1207,9 +1221,23 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
         if (index1.isValid())
             goto find_index2;
 
+        clearSelection();
+
         return;
 
 find_index2:
+        if (tmp_rect.bottomRight() == lastSelectedRect.bottomRight()) {
+            index2 = lastSelectedBottomRightIndex;
+
+            if (index2.isValid()) {
+                goto selection;
+            } else {
+                clearSelection();
+
+                return;
+            }
+        }
+
         for (int j = tmp_rect.bottom(); j - tmp_rect.top() > 0; j -= offset_verizontal) {
             for (int i = tmp_rect.right(); i - tmp_rect.left() > 0; i -= offset_horizontal) {
                 index2 = indexAt(QPoint(i, j));
@@ -1236,10 +1264,16 @@ find_index2:
         if (index2.isValid())
             goto selection;
 
+        clearSelection();
+
         return;
 
 selection:
         selectionModel()->select(QItemSelection(index1, index2), flags);
+
+        lastSelectedRect = tmp_rect;
+        lastSelectedTopLeftIndex = index1;
+        lastSelectedBottomRightIndex = index2;
 
         return;
     }
