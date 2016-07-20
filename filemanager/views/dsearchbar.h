@@ -41,7 +41,7 @@ private:
     void initData();
     void initUI();
     void keyUpDown(int key);
-    void recomended();
+    void recomended(const QString& inputText);
     void complete(const QString & str);
     QStringList splitPath(const QString &path);
     QListWidget * m_list;
