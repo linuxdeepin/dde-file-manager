@@ -853,6 +853,11 @@ void DBookmarkItem::setHighlightDisk(bool isHighlight)
     }
 }
 
+bool DBookmarkItem::isHighlightDisk()
+{
+    return m_isHighlightDisk;
+}
+
 void DBookmarkItem::setUrl(const DUrl &url)
 {
     m_url = url;

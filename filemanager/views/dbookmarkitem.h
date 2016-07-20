@@ -75,7 +75,7 @@ public:
     void setHoverBackgroundEnable(bool b);
     void setHighlightDiskBackgroundEnable(bool b);
     void setHighlightDisk(bool isHighlight);
-
+    bool isHighlightDisk();
     void setUrl(const DUrl &url);
     DUrl getUrl();
     void setCheckable(bool b);
