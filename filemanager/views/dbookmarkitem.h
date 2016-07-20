@@ -54,6 +54,7 @@ public:
     void setPressBackgroundColor(const QColor &color);
     void setReleaseBackgroundColor(const QColor &color);
     void setHoverBackgroundColor(const QColor &color);
+    void setHighlightDiskBackgroundColor(const QColor &color);
     void setHoverEnableFlag(bool flag);
     void setAdjust(qreal value);
     bool isPressed();
@@ -72,6 +73,9 @@ public:
     void setPressBackgroundEnable(bool b);
     void setReleaseBackgroundEnable(bool b);
     void setHoverBackgroundEnable(bool b);
+    void setHighlightDiskBackgroundEnable(bool b);
+    void setHighlightDisk(bool isHighlight);
+
     void setUrl(const DUrl &url);
     DUrl getUrl();
     void setCheckable(bool b);
@@ -82,6 +86,7 @@ public:
     void setHeight(double h);
     void setDefaultItem(bool v);
     bool isDefaultItem();
+    bool isDiskItem();
     QPixmap toPixmap();
     bool isMounted();
     void setMounted(bool v);
@@ -135,6 +140,7 @@ private:
     bool m_pressBackgroundEnabled = false;
     bool m_releaseBackgroundEnabled = false;
     bool m_hoverBackgroundEnabled = false;
+    bool m_highlightDiskBackgroundEnabled = false;
     int m_xOffset = 0;
     int m_yOffset = 0;
     int m_xPos = 0;
@@ -153,6 +159,7 @@ private:
     bool m_checked = false;
     bool m_pressed = false;
     bool m_hovered = false;
+    bool m_isHighlightDisk = false;
     bool m_backgroundEnabled = false;
     bool m_isMenuOpened = false;
     bool m_isTightMode = false;
@@ -171,6 +178,7 @@ private:
     QColor m_hoverBackgroundColor;
     QColor m_releaseBackgroundColor;
     QColor m_pressBackgroundColor;
+    QColor m_highlightDiskBackgroundColor;
     QColor m_textColor;
     QColor m_backGroundColor;
     DDragWidget * drag = NULL;

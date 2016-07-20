@@ -28,6 +28,9 @@ void DBookmarkItemGroup::deselectAll()
     for(int i = 0; i < m_items.size(); i++)
     {
         m_items.at(i)->setChecked(false);
+        if (m_items.at(i)->isDiskItem()){
+            m_items.at(i)->setHighlightDisk(false);
+        }
     }
 }
 
