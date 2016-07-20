@@ -35,7 +35,7 @@ void DStatusBar::initUI()
     m_layout->addStretch();
     m_layout->setSpacing(5);
     m_layout->setContentsMargins(0, 0, 0, 0);
-    setFixedHeight(32);
+    setFixedHeight(24);
     setFocusPolicy(Qt::NoFocus);
     setStyleSheet("QFrame{\
                   background-color: white;\

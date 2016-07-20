@@ -53,6 +53,7 @@ DBookmarkItem::DBookmarkItem(BookMark *bookmark)
 
 void DBookmarkItem::setDeviceInfo(UDiskDeviceInfo *deviceInfo)
 {
+    setHighlightDiskBackgroundEnable(true);
     m_isDisk = true;
     m_checkable = true;
     m_url = DUrl::fromLocalFile(deviceInfo->getMountPoint());
@@ -64,7 +65,6 @@ void DBookmarkItem::setDeviceInfo(UDiskDeviceInfo *deviceInfo)
 
     if (!m_mountBookmarkItem)
         m_mountBookmarkItem = makeMountBookmark(this);
-
     updateMountIndicator();
 }
 
@@ -74,9 +74,11 @@ void DBookmarkItem::init()
     setReleaseBackgroundColor(QColor(238,232,205,0));
     setPressBackgroundColor(QColor(44,167,248,255));
     setHoverBackgroundColor(QColor(0, 0, 0, 12));
+    setHighlightDiskBackgroundColor(QColor("#C0C0C0"));
     setPressBackgroundEnable(true);
     setReleaseBackgroundEnable(true);
     setHoverBackgroundEnable(true);
+    setHighlightDiskBackgroundEnable(false);
     setTextColor(Qt::black);
     setAcceptDrops(true);
     m_checkable = true;
@@ -184,7 +186,7 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
         dy = m_height/2 - m_releaseImage.height()/2;
     }
 
-    if(m_hovered)
+    if(m_hovered && !m_isHighlightDisk)
     {
         if(m_hoverBackgroundEnabled)
         {
@@ -214,6 +216,15 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
             textColor = Qt::white;
         }
         painter->drawPixmap(leftPadding, dy, checked.width(), checked.height(), checked);
+    }else if (m_isHighlightDisk){
+        if(m_highlightDiskBackgroundEnabled)
+        {
+            painter->setPen(m_highlightDiskBackgroundColor);
+            painter->setBrush(m_highlightDiskBackgroundColor);
+            painter->drawRect(m_x_axis, m_y_axis, m_width, m_height);
+            textColor = Qt::white;
+        }
+        painter->drawPixmap(leftPadding, dy, release.width(), release.height(), release);
     }
     else
     {
@@ -223,6 +234,7 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
             painter->setBrush(m_releaseBackgroundColor);
             painter->drawRect(m_x_axis, m_y_axis, m_width, m_height);
         }
+
         painter->drawPixmap(leftPadding, dy, release.width(), release.height(), release);
         textColor = Qt::black;
     }
@@ -732,6 +744,11 @@ void DBookmarkItem::setHoverBackgroundColor(const QColor &color)
     m_hoverBackgroundColor = color;
 }
 
+void DBookmarkItem::setHighlightDiskBackgroundColor(const QColor &color)
+{
+    m_highlightDiskBackgroundColor = color;
+}
+
 void DBookmarkItem::setHoverEnableFlag(bool flag)
 {
      setAcceptHoverEvents(flag);
@@ -823,6 +840,19 @@ void DBookmarkItem::setHoverBackgroundEnable(bool b)
     m_hoverBackgroundEnabled = b;
 }
 
+void DBookmarkItem::setHighlightDiskBackgroundEnable(bool b)
+{
+    m_highlightDiskBackgroundEnabled = b;
+}
+
+void DBookmarkItem::setHighlightDisk(bool isHighlight)
+{
+    m_isHighlightDisk = isHighlight;
+    if (!m_checked){
+        update();
+    }
+}
+
 void DBookmarkItem::setUrl(const DUrl &url)
 {
     m_url = url;
@@ -875,4 +905,9 @@ void DBookmarkItem::setDefaultItem(bool v)
 bool DBookmarkItem::isDefaultItem()
 {
     return m_isDefault;
+}
+
+bool DBookmarkItem::isDiskItem()
+{
+    return m_isDisk;
 }

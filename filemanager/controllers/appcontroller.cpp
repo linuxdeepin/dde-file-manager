@@ -89,6 +89,9 @@ void AppController::actionOpenDisk(const FMEvent &event)
 void AppController::asycOpenDisk(const QString &path)
 {
     m_fmEvent = DUrl(path);
+    DUrlList urls;
+    urls << DUrl(path);
+    m_fmEvent = urls;
     actionOpen(m_fmEvent);
 }
 
