@@ -530,9 +530,13 @@ void DBookmarkScene::volumeRemoved(UDiskDeviceInfo *device)
     DBookmarkItem * item = m_diskItems.value(device->getDiskInfo().ID);
     if(item)
     {
+        bool isChecked = item->isChecked();
+        bool isHighlightDisk = item->isHighlightDisk();
         remove(item);
         m_diskItems.remove(device->getDiskInfo().ID);
-        backHome();
+        if(isChecked || isHighlightDisk){
+            backHome();
+        }
         qDebug() << device->getDiskInfo() << item << DUrl::fromLocalFile(device->getMountPoint());
         emit fileSignalManager->requestAbortJob(DUrl::fromLocalFile(device->getMountPoint()));
         item->deleteLater();
@@ -591,7 +595,9 @@ void DBookmarkScene::mountRemoved(UDiskDeviceInfo *device)
         item->setMounted(false);
         qDebug() << device->getDiskInfo() << item << DUrl::fromLocalFile(device->getMountPoint());
         emit fileSignalManager->requestAbortJob(DUrl::fromLocalFile(device->getMountPoint()));
-        backHome();
+        if (item->isChecked() || item->isHighlightDisk()){
+            backHome();
+        }
         return;
     }
 }
