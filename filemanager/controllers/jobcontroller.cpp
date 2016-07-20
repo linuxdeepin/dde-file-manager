@@ -53,22 +53,20 @@ void JobController::stop()
     if (m_state == Stoped)
         return;
 
+    if (m_iterator)
+        m_iterator->close();
+
     setState(Stoped);
 }
 
-bool JobController::event(QEvent *event)
+void JobController::stopAndDeleteLater()
 {
-    if (event->type() == QEvent::DeferredDelete) {
-        terminate();
-        wait();
-        quit();
+    if (!isRunning())
+        deleteLater();
+    else
+        autoDestroy = true;
 
-        stop();
-
-        emit finished();
-    }
-
-    return QThread::event(event);
+    stop();
 }
 
 void JobController::run()
@@ -129,6 +127,9 @@ void JobController::run()
     setState(Stoped);
 
     emit finished();
+
+    if (autoDestroy)
+        deleteLater();
 }
 
 void JobController::setState(JobController::State state)

@@ -29,15 +29,13 @@ public slots:
     void start();
     void pause();
     void stop();
+    void stopAndDeleteLater();
 
 signals:
     void stateChanged(State state);
     void addChildren(const AbstractFileInfoPointer &info);
     void childrenUpdated(const QList<AbstractFileInfoPointer> &list);
     void finished();
-
-protected:
-    bool event(QEvent *event) Q_DECL_OVERRIDE;
 
 private:
     DDirIteratorPointer m_iterator;
@@ -47,6 +45,8 @@ private:
     State m_state = Stoped;
     QWaitCondition waitCondition;
     QMutex mutex;
+
+    bool autoDestroy = false;
 
     void run() Q_DECL_OVERRIDE;
     void setState(State state);

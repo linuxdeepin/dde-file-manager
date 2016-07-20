@@ -342,7 +342,7 @@ int DFileSystemModel::roleToColumn(int role) const
 
 void DFileSystemModel::fetchMore(const QModelIndex &parent)
 {
-    if(!m_rootNode)
+    if (eventLoop || !m_rootNode)
         return;
 
     const FileSystemNodePointer &parentNode = getNodeByIndex(parent);
@@ -355,8 +355,19 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
         disconnect(jobController, &JobController::finished, this, &DFileSystemModel::onJobFinished);
         disconnect(jobController, &JobController::childrenUpdated, this, &DFileSystemModel::updateChildren);
 
-        jobController->stop();
-        jobController->deleteLater();
+        if (jobController->state() == JobController::Started) {
+            QEventLoop eventLoop(this);
+
+            this->eventLoop = &eventLoop;
+
+            connect(jobController, &JobController::destroyed, &eventLoop, &QEventLoop::quit);
+
+            jobController->stopAndDeleteLater();
+
+            eventLoop.exec();
+
+            this->eventLoop = Q_NULLPTR;
+        }
     }
 
     jobController = fileService->getChildrenJob(parentNode->fileInfo->fileUrl(), m_filters);

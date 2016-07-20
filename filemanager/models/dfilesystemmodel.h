@@ -8,6 +8,10 @@
 #include "durl.h"
 #include "abstractfileinfo.h"
 
+QT_BEGIN_NAMESPACE
+class QEventLoop;
+QT_END_NAMESPACE
+
 class FileSystemNode;
 class AbstractFileInfo;
 class DFileView;
@@ -138,6 +142,7 @@ private:
 //    QModelIndex m_activeIndex;
 
     JobController *jobController = Q_NULLPTR;
+    QEventLoop *eventLoop = Q_NULLPTR;
 
     State m_state = Idle;
 
