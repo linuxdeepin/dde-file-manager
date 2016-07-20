@@ -232,17 +232,21 @@ void UDiskListener::changed(int in0, const QString &in1)
         emit mountAdded(device);
     }else if (device && !info.ID.isEmpty())
     {
+        bool oldCanUnmount = device->getDiskInfo().CanUnmount;
         device->setDiskInfo(info);
-        if (info.CanUnmount){
-            emit mountAdded(device);
-        }else{
-            emit mountRemoved(device);
-        }
-        qDebug() << m_subscribers;
-        foreach (Subscriber* sub, m_subscribers) {
-            QString url = DUrl::fromLocalFile(device->getMountPoint()).toString();
-            qDebug() << url;
-            sub->doSubscriberAction(url);
+        if (oldCanUnmount != info.CanUnmount){
+            if (info.CanUnmount){
+                emit mountAdded(device);
+            }else{
+                emit mountRemoved(device);
+            }
+
+            qDebug() << m_subscribers;
+            foreach (Subscriber* sub, m_subscribers) {
+                QString url = DUrl::fromLocalFile(device->getMountPoint()).toString();
+                qDebug() << url;
+                sub->doSubscriberAction(url);
+            }
         }
 
     }else if (device && info.ID.isEmpty()){

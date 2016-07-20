@@ -252,7 +252,7 @@ void DSearchBar::setCompleter(const QString &text)
             return;
         }
     }
-    recomended();
+    recomended(text);
 
     if (m_list->count() < 10){
         m_list->setFixedHeight(24 * m_list->count() + 8);
@@ -508,7 +508,7 @@ void DSearchBar::keyUpDown(int key)
     m_disableCompletion = true;
 }
 
-void DSearchBar::recomended()
+void DSearchBar::recomended(const QString& inputText)
 {
     if(m_list->count() == 1)
     {
@@ -532,8 +532,9 @@ void DSearchBar::recomended()
         }
         else
         {
+            qDebug() << inputText << modelText;
             setText(modelText);
-            setSelection(m_text.length(), modelText.length());
+            setSelection(inputText.length(), modelText.length());
         }
 //        m_text = text();
     }
