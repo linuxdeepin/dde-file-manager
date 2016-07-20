@@ -1578,6 +1578,7 @@ void DFileView::setContentLabel(const QString &text)
         m_contentLabel.setCenterIn(this);
         m_contentLabel->setObjectName("contentLabel");
         m_contentLabel->setStyleSheet(this->styleSheet());
+        m_contentLabel->setAttribute(Qt::WA_TransparentForMouseEvents);
     }
 
     m_contentLabel->setText(text);
