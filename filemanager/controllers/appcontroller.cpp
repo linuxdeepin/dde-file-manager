@@ -19,6 +19,7 @@
 #include "fileservices.h"
 #include "filejob.h"
 #include "../views/windowmanager.h"
+#include "../dbusinterface/soundeffect_interface.h"
 #include <QProcess>
 #include <QStorageInfo>
 #include <DAboutDialog>
@@ -255,6 +256,13 @@ void AppController::actionClearTrash(const FMEvent &event)
     list << DUrl::fromLocalFile(TRASHINFOPATH) << DUrl::fromLocalFile(TRASHFILEPATH);
 
     fileService->deleteFiles(list, event);
+
+
+    SoundEffectInterface* soundEffectInterface = new SoundEffectInterface(SoundEffectInterface::staticServerPath(),
+                                                                          SoundEffectInterface::staticInterfacePath(),
+                                                                          QDBusConnection::sessionBus(), this);
+    soundEffectInterface->PlaySystemSound("trash-empty");
+    soundEffectInterface->deleteLater();
 }
 
 void AppController::actionNewWord(const FMEvent &event)
