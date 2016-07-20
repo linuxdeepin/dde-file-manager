@@ -583,12 +583,11 @@ void FileServices::openUrl(const FMEvent &event) const
 {
     const AbstractFileInfoPointer &fileInfo = createFileInfo(event.fileUrl());
 
-    if(fileInfo && fileInfo->isDir()) {
+    if (fileInfo && fileInfo->isDir()) {
         fileSignalManager->requestChangeCurrentUrl(event);
-    }else if (deviceListener->isDeviceFolder(event.fileUrl().path())){
+    } else if (deviceListener->isDeviceFolder(event.fileUrl().path())) {
         fileSignalManager->requestChangeCurrentUrl(event);
-    }
-    else{
+    } else {
         openFile(event.fileUrl());
     }
 }
