@@ -93,32 +93,32 @@
 <context>
     <name>DEditorWidgetMenu</name>
     <message>
-        <location filename="../filemanager/views/deditorwidgetmenu.cpp" line="27"/>
+        <location filename="../filemanager/views/deditorwidgetmenu.cpp" line="30"/>
         <source>Undo</source>
         <translation>撤销</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/deditorwidgetmenu.cpp" line="28"/>
+        <location filename="../filemanager/views/deditorwidgetmenu.cpp" line="31"/>
         <source>Redo</source>
         <translation>恢复</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/deditorwidgetmenu.cpp" line="30"/>
+        <location filename="../filemanager/views/deditorwidgetmenu.cpp" line="33"/>
         <source>Cut</source>
         <translation>剪切</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/deditorwidgetmenu.cpp" line="31"/>
+        <location filename="../filemanager/views/deditorwidgetmenu.cpp" line="34"/>
         <source>Copy</source>
         <translation>复制</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/deditorwidgetmenu.cpp" line="32"/>
+        <location filename="../filemanager/views/deditorwidgetmenu.cpp" line="35"/>
         <source>Paste</source>
         <translation>粘贴</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/deditorwidgetmenu.cpp" line="34"/>
+        <location filename="../filemanager/views/deditorwidgetmenu.cpp" line="37"/>
         <source>Select All</source>
         <translation>全选</translation>
     </message>
@@ -166,14 +166,12 @@
         <translation type="vanished">文件夹为空</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/dfileview.cpp" line="2052"/>
         <source>Folder is empty</source>
-        <translation>文件夹为空</translation>
+        <translation type="vanished">文件夹为空</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/dfileview.cpp" line="2054"/>
         <source>File has been moved or deleted</source>
-        <translation>文件已被移动或删除</translation>
+        <translation type="vanished">文件已被移动或删除</translation>
     </message>
 </context>
 <context>
@@ -218,14 +216,13 @@
         <translation>选中 %1 项内容</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/dstatusbar.cpp" line="93"/>
+        <location filename="../filemanager/views/dstatusbar.cpp" line="100"/>
         <source>Loading...</source>
         <translation>正在加载中...</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/dstatusbar.cpp" line="102"/>
         <source>Searching...</source>
-        <translation>正在搜索中...</translation>
+        <translation type="vanished">正在搜索中...</translation>
     </message>
 </context>
 <context>
@@ -403,12 +400,12 @@
 <context>
     <name>FileController</name>
     <message>
-        <location filename="../filemanager/controllers/filecontroller.cpp" line="336"/>
+        <location filename="../filemanager/controllers/filecontroller.cpp" line="298"/>
         <source>New Folder</source>
         <translation>新建文件夹</translation>
     </message>
     <message>
-        <location filename="../filemanager/controllers/filecontroller.cpp" line="348"/>
+        <location filename="../filemanager/controllers/filecontroller.cpp" line="310"/>
         <source>New File</source>
         <translation>新建文本</translation>
     </message>
@@ -1168,26 +1165,26 @@
         <translation>设置壁纸</translation>
     </message>
     <message>
-        <location filename="../filemanager/controllers/appcontroller.cpp" line="257"/>
-        <location filename="../filemanager/controllers/appcontroller.cpp" line="259"/>
+        <location filename="../filemanager/controllers/appcontroller.cpp" line="264"/>
+        <location filename="../filemanager/controllers/appcontroller.cpp" line="266"/>
         <source>newDoc</source>
         <translation>新建word文档</translation>
     </message>
     <message>
-        <location filename="../filemanager/controllers/appcontroller.cpp" line="266"/>
-        <location filename="../filemanager/controllers/appcontroller.cpp" line="268"/>
+        <location filename="../filemanager/controllers/appcontroller.cpp" line="273"/>
+        <location filename="../filemanager/controllers/appcontroller.cpp" line="275"/>
         <source>newExcel</source>
         <translation>新建Excel文档</translation>
     </message>
     <message>
-        <location filename="../filemanager/controllers/appcontroller.cpp" line="275"/>
-        <location filename="../filemanager/controllers/appcontroller.cpp" line="277"/>
+        <location filename="../filemanager/controllers/appcontroller.cpp" line="282"/>
+        <location filename="../filemanager/controllers/appcontroller.cpp" line="284"/>
         <source>newPowerPoint</source>
         <translation>新建PowerPoint文档</translation>
     </message>
     <message>
-        <location filename="../filemanager/controllers/appcontroller.cpp" line="284"/>
-        <location filename="../filemanager/controllers/appcontroller.cpp" line="286"/>
+        <location filename="../filemanager/controllers/appcontroller.cpp" line="291"/>
+        <location filename="../filemanager/controllers/appcontroller.cpp" line="293"/>
         <source>newText</source>
         <translation>新建文本</translation>
     </message>
@@ -1293,7 +1290,7 @@
         <translation>快捷方式</translation>
     </message>
     <message>
-        <location filename="../filemanager/shutil/fileutils.cpp" line="550"/>
+        <location filename="../filemanager/shutil/fileutils.cpp" line="558"/>
         <source>Create symlink</source>
         <translation>创建链接</translation>
     </message>
@@ -1303,13 +1300,13 @@
         <translation>路径</translation>
     </message>
     <message>
-        <location filename="../filemanager/models/trashfileinfo.cpp" line="158"/>
+        <location filename="../filemanager/models/trashfileinfo.cpp" line="163"/>
         <location filename="../filemanager/views/filemenumanager.cpp" line="282"/>
         <source>Time deleted</source>
         <translation>删除时间</translation>
     </message>
     <message>
-        <location filename="../filemanager/models/trashfileinfo.cpp" line="161"/>
+        <location filename="../filemanager/models/trashfileinfo.cpp" line="166"/>
         <source>Path</source>
         <comment>TrashFileInfo</comment>
         <translation>原始路径</translation>
@@ -1320,10 +1317,40 @@
         <translation>深度文件管理器</translation>
     </message>
     <message>
-        <location filename="../filemanager/models/searchfileinfo.cpp" line="297"/>
+        <location filename="../filemanager/models/searchfileinfo.cpp" line="295"/>
         <source>Path</source>
         <comment>SearchFileInfo</comment>
         <translation>路径</translation>
+    </message>
+    <message>
+        <location filename="../filemanager/models/searchfileinfo.cpp" line="402"/>
+        <source>Searching...</source>
+        <translation>正在搜索中...</translation>
+    </message>
+    <message>
+        <location filename="../filemanager/models/searchfileinfo.cpp" line="407"/>
+        <source>No results</source>
+        <translation>无搜索结果</translation>
+    </message>
+    <message>
+        <location filename="../filemanager/models/abstractfileinfo.cpp" line="593"/>
+        <source>Loading...</source>
+        <translation>正在加载中...</translation>
+    </message>
+    <message>
+        <location filename="../filemanager/models/fileinfo.cpp" line="91"/>
+        <source>You do not have permission to access this folder</source>
+        <translation>您没有权限读取此文件夹</translation>
+    </message>
+    <message>
+        <location filename="../filemanager/models/fileinfo.cpp" line="93"/>
+        <source>File has been moved or deleted</source>
+        <translation>文件已被移动或删除</translation>
+    </message>
+    <message>
+        <location filename="../filemanager/models/fileinfo.cpp" line="96"/>
+        <source>Folder is empty</source>
+        <translation>文件夹为空</translation>
     </message>
 </context>
 <context>

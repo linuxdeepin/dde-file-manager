@@ -404,7 +404,7 @@ QString SearchFileInfo::loadingTip() const
 
 QString SearchFileInfo::subtitleForEmptyFloder() const
 {
-    return QObject::tr("Files not search to");
+    return QObject::tr("No results");
 }
 
 void SearchFileInfo::init()
