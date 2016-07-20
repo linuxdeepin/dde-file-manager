@@ -50,11 +50,16 @@ public slots:
     void toNormalNav();
     void doDragEnter();
     void doDragLeave();
+
+protected:
+    void paintEvent(QPaintEvent *event);
+
 private:
     void loadBookmark();
     void addNetworkBookmarkItem();
     void loadDevices();
     bool m_isTight = false;
+    bool m_entered = false;
     QFrame* m_homeBar = NULL;
     QPushButton* m_fileButton = NULL;
     QPushButton* m_tightNavFileButton = NULL;
