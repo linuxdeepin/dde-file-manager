@@ -129,9 +129,9 @@ void DFileView::initConnects()
     connect(m_openWithActionGroup, &QActionGroup::triggered, this, &DFileView::openWithActionTriggered);
     connect(m_keyboardSearchTimer, &QTimer::timeout, this, &DFileView::clearKeyBoardSearchKeys);
 
-    connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &DFileView::handleSelectionChanged);
-    connect(model(), &DFileSystemModel::rowsInserted, this, &DFileView::handleSelectionChanged);
-    connect(model(), &DFileSystemModel::rowsRemoved, this, &DFileView::handleSelectionChanged);
+    connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &DFileView::updateStatusBar);
+    connect(model(), &DFileSystemModel::rowsInserted, this, &DFileView::updateStatusBar);
+    connect(model(), &DFileSystemModel::rowsRemoved, this, &DFileView::updateStatusBar);
     connect(fileSignalManager, &FileSignalManager::requestFoucsOnFileView, this, &DFileView::setFoucsOnFileView);
     connect(fileSignalManager, &FileSignalManager::requestFreshFileView, this, &DFileView::refreshFileView);
 
@@ -177,6 +177,7 @@ void DFileView::initConnects()
         FMEvent event;
 
         event = windowId();
+        event = currentUrl();
 
         emit fileSignalManager->loadingIndicatorShowed(event, state == DFileSystemModel::Busy);
     });
@@ -517,7 +518,6 @@ void DFileView::cd(const FMEvent &event)
         FMEvent e = event;
         e = currentUrl();
         emit fileSignalManager->currentUrlChanged(e);
-        updateStatusBar();
     }
 }
 
@@ -1506,19 +1506,6 @@ void DFileView::clearKeyBoardSearchKeys()
     m_keyboardSearchTimer->stop();
 }
 
-void DFileView::handleSelectionChanged()
-{
-    FMEvent event;
-    event = windowId();
-    int count = selectedIndexCount();
-
-    if (count == 0){
-        emit fileSignalManager->statusBarItemsCounted(event, this->count());
-    }else{
-        emit fileSignalManager->statusBarItemsSelected(event, count);
-    }
-}
-
 void DFileView::setFoucsOnFileView(const FMEvent &event)
 {
     if (event.windowId() == windowId())
@@ -1545,10 +1532,18 @@ void DFileView::handleDataChanged(const QModelIndex &topLeft, const QModelIndex 
 
 void DFileView::updateStatusBar()
 {
-    FMEvent fmEvent;
-    fmEvent = windowId();
-    if (rootIndex().isValid())
-        emit fileSignalManager->statusBarItemsCounted(fmEvent, count());
+    if (model()->state() != DFileSystemModel::Idle)
+        return;
+
+    FMEvent event;
+    event = windowId();
+    int count = selectedIndexCount();
+
+    if (count == 0){
+        emit fileSignalManager->statusBarItemsCounted(event, this->count());
+    }else{
+        emit fileSignalManager->statusBarItemsSelected(event, count);
+    }
 }
 
 void DFileView::setSelectionRectVisible(bool visible)
@@ -2003,6 +1998,8 @@ void DFileView::onChildrenUpdated()
     oldSelectedUrllist.clear();
 
     connect(model(), &DFileSystemModel::rowsInserted, this, &DFileView::updateContentLabel);
+
+    updateStatusBar();
 }
 
 void DFileView::updateContentLabel()
@@ -2010,13 +2007,10 @@ void DFileView::updateContentLabel()
     int count = this->count();
     const DUrl &currentUrl = this->currentUrl();
 
-    if (count <= 0 && currentUrl.isLocalFile()) {
+    if (count <= 0) {
         const AbstractFileInfoPointer &fileInfo = fileService->createFileInfo(currentUrl);
 
-        if (fileInfo->exists())
-            setContentLabel(tr("Folder is empty"));
-        else
-            setContentLabel(tr("File has been moved or deleted"));
+        setContentLabel(fileInfo->subtitleForEmptyFloder());
     } else {
         setContentLabel(QString());
     }

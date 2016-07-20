@@ -397,6 +397,16 @@ DUrl SearchFileInfo::getUrlByNewFileName(const QString &fileName) const
     return url;
 }
 
+QString SearchFileInfo::loadingTip() const
+{
+    return QObject::tr("Searching...");
+}
+
+QString SearchFileInfo::subtitleForEmptyFloder() const
+{
+    return QObject::tr("Files not search to");
+}
+
 void SearchFileInfo::init()
 {
     m_userColumnRoles.clear();

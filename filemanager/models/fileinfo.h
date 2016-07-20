@@ -29,6 +29,8 @@ public:
 
     bool canIteratorDir() const Q_DECL_OVERRIDE;
 
+    QString subtitleForEmptyFloder() const Q_DECL_OVERRIDE;
+
 private:
     using AbstractFileInfo::setUrl;
 

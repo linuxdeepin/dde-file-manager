@@ -84,3 +84,14 @@ bool FileInfo::canIteratorDir() const
 {
     return true;
 }
+
+QString FileInfo::subtitleForEmptyFloder() const
+{
+    if (!isReadable()) {
+        return QObject::tr("The path not readable");
+    } else if (!AbstractFileInfo::exists()) {
+        return QObject::tr("File has been moved or deleted");
+    }
+
+    return QObject::tr("Folder is empty");
+}
