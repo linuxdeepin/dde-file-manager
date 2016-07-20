@@ -351,6 +351,10 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
         return;
 
     if (jobController) {
+        disconnect(jobController, &JobController::addChildren, this, &DFileSystemModel::addFile);
+        disconnect(jobController, &JobController::finished, this, &DFileSystemModel::onJobFinished);
+        disconnect(jobController, &JobController::childrenUpdated, this, &DFileSystemModel::updateChildren);
+
         jobController->stop();
         jobController->deleteLater();
     }

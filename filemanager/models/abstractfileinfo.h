@@ -202,6 +202,9 @@ public:
     virtual Qt::DropActions supportedDragActions() const;
     virtual Qt::DropActions supportedDropActions() const;
 
+    virtual QString loadingTip() const;
+    virtual QString subtitleForEmptyFloder() const;
+
 protected:
     struct FileInfoData
     {

@@ -50,7 +50,7 @@ void DStatusBar::initConnect()
 {
     connect(fileSignalManager, &FileSignalManager::statusBarItemsSelected, this, &DStatusBar::itemSelected);
     connect(fileSignalManager, &FileSignalManager::statusBarItemsCounted, this, &DStatusBar::itemCounted);
-    connect(fileSignalManager, &FileSignalManager::loadingIndicatorShowed, this, &DStatusBar::showLoadingIncator);
+    connect(fileSignalManager, &FileSignalManager::loadingIndicatorShowed, this, &DStatusBar::setLoadingIncatorVisible);
 }
 
 void DStatusBar::itemSelected(const FMEvent &event, int number)
@@ -84,24 +84,23 @@ void DStatusBar::itemCounted(const FMEvent &event, int number)
     }
 }
 
-void DStatusBar::showLoadingIncator(const FMEvent &event, bool loading)
+void DStatusBar::setLoadingIncatorVisible(const FMEvent &event, bool visible)
 {
-    if(event.windowId() != WindowManager::getWindowId(window()))
+    if (event.windowId() != WindowManager::getWindowId(window()))
         return;
-    m_loadingIndicator->setVisible(loading);
-    if (loading)
-        m_label->setText(tr("Loading..."));
-}
 
-void DStatusBar::showSearchingIncator(const FMEvent &event, bool searching)
-{
-    if(event.windowId() != WindowManager::getWindowId(window()))
-        return;
-    m_loadingIndicator->setVisible(searching);
-    if (searching)
-        m_label->setText(tr("Searching..."));
-    else
-        m_label->setText(tr(""));
+    m_loadingIndicator->setVisible(visible);
+
+    if (visible) {
+        const AbstractFileInfoPointer &fileInfo = fileService->createFileInfo(event.fileUrl());
+
+        if (fileInfo)
+            m_label->setText(fileInfo->loadingTip());
+        else
+            m_label->setText(tr("Loading..."));
+    } else {
+        m_label->setText(QString());
+    }
 }
 
 void DStatusBar::resizeEvent(QResizeEvent *event)

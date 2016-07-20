@@ -588,6 +588,16 @@ Qt::DropActions AbstractFileInfo::supportedDropActions() const
     return Qt::IgnoreAction;
 }
 
+QString AbstractFileInfo::loadingTip() const
+{
+    return QObject::tr("Loading...");
+}
+
+QString AbstractFileInfo::subtitleForEmptyFloder() const
+{
+    return QString();
+}
+
 void AbstractFileInfo::updateFileMetaData()
 {
     this->data->pinyinName = QString();
