@@ -40,16 +40,18 @@ public:
 
     QString searchKeyword() const;
     DUrl searchTargetUrl() const;
+    DUrl searchedFileUrl() const;
 
     void setSearchKeyword(const QString &keyword);
     void setSearchTargetUrl(const DUrl &url);
+    void setSearchedFileUrl(const DUrl &url);
 
     static DUrl fromLocalFile(const QString &filePath);
     static DUrl fromTrashFile(const QString &filePath);
     static DUrl fromRecentFile(const QString &filePath);
     static DUrl fromBookMarkFile(const QString &filePath);
     static DUrl fromSearchFile(const QString &filePath);
-    static DUrl fromSearchFile(const DUrl &targetUrl, const QString &keyword);
+    static DUrl fromSearchFile(const DUrl &targetUrl, const QString &keyword, const DUrl &searchedFileUrl = DUrl());
     static DUrl fromComputerFile(const QString &filePath);
     static DUrl fromNetworkFile(const QString &filePath);
     static DUrl fromAFCFile(const QString &filePath);

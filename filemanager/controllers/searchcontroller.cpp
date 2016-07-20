@@ -109,7 +109,7 @@ bool SearchDiriterator::hasNext() const
                 DUrl url = fileUrl;
                 const DUrl &realUrl = fileInfo->fileUrl();
 
-                url.setFragment(realUrl.toString());
+                url.setSearchedFileUrl(realUrl);
 
                 if (parent->urlToTargetUrlMap.contains(realUrl, fileUrl)) {
                     ++parent->urlToTargetUrlMapInsertCount[QPair<DUrl, DUrl>(realUrl, fileUrl)];
@@ -268,7 +268,7 @@ const DDirIteratorPointer SearchController::createDirIterator(const DUrl &fileUr
 void SearchController::onFileCreated(const DUrl &fileUrl)
 {
     for (DUrl url : urlToTargetUrlMap.values(fileUrl)) {
-        url.setFragment(fileUrl.toString());
+        url.setSearchedFileUrl(fileUrl);
 
         emit childrenAdded(url);
     }
@@ -277,7 +277,7 @@ void SearchController::onFileCreated(const DUrl &fileUrl)
 void SearchController::onFileRemove(const DUrl &fileUrl)
 {
     for (DUrl url : urlToTargetUrlMap.values(fileUrl)) {
-        url.setFragment(fileUrl.toString());
+        url.setSearchedFileUrl(fileUrl);
 
         emit childrenRemoved(url);
     }
@@ -301,7 +301,7 @@ void SearchController::removeJob(const DUrl &fileUrl)
 
 DUrl SearchController::realUrl(const DUrl &searchUrl)
 {
-    return DUrl(searchUrl.fragment());
+    return searchUrl.searchedFileUrl();
 }
 
 DUrlList SearchController::realUrlList(const DUrlList &searchUrls)

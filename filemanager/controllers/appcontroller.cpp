@@ -300,7 +300,15 @@ void AppController::actionUnmount(const FMEvent &event)
 
 void AppController::actionRestore(const FMEvent &event)
 {
-    const DUrlList& urls = event.fileUrlList();
+    DUrlList urls;
+
+    for (const DUrl &url : event.fileUrlList()) {
+        if (url.isSearchFile())
+            urls << url.searchedFileUrl();
+        else
+            urls << url;
+    }
+
     emit fileSignalManager->requestRestoreTrashFile(urls, event);
 }
 
