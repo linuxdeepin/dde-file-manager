@@ -741,6 +741,12 @@ void DFileSystemModel::refresh(const DUrl &fileUrl)
     fetchMore(index);
 }
 
+void DFileSystemModel::update()
+{
+    const QModelIndex &rootIndex = createIndex(m_rootNode, 0);
+
+    emit dataChanged(rootIndex.child(0, 0), rootIndex.child(rootIndex.row() - 1, 0));
+}
 
 void DFileSystemModel::toggleHiddenFiles(const DUrl &fileUrl)
 {

@@ -114,6 +114,7 @@ public slots:
     void updateChildren(QList<AbstractFileInfoPointer> list);
     /// warning: only refresh current url
     void refresh(const DUrl &fileUrl = DUrl());
+    void update();
     void toggleHiddenFiles(const DUrl &fileUrl);
 
 signals:
