@@ -44,22 +44,26 @@ void AppController::initConnect()
 void AppController::actionOpen(const FMEvent &event)
 {
     const DUrlList& urls = event.fileUrlList();
-    if (urls.size() == 1){
+
+    if (urls.size() == 1) {
+        const_cast<FMEvent&>(event) = urls.first();
+
         fileService->openUrl(event);
-    }else{
+    } else {
         foreach (DUrl url, urls) {
-            if (url.isRecentFile()){
+            if (url.isRecentFile()) {
                 url.setScheme(FILE_SCHEME);
             }
-            if (url.isLocalFile()){
+
+            if (url.isLocalFile()) {
                 QFileInfo info(url.toLocalFile());
-                if (info.isFile()){
-                    const_cast<FMEvent&>(event) = url;
-                    fileService->openUrl(event);
-                }else if(info.isDir()){
+
+                if (info.isFile()) {
+                    fileService->openFile(url);
+                } else if(info.isDir()) {
                     emit fileSignalManager->requestOpenNewWindowByUrl(url, true);
                 }
-            }else if (url.isSMBFile()){
+            } else if (url.isSMBFile()) {
                 emit fileSignalManager->requestOpenNewWindowByUrl(url, true);
             }
         }

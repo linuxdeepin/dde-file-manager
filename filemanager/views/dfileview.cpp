@@ -667,11 +667,10 @@ void DFileView::wheelEvent(QWheelEvent *event)
 void DFileView::keyPressEvent(QKeyEvent *event)
 {
     const DUrlList& urls = selectedUrls();
+
     FMEvent fmevent;
+
     fmevent = urls;
-    if (urls.size() == 1){
-        fmevent = urls.at(0);
-    }
     fmevent = FMEvent::FileView;
     fmevent = windowId();
     fmevent = currentUrl();
