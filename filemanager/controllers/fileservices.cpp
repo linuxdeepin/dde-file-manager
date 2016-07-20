@@ -441,6 +441,9 @@ bool FileServices::createSymlink(const DUrl &fileUrl, const FMEvent &event) cons
 
     int windowId = event.windowId();
     FileUtils::createSoftLink(windowId, fileUrl.toLocalFile());
+
+    /// TODO
+    return true;
 }
 
 bool FileServices::createSymlink(const DUrl &fileUrl, const DUrl &linkToUrl) const
@@ -459,6 +462,9 @@ bool FileServices::sendToDesktop(const FMEvent &event) const
 {
     const DUrlList& urls = event.fileUrlList();
     FileUtils::sendToDesktop(urls);
+
+    /// TODO
+    return true;
 }
 
 bool FileServices::openInTerminal(const DUrl &fileUrl) const

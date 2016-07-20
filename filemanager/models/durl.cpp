@@ -142,6 +142,14 @@ DUrl DUrl::searchTargetUrl() const
     return DUrl(query.queryItemValue("url", FullyDecoded));
 }
 
+DUrl DUrl::searchedFileUrl() const
+{
+    if (!isSearchFile())
+        return DUrl();
+
+    return DUrl(fragment(FullyDecoded));
+}
+
 void DUrl::setSearchKeyword(const QString &keyword)
 {
     if(!isSearchFile())
@@ -166,6 +174,14 @@ void DUrl::setSearchTargetUrl(const DUrl &url)
     query.addQueryItem("url", url.toString());
 
     setQuery(query);
+}
+
+void DUrl::setSearchedFileUrl(const DUrl &url)
+{
+    if (!isSearchFile())
+        return;
+
+    setFragment(url.toString());
 }
 
 DUrl DUrl::fromLocalFile(const QString &filePath)
@@ -213,7 +229,7 @@ DUrl DUrl::fromSearchFile(const QString &filePath)
     return url;
 }
 
-DUrl DUrl::fromSearchFile(const DUrl &targetUrl, const QString &keyword)
+DUrl DUrl::fromSearchFile(const DUrl &targetUrl, const QString &keyword, const DUrl &searchedFileUrl)
 {
     DUrl url = fromSearchFile(QString());
 
@@ -223,6 +239,9 @@ DUrl DUrl::fromSearchFile(const DUrl &targetUrl, const QString &keyword)
     query.addQueryItem("url", targetUrl.toString());
 
     url.setQuery(query);
+
+    if (searchedFileUrl.isValid())
+        url.setFragment(searchedFileUrl.toString());
 
     return url;
 }

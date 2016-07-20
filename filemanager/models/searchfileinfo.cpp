@@ -25,13 +25,11 @@ SearchFileInfo::SearchFileInfo()
 SearchFileInfo::SearchFileInfo(const DUrl &url)
     : AbstractFileInfo(url)
 {
-    const QString &fragment = url.fragment();
-
-    if (!fragment.isEmpty()) {
+    if (url.searchedFileUrl().isValid()) {
         m_parentUrl = url;
-        m_parentUrl.setFragment(QString());
+        m_parentUrl.setSearchedFileUrl(DUrl());
 
-        realFileInfo = FileServices::instance()->createFileInfo(DUrl(fragment));
+        realFileInfo = FileServices::instance()->createFileInfo(url.searchedFileUrl());
     } else {
         data->fileInfo = QFileInfo();
     }
@@ -376,7 +374,7 @@ bool SearchFileInfo::isEmptyFloder() const
     if (path().isEmpty())
         return false;
 
-    const AbstractFileInfoPointer &fileInfo = FileServices::instance()->createFileInfo(DUrl(fileUrl().fragment()));
+    const AbstractFileInfoPointer &fileInfo = FileServices::instance()->createFileInfo(fileUrl().searchedFileUrl());
 
     return fileInfo && fileInfo->isEmptyFloder();
 }
@@ -394,7 +392,7 @@ DUrl SearchFileInfo::getUrlByNewFileName(const QString &fileName) const
     DUrl url = fileUrl();
 
     if (realFileInfo)
-        url.setFragment(realFileInfo->getUrlByNewFileName(fileName).toString());
+        url.setSearchedFileUrl(realFileInfo->getUrlByNewFileName(fileName));
 
     return url;
 }
