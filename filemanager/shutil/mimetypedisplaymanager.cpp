@@ -36,7 +36,7 @@ void MimeTypeDisplayManager::initData()
     m_displayNames["unknown"] = tr("unknown");
 
 
-    m_defaultIconNames["directory"] = "inode/directory";
+    m_defaultIconNames["directory"] = "folder";
     m_defaultIconNames["desktop"] = "application-default-icon";
     m_defaultIconNames["video"] = "video";
     m_defaultIconNames["audio"] = "music";

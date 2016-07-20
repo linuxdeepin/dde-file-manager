@@ -23,6 +23,7 @@
 #include "../models/dfilesystemmodel.h"
 
 #include "../shutil/fileutils.h"
+#include "../app/global.h"
 
 #include <dthememanager.h>
 #include <dscrollbar.h>
@@ -139,6 +140,8 @@ void DFileView::initConnects()
     connect(model(), &DFileSystemModel::dataChanged, this, &DFileView::handleDataChanged);
     connect(model(), &DFileSystemModel::rootUrlDeleted, this, &DFileView::updateContentLabel, Qt::QueuedConnection);
     connect(model(), &DFileSystemModel::childrenUpdated, this, &DFileView::updateContentLabel, Qt::QueuedConnection);
+
+    connect(fileIconProvider, &IconProvider::themeChanged, this, &DFileView::handleThemeChanged);
 
     if (!m_cutUrlSet.capacity()) {
         m_cutUrlSet.reserve(1);
@@ -1528,6 +1531,12 @@ void DFileView::refreshFileView(const FMEvent &event)
     if (event.windowId() != windowId()){
         return;
     }
+    model()->refresh();
+}
+
+void DFileView::handleThemeChanged(const QString &theme)
+{
+    qDebug() << theme;
     model()->refresh();
 }
 

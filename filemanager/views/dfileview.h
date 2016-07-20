@@ -133,6 +133,7 @@ public slots:
     void handleSelectionChanged();
     void setFoucsOnFileView(const FMEvent& event);
     void refreshFileView(const FMEvent& event);
+    void handleThemeChanged(const QString& theme);
 
     void clearSelection();
 

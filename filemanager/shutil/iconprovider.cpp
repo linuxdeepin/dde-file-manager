@@ -32,8 +32,8 @@ static GtkIconTheme* them = NULL;
 
 IconProvider::IconProvider(QObject *parent) : QObject(parent)
 {
-    m_gsettings = new QGSettings("com.deepin.wrap.gnome.desktop.wm.preferences",
-                                 "/com/deepin/wrap/gnome/desktop/wm/preferences/");
+    m_gsettings = new QGSettings("com.deepin.dde.appearance",
+                                 "/com/deepin/dde/appearance/");
     m_mimeDatabase = new QMimeDatabase;
     m_iconSizes << QSize(48, 48) << QSize(64, 64) << QSize(96, 96) << QSize(128, 128) << QSize(256, 256);
 
@@ -226,7 +226,7 @@ QString IconProvider::getThemeIconPath(QString iconName, int size)
 void IconProvider::initConnect()
 {
     connect(m_gsettings, SIGNAL(changed(QString)),
-            this, SLOT(handleWmValueChanged(QString)));
+            this, SLOT(handleThemeChanged(QString)));
 }
 
 void IconProvider::gtkInit()
@@ -237,7 +237,7 @@ void IconProvider::gtkInit()
 
 QString IconProvider::getCurrentTheme()
 {
-    QString temp = m_gsettings->get("theme").toString();
+    QString temp = m_gsettings->get("icon-theme").toString();
     if (!temp.isEmpty()){
         return temp;
     }else{
@@ -267,15 +267,17 @@ void IconProvider::setCurrentTheme()
     setTheme(temp);
 }
 
-void IconProvider::handleWmValueChanged(const QString &key)
+void IconProvider::handleThemeChanged(const QString &key)
 {
-    if (key == "theme"){
+    qDebug() << key;
+    if (key == "iconTheme"){
         QString theme = getCurrentTheme();
         if (QIcon::themeName() == theme){
             return;
         }
         qDebug() << "Theme change from" << QIcon::themeName() << "to" << theme;
         setTheme(theme);
+        m_mimeIcons.clear();
         emit themeChanged(theme);
     }
 }
@@ -307,11 +309,23 @@ QIcon IconProvider::getDesktopIcon(const QString &iconName, int size)
                 path = m_desktopIconPaths.value(iconName);
             }else{
                 path = getThemeIconPath(iconName, size);
-                if (path.isEmpty())
-                    path = getThemeIconPath("application-default-icon");
-                m_desktopIconPaths[iconName] = path;
+                if (path.isEmpty()){
+//                    path = getThemeIconPath("application-default-icon");
+                }else{
+                    m_desktopIconPaths[iconName] = path;
+                }
             }
-            QIcon icon = QIcon(path);
+
+            QIcon icon;
+            if (!path.isEmpty()){
+                icon = QIcon(path);
+            }else{
+                icon = QIcon::fromTheme(iconName);
+                if (icon.isNull()){
+                    qDebug() << iconName << icon;
+                    icon = QIcon(getThemeIconPath("application-default-icon"));
+                }
+            }
 
             m_desktopIcons[iconName] = icon;
 
@@ -365,7 +379,16 @@ QIcon IconProvider::findIcon(const QString &absoluteFilePath, const QString &mim
         path = getThemeIconPath(mimeTypeDisplayManager->defaultIcon(mimeType));
     }
 
-    theIcon = QIcon(path);
+    if (!path.isEmpty()){
+        theIcon = QIcon(path);
+    }else{
+        theIcon = QIcon::fromTheme(iconName.replace("/", "-"));
+        qDebug() << iconName.replace("/", "-") << path;
+
+        if (theIcon.isNull()){
+            theIcon = QIcon(getThemeIconPath("application-default-icon"));
+        }
+    }
 
     m_mimeIcons.insert(_mimeType, theIcon);
 
