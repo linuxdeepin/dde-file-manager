@@ -227,18 +227,30 @@ void DLeftSideBar::toNormalNav()
 
 void DLeftSideBar::doDragEnter()
 {
-    setStyleSheet("QFrame#LeftSideBar{\
-                  background-color: transparent;\
-                  border: 1px solid #2ca7f8\
-              }");
+    m_entered = true;
+    update();
 }
 
 void DLeftSideBar::doDragLeave()
 {
-    setStyleSheet("QFrame#LeftSideBar{\
-                  background-color: transparent;\
-                  border: 0px solid transparent\
-    }");
+    m_entered = false;
+    update();
+}
+
+void DLeftSideBar::paintEvent(QPaintEvent *event)
+{
+    Q_UNUSED(event)
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    QPen pen;
+    if (m_entered){
+        pen.setColor(QColor("#2ca7f8"));
+        pen.setWidth(1);
+        painter.setPen(pen);
+        painter.drawRect(geometry());
+    }else{
+        pen.setWidth(0);
+    }
 }
 
 void DLeftSideBar::loadBookmark()
