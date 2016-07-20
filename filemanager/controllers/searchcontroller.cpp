@@ -24,6 +24,7 @@ public:
     QString filePath() const Q_DECL_OVERRIDE;
     const AbstractFileInfoPointer fileInfo() const Q_DECL_OVERRIDE;
     QString path() const Q_DECL_OVERRIDE;
+    void close() Q_DECL_OVERRIDE;
 
 private:
     SearchController *parent;
@@ -38,6 +39,8 @@ private:
     QDirIterator::IteratorFlags m_flags;
     mutable QList<DUrl> searchPathList;
     mutable DDirIteratorPointer it;
+
+    bool closed = false;
 };
 
 SearchDiriterator::SearchDiriterator(const DUrl &url, QDir::Filters filter, QDirIterator::IteratorFlags flags, SearchController *parent)
@@ -78,6 +81,9 @@ bool SearchDiriterator::hasNext() const
         return true;
 
     forever {
+        if (closed)
+            return false;
+
         if (!it) {
             if (searchPathList.isEmpty())
                 break;
@@ -92,6 +98,9 @@ bool SearchDiriterator::hasNext() const
         }
 
         while (it->hasNext()) {
+            if (closed)
+                return false;
+
             it->next();
 
             AbstractFileInfoPointer fileInfo = it->fileInfo();
@@ -150,6 +159,11 @@ const AbstractFileInfoPointer SearchDiriterator::fileInfo() const
 QString SearchDiriterator::path() const
 {
     return currentFileInfo ? currentFileInfo->path() : QString();
+}
+
+void SearchDiriterator::close()
+{
+    closed = true;
 }
 
 SearchController::SearchController(QObject *parent)

@@ -12,6 +12,7 @@ public:
 
     virtual DUrl next() = 0;
     virtual bool hasNext() const = 0;
+    virtual void close() {};
 
     virtual QString fileName() const = 0;
     virtual QString filePath() const = 0;
