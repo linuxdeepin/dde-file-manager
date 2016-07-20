@@ -15,9 +15,9 @@ You can run, close and create a shortcut for Deepin File Manager by the followin
 1. Click on ![Launcher](icon/launcher-24.svg) or move the mouse pointer to the upper left corner of the screen to enter Launcher interface.
 2. Locate ![File Manager](icon/deepin-file-manager.svg) by scrolling mouse wheel or searching by "deepin file manager" in Launcher interface.
 3. Right click on ![File Manager](icon/deepin-file-manager.svg), you can
-- Click on **Send to desktop** to create a desktop shortcut.
-- Click on **Send to dock** to fix the application on dock.
-- Click on **Add to startup** to add the application to startup, it will automatically run when the system starts up.
+ - Click on **Send to desktop** to create a desktop shortcut.
+ - Click on **Send to dock** to fix the application on dock.
+ - Click on **Add to startup** to add the application to startup, it will automatically run when the system starts up.
 
 > ![tips](icon/tips.svg): In Control Center, you can set Deepin File Manger as the default file manager. Specific operations refer to [Default Application Settings](dman:///dde-control-center#Default Application Settings).
 
