@@ -200,7 +200,7 @@ void DToolBar::searchBarActivated()
     m_searchBar->clear();
     m_searchBar->setActive(true);
     m_searchBar->setFocus();
-    m_searchBar->setCurrentPath(m_crumbWidget->getUrl());
+    m_searchBar->setCurrentPath(m_crumbWidget->getCurrentUrl());
     m_searchButton->hide();
 }
 

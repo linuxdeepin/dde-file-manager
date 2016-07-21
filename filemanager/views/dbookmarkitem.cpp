@@ -224,7 +224,7 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
             painter->drawRect(m_x_axis, m_y_axis, m_width, m_height);
             textColor = Qt::white;
         }
-        painter->drawPixmap(leftPadding, dy, release.width(), release.height(), release);
+        painter->drawPixmap(leftPadding, dy, release.width(), release.height(), checked);
     }
     else
     {

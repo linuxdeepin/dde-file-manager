@@ -37,6 +37,7 @@ public:
     QString back();
     QString path();
     DUrl getUrl();
+    DUrl getCurrentUrl();
 private:
     void addRecentCrumb();
     void addComputerCrumb();
