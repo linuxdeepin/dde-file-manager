@@ -8,7 +8,7 @@
 
 CloseAllDialogIndicator::CloseAllDialogIndicator(QWidget *parent) : QDialog(parent)
 {
-    setWindowFlags(Qt::FramelessWindowHint | Qt::Dialog);
+    setWindowFlags(Qt::FramelessWindowHint | Qt::Dialog | Qt::WindowStaysOnTopHint);
     setAttribute(Qt::WA_TranslucentBackground);
     setFocusPolicy(Qt::NoFocus);
     initUI();
