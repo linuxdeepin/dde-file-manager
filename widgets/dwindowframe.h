@@ -87,9 +87,8 @@ private:
     int userMaximumHeight = QWIDGETSIZE_MAX;
     void applyMaximumSizeRestriction();
 
-
-
-    QGraphicsDropShadowEffect* shadowEffect = nullptr;
+//    QGraphicsDropShadowEffect* shadowEffect = nullptr;
+    QPixmap shadowPixmap;
 
     CornerEdge resizingCornerEdge = CornerEdge::Nil;
     CornerEdge getCornerEdge(int, int);
