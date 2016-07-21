@@ -30,7 +30,9 @@ protected:
     void resizeEvent(QResizeEvent* event);
 
 private:
+    QString m_OnlyOneItemCounted;
     QString m_counted;
+    QString m_OnlyOneItemSelected;
     QString m_selected;
 
     QHBoxLayout * m_layout;
