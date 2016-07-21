@@ -77,9 +77,6 @@ public:
 
     QList<int> columnRoleList() const;
 
-    int selectedIndexCount() const
-    { return selectedIndexes().count();}
-
     int windowId() const;
 
     using DListView::edit;
@@ -95,9 +92,15 @@ public:
     int horizontalOffset() const Q_DECL_OVERRIDE;
 
     bool isSelected(const QModelIndex &index) const;
+    int selectedIndexCount() const;
     QModelIndexList selectedIndexes() const Q_DECL_OVERRIDE;
+
     QModelIndex indexAt(const QPoint &point) const Q_DECL_OVERRIDE;
     QRect visualRect(const QModelIndex &index) const Q_DECL_OVERRIDE;
+
+    typedef QPair<int, int> RandeIndex;
+    typedef QList<RandeIndex> RandeIndexList;
+    RandeIndexList visibleIndexes(QRect rect) const;
 
     inline QSize itemSizeHint() const
     { return m_itemSizeHint;}
@@ -140,7 +143,7 @@ public slots:
 
     void setSelectionRectVisible(bool visible);
     bool isSelectionRectVisible() const;
-    bool canShowSElectionRect() const;
+    bool canShowSelectionRect() const;
 
     void setContentLabel(const QString &text);
 
@@ -210,10 +213,11 @@ private:
     void popupHeaderViewContextMenu(const QPoint &pos);
     void onChildrenUpdated();
     void updateContentLabel();
+    void updateSelectionRect();
 
     using DListView::setOrientation;
 
-    QPoint m_pressedPos;
+    QRect m_selectedGeometry;
     QWidget *m_selectionRectWidget = Q_NULLPTR;
     bool m_selectionRectVisible = true;
 
@@ -246,11 +250,6 @@ private:
     QIcon unreadableIcon;
 
     QModelIndex m_mouseLastPressedIndex;
-
-    /// file section data
-    QRect lastSelectedRect;
-    QModelIndex lastSelectedTopLeftIndex;
-    QModelIndex lastSelectedBottomRightIndex;
 };
 
 #endif // DFILEVIEW_H

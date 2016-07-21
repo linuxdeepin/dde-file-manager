@@ -31,6 +31,14 @@ bool DFileSelectionModel::isSelected(const QModelIndex &index) const
     return false;
 }
 
+int DFileSelectionModel::selectedCount() const
+{
+    if (m_currentCommand != QFlags<QItemSelectionModel::SelectionFlags>(Current|Rows|ClearAndSelect))
+        return selectedIndexes().count();
+
+    return m_lastSelectedIndex.row() - m_firstSelectedIndex.row() + 1;
+}
+
 QModelIndexList DFileSelectionModel::selectedIndexes() const
 {
     if (m_selectedList.isEmpty()) {
@@ -80,7 +88,7 @@ void DFileSelectionModel::select(const QItemSelection &selection, QItemSelection
     m_currentCommand = command;
     m_selection = newSelection;
 
-    m_timer.start(200);
+    m_timer.start(20);
 }
 
 void DFileSelectionModel::updateSelecteds()
