@@ -216,7 +216,7 @@
         <translation>选中 %1 项内容</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/dstatusbar.cpp" line="100"/>
+        <location filename="../filemanager/views/dstatusbar.cpp" line="99"/>
         <source>Loading...</source>
         <translation>正在加载中...</translation>
     </message>
@@ -262,6 +262,7 @@
     </message>
     <message>
         <location filename="../filemanager/dialogs/dialogmanager.cpp" line="195"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="351"/>
         <source>Confirm</source>
         <translation>确定</translation>
     </message>
@@ -282,6 +283,7 @@
         <location filename="../filemanager/dialogs/dialogmanager.cpp" line="212"/>
         <location filename="../filemanager/dialogs/dialogmanager.cpp" line="252"/>
         <location filename="../filemanager/dialogs/dialogmanager.cpp" line="332"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="351"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
@@ -341,6 +343,16 @@
         <translation>强制卸载</translation>
     </message>
     <message>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="348"/>
+        <source>%1 that this shortcut refers to has been changed or moved</source>
+        <translation>此快捷方式所指向的“%1”已被更改或移动</translation>
+    </message>
+    <message>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="349"/>
+        <source>Do you want to delete this shortcut？</source>
+        <translation>是否删除此快捷方式?</translation>
+    </message>
+    <message>
         <source>Are you sure to permanently delete %1?</source>
         <translation type="obsolete">您确定要删除 %1？</translation>
     </message>
@@ -382,17 +394,17 @@
         <translation type="vanished">确定</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="349"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="369"/>
         <source>File Manager</source>
         <translation>文件管理器</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="350"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="370"/>
         <source>Version:1.0</source>
         <translation>版本：1.0</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="351"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="371"/>
         <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions. </source>
         <translation>文件管理器是深度科技自主研发的一款管理文件的工具， 它包括搜索、复制、回收站、压缩/解压缩， 文件属性等管理文件的功能。</translation>
     </message>
@@ -400,12 +412,12 @@
 <context>
     <name>FileController</name>
     <message>
-        <location filename="../filemanager/controllers/filecontroller.cpp" line="298"/>
+        <location filename="../filemanager/controllers/filecontroller.cpp" line="304"/>
         <source>New Folder</source>
         <translation>新建文件夹</translation>
     </message>
     <message>
-        <location filename="../filemanager/controllers/filecontroller.cpp" line="310"/>
+        <location filename="../filemanager/controllers/filecontroller.cpp" line="316"/>
         <source>New File</source>
         <translation>新建文本</translation>
     </message>
@@ -1165,26 +1177,26 @@
         <translation>设置壁纸</translation>
     </message>
     <message>
-        <location filename="../filemanager/controllers/appcontroller.cpp" line="264"/>
-        <location filename="../filemanager/controllers/appcontroller.cpp" line="266"/>
+        <location filename="../filemanager/controllers/appcontroller.cpp" line="272"/>
+        <location filename="../filemanager/controllers/appcontroller.cpp" line="274"/>
         <source>newDoc</source>
         <translation>新建word文档</translation>
     </message>
     <message>
-        <location filename="../filemanager/controllers/appcontroller.cpp" line="273"/>
-        <location filename="../filemanager/controllers/appcontroller.cpp" line="275"/>
+        <location filename="../filemanager/controllers/appcontroller.cpp" line="281"/>
+        <location filename="../filemanager/controllers/appcontroller.cpp" line="283"/>
         <source>newExcel</source>
         <translation>新建Excel文档</translation>
     </message>
     <message>
-        <location filename="../filemanager/controllers/appcontroller.cpp" line="282"/>
-        <location filename="../filemanager/controllers/appcontroller.cpp" line="284"/>
+        <location filename="../filemanager/controllers/appcontroller.cpp" line="290"/>
+        <location filename="../filemanager/controllers/appcontroller.cpp" line="292"/>
         <source>newPowerPoint</source>
         <translation>新建PowerPoint文档</translation>
     </message>
     <message>
-        <location filename="../filemanager/controllers/appcontroller.cpp" line="291"/>
-        <location filename="../filemanager/controllers/appcontroller.cpp" line="293"/>
+        <location filename="../filemanager/controllers/appcontroller.cpp" line="299"/>
+        <location filename="../filemanager/controllers/appcontroller.cpp" line="301"/>
         <source>newText</source>
         <translation>新建文本</translation>
     </message>

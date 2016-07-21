@@ -74,10 +74,16 @@ bool FileController::openFile(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
 
+    const AbstractFileInfoPointer pfile = createFileInfo(fileUrl, accepted);
+
     if (FileUtils::isExecutableScript(fileUrl.toLocalFile())) {
         int code = dialogManager->showRunExcutableDialog(fileUrl);
 
         return FileUtils::openExcutableFile(fileUrl.path(), code);
+    }else if (pfile->isSymLink() && !QFile(pfile->symLinkTarget()).exists()){
+        QString targetName = pfile->symLinkTarget().split("/").last();
+        dialogManager->showBreakSymlinkDialog(targetName, fileUrl);
+        return false;
     }
 
     return FileUtils::openFile(fileUrl.path());

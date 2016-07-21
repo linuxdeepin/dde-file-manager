@@ -340,6 +340,26 @@ void DialogManager::showDiskErrorDialog(const QString & id, const QString & erro
     }
 }
 
+void DialogManager::showBreakSymlinkDialog(const QString &targetName, const DUrl &linkfile)
+{
+    const AbstractFileInfoPointer &fileInfo = FileServices::instance()->createFileInfo(linkfile);
+
+    DDialog d;
+    d.setTitle(tr("%1 that this shortcut refers to has been changed or moved").arg(targetName));
+    d.setMessage(tr("Do you want to delete this shortcut？"));
+    QStringList buttonTexts;
+    buttonTexts << tr("Cancel") << tr("Confirm");
+    d.addButtons(buttonTexts);
+    d.setDefaultButton(1);
+    d.setIcon(fileInfo->fileIcon().pixmap(64, 64));
+    int code = d.exec();
+    if (code == 1){
+        DUrlList urls;
+        urls << linkfile;
+        fileService->moveToTrash(urls);
+    }
+}
+
 void DialogManager::showAboutDialog(const FMEvent &event)
 {
     QWidget* w = WindowManager::getWindowById(event.windowId());
