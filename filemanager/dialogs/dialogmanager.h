@@ -45,6 +45,7 @@ public slots:
     void showTrashPropertyDialog(const FMEvent &event);
     void showDevicePropertyDialog(const FMEvent &event);
     void showDiskErrorDialog(const QString &id, const QString &errorText);
+    void showBreakSymlinkDialog(const QString &targetName, const DUrl& linkfile);
     void showAboutDialog(const FMEvent &event);
 
     void removePropertyDialog(const DUrl& url);
