@@ -156,6 +156,21 @@ DUrl DCrumbWidget::getUrl()
     return m_path;
 }
 
+DUrl DCrumbWidget::getCurrentUrl()
+{
+    DUrl result;
+    if (m_path.isLocalFile()){
+        result = DUrl::fromLocalFile(qobject_cast<DCrumbButton*>(m_group.checkedButton())->path());
+    }else if (m_path.isTrashFile()){
+        result = DUrl::fromTrashFile(qobject_cast<DCrumbButton*>(m_group.checkedButton())->path());
+    }
+    else
+    {
+        result = m_path;
+    }
+    return result;
+}
+
 void DCrumbWidget::addRecentCrumb()
 {
     QString text = RECENT_ROOT;

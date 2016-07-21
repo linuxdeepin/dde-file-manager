@@ -732,6 +732,12 @@ void DSearchBar::setCurrentPath(const DUrl &path)
 {
     m_currentPath = path;
     m_disableCompletion = true;
-    setText(path.toLocalFile());
-    setSelection(0, path.toLocalFile().length());
+
+    if (path.isLocalFile()){
+        setText(path.toLocalFile());
+        setSelection(0, path.toLocalFile().length());
+    }else{
+        setText(path.toString());
+        setSelection(0, path.toString().length());
+    }
 }
