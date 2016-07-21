@@ -305,7 +305,9 @@ void DialogManager::showTrashPropertyDialog(const FMEvent &event)
 
     if (w) {
         m_trashDialog = new TrashPropertyDialog(event.fileUrl());
+        QPoint pos = getPerportyPos(m_trashDialog->size().width(), m_trashDialog->size().height(), 1, 0);
         m_trashDialog->show();
+        m_trashDialog->move(pos);
 
         TIMER_SINGLESHOT(100, {
                              m_trashDialog->raise();

@@ -27,7 +27,7 @@ TrashPropertyDialog::~TrashPropertyDialog()
 
 void TrashPropertyDialog::initUI()
 {
-    setFixedSize(360, 300);
+    setFixedSize(320, 300);
     setTitle("");
 
     const AbstractFileInfoPointer &fileInfo = FileServices::instance()->createFileInfo(m_url);
