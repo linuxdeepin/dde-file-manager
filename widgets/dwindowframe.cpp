@@ -91,7 +91,7 @@ auto cornerEdge2XCursor(const CornerEdge& ce) -> int {
 
 DWindowFrame::DWindowFrame(QWidget* parent) : QWidget(parent),
                                               resizeHandleWidth(6),
-                                              shadowRadius(24),
+                                              shadowRadius(20),
                                               layoutMargin(25),
                                               borderRadius(4) {
     this->setAttribute(Qt::WA_TranslucentBackground, true);
@@ -112,13 +112,13 @@ DWindowFrame::~DWindowFrame() {
 void DWindowFrame::polish() {
 #ifndef BUILD_WITH_WEBENGINE
     // draw window shadow
-    if (!this->shadowEffect) {
-        this->shadowEffect = new QGraphicsDropShadowEffect(this);
-        this->shadowEffect->setBlurRadius(this->shadowRadius);
-        this->shadowEffect->setColor(this->borderColor);
-        this->shadowEffect->setOffset(this->shadowOffsetX, this->shadowOffsetY);
-//        this->setGraphicsEffect(this->shadowEffect);
-    }
+//    if (!this->shadowEffect) {
+//        this->shadowEffect = new QGraphicsDropShadowEffect(this);
+//        this->shadowEffect->setBlurRadius(this->shadowRadius);
+//        this->shadowEffect->setColor(this->borderColor);
+//        this->shadowEffect->setOffset(this->shadowOffsetX, this->shadowOffsetY);
+////        this->setGraphicsEffect(this->shadowEffect);
+//    }
 #endif
 
     const auto layout = this->layout();
@@ -539,7 +539,52 @@ void DWindowFrame::addContenWidget(QWidget *main)
     this->layout()->addWidget(main);
 }
 
+QT_BEGIN_NAMESPACE
+//extern Q_WIDGETS_EXPORT void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int transposed = 0);
+extern Q_WIDGETS_EXPORT void qt_blurImage(QPainter *p, QImage &blurImage, qreal radius, bool quality, bool alphaOnly, int transposed = 0);
+QT_END_NAMESPACE
+
+QImage dropShadow(const QPixmap &px, qreal radius, const QColor &color = Qt::black, QSize size = QSize())
+{
+    if (px.isNull())
+        return QImage();
+
+    if (!size.isValid())
+        size = px.size();
+
+    QImage tmp(size, QImage::Format_ARGB32_Premultiplied);
+    tmp.fill(0);
+    QPainter tmpPainter(&tmp);
+    tmpPainter.setCompositionMode(QPainter::CompositionMode_Source);
+    tmpPainter.drawPixmap(QPoint(radius, radius), px.scaled(QSize(size.width() - 2 * radius, size.height() - 2 * radius)));
+    tmpPainter.end();
+
+    // blur the alpha channel
+    QImage blurred(tmp.size(), QImage::Format_ARGB32_Premultiplied);
+    blurred.fill(0);
+    QPainter blurPainter(&blurred);
+    qt_blurImage(&blurPainter, tmp, radius, false, true);
+    blurPainter.end();
+
+    if (color == QColor(Qt::black))
+        return blurred;
+
+    tmp = blurred;
+
+    // blacken the image...
+    tmpPainter.begin(&tmp);
+    tmpPainter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+    tmpPainter.fillRect(tmp.rect(), color);
+    tmpPainter.end();
+
+    return tmp;
+}
+
 void DWindowFrame::paintEvent(QPaintEvent* event) {
+    QPainter painter(this);
+
+    painter.drawPixmap(0, 0, shadowPixmap);
+
     QWidget::paintEvent(event);
     this->paintOutline();
 }
@@ -567,6 +612,12 @@ void DWindowFrame::paintOutline() {
 void DWindowFrame::resizeEvent(QResizeEvent *event) {
     QWidget::resizeEvent(event);
     this->polish();
+
+    QPixmap pixmap(event->size());
+
+    pixmap.fill(borderColor);
+
+    shadowPixmap = QPixmap::fromImage(dropShadow(pixmap, shadowRadius));
 }
 
 FilterMouseMove::FilterMouseMove(QObject *object) : QObject(object) {
