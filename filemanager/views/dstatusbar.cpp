@@ -14,7 +14,9 @@ DStatusBar::DStatusBar(QWidget *parent)
 
 void DStatusBar::initUI()
 {
+    m_OnlyOneItemCounted = tr("%1 item");
     m_counted = tr("%1 items");
+    m_OnlyOneItemSelected = tr("%1 item selected");
     m_selected = tr("%1 items selected");
     m_layout = new QHBoxLayout(this);
 
@@ -64,7 +66,7 @@ void DStatusBar::itemSelected(const FMEvent &event, int number)
     }
     else
     {
-        m_label->setText(m_selected.arg(QString::number(number)));
+        m_label->setText(m_OnlyOneItemSelected.arg(QString::number(number)));
     }
 }
 
@@ -79,7 +81,7 @@ void DStatusBar::itemCounted(const FMEvent &event, int number)
     }
     else
     {
-        m_label->setText(m_counted.arg(QString::number(number)));
+        m_label->setText(m_OnlyOneItemCounted.arg(QString::number(number)));
     }
 }
 

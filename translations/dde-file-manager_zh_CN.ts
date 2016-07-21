@@ -202,21 +202,27 @@
 <context>
     <name>DStatusBar</name>
     <message>
+        <location filename="../filemanager/views/dstatusbar.cpp" line="19"/>
         <source>%1 item selected</source>
-        <translation type="vanished">选中 %1 项内容</translation>
+        <translation>选中 %1 项内容</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/dstatusbar.cpp" line="17"/>
+        <location filename="../filemanager/views/dstatusbar.cpp" line="18"/>
         <source>%1 items</source>
         <translation>%1 项</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/dstatusbar.cpp" line="18"/>
+        <location filename="../filemanager/views/dstatusbar.cpp" line="17"/>
+        <source>%1 item</source>
+        <translation>%1 项</translation>
+    </message>
+    <message>
+        <location filename="../filemanager/views/dstatusbar.cpp" line="20"/>
         <source>%1 items selected</source>
         <translation>选中 %1 项内容</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/dstatusbar.cpp" line="99"/>
+        <location filename="../filemanager/views/dstatusbar.cpp" line="101"/>
         <source>Loading...</source>
         <translation>正在加载中...</translation>
     </message>
@@ -262,7 +268,7 @@
     </message>
     <message>
         <location filename="../filemanager/dialogs/dialogmanager.cpp" line="195"/>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="351"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="353"/>
         <source>Confirm</source>
         <translation>确定</translation>
     </message>
@@ -282,8 +288,8 @@
         <location filename="../filemanager/dialogs/dialogmanager.cpp" line="177"/>
         <location filename="../filemanager/dialogs/dialogmanager.cpp" line="212"/>
         <location filename="../filemanager/dialogs/dialogmanager.cpp" line="252"/>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="332"/>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="351"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="334"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="353"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
@@ -333,22 +339,22 @@
         <translation>您确定要彻底删除选中的%1项内容？</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="330"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="332"/>
         <source>Disk file is being used, can not unmount now</source>
         <translation>磁盘文件被占用，无法卸载</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="332"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="334"/>
         <source>Force unmount</source>
         <translation>强制卸载</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="348"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="350"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
         <translation>此快捷方式所指向的“%1”已被更改或移动</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="349"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="351"/>
         <source>Do you want to delete this shortcut？</source>
         <translation>是否删除此快捷方式?</translation>
     </message>
@@ -394,17 +400,17 @@
         <translation type="vanished">确定</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="369"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="371"/>
         <source>File Manager</source>
         <translation>文件管理器</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="370"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="372"/>
         <source>Version:1.0</source>
         <translation>版本：1.0</translation>
     </message>
     <message>
-        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="371"/>
+        <location filename="../filemanager/dialogs/dialogmanager.cpp" line="373"/>
         <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions. </source>
         <translation>文件管理器是深度科技自主研发的一款管理文件的工具， 它包括搜索、复制、回收站、压缩/解压缩， 文件属性等管理文件的功能。</translation>
     </message>
