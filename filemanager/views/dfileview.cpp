@@ -79,6 +79,7 @@ void DFileView::initUI()
     setEditTriggers(QListView::EditKeyPressed | QListView::SelectedClicked);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBar(new DScrollBar);
+
     DListView::setSelectionRectVisible(false);
 
     m_selectionRectWidget = new QWidget(this);
@@ -340,6 +341,11 @@ bool DFileView::isSelected(const QModelIndex &index) const
     return static_cast<DFileSelectionModel*>(selectionModel())->isSelected(index);
 }
 
+int DFileView::selectedIndexCount() const
+{
+    return static_cast<const DFileSelectionModel*>(selectionModel())->selectedCount();
+}
+
 QModelIndexList DFileView::selectedIndexes() const
 {
     return static_cast<DFileSelectionModel*>(selectionModel())->selectedIndexes();
@@ -448,6 +454,54 @@ QRect DFileView::visualRect(const QModelIndex &index) const
     rect.moveTop(rect.top() - verticalOffset());
 
     return rect;
+}
+
+DFileView::RandeIndexList DFileView::visibleIndexes(QRect rect) const
+{
+    RandeIndexList list;
+
+    QSize item_size = itemSizeHint();
+    QSize icon_size = iconSize();
+
+    int count = this->count();
+    int spacing  = this->spacing();
+    int item_width = item_size.width() + spacing *  2;
+    int item_height = item_size.height() + spacing * 2;
+
+    if (item_size.width() == -1) {
+        list << RandeIndex(qMax((rect.top() + spacing) / item_height, 0),
+                           qMin((rect.bottom() - spacing) / item_height, count - 1));
+    } else {
+        rect += QMargins(-spacing, -spacing, -spacing, -spacing);
+
+        int column_count = (width() - spacing * 2.5) / item_width;
+        int begin_row_index = rect.top() / item_height;
+        int end_row_index = rect.bottom() / item_height;
+        int begin_column_index = rect.left() / item_width;
+        int end_column_index = rect.right() / item_width;
+
+        if (rect.top() % item_height > icon_size.height())
+            ++begin_row_index;
+
+        int icon_margin = (item_width - icon_size.width()) / 2;
+
+        if (rect.left() % item_width > item_width - icon_margin)
+            ++begin_column_index;
+
+        if (rect.right() % item_width < icon_margin)
+            --end_column_index;
+
+        int begin_index = begin_row_index * column_count;
+
+        for (int i = begin_row_index; i <= end_row_index; ++i) {
+            list << RandeIndex(qMax(begin_index + begin_column_index, 0),
+                               qMin(begin_index + end_column_index, count - 1));
+
+            begin_index += column_count;
+        }
+    }
+
+    return list;
 }
 
 bool DFileView::isCutIndex(const QModelIndex &index) const
@@ -881,11 +935,13 @@ void DFileView::mousePressEvent(QMouseEvent *event)
                 clearSelection();
             }
 
-            if (canShowSElectionRect())
+            if (canShowSelectionRect())
                 m_selectionRectWidget->show();
 
-            m_pressedPos = viewport()->mapToParent(static_cast<QMouseEvent*>(event)->pos());
-            lastSelectedRect = QRect();
+            m_selectedGeometry.setTop(event->pos().y() + verticalOffset());
+            m_selectedGeometry.setLeft(event->pos().x() + horizontalOffset());
+
+            connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &DFileView::updateSelectionRect);
         } else if (Global::keyCtrlIsPressed()) {
             const QModelIndex &index = indexAt(event->pos());
 
@@ -911,35 +967,27 @@ void DFileView::mousePressEvent(QMouseEvent *event)
 
 void DFileView::mouseMoveEvent(QMouseEvent *event)
 {
-    if (m_selectionRectWidget->isHidden())
+    if (dragEnabled())
         return DListView::mouseMoveEvent(event);
 
-    const QPoint &pos = viewport()->mapToParent(static_cast<QMouseEvent*>(event)->pos());
-    QRect rect;
-
-    rect.adjust(qMin(m_pressedPos.x(), pos.x()), qMin(m_pressedPos.y(), pos.y()),
-                qMax(pos.x(), m_pressedPos.x()), qMax(pos.y(), m_pressedPos.y()));
-
-    m_selectionRectWidget->setGeometry(rect);
-
-    rect.moveTopLeft(viewport()->mapFromParent(rect.topLeft()));
-    setSelection(rect, QItemSelectionModel::Current|QItemSelectionModel::Rows|QItemSelectionModel::ClearAndSelect);
+    updateSelectionRect();
+    doAutoScroll();
 }
 
 void DFileView::mouseReleaseEvent(QMouseEvent *event)
 {
-    Q_UNUSED(event)
-
-    if (m_selectionRectWidget->isHidden())
-        DListView::mouseReleaseEvent(event);
-
-    m_selectionRectWidget->resize(0, 0);
-    m_selectionRectWidget->hide();
+    disconnect(verticalScrollBar(), &QScrollBar::valueChanged, this, &DFileView::updateSelectionRect);
 
     if (m_mouseLastPressedIndex.isValid() && Global::keyCtrlIsPressed()) {
         if (m_mouseLastPressedIndex == indexAt(event->pos()))
             selectionModel()->select(m_mouseLastPressedIndex, QItemSelectionModel::Deselect);
     }
+
+    if (dragEnabled())
+        return DListView::mouseReleaseEvent(event);
+
+    m_selectionRectWidget->resize(0, 0);
+    m_selectionRectWidget->hide();
 }
 
 void DFileView::handleCommitData(QWidget *editor)
@@ -1142,132 +1190,16 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
         tmp_rect.adjust(qMin(rect.left(), rect.right()), qMin(rect.top(), rect.bottom()),
                         qMax(rect.left(), rect.right()), qMax(rect.top(), rect.bottom()));
 
-        int offset_horizontal = m_currentViewMode == ListMode ? width() : iconSize().width();
-        int offset_verizontal = iconSize().height();
+        const RandeIndexList &list = visibleIndexes(tmp_rect);
 
-        QModelIndex index1;
-        QModelIndex index2;
-
-        if (tmp_rect.topLeft() == lastSelectedRect.topLeft()) {
-            index1 == lastSelectedTopLeftIndex;
-
-            if (index1.isValid()) {
-                goto find_index2;
-            }
-        }
-
-        if (m_currentViewMode == ListMode) {
-            for (int j = tmp_rect.top(); tmp_rect.bottom() - j > 0; j += offset_verizontal) {
-                index1 = indexAt(QPoint(tmp_rect.left(), j));
-
-                if (index1.isValid())
-                    break;
-            }
-
-            if (!index1.isValid()) {
-                index1 = indexAt(QPoint(tmp_rect.left(), tmp_rect.bottom()));
-
-                if (!index1.isValid()) {
-                    clearSelection();
-
-                    return;
-                }
-            }
-
-            for (int j = tmp_rect.bottom(); j - tmp_rect.top() > 0; j -= offset_verizontal) {
-                index2 = indexAt(QPoint(tmp_rect.left(), j));
-
-                if (index2.isValid())
-                    goto selection;
-            }
-
-            index2 = indexAt(QPoint(tmp_rect.left(), tmp_rect.top()));
-
-            if (index2.isValid())
-                goto selection;
-
+        if (list.isEmpty()) {
             clearSelection();
 
             return;
         }
 
-        for (int j = tmp_rect.top(); tmp_rect.bottom() - j > 0; j += offset_verizontal) {
-            for (int i = tmp_rect.left(); tmp_rect.right() - i > 0; i += offset_horizontal) {
-                index1 = indexAt(QPoint(i, j));
-
-                if (index1.isValid())
-                    goto find_index2;
-            }
-
-            index1 = indexAt(QPoint(tmp_rect.right(), j));
-
-            if (index1.isValid())
-                goto find_index2;
-        }
-
-        for (int i = tmp_rect.left(); tmp_rect.right() - i > 0; i += offset_horizontal) {
-            index1 = indexAt(QPoint(i, tmp_rect.bottom()));
-
-            if (index1.isValid())
-                goto find_index2;
-        }
-
-        index1 = indexAt(QPoint(tmp_rect.right(), tmp_rect.bottom()));
-
-        if (index1.isValid())
-            goto find_index2;
-
-        clearSelection();
-
-        return;
-
-find_index2:
-        if (tmp_rect.bottomRight() == lastSelectedRect.bottomRight()) {
-            index2 = lastSelectedBottomRightIndex;
-
-            if (index2.isValid()) {
-                goto selection;
-            }
-        }
-
-        for (int j = tmp_rect.bottom(); j - tmp_rect.top() > 0; j -= offset_verizontal) {
-            for (int i = tmp_rect.right(); i - tmp_rect.left() > 0; i -= offset_horizontal) {
-                index2 = indexAt(QPoint(i, j));
-
-                if (index2.isValid())
-                    goto selection;
-            }
-
-            index2 = indexAt(QPoint(tmp_rect.left(), j));
-
-            if (index2.isValid())
-                goto selection;
-        }
-
-        for (int i = tmp_rect.right(); i - tmp_rect.left() > 0; i -= offset_horizontal) {
-            index2 = indexAt(QPoint(i, tmp_rect.top()));
-
-            if (index2.isValid())
-                goto selection;
-        }
-
-        index2 = indexAt(QPoint(tmp_rect.left(), tmp_rect.top()));
-
-        if (index2.isValid())
-            goto selection;
-
-        clearSelection();
-
-        return;
-
-selection:
-        selectionModel()->select(QItemSelection(index1, index2), flags);
-
-        lastSelectedRect = tmp_rect;
-        lastSelectedTopLeftIndex = index1;
-        lastSelectedBottomRightIndex = index2;
-
-        return;
+        return selectionModel()->select(QItemSelection(rootIndex().child(list.first().first, 0),
+                                                       rootIndex().child(list.last().second, 0)), flags);
     }
 
     DListView::setSelection(rect, flags);
@@ -1581,7 +1513,7 @@ bool DFileView::isSelectionRectVisible() const
     return m_selectionRectVisible;
 }
 
-bool DFileView::canShowSElectionRect() const
+bool DFileView::canShowSelectionRect() const
 {
     return m_selectionRectVisible && selectionMode() != NoSelection && selectionMode() != SingleSelection;
 }
@@ -2040,4 +1972,32 @@ void DFileView::updateContentLabel()
     } else {
         setContentLabel(QString());
     }
+}
+
+void DFileView::updateSelectionRect()
+{
+    if (dragEnabled())
+        return;
+
+    QPoint pos = mapFromGlobal(QCursor::pos());
+
+    if (m_selectionRectWidget->isVisible()) {
+        QRect rect;
+        QPoint pressedPos = viewport()->mapToParent(m_selectedGeometry.topLeft());
+
+        pressedPos.setX(pressedPos.x() - horizontalOffset());
+        pressedPos.setY(pressedPos.y() - verticalOffset());
+
+        rect.adjust(qMin(pressedPos.x(), pos.x()), qMin(pressedPos.y(), pos.y()),
+                    qMax(pos.x(), pressedPos.x()), qMax(pos.y(), pressedPos.y()));
+
+        m_selectionRectWidget->setGeometry(rect);
+    }
+
+    pos = viewport()->mapFromParent(pos);
+
+    m_selectedGeometry.setBottom(pos.y() + verticalOffset());
+    m_selectedGeometry.setRight(pos.x() + horizontalOffset());
+
+    setSelection(m_selectedGeometry, QItemSelectionModel::Current|QItemSelectionModel::Rows|QItemSelectionModel::ClearAndSelect);
 }
