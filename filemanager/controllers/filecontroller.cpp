@@ -254,12 +254,18 @@ bool FileController::pasteFile(PasteType type, const DUrlList &urlList,
         return false;
 
     if(type == CutType) {
-        FileJob job("move");
 
-        dialogManager->addJob(&job);
+        DUrl parentUrl = DUrl::parentUrl(urlList.first());
+        if (parentUrl == event.fileUrl()){
 
-        job.doMove(DUrl::toQUrlList(urlList), event.fileUrl().toString());
-        dialogManager->removeJob(job.getJobId());
+        }else{
+            FileJob job("move");
+
+            dialogManager->addJob(&job);
+
+            job.doMove(DUrl::toQUrlList(urlList), event.fileUrl().toString());
+            dialogManager->removeJob(job.getJobId());
+        }
 
         qApp->clipboard()->clear();
     } else {
