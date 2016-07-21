@@ -522,14 +522,24 @@ void DCrumbWidget::crumbModified()
 void DCrumbWidget::crumbMoveToLeft()
 {
     m_listWidget->horizontalScrollBar()->triggerAction(QAbstractSlider::SliderPageStepSub);
-    m_listWidget->scrollToItem(m_listWidget->itemAt(0,0));
+    m_listWidget->scrollToItem(m_listWidget->itemAt(0,0), QAbstractItemView::PositionAtTop);
     checkArrows();
 }
 
 void DCrumbWidget::crumbMoveToRight()
 {
     m_listWidget->horizontalScrollBar()->triggerAction(QAbstractSlider::SliderPageStepAdd);
-    m_listWidget->scrollToItem(m_listWidget->itemAt(m_listWidget->width() - 10,10));
+    QListWidgetItem* item = m_listWidget->itemAt(m_listWidget->width() - 10,10);
+    if (m_listWidget->itemWidget(item)->width() > m_listWidget->width()){
+        int row = m_listWidget->row(item);
+        if (row == (m_listWidget->count() - 1)){
+            m_listWidget->scrollToBottom();
+        }else{
+            m_listWidget->scrollToItem(m_listWidget->item(row + 1), QAbstractItemView::PositionAtBottom);
+        }
+    }else{
+        m_listWidget->scrollToItem(item, QAbstractItemView::PositionAtBottom);
+    }
     checkArrows();
 }
 
