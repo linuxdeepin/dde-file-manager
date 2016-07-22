@@ -491,6 +491,9 @@ DFileView::RandeIndexList DFileView::visibleIndexes(QRect rect) const
         if (rect.right() % item_width < icon_margin)
             --end_column_index;
 
+        end_row_index = qMin(end_row_index, count / column_count);
+        end_column_index = qMin(end_column_index, column_count - 1);
+
         int begin_index = begin_row_index * column_count;
 
         for (int i = begin_row_index; i <= end_row_index; ++i) {
