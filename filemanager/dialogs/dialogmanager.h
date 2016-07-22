@@ -53,6 +53,8 @@ public slots:
     void updateCloseIndicator();
     void raiseAllPropertyDialog();
     void handleFocusChanged(QWidget* old, QWidget* now);
+
+    void refreshPropertyDialogs(const DUrl& oldUrl, const DUrl& newUrl);
 private:
     DTaskDialog* m_taskDialog = NULL;
     CloseAllDialogIndicator* m_closeIndicatorDialog;

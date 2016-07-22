@@ -6,6 +6,8 @@
 #include <QLabel>
 #include <QCloseEvent>
 #include <QTextEdit>
+#include <QStackedWidget>
+#include <QPushButton>
 
 QT_BEGIN_NAMESPACE
 class QFrame;
@@ -33,8 +35,15 @@ class NameTextEdit: public QTextEdit
 public:
     explicit NameTextEdit(const QString &text="", QWidget *parent=0);
 
+signals:
+    void editFinished();
+
 public slots:
     void setPlainText(const QString & text);
+
+protected:
+    void focusOutEvent(QFocusEvent *event);
+    void keyPressEvent(QKeyEvent* event);
 };
 
 
@@ -107,6 +116,9 @@ public:
 public slots:
     void raise();
     void updateFolderSize(qint64 size);
+    void renameFile();
+    void showTextShowFrame();
+
 
 signals:
     void requestStartComputerFolderSize();
@@ -117,14 +129,20 @@ signals:
 protected:
     void closeEvent(QCloseEvent* event);
     void timerEvent(QTimerEvent* event);
+    void resizeEvent(QResizeEvent* event);
 
 private:
     DUrl m_url;
     QString m_absolutePath;
     qint64 m_size = 0;
+    bool m_editDisbaled = false;
     int m_fileCount = 0;
     QLabel *m_icon = NULL;
     NameTextEdit *m_edit = NULL;
+    QStackedWidget *m_editStackWidget = NULL;
+    QFrame* m_textShowFrame = NULL;
+    QLabel* m_textShowLastLabel = NULL;
+    QPushButton* m_editButton = NULL;
     QCheckBox * m_executableCheckBox = NULL;
     SectionValueLabel* m_folderSizeLabel = NULL;
     QFrame *m_basicInfoFrame = NULL;
@@ -136,7 +154,7 @@ private:
 
     DExpandGroup *addExpandWidget(const QStringList &titleList);
 
-
+    void initTextShowFrame(const QString& text);
     QFrame *createBasicInfoWidget(const AbstractFileInfoPointer &info);
     QFrame *createLocalDeviceInfoWidget(const DUrl& url);
     QFrame *createDeviceInfoWidget(UDiskDeviceInfo* info);

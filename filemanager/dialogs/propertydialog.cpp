@@ -9,6 +9,7 @@
 #include "../shutil/fileutils.h"
 #include "utils/utils.h"
 
+
 #include <dscrollbar.h>
 #include <dexpandgroup.h>
 #include <dseparatorhorizontal.h>
@@ -27,21 +28,92 @@
 #include <QListWidget>
 #include <QButtonGroup>
 #include <QPushButton>
+#include <QStackedWidget>
 #include <QStorageInfo>
+#include "../views/deditorwidgetmenu.h"
+
 
 
 NameTextEdit::NameTextEdit(const QString &text, QWidget *parent):
     QTextEdit(text, parent)
 {
     setObjectName("NameTextEdit");
+    setWordWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setFrameShape(QFrame::NoFrame);
+    setFixedSize(200, 60);
+    Q_UNUSED(new DEditorWidgetMenu(this))
+
+    connect(this, &QTextEdit::textChanged, this, [this] {
+        QSignalBlocker blocker(this);
+        Q_UNUSED(blocker)
+
+        QString text = this->toPlainText();
+        const QString old_text = text;
+
+        int text_length = text.length();
+
+        text.remove('/');
+        text.remove(QChar(0));
+
+        QVector<uint> list = text.toUcs4();
+        int cursor_pos = this->textCursor().position() - text_length + text.length();
+
+        while (text.toUtf8().size() > MAX_FILE_NAME_CHAR_COUNT) {
+            list.removeAt(--cursor_pos);
+
+            text = QString::fromUcs4(list.data(), list.size());
+        }
+
+        if (text.count() != old_text.count()) {
+            this->setText(text);
+        }
+
+        QTextCursor cursor = this->textCursor();
+
+        cursor.movePosition(QTextCursor::Start);
+
+        do {
+            QTextBlockFormat format = cursor.blockFormat();
+
+            format.setLineHeight(TEXT_LINE_HEIGHT, QTextBlockFormat::FixedHeight);
+            cursor.setBlockFormat(format);
+        } while (cursor.movePosition(QTextCursor::NextBlock));
+
+        cursor.setPosition(cursor_pos);
+
+        this->setTextCursor(cursor);
+        this->setAlignment(Qt::AlignHCenter);
+
+        if (this->isReadOnly())
+            this->setFixedHeight(this->document()->size().height());
+    });
+
+
 }
 
 void NameTextEdit::setPlainText(const QString &text)
 {
-    QFontMetrics font = this->fontMetrics();
-    QString t = font.elidedText(text, Qt::ElideMiddle, width());
-    QTextEdit::setPlainText(t);
+    QTextEdit::setPlainText(text);
+    setAlignment(Qt::AlignCenter);
 }
+
+void NameTextEdit::focusOutEvent(QFocusEvent *event)
+{
+    emit editFinished();
+    QTextEdit::focusOutEvent(event);
+}
+
+void NameTextEdit::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter){
+        emit editFinished();
+    }
+    QTextEdit::keyPressEvent(event);
+}
+
+
 
 
 GroupTitleLabel::GroupTitleLabel(const QString &text, QWidget *parent, Qt::WindowFlags f):
@@ -156,8 +228,7 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
         QString name = diskInfo->getName();
         m_icon->setPixmap(diskInfo->fileIcon().pixmap(128, 128));
         m_edit->setPlainText(name);
-        m_edit->setAlignment(Qt::AlignHCenter);
-
+        m_editDisbaled = true;
         m_deviceInfoFrame = createDeviceInfoWidget(diskInfo);
 
         QStringList titleList;
@@ -170,7 +241,8 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
     }else if (url == DUrl::fromLocalFile("/")){
         m_icon->setPixmap(svgToPixmap(":/devices/images/device/drive-harddisk-deepin.svg", 128, 128));
         m_edit->setPlainText(tr("Disk"));
-        m_edit->setAlignment(Qt::AlignHCenter);
+        m_editDisbaled = true;
+
         m_localDeviceInfoFrame = createLocalDeviceInfoWidget(url);
         QStringList titleList;
         titleList << basicInfo;
@@ -207,6 +279,10 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
             m_fileCount = fileInfo->size();
         }
     }
+    initTextShowFrame(m_edit->toPlainText());
+    if (m_editDisbaled){
+        m_editButton->hide();
+    }
 }
 
 void PropertyDialog::initUI()
@@ -215,21 +291,30 @@ void PropertyDialog::initUI()
     setFixedSize(QSize(320, 480));
     m_icon->setFixedHeight(150);
 
-    m_edit->setContextMenuPolicy(Qt::NoContextMenu);
-    m_edit->setReadOnly(true);
-    m_edit->setWordWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
-    m_edit->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    m_edit->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    m_edit->setFrameShape(QFrame::NoFrame);
-    m_edit->setMaximumHeight(60);
+
+    QFrame* m_editFrame = new QFrame;
+
+    QHBoxLayout* editLayout = new QHBoxLayout;
+    editLayout->addStretch();
+    editLayout->addWidget(m_edit);
+    editLayout->addStretch();
+    editLayout->setSpacing(0);
+    editLayout->setContentsMargins(0, 0, 0, 0);
+    m_editFrame->setLayout(editLayout);
+
+    m_editStackWidget = new QStackedWidget(this);
+    m_editStackWidget->setFixedHeight(60);
+    m_editStackWidget->addWidget(m_editFrame);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
 
     layout->setMargin(5);
     layout->setSpacing(0);
     layout->addWidget(m_icon, 0, Qt::AlignHCenter);
-    layout->addWidget(m_edit, 0, Qt::AlignHCenter);
+    layout->addWidget(m_editStackWidget, 0, Qt::AlignHCenter);
     setLayout(layout);
+
+    connect(m_edit, &NameTextEdit::editFinished, this, &PropertyDialog::showTextShowFrame);
 }
 
 
@@ -237,6 +322,53 @@ void PropertyDialog::updateFolderSize(qint64 size)
 {
     m_size = size;
     m_folderSizeLabel->setText(FileUtils::formatSize(size));
+}
+
+void PropertyDialog::renameFile()
+{
+    const AbstractFileInfoPointer &fileInfo = FileServices::instance()->createFileInfo(m_url);
+    m_edit->setPlainText(fileInfo->displayName());
+    m_editStackWidget->setCurrentIndex(0);
+
+    const AbstractFileInfoPointer pfile = fileService->createFileInfo(m_url);
+    int endPos = -1;
+    if(pfile->isFile()){
+        endPos = m_edit->toPlainText().length() - pfile->suffix().length() - 1;
+    }
+    if(endPos == -1) {
+        m_edit->selectAll();
+        endPos = m_edit->toPlainText().length();
+    }
+    QTextCursor cursor = m_edit->textCursor();
+    cursor.setPosition(0);
+    cursor.setPosition(endPos, QTextCursor::KeepAnchor);
+    m_edit->setTextCursor(cursor);
+
+}
+
+void PropertyDialog::showTextShowFrame()
+{
+    DUrl oldUrl = m_url;
+    DUrl newUrl = DUrl(QString("%1/%2").arg(DUrl::parentUrl(m_url).toString(), m_edit->toPlainText()));
+
+    QFile file(oldUrl.toLocalFile());
+    const QString &newFilePath = newUrl.toLocalFile();
+    bool result = file.rename(newFilePath);
+    if (!result) {
+        result = QProcess::execute("mv \"" + file.fileName().toUtf8() + "\" \"" + newFilePath.toUtf8() + "\"") == 0;
+    }
+
+    qDebug() << result;
+
+    if (result){
+        m_url = newUrl;
+        m_absolutePath = m_url.toLocalFile();
+        const AbstractFileInfoPointer &fileInfo = FileServices::instance()->createFileInfo(m_url);
+        initTextShowFrame(fileInfo->displayName());
+        dialogManager->refreshPropertyDialogs(oldUrl, newUrl);
+    }else{
+        m_editStackWidget->setCurrentIndex(1);
+    }
 }
 
 void PropertyDialog::startComputerFolderSize(const QString &dir)
@@ -303,6 +435,11 @@ void PropertyDialog::timerEvent(QTimerEvent *event)
     }
 }
 
+void PropertyDialog::resizeEvent(QResizeEvent *event)
+{
+    BaseDialog::resizeEvent(event);
+}
+
 
 DExpandGroup *PropertyDialog::addExpandWidget(const QStringList &titleList)
 {
@@ -321,6 +458,66 @@ DExpandGroup *PropertyDialog::addExpandWidget(const QStringList &titleList)
     }
     layout->addStretch();
     return group;
+}
+
+void PropertyDialog::initTextShowFrame(const QString &text)
+{
+    m_textShowFrame = new QFrame(this);
+    m_textShowFrame->setFixedHeight(60);
+
+    m_editButton = new QPushButton(m_textShowFrame);
+    m_editButton->setObjectName("EditButton");
+    m_editButton->setFixedSize(16, 16);
+    connect(m_editButton, &QPushButton::clicked, this, &PropertyDialog::renameFile);
+
+    QFontMetrics font = m_edit->fontMetrics();
+    QString t = Global::elideText(text, m_edit->size(), font, QTextOption::WrapAtWordBoundaryOrAnywhere, Qt::ElideMiddle, 0);
+    QStringList labelTexts = t.split("\n");
+
+
+    qDebug() << text << labelTexts;
+    QVBoxLayout* textShowLayout = new QVBoxLayout;
+
+    textShowLayout->addStretch();
+    for(int i=0; i< labelTexts.length(); i++){
+        QString labelText = labelTexts.at(i);
+        QLabel* label = new QLabel(labelText, m_textShowFrame);
+        label->setFixedHeight(20);
+        label->setAlignment(Qt::AlignCenter);
+        QHBoxLayout* hLayout = new QHBoxLayout;
+        hLayout->addStretch();
+
+        if (i < (labelTexts.length() - 1)){
+            if (label->fontMetrics().width(labelText) > (m_edit->width() - 10) ){
+                label->setFixedWidth(m_edit->width());
+            }
+            hLayout->addWidget(label);
+        }else{
+            hLayout->addWidget(label);
+            if (label->fontMetrics().width(labelText) > (m_edit->width() - 2*m_editButton->width()) && labelTexts.length() >=3){
+                labelText = label->fontMetrics().elidedText(labelText, Qt::ElideMiddle, m_edit->width() - 2*m_editButton->width());
+            }
+            label->setText(labelText);
+            hLayout->addSpacing(2);
+            hLayout->addWidget(m_editButton);
+        }
+        hLayout->addStretch();
+
+        textShowLayout->addLayout(hLayout, Qt::AlignCenter);
+        m_textShowLastLabel = label;
+
+    }
+    textShowLayout->addStretch();
+    textShowLayout->setSpacing(0);
+    textShowLayout->setContentsMargins(0, 0, 0, 0);
+    m_textShowFrame->setLayout(textShowLayout);
+
+    if (m_editStackWidget->count() == 1){
+        m_editStackWidget->addWidget(m_textShowFrame);
+    }else{
+        m_editStackWidget->insertWidget(1, m_textShowFrame);
+    }
+    m_editStackWidget->setCurrentIndex(1);
 }
 
 
