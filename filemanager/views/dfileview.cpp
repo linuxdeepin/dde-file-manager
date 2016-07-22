@@ -506,6 +506,11 @@ bool DFileView::isCutIndex(const QModelIndex &index) const
     return m_cutUrlSet.contains(fileInfo->redirectedFileUrl());
 }
 
+bool DFileView::isActiveIndex(const QModelIndex &index) const
+{
+    return dragMoveHoverIndex == index;
+}
+
 QList<QIcon> DFileView::fileAdditionalIcon(const QModelIndex &index) const
 {
     QList<QIcon> icons;
@@ -968,6 +973,8 @@ void DFileView::mouseMoveEvent(QMouseEvent *event)
 
 void DFileView::mouseReleaseEvent(QMouseEvent *event)
 {
+    dragMoveHoverIndex = QModelIndex();
+
     disconnect(verticalScrollBar(), &QScrollBar::valueChanged, this, &DFileView::updateSelectionRect);
 
     if (m_mouseLastPressedIndex.isValid() && Global::keyCtrlIsPressed()) {
@@ -1153,9 +1160,27 @@ void DFileView::dragEnterEvent(QDragEnterEvent *event)
 
 void DFileView::dragMoveEvent(QDragMoveEvent *event)
 {
+    dragMoveHoverIndex = indexAt(event->pos());
+
+    update();
+
     if (dragDropMode() == InternalMove
         && (event->source() != this || !(event->possibleActions() & Qt::MoveAction)))
         QAbstractItemView::dragMoveEvent(event);
+}
+
+void DFileView::dragLeaveEvent(QDragLeaveEvent *event)
+{
+    dragMoveHoverIndex = QModelIndex();
+
+    DListView::dragLeaveEvent(event);
+}
+
+void DFileView::dropEvent(QDropEvent *event)
+{
+    dragMoveHoverIndex = QModelIndex();
+
+    DListView::dropEvent(event);
 }
 
 void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags flags)

@@ -37,12 +37,10 @@ public:
     void setEditorData(QWidget * editor, const QModelIndex & index) const Q_DECL_OVERRIDE;
     void destroyEditor(QWidget *editor, const QModelIndex &index) const Q_DECL_OVERRIDE;
 
-    void paintIconItem(bool isDragMode, QPainter *painter,
-                       const QStyleOptionViewItem &option,
-                       const QModelIndex &index) const;
-    void paintListItem(bool isDragMode, QPainter *painter,
-                       const QStyleOptionViewItem &option,
-                       const QModelIndex &index) const;
+    void paintIconItem(QPainter *painter, const QStyleOptionViewItem &option,
+                       const QModelIndex &index, bool isDragMode, bool isActive) const;
+    void paintListItem(QPainter *painter, const QStyleOptionViewItem &option,
+                       const QModelIndex &index, bool isDragMode, bool isActive) const;
 
     QList<QRect> paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
