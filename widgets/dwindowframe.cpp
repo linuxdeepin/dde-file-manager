@@ -12,6 +12,9 @@
 #include <QDebug>
 #include <QVBoxLayout>
 #include <QPainter>
+#include <QGuiApplication>
+#include <QWindow>
+
 #include "dwindowframe.h"
 
 #include <X11/Xlib.h>
@@ -41,6 +44,12 @@
 #define XC_bottom_left_corner 12
 #define XC_left_side 70
 #define XC_top_left_corner 134
+
+/// shadow
+#define SHADOW_RADIUS_NORMAL 36
+#define SHADOW_RADIUS_ACTIVE 30
+#define SHADOW_COLOR_NORMAL QColor(0, 0, 0, 255 * 0.4)
+#define SHADOW_COLOR_ACTIVE QColor(0, 0, 0, 255 * 0.6)
 
 auto cornerEdge2WmGravity(const CornerEdge& ce) -> int {
     switch (ce) {
@@ -93,8 +102,8 @@ DWindowFrame::DWindowFrame(QWidget* parent)
     : QWidget(parent)
     , layoutMargin(25)
     , resizeHandleWidth(6)
-    , shadowRadius(20)
-    , borderRadius(4)
+    , shadowRadius(SHADOW_RADIUS_NORMAL)
+    , shadowColor(SHADOW_COLOR_NORMAL)
 {
     this->setAttribute(Qt::WA_TranslucentBackground, true);
     this->setWindowFlags(Qt::FramelessWindowHint);
@@ -105,6 +114,25 @@ DWindowFrame::DWindowFrame(QWidget* parent)
     this->horizontalLayout->setObjectName("horizontalLayout");
     this->setMargins(this->layoutMargin);
     this->setLayout(this->horizontalLayout);
+
+    connect(qApp, &QGuiApplication::focusWindowChanged, this, [this] {
+        if (isActiveWindow()) {
+            if (shadowRadius == SHADOW_RADIUS_ACTIVE)
+                return;
+
+            shadowRadius = SHADOW_RADIUS_ACTIVE;
+            shadowColor = SHADOW_COLOR_ACTIVE;
+        } else {
+            if (shadowRadius == SHADOW_RADIUS_NORMAL)
+                return;
+
+            shadowRadius = SHADOW_RADIUS_NORMAL;
+            shadowColor = SHADOW_COLOR_NORMAL;
+        }
+
+        drawShadowPixmap();
+        update();
+    });
 }
 
 DWindowFrame::~DWindowFrame() {
@@ -155,13 +183,13 @@ void DWindowFrame::polish() {
                     QRegion(0, 0, borderRadius * 2, borderRadius * 2, QRegion::RegionType::Ellipse)
             );
             const auto tr = QRegion(widget->width() - borderRadius, 0, borderRadius, borderRadius, QRegion::RegionType::Rectangle).subtracted(
-                    QRegion(widget->width() - 2 * borderRadius, 0, borderRadius * 2, borderRadius * 2, QRegion::RegionType::Ellipse)
+                    QRegion(widget->rect().right() - 2 * borderRadius, 0, borderRadius * 2, borderRadius * 2, QRegion::RegionType::Ellipse)
             );
             const auto bl = QRegion(0, widget->height() - borderRadius, borderRadius, borderRadius, QRegion::RegionType::Rectangle).subtracted(
-                    QRegion(0, widget->height() - 2 * borderRadius, borderRadius * 2, borderRadius * 2, QRegion::RegionType::Ellipse)
+                    QRegion(0, widget->rect().bottom() - 2 * borderRadius, borderRadius * 2, borderRadius * 2, QRegion::RegionType::Ellipse)
             );
             const auto br = QRegion(widget->width() - borderRadius, widget->height() - borderRadius, borderRadius, borderRadius, QRegion::RegionType::Rectangle).subtracted(
-                    QRegion(widget->width() - 2 * borderRadius, widget->height() - 2 * borderRadius, borderRadius * 2, borderRadius * 2, QRegion::RegionType::Ellipse)
+                    QRegion(widget->rect().right() - 2 * borderRadius, widget->rect().bottom() - 2 * borderRadius, borderRadius * 2, borderRadius * 2, QRegion::RegionType::Ellipse)
             );
 
             const auto result = region
@@ -585,7 +613,7 @@ QImage dropShadow(const QPixmap &px, qreal radius, const QColor &color = Qt::bla
 void DWindowFrame::paintEvent(QPaintEvent* event) {
     QPainter painter(this);
 
-    painter.drawPixmap(0, 0, shadowPixmap);
+    painter.drawPixmap(shadowOffsetX, shadowOffsetY, shadowPixmap);
 
     QWidget::paintEvent(event);
     this->paintOutline();
@@ -593,33 +621,62 @@ void DWindowFrame::paintEvent(QPaintEvent* event) {
 
 void DWindowFrame::paintOutline() {
     QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing, true);
+    QPen pen;
+    QColor color = borderColor;
 
-    const auto outlinePadding = this->layout()->contentsMargins().left();
-    auto rect = this->rect();
-    rect.setX(outlinePadding);
-    rect.setY(outlinePadding);
-    rect.setWidth(rect.width() - outlinePadding);
-    rect.setHeight(rect.height() - outlinePadding);
+    color.setAlphaF(color.alphaF() * 0.4);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    pen.setWidth(1);
+    pen.setColor(color);
+    painter.setPen(pen);
+
+    const qreal outlinePadding = this->layout()->contentsMargins().left();
+    QRectF rect = this->rect();
+    rect.setX(outlinePadding - 0.5);
+    rect.setY(outlinePadding - 0.5);
+    rect.setWidth(rect.width() - outlinePadding + 0.5);
+    rect.setHeight(rect.height() - outlinePadding + 0.5);
+
+    QRectF rr(rect.topLeft(), QSizeF(borderRadius * 2, borderRadius * 2));
+
+    rr.moveTop(rect.top());
+
+    painter.drawEllipse(rr);
+
+    rr.moveRight(rect.right());
+
+    painter.drawEllipse(rr);
+
+    rr.moveBottom(rect.bottom());
+
+    painter.drawEllipse(rr);
+
+    rr.moveLeft(rect.left());
+
+    painter.drawEllipse(rr);
 
     QPainterPath path;
-    path.addRoundedRect(rect, this->borderRadius, this->borderRadius);
-    QPen pen;
+
     pen.setColor(this->borderColor);
-    pen.setWidth(2);
     painter.setPen(pen);
+    path.addRoundedRect(rect, this->borderRadius, this->borderRadius);
     painter.drawPath(path);
+}
+
+void DWindowFrame::drawShadowPixmap()
+{
+    QPixmap pixmap(size());
+
+    pixmap.fill(shadowColor);
+
+    shadowPixmap = QPixmap::fromImage(dropShadow(pixmap, shadowRadius));
 }
 
 void DWindowFrame::resizeEvent(QResizeEvent *event) {
     QWidget::resizeEvent(event);
     this->polish();
 
-    QPixmap pixmap(event->size());
-
-    pixmap.fill(borderColor);
-
-    shadowPixmap = QPixmap::fromImage(dropShadow(pixmap, shadowRadius));
+    drawShadowPixmap();
 }
 
 FilterMouseMove::FilterMouseMove(QObject *object) : QObject(object) {

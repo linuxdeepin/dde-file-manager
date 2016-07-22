@@ -61,7 +61,7 @@ public slots:
 
 protected:
     int shadowOffsetX = 0;
-    int shadowOffsetY = 6;
+    int shadowOffsetY = 7;
 
     void changeEvent(QEvent* event) override;
     void paintEvent(QPaintEvent*) override;
@@ -75,9 +75,10 @@ private:
     void startResizing(const QPoint& globalPoint, const CornerEdge& ce);
 
     const int resizeHandleWidth = 0;
-    unsigned const int shadowRadius = 0;
-    const unsigned int borderRadius = 0;
-    const QColor borderColor = QColor(0, 0, 0, 255 / 5);
+    unsigned int shadowRadius;
+    const unsigned int borderRadius = 4;
+    QColor shadowColor;
+    const QColor borderColor = QColor(0, 0, 0, 255 * 0.15);
 
     int userMinimumWidth = 0;
     int userMinimumHeight = 0;
@@ -95,6 +96,7 @@ private:
 
     void setMargins(unsigned int width);
     void paintOutline();
+    void drawShadowPixmap();
 };
 
 class FilterMouseMove : public QObject {
