@@ -637,6 +637,11 @@ void DWindowFrame::paintOutline() {
     rect.setWidth(rect.width() - outlinePadding + 0.5);
     rect.setHeight(rect.height() - outlinePadding + 0.5);
 
+    QPainterPath path;
+
+    path.addRoundedRect(rect, this->borderRadius, this->borderRadius);
+    painter.fillPath(path, Qt::white);
+
     QRectF rr(rect.topLeft(), QSizeF(borderRadius * 2, borderRadius * 2));
 
     rr.moveTop(rect.top());
@@ -655,11 +660,8 @@ void DWindowFrame::paintOutline() {
 
     painter.drawEllipse(rr);
 
-    QPainterPath path;
-
     pen.setColor(this->borderColor);
     painter.setPen(pen);
-    path.addRoundedRect(rect, this->borderRadius, this->borderRadius);
     painter.drawPath(path);
 }
 
