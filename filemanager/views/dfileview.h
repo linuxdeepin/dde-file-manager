@@ -108,6 +108,7 @@ public:
     using DListView::viewportMargins;
 
     bool isCutIndex(const QModelIndex &index) const;
+    bool isActiveIndex(const QModelIndex &index) const;
 
     QList<QIcon> fileAdditionalIcon(const QModelIndex &index) const;
 
@@ -172,6 +173,8 @@ protected:
     void contextMenuEvent(QContextMenuEvent *event) Q_DECL_OVERRIDE;
     void dragEnterEvent(QDragEnterEvent *event) Q_DECL_OVERRIDE;
     void dragMoveEvent(QDragMoveEvent *event) Q_DECL_OVERRIDE;
+    void dragLeaveEvent(QDragLeaveEvent *event) Q_DECL_OVERRIDE;
+    void dropEvent(QDropEvent *event) Q_DECL_OVERRIDE;
     void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags flags) Q_DECL_OVERRIDE;
     QModelIndex moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers modifiers) Q_DECL_OVERRIDE;
     void rowsAboutToBeRemoved(const QModelIndex & parent, int start, int end) Q_DECL_OVERRIDE;
@@ -250,6 +253,9 @@ private:
     QIcon unreadableIcon;
 
     QModelIndex m_mouseLastPressedIndex;
+
+    /// drag drop
+    QModelIndex dragMoveHoverIndex;
 };
 
 #endif // DFILEVIEW_H
