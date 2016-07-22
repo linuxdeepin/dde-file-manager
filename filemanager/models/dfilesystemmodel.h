@@ -145,6 +145,8 @@ private:
 
     State m_state = Idle;
 
+    bool childrenUpdated = false;
+
     inline const FileSystemNodePointer getNodeByIndex(const QModelIndex &index) const;
     QModelIndex createIndex(const FileSystemNodePointer &node, int column) const;
     using QAbstractItemModel::createIndex;

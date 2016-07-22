@@ -41,7 +41,6 @@ signals:
     void stateChanged(State state);
     void addChildren(const AbstractFileInfoPointer &info);
     void childrenUpdated(const QList<AbstractFileInfoPointer> &list);
-    void finished();
 
 private:
     DDirIteratorPointer m_iterator;
