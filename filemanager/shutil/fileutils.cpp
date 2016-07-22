@@ -497,6 +497,8 @@ bool FileUtils::setBackground(const QString &pictureFilePath)
                                              "/com/deepin/wrap/gnome/desktop/background/");
     gsettings->set(WallpaperKey, pictureFilePath);
     gsettings->deleteLater();
+
+    return true;
 }
 
 

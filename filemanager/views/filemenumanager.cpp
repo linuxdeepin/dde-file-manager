@@ -71,6 +71,8 @@ DFileMenu *FileMenuManager::createNetworkMarkMenu()
 
 DFileMenu *FileMenuManager::createCustomBookMarkMenu(const DUrl &url, const QSet<MenuAction> &disableList)
 {
+    Q_UNUSED(disableList)
+
     QVector<MenuAction> actionKeys;
     QSet<MenuAction> disableActionKeys;
 

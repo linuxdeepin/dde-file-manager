@@ -10,6 +10,8 @@ SplitterHandle::SplitterHandle(Qt::Orientation orientation, QSplitter *parent):
 
 void SplitterHandle::enterEvent(QEvent *e)
 {
+    Q_UNUSED(e)
+
     setCursor(Qt::ArrowCursor);
 }
 
