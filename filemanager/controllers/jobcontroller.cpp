@@ -72,7 +72,7 @@ void JobController::stopAndDeleteLater()
     if (!isRunning())
         deleteLater();
     else
-        connect(this, &QThread::finished, this, &JobController::deleteLater);
+        connect(this, &JobController::finished, this, &JobController::deleteLater);
 
     stop();
 }
@@ -83,8 +83,6 @@ void JobController::run()
         emit childrenUpdated(FileServices::instance()->getChildren(m_fileUrl, m_filters));
 
         setState(Stoped);
-
-        emit finished();
 
         return;
     }
@@ -115,8 +113,7 @@ void JobController::run()
             if (timer->elapsed() > 500) {
                 update_children = false;
 
-                if (!fileInfoQueue.isEmpty())
-                    emit childrenUpdated(fileInfoQueue);
+                emit childrenUpdated(fileInfoQueue);
 
                 fileInfoQueue.clear();
 
@@ -131,13 +128,10 @@ void JobController::run()
     }
 
     if (update_children) {
-        if (!fileInfoQueue.isEmpty())
-            emit childrenUpdated(fileInfoQueue);
+        emit childrenUpdated(fileInfoQueue);
     }
 
     setState(Stoped);
-
-    emit finished();
 }
 
 void JobController::setState(JobController::State state)

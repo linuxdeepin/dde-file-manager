@@ -383,7 +383,7 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
     if (!jobController)
         return;
 
-    connect(jobController, &JobController::addChildren, this, &DFileSystemModel::addFile, Qt::QueuedConnection);
+    connect(jobController, &JobController::addChildren, this, &DFileSystemModel::addFile, Qt::DirectConnection);
     connect(jobController, &JobController::finished, this, &DFileSystemModel::onJobFinished, Qt::QueuedConnection);
     connect(jobController, &JobController::childrenUpdated, this, &DFileSystemModel::updateChildren, Qt::QueuedConnection);
 
@@ -393,6 +393,7 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
 
     setState(Busy);
 
+    childrenUpdated = false;
     jobController->start();
 }
 
@@ -721,11 +722,6 @@ void DFileSystemModel::updateChildren(QList<AbstractFileInfoPointer> list)
         return;
     };
 
-    bool isBusy = state() == Busy;
-
-    if (!isBusy)
-        setState(Busy);
-
     const FileSystemNodePointer &node = m_rootNode;
 
     if(!node) {
@@ -752,8 +748,11 @@ void DFileSystemModel::updateChildren(QList<AbstractFileInfoPointer> list)
 
     endInsertRows();
 
-    if (!isBusy)
+    if (!jobController || jobController->isFinished()) {
         setState(Idle);
+    } else {
+        childrenUpdated = true;
+    }
 }
 
 void DFileSystemModel::refresh(const DUrl &fileUrl)
@@ -981,7 +980,8 @@ void DFileSystemModel::setState(DFileSystemModel::State state)
 
 void DFileSystemModel::onJobFinished()
 {
-    setState(Idle);
+    if (childrenUpdated)
+        setState(Idle);
 }
 
 void DFileSystemModel::addFile(const AbstractFileInfoPointer &fileInfo)
