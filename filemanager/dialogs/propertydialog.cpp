@@ -140,7 +140,8 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
                            &~ Qt::WindowMaximizeButtonHint
                            &~ Qt::WindowMinimizeButtonHint
                            &~ Qt::WindowSystemMenuHint);
-
+    startTimer(1000);
+    m_absolutePath = url.toLocalFile();
     qDebug() << url;
 
     QString basicInfo = tr("Basic info");
@@ -151,6 +152,7 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
     }
     if (diskInfo){
         qDebug() << diskInfo->getDiskInfo();
+        m_absolutePath = diskInfo->getMountPoint();
         QString name = diskInfo->getName();
         m_icon->setPixmap(diskInfo->fileIcon().pixmap(128, 128));
         m_edit->setPlainText(name);
@@ -291,6 +293,14 @@ void PropertyDialog::closeEvent(QCloseEvent *event)
     emit aboutToClosed(m_url);
     BaseDialog::closeEvent(event);
     emit closed(m_url);
+}
+
+void PropertyDialog::timerEvent(QTimerEvent *event)
+{
+    Q_UNUSED(event)
+    if (!QFile(m_absolutePath).exists()){
+        close();
+    }
 }
 
 
