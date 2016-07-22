@@ -283,7 +283,18 @@ void DToolBar::crumbChanged(const FMEvent &event)
         return;
     }
 
-    m_crumbWidget->setCrumb(event.fileUrl());
+    if (event.fileUrl().isSearchFile()){
+        m_searchBar->show();
+        m_crumbWidget->hide();
+        m_searchBar->setAlignment(Qt::AlignLeft);
+        m_searchBar->clear();
+        m_searchBar->setActive(true);
+        m_searchBar->setFocus();
+        m_searchBar->setText(event.fileUrl().searchKeyword());
+        m_searchBar->getPopupList()->hide();
+    }else{
+        m_crumbWidget->setCrumb(event.fileUrl());
+    }
 
     if(event.source() == FMEvent::BackAndForwardButton)
         return;
