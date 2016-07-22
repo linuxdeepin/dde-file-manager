@@ -141,7 +141,7 @@ private:
     Qt::SortOrder m_srotOrder = Qt::AscendingOrder;
 //    QModelIndex m_activeIndex;
 
-    JobController *jobController = Q_NULLPTR;
+    QPointer<JobController> jobController;
     QEventLoop *eventLoop = Q_NULLPTR;
 
     State m_state = Idle;

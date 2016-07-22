@@ -9,6 +9,10 @@
 #include <QQueue>
 #include <QDir>
 
+QT_BEGIN_NAMESPACE
+class QElapsedTimer;
+QT_END_NAMESPACE
+
 class JobController : public QThread
 {
     Q_OBJECT
@@ -22,6 +26,8 @@ public:
 
     explicit JobController(const DDirIteratorPointer &iterator, QObject *parent = 0);
     explicit JobController(const DUrl &fileUrl, QDir::Filters filters, QObject *parent = 0);
+
+    ~JobController();
 
     State state() const;
 
@@ -46,7 +52,7 @@ private:
     QWaitCondition waitCondition;
     QMutex mutex;
 
-    bool autoDestroy = false;
+    QElapsedTimer *timer = Q_NULLPTR;
 
     void run() Q_DECL_OVERRIDE;
     void setState(State state);
