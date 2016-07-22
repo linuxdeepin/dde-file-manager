@@ -116,9 +116,11 @@ signals:
 
 protected:
     void closeEvent(QCloseEvent* event);
+    void timerEvent(QTimerEvent* event);
 
 private:
     DUrl m_url;
+    QString m_absolutePath;
     qint64 m_size = 0;
     int m_fileCount = 0;
     QLabel *m_icon = NULL;
