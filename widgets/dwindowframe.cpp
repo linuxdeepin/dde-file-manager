@@ -89,11 +89,13 @@ auto cornerEdge2XCursor(const CornerEdge& ce) -> int {
     }
 }
 
-DWindowFrame::DWindowFrame(QWidget* parent) : QWidget(parent),
-                                              resizeHandleWidth(6),
-                                              shadowRadius(20),
-                                              layoutMargin(25),
-                                              borderRadius(4) {
+DWindowFrame::DWindowFrame(QWidget* parent)
+    : QWidget(parent)
+    , layoutMargin(25)
+    , resizeHandleWidth(6)
+    , shadowRadius(20)
+    , borderRadius(4)
+{
     this->setAttribute(Qt::WA_TranslucentBackground, true);
     this->setWindowFlags(Qt::FramelessWindowHint);
     this->setMouseTracking(true);

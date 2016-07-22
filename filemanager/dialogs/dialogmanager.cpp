@@ -326,6 +326,8 @@ void DialogManager::showDevicePropertyDialog(const FMEvent &event)
 
 void DialogManager::showDiskErrorDialog(const QString & id, const QString & errorText)
 {
+    Q_UNUSED(errorText)
+
     UDiskDeviceInfo* info = deviceListener->getDevice(id);
     if (info){
         DDialog d;
@@ -432,6 +434,9 @@ void DialogManager::raiseAllPropertyDialog()
 
 void DialogManager::handleFocusChanged(QWidget *old, QWidget *now)
 {
+    Q_UNUSED(old)
+    Q_UNUSED(now)
+
     if (m_propertyDialogs.values().contains(qobject_cast<PropertyDialog*>(qApp->activeWindow()))){
         raiseAllPropertyDialog();
     }else if(m_closeIndicatorDialog == qobject_cast<CloseAllDialogIndicator*>(qApp->activeWindow())){

@@ -34,7 +34,8 @@ const SecretSchema *SecrectManager::SMBSecretSchema()
             {"domain", SECRET_SCHEMA_ATTRIBUTE_STRING },
             {"server", SECRET_SCHEMA_ATTRIBUTE_STRING },
             {"protocol", SECRET_SCHEMA_ATTRIBUTE_STRING }
-        }
+        },
+        0, 0, 0, 0, 0, 0, 0, 0
     };
 
     return &the_schema;
@@ -42,6 +43,9 @@ const SecretSchema *SecrectManager::SMBSecretSchema()
 
 void SecrectManager::on_password_cleared(GObject *source, GAsyncResult *result, gpointer unused)
 {
+    Q_UNUSED(source)
+    Q_UNUSED(unused)
+
     qDebug() << "on_password_cleared";
     GError *error = NULL;
 
