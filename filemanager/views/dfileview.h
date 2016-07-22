@@ -211,7 +211,7 @@ private:
     void updateItemSizeHint();
     void updateColumnWidth();
     void popupHeaderViewContextMenu(const QPoint &pos);
-    void onChildrenUpdated();
+    void onModelStateChanged(int state);
     void updateContentLabel();
     void updateSelectionRect();
 
