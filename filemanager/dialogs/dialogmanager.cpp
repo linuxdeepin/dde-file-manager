@@ -445,6 +445,15 @@ void DialogManager::handleFocusChanged(QWidget *old, QWidget *now)
     }
 }
 
+void DialogManager::refreshPropertyDialogs(const DUrl &oldUrl, const DUrl &newUrl)
+{
+    PropertyDialog* d = m_propertyDialogs.value(oldUrl);
+    if (d){
+        m_propertyDialogs.remove(oldUrl);
+        m_propertyDialogs.insert(newUrl, d);
+    }
+}
+
 void DialogManager::handleConflictRepsonseConfirmed(const QMap<QString, QString> &jobDetail, const QMap<QString, QVariant> &response)
 {
     QString jobId = jobDetail.value("jobId");
