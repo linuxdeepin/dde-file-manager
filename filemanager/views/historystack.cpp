@@ -19,7 +19,7 @@ void HistoryStack::insert(DUrl url)
         else
         {
             DUrlList localList;
-            for(int i = 0; i < m_index; i++)
+            for(int i = 0; i < m_list.size(); i++)
             {
                 DUrl text = m_list.at(i);
                 localList.append(text);
