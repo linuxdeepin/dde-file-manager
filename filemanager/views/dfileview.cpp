@@ -124,6 +124,7 @@ void DFileView::initConnects()
             this, &DFileView::select);
     connect(fileSignalManager, &FileSignalManager::requestSelectRenameFile,
             this, &DFileView::selectAndRename);
+    connect(this, &DFileView::rowCountChanged, this, &DFileView::updateStatusBar);
 
     connect(m_displayAsActionGroup, &QActionGroup::triggered, this, &DFileView::dislpayAsActionTriggered);
     connect(m_sortByActionGroup, &QActionGroup::triggered, this, &DFileView::sortByActionTriggered);
@@ -131,15 +132,13 @@ void DFileView::initConnects()
     connect(m_keyboardSearchTimer, &QTimer::timeout, this, &DFileView::clearKeyBoardSearchKeys);
 
     connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &DFileView::updateStatusBar);
-    connect(model(), &DFileSystemModel::rowsInserted, this, &DFileView::updateStatusBar);
-    connect(model(), &DFileSystemModel::rowsRemoved, this, &DFileView::updateStatusBar);
     connect(fileSignalManager, &FileSignalManager::requestFoucsOnFileView, this, &DFileView::setFoucsOnFileView);
     connect(fileSignalManager, &FileSignalManager::requestFreshFileView, this, &DFileView::refreshFileView);
 
     connect(itemDelegate(), &DFileItemDelegate::commitData, this, &DFileView::handleCommitData);
     connect(model(), &DFileSystemModel::dataChanged, this, &DFileView::handleDataChanged);
     connect(model(), &DFileSystemModel::rootUrlDeleted, this, &DFileView::updateContentLabel, Qt::QueuedConnection);
-    connect(model(), &DFileSystemModel::childrenUpdated, this, &DFileView::updateContentLabel, Qt::QueuedConnection);
+    connect(model(), &DFileSystemModel::stateChanged, this, &DFileView::onModelStateChanged);
 
     connect(fileIconProvider, &IconProvider::themeChanged, model(), &DFileSystemModel::update);
 
@@ -171,16 +170,6 @@ void DFileView::initConnects()
         }
 
         update();
-    });
-
-    connect(model(), &DFileSystemModel::childrenUpdated, this, &DFileView::onChildrenUpdated);
-    connect(model(), &DFileSystemModel::stateChanged, this, [this] (DFileSystemModel::State state) {
-        FMEvent event;
-
-        event = windowId();
-        event = currentUrl();
-
-        emit fileSignalManager->loadingIndicatorShowed(event, state == DFileSystemModel::Busy);
     });
 }
 
@@ -1399,8 +1388,6 @@ bool DFileView::setCurrentUrl(DUrl fileUrl)
     if(currentUrl == fileUrl)
         return false;
 
-    disconnect(model(), &DFileSystemModel::rowsInserted, this, &DFileView::updateContentLabel);
-
 //    QModelIndex index = model()->index(fileUrl);
 
 //    if(!index.isValid())
@@ -1946,21 +1933,35 @@ void DFileView::popupHeaderViewContextMenu(const QPoint &/*pos*/)
     menu->exec();
 }
 
-void DFileView::onChildrenUpdated()
+void DFileView::onModelStateChanged(int state)
 {
-    for (const DUrl &url : oldSelectedUrllist) {
-        selectionModel()->select(model()->index(url), QItemSelectionModel::SelectCurrent);
+    FMEvent event;
+
+    event = windowId();
+    event = currentUrl();
+
+    emit fileSignalManager->loadingIndicatorShowed(event, state == DFileSystemModel::Busy);
+
+    if (state == DFileSystemModel::Busy) {
+        setContentLabel(QString());
+
+        disconnect(this, &DFileView::rowCountChanged, this, &DFileView::updateContentLabel);
+    } else if (state == DFileSystemModel::Idle) {
+        for (const DUrl &url : oldSelectedUrllist) {
+            selectionModel()->select(model()->index(url), QItemSelectionModel::SelectCurrent);
+        }
+
+        if (!oldSelectedUrllist.isEmpty()) {
+            scrollTo(model()->index(oldSelectedUrllist.first()), PositionAtTop);
+        }
+
+        oldSelectedUrllist.clear();
+
+        updateStatusBar();
+        updateContentLabel();
+
+        connect(this, &DFileView::rowCountChanged, this, &DFileView::updateContentLabel);
     }
-
-    if (!oldSelectedUrllist.isEmpty()) {
-        scrollTo(model()->index(oldSelectedUrllist.first()), PositionAtTop);
-    }
-
-    oldSelectedUrllist.clear();
-
-    connect(model(), &DFileSystemModel::rowsInserted, this, &DFileView::updateContentLabel);
-
-    updateStatusBar();
 }
 
 void DFileView::updateContentLabel()

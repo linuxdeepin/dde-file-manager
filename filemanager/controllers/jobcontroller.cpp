@@ -63,6 +63,8 @@ void JobController::stop()
         m_iterator->close();
 
     setState(Stoped);
+
+    waitCondition.wakeAll();
 }
 
 void JobController::stopAndDeleteLater()

@@ -354,20 +354,28 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
         return;
 
     if (jobController) {
-        QEventLoop eventLoop(this);
+        disconnect(jobController, &JobController::addChildren, this, &DFileSystemModel::addFile);
+        disconnect(jobController, &JobController::finished, this, &DFileSystemModel::onJobFinished);
+        disconnect(jobController, &JobController::childrenUpdated, this, &DFileSystemModel::updateChildren);
 
-        this->eventLoop = &eventLoop;
+        if (jobController->isFinished()) {
+            jobController->deleteLater();
+        } else {
+            QEventLoop eventLoop(this);
 
-        connect(jobController, &JobController::destroyed, &eventLoop, &QEventLoop::quit);
+            this->eventLoop = &eventLoop;
 
-        jobController->stopAndDeleteLater();
+            connect(jobController, &JobController::destroyed, &eventLoop, &QEventLoop::quit);
 
-        int code = eventLoop.exec(QEventLoop::EventLoopExec);
+            jobController->stopAndDeleteLater();
 
-        this->eventLoop = Q_NULLPTR;
+            int code = eventLoop.exec();
 
-        if (code != 0)
-            return;
+            this->eventLoop = Q_NULLPTR;
+
+            if (code != 0)
+                return;
+        }
     }
 
     jobController = fileService->getChildrenJob(parentNode->fileInfo->fileUrl(), m_filters);
@@ -506,14 +514,6 @@ QModelIndex DFileSystemModel::setRootUrl(const DUrl &fileUrl)
 {
     if (eventLoop)
         eventLoop->exit(1);
-
-    if (jobController) {
-        disconnect(jobController, &JobController::addChildren, this, &DFileSystemModel::addFile);
-        disconnect(jobController, &JobController::finished, this, &DFileSystemModel::onJobFinished);
-        disconnect(jobController, &JobController::childrenUpdated, this, &DFileSystemModel::updateChildren);
-
-        jobController->stopAndDeleteLater();
-    }
 
     if (m_rootNode) {
         const DUrl m_rootFileUrl = m_rootNode->fileInfo->fileUrl();
@@ -982,8 +982,6 @@ void DFileSystemModel::setState(DFileSystemModel::State state)
 void DFileSystemModel::onJobFinished()
 {
     setState(Idle);
-
-    emit childrenUpdated(rootUrl());
 }
 
 void DFileSystemModel::addFile(const AbstractFileInfoPointer &fileInfo)
