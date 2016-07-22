@@ -18,6 +18,12 @@ JobController::JobController(const DUrl &fileUrl, QDir::Filters filters, QObject
 
 }
 
+JobController::~JobController()
+{
+    if (timer)
+        delete timer;
+}
+
 JobController::State JobController::state() const
 {
     return m_state;
@@ -64,7 +70,7 @@ void JobController::stopAndDeleteLater()
     if (!isRunning())
         deleteLater();
     else
-        autoDestroy = true;
+        connect(this, &QThread::finished, this, &JobController::deleteLater);
 
     stop();
 }
@@ -82,9 +88,11 @@ void JobController::run()
     }
 
     QQueue<AbstractFileInfoPointer> fileInfoQueue;
-    QElapsedTimer *timer = new QElapsedTimer();
 
-    timer->start();
+    if (!timer)
+        timer = new QElapsedTimer();
+
+    timer->restart();
 
     bool update_children = true;
 
@@ -111,6 +119,7 @@ void JobController::run()
                 fileInfoQueue.clear();
 
                 delete timer;
+                timer = Q_NULLPTR;
             }
         } else {
             emit addChildren(m_iterator->fileInfo());
@@ -127,9 +136,6 @@ void JobController::run()
     setState(Stoped);
 
     emit finished();
-
-    if (autoDestroy)
-        deleteLater();
 }
 
 void JobController::setState(JobController::State state)

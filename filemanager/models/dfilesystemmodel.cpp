@@ -342,7 +342,10 @@ int DFileSystemModel::roleToColumn(int role) const
 
 void DFileSystemModel::fetchMore(const QModelIndex &parent)
 {
-    if (eventLoop || !m_rootNode)
+    if (eventLoop)
+        eventLoop->exit(1);
+
+    if (!m_rootNode)
         return;
 
     const FileSystemNodePointer &parentNode = getNodeByIndex(parent);
@@ -351,23 +354,20 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
         return;
 
     if (jobController) {
-        disconnect(jobController, &JobController::addChildren, this, &DFileSystemModel::addFile);
-        disconnect(jobController, &JobController::finished, this, &DFileSystemModel::onJobFinished);
-        disconnect(jobController, &JobController::childrenUpdated, this, &DFileSystemModel::updateChildren);
+        QEventLoop eventLoop(this);
 
-        if (jobController->state() == JobController::Started) {
-            QEventLoop eventLoop(this);
+        this->eventLoop = &eventLoop;
 
-            this->eventLoop = &eventLoop;
+        connect(jobController, &JobController::destroyed, &eventLoop, &QEventLoop::quit);
 
-            connect(jobController, &JobController::destroyed, &eventLoop, &QEventLoop::quit);
+        jobController->stopAndDeleteLater();
 
-            jobController->stopAndDeleteLater();
+        int code = eventLoop.exec(QEventLoop::EventLoopExec);
 
-            eventLoop.exec();
+        this->eventLoop = Q_NULLPTR;
 
-            this->eventLoop = Q_NULLPTR;
-        }
+        if (code != 0)
+            return;
     }
 
     jobController = fileService->getChildrenJob(parentNode->fileInfo->fileUrl(), m_filters);
@@ -376,8 +376,8 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
         return;
 
     connect(jobController, &JobController::addChildren, this, &DFileSystemModel::addFile, Qt::QueuedConnection);
-    connect(jobController, &JobController::finished, this, &DFileSystemModel::onJobFinished);
-    connect(jobController, &JobController::childrenUpdated, this, &DFileSystemModel::updateChildren, Qt::DirectConnection);
+    connect(jobController, &JobController::finished, this, &DFileSystemModel::onJobFinished, Qt::QueuedConnection);
+    connect(jobController, &JobController::childrenUpdated, this, &DFileSystemModel::updateChildren, Qt::QueuedConnection);
 
     fileService->addUrlMonitor(parentNode->fileInfo->fileUrl());
 
@@ -504,7 +504,18 @@ bool DFileSystemModel::canFetchMore(const QModelIndex &parent) const
 
 QModelIndex DFileSystemModel::setRootUrl(const DUrl &fileUrl)
 {
-    if(m_rootNode) {
+    if (eventLoop)
+        eventLoop->exit(1);
+
+    if (jobController) {
+        disconnect(jobController, &JobController::addChildren, this, &DFileSystemModel::addFile);
+        disconnect(jobController, &JobController::finished, this, &DFileSystemModel::onJobFinished);
+        disconnect(jobController, &JobController::childrenUpdated, this, &DFileSystemModel::updateChildren);
+
+        jobController->stopAndDeleteLater();
+    }
+
+    if (m_rootNode) {
         const DUrl m_rootFileUrl = m_rootNode->fileInfo->fileUrl();
 
         if(fileUrl == m_rootFileUrl)
@@ -701,6 +712,20 @@ DFileSystemModel::State DFileSystemModel::state() const
 
 void DFileSystemModel::updateChildren(QList<AbstractFileInfoPointer> list)
 {
+    if (qApp->thread() == QThread::currentThread()) {
+        if (QThreadPool::globalInstance()->activeThreadCount() >= QThreadPool::globalInstance()->maxThreadCount())
+            QThreadPool::globalInstance()->setMaxThreadCount(QThreadPool::globalInstance()->maxThreadCount() + 10);
+
+        QtConcurrent::run(QThreadPool::globalInstance(), this, &DFileSystemModel::updateChildren, list);
+
+        return;
+    };
+
+    bool isBusy = state() == Busy;
+
+    if (!isBusy)
+        setState(Busy);
+
     const FileSystemNodePointer &node = m_rootNode;
 
     if(!node) {
@@ -726,6 +751,9 @@ void DFileSystemModel::updateChildren(QList<AbstractFileInfoPointer> list)
     }
 
     endInsertRows();
+
+    if (!isBusy)
+        setState(Idle);
 }
 
 void DFileSystemModel::refresh(const DUrl &fileUrl)
