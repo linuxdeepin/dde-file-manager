@@ -12,6 +12,7 @@
 #include <QtMath>
 #include "../views/windowmanager.h"
 #include "standardpath.h"
+#include "../app/global.h"
 
 #undef signals
 extern "C" {
@@ -504,27 +505,27 @@ bool FileUtils::setBackground(const QString &pictureFilePath)
 
 QString FileUtils::getSoftLinkFileName(const QString &file, const QString &targetDir)
 {
-    QFileInfo  info(file);
+    const AbstractFileInfoPointer pInfo = fileService->createFileInfo(DUrl::fromLocalFile(file));
 
-    if (info.exists()){
-        QString baseName = info.baseName();
+    if (pInfo->exists()){
+        QString baseName = pInfo->baseName();
         QString shortcut = QObject::tr("Shortcut");
         QString linkBaseName;
         int number = 1;
         while (true) {
-            if (info.isFile()){
+            if (pInfo->isFile()){
                 if (number == 1){
-                    linkBaseName = QString("%1 %2.%3").arg(baseName, shortcut, info.suffix());
+                    linkBaseName = QString("%1 %2.%3").arg(baseName, shortcut, pInfo->suffix());
                 }else{
-                    linkBaseName = QString("%1 %2%3.%4").arg(baseName, shortcut, QString::number(number), info.suffix());
+                    linkBaseName = QString("%1 %2%3.%4").arg(baseName, shortcut, QString::number(number), pInfo->suffix());
                 }
-            }else if (info.isDir()){
+            }else if (pInfo->isDir()){
                 if (number == 1){
                     linkBaseName = QString("%1 %2").arg(baseName, shortcut);
                 }else{
                     linkBaseName = QString("%1 %2%3").arg(baseName, shortcut, QString::number(number));
                 }
-            }else if (info.isSymLink()){
+            }else if (pInfo->isSymLink()){
                 return QString();
             }
             QString linkFile = QString("%1/%2").arg(targetDir, linkBaseName);

@@ -101,6 +101,11 @@ QString AbstractFileInfo::absoluteFilePath() const
     return data->absoluteFilePath;
 }
 
+QString AbstractFileInfo::baseName() const
+{
+    return data->fileInfo.baseName();
+}
+
 QString AbstractFileInfo::fileName() const
 {
     if (data->fileName.isNull() || data->fileName.isEmpty()){
@@ -596,6 +601,30 @@ QString AbstractFileInfo::loadingTip() const
 QString AbstractFileInfo::subtitleForEmptyFloder() const
 {
     return QString();
+}
+
+QString AbstractFileInfo::suffix() const
+{
+
+    if (data->fileInfo.completeSuffix() != data->fileInfo.suffix()){
+        QStringList suffixes = data->fileInfo.completeSuffix().split(".");
+        if (suffixes.length() >= 2){
+            if (suffixes.at(suffixes.length() - 2) == "tar"){
+                return QString("%1.%2").arg("tar", data->fileInfo.suffix());
+            }else{
+                return data->fileInfo.suffix();
+            }
+        }else{
+            return data->fileInfo.suffix();
+        }
+    }else{
+        return data->fileInfo.suffix();
+    }
+}
+
+QString AbstractFileInfo::completeSuffix() const
+{
+    return data->fileInfo.completeSuffix();
 }
 
 void AbstractFileInfo::updateFileMetaData()

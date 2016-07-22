@@ -245,7 +245,13 @@ void DFileItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
         if(item->edit->isReadOnly())
             return;
 
-        int endPos = item->edit->toPlainText().lastIndexOf('.');
+        const AbstractFileInfoPointer p = parent()->model()->fileInfo(index);
+        qDebug() << p->completeSuffix();
+
+        int endPos = -1;
+        if(p->isFile()){
+            endPos = item->edit->toPlainText().length() - p->suffix().length() - 1;
+        }
 
         if(endPos == -1) {
             item->edit->selectAll();

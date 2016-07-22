@@ -89,6 +89,7 @@ public:
 
     virtual QString filePath() const;
     virtual QString absoluteFilePath() const;
+    virtual QString baseName() const;
     virtual QString fileName() const;
     virtual QString displayName() const;
     QString pinyinName() const;
@@ -204,6 +205,9 @@ public:
 
     virtual QString loadingTip() const;
     virtual QString subtitleForEmptyFloder() const;
+
+    virtual QString suffix() const;
+    virtual QString completeSuffix() const;
 
 protected:
     struct FileInfoData
