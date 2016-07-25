@@ -141,7 +141,8 @@ HEADERS += \
     filemanager/dialogs/trashpropertydialog.h \
     filemanager/views/dbookmarkmountedindicatoritem.h \
     filemanager/views/deditorwidgetmenu.h \
-    filemanager/controllers/jobcontroller.h
+    filemanager/controllers/jobcontroller.h \
+    filemanager/shutil/filessizeworker.h
 
 
 SOURCES += \
@@ -239,7 +240,8 @@ SOURCES += \
     filemanager/dialogs/trashpropertydialog.cpp \
     filemanager/views/dbookmarkmountedindicatoritem.cpp \
     filemanager/views/deditorwidgetmenu.cpp \
-    filemanager/controllers/jobcontroller.cpp
+    filemanager/controllers/jobcontroller.cpp \
+    filemanager/shutil/filessizeworker.cpp
 
 
 
