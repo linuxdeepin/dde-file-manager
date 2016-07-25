@@ -245,15 +245,22 @@ void DFileItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
         if(item->edit->isReadOnly())
             return;
 
-        const AbstractFileInfoPointer p = parent()->model()->fileInfo(index);
-        qDebug() << p->completeSuffix();
+        const AbstractFileInfoPointer &fileInfo = parent()->model()->fileInfo(index);
 
         int endPos = -1;
-        if(p->isFile()){
-            endPos = item->edit->toPlainText().length() - p->suffix().length() - 1;
+
+        if (fileInfo) {
+            if (fileInfo->isFile()) {
+                const QString &suffix = fileInfo->suffix();
+
+                if (!suffix.isEmpty())
+                    endPos = item->edit->toPlainText().length() - suffix.length() - 1;
+            }
+        } else {
+            endPos = item->edit->toPlainText().lastIndexOf('.');
         }
 
-        if(endPos == -1) {
+        if (endPos == -1) {
             item->edit->selectAll();
         } else {
             QTextCursor cursor = item->edit->textCursor();
@@ -812,7 +819,20 @@ bool DFileItemDelegate::eventFilter(QObject *object, QEvent *event)
         QLineEdit *edit = qobject_cast<QLineEdit*>(object);
 
         if(edit) {
-            int endPos = edit->text().lastIndexOf('.');
+            const AbstractFileInfoPointer &fileInfo = parent()->model()->fileInfo(editing_index);
+
+            int endPos = -1;
+
+            if (fileInfo) {
+                if (fileInfo->isFile()) {
+                    const QString &suffix = fileInfo->suffix();
+
+                    if (!suffix.isEmpty())
+                        endPos = edit->text().length() - suffix.length() - 1;
+                }
+            } else {
+                endPos = edit->text().lastIndexOf('.');
+            }
 
             if(endPos == -1)
                 edit->selectAll();

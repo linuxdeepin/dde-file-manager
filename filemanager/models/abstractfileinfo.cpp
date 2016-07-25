@@ -605,21 +605,18 @@ QString AbstractFileInfo::subtitleForEmptyFloder() const
 
 QString AbstractFileInfo::suffix() const
 {
+    const QString &suffix = data->fileInfo.suffix();
+    const QString &completeSuffix = data->fileInfo.completeSuffix();
 
-    if (data->fileInfo.completeSuffix() != data->fileInfo.suffix()){
-        QStringList suffixes = data->fileInfo.completeSuffix().split(".");
-        if (suffixes.length() >= 2){
-            if (suffixes.at(suffixes.length() - 2) == "tar"){
-                return QString("%1.%2").arg("tar", data->fileInfo.suffix());
-            }else{
-                return data->fileInfo.suffix();
-            }
-        }else{
-            return data->fileInfo.suffix();
+    if (completeSuffix != suffix) {
+        QStringList suffixes = completeSuffix.split(".");
+
+        if (suffixes.length() >= 2 && suffixes.at(suffixes.length() - 2) == "tar") {
+            return QString("%1.%2").arg("tar", suffix);
         }
-    }else{
-        return data->fileInfo.suffix();
     }
+
+    return suffix;
 }
 
 QString AbstractFileInfo::completeSuffix() const
