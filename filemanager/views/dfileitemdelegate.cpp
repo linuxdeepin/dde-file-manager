@@ -353,10 +353,10 @@ void DFileItemDelegate::paintIconItem(QPainter *painter, const QStyleOptionViewI
     label_rect.setWidth(opt.rect.width() - 2 * TEXT_PADDING);
     label_rect.moveLeft(label_rect.left() + TEXT_PADDING);
 
-    /// if has focus show all file name else show elide file name.
+    /// if has selected show all file name else show elide file name.
     bool singleSelected = parent()->selectedIndexCount() < 2;
 
-    if((opt.state & QStyle::State_HasFocus) && singleSelected) {
+    if((opt.state & QStyle::State_Selected) && singleSelected) {
         const_cast<DFileItemDelegate*>(this)->hideExpandedIndex();
 
         int height = 0;
@@ -688,7 +688,6 @@ QList<QRect> DFileItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
 
         label_rect.setTop(icon_rect.bottom() + TEXT_PADDING  + ICON_MODE_ICON_SPACING);
 
-        /// if has focus show all file name else show elide file name.
         /// init file name text
 
         if(m_elideMap.contains(str)) {
