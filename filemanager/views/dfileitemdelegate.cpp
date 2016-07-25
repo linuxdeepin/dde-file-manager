@@ -552,6 +552,19 @@ void DFileItemDelegate::paintListItem(QPainter *painter, const QStyleOptionViewI
                 painter->fillRect(opt.rect, QColor(255, 255, 255));
             }
         }
+
+        if (isActive) {
+            QRectF rect = opt.rect;
+            QPainterPath path;
+
+            rect += QMarginsF(-0.5, -0.5, -0.5, -0.5);
+
+            path.addRoundedRect(rect, LIST_MODE_RECT_RADIUS, LIST_MODE_RECT_RADIUS);
+
+            painter->setRenderHint(QPainter::Antialiasing, true);
+            painter->fillPath(path, QColor(43, 167, 248, 0.50 * 255));
+            painter->setRenderHint(QPainter::Antialiasing, false);
+        }
     }
 
     opt.rect.setLeft(opt.rect.left() + LEFT_PADDING);

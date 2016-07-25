@@ -1162,6 +1162,13 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
 {
     dragMoveHoverIndex = indexAt(event->pos());
 
+    if (dragMoveHoverIndex.isValid()) {
+        const AbstractFileInfoPointer &fileInfo = model()->fileInfo(dragMoveHoverIndex);
+
+        if (!fileInfo || fileInfo->isFile())
+            dragMoveHoverIndex = QModelIndex();
+    }
+
     update();
 
     if (dragDropMode() == InternalMove
