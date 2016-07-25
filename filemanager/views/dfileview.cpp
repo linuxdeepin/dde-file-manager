@@ -73,7 +73,6 @@ void DFileView::initUI()
     setIconSize(currentIconSize());
     setTextElideMode(Qt::ElideMiddle);
     setDragDropMode(QAbstractItemView::DragDrop);
-    setDefaultDropAction(Qt::MoveAction);
     setDropIndicatorShown(false);
     setSelectionMode(QAbstractItemView::ExtendedSelection);
     setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -1159,6 +1158,10 @@ void DFileView::dragEnterEvent(QDragEnterEvent *event)
         }
     }
 
+    if (event->source() == this && !Global::keyCtrlIsPressed()) {
+        event->setDropAction(Qt::MoveAction);
+    }
+
     DListView::dragEnterEvent(event);
 }
 
@@ -1171,6 +1174,10 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
 
         if (!fileInfo || fileInfo->isFile())
             dragMoveHoverIndex = QModelIndex();
+    }
+
+    if (event->source() == this && !Global::keyCtrlIsPressed()) {
+        event->setDropAction(Qt::MoveAction);
     }
 
     update();
@@ -1190,6 +1197,10 @@ void DFileView::dragLeaveEvent(QDragLeaveEvent *event)
 void DFileView::dropEvent(QDropEvent *event)
 {
     dragMoveHoverIndex = QModelIndex();
+
+    if (event->source() == this && !Global::keyCtrlIsPressed()) {
+        event->setDropAction(Qt::MoveAction);
+    }
 
     DListView::dropEvent(event);
 }
