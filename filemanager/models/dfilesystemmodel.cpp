@@ -613,6 +613,12 @@ void DFileSystemModel::sort(int column, Qt::SortOrder order)
 
 void DFileSystemModel::sort()
 {
+    if (state() == Busy) {
+        qWarning() << "I'm busying";
+
+        return;
+    }
+
     if (QThreadPool::globalInstance()->activeThreadCount() >= MAX_THREAD_COUNT) {
         qDebug() << "Beyond the maximum number of threads!";
         return;
