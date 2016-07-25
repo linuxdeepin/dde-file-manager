@@ -23,6 +23,7 @@
 #include "../models/dfilesystemmodel.h"
 
 #include "../shutil/fileutils.h"
+#include "../shutil/iconprovider.h"
 
 #include <dthememanager.h>
 #include <dscrollbar.h>
@@ -141,6 +142,9 @@ void DFileView::initConnects()
     connect(model(), &DFileSystemModel::stateChanged, this, &DFileView::onModelStateChanged);
 
     connect(fileIconProvider, &IconProvider::themeChanged, model(), &DFileSystemModel::update);
+    connect(fileIconProvider, &IconProvider::iconChanged, [this] (const QString &filePath) {
+        update(model()->index(DUrl::fromLocalFile(filePath)));
+    });
 
     if (!m_cutUrlSet.capacity()) {
         m_cutUrlSet.reserve(1);

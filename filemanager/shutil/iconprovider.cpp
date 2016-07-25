@@ -17,6 +17,8 @@
 
 #include "fileutils.h"
 #include "desktopfile.h"
+#include "thumbnailmanager.h"
+
 #include "../app/global.h"
 #include "../controllers/appcontroller.h"
 
@@ -43,6 +45,8 @@ IconProvider::IconProvider(QObject *parent) : QObject(parent)
 
     initConnect();
     setCurrentTheme();
+
+    connect(thumbnailManager, &ThumbnailManager::taskFinished, this, &IconProvider::iconChanged);
 }
 
 IconProvider::~IconProvider()
@@ -346,10 +350,12 @@ QIcon IconProvider::findIcon(const QString &absoluteFilePath, const QString &mim
     QString _mimeType = mimeType;
 
     if (m_supportImageMimeTypesSet.contains(mimeType)) {
-        theIcon = thumbnailManager->thumbnailIcon(absoluteFilePath);
+        theIcon = thumbnailManager->getThumbnailIcon(absoluteFilePath);
 
-        if (!theIcon.isNull())
-            return theIcon;
+        if (theIcon.isNull())
+            thumbnailManager->requestThumbnailIcon(absoluteFilePath);
+
+        return theIcon;
     } else if (mimeType == "application/x-desktop") {
         return IconProvider::getDesktopIcon(DesktopFile(absoluteFilePath).getIcon(), 48);
     } else if (systemPathManager->isSystemPath(absoluteFilePath)) {

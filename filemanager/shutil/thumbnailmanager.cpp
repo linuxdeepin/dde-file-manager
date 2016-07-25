@@ -1,15 +1,13 @@
 #include "thumbnailmanager.h"
 #include "standardpath.h"
 #include "fileutils.h"
+
 #include <QDir>
 #include <QtConcurrent/QtConcurrentRun>
-
-ThumbnailManager::ThumbnailManager(QObject *parent) : QObject(parent)
-{
-    m_threadPool = new QThreadPool(this);
-}
-
-ThumbnailManager::~ThumbnailManager()
+#include <QImageReader>
+#include <QCryptographicHash>
+ThumbnailManager::ThumbnailManager(QObject *parent)
+    : QThread(parent)
 {
 
 }
@@ -26,54 +24,89 @@ QString ThumbnailManager::getThumbnailPath(const QString &name)
     return QString("%1/%2").arg(getThumbnailCachePath(), name);
 }
 
-QIcon ThumbnailManager::thumbnailIcon(const QString &fpath)
+QIcon ThumbnailManager::getThumbnailIcon(const QString &fpath)
 {
-    QIcon icon = m_thumbnailsIcon.value(fpath);
+    const QString &md5 = m_pathToMd5.value(fpath);
 
-    if (!icon.isNull())
-        return icon;
+    if (md5.isEmpty())
+        return QIcon();
 
-    QFileInfo info(fpath);
+    return m_md5ToIcon.value(md5);
+}
 
-//    if (info.size() > 1024 * 256) {
-        QString md5 = FileUtils::md5(fpath);
-        QString thumbnailPath = QString("%1.png").arg(getThumbnailPath(md5));
+void ThumbnailManager::requestThumbnailIcon(const QString &fpath)
+{
+    if (taskQueue.contains(fpath))
+        return;
+
+    taskQueue << fpath;
+
+    if (!isRunning())
+        start();
+}
+
+void ThumbnailManager::run()
+{
+    while (!taskQueue.isEmpty()) {
+        const QString &fpath = taskQueue.dequeue();
+
+        QFile file(fpath);
+
+        /// ensure image size < 100MB
+        if (file.size() > 1024 * 1024 * 100)
+            continue;
+
+        QString md5;
+
+        if (file.open(QIODevice::ReadOnly)) {
+            md5 = QCryptographicHash::hash(file.readAll(), QCryptographicHash::Md5).toHex();
+        } else {
+            md5 = fpath;
+        }
+
+        m_pathToMd5[fpath] = md5;
+
+        QIcon icon = m_md5ToIcon.value(md5);
+
+        if (!icon.isNull()) {
+            emit taskFinished(fpath, icon);
+
+            continue;
+        }
+
+        QString thumbnailPath = QString("%1.jpg").arg(getThumbnailPath(md5));
 
         if (QFile(thumbnailPath).exists()) {
             icon = QIcon(thumbnailPath);
 
-            m_thumbnailsIcon[fpath] = icon;
+            m_md5ToIcon[md5] = icon;
         } else {
-            addThumbnailTask(fpath, thumbnailPath);
+            QImageReader reader(fpath);
+
+            if (reader.canRead()) {
+                QSize size = reader.size();
+
+                bool canScale = size.width() > 256 || size.height() > 256;
+
+                if (canScale) {
+                    size.scale(QSize(qMin(256, size.width()), qMin(256, size.height())), Qt::KeepAspectRatio);
+                    reader.setScaledSize(size);
+                }
+
+                const QPixmap &pixmap = QPixmap::fromImageReader(&reader);
+
+                icon = QIcon(pixmap);
+
+                m_md5ToIcon[md5] = icon;
+
+                if (canScale) {
+                    pixmap.save(thumbnailPath, "jpg", 20);
+                } else {
+                    QFile::link(fpath, thumbnailPath);
+                }
+            }
         }
-//    } else {
-//        icon = QIcon(fpath);
 
-//        m_thumbnailsIcon[fpath] = icon;
-//    }
-
-    return icon;
-}
-
-void ThumbnailManager::addThumbnailTask(const QString &fpath, const QString &thumbnailPath)
-{
-    QtConcurrent::run(m_threadPool, this, &ThumbnailManager::actionThumbnailTask, fpath, thumbnailPath);
-}
-
-void ThumbnailManager::actionThumbnailTask(const QString &fpath, const QString &thumbnailPath)
-{
-    if (m_thumbnailsIcon.contains(fpath)){
-        return;
-    }
-
-    m_thumbnailsIcon[fpath] = QIcon();
-
-    QFileInfo info(fpath);
-
-    if (info.exists()){
-        QPixmap pixmap(fpath);
-        QPixmap thumbnail = pixmap.scaled(256, 256, Qt::KeepAspectRatio);
-        thumbnail.save(thumbnailPath);
-        m_thumbnailsIcon[fpath] = QIcon(thumbnail);
+        emit taskFinished(fpath, icon);
     }
 }
