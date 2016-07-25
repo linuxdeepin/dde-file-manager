@@ -1621,6 +1621,8 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
                     model(), &QAbstractItemModel::sort);
             connect(m_headerView, &QHeaderView::customContextMenuRequested,
                     this, &DFileView::popupHeaderViewContextMenu);
+
+            m_headerView->setAttribute(Qt::WA_TransparentForMouseEvents, model()->state() == DFileSystemModel::Busy);
         }
 
         addHeaderWidget(m_headerView);
@@ -1971,6 +1973,10 @@ void DFileView::onModelStateChanged(int state)
         setContentLabel(QString());
 
         disconnect(this, &DFileView::rowCountChanged, this, &DFileView::updateContentLabel);
+
+        if (m_headerView) {
+            m_headerView->setAttribute(Qt::WA_TransparentForMouseEvents);
+        }
     } else if (state == DFileSystemModel::Idle) {
         for (const DUrl &url : oldSelectedUrllist) {
             selectionModel()->select(model()->index(url), QItemSelectionModel::SelectCurrent);
@@ -1986,6 +1992,10 @@ void DFileView::onModelStateChanged(int state)
         updateContentLabel();
 
         connect(this, &DFileView::rowCountChanged, this, &DFileView::updateContentLabel);
+
+        if (m_headerView) {
+            m_headerView->setAttribute(Qt::WA_TransparentForMouseEvents, false);
+        }
     }
 }
 
