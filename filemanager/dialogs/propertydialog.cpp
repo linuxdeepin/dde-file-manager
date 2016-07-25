@@ -256,6 +256,12 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
         m_edit->setPlainText(fileInfo->displayName());
         m_edit->setAlignment(Qt::AlignHCenter);
 
+        if (systemPathManager->isSystemPath(fileInfo->filePath())){
+            m_editDisbaled = true;
+        }else if (!fileInfo->isWritable()){
+            m_editDisbaled = true;
+        }
+
         m_basicInfoFrame = createBasicInfoWidget(fileInfo);
 
         QStringList titleList;
