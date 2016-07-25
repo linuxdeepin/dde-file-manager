@@ -323,14 +323,18 @@ void DFileItemDelegate::paintIconItem(QPainter *painter, const QStyleOptionViewI
     if (isActive && !isSelected) {
         QPen pen;
         QRectF rect = opt.rect;
+        QPainterPath path;
 
         rect.moveTopLeft(QPointF(0.5, 0.5) + rect.topLeft());
 
         pen.setColor(SELECTED_BACKGROUND_COLOR);
 
+        path.addRoundedRect(rect, LIST_MODE_RECT_RADIUS, LIST_MODE_RECT_RADIUS);
+
         painter->setPen(pen);
         painter->setRenderHint(QPainter::Antialiasing, true);
-        painter->drawRoundedRect(rect, LIST_MODE_RECT_RADIUS, LIST_MODE_RECT_RADIUS);
+        painter->fillPath(path, QColor(43, 167, 248, 0.50 * 255));
+        painter->drawPath(path);
         painter->setRenderHint(QPainter::Antialiasing, false);
         painter->setPen(Qt::black);
     }
