@@ -15,6 +15,9 @@
 #include "utils/xutil.h"
 #include "openwithotherdialog.h"
 #include "trashpropertydialog.h"
+
+#include "../shutil/iconprovider.h"
+
 #include <ddialog.h>
 #include <DAboutDialog>
 #include <dscrollbar.h>

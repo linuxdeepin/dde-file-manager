@@ -5,6 +5,7 @@
 #include <../controllers/fileservices.h>
 #include "../shutil/fileutils.h"
 #include "../shutil/mimesappsmanager.h"
+#include "../shutil/iconprovider.h"
 #include "deviceinfo/deviceinfo.h"
 #include "../shutil/fileutils.h"
 #include "utils/utils.h"

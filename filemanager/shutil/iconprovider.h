@@ -35,9 +35,9 @@ public:
 
 signals:
     void themeChanged(const QString& theme);
+    void iconChanged(const QString &filePath);
 
 public slots:
-
     void setTheme(const QString &themeName);
     void setCurrentTheme();
     void handleThemeChanged(const QString &key);
