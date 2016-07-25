@@ -508,7 +508,7 @@ bool DFileSystemModel::canFetchMore(const QModelIndex &parent) const
     if(!parentNode)
         return false;
 
-    return isDir(parentNode) && !parentNode->populatedChildren;
+    return (isDir(parentNode) || !parentNode->fileInfo->exists()) && !parentNode->populatedChildren;
 }
 
 QModelIndex DFileSystemModel::setRootUrl(const DUrl &fileUrl)

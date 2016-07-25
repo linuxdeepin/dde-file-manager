@@ -87,10 +87,10 @@ bool FileInfo::canIteratorDir() const
 
 QString FileInfo::subtitleForEmptyFloder() const
 {
-    if (!isReadable()) {
-        return QObject::tr("You do not have permission to access this folder");
-    } else if (!AbstractFileInfo::exists()) {
+    if (!AbstractFileInfo::exists()) {
         return QObject::tr("File has been moved or deleted");
+    } else if (!isReadable()) {
+        return QObject::tr("You do not have permission to access this folder");
     }
 
     return QObject::tr("Folder is empty");
