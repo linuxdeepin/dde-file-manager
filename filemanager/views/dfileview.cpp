@@ -25,6 +25,8 @@
 #include "../shutil/fileutils.h"
 #include "../shutil/iconprovider.h"
 
+#include "xdndworkaround.h"
+
 #include <dthememanager.h>
 #include <dscrollbar.h>
 
@@ -32,6 +34,7 @@
 #include <QLineEdit>
 #include <QTextEdit>
 #include <QTimer>
+#include <QX11Info>
 
 DWIDGET_USE_NAMESPACE
 
@@ -1162,6 +1165,13 @@ void DFileView::dragEnterEvent(QDragEnterEvent *event)
         event->setDropAction(Qt::MoveAction);
     }
 
+    if (event->mimeData()->hasFormat("XdndDirectSave0")) {
+        event->setDropAction(Qt::CopyAction);
+        event->acceptProposedAction();
+
+        return;
+    }
+
     DListView::dragEnterEvent(event);
 }
 
@@ -1200,6 +1210,55 @@ void DFileView::dropEvent(QDropEvent *event)
 
     if (event->source() == this && !Global::keyCtrlIsPressed()) {
         event->setDropAction(Qt::MoveAction);
+    }
+
+    // Try to support XDS
+    // NOTE: in theory, it's not possible to implement XDS with pure Qt.
+    // We achieved this with some dirty XCB/XDND workarounds.
+    // Please refer to XdndWorkaround::clientMessage() in xdndworkaround.cpp for details.
+    if (QX11Info::isPlatformX11() && event->mimeData()->hasFormat("XdndDirectSave0")) {
+        event->setDropAction(Qt::CopyAction);
+        //    const QWidget* targetWidget = childView()->viewport();
+        // these are dynamic QObject property set by our XDND workarounds in xworkaround.cpp.
+        //    xcb_window_t dndSource = xcb_window_t(targetWidget->property("xdnd::lastDragSource").toUInt());
+        //    xcb_timestamp_t dropTimestamp = (xcb_timestamp_t)targetWidget->property("xdnd::lastDropTime").toUInt();
+
+        xcb_window_t dndSource = xcb_window_t(XdndWorkaround::lastDragSource);
+//        xcb_timestamp_t dropTimestamp = (xcb_timestamp_t)XdndWorkaround::lastDropTime;
+        // qDebug() << "XDS: source window" << dndSource << dropTimestamp;
+        if (dndSource != 0) {
+            xcb_connection_t* conn = QX11Info::connection();
+            xcb_atom_t XdndDirectSaveAtom = XdndWorkaround::internAtom("XdndDirectSave0", 15);
+            xcb_atom_t textAtom = XdndWorkaround::internAtom("text/plain", 10);
+
+            // 1. get the filename from XdndDirectSave property of the source window
+
+
+            QByteArray basename = XdndWorkaround::windowProperty(dndSource, XdndDirectSaveAtom, textAtom, 1024);
+
+            // 2. construct the fill URI for the file, and update the source window property.
+
+            QByteArray fileUri;
+
+            const QModelIndex &index = indexAt(event->pos());
+            const AbstractFileInfoPointer &fileInfo = model()->fileInfo(index.isValid() ? index : rootIndex());
+
+            if (fileInfo && fileInfo->fileUrl().isLocalFile() && fileInfo->isDir()) {
+                fileUri.append(fileInfo->fileUrl().toString() + "/" + basename);
+            }
+
+            XdndWorkaround::setWindowProperty(dndSource,  XdndDirectSaveAtom, textAtom, (void*)fileUri.constData(), fileUri.length());
+
+            // 3. send to XDS selection data request with type "XdndDirectSave" to the source window and
+            //    receive result from the source window. (S: success, E: error, or F: failure)
+            QByteArray result = event->mimeData()->data("XdndDirectSave0");
+            Q_UNUSED(result)
+//            qDebug() <<"result" << result;
+            // NOTE: there seems to be some bugs in file-roller so it always replies with "E" even if the
+            //       file extraction is finished successfully. Anyways, we ignore any error at the moment.
+        }
+
+        event->accept(); // yeah! we've done with XDS so stop Qt from further event propagation.
     }
 
     DListView::dropEvent(event);
