@@ -376,7 +376,7 @@ QIcon IconProvider::findIcon(const QString &absoluteFilePath, const QString &mim
     QString path = getThemeIconPath(iconName.replace("/", "-"), 256);
 
     if (path.isEmpty()) {
-        path = getThemeIconPath(mimeTypeDisplayManager->defaultIcon(mimeType));
+        path = getThemeIconPath(mimeTypeDisplayManager->defaultIcon(mimeType), 256);
     }
 
     if (!path.isEmpty()){
