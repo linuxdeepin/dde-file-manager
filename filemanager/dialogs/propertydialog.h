@@ -72,32 +72,6 @@ public:
 };
 
 
-
-
-class ComupterFolderSizeWorker: public QObject
-{
-    Q_OBJECT
-public:
-    explicit ComupterFolderSizeWorker(const QString& dir);
-
-public:
-    void coumpueteSize();
-    QString dir() const;
-    void setDir(const QString &dir);
-
-signals:
-    void sizeUpdated(qint64 size);
-
-public:
-    void updateSize();
-
-private:
-    QString m_dir;
-    qint64 m_size;
-};
-
-
-
 class PropertyDialog : public BaseDialog
 {
     Q_OBJECT
@@ -107,7 +81,7 @@ public:
 
 public:
     void initUI();
-    void startComputerFolderSize(const QString& dir);
+    void startComputerFolderSize(const DUrl &url);
     void toggleFileExecutable(bool isChecked);
     DUrl getUrl();
     int getFileCount();
