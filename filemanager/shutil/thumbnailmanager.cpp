@@ -45,6 +45,28 @@ void ThumbnailManager::requestThumbnailIcon(const QString &fpath)
         start();
 }
 
+QByteArray formatName(QImage::Format f)
+{
+    switch (f) {
+    case QImage::Format_ARGB32:
+    case QImage::Format_ARGB32_Premultiplied:
+    case QImage::Format_ARGB8565_Premultiplied:
+    case QImage::Format_ARGB6666_Premultiplied:
+    case QImage::Format_ARGB8555_Premultiplied:
+    case QImage::Format_ARGB4444_Premultiplied:
+    case QImage::Format_RGBA8888:
+    case QImage::Format_RGBA8888_Premultiplied:
+    case QImage::Format_A2BGR30_Premultiplied:
+    case QImage::Format_A2RGB30_Premultiplied:
+    case QImage::Format_Alpha8:
+        return "png";
+    default:
+        break;
+    }
+
+    return "jpeg";
+}
+
 void ThumbnailManager::run()
 {
     while (!taskQueue.isEmpty()) {
@@ -74,7 +96,7 @@ void ThumbnailManager::run()
             continue;
         }
 
-        QString thumbnailPath = QString("%1.jpg").arg(getThumbnailPath(md5));
+        QString thumbnailPath = QString("%1").arg(getThumbnailPath(md5));
 
         if (QFile(thumbnailPath).exists()) {
             icon = QIcon(thumbnailPath);
@@ -93,6 +115,7 @@ void ThumbnailManager::run()
                     reader.setScaledSize(size);
                 }
 
+                const QByteArray &format = formatName(reader.imageFormat());
                 const QPixmap &pixmap = QPixmap::fromImageReader(&reader);
 
                 icon = QIcon(pixmap);
@@ -100,7 +123,7 @@ void ThumbnailManager::run()
                 m_md5ToIcon[md5] = icon;
 
                 if (canScale) {
-                    pixmap.save(thumbnailPath, "jpg", 20);
+                    pixmap.save(thumbnailPath, format, 20);
                 } else {
                     QFile::link(fpath, thumbnailPath);
                 }
