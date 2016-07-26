@@ -230,7 +230,7 @@ void DToolBar::searchBarDeactivated()
 void DToolBar::searchBarTextEntered()
 {
     QString text = m_searchBar->text();
-
+    qDebug() << text;
     if (text.isEmpty()) {
         return;
     }else if (text.endsWith("/")){
@@ -242,6 +242,8 @@ void DToolBar::searchBarTextEntered()
     event = WindowManager::getWindowId(window());
     event = FMEvent::SearchBar;
     event = DUrl::fromUserInput(text);
+
+    qDebug() << event << text;
 
     if (!m_searchBar->hasScheme()) {
         DUrl url = m_crumbWidget->getCurrentUrl();
