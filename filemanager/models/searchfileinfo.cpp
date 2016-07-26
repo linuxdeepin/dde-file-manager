@@ -299,8 +299,15 @@ QVariant SearchFileInfo::userColumnDisplayName(int userColumnRole) const
 
 QVariant SearchFileInfo::userColumnData(int userColumnRole) const
 {
-    if (userColumnRole == DFileSystemModel::FileUserRole + 1)
-        return absoluteFilePath();
+    if (userColumnRole == DFileSystemModel::FileUserRole + 1) {
+        const DUrl &fileUrl = realFileInfo->fileUrl();
+
+        if (fileUrl.isLocalFile()) {
+            return absoluteFilePath();
+        } else {
+            return fileUrl.toString();
+        }
+    }
 
     return AbstractFileInfo::userColumnData(userColumnRole);
 }
