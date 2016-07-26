@@ -33,6 +33,9 @@ DWIDGET_USE_NAMESPACE
 
 int main(int argc, char *argv[])
 {
+    Q_INIT_RESOURCE(icons);
+    Q_INIT_RESOURCE(dui_theme_dark);
+    Q_INIT_RESOURCE(dui_theme_light);
 #ifdef ENABLE_PPROF
     ProfilerStart("pprof.prof");
 #endif
