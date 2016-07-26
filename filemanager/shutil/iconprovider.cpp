@@ -46,7 +46,7 @@ IconProvider::IconProvider(QObject *parent) : QObject(parent)
     initConnect();
     setCurrentTheme();
 
-    connect(thumbnailManager, &ThumbnailManager::taskFinished, this, &IconProvider::iconChanged);
+    connect(thumbnailManager, &ThumbnailManager::iconChanged, this, &IconProvider::iconChanged);
 }
 
 IconProvider::~IconProvider()

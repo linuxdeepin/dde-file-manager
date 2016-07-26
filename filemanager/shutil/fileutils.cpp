@@ -591,6 +591,33 @@ QString FileUtils::md5(const QString &fpath)
     return QCryptographicHash::hash(fpath.toLocal8Bit(), QCryptographicHash::Md5).toHex();
 }
 
+QByteArray FileUtils::md5(QFile *file, const QString &filePath)
+{
+    QByteArray md5 = filePath.toLocal8Bit() + QByteArray::number(file->size());
+
+    if (file->open(QIODevice::ReadOnly)) {
+        if (file->size() < 8192) {
+            md5 += file->readAll();
+        } else {
+            char data[4097] = {};
+
+            file->read(data, 4096);
+
+            md5.append(data);
+
+            file->seek(file->size() - 4096);
+
+            file->read(data, 4096);
+
+            md5.append(data);
+        }
+
+        file->close();
+    }
+
+    return QCryptographicHash::hash(md5, QCryptographicHash::Md5).toHex();;
+}
+
 bool FileUtils::isFileExecutable(const QString &path)
 {
     QFile file(path);
@@ -657,4 +684,26 @@ bool FileUtils::openExcutableFile(const QString &path, int flag)
     }
 
     return result;
+}
+
+QByteArray FileUtils::imageFormatName(QImage::Format f)
+{
+    switch (f) {
+    case QImage::Format_ARGB32:
+    case QImage::Format_ARGB32_Premultiplied:
+    case QImage::Format_ARGB8565_Premultiplied:
+    case QImage::Format_ARGB6666_Premultiplied:
+    case QImage::Format_ARGB8555_Premultiplied:
+    case QImage::Format_ARGB4444_Premultiplied:
+    case QImage::Format_RGBA8888:
+    case QImage::Format_RGBA8888_Premultiplied:
+    case QImage::Format_A2BGR30_Premultiplied:
+    case QImage::Format_A2RGB30_Premultiplied:
+    case QImage::Format_Alpha8:
+        return "png";
+    default:
+        break;
+    }
+
+    return "jpeg";
 }

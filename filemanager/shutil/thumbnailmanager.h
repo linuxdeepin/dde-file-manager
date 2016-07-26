@@ -6,6 +6,10 @@
 #include <QMap>
 #include <QIcon>
 
+QT_BEGIN_NAMESPACE
+class QFileSystemWatcher;
+QT_END_NAMESPACE
+
 class ThumbnailManager : public QThread
 {
     Q_OBJECT
@@ -20,15 +24,17 @@ public:
     void requestThumbnailIcon(const QString &fpath);
 
 signals:
-    void taskFinished(const QString &fpath, const QIcon &icon);
+    void iconChanged(const QString &filePath, const QIcon &icon);
 
 protected:
     void run() Q_DECL_OVERRIDE;
 
 private:
     QQueue<QString> taskQueue;
-    QMap<QString, QIcon> m_md5ToIcon;
     QMap<QString, QString> m_pathToMd5;
+    QMap<QString, QIcon> m_md5ToIcon;
+
+    QFileSystemWatcher *watcher = Q_NULLPTR;
 };
 
 #endif // THUMBNAILMANAGER_H

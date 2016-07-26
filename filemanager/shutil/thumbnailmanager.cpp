@@ -6,10 +6,19 @@
 #include <QtConcurrent/QtConcurrentRun>
 #include <QImageReader>
 #include <QCryptographicHash>
+#include <QFileSystemWatcher>
+
 ThumbnailManager::ThumbnailManager(QObject *parent)
     : QThread(parent)
+    , watcher(new QFileSystemWatcher(this))
 {
+    connect(watcher, &QFileSystemWatcher::fileChanged, this, [this] (const QString &filePath) {
+        const QString &md5 = m_pathToMd5.take(filePath);
 
+        if (!md5.isEmpty()) {
+            emit iconChanged(filePath, QIcon());
+        }
+    });
 }
 
 QString ThumbnailManager::getThumbnailCachePath()
@@ -26,16 +35,34 @@ QString ThumbnailManager::getThumbnailPath(const QString &name)
 
 QIcon ThumbnailManager::getThumbnailIcon(const QString &fpath)
 {
-    const QString &md5 = m_pathToMd5.value(fpath);
+    int pos = fpath.lastIndexOf('/');
 
-    if (md5.isEmpty())
-        return QIcon();
+    if (pos > 0 && getThumbnailPath("") == fpath.left(pos + 1)) {
+        if (!m_pathToMd5.contains(fpath)) {
+            const QString &md5 = fpath.mid(pos + 1);
 
-    return m_md5ToIcon.value(md5);
+            m_pathToMd5[fpath] = md5;
+
+            if (!m_md5ToIcon.contains(md5)) {
+                const QIcon &icon = QIcon(fpath);
+
+                m_md5ToIcon[md5] = icon;
+
+                return icon;
+            }
+
+            return m_md5ToIcon.value(md5);
+        }
+    }
+
+    return m_md5ToIcon.value(m_pathToMd5.value(fpath));
 }
 
 void ThumbnailManager::requestThumbnailIcon(const QString &fpath)
 {
+    if (m_pathToMd5.contains(fpath))
+        return;
+
     if (taskQueue.contains(fpath))
         return;
 
@@ -43,28 +70,6 @@ void ThumbnailManager::requestThumbnailIcon(const QString &fpath)
 
     if (!isRunning())
         start();
-}
-
-QByteArray formatName(QImage::Format f)
-{
-    switch (f) {
-    case QImage::Format_ARGB32:
-    case QImage::Format_ARGB32_Premultiplied:
-    case QImage::Format_ARGB8565_Premultiplied:
-    case QImage::Format_ARGB6666_Premultiplied:
-    case QImage::Format_ARGB8555_Premultiplied:
-    case QImage::Format_ARGB4444_Premultiplied:
-    case QImage::Format_RGBA8888:
-    case QImage::Format_RGBA8888_Premultiplied:
-    case QImage::Format_A2BGR30_Premultiplied:
-    case QImage::Format_A2RGB30_Premultiplied:
-    case QImage::Format_Alpha8:
-        return "png";
-    default:
-        break;
-    }
-
-    return "jpeg";
 }
 
 void ThumbnailManager::run()
@@ -75,26 +80,25 @@ void ThumbnailManager::run()
         QFile file(fpath);
 
         /// ensure image size < 100MB
-        if (file.size() > 1024 * 1024 * 100)
+        if (file.size() > 1024 * 1024 * 30) {
+            m_pathToMd5[fpath] = QString();
+
             continue;
-
-        QString md5;
-
-        if (file.open(QIODevice::ReadOnly)) {
-            md5 = QCryptographicHash::hash(file.readAll(), QCryptographicHash::Md5).toHex();
-        } else {
-            md5 = fpath;
         }
+
+        watcher->addPath(fpath);
+
+        const QString &md5 = FileUtils::md5(&file, fpath);;
 
         m_pathToMd5[fpath] = md5;
 
         QIcon icon = m_md5ToIcon.value(md5);
 
         if (!icon.isNull()) {
-            emit taskFinished(fpath, icon);
+            emit iconChanged(fpath, icon);
 
             continue;
-        }
+        };
 
         QString thumbnailPath = QString("%1").arg(getThumbnailPath(md5));
 
@@ -103,7 +107,7 @@ void ThumbnailManager::run()
 
             m_md5ToIcon[md5] = icon;
         } else {
-            QImageReader reader(fpath);
+            QImageReader reader(&file);
 
             if (reader.canRead()) {
                 QSize size = reader.size();
@@ -115,7 +119,7 @@ void ThumbnailManager::run()
                     reader.setScaledSize(size);
                 }
 
-                const QByteArray &format = formatName(reader.imageFormat());
+                const QByteArray &format = FileUtils::imageFormatName(reader.imageFormat());
                 const QPixmap &pixmap = QPixmap::fromImageReader(&reader);
 
                 icon = QIcon(pixmap);
@@ -130,6 +134,6 @@ void ThumbnailManager::run()
             }
         }
 
-        emit taskFinished(fpath, icon);
+        emit iconChanged(fpath, icon);
     }
 }
