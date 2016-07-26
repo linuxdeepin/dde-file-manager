@@ -52,11 +52,14 @@ public:
     static void sendToDesktop(const QString& file);
 
     static QString md5(const QString& data);
+    static QByteArray md5(QFile *file, const QString &filePath);
 
     static bool isFileExecutable(const QString& path);
     static QString getFileMimetype(const QString& path);
     static bool isExecutableScript(const QString& path);
     static bool openExcutableFile(const QString& path, int flag);
+
+    static QByteArray imageFormatName(QImage::Format f);
 };
 
 #endif // FILEUTILS_H
