@@ -198,6 +198,11 @@ void UDiskListener::asyncRequestDiskInfosFinihsed(QDBusPendingCallWatcher *call)
         foreach(DiskInfo info, diskinfos)
         {
             qDebug() << info;
+
+            if (info.Icon == "drive-optical" && info.Name.startsWith("CD")){
+                info.Type = "dvd";
+            }
+
             UDiskDeviceInfo *device;
             if(m_map.value(info.ID))
             {
@@ -223,6 +228,10 @@ void UDiskListener::changed(int in0, const QString &in1)
 
     UDiskDeviceInfo *device = hasDeviceInfo(in1);
     DiskInfo info = m_diskMountInterface->QueryDisk(in1);
+
+    if (info.Icon == "drive-optical" && info.Name.startsWith("CD")){
+        info.Type = "dvd";
+    }
 
     qDebug() << device << info;
     if(device == NULL && !info.ID.isEmpty())
