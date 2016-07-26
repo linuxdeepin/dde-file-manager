@@ -56,11 +56,6 @@ QString TrashFileInfo::displayName() const
     return m_displayName;
 }
 
-QString TrashFileInfo::absoluteFilePath() const
-{
-    return fileUrl().toString();
-}
-
 void TrashFileInfo::setUrl(const DUrl &fileUrl)
 {
     AbstractFileInfo::setUrl(fileUrl);
@@ -269,7 +264,7 @@ void TrashFileInfo::updateInfo()
     const QString &basePath = TRASHFILEPATH;
     const QString &fileBaseName = filePath.mid(basePath.size(), filePath.indexOf('/', basePath.size() + 1) - basePath.size());
 
-    if(QFile::exists(TRASHINFOPATH + fileBaseName + ".trashinfo")) {
+    if (QFile::exists(TRASHINFOPATH + fileBaseName + ".trashinfo")) {
         QSettings setting(TRASHINFOPATH + fileBaseName + ".trashinfo", QSettings::NativeFormat);
 
         setting.beginGroup("Trash Info");
@@ -277,11 +272,7 @@ void TrashFileInfo::updateInfo()
 
         originalFilePath = QByteArray::fromPercentEncoding(setting.value("Path").toByteArray()) + filePath.mid(basePath.size() + fileBaseName.size());
 
-
-        if (originalFilePath.endsWith("desktop"))
-            m_displayName = AbstractFileInfo::displayName();
-        else
-            m_displayName = originalFilePath.mid(originalFilePath.lastIndexOf('/') + 1);
+        m_displayName = originalFilePath.mid(originalFilePath.lastIndexOf('/') + 1);
 
         m_deletionDate = QDateTime::fromString(setting.value("DeletionDate").toString(), Qt::ISODate);
         displayDeletionDate = m_deletionDate.toString(timeFormat());

@@ -16,7 +16,6 @@ public:
     bool isWritable() const Q_DECL_OVERRIDE;
 
     QString displayName() const Q_DECL_OVERRIDE;
-    QString absoluteFilePath() const Q_DECL_OVERRIDE;
 
     void setUrl(const DUrl &fileUrl) Q_DECL_OVERRIDE;
 
