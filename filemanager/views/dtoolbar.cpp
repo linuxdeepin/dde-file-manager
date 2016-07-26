@@ -244,7 +244,7 @@ void DToolBar::searchBarTextEntered()
     event = DUrl::fromUserInput(text);
 
     if (!m_searchBar->hasScheme()) {
-        DUrl url = m_crumbWidget->getUrl();
+        DUrl url = m_crumbWidget->getCurrentUrl();
 
         if (url.isSearchFile())
             url.setSearchKeyword(text);

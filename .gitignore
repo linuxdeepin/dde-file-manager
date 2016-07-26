@@ -32,3 +32,6 @@ build*
 *.pro.user*
 *.qm
 *.autosave
+
+vendor/include/*
+vendor/lib/*
