@@ -2,6 +2,7 @@
 #include "dseparatorhorizontal.h"
 #include "../shutil/fileutils.h"
 #include "../controllers/fileservices.h"
+#include "../shutil/filessizeworker.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QThread>
@@ -57,20 +58,22 @@ void TrashPropertyDialog::initUI()
     mainLayout->setContentsMargins(10, 10, 10, 10);
     setLayout(mainLayout);
 
-    startComputerFolderSize(fileInfo->absoluteFilePath());
+    startComputerFolderSize(m_url);
 }
 
-void TrashPropertyDialog::startComputerFolderSize(const QString &dir)
+void TrashPropertyDialog::startComputerFolderSize(const DUrl &url)
 {
-    ComupterFolderSizeWorker* worker = new ComupterFolderSizeWorker(dir);
+    DUrlList urls;
+    urls << url;
+    FilesSizeWorker* worker = new FilesSizeWorker(urls);
     QThread*  workerThread = new QThread;
     worker->moveToThread(workerThread);
 
-    connect(workerThread, &QThread::finished, worker, &ComupterFolderSizeWorker::deleteLater);
+    connect(workerThread, &QThread::finished, worker, &FilesSizeWorker::deleteLater);
     connect(workerThread, &QThread::finished, workerThread, &QThread::deleteLater);
 
-    connect(this, &TrashPropertyDialog::requestStartComputerFolderSize, worker, &ComupterFolderSizeWorker::coumpueteSize);
-    connect(worker, &ComupterFolderSizeWorker::sizeUpdated, this, &TrashPropertyDialog::updateFolderSize);
+    connect(this, &TrashPropertyDialog::requestStartComputerFolderSize, worker, &FilesSizeWorker::coumpueteSize);
+    connect(worker, &FilesSizeWorker::sizeUpdated, this, &TrashPropertyDialog::updateFolderSize);
 
     workerThread->start();
 
