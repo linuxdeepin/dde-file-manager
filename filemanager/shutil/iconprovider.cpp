@@ -354,8 +354,8 @@ QIcon IconProvider::findIcon(const QString &absoluteFilePath, const QString &mim
 
         if (theIcon.isNull())
             thumbnailManager->requestThumbnailIcon(absoluteFilePath);
-
-        return theIcon;
+        else
+            return theIcon;
     } else if (mimeType == "application/x-desktop") {
         return IconProvider::getDesktopIcon(DesktopFile(absoluteFilePath).getIcon(), 48);
     } else if (systemPathManager->isSystemPath(absoluteFilePath)) {
