@@ -9,7 +9,7 @@ Categories=Utility;
 OnlyShowIn=Deepin;
 MimeType=inode/directory;
 
-Name=DDE File Manager
+Name=Deepin File Manager
 Name[ar]=مدير الملفات
 Name[ast]=Xestor de Ficheros
 Name[bg]=Файлов мениджър
