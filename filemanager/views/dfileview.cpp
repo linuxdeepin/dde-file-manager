@@ -1590,6 +1590,7 @@ void DFileView::updateStatusBar()
 
     FMEvent event;
     event = windowId();
+    event = selectedUrls();
     int count = selectedIndexCount();
 
     if (count == 0){

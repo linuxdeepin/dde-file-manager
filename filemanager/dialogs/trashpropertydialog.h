@@ -14,7 +14,7 @@ public:
     ~TrashPropertyDialog();
 
     void initUI();
-    void startComputerFolderSize(const QString& dir);
+    void startComputerFolderSize(const DUrl& url);
 
 signals:
     void requestStartComputerFolderSize();

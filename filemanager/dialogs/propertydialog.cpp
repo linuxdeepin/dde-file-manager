@@ -9,7 +9,8 @@
 #include "deviceinfo/deviceinfo.h"
 #include "../shutil/fileutils.h"
 #include "utils/utils.h"
-
+#include "../views/deditorwidgetmenu.h"
+#include "../shutil/filessizeworker.h"
 
 #include <dscrollbar.h>
 #include <dexpandgroup.h>
@@ -31,8 +32,6 @@
 #include <QPushButton>
 #include <QStackedWidget>
 #include <QStorageInfo>
-#include "../views/deditorwidgetmenu.h"
-
 
 
 NameTextEdit::NameTextEdit(const QString &text, QWidget *parent):
@@ -142,64 +141,6 @@ SectionValueLabel::SectionValueLabel(const QString &text, QWidget *parent, Qt::W
 }
 
 
-ComupterFolderSizeWorker::ComupterFolderSizeWorker(const QString &dir):
-    QObject(),
-    m_dir(dir)
-
-{
-    m_size = 0;
-}
-
-
-void ComupterFolderSizeWorker::coumpueteSize()
-{
-    QFileInfo targetInfo(m_dir);
-    if (targetInfo.exists()){
-        if (targetInfo.isDir()){
-            QDir d(m_dir);
-            QFileInfoList entryInfoList = d.entryInfoList(QDir::AllEntries | QDir::System
-                        | QDir::NoDotAndDotDot | QDir::NoSymLinks
-                        | QDir::Hidden);
-            foreach (QFileInfo file, entryInfoList) {
-                if (file.isFile()){
-                    m_size += file.size();
-                    updateSize();
-                }
-                else {
-                    QDirIterator it(file.absoluteFilePath(), QDir::AllEntries | QDir::System
-                                  | QDir::NoDotAndDotDot | QDir::NoSymLinks
-                                  | QDir::Hidden, QDirIterator::Subdirectories);
-                    while (it.hasNext()) {
-                        it.next();
-                        m_size += it.fileInfo().size();
-                        updateSize();
-                    }
-                }
-            }
-        }else{
-            m_size += targetInfo.size();
-        }
-    }
-    emit sizeUpdated(m_size);
-}
-
-QString ComupterFolderSizeWorker::dir() const
-{
-    return m_dir;
-}
-
-void ComupterFolderSizeWorker::setDir(const QString &dir)
-{
-    m_dir = dir;
-}
-
-void ComupterFolderSizeWorker::updateSize()
-{
-    emit sizeUpdated(m_size);
-}
-
-
-
 PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
     : BaseDialog(parent)
     , m_url(url)
@@ -282,7 +223,7 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
             m_fileCount = 1;
             m_size = fileInfo->size();
         }else if (fileInfo->isDir()){
-            startComputerFolderSize(fileInfo->absoluteFilePath());
+            startComputerFolderSize(m_url);
             m_fileCount = fileInfo->size();
         }
     }
@@ -378,17 +319,19 @@ void PropertyDialog::showTextShowFrame()
     }
 }
 
-void PropertyDialog::startComputerFolderSize(const QString &dir)
+void PropertyDialog::startComputerFolderSize(const DUrl &url)
 {
-    ComupterFolderSizeWorker* worker = new ComupterFolderSizeWorker(dir);
+    DUrlList urls;
+    urls << url;
+    FilesSizeWorker* worker = new FilesSizeWorker(urls);
     QThread*  workerThread = new QThread;
     worker->moveToThread(workerThread);
 
-    connect(workerThread, &QThread::finished, worker, &ComupterFolderSizeWorker::deleteLater);
+    connect(workerThread, &QThread::finished, worker, &FilesSizeWorker::deleteLater);
     connect(workerThread, &QThread::finished, workerThread, &QThread::deleteLater);
 
-    connect(this, &PropertyDialog::requestStartComputerFolderSize, worker, &ComupterFolderSizeWorker::coumpueteSize);
-    connect(worker, &ComupterFolderSizeWorker::sizeUpdated, this, &PropertyDialog::updateFolderSize);
+    connect(this, &PropertyDialog::requestStartComputerFolderSize, worker, &FilesSizeWorker::coumpueteSize);
+    connect(worker, &FilesSizeWorker::sizeUpdated, this, &PropertyDialog::updateFolderSize);
 
     workerThread->start();
 

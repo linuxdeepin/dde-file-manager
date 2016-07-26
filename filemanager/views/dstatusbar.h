@@ -35,6 +35,11 @@ private:
     QString m_OnlyOneItemSelected;
     QString m_selected;
 
+    QString m_selectFolders;
+    QString m_selectOnlyOneFolder;
+    QString m_selectFiles;
+    QString m_selectOnlyOneFile;
+
     QHBoxLayout * m_layout;
     QLabel * m_label;
     DPictureSequenceView* m_loadingIndicator;
