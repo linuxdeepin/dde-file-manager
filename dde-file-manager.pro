@@ -10,8 +10,21 @@ QT       += core gui svg dbus x11extras network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = dde-file-manager
+isEmpty(TARGET) {
+    TARGET = dde-file-manager
+}
+
 TEMPLATE = app
+
+isEmpty(VERSION) {
+    VERSION = 1.0
+}
+
+DEFINES += QMAKE_TARGET=\\\"$$TARGET\\\" QMAKE_VERSION=\\\"$$VERSION\\\"
+
+isEmpty(QMAKE_ORGANIZATION_NAME) {
+    DEFINES += QMAKE_ORGANIZATION_NAME=\\\"deepin\\\"
+}
 
 isEmpty(PREFIX){
     PREFIX = /usr
@@ -240,15 +253,15 @@ SOURCES += \
 INCLUDEPATH += filemanager/models
 
 BINDIR = $$PREFIX/bin
-APPSHAREDIR = $$PREFIX/share/dde-file-manager
-HELPSHAREDIR = $$PREFIX/share/dman/dde-file-manager
+APPSHAREDIR = $$PREFIX/share/$$TARGET
+HELPSHAREDIR = $$PREFIX/share/dman/$$TARGET
 ICONDIR = $$PREFIX/share/icons/hicolor/scalable/apps
 DEFINES += APPSHAREDIR=\\\"$$APPSHAREDIR\\\"
 
 target.path = $$BINDIR
 
 desktop.path = $${PREFIX}/share/applications/
-desktop.files = dde-file-manager.desktop
+desktop.files = $${TARGET}.desktop
 
 templateFiles.path = $$APPSHAREDIR/templates
 templateFiles.files = skin/templates/newDoc.doc \
@@ -266,8 +279,8 @@ mimetypeFiles.files += \
     mimetypes/image.mimetype \
     mimetypes/executable.mimetype
 
-TRANSLATIONS += $$PWD/translations/dde-file-manager.ts \
-    $$PWD/translations/dde-file-manager_zh_CN.ts
+TRANSLATIONS += $$PWD/translations/$${TARGET}.ts \
+    $$PWD/translations/$${TARGET}_zh_CN.ts
 
 # Automating generation .qm files from .ts files
 CONFIG(release, debug|release) {
@@ -282,6 +295,6 @@ help.path = $$HELPSHAREDIR
 help.files = help/*
 
 icon.path = $$ICONDIR
-icon.files = skin/images/dde-file-manager.svg
+icon.files = skin/images/$${TARGET}.svg
 
 INSTALLS += target desktop templateFiles translations mimetypeFiles help icon

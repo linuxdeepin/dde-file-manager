@@ -42,9 +42,10 @@ int main(int argc, char *argv[])
 #endif
     SingleApplication app(argc, argv);
 
-    app.setOrganizationName("deepin");
-    app.setApplicationName(QObject::tr("Deepin File Manager"));
-    app.setApplicationVersion("v1.0");
+    app.setOrganizationName(QMAKE_ORGANIZATION_NAME);
+    app.setApplicationDisplayName(QObject::tr("File Manager"));
+    app.setApplicationName(QMAKE_TARGET);
+    app.setApplicationVersion(QMAKE_VERSION);
 
     LogUtil::registerLogger();
 
@@ -62,7 +63,7 @@ int main(int argc, char *argv[])
 
     QThreadPool::globalInstance()->setMaxThreadCount(MAX_THREAD_COUNT);
 
-    QString uniqueKey = "dde-file-manager";
+    QString uniqueKey = app.applicationName();
 
     bool isSingleInstance  = app.setSingleInstance(uniqueKey);
 
@@ -71,7 +72,7 @@ int main(int argc, char *argv[])
     if (isSingleInstance){
         QTranslator translator;
 
-        if (translator.load(APPSHAREDIR"/translations/dde-file-manager_" + QLocale::system().name()))
+        if (translator.load(APPSHAREDIR"/translations/" + app.applicationName() +"_" + QLocale::system().name()))
             app.installTranslator(&translator);
 
         QTranslator translator_qt;
