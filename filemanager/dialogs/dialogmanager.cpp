@@ -389,8 +389,8 @@ void DialogManager::showAboutDialog(const FMEvent &event)
     QString icon(":/images/images/dde-file-manager_96.png");
     DAboutDialog *dialog = new DAboutDialog(icon,
                         icon,
-                        tr("File Manager"),
-                        tr("Version:1.0"),
+                        qApp->applicationDisplayName(),
+                        tr("Version:") + qApp->applicationVersion(),
                         tr("File Manager is a file management tool independently "
                            "developed by Deepin Technology, featured with searching, "
                            "copying, trash, compression/decompression, file property "

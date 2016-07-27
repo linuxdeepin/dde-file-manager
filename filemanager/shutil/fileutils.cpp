@@ -385,7 +385,7 @@ QString FileUtils::newDocmentName(const QString &targetdir, const QString &baseN
 void FileUtils::cpTemplateFileToTargetDir(const QString& targetdir, const QString& baseName, const QString& suffix)
 {
     QString templateFile;
-    QDirIterator it("/usr/share/dde-file-manager/templates", QDir::Files);
+    QDirIterator it(APPSHAREDIR"/templates", QDir::Files);
     while (it.hasNext()) {
       it.next();
       if (it.filePath().endsWith(suffix)){
