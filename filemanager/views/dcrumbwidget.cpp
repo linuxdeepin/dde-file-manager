@@ -4,11 +4,18 @@
 
 #include "dcrumbwidget.h"
 #include "dcrumbbutton.h"
-#include "../app/fmevent.h"
 #include "windowmanager.h"
 #include "dstatebutton.h"
+
+#include "../app/fmevent.h"
 #include "../app/global.h"
 
+#include "../controllers/pathmanager.h"
+
+#include "../deviceinfo/udiskdeviceinfo.h"
+#include "../deviceinfo/udisklistener.h"
+
+#include "widgets/singleton.h"
 
 DCrumbWidget::DCrumbWidget(QWidget *parent)
     : QFrame(parent)

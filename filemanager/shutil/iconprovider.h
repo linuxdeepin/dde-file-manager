@@ -4,13 +4,11 @@
 #include <QObject>
 #include <QIcon>
 #include <QCache>
-#include <QHash>
+#include <QMap>
 #include <QSet>
 #include <QFileIconProvider>
 #include <QGSettings>
 #include <QMimeDatabase>
-
-#include "mimeutils.h"
 
 class IconProvider : public QObject
 {

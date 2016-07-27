@@ -4,18 +4,22 @@
 #include "../app/global.h"
 #include "../app/filesignalmanager.h"
 #include "../app/fmevent.h"
-#include "../shutil/fileutils.h"
+#include "../app/filemanagerapp.h"
 
-#include "../controllers/fileservices.h"
+#include "../shutil/fileutils.h"
+#include "../shutil/standardpath.h"
 
 #include "../dialogs/propertydialog.h"
+
 #include "../views/windowmanager.h"
-#include "../shutil/standardpath.h"
+
+#include "../controllers/fileservices.h"
 #include "../controllers/filejob.h"
 #include "../controllers/bookmarkmanager.h"
 #include "../controllers/appcontroller.h"
 #include "../controllers/trashmanager.h"
-#include "../app/filemanagerapp.h"
+
+#include "widgets/singleton.h"
 
 #include <QFileDialog>
 #include <QDesktopServices>

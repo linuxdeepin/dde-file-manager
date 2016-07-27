@@ -10,16 +10,25 @@
 #include "bookmarkmanager.h"
 #include "networkcontroller.h"
 #include "deviceinfo/udisklistener.h"
-#include "../app/global.h"
-#include "../app/fmevent.h"
-
-
-#include "../shutil/fileutils.h"
-#include "../app/filesignalmanager.h"
 #include "fileservices.h"
 #include "filejob.h"
+
+#include "../app/filesignalmanager.h"
+#include "../app/fmevent.h"
+#include "../app/global.h"
+
+#include "../shutil/fileutils.h"
+
 #include "../views/windowmanager.h"
+
 #include "../dbusinterface/soundeffect_interface.h"
+
+#include "../gvfs/networkmanager.h"
+#include "../gvfs/gvfsmountclient.h"
+#include "../gvfs/secrectmanager.h"
+
+#include "widgets/singleton.h"
+
 #include <QProcess>
 #include <QStorageInfo>
 #include <DAboutDialog>

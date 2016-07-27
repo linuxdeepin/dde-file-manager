@@ -1,17 +1,23 @@
 #include "dfilemanagerwindow.h"
-#include "utils/xutil.h"
 #include "dleftsidebar.h"
 #include "dtoolbar.h"
 #include "dfileview.h"
 #include "ddetailview.h"
-#include "../app/global.h"
-#include "../app/fmevent.h"
 #include "dfilemenu.h"
 #include "dsearchbar.h"
 #include "dsplitter.h"
-#include "utils/xutil.h"
 #include "extendview.h"
 #include "dstatusbar.h"
+#include "filemenumanager.h"
+
+#include "../app/global.h"
+#include "../app/fmevent.h"
+
+#include "utils/xutil.h"
+#include "utils/xutil.h"
+#include "utils/utils.h"
+
+#include "widgets/singleton.h"
 
 #include <QStatusBar>
 #include <QFrame>
@@ -22,8 +28,6 @@
 #include <QThread>
 #include <QDesktopWidget>
 #include <QStackedLayout>
-
-
 
 const int DFileManagerWindow::MinimumWidth = 0;
 

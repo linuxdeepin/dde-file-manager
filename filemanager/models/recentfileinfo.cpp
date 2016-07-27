@@ -4,6 +4,8 @@
 
 #include "../shutil/iconprovider.h"
 
+#include "widgets/singleton.h"
+
 RecentFileInfo::RecentFileInfo()
     : AbstractFileInfo()
 {

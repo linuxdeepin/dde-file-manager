@@ -1,8 +1,14 @@
 #include "fmstatemanager.h"
+
+#include "utils/qobjecthelper.h"
+
 #include "../app/global.h"
 #include "../app/filesignalmanager.h"
+
 #include "../shutil/standardpath.h"
-#include "utils/qobjecthelper.h"
+
+#include <QJsonParseError>
+#include <QJsonObject>
 
 QMap<DUrl, QPair<int, int>> FMStateManager::SortStates;
 

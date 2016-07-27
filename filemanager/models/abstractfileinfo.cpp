@@ -5,11 +5,18 @@
 #include "../models/dfilesystemmodel.h"
 
 #include "../shutil/fileutils.h"
+#include "../shutil/mimetypedisplaymanager.h"
+
 #include "../controllers/pathmanager.h"
+#include "../controllers/fileservices.h"
+
 #include "../app/global.h"
+
+#include "widgets/singleton.h"
+
 #include <QDateTime>
 #include <QDebug>
-
+#include <QApplication>
 
 namespace FileSortFunction {
 Qt::SortOrder sortOrderGlobal;
@@ -116,22 +123,7 @@ QString AbstractFileInfo::fileName() const
 
 QString AbstractFileInfo::displayName() const
 {
-    if (systemPathManager->isSystemPath(filePath())) {
-        QString displayName = systemPathManager->getSystemPathDisplayNameByPath(filePath());
-        if (displayName.isEmpty())
-            return fileName();
-        else
-            return displayName;
-
-    } else {
-        if (isDesktopFile()){
-            return DesktopFile(absoluteFilePath()).getLocalName();
-        }
-
-        return fileName();
-    }
-
-    return QString();
+    return fileName();
 }
 
 QString AbstractFileInfo::pinyinName() const

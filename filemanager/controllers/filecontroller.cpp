@@ -1,19 +1,30 @@
 #include "filecontroller.h"
 #include "fileinfo.h"
+#include "fileservices.h"
+#include "filejob.h"
 
 #include "../models/desktopfileinfo.h"
-
-#include "../controllers/filejob.h"
 
 #include "../app/global.h"
 #include "../app/fmevent.h"
 #include "../app/filesignalmanager.h"
+
 #include "../shutil/fileutils.h"
+
+#include "../dialogs/dialogmanager.h"
+
+#include "widgets/singleton.h"
+
 #include "filemonitor/filemonitor.h"
 
 #include <QDesktopServices>
 #include <QDirIterator>
 #include <QFileInfo>
+#include <QClipboard>
+#include <QProcess>
+#include <QMimeData>
+#include <QGuiApplication>
+#include <QUrlQuery>
 
 class FileDirIterator : public DDirIterator
 {
@@ -55,7 +66,7 @@ const AbstractFileInfoPointer FileController::createFileInfo(const DUrl &fileUrl
 {
     accepted = true;
 
-    if(fileUrl.path().endsWith(QString(".") + DESKTOP_SURRIX))
+    if (fileUrl.path().endsWith(QString(".") + DESKTOP_SURRIX))
         return AbstractFileInfoPointer(new DesktopFileInfo(fileUrl));
     else
         return AbstractFileInfoPointer(new FileInfo(fileUrl));
@@ -468,6 +479,9 @@ QString FileDirIterator::filePath() const
 
 const AbstractFileInfoPointer FileDirIterator::fileInfo() const
 {
+    if (fileName().endsWith(QString(".") + DESKTOP_SURRIX))
+        return AbstractFileInfoPointer(new DesktopFileInfo(iterator.fileInfo()));
+
     return AbstractFileInfoPointer(new FileInfo(iterator.fileInfo()));
 }
 

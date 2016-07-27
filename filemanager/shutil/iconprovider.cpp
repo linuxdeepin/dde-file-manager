@@ -1,4 +1,18 @@
 #include "iconprovider.h"
+#include "fileutils.h"
+#include "desktopfile.h"
+#include "thumbnailmanager.h"
+
+#include "../app/global.h"
+
+#include "../controllers/pathmanager.h"
+#include "../controllers/appcontroller.h"
+
+#include "../shutil/mimesappsmanager.h"
+#include "../shutil/mimetypedisplaymanager.h"
+
+#include "widgets/singleton.h"
+
 #include <QImage>
 #include <QImageReader>
 #include <QSvgRenderer>
@@ -14,13 +28,6 @@
 #include <QDir>
 #include <QDebug>
 #include <QImageReader>
-
-#include "fileutils.h"
-#include "desktopfile.h"
-#include "thumbnailmanager.h"
-
-#include "../app/global.h"
-#include "../controllers/appcontroller.h"
 
 #undef signals
 extern "C" {

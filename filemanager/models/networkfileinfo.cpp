@@ -1,6 +1,11 @@
 #include "networkfileinfo.h"
+
 #include "../app/global.h"
+
 #include "../shutil/iconprovider.h"
+
+#include "widgets/singleton.h"
+
 #include <QIcon>
 
 NetworkFileInfo::NetworkFileInfo():

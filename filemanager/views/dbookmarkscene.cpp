@@ -2,19 +2,26 @@
 #include "dbookmarkitem.h"
 #include "dbookmarkrootitem.h"
 #include "dbookmarkitemgroup.h"
-#include "../app/global.h"
-#include "../controllers/bookmarkmanager.h"
-#include <QDebug>
-#include <QGraphicsView>
-#include <QMimeData>
-#include <QDir>
-#include "../app/fmevent.h"
-#include "../app/filesignalmanager.h"
-#include "../../deviceinfo/udiskdeviceinfo.h"
 #include "dbookmarkline.h"
 #include "windowmanager.h"
 #include "dbusinterface/dbustype.h"
 
+#include "../controllers/bookmarkmanager.h"
+#include "../controllers/pathmanager.h"
+
+#include "../app/global.h"
+#include "../app/fmevent.h"
+#include "../app/filesignalmanager.h"
+
+#include "../deviceinfo/udiskdeviceinfo.h"
+#include "../deviceinfo/udisklistener.h"
+
+#include "widgets/singleton.h"
+
+#include <QDebug>
+#include <QGraphicsView>
+#include <QMimeData>
+#include <QDir>
 
 DBookmarkScene::DBookmarkScene()
 {

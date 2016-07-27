@@ -3,14 +3,17 @@
 #include "dhorizseparator.h"
 #include "windowmanager.h"
 
-#include "../controllers/pathmanager.h"
 #include "../controllers/bookmarkmanager.h"
-#include "../../deviceinfo/devicelistener.h"
-#include "../../deviceinfo/deviceinfo.h"
 
 #include "../app/global.h"
 #include "../app/fmevent.h"
 #include "../app/filesignalmanager.h"
+
+#include "../../deviceinfo/devicelistener.h"
+#include "../../deviceinfo/deviceinfo.h"
+#include "../../deviceinfo/udisklistener.h"
+
+#include "widgets/singleton.h"
 
 #include "dhoverbutton.h"
 #include "dbookmarkitem.h"

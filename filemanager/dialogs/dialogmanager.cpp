@@ -1,27 +1,42 @@
 #include "dialogmanager.h"
-#include <QTimer>
-#include "dialogs/dtaskdialog.h"
-#include "../app/global.h"
-#include "../app/filesignalmanager.h"
-#include "../controllers/filejob.h"
-#include "dialogs/messagewrongdialog.h"
-#include "../dialogs/propertydialog.h"
-#include "../dialogs/openwithdialog.h"
-#include "../models/fileinfo.h"
-#include "../app/fmevent.h"
-#include "../views/windowmanager.h"
-#include "../models/trashfileinfo.h"
 #include "closealldialogindicator.h"
-#include "utils/xutil.h"
 #include "openwithotherdialog.h"
 #include "trashpropertydialog.h"
 
+#include "../app/global.h"
+#include "../app/filesignalmanager.h"
+#include "../app/fmevent.h"
+
+#include "../controllers/filejob.h"
+#include "../controllers/fileservices.h"
+
+#include "../models/fileinfo.h"
+#include "../models/trashfileinfo.h"
+
+#include "../views/windowmanager.h"
+
 #include "../shutil/iconprovider.h"
+
+#include "../utils/xutil.h"
+#include "../utils/utils.h"
+
+#include "../dialogs/dtaskdialog.h"
+#include "../dialogs/messagewrongdialog.h"
+#include "../dialogs/propertydialog.h"
+#include "../dialogs/openwithdialog.h"
+
+#include "../deviceinfo/udisklistener.h"
+#include "../deviceinfo/udiskdeviceinfo.h"
+
+#include "widgets/singleton.h"
 
 #include <ddialog.h>
 #include <DAboutDialog>
 #include <dscrollbar.h>
+
+#include <QTimer>
 #include <QDesktopWidget>
+#include <QApplication>
 
 DWIDGET_USE_NAMESPACE
 

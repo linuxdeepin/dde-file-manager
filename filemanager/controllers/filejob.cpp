@@ -3,6 +3,8 @@
 #include "../app/filesignalmanager.h"
 #include "../shutil/fileutils.h"
 
+#include "widgets/singleton.h"
+
 #include <QFile>
 #include <QThread>
 #include <QDir>
@@ -10,6 +12,8 @@
 #include <QDateTime>
 #include <QElapsedTimer>
 #include <QDirIterator>
+#include <QProcess>
+#include <QCryptographicHash>
 
 QMap<DUrl, int> FileJob::SelectedFiles;
 

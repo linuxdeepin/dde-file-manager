@@ -1,9 +1,13 @@
 #include "udisklistener.h"
+#include "fstab.h"
 
 #include "../../filemanager/app/global.h"
 #include "../../filemanager/app/filesignalmanager.h"
-#include "fstab.h"
+
+#include "../controllers/fileservices.h"
 #include "../controllers/subscriber.h"
+
+#include "widgets/singleton.h"
 
 UDiskListener::UDiskListener()
 {

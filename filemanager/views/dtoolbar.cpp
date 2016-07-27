@@ -5,6 +5,9 @@
 #include "dcrumbwidget.h"
 #include "historystack.h"
 #include "dhoverbutton.h"
+#include "historystack.h"
+#include "dhoverbutton.h"
+#include "windowmanager.h"
 
 #include "../app/fmevent.h"
 #include "../app/global.h"
@@ -12,11 +15,10 @@
 
 #include "../views/filemenumanager.h"
 
+#include "widgets/singleton.h"
+
 #include <QHBoxLayout>
 #include <QVBoxLayout>
-#include "historystack.h"
-#include "dhoverbutton.h"
-#include "windowmanager.h"
 #include <QDebug>
 
 const int DToolBar::ButtonWidth = 26;

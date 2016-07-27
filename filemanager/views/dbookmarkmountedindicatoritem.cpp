@@ -1,5 +1,11 @@
 #include "dbookmarkmountedindicatoritem.h"
+
 #include "../app/global.h"
+
+#include "../deviceinfo/udisklistener.h"
+
+#include "widgets/singleton.h"
+
 #include <QDebug>
 
 DBookmarkMountedIndicatorItem::DBookmarkMountedIndicatorItem(DBookmarkItem *parentItem):

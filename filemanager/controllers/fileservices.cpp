@@ -14,12 +14,22 @@
 
 #include "../shutil/fileutils.h"
 
+#include "../dialogs/dialogmanager.h"
+
+#include "../deviceinfo/udisklistener.h"
+
+#include "widgets/singleton.h"
+
 #include <ddialog.h>
 
 #include <QUrl>
 #include <QDebug>
 #include <QtConcurrent/QtConcurrentRun>
 #include <QFileDialog>
+#include <QClipboard>
+#include <QApplication>
+#include <QMimeData>
+#include <QTimer>
 
 DWIDGET_USE_NAMESPACE
 

@@ -13,13 +13,17 @@
 #include <dthememanager.h>
 
 #include "../app/global.h"
+
 #include "../controllers/fileservices.h"
+
 #include "../shutil/mimesappsmanager.h"
-#include "../app/global.h"
 #include "../shutil/desktopfile.h"
 #include "../shutil/iconprovider.h"
 #include "../shutil/fileutils.h"
 
+#include "../utils/utils.h"
+
+#include "widgets/singleton.h"
 
 OpenWithOtherDialog::OpenWithOtherDialog(const DUrl &url, QWidget *parent) :
     DDialog(parent)

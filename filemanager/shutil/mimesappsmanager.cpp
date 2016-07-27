@@ -1,4 +1,10 @@
 #include "mimesappsmanager.h"
+#include "iconprovider.h"
+
+#include "../app/global.h"
+
+#include "widgets/singleton.h"
+
 #include <QDir>
 #include <QSettings>
 #include <QMimeType>
@@ -14,9 +20,6 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QApplication>
-#include "../app/global.h"
-#include "iconprovider.h"
-
 
 QStringList MimesAppsManager::DesktopFiles = {};
 QMap<QString, QStringList> MimesAppsManager::MimeApps = {};
