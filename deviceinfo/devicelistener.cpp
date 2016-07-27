@@ -1,8 +1,12 @@
 #include "devicelistener.h"
 #include "deviceinfo.h"
+
 #include "../filemanager/app/global.h"
 #include "../filemanager/app/filesignalmanager.h"
+
 #include "../filemanager/controllers/fileservices.h"
+
+#include "widgets/singleton.h"
 
 DeviceListener::DeviceListener()
 {

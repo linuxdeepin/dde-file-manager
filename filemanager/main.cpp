@@ -12,6 +12,8 @@
 #include "../shutil/mimesappsmanager.h"
 #include "../dialogs/openwithdialog.h"
 
+#include "widgets/singleton.h"
+
 #include <dthememanager.h>
 #include <dwindow.h>
 
@@ -19,9 +21,8 @@
 #include <QDebug>
 #include <QThreadPool>
 #include <QTranslator>
-#include <QImageReader>
-
-#include "../controllers/pathmanager.h"
+#include <QLibraryInfo>
+#include <QDir>
 
 #include "xdndworkaround.h"
 

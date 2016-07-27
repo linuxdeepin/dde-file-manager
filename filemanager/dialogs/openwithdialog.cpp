@@ -1,4 +1,14 @@
 #include "openwithdialog.h"
+
+#include "../shutil/mimesappsmanager.h"
+#include "../shutil/desktopfile.h"
+#include "../shutil/iconprovider.h"
+#include "../shutil/fileutils.h"
+
+#include "../app/global.h"
+
+#include "widgets/singleton.h"
+
 #include <QListWidget>
 #include <QListWidgetItem>
 #include <QVBoxLayout>
@@ -7,12 +17,7 @@
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QWindow>
-#include "../shutil/mimesappsmanager.h"
-#include "../app/global.h"
-#include "../shutil/desktopfile.h"
-#include "../shutil/iconprovider.h"
-#include "../shutil/fileutils.h"
-
+#include <QDebug>
 
 OpenWithDialog::OpenWithDialog(const DUrl &url, QWidget *parent) :
     BaseDialog(parent)

@@ -1,20 +1,22 @@
 #include "dsearchbar.h"
-#include "ddirmodel.h"
 
-#include "../app/global.h"
+#include "windowmanager.h"
+#include "deditorwidgetmenu.h"
 
 #include "../controllers/searchhistroymanager.h"
+
+#include "../app/global.h"
 #include "../app/filesignalmanager.h"
+#include "../app/fmevent.h"
+
+#include "widgets/singleton.h"
+
+#include <dscrollbar.h>
 
 #include <QDirModel>
 #include <QLabel>
 #include <QDebug>
-
-#include <dscrollbar.h>
-
-#include "../app/fmevent.h"
-#include "windowmanager.h"
-#include "deditorwidgetmenu.h"
+#include <QApplication>
 
 DSearchBar::DSearchBar(QWidget *parent):QLineEdit(parent)
 {

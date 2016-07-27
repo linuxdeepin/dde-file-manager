@@ -1,6 +1,13 @@
 #include "fileutils.h"
+#include "standardpath.h"
+
+#include "../views/windowmanager.h"
+
+#include "../app/global.h"
+
+#include "../controllers/fileservices.h"
+
 #include <QDirIterator>
-#include <sys/vfs.h>
 #include <QUrl>
 #include <QMimeDatabase>
 #include <QProcess>
@@ -10,9 +17,8 @@
 #include <QDebug>
 #include <QDesktopServices>
 #include <QtMath>
-#include "../views/windowmanager.h"
-#include "standardpath.h"
-#include "../app/global.h"
+
+#include <sys/vfs.h>
 
 #undef signals
 extern "C" {

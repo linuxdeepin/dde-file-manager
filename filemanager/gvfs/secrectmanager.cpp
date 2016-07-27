@@ -1,8 +1,14 @@
 #include "secrectmanager.h"
+
 #include "../app/global.h"
 #include "../app/filesignalmanager.h"
+
 #include "../shutil/standardpath.h"
+
+#include "widgets/singleton.h"
+
 #include <QDebug>
+#include <QJsonDocument>
 
 SecrectManager::SecrectManager(QObject *parent) : QObject(parent)
 {

@@ -11,6 +11,7 @@
 #include <QLineEdit>
 #include <QTextBlock>
 #include <QAbstractTextDocumentLayout>
+#include <QApplication>
 
 #define ICON_SPACING 16
 #define ICON_MODE_RECT_RADIUS 4

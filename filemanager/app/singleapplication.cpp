@@ -1,9 +1,15 @@
 #include "singleapplication.h"
-#include "widgets/commandlinemanager.h"
-#include <QJsonDocument>
-#include <QJsonObject>
 #include "global.h"
 #include "filesignalmanager.h"
+#include "durl.h"
+
+#include "widgets/commandlinemanager.h"
+#include "widgets/singleton.h"
+
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QProcess>
+#include <QDir>
 
 QString SingleApplication::UserID = "1000";
 

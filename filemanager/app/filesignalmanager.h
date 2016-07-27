@@ -1,16 +1,15 @@
 #ifndef FILESIGNALMANAGER_H
 #define FILESIGNALMANAGER_H
 
-#include "global.h"
-
 #include <QObject>
-#include <QDir>
-#include <QDebug>
 
 class FileInfo;
 class FMEvent;
 class AbstractFileInfo;
 class DeviceInfo;
+class DUrl;
+
+typedef QList<DUrl> DUrlList;
 
 class FileSignalManager : public QObject
 {

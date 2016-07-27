@@ -1,19 +1,28 @@
 #include "filemanagerapp.h"
+#include "filesignalmanager.h"
+
 #include "../views/windowmanager.h"
 #include "../views/dfilemanagerwindow.h"
+
 #include "../controllers/appcontroller.h"
+
 #include "../app/define.h"
 #include "../app/global.h"
-#include "filesignalmanager.h"
+
 #include "../dialogs/dialogmanager.h"
-#include "widgets/commandlinemanager.h"
+
 #include "../models/fmstate.h"
+
+#include "../shutil/mimesappsmanager.h"
+
+#include "widgets/singleton.h"
+#include "widgets/commandlinemanager.h"
+
 #include <QLocalServer>
 #include <QLocalSocket>
 #include <QDataStream>
-
-
-#include <QtCore/QCoreApplication>
+#include <QGuiApplication>
+#include <QTimer>
 
 FileManagerApp::FileManagerApp(QObject *parent) : QObject(parent)
 {

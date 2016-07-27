@@ -5,6 +5,8 @@
 #include "../shutil/properties.h"
 #include "../shutil/iconprovider.h"
 
+#include "widgets/singleton.h"
+
 #include <QSettings>
 
 DesktopFileInfo::DesktopFileInfo() :
@@ -87,7 +89,13 @@ QMap<QString, QVariant> DesktopFileInfo::getDesktopFileInfo(const DUrl &fileUrl)
     // Loads .desktop file (read from 'Desktop Entry' group)
     Properties desktop(fileUrl.path(), "Desktop Entry");
 
-    map["Name"] = desktop.value("Name", settings.value("Name"));
+    const QString &name = desktop.value("Name[" + QLocale::system().name() + "]", settings.value("Name[" + QLocale::system().name() + "]")).toString();
+
+    if (name.isEmpty())
+        map["Name"] = desktop.value("Name", settings.value("Name"));
+    else
+        map["Name"] = name;
+
     map["Exec"] = desktop.value("Exec", settings.value("Exec"));
     map["Icon"] = desktop.value("Icon", settings.value("Icon"));
     map["Type"] = desktop.value("Type", settings.value("Type", "Application"));

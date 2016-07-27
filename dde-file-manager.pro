@@ -66,8 +66,6 @@ HEADERS += \
     filemanager/views/filemenumanager.h \
     filemanager/views/dsearchbar.h \
     filemanager/views/dfileitemdelegate.h \
-    filemanager/shutil/desktopparse.h \
-    filemanager/shutil/mimeutils.h \
     filemanager/models/fileinfo.h \
     filemanager/models/desktopfileinfo.h \
     filemanager/shutil/iconprovider.h \
@@ -78,7 +76,6 @@ HEADERS += \
     filemanager/models/fmstate.h \
     filemanager/controllers/bookmarkmanager.h \
     filemanager/controllers/recenthistorymanager.h \
-    filemanager/controllers/fmsettingmanager.h \
     filemanager/controllers/fmstatemanager.h \
     filemanager/controllers/basemanager.h \
     filemanager/dialogs/dialogmanager.h \
@@ -91,7 +88,6 @@ HEADERS += \
     filemanager/views/dcrumbwidget.h \
     filemanager/views/dcrumbbutton.h \
     filemanager/views/dhorizseparator.h \
-    filemanager/models/ddirmodel.h \
     filemanager/app/fmevent.h \
     filemanager/views/historystack.h\
     filemanager/dialogs/propertydialog.h \
@@ -121,7 +117,6 @@ HEADERS += \
     filemanager/models/searchfileinfo.h\
     filemanager/shutil/standardpath.h \
     filemanager/dialogs/basedialog.h \
-    filemanager/controllers/fmsortmanager.h \
     filemanager/models/ddiriterator.h \
     filemanager/views/extendview.h \
     filemanager/controllers/pathmanager.h \
@@ -165,8 +160,6 @@ SOURCES += \
     filemanager/views/filemenumanager.cpp \
     filemanager/views/dsearchbar.cpp \
     filemanager/views/dfileitemdelegate.cpp \
-    filemanager/shutil/desktopparse.cpp \
-    filemanager/shutil/mimeutils.cpp \
     filemanager/models/fileinfo.cpp \
     filemanager/models/desktopfileinfo.cpp \
     filemanager/shutil/iconprovider.cpp \
@@ -177,7 +170,6 @@ SOURCES += \
     filemanager/models/fmstate.cpp \
     filemanager/controllers/bookmarkmanager.cpp \
     filemanager/controllers/recenthistorymanager.cpp \
-    filemanager/controllers/fmsettingmanager.cpp \
     filemanager/controllers/fmstatemanager.cpp \
     filemanager/controllers/basemanager.cpp \
     filemanager/dialogs/dialogmanager.cpp \
@@ -190,7 +182,6 @@ SOURCES += \
     filemanager/views/dcrumbwidget.cpp \
     filemanager/views/dcrumbbutton.cpp \
     filemanager/views/dhorizseparator.cpp \
-    filemanager/models/ddirmodel.cpp \
     filemanager/app/fmevent.cpp \
     filemanager/views/historystack.cpp\
     filemanager/dialogs/propertydialog.cpp \
@@ -220,7 +211,6 @@ SOURCES += \
     filemanager/models/searchfileinfo.cpp\
     filemanager/shutil/standardpath.cpp \
     filemanager/dialogs/basedialog.cpp \
-    filemanager/controllers/fmsortmanager.cpp \
     filemanager/views/extendview.cpp \
     filemanager/controllers/pathmanager.cpp \
     filemanager/views/ddragwidget.cpp \

@@ -2,6 +2,7 @@
 #include "fileinfo.h"
 
 #include "../controllers/trashmanager.h"
+#include "../controllers/fileservices.h"
 
 #include "../app/global.h"
 
@@ -9,7 +10,10 @@
 
 #include "../models/dfilesystemmodel.h"
 
+#include "widgets/singleton.h"
+
 #include <QMimeType>
+#include <QSettings>
 
 namespace FileSortFunction {
 SORT_FUN_DEFINE(deletionDate, DeletionDate, TrashFileInfo)

@@ -4,6 +4,10 @@
 
 #include "../shutil/iconprovider.h"
 
+#include "../controllers/pathmanager.h"
+
+#include "widgets/singleton.h"
+
 #include <QDateTime>
 #include <QDir>
 #include <QMimeDatabase>
@@ -94,4 +98,19 @@ QString FileInfo::subtitleForEmptyFloder() const
     }
 
     return QObject::tr("Folder is empty");
+}
+
+QString FileInfo::displayName() const
+{
+    if (systemPathManager->isSystemPath(filePath())) {
+        QString displayName = systemPathManager->getSystemPathDisplayNameByPath(filePath());
+
+        if (displayName.isEmpty())
+            return fileName();
+        else
+            return displayName;
+
+    } else {
+        return fileName();
+    }
 }

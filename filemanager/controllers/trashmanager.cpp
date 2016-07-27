@@ -8,7 +8,10 @@
 
 #include "../../filemonitor/filemonitor.h"
 
+#include "widgets/singleton.h"
+
 #include <QDebug>
+#include <QUrlQuery>
 
 class TrashDirIterator : public DDirIterator
 {

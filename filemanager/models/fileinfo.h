@@ -31,6 +31,8 @@ public:
 
     QString subtitleForEmptyFloder() const Q_DECL_OVERRIDE;
 
+    QString displayName() const Q_DECL_OVERRIDE;
+
 private:
     using AbstractFileInfo::setUrl;
 

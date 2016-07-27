@@ -8,6 +8,7 @@
 #include "windowmanager.h"
 #include "dfilemanagerwindow.h"
 #include "dfileselectionmodel.h"
+#include "xdndworkaround.h"
 
 #include "../app/global.h"
 #include "../app/fmevent.h"
@@ -19,13 +20,15 @@
 #include "../controllers/fileservices.h"
 #include "../controllers/filejob.h"
 #include "../controllers/fmstatemanager.h"
+#include "../controllers/pathmanager.h"
 
 #include "../models/dfilesystemmodel.h"
 
 #include "../shutil/fileutils.h"
 #include "../shutil/iconprovider.h"
+#include "../shutil/mimesappsmanager.h"
 
-#include "xdndworkaround.h"
+#include "widgets/singleton.h"
 
 #include <dthememanager.h>
 #include <dscrollbar.h>
@@ -35,6 +38,7 @@
 #include <QTextEdit>
 #include <QTimer>
 #include <QX11Info>
+#include <QUrlQuery>
 
 DWIDGET_USE_NAMESPACE
 

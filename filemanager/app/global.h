@@ -1,29 +1,11 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
-#include "widgets/singleton.h"
-
-#include "utils/utils.h"
-
-#include "../views/filemenumanager.h"
-
-#include "../dialogs/dialogmanager.h"
-
-#include "../controllers/fileservices.h"
-#include "../controllers/pathmanager.h"
-#include "../models/abstractfileinfo.h"
-#include "../../deviceinfo/devicelistener.h"
-#include "../../deviceinfo/udisklistener.h"
-#include "../shutil/mimesappsmanager.h"
-#include "../shutil/mimetypedisplaymanager.h"
-#include "../controllers/appcontroller.h"
-#include "../gvfs/networkmanager.h"
-#include "../gvfs/gvfsmountclient.h"
-#include "../gvfs/secrectmanager.h"
-
+//! Warning: Don't include file here
 #include <QFontMetrics>
 #include <QTextOption>
 #include <QTextLayout>
+// Warning: Don't include file here
 
 #define fileManagerApp Singleton<FileManagerApp>::instance()
 #define searchHistoryManager  Singleton<SearchHistroyManager>::instance()

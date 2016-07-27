@@ -1,6 +1,9 @@
 #include "networkmanager.h"
+
 #include "../app/filesignalmanager.h"
 #include "../app/global.h"
+
+#include "widgets/singleton.h"
 
 NetworkNode::NetworkNode()
 {
