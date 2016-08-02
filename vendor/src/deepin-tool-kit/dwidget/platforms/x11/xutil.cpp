@@ -505,9 +505,10 @@ void DisableResize(QWidget *w)
 
     hints->flags |= MWM_HINTS_FUNCTIONS;
     if (hints->functions == MWM_FUNC_ALL) {
-        hints->functions = MWM_FUNC_MOVE | MWM_FUNC_MINIMIZE;
+        hints->functions = MWM_FUNC_MOVE | MWM_FUNC_MINIMIZE | MWM_FUNC_CLOSE;
     } else {
         hints->functions &= ~MWM_FUNC_RESIZE;
+        hints->functions |= MWM_FUNC_CLOSE;
     }
 
     if (hints->decorations == MWM_DECOR_ALL) {
