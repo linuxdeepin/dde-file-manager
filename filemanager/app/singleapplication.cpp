@@ -60,7 +60,13 @@ void SingleApplication::newClientProcess(const QString &key)
 
 QString SingleApplication::userServerName(const QString &key)
 {
-    QString userKey = QString("%1/%2/%3").arg("/var/run/user", userID(), key);
+    QString userKey;
+    if (userID() == "0"){
+        userKey = QString("%1/%2").arg("/tmp", key);
+    }else{
+        userKey = QString("%1/%2/%3").arg("/var/run/user", userID(), key);
+    }
+    qDebug() << userKey;
     return userKey;
 }
 
