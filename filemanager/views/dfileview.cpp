@@ -899,7 +899,6 @@ void DFileView::keyPressEvent(QKeyEvent *event)
 
 void DFileView::keyReleaseEvent(QKeyEvent *event)
 {
-//    qDebug() <<"modifiers"<<event->modifiers();
     if(event->modifiers()==Qt::NoModifier)
         QProcess::startDetached("deepin-shortcut-viewer");
     DListView::keyReleaseEvent(event);
