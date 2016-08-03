@@ -46,10 +46,10 @@
 #define XC_top_left_corner 134
 
 /// shadow
-#define SHADOW_RADIUS_NORMAL 36
-#define SHADOW_RADIUS_ACTIVE 30
-#define SHADOW_COLOR_NORMAL QColor(0, 0, 0, 255 * 0.4)
-#define SHADOW_COLOR_ACTIVE QColor(0, 0, 0, 255 * 0.6)
+#define SHADOW_RADIUS_NORMAL 40
+#define SHADOW_RADIUS_ACTIVE 40
+#define SHADOW_COLOR_NORMAL QColor(0, 0, 0, 255 * 0.15)
+#define SHADOW_COLOR_ACTIVE QColor(0, 0, 0, 255 * 0.3)
 
 auto cornerEdge2WmGravity(const CornerEdge& ce) -> int {
     switch (ce) {
@@ -100,7 +100,7 @@ auto cornerEdge2XCursor(const CornerEdge& ce) -> int {
 
 DWindowFrame::DWindowFrame(QWidget* parent)
     : QWidget(parent)
-    , layoutMargin(25)
+    , layoutMargin(SHADOW_RADIUS_NORMAL)
     , resizeHandleWidth(6)
     , shadowRadius(SHADOW_RADIUS_NORMAL)
     , shadowColor(SHADOW_COLOR_NORMAL)
@@ -117,15 +117,9 @@ DWindowFrame::DWindowFrame(QWidget* parent)
 
     connect(qApp, &QGuiApplication::focusWindowChanged, this, [this] {
         if (isActiveWindow()) {
-            if (shadowRadius == SHADOW_RADIUS_ACTIVE)
-                return;
-
             shadowRadius = SHADOW_RADIUS_ACTIVE;
             shadowColor = SHADOW_COLOR_ACTIVE;
         } else {
-            if (shadowRadius == SHADOW_RADIUS_NORMAL)
-                return;
-
             shadowRadius = SHADOW_RADIUS_NORMAL;
             shadowColor = SHADOW_COLOR_NORMAL;
         }
@@ -622,13 +616,6 @@ void DWindowFrame::paintEvent(QPaintEvent* event) {
 void DWindowFrame::paintOutline() {
     QPainter painter(this);
     QPen pen;
-    QColor color = borderColor;
-
-    color.setAlphaF(color.alphaF() * 0.4);
-    painter.setRenderHint(QPainter::Antialiasing, true);
-    pen.setWidth(1);
-    pen.setColor(color);
-    painter.setPen(pen);
 
     const qreal outlinePadding = this->layout()->contentsMargins().left();
     QRectF rect = this->rect();
@@ -639,30 +626,28 @@ void DWindowFrame::paintOutline() {
 
     QPainterPath path;
 
-    path.addRoundedRect(rect, this->borderRadius, this->borderRadius);
-    painter.fillPath(path, Qt::white);
-
     QRectF rr(rect.topLeft(), QSizeF(borderRadius * 2, borderRadius * 2));
 
-    rr.moveTop(rect.top());
-
-    painter.drawEllipse(rr);
+    path.addEllipse(rr.marginsAdded(QMarginsF(-0.3, -0.3, 0, 0)));
 
     rr.moveRight(rect.right());
 
-    painter.drawEllipse(rr);
+    path.addEllipse(rr.marginsAdded(QMarginsF(0, -0.3, -0.3, 0)));
 
     rr.moveBottom(rect.bottom());
 
-    painter.drawEllipse(rr);
+    path.addEllipse(rr.marginsAdded(QMarginsF(0, 0, -0.3, -0.3)));
 
     rr.moveLeft(rect.left());
 
-    painter.drawEllipse(rr);
+    path.addEllipse(rr.marginsAdded(QMarginsF(-0.3, 0, 0, -0.3)));
 
-    pen.setColor(this->borderColor);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.fillPath(path, Qt::white);
+    pen.setColor(borderColor);
     painter.setPen(pen);
     painter.drawPath(path);
+    painter.drawRoundedRect(rect, this->borderRadius, this->borderRadius);
 }
 
 void DWindowFrame::drawShadowPixmap()
