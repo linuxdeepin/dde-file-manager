@@ -78,7 +78,7 @@ private:
     unsigned int shadowRadius;
     const unsigned int borderRadius = 4;
     QColor shadowColor;
-    const QColor borderColor = QColor(0, 0, 0, 255 * 0.15);
+    const QColor borderColor = QColor(0, 0, 0, 255 * 0.1);
 
     int userMinimumWidth = 0;
     int userMinimumHeight = 0;
