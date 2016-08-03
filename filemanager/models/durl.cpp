@@ -315,17 +315,20 @@ DUrl DUrl::fromUserInput(const QString &userInput)
 
 DUrl DUrl::fromUserInput(const QString &userInput, QString workingDirectory, QUrl::UserInputResolutionOptions options)
 {
+    if (options != AssumeLocalFile)
+        return QUrl::fromUserInput(userInput, workingDirectory, options);
+
     if (workingDirectory.isEmpty())
         workingDirectory = QDir::currentPath();
 
     if (userInput.startsWith("~")) {
-        return QUrl::fromUserInput(QDir::homePath() + userInput.mid(1), workingDirectory, options);
+        return DUrl::fromLocalFile(QDir::homePath() + userInput.mid(1));
     } else if (userInput.startsWith(".")) {
         QFileInfo fileInfo(workingDirectory + "/" + userInput);
 
         return DUrl::fromLocalFile(fileInfo.absoluteFilePath());
     } else if (userInput.startsWith("/")) {
-        return QUrl::fromUserInput(userInput, workingDirectory, options);
+        return DUrl::fromLocalFile(userInput);
     } else {
         return DUrl(userInput);
     }
