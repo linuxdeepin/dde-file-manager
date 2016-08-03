@@ -32,6 +32,7 @@
 #include <QProcess>
 #include <QStorageInfo>
 #include <DAboutDialog>
+#include <qprocess.h>
 
 AppController::AppController(QObject *parent) : QObject(parent)
 {
@@ -437,6 +438,7 @@ void AppController::actionExitCurrentWindow(const FMEvent &event)
 void AppController::actionShowHotkeyHelp(const FMEvent &event)
 {
     Q_UNUSED(event)
+    QProcess::startDetached("deepin-shortcut-viewer dde-file-manager");
 }
 
 void AppController::actionBack(const FMEvent &event)
