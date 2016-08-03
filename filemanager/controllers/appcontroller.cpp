@@ -438,7 +438,15 @@ void AppController::actionExitCurrentWindow(const FMEvent &event)
 void AppController::actionShowHotkeyHelp(const FMEvent &event)
 {
     Q_UNUSED(event)
-    QProcess::startDetached("deepin-shortcut-viewer dde-file-manager");
+    QRect rect=WindowManager::getWindowById(event.windowId())->geometry();
+    QString cmd="deepin-shortcut-viewer -t="+qApp->applicationName()+" -r="+
+            QString::number(rect.x())+","+
+            QString::number(rect.y())+","+
+            QString::number(rect.width())+","+
+            QString::number(rect.height());
+    qDebug()<<cmd;
+
+    QProcess::startDetached(cmd);
 }
 
 void AppController::actionBack(const FMEvent &event)
