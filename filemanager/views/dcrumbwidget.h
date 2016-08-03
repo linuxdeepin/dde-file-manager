@@ -7,6 +7,7 @@
 #include <QPushButton>
 #include <QListWidget>
 #include <QListWidgetItem>
+
 #include "deviceinfo/udiskdeviceinfo.h"
 #include "durl.h"
 #include "dbusinterface/dbustype.h"
@@ -71,6 +72,7 @@ private:
     int m_prevCheckedId = -1;
     QList<QListWidgetItem*> m_items;
     int m_crumbTotalLen = 0;
+
 public slots:
     void buttonPressed();
     void crumbModified();
@@ -81,7 +83,7 @@ signals:
     void searchBarActivated();
 
 protected:
-    void resizeEvent(QResizeEvent *e);
+    void resizeEvent(QResizeEvent *e) Q_DECL_OVERRIDE;
 };
 
 #endif // DCRUMBWIDGET_H

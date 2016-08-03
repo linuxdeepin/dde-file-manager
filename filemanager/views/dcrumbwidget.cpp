@@ -2,6 +2,8 @@
 #include <QStandardPaths>
 #include <QScrollBar>
 
+#include <anchors.h>
+
 #include "dcrumbwidget.h"
 #include "dcrumbbutton.h"
 #include "windowmanager.h"
@@ -25,6 +27,11 @@ DCrumbWidget::DCrumbWidget(QWidget *parent)
 
 void DCrumbWidget::initUI()
 {
+    Anchors<QWidget> background_widget(new QWidget(this));
+
+    background_widget.setFill(this);
+    background_widget->setObjectName("DCrumbBackgroundWidget");
+
     m_homePath = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).last();
     createArrows();
     m_listWidget = new ListWidgetPrivate(this);
@@ -482,8 +489,7 @@ void DCrumbWidget::buttonPressed()
     event = WindowManager::getWindowId(window());
     event = FMEvent::CrumbButton;
     QString text = button->path();
-    DCrumbButton * localButton = (DCrumbButton *)m_group.buttons().at(0);
-    qDebug() << text << localButton->getName();
+    DCrumbButton * localButton = qobject_cast<DCrumbButton*>(m_group.buttons().at(0));
 
     if(localButton->getName() == RECENT_ROOT)
     {
@@ -502,7 +508,7 @@ void DCrumbWidget::buttonPressed()
             if (text.startsWith("/")){
                 text.remove(0, 1);
             }
-            qDebug() << text;
+
             event = DUrl(text);
         }else{
             event = DUrl(NETWORK_ROOT);
@@ -519,6 +525,8 @@ void DCrumbWidget::buttonPressed()
 
     m_listWidget->scrollToItem(button->getItem());
     emit crumbSelected(event);
+
+    m_listWidget->update();
 }
 
 void DCrumbWidget::crumbModified()

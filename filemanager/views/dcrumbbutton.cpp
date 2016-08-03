@@ -54,20 +54,25 @@ void DCrumbButton::setPath(const QString &path)
 
 void DCrumbButton::paintEvent(QPaintEvent *e)
 {
-    QPainter painter;
-    painter.begin(this);
-    painter.setRenderHint(QPainter::Antialiasing);
+    const QPushButton *button = qobject_cast<QPushButton*>(m_item->listWidget()->itemWidget(m_item->listWidget()->item(m_index + 1)));
 
-    double w = width();
-    double h = height();
-    QPolygon polygon;
-    polygon << QPoint(w, 2);
-    polygon << QPoint(w, h - 2);
-    QPen pen(QColor(0, 0, 0, 24));
-    pen.setWidthF(1);
-    painter.setPen(pen);
-    painter.drawPolygon(polygon);
-    painter.end();
+    if (!isChecked() && (!button || !button->isChecked())) {
+        QPainter painter;
+        painter.begin(this);
+        painter.setRenderHint(QPainter::Antialiasing);
+
+        double w = width();
+        double h = height();
+        QPolygon polygon;
+        polygon << QPoint(w, 2);
+        polygon << QPoint(w, h - 2);
+        QPen pen(QColor(0, 0, 0, 24));
+        pen.setWidthF(1);
+        painter.setPen(pen);
+        painter.drawPolygon(polygon);
+        painter.end();
+    }
+
     QPushButton::paintEvent(e);
 }
 
