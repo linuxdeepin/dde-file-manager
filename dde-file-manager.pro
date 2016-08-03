@@ -255,6 +255,7 @@ INCLUDEPATH += filemanager/models
 BINDIR = $$PREFIX/bin
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 HELPSHAREDIR = $$PREFIX/share/dman/$$TARGET
+SHORTCUTSHAREDIR = $$PREFIX/share/deepin-shortcut-viewer/$$TARGET
 ICONDIR = $$PREFIX/share/icons/hicolor/scalable/apps
 DEFINES += APPSHAREDIR=\\\"$$APPSHAREDIR\\\"
 
@@ -297,4 +298,7 @@ help.files = help/*
 icon.path = $$ICONDIR
 icon.files = skin/images/$${TARGET}.svg
 
-INSTALLS += target desktop templateFiles translations mimetypeFiles help icon
+shortcut.path = $$SHORTCUTSHAREDIR
+shortcut.files = shortcut/*
+
+INSTALLS += target desktop templateFiles translations mimetypeFiles help icon shortcut

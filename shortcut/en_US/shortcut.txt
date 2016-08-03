@@ -1,0 +1,34 @@
+[Item]
+Select to the first item=Shift + Home 
+Select to the last item=Shift + End 
+Select leftwards=Shift + Left 
+Select rightwards=Shift + Right 
+Select to upper row=Shift + Up 
+Select to lower row=Shift + Down 
+Open=Ctrl + Down 
+To parent directory=Ctrl + Up 
+Permanently delete=Shift + Delete 
+Delete=Delete
+Select all=Ctrl + a 
+Copy=Ctrl + c 
+Cut=Ctrl + x 
+Paste=Ctrl + v 
+Rename=F2 
+
+[New/Search]
+New window=Ctrl + n 
+New folder=Ctrl + Shift + n 
+Search=Ctrl + f
+
+[View]
+Item information=Ctrl + i 
+Help=F1
+Keyboard shortcuts=Ctrl + Shift + /   
+[Switch display status]
+Hide item=Ctrl + h
+Input in address bar=Ctrl + l 
+
+[Others]
+Close=Alt + F4      
+Back=Alt + left 
+Forward=Alt + right 
