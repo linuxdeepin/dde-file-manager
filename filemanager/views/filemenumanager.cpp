@@ -153,11 +153,13 @@ DFileMenu *FileMenuManager::createToolBarSettingsMenu(const QSet<MenuAction> &di
     actionKeys.reserve(5);
 
     actionKeys << MenuAction::NewWindow
-               << MenuAction::Separator
+               << MenuAction::Separator;
 //               << MenuAction::Settings
-               << MenuAction::Help
-               << MenuAction::About
-               << MenuAction::Exit;
+    #ifndef ARCH_MIPSEL
+        actionKeys  << MenuAction::Help;
+    #endif
+    actionKeys  << MenuAction::About
+                << MenuAction::Exit;
 
     return genereteMenuByKeys(actionKeys, disableList);
 }

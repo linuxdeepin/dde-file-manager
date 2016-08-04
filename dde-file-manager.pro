@@ -26,6 +26,11 @@ isEmpty(QMAKE_ORGANIZATION_NAME) {
     DEFINES += QMAKE_ORGANIZATION_NAME=\\\"deepin\\\"
 }
 
+ARCH = $$QMAKE_HOST.arch
+isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
+    DEFINES += ARCH_MIPSEL
+}
+
 isEmpty(PREFIX){
     PREFIX = /usr
 }
