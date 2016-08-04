@@ -361,7 +361,7 @@ void DFileItemDelegate::paintIconItem(QPainter *painter, const QStyleOptionViewI
     /// if has selected show all file name else show elide file name.
     bool singleSelected = parent()->selectedIndexCount() < 2;
 
-    if((opt.state & QStyle::State_Selected) && singleSelected) {
+    if (isSelected && singleSelected) {
         const_cast<DFileItemDelegate*>(this)->hideExpandedIndex();
 
         int height = 0;
@@ -394,8 +394,6 @@ void DFileItemDelegate::paintIconItem(QPainter *painter, const QStyleOptionViewI
             if (parent()->indexOfRow(index) == parent()->rowCount() - 1) {
                 lastAndExpandedInde = index;
             }
-
-            return;
         }
     } else {
         /// init file name text
