@@ -605,6 +605,9 @@ QImage dropShadow(const QPixmap &px, qreal radius, const QColor &color = Qt::bla
 }
 
 void DWindowFrame::paintEvent(QPaintEvent* event) {
+    if (event->rect() != rect())
+        return;
+
     QPainter painter(this);
 
     painter.drawPixmap(shadowOffsetX, shadowOffsetY, shadowPixmap);
