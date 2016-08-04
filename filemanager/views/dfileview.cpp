@@ -827,7 +827,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
     case Qt::ShiftModifier:
         if (event->key() == Qt::Key_Delete) {
             if (fmevent.fileUrlList().isEmpty())
-                fmevent = DUrlList() << fmevent.fileUrl();
+                return;
 
             fileService->deleteFiles(fmevent.fileUrlList(), fmevent);
 
