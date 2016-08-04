@@ -1189,7 +1189,7 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
     if (dragMoveHoverIndex.isValid()) {
         const AbstractFileInfoPointer &fileInfo = model()->fileInfo(dragMoveHoverIndex);
 
-        if (!fileInfo || fileInfo->isFile())
+        if (!fileInfo || !fileInfo->isDir())
             dragMoveHoverIndex = QModelIndex();
     }
 
