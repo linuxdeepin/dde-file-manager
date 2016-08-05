@@ -85,3 +85,9 @@ void TrashPropertyDialog::updateFolderSize(qint64 size)
     m_sizeLabel->setText(FileUtils::formatSize(size));
 }
 
+void TrashPropertyDialog::closeEvent(QCloseEvent *event)
+{
+    BaseDialog::closeEvent(event);
+    emit closed();
+}
+
