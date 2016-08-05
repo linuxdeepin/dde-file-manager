@@ -98,7 +98,7 @@ bool UDiskListener::isDeviceFolder(const QString &path) const
     for (int i = 0; i < m_list.size(); i++)
     {
         UDiskDeviceInfo * info = m_list.at(i);
-        if (info->getMountPoint() == path){
+        if (info->getMountPointUrl().toLocalFile() == path){
             return true;
         }
     }
@@ -110,8 +110,8 @@ bool UDiskListener::isInDeviceFolder(const QString &path) const
     for (int i = 0; i < m_list.size(); i++)
     {
         UDiskDeviceInfo * info = m_list.at(i);
-        if (!info->getMountPoint().isEmpty()){
-            if (path.startsWith(info->getMountPoint())){
+        if (!info->getMountPointUrl().isEmpty()){
+            if (path.startsWith(info->getMountPointUrl().toLocalFile())){
                 return true;
             }
         }
@@ -124,9 +124,10 @@ UDiskDeviceInfo *UDiskListener::getDeviceByPath(const QString &path)
     for (int i = 0; i < m_list.size(); i++)
     {
         UDiskDeviceInfo * info = m_list.at(i);
-        if (!info->getMountPoint().isEmpty()){
-            bool flag = DUrl(path) == DUrl(info->getMountPoint());
-            if (path.startsWith(info->getMountPoint()) && flag){
+        if (!info->getMountPointUrl().isEmpty()){
+            bool flag = (DUrl::fromLocalFile(path) == info->getMountPointUrl());
+
+            if (path.startsWith(info->getMountPointUrl().toLocalFile()) && flag){
                 return info;
             }
         }
@@ -139,9 +140,10 @@ UDiskDeviceInfo *UDiskListener::getDeviceByFilePath(const QString &path)
     for (int i = 0; i < m_list.size(); i++)
     {
         UDiskDeviceInfo * info = m_list.at(i);
-        if (!info->getMountPoint().isEmpty()){
-            bool flag = DUrl(path) == DUrl(info->getMountPoint());
-            if (path.startsWith(info->getMountPoint()) && !flag){
+        if (!info->getMountPointUrl().isEmpty()){
+            bool flag = (DUrl::fromLocalFile(path) == info->getMountPointUrl());
+
+            if (path.startsWith(info->getMountPointUrl().toLocalFile()) && !flag){
                 return info;
             }
         }
@@ -154,7 +156,7 @@ UDiskDeviceInfo::MediaType UDiskListener::getDeviceMediaType(const QString &path
     for (int i = 0; i < m_list.size(); i++)
     {
         UDiskDeviceInfo * info = m_list.at(i);
-        if (info->getMountPoint() == path){
+        if (info->getMountPointUrl().toLocalFile() == path){
             return info->getMediaType();
         }
     }
@@ -256,7 +258,7 @@ void UDiskListener::changed(int in0, const QString &in1)
 
             qDebug() << m_subscribers;
             foreach (Subscriber* sub, m_subscribers) {
-                QString url = DUrl::fromLocalFile(device->getMountPoint()).toString();
+                QString url = device->getMountPointUrl().toString();
                 qDebug() << url;
                 sub->doSubscriberAction(url);
             }
@@ -277,9 +279,9 @@ void UDiskListener::forceUnmount(const QString &id)
         QStringList args;
         args << "-f" ;
         if (device->canEject()){
-            args << "-e" << device->getMountPoint();
+            args << "-e" << device->getMountPointUrl().toLocalFile();
         }else{
-            args << "-u" << device->getMountPoint();
+            args << "-u" << device->getMountPointUrl().toLocalFile();
         }
         bool reslut = QProcess::startDetached("gvfs-mount", args);
         qDebug() << "gvfs-mount" << args << reslut;
@@ -343,7 +345,7 @@ const AbstractFileInfoPointer UDiskListener::createFileInfo(const DUrl &fileUrl,
     {
         UDiskDeviceInfo * info = m_list.at(i);
 
-        if(info->getMountPoint() == path)
+        if(info->getMountPointUrl().toLocalFile() == path)
         {
             AbstractFileInfoPointer fileInfo(new UDiskDeviceInfo(info));
             return fileInfo;

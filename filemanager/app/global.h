@@ -42,6 +42,7 @@
 #define SMB_SCHEME "smb"
 #define AFC_SCHEME "afc"
 #define MTP_SCHEME "mtp"
+#define GPHOTO2_SCHEME "gphoto2"
 
 #define TRASH_ROOT "trash:///"
 #define RECENT_ROOT "recent:///"

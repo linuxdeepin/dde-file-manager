@@ -63,6 +63,8 @@ void DUrl::setUrl(const QString &url, QUrl::ParsingMode parsingMode, bool makeAb
 
     if(makeAbsolute)
         this->makeAbsolutePath();
+
+    updateVirtualPath();
 }
 
 bool DUrl::isTrashFile() const
@@ -129,7 +131,7 @@ QString DUrl::searchKeyword() const
 
     QUrlQuery query(this->query());
 
-    return query.queryItemValue("keyword");
+    return query.queryItemValue("keyword", FullyDecoded);
 }
 
 DUrl DUrl::searchTargetUrl() const

@@ -38,7 +38,7 @@ public:
     QString getName() const;
     QString getType() const;
     QString getPath() const;
-    QString getMountPoint();
+    DUrl getMountPointUrl();
     QString getIcon() const;
     bool canEject() const;
     bool canUnmount() const;

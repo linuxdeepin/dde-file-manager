@@ -544,8 +544,8 @@ void DBookmarkScene::volumeRemoved(UDiskDeviceInfo *device)
         if(isChecked || isHighlightDisk){
             backHome();
         }
-        qDebug() << device->getDiskInfo() << item << DUrl::fromLocalFile(device->getMountPoint());
-        emit fileSignalManager->requestAbortJob(DUrl::fromLocalFile(device->getMountPoint()));
+        qDebug() << device->getDiskInfo() << item << device->getMountPointUrl();
+        emit fileSignalManager->requestAbortJob(device->getMountPointUrl());
         item->deleteLater();
     }
 }
@@ -557,7 +557,7 @@ void DBookmarkScene::mountAdded(UDiskDeviceInfo *device)
     {
         item->setDeviceInfo(device);
         item->setMounted(true);
-        item->setUrl(DUrl::fromLocalFile(device->getMountPoint()));
+        item->setUrl(device->getMountPointUrl());
     }else{
         QString key = "Disk";
         if (device->getMediaType() == UDiskDeviceInfo::removable){
@@ -577,7 +577,7 @@ void DBookmarkScene::mountAdded(UDiskDeviceInfo *device)
         }
         item = createBookmarkByKey(key);
         item->setDeviceInfo(device);
-        item->setUrl(DUrl::fromLocalFile(device->getMountPoint()));
+        item->setUrl(device->getMountPointUrl());
 
         insert(indexOf(m_defaultDiskItem) + 1 + m_diskItems.count(), item);
 
@@ -600,8 +600,8 @@ void DBookmarkScene::mountRemoved(UDiskDeviceInfo *device)
     if(item)
     {
         item->setMounted(false);
-        qDebug() << device->getDiskInfo() << item << DUrl::fromLocalFile(device->getMountPoint());
-        emit fileSignalManager->requestAbortJob(DUrl::fromLocalFile(device->getMountPoint()));
+        qDebug() << device->getDiskInfo() << item << device->getMountPointUrl();
+        emit fileSignalManager->requestAbortJob(device->getMountPointUrl());
         if (item->isChecked() || item->isHighlightDisk()){
             backHome();
         }

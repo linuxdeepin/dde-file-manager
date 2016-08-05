@@ -65,7 +65,7 @@ void DBookmarkItem::setDeviceInfo(UDiskDeviceInfo *deviceInfo)
     setHighlightDiskBackgroundEnable(true);
     m_isDisk = true;
     m_checkable = true;
-    m_url = DUrl::fromLocalFile(deviceInfo->getMountPoint());
+    m_url = deviceInfo->getMountPointUrl();
     m_isDefault = true;
     m_sysPath = deviceInfo->getDiskInfo().ID;
     m_textContent = deviceInfo->displayName();
