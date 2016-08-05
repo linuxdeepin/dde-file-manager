@@ -323,7 +323,13 @@ void DialogManager::showTrashPropertyDialog(const FMEvent &event)
     QWidget* w = WindowManager::getWindowById(event.windowId());
 
     if (w) {
+        if (m_trashDialog){
+            m_trashDialog->close();
+        }
         m_trashDialog = new TrashPropertyDialog(event.fileUrl());
+        connect(m_trashDialog, &TrashPropertyDialog::closed, [=](){
+               m_trashDialog = NULL;
+        });
         QPoint pos = getPerportyPos(m_trashDialog->size().width(), m_trashDialog->size().height(), 1, 0);
         m_trashDialog->show();
         m_trashDialog->move(pos);
