@@ -194,7 +194,11 @@ int DialogManager::showRunExcutableDialog(const DUrl &url)
     buttonKeys << "OptionCancel" << "OptionRun" << "OptionRunInTerminal" << "OptionDisplay";
     buttonTexts << tr("Cancel") << tr("Run") << tr("Run in terminal") << tr("Display");
     DDialog d;
+#ifdef ARCH_MIPSEL
+    d.setIcon(QIcon(svgToPixmap(":/images/images/application-x-shellscript.svg", 64, 64)));
+#else
     d.setIcon(fileIconProvider->getDesktopIcon("application-x-shellscript", 256));
+#endif
     d.setTitle(message);
     d.setMessage(tipMessage);
     d.addButtons(buttonTexts);
