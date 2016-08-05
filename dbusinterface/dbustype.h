@@ -4,6 +4,7 @@
 #include <QtCore>
 #include <QtDBus>
 
+#include "durl.h"
 
 class  DiskInfo
 {
@@ -13,7 +14,7 @@ public:
     QString Name;
     QString Type;
     QString Path;
-    QString MountPoint;
+    DUrl MountPointUrl;
     QString Icon;
     bool CanUnmount;
     bool CanEject;

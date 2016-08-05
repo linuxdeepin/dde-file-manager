@@ -62,7 +62,7 @@ private:
     void checkArrows();
     QHBoxLayout * m_buttonLayout;
     QButtonGroup m_group;
-    DUrl m_path;
+    DUrl m_url;
     QString m_homePath;
     QPushButton * m_leftArrow = NULL;
     QPushButton * m_rightArrow = NULL;

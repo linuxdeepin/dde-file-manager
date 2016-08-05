@@ -561,7 +561,11 @@ bool AbstractFileInfo::canIteratorDir() const
 
 DUrl AbstractFileInfo::getUrlByNewFileName(const QString &fileName) const
 {
-    return DUrl(scheme() + "://" + absolutePath() + "/" + QUrl::toPercentEncoding(fileName));
+    DUrl url = fileUrl();
+
+    url.setPath(absolutePath() + "/" + fileName);
+
+    return url;
 }
 
 DUrl AbstractFileInfo::mimeDataUrl() const

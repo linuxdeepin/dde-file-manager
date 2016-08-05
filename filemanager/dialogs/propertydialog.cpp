@@ -177,7 +177,7 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
     }
     if (diskInfo){
         qDebug() << diskInfo->getDiskInfo();
-        m_absolutePath = diskInfo->getMountPoint();
+        m_absolutePath = diskInfo->getMountPointUrl().toLocalFile();
         QString name = diskInfo->getName();
         m_icon->setPixmap(diskInfo->fileIcon().pixmap(128, 128));
         m_edit->setPlainText(name);

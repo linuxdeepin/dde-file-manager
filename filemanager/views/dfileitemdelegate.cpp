@@ -239,7 +239,7 @@ void DFileItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
         }
 
         item->icon->setPixmap(pixmap);
-        item->edit->setPlainText(index.data().toString());
+        item->edit->setPlainText(index.data(DFileSystemModel::FileNameRole).toString());
         item->edit->setAlignment(Qt::AlignHCenter);
         item->edit->document()->setTextWidth(parent()->itemSizeHint().width());
 

@@ -15,7 +15,7 @@ UDiskDeviceInfo::UDiskDeviceInfo(UDiskDeviceInfo *info)
     : AbstractFileInfo(DUrl::fromComputerFile("/"))
 {
     m_diskInfo = info->getDiskInfo();
-    data->url = DUrl::fromLocalFile(info->getMountPoint());
+    data->url = info->getMountPointUrl();
     data->url.setQuery(info->getId());
 }
 
@@ -34,7 +34,7 @@ UDiskDeviceInfo::UDiskDeviceInfo(const QString &url)
 UDiskDeviceInfo::UDiskDeviceInfo(const DiskInfo &diskInfo)
 {
     m_diskInfo = diskInfo;
-    data->url = DUrl::fromLocalFile(getMountPoint());
+    data->url = getMountPointUrl();
     data->url.setQuery(getId());
 }
 
@@ -46,7 +46,7 @@ UDiskDeviceInfo::~UDiskDeviceInfo()
 void UDiskDeviceInfo::setDiskInfo(const DiskInfo &diskInfo)
 {
     m_diskInfo = diskInfo;
-    data->url = DUrl::fromLocalFile(getMountPoint());
+    data->url = getMountPointUrl();
     data->url.setQuery(getId());
 }
 
@@ -75,19 +75,19 @@ QString UDiskDeviceInfo::getPath() const
     return m_diskInfo.Path;
 }
 
-QString UDiskDeviceInfo::getMountPoint()
+DUrl UDiskDeviceInfo::getMountPointUrl()
 {
     QString path = QString("/run/user/%1/gvfs").arg(SingleApplication::UserID);
 
-    if (m_diskInfo.MountPoint.startsWith("afc://")){
-        m_diskInfo.MountPoint = QString("%1/afc:host=%2").arg(path, m_diskInfo.ID);
-    }else if (m_diskInfo.MountPoint.startsWith("mtp://")){
-        QStringList ids = m_diskInfo.MountPoint.split("/");
+    if (m_diskInfo.MountPointUrl.scheme() == AFC_SCHEME){
+        m_diskInfo.MountPointUrl = DUrl::fromLocalFile(QString("%1/afc:host=%2").arg(path, m_diskInfo.ID));
+    }else if (m_diskInfo.MountPointUrl.scheme() == MTP_SCHEME){
+        QStringList ids = m_diskInfo.MountPointUrl.toString().split("/");
         QString key = QUrl::toPercentEncoding(ids[2]);
-        m_diskInfo.MountPoint = QString("%1/mtp:host=%2").arg(path, key);
-    }else if (m_diskInfo.MountPoint.startsWith("smb://")){
+        m_diskInfo.MountPointUrl = DUrl::fromLocalFile(QString("%1/mtp:host=%2").arg(path, key));
+    }else if (m_diskInfo.MountPointUrl.scheme() == SMB_SCHEME){
         QString mountPath = QString("%1/smb-share:").arg(path);
-        QStringList ids = m_diskInfo.MountPoint.split("/");
+        QStringList ids = m_diskInfo.MountPointUrl.toString().split("/");
         QString share = ids[3];
         QString domain;
         QString user;
@@ -122,18 +122,14 @@ QString UDiskDeviceInfo::getMountPoint()
             mountPath = QString("%1user=%2,").arg(mountPath, user);
         }
         qDebug() << domain << ip << share << user << mountPath;
-        m_diskInfo.MountPoint = mountPath.left(mountPath.length()-1);
-    }else if(m_diskInfo.MountPoint.startsWith("gphoto2://")){
-        QStringList ids = m_diskInfo.MountPoint.split("/");
+        m_diskInfo.MountPointUrl = DUrl::fromLocalFile(mountPath.left(mountPath.length()-1));
+    }else if(m_diskInfo.MountPointUrl.scheme() == GPHOTO2_SCHEME){
+        QStringList ids = m_diskInfo.MountPointUrl.toString().split("/");
         QString key = QUrl::toPercentEncoding(ids[2]);
-        m_diskInfo.MountPoint = QString("%1/gphoto2:host=%2").arg(path, key);
+        m_diskInfo.MountPointUrl = DUrl::fromLocalFile(QString("%1/gphoto2:host=%2").arg(path, key));
     }
 
-    QString result = m_diskInfo.MountPoint.replace("file://", "");
-    QUrl url = QUrl::fromLocalFile(result);
-    result = url.fromEncoded(result.toLatin1()).toString();
-//    qDebug() << url.fromEncoded(result.toLatin1()).toString();
-    return result;
+    return m_diskInfo.MountPointUrl;
 }
 
 QString UDiskDeviceInfo::getIcon() const
@@ -154,10 +150,10 @@ bool UDiskDeviceInfo::canUnmount() const
 qulonglong UDiskDeviceInfo::getFree()
 {
     if (getType() == "dvd"){
-        return QStorageInfo(getMountPoint()).bytesFree();
+        return QStorageInfo(getMountPointUrl().toLocalFile()).bytesFree();
     }
     if (m_diskInfo.Total == 0){
-        return QStorageInfo(getMountPoint()).bytesFree();
+        return QStorageInfo(getMountPointUrl().toLocalFile()).bytesFree();
     }
     return (m_diskInfo.Total - m_diskInfo.Used) * 1024;
 }
@@ -170,10 +166,10 @@ qulonglong UDiskDeviceInfo::getUsed() const
 qulonglong UDiskDeviceInfo::getTotal()
 {
     if (getType() == "dvd"){
-        return QStorageInfo(getMountPoint()).bytesTotal();
+        return QStorageInfo(getMountPointUrl().toLocalFile()).bytesTotal();
     }
     if (m_diskInfo.Total == 0){
-        return QStorageInfo(getMountPoint()).bytesTotal();
+        return QStorageInfo(getMountPointUrl().toLocalFile()).bytesTotal();
     }
     return m_diskInfo.Total * 1024;
 }
@@ -242,7 +238,7 @@ QString UDiskDeviceInfo::sizeDisplayName() const
 
 qint64 UDiskDeviceInfo::filesCount() const
 {
-    return FileUtils::filesCount(const_cast<UDiskDeviceInfo*>(this)->getMountPoint());
+    return FileUtils::filesCount(const_cast<UDiskDeviceInfo*>(this)->getMountPointUrl().toLocalFile());
 }
 
 bool UDiskDeviceInfo::isReadable() const
@@ -302,7 +298,7 @@ QVector<MenuAction> UDiskDeviceInfo::menuActionList(AbstractFileInfo::MenuType t
     if (type == SpaceArea)
         return actionKeys;
 
-    qDebug() << const_cast<UDiskDeviceInfo*>(this)->getMountPoint();
+    qDebug() << const_cast<UDiskDeviceInfo*>(this)->getMountPointUrl();
 
     actionKeys.reserve(6);
 

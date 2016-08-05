@@ -119,7 +119,7 @@ void DCrumbWidget::setCrumb(const DUrl &path)
 //    qDebug() << path;
     if(path.isSearchFile())
         return;
-    m_path = path;
+    m_url = path;
     m_needArrows = false;
     clear();
     if(path.isRecentFile())
@@ -162,26 +162,31 @@ void DCrumbWidget::clear()
 
 QString DCrumbWidget::path()
 {
-    return m_path.toLocalFile();
+    return m_url.toLocalFile();
 }
 
 DUrl DCrumbWidget::getUrl()
 {
-    return m_path;
+    return m_url;
 }
 
 DUrl DCrumbWidget::getCurrentUrl()
 {
     DUrl result;
-    if (m_path.isLocalFile()){
-        result = DUrl::fromLocalFile(qobject_cast<DCrumbButton*>(m_group.checkedButton())->path());
-    }else if (m_path.isTrashFile()){
-        result = DUrl::fromTrashFile(qobject_cast<DCrumbButton*>(m_group.checkedButton())->path());
+
+    const DCrumbButton *button = qobject_cast<DCrumbButton*>(m_group.checkedButton());
+    const QString &path = button ? button->path() : QString();
+
+    if (m_url.isLocalFile()){
+        result = DUrl::fromLocalFile(path);
+    }else if (m_url.isTrashFile()){
+        result = DUrl::fromTrashFile(path);
     }
     else
     {
-        result = m_path;
+        result = m_url;
     }
+
     return result;
 }
 
@@ -359,7 +364,7 @@ void DCrumbWidget::addLocalCrumbs(const DUrl & url)
             info = deviceListener->getDeviceByFilePath(path);
         }
         if (info){
-            QString mountPoint = info->getMountPoint();
+            QString mountPoint = info->getMountPointUrl().toLocalFile();
             qDebug() << mountPoint << info << info->getDiskInfo();
             QString tmpPath = url.toLocalFile();
             tmpPath.replace(mountPoint, "");
@@ -381,7 +386,7 @@ void DCrumbWidget::addLocalCrumbs(const DUrl & url)
 
 bool DCrumbWidget::hasPath(const QString &path)
 {
-    return m_path.toLocalFile().contains(path);
+    return m_url.toLocalFile().contains(path);
 }
 
 bool DCrumbWidget::isInHome(const QString& path)
@@ -531,7 +536,7 @@ void DCrumbWidget::buttonPressed()
 
 void DCrumbWidget::crumbModified()
 {
-    setCrumb(m_path);
+    setCrumb(m_url);
 }
 
 void DCrumbWidget::crumbMoveToLeft()
