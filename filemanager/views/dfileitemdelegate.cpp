@@ -290,6 +290,14 @@ void DFileItemDelegate::destroyEditor(QWidget *editor, const QModelIndex &index)
     editing_index = QModelIndex();
 }
 
+QString DFileItemDelegate::displayText(const QVariant &value, const QLocale &locale) const
+{
+    if (value.type() == QVariant::String)
+        return value.toString();
+
+    return QStyledItemDelegate::displayText(value, locale);
+}
+
 QString trimmedEnd(QString str)
 {
     while (!str.isEmpty()) {
