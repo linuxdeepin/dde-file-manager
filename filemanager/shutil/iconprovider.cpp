@@ -352,7 +352,7 @@ void IconProvider::setDesktopIconPaths(const QMap<QString, QString> &iconPaths)
 
 QIcon IconProvider::findIcon(const QString &absoluteFilePath, const QString &mimeType)
 {
-//    qDebug() << absoluteFilePath << FileUtils::getFileMimetype(absoluteFilePath) << getMimeTypeByFile(absoluteFilePath) << mimeType << getFileIcon(absoluteFilePath, 256);
+//    qDebug() << absoluteFilePath << m_mimeDatabase->mimeTypeForFile(absoluteFilePath).iconName() << FileUtils::getFileMimetype(absoluteFilePath) << getMimeTypeByFile(absoluteFilePath) << mimeType << getFileIcon(absoluteFilePath, 256);
     QIcon theIcon;
     QString _mimeType = mimeType;
 
@@ -375,18 +375,22 @@ QIcon IconProvider::findIcon(const QString &absoluteFilePath, const QString &mim
     if (!theIcon.isNull())
         return theIcon;
 
-    QString iconName = _mimeType;
+    QString iconName = m_mimeDatabase->mimeTypeForFile(absoluteFilePath).iconName();
 
     /*todo add whitelists for especial mimetype*/
-    if (iconName == "application/wps-office.docx"){
-        iconName = "wps-office-dot";
-    }else if (iconName == "application/vnd.debian.binary-package"){
+    if (iconName == "application-wps-office.docx"){
+        iconName = "application-wps-office.doc";
+    }else if (iconName == "application-vnd.debian.binary-package"){
         iconName = "application-x-deb";
-    }else if (iconName == "application/vnd.ms-htmlhelp"){
+    }else if (iconName == "application-vnd.ms-htmlhelp"){
         iconName = "chmsee";
     }
 
-    QString path = getThemeIconPath(iconName.replace("/", "-"), 256);
+    QString path = getThemeIconPath(iconName, 256);
+
+    if (path.isEmpty()){
+        path = getFileIcon(absoluteFilePath, 256);
+    }
 
     if (path.isEmpty()) {
         path = getThemeIconPath(mimeTypeDisplayManager->defaultIcon(mimeType), 256);
@@ -395,8 +399,8 @@ QIcon IconProvider::findIcon(const QString &absoluteFilePath, const QString &mim
     if (!path.isEmpty()){
         theIcon = QIcon(path);
     }else{
-        theIcon = QIcon::fromTheme(iconName.replace("/", "-"));
-        qDebug() << iconName.replace("/", "-") << path;
+        theIcon = QIcon::fromTheme(iconName);
+        qDebug() << iconName<< path;
 
         if (theIcon.isNull()){
             theIcon = QIcon(getThemeIconPath("application-default-icon"));
