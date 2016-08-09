@@ -118,7 +118,7 @@ void DFileView::initConnects()
             this, [this] (const QModelIndex &index) {
         if (!Global::keyCtrlIsPressed() && !Global::keyShiftIsPressed())
             openIndex(index);
-    });
+    }, Qt::QueuedConnection);
     connect(fileSignalManager, &FileSignalManager::fetchNetworksSuccessed,
             this, &DFileView::cd);
     connect(fileSignalManager, &FileSignalManager::requestChangeCurrentUrl,
