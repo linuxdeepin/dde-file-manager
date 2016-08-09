@@ -384,6 +384,8 @@ QIcon IconProvider::findIcon(const QString &absoluteFilePath, const QString &mim
         iconName = "application-x-deb";
     }else if (iconName == "application-vnd.ms-htmlhelp"){
         iconName = "chmsee";
+    }else if (systemPathManager->isSystemPath(absoluteFilePath)) {
+        iconName = _mimeType;
     }
 
     QString path = getThemeIconPath(iconName, 256);
