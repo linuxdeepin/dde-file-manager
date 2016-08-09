@@ -43,7 +43,6 @@ int main(int argc, char *argv[])
     SingleApplication app(argc, argv);
 
     app.setOrganizationName(QMAKE_ORGANIZATION_NAME);
-    app.setApplicationDisplayName(QObject::tr("File Manager"));
     app.setApplicationName(QMAKE_TARGET);
     app.setApplicationVersion(QMAKE_VERSION);
 
@@ -60,7 +59,7 @@ int main(int argc, char *argv[])
         commandlineUrl = DUrl::fromLocalFile(QDir::homePath());
         qDebug() << commandlineUrl;
     }
-
+    qDebug() << app.applicationDisplayName();
     QThreadPool::globalInstance()->setMaxThreadCount(MAX_THREAD_COUNT);
 
     QString uniqueKey = app.applicationName();
@@ -85,6 +84,7 @@ int main(int argc, char *argv[])
         /// fix Qt drag drop to google chrome bug
         new XdndWorkaround();
 
+        app.setApplicationDisplayName(QObject::tr("File Manager"));
         fileManagerApp->show(commandlineUrl);
         dialogManager;
 
