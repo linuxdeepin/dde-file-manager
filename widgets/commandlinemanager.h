@@ -18,7 +18,7 @@ public:
         return &instance;
     }
 
-    static void initOptions();
+    void initOptions();
 
     void parserOptions();
     bool isNameExisted(const QString& name) const;
