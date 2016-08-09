@@ -318,7 +318,7 @@ void DMainWindow::mouseMoveEvent(QMouseEvent *event)
 
 void DMainWindow::mouseDoubleClickEvent(QMouseEvent *event)
 {
-    if (event->y() <= m_fileManagerWindow->getTitleBar()->height() + layoutMargin + 2){
+    if (event->y() <= m_fileManagerWindow->getTitleBar()->height() + layoutMargin + 2 && event->button() == Qt::LeftButton){
         if (windowState() != Qt::WindowMaximized){
             setWindowState(Qt::WindowMaximized);
             m_fileManagerWindow->getTitleBar()->setWindowState(Qt::WindowMaximized);
