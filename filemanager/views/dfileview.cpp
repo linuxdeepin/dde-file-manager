@@ -314,6 +314,7 @@ void DFileView::setIconSize(const QSize &size)
 
     updateItemSizeHint();
     updateHorizontalOffset();
+    updateGeometries();
 }
 
 DFileView::ViewMode DFileView::getDefaultViewMode()
