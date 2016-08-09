@@ -44,7 +44,7 @@ include(./dbusinterface/dbusinterface.pri)
 include($$PWD/chinese2pinyin/chinese2pinyin.pri)
 include($$PWD/xdnd/xdnd.pri)
 
-PKGCONFIG += x11 gtk+-2.0 xcb xcb-ewmh gsettings-qt dtkbase dtkutil dtkwidget libudev x11 xext libsecret-1 gio-unix-2.0
+PKGCONFIG += x11 gtk+-2.0 xcb xcb-ewmh gsettings-qt libudev x11 xext libsecret-1 gio-unix-2.0
 CONFIG += c++11 link_pkgconfig
 #DEFINES += QT_NO_DEBUG_OUTPUT
 DEFINES += QT_MESSAGELOGCONTEXT

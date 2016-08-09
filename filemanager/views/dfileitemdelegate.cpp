@@ -402,6 +402,8 @@ void DFileItemDelegate::paintIconItem(QPainter *painter, const QStyleOptionViewI
             if (parent()->indexOfRow(index) == parent()->rowCount() - 1) {
                 lastAndExpandedInde = index;
             }
+
+            parent()->updateGeometries();
         }
     } else {
         /// init file name text
@@ -625,7 +627,7 @@ void DFileItemDelegate::paintListItem(QPainter *painter, const QStyleOptionViewI
 
     if(index != editing_index || role != DFileSystemModel::FileNameRole) {
         /// draw file name label
-        const QString &file_name = Global::elideText(index.data(role).toString(), rect.size(),
+        const QString &file_name = Global::elideText(index.data(role).toString().remove('\n'), rect.size(),
                                                      painter->fontMetrics(), QTextOption::NoWrap, Qt::ElideRight);
 
         painter->drawText(rect, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()), file_name);

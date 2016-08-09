@@ -24,7 +24,14 @@ QString Global::wordWrapText(const QString &text, int width, QTextOption::WrapMo
 
     while (line.isValid()) {
         line.setLineWidth(width);
-        str += text.mid(line.textStart(), line.textLength());
+
+        const QString &tmp_str = text.mid(line.textStart(), line.textLength());
+
+        str += tmp_str;
+
+        if (tmp_str.indexOf('\n') >= 0)
+            text_height += TEXT_LINE_HEIGHT;
+
         text_height += TEXT_LINE_HEIGHT;
         line = textLayout.createLine();
 
@@ -43,7 +50,7 @@ QString Global::wordWrapText(const QString &text, int width, QTextOption::WrapMo
 QString Global::elideText(const QString &text, const QSize &size, const QFontMetrics &fontMetrics,
                           QTextOption::WrapMode wordWrap, Qt::TextElideMode mode, int flags)
 {
-    qreal height = 0;
+    int height = 0;
 
     QTextLayout textLayout(text);
     QString str;
@@ -58,13 +65,19 @@ QString Global::elideText(const QString &text, const QSize &size, const QFontMet
         height += TEXT_LINE_HEIGHT;
 
         if(height + TEXT_LINE_HEIGHT >= size.height()) {
-            str += fontMetrics.elidedText(text.mid(line.textStart() + line.textLength() + 1),
-                                          mode, size.width(), flags);
+            str += fontMetrics.elidedText(text.mid(line.textStart() + line.textLength() + 1), mode, size.width(), flags);
+
             break;
         }
 
         line.setLineWidth(size.width());
-        str += text.mid(line.textStart(), line.textLength());
+
+        const QString &tmp_str = text.mid(line.textStart(), line.textLength());
+
+        if (tmp_str.indexOf('\n'))
+            height += TEXT_LINE_HEIGHT;
+
+        str += tmp_str;
 
         line = textLayout.createLine();
 

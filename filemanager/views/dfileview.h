@@ -106,6 +106,7 @@ public:
     { return m_itemSizeHint;}
 
     using DListView::viewportMargins;
+    using DListView::updateGeometries;
 
     bool isCutIndex(const QModelIndex &index) const;
     bool isActiveIndex(const QModelIndex &index) const;
