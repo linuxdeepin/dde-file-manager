@@ -95,6 +95,7 @@ void DFileView::initUI()
     m_selectionRectWidget->resize(0, 0);
     m_selectionRectWidget->setObjectName("SelectionRect");
     m_selectionRectWidget->raise();
+    m_selectionRectWidget->setAttribute(Qt::WA_TransparentForMouseEvents);
 
     linkIcon = QIcon(":/images/images/link_large.png");
     lockIcon = QIcon(":/images/images/lock_large.png");
@@ -473,7 +474,7 @@ DFileView::RandeIndexList DFileView::visibleIndexes(QRect rect) const
         list << RandeIndex(qMax((rect.top() + spacing) / item_height, 0),
                            qMin((rect.bottom() - spacing) / item_height, count - 1));
     } else {
-        rect += QMargins(-spacing, -spacing, -spacing, -spacing);
+        rect -= QMargins(spacing, spacing, spacing, spacing);
 
         int column_count = (width() - spacing * 2.5) / item_width;
         int begin_row_index = rect.top() / item_height;
@@ -492,8 +493,13 @@ DFileView::RandeIndexList DFileView::visibleIndexes(QRect rect) const
         if (rect.right() % item_width < icon_margin)
             --end_column_index;
 
+        begin_row_index = qMax(begin_row_index, 0);
+        begin_column_index = qMax(begin_column_index, 0);
         end_row_index = qMin(end_row_index, count / column_count);
         end_column_index = qMin(end_column_index, column_count - 1);
+
+        if (begin_row_index > end_row_index || begin_column_index > end_column_index)
+            return list;
 
         int begin_index = begin_row_index * column_count;
 
@@ -1296,8 +1302,8 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
     if (flags == (QItemSelectionModel::Current|QItemSelectionModel::Rows|QItemSelectionModel::ClearAndSelect)) {
         QRect tmp_rect;
 
-        tmp_rect.adjust(qMin(rect.left(), rect.right()), qMin(rect.top(), rect.bottom()),
-                        qMax(rect.left(), rect.right()), qMax(rect.top(), rect.bottom()));
+        tmp_rect.setCoords(qMin(rect.left(), rect.right()), qMin(rect.top(), rect.bottom()),
+                           qMax(rect.left(), rect.right()), qMax(rect.top(), rect.bottom()));
 
         const RandeIndexList &list = visibleIndexes(tmp_rect);
 
@@ -2120,8 +2126,8 @@ void DFileView::updateSelectionRect()
         pressedPos.setX(pressedPos.x() - horizontalOffset());
         pressedPos.setY(pressedPos.y() - verticalOffset());
 
-        rect.adjust(qMin(pressedPos.x(), pos.x()), qMin(pressedPos.y(), pos.y()),
-                    qMax(pos.x(), pressedPos.x()), qMax(pos.y(), pressedPos.y()));
+        rect.setCoords(qMin(pressedPos.x(), pos.x()), qMin(pressedPos.y(), pos.y()),
+                       qMax(pos.x(), pressedPos.x()), qMax(pos.y(), pressedPos.y()));
 
         m_selectionRectWidget->setGeometry(rect);
     }
