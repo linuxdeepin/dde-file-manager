@@ -1,11 +1,20 @@
 #include "global.h"
 
+#include "utils/utils.h"
+
+#include <QDebug>
+
 #ifdef Q_OS_LINUX
 #include <X11/XKBlib.h>
 #include <QX11Info>
 #elif defined(Q_OS_WIN32)
 #include <Windows.h>
 #endif
+
+#include <QFileInfo>
+#include <QProcess>
+
+#include <cstdio>
 
 #include "chinese2pinyin.h"
 
@@ -132,4 +141,35 @@ bool Global::keyCtrlIsPressed()
 
     return status == 0xF0;
 #endif
+}
+
+bool Global::fileNameCorrection(const QString &filePath)
+{
+    QFileInfo info(filePath);
+    QProcess ls;
+
+    ls.start("ls", QStringList() << "-1" << "--color=never" << info.absolutePath());
+    ls.waitForFinished();
+
+    const QByteArray &request = ls.readAllStandardOutput();
+
+    for (const QByteArray &name : request.split('\n')) {
+        const QString str_fileName = QString::fromLocal8Bit(name);
+
+        if (str_fileName == info.fileName() && str_fileName.toLocal8Bit() != name) {
+            return fileNameCorrection(joinPath(info.absolutePath().toLocal8Bit(), name));
+        }
+    }
+
+    return false;
+}
+
+bool Global::fileNameCorrection(const QByteArray &filePath)
+{
+    const QByteArray &newFilePath = QString::fromLocal8Bit(filePath).toLocal8Bit();
+
+    if (filePath == newFilePath)
+        return true;
+
+    return std::rename(filePath.constData(), newFilePath.constData());
 }

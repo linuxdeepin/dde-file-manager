@@ -479,6 +479,10 @@ QString FileDirIterator::filePath() const
 
 const AbstractFileInfoPointer FileDirIterator::fileInfo() const
 {
+    if (iterator.fileName().contains(QChar(0xfffd))) {
+        Global::fileNameCorrection(iterator.filePath());
+    }
+
     if (fileName().endsWith(QString(".") + DESKTOP_SURRIX))
         return AbstractFileInfoPointer(new DesktopFileInfo(iterator.fileInfo()));
 

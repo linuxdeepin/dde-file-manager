@@ -172,11 +172,9 @@ QString getQssFromFile(QString filename)
     return qss;
 }
 
-QString joinPath(const QString& path, const QString& fileName){
-    QString separator(QDir::separator());
-    return QString("%1%2%3").arg(path, separator, fileName);
+QByteArray joinPath(const QByteArray& path, const QByteArray &fileName){
+    return path + QDir::separator().toLatin1() + fileName;
 }
-
 
 QPixmap svgToPixmap(const QString &path, int w, int h)
 {
@@ -192,4 +190,9 @@ QPixmap svgToPixmap(const QString &path, int w, int h)
     painter.end();
 
     return pixmap;
+}
+
+QString joinPath(const QString &path, const QString &fileName)
+{
+    return path + QDir::separator() + fileName;
 }

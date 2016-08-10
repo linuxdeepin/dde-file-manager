@@ -143,6 +143,8 @@ public:
 
     static bool keyShiftIsPressed();
     static bool keyCtrlIsPressed();
+    static bool fileNameCorrection(const QString &filePath);
+    static bool fileNameCorrection(const QByteArray &filePath);
 };
 
 #endif // GLOBAL_H

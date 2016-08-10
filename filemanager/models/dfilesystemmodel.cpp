@@ -746,6 +746,9 @@ void DFileSystemModel::updateChildren(QList<AbstractFileInfoPointer> list)
     beginInsertRows(createIndex(node, 0), 0, list.count() - 1);
 
     for(const AbstractFileInfoPointer &fileInfo : list) {
+        if (node->children.contains(fileInfo->fileUrl()))
+            continue;
+
         const FileSystemNodePointer &chileNode = createNode(node.data(), fileInfo);
 
         node->children[fileInfo->fileUrl()] = chileNode;
