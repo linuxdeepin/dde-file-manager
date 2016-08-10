@@ -13,17 +13,19 @@ CommandLineManager::CommandLineManager():
 }
 
 void CommandLineManager::process(){
+
     m_commandParser->setApplicationDescription(QString("%1 helper").arg(QCoreApplication::applicationName()));
+    initOptions();
     m_commandParser->addHelpOption();
     m_commandParser->addVersionOption();
+
     m_commandParser->process(*qApp);
     parserOptions();
 }
 
 void CommandLineManager::initOptions(){
-    QCommandLineOption logOption(QStringList() << "l" << "log", "enable log to destination [stdout|file].", "logDestination", "file");
-    CommandLineManager::instance()->addOption(logOption);
-    CommandLineManager::instance()->process();
+    QCommandLineOption newWindowOption(QStringList() << "n" << "new-window", "show new window");
+    addOption(newWindowOption);
 }
 
 void CommandLineManager::addOption(const QCommandLineOption &option){
