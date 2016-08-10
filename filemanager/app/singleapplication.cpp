@@ -42,11 +42,15 @@ void SingleApplication::newClientProcess(const QString &key)
             if (localSocket->isValid()){
                 qDebug() << "start write";
                 QString commandlineUrl;
+                bool isNewWindow = false;
                 if (CommandLineManager::instance()->positionalArguments().count() > 0){
                     commandlineUrl = CommandLineManager::instance()->positionalArguments().at(0);
+                }else{
+                    isNewWindow = CommandLineManager::instance()->isSet("n");
                 }
                 QJsonObject message;
                 message.insert("url", commandlineUrl);
+                message.insert("isNewWindow", isNewWindow);
                 QJsonDocument  obj(message);
                 localSocket->write(obj.toJson().data());
                 localSocket->flush();
@@ -120,12 +124,18 @@ void SingleApplication::readData()
     qDebug() << messageObj << error->errorString();
 
     DUrl url = DUrl::fromLocalFile(QDir::homePath());
+    bool isNewWindow = false;
     if (messageObj.contains("url")){
         QString _url = messageObj.value("url").toString();
         if (!_url.isEmpty()){
             url = DUrl::fromUserInput(_url);
         }
     }
-    qDebug() << url;
-    emit fileSignalManager->requestOpenNewWindowByUrl(url, false);
+    if (messageObj.contains("isNewWindow")){
+        if (messageObj.value("isNewWindow").toBool()){
+            isNewWindow = true;
+        }
+    }
+    qDebug() << url << isNewWindow;
+    emit fileSignalManager->requestOpenNewWindowByUrl(url, isNewWindow);
 }
