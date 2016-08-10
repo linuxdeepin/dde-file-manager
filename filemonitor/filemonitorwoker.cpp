@@ -10,6 +10,8 @@
 #include "filemonitorwoker.h"
 #include "utils/utils.h"
 
+#include "filemanager/app/global.h"
+
 FileMonitorWoker::FileMonitorWoker(QObject *parent) :
     QObject(parent)
 {
@@ -253,11 +255,11 @@ void FileMonitorWoker::handleInotifyEvent(const inotify_event *event)
 {
 //    qDebug() << event->wd << QString::number(event->mask, 16).toUpper();
     int id = event->wd;
-    QString path = getPathFromID(id);
+    QByteArray path = getPathFromID(id).toLocal8Bit();
     if (path.isEmpty()) {
         // perhaps a directory?
         id = -id;
-        path = getPathFromID(id);
+        path = getPathFromID(id).toLocal8Bit();
         if (path.isEmpty()) {
             return;
         }
@@ -265,8 +267,15 @@ void FileMonitorWoker::handleInotifyEvent(const inotify_event *event)
 
     path = joinPath(path, event->name);
 
+    if (event->name != QString::fromLocal8Bit(event->name).toLocal8Bit()) {
+        if (event->mask & (IN_CREATE | IN_MOVED_TO)) {
+            Global::fileNameCorrection(path);
+        }
+    }
+
     if (event->mask & IN_CREATE) {
         qDebug() << "IN_CREATE" << path;
+
         emit fileCreated(event->cookie, path);
 
         if (m_pathToID.contains(path)) {
@@ -316,6 +325,7 @@ void FileMonitorWoker::handleInotifyEvent(const inotify_event *event)
 
     if (event->mask & IN_DELETE) {
         qDebug() << "IN_DELETE" << path;
+
         emit fileDeleted(event->cookie, path);
     }
 
