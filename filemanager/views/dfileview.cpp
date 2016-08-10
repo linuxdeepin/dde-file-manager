@@ -296,7 +296,7 @@ int DFileView::itemCountForRow() const
 
     int itemWidth = itemSizeHint().width() + ICON_VIEW_SPACING * 2;
 
-    return (width() - ICON_VIEW_SPACING * 2.5) / itemWidth;
+    return (width() - ICON_VIEW_SPACING * 2.9) / itemWidth;
 }
 
 QList<int> DFileView::columnRoleList() const
@@ -400,7 +400,7 @@ QModelIndex DFileView::indexAt(const QPoint &point) const
             return QModelIndex();
 
         int row_index = pos.y() / (item_size.height() + ICON_VIEW_SPACING * 2);
-        int column_count = (width() - ICON_VIEW_SPACING * 2.5) / item_width;
+        int column_count = (width() - ICON_VIEW_SPACING * 2.9) / item_width;
         int column_index = pos.x() / item_width;
 
         if (column_index >= column_count)
@@ -443,7 +443,7 @@ QRect DFileView::visualRect(const QModelIndex &index) const
         rect.setHeight(item_size.height());
     } else {
         int item_width = item_size.width() + ICON_VIEW_SPACING * 2;
-        int column_count = (width() - ICON_VIEW_SPACING * 2.5) / item_width;
+        int column_count = (width() - ICON_VIEW_SPACING * 2.9) / item_width;
         int column_index = index.row() % column_count;
         int row_index = index.row() / column_count;
 
@@ -476,7 +476,7 @@ DFileView::RandeIndexList DFileView::visibleIndexes(QRect rect) const
     } else {
         rect -= QMargins(spacing, spacing, spacing, spacing);
 
-        int column_count = (width() - spacing * 2.5) / item_width;
+        int column_count = (width() - spacing * 2.9) / item_width;
         int begin_row_index = rect.top() / item_height;
         int end_row_index = rect.bottom() / item_height;
         int begin_column_index = rect.left() / item_width;
@@ -1662,7 +1662,7 @@ void DFileView::updateHorizontalOffset()
     if (isIconViewMode()) {
         int contentWidth = width();
         int itemWidth = itemSizeHint().width() + ICON_VIEW_SPACING * 2;
-        int itemColumn = (contentWidth - ICON_VIEW_SPACING * 2.5) / itemWidth;
+        int itemColumn = (contentWidth - ICON_VIEW_SPACING * 2.9) / itemWidth;
 
         m_horizontalOffset = -(contentWidth - itemWidth * itemColumn) / 2;
     } else {
