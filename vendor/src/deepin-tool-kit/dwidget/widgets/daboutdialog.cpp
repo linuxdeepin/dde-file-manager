@@ -6,6 +6,7 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QIcon>
+#include <QKeyEvent>
 
 DWIDGET_BEGIN_NAMESPACE
 
@@ -47,6 +48,7 @@ DAboutDialog::DAboutDialog(
     companyLogoLabel->setFixedSize(companyLogoPixmap.size());
 
     QLabel *websiteLabel = new QLabel(website);
+    websiteLabel->setFixedHeight(24);
     websiteLabel->setStyleSheet("font-size:13px; color: #004EE5");
     websiteLabel->setOpenExternalLinks(false);
     QString websiteText = QString(websiteLinkTemplate).arg(websiteLink).arg(website);
@@ -87,6 +89,11 @@ DAboutDialog::DAboutDialog(
     this->setFixedWidth(400);
     this->adjustSize();
     this->setFixedSize(this->size());
+    if (parent && parent->isTopLevel()) {
+        QPoint pCenterGlobal = mapToGlobal(parent->geometry().center());
+        this->move(pCenterGlobal.x() - width() / 2,
+                   pCenterGlobal.y() - height() / 2);
+    }
 
     setFocus();
 }
@@ -111,6 +118,17 @@ void DAboutDialog::onLogLinkActivated(const QString &link)
 {
     QDesktopServices::openUrl(QUrl(link));
 
+}
+
+void DAboutDialog::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Escape) {
+        close();
+
+        event->accept();
+    }
+
+    DWindow::keyPressEvent(event);
 }
 
 DWIDGET_END_NAMESPACE

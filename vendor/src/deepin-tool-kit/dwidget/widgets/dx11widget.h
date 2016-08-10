@@ -16,7 +16,6 @@ class LIBDTKWIDGETSHARED_EXPORT DX11Widget : public QWidget, public DObject
     Q_OBJECT
 public:
     explicit DX11Widget(QWidget *parent = 0);
-    explicit DX11Widget(DObjectPrivate &dd, QWidget *parent = 0);
 
     Q_PROPERTY(int radius READ radius WRITE setRadius)
     Q_PROPERTY(int shadowWidth READ shadowWidth WRITE setShadowWidth)
@@ -24,12 +23,16 @@ public:
     Q_PROPERTY(int titlebarHeight READ titlebarHeight WRITE setTitlebarFixedHeight)
     Q_PROPERTY(QPixmap backgroundImage READ backgroundImage WRITE setBackgroundImage)
     Q_PROPERTY(QColor backgroundColor READ backgroundColor WRITE setBackgroundColor NOTIFY backgroundColorChanged)
+    Q_PROPERTY(QColor shadowColor READ shadowColor WRITE setShadowColor NOTIFY shadowColorChanged)
+    Q_PROPERTY(QPoint shadowOffset READ shadowOffset WRITE setShadowOffset NOTIFY shadowOffsetChanged)
 
     Qt::WindowFlags windowFlags();
     void setWindowFlags(Qt::WindowFlags type);
 
     void setTitle(const QString &);
     void setTitleIcon(const QPixmap &icon);
+
+    DTitlebar *titlebar() const;
 
     void setTitlebarMenu(DMenu *);
     void setTitlebarWidget(QWidget *, bool fixCenterPos = false);
@@ -61,6 +64,7 @@ public:
     void setFixedWidth(int w);
 //    void setFixedHeight(int h);
 
+    void resize(int width, int height);
     void resize(const QSize &);
 
     void removeLayout();
@@ -101,6 +105,8 @@ public:
     void setMaximumHeight(int maxh);
 
     QColor backgroundColor() const;
+    QColor shadowColor() const;
+    QPoint shadowOffset() const;
 
 protected:
     void mouseMoveEvent(QMouseEvent *) Q_DECL_OVERRIDE;
@@ -112,6 +118,8 @@ protected:
     void closeEvent(QCloseEvent *) Q_DECL_OVERRIDE;
     void enterEvent(QEvent *)Q_DECL_OVERRIDE;
     void leaveEvent(QEvent *)Q_DECL_OVERRIDE;
+    void changeEvent(QEvent *event) Q_DECL_OVERRIDE;
+
 public slots:
     void showMinimized();
     void showMaximized();
@@ -122,12 +130,19 @@ public slots:
     void toggleMaximizedWindow();
 
     void setBackgroundColor(QColor backgroundColor);
+    void setShadowColor(QColor shadowColor);
+    void setShadowOffset(QPoint shadowOffset);
+
 protected:
-    void setShadow();
+    explicit DX11Widget(DX11WidgetPrivate &dd, QWidget *parent = 0);
+
+    virtual void drawShadowPixmap();
 
 Q_SIGNALS:
     void optionClicked();
     void backgroundColorChanged(QColor backgroundColor);
+    void shadowColorChanged(QColor shadowColor);
+    void shadowOffsetChanged(QPoint shadowOffset);
 
 private:
 
