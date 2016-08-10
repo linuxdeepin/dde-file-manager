@@ -33,6 +33,7 @@ public:
     QSize externSize(const QSize &size) const;
     QMargins externMargins() const;
     int externWidth() const;
+    void updateContentsMargins();
 
     bool leftPressed;
     bool resizable;
@@ -46,13 +47,15 @@ public:
     QPoint              m_LastMousePos;
     Qt::WindowFlags     dwindowFlags;
     QColor              m_backgroundColor;
+    QColor              shadowColor;
+    QPoint              shadowOffset;
 
     QPixmap             m_Background;
+    QPixmap             shadowPixmap;
     QWidget             *windowWidget     = nullptr;
     QVBoxLayout         *rootLayout     = nullptr;
     DTitlebar           *titlebar       = nullptr;
     QWidget             *contentWidget  = nullptr;
-    QGraphicsDropShadowEffect *m_Shadow = nullptr;
 
     XUtils::CornerEdge resizingCornerEdge = XUtils::CornerEdge::kInvalid;
 };

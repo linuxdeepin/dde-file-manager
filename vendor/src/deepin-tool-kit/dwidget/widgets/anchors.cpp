@@ -874,7 +874,7 @@ void AnchorsBase::setAlignWhenCentered(bool alignWhenCentered)
     ARect rect = target()->geometry();\
     rect.set##fun(arg, point);\
     target()->setMinimumSize(QSize(0,0));\
-    target()->setMaximumSize(QSize(16777215, 16777215));\
+    target()->setMaximumSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));\
     target()->setGeometry(rect);\
 
 #define MOVE_POS(fun)\

@@ -54,7 +54,7 @@ void ToggleMaximizedWindow(QWidget *widget);
 void SkipTaskbarPager(QWidget *widget);
 void SetStayOnTop(QWidget *widget, bool on);
 void SetMouseTransparent(QWidget *widget, bool on);
-void SetWindowExtents(QWidget *widget, unsigned long WindowGlowRadius, const int resizeHandlSize);
+void SetWindowExtents(QWidget *widget, const QMargins &margins, const int resizeHandlSize);
 void PropagateSizeHints(QWidget *w);
 void DisableResize(QWidget *w);
 

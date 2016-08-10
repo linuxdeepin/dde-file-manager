@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QHBoxLayout>
 #include <QApplication>
+#include <QMouseEvent>
 
 #include <private/dobject_p.h>
 
@@ -28,6 +29,7 @@ protected:
 
 private:
     void init();
+    void _q_toggleWindowState();
 
     QHBoxLayout         *mainLayout;
     DLabel              *iconLabel;
@@ -37,12 +39,18 @@ private:
     DWindowCloseButton  *closeButton;
     DWindowOptionButton *optionButton;
 
+    QWidget             *customWidget = Q_NULLPTR;
     QWidget             *coustomAtea;
     QWidget             *buttonArea;
     QWidget             *titleArea;
     QWidget             *titlePadding;
 
     DMenu               *menu;
+
+    QWidget             *parentWindow = Q_NULLPTR;
+
+    bool                mousePressed = false;
+
     Q_DECLARE_PUBLIC(DTitlebar)
 };
 
@@ -117,10 +125,24 @@ void DTitlebarPrivate::init()
     buttonArea->setFixedHeight(q->height());
 
     q->connect(optionButton, &DWindowOptionButton::clicked, q, &DTitlebar::optionClicked);
-    q->connect(closeButton, &DWindowCloseButton::clicked, q, &DTitlebar::closeClicked);
-    q->connect(maxButton, &DWindowMaxButton::maximum, q, &DTitlebar::maximumClicked);
-    q->connect(maxButton, &DWindowMaxButton::restore, q, &DTitlebar::restoreClicked);
-    q->connect(minButton, &DWindowMaxButton::clicked, q, &DTitlebar::minimumClicked);
+}
+
+void DTitlebarPrivate::_q_toggleWindowState()
+{
+    D_QC(DTitlebar);
+
+    QWidget *parentWindow = q->parentWidget();
+
+    if (!parentWindow)
+        return;
+
+    parentWindow = parentWindow->window();
+
+    if (parentWindow->windowState() == Qt::WindowMaximized) {
+        parentWindow->showNormal();
+    } else if (parentWindow->windowState() == Qt::WindowNoState) {
+        parentWindow->showMaximized();
+    }
 }
 
 DTitlebar::DTitlebar(QWidget *parent) :
@@ -132,6 +154,20 @@ DTitlebar::DTitlebar(QWidget *parent) :
     d->buttonArea->adjustSize();
     d->buttonArea->resize(d->buttonArea->size());
     d->titlePadding->setFixedSize(d->buttonArea->size());
+}
+
+DMenu *DTitlebar::menu() const
+{
+    D_DC(DTitlebar);
+
+    return d->menu;
+}
+
+QWidget *DTitlebar::customWidget() const
+{
+    D_DC(DTitlebar);
+
+    return d->customWidget;
 }
 
 ///
@@ -170,6 +206,34 @@ void DTitlebar::showMenu()
     d->menu->exec(d->optionButton->mapToGlobal(d->optionButton->rect().bottomLeft()));
 }
 
+void DTitlebar::mousePressEvent(QMouseEvent *event)
+{
+    D_D(DTitlebar);
+
+    d->mousePressed = (event->buttons() == Qt::LeftButton);
+}
+
+void DTitlebar::mouseReleaseEvent(QMouseEvent *event)
+{
+    D_D(DTitlebar);
+
+    if (event->buttons() == Qt::LeftButton)
+        d->mousePressed = false;
+}
+
+bool DTitlebar::eventFilter(QObject *obj, QEvent *event)
+{
+    D_D(DTitlebar);
+
+    if (obj == d->parentWindow) {
+        if (event->type() == QEvent::WindowStateChange) {
+            d->maxButton->setMaximized(d->parentWindow->windowState() == Qt::WindowMaximized);
+        }
+    }
+
+    return QWidget::eventFilter(obj, event);
+}
+
 void DTitlebar::setCustomWidget(QWidget *w, bool fixCenterPos)
 {
     setCustomWidget(w, Qt::AlignCenter, fixCenterPos);
@@ -200,6 +264,7 @@ void DTitlebar::setCustomWidget(QWidget *w, Qt::AlignmentFlag wflag, bool fixCen
     qDeleteAll(d->coustomAtea->children());
     d->coustomAtea->setLayout(l);
     d->buttonArea->resize(old);
+    d->customWidget = w;
 }
 
 void DTitlebar::setFixedHeight(int h)
@@ -235,15 +300,61 @@ int DTitlebar::buttonAreaWidth() const
     return d->buttonArea->width();
 }
 
-void DTitlebar::mouseMoveEvent(QMouseEvent */*event*/)
+void DTitlebar::setVisible(bool visible)
 {
-    emit mouseMoving();
+    D_D(DTitlebar);
+
+    if (visible == isVisible())
+        return;
+
+    QWidget::setVisible(visible);
+
+    if (visible) {
+        d->parentWindow = parentWidget();
+
+        if (!d->parentWindow)
+            return;
+
+        d->parentWindow = d->parentWindow->window();
+        d->parentWindow->installEventFilter(this);
+
+        connect(d->maxButton, SIGNAL(clicked()), this, SLOT(_q_toggleWindowState()));
+        connect(this, SIGNAL(doubleClicked()), this, SLOT(_q_toggleWindowState()));
+        connect(d->minButton, &DWindowMinButton::clicked, d->parentWindow, &QWidget::showMinimized);
+        connect(d->closeButton, &DWindowCloseButton::clicked, d->parentWindow, &QWidget::close);
+    } else {
+        if (!d->parentWindow)
+            return;
+
+        d->parentWindow->removeEventFilter(this);
+
+        disconnect(d->maxButton, SIGNAL(clicked()), this, SLOT(_q_toggleWindowState()));
+        disconnect(this, SIGNAL(doubleClicked()), this, SLOT(_q_toggleWindowState()));
+        disconnect(d->minButton, &DWindowMinButton::clicked, d->parentWindow, &QWidget::showMinimized);
+        disconnect(d->closeButton, &DWindowCloseButton::clicked, d->parentWindow, &QWidget::close);
+    }
 }
 
-void DTitlebar::mouseDoubleClickEvent(QMouseEvent */*event*/)
+void DTitlebar::mouseMoveEvent(QMouseEvent *event)
 {
-    emit doubleClicked();
+    Q_UNUSED(event)
+    D_DC(DTitlebar);
+
+    if (d->mousePressed)
+        emit mouseMoving();
 }
 
+void DTitlebar::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    D_D(DTitlebar);
+
+    if (event->buttons() == Qt::LeftButton) {
+        d->mousePressed = false;
+
+        emit doubleClicked();
+    }
+}
 
 DWIDGET_END_NAMESPACE
+
+#include "moc_dtitlebar.cpp"
