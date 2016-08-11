@@ -23,7 +23,7 @@ QDBusArgument &operator<<(QDBusArgument &argument, const DiskInfo &obj)
     argument.beginStructure();
     argument << obj.ID << obj.Name;
     argument << obj.Type << obj.Path;
-    argument << obj.MountPointUrl.toString() << obj.Icon;
+    argument << obj.MountPoint << obj.Icon;
     argument << obj.CanUnmount << obj.CanEject;
     argument << obj.Used << obj.Total;
     argument.endStructure();
@@ -33,18 +33,15 @@ QDBusArgument &operator<<(QDBusArgument &argument, const DiskInfo &obj)
 
 const QDBusArgument &operator>>(const QDBusArgument &argument, DiskInfo &obj)
 {
-    QString mount_point_url;
-
     argument.beginStructure();
     argument >> obj.ID >> obj.Name;
     argument >> obj.Type >> obj.Path;
-    argument >> mount_point_url >>  obj.Icon;
+    argument >> obj.MountPoint >>  obj.Icon;
     argument >> obj.CanUnmount >> obj.CanEject;
     argument >> obj.Used >> obj.Total;
     argument.endStructure();
 
-    obj.MountPointUrl.setUrl(mount_point_url);
-
+    obj.MountPointUrl.setUrl(obj.MountPoint);
     return argument;
 }
 
@@ -56,12 +53,13 @@ QDebug operator<<(QDebug dbg, const DiskInfo &info)
     dbg.nospace() << "Name: " << info.Name << ",";
     dbg.nospace() << "Type: " << info.Type << ",";
     dbg.nospace() << "Path: " << info.Path << ",";
-    dbg.nospace() << "MountPoint: " << info.MountPointUrl << ",";
+    dbg.nospace() << "MountPoint: " << info.MountPoint << ",";
     dbg.nospace() << "Icon: " << info.Icon << ",";
     dbg.nospace() << "CanUnmount: " << info.CanUnmount << ",";
     dbg.nospace() << "CanEject: " << info.CanEject << ",";
     dbg.nospace() << "Used: " << info.Used<< ",";
     dbg.nospace() << "Total: " << info.Total<< ",";
+    dbg.nospace() << "MountPointUrl: " << info.MountPointUrl << ",";
     dbg.nospace() << ")";
     return dbg;
 }
