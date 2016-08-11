@@ -14,12 +14,14 @@ public:
     QString Name;
     QString Type;
     QString Path;
-    DUrl MountPointUrl;
+    QString MountPoint;
     QString Icon;
     bool CanUnmount;
     bool CanEject;
     qulonglong Used;
     qulonglong Total;
+
+    DUrl MountPointUrl;
 
     DiskInfo();
     ~DiskInfo();
