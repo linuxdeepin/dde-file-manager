@@ -98,5 +98,10 @@ int main(int argc, char *argv[])
 #endif
     }else{
         SingleApplication::newClientProcess(uniqueKey);
+        QWidget w;
+        w.setWindowFlags(Qt::FramelessWindowHint);
+        w.setAttribute(Qt::WA_TranslucentBackground);
+        w.resize(0, 0);
+        w.show();
     }
 }
