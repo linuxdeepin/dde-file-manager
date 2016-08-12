@@ -180,6 +180,7 @@ DiskInfo UDiskListener::queryDisk(const QString &path)
 
 void UDiskListener::unmount(const QString &path)
 {
+    qDebug() << path;
     m_diskMountInterface->Unmount(path);
 }
 

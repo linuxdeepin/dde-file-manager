@@ -320,7 +320,7 @@ void AppController::actionMount(const FMEvent &event)
 void AppController::actionUnmount(const FMEvent &event)
 {
     const DUrl& fileUrl = event.fileUrl();
-    deviceListener->unmount(fileUrl.query());
+    deviceListener->unmount(fileUrl.query(DUrl::FullyEncoded));
 }
 
 void AppController::actionRestore(const FMEvent &event)

@@ -75,6 +75,11 @@ QString UDiskDeviceInfo::getPath() const
     return m_diskInfo.Path;
 }
 
+QString UDiskDeviceInfo::getMountPoint() const
+{
+    return m_diskInfo.MountPoint;
+}
+
 DUrl UDiskDeviceInfo::getMountPointUrl()
 {
     QString path = QString("/run/user/%1/gvfs").arg(SingleApplication::UserID);
@@ -83,7 +88,7 @@ DUrl UDiskDeviceInfo::getMountPointUrl()
         m_diskInfo.MountPointUrl = DUrl::fromLocalFile(QString("%1/afc:host=%2").arg(path, m_diskInfo.ID));
     }else if (m_diskInfo.MountPoint.startsWith(MTP_SCHEME)){
         QStringList ids = m_diskInfo.MountPoint.split("/");
-        QString key = QUrl::toPercentEncoding(ids[2]);;
+        QString key = QUrl::toPercentEncoding(ids[2]);
         m_diskInfo.MountPointUrl = DUrl::fromLocalFile(QString("%1/mtp:host=%2").arg(path, key));
     }else if (m_diskInfo.MountPoint.startsWith(SMB_SCHEME)){
         QString mountPath = QString("%1/smb-share:").arg(path);
@@ -121,7 +126,8 @@ DUrl UDiskDeviceInfo::getMountPointUrl()
         if (!user.isEmpty()){
             mountPath = QString("%1user=%2,").arg(mountPath, user);
         }
-        qDebug() << domain << ip << share << user << mountPath;
+        qDebug() << domain << ip << share << user << mountPath << QUrl::fromPercentEncoding(mountPath.toLatin1());
+        mountPath = QUrl::fromPercentEncoding(mountPath.toLatin1());
         m_diskInfo.MountPointUrl = DUrl::fromLocalFile(mountPath.left(mountPath.length()-1));
     }else if(m_diskInfo.MountPoint.startsWith(GPHOTO2_SCHEME)){
         QStringList ids = m_diskInfo.MountPoint.split("/");
