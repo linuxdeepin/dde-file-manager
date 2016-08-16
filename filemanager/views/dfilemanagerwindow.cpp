@@ -393,8 +393,14 @@ void DMainWindow::mousePressEvent(QMouseEvent *event)
 void DMainWindow::mouseMoveEvent(QMouseEvent *event)
 {
     if (this->isActiveWindow()){
-        if (event->y() <= m_fileManagerWindow->getTitleBar()->height() + layoutMargin + 2)
-            emit startMoving();
+        if (event->y() <= m_fileManagerWindow->getTitleBar()->height() + layoutMargin + 2) {
+            if (event->buttons()) {
+                Qt::MouseButton button = event->buttons() & Qt::LeftButton ? Qt::LeftButton :
+                    event->buttons() & Qt::RightButton ? Qt::RightButton :
+                    Qt::NoButton;
+                startMoving(button);
+            }
+        }
     }
     DWindowFrame::mouseMoveEvent(event);
 }
