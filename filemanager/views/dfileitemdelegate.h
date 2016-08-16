@@ -56,6 +56,8 @@ public:
     FileIconItem *expandedIndexWidget() const;
     QWidget *editingIndexWidget() const;
 
+    QRect fileNameRect(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+
 protected:
     bool eventFilter(QObject *object, QEvent *event) Q_DECL_OVERRIDE;
     void initStyleOption(QStyleOptionViewItem *option,
