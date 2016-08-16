@@ -179,6 +179,7 @@ protected:
     void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags flags) Q_DECL_OVERRIDE;
     QModelIndex moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers modifiers) Q_DECL_OVERRIDE;
     void rowsAboutToBeRemoved(const QModelIndex & parent, int start, int end) Q_DECL_OVERRIDE;
+    void rowsInserted(const QModelIndex & parent, int start, int end);
 
 private:
     FileMenuManager* m_fileMenuManager;
