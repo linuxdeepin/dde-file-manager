@@ -838,6 +838,16 @@ QWidget *DFileItemDelegate::editingIndexWidget() const
     return parent()->indexWidget(editing_index);
 }
 
+QRect DFileItemDelegate::fileNameRect(const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    const QList<QRect> &rects = paintGeomertys(option, index);
+
+    if (rects.count() > 1)
+        return rects.at(1);
+
+    return QRect();
+}
+
 bool DFileItemDelegate::eventFilter(QObject *object, QEvent *event)
 {
     if(event->type() == QEvent::Show) {

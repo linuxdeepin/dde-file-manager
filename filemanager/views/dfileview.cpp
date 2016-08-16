@@ -621,6 +621,17 @@ bool DFileView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger tr
     if (fileUrl.isEmpty() || selectedIndexCount() > 1 || (trigger == SelectedClicked && Global::keyShiftIsPressed()))
         return false;
 
+    if (trigger == SelectedClicked) {
+        QStyleOptionViewItem option = viewOptions();
+
+        option.rect = visualRect(index);
+
+        const QRect &file_name_rect = itemDelegate()->fileNameRect(option, index);
+
+        if (!file_name_rect.contains(static_cast<QMouseEvent*>(event)->pos()))
+            return false;
+    }
+
     return DListView::edit(index, trigger, event);
 }
 
