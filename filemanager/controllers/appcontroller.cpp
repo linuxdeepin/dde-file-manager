@@ -112,6 +112,12 @@ void AppController::actionOpenInNewWindow(const FMEvent &event)
     fileService->openNewWindow(fileUrl);
 }
 
+void AppController::actionOpenInNewTab(const FMEvent &event)
+{
+    qDebug() << event;
+    emit fileSignalManager->requestOpenInNewTab(event);
+}
+
 void AppController::actionOpenDiskInNewWindow(const FMEvent &event)
 {
     const DUrl& fileUrl = event.fileUrl();

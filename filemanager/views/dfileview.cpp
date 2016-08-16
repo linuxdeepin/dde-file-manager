@@ -9,7 +9,7 @@
 #include "dfilemanagerwindow.h"
 #include "dfileselectionmodel.h"
 #include "xdndworkaround.h"
-
+#include "dstatusbar.h"
 #include "../app/global.h"
 #include "../app/fmevent.h"
 #include "../app/filemanagerapp.h"
@@ -100,6 +100,9 @@ void DFileView::initUI()
     linkIcon = QIcon(":/images/images/link_large.png");
     lockIcon = QIcon(":/images/images/lock_large.png");
     unreadableIcon = QIcon(":/images/images/unreadable.svg");
+
+    m_statusBar = new DStatusBar(this);
+    addFooterWidget(m_statusBar);
 }
 
 void DFileView::initDelegate()
@@ -120,10 +123,10 @@ void DFileView::initConnects()
         if (!Global::keyCtrlIsPressed() && !Global::keyShiftIsPressed())
             openIndex(index);
     }, Qt::QueuedConnection);
-    connect(fileSignalManager, &FileSignalManager::fetchNetworksSuccessed,
-            this, &DFileView::cd);
-    connect(fileSignalManager, &FileSignalManager::requestChangeCurrentUrl,
-            this, &DFileView::preHandleCd);
+//    connect(fileSignalManager, &FileSignalManager::fetchNetworksSuccessed,
+//            this, &DFileView::cd);
+//    connect(fileSignalManager, &FileSignalManager::requestChangeCurrentUrl,
+//            this, &DFileView::preHandleCd);
 
     connect(fileSignalManager, &FileSignalManager::requestRename,
             this, static_cast<void (DFileView::*)(const FMEvent&)>(&DFileView::edit));
@@ -586,7 +589,9 @@ void DFileView::cd(const FMEvent &event)
     if (setCurrentUrl(fileUrl)) {
         FMEvent e = event;
         e = currentUrl();
+        qDebug() << e;
         emit fileSignalManager->currentUrlChanged(e);
+
     }
 }
 
@@ -705,9 +710,6 @@ void DFileView::dislpayAsActionTriggered(QAction *action)
             break;
         case MenuAction::ListView:
             setViewMode(ListMode);
-            break;
-        case MenuAction::ExtendView:
-            static_cast<DMainWindow*>(WindowManager::getWindowById(windowId()))->fileManagerWindow()->setExtendView();
             break;
         default:
             break;

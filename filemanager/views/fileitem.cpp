@@ -77,7 +77,7 @@ FileIconItem::FileIconItem(QWidget *parent) :
         edit->setTextCursor(cursor);
         edit->setAlignment(Qt::AlignHCenter);
 
-        if (edit->isReadOnly())
+        if (edit->isReadOnly() && edit->isVisible())
             edit->setFixedHeight(edit->document()->size().height());
     });
 }
@@ -114,10 +114,14 @@ bool FileIconItem::event(QEvent *ee)
     } else if(ee->type() == QEvent::Resize) {
         edit->setFixedWidth(width());
 
-        if (edit->isReadOnly())
-            edit->setFixedHeight(edit->document()->size().height());
-        else
+        if (edit->isReadOnly()) {
+            int text_height = edit->document()->size().height();
+
+            if (edit->isVisible())
+                edit->setFixedHeight(text_height);
+        } else {
             edit->setFixedHeight(TEXT_LINE_HEIGHT * 3 + TEXT_PADDING * 2);
+        }
 
         resize(width(), icon->height() + edit->height() + ICON_MODE_ICON_SPACING);
     }
@@ -153,6 +157,19 @@ bool FileIconItem::eventFilter(QObject *obj, QEvent *ee)
         }
     } else if (ee->type() == QEvent::FocusOut && obj == edit) {
         emit inputFocusOut();
+    }
+
+    if (obj == edit && ee->type() == QEvent::Show) {
+        edit->setFixedWidth(width());
+
+        if (edit->isReadOnly()) {
+            int text_height = edit->document()->size().height();
+
+            if (edit->isVisible())
+                edit->setFixedHeight(text_height);
+        } else {
+            edit->setFixedHeight(TEXT_LINE_HEIGHT * 3 + TEXT_PADDING * 2);
+        }
     }
 
     return QFrame::eventFilter(obj, ee);

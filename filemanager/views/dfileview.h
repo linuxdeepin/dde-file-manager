@@ -32,6 +32,7 @@ class FMEvent;
 class DFileSystemModel;
 class DFileItemDelegate;
 class AbstractFileInfo;
+class DStatusBar;
 
 class DFileView : public DListView
 {
@@ -184,6 +185,7 @@ protected:
 private:
     FileMenuManager* m_fileMenuManager;
     QHeaderView *m_headerView = Q_NULLPTR;
+    DStatusBar* m_statusBar=NULL;
 
     QActionGroup* m_displayAsActionGroup;
     QActionGroup* m_sortByActionGroup;

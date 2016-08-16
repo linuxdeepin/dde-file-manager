@@ -360,6 +360,7 @@ QVector<MenuAction> AbstractFileInfo::menuActionList(AbstractFileInfo::MenuType 
 
             if (isDir()){
                 actionKeys << MenuAction::OpenInNewWindow;
+//                actionKeys << MenuAction::OpenInNewTab;
             }else{
                 if (!isDesktopFile())
                     actionKeys << MenuAction::OpenWith;

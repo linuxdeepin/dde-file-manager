@@ -507,3 +507,10 @@ QLineEdit#BookmarkLineEdit{
     border: solid 1px rgba(43, 167, 248, 1);
     color: white;
 }
+
+/*ComputerView*/
+
+QScrollArea#ComputerView{
+    border: none;
+    background-color: white;
+}

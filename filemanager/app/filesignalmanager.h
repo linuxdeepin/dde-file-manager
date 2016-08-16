@@ -23,6 +23,9 @@ signals:
     /* change currentUrl*/
     void requestChangeCurrentUrl(const FMEvent &event);
 
+    /* request open in new tab*/
+    void requestOpenInNewTab(const FMEvent &event);
+
     /* request fetch network nodes*/
 
     void requestFetchNetworks(const FMEvent &event);
