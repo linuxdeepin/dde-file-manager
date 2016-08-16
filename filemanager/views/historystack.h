@@ -9,7 +9,7 @@ class HistoryStack
 {
 public:
     HistoryStack(int threshold);
-    void insert(DUrl url);
+    void append(DUrl url);
     DUrl back();
     DUrl forward();
     void setThreshold(int threshold);
@@ -22,6 +22,12 @@ private:
     QList<DUrl> m_list;
     int m_threshold;
     int m_index;
+
+    friend QDebug operator<<(QDebug beg, const HistoryStack &stack);
 };
+
+QT_BEGIN_NAMESPACE
+QDebug operator<<(QDebug beg, const HistoryStack &stack);
+QT_END_NAMESPACE
 
 #endif // HISTORYSTACK_H
