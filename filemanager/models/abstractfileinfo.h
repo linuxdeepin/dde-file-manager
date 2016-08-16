@@ -208,6 +208,8 @@ public:
     virtual QString suffix() const;
     virtual QString completeSuffix() const;
 
+    void updateFileInfo();
+
 protected:
     struct FileInfoData
     {

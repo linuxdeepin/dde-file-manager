@@ -873,6 +873,7 @@ void DFileSystemModel::onFileDeleted(const DUrl &fileUrl)
 void DFileSystemModel::onFileUpdated(const DUrl &fileUrl)
 {
 //    const FileSystemNodePointer &node = m_urlToNode.value(fileUrl);
+
     const FileSystemNodePointer &node = m_rootNode;
 
     if(!node)
@@ -883,7 +884,10 @@ void DFileSystemModel::onFileUpdated(const DUrl &fileUrl)
     if(!index.isValid())
         return;
 
-    node->fileInfo = fileService->createFileInfo(fileUrl);
+    const FileSystemNodePointer &child = node->children.value(fileUrl);
+
+    if (child && child->fileInfo)
+        child->fileInfo->updateFileInfo();
 
     emit dataChanged(index, index);
 }

@@ -50,6 +50,7 @@ public:
 private slots:
     void onFileCreated(const QString &filePath);
     void onFileRemove(const QString &filePath);
+    void onFileInfoChanged(const QString &filePath);
 
 private:
     FileMonitor *fileMonitor;

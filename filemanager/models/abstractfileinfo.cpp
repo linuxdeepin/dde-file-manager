@@ -621,6 +621,18 @@ QString AbstractFileInfo::completeSuffix() const
     return data->fileInfo.completeSuffix();
 }
 
+void AbstractFileInfo::updateFileInfo()
+{
+    metaDataCacheMap.remove(data->url);
+
+    data->fileInfo.refresh();
+    data->size = -1;
+    data->created = QDateTime();
+    data->lastModified = QDateTime();
+
+    updateFileMetaData();
+}
+
 void AbstractFileInfo::updateFileMetaData()
 {
     this->data->pinyinName = QString();
