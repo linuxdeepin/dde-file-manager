@@ -746,6 +746,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
 
     switch (event->modifiers()) {
     case Qt::NoModifier:
+    case Qt::KeypadModifier:
         switch (event->key()) {
         case Qt::Key_Return:
         case Qt::Key_Enter:
@@ -890,14 +891,6 @@ void DFileView::keyPressEvent(QKeyEvent *event)
 
             return;
         default: break;
-        }
-
-        break;
-    case Qt::KeypadModifier:
-        if (event->key() == Qt::Key_Enter && !itemDelegate()->editingIndex().isValid()) {
-            appController->actionOpen(fmevent);
-
-            return;
         }
 
         break;
