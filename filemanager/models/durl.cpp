@@ -141,7 +141,7 @@ DUrl DUrl::searchTargetUrl() const
 
     QUrlQuery query(this->query());
 
-    return DUrl(query.queryItemValue("url", FullyDecoded));
+    return DUrl(query.queryItemValue("url", FullyEncoded));
 }
 
 DUrl DUrl::searchedFileUrl() const
@@ -149,7 +149,7 @@ DUrl DUrl::searchedFileUrl() const
     if (!isSearchFile())
         return DUrl();
 
-    return DUrl(fragment(FullyDecoded));
+    return DUrl(fragment(FullyEncoded));
 }
 
 void DUrl::setSearchKeyword(const QString &keyword)
@@ -160,7 +160,7 @@ void DUrl::setSearchKeyword(const QString &keyword)
     QUrlQuery query(this->query());
 
     query.removeQueryItem("keyword");
-    query.addQueryItem("keyword", keyword);
+    query.addQueryItem("keyword", QUrl::toPercentEncoding(keyword, QByteArray(), "%"));
 
     setQuery(query);
 }
@@ -237,7 +237,7 @@ DUrl DUrl::fromSearchFile(const DUrl &targetUrl, const QString &keyword, const D
 
     QUrlQuery query;
 
-    query.addQueryItem("keyword", keyword);
+    query.addQueryItem("keyword", QUrl::toPercentEncoding(keyword, QByteArray(), "%"));
     query.addQueryItem("url", targetUrl.toString());
 
     url.setQuery(query);

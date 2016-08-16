@@ -232,7 +232,7 @@ void DToolBar::searchBarDeactivated()
 void DToolBar::searchBarTextEntered()
 {
     QString text = m_searchBar->text();
-    qDebug() << text;
+
     if (text.isEmpty()) {
         return;
     }else if (text.endsWith("/")){
