@@ -37,6 +37,8 @@ private:
     using AbstractFileInfo::setUrl;
 
     static QMap<DUrl, bool> canRenameCacheMap;
+
+    friend class FileController;
 };
 
 Q_DECLARE_METATYPE(FileInfo)

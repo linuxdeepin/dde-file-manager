@@ -55,6 +55,8 @@ FileController::FileController(QObject *parent)
             this, &FileController::onFileCreated);
     connect(fileMonitor, &FileMonitor::fileDeleted,
             this, &FileController::onFileRemove);
+    connect(fileMonitor, &FileMonitor::fileMetaDataChanged,
+            this, &FileController::onFileInfoChanged);
 }
 
 bool FileController::findExecutable(const QString &executableName, const QStringList &paths)
@@ -434,6 +436,15 @@ void FileController::onFileCreated(const QString &filePath)
 void FileController::onFileRemove(const QString &filePath)
 {
     emit childrenRemoved(DUrl::fromLocalFile(filePath));
+}
+
+void FileController::onFileInfoChanged(const QString &filePath)
+{
+    const DUrl &url = DUrl::fromLocalFile(filePath);
+
+    FileInfo::canRenameCacheMap.remove(url);
+
+    emit childrenUpdated(url);
 }
 
 QString FileController::checkDuplicateName(const QString &name) const

@@ -79,6 +79,8 @@ void FileServices::setFileUrlHandler(const QString &scheme, const QString &host,
             instance(), &FileServices::childrenAdded);
     connect(controller, &AbstractFileController::childrenRemoved,
             instance(), &FileServices::childrenRemoved);
+    connect(controller, &AbstractFileController::childrenUpdated,
+            instance(), &FileServices::childrenUpdated);
 }
 
 void FileServices::unsetFileUrlHandler(AbstractFileController *controller)
@@ -92,6 +94,8 @@ void FileServices::unsetFileUrlHandler(AbstractFileController *controller)
             instance(), &FileServices::childrenAdded);
     disconnect(controller, &AbstractFileController::childrenRemoved,
             instance(), &FileServices::childrenRemoved);
+    disconnect(controller, &AbstractFileController::childrenUpdated,
+            instance(), &FileServices::childrenUpdated);
 }
 
 void FileServices::clearFileUrlHandler(const QString &scheme, const QString &host)
@@ -99,11 +103,11 @@ void FileServices::clearFileUrlHandler(const QString &scheme, const QString &hos
     const HandlerType handler(scheme, host);
 
     for(const AbstractFileController *controller : m_controllerHash.values(handler)) {
-        connect(controller, &AbstractFileController::childrenAdded,
+        disconnect(controller, &AbstractFileController::childrenAdded,
                 instance(), &FileServices::childrenAdded);
-        connect(controller, &AbstractFileController::childrenRemoved,
+        disconnect(controller, &AbstractFileController::childrenRemoved,
                 instance(), &FileServices::childrenRemoved);
-        connect(controller, &AbstractFileController::childrenUpdated,
+        disconnect(controller, &AbstractFileController::childrenUpdated,
                 instance(), &FileServices::childrenUpdated);
     }
 
