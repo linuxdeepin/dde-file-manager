@@ -323,10 +323,15 @@ void DWindowFrame::updateCursor(CornerEdge ce) {
     XFlush(display);
 }
 
-void DWindowFrame::startMoving() {
+void DWindowFrame::startMoving(Qt::MouseButton button) {
     const auto display = QX11Info::display();
     const auto winId = this->winId();
     const auto screen = QX11Info::appScreen();
+
+    int xbtn = button == Qt::LeftButton ? Button1 : 
+        button == Qt::RightButton ? Button3 :
+        AnyButton;
+
 
     XEvent xev;
     const Atom netMoveResize = XInternAtom(display, "_NET_WM_MOVERESIZE", false);
@@ -340,7 +345,7 @@ void DWindowFrame::startMoving() {
     xev.xclient.data.l[0] = globalPos.x();
     xev.xclient.data.l[1] = globalPos.y();
     xev.xclient.data.l[2] = _NET_WM_MOVERESIZE_MOVE;
-    xev.xclient.data.l[3] = 0;
+    xev.xclient.data.l[3] = xbtn;
     xev.xclient.data.l[4] = 0;
     XUngrabPointer(display, QX11Info::appTime());
 
