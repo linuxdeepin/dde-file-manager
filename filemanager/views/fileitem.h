@@ -19,6 +19,13 @@ public:
 
     QSize sizeHint() const Q_DECL_OVERRIDE;
 
+    inline QLabel* getIconLabel(){
+        return icon;
+    }
+    inline QTextEdit* getTextEdit(){
+        return edit;
+    }
+
 signals:
     void inputFocusOut();
 

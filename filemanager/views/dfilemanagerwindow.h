@@ -6,6 +6,8 @@
 #include "../models/durl.h"
 #include "widgets/dwindowframe.h"
 #include <QMainWindow>
+#include <QDir>
+#include <QMap>
 
 #define DEFAULT_WINDOWS_WIDTH 960
 #define DEFAULT_WINDOWS_HEIGHT 540
@@ -32,7 +34,8 @@ class ExtendView;
 class QStackedLayout;
 
 class DStatusBar;
-
+class FMEvent;
+class ComputerView;
 
 
 DWIDGET_USE_NAMESPACE
@@ -55,8 +58,11 @@ public:
 
     void initRightView();
     void initToolBar();
+    void initTabBar();
+    void initViewLayout();
     void initFileView();
-    void initExtendView();
+    void initComputerView();
+
 
     void initCentralWidget();
     void initConnect();
@@ -69,29 +75,37 @@ public:
     DTitlebar* getTitleBar();
     DToolBar* getToolBar();
 
+    int windowId();
+
 public slots:
     void showMinimized();
     void setFileViewMode(int viewMode);
     void setFileViewSortRole(int sortRole);
     void setIconView();
     void setListView();
-    void setExtendView();
+    void preHandleCd(const FMEvent& event);
+    void cd(const FMEvent& event);
+    void showComputerView(const FMEvent& event);
+    void openNewTab(const FMEvent& event);
+    void createNewView(const FMEvent& event);
 
 private:
-    QFrame* m_centralWidget;
+    QFrame* m_centralWidget = NULL;
     DTitlebar* m_titleBar = NULL;
     DLeftSideBar* m_leftSideBar = NULL;
     QFrame* m_rightView = NULL;
     DToolBar* m_toolbar = NULL;
+    QTabBar* m_tabBar = NULL;
     DFileView* m_fileView = NULL;
+    ComputerView* m_computerView = NULL;
     DDetailView* m_detailView = NULL;
     DStatusBar* m_statusBar = NULL;
-    QVBoxLayout* m_mainLayout;
-    QVBoxLayout* m_viewLayout;
-    DSplitter* m_splitter;
+    QVBoxLayout* m_mainLayout = NULL;
+    DSplitter* m_splitter = NULL;
     QFrame * m_titleFrame = NULL;
-    ExtendView* m_extendView = NULL;
-    QStackedLayout* m_viewStackLayout;
+    QStackedLayout* m_viewStackLayout=NULL;
+
+    QMap<DUrl, QWidget*> m_views={};
 };
 
 class DMainWindow : public DWindowFrame{

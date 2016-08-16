@@ -15,6 +15,7 @@ public:
         Open,
         OpenDisk,
         OpenInNewWindow,
+        OpenInNewTab,
         OpenDiskInNewWindow,
         OpenWith,
         OpenWithCustom,

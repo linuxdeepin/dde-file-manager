@@ -149,7 +149,6 @@ void WindowManager::onWindowClosed()
         dialogManager->closeAllPropertyDialog();
     }
     m_windows.remove(static_cast<const QWidget*>(sender()));
-
 }
 
 void WindowManager::onLastActivedWindowClosed(int winId)

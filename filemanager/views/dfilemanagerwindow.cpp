@@ -9,9 +9,11 @@
 #include "extendview.h"
 #include "dstatusbar.h"
 #include "filemenumanager.h"
+#include "computerview.h"
 
 #include "../app/global.h"
 #include "../app/fmevent.h"
+#include "../app/filesignalmanager.h"
 
 #include "utils/xutil.h"
 #include "utils/xutil.h"
@@ -28,6 +30,7 @@
 #include <QThread>
 #include <QDesktopWidget>
 #include <QStackedLayout>
+#include <QTabBar>
 
 const int DFileManagerWindow::MinimumWidth = 0;
 
@@ -97,8 +100,11 @@ void DFileManagerWindow::initLeftSideBar()
 void DFileManagerWindow::initRightView()
 {
     initToolBar();
+    initTabBar();
+    initViewLayout();
     initFileView();
-    initExtendView();
+    initComputerView();
+
     m_rightView = new QFrame;
 
     m_titleFrame = new QFrame;
@@ -117,20 +123,11 @@ void DFileManagerWindow::initRightView()
     titleLayout->setContentsMargins(0, 0, 0, 0);
 
     m_titleFrame->setLayout(titleLayout);
-
     m_titleFrame->setFixedHeight(TITLE_FIXED_HEIGHT);
-
-    m_viewStackLayout = new QStackedLayout(this);
-    m_viewStackLayout->addWidget(m_fileView);
-    m_viewStackLayout->addWidget(m_extendView);
-    m_viewStackLayout->setSpacing(0);
-    m_viewStackLayout->setContentsMargins(0, 0, 0, 0);
-
-    m_statusBar = new DStatusBar(m_fileView);
-    m_fileView->addFooterWidget(m_statusBar);
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->addWidget(m_titleFrame);
+    mainLayout->addWidget(m_tabBar);
     mainLayout->addLayout(m_viewStackLayout);
     mainLayout->setSpacing(0);
     mainLayout->setContentsMargins(0, 0, 0, 0);
@@ -144,17 +141,34 @@ void DFileManagerWindow::initToolBar()
     m_toolbar->setFixedHeight(40);
 }
 
-void DFileManagerWindow::initFileView()
+void DFileManagerWindow::initTabBar()
 {
-    m_fileView = new DFileView(this);
-    m_fileView->setObjectName("FileView");
-
-    setFocusProxy(m_fileView);
+    m_tabBar = new QTabBar(this);
+    m_tabBar->setFixedHeight(30);
+    m_tabBar->setExpanding(true);
+    m_tabBar->hide();
 }
 
-void DFileManagerWindow::initExtendView()
+void DFileManagerWindow::initViewLayout()
 {
-    m_extendView = new ExtendView(this);
+    m_viewStackLayout = new QStackedLayout(this);
+    m_viewStackLayout->setSpacing(0);
+    m_viewStackLayout->setContentsMargins(0, 0, 0, 0);
+}
+
+void DFileManagerWindow::initFileView()
+{
+    FMEvent event;
+    event = DUrl();
+    event = windowId();
+    createNewView(event);
+}
+
+void DFileManagerWindow::initComputerView()
+{
+    m_computerView = new ComputerView(this);
+    m_viewStackLayout->addWidget(m_computerView);
+    m_views.insert(ComputerView::url(), m_computerView);
 }
 
 void DFileManagerWindow::initCentralWidget()
@@ -178,8 +192,11 @@ void DFileManagerWindow::initConnect()
     connect(m_titleBar, SIGNAL(closeClicked()), parentWidget(), SLOT(close()));
     connect(m_toolbar, &DToolBar::requestIconView, this, &DFileManagerWindow::setIconView);
     connect(m_toolbar, &DToolBar::requestListView, this, &DFileManagerWindow::setListView);
-    connect(m_toolbar, &DToolBar::requestExtendView, this, &DFileManagerWindow::setExtendView);
-    connect(m_fileView, &DFileView::viewModeChanged, m_toolbar, &DToolBar::checkViewModeButton);
+
+    connect(fileSignalManager, &FileSignalManager::requestOpenInNewTab, this, &DFileManagerWindow::openNewTab);
+
+    connect(fileSignalManager, &FileSignalManager::fetchNetworksSuccessed, this, &DFileManagerWindow::cd);
+    connect(fileSignalManager, &FileSignalManager::requestChangeCurrentUrl,this, &DFileManagerWindow::preHandleCd);
 }
 
 DUrl DFileManagerWindow::currentUrl() const
@@ -207,6 +224,11 @@ DToolBar *DFileManagerWindow::getToolBar()
     return m_toolbar;
 }
 
+int DFileManagerWindow::windowId()
+{
+    return window()->winId();
+}
+
 void DFileManagerWindow::showMinimized()
 {
     QtX11::utils::ShowMinimizedWindow(this);
@@ -224,21 +246,77 @@ void DFileManagerWindow::setFileViewSortRole(int sortRole)
 
 void DFileManagerWindow::setIconView()
 {
-    m_viewStackLayout->setCurrentIndex(0);
+    m_viewStackLayout->setCurrentWidget(m_fileView);
     m_fileView->setViewModeToIcon();
 }
 
 void DFileManagerWindow::setListView()
 {
-    m_viewStackLayout->setCurrentIndex(0);
+    m_viewStackLayout->setCurrentWidget(m_fileView);
     m_fileView->setViewModeToList();
 }
 
-void DFileManagerWindow::setExtendView()
+void DFileManagerWindow::preHandleCd(const FMEvent &event)
 {
-    m_viewStackLayout->setCurrentIndex(1);
-    m_extendView->setStartUrl(m_fileView->currentUrl());
-    m_toolbar->checkViewModeButton(DFileView::ExtendMode);
+    qDebug() << event;
+    if (event.windowId() != windowId()){
+        return;
+    }
+    if (event.fileUrl().isNetWorkFile()){
+        emit fileSignalManager->requestFetchNetworks(event);
+    }else if (event.fileUrl().isSMBFile()){
+        emit fileSignalManager->requestFetchNetworks(event);
+    }else if (event.fileUrl().isComputerFile()){
+        showComputerView(event);
+    }else{
+        cd(event);
+    }
+}
+
+void DFileManagerWindow::cd(const FMEvent &event)
+{
+    if (m_viewStackLayout->currentWidget() != m_fileView){
+        m_viewStackLayout->setCurrentWidget(m_fileView);
+    }
+    m_fileView->cd(event);
+}
+
+void DFileManagerWindow::showComputerView(const FMEvent &event)
+{
+    m_viewStackLayout->setCurrentWidget(m_computerView);
+    emit fileSignalManager->currentUrlChanged(event);
+}
+
+void DFileManagerWindow::openNewTab(const FMEvent &event)
+{
+    if (event.windowId() != windowId()){
+        return;
+    }
+    qDebug() << event;
+    createNewView(event);
+
+    if (m_views.count() >= 3){
+        m_tabBar->show();
+    }
+}
+
+void DFileManagerWindow::createNewView(const FMEvent &event)
+{
+    qDebug() << event;
+    DFileView* view = new DFileView(this);
+    view->setObjectName("FileView");
+    setFocusProxy(view);
+    m_views.insert(event.fileUrl(), view);
+
+    m_viewStackLayout->addWidget(view);
+
+    m_viewStackLayout->setCurrentWidget(view);
+
+    view->cd(event);
+    m_fileView = view;
+
+    m_tabBar->addTab(event.fileUrl().toString());
+    connect(view, &DFileView::viewModeChanged, m_toolbar, &DToolBar::checkViewModeButton);
 }
 
 

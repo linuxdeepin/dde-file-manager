@@ -157,7 +157,9 @@ HEADERS += \
     filemanager/views/dbookmarkmountedindicatoritem.h \
     filemanager/views/deditorwidgetmenu.h \
     filemanager/controllers/jobcontroller.h \
-    filemanager/shutil/filessizeworker.h
+    filemanager/shutil/filessizeworker.h \
+    filemanager/views/computerview.h \
+    filemanager/views/flowlayout.h
 
 
 SOURCES += \
@@ -251,7 +253,9 @@ SOURCES += \
     filemanager/views/dbookmarkmountedindicatoritem.cpp \
     filemanager/views/deditorwidgetmenu.cpp \
     filemanager/controllers/jobcontroller.cpp \
-    filemanager/shutil/filessizeworker.cpp
+    filemanager/shutil/filessizeworker.cpp \
+    filemanager/views/computerview.cpp \
+    filemanager/views/flowlayout.cpp
 
 
 

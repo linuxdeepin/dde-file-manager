@@ -126,7 +126,7 @@ DUrl UDiskDeviceInfo::getMountPointUrl()
         if (!user.isEmpty()){
             mountPath = QString("%1user=%2,").arg(mountPath, user);
         }
-        qDebug() << domain << ip << share << user << mountPath << QUrl::fromPercentEncoding(mountPath.toLatin1());
+//        qDebug() << domain << ip << share << user << mountPath << QUrl::fromPercentEncoding(mountPath.toLatin1());
         mountPath = QUrl::fromPercentEncoding(mountPath.toLatin1());
         m_diskInfo.MountPointUrl = DUrl::fromLocalFile(mountPath.left(mountPath.length()-1));
     }else if(m_diskInfo.MountPoint.startsWith(GPHOTO2_SCHEME)){

@@ -398,7 +398,7 @@ void DBookmarkScene::doDragFinished(const QPointF &point, const QPointF &scenePo
 
 void DBookmarkScene::currentUrlChanged(const FMEvent &event)
 {
-    qDebug() << event;
+    qDebug() << this << event;
     if(event.windowId() != windowId())
         return;
     if(event.source() == FMEvent::LeftSideBar)
