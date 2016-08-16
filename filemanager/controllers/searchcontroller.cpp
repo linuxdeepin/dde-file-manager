@@ -123,7 +123,7 @@ bool SearchDiriterator::hasNext() const
                 if (parent->urlToTargetUrlMap.contains(realUrl, fileUrl)) {
                     ++parent->urlToTargetUrlMapInsertCount[QPair<DUrl, DUrl>(realUrl, fileUrl)];
                 } else {
-                    parent->urlToTargetUrlMap.insertMulti(fileInfo->fileUrl(), fileUrl);
+                    parent->urlToTargetUrlMap.insertMulti(realUrl, fileUrl);
                     parent->urlToTargetUrlMapInsertCount[QPair<DUrl, DUrl>(realUrl, fileUrl)] = 0;
                 }
 
