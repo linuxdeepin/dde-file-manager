@@ -31,12 +31,17 @@ DUrl HistoryStack::back()
     DUrl url;
 
     while (--m_index >= 0) {
+        if (m_index >= m_list.count())
+            continue;
+
         url = m_list.at(m_index);
 
         const AbstractFileInfoPointer &fileInfo = FileServices::instance()->createFileInfo(url);
 
-        if (!fileInfo->exists()){
+        if (!fileInfo || !fileInfo->exists()){
             removeAt(m_index);
+
+            ++m_index;
         } else {
             break;
         }
@@ -47,17 +52,17 @@ DUrl HistoryStack::back()
 
 DUrl HistoryStack::forward()
 {
-    int size = m_list.size();
-
     DUrl url;
 
-    while (++m_index < size) {
+    while (++m_index < m_list.count()) {
         url = m_list.at(m_index);
 
         const AbstractFileInfoPointer &fileInfo = FileServices::instance()->createFileInfo(url);
 
-        if (!fileInfo->exists()){
+        if (!fileInfo || !fileInfo->exists()){
             removeAt(m_index);
+
+            --m_index;
         } else {
             break;
         }
