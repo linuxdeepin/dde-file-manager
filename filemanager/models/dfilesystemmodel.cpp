@@ -832,7 +832,6 @@ void DFileSystemModel::onFileDeleted(const DUrl &fileUrl)
     qDebug() << "file deleted:" << fileUrl;
 
     const AbstractFileInfoPointer &info = fileService->createFileInfo(fileUrl);
-
     if(!info)
         return;
 
@@ -847,15 +846,11 @@ void DFileSystemModel::onFileDeleted(const DUrl &fileUrl)
         return;
 
     const FileSystemNodePointer &parentNode = m_rootNode;
-
     if(parentNode && parentNode->populatedChildren) {
         int index = parentNode->visibleChildren.indexOf(fileUrl);
-
         beginRemoveRows(createIndex(parentNode, 0), index, index);
-
         parentNode->visibleChildren.removeAt(index);
         parentNode->children.remove(fileUrl);
-
         endRemoveRows();
 
 //        const FileSystemNodePointer &node = m_urlToNode.value(fileUrl);

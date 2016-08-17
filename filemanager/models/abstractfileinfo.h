@@ -102,7 +102,6 @@ public:
     virtual bool isWritable() const;
     virtual bool isExecutable() const;
     virtual bool isHidden() const;
-
     virtual bool isRelative() const;
     virtual bool isAbsolute() const;
     virtual bool makeAbsolute();
