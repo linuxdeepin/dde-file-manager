@@ -321,7 +321,7 @@ void DToolBar::searchBarChanged(QString path)
 void DToolBar::backButtonClicked()
 {
     DUrl url = m_navStack->back();
-    qDebug() << url;
+
     if(!url.isEmpty())
     {
         FMEvent event;
@@ -399,7 +399,7 @@ void DToolBar::handleHotkeyCtrlL(const FMEvent &event)
 
 void DToolBar::checkNavHistory(DUrl url)
 {
-    m_navStack->insert(url);
+    m_navStack->append(url);
     if(m_navStack->size() > 1)
         m_backButton->setEnabled(true);
     else
