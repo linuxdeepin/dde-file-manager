@@ -1433,232 +1433,289 @@
 <context>
     <name>Shortcut</name>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="10"/>
         <source>Item</source>
-        <translation type="vanished">文件</translation>
+        <translation>文件</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="11"/>
         <source>Select to the first item</source>
-        <translation type="vanished">选择到第一个文件</translation>
+        <translation>选择到第一个文件</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="11"/>
         <source>Shift + Home </source>
-        <translation type="vanished">Shift + Home</translation>
+        <translation>Shift + Home</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="12"/>
         <source>Select to the last item</source>
-        <translation type="vanished">选择到最后一个文件</translation>
+        <translation>选择到最后一个文件</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="12"/>
         <source>Shift + End </source>
-        <translation type="vanished">Shift + End</translation>
+        <translation>Shift + End</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="13"/>
         <source>Select leftwards</source>
-        <translation type="vanished">向前选择</translation>
+        <translation>向前选择</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="13"/>
         <source>Shift + Left </source>
-        <translation type="vanished">Shift + Left</translation>
+        <translation>Shift + Left</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="14"/>
         <source>Select rightwards</source>
-        <translation type="vanished">向后选择</translation>
+        <translation>向后选择</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="14"/>
         <source>Shift + Right </source>
-        <translation type="vanished">Shift + Right</translation>
+        <translation>Shift + Right</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="15"/>
         <source>Select to upper row</source>
-        <translation type="vanished">向上一行选择</translation>
+        <translation>向上一行选择</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="15"/>
         <source>Shift + Up </source>
-        <translation type="vanished">Shift + Up</translation>
+        <translation>Shift + Up</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="16"/>
         <source>Select to lower row</source>
-        <translation type="vanished">向下一行选择</translation>
+        <translation>向下一行选择</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="16"/>
         <source>Shift + Down </source>
-        <translation type="vanished">Shift + Down</translation>
+        <translation>Shift + Down</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="17"/>
         <source>Open</source>
-        <translation type="vanished">打开文件</translation>
+        <translation>打开文件</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="17"/>
         <source>Ctrl + Down </source>
-        <translation type="vanished">Ctrl + Down</translation>
+        <translation>Ctrl + Down</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="18"/>
         <source>To parent directory</source>
-        <translation type="vanished">返回上一级</translation>
+        <translation>返回上一级</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="18"/>
         <source>Ctrl + Up </source>
-        <translation type="vanished">Ctrl + Up</translation>
+        <translation>Ctrl + Up</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="19"/>
         <source>Permanently delete</source>
-        <translation type="vanished">彻底删除</translation>
+        <translation>彻底删除</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="19"/>
         <source>Shift + Delete </source>
-        <translation type="vanished">Shift + Delete</translation>
+        <translation>Shift + Delete</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="20"/>
         <source>Delete</source>
-        <translation type="vanished">Delete</translation>
+        <translation>Delete</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="20"/>
         <source>Delete file</source>
-        <translation type="vanished">删除文件</translation>
+        <translation>删除文件</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="21"/>
         <source>Select all</source>
-        <translation type="vanished">全选文件</translation>
+        <translation>全选文件</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="21"/>
         <source>Ctrl + a </source>
-        <translation type="vanished">Ctrl + a</translation>
+        <translation>Ctrl + a</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="22"/>
         <source>Copy</source>
-        <translation type="vanished">拷贝文件</translation>
+        <translation>拷贝文件</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="22"/>
         <source>Ctrl + c </source>
-        <translation type="vanished">Ctrl + c</translation>
+        <translation>Ctrl + c</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="23"/>
         <source>Cut</source>
-        <translation type="vanished">剪切文件</translation>
+        <translation>剪切文件</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="23"/>
         <source>Ctrl + x </source>
-        <translation type="vanished">Ctrl + x</translation>
+        <translation>Ctrl + x</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="24"/>
         <source>Paste</source>
-        <translation type="vanished">粘贴文件</translation>
+        <translation>粘贴文件</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="24"/>
         <source>Ctrl + v </source>
-        <translation type="vanished">Ctrl + v</translation>
+        <translation>Ctrl + v</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="25"/>
         <source>Rename</source>
-        <translation type="vanished">重命名</translation>
+        <translation>重命名</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="25"/>
         <source>F2 </source>
-        <translation type="vanished">F2</translation>
+        <translation>F2</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="26"/>
         <source>New/Search</source>
-        <translation type="vanished">新建/搜索</translation>
+        <translation>新建/搜索</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="27"/>
         <source>New window</source>
-        <translation type="vanished">新建窗口</translation>
+        <translation>新建窗口</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="27"/>
         <source>Ctrl + n </source>
-        <translation type="vanished">Ctrl + n</translation>
+        <translation>Ctrl + n</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="28"/>
         <source>New folder</source>
-        <translation type="vanished">新建文件夹</translation>
+        <translation>新建文件夹</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="28"/>
         <source>Ctrl + Shift + n </source>
-        <translation type="vanished">Ctrl + Shift + n</translation>
+        <translation>Ctrl + Shift + n</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="29"/>
         <source>Search</source>
-        <translation type="vanished">搜索</translation>
+        <translation>搜索</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="29"/>
         <source>Ctrl + f</source>
-        <translation type="vanished">Ctrl + f</translation>
+        <translation>Ctrl + f</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="30"/>
         <source>View</source>
-        <translation type="vanished">查看</translation>
+        <translation>查看</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="31"/>
         <source>Item information</source>
-        <translation type="vanished">文件信息</translation>
+        <translation>文件信息</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="31"/>
         <source>Ctrl + i </source>
-        <translation type="vanished">Ctrl + i</translation>
+        <translation>Ctrl + i</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="32"/>
         <source>Help</source>
-        <translation type="vanished">帮助手册</translation>
+        <translation>帮助手册</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="32"/>
         <source>F1 </source>
-        <translation type="vanished">F1</translation>
+        <translation>F1</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="33"/>
         <source>Keyboard shortcuts</source>
-        <translation type="vanished">所有快捷键</translation>
+        <translation>所有快捷键</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="33"/>
         <source>Ctrl + Shift + / </source>
-        <translation type="vanished">Ctrl + Shift + /</translation>
+        <translation>Ctrl + Shift + /</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="34"/>
         <source>Switch display status</source>
-        <translation type="vanished">切换显示状态</translation>
+        <translation>切换显示状态</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="35"/>
         <source>Hide item</source>
-        <translation type="vanished">隐藏文件</translation>
+        <translation>隐藏文件</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="35"/>
         <source>Ctrl + h </source>
-        <translation type="vanished">Ctrl + h</translation>
+        <translation>Ctrl + h</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="36"/>
         <source>Input in address bar</source>
-        <translation type="vanished">地址栏输入</translation>
+        <translation>地址栏输入</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="36"/>
         <source>Ctrl + l </source>
-        <translation type="vanished">Ctrl + l</translation>
+        <translation>Ctrl + l</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="37"/>
         <source>Others</source>
-        <translation type="vanished">其它</translation>
+        <translation>其它</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="38"/>
         <source>Close</source>
-        <translation type="vanished">关闭</translation>
+        <translation>关闭</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="38"/>
         <source>Alt + F4 </source>
-        <translation type="vanished">Alt + F4</translation>
+        <translation>Alt + F4</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="39"/>
         <source>Back</source>
-        <translation type="vanished">后退</translation>
+        <translation>后退</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="39"/>
         <source>Alt + left </source>
-        <translation type="vanished">Alt + left</translation>
+        <translation>Alt + left</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="40"/>
         <source>Forward</source>
-        <translation type="vanished">前进</translation>
+        <translation>前进</translation>
     </message>
     <message>
+        <location filename="../filemanager/shutil/shortcut.cpp" line="40"/>
         <source>Alt + right </source>
-        <translation type="vanished">Alt + right</translation>
+        <translation>Alt + right</translation>
     </message>
 </context>
 <context>
