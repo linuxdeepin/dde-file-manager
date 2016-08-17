@@ -19,12 +19,10 @@ public:
 
     QSize sizeHint() const Q_DECL_OVERRIDE;
 
-    inline QLabel* getIconLabel(){
-        return icon;
-    }
-    inline QTextEdit* getTextEdit(){
-        return edit;
-    }
+    inline QLabel* getIconLabel() const
+    { return icon; }
+    inline QTextEdit* getTextEdit() const
+    { return edit; }
 
 signals:
     void inputFocusOut();
@@ -34,6 +32,8 @@ protected:
     bool eventFilter(QObject *obj, QEvent *ee) Q_DECL_OVERRIDE;
 
 private:
+    void updateEditorGeometry();
+
     bool canDeferredDelete = true;
     QLabel *icon;
     QTextEdit *edit;
