@@ -145,21 +145,10 @@ bool FileServices::compressFiles(const DUrlList &urlList) const
     return false;
 }
 
-bool FileServices::decompressFile(const DUrl &fileUrl) const
-{
-    TRAVERSE(fileUrl, {
-                 bool ok = controller->decompressFile(fileUrl, accepted);
 
-                 if(accepted) {
-                     return ok;
-                 }
-             })
-
-    return false;
-}
-bool FileServices::decompressFiles(const DUrlList urllist) const{
+bool FileServices::decompressFile(const DUrlList urllist) const{
     TRAVERSE(urllist.at(0), {
-                 bool ok = controller->decompressFiles(urllist, accepted);
+                 bool ok = controller->decompressFile(urllist, accepted);
 
                  if(accepted) {
                      return ok;
@@ -169,21 +158,9 @@ bool FileServices::decompressFiles(const DUrlList urllist) const{
     return false;
 }
 
-bool FileServices::decompressFileHere(const DUrl &fileUrl) const
-{
-    TRAVERSE(fileUrl, {
-                 bool ok = controller->decompressFileHere(fileUrl, accepted);
-
-                 if(accepted) {
-                     return ok;
-                 }
-             })
-
-    return false;
-}
-bool FileServices::decompressFilesHere(const DUrlList urllist) const{
+bool FileServices::decompressFileHere(const DUrlList urllist) const{
     TRAVERSE(urllist.at(0), {
-                 bool ok = controller->decompressFilesHere(urllist, accepted);
+                 bool ok = controller->decompressFileHere(urllist, accepted);
 
                  if(accepted) {
                      return ok;

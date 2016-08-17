@@ -122,7 +122,7 @@ bool FileController::compressFiles(const DUrlList &urlList, bool &accepted) cons
     return accepted;
 }
 
-bool FileController::decompressFiles(const DUrlList &fileUrlList, bool &accepted) const{
+bool FileController::decompressFile(const DUrlList &fileUrlList, bool &accepted) const{
     accepted = true;
     if (findExecutable("file-roller")){
         QStringList args;
@@ -139,7 +139,7 @@ bool FileController::decompressFiles(const DUrlList &fileUrlList, bool &accepted
     return accepted;
 }
 
-bool FileController::decompressFilesHere(const DUrlList &fileUrlList, bool &accepted) const{
+bool FileController::decompressFileHere(const DUrlList &fileUrlList, bool &accepted) const{
     accepted = true;
     if (findExecutable("file-roller")){
         QStringList args;

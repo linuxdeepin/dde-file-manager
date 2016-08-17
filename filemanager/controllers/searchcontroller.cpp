@@ -250,11 +250,11 @@ bool SearchController::compressFiles(const DUrlList &urlList, bool &accepted) co
     return FileServices::instance()->compressFiles(realUrlList(urlList));
 }
 
-bool SearchController::decompressFile(const DUrl &fileUrl, bool &accepted) const
+bool SearchController::decompressFile(const DUrlList &fileUrlList, bool &accepted) const
 {
     accepted = true;
 
-    return FileServices::instance()->decompressFile(realUrl(fileUrl));
+    return FileServices::instance()->decompressFile(realUrlList(fileUrlList));
 }
 
 bool SearchController::createSymlink(const DUrl &fileUrl, const DUrl &linkToUrl, bool &accepted) const
