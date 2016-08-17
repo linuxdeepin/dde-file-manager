@@ -366,6 +366,9 @@ void ComputerView::loadNativeItems()
     info.MountPointUrl = DUrl::fromLocalFile("/");
     device->setDiskInfo(info);
     mountAdded(device);
+    foreach (UDiskDeviceInfo* device, deviceListener->getDeviceList()) {
+        mountAdded(device);
+    }
 }
 
 void ComputerView::volumeAdded(UDiskDeviceInfo *device)

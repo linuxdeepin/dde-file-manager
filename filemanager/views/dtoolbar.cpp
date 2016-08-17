@@ -397,6 +397,12 @@ void DToolBar::handleHotkeyCtrlL(const FMEvent &event)
     }
 }
 
+void DToolBar::setViewModeButtonVisible(bool isVisible)
+{
+    m_iconViewButton->setVisible(isVisible);
+    m_listViewButton->setVisible(isVisible);
+}
+
 void DToolBar::checkNavHistory(DUrl url)
 {
     m_navStack->append(url);

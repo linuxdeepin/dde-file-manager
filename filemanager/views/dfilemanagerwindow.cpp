@@ -268,6 +268,8 @@ void DFileManagerWindow::preHandleCd(const FMEvent &event)
         emit fileSignalManager->requestFetchNetworks(event);
     }else if (event.fileUrl().isComputerFile()){
         showComputerView(event);
+    }else if (event.fileUrl().isSearchFile() && m_viewStackLayout->currentWidget() == m_computerView){
+        return;
     }else{
         cd(event);
     }
@@ -279,12 +281,14 @@ void DFileManagerWindow::cd(const FMEvent &event)
         m_viewStackLayout->setCurrentWidget(m_fileView);
     }
     m_fileView->cd(event);
+    m_toolbar->setViewModeButtonVisible(true);
 }
 
 void DFileManagerWindow::showComputerView(const FMEvent &event)
 {
     m_viewStackLayout->setCurrentWidget(m_computerView);
     emit fileSignalManager->currentUrlChanged(event);
+    m_toolbar->setViewModeButtonVisible(false);
 }
 
 void DFileManagerWindow::openNewTab(const FMEvent &event)

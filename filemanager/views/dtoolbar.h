@@ -57,6 +57,9 @@ public slots:
     void handleHotkeyForward(const FMEvent &event);
     void handleHotkeyCtrlF(const FMEvent &event);
     void handleHotkeyCtrlL(const FMEvent &event);
+
+    void setViewModeButtonVisible(bool isVisible);
+
 private:
     void checkNavHistory(DUrl url);
     bool m_searchState = false;
