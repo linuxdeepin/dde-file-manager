@@ -337,3 +337,11 @@ QSet<MenuAction> UDiskDeviceInfo::disableMenuActionList() const
     return actionKeys;
 }
 
+bool UDiskDeviceInfo::exists() const
+{
+    if (fileUrl().isComputerFile())
+        return true;
+
+    return false;
+}
+

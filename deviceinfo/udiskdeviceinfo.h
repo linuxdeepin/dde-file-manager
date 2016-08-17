@@ -65,6 +65,8 @@ public:
     QVector<MenuAction> menuActionList(MenuType type) const Q_DECL_OVERRIDE;
     QSet<MenuAction> disableMenuActionList() const Q_DECL_OVERRIDE;
 
+    bool exists() const Q_DECL_OVERRIDE;
+
 private:
     DiskInfo m_diskInfo;
 };
