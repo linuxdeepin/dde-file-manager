@@ -25,8 +25,8 @@ public:
 
     bool openFile(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
     bool compressFiles(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;
-    bool decompressFiles(const DUrlList &fileUrlList, bool &accepted) const Q_DECL_OVERRIDE;
-    bool decompressFilesHere(const DUrlList &fileUrlList, bool &accepted) const Q_DECL_OVERRIDE;
+    bool decompressFile(const DUrlList &fileUrlList, bool &accepted) const Q_DECL_OVERRIDE;
+    bool decompressFileHere(const DUrlList &fileUrlList, bool &accepted) const Q_DECL_OVERRIDE;
     bool copyFiles(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;
     bool renameFile(const DUrl &oldUrl, const DUrl &newUrl, bool &accepted) const Q_DECL_OVERRIDE;
     bool deleteFiles(const DUrlList &urlList, const FMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
