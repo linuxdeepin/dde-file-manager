@@ -26,7 +26,7 @@ public:
     bool renameFile(const DUrl &oldUrl, const DUrl &newUrl, bool &accepted) const Q_DECL_OVERRIDE;
 
     bool compressFiles(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;
-    bool decompressFile(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
+    bool decompressFile(const DUrlList &fileUrlList, bool &accepted) const Q_DECL_OVERRIDE;
 
     bool createSymlink(const DUrl &fileUrl, const DUrl &linkToUrl, bool &accepted) const Q_DECL_OVERRIDE;
 
