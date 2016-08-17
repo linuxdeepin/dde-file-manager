@@ -120,12 +120,14 @@ bool FileController::compressFiles(const DUrlList &urlList, bool &accepted) cons
     return accepted;
 }
 
-bool FileController::decompressFile(const DUrl &fileUrl, bool &accepted) const
-{
+bool FileController::decompressFiles(const DUrlList &fileUrlList, bool &accepted) const{
     accepted = true;
     if (findExecutable("file-roller")){
         QStringList args;
-        args << "-f" << fileUrl.toLocalFile();
+        args << "-f";
+        for(auto it : fileUrlList){
+            args << it.toLocalFile();
+        }
         qDebug() << args;
         bool result = QProcess::startDetached("file-roller", args);
         return result;
@@ -135,12 +137,14 @@ bool FileController::decompressFile(const DUrl &fileUrl, bool &accepted) const
     return accepted;
 }
 
-bool FileController::decompressFileHere(const DUrl &fileUrl, bool &accepted) const
-{
+bool FileController::decompressFilesHere(const DUrlList &fileUrlList, bool &accepted) const{
     accepted = true;
     if (findExecutable("file-roller")){
         QStringList args;
-        args << "-h" << fileUrl.toLocalFile();
+        args << "-h";
+        for(auto it : fileUrlList){
+            args << it.toLocalFile();
+        }
         qDebug() << args;
         bool result = QProcess::startDetached("file-roller", args);
         return result;

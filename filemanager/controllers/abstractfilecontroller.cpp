@@ -32,6 +32,16 @@ bool AbstractFileController::decompressFile(const DUrl &fileUrl, bool &accepted)
 
     return false;
 }
+bool AbstractFileController::decompressFiles(const DUrlList &fileUrlList, bool &accepted) const{
+    Q_UNUSED(fileUrlList)
+    accepted = false;
+    return false;
+}
+bool AbstractFileController::decompressFilesHere(const DUrlList &fileUrlList, bool &accepted) const{
+    Q_UNUSED(fileUrlList)
+    accepted = false;
+    return false;
+}
 
 bool AbstractFileController::decompressFileHere(const DUrl &fileUrl, bool &accepted) const
 {

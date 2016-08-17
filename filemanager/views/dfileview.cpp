@@ -1913,9 +1913,13 @@ void DFileView::showNormalMenu(const QModelIndex &index)
         }
     } else {
         bool isSystemPathIncluded = false;
+        bool isAllCompressedFiles = true;
 
         foreach (DUrl url, list) {
             const AbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
+
+            if(!FileUtils::isArchive(url.path()))
+                isAllCompressedFiles = false;
 
             if (systemPathManager->isSystemPath(fileInfo->redirectedFileUrl().toLocalFile())) {
                 isSystemPathIncluded = true;
@@ -1931,6 +1935,9 @@ void DFileView::showNormalMenu(const QModelIndex &index)
 
         if (actions.isEmpty())
             return;
+
+        if(isAllCompressedFiles)
+            actions<<MenuAction::Decompress<<MenuAction::DecompressHere;
 
         const QMap<MenuAction, QVector<MenuAction> > subActions;
         const QSet<MenuAction> &disableList = FileMenuManager::getDisableActionList(list);

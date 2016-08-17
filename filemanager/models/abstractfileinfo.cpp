@@ -731,3 +731,4 @@ QDebug operator<<(QDebug deg, const AbstractFileInfo &info)
     return deg;
 }
 QT_END_NAMESPACE
+

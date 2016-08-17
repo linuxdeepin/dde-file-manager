@@ -43,6 +43,8 @@ public:
     bool compressFiles(const DUrlList &urlList) const ;
     bool decompressFile(const DUrl &fileUrl) const;
     bool decompressFileHere(const DUrl &fileUrl) const;
+    bool decompressFiles(const DUrlList urllist) const;
+    bool decompressFilesHere(const DUrlList urllist) const;
     bool copyFiles(const DUrlList &urlList) const;
     bool renameFile(const DUrl &oldUrl, const DUrl &newUrl, const FMEvent &event) const;
     bool renameFile(const DUrl &oldUrl, const DUrl &newUrl) const;
