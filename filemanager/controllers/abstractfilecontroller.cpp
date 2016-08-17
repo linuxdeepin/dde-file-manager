@@ -24,28 +24,18 @@ bool AbstractFileController::compressFiles(const DUrlList &urlList, bool &accept
     return false;
 }
 
-bool AbstractFileController::decompressFile(const DUrl &fileUrl, bool &accepted) const
+bool AbstractFileController::decompressFile(const DUrlList &fileUrlList, bool &accepted) const
 {
-    Q_UNUSED(fileUrl)
-
-    accepted = false;
-
-    return false;
-}
-bool AbstractFileController::decompressFiles(const DUrlList &fileUrlList, bool &accepted) const{
     Q_UNUSED(fileUrlList)
+
     accepted = false;
-    return false;
-}
-bool AbstractFileController::decompressFilesHere(const DUrlList &fileUrlList, bool &accepted) const{
-    Q_UNUSED(fileUrlList)
-    accepted = false;
+
     return false;
 }
 
-bool AbstractFileController::decompressFileHere(const DUrl &fileUrl, bool &accepted) const
+bool AbstractFileController::decompressFileHere(const DUrlList &fileUrlList, bool &accepted) const
 {
-    Q_UNUSED(fileUrl)
+    Q_UNUSED(fileUrlList)
 
     accepted = false;
 

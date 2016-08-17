@@ -160,14 +160,14 @@ void AppController::actionCompress(const FMEvent &event)
 void AppController::actionDecompress(const FMEvent &event)
 {
     const DUrlList &list = event.fileUrlList();
-    fileService->decompressFiles(list);
+    fileService->decompressFile(list);
 
 }
 
 void AppController::actionDecompressHere(const FMEvent &event)
 {
     const DUrlList &list = event.fileUrlList();
-    fileService->decompressFilesHere(list);
+    fileService->decompressFileHere(list);
 }
 
 void AppController::actionCut(const FMEvent &event)
