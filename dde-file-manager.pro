@@ -159,7 +159,9 @@ HEADERS += \
     filemanager/controllers/jobcontroller.h \
     filemanager/shutil/filessizeworker.h \
     filemanager/views/computerview.h \
-    filemanager/views/flowlayout.h
+    filemanager/views/flowlayout.h \
+    filemanager/shutil/shortcut.h
+
 
 
 SOURCES += \
@@ -255,7 +257,8 @@ SOURCES += \
     filemanager/controllers/jobcontroller.cpp \
     filemanager/shutil/filessizeworker.cpp \
     filemanager/views/computerview.cpp \
-    filemanager/views/flowlayout.cpp
+    filemanager/views/flowlayout.cpp \
+    filemanager/shutil/shortcut.cpp
 
 
 
@@ -264,7 +267,6 @@ INCLUDEPATH += filemanager/models
 BINDIR = $$PREFIX/bin
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 HELPSHAREDIR = $$PREFIX/share/dman/$$TARGET
-SHORTCUTSHAREDIR = $$PREFIX/share/deepin-shortcut-viewer/$$TARGET
 ICONDIR = $$PREFIX/share/icons/hicolor/scalable/apps
 DEFINES += APPSHAREDIR=\\\"$$APPSHAREDIR\\\"
 
@@ -307,7 +309,4 @@ help.files = help/*
 icon.path = $$ICONDIR
 icon.files = skin/images/$${TARGET}.svg
 
-shortcut.path = $$SHORTCUTSHAREDIR
-shortcut.files = shortcut/*
-
-INSTALLS += target desktop templateFiles translations mimetypeFiles help icon shortcut
+INSTALLS += target desktop templateFiles translations mimetypeFiles help icon

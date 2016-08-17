@@ -33,6 +33,7 @@
 #include <QStorageInfo>
 #include <DAboutDialog>
 #include <qprocess.h>
+#include "../shutil/shortcut.h"
 
 AppController::AppController(QObject *parent) : QObject(parent)
 {
@@ -446,14 +447,16 @@ void AppController::actionShowHotkeyHelp(const FMEvent &event)
 {
     Q_UNUSED(event)
     QRect rect=WindowManager::getWindowById(event.windowId())->geometry();
-    QString cmd="deepin-shortcut-viewer -t="+qApp->applicationName()+" -r="+
+    Shortcut sc;
+    QStringList args;
+    QString param1 = "-j="+sc.toStr();
+    QString param2 = "-r="+
             QString::number(rect.x())+","+
             QString::number(rect.y())+","+
             QString::number(rect.width())+","+
             QString::number(rect.height());
-    qDebug()<<cmd;
-
-    QProcess::startDetached(cmd);
+    args<<param1<<param2;
+    QProcess::startDetached("deepin-shortcut-viewer",args);
 }
 
 void AppController::actionBack(const FMEvent &event)

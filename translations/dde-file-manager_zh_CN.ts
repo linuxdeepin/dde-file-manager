@@ -48,22 +48,22 @@
 <context>
     <name>ComputerView</name>
     <message>
-        <location filename="../filemanager/views/computerview.cpp" line="206"/>
+        <location filename="../filemanager/views/computerview.cpp" line="290"/>
         <source>My Directories</source>
         <translation>我的目录</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/computerview.cpp" line="214"/>
+        <location filename="../filemanager/views/computerview.cpp" line="296"/>
         <source>Internal Disk</source>
         <translation>内置磁盘</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/computerview.cpp" line="220"/>
+        <location filename="../filemanager/views/computerview.cpp" line="302"/>
         <source>External Disk</source>
         <translation>外置磁盘</translation>
     </message>
     <message>
-        <location filename="../filemanager/views/computerview.cpp" line="280"/>
+        <location filename="../filemanager/views/computerview.cpp" line="362"/>
         <source>Disk</source>
         <translation>磁盘</translation>
     </message>
@@ -464,12 +464,12 @@
 <context>
     <name>FileController</name>
     <message>
-        <location filename="../filemanager/controllers/filecontroller.cpp" line="321"/>
+        <location filename="../filemanager/controllers/filecontroller.cpp" line="327"/>
         <source>New Folder</source>
         <translation>新建文件夹</translation>
     </message>
     <message>
-        <location filename="../filemanager/controllers/filecontroller.cpp" line="333"/>
+        <location filename="../filemanager/controllers/filecontroller.cpp" line="339"/>
         <source>New File</source>
         <translation>新建文本</translation>
     </message>
@@ -1234,26 +1234,26 @@
         <translation>设置壁纸</translation>
     </message>
     <message>
-        <location filename="../filemanager/controllers/appcontroller.cpp" line="288"/>
         <location filename="../filemanager/controllers/appcontroller.cpp" line="290"/>
+        <location filename="../filemanager/controllers/appcontroller.cpp" line="292"/>
         <source>newDoc</source>
         <translation>新建word文档</translation>
     </message>
     <message>
-        <location filename="../filemanager/controllers/appcontroller.cpp" line="297"/>
         <location filename="../filemanager/controllers/appcontroller.cpp" line="299"/>
+        <location filename="../filemanager/controllers/appcontroller.cpp" line="301"/>
         <source>newExcel</source>
         <translation>新建Excel文档</translation>
     </message>
     <message>
-        <location filename="../filemanager/controllers/appcontroller.cpp" line="306"/>
         <location filename="../filemanager/controllers/appcontroller.cpp" line="308"/>
+        <location filename="../filemanager/controllers/appcontroller.cpp" line="310"/>
         <source>newPowerPoint</source>
         <translation>新建PowerPoint文档</translation>
     </message>
     <message>
-        <location filename="../filemanager/controllers/appcontroller.cpp" line="315"/>
         <location filename="../filemanager/controllers/appcontroller.cpp" line="317"/>
+        <location filename="../filemanager/controllers/appcontroller.cpp" line="319"/>
         <source>newText</source>
         <translation>新建文本</translation>
     </message>
@@ -1428,6 +1428,237 @@
         <location filename="../filemanager/main.cpp" line="87"/>
         <source>File Manager</source>
         <translation>文件管理器</translation>
+    </message>
+</context>
+<context>
+    <name>Shortcut</name>
+    <message>
+        <source>Item</source>
+        <translation type="vanished">文件</translation>
+    </message>
+    <message>
+        <source>Select to the first item</source>
+        <translation type="vanished">选择到第一个文件</translation>
+    </message>
+    <message>
+        <source>Shift + Home </source>
+        <translation type="vanished">Shift + Home</translation>
+    </message>
+    <message>
+        <source>Select to the last item</source>
+        <translation type="vanished">选择到最后一个文件</translation>
+    </message>
+    <message>
+        <source>Shift + End </source>
+        <translation type="vanished">Shift + End</translation>
+    </message>
+    <message>
+        <source>Select leftwards</source>
+        <translation type="vanished">向前选择</translation>
+    </message>
+    <message>
+        <source>Shift + Left </source>
+        <translation type="vanished">Shift + Left</translation>
+    </message>
+    <message>
+        <source>Select rightwards</source>
+        <translation type="vanished">向后选择</translation>
+    </message>
+    <message>
+        <source>Shift + Right </source>
+        <translation type="vanished">Shift + Right</translation>
+    </message>
+    <message>
+        <source>Select to upper row</source>
+        <translation type="vanished">向上一行选择</translation>
+    </message>
+    <message>
+        <source>Shift + Up </source>
+        <translation type="vanished">Shift + Up</translation>
+    </message>
+    <message>
+        <source>Select to lower row</source>
+        <translation type="vanished">向下一行选择</translation>
+    </message>
+    <message>
+        <source>Shift + Down </source>
+        <translation type="vanished">Shift + Down</translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation type="vanished">打开文件</translation>
+    </message>
+    <message>
+        <source>Ctrl + Down </source>
+        <translation type="vanished">Ctrl + Down</translation>
+    </message>
+    <message>
+        <source>To parent directory</source>
+        <translation type="vanished">返回上一级</translation>
+    </message>
+    <message>
+        <source>Ctrl + Up </source>
+        <translation type="vanished">Ctrl + Up</translation>
+    </message>
+    <message>
+        <source>Permanently delete</source>
+        <translation type="vanished">彻底删除</translation>
+    </message>
+    <message>
+        <source>Shift + Delete </source>
+        <translation type="vanished">Shift + Delete</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation type="vanished">Delete</translation>
+    </message>
+    <message>
+        <source>Delete file</source>
+        <translation type="vanished">删除文件</translation>
+    </message>
+    <message>
+        <source>Select all</source>
+        <translation type="vanished">全选文件</translation>
+    </message>
+    <message>
+        <source>Ctrl + a </source>
+        <translation type="vanished">Ctrl + a</translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation type="vanished">拷贝文件</translation>
+    </message>
+    <message>
+        <source>Ctrl + c </source>
+        <translation type="vanished">Ctrl + c</translation>
+    </message>
+    <message>
+        <source>Cut</source>
+        <translation type="vanished">剪切文件</translation>
+    </message>
+    <message>
+        <source>Ctrl + x </source>
+        <translation type="vanished">Ctrl + x</translation>
+    </message>
+    <message>
+        <source>Paste</source>
+        <translation type="vanished">粘贴文件</translation>
+    </message>
+    <message>
+        <source>Ctrl + v </source>
+        <translation type="vanished">Ctrl + v</translation>
+    </message>
+    <message>
+        <source>Rename</source>
+        <translation type="vanished">重命名</translation>
+    </message>
+    <message>
+        <source>F2 </source>
+        <translation type="vanished">F2</translation>
+    </message>
+    <message>
+        <source>New/Search</source>
+        <translation type="vanished">新建/搜索</translation>
+    </message>
+    <message>
+        <source>New window</source>
+        <translation type="vanished">新建窗口</translation>
+    </message>
+    <message>
+        <source>Ctrl + n </source>
+        <translation type="vanished">Ctrl + n</translation>
+    </message>
+    <message>
+        <source>New folder</source>
+        <translation type="vanished">新建文件夹</translation>
+    </message>
+    <message>
+        <source>Ctrl + Shift + n </source>
+        <translation type="vanished">Ctrl + Shift + n</translation>
+    </message>
+    <message>
+        <source>Search</source>
+        <translation type="vanished">搜索</translation>
+    </message>
+    <message>
+        <source>Ctrl + f</source>
+        <translation type="vanished">Ctrl + f</translation>
+    </message>
+    <message>
+        <source>View</source>
+        <translation type="vanished">查看</translation>
+    </message>
+    <message>
+        <source>Item information</source>
+        <translation type="vanished">文件信息</translation>
+    </message>
+    <message>
+        <source>Ctrl + i </source>
+        <translation type="vanished">Ctrl + i</translation>
+    </message>
+    <message>
+        <source>Help</source>
+        <translation type="vanished">帮助手册</translation>
+    </message>
+    <message>
+        <source>F1 </source>
+        <translation type="vanished">F1</translation>
+    </message>
+    <message>
+        <source>Keyboard shortcuts</source>
+        <translation type="vanished">所有快捷键</translation>
+    </message>
+    <message>
+        <source>Ctrl + Shift + / </source>
+        <translation type="vanished">Ctrl + Shift + /</translation>
+    </message>
+    <message>
+        <source>Switch display status</source>
+        <translation type="vanished">切换显示状态</translation>
+    </message>
+    <message>
+        <source>Hide item</source>
+        <translation type="vanished">隐藏文件</translation>
+    </message>
+    <message>
+        <source>Ctrl + h </source>
+        <translation type="vanished">Ctrl + h</translation>
+    </message>
+    <message>
+        <source>Input in address bar</source>
+        <translation type="vanished">地址栏输入</translation>
+    </message>
+    <message>
+        <source>Ctrl + l </source>
+        <translation type="vanished">Ctrl + l</translation>
+    </message>
+    <message>
+        <source>Others</source>
+        <translation type="vanished">其它</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="vanished">关闭</translation>
+    </message>
+    <message>
+        <source>Alt + F4 </source>
+        <translation type="vanished">Alt + F4</translation>
+    </message>
+    <message>
+        <source>Back</source>
+        <translation type="vanished">后退</translation>
+    </message>
+    <message>
+        <source>Alt + left </source>
+        <translation type="vanished">Alt + left</translation>
+    </message>
+    <message>
+        <source>Forward</source>
+        <translation type="vanished">前进</translation>
+    </message>
+    <message>
+        <source>Alt + right </source>
+        <translation type="vanished">Alt + right</translation>
     </message>
 </context>
 <context>
