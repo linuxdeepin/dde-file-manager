@@ -673,7 +673,7 @@ bool FileUtils::openExcutableFile(const QString &path, int flag)
 
         break;
     case 1:
-        result = QProcess::startDetached(path);
+        result = QProcess::startDetached(path, QStringList());
         break;
     case 2:{
         QStringList args;
