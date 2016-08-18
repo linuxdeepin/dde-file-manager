@@ -23,6 +23,9 @@ public:
 
     DUrl MountPointUrl;
 
+    /*if true show in computerview for especially used*/
+    bool isNativeCustom = false;
+
     DiskInfo();
     ~DiskInfo();
 

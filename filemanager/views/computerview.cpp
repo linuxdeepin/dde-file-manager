@@ -11,6 +11,9 @@
 #include "../app/fmevent.h"
 #include "../controllers/appcontroller.h"
 #include "../app/filemanagerapp.h"
+#include "dfilemenu.h"
+#include "filemenumanager.h"
+#include "../shutil/standardpath.h"
 #include <dscrollbar.h>
 #include <QVBoxLayout>
 #include <QLabel>
@@ -19,8 +22,8 @@
 #include <QDebug>
 #include <QTextEdit>
 #include <QSizePolicy>
-#include "dfilemenu.h"
-#include "filemenumanager.h"
+#include <QFile>
+
 
 
 DWIDGET_USE_NAMESPACE
@@ -112,10 +115,14 @@ void ComputerViewItem::contextMenuEvent(QContextMenuEvent *event)
         menu = FileMenuManager::createDefaultBookMarkMenu();
         url = m_info->fileUrl();
     }else if (m_deviceInfo){
-        if (m_deviceInfo->getMountPoint() == "/"){
+        if (m_deviceInfo->getMountPoint() == "/" && !m_deviceInfo->getDiskInfo().isNativeCustom){
             menu = FileMenuManager::createDefaultBookMarkMenu();
-            url = DUrl::fromLocalFile("/");
-        }else{
+            url = m_deviceInfo->getMountPointUrl();
+        }else if (m_deviceInfo->getDiskInfo().isNativeCustom){
+            menu = FileMenuManager::createDefaultBookMarkMenu();
+            url = m_deviceInfo->getMountPointUrl();
+        }
+        else{
             menu = FileMenuManager::genereteMenuByKeys(
                         m_deviceInfo->menuActionList(AbstractFileInfo::SingleFile),
                         m_deviceInfo->disableMenuActionList());
@@ -322,7 +329,13 @@ void ComputerView::initUI()
     setVerticalScrollBar(new DScrollBar);
 
     loadSystemItems();
-    loadNativeItems();
+
+    if (isDiskConfExisted()){
+        loadCustomItems();
+    }else{
+        loadNativeItems();
+    }
+
     resizeItemBySizeIndex(m_currentIconSizeIndex);
 
     if (m_removableItems.count() == 0){
@@ -369,6 +382,47 @@ void ComputerView::loadNativeItems()
     foreach (UDiskDeviceInfo* device, deviceListener->getDeviceList()) {
         mountAdded(device);
     }
+}
+
+void ComputerView::loadCustomItems()
+{
+    QSettings diskSettings(getDiskConfPath(), QSettings::IniFormat);
+    diskSettings.beginGroup("Disk");
+    foreach (QString key, diskSettings.childKeys()) {
+        loadCustomItemsByNameUrl(key, diskSettings.value(key).toString());
+    }
+    diskSettings.endGroup();
+}
+
+void ComputerView::loadCustomItemsByNameUrl(const QString &id, const QString &url)
+{
+    UDiskDeviceInfo* device = new UDiskDeviceInfo();
+    DiskInfo info;
+    info.ID = id;
+    info.CanEject = false;
+    info.CanUnmount = false;
+    info.Type = "native";
+    info.Name = id;
+    info.MountPoint = url;
+    info.Total = 0;
+    info.Used = 0;
+    info.MountPointUrl = DUrl::fromLocalFile(url);
+    info.isNativeCustom = true;
+    device->setDiskInfo(info);
+    mountAdded(device);
+}
+
+bool ComputerView::isDiskConfExisted()
+{
+    if (QFile(getDiskConfPath()).exists()){
+        return true;
+    }
+    return false;
+}
+
+QString ComputerView::getDiskConfPath()
+{
+    return QString("%1/%2").arg(StandardPath::getConfigPath(), "disk.conf");
 }
 
 void ComputerView::volumeAdded(UDiskDeviceInfo *device)
