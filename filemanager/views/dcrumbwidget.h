@@ -75,7 +75,6 @@ private:
 
 public slots:
     void buttonPressed();
-    void crumbModified();
     void crumbMoveToLeft();
     void crumbMoveToRight();
 signals:

@@ -1509,6 +1509,10 @@ void DFileView::keyboardSearch(const QString &search)
 
 bool DFileView::setCurrentUrl(DUrl fileUrl)
 {
+
+    if (fileUrl.isTrashFile() && fileUrl.path().isEmpty()){
+        fileUrl.setPath("/");
+    };
     const AbstractFileInfoPointer &info = FileServices::instance()->createFileInfo(fileUrl);
 
     if (!info){
