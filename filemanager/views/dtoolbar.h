@@ -30,7 +30,6 @@ public:
     void initAddressToolBar();
     void initContollerToolBar();
     void initConnect();
-    void startup();
     DSearchBar * getSearchBar();
 
 signals:

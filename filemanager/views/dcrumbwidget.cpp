@@ -116,7 +116,7 @@ void DCrumbWidget::addCrumb(const QStringList &list)
 
 void DCrumbWidget::setCrumb(const DUrl &path)
 {
-//    qDebug() << path;
+    qDebug() << path;
     if(path.isSearchFile())
         return;
     m_url = path;
@@ -129,11 +129,10 @@ void DCrumbWidget::setCrumb(const DUrl &path)
     else if(path.isComputerFile())
     {
         addComputerCrumb();
-        addLocalCrumbs(path);
     }
     else if(path.isTrashFile())
     {
-        if (path == DUrl(TRASH_ROOT)){
+        if (path.path().isEmpty()){
             addTrashCrumb();
         }else{
             addTrashCrumb();
@@ -176,11 +175,12 @@ DUrl DCrumbWidget::getCurrentUrl()
 
     const DCrumbButton *button = qobject_cast<DCrumbButton*>(m_group.checkedButton());
     const QString &path = button ? button->path() : QString();
-
     if (m_url.isLocalFile()){
         result = DUrl::fromLocalFile(path);
     }else if (m_url.isTrashFile()){
         result = DUrl::fromTrashFile(path);
+    }else if (m_url.isComputerFile()){
+        result = DUrl::fromComputerFile("/");
     }
     else
     {
@@ -201,6 +201,7 @@ void DCrumbWidget::addRecentCrumb()
                 text, this);
     button->setFocusPolicy(Qt::NoFocus);
     button->adjustSize();
+    button->setPath("/");
     m_group.addButton(button, button->getIndex());
     button->setChecked(true);
     connect(button, &DCrumbButton::clicked, this, &DCrumbWidget::buttonPressed);
@@ -217,6 +218,7 @@ void DCrumbWidget::addComputerCrumb()
                 text, this);
     button->setFocusPolicy(Qt::NoFocus);
     button->adjustSize();
+    button->setPath("/");
     m_group.addButton(button, button->getIndex());
     button->setChecked(true);
     connect(button, &DCrumbButton::clicked, this, &DCrumbWidget::buttonPressed);
@@ -233,6 +235,7 @@ void DCrumbWidget::addTrashCrumb()
                 text, this);
     button->setFocusPolicy(Qt::NoFocus);
     button->adjustSize();
+    button->setPath("/");
     m_group.addButton(button, button->getIndex());
     button->setChecked(true);
     connect(button, &DCrumbButton::clicked, this, &DCrumbWidget::buttonPressed);
@@ -264,6 +267,7 @@ void DCrumbWidget::addNetworkCrumb()
                 text, this);
     button->setFocusPolicy(Qt::NoFocus);
     button->adjustSize();
+    button->setPath("/");
     m_group.addButton(button, button->getIndex());
     button->setChecked(true);
     connect(button, &DCrumbButton::clicked, this, &DCrumbWidget::buttonPressed);
@@ -532,11 +536,6 @@ void DCrumbWidget::buttonPressed()
     emit crumbSelected(event);
 
     m_listWidget->update();
-}
-
-void DCrumbWidget::crumbModified()
-{
-    setCrumb(m_url);
 }
 
 void DCrumbWidget::crumbMoveToLeft()
