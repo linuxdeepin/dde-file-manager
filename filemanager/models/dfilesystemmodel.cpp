@@ -67,7 +67,7 @@ DFileSystemModel::~DFileSystemModel()
 //            fileService->removeUrlMonitor(node->fileInfo->fileUrl());
 //    }
 
-    setRootUrl(DUrl());
+//    setRootUrl(DUrl());
 }
 
 DFileView *DFileSystemModel::parent() const
@@ -79,6 +79,9 @@ QModelIndex DFileSystemModel::index(const DUrl &fileUrl, int column)
 {
     if (fileUrl == rootUrl())
         return createIndex(m_rootNode, column);
+
+    if (!m_rootNode)
+        return QModelIndex();
 
 //    const FileSystemNodePointer &node = m_urlToNode.value(fileUrl);
     const FileSystemNodePointer &node = m_rootNode->children.value(fileUrl);

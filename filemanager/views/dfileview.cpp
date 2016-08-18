@@ -153,7 +153,7 @@ void DFileView::initConnects()
     connect(model(), &DFileSystemModel::stateChanged, this, &DFileView::onModelStateChanged);
 
     connect(fileIconProvider, &IconProvider::themeChanged, model(), &DFileSystemModel::update);
-    connect(fileIconProvider, &IconProvider::iconChanged, [this] (const QString &filePath) {
+    connect(fileIconProvider, &IconProvider::iconChanged, this, [this] (const QString &filePath) {
         update(model()->index(DUrl::fromLocalFile(filePath)));
     });
 
