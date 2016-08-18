@@ -29,7 +29,6 @@ DToolBar::DToolBar(QWidget *parent) : QFrame(parent)
     initData();
     initUI();
     initConnect();
-    startup();
 }
 
 DToolBar::~DToolBar()
@@ -173,16 +172,6 @@ void DToolBar::initConnect()
     connect(fileSignalManager, &FileSignalManager::requestSearchCtrlL, this, &DToolBar::handleHotkeyCtrlL);
 }
 
-void DToolBar::startup()
-{
-    QString user = getenv("USER");
-    FMEvent event(-1, FMEvent::SearchBar);
-    event = DUrl::fromLocalFile("/home/" + user);
-    m_crumbWidget->setCrumb(event.fileUrl());
-
-    emit fileSignalManager->requestChangeCurrentUrl(event);
-}
-
 DSearchBar *DToolBar::getSearchBar()
 {
     return m_searchBar;
@@ -235,17 +224,16 @@ void DToolBar::searchBarTextEntered()
 
     if (text.isEmpty()) {
         return;
-    }else if (text.endsWith("/")){
-        text = text.left(text.length() - 1);
     }
-
     FMEvent event;
 
     event = WindowManager::getWindowId(window());
     event = FMEvent::SearchBar;
-    event = DUrl::fromUserInput(text);
 
-    qDebug() << event << text;
+    DUrl inputUrl = DUrl::fromUserInput(text);
+
+    event = inputUrl;
+    qDebug() << event << inputUrl << text;
 
     if (!m_searchBar->hasScheme()) {
         DUrl url = m_crumbWidget->getCurrentUrl();
