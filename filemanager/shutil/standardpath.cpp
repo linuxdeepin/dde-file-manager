@@ -38,6 +38,15 @@ QString StandardPath::getCachePath()
     return defaultPath;
 }
 
+QString StandardPath::getConfigPath()
+{
+    QString projectName = qApp->applicationName();
+    QDir::home().mkpath(".config");
+    QDir::home().mkpath(QString("%1/%2/").arg(".config", projectName));
+    QString defaultPath = QString("%1/%2/%3").arg(QDir::homePath(), ".config", projectName);
+    return defaultPath;
+}
+
 QString StandardPath::getTrashPath()
 {
     QDir::home().mkpath(".local/");

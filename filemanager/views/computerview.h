@@ -99,6 +99,11 @@ public:
 
     void loadSystemItems();
     void loadNativeItems();
+    void loadCustomItems();
+    void loadCustomItemsByNameUrl(const QString& id, const QString& url);
+
+    bool isDiskConfExisted();
+    QString getDiskConfPath();
 
 signals:
 
