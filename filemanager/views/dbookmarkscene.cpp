@@ -23,7 +23,8 @@
 #include <QMimeData>
 #include <QDir>
 
-DBookmarkScene::DBookmarkScene()
+DBookmarkScene::DBookmarkScene(QObject *parent)
+    : QGraphicsScene(parent)
 {
     initData();
     initUI();
