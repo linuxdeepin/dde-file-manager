@@ -116,7 +116,7 @@ void DLeftSideBar::initNav()
     m_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_view->setObjectName("Bookmark");
     m_view->setAlignment(Qt::AlignTop);
-    m_scene = new DBookmarkScene;
+    m_scene = new DBookmarkScene(this);
     m_scene->setSceneRect(10, 10, 200, 500);
     m_view->setScene(m_scene);
 
