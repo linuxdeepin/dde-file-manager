@@ -447,14 +447,11 @@ void AppController::actionShowHotkeyHelp(const FMEvent &event)
 {
     Q_UNUSED(event)
     QRect rect=WindowManager::getWindowById(event.windowId())->geometry();
+    QPoint pos(rect.x() + rect.width()/2 , rect.y() + rect.height()/2);
     Shortcut sc;
     QStringList args;
     QString param1 = "-j="+sc.toStr();
-    QString param2 = "-r="+
-            QString::number(rect.x())+","+
-            QString::number(rect.y())+","+
-            QString::number(rect.width())+","+
-            QString::number(rect.height());
+    QString param2 = "-p=" + QString::number(pos.x()) + "," + QString::number(pos.y());
     args<<param1<<param2;
     QProcess::startDetached("deepin-shortcut-viewer",args);
 }
