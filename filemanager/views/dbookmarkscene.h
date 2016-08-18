@@ -22,7 +22,7 @@ class DBookmarkScene : public QGraphicsScene
 {
     Q_OBJECT
 public:
-    DBookmarkScene();
+    DBookmarkScene(QObject *parent);
 
     void initData();
     void initUI();

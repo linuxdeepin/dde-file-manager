@@ -258,7 +258,7 @@ void DFileManagerWindow::setListView()
 
 void DFileManagerWindow::preHandleCd(const FMEvent &event)
 {
-    qDebug() << event;
+    qDebug() << event << windowId();
     if (event.windowId() != windowId()){
         return;
     }
@@ -341,6 +341,7 @@ void DMainWindow::initUI()
 {
     setFocusPolicy(Qt::NoFocus);
     setWindowIcon(QIcon(":/images/images/dde-file-manager.svg"));
+    setAttribute(Qt::WA_DeleteOnClose);
     resize(DEFAULT_WINDOWS_WIDTH, DEFAULT_WINDOWS_HEIGHT);
     m_fileManagerWindow = new DFileManagerWindow(this);
     addContenWidget(m_fileManagerWindow);
