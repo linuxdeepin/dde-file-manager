@@ -95,8 +95,10 @@ QString FileJob::getTargetDir()
     return m_tarPath;
 }
 
-void FileJob::doCopy(const QList<QUrl> &files, const QString &destination)
+DUrlList FileJob::doCopy(const DUrlList &files, const QString &destination)
 {
+    DUrlList list;
+
     qDebug() << "Do copy is started";
     //pre-calculate total size
     m_totalSize = FileUtils::totalSize(files);
@@ -105,20 +107,27 @@ void FileJob::doCopy(const QList<QUrl> &files, const QString &destination)
     {
         QUrl url = files.at(i);
         QDir srcDir(url.toLocalFile());
+        QString targetPath;
+
         if(srcDir.exists())
         {
-            copyDir(url.toLocalFile(), QUrl(destination).toLocalFile());
+            copyDir(url.toLocalFile(), QUrl(destination).toLocalFile(), false,  &targetPath);
         }
         else
-            copyFile(url.toLocalFile(), QUrl(destination).toLocalFile());
+            copyFile(url.toLocalFile(), QUrl(destination).toLocalFile(), false,  &targetPath);
+
+        if (!targetPath.isEmpty())
+            list << DUrl::fromLocalFile(targetPath);
     }
     if(m_isJobAdded)
         jobRemoved();
     emit finished();
     qDebug() << "Do copy is done!";
+
+    return list;
 }
 
-void FileJob::doDelete(const QList<QUrl> &files)
+void FileJob::doDelete(const DUrlList &files)
 {
     qDebug() << "Do delete is started";
     for(int i = 0; i < files.size(); i++)
@@ -139,22 +148,23 @@ void FileJob::doDelete(const QList<QUrl> &files)
     qDebug() << "Do delete is done!";
 }
 
-void FileJob::doMoveToTrash(const QList<QUrl> &files)
+DUrlList FileJob::doMoveToTrash(const DUrlList &files)
 {
     QDir trashDir;
+    DUrlList list;
 
     if(!trashDir.mkpath(TRASHFILEPATH)) {
         qDebug() << "mk" << TRASHINFOPATH << "failed!";
         /// TODO
 
-        return;
+        return list;
     }
 
     if(!trashDir.mkpath(TRASHINFOPATH)) {
         qDebug() << "mk" << TRASHINFOPATH << "failed!";
         /// TODO
 
-        return;
+        return list;
     }
 
     bool ok = true;
@@ -163,10 +173,15 @@ void FileJob::doMoveToTrash(const QList<QUrl> &files)
     {
         QUrl url = files.at(i);
         QDir dir(url.path());
+        QString targetPath;
+
         if(dir.exists())
-            ok = ok && moveDirToTrash(url.path());
+            ok = ok && moveDirToTrash(url.path(), &targetPath);
         else
-            ok = ok && moveFileToTrash(url.path());
+            ok = ok && moveFileToTrash(url.path(), &targetPath);
+
+        if (!targetPath.isEmpty())
+            list << DUrl::fromLocalFile(targetPath);
     }
     if(m_isJobAdded)
         jobRemoved();
@@ -175,39 +190,46 @@ void FileJob::doMoveToTrash(const QList<QUrl> &files)
 
     if (ok)
         qDebug() << "Move to Trash is done!";
+
+    return list;
 }
 
-void FileJob::doMove(const QList<QUrl> &files, const QString &destination)
+DUrlList FileJob::doMove(const DUrlList &files, const QString &destination)
 {
     qDebug() << "Do move is started" << files << destination;
     m_totalSize = FileUtils::totalSize(files);
     jobPrepared();
+
+    DUrlList list;
     QString tarLocal = QUrl(destination).toLocalFile();
     QStorageInfo tarInfo(tarLocal);
     QDir tarDir(tarLocal);
+
     if(!tarDir.exists())
     {
         qDebug() << "Destination must be directory";
-        return;
+        return list;
     }
+
     for(int i = 0; i < files.size(); i++)
     {
         QUrl url = files.at(i);
         QDir srcDir(url.toLocalFile());
         QStorageInfo srcInfo(srcDir);
+        QString targetPath;
 
         if(srcDir.exists())
         {
             if(srcInfo.rootPath() == tarInfo.rootPath())
             {
-                if (!moveDir(url.toLocalFile(), tarDir.path())) {
-                    if(copyDir(url.toLocalFile(), tarLocal, true))
+                if (!moveDir(url.toLocalFile(), tarDir.path()), &targetPath) {
+                    if(copyDir(url.toLocalFile(), tarLocal, true, &targetPath))
                         deleteDir(url.toLocalFile());
                 }
             }
             else
             {
-                if(copyDir(url.toLocalFile(), tarLocal, true))
+                if(copyDir(url.toLocalFile(), tarLocal, true, &targetPath))
                     deleteDir(url.toLocalFile());
             }
         }
@@ -215,29 +237,34 @@ void FileJob::doMove(const QList<QUrl> &files, const QString &destination)
         {
             if(srcInfo.rootPath() == tarInfo.rootPath())
             {
-                if (!moveFile(url.toLocalFile(), tarDir.path())) {
-                    if(copyFile(url.toLocalFile(), QUrl(destination).toLocalFile(), true))
+                if (!moveFile(url.toLocalFile(), tarDir.path(), &targetPath)) {
+                    if(copyFile(url.toLocalFile(), QUrl(destination).toLocalFile(), true, &targetPath))
                         deleteFile(url.toLocalFile());
                 }
             }
             else
             {
-                if(copyFile(url.toLocalFile(), QUrl(destination).toLocalFile(), true))
+                if(copyFile(url.toLocalFile(), QUrl(destination).toLocalFile(), true, &targetPath))
                     deleteFile(url.toLocalFile());
             }
         }
+
+        if (!targetPath.isEmpty())
+            list << DUrl::fromLocalFile(targetPath);
     }
     if(m_isJobAdded)
         jobRemoved();
     emit finished();
     qDebug() << "Do move is done!";
+
+    return list;
 }
 
 void FileJob::doTrashRestore(const QString &srcFile, const QString &tarFile)
 {
 //    qDebug() << srcFile << tarFile;
     qDebug() << "Do restore trash file is started";
-    QList<QUrl> files;
+    DUrlList files;
     files << QUrl::fromLocalFile(srcFile);
     m_totalSize = FileUtils::totalSize(files);
     jobPrepared();
@@ -371,7 +398,7 @@ void FileJob::jobConflicted()
     m_status = Paused;
 }
 
-bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMoved)
+bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMoved, QString *targetPath)
 {
     QFile from(srcFile);   
     QFileInfo sf(srcFile);
@@ -441,6 +468,10 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
                     to.flush();
                     from.close();
                     to.close();
+
+                    if (targetPath)
+                        *targetPath = m_tarPath;
+
                     return true;
                 }
                 qint64 inBytes = from.read(block, DATA_BLOCK_SIZE);
@@ -527,7 +558,7 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
     return false;
 }
 
-bool FileJob::copyDir(const QString &srcPath, const QString &tarPath, bool isMoved)
+bool FileJob::copyDir(const QString &srcPath, const QString &tarPath, bool isMoved, QString *targetPath)
 {
     if(m_status == FileJob::Cancelled)
     {
@@ -598,6 +629,10 @@ bool FileJob::copyDir(const QString &srcPath, const QString &tarPath, bool isMov
                     }
                 }
             }
+
+            if (targetPath)
+                *targetPath = tf.absoluteFilePath();
+
             return true;
             break;
         }
@@ -609,10 +644,14 @@ bool FileJob::copyDir(const QString &srcPath, const QString &tarPath, bool isMov
         default: break;
         }
     }
+
+    if (targetPath)
+        *targetPath = tf.absoluteFilePath();
+
     return true;
 }
 
-bool FileJob::moveFile(const QString &srcFile, const QString &tarDir)
+bool FileJob::moveFile(const QString &srcFile, const QString &tarDir, QString *targetPath)
 {
     QFile from(srcFile);
     QDir to(tarDir);
@@ -661,7 +700,11 @@ bool FileJob::moveFile(const QString &srcFile, const QString &tarDir)
                         localFile.remove();
 
                 }
-                return from.rename(m_srcPath);
+
+                bool ok = from.rename(m_srcPath);
+
+                if (ok)
+                    *targetPath = m_srcPath;
             }
             case FileJob::Paused:
                 QThread::msleep(100);
@@ -755,7 +798,7 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
     return false;
 }
 
-bool FileJob::moveDir(const QString &srcFile, const QString &tarDir)
+bool FileJob::moveDir(const QString &srcFile, const QString &tarDir, QString *targetPath)
 {
     QDir from(srcFile);
     QFileInfo fromInfo(srcFile);
@@ -804,7 +847,11 @@ bool FileJob::moveDir(const QString &srcFile, const QString &tarDir)
                         localDir.removeRecursively();
 
                 }
-                return from.rename(from.absolutePath(), m_srcPath);
+
+                bool ok = from.rename(from.absolutePath(), m_srcPath);
+
+                if (ok && targetPath)
+                    *targetPath = m_srcPath;
             }
             case FileJob::Paused:
                 QThread::msleep(100);
@@ -869,7 +916,7 @@ bool FileJob::deleteDir(const QString &dir)
     return true;
 }
 
-bool FileJob::moveDirToTrash(const QString &dir)
+bool FileJob::moveDirToTrash(const QString &dir, QString *targetPath)
 {
     if(m_status == FileJob::Cancelled)
     {
@@ -894,6 +941,9 @@ bool FileJob::moveDirToTrash(const QString &dir)
             return false;
         }
     }
+
+    if (targetPath)
+        *targetPath = newName;
 
     return true;
 }
@@ -926,7 +976,7 @@ QString FileJob::getNotExistsTrashFileName(const QString &fileName)
     return QString::fromUtf8(name + suffix);
 }
 
-bool FileJob::moveFileToTrash(const QString &file)
+bool FileJob::moveFileToTrash(const QString &file, QString *targetPath)
 {
     if(m_status == FileJob::Cancelled)
     {
@@ -951,6 +1001,9 @@ bool FileJob::moveFileToTrash(const QString &file)
             return false;
         }
     }
+
+    if (targetPath)
+        *targetPath = newName;
 
     return true;
 }

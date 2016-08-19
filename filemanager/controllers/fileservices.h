@@ -49,7 +49,7 @@ public:
     void deleteFiles(const DUrlList &urlList, const FMEvent &event) const;
     bool deleteFilesSync(const DUrlList &urlList, const FMEvent &event) const;
     void moveToTrash(const DUrlList &urlList) const;
-    bool moveToTrashSync(const DUrlList &urlList) const;
+    DUrlList moveToTrashSync(const DUrlList &urlList) const;
     bool cutFiles(const DUrlList &urlList) const;
     void pasteFile(const FMEvent &event) const;
     void pasteFile(AbstractFileController::PasteType type,
@@ -88,6 +88,9 @@ signals:
     void childrenRemoved(const DUrl &fileUrl) const;
     void childrenUpdated(const DUrl &fileUrl) const;
     void fileOpened(const DUrl &fileUrl) const;
+
+private slots:
+    void laterRequestSelectFiles(const FMEvent &event) const;
 
 private:
     explicit FileServices(QObject *parent = 0);

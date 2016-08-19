@@ -210,7 +210,7 @@ bool FileController::deleteFiles(const DUrlList &urlList, const FMEvent &event, 
 
     dialogManager->addJob(&job);
 
-    job.doDelete(DUrl::toQUrlList(urlList));
+    job.doDelete(urlList);
     dialogManager->removeJob(job.getJobId());
 
     return true;
@@ -222,7 +222,7 @@ bool FileController::deleteFiles(const DUrlList &urlList, const FMEvent &event, 
  *
  * Trash file or directory with the given url address.
  */
-bool FileController::moveToTrash(const DUrlList &urlList, bool &accepted) const
+DUrlList FileController::moveToTrash(const DUrlList &urlList, bool &accepted) const
 {
     accepted = true;
 
@@ -230,10 +230,10 @@ bool FileController::moveToTrash(const DUrlList &urlList, bool &accepted) const
 
     dialogManager->addJob(&job);
 
-    job.doMoveToTrash(DUrl::toQUrlList(urlList));
+    DUrlList list = job.doMoveToTrash(urlList);
     dialogManager->removeJob(job.getJobId());
 
-    return true;
+    return list;
 }
 
 bool FileController::cutFiles(const DUrlList &urlList, bool &accepted) const
@@ -260,15 +260,16 @@ bool FileController::cutFiles(const DUrlList &urlList, bool &accepted) const
     return true;
 }
 
-bool FileController::pasteFile(PasteType type, const DUrlList &urlList,
-                               const FMEvent &event, bool &accepted) const
+DUrlList FileController::pasteFile(PasteType type, const DUrlList &urlList,
+                                   const FMEvent &event, bool &accepted) const
 {
     accepted = true;
 
+    DUrlList list;
     QDir dir(event.fileUrl().toLocalFile());
     //Make sure the target directory exists.
     if(!dir.exists())
-        return false;
+        return list;
 
     if(type == CutType) {
 
@@ -280,7 +281,7 @@ bool FileController::pasteFile(PasteType type, const DUrlList &urlList,
 
             dialogManager->addJob(&job);
 
-            job.doMove(DUrl::toQUrlList(urlList), event.fileUrl().toString());
+            list = job.doMove(urlList, event.fileUrl().toString());
             dialogManager->removeJob(job.getJobId());
         }
 
@@ -291,11 +292,11 @@ bool FileController::pasteFile(PasteType type, const DUrlList &urlList,
 
         dialogManager->addJob(&job);
 
-        job.doCopy(DUrl::toQUrlList(urlList), event.fileUrl().toString());
+        list = job.doCopy(urlList, event.fileUrl().toString());
         dialogManager->removeJob(job.getJobId());
     }
 
-    return true;
+    return list;
 }
 
 
@@ -427,7 +428,7 @@ void FileController::onFileCreated(const QString &filePath)
         int windowId = FileJob::SelectedFiles.value(url);
         FMEvent event;
         event = windowId;
-        event = url;
+        event = DUrlList() << url;
         emit fileSignalManager->requestSelectRenameFile(event);
         FileJob::SelectedFiles.remove(url);
     }

@@ -45,10 +45,10 @@ signals:
     void result(QString content);
     void finished();
 public slots:
-    void doCopy(const QList<QUrl> &files, const QString &destination);
-    void doDelete(const QList<QUrl> &files);
-    void doMoveToTrash(const QList<QUrl> &files);
-    void doMove(const QList<QUrl> &files, const QString &destination);
+    DUrlList doCopy(const DUrlList &files, const QString &destination);
+    void doDelete(const DUrlList &files);
+    DUrlList doMoveToTrash(const DUrlList &files);
+    DUrlList doMove(const DUrlList &files, const QString &destination);
 
     void doTrashRestore(const QString &srcFile, const QString& tarFile);
 
@@ -88,15 +88,15 @@ private:
 
 
 
-    bool copyFile(const QString &srcFile, const QString &tarDir, bool isMoved=false);
-    bool copyDir(const QString &srcPath, const QString &tarPath, bool isMoved=false);
-    bool moveFile(const QString &srcFile, const QString &tarDir);
+    bool copyFile(const QString &srcFile, const QString &tarDir, bool isMoved=false, QString *targetPath = 0);
+    bool copyDir(const QString &srcPath, const QString &tarPath, bool isMoved=false, QString *targetPath = 0);
+    bool moveFile(const QString &srcFile, const QString &tarDir, QString *targetPath = 0);
     bool restoreTrashFile(const QString &srcFile, const QString &tarFile);
-    bool moveDir(const QString &srcFile, const QString &tarDir);
+    bool moveDir(const QString &srcFile, const QString &tarDir, QString *targetPath = 0);
     bool deleteFile(const QString &file);
     bool deleteDir(const QString &dir);
-    bool moveDirToTrash(const QString &dir);
-    bool moveFileToTrash(const QString &file);
+    bool moveDirToTrash(const QString &dir, QString *targetPath = 0);
+    bool moveFileToTrash(const QString &file, QString *targetPath = 0);
     bool writeTrashInfo(const QString &fileBaseName, const QString &path, const QString &time);
 
     QString getNotExistsTrashFileName(const QString &fileName);

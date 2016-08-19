@@ -25,8 +25,8 @@ public:
     bool addUrlMonitor(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
     bool removeUrlMonitor(const DUrl &url, bool &accepted) const Q_DECL_OVERRIDE;
     bool copyFiles(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;
-    bool pasteFile(PasteType type, const DUrlList &urlList,
-                   const FMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
+    DUrlList pasteFile(PasteType type, const DUrlList &urlList,
+                       const FMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
     bool deleteFiles(const DUrlList &urlList, const FMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
     const DDirIteratorPointer createDirIterator(const DUrl &fileUrl, QDir::Filters filters,
                                                             QDirIterator::IteratorFlags flags,

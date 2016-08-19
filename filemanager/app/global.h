@@ -116,7 +116,7 @@
     TIMER_SINGLESHOT(Obj, Time, Code, Qt::AutoConnection, captured)
 #else
 #define TIMER_SINGLESHOT_OBJECT(Obj, Time, Code, captured...)\
-    QTimer::singleShot(Time, Obj, [captured]{Code}});
+    QTimer::singleShot(Time, Obj, [captured]{Code});
 #endif
 
 #define ASYN_CALL_SLOT(obj, fun, args...) \

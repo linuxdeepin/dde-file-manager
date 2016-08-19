@@ -24,7 +24,7 @@ public:
                             QStringList *list);
     static qint64 filesCount(const QString& dir);
     static qint64 totalSize(const QString& dir);
-    static qint64 totalSize(const QList<QUrl> &files);
+    static qint64 totalSize(const DUrlList &files);
     static bool isArchive(const QString& path);
     static QStringList getApplicationNames();
     static QList<DesktopFile> getApplications();
