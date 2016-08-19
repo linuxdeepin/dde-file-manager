@@ -247,7 +247,8 @@ private:
     int firstVisibleColumn = -1;
     int lastVisibleColumn = -1;
 
-    DUrlList oldSelectedUrllist;
+    DUrlList preSelectionUrls;
+    QMap<DUrl, DUrlList> urlLastSelectedChildrens;
 
     Anchors<QLabel> m_contentLabel = Q_NULLPTR;
 

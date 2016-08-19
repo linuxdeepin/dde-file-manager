@@ -580,6 +580,9 @@ void DFileView::cd(const FMEvent &event)
         return;
 
     itemDelegate()->hideAllIIndexWidget();
+
+    urlLastSelectedChildrens[currentUrl()] = selectedUrls();
+
     clearSelection();
 
     if (!event.fileUrl().isSearchFile()){
@@ -813,7 +816,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
 
             return;
         case Qt::Key_H:
-            oldSelectedUrllist = urls;
+            preSelectionUrls = urls;
 
             itemDelegate()->hideAllIIndexWidget();
             clearSelection();
@@ -1580,8 +1583,11 @@ bool DFileView::setCurrentUrl(DUrl fileUrl)
 
     const DUrl &defaultSelectUrl = DUrl(QUrlQuery(fileUrl.query()).queryItemValue("selectUrl"));
 
-    if (defaultSelectUrl.isValid())
-        oldSelectedUrllist << defaultSelectUrl;
+    if (defaultSelectUrl.isValid()) {
+        preSelectionUrls << defaultSelectUrl;
+    } else {
+        preSelectionUrls = urlLastSelectedChildrens.value(fileUrl);
+    }
 
     return true;
 }
@@ -2109,15 +2115,15 @@ void DFileView::onModelStateChanged(int state)
             m_headerView->setAttribute(Qt::WA_TransparentForMouseEvents);
         }
     } else if (state == DFileSystemModel::Idle) {
-        for (const DUrl &url : oldSelectedUrllist) {
+        for (const DUrl &url : preSelectionUrls) {
             selectionModel()->select(model()->index(url), QItemSelectionModel::SelectCurrent);
         }
 
-        if (!oldSelectedUrllist.isEmpty()) {
-            scrollTo(model()->index(oldSelectedUrllist.first()), PositionAtTop);
+        if (!preSelectionUrls.isEmpty()) {
+            scrollTo(model()->index(preSelectionUrls.first()), PositionAtTop);
         }
 
-        oldSelectedUrllist.clear();
+        preSelectionUrls.clear();
 
         updateStatusBar();
         updateContentLabel();
