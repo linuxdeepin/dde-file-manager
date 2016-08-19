@@ -30,6 +30,9 @@ DUrl HistoryStack::back()
 {
     DUrl url;
 
+    if (m_index <= 0)
+        return url;
+
     while (--m_index >= 0) {
         if (m_index >= m_list.count())
             continue;
@@ -40,8 +43,6 @@ DUrl HistoryStack::back()
 
         if (!fileInfo || !fileInfo->exists()){
             removeAt(m_index);
-
-            ++m_index;
         } else {
             break;
         }
@@ -53,6 +54,9 @@ DUrl HistoryStack::back()
 DUrl HistoryStack::forward()
 {
     DUrl url;
+
+    if (m_index >= m_list.count() - 1)
+        return url;
 
     while (++m_index < m_list.count()) {
         url = m_list.at(m_index);
