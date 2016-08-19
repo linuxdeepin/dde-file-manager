@@ -581,8 +581,6 @@ void DFileView::cd(const FMEvent &event)
 
     itemDelegate()->hideAllIIndexWidget();
 
-    urlLastSelectedChildrens[currentUrl()] = selectedUrls();
-
     clearSelection();
 
     if (!event.fileUrl().isSearchFile()){
@@ -607,14 +605,6 @@ void DFileView::cdUp(const FMEvent &event)
     const_cast<FMEvent&>(event) = parentUrl;
 
     cd(event);
-
-    const QModelIndex &index = model()->index(oldCurrentUrl);
-
-    /// selection the children file
-    if (index.isValid()) {
-        clearSelection();
-        setCurrentIndex(index);
-    }
 }
 
 void DFileView::edit(const FMEvent &event)
@@ -1612,7 +1602,18 @@ bool DFileView::setCurrentUrl(DUrl fileUrl)
     if (defaultSelectUrl.isValid()) {
         preSelectionUrls << defaultSelectUrl;
     } else {
-        preSelectionUrls = urlLastSelectedChildrens.value(fileUrl);
+        DUrl oldCurrentUrl = currentUrl;
+
+        forever {
+            const DUrl &tmp_url = oldCurrentUrl.parentUrl();
+
+            if (tmp_url == fileUrl || !tmp_url.isValid())
+                break;
+
+            oldCurrentUrl = tmp_url;
+        }
+
+        preSelectionUrls << oldCurrentUrl;
     }
 
     return true;

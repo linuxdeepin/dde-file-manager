@@ -42,6 +42,8 @@ public:
     DUrl searchTargetUrl() const;
     DUrl searchedFileUrl() const;
 
+    DUrl parentUrl() const;
+
     void setSearchKeyword(const QString &keyword);
     void setSearchTargetUrl(const DUrl &url);
     void setSearchedFileUrl(const DUrl &url);

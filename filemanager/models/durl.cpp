@@ -152,6 +152,11 @@ DUrl DUrl::searchedFileUrl() const
     return DUrl(fragment(FullyEncoded));
 }
 
+DUrl DUrl::parentUrl() const
+{
+    return parentUrl(*this);
+}
+
 void DUrl::setSearchKeyword(const QString &keyword)
 {
     if(!isSearchFile())
@@ -378,8 +383,13 @@ DUrl::DUrlList DUrl::childrenList(const DUrl &url)
 DUrl DUrl::parentUrl(const DUrl &url)
 {
     DUrl _url;
+    const QString &path = url.path();
+
+    if (path == "/")
+        return DUrl();
+
     _url.setScheme(url.scheme());
-    QStringList paths = url.path().split("/");
+    QStringList paths = path.split("/");
     paths.removeAt(0);
     if (!paths.isEmpty())
         paths.removeLast();
