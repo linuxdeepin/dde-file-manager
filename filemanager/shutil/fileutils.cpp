@@ -139,7 +139,7 @@ qint64 FileUtils::totalSize(const QString &targetFile)
  * @param files
  * @return total size
  */
-qint64 FileUtils::totalSize(const QList<QUrl> &files) {
+qint64 FileUtils::totalSize(const DUrlList &files) {
   qint64 total = 1;
   foreach (QUrl url, files) {
     QFileInfo file = url.path();

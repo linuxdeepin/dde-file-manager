@@ -197,7 +197,7 @@ bool FileServices::renameFile(const DUrl &oldUrl, const DUrl &newUrl, const FMEv
     if (renameFile(oldUrl, newUrl)) {
         FMEvent e = event;
 
-        e = newUrl;
+        e = DUrlList() << newUrl;
 
         TIMER_SINGLESHOT(200, {
             emit fileSignalManager->requestSelectFile(e);
@@ -278,19 +278,19 @@ void FileServices::moveToTrash(const DUrlList &urlList) const
     moveToTrashSync(urlList);
 }
 
-bool FileServices::moveToTrashSync(const DUrlList &urlList) const
+DUrlList FileServices::moveToTrashSync(const DUrlList &urlList) const
 {
     if (urlList.isEmpty())
-        return false;
+        return urlList;
 
     TRAVERSE(urlList.first(), {
-                 bool ok = controller->moveToTrash(urlList, accepted);
+                 DUrlList list = controller->moveToTrash(urlList, accepted);
 
-                 if(accepted)
-                    return ok;
+                 if (accepted)
+                    return list;
              })
 
-    return false;
+    return DUrlList();
 }
 
 bool FileServices::cutFiles(const DUrlList &urlList) const
@@ -345,10 +345,18 @@ void FileServices::pasteFile(AbstractFileController::PasteType type,
     }
 
     TRAVERSE(event.fileUrl(), {
-                 controller->pasteFile(type, urlList, event, accepted);
+                 DUrlList list = controller->pasteFile(type, urlList, event, accepted);
 
-                 if(accepted)
-                 return;
+                 if(accepted) {
+                     FMEvent e = event;
+
+                     e = list;
+
+                     metaObject()->invokeMethod(const_cast<FileServices*>(this), "laterRequestSelectFiles",
+                                                Qt::QueuedConnection, Q_ARG(FMEvent, e));
+
+                     return;
+                 }
              })
 }
 
@@ -603,4 +611,13 @@ void FileServices::openUrl(const FMEvent &event) const
     } else {
         openFile(event.fileUrl());
     }
+}
+
+void FileServices::laterRequestSelectFiles(const FMEvent &event) const
+{
+    FileSignalManager *manager = fileSignalManager;
+
+    TIMER_SINGLESHOT_OBJECT(manager, 200, {
+                                manager->requestSelectFile(event);
+                            }, event, manager)
 }

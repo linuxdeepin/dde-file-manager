@@ -215,7 +215,7 @@ bool SearchController::copyFiles(const DUrlList &urlList, bool &accepted) const
     return FileServices::instance()->copyFiles(realUrlList(urlList));
 }
 
-bool SearchController::moveToTrash(const DUrlList &urlList, bool &accepted) const
+DUrlList SearchController::moveToTrash(const DUrlList &urlList, bool &accepted) const
 {
     accepted = true;
 

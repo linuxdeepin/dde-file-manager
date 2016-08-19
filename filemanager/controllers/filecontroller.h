@@ -30,10 +30,10 @@ public:
     bool copyFiles(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;
     bool renameFile(const DUrl &oldUrl, const DUrl &newUrl, bool &accepted) const Q_DECL_OVERRIDE;
     bool deleteFiles(const DUrlList &urlList, const FMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
-    bool moveToTrash(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;
+    DUrlList moveToTrash(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;
     bool cutFiles(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;
-    bool pasteFile(PasteType type, const DUrlList &urlList,
-                   const FMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
+    DUrlList pasteFile(PasteType type, const DUrlList &urlList,
+                       const FMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
     bool restoreFile(const DUrl &srcUrl, const DUrl &tarUrl, const FMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
     bool newFolder(const FMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
     bool newFile(const DUrl &toUrl, bool &accepted) const Q_DECL_OVERRIDE;

@@ -31,10 +31,10 @@ public:
     virtual bool copyFiles(const DUrlList &urlList, bool &accepted) const;
     virtual bool renameFile(const DUrl &oldUrl, const DUrl &newUrl, bool &accepted) const;
     virtual bool deleteFiles(const DUrlList &urlList, const FMEvent &event, bool &accepted) const;
-    virtual bool moveToTrash(const DUrlList &urlList, bool &accepted) const;
+    virtual DUrlList moveToTrash(const DUrlList &urlList, bool &accepted) const;
     virtual bool cutFiles(const DUrlList &urlList, bool &accepted) const;
-    virtual bool pasteFile(PasteType type, const DUrlList &urlList,
-                           const FMEvent &event, bool &accepted) const;
+    virtual DUrlList pasteFile(PasteType type, const DUrlList &urlList,
+                               const FMEvent &event, bool &accepted) const;
     virtual bool restoreFile(const DUrl &srcUrl, const DUrl &tarUrl, const FMEvent &event, bool &accepted) const;
     virtual bool newFolder(const FMEvent &event, bool &accepted) const;
     virtual bool newFile(const DUrl &toUrl, bool &accepted) const;

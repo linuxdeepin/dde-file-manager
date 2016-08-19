@@ -165,15 +165,15 @@ bool TrashManager::copyFiles(const DUrlList &urlList, bool &accepted) const
     return true;
 }
 
-bool TrashManager::pasteFile(AbstractFileController::PasteType type, const DUrlList &urlList,
-                             const FMEvent &event, bool &accepted) const
+DUrlList TrashManager::pasteFile(AbstractFileController::PasteType type, const DUrlList &urlList,
+                                 const FMEvent &event, bool &accepted) const
 {
     Q_UNUSED(event)
 
     accepted = (type == AbstractFileController::CutType);
 
     if (!accepted)
-        return false;
+        return DUrlList();
 
     return fileService->moveToTrashSync(urlList);
 }

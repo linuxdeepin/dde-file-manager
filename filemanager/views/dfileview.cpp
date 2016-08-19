@@ -655,15 +655,24 @@ bool DFileView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger tr
 
 bool DFileView::select(const FMEvent &event)
 {
-    if(event.windowId() != windowId()) {
+    if (event.windowId() != windowId()) {
         return false;
     }
 
-    const QModelIndex &index = model()->index(event.fileUrl());
+    QModelIndex firstIndex;
 
-    setCurrentIndex(index);
+    for (const DUrl &url : event.fileUrlList()) {
+        const QModelIndex &index = model()->index(url);
 
-    scrollTo(index, PositionAtTop);
+        if (index.isValid())
+            setCurrentIndex(index);
+
+        if (!firstIndex.isValid())
+            firstIndex = index;
+    }
+
+    if (firstIndex.isValid())
+        scrollTo(firstIndex, PositionAtTop);
 
     return true;
 }
@@ -671,8 +680,15 @@ bool DFileView::select(const FMEvent &event)
 void DFileView::selectAndRename(const FMEvent &event)
 {
     bool isSelected = select(event);
-    if (isSelected)
-        appController->actionRename(event);
+
+    if (isSelected) {
+        FMEvent e = event;
+
+        if (!e.fileUrlList().isEmpty())
+            e = e.fileUrlList().first();
+
+        appController->actionRename(e);
+    }
 }
 
 void DFileView::setViewMode(DFileView::ViewMode mode)

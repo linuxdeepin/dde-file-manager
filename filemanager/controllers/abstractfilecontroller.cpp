@@ -70,13 +70,13 @@ bool AbstractFileController::deleteFiles(const DUrlList &urlList, const FMEvent 
     return false;
 }
 
-bool AbstractFileController::moveToTrash(const DUrlList &urlList, bool &accepted) const
+DUrlList AbstractFileController::moveToTrash(const DUrlList &urlList, bool &accepted) const
 {
     Q_UNUSED(urlList)
 
     accepted = false;
 
-    return false;
+    return DUrlList();
 }
 
 bool AbstractFileController::cutFiles(const DUrlList &urlList, bool &accepted) const
@@ -88,7 +88,7 @@ bool AbstractFileController::cutFiles(const DUrlList &urlList, bool &accepted) c
     return false;
 }
 
-bool AbstractFileController::pasteFile(PasteType type, const DUrlList &urlList,
+DUrlList AbstractFileController::pasteFile(PasteType type, const DUrlList &urlList,
                                        const FMEvent &event, bool &accepted) const
 {
     Q_UNUSED(type)
@@ -97,7 +97,7 @@ bool AbstractFileController::pasteFile(PasteType type, const DUrlList &urlList,
 
     accepted = false;
 
-    return false;
+    return DUrlList();
 }
 
 bool AbstractFileController::restoreFile(const DUrl &srcUrl, const DUrl &tarUrl, const FMEvent &event, bool &accepted) const
