@@ -328,6 +328,7 @@ void AppController::actionMount(const FMEvent &event)
 void AppController::actionUnmount(const FMEvent &event)
 {
     const DUrl& fileUrl = event.fileUrl();
+    backHomeUmMountEject(event);
     deviceListener->unmount(fileUrl.query(DUrl::FullyEncoded));
 }
 
@@ -353,7 +354,8 @@ void AppController::actionRestoreAll(const FMEvent &event)
 void AppController::actionEject(const FMEvent &event)
 {
     const DUrl& fileUrl = event.fileUrl();
-    deviceListener->eject(fileUrl.query());
+    backHomeUmMountEject(event);
+    deviceListener->eject(fileUrl.query(DUrl::FullyEncoded));
 }
 
 void AppController::actionOpenInTerminal(const FMEvent &event)
@@ -543,6 +545,18 @@ void AppController::doSubscriberAction(const QString &path)
         break;
     }
     deviceListener->removeSubscriber(this);
+}
+
+void AppController::backHomeUmMountEject(const FMEvent &event)
+{
+    DUrl url = DUrl::fromLocalFile(event.fileUrl().path());
+    qDebug() << event << url << WindowManager::getUrlByWindowId(event.windowId()) << (WindowManager::getUrlByWindowId(event.windowId()) == url);
+    if (WindowManager::getUrlByWindowId(event.windowId()) == url){
+        FMEvent fmEvent;
+        fmEvent = event.windowId();
+        fmEvent = DUrl::fromLocalFile(QDir::homePath());
+        fileSignalManager->requestChangeCurrentUrl(fmEvent);
+    }
 }
 
 AppController::~AppController()

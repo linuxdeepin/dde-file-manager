@@ -26,6 +26,8 @@ public:
     void saveWindowState(DMainWindow* window);
     inline QHash<const QWidget*, int> getWindows(){return m_windows;}
 
+    static DUrl getUrlByWindowId(int windowId);
+
 signals:
     void start(const QString &src);
 

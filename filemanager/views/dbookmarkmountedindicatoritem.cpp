@@ -5,7 +5,9 @@
 #include "../deviceinfo/udisklistener.h"
 
 #include "widgets/singleton.h"
-
+#include "../app/filesignalmanager.h"
+#include "../app/fmevent.h"
+#include "windowmanager.h"
 #include <QDebug>
 
 DBookmarkMountedIndicatorItem::DBookmarkMountedIndicatorItem(DBookmarkItem *parentItem):
@@ -58,7 +60,16 @@ void DBookmarkMountedIndicatorItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *
 
     setPress(false);
     setHovered(false);
-    qDebug() << event << "=========" << m_parentItem->getSysPath();
+    qDebug() << event << "=========" << m_parentItem->getSysPath() << WindowManager::getUrlByWindowId(windowId()) << m_parentItem->getUrl();
+
+
+    if (WindowManager::getUrlByWindowId(windowId()) == m_parentItem->getUrl()){
+        FMEvent fmEvent;
+        fmEvent = windowId();
+        fmEvent = DUrl::fromLocalFile(QDir::homePath());
+        fileSignalManager->requestChangeCurrentUrl(fmEvent);
+    }
+
     deviceListener->unmount(m_parentItem->getSysPath());
     update();
 }

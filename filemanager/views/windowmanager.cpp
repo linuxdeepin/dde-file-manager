@@ -69,6 +69,15 @@ void WindowManager::saveWindowState(DMainWindow *window)
     m_fmStateManager->saveCache();
 }
 
+DUrl WindowManager::getUrlByWindowId(int windowId)
+{
+    if (getWindowById(windowId)){
+         DMainWindow* window = qobject_cast<DMainWindow*>(getWindowById(windowId));
+         return window->fileManagerWindow()->currentUrl();
+    }
+    return DUrl::fromLocalFile(QDir::homePath());
+}
+
 void WindowManager::showNewWindow(const DUrl &url, bool isAlwaysOpen)
 {
     if (!isAlwaysOpen){

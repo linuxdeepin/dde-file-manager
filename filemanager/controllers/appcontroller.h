@@ -88,6 +88,7 @@ public:
     void doSubscriberAction(const QString &path);
 
 private:
+    void backHomeUmMountEject(const FMEvent& event);
     FMEvent m_fmEvent;
 };
 

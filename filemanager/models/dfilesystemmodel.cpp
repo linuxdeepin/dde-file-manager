@@ -68,6 +68,7 @@ DFileSystemModel::~DFileSystemModel()
 //    }
 
 //    setRootUrl(DUrl());
+    clear();
 }
 
 DFileView *DFileSystemModel::parent() const
