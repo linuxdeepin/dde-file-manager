@@ -201,7 +201,11 @@ void DFileManagerWindow::initConnect()
 
 DUrl DFileManagerWindow::currentUrl() const
 {
-    return m_fileView->currentUrl();
+    if (m_viewStackLayout->currentWidget() == m_fileView){
+        return m_fileView->currentUrl();
+    }else if (m_viewStackLayout->currentWidget() == m_computerView){
+        return DUrl::fromComputerFile("/");
+    }
 }
 
 int DFileManagerWindow::getFileViewMode() const
