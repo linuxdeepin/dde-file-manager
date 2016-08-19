@@ -602,9 +602,19 @@ void DFileView::cdUp(const FMEvent &event)
 {
     AbstractFileInfoPointer fileInfo = model()->fileInfo(rootIndex());
 
-    const DUrl& parentUrl = fileInfo ? fileInfo->parentUrl() : DUrl::parentUrl(currentUrl());
+    const DUrl &oldCurrentUrl = this->currentUrl();
+    const DUrl& parentUrl = fileInfo ? fileInfo->parentUrl() : DUrl::parentUrl(oldCurrentUrl);
     const_cast<FMEvent&>(event) = parentUrl;
+
     cd(event);
+
+    const QModelIndex &index = model()->index(oldCurrentUrl);
+
+    /// selection the children file
+    if (index.isValid()) {
+        clearSelection();
+        setCurrentIndex(index);
+    }
 }
 
 void DFileView::edit(const FMEvent &event)
