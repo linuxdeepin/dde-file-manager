@@ -12,6 +12,7 @@
 
 SecrectManager::SecrectManager(QObject *parent) : QObject(parent)
 {
+    qDebug() << "Create SecrectManager";
     initData();
     initConnect();
 }

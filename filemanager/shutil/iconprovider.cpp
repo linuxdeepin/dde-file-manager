@@ -201,7 +201,7 @@ QString IconProvider::getThemeIconPath(QString iconName, int size)
     if (ext != NULL) {
         if (g_ascii_strcasecmp(ext+1, "png") == 0 || g_ascii_strcasecmp(ext+1, "svg") == 0 || g_ascii_strcasecmp(ext+1, "jpg") == 0) {
             pic_name_len = ext - name;
-            g_debug("desktop's Icon name should an absoulte path or an basename without extension");
+//            g_debug("desktop's Icon name should an absoulte path or an basename without extension");
         }
     }
 
@@ -216,7 +216,7 @@ QString IconProvider::getThemeIconPath(QString iconName, int size)
     GtkIconInfo* info = gtk_icon_theme_lookup_icon(them, pic_name, size, GTK_ICON_LOOKUP_GENERIC_FALLBACK);
 
     if (info == NULL) {
-        g_warning("get gtk icon theme info failed for %s", pic_name);
+//        g_warning("get gtk icon theme info failed for %s", pic_name);
         g_free(pic_name);
         return QString("");
     }
@@ -333,7 +333,6 @@ QIcon IconProvider::getDesktopIcon(const QString &iconName, int size)
             }else{
                 icon = QIcon::fromTheme(iconName);
                 if (icon.isNull()){
-                    qDebug() << iconName << icon;
                     icon = QIcon(getThemeIconPath("application-default-icon"));
                 }
             }

@@ -11,7 +11,7 @@
 
 #include "../shutil/mimesappsmanager.h"
 #include "../dialogs/openwithdialog.h"
-
+#include "../controllers/appcontroller.h"
 #include "widgets/singleton.h"
 
 #include <dthememanager.h>
@@ -54,13 +54,9 @@ int main(int argc, char *argv[])
 
     if (CommandLineManager::instance()->positionalArguments().count() > 0){
         commandlineUrl = DUrl::fromUserInput(CommandLineManager::instance()->positionalArguments().at(0));
-        qDebug() << commandlineUrl;
     } else {
         commandlineUrl = DUrl::fromLocalFile(QDir::homePath());
-        qDebug() << commandlineUrl;
     }
-    qDebug() << app.applicationDisplayName();
-    QThreadPool::globalInstance()->setMaxThreadCount(MAX_THREAD_COUNT);
 
     QString uniqueKey = app.applicationName();
 
@@ -87,7 +83,8 @@ int main(int argc, char *argv[])
         app.setApplicationDisplayName(QObject::tr("File Manager"));
         fileManagerApp->show(commandlineUrl);
         dialogManager;
-
+        appController->createGVfSManager();
+        QThreadPool::globalInstance()->setMaxThreadCount(MAX_THREAD_COUNT);
 #ifdef ENABLE_PPROF
         int request = app.exec();
 

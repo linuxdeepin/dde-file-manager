@@ -81,10 +81,7 @@ void DBookmarkScene::initData()
 
     foreach (QString key, m_systemPathKeys) {
         m_systemBookMarks[key] = systemPathManager->getSystemPathDisplayName(key);
-        qDebug() << key << m_systemBookMarks[key];
     }
-
-
 }
 
 void DBookmarkScene::initUI()

@@ -20,6 +20,7 @@ MountAskPasswordDialog* GvfsMountClient::AskPasswordDialog = NULL;
 
 GvfsMountClient::GvfsMountClient(QObject *parent) : QObject(parent)
 {
+    qDebug() << "Create GvfsMountClient";
     initConnect();
 }
 
