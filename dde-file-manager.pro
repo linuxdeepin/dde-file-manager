@@ -17,7 +17,7 @@ isEmpty(TARGET) {
 TEMPLATE = app
 
 isEmpty(VERSION) {
-    VERSION = 1.0
+    VERSION = 1.1
 }
 
 DEFINES += QMAKE_TARGET=\\\"$$TARGET\\\" QMAKE_VERSION=\\\"$$VERSION\\\"
