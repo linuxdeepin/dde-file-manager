@@ -2,7 +2,7 @@
 #define DEVICEINFO_H
 
 #include <QString>
-#include "../filemanager/models/abstractfileinfo.h"
+#include "models/abstractfileinfo.h"
 
 #define BYTES_PER_BLOCK 512
 

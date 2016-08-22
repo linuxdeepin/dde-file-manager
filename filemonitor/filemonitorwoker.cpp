@@ -9,8 +9,8 @@
 
 #include "filemonitorwoker.h"
 #include "utils/utils.h"
-
-#include "filemanager/app/global.h"
+#include <QFileInfo>
+#include <QProcess>
 
 FileMonitorWoker::FileMonitorWoker(QObject *parent) :
     QObject(parent)
@@ -47,6 +47,37 @@ void FileMonitorWoker::initInotify()
 
     fcntl(m_inotifyFd, F_SETFD, FD_CLOEXEC);
     connect(m_notifier, SIGNAL(activated(int)), this, SLOT(readFromInotify()));
+}
+
+bool FileMonitorWoker::fileNameCorrection(const QString &filePath)
+{
+    QFileInfo info(filePath);
+    QProcess ls;
+
+    ls.start("ls", QStringList() << "-1" << "--color=never" << info.absolutePath());
+    ls.waitForFinished();
+
+    const QByteArray &request = ls.readAllStandardOutput();
+
+    for (const QByteArray &name : request.split('\n')) {
+        const QString str_fileName = QString::fromLocal8Bit(name);
+
+        if (str_fileName == info.fileName() && str_fileName.toLocal8Bit() != name) {
+            return fileNameCorrection(joinPath(info.absolutePath().toLocal8Bit(), name));
+        }
+    }
+
+    return false;
+}
+
+bool FileMonitorWoker::fileNameCorrection(const QByteArray &filePath)
+{
+    const QByteArray &newFilePath = QString::fromLocal8Bit(filePath).toLocal8Bit();
+
+    if (filePath == newFilePath)
+        return true;
+
+    return std::rename(filePath.constData(), newFilePath.constData());
 }
 
 QStringList FileMonitorWoker::addPathsAction(const QStringList &paths)
@@ -269,7 +300,7 @@ void FileMonitorWoker::handleInotifyEvent(const inotify_event *event)
 
     if (event->name != QString::fromLocal8Bit(event->name).toLocal8Bit()) {
         if (event->mask & (IN_CREATE | IN_MOVED_TO)) {
-            Global::fileNameCorrection(path);
+            fileNameCorrection(path);
         }
     }
 

@@ -3,7 +3,7 @@
 #include "dbookmarkitem.h"
 
 #include "../app/global.h"
-#include "../../filemanager/app/filesignalmanager.h"
+#include "app/filesignalmanager.h"
 
 #include "../controllers/bookmarkmanager.h"
 #include "../app/fmevent.h"

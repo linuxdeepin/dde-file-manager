@@ -1,7 +1,7 @@
 #ifndef UDISKLISTENER_H
 #define UDISKLISTENER_H
 
-#include "../../filemanager/controllers/abstractfilecontroller.h"
+#include "controllers/abstractfilecontroller.h"
 
 #include <QDBusConnection>
 #include <QDBusInterface>

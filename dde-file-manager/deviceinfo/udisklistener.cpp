@@ -1,8 +1,8 @@
 #include "udisklistener.h"
 #include "fstab.h"
 
-#include "../../filemanager/app/global.h"
-#include "../../filemanager/app/filesignalmanager.h"
+#include "app/global.h"
+#include "app/filesignalmanager.h"
 
 #include "../controllers/fileservices.h"
 #include "../controllers/subscriber.h"
