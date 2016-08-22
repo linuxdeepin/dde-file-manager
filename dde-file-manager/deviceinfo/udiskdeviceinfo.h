@@ -1,7 +1,7 @@
 #ifndef UDISKDEVICEINFO_H
 #define UDISKDEVICEINFO_H
 
-#include "../filemanager/models/abstractfileinfo.h"
+#include "models/abstractfileinfo.h"
 
 #include <QDBusInterface>
 #include <QString>

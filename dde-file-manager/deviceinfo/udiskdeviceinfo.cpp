@@ -1,6 +1,6 @@
 #include "udiskdeviceinfo.h"
-#include "../filemanager/app/global.h"
-#include "../filemanager/shutil/fileutils.h"
+#include "app/global.h"
+#include "shutil/fileutils.h"
 #include <QIcon>
 #include "../app/singleapplication.h"
 #include "utils/utils.h"

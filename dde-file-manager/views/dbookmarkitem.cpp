@@ -35,7 +35,7 @@
 
 #include "../dialogs/dialogmanager.h"
 
-#include "../../deviceinfo/udiskdeviceinfo.h"
+#include "deviceinfo/udiskdeviceinfo.h"
 
 #include "widgets/singleton.h"
 

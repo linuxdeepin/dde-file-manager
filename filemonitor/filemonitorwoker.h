@@ -35,6 +35,9 @@ public:
 
     void initInotify();
 
+    static bool fileNameCorrection(const QString &filePath);
+    static bool fileNameCorrection(const QByteArray &filePath);
+
 
 signals:
     void monitorFolderChanged(const QString& path);

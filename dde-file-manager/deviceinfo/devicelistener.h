@@ -14,7 +14,7 @@
 #include <sys/vfs.h>
 #include <fcntl.h>
 
-#include "../filemanager/controllers/abstractfilecontroller.h"
+#include "controllers/abstractfilecontroller.h"
 
 struct udev_device;
 struct udev_monitor;

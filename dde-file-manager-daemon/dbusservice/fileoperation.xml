@@ -1,0 +1,18 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+    <interface name="com.deepin.filemanager.daemon.Operations">
+        <method name="NewRenameJob">
+            <arg type="s" name="oldFile" direction="in"/>
+            <arg type="s" name="newFile" direction="in"/>
+            <arg type="v" name="result" direction="out"/>
+        </method>
+
+        <method name="test">
+            <arg type="s" name="oldFile" direction="in"/>
+            <arg type="s" name="newFile" direction="in"/>
+            <arg type="s" name="result1" direction="out"/>
+            <arg type="o" name="result2" direction="out"/>
+            <arg type="b" name="result3" direction="out"/>
+        </method>
+    </interface>
+</node>

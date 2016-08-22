@@ -9,9 +9,9 @@
 #include "../app/fmevent.h"
 #include "../app/filesignalmanager.h"
 
-#include "../../deviceinfo/devicelistener.h"
-#include "../../deviceinfo/deviceinfo.h"
-#include "../../deviceinfo/udisklistener.h"
+#include "deviceinfo/devicelistener.h"
+#include "deviceinfo/deviceinfo.h"
+#include "deviceinfo/udisklistener.h"
 
 #include "widgets/singleton.h"
 
