@@ -24,6 +24,7 @@ public:
     ~AppController();
 
     void initConnect();
+    void createGVfSManager();
 
 public slots:
     void actionOpen(const FMEvent& event);

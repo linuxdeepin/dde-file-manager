@@ -60,6 +60,7 @@ QMap<DUrl, NetworkNodeList> NetworkManager::NetworkNodes = {};
 
 NetworkManager::NetworkManager(QObject *parent) : QObject(parent)
 {
+    qDebug() << "Create NetworkManager";
     qRegisterMetaType<NetworkNodeList>("NetworkNodeList");
     initData();
     initConnect();

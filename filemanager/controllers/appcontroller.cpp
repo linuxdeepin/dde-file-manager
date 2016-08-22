@@ -43,14 +43,18 @@ AppController::AppController(QObject *parent) : QObject(parent)
     FileServices::dRegisterUrlHandler<SearchController>(SEARCH_SCHEME, "");
     FileServices::dRegisterUrlHandler<NetworkController>(NETWORK_SCHEME, "");
     FileServices::dRegisterUrlHandler<NetworkController>(SMB_SCHEME, "");
-    networkManager;
-    gvfsMountClient;
-    secrectManager;
 }
 
 void AppController::initConnect()
 {
 
+}
+
+void AppController::createGVfSManager()
+{
+    networkManager;
+    gvfsMountClient;
+    secrectManager;
 }
 
 void AppController::actionOpen(const FMEvent &event)
