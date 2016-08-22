@@ -3,14 +3,7 @@
 #include "utils/utils.h"
 
 #include <QDebug>
-
-#ifdef Q_OS_LINUX
-#include <X11/XKBlib.h>
-#include <QX11Info>
-#elif defined(Q_OS_WIN32)
-#include <Windows.h>
-#endif
-
+#include <QGuiApplication>
 #include <QFileInfo>
 #include <QProcess>
 
@@ -113,34 +106,12 @@ bool Global::startWithHanzi(const QString &text)
 
 bool Global::keyShiftIsPressed()
 {
-#ifdef Q_OS_LINUX
-    Display *dpy = QX11Info::display();
-    XkbStateRec sate;
-
-    XkbGetState(dpy, XkbUseCoreKbd, &sate);
-
-    return sate.mods & 1;
-#elif defined(Q_OS_WIN32)
-    short status = GetKeyState(VK_SHIFT);
-
-    return status == 0xF0;
-#endif
+    return qApp->keyboardModifiers() == Qt::ShiftModifier;
 }
 
 bool Global::keyCtrlIsPressed()
 {
-#ifdef Q_OS_LINUX
-    Display *dpy = QX11Info::display();
-    XkbStateRec sate;
-
-    XkbGetState(dpy, XkbUseCoreKbd, &sate);
-
-    return sate.mods & 4;
-#elif defined(Q_OS_WIN32)
-    short status = GetKeyState(VK_CTRL);
-
-    return status == 0xF0;
-#endif
+    return qApp->keyboardModifiers() == Qt::ControlModifier;
 }
 
 bool Global::fileNameCorrection(const QString &filePath)
