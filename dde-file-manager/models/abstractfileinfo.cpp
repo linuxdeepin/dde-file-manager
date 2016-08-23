@@ -346,6 +346,7 @@ QVector<MenuAction> AbstractFileInfo::menuActionList(AbstractFileInfo::MenuType 
         if (isDir() && systemPathManager->isSystemPath(filePath())) {
             actionKeys << MenuAction::Open
                        << MenuAction::OpenInNewWindow
+                       << MenuAction::OpenInNewTab
                        << MenuAction::Separator
                        << MenuAction::Copy
                        << MenuAction::CreateSymlink
@@ -360,7 +361,7 @@ QVector<MenuAction> AbstractFileInfo::menuActionList(AbstractFileInfo::MenuType 
 
             if (isDir()){
                 actionKeys << MenuAction::OpenInNewWindow;
-//                actionKeys << MenuAction::OpenInNewTab;
+                actionKeys << MenuAction::OpenInNewTab;
             }else{
                 if (!isDesktopFile())
                     actionKeys << MenuAction::OpenWith;

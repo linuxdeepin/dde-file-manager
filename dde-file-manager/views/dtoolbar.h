@@ -31,6 +31,8 @@ public:
     void initContollerToolBar();
     void initConnect();
     DSearchBar * getSearchBar();
+    void addHistoryStack(int viewIndex);
+    void switchHistoryStack(const int viewIndex , const DUrl &url);
 
 signals:
     void requestIconView();
@@ -82,6 +84,8 @@ private:
     DCrumbWidget * m_crumbWidget = NULL;
     QButtonGroup * m_viewButtonGroup = NULL;
     HistoryStack * m_navStack = NULL;
+    QMap<int,HistoryStack*> m_navStacks;
+
 };
 
 #endif // DTOOLBAR_H

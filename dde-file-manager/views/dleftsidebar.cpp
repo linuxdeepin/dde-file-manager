@@ -141,6 +141,9 @@ void DLeftSideBar::initNav()
     navLayout->setContentsMargins(0, 0, 0, 0);
     m_nav->setLayout(navLayout);
 }
+DBookmarkScene* DLeftSideBar::scene(){
+    return m_scene;
+}
 
 void DLeftSideBar::resizeEvent(QResizeEvent *e)
 {

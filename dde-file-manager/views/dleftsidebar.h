@@ -37,6 +37,7 @@ public:
     void initConnect();
     void initNav();
     QGraphicsView *view() const;
+    DBookmarkScene* scene();
 
 protected:
     void resizeEvent(QResizeEvent *e);

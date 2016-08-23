@@ -8,6 +8,7 @@
 #include <QMainWindow>
 #include <QDir>
 #include <QMap>
+#include "./dtabbar.h"
 
 #define DEFAULT_WINDOWS_WIDTH 960
 #define DEFAULT_WINDOWS_HEIGHT 540
@@ -32,6 +33,7 @@ class DMainWindow;
 class DFileManagerWindow;
 class ExtendView;
 class QStackedLayout;
+class QPushButton;
 
 class DStatusBar;
 class FMEvent;
@@ -88,6 +90,11 @@ public slots:
     void showComputerView(const FMEvent& event);
     void openNewTab(const FMEvent& event);
     void createNewView(const FMEvent& event);
+    void switchToView(const int index , const FMEvent &event);
+    void deleteView(int index , const FMEvent &event);
+    void onFileViewCurrentUrlChanged(const DUrl &url);
+    void onTabAddableChanged(bool addable);
+
 
 private:
     QFrame* m_centralWidget = NULL;
@@ -95,7 +102,8 @@ private:
     DLeftSideBar* m_leftSideBar = NULL;
     QFrame* m_rightView = NULL;
     DToolBar* m_toolbar = NULL;
-    QTabBar* m_tabBar = NULL;
+    DTabBar* m_tabBar = NULL;
+    QPushButton *m_newTabButton;
     DFileView* m_fileView = NULL;
     ComputerView* m_computerView = NULL;
     DDetailView* m_detailView = NULL;

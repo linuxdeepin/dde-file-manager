@@ -514,3 +514,61 @@ QScrollArea#ComputerView{
     border: none;
     background-color: white;
 }
+
+/*TabBar*/
+DTabBar#TabBar{
+    background-color: transparent;
+    border: none;
+}
+DTabBar#TabBar::tab{
+    border-right: 1px solid rgba(0,0,0,30);
+    border-bottom: 1px solid rgba(0,0,0,30);
+    background-color: #fafafa;
+    color: #949494;
+    border-radius: 0px;
+    height: 23px;
+    font-size: 12px;
+}
+
+DTabBar#TabBar::tab:selected {
+    border-right: 1px solid rgba(0,0,0,30);
+    background-color: #ffffff;
+    color: #303030;
+    border-radius: 0px;
+    height: 23px;
+    font-size: 12px;
+}
+
+DTabCloseButton#TabCloseButton{
+    border: none;
+    image: url(:/icons/images/icons/tab_close_normal.png);
+    subcontrol-position: right center;
+}
+DTabCloseButton#TabCloseButton:hover{
+    border: none;
+    image: url(:/icons/images/icons/tab_close_hover.png);
+    subcontrol-position: right center;
+}
+DTabCloseButton#TabCloseButton:pressed{
+    border: none;
+    image: url(:/icons/images/icons/tab_close_press.png);
+    subcontrol-position: right center;
+}
+
+/*New tab button*/
+QPushButton#NewTabButton{
+    border: none;
+    image: url(:/icons/images/icons/new_tab_normal.png);
+}
+QPushButton#NewTabButton:hover{
+    border: none;
+    image: url(:/icons/images/icons/new_tab_hover.png);
+}
+QPushButton#NewTabButton:pressed{
+    border: none;
+    image: url(:/icons/images/icons/new_tab_press.png);
+}
+QPushButton#NewTabButton:disabled {
+    border: none;
+    image: url(:/icons/images/icons/new_tab_disabled.png);
+}
