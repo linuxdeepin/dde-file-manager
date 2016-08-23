@@ -45,12 +45,12 @@ include(deviceinfo/deviceinfo.pri)
 include(dbusinterface/dbusinterface.pri)
 
 
-PKGCONFIG += x11 gtk+-2.0 xcb xcb-ewmh gsettings-qt libudev x11 xext libsecret-1 gio-unix-2.0
+PKGCONFIG += x11 gtk+-2.0 xcb xcb-ewmh gsettings-qt libudev x11 xext libsecret-1 gio-unix-2.0 poppler-qt5
 CONFIG += c++11 link_pkgconfig
 #DEFINES += QT_NO_DEBUG_OUTPUT
 DEFINES += QT_MESSAGELOGCONTEXT
 
-LIBS += -lmagic
+LIBS += -lmagic -lavformat  -lavcodec -lavutil -lswscale
 # Automating generation .qm files from .ts files
 # system($$PWD/desktop/translate_generation.sh)
 
@@ -162,7 +162,8 @@ HEADERS += \
     views/computerview.h \
     views/flowlayout.h \
     shutil/shortcut.h \
-    views/dtabbar.h
+    views/dtabbar.h \
+    shutil/filepreviewiconprovider.h
 
 
 
@@ -261,7 +262,8 @@ SOURCES += \
     views/computerview.cpp \
     views/flowlayout.cpp \
     shutil/shortcut.cpp \
-    views/dtabbar.cpp
+    views/dtabbar.cpp \
+    shutil/filepreviewiconprovider.cpp
 
 
 INCLUDEPATH += models ..

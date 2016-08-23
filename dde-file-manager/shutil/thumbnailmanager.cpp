@@ -7,6 +7,10 @@
 #include <QImageReader>
 #include <QCryptographicHash>
 #include <QFileSystemWatcher>
+#include "../app/global.h"
+#include "../widgets/singleton.h"
+#include "../controllers/fileservices.h"
+#include "./mimetypedisplaymanager.h"
 
 ThumbnailManager::ThumbnailManager(QObject *parent)
     : QThread(parent)
@@ -78,9 +82,11 @@ void ThumbnailManager::run()
         const QString &fpath = taskQueue.dequeue();
 
         QFile file(fpath);
+        QImageReader reader(&file);
+        AbstractFileInfoPointer fileInfo = fileService->createFileInfo(DUrl::fromUserInput(fpath));
 
-        /// ensure image size < 100MB
-        if (file.size() > 1024 * 1024 * 30) {
+        /// ensure image size < 30MB
+        if (file.size() > 1024 * 1024 * 30&&reader.canRead()) {
             m_pathToMd5[fpath] = QString();
 
             continue;
@@ -107,8 +113,6 @@ void ThumbnailManager::run()
 
             m_md5ToIcon[md5] = icon;
         } else {
-            QImageReader reader(&file);
-
             if (reader.canRead()) {
                 QSize size = reader.size();
 
@@ -131,6 +135,24 @@ void ThumbnailManager::run()
                 } else {
                     QFile::link(fpath, thumbnailPath);
                 }
+            }
+            else if(fileInfo->mimeTypeName() == "text/plain"){
+                const QPixmap &pixmap = FilePreviewIconProvider::getPlainTextPreviewIcon(fpath);
+                icon = QIcon(pixmap);
+                m_md5ToIcon[md5] = icon;
+                pixmap.save(thumbnailPath,"png",20);
+            }
+            else if(fileInfo->mimeTypeName() == "application/pdf"){
+                const QPixmap &pixmap = FilePreviewIconProvider::getPDFPreviewIcon(fpath);
+                icon = QIcon(pixmap);
+                m_md5ToIcon[md5] = icon;
+                pixmap.save(thumbnailPath,"png",20);
+            }
+            else if(mimeTypeDisplayManager->defaultIcon(fileInfo->mimeTypeName()) == "video"){
+                const QPixmap &pixmap = FilePreviewIconProvider::getVideoPreviewIcon(fpath);
+                icon = QIcon(pixmap);
+                m_md5ToIcon[md5] = icon;
+                pixmap.save(thumbnailPath,"png",20);
             }
         }
 
