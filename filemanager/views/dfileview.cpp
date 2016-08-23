@@ -650,16 +650,25 @@ bool DFileView::select(const FMEvent &event)
     }
 
     QModelIndex firstIndex;
+    QModelIndex lastIndex;
+
+    clearSelection();
 
     for (const DUrl &url : event.fileUrlList()) {
         const QModelIndex &index = model()->index(url);
 
-        if (index.isValid())
-            setCurrentIndex(index);
+        if (index.isValid()) {
+            selectionModel()->select(index, QItemSelectionModel::Select);
+        }
 
         if (!firstIndex.isValid())
             firstIndex = index;
+
+        lastIndex = index;
     }
+
+    if (lastIndex.isValid())
+        selectionModel()->setCurrentIndex(lastIndex, QItemSelectionModel::Select);
 
     if (firstIndex.isValid())
         scrollTo(firstIndex, PositionAtTop);
