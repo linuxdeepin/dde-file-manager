@@ -5,6 +5,7 @@
 #include <QQueue>
 #include <QMap>
 #include <QIcon>
+#include "filepreviewiconprovider.h"
 
 QT_BEGIN_NAMESPACE
 class QFileSystemWatcher;
