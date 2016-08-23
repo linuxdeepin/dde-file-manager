@@ -23,7 +23,7 @@ Deepin File Manager is a file management tool independently  developed by Deepin
 
 1. Make sure you have installed all dependencies.
 
-2. Build:
+2. Build: 
 ```
 $ cd dde-file-manager
 $ mkdir Build

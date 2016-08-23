@@ -401,20 +401,25 @@ void DBookmarkScene::currentUrlChanged(const FMEvent &event)
         return;
     if(event.source() == FMEvent::LeftSideBar)
         return;
+    setCurrentUrl(event.fileUrl());
+}
+
+
+void DBookmarkScene::setCurrentUrl(DUrl url)
+{
     m_itemGroup->deselectAll();
+    url.setQuery("");
     for(int i = 0; i < m_itemGroup->items()->size(); i++)
     {
-        DUrl eventUrl = event.fileUrl();
-        eventUrl.setQuery("");
         DBookmarkItem* item = m_itemGroup->items()->at(i);
         DUrl itemUrl = item->getUrl();
         itemUrl.setQuery("");
 
-        if(eventUrl == itemUrl)
+        if(url == itemUrl)
         {
             item->setChecked(true);
             return;
-        }else if (DUrl::childrenList(eventUrl).contains(itemUrl)){
+        }else if (DUrl::childrenList(url).contains(itemUrl)){
             if (item->isDiskItem()){
                 item->setHighlightDisk(true);
                 return;

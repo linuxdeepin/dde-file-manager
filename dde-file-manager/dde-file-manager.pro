@@ -161,7 +161,8 @@ HEADERS += \
     shutil/filessizeworker.h \
     views/computerview.h \
     views/flowlayout.h \
-    shutil/shortcut.h
+    shutil/shortcut.h \
+    views/dtabbar.h
 
 
 
@@ -259,7 +260,8 @@ SOURCES += \
     shutil/filessizeworker.cpp \
     views/computerview.cpp \
     views/flowlayout.cpp \
-    shutil/shortcut.cpp
+    shutil/shortcut.cpp \
+    views/dtabbar.cpp
 
 
 INCLUDEPATH += models ..

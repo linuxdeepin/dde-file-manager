@@ -1590,7 +1590,7 @@ bool DFileView::setCurrentUrl(DUrl fileUrl)
             switchViewMode(m_defaultViewMode);
         }
     } 
-    //emit currentUrlChanged(fileUrl);
+    emit currentUrlChanged(fileUrl);
 
     if (focusWidget() && focusWidget()->window() == window() && fileUrl.isLocalFile())
         QDir::setCurrent(fileUrl.toLocalFile());

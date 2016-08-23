@@ -38,7 +38,7 @@ DToolBar::~DToolBar()
 
 void DToolBar::initData()
 {
-    m_navStack = new HistoryStack(65536);
+//    m_navStack = new HistoryStack(65536);
 }
 
 void DToolBar::initUI()
@@ -404,5 +404,23 @@ void DToolBar::checkNavHistory(DUrl url)
     else
         m_forwardButton->setEnabled(true);
 }
+
+void DToolBar::addHistoryStack(int viewIndex){
+    m_navStacks.insert(viewIndex, new HistoryStack(65536));
+}
+void DToolBar::switchHistoryStack(const int viewIndex , const DUrl &url){
+    m_navStack = m_navStacks[viewIndex];
+    if(m_navStack->size() > 1)
+        m_backButton->setEnabled(true);
+    else
+        m_backButton->setEnabled(false);
+
+    if(m_navStack->isLast())
+        m_forwardButton->setEnabled(false);
+    else
+        m_forwardButton->setEnabled(true);
+    m_crumbWidget->setCrumb(url);
+}
+
 
 

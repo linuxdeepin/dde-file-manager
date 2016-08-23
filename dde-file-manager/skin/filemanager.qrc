@@ -342,5 +342,12 @@
         <file>images/icons/up_press.png</file>
         <file>images/icons/backward_disabled.png</file>
         <file>images/icons/forward_disabled.png</file>
+        <file>images/icons/new_tab_disabled.png</file>
+        <file>images/icons/new_tab_press.png</file>
+        <file>images/icons/new_tab_hover.png</file>
+        <file>images/icons/new_tab_normal.png</file>
+        <file>images/icons/tab_close_hover.png</file>
+        <file>images/icons/tab_close_normal.png</file>
+        <file>images/icons/tab_close_press.png</file>
     </qresource>
 </RCC>

@@ -63,6 +63,7 @@ signals:
     void dropped();
 public slots:
     void doDragFinished(const QPointF &point, const QPointF &scenePoint, DBookmarkItem *item);
+    void setCurrentUrl(DUrl url);
     void currentUrlChanged(const FMEvent &event);
     void setHomeItem(DBookmarkItem* item);
     void setDefaultDiskItem(DBookmarkItem* item);
