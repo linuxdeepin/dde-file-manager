@@ -467,24 +467,16 @@ bool FileUtils::openFileByApp(const QString &filePath, const QString &app)
         return false;
     }
 
-    const auto isSupportLaunchUris = g_app_info_supports_uris(reinterpret_cast<GAppInfo*>(appInfo));
-
-    if (!isSupportLaunchUris){
-        qWarning() << "Failed to open desktop file with gio: g_app_info_supports_uris returns false";
-        openFile(filePath);
-        return false;
-    }
-
     const auto stdFilePath = filePath.toStdString();
     const char* cFilePath = stdFilePath.c_str();
 
-    GList uris;
-    uris.data = (gchar *)cFilePath;
-    uris.prev = uris.next = NULL;
-
+    GList files;
+    GFile* file = g_file_new_for_commandline_arg((gchar *)cFilePath);
+    files.data = file;
+    files.prev = files.next = NULL;
 
     GError* gError = nullptr;
-    const auto ok = g_app_info_launch_uris(reinterpret_cast<GAppInfo*>(appInfo), &uris, NULL, &gError);
+    const auto ok = g_app_info_launch(reinterpret_cast<GAppInfo*>(appInfo), &files, NULL, &gError);
     if (gError) {
         qWarning() << "Error when trying to open desktop file with gio:" << gError->message;
         g_error_free(gError);
@@ -494,7 +486,7 @@ bool FileUtils::openFileByApp(const QString &filePath, const QString &app)
         qWarning() << "Failed to open desktop file with gio: g_app_info_launch_uris returns false";
     }
     g_object_unref(appInfo);
-
+    g_object_unref(file);
     return ok;
 }
 
