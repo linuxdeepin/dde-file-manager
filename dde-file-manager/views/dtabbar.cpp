@@ -11,23 +11,15 @@ DTabBar::DTabBar(QWidget *parent) : QTabBar(parent)
     initConnections();
     setMovable(true);
     setAutoHide(true);
-    setDrawBase(true);
+//    setDrawBase(false);
     setUsesScrollButtons(false);
-    setExpanding(true);
     installEventFilter(this);
     setMouseTracking(true);
     setElideMode(Qt::ElideMiddle);
+//    setDocumentMode(true);
 }
 void DTabBar::initConnections(){
-    connect(this, &DTabBar::currentChanged , this, &DTabBar::onCurrentIndexChanged);
-    connect(this, &DTabBar::tabCloseRequested, this, &DTabBar::onTabCloseRequest);
-}
-
-void DTabBar::onCurrentIndexChanged(int index){
-    const int winId = window()->winId();
-    FMEvent event;
-    event = winId;
-    emit requestCurrentFileViewChanged(tabData(index).toInt() , event);
+    connect(this, &DTabBar::tabMoved, this, &DTabBar::onTabMoved);
 }
 
 void DTabBar::addTabWithData(const int &data, QString str){
@@ -36,18 +28,19 @@ void DTabBar::addTabWithData(const int &data, QString str){
     DTabCloseButton *closeButton = new DTabCloseButton(this);
     closeButton->setTabIndex(index);
     closeButton->setObjectName("TabCloseButton");
-    closeButton->setFixedSize(16,25);
+    closeButton->setFixedSize(24,24);
     QPushButton *emptyButton = new QPushButton(this);
-    emptyButton->setFixedSize(16,25);
+    emptyButton->setFixedSize(24,24);
     setTabButton(index,QTabBar::RightSide,closeButton);
     setTabButton(index,QTabBar::LeftSide,emptyButton);
     emptyButton->setEnabled(false);
     emptyButton->setVisible(false);
     closeButton->hide();
     connect(closeButton, &QPushButton::clicked, this, [=]{
+//        qDebug()<<"<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< tab close bnt clicke:"<<closeButton->tabIndex();
         emit QTabBar::tabCloseRequested(closeButton->tabIndex());
     });
-    if(count()>=MAX_TAB_COUNT)
+    if(count()>=8)
         emit tabAddableChanged(false);
 }
 
@@ -76,31 +69,9 @@ QSize DTabBar::minimumTabSizeHint(int index) const{
     else
         return QSize(averageWidth,height());
 }
-void DTabBar::onTabCloseRequest(const int &index){
 
-    FMEvent event;
-    event = window()->winId();
-    int viewIndex = tabData(index).toInt();
-    removeTab(index);
-    emit requestRemoveView(viewIndex, event);
-    if(count()<MAX_TAB_COUNT)
-        emit tabAddableChanged(true);
-
-    //recorrect view index
-    for(int i = index; i<count(); i++){
-        int newViewIndex = tabData(i).toInt();
-        newViewIndex--;
-        setTabData(i,newViewIndex);
-    }
-
-    //recorrect tab's button index
-    for(int i = index; i<count(); i++){
-        DTabCloseButton *closeButton = qobject_cast<DTabCloseButton*>(tabButton(i, QTabBar::RightSide));
-        closeButton->setTabIndex(closeButton->tabIndex()-1);
-    }
-}
 bool DTabBar::tabAddable(){
-    return count()<MAX_TAB_COUNT;
+    return count()<8;
 }
 void DTabBar::mouseMoveEvent(QMouseEvent *event){
     QTabBar::mouseMoveEvent(event);
@@ -124,4 +95,13 @@ bool DTabBar::event(QEvent *event){
         }
     }
     QTabBar::event(event);
+}
+
+void DTabBar::onTabMoved(const int from, const int to){
+    DTabCloseButton *fromCloseBnt = qobject_cast<DTabCloseButton*>(tabButton(from, QTabBar::RightSide));
+    DTabCloseButton *toCloseBnt = qobject_cast<DTabCloseButton*>(tabButton(to, QTabBar::RightSide));
+    fromCloseBnt->setTabIndex(from);
+    toCloseBnt->setTabIndex(to);
+//    qDebug()<<"tab move , from:"<<from<<","<<"from view index:"<<tabData(from).toInt()<<
+//              ","<<"to:"<<to<<", to view idnex:"<<tabData(to).toInt();
 }

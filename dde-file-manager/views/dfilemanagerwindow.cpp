@@ -158,7 +158,7 @@ void DFileManagerWindow::initTabBar()
 
     m_newTabButton = new QPushButton(this);
     m_newTabButton->setObjectName("NewTabButton");
-    m_newTabButton->setFixedSize(24,24);
+    m_newTabButton->setFixedSize(25,24);
     m_newTabButton->hide();
 }
 
@@ -211,8 +211,9 @@ void DFileManagerWindow::initConnect()
     connect(fileSignalManager, &FileSignalManager::fetchNetworksSuccessed, this, &DFileManagerWindow::cd);
     connect(fileSignalManager, &FileSignalManager::requestChangeCurrentUrl,this, &DFileManagerWindow::preHandleCd);
 
-    connect(m_tabBar, &DTabBar::requestCurrentFileViewChanged,this, &DFileManagerWindow::switchToView);
-    connect(m_tabBar,&DTabBar::requestRemoveView,this, &DFileManagerWindow::deleteView);
+    connect(m_tabBar, &DTabBar::tabMoved, m_toolbar, &DToolBar::moveNavStacks);
+    connect(m_tabBar, &DTabBar::currentChanged,this, &DFileManagerWindow::onCurrentTabChanged);
+    connect(m_tabBar, &DTabBar::tabCloseRequested, this,&DFileManagerWindow::onCurrentTabClosed);
     connect(m_tabBar, &DTabBar::tabAddableChanged, this, &DFileManagerWindow::onTabAddableChanged);
     connect(m_newTabButton, &QPushButton::clicked, this, [=]{
         FMEvent event;
@@ -221,10 +222,51 @@ void DFileManagerWindow::initConnect()
         event = window()->winId();
         createNewView(event);
     });
-
 }
+
+void DFileManagerWindow::onCurrentTabClosed(const int index){
+
+//    qDebug()<<"<<<<<<<<<<<<<<< current tab closed: tab index:"<<index<<","<<"view index:"<<m_tabBar->tabData(index).toInt();
+
+    int viewIndex = m_tabBar->tabData(index).toInt();
+    DFileView *currentView =qobject_cast<DFileView*>(m_viewStackLayout->widget(viewIndex));
+    m_viewStackLayout->removeWidget(currentView);
+
+    if(m_tabBar->isHidden())
+        m_newTabButton->hide();
+
+    m_toolbar->removeNavStackAt(index);
+
+    //recorrect view index
+    for(int i = 0; i<m_tabBar->count(); i++){
+        int newViewIndex = m_tabBar->tabData(i).toInt();
+        if(newViewIndex >= viewIndex){
+            newViewIndex--;
+            m_tabBar->setTabData(i,newViewIndex);
+        }
+    }
+
+    //recorrect tab's button index
+    for(int i = index; i<m_tabBar->count(); i++){
+        DTabCloseButton *closeButton = qobject_cast<DTabCloseButton*>(m_tabBar->tabButton(i, QTabBar::RightSide));
+        closeButton->setTabIndex(closeButton->tabIndex()-1);
+    }
+
+    m_tabBar->removeTab(index);
+    if(m_tabBar->count()<8)
+        emit m_tabBar->tabAddableChanged(true);
+
+    if(m_tabBar->isHidden())
+        m_newTabButton->hide();
+}
+
 void DFileManagerWindow::onTabAddableChanged(bool addable){
     m_newTabButton->setEnabled(addable);
+}
+void DFileManagerWindow::onCurrentTabChanged(int tabIndex){
+    int viewIndex = m_tabBar->tabData(tabIndex).toInt();
+    switchToView(viewIndex);
+    m_toolbar->switchHistoryStack(tabIndex,m_fileView->currentUrl());
 }
 
 
@@ -346,8 +388,8 @@ void DFileManagerWindow::createNewView(const FMEvent &event)
     m_views.insert(event.fileUrl(), view);
 
     int viewIndex = m_viewStackLayout->addWidget(view);
-    m_toolbar->addHistoryStack(viewIndex);
-    m_toolbar->switchHistoryStack(viewIndex,event.fileUrl());
+    m_toolbar->addHistoryStack();
+    m_toolbar->switchHistoryStack(m_toolbar->navStackCount()-1,event.fileUrl());
 
     m_viewStackLayout->setCurrentWidget(view);
 
@@ -374,6 +416,9 @@ void DFileManagerWindow::createNewView(const FMEvent &event)
     if(!m_tabBar->isHidden())
         m_newTabButton->show();
 
+//    if(m_tabBar->count() >= 8)
+//        emit m_tabBar->tabAddableChanged(false);
+
 
 }
 
@@ -387,24 +432,11 @@ void DFileManagerWindow::onFileViewCurrentUrlChanged(const DUrl &url){
     m_tabBar->setTabText(urlDisplayName,viewIndex,event);
 }
 
-void DFileManagerWindow::switchToView(const int index, const FMEvent &event){
-    if(event.windowId() != windowId())
-        return;
-    m_viewStackLayout->setCurrentIndex(index);
-    m_fileView = qobject_cast<DFileView*>(m_viewStackLayout->widget(index));
-    m_toolbar->switchHistoryStack(index,m_fileView->currentUrl());
-    qDebug()<<"<<<<<<<<<<<<<<<<<<<:"<<m_fileView->currentUrl();
+void DFileManagerWindow::switchToView(const int viewIndex){
+//    qDebug()<<"<<<<<<<<<<<<<<<<<< switching view: view index:"<<viewIndex;
+    m_viewStackLayout->setCurrentIndex(viewIndex);
+    m_fileView = qobject_cast<DFileView*>(m_viewStackLayout->widget(viewIndex));
     m_leftSideBar->scene()->setCurrentUrl(m_fileView->currentUrl());
-}
-
-void DFileManagerWindow::deleteView(int index, const FMEvent &event){
-    if(event.windowId() != windowId())
-        return;
-    DFileView *currentView =qobject_cast<DFileView*>(m_viewStackLayout->widget(index));
-    m_viewStackLayout->removeWidget(currentView);
-
-    if(m_tabBar->isHidden())
-        m_newTabButton->hide();
 }
 
 

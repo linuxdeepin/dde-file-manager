@@ -9,13 +9,8 @@
 #include "../models/durl.h"
 
 #include "widgets/singleton.h"
-#include <QMap>
 #include <QDebug>
-#include <QFont>
-#include <QFontMetrics>
-#include <QJsonObject>
 #include <QPushButton>
-#define MAX_TAB_COUNT 8
 
 class DTabCloseButton : public QPushButton{
     Q_OBJECT
@@ -39,13 +34,10 @@ public:
     void setTabText(const QString &text, const int &viewIndex, const FMEvent &event);
 
 signals:
-    void requestRemoveView(int index , FMEvent event);
     void tabAddableChanged(bool addbable);
-    void requestCurrentFileViewChanged(int index, FMEvent envent);
 
 public slots:
-    void onCurrentIndexChanged(int index);
-    void onTabCloseRequest(const int &index);
+    void onTabMoved(const int from, const int to);
 protected:
     QSize tabSizeHint(int index) const ;
     QSize minimumTabSizeHint(int index) const ;
