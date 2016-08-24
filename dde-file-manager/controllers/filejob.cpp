@@ -15,8 +15,6 @@
 #include <QProcess>
 #include <QCryptographicHash>
 
-QMap<DUrl, int> FileJob::SelectedFiles;
-
 
 void FileJob::setStatus(FileJob::Status status)
 {

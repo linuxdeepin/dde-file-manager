@@ -26,7 +26,6 @@ public:
         Run,
         Conflicted
     };
-    static QMap<DUrl, int> SelectedFiles;
     void setStatus(Status status);
     explicit FileJob(const QString &title, QObject *parent = 0);
     void setJobId(const QString &id);
