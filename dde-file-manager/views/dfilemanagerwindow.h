@@ -90,10 +90,11 @@ public slots:
     void showComputerView(const FMEvent& event);
     void openNewTab(const FMEvent& event);
     void createNewView(const FMEvent& event);
-    void switchToView(const int index , const FMEvent &event);
-    void deleteView(int index , const FMEvent &event);
+    void switchToView(const int index);
     void onFileViewCurrentUrlChanged(const DUrl &url);
     void onTabAddableChanged(bool addable);
+    void onCurrentTabChanged(int tabIndex);
+    void onCurrentTabClosed(const int index);
 
 
 private:

@@ -520,39 +520,48 @@ DTabBar#TabBar{
     background-color: transparent;
     border: none;
 }
+/*TabBar tab */
 DTabBar#TabBar::tab{
     border-right: 1px solid rgba(0,0,0,30);
     border-bottom: 1px solid rgba(0,0,0,30);
     background-color: #fafafa;
     color: #949494;
     border-radius: 0px;
-    height: 23px;
     font-size: 12px;
+    margin-top: -4px;
 }
-
 DTabBar#TabBar::tab:selected {
     border-right: 1px solid rgba(0,0,0,30);
+    border-bottom: 1px solid rgba(0,0,0,30);
     background-color: #ffffff;
     color: #303030;
     border-radius: 0px;
-    height: 23px;
     font-size: 12px;
 }
-
+DTabBar#TabBar::tab:!selected:hover {
+    border-right: 1px solid rgba(0,0,0,30);
+    border-bottom: 1px solid rgba(0,0,0,30);
+    background-color: #ededed;
+    color: #303030;
+    border-radius: 0px;
+    font-size: 12px;
+}
+QTabBar::tab:!selected {
+    margin-top: 0px; /* make non-selected tabs look smaller */
+}
+/* tabBar tab close button*/
 DTabCloseButton#TabCloseButton{
-    border: none;
+    border:none;
     image: url(:/icons/images/icons/tab_close_normal.png);
-    subcontrol-position: right center;
+    subcontrol-position: center center;
 }
 DTabCloseButton#TabCloseButton:hover{
-    border: none;
     image: url(:/icons/images/icons/tab_close_hover.png);
-    subcontrol-position: right center;
+    subcontrol-position: center center;
 }
 DTabCloseButton#TabCloseButton:pressed{
-    border: none;
     image: url(:/icons/images/icons/tab_close_press.png);
-    subcontrol-position: right center;
+    subcontrol-position: center center;
 }
 
 /*New tab button*/
