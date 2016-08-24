@@ -405,11 +405,14 @@ void DToolBar::checkNavHistory(DUrl url)
         m_forwardButton->setEnabled(true);
 }
 
-void DToolBar::addHistoryStack(int viewIndex){
-    m_navStacks.insert(viewIndex, new HistoryStack(65536));
+void DToolBar::addHistoryStack(){
+    m_navStacks.append(new HistoryStack(65536));
 }
-void DToolBar::switchHistoryStack(const int viewIndex , const DUrl &url){
-    m_navStack = m_navStacks[viewIndex];
+
+void DToolBar::switchHistoryStack(const int index , const DUrl &url){
+    m_navStack = m_navStacks.at(index);
+    if(!m_navStack)
+        return;
     if(m_navStack->size() > 1)
         m_backButton->setEnabled(true);
     else
@@ -422,5 +425,32 @@ void DToolBar::switchHistoryStack(const int viewIndex , const DUrl &url){
     m_crumbWidget->setCrumb(url);
 }
 
+void DToolBar::removeNavStackAt(int index){
+    m_navStacks.removeAt(index);
 
+    if(index < m_navStacks.count())
+        m_navStack = m_navStacks.at(index);
+    else
+        m_navStack = m_navStacks.at(m_navStacks.count()-1);
 
+    if(!m_navStack)
+        return;
+    if(m_navStack->size() > 1)
+        m_backButton->setEnabled(true);
+    else
+        m_backButton->setEnabled(false);
+
+    if(m_navStack->isLast())
+        m_forwardButton->setEnabled(false);
+    else
+        m_forwardButton->setEnabled(true);
+}
+
+void DToolBar::moveNavStacks(int from, int to){
+//    qDebug()<<"<<<<<<<<<<<<<<<<<<<<<<<<<<< move nav stacks:  from:"<<from<<", to:"<<to;
+    m_navStacks.move(from,to);
+}
+
+int DToolBar::navStackCount() const{
+    return m_navStacks.count();
+}
