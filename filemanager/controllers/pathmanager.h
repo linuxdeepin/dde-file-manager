@@ -17,6 +17,8 @@ public:
     explicit PathManager(QObject *parent = 0);
     ~PathManager();
 
+    void createSystemPathForce();
+
     void initPaths();
     void initConnect();
 
