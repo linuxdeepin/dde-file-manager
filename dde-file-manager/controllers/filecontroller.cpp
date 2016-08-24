@@ -16,6 +16,7 @@
 #include "widgets/singleton.h"
 
 #include "filemonitor/filemonitor.h"
+#include "appcontroller.h"
 
 #include <QDesktopServices>
 #include <QDirIterator>
@@ -327,7 +328,7 @@ bool FileController::newFolder(const FMEvent &event, bool &accepted) const
 
     QString folderName = checkDuplicateName(dir.absolutePath() + "/" + tr("New Folder"));
 
-    FileJob::SelectedFiles.insert(DUrl::fromLocalFile(folderName), event.windowId());
+    AppController::SelectedFiles.insert(DUrl::fromLocalFile(folderName), event.windowId());
     return dir.mkdir(folderName);
 }
 
@@ -424,13 +425,13 @@ void FileController::onFileCreated(const QString &filePath)
 {
     DUrl url = DUrl::fromLocalFile(filePath);
     emit childrenAdded(url);
-    if (FileJob::SelectedFiles.contains(url)){
-        int windowId = FileJob::SelectedFiles.value(url);
+    if (AppController::SelectedFiles.contains(url)){
+        int windowId = AppController::SelectedFiles.value(url);
         FMEvent event;
         event = windowId;
         event = DUrlList() << url;
         emit fileSignalManager->requestSelectRenameFile(event);
-        FileJob::SelectedFiles.remove(url);
+        AppController::SelectedFiles.remove(url);
     }
 }
 

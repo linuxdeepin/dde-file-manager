@@ -20,6 +20,8 @@ public:
         OpenNewWindow
     };
 
+    static QMap<DUrl, int> SelectedFiles;
+
     explicit AppController(QObject *parent = 0);
     ~AppController();
 

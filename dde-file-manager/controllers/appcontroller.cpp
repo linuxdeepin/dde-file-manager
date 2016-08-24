@@ -35,6 +35,9 @@
 #include <qprocess.h>
 #include "../shutil/shortcut.h"
 
+QMap<DUrl, int> AppController::SelectedFiles;
+
+
 AppController::AppController(QObject *parent) : QObject(parent)
 {
     FileServices::instance()->setFileUrlHandler(RECENT_SCHEME, "", new RecentHistoryManager(this));
@@ -292,7 +295,7 @@ void AppController::actionNewWord(const FMEvent &event)
     const DUrl& fileUrl = event.fileUrl();
     int windowId = event.windowId();
     QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("newDoc"), "doc");
-    FileJob::SelectedFiles.insert(DUrl::fromLocalFile(targetFile), windowId);
+    AppController::SelectedFiles.insert(DUrl::fromLocalFile(targetFile), windowId);
     FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("newDoc"), "doc");
 }
 
@@ -301,7 +304,7 @@ void AppController::actionNewExcel(const FMEvent &event)
     const DUrl& fileUrl = event.fileUrl();
     int windowId = event.windowId();
     QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("newExcel"), "xls");
-    FileJob::SelectedFiles.insert(DUrl::fromLocalFile(targetFile), windowId);
+    AppController::SelectedFiles.insert(DUrl::fromLocalFile(targetFile), windowId);
     FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("newExcel"), "xls");
 }
 
@@ -310,7 +313,7 @@ void AppController::actionNewPowerpoint(const FMEvent &event)
     const DUrl& fileUrl = event.fileUrl();
     int windowId = event.windowId();
     QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("newPowerPoint"), "ppt");
-    FileJob::SelectedFiles.insert(DUrl::fromLocalFile(targetFile), windowId);
+    AppController::SelectedFiles.insert(DUrl::fromLocalFile(targetFile), windowId);
     FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("newPowerPoint"), "ppt");
 }
 
@@ -319,7 +322,7 @@ void AppController::actionNewText(const FMEvent &event)
     const DUrl& fileUrl = event.fileUrl();
     int windowId = event.windowId();
     QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("newText"), "txt");
-    FileJob::SelectedFiles.insert(DUrl::fromLocalFile(targetFile), windowId);
+    AppController::SelectedFiles.insert(DUrl::fromLocalFile(targetFile), windowId);
     FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("newText"), "txt");
 }
 
