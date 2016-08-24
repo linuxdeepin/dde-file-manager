@@ -31,8 +31,10 @@ public:
     void initContollerToolBar();
     void initConnect();
     DSearchBar * getSearchBar();
-    void addHistoryStack(int viewIndex);
-    void switchHistoryStack(const int viewIndex , const DUrl &url);
+    void addHistoryStack();
+
+    int navStackCount() const;
+
 
 signals:
     void requestIconView();
@@ -60,6 +62,9 @@ public slots:
     void handleHotkeyCtrlL(const FMEvent &event);
 
     void setViewModeButtonVisible(bool isVisible);
+    void moveNavStacks(int from, int to);
+    void removeNavStackAt(int index);
+    void switchHistoryStack(const int index , const DUrl &url);
 
 private:
     void checkNavHistory(DUrl url);
@@ -84,7 +89,7 @@ private:
     DCrumbWidget * m_crumbWidget = NULL;
     QButtonGroup * m_viewButtonGroup = NULL;
     HistoryStack * m_navStack = NULL;
-    QMap<int,HistoryStack*> m_navStacks;
+    QList<HistoryStack*> m_navStacks;
 
 };
 
