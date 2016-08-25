@@ -22,8 +22,8 @@ public:
     ~WindowManager();
     void initConnect();
 
-    void loadWindowState(DMainWindow* window);
-    void saveWindowState(DMainWindow* window);
+    void loadWindowState(DFileManagerWindow* window);
+    void saveWindowState(DFileManagerWindow* window);
     inline QHash<const QWidget*, int> getWindows(){return m_windows;}
 
     static DUrl getUrlByWindowId(int windowId);

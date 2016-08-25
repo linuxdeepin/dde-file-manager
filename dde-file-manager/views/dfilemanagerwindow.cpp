@@ -23,6 +23,8 @@
 #include "../controllers/fileservices.h"
 #include "./dbookmarkscene.h"
 
+#include <dplatformwindowhandle.h>
+
 #include <QStatusBar>
 #include <QFrame>
 #include <QVBoxLayout>
@@ -34,12 +36,17 @@
 #include <QStackedLayout>
 #include <QTabBar>
 
+DWIDGET_USE_NAMESPACE;
+
 const int DFileManagerWindow::MinimumWidth = 0;
 
 DFileManagerWindow::DFileManagerWindow(QWidget *parent) : QMainWindow(parent)
 {
+    DPlatformWindowHandle::enableDXcbForWindow(this);
+
     setWindowFlags(Qt::FramelessWindowHint);
     setWindowIcon(QIcon(":/images/images/dde-file-manager.svg"));
+
     initData();
     initUI();
     initConnect();
@@ -272,11 +279,13 @@ void DFileManagerWindow::onCurrentTabChanged(int tabIndex){
 
 DUrl DFileManagerWindow::currentUrl() const
 {
-    if (m_viewStackLayout->currentWidget() == m_fileView){
+    if (m_viewStackLayout->currentWidget() == m_fileView) {
         return m_fileView->currentUrl();
-    }else if (m_viewStackLayout->currentWidget() == m_computerView){
+    } else if (m_viewStackLayout->currentWidget() == m_computerView) {
         return DUrl::fromComputerFile("/");
     }
+
+    return DUrl();
 }
 
 int DFileManagerWindow::getFileViewMode() const
@@ -302,11 +311,6 @@ DToolBar *DFileManagerWindow::getToolBar()
 int DFileManagerWindow::windowId()
 {
     return window()->winId();
-}
-
-void DFileManagerWindow::showMinimized()
-{
-    QtX11::utils::ShowMinimizedWindow(this);
 }
 
 void DFileManagerWindow::setFileViewMode(int viewMode)
@@ -439,108 +443,32 @@ void DFileManagerWindow::switchToView(const int viewIndex){
     m_leftSideBar->scene()->setCurrentUrl(m_fileView->currentUrl());
 }
 
-
-DMainWindow::DMainWindow(QWidget *parent):
-    DWindowFrame(parent)
-{
-    initUI();
-    initConnect();
-//    startTimer(4000);
-}
-
-DMainWindow::~DMainWindow()
-{
-
-}
-
-void DMainWindow::initUI()
-{
-    setFocusPolicy(Qt::NoFocus);
-    setWindowIcon(QIcon(":/images/images/dde-file-manager.svg"));
-    setAttribute(Qt::WA_DeleteOnClose);
-    resize(DEFAULT_WINDOWS_WIDTH, DEFAULT_WINDOWS_HEIGHT);
-    m_fileManagerWindow = new DFileManagerWindow(this);
-    addContenWidget(m_fileManagerWindow);
-}
-
-void DMainWindow::initConnect()
-{
-
-}
-
-
-void DMainWindow::moveCenter(const QPoint &cp){
+void DFileManagerWindow::moveCenter(const QPoint &cp){
     QRect qr = frameGeometry();
 
     qr.moveCenter(cp);
     move(qr.topLeft());
 }
 
-void DMainWindow::moveTopRight(){
+void DFileManagerWindow::moveTopRight(){
     QRect pRect;
     pRect = qApp->desktop()->availableGeometry();
     int x = pRect.width() - width();
     move(QPoint(x, 0));
 }
 
-void DMainWindow::moveTopRightByRect(QRect rect){
+void DFileManagerWindow::moveTopRightByRect(QRect rect){
     int x = rect.x() + rect.width() - width();
     move(QPoint(x, 0));
 }
 
-void DMainWindow::closeEvent(QCloseEvent *event)
+void DFileManagerWindow::closeEvent(QCloseEvent *event)
 {
     emit aboutToClose();
-    DWindowFrame::closeEvent(event);
+    QMainWindow::closeEvent(event);
 }
 
-void DMainWindow::timerEvent(QTimerEvent *event)
-{
-    Q_UNUSED(event)
-    qDebug() << qApp->focusWidget();
-}
-
-void DMainWindow::mousePressEvent(QMouseEvent *event)
-{
-    m_fileManagerWindow->getToolBar()->getSearchBar()->hideCompleter();
-    DWindowFrame::mousePressEvent(event);
-}
-
-void DMainWindow::mouseMoveEvent(QMouseEvent *event)
-{
-    if (this->isActiveWindow()){
-        if (event->y() <= m_fileManagerWindow->getTitleBar()->height() + layoutMargin + 2) {
-            if (event->buttons()) {
-                Qt::MouseButton button = event->buttons() & Qt::LeftButton ? Qt::LeftButton :
-                    event->buttons() & Qt::RightButton ? Qt::RightButton :
-                    Qt::NoButton;
-                startMoving(button);
-            }
-        }
-    }
-    DWindowFrame::mouseMoveEvent(event);
-}
-
-void DMainWindow::mouseDoubleClickEvent(QMouseEvent *event)
-{
-    if (event->y() <= m_fileManagerWindow->getTitleBar()->height() + layoutMargin + 2 && event->button() == Qt::LeftButton){
-        if (windowState() != Qt::WindowMaximized){
-            setWindowState(Qt::WindowMaximized);
-            m_fileManagerWindow->getTitleBar()->setWindowState(Qt::WindowMaximized);
-        }else{
-            showNormal();
-            m_fileManagerWindow->getTitleBar()->setWindowState(Qt::WindowMinimized);
-        }
-    }
-    DWindowFrame::mouseDoubleClickEvent(event);
-}
-
-DFileManagerWindow *DMainWindow::fileManagerWindow() const
-{
-    return m_fileManagerWindow;
-}
-
-void DMainWindow::moveCenterByRect(QRect rect){
+void DFileManagerWindow::moveCenterByRect(QRect rect){
     QRect qr = frameGeometry();
     qr.moveCenter(rect.center());
     move(qr.topLeft());
