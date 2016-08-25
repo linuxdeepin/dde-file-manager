@@ -40,6 +40,8 @@ int main(int argc, char *argv[])
 #ifdef ENABLE_PPROF
     ProfilerStart("pprof.prof");
 #endif
+    SingleApplication::loadDXcbPlugin();
+
     SingleApplication app(argc, argv);
 
     app.setOrganizationName(QMAKE_ORGANIZATION_NAME);

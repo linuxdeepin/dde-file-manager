@@ -43,7 +43,7 @@ void WindowManager::initConnect()
     connect(fileSignalManager, &FileSignalManager::requestQuitApplication, this, &WindowManager::quit);
 }
 
-void WindowManager::loadWindowState(DMainWindow *window)
+void WindowManager::loadWindowState(DFileManagerWindow *window)
 {
     m_fmStateManager->loadCache();
     FMState* state = m_fmStateManager->fmState();
@@ -54,13 +54,12 @@ void WindowManager::loadWindowState(DMainWindow *window)
     int windowState = state->windowState();
     window->resize(width, height);
     window->setWindowState(static_cast<Qt::WindowState>(windowState));
-    window->fileManagerWindow()->getTitleBar()->setWindowState(static_cast<Qt::WindowState>(windowState));
 }
 
 
-void WindowManager::saveWindowState(DMainWindow *window)
+void WindowManager::saveWindowState(DFileManagerWindow *window)
 {
-    m_fmStateManager->fmState()->setViewMode(window->fileManagerWindow()->getFileViewMode());
+    m_fmStateManager->fmState()->setViewMode(window->getFileViewMode());
     m_fmStateManager->fmState()->setX(window->x());
     m_fmStateManager->fmState()->setY(window->y());
     m_fmStateManager->fmState()->setWidth(window->size().width());
@@ -72,8 +71,8 @@ void WindowManager::saveWindowState(DMainWindow *window)
 DUrl WindowManager::getUrlByWindowId(int windowId)
 {
     if (getWindowById(windowId)){
-         DMainWindow* window = qobject_cast<DMainWindow*>(getWindowById(windowId));
-         return window->fileManagerWindow()->currentUrl();
+         DFileManagerWindow* window = qobject_cast<DFileManagerWindow*>(getWindowById(windowId));
+         return window->currentUrl();
     }
     return DUrl::fromLocalFile(QDir::homePath());
 }
@@ -83,18 +82,18 @@ void WindowManager::showNewWindow(const DUrl &url, bool isAlwaysOpen)
     if (!isAlwaysOpen){
         for(int i=0; i< m_windows.count(); i++){
             QWidget* window = const_cast<QWidget *>(m_windows.keys().at(i));
-            DUrl currentUrl = static_cast<DMainWindow *>(window)->fileManagerWindow()->currentUrl();
+            DUrl currentUrl = static_cast<DFileManagerWindow *>(window)->currentUrl();
             if (currentUrl == url){
-                qDebug() << currentUrl << static_cast<DMainWindow *>(window);
-                qApp->setActiveWindow(static_cast<DMainWindow *>(window));
+                qDebug() << currentUrl << static_cast<DFileManagerWindow *>(window);
+                qApp->setActiveWindow(static_cast<DFileManagerWindow *>(window));
                 return;
             }
         }
     }
 
     QX11Info::setAppTime(QX11Info::appUserTime());
-    DMainWindow *window = new DMainWindow();
-    connect(window, &DMainWindow::aboutToClose,
+    DFileManagerWindow *window = new DFileManagerWindow();
+    connect(window, &DFileManagerWindow::aboutToClose,
             this, &WindowManager::onWindowClosed);
 
     qDebug() << "new window" << window->winId() << url;
@@ -117,7 +116,7 @@ void WindowManager::showNewWindow(const DUrl &url, bool isAlwaysOpen)
 
         window->moveCenter(currentScreenGeometry.center());
     }
-    window->fileManagerWindow()->setFileViewMode(m_fmStateManager->fmState()->viewMode());
+    window->setFileViewMode(m_fmStateManager->fmState()->viewMode());
     window->show();
 
     FMEvent event;
@@ -153,7 +152,7 @@ QWidget *WindowManager::getWindowById(int winId)
 void WindowManager::onWindowClosed()
 {
     if (m_windows.count() == 1){
-        DMainWindow* window = static_cast<DMainWindow*>(sender());
+        DFileManagerWindow* window = static_cast<DFileManagerWindow*>(sender());
         saveWindowState(window);
         dialogManager->closeAllPropertyDialog();
     }

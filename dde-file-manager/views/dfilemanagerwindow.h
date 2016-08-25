@@ -2,13 +2,15 @@
 #define DFILEMANAGERWINDOW_H
 
 #include "dmovablemainwindow.h"
-#include <dtitlebar.h>
+#include "dtabbar.h"
+
 #include "../models/durl.h"
-#include "widgets/dwindowframe.h"
+
+#include <dtitlebar.h>
+
 #include <QMainWindow>
 #include <QDir>
 #include <QMap>
-#include "./dtabbar.h"
 
 #define DEFAULT_WINDOWS_WIDTH 960
 #define DEFAULT_WINDOWS_HEIGHT 540
@@ -29,7 +31,7 @@ class QSplitter;
 class QResizeEvent;
 class DSplitter;
 
-class DMainWindow;
+class DFileManagerWindow;
 class DFileManagerWindow;
 class ExtendView;
 class QStackedLayout;
@@ -79,8 +81,15 @@ public:
 
     int windowId();
 
+signals:
+    void aboutToClose();
+
 public slots:
-    void showMinimized();
+    void moveCenter(const QPoint &cp);
+    void moveTopRight();
+    void moveCenterByRect(QRect rect);
+    void moveTopRightByRect(QRect rect);
+
     void setFileViewMode(int viewMode);
     void setFileViewSortRole(int sortRole);
     void setIconView();
@@ -96,6 +105,8 @@ public slots:
     void onCurrentTabChanged(int tabIndex);
     void onCurrentTabClosed(const int index);
 
+protected:
+    void closeEvent(QCloseEvent* event);
 
 private:
     QFrame* m_centralWidget = NULL;
@@ -115,36 +126,6 @@ private:
     QStackedLayout* m_viewStackLayout=NULL;
 
     QMap<DUrl, QWidget*> m_views={};
-};
-
-class DMainWindow : public DWindowFrame{
-    Q_OBJECT
-public:
-    explicit DMainWindow(QWidget *parent = 0);
-    ~DMainWindow();
-    void initUI();
-    void initConnect();
-
-    DFileManagerWindow *fileManagerWindow() const;
-
-signals:
-    void aboutToClose();
-
-public slots:
-    void moveCenter(const QPoint &cp);
-    void moveTopRight();
-    void moveCenterByRect(QRect rect);
-    void moveTopRightByRect(QRect rect);
-
-protected:
-    void closeEvent(QCloseEvent* event);
-    void timerEvent(QTimerEvent* event);
-    void mousePressEvent(QMouseEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
-    void mouseDoubleClickEvent(QMouseEvent *event);
-
-private:
-    DFileManagerWindow *m_fileManagerWindow;
 };
 
 #endif // DFILEMANAGERWINDOW_H

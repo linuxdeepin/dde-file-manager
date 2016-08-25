@@ -5,7 +5,11 @@
 #include <QLocalServer>
 #include <QLocalSocket>
 
-class SingleApplication : public QApplication
+#include <DApplication>
+
+DWIDGET_USE_NAMESPACE;
+
+class SingleApplication : public DApplication
 {
     Q_OBJECT
 public:
