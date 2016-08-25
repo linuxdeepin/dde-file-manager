@@ -12,6 +12,11 @@ public:
     static QString getAppConfigPath();
     static QString getHomePath();
     static QString getDesktopPath();
+    static QString getVideosPath();
+    static QString getMusicPath();
+    static QString getPicturesPath();
+    static QString getDocumentsPath();
+    static QString getDownloadsPath();
     static QString getCachePath();
     static QString getConfigPath();
     static QString getTrashPath();

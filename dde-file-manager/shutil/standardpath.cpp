@@ -26,7 +26,32 @@ QString StandardPath::getHomePath()
 
 QString StandardPath::getDesktopPath()
 {
-    return QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).at(0);
+    return QString("%1/%2").arg(getHomePath(), "Desktop");
+}
+
+QString StandardPath::getVideosPath()
+{
+    return QString("%1/%2").arg(getHomePath(), "Videos");
+}
+
+QString StandardPath::getMusicPath()
+{
+    return QString("%1/%2").arg(getHomePath(), "Music");
+}
+
+QString StandardPath::getPicturesPath()
+{
+    return QString("%1/%2").arg(getHomePath(), "Pictures");
+}
+
+QString StandardPath::getDocumentsPath()
+{
+    return QString("%1/%2").arg(getHomePath(), "Documents");
+}
+
+QString StandardPath::getDownloadsPath()
+{
+    return QString("%1/%2").arg(getHomePath(), "Downloads");
 }
 
 QString StandardPath::getCachePath()

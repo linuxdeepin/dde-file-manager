@@ -107,13 +107,13 @@ QString PathManager::getSystemCachePath()
 
 void PathManager::loadSystemPaths()
 {
-    m_systemPathsMap["Home"] = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0);
-    m_systemPathsMap["Desktop"] = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).at(0);
-    m_systemPathsMap["Videos"] = QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).at(0);
-    m_systemPathsMap["Music"] = QStandardPaths::standardLocations(QStandardPaths::MusicLocation).at(0);
-    m_systemPathsMap["Pictures"] = QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).at(0);
-    m_systemPathsMap["Documents"] = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).at(0);
-    m_systemPathsMap["Downloads"] = QStandardPaths::standardLocations(QStandardPaths::DownloadLocation).at(0);
+    m_systemPathsMap["Home"] = StandardPath::getHomePath();
+    m_systemPathsMap["Desktop"] = StandardPath::getDesktopPath();
+    m_systemPathsMap["Videos"] = StandardPath::getVideosPath();
+    m_systemPathsMap["Music"] = StandardPath::getMusicPath();
+    m_systemPathsMap["Pictures"] = StandardPath::getPicturesPath();
+    m_systemPathsMap["Documents"] = StandardPath::getDocumentsPath();
+    m_systemPathsMap["Downloads"] = StandardPath::getDownloadsPath();
 
     m_systemPathsSet.reserve(m_systemPathsMap.size());
 
@@ -136,8 +136,7 @@ void PathManager::mkPath(const QString &path)
 void PathManager::handleDirectoryChanged(const QString &path)
 {
     qDebug() << path;
-    mkPath(path);
-    m_fileSystemWatcher->addPath(path);
+    loadSystemPaths();
 }
 
 QMap<QString, QString> PathManager::systemPathDisplayNamesMap() const
