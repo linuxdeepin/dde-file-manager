@@ -25,3 +25,17 @@ void TestDUtil::testLogPath()
     QCOMPARE(DLogManager::getlogFilePath(), logPath.toString());
 }
 
+void TestDUtil::testPathChange()
+{
+    DPathBuf root("/");
+
+    auto usr = root / "./usr";
+    QCOMPARE(QDir(usr.toString()).absolutePath(), QDir::toNativeSeparators("/usr"));
+
+    root /= "root";
+    QCOMPARE(root.toString(), QDir::toNativeSeparators("/root"));
+
+    root /= "../usr";
+    QCOMPARE(root.toString(), usr.toString());
+}
+

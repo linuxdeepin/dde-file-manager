@@ -1,5 +1,7 @@
 #include "daboutdialog.h"
 
+#include <dutility.h>
+
 #include <QDesktopServices>
 #include <QUrl>
 #include <QDebug>
@@ -32,7 +34,7 @@ DAboutDialog::DAboutDialog(
     setWindowIcon(QIcon(windowIcon));
 
     QLabel *logoLabel = new QLabel("logo");
-    logoLabel->setContentsMargins(0,0,0,0);
+    logoLabel->setContentsMargins(0, 0, 0, 0);
     logoLabel->setFixedSize(96, 96);
     logoLabel->setPixmap(QPixmap(productIcon).scaled(logoLabel->size(), Qt::KeepAspectRatio));
 
@@ -56,16 +58,17 @@ DAboutDialog::DAboutDialog(
     connect(websiteLabel, SIGNAL(linkActivated(QString)),
             this, SLOT(onLogLinkActivated(QString)));
 
-    QString textFormat = "<p style='text-indent: 24px;'>%1</p>";
-    QString descriptionText =  textFormat.arg(description);
-    QLabel *descriptionLabel = new QLabel(descriptionText);
-    descriptionLabel->setStyleSheet("font-size:11px; color: #1A1A1A; border: 0px solid;");
+    QLabel *descriptionLabel = new QLabel();
+    descriptionLabel->setText(description + '\n');
+    descriptionLabel->setAlignment(Qt::AlignHCenter);
+
+    descriptionLabel->setStyleSheet("font-size:11px; color: #1A1A1A; border: none;");
     descriptionLabel->setWordWrap(true);
     descriptionLabel->adjustSize();
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->setMargin(0);
-    mainLayout->setContentsMargins(38,0,38,26);
+    mainLayout->setContentsMargins(38, 0, 38, 10);
     mainLayout->setSpacing(0);
     mainLayout->addWidget(logoLabel);
     mainLayout->setAlignment(logoLabel, Qt::AlignCenter);
@@ -82,7 +85,7 @@ DAboutDialog::DAboutDialog(
     mainLayout->addWidget(websiteLabel);
     mainLayout->setAlignment(websiteLabel, Qt::AlignCenter);
     mainLayout->addSpacing(26);
-    mainLayout->addWidget(descriptionLabel);
+    mainLayout->addWidget(descriptionLabel, Qt::AlignHCenter);
 
     setLayout(mainLayout);
 

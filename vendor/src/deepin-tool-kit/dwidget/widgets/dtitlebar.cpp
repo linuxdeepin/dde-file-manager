@@ -133,8 +133,9 @@ void DTitlebarPrivate::_q_toggleWindowState()
 
     QWidget *parentWindow = q->parentWidget();
 
-    if (!parentWindow)
+    if (!parentWindow) {
         return;
+    }
 
     parentWindow = parentWindow->window();
 
@@ -178,7 +179,9 @@ QWidget *DTitlebar::customWidget() const
 void DTitlebar::setWindowFlags(Qt::WindowFlags type)
 {
     D_D(DTitlebar);
-    d->titleLabel->setVisible(type & Qt::WindowTitleHint);
+    if (d->titleLabel) {
+        d->titleLabel->setVisible(type & Qt::WindowTitleHint);
+    }
     d->iconLabel->setVisible(type & Qt::WindowTitleHint);
     d->minButton->setVisible(type & Qt::WindowMinimizeButtonHint);
     d->maxButton->setVisible(type & Qt::WindowMaximizeButtonHint);
@@ -209,16 +212,17 @@ void DTitlebar::showMenu()
 void DTitlebar::mousePressEvent(QMouseEvent *event)
 {
     D_D(DTitlebar);
-
     d->mousePressed = (event->buttons() == Qt::LeftButton);
+
+    emit mousePressed(event->buttons());
 }
 
 void DTitlebar::mouseReleaseEvent(QMouseEvent *event)
 {
     D_D(DTitlebar);
-
-    if (event->buttons() == Qt::LeftButton)
+    if (event->buttons() == Qt::LeftButton) {
         d->mousePressed = false;
+    }
 }
 
 bool DTitlebar::eventFilter(QObject *obj, QEvent *event)
@@ -262,6 +266,7 @@ void DTitlebar::setCustomWidget(QWidget *w, Qt::AlignmentFlag wflag, bool fixCen
     l->addWidget(w);
     l->setAlignment(w, wflag);
     qDeleteAll(d->coustomAtea->children());
+    d->titleLabel = nullptr;
     d->coustomAtea->setLayout(l);
     d->buttonArea->resize(old);
     d->customWidget = w;
@@ -278,14 +283,18 @@ void DTitlebar::setFixedHeight(int h)
 void DTitlebar::setTitle(const QString &title)
 {
     D_D(DTitlebar);
-    d->titleLabel->setText(title);
+    if (d->titleLabel) {
+        d->titleLabel->setText(title);
+    }
 }
 
 void DTitlebar::setIcon(const QPixmap &icon)
 {
     D_D(DTitlebar);
-    d->titleLabel->setContentsMargins(0, 0, 0, 0);
-    d->iconLabel->setPixmap(icon.scaled(DefaultIconWidth, DefaultIconHeight, Qt::KeepAspectRatio));
+    if (d->titleLabel) {
+        d->titleLabel->setContentsMargins(0, 0, 0, 0);
+        d->iconLabel->setPixmap(icon.scaled(DefaultIconWidth, DefaultIconHeight, Qt::KeepAspectRatio));
+    }
 }
 
 void DTitlebar::setWindowState(Qt::WindowState windowState)
@@ -304,16 +313,18 @@ void DTitlebar::setVisible(bool visible)
 {
     D_D(DTitlebar);
 
-    if (visible == isVisible())
+    if (visible == isVisible()) {
         return;
+    }
 
     QWidget::setVisible(visible);
 
     if (visible) {
         d->parentWindow = parentWidget();
 
-        if (!d->parentWindow)
+        if (!d->parentWindow) {
             return;
+        }
 
         d->parentWindow = d->parentWindow->window();
         d->parentWindow->installEventFilter(this);
@@ -323,8 +334,9 @@ void DTitlebar::setVisible(bool visible)
         connect(d->minButton, &DWindowMinButton::clicked, d->parentWindow, &QWidget::showMinimized);
         connect(d->closeButton, &DWindowCloseButton::clicked, d->parentWindow, &QWidget::close);
     } else {
-        if (!d->parentWindow)
+        if (!d->parentWindow) {
             return;
+        }
 
         d->parentWindow->removeEventFilter(this);
 
@@ -337,11 +349,13 @@ void DTitlebar::setVisible(bool visible)
 
 void DTitlebar::mouseMoveEvent(QMouseEvent *event)
 {
-    Q_UNUSED(event)
     D_DC(DTitlebar);
 
-    if (d->mousePressed)
-        emit mouseMoving();
+    if (event->buttons() == Qt::LeftButton /*&& d->mousePressed*/) {
+        Qt::MouseButton button = event->buttons() & Qt::LeftButton ? Qt::LeftButton : Qt::NoButton;
+        emit mouseMoving(button);
+    }
+    QWidget::mouseMoveEvent(event);
 }
 
 void DTitlebar::mouseDoubleClickEvent(QMouseEvent *event)

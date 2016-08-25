@@ -1,8 +1,7 @@
 QT += testlib
 QT -= gui
 
-CONFIG += testcase
-
+CONFIG += testcase c++11
 
 SOURCES += \
     dutiltester.cpp \

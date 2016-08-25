@@ -35,6 +35,8 @@ public:
     int externWidth() const;
     void updateContentsMargins();
 
+    void _q_onTitleBarMousePressed(Qt::MouseButtons buttons) const;
+
     bool leftPressed;
     bool resizable;
 
