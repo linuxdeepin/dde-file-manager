@@ -41,6 +41,7 @@ include(./utils/utils.pri)
 include(./filemonitor/filemonitor.pri)
 include(./deviceinfo/deviceinfo.pri)
 include(./dbusinterface/dbusinterface.pri)
+include(./simpleini/simpleini.pri)
 include($$PWD/chinese2pinyin/chinese2pinyin.pri)
 include($$PWD/xdnd/xdnd.pri)
 

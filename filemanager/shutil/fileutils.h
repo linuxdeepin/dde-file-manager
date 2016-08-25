@@ -60,6 +60,11 @@ public:
     static bool openExcutableFile(const QString& path, int flag);
 
     static QByteArray imageFormatName(QImage::Format f);
+
+
+    static QString getFileContent(const QString &file);
+    static bool writeTextFile(QString filePath, QString content);
+    static void setDefaultFileManager();
 };
 
 #endif // FILEUTILS_H

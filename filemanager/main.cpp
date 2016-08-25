@@ -10,6 +10,7 @@
 #include "../dialogs/dialogmanager.h"
 
 #include "../shutil/mimesappsmanager.h"
+#include "../shutil/fileutils.h"
 #include "../dialogs/openwithdialog.h"
 #include "../controllers/appcontroller.h"
 #include "widgets/singleton.h"
@@ -85,6 +86,7 @@ int main(int argc, char *argv[])
         dialogManager;
         appController->createGVfSManager();
         QThreadPool::globalInstance()->setMaxThreadCount(MAX_THREAD_COUNT);
+        FileUtils::setDefaultFileManager();
 #ifdef ENABLE_PPROF
         int request = app.exec();
 
