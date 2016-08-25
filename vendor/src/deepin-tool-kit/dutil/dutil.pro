@@ -2,8 +2,7 @@ DCOMMON_DIR = $$PWD/../common
 include($$DCOMMON_DIR/lib.pri)
 include(dlog/dlog.pri)
 
-#QT -= gui
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+QT -= gui
 
 TARGET = dtkutil
 
@@ -11,8 +10,7 @@ DEFINES += LIBDTKUTIL_LIBRARY
 
 HEADERS += \
     dutil_global.h \
-    dpathbuf.h \
-    dutility.h
+    dpathbuf.h
 
 includes.path = $${DTK_INCLUDEPATH}/DUtil
 includes.files += \
@@ -40,5 +38,4 @@ else:unix: LIBS += -L$$OUT_PWD/../dbase/ -ldtkbase
 INCLUDEPATH += $$PWD/../dbase
 DEPENDPATH += $$PWD/../dbase
 
-SOURCES += \
-    dutility.cpp
+SOURCES +=

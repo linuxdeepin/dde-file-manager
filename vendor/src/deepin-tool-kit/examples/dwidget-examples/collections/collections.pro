@@ -12,7 +12,10 @@ unix{
     QT += x11extras dbus
     CONFIG += link_pkgconfig
 }
-DEFINES += STATIC_LIB
+
+win32* {
+    DEFINES += STATIC_LIB
+}
 
 SOURCES += main.cpp\
     mainwindow.cpp \

@@ -36,6 +36,7 @@ public:
 
     void setTitlebarMenu(DMenu *);
     void setTitlebarWidget(QWidget *, bool fixCenterPos = false);
+    void setTitlebarWidget(QWidget *w, Qt::AlignmentFlag wflag, bool fixCenterPos = false);
     int titlebarHeight() const;
     void setTitlebarFixedHeight(int h);
 
@@ -126,7 +127,7 @@ public slots:
     void showFullScreen();
     void showNormal();
 
-    void moveWindow();
+    void moveWindow(Qt::MouseButton botton);
     void toggleMaximizedWindow();
 
     void setBackgroundColor(QColor backgroundColor);
@@ -145,6 +146,7 @@ Q_SIGNALS:
     void shadowOffsetChanged(QPoint shadowOffset);
 
 private:
+    D_PRIVATE_SLOT(void _q_onTitleBarMousePressed(Qt::MouseButtons) const)
 
     D_DECLARE_PRIVATE(DX11Widget)
 };
