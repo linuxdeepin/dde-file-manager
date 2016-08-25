@@ -703,6 +703,7 @@ bool FileJob::moveFile(const QString &srcFile, const QString &tarDir, QString *t
 
                 if (ok)
                     *targetPath = m_srcPath;
+                return ok;
             }
             case FileJob::Paused:
                 QThread::msleep(100);
@@ -850,6 +851,7 @@ bool FileJob::moveDir(const QString &srcFile, const QString &tarDir, QString *ta
 
                 if (ok && targetPath)
                     *targetPath = m_srcPath;
+                return ok;
             }
             case FileJob::Paused:
                 QThread::msleep(100);

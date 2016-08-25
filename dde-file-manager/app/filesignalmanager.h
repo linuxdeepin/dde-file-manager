@@ -62,15 +62,6 @@ signals:
     /*copy/move job conflict dialog show */
     void conflictDialogShowed(const QMap<QString, QString>& jobDetail);
 
-    /*conflictTimer in move/copy job  stop when conflict dialog showed*/
-    void conflictTimerStoped(const QMap<QString, QString>& jobDetail);
-
-    /*conflictTimer in move/copy job restart when conflict dialog showed*/
-    void conflictTimerReStarted(const QMap<QString, QString>& jobDetail);
-
-    /*copy/move job conflict response confirmed from ui*/
-    void conflictRepsonseConfirmed(const QMap<QString, QString>& jobDetail, const QMap<QString, QVariant>& response);
-
     /*request rename to DFileView*/
     void requestRename(const FMEvent &event);
 
