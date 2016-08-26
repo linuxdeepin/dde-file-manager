@@ -1,7 +1,7 @@
 #include "filecontroller.h"
 #include "fileinfo.h"
 #include "fileservices.h"
-#include "filejob.h"
+#include "fileoperations/filejob.h"
 
 #include "../models/desktopfileinfo.h"
 

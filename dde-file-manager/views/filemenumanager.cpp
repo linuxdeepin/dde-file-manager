@@ -14,7 +14,7 @@
 #include "../views/windowmanager.h"
 
 #include "../controllers/fileservices.h"
-#include "../controllers/filejob.h"
+#include "fileoperations/filejob.h"
 #include "../controllers/bookmarkmanager.h"
 #include "../controllers/appcontroller.h"
 #include "../controllers/trashmanager.h"

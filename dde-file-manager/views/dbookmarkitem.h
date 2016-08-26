@@ -12,7 +12,7 @@
 #include <QGraphicsProxyWidget>
 #include <QGraphicsTextItem>
 
-#include "durl.h"
+#include "utils/durl.h"
 
 #define MARGIN_IMAGE_BOUND 5
 

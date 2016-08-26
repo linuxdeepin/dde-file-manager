@@ -2,7 +2,7 @@
 #define FILESSIZEWORKER_H
 
 #include <QObject>
-#include "../models/durl.h"
+#include "utils/durl.h"
 
 class FilesSizeWorker : public QObject
 {

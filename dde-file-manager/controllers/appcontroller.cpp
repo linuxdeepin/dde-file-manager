@@ -11,7 +11,7 @@
 #include "networkcontroller.h"
 #include "deviceinfo/udisklistener.h"
 #include "fileservices.h"
-#include "filejob.h"
+#include "fileoperations/filejob.h"
 
 #include "../app/filesignalmanager.h"
 #include "../app/fmevent.h"

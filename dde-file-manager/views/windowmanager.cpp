@@ -7,7 +7,7 @@
 
 #include "../models/fmstate.h"
 
-#include "../controllers/filejob.h"
+#include "fileoperations/filejob.h"
 #include "../controllers/fmstatemanager.h"
 
 #include "../dialogs/dialogmanager.h"

@@ -30,31 +30,6 @@
 #define defaut_computerIcon ":/images/images/computer.png"
 #define defaut_trashIcon ":/images/images/user-trash-full.png"
 
-#define ComputerUrl "computer://"
-
-#define TRASH_SCHEME "trash"
-#define RECENT_SCHEME "recent"
-#define BOOKMARK_SCHEME "bookmark"
-#define FILE_SCHEME "file"
-#define COMPUTER_SCHEME "computer"
-#define SEARCH_SCHEME "search"
-#define NETWORK_SCHEME "network"
-#define SMB_SCHEME "smb"
-#define AFC_SCHEME "afc"
-#define MTP_SCHEME "mtp"
-#define GPHOTO2_SCHEME "gphoto2"
-
-#define TRASH_ROOT "trash:///"
-#define RECENT_ROOT "recent:///"
-#define BOOKMARK_ROOT "bookmark:///"
-#define FILE_ROOT  "file:///"
-#define COMPUTER_ROOT "computer:///"
-#define NETWORK_ROOT "network:///"
-#define SMB_ROOT "smb:///"
-
-#define TRASHPATH QDir::homePath() + "/.local/share/Trash"
-#define TRASHFILEPATH TRASHPATH + "/files"
-#define TRASHINFOPATH TRASHPATH + "/info"
 
 // begin file item global define
 #define TEXT_LINE_HEIGHT 18

@@ -7,7 +7,7 @@
 #include "../app/filesignalmanager.h"
 #include "../app/fmevent.h"
 
-#include "../controllers/filejob.h"
+#include "fileoperations/filejob.h"
 #include "../controllers/fileservices.h"
 
 #include "../models/fileinfo.h"
@@ -71,13 +71,8 @@ void DialogManager::initCloseIndicatorDialog()
 
 void DialogManager::initConnect()
 {
-    connect(fileSignalManager, &FileSignalManager::jobAdded, m_taskDialog, &DTaskDialog::addTask);
-    connect(fileSignalManager, &FileSignalManager::jobRemoved, m_taskDialog, &DTaskDialog::delayRemoveTask);
-    connect(fileSignalManager, &FileSignalManager::jobDataUpdated, m_taskDialog, &DTaskDialog::handleUpdateTaskWidget);
     connect(fileSignalManager, &FileSignalManager::requestAbortJob, this, &DialogManager::abortJobByDestinationUrl);
-    connect(fileSignalManager, &FileSignalManager::abortTask, m_taskDialog, &DTaskDialog::abortTask);
 
-    connect(fileSignalManager, &FileSignalManager::conflictDialogShowed, m_taskDialog, &DTaskDialog::showConflictDiloagByJob);
     connect(m_taskDialog, &DTaskDialog::conflictRepsonseConfirmed, this, &DialogManager::handleConflictRepsonseConfirmed);
     connect(m_taskDialog, &DTaskDialog::closed, fileSignalManager, &FileSignalManager::requestQuitApplication);
 
@@ -139,6 +134,11 @@ QPoint DialogManager::getPerportyPos(int dialogWidth, int dialogHeight, int coun
 void DialogManager::addJob(FileJob *job)
 {
     m_jobs.insert(job->getJobId(), job);
+    connect(job, &FileJob::requestJobAdded, m_taskDialog, &DTaskDialog::addTask);
+    connect(job, &FileJob::requestJobRemoved, m_taskDialog, &DTaskDialog::delayRemoveTask);
+    connect(job, &FileJob::requestJobDataUpdated, m_taskDialog, &DTaskDialog::handleUpdateTaskWidget);
+    connect(job, &FileJob::requestAbortTask, m_taskDialog, &DTaskDialog::abortTask);
+    connect(job, &FileJob::requestConflictDialogShowed, m_taskDialog, &DTaskDialog::showConflictDiloagByJob);
 }
 
 

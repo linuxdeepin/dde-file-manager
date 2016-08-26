@@ -9,7 +9,7 @@
 #include <QListWidgetItem>
 
 #include "deviceinfo/udiskdeviceinfo.h"
-#include "durl.h"
+#include "utils/durl.h"
 #include "dbusinterface/dbustype.h"
 
 class FMEvent;

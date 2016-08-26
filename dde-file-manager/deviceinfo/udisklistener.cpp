@@ -11,8 +11,6 @@
 
 UDiskListener::UDiskListener()
 {
-    fileService->setFileUrlHandler(COMPUTER_SCHEME, "", this);
-
 //    readFstab();
     m_diskMountInterface = new DiskMountInterface(DiskMountInterface::staticServerPath(),
                                                   DiskMountInterface::staticInterfacePath(),

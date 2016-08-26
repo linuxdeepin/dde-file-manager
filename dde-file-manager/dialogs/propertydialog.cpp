@@ -17,8 +17,6 @@
 
 #include "../deviceinfo/udisklistener.h"
 
-#include "deviceinfo/deviceinfo.h"
-
 #include "utils/utils.h"
 
 #include "widgets/singleton.h"

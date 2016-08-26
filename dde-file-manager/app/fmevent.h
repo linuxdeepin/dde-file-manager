@@ -5,7 +5,7 @@
 #include <QSharedData>
 #include <QMetaType>
 
-#include "durl.h"
+#include "utils/durl.h"
 
 class FMEvent
 {

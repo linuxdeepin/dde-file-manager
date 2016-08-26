@@ -6,7 +6,7 @@
 #include "../app/global.h"
 #include "../app/fmevent.h"
 #include "../app/filesignalmanager.h"
-#include "../models/durl.h"
+#include "utils/durl.h"
 
 #include "widgets/singleton.h"
 #include <QDebug>

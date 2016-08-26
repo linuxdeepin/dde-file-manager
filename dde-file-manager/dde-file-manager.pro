@@ -41,6 +41,7 @@ include(../utils/utils.pri)
 include(../filemonitor/filemonitor.pri)
 include(../chinese2pinyin/chinese2pinyin.pri)
 include(../xdnd/xdnd.pri)
+include(../fileoperations/fileoperations.pri)
 include(deviceinfo/deviceinfo.pri)
 include(dbusinterface/dbusinterface.pri)
 
@@ -111,7 +112,6 @@ HEADERS += \
     app/fmevent.h \
     views/historystack.h\
     dialogs/propertydialog.h \
-    controllers/filejob.h \
     views/dfilemenu.h \
     views/dhoverbutton.h \
     views/dbookmarkscene.h \
@@ -132,7 +132,6 @@ HEADERS += \
     views/dbookmarkline.h \
     views/dsplitterhandle.h \
     dialogs/openwithdialog.h \
-    models/durl.h \
     controllers/searchcontroller.h \
     models/searchfileinfo.h\
     shutil/standardpath.h \
@@ -211,7 +210,6 @@ SOURCES += \
     app/fmevent.cpp \
     views/historystack.cpp\
     dialogs/propertydialog.cpp \
-    controllers/filejob.cpp \
     views/dfilemenu.cpp \
     views/dhoverbutton.cpp \
     views/dbookmarkscene.cpp \
@@ -232,7 +230,6 @@ SOURCES += \
     views/dbookmarkline.cpp \
     views/dsplitterhandle.cpp \
     dialogs/openwithdialog.cpp \
-    models/durl.cpp \
     controllers/searchcontroller.cpp \
     models/searchfileinfo.cpp\
     shutil/standardpath.cpp \

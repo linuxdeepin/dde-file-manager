@@ -11,7 +11,7 @@
 
 #include <anchors.h>
 
-#include "durl.h"
+#include "utils/durl.h"
 
 class DFileSystemModel;
 

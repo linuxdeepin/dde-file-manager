@@ -15,10 +15,10 @@
 #include "../app/filemanagerapp.h"
 #include "../app/filesignalmanager.h"
 
+#include "fileoperations/filejob.h"
 #include "../controllers/appcontroller.h"
 #include "../controllers/filecontroller.h"
 #include "../controllers/fileservices.h"
-#include "../controllers/filejob.h"
 #include "../controllers/fmstatemanager.h"
 #include "../controllers/pathmanager.h"
 

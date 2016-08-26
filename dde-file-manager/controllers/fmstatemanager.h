@@ -5,7 +5,7 @@
 
 #include <QObject>
 #include "../models/fmstate.h"
-#include "../models/durl.h"
+#include "utils/durl.h"
 
 
 class FMStateManager : public QObject, public BaseManager
