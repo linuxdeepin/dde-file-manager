@@ -40,11 +40,9 @@ DWIDGET_USE_NAMESPACE;
 
 const int DFileManagerWindow::MinimumWidth = 0;
 
-DFileManagerWindow::DFileManagerWindow(QWidget *parent) : QMainWindow(parent)
+DFileManagerWindow::DFileManagerWindow(QWidget *parent)
+    : DMainWindow(parent)
 {
-    DPlatformWindowHandle::enableDXcbForWindow(this);
-
-    setWindowFlags(Qt::FramelessWindowHint);
     setWindowIcon(QIcon(":/images/images/dde-file-manager.svg"));
 
     initData();
@@ -73,9 +71,8 @@ void DFileManagerWindow::initUI()
 
 void DFileManagerWindow::initTitleBar()
 {
-    m_titleBar = new DTitlebar(this);
-    m_titleBar->layout()->setContentsMargins(0, 0, 8, 0);
-    m_titleBar->setWindowFlags(m_titleBar->windowFlags());
+    if (!titleBar())
+        return;
 
     DFileMenu* menu = fileMenuManger->createToolBarSettingsMenu();
 
@@ -83,7 +80,12 @@ void DFileManagerWindow::initTitleBar()
     event = window()->winId();
     menu->setEvent(event);
 
-    m_titleBar->setMenu(menu);
+    titleBar()->setMenu(menu);
+
+    QWidget *widget = new QWidget();
+
+    widget->setFixedSize(0, 1);
+    titleBar()->setCustomWidget(widget, false);
 }
 
 void DFileManagerWindow::initSplitter()
@@ -122,12 +124,7 @@ void DFileManagerWindow::initRightView()
     titleLayout->setMargin(0);
     titleLayout->setSpacing(0);
     titleLayout->addWidget(m_toolbar);
-    titleLayout->addWidget(m_titleBar);
-
-    QWidget *empty = new QWidget;
-    empty->setFixedSize(0,1);
-    m_titleBar->setCustomWidget(empty, Qt::AlignLeft, false);
-
+    titleLayout->addWidget(titleBar());
     titleLayout->setSpacing(0);
     titleLayout->setContentsMargins(0, 0, 0, 0);
 
@@ -206,10 +203,13 @@ void DFileManagerWindow::initCentralWidget()
 
 void DFileManagerWindow::initConnect()
 {
-    connect(m_titleBar, SIGNAL(minimumClicked()), parentWidget(), SLOT(showMinimized()));
-    connect(m_titleBar, SIGNAL(maximumClicked()), parentWidget(), SLOT(showMaximized()));
-    connect(m_titleBar, SIGNAL(restoreClicked()), parentWidget(), SLOT(showNormal()));
-    connect(m_titleBar, SIGNAL(closeClicked()), parentWidget(), SLOT(close()));
+    if (titleBar()) {
+        connect(titleBar(), SIGNAL(minimumClicked()), parentWidget(), SLOT(showMinimized()));
+        connect(titleBar(), SIGNAL(maximumClicked()), parentWidget(), SLOT(showMaximized()));
+        connect(titleBar(), SIGNAL(restoreClicked()), parentWidget(), SLOT(showNormal()));
+        connect(titleBar(), SIGNAL(closeClicked()), parentWidget(), SLOT(close()));
+    }
+
     connect(m_toolbar, &DToolBar::requestIconView, this, &DFileManagerWindow::setIconView);
     connect(m_toolbar, &DToolBar::requestListView, this, &DFileManagerWindow::setListView);
 
@@ -296,11 +296,6 @@ int DFileManagerWindow::getFileViewMode() const
 int DFileManagerWindow::getFileViewSortRole() const
 {
     return m_fileView->getSortRoles();
-}
-
-DTitlebar *DFileManagerWindow::getTitleBar()
-{
-    return m_titleBar;
 }
 
 DToolBar *DFileManagerWindow::getToolBar()

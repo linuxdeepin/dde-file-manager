@@ -3,8 +3,10 @@
 
 #include "dmovablemainwindow.h"
 #include "dtabbar.h"
-#include <dtitlebar.h>
 #include "utils/durl.h"
+
+#include <DTitlebar>
+#include <DMainWindow>
 
 #include <QMainWindow>
 #include <QDir>
@@ -42,7 +44,7 @@ class ComputerView;
 
 DWIDGET_USE_NAMESPACE
 
-class DFileManagerWindow : public QMainWindow
+class DFileManagerWindow : public DMainWindow
 {
     Q_OBJECT
 public:
@@ -74,7 +76,6 @@ public:
     int getFileViewMode() const;
     int getFileViewSortRole() const;
 
-    DTitlebar* getTitleBar();
     DToolBar* getToolBar();
 
     int windowId();
@@ -108,7 +109,6 @@ protected:
 
 private:
     QFrame* m_centralWidget = NULL;
-    DTitlebar* m_titleBar = NULL;
     DLeftSideBar* m_leftSideBar = NULL;
     QFrame* m_rightView = NULL;
     DToolBar* m_toolbar = NULL;
