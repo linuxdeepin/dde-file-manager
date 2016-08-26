@@ -5,7 +5,7 @@
 #include <QMap>
 #include <QElapsedTimer>
 #include <QUrl>
-#include "../models/durl.h"
+#include "utils/durl.h"
 #include <QStorageInfo>
 
 #define TRANSFER_RATE 5
@@ -13,6 +13,7 @@
 #define DATA_BLOCK_SIZE 65536
 #define ONE_MB_SIZE 1048576
 #define ONE_KB_SIZE 1024
+
 
 class FileJob : public QObject
 {
@@ -39,10 +40,28 @@ public:
     QString getTargetDir();
 
 signals:
+
+    /*add copy/move/delete job to taskdialog when copy/move/delete job created*/
+    void requestJobAdded(const QMap<QString, QString>& jobDetail);
+
+    /*remove copy/move/delete job to taskdialog when copy/move/delete job finished*/
+    void requestJobRemoved(const QMap<QString, QString>& jobDetail);
+
+    /*update copy/move/delete job taskdialog ui*/
+    void requestJobDataUpdated(const QMap<QString, QString>& jobDetail,
+                           const QMap<QString, QString>& data);
+
+    /*abort copy/move/delete job taskdialog from ui*/
+    void requestAbortTask(const QMap<QString, QString>& jobDetail);
+
+    /*copy/move job conflict dialog show */
+    void requestConflictDialogShowed(const QMap<QString, QString>& jobDetail);
+
     void progressPercent(int value);
     void error(QString content);
     void result(QString content);
     void finished();
+
 public slots:
     DUrlList doCopy(const DUrlList &files, const QString &destination);
     void doDelete(const DUrlList &files);

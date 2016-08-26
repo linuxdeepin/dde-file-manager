@@ -80,15 +80,6 @@ signals:
     /*requst open new window by given url*/
     void requestOpenNewWindowByUrl(const DUrl& url, bool isAlwaysOpen);
 
-    /* device mounted */
-    void deviceMounted(int i);
-
-    /* device added */
-    void deviceAdded(DeviceInfo &deviceInfos);
-
-    /* device removed */
-    void deviceRemoved(DeviceInfo &deviceInfos);
-
     /*request active window*/
     void requestActiveWindow();
 

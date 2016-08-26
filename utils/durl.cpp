@@ -6,7 +6,6 @@
 #include <QDebug>
 #include <QUrlQuery>
 
-#include "../app/global.h"
 
 QSet<QString> schemeList = QSet<QString>() << QString(TRASH_SCHEME)
                                            << QString(RECENT_SCHEME)

@@ -4,7 +4,7 @@
 #include <QObject>
 #include "basedialog.h"
 
-#include "durl.h"
+#include "utils/durl.h"
 
 DWIDGET_USE_NAMESPACE
 

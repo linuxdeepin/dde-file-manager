@@ -4,6 +4,7 @@
 #include <QIcon>
 #include "../app/singleapplication.h"
 #include "utils/utils.h"
+#include "utils/durl.h"
 
 
 UDiskDeviceInfo::UDiskDeviceInfo()

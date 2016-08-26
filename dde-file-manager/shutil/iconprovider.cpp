@@ -355,8 +355,8 @@ QIcon IconProvider::findIcon(const QString &absoluteFilePath, const QString &mim
     QIcon theIcon;
     QString _mimeType = mimeType;
     if (m_supportImageMimeTypesSet.contains(mimeType)||
-            mimeType == "text/plain" || mimeType == "application/pdf"||
-            mimeTypeDisplayManager->defaultIcon(mimeType) == "video") {
+            mimeType == "text/plain" || mimeType == "application/pdf"/*||
+            mimeTypeDisplayManager->defaultIcon(mimeType) == "video"*/) {
         theIcon = thumbnailManager->getThumbnailIcon(absoluteFilePath);
 
         if (theIcon.isNull())

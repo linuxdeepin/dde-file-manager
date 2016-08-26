@@ -8,7 +8,7 @@
 #include <QMouseEvent>
 #include <QShowEvent>
 #include "fileitem.h"
-#include "../models/durl.h"
+#include "utils/durl.h"
 #include "../models/abstractfileinfo.h"
 #include "deviceinfo/udiskdeviceinfo.h"
 

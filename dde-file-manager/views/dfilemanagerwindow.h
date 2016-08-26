@@ -3,10 +3,8 @@
 
 #include "dmovablemainwindow.h"
 #include "dtabbar.h"
-
-#include "../models/durl.h"
-
 #include <dtitlebar.h>
+#include "utils/durl.h"
 
 #include <QMainWindow>
 #include <QDir>

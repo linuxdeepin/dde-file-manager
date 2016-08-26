@@ -1,10 +1,6 @@
 #include "filejob.h"
-#include "../app/global.h"
-#include "../app/filesignalmanager.h"
+
 #include "../shutil/fileutils.h"
-
-#include "widgets/singleton.h"
-
 #include <QFile>
 #include <QThread>
 #include <QDir>
@@ -350,7 +346,7 @@ void FileJob::jobUpdated()
     jobDataDetail.insert("file", m_srcFileName);
     jobDataDetail.insert("progress", QString::number(m_bytesCopied * 100/ m_totalSize));
     jobDataDetail.insert("destination", m_tarFileName);
-    emit fileSignalManager->jobDataUpdated(m_jobDetail, jobDataDetail);
+    emit requestJobDataUpdated(m_jobDetail, jobDataDetail);
 }
 
 void FileJob::jobAdded()
@@ -359,18 +355,18 @@ void FileJob::jobAdded()
         return;
     m_jobDetail.insert("jobId", m_id);
     m_jobDetail.insert("type", m_title);
-    emit fileSignalManager->jobAdded(m_jobDetail);
+    emit requestJobAdded(m_jobDetail);
     m_isJobAdded = true;
 }
 
 void FileJob::jobRemoved()
 {
-    emit fileSignalManager->jobRemoved(m_jobDetail);
+    emit requestJobRemoved(m_jobDetail);
 }
 
 void FileJob::jobAborted()
 {
-    emit fileSignalManager->abortTask(m_jobDetail);
+    emit requestAbortTask(m_jobDetail);
 }
 
 void FileJob::jobPrepared()
@@ -391,8 +387,8 @@ void FileJob::jobConflicted()
     jobDataDetail.insert("file", m_srcFileName);
     jobDataDetail.insert("progress", "");
     jobDataDetail.insert("destination", m_tarFileName);
-    emit fileSignalManager->jobDataUpdated(m_jobDetail, jobDataDetail);
-    emit fileSignalManager->conflictDialogShowed(m_jobDetail);
+    emit requestJobDataUpdated(m_jobDetail, jobDataDetail);
+    emit requestConflictDialogShowed(m_jobDetail);
     m_status = Paused;
 }
 

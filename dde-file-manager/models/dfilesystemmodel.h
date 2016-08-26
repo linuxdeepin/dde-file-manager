@@ -5,7 +5,7 @@
 #include <QPointer>
 #include <QDir>
 
-#include "durl.h"
+#include "utils/durl.h"
 #include "abstractfileinfo.h"
 
 QT_BEGIN_NAMESPACE

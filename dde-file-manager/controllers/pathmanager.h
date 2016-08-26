@@ -7,7 +7,7 @@
 #include <QFileSystemWatcher>
 
 #include "basemanager.h"
-#include "../models/durl.h"
+#include "utils/durl.h"
 
 class PathManager : public QObject, public BaseManager
 {
