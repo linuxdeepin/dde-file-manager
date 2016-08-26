@@ -23,6 +23,7 @@
 #include "dtitlebar.h"
 
 #include <DApplication>
+#include <DMenu>
 
 #include "mainwindow.h"
 #include "buttonlisttab.h"
@@ -33,26 +34,16 @@
 
 DWIDGET_USE_NAMESPACE
 
-MainWindow::MainWindow(DWindow *parent)
-    : QWidget(parent)
+MainWindow::MainWindow(QWidget *parent)
+    : DMainWindow(parent)
 {
     DThemeManager *themeManager = DThemeManager::instance();
 
     initTabWidget();
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
+
     mainLayout->setMargin(0);
-
-    DTitlebar *titlebar = Q_NULLPTR;
-
-    if (DApplication::isDXcbPlatform()) {
-        DPlatformWindowHandle::enableDXcbForWindow(this);
-        setWindowFlags(Qt::FramelessWindowHint);
-
-        titlebar = new DTitlebar(this);
-        mainLayout->addWidget(titlebar);
-    }
-
     mainLayout->addWidget(m_mainTab);
 
     QHBoxLayout *styleLayout = new QHBoxLayout();
@@ -70,9 +61,16 @@ MainWindow::MainWindow(DWindow *parent)
 
     mainLayout->addLayout(styleLayout);
 
-    this->setLayout(mainLayout);
+    QWidget *centralWidget = new QWidget(this);
+
+    centralWidget->setLayout(mainLayout);
+
+    setCentralWidget(centralWidget);
+
+    DTitlebar *titlebar = this->titleBar();
 
     if (titlebar) {
+
         titlebar->setMenu(new DMenu(titlebar));
 
         titlebar->menu()->addAction("testmenu1");
@@ -83,7 +81,6 @@ MainWindow::MainWindow(DWindow *parent)
 
         connect(titlebar->menu(), &DMenu::triggered, this, &MainWindow::menuItemInvoked);
     }
-
 }
 
 void MainWindow::menuItemInvoked(DAction *action)

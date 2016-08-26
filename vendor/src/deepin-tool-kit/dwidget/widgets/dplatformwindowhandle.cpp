@@ -21,12 +21,15 @@ DEFINE_CONST_CHAR(shadowOffset);
 DEFINE_CONST_CHAR(shadowColor);
 DEFINE_CONST_CHAR(clipPath);
 DEFINE_CONST_CHAR(frameMask);
+DEFINE_CONST_CHAR(frameMargins);
 
 DPlatformWindowHandle::DPlatformWindowHandle(QWindow *window, QObject *parent)
     : QObject(parent)
     , m_window(window)
 {
     enableDXcbForWindow(window);
+
+    window->installEventFilter(this);
 }
 
 DPlatformWindowHandle::DPlatformWindowHandle(QWidget *widget, QObject *parent)
@@ -36,6 +39,7 @@ DPlatformWindowHandle::DPlatformWindowHandle(QWidget *widget, QObject *parent)
     enableDXcbForWindow(widget);
 
     m_window = widget->windowHandle();
+    m_window->installEventFilter(this);
 }
 
 void DPlatformWindowHandle::enableDXcbForWindow(QWidget *widget)
@@ -107,6 +111,11 @@ QRegion DPlatformWindowHandle::frameMask() const
     return qvariant_cast<QRegion>(m_window->property(_frameMask));
 }
 
+QMargins DPlatformWindowHandle::frameMargins() const
+{
+    return qvariant_cast<QMargins>(m_window->property(_frameMargins));
+}
+
 void DPlatformWindowHandle::setWindowRadius(int windowRadius)
 {
     m_window->setProperty(_windowRadius, windowRadius);
@@ -145,6 +154,37 @@ void DPlatformWindowHandle::setClipPath(const QPainterPath &clipPath)
 void DPlatformWindowHandle::setFrameMask(const QRegion &frameMask)
 {
     m_window->setProperty(_frameMask, QVariant::fromValue(frameMask));
+}
+
+bool DPlatformWindowHandle::eventFilter(QObject *obj, QEvent *event)
+{
+    if (obj == m_window) {
+        if (event->type() == QEvent::DynamicPropertyChange) {
+            QDynamicPropertyChangeEvent *e = static_cast<QDynamicPropertyChangeEvent*>(event);
+
+            if (e->propertyName() == _windowRadius) {
+                emit windowRadiusChanged();
+            } else if (e->propertyName() == _borderWidth) {
+                emit borderWidthChanged();
+            } else if (e->propertyName() == _borderColor) {
+                emit borderColorChanged();
+            } else if (e->propertyName() == _shadowRadius) {
+                emit shadowRadiusChanged();
+            } else if (e->propertyName() == _shadowOffset) {
+                emit shadowOffsetChanged();
+            } else if (e->propertyName() == _shadowColor) {
+                emit shadowColorChanged();
+            } else if (e->propertyName() == _clipPath) {
+                emit clipPathChanged();
+            } else if (e->propertyName() == _frameMask) {
+                emit frameMaskChanged();
+            } else if (e->propertyName() == _frameMargins) {
+                emit frameMarginsChanged();
+            }
+        }
+    }
+
+    return false;
 }
 
 DWIDGET_END_NAMESPACE
