@@ -39,6 +39,9 @@ void DMainWindowPrivate::init()
         q->connect(handle, &DPlatformWindowHandle::shadowOffsetChanged, q, &DMainWindow::shadowOffsetChanged);
         q->connect(handle, &DPlatformWindowHandle::shadowRadiusChanged, q, &DMainWindow::shadowRadiusChanged);
         q->connect(handle, &DPlatformWindowHandle::windowRadiusChanged, q, &DMainWindow::windowRadiusChanged);
+        q->connect(handle, &DPlatformWindowHandle::translucentBackgroundChanged, q, &DMainWindow::translucentBackgroundChanged);
+        q->connect(handle, &DPlatformWindowHandle::enableSystemMoveChanged, q, &DMainWindow::enableSystemMoveChanged);
+        q->connect(handle, &DPlatformWindowHandle::enableSystemResizeChanged, q, &DMainWindow::enableSystemResizeChanged);
 
         q->connect(qApp, &QGuiApplication::focusWindowChanged, q, [q] {
             if (q->isActiveWindow()) {
@@ -55,6 +58,13 @@ DMainWindow::DMainWindow(QWidget *parent)
     , DObject(*new DMainWindowPrivate(this))
 {
     d_func()->init();
+}
+
+DTitlebar *DMainWindow::titleBar() const
+{
+    D_DC(DMainWindow);
+
+    return d->titlebar;
 }
 
 bool DMainWindow::isDXcbWindow() const
@@ -154,11 +164,34 @@ QMargins DMainWindow::frameMargins() const
     return d->handle->frameMargins();
 }
 
-DTitlebar *DMainWindow::titleBar() const
+bool DMainWindow::translucentBackground() const
 {
     D_DC(DMainWindow);
 
-    return d->titlebar;
+    if (!d->handle)
+        return false;
+
+    return d->handle->translucentBackground();
+}
+
+bool DMainWindow::enableSystemResize() const
+{
+    D_DC(DMainWindow);
+
+    if (!d->handle)
+        return false;
+
+    return d->handle->enableSystemResize();
+}
+
+bool DMainWindow::enableSystemMove() const
+{
+    D_DC(DMainWindow);
+
+    if (!d->handle)
+        return false;
+
+    return d->handle->enableSystemResize();
 }
 
 void DMainWindow::setWindowRadius(int windowRadius)
@@ -239,6 +272,36 @@ void DMainWindow::setFrameMask(const QRegion &frameMask)
         return;
 
     d->handle->setFrameMask(frameMask);
+}
+
+void DMainWindow::setTranslucentBackground(bool translucentBackground)
+{
+    D_D(DMainWindow);
+
+    if (!d->handle)
+        return;
+
+    d->handle->setTranslucentBackground(translucentBackground);
+}
+
+void DMainWindow::setEnableSystemResize(bool enableSystemResize)
+{
+    D_D(DMainWindow);
+
+    if (!d->handle)
+        return;
+
+    d->handle->setEnableSystemResize(enableSystemResize);
+}
+
+void DMainWindow::setEnableSystemMove(bool enableSystemMove)
+{
+    D_D(DMainWindow);
+
+    if (!d->handle)
+        return;
+
+    d->handle->setEnableSystemMove(enableSystemMove);
 }
 
 DMainWindow::DMainWindow(DMainWindowPrivate &dd, QWidget *parent)

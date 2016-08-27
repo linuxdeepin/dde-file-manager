@@ -28,6 +28,9 @@ class DPlatformWindowHandle : public QObject
     Q_PROPERTY(QPainterPath clipPath READ clipPath WRITE setClipPath NOTIFY clipPathChanged)
     Q_PROPERTY(QRegion frameMask READ frameMask WRITE setFrameMask NOTIFY frameMaskChanged)
     Q_PROPERTY(QMargins frameMargins READ frameMargins NOTIFY frameMarginsChanged)
+    Q_PROPERTY(bool translucentBackground READ translucentBackground WRITE setTranslucentBackground NOTIFY translucentBackgroundChanged)
+    Q_PROPERTY(bool enableSystemResize READ enableSystemResize WRITE setEnableSystemResize NOTIFY enableSystemResizeChanged)
+    Q_PROPERTY(bool enableSystemMove READ enableSystemMove WRITE setEnableSystemMove NOTIFY enableSystemMoveChanged)
 
 public:
     explicit DPlatformWindowHandle(QWindow *window, QObject *parent = 0);
@@ -49,6 +52,10 @@ public:
     QRegion frameMask() const;
     QMargins frameMargins() const;
 
+    bool translucentBackground() const;
+    bool enableSystemResize() const;
+    bool enableSystemMove() const;
+
 public slots:
     void setWindowRadius(int windowRadius);
 
@@ -62,6 +69,10 @@ public slots:
     void setClipPath(const QPainterPath &clipPath);
     void setFrameMask(const QRegion &frameMask);
 
+    void setTranslucentBackground(bool translucentBackground);
+    void setEnableSystemResize(bool enableSystemResize);
+    void setEnableSystemMove(bool enableSystemMove);
+
 signals:
     void frameMarginsChanged();
     void windowRadiusChanged();
@@ -72,6 +83,9 @@ signals:
     void shadowColorChanged();
     void clipPathChanged();
     void frameMaskChanged();
+    void translucentBackgroundChanged();
+    void enableSystemResizeChanged();
+    void enableSystemMoveChanged();
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event) Q_DECL_OVERRIDE;

@@ -24,9 +24,14 @@ class LIBDTKWIDGETSHARED_EXPORT DMainWindow : public QMainWindow, public DObject
     Q_PROPERTY(QPainterPath clipPath READ clipPath WRITE setClipPath NOTIFY clipPathChanged)
     Q_PROPERTY(QRegion frameMask READ frameMask WRITE setFrameMask NOTIFY frameMaskChanged)
     Q_PROPERTY(QMargins frameMargins READ frameMargins NOTIFY frameMarginsChanged)
+    Q_PROPERTY(bool translucentBackground READ translucentBackground WRITE setTranslucentBackground NOTIFY translucentBackgroundChanged)
+    Q_PROPERTY(bool enableSystemResize READ enableSystemResize WRITE setEnableSystemResize NOTIFY enableSystemResizeChanged)
+    Q_PROPERTY(bool enableSystemMove READ enableSystemMove WRITE setEnableSystemMove NOTIFY enableSystemMoveChanged)
 
 public:
     explicit DMainWindow(QWidget *parent = 0);
+
+    DTitlebar *titleBar() const;
 
     bool isDXcbWindow() const;
 
@@ -43,7 +48,9 @@ public:
     QRegion frameMask() const;
     QMargins frameMargins() const;
 
-    DTitlebar *titleBar() const;
+    bool translucentBackground() const;
+    bool enableSystemResize() const;
+    bool enableSystemMove() const;
 
 public slots:
     void setWindowRadius(int windowRadius);
@@ -58,6 +65,10 @@ public slots:
     void setClipPath(const QPainterPath &clipPath);
     void setFrameMask(const QRegion &frameMask);
 
+    void setTranslucentBackground(bool translucentBackground);
+    void setEnableSystemResize(bool enableSystemResize);
+    void setEnableSystemMove(bool enableSystemMove);
+
 signals:
     void windowRadiusChanged();
     void borderWidthChanged();
@@ -68,6 +79,9 @@ signals:
     void clipPathChanged();
     void frameMaskChanged();
     void frameMarginsChanged();
+    void translucentBackgroundChanged();
+    void enableSystemResizeChanged();
+    void enableSystemMoveChanged();
 
 protected:
     DMainWindow(DMainWindowPrivate &dd, QWidget *parent = 0);
