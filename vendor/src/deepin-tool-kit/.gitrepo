@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://cr.deepin.io/deepin-tool-kit
 	branch = master
-	commit = 322db1fd0af39ae6e9758624487f7d51305d6910
-	parent = 24e76b6354fad0a8fb3edc551f1aa24d5e0d0639
+	commit = 634f7bb5b9c9a7aed2a13f9858ba26dce8dcbf22
+	parent = 05ac7a7182de915236369bc0b865e32565414bb1
 	cmdver = 0.3.0

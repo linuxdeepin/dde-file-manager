@@ -18,7 +18,7 @@
 
 DWIDGET_BEGIN_NAMESPACE
 
-const int DefaultTitlebarHeight = 32;
+const int DefaultTitlebarHeight = 40;
 const int DefaultIconHeight = 20;
 const int DefaultIconWidth = 20;
 
@@ -44,6 +44,7 @@ private:
     QWidget             *buttonArea;
     QWidget             *titleArea;
     QWidget             *titlePadding;
+    QLabel              *separator;
 
     DMenu               *menu;
 
@@ -73,8 +74,9 @@ void DTitlebarPrivate::init()
     buttonArea      = new QWidget;
     titleArea       = new QWidget;
     titlePadding    = new QWidget;
+    separator       = new QLabel(q);
 
-    mainLayout->setContentsMargins(5, 2, 5, 0);
+    mainLayout->setContentsMargins(7, 0, 7, 0);
     mainLayout->setSpacing(0);
 
     iconLabel->setFixedSize(DefaultIconWidth, DefaultIconHeight);
@@ -83,6 +85,10 @@ void DTitlebarPrivate::init()
     titleLabel->setStyleSheet("font-size: 14px;");
     titleLabel->setContentsMargins(0, 0, DefaultIconWidth + 10, 0);
 //    q->setStyleSheet("background-color: green;");
+
+    separator->setFixedHeight(1);
+    separator->setStyleSheet("background: rgba(0, 0, 0, 20);");
+    separator->hide();
 
     QHBoxLayout *buttonAreaLayout = new QHBoxLayout;
     buttonAreaLayout->setMargin(0);
@@ -209,6 +215,14 @@ void DTitlebar::showMenu()
     d->menu->exec(d->optionButton->mapToGlobal(d->optionButton->rect().bottomLeft()));
 }
 
+void DTitlebar::showEvent(QShowEvent *event)
+{
+    D_D(DTitlebar);
+    d->separator->setFixedWidth(width() - 2);
+    d->separator->move(1, height() - d->separator->height());
+    QWidget::showEvent(event);
+}
+
 void DTitlebar::mousePressEvent(QMouseEvent *event)
 {
     D_D(DTitlebar);
@@ -280,6 +294,17 @@ void DTitlebar::setFixedHeight(int h)
     d->buttonArea->setFixedHeight(h);
 }
 
+void DTitlebar::setSeparatorVisible(bool visible)
+{
+    D_D(DTitlebar);
+    if (visible) {
+        d->separator->show();
+        d->separator->raise();
+    } else {
+        d->separator->hide();
+    }
+}
+
 void DTitlebar::setTitle(const QString &title)
 {
     D_D(DTitlebar);
@@ -307,6 +332,12 @@ int DTitlebar::buttonAreaWidth() const
 {
     D_DC(DTitlebar);
     return d->buttonArea->width();
+}
+
+bool DTitlebar::separatorVisible() const
+{
+    D_DC(DTitlebar);
+    return d->separator->isVisible();
 }
 
 void DTitlebar::setVisible(bool visible)
