@@ -21,10 +21,15 @@ class ListWidgetPrivate : public QListWidget
 {
 public:
     ListWidgetPrivate(DCrumbWidget * crumbWidget);
+
+protected:
+    void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+    void mouseReleaseEvent(QMouseEvent *event)  Q_DECL_OVERRIDE;
+    void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+
 private:
     DCrumbWidget * m_crumbWidget;
-protected:
-    void mousePressEvent(QMouseEvent *event);
+    QPoint oldGlobalPos;
 };
 
 class DCrumbWidget : public QFrame

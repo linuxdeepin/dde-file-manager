@@ -1,6 +1,7 @@
 #include "dcrumbbutton.h"
 #include <QPainter>
 #include <QDebug>
+#include <QMouseEvent>
 
 DCrumbButton::DCrumbButton(int index, const QString &text, QWidget *parent)
     : QPushButton(text, parent)
@@ -74,6 +75,25 @@ void DCrumbButton::paintEvent(QPaintEvent *e)
     }
 
     QPushButton::paintEvent(e);
+}
+
+void DCrumbButton::mouseMoveEvent(QMouseEvent *e)
+{
+    return QWidget::mouseMoveEvent(e);
+}
+
+void DCrumbButton::mousePressEvent(QMouseEvent *e)
+{
+    oldGlobalPos = e->globalPos();
+
+    return QPushButton::mousePressEvent(e);
+}
+
+void DCrumbButton::mouseReleaseEvent(QMouseEvent *e)
+{
+    if (oldGlobalPos == e->globalPos() && e->button() == Qt::LeftButton) {
+        QPushButton::mouseReleaseEvent(e);
+    }
 }
 
 DCrumbIconButton::DCrumbIconButton(int index, const QIcon &normalIcon, const QIcon &hoverIcon, const QIcon &checkedIcon, const QString &text, QWidget *parent)

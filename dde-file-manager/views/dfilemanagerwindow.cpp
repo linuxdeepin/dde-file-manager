@@ -460,7 +460,19 @@ void DFileManagerWindow::moveTopRightByRect(QRect rect){
 void DFileManagerWindow::closeEvent(QCloseEvent *event)
 {
     emit aboutToClose();
-    QMainWindow::closeEvent(event);
+    DMainWindow::closeEvent(event);
+}
+
+void DFileManagerWindow::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    if (event->y() <= m_titleFrame->height()) {
+        if (isMaximized())
+            showNormal();
+        else
+            showMaximized();
+    } else {
+        DMainWindow::mouseDoubleClickEvent(event);
+    }
 }
 
 void DFileManagerWindow::moveCenterByRect(QRect rect){
