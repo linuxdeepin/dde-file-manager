@@ -110,13 +110,11 @@ void DFileManagerWindow::initRightView()
     m_titleFrame = new QFrame;
     m_titleFrame->setObjectName("TitleBar");
     QHBoxLayout * titleLayout = new QHBoxLayout;
-    titleLayout->setMargin(0);
-    titleLayout->setSpacing(0);
     titleLayout->addWidget(m_toolbar);
     titleLayout->addWidget(m_titleBar);
 
     QWidget *empty = new QWidget;
-    empty->setFixedSize(0,1);
+    empty->setFixedSize(4, 1);
     m_titleBar->setCustomWidget(empty, Qt::AlignLeft, false);
 
     titleLayout->setSpacing(0);
