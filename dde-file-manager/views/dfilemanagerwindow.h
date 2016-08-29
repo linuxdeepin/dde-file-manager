@@ -105,7 +105,8 @@ public slots:
     void onCurrentTabClosed(const int index);
 
 protected:
-    void closeEvent(QCloseEvent* event);
+    void closeEvent(QCloseEvent* event)  Q_DECL_OVERRIDE;
+    void mouseDoubleClickEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
 
 private:
     QFrame* m_centralWidget = NULL;

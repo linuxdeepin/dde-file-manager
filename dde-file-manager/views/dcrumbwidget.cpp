@@ -576,9 +576,23 @@ ListWidgetPrivate::ListWidgetPrivate(DCrumbWidget *crumbWidget)
 
 void ListWidgetPrivate::mousePressEvent(QMouseEvent *event)
 {
+    oldGlobalPos = event->globalPos();
+
     QListWidget::mousePressEvent(event);
-    if(itemAt(event->pos()) == NULL)
-    {
+}
+
+void ListWidgetPrivate::mouseReleaseEvent(QMouseEvent *event)
+{
+    QListWidget::mouseReleaseEvent(event);
+
+    if (oldGlobalPos == event->globalPos() && itemAt(event->pos()) == NULL) {
         emit m_crumbWidget->searchBarActivated();
     }
+
+    oldGlobalPos = event->globalPos();
+}
+
+void ListWidgetPrivate::mouseMoveEvent(QMouseEvent *event)
+{
+    QWidget::mouseMoveEvent(event);
 }

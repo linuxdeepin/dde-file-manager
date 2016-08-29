@@ -17,13 +17,18 @@ public:
     QString path() const;
     void setPath(const QString &path);
 
+protected:
+    void paintEvent(QPaintEvent *e) Q_DECL_OVERRIDE;
+    void mouseMoveEvent(QMouseEvent *e) Q_DECL_OVERRIDE;
+    void mousePressEvent(QMouseEvent *e) Q_DECL_OVERRIDE;
+    void mouseReleaseEvent(QMouseEvent *e) Q_DECL_OVERRIDE;
+
 private:
     int m_index;
     QString m_name;
     QString m_path;
     QListWidgetItem * m_item;
-protected:
-    void paintEvent(QPaintEvent *e);
+    QPoint oldGlobalPos;
 };
 
 class DCrumbIconButton : public DCrumbButton
