@@ -27,6 +27,7 @@ public:
     void setCustomWidget(QWidget *, Qt::AlignmentFlag flag = Qt::AlignCenter, bool fixCenterPos = false);
     void setWindowFlags(Qt::WindowFlags type);
     int buttonAreaWidth() const;
+    bool separatorVisible() const;
 
     void setVisible(bool visible) Q_DECL_OVERRIDE;
 
@@ -42,6 +43,7 @@ signals:
 
 public slots:
     void setFixedHeight(int h);
+    void setSeparatorVisible(bool visible);
     void setTitle(const QString &title);
     void setIcon(const QPixmap &icon);
     Q_DECL_DEPRECATED void setWindowState(Qt::WindowState windowState);
@@ -50,6 +52,7 @@ private slots:
     void showMenu();
 
 protected:
+    void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
     void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;

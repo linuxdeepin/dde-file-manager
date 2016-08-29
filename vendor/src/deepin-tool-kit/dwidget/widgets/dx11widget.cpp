@@ -147,6 +147,24 @@ DX11Widget::DX11Widget(QWidget *parent): DX11Widget(*new DX11WidgetPrivate(this)
 
 }
 
+DX11Widget::DecorationFlags DX11Widget::decorationFlags()
+{
+    D_D(DX11Widget);
+    return d->decorationFlags;
+}
+
+void DX11Widget::setDecorationFlags(DX11Widget::DecorationFlags flags)
+{
+    D_D(DX11Widget);
+    d->decorationFlags = flags;
+
+    if (flags & ShowTitlebarSeparator) {
+        d->titlebar->setSeparatorVisible(true);
+    } else {
+        d->titlebar->setSeparatorVisible(false);
+    }
+}
+
 DX11Widget::DX11Widget(DX11WidgetPrivate &dd, QWidget *parent)
     : QWidget(parent), DObject(dd)
 {
@@ -158,6 +176,7 @@ DX11Widget::DX11Widget(DX11WidgetPrivate &dd, QWidget *parent)
     QWidget::setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
 
     setWindowFlags(windowFlags());
+    setDecorationFlags(decorationFlags());
 
     DX11Widget::adjustSize();
 #ifdef Q_OS_LINUX
