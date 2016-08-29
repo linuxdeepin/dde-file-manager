@@ -1324,9 +1324,31 @@ void DFileView::dropEvent(QDropEvent *event)
         }
 
         event->accept(); // yeah! we've done with XDS so stop Qt from further event propagation.
-    }
+    } else {
+        QModelIndex index = indexAt(event->pos());
 
-    DListView::dropEvent(event);
+        if (!index.isValid())
+            index = rootIndex();
+
+        if (!index.isValid())
+            return;
+
+        if (model()->supportedDropActions() & event->dropAction() && model()->flags(index) & Qt::ItemIsDropEnabled) {
+            const Qt::DropAction action = dragDropMode() == InternalMove ? Qt::MoveAction : event->dropAction();
+            if (model()->dropMimeData(event->mimeData(), action, index.row(), index.column(), index)) {
+                if (action != event->dropAction()) {
+                    event->setDropAction(action);
+                    event->accept();
+                } else {
+                    event->acceptProposedAction();
+                }
+            }
+        }
+
+        stopAutoScroll();
+        setState(NoState);
+        viewport()->update();
+    }
 }
 
 void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags flags)
