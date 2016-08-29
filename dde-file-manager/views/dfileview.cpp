@@ -113,7 +113,9 @@ void DFileView::initDelegate()
 void DFileView::initModel()
 {
     setModel(new DFileSystemModel(this));
+#ifndef CLASSICAL_SECTION
     setSelectionModel(new DFileSelectionModel(model(), this));
+#endif
 }
 
 void DFileView::initConnects()
@@ -343,17 +345,29 @@ int DFileView::horizontalOffset() const
 
 bool DFileView::isSelected(const QModelIndex &index) const
 {
+#ifndef CLASSICAL_SECTION
     return static_cast<DFileSelectionModel*>(selectionModel())->isSelected(index);
+#else
+    return selectionModel()->isSelected(index);
+#endif
 }
 
 int DFileView::selectedIndexCount() const
 {
+#ifndef CLASSICAL_SECTION
     return static_cast<const DFileSelectionModel*>(selectionModel())->selectedCount();
+#else
+    return selectionModel()->selectedIndexes().count();
+#endif
 }
 
 QModelIndexList DFileView::selectedIndexes() const
 {
+#ifndef CLASSICAL_SECTION
     return static_cast<DFileSelectionModel*>(selectionModel())->selectedIndexes();
+#else
+    return selectionModel()->selectedIndexes();
+#endif
 }
 
 QModelIndex DFileView::indexAt(const QPoint &point) const
@@ -1347,8 +1361,18 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
             return;
         }
 
+#ifndef CLASSICAL_SECTION
         return selectionModel()->select(QItemSelection(rootIndex().child(list.first().first, 0),
                                                        rootIndex().child(list.last().second, 0)), flags);
+#else
+        QItemSelection selection;
+
+        for (const RandeIndex &index : list) {
+            selection.append(QItemSelectionRange(rootIndex().child(index.first, 0), rootIndex().child(index.second, 0)));
+        }
+
+        return selectionModel()->select(selection, flags);
+#endif
     }
 
     DListView::setSelection(rect, flags);
