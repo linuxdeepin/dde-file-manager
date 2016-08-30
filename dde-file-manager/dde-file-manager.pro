@@ -314,4 +314,18 @@ help.files = help/*
 icon.path = $$ICONDIR
 icon.files = skin/images/$${TARGET}.svg
 
-INSTALLS += target desktop templateFiles translations mimetypeFiles help icon
+policy.path = $${PREFIX}/share/polkit-1/actions/
+policy.files = pkexec/com.deepin.pkexec.dde-file-manager.policy
+
+pkexec.path = /usr/bin/
+pkexec.files = pkexec/dde-file-manager-pkexec
+
+INSTALLS += target desktop templateFiles translations mimetypeFiles help icon policy pkexec
+
+isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
+
+}else{
+    xdg_autostart.path = /etc/xdg/autostart
+    xdg_autostart.files = dde-file-manager-xdg-autostart.desktop
+    INSTALLS += xdg_autostart
+}

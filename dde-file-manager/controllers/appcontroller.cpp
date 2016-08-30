@@ -145,6 +145,14 @@ void AppController::asycOpenDiskInNewWindow(const QString &path)
     actionOpenInNewWindow(m_fmEvent);
 }
 
+void AppController::actionOpenAsAdmain(const FMEvent &event)
+{
+    QStringList args;
+    args << event.fileUrl().toLocalFile();
+    qDebug() << args;
+    QProcess::startDetached("dde-file-manager-pkexec", args);
+}
+
 void AppController::actionOpenWithCustom(const FMEvent &event)
 {
     emit fileSignalManager->requestShowOpenWithDialog(event);
