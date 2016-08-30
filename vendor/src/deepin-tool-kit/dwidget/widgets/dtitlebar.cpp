@@ -76,7 +76,7 @@ void DTitlebarPrivate::init()
     titlePadding    = new QWidget;
     separator       = new QLabel(q);
 
-    mainLayout->setContentsMargins(7, 0, 7, 0);
+    mainLayout->setContentsMargins(6, 0, 6, 0);
     mainLayout->setSpacing(0);
 
     iconLabel->setFixedSize(DefaultIconWidth, DefaultIconHeight);
@@ -218,8 +218,8 @@ void DTitlebar::showMenu()
 void DTitlebar::showEvent(QShowEvent *event)
 {
     D_D(DTitlebar);
-    d->separator->setFixedWidth(width() - 2);
-    d->separator->move(1, height() - d->separator->height());
+    d->separator->setFixedWidth(width());
+    d->separator->move(0, height() - d->separator->height());
     QWidget::showEvent(event);
 }
 

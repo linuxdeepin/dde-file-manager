@@ -197,6 +197,9 @@ const CaLunarDayInfo CalendarView::getCaLunarDayInfo(int pos) const
 {
     const QDate date = m_days[pos];
 
+    if (!date.isValid()) {
+        return *emptyCaLunarDayInfo;
+    }
     if (lunarCache->contains(date))
         return lunarCache->value(date);
     if (lunarCache->size() > 300)
@@ -222,13 +225,15 @@ void CalendarView::getDbusData() const
     CaLunarDayInfo currentDayInfo;
 
     if (!lunarCache->contains(date)) {
+        if (!date.isValid()) {
+            return;
+        }
         bool o1 = true;
         QDBusReply<CaLunarMonthInfo> reply = m_DBusInter->GetLunarMonthCalendar(date.year(), date.month(), false, o1);
         QDate cacheDate;
         cacheDate.setDate(date.year(), date.month(), 1);
         foreach(const CaLunarDayInfo & dayInfo, reply.value().mCaLunarDayInfo) {
             lunarCache->insert(cacheDate, dayInfo);
-//            qDebug() << "add cache" << cacheDate << dayInfo;
             if (date == m_currentDate) {
                 currentDayInfo = dayInfo;
             }
@@ -241,8 +246,9 @@ void CalendarView::getDbusData() const
     m_cellList.at(pos)->update();
 
     // refersh lunar info
-    if (date == m_currentDate)
+    if (date == m_currentDate) {
         emit dateSelected(date, currentDayInfo);
+    }
 }
 
 void CalendarView::paintCell(QWidget *cell)

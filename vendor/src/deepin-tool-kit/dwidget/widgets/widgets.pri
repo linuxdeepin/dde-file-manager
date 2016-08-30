@@ -89,7 +89,8 @@ HEADERS += $$PWD/dslider.h\
     $$PWD/dx11widget.h \
     $$PWD/daction.h \
     $$PWD/dplatformwindowhandle.h \
-    $$PWD/dmainwindow.h
+    $$PWD/dmainwindow.h \
+    $$PWD/dblureffectwidget.h
 
 SOURCES += $$PWD/dslider.cpp \
     $$PWD/dthememanager.cpp \
@@ -156,7 +157,8 @@ SOURCES += $$PWD/dslider.cpp \
     $$PWD/dx11widget.cpp \
     $$PWD/daction.cpp \
     $$PWD/dplatformwindowhandle.cpp \
-    $$PWD/dmainwindow.cpp
+    $$PWD/dmainwindow.cpp \
+    $$PWD/dblureffectwidget.cpp
 
 RESOURCES += \
     $$PWD/themes/dui_theme_dark.qrc \

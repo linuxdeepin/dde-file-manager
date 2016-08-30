@@ -124,10 +124,10 @@ int DX11WidgetPrivate::externWidth() const
 
 void DX11WidgetPrivate::updateContentsMargins()
 {
-    rootLayout->setContentsMargins(m_ShadowWidth - shadowOffset.x(),
+    rootLayout->setContentsMargins(m_ShadowWidth + m_Border - shadowOffset.x(),
                                    m_ShadowWidth + m_Border - shadowOffset.y(),
-                                   m_ShadowWidth + shadowOffset.x(),
-                                   m_ShadowWidth + shadowOffset.y());
+                                   m_ShadowWidth + m_Border + shadowOffset.x(),
+                                   m_ShadowWidth + m_Border + shadowOffset.y());
 }
 
 void DX11WidgetPrivate::_q_onTitleBarMousePressed(Qt::MouseButtons buttons) const

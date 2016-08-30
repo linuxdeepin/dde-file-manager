@@ -43,7 +43,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
 
-    mainLayout->setMargin(0);
+    mainLayout->setMargin(5);
     mainLayout->addWidget(m_mainTab);
 
     QHBoxLayout *styleLayout = new QHBoxLayout();
@@ -72,7 +72,7 @@ MainWindow::MainWindow(QWidget *parent)
     if (titlebar) {
 
         titlebar->setMenu(new DMenu(titlebar));
-
+        titlebar->setSeparatorVisible(true);
         titlebar->menu()->addAction("testmenu1");
         titlebar->menu()->addAction("testmenu2");
         DMenu *menu = titlebar->menu()->addMenu("menu1");

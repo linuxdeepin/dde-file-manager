@@ -33,7 +33,8 @@ includes.files += widgets/DTitlebar \
     widgets/DApplication \
     widgets/DGraphicsDropShadowEffect \
     widgets/DAction \
-    widgets/DMainWindow
+    widgets/DMainWindow \
+    widgets/DBlurEffectWidget
 
 QMAKE_PKGCONFIG_NAME = DTK_WIDGET
 QMAKE_PKGCONFIG_DESCRIPTION = Deepin Tool Kit UI Module
