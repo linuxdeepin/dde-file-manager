@@ -81,6 +81,7 @@ void DFileManagerWindow::initTitleBar()
     menu->setEvent(event);
 
     titleBar()->setMenu(menu);
+    titleBar()->setContentsMargins(1, 1, 0, 0);
 
     QWidget *widget = new QWidget();
 
