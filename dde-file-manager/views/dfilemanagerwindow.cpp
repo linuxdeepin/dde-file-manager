@@ -85,7 +85,7 @@ void DFileManagerWindow::initTitleBar()
 
     QWidget *widget = new QWidget();
 
-    widget->setFixedSize(0, 1);
+    widget->setFixedSize(35, 0);
     titleBar()->setCustomWidget(widget, false);
 }
 
