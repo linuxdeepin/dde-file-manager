@@ -238,6 +238,7 @@ void FileMenuManager::initData()
     m_actionKeys[MenuAction::OpenInNewTab] = QObject::tr("Open in new tab");
     m_actionKeys[MenuAction::OpenDisk] = QObject::tr("Open");
     m_actionKeys[MenuAction::OpenDiskInNewWindow] = QObject::tr("Open in new window");
+    m_actionKeys[MenuAction::OpenAsAdmain] = QObject::tr("Open in new window as admain");
     m_actionKeys[MenuAction::OpenWith] = QObject::tr("Open with");
     m_actionKeys[MenuAction::OpenWithCustom] = QObject::tr("Others");
     m_actionKeys[MenuAction::OpenFileLocation] = QObject::tr("Open file loaction");
