@@ -335,6 +335,7 @@ QVector<MenuAction> AbstractFileInfo::menuActionList(AbstractFileInfo::MenuType 
                    << MenuAction::Separator
                    << MenuAction::DisplayAs
                    << MenuAction::SortBy
+                   << MenuAction::OpenAsAdmain
                    << MenuAction::OpenInTerminal
                    << MenuAction::Separator
                    << MenuAction::Paste
@@ -347,6 +348,7 @@ QVector<MenuAction> AbstractFileInfo::menuActionList(AbstractFileInfo::MenuType 
             actionKeys << MenuAction::Open
                        << MenuAction::OpenInNewWindow
                        << MenuAction::OpenInNewTab
+                       << MenuAction::OpenAsAdmain
                        << MenuAction::Separator
                        << MenuAction::Copy
                        << MenuAction::CreateSymlink
@@ -360,8 +362,9 @@ QVector<MenuAction> AbstractFileInfo::menuActionList(AbstractFileInfo::MenuType 
             actionKeys << MenuAction::Open;
 
             if (isDir()){
-                actionKeys << MenuAction::OpenInNewWindow;
-                actionKeys << MenuAction::OpenInNewTab;
+                actionKeys << MenuAction::OpenInNewWindow
+                           << MenuAction::OpenInNewTab
+                           << MenuAction::OpenAsAdmain;
             }else{
                 if (!isDesktopFile())
                     actionKeys << MenuAction::OpenWith;
