@@ -17,6 +17,7 @@ public:
         OpenInNewWindow,
         OpenInNewTab,
         OpenDiskInNewWindow,
+        OpenAsAdmain,
         OpenWith,
         OpenWithCustom,
         OpenFileLocation,
