@@ -51,7 +51,7 @@ void DToolBar::initUI()
     mainLayout->addWidget(m_addressToolBar);
     mainLayout->addWidget(m_contollerToolBar);
     mainLayout->setSpacing(0);
-    mainLayout->setContentsMargins(14, 0, 48, 0);
+    mainLayout->setContentsMargins(14, 0, 14, 0);
     setLayout(mainLayout);
 }
 
