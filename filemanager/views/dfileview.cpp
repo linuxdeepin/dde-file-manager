@@ -1333,6 +1333,9 @@ void DFileView::dropEvent(QDropEvent *event)
         if (!index.isValid())
             return;
 
+        if (isSelected(index))
+            return;
+
         if (model()->supportedDropActions() & event->dropAction() && model()->flags(index) & Qt::ItemIsDropEnabled) {
             const Qt::DropAction action = dragDropMode() == InternalMove ? Qt::MoveAction : event->dropAction();
             if (model()->dropMimeData(event->mimeData(), action, index.row(), index.column(), index)) {
