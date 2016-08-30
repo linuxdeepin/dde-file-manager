@@ -192,7 +192,7 @@ void MountAskPasswordDialog::handleConnect()
 void MountAskPasswordDialog::togglePasswordFrame(int id)
 {
     if (id == 0){
-        setFixedSize(QSize(380, 142));
+        setFixedSize(QSize(380, 152));
         m_passwordFrame->hide();
     }else{
         setFixedSize(QSize(380, 280));
