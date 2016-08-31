@@ -15,6 +15,12 @@ class LIBDTKWIDGETSHARED_EXPORT DX11Widget : public QWidget, public DObject
 {
     Q_OBJECT
 public:
+    enum DecorationFlag {
+        ShowTitlebarSeparator = 0x01
+    };
+    Q_DECLARE_FLAGS(DecorationFlags, DecorationFlag)
+    Q_FLAG(DecorationFlags)
+
     explicit DX11Widget(QWidget *parent = 0);
 
     Q_PROPERTY(int radius READ radius WRITE setRadius)
@@ -26,6 +32,9 @@ public:
     Q_PROPERTY(QColor shadowColor READ shadowColor WRITE setShadowColor NOTIFY shadowColorChanged)
     Q_PROPERTY(QPoint shadowOffset READ shadowOffset WRITE setShadowOffset NOTIFY shadowOffsetChanged)
 
+    DecorationFlags decorationFlags();
+    void setDecorationFlags(DecorationFlags flags);
+
     Qt::WindowFlags windowFlags();
     void setWindowFlags(Qt::WindowFlags type);
 
@@ -36,6 +45,7 @@ public:
 
     void setTitlebarMenu(DMenu *);
     void setTitlebarWidget(QWidget *, bool fixCenterPos = false);
+    void setTitlebarWidget(QWidget *w, Qt::AlignmentFlag wflag, bool fixCenterPos = false);
     int titlebarHeight() const;
     void setTitlebarFixedHeight(int h);
 
@@ -126,7 +136,7 @@ public slots:
     void showFullScreen();
     void showNormal();
 
-    void moveWindow();
+    void moveWindow(Qt::MouseButton botton);
     void toggleMaximizedWindow();
 
     void setBackgroundColor(QColor backgroundColor);
@@ -145,6 +155,7 @@ Q_SIGNALS:
     void shadowOffsetChanged(QPoint shadowOffset);
 
 private:
+    D_PRIVATE_SLOT(void _q_onTitleBarMousePressed(Qt::MouseButtons) const)
 
     D_DECLARE_PRIVATE(DX11Widget)
 };

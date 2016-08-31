@@ -18,6 +18,12 @@
 #include "dswitchbutton.h"
 #include "segmentedcontrol.h"
 #include "dcolorpicker.h"
+#include "daction.h"
+#include "dplatformwindowhandle.h"
+#include "dtitlebar.h"
+
+#include <DApplication>
+#include <DMenu>
 
 #include "mainwindow.h"
 #include "buttonlisttab.h"
@@ -28,15 +34,16 @@
 
 DWIDGET_USE_NAMESPACE
 
-MainWindow::MainWindow(DWindow *parent)
-    : DWindow(parent)
+MainWindow::MainWindow(QWidget *parent)
+    : DMainWindow(parent)
 {
     DThemeManager *themeManager = DThemeManager::instance();
 
     initTabWidget();
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
-    mainLayout->setMargin(0);
+
+    mainLayout->setMargin(5);
     mainLayout->addWidget(m_mainTab);
 
     QHBoxLayout *styleLayout = new QHBoxLayout();
@@ -54,19 +61,26 @@ MainWindow::MainWindow(DWindow *parent)
 
     mainLayout->addLayout(styleLayout);
 
-    this->setContentLayout(mainLayout);
+    QWidget *centralWidget = new QWidget(this);
 
-    dbusMenu()->addAction("testmenu1");
-    dbusMenu()->addAction("testmenu2");
+    centralWidget->setLayout(mainLayout);
 
-#ifdef Q_OS_LINUX
-    DMenu *menu = dbusMenu()->addMenu("menu1");
+    setCentralWidget(centralWidget);
 
-    menu->addAction("menu1->action1");
-    menu->addAction("menu2->action2");
+    DTitlebar *titlebar = this->titleBar();
 
-    connect(dbusMenu(), &DMenu::triggered, this, &MainWindow::menuItemInvoked);
-#endif
+    if (titlebar) {
+
+        titlebar->setMenu(new DMenu(titlebar));
+        titlebar->setSeparatorVisible(true);
+        titlebar->menu()->addAction("testmenu1");
+        titlebar->menu()->addAction("testmenu2");
+        DMenu *menu = titlebar->menu()->addMenu("menu1");
+        menu->addAction("menu1->action1");
+        menu->addAction("menu1->action2");
+
+        connect(titlebar->menu(), &DMenu::triggered, this, &MainWindow::menuItemInvoked);
+    }
 }
 
 void MainWindow::menuItemInvoked(DAction *action)

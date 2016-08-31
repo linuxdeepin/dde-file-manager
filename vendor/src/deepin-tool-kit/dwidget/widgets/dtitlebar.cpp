@@ -13,12 +13,16 @@
 #include "dwindowrestorebutton.h"
 #include "dwindowoptionbutton.h"
 #include "dlabel.h"
+#include "dplatformwindowhandle.h"
+#ifdef Q_OS_LINUX
+#include "../platforms/x11/xutil.h"
+#endif
 
 #include  "dmenu.h"
 
 DWIDGET_BEGIN_NAMESPACE
 
-const int DefaultTitlebarHeight = 32;
+const int DefaultTitlebarHeight = 40;
 const int DefaultIconHeight = 20;
 const int DefaultIconWidth = 20;
 
@@ -30,6 +34,7 @@ protected:
 private:
     void init();
     void _q_toggleWindowState();
+    void _q_showMinimized();
 
     QHBoxLayout         *mainLayout;
     DLabel              *iconLabel;
@@ -44,6 +49,7 @@ private:
     QWidget             *buttonArea;
     QWidget             *titleArea;
     QWidget             *titlePadding;
+    QLabel              *separator;
 
     DMenu               *menu;
 
@@ -73,8 +79,9 @@ void DTitlebarPrivate::init()
     buttonArea      = new QWidget;
     titleArea       = new QWidget;
     titlePadding    = new QWidget;
+    separator       = new QLabel(q);
 
-    mainLayout->setContentsMargins(5, 2, 5, 0);
+    mainLayout->setContentsMargins(6, 0, 6, 0);
     mainLayout->setSpacing(0);
 
     iconLabel->setFixedSize(DefaultIconWidth, DefaultIconHeight);
@@ -84,7 +91,12 @@ void DTitlebarPrivate::init()
     titleLabel->setContentsMargins(0, 0, DefaultIconWidth + 10, 0);
 //    q->setStyleSheet("background-color: green;");
 
+    separator->setFixedHeight(1);
+    separator->setStyleSheet("background: rgba(0, 0, 0, 20);");
+    separator->hide();
+
     QHBoxLayout *buttonAreaLayout = new QHBoxLayout;
+	buttonAreaLayout->setContentsMargins(0, 1, 0, 0);
     buttonAreaLayout->setMargin(0);
     buttonAreaLayout->setSpacing(0);
     buttonAreaLayout->addWidget(optionButton);
@@ -133,15 +145,29 @@ void DTitlebarPrivate::_q_toggleWindowState()
 
     QWidget *parentWindow = q->parentWidget();
 
-    if (!parentWindow)
+    if (!parentWindow) {
         return;
+    }
 
     parentWindow = parentWindow->window();
 
-    if (parentWindow->windowState() == Qt::WindowMaximized) {
+    if (parentWindow->isMaximized()) {
         parentWindow->showNormal();
-    } else if (parentWindow->windowState() == Qt::WindowNoState) {
+    } else if (!parentWindow->isFullScreen()) {
         parentWindow->showMaximized();
+    }
+}
+
+void DTitlebarPrivate::_q_showMinimized()
+{
+    if (DPlatformWindowHandle::isEnabledDXcb(parentWindow)) {
+        parentWindow->showMinimized();
+    } else {
+#ifdef Q_OS_LINUX
+        XUtils::ShowMinimizedWindow(parentWindow, true);
+#else
+        parentWindow->showMinimized();
+#endif
     }
 }
 
@@ -178,7 +204,9 @@ QWidget *DTitlebar::customWidget() const
 void DTitlebar::setWindowFlags(Qt::WindowFlags type)
 {
     D_D(DTitlebar);
-    d->titleLabel->setVisible(type & Qt::WindowTitleHint);
+    if (d->titleLabel) {
+        d->titleLabel->setVisible(type & Qt::WindowTitleHint);
+    }
     d->iconLabel->setVisible(type & Qt::WindowTitleHint);
     d->minButton->setVisible(type & Qt::WindowMinimizeButtonHint);
     d->maxButton->setVisible(type & Qt::WindowMaximizeButtonHint);
@@ -206,19 +234,28 @@ void DTitlebar::showMenu()
     d->menu->exec(d->optionButton->mapToGlobal(d->optionButton->rect().bottomLeft()));
 }
 
+void DTitlebar::showEvent(QShowEvent *event)
+{
+    D_D(DTitlebar);
+    d->separator->setFixedWidth(width());
+    d->separator->move(0, height() - d->separator->height());
+    QWidget::showEvent(event);
+}
+
 void DTitlebar::mousePressEvent(QMouseEvent *event)
 {
     D_D(DTitlebar);
-
     d->mousePressed = (event->buttons() == Qt::LeftButton);
+
+    emit mousePressed(event->buttons());
 }
 
 void DTitlebar::mouseReleaseEvent(QMouseEvent *event)
 {
     D_D(DTitlebar);
-
-    if (event->buttons() == Qt::LeftButton)
+    if (event->buttons() == Qt::LeftButton) {
         d->mousePressed = false;
+    }
 }
 
 bool DTitlebar::eventFilter(QObject *obj, QEvent *event)
@@ -262,6 +299,7 @@ void DTitlebar::setCustomWidget(QWidget *w, Qt::AlignmentFlag wflag, bool fixCen
     l->addWidget(w);
     l->setAlignment(w, wflag);
     qDeleteAll(d->coustomAtea->children());
+    d->titleLabel = nullptr;
     d->coustomAtea->setLayout(l);
     d->buttonArea->resize(old);
     d->customWidget = w;
@@ -275,17 +313,32 @@ void DTitlebar::setFixedHeight(int h)
     d->buttonArea->setFixedHeight(h);
 }
 
+void DTitlebar::setSeparatorVisible(bool visible)
+{
+    D_D(DTitlebar);
+    if (visible) {
+        d->separator->show();
+        d->separator->raise();
+    } else {
+        d->separator->hide();
+    }
+}
+
 void DTitlebar::setTitle(const QString &title)
 {
     D_D(DTitlebar);
-    d->titleLabel->setText(title);
+    if (d->titleLabel) {
+        d->titleLabel->setText(title);
+    }
 }
 
 void DTitlebar::setIcon(const QPixmap &icon)
 {
     D_D(DTitlebar);
-    d->titleLabel->setContentsMargins(0, 0, 0, 0);
-    d->iconLabel->setPixmap(icon.scaled(DefaultIconWidth, DefaultIconHeight, Qt::KeepAspectRatio));
+    if (d->titleLabel) {
+        d->titleLabel->setContentsMargins(0, 0, 0, 0);
+        d->iconLabel->setPixmap(icon.scaled(DefaultIconWidth, DefaultIconHeight, Qt::KeepAspectRatio));
+    }
 }
 
 void DTitlebar::setWindowState(Qt::WindowState windowState)
@@ -294,54 +347,72 @@ void DTitlebar::setWindowState(Qt::WindowState windowState)
     d->maxButton->setWindowState(windowState);
 }
 
+void DTitlebar::toggleWindowState()
+{
+    D_D(DTitlebar);
+
+    d->_q_toggleWindowState();
+}
+
 int DTitlebar::buttonAreaWidth() const
 {
     D_DC(DTitlebar);
     return d->buttonArea->width();
 }
 
+bool DTitlebar::separatorVisible() const
+{
+    D_DC(DTitlebar);
+    return d->separator->isVisible();
+}
+
 void DTitlebar::setVisible(bool visible)
 {
     D_D(DTitlebar);
 
-    if (visible == isVisible())
+    if (visible == isVisible()) {
         return;
+    }
 
     QWidget::setVisible(visible);
 
     if (visible) {
         d->parentWindow = parentWidget();
 
-        if (!d->parentWindow)
+        if (!d->parentWindow) {
             return;
+        }
 
         d->parentWindow = d->parentWindow->window();
         d->parentWindow->installEventFilter(this);
 
         connect(d->maxButton, SIGNAL(clicked()), this, SLOT(_q_toggleWindowState()));
         connect(this, SIGNAL(doubleClicked()), this, SLOT(_q_toggleWindowState()));
-        connect(d->minButton, &DWindowMinButton::clicked, d->parentWindow, &QWidget::showMinimized);
+        connect(d->minButton, SIGNAL(clicked()), this, SLOT(_q_showMinimized()));
         connect(d->closeButton, &DWindowCloseButton::clicked, d->parentWindow, &QWidget::close);
     } else {
-        if (!d->parentWindow)
+        if (!d->parentWindow) {
             return;
+        }
 
         d->parentWindow->removeEventFilter(this);
 
         disconnect(d->maxButton, SIGNAL(clicked()), this, SLOT(_q_toggleWindowState()));
         disconnect(this, SIGNAL(doubleClicked()), this, SLOT(_q_toggleWindowState()));
-        disconnect(d->minButton, &DWindowMinButton::clicked, d->parentWindow, &QWidget::showMinimized);
+        disconnect(d->minButton, SIGNAL(clicked()), this, SLOT(_q_showMinimized()));
         disconnect(d->closeButton, &DWindowCloseButton::clicked, d->parentWindow, &QWidget::close);
     }
 }
 
 void DTitlebar::mouseMoveEvent(QMouseEvent *event)
 {
-    Q_UNUSED(event)
     D_DC(DTitlebar);
 
-    if (d->mousePressed)
-        emit mouseMoving();
+    if (event->buttons() == Qt::LeftButton /*&& d->mousePressed*/) {
+        Qt::MouseButton button = event->buttons() & Qt::LeftButton ? Qt::LeftButton : Qt::NoButton;
+        emit mouseMoving(button);
+    }
+    QWidget::mouseMoveEvent(event);
 }
 
 void DTitlebar::mouseDoubleClickEvent(QMouseEvent *event)

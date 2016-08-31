@@ -11,6 +11,8 @@ public:
 
 private slots:
     void testLogPath();
+
+    void testPathChange();
 };
 
 #endif // DUTILTESTER_H

@@ -18,6 +18,8 @@ class QBoxLayout;
 
 DWIDGET_BEGIN_NAMESPACE
 
+class DPlatformWindowHandle;
+
 class DAbstractDialogPrivate : public DObjectPrivate
 {
 protected:
@@ -36,6 +38,8 @@ private:
     QColor backgroundColor;
     QColor borderColor;
     DAbstractDialog::DisplayPostion displayPostion;
+
+    DPlatformWindowHandle *handle = Q_NULLPTR;
 
     Q_DECLARE_PUBLIC(DAbstractDialog)
 };
