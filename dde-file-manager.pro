@@ -310,7 +310,11 @@ help.files = help/*
 icon.path = $$ICONDIR
 icon.files = skin/images/$${TARGET}.svg
 
-INSTALLS += target desktop templateFiles translations mimetypeFiles help icon
+dde-xdg-user-dirs-update.path = $$BINDIR
+dde-xdg-user-dirs-update.files = $$PWD/dde-xdg-user-dirs-update.sh
+
+
+INSTALLS += target desktop templateFiles translations mimetypeFiles help icon dde-xdg-user-dirs-update
 
 isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
 
