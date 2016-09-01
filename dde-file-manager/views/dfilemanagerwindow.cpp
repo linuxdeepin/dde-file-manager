@@ -157,9 +157,8 @@ void DFileManagerWindow::initToolBar()
 
 void DFileManagerWindow::initTabBar()
 {
-    m_tabBar = new DTabBar(this);
+    m_tabBar = new TabBar(this);
     m_tabBar->setFixedHeight(24);
-    m_tabBar->setObjectName("TabBar");
 
     m_newTabButton = new QPushButton(this);
     m_newTabButton->setObjectName("NewTabButton");
@@ -219,10 +218,10 @@ void DFileManagerWindow::initConnect()
     connect(fileSignalManager, &FileSignalManager::fetchNetworksSuccessed, this, &DFileManagerWindow::cd);
     connect(fileSignalManager, &FileSignalManager::requestChangeCurrentUrl,this, &DFileManagerWindow::preHandleCd);
 
-    connect(m_tabBar, &DTabBar::tabMoved, m_toolbar, &DToolBar::moveNavStacks);
-    connect(m_tabBar, &DTabBar::currentChanged,this, &DFileManagerWindow::onCurrentTabChanged);
-    connect(m_tabBar, &DTabBar::tabCloseRequested, this,&DFileManagerWindow::onCurrentTabClosed);
-    connect(m_tabBar, &DTabBar::tabAddableChanged, this, &DFileManagerWindow::onTabAddableChanged);
+    connect(m_tabBar, &TabBar::tabMoved, m_toolbar, &DToolBar::moveNavStacks);
+    connect(m_tabBar, &TabBar::currentChanged,this, &DFileManagerWindow::onCurrentTabChanged);
+    connect(m_tabBar, &TabBar::tabCloseRequested, this,&DFileManagerWindow::onCurrentTabClosed);
+    connect(m_tabBar, &TabBar::tabAddableChanged, this, &DFileManagerWindow::onTabAddableChanged);
     connect(m_newTabButton, &QPushButton::clicked, this, [=]{
         FMEvent event;
         const DUrl url = DUrl::fromUserInput(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0));
@@ -234,9 +233,7 @@ void DFileManagerWindow::initConnect()
 
 void DFileManagerWindow::onCurrentTabClosed(const int index){
 
-//    qDebug()<<"<<<<<<<<<<<<<<< current tab closed: tab index:"<<index<<","<<"view index:"<<m_tabBar->tabData(index).toInt();
-
-    int viewIndex = m_tabBar->tabData(index).toInt();
+    int viewIndex = m_tabBar->tabData(index).toJsonObject()["viewIndex"].toInt();
     DFileView *currentView =qobject_cast<DFileView*>(m_viewStackLayout->widget(viewIndex));
     m_viewStackLayout->removeWidget(currentView);
 
@@ -247,32 +244,40 @@ void DFileManagerWindow::onCurrentTabClosed(const int index){
 
     //recorrect view index
     for(int i = 0; i<m_tabBar->count(); i++){
-        int newViewIndex = m_tabBar->tabData(i).toInt();
+        int newViewIndex = m_tabBar->tabData(i).toJsonObject()["viewIndex"].toInt();
         if(newViewIndex >= viewIndex){
             newViewIndex--;
-            m_tabBar->setTabData(i,newViewIndex);
+            QJsonObject tabData = m_tabBar->tabData(i).toJsonObject();
+            tabData["viewIndex"] = newViewIndex;
+            m_tabBar->setTabData(i,tabData);
         }
-    }
-
-    //recorrect tab's button index
-    for(int i = index; i<m_tabBar->count(); i++){
-        DTabCloseButton *closeButton = qobject_cast<DTabCloseButton*>(m_tabBar->tabButton(i, QTabBar::RightSide));
-        closeButton->setTabIndex(closeButton->tabIndex()-1);
     }
 
     m_tabBar->removeTab(index);
     if(m_tabBar->count()<8)
         emit m_tabBar->tabAddableChanged(true);
 
+    if(m_tabBar->count()<2)
+        m_tabBar->hide();
+
     if(m_tabBar->isHidden())
         m_newTabButton->hide();
+
+    /**For the tab close button below the cursor doesn't response a hover event on a tab closing action ,
+     *just move the cursor to refresh that event;
+     **/
+    QPoint localPos = QCursor::pos();
+    localPos -= QPoint(18,0);
+    QCursor::setPos(localPos);
+    localPos += QPoint(18,0);
+    QCursor::setPos(localPos);
 }
 
 void DFileManagerWindow::onTabAddableChanged(bool addable){
     m_newTabButton->setEnabled(addable);
 }
 void DFileManagerWindow::onCurrentTabChanged(int tabIndex){
-    int viewIndex = m_tabBar->tabData(tabIndex).toInt();
+    int viewIndex = m_tabBar->tabData(tabIndex).toJsonObject()["viewIndex"].toInt();
     switchToView(viewIndex);
     m_toolbar->switchHistoryStack(tabIndex,m_fileView->currentUrl());
 }
@@ -409,27 +414,20 @@ void DFileManagerWindow::createNewView(const FMEvent &event)
     const AbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
     QString urlDisplayName = fileInfo->displayName();
 
-    m_tabBar->addTabWithData(viewIndex,urlDisplayName);
+    m_tabBar->addTabWithData(viewIndex,urlDisplayName,fileInfo->path());
     m_tabBar->setCurrentIndex(m_tabBar->count()-1);
     connect(view, &DFileView::viewModeChanged, m_toolbar, &DToolBar::checkViewModeButton);
 
     if(!m_tabBar->isHidden())
         m_newTabButton->show();
-
-//    if(m_tabBar->count() >= 8)
-//        emit m_tabBar->tabAddableChanged(false);
-
-
 }
 
 void DFileManagerWindow::onFileViewCurrentUrlChanged(const DUrl &url){
     int viewIndex = m_viewStackLayout->indexOf(m_fileView);
-    FMEvent event;
-    event = window()->winId();
     const AbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
     QString urlDisplayName = fileInfo->displayName();
 
-    m_tabBar->setTabText(urlDisplayName,viewIndex,event);
+    m_tabBar->setTabText(viewIndex,urlDisplayName, url.path());
 }
 
 void DFileManagerWindow::switchToView(const int viewIndex){
