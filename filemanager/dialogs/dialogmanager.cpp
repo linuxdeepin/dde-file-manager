@@ -37,6 +37,7 @@
 #include <QTimer>
 #include <QDesktopWidget>
 #include <QApplication>
+#include <QScreen>
 
 DWIDGET_USE_NAMESPACE
 
@@ -103,8 +104,21 @@ void DialogManager::initConnect()
 
 QPoint DialogManager::getPerportyPos(int dialogWidth, int dialogHeight, int count, int index)
 {
-    int desktopWidth = qApp->desktop()->geometry().width();
-    int desktopHeight = qApp->desktop()->geometry().height();
+    const QScreen *cursor_screen = Q_NULLPTR;
+    const QPoint &cursor_pos = QCursor::pos();
+
+    for (const QScreen *screen : qApp->screens()) {
+        if (screen->geometry().contains(cursor_pos)) {
+            cursor_screen = screen;
+            break;
+        }
+    }
+
+    if (!cursor_screen)
+        cursor_screen = qApp->primaryScreen();
+
+    int desktopWidth = cursor_screen->size().width();
+    int desktopHeight = cursor_screen->size().height();
     int SpaceWidth = 20;
     int SpaceHeight = 100;
     int row, x , y;
@@ -133,9 +147,7 @@ QPoint DialogManager::getPerportyPos(int dialogWidth, int dialogHeight, int coun
 
     y = (desktopHeight - dialogsHeight) / 2 + (index / numberPerRow) * SpaceHeight;
 
-    qDebug() << desktopHeight <<  dialogsHeight << dialogHeight << y;
-
-    return QPoint(x, y);
+    return QPoint(x, y) + cursor_screen->geometry().topLeft();
 
 }
 
