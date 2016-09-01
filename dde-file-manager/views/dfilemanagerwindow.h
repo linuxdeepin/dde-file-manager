@@ -12,6 +12,8 @@
 #include <QDir>
 #include <QMap>
 
+#include <QCursor>
+
 #define DEFAULT_WINDOWS_WIDTH 960
 #define DEFAULT_WINDOWS_HEIGHT 540
 #define LEFTSIDEBAR_MAX_WIDTH 200
@@ -113,7 +115,7 @@ private:
     DLeftSideBar* m_leftSideBar = NULL;
     QFrame* m_rightView = NULL;
     DToolBar* m_toolbar = NULL;
-    DTabBar* m_tabBar = NULL;
+    TabBar* m_tabBar = NULL;
     QPushButton *m_newTabButton;
     DFileView* m_fileView = NULL;
     ComputerView* m_computerView = NULL;
@@ -125,6 +127,7 @@ private:
     QStackedLayout* m_viewStackLayout=NULL;
 
     QMap<DUrl, QWidget*> m_views={};
+
 };
 
 #endif // DFILEMANAGERWINDOW_H
