@@ -43,8 +43,6 @@ private:
     QHBoxLayout * m_layout;
     QLabel * m_label;
     DPictureSequenceView* m_loadingIndicator;
-
-    QSizeGrip* m_sizeGrip;
 };
 
 #endif // DSTATUSBAR_H
