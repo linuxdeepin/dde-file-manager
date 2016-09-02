@@ -50,7 +50,7 @@ private:
     int m_y = 0;
     int m_width = 950;
     int m_height = 600;
-    int m_windowState;
+    int m_windowState = 0;
 };
 
 
