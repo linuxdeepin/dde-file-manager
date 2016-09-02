@@ -2,22 +2,26 @@
 #include <QDBusConnection>
 #include <QDBusConnectionInterface>
 #include <QDebug>
-#include "fileoperation.h"
+#include <DLog>
+#include "app/global.h"
+#include "app/filemanagerdaemon.h"
+#include "client/filemanagerclient.h"
 
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
     QDBusConnection connection = QDBusConnection::systemBus();
-    QString service = "com.deepin.filemanager.daemon";
-    QString objectPath = "/com/deepin/filemanager/daemon/Operations";
-    if (!connection.interface()->isServiceRegistered(service)){
-        qDebug() << connection.registerService(service) << "register" << service << "success";
-        FileOperation fileOperation(service, objectPath);
+    DTK_UTIL_NAMESPACE::DLogManager::registerConsoleAppender();
+    DTK_UTIL_NAMESPACE::DLogManager::registerFileAppender();
+    if (!connection.interface()->isServiceRegistered(DaemonServicePath)){
+        qDebug() << connection.registerService(DaemonServicePath) << "register" << DaemonServicePath << "success";
+        FileManagerDaemon* daemon = new FileManagerDaemon();
+        qDebug() << daemon;
         return a.exec();
     }else{
         qDebug() << "dde-file-manager-daemon is runing";
-//        RenameJobInterface renameJobInterface("com.deepin.filemanager.daemon", "/com/deepin/filemanager/daemon/RenameJob", connection);
-//        renameJobInterface.Execute();
-        return 0;
+        FileManagerClient* client = new FileManagerClient();
+        qDebug() << client << QCoreApplication::applicationPid();
+        return a.exec();
     }
 }
