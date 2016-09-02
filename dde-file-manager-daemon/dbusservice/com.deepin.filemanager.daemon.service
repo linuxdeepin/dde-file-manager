@@ -1,4 +1,4 @@
 [D-BUS Service]
 Name=com.deepin.filemanager.daemon
-Exec=pkexec /usr/bin/dde-fiel-manager-daemon
+Exec=/usr/bin/dde-file-manager-daemon
 User=root

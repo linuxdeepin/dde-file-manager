@@ -1,0 +1,34 @@
+#!/bin/bash
+
+echo "=====fileoperation====="
+qdbusxml2cpp -i controllers/fileoperation.h  -i dbusservice/dbustype/dbusinforet.h -c FileOperationAdaptor -l FileOperation -a dbusadaptor/fileoperation_adaptor fileoperation.xml
+qdbusxml2cpp -i dbusservice/dbustype/dbusinforet.h -c FileOperationInterface -p dbusinterface/fileoperation_interface fileoperation.xml
+
+
+echo "=====createfolderjob====="
+qdbusxml2cpp -i fileoperationjob/createfolderjob.h -c CreateFolderJobAdaptor -l CreateFolderJob -a dbusadaptor/createfolderjob_adaptor createfolderjob.xml
+qdbusxml2cpp -c CreateFolderJobInterface -p dbusinterface/createfolderjob_interface createfolderjob.xml
+
+
+echo "=====createtemplatefilejob====="
+qdbusxml2cpp -i fileoperationjob/createtemplatefilejob.h -c CreateTemplateFileAdaptor -l CreateTemplateFileJob -a dbusadaptor/createtemplatefilejob_adaptor createtemplatefilejob.xml
+qdbusxml2cpp -c CreateTemplateFileInterface -p dbusinterface/createtemplatefilejob_interface createtemplatefilejob.xml
+
+
+echo "=====copyjob====="
+qdbusxml2cpp -i fileoperationjob/copyjob.h -c CopyJobAdaptor -l CopyJob -a dbusadaptor/copyjob_adaptor copyjob.xml
+qdbusxml2cpp -c CopyJobInterface -p dbusinterface/copyjob_interface copyjob.xml
+
+
+echo "=====movejob====="
+qdbusxml2cpp -i fileoperationjob/movejob.h -c MoveJobAdaptor -l MoveJob -a dbusadaptor/movejob_adaptor movejob.xml
+qdbusxml2cpp -c MoveJobInterface -p dbusinterface/movejob_interface movejob.xml
+
+
+echo "=====renamejob====="
+qdbusxml2cpp -i fileoperationjob/renamejob.h -c RenameJobAdaptor -l RenameJob -a dbusadaptor/renamejob_adaptor renamejob.xml
+qdbusxml2cpp -c RenameJobInterface -p dbusinterface/renamejob_interface renamejob.xml
+
+echo "=====deletejob====="
+qdbusxml2cpp -i fileoperationjob/deletejob.h -c DeleteJobAdaptor -l DeleteJob -a dbusadaptor/deletejob_adaptor deletejob.xml
+qdbusxml2cpp -c DeleteJobInterface -p dbusinterface/deletejob_interface deletejob.xml
