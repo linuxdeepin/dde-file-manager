@@ -516,21 +516,21 @@ QScrollArea#ComputerView{
 }
 
 /*TabBar*/
-DTabBar#TabBar{
+TabBar#TabBar{
     background-color: transparent;
     border: none;
 }
 /*TabBar tab */
-DTabBar#TabBar::tab{
+TabBar>Tab#Tab{
     border-right: 1px solid rgba(0,0,0,30);
     border-bottom: 1px solid rgba(0,0,0,30);
     background-color: #fafafa;
     color: #949494;
     border-radius: 0px;
     font-size: 12px;
-    margin-top: -4px;
+    margin-top: -2px;
 }
-DTabBar#TabBar::tab:selected {
+TabBar>Tab#Tab:selected {
     border-right: 1px solid rgba(0,0,0,30);
     border-bottom: 1px solid rgba(0,0,0,30);
     background-color: #ffffff;
@@ -538,7 +538,7 @@ DTabBar#TabBar::tab:selected {
     border-radius: 0px;
     font-size: 12px;
 }
-DTabBar#TabBar::tab:!selected:hover {
+TabBar>Tab#Tab:hover {
     border-right: 1px solid rgba(0,0,0,30);
     border-bottom: 1px solid rgba(0,0,0,30);
     background-color: #ededed;
@@ -546,7 +546,7 @@ DTabBar#TabBar::tab:!selected:hover {
     border-radius: 0px;
     font-size: 12px;
 }
-QTabBar::tab:!selected {
+TabBar>Tab#Tab:!selected {
     margin-top: 0px; /* make non-selected tabs look smaller */
 }
 /* tabBar tab close button*/
@@ -554,6 +554,7 @@ DTabCloseButton#TabCloseButton{
     border:none;
     image: url(:/icons/images/icons/tab_close_normal.png);
     subcontrol-position: center center;
+    margin-left: 0px;
 }
 DTabCloseButton#TabCloseButton:hover{
     image: url(:/icons/images/icons/tab_close_hover.png);
