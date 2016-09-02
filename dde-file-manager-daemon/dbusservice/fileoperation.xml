@@ -1,10 +1,45 @@
 <!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
 <node>
     <interface name="com.deepin.filemanager.daemon.Operations">
+        
+        <method name="NewCreateFolderJob">
+            <arg type="s" name="fabspath" direction="in"/>
+            <arg type="(so)" direction="out"/>
+            <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="DBusInfoRet"/>
+        </method>
+
+        <method name="NewCreateTemplateFileJob">
+            <arg type="s" name="templateFile" direction="in"/>
+            <arg type="s" name="targetDir" direction="in"/>
+            <arg type="(so)" direction="out"/>
+            <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="DBusInfoRet"/>
+        </method>
+
+        <method name="NewCopyJob">
+            <arg type="as" name="filelist" direction="in"/>
+            <arg type="s" name="targetDir" direction="in"/>
+            <arg type="(so)" direction="out"/>
+            <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="DBusInfoRet"/>
+        </method>
+
+        <method name="NewMoveJob">
+            <arg type="as" name="filelist" direction="in"/>
+            <arg type="s" name="targetDir" direction="in"/>
+            <arg type="(so)" direction="out"/>
+            <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="DBusInfoRet"/>
+        </method>
+
         <method name="NewRenameJob">
             <arg type="s" name="oldFile" direction="in"/>
             <arg type="s" name="newFile" direction="in"/>
-            <arg type="v" name="result" direction="out"/>
+            <arg type="(so)" direction="out"/>
+            <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="DBusInfoRet"/>
+        </method>
+
+        <method name="NewDeleteJob">
+            <arg type="as" name="filelist" direction="in"/>
+            <arg type="(so)" direction="out"/>
+            <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="DBusInfoRet"/>
         </method>
 
         <method name="test">
