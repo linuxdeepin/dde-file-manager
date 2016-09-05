@@ -531,8 +531,13 @@ void DSearchBar::recomended(const QString& inputText)
         {
             list.removeLast();
             list.append(modelText);
-            qDebug() << list;
-            setText(list.join("/").replace(0,1,""));
+            if (list.length() > 0){
+                if (list.at(0).startsWith("~")){
+                    setText(list.join("/"));
+                }else{
+                    setText(list.join("/").replace(0,1,""));
+                }
+            }
             setSelection(text().length() + last.length() - modelText.length(), text().length());
         }
         else if(isLocalFile())
