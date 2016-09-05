@@ -2,5 +2,4 @@ TEMPLATE  = subdirs
 
 SUBDIRS  += \
     dde-file-manager \
-    dde-file-manager-daemon \
-    dde-file-dialog
+    dde-file-manager-daemon
