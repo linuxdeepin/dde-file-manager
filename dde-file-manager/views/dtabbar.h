@@ -38,6 +38,8 @@
 
 class Tab:public QGraphicsObject{
     Q_OBJECT
+    Q_PROPERTY(QRect geometry READ geometry WRITE setGeometry)
+
 public:
     explicit Tab(QGraphicsObject *parent = 0,int viewIndex = 0,QString text = "");
     ~Tab();
@@ -55,7 +57,7 @@ public:
     bool isDragging();
     void setHovered(bool hovered);
     bool isDragOutSide();
-    QPixmap toPixmap();
+    QPixmap toPixmap(bool drawBorder = true);
 
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
@@ -73,7 +75,8 @@ signals:
     void clicked();
     void moveNext(const int fromTabIndex);
     void movePrevius(const int fromTabIndex);
-    void requestNewWindow(const int tabIndex);
+    void requestNewWindow(const QString url);
+    void aboutToNewWindow(const int tabIndex);
     void draggingFinished();
     void draggingStarted();
 
@@ -151,8 +154,8 @@ public slots:
     void onTabCloseButtonUnHovered(int closingIndex);
     void onMoveNext(const int fromTabIndex);
     void onMovePrevius(const int fromTabIndex);
-    void onRequestNewWindow(const int tabIndex);
-
+    void onRequestNewWindow(const QString url);
+    void onAboutToNewWindow(const int tabIndex);
 
 protected:
     void resizeEvent(QResizeEvent *e);
@@ -170,6 +173,7 @@ private:
     TabCloseButton *m_TabCloseButton;
     int m_trackingIndex = 0;
     bool m_lastDeleteState = false;
+    bool m_lastAddTabState = false;
 };
 
 
