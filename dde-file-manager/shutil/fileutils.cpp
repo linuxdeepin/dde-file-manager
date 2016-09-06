@@ -6,6 +6,7 @@
 #include "../app/global.h"
 
 #include "../controllers/fileservices.h"
+#include "simpleini/SimpleIni.h"
 
 #include <QDirIterator>
 #include <QUrl>
@@ -704,4 +705,57 @@ QByteArray FileUtils::imageFormatName(QImage::Format f)
     }
 
     return "jpeg";
+}
+
+
+QString FileUtils::getFileContent(const QString &file)
+{
+    QFile f(file);
+    QString fileContent = "";
+    if (f.open(QFile::ReadOnly))
+    {
+        fileContent = QString(f.readAll());
+        f.close();
+    }
+    return fileContent;
+}
+
+bool FileUtils::writeTextFile(QString filePath, QString content)
+{
+    QFile file(filePath);
+    if (file.open(QIODevice::WriteOnly|QIODevice::Text)) {
+        QTextStream in(&file);
+        in << content << endl;
+        file.close();
+        return true;
+    }
+    return false;
+}
+
+void FileUtils::setDefaultFileManager()
+{
+    QString configPath = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).at(0);
+    QString mimeAppsListPath = QString("%1/%2").arg(configPath, "mimeapps.list");
+    QString mimeKey("inode/directory");
+    QString appDesktopFile("dde-file-manager.desktop");
+    const char defaultApplicationsSection[] = "Default Applications";
+
+    CSimpleIniA settings;
+    settings.SetUnicode(true);
+    QString content(getFileContent(mimeAppsListPath));
+    settings.LoadData(content.toStdString().c_str(), content.length());
+
+
+    const char* mime_cstr = mimeKey.toStdString().c_str();
+    if (QString(settings.GetValue(defaultApplicationsSection, mime_cstr)) == appDesktopFile){
+        return;
+    }else{
+        settings.SetValue(defaultApplicationsSection, mime_cstr,
+                          appDesktopFile.toStdString().c_str());
+
+        std::string strData;
+        settings.Save(strData);
+        qDebug() << QString::fromStdString(strData);
+        writeTextFile(mimeAppsListPath, QString::fromStdString(strData));
+    }
 }
