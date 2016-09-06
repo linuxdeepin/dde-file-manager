@@ -56,6 +56,7 @@ private:
     FileMonitor *fileMonitor;
 
     QString checkDuplicateName(const QString &name) const;
+    void setUrlsToClipboard(const DUrlList &list, const QByteArray &action = "copy") const;
 };
 
 #endif // FILECONTROLLER_H

@@ -166,7 +166,9 @@ void DFileView::initConnects()
         connect(qApp->clipboard(), &QClipboard::dataChanged, [] {
             DFileView::m_cutUrlSet.clear();
 
-            if (qApp->clipboard()->mimeData()->text() != "cut")
+            const QByteArray &data = qApp->clipboard()->mimeData()->data("x-special/gnome-copied-files");
+
+            if (!data.startsWith("cut"))
                 return;
 
             for (const QUrl &url : qApp->clipboard()->mimeData()->urls()) {

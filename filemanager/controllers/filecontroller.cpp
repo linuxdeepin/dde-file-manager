@@ -160,22 +160,7 @@ bool FileController::copyFiles(const DUrlList &urlList, bool &accepted) const
 {
     accepted = true;
 
-    QMimeData *mimeData = new QMimeData;
-
-    QByteArray ba;
-
-    ba.append("copy");
-
-    for(const DUrl &url : urlList) {
-        ba.append("\n");
-        ba.append(url.toString());
-    }
-
-    mimeData->setText("copy");
-    mimeData->setData("x-special/gnome-copied-files", ba);
-    mimeData->setUrls(DUrl::toQUrlList(urlList));
-
-    qApp->clipboard()->setMimeData(mimeData);
+    setUrlsToClipboard(urlList);
 
     return true;
 }
@@ -240,22 +225,7 @@ bool FileController::cutFiles(const DUrlList &urlList, bool &accepted) const
 {
     accepted = true;
 
-    QMimeData *mimeData = new QMimeData;
-
-    QByteArray ba;
-
-    ba.append("cut");
-
-    for(const DUrl &url : urlList) {
-        ba.append("\n");
-        ba.append(url.toString());
-    }
-
-    mimeData->setText("cut");
-    mimeData->setData("x-special/gnome-copied-files", ba);
-    mimeData->setUrls(DUrl::toQUrlList(urlList));
-
-    qApp->clipboard()->setMimeData(mimeData);
+    setUrlsToClipboard(urlList, "cut");
 
     return true;
 }
@@ -464,6 +434,31 @@ QString FileController::checkDuplicateName(const QString &name) const
     }
 
     return destUrl;
+}
+
+void FileController::setUrlsToClipboard(const DUrlList &list, const QByteArray &action) const
+{
+    QMimeData *mimeData = new QMimeData;
+
+    QByteArray ba = action;
+    QString text;
+
+    for(const DUrl &url : list) {
+        ba.append("\n");
+        ba.append(url.toString());
+
+        const QString &path = url.toLocalFile();
+
+        if (!path.isEmpty()) {
+            text += path + '\n';
+        }
+    }
+
+    mimeData->setText(text.endsWith('\n') ? text.left(text.length() - 1) : text);
+    mimeData->setData("x-special/gnome-copied-files", ba);
+    mimeData->setUrls(DUrl::toQUrlList(list));
+
+    qApp->clipboard()->setMimeData(mimeData);
 }
 
 FileDirIterator::FileDirIterator(const QString &path, QDir::Filters filter, QDirIterator::IteratorFlags flags)
