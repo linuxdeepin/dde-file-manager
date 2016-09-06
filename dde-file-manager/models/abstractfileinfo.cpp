@@ -94,7 +94,7 @@ bool AbstractFileInfo::exists() const
 
 QString AbstractFileInfo::filePath() const
 {
-    if (data->filePath.isNull() || data->filePath.isEmpty()){
+    if (data->filePath.isEmpty()){
         data->filePath = data->fileInfo.filePath();
     }
     return data->filePath;
@@ -102,7 +102,7 @@ QString AbstractFileInfo::filePath() const
 
 QString AbstractFileInfo::absoluteFilePath() const
 {
-    if (data->absoluteFilePath.isNull() || data->absoluteFilePath.isEmpty()){
+    if (data->absoluteFilePath.isEmpty()){
         data->absoluteFilePath = data->fileInfo.absoluteFilePath();
     }
     return data->absoluteFilePath;
@@ -115,7 +115,7 @@ QString AbstractFileInfo::baseName() const
 
 QString AbstractFileInfo::fileName() const
 {
-    if (data->fileName.isNull() || data->fileName.isEmpty()){
+    if (data->fileName.isEmpty()){
         data->fileName = data->fileInfo.fileName();
     }
     return data->fileName;
@@ -138,7 +138,7 @@ QString AbstractFileInfo::pinyinName() const
 
 QString AbstractFileInfo::path() const
 {
-    if (data->path.isNull() || data->path.isEmpty()){
+    if (data->path.isEmpty()){
         data->path = data->fileInfo.path();
     }
     return data->path;
@@ -146,7 +146,7 @@ QString AbstractFileInfo::path() const
 
 QString AbstractFileInfo::absolutePath() const
 {
-    if (data->absolutePath.isNull() || data->absolutePath.isEmpty()){
+    if (data->absolutePath.isEmpty()){
         data->absolutePath = data->fileInfo.absolutePath();
     }
     return data->absolutePath;
