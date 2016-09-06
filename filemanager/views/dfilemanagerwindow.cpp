@@ -55,8 +55,6 @@ void DFileManagerWindow::initData()
 
 void DFileManagerWindow::initUI()
 {
-    resize(DEFAULT_WINDOWS_WIDTH, DEFAULT_WINDOWS_HEIGHT);
-    setMinimumSize(800, 420);
     initCentralWidget();
     setCentralWidget(m_centralWidget);
     setStyleSheet(getQssFromFile(":/qss/qss/filemanager.qss"));
@@ -345,6 +343,7 @@ void DMainWindow::initUI()
     setWindowIcon(QIcon(":/images/images/dde-file-manager.svg"));
     setAttribute(Qt::WA_DeleteOnClose);
     resize(DEFAULT_WINDOWS_WIDTH, DEFAULT_WINDOWS_HEIGHT);
+    setMinimumSize(800, 420);
     m_fileManagerWindow = new DFileManagerWindow(this);
     addContenWidget(m_fileManagerWindow);
 }
