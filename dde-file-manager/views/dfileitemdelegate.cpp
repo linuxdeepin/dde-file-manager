@@ -242,6 +242,7 @@ void DFileItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
         item->edit->setPlainText(index.data(DFileSystemModel::FileNameRole).toString());
         item->edit->setAlignment(Qt::AlignHCenter);
         item->edit->document()->setTextWidth(parent()->itemSizeHint().width());
+        item->setOpacity(parent()->isCutIndex(index) ? 0.3 : 1);
 
         if(item->edit->isReadOnly())
             return;
