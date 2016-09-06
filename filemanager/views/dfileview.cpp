@@ -1481,16 +1481,6 @@ void DFileView::rowsAboutToBeRemoved(const QModelIndex &parent, int start, int e
 
 void DFileView::rowsInserted(const QModelIndex &parent, int start, int end)
 {
-    for (const QModelIndex &index : selectedIndexes()) {
-        if (index.parent() != parent)
-            continue;
-
-        if (index.row() >= start) {
-            selectionModel()->select(index, QItemSelectionModel::Clear);
-            selectionModel()->select(parent.child(index.row() + end - start, 0), QItemSelectionModel::Select);
-        }
-    }
-
     DListView::rowsInserted(parent, start, end);
 }
 
