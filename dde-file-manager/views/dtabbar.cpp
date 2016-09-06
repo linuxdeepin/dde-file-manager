@@ -37,22 +37,23 @@ int TabBar::addTabWithData(const int &viewIndex, const QString text, const QStri
 
     connect(tab, &Tab::clicked, this, [=]{
        setCurrentIndex(tab->tabIndex());
+       m_TabCloseButton->setActiveWidthTab(true);
     });
-
     connect(tab, &Tab::moveNext, this, &TabBar::onMoveNext);
     connect(tab, &Tab::movePrevius, this, &TabBar::onMovePrevius);
     connect(tab, &Tab::requestNewWindow, this, &TabBar::onRequestNewWindow);
     connect(tab, &Tab::draggingFinished, this, [=]{
-        updateScreen();
         m_TabCloseButton->setZValue(2);
         if(tab->isDragOutSide())
             m_TabCloseButton->hide();
+        m_lastDeleteState = false;
+        updateScreen();
     });
     connect(tab, &Tab::draggingStarted, this, [=]{
        m_TabCloseButton->setZValue(0);
     });
-    m_scene->addItem(tab);
 
+    m_scene->addItem(tab);
     setCurrentIndex(index);
 
     if(count()>=2)
@@ -77,18 +78,24 @@ int TabBar::count() const
 
 void TabBar::removeTab(const int index)
 {
+    qDebug()<<"<<<<<<<<<<<<<<<<remove tab:"<<index;
     Tab *tab = m_tabs.at(index);
-    int closingIndex = m_TabCloseButton->closingIndex();
-    m_scene->removeItem(tab);
-    m_tabs.removeAt(m_TabCloseButton->closingIndex());
 
-    for(int i = closingIndex; i<count(); i++){
-        Tab *tab = m_tabs.at(i);
+//    m_scene->removeItem(tab);
+    m_tabs.removeAt(index);
+    tab->deleteLater();
+
+    for(int i = index; i<count(); i++){
+        tab = m_tabs.at(i);
         tab->setTabIndex(tab->tabIndex() - 1);
     }
     if(m_TabCloseButton->closingIndex() != count() - 1){
         m_lastDeleteState = true;
     }
+    if(index<count())
+        setCurrentIndex(index);
+    else
+        setCurrentIndex(count()-1);
     updateScreen();
 }
 
@@ -111,16 +118,16 @@ void TabBar::setCurrentIndex(const int index)
     int counter = 0;
     for(auto tab: m_tabs){
         if(counter == index){
-            tab->setChecked(true);
+            tab->setSelected(true);
             tab->update();
         }
         else{
-            tab->setChecked(false);
+            tab->setSelected(false);
             tab->update();
         }
         counter ++;
     }
-    currentChanged(index);
+    emit currentChanged(index);
     updateScreen();
 }
 
@@ -160,7 +167,7 @@ QSize TabBar::tabSizeHint(const int &index)
 
     int averageWidth = width()/count();
 
-    qDebug()<<averageWidth<<size()<<","<<count();
+//    qDebug()<<averageWidth<<size()<<","<<count();
     if(index == count() -1)
         return (QSize(width() - averageWidth*(count()-1),24));
     else
@@ -173,7 +180,7 @@ void TabBar::updateScreen()
     int lastX = 0;
     for(auto tab:m_tabs){
         QRect rect(lastX,0,tabSizeHint(counter).width(),tabSizeHint(counter).height());
-        qDebug()<<rect;
+//        qDebug()<<rect;
         lastX = rect.x() + rect.width();
         if(tab->isDragging()){
             counter ++ ;
@@ -200,6 +207,7 @@ void TabBar::onMoveNext(const int fromTabIndex)
     m_tabs.swap(fromTabIndex,fromTabIndex+1);
     fromTab->setTabIndex(fromTabIndex +1);
     toTab->setTabIndex(fromTabIndex);
+    emit tabMoved(fromTabIndex,fromTabIndex+1);
     setCurrentIndex(fromTabIndex+1);
 }
 
@@ -210,6 +218,7 @@ void TabBar::onMovePrevius(const int fromTabIndex)
     m_tabs.swap(fromTabIndex,fromTabIndex-1);
     fromTab->setTabIndex(fromTabIndex -1);
     toTab->setTabIndex(fromTabIndex);
+    emit tabMoved(fromTabIndex,fromTabIndex-1);
     setCurrentIndex(fromTabIndex-1);
 }
 
@@ -279,6 +288,12 @@ void TabBar::mouseMoveEvent(QMouseEvent *event)
         Tab *tab = m_tabs.at(closingIndex);
         m_TabCloseButton->setClosingIndex(closingIndex);
         m_TabCloseButton->setX(tab->x()+tab->width()-24);
+
+        if(closingIndex == currentIndex())
+            m_TabCloseButton->setActiveWidthTab(true);
+        else
+            m_TabCloseButton->setActiveWidthTab(false);
+
     }
     else{
         if(m_lastDeleteState){
@@ -305,16 +320,29 @@ QRectF TabCloseButton::boundingRect() const
 
 void TabCloseButton::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    QString imgSrc;
     if(m_mousePressed){
-        QPixmap pixmap(":/icons/images/icons/tab_close_press.png");
+        if(m_activeWidthTab)
+            imgSrc = ":/icons/images/icons/active_tab_close_press.png";
+        else
+            imgSrc = ":/icons/images/icons/tab_close_press.png";
+        QPixmap pixmap(imgSrc);
         painter->drawPixmap(boundingRect().toRect(),pixmap);
     }
     else if(m_mouseHovered){
-        QPixmap pixmap(":/icons/images/icons/tab_close_hover.png");
+        if(m_activeWidthTab)
+            imgSrc = ":/icons/images/icons/active_tab_close_hover.png";
+        else
+            imgSrc = ":/icons/images/icons/tab_close_hover.png";
+        QPixmap pixmap(imgSrc);
         painter->drawPixmap(boundingRect().toRect(),pixmap);
     }
     else{
-        QPixmap pixmap(":/icons/images/icons/tab_close_normal.png");
+        if(m_activeWidthTab)
+            imgSrc = ":/icons/images/icons/active_tab_close_normal.png";
+        else
+            imgSrc = ":/icons/images/icons/tab_close_normal.png";
+        QPixmap pixmap(imgSrc);
         painter->drawPixmap(boundingRect().toRect(),pixmap);
     }
 }
@@ -327,6 +355,12 @@ int TabCloseButton::closingIndex()
 void TabCloseButton::setClosingIndex(int index)
 {
     m_closingIndex = index;
+}
+
+void TabCloseButton::setActiveWidthTab(bool active)
+{
+    m_activeWidthTab = active;
+    update();
 }
 
 void TabCloseButton::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -381,6 +415,11 @@ Tab::Tab(QGraphicsObject *parent, int viewIndex, QString text):
     setFlags(ItemIsSelectable);
 }
 
+Tab::~Tab()
+{
+    qDebug()<<"**************************************delete tab:"<<tabIndex();
+}
+
 void Tab::setTabIndex(int index)
 {
     m_tabIndex = index;
@@ -416,12 +455,13 @@ void Tab::setFixedSize(QSize size)
 {
     m_width = size.width();
     m_height = size.height();
+    update();
 }
 
 void Tab::setGeometry(QRect rect)
 {
 
-    qDebug()<<"geometry:"<<rect;
+//    qDebug()<<"geometry:"<<rect;
     setX(rect.x());
     setY(rect.y());
     m_width = rect.width();
@@ -449,16 +489,6 @@ bool Tab::isDragging()
     return m_isDragging;
 }
 
-bool Tab::isChecked()
-{
-    return m_checked;
-}
-
-void Tab::setChecked(bool check)
-{
-    m_checked = check;
-}
-
 void Tab::setHovered(bool hovered)
 {
     m_hovered = hovered;
@@ -467,6 +497,36 @@ void Tab::setHovered(bool hovered)
 bool Tab::isDragOutSide()
 {
     return m_dragOutSide;
+}
+
+QPixmap Tab::toPixmap()
+{
+    QImage img(m_width,m_height,QImage::Format_ARGB32);
+    img.fill(Qt::white);
+    QPainter painter(&img);
+    QPen pen;
+    QColor color(Qt::yellow);
+    pen.setStyle(Qt::SolidLine);
+    pen.setColor(color);
+    painter.setPen(pen);
+    pen.setWidth(1);
+
+    //draw text
+    QFont font;
+    font.setPixelSize(14);
+    QFontMetrics fm(font);
+    QString str = fm.elidedText(m_tabText,Qt::ElideRight,m_width-10);
+
+    //draw backgound
+    color.setNamedColor("#FFFFFF");
+    painter.fillRect(boundingRect(),color);
+    color.setNamedColor("#303030");
+    pen.setColor(color);
+    painter.setPen(pen);
+    painter.drawText((m_width-fm.width(str))/2,(m_height-fm.height())/2,
+                      fm.width(str),fm.height(),0,str);
+
+    return QPixmap::fromImage(img);
 }
 
 QRectF Tab::boundingRect() const
@@ -491,7 +551,7 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
 
     //draw backgound
 
-    if(m_checked){
+    if(isSelected()){
         color.setNamedColor("#FFFFFF");
         painter->fillRect(boundingRect(),color);
         color.setNamedColor("#303030");
@@ -500,7 +560,7 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
         painter->drawText((m_width-fm.width(str))/2,(m_height-fm.height())/2,
                           fm.width(str),fm.height(),0,str);
     }
-    else if(m_hovered||(m_hovered&&!m_checked)){
+    else if(m_hovered||(m_hovered&&!isSelected())){
         color.setNamedColor("#EDEDED");
         painter->fillRect(boundingRect(),color);
         color.setNamedColor("#303030");
@@ -554,21 +614,27 @@ void Tab::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     qDebug()<<event->pos();
 
 
-    if(event->pos().y()<0 || event->pos().y() > m_height){
+    if(event->pos().y()<-m_height || event->pos().y() > m_height*2){
         if(!m_dragOutSide){
             m_dragOutSide = true;
-            m_dragWidget = new DragWidget;
-            m_dragWidget->show();
-            m_dragWidget->setText(m_tabText);
-            m_dragWidget->setFixedSize(m_width,m_height);
-            m_dragWidget->move(QCursor::pos() - QPoint(m_width/2, m_height/2));
-            m_cursor.setShape(Qt::DragMoveCursor);
+
+            m_dragWidget = new DDragWidget((QObject*)event->widget());
+            QMimeData *mimeData = new QMimeData;
+            m_dragWidget->setPixmap(toPixmap());
+            m_dragWidget->setMimeData(mimeData);
+            m_dragWidget->setHotSpot(QPoint(m_width/4, 4));
+            m_dragWidget->startDrag();
+            m_pressed = false;
+
+            emit draggingFinished();
+            emit requestNewWindow(tabIndex());
+//            m_dragWidget = NULL;
         }
     }
 
     if(m_dragOutSide){
-        if(m_dragWidget)
-            m_dragWidget->move(QCursor::pos() - QPoint(m_width/2, m_height/2));
+//        if(m_dragWidget)
+//            m_dragWidget->move(QCursor::pos() - QPoint(m_width/2, m_height/2));
         QGraphicsObject::mouseMoveEvent(event);
         return;
     }
@@ -603,15 +669,16 @@ void Tab::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         m_pressed = false;
         setZValue(1);
         QGraphicsObject::mouseReleaseEvent(event);
-        emit requestNewWindow(tabIndex());
-        emit draggingFinished();
+
         m_dragOutSide = false;
         m_isDragging = false;
         m_cursor.setShape(Qt::ArrowCursor);
         if(m_dragWidget){
-            m_dragWidget->close();
+//            m_dragWidget->close();
             m_dragWidget = NULL;
         }
+        emit draggingFinished();
+        emit requestNewWindow(tabIndex());
         return;
     }
 
@@ -635,36 +702,4 @@ void Tab::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
     m_hovered = false;
     m_pressed = false;
     QGraphicsObject::hoverLeaveEvent(event);
-}
-
-
-DragWidget::DragWidget(QWidget *parent):QPushButton(parent)
-{
-    setAttribute(Qt::WA_DeleteOnClose);
-    setWindowFlags(Qt::FramelessWindowHint);
-}
-
-void DragWidget::paintEvent(QPaintEvent *e)
-{
-    QPainter painter(this);
-    QPen pen;
-    QColor color;
-    color.setRgb(255,255,255);
-    pen.setColor(color);
-    painter.setPen(pen);
-    painter.fillRect(0,0,width(),height(),Qt::white);
-//    painter.fillre
-
-    QFont font;
-    font.setPixelSize(14);
-    QFontMetrics fm(font);
-    QString str = fm.elidedText(text(),Qt::ElideRight,width()-10);
-
-    color.setRgb(180,180,180);
-    pen.setColor(color);
-    painter.setPen(pen);
-
-    painter.drawText((width() - fm.width(str))/2,(height() - fm.height())/2,fm.width(str),fm.height(),0,str);
-
-    QWidget::paintEvent(e);
 }
