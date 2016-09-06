@@ -349,5 +349,8 @@
         <file>images/icons/tab_close_hover.png</file>
         <file>images/icons/tab_close_normal.png</file>
         <file>images/icons/tab_close_press.png</file>
+        <file>images/icons/active_tab_close_hover.png</file>
+        <file>images/icons/active_tab_close_normal.png</file>
+        <file>images/icons/active_tab_close_press.png</file>
     </qresource>
 </RCC>

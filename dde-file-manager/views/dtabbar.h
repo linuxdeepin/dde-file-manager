@@ -30,23 +30,17 @@
 #include "../app/filemanagerapp.h"
 #include "../controllers/appcontroller.h"
 #include "QCursor"
+#include <QPropertyAnimation>
+#include "ddragwidget.h"
 
 #define TAB_CLOSE_BUTTON_WIDTH 18
 #define TAB_CLOSE_BUTTON_HEIGHT 24
-
-class DragWidget:public QPushButton{
-    Q_OBJECT
-public:
-    explicit DragWidget(QWidget *parent = 0);
-
-protected:
-    void paintEvent(QPaintEvent *) Q_DECL_OVERRIDE;
-};
 
 class Tab:public QGraphicsObject{
     Q_OBJECT
 public:
     explicit Tab(QGraphicsObject *parent = 0,int viewIndex = 0,QString text = "");
+    ~Tab();
     void setTabIndex(int index);
     int tabIndex();
     void setTabData(QVariant data);
@@ -59,10 +53,9 @@ public:
     int width();
     int height();
     bool isDragging();
-    bool isChecked();
-    void setChecked(bool check);
     void setHovered(bool hovered);
     bool isDragOutSide();
+    QPixmap toPixmap();
 
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
@@ -94,12 +87,10 @@ private:
     int m_width;
     int m_height;
     bool m_isDragging = false;
-    bool m_checked;
     QPointF m_originPos;
     bool m_dragOutSide = false;
-    DragWidget *m_dragWidget = NULL;
+    DDragWidget *m_dragWidget = NULL;
     QCursor m_cursor;
-
 };
 
 class TabCloseButton:public QGraphicsObject{
@@ -110,6 +101,7 @@ public:
     void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0);
     int closingIndex();
     void setClosingIndex(int index);
+    void setActiveWidthTab(bool active);
 signals:
     void clicked();
     void hovered(int index);
@@ -126,6 +118,7 @@ private:
     bool m_mouseHovered = false;
     bool m_mousePressed = false;
     int m_closingIndex;
+    bool m_activeWidthTab = false;
 };
 
 class TabBar:public QGraphicsView{

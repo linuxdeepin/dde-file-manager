@@ -234,18 +234,18 @@ void DFileManagerWindow::initConnect()
 void DFileManagerWindow::onCurrentTabClosed(const int index){
 
     int viewIndex = m_tabBar->tabData(index).toJsonObject()["viewIndex"].toInt();
+    qDebug()<<"************************delete file view:"<<viewIndex;
     DFileView *currentView =qobject_cast<DFileView*>(m_viewStackLayout->widget(viewIndex));
+
+    currentView->close();
     m_viewStackLayout->removeWidget(currentView);
-
-    if(m_tabBar->isHidden())
-        m_newTabButton->hide();
-
-    m_toolbar->removeNavStackAt(index);
+    m_fileView = NULL;
+    delete currentView;
 
     //recorrect view index
     for(int i = 0; i<m_tabBar->count(); i++){
         int newViewIndex = m_tabBar->tabData(i).toJsonObject()["viewIndex"].toInt();
-        if(newViewIndex >= viewIndex){
+        if(newViewIndex > viewIndex){
             newViewIndex--;
             QJsonObject tabData = m_tabBar->tabData(i).toJsonObject();
             tabData["viewIndex"] = newViewIndex;
@@ -254,6 +254,8 @@ void DFileManagerWindow::onCurrentTabClosed(const int index){
     }
 
     m_tabBar->removeTab(index);
+    m_toolbar->removeNavStackAt(index);
+
     if(m_tabBar->count()<8)
         emit m_tabBar->tabAddableChanged(true);
 
@@ -279,6 +281,7 @@ void DFileManagerWindow::onTabAddableChanged(bool addable){
 void DFileManagerWindow::onCurrentTabChanged(int tabIndex){
     int viewIndex = m_tabBar->tabData(tabIndex).toJsonObject()["viewIndex"].toInt();
     switchToView(viewIndex);
+
     m_toolbar->switchHistoryStack(tabIndex,m_fileView->currentUrl());
 }
 
@@ -431,7 +434,7 @@ void DFileManagerWindow::onFileViewCurrentUrlChanged(const DUrl &url){
 }
 
 void DFileManagerWindow::switchToView(const int viewIndex){
-//    qDebug()<<"<<<<<<<<<<<<<<<<<< switching view: view index:"<<viewIndex;
+    qDebug()<<"<<<<<<<<<<<<<<<<<< switching view: view index:"<<viewIndex;
     m_viewStackLayout->setCurrentIndex(viewIndex);
     m_fileView = qobject_cast<DFileView*>(m_viewStackLayout->widget(viewIndex));
     m_leftSideBar->scene()->setCurrentUrl(m_fileView->currentUrl());
