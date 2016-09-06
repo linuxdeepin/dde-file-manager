@@ -58,13 +58,7 @@ bool FileInfo::isCanRename() const
     if (canRenameCacheMap.contains(fileUrl()))
         return canRenameCacheMap[fileUrl()];
 
-    bool isWritable = this->isWritable();
-
-    if (!isWritable && !exists(fileUrl())) {
-        return false;
-    }
-
-    bool canRename = FileInfo(absolutePath()).isWritable() && isWritable;
+    bool canRename = FileInfo(absolutePath()).isWritable();
 
     canRenameCacheMap[fileUrl()] = canRename;
 
