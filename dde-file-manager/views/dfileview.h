@@ -224,6 +224,8 @@ private:
 
     using DListView::setOrientation;
 
+    void preproccessDropEvent(QDropEvent *event) const;
+
     QRect m_selectedGeometry;
     QWidget *m_selectionRectWidget = Q_NULLPTR;
     bool m_selectionRectVisible = true;
