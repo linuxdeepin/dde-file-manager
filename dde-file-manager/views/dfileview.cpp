@@ -69,6 +69,7 @@ DFileView::DFileView(QWidget *parent) : DListView(parent)
 DFileView::~DFileView()
 {
     disconnect(this, &DFileView::rowCountChanged, this, &DFileView::updateStatusBar);
+    disconnect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &DFileView::updateStatusBar);
 }
 
 void DFileView::initUI()

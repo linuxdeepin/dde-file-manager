@@ -167,11 +167,14 @@ void DSearchBar::historySaved()
     if(text().isEmpty())
         return;
     QString str = text();
-    if(!m_historyList.contains(str))
-    {
-        m_historyList.append(str);
-        m_stringListMode->setStringList(m_historyList);
-        searchHistoryManager->writeIntoSearchHistory(str);
+    if (!hasScheme()){
+        if(!m_historyList.contains(str))
+        {
+
+            m_historyList.append(str);
+            m_stringListMode->setStringList(m_historyList);
+            searchHistoryManager->writeIntoSearchHistory(str);
+        }
     }
     m_list->hide();
 }
@@ -199,14 +202,21 @@ void DSearchBar::setCompleter(const QString &text)
 
     const DUrl &url = DUrl::fromUserInput(text);
 
+//    qDebug() << text << url << url.isLocalFile() << url.path().isEmpty() << url.toLocalFile();
     if(/*hasScheme() || */url.isLocalFile())
     {
-        QFileInfo fileInfo(url.path().isEmpty() ? "/" : url.toLocalFile());
+        QFileInfo fileInfo;
+        if (text.endsWith(".")){
+            fileInfo = QFileInfo(url.path().isEmpty() ? "/" : url.toLocalFile() + "/");
+        }else{
+            fileInfo = QFileInfo(url.path().isEmpty() ? "/" : url.toLocalFile());
+        }
+//        qDebug() << url.toLocalFile() << fileInfo.absolutePath() << fileInfo.path() << QDir::cleanPath(url.toLocalFile());
         QDir dir(fileInfo.absolutePath());
         QStringList localList = splitPath(text);
         QStringList sl;
-
-        foreach(QFileInfo info, dir.entryInfoList(QDir::AllDirs|QDir::NoDotAndDotDot, QDir::Name))
+//        qDebug() << fileInfo.absolutePath();
+        foreach(QFileInfo info, dir.entryInfoList(QDir::AllDirs| QDir::Hidden |QDir::NoDotAndDotDot, QDir::Name))
         {
             QString temp = localList.last();
 //            qDebug() << temp << info.absoluteFilePath() << fileInfo.absoluteFilePath();
@@ -219,8 +229,10 @@ void DSearchBar::setCompleter(const QString &text)
                     sl << info.fileName();
             }
         }
-        if(sl.isEmpty())
+        if(sl.isEmpty()){
+            m_list->hide();
             return;
+        }
         foreach (QString itemText, sl) {
             QListWidgetItem* item = new QListWidgetItem(itemText);
             item->setTextAlignment(Qt::AlignVCenter);
@@ -287,7 +299,11 @@ void DSearchBar::completeText(QListWidgetItem *item)
         list.removeLast();
         list.append(modelText);
         qDebug() << list;
-        setText(list.join("/").replace(0,1,""));
+        if (list.length() >=1 && list.at(0) == "/"){
+            setText(list.join("/").replace(0, 1, ""));
+        }else{
+            setText(list.join("/"));
+        }
     }
     else if(isLocalFile())
     {
@@ -531,8 +547,13 @@ void DSearchBar::recomended(const QString& inputText)
         {
             list.removeLast();
             list.append(modelText);
-            qDebug() << list;
-            setText(list.join("/").replace(0,1,""));
+            if (list.length() > 0){
+                if (list.length() >=1 && list.at(0) == "/"){
+                    setText(list.join("/").replace(0, 1, ""));
+                }else{
+                    setText(list.join("/"));
+                }
+            }
             setSelection(text().length() + last.length() - modelText.length(), text().length());
         }
         else if(isLocalFile())
@@ -626,7 +647,11 @@ void DSearchBar::keyPressEvent(QKeyEvent *e)
                         {
                             list.removeLast();
                             list.append(modelText);
-                            setText(list.join("/").replace(0,1,""));
+                            if (list.length() >=1 && list.at(0) == "/"){
+                                setText(list.join("/").replace(0, 1, ""));
+                            }else{
+                                setText(list.join("/"));
+                            }
                         }
                         else if(isLocalFile())
                         {
