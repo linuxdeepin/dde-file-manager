@@ -315,13 +315,16 @@ help.files = help/*
 icon.path = $$ICONDIR
 icon.files = skin/images/$${TARGET}.svg
 
+dde-xdg-user-dirs-update.path = $$BINDIR
+dde-xdg-user-dirs-update.files = $$PWD/dde-xdg-user-dirs-update.sh
+
 policy.path = $${PREFIX}/share/polkit-1/actions/
 policy.files = pkexec/com.deepin.pkexec.dde-file-manager.policy
 
 pkexec.path = /usr/bin/
 pkexec.files = pkexec/dde-file-manager-pkexec
 
-INSTALLS += target desktop templateFiles translations mimetypeFiles help icon policy pkexec
+INSTALLS += target desktop templateFiles translations mimetypeFiles help icon dde-xdg-user-dirs-update policy pkexec
 
 isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
 
