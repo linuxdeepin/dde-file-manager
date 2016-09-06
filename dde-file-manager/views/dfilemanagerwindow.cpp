@@ -264,15 +264,6 @@ void DFileManagerWindow::onCurrentTabClosed(const int index){
 
     if(m_tabBar->isHidden())
         m_newTabButton->hide();
-
-    /**For the tab close button below the cursor doesn't response a hover event on a tab closing action ,
-     *just move the cursor to refresh that event;
-     **/
-    QPoint localPos = QCursor::pos();
-    localPos -= QPoint(18,0);
-    QCursor::setPos(localPos);
-    localPos += QPoint(18,0);
-    QCursor::setPos(localPos);
 }
 
 void DFileManagerWindow::onTabAddableChanged(bool addable){
