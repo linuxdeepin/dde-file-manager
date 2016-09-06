@@ -265,10 +265,10 @@ bool UDiskDeviceInfo::isCanRename() const
 
 QIcon UDiskDeviceInfo::fileIcon() const
 {
-    return const_cast<UDiskDeviceInfo*>(this)->fileIcon(128, 128);
+    return fileIcon(128, 128);
 }
 
-QIcon UDiskDeviceInfo::fileIcon(int width, int height)
+QIcon UDiskDeviceInfo::fileIcon(int width, int height) const
 {
     if(getType() == "native")
         return QIcon(svgToPixmap(":/devices/images/device/drive-harddisk.svg", width, height));
