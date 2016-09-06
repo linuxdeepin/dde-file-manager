@@ -326,7 +326,8 @@ DUrl DUrl::fromUserInput(const QString &userInput, QString workingDirectory, QUr
 
     if (userInput.startsWith("~")) {
         return DUrl::fromLocalFile(QDir::homePath() + userInput.mid(1));
-    } else if (QDir().exists(userInput) || userInput.startsWith(".") || userInput.startsWith("/")) {
+    } else if (QDir().exists(userInput) || userInput.startsWith("./")
+               || userInput.startsWith("../") || userInput.startsWith("/")) {
         QDir dir(userInput);
 
         return DUrl::fromLocalFile(dir.absolutePath());
@@ -385,6 +386,8 @@ DUrl DUrl::parentUrl(const DUrl &url)
     _url.setScheme(url.scheme());
     QStringList paths = path.split("/");
     paths.removeAt(0);
+    if (!paths.isEmpty() && paths.last().isEmpty())
+        paths.removeLast();
     if (!paths.isEmpty())
         paths.removeLast();
     QString _path;
