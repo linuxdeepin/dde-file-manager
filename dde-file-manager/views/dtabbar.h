@@ -1,37 +1,21 @@
 #ifndef DTABBAR_H
 #define DTABBAR_H
 
-#include <QTabBar>
-#include <QWidget>
-#include "../app/global.h"
-#include "../app/fmevent.h"
-#include "../app/filesignalmanager.h"
-
 #include "widgets/singleton.h"
 #include "utils/durl.h"
 #include <QDebug>
 #include "widgets/singleton.h"
-#include <QPushButton>
 #include <QFont>
 #include <QFontMetrics>
 #include <QJsonObject>
 #include <QGraphicsScene>
 #include <QGraphicsView>
-#include <QGraphicsWidget>
-#include <QGraphicsLinearLayout>
-#include <QRect>
-#include <QGraphicsProxyWidget>
 #include <QGraphicsItem>
 #include <QGraphicsSceneHoverEvent>
 #include <QGraphicsSceneMouseEvent>
-#include <QGraphicsWidget>
-#include "../app/global.h"
-#include "../app/fmevent.h"
-#include "../app/filemanagerapp.h"
-#include "../controllers/appcontroller.h"
-#include "QCursor"
-#include <QPropertyAnimation>
+#include <QCursor>
 #include "ddragwidget.h"
+
 
 #define TAB_CLOSE_BUTTON_WIDTH 18
 #define TAB_CLOSE_BUTTON_HEIGHT 24
@@ -58,13 +42,16 @@ public:
     void setHovered(bool hovered);
     bool isDragOutSide();
     QPixmap toPixmap(bool drawBorder = true);
+    bool isChecked() const;
+    void setChecked(const bool check);
+    bool borderLeft() const;
+    void setBorderLeft(const bool flag);
 
     QRectF boundingRect() const;
+    QPainterPath shape();
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
 protected:
-    QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint) const;
-
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
     void mousePressEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
@@ -93,7 +80,8 @@ private:
     QPointF m_originPos;
     bool m_dragOutSide = false;
     DDragWidget *m_dragWidget = NULL;
-    QCursor m_cursor;
+    bool m_checked = false;
+    bool m_borderLeft = false;
 };
 
 class TabCloseButton:public QGraphicsObject{
@@ -133,7 +121,6 @@ public:
     QVariant tabData(const int index);
     int count() const;
     void removeTab(const int index);
-    QRect tabRect(const int index) const;
     int currentIndex() const;
     void setCurrentIndex(const int index);
     bool tabAddable();
