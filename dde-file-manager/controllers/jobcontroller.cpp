@@ -123,7 +123,7 @@ void JobController::run()
         } else {
             emit addChildren(m_iterator->fileInfo());
 
-            QThread::msleep(20);
+            QThread::msleep(50);
         }
     }
 
