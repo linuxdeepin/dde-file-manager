@@ -46,6 +46,7 @@ public:
 
 DFileSystemModel::DFileSystemModel(DFileView *parent)
     : QAbstractItemModel(parent)
+    , addChildrenSemaphore(1)
 {
     connect(fileService, &FileServices::childrenAdded,
             this, &DFileSystemModel::onFileCreated,
@@ -68,6 +69,12 @@ DFileSystemModel::~DFileSystemModel()
 //    }
 
 //    setRootUrl(DUrl());
+    addChildrenSemaphore.acquire();
+
+    if (jobController) {
+        jobController->stopAndDeleteLater();
+    }
+
     clear();
 }
 
@@ -738,6 +745,8 @@ void DFileSystemModel::updateChildren(QList<AbstractFileInfoPointer> list)
         return;
     }
 
+    addChildrenSemaphore.acquire();
+
     for (const DUrl url : node->visibleChildren) {
         deleteNodeByUrl(url);
     }
@@ -766,6 +775,8 @@ void DFileSystemModel::updateChildren(QList<AbstractFileInfoPointer> list)
     } else {
         childrenUpdated = true;
     }
+
+    addChildrenSemaphore.release();
 }
 
 void DFileSystemModel::refresh(const DUrl &fileUrl)
@@ -998,6 +1009,8 @@ void DFileSystemModel::onJobFinished()
 
 void DFileSystemModel::addFile(const AbstractFileInfoPointer &fileInfo)
 {
+    addChildrenSemaphore.acquire();
+
     const FileSystemNodePointer &parentNode = m_rootNode;
     const DUrl &fileUrl = fileInfo->fileUrl();
 
@@ -1029,4 +1042,6 @@ void DFileSystemModel::addFile(const AbstractFileInfoPointer &fileInfo)
 
         endInsertRows();
     }
+
+    addChildrenSemaphore.release();
 }
