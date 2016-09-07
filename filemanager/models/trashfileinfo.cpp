@@ -216,7 +216,9 @@ Qt::DropActions TrashFileInfo::supportedDragActions() const
 
 Qt::DropActions TrashFileInfo::supportedDropActions() const
 {
-    return Qt::MoveAction;
+    const QString &path = fileUrl().path();
+
+    return path.isEmpty() || path == "/" ? Qt::MoveAction : Qt::IgnoreAction;
 }
 
 AbstractFileInfo::sortFunction TrashFileInfo::sortFunByColumn(int columnRole) const

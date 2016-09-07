@@ -1229,9 +1229,7 @@ void DFileView::dragEnterEvent(QDragEnterEvent *event)
         }
     }
 
-    if (event->source() == this && !Global::keyCtrlIsPressed()) {
-        event->setDropAction(Qt::MoveAction);
-    }
+    preproccessDropEvent(event);
 
     if (event->mimeData()->hasFormat("XdndDirectSave0")) {
         event->setDropAction(Qt::CopyAction);
@@ -1250,12 +1248,16 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
     if (dragMoveHoverIndex.isValid()) {
         const AbstractFileInfoPointer &fileInfo = model()->fileInfo(dragMoveHoverIndex);
 
-        if (!fileInfo || !fileInfo->isDir())
-            dragMoveHoverIndex = QModelIndex();
-    }
+        if (fileInfo) {
+            if (!fileInfo->isDir()) {
+                dragMoveHoverIndex = QModelIndex();
+            } else if(!fileInfo->supportedDropActions().testFlag(event->dropAction())) {
+                dragMoveHoverIndex = QModelIndex();
 
-    if (event->source() == this && !Global::keyCtrlIsPressed()) {
-        event->setDropAction(Qt::MoveAction);
+                update();
+                return event->ignore();
+            }
+        }
     }
 
     update();
@@ -1276,9 +1278,7 @@ void DFileView::dropEvent(QDropEvent *event)
 {
     dragMoveHoverIndex = QModelIndex();
 
-    if (event->source() == this && !Global::keyCtrlIsPressed()) {
-        event->setDropAction(Qt::MoveAction);
-    }
+    preproccessDropEvent(event);
 
     // Try to support XDS
     // NOTE: in theory, it's not possible to implement XDS with pure Qt.
@@ -2256,4 +2256,31 @@ void DFileView::updateSelectionRect()
     m_selectedGeometry.setRight(pos.x() + horizontalOffset());
 
     setSelection(m_selectedGeometry, QItemSelectionModel::Current|QItemSelectionModel::Rows|QItemSelectionModel::ClearAndSelect);
+}
+
+void DFileView::preproccessDropEvent(QDropEvent *event) const
+{
+    if (event->source() == this && !Global::keyCtrlIsPressed()) {
+        event->setDropAction(Qt::MoveAction);
+    } else {
+        AbstractFileInfoPointer info = model()->fileInfo(indexAt(event->pos()));
+
+        if (!info)
+            info = model()->fileInfo(rootIndex());
+
+        if (info && !info->supportedDropActions().testFlag(event->dropAction())) {
+            QList<Qt::DropAction> actions;
+
+            actions.reserve(3);
+            actions << Qt::CopyAction << Qt::MoveAction << Qt::LinkAction;
+
+            for (Qt::DropAction action : actions) {
+                if (event->possibleActions().testFlag(action) && info->supportedDropActions().testFlag(action)) {
+                    event->setDropAction(action);
+
+                    break;
+                }
+            }
+        }
+    }
 }
