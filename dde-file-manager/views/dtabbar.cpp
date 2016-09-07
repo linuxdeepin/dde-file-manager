@@ -61,18 +61,18 @@ QString Tab::tabText()
 
 void Tab::setFixedSize(QSize size)
 {
+    prepareGeometryChange();
     m_width = size.width();
     m_height = size.height();
-    update();
 }
 
 void Tab::setGeometry(QRect rect)
 {
+    prepareGeometryChange();
     setX(rect.x());
     setY(rect.y());
     m_width = rect.width();
     m_height = rect.height();
-    update();
 }
 
 QRect Tab::geometry()
@@ -659,6 +659,7 @@ void TabBar:: updateScreen()
             tab->setGeometry(rect);
         counter ++;
     }
+    updateSceneRect(m_scene->sceneRect());
 }
 
 void TabBar::initConnections()
@@ -739,7 +740,6 @@ void TabBar::resizeEvent(QResizeEvent *event)
 bool TabBar::event(QEvent *event)
 {
     if(event->type() == event->Leave){
-
         m_TabCloseButton->hide();
         m_lastDeleteState = false;
         updateScreen();
