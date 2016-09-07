@@ -1543,15 +1543,14 @@ void DFileView::shrinkIcon()
 
 void DFileView::openIndex(const QModelIndex &index)
 {
-    qDebug() << index << model()->hasChildren(index);
-    if(model()->hasChildren(index)){
+   if (model()->hasChildren(index)) {
         FMEvent event;
 
         event = model()->getUrlByIndex(index);
         event = FMEvent::FileView;
         event = windowId();
-        qDebug() << event;
-        emit fileSignalManager->requestChangeCurrentUrl(event);
+
+        cd(event);
     } else {
         emit fileService->openFile(model()->getUrlByIndex(index));
     }
