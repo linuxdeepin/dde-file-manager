@@ -909,7 +909,13 @@ void DFileSystemModel::onFileUpdated(const DUrl &fileUrl)
 
 const FileSystemNodePointer DFileSystemModel::getNodeByIndex(const QModelIndex &index) const
 {
+    if (!m_rootNode)
+        return FileSystemNodePointer();
+
     FileSystemNode *indexNode = static_cast<FileSystemNode*>(index.internalPointer());
+
+    if (m_rootNode->children.key(FileSystemNodePointer(indexNode)).isEmpty())
+        return m_rootNode;
 
     return FileSystemNodePointer(indexNode);
 }
