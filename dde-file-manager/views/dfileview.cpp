@@ -103,6 +103,8 @@ void DFileView::initUI()
     unreadableIcon = QIcon(":/images/images/unreadable.svg");
 
     m_statusBar = new DStatusBar(this);
+    m_scalingSlider = m_statusBar->scalingSlider();
+    m_scalingSlider->setValue(m_currentIconSizeIndex);
     addFooterWidget(m_statusBar);
 }
 
@@ -191,6 +193,8 @@ void DFileView::initConnects()
 
         update();
     });
+
+    connect(m_scalingSlider, &DSlider::valueChanged,this,&DFileView::setIconSizeWithIndex);
 }
 
 void DFileView::initActions()
@@ -1519,16 +1523,20 @@ QSize DFileView::currentIconSize() const
 
 void DFileView::enlargeIcon()
 {
-    if(m_currentIconSizeIndex < m_iconSizes.count() - 1)
+    if(m_currentIconSizeIndex < m_iconSizes.count() - 1){
         ++m_currentIconSizeIndex;
+        m_scalingSlider->setValue(m_currentIconSizeIndex);
+    }
 
     setIconSize(currentIconSize());
 }
 
 void DFileView::shrinkIcon()
 {
-    if(m_currentIconSizeIndex > 0)
+    if(m_currentIconSizeIndex > 0){
         --m_currentIconSizeIndex;
+        m_scalingSlider->setValue(m_currentIconSizeIndex);
+    }
 
     setIconSize(currentIconSize());
 }
@@ -1764,6 +1772,12 @@ void DFileView::setContentLabel(const QString &text)
 
     m_contentLabel->setText(text);
     m_contentLabel->adjustSize();
+}
+
+void DFileView::setIconSizeWithIndex(const int index)
+{
+    m_currentIconSizeIndex = index;
+    setIconSize(currentIconSize());
 }
 
 void DFileView::updateHorizontalOffset()
