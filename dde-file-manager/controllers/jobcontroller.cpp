@@ -3,6 +3,10 @@
 
 #include <QtConcurrent/QtConcurrent>
 
+#ifndef LOAD_FILE_INTERVAL
+#define LOAD_FILE_INTERVAL 50
+#endif
+
 JobController::JobController(const DDirIteratorPointer &iterator, QObject *parent)
     : QThread(parent)
     , m_iterator(iterator)
@@ -110,7 +114,7 @@ void JobController::run()
         if (update_children) {
             fileInfoQueue.enqueue(m_iterator->fileInfo());
 
-            if (timer->elapsed() > 500) {
+            if (timer->elapsed() > 500 || fileInfoQueue.count() > 2333) {
                 update_children = false;
 
                 emit childrenUpdated(fileInfoQueue);
@@ -123,7 +127,7 @@ void JobController::run()
         } else {
             emit addChildren(m_iterator->fileInfo());
 
-            QThread::msleep(50);
+            QThread::msleep(LOAD_FILE_INTERVAL);
         }
     }
 
