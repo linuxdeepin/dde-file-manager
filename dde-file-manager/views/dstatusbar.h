@@ -5,7 +5,9 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QSizeGrip>
+#include <QSlider>
 #include "dpicturesequenceview.h"
+#include "dslider.h"
 
 
 DWIDGET_USE_NAMESPACE
@@ -20,6 +22,7 @@ public:
 
     void initUI();
     void initConnect();
+    DSlider* scalingSlider();
 
 public slots:
     void itemSelected(const FMEvent &event, int number);
@@ -43,6 +46,7 @@ private:
     QHBoxLayout * m_layout;
     QLabel * m_label;
     DPictureSequenceView* m_loadingIndicator;
+    DSlider* m_scaleSlider;
 };
 
 #endif // DSTATUSBAR_H

@@ -12,6 +12,7 @@
 #include <anchors.h>
 
 #include "utils/durl.h"
+#include "dslider.h"
 
 class DFileSystemModel;
 
@@ -149,6 +150,7 @@ public slots:
     bool canShowSelectionRect() const;
 
     void setContentLabel(const QString &text);
+    void setIconSizeWithIndex(const int index);
 
 signals:
     void currentUrlChanged(const DUrl &url);
@@ -262,6 +264,8 @@ private:
 
     /// drag drop
     QModelIndex dragMoveHoverIndex;
+
+    DSlider *m_scalingSlider = NULL;
 };
 
 #endif // DFILEVIEW_H

@@ -41,11 +41,20 @@ void DStatusBar::initUI()
     m_loadingIndicator->hide();
 
     m_label = new QLabel(m_counted.arg("0"), this);
-    m_layout->addStretch();
+    m_scaleSlider = new DSlider(this);
+    m_scaleSlider->setObjectName("ScalingSlider");
+    m_scaleSlider->setFixedWidth(142);
+    m_scaleSlider->setMinValue(0);
+    m_scaleSlider->setMaxValue(4);
+    m_scaleSlider->setStepSize(1);
+
+    m_layout->addStretch(3);
     m_layout->addWidget(m_loadingIndicator);
     m_layout->addWidget(m_label);
-    m_layout->addStretch();
-    m_layout->setSpacing(5);
+    m_layout->addStretch(2);
+    m_layout->addWidget(m_scaleSlider);
+    m_layout->setSpacing(14);
+    m_layout->addSpacing(4);
     m_layout->setContentsMargins(0, 0, 0, 0);
     setFixedHeight(24);
     setFocusPolicy(Qt::NoFocus);
@@ -61,6 +70,11 @@ void DStatusBar::initConnect()
     connect(fileSignalManager, &FileSignalManager::statusBarItemsSelected, this, &DStatusBar::itemSelected);
     connect(fileSignalManager, &FileSignalManager::statusBarItemsCounted, this, &DStatusBar::itemCounted);
     connect(fileSignalManager, &FileSignalManager::loadingIndicatorShowed, this, &DStatusBar::setLoadingIncatorVisible);
+}
+
+DSlider *DStatusBar::scalingSlider()
+{
+    return m_scaleSlider;
 }
 
 void DStatusBar::itemSelected(const FMEvent &event, int number)
