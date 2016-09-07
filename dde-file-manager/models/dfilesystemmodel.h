@@ -4,7 +4,6 @@
 #include <QAbstractItemModel>
 #include <QPointer>
 #include <QDir>
-#include <QSemaphore>
 
 #include "utils/durl.h"
 #include "abstractfileinfo.h"
@@ -147,7 +146,6 @@ private:
     State m_state = Idle;
 
     bool childrenUpdated = false;
-    QSemaphore addChildrenSemaphore;
 
     inline const FileSystemNodePointer getNodeByIndex(const QModelIndex &index) const;
     QModelIndex createIndex(const FileSystemNodePointer &node, int column) const;
