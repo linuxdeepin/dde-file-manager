@@ -167,8 +167,7 @@ HEADERS += \
     views/flowlayout.h \
     shutil/shortcut.h \
     views/dtabbar.h \
-    shutil/filepreviewiconprovider.h \
-    views/dslider.h
+    shutil/filepreviewiconprovider.h
 
 
 
@@ -266,8 +265,7 @@ SOURCES += \
     views/flowlayout.cpp \
     shutil/shortcut.cpp \
     views/dtabbar.cpp \
-    shutil/filepreviewiconprovider.cpp \
-    views/dslider.cpp
+    shutil/filepreviewiconprovider.cpp
 
 
 INCLUDEPATH += models ..

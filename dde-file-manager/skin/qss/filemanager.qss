@@ -582,8 +582,3 @@ QPushButton#NewTabButton:disabled {
     border: none;
     image: url(:/icons/images/icons/new_tab_disabled.png);
 }
-
-/*scaling slider inside the status bar*/
-DSlider#ScalingSlider{
-    border: none;
-}

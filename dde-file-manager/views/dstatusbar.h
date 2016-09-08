@@ -1,14 +1,13 @@
 #ifndef DSTATUSBAR_H
 #define DSTATUSBAR_H
 
+#include <dpicturesequenceview.h>
+#include <dslider.h>
+
 #include <QStatusBar>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QSizeGrip>
-#include <QSlider>
-#include "dpicturesequenceview.h"
-#include "dslider.h"
-
 
 DWIDGET_USE_NAMESPACE
 
