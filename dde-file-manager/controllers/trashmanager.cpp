@@ -3,10 +3,10 @@
 #include "fileservices.h"
 #include "fileinfo.h"
 
-#include "../app/global.h"
-#include "../app/filesignalmanager.h"
+#include "app/global.h"
+#include "app/filesignalmanager.h"
 
-#include "../../filemonitor/filemonitor.h"
+#include "filemonitor/filemonitor.h"
 
 #include "widgets/singleton.h"
 

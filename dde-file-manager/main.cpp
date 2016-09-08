@@ -7,11 +7,11 @@
 
 #include "widgets/commandlinemanager.h"
 
-#include "../dialogs/dialogmanager.h"
-#include "../shutil/fileutils.h"
-#include "../shutil/mimesappsmanager.h"
-#include "../dialogs/openwithdialog.h"
-#include "../controllers/appcontroller.h"
+#include "dialogs/dialogmanager.h"
+#include "shutil/fileutils.h"
+#include "shutil/mimesappsmanager.h"
+#include "dialogs/openwithdialog.h"
+#include "controllers/appcontroller.h"
 #include "widgets/singleton.h"
 
 #include <dthememanager.h>

@@ -1,5 +1,5 @@
 #include "movejobworker.h"
-#include "../app/global.h"
+#include "app/global.h"
 
 MovejobWorker::MovejobWorker(QStringList files, QString destination, QObject *parent) :
     QObject(parent),

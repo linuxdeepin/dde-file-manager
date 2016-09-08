@@ -1,16 +1,16 @@
 #include "abstractfileinfo.h"
 
-#include "../views/dfileview.h"
+#include "views/dfileview.h"
 
-#include "../models/dfilesystemmodel.h"
+#include "models/dfilesystemmodel.h"
 
-#include "../shutil/fileutils.h"
-#include "../shutil/mimetypedisplaymanager.h"
+#include "shutil/fileutils.h"
+#include "shutil/mimetypedisplaymanager.h"
 
-#include "../controllers/pathmanager.h"
-#include "../controllers/fileservices.h"
+#include "controllers/pathmanager.h"
+#include "controllers/fileservices.h"
 
-#include "../app/global.h"
+#include "app/global.h"
 
 #include "widgets/singleton.h"
 

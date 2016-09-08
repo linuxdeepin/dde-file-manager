@@ -3,11 +3,11 @@
 #include "dhorizseparator.h"
 #include "windowmanager.h"
 
-#include "../controllers/bookmarkmanager.h"
+#include "controllers/bookmarkmanager.h"
 
-#include "../app/global.h"
-#include "../app/fmevent.h"
-#include "../app/filesignalmanager.h"
+#include "app/global.h"
+#include "app/fmevent.h"
+#include "app/filesignalmanager.h"
 
 #include "deviceinfo/udisklistener.h"
 

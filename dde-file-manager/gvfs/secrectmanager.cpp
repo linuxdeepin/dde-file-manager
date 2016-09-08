@@ -1,9 +1,9 @@
 #include "secrectmanager.h"
 
-#include "../app/global.h"
-#include "../app/filesignalmanager.h"
+#include "app/global.h"
+#include "app/filesignalmanager.h"
 
-#include "../shutil/standardpath.h"
+#include "shutil/standardpath.h"
 
 #include "widgets/singleton.h"
 

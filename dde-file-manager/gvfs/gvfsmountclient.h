@@ -2,7 +2,7 @@
 #define GVFSMOUNTCLIENT_H
 
 #include <QObject>
-#include "../app/fmevent.h"
+#include "app/fmevent.h"
 
 #undef signals
 extern "C" {

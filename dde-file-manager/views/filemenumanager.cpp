@@ -1,23 +1,23 @@
 #include "filemenumanager.h"
 #include "dfilemenu.h"
 
-#include "../app/global.h"
-#include "../app/filesignalmanager.h"
-#include "../app/fmevent.h"
-#include "../app/filemanagerapp.h"
+#include "app/global.h"
+#include "app/filesignalmanager.h"
+#include "app/fmevent.h"
+#include "app/filemanagerapp.h"
 
-#include "../shutil/fileutils.h"
-#include "../shutil/standardpath.h"
+#include "shutil/fileutils.h"
+#include "shutil/standardpath.h"
 
-#include "../dialogs/propertydialog.h"
+#include "dialogs/propertydialog.h"
 
-#include "../views/windowmanager.h"
+#include "views/windowmanager.h"
 
-#include "../controllers/fileservices.h"
+#include "controllers/fileservices.h"
 #include "fileoperations/filejob.h"
-#include "../controllers/bookmarkmanager.h"
-#include "../controllers/appcontroller.h"
-#include "../controllers/trashmanager.h"
+#include "controllers/bookmarkmanager.h"
+#include "controllers/appcontroller.h"
+#include "controllers/trashmanager.h"
 
 #include "widgets/singleton.h"
 

@@ -3,7 +3,7 @@
 
 
 #include "fileinfo.h"
-#include "../gvfs/networkmanager.h"
+#include "gvfs/networkmanager.h"
 
 
 class NetworkFileInfo: public AbstractFileInfo

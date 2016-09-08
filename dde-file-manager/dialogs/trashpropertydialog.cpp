@@ -1,8 +1,8 @@
 #include "trashpropertydialog.h"
 #include "dseparatorhorizontal.h"
-#include "../shutil/fileutils.h"
-#include "../controllers/fileservices.h"
-#include "../shutil/filessizeworker.h"
+#include "shutil/fileutils.h"
+#include "controllers/fileservices.h"
+#include "shutil/filessizeworker.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QThread>

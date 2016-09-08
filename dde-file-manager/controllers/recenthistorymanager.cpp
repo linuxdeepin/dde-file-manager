@@ -2,10 +2,10 @@
 #include "recentfileinfo.h"
 #include "fileservices.h"
 
-#include "../app/filesignalmanager.h"
-#include "../app/global.h"
+#include "app/filesignalmanager.h"
+#include "app/global.h"
 
-#include "../shutil/standardpath.h"
+#include "shutil/standardpath.h"
 
 #include "widgets/singleton.h"
 

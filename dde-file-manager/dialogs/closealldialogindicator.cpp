@@ -4,7 +4,7 @@
 #include <QDesktopWidget>
 #include <QApplication>
 #include <QKeyEvent>
-#include "../shutil/fileutils.h"
+#include "shutil/fileutils.h"
 
 CloseAllDialogIndicator::CloseAllDialogIndicator(QWidget *parent) : QDialog(parent)
 {

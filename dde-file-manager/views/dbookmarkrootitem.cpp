@@ -2,11 +2,11 @@
 #include "dbookmarkscene.h"
 #include "dbookmarkitem.h"
 
-#include "../app/global.h"
+#include "app/global.h"
 #include "app/filesignalmanager.h"
 
-#include "../controllers/bookmarkmanager.h"
-#include "../app/fmevent.h"
+#include "controllers/bookmarkmanager.h"
+#include "app/fmevent.h"
 
 #include <QDebug>
 #include <QMimeData>

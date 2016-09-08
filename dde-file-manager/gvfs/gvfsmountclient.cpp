@@ -2,10 +2,10 @@
 
 #include "mountaskpassworddialog.h"
 
-#include "../app/filesignalmanager.h"
-#include "../app/global.h"
+#include "app/filesignalmanager.h"
+#include "app/global.h"
 
-#include "../views/windowmanager.h"
+#include "views/windowmanager.h"
 
 #include "widgets/singleton.h"
 

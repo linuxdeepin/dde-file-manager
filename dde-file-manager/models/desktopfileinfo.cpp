@@ -1,9 +1,9 @@
 #include "desktopfileinfo.h"
 
-#include "../app/global.h"
+#include "app/global.h"
 
-#include "../shutil/properties.h"
-#include "../shutil/iconprovider.h"
+#include "shutil/properties.h"
+#include "shutil/iconprovider.h"
 
 #include "widgets/singleton.h"
 

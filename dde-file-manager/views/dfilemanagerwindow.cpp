@@ -11,16 +11,16 @@
 #include "filemenumanager.h"
 #include "computerview.h"
 
-#include "../app/global.h"
-#include "../app/fmevent.h"
-#include "../app/filesignalmanager.h"
+#include "app/global.h"
+#include "app/fmevent.h"
+#include "app/filesignalmanager.h"
 
 #include "utils/xutil.h"
 #include "utils/xutil.h"
 #include "utils/utils.h"
 
 #include "widgets/singleton.h"
-#include "../controllers/fileservices.h"
+#include "controllers/fileservices.h"
 #include "./dbookmarkscene.h"
 
 #include <dplatformwindowhandle.h>

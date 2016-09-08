@@ -2,10 +2,10 @@
 
 #include "utils/qobjecthelper.h"
 
-#include "../app/global.h"
-#include "../app/filesignalmanager.h"
+#include "app/global.h"
+#include "app/filesignalmanager.h"
 
-#include "../shutil/standardpath.h"
+#include "shutil/standardpath.h"
 
 #include <QJsonParseError>
 #include <QJsonObject>

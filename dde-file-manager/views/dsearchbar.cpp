@@ -3,11 +3,11 @@
 #include "windowmanager.h"
 #include "deditorwidgetmenu.h"
 
-#include "../controllers/searchhistroymanager.h"
+#include "controllers/searchhistroymanager.h"
 
-#include "../app/global.h"
-#include "../app/filesignalmanager.h"
-#include "../app/fmevent.h"
+#include "app/global.h"
+#include "app/filesignalmanager.h"
+#include "app/fmevent.h"
 
 #include "widgets/singleton.h"
 

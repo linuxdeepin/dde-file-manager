@@ -3,7 +3,7 @@
 #include "dfilesystemmodel.h"
 #include "deditorwidgetmenu.h"
 
-#include "../app/global.h"
+#include "app/global.h"
 
 #include <QLabel>
 #include <QPainter>

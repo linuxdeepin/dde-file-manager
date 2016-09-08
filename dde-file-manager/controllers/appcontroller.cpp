@@ -13,19 +13,19 @@
 #include "fileservices.h"
 #include "fileoperations/filejob.h"
 
-#include "../app/filesignalmanager.h"
-#include "../app/fmevent.h"
-#include "../app/global.h"
+#include "app/filesignalmanager.h"
+#include "app/fmevent.h"
+#include "app/global.h"
 
-#include "../shutil/fileutils.h"
+#include "shutil/fileutils.h"
 
-#include "../views/windowmanager.h"
+#include "views/windowmanager.h"
 
-#include "../dbusinterface/soundeffect_interface.h"
+#include "dbusinterface/soundeffect_interface.h"
 
-#include "../gvfs/networkmanager.h"
-#include "../gvfs/gvfsmountclient.h"
-#include "../gvfs/secrectmanager.h"
+#include "gvfs/networkmanager.h"
+#include "gvfs/gvfsmountclient.h"
+#include "gvfs/secrectmanager.h"
 
 #include "widgets/singleton.h"
 
@@ -33,7 +33,7 @@
 #include <QStorageInfo>
 #include <DAboutDialog>
 #include <qprocess.h>
-#include "../shutil/shortcut.h"
+#include "shutil/shortcut.h"
 
 QMap<DUrl, int> AppController::SelectedFiles;
 

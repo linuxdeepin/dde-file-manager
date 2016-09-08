@@ -12,7 +12,7 @@
 #include <QDBusArgument>
 #include <QXmlStreamReader>
 #include <QDBusPendingReply>
-#include "../dbusinterface/diskmount_interface.h"
+#include "dbusinterface/diskmount_interface.h"
 #include "udiskdeviceinfo.h"
 
 

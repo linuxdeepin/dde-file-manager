@@ -1,6 +1,6 @@
 #include "filejob.h"
 
-#include "../shutil/fileutils.h"
+#include "shutil/fileutils.h"
 #include <QFile>
 #include <QThread>
 #include <QDir>

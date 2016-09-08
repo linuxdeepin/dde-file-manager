@@ -1,21 +1,21 @@
 #include "propertydialog.h"
 #include "fileinfo.h"
 
-#include "../app/global.h"
+#include "app/global.h"
 
-#include "../controllers/fileservices.h"
+#include "controllers/fileservices.h"
 
-#include "../shutil/fileutils.h"
-#include "../shutil/mimesappsmanager.h"
-#include "../shutil/iconprovider.h"
-#include "../shutil/filessizeworker.h"
-#include "../shutil/fileutils.h"
+#include "shutil/fileutils.h"
+#include "shutil/mimesappsmanager.h"
+#include "shutil/iconprovider.h"
+#include "shutil/filessizeworker.h"
+#include "shutil/fileutils.h"
 
-#include "../views/deditorwidgetmenu.h"
+#include "views/deditorwidgetmenu.h"
 
-#include "../dialogs/dialogmanager.h"
+#include "dialogs/dialogmanager.h"
 
-#include "../deviceinfo/udisklistener.h"
+#include "deviceinfo/udisklistener.h"
 
 #include "utils/utils.h"
 

@@ -1,14 +1,14 @@
 #include "trashfileinfo.h"
 #include "fileinfo.h"
 
-#include "../controllers/trashmanager.h"
-#include "../controllers/fileservices.h"
+#include "controllers/trashmanager.h"
+#include "controllers/fileservices.h"
 
-#include "../app/global.h"
+#include "app/global.h"
 
-#include "../shutil/iconprovider.h"
+#include "shutil/iconprovider.h"
 
-#include "../models/dfilesystemmodel.h"
+#include "models/dfilesystemmodel.h"
 
 #include "widgets/singleton.h"
 

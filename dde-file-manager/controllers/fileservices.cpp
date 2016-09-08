@@ -2,21 +2,21 @@
 #include "abstractfilecontroller.h"
 #include "jobcontroller.h"
 
-#include "../app/filesignalmanager.h"
-#include "../app/fmevent.h"
-#include "../app/global.h"
+#include "app/filesignalmanager.h"
+#include "app/fmevent.h"
+#include "app/global.h"
 
-#include "../views/windowmanager.h"
+#include "views/windowmanager.h"
 
-#include "../models/abstractfileinfo.h"
-#include "../models/fileinfo.h"
-#include "../models/trashfileinfo.h"
+#include "models/abstractfileinfo.h"
+#include "models/fileinfo.h"
+#include "models/trashfileinfo.h"
 
-#include "../shutil/fileutils.h"
+#include "shutil/fileutils.h"
 
-#include "../dialogs/dialogmanager.h"
+#include "dialogs/dialogmanager.h"
 
-#include "../deviceinfo/udisklistener.h"
+#include "deviceinfo/udisklistener.h"
 
 #include "widgets/singleton.h"
 

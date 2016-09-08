@@ -2,7 +2,7 @@
 #define TRASHFILEINFO_H
 
 #include "abstractfileinfo.h"
-#include "../app/fmevent.h"
+#include "app/fmevent.h"
 
 class TrashFileInfo : public AbstractFileInfo
 {

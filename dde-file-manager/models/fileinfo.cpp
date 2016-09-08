@@ -1,10 +1,10 @@
 #include "fileinfo.h"
 
-#include "../app/global.h"
+#include "app/global.h"
 
-#include "../shutil/iconprovider.h"
+#include "shutil/iconprovider.h"
 
-#include "../controllers/pathmanager.h"
+#include "controllers/pathmanager.h"
 
 #include "widgets/singleton.h"
 

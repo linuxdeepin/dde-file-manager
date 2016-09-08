@@ -10,7 +10,7 @@
 
 #include <dscrollbar.h>
 
-#include "../utils/xutil.h"
+#include "utils/xutil.h"
 
 MoveCopyTaskWidget::MoveCopyTaskWidget(const QMap<QString, QString> &jobDetail, QWidget *parent):
     QFrame(parent),

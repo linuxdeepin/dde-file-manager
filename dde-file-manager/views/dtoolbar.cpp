@@ -9,11 +9,11 @@
 #include "dhoverbutton.h"
 #include "windowmanager.h"
 
-#include "../app/fmevent.h"
-#include "../app/global.h"
-#include "../app/filesignalmanager.h"
+#include "app/fmevent.h"
+#include "app/global.h"
+#include "app/filesignalmanager.h"
 
-#include "../views/filemenumanager.h"
+#include "views/filemenumanager.h"
 
 #include "widgets/singleton.h"
 
