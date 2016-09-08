@@ -1,7 +1,7 @@
 #ifndef FILEMENUMANAGER_H
 #define FILEMENUMANAGER_H
 
-#include "abstractfileinfo.h"
+#include "models/abstractfileinfo.h"
 
 #include <DAction>
 

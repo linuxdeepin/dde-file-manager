@@ -2,8 +2,8 @@
 #define ABSTRACTFILECONTROLLER_H
 
 #include "utils/durl.h"
-#include "abstractfileinfo.h"
 
+#include "models/abstractfileinfo.h"
 #include "models/ddiriterator.h"
 
 #include <QObject>

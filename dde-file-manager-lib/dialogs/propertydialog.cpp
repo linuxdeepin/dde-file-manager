@@ -1,5 +1,6 @@
 #include "propertydialog.h"
-#include "fileinfo.h"
+
+#include "models/fileinfo.h"
 
 #include "app/global.h"
 

@@ -1,7 +1,8 @@
 #include "trashmanager.h"
-#include "trashfileinfo.h"
 #include "fileservices.h"
-#include "fileinfo.h"
+
+#include "models/fileinfo.h"
+#include "models/trashfileinfo.h"
 
 #include "app/global.h"
 #include "app/filesignalmanager.h"

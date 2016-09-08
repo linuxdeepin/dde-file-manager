@@ -10,6 +10,8 @@
 #include <QJsonObject>
 #include <QProcess>
 #include <QDir>
+#include <QLocalServer>
+#include <QLocalSocket>
 
 QString SingleApplication::UserID = "1000";
 
@@ -30,6 +32,13 @@ SingleApplication::~SingleApplication()
 void SingleApplication::initConnect()
 {
     connect(m_localServer, &QLocalServer::newConnection, this, &SingleApplication::handleConnection);
+}
+
+void SingleApplication::initSources()
+{
+    Q_INIT_RESOURCE(icons);
+    Q_INIT_RESOURCE(dui_theme_dark);
+    Q_INIT_RESOURCE(dui_theme_light);
 }
 
 void SingleApplication::newClientProcess(const QString &key)
@@ -65,16 +74,21 @@ void SingleApplication::newClientProcess(const QString &key)
 QString SingleApplication::userServerName(const QString &key)
 {
     QString userKey;
-    if (userID() == "0"){
+    if (getUserID() == "0"){
         userKey = QString("%1/%2").arg("/tmp", key);
     }else{
-        userKey = QString("%1/%2/%3").arg("/var/run/user", userID(), key);
+        userKey = QString("%1/%2/%3").arg("/var/run/user", getUserID(), key);
     }
     qDebug() << userKey;
     return userKey;
 }
 
-QString SingleApplication::userID()
+QString SingleApplication::userId()
+{
+    return UserID;
+}
+
+QString SingleApplication::getUserID()
 {
     QProcess userID;
     userID.start("id", QStringList() << "-u");
@@ -83,8 +97,6 @@ QString SingleApplication::userID()
     UserID = QString(id).trimmed();
     return UserID;
 }
-
-
 
 bool SingleApplication::setSingleInstance(const QString &key)
 {

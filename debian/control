@@ -11,6 +11,22 @@ Homepage: http://www.deepin.org
 
 Package: dde-file-manager
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends},dde-daemon (>=3.0.16+r1)
+Depends: ${shlibs:Depends}, ${misc:Depends}, dde-daemon (>=3.0.16+r1),
+ libdde-file-manager( =${binary:Version})
 Description: File manager front end of Deepin OS
  File manager front end of Deepin OS
+
+Package: libdde-file-manager
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Multi-Arch: same
+Description: DDE File Manager library
+ .
+ This package contains the shared libraries.
+
+Package: libdde-file-manager-dev
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libdde-file-manager( =${binary:Version})
+Description: DDE File Manager Devel library
+ .
+ This package contains the header files and static libraries of libdde-file-manager

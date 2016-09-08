@@ -1,13 +1,10 @@
 #include "dfileview.h"
-#include "dfilesystemmodel.h"
 #include "fileitem.h"
 #include "filemenumanager.h"
 #include "dfileitemdelegate.h"
-#include "fileinfo.h"
 #include "dfilemenu.h"
 #include "windowmanager.h"
 #include "dfilemanagerwindow.h"
-#include "dfileselectionmodel.h"
 #include "xdndworkaround.h"
 #include "dstatusbar.h"
 #include "app/global.h"
@@ -16,12 +13,15 @@
 #include "app/filesignalmanager.h"
 
 #include "fileoperations/filejob.h"
+
 #include "controllers/appcontroller.h"
 #include "controllers/filecontroller.h"
 #include "controllers/fileservices.h"
 #include "controllers/fmstatemanager.h"
 #include "controllers/pathmanager.h"
 
+#include "models/fileinfo.h"
+#include "models/dfileselectionmodel.h"
 #include "models/dfilesystemmodel.h"
 
 #include "shutil/fileutils.h"

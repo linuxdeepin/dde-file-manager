@@ -1,8 +1,8 @@
 #include "dfileitemdelegate.h"
 #include "fileitem.h"
-#include "dfilesystemmodel.h"
 #include "deditorwidgetmenu.h"
 
+#include "models/dfilesystemmodel.h"
 #include "app/global.h"
 
 #include <QLabel>

@@ -1,11 +1,13 @@
 #ifndef SINGLEAPPLICATION_H
 #define SINGLEAPPLICATION_H
 
-#include <QApplication>
-#include <QLocalServer>
-#include <QLocalSocket>
+#include <QtGlobal>
 
 #include <DApplication>
+
+QT_BEGIN_NAMESPACE
+class QLocalServer;
+QT_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE;
 
@@ -17,12 +19,10 @@ public:
     ~SingleApplication();
     void initConnect();
 
+    static void initSources();
     static void newClientProcess(const QString& key);
     static QString userServerName(const QString& key);
-    static QString userID();
-    static QString UserID;
-
-signals:
+    static QString userId();
 
 public slots:
     bool setSingleInstance(const QString& key);
@@ -30,8 +30,10 @@ public slots:
     void readData();
 
 private:
-    QLocalServer* m_localServer;
+    static QString getUserID();
 
+    static QString UserID;
+    QLocalServer* m_localServer;
 };
 
 #endif // SINGLEAPPLICATION_H

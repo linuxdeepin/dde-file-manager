@@ -83,7 +83,7 @@ QString UDiskDeviceInfo::getMountPoint() const
 
 DUrl UDiskDeviceInfo::getMountPointUrl()
 {
-    QString path = QString("/run/user/%1/gvfs").arg(SingleApplication::UserID);
+    QString path = QString("/run/user/%1/gvfs").arg(SingleApplication::userId());
 
     if (m_diskInfo.MountPoint.startsWith(AFC_SCHEME)){
         m_diskInfo.MountPointUrl = DUrl::fromLocalFile(QString("%1/afc:host=%2").arg(path, m_diskInfo.ID));
