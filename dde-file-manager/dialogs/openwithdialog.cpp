@@ -1,11 +1,11 @@
 #include "openwithdialog.h"
 
-#include "../shutil/mimesappsmanager.h"
-#include "../shutil/desktopfile.h"
-#include "../shutil/iconprovider.h"
-#include "../shutil/fileutils.h"
+#include "shutil/mimesappsmanager.h"
+#include "shutil/desktopfile.h"
+#include "shutil/iconprovider.h"
+#include "shutil/fileutils.h"
 
-#include "../app/global.h"
+#include "app/global.h"
 
 #include "widgets/singleton.h"
 

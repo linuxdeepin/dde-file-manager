@@ -1,6 +1,6 @@
 #include "deletejobcontroller.h"
 #include "dialogs/confirmdeletedialog.h"
-#include "../app/global.h"
+#include "app/global.h"
 #include "deletejobworker.h"
 
 DeleteJobController::DeleteJobController(QObject *parent) : QObject(parent)

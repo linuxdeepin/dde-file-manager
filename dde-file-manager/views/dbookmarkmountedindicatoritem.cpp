@@ -1,12 +1,12 @@
 #include "dbookmarkmountedindicatoritem.h"
 
-#include "../app/global.h"
+#include "app/global.h"
 
-#include "../deviceinfo/udisklistener.h"
+#include "deviceinfo/udisklistener.h"
 
 #include "widgets/singleton.h"
-#include "../app/filesignalmanager.h"
-#include "../app/fmevent.h"
+#include "app/filesignalmanager.h"
+#include "app/fmevent.h"
 #include "windowmanager.h"
 #include <QDebug>
 

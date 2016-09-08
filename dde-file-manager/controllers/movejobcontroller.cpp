@@ -1,5 +1,5 @@
 #include "movejobcontroller.h"
-#include "../app/global.h"
+#include "app/global.h"
 #include "movejobworker.h"
 
 MoveJobController::MoveJobController(QObject *parent) : QObject(parent)

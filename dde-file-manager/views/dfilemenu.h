@@ -2,7 +2,7 @@
 #define DFILEMENU_H
 
 #include <DMenu>
-#include "../app/fmevent.h"
+#include "app/fmevent.h"
 
 
 DWIDGET_USE_NAMESPACE

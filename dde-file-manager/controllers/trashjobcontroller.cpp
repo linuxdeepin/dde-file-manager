@@ -1,5 +1,5 @@
 #include "trashjobcontroller.h"
-#include "../app/global.h"
+#include "app/global.h"
 #include "dialogs/cleartrashdialog.h"
 
 TrashJobController::TrashJobController(QObject *parent) : QObject(parent)

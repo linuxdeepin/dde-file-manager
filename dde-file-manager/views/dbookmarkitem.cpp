@@ -20,20 +20,20 @@
 #include <QSvgRenderer>
 
 
-#include "../models/bookmark.h"
+#include "models/bookmark.h"
 
-#include "../app/global.h"
-#include "../app/fmevent.h"
-#include "../app/filesignalmanager.h"
-#include "../app/filemanagerapp.h"
+#include "app/global.h"
+#include "app/fmevent.h"
+#include "app/filesignalmanager.h"
+#include "app/filemanagerapp.h"
 
-#include "../shutil/iconprovider.h"
+#include "shutil/iconprovider.h"
 
-#include "../controllers/bookmarkmanager.h"
-#include "../controllers/appcontroller.h"
-#include "../controllers/fileservices.h"
+#include "controllers/bookmarkmanager.h"
+#include "controllers/appcontroller.h"
+#include "controllers/fileservices.h"
 
-#include "../dialogs/dialogmanager.h"
+#include "dialogs/dialogmanager.h"
 
 #include "deviceinfo/udiskdeviceinfo.h"
 

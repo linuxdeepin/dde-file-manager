@@ -4,7 +4,7 @@
 #include "basemanager.h"
 
 #include <QObject>
-#include "../models/fmstate.h"
+#include "models/fmstate.h"
 #include "utils/durl.h"
 
 

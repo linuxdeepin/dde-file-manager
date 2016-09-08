@@ -3,30 +3,30 @@
 #include "openwithotherdialog.h"
 #include "trashpropertydialog.h"
 
-#include "../app/global.h"
-#include "../app/filesignalmanager.h"
-#include "../app/fmevent.h"
+#include "app/global.h"
+#include "app/filesignalmanager.h"
+#include "app/fmevent.h"
 
 #include "fileoperations/filejob.h"
-#include "../controllers/fileservices.h"
+#include "controllers/fileservices.h"
 
-#include "../models/fileinfo.h"
-#include "../models/trashfileinfo.h"
+#include "models/fileinfo.h"
+#include "models/trashfileinfo.h"
 
-#include "../views/windowmanager.h"
+#include "views/windowmanager.h"
 
-#include "../shutil/iconprovider.h"
+#include "shutil/iconprovider.h"
 
-#include "../utils/xutil.h"
-#include "../utils/utils.h"
+#include "utils/xutil.h"
+#include "utils/utils.h"
 
-#include "../dialogs/dtaskdialog.h"
-#include "../dialogs/messagewrongdialog.h"
-#include "../dialogs/propertydialog.h"
-#include "../dialogs/openwithdialog.h"
+#include "dialogs/dtaskdialog.h"
+#include "dialogs/messagewrongdialog.h"
+#include "dialogs/propertydialog.h"
+#include "dialogs/openwithdialog.h"
 
-#include "../deviceinfo/udisklistener.h"
-#include "../deviceinfo/udiskdeviceinfo.h"
+#include "deviceinfo/udisklistener.h"
+#include "deviceinfo/udiskdeviceinfo.h"
 
 #include "widgets/singleton.h"
 

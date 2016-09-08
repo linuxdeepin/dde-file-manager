@@ -6,7 +6,7 @@
 #include <QVariant>
 #include <QDebug>
 #include <QDir>
-#include "../shutil/standardpath.h"
+#include "shutil/standardpath.h"
 
 PathManager::PathManager(QObject *parent) : QObject(parent)
 {

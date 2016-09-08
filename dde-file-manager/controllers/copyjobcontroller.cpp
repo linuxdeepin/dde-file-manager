@@ -1,5 +1,5 @@
 #include "copyjobcontroller.h"
-#include "../app/global.h"
+#include "app/global.h"
 #include "copyjobworker.h"
 
 

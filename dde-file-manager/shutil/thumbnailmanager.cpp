@@ -7,9 +7,9 @@
 #include <QImageReader>
 #include <QCryptographicHash>
 #include <QFileSystemWatcher>
-#include "../app/global.h"
-#include "../widgets/singleton.h"
-#include "../controllers/fileservices.h"
+#include "app/global.h"
+#include "widgets/singleton.h"
+#include "controllers/fileservices.h"
 #include "./mimetypedisplaymanager.h"
 
 ThumbnailManager::ThumbnailManager(QObject *parent)

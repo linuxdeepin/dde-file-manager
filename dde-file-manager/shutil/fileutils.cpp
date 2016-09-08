@@ -1,11 +1,11 @@
 #include "fileutils.h"
 #include "standardpath.h"
 
-#include "../views/windowmanager.h"
+#include "views/windowmanager.h"
 
-#include "../app/global.h"
+#include "app/global.h"
 
-#include "../controllers/fileservices.h"
+#include "controllers/fileservices.h"
 #include "simpleini/SimpleIni.h"
 
 #include <QDirIterator>

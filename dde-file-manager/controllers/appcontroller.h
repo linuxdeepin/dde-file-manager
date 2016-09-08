@@ -4,7 +4,7 @@
 
 #include <QObject>
 #include "subscriber.h"
-#include "../app/fmevent.h"
+#include "app/fmevent.h"
 
 class FileController;
 class FileMonitor;

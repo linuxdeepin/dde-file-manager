@@ -1,16 +1,16 @@
 #include "windowmanager.h"
 #include "dfilemanagerwindow.h"
 
-#include "../app/global.h"
-#include "../app/filesignalmanager.h"
-#include "../app/fmevent.h"
+#include "app/global.h"
+#include "app/filesignalmanager.h"
+#include "app/fmevent.h"
 
-#include "../models/fmstate.h"
+#include "models/fmstate.h"
 
 #include "fileoperations/filejob.h"
-#include "../controllers/fmstatemanager.h"
+#include "controllers/fmstatemanager.h"
 
-#include "../dialogs/dialogmanager.h"
+#include "dialogs/dialogmanager.h"
 
 #include "utils/qobjecthelper.h"
 

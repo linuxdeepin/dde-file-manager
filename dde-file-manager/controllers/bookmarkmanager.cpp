@@ -2,9 +2,9 @@
 #include "fileinfo.h"
 #include "fileservices.h"
 
-#include "../shutil/standardpath.h"
+#include "shutil/standardpath.h"
 
-#include "../app/global.h"
+#include "app/global.h"
 
 #include <QJsonObject>
 #include <QFile>

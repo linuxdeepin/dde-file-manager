@@ -1,5 +1,5 @@
 #include "basemanager.h"
-#include "../shutil/standardpath.h"
+#include "shutil/standardpath.h"
 #include <QFile>
 #include <QDebug>
 

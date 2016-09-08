@@ -1,13 +1,13 @@
 #include "dstatusbar.h"
 #include "windowmanager.h"
 
-#include "../app/fmevent.h"
-#include "../app/filesignalmanager.h"
-#include "../app/global.h"
+#include "app/fmevent.h"
+#include "app/filesignalmanager.h"
+#include "app/global.h"
 
-#include "../shutil/fileutils.h"
+#include "shutil/fileutils.h"
 
-#include "../controllers/fileservices.h"
+#include "controllers/fileservices.h"
 
 #include "widgets/singleton.h"
 

@@ -4,8 +4,8 @@
 #include "app/global.h"
 #include "app/filesignalmanager.h"
 
-#include "../controllers/fileservices.h"
-#include "../controllers/subscriber.h"
+#include "controllers/fileservices.h"
+#include "controllers/subscriber.h"
 
 #include "widgets/singleton.h"
 

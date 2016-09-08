@@ -1,6 +1,6 @@
 #include "searchhistroymanager.h"
 #include "searchhistory.h"
-#include "../shutil/standardpath.h"
+#include "shutil/standardpath.h"
 #include <QList>
 #include <QJsonObject>
 #include <QFile>

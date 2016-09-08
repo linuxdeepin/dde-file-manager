@@ -4,7 +4,7 @@
 #include "utils/durl.h"
 #include "abstractfileinfo.h"
 
-#include "../models/ddiriterator.h"
+#include "models/ddiriterator.h"
 
 #include <QObject>
 #include <QDir>

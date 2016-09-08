@@ -4,7 +4,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsWidget>
 #include <QGraphicsLinearLayout>
-#include "../app/fmevent.h"
+#include "app/fmevent.h"
 
 #define BOOKMARK_ITEM_HEIGHT 30
 #define SEPARATOR_ITEM_HEIGHT 6

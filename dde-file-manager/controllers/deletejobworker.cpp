@@ -1,6 +1,6 @@
 #include "deletejobworker.h"
 #include "dialogs/confirmdeletedialog.h"
-#include "../app/global.h"
+#include "app/global.h"
 
 DeletejobWorker::DeletejobWorker(const QStringList &files, QObject *parent):
     QObject(parent),

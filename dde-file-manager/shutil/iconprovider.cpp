@@ -3,13 +3,13 @@
 #include "desktopfile.h"
 #include "thumbnailmanager.h"
 
-#include "../app/global.h"
+#include "app/global.h"
 
-#include "../controllers/pathmanager.h"
-#include "../controllers/appcontroller.h"
+#include "controllers/pathmanager.h"
+#include "controllers/appcontroller.h"
 
-#include "../shutil/mimesappsmanager.h"
-#include "../shutil/mimetypedisplaymanager.h"
+#include "shutil/mimesappsmanager.h"
+#include "shutil/mimetypedisplaymanager.h"
 
 #include "widgets/singleton.h"
 

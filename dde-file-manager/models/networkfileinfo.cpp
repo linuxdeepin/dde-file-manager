@@ -1,8 +1,8 @@
 #include "networkfileinfo.h"
 
-#include "../app/global.h"
+#include "app/global.h"
 
-#include "../shutil/iconprovider.h"
+#include "shutil/iconprovider.h"
 
 #include "widgets/singleton.h"
 

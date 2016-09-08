@@ -3,15 +3,15 @@
 #include "fileservices.h"
 #include "fileoperations/filejob.h"
 
-#include "../models/desktopfileinfo.h"
+#include "models/desktopfileinfo.h"
 
-#include "../app/global.h"
-#include "../app/fmevent.h"
-#include "../app/filesignalmanager.h"
+#include "app/global.h"
+#include "app/fmevent.h"
+#include "app/filesignalmanager.h"
 
-#include "../shutil/fileutils.h"
+#include "shutil/fileutils.h"
 
-#include "../dialogs/dialogmanager.h"
+#include "dialogs/dialogmanager.h"
 
 #include "widgets/singleton.h"
 

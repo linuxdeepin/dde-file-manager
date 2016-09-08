@@ -1,11 +1,11 @@
 #include "searchcontroller.h"
 #include "fileservices.h"
 
-#include "../models/searchfileinfo.h"
-#include "../models/ddiriterator.h"
+#include "models/searchfileinfo.h"
+#include "models/ddiriterator.h"
 
-#include "../app/global.h"
-#include "../app/filesignalmanager.h"
+#include "app/global.h"
+#include "app/filesignalmanager.h"
 
 #include <QDebug>
 #include <QRegularExpression>

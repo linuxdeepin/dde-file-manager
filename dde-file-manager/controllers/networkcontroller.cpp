@@ -1,6 +1,6 @@
 #include "networkcontroller.h"
-#include "../models/networkfileinfo.h"
-#include "../gvfs/networkmanager.h"
+#include "models/networkfileinfo.h"
+#include "gvfs/networkmanager.h"
 
 NetworkController::NetworkController(QObject *parent):
     AbstractFileController(parent)

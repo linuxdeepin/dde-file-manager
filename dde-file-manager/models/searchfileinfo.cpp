@@ -1,12 +1,12 @@
 #include "searchfileinfo.h"
 
-#include "../views/dfileview.h"
+#include "views/dfileview.h"
 
-#include "../controllers/fileservices.h"
+#include "controllers/fileservices.h"
 
-#include "../models/dfilesystemmodel.h"
+#include "models/dfilesystemmodel.h"
 
-#include "../app/global.h"
+#include "app/global.h"
 
 #include <QIcon>
 #include <QDateTime>

@@ -6,15 +6,15 @@
 #include "windowmanager.h"
 #include "dbusinterface/dbustype.h"
 
-#include "../controllers/bookmarkmanager.h"
-#include "../controllers/pathmanager.h"
+#include "controllers/bookmarkmanager.h"
+#include "controllers/pathmanager.h"
 
-#include "../app/global.h"
-#include "../app/fmevent.h"
-#include "../app/filesignalmanager.h"
+#include "app/global.h"
+#include "app/fmevent.h"
+#include "app/filesignalmanager.h"
 
-#include "../deviceinfo/udiskdeviceinfo.h"
-#include "../deviceinfo/udisklistener.h"
+#include "deviceinfo/udiskdeviceinfo.h"
+#include "deviceinfo/udisklistener.h"
 
 #include "widgets/singleton.h"
 

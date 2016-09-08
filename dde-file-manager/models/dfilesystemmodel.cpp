@@ -2,20 +2,20 @@
 #include "desktopfileinfo.h"
 #include "abstractfileinfo.h"
 
-#include "../app/global.h"
-#include "../app/filemanagerapp.h"
-#include "../app/fmevent.h"
+#include "app/global.h"
+#include "app/filemanagerapp.h"
+#include "app/fmevent.h"
 
-#include "../views/dfileview.h"
+#include "views/dfileview.h"
 
-#include "../controllers/appcontroller.h"
-#include "../controllers/fileservices.h"
-#include "../controllers/jobcontroller.h"
+#include "controllers/appcontroller.h"
+#include "controllers/fileservices.h"
+#include "controllers/jobcontroller.h"
 
 #include "filemonitor/filemonitor.h"
 
-#include "../shutil/mimetypedisplaymanager.h"
-#include "../shutil/fileutils.h"
+#include "shutil/mimetypedisplaymanager.h"
+#include "shutil/fileutils.h"
 
 #include <QDebug>
 #include <QFileIconProvider>

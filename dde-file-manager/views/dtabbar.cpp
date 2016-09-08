@@ -2,10 +2,10 @@
 #include <QtCore>
 #include <QDebug>
 #include <QPropertyAnimation>
-#include "../app/global.h"
-#include "../app/fmevent.h"
-#include "../app/filemanagerapp.h"
-#include "../controllers/appcontroller.h"
+#include "app/global.h"
+#include "app/fmevent.h"
+#include "app/filemanagerapp.h"
+#include "controllers/appcontroller.h"
 
 #include <dutility.h>
 

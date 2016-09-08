@@ -5,7 +5,7 @@
 #include <QSize>
 #include <QDebug>
 #include "utils/debugobejct.h"
-#include "../app/fmevent.h"
+#include "app/fmevent.h"
 
 #undef signals
 extern "C" {

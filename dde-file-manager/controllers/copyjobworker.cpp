@@ -1,5 +1,5 @@
 #include "copyjobworker.h"
-#include "../app/global.h"
+#include "app/global.h"
 
 CopyjobWorker::CopyjobWorker(QStringList files, QString destination, QObject *parent) :
     QObject(parent),
