@@ -39,14 +39,14 @@ void JobController::start()
         return;
     }
 
-    setState(Started);
-
     if (m_state == Paused) {
+        setState(Started);
         waitCondition.wakeAll();
 
         return;
     }
 
+    setState(Started);
     QThread::start(TimeCriticalPriority);
 }
 
