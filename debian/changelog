@@ -1,0 +1,23 @@
+dde-file-manager (1.0.1-1) stable; urgency=low
+
+  * Autobuild Tag 1.0.1 
+
+ -- TagBuilder <tagbuilder@deepin.com>  Tue, 26 Jul 2016 06:56:58 +0000
+
+dde-file-manager (1.0-3) stable; urgency=low
+
+  * Rebuild Version 1.0 
+
+ -- TagBuilder <tagbuilder@deepin.com>  Tue, 26 Jul 2016 04:42:53 +0000
+
+dde-file-manager (1.0-2) stable; urgency=low
+
+  * Rebuild Version 1.0 
+
+ -- TagBuilder <tagbuilder@deepin.com>  Tue, 26 Jul 2016 04:17:56 +0000
+
+dde-file-manager (1.0-1) unstable; urgency=medium
+
+  * Initial release 
+
+ -- Deepin Packages Builder <packages@linuxdeepin.com>  Tue, 16 Feb 2016 11:08:50 +0800

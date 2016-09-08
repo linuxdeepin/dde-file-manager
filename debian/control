@@ -1,0 +1,16 @@
+Source: dde-file-manager
+Section: devel
+Priority: optional
+Maintainer: Deepin Packages Builder <packages@linuxdeepin.com>
+Build-Depends: debhelper (>=9), pkg-config, qt5-qmake, qt5-default, qtbase5-dev, qtbase5-private-dev,
+ libxcb-ewmh-dev, libgtk2.0-dev, libqt5x11extras5-dev, libgsettings-qt-dev, libqt5svg5-dev, 
+ qttools5-dev-tools, libmagic-dev, libudev-dev, libsecret-1-dev,
+ libxcb-util0-dev, libstartup-notification0-dev, libpoppler-qt5-dev, libavformat-dev, libswscale-dev, libpolkit-agent-1-dev, libpolkit-qt5-1-dev, qtmultimedia5-dev
+Standards-Version: 3.9.6
+Homepage: http://www.deepin.org
+
+Package: dde-file-manager
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends},dde-daemon (>=3.0.16+r1)
+Description: File manager front end of Deepin OS
+ File manager front end of Deepin OS
