@@ -1,0 +1,7 @@
+usr/lib/*/libdde-file-manager.so.*
+usr/share/dde-file-manager/translations/*
+usr/share/dde-file-manager/templates/*
+usr/share/dde-file-manager/mimetypes/*
+usr/share/dde-file-manager/templates/*
+usr/share/dman/*
+usr/share/icons/*

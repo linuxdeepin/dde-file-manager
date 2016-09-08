@@ -24,7 +24,7 @@
 #include <QLibraryInfo>
 #include <QDir>
 
-#include "xdndworkaround.h"
+#include "xdnd/xdndworkaround.h"
 
 #ifdef ENABLE_PPROF
 #include <gperftools/profiler.h>
@@ -34,14 +34,11 @@ DWIDGET_USE_NAMESPACE
 
 int main(int argc, char *argv[])
 {
-    Q_INIT_RESOURCE(icons);
-    Q_INIT_RESOURCE(dui_theme_dark);
-    Q_INIT_RESOURCE(dui_theme_light);
 #ifdef ENABLE_PPROF
     ProfilerStart("pprof.prof");
 #endif
     SingleApplication::loadDXcbPlugin();
-
+    SingleApplication::initSources();
     SingleApplication app(argc, argv);
 
     app.setOrganizationName(QMAKE_ORGANIZATION_NAME);

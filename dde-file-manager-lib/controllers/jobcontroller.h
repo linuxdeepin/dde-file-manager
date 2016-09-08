@@ -1,7 +1,7 @@
 #ifndef JOBCONTROLLER_H
 #define JOBCONTROLLER_H
 
-#include "ddiriterator.h"
+#include "models/ddiriterator.h"
 
 #include <QThread>
 #include <QWaitCondition>

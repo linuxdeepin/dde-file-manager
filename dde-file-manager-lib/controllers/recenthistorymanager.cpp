@@ -1,10 +1,10 @@
 #include "recenthistorymanager.h"
-#include "recentfileinfo.h"
 #include "fileservices.h"
 
 #include "app/filesignalmanager.h"
 #include "app/global.h"
 
+#include "models/recentfileinfo.h"
 #include "shutil/standardpath.h"
 
 #include "widgets/singleton.h"

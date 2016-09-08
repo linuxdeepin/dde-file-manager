@@ -1,8 +1,8 @@
 #include "filecontroller.h"
-#include "fileinfo.h"
 #include "fileservices.h"
 #include "fileoperations/filejob.h"
 
+#include "models/fileinfo.h"
 #include "models/desktopfileinfo.h"
 
 #include "app/global.h"

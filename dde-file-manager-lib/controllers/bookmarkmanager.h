@@ -2,8 +2,9 @@
 #define BOOKMARKMANAGER_H
 
 #include "basemanager.h"
-#include "bookmark.h"
 #include "abstractfilecontroller.h"
+
+#include "models/bookmark.h"
 
 #include <QDir>
 

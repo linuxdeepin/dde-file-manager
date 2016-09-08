@@ -1,0 +1,4 @@
+usr/bin/*
+usr/share/applications/*
+usr/share/polkit-1/actions/*
+etc/xdg/autostart/*
