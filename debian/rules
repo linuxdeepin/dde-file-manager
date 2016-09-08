@@ -1,0 +1,10 @@
+#!/usr/bin/make -f
+
+VERSION=$(shell dpkg-parsechangelog -ldebian/changelog -SVersion | awk -F'-' '{print $$1}')
+
+%:
+	dh $@ --parallel
+
+override_dh_auto_configure:
+	dh_auto_configure -- DAPP_VERSION=$(VERSION)
+
