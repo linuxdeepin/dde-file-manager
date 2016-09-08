@@ -12,7 +12,7 @@
 #include <anchors.h>
 
 #include "utils/durl.h"
-#include "dslider.h"
+#include <dslider.h>
 
 class DFileSystemModel;
 

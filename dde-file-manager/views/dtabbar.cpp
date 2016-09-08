@@ -744,7 +744,7 @@ bool TabBar::event(QEvent *event)
         m_lastDeleteState = false;
         updateScreen();
     }
-    QGraphicsView::event(event);
+    return QGraphicsView::event(event);
 }
 
 void TabBar::mouseMoveEvent(QMouseEvent *event)
