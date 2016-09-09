@@ -6,7 +6,7 @@
 #include <QDir>
 #include <QFuture>
 
-#include "utils/durl.h"
+#include "durl.h"
 #include "abstractfileinfo.h"
 
 QT_BEGIN_NAMESPACE

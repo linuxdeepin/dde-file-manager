@@ -2,7 +2,7 @@
 #define TRASHPROPERTYDIALOG_H
 
 #include "basedialog.h"
-#include "utils/durl.h"
+#include "durl.h"
 #include <QLabel>
 #include "propertydialog.h"
 

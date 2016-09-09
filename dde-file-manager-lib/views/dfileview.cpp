@@ -32,6 +32,8 @@
 
 #include <dthememanager.h>
 #include <dscrollbar.h>
+#include <anchors.h>
+#include <dslider.h>
 
 #include <QWheelEvent>
 #include <QLineEdit>
@@ -40,6 +42,10 @@
 #include <QX11Info>
 #include <QUrlQuery>
 #include <QProcess>
+#include <QFrame>
+#include <QLabel>
+#include <QActionGroup>
+#include <QContextMenuEvent>
 
 DWIDGET_USE_NAMESPACE
 
@@ -50,14 +56,82 @@ DWIDGET_USE_NAMESPACE
 
 #define LIST_VIEW_ICON_SIZE 28
 
-QSet<DUrl> DFileView::m_cutUrlSet;
+class DFileViewPrivate
+{
+public:
+    DFileViewPrivate(DFileView *qq)
+        : q_ptr(qq) {}
 
-DFileView::DFileView(QWidget *parent) : DListView(parent)
+    DFileView *q_ptr;
+
+    FileMenuManager* fileMenuManager;
+    QHeaderView *headerView = Q_NULLPTR;
+    DStatusBar* statusBar=NULL;
+
+    QActionGroup* displayAsActionGroup;
+    QActionGroup* sortByActionGroup;
+    QActionGroup* openWithActionGroup;
+
+    QList<int> columnRoles;
+    QList<int> iconSizes;
+
+    DFileView::ViewMode defaultViewMode = DFileView::IconMode;
+    DFileView::ViewMode currentViewMode = DFileView::IconMode;
+
+    int currentIconSizeIndex = 1;
+
+    QRect selectedGeometry;
+    QWidget *selectionRectWidget = Q_NULLPTR;
+    bool selectionRectVisible = true;
+
+    int horizontalOffset = 0;
+
+    QTimer* keyboardSearchTimer;
+    QString keyboardSearchKeys;
+
+    QSize itemSizeHint;
+
+    /// move cursor later selecte index when pressed key shift
+    QModelIndex lastCursorIndex;
+
+    /// cut state indexs
+    static QSet<DUrl> cutUrlSet;
+
+    /// list mode column visible
+    QMap<QString, bool> columnForRoleHiddenMap;
+
+    int firstVisibleColumn = -1;
+    int lastVisibleColumn = -1;
+
+    DUrlList preSelectionUrls;
+
+    Anchors<QLabel> contentLabel = Q_NULLPTR;
+
+    /// file additional icon
+    QIcon lockIcon;
+    QIcon linkIcon;
+    QIcon unreadableIcon;
+
+    QModelIndex mouseLastPressedIndex;
+
+    /// drag drop
+    QModelIndex dragMoveHoverIndex;
+
+    DSlider *scalingSlider = NULL;
+};
+
+QSet<DUrl> DFileViewPrivate::cutUrlSet;
+
+DFileView::DFileView(QWidget *parent)
+    : DListView(parent)
+    , d_ptr(new DFileViewPrivate(this))
 {
     D_THEME_INIT_WIDGET(DFileView);
-    m_displayAsActionGroup = new QActionGroup(this);
-    m_sortByActionGroup = new QActionGroup(this);
-    m_openWithActionGroup = new QActionGroup(this);
+    D_D(DFileView);
+
+    d->displayAsActionGroup = new QActionGroup(this);
+    d->sortByActionGroup = new QActionGroup(this);
+    d->openWithActionGroup = new QActionGroup(this);
     initUI();
     initDelegate();
     initModel();
@@ -74,7 +148,9 @@ DFileView::~DFileView()
 
 void DFileView::initUI()
 {
-    m_iconSizes << 48 << 64 << 96 << 128 << 256;
+    D_D(DFileView);
+
+    d->iconSizes << 48 << 64 << 96 << 128 << 256;
 
     setSpacing(ICON_VIEW_SPACING);
     setResizeMode(QListView::Adjust);
@@ -91,21 +167,21 @@ void DFileView::initUI()
 
     DListView::setSelectionRectVisible(false);
 
-    m_selectionRectWidget = new QWidget(this);
-    m_selectionRectWidget->hide();
-    m_selectionRectWidget->resize(0, 0);
-    m_selectionRectWidget->setObjectName("SelectionRect");
-    m_selectionRectWidget->raise();
-    m_selectionRectWidget->setAttribute(Qt::WA_TransparentForMouseEvents);
+    d->selectionRectWidget = new QWidget(this);
+    d->selectionRectWidget->hide();
+    d->selectionRectWidget->resize(0, 0);
+    d->selectionRectWidget->setObjectName("SelectionRect");
+    d->selectionRectWidget->raise();
+    d->selectionRectWidget->setAttribute(Qt::WA_TransparentForMouseEvents);
 
-    linkIcon = QIcon(":/images/images/link_large.png");
-    lockIcon = QIcon(":/images/images/lock_large.png");
-    unreadableIcon = QIcon(":/images/images/unreadable.svg");
+    d->linkIcon = QIcon(":/images/images/link_large.png");
+    d->lockIcon = QIcon(":/images/images/lock_large.png");
+    d->unreadableIcon = QIcon(":/images/images/unreadable.svg");
 
-    m_statusBar = new DStatusBar(this);
-    m_scalingSlider = m_statusBar->scalingSlider();
-    m_scalingSlider->setValue(m_currentIconSizeIndex);
-    addFooterWidget(m_statusBar);
+    d->statusBar = new DStatusBar(this);
+    d->scalingSlider = d->statusBar->scalingSlider();
+    d->scalingSlider->setValue(d->currentIconSizeIndex);
+    addFooterWidget(d->statusBar);
 }
 
 void DFileView::initDelegate()
@@ -123,6 +199,8 @@ void DFileView::initModel()
 
 void DFileView::initConnects()
 {
+    D_D(DFileView);
+
     connect(this, &DFileView::doubleClicked,
             this, [this] (const QModelIndex &index) {
         if (!Global::keyCtrlIsPressed() && !Global::keyShiftIsPressed())
@@ -143,10 +221,10 @@ void DFileView::initConnects()
             this, &DFileView::selectAndRename);
     connect(this, &DFileView::rowCountChanged, this, &DFileView::updateStatusBar);
 
-    connect(m_displayAsActionGroup, &QActionGroup::triggered, this, &DFileView::dislpayAsActionTriggered);
-    connect(m_sortByActionGroup, &QActionGroup::triggered, this, &DFileView::sortByActionTriggered);
-    connect(m_openWithActionGroup, &QActionGroup::triggered, this, &DFileView::openWithActionTriggered);
-    connect(m_keyboardSearchTimer, &QTimer::timeout, this, &DFileView::clearKeyBoardSearchKeys);
+    connect(d->displayAsActionGroup, &QActionGroup::triggered, this, &DFileView::dislpayAsActionTriggered);
+    connect(d->sortByActionGroup, &QActionGroup::triggered, this, &DFileView::sortByActionTriggered);
+    connect(d->openWithActionGroup, &QActionGroup::triggered, this, &DFileView::openWithActionTriggered);
+    connect(d->keyboardSearchTimer, &QTimer::timeout, this, &DFileView::clearKeyBoardSearchKeys);
 
     connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &DFileView::updateStatusBar);
     connect(fileSignalManager, &FileSignalManager::requestFoucsOnFileView, this, &DFileView::setFoucsOnFileView);
@@ -162,11 +240,11 @@ void DFileView::initConnects()
         update(model()->index(DUrl::fromLocalFile(filePath)));
     });
 
-    if (!m_cutUrlSet.capacity()) {
-        m_cutUrlSet.reserve(1);
+    if (!d->cutUrlSet.capacity()) {
+        d->cutUrlSet.reserve(1);
 
         connect(qApp->clipboard(), &QClipboard::dataChanged, [] {
-            DFileView::m_cutUrlSet.clear();
+            DFileViewPrivate::cutUrlSet.clear();
 
             const QByteArray &data = qApp->clipboard()->mimeData()->data("x-special/gnome-copied-files");
 
@@ -174,7 +252,7 @@ void DFileView::initConnects()
                 return;
 
             for (const QUrl &url : qApp->clipboard()->mimeData()->urls()) {
-                DFileView::m_cutUrlSet << url;
+                DFileViewPrivate::cutUrlSet << url;
             }
         });
     }
@@ -194,7 +272,7 @@ void DFileView::initConnects()
         update();
     });
 
-    connect(m_scalingSlider, &DSlider::valueChanged,this,&DFileView::setIconSizeWithIndex);
+    connect(d->scalingSlider, &DSlider::valueChanged,this,&DFileView::setIconSizeWithIndex);
 }
 
 void DFileView::initActions()
@@ -240,8 +318,10 @@ void DFileView::initActions()
 
 void DFileView::initKeyboardSearchTimer()
 {
-    m_keyboardSearchTimer = new QTimer(this);
-    m_keyboardSearchTimer->setInterval(500);
+    D_D(DFileView);
+
+    d->keyboardSearchTimer = new QTimer(this);
+    d->keyboardSearchTimer->setInterval(500);
 }
 
 DFileSystemModel *DFileView::model() const
@@ -277,20 +357,26 @@ bool DFileView::isIconViewMode() const
 
 int DFileView::columnWidth(int column) const
 {
-    return m_headerView ? m_headerView->sectionSize(column) : 100;
+    D_DC(DFileView);
+
+    return d->headerView ? d->headerView->sectionSize(column) : 100;
 }
 
 void DFileView::setColumnWidth(int column, int width)
 {
-    if(!m_headerView)
+    D_D(DFileView);
+
+    if(!d->headerView)
         return;
 
-    m_headerView->resizeSection(column, width);
+    d->headerView->resizeSection(column, width);
 }
 
 int DFileView::columnCount() const
 {
-    return m_headerView ? m_headerView->count() : 1;
+    D_DC(DFileView);
+
+    return d->headerView ? d->headerView->count() : 1;
 }
 
 int DFileView::rowCount() const
@@ -313,7 +399,9 @@ int DFileView::itemCountForRow() const
 
 QList<int> DFileView::columnRoleList() const
 {
-    return m_columnRoles;
+    D_DC(DFileView);
+
+    return d->columnRoles;
 }
 
 int DFileView::windowId() const
@@ -330,24 +418,28 @@ void DFileView::setIconSize(const QSize &size)
     updateGeometries();
 }
 
-DFileView::ViewMode DFileView::getDefaultViewMode()
+DFileView::ViewMode DFileView::getDefaultViewMode() const
 {
-    return m_defaultViewMode;
+    D_DC(DFileView);
+
+    return d->defaultViewMode;
 }
 
-int DFileView::getSortRoles()
+int DFileView::getSortRoles() const
 {
     return model()->sortRole();
 }
 
-bool DFileView::testViewMode(ViewModes modes, DFileView::ViewMode mode)
+bool DFileView::testViewMode(ViewModes modes, DFileView::ViewMode mode) const
 {
     return (modes | mode) == modes;
 }
 
 int DFileView::horizontalOffset() const
 {
-    return m_horizontalOffset;
+    D_DC(DFileView);
+
+    return d->horizontalOffset;
 }
 
 bool DFileView::isSelected(const QModelIndex &index) const
@@ -541,23 +633,36 @@ DFileView::RandeIndexList DFileView::visibleIndexes(QRect rect) const
     return list;
 }
 
+QSize DFileView::itemSizeHint() const
+{
+    D_DC(DFileView);
+
+    return d->itemSizeHint;
+}
+
 bool DFileView::isCutIndex(const QModelIndex &index) const
 {
+    D_DC(DFileView);
+
     const AbstractFileInfoPointer &fileInfo = model()->fileInfo(index);
 
     if (!fileInfo || !fileInfo->canRedirectionFileUrl())
-        return m_cutUrlSet.contains(model()->getUrlByIndex(index));
+        return d->cutUrlSet.contains(model()->getUrlByIndex(index));
 
-    return m_cutUrlSet.contains(fileInfo->redirectedFileUrl());
+    return d->cutUrlSet.contains(fileInfo->redirectedFileUrl());
 }
 
 bool DFileView::isActiveIndex(const QModelIndex &index) const
 {
-    return dragMoveHoverIndex == index;
+    D_DC(DFileView);
+
+    return d->dragMoveHoverIndex == index;
 }
 
 QList<QIcon> DFileView::fileAdditionalIcon(const QModelIndex &index) const
 {
+    D_DC(DFileView);
+
     QList<QIcon> icons;
     const AbstractFileInfoPointer &fileInfo = model()->fileInfo(index);
 
@@ -565,14 +670,14 @@ QList<QIcon> DFileView::fileAdditionalIcon(const QModelIndex &index) const
         return icons;
 
     if (fileInfo->isSymLink()) {
-        icons << linkIcon;
+        icons << d->linkIcon;
     }
 
     if (!fileInfo->isWritable())
-        icons << lockIcon;
+        icons << d->lockIcon;
 
     if (!fileInfo->isReadable())
-        icons << unreadableIcon;
+        icons << d->unreadableIcon;
 
     return icons;
 }
@@ -713,20 +818,24 @@ void DFileView::selectAndRename(const FMEvent &event)
 
 void DFileView::setViewMode(DFileView::ViewMode mode)
 {
-    if(mode != m_defaultViewMode)
-        m_defaultViewMode = mode;
+    D_D(DFileView);
+
+    if(mode != d->defaultViewMode)
+        d->defaultViewMode = mode;
 
     switchViewMode(mode);
 }
 
 void DFileView::sortByRole(int role)
 {
+    D_D(DFileView);
+
     Qt::SortOrder order = (model()->sortRole() == role && model()->sortOrder() == Qt::AscendingOrder)
                             ? Qt::DescendingOrder
                             : Qt::AscendingOrder;
 
-    if (m_headerView) {
-        m_headerView->setSortIndicator(model()->roleToColumn(role), order);
+    if (d->headerView) {
+        d->headerView->setSortIndicator(model()->roleToColumn(role), order);
     } else {
         model()->setSortRole(role, order);
         model()->sort();
@@ -767,9 +876,11 @@ void DFileView::dislpayAsActionTriggered(QAction *action)
 
 void DFileView::sortByActionTriggered(QAction *action)
 {
+    D_DC(DFileView);
+
     DAction* dAction = static_cast<DAction*>(action);
 
-    sortByColumn(m_sortByActionGroup->actions().indexOf(dAction));
+    sortByColumn(d->sortByActionGroup->actions().indexOf(dAction));
 }
 
 void DFileView::openWithActionTriggered(QAction *action)
@@ -797,6 +908,8 @@ void DFileView::wheelEvent(QWheelEvent *event)
 
 void DFileView::keyPressEvent(QKeyEvent *event)
 {
+    D_D(DFileView);
+
     const DUrlList& urls = selectedUrls();
 
     FMEvent fmevent;
@@ -862,7 +975,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
 
             return;
         case Qt::Key_H:
-            preSelectionUrls = urls;
+            d->preSelectionUrls = urls;
 
             itemDelegate()->hideAllIIndexWidget();
             clearSelection();
@@ -978,6 +1091,8 @@ void DFileView::showEvent(QShowEvent *event)
 
 void DFileView::mousePressEvent(QMouseEvent *event)
 {
+    D_D(DFileView);
+
     switch (event->button()) {
     case Qt::BackButton: {
         FMEvent event;
@@ -1011,17 +1126,17 @@ void DFileView::mousePressEvent(QMouseEvent *event)
             }
 
             if (canShowSelectionRect())
-                m_selectionRectWidget->show();
+                d->selectionRectWidget->show();
 
-            m_selectedGeometry.setTop(event->pos().y() + verticalOffset());
-            m_selectedGeometry.setLeft(event->pos().x() + horizontalOffset());
+            d->selectedGeometry.setTop(event->pos().y() + verticalOffset());
+            d->selectedGeometry.setLeft(event->pos().x() + horizontalOffset());
 
             connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &DFileView::updateSelectionRect);
         } else if (Global::keyCtrlIsPressed()) {
             const QModelIndex &index = indexAt(event->pos());
 
             if (selectionModel()->isSelected(index)) {
-                m_mouseLastPressedIndex = index;
+                d->mouseLastPressedIndex = index;
 
                 DListView::mousePressEvent(event);
 
@@ -1031,7 +1146,7 @@ void DFileView::mousePressEvent(QMouseEvent *event)
             }
         }
 
-        m_mouseLastPressedIndex = QModelIndex();
+        d->mouseLastPressedIndex = QModelIndex();
 
         DListView::mousePressEvent(event);
         break;
@@ -1051,20 +1166,22 @@ void DFileView::mouseMoveEvent(QMouseEvent *event)
 
 void DFileView::mouseReleaseEvent(QMouseEvent *event)
 {
-    dragMoveHoverIndex = QModelIndex();
+    D_D(DFileView);
+
+    d->dragMoveHoverIndex = QModelIndex();
 
     disconnect(verticalScrollBar(), &QScrollBar::valueChanged, this, &DFileView::updateSelectionRect);
 
-    if (m_mouseLastPressedIndex.isValid() && Global::keyCtrlIsPressed()) {
-        if (m_mouseLastPressedIndex == indexAt(event->pos()))
-            selectionModel()->select(m_mouseLastPressedIndex, QItemSelectionModel::Deselect);
+    if (d->mouseLastPressedIndex.isValid() && Global::keyCtrlIsPressed()) {
+        if (d->mouseLastPressedIndex == indexAt(event->pos()))
+            selectionModel()->select(d->mouseLastPressedIndex, QItemSelectionModel::Deselect);
     }
 
     if (dragEnabled())
         return DListView::mouseReleaseEvent(event);
 
-    m_selectionRectWidget->resize(0, 0);
-    m_selectionRectWidget->hide();
+    d->selectionRectWidget->resize(0, 0);
+    d->selectionRectWidget->hide();
 }
 
 void DFileView::handleCommitData(QWidget *editor)
@@ -1166,9 +1283,9 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
 
 //            if (isEmptyArea) {
 //                if (canShowSElectionRect())
-//                    m_selectionRectWidget->show();
+//                    d->selectionRectWidget->show();
 
-//                m_pressedPos = static_cast<QMouseEvent*>(event)->pos();
+//                d->pressedPos = static_cast<QMouseEvent*>(event)->pos();
 //            }
 //        } else if (e->button() == Qt::RightButton) {
 //            if (isEmptyArea  && !selectionModel()->isSelected(indexAt(pos))) {
@@ -1191,16 +1308,16 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
 //        break;
 //    }
 //    case QEvent::MouseMove: {
-//        if (m_selectionRectWidget->isHidden())
+//        if (d->selectionRectWidget->isHidden())
 //            break;
 
 //        const QPoint &pos = static_cast<QMouseEvent*>(event)->pos();
 //        QRect rect;
 
-//        rect.adjust(qMin(m_pressedPos.x(), pos.x()), qMin(m_pressedPos.y(), pos.y()),
-//                    qMax(pos.x(), m_pressedPos.x()), qMax(pos.y(), m_pressedPos.y()));
+//        rect.adjust(qMin(d->pressedPos.x(), pos.x()), qMin(d->pressedPos.y(), pos.y()),
+//                    qMax(pos.x(), d->pressedPos.x()), qMax(pos.y(), d->pressedPos.y()));
 
-//        m_selectionRectWidget->setGeometry(rect);
+//        d->selectionRectWidget->setGeometry(rect);
 
 ////        rect.moveTopLeft(viewport()->mapFromParent(rect.topLeft()));
 
@@ -1209,8 +1326,8 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
 //        break;
 //    }
 //    case QEvent::MouseButtonRelease: {
-//        m_selectionRectWidget->resize(0, 0);
-//        m_selectionRectWidget->hide();
+//        d->selectionRectWidget->resize(0, 0);
+//        d->selectionRectWidget->hide();
 
 //        break;
 //    }
@@ -1247,16 +1364,18 @@ void DFileView::dragEnterEvent(QDragEnterEvent *event)
 
 void DFileView::dragMoveEvent(QDragMoveEvent *event)
 {
-    dragMoveHoverIndex = indexAt(event->pos());
+    D_D(DFileView);
 
-    if (dragMoveHoverIndex.isValid()) {
-        const AbstractFileInfoPointer &fileInfo = model()->fileInfo(dragMoveHoverIndex);
+    d->dragMoveHoverIndex = indexAt(event->pos());
+
+    if (d->dragMoveHoverIndex.isValid()) {
+        const AbstractFileInfoPointer &fileInfo = model()->fileInfo(d->dragMoveHoverIndex);
 
         if (fileInfo) {
             if (!fileInfo->isDir()) {
-                dragMoveHoverIndex = QModelIndex();
+                d->dragMoveHoverIndex = QModelIndex();
             } else if(!fileInfo->supportedDropActions().testFlag(event->dropAction())) {
-                dragMoveHoverIndex = QModelIndex();
+                d->dragMoveHoverIndex = QModelIndex();
 
                 update();
                 return event->ignore();
@@ -1273,14 +1392,18 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
 
 void DFileView::dragLeaveEvent(QDragLeaveEvent *event)
 {
-    dragMoveHoverIndex = QModelIndex();
+    D_D(DFileView);
+
+    d->dragMoveHoverIndex = QModelIndex();
 
     DListView::dragLeaveEvent(event);
 }
 
 void DFileView::dropEvent(QDropEvent *event)
 {
-    dragMoveHoverIndex = QModelIndex();
+    D_D(DFileView);
+
+    d->dragMoveHoverIndex = QModelIndex();
 
     preproccessDropEvent(event);
 
@@ -1412,18 +1535,20 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
 
 QModelIndex DFileView::moveCursor(QAbstractItemView::CursorAction cursorAction, Qt::KeyboardModifiers modifiers)
 {
+    D_D(DFileView);
+
     QModelIndex current = currentIndex();
 
     if (!current.isValid()) {
-        m_lastCursorIndex = DListView::moveCursor(cursorAction, modifiers);
+        d->lastCursorIndex = DListView::moveCursor(cursorAction, modifiers);
 
-        return m_lastCursorIndex;
+        return d->lastCursorIndex;
     }
 
     if (rectForIndex(current).isEmpty()) {
-        m_lastCursorIndex = model()->index(0, 0, rootIndex());
+        d->lastCursorIndex = model()->index(0, 0, rootIndex());
 
-        return m_lastCursorIndex;
+        return d->lastCursorIndex;
     }
 
     QModelIndex index;
@@ -1433,7 +1558,7 @@ QModelIndex DFileView::moveCursor(QAbstractItemView::CursorAction cursorAction, 
         if (Global::keyShiftIsPressed()) {
             index = DListView::moveCursor(cursorAction, modifiers);
 
-            if (index == m_lastCursorIndex) {
+            if (index == d->lastCursorIndex) {
                 index = index.sibling(index.row() - 1, index.column());
             }
         } else {
@@ -1445,7 +1570,7 @@ QModelIndex DFileView::moveCursor(QAbstractItemView::CursorAction cursorAction, 
         if (Global::keyShiftIsPressed()) {
             index = DListView::moveCursor(cursorAction, modifiers);
 
-            if (index == m_lastCursorIndex) {
+            if (index == d->lastCursorIndex) {
                 index = index.sibling(index.row() + 1, index.column());
             }
         } else {
@@ -1459,12 +1584,12 @@ QModelIndex DFileView::moveCursor(QAbstractItemView::CursorAction cursorAction, 
     }
 
     if (index.isValid()) {
-        m_lastCursorIndex = index;
+        d->lastCursorIndex = index;
 
         return index;
     }
 
-    m_lastCursorIndex = current;
+    d->lastCursorIndex = current;
 
     return current;
 }
@@ -1516,16 +1641,20 @@ bool DFileView::isEmptyArea(const QModelIndex &index, const QPoint &pos) const
 
 QSize DFileView::currentIconSize() const
 {
-    int size = m_iconSizes.value(m_currentIconSizeIndex);
+    D_DC(DFileView);
+
+    int size = d->iconSizes.value(d->currentIconSizeIndex);
 
     return QSize(size, size);
 }
 
 void DFileView::enlargeIcon()
 {
-    if(m_currentIconSizeIndex < m_iconSizes.count() - 1){
-        ++m_currentIconSizeIndex;
-        m_scalingSlider->setValue(m_currentIconSizeIndex);
+    D_D(DFileView);
+
+    if(d->currentIconSizeIndex < d->iconSizes.count() - 1){
+        ++d->currentIconSizeIndex;
+        d->scalingSlider->setValue(d->currentIconSizeIndex);
     }
 
     setIconSize(currentIconSize());
@@ -1533,9 +1662,11 @@ void DFileView::enlargeIcon()
 
 void DFileView::shrinkIcon()
 {
-    if(m_currentIconSizeIndex > 0){
-        --m_currentIconSizeIndex;
-        m_scalingSlider->setValue(m_currentIconSizeIndex);
+    D_D(DFileView);
+
+    if(d->currentIconSizeIndex > 0){
+        --d->currentIconSizeIndex;
+        d->scalingSlider->setValue(d->currentIconSizeIndex);
     }
 
     setIconSize(currentIconSize());
@@ -1558,9 +1689,11 @@ void DFileView::openIndex(const QModelIndex &index)
 
 void DFileView::keyboardSearch(const QString &search)
 {
-    m_keyboardSearchKeys.append(search);
-    m_keyboardSearchTimer->start();
-    QModelIndexList matchModelIndexListCaseSensitive = model()->match(rootIndex(), DFileSystemModel::FilePinyinName, m_keyboardSearchKeys, -1,
+    D_D(DFileView);
+
+    d->keyboardSearchKeys.append(search);
+    d->keyboardSearchTimer->start();
+    QModelIndexList matchModelIndexListCaseSensitive = model()->match(rootIndex(), DFileSystemModel::FilePinyinName, d->keyboardSearchKeys, -1,
                                                                       Qt::MatchFlags(Qt::MatchStartsWith|Qt::MatchWrap | Qt::MatchCaseSensitive | Qt::MatchRecursive));
     foreach (const QModelIndex& index, matchModelIndexListCaseSensitive) {
         QString absolutePath = FileInfo(model()->getUrlByIndex(index).path()).absolutePath();
@@ -1571,7 +1704,7 @@ void DFileView::keyboardSearch(const QString &search)
         }
     }
 
-    QModelIndexList matchModelIndexListNoCaseSensitive = model()->match(rootIndex(), DFileSystemModel::FilePinyinName, m_keyboardSearchKeys, -1,
+    QModelIndexList matchModelIndexListNoCaseSensitive = model()->match(rootIndex(), DFileSystemModel::FilePinyinName, d->keyboardSearchKeys, -1,
                                                                         Qt::MatchFlags(Qt::MatchStartsWith|Qt::MatchWrap | Qt::MatchRecursive));
     foreach (const QModelIndex& index, matchModelIndexListNoCaseSensitive) {
         QString absolutePath = FileInfo(model()->getUrlByIndex(index).path()).absolutePath();
@@ -1586,10 +1719,12 @@ void DFileView::keyboardSearch(const QString &search)
 
 bool DFileView::setCurrentUrl(DUrl fileUrl)
 {
+    D_D(DFileView);
 
-    if (fileUrl.isTrashFile() && fileUrl.path().isEmpty()){
+    if (fileUrl.isTrashFile() && fileUrl.path().isEmpty()) {
         fileUrl.setPath("/");
-    };
+    }
+
     const AbstractFileInfoPointer &info = FileServices::instance()->createFileInfo(fileUrl);
 
     if (!info){
@@ -1625,7 +1760,7 @@ bool DFileView::setCurrentUrl(DUrl fileUrl)
         updateContentLabel();
     }
 
-    if (m_currentViewMode == ListMode) {
+    if (d->currentViewMode == ListMode) {
         updateListHeaderViewProperty();
     } else {
         const QPair<int, int> &sort_config = FMStateManager::SortStates.value(fileUrl, QPair<int, int>(DFileSystemModel::FileDisplayNameRole, Qt::AscendingOrder));
@@ -1636,7 +1771,7 @@ bool DFileView::setCurrentUrl(DUrl fileUrl)
     if(info) {
         ViewModes modes = (ViewModes)info->supportViewMode();
 
-        if(!testViewMode(modes, m_defaultViewMode)) {
+        if(!testViewMode(modes, d->defaultViewMode)) {
             if(testViewMode(modes, IconMode)) {
                 switchViewMode(IconMode);
             } else if(testViewMode(modes, ListMode)) {
@@ -1645,7 +1780,7 @@ bool DFileView::setCurrentUrl(DUrl fileUrl)
                 switchViewMode(ExtendMode);
             }
         } else {
-            switchViewMode(m_defaultViewMode);
+            switchViewMode(d->defaultViewMode);
         }
     } 
     emit currentUrlChanged(fileUrl);
@@ -1658,7 +1793,7 @@ bool DFileView::setCurrentUrl(DUrl fileUrl)
     const DUrl &defaultSelectUrl = DUrl(QUrlQuery(fileUrl.query()).queryItemValue("selectUrl"));
 
     if (defaultSelectUrl.isValid()) {
-        preSelectionUrls << defaultSelectUrl;
+        d->preSelectionUrls << defaultSelectUrl;
     } else {
         DUrl oldCurrentUrl = currentUrl;
 
@@ -1671,7 +1806,7 @@ bool DFileView::setCurrentUrl(DUrl fileUrl)
             oldCurrentUrl = tmp_url;
         }
 
-        preSelectionUrls << oldCurrentUrl;
+        d->preSelectionUrls << oldCurrentUrl;
     }
 
     return true;
@@ -1679,17 +1814,21 @@ bool DFileView::setCurrentUrl(DUrl fileUrl)
 
 void DFileView::clearHeardView()
 {
-    if(m_headerView) {
+    D_D(DFileView);
+
+    if (d->headerView) {
         removeHeaderWidget(0);
 
-        m_headerView = Q_NULLPTR;
+        d->headerView = Q_NULLPTR;
     }
 }
 
 void DFileView::clearKeyBoardSearchKeys()
 {
-    m_keyboardSearchKeys.clear();
-    m_keyboardSearchTimer->stop();
+    D_D(DFileView);
+
+    d->keyboardSearchKeys.clear();
+    d->keyboardSearchTimer->stop();
 }
 
 void DFileView::setFoucsOnFileView(const FMEvent &event)
@@ -1735,66 +1874,80 @@ void DFileView::updateStatusBar()
 
 void DFileView::setSelectionRectVisible(bool visible)
 {
-    m_selectionRectVisible = visible;
+    D_D(DFileView);
+
+    d->selectionRectVisible = visible;
 }
 
 bool DFileView::isSelectionRectVisible() const
 {
-    return m_selectionRectVisible;
+    D_DC(DFileView);
+
+    return d->selectionRectVisible;
 }
 
 bool DFileView::canShowSelectionRect() const
 {
-    return m_selectionRectVisible && selectionMode() != NoSelection && selectionMode() != SingleSelection;
+    D_DC(DFileView);
+
+    return d->selectionRectVisible && selectionMode() != NoSelection && selectionMode() != SingleSelection;
 }
 
 void DFileView::setContentLabel(const QString &text)
 {
+    D_D(DFileView);
+
     if (text.isEmpty()) {
-        if (m_contentLabel) {
-            m_contentLabel->deleteLater();
-            m_contentLabel = Q_NULLPTR;
+        if (d->contentLabel) {
+            d->contentLabel->deleteLater();
+            d->contentLabel = Q_NULLPTR;
         }
 
         return;
     }
 
-    if (!m_contentLabel) {
-        m_contentLabel = new QLabel(this);
+    if (!d->contentLabel) {
+        d->contentLabel = new QLabel(this);
 
-        m_contentLabel->show();
-        m_contentLabel.setCenterIn(this);
-        m_contentLabel->setObjectName("contentLabel");
-        m_contentLabel->setStyleSheet(this->styleSheet());
-        m_contentLabel->setAttribute(Qt::WA_TransparentForMouseEvents);
+        d->contentLabel->show();
+        d->contentLabel.setCenterIn(this);
+        d->contentLabel->setObjectName("contentLabel");
+        d->contentLabel->setStyleSheet(this->styleSheet());
+        d->contentLabel->setAttribute(Qt::WA_TransparentForMouseEvents);
     }
 
-    m_contentLabel->setText(text);
-    m_contentLabel->adjustSize();
+    d->contentLabel->setText(text);
+    d->contentLabel->adjustSize();
 }
 
 void DFileView::setIconSizeWithIndex(const int index)
 {
-    m_currentIconSizeIndex = index;
+    D_D(DFileView);
+
+    d->currentIconSizeIndex = index;
     setIconSize(currentIconSize());
 }
 
 void DFileView::updateHorizontalOffset()
 {
+    D_D(DFileView);
+
     if (isIconViewMode()) {
         int contentWidth = width();
         int itemWidth = itemSizeHint().width() + ICON_VIEW_SPACING * 2;
         int itemColumn = (contentWidth - ICON_VIEW_SPACING * 2.9) / itemWidth;
 
-        m_horizontalOffset = -(contentWidth - itemWidth * itemColumn) / 2;
+        d->horizontalOffset = -(contentWidth - itemWidth * itemColumn) / 2;
     } else {
-        m_horizontalOffset = 0;
+        d->horizontalOffset = 0;
     }
 }
 
 void DFileView::switchViewMode(DFileView::ViewMode mode)
 {
-    if (m_currentViewMode == mode) {
+    D_D(DFileView);
+
+    if (d->currentViewMode == mode) {
         return;
     }
 
@@ -1804,14 +1957,14 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
         return;
     }
 
-    m_currentViewMode = mode;
+    d->currentViewMode = mode;
 
     itemDelegate()->hideAllIIndexWidget();
 
     switch (mode) {
     case IconMode: {
         clearHeardView();
-        m_columnRoles.clear();
+        d->columnRoles.clear();
         setIconSize(currentIconSize());
         setOrientation(QListView::LeftToRight, true);
         setSpacing(ICON_VIEW_SPACING);
@@ -1821,32 +1974,32 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
     case ListMode: {
         itemDelegate()->hideAllIIndexWidget();
 
-        if(!m_headerView) {
-            m_headerView = new QHeaderView(Qt::Horizontal);
+        if(!d->headerView) {
+            d->headerView = new QHeaderView(Qt::Horizontal);
 
             updateListHeaderViewProperty();
 
-            m_headerView->setHighlightSections(false);
-            m_headerView->setSectionsClickable(true);
-            m_headerView->setSortIndicatorShown(true);
-            m_headerView->setDefaultAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-            m_headerView->setContextMenuPolicy(Qt::CustomContextMenu);
+            d->headerView->setHighlightSections(false);
+            d->headerView->setSectionsClickable(true);
+            d->headerView->setSortIndicatorShown(true);
+            d->headerView->setDefaultAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+            d->headerView->setContextMenuPolicy(Qt::CustomContextMenu);
 
             if(selectionModel()) {
-                m_headerView->setSelectionModel(selectionModel());
+                d->headerView->setSelectionModel(selectionModel());
             }
 
-            connect(m_headerView, &QHeaderView::sectionResized,
+            connect(d->headerView, &QHeaderView::sectionResized,
                     this, static_cast<void (DFileView::*)()>(&DFileView::update));
-            connect(m_headerView, &QHeaderView::sortIndicatorChanged,
+            connect(d->headerView, &QHeaderView::sortIndicatorChanged,
                     model(), &QAbstractItemModel::sort);
-            connect(m_headerView, &QHeaderView::customContextMenuRequested,
+            connect(d->headerView, &QHeaderView::customContextMenuRequested,
                     this, &DFileView::popupHeaderViewContextMenu);
 
-            m_headerView->setAttribute(Qt::WA_TransparentForMouseEvents, model()->state() == DFileSystemModel::Busy);
+            d->headerView->setAttribute(Qt::WA_TransparentForMouseEvents, model()->state() == DFileSystemModel::Busy);
         }
 
-        addHeaderWidget(m_headerView);
+        addHeaderWidget(d->headerView);
 
         setIconSize(QSize(LIST_VIEW_ICON_SIZE, LIST_VIEW_ICON_SIZE));
         setOrientation(QListView::TopToBottom, false);
@@ -1856,23 +2009,23 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
     }
     case ExtendMode: {
         itemDelegate()->hideAllIIndexWidget();
-        if(!m_headerView) {
-            m_headerView = new QHeaderView(Qt::Horizontal);
+        if(!d->headerView) {
+            d->headerView = new QHeaderView(Qt::Horizontal);
 
             updateExtendHeaderViewProperty();
 
-            m_headerView->setHighlightSections(true);
-            m_headerView->setSectionsClickable(true);
-            m_headerView->setSortIndicatorShown(true);
-            m_headerView->setDefaultAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+            d->headerView->setHighlightSections(true);
+            d->headerView->setSectionsClickable(true);
+            d->headerView->setSortIndicatorShown(true);
+            d->headerView->setDefaultAlignment(Qt::AlignLeft | Qt::AlignVCenter);
 
             if(selectionModel()) {
-                m_headerView->setSelectionModel(selectionModel());
+                d->headerView->setSelectionModel(selectionModel());
             }
 
-            connect(m_headerView, &QHeaderView::sectionResized,
+            connect(d->headerView, &QHeaderView::sectionResized,
                     this, static_cast<void (DFileView::*)()>(&DFileView::update));
-            connect(m_headerView, &QHeaderView::sortIndicatorChanged,
+            connect(d->headerView, &QHeaderView::sortIndicatorChanged,
                     model(), &QAbstractItemModel::sort);
         }
         setColumnWidth(0, 200);
@@ -1892,6 +2045,8 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
 
 void DFileView::showEmptyAreaMenu()
 {
+    D_D(DFileView);
+
     const QModelIndex &index = rootIndex();
     const AbstractFileInfoPointer &info = model()->fileInfo(index);
     const QVector<MenuAction> &actions = info->menuActionList(AbstractFileInfo::SpaceArea);
@@ -1912,30 +2067,30 @@ void DFileView::showEmptyAreaMenu()
     tmp_action = menu->actionAt(fileMenuManger->getActionString(MenuAction::SortBy));
     DFileMenu *sortBySubMenu = static_cast<DFileMenu*>(tmp_action ? tmp_action->menu() : Q_NULLPTR);
 
-    for (QAction *action : m_displayAsActionGroup->actions()) {
-        m_displayAsActionGroup->removeAction(action);
+    for (QAction *action : d->displayAsActionGroup->actions()) {
+        d->displayAsActionGroup->removeAction(action);
     }
 
     if (displayAsSubMenu){
         foreach (DAction* action, displayAsSubMenu->actionList()) {
-            action->setActionGroup(m_displayAsActionGroup);
+            action->setActionGroup(d->displayAsActionGroup);
         }
-        if (m_currentViewMode == IconMode){
+        if (d->currentViewMode == IconMode){
             displayAsSubMenu->actionAt(fileMenuManger->getActionString(MenuAction::IconView))->setChecked(true);
-        }else if (m_currentViewMode == ListMode){
+        }else if (d->currentViewMode == ListMode){
             displayAsSubMenu->actionAt(fileMenuManger->getActionString(MenuAction::ListView))->setChecked(true);
-        }else if (m_currentViewMode == ExtendMode){
+        }else if (d->currentViewMode == ExtendMode){
             displayAsSubMenu->actionAt(fileMenuManger->getActionString(MenuAction::ExtendView))->setChecked(true);
         }
     }
 
-    for (QAction *action : m_sortByActionGroup->actions()) {
-        m_sortByActionGroup->removeAction(action);
+    for (QAction *action : d->sortByActionGroup->actions()) {
+        d->sortByActionGroup->removeAction(action);
     }
 
     if (sortBySubMenu){
         foreach (DAction* action, sortBySubMenu->actionList()) {
-            action->setActionGroup(m_sortByActionGroup);
+            action->setActionGroup(d->sortByActionGroup);
         }
 
         DAction *action = sortBySubMenu->actionAt(model()->sortColumn());
@@ -1962,6 +2117,8 @@ void DFileView::showEmptyAreaMenu()
 
 void DFileView::showNormalMenu(const QModelIndex &index)
 {
+    D_D(DFileView);
+
     if(!index.isValid())
         return;
 
@@ -1998,8 +2155,8 @@ void DFileView::showNormalMenu(const QModelIndex &index)
                 }
             }
 
-            for (QAction *action : m_openWithActionGroup->actions()) {
-                m_openWithActionGroup->removeAction(action);
+            for (QAction *action : d->openWithActionGroup->actions()) {
+                d->openWithActionGroup->removeAction(action);
             }
 
             foreach (QString app, recommendApps) {
@@ -2007,7 +2164,7 @@ void DFileView::showNormalMenu(const QModelIndex &index)
                 action->setProperty("app", app);
                 action->setProperty("url", info->redirectedFileUrl().toLocalFile());
                 openWithMenu->addAction(action);
-                m_openWithActionGroup->addAction(action);
+                d->openWithActionGroup->addAction(action);
             }
 
             DAction* action = new DAction(fileMenuManger->getActionString(MenuAction::OpenWithCustom), 0);
@@ -2061,39 +2218,41 @@ void DFileView::showNormalMenu(const QModelIndex &index)
 
 void DFileView::updateListHeaderViewProperty()
 {
-    if (!m_headerView)
+    D_D(DFileView);
+
+    if (!d->headerView)
         return;
 
-    m_headerView->setModel(Q_NULLPTR);
-    m_headerView->setModel(model());
-    m_headerView->setSectionResizeMode(QHeaderView::Fixed);
-    m_headerView->setDefaultSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
-    m_headerView->setMinimumSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
+    d->headerView->setModel(Q_NULLPTR);
+    d->headerView->setModel(model());
+    d->headerView->setSectionResizeMode(QHeaderView::Fixed);
+    d->headerView->setDefaultSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
+    d->headerView->setMinimumSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
 
     const QPair<int, int> &sort_config = FMStateManager::SortStates.value(currentUrl(), QPair<int, int>(DFileSystemModel::FileDisplayNameRole, Qt::AscendingOrder));
     int sort_column = model()->roleToColumn(sort_config.first);
 
-    m_headerView->setSortIndicator(sort_column, Qt::SortOrder(sort_config.second));
+    d->headerView->setSortIndicator(sort_column, Qt::SortOrder(sort_config.second));
 
-    m_columnRoles.clear();
+    d->columnRoles.clear();
 
-    for (int i = 0; i < m_headerView->count(); ++i) {
-        m_columnRoles << model()->columnToRole(i);
+    for (int i = 0; i < d->headerView->count(); ++i) {
+        d->columnRoles << model()->columnToRole(i);
 
         int column_width = model()->columnWidth(i);
 
         if (column_width >= 0) {
-            m_headerView->resizeSection(i, column_width + COLUMU_PADDING * 2);
+            d->headerView->resizeSection(i, column_width + COLUMU_PADDING * 2);
         } else {
-            m_headerView->setSectionResizeMode(i, QHeaderView::Stretch);
+            d->headerView->setSectionResizeMode(i, QHeaderView::Stretch);
         }
 
         const QString &column_name = model()->headerData(i, Qt::Horizontal, Qt::DisplayRole).toString();
 
-        if (!m_columnForRoleHiddenMap.contains(column_name)) {
-            m_headerView->setSectionHidden(i, !model()->columnDefaultVisibleForRole(model()->columnToRole(i)));
+        if (!d->columnForRoleHiddenMap.contains(column_name)) {
+            d->headerView->setSectionHidden(i, !model()->columnDefaultVisibleForRole(model()->columnToRole(i)));
         } else {
-            m_headerView->setSectionHidden(i, m_columnForRoleHiddenMap.value(column_name));
+            d->headerView->setSectionHidden(i, d->columnForRoleHiddenMap.value(column_name));
         }
     }
 
@@ -2102,82 +2261,91 @@ void DFileView::updateListHeaderViewProperty()
 
 void DFileView::updateExtendHeaderViewProperty()
 {
-    if(!m_headerView)
-        return;
-    m_headerView->setModel(Q_NULLPTR);
-    m_headerView->setModel(model());
-    m_headerView->setSectionResizeMode(QHeaderView::Fixed);
-    m_headerView->setSectionResizeMode(0, QHeaderView::Stretch);
-    m_headerView->setDefaultSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
-    m_headerView->setMinimumSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
+    D_D(DFileView);
 
-    m_columnRoles.clear();
-    m_columnRoles << model()->columnToRole(0);
+    if (!d->headerView)
+        return;
+
+    d->headerView->setModel(Q_NULLPTR);
+    d->headerView->setModel(model());
+    d->headerView->setSectionResizeMode(QHeaderView::Fixed);
+    d->headerView->setSectionResizeMode(0, QHeaderView::Stretch);
+    d->headerView->setDefaultSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
+    d->headerView->setMinimumSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
+
+    d->columnRoles.clear();
+    d->columnRoles << model()->columnToRole(0);
 }
 
 void DFileView::updateItemSizeHint()
 {
-    if(isIconViewMode()) {
+    D_D(DFileView);
+
+    if (isIconViewMode()) {
         int width = iconSize().width() * 1.8;
 
-        m_itemSizeHint = QSize(width, iconSize().height() + 2 * TEXT_PADDING  + ICON_MODE_ICON_SPACING + LIST_VIEW_SPACING + 3 * TEXT_LINE_HEIGHT);
+        d->itemSizeHint = QSize(width, iconSize().height() + 2 * TEXT_PADDING  + ICON_MODE_ICON_SPACING + LIST_VIEW_SPACING + 3 * TEXT_LINE_HEIGHT);
     } else {
-        m_itemSizeHint = QSize(-1, iconSize().height() * 1.1);
+        d->itemSizeHint = QSize(-1, iconSize().height() * 1.1);
     }
 }
 
 void DFileView::updateColumnWidth()
 {
-    int column_count = m_headerView->count();
+    D_D(DFileView);
+
+    int column_count = d->headerView->count();
     int i = 0;
     int j = column_count - 1;
 
     for (; i < column_count; ++i) {
-        if (m_headerView->isSectionHidden(i))
+        if (d->headerView->isSectionHidden(i))
             continue;
 
-        m_headerView->resizeSection(i, model()->columnWidth(i) + LEFT_PADDING + LIST_MODE_LEFT_MARGIN + 2 * COLUMU_PADDING);
+        d->headerView->resizeSection(i, model()->columnWidth(i) + LEFT_PADDING + LIST_MODE_LEFT_MARGIN + 2 * COLUMU_PADDING);
         break;
     }
 
     for (; j > 0; --j) {
-        if (m_headerView->isSectionHidden(j))
+        if (d->headerView->isSectionHidden(j))
             continue;
 
-        m_headerView->resizeSection(j, model()->columnWidth(j) + RIGHT_PADDING + LIST_MODE_RIGHT_MARGIN + 2 * COLUMU_PADDING);
+        d->headerView->resizeSection(j, model()->columnWidth(j) + RIGHT_PADDING + LIST_MODE_RIGHT_MARGIN + 2 * COLUMU_PADDING);
         break;
     }
 
-    if (firstVisibleColumn != i) {
-        if (firstVisibleColumn > 0)
-            m_headerView->resizeSection(firstVisibleColumn, model()->columnWidth(firstVisibleColumn) + 2 * COLUMU_PADDING);
+    if (d->firstVisibleColumn != i) {
+        if (d->firstVisibleColumn > 0)
+            d->headerView->resizeSection(d->firstVisibleColumn, model()->columnWidth(d->firstVisibleColumn) + 2 * COLUMU_PADDING);
 
-        firstVisibleColumn = i;
+        d->firstVisibleColumn = i;
     }
 
-    if (lastVisibleColumn != j) {
-        if (lastVisibleColumn > 0)
-            m_headerView->resizeSection(lastVisibleColumn, model()->columnWidth(lastVisibleColumn) + 2 * COLUMU_PADDING);
+    if (d->lastVisibleColumn != j) {
+        if (d->lastVisibleColumn > 0)
+            d->headerView->resizeSection(d->lastVisibleColumn, model()->columnWidth(d->lastVisibleColumn) + 2 * COLUMU_PADDING);
 
-        lastVisibleColumn = j;
+        d->lastVisibleColumn = j;
     }
 }
 
 void DFileView::popupHeaderViewContextMenu(const QPoint &/*pos*/)
 {
+    D_D(DFileView);
+
     DMenu *menu = new DMenu();
 
-    for (int i = 1; i < m_headerView->count(); ++i) {
+    for (int i = 1; i < d->headerView->count(); ++i) {
         DAction *action = new DAction(menu);
 
         action->setText(model()->columnNameByRole(model()->columnToRole(i)).toString());
         action->setCheckable(true);
-        action->setChecked(!m_headerView->isSectionHidden(i));
+        action->setChecked(!d->headerView->isSectionHidden(i));
 
-        connect(action, &DAction::triggered, this, [this, action, i] {
-            m_columnForRoleHiddenMap[action->text()] = action->isChecked();
+        connect(action, &DAction::triggered, this, [this, action, i, d] {
+            d->columnForRoleHiddenMap[action->text()] = action->isChecked();
 
-            m_headerView->setSectionHidden(i, action->isChecked());
+            d->headerView->setSectionHidden(i, action->isChecked());
 
             updateColumnWidth();
         });
@@ -2190,6 +2358,8 @@ void DFileView::popupHeaderViewContextMenu(const QPoint &/*pos*/)
 
 void DFileView::onModelStateChanged(int state)
 {
+    D_D(DFileView);
+
     FMEvent event;
 
     event = windowId();
@@ -2202,27 +2372,27 @@ void DFileView::onModelStateChanged(int state)
 
         disconnect(this, &DFileView::rowCountChanged, this, &DFileView::updateContentLabel);
 
-        if (m_headerView) {
-            m_headerView->setAttribute(Qt::WA_TransparentForMouseEvents);
+        if (d->headerView) {
+            d->headerView->setAttribute(Qt::WA_TransparentForMouseEvents);
         }
     } else if (state == DFileSystemModel::Idle) {
-        for (const DUrl &url : preSelectionUrls) {
+        for (const DUrl &url : d->preSelectionUrls) {
             selectionModel()->select(model()->index(url), QItemSelectionModel::SelectCurrent);
         }
 
-        if (!preSelectionUrls.isEmpty()) {
-            scrollTo(model()->index(preSelectionUrls.first()), PositionAtTop);
+        if (!d->preSelectionUrls.isEmpty()) {
+            scrollTo(model()->index(d->preSelectionUrls.first()), PositionAtTop);
         }
 
-        preSelectionUrls.clear();
+        d->preSelectionUrls.clear();
 
         updateStatusBar();
         updateContentLabel();
 
         connect(this, &DFileView::rowCountChanged, this, &DFileView::updateContentLabel);
 
-        if (m_headerView) {
-            m_headerView->setAttribute(Qt::WA_TransparentForMouseEvents, false);
+        if (d->headerView) {
+            d->headerView->setAttribute(Qt::WA_TransparentForMouseEvents, false);
         }
     }
 }
@@ -2243,14 +2413,16 @@ void DFileView::updateContentLabel()
 
 void DFileView::updateSelectionRect()
 {
+    D_D(DFileView);
+
     if (dragEnabled())
         return;
 
     QPoint pos = mapFromGlobal(QCursor::pos());
 
-    if (m_selectionRectWidget->isVisible()) {
+    if (d->selectionRectWidget->isVisible()) {
         QRect rect;
-        QPoint pressedPos = viewport()->mapToParent(m_selectedGeometry.topLeft());
+        QPoint pressedPos = viewport()->mapToParent(d->selectedGeometry.topLeft());
 
         pressedPos.setX(pressedPos.x() - horizontalOffset());
         pressedPos.setY(pressedPos.y() - verticalOffset());
@@ -2258,15 +2430,15 @@ void DFileView::updateSelectionRect()
         rect.setCoords(qMin(pressedPos.x(), pos.x()), qMin(pressedPos.y(), pos.y()),
                        qMax(pos.x(), pressedPos.x()), qMax(pos.y(), pressedPos.y()));
 
-        m_selectionRectWidget->setGeometry(rect);
+        d->selectionRectWidget->setGeometry(rect);
     }
 
     pos = viewport()->mapFromParent(pos);
 
-    m_selectedGeometry.setBottom(pos.y() + verticalOffset());
-    m_selectedGeometry.setRight(pos.x() + horizontalOffset());
+    d->selectedGeometry.setBottom(pos.y() + verticalOffset());
+    d->selectedGeometry.setRight(pos.x() + horizontalOffset());
 
-    setSelection(m_selectedGeometry, QItemSelectionModel::Current|QItemSelectionModel::Rows|QItemSelectionModel::ClearAndSelect);
+    setSelection(d->selectedGeometry, QItemSelectionModel::Current|QItemSelectionModel::Rows|QItemSelectionModel::ClearAndSelect);
 }
 
 void DFileView::preproccessDropEvent(QDropEvent *event) const

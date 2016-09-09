@@ -21,7 +21,7 @@
 #include "shutil/iconprovider.h"
 #include "shutil/fileutils.h"
 
-#include "utils/utils.h"
+#include "utils.h"
 
 #include "widgets/singleton.h"
 

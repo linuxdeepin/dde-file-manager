@@ -1,6 +1,6 @@
 #include "fmstatemanager.h"
 
-#include "utils/qobjecthelper.h"
+#include "qobjecthelper.h"
 
 #include "app/global.h"
 #include "app/filesignalmanager.h"

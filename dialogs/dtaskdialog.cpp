@@ -1,5 +1,5 @@
 #include "dtaskdialog.h"
-#include "utils/utils.h"
+#include "utils.h"
 #include <dcircleprogress.h>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -10,7 +10,7 @@
 
 #include <dscrollbar.h>
 
-#include "utils/xutil.h"
+#include "xutil.h"
 
 MoveCopyTaskWidget::MoveCopyTaskWidget(const QMap<QString, QString> &jobDetail, QWidget *parent):
     QFrame(parent),

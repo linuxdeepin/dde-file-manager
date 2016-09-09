@@ -3,7 +3,7 @@
 
 #include <QList>
 
-#include "utils/durl.h"
+#include "durl.h"
 
 class HistoryStack
 {

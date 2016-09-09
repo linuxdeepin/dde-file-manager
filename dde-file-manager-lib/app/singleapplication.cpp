@@ -1,7 +1,7 @@
 #include "singleapplication.h"
 #include "global.h"
 #include "filesignalmanager.h"
-#include "utils/durl.h"
+#include "durl.h"
 
 #include "widgets/commandlinemanager.h"
 #include "widgets/singleton.h"

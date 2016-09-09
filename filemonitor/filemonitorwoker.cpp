@@ -8,7 +8,7 @@
  **/
 
 #include "filemonitorwoker.h"
-#include "utils/utils.h"
+#include "utils.h"
 #include <QFileInfo>
 #include <QProcess>
 

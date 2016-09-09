@@ -2,7 +2,7 @@
 #define BOOKMARK_H
 
 #include <QObject>
-#include "utils/debugobejct.h"
+#include "debugobejct.h"
 #include <QString>
 #include <QDateTime>
 #include "abstractfileinfo.h"

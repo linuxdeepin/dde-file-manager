@@ -12,7 +12,7 @@
 
 #include "dialogs/dialogmanager.h"
 
-#include "utils/qobjecthelper.h"
+#include "qobjecthelper.h"
 
 #include "widgets/singleton.h"
 

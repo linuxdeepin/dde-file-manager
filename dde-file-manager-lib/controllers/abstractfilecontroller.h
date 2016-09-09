@@ -1,7 +1,7 @@
 #ifndef ABSTRACTFILECONTROLLER_H
 #define ABSTRACTFILECONTROLLER_H
 
-#include "utils/durl.h"
+#include "durl.h"
 
 #include "models/abstractfileinfo.h"
 #include "models/ddiriterator.h"

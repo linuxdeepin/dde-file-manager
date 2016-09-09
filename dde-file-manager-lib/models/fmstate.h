@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QSize>
-#include "utils/debugobejct.h"
+#include "debugobejct.h"
 
 class FMState : public DebugObejct
 {

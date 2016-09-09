@@ -3,7 +3,9 @@
 
 #include <QObject>
 #include <QMap>
-#include "utils/durl.h"
+
+#include "durl.h"
+
 class DTaskDialog;
 class FileJob;
 class AbstractFileInfo;

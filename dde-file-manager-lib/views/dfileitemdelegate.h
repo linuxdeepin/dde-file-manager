@@ -5,6 +5,7 @@
 
 #include <QStyledItemDelegate>
 #include <QHeaderView>
+#include <QPointer>
 
 DWIDGET_USE_NAMESPACE
 

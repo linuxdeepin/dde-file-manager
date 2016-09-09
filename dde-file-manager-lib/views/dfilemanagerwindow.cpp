@@ -10,20 +10,21 @@
 #include "dstatusbar.h"
 #include "filemenumanager.h"
 #include "computerview.h"
+#include "dtabbar.h"
+#include "dbookmarkscene.h"
 
 #include "app/global.h"
 #include "app/fmevent.h"
 #include "app/filesignalmanager.h"
 
-#include "utils/xutil.h"
-#include "utils/xutil.h"
-#include "utils/utils.h"
+#include "xutil.h"
+#include "utils.h"
 
 #include "widgets/singleton.h"
 #include "controllers/fileservices.h"
-#include "./dbookmarkscene.h"
 
 #include <dplatformwindowhandle.h>
+#include <DTitlebar>
 
 #include <QStatusBar>
 #include <QFrame>
@@ -38,10 +39,37 @@
 
 DWIDGET_USE_NAMESPACE;
 
-const int DFileManagerWindow::MinimumWidth = 0;
+class DFileManagerWindowPrivate
+{
+public:
+    DFileManagerWindowPrivate(DFileManagerWindow *qq)
+        : q_ptr(qq) {}
+
+    QFrame* centralWidget = NULL;
+    DLeftSideBar* leftSideBar = NULL;
+    QFrame* rightView = NULL;
+    DToolBar* toolbar = NULL;
+    TabBar* tabBar = NULL;
+    QPushButton *newTabButton;
+    DFileView* fileView = NULL;
+    ComputerView* computerView = NULL;
+    DDetailView* detailView = NULL;
+    DStatusBar* statusBar = NULL;
+    QVBoxLayout* mainLayout = NULL;
+    DSplitter* splitter = NULL;
+    QFrame * titleFrame = NULL;
+    QStackedLayout* viewStackLayout = NULL;
+
+    QMap<DUrl, QWidget*> views;
+
+    DFileManagerWindow *q_ptr;
+
+    D_DECLARE_PUBLIC(DFileManagerWindow)
+};
 
 DFileManagerWindow::DFileManagerWindow(QWidget *parent)
     : DMainWindow(parent)
+    , d_ptr(new DFileManagerWindowPrivate(this))
 {
     setWindowIcon(QIcon(":/images/images/dde-file-manager.svg"));
 
@@ -62,10 +90,12 @@ void DFileManagerWindow::initData()
 
 void DFileManagerWindow::initUI()
 {
+    D_DC(DFileManagerWindow);
+
     resize(DEFAULT_WINDOWS_WIDTH, DEFAULT_WINDOWS_HEIGHT);
     setMinimumSize(800, 420);
     initCentralWidget();
-    setCentralWidget(m_centralWidget);
+    setCentralWidget(d->centralWidget);
     setStyleSheet(getQssFromFile(":/qss/qss/filemanager.qss"));
 }
 
@@ -91,86 +121,98 @@ void DFileManagerWindow::initTitleBar()
 
 void DFileManagerWindow::initSplitter()
 {
+    D_D(DFileManagerWindow);
+
     initLeftSideBar();
     initRightView();
 
-    m_splitter = new DSplitter(Qt::Horizontal, this);
-    m_splitter->addWidget(m_leftSideBar);
-    m_splitter->addWidget(m_rightView);
-    m_splitter->setChildrenCollapsible(false);
+    d->splitter = new DSplitter(Qt::Horizontal, this);
+    d->splitter->addWidget(d->leftSideBar);
+    d->splitter->addWidget(d->rightView);
+    d->splitter->setChildrenCollapsible(false);
 
-    connect(m_leftSideBar, &DLeftSideBar::moveSplitter, m_splitter, &DSplitter::moveSplitter);
+    connect(d->leftSideBar, &DLeftSideBar::moveSplitter, d->splitter, &DSplitter::moveSplitter);
 }
 
 void DFileManagerWindow::initLeftSideBar()
 {
-    m_leftSideBar = new DLeftSideBar(this);
-    m_leftSideBar->setObjectName("LeftSideBar");
-    m_leftSideBar->setFixedWidth(LEFTSIDEBAR_MAX_WIDTH);
+    D_D(DFileManagerWindow);
+
+    d->leftSideBar = new DLeftSideBar(this);
+    d->leftSideBar->setObjectName("LeftSideBar");
+    d->leftSideBar->setFixedWidth(LEFTSIDEBAR_MAX_WIDTH);
 }
 
 void DFileManagerWindow::initRightView()
 {
+    D_D(DFileManagerWindow);
+
     initToolBar();
     initTabBar();
     initViewLayout();
     initComputerView();
     initFileView();
 
-    m_rightView = new QFrame;
+    d->rightView = new QFrame;
 
-    m_titleFrame = new QFrame;
-    m_titleFrame->setObjectName("TitleBar");
+    d->titleFrame = new QFrame;
+    d->titleFrame->setObjectName("TitleBar");
     QHBoxLayout * titleLayout = new QHBoxLayout;
     titleLayout->setMargin(0);
     titleLayout->setSpacing(0);
-    titleLayout->addWidget(m_toolbar);
+    titleLayout->addWidget(d->toolbar);
     titleLayout->addWidget(titleBar());
     titleLayout->setSpacing(0);
     titleLayout->setContentsMargins(0, 0, 0, 0);
 
-    m_titleFrame->setLayout(titleLayout);
-    m_titleFrame->setFixedHeight(TITLE_FIXED_HEIGHT);
+    d->titleFrame->setLayout(titleLayout);
+    d->titleFrame->setFixedHeight(TITLE_FIXED_HEIGHT);
 
     QHBoxLayout *tabBarLayout = new QHBoxLayout;
     tabBarLayout->setMargin(0);
     tabBarLayout->setSpacing(0);
-    tabBarLayout->addWidget(m_tabBar);
-    tabBarLayout->addWidget(m_newTabButton);
+    tabBarLayout->addWidget(d->tabBar);
+    tabBarLayout->addWidget(d->newTabButton);
 
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(m_titleFrame);
+    mainLayout->addWidget(d->titleFrame);
     mainLayout->addLayout(tabBarLayout);
-    mainLayout->addLayout(m_viewStackLayout);
+    mainLayout->addLayout(d->viewStackLayout);
     mainLayout->setSpacing(0);
     mainLayout->setContentsMargins(0, 0, 0, 0);
-    m_rightView->setLayout(mainLayout);
+    d->rightView->setLayout(mainLayout);
 }
 
 void DFileManagerWindow::initToolBar()
 {
-    m_toolbar = new DToolBar(this);
-    m_toolbar->setObjectName("ToolBar");
-    m_toolbar->setFixedHeight(40);
+    D_D(DFileManagerWindow);
+
+    d->toolbar = new DToolBar(this);
+    d->toolbar->setObjectName("ToolBar");
+    d->toolbar->setFixedHeight(40);
 }
 
 void DFileManagerWindow::initTabBar()
 {
-    m_tabBar = new TabBar(this);
-    m_tabBar->setFixedHeight(24);
+    D_D(DFileManagerWindow);
 
-    m_newTabButton = new QPushButton(this);
-    m_newTabButton->setObjectName("NewTabButton");
-    m_newTabButton->setFixedSize(25,24);
-    m_newTabButton->hide();
+    d->tabBar = new TabBar(this);
+    d->tabBar->setFixedHeight(24);
+
+    d->newTabButton = new QPushButton(this);
+    d->newTabButton->setObjectName("NewTabButton");
+    d->newTabButton->setFixedSize(25,24);
+    d->newTabButton->hide();
 }
 
 void DFileManagerWindow::initViewLayout()
 {
-    m_viewStackLayout = new QStackedLayout(this);
-    m_viewStackLayout->setSpacing(0);
-    m_viewStackLayout->setContentsMargins(0, 0, 0, 0);
+    D_D(DFileManagerWindow);
+
+    d->viewStackLayout = new QStackedLayout(this);
+    d->viewStackLayout->setSpacing(0);
+    d->viewStackLayout->setContentsMargins(0, 0, 0, 0);
 }
 
 void DFileManagerWindow::initFileView()
@@ -183,26 +225,32 @@ void DFileManagerWindow::initFileView()
 
 void DFileManagerWindow::initComputerView()
 {
-    m_computerView = new ComputerView(this);
-    m_viewStackLayout->addWidget(m_computerView);
-    m_views.insert(ComputerView::url(), m_computerView);
+    D_D(DFileManagerWindow);
+
+    d->computerView = new ComputerView(this);
+    d->viewStackLayout->addWidget(d->computerView);
+    d->views.insert(ComputerView::url(), d->computerView);
 }
 
 void DFileManagerWindow::initCentralWidget()
 {
+    D_D(DFileManagerWindow);
+
     initTitleBar();
     initSplitter();
 
-    m_centralWidget = new QFrame(this);
+    d->centralWidget = new QFrame(this);
     QVBoxLayout* mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(m_splitter);
+    mainLayout->addWidget(d->splitter);
     mainLayout->setSpacing(0);
     mainLayout->setContentsMargins(0, 0, 0, 0);
-    m_centralWidget->setLayout(mainLayout);
+    d->centralWidget->setLayout(mainLayout);
 }
 
 void DFileManagerWindow::initConnect()
 {
+    D_D(DFileManagerWindow);
+
     if (titleBar()) {
         connect(titleBar(), SIGNAL(minimumClicked()), parentWidget(), SLOT(showMinimized()));
         connect(titleBar(), SIGNAL(maximumClicked()), parentWidget(), SLOT(showMaximized()));
@@ -210,19 +258,19 @@ void DFileManagerWindow::initConnect()
         connect(titleBar(), SIGNAL(closeClicked()), parentWidget(), SLOT(close()));
     }
 
-    connect(m_toolbar, &DToolBar::requestIconView, this, &DFileManagerWindow::setIconView);
-    connect(m_toolbar, &DToolBar::requestListView, this, &DFileManagerWindow::setListView);
+    connect(d->toolbar, &DToolBar::requestIconView, this, &DFileManagerWindow::setIconView);
+    connect(d->toolbar, &DToolBar::requestListView, this, &DFileManagerWindow::setListView);
 
     connect(fileSignalManager, &FileSignalManager::requestOpenInNewTab, this, &DFileManagerWindow::openNewTab);
 
     connect(fileSignalManager, &FileSignalManager::fetchNetworksSuccessed, this, &DFileManagerWindow::cd);
     connect(fileSignalManager, &FileSignalManager::requestChangeCurrentUrl,this, &DFileManagerWindow::preHandleCd);
 
-    connect(m_tabBar, &TabBar::tabMoved, m_toolbar, &DToolBar::moveNavStacks);
-    connect(m_tabBar, &TabBar::currentChanged,this, &DFileManagerWindow::onCurrentTabChanged);
-    connect(m_tabBar, &TabBar::tabCloseRequested, this,&DFileManagerWindow::onCurrentTabClosed);
-    connect(m_tabBar, &TabBar::tabAddableChanged, this, &DFileManagerWindow::onTabAddableChanged);
-    connect(m_newTabButton, &QPushButton::clicked, this, [=]{
+    connect(d->tabBar, &TabBar::tabMoved, d->toolbar, &DToolBar::moveNavStacks);
+    connect(d->tabBar, &TabBar::currentChanged,this, &DFileManagerWindow::onCurrentTabChanged);
+    connect(d->tabBar, &TabBar::tabCloseRequested, this,&DFileManagerWindow::onCurrentTabClosed);
+    connect(d->tabBar, &TabBar::tabAddableChanged, this, &DFileManagerWindow::onTabAddableChanged);
+    connect(d->newTabButton, &QPushButton::clicked, this, [=]{
         FMEvent event;
         const DUrl url = DUrl::fromUserInput(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0));
         event = url;
@@ -233,55 +281,65 @@ void DFileManagerWindow::initConnect()
 
 void DFileManagerWindow::onCurrentTabClosed(const int index){
 
-    int viewIndex = m_tabBar->tabData(index).toJsonObject()["viewIndex"].toInt();
+    D_D(DFileManagerWindow);
+
+    int viewIndex = d->tabBar->tabData(index).toJsonObject()["viewIndex"].toInt();
     qDebug()<<"************************delete file view:"<<viewIndex;
-    DFileView *currentView =qobject_cast<DFileView*>(m_viewStackLayout->widget(viewIndex));
+    DFileView *currentView =qobject_cast<DFileView*>(d->viewStackLayout->widget(viewIndex));
 
     currentView->close();
-    m_viewStackLayout->removeWidget(currentView);
-    m_fileView = NULL;
+    d->viewStackLayout->removeWidget(currentView);
+    d->fileView = NULL;
     delete currentView;
 
     //recorrect view index
-    for(int i = 0; i<m_tabBar->count(); i++){
-        int newViewIndex = m_tabBar->tabData(i).toJsonObject()["viewIndex"].toInt();
+    for(int i = 0; i<d->tabBar->count(); i++){
+        int newViewIndex = d->tabBar->tabData(i).toJsonObject()["viewIndex"].toInt();
         if(newViewIndex > viewIndex){
             newViewIndex--;
-            QJsonObject tabData = m_tabBar->tabData(i).toJsonObject();
+            QJsonObject tabData = d->tabBar->tabData(i).toJsonObject();
             tabData["viewIndex"] = newViewIndex;
-            m_tabBar->setTabData(i,tabData);
+            d->tabBar->setTabData(i,tabData);
         }
     }
 
-    m_tabBar->removeTab(index);
-    m_toolbar->removeNavStackAt(index);
+    d->tabBar->removeTab(index);
+    d->toolbar->removeNavStackAt(index);
 
-    if(m_tabBar->count()<8)
-        emit m_tabBar->tabAddableChanged(true);
+    if(d->tabBar->count()<8)
+        emit d->tabBar->tabAddableChanged(true);
 
-    if(m_tabBar->count()<2)
-        m_tabBar->hide();
+    if(d->tabBar->count()<2)
+        d->tabBar->hide();
 
-    if(m_tabBar->isHidden())
-        m_newTabButton->hide();
+    if(d->tabBar->isHidden())
+        d->newTabButton->hide();
 }
 
-void DFileManagerWindow::onTabAddableChanged(bool addable){
-    m_newTabButton->setEnabled(addable);
+void DFileManagerWindow::onTabAddableChanged(bool addable)
+{
+    D_D(DFileManagerWindow);
+
+    d->newTabButton->setEnabled(addable);
 }
-void DFileManagerWindow::onCurrentTabChanged(int tabIndex){
-    int viewIndex = m_tabBar->tabData(tabIndex).toJsonObject()["viewIndex"].toInt();
+void DFileManagerWindow::onCurrentTabChanged(int tabIndex)
+{
+    D_D(DFileManagerWindow);
+
+    int viewIndex = d->tabBar->tabData(tabIndex).toJsonObject()["viewIndex"].toInt();
     switchToView(viewIndex);
 
-    m_toolbar->switchHistoryStack(tabIndex,m_fileView->currentUrl());
+    d->toolbar->switchHistoryStack(tabIndex,d->fileView->currentUrl());
 }
 
 
 DUrl DFileManagerWindow::currentUrl() const
 {
-    if (m_viewStackLayout->currentWidget() == m_fileView) {
-        return m_fileView->currentUrl();
-    } else if (m_viewStackLayout->currentWidget() == m_computerView) {
+    D_DC(DFileManagerWindow);
+
+    if (d->viewStackLayout->currentWidget() == d->fileView) {
+        return d->fileView->currentUrl();
+    } else if (d->viewStackLayout->currentWidget() == d->computerView) {
         return DUrl::fromComputerFile("/");
     }
 
@@ -290,17 +348,30 @@ DUrl DFileManagerWindow::currentUrl() const
 
 int DFileManagerWindow::getFileViewMode() const
 {
-    return m_fileView->getDefaultViewMode();
+    D_DC(DFileManagerWindow);
+
+    return d->fileView->getDefaultViewMode();
 }
 
 int DFileManagerWindow::getFileViewSortRole() const
 {
-    return m_fileView->getSortRoles();
+    D_DC(DFileManagerWindow);
+
+    return d->fileView->getSortRoles();
 }
 
-DToolBar *DFileManagerWindow::getToolBar()
+DToolBar *DFileManagerWindow::getToolBar() const
 {
-    return m_toolbar;
+    D_DC(DFileManagerWindow);
+
+    return d->toolbar;
+}
+
+DFileView *DFileManagerWindow::getFileView() const
+{
+    D_DC(DFileManagerWindow);
+
+    return d->fileView;
 }
 
 int DFileManagerWindow::windowId()
@@ -310,96 +381,115 @@ int DFileManagerWindow::windowId()
 
 void DFileManagerWindow::setFileViewMode(int viewMode)
 {
-    m_fileView->setViewMode(static_cast<DFileView::ViewMode>(viewMode));
+    D_D(DFileManagerWindow);
+
+    d->fileView->setViewMode(static_cast<DFileView::ViewMode>(viewMode));
 }
 
 void DFileManagerWindow::setFileViewSortRole(int sortRole)
 {
-    m_fileView->sortByRole(sortRole);
+    D_D(DFileManagerWindow);
+
+    d->fileView->sortByRole(sortRole);
 }
 
 void DFileManagerWindow::setIconView()
 {
-    m_viewStackLayout->setCurrentWidget(m_fileView);
-    m_fileView->setViewModeToIcon();
+    D_D(DFileManagerWindow);
+
+    d->viewStackLayout->setCurrentWidget(d->fileView);
+    d->fileView->setViewModeToIcon();
 }
 
 void DFileManagerWindow::setListView()
 {
-    m_viewStackLayout->setCurrentWidget(m_fileView);
-    m_fileView->setViewModeToList();
+    D_D(DFileManagerWindow);
+
+    d->viewStackLayout->setCurrentWidget(d->fileView);
+    d->fileView->setViewModeToList();
 }
 
 void DFileManagerWindow::preHandleCd(const FMEvent &event)
 {
-    qDebug() << event << windowId();
-    if (event.windowId() != windowId()){
+    D_DC(DFileManagerWindow);
+
+    if (event.windowId() != windowId()) {
         return;
     }
-    if (event.fileUrl().isNetWorkFile()){
+
+    if (event.fileUrl().isNetWorkFile()) {
         emit fileSignalManager->requestFetchNetworks(event);
-    }else if (event.fileUrl().isSMBFile()){
+    } else if (event.fileUrl().isSMBFile()) {
         emit fileSignalManager->requestFetchNetworks(event);
-    }else if (event.fileUrl().isComputerFile()){
+    } else if (event.fileUrl().isComputerFile()) {
         showComputerView(event);
-    }else if (event.fileUrl().isSearchFile() && m_viewStackLayout->currentWidget() == m_computerView){
+    } else if (event.fileUrl().isSearchFile()
+               && d->viewStackLayout->currentWidget() == d->computerView) {
         return;
-    }else{
+    } else {
         cd(event);
     }
 }
 
 void DFileManagerWindow::cd(const FMEvent &event)
 {
-    if (m_viewStackLayout->currentWidget() != m_fileView){
-        m_viewStackLayout->setCurrentWidget(m_fileView);
+    D_D(DFileManagerWindow);
+
+    if (d->viewStackLayout->currentWidget() != d->fileView) {
+        d->viewStackLayout->setCurrentWidget(d->fileView);
     }
-    m_fileView->cd(event);
-    m_toolbar->setViewModeButtonVisible(true);
+
+    d->fileView->cd(event);
+    d->toolbar->setViewModeButtonVisible(true);
 }
 
 void DFileManagerWindow::showComputerView(const FMEvent &event)
 {
-    m_viewStackLayout->setCurrentWidget(m_computerView);
+    D_D(DFileManagerWindow);
+
+    d->viewStackLayout->setCurrentWidget(d->computerView);
     emit fileSignalManager->currentUrlChanged(event);
-    m_toolbar->setViewModeButtonVisible(false);
+    d->toolbar->setViewModeButtonVisible(false);
 }
 
 void DFileManagerWindow::openNewTab(const FMEvent &event)
 {
+    D_D(DFileManagerWindow);
+
     if (event.windowId() != windowId()){
         return;
     }
-    qDebug() << event;
+
     createNewView(event);
 
-    if (m_views.count() >= 3){
-        m_newTabButton->show();
+    if (d->views.count() >= 3){
+        d->newTabButton->show();
     }
 }
 
 void DFileManagerWindow::createNewView(const FMEvent &event)
 {
-    qDebug() << event;
+    D_D(DFileManagerWindow);
+
     DFileView* view = new DFileView(this);
     view->setObjectName("FileView");
     setFocusProxy(view);
-    m_views.insert(event.fileUrl(), view);
+    d->views.insert(event.fileUrl(), view);
 
-    int viewIndex = m_viewStackLayout->addWidget(view);
-    m_toolbar->addHistoryStack();
-    m_toolbar->switchHistoryStack(m_toolbar->navStackCount()-1,event.fileUrl());
+    int viewIndex = d->viewStackLayout->addWidget(view);
+    d->toolbar->addHistoryStack();
+    d->toolbar->switchHistoryStack(d->toolbar->navStackCount()-1,event.fileUrl());
 
-    m_viewStackLayout->setCurrentWidget(view);
+    d->viewStackLayout->setCurrentWidget(view);
 
     view->cd(event);
-    m_fileView = view;
+    d->fileView = view;
 
-    connect(view, &DFileView::viewModeChanged, m_toolbar, &DToolBar::checkViewModeButton);
+    connect(view, &DFileView::viewModeChanged, d->toolbar, &DToolBar::checkViewModeButton);
     connect(view, &DFileView::currentUrlChanged ,this, &DFileManagerWindow::onFileViewCurrentUrlChanged);
 
     DUrl url;
-    if(event.fileUrl().isEmpty())
+    if (event.fileUrl().isEmpty())
         url = DUrl::fromUserInput(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0));
     else
         url = event.fileUrl();
@@ -408,44 +498,52 @@ void DFileManagerWindow::createNewView(const FMEvent &event)
     const AbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
     QString urlDisplayName = fileInfo->displayName();
 
-    m_tabBar->addTabWithData(viewIndex,urlDisplayName,fileInfo->path());
-    m_tabBar->setCurrentIndex(m_tabBar->count()-1);
-    connect(view, &DFileView::viewModeChanged, m_toolbar, &DToolBar::checkViewModeButton);
+    d->tabBar->addTabWithData(viewIndex,urlDisplayName,fileInfo->path());
+    d->tabBar->setCurrentIndex(d->tabBar->count()-1);
+    connect(view, &DFileView::viewModeChanged, d->toolbar, &DToolBar::checkViewModeButton);
 
-    if(!m_tabBar->isHidden())
-        m_newTabButton->show();
+    if (!d->tabBar->isHidden())
+        d->newTabButton->show();
 }
 
-void DFileManagerWindow::onFileViewCurrentUrlChanged(const DUrl &url){
-    int viewIndex = m_viewStackLayout->indexOf(m_fileView);
+void DFileManagerWindow::onFileViewCurrentUrlChanged(const DUrl &url)
+{
+    D_D(DFileManagerWindow);
+
+    int viewIndex = d->viewStackLayout->indexOf(d->fileView);
     const AbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
     QString urlDisplayName = fileInfo->displayName();
 
-    m_tabBar->setTabText(viewIndex,urlDisplayName, url.path());
+    d->tabBar->setTabText(viewIndex,urlDisplayName, url.path());
 }
 
-void DFileManagerWindow::switchToView(const int viewIndex){
-    qDebug()<<"<<<<<<<<<<<<<<<<<< switching view: view index:"<<viewIndex;
-    m_viewStackLayout->setCurrentIndex(viewIndex);
-    m_fileView = qobject_cast<DFileView*>(m_viewStackLayout->widget(viewIndex));
-    m_leftSideBar->scene()->setCurrentUrl(m_fileView->currentUrl());
+void DFileManagerWindow::switchToView(const int viewIndex)
+{
+    D_D(DFileManagerWindow);
+
+    d->viewStackLayout->setCurrentIndex(viewIndex);
+    d->fileView = qobject_cast<DFileView*>(d->viewStackLayout->widget(viewIndex));
+    d->leftSideBar->scene()->setCurrentUrl(d->fileView->currentUrl());
 }
 
-void DFileManagerWindow::moveCenter(const QPoint &cp){
+void DFileManagerWindow::moveCenter(const QPoint &cp)
+{
     QRect qr = frameGeometry();
 
     qr.moveCenter(cp);
     move(qr.topLeft());
 }
 
-void DFileManagerWindow::moveTopRight(){
+void DFileManagerWindow::moveTopRight()
+{
     QRect pRect;
     pRect = qApp->desktop()->availableGeometry();
     int x = pRect.width() - width();
     move(QPoint(x, 0));
 }
 
-void DFileManagerWindow::moveTopRightByRect(QRect rect){
+void DFileManagerWindow::moveTopRightByRect(QRect rect)
+{
     int x = rect.x() + rect.width() - width();
     move(QPoint(x, 0));
 }
@@ -458,7 +556,9 @@ void DFileManagerWindow::closeEvent(QCloseEvent *event)
 
 void DFileManagerWindow::mouseDoubleClickEvent(QMouseEvent *event)
 {
-    if (event->y() <= m_titleFrame->height()) {
+    D_DC(DFileManagerWindow);
+
+    if (event->y() <= d->titleFrame->height()) {
         if (isMaximized())
             showNormal();
         else
@@ -468,7 +568,8 @@ void DFileManagerWindow::mouseDoubleClickEvent(QMouseEvent *event)
     }
 }
 
-void DFileManagerWindow::moveCenterByRect(QRect rect){
+void DFileManagerWindow::moveCenterByRect(QRect rect)
+{
     QRect qr = frameGeometry();
     qr.moveCenter(rect.center());
     move(qr.topLeft());

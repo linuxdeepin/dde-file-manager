@@ -11,7 +11,7 @@
 #include <QAbstractItemView>
 #include <QMimeType>
 
-#include "utils/durl.h"
+#include "durl.h"
 #include "menuactiontype.h"
 
 #define SORT_FUN_DEFINE(Value, Name, Type) \
