@@ -2,7 +2,7 @@
 #include <QStandardPaths>
 #include <QSvgRenderer>
 #include <QPainter>
-#include "utils/utils.h"
+#include "utils.h"
 #include "utils.h"
 
 

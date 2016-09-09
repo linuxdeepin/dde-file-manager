@@ -2,7 +2,7 @@
 #define FMSETTING_H
 
 #include <QObject>
-#include "utils/debugobejct.h"
+#include "debugobejct.h"
 
 class FMSetting : public DebugObejct
 {

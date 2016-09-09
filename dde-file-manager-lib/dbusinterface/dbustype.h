@@ -4,7 +4,7 @@
 #include <QtCore>
 #include <QtDBus>
 
-#include "utils/durl.h"
+#include "durl.h"
 
 class  DiskInfo
 {

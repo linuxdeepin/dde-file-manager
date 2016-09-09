@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QDateTime>
-#include "utils/debugobejct.h"
+#include "debugobejct.h"
 
 class SearchHistory : public DebugObejct
 {

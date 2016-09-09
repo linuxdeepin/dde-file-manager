@@ -2,7 +2,7 @@
 #include <QVBoxLayout>
 #include <QFormLayout>
 #include <QDebug>
-#include "utils/utils.h"
+#include "utils.h"
 
 MountAskPasswordDialog::MountAskPasswordDialog(QWidget *parent) : DDialog(parent)
 {

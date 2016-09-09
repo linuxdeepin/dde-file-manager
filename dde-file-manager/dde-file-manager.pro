@@ -39,7 +39,8 @@ SOURCES += \
 
 INCLUDEPATH += $$PWD/../dde-file-manager-lib $$PWD/..\
                $$PWD/../vendor/include/libdtk-1.0/DBase\
-               $$PWD/../vendor/include/libdtk-1.0/DWidget
+               $$PWD/../vendor/include/libdtk-1.0/DWidget\
+               $$PWD/../utils
 
 BINDIR = $$PREFIX/bin
 DEFINES += APPSHAREDIR=\\\"$$PREFIX/share/$$TARGET\\\"

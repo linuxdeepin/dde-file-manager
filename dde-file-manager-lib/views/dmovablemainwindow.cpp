@@ -1,5 +1,5 @@
 #include "dmovablemainwindow.h"
-#include "utils/xutil.h"
+#include "xutil.h"
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QMouseEvent>

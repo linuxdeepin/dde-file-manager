@@ -1,6 +1,6 @@
 #include "filemonitor.h"
 #include "filemonitorwoker.h"
-#include "utils/utils.h"
+#include "utils.h"
 #include <QDir>
 
 FileMonitor::FileMonitor(QObject *parent) : QObject(parent)

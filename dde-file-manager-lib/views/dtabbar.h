@@ -2,7 +2,7 @@
 #define DTABBAR_H
 
 #include "widgets/singleton.h"
-#include "utils/durl.h"
+#include "durl.h"
 #include <QDebug>
 #include "widgets/singleton.h"
 #include <QFont>

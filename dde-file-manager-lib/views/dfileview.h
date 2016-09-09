@@ -3,16 +3,7 @@
 
 #include <dlistview.h>
 
-#include <QFrame>
-#include <QLabel>
-#include <QUrl>
-#include <QActionGroup>
-#include <QContextMenuEvent>
-
-#include <anchors.h>
-
-#include "utils/durl.h"
-#include <dslider.h>
+#include "durl.h"
 
 class DFileSystemModel;
 
@@ -34,7 +25,7 @@ class DFileSystemModel;
 class DFileItemDelegate;
 class AbstractFileInfo;
 class DStatusBar;
-
+class DFileViewPrivate;
 class DFileView : public DListView
 {
     Q_OBJECT
@@ -85,11 +76,11 @@ public:
 
     void setIconSize(const QSize &size);
 
-    ViewMode getDefaultViewMode();
+    ViewMode getDefaultViewMode() const;
 
-    int getSortRoles();
+    int getSortRoles() const;
 
-    bool testViewMode(ViewModes modes, ViewMode mode);
+    bool testViewMode(ViewModes modes, ViewMode mode) const;
 
     int horizontalOffset() const Q_DECL_OVERRIDE;
 
@@ -104,8 +95,7 @@ public:
     typedef QList<RandeIndex> RandeIndexList;
     RandeIndexList visibleIndexes(QRect rect) const;
 
-    inline QSize itemSizeHint() const
-    { return m_itemSizeHint;}
+    QSize itemSizeHint() const;
 
     using DListView::viewportMargins;
     using DListView::updateGeometries;
@@ -185,22 +175,6 @@ protected:
     void rowsInserted(const QModelIndex & parent, int start, int end);
 
 private:
-    FileMenuManager* m_fileMenuManager;
-    QHeaderView *m_headerView = Q_NULLPTR;
-    DStatusBar* m_statusBar=NULL;
-
-    QActionGroup* m_displayAsActionGroup;
-    QActionGroup* m_sortByActionGroup;
-    QActionGroup* m_openWithActionGroup;
-
-    QList<int> m_columnRoles;
-    QList<int> m_iconSizes;
-
-    ViewMode m_defaultViewMode = IconMode;
-    ViewMode m_currentViewMode = IconMode;
-
-    int m_currentIconSizeIndex = 1;
-
     inline bool isEmptyArea(const QPoint &pos) const
     { return isEmptyArea(indexAt(pos), pos);}
     bool isEmptyArea(const QModelIndex &index, const QPoint &pos) const;
@@ -228,44 +202,9 @@ private:
 
     void preproccessDropEvent(QDropEvent *event) const;
 
-    QRect m_selectedGeometry;
-    QWidget *m_selectionRectWidget = Q_NULLPTR;
-    bool m_selectionRectVisible = true;
+    DFileViewPrivate *d_ptr;
 
-    int m_horizontalOffset = 0;
-
-    QTimer* m_keyboardSearchTimer;
-    QString m_keyboardSearchKeys;
-
-    QSize m_itemSizeHint;
-
-    /// move cursor later selecte index when pressed key shift
-    QModelIndex m_lastCursorIndex;
-
-    /// cut state indexs
-    static QSet<DUrl> m_cutUrlSet;
-
-    /// list mode column visible
-    QMap<QString, bool> m_columnForRoleHiddenMap;
-
-    int firstVisibleColumn = -1;
-    int lastVisibleColumn = -1;
-
-    DUrlList preSelectionUrls;
-
-    Anchors<QLabel> m_contentLabel = Q_NULLPTR;
-
-    /// file additional icon
-    QIcon lockIcon;
-    QIcon linkIcon;
-    QIcon unreadableIcon;
-
-    QModelIndex m_mouseLastPressedIndex;
-
-    /// drag drop
-    QModelIndex dragMoveHoverIndex;
-
-    DSlider *m_scalingSlider = NULL;
+    Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_ptr), DFileView)
 };
 
 #endif // DFILEVIEW_H

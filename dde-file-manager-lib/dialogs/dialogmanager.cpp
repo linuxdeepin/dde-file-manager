@@ -17,8 +17,8 @@
 
 #include "shutil/iconprovider.h"
 
-#include "utils/xutil.h"
-#include "utils/utils.h"
+#include "xutil.h"
+#include "utils.h"
 
 #include "dialogs/dtaskdialog.h"
 #include "dialogs/messagewrongdialog.h"

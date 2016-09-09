@@ -8,7 +8,7 @@
 #include <QDir>
 #include "desktopfile.h"
 #include "properties.h"
-#include "utils/durl.h"
+#include "durl.h"
 
 /**
  * @class FileUtils

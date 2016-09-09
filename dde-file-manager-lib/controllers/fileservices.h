@@ -2,7 +2,7 @@
 #define FILESERVICES_H
 
 #include "abstractfilecontroller.h"
-#include "utils/durl.h"
+#include "durl.h"
 
 #include <QObject>
 #include <QString>

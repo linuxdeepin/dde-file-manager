@@ -3,8 +3,8 @@
 #include "shutil/fileutils.h"
 #include <QIcon>
 #include "app/singleapplication.h"
-#include "utils/utils.h"
-#include "utils/durl.h"
+#include "utils.h"
+#include "durl.h"
 
 
 UDiskDeviceInfo::UDiskDeviceInfo()

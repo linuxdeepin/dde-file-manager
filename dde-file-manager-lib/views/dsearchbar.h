@@ -12,7 +12,7 @@
 #include <QStringList>
 #include <QDirModel>
 #include <QPushButton>
-#include "utils/durl.h"
+#include "durl.h"
 
 class FMEvent;
 

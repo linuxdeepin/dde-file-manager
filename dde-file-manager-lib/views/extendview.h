@@ -2,7 +2,7 @@
 #define EXTENDVIEW_H
 
 #include <QFrame>
-#include "utils/durl.h"
+#include "durl.h"
 class QListWidget;
 class DDetailView;
 

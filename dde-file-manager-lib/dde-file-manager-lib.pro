@@ -152,7 +152,8 @@ HEADERS += \
     views/flowlayout.h \
     shutil/shortcut.h \
     views/dtabbar.h \
-    shutil/filepreviewiconprovider.h
+    shutil/filepreviewiconprovider.h \
+    views/dfiledialog.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -247,9 +248,10 @@ SOURCES += \
     views/flowlayout.cpp \
     shutil/shortcut.cpp \
     views/dtabbar.cpp \
-    shutil/filepreviewiconprovider.cpp
+    shutil/filepreviewiconprovider.cpp \
+    views/dfiledialog.cpp
 
-INCLUDEPATH += $$PWD/../
+INCLUDEPATH += $$PWD/../ $$PWD/../utils/
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 HELPSHAREDIR = $$PREFIX/share/dman/$$TARGET
@@ -274,7 +276,10 @@ isEmpty(INCLUDE_INSTALL_DIR) {
     includes.path = $$INCLUDE_INSTALL_DIR/dde-file-manager-$$VERSION
 }
 
-includes.files += $$PWD/../utils/durl.h
+includes.files += \
+    $$PWD/../durl.h\
+    $$PWD/views/dfiledialog.h\
+    $$PWD/views/dfilemanagerwindow.h
 
 QMAKE_PKGCONFIG_LIBDIR = $$target.path
 QMAKE_PKGCONFIG_VERSION = $$VERSION

@@ -9,7 +9,7 @@
 #include <QGraphicsView>
 #include <QLabel>
 
-#include "utils/durl.h"
+#include "durl.h"
 
 #define LEFTSIDEBAR_MIN 48
 #define LEFTSIDEBAR_MAX 200

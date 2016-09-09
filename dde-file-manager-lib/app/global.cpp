@@ -1,6 +1,6 @@
 #include "global.h"
 
-#include "utils/utils.h"
+#include "utils.h"
 
 #include <QDebug>
 #include <QGuiApplication>

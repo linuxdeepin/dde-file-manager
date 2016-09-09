@@ -1,18 +1,9 @@
 #ifndef DFILEMANAGERWINDOW_H
 #define DFILEMANAGERWINDOW_H
 
-#include "dmovablemainwindow.h"
-#include "dtabbar.h"
-#include "utils/durl.h"
+#include "durl.h"
 
-#include <DTitlebar>
 #include <DMainWindow>
-
-#include <QMainWindow>
-#include <QDir>
-#include <QMap>
-
-#include <QCursor>
 
 #define DEFAULT_WINDOWS_WIDTH 960
 #define DEFAULT_WINDOWS_HEIGHT 540
@@ -42,18 +33,17 @@ class QPushButton;
 class DStatusBar;
 class FMEvent;
 class ComputerView;
-
+class TabBar;
 
 DWIDGET_USE_NAMESPACE
 
+class DFileManagerWindowPrivate;
 class DFileManagerWindow : public DMainWindow
 {
     Q_OBJECT
 public:
     explicit DFileManagerWindow(QWidget *parent = 0);
     ~DFileManagerWindow();
-
-    static const int MinimumWidth;
 
     void initData();
     void initUI();
@@ -78,7 +68,8 @@ public:
     int getFileViewMode() const;
     int getFileViewSortRole() const;
 
-    DToolBar* getToolBar();
+    DToolBar* getToolBar() const;
+    DFileView *getFileView() const;
 
     int windowId();
 
@@ -111,23 +102,9 @@ protected:
     void mouseDoubleClickEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
 
 private:
-    QFrame* m_centralWidget = NULL;
-    DLeftSideBar* m_leftSideBar = NULL;
-    QFrame* m_rightView = NULL;
-    DToolBar* m_toolbar = NULL;
-    TabBar* m_tabBar = NULL;
-    QPushButton *m_newTabButton;
-    DFileView* m_fileView = NULL;
-    ComputerView* m_computerView = NULL;
-    DDetailView* m_detailView = NULL;
-    DStatusBar* m_statusBar = NULL;
-    QVBoxLayout* m_mainLayout = NULL;
-    DSplitter* m_splitter = NULL;
-    QFrame * m_titleFrame = NULL;
-    QStackedLayout* m_viewStackLayout=NULL;
+    QScopedPointer<DFileManagerWindowPrivate> d_ptr;
 
-    QMap<DUrl, QWidget*> m_views={};
-
+    Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_ptr), DFileManagerWindow)
 };
 
 #endif // DFILEMANAGERWINDOW_H

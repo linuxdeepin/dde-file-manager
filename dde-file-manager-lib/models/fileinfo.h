@@ -6,7 +6,7 @@
 #include <QUrl>
 #include <QMimeType>
 
-#include "utils/debugobejct.h"
+#include "debugobejct.h"
 
 #include "abstractfileinfo.h"
 
