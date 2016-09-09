@@ -54,7 +54,11 @@ DFileItemDelegate::DFileItemDelegate(DFileView *parent) :
 
 DFileItemDelegate::~DFileItemDelegate()
 {
-    expanded_item->canDeferredDelete = true;
+    if (expanded_item) {
+        expanded_item->setParent(0);
+        expanded_item->canDeferredDelete = true;
+        expanded_item->deleteLater();
+    }
 }
 
 void DFileItemDelegate::paint(QPainter *painter,

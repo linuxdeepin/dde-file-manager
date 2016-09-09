@@ -4,6 +4,7 @@
 #include <QAbstractItemModel>
 #include <QPointer>
 #include <QDir>
+#include <QFuture>
 
 #include "utils/durl.h"
 #include "abstractfileinfo.h"
@@ -142,6 +143,7 @@ private:
 
     QPointer<JobController> jobController;
     QEventLoop *eventLoop = Q_NULLPTR;
+    QFuture<void> updateChildrenFuture;
 
     State m_state = Idle;
 
