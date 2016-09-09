@@ -73,10 +73,12 @@ void JobController::stop()
 
 void JobController::stopAndDeleteLater()
 {
-    if (!isRunning())
+    if (!isRunning()) {
         deleteLater();
-    else
+    } else {
+        disconnect(this, &JobController::finished, this, &JobController::deleteLater);
         connect(this, &JobController::finished, this, &JobController::deleteLater);
+    }
 
     stop();
 }

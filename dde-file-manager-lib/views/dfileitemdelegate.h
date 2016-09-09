@@ -64,7 +64,7 @@ protected:
                          const QModelIndex &index) const Q_DECL_OVERRIDE;
 
 private:
-    FileIconItem *expanded_item;
+    QPointer<FileIconItem> expanded_item;
 
     mutable QHash<QString, QString> m_elideMap;
     mutable QHash<QString, QString> m_wordWrapMap;
