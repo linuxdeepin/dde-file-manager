@@ -1,7 +1,8 @@
 #include "iconprovider.h"
 #include "fileutils.h"
 #include "desktopfile.h"
-#include "thumbnailmanager.h"
+//#include "thumbnailmanager.h"
+#include "thumbnailer/thumbnailmanager.h"
 
 #include "app/global.h"
 
@@ -354,9 +355,7 @@ QIcon IconProvider::findIcon(const QString &absoluteFilePath, const QString &mim
 //    qDebug() << absoluteFilePath << m_mimeDatabase->mimeTypeForFile(absoluteFilePath).iconName() << FileUtils::getFileMimetype(absoluteFilePath) << getMimeTypeByFile(absoluteFilePath) << mimeType << getFileIcon(absoluteFilePath, 256);
     QIcon theIcon;
     QString _mimeType = mimeType;
-    if (m_supportImageMimeTypesSet.contains(mimeType)||
-            mimeType == "text/plain" || mimeType == "application/pdf"/*||
-            mimeTypeDisplayManager->defaultIcon(mimeType) == "video"*/) {
+    if (thumbnailManager->canGenerateThumbnail(absoluteFilePath)) {
         theIcon = thumbnailManager->getThumbnailIcon(absoluteFilePath);
 
         if (theIcon.isNull())

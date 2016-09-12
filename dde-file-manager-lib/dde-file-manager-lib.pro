@@ -41,6 +41,7 @@ include(../simpleini/simpleini.pri)
 include(../fileoperations/fileoperations.pri)
 include(deviceinfo/deviceinfo.pri)
 include(dbusinterface/dbusinterface.pri)
+include(../thumbnailer/thumbnailer.pri)
 
 PKGCONFIG += x11 gtk+-2.0 xcb xcb-ewmh gsettings-qt libudev x11 xext libsecret-1\
              gio-unix-2.0 poppler-qt5 libstartup-notification-1.0 xcb-aux
@@ -48,7 +49,7 @@ CONFIG += c++11 link_pkgconfig
 #DEFINES += QT_NO_DEBUG_OUTPUT
 DEFINES += QT_MESSAGELOGCONTEXT
 
-LIBS += -lmagic -lavformat  -lavcodec -lavutil -lswscale
+LIBS += -lmagic -lffmpegthumbnailer
 
 RESOURCES += \
     skin/skin.qrc \
@@ -132,7 +133,6 @@ HEADERS += \
     shutil/mimetypedisplaymanager.h \
     views/dstatusbar.h \
     controllers/subscriber.h \
-    shutil/thumbnailmanager.h \
     models/menuactiontype.h \
     models/dfileselectionmodel.h \
     dialogs/closealldialogindicator.h \
@@ -227,7 +227,6 @@ SOURCES += \
     shutil/mimetypedisplaymanager.cpp \
     views/dstatusbar.cpp \
     controllers/subscriber.cpp \
-    shutil/thumbnailmanager.cpp \
     models/menuactiontype.cpp \
     models/dfileselectionmodel.cpp \
     dialogs/closealldialogindicator.cpp \
