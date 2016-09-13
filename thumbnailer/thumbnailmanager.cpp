@@ -6,6 +6,9 @@
 #include <QCryptographicHash>
 #include <QFileSystemWatcher>
 #include <QProcess>
+#include <QImageWriter>
+#include <QDateTime>
+#include <QUrl>
 
 #include "app/global.h"
 #include "widgets/singleton.h"
@@ -74,35 +77,56 @@ QString ThumbnailManager::getThumbnailPath(const QString &name, ThumbnailGenerat
         return m_thumbnailPath;
 }
 
-QIcon ThumbnailManager::getThumbnailIcon(const QString &fpath)
+QIcon ThumbnailManager::getThumbnailIcon(const QUrl& fileUrl)
 {
-    int pos = fpath.lastIndexOf('/');
+    QString fpath = fileUrl.path();
 
-    if (m_thumbnailLargePath == fpath.left(pos)) {
-        QIcon icon(fpath);
-        return icon;
+    // check if the source file is inside the thumbnail cache path
+    if(fileUrl.isLocalFile()){
+        int pos = fpath.lastIndexOf('/');
+        if (m_thumbnailLargePath == fpath.left(pos)) {
+            QIcon icon(fpath);
+            return icon;
+        }
     }
 
-    return m_md5ToIcon.value(m_pathToMd5.value(fpath));
+    // check last modify time
+    if(m_md5ToIcon.contains(m_pathToMd5.value(fileUrl.toString()))&&fileUrl.isLocalFile()){
+
+        QString thumbnailPath = QString("%1").arg(getThumbnailPath(m_pathToMd5.value(fileUrl.toString()), ThumbnailGenerator::THUMBNAIL_LARGE));
+        QImage reader(thumbnailPath);
+        QString dateStr = reader.text("Thumb::MTime");
+        QFileInfo info(fpath);
+        if(dateStr != QString::number(info.lastModified().toMSecsSinceEpoch()/1000)){
+            m_md5ToIcon.take(m_pathToMd5.value(fileUrl.toString()));
+            m_pathToMd5.take(fileUrl.toString());
+            QFile::remove(thumbnailPath);
+            return QIcon();
+        }
+
+        return m_md5ToIcon.value(m_pathToMd5.value(fileUrl.toString()));
+    }
+
+    return m_md5ToIcon.value(m_pathToMd5.value(fileUrl.toString()));
 }
 
-void ThumbnailManager::requestThumbnailIcon(const QString &fpath)
+void ThumbnailManager::requestThumbnailIcon(const QUrl& fileUrl)
 {
-    if (m_pathToMd5.contains(fpath))
+    if (m_pathToMd5.contains(fileUrl.toString()))
         return;
 
-    if (taskQueue.contains(fpath))
+    if (taskQueue.contains(fileUrl.toString()))
         return;
 
-    taskQueue << fpath;
+    taskQueue << fileUrl.toString();
 
     if (!isRunning())
         start();
 }
 
-bool ThumbnailManager::canGenerateThumbnail(const QString &fpath)
+bool ThumbnailManager::canGenerateThumbnail(const QUrl& fileUrl)
 {
-    return m_thumbnailGenerator.canGenerateThumbnail(fpath);
+    return m_thumbnailGenerator.canGenerateThumbnail(fileUrl);
 }
 
 QString ThumbnailManager::toMd5(const QString data)
@@ -124,13 +148,17 @@ void ThumbnailManager::onFileChanged(const QString &path)
 void ThumbnailManager::run()
 {
     while (!taskQueue.isEmpty()) {
-        const QString &fpath = taskQueue.dequeue();
+        const QString &fileUrl = taskQueue.dequeue();
 
-        m_watcher->addPath(fpath);
+        QUrl url(fileUrl);
+        QString fpath = url.path();
 
-        const QString &md5 = toMd5(fpath);
+        if(url.isLocalFile())
+            m_watcher->addPath(fpath);
 
-        m_pathToMd5[fpath] = md5;
+        const QString &md5 = toMd5(fileUrl);
+
+        m_pathToMd5[fileUrl] = md5;
 
         QIcon icon = m_md5ToIcon.value(md5);
 
@@ -147,11 +175,21 @@ void ThumbnailManager::run()
 
             m_md5ToIcon[md5] = icon;
         }
-        else if(m_thumbnailGenerator.canGenerateThumbnail(fpath)){
-            const QPixmap &pixmap = m_thumbnailGenerator.generateThumbnail(fpath, ThumbnailGenerator::THUMBNAIL_LARGE);
+        else if(m_thumbnailGenerator.canGenerateThumbnail(url)){
+            const QPixmap &pixmap = m_thumbnailGenerator.generateThumbnail(url, ThumbnailGenerator::THUMBNAIL_LARGE);
             icon = QIcon(pixmap);
             m_md5ToIcon[md5] = icon;
-            pixmap.save(thumbnailPath, "png", 20);
+            QImage img  = pixmap.toImage();
+
+            //write extra attribute messages
+            QMap<QString,QString> attributeSet = m_thumbnailGenerator.getAttributeSet(fileUrl);
+            QList<QString> keys = attributeSet.keys();
+
+            foreach (QString key, keys) {
+                img.setText(key,attributeSet.value(key));
+            }
+
+            img.save(thumbnailPath,"png",20);
         }
         emit iconChanged(fpath, icon);
     }

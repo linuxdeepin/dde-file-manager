@@ -8,6 +8,8 @@
 #include <QMimeDatabase>
 #include <QStandardPaths>
 #include <QDir>
+#include <QFileInfo>
+#include <QUrl>
 
 // poppler for pdf
 #include <poppler/qt5/poppler-qt5.h>
@@ -22,30 +24,42 @@ ThumbnailGenerator::ThumbnailGenerator(QObject *parent) : QObject(parent)
 
 }
 
-QPixmap ThumbnailGenerator::generateThumbnail(const QString fileUrl, ThumbnailGenerator::ThumbnailSize size)
+QPixmap ThumbnailGenerator::generateThumbnail(const QUrl& fileUrl, ThumbnailGenerator::ThumbnailSize size)
 {
-    if(isPictureFile(fileUrl))
-        return getPictureThumbnail(fileUrl, size);
-    if(isTextPlainFile(fileUrl))
-        return getTextplainThumbnail(fileUrl, size);
-    if(isPDFFile(fileUrl))
-        return getPDFThumbnail(fileUrl, size);
-    if(isVideoFile(fileUrl))
-        return getVideoThumbnail(fileUrl, size);
+    if(fileUrl.isLocalFile()){
+        QString fPath = fileUrl.path();
+        if(isPictureFile(fPath))
+            return getPictureThumbnail(fPath, size);
+        if(isTextPlainFile(fPath))
+            return getTextplainThumbnail(fPath, size);
+        if(isPDFFile(fPath))
+            return getPDFThumbnail(fPath, size);
+        if(isVideoFile(fPath))
+            return getVideoThumbnail(fPath, size);
+    }
+    else{
+        //TODO
+    }
 
     return QPixmap();
 }
 
-bool ThumbnailGenerator::canGenerateThumbnail(const QString fileUrl) const
+bool ThumbnailGenerator::canGenerateThumbnail(const QUrl&  fileUrl) const
 {
-    if(isPictureFile(fileUrl))
-        return true;
-    if(isTextPlainFile(fileUrl))
-        return true;
-    if(isPDFFile(fileUrl))
-        return true;
-    if(isVideoFile(fileUrl))
-        return true;
+    if(fileUrl.isLocalFile()){
+        QString fPath = fileUrl.path();
+        if(isPictureFile(fPath))
+            return true;
+        if(isTextPlainFile(fPath))
+            return true;
+        if(isPDFFile(fPath))
+            return true;
+        if(isVideoFile(fPath))
+            return true;
+    }
+    else{
+        //TODO
+    }
 
     return false;
 }
@@ -89,9 +103,51 @@ bool ThumbnailGenerator::isPictureFile(const QString &fileName) const
     return reader.canRead();
 }
 
-QPixmap ThumbnailGenerator::getTextplainThumbnail(const QString &fileUrl, const ThumbnailGenerator::ThumbnailSize &size)
+QMap<QString,QString> ThumbnailGenerator::getAttributeSet(const QUrl&  fileUrl)
 {
-    QFile file(fileUrl);
+    QMap<QString,QString> set;
+    if(fileUrl.isLocalFile()){
+        QString fileName = fileUrl.path();
+        QFileInfo info(fileName);
+        QString mimetype = QMimeDatabase().mimeTypeForFile(fileName).name();
+        set.insert("Thumb::Mimetype",mimetype);
+        set.insert("Thumb::Size",QString::number(QFile(fileName).size()));
+        set.insert("Thumb::URI",fileUrl.toString());
+        set.insert("Thumb::MTime",QString::number(info.lastModified().toMSecsSinceEpoch()/1000));
+        set.insert("Software", "Deepin File Manager");
+
+        if(isTextPlainFile(fileName)){
+            return set;
+        }
+
+        if(isPictureFile(fileName)){
+            QImageReader reader(fileName);
+            set.insert("Thumb::Image::Width",QString::number(reader.size().width()));
+            set.insert("Thumb::Image::Height",QString::number(reader.size().height()));
+            return set;
+        }
+
+        if(isPDFFile(fileName)){
+            Poppler::Document* document = Poppler::Document::load(fileName);
+            set.insert("Thumb::Document::Pages",QString::number(document->numPages()));
+            return set;
+        }
+
+        else if(isVideoFile(fileName)){
+            //TODO
+            return set;
+        }
+    }
+    else{
+        //TODO for other's scheme
+    }
+
+    return set;
+}
+
+QPixmap ThumbnailGenerator::getTextplainThumbnail(const QString &fpath, const ThumbnailGenerator::ThumbnailSize &size)
+{
+    QFile file(fpath);
     if(!file.exists())
         return QPixmap();
 
@@ -139,9 +195,9 @@ QPixmap ThumbnailGenerator::getTextplainThumbnail(const QString &fileUrl, const 
     return QPixmap::fromImage(img);
 }
 
-QPixmap ThumbnailGenerator::getPDFThumbnail(const QString &fileUrl, const ThumbnailGenerator::ThumbnailSize &size)
+QPixmap ThumbnailGenerator::getPDFThumbnail(const QString &fpath, const ThumbnailGenerator::ThumbnailSize &size)
 {
-    Poppler::Document* document = Poppler::Document::load(fileUrl);
+    Poppler::Document* document = Poppler::Document::load(fpath);
     if((!document || document->isLocked())){
         delete document;
         qDebug()<<"file reading error....";
@@ -167,11 +223,11 @@ QPixmap ThumbnailGenerator::getPDFThumbnail(const QString &fileUrl, const Thumbn
     return QPixmap::fromImage(img);
 }
 
-QPixmap ThumbnailGenerator::getVideoThumbnail(const QString &fileUrl, const ThumbnailGenerator::ThumbnailSize &size)
+QPixmap ThumbnailGenerator::getVideoThumbnail(const QString &fpath, const ThumbnailGenerator::ThumbnailSize &size)
 {
-    QString tempFile = QDir().tempPath() +"/"+ QDateTime().toString()+".png";
-    VideoThumbnailer vt(size,true,true,20,true);
-    vt.generateThumbnail(fileUrl.toStdString(), Png,  tempFile.toStdString());
+    QString tempFile = QDir().tempPath() +"/"+QString::number(QDateTime::currentMSecsSinceEpoch())+".png";
+    VideoThumbnailer vt(size,false,true,20,true);
+    vt.generateThumbnail(fpath.toStdString(), Png,  tempFile.toStdString());
     QPixmap pixmap = QPixmap::fromImage(QImage(tempFile));
     QFile file(tempFile);
     if(file.exists())
@@ -179,9 +235,9 @@ QPixmap ThumbnailGenerator::getVideoThumbnail(const QString &fileUrl, const Thum
     return pixmap;
 }
 
-QPixmap ThumbnailGenerator::getPictureThumbnail(const QString &fileUrl, const ThumbnailGenerator::ThumbnailSize &size)
+QPixmap ThumbnailGenerator::getPictureThumbnail(const QString &fpath, const ThumbnailGenerator::ThumbnailSize &size)
 {
-    QFile file(fileUrl);
+    QFile file(fpath);
     QImageReader reader(&file);
 
     /// ensure image size < 30MB

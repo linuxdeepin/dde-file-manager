@@ -350,16 +350,17 @@ void IconProvider::setDesktopIconPaths(const QMap<QString, QString> &iconPaths)
     m_desktopIconPaths = iconPaths;
 }
 
-QIcon IconProvider::findIcon(const QString &absoluteFilePath, const QString &mimeType)
+QIcon IconProvider::findIcon(const DUrl& fileUrl, const QString &mimeType)
 {
 //    qDebug() << absoluteFilePath << m_mimeDatabase->mimeTypeForFile(absoluteFilePath).iconName() << FileUtils::getFileMimetype(absoluteFilePath) << getMimeTypeByFile(absoluteFilePath) << mimeType << getFileIcon(absoluteFilePath, 256);
     QIcon theIcon;
     QString _mimeType = mimeType;
-    if (thumbnailManager->canGenerateThumbnail(absoluteFilePath)) {
-        theIcon = thumbnailManager->getThumbnailIcon(absoluteFilePath);
+    QString absoluteFilePath = fileUrl.path();
+    if (thumbnailManager->canGenerateThumbnail(static_cast<QUrl>(fileUrl))) {
+        theIcon = thumbnailManager->getThumbnailIcon(static_cast<QUrl>(fileUrl));
 
         if (theIcon.isNull())
-            thumbnailManager->requestThumbnailIcon(absoluteFilePath);
+            thumbnailManager->requestThumbnailIcon(static_cast<QUrl>(fileUrl));
         else
             return theIcon;
     } else if (mimeType == "application/x-desktop") {
