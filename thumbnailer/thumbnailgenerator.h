@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QPixmap>
+#include <QUrl>
 
 #define THUMBNAIL_SIZE_NORMAL 128
 #define THUMBNAIL_SIZE_LARGE 256
@@ -18,23 +19,24 @@ public:
         THUMBNAIL_LARGE = THUMBNAIL_SIZE_LARGE
     };
 
-    QPixmap generateThumbnail(const QString fileUrl , ThumbnailSize size);
-    bool canGenerateThumbnail(const QString fileUrl)const;
+    QPixmap generateThumbnail(const QUrl& fileUrl , ThumbnailSize size);
+    bool canGenerateThumbnail(const QUrl&  fileUrl)const;
 
     bool isTextPlainFile(const QString &fileName) const;
     bool isPDFFile(const QString &fileName) const;
     bool isVideoFile(const QString &fileName) const;
     bool isPictureFile(const QString &fileName) const;
+    QMap<QString,QString> getAttributeSet(const QUrl&  fileUrl);
 
 signals:
 
 public slots:
 
 private:
-    QPixmap getTextplainThumbnail(const QString &fileUrl, const ThumbnailSize &size = THUMBNAIL_NORMAL);
-    QPixmap getPDFThumbnail(const QString &fileUrl, const ThumbnailSize &size = THUMBNAIL_NORMAL);
-    QPixmap getVideoThumbnail(const QString &fileUrl, const ThumbnailSize &size = THUMBNAIL_NORMAL);
-    QPixmap getPictureThumbnail(const QString &fileUrl, const ThumbnailSize &size = THUMBNAIL_NORMAL);
+    QPixmap getTextplainThumbnail(const QString &fpath, const ThumbnailSize &size = THUMBNAIL_NORMAL);
+    QPixmap getPDFThumbnail(const QString &fpath, const ThumbnailSize &size = THUMBNAIL_NORMAL);
+    QPixmap getVideoThumbnail(const QString &fpath, const ThumbnailSize &size = THUMBNAIL_NORMAL);
+    QPixmap getPictureThumbnail(const QString &fpath, const ThumbnailSize &size = THUMBNAIL_NORMAL);
 
 };
 

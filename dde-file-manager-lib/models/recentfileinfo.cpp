@@ -49,7 +49,7 @@ bool RecentFileInfo::isDir() const
 
 QIcon RecentFileInfo::fileIcon() const
 {
-    return fileIconProvider->getFileIcon(absoluteFilePath(), mimeTypeName());
+    return fileIconProvider->getFileIcon(fileUrl(), mimeTypeName());
 }
 
 QVector<MenuAction> RecentFileInfo::menuActionList(AbstractFileInfo::MenuType type) const

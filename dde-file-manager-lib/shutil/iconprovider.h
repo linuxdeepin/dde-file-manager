@@ -9,6 +9,7 @@
 #include <QFileIconProvider>
 #include <QGSettings>
 #include <QMimeDatabase>
+#include "./utils/durl.h"
 
 class IconProvider : public QObject
 {
@@ -40,14 +41,14 @@ public slots:
     void setCurrentTheme();
     void handleThemeChanged(const QString &key);
 
-    inline QIcon getFileIcon(const QString& absoluteFilePath, const QString &mimeType)
-    { return findIcon(absoluteFilePath, mimeType);}
+    inline QIcon getFileIcon(const DUrl& fileUrl, const QString &mimeType)
+    { return findIcon(fileUrl, mimeType);}
     QIcon getDesktopIcon(const QString& iconName, int size);
 
     void setDesktopIconPaths(const QMap<QString,QString>& iconPaths);
 
 private:
-    QIcon findIcon(const QString& absoluteFilePath, const QString &mimeType);
+    QIcon findIcon(const DUrl& fileUrl, const QString &mimeType);
     QString getMimeTypeByFile(const QString &file);
 
 private:

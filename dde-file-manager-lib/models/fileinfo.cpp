@@ -72,7 +72,7 @@ QMimeType FileInfo::mimeType() const
 
 QIcon FileInfo::fileIcon() const
 {
-    return fileIconProvider->getFileIcon(absoluteFilePath(), mimeTypeName());
+    return fileIconProvider->getFileIcon(fileUrl(), mimeTypeName());
 }
 
 bool FileInfo::canIteratorDir() const

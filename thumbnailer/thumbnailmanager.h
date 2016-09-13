@@ -7,6 +7,7 @@
 #include <QIcon>
 #include "thumbnailgenerator.h"
 #include <QCache>
+#include <QUrl>
 
 QT_BEGIN_NAMESPACE
 class QFileSystemWatcher;
@@ -23,10 +24,10 @@ public:
     QString getThumbnailCachePath();
     QString getThumbnailPath(const QString& name, ThumbnailGenerator::ThumbnailSize size);
 
-    QIcon getThumbnailIcon(const QString &fpath);
-    void requestThumbnailIcon(const QString &fpath);
+    QIcon getThumbnailIcon(const QUrl& fileUrl);
+    void requestThumbnailIcon(const QUrl& fileUrl);
 
-    bool canGenerateThumbnail(const QString &fpath);
+    bool canGenerateThumbnail(const QUrl& fileUrl);
 
     QString toMd5(const QString data);
 
