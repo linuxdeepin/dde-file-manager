@@ -207,14 +207,19 @@ void DTitlebar::setWindowFlags(Qt::WindowFlags type)
     if (d->titleLabel) {
         d->titleLabel->setVisible(type & Qt::WindowTitleHint);
     }
-    d->iconLabel->setVisible(type & Qt::WindowTitleHint);
+
+    if (d->iconLabel)
+        d->iconLabel->setVisible(type & Qt::WindowTitleHint);
+
     d->minButton->setVisible(type & Qt::WindowMinimizeButtonHint);
     d->maxButton->setVisible(type & Qt::WindowMaximizeButtonHint);
     d->closeButton->setVisible(type & Qt::WindowCloseButtonHint);
     d->optionButton->setVisible(type & Qt::WindowSystemMenuHint);
     d->buttonArea->adjustSize();
     d->buttonArea->resize(d->buttonArea->size());
-    d->titlePadding->setFixedSize(d->buttonArea->size());
+
+    if (d->titlePadding)
+        d->titlePadding->setFixedSize(d->buttonArea->size());
 }
 
 void DTitlebar::setMenu(DMenu *menu)
@@ -299,7 +304,10 @@ void DTitlebar::setCustomWidget(QWidget *w, Qt::AlignmentFlag wflag, bool fixCen
     l->addWidget(w);
     l->setAlignment(w, wflag);
     qDeleteAll(d->coustomAtea->children());
-    d->titleLabel = nullptr;
+    d->titleLabel = Q_NULLPTR;
+    d->titleArea = Q_NULLPTR;
+    d->iconLabel = Q_NULLPTR;
+    d->titlePadding = Q_NULLPTR;
     d->coustomAtea->setLayout(l);
     d->buttonArea->resize(old);
     d->customWidget = w;
