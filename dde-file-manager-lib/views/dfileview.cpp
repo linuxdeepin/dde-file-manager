@@ -875,7 +875,7 @@ void DFileView::sortByColumn(int column)
 
 void DFileView::selectAll(int windowId)
 {
-    if(windowId != WindowManager::getWindowId(window()))
+    if(windowId != WindowManager::getWindowId(this))
         return;
 
     DListView::selectAll();

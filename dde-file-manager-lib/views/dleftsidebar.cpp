@@ -155,14 +155,13 @@ void DLeftSideBar::resizeEvent(QResizeEvent *e)
 
 void DLeftSideBar::handleLocationChanged(const FMEvent &e)
 {
-    if(e.windowId() != WindowManager::getWindowId(window()))
+    if(e.windowId() != WindowManager::getWindowId(this))
         return;
     FMEvent event;
 
     event = e.fileUrl();
     event = FMEvent::LeftSideBar;
-    event = WindowManager::getWindowId(window());
-    qDebug() << event;
+    event = WindowManager::getWindowId(this);
 
     if (e.fileUrl().isNetWorkFile()){
         emit fileSignalManager->requestFetchNetworks(e);

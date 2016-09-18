@@ -227,7 +227,7 @@ void DToolBar::searchBarTextEntered()
     }
     FMEvent event;
 
-    event = WindowManager::getWindowId(window());
+    event = WindowManager::getWindowId(this);
     event = FMEvent::SearchBar;
 
     DUrl inputUrl = DUrl::fromUserInput(text);
@@ -251,12 +251,12 @@ void DToolBar::searchBarTextEntered()
 
 void DToolBar::crumbSelected(const FMEvent &e)
 {
-    if(e.windowId() != WindowManager::getWindowId(window()))
+    if(e.windowId() != WindowManager::getWindowId(this))
         return;
 
     FMEvent event;
 
-    event = WindowManager::getWindowId(window());
+    event = WindowManager::getWindowId(this);
     event = FMEvent::CrumbButton;
     event = e.fileUrl();
 
@@ -266,7 +266,7 @@ void DToolBar::crumbSelected(const FMEvent &e)
 
 void DToolBar::crumbChanged(const FMEvent &event)
 {
-    if(event.windowId() != WindowManager::getWindowId(window()))
+    if(event.windowId() != WindowManager::getWindowId(this))
         return;
 
     if(event.source() == FMEvent::CrumbButton)
@@ -313,7 +313,7 @@ void DToolBar::backButtonClicked()
     if(!url.isEmpty())
     {
         FMEvent event;
-        event = WindowManager::getWindowId(window());
+        event = WindowManager::getWindowId(this);
         event = FMEvent::BackAndForwardButton;
         event = url;
         if(m_navStack->isFirst())
@@ -329,7 +329,7 @@ void DToolBar::forwardButtonClicked()
     if(!url.isEmpty())
     {
         FMEvent event;
-        event = WindowManager::getWindowId(window());
+        event = WindowManager::getWindowId(this);
         event = FMEvent::BackAndForwardButton;
         event = url;
         if(m_navStack->isLast())

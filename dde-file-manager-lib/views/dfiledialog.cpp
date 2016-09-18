@@ -3,6 +3,7 @@
 
 #include <DTitlebar>
 #include <dtextbutton.h>
+#include <dthememanager.h>
 
 #include <QEventLoop>
 #include <QPointer>
@@ -31,7 +32,11 @@ DFileDialog::DFileDialog(QWidget *parent)
     , d_ptr(new DFileDialogPrivate())
 {
     setWindowFlags(windowFlags() | Qt::Dialog);
-    titleBar()->setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
+
+    DThemeManager::instance()->setTheme("light");
+
+    if (titleBar())
+        titleBar()->setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
 
     DStatusBar *statusBar = getFileView()->statusBar();
 
