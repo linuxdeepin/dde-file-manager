@@ -118,6 +118,8 @@ public:
     QModelIndex dragMoveHoverIndex;
 
     DSlider *scalingSlider = NULL;
+
+    Q_DECLARE_PUBLIC(DFileView)
 };
 
 QSet<DUrl> DFileViewPrivate::cutUrlSet;
@@ -216,7 +218,7 @@ void DFileView::initConnects()
     connect(fileSignalManager, &FileSignalManager::requestViewSelectAll,
             this, &DFileView::selectAll);
     connect(fileSignalManager, &FileSignalManager::requestSelectFile,
-            this, &DFileView::select);
+            this, static_cast<bool (DFileView::*)(const FMEvent&)>(&DFileView::select));
     connect(fileSignalManager, &FileSignalManager::requestSelectRenameFile,
             this, &DFileView::selectAndRename);
     connect(this, &DFileView::rowCountChanged, this, &DFileView::updateStatusBar);
@@ -334,6 +336,13 @@ DFileItemDelegate *DFileView::itemDelegate() const
     return qobject_cast<DFileItemDelegate*>(DListView::itemDelegate());
 }
 
+DStatusBar *DFileView::statusBar() const
+{
+    D_DC(DFileView);
+
+    return d->statusBar;
+}
+
 DUrl DFileView::currentUrl() const
 {
     return model()->getUrlByIndex(rootIndex());
@@ -423,6 +432,13 @@ DFileView::ViewMode DFileView::getDefaultViewMode() const
     D_DC(DFileView);
 
     return d->defaultViewMode;
+}
+
+DFileView::ViewMode DFileView::viewMode() const
+{
+    D_DC(DFileView);
+
+    return d->currentViewMode;
 }
 
 int DFileView::getSortRoles() const
@@ -700,25 +716,28 @@ void DFileView::cd(const FMEvent &event)
     if (event.windowId() != windowId())
         return;
 
-    const DUrl &fileUrl = event.fileUrl();
+    cd(event.fileUrl());
+}
 
-    if (fileUrl.isEmpty())
+void DFileView::cd(const DUrl &url)
+{
+    if (url.isEmpty())
         return;
 
     itemDelegate()->hideAllIIndexWidget();
 
     clearSelection();
 
-    if (!event.fileUrl().isSearchFile()){
+    if (!url.isSearchFile()){
         setFocus();
     }
 
-    if (setCurrentUrl(fileUrl)) {
-        FMEvent e = event;
+    if (setCurrentUrl(url)) {
+        FMEvent e;
+        e = FMEvent::FileView;
+        e = windowId();
         e = currentUrl();
-        qDebug() << e;
         emit fileSignalManager->currentUrlChanged(e);
-
     }
 }
 
@@ -775,12 +794,19 @@ bool DFileView::select(const FMEvent &event)
         return false;
     }
 
+    select(event.fileUrlList());
+
+    return true;
+}
+
+void DFileView::select(const DUrlList &list)
+{
     QModelIndex firstIndex;
     QModelIndex lastIndex;
 
     clearSelection();
 
-    for (const DUrl &url : event.fileUrlList()) {
+    for (const DUrl &url : list) {
         const QModelIndex &index = model()->index(url);
 
         if (index.isValid()) {
@@ -798,8 +824,6 @@ bool DFileView::select(const FMEvent &event)
 
     if (firstIndex.isValid())
         scrollTo(firstIndex, PositionAtTop);
-
-    return true;
 }
 
 void DFileView::selectAndRename(const FMEvent &event)

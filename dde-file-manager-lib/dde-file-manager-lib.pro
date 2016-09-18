@@ -153,7 +153,8 @@ HEADERS += \
     shutil/shortcut.h \
     views/dtabbar.h \
     shutil/filepreviewiconprovider.h \
-    views/dfiledialog.h
+    views/dfiledialog.h \
+    interfaces/dfiledialoghandle.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -248,7 +249,8 @@ SOURCES += \
     shutil/shortcut.cpp \
     views/dtabbar.cpp \
     shutil/filepreviewiconprovider.cpp \
-    views/dfiledialog.cpp
+    views/dfiledialog.cpp \
+    interfaces/dfiledialoghandle.cpp
 
 INCLUDEPATH += $$PWD/../ $$PWD/../utils/
 
@@ -275,10 +277,7 @@ isEmpty(INCLUDE_INSTALL_DIR) {
     includes.path = $$INCLUDE_INSTALL_DIR/dde-file-manager-$$VERSION
 }
 
-includes.files += \
-    $$PWD/../durl.h\
-    $$PWD/views/dfiledialog.h\
-    $$PWD/views/dfilemanagerwindow.h
+includes.files += $$PWD/interfaces/*.h
 
 QMAKE_PKGCONFIG_LIBDIR = $$target.path
 QMAKE_PKGCONFIG_VERSION = $$VERSION
