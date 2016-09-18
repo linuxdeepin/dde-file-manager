@@ -16,6 +16,7 @@
 #include "app/global.h"
 #include "app/fmevent.h"
 #include "app/filesignalmanager.h"
+#include "app/filemanagerapp.h"
 
 #include "xutil.h"
 #include "utils.h"
@@ -72,6 +73,9 @@ DFileManagerWindow::DFileManagerWindow(QWidget *parent)
     , d_ptr(new DFileManagerWindowPrivate(this))
 {
     setWindowIcon(QIcon(":/images/images/dde-file-manager.svg"));
+
+    /// ensure AppController object is defined
+    Q_UNUSED(fileManagerApp->getAppController())
 
     initData();
     initUI();

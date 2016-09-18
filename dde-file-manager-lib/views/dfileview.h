@@ -51,6 +51,7 @@ public:
 
     DFileSystemModel *model() const;
     DFileItemDelegate *itemDelegate() const;
+    DStatusBar *statusBar() const;
 
     DUrl currentUrl() const;
     DUrlList selectedUrls() const;
@@ -77,6 +78,7 @@ public:
     void setIconSize(const QSize &size);
 
     ViewMode getDefaultViewMode() const;
+    ViewMode viewMode() const;
 
     int getSortRoles() const;
 
@@ -108,10 +110,12 @@ public:
 public slots:
     void preHandleCd(const FMEvent &event);
     void cd(const FMEvent &event);
+    void cd(const DUrl &url);
     void cdUp(const FMEvent &event);
     void edit(const FMEvent &event);
     bool edit(const QModelIndex & index, EditTrigger trigger, QEvent * event) Q_DECL_OVERRIDE;
     bool select(const FMEvent &event);
+    void select(const DUrlList &list);
     void selectAndRename(const FMEvent &event);
     inline void setViewModeToList()
     { setViewMode(ListMode);}
@@ -123,7 +127,6 @@ public slots:
     void sortByRole(int role);
     void sortByColumn(int column);
 
-    bool setCurrentUrl(DUrl fileUrl);
     void clearHeardView();
 
     void clearKeyBoardSearchKeys();
@@ -147,6 +150,7 @@ signals:
     void viewModeChanged(ViewMode viewMode);
 
 private slots:
+    bool setCurrentUrl(DUrl fileUrl);
     void selectAll(int windowId);
     void dislpayAsActionTriggered(QAction * action);
     void sortByActionTriggered(QAction * action);
@@ -202,7 +206,7 @@ private:
 
     void preproccessDropEvent(QDropEvent *event) const;
 
-    DFileViewPrivate *d_ptr;
+    QScopedPointer<DFileViewPrivate> d_ptr;
 
     Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_ptr), DFileView)
 };

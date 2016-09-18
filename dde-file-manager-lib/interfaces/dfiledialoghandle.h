@@ -1,25 +1,26 @@
-#ifndef DFILEDIALOG_H
-#define DFILEDIALOG_H
-
-#include "dfilemanagerwindow.h"
-#include "dfileview.h"
+#ifndef DFILEDIALOGHANDLE_H
+#define DFILEDIALOGHANDLE_H
 
 #include <QFileDialog>
+#include <QScopedPointer>
 
-class DFileDialogPrivate;
-class DFileDialog : public DFileManagerWindow
+class DFileDialogHandlePrivate;
+class DFileDialogHandle : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit DFileDialog(QWidget *parent = 0);
-    ~DFileDialog();
+    explicit DFileDialogHandle(QWidget *parent = 0);
+    ~DFileDialogHandle();
+
+    void setParent(QWidget *parent);
+    QWidget *widget() const;
 
     void setDirectory(const QString & directory);
     void setDirectory(const QDir & directory);
     QDir directory() const;
 
-    void setDirectoryUrl(const DUrl & directory);
+    void setDirectoryUrl(const QUrl & directory);
     QUrl directoryUrl() const;
 
     void selectFile(const QString &filename);
@@ -37,8 +38,8 @@ public:
     QDir::Filters filter() const;
     void setFilter(QDir::Filters filters);
 
-    void setViewMode(DFileView::ViewMode mode);
-    DFileView::ViewMode viewMode() const;
+    void setViewMode(QFileDialog::ViewMode mode);
+    QFileDialog::ViewMode viewMode() const;
 
     void setFileMode(QFileDialog::FileMode mode);
     QFileDialog::FileMode fileMode() const;
@@ -55,21 +56,19 @@ Q_SIGNALS:
     void rejected();
 
 public Q_SLOTS:
+    void show();
+    void hide();
     void accept();
     void done(int r);
     int exec();
     void open();
     void reject();
 
-protected:
-    void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
-    void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
-    void adjustPosition(QWidget *w);
-
 private:
-    QScopedPointer<DFileDialogPrivate> d_ptr;
+    QScopedPointer<DFileDialogHandlePrivate> d_ptr;
 
-    Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_ptr), DFileDialog)
+    Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_ptr), DFileDialogHandle)
+    Q_DISABLE_COPY(DFileDialogHandle)
 };
 
-#endif // DFILEDIALOG_H
+#endif // DFILEDIALOGHANDLE_H
