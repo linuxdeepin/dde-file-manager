@@ -282,7 +282,7 @@ int DBookmarkScene::getCustomBookmarkItemInsertIndex()
 
 int DBookmarkScene::windowId()
 {
-    return WindowManager::getWindowId(views().at(0)->window());
+    return WindowManager::getWindowId(views().at(0));
 }
 
 /**

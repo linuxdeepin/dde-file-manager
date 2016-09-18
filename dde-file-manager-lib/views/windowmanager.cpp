@@ -135,6 +135,17 @@ void WindowManager::showNewWindow(const DUrl &url, bool isAlwaysOpen)
 
 int WindowManager::getWindowId(const QWidget *window)
 {
+    while (window) {
+        if (window->inherits("DFileManagerWindow")) {
+            if (m_windows.isEmpty())
+                return window->winId();
+
+            return m_windows.value(window, -1);
+        }
+
+        window = window->parentWidget();
+    }
+
     return m_windows.value(window, -1);
 }
 

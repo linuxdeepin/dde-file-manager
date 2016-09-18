@@ -444,7 +444,7 @@ QString DBookmarkItem::getSysPath()
 
 int DBookmarkItem::windowId()
 {
-    return WindowManager::getWindowId(scene()->views().at(0)->window());
+    return WindowManager::getWindowId(scene()->views().at(0));
 }
 
 DBookmarkItem *DBookmarkItem::makeBookmark(const QString &name, const DUrl &url)

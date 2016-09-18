@@ -79,7 +79,7 @@ DSlider *DStatusBar::scalingSlider()
 
 void DStatusBar::itemSelected(const FMEvent &event, int number)
 {
-    if(event.windowId() != WindowManager::getWindowId(window()))
+    if(event.windowId() != WindowManager::getWindowId(this))
         return;
 
     if(number > 1)
@@ -168,7 +168,7 @@ void DStatusBar::itemSelected(const FMEvent &event, int number)
 
 void DStatusBar::itemCounted(const FMEvent &event, int number)
 {
-    if(event.windowId() != WindowManager::getWindowId(window()))
+    if(event.windowId() != WindowManager::getWindowId(this))
         return;
 
     if(number > 1)
@@ -183,7 +183,7 @@ void DStatusBar::itemCounted(const FMEvent &event, int number)
 
 void DStatusBar::setLoadingIncatorVisible(const FMEvent &event, bool visible)
 {
-    if (event.windowId() != WindowManager::getWindowId(window()))
+    if (event.windowId() != WindowManager::getWindowId(this))
         return;
 
     m_loadingIndicator->setVisible(visible);

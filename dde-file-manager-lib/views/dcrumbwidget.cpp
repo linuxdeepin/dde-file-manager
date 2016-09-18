@@ -495,7 +495,7 @@ void DCrumbWidget::buttonPressed()
     DCrumbButton * button = static_cast<DCrumbButton*>(sender());
 
     FMEvent event;
-    event = WindowManager::getWindowId(window());
+    event = WindowManager::getWindowId(this);
     event = FMEvent::CrumbButton;
     QString text = button->path();
     DCrumbButton * localButton = qobject_cast<DCrumbButton*>(m_group.buttons().at(0));
