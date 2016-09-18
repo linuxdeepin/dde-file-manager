@@ -27,7 +27,7 @@ void DPictureSequenceViewPrivate::init()
     m_scene = new QGraphicsScene(q);
     m_refreshTimer = new QTimer(q);
     m_refreshTimer->setInterval(33);
-    m_refreshTimer->start();
+//    m_refreshTimer->start();
 
     q->setScene(m_scene);
     q->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -79,6 +79,8 @@ void DPictureSequenceViewPrivate::setSingleShot(bool singleShot)
 
 void DPictureSequenceViewPrivate::refreshPicture()
 {
+    Q_ASSERT(!m_pictureList.isEmpty());
+
     m_pictureList[m_lastItemPos++]->hide();
 
     if (m_lastItemPos == m_pictureList.count())

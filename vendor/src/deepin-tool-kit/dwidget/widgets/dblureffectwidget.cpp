@@ -8,7 +8,7 @@
 #include <qpa/qplatformbackingstore.h>
 
 QT_BEGIN_NAMESPACE
-extern Q_WIDGETS_EXPORT void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int transposed = 0);
+Q_WIDGETS_EXPORT void qt_blurImage(QPainter *p, QImage &blurImage, qreal radius, bool quality, bool alphaOnly, int transposed = 0);
 QT_END_NAMESPACE
 
 DWIDGET_BEGIN_NAMESPACE
@@ -82,15 +82,12 @@ void DBlurEffectWidget::paintEvent(QPaintEvent *event)
     QPoint point_offset = mapTo(window(), QPoint(0, 0));
     int radius = d->radius;
 
-    for (const QRect &rect : event->region().rects()) {
-        const QRect &tmp_rect = rect.translated(point_offset).adjusted(-radius, -radius, radius, radius);
+    const QRect &tmp_rect = event->rect().translated(point_offset).adjusted(-radius, -radius, radius, radius);
 
-        QImage image = window()->backingStore()->handle()->toImage().copy(tmp_rect);
+    QImage image = window()->backingStore()->handle()->toImage().copy(tmp_rect);
 
-        qt_blurImage(image, radius, false, false);
-
-        pa.drawImage(rect.topLeft(), image, QRect(QPoint(radius, radius), rect.size()));
-    }
+    pa.translate(event->rect().topLeft() - QPoint(radius, radius));
+    qt_blurImage(&pa, image, radius, false, false);
 }
 
 DWIDGET_END_NAMESPACE

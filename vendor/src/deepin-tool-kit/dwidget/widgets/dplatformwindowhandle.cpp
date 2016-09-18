@@ -88,6 +88,16 @@ void DPlatformWindowHandle::enableDXcbForWindow(QWindow *window)
     }
 }
 
+bool DPlatformWindowHandle::isEnabledDXcb(QWidget *widget)
+{
+    return widget->windowHandle() && widget->windowHandle()->property(_useDxcb).toBool();
+}
+
+bool DPlatformWindowHandle::isEnabledDXcb(QWindow *window)
+{
+    return window->property(_useDxcb).toBool();
+}
+
 int DPlatformWindowHandle::windowRadius() const
 {
     return m_window->property(_windowRadius).toInt();

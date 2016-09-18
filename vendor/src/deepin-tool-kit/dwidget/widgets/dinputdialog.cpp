@@ -9,6 +9,7 @@
 
 #include <QAbstractButton>
 #include <QHBoxLayout>
+#include <QShowEvent>
 
 #include "dinputdialog.h"
 #include "private/dinputdialog_p.h"
@@ -473,6 +474,14 @@ double DInputDialog::getDouble(QWidget *parent, const QString &title, const QStr
     *ok = dialog.exec() == QDialog::Accepted;
 
     return dialog.doubleValue();
+}
+
+void DInputDialog::showEvent(QShowEvent *e)
+{
+    DDialog::showEvent(e);
+
+    Q_D(DInputDialog);
+    d->lineEdit->setFocus();
 }
 
 DWIDGET_END_NAMESPACE
