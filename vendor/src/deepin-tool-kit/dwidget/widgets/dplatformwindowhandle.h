@@ -38,6 +38,8 @@ public:
 
     static void enableDXcbForWindow(QWidget *widget);
     static void enableDXcbForWindow(QWindow *window);
+    static bool isEnabledDXcb(QWidget *widget);
+    static bool isEnabledDXcb(QWindow *window);
 
     int windowRadius() const;
 

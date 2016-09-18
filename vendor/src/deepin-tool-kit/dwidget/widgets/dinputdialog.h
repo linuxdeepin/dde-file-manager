@@ -132,6 +132,9 @@ public:
     }
 #endif
 
+protected:
+    void showEvent(QShowEvent *e);
+
 Q_SIGNALS:
     // ### emit signals!
     void textValueChanged(const QString &text);

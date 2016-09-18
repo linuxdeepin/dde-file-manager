@@ -299,8 +299,6 @@ void DSlider::paintEvent(QPaintEvent *event)
 
 void DSlider::mouseMoveEvent(QMouseEvent *event)
 {
-    QAbstractSlider::mouseMoveEvent(event);
-
     Q_D(DSlider);
 
     if(d->mousePressed) {
