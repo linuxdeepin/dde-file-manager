@@ -146,6 +146,7 @@ DFileView::~DFileView()
 {
     disconnect(this, &DFileView::rowCountChanged, this, &DFileView::updateStatusBar);
     disconnect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &DFileView::updateStatusBar);
+    disconnect(this, &DFileView::rowCountChanged, this, &DFileView::updateContentLabel);
 }
 
 void DFileView::initUI()
@@ -208,10 +209,7 @@ void DFileView::initConnects()
         if (!Global::keyCtrlIsPressed() && !Global::keyShiftIsPressed())
             openIndex(index);
     }, Qt::QueuedConnection);
-//    connect(fileSignalManager, &FileSignalManager::fetchNetworksSuccessed,
-//            this, &DFileView::cd);
-//    connect(fileSignalManager, &FileSignalManager::requestChangeCurrentUrl,
-//            this, &DFileView::preHandleCd);
+
 
     connect(fileSignalManager, &FileSignalManager::requestRename,
             this, static_cast<void (DFileView::*)(const FMEvent&)>(&DFileView::edit));
