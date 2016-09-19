@@ -508,6 +508,9 @@ void DFileManagerWindow::createNewView(const FMEvent &event)
 
     if (!d->tabBar->isHidden())
         d->newTabButton->show();
+
+    d->leftSideBar->setFileView(d->fileView);
+    d->leftSideBar->setToolbar(d->toolbar);
 }
 
 void DFileManagerWindow::onFileViewCurrentUrlChanged(const DUrl &url)

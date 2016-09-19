@@ -24,6 +24,8 @@ class DBookmarkItem;
 class DBookmarkScene;
 class DBookmarkItemGroup;
 class FMEvent;
+class DFileView;
+class DToolBar;
 
 
 class DLeftSideBar : public QFrame
@@ -39,6 +41,12 @@ public:
     QGraphicsView *view() const;
     DBookmarkScene* scene();
 
+    DFileView *fileView() const;
+    void setFileView(DFileView *fileView);
+
+    DToolBar *toolbar() const;
+    void setToolbar(DToolBar *toolbar);
+
 protected:
     void resizeEvent(QResizeEvent *e);
 
@@ -51,6 +59,7 @@ public slots:
     void toNormalNav();
     void doDragEnter();
     void doDragLeave();
+    void handdleRequestDiskInfosFinihsed();
 
 protected:
     void paintEvent(QPaintEvent *event);
@@ -101,6 +110,8 @@ private:
     DBookmarkItemGroup * m_itemGroupTight;
 
     QLabel * m_fileLabel = NULL;
+    DFileView *m_fileView = NULL;
+    DToolBar *m_toolbar = NULL;
 };
 
 #endif // DLEFTSIDEBAR_H

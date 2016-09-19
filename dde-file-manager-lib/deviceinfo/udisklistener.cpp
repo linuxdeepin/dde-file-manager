@@ -227,6 +227,7 @@ void UDiskListener::asyncRequestDiskInfosFinihsed(QDBusPendingCallWatcher *call)
         qCritical() << reply.error().message();
     }
     call->deleteLater();
+    emit requestDiskInfosFinihsed();
 }
 
 void UDiskListener::changed(int in0, const QString &in1)
