@@ -99,8 +99,11 @@ bool ThumbnailGenerator::isVideoFile(const QString &fileName) const
 
 bool ThumbnailGenerator::isPictureFile(const QString &fileName) const
 {
-    QImageReader reader(fileName);
-    return reader.canRead();
+    QString mimeType = QMimeDatabase().mimeTypeForFile(fileName).name();
+    if(mimeType.startsWith("image"))
+        return true;
+    else
+        return false;
 }
 
 QMap<QString,QString> ThumbnailGenerator::getAttributeSet(const QUrl&  fileUrl)
