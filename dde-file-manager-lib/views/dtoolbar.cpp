@@ -454,3 +454,8 @@ void DToolBar::moveNavStacks(int from, int to){
 int DToolBar::navStackCount() const{
     return m_navStacks.count();
 }
+
+void DToolBar::setCrumb(const DUrl &url)
+{
+    m_crumbWidget->setCrumb(url);
+}

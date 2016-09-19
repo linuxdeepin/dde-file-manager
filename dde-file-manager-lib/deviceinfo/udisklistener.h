@@ -55,6 +55,8 @@ signals:
     void volumeRemoved(UDiskDeviceInfo * device);
     void mountAdded(UDiskDeviceInfo * device);
     void mountRemoved(UDiskDeviceInfo * device);
+    void requestDiskInfosFinihsed();
+
 public slots:
     void mount(const QString &path);
     DiskInfo queryDisk(const QString& path);

@@ -34,7 +34,7 @@ public:
     void addHistoryStack();
 
     int navStackCount() const;
-
+    void setCrumb(const DUrl& url);
 
 signals:
     void requestIconView();
