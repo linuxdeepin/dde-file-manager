@@ -48,6 +48,7 @@ bool ThumbnailGenerator::canGenerateThumbnail(const QUrl&  fileUrl) const
 {
     if(fileUrl.isLocalFile()){
         QString fPath = fileUrl.path();
+
         if(isPictureFile(fPath))
             return true;
         if(isTextPlainFile(fPath))
@@ -59,6 +60,7 @@ bool ThumbnailGenerator::canGenerateThumbnail(const QUrl&  fileUrl) const
     }
     else{
         //TODO
+        return false;
     }
 
     return false;
