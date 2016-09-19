@@ -231,8 +231,16 @@ QPixmap ThumbnailGenerator::getPDFThumbnail(const QString &fpath, const Thumbnai
 QPixmap ThumbnailGenerator::getVideoThumbnail(const QString &fpath, const ThumbnailGenerator::ThumbnailSize &size)
 {
     QString tempFile = QDir().tempPath() +"/"+QString::number(QDateTime::currentMSecsSinceEpoch())+".png";
-    VideoThumbnailer vt(size,false,true,20,true);
-    vt.generateThumbnail(fpath.toStdString(), Png,  tempFile.toStdString());
+
+    try{
+        VideoThumbnailer vt(size,false,true,20,true);
+        vt.generateThumbnail(fpath.toStdString(), Png,  tempFile.toStdString());
+    }
+    catch(std::logic_error e){
+        qDebug()<<e.what();
+        return QPixmap();
+    }
+
     QPixmap pixmap = QPixmap::fromImage(QImage(tempFile));
     QFile file(tempFile);
     if(file.exists())
