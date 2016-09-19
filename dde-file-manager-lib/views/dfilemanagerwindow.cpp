@@ -307,8 +307,8 @@ void DFileManagerWindow::onCurrentTabClosed(const int index){
         }
     }
 
-    d->tabBar->removeTab(index);
     d->toolbar->removeNavStackAt(index);
+    d->tabBar->removeTab(index);
 
     if(d->tabBar->count()<8)
         emit d->tabBar->tabAddableChanged(true);

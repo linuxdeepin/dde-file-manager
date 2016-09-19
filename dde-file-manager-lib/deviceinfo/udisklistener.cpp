@@ -179,11 +179,13 @@ DiskInfo UDiskListener::queryDisk(const QString &path)
 void UDiskListener::unmount(const QString &path)
 {
     qDebug() << path;
+    QDir::setCurrent(QDir::homePath());
     m_diskMountInterface->Unmount(path);
 }
 
 void UDiskListener::eject(const QString &path)
 {
+    QDir::setCurrent(QDir::homePath());
     m_diskMountInterface->Eject(path);
 }
 
