@@ -43,11 +43,12 @@ void DStatusBar::initUI()
     m_label = new QLabel(m_counted.arg("0"), this);
     m_scaleSlider = new DSlider(this);
     m_scaleSlider->setOrientation(Qt::Horizontal);
-    m_scaleSlider->setFixedWidth(120);
+    m_scaleSlider->setFixedSize(120,20);
     m_scaleSlider->setPageStep(1);
     m_scaleSlider->setTickInterval(1);
     m_scaleSlider->setMinimum(0);
     m_scaleSlider->setMaximum(4);
+
 
     m_layout->addStretch(3);
     m_layout->addWidget(m_loadingIndicator);
