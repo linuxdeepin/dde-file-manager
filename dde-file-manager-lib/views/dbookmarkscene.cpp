@@ -722,10 +722,11 @@ DBookmarkItem *DBookmarkScene::hasBookmarkItem(const DUrl &url)
 DBookmarkItem *DBookmarkScene::itemAt(const QPointF & point)
 {
     DBookmarkItem * item =  (DBookmarkItem *)QGraphicsScene::itemAt(point, QTransform());
-    if(item->objectName() == "BMRootItem")
-        return NULL;
-    if(item)
+    if(item){
+        if(item->objectName() == "BMRootItem")
+            return NULL;
         return item;
+    }
     else
         return (DBookmarkItem *)QGraphicsScene::itemAt(point + QPointF(0, BOOKMARK_ITEM_SPACE*2), QTransform());
 }
