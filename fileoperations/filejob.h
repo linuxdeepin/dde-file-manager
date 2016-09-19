@@ -27,8 +27,12 @@ public:
         Run,
         Conflicted
     };
-    void setStatus(Status status);
+
+    static int FileJobCount;
+
+
     explicit FileJob(const QString &title, QObject *parent = 0);
+    void setStatus(Status status);
     void setJobId(const QString &id);
     QString getJobId();
     QString checkDuplicateName(const QString &name);

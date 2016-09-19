@@ -11,20 +11,22 @@
 #include <QProcess>
 #include <QCryptographicHash>
 
+int FileJob::FileJobCount = 0;
+
+FileJob::FileJob(const QString &title, QObject *parent) : QObject(parent)
+{
+    FileJobCount += 1;
+    m_status = FileJob::Started;
+    QString user = getenv("USER");
+    m_trashLoc = "/home/" + user + "/.local/share/Trash";
+    m_id = QString::number(FileJobCount);
+    m_title = title;
+    connect(this, &FileJob::finished, this, &FileJob::handleJobFinished);
+}
 
 void FileJob::setStatus(FileJob::Status status)
 {
     m_status = status;
-}
-
-FileJob::FileJob(const QString &title, QObject *parent) : QObject(parent)
-{
-    m_status = FileJob::Started;
-    QString user = getenv("USER");
-    m_trashLoc = "/home/" + user + "/.local/share/Trash";
-    m_id = QString::number(QDateTime::currentDateTime().toMSecsSinceEpoch());
-    m_title = title;
-    connect(this, &FileJob::finished, this, &FileJob::handleJobFinished);
 }
 
 void FileJob::setJobId(const QString &id)
@@ -216,7 +218,7 @@ DUrlList FileJob::doMove(const DUrlList &files, const QString &destination)
         {
             if(srcInfo.rootPath() == tarInfo.rootPath())
             {
-                if (!moveDir(url.toLocalFile(), tarDir.path()), &targetPath) {
+                if (!moveDir(url.toLocalFile(), tarDir.path(), &targetPath)) {
                     if(copyDir(url.toLocalFile(), tarLocal, true, &targetPath))
                         deleteDir(url.toLocalFile());
                 }
@@ -394,7 +396,12 @@ void FileJob::jobConflicted()
 
 bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMoved, QString *targetPath)
 {
-    QFile from(srcFile);   
+    if(m_applyToAll && m_status == FileJob::Cancelled){
+        return false;
+    }else if(!m_applyToAll && m_status == FileJob::Cancelled){
+        m_status = Started;
+    }
+    QFile from(srcFile);
     QFileInfo sf(srcFile);
     QFileInfo tf(tarDir);
     m_srcFileName = sf.fileName();
@@ -445,8 +452,15 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
                 if(!to.open(QIODevice::WriteOnly))
                 {
                     //Operation failed
-                    qDebug() << tarDir << "isn't write only";
-                    return false;
+                    //Operation failed
+                    qDebug() << to.fileName() << to.error() << to.errorString() << "isn't write only";
+                    QString toFileName =  tarDir + "/" + DUrl::toPercentEncoding(m_srcFileName);
+                    qDebug() << "toPercentEncoding" <<  toFileName;
+                    to.setFileName(toFileName);
+                    if (!to.open(QIODevice::WriteOnly)){
+                       qDebug() << to.fileName() << to.error() <<to.errorString() << "isn't write only";
+                       return false;
+                    }
                 }
                 m_status = Run;
                 break;
@@ -554,9 +568,10 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
 
 bool FileJob::copyDir(const QString &srcPath, const QString &tarPath, bool isMoved, QString *targetPath)
 {
-    if(m_status == FileJob::Cancelled)
-    {
+    if(m_applyToAll && m_status == FileJob::Cancelled){
         return false;
+    }else if(!m_applyToAll && m_status == FileJob::Cancelled){
+        m_status = Started;
     }
     QDir sourceDir(srcPath);
     QDir targetDir(tarPath + "/" + sourceDir.dirName());
@@ -612,20 +627,21 @@ bool FileJob::copyDir(const QString &srcPath, const QString &tarPath, bool isMov
 
                 if(fileInfo.isDir())
                 {
-                    if(!copyDir(fileInfo.filePath(), targetDir.absolutePath()))
-                        return false;
+                    if(!copyDir(fileInfo.filePath(), targetDir.absolutePath())){
+                        qDebug() << "coye dir" << fileInfo.filePath() << "failed";
+                    }
                 }
                 else
                 {
                     if(!copyFile(fileInfo.filePath(), targetDir.absolutePath()))
                     {
-                        return false;
+                        qDebug() << "coye file" << fileInfo.filePath() << "failed";
                     }
                 }
             }
 
             if (targetPath)
-                *targetPath = tf.absoluteFilePath();
+                *targetPath = m_tarPath;
 
             return true;
             break;
@@ -640,13 +656,18 @@ bool FileJob::copyDir(const QString &srcPath, const QString &tarPath, bool isMov
     }
 
     if (targetPath)
-        *targetPath = tf.absoluteFilePath();
+        *targetPath = m_tarPath;
 
     return true;
 }
 
 bool FileJob::moveFile(const QString &srcFile, const QString &tarDir, QString *targetPath)
 {
+    if(m_applyToAll && m_status == FileJob::Cancelled){
+        return false;
+    }else if(!m_applyToAll && m_status == FileJob::Cancelled){
+        m_status = Started;
+    }
     QFile from(srcFile);
     QDir to(tarDir);
     QFileInfo fromInfo(srcFile);
@@ -705,7 +726,7 @@ bool FileJob::moveFile(const QString &srcFile, const QString &tarDir, QString *t
                 QThread::msleep(100);
                 break;
             case FileJob::Cancelled:
-                return false;
+                return true;
             default:
                 return false;
          }
@@ -784,7 +805,7 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
                 QThread::msleep(100);
                 break;
             case FileJob::Cancelled:
-                return false;
+                return true;
             default:
                 return false;
          }
@@ -795,6 +816,11 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
 
 bool FileJob::moveDir(const QString &srcFile, const QString &tarDir, QString *targetPath)
 {
+    if(m_applyToAll && m_status == FileJob::Cancelled){
+        return false;
+    }else if(!m_applyToAll && m_status == FileJob::Cancelled){
+        m_status = Started;
+    }
     QDir from(srcFile);
     QFileInfo fromInfo(srcFile);
     QDir to(tarDir);
@@ -853,7 +879,7 @@ bool FileJob::moveDir(const QString &srcFile, const QString &tarDir, QString *ta
                 QThread::msleep(100);
                 break;
             case FileJob::Cancelled:
-                return false;
+                return true;
             default:
                 return false;
          }
