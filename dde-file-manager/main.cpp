@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
         /// fix Qt drag drop to google chrome bug
         new XdndWorkaround();
 
-        app.setApplicationDisplayName(QObject::tr("File Manager"));
+        app.setApplicationDisplayName(QObject::tr("Deepin File Manager"));
         fileManagerApp->show(commandlineUrl);
         dialogManager;
         appController->createGVfSManager();
