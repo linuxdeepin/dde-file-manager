@@ -704,6 +704,9 @@ void DFileSystemModel::sort()
 const AbstractFileInfoPointer DFileSystemModel::fileInfo(const QModelIndex &index) const
 {
     const FileSystemNodePointer &node = getNodeByIndex(index);
+    if (node && node->fileInfo){
+        node->fileInfo->updateFileInfo();
+    }
 
     return node ? node->fileInfo : AbstractFileInfoPointer();
 }
