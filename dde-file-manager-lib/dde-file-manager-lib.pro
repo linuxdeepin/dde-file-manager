@@ -152,7 +152,6 @@ HEADERS += \
     views/flowlayout.h \
     shutil/shortcut.h \
     views/dtabbar.h \
-    shutil/filepreviewiconprovider.h \
     views/dfiledialog.h \
     interfaces/dfiledialoghandle.h
 
@@ -248,7 +247,6 @@ SOURCES += \
     views/flowlayout.cpp \
     shutil/shortcut.cpp \
     views/dtabbar.cpp \
-    shutil/filepreviewiconprovider.cpp \
     views/dfiledialog.cpp \
     interfaces/dfiledialoghandle.cpp
 
