@@ -36,6 +36,7 @@ public:
 public slots:
     void show(const DUrl& url);
     void lazyRunCacheTask();
+    void runCacheTask();
 
 private:
     WindowManager* m_windowManager = NULL;

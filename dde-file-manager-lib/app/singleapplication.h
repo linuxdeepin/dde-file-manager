@@ -28,6 +28,7 @@ public slots:
     bool setSingleInstance(const QString& key);
     void handleConnection();
     void readData();
+    void closeServer();
 
 private:
     static QString getUserID();

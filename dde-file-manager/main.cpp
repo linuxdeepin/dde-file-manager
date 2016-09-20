@@ -23,6 +23,7 @@
 #include <QTranslator>
 #include <QLibraryInfo>
 #include <QDir>
+#include <QProcess>
 
 #include "xdnd/xdndworkaround.h"
 
@@ -60,6 +61,7 @@ int main(int argc, char *argv[])
     QString uniqueKey = app.applicationName();
 
     bool isSingleInstance  = app.setSingleInstance(uniqueKey);
+    bool isBackendRun = CommandLineManager::instance()->isSet("d");
 
     qDebug() << isSingleInstance << commandlineUrl;
 
@@ -69,18 +71,23 @@ int main(int argc, char *argv[])
         if (translator.load(APPSHAREDIR"/translations/" + app.applicationName() +"_" + QLocale::system().name()))
             app.installTranslator(&translator);
 
+        DThemeManager::instance()->setTheme("light");
+        app.setApplicationDisplayName(QObject::tr("Deepin File Manager"));
+
+        if (!isBackendRun){
+            fileManagerApp->show(commandlineUrl);
+        }else{
+            fileManagerApp->runCacheTask();
+        }
+
         QTranslator translator_qt;
 
         if (translator_qt.load(QLibraryInfo::location(QLibraryInfo::TranslationsPath) + "/qt_" + QLocale::system().name() + ".qm"))
             app.installTranslator(&translator_qt);
 
-        DThemeManager::instance()->setTheme("light");
-
         /// fix Qt drag drop to google chrome bug
         new XdndWorkaround();
 
-        app.setApplicationDisplayName(QObject::tr("Deepin File Manager"));
-        fileManagerApp->show(commandlineUrl);
         dialogManager;
         appController->createGVfSManager();
         QThreadPool::globalInstance()->setMaxThreadCount(MAX_THREAD_COUNT);
@@ -91,7 +98,12 @@ int main(int argc, char *argv[])
         ProfilerStop();
         quick_exit(request);
 #else
-        quick_exit(app.exec());
+        int ret = app.exec();
+#ifdef AUTO_RESTART_DEAMON
+        app.closeServer();
+        QProcess::startDetached(QString("%1 -d").arg(QString(argv[0])));
+#endif
+        quick_exit(ret);
 #endif
     }else{
         SingleApplication::newClientProcess(uniqueKey);

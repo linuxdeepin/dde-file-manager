@@ -25,6 +25,7 @@ isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
 
     #use classical file section mode
     DEFINES += CLASSICAL_SECTION
+    DEFINES += AUTO_RESTART_DEAMON
 }
 
 isEmpty(PREFIX){

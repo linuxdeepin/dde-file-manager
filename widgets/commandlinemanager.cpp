@@ -25,7 +25,9 @@ void CommandLineManager::process(){
 
 void CommandLineManager::initOptions(){
     QCommandLineOption newWindowOption(QStringList() << "n" << "new-window", "show new window");
+    QCommandLineOption backendOption(QStringList() << "d" << "none window process", "start dde-file-manager in no window mode");
     addOption(newWindowOption);
+    addOption(backendOption);
 }
 
 void CommandLineManager::addOption(const QCommandLineOption &option){
