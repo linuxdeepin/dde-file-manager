@@ -102,3 +102,7 @@ void FileManagerApp::lazyRunCacheTask()
     connect(m_taskTimer, &QTimer::timeout, m_taskTimer, &QTimer::deleteLater);
 }
 
+void FileManagerApp::runCacheTask()
+{
+    emit fileSignalManager->requestUpdateMimeAppsCache();
+}

@@ -1,0 +1,5 @@
+[Desktop Entry]
+Type=Application
+Name=file-manager-daemon auto
+Exec=env GIO_LAUNCHED_DESKTOP_FILE=/usr/share/applications/dde-file-manager.desktop /usr/bin/dde-file-manager -d
+NoShowIn=GNOME;Unity;Deepin

@@ -23,10 +23,7 @@ SingleApplication::SingleApplication(int &argc, char **argv, int): DApplication(
 
 SingleApplication::~SingleApplication()
 {
-    if (m_localServer){
-        m_localServer->removeServer(m_localServer->serverName());
-        m_localServer->close();
-    }
+    closeServer();
 }
 
 void SingleApplication::initConnect()
@@ -150,4 +147,12 @@ void SingleApplication::readData()
     }
     qDebug() << url << isNewWindow;
     emit fileSignalManager->requestOpenNewWindowByUrl(url, isNewWindow);
+}
+
+void SingleApplication::closeServer()
+{
+    if (m_localServer){
+        m_localServer->removeServer(m_localServer->serverName());
+        m_localServer->close();
+    }
 }
