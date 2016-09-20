@@ -357,10 +357,10 @@ QIcon IconProvider::findIcon(const DUrl& fileUrl, const QString &mimeType)
     QString _mimeType = mimeType;
     QString absoluteFilePath = fileUrl.path();
     if (thumbnailManager->canGenerateThumbnail(static_cast<QUrl>(fileUrl))) {
-        theIcon = thumbnailManager->getThumbnailIcon(static_cast<QUrl>(fileUrl));
+        theIcon = thumbnailManager->getThumbnailIcon(static_cast<QUrl>(fileUrl),ThumbnailGenerator::THUMBNAIL_LARGE);
 
         if (theIcon.isNull())
-            thumbnailManager->requestThumbnailIcon(static_cast<QUrl>(fileUrl));
+            thumbnailManager->requestThumbnailIcon(static_cast<QUrl>(fileUrl),ThumbnailGenerator::THUMBNAIL_LARGE);
         else
             return theIcon;
     } else if (mimeType == "application/x-desktop") {

@@ -116,7 +116,7 @@ QMap<QString,QString> ThumbnailGenerator::getAttributeSet(const QUrl&  fileUrl)
         QFileInfo info(fileName);
         QString mimetype = QMimeDatabase().mimeTypeForFile(fileName).name();
         set.insert("Thumb::Mimetype",mimetype);
-        set.insert("Thumb::Size",QString::number(QFile(fileName).size()));
+        set.insert("Thumb::Size",QString::number(info.size()));
         set.insert("Thumb::URI",fileUrl.toString());
         set.insert("Thumb::MTime",QString::number(info.lastModified().toMSecsSinceEpoch()/1000));
         set.insert("Software", "Deepin File Manager");
@@ -127,14 +127,23 @@ QMap<QString,QString> ThumbnailGenerator::getAttributeSet(const QUrl&  fileUrl)
 
         if(isPictureFile(fileName)){
             QImageReader reader(fileName);
-            set.insert("Thumb::Image::Width",QString::number(reader.size().width()));
-            set.insert("Thumb::Image::Height",QString::number(reader.size().height()));
+            if(reader.canRead()){
+                set.insert("Thumb::Image::Width",QString::number(reader.size().width()));
+                set.insert("Thumb::Image::Height",QString::number(reader.size().height()));
+            }
             return set;
         }
 
         if(isPDFFile(fileName)){
+            // handle fail thumbnailing files
             Poppler::Document* document = Poppler::Document::load(fileName);
+            if((!document || document->isLocked())){
+                delete document;
+                return set;
+            }
+
             set.insert("Thumb::Document::Pages",QString::number(document->numPages()));
+            delete document;
             return set;
         }
 
@@ -205,7 +214,7 @@ QPixmap ThumbnailGenerator::getPDFThumbnail(const QString &fpath, const Thumbnai
     Poppler::Document* document = Poppler::Document::load(fpath);
     if((!document || document->isLocked())){
         delete document;
-        qDebug()<<"file reading error....";
+        qDebug()<<"file reading error...."<<fpath;
         return QPixmap();
     }
     qDebug()<<"pdf document read successfully!";
@@ -233,7 +242,7 @@ QPixmap ThumbnailGenerator::getVideoThumbnail(const QString &fpath, const Thumbn
     QString tempFile = QDir().tempPath() +"/"+QString::number(QDateTime::currentMSecsSinceEpoch())+".png";
 
     try{
-        VideoThumbnailer vt(size,false,true,20,true);
+        VideoThumbnailer vt(size,false,true,20,false);
         vt.generateThumbnail(fpath.toStdString(), Png,  tempFile.toStdString());
     }
     catch(std::logic_error e){
@@ -243,6 +252,7 @@ QPixmap ThumbnailGenerator::getVideoThumbnail(const QString &fpath, const Thumbn
 
     QPixmap pixmap = QPixmap::fromImage(QImage(tempFile));
     QFile file(tempFile);
+
     if(file.exists())
         file.remove();
     return pixmap;

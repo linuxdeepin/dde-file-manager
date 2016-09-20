@@ -13,6 +13,15 @@ QT_BEGIN_NAMESPACE
 class QFileSystemWatcher;
 QT_END_NAMESPACE
 
+struct ThumbnailTask{
+    QUrl fileUrl;
+    ThumbnailGenerator::ThumbnailSize size;
+    ThumbnailTask(const QUrl& url, const ThumbnailGenerator::ThumbnailSize& size):
+        fileUrl(url){
+        this->size = size;
+    }
+};
+
 class ThumbnailManager : public QThread
 {
     Q_OBJECT
@@ -21,11 +30,13 @@ public:
     void init();
     void initConnections();
 
-    QString getThumbnailCachePath();
-    QString getThumbnailPath(const QString& name, ThumbnailGenerator::ThumbnailSize size);
+    QString getThumbnailCachePath() const;
+    QString getThumbnailPath(const QString& name, ThumbnailGenerator::ThumbnailSize size) const;
+    QString getThumbnailFailPath(const QString& name) const;
 
-    QIcon getThumbnailIcon(const QUrl& fileUrl);
-    void requestThumbnailIcon(const QUrl& fileUrl);
+    QIcon getThumbnailIcon(const QUrl& fileUrl, ThumbnailGenerator::ThumbnailSize size);
+    void requestThumbnailIcon(const QUrl& fileUrl, ThumbnailGenerator::ThumbnailSize size);
+    QIcon getDefaultIcon(const QUrl& fileUrl);
 
     bool canGenerateThumbnail(const QUrl& fileUrl);
 
@@ -46,7 +57,7 @@ private:
     QString m_thumbnailFailPath;
     QString m_thumbnailPath;
 
-    QQueue<QString> taskQueue;
+    QQueue<ThumbnailTask> taskQueue;
     QMap<QString, QString> m_pathToMd5;
     QMap<QString, QIcon> m_md5ToIcon;
 
