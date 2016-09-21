@@ -19,7 +19,7 @@ public:
         ShowTitlebarSeparator = 0x01
     };
     Q_DECLARE_FLAGS(DecorationFlags, DecorationFlag)
-    Q_FLAG(DecorationFlags)
+    Q_FLAGS(DecorationFlags)
 
     explicit DX11Widget(QWidget *parent = 0);
 

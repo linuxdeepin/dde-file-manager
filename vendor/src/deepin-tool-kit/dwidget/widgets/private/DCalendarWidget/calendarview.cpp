@@ -234,7 +234,7 @@ void CalendarView::getDbusData() const
         cacheDate.setDate(date.year(), date.month(), 1);
         foreach(const CaLunarDayInfo & dayInfo, reply.value().mCaLunarDayInfo) {
             lunarCache->insert(cacheDate, dayInfo);
-            if (date == m_currentDate) {
+            if (cacheDate == m_currentDate) {
                 currentDayInfo = dayInfo;
             }
             cacheDate = cacheDate.addDays(1);
@@ -247,6 +247,7 @@ void CalendarView::getDbusData() const
 
     // refersh lunar info
     if (date == m_currentDate) {
+//        qDebug() << date << currentDayInfo;
         emit dateSelected(date, currentDayInfo);
     }
 }
