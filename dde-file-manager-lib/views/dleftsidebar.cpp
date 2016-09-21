@@ -2,6 +2,7 @@
 #include "dcheckablebutton.h"
 #include "dhorizseparator.h"
 #include "windowmanager.h"
+#include "dfilemanagerwindow.h"
 
 #include "controllers/bookmarkmanager.h"
 

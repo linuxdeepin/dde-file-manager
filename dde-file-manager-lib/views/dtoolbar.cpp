@@ -207,7 +207,7 @@ void DToolBar::searchBarDeactivated()
     m_searchButton->show();
 
     FMEvent event;
-    event = window()->winId();
+    event = WindowManager::getWindowId(this);
     event = FMEvent::SearchBar;
     emit fileSignalManager->requestFoucsOnFileView(event);
 }
@@ -358,21 +358,21 @@ void DToolBar::checkViewModeButton(DFileView::ViewMode mode)
 
 void DToolBar::handleHotkeyBack(const FMEvent &event)
 {
-    if (event.windowId() == (int)window()->winId()) {
+    if (event.windowId() == WindowManager::getWindowId(this)) {
         backButtonClicked();
     }
 }
 
 void DToolBar::handleHotkeyForward(const FMEvent &event)
 {
-    if (event.windowId() == (int)window()->winId()) {
+    if (event.windowId() == WindowManager::getWindowId(this)) {
         forwardButtonClicked();
     }
 }
 
 void DToolBar::handleHotkeyCtrlF(const FMEvent &event)
 {
-    if (event.windowId() == (int)window()->winId()) {
+    if (event.windowId() == WindowManager::getWindowId(this)) {
         searchBarActivated();
         m_searchBar->setText("");
     }
@@ -380,7 +380,7 @@ void DToolBar::handleHotkeyCtrlF(const FMEvent &event)
 
 void DToolBar::handleHotkeyCtrlL(const FMEvent &event)
 {
-    if (event.windowId() == (int)window()->winId()) {
+    if (event.windowId() == WindowManager::getWindowId(this)) {
         searchBarActivated();
     }
 }

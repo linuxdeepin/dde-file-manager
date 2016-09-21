@@ -19,6 +19,8 @@
 
 #include "widgets/singleton.h"
 
+DWIDGET_USE_NAMESPACE
+
 DCrumbWidget::DCrumbWidget(QWidget *parent)
     : QFrame(parent)
 {

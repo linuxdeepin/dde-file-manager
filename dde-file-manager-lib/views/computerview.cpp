@@ -1,20 +1,23 @@
 #include "computerview.h"
 #include "flowlayout.h"
-
-#include "app/global.h"
-#include "models/abstractfileinfo.h"
-#include "controllers/fileservices.h"
-#include "controllers/pathmanager.h"
-#include "widgets/singleton.h"
-#include "deviceinfo/udisklistener.h"
-#include "app/filesignalmanager.h"
-#include "app/fmevent.h"
-#include "controllers/appcontroller.h"
-#include "app/filemanagerapp.h"
 #include "dfilemenu.h"
 #include "filemenumanager.h"
+#include "windowmanager.h"
+
+#include "app/global.h"
+#include "app/filesignalmanager.h"
+#include "app/fmevent.h"
+#include "app/filemanagerapp.h"
+#include "controllers/fileservices.h"
+#include "controllers/pathmanager.h"
+#include "controllers/appcontroller.h"
+#include "deviceinfo/udisklistener.h"
+#include "models/abstractfileinfo.h"
 #include "shutil/standardpath.h"
+#include "widgets/singleton.h"
+
 #include <dscrollbar.h>
+
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QPushButton>
@@ -23,8 +26,6 @@
 #include <QTextEdit>
 #include <QSizePolicy>
 #include <QFile>
-
-
 
 DWIDGET_USE_NAMESPACE
 
@@ -102,7 +103,7 @@ void ComputerViewItem::setDeviceInfo(UDiskDeviceInfo *deviceInfo)
 
 int ComputerViewItem::windowId()
 {
-    return window()->winId();
+    return WindowManager::getWindowId(this);
 }
 
 void ComputerViewItem::contextMenuEvent(QContextMenuEvent *event)

@@ -413,7 +413,7 @@ QList<int> DFileView::columnRoleList() const
 
 int DFileView::windowId() const
 {
-    return window()->winId();
+    return WindowManager::getWindowId(this);
 }
 
 void DFileView::setIconSize(const QSize &size)
