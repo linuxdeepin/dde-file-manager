@@ -17,8 +17,8 @@
 #include <QDesktopWidget>
 #include <QScreen>
 #include <QAction>
+#include <QRegExp>
 #include <QRegularExpression>
-#include <QRegularExpressionMatch>
 
 #include "private/ddialog_p.h"
 
@@ -148,14 +148,13 @@ QMap<int, QString> DDialogPrivate::scanTags(QString origin) const
 {
     QMap<int, QString> result;
 
-    QRegularExpression re("<.*?>");
-    QRegularExpressionMatch match;
-    int index = origin.indexOf(re, 0, &match);
+    QRegExp re("<.*?>");
+    int index = origin.indexOf(re, 0);
     int matchLength = 0;
     while (index >= 0) {
-        result[index] = match.captured();
-        matchLength = match.captured().length();
-        index = origin.indexOf(re, index + matchLength, &match);
+        result[index] = re.cap();
+        matchLength = re.matchedLength();
+        index = origin.indexOf(re, index + matchLength);
     }
 
     return result;

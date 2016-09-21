@@ -227,7 +227,7 @@ void DCalendar::showEvent(QShowEvent *)
 
 void DCalendar::viewDateChanged(const QDate &date, const CaLunarDayInfo &lunarInfo)
 {
-//    qDebug() << date << lunarInfo;
+//    qDebug() << date << lunarInfo << sender() <<m_viewCurrent;
     if (sender() != m_viewCurrent)
         return;
 
