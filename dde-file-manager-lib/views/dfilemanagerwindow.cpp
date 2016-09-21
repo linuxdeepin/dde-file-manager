@@ -12,6 +12,7 @@
 #include "computerview.h"
 #include "dtabbar.h"
 #include "dbookmarkscene.h"
+#include "windowmanager.h"
 
 #include "app/global.h"
 #include "app/fmevent.h"
@@ -111,7 +112,7 @@ void DFileManagerWindow::initTitleBar()
     DFileMenu* menu = fileMenuManger->createToolBarSettingsMenu();
 
     FMEvent event;
-    event = window()->winId();
+    event = windowId();
     menu->setEvent(event);
 
     titleBar()->setMenu(menu);
@@ -278,7 +279,7 @@ void DFileManagerWindow::initConnect()
         FMEvent event;
         const DUrl url = DUrl::fromUserInput(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0));
         event = url;
-        event = window()->winId();
+        event = windowId();
         createNewView(event);
     });
 }
@@ -380,7 +381,7 @@ DFileView *DFileManagerWindow::getFileView() const
 
 int DFileManagerWindow::windowId()
 {
-    return window()->winId();
+    return WindowManager::getWindowId(this);
 }
 
 void DFileManagerWindow::setFileViewMode(int viewMode)

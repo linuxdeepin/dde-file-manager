@@ -1,13 +1,15 @@
 #include "dtabbar.h"
-#include <QtCore>
-#include <QDebug>
-#include <QPropertyAnimation>
+#include "windowmanager.h"
+
 #include "app/global.h"
 #include "app/fmevent.h"
 #include "app/filemanagerapp.h"
 #include "controllers/appcontroller.h"
 
 #include <dutility.h>
+
+#include <QPropertyAnimation>
+#include <QDebug>
 
 DWIDGET_USE_NAMESPACE
 
@@ -703,7 +705,7 @@ void TabBar::onRequestNewWindow(const QString closeUrl)
     DUrl url = DUrl::fromUserInput(closeUrl);
     FMEvent event;
     event = FMEvent::FileView;
-    event = window()->winId();
+    event = WindowManager::getWindowId(this);
     event = url;
     appController->actionNewWindow(event);
 }
