@@ -14,9 +14,11 @@ JobController::JobController(const DDirIteratorPointer &iterator, QObject *paren
 
 }
 
-JobController::JobController(const DUrl &fileUrl, QDir::Filters filters, QObject *parent)
+JobController::JobController(const DUrl &fileUrl, const QStringList &nameFilters,
+                             QDir::Filters filters, QObject *parent)
     : QThread(parent)
     , m_fileUrl(fileUrl)
+    , m_nameFilters(nameFilters)
     , m_filters(filters)
 {
 
@@ -86,7 +88,7 @@ void JobController::stopAndDeleteLater()
 void JobController::run()
 {
     if (!m_iterator) {
-        emit childrenUpdated(FileServices::instance()->getChildren(m_fileUrl, m_filters));
+        emit childrenUpdated(FileServices::instance()->getChildren(m_fileUrl, m_nameFilters, m_filters));
 
         setState(Stoped);
 
@@ -132,6 +134,7 @@ void JobController::run()
             QThread::msleep(LOAD_FILE_INTERVAL);
         }
     }
+
 
     if (update_children) {
         emit childrenUpdated(fileInfoQueue);

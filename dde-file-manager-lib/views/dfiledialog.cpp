@@ -25,6 +25,7 @@ public:
     DTextButton *acceptButton;
     QFileDialog::AcceptMode acceptMode = QFileDialog::AcceptOpen;
     QEventLoop *eventLoop = Q_NULLPTR;
+    QStringList nameFilters;
 };
 
 DFileDialog::DFileDialog(QWidget *parent)
@@ -116,39 +117,47 @@ QList<QUrl> DFileDialog::selectedUrls() const
     return DUrl::toQUrlList(getFileView()->selectedUrls());
 }
 
-void DFileDialog::setNameFilter(const QString &filter)
-{
-
-}
-
 void DFileDialog::setNameFilters(const QStringList &filters)
 {
+    D_D(DFileDialog);
 
+    d->nameFilters = filters;
+
+    if (selectedNameFilter().isEmpty())
+        selectNameFilter(filters.isEmpty() ? QString() : filters.first());
 }
 
 QStringList DFileDialog::nameFilters() const
 {
+    D_DC(DFileDialog);
 
+    return d->nameFilters;
 }
 
 void DFileDialog::selectNameFilter(const QString &filter)
 {
-
+    if (!filter.isEmpty())
+        getFileView()->setNameFilters(QStringList() << filter);
 }
 
 QString DFileDialog::selectedNameFilter() const
 {
+    const QStringList &filters = getFileView()->nameFilters();
 
+    if (filters.isEmpty())
+        return QString();
+
+    return filters.first();
 }
 
 QDir::Filters DFileDialog::filter() const
 {
-
+    return getFileView()->filters();
 }
 
 void DFileDialog::setFilter(QDir::Filters filters)
 {
-
+    getFileView()->setFilters(filters);
 }
 
 void DFileDialog::setViewMode(DFileView::ViewMode mode)
@@ -163,12 +172,15 @@ DFileView::ViewMode DFileDialog::viewMode() const
 
 void DFileDialog::setFileMode(QFileDialog::FileMode mode)
 {
-
-}
-
-QFileDialog::FileMode DFileDialog::fileMode() const
-{
-
+    switch (mode) {
+    case QFileDialog::ExistingFile:
+        getFileView()->setSelectionMode(QAbstractItemView::SingleSelection);
+        break;
+    case QFileDialog::ExistingFiles:
+        getFileView()->setSelectionMode(QAbstractItemView::ExtendedSelection);
+        break;
+    default: break;
+    }
 }
 
 void DFileDialog::setAcceptMode(QFileDialog::AcceptMode mode)

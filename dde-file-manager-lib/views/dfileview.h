@@ -5,6 +5,8 @@
 
 #include "durl.h"
 
+#include <QDir>
+
 class DFileSystemModel;
 
 QT_BEGIN_NAMESPACE
@@ -126,6 +128,11 @@ public slots:
     void setViewMode(ViewMode mode);
     void sortByRole(int role);
     void sortByColumn(int column);
+
+    QStringList nameFilters() const;
+    void setNameFilters(const QStringList &nameFilters);
+    QDir::Filters filters() const;
+    void setFilters(QDir::Filters filters);
 
     void clearHeardView();
 

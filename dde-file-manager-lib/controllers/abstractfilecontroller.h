@@ -45,10 +45,12 @@ public:
 
     virtual bool openFileLocation(const DUrl &fileUrl, bool &accepted) const;
 
-    virtual const QList<AbstractFileInfoPointer> getChildren(const DUrl &fileUrl, QDir::Filters filters, bool &accepted) const;
+    virtual const QList<AbstractFileInfoPointer> getChildren(const DUrl &fileUrl, const QStringList &nameFilters,
+                                                             QDir::Filters filters, QDirIterator::IteratorFlags flags,
+                                                             bool &accepted) const;
     virtual const AbstractFileInfoPointer createFileInfo(const DUrl &fileUrl, bool &accepted) const;
-    virtual const DDirIteratorPointer createDirIterator(const DUrl &fileUrl, QDir::Filters filters,
-                                                        QDirIterator::IteratorFlags flags,
+    virtual const DDirIteratorPointer createDirIterator(const DUrl &fileUrl, const QStringList &nameFilters,
+                                                        QDir::Filters filters, QDirIterator::IteratorFlags flags,
                                                         bool &accepted) const;
 
     virtual bool createSymlink(const DUrl &fileUrl, const DUrl &linkToUrl, bool &accepted) const;

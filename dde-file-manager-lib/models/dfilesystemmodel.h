@@ -100,10 +100,14 @@ public:
     void setSortColumn(int column, Qt::SortOrder order = Qt::AscendingOrder);
     void setSortRole(int role, Qt::SortOrder order = Qt::AscendingOrder);
 //    void setActiveIndex(const QModelIndex &index);
+    void setNameFilters(const QStringList &nameFilters);
+    void setFilters(QDir::Filters filters);
 
     Qt::SortOrder sortOrder() const;
     int sortColumn() const;
     int sortRole() const;
+    QStringList nameFilters() const;
+    QDir::Filters filters() const;
 
     void sort(int column, Qt::SortOrder order = Qt::AscendingOrder) Q_DECL_OVERRIDE;
     void sort();
@@ -137,6 +141,7 @@ private:
 //    QHash<DUrl, FileSystemNodePointer> m_urlToNode;
 
     int m_sortRole = FileDisplayNameRole;
+    QStringList m_nameFilters;
     QDir::Filters m_filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System;
     Qt::SortOrder m_srotOrder = Qt::AscendingOrder;
 //    QModelIndex m_activeIndex;

@@ -25,7 +25,8 @@ public:
     };
 
     explicit JobController(const DDirIteratorPointer &iterator, QObject *parent = 0);
-    explicit JobController(const DUrl &fileUrl, QDir::Filters filters, QObject *parent = 0);
+    explicit JobController(const DUrl &fileUrl, const QStringList &nameFilters,
+                           QDir::Filters filters, QObject *parent = 0);
 
     ~JobController();
 
@@ -45,6 +46,7 @@ signals:
 private:
     DDirIteratorPointer m_iterator;
     DUrl m_fileUrl;
+    QStringList m_nameFilters;
     QDir::Filters m_filters;
 
     State m_state = Stoped;

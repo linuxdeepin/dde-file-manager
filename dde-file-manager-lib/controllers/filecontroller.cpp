@@ -31,6 +31,7 @@ class FileDirIterator : public DDirIterator
 {
 public:
     FileDirIterator(const QString &path,
+                    const QStringList &nameFilters,
                     QDir::Filters filter,
                     QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags);
 
@@ -75,13 +76,13 @@ const AbstractFileInfoPointer FileController::createFileInfo(const DUrl &fileUrl
         return AbstractFileInfoPointer(new FileInfo(fileUrl));
 }
 
-const DDirIteratorPointer FileController::createDirIterator(const DUrl &fileUrl, QDir::Filters filters,
-                                                            QDirIterator::IteratorFlags flags,
+const DDirIteratorPointer FileController::createDirIterator(const DUrl &fileUrl, const QStringList &nameFilters,
+                                                            QDir::Filters filters, QDirIterator::IteratorFlags flags,
                                                             bool &accepted) const
 {
     accepted = true;
 
-    return DDirIteratorPointer(new FileDirIterator(fileUrl.path(), filters, flags));
+    return DDirIteratorPointer(new FileDirIterator(fileUrl.path(), nameFilters, filters, flags));
 }
 
 bool FileController::openFile(const DUrl &fileUrl, bool &accepted) const
@@ -462,9 +463,10 @@ void FileController::setUrlsToClipboard(const DUrlList &list, const QByteArray &
     qApp->clipboard()->setMimeData(mimeData);
 }
 
-FileDirIterator::FileDirIterator(const QString &path, QDir::Filters filter, QDirIterator::IteratorFlags flags)
+FileDirIterator::FileDirIterator(const QString &path, const QStringList &nameFilters,
+                                 QDir::Filters filter, QDirIterator::IteratorFlags flags)
     : DDirIterator()
-    , iterator(path, filter, flags)
+    , iterator(path, nameFilters, filter, flags)
 {
 
 }

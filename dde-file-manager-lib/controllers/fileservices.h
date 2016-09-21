@@ -72,12 +72,14 @@ public:
     bool openInTerminal(const DUrl &fileUrl) const;
 
     const AbstractFileInfoPointer createFileInfo(const DUrl &fileUrl) const;
-    const DDirIteratorPointer createDirIterator(const DUrl &fileUrl, QDir::Filters filters,
+    const DDirIteratorPointer createDirIterator(const DUrl &fileUrl, const QStringList &nameFilters, QDir::Filters filters,
                                                 QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags) const;
 
-    const QList<AbstractFileInfoPointer> getChildren(const DUrl &fileUrl, QDir::Filters filters, bool *ok = Q_NULLPTR);
+    const QList<AbstractFileInfoPointer> getChildren(const DUrl &fileUrl, const QStringList &nameFilters, QDir::Filters filters,
+                                                     QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags, bool *ok = Q_NULLPTR);
 
-    JobController *getChildrenJob(const DUrl &fileUrl, QDir::Filters filters) const;
+    JobController *getChildrenJob(const DUrl &fileUrl, const QStringList &nameFilters,
+                                  QDir::Filters filters, QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags) const;
 
 public slots:
     void openNewWindow(const DUrl &fileUrl) const;

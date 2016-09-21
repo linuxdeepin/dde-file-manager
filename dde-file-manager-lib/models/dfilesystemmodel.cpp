@@ -391,8 +391,7 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
             if (code != 0) {
                 jobController->terminate();
                 jobController->quit();
-                jobController->wait();
-                jobController->deleteLater();
+                jobController.clear();
 
                 return;
             }
@@ -402,7 +401,7 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
         }
     }
 
-    jobController = fileService->getChildrenJob(parentNode->fileInfo->fileUrl(), m_filters);
+    jobController = fileService->getChildrenJob(parentNode->fileInfo->fileUrl(), m_nameFilters, m_filters);
 
     if (!jobController)
         return;
@@ -587,6 +586,26 @@ void DFileSystemModel::setSortRole(int role, Qt::SortOrder order)
     m_srotOrder = order;
 }
 
+void DFileSystemModel::setNameFilters(const QStringList &nameFilters)
+{
+    if (m_nameFilters == nameFilters)
+        return;
+
+    m_nameFilters = nameFilters;
+
+    refresh();
+}
+
+void DFileSystemModel::setFilters(QDir::Filters filters)
+{
+    if (m_filters == filters)
+        return;
+
+    m_filters = filters;
+
+    refresh();
+}
+
 //void DFileSystemModel::setActiveIndex(const QModelIndex &index)
 //{
 //    int old_column_count = columnCount(m_activeIndex);
@@ -624,6 +643,16 @@ int DFileSystemModel::sortColumn() const
 int DFileSystemModel::sortRole() const
 {
     return m_sortRole;
+}
+
+QStringList DFileSystemModel::nameFilters() const
+{
+    return m_nameFilters;
+}
+
+QDir::Filters DFileSystemModel::filters() const
+{
+    return m_filters;
 }
 
 void DFileSystemModel::sort(int column, Qt::SortOrder order)
