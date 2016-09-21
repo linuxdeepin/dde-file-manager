@@ -4,10 +4,7 @@
 #include <QObject>
 
 class WindowManager;
-class FileManagerWindow;
-class DFileManagerWindow;
 class AppController;
-class DialogManager;
 class DUrl;
 class QTimer;
 
@@ -40,10 +37,7 @@ public slots:
 
 private:
     WindowManager* m_windowManager = NULL;
-    FileManagerWindow* m_fileManagerWindow = NULL;
-    DFileManagerWindow * m_dFileMangerWindow = NULL;
     AppController* m_appController = NULL;
-    DialogManager* m_dialogManager = NULL;
     QTimer* m_taskTimer = NULL;
 };
 
