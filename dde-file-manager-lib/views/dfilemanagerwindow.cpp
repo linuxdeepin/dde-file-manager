@@ -18,6 +18,7 @@
 #include "app/fmevent.h"
 #include "app/filesignalmanager.h"
 #include "app/filemanagerapp.h"
+#include "../controllers/fileservices.h"
 
 #include "xutil.h"
 #include "utils.h"
@@ -282,6 +283,7 @@ void DFileManagerWindow::initConnect()
         event = windowId();
         createNewView(event);
     });
+    connect(fileService, &FileServices::childrenRemoved, d->toolbar, &DToolBar::dirDeleted);
 }
 
 void DFileManagerWindow::onCurrentTabClosed(const int index){

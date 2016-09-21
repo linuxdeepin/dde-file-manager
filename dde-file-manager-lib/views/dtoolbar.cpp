@@ -233,6 +233,10 @@ void DToolBar::searchBarTextEntered()
     DUrl inputUrl = DUrl::fromUserInput(text);
 
     event = inputUrl;
+    if(inputUrl.isLocalFile()){
+        if(!QDir(inputUrl.path()).exists())
+            return;
+    }
     qDebug() << event << inputUrl << text;
 
     if (!m_searchBar->hasScheme()) {
@@ -423,6 +427,18 @@ void DToolBar::switchHistoryStack(const int index , const DUrl &url){
     else
         m_forwardButton->setEnabled(true);
     m_crumbWidget->setCrumb(url);
+}
+
+void DToolBar::dirDeleted(const DUrl &url)
+{
+    if(m_crumbWidget->getUrl().path().startsWith(url.path())){
+        m_crumbWidget->setCrumb(url.parentUrl());
+        FMEvent event;
+        event = WindowManager::getWindowId(this);
+        event = FMEvent::CrumbButton;
+        event = url.parentUrl();
+        emit m_crumbWidget->crumbSelected(event);
+    }
 }
 
 void DToolBar::removeNavStackAt(int index){
