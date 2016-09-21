@@ -117,13 +117,6 @@ QList<QUrl> DFileDialogHandle::selectedUrls() const
     return d->dialog->selectedUrls();
 }
 
-void DFileDialogHandle::setNameFilter(const QString &filter)
-{
-    D_D(DFileDialogHandle);
-
-    d->dialog->setNameFilter(filter);
-}
-
 void DFileDialogHandle::setNameFilters(const QStringList &filters)
 {
     D_D(DFileDialogHandle);
@@ -191,13 +184,6 @@ void DFileDialogHandle::setFileMode(QFileDialog::FileMode mode)
     D_D(DFileDialogHandle);
 
     d->dialog->setFileMode(mode);
-}
-
-QFileDialog::FileMode DFileDialogHandle::fileMode() const
-{
-    D_DC(DFileDialogHandle);
-
-    return d->dialog->fileMode();
 }
 
 void DFileDialogHandle::setAcceptMode(QFileDialog::AcceptMode mode)

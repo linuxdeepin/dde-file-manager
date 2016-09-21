@@ -164,10 +164,14 @@ bool AbstractFileController::openFileLocation(const DUrl &fileUrl, bool &accepte
     return false;
 }
 
-const QList<AbstractFileInfoPointer> AbstractFileController::getChildren(const DUrl &fileUrl, QDir::Filters filters, bool &accepted) const
+const QList<AbstractFileInfoPointer> AbstractFileController::getChildren(const DUrl &fileUrl, const QStringList &nameFilters,
+                                                                         QDir::Filters filters, QDirIterator::IteratorFlags flags,
+                                                                         bool &accepted) const
 {
     Q_UNUSED(fileUrl)
+    Q_UNUSED(nameFilters)
     Q_UNUSED(filters)
+    Q_UNUSED(flags)
 
     accepted = false;
 
@@ -183,10 +187,12 @@ const AbstractFileInfoPointer AbstractFileController::createFileInfo(const DUrl 
     return AbstractFileInfoPointer();
 }
 
-const DDirIteratorPointer AbstractFileController::createDirIterator(const DUrl &fileUrl, QDir::Filters filters,
-                                                                    QDirIterator::IteratorFlags flags, bool &accepted) const
+const DDirIteratorPointer AbstractFileController::createDirIterator(const DUrl &fileUrl, const QStringList &nameFilters,
+                                                                    QDir::Filters filters, QDirIterator::IteratorFlags flags,
+                                                                    bool &accepted) const
 {
     Q_UNUSED(fileUrl)
+    Q_UNUSED(nameFilters)
     Q_UNUSED(filters)
     Q_UNUSED(flags)
 

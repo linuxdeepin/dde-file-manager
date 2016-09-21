@@ -517,10 +517,11 @@ const AbstractFileInfoPointer FileServices::createFileInfo(const DUrl &fileUrl) 
     return AbstractFileInfoPointer();
 }
 
-const DDirIteratorPointer FileServices::createDirIterator(const DUrl &fileUrl, QDir::Filters filters, QDirIterator::IteratorFlags flags) const
+const DDirIteratorPointer FileServices::createDirIterator(const DUrl &fileUrl, const QStringList &nameFilters,
+                                                          QDir::Filters filters, QDirIterator::IteratorFlags flags) const
 {
     TRAVERSE(fileUrl, {
-                 const DDirIteratorPointer iterator = controller->createDirIterator(fileUrl, filters, flags, accepted);
+                 const DDirIteratorPointer iterator = controller->createDirIterator(fileUrl, nameFilters, filters, flags, accepted);
 
                  if(accepted)
                      return iterator;
@@ -529,10 +530,11 @@ const DDirIteratorPointer FileServices::createDirIterator(const DUrl &fileUrl, Q
     return DDirIteratorPointer();
 }
 
-const QList<AbstractFileInfoPointer> FileServices::getChildren(const DUrl &fileUrl, QDir::Filters filters, bool *ok)
+const QList<AbstractFileInfoPointer> FileServices::getChildren(const DUrl &fileUrl, const QStringList &nameFilters,
+                                                               QDir::Filters filters, QDirIterator::IteratorFlags flags, bool *ok)
 {
     TRAVERSE(fileUrl, {
-                 const QList<AbstractFileInfoPointer> list = controller->getChildren(fileUrl, filters, accepted);
+                 const QList<AbstractFileInfoPointer> list = controller->getChildren(fileUrl, nameFilters, filters, flags, accepted);
 
                  if (ok)
                     *ok = accepted;
@@ -547,14 +549,15 @@ const QList<AbstractFileInfoPointer> FileServices::getChildren(const DUrl &fileU
     return QList<AbstractFileInfoPointer>();
 }
 
-JobController *FileServices::getChildrenJob(const DUrl &fileUrl, QDir::Filters filters) const
+JobController *FileServices::getChildrenJob(const DUrl &fileUrl, const QStringList &nameFilters,
+                                            QDir::Filters filters, QDirIterator::IteratorFlags flags) const
 {
-    const DDirIteratorPointer &iterator = createDirIterator(fileUrl, filters);
+    const DDirIteratorPointer &iterator = createDirIterator(fileUrl, nameFilters, filters, flags);
 
     if (iterator)
         return new JobController(iterator, const_cast<FileServices*>(this));
 
-    return new JobController(fileUrl, filters, const_cast<FileServices*>(this));
+    return new JobController(fileUrl, nameFilters, filters, const_cast<FileServices*>(this));
 }
 
 QList<AbstractFileController*> FileServices::getHandlerTypeByUrl(const DUrl &fileUrl,

@@ -76,8 +76,10 @@ private:
 
     DiskMountInterface* m_diskMountInterface;
 public:
-    const QList<AbstractFileInfoPointer> getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const;
-    const AbstractFileInfoPointer createFileInfo(const DUrl &fileUrl, bool &accepted) const;
+    const QList<AbstractFileInfoPointer> getChildren(const DUrl &fileUrl, const QStringList &nameFilters,
+                                                     QDir::Filters filters, QDirIterator::IteratorFlags flags,
+                                                     bool &accepted) const Q_DECL_OVERRIDE;
+    const AbstractFileInfoPointer createFileInfo(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
 };
 
 #endif // UDISKLISTENER_H

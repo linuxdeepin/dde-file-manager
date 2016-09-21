@@ -18,8 +18,9 @@ class TrashDirIterator : public DDirIterator
 {
 public:
     TrashDirIterator(const DUrl &url,
-                    QDir::Filters filter,
-                    QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags);
+                     const QStringList &nameFilters,
+                     QDir::Filters filter,
+                     QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags);
 
     DUrl next() Q_DECL_OVERRIDE;
     bool hasNext() const Q_DECL_OVERRIDE;
@@ -33,11 +34,11 @@ private:
     QDirIterator *iterator;
 };
 
-TrashDirIterator::TrashDirIterator(const DUrl &url, QDir::Filters filter,
-                                   QDirIterator::IteratorFlags flags)
+TrashDirIterator::TrashDirIterator(const DUrl &url, const QStringList &nameFilters,
+                                   QDir::Filters filter, QDirIterator::IteratorFlags flags)
     : DDirIterator()
 {
-    iterator = new QDirIterator(TRASHFILEPATH + url.path(), filter, flags);
+    iterator = new QDirIterator(TRASHFILEPATH + url.path(), nameFilters, filter, flags);
 }
 
 DUrl TrashDirIterator::next()
@@ -201,12 +202,13 @@ bool TrashManager::deleteFiles(const DUrlList &urlList, const FMEvent &event, bo
     return true;
 }
 
-const DDirIteratorPointer TrashManager::createDirIterator(const DUrl &fileUrl, QDir::Filters filters,
-                                                          QDirIterator::IteratorFlags flags, bool &accepted) const
+const DDirIteratorPointer TrashManager::createDirIterator(const DUrl &fileUrl, const QStringList &nameFilters,
+                                                          QDir::Filters filters, QDirIterator::IteratorFlags flags,
+                                                          bool &accepted) const
 {
     accepted = true;
 
-    return DDirIteratorPointer(new TrashDirIterator(fileUrl, filters, flags));
+    return DDirIteratorPointer(new TrashDirIterator(fileUrl, nameFilters, filters, flags));
 }
 
 bool TrashManager::restoreTrashFile(const DUrlList &fileUrl, const FMEvent &event) const

@@ -14,7 +14,8 @@
 class SearchDiriterator : public DDirIterator
 {
 public:
-    SearchDiriterator(const DUrl &url, QDir::Filters filter, QDirIterator::IteratorFlags flags, SearchController *parent);
+    SearchDiriterator(const DUrl &url, const QStringList &nameFilters, QDir::Filters filter,
+                      QDirIterator::IteratorFlags flags, SearchController *parent);
     ~SearchDiriterator();
 
     DUrl next() Q_DECL_OVERRIDE;
@@ -35,6 +36,7 @@ private:
     DUrl targetUrl;
     QString keyword;
     QRegularExpression regular;
+    QStringList m_nameFilters;
     QDir::Filters m_filter;
     QDirIterator::IteratorFlags m_flags;
     mutable QList<DUrl> searchPathList;
@@ -43,10 +45,13 @@ private:
     bool closed = false;
 };
 
-SearchDiriterator::SearchDiriterator(const DUrl &url, QDir::Filters filter, QDirIterator::IteratorFlags flags, SearchController *parent)
+SearchDiriterator::SearchDiriterator(const DUrl &url, const QStringList &nameFilters,
+                                     QDir::Filters filter, QDirIterator::IteratorFlags flags,
+                                     SearchController *parent)
     : DDirIterator()
     , parent(parent)
     , fileUrl(url)
+    , m_nameFilters(nameFilters)
     , m_filter(filter)
     , m_flags(flags)
 {
@@ -90,7 +95,7 @@ bool SearchDiriterator::hasNext() const
 
             const DUrl &url = searchPathList.takeAt(0);
 
-            it = FileServices::instance()->createDirIterator(url, QDir::NoDotAndDotDot | m_filter, m_flags);
+            it = FileServices::instance()->createDirIterator(url, m_nameFilters,QDir::NoDotAndDotDot | m_filter, m_flags);
 
             if (!it) {
                 continue;
@@ -271,12 +276,13 @@ bool SearchController::openInTerminal(const DUrl &fileUrl, bool &accepted) const
     return FileServices::instance()->openInTerminal(realUrl(fileUrl));
 }
 
-const DDirIteratorPointer SearchController::createDirIterator(const DUrl &fileUrl, QDir::Filters filters,
-                                                              QDirIterator::IteratorFlags flags, bool &accepted) const
+const DDirIteratorPointer SearchController::createDirIterator(const DUrl &fileUrl, const QStringList &nameFilters,
+                                                              QDir::Filters filters, QDirIterator::IteratorFlags flags,
+                                                              bool &accepted) const
 {
     accepted = true;
 
-    return DDirIteratorPointer(new SearchDiriterator(fileUrl, filters, flags, const_cast<SearchController*>(this)));
+    return DDirIteratorPointer(new SearchDiriterator(fileUrl, nameFilters, filters, flags, const_cast<SearchController*>(this)));
 }
 
 void SearchController::onFileCreated(const DUrl &fileUrl)

@@ -29,7 +29,6 @@ public:
     void selectUrl(const QUrl &url);
     QList<QUrl> selectedUrls() const;
 
-    void setNameFilter(const QString &filter);
     void setNameFilters(const QStringList &filters);
     QStringList nameFilters() const;
     void selectNameFilter(const QString &filter);
@@ -42,7 +41,6 @@ public:
     QFileDialog::ViewMode viewMode() const;
 
     void setFileMode(QFileDialog::FileMode mode);
-    QFileDialog::FileMode fileMode() const;
 
     void setAcceptMode(QFileDialog::AcceptMode mode);
     QFileDialog::AcceptMode acceptMode() const;

@@ -20,9 +20,13 @@ const AbstractFileInfoPointer NetworkController::createFileInfo(const DUrl &file
     return AbstractFileInfoPointer(new NetworkFileInfo(fileUrl));
 }
 
-const QList<AbstractFileInfoPointer> NetworkController::getChildren(const DUrl &fileUrl, QDir::Filters filter, bool &accepted) const
+const QList<AbstractFileInfoPointer> NetworkController::getChildren(const DUrl &fileUrl, const QStringList &nameFilters,
+                                                                    QDir::Filters filters, QDirIterator::IteratorFlags flags,
+                                                                    bool &accepted) const
 {
-    Q_UNUSED(filter)
+    Q_UNUSED(filters)
+    Q_UNUSED(nameFilters)
+    Q_UNUSED(flags)
 
     QList<AbstractFileInfoPointer> infolist;
 

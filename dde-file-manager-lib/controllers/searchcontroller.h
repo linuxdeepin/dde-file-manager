@@ -32,8 +32,8 @@ public:
 
     bool openInTerminal(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
 
-    const DDirIteratorPointer createDirIterator(const DUrl &fileUrl, QDir::Filters filters,
-                                                QDirIterator::IteratorFlags flags,
+    const DDirIteratorPointer createDirIterator(const DUrl &fileUrl, const QStringList &nameFilters,
+                                                QDir::Filters filters, QDirIterator::IteratorFlags flags,
                                                 bool &accepted) const Q_DECL_OVERRIDE;
 
 private slots:

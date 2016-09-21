@@ -871,6 +871,26 @@ void DFileView::sortByColumn(int column)
     sortByRole(model()->columnToRole(column));
 }
 
+QStringList DFileView::nameFilters() const
+{
+    return model()->nameFilters();
+}
+
+void DFileView::setNameFilters(const QStringList &nameFilters)
+{
+    model()->setNameFilters(nameFilters);
+}
+
+QDir::Filters DFileView::filters() const
+{
+    return model()->filters();
+}
+
+void DFileView::setFilters(QDir::Filters filters)
+{
+    model()->setFilters(filters);
+}
+
 void DFileView::selectAll(int windowId)
 {
     if(windowId != WindowManager::getWindowId(this))
