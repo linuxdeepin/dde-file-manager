@@ -18,11 +18,14 @@
 #include "widgets/singleton.h"
 #include "widgets/commandlinemanager.h"
 
+#include "xdnd/xdndworkaround.h"
+
 #include <QLocalServer>
 #include <QLocalSocket>
 #include <QDataStream>
 #include <QGuiApplication>
 #include <QTimer>
+#include <QThreadPool>
 
 FileManagerApp::FileManagerApp(QObject *parent) : QObject(parent)
 {
@@ -42,6 +45,14 @@ FileManagerApp::~FileManagerApp()
 
 void FileManagerApp::initApp()
 {
+    /// init dialog manager
+    dialogManager;
+
+    /// fix Qt drag drop to google chrome bug
+    new XdndWorkaround();
+
+    QThreadPool::globalInstance()->setMaxThreadCount(MAX_THREAD_COUNT);
+
     QFont font;
     font.setPixelSize(14);
     qApp->setFont(font);
@@ -59,6 +70,7 @@ void FileManagerApp::initView()
 void FileManagerApp::initController()
 {
     m_appController = new AppController(this);
+    m_appController->createGVfSManager();
 }
 
 void FileManagerApp::initGtk()

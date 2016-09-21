@@ -19,13 +19,10 @@
 
 #include <QApplication>
 #include <QDebug>
-#include <QThreadPool>
 #include <QTranslator>
 #include <QLibraryInfo>
 #include <QDir>
 #include <QProcess>
-
-#include "xdnd/xdndworkaround.h"
 
 #ifdef ENABLE_PPROF
 #include <gperftools/profiler.h>
@@ -85,12 +82,6 @@ int main(int argc, char *argv[])
         if (translator_qt.load(QLibraryInfo::location(QLibraryInfo::TranslationsPath) + "/qt_" + QLocale::system().name() + ".qm"))
             app.installTranslator(&translator_qt);
 
-        /// fix Qt drag drop to google chrome bug
-        new XdndWorkaround();
-
-        dialogManager;
-        appController->createGVfSManager();
-        QThreadPool::globalInstance()->setMaxThreadCount(MAX_THREAD_COUNT);
         FileUtils::setDefaultFileManager();
 #ifdef ENABLE_PPROF
         int request = app.exec();

@@ -136,28 +136,34 @@ void WindowManager::showNewWindow(const DUrl &url, bool isAlwaysOpen)
 
 int WindowManager::getWindowId(const QWidget *window)
 {
+    int winId = m_windows.value(window->topLevelWidget(), -1);
+
+    if (winId != -1)
+        return winId;
+
     while (window) {
         if (window->inherits("DFileManagerWindow")) {
-            if (m_windows.isEmpty())
-                return window->winId();
-
-            return m_windows.value(window, -1);
+            return window->winId();
         }
 
         window = window->parentWidget();
     }
 
-    return m_windows.value(window, -1);
+    return -1;
 }
 
 QWidget *WindowManager::getWindowById(int winId)
 {
-    for(int i=0; i< m_windows.count(); i++){
-        if (m_windows.values().at(i) == winId){
-            QWidget* window = const_cast<QWidget *>(m_windows.keys().at(i));
-            return window;
-        }
+    const QWidget *widget = m_windows.key(winId);
+
+    if (widget)
+        return const_cast<QWidget*>(widget);
+
+    for (QWidget *widget : qApp->topLevelWidgets()) {
+        if ((int)widget->winId() == winId)
+            return widget;
     }
+
     return Q_NULLPTR;
 }
 
