@@ -54,7 +54,7 @@ IconProvider::IconProvider(QObject *parent) : QObject(parent)
     initConnect();
     setCurrentTheme();
 
-    connect(thumbnailManager, &ThumbnailManager::iconChanged, this, &IconProvider::iconChanged);
+    connect(thumbnailManager, &ThumbnailManager::pixmapChanged, this, &IconProvider::iconChanged);
 }
 
 IconProvider::~IconProvider()
@@ -353,16 +353,16 @@ void IconProvider::setDesktopIconPaths(const QMap<QString, QString> &iconPaths)
 QIcon IconProvider::findIcon(const DUrl& fileUrl, const QString &mimeType)
 {
 //    qDebug() << absoluteFilePath << m_mimeDatabase->mimeTypeForFile(absoluteFilePath).iconName() << FileUtils::getFileMimetype(absoluteFilePath) << getMimeTypeByFile(absoluteFilePath) << mimeType << getFileIcon(absoluteFilePath, 256);
-    QIcon theIcon;
+    QPixmap pixmap;
     QString _mimeType = mimeType;
     QString absoluteFilePath = fileUrl.path();
     if (thumbnailManager->canGenerateThumbnail(static_cast<QUrl>(fileUrl))) {
-        theIcon = thumbnailManager->getThumbnailIcon(static_cast<QUrl>(fileUrl),ThumbnailGenerator::THUMBNAIL_LARGE);
+        pixmap = thumbnailManager->getThumbnailPixmap(static_cast<QUrl>(fileUrl),ThumbnailGenerator::THUMBNAIL_LARGE);
 
-        if (theIcon.isNull())
-            thumbnailManager->requestThumbnailIcon(static_cast<QUrl>(fileUrl),ThumbnailGenerator::THUMBNAIL_LARGE);
+        if (pixmap.isNull())
+            thumbnailManager->requestThumbnailPixmap(static_cast<QUrl>(fileUrl),ThumbnailGenerator::THUMBNAIL_LARGE,20);
         else
-            return theIcon;
+            return QIcon(pixmap);
     } else if (mimeType == "application/x-desktop") {
         return IconProvider::getDesktopIcon(DesktopFile(absoluteFilePath).getIcon(), 48);
     } else if (systemPathManager->isSystemPath(absoluteFilePath)) {
@@ -370,7 +370,7 @@ QIcon IconProvider::findIcon(const DUrl& fileUrl, const QString &mimeType)
     }
 
     // If type of file is directory, return icon of directory
-    theIcon = m_mimeIcons.value(_mimeType);
+    QIcon theIcon = m_mimeIcons.value(_mimeType);
 
     if (!theIcon.isNull())
         return theIcon;

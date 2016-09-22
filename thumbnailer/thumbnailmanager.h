@@ -4,7 +4,7 @@
 #include <QThread>
 #include <QQueue>
 #include <QMap>
-#include <QIcon>
+#include <QPixmap>
 #include "thumbnailgenerator.h"
 #include <QCache>
 #include <QUrl>
@@ -16,9 +16,11 @@ QT_END_NAMESPACE
 struct ThumbnailTask{
     QUrl fileUrl;
     ThumbnailGenerator::ThumbnailSize size;
-    ThumbnailTask(const QUrl& url, const ThumbnailGenerator::ThumbnailSize& size):
+    int quality = -1;
+    ThumbnailTask(const QUrl& url, const ThumbnailGenerator::ThumbnailSize& size, const int& quality):
         fileUrl(url){
         this->size = size;
+        this->quality = quality;
     }
 };
 
@@ -34,16 +36,15 @@ public:
     QString getThumbnailPath(const QString& name, ThumbnailGenerator::ThumbnailSize size) const;
     QString getThumbnailFailPath(const QString& name) const;
 
-    QIcon getThumbnailIcon(const QUrl& fileUrl, ThumbnailGenerator::ThumbnailSize size);
-    void requestThumbnailIcon(const QUrl& fileUrl, ThumbnailGenerator::ThumbnailSize size);
-    QIcon getDefaultIcon(const QUrl& fileUrl);
-
+    QPixmap getThumbnailPixmap(const QUrl& fileUrl, ThumbnailGenerator::ThumbnailSize size);
+    void requestThumbnailPixmap(const QUrl& fileUrl, ThumbnailGenerator::ThumbnailSize size, const int& quality);
+    QPixmap getDefaultPixmap(const QUrl& fileUrl);
     bool canGenerateThumbnail(const QUrl& fileUrl);
 
     QString toMd5(const QString data);
 
 signals:
-    void iconChanged(const QString &filePath, const QIcon &icon);
+    void pixmapChanged(const QString &filePath, const QPixmap &pixmap);
 public slots:
     void onFileChanged(const QString &path);
 
@@ -59,7 +60,7 @@ private:
 
     QQueue<ThumbnailTask> taskQueue;
     QMap<QString, QString> m_pathToMd5;
-    QMap<QString, QIcon> m_md5ToIcon;
+    QMap<QString, QPixmap> m_md5ToPixmap;
 
     QFileSystemWatcher *m_watcher = Q_NULLPTR;
     ThumbnailGenerator m_thumbnailGenerator;
