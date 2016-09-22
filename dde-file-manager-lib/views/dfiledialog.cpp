@@ -1,8 +1,8 @@
 #include "dfiledialog.h"
 #include "views/dstatusbar.h"
+#include "models/dfilesystemmodel.h"
 
 #include <DTitlebar>
-#include <dtextbutton.h>
 #include <dthememanager.h>
 
 #include <QEventLoop>
@@ -11,6 +11,9 @@
 #include <QShowEvent>
 #include <QApplication>
 #include <QDesktopWidget>
+#include <QPushButton>
+#include <QComboBox>
+#include <QLineEdit>
 #include <QDebug>
 
 #include <private/qguiapplication_p.h>
@@ -21,8 +24,7 @@ class DFileDialogPrivate
 public:
     int result = 0;
 
-    DTextButton *rejectButton;
-    DTextButton *acceptButton;
+    QFileDialog::FileMode fileMode = QFileDialog::AnyFile;
     QFileDialog::AcceptMode acceptMode = QFileDialog::AcceptOpen;
     QEventLoop *eventLoop = Q_NULLPTR;
     QStringList nameFilters;
@@ -39,22 +41,13 @@ DFileDialog::DFileDialog(QWidget *parent)
     if (titleBar())
         titleBar()->setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
 
+    setAcceptMode(QFileDialog::AcceptOpen);
+
     DStatusBar *statusBar = getFileView()->statusBar();
 
-    if (statusBar->layout()) {
-        DTextButton *cancelButton = new DTextButton(tr("Cancel"));
-        DTextButton *openButton = new DTextButton(tr("Open"));
-
-        statusBar->layout()->addWidget(cancelButton);
-        statusBar->layout()->addWidget(openButton);
-        statusBar->layout()->setContentsMargins(10, 10, 10, 10);
-
-        connect(cancelButton, &DTextButton::clicked, this, &DFileDialog::reject);
-        connect(openButton, &DTextButton::clicked, this, &DFileDialog::accept);
-
-        d_func()->rejectButton = cancelButton;
-        d_func()->acceptButton = openButton;
-    }
+    statusBar->rejectButton()->setText(tr("Cancel"));
+    connect(statusBar->acceptButton(), &QPushButton::clicked, this, &DFileDialog::onAcceptButtonClicked);
+    connect(statusBar->rejectButton(), &QPushButton::clicked, this, &DFileDialog::onRejectButtonClicked);
 }
 
 DFileDialog::~DFileDialog()
@@ -114,7 +107,25 @@ void DFileDialog::selectUrl(const QUrl &url)
 
 QList<QUrl> DFileDialog::selectedUrls() const
 {
-    return DUrl::toQUrlList(getFileView()->selectedUrls());
+    D_DC(DFileDialog);
+
+    DUrlList list = getFileView()->selectedUrls();
+
+    if (d->acceptMode == QFileDialog::AcceptSave) {
+        if (list.isEmpty())
+            list << getFileView()->currentUrl();
+
+        const AbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(list.first());
+        const QString &newPath = fileInfo->absoluteFilePath() + QDir::separator() + getFileView()->statusBar()->lineEdit()->text();
+        QUrl url = list.first();
+
+        url.setPath(newPath);
+
+        if (fileInfo->isDir())
+            return QList<QUrl>() << url;
+    }
+
+    return DUrl::toQUrlList(list);
 }
 
 void DFileDialog::setNameFilters(const QStringList &filters)
@@ -122,6 +133,11 @@ void DFileDialog::setNameFilters(const QStringList &filters)
     D_D(DFileDialog);
 
     d->nameFilters = filters;
+
+    if (getFileView()->statusBar()->comboBox()) {
+        getFileView()->statusBar()->comboBox()->clear();
+        getFileView()->statusBar()->comboBox()->addItems(filters);
+    }
 
     if (selectedNameFilter().isEmpty())
         selectNameFilter(filters.isEmpty() ? QString() : filters.first());
@@ -172,14 +188,17 @@ DFileView::ViewMode DFileDialog::viewMode() const
 
 void DFileDialog::setFileMode(QFileDialog::FileMode mode)
 {
-    switch (mode) {
-    case QFileDialog::ExistingFile:
-        getFileView()->setSelectionMode(QAbstractItemView::SingleSelection);
-        break;
+    D_D(DFileDialog);
+
+    d->fileMode = mode;
+
+    switch (static_cast<int>(mode)) {
     case QFileDialog::ExistingFiles:
         getFileView()->setSelectionMode(QAbstractItemView::ExtendedSelection);
         break;
-    default: break;
+    default:
+        getFileView()->setSelectionMode(QAbstractItemView::SingleSelection);
+        break;
     }
 }
 
@@ -189,10 +208,19 @@ void DFileDialog::setAcceptMode(QFileDialog::AcceptMode mode)
 
     d->acceptMode = mode;
 
-    if (mode == QFileDialog::AcceptOpen)
-        d->acceptButton->setText(tr("Open"));
-    else
-        d->acceptButton->setText(tr("Save"));
+    if (mode == QFileDialog::AcceptOpen) {
+        getFileView()->statusBar()->setMode(DStatusBar::DialogOpen);
+        getFileView()->statusBar()->acceptButton()->setText(tr("Open"));
+        setFileMode(d->fileMode);
+
+        connect(getFileView()->statusBar()->comboBox(),
+                static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::activated),
+                this, &DFileDialog::selectNameFilter);
+    } else {
+        getFileView()->statusBar()->setMode(DStatusBar::DialogSave);
+        getFileView()->statusBar()->acceptButton()->setText(tr("Save"));
+        getFileView()->setSelectionMode(QAbstractItemView::SingleSelection);
+    }
 }
 
 QFileDialog::AcceptMode DFileDialog::acceptMode() const
@@ -204,14 +232,12 @@ QFileDialog::AcceptMode DFileDialog::acceptMode() const
 
 void DFileDialog::setLabelText(QFileDialog::DialogLabel label, const QString &text)
 {
-    D_D(DFileDialog);
-
-    switch (label) {
+    switch (static_cast<int>(label)) {
     case QFileDialog::Accept:
-        d->acceptButton->setText(text);
+        getFileView()->statusBar()->acceptButton()->setText(text);
         break;
     case QFileDialog::Reject:
-        d->rejectButton->setText(text);
+        getFileView()->statusBar()->rejectButton()->setText(text);
         break;
     default:
         break;
@@ -220,13 +246,11 @@ void DFileDialog::setLabelText(QFileDialog::DialogLabel label, const QString &te
 
 QString DFileDialog::labelText(QFileDialog::DialogLabel label) const
 {
-    D_DC(DFileDialog);
-
-    switch (label) {
+    switch (static_cast<int>(label)) {
     case QFileDialog::Accept:
-        return d->acceptButton->text();
+        return getFileView()->statusBar()->acceptButton()->text();
     case QFileDialog::Reject:
-        return d->rejectButton->text();
+        return getFileView()->statusBar()->rejectButton()->text();
     default:
         break;
     }
@@ -393,4 +417,56 @@ void DFileDialog::adjustPosition(QWidget *w)
         p.setY(desk.y());
 
     move(p);
+}
+
+void DFileDialog::onAcceptButtonClicked()
+{
+    D_DC(DFileDialog);
+
+    if (d->acceptMode == QFileDialog::AcceptSave) {
+        if (!getFileView()->statusBar()->lineEdit()->text().isEmpty())
+            accept();
+        return;
+    }
+
+    const DUrlList &urls = getFileView()->selectedUrls();
+
+    if (urls.isEmpty())
+        return;
+
+    switch (static_cast<int>(d->fileMode)) {
+    case QFileDialog::AnyFile:
+    case QFileDialog::ExistingFile:
+        if (urls.count() == 1) {
+            const AbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(urls.first());
+
+            if (fileInfo->isDir())
+                getFileView()->cd(urls.first());
+            else
+                accept();
+        }
+        break;
+    case QFileDialog::ExistingFiles:
+        for (const DUrl &url : urls) {
+            const AbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(url);
+
+            if (fileInfo->isDir())
+                return;
+        }
+        accept();
+        break;
+    default:
+        if (urls.count() == 1) {
+            const AbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(urls.first());
+
+            if (fileInfo->isDir())
+                accept();
+        }
+        break;
+    }
+}
+
+void DFileDialog::onRejectButtonClicked()
+{
+    reject();
 }

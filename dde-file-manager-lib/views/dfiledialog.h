@@ -65,6 +65,9 @@ protected:
     void adjustPosition(QWidget *w);
 
 private:
+    void onAcceptButtonClicked();
+    void onRejectButtonClicked();
+
     QScopedPointer<DFileDialogPrivate> d_ptr;
 
     Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_ptr), DFileDialog)
