@@ -11,17 +11,36 @@
 
 DWIDGET_USE_NAMESPACE
 
+QT_BEGIN_NAMESPACE
+class QPushButton;
+class QLineEdit;
+class QComboBox;
+QT_END_NAMESPACE
+
 class FMEvent;
 
 class DStatusBar : public QFrame
 {
     Q_OBJECT
 public:
+    enum Mode {
+        Normal,
+        DialogOpen,
+        DialogSave
+    };
+
     DStatusBar(QWidget * parent = 0);
 
     void initUI();
     void initConnect();
-    DSlider* scalingSlider();
+
+    void setMode(Mode mode);
+
+    DSlider* scalingSlider() const;
+    QPushButton *acceptButton() const;
+    QPushButton *rejectButton() const;
+    QLineEdit *lineEdit() const;
+    QComboBox *comboBox() const;
 
 public slots:
     void itemSelected(const FMEvent &event, int number);
@@ -32,6 +51,8 @@ protected:
     void resizeEvent(QResizeEvent* event);
 
 private:
+    void clearLayout();
+
     QString m_OnlyOneItemCounted;
     QString m_counted;
     QString m_OnlyOneItemSelected;
@@ -43,9 +64,14 @@ private:
     QString m_selectOnlyOneFile;
 
     QHBoxLayout * m_layout;
-    QLabel * m_label;
+    QLabel * m_label = Q_NULLPTR;
     DPictureSequenceView* m_loadingIndicator;
     DSlider* m_scaleSlider;
+
+    QPushButton *m_acceptButton = Q_NULLPTR;
+    QPushButton *m_rejectButton = Q_NULLPTR;
+    QLineEdit *m_lineEdit = Q_NULLPTR;
+    QComboBox *m_comboBox = Q_NULLPTR;
 };
 
 #endif // DSTATUSBAR_H

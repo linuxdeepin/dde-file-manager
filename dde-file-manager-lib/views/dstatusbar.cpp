@@ -11,11 +11,16 @@
 
 #include "widgets/singleton.h"
 
+#include <dtextbutton.h>
+#include <dcombobox.h>
+#include <dlineedit.h>
+
 DStatusBar::DStatusBar(QWidget *parent)
     : QFrame(parent)
 {
     initUI();
     initConnect();
+    setMode(Normal);
 }
 
 void DStatusBar::initUI()
@@ -31,6 +36,7 @@ void DStatusBar::initUI()
     m_layout = new QHBoxLayout(this);
 
     QStringList seq;
+
     for (int i(1); i != 91; ++i)
         seq.append(QString(":/images/images/Spinner/Spinner%1.png").arg(i, 2, 10, QChar('0')));
 
@@ -40,7 +46,6 @@ void DStatusBar::initUI()
     m_loadingIndicator->setSpeed(20);
     m_loadingIndicator->hide();
 
-    m_label = new QLabel(m_counted.arg("0"), this);
     m_scaleSlider = new DSlider(this);
     m_scaleSlider->setOrientation(Qt::Horizontal);
     m_scaleSlider->setFixedSize(120,20);
@@ -49,20 +54,7 @@ void DStatusBar::initUI()
     m_scaleSlider->setMinimum(0);
     m_scaleSlider->setMaximum(4);
 
-
-    m_layout->addStretch(3);
-    m_layout->addWidget(m_loadingIndicator);
-    m_layout->addWidget(m_label);
-    m_layout->addStretch(2);
-    m_layout->addWidget(m_scaleSlider);
-    m_layout->setSpacing(14);
-    m_layout->addSpacing(4);
-    m_layout->setContentsMargins(0, 0, 0, 0);
     setFocusPolicy(Qt::NoFocus);
-    setStyleSheet("QFrame{\
-                  background-color: white;\
-                  color: #797979;\
-              }");
     setLayout(m_layout);
 }
 
@@ -73,93 +65,219 @@ void DStatusBar::initConnect()
     connect(fileSignalManager, &FileSignalManager::loadingIndicatorShowed, this, &DStatusBar::setLoadingIncatorVisible);
 }
 
-DSlider *DStatusBar::scalingSlider()
+void DStatusBar::setMode(DStatusBar::Mode mode)
+{
+    switch (mode) {
+    case Normal:
+        if (m_label)
+            return;
+
+        if (m_acceptButton) {
+            m_acceptButton->hide();
+            m_acceptButton->deleteLater();
+            m_acceptButton = Q_NULLPTR;
+        }
+        if (m_rejectButton) {
+            m_rejectButton->hide();
+            m_rejectButton->deleteLater();
+            m_rejectButton = Q_NULLPTR;
+        }
+        if (m_lineEdit) {
+            m_lineEdit->hide();
+            m_lineEdit->deleteLater();
+            m_lineEdit = Q_NULLPTR;
+        }
+        if (m_comboBox) {
+            m_comboBox->hide();
+            m_comboBox->deleteLater();
+            m_comboBox = Q_NULLPTR;
+        }
+
+        m_label = new QLabel(m_counted.arg("0"), this);
+
+        clearLayout();
+        m_layout->addStretch(3);
+        m_layout->addWidget(m_loadingIndicator);
+        m_layout->addWidget(m_label);
+        m_layout->addStretch(2);
+        m_layout->addWidget(m_scaleSlider);
+        m_layout->setSpacing(14);
+        m_layout->addSpacing(4);
+        m_layout->setContentsMargins(0, 0, 0, 0);
+
+        setStyleSheet("QFrame{"
+                      "background-color: white;"
+                      "color: #797979;}");
+
+        break;
+    case DialogOpen:
+        if (m_comboBox)
+            return;
+
+        if (m_lineEdit) {
+            m_lineEdit->hide();
+            m_lineEdit->deleteLater();
+            m_lineEdit = Q_NULLPTR;
+        }
+
+        m_comboBox = new DComboBox(this);
+        break;
+    case DialogSave:
+        if (m_lineEdit)
+            return;
+
+        if (m_comboBox) {
+            m_comboBox->hide();
+            m_comboBox->deleteLater();
+            m_comboBox = Q_NULLPTR;
+        }
+
+        m_lineEdit = new DLineEdit(this);
+        break;
+    }
+
+    if (mode == DialogOpen || mode == DialogSave) {
+        if (m_label) {
+            m_label->hide();
+            m_label->deleteLater();
+            m_label = Q_NULLPTR;
+        }
+        if (!m_acceptButton) {
+            m_acceptButton = new DTextButton(QString(), this);
+            m_acceptButton->setFixedHeight(28);
+        }
+        if (!m_rejectButton) {
+            m_rejectButton = new DTextButton(QString(), this);
+            m_rejectButton->setFixedHeight(28);
+        }
+
+        clearLayout();
+        m_layout->addWidget(m_scaleSlider);
+        if (mode == DialogOpen)
+            m_layout->addWidget(m_comboBox);
+        else
+            m_layout->addWidget(m_lineEdit);
+        m_layout->addStretch();
+        m_layout->addWidget(m_loadingIndicator);
+        m_layout->addWidget(m_rejectButton);
+        m_layout->addWidget(m_acceptButton);
+        m_layout->setSpacing(10);
+        m_layout->setContentsMargins(10, 10, 10, 10);
+
+        setStyleSheet("QFrame{"
+                      "background-color: white;"
+                      "color: #797979;"
+                      "border-top: 1px solid rgba(0, 0, 0, 0.1);}");
+    }
+}
+
+DSlider *DStatusBar::scalingSlider() const
 {
     return m_scaleSlider;
 }
 
+QPushButton *DStatusBar::acceptButton() const
+{
+    return m_acceptButton;
+}
+
+QPushButton *DStatusBar::rejectButton() const
+{
+    return m_rejectButton;
+}
+
+QLineEdit *DStatusBar::lineEdit() const
+{
+    return m_lineEdit;
+}
+
+QComboBox *DStatusBar::comboBox() const
+{
+    return m_comboBox;
+}
+
 void DStatusBar::itemSelected(const FMEvent &event, int number)
 {
-    if(event.windowId() != WindowManager::getWindowId(this))
+    if (!m_label || event.windowId() != WindowManager::getWindowId(this))
         return;
 
-    if(number > 1)
-    {
+    if (number > 1) {
         int fileCount = 0;
         qint64 fileSize = 0;
         int folderCount = 0;
         int folderContains = 0;
+
         foreach (DUrl url, event.fileUrlList()) {
             const AbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
 
-            if (fileInfo->isSymLink()){
+            if (fileInfo->isSymLink()) {
                 QFileInfo targetInfo(fileInfo->symLinkTarget());
-                if (targetInfo.exists() && targetInfo.isDir()){
+
+                if (targetInfo.exists() && targetInfo.isDir()) {
                     folderCount += 1;
                     folderContains += fileInfo->filesCount();
-                }else if (targetInfo.exists() && targetInfo.isFile()){
+                } else if (targetInfo.exists() && targetInfo.isFile()) {
                     fileSize += fileInfo->size();
                     fileCount += 1;
-                }else{
+                } else {
                     fileSize += fileInfo->size();
                     fileCount += 1;
                 }
-            }
-            else if (fileInfo->isFile()){
+            } else if (fileInfo->isFile()) {
                 fileSize += fileInfo->size();
                 fileCount += 1;
-            }else{
+            } else {
                 folderCount += 1;
                 folderContains += fileInfo->filesCount();
             }
         }
 
         QString selectedFolders;
-        if (folderCount == 1 && folderContains <= 1){
+
+        if (folderCount == 1 && folderContains <= 1) {
             selectedFolders = m_selectOnlyOneFolder.arg(QString::number(folderCount), m_OnlyOneItemCounted.arg(folderContains));
-        }else if (folderCount == 1 && folderContains > 1){
+        } else if (folderCount == 1 && folderContains > 1) {
             selectedFolders = m_selectOnlyOneFolder.arg(QString::number(folderCount), m_counted.arg(folderContains));
-        }else if (folderCount > 1 && folderContains <= 1){
+        } else if (folderCount > 1 && folderContains <= 1) {
             selectedFolders = m_selectFolders.arg(QString::number(folderCount), m_OnlyOneItemCounted.arg(folderContains));
-        }else if (folderCount > 1 && folderContains > 1){
+        } else if (folderCount > 1 && folderContains > 1) {
             selectedFolders = m_selectFolders.arg(QString::number(folderCount), m_counted.arg(folderContains));
-        }else{
+        } else {
             selectedFolders = "";
         }
 
         QString selectedFiles;
-        if (fileCount == 1){
+
+        if (fileCount == 1) {
             selectedFiles = m_selectOnlyOneFile.arg(QString::number(fileCount), FileUtils::formatSize(fileSize));
-        }else if (fileCount > 1 ){
+        } else if (fileCount > 1 ) {
             selectedFiles = m_selectFiles.arg(QString::number(fileCount), FileUtils::formatSize(fileSize));
-        }else{
+        } else {
             selectedFiles = "";
         }
 
-        if (selectedFolders.isEmpty()){
+        if (selectedFolders.isEmpty()) {
             m_label->setText(QString("%1").arg(selectedFiles));
-        }else if (selectedFiles.isEmpty()){
+        } else if (selectedFiles.isEmpty()) {
             m_label->setText(QString("%1").arg(selectedFolders));
-        }else{
+        } else {
             m_label->setText(QString("%1,%2").arg(selectedFolders, selectedFiles));
         }
-    }
-    else
-    {
-        if (number == 1){
-            if (event.fileUrlList().count() == 1){
+    } else {
+        if (number == 1) {
+            if (event.fileUrlList().count() == 1) {
                 DUrl url = event.fileUrlList().first();
-
                 const AbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
-                if (fileInfo->isFile()){
+
+                if (fileInfo->isFile()) {
                     m_label->setText(m_selectOnlyOneFile.arg(QString::number(number), FileUtils::formatSize(fileInfo->size())));
-                }else if (fileInfo->isDir()){
-                    if (fileInfo->filesCount() <= 1){
+                } else if (fileInfo->isDir()) {
+                    if (fileInfo->filesCount() <= 1) {
                         m_label->setText(m_selectOnlyOneFolder.arg(QString::number(number),
-                                                                        m_OnlyOneItemCounted.arg(QString::number(fileInfo->filesCount()))));
-                    }else{
+                                                                   m_OnlyOneItemCounted.arg(QString::number(fileInfo->filesCount()))));
+                    } else {
                         m_label->setText(m_selectOnlyOneFolder.arg(QString::number(number),
-                                                                        m_counted.arg(QString::number(fileInfo->filesCount()))));
+                                                                   m_counted.arg(QString::number(fileInfo->filesCount()))));
                     }
                 }
             }
@@ -169,15 +287,12 @@ void DStatusBar::itemSelected(const FMEvent &event, int number)
 
 void DStatusBar::itemCounted(const FMEvent &event, int number)
 {
-    if(event.windowId() != WindowManager::getWindowId(this))
+    if (!m_label || event.windowId() != WindowManager::getWindowId(this))
         return;
 
-    if(number > 1)
-    {
+    if (number > 1) {
         m_label->setText(m_counted.arg(QString::number(number)));
-    }
-    else
-    {
+    } else {
         m_label->setText(m_OnlyOneItemCounted.arg(QString::number(number)));
     }
 }
@@ -188,6 +303,9 @@ void DStatusBar::setLoadingIncatorVisible(const FMEvent &event, bool visible)
         return;
 
     m_loadingIndicator->setVisible(visible);
+
+    if (!m_label)
+        return;
 
     if (visible) {
         const AbstractFileInfoPointer &fileInfo = fileService->createFileInfo(event.fileUrl());
@@ -206,4 +324,10 @@ void DStatusBar::resizeEvent(QResizeEvent *event)
     m_loadingIndicator->move((event->size().width() - m_loadingIndicator->width()) / 2, 0);
 
     QFrame::resizeEvent(event);
+}
+
+void DStatusBar::clearLayout()
+{
+    while (m_layout->count() > 0)
+        delete m_layout->takeAt(0);
 }
