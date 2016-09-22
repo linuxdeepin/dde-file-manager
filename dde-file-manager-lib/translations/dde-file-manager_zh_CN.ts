@@ -48,22 +48,22 @@
 <context>
     <name>ComputerView</name>
     <message>
-        <location filename="../views/computerview.cpp" line="297"/>
+        <location filename="../views/computerview.cpp" line="298"/>
         <source>My Directories</source>
         <translation>我的目录</translation>
     </message>
     <message>
-        <location filename="../views/computerview.cpp" line="303"/>
+        <location filename="../views/computerview.cpp" line="304"/>
         <source>Internal Disk</source>
         <translation>内置磁盘</translation>
     </message>
     <message>
-        <location filename="../views/computerview.cpp" line="309"/>
+        <location filename="../views/computerview.cpp" line="310"/>
         <source>External Disk</source>
         <translation>外置磁盘</translation>
     </message>
     <message>
-        <location filename="../views/computerview.cpp" line="375"/>
+        <location filename="../views/computerview.cpp" line="376"/>
         <source>Disk</source>
         <translation>磁盘</translation>
     </message>
@@ -149,18 +149,18 @@
 <context>
     <name>DFileDialog</name>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="44"/>
+        <location filename="../views/dfiledialog.cpp" line="45"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="45"/>
-        <location filename="../views/dfiledialog.cpp" line="181"/>
+        <location filename="../views/dfiledialog.cpp" line="46"/>
+        <location filename="../views/dfiledialog.cpp" line="193"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="183"/>
+        <location filename="../views/dfiledialog.cpp" line="195"/>
         <source>Save</source>
         <translation>保存</translation>
     </message>
@@ -235,8 +235,8 @@
         <translation type="vanished">磁盘</translation>
     </message>
     <message>
-        <location filename="../views/dleftsidebar.cpp" line="99"/>
-        <location filename="../views/dleftsidebar.cpp" line="200"/>
+        <location filename="../views/dleftsidebar.cpp" line="103"/>
+        <location filename="../views/dleftsidebar.cpp" line="224"/>
         <source>File Manager</source>
         <translation>文件管理器</translation>
     </message>
@@ -483,12 +483,12 @@
 <context>
     <name>FileController</name>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="299"/>
+        <location filename="../controllers/filecontroller.cpp" line="300"/>
         <source>New Folder</source>
         <translation>新建文件夹</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="311"/>
+        <location filename="../controllers/filecontroller.cpp" line="312"/>
         <source>New File</source>
         <translation>新建文本</translation>
     </message>
@@ -496,22 +496,27 @@
 <context>
     <name>FileJob</name>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="304"/>
+        <location filename="../../fileoperations/filejob.cpp" line="48"/>
+        <source>copy</source>
+        <translation>副本</translation>
+    </message>
+    <message>
+        <location filename="../../fileoperations/filejob.cpp" line="307"/>
         <source>%1 s</source>
         <translation>%1 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="308"/>
+        <location filename="../../fileoperations/filejob.cpp" line="311"/>
         <source>%1 m %2 s</source>
         <translation>%1 分 %2 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="314"/>
+        <location filename="../../fileoperations/filejob.cpp" line="317"/>
         <source>%1 h %2 m %3 s</source>
         <translation>%1 时 %2 分 %3 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="323"/>
+        <location filename="../../fileoperations/filejob.cpp" line="326"/>
         <source>%1 d %2 h %3 m %4 s</source>
         <translation>%1 天 %2 时 %3 分 %4 秒</translation>
     </message>
@@ -1367,13 +1372,13 @@
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="240"/>
-        <location filename="../models/abstractfileinfo.cpp" line="303"/>
+        <location filename="../models/abstractfileinfo.cpp" line="306"/>
         <source>%1 item</source>
         <translation>%1 项</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="242"/>
-        <location filename="../models/abstractfileinfo.cpp" line="305"/>
+        <location filename="../models/abstractfileinfo.cpp" line="308"/>
         <source>%1 items</source>
         <translation>%1 项</translation>
     </message>
@@ -1425,7 +1430,7 @@
         <translation>无搜索结果</translation>
     </message>
     <message>
-        <location filename="../models/abstractfileinfo.cpp" line="599"/>
+        <location filename="../models/abstractfileinfo.cpp" line="603"/>
         <source>Loading...</source>
         <translation>正在加载中...</translation>
     </message>

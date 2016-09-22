@@ -45,25 +45,34 @@ QString FileJob::checkDuplicateName(const QString &name)
     QFile file(destUrl);
     QFileInfo startInfo(destUrl);
     int num = 1;
+    QString cpy = tr("copy");
     while (file.exists())
     {
         if(num == 1)
         {
             if(startInfo.isDir())
-                destUrl = QString("%1/%2(copy)").arg(startInfo.absolutePath()).
-                        arg(startInfo.fileName());
+                destUrl = QString("%1/%2(%3)").arg(startInfo.absolutePath(),
+                                                   startInfo.fileName(),
+                                                   cpy);
             else
-                destUrl = QString("%1/%2(copy).%3").arg(startInfo.absolutePath()).
-                        arg(startInfo.baseName()).arg(startInfo.completeSuffix());
+                destUrl = QString("%1/%2(%3).%4").arg(startInfo.absolutePath(),
+                                                      startInfo.baseName(),
+                                                      cpy,
+                                                      startInfo.completeSuffix());
         }
         else
         {
             if(startInfo.isDir())
-                destUrl = QString("%1/%2(copy %3)").arg(startInfo.absolutePath()).
-                        arg(startInfo.fileName()).arg(num);
+                destUrl = QString("%1/%2(%3 %4)").arg(startInfo.absolutePath(),
+                                                      startInfo.fileName(),
+                                                      cpy,
+                                                      QString::number(num));
             else
-                destUrl = QString("%1/%2(copy %3).%4").arg(startInfo.absolutePath()).
-                        arg(startInfo.baseName()).arg(num).arg(startInfo.completeSuffix());
+                destUrl = QString("%1/%2(%3 %4).%5").arg(startInfo.absolutePath(),
+                                                         startInfo.baseName(),
+                                                         cpy,
+                                                         QString::number(num),
+                                                         startInfo.completeSuffix());
         }
         num++;
         file.setFileName(destUrl);
