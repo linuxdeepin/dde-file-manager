@@ -22,6 +22,8 @@
 
 #include "widgets/singleton.h"
 
+#include "shareinfoframe.h"
+
 #include <dscrollbar.h>
 #include <dexpandgroup.h>
 #include <dseparatorhorizontal.h>
@@ -169,6 +171,7 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
     qDebug() << url;
 
     QString basicInfo = tr("Basic info");
+    QString shareManager = tr("Share manager");
     initUI();
     UDiskDeviceInfo* diskInfo = deviceListener->getDevice(url.query());
     if (diskInfo == NULL){
@@ -216,9 +219,12 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
 
         QStringList titleList;
         if (fileInfo->isFile()){
-            titleList = QStringList() << basicInfo;
+            titleList << basicInfo;
         }else{
-            titleList = QStringList() << basicInfo;
+            titleList << basicInfo;
+            if (fileInfo->isDir()){
+                titleList << shareManager;
+            }
         }
         DExpandGroup *expandGroup = addExpandWidget(titleList);
         expandGroup->expand(0)->setExpandedSeparatorVisible(false);
@@ -231,6 +237,13 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
             m_fileCount = 1;
             m_size = fileInfo->size();
         }else if (fileInfo->isDir()){
+            setFixedSize(QSize(320, 500));
+            m_shareinfoFrame = createShareInfoFrame(fileInfo);
+            expandGroup->expand(0)->setExpandedSeparatorVisible(true);
+            expandGroup->expand(1)->setExpandedSeparatorVisible(false);
+            expandGroup->expand(1)->setContent(m_shareinfoFrame);
+            expandGroup->expand(1)->setExpand(false);
+
             startComputerFolderSize(m_url);
             m_fileCount = fileInfo->size();
         }
@@ -521,6 +534,12 @@ QFrame *PropertyDialog::createBasicInfoWidget(const AbstractFileInfoPointer &inf
     widget->setLayout(layout);
 
     return widget;
+}
+
+ShareInfoFrame *PropertyDialog::createShareInfoFrame(const AbstractFileInfoPointer &info)
+{
+    ShareInfoFrame* frame = new ShareInfoFrame(info, this);
+    return frame;
 }
 
 QFrame *PropertyDialog::createLocalDeviceInfoWidget(const DUrl &url)

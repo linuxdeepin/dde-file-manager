@@ -24,6 +24,7 @@ DWIDGET_END_NAMESPACE
 class AbstractFileInfo;
 class UDiskDeviceInfo;
 class DUrl;
+class ShareInfoFrame;
 
 DWIDGET_USE_NAMESPACE
 
@@ -120,6 +121,7 @@ private:
     QCheckBox * m_executableCheckBox = NULL;
     SectionValueLabel* m_folderSizeLabel = NULL;
     QFrame *m_basicInfoFrame = NULL;
+    ShareInfoFrame* m_shareinfoFrame = NULL;
     QFrame *m_localDeviceInfoFrame = NULL;
     QFrame *m_deviceInfoFrame = NULL;
     QFrame *m_OpenWithFrame = NULL;
@@ -130,11 +132,14 @@ private:
 
     void initTextShowFrame(const QString& text);
     QFrame *createBasicInfoWidget(const AbstractFileInfoPointer &info);
+    ShareInfoFrame* createShareInfoFrame(const AbstractFileInfoPointer &info);
     QFrame *createLocalDeviceInfoWidget(const DUrl& url);
     QFrame *createDeviceInfoWidget(UDiskDeviceInfo* info);
 
     QListWidget *createOpenWithListWidget(const AbstractFileInfoPointer &info);
     QFrame *createAuthorityManagermentWidget(const AbstractFileInfoPointer &info);
+
+
 
 };
 
