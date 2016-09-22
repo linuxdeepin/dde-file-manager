@@ -619,12 +619,11 @@ bool FileJob::copyDir(const QString &srcPath, const QString &tarPath, bool isMov
         }
         case Run:
         {
-            QFileInfoList fileInfoList = sourceDir.entryInfoList();
+            QFileInfoList fileInfoList = sourceDir.entryInfoList(QDir::AllEntries | QDir::System
+                                                                 | QDir::NoDotAndDotDot | QDir::NoSymLinks
+                                                                 | QDir::Hidden);
             foreach(QFileInfo fileInfo, fileInfoList)
             {
-                if(fileInfo.fileName() == "." || fileInfo.fileName() == "..")
-                    continue;
-
                 if(fileInfo.isDir())
                 {
                     if(!copyDir(fileInfo.filePath(), targetDir.absolutePath())){
