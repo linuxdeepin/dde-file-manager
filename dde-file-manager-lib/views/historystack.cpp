@@ -12,6 +12,11 @@ HistoryStack::HistoryStack(int threshold)
 
 void HistoryStack::append(DUrl url)
 {
+    if(m_index<=m_list.count()-1&&m_index>=0){
+        if(m_list.at(m_index) == url)
+            return;
+    }
+
     if (m_index < m_threshold) {
         ++m_index;
 
@@ -65,7 +70,6 @@ DUrl HistoryStack::forward()
 
         if (!fileInfo || !fileInfo->exists()){
             removeAt(m_index);
-
             --m_index;
         } else {
             break;
