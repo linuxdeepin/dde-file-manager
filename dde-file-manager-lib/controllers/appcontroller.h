@@ -27,6 +27,7 @@ public:
 
     void initConnect();
     void createGVfSManager();
+    void createUserShareManager();
 
 public slots:
     void actionOpen(const FMEvent& event);

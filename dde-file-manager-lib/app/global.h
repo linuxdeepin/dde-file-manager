@@ -25,6 +25,7 @@
 #define networkManager Singleton<NetworkManager>::instance()
 #define gvfsMountClient Singleton<GvfsMountClient>::instance()
 #define secrectManager Singleton<SecrectManager>::instance()
+#define userShareManager Singleton<UserShareManager>::instance()
 
 #define defaut_icon ":/images/images/default.png"
 #define defaut_computerIcon ":/images/images/computer.png"

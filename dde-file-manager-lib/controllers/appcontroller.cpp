@@ -26,7 +26,7 @@
 #include "gvfs/networkmanager.h"
 #include "gvfs/gvfsmountclient.h"
 #include "gvfs/secrectmanager.h"
-
+#include "usershare/usersharemanager.h"
 #include "widgets/singleton.h"
 
 #include <QProcess>
@@ -58,6 +58,11 @@ void AppController::createGVfSManager()
     networkManager;
     gvfsMountClient;
     secrectManager;
+}
+
+void AppController::createUserShareManager()
+{
+    userShareManager;
 }
 
 void AppController::actionOpen(const FMEvent &event)

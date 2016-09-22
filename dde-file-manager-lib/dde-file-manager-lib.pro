@@ -155,7 +155,8 @@ HEADERS += \
     shutil/shortcut.h \
     views/dtabbar.h \
     views/dfiledialog.h \
-    interfaces/dfiledialoghandle.h
+    interfaces/dfiledialoghandle.h \
+    dialogs/shareinfoframe.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -250,7 +251,8 @@ SOURCES += \
     shutil/shortcut.cpp \
     views/dtabbar.cpp \
     views/dfiledialog.cpp \
-    interfaces/dfiledialoghandle.cpp
+    interfaces/dfiledialoghandle.cpp \
+    dialogs/shareinfoframe.cpp
 
 INCLUDEPATH += $$PWD/../ $$PWD/../utils/
 
