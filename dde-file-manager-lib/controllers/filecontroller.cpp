@@ -299,7 +299,7 @@ bool FileController::newFolder(const FMEvent &event, bool &accepted) const
 
     QString folderName = checkDuplicateName(dir.absolutePath() + "/" + tr("New Folder"));
 
-    AppController::SelectedFiles.insert(DUrl::fromLocalFile(folderName), event.windowId());
+    AppController::selectionAndRenameFile = qMakePair(DUrl::fromLocalFile(folderName), event.windowId());
     return dir.mkdir(folderName);
 }
 
@@ -396,13 +396,13 @@ void FileController::onFileCreated(const QString &filePath)
 {
     DUrl url = DUrl::fromLocalFile(filePath);
     emit childrenAdded(url);
-    if (AppController::SelectedFiles.contains(url)){
-        int windowId = AppController::SelectedFiles.value(url);
+    if (AppController::selectionAndRenameFile.first == url) {
+        int windowId = AppController::selectionAndRenameFile.second;
+        AppController::selectionAndRenameFile = qMakePair(DUrl(), -1);
         FMEvent event;
         event = windowId;
         event = DUrlList() << url;
         emit fileSignalManager->requestSelectRenameFile(event);
-        AppController::SelectedFiles.remove(url);
     }
 }
 
