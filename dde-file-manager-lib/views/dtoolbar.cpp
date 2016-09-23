@@ -16,6 +16,8 @@
 #include "views/filemenumanager.h"
 
 #include "widgets/singleton.h"
+#include "views/dfileview.h"
+#include "views/dfilemanagerwindow.h"
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -396,6 +398,9 @@ void DToolBar::setViewModeButtonVisible(bool isVisible)
 
 void DToolBar::checkNavHistory(DUrl url)
 {
+    if (!m_navStack)
+        return;
+
     m_navStack->append(url);
     if(m_navStack->size() > 1)
         m_backButton->setEnabled(true);

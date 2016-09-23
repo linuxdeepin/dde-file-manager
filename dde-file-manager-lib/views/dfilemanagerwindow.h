@@ -75,6 +75,7 @@ public:
 
 signals:
     void aboutToClose();
+    void fileViewChanged(const DFileView* fileView);
 
 public slots:
     void moveCenter(const QPoint &cp);
@@ -91,6 +92,7 @@ public slots:
     void showComputerView(const FMEvent& event);
     void openNewTab(const FMEvent& event);
     void createNewView(const FMEvent& event);
+    void setFileView(DFileView *view);
     void switchToView(const int index);
     void onFileViewCurrentUrlChanged(const DUrl &url);
     void onTabAddableChanged(bool addable);
