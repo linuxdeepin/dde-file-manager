@@ -313,7 +313,6 @@ void DToolBar::searchBarChanged(QString path)
 void DToolBar::backButtonClicked()
 {
     DUrl url = m_navStack->back();
-
     if(!url.isEmpty())
     {
         FMEvent event;
