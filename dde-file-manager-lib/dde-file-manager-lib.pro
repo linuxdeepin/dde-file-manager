@@ -37,13 +37,14 @@ include(../dialogs/dialogs.pri)
 include(../utils/utils.pri)
 include(../filemonitor/filemonitor.pri)
 include(../chinese2pinyin/chinese2pinyin.pri)
-include(../xdnd/xdnd.pri)
 include(../simpleini/simpleini.pri)
 include(../fileoperations/fileoperations.pri)
 include(deviceinfo/deviceinfo.pri)
 include(dbusinterface/dbusinterface.pri)
 include(../thumbnailer/thumbnailer.pri)
 include(../usershare/usershare.pri)
+
+lessThan(QT_MAJOR_VERSION, 6): include(../xdnd/xdnd.pri)
 
 PKGCONFIG += x11 gtk+-2.0 xcb xcb-ewmh gsettings-qt libudev x11 xext libsecret-1\
              gio-unix-2.0 poppler-qt5 libstartup-notification-1.0 xcb-aux

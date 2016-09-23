@@ -18,7 +18,9 @@
 #include "widgets/singleton.h"
 #include "widgets/commandlinemanager.h"
 
+#if QT_VERSION_MINOR < 6
 #include "xdnd/xdndworkaround.h"
+#endif
 
 #include <QLocalServer>
 #include <QLocalSocket>
@@ -48,8 +50,10 @@ void FileManagerApp::initApp()
     /// init dialog manager
     dialogManager;
 
+#if QT_VERSION_MINOR < 6
     /// fix Qt drag drop to google chrome bug
     new XdndWorkaround();
+#endif
 
     QThreadPool::globalInstance()->setMaxThreadCount(MAX_THREAD_COUNT);
 
