@@ -62,7 +62,7 @@ signals:
     void clicked();
     void moveNext(const int fromTabIndex);
     void movePrevius(const int fromTabIndex);
-    void requestNewWindow(const QString url);
+    void requestNewWindow(const DUrl url);
     void aboutToNewWindow(const int tabIndex);
     void draggingFinished();
     void draggingStarted();
@@ -117,7 +117,7 @@ class TabBar:public QGraphicsView{
     Q_OBJECT
 public:
     explicit TabBar(QWidget *parent = 0);
-    int addTabWithData(const int &viewIndex, const QString text, const QString url);
+    int addTabWithData(const int &viewIndex, const QString text, const DUrl url);
     QVariant tabData(const int index);
     int count() const;
     void removeTab(const int index);
@@ -125,7 +125,7 @@ public:
     void setCurrentIndex(const int index);
     bool tabAddable();
     void setTabData(const int &index, const QVariant &tabData);
-    void setTabText(const int viewIndex, const QString text, const QString url);
+    void setTabText(const int viewIndex, const QString text, const DUrl url);
     QSize tabSizeHint(const int &index);
     void updateScreen();
     void initConnections();
@@ -141,7 +141,7 @@ public slots:
     void onTabCloseButtonUnHovered(int closingIndex);
     void onMoveNext(const int fromTabIndex);
     void onMovePrevius(const int fromTabIndex);
-    void onRequestNewWindow(const QString url);
+    void onRequestNewWindow(const DUrl url);
     void onAboutToNewWindow(const int tabIndex);
 
 protected:

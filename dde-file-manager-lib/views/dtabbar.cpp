@@ -259,7 +259,6 @@ void Tab::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void Tab::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    qDebug()<<event->pos();
     if(m_isDragging&&!m_borderLeft){
         m_borderLeft = true;
         update();
@@ -286,7 +285,8 @@ void Tab::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             m_dragWidget->setHotSpot(QPoint(150+radius, 12+radius));
             m_dragWidget->startDrag();
             m_pressed = false;
-            emit requestNewWindow(tabData().toJsonObject()["url"].toString());
+
+            emit requestNewWindow(DUrl(tabData().toJsonObject().value("url").toString()));
         }
     }
 
@@ -471,7 +471,7 @@ TabBar::TabBar(QWidget *parent):QGraphicsView(parent){
     hide();
 }
 
-int TabBar::addTabWithData(const int &viewIndex, const QString text, const QString url)
+int TabBar::addTabWithData(const int &viewIndex, const QString text, const DUrl url)
 {
     Tab *tab = new Tab(0,viewIndex,text);
     m_tabs.append(tab);
@@ -485,7 +485,7 @@ int TabBar::addTabWithData(const int &viewIndex, const QString text, const QStri
     QJsonObject tabData;
     tabData["viewIndex"] = viewIndex;
     tabData["text"] = text;
-    tabData["url"] = url;
+    tabData["url"] = url.toString();
     tab->setTabData(QVariant(tabData));
 
     connect(tab, &Tab::clicked, this, [=]{
@@ -600,7 +600,7 @@ void TabBar::setTabData(const int &index, const QVariant &tabData)
     m_tabs.at(index)->setTabData(tabData);
 }
 
-void TabBar::setTabText(const int viewIndex, const QString text, const QString url)
+void TabBar::setTabText(const int viewIndex, const QString text, const DUrl url)
 {
     int counter = 0;
     for(auto it:m_tabs){
@@ -608,7 +608,7 @@ void TabBar::setTabText(const int viewIndex, const QString text, const QString u
             it->setTabText(text);
             QJsonObject tabData = it->tabData().toJsonObject();
             tabData["text"] = text;
-            tabData["url"] = url;
+            tabData["url"] = url.toString();
             it->setTabData(QVariant(tabData));
             it->update();
         }
@@ -700,9 +700,8 @@ void TabBar::onMovePrevius(const int fromTabIndex)
     setCurrentIndex(fromTabIndex-1);
 }
 
-void TabBar::onRequestNewWindow(const QString closeUrl)
+void TabBar::onRequestNewWindow(const DUrl url)
 {
-    DUrl url = DUrl::fromUserInput(closeUrl);
     FMEvent event;
     event = FMEvent::FileView;
     event = WindowManager::getWindowId(this);
