@@ -80,7 +80,7 @@ QString ThumbnailManager::getThumbnailFailPath(const QString &name) const
     return QString("%1/%2.png").arg(m_thumbnailFailPath,name);
 }
 
-QIcon ThumbnailManager::getThumbnailIcon(const QUrl& fileUrl, ThumbnailGenerator::ThumbnailSize size)
+QPixmap ThumbnailManager::getThumbnailPixmap(const QUrl& fileUrl, ThumbnailGenerator::ThumbnailSize size)
 {
     QString fpath = fileUrl.path();
 
@@ -88,14 +88,14 @@ QIcon ThumbnailManager::getThumbnailIcon(const QUrl& fileUrl, ThumbnailGenerator
     if(fileUrl.isLocalFile()){
         int pos = fpath.lastIndexOf('/');
         if (m_thumbnailLargePath == fpath.left(pos)) {
-            QIcon icon(fpath);
+            QPixmap icon(fpath);
             return icon;
         }
     }
 
 
     // check last modify time
-    if(m_md5ToIcon.contains(m_pathToMd5.value(fileUrl.toString()))&&fileUrl.isLocalFile()){
+    if(m_md5ToPixmap.contains(m_pathToMd5.value(fileUrl.toString()))&&fileUrl.isLocalFile()){
 
         // first of all , check fail thumbnail path
         QString md5 = toMd5(fileUrl.toString());
@@ -105,13 +105,13 @@ QIcon ThumbnailManager::getThumbnailIcon(const QUrl& fileUrl, ThumbnailGenerator
             QImage failedImg(thumbnailFailPath);
             if(failedImg.text("Thumb::MTime")!=QString::number(failedFInfo.lastModified().toMSecsSinceEpoch()/1000)||
                     failedImg.text("Thumb::Size")!= QString::number(QFile(thumbnailFailPath).size())){
-                m_md5ToIcon.take(m_pathToMd5.value(fileUrl.toString()));
+                m_md5ToPixmap.take(m_pathToMd5.value(fileUrl.toString()));
                 m_pathToMd5.take(fileUrl.toString());
                 QFile::remove(thumbnailFailPath);
-                return QIcon();
+                return QPixmap();
             }
             else
-                return getDefaultIcon(fileUrl);
+                return getDefaultPixmap(fileUrl);
         }
 
         // check thumbnail path(normal or large)
@@ -120,21 +120,21 @@ QIcon ThumbnailManager::getThumbnailIcon(const QUrl& fileUrl, ThumbnailGenerator
         QString dateStr = reader.text("Thumb::MTime");
         QFileInfo info(fpath);
         if(dateStr != QString::number(info.lastModified().toMSecsSinceEpoch()/1000)){
-            m_md5ToIcon.take(m_pathToMd5.value(fileUrl.toString()));
+            m_md5ToPixmap.take(m_pathToMd5.value(fileUrl.toString()));
             m_pathToMd5.take(fileUrl.toString());
             QFile::remove(thumbnailPath);
-            return QIcon();
+            return QPixmap();
         }
 
-        return m_md5ToIcon.value(m_pathToMd5.value(fileUrl.toString()));
+        return m_md5ToPixmap.value(m_pathToMd5.value(fileUrl.toString()));
     }
 
-    return QIcon();
+    return QPixmap();
 }
 
-void ThumbnailManager::requestThumbnailIcon(const QUrl& fileUrl, ThumbnailGenerator::ThumbnailSize size)
+void ThumbnailManager::requestThumbnailPixmap(const QUrl& fileUrl, ThumbnailGenerator::ThumbnailSize size, const int& quality)
 {
-    ThumbnailTask task(fileUrl,size);
+    ThumbnailTask task(fileUrl,size, quality);
 
     if (m_pathToMd5.contains(fileUrl.toString()))
         return;
@@ -148,10 +148,10 @@ void ThumbnailManager::requestThumbnailIcon(const QUrl& fileUrl, ThumbnailGenera
         start();
 }
 
-QIcon ThumbnailManager::getDefaultIcon(const QUrl &fileUrl)
+QPixmap ThumbnailManager::getDefaultPixmap(const QUrl &fileUrl)
 {
     //TODO
-    return QIcon();
+    return QPixmap();
 }
 
 bool ThumbnailManager::canGenerateThumbnail(const QUrl& fileUrl)
@@ -172,7 +172,7 @@ void ThumbnailManager::onFileChanged(const QString &path)
     const QString &md5 = m_pathToMd5.take(path);
 
     if (!md5.isEmpty())
-        emit iconChanged(path, QIcon());
+        emit pixmapChanged(path, QPixmap());
 }
 
 void ThumbnailManager::run()
@@ -190,10 +190,10 @@ void ThumbnailManager::run()
 
         m_pathToMd5[task.fileUrl.toString()] = md5;
 
-        QIcon icon = m_md5ToIcon.value(md5);
+        QPixmap pixmap = m_md5ToPixmap.value(md5);
 
-        if (!icon.isNull()) {
-            emit iconChanged(fpath, icon);
+        if (!pixmap.isNull()) {
+            emit pixmapChanged(fpath, pixmap);
 
             continue;
         };
@@ -201,15 +201,15 @@ void ThumbnailManager::run()
         QString thumbnailPath = QString("%1").arg(getThumbnailPath(md5, task.size));
 
         if (QFile(thumbnailPath).exists()) {
-            icon = QIcon(thumbnailPath);
+            pixmap = QPixmap(thumbnailPath);
 
-            m_md5ToIcon[md5] = icon;
+            m_md5ToPixmap[md5] = pixmap;
         }
         else if(m_thumbnailGenerator.canGenerateThumbnail(task.fileUrl)){
-            const QPixmap &pixmap = m_thumbnailGenerator.generateThumbnail(task.fileUrl, task.size);
+            const QPixmap &thumbNailedpixmap = m_thumbnailGenerator.generateThumbnail(task.fileUrl, task.size);
 
-            if(pixmap.isNull()){
-                // deal with fail thumbnailing icon
+            if(thumbNailedpixmap.isNull()){
+                // deal with fail thumbnailing pixmap
                 QString thumbnailFailedPath = getThumbnailFailPath(md5);
                 QImage img(1,1,QImage::Format_ARGB32_Premultiplied);
 
@@ -219,17 +219,16 @@ void ThumbnailManager::run()
                 foreach (QString key, keys) {
                     img.setText(key,attributeSet.value(key));
                 }
-                m_md5ToIcon[md5] = QIcon();
+                m_md5ToPixmap[md5] = QPixmap();
 
                 qDebug()<<"save failed thumbnail:"<<img.save(thumbnailFailedPath,"png")<<thumbnailFailedPath<<","<<task.fileUrl;
 
-                //do not emit icon changed, otherwise it will turn to a death loops
+                //do not emit pixmap changed, otherwise it will turn to a death loops
                 break;
             }
 
-            icon = QIcon(pixmap);
-            m_md5ToIcon[md5] = icon;
-            QImage img  = pixmap.toImage();
+            m_md5ToPixmap[md5] = thumbNailedpixmap;
+            QImage img  = thumbNailedpixmap.toImage();
 
             //write extra attribute messages
             QMap<QString,QString> attributeSet = m_thumbnailGenerator.getAttributeSet(task.fileUrl);
@@ -239,8 +238,8 @@ void ThumbnailManager::run()
                 img.setText(key,attributeSet.value(key));
             }
 
-            qDebug()<<"save thumbnail:"<<img.save(thumbnailPath,"png",20)<<thumbnailPath<<","<<task.fileUrl;
+            qDebug()<<"save thumbnail:"<<img.save(thumbnailPath,"png",task.quality)<<thumbnailPath<<","<<task.fileUrl;
         }
-        emit iconChanged(fpath, icon);
+        emit pixmapChanged(fpath, pixmap);
     }
 }
