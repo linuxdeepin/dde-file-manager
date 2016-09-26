@@ -3,8 +3,8 @@
 # Project created by QtCreator 2015-06-24T09:14:17
 #
 #-------------------------------------------------
-system($$PWD/../vendor/prebuild)
-include($$PWD/../vendor/vendor.pri)
+#system($$PWD/../vendor/prebuild)
+#include($$PWD/../vendor/vendor.pri)
 
 QT       += core gui svg dbus x11extras network
 
@@ -47,7 +47,8 @@ include(../usershare/usershare.pri)
 lessThan(QT_MAJOR_VERSION, 6): include(../xdnd/xdnd.pri)
 
 PKGCONFIG += x11 gtk+-2.0 xcb xcb-ewmh gsettings-qt libudev x11 xext libsecret-1\
-             gio-unix-2.0 poppler-qt5 libstartup-notification-1.0 xcb-aux
+             gio-unix-2.0 poppler-qt5 libstartup-notification-1.0 xcb-aux dtkbase\
+             dtkutil dtkwidget
 CONFIG += c++11 link_pkgconfig
 #DEFINES += QT_NO_DEBUG_OUTPUT
 DEFINES += QT_MESSAGELOGCONTEXT
