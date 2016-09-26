@@ -10,7 +10,8 @@ isEmpty(TARGET) {
 }
 
 TEMPLATE = app
-CONFIG += c++11
+CONFIG += c++11 link_pkgconfig
+PKGCONFIG += dtkbase dtkwidget
 
 isEmpty(VERSION) {
     VERSION = 1.1
