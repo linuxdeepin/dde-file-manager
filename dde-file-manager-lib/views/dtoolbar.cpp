@@ -398,14 +398,15 @@ void DToolBar::setViewModeButtonVisible(bool isVisible)
 
 void DToolBar::checkNavHistory(DUrl url)
 {
+
     if (!m_navStack)
         return;
 
     m_navStack->append(url);
-    if(m_navStack->size() > 1)
-        m_backButton->setEnabled(true);
-    else
+    if(m_navStack->isFirst())
         m_backButton->setEnabled(false);
+    else
+        m_backButton->setEnabled(true);
 
     if(m_navStack->isLast())
         m_forwardButton->setEnabled(false);

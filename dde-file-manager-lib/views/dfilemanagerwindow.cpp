@@ -82,6 +82,7 @@ DFileManagerWindow::DFileManagerWindow(QWidget *parent)
     initData();
     initUI();
     initConnect();
+    initFileView();
 }
 
 DFileManagerWindow::~DFileManagerWindow()
@@ -157,7 +158,7 @@ void DFileManagerWindow::initRightView()
     initTabBar();
     initViewLayout();
     initComputerView();
-    initFileView();
+//    initFileView();
 
     d->rightView = new QFrame;
 
@@ -490,15 +491,13 @@ void DFileManagerWindow::createNewView(const FMEvent &event)
         url = DUrl::fromUserInput(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0));
     else
         url = event.fileUrl();
-    view->cd(url);
 
     const AbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
     QString urlDisplayName = fileInfo->displayName();
 
-    d->tabBar->addTabWithData(viewIndex,urlDisplayName,url);
-
     setFileView(view);
-
+    d->tabBar->addTabWithData(viewIndex,urlDisplayName,url);
+    view->cd(url);
 }
 
 void DFileManagerWindow::setFileView(DFileView *view)
@@ -528,6 +527,9 @@ void DFileManagerWindow::onFileViewCurrentUrlChanged(const DUrl &url)
 {
     D_D(DFileManagerWindow);
 
+    if(!url.isValid())
+        return;
+
     int viewIndex = d->viewStackLayout->indexOf(d->fileView);
     const AbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
     QString urlDisplayName = fileInfo->displayName();
@@ -541,6 +543,8 @@ void DFileManagerWindow::switchToView(const int viewIndex)
 
     d->viewStackLayout->setCurrentIndex(viewIndex);
     d->fileView = qobject_cast<DFileView*>(d->viewStackLayout->widget(viewIndex));
+    if(!d->fileView)
+        return;
     emit fileViewChanged(d->fileView);
     d->leftSideBar->scene()->setCurrentUrl(d->fileView->currentUrl());
 
