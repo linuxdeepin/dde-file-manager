@@ -111,28 +111,34 @@ void DStatusBar::setMode(DStatusBar::Mode mode)
 
         break;
     case DialogOpen:
-        if (m_comboBox)
+        if (!m_comboBox) {
+            m_comboBox = new DComboBox(this);
+            m_comboBox->setMaximumWidth(200);
+        } else if (!m_comboBox->isVisible()) {
+            m_comboBox->show();
+        } else {
             return;
+        }
 
         if (m_lineEdit) {
             m_lineEdit->hide();
             m_lineEdit->deleteLater();
             m_lineEdit = Q_NULLPTR;
         }
-
-        m_comboBox = new DComboBox(this);
         break;
     case DialogSave:
         if (m_lineEdit)
             return;
 
-        if (m_comboBox) {
-            m_comboBox->hide();
-            m_comboBox->deleteLater();
-            m_comboBox = Q_NULLPTR;
+        if (!m_comboBox) {
+            m_comboBox = new DComboBox(this);
+            m_comboBox->setMaximumWidth(200);
         }
 
+        m_comboBox->hide();
+
         m_lineEdit = new DLineEdit(this);
+        m_lineEdit->setMaximumWidth(200);
         break;
     }
 
