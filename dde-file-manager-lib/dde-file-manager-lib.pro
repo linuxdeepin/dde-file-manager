@@ -52,9 +52,7 @@ include(../usershare/usershare.pri)
 
 lessThan(QT_MAJOR_VERSION, 6): include(../xdnd/xdnd.pri)
 
-PKGCONFIG += x11 gtk+-2.0 xcb xcb-ewmh gsettings-qt libudev x11 xext libsecret-1\
-             gio-unix-2.0 poppler-qt5 libstartup-notification-1.0 xcb-aux dtkbase\
-             dtkutil dtkwidget
+PKGCONFIG += gtk+-2.0 gsettings-qt libsecret-1 dtkbase dtkutil dtkwidget
 CONFIG += c++11 link_pkgconfig
 #DEFINES += QT_NO_DEBUG_OUTPUT
 DEFINES += QT_MESSAGELOGCONTEXT
