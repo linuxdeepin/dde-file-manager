@@ -19,6 +19,12 @@ isEmpty(VERSION) {
     VERSION = 1.0
 }
 
+DEFINES += QMAKE_TARGET=\\\"$$TARGET\\\" QMAKE_VERSION=\\\"$$VERSION\\\"
+
+isEmpty(QMAKE_ORGANIZATION_NAME) {
+    DEFINES += QMAKE_ORGANIZATION_NAME=\\\"deepin\\\"
+}
+
 ARCH = $$QMAKE_HOST.arch
 isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
     DEFINES += ARCH_MIPSEL
@@ -158,7 +164,9 @@ HEADERS += \
     views/dtabbar.h \
     views/dfiledialog.h \
     interfaces/dfiledialoghandle.h \
-    dialogs/shareinfoframe.h
+    dialogs/shareinfoframe.h \
+    interfaces/dfmstandardpaths.h \
+    interfaces/dfmglobal.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -254,7 +262,9 @@ SOURCES += \
     views/dtabbar.cpp \
     views/dfiledialog.cpp \
     interfaces/dfiledialoghandle.cpp \
-    dialogs/shareinfoframe.cpp
+    dialogs/shareinfoframe.cpp \
+    interfaces/dfmstandardpaths.cpp \
+    interfaces/dfmglobal.cpp
 
 INCLUDEPATH += $$PWD/../ $$PWD/../utils/
 
@@ -311,6 +321,7 @@ TRANSLATIONS += $$PWD/translations/$${TARGET}.ts \
 # Automating generation .qm files from .ts files
 CONFIG(release, debug|release) {
     system($$PWD/generate_translations.sh)
+    DEFINES += QT_NO_DEBUG_OUTPUT
 }
 
 translations.path = $$APPSHAREDIR/translations

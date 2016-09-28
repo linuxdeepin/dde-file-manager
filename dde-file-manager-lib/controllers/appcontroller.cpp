@@ -17,10 +17,9 @@
 #include "app/fmevent.h"
 #include "app/global.h"
 
+#include "interfaces/dfmstandardpaths.h"
 #include "shutil/fileutils.h"
-
 #include "views/windowmanager.h"
-
 #include "dbusinterface/soundeffect_interface.h"
 
 #include "gvfs/networkmanager.h"
@@ -290,7 +289,7 @@ void AppController::actionClearTrash(const FMEvent &event)
 {
     DUrlList list;
 
-    list << DUrl::fromLocalFile(TRASHINFOPATH) << DUrl::fromLocalFile(TRASHFILEPATH);
+    list << DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashInfosPath)) << DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath));
 
     fileService->deleteFiles(list, event);
 

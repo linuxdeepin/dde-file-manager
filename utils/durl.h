@@ -23,10 +23,6 @@
 #define NETWORK_ROOT "network:///"
 #define SMB_ROOT "smb:///"
 
-#define TRASHPATH QDir::homePath() + "/.local/share/Trash"
-#define TRASHFILEPATH TRASHPATH + "/files"
-#define TRASHINFOPATH TRASHPATH + "/info"
-
 class DUrl;
 
 QT_BEGIN_NAMESPACE

@@ -77,11 +77,6 @@ int main(int argc, char *argv[])
             fileManagerApp->runCacheTask();
         }
 
-        QTranslator translator_qt;
-
-        if (translator_qt.load(QLibraryInfo::location(QLibraryInfo::TranslationsPath) + "/qt_" + QLocale::system().name() + ".qm"))
-            app.installTranslator(&translator_qt);
-
         FileUtils::setDefaultFileManager();
 #ifdef ENABLE_PPROF
         int request = app.exec();

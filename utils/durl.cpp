@@ -1,11 +1,11 @@
 #include "durl.h"
+#include "interfaces/dfmstandardpaths.h"
 
 #include <QFileInfo>
 #include <QSet>
 #include <QDir>
 #include <QDebug>
 #include <QUrlQuery>
-
 
 QSet<QString> schemeList = QSet<QString>() << QString(TRASH_SCHEME)
                                            << QString(RECENT_SCHEME)
@@ -450,7 +450,7 @@ DUrl DUrl::toAbsolutePathUrl() const
 QString DUrl::toLocalFile() const
 {
     if (isTrashFile()) {
-        return TRASHFILEPATH + path();
+        return DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath) + path();
     } else if (isSearchFile()) {
         return DUrl(fragment()).toLocalFile();
     } else {

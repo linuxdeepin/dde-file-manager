@@ -1,6 +1,8 @@
 #include "filejob.h"
 
 #include "shutil/fileutils.h"
+#include "interfaces/dfmstandardpaths.h"
+
 #include <QFile>
 #include <QThread>
 #include <QDir>
@@ -158,15 +160,15 @@ DUrlList FileJob::doMoveToTrash(const DUrlList &files)
     QDir trashDir;
     DUrlList list;
 
-    if(!trashDir.mkpath(TRASHFILEPATH)) {
-        qDebug() << "mk" << TRASHINFOPATH << "failed!";
+    if(!trashDir.mkpath(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath))) {
+        qDebug() << "mk" << DFMStandardPaths::standardLocation(DFMStandardPaths::TrashInfosPath) << "failed!";
         /// TODO
 
         return list;
     }
 
-    if(!trashDir.mkpath(TRASHINFOPATH)) {
-        qDebug() << "mk" << TRASHINFOPATH << "failed!";
+    if(!trashDir.mkpath(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashInfosPath))) {
+        qDebug() << "mk" << DFMStandardPaths::standardLocation(DFMStandardPaths::TrashInfosPath) << "failed!";
         /// TODO
 
         return list;
@@ -999,7 +1001,7 @@ QString FileJob::getNotExistsTrashFileName(const QString &fileName)
     name.chop(suffix.size());
     name = name.left(200 - suffix.size());
 
-    while (QFile::exists(TRASHFILEPATH + "/" + name + suffix)) {
+    while (QFile::exists(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath) + "/" + name + suffix)) {
         name = QCryptographicHash::hash(name, QCryptographicHash::Md5).toHex();
     }
 
