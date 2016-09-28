@@ -5,11 +5,9 @@
 #include "controllers/fileservices.h"
 
 #include "app/global.h"
-
+#include "interfaces/dfmstandardpaths.h"
 #include "shutil/iconprovider.h"
-
 #include "models/dfilesystemmodel.h"
-
 #include "widgets/singleton.h"
 
 #include <QMimeType>
@@ -64,7 +62,7 @@ void TrashFileInfo::setUrl(const DUrl &fileUrl)
 {
     AbstractFileInfo::setUrl(fileUrl);
 
-    data->fileInfo.setFile(TRASHFILEPATH + fileUrl.path());
+    data->fileInfo.setFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath) + fileUrl.path());
 
     updateInfo();
 }
@@ -267,11 +265,11 @@ QString TrashFileInfo::sourceFilePath() const
 void TrashFileInfo::updateInfo()
 {
     const QString &filePath = data->fileInfo.absoluteFilePath();
-    const QString &basePath = TRASHFILEPATH;
+    const QString &basePath = DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath);
     const QString &fileBaseName = filePath.mid(basePath.size(), filePath.indexOf('/', basePath.size() + 1) - basePath.size());
 
-    if (QFile::exists(TRASHINFOPATH + fileBaseName + ".trashinfo")) {
-        QSettings setting(TRASHINFOPATH + fileBaseName + ".trashinfo", QSettings::NativeFormat);
+    if (QFile::exists(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashInfosPath) + fileBaseName + ".trashinfo")) {
+        QSettings setting(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashInfosPath) + fileBaseName + ".trashinfo", QSettings::NativeFormat);
 
         setting.beginGroup("Trash Info");
         setting.setIniCodec("utf-8");
