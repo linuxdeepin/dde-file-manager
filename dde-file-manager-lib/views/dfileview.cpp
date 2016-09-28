@@ -2241,7 +2241,7 @@ void DFileView::showNormalMenu(const QModelIndex &index)
 
     FMEvent event;
 
-    event = info->fileUrl();
+    event = info->redirectedFileUrl();
     event = list;
     event = windowId();
     event = FMEvent::FileView;
