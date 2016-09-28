@@ -18,6 +18,7 @@
 
 #include <private/qguiapplication_p.h>
 #include <qpa/qplatformtheme.h>
+#include <qpa/qplatformdialoghelper.h>
 
 class DFileDialogPrivate
 {
@@ -152,8 +153,40 @@ QStringList DFileDialog::nameFilters() const
 
 void DFileDialog::selectNameFilter(const QString &filter)
 {
-    if (!filter.isEmpty())
-        getFileView()->setNameFilters(QStringList() << filter);
+    D_D(DFileDialog);
+
+    int index = getFileView()->statusBar()->comboBox()->findText(filter);
+
+    if (index < 0)
+        return;
+
+    QStringList nameFilters = d->nameFilters;
+
+    if (index == nameFilters.size()) {
+        QAbstractItemModel *comboModel = getFileView()->statusBar()->comboBox()->model();
+        nameFilters.append(comboModel->index(comboModel->rowCount() - 1, 0).data().toString());
+        setNameFilters(nameFilters);
+    }
+
+    QString nameFilter = nameFilters.at(index);
+    QStringList newNameFilters = QPlatformFileDialogHelper::cleanFilterList(nameFilter);
+    if (d->acceptMode == QFileDialog::AcceptSave) {
+        QString newNameFilterExtension;
+        if (newNameFilters.count() > 0)
+            newNameFilterExtension = QFileInfo(newNameFilters.at(0)).suffix();
+
+        QString fileName = getFileView()->statusBar()->lineEdit()->text();
+        const QString fileNameExtension = QFileInfo(fileName).suffix();
+        if (!fileNameExtension.isEmpty() && !newNameFilterExtension.isEmpty()) {
+            const int fileNameExtensionLength = fileNameExtension.count();
+            fileName.replace(fileName.count() - fileNameExtensionLength,
+                             fileNameExtensionLength, newNameFilterExtension);
+            getFileView()->clearSelection();
+            getFileView()->statusBar()->lineEdit()->setText(fileName);
+        }
+    }
+
+    getFileView()->setNameFilters(newNameFilters);
 }
 
 QString DFileDialog::selectedNameFilter() const
