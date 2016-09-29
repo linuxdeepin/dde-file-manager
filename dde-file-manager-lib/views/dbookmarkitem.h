@@ -95,6 +95,8 @@ public:
     void setSysPath(const QString &path);
     QString getSysPath();
     int windowId();
+    BookMark* getBookmarkModel();
+    void setBookmarkModel(BookMark* bookmark);
     static DBookmarkItem* makeBookmark(const QString &name, const DUrl &url);
     static DBookmarkMountedIndicatorItem* makeMountBookmark(DBookmarkItem* parentItem);
     void editMode();
@@ -190,6 +192,9 @@ private:
     bool m_isMounted = false;
     QString m_deviceLabel;
     QString m_sysPath;
+
+    /*bookmark model map */
+    BookMark* m_bookmarkModel;
 public slots:
     void editFinished();
     void checkMountedItem(const FMEvent& event);

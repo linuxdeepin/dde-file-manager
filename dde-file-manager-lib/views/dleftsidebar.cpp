@@ -186,6 +186,7 @@ void DLeftSideBar::handleLocationChanged(const FMEvent &e)
     event = e.fileUrl();
     event = FMEvent::LeftSideBar;
     event = WindowManager::getWindowId(this);
+    event.setBookmarkIndex(e.bookmarkIndex());
 
     if (e.fileUrl().isNetWorkFile()){
         emit fileSignalManager->requestFetchNetworks(e);
@@ -307,6 +308,7 @@ void DLeftSideBar::loadBookmark()
     {
         BookMark * bm = m_list.at(i);
         DBookmarkItem * item = DBookmarkItem::makeBookmark(bm->getName(), bm->getUrl());
+        item->setBookmarkModel(bm);
         m_scene->addItem(item);
     }
 }

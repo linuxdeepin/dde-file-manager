@@ -101,11 +101,13 @@ void DBookmarkItem::editFinished()
     FMEvent event;
     event = windowId();
     event = m_url;
+    if(m_group)
+        event.setBookmarkIndex(m_group->items()->indexOf(this));
 
     if (!m_lineEdit->text().isEmpty() && m_lineEdit->text() != m_textContent)
     {
-        bookmarkManager->renameBookmark(m_textContent, m_lineEdit->text(), m_url);
-        fileSignalManager->bookmarkRenamed(m_textContent, m_lineEdit->text(), event);
+        bookmarkManager->renameBookmark(getBookmarkModel(), m_lineEdit->text());
+        emit fileSignalManager->bookmarkRenamed(m_lineEdit->text(), event);
         m_textContent = m_lineEdit->text();
     }
 
@@ -136,6 +138,7 @@ void DBookmarkItem::checkMountedItem(const FMEvent &event)
         e = windowId();
         e = m_url;
         e = FMEvent::LeftSideBar;
+        e.setBookmarkIndex(m_group->items()->indexOf(this));
         qDebug() << m_isDisk << m_deviceInfo << m_url;
         m_group->url(e);
     }
@@ -447,6 +450,16 @@ int DBookmarkItem::windowId()
     return WindowManager::getWindowId(scene()->views().at(0));
 }
 
+BookMark *DBookmarkItem::getBookmarkModel()
+{
+    return m_bookmarkModel;
+}
+
+void DBookmarkItem::setBookmarkModel(BookMark *bookmark)
+{
+    m_bookmarkModel = bookmark;
+}
+
 DBookmarkItem *DBookmarkItem::makeBookmark(const QString &name, const DUrl &url)
 {
     DBookmarkItem * item = new DBookmarkItem;
@@ -532,6 +545,8 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             event = m_url;
             event = FMEvent::LeftSideBar;
             event = windowId();
+            if(m_group)
+                event.setBookmarkIndex(m_group->items()->indexOf(this));
             int result = dialogManager->showRemoveBookMarkDialog(event);
             if (result == DDialog::Accepted)
             {
@@ -711,6 +726,8 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     fmEvent = urls;
     fmEvent = windowId();
     fmEvent = FMEvent::LeftSideBar;
+    if(m_group)
+        fmEvent.setBookmarkIndex(m_group->items()->indexOf(this));
 
     menu->setEvent(fmEvent);
 

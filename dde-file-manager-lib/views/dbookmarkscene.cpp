@@ -374,6 +374,7 @@ void DBookmarkScene::doDragFinished(const QPointF &point, const QPointF &scenePo
         event = FMEvent::LeftSideBar;
         event = item->getUrl();
         event = item->windowId();
+        event.setBookmarkIndex(m_itemGroup->items()->indexOf(item));
 
         emit fileSignalManager->requestBookmarkRemove(event);
     }
@@ -452,23 +453,17 @@ void DBookmarkScene::setNetworkDiskItem(DBookmarkItem *item)
  */
 void DBookmarkScene::doBookmarkRemoved(const FMEvent &event)
 {
-    for(int i = 0; i < m_itemGroup->items()->size(); i++)
-    {
-        if(event.fileUrl() == m_itemGroup->items()->at(i)->getUrl())
-        {
-            DBookmarkItem * item = m_itemGroup->items()->at(i);
-            remove(item);
-            bookmarkManager->removeBookmark(item->text(), item->getUrl());
-
-            if (bookmarkManager->getBookmarks().count() == 0){
-                DBookmarkLine* lineItem = static_cast<DBookmarkLine*>(m_itemGroup->items()->at(i-1));
-                if (lineItem){
-                    if (lineItem->objectName() == "DBookmarkLine"){
-                        remove(lineItem);
-                    }
-                }
+    DBookmarkItem * item = m_itemGroup->items()->at(event.bookmarkIndex());
+    if(!item)
+        return;
+    remove(item);
+    bookmarkManager->removeBookmark(item->getBookmarkModel());
+    if (bookmarkManager->getBookmarks().count() == 0){
+        DBookmarkLine* lineItem = static_cast<DBookmarkLine*>(m_itemGroup->items()->at(event.bookmarkIndex()-1));
+        if (lineItem){
+            if (lineItem->objectName() == "DBookmarkLine"){
+                remove(lineItem);
             }
-            break;
         }
     }
 }
@@ -478,34 +473,25 @@ void DBookmarkScene::bookmarkRename(const FMEvent &event)
     if(windowId() != event.windowId())
         return;
 
-    for(int i = 0; i < m_itemGroup->items()->size(); i++)
-    {
-        if(event.fileUrl() == m_itemGroup->items()->at(i)->getUrl())
-        {
-            DBookmarkItem * item = m_itemGroup->items()->at(i);
-            item->editMode();
-            break;
-        }
+    if(event.bookmarkIndex() != -1){
+        DBookmarkItem* item = m_itemGroup->items()->at(event.bookmarkIndex());
+        item->editMode();
     }
 }
 
-void DBookmarkScene::doBookmarkRenamed(const QString &oldname, const QString &newname,const FMEvent &event)
+void DBookmarkScene::doBookmarkRenamed(const QString &newname,const FMEvent &event)
 {
-    for(int i = 0; i < m_itemGroup->items()->size(); i++)
-    {
-        DBookmarkItem * item = m_itemGroup->items()->at(i);
-        if(event.fileUrl() == item->getUrl() && item->text() == oldname)
-        {
-            DBookmarkItem * item = m_itemGroup->items()->at(i);
+    if(event.bookmarkIndex() != -1){
+        DBookmarkItem * item = m_itemGroup->items()->at(event.bookmarkIndex());
+        if(item)
             item->setText(newname);
-            break;
-        }
     }
 }
 
 void DBookmarkScene::doBookmarkAdded(const QString &name, const FMEvent &event)
 {
     DBookmarkItem * item = DBookmarkItem::makeBookmark(name, event.fileUrl());
+    item->setBookmarkModel(bookmarkManager->getBookmarks().at(0));
 
     int insertIndex  = getCustomBookmarkItemInsertIndex();
     insert(insertIndex, item);
