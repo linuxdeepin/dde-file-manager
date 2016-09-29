@@ -31,6 +31,7 @@ public:
         DUrlList fileUrlList;
 
         friend class FMEvent;
+        int bookMarkIndex = -1;
     };
 
     FMEvent(int wId = -1, EventSource source = Unknow, const DUrl &fileUrl = DUrl());
@@ -78,6 +79,12 @@ public:
 
     inline const DUrlList &fileUrlList() const
     {return data->fileUrlList;}
+
+    inline const int &bookmarkIndex() const
+    {return data->bookMarkIndex;}
+
+    inline void setBookmarkIndex(const int& index)
+    {data->bookMarkIndex = index;}
 
 private:
     QSharedDataPointer<FMEventData> data;

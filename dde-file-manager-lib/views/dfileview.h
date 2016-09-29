@@ -4,6 +4,7 @@
 #include <dlistview.h>
 
 #include "durl.h"
+#include "app/fmevent.h"
 
 #include <QDir>
 
@@ -22,7 +23,6 @@ DWIDGET_USE_NAMESPACE
 
 class FileController;
 class FileMenuManager;
-class FMEvent;
 class DFileSystemModel;
 class DFileItemDelegate;
 class AbstractFileInfo;
@@ -112,7 +112,7 @@ public:
 public slots:
     void preHandleCd(const FMEvent &event);
     void cd(const FMEvent &event);
-    void cd(const DUrl &url);
+    void cd(const DUrl &url, FMEvent::EventSource source = FMEvent::FileView);
     void cdUp(const FMEvent &event);
     void edit(const FMEvent &event);
     bool edit(const QModelIndex & index, EditTrigger trigger, QEvent * event) Q_DECL_OVERRIDE;

@@ -8,7 +8,6 @@
 #include "xdndworkaround.h"
 #include "dstatusbar.h"
 #include "app/global.h"
-#include "app/fmevent.h"
 #include "app/filemanagerapp.h"
 #include "app/filesignalmanager.h"
 
@@ -714,10 +713,10 @@ void DFileView::cd(const FMEvent &event)
     if (event.windowId() != windowId())
         return;
 
-    cd(event.fileUrl());
+    cd(event.fileUrl(), event.source());
 }
 
-void DFileView::cd(const DUrl &url)
+void DFileView::cd(const DUrl &url, FMEvent::EventSource source)
 {
     if (url.isEmpty())
         return;
@@ -732,7 +731,7 @@ void DFileView::cd(const DUrl &url)
 
     if (setCurrentUrl(url)) {
         FMEvent e;
-        e = FMEvent::FileView;
+        e = source;
         e = windowId();
         e = currentUrl();
         emit fileSignalManager->currentUrlChanged(e);

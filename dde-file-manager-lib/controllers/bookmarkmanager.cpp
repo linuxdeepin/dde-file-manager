@@ -16,6 +16,7 @@
 
 #include <stdlib.h>
 
+
 BookMarkManager::BookMarkManager(QObject *parent)
     : AbstractFileController(parent)
     , BaseManager()
@@ -107,32 +108,24 @@ BookMark * BookMarkManager::writeIntoBookmark(int index, const QString &name, co
     return bookmark;
 }
 
-void BookMarkManager::removeBookmark(const QString &name, const DUrl &url)
+void BookMarkManager::removeBookmark(BookMark *bookmark)
 {
-    for(int i = 0; i < m_bookmarks.size(); i++)
-    {
-        BookMark * bookmark = m_bookmarks.at(i);
-        if(bookmark->getName() == name && bookmark->getUrl() == url)
-        {
-            m_bookmarks.removeOne(bookmark);
-            break;
-        }
-    }
+//    for(int i = 0; i < m_bookmarks.size(); i++)
+//    {
+//        BookMark * bookmark = m_bookmarks.at(i);
+//        if(bookmark->getName() == name && bookmark->getUrl() == url)
+//        {
+//            m_bookmarks.removeOne(bookmark);
+//            break;
+//        }
+//    }
+    m_bookmarks.removeOne(bookmark);
     save();
 }
 
-void BookMarkManager::renameBookmark(const QString &oldname, const QString &newname, const DUrl &url)
+void BookMarkManager::renameBookmark(BookMark* bookmark, const QString &newname)
 {
-    qDebug() << oldname << newname << url;
-    for(int i = 0; i < m_bookmarks.size(); i++)
-    {
-        BookMark * bookmark = m_bookmarks.at(i);
-        if(bookmark->getName() == oldname && bookmark->getUrl() == url)
-        {
-            bookmark->setName(newname);
-            break;
-        }
-    }
+    bookmark->setName(newname);
     save();
 }
 

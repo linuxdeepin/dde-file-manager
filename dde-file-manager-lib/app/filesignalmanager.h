@@ -135,7 +135,7 @@ signals:
     void requestBookmarkRename(const FMEvent &event);
 
     /*book mark rename*/
-    void bookmarkRenamed(const QString &oldname, const QString &newname, const FMEvent &event);
+    void bookmarkRenamed(const QString &newname, const FMEvent &event);
 
     /*focus back to DFileView*/
     void requestFoucsOnFileView(const FMEvent &event);
