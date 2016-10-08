@@ -221,7 +221,7 @@ void ThumbnailManager::run()
                 }
                 m_md5ToPixmap[md5] = QPixmap();
 
-                qDebug()<<"save failed thumbnail:"<<img.save(thumbnailFailedPath,"png")<<thumbnailFailedPath<<","<<task.fileUrl;
+                img.save(thumbnailFailedPath,"png");
 
                 //do not emit pixmap changed, otherwise it will turn to a death loops
                 break;
@@ -238,7 +238,7 @@ void ThumbnailManager::run()
                 img.setText(key,attributeSet.value(key));
             }
 
-            qDebug()<<"save thumbnail:"<<img.save(thumbnailPath,"png",task.quality)<<thumbnailPath<<","<<task.fileUrl;
+            img.save(thumbnailPath,"png",task.quality);
         }
         emit pixmapChanged(fpath, pixmap);
     }
