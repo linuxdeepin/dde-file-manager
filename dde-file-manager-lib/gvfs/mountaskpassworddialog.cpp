@@ -86,6 +86,7 @@ void MountAskPasswordDialog::initUI()
 
 
     m_passwordCheckBox = new DCheckBox();
+    m_passwordCheckBox->setFixedSize(12,22);
     QLabel* rememberLabel = new QLabel(tr("Remember password"));
 
 
@@ -103,6 +104,7 @@ void MountAskPasswordDialog::initUI()
 
     QFormLayout* inputLayout = new  QFormLayout;
     inputLayout->setLabelAlignment(Qt::AlignVCenter | Qt::AlignRight);
+    inputLayout->setFormAlignment(Qt::AlignVCenter | Qt::AlignRight);
     inputLayout->addRow(usernameLable, m_usernameLineEdit);
     inputLayout->addRow(domainLable, m_domainLineEdit);
     inputLayout->addRow(passwordLable, m_passwordLineEdit);
