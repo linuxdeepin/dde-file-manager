@@ -190,6 +190,20 @@ void UserShareManager::addUserShare(const ShareInfo &info)
              << info.comment() << info.usershare_acl()
              << info.guest_ok();
         bool ret = QProcess::startDetached(cmd, args);
+
+        if(info.isWritable()){
+            QString cmd = "chmod";
+            QStringList args;
+            args << "-R"<<"777"<<info.path();
+            ret = QProcess::startDetached(cmd, args);
+        }
+        else {
+            QString cmd = "chmod";
+            QStringList args;
+            args << "-R"<<"755"<<info.path();
+            ret = QProcess::startDetached(cmd, args);
+        }
+
         if (ret){
             qDebug() << info.path();
             m_sharePathByFileManager.insert(info.path(), info.shareName());
