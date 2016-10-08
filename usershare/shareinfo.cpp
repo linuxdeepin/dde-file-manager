@@ -75,9 +75,9 @@ void ShareInfo::setGuest_ok(const QString &guest_ok)
 {
     m_guest_ok = guest_ok;
     if (m_guest_ok.isEmpty()){
-        m_guest_ok = "guest_ok=n";
+        m_guest_ok = "n";
     }
-    if(guest_ok == "guest_ok=n"){
+    if(guest_ok == "n"){
         m_isGuestOk = false;
     }else{
         m_isGuestOk = true;
