@@ -52,9 +52,6 @@ uint32_t XdndWorkaround::lastDropTime = 0;
 XdndWorkaround::XdndWorkaround():
     lastDrag_(nullptr) {
 
-    if(!QX11Info::isPlatformX11())
-        return;
-
     // we need to filter all X11 events
     qApp->installNativeEventFilter(this);
 
@@ -79,8 +76,6 @@ XdndWorkaround::XdndWorkaround():
 }
 
 XdndWorkaround::~XdndWorkaround() {
-    if(!QX11Info::isPlatformX11())
-        return;
     qApp->removeNativeEventFilter(this);
 }
 
