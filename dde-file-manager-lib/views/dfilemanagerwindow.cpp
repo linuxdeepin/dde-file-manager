@@ -463,6 +463,9 @@ void DFileManagerWindow::openNewTab(const FMEvent &event)
 {
     D_D(DFileManagerWindow);
 
+    if(!d->tabBar->tabAddable())
+        return;
+
     if (event.windowId() != windowId()){
         return;
     }
