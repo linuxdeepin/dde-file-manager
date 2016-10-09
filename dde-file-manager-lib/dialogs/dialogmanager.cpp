@@ -234,6 +234,7 @@ int DialogManager::showRenameNameSameErrorDialog(const QString &name, const FMEv
 int DialogManager::showDeleteFilesClearTrashDialog(const FMEvent &event)
 {
     QString ClearTrash = tr("Are you sure to empty %1 item?");
+    QString ClearTrashMutliple = tr("Are you sure to empty %1 items?");
     QString DeleteFileName = tr("Permanently delete %1?");
     QString DeleteFileItems = tr("Permanently delete %1 items?");
 
@@ -247,7 +248,10 @@ int DialogManager::showDeleteFilesClearTrashDialog(const FMEvent &event)
     if (urlList.first() == DUrl::fromTrashFile("/") && event.source() == FMEvent::Menu && urlList.size() == 1){
         buttonTexts[1]= tr("Empty");
         const AbstractFileInfoPointer &fileInfo = FileServices::instance()->createFileInfo(urlList.first());
-        d.setTitle(ClearTrash.arg(fileInfo->filesCount()));
+        if(fileInfo->filesCount() == 1)
+            d.setTitle(ClearTrash.arg(fileInfo->filesCount()));
+        else
+            d.setTitle(ClearTrashMutliple.arg(fileInfo->filesCount()));
     }else if (urlList.first().isLocalFile() && event.source() == FMEvent::FileView && urlList.size() == 1){
         FileInfo f(urlList.first());
         d.setTitle(DeleteFileName.arg(f.displayName()));
