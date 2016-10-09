@@ -142,9 +142,8 @@ DFileView::DFileView(QWidget *parent)
 
 DFileView::~DFileView()
 {
-    disconnect(this, &DFileView::rowCountChanged, this, &DFileView::updateStatusBar);
+    disconnect(this, &DFileView::rowCountChanged, this, &DFileView::onRowCountChanged);
     disconnect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &DFileView::updateStatusBar);
-    disconnect(this, &DFileView::rowCountChanged, this, &DFileView::updateContentLabel);
 }
 
 void DFileView::initUI()
@@ -217,7 +216,7 @@ void DFileView::initConnects()
             this, static_cast<bool (DFileView::*)(const FMEvent&)>(&DFileView::select));
     connect(fileSignalManager, &FileSignalManager::requestSelectRenameFile,
             this, &DFileView::selectAndRename);
-    connect(this, &DFileView::rowCountChanged, this, &DFileView::updateStatusBar);
+    connect(this, &DFileView::rowCountChanged, this, &DFileView::onRowCountChanged, Qt::QueuedConnection);
 
     connect(d->displayAsActionGroup, &QActionGroup::triggered, this, &DFileView::dislpayAsActionTriggered);
     connect(d->sortByActionGroup, &QActionGroup::triggered, this, &DFileView::sortByActionTriggered);
@@ -230,7 +229,6 @@ void DFileView::initConnects()
 
     connect(itemDelegate(), &DFileItemDelegate::commitData, this, &DFileView::handleCommitData);
     connect(model(), &DFileSystemModel::dataChanged, this, &DFileView::handleDataChanged);
-    connect(model(), &DFileSystemModel::rootUrlDeleted, this, &DFileView::updateContentLabel, Qt::QueuedConnection);
     connect(model(), &DFileSystemModel::stateChanged, this, &DFileView::onModelStateChanged);
 
     connect(fileIconProvider, &IconProvider::themeChanged, model(), &DFileSystemModel::update);
@@ -931,6 +929,16 @@ void DFileView::openWithActionTriggered(QAction *action)
     FileUtils::openFileByApp(url, app);
 }
 
+void DFileView::onRowCountChanged()
+{
+#ifndef CLASSICAL_SECTION
+    static_cast<DFileSelectionModel*>(selectionModel())->m_selectedList.clear();
+#endif
+
+    updateStatusBar();
+    updateContentLabel();
+}
+
 void DFileView::wheelEvent(QWheelEvent *event)
 {
     if(isIconViewMode() && Global::keyCtrlIsPressed()) {
@@ -1289,9 +1297,7 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
         clearSelection();
         showEmptyAreaMenu();
     } else {
-        const QModelIndexList &list = selectedIndexes();
-
-        if (!list.contains(index)) {
+        if (!isSelected(index)) {
             setCurrentIndex(index);
         }
 
@@ -1897,11 +1903,9 @@ void DFileView::setContentLabel(const QString &text)
 {
     D_D(DFileView);
 
-    if (text.isEmpty()) {
-        if (d->contentLabel) {
-            d->contentLabel->deleteLater();
-            d->contentLabel = Q_NULLPTR;
-        }
+    if (text.isEmpty() && d->contentLabel) {
+        d->contentLabel->deleteLater();
+        d->contentLabel = Q_NULLPTR;
 
         return;
     }
@@ -2370,8 +2374,6 @@ void DFileView::onModelStateChanged(int state)
     if (state == DFileSystemModel::Busy) {
         setContentLabel(QString());
 
-        disconnect(this, &DFileView::rowCountChanged, this, &DFileView::updateContentLabel);
-
         if (d->headerView) {
             d->headerView->setAttribute(Qt::WA_TransparentForMouseEvents);
         }
@@ -2388,8 +2390,6 @@ void DFileView::onModelStateChanged(int state)
 
         updateStatusBar();
         updateContentLabel();
-
-        connect(this, &DFileView::rowCountChanged, this, &DFileView::updateContentLabel);
 
         if (d->headerView) {
             d->headerView->setAttribute(Qt::WA_TransparentForMouseEvents, false);

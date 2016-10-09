@@ -310,6 +310,9 @@ void DStatusBar::setLoadingIncatorVisible(const FMEvent &event, bool visible)
 
     m_loadingIndicator->setVisible(visible);
 
+    if (visible)
+        m_loadingIndicator->play();
+
     if (!m_label)
         return;
 

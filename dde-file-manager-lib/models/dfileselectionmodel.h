@@ -28,6 +28,8 @@ private:
     QModelIndex m_lastSelectedIndex;
     QItemSelectionModel::SelectionFlags m_currentCommand;
     QTimer m_timer;
+
+    friend class DFileView;
 };
 
 #endif // DFILESELECTIONMODEL_H
