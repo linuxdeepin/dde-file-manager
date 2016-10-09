@@ -6,6 +6,7 @@
 #include "app/global.h"
 
 #include <QFormLayout>
+#include <QProcess>
 
 ShareInfoFrame::ShareInfoFrame(const AbstractFileInfoPointer &info, QWidget *parent) :
     QFrame(parent),
@@ -135,6 +136,12 @@ void ShareInfoFrame::handShareInfoChanged()
     if (m_sharCheckBox->isChecked()){
         userShareManager->addUserShare(info);
     }else{
+        if(info.isWritable()){
+            QString cmd = "chmod";
+            QStringList args;
+            args << "-R"<<"755"<<info.path();
+            QProcess::startDetached(cmd, args);
+        }
         userShareManager->deleteUserShareByPath(info.path());
     }
 }
