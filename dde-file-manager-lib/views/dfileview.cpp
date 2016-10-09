@@ -1054,6 +1054,9 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             appController->actionForward(fmevent);
 
             return;
+        case Qt::Key_T:
+            emit fileSignalManager->requestOpenInNewTab(fmevent);
+            return;
         default: break;
         }
 
