@@ -162,7 +162,7 @@ private slots:
     void dislpayAsActionTriggered(QAction * action);
     void sortByActionTriggered(QAction * action);
     void openWithActionTriggered(QAction * action);
-
+    void onRowCountChanged();
     void handleCommitData(QWidget * editor);
 
 protected:
