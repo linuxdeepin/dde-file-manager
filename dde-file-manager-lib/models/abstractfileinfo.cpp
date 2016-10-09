@@ -389,7 +389,7 @@ QVector<MenuAction> AbstractFileInfo::menuActionList(AbstractFileInfo::MenuType 
             if (isDir()) {
                 actionKeys << MenuAction::Compress << MenuAction::OpenInTerminal;
             } else if(isFile()) {
-                if (mimeTypeName().startsWith("image")) {
+                if (mimeTypeName().startsWith("image") && isReadable()) {
                     actionKeys << MenuAction::SetAsWallpaper;
                 }
 
