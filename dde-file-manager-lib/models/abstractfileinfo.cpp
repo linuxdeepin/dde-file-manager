@@ -17,10 +17,12 @@
 #include <QDateTime>
 #include <QDebug>
 #include <QApplication>
+#include <QCollator>
 
 namespace FileSortFunction {
 Qt::SortOrder sortOrderGlobal;
 AbstractFileInfo::sortFunction sortFun;
+QCollator sortCollator;
 
 bool sortByString(const QString &str1, const QString &str2, Qt::SortOrder order)
 {
@@ -31,7 +33,7 @@ bool sortByString(const QString &str1, const QString &str2, Qt::SortOrder order)
         return order == Qt::AscendingOrder;
     }
 
-    return ((order == Qt::DescendingOrder) ^ (Global::toPinyin(str1).toLower() < Global::toPinyin(str2).toLower())) == 0x01;
+    return ((order == Qt::DescendingOrder) ^ (sortCollator.compare(str1, str2) < 0)) == 0x01;
 }
 
 SORT_FUN_DEFINE(displayName, DisplayName, AbstractFileInfo)
@@ -668,6 +670,9 @@ void AbstractFileInfo::init()
 {
     m_userColumnRoles << DFileSystemModel::FileLastModifiedRole << DFileSystemModel::FileSizeRole
                       << DFileSystemModel::FileMimeTypeRole;
+
+    FileSortFunction::sortCollator.setNumericMode(true);
+    FileSortFunction::sortCollator.setCaseSensitivity(Qt::CaseInsensitive);
 }
 
 QMap<MenuAction, QVector<MenuAction> > AbstractFileInfo::subMenuActionList() const
