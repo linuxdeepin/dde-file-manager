@@ -164,6 +164,7 @@ private slots:
     void openWithActionTriggered(QAction * action);
     void onRowCountChanged();
     void handleCommitData(QWidget * editor);
+    void handleViewModeChanged(const DFileView::ViewMode& viewMode);
 
 protected:
     void wheelEvent(QWheelEvent * event) Q_DECL_OVERRIDE;

@@ -235,6 +235,7 @@ void DFileView::initConnects()
     connect(fileIconProvider, &IconProvider::iconChanged, this, [this] (const QString &filePath) {
         update(model()->index(DUrl::fromLocalFile(filePath)));
     });
+    connect(this, &DFileView::viewModeChanged, this, &DFileView::handleViewModeChanged);
 
     if (!d->cutUrlSet.capacity()) {
         d->cutUrlSet.reserve(1);
@@ -1265,6 +1266,18 @@ void DFileView::handleCommitData(QWidget *editor)
                          }, old_url, new_url, event)
     } else {
         fileService->renameFile(old_url, new_url, event);
+    }
+}
+
+void DFileView::handleViewModeChanged(const DFileView::ViewMode &viewMode)
+{
+    D_D(DFileView);
+    if(viewMode == DFileView::IconMode){
+        if(d->statusBar->scalingSlider()->isHidden())
+            d->statusBar->scalingSlider()->show();
+    }else{
+        if(!d->statusBar->scalingSlider()->isHidden())
+            d->statusBar->scalingSlider()->hide();
     }
 }
 
