@@ -819,6 +819,9 @@ void DFileItemDelegate::commitDataAndCloseActiveEditor()
 {
     QWidget *editor = parent()->indexWidget(editing_index);
 
+    if (!editor)
+        return;
+
     QMetaObject::invokeMethod(this, "_q_commitDataAndCloseEditor",
                               Qt::DirectConnection, Q_ARG(QWidget*, editor));
 }
@@ -882,7 +885,7 @@ bool DFileItemDelegate::eventFilter(QObject *object, QEvent *event)
     } else if (event->type() == QEvent::KeyPress) {
         QKeyEvent *e = static_cast<QKeyEvent*>(event);
 
-        if (e->key() == Qt::Key_Enter) {
+        if (e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return) {
             e->accept();
 
             QLineEdit *edit = qobject_cast<QLineEdit*>(object);
@@ -892,11 +895,11 @@ bool DFileItemDelegate::eventFilter(QObject *object, QEvent *event)
 
             return true;
         }
-    } else if (event->type() == QEvent::FocusOut) {
+    } /*else if (event->type() == QEvent::FocusOut) {
         onEditWidgetFocusOut();
 
         return true;
-    }
+    }*/
 
     return QStyledItemDelegate::eventFilter(object, event);
 }
