@@ -2403,6 +2403,9 @@ void DFileView::onModelStateChanged(int state)
 
 void DFileView::updateContentLabel()
 {
+    if (model()->state() != DFileSystemModel::Idle)
+        return;
+
     int count = this->count();
     const DUrl &currentUrl = this->currentUrl();
 
