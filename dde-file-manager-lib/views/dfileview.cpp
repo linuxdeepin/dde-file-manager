@@ -2046,6 +2046,7 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
     }
 
     updateItemSizeHint();
+    setFocus();
 
     emit viewModeChanged(mode);
 }
