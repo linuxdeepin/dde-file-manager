@@ -19,12 +19,14 @@
 #include "app/filesignalmanager.h"
 #include "app/filemanagerapp.h"
 #include "../controllers/fileservices.h"
+#include "../deviceinfo/udisklistener.h"
 
 #include "xutil.h"
 #include "utils.h"
 
 #include "widgets/singleton.h"
 #include "controllers/fileservices.h"
+#include "controllers/appcontroller.h"
 
 #include <dplatformwindowhandle.h>
 #include <DTitlebar>
@@ -323,6 +325,20 @@ void DFileManagerWindow::onCurrentTabClosed(const int index){
         d->newTabButton->hide();
 }
 
+QString DFileManagerWindow::getDisplayNameByDiskUrl(const DUrl &url)
+{
+    const AbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
+    QString urlDisplayName;
+    if(fileInfo)
+        urlDisplayName = fileInfo->displayName();
+
+    UDiskDeviceInfo* info = deviceListener->getDeviceByPath(url.path());
+    if(info)
+        urlDisplayName = info->displayName();
+
+    return urlDisplayName;
+}
+
 void DFileManagerWindow::onTabAddableChanged(bool addable)
 {
     D_D(DFileManagerWindow);
@@ -495,8 +511,11 @@ void DFileManagerWindow::createNewView(const FMEvent &event)
     else
         url = event.fileUrl();
 
-    const AbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
-    QString urlDisplayName = fileInfo->displayName();
+    if(deviceListener->isDeviceFolder(url.path())){
+        appController->actionOpenDisk(event);
+    }
+
+    QString urlDisplayName = getDisplayNameByDiskUrl(url);
 
     setFileView(view);
     d->tabBar->addTabWithData(viewIndex,urlDisplayName,url);
@@ -508,11 +527,6 @@ void DFileManagerWindow::setFileView(DFileView *view)
     D_D(DFileManagerWindow);
 
     d->viewStackLayout->setCurrentWidget(view);
-
-    if (d->fileView) {
-        disconnect(d->fileView, &DFileView::viewModeChanged, d->toolbar, &DToolBar::checkViewModeButton);
-        disconnect(d->fileView, &DFileView::currentUrlChanged ,this, &DFileManagerWindow::onFileViewCurrentUrlChanged);
-    }
 
     d->fileView = view;
 
@@ -534,8 +548,8 @@ void DFileManagerWindow::onFileViewCurrentUrlChanged(const DUrl &url)
         return;
 
     int viewIndex = d->viewStackLayout->indexOf(d->fileView);
-    const AbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
-    QString urlDisplayName = fileInfo->displayName();
+
+    QString urlDisplayName = getDisplayNameByDiskUrl(url);
 
     d->tabBar->setTabText(viewIndex,urlDisplayName, url);
 }
@@ -544,10 +558,19 @@ void DFileManagerWindow::switchToView(const int viewIndex)
 {
     D_D(DFileManagerWindow);
 
+    if (d->fileView) {
+        disconnect(d->fileView, &DFileView::viewModeChanged, d->toolbar, &DToolBar::checkViewModeButton);
+        disconnect(d->fileView, &DFileView::currentUrlChanged ,this, &DFileManagerWindow::onFileViewCurrentUrlChanged);
+    }
+
     d->viewStackLayout->setCurrentIndex(viewIndex);
     d->fileView = qobject_cast<DFileView*>(d->viewStackLayout->widget(viewIndex));
     if(!d->fileView)
         return;
+
+    connect(d->fileView, &DFileView::viewModeChanged, d->toolbar, &DToolBar::checkViewModeButton);
+    connect(d->fileView, &DFileView::currentUrlChanged ,this, &DFileManagerWindow::onFileViewCurrentUrlChanged);
+
     emit fileViewChanged(d->fileView);
     d->leftSideBar->scene()->setCurrentUrl(d->fileView->currentUrl());
 

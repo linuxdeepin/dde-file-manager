@@ -309,7 +309,9 @@ QVector<MenuAction> UDiskDeviceInfo::menuActionList(AbstractFileInfo::MenuType t
 
     actionKeys.reserve(6);
 
-    actionKeys << MenuAction::OpenDisk << MenuAction::OpenDiskInNewWindow
+    actionKeys << MenuAction::OpenDisk
+               << MenuAction::OpenDiskInNewWindow
+               << MenuAction::OpenInNewTab
                << MenuAction::Separator;
 
     if(m_diskInfo.CanEject){

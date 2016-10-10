@@ -20,6 +20,9 @@ public:
     static QString getCachePath();
     static QString getConfigPath();
     static QString getTrashPath();
+    static QString getTrashFilesPath();
+    static QString getDiskPath();
+    static QString getNetworkRootPath();
 };
 
 #endif // STANDARDPATH_H
