@@ -357,10 +357,7 @@ int DFileSystemModel::roleToColumn(int role) const
 
 void DFileSystemModel::fetchMore(const QModelIndex &parent)
 {
-    if (eventLoop)
-        eventLoop->exit(1);
-
-    if (!m_rootNode)
+    if (eventLoop || !m_rootNode)
         return;
 
     const FileSystemNodePointer &parentNode = getNodeByIndex(parent);
@@ -369,7 +366,7 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
         return;
 
     if (jobController) {
-        disconnect(jobController, &JobController::addChildren, this, &DFileSystemModel::addFile);
+        disconnect(jobController, &JobController::addChildren, this, &DFileSystemModel::onJobAddChildren);
         disconnect(jobController, &JobController::finished, this, &DFileSystemModel::onJobFinished);
         disconnect(jobController, &JobController::childrenUpdated, this, &DFileSystemModel::updateChildren);
 
@@ -406,7 +403,7 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
     if (!jobController)
         return;
 
-    connect(jobController, &JobController::addChildren, this, &DFileSystemModel::addFile, Qt::QueuedConnection);
+    connect(jobController, &JobController::addChildren, this, &DFileSystemModel::onJobAddChildren, Qt::DirectConnection);
     connect(jobController, &JobController::finished, this, &DFileSystemModel::onJobFinished, Qt::QueuedConnection);
     connect(jobController, &JobController::childrenUpdated, this, &DFileSystemModel::updateChildren, Qt::QueuedConnection);
 
@@ -536,6 +533,9 @@ bool DFileSystemModel::canFetchMore(const QModelIndex &parent) const
 
 QModelIndex DFileSystemModel::setRootUrl(const DUrl &fileUrl)
 {
+    // Restore state
+    setState(Idle);
+
     if (eventLoop)
         eventLoop->exit(1);
 
@@ -733,9 +733,9 @@ void DFileSystemModel::sort()
 const AbstractFileInfoPointer DFileSystemModel::fileInfo(const QModelIndex &index) const
 {
     const FileSystemNodePointer &node = getNodeByIndex(index);
-    if (node && node->fileInfo){
-        node->fileInfo->updateFileInfo();
-    }
+//    if (node && node->fileInfo){
+//        node->fileInfo->updateFileInfo();
+//    }
 
     return node ? node->fileInfo : AbstractFileInfoPointer();
 }
@@ -1046,7 +1046,7 @@ void DFileSystemModel::clear()
 
     const QModelIndex &index = createIndex(m_rootNode, 0);
 
-    beginRemoveRows(index, 0, rowCount(index) - 1);
+    beginRemoveRows(index, 0, m_rootNode->visibleChildren.count() - 1);
 
     deleteNode((m_rootNode));
 
@@ -1063,10 +1063,35 @@ void DFileSystemModel::setState(DFileSystemModel::State state)
     emit stateChanged(state);
 }
 
+void DFileSystemModel::onJobAddChildren(const AbstractFileInfoPointer &fileInfo)
+{
+    static QMutex mutex;
+    static QWaitCondition condition;
+
+    QTimer *timer = new QTimer;
+    timer->setSingleShot(true);
+    timer->moveToThread(qApp->thread());
+    timer->setParent(this);
+    connect(timer, &QTimer::timeout, this, [this, fileInfo, timer] {
+        timer->deleteLater();
+        addFile(fileInfo);
+        condition.wakeAll();
+    });
+    timer->metaObject()->invokeMethod(timer, "start", Q_ARG(int, 0));
+    mutex.lock();
+    condition.wait(&mutex);
+    mutex.unlock();
+}
+
 void DFileSystemModel::onJobFinished()
 {
     if (childrenUpdated)
         setState(Idle);
+
+    JobController *job = qobject_cast<JobController*>(sender());
+
+    if (job)
+        job->deleteLater();
 }
 
 void DFileSystemModel::addFile(const AbstractFileInfoPointer &fileInfo)

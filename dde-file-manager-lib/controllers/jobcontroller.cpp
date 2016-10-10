@@ -109,7 +109,9 @@ void JobController::run()
             mutex.lock();
             waitCondition.wait(&mutex);
             mutex.unlock();
-        } else if (m_state == Stoped) {
+        }
+
+        if (m_state == Stoped) {
             break;
         }
 
@@ -118,7 +120,7 @@ void JobController::run()
         if (update_children) {
             fileInfoQueue.enqueue(m_iterator->fileInfo());
 
-            if (timer->elapsed() > 500 || fileInfoQueue.count() > 2333) {
+            if (timer->elapsed() > 5000 || fileInfoQueue.count() > 10000) {
                 update_children = false;
 
                 emit childrenUpdated(fileInfoQueue);

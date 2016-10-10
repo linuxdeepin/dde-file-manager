@@ -169,6 +169,7 @@ private:
     void clear();
 
     void setState(State state);
+    void onJobAddChildren(const AbstractFileInfoPointer &fileInfo);
     void onJobFinished();
     void addFile(const AbstractFileInfoPointer &fileInfo);
 
