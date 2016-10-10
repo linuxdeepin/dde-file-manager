@@ -402,6 +402,12 @@ int DFileManagerWindow::windowId()
     return WindowManager::getWindowId(this);
 }
 
+bool DFileManagerWindow::tabAddable() const
+{
+    D_DC(DFileManagerWindow);
+    return d->tabBar->tabAddable();
+}
+
 void DFileManagerWindow::setFileViewMode(int viewMode)
 {
     D_D(DFileManagerWindow);
