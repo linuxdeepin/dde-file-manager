@@ -695,25 +695,32 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     m_isMenuOpened = true;
     DFileMenu *menu;
 
+    QSet<MenuAction> disableList;
+
+    const bool tabAddable = WindowManager::tabAddableByWinId(windowId());
+    if(!tabAddable)
+        disableList << MenuAction::OpenInNewTab;
+
     if (m_url.isRecentFile()){
-        menu = FileMenuManager::createRecentLeftBarMenu();
+        menu = FileMenuManager::createRecentLeftBarMenu(disableList);
     }else if (m_url.isTrashFile()){
-        menu = FileMenuManager::createTrashLeftBarMenu();
+        menu = FileMenuManager::createTrashLeftBarMenu(disableList);
     }else if(m_isDisk && m_deviceInfo)
     {
+        disableList |= m_deviceInfo->disableMenuActionList();
         m_url.setQuery(m_sysPath);
 
         m_deviceInfo->canUnmount();
 
         menu = FileMenuManager::genereteMenuByKeys(
                     m_deviceInfo->menuActionList(AbstractFileInfo::SingleFile),
-                    m_deviceInfo->disableMenuActionList());
+                    disableList);
     }else if (m_url.isNetWorkFile()){
-        menu = FileMenuManager::createNetworkMarkMenu();
+        menu = FileMenuManager::createNetworkMarkMenu(disableList);
     }else if(m_isDefault)
-        menu = FileMenuManager::createDefaultBookMarkMenu();
+        menu = FileMenuManager::createDefaultBookMarkMenu(disableList);
     else
-        menu = FileMenuManager::createCustomBookMarkMenu(m_url);
+        menu = FileMenuManager::createCustomBookMarkMenu(m_url, disableList);
 
     QPointer<DBookmarkItem> me = this;
 

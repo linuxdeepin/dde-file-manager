@@ -26,6 +26,8 @@ public:
 
     static DUrl getUrlByWindowId(int windowId);
 
+    static bool tabAddableByWinId(const int& winId);
+
 signals:
     void start(const QString &src);
 

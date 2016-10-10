@@ -49,10 +49,9 @@ DFileMenu *FileMenuManager::createRecentLeftBarMenu(const QSet<MenuAction> &disa
     return genereteMenuByKeys(actionKeys, disableList);
 }
 
-DFileMenu *FileMenuManager::createDefaultBookMarkMenu()
+DFileMenu *FileMenuManager::createDefaultBookMarkMenu(const QSet<MenuAction> &disableList)
 {
     QVector<MenuAction> actionKeys;
-    QSet<MenuAction> disableList;
 
     actionKeys.reserve(2);
 
@@ -63,10 +62,9 @@ DFileMenu *FileMenuManager::createDefaultBookMarkMenu()
     return genereteMenuByKeys(actionKeys, disableList);
 }
 
-DFileMenu *FileMenuManager::createNetworkMarkMenu()
+DFileMenu *FileMenuManager::createNetworkMarkMenu(const QSet<MenuAction> &disableList)
 {
-    QVector<MenuAction> actionKeys;
-    QSet<MenuAction> disableList;
+    QVector<MenuAction> actionKeys;;
 
     actionKeys.reserve(1);
 
