@@ -98,6 +98,7 @@ public slots:
     void onTabAddableChanged(bool addable);
     void onCurrentTabChanged(int tabIndex);
     void onCurrentTabClosed(const int index);
+    QString getDisplayNameByDiskUrl(const DUrl& url);
 
 protected:
     void closeEvent(QCloseEvent* event)  Q_DECL_OVERRIDE;

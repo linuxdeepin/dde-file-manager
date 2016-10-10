@@ -6,6 +6,8 @@
 
 #include "widgets/singleton.h"
 
+#include "controllers/pathmanager.h"
+
 #include <QIcon>
 
 NetworkFileInfo::NetworkFileInfo():
@@ -67,6 +69,10 @@ DUrl NetworkFileInfo::parentUrl() const
 
 QString NetworkFileInfo::displayName() const
 {
+
+    if (systemPathManager->isSystemPath(fileUrl().toString()))
+        return systemPathManager->getSystemPathDisplayNameByPath(fileUrl().toString());
+
     return m_networkNode.displayName();
 }
 

@@ -67,17 +67,16 @@ void DBookmarkScene::initData()
     }
 
 
-    m_systemPathKeys << "Desktop"
+    m_systemPathKeys << "Home"
+                     << "Desktop"
                      << "Videos"
                      << "Music"
                      << "Pictures"
                      << "Documents"
-                     << "Downloads";
-
-    m_systemBookMarks["Home"] = tr("Home");
-    m_systemBookMarks["Trash"] = tr("Trash");
-    m_systemBookMarks["Disk"] = tr("Disk");
-    m_systemBookMarks["Network"] = tr("Computers in LAN");
+                     << "Downloads"
+                     << "Trash"
+                     << "Disk"
+                     << "Network";
 
     foreach (QString key, m_systemPathKeys) {
         m_systemBookMarks[key] = systemPathManager->getSystemPathDisplayName(key);

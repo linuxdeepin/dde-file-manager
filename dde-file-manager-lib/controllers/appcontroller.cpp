@@ -28,6 +28,8 @@
 #include "usershare/usersharemanager.h"
 #include "widgets/singleton.h"
 
+#include "../deviceinfo/udisklistener.h"
+
 #include <QProcess>
 #include <QStorageInfo>
 #include <DAboutDialog>

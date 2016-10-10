@@ -3,6 +3,7 @@
 
 #include "controllers/trashmanager.h"
 #include "controllers/fileservices.h"
+#include "controllers/pathmanager.h"
 
 #include "app/global.h"
 #include "interfaces/dfmstandardpaths.h"
@@ -284,7 +285,10 @@ void TrashFileInfo::updateInfo()
         if (displayDeletionDate.isEmpty())
             displayDeletionDate = setting.value("DeletionDate").toString();
     } else {
-        m_displayName = fileName();
+        if (systemPathManager->isSystemPath(filePath))
+            m_displayName = systemPathManager->getSystemPathDisplayNameByPath(filePath);
+        else
+            m_displayName = fileName();
     }
 }
 

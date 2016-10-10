@@ -42,6 +42,7 @@ DFileMenu *FileMenuManager::createRecentLeftBarMenu(const QSet<MenuAction> &disa
     actionKeys.reserve(2);
 
     actionKeys << MenuAction::OpenInNewWindow
+               << MenuAction::OpenInNewTab
                << MenuAction::ClearRecent
                << MenuAction::Property;
 
@@ -56,6 +57,7 @@ DFileMenu *FileMenuManager::createDefaultBookMarkMenu()
     actionKeys.reserve(2);
 
     actionKeys << MenuAction::OpenInNewWindow
+               << MenuAction::OpenInNewTab
                << MenuAction::Property;
 
     return genereteMenuByKeys(actionKeys, disableList);
@@ -68,7 +70,8 @@ DFileMenu *FileMenuManager::createNetworkMarkMenu()
 
     actionKeys.reserve(1);
 
-    actionKeys << MenuAction::OpenInNewWindow;
+    actionKeys << MenuAction::OpenInNewWindow
+               << MenuAction::OpenInNewTab;
 
     return genereteMenuByKeys(actionKeys, disableList);
 }
@@ -83,6 +86,7 @@ DFileMenu *FileMenuManager::createCustomBookMarkMenu(const DUrl &url, const QSet
     actionKeys.reserve(10);
 
     actionKeys << MenuAction::OpenInNewWindow
+               << MenuAction::OpenInNewTab
                << MenuAction::Rename
                << MenuAction::Remove
                << MenuAction::Property;
@@ -103,6 +107,7 @@ DFileMenu *FileMenuManager::createTrashLeftBarMenu(const QSet<MenuAction> &disab
     actionKeys.reserve(4);
 
     actionKeys << MenuAction::OpenInNewWindow;
+    actionKeys << MenuAction::OpenInNewTab;
     actionKeys << MenuAction::ClearTrash;
     actionKeys<< MenuAction::Property;
 

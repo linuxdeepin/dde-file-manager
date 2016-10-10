@@ -23,12 +23,16 @@ PathManager::~PathManager()
 void PathManager::initPaths()
 {
     loadSystemPaths();
+    m_systemPathDisplayNamesMap["Home"] = tr("Home");
     m_systemPathDisplayNamesMap["Desktop"] = tr("Desktop");
     m_systemPathDisplayNamesMap["Videos"] = tr("Videos");
     m_systemPathDisplayNamesMap["Music"] = tr("Music");
     m_systemPathDisplayNamesMap["Pictures"] = tr("Pictures");
     m_systemPathDisplayNamesMap["Documents"] = tr("Documents");
     m_systemPathDisplayNamesMap["Downloads"] = tr("Downloads");
+    m_systemPathDisplayNamesMap["Trash"] = tr("Trash");
+    m_systemPathDisplayNamesMap["Disk"] = tr("Disk");
+    m_systemPathDisplayNamesMap["Network"] = tr("Computers in LAN");
 
 
     m_systemPathIconNamesMap["Home"] = "folder-home";
@@ -114,6 +118,9 @@ void PathManager::loadSystemPaths()
     m_systemPathsMap["Pictures"] = StandardPath::getPicturesPath();
     m_systemPathsMap["Documents"] = StandardPath::getDocumentsPath();
     m_systemPathsMap["Downloads"] = StandardPath::getDownloadsPath();
+    m_systemPathsMap["Trash"] = StandardPath::getTrashFilesPath();
+    m_systemPathsMap["Disk"] = StandardPath::getDiskPath();
+    m_systemPathsMap["Network"] = StandardPath::getNetworkRootPath();
 
     m_systemPathsSet.reserve(m_systemPathsMap.size());
 

@@ -3,6 +3,7 @@
 #include <QApplication>
 #include <QDir>
 #include <QDebug>
+#include "./controllers/pathmanager.h"
 
 StandardPath::StandardPath()
 {
@@ -80,5 +81,20 @@ QString StandardPath::getTrashPath()
     QDir::home().mkpath( ".local/share/Trash/files/" );
     QDir::home().mkpath( ".local/share/Trash/info/" );
     return QDir::homePath() + "/.local/share/Trash/";
+}
+
+QString StandardPath::getTrashFilesPath()
+{
+    return QDir::homePath() + "/.local/share/Trash/files/";
+}
+
+QString StandardPath::getDiskPath()
+{
+    return QDir::rootPath();
+}
+
+QString StandardPath::getNetworkRootPath()
+{
+    return NETWORK_ROOT;
 }
 
