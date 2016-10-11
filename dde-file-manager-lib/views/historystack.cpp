@@ -33,6 +33,7 @@ void HistoryStack::append(DUrl url)
 
 DUrl HistoryStack::back()
 {
+    const DUrl &currentUrl = m_list.value(m_index);
     DUrl url;
 
     if (m_index <= 0)
@@ -46,7 +47,7 @@ DUrl HistoryStack::back()
 
         const AbstractFileInfoPointer &fileInfo = FileServices::instance()->createFileInfo(url);
 
-        if (!fileInfo || !fileInfo->exists()){
+        if (!fileInfo || !fileInfo->exists() || currentUrl == url) {
             removeAt(m_index);
         } else {
             break;
@@ -58,6 +59,7 @@ DUrl HistoryStack::back()
 
 DUrl HistoryStack::forward()
 {
+    const DUrl &currentUrl = m_list.value(m_index);
     DUrl url;
 
     if (m_index >= m_list.count() - 1)
@@ -68,7 +70,7 @@ DUrl HistoryStack::forward()
 
         const AbstractFileInfoPointer &fileInfo = FileServices::instance()->createFileInfo(url);
 
-        if (!fileInfo || !fileInfo->exists()){
+        if (!fileInfo || !fileInfo->exists() || currentUrl == url) {
             removeAt(m_index);
             --m_index;
         } else {
