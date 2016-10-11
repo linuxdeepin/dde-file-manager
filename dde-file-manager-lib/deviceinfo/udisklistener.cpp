@@ -19,6 +19,7 @@ UDiskListener::UDiskListener()
 //    connect(m_diskMountInterface, &DiskMountInterface::Error, this, &UDiskListener::handleError);
     connect(m_diskMountInterface, &DiskMountInterface::Error,
             fileSignalManager, &FileSignalManager::showDiskErrorDialog);
+    loadCustomVolumeLetters();
 }
 
 UDiskDeviceInfo *UDiskListener::getDevice(const QString &id)
@@ -159,6 +160,36 @@ UDiskDeviceInfo::MediaType UDiskListener::getDeviceMediaType(const QString &path
         }
     }
     return UDiskDeviceInfo::unknown;
+}
+
+QString UDiskListener::getVolumeConfPath()
+{
+    return "/etc/deepin/volume_letter.conf";
+}
+
+bool UDiskListener::isVolumeConfExists()
+{
+    if (QFile(getVolumeConfPath()).exists()){
+        return true;
+    }
+    return false;
+}
+
+void UDiskListener::loadCustomVolumeLetters()
+{
+    if (isVolumeConfExists()){
+        QSettings VolumeSettings(getVolumeConfPath(), QSettings::IniFormat);
+        VolumeSettings.beginGroup("Volume");
+        foreach (QString key, VolumeSettings.childKeys()) {
+            m_volumeLetters.insert(key, VolumeSettings.value(key).toString());
+        }
+        VolumeSettings.endGroup();
+    }
+}
+
+QMap<QString, QString> UDiskListener::getVolumeLetters()
+{
+    return m_volumeLetters;
 }
 
 void UDiskListener::mount(const QString &path)

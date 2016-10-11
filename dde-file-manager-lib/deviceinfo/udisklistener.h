@@ -50,6 +50,11 @@ public:
     UDiskDeviceInfo * getDeviceByFilePath(const QString &path);
     UDiskDeviceInfo::MediaType getDeviceMediaType(const QString &path);
 
+    QString getVolumeConfPath();
+    bool isVolumeConfExists();
+    void loadCustomVolumeLetters();
+    QMap<QString, QString> getVolumeLetters();
+
 signals:
     void volumeAdded(UDiskDeviceInfo * device);
     void volumeRemoved(UDiskDeviceInfo * device);
@@ -70,6 +75,7 @@ private:
     void readFstab();
     QList<UDiskDeviceInfo *> m_list;
     QMap<QString, UDiskDeviceInfo *> m_map;
+    QMap<QString, QString> m_volumeLetters;
     QList<QString> fstab;
 
     QList<Subscriber*> m_subscribers;
