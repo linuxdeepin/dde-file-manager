@@ -232,7 +232,7 @@ void DToolBar::searchBarTextEntered()
     event = WindowManager::getWindowId(this);
     event = FMEvent::SearchBar;
 
-    DUrl inputUrl = DUrl::fromUserInput(text);
+    DUrl inputUrl = DUrl::fromUserInput(text, false);
 
     event = inputUrl;
     if(inputUrl.isLocalFile()){

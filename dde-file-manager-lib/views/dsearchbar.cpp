@@ -724,7 +724,7 @@ QAction *DSearchBar::getClearAction()
 
 bool DSearchBar::hasScheme()
 {
-    DUrl url = DUrl::fromUserInput(text());
+    DUrl url = DUrl::fromUserInput(text(), false);
 
     if( url.isBookMarkFile() ||
             url.isComputerFile() ||
