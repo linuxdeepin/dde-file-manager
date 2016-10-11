@@ -193,7 +193,7 @@ bool FileController::deleteFiles(const DUrlList &urlList, const FMEvent &event, 
     Q_UNUSED(event);
     accepted = true;
 
-    FileJob job("delete");
+    FileJob job(FileJob::Delete);
 
     dialogManager->addJob(&job);
 
@@ -213,7 +213,7 @@ DUrlList FileController::moveToTrash(const DUrlList &urlList, bool &accepted) co
 {
     accepted = true;
 
-    FileJob job("delete");
+    FileJob job(FileJob::Delete);
 
     dialogManager->addJob(&job);
 
@@ -249,7 +249,7 @@ DUrlList FileController::pasteFile(PasteType type, const DUrlList &urlList,
         if (parentUrl == event.fileUrl()){
 
         }else{
-            FileJob job("move");
+            FileJob job(FileJob::Move);
 
             dialogManager->addJob(&job);
 
@@ -260,7 +260,7 @@ DUrlList FileController::pasteFile(PasteType type, const DUrlList &urlList,
         qApp->clipboard()->clear();
     } else {
 
-        FileJob job("copy");
+        FileJob job(FileJob::Copy);
 
         dialogManager->addJob(&job);
 
@@ -279,7 +279,7 @@ bool FileController::restoreFile(const DUrl &srcUrl, const DUrl &tarUrl, const F
     accepted = true;
 
 //    qDebug() << srcUrl << tarUrl << event;
-    FileJob job("restore");
+    FileJob job(FileJob::Restore);
 
     dialogManager->addJob(&job);
 

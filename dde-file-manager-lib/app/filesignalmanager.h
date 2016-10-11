@@ -169,6 +169,11 @@ signals:
 
     /*request abort copy/move job*/
     void requestAbortJob(const DUrl& url);
+
+    /*request start file job task update timer*/
+    void requestStartUpdateJobTimer();
+
+    void requestStopUpdateJobTimer();
 };
 
 #endif // FILESIGNALMANAGER_H

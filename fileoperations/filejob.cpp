@@ -12,18 +12,48 @@
 #include <QDirIterator>
 #include <QProcess>
 #include <QCryptographicHash>
+#include <QMetaEnum>
+
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+#include <sys/syscall.h>
 
 int FileJob::FileJobCount = 0;
+qint64 FileJob::Msec_For_Display = 1000;
+qint64 FileJob::Data_Block_Size = 65536;
+qint64 FileJob::Data_Flush_Size = 16777216;
 
-FileJob::FileJob(const QString &title, QObject *parent) : QObject(parent)
+
+FileJob::FileJob(JobType jobType, QObject *parent) : QObject(parent)
 {
     FileJobCount += 1;
     m_status = FileJob::Started;
     QString user = getenv("USER");
     m_trashLoc = "/home/" + user + "/.local/share/Trash";
     m_id = QString::number(FileJobCount);
-    m_title = title;
+    m_jobType = jobType;
     connect(this, &FileJob::finished, this, &FileJob::handleJobFinished);
+
+#ifdef SPLICE_CP
+    if(pipe(m_filedes) < 0) {
+       qDebug() << "Create  pipe fail";
+    }
+    qDebug() << "Create  pipe successfully";
+#endif
+}
+
+FileJob::~FileJob()
+{
+#ifdef SPLICE_CP
+    close(m_filedes[0]);
+    close(m_filedes[1]);
+    qDebug() << "close pipe";
+#endif
 }
 
 void FileJob::setStatus(FileJob::Status status)
@@ -106,10 +136,20 @@ DUrlList FileJob::doCopy(const DUrlList &files, const QString &destination)
 {
     DUrlList list;
 
-    qDebug() << "Do copy is started";
+    qDebug() << "Do copy is started" << Data_Block_Size << Data_Flush_Size;
     //pre-calculate total size
     m_totalSize = FileUtils::totalSize(files);
     jobPrepared();
+
+    QString tarLocal = QUrl(destination).toLocalFile();
+    QStorageInfo tarInfo(tarLocal);
+    if (files.count() > 0 ){
+        QStorageInfo srcInfo(files.at(0).toLocalFile());
+        if (srcInfo.rootPath() != tarInfo.rootPath()){
+            m_isInSameDisk = false;
+        }
+    }
+
     for(int i = 0; i < files.size(); i++)
     {
         QUrl url = files.at(i);
@@ -117,9 +157,7 @@ DUrlList FileJob::doCopy(const DUrlList &files, const QString &destination)
         QString targetPath;
 
         if(srcDir.exists())
-        {
             copyDir(url.toLocalFile(), QUrl(destination).toLocalFile(), false,  &targetPath);
-        }
         else
             copyFile(url.toLocalFile(), QUrl(destination).toLocalFile(), false,  &targetPath);
 
@@ -218,16 +256,22 @@ DUrlList FileJob::doMove(const DUrlList &files, const QString &destination)
         return list;
     }
 
+    if (files.count() > 0 ){
+        QStorageInfo srcInfo(files.at(0).toLocalFile());
+        if (srcInfo.rootPath() != tarInfo.rootPath()){
+            m_isInSameDisk = false;
+        }
+    }
+
     for(int i = 0; i < files.size(); i++)
     {
         QUrl url = files.at(i);
         QDir srcDir(url.toLocalFile());
-        QStorageInfo srcInfo(srcDir);
         QString targetPath;
 
         if(srcDir.exists())
         {
-            if(srcInfo.rootPath() == tarInfo.rootPath())
+            if(m_isInSameDisk)
             {
                 if (!moveDir(url.toLocalFile(), tarDir.path(), &targetPath)) {
                     if(copyDir(url.toLocalFile(), tarLocal, true, &targetPath))
@@ -242,7 +286,7 @@ DUrlList FileJob::doMove(const DUrlList &files, const QString &destination)
         }
         else
         {
-            if(srcInfo.rootPath() == tarInfo.rootPath())
+            if(m_isInSameDisk)
             {
                 if (!moveFile(url.toLocalFile(), tarDir.path(), &targetPath)) {
                     if(copyFile(url.toLocalFile(), QUrl(destination).toLocalFile(), true, &targetPath))
@@ -303,40 +347,59 @@ void FileJob::handleJobFinished()
 {
     qDebug() << m_status;
     m_bytesCopied = m_totalSize;
+    m_bytesPerSec = -1;
+    m_isFinished = true;
     jobUpdated();
 }
 
 void FileJob::jobUpdated()
 {
-    QMap<QString, QString> jobDataDetail;
-    if(m_bytesPerSec > 0)
-    {
-        int remainTime = (m_totalSize - m_bytesCopied) / m_bytesPerSec;
 
-        if (remainTime < 60){
-            jobDataDetail.insert("remainTime", tr("%1 s").arg(QString::number(remainTime)));
-        }else if (remainTime >=60  && remainTime < 3600){
-            int min = remainTime / 60;
-            int second = remainTime % 60;
-            jobDataDetail.insert("remainTime", tr("%1 m %2 s").arg(QString::number(min),
-                                                                        QString::number(second)));
-        }else if (remainTime >=3600  && remainTime < 86400){
-            int hour = remainTime / 3600;
-            int min = (remainTime % 3600) / 60;
-            int second = (remainTime % 3600) % 60;
-            jobDataDetail.insert("remainTime", tr("%1 h %2 m %3 s").arg(QString::number(hour),
-                                                                             QString::number(min),
-                                                                             QString::number(second)));
-        }else{
-            int day = remainTime / 86400;
-            int left = remainTime % 86400;
-            int hour = left / 3600;
-            int min = (left % 3600) / 60;
-            int second = (left % 3600) % 60;
-            jobDataDetail.insert("remainTime", tr("%1 d %2 h %3 m %4 s").arg(QString::number(day),
-                                                                                  QString::number(hour),
-                                                                                  QString::number(min),
-                                                                                  QString::number(second)));
+    QMap<QString, QString> jobDataDetail;
+    if (!m_isFinished){
+
+        qint64 currentMsec = m_timer.elapsed();
+
+        m_factor = (currentMsec - m_lastMsec) / 1000;
+
+        if (m_factor <= 0)
+            return;
+
+        m_bytesPerSec /= m_factor;
+
+        if (m_bytesPerSec == 0){
+            return;
+        }
+
+        if(m_bytesPerSec > 0)
+        {
+            int remainTime = (m_totalSize - m_bytesCopied) / m_bytesPerSec;
+
+            if (remainTime < 60){
+                jobDataDetail.insert("remainTime", tr("%1 s").arg(QString::number(remainTime)));
+            }else if (remainTime >=60  && remainTime < 3600){
+                int min = remainTime / 60;
+                int second = remainTime % 60;
+                jobDataDetail.insert("remainTime", tr("%1 m %2 s").arg(QString::number(min),
+                                                                            QString::number(second)));
+            }else if (remainTime >=3600  && remainTime < 86400){
+                int hour = remainTime / 3600;
+                int min = (remainTime % 3600) / 60;
+                int second = (remainTime % 3600) % 60;
+                jobDataDetail.insert("remainTime", tr("%1 h %2 m %3 s").arg(QString::number(hour),
+                                                                                 QString::number(min),
+                                                                                 QString::number(second)));
+            }else{
+                int day = remainTime / 86400;
+                int left = remainTime % 86400;
+                int hour = left / 3600;
+                int min = (left % 3600) / 60;
+                int second = (left % 3600) % 60;
+                jobDataDetail.insert("remainTime", tr("%1 d %2 h %3 m %4 s").arg(QString::number(day),
+                                                                                      QString::number(hour),
+                                                                                      QString::number(min),
+                                                                                      QString::number(second)));
+            }
         }
     }
     QString speed;
@@ -355,11 +418,17 @@ void FileJob::jobUpdated()
             speed = QString("%1 KB/s").arg(QString::number(m_bytesPerSec));
         }
     }
+
     jobDataDetail.insert("speed", speed);
     jobDataDetail.insert("file", m_srcFileName);
     jobDataDetail.insert("progress", QString::number(m_bytesCopied * 100/ m_totalSize));
     jobDataDetail.insert("destination", m_tarFileName);
+    m_progress = jobDataDetail.value("progress");
     emit requestJobDataUpdated(m_jobDetail, jobDataDetail);
+    qDebug() << jobDataDetail;
+
+    m_lastMsec = m_timer.elapsed();
+    m_bytesPerSec = 0;
 }
 
 void FileJob::jobAdded()
@@ -367,7 +436,11 @@ void FileJob::jobAdded()
     if(m_isJobAdded)
         return;
     m_jobDetail.insert("jobId", m_id);
-    m_jobDetail.insert("type", m_title);
+
+    QMetaEnum metaEnum = QMetaEnum::fromType<JobType>();
+    QString type = metaEnum.valueToKey(m_jobType);
+
+    m_jobDetail.insert("type", type.toLower());
     emit requestJobAdded(m_jobDetail);
     m_isJobAdded = true;
 }
@@ -386,9 +459,9 @@ void FileJob::jobPrepared()
 {
     m_bytesCopied = 0;
     m_bytesPerSec = 0;
+    m_isFinished = false;
     m_timer.start();
-    lastMsec = m_timer.elapsed();
-    currentMsec = m_timer.elapsed();
+    m_lastMsec = m_timer.elapsed();
 }
 
 void FileJob::jobConflicted()
@@ -398,7 +471,7 @@ void FileJob::jobConflicted()
     jobDataDetail.insert("remainTime", "");
     jobDataDetail.insert("speed", "");
     jobDataDetail.insert("file", m_srcFileName);
-    jobDataDetail.insert("progress", "");
+    jobDataDetail.insert("progress", m_progress);
     jobDataDetail.insert("destination", m_tarFileName);
     emit requestJobDataUpdated(m_jobDetail, jobDataDetail);
     emit requestConflictDialogShowed(m_jobDetail);
@@ -424,8 +497,9 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
 
     //We only check the conflict of the files when
     //they are not in the same folder
+    bool isTarFileExists = to.exists();
     if(sf.absolutePath() != tf.absoluteFilePath())
-        if(to.exists() && !m_applyToAll)
+        if(isTarFileExists && !m_applyToAll)
         {
             if (!isMoved){
                 jobConflicted();
@@ -434,56 +508,126 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
             }
         }
 
-    bool isGreater = false;
-    char block[DATA_BLOCK_SIZE];
-    qint64 thres = 0;
-    bool startToDisplay = false;
+#ifdef SPLICE_CP
+    loff_t in_off = 0;
+    loff_t out_off = 0;
+    int buf_size = 16 * 1024;
+    qint64 len = 0;
+    ssize_t err = -1;
+    int in_fd = 0;
+    int out_fd = 0;
+#else
+    char block[Data_Block_Size];
+#endif
+
     while(true)
     {
         switch(m_status)
         {
             case FileJob::Started:
             {
-                if(!m_isReplaced)
-                {
-                    m_tarPath = checkDuplicateName(m_tarPath);
+                if (isTarFileExists){
+                    if(!m_isReplaced)
+                    {
+                        m_tarPath = checkDuplicateName(m_tarPath);
+                        to.setFileName(m_tarPath);
+                    }
+                    else
+                    {
+                        if(!m_applyToAll)
+                            m_isReplaced = false;
+                    }
                 }
-                else
-                {
-                    if(!m_applyToAll)
-                        m_isReplaced = false;
-                }
+
                 if(!from.open(QIODevice::ReadOnly))
                 {
                     //Operation failed
                     qDebug() << srcFile << "isn't read only";
                     return false;
                 }
-                to.setFileName(m_tarPath);
+
                 if(!to.open(QIODevice::WriteOnly))
                 {
-                    //Operation failed
                     //Operation failed
                     qDebug() << to.fileName() << to.error() << to.errorString() << "isn't write only";
                     QString toFileName =  tarDir + "/" + DUrl::toPercentEncoding(m_srcFileName);
                     qDebug() << "toPercentEncoding" <<  toFileName;
                     to.setFileName(toFileName);
                     if (!to.open(QIODevice::WriteOnly)){
-                       qDebug() << to.fileName() << to.error() <<to.errorString() << "isn't write only";
-                       return false;
+                        qDebug() << to.fileName() << to.error() <<to.errorString() << "isn't write only";
+                        return false;
                     }
                 }
                 m_status = Run;
+ #ifdef SPLICE_CP
+                in_fd = from.handle();
+                out_fd = to.handle();
+                len = sf.size();
+ #endif
+                posix_fadvise(from.handle(), 0, sf.size(), POSIX_FADV_SEQUENTIAL);
+                posix_fadvise(from.handle(), 0, sf.size(), POSIX_FADV_WILLNEED);
                 break;
             }
             case FileJob::Run:
             {
+
+#ifdef SPLICE_CP
+                if(len <= 0)
+                {
+                    if ((m_totalSize - m_bytesCopied) <= 1){
+                        m_bytesCopied = m_totalSize;
+                    }
+
+                    to.flush();
+//                    fsync(out_fd);
+                    from.close();
+                    to.close();
+
+                    if (targetPath)
+                        *targetPath = m_tarPath;
+
+                    return true;
+                }
+
+                if(buf_size > len)
+                    buf_size = len;
+                /*
+                 * move to pipe buffer.
+                 */
+                err = splice(in_fd, &in_off, m_filedes[1], NULL, buf_size, SPLICE_F_MOVE);
+                if(err < 0) {
+                    qDebug() << "splice pipe0 fail";
+                    return false;
+                }
+
+                if (err < buf_size) {
+                    qDebug() << QString("copy ret %1 (need %2)").arg(err, buf_size);
+                    buf_size = err;
+                }
+                /*
+                 * move from pipe buffer to out_fd
+                 */
+                err = splice(m_filedes[0], NULL, out_fd, &out_off, buf_size, SPLICE_F_MOVE );
+                if(err < 0) {
+                    qDebug() << "splice pipe1 fail";
+                    return false;
+                }
+                len -= buf_size;
+
+                m_bytesCopied += buf_size;
+                m_bytesPerSec += buf_size;
+
+                if (!m_isInSameDisk){
+                    if (m_bytesCopied % (Data_Flush_Size) == 0){
+                        fsync(out_fd);
+                    }
+                }
+#else
                 if(from.atEnd())
                 {
                     if ((m_totalSize - m_bytesCopied) <= 1){
                         m_bytesCopied = m_totalSize;
                     }
-                    jobUpdated();
                     to.flush();
                     from.close();
                     to.close();
@@ -493,75 +637,31 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
 
                     return true;
                 }
-                qint64 inBytes = from.read(block, DATA_BLOCK_SIZE);
+                to.waitForBytesWritten(-1);
+
+                qint64 inBytes = from.read(block, Data_Block_Size);
                 to.write(block, inBytes);
                 m_bytesCopied += inBytes;
-
-                if (m_bytesCopied % (1024 * 1024 * 16) == 0){
-                    to.flush();
-                    to.close();
-                    if(!to.open(QIODevice::WriteOnly | QIODevice::Append))
-                    {
-                        //Operation failed
-                        qDebug() << tarDir << "isn't write only";
-                        return false;
-                    }
-                }
                 m_bytesPerSec += inBytes;
-                currentMsec = m_timer.elapsed();
 
-                if(startToDisplay)
-                {
-                    if(isGreater)
-                    {
-                        if(currentMsec - lastMsec > MSEC_FOR_DISPLAY)
+                if (!m_isInSameDisk){
+                    if (m_bytesCopied % (Data_Flush_Size) == 0){
+                        to.flush();
+                        to.close();
+                        if(!to.open(QIODevice::WriteOnly | QIODevice::Append))
                         {
-                            m_factor = (currentMsec - lastMsec);
-                            m_factor /= 1000;
-                            m_bytesPerSec /= m_factor;
-                            jobUpdated();
-                            lastMsec = m_timer.elapsed();
-                            m_bytesPerSec = 0;
+                            //Operation failed
+                            qDebug() << tarDir << "isn't write only";
+                            return false;
                         }
                     }
-                    else
-                    {
-                        if(m_bytesPerSec > thres)
-                        {
-                            m_factor = (currentMsec - lastMsec);
-                            m_factor /= 1000;
-
-                            if(m_factor)
-                                m_bytesPerSec /= m_factor;
-                            else
-                                m_bytesPerSec = 0;
-                            jobUpdated();
-                            lastMsec = m_timer.elapsed();
-                            m_bytesPerSec = 0;
-                        }
-                    }
-                    break;
                 }
-
-                if(currentMsec - lastMsec > MSEC_FOR_DISPLAY && !startToDisplay)
-                {
-                    startToDisplay = true;
-                    if(!m_isJobAdded)
-                        jobAdded();
-
-                    if(m_totalSize / m_bytesCopied > TRANSFER_RATE)
-                        isGreater = true;
-                    else
-                    {
-                        thres = (m_totalSize - m_bytesCopied) / TRANSFER_RATE;
-                        m_bytesPerSec = 0;
-                    }
-                }
+#endif
                 break;
             }
             case FileJob::Paused:
                 QThread::msleep(100);
-                lastMsec = m_timer.elapsed();
+                m_lastMsec = m_timer.elapsed();
                 break;
             case FileJob::Cancelled:
                 from.close();
@@ -593,10 +693,11 @@ bool FileJob::copyDir(const QString &srcPath, const QString &tarPath, bool isMov
     m_srcPath = srcPath;
     m_tarPath = targetDir.absolutePath();
     m_status = Started;
-    //We only check the conflict of the files when
-    //they are not in the same folder
+
+    bool isTargetDirExists = targetDir.exists();
+
     if(sf.absolutePath() != tf.absolutePath())
-        if(targetDir.exists() && !m_applyToAll)
+        if(isTargetDirExists && !m_applyToAll)
         {
             if (!isMoved){
                 jobConflicted();
@@ -610,19 +711,23 @@ bool FileJob::copyDir(const QString &srcPath, const QString &tarPath, bool isMov
         {
         case Started:
         {
-            if(!m_isReplaced)
-            {
-                m_tarPath = checkDuplicateName(m_tarPath);
+            if (isTargetDirExists){
+                if(!m_isReplaced)
+                {
+                    m_tarPath = checkDuplicateName(m_tarPath);
+                    targetDir.setPath(m_tarPath);
+                    isTargetDirExists = false;
+                }
+                else
+                {
+                    if(!m_applyToAll)
+                        m_isReplaced = false;
+                }
             }
-            else
+
+            if(!isTargetDirExists)
             {
-                if(!m_applyToAll)
-                    m_isReplaced = false;
-            }
-            targetDir.setPath(m_tarPath);
-            if(!targetDir.exists())
-            {
-                if(!targetDir.mkdir(targetDir.absolutePath()))
+                if(!targetDir.mkdir(m_tarPath))
                     return false;
             }
             m_status = Run;
@@ -630,11 +735,15 @@ bool FileJob::copyDir(const QString &srcPath, const QString &tarPath, bool isMov
         }
         case Run:
         {
-            QFileInfoList fileInfoList = sourceDir.entryInfoList(QDir::AllEntries | QDir::System
-                                                                 | QDir::NoDotAndDotDot | QDir::NoSymLinks
-                                                                 | QDir::Hidden);
-            foreach(QFileInfo fileInfo, fileInfoList)
-            {
+            QDirIterator tmp_iterator(sourceDir.absolutePath(),
+                                      QDir::AllEntries | QDir::System
+                                      | QDir::NoDotAndDotDot | QDir::NoSymLinks
+                                      | QDir::Hidden);
+
+            while (tmp_iterator.hasNext()) {
+                tmp_iterator.next();
+                const QFileInfo fileInfo = tmp_iterator.fileInfo();
+
                 if(fileInfo.isDir())
                 {
                     if(!copyDir(fileInfo.filePath(), targetDir.absolutePath())){
@@ -654,7 +763,6 @@ bool FileJob::copyDir(const QString &srcPath, const QString &tarPath, bool isMov
                 *targetPath = m_tarPath;
 
             return true;
-            break;
         }
         case Paused:
             QThread::msleep(100);

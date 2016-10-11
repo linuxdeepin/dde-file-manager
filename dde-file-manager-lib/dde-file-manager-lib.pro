@@ -26,12 +26,18 @@ isEmpty(QMAKE_ORGANIZATION_NAME) {
 }
 
 ARCH = $$QMAKE_HOST.arch
-isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
+isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
     DEFINES += ARCH_MIPSEL
 
     #use classical file section mode
     DEFINES += CLASSICAL_SECTION
     DEFINES += AUTO_RESTART_DEAMON
+
+    DEFINES += LOAD_FILE_INTERVAL=150
+}
+
+isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
+    DEFINES += SPLICE_CP
 }
 
 isEmpty(PREFIX){
@@ -319,7 +325,7 @@ TRANSLATIONS += $$PWD/translations/$${TARGET}.ts \
 # Automating generation .qm files from .ts files
 CONFIG(release, debug|release) {
     system($$PWD/generate_translations.sh)
-    DEFINES += QT_NO_DEBUG_OUTPUT
+#    DEFINES += QT_NO_DEBUG_OUTPUT
 }
 
 translations.path = $$APPSHAREDIR/translations
