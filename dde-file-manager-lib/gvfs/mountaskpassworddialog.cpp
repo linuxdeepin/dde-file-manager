@@ -149,7 +149,12 @@ void MountAskPasswordDialog::setLoginData(const QJsonObject &obj)
 {
     m_loginObj = obj;
 
-    m_messageLabel->setText(m_loginObj.value("message").toString());
+    QFontMetrics fm(m_messageLabel->font());
+    const QString& str = fm.elidedText(m_loginObj.value("message").toString()
+                                       ,Qt::ElideMiddle,
+                                       this->size().width()-80);
+
+    m_messageLabel->setText(str);
 
     if (m_loginObj.value("anonymous").toBool()){
         m_anonymousButtonGroup->button(0)->click();
@@ -194,7 +199,7 @@ void MountAskPasswordDialog::handleConnect()
 void MountAskPasswordDialog::togglePasswordFrame(int id)
 {
     if (id == 0){
-        setFixedSize(QSize(380, 142));
+        setFixedSize(QSize(380, 160));
         m_passwordFrame->hide();
     }else{
         setFixedSize(QSize(380, 280));
