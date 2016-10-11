@@ -2078,6 +2078,9 @@ void DFileView::showEmptyAreaMenu()
     const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList();
 
     QSet<MenuAction> disableList = FileMenuManager::getDisableActionList(model()->getUrlByIndex(index));
+    const bool& tabAddable = WindowManager::tabAddableByWinId(windowId());
+    if(!tabAddable)
+        disableList << MenuAction::OpenInNewTab;
 
     if (!count())
         disableList << MenuAction::SelectAll;
@@ -2156,7 +2159,10 @@ void DFileView::showNormalMenu(const QModelIndex &index)
             return;
 
         const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList();
-        const QSet<MenuAction> &disableList = FileMenuManager::getDisableActionList(list);
+        QSet<MenuAction> disableList = FileMenuManager::getDisableActionList(list);
+        const bool& tabAddable = WindowManager::tabAddableByWinId(windowId());
+        if(!tabAddable)
+            disableList << MenuAction::OpenInNewTab;
 
         menu = FileMenuManager::genereteMenuByKeys(actions, disableList, true, subActions);
 
@@ -2221,7 +2227,10 @@ void DFileView::showNormalMenu(const QModelIndex &index)
             actions<<MenuAction::Decompress<<MenuAction::DecompressHere;
 
         const QMap<MenuAction, QVector<MenuAction> > subActions;
-        const QSet<MenuAction> &disableList = FileMenuManager::getDisableActionList(list);
+        QSet<MenuAction> disableList = FileMenuManager::getDisableActionList(list);
+        const bool& tabAddable = WindowManager::tabAddableByWinId(windowId());
+        if(!tabAddable)
+            disableList << MenuAction::OpenInNewTab;
         menu = FileMenuManager::genereteMenuByKeys(actions, disableList, true, subActions);
     }
 

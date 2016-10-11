@@ -73,6 +73,8 @@ public:
 
     int windowId();
 
+    bool tabAddable() const;
+
 signals:
     void aboutToClose();
     void fileViewChanged(const DFileView* fileView);

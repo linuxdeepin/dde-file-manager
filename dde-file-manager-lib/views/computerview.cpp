@@ -112,21 +112,26 @@ void ComputerViewItem::contextMenuEvent(QContextMenuEvent *event)
     setChecked(true);
     DFileMenu *menu;
     DUrl url;
+    QSet<MenuAction> disableList;
+    const bool& tabAddable = WindowManager::tabAddableByWinId(windowId());
+    if(!tabAddable)
+        disableList << MenuAction::OpenInNewTab;
     if (m_info){
-        menu = FileMenuManager::createDefaultBookMarkMenu();
+        menu = FileMenuManager::createDefaultBookMarkMenu(disableList);
         url = m_info->fileUrl();
     }else if (m_deviceInfo){
         if (m_deviceInfo->getMountPoint() == "/" && !m_deviceInfo->getDiskInfo().isNativeCustom){
-            menu = FileMenuManager::createDefaultBookMarkMenu();
+            menu = FileMenuManager::createDefaultBookMarkMenu(disableList);
             url = m_deviceInfo->getMountPointUrl();
         }else if (m_deviceInfo->getDiskInfo().isNativeCustom){
-            menu = FileMenuManager::createDefaultBookMarkMenu();
+            menu = FileMenuManager::createDefaultBookMarkMenu(disableList);
             url = m_deviceInfo->getMountPointUrl();
         }
         else{
+            disableList |= m_deviceInfo->disableMenuActionList();
             menu = FileMenuManager::genereteMenuByKeys(
                         m_deviceInfo->menuActionList(AbstractFileInfo::SingleFile),
-                        m_deviceInfo->disableMenuActionList());
+                        disableList);
             url = m_deviceInfo->getMountPointUrl();
             url.setQuery(m_deviceInfo->getId());
         }
