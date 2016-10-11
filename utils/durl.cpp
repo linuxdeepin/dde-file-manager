@@ -314,19 +314,20 @@ DUrlList DUrl::fromQUrlList(const QList<QUrl> &urls)
     return urlList;
 }
 
-DUrl DUrl::fromUserInput(const QString &userInput)
+DUrl DUrl::fromUserInput(const QString &userInput, bool preferredLocalPath)
 {
-    return fromUserInput(userInput, QString());
+    return fromUserInput(userInput, QString(), preferredLocalPath);
 }
 
-DUrl DUrl::fromUserInput(const QString &userInput, QString workingDirectory, QUrl::UserInputResolutionOptions options)
+DUrl DUrl::fromUserInput(const QString &userInput, QString workingDirectory,
+                         bool preferredLocalPath, QUrl::UserInputResolutionOptions options)
 {
     if (options != AssumeLocalFile)
         return QUrl::fromUserInput(userInput, workingDirectory, options);
 
-    if (userInput.startsWith("~")) {
+    if ((userInput.startsWith("~") && preferredLocalPath) || userInput.startsWith("~/")) {
         return DUrl::fromLocalFile(QDir::homePath() + userInput.mid(1));
-    } else if (QDir().exists(userInput) || userInput.startsWith("./")
+    } else if ((preferredLocalPath && QDir().exists(userInput)) || userInput.startsWith("./")
                || userInput.startsWith("../") || userInput.startsWith("/")) {
         QDir dir(userInput);
 
