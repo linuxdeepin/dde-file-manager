@@ -77,6 +77,15 @@ DUrl WindowManager::getUrlByWindowId(int windowId)
     return DUrl::fromLocalFile(QDir::homePath());
 }
 
+bool WindowManager::tabAddableByWinId(const int &winId)
+{
+    DFileManagerWindow* window = qobject_cast<DFileManagerWindow*>(getWindowById(winId));
+    if(window)
+        return window->tabAddable();
+    return false;
+
+}
+
 void WindowManager::showNewWindow(const DUrl &url, bool isAlwaysOpen)
 {
     if (!isAlwaysOpen){
