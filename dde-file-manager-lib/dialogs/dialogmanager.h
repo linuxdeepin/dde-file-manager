@@ -33,7 +33,10 @@ public slots:
     void handleConflictRepsonseConfirmed(const QMap<QString, QString> &jobDetail, const QMap<QString, QVariant> &response);
     void addJob(FileJob * job);
     void removeJob(const QString &jobId);
-    void showTaskDialog();
+    void updateJob();
+    void startUpdateJobTimer();
+    void stopUpdateJobTimer();
+
     void abortJob(const QMap<QString, QString> &jobDetail);
     void abortJobByDestinationUrl(const DUrl& url);
 
@@ -64,7 +67,7 @@ private:
     QMap<QString, FileJob*> m_jobs;
     QMap<DUrl, PropertyDialog*> m_propertyDialogs;
     QTimer* m_closeIndicatorTimer = NULL;
-
+    QTimer* m_updateJobTaskTimer = NULL;
 };
 
 #endif // DIALOGMANAGER_H

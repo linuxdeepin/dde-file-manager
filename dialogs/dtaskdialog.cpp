@@ -34,6 +34,7 @@ void MoveCopyTaskWidget::initUI(){
     m_cirleWidget->setBackgroundColor(QColor(20, 20, 20));
     m_cirleWidget->setChunkColor(QColor("#3cadff"));
     m_cirleWidget->setLineWidth(2);
+    m_cirleWidget->setValue(0);
     m_closeButton = new QPushButton;
     m_closeButton->setObjectName("CloseButton");
     m_closeButton->setFixedSize(27, 23);

@@ -28,10 +28,23 @@ public:
         Conflicted
     };
 
+    enum JobType{
+        Copy,
+        Move,
+        Delete,
+        Restore
+    };
+    Q_ENUM(JobType)
+
     static int FileJobCount;
 
+    static qint64 Msec_For_Display;
+    static qint64 Data_Block_Size;
+    static qint64 Data_Flush_Size;
 
-    explicit FileJob(const QString &title, QObject *parent = 0);
+
+    explicit FileJob(JobType jobType, QObject *parent = 0);
+    ~FileJob();
     void setStatus(Status status);
     void setJobId(const QString &id);
     QString getJobId();
@@ -42,6 +55,11 @@ public:
     int getWindowId();
 
     QString getTargetDir();
+
+    inline QMap<QString, QString> jobDetail(){ return m_jobDetail; }
+    inline qint64 currentMsec() { return m_timer.elapsed(); }
+    inline qint64 lastMsec() { return m_lastMsec; }
+    inline bool isJobAdded() { return m_isJobAdded; }
 
 signals:
 
@@ -94,6 +112,7 @@ private:
     qint64 m_bytesCopied;
     qint64 m_totalSize;
     qint64 m_bytesPerSec;
+    QString m_progress;
     float m_factor;
     bool m_isJobAdded = false;
     QString m_srcFileName;
@@ -101,14 +120,15 @@ private:
     QString m_srcPath;
     QString m_tarPath;
     QElapsedTimer m_timer;
-    qint64 lastMsec;
-    qint64 currentMsec;
+    qint64 m_lastMsec;
     bool m_applyToAll  = false;
     bool m_isReplaced = false;
-    QString m_title;
+    JobType m_jobType;
     int m_windowId = -1;
 
-
+    int m_filedes[2] = {0, 0};
+    bool m_isInSameDisk = true;
+    bool m_isFinished = false;
 
     bool copyFile(const QString &srcFile, const QString &tarDir, bool isMoved=false, QString *targetPath = 0);
     bool copyDir(const QString &srcPath, const QString &tarPath, bool isMoved=false, QString *targetPath = 0);
