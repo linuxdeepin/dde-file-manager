@@ -55,7 +55,7 @@ void SingleApplication::newClientProcess(const QString &key)
                     isNewWindow = CommandLineManager::instance()->isSet("n");
                 }
                 QJsonObject message;
-                message.insert("url", commandlineUrl);
+                message.insert("url", DUrl::fromUserInput(commandlineUrl).toString());
                 message.insert("isNewWindow", isNewWindow);
                 QJsonDocument  obj(message);
                 localSocket->write(obj.toJson().data());
@@ -125,12 +125,14 @@ void SingleApplication::handleConnection()
 
 void SingleApplication::readData()
 {
-    qDebug() << sender();
-    qDebug() << static_cast<QLocalSocket*>(sender())->bytesAvailable();
+    QLocalSocket *socket = qobject_cast<QLocalSocket*>(sender());
 
-    QJsonParseError* error = new QJsonParseError();
-    QJsonObject messageObj = QJsonDocument::fromJson(QByteArray(static_cast<QLocalSocket*>(sender())->readAll()), error).object();
-    qDebug() << messageObj << error->errorString();
+    if (!socket)
+        return;
+
+    QJsonParseError error;
+    QJsonObject messageObj = QJsonDocument::fromJson(socket->readAll(), &error).object();
+    qDebug() << messageObj << error.errorString();
 
     DUrl url = DUrl::fromLocalFile(QDir::homePath());
     bool isNewWindow = false;
