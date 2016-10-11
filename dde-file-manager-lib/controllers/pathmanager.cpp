@@ -55,6 +55,8 @@ QString PathManager::getSystemPath(QString key)
         initPaths();
     }
     QString path = m_systemPathsMap.value(key);
+    if(key == "Home" || key == "Trash" || key == "Disk" || key == "Network")
+        return path;
     if (!QDir(path).exists()){
         bool flag = QDir::home().mkpath(path);
         qDebug() << "mkpath" << path << flag;
@@ -126,9 +128,11 @@ void PathManager::loadSystemPaths()
 
     foreach (QString key, m_systemPathsMap.keys()) {
         QString path = m_systemPathsMap.value(key);
-        mkPath(path);
-        m_fileSystemWatcher->addPath(path);
         m_systemPathsSet << path;
+        if(key == "Home" || key == "Trash" || key == "Disk" || key == "Network")
+            continue;
+        m_fileSystemWatcher->addPath(path);
+        mkPath(path);
     }
 }
 
