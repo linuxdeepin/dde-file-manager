@@ -226,7 +226,11 @@ QPixmap ThumbnailGenerator::getPDFThumbnail(const QString &fpath, const Thumbnai
 
     Poppler::Page* pdfPage = document->page(0); //Document start at page 0
 
-    QImage img = pdfPage->renderToImage(72,72,0,0,pdfPage->pageSize().width(),pdfPage->pageSize().height());
+    QImage img;
+    img = pdfPage->thumbnail();
+    if(img.isNull()){
+        img = pdfPage->renderToImage(72,72,0,0,pdfPage->pageSize().width(),pdfPage->pageSize().height());
+    }
     if(img.isNull()){
         qDebug()<<"render error";
         return QPixmap();
@@ -235,6 +239,7 @@ QPixmap ThumbnailGenerator::getPDFThumbnail(const QString &fpath, const Thumbnai
     img = img.scaled(QSize(size,size),Qt::KeepAspectRatio,Qt::SmoothTransformation);
     delete pdfPage;
     return QPixmap::fromImage(img);
+
 }
 
 QPixmap ThumbnailGenerator::getVideoThumbnail(const QString &fpath, const ThumbnailGenerator::ThumbnailSize &size)
