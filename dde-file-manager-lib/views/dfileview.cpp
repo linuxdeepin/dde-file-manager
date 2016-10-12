@@ -109,6 +109,7 @@ public:
     QIcon lockIcon;
     QIcon linkIcon;
     QIcon unreadableIcon;
+    QIcon sharedIcon;
 
     QModelIndex mouseLastPressedIndex;
 
@@ -177,6 +178,7 @@ void DFileView::initUI()
     d->linkIcon = QIcon(":/images/images/link_large.png");
     d->lockIcon = QIcon(":/images/images/lock_large.png");
     d->unreadableIcon = QIcon(":/images/images/unreadable.svg");
+    d->sharedIcon = QIcon(":/images/images/share_large.png");
 
     d->statusBar = new DStatusBar(this);
     d->scalingSlider = d->statusBar->scalingSlider();
@@ -689,6 +691,9 @@ QList<QIcon> DFileView::fileAdditionalIcon(const QModelIndex &index) const
 
     if (!fileInfo->isReadable())
         icons << d->unreadableIcon;
+
+    if (fileInfo->isShared())
+        icons << d->sharedIcon;
 
     return icons;
 }
@@ -1767,7 +1772,7 @@ bool DFileView::setCurrentUrl(DUrl fileUrl)
     const DUrl &currentUrl = this->currentUrl();
 
 
-    if(currentUrl == fileUrl)
+    if(currentUrl == fileUrl && !info->isShared())
         return false;
 
 //    QModelIndex index = model()->index(fileUrl);

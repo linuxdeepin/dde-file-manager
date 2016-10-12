@@ -21,6 +21,8 @@ public:
 
     ShareInfo getShareInfoByPath(const QString& path) const;
     QString getShareNameByPath(const QString& path) const;
+    ShareInfoList shareInfoList();
+    bool hasShareFolders() const;
 
     static void writeCacheToFile(const QString &path, const QString &content);
     static QString readCacheFromFile(const QString &path);

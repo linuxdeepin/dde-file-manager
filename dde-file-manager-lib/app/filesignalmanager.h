@@ -23,6 +23,9 @@ signals:
     /* change currentUrl*/
     void requestChangeCurrentUrl(const FMEvent &event);
 
+    /* emit usershare status changed*/
+    void userShareCountChanged(const int count);
+
     /* request open in new tab*/
     void requestOpenInNewTab(const FMEvent &event);
 

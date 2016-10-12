@@ -7,6 +7,7 @@
 #include "recenthistorymanager.h"
 #include "trashmanager.h"
 #include "searchcontroller.h"
+#include "sharecontroler.h"
 #include "bookmarkmanager.h"
 #include "networkcontroller.h"
 #include "deviceinfo/udisklistener.h"
@@ -46,6 +47,7 @@ AppController::AppController(QObject *parent) : QObject(parent)
     FileServices::dRegisterUrlHandler<SearchController>(SEARCH_SCHEME, "");
     FileServices::dRegisterUrlHandler<NetworkController>(NETWORK_SCHEME, "");
     FileServices::dRegisterUrlHandler<NetworkController>(SMB_SCHEME, "");
+    FileServices::dRegisterUrlHandler<ShareControler>(USERSHARE_SCHEME, "");
 }
 
 void AppController::initConnect()
@@ -445,6 +447,19 @@ void AppController::actionSetAsWallpaper(const FMEvent &event)
 {
     const DUrl& fileUrl = event.fileUrl();
     FileUtils::setBackground(fileUrl.toLocalFile());
+}
+
+void AppController::actionUnShare(const FMEvent &event)
+{
+    const ShareInfo& info = userShareManager->getShareInfoByPath(event.fileUrl().path());
+    userShareManager->deleteUserShare(info);
+    if(userShareManager->hasShareFolders())
+        emit fileSignalManager->requestFreshFileView(event);
+    else{
+        FMEvent e = event;
+        e = DUrl::fromUserInput(QDir::homePath());
+        emit fileSignalManager->requestChangeCurrentUrl(e);
+    }
 }
 
 void AppController::actionctrlL(const FMEvent &event)

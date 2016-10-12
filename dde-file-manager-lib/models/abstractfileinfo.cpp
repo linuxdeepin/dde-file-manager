@@ -187,6 +187,11 @@ bool AbstractFileInfo::isAbsolute() const
     return data->fileInfo.isAbsolute();
 }
 
+bool AbstractFileInfo::isShared() const
+{
+    return false;
+}
+
 bool AbstractFileInfo::makeAbsolute()
 {
     bool ok = data->fileInfo.makeAbsolute();

@@ -11,6 +11,10 @@
 #include <simpleini/SimpleIni.h>
 #include "shareinfo.h"
 
+#include "app/global.h"
+#include "widgets/singleton.h"
+#include "app/filesignalmanager.h"
+
 UserShareManager::UserShareManager(QObject *parent) : QObject(parent)
 {
     m_fileSystemWatcher = new QFileSystemWatcher(this);
@@ -120,9 +124,26 @@ QString UserShareManager::readCacheFromFile(const QString &path)
     return QString(content);
 }
 
+ShareInfoList UserShareManager::shareInfoList()
+{
+    ShareInfoList shareList;
+    QList<QString> keys = m_shareInfos.keys();
+    foreach (QString key, keys) {
+        shareList << m_shareInfos.value(key);
+    }
+
+    return shareList;
+}
+
+bool UserShareManager::hasShareFolders() const
+{
+    return m_shareInfos.count()>=1;
+}
+
 void UserShareManager::handleShareChanged()
 {
     updateUserShareInfo();
+    emit fileSignalManager->userShareCountChanged(m_shareInfos.count());
 }
 
 void UserShareManager::updateUserShareInfo()
@@ -182,6 +203,11 @@ void UserShareManager::updateUserShareInfo()
 
 void UserShareManager::addUserShare(const ShareInfo &info)
 {
+    //handle old info
+    ShareInfo oldInfo = getShareInfoByPath(info.path());
+    if(oldInfo.isValid())
+        deleteUserShare(oldInfo);
+
     if (!info.shareName().isEmpty() && QFile(info.path()).exists()){
         QString cmd = "net";
         QStringList args;
@@ -219,12 +245,14 @@ void UserShareManager::deleteUserShareByShareName(const QString &shareName)
     args << "usershare" << "delete"
          << shareName;
     QProcess::startDetached(cmd, args);
+    updateUserShareInfo();
 }
 
 void UserShareManager::deleteUserShare(const ShareInfo &info)
 {
     if (!info.shareName().isEmpty()){
         deleteUserShareByShareName(info.shareName());
+        updateUserShareInfo();
     }
 }
 

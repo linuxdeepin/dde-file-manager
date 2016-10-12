@@ -170,7 +170,9 @@ HEADERS += \
     interfaces/dfiledialoghandle.h \
     dialogs/shareinfoframe.h \
     interfaces/dfmstandardpaths.h \
-    interfaces/dfmglobal.h
+    interfaces/dfmglobal.h \
+    controllers/sharecontroler.h \
+    models/sharefileinfo.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -268,7 +270,9 @@ SOURCES += \
     interfaces/dfiledialoghandle.cpp \
     dialogs/shareinfoframe.cpp \
     interfaces/dfmstandardpaths.cpp \
-    interfaces/dfmglobal.cpp
+    interfaces/dfmglobal.cpp \
+    controllers/sharecontroler.cpp \
+    models/sharefileinfo.cpp
 
 INCLUDEPATH += $$PWD/../ $$PWD/../utils/
 

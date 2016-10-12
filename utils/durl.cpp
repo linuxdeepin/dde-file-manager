@@ -111,6 +111,11 @@ bool DUrl::isMTPFile() const
     return scheme() == MTP_SCHEME;
 }
 
+bool DUrl::isUserShareFile() const
+{
+    return scheme() == USERSHARE_SCHEME;
+}
+
 QString DUrl::toString(QUrl::FormattingOptions options) const
 {
     if(isLocalFile() || !schemeList.contains(scheme()))

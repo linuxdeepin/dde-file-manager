@@ -104,6 +104,7 @@ public:
     virtual bool isHidden() const;
     virtual bool isRelative() const;
     virtual bool isAbsolute() const;
+    virtual bool isShared() const;
     virtual bool makeAbsolute();
 
     virtual bool isFile() const;

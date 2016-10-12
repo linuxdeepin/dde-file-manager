@@ -48,6 +48,7 @@ void DBookmarkScene::initData()
              << "Iphone"
              << "Android"
              << "Network"
+             << "UserShare"
              << "Dvd";
 
     foreach (QString key, IconKeys) {
@@ -76,7 +77,8 @@ void DBookmarkScene::initData()
                      << "Downloads"
                      << "Trash"
                      << "Disk"
-                     << "Network";
+                     << "Network"
+                     << "UserShare";
 
     foreach (QString key, m_systemPathKeys) {
         m_systemBookMarks[key] = systemPathManager->getSystemPathDisplayName(key);

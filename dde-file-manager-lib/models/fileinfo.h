@@ -23,6 +23,8 @@ public:
 
     bool isCanRename() const Q_DECL_OVERRIDE;
 
+    bool isShared() const Q_DECL_OVERRIDE;
+
     QMimeType mimeType() const Q_DECL_OVERRIDE;
 
     QIcon fileIcon() const Q_DECL_OVERRIDE;

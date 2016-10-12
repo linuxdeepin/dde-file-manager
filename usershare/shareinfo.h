@@ -49,6 +49,7 @@ private:
     bool m_isGuestOk = false;
 };
 
+typedef QList<ShareInfo> ShareInfoList;
 
 QDebug operator<<(QDebug dbg, const ShareInfo &obj);
 

@@ -9,6 +9,7 @@
 #include "app/global.h"
 #include "app/fmevent.h"
 #include "app/filesignalmanager.h"
+#include "usershare/usersharemanager.h"
 
 #include "deviceinfo/udisklistener.h"
 
@@ -74,6 +75,7 @@ void DLeftSideBar::initUI()
     setLayout(mainLayout);
     loadBookmark();
     addNetworkBookmarkItem();
+    addUserShareBookmarkItem();
     loadDevices();
 
     m_view->centerOn(0,0);
@@ -87,6 +89,7 @@ void DLeftSideBar::initConnect()
     connect(m_scene, &DBookmarkScene::dragLeft, this, &DLeftSideBar::doDragLeave);
     connect(m_scene, &DBookmarkScene::dropped, this, &DLeftSideBar::doDragLeave);
     connect(deviceListener, &UDiskListener::requestDiskInfosFinihsed, this, &DLeftSideBar::handdleRequestDiskInfosFinihsed);
+    connect(fileSignalManager, &FileSignalManager::userShareCountChanged, this, &DLeftSideBar::handleUserShareCountChanged);
 }
 
 void DLeftSideBar::initNav()
@@ -281,6 +284,19 @@ void DLeftSideBar::handdleRequestDiskInfosFinihsed()
     }
 }
 
+void DLeftSideBar::handleUserShareCountChanged(const int &count)
+{
+    DBookmarkItem* item = m_scene->hasBookmarkItem(DUrl(USERSHARE_ROOT));
+    if(count < 1){
+        if(item)
+            item->hide();
+    }
+    else{
+        if(item)
+            item->show();
+    }
+}
+
 void DLeftSideBar::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event)
@@ -321,6 +337,17 @@ void DLeftSideBar::addNetworkBookmarkItem()
     item->setUrl(DUrl("network:///"));
     m_scene->addItem(item);
     m_scene->setNetworkDiskItem(item);
+}
+
+void DLeftSideBar::addUserShareBookmarkItem()
+{
+    QString key = "UserShare";
+    DBookmarkItem * item = m_scene->createBookmarkByKey(key);
+    item->setUrl(DUrl(USERSHARE_ROOT));
+    m_scene->addItem(item);
+    if(!userShareManager->hasShareFolders())
+        item->hide();
+
 }
 
 void DLeftSideBar::loadDevices()

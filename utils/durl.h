@@ -14,6 +14,7 @@
 #define AFC_SCHEME "afc"
 #define MTP_SCHEME "mtp"
 #define GPHOTO2_SCHEME "gphoto2"
+#define USERSHARE_SCHEME "usershare"
 
 #define TRASH_ROOT "trash:///"
 #define RECENT_ROOT "recent:///"
@@ -22,6 +23,7 @@
 #define COMPUTER_ROOT "computer:///"
 #define NETWORK_ROOT "network:///"
 #define SMB_ROOT "smb:///"
+#define USERSHARE_ROOT "usershare:///"
 
 class DUrl;
 
@@ -55,6 +57,7 @@ public:
     bool isSMBFile() const;
     bool isAFCFile() const;
     bool isMTPFile() const;
+    bool isUserShareFile() const;
 
     QString toString(FormattingOptions options = FormattingOptions( PrettyDecoded )) const;
 
