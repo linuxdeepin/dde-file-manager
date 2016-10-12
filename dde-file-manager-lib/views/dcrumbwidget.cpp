@@ -145,6 +145,8 @@ void DCrumbWidget::setCrumb(const DUrl &path)
         addCrumb(QStringList() << path.toString());
     }else if(path.isNetWorkFile()){
         addNetworkCrumb();
+    }else if(path.isUserShareFile()){
+        addUserShareCrumb();
     }
     else
     {
@@ -266,6 +268,23 @@ void DCrumbWidget::addNetworkCrumb()
                 QIcon(":/icons/images/icons/network_normal_16px.svg"),
                 QIcon(":/icons/images/icons/network_hover_16px.svg"),
                 QIcon(":/icons/images/icons/network_checked_16px.svg"),
+                text, this);
+    button->setFocusPolicy(Qt::NoFocus);
+    button->adjustSize();
+    button->setPath("/");
+    m_group.addButton(button, button->getIndex());
+    button->setChecked(true);
+    connect(button, &DCrumbButton::clicked, this, &DCrumbWidget::buttonPressed);
+}
+
+void DCrumbWidget::addUserShareCrumb()
+{
+    QString text = USERSHARE_ROOT;
+    DCrumbButton * button = new DCrumbIconButton(
+                m_group.buttons().size(),
+                QIcon(":/icons/images/icons/usershare_normal_16px.svg"),
+                QIcon(":/icons/images/icons/usershare_hover_16px.svg"),
+                QIcon(":/icons/images/icons/usershare_checked_16px.svg"),
                 text, this);
     button->setFocusPolicy(Qt::NoFocus);
     button->adjustSize();
@@ -524,6 +543,8 @@ void DCrumbWidget::buttonPressed()
         }else{
             event = DUrl(NETWORK_ROOT);
         }
+    }else if(localButton->getName() == USERSHARE_ROOT){
+        event = DUrl(USERSHARE_ROOT);
     }
     else if(localButton->getName() == m_homePath)
     {

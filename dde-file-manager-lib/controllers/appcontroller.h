@@ -76,6 +76,7 @@ public slots:
     void actionAbout(const FMEvent& event);
     void actionExit(const FMEvent& event);
     void actionSetAsWallpaper(const FMEvent& event);
+    void actionUnShare(const FMEvent& event);
 
 
     void actionctrlL(const FMEvent& event);

@@ -33,6 +33,7 @@ void PathManager::initPaths()
     m_systemPathDisplayNamesMap["Trash"] = tr("Trash");
     m_systemPathDisplayNamesMap["Disk"] = tr("Disk");
     m_systemPathDisplayNamesMap["Network"] = tr("Computers in LAN");
+    m_systemPathDisplayNamesMap["UserShare"] = tr("My Shares");
 
 
     m_systemPathIconNamesMap["Home"] = "folder-home";
@@ -123,6 +124,7 @@ void PathManager::loadSystemPaths()
     m_systemPathsMap["Trash"] = StandardPath::getTrashFilesPath();
     m_systemPathsMap["Disk"] = StandardPath::getDiskPath();
     m_systemPathsMap["Network"] = StandardPath::getNetworkRootPath();
+    m_systemPathsMap["UserShare"] = StandardPath::getUserShareRootPath();
 
     m_systemPathsSet.reserve(m_systemPathsMap.size());
 

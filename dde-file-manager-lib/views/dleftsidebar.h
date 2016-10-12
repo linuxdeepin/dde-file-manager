@@ -60,6 +60,7 @@ public slots:
     void doDragEnter();
     void doDragLeave();
     void handdleRequestDiskInfosFinihsed();
+    void handleUserShareCountChanged(const int &count);
 
 protected:
     void paintEvent(QPaintEvent *event);
@@ -67,6 +68,7 @@ protected:
 private:
     void loadBookmark();
     void addNetworkBookmarkItem();
+    void addUserShareBookmarkItem();
     void loadDevices();
     bool m_isTight = false;
     bool m_entered = false;

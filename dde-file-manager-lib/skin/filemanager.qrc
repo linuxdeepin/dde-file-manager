@@ -165,6 +165,8 @@
         <file>images/lock_large.png</file>
         <file>images/lock_small.png</file>
         <file>images/application-x-shellscript.svg</file>
+        <file>images/share_large.png</file>
+        <file>images/share_small.png</file>
     </qresource>
     <qresource prefix="/icons">
         <file>images/icons/desktop_checked_16px.svg</file>
@@ -353,5 +355,11 @@
         <file>images/icons/active_tab_close_normal.png</file>
         <file>images/icons/active_tab_close_press.png</file>
         <file>images/icons/slider_handle.png</file>
+        <file>images/icons/usershare_checked_16px.svg</file>
+        <file>images/icons/usershare_checked_22px.svg</file>
+        <file>images/icons/usershare_hover_16px.svg</file>
+        <file>images/icons/usershare_hover_22px.svg</file>
+        <file>images/icons/usershare_normal_16px.svg</file>
+        <file>images/icons/usershare_normal_22px.svg</file>
     </qresource>
 </RCC>

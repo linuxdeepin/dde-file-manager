@@ -50,6 +50,7 @@ private:
     void addTrashCrumb();
     void addHomeCrumb();
     void addNetworkCrumb();
+    void addUserShareCrumb();
 
     DCrumbButton* createDeviceCrumbButtonByType(UDiskDeviceInfo::MediaType type, const QString& mountPoint);
 

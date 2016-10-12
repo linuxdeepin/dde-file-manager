@@ -71,6 +71,7 @@ public:
         ExtendView,
         SetAsWallpaper,
         ForgetPassword,
+        UnShare,
         Unknow
     };
 

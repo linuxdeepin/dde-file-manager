@@ -293,6 +293,7 @@ void FileMenuManager::initData()
     m_actionKeys[MenuAction::DeletionDate] = QObject::tr("Time deleted");
     m_actionKeys[MenuAction::SourcePath] = QObject::tr("Source path");
     m_actionKeys[MenuAction::AbsolutePath] = QObject::tr("Path");
+    m_actionKeys[MenuAction::UnShare] = QObject::tr("Cancle sharing");
 }
 
 void FileMenuManager::initActions()

@@ -51,7 +51,7 @@ bool TrashFileInfo::isReadable() const
 
 bool TrashFileInfo::isWritable() const
 {
-    return true;
+    return false;
 }
 
 QString TrashFileInfo::displayName() const

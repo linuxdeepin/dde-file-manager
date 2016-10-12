@@ -23,6 +23,7 @@ public:
     static QString getTrashFilesPath();
     static QString getDiskPath();
     static QString getNetworkRootPath();
+    static QString getUserShareRootPath();
 };
 
 #endif // STANDARDPATH_H

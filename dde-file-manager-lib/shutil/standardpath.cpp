@@ -98,3 +98,8 @@ QString StandardPath::getNetworkRootPath()
     return NETWORK_ROOT;
 }
 
+QString StandardPath::getUserShareRootPath()
+{
+    return USERSHARE_ROOT;
+}
+

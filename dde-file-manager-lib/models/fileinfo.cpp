@@ -8,6 +8,10 @@
 
 #include "widgets/singleton.h"
 
+#include "app/global.h"
+#include "widgets/singleton.h"
+#include "usershare/usersharemanager.h"
+
 #include <QDateTime>
 #include <QDir>
 #include <QMimeDatabase>
@@ -60,6 +64,12 @@ bool FileInfo::isCanRename() const
     canRenameCacheMap[fileUrl()] = canRename;
 
     return canRename;
+}
+
+bool FileInfo::isShared() const
+{
+    ShareInfo info = userShareManager->getShareInfoByPath(fileUrl().path());
+    return info.isValid();
 }
 
 QMimeType FileInfo::mimeType() const
