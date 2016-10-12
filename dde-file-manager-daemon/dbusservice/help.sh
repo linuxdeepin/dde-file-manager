@@ -32,3 +32,8 @@ qdbusxml2cpp -c RenameJobInterface -p dbusinterface/renamejob_interface renamejo
 echo "=====deletejob====="
 qdbusxml2cpp -i fileoperationjob/deletejob.h -c DeleteJobAdaptor -l DeleteJob -a dbusadaptor/deletejob_adaptor deletejob.xml
 qdbusxml2cpp -c DeleteJobInterface -p dbusinterface/deletejob_interface deletejob.xml
+
+
+echo "=====usershare====="
+qdbusxml2cpp -i usershare/usersharemanager.h -c UserShareAdaptor -l UserShareManager -a dbusadaptor/usershare_adaptor usershare.xml
+qdbusxml2cpp -c UserShareInterface -p dbusinterface/usershare_interface usershare.xml

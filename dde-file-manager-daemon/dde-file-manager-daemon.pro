@@ -49,7 +49,10 @@ SOURCES += main.cpp \
     dbusservice/dbusinterface/createfolderjob_interface.cpp \
     dbusservice/dbusinterface/createtemplatefilejob_interface.cpp \
     dbusservice/dbusinterface/deletejob_interface.cpp \
-    dbusservice/dbusinterface/movejob_interface.cpp
+    dbusservice/dbusinterface/movejob_interface.cpp \
+    usershare/usersharemanager.cpp \
+    dbusservice/dbusadaptor/usershare_adaptor.cpp \
+    dbusservice/dbusinterface/usershare_interface.cpp
 
 HEADERS += \
     app/filemanagerdaemon.h \
@@ -79,7 +82,10 @@ HEADERS += \
     dbusservice/dbusinterface/createfolderjob_interface.h \
     dbusservice/dbusinterface/createtemplatefilejob_interface.h \
     dbusservice/dbusinterface/deletejob_interface.h \
-    dbusservice/dbusinterface/movejob_interface.h
+    dbusservice/dbusinterface/movejob_interface.h \
+    usershare/usersharemanager.h \
+    dbusservice/dbusadaptor/usershare_adaptor.h \
+    dbusservice/dbusinterface/usershare_interface.h
 
 
 target.path = /usr/bin

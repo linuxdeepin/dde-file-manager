@@ -4,6 +4,7 @@
 #include <QObject>
 
 class FileOperation;
+class UserShareManager;
 
 class AppController : public QObject
 {
@@ -21,6 +22,7 @@ public slots:
 
 private:
     FileOperation* m_fileOperationController = NULL;
+    UserShareManager* m_userShareManager = NULL;
 };
 
 #endif // APPCONTROLLER_H
