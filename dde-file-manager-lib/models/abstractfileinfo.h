@@ -98,6 +98,7 @@ public:
     virtual QString absolutePath() const;
 
     virtual bool isCanRename() const = 0;
+    virtual bool isCanShare() const;
     virtual bool isReadable() const;
     virtual bool isWritable() const;
     virtual bool isExecutable() const;

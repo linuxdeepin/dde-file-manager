@@ -99,7 +99,7 @@ QIcon DFMGlobal::standardIcon(DFMGlobal::Icon iconType) const
 {
     static QIcon linkIcon(":/images/images/link_large.png");
     static QIcon lockIcon (":/images/images/lock_large.png");
-    static QIcon unreadableIcon(":/images/images/unreadable.svg");
+    static QIcon unreadableIcon(":/images/images/unreadable_large.png");
     static QIcon shareIcon(":/images/images/share_large.png");
 
     switch (iconType) {

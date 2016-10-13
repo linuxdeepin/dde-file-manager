@@ -66,6 +66,11 @@ bool FileInfo::isCanRename() const
     return canRename;
 }
 
+bool FileInfo::isCanShare() const
+{
+    return fileUrl().path().startsWith(QDir::homePath()) && isDir();
+}
+
 bool FileInfo::isShared() const
 {
     ShareInfo info = userShareManager->getShareInfoByPath(fileUrl().path());

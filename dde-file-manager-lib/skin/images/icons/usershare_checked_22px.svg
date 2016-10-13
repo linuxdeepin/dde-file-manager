@@ -4,14 +4,14 @@
     <title>share-active-22px</title>
     <desc>Created with Sketch.</desc>
     <defs></defs>
-    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
-        <g id="share-active-22px" stroke="#FFFFFF">
-            <g id="Group-2" transform="translate(1.398060, 1.409526)">
-                <circle id="Oval-2" fill="#FFFFFF" cx="3.125" cy="9.125" r="3"></circle>
-                <circle id="Oval-2" fill="#FFFFFF" cx="14.125" cy="3.125" r="3"></circle>
-                <circle id="Oval-2" fill="#FFFFFF" cx="14.125" cy="15.125" r="3"></circle>
-                <path d="M5.625,11.125 L11.125,14.125" id="Path" stroke-width="2"></path>
-                <path d="M11.125,4.125 L5.625,7.125" id="Path" stroke-width="2"></path>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="share-active-22px" fill="#FFFFFF">
+            <g id="Group-2" transform="translate(0.398060, 0.409526)">
+                <circle id="Oval-2" cx="4.10073899" cy="10.1585901" r="3.20000005"></circle>
+                <circle id="Oval-2" cx="15.095099" cy="4.07167276" r="3.20000005"></circle>
+                <circle id="Oval-2" cx="15.0599462" cy="16.1412547" r="3.20000005"></circle>
+                <path d="M12.0296612,15.4685583 C12.5453907,15.733021 13.1915164,15.5543632 13.4728234,15.0695149 C13.7541304,14.5846665 13.5640934,13.9772299 13.0483639,13.7127672 L7.1980558,10.7127672 C6.68232632,10.4483044 6.03620059,10.6269623 5.7548936,11.1118106 C5.4735866,11.5966589 5.66362358,12.2040956 6.17935307,12.4685583 L12.0296612,15.4685583 Z" id="Path"></path>
+                <path d="M6.17935307,7.71276717 C5.66362358,7.9772299 5.4735866,8.58466654 5.7548936,9.06951487 C6.03620059,9.55436321 6.68232632,9.73302104 7.1980558,9.46855832 L13.0483639,6.46855832 C13.5640934,6.20409559 13.7541304,5.59665895 13.4728234,5.11181061 C13.1915164,4.62696227 12.5453907,4.44830444 12.0296612,4.71276717 L6.17935307,7.71276717 Z" id="Path"></path>
             </g>
         </g>
     </g>

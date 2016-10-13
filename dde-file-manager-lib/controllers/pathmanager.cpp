@@ -56,11 +56,14 @@ QString PathManager::getSystemPath(QString key)
         initPaths();
     }
     QString path = m_systemPathsMap.value(key);
-    if(key == "Home" || key == "Trash" || key == "Disk" || key == "Network")
-        return path;
-    if (!QDir(path).exists()){
-        bool flag = QDir::home().mkpath(path);
-        qDebug() << "mkpath" << path << flag;
+    if(key == "Desktop" || key == "Videos" || key == "Music" ||
+       key == "Pictures" || key == "Documents" || key == "Downloads" ||
+       key == "Trash"){
+
+        if (!QDir(path).exists()){
+            bool flag = QDir::home().mkpath(path);
+            qDebug() << "mkpath" << path << flag;
+        }
     }
     return path;
 }
@@ -131,10 +134,12 @@ void PathManager::loadSystemPaths()
     foreach (QString key, m_systemPathsMap.keys()) {
         QString path = m_systemPathsMap.value(key);
         m_systemPathsSet << path;
-        if(key == "Home" || key == "Trash" || key == "Disk" || key == "Network")
-            continue;
-        m_fileSystemWatcher->addPath(path);
-        mkPath(path);
+        if(key == "Desktop" || key == "Videos" || key == "Music" ||
+           key == "Pictures" || key == "Documents" || key == "Downloads" ||
+           key == "Trash"){
+            m_fileSystemWatcher->addPath(path);
+            mkPath(path);
+        }
     }
 }
 
