@@ -22,9 +22,16 @@ UserShareManager::~UserShareManager()
 bool UserShareManager::setUserSharePassword(const QString &username, const QString &passward)
 {
     qDebug() << username << passward;
-    QString cmd = QString("echo -e \"%1\n%2\" | smbpasswd -a -s %3").arg(passward, passward, username);
-    qDebug() << cmd;
-    bool ret = QProcess::startDetached(cmd);
+    QStringList args;
+    args << "-a" << username << "-s";
+    QProcess p;
+    p.start("smbpasswd", args);
+    p.write(passward.toStdString().c_str());
+    p.write("\n");
+    p.write(passward.toStdString().c_str());
+    p.closeWriteChannel();
+    bool ret = p.waitForFinished();
+    qDebug() << p.readAll() << p.readAllStandardError() << p.readAllStandardOutput();
     return ret;
 }
 

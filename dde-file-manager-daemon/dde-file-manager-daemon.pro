@@ -22,6 +22,8 @@ TEMPLATE = app
 
 INCLUDEPATH += dbusservice
 
+DEFINES += QT_MESSAGELOGCONTEXT
+
 SOURCES += main.cpp \
     app/filemanagerdaemon.cpp \
     controllers/appcontroller.cpp \
