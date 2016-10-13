@@ -29,6 +29,9 @@ signals:
     /* request open in new tab*/
     void requestOpenInNewTab(const FMEvent &event);
 
+    /* request close current tab*/
+    void requestCloseCurrentTab(const FMEvent &event);
+
     /* request fetch network nodes*/
 
     void requestFetchNetworks(const FMEvent &event);

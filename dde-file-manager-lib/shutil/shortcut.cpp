@@ -37,6 +37,7 @@ Shortcut::Shortcut(QObject *parent) : QObject(parent)
                       << ShortcutItem(tr("Input in address bar"),tr("Ctrl + l "));
     group5.groupName = tr("Others");
     group5.groupItems << ShortcutItem(tr("Close"),tr("Alt + F4 "))
+                      << ShortcutItem(tr("Close current tab"), tr("Ctrl + w"))
                       << ShortcutItem(tr("Back"),tr("Alt + left "))
                       << ShortcutItem(tr("Forward"),tr("Alt + right "));
     m_shortcutGroups << group1 << group2 << group3 << group4 << group5;
