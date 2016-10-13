@@ -11,6 +11,11 @@
 #include <QUrl>
 #include <QFileInfo>
 #include <QFile>
+#include "QPainter"
+
+#include "dutility.h"
+
+DWIDGET_USE_NAMESPACE
 
 ThumbnailManager::ThumbnailManager(QObject *parent)
     : QThread(parent)
@@ -226,8 +231,6 @@ void ThumbnailManager::run()
                 //do not emit pixmap changed, otherwise it will turn to a death loops
                 break;
             }
-
-            m_md5ToPixmap[md5] = thumbNailedpixmap;
             QImage img  = thumbNailedpixmap.toImage();
 
             //write extra attribute messages
@@ -238,7 +241,10 @@ void ThumbnailManager::run()
                 img.setText(key,attributeSet.value(key));
             }
 
-            img.save(thumbnailPath,"png",task.quality);
+            bool ret = img.save(thumbnailPath,"png",task.quality);
+            if(ret)
+                pixmap = QPixmap(thumbnailPath);
+            m_md5ToPixmap[md5] = pixmap;
         }
         emit pixmapChanged(fpath, pixmap);
     }

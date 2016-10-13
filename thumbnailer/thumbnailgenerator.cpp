@@ -10,6 +10,7 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QUrl>
+#include <QPainter>
 
 // poppler for pdf
 #include <poppler/qt5/poppler-qt5.h>
@@ -26,22 +27,32 @@ ThumbnailGenerator::ThumbnailGenerator(QObject *parent) : QObject(parent)
 
 QPixmap ThumbnailGenerator::generateThumbnail(const QUrl& fileUrl, ThumbnailGenerator::ThumbnailSize size)
 {
+    QPixmap pixmap;
+
     if(fileUrl.isLocalFile()){
         QString fPath = fileUrl.path();
         if(isPictureFile(fPath))
-            return getPictureThumbnail(fPath, size);
+            pixmap = getPictureThumbnail(fPath, size);
         if(isTextPlainFile(fPath))
-            return getTextplainThumbnail(fPath, size);
+            pixmap = getTextplainThumbnail(fPath, size);
         if(isPDFFile(fPath))
-            return getPDFThumbnail(fPath, size);
+            pixmap = getPDFThumbnail(fPath, size);
         if(isVideoFile(fPath))
-            return getVideoThumbnail(fPath, size);
+            pixmap = getVideoThumbnail(fPath, size);
     }
     else{
         //TODO
     }
 
-    return QPixmap();
+    QImage img = pixmap.toImage();
+    QPainter pa(&img);
+    QPen pen;
+    pen.setColor(QColor(0,0,0,0.3*255));
+    pen.setWidth(1);
+    pa.setPen(pen);
+    pa.drawRect(QRect(0,0,img.width()-1,img.height()-1));
+
+    return QPixmap::fromImage(img);
 }
 
 bool ThumbnailGenerator::canGenerateThumbnail(const QUrl&  fileUrl) const
@@ -278,7 +289,7 @@ QPixmap ThumbnailGenerator::getPictureThumbnail(const QString &fpath, const Thum
     bool canScale = imgsize.width() > size || imgsize.height() > size;
 
     if (canScale) {
-        imgsize.scale(QSize(qMin(256, imgsize.width()), qMin(256, imgsize.height())), Qt::KeepAspectRatio);
+        imgsize.scale(QSize(qMin((int)size, imgsize.width()), qMin((int)size, imgsize.height())), Qt::KeepAspectRatio);
         reader.setScaledSize(imgsize);
     }
 
