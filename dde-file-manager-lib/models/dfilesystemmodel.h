@@ -15,9 +15,9 @@ QT_END_NAMESPACE
 
 class FileSystemNode;
 class AbstractFileInfo;
-class DFileView;
 class FMEvent;
 class JobController;
+class DFileViewHelper;
 
 typedef QExplicitlySharedDataPointer<FileSystemNode> FileSystemNodePointer;
 
@@ -48,10 +48,10 @@ public:
         Unknow
     };
 
-    explicit DFileSystemModel(DFileView *parent = 0);
+    explicit DFileSystemModel(DFileViewHelper *parent);
     ~DFileSystemModel();
 
-    DFileView *parent() const;
+    DFileViewHelper *parent() const;
 
     inline QModelIndex createIndex(int arow, int acolumn, quintptr aid) const
     { return QAbstractItemModel::createIndex(arow, acolumn, aid);}

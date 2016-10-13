@@ -1,31 +1,21 @@
 #ifndef DFILEITEMDELEGATE_H
 #define DFILEITEMDELEGATE_H
 
-#include "dfileview.h"
+#include "dstyleditemdelegate.h"
 
-#include <QStyledItemDelegate>
-#include <QHeaderView>
 #include <QPointer>
 
-DWIDGET_USE_NAMESPACE
-
 class FileIconItem;
-
 QT_BEGIN_NAMESPACE
 class QTextDocument;
 QT_END_NAMESPACE
 
-class DFileItemDelegate : public QStyledItemDelegate
+class DIconItemDelegate : public DStyledItemDelegate
 {
     Q_OBJECT
 public:
-    explicit DFileItemDelegate(DFileView *parent = 0);
-    ~DFileItemDelegate();
-
-    inline DFileView *parent() const
-    {
-        return qobject_cast<DFileView*>(QStyledItemDelegate::parent());
-    }
+    explicit DIconItemDelegate(DFileViewHelper *parent);
+    ~DIconItemDelegate();
 
     void paint(QPainter *painter,
                const QStyleOptionViewItem &option,
@@ -36,33 +26,28 @@ public:
 
     void updateEditorGeometry(QWidget * editor, const QStyleOptionViewItem & option, const QModelIndex &) const Q_DECL_OVERRIDE;
     void setEditorData(QWidget * editor, const QModelIndex & index) const Q_DECL_OVERRIDE;
-    void destroyEditor(QWidget *editor, const QModelIndex &index) const Q_DECL_OVERRIDE;
-
-    QString displayText(const QVariant &value, const QLocale& locale) const Q_DECL_OVERRIDE;
 
     void paintIconItem(QPainter *painter, const QStyleOptionViewItem &option,
                        const QModelIndex &index, bool isDragMode, bool isActive) const;
-    void paintListItem(QPainter *painter, const QStyleOptionViewItem &option,
-                       const QModelIndex &index, bool isDragMode, bool isActive) const;
 
-    QList<QRect> paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    QList<QRect> paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index) const Q_DECL_OVERRIDE;
 
-    void hideExpandedIndex();
-    void hideAllIIndexWidget();
-    void commitDataAndCloseActiveEditor();
+    QModelIndexList hasWidgetIndexs() const Q_DECL_OVERRIDE;
+    void hideNotEditingIndexWidget() Q_DECL_OVERRIDE;
 
-    QModelIndex editingIndex() const;
     QModelIndex expandedIndex() const;
-
     FileIconItem *expandedIndexWidget() const;
-    QWidget *editingIndexWidget() const;
 
-    QRect fileNameRect(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    int iconSizeLevel() const Q_DECL_OVERRIDE;
+    int minimumIconSizeLevel() const Q_DECL_OVERRIDE;
+    int maximumIconSizeLevel() const Q_DECL_OVERRIDE;
+
+    int increaseIcon() Q_DECL_OVERRIDE;
+    int decreaseIcon() Q_DECL_OVERRIDE;
+    int setIconSizeByIconSizeLevel(int level) Q_DECL_OVERRIDE;
 
 protected:
     bool eventFilter(QObject *object, QEvent *event) Q_DECL_OVERRIDE;
-    void initStyleOption(QStyleOptionViewItem *option,
-                         const QModelIndex &index) const Q_DECL_OVERRIDE;
 
 private:
     QPointer<FileIconItem> expanded_item;
@@ -72,13 +57,16 @@ private:
     mutable QHash<QString, int> m_textHeightMap;
     mutable QHash<QString, QTextDocument*> m_documentMap;
     mutable QModelIndex expanded_index;
-    mutable QModelIndex editing_index;
     mutable QModelIndex lastAndExpandedInde;
 
-    void onEditWidgetFocusOut();
-    QList<QRect> getCornerGeometryList(const QRect &baseRect, const QSize &cornerSize) const;
+    QList<int> m_iconSizes;
+    /// default icon size is 64px.
+    int m_currentIconSizeIndex = 1;
 
-    friend class DFileView;
+    void onEditWidgetFocusOut();
+    void onIconSizeChanged();
+    void onTriggerEdit(const QModelIndex &index);
+    QSize iconSizeByIconSizeLevel() const;
 };
 
 #endif // DFILEITEMDELEGATE_H
