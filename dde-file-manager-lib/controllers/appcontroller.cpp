@@ -48,11 +48,15 @@ AppController::AppController(QObject *parent) : QObject(parent)
     FileServices::dRegisterUrlHandler<NetworkController>(NETWORK_SCHEME, "");
     FileServices::dRegisterUrlHandler<NetworkController>(SMB_SCHEME, "");
     FileServices::dRegisterUrlHandler<ShareControler>(USERSHARE_SCHEME, "");
+    createGVfSManager();
+    createUserShareManager();
+    initConnect();
 }
 
 void AppController::initConnect()
 {
-
+    connect(userShareManager, &UserShareManager::userShareCountChanged,
+            fileSignalManager, &FileSignalManager::userShareCountChanged);
 }
 
 void AppController::createGVfSManager()
@@ -453,13 +457,6 @@ void AppController::actionUnShare(const FMEvent &event)
 {
     const ShareInfo& info = userShareManager->getShareInfoByPath(event.fileUrl().path());
     userShareManager->deleteUserShare(info);
-    if(userShareManager->hasShareFolders())
-        emit fileSignalManager->requestFreshFileView(event);
-    else{
-        FMEvent e = event;
-        e = DUrl::fromUserInput(QDir::homePath());
-        emit fileSignalManager->requestChangeCurrentUrl(e);
-    }
 }
 
 void AppController::actionctrlL(const FMEvent &event)

@@ -15,6 +15,9 @@
 
 #include "widgets/singleton.h"
 #include "interfaces/dfmglobal.h"
+
+#include "usershare/usersharemanager.h"
+
 #include "filemonitor/filemonitor.h"
 #include "appcontroller.h"
 
@@ -402,11 +405,16 @@ void FileController::onFileCreated(const QString &filePath)
         event = DUrlList() << url;
         emit fileSignalManager->requestSelectRenameFile(event);
     }
+    AbstractFileInfoPointer fileInfo = fileService->createFileInfo(DUrl::fromUserInput(filePath));
+    if(fileInfo->isShared())
+        emit fileSignalManager->userShareCountChanged(0);
+
 }
 
 void FileController::onFileRemove(const QString &filePath)
 {
     emit childrenRemoved(DUrl::fromLocalFile(filePath));
+    emit fileSignalManager->userShareCountChanged(0);
 }
 
 void FileController::onFileInfoChanged(const QString &filePath)

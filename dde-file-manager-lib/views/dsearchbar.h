@@ -35,6 +35,7 @@ public:
     bool isComputerFile();
     bool isLocalFile();
     bool isTrashFile();
+    bool isUserShareFile();
     bool isPath();
     void setCurrentPath(const DUrl &path);
 private:

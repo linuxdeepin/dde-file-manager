@@ -149,6 +149,7 @@ public slots:
 
     void setContentLabel(const QString &text);
 
+    void handleUserShareCountChanged(const int& count);
 signals:
     void currentUrlChanged(const DUrl &url);
     void viewModeChanged(ViewMode viewMode);

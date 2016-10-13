@@ -286,14 +286,13 @@ void DLeftSideBar::handdleRequestDiskInfosFinihsed()
 
 void DLeftSideBar::handleUserShareCountChanged(const int &count)
 {
+    Q_UNUSED(count)
     DBookmarkItem* item = m_scene->hasBookmarkItem(DUrl(USERSHARE_ROOT));
-    if(count < 1){
-        if(item)
-            item->hide();
-    }
-    else{
-        if(item)
+    if(item){
+        if(userShareManager->hasValidShareFolders())
             item->show();
+        else
+            item->hide();
     }
 }
 
@@ -345,7 +344,7 @@ void DLeftSideBar::addUserShareBookmarkItem()
     DBookmarkItem * item = m_scene->createBookmarkByKey(key);
     item->setUrl(DUrl(USERSHARE_ROOT));
     m_scene->addItem(item);
-    if(!userShareManager->hasShareFolders())
+    if(!userShareManager->hasValidShareFolders())
         item->hide();
 
 }

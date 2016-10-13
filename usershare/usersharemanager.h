@@ -20,14 +20,16 @@ public:
     QString getCacehPath();
 
     ShareInfo getShareInfoByPath(const QString& path) const;
+    ShareInfo getsShareInfoByShareName(const QString& shareName) const;
     QString getShareNameByPath(const QString& path) const;
     ShareInfoList shareInfoList();
-    bool hasShareFolders() const;
+    bool hasValidShareFolders();
 
     static void writeCacheToFile(const QString &path, const QString &content);
     static QString readCacheFromFile(const QString &path);
 
 signals:
+    void userShareCountChanged(const int& count);
 
 public slots:
     void handleShareChanged();

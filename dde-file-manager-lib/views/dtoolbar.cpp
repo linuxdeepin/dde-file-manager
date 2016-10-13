@@ -251,7 +251,6 @@ void DToolBar::searchBarTextEntered()
 
         event = url;
     }
-
     emit fileSignalManager->requestChangeCurrentUrl(event);
 }
 

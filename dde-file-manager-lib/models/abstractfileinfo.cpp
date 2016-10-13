@@ -409,8 +409,11 @@ QVector<MenuAction> AbstractFileInfo::menuActionList(AbstractFileInfo::MenuType 
 
             actionKeys << MenuAction::Separator
                        << MenuAction::Delete
-                       << MenuAction::Separator
-                       << MenuAction::Property;
+                       << MenuAction::Separator;
+            if(isDir() && isShared())
+                actionKeys << MenuAction::UnShare;
+
+            actionKeys  << MenuAction::Property;
         }
     } else if (type == MultiFiles) {
         actionKeys << MenuAction::Open

@@ -20,6 +20,7 @@
 #include "controllers/fileservices.h"
 #include "controllers/fmstatemanager.h"
 #include "controllers/pathmanager.h"
+#include "usershare/usersharemanager.h"
 
 #include "models/fileinfo.h"
 #include "models/dfileselectionmodel.h"
@@ -236,6 +237,8 @@ void DFileView::initConnects()
 
         update();
     });
+    connect(fileSignalManager, &FileSignalManager::userShareCountChanged,
+            this, &DFileView::handleUserShareCountChanged);
 }
 
 void DFileView::initActions()
@@ -1811,6 +1814,15 @@ void DFileView::setContentLabel(const QString &text)
 
     d->contentLabel->setText(text);
     d->contentLabel->adjustSize();
+}
+
+void DFileView::handleUserShareCountChanged(const int &count)
+{
+    Q_UNUSED(count)
+    if(!userShareManager->hasValidShareFolders()){
+        cd(DUrl::fromUserInput(QDir::homePath()));
+    }
+    model()->refresh();
 }
 
 void DFileView::updateHorizontalOffset()
