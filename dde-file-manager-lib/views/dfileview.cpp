@@ -208,8 +208,6 @@ void DFileView::initConnects()
     connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &DFileView::updateStatusBar);
     connect(fileSignalManager, &FileSignalManager::requestFoucsOnFileView, this, &DFileView::setFoucsOnFileView);
     connect(fileSignalManager, &FileSignalManager::requestFreshFileView, this, &DFileView::refreshFileView);
-    connect(fileSignalManager, &FileSignalManager::userShareCountChanged,
-            this, &DFileView::handleUserShareCountChanged);
 
     connect(model(), &DFileSystemModel::dataChanged, this, &DFileView::handleDataChanged);
     connect(model(), &DFileSystemModel::stateChanged, this, &DFileView::onModelStateChanged);
@@ -1629,6 +1627,10 @@ void DFileView::clearSelection()
 void DFileView::handleDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
 {
     DListView::dataChanged(topLeft, bottomRight, roles);
+
+    for (int i = topLeft.row(); i <= bottomRight.row(); ++i) {
+        update(model()->index(i, 0));
+    }
 }
 
 void DFileView::updateStatusBar()
@@ -1692,16 +1694,6 @@ void DFileView::setContentLabel(const QString &text)
 
     d->contentLabel->setText(text);
     d->contentLabel->adjustSize();
-}
-
-void DFileView::handleUserShareCountChanged(const int &count)
-{
-    Q_UNUSED(count)
-    if(!userShareManager->hasValidShareFolders()){
-        if(currentUrl().isUserShareFile())
-            cd(DUrl::fromUserInput(QDir::homePath()));
-    }
-    model()->refresh();
 }
 
 void DFileView::updateHorizontalOffset()

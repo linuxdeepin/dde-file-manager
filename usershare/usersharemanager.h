@@ -22,14 +22,17 @@ public:
     ShareInfo getShareInfoByPath(const QString& path) const;
     ShareInfo getsShareInfoByShareName(const QString& shareName) const;
     QString getShareNameByPath(const QString& path) const;
-    ShareInfoList shareInfoList();
-    bool hasValidShareFolders();
+    ShareInfoList shareInfoList() const;
+    bool hasValidShareFolders() const;
+    bool isShareFile(const QString &filePath) const;
 
     static void writeCacheToFile(const QString &path, const QString &content);
     static QString readCacheFromFile(const QString &path);
 
 signals:
     void userShareCountChanged(const int& count);
+    void userShareAdded(const QString& path);
+    void userShareDeleted(const QString& path);
 
 public slots:
     void handleShareChanged();
@@ -47,7 +50,7 @@ private:
 
     QFileSystemWatcher* m_fileSystemWatcher=NULL;
     QMap<QString, ShareInfo> m_shareInfos = {};
-    QMap<QString, QString> m_sharePathByFileManager = {};
+    QMap<QString, QString> m_sharePathByFilePath = {};
     QMap<QString, QStringList> m_sharePathToNames = {};
 };
 
