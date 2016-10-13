@@ -360,7 +360,7 @@ QIcon IconProvider::findIcon(const DUrl& fileUrl, const QString &mimeType)
         pixmap = thumbnailManager->getThumbnailPixmap(static_cast<QUrl>(fileUrl),ThumbnailGenerator::THUMBNAIL_LARGE);
 
         if (pixmap.isNull())
-            thumbnailManager->requestThumbnailPixmap(static_cast<QUrl>(fileUrl),ThumbnailGenerator::THUMBNAIL_LARGE,20);
+            thumbnailManager->requestThumbnailPixmap(static_cast<QUrl>(fileUrl),ThumbnailGenerator::THUMBNAIL_LARGE,100);
         else
             return QIcon(pixmap);
     } else if (mimeType == "application/x-desktop") {
