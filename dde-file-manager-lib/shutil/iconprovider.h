@@ -1,6 +1,8 @@
 #ifndef ICONPROVIDER_H
 #define ICONPROVIDER_H
 
+#include "durl.h"
+
 #include <QObject>
 #include <QIcon>
 #include <QCache>
@@ -9,7 +11,6 @@
 #include <QFileIconProvider>
 #include <QGSettings>
 #include <QMimeDatabase>
-#include "./utils/durl.h"
 
 class IconProvider : public QObject
 {

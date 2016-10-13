@@ -9,16 +9,119 @@
 
 #include "dfileviewhelper.h"
 #include "dfmglobal.h"
+#include "dstyleditemdelegate.h"
+#include "app/global.h"
+#include "app/fmevent.h"
 #include "views/windowmanager.h"
-
 #define protected public
 #include "models/abstractfileinfo.h"
 #undef protected
+#include "models/dfilesystemmodel.h"
+#include "shutil/iconprovider.h"
+#include "views/fileitem.h"
+#include "widgets/singleton.h"
+#include "controllers/fileservices.h"
+
+#include <QTimer>
+#include <QAction>
+
+class DFileViewHelperPrivate
+{
+public:
+    DFileViewHelperPrivate(DFileViewHelper *qq)
+        : q_ptr(qq) {}
+
+    void init();
+
+    QByteArray keyboardSearchKeys;
+    QTimer keyboardSearchTimer;
+
+    DFileViewHelper *q_ptr;
+
+    Q_DECLARE_PUBLIC(DFileViewHelper)
+};
+
+void DFileViewHelperPrivate::init()
+{
+    Q_Q(DFileViewHelper);
+
+    keyboardSearchTimer.setSingleShot(true);
+    keyboardSearchTimer.setInterval(500);
+
+    // init connects
+    QObject::connect(&keyboardSearchTimer, &QTimer::timeout,
+                    q , [this] {
+        keyboardSearchKeys.clear();
+    });
+    QObject::connect(fileIconProvider, &IconProvider::themeChanged, q, [q] {
+        q->model()->update();
+    });
+    QObject::connect(fileIconProvider, &IconProvider::iconChanged, q, [q] (const QString &filePath) {
+        q->parent()->update(q->model()->index(DUrl::fromLocalFile(filePath)));
+    });
+    QObject::connect(DFMGlobal::instance(), &DFMGlobal::clipboardDataChanged, q, [q] {
+        for (const QModelIndex &index : q->itemDelegate()->hasWidgetIndexs()) {
+            FileIconItem *item = qobject_cast<FileIconItem*>(q->indexWidget(index));
+
+            if (item)
+                item->setOpacity(q->isCut(index) ? 0.3 : 1);
+        }
+
+        q->parent()->update();
+    });
+
+    // init actions
+    QAction *copy_action = new QAction(q->parent());
+
+    copy_action->setAutoRepeat(false);
+    copy_action->setShortcut(QKeySequence::Copy);
+
+    QObject::connect(copy_action, &QAction::triggered,
+            q, [q] {
+        fileService->copyFiles(q->selectedUrls());
+    });
+
+    QAction *cut_action = new QAction(q->parent());
+
+    cut_action->setAutoRepeat(false);
+    cut_action->setShortcut(QKeySequence::Cut);
+
+    QObject::connect(cut_action, &QAction::triggered,
+            q, [q] {
+        fileService->cutFiles(q->selectedUrls());
+    });
+
+    QAction *paste_action = new QAction(q->parent());
+
+    paste_action->setShortcut(QKeySequence::Paste);
+
+    QObject::connect(paste_action, &QAction::triggered,
+            q, [q] {
+        FMEvent event;
+
+        event = q->currentUrl();
+        event = q->windowId();
+        event = FMEvent::FileView;
+        fileService->pasteFile(event);
+    });
+
+    q->parent()->addAction(copy_action);
+    q->parent()->addAction(cut_action);
+    q->parent()->addAction(paste_action);
+}
 
 DFileViewHelper::DFileViewHelper(QAbstractItemView *parent)
     : QObject(parent)
+    , d_ptr(new DFileViewHelperPrivate(this))
 {
     Q_ASSERT(parent);
+
+    d_func()->init();
+}
+
+DFileViewHelper::~DFileViewHelper()
+{
+
 }
 
 QAbstractItemView *DFileViewHelper::parent() const
@@ -158,18 +261,6 @@ QString DFileViewHelper::selectionWhenEditing(const QModelIndex &index) const
 }
 
 /*!
- * \brief Return file info by index.
- * \param index
- * \return
- */
-const AbstractFileInfo *DFileViewHelper::fileInfo(const QModelIndex &index) const
-{
-    Q_UNUSED(index)
-
-    return 0;
-}
-
-/*!
  * \brief Return the view role list by column
  * \return
  */
@@ -188,6 +279,16 @@ int DFileViewHelper::columnWidth(int columnIndex) const
     Q_UNUSED(columnIndex)
 
     return -1;
+}
+
+DUrl DFileViewHelper::currentUrl() const
+{
+    const AbstractFileInfo *fileInfo = this->fileInfo(parent()->rootIndex());
+
+    if (!fileInfo)
+        return DUrl();
+
+    return fileInfo->fileUrl();
 }
 
 /*!
@@ -228,4 +329,69 @@ void DFileViewHelper::updateGeometries()
 QMargins DFileViewHelper::fileViewViewportMargins() const
 {
     return parent()->viewportMargins();
+}
+
+/*!
+ * \brief DFileViewHelper::keyboardSearch
+ * \param key
+ */
+void DFileViewHelper::keyboardSearch(char key)
+{
+    Q_D(DFileViewHelper);
+
+    d->keyboardSearchKeys.append(key);
+    d->keyboardSearchTimer.start();
+
+    QModelIndexList matchModelIndexListCaseSensitive = parent()->model()->match(parent()->rootIndex(),
+                                                                                DFileSystemModel::FilePinyinName,
+                                                                                d->keyboardSearchKeys,
+                                                                                -1,
+                                                                                Qt::MatchFlags(Qt::MatchStartsWith|Qt::MatchWrap | Qt::MatchCaseSensitive));
+    for (const QModelIndex& index : matchModelIndexListCaseSensitive) {
+        parent()->setCurrentIndex(index);
+        parent()->scrollTo(index, QAbstractItemView::PositionAtTop);
+    }
+
+    QModelIndexList matchModelIndexListNoCaseSensitive = parent()->model()->match(parent()->rootIndex(),
+                                                                                  DFileSystemModel::FilePinyinName,
+                                                                                  d->keyboardSearchKeys,
+                                                                                  -1,
+                                                                                  Qt::MatchFlags(Qt::MatchStartsWith|Qt::MatchWrap));
+    for (const QModelIndex& index : matchModelIndexListNoCaseSensitive) {
+        parent()->setCurrentIndex(index);
+        parent()->scrollTo(index, QAbstractItemView::PositionAtTop);
+    }
+}
+
+/*!
+ * \brief Return true if the position is empty area; otherwise return false.
+ * \param pos
+ * \return
+ */
+bool DFileViewHelper::isEmptyArea(const QPoint &pos) const
+{
+    const QModelIndex &index = parent()->indexAt(pos);
+
+    if (index.isValid() && isSelected(index)) {
+        return false;
+    } else {
+        const QRect &rect = parent()->visualRect(index);
+
+        if(!rect.contains(pos))
+            return true;
+
+        QStyleOptionViewItem option = parent()->viewOptions();
+
+        option.rect = rect;
+
+        const QList<QRect> &geometry_list = itemDelegate()->paintGeomertys(option, index);
+
+        for(const QRect &rect : geometry_list) {
+            if(rect.contains(pos)) {
+                return false;
+            }
+        }
+    }
+
+    return true;
 }

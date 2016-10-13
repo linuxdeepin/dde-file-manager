@@ -52,6 +52,21 @@ const AbstractFileInfo *FileViewHelper::fileInfo(const QModelIndex &index) const
     return parent()->model()->fileInfo(index).constData();
 }
 
+DStyledItemDelegate *FileViewHelper::itemDelegate() const
+{
+    return parent()->itemDelegate();
+}
+
+DFileSystemModel *FileViewHelper::model() const
+{
+    return parent()->model();
+}
+
+const DUrlList FileViewHelper::selectedUrls() const
+{
+    return parent()->selectedUrls();
+}
+
 QList<int> FileViewHelper::columnRoleList() const
 {
     return parent()->columnRoleList();

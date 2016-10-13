@@ -26,6 +26,9 @@ public:
     int rowCount() const Q_DECL_OVERRIDE;
     int indexOfRow(const QModelIndex &index) const Q_DECL_OVERRIDE;
     const AbstractFileInfo *fileInfo(const QModelIndex &index) const Q_DECL_OVERRIDE;
+    DStyledItemDelegate *itemDelegate() const Q_DECL_OVERRIDE;
+    DFileSystemModel *model() const Q_DECL_OVERRIDE;
+    const DUrlList selectedUrls() const Q_DECL_OVERRIDE;
 
     QList<int> columnRoleList() const Q_DECL_OVERRIDE;
     int columnWidth(int columnIndex) const Q_DECL_OVERRIDE;

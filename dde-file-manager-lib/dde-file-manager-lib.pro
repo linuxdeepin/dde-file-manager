@@ -176,7 +176,8 @@ HEADERS += \
     interfaces/diconitemdelegate.h \
     views/fileviewhelper.h \
     interfaces/dlistitemdelegate.h \
-    interfaces/dstyleditemdelegate.h
+    interfaces/dstyleditemdelegate.h \
+    interfaces/durl.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -280,9 +281,10 @@ SOURCES += \
     interfaces/diconitemdelegate.cpp \
     views/fileviewhelper.cpp \
     interfaces/dlistitemdelegate.cpp \
-    interfaces/dstyleditemdelegate.cpp
+    interfaces/dstyleditemdelegate.cpp \
+    interfaces/durl.cpp
 
-INCLUDEPATH += $$PWD/../ $$PWD/../utils/
+INCLUDEPATH += $$PWD/../ $$PWD/../utils/ $$PWD/interfaces/
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 HELPSHAREDIR = $$PREFIX/share/dman/$$TARGET

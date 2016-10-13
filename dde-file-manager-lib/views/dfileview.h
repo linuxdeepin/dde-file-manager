@@ -48,8 +48,6 @@ public:
     void initUI();
     void initModel();
     void initConnects();
-    void initActions();
-    void initKeyboardSearchTimer();
 
     DFileSystemModel *model() const;
     DStyledItemDelegate *itemDelegate() const;
@@ -134,7 +132,6 @@ public slots:
 
     void clearHeardView();
 
-    void clearKeyBoardSearchKeys();
     void setFoucsOnFileView(const FMEvent& event);
     void refreshFileView(const FMEvent& event);
 
@@ -184,10 +181,6 @@ protected:
     void rowsInserted(const QModelIndex & parent, int start, int end) Q_DECL_OVERRIDE;
 
 private:
-    inline bool isEmptyArea(const QPoint &pos) const
-    { return isEmptyArea(indexAt(pos), pos);}
-    bool isEmptyArea(const QModelIndex &index, const QPoint &pos) const;
-
     void increaseIcon();
     void decreaseIcon();
     void openIndex(const QModelIndex &index);
