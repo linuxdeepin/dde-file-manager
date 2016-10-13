@@ -61,7 +61,7 @@ bool ShareFileInfo::isReadable() const
 
 bool ShareFileInfo::isWritable() const
 {
-    return false;
+    return true;
 }
 
 QString ShareFileInfo::displayName() const

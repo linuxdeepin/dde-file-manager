@@ -44,10 +44,9 @@ const QList<AbstractFileInfoPointer> ShareControler::getChildren(const DUrl &fil
 
     ShareInfoList sharelist = userShareManager->shareInfoList();
     foreach (ShareInfo shareInfo, sharelist) {
-        bool a;
-        AbstractFileInfoPointer fileInfo = createFileInfo(DUrl::fromUserInput(shareInfo.path()), a);
-        qDebug()<<"^^^^^^^^^^^^^^"<<fileInfo->fileUrl();
-        infolist << fileInfo;
+        AbstractFileInfoPointer fileInfo = createFileInfo(DUrl::fromUserInput(shareInfo.path()), accepted);
+        if(fileInfo->exists())
+            infolist << fileInfo;
     }
 
     return infolist;

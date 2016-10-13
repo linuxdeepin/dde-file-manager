@@ -20,6 +20,7 @@
 #include "app/filemanagerapp.h"
 #include "../controllers/fileservices.h"
 #include "../deviceinfo/udisklistener.h"
+#include "usershare/usersharemanager.h"
 
 #include "xutil.h"
 #include "utils.h"
@@ -455,7 +456,21 @@ void DFileManagerWindow::preHandleCd(const FMEvent &event)
     } else if (event.fileUrl().isSearchFile()
                && d->viewStackLayout->currentWidget() == d->computerView) {
         return;
-    } else {
+    } else if(event.fileUrl().isUserShareFile()){
+        if(event.fileUrl().toString() == USERSHARE_ROOT){
+            cd(event);
+            return;
+        }
+        QString shareName = event.fileUrl().path();
+        shareName = shareName.mid(1,shareName.length()-1);
+        ShareInfo info = userShareManager->getsShareInfoByShareName(shareName);
+        if(info.isValid()){
+            DUrl url = DUrl::fromUserInput(info.path());
+            FMEvent e = event;
+            e = url;
+            cd(e);
+        }
+    }else {
         cd(event);
     }
 }

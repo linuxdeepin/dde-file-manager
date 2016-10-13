@@ -593,6 +593,9 @@ void DSearchBar::complete(const QString &str)
             setText(list.join("/"));
         }
     }
+    else if(isUserShareFile()){
+        return;
+    }
     else if(isLocalFile())
     {
         list.removeLast();
@@ -603,7 +606,6 @@ void DSearchBar::complete(const QString &str)
     {
         setText(str);
     }
-//    m_text = text();
 }
 
 void DSearchBar::keyPressEvent(QKeyEvent *e)
@@ -733,7 +735,8 @@ bool DSearchBar::hasScheme()
             url.isTrashFile() ||
             url.isSearchFile() ||
             url.isNetWorkFile() ||
-            url.isSMBFile())
+            url.isSMBFile() ||
+            url.isUserShareFile())
         return true;
     else
         return false;
@@ -762,6 +765,11 @@ bool DSearchBar::isLocalFile()
 bool DSearchBar::isTrashFile()
 {
     return DUrl::fromUserInput(text()).isTrashFile();
+}
+
+bool DSearchBar::isUserShareFile()
+{
+    return DUrl(text()).isUserShareFile();
 }
 
 bool DSearchBar::isPath()

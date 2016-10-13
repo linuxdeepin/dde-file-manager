@@ -11,10 +11,6 @@
 #include <simpleini/SimpleIni.h>
 #include "shareinfo.h"
 
-#include "app/global.h"
-#include "widgets/singleton.h"
-#include "app/filesignalmanager.h"
-
 UserShareManager::UserShareManager(QObject *parent) : QObject(parent)
 {
     m_fileSystemWatcher = new QFileSystemWatcher(this);
@@ -55,6 +51,11 @@ ShareInfo UserShareManager::getShareInfoByPath(const QString &path) const
         }
     }
     return ShareInfo();
+}
+
+ShareInfo UserShareManager::getsShareInfoByShareName(const QString &shareName) const
+{
+    return m_shareInfos.value(shareName);
 }
 
 QString UserShareManager::getShareNameByPath(const QString &path) const
@@ -135,15 +136,19 @@ ShareInfoList UserShareManager::shareInfoList()
     return shareList;
 }
 
-bool UserShareManager::hasShareFolders() const
+bool UserShareManager::hasValidShareFolders()
 {
-    return m_shareInfos.count()>=1;
+    foreach (const ShareInfo& info, shareInfoList()) {
+        if(QFile::exists(info.path()))
+            return true;
+    }
+    return false;
 }
 
 void UserShareManager::handleShareChanged()
 {
     updateUserShareInfo();
-    emit fileSignalManager->userShareCountChanged(m_shareInfos.count());
+    emit userShareCountChanged(m_shareInfos.count());
 }
 
 void UserShareManager::updateUserShareInfo()
@@ -185,6 +190,7 @@ void UserShareManager::updateUserShareInfo()
                     info.setGuest_ok(value);
                 }
             }
+
             m_shareInfos.insert(info.shareName(), info);
 
             if (m_sharePathToNames.contains(info.path())){
@@ -244,15 +250,15 @@ void UserShareManager::deleteUserShareByShareName(const QString &shareName)
     QStringList args;
     args << "usershare" << "delete"
          << shareName;
-    QProcess::startDetached(cmd, args);
-    updateUserShareInfo();
+    QProcess p;
+    p.start(cmd, args);
+    p.waitForFinished();
 }
 
 void UserShareManager::deleteUserShare(const ShareInfo &info)
 {
     if (!info.shareName().isEmpty()){
         deleteUserShareByShareName(info.shareName());
-        updateUserShareInfo();
     }
 }
 

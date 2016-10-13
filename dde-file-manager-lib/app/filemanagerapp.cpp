@@ -78,8 +78,6 @@ void FileManagerApp::initView()
 void FileManagerApp::initController()
 {
     m_appController = new AppController(this);
-    m_appController->createGVfSManager();
-    m_appController->createUserShareManager();
 }
 
 void FileManagerApp::initGtk()
