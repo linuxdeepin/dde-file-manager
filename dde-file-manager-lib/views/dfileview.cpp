@@ -1579,7 +1579,7 @@ void DFileView::openIndex(const QModelIndex &index)
         event = FMEvent::FileView;
         event = windowId();
 
-        cd(event);
+        preHandleCd(event);
     } else {
         emit fileService->openFile(model()->getUrlByIndex(index));
     }
