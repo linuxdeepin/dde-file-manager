@@ -99,7 +99,8 @@ public slots:
     void onFileViewCurrentUrlChanged(const DUrl &url);
     void onTabAddableChanged(bool addable);
     void onCurrentTabChanged(int tabIndex);
-    void onCurrentTabClosed(const int index);
+    void onCurrentTabClosed(const int index, const bool& remainState);
+    void closeCurrentTab(const FMEvent& event);
     QString getDisplayNameByDiskUrl(const DUrl& url);
 
 protected:

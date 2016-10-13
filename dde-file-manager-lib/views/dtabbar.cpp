@@ -544,7 +544,7 @@ int TabBar::count() const
     return m_tabs.count();
 }
 
-void TabBar::removeTab(const int index)
+void TabBar::removeTab(const int index, const bool &remainState)
 {
     Tab *tab = m_tabs.at(index);
 
@@ -556,7 +556,7 @@ void TabBar::removeTab(const int index)
         tab->setTabIndex(tab->tabIndex() - 1);
     }
     if(m_TabCloseButton->closingIndex() <=count()-1 &&m_TabCloseButton->closingIndex()>=0){
-        m_lastDeleteState = true;
+        m_lastDeleteState = remainState;
     }
     if(index<count())
         setCurrentIndex(index);
@@ -670,7 +670,7 @@ void TabBar::initConnections()
     connect(m_TabCloseButton, &TabCloseButton::unHovered, this, &TabBar::onTabCloseButtonUnHovered);
     connect(m_TabCloseButton, &TabCloseButton::clicked, this, [=]{
         int closingIndex = m_TabCloseButton->closingIndex();
-        emit tabCloseRequested(closingIndex);
+        emit tabCloseRequested(closingIndex, true);
 
         //redirect tab close button's closingIndex
         if(closingIndex>=count())

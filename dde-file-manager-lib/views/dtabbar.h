@@ -120,7 +120,7 @@ public:
     int addTabWithData(const int &viewIndex, const QString text, const DUrl url);
     QVariant tabData(const int index);
     int count() const;
-    void removeTab(const int index);
+    void removeTab(const int index, const bool& remainState);
     int currentIndex() const;
     void setCurrentIndex(const int index);
     bool tabAddable();
@@ -132,7 +132,7 @@ public:
 
 signals:
     void currentChanged(const int &index);
-    void tabCloseRequested(const int &index);
+    void tabCloseRequested(const int &index, const bool& remainState = false);
     void tabAddableChanged(const bool &tabAddable);
     void tabMoved(const int &from, const int &to);
 

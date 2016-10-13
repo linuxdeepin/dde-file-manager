@@ -1011,6 +1011,9 @@ void DFileView::keyPressEvent(QKeyEvent *event)
         case Qt::Key_T:
             emit fileSignalManager->requestOpenInNewTab(fmevent);
             return;
+        case Qt::Key_W:
+            emit fileSignalManager->requestCloseCurrentTab(fmevent);
+            return;
         default: break;
         }
 

@@ -275,6 +275,7 @@ void DFileManagerWindow::initConnect()
 
     connect(fileSignalManager, &FileSignalManager::fetchNetworksSuccessed, this, &DFileManagerWindow::cd);
     connect(fileSignalManager, &FileSignalManager::requestChangeCurrentUrl,this, &DFileManagerWindow::preHandleCd);
+        connect(fileSignalManager, &FileSignalManager::requestCloseCurrentTab, this, &DFileManagerWindow::closeCurrentTab);
 
     connect(d->tabBar, &TabBar::tabMoved, d->toolbar, &DToolBar::moveNavStacks);
     connect(d->tabBar, &TabBar::currentChanged,this, &DFileManagerWindow::onCurrentTabChanged);
@@ -290,7 +291,7 @@ void DFileManagerWindow::initConnect()
     connect(fileService, &FileServices::childrenRemoved, d->toolbar, &DToolBar::dirDeleted);
 }
 
-void DFileManagerWindow::onCurrentTabClosed(const int index){
+void DFileManagerWindow::onCurrentTabClosed(const int index, const bool &remainState){
 
     D_D(DFileManagerWindow);
 
@@ -314,7 +315,7 @@ void DFileManagerWindow::onCurrentTabClosed(const int index){
     }
 
     d->toolbar->removeNavStackAt(index);
-    d->tabBar->removeTab(index);
+    d->tabBar->removeTab(index, remainState);
 
     if(d->tabBar->count()<8)
         emit d->tabBar->tabAddableChanged(true);
@@ -324,6 +325,21 @@ void DFileManagerWindow::onCurrentTabClosed(const int index){
 
     if(d->tabBar->isHidden())
         d->newTabButton->hide();
+}
+
+void DFileManagerWindow::closeCurrentTab(const FMEvent &event)
+{
+    D_D(DFileManagerWindow);
+
+    if(event.windowId() != winId())
+        return;
+
+    if(d->tabBar->count() == 1){
+        close();
+        return;
+    }
+
+    emit d->tabBar->tabCloseRequested(d->tabBar->currentIndex());
 }
 
 QString DFileManagerWindow::getDisplayNameByDiskUrl(const DUrl &url)
