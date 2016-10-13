@@ -407,14 +407,14 @@ void FileController::onFileCreated(const QString &filePath)
     }
     AbstractFileInfoPointer fileInfo = fileService->createFileInfo(DUrl::fromUserInput(filePath));
     if(fileInfo->isShared())
-        emit fileSignalManager->userShareCountChanged(0);
 
+        emit fileSignalManager->userShareCountChanged(userShareManager->shareInfoList().count());
 }
 
 void FileController::onFileRemove(const QString &filePath)
 {
     emit childrenRemoved(DUrl::fromLocalFile(filePath));
-    emit fileSignalManager->userShareCountChanged(0);
+    emit fileSignalManager->userShareCountChanged(userShareManager->shareInfoList().count());
 }
 
 void FileController::onFileInfoChanged(const QString &filePath)

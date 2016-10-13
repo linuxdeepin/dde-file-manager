@@ -22,6 +22,7 @@ public:
     static QMimeType mimeType(const QString &filePath);
 
     bool isCanRename() const Q_DECL_OVERRIDE;
+    bool isCanShare() const Q_DECL_OVERRIDE;
 
     bool isShared() const Q_DECL_OVERRIDE;
 

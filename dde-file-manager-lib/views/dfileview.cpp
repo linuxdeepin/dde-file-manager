@@ -1820,7 +1820,8 @@ void DFileView::handleUserShareCountChanged(const int &count)
 {
     Q_UNUSED(count)
     if(!userShareManager->hasValidShareFolders()){
-        cd(DUrl::fromUserInput(QDir::homePath()));
+        if(currentUrl().isUserShareFile())
+            cd(DUrl::fromUserInput(QDir::homePath()));
     }
     model()->refresh();
 }

@@ -13,6 +13,8 @@
         <file>images/dde-file-manager_96.png</file>
         <file>images/dde-file-manager.png</file>
         <file>images/dde-file-manager.svg</file>
+        <file>images/unreadable_small.png</file>
+        <file>images/unreadable_large.png</file>
     </qresource>
     <qresource prefix="/devices">
         <file>images/device/drive-harddisk-deepin.svg</file>

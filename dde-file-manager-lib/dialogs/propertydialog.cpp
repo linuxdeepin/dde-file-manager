@@ -222,7 +222,7 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
             titleList << basicInfo;
         }else{
             titleList << basicInfo;
-            if (fileInfo->isDir()){
+            if (fileInfo->isCanShare()){
                 titleList << shareManager;
             }
         }
@@ -236,7 +236,7 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
     //        expandGroup->expand(1)->setContent(m_OpenWithListWidget);
             m_fileCount = 1;
             m_size = fileInfo->size();
-        }else if (fileInfo->isDir()){
+        }else if (fileInfo->isCanShare()){
             setFixedSize(QSize(320, 500));
             m_shareinfoFrame = createShareInfoFrame(fileInfo);
             expandGroup->expand(0)->setExpandedSeparatorVisible(true);

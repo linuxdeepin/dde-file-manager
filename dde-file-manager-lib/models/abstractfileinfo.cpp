@@ -157,6 +157,11 @@ QString AbstractFileInfo::absolutePath() const
     return data->absolutePath;
 }
 
+bool AbstractFileInfo::isCanShare() const
+{
+    return false;
+}
+
 bool AbstractFileInfo::isReadable() const
 {
     return metaData().isReadable;
@@ -411,7 +416,8 @@ QVector<MenuAction> AbstractFileInfo::menuActionList(AbstractFileInfo::MenuType 
                        << MenuAction::Delete
                        << MenuAction::Separator;
             if(isDir() && isShared())
-                actionKeys << MenuAction::UnShare;
+                actionKeys << MenuAction::UnShare
+                           << MenuAction::Separator;
 
             actionKeys  << MenuAction::Property;
         }
