@@ -4,6 +4,7 @@
 #include "usershare/usersharemanager.h"
 #include "widgets/singleton.h"
 #include "app/global.h"
+#include "controllers/fileservices.h"
 
 #include <QFormLayout>
 #include <QProcess>

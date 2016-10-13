@@ -73,8 +73,7 @@ bool FileInfo::isCanShare() const
 
 bool FileInfo::isShared() const
 {
-    ShareInfo info = userShareManager->getShareInfoByPath(fileUrl().path());
-    return info.isValid();
+    return userShareManager->isShareFile(absoluteFilePath());
 }
 
 QMimeType FileInfo::mimeType() const

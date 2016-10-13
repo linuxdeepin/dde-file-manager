@@ -60,6 +60,8 @@ FileController::FileController(QObject *parent)
             this, &FileController::onFileRemove);
     connect(fileMonitor, &FileMonitor::fileMetaDataChanged,
             this, &FileController::onFileInfoChanged);
+    connect(userShareManager, &UserShareManager::userShareAdded, this, &FileController::onFileInfoChanged);
+    connect(userShareManager, &UserShareManager::userShareDeleted, this, &FileController::onFileInfoChanged);
 }
 
 bool FileController::findExecutable(const QString &executableName, const QStringList &paths)
@@ -405,16 +407,11 @@ void FileController::onFileCreated(const QString &filePath)
         event = DUrlList() << url;
         emit fileSignalManager->requestSelectRenameFile(event);
     }
-    AbstractFileInfoPointer fileInfo = fileService->createFileInfo(DUrl::fromUserInput(filePath));
-    if(fileInfo->isShared())
-
-        emit fileSignalManager->userShareCountChanged(userShareManager->shareInfoList().count());
 }
 
 void FileController::onFileRemove(const QString &filePath)
 {
     emit childrenRemoved(DUrl::fromLocalFile(filePath));
-    emit fileSignalManager->userShareCountChanged(userShareManager->shareInfoList().count());
 }
 
 void FileController::onFileInfoChanged(const QString &filePath)
