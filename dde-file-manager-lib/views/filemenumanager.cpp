@@ -10,7 +10,7 @@
 #include "shutil/standardpath.h"
 
 #include "dialogs/propertydialog.h"
-
+#include "interfaces/dfmglobal.h"
 #include "views/windowmanager.h"
 
 #include "controllers/fileservices.h"
@@ -216,10 +216,7 @@ QSet<MenuAction> FileMenuManager::getDisableActionList(const DUrlList &urlList)
         }
     }
 
-    const QClipboard *clipboard = qApp->clipboard();
-    const QByteArray &data = clipboard->mimeData()->data("x-special/gnome-copied-files");
-
-    if (!data.startsWith("cut\n") && !data.startsWith("copy\n")){
+    if (DFMGlobal::instance()->clipboardAction() == DFMGlobal::Unknow){
         disableList << MenuAction::Paste;
     }
 

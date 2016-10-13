@@ -24,7 +24,7 @@ DWIDGET_USE_NAMESPACE
 class FileController;
 class FileMenuManager;
 class DFileSystemModel;
-class DFileItemDelegate;
+class DStyledItemDelegate;
 class AbstractFileInfo;
 class DStatusBar;
 class DFileViewPrivate;
@@ -44,15 +44,16 @@ public:
     explicit DFileView(QWidget *parent = 0);
     ~DFileView();
 
-    void initUI();
     void initDelegate();
+    void initUI();
     void initModel();
     void initConnects();
     void initActions();
     void initKeyboardSearchTimer();
 
     DFileSystemModel *model() const;
-    DFileItemDelegate *itemDelegate() const;
+    DStyledItemDelegate *itemDelegate() const;
+    void setItemDelegate(DStyledItemDelegate *delegate);
     DStatusBar *statusBar() const;
 
     DUrl currentUrl() const;
@@ -104,10 +105,7 @@ public:
     using DListView::viewportMargins;
     using DListView::updateGeometries;
 
-    bool isCutIndex(const QModelIndex &index) const;
-    bool isActiveIndex(const QModelIndex &index) const;
-
-    QList<QIcon> fileAdditionalIcon(const QModelIndex &index) const;
+    bool isDropTarget(const QModelIndex &index) const;
 
 public slots:
     void preHandleCd(const FMEvent &event);
@@ -150,7 +148,6 @@ public slots:
     bool canShowSelectionRect() const;
 
     void setContentLabel(const QString &text);
-    void setIconSizeWithIndex(const int index);
 
 signals:
     void currentUrlChanged(const DUrl &url);
@@ -190,10 +187,8 @@ private:
     { return isEmptyArea(indexAt(pos), pos);}
     bool isEmptyArea(const QModelIndex &index, const QPoint &pos) const;
 
-    QSize currentIconSize() const;
-
-    void enlargeIcon();
-    void shrinkIcon();
+    void increaseIcon();
+    void decreaseIcon();
     void openIndex(const QModelIndex &index);
     void keyboardSearch(const QString & search) Q_DECL_OVERRIDE;
     void updateHorizontalOffset();
@@ -202,7 +197,6 @@ private:
     void showNormalMenu(const QModelIndex &index);
     void updateListHeaderViewProperty();
     void updateExtendHeaderViewProperty();
-    void updateItemSizeHint();
     void updateColumnWidth();
     void popupHeaderViewContextMenu(const QPoint &pos);
     void onModelStateChanged(int state);

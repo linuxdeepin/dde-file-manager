@@ -49,10 +49,6 @@ void DStatusBar::initUI()
     m_scaleSlider = new DSlider(this);
     m_scaleSlider->setOrientation(Qt::Horizontal);
     m_scaleSlider->setFixedSize(120,20);
-    m_scaleSlider->setPageStep(1);
-    m_scaleSlider->setTickInterval(1);
-    m_scaleSlider->setMinimum(0);
-    m_scaleSlider->setMaximum(4);
 
     setFocusPolicy(Qt::NoFocus);
     setLayout(m_layout);

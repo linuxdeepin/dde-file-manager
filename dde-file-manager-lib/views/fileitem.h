@@ -39,7 +39,7 @@ private:
     QTextEdit *edit;
     QGraphicsOpacityEffect *opacityEffect = Q_NULLPTR;
 
-    friend class DFileItemDelegate;
+    friend class DIconItemDelegate;
     friend class DFileView;
 };
 

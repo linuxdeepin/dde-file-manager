@@ -17,7 +17,7 @@
 #include "dialogs/dialogmanager.h"
 
 #include "deviceinfo/udisklistener.h"
-
+#include "interfaces/dfmglobal.h"
 #include "widgets/singleton.h"
 
 #include <ddialog.h>
@@ -310,24 +310,15 @@ bool FileServices::cutFiles(const DUrlList &urlList) const
 
 void FileServices::pasteFile(const FMEvent &event) const
 {
-    const QClipboard *clipboard = qApp->clipboard();
-    const QMimeData *mimeData = clipboard->mimeData();
+    DFMGlobal::ClipboardAction action = DFMGlobal::instance()->clipboardAction();
 
-    const QByteArray &data = mimeData->data("x-special/gnome-copied-files");
+    if (action == DFMGlobal::Unknow)
+        return;
 
-    if(!data.isEmpty()) {
-        QTextStream text(data);
-        AbstractFileController::PasteType type = text.readLine() == "cut" ? AbstractFileController::CutType
-                                                                          : AbstractFileController::CopyType;
+    AbstractFileController::PasteType type = (action == DFMGlobal::CutAction) ? AbstractFileController::CutType
+                                                                              : AbstractFileController::CopyType;
 
-        DUrlList urls;
-
-        while(!text.atEnd()) {
-            urls.append(DUrl(text.readLine()));
-        }
-
-        pasteFile(type, urls, event);
-    }
+    pasteFile(type, DUrl::fromQUrlList(DFMGlobal::instance()->clipboardFileUrlList()), event);
 }
 
 void FileServices::pasteFile(AbstractFileController::PasteType type,

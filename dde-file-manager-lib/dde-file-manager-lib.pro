@@ -90,7 +90,6 @@ HEADERS += \
     views/fileitem.h \
     views/filemenumanager.h \
     views/dsearchbar.h \
-    views/dfileitemdelegate.h \
     models/fileinfo.h \
     models/desktopfileinfo.h \
     shutil/iconprovider.h \
@@ -172,7 +171,12 @@ HEADERS += \
     interfaces/dfmstandardpaths.h \
     interfaces/dfmglobal.h \
     controllers/sharecontroler.h \
-    models/sharefileinfo.h
+    models/sharefileinfo.h \
+    interfaces/dfileviewhelper.h \
+    interfaces/diconitemdelegate.h \
+    views/fileviewhelper.h \
+    interfaces/dlistitemdelegate.h \
+    interfaces/dstyleditemdelegate.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -190,7 +194,6 @@ SOURCES += \
     views/fileitem.cpp \
     views/filemenumanager.cpp \
     views/dsearchbar.cpp \
-    views/dfileitemdelegate.cpp \
     models/fileinfo.cpp \
     models/desktopfileinfo.cpp \
     shutil/iconprovider.cpp \
@@ -272,7 +275,12 @@ SOURCES += \
     interfaces/dfmstandardpaths.cpp \
     interfaces/dfmglobal.cpp \
     controllers/sharecontroler.cpp \
-    models/sharefileinfo.cpp
+    models/sharefileinfo.cpp \
+    interfaces/dfileviewhelper.cpp \
+    interfaces/diconitemdelegate.cpp \
+    views/fileviewhelper.cpp \
+    interfaces/dlistitemdelegate.cpp \
+    interfaces/dstyleditemdelegate.cpp
 
 INCLUDEPATH += $$PWD/../ $$PWD/../utils/
 

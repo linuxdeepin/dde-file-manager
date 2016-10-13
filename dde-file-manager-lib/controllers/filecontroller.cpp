@@ -14,16 +14,14 @@
 #include "dialogs/dialogmanager.h"
 
 #include "widgets/singleton.h"
-
+#include "interfaces/dfmglobal.h"
 #include "filemonitor/filemonitor.h"
 #include "appcontroller.h"
 
 #include <QDesktopServices>
 #include <QDirIterator>
 #include <QFileInfo>
-#include <QClipboard>
 #include <QProcess>
-#include <QMimeData>
 #include <QGuiApplication>
 #include <QUrlQuery>
 
@@ -162,7 +160,7 @@ bool FileController::copyFiles(const DUrlList &urlList, bool &accepted) const
 {
     accepted = true;
 
-    setUrlsToClipboard(urlList);
+    DFMGlobal::setUrlsToClipboard(DUrl::toQUrlList(urlList), DFMGlobal::CopyAction);
 
     return true;
 }
@@ -227,7 +225,7 @@ bool FileController::cutFiles(const DUrlList &urlList, bool &accepted) const
 {
     accepted = true;
 
-    setUrlsToClipboard(urlList, "cut");
+    DFMGlobal::setUrlsToClipboard(DUrl::toQUrlList(urlList), DFMGlobal::CutAction);
 
     return true;
 }
@@ -257,7 +255,7 @@ DUrlList FileController::pasteFile(PasteType type, const DUrlList &urlList,
             dialogManager->removeJob(job.getJobId());
         }
 
-        qApp->clipboard()->clear();
+        DFMGlobal::clearClipboard();
     } else {
 
         FileJob job(FileJob::Copy);
@@ -436,31 +434,6 @@ QString FileController::checkDuplicateName(const QString &name) const
     }
 
     return destUrl;
-}
-
-void FileController::setUrlsToClipboard(const DUrlList &list, const QByteArray &action) const
-{
-    QMimeData *mimeData = new QMimeData;
-
-    QByteArray ba = action;
-    QString text;
-
-    for(const DUrl &url : list) {
-        ba.append("\n");
-        ba.append(url.toString());
-
-        const QString &path = url.toLocalFile();
-
-        if (!path.isEmpty()) {
-            text += path + '\n';
-        }
-    }
-
-    mimeData->setText(text.endsWith('\n') ? text.left(text.length() - 1) : text);
-    mimeData->setData("x-special/gnome-copied-files", ba);
-    mimeData->setUrls(DUrl::toQUrlList(list));
-
-    qApp->clipboard()->setMimeData(mimeData);
 }
 
 FileDirIterator::FileDirIterator(const QString &path, const QStringList &nameFilters,

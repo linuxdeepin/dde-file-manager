@@ -13,7 +13,7 @@
 #include "controllers/jobcontroller.h"
 
 #include "filemonitor/filemonitor.h"
-
+#include "interfaces/dfileviewhelper.h"
 #include "shutil/mimetypedisplaymanager.h"
 #include "shutil/fileutils.h"
 
@@ -44,7 +44,7 @@ public:
     }
 };
 
-DFileSystemModel::DFileSystemModel(DFileView *parent)
+DFileSystemModel::DFileSystemModel(DFileViewHelper *parent)
     : QAbstractItemModel(parent)
 {
     connect(fileService, &FileServices::childrenAdded,
@@ -82,9 +82,9 @@ DFileSystemModel::~DFileSystemModel()
     clear();
 }
 
-DFileView *DFileSystemModel::parent() const
+DFileViewHelper *DFileSystemModel::parent() const
 {
-    return qobject_cast<DFileView*>(QAbstractItemModel::parent());
+    return static_cast<DFileViewHelper*>(QAbstractItemModel::parent());
 }
 
 QModelIndex DFileSystemModel::index(const DUrl &fileUrl, int column)
