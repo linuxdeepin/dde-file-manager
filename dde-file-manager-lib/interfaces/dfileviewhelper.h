@@ -14,16 +14,22 @@
 #include <QMargins>
 #include <QEvent>
 
+#include "durl.h"
+
 QT_BEGIN_NAMESPACE
 class QAbstractItemView;
 QT_END_NAMESPACE
 class AbstractFileInfo;
+class DStyledItemDelegate;
+class DFileSystemModel;
+class DFileViewHelperPrivate;
 class DFileViewHelper : public QObject
 {
     Q_OBJECT
 
 public:
     explicit DFileViewHelper(QAbstractItemView *parent);
+    ~DFileViewHelper();
 
     QAbstractItemView *parent() const;
 
@@ -36,18 +42,31 @@ public:
     virtual int indexOfRow(const QModelIndex &index) const;
     virtual QList<QIcon> additionalIcon(const QModelIndex &index) const;
     virtual QString selectionWhenEditing(const QModelIndex &index) const;
-    virtual const AbstractFileInfo *fileInfo(const QModelIndex &index) const;
-
     virtual QList<int> columnRoleList() const;
     virtual int columnWidth(int columnIndex) const;
+    virtual DUrl currentUrl() const;
+
+    virtual const AbstractFileInfo *fileInfo(const QModelIndex &index) const = 0;
+    virtual DStyledItemDelegate *itemDelegate() const = 0;
+    virtual DFileSystemModel *model() const = 0;
+    virtual const DUrlList selectedUrls() const = 0;
 
     void setIndexWidget(const QModelIndex &index, QWidget *widget);
     QWidget *indexWidget(const QModelIndex &index) const;
     void updateGeometries();
     QMargins fileViewViewportMargins() const;
 
+    void keyboardSearch(char key);
+    bool isEmptyArea(const QPoint &pos) const;
+
 signals:
     void triggerEdit(const QModelIndex &index);
+
+private:
+    QScopedPointer<DFileViewHelperPrivate> d_ptr;
+
+    Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_ptr), DFileViewHelper)
+    Q_DISABLE_COPY(DFileViewHelper)
 };
 
 #endif // DFILEVIEWHELPER_H

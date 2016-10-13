@@ -10,24 +10,20 @@
 #include "app/filemanagerapp.h"
 #include "app/filesignalmanager.h"
 
-#include "fileoperations/filejob.h"
 #include "interfaces/dfmglobal.h"
 #include "interfaces/diconitemdelegate.h"
 #include "interfaces/dlistitemdelegate.h"
 
 #include "controllers/appcontroller.h"
-#include "controllers/filecontroller.h"
 #include "controllers/fileservices.h"
 #include "controllers/fmstatemanager.h"
 #include "controllers/pathmanager.h"
 #include "usershare/usersharemanager.h"
 
-#include "models/fileinfo.h"
 #include "models/dfileselectionmodel.h"
 #include "models/dfilesystemmodel.h"
 
 #include "shutil/fileutils.h"
-#include "shutil/iconprovider.h"
 #include "shutil/mimesappsmanager.h"
 
 #include "widgets/singleton.h"
@@ -83,9 +79,6 @@ public:
 
     int horizontalOffset = 0;
 
-    QTimer* keyboardSearchTimer;
-    QString keyboardSearchKeys;
-
     /// move cursor later selecte index when pressed key shift
     QModelIndex lastCursorIndex;
 
@@ -125,8 +118,6 @@ DFileView::DFileView(QWidget *parent)
     initDelegate();
     initUI();
     initModel();
-    initActions();
-    initKeyboardSearchTimer();
     initConnects();
 }
 
@@ -213,81 +204,17 @@ void DFileView::initConnects()
     connect(d->displayAsActionGroup, &QActionGroup::triggered, this, &DFileView::dislpayAsActionTriggered);
     connect(d->sortByActionGroup, &QActionGroup::triggered, this, &DFileView::sortByActionTriggered);
     connect(d->openWithActionGroup, &QActionGroup::triggered, this, &DFileView::openWithActionTriggered);
-    connect(d->keyboardSearchTimer, &QTimer::timeout, this, &DFileView::clearKeyBoardSearchKeys);
 
     connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &DFileView::updateStatusBar);
     connect(fileSignalManager, &FileSignalManager::requestFoucsOnFileView, this, &DFileView::setFoucsOnFileView);
     connect(fileSignalManager, &FileSignalManager::requestFreshFileView, this, &DFileView::refreshFileView);
+    connect(fileSignalManager, &FileSignalManager::userShareCountChanged,
+            this, &DFileView::handleUserShareCountChanged);
 
     connect(model(), &DFileSystemModel::dataChanged, this, &DFileView::handleDataChanged);
     connect(model(), &DFileSystemModel::stateChanged, this, &DFileView::onModelStateChanged);
 
-    connect(fileIconProvider, &IconProvider::themeChanged, model(), &DFileSystemModel::update);
-    connect(fileIconProvider, &IconProvider::iconChanged, this, [this] (const QString &filePath) {
-        update(model()->index(DUrl::fromLocalFile(filePath)));
-    });
     connect(this, &DFileView::viewModeChanged, this, &DFileView::handleViewModeChanged);
-    connect(DFMGlobal::instance(), &DFMGlobal::clipboardDataChanged, this, [this, d] {
-        for (const QModelIndex &index : itemDelegate()->hasWidgetIndexs()) {
-            FileIconItem *item = qobject_cast<FileIconItem*>(indexWidget(index));
-
-            if (item)
-                item->setOpacity(d->fileViewHelper->isCut(index) ? 0.3 : 1);
-        }
-
-        update();
-    });
-    connect(fileSignalManager, &FileSignalManager::userShareCountChanged,
-            this, &DFileView::handleUserShareCountChanged);
-}
-
-void DFileView::initActions()
-{
-    QAction *copy_action = new QAction(this);
-
-    copy_action->setAutoRepeat(false);
-    copy_action->setShortcut(QKeySequence::Copy);
-
-    connect(copy_action, &QAction::triggered,
-            this, [this] {
-        fileService->copyFiles(selectedUrls());
-    });
-
-    QAction *cut_action = new QAction(this);
-
-    cut_action->setAutoRepeat(false);
-    cut_action->setShortcut(QKeySequence::Cut);
-
-    connect(cut_action, &QAction::triggered,
-            this, [this] {
-        fileService->cutFiles(selectedUrls());
-    });
-
-    QAction *paste_action = new QAction(this);
-
-    paste_action->setShortcut(QKeySequence::Paste);
-
-    connect(paste_action, &QAction::triggered,
-            this, [this] {
-        FMEvent event;
-
-        event = currentUrl();
-        event = windowId();
-        event = FMEvent::FileView;
-        fileService->pasteFile(event);
-    });
-
-    addAction(copy_action);
-    addAction(cut_action);
-    addAction(paste_action);
-}
-
-void DFileView::initKeyboardSearchTimer()
-{
-    D_D(DFileView);
-
-    d->keyboardSearchTimer = new QTimer(this);
-    d->keyboardSearchTimer->setInterval(500);
 }
 
 DFileSystemModel *DFileView::model() const
@@ -1116,7 +1043,7 @@ void DFileView::mousePressEvent(QMouseEvent *event)
         break;
     }
     case Qt::LeftButton: {
-        bool isEmptyArea = this->isEmptyArea(event->pos());
+        bool isEmptyArea = d->fileViewHelper->isEmptyArea(event->pos());
 
         setDragEnabled(!isEmptyArea);
 
@@ -1260,7 +1187,9 @@ void DFileView::resizeEvent(QResizeEvent *event)
 
 void DFileView::contextMenuEvent(QContextMenuEvent *event)
 {
-    bool isEmptyArea = this->isEmptyArea(event->pos());
+    D_DC(DFileView);
+
+    bool isEmptyArea = d->fileViewHelper->isEmptyArea(event->pos());
 
     const QModelIndex &index = indexAt(event->pos());
 
@@ -1519,32 +1448,6 @@ void DFileView::rowsInserted(const QModelIndex &parent, int start, int end)
     DListView::rowsInserted(parent, start, end);
 }
 
-bool DFileView::isEmptyArea(const QModelIndex &index, const QPoint &pos) const
-{
-    if(index.isValid() && selectionModel()->selectedIndexes().contains(index)) {
-        return false;
-    } else {
-        const QRect &rect = visualRect(index);
-
-        if(!rect.contains(pos))
-            return true;
-
-        QStyleOptionViewItem option = viewOptions();
-
-        option.rect = rect;
-
-        const QList<QRect> &geometry_list = itemDelegate()->paintGeomertys(option, index);
-
-        for(const QRect &rect : geometry_list) {
-            if(rect.contains(pos)) {
-                return false;
-            }
-        }
-    }
-
-    return true;
-}
-
 void DFileView::increaseIcon()
 {
     D_D(DFileView);
@@ -1592,30 +1495,10 @@ void DFileView::keyboardSearch(const QString &search)
 {
     D_D(DFileView);
 
-    d->keyboardSearchKeys.append(search);
-    d->keyboardSearchTimer->start();
-    QModelIndexList matchModelIndexListCaseSensitive = model()->match(rootIndex(), DFileSystemModel::FilePinyinName, d->keyboardSearchKeys, -1,
-                                                                      Qt::MatchFlags(Qt::MatchStartsWith|Qt::MatchWrap | Qt::MatchCaseSensitive | Qt::MatchRecursive));
-    foreach (const QModelIndex& index, matchModelIndexListCaseSensitive) {
-        QString absolutePath = FileInfo(model()->getUrlByIndex(index).path()).absolutePath();
-        if (absolutePath == currentUrl().path()){
-            setCurrentIndex(index);
-            scrollTo(index, PositionAtTop);
-            return;
-        }
-    }
+    if (search.isEmpty())
+        return;
 
-    QModelIndexList matchModelIndexListNoCaseSensitive = model()->match(rootIndex(), DFileSystemModel::FilePinyinName, d->keyboardSearchKeys, -1,
-                                                                        Qt::MatchFlags(Qt::MatchStartsWith|Qt::MatchWrap | Qt::MatchRecursive));
-    foreach (const QModelIndex& index, matchModelIndexListNoCaseSensitive) {
-        QString absolutePath = FileInfo(model()->getUrlByIndex(index).path()).absolutePath();
-        if (absolutePath == currentUrl().path()){
-            setCurrentIndex(index);
-            scrollTo(index, PositionAtTop);
-            return;
-        }
-    }
-
+    d->fileViewHelper->keyboardSearch(search.toLocal8Bit().at(0));
 }
 
 bool DFileView::setCurrentUrl(DUrl fileUrl)
@@ -1722,14 +1605,6 @@ void DFileView::clearHeardView()
 
         d->headerView = Q_NULLPTR;
     }
-}
-
-void DFileView::clearKeyBoardSearchKeys()
-{
-    D_D(DFileView);
-
-    d->keyboardSearchKeys.clear();
-    d->keyboardSearchTimer->stop();
 }
 
 void DFileView::setFoucsOnFileView(const FMEvent &event)

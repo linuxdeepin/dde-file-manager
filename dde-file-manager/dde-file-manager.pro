@@ -38,10 +38,9 @@ CONFIG(debug, debug|release) {
 SOURCES += \
     main.cpp
 
-INCLUDEPATH += $$PWD/../dde-file-manager-lib $$PWD/..\
-               $$PWD/../vendor/include/libdtk-1.0/DBase\
-               $$PWD/../vendor/include/libdtk-1.0/DWidget\
-               $$PWD/../utils
+INCLUDEPATH += $$PWD/../dde-file-manager-lib $$PWD/.. \
+               $$PWD/../utils \
+               $$PWD/../dde-file-manager-lib/interfaces
 
 BINDIR = $$PREFIX/bin
 DEFINES += APPSHAREDIR=\\\"$$PREFIX/share/$$TARGET\\\"
