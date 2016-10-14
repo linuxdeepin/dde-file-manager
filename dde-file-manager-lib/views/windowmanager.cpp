@@ -131,11 +131,11 @@ void WindowManager::showNewWindow(const DUrl &url, bool isAlwaysOpen)
 
     FMEvent event;
     if (!url.isEmpty()){
-        event = url;
+        event << url;
     }else{
-        event = DUrl::fromLocalFile(QDir::homePath());
+        event << DUrl::fromLocalFile(QDir::homePath());
     }
-    event = window->winId();
+    event << window->winId();
     emit fileSignalManager->requestChangeCurrentUrl(event);
 
     qApp->setActiveWindow(window);

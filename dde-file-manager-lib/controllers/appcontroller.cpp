@@ -76,7 +76,7 @@ void AppController::actionOpen(const FMEvent &event)
     const DUrlList& urls = event.fileUrlList();
 
     if (urls.size() == 1) {
-        const_cast<FMEvent&>(event) = urls.first();
+        const_cast<FMEvent&>(event) << urls.first();
 
         fileService->openUrl(event);
     } else {
@@ -118,10 +118,10 @@ void AppController::actionOpenDisk(const FMEvent &event)
 
 void AppController::asycOpenDisk(const QString &path)
 {
-    m_fmEvent = DUrl(path);
+    m_fmEvent << DUrl(path);
     DUrlList urls;
     urls << DUrl(path);
-    m_fmEvent = urls;
+    m_fmEvent << urls;
     actionOpen(m_fmEvent);
 }
 
@@ -152,7 +152,7 @@ void AppController::actionOpenDiskInNewWindow(const FMEvent &event)
 
 void AppController::asycOpenDiskInNewWindow(const QString &path)
 {
-    m_fmEvent = DUrl(path);
+    m_fmEvent << DUrl(path);
     actionOpenInNewWindow(m_fmEvent);
 }
 

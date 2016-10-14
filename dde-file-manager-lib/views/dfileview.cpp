@@ -752,10 +752,10 @@ void DFileView::keyPressEvent(QKeyEvent *event)
 
     FMEvent fmevent;
 
-    fmevent = urls;
-    fmevent = FMEvent::FileView;
-    fmevent = windowId();
-    fmevent = currentUrl();
+    fmevent << urls;
+    fmevent << FMEvent::FileView;
+    fmevent << windowId();
+    fmevent << currentUrl();
 
     switch (event->modifiers()) {
     case Qt::NoModifier:
@@ -823,7 +823,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             return;
         case Qt::Key_I:
             if (fmevent.fileUrlList().isEmpty())
-                fmevent = DUrlList() << fmevent.fileUrl();
+                fmevent << (DUrlList() << fmevent.fileUrl());
 
             appController->actionProperty(fmevent);
 
@@ -932,8 +932,8 @@ void DFileView::mousePressEvent(QMouseEvent *event)
     case Qt::BackButton: {
         FMEvent event;
 
-        event = this->windowId();
-        event = FMEvent::FileView;
+        event << this->windowId();
+        event << FMEvent::FileView;
 
         fileSignalManager->requestBack(event);
 
@@ -942,8 +942,8 @@ void DFileView::mousePressEvent(QMouseEvent *event)
     case Qt::ForwardButton: {
         FMEvent event;
 
-        event = this->windowId();
-        event = FMEvent::FileView;
+        event << this->windowId();
+        event << FMEvent::FileView;
 
         fileSignalManager->requestForward(event);
 
@@ -1033,9 +1033,9 @@ void DFileView::handleCommitData(QWidget *editor)
     FileIconItem *item = qobject_cast<FileIconItem*>(editor);
 
     FMEvent event;
-    event = fileInfo->fileUrl();
-    event = windowId();
-    event = FMEvent::FileView;
+    event << fileInfo->fileUrl();
+    event << windowId();
+    event << FMEvent::FileView;
 
     QString new_file_name = lineEdit ? lineEdit->text() : item ? item->edit->toPlainText() : "";
 
@@ -1390,9 +1390,9 @@ void DFileView::openIndex(const QModelIndex &index)
    if (model()->hasChildren(index)) {
         FMEvent event;
 
-        event = model()->getUrlByIndex(index);
-        event = FMEvent::FileView;
-        event = windowId();
+        event << model()->getUrlByIndex(index);
+        event << FMEvent::FileView;
+        event << windowId();
 
         d->fileViewHelper->preHandleCd(event);
     } else {
@@ -1538,8 +1538,8 @@ void DFileView::updateStatusBar()
         return;
 
     FMEvent event;
-    event = windowId();
-    event = selectedUrls();
+    event << windowId();
+    event << selectedUrls();
     int count = selectedIndexCount();
 
     if (count == 0){
@@ -1751,10 +1751,10 @@ void DFileView::showEmptyAreaMenu()
     urls.append(currentUrl());
 
     FMEvent event;
-    event = currentUrl();
-    event = urls;
-    event = windowId();
-    event = FMEvent::FileView;
+    event << currentUrl();
+    event << urls;
+    event << windowId();
+    event << FMEvent::FileView;
     menu->setEvent(event);
 
 
@@ -1860,10 +1860,10 @@ void DFileView::showNormalMenu(const QModelIndex &index)
 
     FMEvent event;
 
-    event = info->redirectedFileUrl();
-    event = list;
-    event = windowId();
-    event = FMEvent::FileView;
+    event << info->redirectedFileUrl();
+    event << list;
+    event << windowId();
+    event << FMEvent::FileView;
 
     menu->setEvent(event);
     menu->exec();
@@ -2003,8 +2003,8 @@ void DFileView::onModelStateChanged(int state)
 
     FMEvent event;
 
-    event = windowId();
-    event = currentUrl();
+    event << windowId();
+    event << currentUrl();
 
     emit fileSignalManager->loadingIndicatorShowed(event, state == DFileSystemModel::Busy);
 

@@ -118,7 +118,7 @@ void DFileManagerWindow::initTitleBar()
     DFileMenu* menu = fileMenuManger->createToolBarSettingsMenu();
 
     FMEvent event;
-    event = windowId();
+    event << windowId();
     menu->setEvent(event);
 
     titleBar()->setMenu(menu);
@@ -229,8 +229,8 @@ void DFileManagerWindow::initViewLayout()
 void DFileManagerWindow::initFileView()
 {
     FMEvent event;
-    event = DUrl();
-    event = windowId();
+    event << DUrl();
+    event << windowId();
     createNewView(event);
 }
 
@@ -285,8 +285,8 @@ void DFileManagerWindow::initConnect()
     connect(d->newTabButton, &QPushButton::clicked, this, [=]{
         FMEvent event;
         const DUrl url = DUrl::fromUserInput(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0));
-        event = url;
-        event = windowId();
+        event << url;
+        event << windowId();
         createNewView(event);
     });
     connect(fileService, &FileServices::childrenRemoved, d->toolbar, &DToolBar::dirDeleted);
@@ -484,7 +484,7 @@ void DFileManagerWindow::preHandleCd(const FMEvent &event)
         if(info.isValid()){
             DUrl url = DUrl::fromUserInput(info.path());
             FMEvent e = event;
-            e = url;
+            e << url;
             cd(e);
         }
     }else {

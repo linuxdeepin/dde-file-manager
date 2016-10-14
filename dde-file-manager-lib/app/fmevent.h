@@ -34,7 +34,7 @@ public:
         int bookMarkIndex = -1;
     };
 
-    FMEvent(int wId = -1, EventSource source = Unknow, const DUrl &fileUrl = DUrl());
+    explicit FMEvent(int wId = -1, EventSource source = Unknow, const DUrl &fileUrl = DUrl());
 
     inline FMEvent(const FMEvent &other)
         : data(other.data)
@@ -49,20 +49,20 @@ public:
     inline FMEvent &operator =(FMEvent &&other) Q_DECL_NOEXCEPT
     {qSwap(data, other.data); return *this;}
 
-    inline FMEvent &operator =(EventSource source)
+    inline FMEvent &operator <<(EventSource source)
     {
         data->parentSource = data->source;
         data->source = source;
         return *this;
     }
 
-    inline FMEvent &operator =(int wId)
+    inline FMEvent &operator <<(int wId)
     {data->windowId = wId; return *this;}
 
-    inline FMEvent &operator =(const DUrl &fileUrl)
+    inline FMEvent &operator <<(const DUrl &fileUrl)
     {data->fileUrl = fileUrl; return *this;}
 
-    inline FMEvent &operator =(const DUrlList &list)
+    inline FMEvent &operator <<(const DUrlList &list)
     {data->fileUrlList = list; return *this;}
 
     inline int windowId() const

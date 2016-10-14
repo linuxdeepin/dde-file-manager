@@ -186,9 +186,9 @@ void DLeftSideBar::handleLocationChanged(const FMEvent &e)
         return;
     FMEvent event;
 
-    event = e.fileUrl();
-    event = FMEvent::LeftSideBar;
-    event = WindowManager::getWindowId(this);
+    event << e.fileUrl();
+    event << FMEvent::LeftSideBar;
+    event << WindowManager::getWindowId(this);
     event.setBookmarkIndex(e.bookmarkIndex());
 
     if (e.fileUrl().isNetWorkFile()){

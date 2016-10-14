@@ -483,8 +483,8 @@ bool DFileSystemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
 
     FMEvent event;
 
-    event = this->parent()->windowId();
-    event = toUrl;
+    event << this->parent()->windowId();
+    event << toUrl;
 
     switch (action) {
     case Qt::CopyAction:

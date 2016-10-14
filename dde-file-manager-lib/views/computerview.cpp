@@ -141,9 +141,9 @@ void ComputerViewItem::contextMenuEvent(QContextMenuEvent *event)
     urls.append(url);
 
     FMEvent fmEvent;
-    fmEvent = url;
-    fmEvent = urls;
-    fmEvent = windowId();
+    fmEvent << url;
+    fmEvent << urls;
+    fmEvent << windowId();
 
     menu->setEvent(fmEvent);
     menu->exec();
@@ -162,21 +162,21 @@ void ComputerViewItem::mouseDoubleClickEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton){
         FMEvent fevent;
-        fevent = windowId();
+        fevent << windowId();
         if (m_info){
-            fevent = m_info->fileUrl();
+            fevent << m_info->fileUrl();
             emit fileSignalManager->requestChangeCurrentUrl(fevent);
         }else if (m_deviceInfo){
             DUrl url = m_deviceInfo->getMountPointUrl();
             if (!m_deviceInfo->getDiskInfo().CanUnmount){
                 url.setQuery(m_deviceInfo->getId());
-                fevent = url;
+                fevent << url;
                 DUrlList urls;
                 urls.append(url);
-                fevent = urls;
+                fevent << urls;
                 appController->actionOpenDisk(fevent);
             }else{
-                fevent = url;
+                fevent << url;
                 emit fileSignalManager->requestChangeCurrentUrl(fevent);
             }
 

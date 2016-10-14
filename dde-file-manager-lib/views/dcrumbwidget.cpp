@@ -516,22 +516,22 @@ void DCrumbWidget::buttonPressed()
     DCrumbButton * button = static_cast<DCrumbButton*>(sender());
 
     FMEvent event;
-    event = WindowManager::getWindowId(this);
-    event = FMEvent::CrumbButton;
+    event << WindowManager::getWindowId(this);
+    event << FMEvent::CrumbButton;
     QString text = button->path();
     DCrumbButton * localButton = qobject_cast<DCrumbButton*>(m_group.buttons().at(0));
 
     if(localButton->getName() == RECENT_ROOT)
     {
-        event = DUrl::fromRecentFile(text.isEmpty() ? "/":text);
+        event << DUrl::fromRecentFile(text.isEmpty() ? "/":text);
     }
     else if(localButton->getName() == COMPUTER_ROOT)
     {
-        event = DUrl::fromComputerFile(text.isEmpty() ? "/":text);
+        event << DUrl::fromComputerFile(text.isEmpty() ? "/":text);
     }
     else if(localButton->getName() == TRASH_ROOT)
     {
-        event = DUrl::fromTrashFile(text.isEmpty() ? "/":text);
+        event << DUrl::fromTrashFile(text.isEmpty() ? "/":text);
     }else if(localButton->getName() == NETWORK_ROOT)
     {
         if (!text.isEmpty()){
@@ -539,20 +539,20 @@ void DCrumbWidget::buttonPressed()
                 text.remove(0, 1);
             }
 
-            event = DUrl(text);
+            event << DUrl(text);
         }else{
-            event = DUrl(NETWORK_ROOT);
+            event << DUrl(NETWORK_ROOT);
         }
     }else if(localButton->getName() == USERSHARE_ROOT){
-        event = DUrl(USERSHARE_ROOT);
+        event << DUrl(USERSHARE_ROOT);
     }
     else if(localButton->getName() == m_homePath)
     {
-        event = DUrl::fromLocalFile(text);
+        event << DUrl::fromLocalFile(text);
     }
     else
     {
-        event = DUrl::fromLocalFile(text.isEmpty() ? "/":text);
+        event << DUrl::fromLocalFile(text.isEmpty() ? "/":text);
     }
 
     m_listWidget->scrollToItem(button->getItem());

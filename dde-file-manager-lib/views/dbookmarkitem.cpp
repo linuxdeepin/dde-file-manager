@@ -99,8 +99,8 @@ void DBookmarkItem::editFinished()
         return;
 
     FMEvent event;
-    event = windowId();
-    event = m_url;
+    event << windowId();
+    event << m_url;
     if(m_group)
         event.setBookmarkIndex(m_group->items()->indexOf(this));
 
@@ -135,9 +135,9 @@ void DBookmarkItem::checkMountedItem(const FMEvent &event)
         update();
 
         FMEvent e;
-        e = windowId();
-        e = m_url;
-        e = FMEvent::LeftSideBar;
+        e << windowId();
+        e << m_url;
+        e << FMEvent::LeftSideBar;
         e.setBookmarkIndex(m_group->items()->indexOf(this));
         qDebug() << m_isDisk << m_deviceInfo << m_url;
         m_group->url(e);
@@ -542,9 +542,9 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         if(!dir.exists() && !m_isDefault)
         {
             FMEvent event;
-            event = m_url;
-            event = FMEvent::LeftSideBar;
-            event = windowId();
+            event << m_url;
+            event << FMEvent::LeftSideBar;
+            event << windowId();
             if(m_group)
                 event.setBookmarkIndex(m_group->items()->indexOf(this));
             int result = dialogManager->showRemoveBookMarkDialog(event);
@@ -556,12 +556,12 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         else
         {
             FMEvent e;
-            e = windowId();
+            e << windowId();
             if(m_url.isBookMarkFile())
-                e = DUrl::fromLocalFile(m_url.path());
+                e << DUrl::fromLocalFile(m_url.path());
             else
-                e = m_url;
-            e = FMEvent::LeftSideBar;
+                e << m_url;
+            e << FMEvent::LeftSideBar;
             qDebug() << m_isDisk << m_deviceInfo << m_url;
 
             if (m_isDisk){
@@ -570,10 +570,10 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
                     qDebug() << info << m_url << m_isMounted;
                     if (!m_isMounted){
                         m_url.setQuery(m_sysPath);
-                        e = m_url;
+                        e << m_url;
                         DUrlList urls;
                         urls.append(m_url);
-                        e = urls;
+                        e << urls;
                         appController->actionOpenDisk(e);
                     }else{
                         qDebug() << e;
@@ -628,10 +628,10 @@ void DBookmarkItem::dropEvent(QGraphicsSceneDragDropEvent *event)
     if(m_isDisk)
         return;
     FMEvent e;
-    e = FMEvent::LeftSideBar;
-    e = m_url;
-    e = DUrl::fromQUrlList(event->mimeData()->urls());
-    e = windowId();
+    e << FMEvent::LeftSideBar;
+    e << m_url;
+    e << DUrl::fromQUrlList(event->mimeData()->urls());
+    e << windowId();
     qDebug() << m_url;
     if (m_url.isTrashFile()){
         appController->actionDelete(e);
@@ -729,10 +729,10 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     urls.append(m_url);
 
     FMEvent fmEvent;
-    fmEvent = m_url;
-    fmEvent = urls;
-    fmEvent = windowId();
-    fmEvent = FMEvent::LeftSideBar;
+    fmEvent << m_url;
+    fmEvent << urls;
+    fmEvent << windowId();
+    fmEvent << FMEvent::LeftSideBar;
     if(m_group)
         fmEvent.setBookmarkIndex(m_group->items()->indexOf(this));
 

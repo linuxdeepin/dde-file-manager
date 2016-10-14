@@ -703,9 +703,9 @@ void TabBar::onMovePrevius(const int fromTabIndex)
 void TabBar::onRequestNewWindow(const DUrl url)
 {
     FMEvent event;
-    event = FMEvent::FileView;
-    event = WindowManager::getWindowId(this);
-    event = url;
+    event << FMEvent::FileView;
+    event << WindowManager::getWindowId(this);
+    event << url;
     appController->actionNewWindow(event);
 }
 
