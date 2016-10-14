@@ -14,7 +14,7 @@
 
 #include "app/global.h"
 
-#include "controllers/fileservices.h"
+#include "fileservices.h"
 
 #include "shutil/mimesappsmanager.h"
 #include "shutil/desktopfile.h"

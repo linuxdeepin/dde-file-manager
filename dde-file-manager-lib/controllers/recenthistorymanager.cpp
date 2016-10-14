@@ -14,7 +14,7 @@
 #include <QFile>
 #include <QJsonDocument>
 #include <QJsonArray>
-#include <QByteArray>
+#include <QDebug>
 #include <QDateTime>
 #include <QUrl>
 

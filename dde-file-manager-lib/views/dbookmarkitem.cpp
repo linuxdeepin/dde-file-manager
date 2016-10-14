@@ -23,7 +23,7 @@
 #include "models/bookmark.h"
 
 #include "app/global.h"
-#include "app/fmevent.h"
+#include "fmevent.h"
 #include "app/filesignalmanager.h"
 #include "app/filemanagerapp.h"
 
@@ -31,7 +31,7 @@
 
 #include "controllers/bookmarkmanager.h"
 #include "controllers/appcontroller.h"
-#include "controllers/fileservices.h"
+#include "fileservices.h"
 
 #include "dialogs/dialogmanager.h"
 

@@ -15,7 +15,7 @@
 #include "fileoperations/filejob.h"
 
 #include "app/filesignalmanager.h"
-#include "app/fmevent.h"
+#include "fmevent.h"
 #include "app/global.h"
 
 #include "interfaces/dfmstandardpaths.h"

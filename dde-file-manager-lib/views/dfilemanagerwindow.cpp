@@ -14,20 +14,20 @@
 #include "dtabbar.h"
 #include "dbookmarkscene.h"
 #include "windowmanager.h"
+#include "fileservices.h"
 
 #include "app/global.h"
-#include "app/fmevent.h"
+#include "fmevent.h"
 #include "app/filesignalmanager.h"
 #include "app/filemanagerapp.h"
-#include "../controllers/fileservices.h"
-#include "../deviceinfo/udisklistener.h"
+#include "deviceinfo/udisklistener.h"
 #include "usershare/usersharemanager.h"
 
 #include "xutil.h"
 #include "utils.h"
 
 #include "widgets/singleton.h"
-#include "controllers/fileservices.h"
+#include "fileservices.h"
 #include "controllers/appcontroller.h"
 
 #include <dplatformwindowhandle.h>

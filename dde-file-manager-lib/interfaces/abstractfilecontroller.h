@@ -1,7 +1,7 @@
 #ifndef ABSTRACTFILECONTROLLER_H
 #define ABSTRACTFILECONTROLLER_H
 
-#include "models/abstractfileinfo.h"
+#include "abstractfileinfo.h"
 #include "models/ddiriterator.h"
 
 #include <QObject>

@@ -10,7 +10,7 @@
 #include "controllers/pathmanager.h"
 
 #include "app/global.h"
-#include "app/fmevent.h"
+#include "fmevent.h"
 #include "app/filesignalmanager.h"
 
 #include "deviceinfo/udiskdeviceinfo.h"

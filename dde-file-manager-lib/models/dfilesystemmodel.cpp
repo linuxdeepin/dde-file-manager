@@ -4,12 +4,12 @@
 
 #include "app/global.h"
 #include "app/filemanagerapp.h"
-#include "app/fmevent.h"
+#include "fmevent.h"
 
 #include "views/dfileview.h"
 
 #include "controllers/appcontroller.h"
-#include "controllers/fileservices.h"
+#include "fileservices.h"
 #include "controllers/jobcontroller.h"
 
 #include "filemonitor/filemonitor.h"

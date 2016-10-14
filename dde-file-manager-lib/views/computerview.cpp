@@ -6,13 +6,13 @@
 
 #include "app/global.h"
 #include "app/filesignalmanager.h"
-#include "app/fmevent.h"
+#include "fmevent.h"
 #include "app/filemanagerapp.h"
-#include "controllers/fileservices.h"
+#include "fileservices.h"
 #include "controllers/pathmanager.h"
 #include "controllers/appcontroller.h"
 #include "deviceinfo/udisklistener.h"
-#include "models/abstractfileinfo.h"
+#include "abstractfileinfo.h"
 #include "shutil/standardpath.h"
 #include "widgets/singleton.h"
 

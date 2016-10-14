@@ -12,7 +12,7 @@
 #include <QMimeType>
 
 #include "durl.h"
-#include "menuactiontype.h"
+#include "dfmglobal.h"
 
 #define SORT_FUN_DEFINE(Value, Name, Type) \
 bool sortFileListBy##Name(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &info2, Qt::SortOrder order)\
@@ -57,7 +57,7 @@ bool sortByString(T, T, Qt::SortOrder order = Qt::AscendingOrder)
 class AbstractFileInfo;
 typedef QExplicitlySharedDataPointer<AbstractFileInfo> AbstractFileInfoPointer;
 typedef std::function<const AbstractFileInfoPointer(int)> getFileInfoFun;
-typedef MenuActionType::MenuAction MenuAction;
+typedef DFMGlobal::MenuAction MenuAction;
 
 class AbstractFileInfo : public QSharedData
 {

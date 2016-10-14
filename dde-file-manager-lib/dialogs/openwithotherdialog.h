@@ -4,7 +4,7 @@
 #include <ddialog.h>
 #include <QListWidget>
 #include "durl.h"
-#include "models/abstractfileinfo.h"
+#include "abstractfileinfo.h"
 
 DWIDGET_USE_NAMESPACE
 

@@ -27,9 +27,6 @@ public:
     void updateEditorGeometry(QWidget * editor, const QStyleOptionViewItem & option, const QModelIndex &) const Q_DECL_OVERRIDE;
     void setEditorData(QWidget * editor, const QModelIndex & index) const Q_DECL_OVERRIDE;
 
-    void paintIconItem(QPainter *painter, const QStyleOptionViewItem &option,
-                       const QModelIndex &index, bool isDragMode, bool isActive) const;
-
     QList<QRect> paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index) const Q_DECL_OVERRIDE;
 
     QModelIndexList hasWidgetIndexs() const Q_DECL_OVERRIDE;

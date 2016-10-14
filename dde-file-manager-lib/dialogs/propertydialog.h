@@ -2,7 +2,7 @@
 #define PROPERTYDIALOG_H
 
 #include "basedialog.h"
-#include "models/abstractfileinfo.h"
+#include "abstractfileinfo.h"
 #include <QLabel>
 #include <QCloseEvent>
 #include <QTextEdit>

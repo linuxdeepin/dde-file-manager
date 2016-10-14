@@ -9,7 +9,6 @@
 #include <QMultiHash>
 #include <QPair>
 #include <QDir>
-#include <QDebug>
 
 #include <functional>
 

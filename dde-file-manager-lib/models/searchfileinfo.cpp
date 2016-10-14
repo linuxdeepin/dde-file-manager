@@ -2,7 +2,7 @@
 
 #include "views/dfileview.h"
 
-#include "controllers/fileservices.h"
+#include "fileservices.h"
 
 #include "models/dfilesystemmodel.h"
 
