@@ -91,7 +91,9 @@ void DCrumbButton::mousePressEvent(QMouseEvent *e)
 
 void DCrumbButton::mouseReleaseEvent(QMouseEvent *e)
 {
-    if (oldGlobalPos == e->globalPos() && e->button() == Qt::LeftButton) {
+    const QPoint &difference = e->globalPos() - oldGlobalPos;
+
+    if (qAbs(difference.x()) < 10 && qAbs(difference.y()) < 10 && e->button() == Qt::LeftButton) {
         QPushButton::mouseReleaseEvent(e);
     }
 }
