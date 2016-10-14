@@ -20,7 +20,7 @@ class JobController;
 class DFileViewHelper;
 
 typedef QExplicitlySharedDataPointer<FileSystemNode> FileSystemNodePointer;
-
+class DFileSystemModelPrivate;
 class DFileSystemModel : public QAbstractItemModel
 {
     Q_OBJECT
@@ -136,24 +136,6 @@ private slots:
     void onFileUpdated(const DUrl &fileUrl);
 
 private:
-    FileSystemNodePointer m_rootNode;
-
-//    QHash<DUrl, FileSystemNodePointer> m_urlToNode;
-
-    int m_sortRole = FileDisplayNameRole;
-    QStringList m_nameFilters;
-    QDir::Filters m_filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System;
-    Qt::SortOrder m_srotOrder = Qt::AscendingOrder;
-//    QModelIndex m_activeIndex;
-
-    QPointer<JobController> jobController;
-    QEventLoop *eventLoop = Q_NULLPTR;
-    QFuture<void> updateChildrenFuture;
-
-    State m_state = Idle;
-
-    bool childrenUpdated = false;
-
     inline const FileSystemNodePointer getNodeByIndex(const QModelIndex &index) const;
     QModelIndex createIndex(const FileSystemNodePointer &node, int column) const;
     using QAbstractItemModel::createIndex;
@@ -174,6 +156,11 @@ private:
     void addFile(const AbstractFileInfoPointer &fileInfo);
 
     friend class FileSystemNode;
+
+    QScopedPointer<DFileSystemModelPrivate> d_ptr;
+
+    Q_DECLARE_PRIVATE(DFileSystemModel)
+    Q_DISABLE_COPY(DFileSystemModel)
 };
 
 #endif // DFILESYSTEMMODEL_H

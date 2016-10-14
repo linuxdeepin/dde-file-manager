@@ -1,7 +1,7 @@
 #include "mimesappsmanager.h"
 #include "iconprovider.h"
 
-#include "app/global.h"
+#include "app/define.h"
 
 #include "widgets/singleton.h"
 

@@ -1,13 +1,12 @@
 #include "filemanagerapp.h"
 #include "filesignalmanager.h"
-
+#include "dfmglobal.h"
 #include "views/windowmanager.h"
 #include "views/dfilemanagerwindow.h"
 
 #include "controllers/appcontroller.h"
 
 #include "app/define.h"
-#include "app/global.h"
 
 #include "dialogs/dialogmanager.h"
 
@@ -32,6 +31,11 @@
 #include <QThreadPool>
 #include <QSettings>
 
+#undef signals
+extern "C" {
+  #include <gtk/gtk.h>
+}
+#define signals public
 
 FileManagerApp::FileManagerApp(QObject *parent) : QObject(parent)
 {

@@ -2,7 +2,7 @@
 
 #include "qobjecthelper.h"
 
-#include "app/global.h"
+#include "app/define.h"
 #include "app/filesignalmanager.h"
 
 #include "shutil/standardpath.h"

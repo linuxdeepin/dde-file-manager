@@ -10,7 +10,7 @@
 #include "dstatebutton.h"
 
 #include "fmevent.h"
-#include "app/global.h"
+#include "app/define.h"
 
 #include "controllers/pathmanager.h"
 

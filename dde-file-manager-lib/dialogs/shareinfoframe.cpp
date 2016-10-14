@@ -3,7 +3,7 @@
 #include "usershare/shareinfo.h"
 #include "usershare/usersharemanager.h"
 #include "widgets/singleton.h"
-#include "app/global.h"
+#include "app/define.h"
 #include "fileservices.h"
 
 #include <QFormLayout>

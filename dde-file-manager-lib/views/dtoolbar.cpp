@@ -10,7 +10,7 @@
 #include "windowmanager.h"
 
 #include "fmevent.h"
-#include "app/global.h"
+#include "app/define.h"
 #include "app/filesignalmanager.h"
 
 #include "filemenumanager.h"

@@ -2,7 +2,7 @@
 #include "fileservices.h"
 
 #include "app/filesignalmanager.h"
-#include "app/global.h"
+#include "app/define.h"
 
 #include "models/recentfileinfo.h"
 #include "shutil/standardpath.h"

@@ -3,7 +3,7 @@
 #include "mountaskpassworddialog.h"
 
 #include "app/filesignalmanager.h"
-#include "app/global.h"
+#include "app/define.h"
 
 #include "views/windowmanager.h"
 

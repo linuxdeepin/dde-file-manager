@@ -4,8 +4,8 @@
 #include "views/deditorwidgetmenu.h"
 #include "private/dstyleditemdelegate_p.h"
 
-#include "models/dfilesystemmodel.h"
-#include "app/global.h"
+#include "dfilesystemmodel.h"
+#include "app/define.h"
 
 #include <QLabel>
 #include <QPainter>
@@ -168,7 +168,7 @@ void DIconItemDelegate::paint(QPainter *painter,
             str = d->wordWrapMap.value(str);
             height = d->textHeightMap.value(str);
         } else {
-            QString wordWrap_str = Global::wordWrapText(str, label_rect.width(),
+            QString wordWrap_str = DFMGlobal::wordWrapText(str, label_rect.width(),
                                                         QTextOption::WrapAtWordBoundaryOrAnywhere,
                                                         &height);
 
@@ -199,7 +199,7 @@ void DIconItemDelegate::paint(QPainter *painter,
         if(d->elideMap.contains(str)) {
             str = d->elideMap.value(str);
         } else {
-            QString elide_str = Global::elideText(str, label_rect.size(),
+            QString elide_str = DFMGlobal::elideText(str, label_rect.size(),
                                                   painter->fontMetrics(),
                                                   QTextOption::WrapAtWordBoundaryOrAnywhere,
                                                   opt.textElideMode);
@@ -471,7 +471,7 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
     if(d->elideMap.contains(str)) {
         str = d->elideMap.value(str);
     } else {
-        QString elide_str = Global::elideText(str, label_rect.size(),
+        QString elide_str = DFMGlobal::elideText(str, label_rect.size(),
                                               option.fontMetrics,
                                               QTextOption::WrapAtWordBoundaryOrAnywhere,
                                               option.textElideMode);

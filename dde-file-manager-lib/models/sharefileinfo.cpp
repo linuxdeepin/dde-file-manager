@@ -18,10 +18,10 @@
 #include "fileservices.h"
 #include "controllers/pathmanager.h"
 
-#include "app/global.h"
+#include "app/define.h"
 #include "interfaces/dfmstandardpaths.h"
 #include "shutil/iconprovider.h"
-#include "models/dfilesystemmodel.h"
+#include "dfilesystemmodel.h"
 #include "widgets/singleton.h"
 
 #include <QMimeType>

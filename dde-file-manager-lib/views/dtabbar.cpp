@@ -1,7 +1,7 @@
 #include "dtabbar.h"
 #include "windowmanager.h"
 
-#include "app/global.h"
+#include "app/define.h"
 #include "fmevent.h"
 #include "app/filemanagerapp.h"
 #include "controllers/appcontroller.h"

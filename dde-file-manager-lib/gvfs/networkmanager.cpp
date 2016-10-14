@@ -1,7 +1,7 @@
 #include "networkmanager.h"
 
 #include "app/filesignalmanager.h"
-#include "app/global.h"
+#include "app/define.h"
 
 #include "widgets/singleton.h"
 

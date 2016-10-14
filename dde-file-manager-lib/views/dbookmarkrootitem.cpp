@@ -2,7 +2,7 @@
 #include "dbookmarkscene.h"
 #include "dbookmarkitem.h"
 
-#include "app/global.h"
+#include "app/define.h"
 #include "app/filesignalmanager.h"
 
 #include "controllers/bookmarkmanager.h"

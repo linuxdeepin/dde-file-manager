@@ -1,6 +1,6 @@
 #include "fileinfo.h"
 
-#include "app/global.h"
+#include "app/define.h"
 
 #include "shutil/iconprovider.h"
 
@@ -8,7 +8,7 @@
 
 #include "widgets/singleton.h"
 
-#include "app/global.h"
+#include "app/define.h"
 #include "widgets/singleton.h"
 #include "usershare/usersharemanager.h"
 

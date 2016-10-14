@@ -5,7 +5,8 @@
 #include <anchors.h>
 
 #include "fileitem.h"
-#include "app/global.h"
+#include "dfmglobal.h"
+#include "app/define.h"
 
 DWIDGET_USE_NAMESPACE
 

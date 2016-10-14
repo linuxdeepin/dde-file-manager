@@ -22,7 +22,7 @@
 
 #include "models/bookmark.h"
 
-#include "app/global.h"
+#include "app/define.h"
 #include "fmevent.h"
 #include "app/filesignalmanager.h"
 #include "app/filemanagerapp.h"

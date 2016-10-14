@@ -4,7 +4,7 @@
 //#include "thumbnailmanager.h"
 #include "thumbnailer/thumbnailmanager.h"
 
-#include "app/global.h"
+#include "app/define.h"
 
 #include "controllers/pathmanager.h"
 #include "controllers/appcontroller.h"

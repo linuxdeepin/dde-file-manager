@@ -1,6 +1,6 @@
 #include "filemenumanager.h"
 
-#include "app/global.h"
+#include "app/define.h"
 #include "fmevent.h"
 #include "app/filemanagerapp.h"
 #include "dfilemenu.h"

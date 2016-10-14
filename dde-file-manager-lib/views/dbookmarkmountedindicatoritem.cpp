@@ -1,6 +1,6 @@
 #include "dbookmarkmountedindicatoritem.h"
 
-#include "app/global.h"
+#include "app/define.h"
 
 #include "deviceinfo/udisklistener.h"
 
