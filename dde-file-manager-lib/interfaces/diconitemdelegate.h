@@ -10,6 +10,7 @@ QT_BEGIN_NAMESPACE
 class QTextDocument;
 QT_END_NAMESPACE
 
+class DIconItemDelegatePrivate;
 class DIconItemDelegate : public DStyledItemDelegate
 {
     Q_OBJECT
@@ -47,23 +48,12 @@ protected:
     bool eventFilter(QObject *object, QEvent *event) Q_DECL_OVERRIDE;
 
 private:
-    QPointer<FileIconItem> expanded_item;
-
-    mutable QHash<QString, QString> m_elideMap;
-    mutable QHash<QString, QString> m_wordWrapMap;
-    mutable QHash<QString, int> m_textHeightMap;
-    mutable QHash<QString, QTextDocument*> m_documentMap;
-    mutable QModelIndex expanded_index;
-    mutable QModelIndex lastAndExpandedInde;
-
-    QList<int> m_iconSizes;
-    /// default icon size is 64px.
-    int m_currentIconSizeIndex = 1;
-
     void onEditWidgetFocusOut();
     void onIconSizeChanged();
     void onTriggerEdit(const QModelIndex &index);
     QSize iconSizeByIconSizeLevel() const;
+
+    Q_DECLARE_PRIVATE(DIconItemDelegate)
 };
 
 #endif // DFILEITEMDELEGATE_H

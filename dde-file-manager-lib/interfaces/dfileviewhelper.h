@@ -65,7 +65,7 @@ signals:
 private:
     QScopedPointer<DFileViewHelperPrivate> d_ptr;
 
-    Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_ptr), DFileViewHelper)
+    Q_DECLARE_PRIVATE(DFileViewHelper)
     Q_DISABLE_COPY(DFileViewHelper)
 };
 

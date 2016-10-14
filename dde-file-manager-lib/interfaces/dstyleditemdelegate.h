@@ -13,12 +13,14 @@
 #include <QStyledItemDelegate>
 
 class DFileViewHelper;
+class DStyledItemDelegatePrivate;
 class DStyledItemDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
 
 public:
     explicit DStyledItemDelegate(DFileViewHelper *parent);
+    ~DStyledItemDelegate();
 
     DFileViewHelper *parent() const;
 
@@ -45,11 +47,15 @@ public:
     virtual int setIconSizeByIconSizeLevel(int level);
 
 protected:
+    DStyledItemDelegate(DStyledItemDelegatePrivate &dd, DFileViewHelper *parent);
+
     void initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const Q_DECL_OVERRIDE;
     QList<QRect> getCornerGeometryList(const QRect &baseRect, const QSize &cornerSize) const;
 
-    mutable QModelIndex editing_index;
-    QSize m_itemSizeHint;
+    QScopedPointer<DStyledItemDelegatePrivate> d_ptr;
+
+    Q_DECLARE_PRIVATE(DStyledItemDelegate)
+    Q_DISABLE_COPY(DStyledItemDelegate)
 };
 
 #endif // DSTYLEDITEMDELEGATE_H

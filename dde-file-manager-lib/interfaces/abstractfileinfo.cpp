@@ -48,6 +48,11 @@ bool sort(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &i
 }
 } /// end namespace FileSortFunction
 
+class AbstractFileInfoPrivate
+{
+
+};
+
 QMap<DUrl, AbstractFileInfo::FileMetaData> AbstractFileInfo::metaDataCacheMap;
 
 AbstractFileInfo::AbstractFileInfo()

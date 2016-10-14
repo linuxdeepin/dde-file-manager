@@ -2,7 +2,7 @@
 #include "fileservices.h"
 
 #include "models/searchfileinfo.h"
-#include "models/ddiriterator.h"
+#include "ddiriterator.h"
 
 #include "app/global.h"
 #include "app/filesignalmanager.h"
