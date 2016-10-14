@@ -4,7 +4,7 @@
 
 #include "app/filesignalmanager.h"
 #include "fmevent.h"
-#include "app/global.h"
+#include "app/define.h"
 #include "controllers/jobcontroller.h"
 #include "views/windowmanager.h"
 #include "models/fileinfo.h"

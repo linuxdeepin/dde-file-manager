@@ -12,7 +12,7 @@
 #include <dscrollbar.h>
 #include <dthememanager.h>
 
-#include "app/global.h"
+#include "app/define.h"
 
 #include "fileservices.h"
 

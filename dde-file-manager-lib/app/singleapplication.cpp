@@ -1,5 +1,5 @@
 #include "singleapplication.h"
-#include "global.h"
+#include "define.h"
 #include "filesignalmanager.h"
 #include "durl.h"
 

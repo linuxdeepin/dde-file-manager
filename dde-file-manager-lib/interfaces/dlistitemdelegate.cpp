@@ -9,9 +9,9 @@
 
 #include "dlistitemdelegate.h"
 #include "dfileviewhelper.h"
-#include "app/global.h"
+#include "app/define.h"
 #include "views/deditorwidgetmenu.h"
-#include "models/dfilesystemmodel.h"
+#include "dfilesystemmodel.h"
 #include "private/dstyleditemdelegate_p.h"
 
 #include <QLabel>
@@ -153,7 +153,7 @@ void DListItemDelegate::paint(QPainter *painter,
 
     if(index != d->editingIndex || role != DFileSystemModel::FileNameRole) {
         /// draw file name label
-        const QString &file_name = Global::elideText(index.data(role).toString().remove('\n'), rect.size(),
+        const QString &file_name = DFMGlobal::elideText(index.data(role).toString().remove('\n'), rect.size(),
                                                      painter->fontMetrics(), QTextOption::NoWrap, Qt::ElideRight);
 
         painter->drawText(rect, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()), file_name);
@@ -191,7 +191,7 @@ void DListItemDelegate::paint(QPainter *painter,
 
         QModelIndex tmp_index = model->createIndex(index.row(), model->roleToColumn(role), index.internalId());
 
-        const QString &text = Global::elideText(index.data(role).toString(), rect.size(),
+        const QString &text = DFMGlobal::elideText(index.data(role).toString(), rect.size(),
                                                 painter->fontMetrics(), QTextOption::NoWrap, Qt::ElideRight);
 
         painter->drawText(rect, Qt::Alignment(tmp_index.data(Qt::TextAlignmentRole).toInt()), text);

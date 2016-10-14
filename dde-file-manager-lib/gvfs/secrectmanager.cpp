@@ -1,6 +1,6 @@
 #include "secrectmanager.h"
 
-#include "app/global.h"
+#include "app/define.h"
 #include "app/filesignalmanager.h"
 
 #include "shutil/standardpath.h"
@@ -9,6 +9,7 @@
 
 #include <QDebug>
 #include <QJsonDocument>
+#include <QFile>
 
 SecrectManager::SecrectManager(QObject *parent) : QObject(parent)
 {

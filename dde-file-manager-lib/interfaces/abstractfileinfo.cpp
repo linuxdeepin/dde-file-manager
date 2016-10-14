@@ -2,7 +2,7 @@
 
 #include "views/dfileview.h"
 
-#include "models/dfilesystemmodel.h"
+#include "dfilesystemmodel.h"
 
 #include "shutil/fileutils.h"
 #include "shutil/mimetypedisplaymanager.h"
@@ -10,7 +10,7 @@
 #include "controllers/pathmanager.h"
 #include "fileservices.h"
 
-#include "app/global.h"
+#include "app/define.h"
 
 #include "widgets/singleton.h"
 
@@ -26,10 +26,10 @@ QCollator sortCollator;
 
 bool sortByString(const QString &str1, const QString &str2, Qt::SortOrder order)
 {
-    if (Global::startWithHanzi(str1)) {
-        if (!Global::startWithHanzi(str2))
+    if (DFMGlobal::startWithHanzi(str1)) {
+        if (!DFMGlobal::startWithHanzi(str2))
             return order != Qt::AscendingOrder;
-    } else if (Global::startWithHanzi(str2)) {
+    } else if (DFMGlobal::startWithHanzi(str2)) {
         return order == Qt::AscendingOrder;
     }
 
@@ -141,7 +141,7 @@ QString AbstractFileInfo::pinyinName() const
     const QString &diaplayName = this->displayName();
 
     if (data->pinyinName.isEmpty())
-        data->pinyinName = Global::toPinyin(diaplayName);
+        data->pinyinName = DFMGlobal::toPinyin(diaplayName);
 
     return data->pinyinName;
 }

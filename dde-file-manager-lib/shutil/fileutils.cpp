@@ -3,7 +3,7 @@
 
 #include "views/windowmanager.h"
 
-#include "app/global.h"
+#include "app/define.h"
 
 #include "fileservices.h"
 #include "simpleini/SimpleIni.h"

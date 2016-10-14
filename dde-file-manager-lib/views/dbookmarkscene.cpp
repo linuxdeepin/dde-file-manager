@@ -9,7 +9,7 @@
 #include "controllers/bookmarkmanager.h"
 #include "controllers/pathmanager.h"
 
-#include "app/global.h"
+#include "app/define.h"
 #include "fmevent.h"
 #include "app/filesignalmanager.h"
 

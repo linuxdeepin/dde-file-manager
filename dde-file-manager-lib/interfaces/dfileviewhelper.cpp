@@ -10,13 +10,13 @@
 #include "dfileviewhelper.h"
 #include "dfmglobal.h"
 #include "dstyleditemdelegate.h"
-#include "app/global.h"
+#include "app/define.h"
 #include "fmevent.h"
 #include "views/windowmanager.h"
 #define protected public
 #include "abstractfileinfo.h"
 #undef protected
-#include "models/dfilesystemmodel.h"
+#include "dfilesystemmodel.h"
 #include "shutil/iconprovider.h"
 #include "views/fileitem.h"
 #include "widgets/singleton.h"

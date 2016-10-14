@@ -4,7 +4,7 @@
 #include "filemenumanager.h"
 #include "windowmanager.h"
 
-#include "app/global.h"
+#include "app/define.h"
 #include "app/filesignalmanager.h"
 #include "fmevent.h"
 #include "app/filemanagerapp.h"
@@ -211,7 +211,7 @@ void ComputerViewItem::updateStatus()
         getTextEdit()->setStyleSheet("border-radius:4px;background-color: #2da6f7; color:white");
     }else{
         setIconSizeState(m_iconSize, QIcon::Normal);
-        QString ds = Global::elideText(m_name,
+        QString ds = DFMGlobal::elideText(m_name,
                           QSize(width(), 40),
                           fontMetrics(),
                           QTextOption::WrapAtWordBoundaryOrAnywhere,
@@ -532,7 +532,7 @@ void ComputerView::resizeEvent(QResizeEvent *event)
 
 void ComputerView::wheelEvent(QWheelEvent *event)
 {
-    if(Global::keyCtrlIsPressed()) {
+    if(DFMGlobal::keyCtrlIsPressed()) {
         if(event->angleDelta().y() > 0) {
             enlargeIcon();
         } else {

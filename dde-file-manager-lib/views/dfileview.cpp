@@ -5,7 +5,7 @@
 #include "windowmanager.h"
 #include "dstatusbar.h"
 #include "fileviewhelper.h"
-#include "app/global.h"
+#include "app/define.h"
 #include "app/filemanagerapp.h"
 #include "app/filesignalmanager.h"
 
@@ -19,7 +19,7 @@
 #include "controllers/pathmanager.h"
 
 #include "models/dfileselectionmodel.h"
-#include "models/dfilesystemmodel.h"
+#include "dfilesystemmodel.h"
 
 #include "shutil/fileutils.h"
 #include "shutil/mimesappsmanager.h"
@@ -179,7 +179,7 @@ void DFileView::initConnects()
 
     connect(this, &DFileView::doubleClicked,
             this, [this] (const QModelIndex &index) {
-        if (!Global::keyCtrlIsPressed() && !Global::keyShiftIsPressed())
+        if (!DFMGlobal::keyCtrlIsPressed() && !DFMGlobal::keyShiftIsPressed())
             openIndex(index);
     }, Qt::QueuedConnection);
 
@@ -589,7 +589,7 @@ bool DFileView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger tr
 {
     DUrl fileUrl = model()->getUrlByIndex(index);
 
-    if (fileUrl.isEmpty() || selectedIndexCount() > 1 || (trigger == SelectedClicked && Global::keyShiftIsPressed()))
+    if (fileUrl.isEmpty() || selectedIndexCount() > 1 || (trigger == SelectedClicked && DFMGlobal::keyShiftIsPressed()))
         return false;
 
     if (trigger == SelectedClicked) {
@@ -732,7 +732,7 @@ void DFileView::onRowCountChanged()
 
 void DFileView::wheelEvent(QWheelEvent *event)
 {
-    if(isIconViewMode() && Global::keyCtrlIsPressed()) {
+    if(isIconViewMode() && DFMGlobal::keyCtrlIsPressed()) {
         if(event->angleDelta().y() > 0) {
             increaseIcon();
         } else {
@@ -956,7 +956,7 @@ void DFileView::mousePressEvent(QMouseEvent *event)
         setDragEnabled(!isEmptyArea);
 
         if (isEmptyArea) {
-            if (!Global::keyCtrlIsPressed()) {
+            if (!DFMGlobal::keyCtrlIsPressed()) {
                 itemDelegate()->hideNotEditingIndexWidget();
                 clearSelection();
             }
@@ -968,7 +968,7 @@ void DFileView::mousePressEvent(QMouseEvent *event)
             d->selectedGeometry.setLeft(event->pos().x() + horizontalOffset());
 
             connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &DFileView::updateSelectionRect);
-        } else if (Global::keyCtrlIsPressed()) {
+        } else if (DFMGlobal::keyCtrlIsPressed()) {
             const QModelIndex &index = indexAt(event->pos());
 
             if (selectionModel()->isSelected(index)) {
@@ -1008,7 +1008,7 @@ void DFileView::mouseReleaseEvent(QMouseEvent *event)
 
     disconnect(verticalScrollBar(), &QScrollBar::valueChanged, this, &DFileView::updateSelectionRect);
 
-    if (d->mouseLastPressedIndex.isValid() && Global::keyCtrlIsPressed()) {
+    if (d->mouseLastPressedIndex.isValid() && DFMGlobal::keyCtrlIsPressed()) {
         if (d->mouseLastPressedIndex == indexAt(event->pos()))
             selectionModel()->select(d->mouseLastPressedIndex, QItemSelectionModel::Deselect);
     }
@@ -1229,7 +1229,7 @@ void DFileView::dropEvent(QDropEvent *event)
 
 void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags flags)
 {
-    if (Global::keyShiftIsPressed()) {
+    if (DFMGlobal::keyShiftIsPressed()) {
         const QModelIndex &index = indexAt(rect.bottomRight());
 
         if (!index.isValid())
@@ -1298,7 +1298,7 @@ QModelIndex DFileView::moveCursor(QAbstractItemView::CursorAction cursorAction, 
 
     switch (cursorAction) {
     case MoveLeft:
-        if (Global::keyShiftIsPressed()) {
+        if (DFMGlobal::keyShiftIsPressed()) {
             index = DListView::moveCursor(cursorAction, modifiers);
 
             if (index == d->lastCursorIndex) {
@@ -1310,7 +1310,7 @@ QModelIndex DFileView::moveCursor(QAbstractItemView::CursorAction cursorAction, 
 
         break;
     case MoveRight:
-        if (Global::keyShiftIsPressed()) {
+        if (DFMGlobal::keyShiftIsPressed()) {
             index = DListView::moveCursor(cursorAction, modifiers);
 
             if (index == d->lastCursorIndex) {
@@ -2084,7 +2084,7 @@ void DFileView::updateSelectionRect()
 
 void DFileView::preproccessDropEvent(QDropEvent *event) const
 {
-    if (event->source() == this && !Global::keyCtrlIsPressed()) {
+    if (event->source() == this && !DFMGlobal::keyCtrlIsPressed()) {
         event->setDropAction(Qt::MoveAction);
     } else {
         AbstractFileInfoPointer info = model()->fileInfo(indexAt(event->pos()));

@@ -72,8 +72,6 @@ RESOURCES += \
     themes/themes.qrc
 
 HEADERS += \
-    app/define.h \
-    app/global.h \
     controllers/appcontroller.h \
     app/filemanagerapp.h \
     views/dmovablemainwindow.h \
@@ -84,7 +82,6 @@ HEADERS += \
     views/dicontextbutton.h \
     views/dstatebutton.h \
     views/dcheckablebutton.h \
-    models/dfilesystemmodel.h \
     controllers/filecontroller.h \
     app/filesignalmanager.h \
     views/fileitem.h \
@@ -177,7 +174,9 @@ HEADERS += \
     interfaces/fmevent.h \
     interfaces/dfilemenu.h \
     interfaces/ddiriterator.h \
-    interfaces/private/dstyleditemdelegate_p.h
+    interfaces/private/dstyleditemdelegate_p.h \
+    interfaces/dfilesystemmodel.h \
+    app/define.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -190,7 +189,6 @@ SOURCES += \
     views/dicontextbutton.cpp \
     views/dstatebutton.cpp \
     views/dcheckablebutton.cpp \
-    models/dfilesystemmodel.cpp \
     controllers/filecontroller.cpp \
     views/fileitem.cpp \
     views/dsearchbar.cpp \
@@ -246,7 +244,6 @@ SOURCES += \
     controllers/subscriber.cpp \
     models/dfileselectionmodel.cpp \
     dialogs/closealldialogindicator.cpp \
-    app/global.cpp \
     gvfs/gvfsmountclient.cpp \
     gvfs/mountaskpassworddialog.cpp \
     gvfs/networkmanager.cpp \
@@ -281,7 +278,8 @@ SOURCES += \
     interfaces/abstractfilecontroller.cpp \
     interfaces/filemenumanager.cpp \
     interfaces/fmevent.cpp \
-    interfaces/dfilemenu.cpp
+    interfaces/dfilemenu.cpp \
+    interfaces/dfilesystemmodel.cpp
 
 INCLUDEPATH += $$PWD/../ $$PWD/../utils/ $$PWD/interfaces/
 

@@ -1,6 +1,6 @@
 #include "dfiledialog.h"
 #include "views/dstatusbar.h"
-#include "models/dfilesystemmodel.h"
+#include "dfilesystemmodel.h"
 
 #include <DTitlebar>
 #include <dthememanager.h>

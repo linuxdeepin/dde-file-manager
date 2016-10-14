@@ -1,6 +1,6 @@
 #include "desktopfileinfo.h"
 
-#include "app/global.h"
+#include "app/define.h"
 
 #include "shutil/properties.h"
 #include "shutil/iconprovider.h"

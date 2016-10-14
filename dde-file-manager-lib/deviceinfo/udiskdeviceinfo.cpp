@@ -1,5 +1,5 @@
 #include "udiskdeviceinfo.h"
-#include "app/global.h"
+#include "app/define.h"
 #include "shutil/fileutils.h"
 #include <QIcon>
 #include "app/singleapplication.h"

@@ -1,10 +1,16 @@
 #include "dfmglobal.h"
+#include "chinese2pinyin.h"
 
 #include <QGuiApplication>
 #include <QClipboard>
 #include <QMimeData>
 #include <QIcon>
 #include <QUrl>
+#include <QFileInfo>
+#include <QProcess>
+#include <QDir>
+
+#include <cstdio>
 
 namespace GlobalData {
 static QList<QUrl> clipboardFileUrls;
@@ -127,4 +133,140 @@ void DFMGlobal::onClipboardDataChanged()
     GlobalData::onClipboardDataChanged();
 
     emit clipboardDataChanged();
+}
+
+QString DFMGlobal::wordWrapText(const QString &text, int width, QTextOption::WrapMode wrapMode, int *height)
+{
+    QTextLayout textLayout(text);
+    QTextOption &text_option = *const_cast<QTextOption*>(&textLayout.textOption());
+    text_option.setWrapMode(wrapMode);
+
+    textLayout.beginLayout();
+
+    QTextLine line = textLayout.createLine();
+    QString  str;
+
+    int text_height = 0;
+
+    while (line.isValid()) {
+        line.setLineWidth(width);
+
+        const QString &tmp_str = text.mid(line.textStart(), line.textLength());
+
+        str += tmp_str;
+
+        if (tmp_str.indexOf('\n') >= 0)
+            text_height += TEXT_LINE_HEIGHT;
+
+        text_height += TEXT_LINE_HEIGHT;
+        line = textLayout.createLine();
+
+        if(line.isValid())
+            str.append("\n");
+    }
+
+    textLayout.endLayout();
+
+    if(height)
+        *height = text_height;
+
+    return str;
+}
+
+QString DFMGlobal::elideText(const QString &text, const QSize &size, const QFontMetrics &fontMetrics,
+                          QTextOption::WrapMode wordWrap, Qt::TextElideMode mode, int flags)
+{
+    int height = 0;
+
+    QTextLayout textLayout(text);
+    QString str;
+
+    const_cast<QTextOption*>(&textLayout.textOption())->setWrapMode(wordWrap);
+
+    textLayout.beginLayout();
+
+    QTextLine line = textLayout.createLine();
+
+    while (line.isValid()) {
+        height += TEXT_LINE_HEIGHT;
+
+        if(height + TEXT_LINE_HEIGHT >= size.height()) {
+            str += fontMetrics.elidedText(text.mid(line.textStart() + line.textLength() + 1), mode, size.width(), flags);
+
+            break;
+        }
+
+        line.setLineWidth(size.width());
+
+        const QString &tmp_str = text.mid(line.textStart(), line.textLength());
+
+        if (tmp_str.indexOf('\n'))
+            height += TEXT_LINE_HEIGHT;
+
+        str += tmp_str;
+
+        line = textLayout.createLine();
+
+        if(line.isValid())
+            str.append("\n");
+    }
+
+    textLayout.endLayout();
+
+    return str;
+}
+
+QString DFMGlobal::toPinyin(const QString &text)
+{
+    return Pinyin::Chinese2Pinyin(text);
+}
+
+bool DFMGlobal::startWithHanzi(const QString &text)
+{
+    const QVector<uint> list = text.toUcs4();
+
+    return !list.isEmpty() && list.first() >= 0x4e00 && list.first() <= 0x9fbf;
+}
+
+bool DFMGlobal::keyShiftIsPressed()
+{
+    return qApp->keyboardModifiers() == Qt::ShiftModifier;
+}
+
+bool DFMGlobal::keyCtrlIsPressed()
+{
+    return qApp->keyboardModifiers() == Qt::ControlModifier;
+}
+
+bool DFMGlobal::fileNameCorrection(const QString &filePath)
+{
+    QFileInfo info(filePath);
+    QProcess ls;
+
+    ls.start("ls", QStringList() << "-1" << "--color=never" << info.absolutePath());
+    ls.waitForFinished();
+
+    const QByteArray &request = ls.readAllStandardOutput();
+
+    for (const QByteArray &name : request.split('\n')) {
+        const QString str_fileName = QString::fromLocal8Bit(name);
+
+        if (str_fileName == info.fileName() && str_fileName.toLocal8Bit() != name) {
+            const QByteArray &path = info.absolutePath().toLocal8Bit() + QDir::separator().toLatin1() + name;
+
+            return fileNameCorrection(path);
+        }
+    }
+
+    return false;
+}
+
+bool DFMGlobal::fileNameCorrection(const QByteArray &filePath)
+{
+    const QByteArray &newFilePath = QString::fromLocal8Bit(filePath).toLocal8Bit();
+
+    if (filePath == newFilePath)
+        return true;
+
+    return std::rename(filePath.constData(), newFilePath.constData());
 }

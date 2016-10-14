@@ -1,7 +1,7 @@
 #include "windowmanager.h"
 #include "dfilemanagerwindow.h"
 
-#include "app/global.h"
+#include "app/define.h"
 #include "app/filesignalmanager.h"
 #include "fmevent.h"
 

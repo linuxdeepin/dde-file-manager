@@ -16,7 +16,7 @@
 
 #include "app/filesignalmanager.h"
 #include "fmevent.h"
-#include "app/global.h"
+#include "app/define.h"
 
 #include "interfaces/dfmstandardpaths.h"
 #include "shutil/fileutils.h"

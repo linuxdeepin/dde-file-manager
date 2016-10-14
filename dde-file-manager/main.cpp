@@ -1,6 +1,6 @@
 #include "durl.h"
 
-#include "app/global.h"
+#include "app/define.h"
 #include "app/logutil.h"
 #include "app/filemanagerapp.h"
 #include "app/singleapplication.h"

@@ -4,9 +4,9 @@
 
 #include "fileservices.h"
 
-#include "models/dfilesystemmodel.h"
+#include "dfilesystemmodel.h"
 
-#include "app/global.h"
+#include "app/define.h"
 
 #include <QIcon>
 #include <QDateTime>

@@ -4,7 +4,7 @@
 #include "models/fileinfo.h"
 #include "shutil/standardpath.h"
 
-#include "app/global.h"
+#include "app/define.h"
 
 #include <QJsonObject>
 #include <QFile>

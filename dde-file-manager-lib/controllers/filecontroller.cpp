@@ -5,7 +5,7 @@
 #include "models/fileinfo.h"
 #include "models/desktopfileinfo.h"
 
-#include "app/global.h"
+#include "app/define.h"
 #include "fmevent.h"
 #include "app/filesignalmanager.h"
 
@@ -472,7 +472,7 @@ QString FileDirIterator::filePath() const
 const AbstractFileInfoPointer FileDirIterator::fileInfo() const
 {
     if (iterator.fileName().contains(QChar(0xfffd))) {
-        Global::fileNameCorrection(iterator.filePath());
+        DFMGlobal::fileNameCorrection(iterator.filePath());
     }
 
     if (fileName().endsWith(QString(".") + DESKTOP_SURRIX))

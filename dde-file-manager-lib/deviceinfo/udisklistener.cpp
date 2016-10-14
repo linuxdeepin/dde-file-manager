@@ -2,7 +2,7 @@
 #include "fstab.h"
 #include "fileservices.h"
 
-#include "app/global.h"
+#include "app/define.h"
 #include "app/filesignalmanager.h"
 
 #include "controllers/subscriber.h"

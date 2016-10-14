@@ -4,7 +4,7 @@
 #include "models/searchfileinfo.h"
 #include "ddiriterator.h"
 
-#include "app/global.h"
+#include "app/define.h"
 #include "app/filesignalmanager.h"
 
 #include <QDebug>

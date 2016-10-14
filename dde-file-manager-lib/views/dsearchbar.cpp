@@ -5,7 +5,7 @@
 
 #include "controllers/searchhistroymanager.h"
 
-#include "app/global.h"
+#include "app/define.h"
 #include "app/filesignalmanager.h"
 #include "fmevent.h"
 
@@ -17,6 +17,7 @@
 #include <QLabel>
 #include <QDebug>
 #include <QApplication>
+#include <QFocusEvent>
 
 DSearchBar::DSearchBar(QWidget *parent):QLineEdit(parent)
 {
