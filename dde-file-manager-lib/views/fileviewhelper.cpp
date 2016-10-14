@@ -190,7 +190,7 @@ void FileViewHelper::selectAndRename(const FMEvent &event)
     FMEvent e = event;
 
     if (!e.fileUrlList().isEmpty())
-        e = e.fileUrlList().first();
+        e << e.fileUrlList().first();
 
     appController->actionRename(e);
 }
@@ -214,9 +214,9 @@ void FileViewHelper::refreshFileView(const FMEvent &event)
 void FileViewHelper::onCurrentUrlChanged(const DUrl &url)
 {
     FMEvent e;
-    e = (FMEvent::EventSource)lastEventSource;
-    e = windowId();
-    e = currentUrl();
+    e << (FMEvent::EventSource)lastEventSource;
+    e << windowId();
+    e << currentUrl();
     emit fileSignalManager->currentUrlChanged(e);
 
     if (url.isUserShareFile()) {

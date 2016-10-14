@@ -65,8 +65,8 @@ void DBookmarkMountedIndicatorItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *
 
     if (WindowManager::getUrlByWindowId(windowId()) == m_parentItem->getUrl()){
         FMEvent fmEvent;
-        fmEvent = windowId();
-        fmEvent = DUrl::fromLocalFile(QDir::homePath());
+        fmEvent << windowId();
+        fmEvent << DUrl::fromLocalFile(QDir::homePath());
         fileSignalManager->requestChangeCurrentUrl(fmEvent);
     }
 

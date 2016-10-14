@@ -6,6 +6,7 @@
 
 #include "app/global.h"
 #include "app/filesignalmanager.h"
+#include "app/fmevent.h"
 
 #include "filemonitor/filemonitor.h"
 #include "interfaces/dfmstandardpaths.h"
@@ -218,7 +219,7 @@ bool TrashManager::restoreTrashFile(const DUrlList &fileUrl, const FMEvent &even
     for(const DUrl &url : fileUrl) {
         TrashFileInfo info;
         info.setUrl(url);
-        const_cast<FMEvent &>(event) = url;
+        const_cast<FMEvent &>(event) << url;
         info.restore(event);
     }
 

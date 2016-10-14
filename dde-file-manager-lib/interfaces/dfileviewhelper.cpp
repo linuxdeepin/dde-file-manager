@@ -99,9 +99,9 @@ void DFileViewHelperPrivate::init()
             q, [q] {
         FMEvent event;
 
-        event = q->currentUrl();
-        event = q->windowId();
-        event = FMEvent::FileView;
+        event << q->currentUrl();
+        event << q->windowId();
+        event << FMEvent::FileView;
         fileService->pasteFile(event);
     });
 

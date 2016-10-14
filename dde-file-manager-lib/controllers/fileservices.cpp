@@ -197,7 +197,7 @@ bool FileServices::renameFile(const DUrl &oldUrl, const DUrl &newUrl, const FMEv
     if (renameFile(oldUrl, newUrl)) {
         FMEvent e = event;
 
-        e = DUrlList() << newUrl;
+        e << DUrlList() << newUrl;
 
         TIMER_SINGLESHOT(200, {
             emit fileSignalManager->requestSelectFile(e);
@@ -341,7 +341,7 @@ void FileServices::pasteFile(AbstractFileController::PasteType type,
                  if(accepted) {
                      FMEvent e = event;
 
-                     e = list;
+                     e << list;
 
                      metaObject()->invokeMethod(const_cast<FileServices*>(this), "laterRequestSelectFiles",
                                                 Qt::QueuedConnection, Q_ARG(FMEvent, e));

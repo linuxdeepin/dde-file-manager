@@ -1,8 +1,6 @@
 #ifndef ABSTRACTFILECONTROLLER_H
 #define ABSTRACTFILECONTROLLER_H
 
-#include "durl.h"
-
 #include "models/abstractfileinfo.h"
 #include "models/ddiriterator.h"
 
@@ -11,7 +9,8 @@
 #include <QDirIterator>
 
 class FMEvent;
-
+class DUrl;
+typedef QList<DUrl> DUrlList;
 class AbstractFileController : public QObject
 {
     Q_OBJECT

@@ -339,9 +339,9 @@ void DSearchBar::clearText()
     m_searchStart = false;
     FMEvent event;
 
-    event = WindowManager::getWindowId(this);
-    event = FMEvent::SearchBar;
-    event = m_currentPath;
+    event << WindowManager::getWindowId(this);
+    event << FMEvent::SearchBar;
+    event << m_currentPath;
 
 
     emit fileSignalManager->requestChangeCurrentUrl(event);

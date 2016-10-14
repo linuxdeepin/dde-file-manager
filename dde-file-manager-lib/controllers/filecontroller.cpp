@@ -403,8 +403,8 @@ void FileController::onFileCreated(const QString &filePath)
         int windowId = AppController::selectionAndRenameFile.second;
         AppController::selectionAndRenameFile = qMakePair(DUrl(), -1);
         FMEvent event;
-        event = windowId;
-        event = DUrlList() << url;
+        event << windowId;
+        event << DUrlList() << url;
         emit fileSignalManager->requestSelectRenameFile(event);
     }
 }
