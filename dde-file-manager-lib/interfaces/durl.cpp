@@ -16,7 +16,8 @@ QSet<QString> schemeList = QSet<QString>() << QString(TRASH_SCHEME)
                                            << QString(NETWORK_SCHEME)
                                            << QString(SMB_SCHEME)
                                            << QString(AFC_SCHEME)
-                                           << QString(MTP_SCHEME);
+                                           << QString(MTP_SCHEME)
+                                           << QString(USERSHARE_SCHEME);
 
 DUrl::DUrl()
     : QUrl()
@@ -292,6 +293,16 @@ DUrl DUrl::fromMTPFile(const QString &filePath)
     DUrl url;
 
     url.setScheme(MTP_SCHEME, false);
+    url.setPath(filePath);
+
+    return url;
+}
+
+DUrl DUrl::fromUserShareFile(const QString &filePath)
+{
+    DUrl url;
+
+    url.setScheme(USERSHARE_SCHEME);
     url.setPath(filePath);
 
     return url;

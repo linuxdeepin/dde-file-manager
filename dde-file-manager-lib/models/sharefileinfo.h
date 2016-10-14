@@ -43,6 +43,7 @@ public:
     bool makeAbsolute() Q_DECL_OVERRIDE;
 
     DUrl mimeDataUrl() const Q_DECL_OVERRIDE;
+    DUrl parentUrl() const Q_DECL_OVERRIDE;
 
     bool isShared() const Q_DECL_OVERRIDE;
 

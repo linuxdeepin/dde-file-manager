@@ -55,7 +55,7 @@ AppController::AppController(QObject *parent) : QObject(parent)
 
 void AppController::initConnect()
 {
-    connect(userShareManager, &UserShareManager::userShareCountChanged,
+    connect(userShareManager, &UserShareManager::userShareChanged,
             fileSignalManager, &FileSignalManager::userShareCountChanged);
 }
 

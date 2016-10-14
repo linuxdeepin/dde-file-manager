@@ -16,13 +16,14 @@
 #include "controllers/appcontroller.h"
 #include "models/dfilesystemmodel.h"
 #include "widgets/singleton.h"
+#include "usershare/usersharemanager.h"
 
 FileViewHelper::FileViewHelper(DFileView *parent)
     : DFileViewHelper(parent)
     , lastEventSource(FMEvent::FileView)
 {
     connect(parent, &DFileView::triggerEdit, this, &DFileViewHelper::triggerEdit);
-    connect(parent, &DFileView::currentUrlChanged, this, &FileViewHelper::emitUrlChanged);
+    connect(parent, &DFileView::currentUrlChanged, this, &FileViewHelper::onCurrentUrlChanged);
 
     connect(fileSignalManager, &FileSignalManager::requestRename,
             this, &FileViewHelper::edit);
@@ -210,11 +211,26 @@ void FileViewHelper::refreshFileView(const FMEvent &event)
     model()->refresh();
 }
 
-void FileViewHelper::emitUrlChanged()
+void FileViewHelper::onCurrentUrlChanged(const DUrl &url)
 {
     FMEvent e;
     e = (FMEvent::EventSource)lastEventSource;
     e = windowId();
     e = currentUrl();
     emit fileSignalManager->currentUrlChanged(e);
+
+    if (url.isUserShareFile()) {
+        connect(userShareManager, &UserShareManager::userShareChanged,
+                this, &FileViewHelper::onShareFolderCountChanged);
+    } else {
+        disconnect(userShareManager, &UserShareManager::userShareChanged,
+                   this, &FileViewHelper::onShareFolderCountChanged);
+    }
+}
+
+void FileViewHelper::onShareFolderCountChanged(int count)
+{
+    if (count == 0) {
+        parent()->cd(DUrl::fromLocalFile(QDir::homePath()));
+    }
 }
