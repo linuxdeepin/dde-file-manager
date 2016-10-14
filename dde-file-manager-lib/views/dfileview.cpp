@@ -3,7 +3,6 @@
 #include "filemenumanager.h"
 #include "dfilemenu.h"
 #include "windowmanager.h"
-#include "dfilemanagerwindow.h"
 #include "dstatusbar.h"
 #include "fileviewhelper.h"
 #include "app/global.h"
@@ -18,7 +17,6 @@
 #include "controllers/fileservices.h"
 #include "controllers/fmstatemanager.h"
 #include "controllers/pathmanager.h"
-#include "usershare/usersharemanager.h"
 
 #include "models/dfileselectionmodel.h"
 #include "models/dfilesystemmodel.h"
@@ -31,16 +29,10 @@
 #include <dthememanager.h>
 #include <dscrollbar.h>
 #include <anchors.h>
-#include <dslider.h>
 
-#include <QWheelEvent>
 #include <QLineEdit>
 #include <QTextEdit>
-#include <QTimer>
 #include <QUrlQuery>
-#include <QProcess>
-#include <QFrame>
-#include <QLabel>
 #include <QActionGroup>
 #include <QContextMenuEvent>
 #include <QHeaderView>
@@ -98,7 +90,7 @@ public:
     QModelIndex dragMoveHoverIndex;
 
     DSlider *scalingSlider = NULL;
-    DFileViewHelper *fileViewHelper;
+    FileViewHelper *fileViewHelper;
 
     Q_DECLARE_PUBLIC(DFileView)
 };
@@ -190,15 +182,6 @@ void DFileView::initConnects()
             openIndex(index);
     }, Qt::QueuedConnection);
 
-
-    connect(fileSignalManager, &FileSignalManager::requestRename,
-            this, static_cast<void (DFileView::*)(const FMEvent&)>(&DFileView::edit));
-    connect(fileSignalManager, &FileSignalManager::requestViewSelectAll,
-            this, &DFileView::selectAll);
-    connect(fileSignalManager, &FileSignalManager::requestSelectFile,
-            this, static_cast<bool (DFileView::*)(const FMEvent&)>(&DFileView::select));
-    connect(fileSignalManager, &FileSignalManager::requestSelectRenameFile,
-            this, &DFileView::selectAndRename);
     connect(this, &DFileView::rowCountChanged, this, &DFileView::onRowCountChanged, Qt::QueuedConnection);
 
     connect(d->displayAsActionGroup, &QActionGroup::triggered, this, &DFileView::dislpayAsActionTriggered);
@@ -206,9 +189,6 @@ void DFileView::initConnects()
     connect(d->openWithActionGroup, &QActionGroup::triggered, this, &DFileView::openWithActionTriggered);
 
     connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &DFileView::updateStatusBar);
-    connect(fileSignalManager, &FileSignalManager::requestFoucsOnFileView, this, &DFileView::setFoucsOnFileView);
-    connect(fileSignalManager, &FileSignalManager::requestFreshFileView, this, &DFileView::refreshFileView);
-
     connect(model(), &DFileSystemModel::dataChanged, this, &DFileView::handleDataChanged);
     connect(model(), &DFileSystemModel::stateChanged, this, &DFileView::onModelStateChanged);
 
@@ -247,12 +227,19 @@ DStatusBar *DFileView::statusBar() const
     return d->statusBar;
 }
 
+FileViewHelper *DFileView::fileViewHelper() const
+{
+    D_DC(DFileView);
+
+    return d->fileViewHelper;
+}
+
 DUrl DFileView::currentUrl() const
 {
     return model()->getUrlByIndex(rootIndex());
 }
 
-DUrlList DFileView::selectedUrls() const
+QList<DUrl> DFileView::selectedUrls() const
 {
     DUrlList list;
 
@@ -571,31 +558,10 @@ bool DFileView::isDropTarget(const QModelIndex &index) const
     return d->dragMoveHoverIndex == index;
 }
 
-void DFileView::preHandleCd(const FMEvent &event)
-{
-    qDebug() << event;
-    if (event.fileUrl().isNetWorkFile()){
-        emit fileSignalManager->requestFetchNetworks(event);
-        return;
-    }else if (event.fileUrl().isSMBFile()){
-        emit fileSignalManager->requestFetchNetworks(event);
-        return;
-    }
-    cd(event);
-}
-
-void DFileView::cd(const FMEvent &event)
-{
-    if (event.windowId() != windowId())
-        return;
-
-    cd(event.fileUrl(), event.source());
-}
-
-void DFileView::cd(const DUrl &url, FMEvent::EventSource source)
+bool DFileView::cd(const DUrl &url)
 {
     if (url.isEmpty())
-        return;
+        return false;
 
     itemDelegate()->hideAllIIndexWidget();
 
@@ -605,39 +571,17 @@ void DFileView::cd(const DUrl &url, FMEvent::EventSource source)
         setFocus();
     }
 
-    if (setCurrentUrl(url)) {
-        FMEvent e;
-        e = source;
-        e = windowId();
-        e = currentUrl();
-        emit fileSignalManager->currentUrlChanged(e);
-    }
+    return setCurrentUrl(url);
 }
 
-void DFileView::cdUp(const FMEvent &event)
+bool DFileView::cdUp()
 {
-    AbstractFileInfoPointer fileInfo = model()->fileInfo(rootIndex());
+    const AbstractFileInfoPointer &fileInfo = model()->fileInfo(rootIndex());
 
-    const DUrl &oldCurrentUrl = this->currentUrl();
+    const DUrl &oldCurrentUrl = currentUrl();
     const DUrl& parentUrl = fileInfo ? fileInfo->parentUrl() : DUrl::parentUrl(oldCurrentUrl);
-    const_cast<FMEvent&>(event) = parentUrl;
 
-    cd(event);
-}
-
-void DFileView::edit(const FMEvent &event)
-{
-    if(event.windowId() != windowId())
-        return;
-
-    DUrl fileUrl = event.fileUrl();
-
-    if(fileUrl.isEmpty())
-        return;
-
-    const QModelIndex &index = model()->index(fileUrl);
-
-    edit(index, QAbstractItemView::EditKeyPressed, 0);
+    return cd(parentUrl);
 }
 
 bool DFileView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger trigger, QEvent *event)
@@ -661,18 +605,7 @@ bool DFileView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger tr
     return DListView::edit(index, trigger, event);
 }
 
-bool DFileView::select(const FMEvent &event)
-{
-    if (event.windowId() != windowId()) {
-        return false;
-    }
-
-    select(event.fileUrlList());
-
-    return true;
-}
-
-void DFileView::select(const DUrlList &list)
+void DFileView::select(const QList<DUrl> &list)
 {
     QModelIndex firstIndex;
     QModelIndex lastIndex;
@@ -697,20 +630,6 @@ void DFileView::select(const DUrlList &list)
 
     if (firstIndex.isValid())
         scrollTo(firstIndex, PositionAtTop);
-}
-
-void DFileView::selectAndRename(const FMEvent &event)
-{
-    bool isSelected = select(event);
-
-    if (isSelected) {
-        FMEvent e = event;
-
-        if (!e.fileUrlList().isEmpty())
-            e = e.fileUrlList().first();
-
-        appController->actionRename(e);
-    }
 }
 
 void DFileView::setViewMode(DFileView::ViewMode mode)
@@ -764,14 +683,6 @@ QDir::Filters DFileView::filters() const
 void DFileView::setFilters(QDir::Filters filters)
 {
     model()->setFilters(filters);
-}
-
-void DFileView::selectAll(int windowId)
-{
-    if(windowId != WindowManager::getWindowId(this))
-        return;
-
-    DListView::selectAll();
 }
 
 void DFileView::dislpayAsActionTriggered(QAction *action)
@@ -860,7 +771,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
 
             break;
         case Qt::Key_Backspace:
-            cdUp(fmevent);
+            cdUp();
 
             return;
         case Qt::Key_F1:
@@ -918,7 +829,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
 
             return;
         case Qt::Key_Up:
-            cdUp(fmevent);
+            cdUp();
 
             return;
         case Qt::Key_Down:
@@ -977,7 +888,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
     case Qt::AltModifier:
         switch (event->key()) {
         case Qt::Key_Up:
-            cdUp(fmevent);
+            cdUp();
 
             return;
         case Qt::Key_Down:
@@ -993,9 +904,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
 
             return;
         case Qt::Key_Home:
-            fmevent = DUrl::fromLocalFile(QDir::homePath());
-
-            cd(fmevent);
+            cd(DUrl::fromLocalFile(QDir::homePath()));
 
             return;
         default: break;
@@ -1476,6 +1385,8 @@ void DFileView::decreaseIcon()
 
 void DFileView::openIndex(const QModelIndex &index)
 {
+    D_D(DFileView);
+
    if (model()->hasChildren(index)) {
         FMEvent event;
 
@@ -1483,7 +1394,7 @@ void DFileView::openIndex(const QModelIndex &index)
         event = FMEvent::FileView;
         event = windowId();
 
-        preHandleCd(event);
+        d->fileViewHelper->preHandleCd(event);
     } else {
         emit fileService->openFile(model()->getUrlByIndex(index));
     }
@@ -1499,9 +1410,11 @@ void DFileView::keyboardSearch(const QString &search)
     d->fileViewHelper->keyboardSearch(search.toLocal8Bit().at(0));
 }
 
-bool DFileView::setCurrentUrl(DUrl fileUrl)
+bool DFileView::setCurrentUrl(const DUrl &url)
 {
     D_D(DFileView);
+
+    DUrl fileUrl = url;
 
     if (fileUrl.isTrashFile() && fileUrl.path().isEmpty()) {
         fileUrl.setPath("/");
@@ -1527,7 +1440,7 @@ bool DFileView::setCurrentUrl(DUrl fileUrl)
     const DUrl &currentUrl = this->currentUrl();
 
 
-    if(currentUrl == fileUrl && !info->isShared())
+    if(currentUrl == fileUrl/* && !info->isShared()*/)
         return false;
 
 //    QModelIndex index = model()->index(fileUrl);
@@ -1603,20 +1516,6 @@ void DFileView::clearHeardView()
 
         d->headerView = Q_NULLPTR;
     }
-}
-
-void DFileView::setFoucsOnFileView(const FMEvent &event)
-{
-    if (event.windowId() == windowId())
-        setFocus();
-}
-
-void DFileView::refreshFileView(const FMEvent &event)
-{
-    if (event.windowId() != windowId()){
-        return;
-    }
-    model()->refresh();
 }
 
 void DFileView::clearSelection()
