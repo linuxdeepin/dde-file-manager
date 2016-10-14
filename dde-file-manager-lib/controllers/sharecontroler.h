@@ -27,6 +27,7 @@ public:
 signals:
 
 public slots:
+    void onFileInfoChanged(const QString &filePath);
 };
 
 #endif // SHARECONTROLER_H

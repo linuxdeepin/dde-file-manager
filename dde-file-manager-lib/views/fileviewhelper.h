@@ -50,7 +50,8 @@ public slots:
     void refreshFileView(const FMEvent& event);
 
 private:
-    void emitUrlChanged();
+    void onCurrentUrlChanged(const DUrl &url);
+    void onShareFolderCountChanged(int count);
 
     int lastEventSource;
 };

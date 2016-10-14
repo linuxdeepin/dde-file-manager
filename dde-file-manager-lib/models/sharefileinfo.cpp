@@ -33,15 +33,15 @@ ShareFileInfo::ShareFileInfo()
 }
 
 ShareFileInfo::ShareFileInfo(const DUrl &url):
-    AbstractFileInfo(url)
+    AbstractFileInfo()
 {
-
+    ShareFileInfo::setUrl(url);
 }
 
 ShareFileInfo::ShareFileInfo(const QString &url):
-    AbstractFileInfo(url)
+    AbstractFileInfo()
 {
-
+    ShareFileInfo::setUrl(DUrl(url));
 }
 
 ShareFileInfo::~ShareFileInfo()
@@ -74,7 +74,9 @@ QString ShareFileInfo::displayName() const
 
 void ShareFileInfo::setUrl(const DUrl &fileUrl)
 {
+    AbstractFileInfo::setUrl(fileUrl);
 
+    data->fileInfo.setFile(fileUrl.path());
 }
 
 QIcon ShareFileInfo::fileIcon() const
@@ -210,6 +212,11 @@ bool ShareFileInfo::makeAbsolute()
 DUrl ShareFileInfo::mimeDataUrl() const
 {
     return DUrl::fromLocalFile(data->fileInfo.absoluteFilePath());
+}
+
+DUrl ShareFileInfo::parentUrl() const
+{
+    return DUrl::fromUserShareFile("/");
 }
 
 bool ShareFileInfo::isShared() const

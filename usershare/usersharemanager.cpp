@@ -153,7 +153,7 @@ bool UserShareManager::isShareFile(const QString &filePath) const
 void UserShareManager::handleShareChanged()
 {
     updateUserShareInfo();
-    emit userShareCountChanged(m_shareInfos.count());
+    emit userShareChanged(m_shareInfos.count());
 }
 
 void UserShareManager::updateUserShareInfo()
@@ -274,7 +274,6 @@ void UserShareManager::deleteUserShare(const ShareInfo &info)
 {
     if (!info.shareName().isEmpty()){
         deleteUserShareByShareName(info.shareName());
-        emit userShareDeleted(info.path());
     }
 }
 

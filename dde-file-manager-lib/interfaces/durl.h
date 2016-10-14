@@ -81,6 +81,7 @@ public:
     static DUrl fromNetworkFile(const QString &filePath);
     static DUrl fromAFCFile(const QString &filePath);
     static DUrl fromMTPFile(const QString &filePath);
+    static DUrl fromUserShareFile(const QString &filePath);
     static DUrlList fromStringList(const QStringList &urls, ParsingMode mode = TolerantMode);
     static DUrlList fromQUrlList(const QList<QUrl> &urls);
     static DUrl fromUserInput(const QString &userInput, bool preferredLocalPath = true);

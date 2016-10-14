@@ -21,6 +21,12 @@
 ShareControler::ShareControler(QObject *parent) :
     AbstractFileController(parent)
 {
+    connect(userShareManager, &UserShareManager::userShareAdded, this, [=](const QString& filePath){
+        emit childrenAdded(DUrl::fromUserShareFile(filePath));
+    });
+    connect(userShareManager, &UserShareManager::userShareDeleted, this, [=](const QString& filePath){
+        emit childrenRemoved(DUrl::fromUserShareFile(filePath));
+    });
 
 }
 
@@ -44,10 +50,16 @@ const QList<AbstractFileInfoPointer> ShareControler::getChildren(const DUrl &fil
 
     ShareInfoList sharelist = userShareManager->shareInfoList();
     foreach (ShareInfo shareInfo, sharelist) {
-        AbstractFileInfoPointer fileInfo = createFileInfo(DUrl::fromUserInput(shareInfo.path()), accepted);
+        AbstractFileInfoPointer fileInfo = createFileInfo(DUrl::fromUserShareFile(shareInfo.path()), accepted);
         if(fileInfo->exists())
             infolist << fileInfo;
     }
 
     return infolist;
+}
+
+void ShareControler::onFileInfoChanged(const QString &filePath)
+{
+    const DUrl &url = DUrl::fromLocalFile(filePath);
+    emit childrenUpdated(url);
 }
