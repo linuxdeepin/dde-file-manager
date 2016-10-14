@@ -13,10 +13,6 @@
 #include <QFile>
 #include "QPainter"
 
-#include "dutility.h"
-
-DWIDGET_USE_NAMESPACE
-
 ThumbnailManager::ThumbnailManager(QObject *parent)
     : QThread(parent)
     , m_watcher(new QFileSystemWatcher(this))
@@ -72,10 +68,18 @@ QString ThumbnailManager::getThumbnailCachePath() const
 
 QString ThumbnailManager::getThumbnailPath(const QString &name, ThumbnailGenerator::ThumbnailSize size) const
 {
-    if(size == ThumbnailGenerator::THUMBNAIL_NORMAL)
+
+    if(size == ThumbnailGenerator::THUMBNAIL_NORMAL){
+        QDir dir(m_thumbnailNormalPath);
+        if(!dir.exists())
+            dir.mkpath(m_thumbnailNormalPath);
         return QString("%1/%2.png").arg(m_thumbnailNormalPath,name);
-    else if(size == ThumbnailGenerator::THUMBNAIL_LARGE)
+    } else if(size == ThumbnailGenerator::THUMBNAIL_LARGE){
+        QDir dir(m_thumbnailLargePath);
+        if(!dir.exists())
+            dir.mkpath(m_thumbnailLargePath);
         return QString("%1/%2.png").arg(m_thumbnailLargePath,name);
+    }
     else
         return m_thumbnailPath;
 }
@@ -141,7 +145,8 @@ void ThumbnailManager::requestThumbnailPixmap(const QUrl& fileUrl, ThumbnailGene
 {
     ThumbnailTask task(fileUrl,size, quality);
 
-    if (m_pathToMd5.contains(fileUrl.toString()))
+    if (m_pathToMd5.contains(fileUrl.toString()) &&
+            QFile::exists(getThumbnailPath(m_pathToMd5.value(fileUrl.toString()),size)))
         return;
 
 //    if (taskQueue.contains(task))
@@ -212,7 +217,6 @@ void ThumbnailManager::run()
         }
         else if(m_thumbnailGenerator.canGenerateThumbnail(task.fileUrl)){
             const QPixmap &thumbNailedpixmap = m_thumbnailGenerator.generateThumbnail(task.fileUrl, task.size);
-
             if(thumbNailedpixmap.isNull()){
                 // deal with fail thumbnailing pixmap
                 QString thumbnailFailedPath = getThumbnailFailPath(md5);
@@ -241,9 +245,8 @@ void ThumbnailManager::run()
                 img.setText(key,attributeSet.value(key));
             }
 
-            bool ret = img.save(thumbnailPath,"png",task.quality);
-            if(ret)
-                pixmap = QPixmap(thumbnailPath);
+            img.save(thumbnailPath,"png",task.quality);
+            pixmap = QPixmap(thumbnailPath);
             m_md5ToPixmap[md5] = pixmap;
         }
         emit pixmapChanged(fpath, pixmap);
