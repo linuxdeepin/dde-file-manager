@@ -7,7 +7,8 @@
 
 #define THUMBNAIL_SIZE_NORMAL 128
 #define THUMBNAIL_SIZE_LARGE 256
-#define DROPSHADOW_RADIUS 10
+#define DROPSHADOW_RADIUS 15
+#define IMAGE_BORDER 8
 
 class ThumbnailGenerator : public QObject
 {
