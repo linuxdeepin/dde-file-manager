@@ -3,9 +3,6 @@
 
 #include <dlistview.h>
 
-#include "durl.h"
-#include "app/fmevent.h"
-
 #include <QDir>
 
 class DFileSystemModel;
@@ -21,12 +18,14 @@ DWIDGET_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE
 
+class DUrl;
 class FileController;
 class FileMenuManager;
 class DFileSystemModel;
 class DStyledItemDelegate;
 class AbstractFileInfo;
 class DStatusBar;
+class FileViewHelper;
 class DFileViewPrivate;
 class DFileView : public DListView
 {
@@ -53,9 +52,10 @@ public:
     DStyledItemDelegate *itemDelegate() const;
     void setItemDelegate(DStyledItemDelegate *delegate);
     DStatusBar *statusBar() const;
+    FileViewHelper *fileViewHelper() const;
 
     DUrl currentUrl() const;
-    DUrlList selectedUrls() const;
+    QList<DUrl> selectedUrls() const;
 
     bool isIconViewMode() const;
 
@@ -106,15 +106,10 @@ public:
     bool isDropTarget(const QModelIndex &index) const;
 
 public slots:
-    void preHandleCd(const FMEvent &event);
-    void cd(const FMEvent &event);
-    void cd(const DUrl &url, FMEvent::EventSource source = FMEvent::FileView);
-    void cdUp(const FMEvent &event);
-    void edit(const FMEvent &event);
+    bool cd(const DUrl &url);
+    bool cdUp();
     bool edit(const QModelIndex & index, EditTrigger trigger, QEvent * event) Q_DECL_OVERRIDE;
-    bool select(const FMEvent &event);
-    void select(const DUrlList &list);
-    void selectAndRename(const FMEvent &event);
+    void select(const QList<DUrl> &list);
     inline void setViewModeToList()
     { setViewMode(ListMode);}
     inline void setViewModeToIcon()
@@ -131,10 +126,6 @@ public slots:
     void setFilters(QDir::Filters filters);
 
     void clearHeardView();
-
-    void setFoucsOnFileView(const FMEvent& event);
-    void refreshFileView(const FMEvent& event);
-
     void clearSelection();
 
     void handleDataChanged(const QModelIndex & topLeft, const QModelIndex & bottomRight, const QVector<int> & roles = QVector<int>());
@@ -151,8 +142,7 @@ signals:
     void viewModeChanged(ViewMode viewMode);
 
 private slots:
-    bool setCurrentUrl(DUrl fileUrl);
-    void selectAll(int windowId);
+    bool setCurrentUrl(const DUrl &url);
     void dislpayAsActionTriggered(QAction * action);
     void sortByActionTriggered(QAction * action);
     void openWithActionTriggered(QAction * action);

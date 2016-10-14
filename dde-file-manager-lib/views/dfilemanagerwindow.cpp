@@ -2,6 +2,7 @@
 #include "dleftsidebar.h"
 #include "dtoolbar.h"
 #include "dfileview.h"
+#include "fileviewhelper.h"
 #include "ddetailview.h"
 #include "dfilemenu.h"
 #include "dsearchbar.h"
@@ -499,7 +500,7 @@ void DFileManagerWindow::cd(const FMEvent &event)
         d->viewStackLayout->setCurrentWidget(d->fileView);
     }
 
-    d->fileView->cd(event);
+    d->fileView->fileViewHelper()->cd(event);
     d->toolbar->setViewModeButtonVisible(true);
 }
 
