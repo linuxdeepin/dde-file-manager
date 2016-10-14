@@ -199,14 +199,23 @@ void DToolBar::searchBarActivated()
 
 void DToolBar::searchBarDeactivated()
 {
-    m_searchBar->setPlaceholderText("");
-    m_searchBar->hide();
-    m_crumbWidget->show();
-    m_searchBar->clear();
-    m_searchBar->setAlignment(Qt::AlignHCenter);
-    m_searchBar->setActive(false);
-    m_searchBar->window()->setFocus();
-    m_searchButton->show();
+    int winId = WindowManager::getWindowId(this);
+    DFileManagerWindow* window = qobject_cast<DFileManagerWindow*>(WindowManager::getWindowById(winId));
+    if (window){
+        if (window->currentUrl().isSearchFile()){
+
+        }
+        else{
+            m_searchBar->setPlaceholderText("");
+            m_searchBar->hide();
+            m_crumbWidget->show();
+            m_searchBar->clear();
+            m_searchBar->setAlignment(Qt::AlignHCenter);
+            m_searchBar->setActive(false);
+            m_searchBar->window()->setFocus();
+            m_searchButton->show();
+        }
+    }
 
     FMEvent event;
     event << WindowManager::getWindowId(this);
