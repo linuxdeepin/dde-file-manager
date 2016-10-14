@@ -12,6 +12,7 @@
 
 #include "dstyleditemdelegate.h"
 
+class DListItemDelegatePrivate;
 class DListItemDelegate : public DStyledItemDelegate
 {
 public:
@@ -34,6 +35,8 @@ protected:
 
 private:
     void onIconSizeChanged();
+
+    Q_DECLARE_PRIVATE(DListItemDelegate)
 };
 
 #endif // DLISTITEMDELEGATE_H

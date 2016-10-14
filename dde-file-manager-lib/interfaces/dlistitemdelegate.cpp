@@ -12,6 +12,7 @@
 #include "app/global.h"
 #include "views/deditorwidgetmenu.h"
 #include "models/dfilesystemmodel.h"
+#include "private/dstyleditemdelegate_p.h"
 
 #include <QLabel>
 #include <QPainter>
@@ -27,6 +28,13 @@
 #define LIST_VIEW_ICON_SIZE 28
 #define TEXT_COLOR "#303030"
 
+class DListItemDelegatePrivate : public DStyledItemDelegatePrivate
+{
+public:
+    DListItemDelegatePrivate(DListItemDelegate *qq)
+        : DStyledItemDelegatePrivate(qq) {}
+};
+
 DListItemDelegate::DListItemDelegate(DFileViewHelper *parent) :
     DStyledItemDelegate(parent)
 {
@@ -40,6 +48,8 @@ void DListItemDelegate::paint(QPainter *painter,
                               const QStyleOptionViewItem &option,
                               const QModelIndex &index) const
 {
+    Q_D(const DListItemDelegate);
+
     /// judgment way of the whether drag model(another way is: painter.devType() != 1)
     bool isDragMode = ((QPaintDevice*)parent()->parent()->viewport() != painter->device());
     bool isDropTarget = parent()->isDropTarget(index);
@@ -141,7 +151,7 @@ void DListItemDelegate::paint(QPainter *painter,
 
     int role = columnRoleList.at(0);
 
-    if(index != editing_index || role != DFileSystemModel::FileNameRole) {
+    if(index != d->editingIndex || role != DFileSystemModel::FileNameRole) {
         /// draw file name label
         const QString &file_name = Global::elideText(index.data(role).toString().remove('\n'), rect.size(),
                                                      painter->fontMetrics(), QTextOption::NoWrap, Qt::ElideRight);
@@ -207,13 +217,15 @@ void DListItemDelegate::paint(QPainter *painter,
 
 QWidget *DListItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &, const QModelIndex &index) const
 {
-    editing_index = index;
+    Q_D(const DListItemDelegate);
+
+    d->editingIndex = index;
 
     QLineEdit *edit = new QLineEdit(parent);
     edit->setFixedHeight(LIST_EDITER_HEIGHT);
 
-    connect(edit, &QLineEdit::destroyed, this, [this] {
-        editing_index = QModelIndex();
+    connect(edit, &QLineEdit::destroyed, this, [this, d] {
+        d->editingIndex = QModelIndex();
     });
 
     connect(edit, &QLineEdit::textChanged, this, [edit] {
@@ -359,11 +371,13 @@ QRect DListItemDelegate::fileNameRect(const QStyleOptionViewItem &option, const 
 
 bool DListItemDelegate::eventFilter(QObject *object, QEvent *event)
 {
+    Q_D(DListItemDelegate);
+
     if(event->type() == QEvent::Show) {
         QLineEdit *edit = qobject_cast<QLineEdit*>(object);
 
         if(edit) {
-            const QString &selectionWhenEditing = parent()->selectionWhenEditing(editing_index);
+            const QString &selectionWhenEditing = parent()->selectionWhenEditing(d->editingIndex);
             int endPos = selectionWhenEditing.isEmpty() ? -1 : selectionWhenEditing.length();
 
             if(endPos == -1)
@@ -391,5 +405,7 @@ bool DListItemDelegate::eventFilter(QObject *object, QEvent *event)
 
 void DListItemDelegate::onIconSizeChanged()
 {
-    m_itemSizeHint = QSize(-1, parent()->parent()->iconSize().height() * 1.1);
+    Q_D(DListItemDelegate);
+
+    d->itemSizeHint = QSize(-1, parent()->parent()->iconSize().height() * 1.1);
 }

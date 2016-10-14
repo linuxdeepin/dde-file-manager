@@ -2,7 +2,7 @@
 #define ABSTRACTFILECONTROLLER_H
 
 #include "abstractfileinfo.h"
-#include "models/ddiriterator.h"
+#include "ddiriterator.h"
 
 #include <QObject>
 #include <QDir>

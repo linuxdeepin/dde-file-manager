@@ -9,9 +9,16 @@
 
 #include "dstyleditemdelegate.h"
 #include "dfileviewhelper.h"
+#include "private/dstyleditemdelegate_p.h"
 
 DStyledItemDelegate::DStyledItemDelegate(DFileViewHelper *parent)
     : QStyledItemDelegate(parent)
+    , d_ptr(new DStyledItemDelegatePrivate(this))
+{
+
+}
+
+DStyledItemDelegate::~DStyledItemDelegate()
 {
 
 }
@@ -23,24 +30,32 @@ DFileViewHelper *DStyledItemDelegate::parent() const
 
 QModelIndex DStyledItemDelegate::editingIndex() const
 {
-    return editing_index;
+    Q_D(const DStyledItemDelegate);
+
+    return d->editingIndex;
 }
 
 QWidget *DStyledItemDelegate::editingIndexWidget() const
 {
-    return parent()->indexWidget(editing_index);
+    Q_D(const DStyledItemDelegate);
+
+    return parent()->indexWidget(d->editingIndex);
 }
 
 QSize DStyledItemDelegate::sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const
 {
-    return m_itemSizeHint;
+    Q_D(const DStyledItemDelegate);
+
+    return d->itemSizeHint;
 }
 
 void DStyledItemDelegate::destroyEditor(QWidget *editor, const QModelIndex &index) const
 {
+    Q_D(const DStyledItemDelegate);
+
     QStyledItemDelegate::destroyEditor(editor, index);
 
-    editing_index = QModelIndex();
+    d->editingIndex = QModelIndex();
 }
 
 QString DStyledItemDelegate::displayText(const QVariant &value, const QLocale &locale) const
@@ -53,17 +68,21 @@ QString DStyledItemDelegate::displayText(const QVariant &value, const QLocale &l
 
 QModelIndexList DStyledItemDelegate::hasWidgetIndexs() const
 {
-    return QModelIndexList() << editing_index;
+    Q_D(const DStyledItemDelegate);
+
+    return QModelIndexList() << d->editingIndex;
 }
 
 void DStyledItemDelegate::hideAllIIndexWidget()
 {
+    Q_D(const DStyledItemDelegate);
+
     hideNotEditingIndexWidget();
 
-    if (editing_index.isValid()) {
-        parent()->setIndexWidget(editing_index, 0);
+    if (d->editingIndex.isValid()) {
+        parent()->setIndexWidget(d->editingIndex, 0);
 
-        editing_index = QModelIndex();
+        d->editingIndex = QModelIndex();
     }
 }
 
@@ -74,7 +93,9 @@ void DStyledItemDelegate::hideNotEditingIndexWidget()
 
 void DStyledItemDelegate::commitDataAndCloseActiveEditor()
 {
-    QWidget *editor = parent()->indexWidget(editing_index);
+    Q_D(const DStyledItemDelegate);
+
+    QWidget *editor = parent()->indexWidget(d->editingIndex);
 
     if (!editor)
         return;
@@ -122,6 +143,13 @@ int DStyledItemDelegate::setIconSizeByIconSizeLevel(int level)
     Q_UNUSED(level)
 
     return -1;
+}
+
+DStyledItemDelegate::DStyledItemDelegate(DStyledItemDelegatePrivate &dd, DFileViewHelper *parent)
+    : QStyledItemDelegate(parent)
+    , d_ptr(&dd)
+{
+
 }
 
 void DStyledItemDelegate::initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const

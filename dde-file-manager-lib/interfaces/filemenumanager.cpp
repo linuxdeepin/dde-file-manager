@@ -14,10 +14,14 @@
 #include <QMetaEnum>
 #include <QDebug>
 
-QMap<MenuAction, QString> FileMenuManager::m_actionKeys;
-QMap<MenuAction, DAction*> FileMenuManager::m_actions;
-QVector<MenuAction> FileMenuManager::m_sortActionTypes;
+namespace DFileMenuData {
+static QMap<MenuAction, QString> actionKeys;
+static QMap<MenuAction, DAction*> actions;
+static QVector<MenuAction> sortActionTypes;
 
+void initData();
+void initActions();
+}
 
 DFileMenu *FileMenuManager::createRecentLeftBarMenu(const QSet<MenuAction> &disableList)
 {
@@ -159,7 +163,7 @@ DFileMenu *FileMenuManager::createToolBarSortMenu(const QSet<MenuAction> &disabl
                << MenuAction::Type
                << MenuAction::CreatedDate
                << MenuAction::LastModifiedDate;
-    m_sortActionTypes = actionKeys;
+    DFileMenuData::sortActionTypes = actionKeys;
     DFileMenu *menu = genereteMenuByKeys(actionKeys, disableList, true);
     return menu;
 }
@@ -213,76 +217,76 @@ FileMenuManager::FileMenuManager()
     qRegisterMetaType<QList<QUrl>>("QList<QUrl>");
 }
 
-void FileMenuManager::initData()
+void DFileMenuData::initData()
 {
-    m_actionKeys[MenuAction::Open] = QObject::tr("Open");
-    m_actionKeys[MenuAction::OpenInNewWindow] = QObject::tr("Open in new window");
-    m_actionKeys[MenuAction::OpenInNewTab] = QObject::tr("Open in new tab");
-    m_actionKeys[MenuAction::OpenDisk] = QObject::tr("Open");
-    m_actionKeys[MenuAction::OpenDiskInNewWindow] = QObject::tr("Open in new window");
-    m_actionKeys[MenuAction::OpenAsAdmain] = QObject::tr("Open in new window as admain");
-    m_actionKeys[MenuAction::OpenWith] = QObject::tr("Open with");
-    m_actionKeys[MenuAction::OpenWithCustom] = QObject::tr("Others");
-    m_actionKeys[MenuAction::OpenFileLocation] = QObject::tr("Open file loaction");
-    m_actionKeys[MenuAction::Compress] = QObject::tr("Compress");
-    m_actionKeys[MenuAction::Decompress] = QObject::tr("Extract");
-    m_actionKeys[MenuAction::DecompressHere] = QObject::tr("Extract here");
-    m_actionKeys[MenuAction::Cut] = QObject::tr("Cut");
-    m_actionKeys[MenuAction::Copy] = QObject::tr("Copy");
-    m_actionKeys[MenuAction::Paste] = QObject::tr("Paste");
-    m_actionKeys[MenuAction::Rename] = QObject::tr("Rename");
-    m_actionKeys[MenuAction::Remove] = QObject::tr("Remove");
-    m_actionKeys[MenuAction::CreateSymlink] = QObject::tr("Create link");
-    m_actionKeys[MenuAction::SendToDesktop] = QObject::tr("Send to desktop");
-    m_actionKeys[MenuAction::AddToBookMark] = QObject::tr("Add to bookmark");
-    m_actionKeys[MenuAction::Delete] = QObject::tr("Throw to Trash");
-    m_actionKeys[MenuAction::CompleteDeletion] = QObject::tr("Permanently delete");
-    m_actionKeys[MenuAction::Property] = QObject::tr("Property");
+    actionKeys[MenuAction::Open] = QObject::tr("Open");
+    actionKeys[MenuAction::OpenInNewWindow] = QObject::tr("Open in new window");
+    actionKeys[MenuAction::OpenInNewTab] = QObject::tr("Open in new tab");
+    actionKeys[MenuAction::OpenDisk] = QObject::tr("Open");
+    actionKeys[MenuAction::OpenDiskInNewWindow] = QObject::tr("Open in new window");
+    actionKeys[MenuAction::OpenAsAdmain] = QObject::tr("Open in new window as admain");
+    actionKeys[MenuAction::OpenWith] = QObject::tr("Open with");
+    actionKeys[MenuAction::OpenWithCustom] = QObject::tr("Others");
+    actionKeys[MenuAction::OpenFileLocation] = QObject::tr("Open file loaction");
+    actionKeys[MenuAction::Compress] = QObject::tr("Compress");
+    actionKeys[MenuAction::Decompress] = QObject::tr("Extract");
+    actionKeys[MenuAction::DecompressHere] = QObject::tr("Extract here");
+    actionKeys[MenuAction::Cut] = QObject::tr("Cut");
+    actionKeys[MenuAction::Copy] = QObject::tr("Copy");
+    actionKeys[MenuAction::Paste] = QObject::tr("Paste");
+    actionKeys[MenuAction::Rename] = QObject::tr("Rename");
+    actionKeys[MenuAction::Remove] = QObject::tr("Remove");
+    actionKeys[MenuAction::CreateSymlink] = QObject::tr("Create link");
+    actionKeys[MenuAction::SendToDesktop] = QObject::tr("Send to desktop");
+    actionKeys[MenuAction::AddToBookMark] = QObject::tr("Add to bookmark");
+    actionKeys[MenuAction::Delete] = QObject::tr("Throw to Trash");
+    actionKeys[MenuAction::CompleteDeletion] = QObject::tr("Permanently delete");
+    actionKeys[MenuAction::Property] = QObject::tr("Property");
 
-    m_actionKeys[MenuAction::NewFolder] = QObject::tr("New folder");
-    m_actionKeys[MenuAction::NewWindow] = QObject::tr("New window");
-    m_actionKeys[MenuAction::SelectAll] = QObject::tr("Select all");
-    m_actionKeys[MenuAction::ClearRecent] = QObject::tr("Clear recent history");
-    m_actionKeys[MenuAction::ClearTrash] = QObject::tr("Empty Trash");
-    m_actionKeys[MenuAction::DisplayAs] = QObject::tr("Display as");
-    m_actionKeys[MenuAction::SortBy] = QObject::tr("Sort by");
-    m_actionKeys[MenuAction::NewDocument] = QObject::tr("New document");
-    m_actionKeys[MenuAction::NewWord] = QObject::tr("Word");
-    m_actionKeys[MenuAction::NewExcel] = QObject::tr("Excel");
-    m_actionKeys[MenuAction::NewPowerpoint] = QObject::tr("PowerPoint");
-    m_actionKeys[MenuAction::NewText] = QObject::tr("Text");
-    m_actionKeys[MenuAction::OpenInTerminal] = QObject::tr("Open in terminal");
-    m_actionKeys[MenuAction::Restore] = QObject::tr("Restore");
-    m_actionKeys[MenuAction::RestoreAll] = QObject::tr("Restore all");
-    m_actionKeys[MenuAction::Mount] = QObject::tr("Mount");
-    m_actionKeys[MenuAction::Unmount]= QObject::tr("Unmount");
-    m_actionKeys[MenuAction::Eject]= QObject::tr("Eject");
-    m_actionKeys[MenuAction::Name] = QObject::tr("Name");
-    m_actionKeys[MenuAction::Size] = QObject::tr("Size");
-    m_actionKeys[MenuAction::Type] = QObject::tr("Type");
-    m_actionKeys[MenuAction::CreatedDate] = QObject::tr("Time created");
-    m_actionKeys[MenuAction::LastModifiedDate] = QObject::tr("Time modified");
-    m_actionKeys[MenuAction::Settings] = QObject::tr("Settings");
-    m_actionKeys[MenuAction::Help] = QObject::tr("Help");
-    m_actionKeys[MenuAction::About] = QObject::tr("About");
-    m_actionKeys[MenuAction::Exit] = QObject::tr("Exit");
-    m_actionKeys[MenuAction::IconView] = QObject::tr("Icon");
-    m_actionKeys[MenuAction::ListView] = QObject::tr("List");
-    m_actionKeys[MenuAction::ExtendView] = QObject::tr("Extend");
-    m_actionKeys[MenuAction::SetAsWallpaper] = QObject::tr("Set as wallpaper");
-    m_actionKeys[MenuAction::ForgetPassword] = QObject::tr("Log out and unmount");
-    m_actionKeys[MenuAction::DeletionDate] = QObject::tr("Time deleted");
-    m_actionKeys[MenuAction::SourcePath] = QObject::tr("Source path");
-    m_actionKeys[MenuAction::AbsolutePath] = QObject::tr("Path");
-    m_actionKeys[MenuAction::UnShare] = QObject::tr("Cancle sharing");
+    actionKeys[MenuAction::NewFolder] = QObject::tr("New folder");
+    actionKeys[MenuAction::NewWindow] = QObject::tr("New window");
+    actionKeys[MenuAction::SelectAll] = QObject::tr("Select all");
+    actionKeys[MenuAction::ClearRecent] = QObject::tr("Clear recent history");
+    actionKeys[MenuAction::ClearTrash] = QObject::tr("Empty Trash");
+    actionKeys[MenuAction::DisplayAs] = QObject::tr("Display as");
+    actionKeys[MenuAction::SortBy] = QObject::tr("Sort by");
+    actionKeys[MenuAction::NewDocument] = QObject::tr("New document");
+    actionKeys[MenuAction::NewWord] = QObject::tr("Word");
+    actionKeys[MenuAction::NewExcel] = QObject::tr("Excel");
+    actionKeys[MenuAction::NewPowerpoint] = QObject::tr("PowerPoint");
+    actionKeys[MenuAction::NewText] = QObject::tr("Text");
+    actionKeys[MenuAction::OpenInTerminal] = QObject::tr("Open in terminal");
+    actionKeys[MenuAction::Restore] = QObject::tr("Restore");
+    actionKeys[MenuAction::RestoreAll] = QObject::tr("Restore all");
+    actionKeys[MenuAction::Mount] = QObject::tr("Mount");
+    actionKeys[MenuAction::Unmount]= QObject::tr("Unmount");
+    actionKeys[MenuAction::Eject]= QObject::tr("Eject");
+    actionKeys[MenuAction::Name] = QObject::tr("Name");
+    actionKeys[MenuAction::Size] = QObject::tr("Size");
+    actionKeys[MenuAction::Type] = QObject::tr("Type");
+    actionKeys[MenuAction::CreatedDate] = QObject::tr("Time created");
+    actionKeys[MenuAction::LastModifiedDate] = QObject::tr("Time modified");
+    actionKeys[MenuAction::Settings] = QObject::tr("Settings");
+    actionKeys[MenuAction::Help] = QObject::tr("Help");
+    actionKeys[MenuAction::About] = QObject::tr("About");
+    actionKeys[MenuAction::Exit] = QObject::tr("Exit");
+    actionKeys[MenuAction::IconView] = QObject::tr("Icon");
+    actionKeys[MenuAction::ListView] = QObject::tr("List");
+    actionKeys[MenuAction::ExtendView] = QObject::tr("Extend");
+    actionKeys[MenuAction::SetAsWallpaper] = QObject::tr("Set as wallpaper");
+    actionKeys[MenuAction::ForgetPassword] = QObject::tr("Log out and unmount");
+    actionKeys[MenuAction::DeletionDate] = QObject::tr("Time deleted");
+    actionKeys[MenuAction::SourcePath] = QObject::tr("Source path");
+    actionKeys[MenuAction::AbsolutePath] = QObject::tr("Path");
+    actionKeys[MenuAction::UnShare] = QObject::tr("Cancle sharing");
 }
 
-void FileMenuManager::initActions()
+void DFileMenuData::initActions()
 {
-    foreach (MenuAction key, m_actionKeys.keys()) {
-        DAction* action = new DAction(m_actionKeys.value(key), 0);
+    foreach (MenuAction key, actionKeys.keys()) {
+        DAction* action = new DAction(actionKeys.value(key), 0);
         action->setData(key);
-        m_actions.insert(key, action);
+        actions.insert(key, action);
     }
 }
 
@@ -291,9 +295,9 @@ DFileMenu *FileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
                                                bool checkable,
                                                const QMap<MenuAction, QVector<MenuAction> > &subMenuList)
 {
-    if(m_actions.isEmpty()) {
-        initData();
-        initActions();
+    if(DFileMenuData::actions.isEmpty()) {
+        DFileMenuData::initData();
+        DFileMenuData::initActions();
     }
 
     DFileMenu* menu = new DFileMenu;
@@ -304,7 +308,7 @@ DFileMenu *FileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
         if (key == MenuAction::Separator){
             menu->addSeparator();
         }else{
-            DAction *action = m_actions.value(key);
+            DAction *action = DFileMenuData::actions.value(key);
 
             if(!action)
                 continue;
@@ -329,8 +333,8 @@ DFileMenu *FileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
 
 QString FileMenuManager::getActionString(MenuAction type)
 {
-    if (m_actionKeys.contains(type)){
-        return m_actionKeys.value(type);
+    if (DFileMenuData::actionKeys.contains(type)){
+        return DFileMenuData::actionKeys.value(type);
     }
     return "";
 }

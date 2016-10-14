@@ -2,6 +2,7 @@
 #include "dfileviewhelper.h"
 #include "views/fileitem.h"
 #include "views/deditorwidgetmenu.h"
+#include "private/dstyleditemdelegate_p.h"
 
 #include "models/dfilesystemmodel.h"
 #include "app/global.h"
@@ -19,19 +20,41 @@
 #define SELECTED_BACKGROUND_COLOR "#2da6f7"
 #define TEXT_COLOR "#303030"
 
-DIconItemDelegate::DIconItemDelegate(DFileViewHelper *parent) :
-    DStyledItemDelegate(parent)
+class DIconItemDelegatePrivate : public DStyledItemDelegatePrivate
 {
-    expanded_item = new FileIconItem(parent->parent()->viewport());
-    expanded_item->setAttribute(Qt::WA_TransparentForMouseEvents);
-    expanded_item->setProperty("showBackground", true);
-    expanded_item->edit->setReadOnly(true);
-    expanded_item->canDeferredDelete = false;
-    expanded_item->icon->setFixedSize(parent->parent()->iconSize());
-    /// prevent flash when first call show()
-    expanded_item->setFixedWidth(0);
+public:
+    DIconItemDelegatePrivate(DIconItemDelegate *qq)
+        : DStyledItemDelegatePrivate(qq) {}
 
-    m_iconSizes << 48 << 64 << 96 << 128 << 256;
+    QPointer<FileIconItem> expandedItem;
+
+    mutable QHash<QString, QString> elideMap;
+    mutable QHash<QString, QString> wordWrapMap;
+    mutable QHash<QString, int> textHeightMap;
+    mutable QHash<QString, QTextDocument*> documentMap;
+    mutable QModelIndex expandedIndex;
+    mutable QModelIndex lastAndExpandedInde;
+
+    QList<int> iconSizes;
+    /// default icon size is 64px.
+    int currentIconSizeIndex = 1;
+};
+
+DIconItemDelegate::DIconItemDelegate(DFileViewHelper *parent) :
+    DStyledItemDelegate(*new DIconItemDelegatePrivate(this), parent)
+{
+    Q_D(DIconItemDelegate);
+
+    d->expandedItem = new FileIconItem(parent->parent()->viewport());
+    d->expandedItem->setAttribute(Qt::WA_TransparentForMouseEvents);
+    d->expandedItem->setProperty("showBackground", true);
+    d->expandedItem->edit->setReadOnly(true);
+    d->expandedItem->canDeferredDelete = false;
+    d->expandedItem->icon->setFixedSize(parent->parent()->iconSize());
+    /// prevent flash when first call show()
+    d->expandedItem->setFixedWidth(0);
+
+    d->iconSizes << 48 << 64 << 96 << 128 << 256;
 
     connect(parent, &DFileViewHelper::triggerEdit, this, &DIconItemDelegate::onTriggerEdit);
     connect(parent->parent(), &QAbstractItemView::iconSizeChanged,
@@ -42,10 +65,12 @@ DIconItemDelegate::DIconItemDelegate(DFileViewHelper *parent) :
 
 DIconItemDelegate::~DIconItemDelegate()
 {
-    if (expanded_item) {
-        expanded_item->setParent(0);
-        expanded_item->canDeferredDelete = true;
-        expanded_item->deleteLater();
+    Q_D(DIconItemDelegate);
+
+    if (d->expandedItem) {
+        d->expandedItem->setParent(0);
+        d->expandedItem->canDeferredDelete = true;
+        d->expandedItem->deleteLater();
     }
 }
 
@@ -73,6 +98,8 @@ void DIconItemDelegate::paint(QPainter *painter,
                               const QStyleOptionViewItem &option,
                               const QModelIndex &index) const
 {
+    Q_D(const DIconItemDelegate);
+
     /// judgment way of the whether drag model(another way is: painter.devType() != 1)
     bool isDragMode = ((QPaintDevice*)parent()->parent()->viewport() != painter->device());
 
@@ -81,7 +108,7 @@ void DIconItemDelegate::paint(QPainter *painter,
 
     painter->setPen(QColor(TEXT_COLOR));
 
-    if((index == expanded_index || index == editing_index) && !isDragMode)
+    if((index == d->expandedIndex || index == d->editingIndex) && !isDragMode)
         return;
 
     QStyleOptionViewItem opt = option;
@@ -137,9 +164,9 @@ void DIconItemDelegate::paint(QPainter *painter,
 
         /// init file name text
 
-        if(m_wordWrapMap.contains(str)) {
-            str = m_wordWrapMap.value(str);
-            height = m_textHeightMap.value(str);
+        if(d->wordWrapMap.contains(str)) {
+            str = d->wordWrapMap.value(str);
+            height = d->textHeightMap.value(str);
         } else {
             QString wordWrap_str = Global::wordWrapText(str, label_rect.width(),
                                                         QTextOption::WrapAtWordBoundaryOrAnywhere,
@@ -147,21 +174,21 @@ void DIconItemDelegate::paint(QPainter *painter,
 
             wordWrap_str = trimmedEnd(wordWrap_str);
 
-            m_wordWrapMap[str] = wordWrap_str;
-            m_textHeightMap[wordWrap_str] = height;
+            d->wordWrapMap[str] = wordWrap_str;
+            d->textHeightMap[wordWrap_str] = height;
             str = wordWrap_str;
         }
 
         if(height > label_rect.height()) {
             /// use widget(FileIconItem) show file icon and file name label.
 
-            expanded_index = index;
+            d->expandedIndex = index;
 
-            setEditorData(expanded_item, index);
-            parent()->setIndexWidget(index, expanded_item);
+            setEditorData(d->expandedItem, index);
+            parent()->setIndexWidget(index, d->expandedItem);
 
             if (parent()->indexOfRow(index) == parent()->rowCount() - 1) {
-                lastAndExpandedInde = index;
+                d->lastAndExpandedInde = index;
             }
 
             parent()->updateGeometries();
@@ -169,8 +196,8 @@ void DIconItemDelegate::paint(QPainter *painter,
     } else {
         /// init file name text
 
-        if(m_elideMap.contains(str)) {
-            str = m_elideMap.value(str);
+        if(d->elideMap.contains(str)) {
+            str = d->elideMap.value(str);
         } else {
             QString elide_str = Global::elideText(str, label_rect.size(),
                                                   painter->fontMetrics(),
@@ -179,7 +206,7 @@ void DIconItemDelegate::paint(QPainter *painter,
 
             elide_str = trimmedEnd(elide_str);
 
-            m_elideMap[str] = elide_str;
+            d->elideMap[str] = elide_str;
 
             str = elide_str;
         }
@@ -220,7 +247,7 @@ void DIconItemDelegate::paint(QPainter *painter,
     /// draw file name label
 
     if(str.indexOf("\n") >=0 && !str.endsWith("\n")) {
-        QTextDocument *doc = m_documentMap.value(str);
+        QTextDocument *doc = d->documentMap.value(str);
 
         if(!doc) {
             doc = new QTextDocument(str, const_cast<DIconItemDelegate*>(this));
@@ -241,7 +268,7 @@ void DIconItemDelegate::paint(QPainter *painter,
                 cursor.setBlockFormat(format);
             } while (cursor.movePosition(QTextCursor::NextBlock));
 
-            m_documentMap[str] = doc;
+            d->documentMap[str] = doc;
         }
 
         QAbstractTextDocumentLayout::PaintContext ctx;
@@ -295,12 +322,14 @@ void DIconItemDelegate::paint(QPainter *painter,
 
 QSize DIconItemDelegate::sizeHint(const QStyleOptionViewItem &, const QModelIndex &index) const
 {
-    const QSize &size = m_itemSizeHint;
+    Q_D(const DIconItemDelegate);
 
-    if (index.isValid() && index == lastAndExpandedInde) {
-        expanded_item->setFixedWidth(size.width());
+    const QSize &size = d->itemSizeHint;
 
-        return expanded_item->size();
+    if (index.isValid() && index == d->lastAndExpandedInde) {
+        d->expandedItem->setFixedWidth(size.width());
+
+        return d->expandedItem->size();
     }
 
     return size;
@@ -308,13 +337,15 @@ QSize DIconItemDelegate::sizeHint(const QStyleOptionViewItem &, const QModelInde
 
 QWidget *DIconItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &, const QModelIndex &index) const
 {
-    editing_index = index;
+    Q_D(const DIconItemDelegate);
+
+    d->editingIndex = index;
 
     FileIconItem *item = new FileIconItem(parent);
 
     connect(item, &FileIconItem::inputFocusOut, this, &DIconItemDelegate::onEditWidgetFocusOut);
-    connect(item, &FileIconItem::destroyed, this, [this] {
-        editing_index = QModelIndex();
+    connect(item, &FileIconItem::destroyed, this, [this, d] {
+        d->editingIndex = QModelIndex();
     });
 
     Q_UNUSED(new DEditorWidgetMenu(item->edit))
@@ -359,6 +390,8 @@ void DIconItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
 
 void DIconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
+    Q_D(const DIconItemDelegate);
+
     FileIconItem *item = qobject_cast<FileIconItem*>(editor);
 
     if(!item)
@@ -384,7 +417,7 @@ void DIconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
     item->icon->setPixmap(pixmap);
     item->edit->setPlainText(index.data(DFileSystemModel::FileNameRole).toString());
     item->edit->setAlignment(Qt::AlignHCenter);
-    item->edit->document()->setTextWidth(m_itemSizeHint.width());
+    item->edit->document()->setTextWidth(d->itemSizeHint.width());
     item->setOpacity(parent()->isCut(index) ? 0.3 : 1);
 
     if(item->edit->isReadOnly())
@@ -407,6 +440,8 @@ void DIconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
 
 QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+    Q_D(const DIconItemDelegate);
+
     QList<QRect> geomertys;
 
     /// init icon geomerty
@@ -433,15 +468,15 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
 
     /// init file name text
 
-    if(m_elideMap.contains(str)) {
-        str = m_elideMap.value(str);
+    if(d->elideMap.contains(str)) {
+        str = d->elideMap.value(str);
     } else {
         QString elide_str = Global::elideText(str, label_rect.size(),
                                               option.fontMetrics,
                                               QTextOption::WrapAtWordBoundaryOrAnywhere,
                                               option.textElideMode);
 
-        m_elideMap[str] = elide_str;
+        d->elideMap[str] = elide_str;
 
         str = elide_str;
     }
@@ -461,27 +496,35 @@ QModelIndexList DIconItemDelegate::hasWidgetIndexs() const
 
 void DIconItemDelegate::hideNotEditingIndexWidget()
 {
-    if (expanded_index.isValid()) {
-        parent()->setIndexWidget(expanded_index, 0);
-        expanded_item->hide();
-        expanded_index = QModelIndex();
-        lastAndExpandedInde = QModelIndex();
+    Q_D(DIconItemDelegate);
+
+    if (d->expandedIndex.isValid()) {
+        parent()->setIndexWidget(d->expandedIndex, 0);
+        d->expandedItem->hide();
+        d->expandedIndex = QModelIndex();
+        d->lastAndExpandedInde = QModelIndex();
     }
 }
 
 QModelIndex DIconItemDelegate::expandedIndex() const
 {
-    return expanded_index;
+    Q_D(const DIconItemDelegate);
+
+    return d->expandedIndex;
 }
 
 FileIconItem *DIconItemDelegate::expandedIndexWidget() const
 {
-    return expanded_item;
+    Q_D(const DIconItemDelegate);
+
+    return d->expandedItem;
 }
 
 int DIconItemDelegate::iconSizeLevel() const
 {
-    return m_currentIconSizeIndex;
+    Q_D(const DIconItemDelegate);
+
+    return d->currentIconSizeIndex;
 }
 
 int DIconItemDelegate::minimumIconSizeLevel() const
@@ -491,7 +534,9 @@ int DIconItemDelegate::minimumIconSizeLevel() const
 
 int DIconItemDelegate::maximumIconSizeLevel() const
 {
-    return m_iconSizes.count() - 1;
+    Q_D(const DIconItemDelegate);
+
+    return d->iconSizes.count() - 1;
 }
 
 /*!
@@ -500,7 +545,9 @@ int DIconItemDelegate::maximumIconSizeLevel() const
  */
 int DIconItemDelegate::increaseIcon()
 {
-    return setIconSizeByIconSizeLevel(m_currentIconSizeIndex + 1);
+    Q_D(const DIconItemDelegate);
+
+    return setIconSizeByIconSizeLevel(d->currentIconSizeIndex + 1);
 }
 
 /*!
@@ -509,7 +556,9 @@ int DIconItemDelegate::increaseIcon()
  */
 int DIconItemDelegate::decreaseIcon()
 {
-    return setIconSizeByIconSizeLevel(m_currentIconSizeIndex - 1);
+    Q_D(const DIconItemDelegate);
+
+    return setIconSizeByIconSizeLevel(d->currentIconSizeIndex - 1);
 }
 
 /*!
@@ -519,15 +568,17 @@ int DIconItemDelegate::decreaseIcon()
  */
 int DIconItemDelegate::setIconSizeByIconSizeLevel(int level)
 {
-    if (level == m_currentIconSizeIndex)
+    Q_D(DIconItemDelegate);
+
+    if (level == d->currentIconSizeIndex)
         return level;
 
     if (level >= minimumIconSizeLevel() && level <= maximumIconSizeLevel()) {
-        m_currentIconSizeIndex = level;
+        d->currentIconSizeIndex = level;
 
         parent()->parent()->setIconSize(iconSizeByIconSizeLevel());
 
-        return m_currentIconSizeIndex;
+        return d->currentIconSizeIndex;
     }
 
     return -1;
@@ -563,29 +614,35 @@ void DIconItemDelegate::onEditWidgetFocusOut()
 
 void DIconItemDelegate::onIconSizeChanged()
 {
-    m_elideMap.clear();
-    m_wordWrapMap.clear();
-    m_textHeightMap.clear();
+    Q_D(DIconItemDelegate);
+
+    d->elideMap.clear();
+    d->wordWrapMap.clear();
+    d->textHeightMap.clear();
 
     int width = parent()->parent()->iconSize().width() * 1.8;
 
-    m_itemSizeHint = QSize(width, parent()->parent()->iconSize().height() + 2 * TEXT_PADDING  + ICON_MODE_ICON_SPACING + 3 * TEXT_LINE_HEIGHT);
+    d->itemSizeHint = QSize(width, parent()->parent()->iconSize().height() + 2 * TEXT_PADDING  + ICON_MODE_ICON_SPACING + 3 * TEXT_LINE_HEIGHT);
 }
 
 void DIconItemDelegate::onTriggerEdit(const QModelIndex &index)
 {
-    if(index == expanded_index) {
+    Q_D(DIconItemDelegate);
+
+    if(index == d->expandedIndex) {
         parent()->setIndexWidget(index, 0);
-        expanded_item->hide();
-        expanded_index = QModelIndex();
-        lastAndExpandedInde = QModelIndex();
+        d->expandedItem->hide();
+        d->expandedIndex = QModelIndex();
+        d->lastAndExpandedInde = QModelIndex();
         parent()->parent()->edit(index);
     }
 }
 
 QSize DIconItemDelegate::iconSizeByIconSizeLevel() const
 {
-    int size = m_iconSizes.at(m_currentIconSizeIndex);
+    Q_D(const DIconItemDelegate);
+
+    int size = d->iconSizes.at(d->currentIconSizeIndex);
 
     return QSize(size, size);
 }

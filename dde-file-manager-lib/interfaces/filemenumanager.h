@@ -43,14 +43,6 @@ public:
                                          const QMap<MenuAction, QVector<MenuAction> > &subMenuList = QMap<MenuAction, QVector<MenuAction> >());
     static QString getActionString(MenuAction type);
 
-private:
-    static void initData();
-    static void initActions();
-
-    static QMap<MenuAction, QString> m_actionKeys;
-    static QMap<MenuAction, DAction*> m_actions;
-    static QVector<MenuAction> m_sortActionTypes;
-
 public slots:
     void actionTriggered(DAction * action);
 };

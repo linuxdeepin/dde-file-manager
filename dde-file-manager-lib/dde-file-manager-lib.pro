@@ -133,7 +133,6 @@ HEADERS += \
     models/searchfileinfo.h\
     shutil/standardpath.h \
     dialogs/basedialog.h \
-    models/ddiriterator.h \
     views/extendview.h \
     controllers/pathmanager.h \
     views/ddragwidget.h \
@@ -176,7 +175,9 @@ HEADERS += \
     interfaces/abstractfilecontroller.h \
     interfaces/filemenumanager.h \
     interfaces/fmevent.h \
-    interfaces/dfilemenu.h
+    interfaces/dfilemenu.h \
+    interfaces/ddiriterator.h \
+    interfaces/private/dstyleditemdelegate_p.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
