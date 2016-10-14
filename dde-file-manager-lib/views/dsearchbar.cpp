@@ -345,6 +345,7 @@ void DSearchBar::clearText()
 
 
     emit fileSignalManager->requestChangeCurrentUrl(event);
+    emit focusedOut();
 }
 
 void DSearchBar::hideCompleter()
@@ -617,7 +618,7 @@ void DSearchBar::keyPressEvent(QKeyEvent *e)
         switch(key)
         {
             case Qt::Key_Escape:
-                emit focusedOut();
+                m_clearAction->trigger();
                 break;
             case Qt::Key_Down:
             case Qt::Key_Up:
