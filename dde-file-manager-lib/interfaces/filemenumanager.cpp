@@ -1,34 +1,18 @@
 #include "filemenumanager.h"
-#include "dfilemenu.h"
 
 #include "app/global.h"
-#include "app/filesignalmanager.h"
-#include "app/fmevent.h"
+#include "fmevent.h"
 #include "app/filemanagerapp.h"
-
-#include "shutil/fileutils.h"
-#include "shutil/standardpath.h"
-
-#include "dialogs/propertydialog.h"
-#include "interfaces/dfmglobal.h"
-#include "views/windowmanager.h"
-
-#include "controllers/fileservices.h"
-#include "fileoperations/filejob.h"
-#include "controllers/bookmarkmanager.h"
+#include "dfilemenu.h"
+#include "fileservices.h"
 #include "controllers/appcontroller.h"
 #include "controllers/trashmanager.h"
 
 #include "widgets/singleton.h"
 
-#include <QFileDialog>
-#include <QDesktopServices>
-#include <QApplication>
-#include <QMimeData>
-#include <QClipboard>
-#include <QScreen>
 #include <QMetaObject>
 #include <QMetaEnum>
+#include <QDebug>
 
 QMap<MenuAction, QString> FileMenuManager::m_actionKeys;
 QMap<MenuAction, DAction*> FileMenuManager::m_actions;
@@ -216,7 +200,7 @@ QSet<MenuAction> FileMenuManager::getDisableActionList(const DUrlList &urlList)
         }
     }
 
-    if (DFMGlobal::instance()->clipboardAction() == DFMGlobal::Unknow){
+    if (DFMGlobal::instance()->clipboardAction() == DFMGlobal::UnknowAction){
         disableList << MenuAction::Paste;
     }
 
@@ -371,10 +355,6 @@ void FileMenuManager::actionTriggered(DAction *action)
         QString key = metaEnum.valueToKey(type);
         QString methodKey = QString("action%1").arg(key);
         QString methodSignature = QString("action%1(FMEvent)").arg(key);
-        std::string methodString = methodKey.toStdString();
-        std::string methodSignatureString = methodSignature.toStdString();
-        const char* methodName = methodString.c_str();
-        const char* methodSignatureName = methodSignatureString.c_str();
 
         const QMetaObject* metaObject = appController->metaObject();
 //        QStringList methods;
@@ -383,9 +363,9 @@ void FileMenuManager::actionTriggered(DAction *action)
 //        }
 //        qDebug() << methods;
 //        qDebug() << methodKey << methodName;
-        if (metaObject->indexOfSlot(methodSignatureName) != -1){
+        if (metaObject->indexOfSlot(methodSignature.toLocal8Bit().constData()) != -1){
             QMetaObject::invokeMethod(appController,
-                                      methodName,
+                                      methodKey.toLocal8Bit().constData(),
                                       Qt::DirectConnection,
                                       Q_ARG(FMEvent, event));
         }else{

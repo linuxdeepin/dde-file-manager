@@ -6,7 +6,7 @@
 #include "models/desktopfileinfo.h"
 
 #include "app/global.h"
-#include "app/fmevent.h"
+#include "fmevent.h"
 #include "app/filesignalmanager.h"
 
 #include "shutil/fileutils.h"

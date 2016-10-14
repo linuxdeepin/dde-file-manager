@@ -1,29 +1,26 @@
 #ifndef FILEMENUMANAGER_H
 #define FILEMENUMANAGER_H
 
-#include "models/abstractfileinfo.h"
+#include "dfmglobal.h"
 
 #include <DAction>
 
 #include <QObject>
 #include <QMap>
-#include <QApplication>
-#include <QClipboard>
-#include <QMimeData>
-#include <QDir>
 #include <QSet>
 
 DWIDGET_USE_NAMESPACE
 
 class DFileMenu;
 class DUrl;
+typedef DFMGlobal::MenuAction MenuAction;
+typedef QList<DUrl> DUrlList;
 
 class FileMenuManager : public QObject
 {
     Q_OBJECT
 
 public:
-
     FileMenuManager();
 
     static DFileMenu *createRecentLeftBarMenu(const QSet<MenuAction> &disableList = QSet<MenuAction>());
@@ -56,9 +53,6 @@ private:
 
 public slots:
     void actionTriggered(DAction * action);
-
-signals:
-
 };
 
 #endif // FILEMENUMANAGER_H

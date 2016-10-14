@@ -3,7 +3,7 @@
 
 #include "app/global.h"
 #include "app/filesignalmanager.h"
-#include "app/fmevent.h"
+#include "fmevent.h"
 
 #include "models/fmstate.h"
 

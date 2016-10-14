@@ -9,7 +9,7 @@
 #include <QShowEvent>
 #include "fileitem.h"
 #include "durl.h"
-#include "models/abstractfileinfo.h"
+#include "abstractfileinfo.h"
 #include "deviceinfo/udiskdeviceinfo.h"
 
 class FlowLayout;

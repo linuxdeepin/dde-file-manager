@@ -9,7 +9,7 @@
 #include "windowmanager.h"
 #include "dstatebutton.h"
 
-#include "app/fmevent.h"
+#include "fmevent.h"
 #include "app/global.h"
 
 #include "controllers/pathmanager.h"

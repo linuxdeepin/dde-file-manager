@@ -5,10 +5,10 @@
 
 #include "app/global.h"
 #include "app/filesignalmanager.h"
-#include "app/fmevent.h"
+#include "fmevent.h"
 
 #include "fileoperations/filejob.h"
-#include "controllers/fileservices.h"
+#include "fileservices.h"
 
 #include "models/fileinfo.h"
 #include "models/trashfileinfo.h"

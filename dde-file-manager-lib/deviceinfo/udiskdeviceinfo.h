@@ -1,14 +1,13 @@
 #ifndef UDISKDEVICEINFO_H
 #define UDISKDEVICEINFO_H
 
-#include "models/abstractfileinfo.h"
+#include "abstractfileinfo.h"
 
 #include <QDBusInterface>
 #include <QString>
 #include <QDebug>
 #include <QDBusArgument>
 #include "dbusinterface/dbustype.h"
-#include "models/menuactiontype.h"
 
 class UDiskDeviceInfo : public QObject ,public AbstractFileInfo
 {

@@ -2,7 +2,7 @@
 #include "fileinfo.h"
 
 #include "controllers/trashmanager.h"
-#include "controllers/fileservices.h"
+#include "fileservices.h"
 #include "controllers/pathmanager.h"
 
 #include "app/global.h"

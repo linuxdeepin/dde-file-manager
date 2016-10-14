@@ -2,7 +2,7 @@
 #include "windowmanager.h"
 
 #include "app/global.h"
-#include "app/fmevent.h"
+#include "fmevent.h"
 #include "app/filemanagerapp.h"
 #include "controllers/appcontroller.h"
 

@@ -8,7 +8,7 @@
 
 namespace GlobalData {
 static QList<QUrl> clipboardFileUrls;
-static DFMGlobal::ClipboardAction clipboardAction = DFMGlobal::Unknow;
+static DFMGlobal::ClipboardAction clipboardAction = DFMGlobal::UnknowAction;
 
 void onClipboardDataChanged()
 {
@@ -20,7 +20,7 @@ void onClipboardDataChanged()
     } else if (data.startsWith("copy")) {
         clipboardAction = DFMGlobal::CopyAction;
     } else {
-        clipboardAction = DFMGlobal::Unknow;
+        clipboardAction = DFMGlobal::UnknowAction;
     }
 
     for (const QUrl &url : qApp->clipboard()->mimeData()->urls()) {
@@ -54,7 +54,7 @@ QString DFMGlobal::applicationVersion()
 
 void DFMGlobal::setUrlsToClipboard(const QList<QUrl> &list, DFMGlobal::ClipboardAction action)
 {
-    if (action == Unknow)
+    if (action == UnknowAction)
         return;
 
     QMimeData *mimeData = new QMimeData;

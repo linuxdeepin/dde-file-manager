@@ -6,7 +6,7 @@
 
 #include "app/global.h"
 #include "app/filesignalmanager.h"
-#include "app/fmevent.h"
+#include "fmevent.h"
 
 #include "filemonitor/filemonitor.h"
 #include "interfaces/dfmstandardpaths.h"

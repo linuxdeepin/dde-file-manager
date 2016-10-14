@@ -14,7 +14,7 @@
 #include "interfaces/dlistitemdelegate.h"
 
 #include "controllers/appcontroller.h"
-#include "controllers/fileservices.h"
+#include "fileservices.h"
 #include "controllers/fmstatemanager.h"
 #include "controllers/pathmanager.h"
 
@@ -36,6 +36,7 @@
 #include <QActionGroup>
 #include <QContextMenuEvent>
 #include <QHeaderView>
+#include <QMimeData>
 
 DWIDGET_USE_NAMESPACE
 
@@ -1790,7 +1791,7 @@ void DFileView::showNormalMenu(const QModelIndex &index)
 
         menu = FileMenuManager::genereteMenuByKeys(actions, disableList, true, subActions);
 
-        DAction *openWithAction = menu->actionAt(FileMenuManager::getActionString(MenuActionType::OpenWith));
+        DAction *openWithAction = menu->actionAt(FileMenuManager::getActionString(DFMGlobal::OpenWith));
         DFileMenu* openWithMenu = openWithAction ? qobject_cast<DFileMenu*>(openWithAction->menu()) : Q_NULLPTR;
 
         if (openWithMenu) {

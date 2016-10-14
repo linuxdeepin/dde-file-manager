@@ -1,14 +1,12 @@
 #include "fileservices.h"
 #include "abstractfilecontroller.h"
-#include "jobcontroller.h"
+#include "abstractfileinfo.h"
 
 #include "app/filesignalmanager.h"
-#include "app/fmevent.h"
+#include "fmevent.h"
 #include "app/global.h"
-
+#include "controllers/jobcontroller.h"
 #include "views/windowmanager.h"
-
-#include "models/abstractfileinfo.h"
 #include "models/fileinfo.h"
 #include "models/trashfileinfo.h"
 
@@ -312,7 +310,7 @@ void FileServices::pasteFile(const FMEvent &event) const
 {
     DFMGlobal::ClipboardAction action = DFMGlobal::instance()->clipboardAction();
 
-    if (action == DFMGlobal::Unknow)
+    if (action == DFMGlobal::UnknowAction)
         return;
 
     AbstractFileController::PasteType type = (action == DFMGlobal::CutAction) ? AbstractFileController::CutType

@@ -5,7 +5,7 @@
 
 #include "app/global.h"
 
-#include "controllers/fileservices.h"
+#include "fileservices.h"
 #include "simpleini/SimpleIni.h"
 
 #include <QDirIterator>

@@ -2,8 +2,7 @@
 #define DFILEMENU_H
 
 #include <DMenu>
-#include "app/fmevent.h"
-
+#include "fmevent.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -17,7 +16,6 @@ public:
     void setEvent(const FMEvent &event);
 
 private:
-
     FMEvent m_event;
 };
 

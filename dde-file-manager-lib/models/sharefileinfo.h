@@ -12,7 +12,7 @@
 
 #include <QObject>
 #include "abstractfileinfo.h"
-#include "app/fmevent.h"
+#include "fmevent.h"
 
 class ShareFileInfo : public AbstractFileInfo
 {

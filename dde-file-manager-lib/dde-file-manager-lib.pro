@@ -88,7 +88,6 @@ HEADERS += \
     controllers/filecontroller.h \
     app/filesignalmanager.h \
     views/fileitem.h \
-    views/filemenumanager.h \
     views/dsearchbar.h \
     models/fileinfo.h \
     models/desktopfileinfo.h \
@@ -112,10 +111,8 @@ HEADERS += \
     views/dcrumbwidget.h \
     views/dcrumbbutton.h \
     views/dhorizseparator.h \
-    app/fmevent.h \
     views/historystack.h\
     dialogs/propertydialog.h \
-    views/dfilemenu.h \
     views/dhoverbutton.h \
     views/dbookmarkscene.h \
     views/dbookmarkitem.h \
@@ -124,9 +121,6 @@ HEADERS += \
     views/dbookmarkview.h \
     controllers/trashmanager.h \
     views/dsplitter.h \
-    models/abstractfileinfo.h \
-    controllers/fileservices.h \
-    controllers/abstractfilecontroller.h \
     models/recentfileinfo.h \
     app/singleapplication.h \
     app/logutil.h \
@@ -146,7 +140,6 @@ HEADERS += \
     shutil/mimetypedisplaymanager.h \
     views/dstatusbar.h \
     controllers/subscriber.h \
-    models/menuactiontype.h \
     models/dfileselectionmodel.h \
     dialogs/closealldialogindicator.h \
     gvfs/gvfsmountclient.h \
@@ -177,7 +170,13 @@ HEADERS += \
     views/fileviewhelper.h \
     interfaces/dlistitemdelegate.h \
     interfaces/dstyleditemdelegate.h \
-    interfaces/durl.h
+    interfaces/durl.h \
+    interfaces/abstractfileinfo.h \
+    interfaces/fileservices.h \
+    interfaces/abstractfilecontroller.h \
+    interfaces/filemenumanager.h \
+    interfaces/fmevent.h \
+    interfaces/dfilemenu.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -193,7 +192,6 @@ SOURCES += \
     models/dfilesystemmodel.cpp \
     controllers/filecontroller.cpp \
     views/fileitem.cpp \
-    views/filemenumanager.cpp \
     views/dsearchbar.cpp \
     models/fileinfo.cpp \
     models/desktopfileinfo.cpp \
@@ -217,10 +215,8 @@ SOURCES += \
     views/dcrumbwidget.cpp \
     views/dcrumbbutton.cpp \
     views/dhorizseparator.cpp \
-    app/fmevent.cpp \
     views/historystack.cpp\
     dialogs/propertydialog.cpp \
-    views/dfilemenu.cpp \
     views/dhoverbutton.cpp \
     views/dbookmarkscene.cpp \
     views/dbookmarkitem.cpp \
@@ -229,9 +225,6 @@ SOURCES += \
     views/dbookmarkview.cpp \
     controllers/trashmanager.cpp \
     views/dsplitter.cpp \
-    models/abstractfileinfo.cpp \
-    controllers/fileservices.cpp \
-    controllers/abstractfilecontroller.cpp \
     models/recentfileinfo.cpp \
     app/singleapplication.cpp \
     app/logutil.cpp \
@@ -250,7 +243,6 @@ SOURCES += \
     shutil/mimetypedisplaymanager.cpp \
     views/dstatusbar.cpp \
     controllers/subscriber.cpp \
-    models/menuactiontype.cpp \
     models/dfileselectionmodel.cpp \
     dialogs/closealldialogindicator.cpp \
     app/global.cpp \
@@ -282,7 +274,13 @@ SOURCES += \
     views/fileviewhelper.cpp \
     interfaces/dlistitemdelegate.cpp \
     interfaces/dstyleditemdelegate.cpp \
-    interfaces/durl.cpp
+    interfaces/durl.cpp \
+    interfaces/abstractfileinfo.cpp \
+    interfaces/fileservices.cpp \
+    interfaces/abstractfilecontroller.cpp \
+    interfaces/filemenumanager.cpp \
+    interfaces/fmevent.cpp \
+    interfaces/dfilemenu.cpp
 
 INCLUDEPATH += $$PWD/../ $$PWD/../utils/ $$PWD/interfaces/
 

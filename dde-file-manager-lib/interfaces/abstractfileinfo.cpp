@@ -8,7 +8,7 @@
 #include "shutil/mimetypedisplaymanager.h"
 
 #include "controllers/pathmanager.h"
-#include "controllers/fileservices.h"
+#include "fileservices.h"
 
 #include "app/global.h"
 

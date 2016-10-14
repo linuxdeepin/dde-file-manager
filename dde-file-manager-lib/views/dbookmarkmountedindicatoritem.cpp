@@ -6,7 +6,7 @@
 
 #include "widgets/singleton.h"
 #include "app/filesignalmanager.h"
-#include "app/fmevent.h"
+#include "fmevent.h"
 #include "windowmanager.h"
 #include <QDebug>
 
