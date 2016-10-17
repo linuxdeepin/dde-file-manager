@@ -350,7 +350,7 @@ void IconProvider::setDesktopIconPaths(const QMap<QString, QString> &iconPaths)
     m_desktopIconPaths = iconPaths;
 }
 
-QIcon IconProvider::findIcon(const DUrl& fileUrl, const QString &mimeType)
+QIcon IconProvider:: findIcon(const DUrl& fileUrl, const QString &mimeType)
 {
 //    qDebug() << absoluteFilePath << m_mimeDatabase->mimeTypeForFile(absoluteFilePath).iconName() << FileUtils::getFileMimetype(absoluteFilePath) << getMimeTypeByFile(absoluteFilePath) << mimeType << getFileIcon(absoluteFilePath, 256);
     QPixmap pixmap;
@@ -361,8 +361,27 @@ QIcon IconProvider::findIcon(const DUrl& fileUrl, const QString &mimeType)
 
         if (pixmap.isNull())
             thumbnailManager->requestThumbnailPixmap(static_cast<QUrl>(fileUrl),ThumbnailGenerator::THUMBNAIL_LARGE,100);
-        else
-            return QIcon(pixmap);
+        else{
+            if(m_icons.contains(pixmap.cacheKey())){
+                QIcon *ico = m_icons[pixmap.cacheKey()];
+                if(ico)
+                    return *ico;
+            }
+
+            QImage img = pixmap.toImage();
+            QPainter pa(&img);
+            QPen pen;
+            pen.setWidth(1);
+            pen.setColor(QColor(0,0,0,0.5*255));
+            pa.setPen(pen);
+            pa.setRenderHint(pa.Antialiasing);
+            pa.drawRect(QRect(0,0,img.width(),img.height()));
+
+            QIcon *icon = new QIcon(QPixmap::fromImage(img));
+            m_icons.insert(pixmap.cacheKey(), icon);
+
+            return *icon;
+        }
     } else if (mimeType == "application/x-desktop") {
         return IconProvider::getDesktopIcon(DesktopFile(absoluteFilePath).getIcon(), 48);
     } else if (systemPathManager->isSystemPath(absoluteFilePath)) {
