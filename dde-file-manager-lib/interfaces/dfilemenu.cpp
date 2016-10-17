@@ -7,12 +7,12 @@ DFileMenu::DFileMenu(DMenu *parent)
 }
 
 
-FMEvent DFileMenu::event() const
+DFMEvent DFileMenu::event() const
 {
     return m_event;
 }
 
-void DFileMenu::setEvent(const FMEvent &event)
+void DFileMenu::setEvent(const DFMEvent &event)
 {
     m_event = event;
 }

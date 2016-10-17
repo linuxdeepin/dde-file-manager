@@ -83,7 +83,7 @@ void NetworkManager::initConnect()
 }
 
 
-void NetworkManager::fetch_networks(gchar* url, FMEvent* e)
+void NetworkManager::fetch_networks(gchar* url, DFMEvent* e)
 {
     GFile *network_file;
     network_file = g_file_new_for_uri (url);
@@ -113,7 +113,7 @@ void NetworkManager::network_enumeration_finished(GObject *source_object, GAsync
             !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED))
             qWarning ("Failed to fetch network locations: %s", error->message);
         qDebug() << error->message;
-        FMEvent* event = static_cast<FMEvent*>(user_data);
+        DFMEvent* event = static_cast<DFMEvent*>(user_data);
         emit fileSignalManager->requestSMBMount(*event);
         g_clear_error (&error);
     }
@@ -204,17 +204,17 @@ void NetworkManager::populate_networks(GFileEnumerator *enumerator, GList *detec
         g_clear_object (&activatable_file);
     }
 
-    FMEvent* event = static_cast<FMEvent*>(user_data);
+    DFMEvent* event = static_cast<DFMEvent*>(user_data);
     NetworkNodes.remove(event->fileUrl());
     NetworkNodes.insert(event->fileUrl(), nodeList);
     qDebug() << "request NetworkNodeList successfully";
     emit fileSignalManager->fetchNetworksSuccessed(*event);
 }
 
-void NetworkManager::fetchNetworks(const FMEvent &event)
+void NetworkManager::fetchNetworks(const DFMEvent &event)
 {
     qDebug() << event;
-    FMEvent* e = new FMEvent(event);
+    DFMEvent* e = new DFMEvent(event);
     QString path = event.fileUrl().toString();
     gchar *url = const_cast<char*>(path.toStdString().c_str());
     fetch_networks(url, e);

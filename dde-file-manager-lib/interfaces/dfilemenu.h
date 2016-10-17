@@ -2,7 +2,7 @@
 #define DFILEMENU_H
 
 #include <DMenu>
-#include "fmevent.h"
+#include "dfmevent.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -12,11 +12,11 @@ class DFileMenu : public DMenu
 
 public:
     explicit DFileMenu(DMenu * parent = 0);
-    FMEvent event() const;
-    void setEvent(const FMEvent &event);
+    DFMEvent event() const;
+    void setEvent(const DFMEvent &event);
 
 private:
-    FMEvent m_event;
+    DFMEvent m_event;
 };
 
 #endif // DFILEMENU_H

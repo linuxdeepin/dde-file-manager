@@ -1,17 +1,17 @@
 #ifndef TRASHMANAGER_H
 #define TRASHMANAGER_H
 
-#include "abstractfilecontroller.h"
+#include "dabstractfilecontroller.h"
 
 #include <QDir>
 #include <QFileInfoList>
 #include <QFile>
 #include <QFileInfo>
 
-class AbstractFileInfo;
+class DAbstractFileInfo;
 class FileMonitor;
 
-class TrashManager : public AbstractFileController
+class TrashManager : public DAbstractFileController
 {
     Q_OBJECT
 
@@ -26,14 +26,14 @@ public:
     bool removeUrlMonitor(const DUrl &url, bool &accepted) const Q_DECL_OVERRIDE;
     bool copyFiles(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;
     DUrlList pasteFile(PasteType type, const DUrlList &urlList,
-                       const FMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
-    bool deleteFiles(const DUrlList &urlList, const FMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
+                       const DFMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
+    bool deleteFiles(const DUrlList &urlList, const DFMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
     const DDirIteratorPointer createDirIterator(const DUrl &fileUrl, const QStringList &nameFilters,
                                                 QDir::Filters filters, QDirIterator::IteratorFlags flags,
                                                 bool &accepted) const Q_DECL_OVERRIDE;
 
-    bool restoreTrashFile(const DUrlList &fileUrl, const FMEvent &event) const;
-    bool restoreAllTrashFile(const FMEvent &event);
+    bool restoreTrashFile(const DUrlList &fileUrl, const DFMEvent &event) const;
+    bool restoreAllTrashFile(const DFMEvent &event);
 
     static bool isEmpty();
 

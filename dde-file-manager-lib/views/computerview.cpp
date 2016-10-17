@@ -1,18 +1,18 @@
 #include "computerview.h"
 #include "flowlayout.h"
 #include "dfilemenu.h"
-#include "filemenumanager.h"
+#include "dfilemenumanager.h"
 #include "windowmanager.h"
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
-#include "fmevent.h"
+#include "dfmevent.h"
 #include "app/filemanagerapp.h"
-#include "fileservices.h"
+#include "dfileservices.h"
 #include "controllers/pathmanager.h"
 #include "controllers/appcontroller.h"
 #include "deviceinfo/udisklistener.h"
-#include "abstractfileinfo.h"
+#include "dabstractfileinfo.h"
 #include "shutil/standardpath.h"
 #include "widgets/singleton.h"
 
@@ -117,20 +117,20 @@ void ComputerViewItem::contextMenuEvent(QContextMenuEvent *event)
     if(!tabAddable)
         disableList << MenuAction::OpenInNewTab;
     if (m_info){
-        menu = FileMenuManager::createDefaultBookMarkMenu(disableList);
+        menu = DFileMenuManager::createDefaultBookMarkMenu(disableList);
         url = m_info->fileUrl();
     }else if (m_deviceInfo){
         if (m_deviceInfo->getMountPoint() == "/" && !m_deviceInfo->getDiskInfo().isNativeCustom){
-            menu = FileMenuManager::createDefaultBookMarkMenu(disableList);
+            menu = DFileMenuManager::createDefaultBookMarkMenu(disableList);
             url = m_deviceInfo->getMountPointUrl();
         }else if (m_deviceInfo->getDiskInfo().isNativeCustom){
-            menu = FileMenuManager::createDefaultBookMarkMenu(disableList);
+            menu = DFileMenuManager::createDefaultBookMarkMenu(disableList);
             url = m_deviceInfo->getMountPointUrl();
         }
         else{
             disableList |= m_deviceInfo->disableMenuActionList();
-            menu = FileMenuManager::genereteMenuByKeys(
-                        m_deviceInfo->menuActionList(AbstractFileInfo::SingleFile),
+            menu = DFileMenuManager::genereteMenuByKeys(
+                        m_deviceInfo->menuActionList(DAbstractFileInfo::SingleFile),
                         disableList);
             url = m_deviceInfo->getMountPointUrl();
             url.setQuery(m_deviceInfo->getId());
@@ -140,7 +140,7 @@ void ComputerViewItem::contextMenuEvent(QContextMenuEvent *event)
     DUrlList urls;
     urls.append(url);
 
-    FMEvent fmEvent;
+    DFMEvent fmEvent;
     fmEvent << url;
     fmEvent << urls;
     fmEvent << windowId();
@@ -161,7 +161,7 @@ void ComputerViewItem::mousePressEvent(QMouseEvent *event)
 void ComputerViewItem::mouseDoubleClickEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton){
-        FMEvent fevent;
+        DFMEvent fevent;
         fevent << windowId();
         if (m_info){
             fevent << m_info->fileUrl();
@@ -361,7 +361,7 @@ void ComputerView::loadSystemItems()
     foreach (QString key, m_systemPathKeys) {
         QString path = systemPathManager->getSystemPath(key);
         DUrl url = DUrl::fromLocalFile(path);
-        const AbstractFileInfoPointer &fileInfo = FileServices::instance()->createFileInfo(url);
+        const AbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
         ComputerViewItem* item = new ComputerViewItem;
         item->setInfo(fileInfo);
         item->setName(fileInfo->displayName());

@@ -14,7 +14,7 @@
 #include <QPushButton>
 #include "durl.h"
 
-class FMEvent;
+class DFMEvent;
 
 class DSearchBar : public QLineEdit
 {
@@ -65,7 +65,7 @@ public slots:
     void historySaved();
     void setCompleter(const QString &text);
     void completeText(QListWidgetItem * item);
-    void currentUrlChanged(const FMEvent &event);
+    void currentUrlChanged(const DFMEvent &event);
     void clearText();
     void hideCompleter();
     void handleApplicationChanged(QWidget * old, QWidget * now);

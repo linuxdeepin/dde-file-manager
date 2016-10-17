@@ -1,12 +1,12 @@
-#include "abstractfilecontroller.h"
+#include "dabstractfilecontroller.h"
 
-AbstractFileController::AbstractFileController(QObject *parent)
+DAbstractFileController::DAbstractFileController(QObject *parent)
     : QObject(parent)
 {
 
 }
 
-bool AbstractFileController::openFile(const DUrl &fileUrl, bool &accepted) const
+bool DAbstractFileController::openFile(const DUrl &fileUrl, bool &accepted) const
 {
     Q_UNUSED(fileUrl)
 
@@ -15,7 +15,7 @@ bool AbstractFileController::openFile(const DUrl &fileUrl, bool &accepted) const
     return false;
 }
 
-bool AbstractFileController::compressFiles(const DUrlList &urlList, bool &accepted) const
+bool DAbstractFileController::compressFiles(const DUrlList &urlList, bool &accepted) const
 {
     Q_UNUSED(urlList)
 
@@ -24,7 +24,7 @@ bool AbstractFileController::compressFiles(const DUrlList &urlList, bool &accept
     return false;
 }
 
-bool AbstractFileController::decompressFile(const DUrlList &fileUrlList, bool &accepted) const
+bool DAbstractFileController::decompressFile(const DUrlList &fileUrlList, bool &accepted) const
 {
     Q_UNUSED(fileUrlList)
 
@@ -33,7 +33,7 @@ bool AbstractFileController::decompressFile(const DUrlList &fileUrlList, bool &a
     return false;
 }
 
-bool AbstractFileController::decompressFileHere(const DUrlList &fileUrlList, bool &accepted) const
+bool DAbstractFileController::decompressFileHere(const DUrlList &fileUrlList, bool &accepted) const
 {
     Q_UNUSED(fileUrlList)
 
@@ -42,7 +42,7 @@ bool AbstractFileController::decompressFileHere(const DUrlList &fileUrlList, boo
     return false;
 }
 
-bool AbstractFileController::copyFiles(const DUrlList &urlList, bool &accepted) const
+bool DAbstractFileController::copyFiles(const DUrlList &urlList, bool &accepted) const
 {
     Q_UNUSED(urlList)
 
@@ -51,7 +51,7 @@ bool AbstractFileController::copyFiles(const DUrlList &urlList, bool &accepted) 
     return false;
 }
 
-bool AbstractFileController::renameFile(const DUrl &oldUrl, const DUrl &newUrl, bool &accepted) const
+bool DAbstractFileController::renameFile(const DUrl &oldUrl, const DUrl &newUrl, bool &accepted) const
 {
     Q_UNUSED(oldUrl)
     Q_UNUSED(newUrl)
@@ -61,7 +61,7 @@ bool AbstractFileController::renameFile(const DUrl &oldUrl, const DUrl &newUrl, 
     return false;
 }
 
-bool AbstractFileController::deleteFiles(const DUrlList &urlList, const FMEvent &event, bool &accepted) const
+bool DAbstractFileController::deleteFiles(const DUrlList &urlList, const DFMEvent &event, bool &accepted) const
 {
     Q_UNUSED(urlList)
     Q_UNUSED(event)
@@ -70,7 +70,7 @@ bool AbstractFileController::deleteFiles(const DUrlList &urlList, const FMEvent 
     return false;
 }
 
-DUrlList AbstractFileController::moveToTrash(const DUrlList &urlList, bool &accepted) const
+DUrlList DAbstractFileController::moveToTrash(const DUrlList &urlList, bool &accepted) const
 {
     Q_UNUSED(urlList)
 
@@ -79,7 +79,7 @@ DUrlList AbstractFileController::moveToTrash(const DUrlList &urlList, bool &acce
     return DUrlList();
 }
 
-bool AbstractFileController::cutFiles(const DUrlList &urlList, bool &accepted) const
+bool DAbstractFileController::cutFiles(const DUrlList &urlList, bool &accepted) const
 {
     Q_UNUSED(urlList)
 
@@ -88,8 +88,8 @@ bool AbstractFileController::cutFiles(const DUrlList &urlList, bool &accepted) c
     return false;
 }
 
-DUrlList AbstractFileController::pasteFile(PasteType type, const DUrlList &urlList,
-                                       const FMEvent &event, bool &accepted) const
+DUrlList DAbstractFileController::pasteFile(PasteType type, const DUrlList &urlList,
+                                       const DFMEvent &event, bool &accepted) const
 {
     Q_UNUSED(type)
     Q_UNUSED(event)
@@ -100,7 +100,7 @@ DUrlList AbstractFileController::pasteFile(PasteType type, const DUrlList &urlLi
     return DUrlList();
 }
 
-bool AbstractFileController::restoreFile(const DUrl &srcUrl, const DUrl &tarUrl, const FMEvent &event, bool &accepted) const
+bool DAbstractFileController::restoreFile(const DUrl &srcUrl, const DUrl &tarUrl, const DFMEvent &event, bool &accepted) const
 {
     Q_UNUSED(srcUrl)
     Q_UNUSED(tarUrl)
@@ -110,7 +110,7 @@ bool AbstractFileController::restoreFile(const DUrl &srcUrl, const DUrl &tarUrl,
     return false;
 }
 
-bool AbstractFileController::newFolder(const FMEvent &event, bool &accepted) const
+bool DAbstractFileController::newFolder(const DFMEvent &event, bool &accepted) const
 {
     Q_UNUSED(event)
 
@@ -119,7 +119,7 @@ bool AbstractFileController::newFolder(const FMEvent &event, bool &accepted) con
     return false;
 }
 
-bool AbstractFileController::newFile(const DUrl &toUrl, bool &accepted) const
+bool DAbstractFileController::newFile(const DUrl &toUrl, bool &accepted) const
 {
     Q_UNUSED(toUrl)
 
@@ -128,7 +128,7 @@ bool AbstractFileController::newFile(const DUrl &toUrl, bool &accepted) const
     return false;
 }
 
-bool AbstractFileController::newDocument(const DUrl &toUrl, bool &accepted) const
+bool DAbstractFileController::newDocument(const DUrl &toUrl, bool &accepted) const
 {
     Q_UNUSED(toUrl)
 
@@ -137,7 +137,7 @@ bool AbstractFileController::newDocument(const DUrl &toUrl, bool &accepted) cons
     return false;
 }
 
-bool AbstractFileController::addUrlMonitor(const DUrl &url, bool &accepted) const
+bool DAbstractFileController::addUrlMonitor(const DUrl &url, bool &accepted) const
 {
     Q_UNUSED(url)
 
@@ -146,7 +146,7 @@ bool AbstractFileController::addUrlMonitor(const DUrl &url, bool &accepted) cons
     return false;
 }
 
-bool AbstractFileController::removeUrlMonitor(const DUrl &url, bool &accepted) const
+bool DAbstractFileController::removeUrlMonitor(const DUrl &url, bool &accepted) const
 {
     Q_UNUSED(url)
 
@@ -155,7 +155,7 @@ bool AbstractFileController::removeUrlMonitor(const DUrl &url, bool &accepted) c
     return false;
 }
 
-bool AbstractFileController::openFileLocation(const DUrl &fileUrl, bool &accepted) const
+bool DAbstractFileController::openFileLocation(const DUrl &fileUrl, bool &accepted) const
 {
     Q_UNUSED(fileUrl)
 
@@ -164,7 +164,7 @@ bool AbstractFileController::openFileLocation(const DUrl &fileUrl, bool &accepte
     return false;
 }
 
-const QList<AbstractFileInfoPointer> AbstractFileController::getChildren(const DUrl &fileUrl, const QStringList &nameFilters,
+const QList<AbstractFileInfoPointer> DAbstractFileController::getChildren(const DUrl &fileUrl, const QStringList &nameFilters,
                                                                          QDir::Filters filters, QDirIterator::IteratorFlags flags,
                                                                          bool &accepted) const
 {
@@ -178,7 +178,7 @@ const QList<AbstractFileInfoPointer> AbstractFileController::getChildren(const D
     return QList<AbstractFileInfoPointer>();
 }
 
-const AbstractFileInfoPointer AbstractFileController::createFileInfo(const DUrl &fileUrl, bool &accepted) const
+const AbstractFileInfoPointer DAbstractFileController::createFileInfo(const DUrl &fileUrl, bool &accepted) const
 {
     Q_UNUSED(fileUrl)
 
@@ -187,7 +187,7 @@ const AbstractFileInfoPointer AbstractFileController::createFileInfo(const DUrl 
     return AbstractFileInfoPointer();
 }
 
-const DDirIteratorPointer AbstractFileController::createDirIterator(const DUrl &fileUrl, const QStringList &nameFilters,
+const DDirIteratorPointer DAbstractFileController::createDirIterator(const DUrl &fileUrl, const QStringList &nameFilters,
                                                                     QDir::Filters filters, QDirIterator::IteratorFlags flags,
                                                                     bool &accepted) const
 {
@@ -201,7 +201,7 @@ const DDirIteratorPointer AbstractFileController::createDirIterator(const DUrl &
     return DDirIteratorPointer();
 }
 
-bool AbstractFileController::createSymlink(const DUrl &fileUrl, const DUrl &linkToUrl, bool &accepted) const
+bool DAbstractFileController::createSymlink(const DUrl &fileUrl, const DUrl &linkToUrl, bool &accepted) const
 {
     Q_UNUSED(fileUrl)
     Q_UNUSED(linkToUrl)
@@ -211,7 +211,7 @@ bool AbstractFileController::createSymlink(const DUrl &fileUrl, const DUrl &link
     return false;
 }
 
-bool AbstractFileController::openInTerminal(const DUrl &fileUrl, bool &accepted) const
+bool DAbstractFileController::openInTerminal(const DUrl &fileUrl, bool &accepted) const
 {
     Q_UNUSED(fileUrl)
 

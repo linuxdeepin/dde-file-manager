@@ -6,7 +6,7 @@
 #include "gvfs/networkmanager.h"
 
 
-class NetworkFileInfo: public AbstractFileInfo
+class NetworkFileInfo: public DAbstractFileInfo
 {
 public:
     NetworkFileInfo();

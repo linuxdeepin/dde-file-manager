@@ -8,9 +8,9 @@
 
 class DTaskDialog;
 class FileJob;
-class AbstractFileInfo;
+class DAbstractFileInfo;
 class DUrl;
-class FMEvent;
+class DFMEvent;
 class PropertyDialog;
 class CloseAllDialogIndicator;
 class TrashPropertyDialog;
@@ -42,16 +42,16 @@ public slots:
 
     void showUrlWrongDialog(const DUrl &url);
     int showRunExcutableDialog(const DUrl& url);
-    int showRenameNameSameErrorDialog(const QString& name, const FMEvent &event);
-    int showDeleteFilesClearTrashDialog(const FMEvent &event);
-    int showRemoveBookMarkDialog(const FMEvent &event);
-    void showOpenWithDialog(const FMEvent &event);
-    void showPropertyDialog(const FMEvent &event);
-    void showTrashPropertyDialog(const FMEvent &event);
-    void showDevicePropertyDialog(const FMEvent &event);
+    int showRenameNameSameErrorDialog(const QString& name, const DFMEvent &event);
+    int showDeleteFilesClearTrashDialog(const DFMEvent &event);
+    int showRemoveBookMarkDialog(const DFMEvent &event);
+    void showOpenWithDialog(const DFMEvent &event);
+    void showPropertyDialog(const DFMEvent &event);
+    void showTrashPropertyDialog(const DFMEvent &event);
+    void showDevicePropertyDialog(const DFMEvent &event);
     void showDiskErrorDialog(const QString &id, const QString &errorText);
     void showBreakSymlinkDialog(const QString &targetName, const DUrl& linkfile);
-    void showAboutDialog(const FMEvent &event);
+    void showAboutDialog(const DFMEvent &event);
 
     void removePropertyDialog(const DUrl& url);
     void closeAllPropertyDialog();

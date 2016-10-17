@@ -5,7 +5,7 @@
 #include <QSize>
 #include <QDebug>
 #include "debugobejct.h"
-#include "fmevent.h"
+#include "dfmevent.h"
 
 #undef signals
 extern "C" {
@@ -63,7 +63,7 @@ public:
 
 
     static QMap<DUrl, NetworkNodeList> NetworkNodes;
-    static void fetch_networks(gchar* url, FMEvent* e);
+    static void fetch_networks(gchar* url, DFMEvent* e);
     static void network_enumeration_finished (GObject      *source_object,
                                   GAsyncResult *res,
                                   gpointer      user_data);
@@ -77,7 +77,7 @@ public:
 signals:
 
 public slots:
-    void fetchNetworks(const FMEvent& event);
+    void fetchNetworks(const DFMEvent& event);
 
 private:
 

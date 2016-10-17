@@ -1,15 +1,15 @@
 #ifndef FILECONTROLLER_H
 #define FILECONTROLLER_H
 
-#include "abstractfilecontroller.h"
+#include "dabstractfilecontroller.h"
 
 class FileInfoGatherer;
 class IconProvider;
 class RecentHistoryManager;
-class AbstractFileInfo;
+class DAbstractFileInfo;
 class FileMonitor;
 
-class FileController : public AbstractFileController
+class FileController : public DAbstractFileController
 {
     Q_OBJECT
 
@@ -29,13 +29,13 @@ public:
     bool decompressFileHere(const DUrlList &fileUrlList, bool &accepted) const Q_DECL_OVERRIDE;
     bool copyFiles(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;
     bool renameFile(const DUrl &oldUrl, const DUrl &newUrl, bool &accepted) const Q_DECL_OVERRIDE;
-    bool deleteFiles(const DUrlList &urlList, const FMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
+    bool deleteFiles(const DUrlList &urlList, const DFMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
     DUrlList moveToTrash(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;
     bool cutFiles(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;
     DUrlList pasteFile(PasteType type, const DUrlList &urlList,
-                       const FMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
-    bool restoreFile(const DUrl &srcUrl, const DUrl &tarUrl, const FMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
-    bool newFolder(const FMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
+                       const DFMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
+    bool restoreFile(const DUrl &srcUrl, const DUrl &tarUrl, const DFMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
+    bool newFolder(const DFMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
     bool newFile(const DUrl &toUrl, bool &accepted) const Q_DECL_OVERRIDE;
     bool newDocument(const DUrl &toUrl, bool &accepted) const Q_DECL_OVERRIDE;
 

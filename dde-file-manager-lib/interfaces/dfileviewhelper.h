@@ -19,7 +19,7 @@
 QT_BEGIN_NAMESPACE
 class QAbstractItemView;
 QT_END_NAMESPACE
-class AbstractFileInfo;
+class DAbstractFileInfo;
 class DStyledItemDelegate;
 class DFileSystemModel;
 class DFileViewHelperPrivate;
@@ -46,7 +46,7 @@ public:
     virtual int columnWidth(int columnIndex) const;
     virtual DUrl currentUrl() const;
 
-    virtual const AbstractFileInfo *fileInfo(const QModelIndex &index) const = 0;
+    virtual const DAbstractFileInfo *fileInfo(const QModelIndex &index) const = 0;
     virtual DStyledItemDelegate *itemDelegate() const = 0;
     virtual DFileSystemModel *model() const = 0;
     virtual const DUrlList selectedUrls() const = 0;

@@ -2,15 +2,15 @@
 #define BOOKMARKMANAGER_H
 
 #include "basemanager.h"
-#include "abstractfilecontroller.h"
+#include "dabstractfilecontroller.h"
 
 #include "models/bookmark.h"
 
 #include <QDir>
 
-class AbstractFileInfo;
+class DAbstractFileInfo;
 
-class BookMarkManager : public AbstractFileController, public BaseManager
+class BookMarkManager : public DAbstractFileController, public BaseManager
 {
     Q_OBJECT
 public:

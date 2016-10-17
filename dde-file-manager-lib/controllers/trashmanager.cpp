@@ -1,12 +1,12 @@
 #include "trashmanager.h"
-#include "fileservices.h"
+#include "dfileservices.h"
 
 #include "models/fileinfo.h"
 #include "models/trashfileinfo.h"
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
-#include "fmevent.h"
+#include "dfmevent.h"
 
 #include "filemonitor/filemonitor.h"
 #include "interfaces/dfmstandardpaths.h"
@@ -64,7 +64,7 @@ QString TrashDirIterator::filePath() const
 
 const AbstractFileInfoPointer TrashDirIterator::fileInfo() const
 {
-    return FileServices::instance()->createFileInfo(DUrl::fromTrashFile(filePath()));
+    return DFileService::instance()->createFileInfo(DUrl::fromTrashFile(filePath()));
 }
 
 QString TrashDirIterator::path() const
@@ -75,7 +75,7 @@ QString TrashDirIterator::path() const
 TrashManager *firstMe = Q_NULLPTR;
 
 TrashManager::TrashManager(QObject *parent)
-    : AbstractFileController(parent)
+    : DAbstractFileController(parent)
 {
     if(!firstMe) {
         firstMe = this;
@@ -168,12 +168,12 @@ bool TrashManager::copyFiles(const DUrlList &urlList, bool &accepted) const
     return true;
 }
 
-DUrlList TrashManager::pasteFile(AbstractFileController::PasteType type, const DUrlList &urlList,
-                                 const FMEvent &event, bool &accepted) const
+DUrlList TrashManager::pasteFile(DAbstractFileController::PasteType type, const DUrlList &urlList,
+                                 const DFMEvent &event, bool &accepted) const
 {
     Q_UNUSED(event)
 
-    accepted = (type == AbstractFileController::CutType);
+    accepted = (type == DAbstractFileController::CutType);
 
     if (!accepted)
         return DUrlList();
@@ -182,7 +182,7 @@ DUrlList TrashManager::pasteFile(AbstractFileController::PasteType type, const D
 }
 
 
-bool TrashManager::deleteFiles(const DUrlList &urlList, const FMEvent &event, bool &accepted) const
+bool TrashManager::deleteFiles(const DUrlList &urlList, const DFMEvent &event, bool &accepted) const
 {
     accepted = true;
 
@@ -212,21 +212,21 @@ const DDirIteratorPointer TrashManager::createDirIterator(const DUrl &fileUrl, c
     return DDirIteratorPointer(new TrashDirIterator(fileUrl, nameFilters, filters, flags));
 }
 
-bool TrashManager::restoreTrashFile(const DUrlList &fileUrl, const FMEvent &event) const
+bool TrashManager::restoreTrashFile(const DUrlList &fileUrl, const DFMEvent &event) const
 {
     bool ok = true;
 
     for(const DUrl &url : fileUrl) {
         TrashFileInfo info;
         info.setUrl(url);
-        const_cast<FMEvent &>(event) << url;
+        const_cast<DFMEvent &>(event) << url;
         info.restore(event);
     }
 
     return ok;
 }
 
-bool TrashManager::restoreAllTrashFile(const FMEvent &event)
+bool TrashManager::restoreAllTrashFile(const DFMEvent &event)
 {
 
     DUrl fileUrl = event.fileUrlList().at(0);

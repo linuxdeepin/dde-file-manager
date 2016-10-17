@@ -6,11 +6,11 @@
 #include <QMap>
 
 #include "basemanager.h"
-#include "abstractfilecontroller.h"
+#include "dabstractfilecontroller.h"
 
-class AbstractFileInfo;
+class DAbstractFileInfo;
 
-class RecentHistoryManager : public AbstractFileController, public BaseManager
+class RecentHistoryManager : public DAbstractFileController, public BaseManager
 {
     Q_OBJECT
 public:

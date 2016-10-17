@@ -11,16 +11,16 @@
 #include "dfmglobal.h"
 #include "dstyleditemdelegate.h"
 #include "app/define.h"
-#include "fmevent.h"
+#include "dfmevent.h"
 #include "views/windowmanager.h"
 #define protected public
-#include "abstractfileinfo.h"
+#include "dabstractfileinfo.h"
 #undef protected
 #include "dfilesystemmodel.h"
 #include "shutil/iconprovider.h"
 #include "views/fileitem.h"
 #include "widgets/singleton.h"
-#include "fileservices.h"
+#include "dfileservices.h"
 
 #include <QTimer>
 #include <QAction>
@@ -97,11 +97,11 @@ void DFileViewHelperPrivate::init()
 
     QObject::connect(paste_action, &QAction::triggered,
             q, [q] {
-        FMEvent event;
+        DFMEvent event;
 
         event << q->currentUrl();
         event << q->windowId();
-        event << FMEvent::FileView;
+        event << DFMEvent::FileView;
         fileService->pasteFile(event);
     });
 
@@ -145,7 +145,7 @@ int DFileViewHelper::windowId() const
  */
 bool DFileViewHelper::isCut(const QModelIndex &index) const
 {
-    const AbstractFileInfo *fileInfo = this->fileInfo(index);
+    const DAbstractFileInfo *fileInfo = this->fileInfo(index);
 
     if (!fileInfo)
         return false;
@@ -214,7 +214,7 @@ int DFileViewHelper::indexOfRow(const QModelIndex &index) const
 QList<QIcon> DFileViewHelper::additionalIcon(const QModelIndex &index) const
 {
     QList<QIcon> icons;
-    const AbstractFileInfo *fileInfo = this->fileInfo(index);
+    const DAbstractFileInfo *fileInfo = this->fileInfo(index);
 
     if (!fileInfo)
         return icons;
@@ -242,7 +242,7 @@ QList<QIcon> DFileViewHelper::additionalIcon(const QModelIndex &index) const
  */
 QString DFileViewHelper::selectionWhenEditing(const QModelIndex &index) const
 {
-    const AbstractFileInfo *fileInfo = this->fileInfo(index);
+    const DAbstractFileInfo *fileInfo = this->fileInfo(index);
 
     if (!fileInfo)
         return QString();
@@ -283,7 +283,7 @@ int DFileViewHelper::columnWidth(int columnIndex) const
 
 DUrl DFileViewHelper::currentUrl() const
 {
-    const AbstractFileInfo *fileInfo = this->fileInfo(parent()->rootIndex());
+    const DAbstractFileInfo *fileInfo = this->fileInfo(parent()->rootIndex());
 
     if (!fileInfo)
         return DUrl();

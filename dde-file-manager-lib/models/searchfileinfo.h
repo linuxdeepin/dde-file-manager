@@ -3,7 +3,7 @@
 
 #include "fileinfo.h"
 
-class SearchFileInfo : public AbstractFileInfo
+class SearchFileInfo : public DAbstractFileInfo
 {
 public:
     SearchFileInfo();

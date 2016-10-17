@@ -1,5 +1,5 @@
 #include "recenthistorymanager.h"
-#include "fileservices.h"
+#include "dfileservices.h"
 
 #include "app/filesignalmanager.h"
 #include "app/define.h"
@@ -18,18 +18,18 @@
 #include <QDateTime>
 #include <QUrl>
 
-#define fileService FileServices::instance()
+#define fileService DFileService::instance()
 
 RecentHistoryManager *firstRecent = Q_NULLPTR;
 
 RecentHistoryManager::RecentHistoryManager(QObject *parent)
-    : AbstractFileController(parent)
+    : DAbstractFileController(parent)
     , BaseManager()
 {
     if(!firstRecent) {
         firstRecent = this;
 
-        connect(fileService, &FileServices::fileOpened,
+        connect(fileService, &DFileService::fileOpened,
                 this, &RecentHistoryManager::addOpenedFile);
         connect(fileSignalManager, &FileSignalManager::requestRecentFileRemove,
                 this, &RecentHistoryManager::removeRecentFiles);
@@ -93,7 +93,7 @@ bool RecentHistoryManager::copyFiles(const DUrlList &urlList, bool &accepted) co
         localList << DUrl::fromLocalFile(url.path());
     }
 
-    return FileServices::instance()->copyFiles(localList);
+    return DFileService::instance()->copyFiles(localList);
 }
 
 const QList<AbstractFileInfoPointer> RecentHistoryManager::getChildren(const DUrl &fileUrl, const QStringList &nameFilters,

@@ -1,5 +1,5 @@
 #include "jobcontroller.h"
-#include "fileservices.h"
+#include "dfileservices.h"
 
 #include <QtConcurrent/QtConcurrent>
 
@@ -88,7 +88,7 @@ void JobController::stopAndDeleteLater()
 void JobController::run()
 {
     if (!m_iterator) {
-        emit childrenUpdated(FileServices::instance()->getChildren(m_fileUrl, m_nameFilters, m_filters));
+        emit childrenUpdated(DFileService::instance()->getChildren(m_fileUrl, m_nameFilters, m_filters));
 
         setState(Stoped);
 

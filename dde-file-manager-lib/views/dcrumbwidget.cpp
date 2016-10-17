@@ -9,7 +9,7 @@
 #include "windowmanager.h"
 #include "dstatebutton.h"
 
-#include "fmevent.h"
+#include "dfmevent.h"
 #include "app/define.h"
 
 #include "controllers/pathmanager.h"
@@ -515,9 +515,9 @@ void DCrumbWidget::buttonPressed()
 {
     DCrumbButton * button = static_cast<DCrumbButton*>(sender());
 
-    FMEvent event;
+    DFMEvent event;
     event << WindowManager::getWindowId(this);
-    event << FMEvent::CrumbButton;
+    event << DFMEvent::CrumbButton;
     QString text = button->path();
     DCrumbButton * localButton = qobject_cast<DCrumbButton*>(m_group.buttons().at(0));
 

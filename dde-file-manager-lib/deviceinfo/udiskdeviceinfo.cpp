@@ -15,7 +15,7 @@ UDiskDeviceInfo::UDiskDeviceInfo()
 }
 
 UDiskDeviceInfo::UDiskDeviceInfo(UDiskDeviceInfo *info)
-    : AbstractFileInfo(DUrl::fromComputerFile("/"))
+    : DAbstractFileInfo(DUrl::fromComputerFile("/"))
 {
     m_diskInfo = info->getDiskInfo();
     data->url = info->getMountPointUrl();
@@ -23,13 +23,13 @@ UDiskDeviceInfo::UDiskDeviceInfo(UDiskDeviceInfo *info)
 }
 
 UDiskDeviceInfo::UDiskDeviceInfo(const DUrl &url)
-    : AbstractFileInfo(url)
+    : DAbstractFileInfo(url)
 {
 
 }
 
 UDiskDeviceInfo::UDiskDeviceInfo(const QString &url)
-    : AbstractFileInfo(url)
+    : DAbstractFileInfo(url)
 {
 
 }
@@ -304,7 +304,7 @@ DUrl UDiskDeviceInfo::parentUrl() const
     return DUrl::fromComputerFile("/");
 }
 
-QVector<MenuAction> UDiskDeviceInfo::menuActionList(AbstractFileInfo::MenuType type) const
+QVector<MenuAction> UDiskDeviceInfo::menuActionList(DAbstractFileInfo::MenuType type) const
 {
     QVector<MenuAction> actionKeys;
 
@@ -339,7 +339,7 @@ QVector<MenuAction> UDiskDeviceInfo::menuActionList(AbstractFileInfo::MenuType t
 
 QSet<MenuAction> UDiskDeviceInfo::disableMenuActionList() const
 {
-    QSet<MenuAction> actionKeys = AbstractFileInfo::disableMenuActionList();
+    QSet<MenuAction> actionKeys = DAbstractFileInfo::disableMenuActionList();
     if (!m_diskInfo.CanUnmount){
         actionKeys << MenuAction::Property;
     }

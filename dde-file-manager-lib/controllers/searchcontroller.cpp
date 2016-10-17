@@ -1,5 +1,5 @@
 #include "searchcontroller.h"
-#include "fileservices.h"
+#include "dfileservices.h"
 
 #include "models/searchfileinfo.h"
 #include "ddiriterator.h"
@@ -95,7 +95,7 @@ bool SearchDiriterator::hasNext() const
 
             const DUrl &url = searchPathList.takeAt(0);
 
-            it = FileServices::instance()->createDirIterator(url, m_nameFilters,QDir::NoDotAndDotDot | m_filter, m_flags);
+            it = DFileService::instance()->createDirIterator(url, m_nameFilters,QDir::NoDotAndDotDot | m_filter, m_flags);
 
             if (!it) {
                 continue;
@@ -172,10 +172,10 @@ void SearchDiriterator::close()
 }
 
 SearchController::SearchController(QObject *parent)
-    : AbstractFileController(parent)
+    : DAbstractFileController(parent)
 {
-    connect(fileService, &FileServices::childrenAdded, this, &SearchController::onFileCreated);
-    connect(fileService, &FileServices::childrenRemoved, this, &SearchController::onFileRemove);
+    connect(fileService, &DFileService::childrenAdded, this, &SearchController::onFileCreated);
+    connect(fileService, &DFileService::childrenRemoved, this, &SearchController::onFileRemove);
 }
 
 const AbstractFileInfoPointer SearchController::createFileInfo(const DUrl &fileUrl, bool &accepted) const
@@ -189,91 +189,91 @@ bool SearchController::openFileLocation(const DUrl &fileUrl, bool &accepted) con
 {
     accepted = true;
 
-    return FileServices::instance()->openFileLocation(realUrl(fileUrl));
+    return DFileService::instance()->openFileLocation(realUrl(fileUrl));
 }
 
 bool SearchController::openFile(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
 
-    return FileServices::instance()->openFile(realUrl(fileUrl));
+    return DFileService::instance()->openFile(realUrl(fileUrl));
 }
 
 bool SearchController::addUrlMonitor(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
 
-    return FileServices::instance()->addUrlMonitor(realUrl(fileUrl));
+    return DFileService::instance()->addUrlMonitor(realUrl(fileUrl));
 }
 
 bool SearchController::removeUrlMonitor(const DUrl &url, bool &accepted) const
 {
     accepted = true;
 
-    return FileServices::instance()->removeUrlMonitor(realUrl(url));
+    return DFileService::instance()->removeUrlMonitor(realUrl(url));
 }
 
 bool SearchController::copyFiles(const DUrlList &urlList, bool &accepted) const
 {
     accepted = true;
 
-    return FileServices::instance()->copyFiles(realUrlList(urlList));
+    return DFileService::instance()->copyFiles(realUrlList(urlList));
 }
 
 DUrlList SearchController::moveToTrash(const DUrlList &urlList, bool &accepted) const
 {
     accepted = true;
 
-    return FileServices::instance()->moveToTrashSync(realUrlList(urlList));
+    return DFileService::instance()->moveToTrashSync(realUrlList(urlList));
 }
 
 bool SearchController::cutFiles(const DUrlList &urlList, bool &accepted) const
 {
     accepted = true;
 
-    return FileServices::instance()->cutFiles(realUrlList(urlList));
+    return DFileService::instance()->cutFiles(realUrlList(urlList));
 }
 
-bool SearchController::deleteFiles(const DUrlList &urlList, const FMEvent &event, bool &accepted) const
+bool SearchController::deleteFiles(const DUrlList &urlList, const DFMEvent &event, bool &accepted) const
 {
     accepted = true;
 
-    return FileServices::instance()->deleteFilesSync(realUrlList(urlList), event);
+    return DFileService::instance()->deleteFilesSync(realUrlList(urlList), event);
 }
 
 bool SearchController::renameFile(const DUrl &oldUrl, const DUrl &newUrl, bool &accepted) const
 {
     accepted = true;
 
-    return FileServices::instance()->renameFile(realUrl(oldUrl), realUrl(newUrl));
+    return DFileService::instance()->renameFile(realUrl(oldUrl), realUrl(newUrl));
 }
 
 bool SearchController::compressFiles(const DUrlList &urlList, bool &accepted) const
 {
     accepted = true;
 
-    return FileServices::instance()->compressFiles(realUrlList(urlList));
+    return DFileService::instance()->compressFiles(realUrlList(urlList));
 }
 
 bool SearchController::decompressFile(const DUrlList &fileUrlList, bool &accepted) const
 {
     accepted = true;
 
-    return FileServices::instance()->decompressFile(realUrlList(fileUrlList));
+    return DFileService::instance()->decompressFile(realUrlList(fileUrlList));
 }
 
 bool SearchController::createSymlink(const DUrl &fileUrl, const DUrl &linkToUrl, bool &accepted) const
 {
     accepted = true;
 
-    return FileServices::instance()->createSymlink(realUrl(fileUrl), linkToUrl);
+    return DFileService::instance()->createSymlink(realUrl(fileUrl), linkToUrl);
 }
 
 bool SearchController::openInTerminal(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
 
-    return FileServices::instance()->openInTerminal(realUrl(fileUrl));
+    return DFileService::instance()->openInTerminal(realUrl(fileUrl));
 }
 
 const DDirIteratorPointer SearchController::createDirIterator(const DUrl &fileUrl, const QStringList &nameFilters,

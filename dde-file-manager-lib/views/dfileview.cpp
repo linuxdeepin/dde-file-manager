@@ -1,6 +1,6 @@
 #include "dfileview.h"
 #include "fileitem.h"
-#include "filemenumanager.h"
+#include "dfilemenumanager.h"
 #include "dfilemenu.h"
 #include "windowmanager.h"
 #include "dstatusbar.h"
@@ -14,7 +14,7 @@
 #include "interfaces/dlistitemdelegate.h"
 
 #include "controllers/appcontroller.h"
-#include "fileservices.h"
+#include "dfileservices.h"
 #include "controllers/fmstatemanager.h"
 #include "controllers/pathmanager.h"
 
@@ -53,7 +53,7 @@ public:
 
     DFileView *q_ptr;
 
-    FileMenuManager* fileMenuManager;
+    DFileMenuManager* fileMenuManager;
     QHeaderView *headerView = Q_NULLPTR;
     DStatusBar* statusBar=NULL;
 
@@ -751,10 +751,10 @@ void DFileView::keyPressEvent(QKeyEvent *event)
 
     const DUrlList& urls = selectedUrls();
 
-    FMEvent fmevent;
+    DFMEvent fmevent;
 
     fmevent << urls;
-    fmevent << FMEvent::FileView;
+    fmevent << DFMEvent::FileView;
     fmevent << windowId();
     fmevent << currentUrl();
 
@@ -931,20 +931,20 @@ void DFileView::mousePressEvent(QMouseEvent *event)
 
     switch (event->button()) {
     case Qt::BackButton: {
-        FMEvent event;
+        DFMEvent event;
 
         event << this->windowId();
-        event << FMEvent::FileView;
+        event << DFMEvent::FileView;
 
         fileSignalManager->requestBack(event);
 
         break;
     }
     case Qt::ForwardButton: {
-        FMEvent event;
+        DFMEvent event;
 
         event << this->windowId();
-        event << FMEvent::FileView;
+        event << DFMEvent::FileView;
 
         fileSignalManager->requestForward(event);
 
@@ -1033,10 +1033,10 @@ void DFileView::handleCommitData(QWidget *editor)
     QLineEdit *lineEdit = qobject_cast<QLineEdit*>(editor);
     FileIconItem *item = qobject_cast<FileIconItem*>(editor);
 
-    FMEvent event;
+    DFMEvent event;
     event << fileInfo->fileUrl();
     event << windowId();
-    event << FMEvent::FileView;
+    event << DFMEvent::FileView;
 
     QString new_file_name = lineEdit ? lineEdit->text() : item ? item->edit->toPlainText() : "";
 
@@ -1117,7 +1117,7 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
 void DFileView::dragEnterEvent(QDragEnterEvent *event)
 {
     for (const DUrl &url : event->mimeData()->urls()) {
-        const AbstractFileInfoPointer &fileInfo = FileServices::instance()->createFileInfo(url);
+        const AbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
 
         if (!fileInfo->isWritable()) {
             event->ignore();
@@ -1389,10 +1389,10 @@ void DFileView::openIndex(const QModelIndex &index)
     D_D(DFileView);
 
    if (model()->hasChildren(index)) {
-        FMEvent event;
+        DFMEvent event;
 
         event << model()->getUrlByIndex(index);
-        event << FMEvent::FileView;
+        event << DFMEvent::FileView;
         event << windowId();
 
         d->fileViewHelper->preHandleCd(event);
@@ -1421,7 +1421,7 @@ bool DFileView::setCurrentUrl(const DUrl &url)
         fileUrl.setPath("/");
     }
 
-    const AbstractFileInfoPointer &info = FileServices::instance()->createFileInfo(fileUrl);
+    const AbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(fileUrl);
 
     if (!info){
         qDebug() << "This scheme isn't support";
@@ -1538,7 +1538,7 @@ void DFileView::updateStatusBar()
     if (model()->state() != DFileSystemModel::Idle)
         return;
 
-    FMEvent event;
+    DFMEvent event;
     event << windowId();
     event << selectedUrls();
     int count = selectedIndexCount();
@@ -1695,14 +1695,14 @@ void DFileView::showEmptyAreaMenu()
 
     const QModelIndex &index = rootIndex();
     const AbstractFileInfoPointer &info = model()->fileInfo(index);
-    const QVector<MenuAction> &actions = info->menuActionList(AbstractFileInfo::SpaceArea);
+    const QVector<MenuAction> &actions = info->menuActionList(DAbstractFileInfo::SpaceArea);
 
     if (actions.isEmpty())
         return;
 
     const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList();
 
-    QSet<MenuAction> disableList = FileMenuManager::getDisableActionList(model()->getUrlByIndex(index));
+    QSet<MenuAction> disableList = DFileMenuManager::getDisableActionList(model()->getUrlByIndex(index));
     const bool& tabAddable = WindowManager::tabAddableByWinId(windowId());
     if(!tabAddable)
         disableList << MenuAction::OpenInNewTab;
@@ -1710,7 +1710,7 @@ void DFileView::showEmptyAreaMenu()
     if (!count())
         disableList << MenuAction::SelectAll;
 
-    DFileMenu *menu = FileMenuManager::genereteMenuByKeys(actions, disableList, true, subActions);
+    DFileMenu *menu = DFileMenuManager::genereteMenuByKeys(actions, disableList, true, subActions);
     DAction *tmp_action = menu->actionAt(fileMenuManger->getActionString(MenuAction::DisplayAs));
     DFileMenu *displayAsSubMenu = static_cast<DFileMenu*>(tmp_action ? tmp_action->menu() : Q_NULLPTR);
     tmp_action = menu->actionAt(fileMenuManger->getActionString(MenuAction::SortBy));
@@ -1751,11 +1751,11 @@ void DFileView::showEmptyAreaMenu()
     DUrlList urls;
     urls.append(currentUrl());
 
-    FMEvent event;
+    DFMEvent event;
     event << currentUrl();
     event << urls;
     event << windowId();
-    event << FMEvent::FileView;
+    event << DFMEvent::FileView;
     menu->setEvent(event);
 
 
@@ -1778,20 +1778,20 @@ void DFileView::showNormalMenu(const QModelIndex &index)
     const AbstractFileInfoPointer &info = model()->fileInfo(index);
 
     if (list.length() == 1) {
-        const QVector<MenuAction> &actions = info->menuActionList(AbstractFileInfo::SingleFile);
+        const QVector<MenuAction> &actions = info->menuActionList(DAbstractFileInfo::SingleFile);
 
         if (actions.isEmpty())
             return;
 
         const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList();
-        QSet<MenuAction> disableList = FileMenuManager::getDisableActionList(list);
+        QSet<MenuAction> disableList = DFileMenuManager::getDisableActionList(list);
         const bool& tabAddable = WindowManager::tabAddableByWinId(windowId());
         if(!tabAddable)
             disableList << MenuAction::OpenInNewTab;
 
-        menu = FileMenuManager::genereteMenuByKeys(actions, disableList, true, subActions);
+        menu = DFileMenuManager::genereteMenuByKeys(actions, disableList, true, subActions);
 
-        DAction *openWithAction = menu->actionAt(FileMenuManager::getActionString(DFMGlobal::OpenWith));
+        DAction *openWithAction = menu->actionAt(DFileMenuManager::getActionString(DFMGlobal::OpenWith));
         DFileMenu* openWithMenu = openWithAction ? qobject_cast<DFileMenu*>(openWithAction->menu()) : Q_NULLPTR;
 
         if (openWithMenu) {
@@ -1841,9 +1841,9 @@ void DFileView::showNormalMenu(const QModelIndex &index)
         QVector<MenuAction> actions;
 
         if (isSystemPathIncluded)
-            actions = info->menuActionList(AbstractFileInfo::MultiFilesSystemPathIncluded);
+            actions = info->menuActionList(DAbstractFileInfo::MultiFilesSystemPathIncluded);
         else
-            actions = info->menuActionList(AbstractFileInfo::MultiFiles);
+            actions = info->menuActionList(DAbstractFileInfo::MultiFiles);
 
         if (actions.isEmpty())
             return;
@@ -1852,19 +1852,19 @@ void DFileView::showNormalMenu(const QModelIndex &index)
             actions<<MenuAction::Decompress<<MenuAction::DecompressHere;
 
         const QMap<MenuAction, QVector<MenuAction> > subActions;
-        QSet<MenuAction> disableList = FileMenuManager::getDisableActionList(list);
+        QSet<MenuAction> disableList = DFileMenuManager::getDisableActionList(list);
         const bool& tabAddable = WindowManager::tabAddableByWinId(windowId());
         if(!tabAddable)
             disableList << MenuAction::OpenInNewTab;
-        menu = FileMenuManager::genereteMenuByKeys(actions, disableList, true, subActions);
+        menu = DFileMenuManager::genereteMenuByKeys(actions, disableList, true, subActions);
     }
 
-    FMEvent event;
+    DFMEvent event;
 
     event << info->redirectedFileUrl();
     event << list;
     event << windowId();
-    event << FMEvent::FileView;
+    event << DFMEvent::FileView;
 
     menu->setEvent(event);
     menu->exec();
@@ -2002,7 +2002,7 @@ void DFileView::onModelStateChanged(int state)
 {
     D_D(DFileView);
 
-    FMEvent event;
+    DFMEvent event;
 
     event << windowId();
     event << currentUrl();

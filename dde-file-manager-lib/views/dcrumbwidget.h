@@ -12,7 +12,7 @@
 #include "durl.h"
 #include "dbusinterface/dbustype.h"
 
-class FMEvent;
+class DFMEvent;
 class DCrumbButton;
 class DStateButton;
 class DCrumbWidget;
@@ -84,7 +84,7 @@ public slots:
     void crumbMoveToLeft();
     void crumbMoveToRight();
 signals:
-    void crumbSelected(const FMEvent &event);
+    void crumbSelected(const DFMEvent &event);
     void searchBarActivated();
 
 protected:

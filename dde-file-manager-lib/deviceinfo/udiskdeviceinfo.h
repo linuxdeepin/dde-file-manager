@@ -1,7 +1,7 @@
 #ifndef UDISKDEVICEINFO_H
 #define UDISKDEVICEINFO_H
 
-#include "abstractfileinfo.h"
+#include "dabstractfileinfo.h"
 
 #include <QDBusInterface>
 #include <QString>
@@ -9,7 +9,7 @@
 #include <QDBusArgument>
 #include "dbusinterface/dbustype.h"
 
-class UDiskDeviceInfo : public QObject ,public AbstractFileInfo
+class UDiskDeviceInfo : public QObject ,public DAbstractFileInfo
 {
     Q_OBJECT
 public:

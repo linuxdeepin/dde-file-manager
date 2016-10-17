@@ -2,9 +2,9 @@
 #define NETWORKCONTROLLER_H
 
 
-#include "abstractfilecontroller.h"
+#include "dabstractfilecontroller.h"
 
-class NetworkController: public AbstractFileController
+class NetworkController: public DAbstractFileController
 {
     Q_OBJECT
 

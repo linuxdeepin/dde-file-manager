@@ -1,9 +1,9 @@
-#include "fileservices.h"
-#include "abstractfilecontroller.h"
-#include "abstractfileinfo.h"
+#include "dfileservices.h"
+#include "dabstractfilecontroller.h"
+#include "dabstractfileinfo.h"
 
 #include "app/filesignalmanager.h"
-#include "fmevent.h"
+#include "dfmevent.h"
 #include "app/define.h"
 #include "controllers/jobcontroller.h"
 #include "views/windowmanager.h"
@@ -32,38 +32,38 @@
 DWIDGET_USE_NAMESPACE
 
 #define TRAVERSE(url, Code) \
-    QList<AbstractFileController*> &&list = getHandlerTypeByUrl(url);\
+    QList<DAbstractFileController*> &&list = getHandlerTypeByUrl(url);\
     bool accepted = false;\
-    for(AbstractFileController *controller : list) {\
+    for(DAbstractFileController *controller : list) {\
         Code\
     }\
     list = getHandlerTypeByUrl(url, true);\
-    for(AbstractFileController *controller : list) {\
+    for(DAbstractFileController *controller : list) {\
         Code\
     }
 
-QMultiHash<const HandlerType, AbstractFileController*> FileServices::m_controllerHash;
-QHash<const AbstractFileController*, HandlerType> FileServices::m_handlerHash;
-QMultiHash<const HandlerType, std::function<AbstractFileController*()>> FileServices::m_controllerCreatorHash;
+QMultiHash<const HandlerType, DAbstractFileController*> DFileService::m_controllerHash;
+QHash<const DAbstractFileController*, HandlerType> DFileService::m_handlerHash;
+QMultiHash<const HandlerType, std::function<DAbstractFileController*()>> DFileService::m_controllerCreatorHash;
 
-FileServices::FileServices(QObject *parent)
+DFileService::DFileService(QObject *parent)
     : QObject(parent)
 {
-    qRegisterMetaType<FMEvent>("FMEvent");
+    qRegisterMetaType<DFMEvent>("FMEvent");
     qRegisterMetaType<QDir::Filters>("QDir::Filters");
     qRegisterMetaType<QList<AbstractFileInfoPointer>>("QList<AbstractFileInfoPointer>");
     qRegisterMetaType<DUrl>("DUrl");
 }
 
-FileServices *FileServices::instance()
+DFileService *DFileService::instance()
 {
-    static FileServices services;
+    static DFileService services;
 
     return &services;
 }
 
-void FileServices::setFileUrlHandler(const QString &scheme, const QString &host,
-                                     AbstractFileController *controller)
+void DFileService::setFileUrlHandler(const QString &scheme, const QString &host,
+                                     DAbstractFileController *controller)
 {
     if(m_handlerHash.contains(controller))
         return;
@@ -73,47 +73,47 @@ void FileServices::setFileUrlHandler(const QString &scheme, const QString &host,
     m_handlerHash[controller] = type;
     m_controllerHash.insertMulti(type, controller);
 
-    connect(controller, &AbstractFileController::childrenAdded,
-            instance(), &FileServices::childrenAdded);
-    connect(controller, &AbstractFileController::childrenRemoved,
-            instance(), &FileServices::childrenRemoved);
-    connect(controller, &AbstractFileController::childrenUpdated,
-            instance(), &FileServices::childrenUpdated);
+    connect(controller, &DAbstractFileController::childrenAdded,
+            instance(), &DFileService::childrenAdded);
+    connect(controller, &DAbstractFileController::childrenRemoved,
+            instance(), &DFileService::childrenRemoved);
+    connect(controller, &DAbstractFileController::childrenUpdated,
+            instance(), &DFileService::childrenUpdated);
 }
 
-void FileServices::unsetFileUrlHandler(AbstractFileController *controller)
+void DFileService::unsetFileUrlHandler(DAbstractFileController *controller)
 {
     if(!m_handlerHash.contains(controller))
         return;
 
     m_controllerHash.remove(m_handlerHash.value(controller), controller);
 
-    disconnect(controller, &AbstractFileController::childrenAdded,
-            instance(), &FileServices::childrenAdded);
-    disconnect(controller, &AbstractFileController::childrenRemoved,
-            instance(), &FileServices::childrenRemoved);
-    disconnect(controller, &AbstractFileController::childrenUpdated,
-            instance(), &FileServices::childrenUpdated);
+    disconnect(controller, &DAbstractFileController::childrenAdded,
+            instance(), &DFileService::childrenAdded);
+    disconnect(controller, &DAbstractFileController::childrenRemoved,
+            instance(), &DFileService::childrenRemoved);
+    disconnect(controller, &DAbstractFileController::childrenUpdated,
+            instance(), &DFileService::childrenUpdated);
 }
 
-void FileServices::clearFileUrlHandler(const QString &scheme, const QString &host)
+void DFileService::clearFileUrlHandler(const QString &scheme, const QString &host)
 {
     const HandlerType handler(scheme, host);
 
-    for(const AbstractFileController *controller : m_controllerHash.values(handler)) {
-        disconnect(controller, &AbstractFileController::childrenAdded,
-                instance(), &FileServices::childrenAdded);
-        disconnect(controller, &AbstractFileController::childrenRemoved,
-                instance(), &FileServices::childrenRemoved);
-        disconnect(controller, &AbstractFileController::childrenUpdated,
-                instance(), &FileServices::childrenUpdated);
+    for(const DAbstractFileController *controller : m_controllerHash.values(handler)) {
+        disconnect(controller, &DAbstractFileController::childrenAdded,
+                instance(), &DFileService::childrenAdded);
+        disconnect(controller, &DAbstractFileController::childrenRemoved,
+                instance(), &DFileService::childrenRemoved);
+        disconnect(controller, &DAbstractFileController::childrenUpdated,
+                instance(), &DFileService::childrenUpdated);
     }
 
     m_controllerHash.remove(handler);
     m_controllerCreatorHash.remove(handler);
 }
 
-bool FileServices::openFile(const DUrl &fileUrl) const
+bool DFileService::openFile(const DUrl &fileUrl) const
 {
     TRAVERSE(fileUrl, {
                  bool ok = controller->openFile(fileUrl, accepted);
@@ -128,7 +128,7 @@ bool FileServices::openFile(const DUrl &fileUrl) const
             return false;
 }
 
-bool FileServices::compressFiles(const DUrlList &urlList) const
+bool DFileService::compressFiles(const DUrlList &urlList) const
 {
     if (urlList.isEmpty())
         return false;
@@ -144,7 +144,7 @@ bool FileServices::compressFiles(const DUrlList &urlList) const
 }
 
 
-bool FileServices::decompressFile(const DUrlList urllist) const{
+bool DFileService::decompressFile(const DUrlList urllist) const{
     TRAVERSE(urllist.at(0), {
                  bool ok = controller->decompressFile(urllist, accepted);
 
@@ -156,7 +156,7 @@ bool FileServices::decompressFile(const DUrlList urllist) const{
     return false;
 }
 
-bool FileServices::decompressFileHere(const DUrlList urllist) const{
+bool DFileService::decompressFileHere(const DUrlList urllist) const{
     TRAVERSE(urllist.at(0), {
                  bool ok = controller->decompressFileHere(urllist, accepted);
 
@@ -168,7 +168,7 @@ bool FileServices::decompressFileHere(const DUrlList urllist) const{
     return false;
 }
 
-bool FileServices::copyFiles(const DUrlList &urlList) const
+bool DFileService::copyFiles(const DUrlList &urlList) const
 {
     if(urlList.isEmpty())
         return false;
@@ -183,7 +183,7 @@ bool FileServices::copyFiles(const DUrlList &urlList) const
      return false;
 }
 
-bool FileServices::renameFile(const DUrl &oldUrl, const DUrl &newUrl, const FMEvent &event) const
+bool DFileService::renameFile(const DUrl &oldUrl, const DUrl &newUrl, const DFMEvent &event) const
 {
     const AbstractFileInfoPointer &f = createFileInfo(newUrl);
 
@@ -193,7 +193,7 @@ bool FileServices::renameFile(const DUrl &oldUrl, const DUrl &newUrl, const FMEv
     }
 
     if (renameFile(oldUrl, newUrl)) {
-        FMEvent e = event;
+        DFMEvent e = event;
 
         e << DUrlList() << newUrl;
 
@@ -207,7 +207,7 @@ bool FileServices::renameFile(const DUrl &oldUrl, const DUrl &newUrl, const FMEv
     return false;
 }
 
-bool FileServices::renameFile(const DUrl &oldUrl, const DUrl &newUrl) const
+bool DFileService::renameFile(const DUrl &oldUrl, const DUrl &newUrl) const
 {
     TRAVERSE(oldUrl, {
                  bool ok = controller->renameFile(oldUrl, newUrl, accepted);
@@ -219,7 +219,7 @@ bool FileServices::renameFile(const DUrl &oldUrl, const DUrl &newUrl) const
     return false;
 }
 
-void FileServices::deleteFiles(const DUrlList &urlList, const FMEvent &event) const
+void DFileService::deleteFiles(const DUrlList &urlList, const DFMEvent &event) const
 {
     if (urlList.isEmpty())
         return;
@@ -233,7 +233,7 @@ void FileServices::deleteFiles(const DUrlList &urlList, const FMEvent &event) co
         int result = dialogManager->showDeleteFilesClearTrashDialog(event);
 
         if (result == 1) {
-            QtConcurrent::run(QThreadPool::globalInstance(), this, &FileServices::deleteFilesSync, urlList, event);
+            QtConcurrent::run(QThreadPool::globalInstance(), this, &DFileService::deleteFilesSync, urlList, event);
         }
 
         return;
@@ -242,7 +242,7 @@ void FileServices::deleteFiles(const DUrlList &urlList, const FMEvent &event) co
     deleteFilesSync(urlList, event);
 }
 
-bool FileServices::deleteFilesSync(const DUrlList &urlList, const FMEvent &event) const
+bool DFileService::deleteFilesSync(const DUrlList &urlList, const DFMEvent &event) const
 {
     if (urlList.isEmpty())
         return false;
@@ -257,7 +257,7 @@ bool FileServices::deleteFilesSync(const DUrlList &urlList, const FMEvent &event
     return false;
 }
 
-void FileServices::moveToTrash(const DUrlList &urlList) const
+void DFileService::moveToTrash(const DUrlList &urlList) const
 {
     if (urlList.isEmpty())
         return;
@@ -268,7 +268,7 @@ void FileServices::moveToTrash(const DUrlList &urlList) const
     }
 
     if (QThread::currentThread() == qApp->thread()) {
-        QtConcurrent::run(QThreadPool::globalInstance(), this, &FileServices::moveToTrashSync, urlList);
+        QtConcurrent::run(QThreadPool::globalInstance(), this, &DFileService::moveToTrashSync, urlList);
 
         return;
     }
@@ -276,7 +276,7 @@ void FileServices::moveToTrash(const DUrlList &urlList) const
     moveToTrashSync(urlList);
 }
 
-DUrlList FileServices::moveToTrashSync(const DUrlList &urlList) const
+DUrlList DFileService::moveToTrashSync(const DUrlList &urlList) const
 {
     if (urlList.isEmpty())
         return urlList;
@@ -291,7 +291,7 @@ DUrlList FileServices::moveToTrashSync(const DUrlList &urlList) const
     return DUrlList();
 }
 
-bool FileServices::cutFiles(const DUrlList &urlList) const
+bool DFileService::cutFiles(const DUrlList &urlList) const
 {
     if(urlList.isEmpty())
         return false;
@@ -306,21 +306,21 @@ bool FileServices::cutFiles(const DUrlList &urlList) const
     return false;
 }
 
-void FileServices::pasteFile(const FMEvent &event) const
+void DFileService::pasteFile(const DFMEvent &event) const
 {
     DFMGlobal::ClipboardAction action = DFMGlobal::instance()->clipboardAction();
 
     if (action == DFMGlobal::UnknowAction)
         return;
 
-    AbstractFileController::PasteType type = (action == DFMGlobal::CutAction) ? AbstractFileController::CutType
-                                                                              : AbstractFileController::CopyType;
+    DAbstractFileController::PasteType type = (action == DFMGlobal::CutAction) ? DAbstractFileController::CutType
+                                                                              : DAbstractFileController::CopyType;
 
     pasteFile(type, DUrl::fromQUrlList(DFMGlobal::instance()->clipboardFileUrlList()), event);
 }
 
-void FileServices::pasteFile(AbstractFileController::PasteType type,
-                             const DUrlList &urlList, const FMEvent &event) const
+void DFileService::pasteFile(DAbstractFileController::PasteType type,
+                             const DUrlList &urlList, const DFMEvent &event) const
 {
     if(QThreadPool::globalInstance()->activeThreadCount() >= MAX_THREAD_COUNT) {
         qDebug() << "Beyond the maximum number of threads!";
@@ -328,7 +328,7 @@ void FileServices::pasteFile(AbstractFileController::PasteType type,
     }
 
     if(QThread::currentThread() == qApp->thread()) {
-        QtConcurrent::run(QThreadPool::globalInstance(), this, &FileServices::pasteFile, type, urlList, event);
+        QtConcurrent::run(QThreadPool::globalInstance(), this, &DFileService::pasteFile, type, urlList, event);
 
         return;
     }
@@ -337,19 +337,19 @@ void FileServices::pasteFile(AbstractFileController::PasteType type,
                  DUrlList list = controller->pasteFile(type, urlList, event, accepted);
 
                  if(accepted) {
-                     FMEvent e = event;
+                     DFMEvent e = event;
 
                      e << list;
 
-                     metaObject()->invokeMethod(const_cast<FileServices*>(this), "laterRequestSelectFiles",
-                                                Qt::QueuedConnection, Q_ARG(FMEvent, e));
+                     metaObject()->invokeMethod(const_cast<DFileService*>(this), "laterRequestSelectFiles",
+                                                Qt::QueuedConnection, Q_ARG(DFMEvent, e));
 
                      return;
                  }
              })
 }
 
-void FileServices::restoreFile(const DUrl &srcUrl, const DUrl &tarUrl, const FMEvent &event) const
+void DFileService::restoreFile(const DUrl &srcUrl, const DUrl &tarUrl, const DFMEvent &event) const
 {
     if(QThreadPool::globalInstance()->activeThreadCount() >= MAX_THREAD_COUNT) {
         qDebug() << "Beyond the maximum number of threads!";
@@ -357,7 +357,7 @@ void FileServices::restoreFile(const DUrl &srcUrl, const DUrl &tarUrl, const FME
     }
 
     if(QThread::currentThread() == qApp->thread()) {
-        QtConcurrent::run(QThreadPool::globalInstance(), this, &FileServices::restoreFile, srcUrl, tarUrl, event);
+        QtConcurrent::run(QThreadPool::globalInstance(), this, &DFileService::restoreFile, srcUrl, tarUrl, event);
 
         return;
     }
@@ -369,7 +369,7 @@ void FileServices::restoreFile(const DUrl &srcUrl, const DUrl &tarUrl, const FME
              })
 }
 
-bool FileServices::newFolder(const FMEvent &event) const
+bool DFileService::newFolder(const DFMEvent &event) const
 {
     TRAVERSE(event.fileUrl(), {
                  bool ok = controller->newFolder(event, accepted);
@@ -381,7 +381,7 @@ bool FileServices::newFolder(const FMEvent &event) const
     return false;
 }
 
-bool FileServices::newFile(const DUrl &toUrl) const
+bool DFileService::newFile(const DUrl &toUrl) const
 {
     TRAVERSE(toUrl, {
                  bool ok = controller->newFile(toUrl, accepted);
@@ -393,7 +393,7 @@ bool FileServices::newFile(const DUrl &toUrl) const
     return false;
 }
 
-bool FileServices::newDocument(const DUrl &toUrl) const
+bool DFileService::newDocument(const DUrl &toUrl) const
 {
     TRAVERSE(toUrl, {
                  bool ok = controller->newDocument(toUrl, accepted);
@@ -405,7 +405,7 @@ bool FileServices::newDocument(const DUrl &toUrl) const
     return false;
 }
 
-bool FileServices::addUrlMonitor(const DUrl &fileUrl) const
+bool DFileService::addUrlMonitor(const DUrl &fileUrl) const
 {
     TRAVERSE(fileUrl, {
                  bool ok = controller->addUrlMonitor(fileUrl, accepted);
@@ -417,7 +417,7 @@ bool FileServices::addUrlMonitor(const DUrl &fileUrl) const
     return false;
 }
 
-bool FileServices::removeUrlMonitor(const DUrl &fileUrl) const
+bool DFileService::removeUrlMonitor(const DUrl &fileUrl) const
 {
     TRAVERSE(fileUrl, {
                  bool ok = controller->removeUrlMonitor(fileUrl, accepted);
@@ -429,7 +429,7 @@ bool FileServices::removeUrlMonitor(const DUrl &fileUrl) const
     return false;
 }
 
-bool FileServices::openFileLocation(const DUrl &fileUrl) const
+bool DFileService::openFileLocation(const DUrl &fileUrl) const
 {
     TRAVERSE(fileUrl, {
                  bool ok = controller->openFileLocation(fileUrl, accepted);
@@ -441,7 +441,7 @@ bool FileServices::openFileLocation(const DUrl &fileUrl) const
     return false;
 }
 
-bool FileServices::createSymlink(const DUrl &fileUrl, const FMEvent &event) const
+bool DFileService::createSymlink(const DUrl &fileUrl, const DFMEvent &event) const
 {
 //    QString linkName = getSymlinkFileName(fileUrl);
 //    QString linkPath = QFileDialog::getSaveFileName(WindowManager::getWindowById(event.windowId()),
@@ -456,7 +456,7 @@ bool FileServices::createSymlink(const DUrl &fileUrl, const FMEvent &event) cons
     return true;
 }
 
-bool FileServices::createSymlink(const DUrl &fileUrl, const DUrl &linkToUrl) const
+bool DFileService::createSymlink(const DUrl &fileUrl, const DUrl &linkToUrl) const
 {
     TRAVERSE(fileUrl, {
                  bool ok = controller->createSymlink(fileUrl, linkToUrl, accepted);
@@ -468,7 +468,7 @@ bool FileServices::createSymlink(const DUrl &fileUrl, const DUrl &linkToUrl) con
     return false;
 }
 
-bool FileServices::sendToDesktop(const FMEvent &event) const
+bool DFileService::sendToDesktop(const DFMEvent &event) const
 {
     const DUrlList& urls = event.fileUrlList();
     FileUtils::sendToDesktop(urls);
@@ -477,7 +477,7 @@ bool FileServices::sendToDesktop(const FMEvent &event) const
     return true;
 }
 
-bool FileServices::openInTerminal(const DUrl &fileUrl) const
+bool DFileService::openInTerminal(const DUrl &fileUrl) const
 {
     TRAVERSE(fileUrl, {
                  bool ok = controller->openInTerminal(fileUrl, accepted);
@@ -489,12 +489,12 @@ bool FileServices::openInTerminal(const DUrl &fileUrl) const
     return false;
 }
 
-void FileServices::openNewWindow(const DUrl &fileUrl) const
+void DFileService::openNewWindow(const DUrl &fileUrl) const
 {
     emit fileSignalManager->requestOpenNewWindowByUrl(fileUrl, true);
 }
 
-const AbstractFileInfoPointer FileServices::createFileInfo(const DUrl &fileUrl) const
+const AbstractFileInfoPointer DFileService::createFileInfo(const DUrl &fileUrl) const
 {
     TRAVERSE(fileUrl, {
                  const AbstractFileInfoPointer &info = controller->createFileInfo(fileUrl, accepted);
@@ -506,7 +506,7 @@ const AbstractFileInfoPointer FileServices::createFileInfo(const DUrl &fileUrl) 
     return AbstractFileInfoPointer();
 }
 
-const DDirIteratorPointer FileServices::createDirIterator(const DUrl &fileUrl, const QStringList &nameFilters,
+const DDirIteratorPointer DFileService::createDirIterator(const DUrl &fileUrl, const QStringList &nameFilters,
                                                           QDir::Filters filters, QDirIterator::IteratorFlags flags) const
 {
     TRAVERSE(fileUrl, {
@@ -519,7 +519,7 @@ const DDirIteratorPointer FileServices::createDirIterator(const DUrl &fileUrl, c
     return DDirIteratorPointer();
 }
 
-const QList<AbstractFileInfoPointer> FileServices::getChildren(const DUrl &fileUrl, const QStringList &nameFilters,
+const QList<AbstractFileInfoPointer> DFileService::getChildren(const DUrl &fileUrl, const QStringList &nameFilters,
                                                                QDir::Filters filters, QDirIterator::IteratorFlags flags, bool *ok)
 {
     TRAVERSE(fileUrl, {
@@ -538,26 +538,26 @@ const QList<AbstractFileInfoPointer> FileServices::getChildren(const DUrl &fileU
     return QList<AbstractFileInfoPointer>();
 }
 
-JobController *FileServices::getChildrenJob(const DUrl &fileUrl, const QStringList &nameFilters,
+JobController *DFileService::getChildrenJob(const DUrl &fileUrl, const QStringList &nameFilters,
                                             QDir::Filters filters, QDirIterator::IteratorFlags flags) const
 {
     const DDirIteratorPointer &iterator = createDirIterator(fileUrl, nameFilters, filters, flags);
 
     if (iterator)
-        return new JobController(iterator, const_cast<FileServices*>(this));
+        return new JobController(iterator, const_cast<DFileService*>(this));
 
-    return new JobController(fileUrl, nameFilters, filters, const_cast<FileServices*>(this));
+    return new JobController(fileUrl, nameFilters, filters, const_cast<DFileService*>(this));
 }
 
-QList<AbstractFileController*> FileServices::getHandlerTypeByUrl(const DUrl &fileUrl,
+QList<DAbstractFileController*> DFileService::getHandlerTypeByUrl(const DUrl &fileUrl,
                                                                  bool ignoreHost, bool ignoreScheme)
 {
     HandlerType handlerType(ignoreScheme ? "" : fileUrl.scheme(), ignoreHost ? "" : fileUrl.path());
     if(m_controllerCreatorHash.contains(handlerType)) {
-        QList<AbstractFileController*> list = m_controllerHash.values(handlerType);
+        QList<DAbstractFileController*> list = m_controllerHash.values(handlerType);
 
-        for(const std::function<AbstractFileController*()> &creator : m_controllerCreatorHash.values(handlerType)) {
-            AbstractFileController *controller = creator();
+        for(const std::function<DAbstractFileController*()> &creator : m_controllerCreatorHash.values(handlerType)) {
+            DAbstractFileController *controller = creator();
 
             setFileUrlHandler(handlerType.first, handlerType.second, controller);
 
@@ -572,7 +572,7 @@ QList<AbstractFileController*> FileServices::getHandlerTypeByUrl(const DUrl &fil
     }
 }
 
-QString FileServices::getSymlinkFileName(const DUrl &fileUrl)
+QString DFileService::getSymlinkFileName(const DUrl &fileUrl)
 {
     const AbstractFileInfoPointer &fileInfo = instance()->createFileInfo(fileUrl);
 
@@ -592,7 +592,7 @@ QString FileServices::getSymlinkFileName(const DUrl &fileUrl)
     return fileName;
 }
 
-void FileServices::openUrl(const FMEvent &event) const
+void DFileService::openUrl(const DFMEvent &event) const
 {
     const AbstractFileInfoPointer &fileInfo = createFileInfo(event.fileUrl());
 
@@ -605,7 +605,7 @@ void FileServices::openUrl(const FMEvent &event) const
     }
 }
 
-void FileServices::laterRequestSelectFiles(const FMEvent &event) const
+void DFileService::laterRequestSelectFiles(const DFMEvent &event) const
 {
     FileSignalManager *manager = fileSignalManager;
 

@@ -7,7 +7,7 @@
 #include "controllers/bookmarkmanager.h"
 
 #include "app/define.h"
-#include "fmevent.h"
+#include "dfmevent.h"
 #include "app/filesignalmanager.h"
 #include "usershare/usersharemanager.h"
 
@@ -180,14 +180,14 @@ void DLeftSideBar::resizeEvent(QResizeEvent *e)
     QFrame::resizeEvent(e);
 }
 
-void DLeftSideBar::handleLocationChanged(const FMEvent &e)
+void DLeftSideBar::handleLocationChanged(const DFMEvent &e)
 {
     if(e.windowId() != WindowManager::getWindowId(this))
         return;
-    FMEvent event;
+    DFMEvent event;
 
     event << e.fileUrl();
-    event << FMEvent::LeftSideBar;
+    event << DFMEvent::LeftSideBar;
     event << WindowManager::getWindowId(this);
     event.setBookmarkIndex(e.bookmarkIndex());
 

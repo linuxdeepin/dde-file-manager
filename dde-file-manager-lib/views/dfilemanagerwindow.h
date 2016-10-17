@@ -31,7 +31,7 @@ class QStackedLayout;
 class QPushButton;
 
 class DStatusBar;
-class FMEvent;
+class DFMEvent;
 class ComputerView;
 class TabBar;
 
@@ -89,18 +89,18 @@ public slots:
     void setFileViewSortRole(int sortRole);
     void setIconView();
     void setListView();
-    void preHandleCd(const FMEvent& event);
-    void cd(const FMEvent& event);
-    void showComputerView(const FMEvent& event);
-    void openNewTab(const FMEvent& event);
-    void createNewView(const FMEvent& event);
+    void preHandleCd(const DFMEvent& event);
+    void cd(const DFMEvent& event);
+    void showComputerView(const DFMEvent& event);
+    void openNewTab(const DFMEvent& event);
+    void createNewView(const DFMEvent& event);
     void setFileView(DFileView *view);
     void switchToView(const int index);
     void onFileViewCurrentUrlChanged(const DUrl &url);
     void onTabAddableChanged(bool addable);
     void onCurrentTabChanged(int tabIndex);
     void onCurrentTabClosed(const int index, const bool& remainState);
-    void closeCurrentTab(const FMEvent& event);
+    void closeCurrentTab(const DFMEvent& event);
     QString getDisplayNameByDiskUrl(const DUrl& url);
 
 protected:

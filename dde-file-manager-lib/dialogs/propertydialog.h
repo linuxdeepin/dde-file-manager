@@ -2,7 +2,7 @@
 #define PROPERTYDIALOG_H
 
 #include "basedialog.h"
-#include "abstractfileinfo.h"
+#include "dabstractfileinfo.h"
 #include <QLabel>
 #include <QCloseEvent>
 #include <QTextEdit>
@@ -21,7 +21,7 @@ DWIDGET_BEGIN_NAMESPACE
 class DExpandGroup;
 DWIDGET_END_NAMESPACE
 
-class AbstractFileInfo;
+class DAbstractFileInfo;
 class UDiskDeviceInfo;
 class DUrl;
 class ShareInfoFrame;

@@ -7,19 +7,19 @@
 #include "widgets/singleton.h"
 
 RecentFileInfo::RecentFileInfo()
-    : AbstractFileInfo()
+    : DAbstractFileInfo()
 {
 
 }
 
 RecentFileInfo::RecentFileInfo(const DUrl &url)
-    : AbstractFileInfo(url)
+    : DAbstractFileInfo(url)
 {
 
 }
 
 RecentFileInfo::RecentFileInfo(const QString &url)
-    : AbstractFileInfo(url)
+    : DAbstractFileInfo(url)
 {
 
 }
@@ -39,7 +39,7 @@ bool RecentFileInfo::isReadable() const
     if(filePath() == "/")
         return true;
 
-    return AbstractFileInfo::isReadable();
+    return DAbstractFileInfo::isReadable();
 }
 
 bool RecentFileInfo::isDir() const
@@ -52,7 +52,7 @@ QIcon RecentFileInfo::fileIcon() const
     return fileIconProvider->getFileIcon(fileUrl(), mimeTypeName());
 }
 
-QVector<MenuAction> RecentFileInfo::menuActionList(AbstractFileInfo::MenuType type) const
+QVector<MenuAction> RecentFileInfo::menuActionList(DAbstractFileInfo::MenuType type) const
 {
     QVector<MenuAction> actionKeys;
 

@@ -40,7 +40,7 @@ DesktopFileInfo::~DesktopFileInfo()
 
 void DesktopFileInfo::setUrl(const DUrl &fileUrl)
 {
-    AbstractFileInfo::setUrl(fileUrl);
+    DAbstractFileInfo::setUrl(fileUrl);
 
     init(fileUrl);
 }

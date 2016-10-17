@@ -1,10 +1,10 @@
 #ifndef TRASHFILEINFO_H
 #define TRASHFILEINFO_H
 
-#include "abstractfileinfo.h"
+#include "dabstractfileinfo.h"
 
-class FMEvent;
-class TrashFileInfo : public AbstractFileInfo
+class DFMEvent;
+class TrashFileInfo : public DAbstractFileInfo
 {
 public:
     TrashFileInfo();
@@ -44,7 +44,7 @@ public:
     Qt::DropActions supportedDragActions() const Q_DECL_OVERRIDE;
     Qt::DropActions supportedDropActions() const Q_DECL_OVERRIDE;
 
-    bool restore(const FMEvent &event) const;
+    bool restore(const DFMEvent &event) const;
     QDateTime deletionDate() const;
     QString sourceFilePath() const;
 

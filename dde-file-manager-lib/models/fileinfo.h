@@ -8,9 +8,9 @@
 
 #include "debugobejct.h"
 
-#include "abstractfileinfo.h"
+#include "dabstractfileinfo.h"
 
-class FileInfo : public AbstractFileInfo
+class FileInfo : public DAbstractFileInfo
 {
 public:
     FileInfo();
@@ -37,7 +37,7 @@ public:
     QString displayName() const Q_DECL_OVERRIDE;
 
 private:
-    using AbstractFileInfo::setUrl;
+    using DAbstractFileInfo::setUrl;
 
     static QMap<DUrl, bool> canRenameCacheMap;
 

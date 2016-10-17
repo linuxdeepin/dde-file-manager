@@ -7,15 +7,15 @@
 #include <QFuture>
 
 #include "durl.h"
-#include "abstractfileinfo.h"
+#include "dabstractfileinfo.h"
 
 QT_BEGIN_NAMESPACE
 class QEventLoop;
 QT_END_NAMESPACE
 
 class FileSystemNode;
-class AbstractFileInfo;
-class FMEvent;
+class DAbstractFileInfo;
+class DFMEvent;
 class JobController;
 class DFileViewHelper;
 

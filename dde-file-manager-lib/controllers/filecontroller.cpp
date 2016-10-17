@@ -1,12 +1,12 @@
 #include "filecontroller.h"
-#include "fileservices.h"
+#include "dfileservices.h"
 #include "fileoperations/filejob.h"
 
 #include "models/fileinfo.h"
 #include "models/desktopfileinfo.h"
 
 #include "app/define.h"
-#include "fmevent.h"
+#include "dfmevent.h"
 #include "app/filesignalmanager.h"
 
 #include "shutil/fileutils.h"
@@ -49,7 +49,7 @@ private:
 };
 
 FileController::FileController(QObject *parent)
-    : AbstractFileController(parent)
+    : DAbstractFileController(parent)
     , fileMonitor(new FileMonitor(this))
 {
     qRegisterMetaType<QList<FileInfo*>>("QList<FileInfo*>");
@@ -191,7 +191,7 @@ bool FileController::renameFile(const DUrl &oldUrl, const DUrl &newUrl, bool &ac
  *
  * Permanently delete file or directory with the given url.
  */
-bool FileController::deleteFiles(const DUrlList &urlList, const FMEvent &event, bool &accepted) const
+bool FileController::deleteFiles(const DUrlList &urlList, const DFMEvent &event, bool &accepted) const
 {
     Q_UNUSED(event);
     accepted = true;
@@ -236,7 +236,7 @@ bool FileController::cutFiles(const DUrlList &urlList, bool &accepted) const
 }
 
 DUrlList FileController::pasteFile(PasteType type, const DUrlList &urlList,
-                                   const FMEvent &event, bool &accepted) const
+                                   const DFMEvent &event, bool &accepted) const
 {
     accepted = true;
 
@@ -275,7 +275,7 @@ DUrlList FileController::pasteFile(PasteType type, const DUrlList &urlList,
 }
 
 
-bool FileController::restoreFile(const DUrl &srcUrl, const DUrl &tarUrl, const FMEvent &event, bool &accepted) const
+bool FileController::restoreFile(const DUrl &srcUrl, const DUrl &tarUrl, const DFMEvent &event, bool &accepted) const
 {
     Q_UNUSED(event)
 
@@ -293,7 +293,7 @@ bool FileController::restoreFile(const DUrl &srcUrl, const DUrl &tarUrl, const F
 }
 
 
-bool FileController::newFolder(const FMEvent &event, bool &accepted) const
+bool FileController::newFolder(const DFMEvent &event, bool &accepted) const
 {
     accepted = true;
 
@@ -402,7 +402,7 @@ void FileController::onFileCreated(const QString &filePath)
     if (AppController::selectionAndRenameFile.first == url) {
         int windowId = AppController::selectionAndRenameFile.second;
         AppController::selectionAndRenameFile = qMakePair(DUrl(), -1);
-        FMEvent event;
+        DFMEvent event;
         event << windowId;
         event << DUrlList() << url;
         emit fileSignalManager->requestSelectRenameFile(event);

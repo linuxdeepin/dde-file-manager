@@ -7,13 +7,13 @@ BookMark::BookMark()
 }
 
 BookMark::BookMark(const DUrl &url)
-    : AbstractFileInfo(DUrl::fromBookMarkFile("/"))
+    : DAbstractFileInfo(DUrl::fromBookMarkFile("/"))
 {
     data->url.setFragment(url.toLocalFile());
 }
 
 BookMark::BookMark(QDateTime time, const QString &name, const DUrl &url)
-    :AbstractFileInfo(url)
+    :DAbstractFileInfo(url)
 {
     m_time = time;
     m_name = name;

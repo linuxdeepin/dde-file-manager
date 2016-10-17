@@ -1,7 +1,7 @@
 #ifndef DDIRITERATOR_H
 #define DDIRITERATOR_H
 
-#include "abstractfileinfo.h"
+#include "dabstractfileinfo.h"
 
 #include <QSharedData>
 

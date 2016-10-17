@@ -20,10 +20,10 @@ DWIDGET_USE_NAMESPACE
 
 class DUrl;
 class FileController;
-class FileMenuManager;
+class DFileMenuManager;
 class DFileSystemModel;
 class DStyledItemDelegate;
-class AbstractFileInfo;
+class DAbstractFileInfo;
 class DStatusBar;
 class FileViewHelper;
 class DFileViewPrivate;

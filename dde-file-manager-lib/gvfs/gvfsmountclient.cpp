@@ -14,7 +14,7 @@
 
 bool GvfsMountClient::AskingPassword = false;
 QJsonObject GvfsMountClient::SMBLoginObj = {};
-FMEvent GvfsMountClient::MountEvent = FMEvent();
+DFMEvent GvfsMountClient::MountEvent = DFMEvent();
 
 MountAskPasswordDialog* GvfsMountClient::AskPasswordDialog = NULL;
 
@@ -194,7 +194,7 @@ void GvfsMountClient::mountByPath(const QString &path)
     mount(file);
 }
 
-void GvfsMountClient::mountByEvent(const FMEvent &event)
+void GvfsMountClient::mountByEvent(const DFMEvent &event)
 {
     qDebug() << event;
     QString path = event.fileUrl().toString();

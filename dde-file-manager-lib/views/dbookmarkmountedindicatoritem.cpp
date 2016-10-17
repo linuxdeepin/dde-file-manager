@@ -6,7 +6,7 @@
 
 #include "widgets/singleton.h"
 #include "app/filesignalmanager.h"
-#include "fmevent.h"
+#include "dfmevent.h"
 #include "windowmanager.h"
 #include <QDebug>
 
@@ -64,7 +64,7 @@ void DBookmarkMountedIndicatorItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *
 
 
     if (WindowManager::getUrlByWindowId(windowId()) == m_parentItem->getUrl()){
-        FMEvent fmEvent;
+        DFMEvent fmEvent;
         fmEvent << windowId();
         fmEvent << DUrl::fromLocalFile(QDir::homePath());
         fileSignalManager->requestChangeCurrentUrl(fmEvent);

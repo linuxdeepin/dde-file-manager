@@ -7,7 +7,7 @@
 
 #include "durl.h"
 
-class FMEvent
+class DFMEvent
 {
 public:
     enum EventSource {
@@ -30,39 +30,39 @@ public:
         DUrl fileUrl;
         DUrlList fileUrlList;
 
-        friend class FMEvent;
+        friend class DFMEvent;
         int bookMarkIndex = -1;
     };
 
-    explicit FMEvent(int wId = -1, EventSource source = Unknow, const DUrl &fileUrl = DUrl());
+    explicit DFMEvent(int wId = -1, EventSource source = Unknow, const DUrl &fileUrl = DUrl());
 
-    inline FMEvent(const FMEvent &other)
+    inline DFMEvent(const DFMEvent &other)
         : data(other.data)
     {}
 
-    inline FMEvent(FMEvent &&other) Q_DECL_NOEXCEPT
+    inline DFMEvent(DFMEvent &&other) Q_DECL_NOEXCEPT
     {qSwap(data, other.data);}
 
-    inline FMEvent &operator =(const FMEvent &other)
+    inline DFMEvent &operator =(const DFMEvent &other)
     {data = other.data; return *this;}
 
-    inline FMEvent &operator =(FMEvent &&other) Q_DECL_NOEXCEPT
+    inline DFMEvent &operator =(DFMEvent &&other) Q_DECL_NOEXCEPT
     {qSwap(data, other.data); return *this;}
 
-    inline FMEvent &operator <<(EventSource source)
+    inline DFMEvent &operator <<(EventSource source)
     {
         data->parentSource = data->source;
         data->source = source;
         return *this;
     }
 
-    inline FMEvent &operator <<(int wId)
+    inline DFMEvent &operator <<(int wId)
     {data->windowId = wId; return *this;}
 
-    inline FMEvent &operator <<(const DUrl &fileUrl)
+    inline DFMEvent &operator <<(const DUrl &fileUrl)
     {data->fileUrl = fileUrl; return *this;}
 
-    inline FMEvent &operator <<(const DUrlList &list)
+    inline DFMEvent &operator <<(const DUrlList &list)
     {data->fileUrlList = list; return *this;}
 
     inline int windowId() const
@@ -91,7 +91,7 @@ private:
 };
 
 QT_BEGIN_NAMESPACE
-QDebug operator<<(QDebug deg, const FMEvent &info);
+QDebug operator<<(QDebug deg, const DFMEvent &info);
 QT_END_NAMESPACE
 
 #endif // FMEVENT_H

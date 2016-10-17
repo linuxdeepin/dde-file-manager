@@ -12,7 +12,7 @@ class DStateButton;
 class DSearchBar;
 class DTabBar;
 class DCrumbWidget;
-class FMEvent;
+class DFMEvent;
 class HistoryStack;
 class DHoverButton;
 
@@ -49,17 +49,17 @@ public slots:
     void searchBarActivated();
     void searchBarDeactivated();
     void searchBarTextEntered();
-    void crumbSelected(const FMEvent &e);
-    void crumbChanged(const FMEvent &event);
+    void crumbSelected(const DFMEvent &e);
+    void crumbChanged(const DFMEvent &event);
     void searchBarChanged(QString path);
     void backButtonClicked();
     void forwardButtonClicked();
     void checkViewModeButton(DFileView::ViewMode mode);
 
-    void handleHotkeyBack(const FMEvent &event);
-    void handleHotkeyForward(const FMEvent &event);
-    void handleHotkeyCtrlF(const FMEvent &event);
-    void handleHotkeyCtrlL(const FMEvent &event);
+    void handleHotkeyBack(const DFMEvent &event);
+    void handleHotkeyForward(const DFMEvent &event);
+    void handleHotkeyCtrlF(const DFMEvent &event);
+    void handleHotkeyCtrlL(const DFMEvent &event);
 
     void setViewModeButtonVisible(bool isVisible);
     void moveNavStacks(int from, int to);

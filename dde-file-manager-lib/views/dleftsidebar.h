@@ -23,7 +23,7 @@ class BMListWidget;
 class DBookmarkItem;
 class DBookmarkScene;
 class DBookmarkItemGroup;
-class FMEvent;
+class DFMEvent;
 class DFileView;
 class DToolBar;
 
@@ -53,7 +53,7 @@ protected:
 signals:
     void moveSplitter(int pos, int index);
 public slots:
-    void handleLocationChanged(const FMEvent &e);
+    void handleLocationChanged(const DFMEvent &e);
     void navSwitched();
     void toTightNav();
     void toNormalNav();
