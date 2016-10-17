@@ -14,6 +14,8 @@
 #include <QMetaEnum>
 #include <QDebug>
 
+#define CLASS_NAME(c) #c
+
 namespace DFileMenuData {
 static QMap<MenuAction, QString> actionKeys;
 static QMap<MenuAction, DAction*> actions;
@@ -358,7 +360,7 @@ void DFileMenuManager::actionTriggered(DAction *action)
         QMetaEnum metaEnum = QMetaEnum::fromType<MenuAction>();
         QString key = metaEnum.valueToKey(type);
         QString methodKey = QString("action%1").arg(key);
-        QString methodSignature = QString("action%1(FMEvent)").arg(key);
+        QString methodSignature = QString("action%1(" CLASS_NAME(DFMEvent) ")").arg(key);
 
         const QMetaObject* metaObject = appController->metaObject();
 //        QStringList methods;
