@@ -558,11 +558,13 @@ void TabBar::removeTab(const int index, const bool &remainState)
     if(m_TabCloseButton->closingIndex() <=count()-1 &&m_TabCloseButton->closingIndex()>=0){
         m_lastDeleteState = remainState;
     }
+    else
+        m_lastAddTabState = false;
+
     if(index<count())
         setCurrentIndex(index);
     else
         setCurrentIndex(count()-1);
-    updateScreen();
 }
 
 int TabBar::currentIndex() const
@@ -650,10 +652,14 @@ void TabBar:: updateScreen()
 
             connect(animation,&QPropertyAnimation::finished,[=]{
                 animation->deleteLater();
-                if((m_TabCloseButton->closingIndex()>=count()||m_TabCloseButton->closingIndex()<0)&&m_lastDeleteState){
+                if((m_TabCloseButton->closingIndex()>=count()||m_TabCloseButton->closingIndex()<0)
+                        &&m_lastDeleteState){
                     m_TabCloseButton->hide();
                     m_lastDeleteState = false;
                     updateScreen();
+                }
+                if(m_TabCloseButton->closingIndex() == counter){
+                    m_TabCloseButton->setPos(tab->x()+tab->width()-26,0);
                 }
             });
         }
@@ -661,6 +667,7 @@ void TabBar:: updateScreen()
             tab->setGeometry(rect);
         counter ++;
     }
+
     updateSceneRect(m_scene->sceneRect());
 }
 
