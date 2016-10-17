@@ -103,13 +103,8 @@ DFileView::DFileView(QWidget *parent)
     D_THEME_INIT_WIDGET(DFileView);
     D_D(DFileView);
 
-    d->displayAsActionGroup = new QActionGroup(this);
-    d->sortByActionGroup = new QActionGroup(this);
-    d->openWithActionGroup = new QActionGroup(this);
-    d->fileViewHelper = new FileViewHelper(this);
-
-    initDelegate();
     initUI();
+    initDelegate();
     initModel();
     initConnects();
 }
@@ -145,6 +140,11 @@ void DFileView::initUI()
 
     DListView::setSelectionRectVisible(false);
 
+    d->displayAsActionGroup = new QActionGroup(this);
+    d->sortByActionGroup = new QActionGroup(this);
+    d->openWithActionGroup = new QActionGroup(this);
+    d->fileViewHelper = new FileViewHelper(this);
+
     d->selectionRectWidget = new QWidget(this);
     d->selectionRectWidget->hide();
     d->selectionRectWidget->resize(0, 0);
@@ -156,9 +156,6 @@ void DFileView::initUI()
     d->scalingSlider = d->statusBar->scalingSlider();
     d->scalingSlider->setPageStep(1);
     d->scalingSlider->setTickInterval(1);
-    d->scalingSlider->setMinimum(itemDelegate()->minimumIconSizeLevel());
-    d->scalingSlider->setMaximum(itemDelegate()->maximumIconSizeLevel());
-    d->scalingSlider->setValue(itemDelegate()->iconSizeLevel());
 
     addFooterWidget(d->statusBar);
 }
@@ -219,6 +216,10 @@ void DFileView::setItemDelegate(DStyledItemDelegate *delegate)
 
     connect(delegate, &DStyledItemDelegate::commitData, this, &DFileView::handleCommitData);
     connect(d->scalingSlider, &DSlider::valueChanged, delegate, &DStyledItemDelegate::setIconSizeByIconSizeLevel);
+
+    d->scalingSlider->setMinimum(delegate->minimumIconSizeLevel());
+    d->scalingSlider->setMaximum(delegate->maximumIconSizeLevel());
+    d->scalingSlider->setValue(delegate->iconSizeLevel());
 }
 
 DStatusBar *DFileView::statusBar() const
@@ -385,7 +386,7 @@ QModelIndex DFileView::indexAt(const QPoint &point) const
 
             QWidget *widget = indexWidget(index);
 
-            if (widget && widget->isVisible() && widget->geometry().contains(point)) {
+            if (widget->isVisible() && widget->geometry().contains(point)) {
                 return index;
             }
         }
@@ -1480,7 +1481,7 @@ bool DFileView::setCurrentUrl(const DUrl &url)
         } else {
             switchViewMode(d->defaultViewMode);
         }
-    } 
+    }
     emit currentUrlChanged(fileUrl);
 
     if (focusWidget() && focusWidget()->window() == window() && fileUrl.isLocalFile())
