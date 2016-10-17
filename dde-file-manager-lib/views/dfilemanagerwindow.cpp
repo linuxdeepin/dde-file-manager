@@ -51,7 +51,7 @@ class DFileManagerWindowPrivate
 public:
     DFileManagerWindowPrivate(DFileManagerWindow *qq)
         : q_ptr(qq) {}
-
+    QPushButton* logoButton = NULL;
     QFrame* centralWidget = NULL;
     DLeftSideBar* leftSideBar = NULL;
     QFrame* rightView = NULL;
@@ -110,6 +110,35 @@ void DFileManagerWindow::initUI()
     setStyleSheet(getQssFromFile(":/qss/qss/filemanager.qss"));
 }
 
+void DFileManagerWindow::initTitleFrame()
+{
+    D_D(DFileManagerWindow);
+
+    d->logoButton = new QPushButton("");
+    d->logoButton->setObjectName("LogoButton");
+    d->logoButton->setFixedSize(QSize(24, 24));
+    d->logoButton->setFocusPolicy(Qt::NoFocus);
+
+    initToolBar();
+    initTitleBar();
+
+    d->titleFrame = new QFrame;
+    d->titleFrame->setObjectName("TitleBar");
+    QHBoxLayout * titleLayout = new QHBoxLayout;
+    titleLayout->setMargin(0);
+    titleLayout->setSpacing(0);
+    titleLayout->addSpacing(12);
+    titleLayout->addWidget(d->logoButton);
+    titleLayout->addSpacing(12);
+    titleLayout->addWidget(d->toolbar);
+    titleLayout->addWidget(titleBar());
+    titleLayout->setSpacing(0);
+    titleLayout->setContentsMargins(0, 0, 0, 0);
+
+    d->titleFrame->setLayout(titleLayout);
+    d->titleFrame->setFixedHeight(TITLE_FIXED_HEIGHT);
+}
+
 void DFileManagerWindow::initTitleBar()
 {
     if (!titleBar())
@@ -158,26 +187,12 @@ void DFileManagerWindow::initRightView()
 {
     D_D(DFileManagerWindow);
 
-    initToolBar();
     initTabBar();
     initViewLayout();
     initComputerView();
 //    initFileView();
 
     d->rightView = new QFrame;
-
-    d->titleFrame = new QFrame;
-    d->titleFrame->setObjectName("TitleBar");
-    QHBoxLayout * titleLayout = new QHBoxLayout;
-    titleLayout->setMargin(0);
-    titleLayout->setSpacing(0);
-    titleLayout->addWidget(d->toolbar);
-    titleLayout->addWidget(titleBar());
-    titleLayout->setSpacing(0);
-    titleLayout->setContentsMargins(0, 0, 0, 0);
-
-    d->titleFrame->setLayout(titleLayout);
-    d->titleFrame->setFixedHeight(TITLE_FIXED_HEIGHT);
 
     QHBoxLayout *tabBarLayout = new QHBoxLayout;
     tabBarLayout->setMargin(0);
@@ -187,7 +202,6 @@ void DFileManagerWindow::initRightView()
 
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(d->titleFrame);
     mainLayout->addLayout(tabBarLayout);
     mainLayout->addLayout(d->viewStackLayout);
     mainLayout->setSpacing(0);
@@ -246,12 +260,12 @@ void DFileManagerWindow::initComputerView()
 void DFileManagerWindow::initCentralWidget()
 {
     D_D(DFileManagerWindow);
-
-    initTitleBar();
+    initTitleFrame();
     initSplitter();
 
     d->centralWidget = new QFrame(this);
     QVBoxLayout* mainLayout = new QVBoxLayout;
+    mainLayout->addWidget(d->titleFrame);
     mainLayout->addWidget(d->splitter);
     mainLayout->setSpacing(0);
     mainLayout->setContentsMargins(0, 0, 0, 0);

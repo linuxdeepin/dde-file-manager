@@ -100,21 +100,6 @@ void DLeftSideBar::initNav()
     m_nav->setFixedWidth(200);
     QVBoxLayout* navLayout = new QVBoxLayout;
 
-    QFrame* fileFrame = new QFrame(this);
-    fileFrame->setFixedHeight(40);
-    QHBoxLayout * fileButtonLayout = new QHBoxLayout;
-    m_fileLabel = new QLabel(tr("File Manager"));
-    m_fileLabel->setObjectName("FileLabel");
-    m_fileButton = new QPushButton("");
-    m_fileButton->setObjectName("FileButton");
-    m_fileButton->setFixedSize(QSize(16,16));
-    m_fileButton->setFocusPolicy(Qt::NoFocus);
-    fileButtonLayout->addWidget(m_fileButton, Qt::AlignVCenter);
-    fileButtonLayout->addWidget(m_fileLabel, Qt::AlignVCenter);
-    fileButtonLayout->setContentsMargins(13, 0, 0, 0);
-    fileButtonLayout->setSpacing(8);
-    fileFrame->setLayout(fileButtonLayout);
-
     m_view = new QGraphicsView;
     m_view->setAcceptDrops(true);
     m_view->setVerticalScrollBar(new DScrollBar);
@@ -140,7 +125,7 @@ void DLeftSideBar::initNav()
             }
         }
     }
-    navLayout->addWidget(fileFrame);
+//    navLayout->addWidget(fileFrame);
     navLayout->addWidget(m_view);
     navLayout->setSpacing(0);
     navLayout->setContentsMargins(0, 0, 0, 0);
@@ -205,40 +190,12 @@ void DLeftSideBar::navSwitched()
         this->setFixedWidth(LEFTSIDEBAR_MIN_WIDTH);
         m_scene->setTightMode(true);
         m_isTight = true;
-        m_fileLabel->setText("");
-        m_fileButton->setFixedSize(QSize(22,22));
-        m_fileButton->setStyleSheet("QPushButton#FileButton{\
-                                   border: none;\
-                                   color: white;\
-                                   image: url(:/icons/images/icons/file_normal_22px.svg);\
-                                   text-align: left;\
-                               }\
-                               QPushButton#FileButton:hover{\
-                                   image: url(:/icons/images/icons/file_hover_22px.svg);\
-                               }\
-                               QPushButton#FileButton:press{\
-                                   image: url(:/icons/images/icons/file_hover_22px.svg);\
-                               }");
     }
     else
     {
         m_isTight = false;
         this->setFixedWidth(LEFTSIDEBAR_MAX_WIDTH);
         m_scene->setTightMode(false);
-        m_fileLabel->setText(tr("File Manager"));
-        m_fileButton->setFixedSize(QSize(16,16));
-        m_fileButton->setStyleSheet("QPushButton#FileButton{\
-                                   border: none;\
-                                   color: white;\
-                                   image: url(:/icons/images/icons/file_normal_16px.svg);\
-                                   text-align: left;\
-                               }\
-                               QPushButton#FileButton:hover{\
-                                   image: url(:/icons/images/icons/file_hover_16px.svg);\
-                               }\
-                               QPushButton#FileButton:press{\
-                                   image: url(:/icons/images/icons/file_hover_16px.svg);\
-                               }");
     }
 }
 
