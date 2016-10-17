@@ -70,6 +70,9 @@ QModelIndexList DStyledItemDelegate::hasWidgetIndexs() const
 {
     Q_D(const DStyledItemDelegate);
 
+    if (!d->editingIndex.isValid())
+        return QModelIndexList();
+
     return QModelIndexList() << d->editingIndex;
 }
 

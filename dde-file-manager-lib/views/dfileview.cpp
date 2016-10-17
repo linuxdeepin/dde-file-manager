@@ -385,7 +385,7 @@ QModelIndex DFileView::indexAt(const QPoint &point) const
 
             QWidget *widget = indexWidget(index);
 
-            if (widget->isVisible() && widget->geometry().contains(point)) {
+            if (widget && widget->isVisible() && widget->geometry().contains(point)) {
                 return index;
             }
         }

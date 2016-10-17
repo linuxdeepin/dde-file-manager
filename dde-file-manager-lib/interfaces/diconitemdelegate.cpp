@@ -491,7 +491,12 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
 
 QModelIndexList DIconItemDelegate::hasWidgetIndexs() const
 {
-    return DStyledItemDelegate::hasWidgetIndexs() << expandedIndex();
+    const QModelIndex &index = expandedIndex();
+
+    if (!index.isValid())
+        return DStyledItemDelegate::hasWidgetIndexs();
+
+    return DStyledItemDelegate::hasWidgetIndexs() << index;
 }
 
 void DIconItemDelegate::hideNotEditingIndexWidget()
