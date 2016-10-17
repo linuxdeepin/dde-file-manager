@@ -15,11 +15,11 @@
 #include "usershare/usersharemanager.h"
 #include "widgets/singleton.h"
 #include "app/define.h"
-#include "fileservices.h"
+#include "dfileservices.h"
 
 
 ShareControler::ShareControler(QObject *parent) :
-    AbstractFileController(parent)
+    DAbstractFileController(parent)
 {
     connect(userShareManager, &UserShareManager::userShareAdded, this, [=](const QString& filePath){
         emit childrenAdded(DUrl::fromUserShareFile(filePath));

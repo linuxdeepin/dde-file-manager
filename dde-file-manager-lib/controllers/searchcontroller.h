@@ -1,12 +1,12 @@
 #ifndef SEARCHCONTROLLER_H
 #define SEARCHCONTROLLER_H
 
-#include "abstractfilecontroller.h"
+#include "dabstractfilecontroller.h"
 
 #include <QSet>
 #include <QPair>
 
-class SearchController : public AbstractFileController
+class SearchController : public DAbstractFileController
 {
     Q_OBJECT
 
@@ -22,7 +22,7 @@ public:
     bool copyFiles(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;
     DUrlList moveToTrash(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;
     bool cutFiles(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;
-    bool deleteFiles(const DUrlList &urlList, const FMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
+    bool deleteFiles(const DUrlList &urlList, const DFMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
     bool renameFile(const DUrl &oldUrl, const DUrl &newUrl, bool &accepted) const Q_DECL_OVERRIDE;
 
     bool compressFiles(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;

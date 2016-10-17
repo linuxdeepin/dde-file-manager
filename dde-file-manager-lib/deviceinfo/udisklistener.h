@@ -1,7 +1,7 @@
 #ifndef UDISKLISTENER_H
 #define UDISKLISTENER_H
 
-#include "abstractfilecontroller.h"
+#include "dabstractfilecontroller.h"
 
 #include <QDBusConnection>
 #include <QDBusInterface>
@@ -25,7 +25,7 @@ class UDiskDeviceInfo;
 class Subscriber;
 
 
-class UDiskListener : public AbstractFileController
+class UDiskListener : public DAbstractFileController
 {
     Q_OBJECT
 public:

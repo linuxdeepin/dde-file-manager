@@ -1,17 +1,17 @@
 #ifndef ABSTRACTFILECONTROLLER_H
 #define ABSTRACTFILECONTROLLER_H
 
-#include "abstractfileinfo.h"
+#include "dabstractfileinfo.h"
 #include "ddiriterator.h"
 
 #include <QObject>
 #include <QDir>
 #include <QDirIterator>
 
-class FMEvent;
+class DFMEvent;
 class DUrl;
 typedef QList<DUrl> DUrlList;
-class AbstractFileController : public QObject
+class DAbstractFileController : public QObject
 {
     Q_OBJECT
 
@@ -21,7 +21,7 @@ public:
         CopyType
     };
 
-    explicit AbstractFileController(QObject *parent = 0);
+    explicit DAbstractFileController(QObject *parent = 0);
 
     virtual bool openFile(const DUrl &fileUrl, bool &accepted) const;
     virtual bool compressFiles(const DUrlList &urlList, bool &accepted) const;
@@ -29,13 +29,13 @@ public:
     virtual bool decompressFileHere(const DUrlList &fileUrlList, bool &accepted) const;
     virtual bool copyFiles(const DUrlList &urlList, bool &accepted) const;
     virtual bool renameFile(const DUrl &oldUrl, const DUrl &newUrl, bool &accepted) const;
-    virtual bool deleteFiles(const DUrlList &urlList, const FMEvent &event, bool &accepted) const;
+    virtual bool deleteFiles(const DUrlList &urlList, const DFMEvent &event, bool &accepted) const;
     virtual DUrlList moveToTrash(const DUrlList &urlList, bool &accepted) const;
     virtual bool cutFiles(const DUrlList &urlList, bool &accepted) const;
     virtual DUrlList pasteFile(PasteType type, const DUrlList &urlList,
-                               const FMEvent &event, bool &accepted) const;
-    virtual bool restoreFile(const DUrl &srcUrl, const DUrl &tarUrl, const FMEvent &event, bool &accepted) const;
-    virtual bool newFolder(const FMEvent &event, bool &accepted) const;
+                               const DFMEvent &event, bool &accepted) const;
+    virtual bool restoreFile(const DUrl &srcUrl, const DUrl &tarUrl, const DFMEvent &event, bool &accepted) const;
+    virtual bool newFolder(const DFMEvent &event, bool &accepted) const;
     virtual bool newFile(const DUrl &toUrl, bool &accepted) const;
     virtual bool newDocument(const DUrl &toUrl, bool &accepted) const;
 

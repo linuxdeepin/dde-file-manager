@@ -17,7 +17,7 @@ class QLineEdit;
 class QComboBox;
 QT_END_NAMESPACE
 
-class FMEvent;
+class DFMEvent;
 
 class DStatusBar : public QFrame
 {
@@ -43,9 +43,9 @@ public:
     QComboBox *comboBox() const;
 
 public slots:
-    void itemSelected(const FMEvent &event, int number);
-    void itemCounted(const FMEvent &event, int number);
-    void setLoadingIncatorVisible(const FMEvent &event, bool visible);
+    void itemSelected(const DFMEvent &event, int number);
+    void itemCounted(const DFMEvent &event, int number);
+    void setLoadingIncatorVisible(const DFMEvent &event, bool visible);
 
 protected:
     void resizeEvent(QResizeEvent* event);

@@ -9,7 +9,7 @@
 
 #include "fileviewhelper.h"
 #include "dfileview.h"
-#include "fmevent.h"
+#include "dfmevent.h"
 #include "app/define.h"
 #include "app/filesignalmanager.h"
 #include "app/filemanagerapp.h"
@@ -20,7 +20,7 @@
 
 FileViewHelper::FileViewHelper(DFileView *parent)
     : DFileViewHelper(parent)
-    , lastEventSource(FMEvent::FileView)
+    , lastEventSource(DFMEvent::FileView)
 {
     connect(parent, &DFileView::triggerEdit, this, &DFileViewHelper::triggerEdit);
     connect(parent, &DFileView::currentUrlChanged, this, &FileViewHelper::onCurrentUrlChanged);
@@ -74,7 +74,7 @@ int FileViewHelper::indexOfRow(const QModelIndex &index) const
     return parent()->indexOfRow(index);
 }
 
-const AbstractFileInfo *FileViewHelper::fileInfo(const QModelIndex &index) const
+const DAbstractFileInfo *FileViewHelper::fileInfo(const QModelIndex &index) const
 {
     return parent()->model()->fileInfo(index).constData();
 }
@@ -109,7 +109,7 @@ int FileViewHelper::columnWidth(int columnIndex) const
     return parent()->columnWidth(columnIndex);
 }
 
-void FileViewHelper::preHandleCd(const FMEvent &event)
+void FileViewHelper::preHandleCd(const DFMEvent &event)
 {
     if (event.windowId() != windowId())
         return;
@@ -124,30 +124,30 @@ void FileViewHelper::preHandleCd(const FMEvent &event)
 
     lastEventSource = event.source();
     parent()->cd(event.fileUrl());
-    lastEventSource = FMEvent::FileView;
+    lastEventSource = DFMEvent::FileView;
 }
 
-void FileViewHelper::cd(const FMEvent &event)
+void FileViewHelper::cd(const DFMEvent &event)
 {
     if (event.windowId() != windowId())
         return;
 
     lastEventSource = event.source();
     parent()->cd(event.fileUrl());
-    lastEventSource = FMEvent::FileView;
+    lastEventSource = DFMEvent::FileView;
 }
 
-void FileViewHelper::cdUp(const FMEvent &event)
+void FileViewHelper::cdUp(const DFMEvent &event)
 {
     if (event.windowId() != windowId())
         return;
 
     lastEventSource = event.source();
     parent()->cdUp();
-    lastEventSource = FMEvent::FileView;
+    lastEventSource = DFMEvent::FileView;
 }
 
-void FileViewHelper::edit(const FMEvent &event)
+void FileViewHelper::edit(const DFMEvent &event)
 {
     if (event.windowId() != windowId())
         return;
@@ -162,7 +162,7 @@ void FileViewHelper::edit(const FMEvent &event)
     parent()->edit(index, QAbstractItemView::EditKeyPressed, 0);
 }
 
-void FileViewHelper::select(const FMEvent &event)
+void FileViewHelper::select(const DFMEvent &event)
 {
     if (event.windowId() != windowId()) {
         return;
@@ -179,7 +179,7 @@ void FileViewHelper::selectAll(int windowId)
     parent()->selectAll();
 }
 
-void FileViewHelper::selectAndRename(const FMEvent &event)
+void FileViewHelper::selectAndRename(const DFMEvent &event)
 {
     if (event.windowId() != windowId()) {
         return;
@@ -187,7 +187,7 @@ void FileViewHelper::selectAndRename(const FMEvent &event)
 
     parent()->select(event.fileUrlList());
 
-    FMEvent e = event;
+    DFMEvent e = event;
 
     if (!e.fileUrlList().isEmpty())
         e << e.fileUrlList().first();
@@ -195,14 +195,14 @@ void FileViewHelper::selectAndRename(const FMEvent &event)
     appController->actionRename(e);
 }
 
-void FileViewHelper::setFoucsOnFileView(const FMEvent &event)
+void FileViewHelper::setFoucsOnFileView(const DFMEvent &event)
 {
     if (event.windowId() == windowId()) {
         parent()->setFocus();
     }
 }
 
-void FileViewHelper::refreshFileView(const FMEvent &event)
+void FileViewHelper::refreshFileView(const DFMEvent &event)
 {
     if (event.windowId() != windowId()) {
         return;
@@ -213,8 +213,8 @@ void FileViewHelper::refreshFileView(const FMEvent &event)
 
 void FileViewHelper::onCurrentUrlChanged(const DUrl &url)
 {
-    FMEvent e;
-    e << (FMEvent::EventSource)lastEventSource;
+    DFMEvent e;
+    e << (DFMEvent::EventSource)lastEventSource;
     e << windowId();
     e << currentUrl();
     emit fileSignalManager->currentUrlChanged(e);

@@ -10,7 +10,7 @@
 #include "controllers/pathmanager.h"
 
 #include "app/define.h"
-#include "fmevent.h"
+#include "dfmevent.h"
 #include "app/filesignalmanager.h"
 
 #include "deviceinfo/udiskdeviceinfo.h"
@@ -371,8 +371,8 @@ void DBookmarkScene::doDragFinished(const QPointF &point, const QPointF &scenePo
     QRect rect(topLeft, bottomRight);
     if(!rect.contains(p))
     {    
-        FMEvent event;
-        event << FMEvent::LeftSideBar;
+        DFMEvent event;
+        event << DFMEvent::LeftSideBar;
         event << item->getUrl();
         event << item->windowId();
         event.setBookmarkIndex(m_itemGroup->items()->indexOf(item));
@@ -396,12 +396,12 @@ void DBookmarkScene::doDragFinished(const QPointF &point, const QPointF &scenePo
     emit dragLeft();
 }
 
-void DBookmarkScene::currentUrlChanged(const FMEvent &event)
+void DBookmarkScene::currentUrlChanged(const DFMEvent &event)
 {
     qDebug() << this << event;
     if(event.windowId() != windowId())
         return;
-    if(event.source() == FMEvent::LeftSideBar)
+    if(event.source() == DFMEvent::LeftSideBar)
         return;
     setCurrentUrl(event.fileUrl());
 }
@@ -452,7 +452,7 @@ void DBookmarkScene::setNetworkDiskItem(DBookmarkItem *item)
  *
  * Remove the custom bookmark with the given url.
  */
-void DBookmarkScene::doBookmarkRemoved(const FMEvent &event)
+void DBookmarkScene::doBookmarkRemoved(const DFMEvent &event)
 {
     DBookmarkItem * item = m_itemGroup->items()->at(event.bookmarkIndex());
     if(!item)
@@ -469,7 +469,7 @@ void DBookmarkScene::doBookmarkRemoved(const FMEvent &event)
     }
 }
 
-void DBookmarkScene::bookmarkRename(const FMEvent &event)
+void DBookmarkScene::bookmarkRename(const DFMEvent &event)
 {
     if(windowId() != event.windowId())
         return;
@@ -480,7 +480,7 @@ void DBookmarkScene::bookmarkRename(const FMEvent &event)
     }
 }
 
-void DBookmarkScene::doBookmarkRenamed(const QString &newname,const FMEvent &event)
+void DBookmarkScene::doBookmarkRenamed(const QString &newname,const DFMEvent &event)
 {
     if(event.bookmarkIndex() != -1){
         DBookmarkItem * item = m_itemGroup->items()->at(event.bookmarkIndex());
@@ -489,7 +489,7 @@ void DBookmarkScene::doBookmarkRenamed(const QString &newname,const FMEvent &eve
     }
 }
 
-void DBookmarkScene::doBookmarkAdded(const QString &name, const FMEvent &event)
+void DBookmarkScene::doBookmarkAdded(const QString &name, const DFMEvent &event)
 {
     DBookmarkItem * item = DBookmarkItem::makeBookmark(name, event.fileUrl());
     item->setBookmarkModel(bookmarkManager->getBookmarks().at(0));
@@ -506,7 +506,7 @@ void DBookmarkScene::doBookmarkAdded(const QString &name, const FMEvent &event)
 
 }
 
-void DBookmarkScene::doMoveBookmark(int from, int to, const FMEvent &event)
+void DBookmarkScene::doMoveBookmark(int from, int to, const DFMEvent &event)
 {
     if(windowId() != event.windowId())
     {
@@ -601,13 +601,13 @@ void DBookmarkScene::mountRemoved(UDiskDeviceInfo *device)
 
 void DBookmarkScene::backHome()
 {
-    FMEvent event;
+    DFMEvent event;
     event << windowId();
     event << DUrl::fromLocalFile(QDir::homePath());
     emit fileSignalManager->requestChangeCurrentUrl(event);
 }
 
-void DBookmarkScene::chooseMountedItem(const FMEvent &event)
+void DBookmarkScene::chooseMountedItem(const DFMEvent &event)
 {
     qDebug() << event << m_diskItems;
     bool checkMountItem = false;
@@ -669,8 +669,8 @@ void DBookmarkScene::moveBefore(DBookmarkItem *from, DBookmarkItem *to)
     bookmarkManager->moveBookmark(indexFrom - getCustomBookmarkItemInsertIndex(), indexTo - getCustomBookmarkItemInsertIndex());
     m_itemGroup->items()->move(indexFrom, indexTo);
 
-    FMEvent event;
-    event << FMEvent::LeftSideBar;
+    DFMEvent event;
+    event << DFMEvent::LeftSideBar;
     event << windowId();
     emit fileSignalManager->requestBookmarkMove(indexFrom, indexTo, event);
 }
@@ -687,8 +687,8 @@ void DBookmarkScene::moveAfter(DBookmarkItem *from, DBookmarkItem *to)
     bookmarkManager->moveBookmark(indexFrom - getCustomBookmarkItemInsertIndex(), indexTo - getCustomBookmarkItemInsertIndex());
     m_itemGroup->items()->move(indexFrom, indexTo);
 
-    FMEvent event;
-    event << FMEvent::LeftSideBar;
+    DFMEvent event;
+    event << DFMEvent::LeftSideBar;
     event << windowId();
     emit fileSignalManager->requestBookmarkMove(indexFrom, indexTo, event);
 }

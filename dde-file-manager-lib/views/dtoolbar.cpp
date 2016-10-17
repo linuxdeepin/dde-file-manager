@@ -9,11 +9,11 @@
 #include "dhoverbutton.h"
 #include "windowmanager.h"
 
-#include "fmevent.h"
+#include "dfmevent.h"
 #include "app/define.h"
 #include "app/filesignalmanager.h"
 
-#include "filemenumanager.h"
+#include "dfilemenumanager.h"
 
 #include "widgets/singleton.h"
 #include "views/dfileview.h"
@@ -217,9 +217,9 @@ void DToolBar::searchBarDeactivated()
         }
     }
 
-    FMEvent event;
+    DFMEvent event;
     event << WindowManager::getWindowId(this);
-    event << FMEvent::SearchBar;
+    event << DFMEvent::SearchBar;
     emit fileSignalManager->requestFoucsOnFileView(event);
 }
 
@@ -236,10 +236,10 @@ void DToolBar::searchBarTextEntered()
     if (text.isEmpty()) {
         return;
     }
-    FMEvent event;
+    DFMEvent event;
 
     event << WindowManager::getWindowId(this);
-    event << FMEvent::SearchBar;
+    event << DFMEvent::SearchBar;
 
     DUrl inputUrl = DUrl::fromUserInput(text, false);
 
@@ -263,27 +263,27 @@ void DToolBar::searchBarTextEntered()
     emit fileSignalManager->requestChangeCurrentUrl(event);
 }
 
-void DToolBar::crumbSelected(const FMEvent &e)
+void DToolBar::crumbSelected(const DFMEvent &e)
 {
     if(e.windowId() != WindowManager::getWindowId(this))
         return;
 
-    FMEvent event;
+    DFMEvent event;
 
     event << WindowManager::getWindowId(this);
-    event << FMEvent::CrumbButton;
+    event << DFMEvent::CrumbButton;
     event << e.fileUrl();
 
 
     emit fileSignalManager->requestChangeCurrentUrl(event);
 }
 
-void DToolBar::crumbChanged(const FMEvent &event)
+void DToolBar::crumbChanged(const DFMEvent &event)
 {
     if(event.windowId() != WindowManager::getWindowId(this))
         return;
 
-    if(event.source() == FMEvent::CrumbButton)
+    if(event.source() == DFMEvent::CrumbButton)
     {
         checkNavHistory(event.fileUrl());
         return;
@@ -302,7 +302,7 @@ void DToolBar::crumbChanged(const FMEvent &event)
         m_crumbWidget->setCrumb(event.fileUrl());
     }
 
-    if(event.source() == FMEvent::BackAndForwardButton)
+    if(event.source() == DFMEvent::BackAndForwardButton)
         return;
     checkNavHistory(event.fileUrl());
 }
@@ -325,9 +325,9 @@ void DToolBar::backButtonClicked()
     DUrl url = m_navStack->back();
     if(!url.isEmpty())
     {
-        FMEvent event;
+        DFMEvent event;
         event << WindowManager::getWindowId(this);
-        event << FMEvent::BackAndForwardButton;
+        event << DFMEvent::BackAndForwardButton;
         event << url;
         if(m_navStack->isFirst())
             m_backButton->setDisabled(true);
@@ -341,9 +341,9 @@ void DToolBar::forwardButtonClicked()
     DUrl url = m_navStack->forward();
     if(!url.isEmpty())
     {
-        FMEvent event;
+        DFMEvent event;
         event << WindowManager::getWindowId(this);
-        event << FMEvent::BackAndForwardButton;
+        event << DFMEvent::BackAndForwardButton;
         event << url;
         if(m_navStack->isLast())
             m_forwardButton->setDisabled(true);
@@ -369,21 +369,21 @@ void DToolBar::checkViewModeButton(DFileView::ViewMode mode)
     }
 }
 
-void DToolBar::handleHotkeyBack(const FMEvent &event)
+void DToolBar::handleHotkeyBack(const DFMEvent &event)
 {
     if (event.windowId() == WindowManager::getWindowId(this)) {
         backButtonClicked();
     }
 }
 
-void DToolBar::handleHotkeyForward(const FMEvent &event)
+void DToolBar::handleHotkeyForward(const DFMEvent &event)
 {
     if (event.windowId() == WindowManager::getWindowId(this)) {
         forwardButtonClicked();
     }
 }
 
-void DToolBar::handleHotkeyCtrlF(const FMEvent &event)
+void DToolBar::handleHotkeyCtrlF(const DFMEvent &event)
 {
     if (event.windowId() == WindowManager::getWindowId(this)) {
         searchBarActivated();
@@ -391,7 +391,7 @@ void DToolBar::handleHotkeyCtrlF(const FMEvent &event)
     }
 }
 
-void DToolBar::handleHotkeyCtrlL(const FMEvent &event)
+void DToolBar::handleHotkeyCtrlL(const DFMEvent &event)
 {
     if (event.windowId() == WindowManager::getWindowId(this)) {
         searchBarActivated();
@@ -446,9 +446,9 @@ void DToolBar::dirDeleted(const DUrl &url)
 {
     if(m_crumbWidget->getUrl().path().startsWith(url.path())){
         m_crumbWidget->setCrumb(url.parentUrl());
-        FMEvent event;
+        DFMEvent event;
         event << WindowManager::getWindowId(this);
-        event << FMEvent::CrumbButton;
+        event << DFMEvent::CrumbButton;
         event << url.parentUrl();
         emit m_crumbWidget->crumbSelected(event);
     }

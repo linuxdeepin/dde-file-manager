@@ -2,7 +2,7 @@
 #include "fileinfo.h"
 
 #include "controllers/trashmanager.h"
-#include "fileservices.h"
+#include "dfileservices.h"
 #include "controllers/pathmanager.h"
 
 #include "app/define.h"
@@ -20,20 +20,20 @@ SORT_FUN_DEFINE(sourceFilePath, SourceFilePath, TrashFileInfo)
 }
 
 TrashFileInfo::TrashFileInfo()
-    : AbstractFileInfo()
+    : DAbstractFileInfo()
 {
     init();
 }
 
 TrashFileInfo::TrashFileInfo(const DUrl &url)
-    : AbstractFileInfo()
+    : DAbstractFileInfo()
 {
     TrashFileInfo::setUrl(url);
     init();
 }
 
 TrashFileInfo::TrashFileInfo(const QString &url)
-    : AbstractFileInfo()
+    : DAbstractFileInfo()
 {
     TrashFileInfo::setUrl(DUrl(url));
     init();
@@ -61,7 +61,7 @@ QString TrashFileInfo::displayName() const
 
 void TrashFileInfo::setUrl(const DUrl &fileUrl)
 {
-    AbstractFileInfo::setUrl(fileUrl);
+    DAbstractFileInfo::setUrl(fileUrl);
 
     data->fileInfo.setFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath) + fileUrl.path());
 
@@ -84,7 +84,7 @@ QMimeType TrashFileInfo::mimeType() const
 
 QFileDevice::Permissions TrashFileInfo::permissions() const
 {
-    QFileDevice::Permissions p = AbstractFileInfo::permissions();
+    QFileDevice::Permissions p = DAbstractFileInfo::permissions();
 
     p &= ~QFileDevice::WriteOwner;
     p &= ~QFileDevice::WriteUser;
@@ -94,7 +94,7 @@ QFileDevice::Permissions TrashFileInfo::permissions() const
     return p;
 }
 
-QVector<MenuAction> TrashFileInfo::menuActionList(AbstractFileInfo::MenuType type) const
+QVector<MenuAction> TrashFileInfo::menuActionList(DAbstractFileInfo::MenuType type) const
 {
     QVector<MenuAction> actionKeys;
 
@@ -152,7 +152,7 @@ QVariant TrashFileInfo::userColumnData(int userColumnRole) const
     if (userColumnRole == DFileSystemModel::FileUserRole + 2)
         return originalFilePath;
 
-    return AbstractFileInfo::userColumnData(userColumnRole);
+    return DAbstractFileInfo::userColumnData(userColumnRole);
 }
 
 QVariant TrashFileInfo::userColumnDisplayName(int userColumnRole) const
@@ -163,7 +163,7 @@ QVariant TrashFileInfo::userColumnDisplayName(int userColumnRole) const
     if (userColumnRole == DFileSystemModel::FileUserRole + 2)
         return QObject::tr("Path", "TrashFileInfo");
 
-    return AbstractFileInfo::userColumnDisplayName(userColumnRole);
+    return DAbstractFileInfo::userColumnDisplayName(userColumnRole);
 }
 
 int TrashFileInfo::userColumnWidth(int userColumnRole) const
@@ -171,7 +171,7 @@ int TrashFileInfo::userColumnWidth(int userColumnRole) const
     if (userColumnRole == DFileSystemModel::FileUserRole + 2)
         return -1;
 
-    return AbstractFileInfo::userColumnWidth(userColumnRole);
+    return DAbstractFileInfo::userColumnWidth(userColumnRole);
 }
 
 bool TrashFileInfo::columnDefaultVisibleForRole(int userColumnRole) const
@@ -179,7 +179,7 @@ bool TrashFileInfo::columnDefaultVisibleForRole(int userColumnRole) const
     if (userColumnRole == DFileSystemModel::FileLastModifiedRole)
         return false;
 
-    return AbstractFileInfo::columnDefaultVisibleForRole(userColumnRole);
+    return DAbstractFileInfo::columnDefaultVisibleForRole(userColumnRole);
 }
 
 MenuAction TrashFileInfo::menuActionByColumnRole(int userColumnRole) const
@@ -190,7 +190,7 @@ MenuAction TrashFileInfo::menuActionByColumnRole(int userColumnRole) const
     if (userColumnRole == DFileSystemModel::FileUserRole + 2)
         return MenuAction::SourcePath;
 
-    return AbstractFileInfo::menuActionByColumnRole(userColumnRole);
+    return DAbstractFileInfo::menuActionByColumnRole(userColumnRole);
 }
 
 bool TrashFileInfo::canIteratorDir() const
@@ -220,17 +220,17 @@ Qt::DropActions TrashFileInfo::supportedDropActions() const
     return path.isEmpty() || path == "/" ? Qt::MoveAction : Qt::IgnoreAction;
 }
 
-AbstractFileInfo::sortFunction TrashFileInfo::sortFunByColumn(int columnRole) const
+DAbstractFileInfo::sortFunction TrashFileInfo::sortFunByColumn(int columnRole) const
 {
     if (columnRole == DFileSystemModel::FileUserRole + 1)
         return FileSortFunction::sortFileListByDeletionDate;
     else if (columnRole == DFileSystemModel::FileUserRole + 2)
         return FileSortFunction::sortFileListBySourceFilePath;
     else
-        return AbstractFileInfo::sortFunByColumn(columnRole);
+        return DAbstractFileInfo::sortFunByColumn(columnRole);
 }
 
-bool TrashFileInfo::restore(const FMEvent &event) const
+bool TrashFileInfo::restore(const DFMEvent &event) const
 {
     if(originalFilePath.isEmpty()) {
         qDebug() << "OriginalFile path ie empty.";

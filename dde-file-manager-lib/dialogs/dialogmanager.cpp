@@ -5,10 +5,10 @@
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
-#include "fmevent.h"
+#include "dfmevent.h"
 
 #include "fileoperations/filejob.h"
-#include "fileservices.h"
+#include "dfileservices.h"
 
 #include "models/fileinfo.h"
 #include "models/trashfileinfo.h"
@@ -246,7 +246,7 @@ int DialogManager::showRunExcutableDialog(const DUrl &url)
 }
 
 
-int DialogManager::showRenameNameSameErrorDialog(const QString &name, const FMEvent &event)
+int DialogManager::showRenameNameSameErrorDialog(const QString &name, const DFMEvent &event)
 {
     DDialog d(WindowManager::getWindowById(event.windowId()));
     d.setTitle(tr("\"%1\" already exists, please use another name.").arg(name));
@@ -260,7 +260,7 @@ int DialogManager::showRenameNameSameErrorDialog(const QString &name, const FMEv
 }
 
 
-int DialogManager::showDeleteFilesClearTrashDialog(const FMEvent &event)
+int DialogManager::showDeleteFilesClearTrashDialog(const DFMEvent &event)
 {
     QString ClearTrash = tr("Are you sure to empty %1 item?");
     QString ClearTrashMutliple = tr("Are you sure to empty %1 items?");
@@ -274,27 +274,27 @@ int DialogManager::showDeleteFilesClearTrashDialog(const FMEvent &event)
     qDebug() << event;
     DDialog d(WindowManager::getWindowById(event.windowId()));
     d.setIcon(QIcon(":/images/dialogs/images/user-trash-full-opened.png"));
-    if (urlList.first() == DUrl::fromTrashFile("/") && event.source() == FMEvent::Menu && urlList.size() == 1){
+    if (urlList.first() == DUrl::fromTrashFile("/") && event.source() == DFMEvent::Menu && urlList.size() == 1){
         buttonTexts[1]= tr("Empty");
-        const AbstractFileInfoPointer &fileInfo = FileServices::instance()->createFileInfo(urlList.first());
+        const AbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(urlList.first());
         if(fileInfo->filesCount() == 1)
             d.setTitle(ClearTrash.arg(fileInfo->filesCount()));
         else
             d.setTitle(ClearTrashMutliple.arg(fileInfo->filesCount()));
-    }else if (urlList.first().isLocalFile() && event.source() == FMEvent::FileView && urlList.size() == 1){
+    }else if (urlList.first().isLocalFile() && event.source() == DFMEvent::FileView && urlList.size() == 1){
         FileInfo f(urlList.first());
         d.setTitle(DeleteFileName.arg(f.displayName()));
-    }else if (urlList.first().isLocalFile() && event.source() == FMEvent::FileView && urlList.size() > 1){
+    }else if (urlList.first().isLocalFile() && event.source() == DFMEvent::FileView && urlList.size() > 1){
         d.setTitle(DeleteFileItems.arg(urlList.size()));
-    }else if (urlList.first().isTrashFile() && event.source() == FMEvent::Menu && urlList.size() == 1){
+    }else if (urlList.first().isTrashFile() && event.source() == DFMEvent::Menu && urlList.size() == 1){
         TrashFileInfo f(urlList.first());
         d.setTitle(DeleteFileName.arg(f.displayName()));
-    }else if (urlList.first().isTrashFile() && event.source() == FMEvent::Menu && urlList.size() > 1){
+    }else if (urlList.first().isTrashFile() && event.source() == DFMEvent::Menu && urlList.size() > 1){
         d.setTitle(DeleteFileItems.arg(urlList.size()));
-    }else if (urlList.first().isTrashFile() && event.source() == FMEvent::FileView && urlList.size() == 1 ){
+    }else if (urlList.first().isTrashFile() && event.source() == DFMEvent::FileView && urlList.size() == 1 ){
         TrashFileInfo f(urlList.first());
         d.setTitle(DeleteFileName.arg(f.displayName()));
-    }else if (urlList.first().isTrashFile() && event.source() == FMEvent::FileView && urlList.size() > 1 ){
+    }else if (urlList.first().isTrashFile() && event.source() == DFMEvent::FileView && urlList.size() > 1 ){
         d.setTitle(DeleteFileItems.arg(urlList.size()));
     }else{
         d.setTitle(DeleteFileItems.arg(urlList.size()));
@@ -307,7 +307,7 @@ int DialogManager::showDeleteFilesClearTrashDialog(const FMEvent &event)
     return code;
 }
 
-int DialogManager::showRemoveBookMarkDialog(const FMEvent &event)
+int DialogManager::showRemoveBookMarkDialog(const DFMEvent &event)
 {
     DDialog d(WindowManager::getWindowById(event.windowId()));
     d.setTitle(tr("Sorry, unable to locate your bookmark directory, remove it?"));
@@ -320,7 +320,7 @@ int DialogManager::showRemoveBookMarkDialog(const FMEvent &event)
     return code;
 }
 
-void DialogManager::showOpenWithDialog(const FMEvent &event)
+void DialogManager::showOpenWithDialog(const DFMEvent &event)
 {
     QWidget* w = WindowManager::getWindowById(event.windowId());
     if (w){
@@ -330,7 +330,7 @@ void DialogManager::showOpenWithDialog(const FMEvent &event)
     }
 }
 
-void DialogManager::showPropertyDialog(const FMEvent &event)
+void DialogManager::showPropertyDialog(const DFMEvent &event)
 {
     QWidget* w = WindowManager::getWindowById(event.windowId());
     if (w){
@@ -363,7 +363,7 @@ void DialogManager::showPropertyDialog(const FMEvent &event)
     }
 }
 
-void DialogManager::showTrashPropertyDialog(const FMEvent &event)
+void DialogManager::showTrashPropertyDialog(const DFMEvent &event)
 {
     QWidget* w = WindowManager::getWindowById(event.windowId());
 
@@ -385,7 +385,7 @@ void DialogManager::showTrashPropertyDialog(const FMEvent &event)
     }
 }
 
-void DialogManager::showDevicePropertyDialog(const FMEvent &event)
+void DialogManager::showDevicePropertyDialog(const DFMEvent &event)
 {
     QWidget* w = WindowManager::getWindowById(event.windowId());
     if (w){
@@ -416,7 +416,7 @@ void DialogManager::showDiskErrorDialog(const QString & id, const QString & erro
 
 void DialogManager::showBreakSymlinkDialog(const QString &targetName, const DUrl &linkfile)
 {
-    const AbstractFileInfoPointer &fileInfo = FileServices::instance()->createFileInfo(linkfile);
+    const AbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(linkfile);
 
     DDialog d;
     d.setTitle(tr("%1 that this shortcut refers to has been changed or moved").arg(targetName));
@@ -434,7 +434,7 @@ void DialogManager::showBreakSymlinkDialog(const QString &targetName, const DUrl
     }
 }
 
-void DialogManager::showAboutDialog(const FMEvent &event)
+void DialogManager::showAboutDialog(const DFMEvent &event)
 {
     QWidget* w = WindowManager::getWindowById(event.windowId());
     QString icon(":/images/images/dde-file-manager_96.png");

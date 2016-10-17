@@ -1,10 +1,10 @@
-#include "filemenumanager.h"
+#include "dfilemenumanager.h"
 
 #include "app/define.h"
-#include "fmevent.h"
+#include "dfmevent.h"
 #include "app/filemanagerapp.h"
 #include "dfilemenu.h"
-#include "fileservices.h"
+#include "dfileservices.h"
 #include "controllers/appcontroller.h"
 #include "controllers/trashmanager.h"
 
@@ -23,7 +23,7 @@ void initData();
 void initActions();
 }
 
-DFileMenu *FileMenuManager::createRecentLeftBarMenu(const QSet<MenuAction> &disableList)
+DFileMenu *DFileMenuManager::createRecentLeftBarMenu(const QSet<MenuAction> &disableList)
 {
     QVector<MenuAction> actionKeys;
 
@@ -37,7 +37,7 @@ DFileMenu *FileMenuManager::createRecentLeftBarMenu(const QSet<MenuAction> &disa
     return genereteMenuByKeys(actionKeys, disableList);
 }
 
-DFileMenu *FileMenuManager::createDefaultBookMarkMenu(const QSet<MenuAction> &disableList)
+DFileMenu *DFileMenuManager::createDefaultBookMarkMenu(const QSet<MenuAction> &disableList)
 {
     QVector<MenuAction> actionKeys;
 
@@ -50,7 +50,7 @@ DFileMenu *FileMenuManager::createDefaultBookMarkMenu(const QSet<MenuAction> &di
     return genereteMenuByKeys(actionKeys, disableList);
 }
 
-DFileMenu *FileMenuManager::createNetworkMarkMenu(const QSet<MenuAction> &disableList)
+DFileMenu *DFileMenuManager::createNetworkMarkMenu(const QSet<MenuAction> &disableList)
 {
     QVector<MenuAction> actionKeys;;
 
@@ -62,7 +62,7 @@ DFileMenu *FileMenuManager::createNetworkMarkMenu(const QSet<MenuAction> &disabl
     return genereteMenuByKeys(actionKeys, disableList);
 }
 
-DFileMenu *FileMenuManager::createCustomBookMarkMenu(const DUrl &url, QSet<MenuAction> disableList)
+DFileMenu *DFileMenuManager::createCustomBookMarkMenu(const DUrl &url, QSet<MenuAction> disableList)
 {
 
     QVector<MenuAction> actionKeys;
@@ -84,7 +84,7 @@ DFileMenu *FileMenuManager::createCustomBookMarkMenu(const DUrl &url, QSet<MenuA
     return genereteMenuByKeys(actionKeys, disableList);
 }
 
-DFileMenu *FileMenuManager::createTrashLeftBarMenu(const QSet<MenuAction> &disableList)
+DFileMenu *DFileMenuManager::createTrashLeftBarMenu(const QSet<MenuAction> &disableList)
 {
     QVector<MenuAction> actionKeys;
 
@@ -106,7 +106,7 @@ DFileMenu *FileMenuManager::createTrashLeftBarMenu(const QSet<MenuAction> &disab
     return genereteMenuByKeys(actionKeys, disableList);
 }
 
-DFileMenu *FileMenuManager::createDiskLeftBarMenu(const QSet<MenuAction> &disableList)
+DFileMenu *DFileMenuManager::createDiskLeftBarMenu(const QSet<MenuAction> &disableList)
 {
     QVector<MenuAction> actionKeys;
 
@@ -120,7 +120,7 @@ DFileMenu *FileMenuManager::createDiskLeftBarMenu(const QSet<MenuAction> &disabl
     return genereteMenuByKeys(actionKeys, disableList);
 }
 
-DFileMenu *FileMenuManager::createDiskViewMenu(const QSet<MenuAction> &disableList)
+DFileMenu *DFileMenuManager::createDiskViewMenu(const QSet<MenuAction> &disableList)
 {
     QVector<MenuAction> actionKeys;
 
@@ -135,7 +135,7 @@ DFileMenu *FileMenuManager::createDiskViewMenu(const QSet<MenuAction> &disableLi
     return genereteMenuByKeys(actionKeys, disableList);
 }
 
-DFileMenu *FileMenuManager::createToolBarSettingsMenu(const QSet<MenuAction> &disableList)
+DFileMenu *DFileMenuManager::createToolBarSettingsMenu(const QSet<MenuAction> &disableList)
 {
     QVector<MenuAction> actionKeys;
 
@@ -153,7 +153,7 @@ DFileMenu *FileMenuManager::createToolBarSettingsMenu(const QSet<MenuAction> &di
     return genereteMenuByKeys(actionKeys, disableList);
 }
 
-DFileMenu *FileMenuManager::createToolBarSortMenu(const QSet<MenuAction> &disableList)
+DFileMenu *DFileMenuManager::createToolBarSortMenu(const QSet<MenuAction> &disableList)
 {
     QVector<MenuAction> actionKeys;
 
@@ -168,7 +168,7 @@ DFileMenu *FileMenuManager::createToolBarSortMenu(const QSet<MenuAction> &disabl
     return menu;
 }
 
-DFileMenu *FileMenuManager::createListViewHeaderMenu(const QSet<MenuAction> &disableList)
+DFileMenu *DFileMenuManager::createListViewHeaderMenu(const QSet<MenuAction> &disableList)
 {
     QVector<MenuAction> actionKeys;
 
@@ -183,7 +183,7 @@ DFileMenu *FileMenuManager::createListViewHeaderMenu(const QSet<MenuAction> &dis
     return menu;
 }
 
-QSet<MenuAction> FileMenuManager::getDisableActionList(const DUrl &fileUrl)
+QSet<MenuAction> DFileMenuManager::getDisableActionList(const DUrl &fileUrl)
 {
     DUrlList list;
 
@@ -192,7 +192,7 @@ QSet<MenuAction> FileMenuManager::getDisableActionList(const DUrl &fileUrl)
     return getDisableActionList(list);
 }
 
-QSet<MenuAction> FileMenuManager::getDisableActionList(const DUrlList &urlList)
+QSet<MenuAction> DFileMenuManager::getDisableActionList(const DUrlList &urlList)
 {
     QSet<MenuAction> disableList;
 
@@ -211,7 +211,7 @@ QSet<MenuAction> FileMenuManager::getDisableActionList(const DUrlList &urlList)
     return disableList;
 }
 
-FileMenuManager::FileMenuManager()
+DFileMenuManager::DFileMenuManager()
 {
     qRegisterMetaType<QMap<QString, QString>>("QMap<QString, QString>");
     qRegisterMetaType<QList<QUrl>>("QList<QUrl>");
@@ -290,7 +290,7 @@ void DFileMenuData::initActions()
     }
 }
 
-DFileMenu *FileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
+DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
                                                const QSet<MenuAction> &disableList,
                                                bool checkable,
                                                const QMap<MenuAction, QVector<MenuAction> > &subMenuList)
@@ -302,7 +302,7 @@ DFileMenu *FileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
 
     DFileMenu* menu = new DFileMenu;
 
-    connect(menu, &DFileMenu::triggered, fileMenuManger, &FileMenuManager::actionTriggered);
+    connect(menu, &DFileMenu::triggered, fileMenuManger, &DFileMenuManager::actionTriggered);
 
     foreach (MenuAction key, keys) {
         if (key == MenuAction::Separator){
@@ -331,7 +331,7 @@ DFileMenu *FileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
     return menu;
 }
 
-QString FileMenuManager::getActionString(MenuAction type)
+QString DFileMenuManager::getActionString(MenuAction type)
 {
     if (DFileMenuData::actionKeys.contains(type)){
         return DFileMenuData::actionKeys.value(type);
@@ -339,11 +339,11 @@ QString FileMenuManager::getActionString(MenuAction type)
     return "";
 }
 
-void FileMenuManager::actionTriggered(DAction *action)
+void DFileMenuManager::actionTriggered(DAction *action)
 {
     DFileMenu *menu = qobject_cast<DFileMenu *>(sender());
-    FMEvent event = menu->event();
-    event << FMEvent::Menu;
+    DFMEvent event = menu->event();
+    event << DFMEvent::Menu;
     if (action->data().isValid()){
         bool flag = false;
         int _type = action->data().toInt(&flag);
@@ -371,7 +371,7 @@ void FileMenuManager::actionTriggered(DAction *action)
             QMetaObject::invokeMethod(appController,
                                       methodKey.toLocal8Bit().constData(),
                                       Qt::DirectConnection,
-                                      Q_ARG(FMEvent, event));
+                                      Q_ARG(DFMEvent, event));
         }else{
             qWarning() << "Appcontroller has no method:" << methodSignature;
         }

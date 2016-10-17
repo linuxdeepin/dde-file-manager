@@ -4,7 +4,7 @@
 
 #include "app/define.h"
 
-#include "fileservices.h"
+#include "dfileservices.h"
 
 #include "shutil/fileutils.h"
 #include "shutil/mimesappsmanager.h"
@@ -206,7 +206,7 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
         expandGroup->expand(0)->setContent(m_localDeviceInfoFrame);
         expandGroup->expand(0)->setExpand(true);
     }else{
-        const AbstractFileInfoPointer &fileInfo = FileServices::instance()->createFileInfo(url);
+        const AbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
         m_icon->setPixmap(fileInfo->fileIcon().pixmap(160, 160));
         m_edit->setPlainText(fileInfo->displayName());
         m_edit->setAlignment(Qt::AlignHCenter);
@@ -295,7 +295,7 @@ void PropertyDialog::updateFolderSize(qint64 size)
 
 void PropertyDialog::renameFile()
 {
-    const AbstractFileInfoPointer &fileInfo = FileServices::instance()->createFileInfo(m_url);
+    const AbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(m_url);
     m_edit->setPlainText(fileInfo->displayName());
     m_editStackWidget->setCurrentIndex(0);
 
@@ -332,7 +332,7 @@ void PropertyDialog::showTextShowFrame()
     if (result){
         m_url = newUrl;
         m_absolutePath = m_url.toLocalFile();
-        const AbstractFileInfoPointer &fileInfo = FileServices::instance()->createFileInfo(m_url);
+        const AbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(m_url);
         initTextShowFrame(fileInfo->displayName());
         dialogManager->refreshPropertyDialogs(oldUrl, newUrl);
     }else{
@@ -545,7 +545,7 @@ ShareInfoFrame *PropertyDialog::createShareInfoFrame(const AbstractFileInfoPoint
 QFrame *PropertyDialog::createLocalDeviceInfoWidget(const DUrl &url)
 {
     QStorageInfo info(url.path());
-    const AbstractFileInfoPointer &fileInfo = FileServices::instance()->createFileInfo(url);
+    const AbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
     QFrame *widget = new QFrame;
     SectionKeyLabel* typeSectionLabel = new SectionKeyLabel(QObject::tr("Device type"));
     SectionKeyLabel* fileAmountSectionLabel = new SectionKeyLabel(QObject::tr("Contains"));

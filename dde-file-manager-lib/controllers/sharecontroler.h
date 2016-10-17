@@ -10,9 +10,9 @@
 #ifndef SHARECONTROLER_H
 #define SHARECONTROLER_H
 
-#include "abstractfilecontroller.h"
+#include "dabstractfilecontroller.h"
 
-class ShareControler : public AbstractFileController
+class ShareControler : public DAbstractFileController
 {
     Q_OBJECT
 public:

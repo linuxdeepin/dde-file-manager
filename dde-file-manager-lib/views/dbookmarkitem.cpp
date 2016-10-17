@@ -2,7 +2,7 @@
 #include "dbookmarkitemgroup.h"
 
 #include "dfilemenu.h"
-#include "filemenumanager.h"
+#include "dfilemenumanager.h"
 #include "windowmanager.h"
 #include "ddragwidget.h"
 #include "ddialog.h"
@@ -23,7 +23,7 @@
 #include "models/bookmark.h"
 
 #include "app/define.h"
-#include "fmevent.h"
+#include "dfmevent.h"
 #include "app/filesignalmanager.h"
 #include "app/filemanagerapp.h"
 
@@ -31,7 +31,7 @@
 
 #include "controllers/bookmarkmanager.h"
 #include "controllers/appcontroller.h"
-#include "fileservices.h"
+#include "dfileservices.h"
 
 #include "dialogs/dialogmanager.h"
 
@@ -98,7 +98,7 @@ void DBookmarkItem::editFinished()
     if (!m_lineEdit || m_eidtMenu->isVisible())
         return;
 
-    FMEvent event;
+    DFMEvent event;
     event << windowId();
     event << m_url;
     if(m_group)
@@ -117,7 +117,7 @@ void DBookmarkItem::editFinished()
     emit fileSignalManager->requestFoucsOnFileView(event);
 }
 
-void DBookmarkItem::checkMountedItem(const FMEvent &event)
+void DBookmarkItem::checkMountedItem(const DFMEvent &event)
 {
     if (event.windowId() != windowId()){
         return;
@@ -134,10 +134,10 @@ void DBookmarkItem::checkMountedItem(const FMEvent &event)
         m_pressed = false;
         update();
 
-        FMEvent e;
+        DFMEvent e;
         e << windowId();
         e << m_url;
-        e << FMEvent::LeftSideBar;
+        e << DFMEvent::LeftSideBar;
         e.setBookmarkIndex(m_group->items()->indexOf(this));
         qDebug() << m_isDisk << m_deviceInfo << m_url;
         m_group->url(e);
@@ -541,9 +541,9 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         QDir dir(m_url.path());
         if(!dir.exists() && !m_isDefault)
         {
-            FMEvent event;
+            DFMEvent event;
             event << m_url;
-            event << FMEvent::LeftSideBar;
+            event << DFMEvent::LeftSideBar;
             event << windowId();
             if(m_group)
                 event.setBookmarkIndex(m_group->items()->indexOf(this));
@@ -555,13 +555,13 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         }
         else
         {
-            FMEvent e;
+            DFMEvent e;
             e << windowId();
             if(m_url.isBookMarkFile())
                 e << DUrl::fromLocalFile(m_url.path());
             else
                 e << m_url;
-            e << FMEvent::LeftSideBar;
+            e << DFMEvent::LeftSideBar;
             qDebug() << m_isDisk << m_deviceInfo << m_url;
 
             if (m_isDisk){
@@ -627,8 +627,8 @@ void DBookmarkItem::dropEvent(QGraphicsSceneDragDropEvent *event)
         return;
     if(m_isDisk)
         return;
-    FMEvent e;
-    e << FMEvent::LeftSideBar;
+    DFMEvent e;
+    e << DFMEvent::LeftSideBar;
     e << m_url;
     e << DUrl::fromQUrlList(event->mimeData()->urls());
     e << windowId();
@@ -636,7 +636,7 @@ void DBookmarkItem::dropEvent(QGraphicsSceneDragDropEvent *event)
     if (m_url.isTrashFile()){
         appController->actionDelete(e);
     }else if (m_url.isLocalFile()){
-        fileService->pasteFile(AbstractFileController::CopyType, DUrl::fromQUrlList(event->mimeData()->urls()), e);
+        fileService->pasteFile(DAbstractFileController::CopyType, DUrl::fromQUrlList(event->mimeData()->urls()), e);
     }
     QGraphicsItem::dropEvent(event);
 }
@@ -702,9 +702,9 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
         disableList << MenuAction::OpenInNewTab;
 
     if (m_url.isRecentFile()){
-        menu = FileMenuManager::createRecentLeftBarMenu(disableList);
+        menu = DFileMenuManager::createRecentLeftBarMenu(disableList);
     }else if (m_url.isTrashFile()){
-        menu = FileMenuManager::createTrashLeftBarMenu(disableList);
+        menu = DFileMenuManager::createTrashLeftBarMenu(disableList);
     }else if(m_isDisk && m_deviceInfo)
     {
         disableList |= m_deviceInfo->disableMenuActionList();
@@ -712,15 +712,15 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 
         m_deviceInfo->canUnmount();
 
-        menu = FileMenuManager::genereteMenuByKeys(
-                    m_deviceInfo->menuActionList(AbstractFileInfo::SingleFile),
+        menu = DFileMenuManager::genereteMenuByKeys(
+                    m_deviceInfo->menuActionList(DAbstractFileInfo::SingleFile),
                     disableList);
     }else if (m_url.isNetWorkFile()){
-        menu = FileMenuManager::createNetworkMarkMenu(disableList);
+        menu = DFileMenuManager::createNetworkMarkMenu(disableList);
     }else if(m_isDefault)
-        menu = FileMenuManager::createDefaultBookMarkMenu(disableList);
+        menu = DFileMenuManager::createDefaultBookMarkMenu(disableList);
     else
-        menu = FileMenuManager::createCustomBookMarkMenu(m_url, disableList);
+        menu = DFileMenuManager::createCustomBookMarkMenu(m_url, disableList);
 
     QPointer<DBookmarkItem> me = this;
 
@@ -728,11 +728,11 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     DUrlList urls;
     urls.append(m_url);
 
-    FMEvent fmEvent;
+    DFMEvent fmEvent;
     fmEvent << m_url;
     fmEvent << urls;
     fmEvent << windowId();
-    fmEvent << FMEvent::LeftSideBar;
+    fmEvent << DFMEvent::LeftSideBar;
     if(m_group)
         fmEvent.setBookmarkIndex(m_group->items()->indexOf(this));
 

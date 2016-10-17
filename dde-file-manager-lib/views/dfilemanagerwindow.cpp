@@ -9,15 +9,15 @@
 #include "dsplitter.h"
 #include "extendview.h"
 #include "dstatusbar.h"
-#include "filemenumanager.h"
+#include "dfilemenumanager.h"
 #include "computerview.h"
 #include "dtabbar.h"
 #include "dbookmarkscene.h"
 #include "windowmanager.h"
-#include "fileservices.h"
+#include "dfileservices.h"
 
 #include "app/define.h"
-#include "fmevent.h"
+#include "dfmevent.h"
 #include "app/filesignalmanager.h"
 #include "app/filemanagerapp.h"
 #include "deviceinfo/udisklistener.h"
@@ -27,7 +27,7 @@
 #include "utils.h"
 
 #include "widgets/singleton.h"
-#include "fileservices.h"
+#include "dfileservices.h"
 #include "controllers/appcontroller.h"
 
 #include <dplatformwindowhandle.h>
@@ -117,7 +117,7 @@ void DFileManagerWindow::initTitleBar()
 
     DFileMenu* menu = fileMenuManger->createToolBarSettingsMenu();
 
-    FMEvent event;
+    DFMEvent event;
     event << windowId();
     menu->setEvent(event);
 
@@ -228,7 +228,7 @@ void DFileManagerWindow::initViewLayout()
 
 void DFileManagerWindow::initFileView()
 {
-    FMEvent event;
+    DFMEvent event;
     event << DUrl();
     event << windowId();
     createNewView(event);
@@ -283,13 +283,13 @@ void DFileManagerWindow::initConnect()
     connect(d->tabBar, &TabBar::tabCloseRequested, this,&DFileManagerWindow::onCurrentTabClosed);
     connect(d->tabBar, &TabBar::tabAddableChanged, this, &DFileManagerWindow::onTabAddableChanged);
     connect(d->newTabButton, &QPushButton::clicked, this, [=]{
-        FMEvent event;
+        DFMEvent event;
         const DUrl url = DUrl::fromUserInput(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0));
         event << url;
         event << windowId();
         createNewView(event);
     });
-    connect(fileService, &FileServices::childrenRemoved, d->toolbar, &DToolBar::dirDeleted);
+    connect(fileService, &DFileService::childrenRemoved, d->toolbar, &DToolBar::dirDeleted);
 }
 
 void DFileManagerWindow::onCurrentTabClosed(const int index, const bool &remainState){
@@ -328,7 +328,7 @@ void DFileManagerWindow::onCurrentTabClosed(const int index, const bool &remainS
         d->newTabButton->hide();
 }
 
-void DFileManagerWindow::closeCurrentTab(const FMEvent &event)
+void DFileManagerWindow::closeCurrentTab(const DFMEvent &event)
 {
     D_D(DFileManagerWindow);
 
@@ -456,7 +456,7 @@ void DFileManagerWindow::setListView()
     d->fileView->setViewModeToList();
 }
 
-void DFileManagerWindow::preHandleCd(const FMEvent &event)
+void DFileManagerWindow::preHandleCd(const DFMEvent &event)
 {
     D_DC(DFileManagerWindow);
 
@@ -483,7 +483,7 @@ void DFileManagerWindow::preHandleCd(const FMEvent &event)
         ShareInfo info = userShareManager->getsShareInfoByShareName(shareName);
         if(info.isValid()){
             DUrl url = DUrl::fromUserInput(info.path());
-            FMEvent e = event;
+            DFMEvent e = event;
             e << url;
             cd(e);
         }
@@ -492,7 +492,7 @@ void DFileManagerWindow::preHandleCd(const FMEvent &event)
     }
 }
 
-void DFileManagerWindow::cd(const FMEvent &event)
+void DFileManagerWindow::cd(const DFMEvent &event)
 {
     D_D(DFileManagerWindow);
 
@@ -504,7 +504,7 @@ void DFileManagerWindow::cd(const FMEvent &event)
     d->toolbar->setViewModeButtonVisible(true);
 }
 
-void DFileManagerWindow::showComputerView(const FMEvent &event)
+void DFileManagerWindow::showComputerView(const DFMEvent &event)
 {
     D_D(DFileManagerWindow);
 
@@ -513,7 +513,7 @@ void DFileManagerWindow::showComputerView(const FMEvent &event)
     d->toolbar->setViewModeButtonVisible(false);
 }
 
-void DFileManagerWindow::openNewTab(const FMEvent &event)
+void DFileManagerWindow::openNewTab(const DFMEvent &event)
 {
     D_D(DFileManagerWindow);
 
@@ -531,7 +531,7 @@ void DFileManagerWindow::openNewTab(const FMEvent &event)
     }
 }
 
-void DFileManagerWindow::createNewView(const FMEvent &event)
+void DFileManagerWindow::createNewView(const DFMEvent &event)
 {
     D_D(DFileManagerWindow);
 

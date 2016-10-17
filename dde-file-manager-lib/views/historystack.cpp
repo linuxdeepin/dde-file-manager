@@ -1,6 +1,6 @@
 #include "historystack.h"
 
-#include "fileservices.h"
+#include "dfileservices.h"
 
 #include <QDebug>
 
@@ -45,7 +45,7 @@ DUrl HistoryStack::back()
 
         url = m_list.at(m_index);
 
-        const AbstractFileInfoPointer &fileInfo = FileServices::instance()->createFileInfo(url);
+        const AbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
 
         if (!fileInfo || !fileInfo->exists() || currentUrl == url) {
             removeAt(m_index);
@@ -68,7 +68,7 @@ DUrl HistoryStack::forward()
     while (++m_index < m_list.count()) {
         url = m_list.at(m_index);
 
-        const AbstractFileInfoPointer &fileInfo = FileServices::instance()->createFileInfo(url);
+        const AbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
 
         if (!fileInfo || !fileInfo->exists() || currentUrl == url) {
             removeAt(m_index);

@@ -5,7 +5,7 @@
 
 #include "app/define.h"
 
-#include "fileservices.h"
+#include "dfileservices.h"
 #include "simpleini/SimpleIni.h"
 
 #include <QDirIterator>

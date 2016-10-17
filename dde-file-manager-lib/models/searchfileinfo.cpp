@@ -2,7 +2,7 @@
 
 #include "views/dfileview.h"
 
-#include "fileservices.h"
+#include "dfileservices.h"
 
 #include "dfilesystemmodel.h"
 
@@ -17,19 +17,19 @@ SORT_FUN_DEFINE(absoluteFilePath, FilePath, SearchFileInfo)
 }
 
 SearchFileInfo::SearchFileInfo()
-    : AbstractFileInfo()
+    : DAbstractFileInfo()
 {
     init();
 }
 
 SearchFileInfo::SearchFileInfo(const DUrl &url)
-    : AbstractFileInfo(url)
+    : DAbstractFileInfo(url)
 {
     if (url.searchedFileUrl().isValid()) {
         m_parentUrl = url;
         m_parentUrl.setSearchedFileUrl(DUrl());
 
-        realFileInfo = FileServices::instance()->createFileInfo(url.searchedFileUrl());
+        realFileInfo = DFileService::instance()->createFileInfo(url.searchedFileUrl());
     } else {
         data->fileInfo = QFileInfo();
     }
@@ -294,7 +294,7 @@ QVariant SearchFileInfo::userColumnDisplayName(int userColumnRole) const
     if (userColumnRole == DFileSystemModel::FileUserRole + 1)
         return QObject::tr("Path", "SearchFileInfo");
 
-    return AbstractFileInfo::userColumnDisplayName(userColumnRole);
+    return DAbstractFileInfo::userColumnDisplayName(userColumnRole);
 }
 
 QVariant SearchFileInfo::userColumnData(int userColumnRole) const
@@ -309,7 +309,7 @@ QVariant SearchFileInfo::userColumnData(int userColumnRole) const
         }
     }
 
-    return AbstractFileInfo::userColumnData(userColumnRole);
+    return DAbstractFileInfo::userColumnData(userColumnRole);
 }
 
 int SearchFileInfo::userColumnWidth(int userColumnRole) const
@@ -317,7 +317,7 @@ int SearchFileInfo::userColumnWidth(int userColumnRole) const
     if (userColumnRole == DFileSystemModel::FileUserRole + 1)
         return -1;
 
-    return AbstractFileInfo::userColumnWidth(userColumnRole);
+    return DAbstractFileInfo::userColumnWidth(userColumnRole);
 }
 
 MenuAction SearchFileInfo::menuActionByColumnRole(int userColumnRole) const
@@ -325,7 +325,7 @@ MenuAction SearchFileInfo::menuActionByColumnRole(int userColumnRole) const
     if (userColumnRole == DFileSystemModel::FileUserRole + 1)
         return MenuAction::AbsolutePath;
 
-    return AbstractFileInfo::menuActionByColumnRole(userColumnRole);
+    return DAbstractFileInfo::menuActionByColumnRole(userColumnRole);
 }
 
 bool SearchFileInfo::canRedirectionFileUrl() const
@@ -333,7 +333,7 @@ bool SearchFileInfo::canRedirectionFileUrl() const
     if (realFileInfo)
         return true;
 
-    const AbstractFileInfoPointer &targetFileInfo = FileServices::instance()->createFileInfo(DUrl(QUrlQuery(data->url).queryItemValue("url")));
+    const AbstractFileInfoPointer &targetFileInfo = DFileService::instance()->createFileInfo(DUrl(QUrlQuery(data->url).queryItemValue("url")));
 
     return targetFileInfo && !targetFileInfo->canIteratorDir();
 }
@@ -346,7 +346,7 @@ DUrl SearchFileInfo::redirectedFileUrl() const
     return DUrl(QUrlQuery(data->url).queryItemValue("url"));
 }
 
-QVector<MenuAction> SearchFileInfo::menuActionList(AbstractFileInfo::MenuType type) const
+QVector<MenuAction> SearchFileInfo::menuActionList(DAbstractFileInfo::MenuType type) const
 {
     if (!realFileInfo)
         return QVector<MenuAction>();
@@ -381,17 +381,17 @@ bool SearchFileInfo::isEmptyFloder() const
     if (path().isEmpty())
         return false;
 
-    const AbstractFileInfoPointer &fileInfo = FileServices::instance()->createFileInfo(fileUrl().searchedFileUrl());
+    const AbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(fileUrl().searchedFileUrl());
 
     return fileInfo && fileInfo->isEmptyFloder();
 }
 
-AbstractFileInfo::sortFunction SearchFileInfo::sortFunByColumn(int columnRole) const
+DAbstractFileInfo::sortFunction SearchFileInfo::sortFunByColumn(int columnRole) const
 {
     if (columnRole == DFileSystemModel::FileUserRole + 1)
         return FileSortFunction::sortFileListByFilePath;
 
-    return AbstractFileInfo::sortFunByColumn(columnRole);
+    return DAbstractFileInfo::sortFunByColumn(columnRole);
 }
 
 DUrl SearchFileInfo::getUrlByNewFileName(const QString &fileName) const

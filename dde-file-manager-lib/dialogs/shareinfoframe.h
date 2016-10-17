@@ -7,7 +7,7 @@
 #include <dcombobox.h>
 #include <dlineedit.h>
 
-#include "abstractfileinfo.h"
+#include "dabstractfileinfo.h"
 
 DWIDGET_USE_NAMESPACE
 

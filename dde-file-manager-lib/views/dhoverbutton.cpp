@@ -1,5 +1,5 @@
 #include "dhoverbutton.h"
-#include "filemenumanager.h"
+#include "dfilemenumanager.h"
 #include "dfilemenu.h"
 #include <QHBoxLayout>
 #include <QDebug>

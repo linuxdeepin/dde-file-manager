@@ -5,9 +5,9 @@
 #include "debugobejct.h"
 #include <QString>
 #include <QDateTime>
-#include "abstractfileinfo.h"
+#include "dabstractfileinfo.h"
 
-class BookMark : public AbstractFileInfo
+class BookMark : public DAbstractFileInfo
 {
 public:
     BookMark();

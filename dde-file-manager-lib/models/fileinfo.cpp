@@ -19,25 +19,25 @@
 QMap<DUrl, bool> FileInfo::canRenameCacheMap;
 
 FileInfo::FileInfo()
-    : AbstractFileInfo()
+    : DAbstractFileInfo()
 {
 
 }
 
 FileInfo::FileInfo(const QString &fileUrl)
-    : AbstractFileInfo(fileUrl)
+    : DAbstractFileInfo(fileUrl)
 {
 
 }
 
 FileInfo::FileInfo(const DUrl &fileUrl)
-    : AbstractFileInfo(fileUrl)
+    : DAbstractFileInfo(fileUrl)
 {
 
 }
 
 FileInfo::FileInfo(const QFileInfo &fileInfo)
-    : AbstractFileInfo(QUrl::fromLocalFile(fileInfo.absoluteFilePath()))
+    : DAbstractFileInfo(QUrl::fromLocalFile(fileInfo.absoluteFilePath()))
 {
 
 }
@@ -96,7 +96,7 @@ bool FileInfo::canIteratorDir() const
 
 QString FileInfo::subtitleForEmptyFloder() const
 {
-    if (!AbstractFileInfo::exists()) {
+    if (!DAbstractFileInfo::exists()) {
         return QObject::tr("File has been moved or deleted");
     } else if (!isReadable()) {
         return QObject::tr("You do not have permission to access this folder");

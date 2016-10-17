@@ -1,5 +1,5 @@
 #include "bookmarkmanager.h"
-#include "fileservices.h"
+#include "dfileservices.h"
 
 #include "models/fileinfo.h"
 #include "shutil/standardpath.h"
@@ -18,7 +18,7 @@
 
 
 BookMarkManager::BookMarkManager(QObject *parent)
-    : AbstractFileController(parent)
+    : DAbstractFileController(parent)
     , BaseManager()
 {
     load();

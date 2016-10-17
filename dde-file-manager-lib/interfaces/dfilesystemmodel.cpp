@@ -1,7 +1,7 @@
 #include "dfilesystemmodel.h"
-#include "abstractfileinfo.h"
-#include "fileservices.h"
-#include "fmevent.h"
+#include "dabstractfileinfo.h"
+#include "dfileservices.h"
+#include "dfmevent.h"
 
 #include "app/define.h"
 
@@ -14,7 +14,7 @@
 #include <QMimeData>
 #include <QtConcurrent/QtConcurrent>
 
-#define fileService FileServices::instance()
+#define fileService DFileService::instance()
 #define DEFAULT_COLUMN_COUNT 1
 
 class FileSystemNode : public QSharedData
@@ -68,13 +68,13 @@ DFileSystemModel::DFileSystemModel(DFileViewHelper *parent)
     : QAbstractItemModel(parent)
     , d_ptr(new DFileSystemModelPrivate(this))
 {
-    connect(fileService, &FileServices::childrenAdded,
+    connect(fileService, &DFileService::childrenAdded,
             this, &DFileSystemModel::onFileCreated,
             Qt::DirectConnection);
-    connect(fileService, &FileServices::childrenRemoved,
+    connect(fileService, &DFileService::childrenRemoved,
             this, &DFileSystemModel::onFileDeleted,
             Qt::DirectConnection);
-    connect(fileService, &FileServices::childrenUpdated,
+    connect(fileService, &DFileService::childrenUpdated,
             this, &DFileSystemModel::onFileUpdated);
 
     qRegisterMetaType<State>("State");
@@ -529,19 +529,19 @@ bool DFileSystemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
 
     DUrlList urlList = DUrl::fromQUrlList(data->urls());
 
-    FMEvent event;
+    DFMEvent event;
 
     event << this->parent()->windowId();
     event << toUrl;
 
     switch (action) {
     case Qt::CopyAction:
-        fileService->pasteFile(AbstractFileController::CopyType, urlList, event);
+        fileService->pasteFile(DAbstractFileController::CopyType, urlList, event);
         break;
     case Qt::LinkAction:
         break;
     case Qt::MoveAction:
-        fileService->pasteFile(AbstractFileController::CutType, urlList, event);
+        fileService->pasteFile(DAbstractFileController::CutType, urlList, event);
         break;
     default:
         return false;

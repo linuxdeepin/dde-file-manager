@@ -15,7 +15,7 @@
 #include "widgets/singleton.h"
 
 #include "controllers/trashmanager.h"
-#include "fileservices.h"
+#include "dfileservices.h"
 #include "controllers/pathmanager.h"
 
 #include "app/define.h"
@@ -33,13 +33,13 @@ ShareFileInfo::ShareFileInfo()
 }
 
 ShareFileInfo::ShareFileInfo(const DUrl &url):
-    AbstractFileInfo()
+    DAbstractFileInfo()
 {
     ShareFileInfo::setUrl(url);
 }
 
 ShareFileInfo::ShareFileInfo(const QString &url):
-    AbstractFileInfo()
+    DAbstractFileInfo()
 {
     ShareFileInfo::setUrl(DUrl(url));
 }
@@ -74,7 +74,7 @@ QString ShareFileInfo::displayName() const
 
 void ShareFileInfo::setUrl(const DUrl &fileUrl)
 {
-    AbstractFileInfo::setUrl(fileUrl);
+    DAbstractFileInfo::setUrl(fileUrl);
 
     data->fileInfo.setFile(fileUrl.path());
 }
@@ -105,7 +105,7 @@ QMimeType ShareFileInfo::mimeType() const
 //    return p;
 //}
 
-QVector<MenuAction> ShareFileInfo::menuActionList(AbstractFileInfo::MenuType type) const
+QVector<MenuAction> ShareFileInfo::menuActionList(DAbstractFileInfo::MenuType type) const
 {
     QVector<MenuAction> actionKeys;
 
@@ -185,7 +185,7 @@ bool ShareFileInfo::columnDefaultVisibleForRole(int userColumnRole) const
     if (userColumnRole == DFileSystemModel::FileLastModifiedRole)
         return false;
 
-    return AbstractFileInfo::columnDefaultVisibleForRole(userColumnRole);
+    return DAbstractFileInfo::columnDefaultVisibleForRole(userColumnRole);
 }
 
 MenuAction ShareFileInfo::menuActionByColumnRole(int userColumnRole) const
@@ -196,7 +196,7 @@ MenuAction ShareFileInfo::menuActionByColumnRole(int userColumnRole) const
     if (userColumnRole == DFileSystemModel::FileUserRole + 2)
         return MenuAction::SourcePath;
 
-    return AbstractFileInfo::menuActionByColumnRole(userColumnRole);
+    return DAbstractFileInfo::menuActionByColumnRole(userColumnRole);
 }
 
 bool ShareFileInfo::canIteratorDir() const

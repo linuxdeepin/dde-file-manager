@@ -1,7 +1,7 @@
 #include "trashpropertydialog.h"
 #include "dseparatorhorizontal.h"
 #include "shutil/fileutils.h"
-#include "fileservices.h"
+#include "dfileservices.h"
 #include "shutil/filessizeworker.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -31,7 +31,7 @@ void TrashPropertyDialog::initUI()
     setFixedSize(320, 300);
     setTitle("");
 
-    const AbstractFileInfoPointer &fileInfo = FileServices::instance()->createFileInfo(m_url);
+    const AbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(m_url);
 
     m_iconLabel = new QLabel(this);
     m_iconLabel->setFixedSize(160, 160);

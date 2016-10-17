@@ -20,7 +20,7 @@ class DBookmarkItemGroup;
 class UDiskDeviceInfo;
 class BookMark;
 class DDragWidget;
-class FMEvent;
+class DFMEvent;
 class DBookmarkMountedIndicatorItem;
 class DEditorWidgetMenu;
 
@@ -197,7 +197,7 @@ private:
     BookMark* m_bookmarkModel;
 public slots:
     void editFinished();
-    void checkMountedItem(const FMEvent& event);
+    void checkMountedItem(const DFMEvent& event);
 };
 
 #endif // DBOOKMARKITEM_H

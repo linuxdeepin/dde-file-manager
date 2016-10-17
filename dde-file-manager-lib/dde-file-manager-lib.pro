@@ -167,16 +167,16 @@ HEADERS += \
     interfaces/dlistitemdelegate.h \
     interfaces/dstyleditemdelegate.h \
     interfaces/durl.h \
-    interfaces/abstractfileinfo.h \
-    interfaces/fileservices.h \
-    interfaces/abstractfilecontroller.h \
-    interfaces/filemenumanager.h \
-    interfaces/fmevent.h \
     interfaces/dfilemenu.h \
     interfaces/ddiriterator.h \
     interfaces/private/dstyleditemdelegate_p.h \
     interfaces/dfilesystemmodel.h \
-    app/define.h
+    app/define.h \
+    interfaces/dabstractfilecontroller.h \
+    interfaces/dabstractfileinfo.h \
+    interfaces/dfilemenumanager.h \
+    interfaces/dfileservices.h \
+    interfaces/dfmevent.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -273,13 +273,13 @@ SOURCES += \
     interfaces/dlistitemdelegate.cpp \
     interfaces/dstyleditemdelegate.cpp \
     interfaces/durl.cpp \
-    interfaces/abstractfileinfo.cpp \
-    interfaces/fileservices.cpp \
-    interfaces/abstractfilecontroller.cpp \
-    interfaces/filemenumanager.cpp \
-    interfaces/fmevent.cpp \
     interfaces/dfilemenu.cpp \
-    interfaces/dfilesystemmodel.cpp
+    interfaces/dfilesystemmodel.cpp \
+    interfaces/dabstractfilecontroller.cpp \
+    interfaces/dabstractfileinfo.cpp \
+    interfaces/dfilemenumanager.cpp \
+    interfaces/dfileservices.cpp \
+    interfaces/dfmevent.cpp
 
 INCLUDEPATH += $$PWD/../ $$PWD/../utils/ $$PWD/interfaces/
 

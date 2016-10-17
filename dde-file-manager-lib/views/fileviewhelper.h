@@ -13,7 +13,7 @@
 #include "interfaces/dfileviewhelper.h"
 
 class DFileView;
-class FMEvent;
+class DFMEvent;
 class FileViewHelper : public DFileViewHelper
 {
     Q_OBJECT
@@ -29,7 +29,7 @@ public:
     int selectedIndexsCount() const Q_DECL_OVERRIDE;
     int rowCount() const Q_DECL_OVERRIDE;
     int indexOfRow(const QModelIndex &index) const Q_DECL_OVERRIDE;
-    const AbstractFileInfo *fileInfo(const QModelIndex &index) const Q_DECL_OVERRIDE;
+    const DAbstractFileInfo *fileInfo(const QModelIndex &index) const Q_DECL_OVERRIDE;
     DStyledItemDelegate *itemDelegate() const Q_DECL_OVERRIDE;
     DFileSystemModel *model() const Q_DECL_OVERRIDE;
     const DUrlList selectedUrls() const Q_DECL_OVERRIDE;
@@ -39,15 +39,15 @@ public:
 
 public slots:
     // helper fm event
-    void preHandleCd(const FMEvent &event);
-    void cd(const FMEvent &event);
-    void cdUp(const FMEvent &event);
-    void edit(const FMEvent &event);
-    void select(const FMEvent &event);
+    void preHandleCd(const DFMEvent &event);
+    void cd(const DFMEvent &event);
+    void cdUp(const DFMEvent &event);
+    void edit(const DFMEvent &event);
+    void select(const DFMEvent &event);
     void selectAll(int windowId);
-    void selectAndRename(const FMEvent &event);
-    void setFoucsOnFileView(const FMEvent& event);
-    void refreshFileView(const FMEvent& event);
+    void selectAndRename(const DFMEvent &event);
+    void setFoucsOnFileView(const DFMEvent& event);
+    void refreshFileView(const DFMEvent& event);
 
 private:
     void onCurrentUrlChanged(const DUrl &url);

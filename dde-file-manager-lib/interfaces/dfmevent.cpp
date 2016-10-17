@@ -1,8 +1,8 @@
-#include "fmevent.h"
+#include "dfmevent.h"
 
 #include <QDebug>
 
-FMEvent::FMEvent(int wId, FMEvent::EventSource source, const DUrl &fileUrl)
+DFMEvent::DFMEvent(int wId, DFMEvent::EventSource source, const DUrl &fileUrl)
     : data(new FMEventData)
 {
     data->windowId = wId;
@@ -11,7 +11,7 @@ FMEvent::FMEvent(int wId, FMEvent::EventSource source, const DUrl &fileUrl)
 }
 
 QT_BEGIN_NAMESPACE
-QDebug operator<<(QDebug deg, const FMEvent &info)
+QDebug operator<<(QDebug deg, const DFMEvent &info)
 {
     deg << "window id:" << info.windowId() << "source:" << info.source() << "url" << info.fileUrl();
     deg << "urlList{";

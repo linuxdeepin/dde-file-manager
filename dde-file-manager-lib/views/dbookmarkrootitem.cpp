@@ -6,7 +6,7 @@
 #include "app/filesignalmanager.h"
 
 #include "controllers/bookmarkmanager.h"
-#include "fmevent.h"
+#include "dfmevent.h"
 
 #include <QDebug>
 #include <QMimeData>

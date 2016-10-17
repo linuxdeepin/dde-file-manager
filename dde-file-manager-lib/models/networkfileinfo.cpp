@@ -11,13 +11,13 @@
 #include <QIcon>
 
 NetworkFileInfo::NetworkFileInfo():
-    AbstractFileInfo()
+    DAbstractFileInfo()
 {
 
 }
 
 NetworkFileInfo::NetworkFileInfo(const DUrl &url):
-    AbstractFileInfo(url)
+    DAbstractFileInfo(url)
 {
 
 }
@@ -90,7 +90,7 @@ void NetworkFileInfo::setNetworkNode(const NetworkNode &networkNode)
     m_networkNode = networkNode;
 }
 
-QVector<MenuAction> NetworkFileInfo::menuActionList(AbstractFileInfo::MenuType type) const
+QVector<MenuAction> NetworkFileInfo::menuActionList(DAbstractFileInfo::MenuType type) const
 {
     QVector<MenuAction> actionKeys;
     if(type == SpaceArea) {

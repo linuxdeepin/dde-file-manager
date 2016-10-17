@@ -4,7 +4,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsWidget>
 #include <QGraphicsLinearLayout>
-#include "fmevent.h"
+#include "dfmevent.h"
 
 #define BOOKMARK_ITEM_HEIGHT 30
 #define SEPARATOR_ITEM_HEIGHT 6
@@ -64,15 +64,15 @@ signals:
 public slots:
     void doDragFinished(const QPointF &point, const QPointF &scenePoint, DBookmarkItem *item);
     void setCurrentUrl(DUrl url);
-    void currentUrlChanged(const FMEvent &event);
+    void currentUrlChanged(const DFMEvent &event);
     void setHomeItem(DBookmarkItem* item);
     void setDefaultDiskItem(DBookmarkItem* item);
     void setNetworkDiskItem(DBookmarkItem* item);
-    void doBookmarkRemoved(const FMEvent &event);
-    void bookmarkRename(const FMEvent &event);
-    void doBookmarkRenamed(const QString &newname, const FMEvent &event);
-    void doBookmarkAdded(const QString &name, const FMEvent &event);
-    void doMoveBookmark(int from, int to, const FMEvent &event);
+    void doBookmarkRemoved(const DFMEvent &event);
+    void bookmarkRename(const DFMEvent &event);
+    void doBookmarkRenamed(const QString &newname, const DFMEvent &event);
+    void doBookmarkAdded(const QString &name, const DFMEvent &event);
+    void doMoveBookmark(int from, int to, const DFMEvent &event);
 
     void volumeAdded(UDiskDeviceInfo * device);
     void volumeRemoved(UDiskDeviceInfo * device);
@@ -81,7 +81,7 @@ public slots:
 
     void backHome();
 
-    void chooseMountedItem(const FMEvent &event);
+    void chooseMountedItem(const DFMEvent &event);
 private:
     bool isBelowLastItem(const QPointF &point);
     void increaseSize();
@@ -110,7 +110,7 @@ private:
     bool m_acceptDrop;
     bool m_isTightMode = false;
     bool m_delayCheckMountedItem = false;
-    FMEvent m_delayCheckMountedEvent;
+    DFMEvent m_delayCheckMountedEvent;
 
     QGraphicsLinearLayout * m_defaultLayout;
 

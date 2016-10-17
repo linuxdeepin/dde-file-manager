@@ -3,7 +3,7 @@
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
-#include "fmevent.h"
+#include "dfmevent.h"
 
 #include "models/fmstate.h"
 
@@ -129,7 +129,7 @@ void WindowManager::showNewWindow(const DUrl &url, bool isAlwaysOpen)
     }
     window->setFileViewMode(m_fmStateManager->fmState()->viewMode());
 
-    FMEvent event;
+    DFMEvent event;
     if (!url.isEmpty()){
         event << url;
     }else{

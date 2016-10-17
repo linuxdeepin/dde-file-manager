@@ -2,7 +2,7 @@
 #include "windowmanager.h"
 
 #include "app/define.h"
-#include "fmevent.h"
+#include "dfmevent.h"
 #include "app/filemanagerapp.h"
 #include "controllers/appcontroller.h"
 
@@ -702,8 +702,8 @@ void TabBar::onMovePrevius(const int fromTabIndex)
 
 void TabBar::onRequestNewWindow(const DUrl url)
 {
-    FMEvent event;
-    event << FMEvent::FileView;
+    DFMEvent event;
+    event << DFMEvent::FileView;
     event << WindowManager::getWindowId(this);
     event << url;
     appController->actionNewWindow(event);

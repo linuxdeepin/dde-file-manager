@@ -54,12 +54,12 @@ bool sortByString(T, T, Qt::SortOrder order = Qt::AscendingOrder)
 }
 }
 
-class AbstractFileInfo;
-typedef QExplicitlySharedDataPointer<AbstractFileInfo> AbstractFileInfoPointer;
+class DAbstractFileInfo;
+typedef QExplicitlySharedDataPointer<DAbstractFileInfo> AbstractFileInfoPointer;
 typedef std::function<const AbstractFileInfoPointer(int)> getFileInfoFun;
 typedef DFMGlobal::MenuAction MenuAction;
 
-class AbstractFileInfo : public QSharedData
+class DAbstractFileInfo : public QSharedData
 {
 
 public:
@@ -75,13 +75,13 @@ public:
         return "yyyy/MM/dd HH:mm:ss";
     }
 
-    AbstractFileInfo();
-    AbstractFileInfo(const DUrl &url);
-    AbstractFileInfo(const QString &url);
+    DAbstractFileInfo();
+    DAbstractFileInfo(const DUrl &url);
+    DAbstractFileInfo(const QString &url);
 
-    virtual ~AbstractFileInfo();
+    virtual ~DAbstractFileInfo();
 
-    inline AbstractFileInfo &operator =(const AbstractFileInfo &other)
+    inline DAbstractFileInfo &operator =(const DAbstractFileInfo &other)
     {data = other.data; return *this;}
 
     virtual void setUrl(const DUrl &url);
@@ -259,7 +259,7 @@ private:
 };
 
 QT_BEGIN_NAMESPACE
-QDebug operator<<(QDebug deg, const AbstractFileInfo &info);
+QDebug operator<<(QDebug deg, const DAbstractFileInfo &info);
 QT_END_NAMESPACE
 
 #endif // ABSTRACTFILEINFO_H

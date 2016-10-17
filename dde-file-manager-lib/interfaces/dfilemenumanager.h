@@ -16,12 +16,12 @@ class DUrl;
 typedef DFMGlobal::MenuAction MenuAction;
 typedef QList<DUrl> DUrlList;
 
-class FileMenuManager : public QObject
+class DFileMenuManager : public QObject
 {
     Q_OBJECT
 
 public:
-    FileMenuManager();
+    DFileMenuManager();
 
     static DFileMenu *createRecentLeftBarMenu(const QSet<MenuAction> &disableList = QSet<MenuAction>());
     static DFileMenu *createDefaultBookMarkMenu(const QSet<MenuAction> &disableList = QSet<MenuAction>());

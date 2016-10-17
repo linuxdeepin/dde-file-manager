@@ -11,10 +11,10 @@
 #define SHAREFILEINFO_H
 
 #include <QObject>
-#include "abstractfileinfo.h"
-#include "fmevent.h"
+#include "dabstractfileinfo.h"
+#include "dfmevent.h"
 
-class ShareFileInfo : public AbstractFileInfo
+class ShareFileInfo : public DAbstractFileInfo
 {
 public:
     ShareFileInfo();

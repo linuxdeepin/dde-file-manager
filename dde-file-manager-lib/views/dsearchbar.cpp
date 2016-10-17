@@ -7,7 +7,7 @@
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
-#include "fmevent.h"
+#include "dfmevent.h"
 
 #include "widgets/singleton.h"
 
@@ -324,7 +324,7 @@ void DSearchBar::completeText(QListWidgetItem *item)
     m_list->hide();
 }
 
-void DSearchBar::currentUrlChanged(const FMEvent &event)
+void DSearchBar::currentUrlChanged(const DFMEvent &event)
 {
     if(event.fileUrl().isSearchFile())
     {
@@ -338,10 +338,10 @@ void DSearchBar::clearText()
 {
     clear();
     m_searchStart = false;
-    FMEvent event;
+    DFMEvent event;
 
     event << WindowManager::getWindowId(this);
-    event << FMEvent::SearchBar;
+    event << DFMEvent::SearchBar;
     event << m_currentPath;
 
 

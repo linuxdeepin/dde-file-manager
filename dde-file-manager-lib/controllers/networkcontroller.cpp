@@ -3,7 +3,7 @@
 #include "gvfs/networkmanager.h"
 
 NetworkController::NetworkController(QObject *parent):
-    AbstractFileController(parent)
+    DAbstractFileController(parent)
 {
 
 }

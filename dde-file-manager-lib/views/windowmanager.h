@@ -6,7 +6,7 @@
 
 class DFileManagerWindow;
 class DUrl;
-class FMEvent;
+class DFMEvent;
 class FMStateManager;
 class FMState;
 class D;

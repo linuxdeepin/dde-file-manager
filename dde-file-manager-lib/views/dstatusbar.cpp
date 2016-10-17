@@ -1,13 +1,13 @@
 #include "dstatusbar.h"
 #include "windowmanager.h"
 
-#include "fmevent.h"
+#include "dfmevent.h"
 #include "app/filesignalmanager.h"
 #include "app/define.h"
 
 #include "shutil/fileutils.h"
 
-#include "fileservices.h"
+#include "dfileservices.h"
 
 #include "widgets/singleton.h"
 
@@ -198,7 +198,7 @@ QComboBox *DStatusBar::comboBox() const
     return m_comboBox;
 }
 
-void DStatusBar::itemSelected(const FMEvent &event, int number)
+void DStatusBar::itemSelected(const DFMEvent &event, int number)
 {
     if (!m_label || event.windowId() != WindowManager::getWindowId(this))
         return;
@@ -287,7 +287,7 @@ void DStatusBar::itemSelected(const FMEvent &event, int number)
     }
 }
 
-void DStatusBar::itemCounted(const FMEvent &event, int number)
+void DStatusBar::itemCounted(const DFMEvent &event, int number)
 {
     if (!m_label || event.windowId() != WindowManager::getWindowId(this))
         return;
@@ -299,7 +299,7 @@ void DStatusBar::itemCounted(const FMEvent &event, int number)
     }
 }
 
-void DStatusBar::setLoadingIncatorVisible(const FMEvent &event, bool visible)
+void DStatusBar::setLoadingIncatorVisible(const DFMEvent &event, bool visible)
 {
     if (event.windowId() != WindowManager::getWindowId(this))
         return;
