@@ -47,6 +47,7 @@ public:
 
     void initData();
     void initUI();
+    void initTitleFrame();
     void initTitleBar();
     void initSplitter();
 

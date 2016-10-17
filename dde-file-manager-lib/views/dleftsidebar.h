@@ -73,7 +73,6 @@ private:
     bool m_isTight = false;
     bool m_entered = false;
     QFrame* m_homeBar = NULL;
-    QPushButton* m_fileButton = NULL;
     QPushButton* m_tightNavFileButton = NULL;
     DCheckableButton* m_homeButton = NULL;
     DCheckableButton* m_recentButton = NULL;
@@ -110,8 +109,6 @@ private:
     DBookmarkScene * m_tightScene;
     DBookmarkItemGroup * m_itemGroup;
     DBookmarkItemGroup * m_itemGroupTight;
-
-    QLabel * m_fileLabel = NULL;
     DFileView *m_fileView = NULL;
     DToolBar *m_toolbar = NULL;
 };

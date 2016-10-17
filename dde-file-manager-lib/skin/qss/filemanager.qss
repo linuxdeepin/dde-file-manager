@@ -6,6 +6,18 @@ QMainWindow{
     background-color: #f9f9fa;
 }
 
+
+QPushButton#LogoButton{
+   border: none;
+   image: url(:/images/images/dde-file-manager.svg);
+}
+QPushButton#LogoButton:hover{
+   image: url(:/images/images/dde-file-manager.svg);
+}
+QPushButton#LogoButton:press{
+   image: url(:/images/images/dde-file-manager.svg);
+}
+
 QFrame#TitleBar{
     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                     stop: 0 #FFFFFF,
