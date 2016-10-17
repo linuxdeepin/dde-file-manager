@@ -10,6 +10,7 @@
 #include "shutil/iconprovider.h"
 #include "dfilesystemmodel.h"
 #include "widgets/singleton.h"
+#include "fileinfo.h"
 
 #include <QMimeType>
 #include <QSettings>
@@ -46,12 +47,22 @@ bool TrashFileInfo::isCanRename() const
 
 bool TrashFileInfo::isReadable() const
 {
-    return true;
+    DUrl url;
+    url.setScheme(FILE_SCHEME);
+    url.setPath(sourceFilePath());
+
+    FileInfo info(url);
+    return info.isReadable();
 }
 
 bool TrashFileInfo::isWritable() const
 {
-    return false;
+    DUrl url;
+    url.setScheme(FILE_SCHEME);
+    url.setPath(sourceFilePath());
+
+    FileInfo info(url);
+    return info.isWritable();
 }
 
 QString TrashFileInfo::displayName() const
