@@ -599,6 +599,10 @@ void DFileManagerWindow::switchToView(const int viewIndex)
     if (d->fileView) {
         disconnect(d->fileView, &DFileView::viewModeChanged, d->toolbar, &DToolBar::checkViewModeButton);
         disconnect(d->fileView, &DFileView::currentUrlChanged ,this, &DFileManagerWindow::onFileViewCurrentUrlChanged);
+
+        disconnect(fileSignalManager, &FileSignalManager::statusBarItemsSelected, d->fileView->statusBar(), &DStatusBar::itemSelected);
+        disconnect(fileSignalManager, &FileSignalManager::statusBarItemsCounted, d->fileView->statusBar(), &DStatusBar::itemCounted);
+        disconnect(fileSignalManager, &FileSignalManager::loadingIndicatorShowed, d->fileView->statusBar(), &DStatusBar::setLoadingIncatorVisible);
     }
 
     d->viewStackLayout->setCurrentIndex(viewIndex);
@@ -608,6 +612,11 @@ void DFileManagerWindow::switchToView(const int viewIndex)
 
     connect(d->fileView, &DFileView::viewModeChanged, d->toolbar, &DToolBar::checkViewModeButton);
     connect(d->fileView, &DFileView::currentUrlChanged ,this, &DFileManagerWindow::onFileViewCurrentUrlChanged);
+
+    connect(fileSignalManager, &FileSignalManager::statusBarItemsSelected, d->fileView->statusBar(), &DStatusBar::itemSelected);
+    connect(fileSignalManager, &FileSignalManager::statusBarItemsCounted, d->fileView->statusBar(), &DStatusBar::itemCounted);
+    connect(fileSignalManager, &FileSignalManager::loadingIndicatorShowed, d->fileView->statusBar(), &DStatusBar::setLoadingIncatorVisible);
+
 
     emit fileViewChanged(d->fileView);
     d->leftSideBar->scene()->setCurrentUrl(d->fileView->currentUrl());
