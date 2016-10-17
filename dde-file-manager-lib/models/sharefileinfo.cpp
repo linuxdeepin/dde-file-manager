@@ -117,7 +117,8 @@ QVector<MenuAction> ShareFileInfo::menuActionList(DAbstractFileInfo::MenuType ty
     } else if (type == SingleFile){
         actionKeys.reserve(12);
         if(isDir()){
-            actionKeys << MenuAction::OpenInNewWindow
+            actionKeys << MenuAction::Open
+                       << MenuAction::OpenInNewWindow
                        << MenuAction::OpenInNewTab
                        << MenuAction::UnShare;
         }
