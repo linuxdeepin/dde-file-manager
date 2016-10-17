@@ -171,7 +171,9 @@ void UserShareManager::updateUserShareInfo()
         settings.GetAllSections(sections);
         CSimpleIniA::TNamesDepend::iterator i;
 
+        //cache
         QStringList oldShareInfos = m_shareInfos.keys();
+        QMap<QString,ShareInfo> shareInfoCache = m_shareInfos;
 
         m_shareInfos.clear();
         m_sharePathToNames.clear();
@@ -198,10 +200,11 @@ void UserShareManager::updateUserShareInfo()
                 }
             }
 
-            if (info.isValid() && !oldShareInfos.contains(info.path())) {
-                oldShareInfos.removeOne(info.path());
-
+            if (info.isValid() && !oldShareInfos.contains(info.shareName())) {
                 emit userShareAdded(info.path());
+            }
+            else if(info.isValid() && oldShareInfos.contains(info.shareName())){
+                oldShareInfos.removeOne(info.shareName());
             }
 
             m_shareInfos.insert(info.shareName(), info);
@@ -217,8 +220,10 @@ void UserShareManager::updateUserShareInfo()
             }
         }
 
-        for (const QString &path : oldShareInfos)
-            emit userShareDeleted(path);
+        // emit deleted usershare
+        for (const QString &shareName : oldShareInfos){
+            emit userShareDeleted(shareInfoCache.value(shareName).path());
+        }
     }
 }
 

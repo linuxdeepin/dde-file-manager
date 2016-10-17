@@ -402,6 +402,15 @@ void AppController::actionProperty(const DFMEvent &event)
 
     if (event.fileUrlList().first() == DUrl::fromTrashFile("/")){
         emit fileSignalManager->requestShowTrashPropertyDialog(event);
+    }else if(event.fileUrl().isUserShareFile()){
+        DUrl url = event.fileUrl();
+        url.setScheme(FILE_SCHEME);
+        DUrlList list;
+        list << url;
+        DFMEvent e = event;
+        e << url;
+        e << list;
+        emit fileSignalManager->requestShowPropertyDialog(e);
     }else{
         emit fileSignalManager->requestShowPropertyDialog(event);
     }
