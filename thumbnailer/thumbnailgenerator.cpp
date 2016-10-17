@@ -48,24 +48,7 @@ QPixmap ThumbnailGenerator::generateThumbnail(const QUrl& fileUrl, ThumbnailGene
         //TODO
     }
 
-    QImage img(pixmap.width() + IMAGE_BORDER*2, pixmap.height() + IMAGE_BORDER*2, QImage::Format_ARGB32_Premultiplied);
-    img.fill(Qt::white);
-    QPainter pa(&img);
-    pa.setRenderHint(QPainter::Antialiasing);
-    pa.drawPixmap(IMAGE_BORDER,IMAGE_BORDER,pixmap);
-
-    QImage dimg = DUtility::dropShadow(QPixmap::fromImage(img),DROPSHADOW_RADIUS);
-    QPainter dpa(&dimg);
-    QPen pen;
-    pen.setColor(QColor(0,0,0, 0.5*255));
-    pen.setWidth(1);
-    dpa.setPen(pen);
-    dpa.setRenderHint(QPainter::Antialiasing);
-    dpa.drawPixmap(IMAGE_BORDER + DROPSHADOW_RADIUS, IMAGE_BORDER + DROPSHADOW_RADIUS, pixmap);
-    dpa.drawRect(QRect(IMAGE_BORDER + DROPSHADOW_RADIUS - 1,
-                       IMAGE_BORDER + DROPSHADOW_RADIUS- 1,pixmap.width() +1,pixmap.height()+1));
-
-    return QPixmap::fromImage(dimg);
+    return pixmap;
 }
 
 bool ThumbnailGenerator::canGenerateThumbnail(const QUrl&  fileUrl) const
