@@ -56,7 +56,7 @@ private:
     mutable QHash<QString,QIcon> m_mimeIcons;
     mutable QMap<QString,QIcon> m_desktopIcons;
     mutable QMap<QString,QString> m_desktopIconPaths;
-    mutable QCache<QString,QIcon> m_icons;
+    mutable QCache<qint64,QIcon> m_icons;
     mutable QMap<QString,QIcon> m_thumbnailIcons;
 
     QSet<QString> m_supportImageMimeTypesSet;
