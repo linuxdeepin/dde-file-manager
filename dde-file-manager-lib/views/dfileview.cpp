@@ -1390,8 +1390,10 @@ void DFileView::openIndex(const QModelIndex &index)
 
    if (model()->hasChildren(index)) {
         DFMEvent event;
-
-        event << model()->getUrlByIndex(index);
+        DUrl url = model()->getUrlByIndex(index);
+        if(url.isUserShareFile())
+            url.setScheme(FILE_SCHEME);
+        event << url;
         event << DFMEvent::FileView;
         event << windowId();
 

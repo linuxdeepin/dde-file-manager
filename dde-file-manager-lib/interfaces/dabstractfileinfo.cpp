@@ -376,8 +376,13 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
                        << MenuAction::OpenInTerminal
                        << MenuAction::Separator
                        << MenuAction::Compress
-                       << MenuAction::Separator
-                       << MenuAction::Property;
+                       << MenuAction::Separator;
+            if(isShared())
+                actionKeys << MenuAction::UnShare
+                           << MenuAction::Separator;
+
+            actionKeys  << MenuAction::Property;
+
         } else {
             actionKeys << MenuAction::Open;
 

@@ -22,6 +22,9 @@ ShareControler::ShareControler(QObject *parent) :
     DAbstractFileController(parent)
 {
     connect(userShareManager, &UserShareManager::userShareAdded, this, [=](const QString& filePath){
+        static int counter;
+        qDebug()<<"*****************************"<<counter;
+        counter++;
         emit childrenAdded(DUrl::fromUserShareFile(filePath));
     });
     connect(userShareManager, &UserShareManager::userShareDeleted, this, [=](const QString& filePath){
