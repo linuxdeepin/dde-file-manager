@@ -2,6 +2,7 @@
 #include "closealldialogindicator.h"
 #include "openwithotherdialog.h"
 #include "trashpropertydialog.h"
+#include "usersharepasswordsettingdialog.h"
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
@@ -450,6 +451,12 @@ void DialogManager::showAboutDialog(const DFMEvent &event)
     const QPoint global = w->mapToGlobal(w->rect().center());
     dialog->move(global.x() - dialog->width() / 2, global.y() - dialog->height() / 2);
     dialog->show();
+}
+
+void DialogManager::showUserSharePasswordSettingDialog(const DFMEvent &event)
+{
+    UserSharePasswordSettingDialog *dialog = new UserSharePasswordSettingDialog(0);
+    dialog->open();
 }
 
 void DialogManager::removePropertyDialog(const DUrl &url)

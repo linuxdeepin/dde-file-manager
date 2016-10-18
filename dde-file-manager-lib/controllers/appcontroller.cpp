@@ -27,6 +27,7 @@
 #include "gvfs/gvfsmountclient.h"
 #include "gvfs/secrectmanager.h"
 #include "usershare/usersharemanager.h"
+#include "dialogs/dialogmanager.h"
 #include "widgets/singleton.h"
 
 #include "../deviceinfo/udisklistener.h"
@@ -477,6 +478,11 @@ void AppController::actionUnShare(const DFMEvent &event)
 {
     const ShareInfo& info = userShareManager->getShareInfoByPath(event.fileUrl().path());
     userShareManager->deleteUserShare(info);
+}
+
+void AppController::actionSetUserSharePassword(const DFMEvent &event)
+{
+    dialogManager->showUserSharePasswordSettingDialog(event);
 }
 
 void AppController::actionctrlL(const DFMEvent &event)

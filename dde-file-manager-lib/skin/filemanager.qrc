@@ -361,5 +361,7 @@
         <file>images/icons/usershare_hover_22px.svg</file>
         <file>images/icons/usershare_normal_16px.svg</file>
         <file>images/icons/usershare_normal_22px.svg</file>
+        <file>images/icons/share_password.svg</file>
+        <file>images/icons/share_password.png</file>
     </qresource>
 </RCC>

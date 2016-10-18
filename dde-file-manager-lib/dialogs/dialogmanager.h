@@ -52,6 +52,7 @@ public slots:
     void showDiskErrorDialog(const QString &id, const QString &errorText);
     void showBreakSymlinkDialog(const QString &targetName, const DUrl& linkfile);
     void showAboutDialog(const DFMEvent &event);
+    void showUserSharePasswordSettingDialog(const DFMEvent& event);
 
     void removePropertyDialog(const DUrl& url);
     void closeAllPropertyDialog();
