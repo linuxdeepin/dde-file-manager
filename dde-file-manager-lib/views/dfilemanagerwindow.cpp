@@ -580,8 +580,12 @@ void DFileManagerWindow::setFileView(DFileView *view)
 
     d->viewStackLayout->setCurrentWidget(view);
 
-    if(d->fileView)
+    if(d->fileView){
         view->setViewMode(d->fileView->getDefaultViewMode());
+        disconnect(fileSignalManager, &FileSignalManager::statusBarItemsSelected, d->fileView->statusBar(), &DStatusBar::itemSelected);
+        disconnect(fileSignalManager, &FileSignalManager::statusBarItemsCounted, d->fileView->statusBar(), &DStatusBar::itemCounted);
+        disconnect(fileSignalManager, &FileSignalManager::loadingIndicatorShowed, d->fileView->statusBar(), &DStatusBar::setLoadingIncatorVisible);
+    }
 
     d->fileView = view;
 
