@@ -348,16 +348,16 @@ DUrl SearchFileInfo::redirectedFileUrl() const
 
 QVector<MenuAction> SearchFileInfo::menuActionList(DAbstractFileInfo::MenuType type) const
 {
-    if (!realFileInfo)
-        return QVector<MenuAction>();
-
-    QVector<MenuAction> actions = realFileInfo->menuActionList(type);
-
-    if (type == SpaceArea)
+    QVector<MenuAction> actions;
+    if (!realFileInfo && type == SpaceArea){
+        actions << MenuAction::DisplayAs;
+        actions << MenuAction::SortBy;
+        actions << MenuAction::SelectAll;
         return actions;
+    }
 
+    actions = realFileInfo->menuActionList(type);
     actions.insert(1, MenuAction::OpenFileLocation);
-
     return actions;
 }
 
