@@ -30,6 +30,8 @@
 #include <QDebug>
 #include <QImageReader>
 
+#define ICON_BORDER 5
+
 #undef signals
 extern "C" {
   #include <gtk/gtk.h>
@@ -368,14 +370,23 @@ QIcon IconProvider:: findIcon(const DUrl& fileUrl, const QString &mimeType)
                     return *ico;
             }
 
-            QImage img = pixmap.toImage();
+            QImage img(pixmap.width() + ICON_BORDER*2, pixmap.height() + ICON_BORDER*2,
+                       QImage::Format_ARGB32_Premultiplied);
+            img.fill(Qt::white);
             QPainter pa(&img);
             QPen pen;
             pen.setWidth(1);
-            pen.setColor(QColor(0,0,0,0.5*255));
+            pen.setColor(QColor(0,0,0,0.35*255));
             pa.setPen(pen);
             pa.setRenderHint(pa.Antialiasing);
-            pa.drawRect(QRect(0,0,img.width(),img.height()));
+            QVector<QLine> lines;
+            lines << QLine(QPoint(0,0),QPoint(img.width(),0))
+                  << QLine(QPoint(img.width(),1),QPoint(img.width(),img.height()))
+                  << QLine(QPoint(0,img.height()),QPoint(img.width()-1,img.height()))
+                  << QLine(QPoint(0,1),QPoint(0,img.height() -1));
+            pa.drawLines(lines);
+
+            pa.drawPixmap(ICON_BORDER, ICON_BORDER, pixmap);
 
             QIcon *icon = new QIcon(QPixmap::fromImage(img));
             m_icons.insert(pixmap.cacheKey(), icon);
