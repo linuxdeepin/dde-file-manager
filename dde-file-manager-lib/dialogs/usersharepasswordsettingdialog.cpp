@@ -10,7 +10,7 @@ UserSharePasswordSettingDialog::UserSharePasswordSettingDialog(QWidget *parent) 
     buttonTexts << tr("Cancle") << tr("Comfirm");
     addButtons(buttonTexts);
     setDefaultButton(0);
-    setTitle(tr("Please set share password"));
+    setTitle(tr("Please enter share password"));
     setIcon(QIcon(":/icons/images/icons/share_password.png"));
     initUI();
     initConnections();
