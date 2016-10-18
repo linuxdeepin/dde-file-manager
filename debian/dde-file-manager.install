@@ -2,3 +2,5 @@ usr/bin/*
 usr/share/applications/*
 usr/share/polkit-1/actions/*
 etc/xdg/autostart/*
+etc/dbus-1/system.d/*
+usr/share/dbus-1/*
