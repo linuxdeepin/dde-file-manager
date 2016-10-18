@@ -5,7 +5,7 @@
 #include "shutil/iconprovider.h"
 
 #include "controllers/pathmanager.h"
-
+#include "deviceinfo/udisklistener.h"
 #include "widgets/singleton.h"
 
 #include "app/define.h"
@@ -68,7 +68,12 @@ bool FileInfo::isCanRename() const
 
 bool FileInfo::isCanShare() const
 {
-    return fileUrl().path().startsWith(QDir::homePath()) && isDir();
+    if (isDir() && isReadable()){
+        bool isInDeviceFolder = deviceListener->isInDeviceFolder(absolutePath());
+        bool isCanShare = isInDeviceFolder || fileUrl().path().startsWith(QDir::homePath());
+        return isCanShare;
+    }
+    return false;
 }
 
 bool FileInfo::isShared() const
