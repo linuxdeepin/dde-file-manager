@@ -649,6 +649,7 @@ void TabBar:: updateScreen()
             animation->setStartValue(tab->geometry());
             animation->setEndValue(rect);
             animation->start();
+            m_TabCloseButton->hide();
 
             connect(animation,&QPropertyAnimation::finished,[=]{
                 animation->deleteLater();
@@ -661,6 +662,15 @@ void TabBar:: updateScreen()
                 if(m_TabCloseButton->closingIndex() == counter){
                     m_TabCloseButton->setPos(tab->x()+tab->width()-26,0);
                 }
+
+                // handle tab close button display position
+                QMouseEvent * event = new QMouseEvent(QMouseEvent::MouseMove,
+                                                      mapFromGlobal(QCursor::pos()),
+                                                      Qt::NoButton,
+                                                      Qt::NoButton,
+                                                      Qt::NoModifier);
+                mouseMoveEvent(event);
+                m_TabCloseButton->show();
             });
         }
         else
