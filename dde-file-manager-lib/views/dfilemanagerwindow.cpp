@@ -580,6 +580,9 @@ void DFileManagerWindow::setFileView(DFileView *view)
 
     d->viewStackLayout->setCurrentWidget(view);
 
+    if(d->fileView)
+        view->setViewMode(d->fileView->getDefaultViewMode());
+
     d->fileView = view;
 
     connect(view, &DFileView::viewModeChanged, d->toolbar, &DToolBar::checkViewModeButton);

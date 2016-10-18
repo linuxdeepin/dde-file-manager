@@ -5,6 +5,7 @@
 #include "dfmevent.h"
 #include "app/filemanagerapp.h"
 #include "controllers/appcontroller.h"
+#include <QThread>
 
 #include <dutility.h>
 
@@ -558,8 +559,17 @@ void TabBar::removeTab(const int index, const bool &remainState)
     if(m_TabCloseButton->closingIndex() <=count()-1 &&m_TabCloseButton->closingIndex()>=0){
         m_lastDeleteState = remainState;
     }
-    else
+    else{
         m_lastAddTabState = false;
+//        QThread::msleep(100);
+        // handle tab close button display position
+        QMouseEvent * event = new QMouseEvent(QMouseEvent::MouseMove,
+                                              mapFromGlobal(QCursor::pos()),
+                                              Qt::NoButton,
+                                              Qt::NoButton,
+                                              Qt::NoModifier);
+        mouseMoveEvent(event);
+    }
 
     if(index<count())
         setCurrentIndex(index);
@@ -649,28 +659,18 @@ void TabBar:: updateScreen()
             animation->setStartValue(tab->geometry());
             animation->setEndValue(rect);
             animation->start();
-            m_TabCloseButton->hide();
 
             connect(animation,&QPropertyAnimation::finished,[=]{
                 animation->deleteLater();
-                if((m_TabCloseButton->closingIndex()>=count()||m_TabCloseButton->closingIndex()<0)
-                        &&m_lastDeleteState){
-                    m_TabCloseButton->hide();
-                    m_lastDeleteState = false;
-                    updateScreen();
-                }
+
                 if(m_TabCloseButton->closingIndex() == counter){
                     m_TabCloseButton->setPos(tab->x()+tab->width()-26,0);
                 }
+                if((m_TabCloseButton->closingIndex()>=count()||m_TabCloseButton->closingIndex()<0)
+                        &&m_lastDeleteState){
+                    m_lastDeleteState = false;
+                }
 
-                // handle tab close button display position
-                QMouseEvent * event = new QMouseEvent(QMouseEvent::MouseMove,
-                                                      mapFromGlobal(QCursor::pos()),
-                                                      Qt::NoButton,
-                                                      Qt::NoButton,
-                                                      Qt::NoModifier);
-                mouseMoveEvent(event);
-                m_TabCloseButton->show();
             });
         }
         else
