@@ -47,21 +47,13 @@ bool TrashFileInfo::isCanRename() const
 
 bool TrashFileInfo::isReadable() const
 {
-    DUrl url;
-    url.setScheme(FILE_SCHEME);
-    url.setPath(sourceFilePath());
-
-    FileInfo info(url);
+    FileInfo info(mimeDataUrl());
     return info.isReadable();
 }
 
 bool TrashFileInfo::isWritable() const
 {
-    DUrl url;
-    url.setScheme(FILE_SCHEME);
-    url.setPath(sourceFilePath());
-
-    FileInfo info(url);
+    FileInfo info(mimeDataUrl());
     return info.isWritable();
 }
 
