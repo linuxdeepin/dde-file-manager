@@ -176,7 +176,8 @@ HEADERS += \
     interfaces/dabstractfileinfo.h \
     interfaces/dfilemenumanager.h \
     interfaces/dfileservices.h \
-    interfaces/dfmevent.h
+    interfaces/dfmevent.h \
+    dialogs/usersharepasswordsettingdialog.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -279,7 +280,8 @@ SOURCES += \
     interfaces/dabstractfileinfo.cpp \
     interfaces/dfilemenumanager.cpp \
     interfaces/dfileservices.cpp \
-    interfaces/dfmevent.cpp
+    interfaces/dfmevent.cpp \
+    dialogs/usersharepasswordsettingdialog.cpp
 
 INCLUDEPATH += $$PWD/../ $$PWD/../utils/ $$PWD/interfaces/
 

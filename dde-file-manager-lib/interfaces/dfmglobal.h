@@ -138,6 +138,7 @@ public:
         SetAsWallpaper,
         ForgetPassword,
         UnShare,
+        SetUserSharePassword,
         Unknow
     };
 

@@ -144,7 +144,8 @@ DFileMenu *DFileMenuManager::createToolBarSettingsMenu(const QSet<MenuAction> &d
     actionKeys.reserve(5);
 
     actionKeys << MenuAction::NewWindow
-               << MenuAction::Separator;
+               << MenuAction::Separator
+               << MenuAction::SetUserSharePassword;
 //               << MenuAction::Settings
     #ifndef ARCH_MIPSEL
         actionKeys  << MenuAction::Help;
@@ -281,6 +282,7 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::SourcePath] = QObject::tr("Source path");
     actionKeys[MenuAction::AbsolutePath] = QObject::tr("Path");
     actionKeys[MenuAction::UnShare] = QObject::tr("Cancle sharing");
+    actionKeys[MenuAction::SetUserSharePassword] = QObject::tr("Set share password");
 }
 
 void DFileMenuData::initActions()
