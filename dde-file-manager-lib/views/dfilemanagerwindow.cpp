@@ -287,7 +287,7 @@ void DFileManagerWindow::initConnect()
         const DUrl url = DUrl::fromUserInput(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0));
         event << url;
         event << windowId();
-        createNewView(event);
+        openNewTab(event);
     });
     connect(fileService, &DFileService::childrenRemoved, d->toolbar, &DToolBar::dirDeleted);
 }
