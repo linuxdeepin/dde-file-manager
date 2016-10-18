@@ -161,6 +161,7 @@ private:
     int m_trackingIndex = 0;
     bool m_lastDeleteState = false;
     bool m_lastAddTabState = false;
+    int m_historyWidth = 0;
 };
 
 
