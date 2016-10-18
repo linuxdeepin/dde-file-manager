@@ -1706,6 +1706,11 @@ void DFileView::showEmptyAreaMenu()
     const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList();
 
     QSet<MenuAction> disableList = DFileMenuManager::getDisableActionList(model()->getUrlByIndex(index));
+
+    if (model()->state() != DFileSystemModel::Idle){
+        disableList << MenuAction::SortBy;
+    }
+
     const bool& tabAddable = WindowManager::tabAddableByWinId(windowId());
     if(!tabAddable)
         disableList << MenuAction::OpenInNewTab;
