@@ -251,14 +251,15 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
     //        expandGroup->expand(1)->setContent(m_OpenWithListWidget);
             m_fileCount = 1;
             m_size = fileInfo->size();
-        }else if (fileInfo->isCanShare()){
-            setFixedSize(QSize(320, 500));
-            m_shareinfoFrame = createShareInfoFrame(fileInfo);
-            expandGroup->expand(0)->setExpandedSeparatorVisible(true);
-            expandGroup->expand(1)->setExpandedSeparatorVisible(false);
-            expandGroup->expand(1)->setContent(m_shareinfoFrame);
-            expandGroup->expand(1)->setExpand(false);
-
+        }else if (fileInfo->isDir()){
+            if (fileInfo->isCanShare()){
+                setFixedSize(QSize(320, 500));
+                m_shareinfoFrame = createShareInfoFrame(fileInfo);
+                expandGroup->expand(0)->setExpandedSeparatorVisible(true);
+                expandGroup->expand(1)->setExpandedSeparatorVisible(false);
+                expandGroup->expand(1)->setContent(m_shareinfoFrame);
+                expandGroup->expand(1)->setExpand(false);
+            }
             startComputerFolderSize(m_url);
             m_fileCount = fileInfo->size();
         }
