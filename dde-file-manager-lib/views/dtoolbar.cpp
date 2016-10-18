@@ -234,6 +234,7 @@ void DToolBar::searchBarTextEntered()
     QString text = m_searchBar->text();
 
     if (text.isEmpty()) {
+        m_searchBar->clearText();
         return;
     }
     DFMEvent event;
