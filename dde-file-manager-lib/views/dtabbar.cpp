@@ -561,7 +561,6 @@ void TabBar::removeTab(const int index, const bool &remainState)
     }
     else{
         m_lastAddTabState = false;
-//        QThread::msleep(100);
         // handle tab close button display position
         QMouseEvent * event = new QMouseEvent(QMouseEvent::MouseMove,
                                               mapFromGlobal(QCursor::pos()),
@@ -634,10 +633,10 @@ QSize TabBar::tabSizeHint(const int &index)
     if(m_lastDeleteState)
         return QSize(m_tabs.at(0)->width(),m_tabs.at(0)->height());
 
-    int averageWidth = width()/count();
+    int averageWidth = m_historyWidth/count();
 
     if(index == count() -1)
-        return (QSize(width() - averageWidth*(count()-1),24));
+        return (QSize(m_historyWidth - averageWidth*(count()-1),24));
     else
         return (QSize(averageWidth,24));
 }
@@ -687,6 +686,14 @@ void TabBar::initConnections()
     connect(m_TabCloseButton, &TabCloseButton::unHovered, this, &TabBar::onTabCloseButtonUnHovered);
     connect(m_TabCloseButton, &TabCloseButton::clicked, this, [=]{
         int closingIndex = m_TabCloseButton->closingIndex();
+
+        //effect handler
+        if(closingIndex == count() - 1){
+            m_historyWidth = count() * m_tabs.at(0)->width();
+        }
+        else{
+            m_historyWidth = (count() - 1) * m_tabs.at(0)->width();
+        }
         emit tabCloseRequested(closingIndex, true);
 
         //redirect tab close button's closingIndex
@@ -751,6 +758,7 @@ void TabBar::onTabCloseButtonHovered(int closingIndex)
 void TabBar::resizeEvent(QResizeEvent *event)
 {
     m_scene->setSceneRect(0,0,width(),height());
+    m_historyWidth = width();
     updateScreen();
     QGraphicsView::resizeEvent(event);
 }
@@ -760,6 +768,7 @@ bool TabBar::event(QEvent *event)
     if(event->type() == event->Leave){
         m_TabCloseButton->hide();
         m_lastDeleteState = false;
+        m_historyWidth = width();
         updateScreen();
     }
     return QGraphicsView::event(event);
@@ -797,6 +806,7 @@ void TabBar::mouseMoveEvent(QMouseEvent *event)
             m_lastDeleteState = false;
             updateScreen();
         }
+
     }
 
     QGraphicsView::mouseMoveEvent(event);
