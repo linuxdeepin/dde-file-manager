@@ -113,17 +113,32 @@ void NameTextEdit::setPlainText(const QString &text)
 
 void NameTextEdit::focusOutEvent(QFocusEvent *event)
 {
-    emit editFinished();
     QTextEdit::focusOutEvent(event);
 }
 
 void NameTextEdit::keyPressEvent(QKeyEvent *event)
 {
+    if (event->key() == Qt::Key_Escape){
+        setIsCanceled(true);
+        emit editFinished();
+        return;
+    }
     if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter){
+        setIsCanceled(false);
         emit editFinished();
     }
     QTextEdit::keyPressEvent(event);
 }
+bool NameTextEdit::isCanceled() const
+{
+    return m_isCanceled;
+}
+
+void NameTextEdit::setIsCanceled(bool isCanceled)
+{
+    m_isCanceled = isCanceled;
+}
+
 
 
 
@@ -317,27 +332,43 @@ void PropertyDialog::renameFile()
 
 void PropertyDialog::showTextShowFrame()
 {
-    DUrl oldUrl = m_url;
-    DUrl newUrl = DUrl(QString("%1/%2").arg(DUrl::parentUrl(m_url).toString(), m_edit->toPlainText()));
-
-    QFile file(oldUrl.toLocalFile());
-    const QString &newFilePath = newUrl.toLocalFile();
-    bool result = file.rename(newFilePath);
-    if (!result) {
-        result = QProcess::execute("mv \"" + file.fileName().toUtf8() + "\" \"" + newFilePath.toUtf8() + "\"") == 0;
-    }
-
-    qDebug() << result;
-
-    if (result){
-        m_url = newUrl;
-        m_absolutePath = m_url.toLocalFile();
+    if (m_edit->isCanceled()){
         const AbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(m_url);
         initTextShowFrame(fileInfo->displayName());
-        dialogManager->refreshPropertyDialogs(oldUrl, newUrl);
     }else{
-        m_editStackWidget->setCurrentIndex(1);
+        DUrl oldUrl = m_url;
+        DUrl newUrl = DUrl(QString("%1/%2").arg(DUrl::parentUrl(m_url).toString(), m_edit->toPlainText()));
+
+        QFile file(oldUrl.toLocalFile());
+        const QString &newFilePath = newUrl.toLocalFile();
+        bool result = file.rename(newFilePath);
+        if (!result) {
+            result = QProcess::execute("mv \"" + file.fileName().toUtf8() + "\" \"" + newFilePath.toUtf8() + "\"") == 0;
+        }
+
+        qDebug() << result;
+
+        if (result){
+            m_url = newUrl;
+            m_absolutePath = m_url.toLocalFile();
+            const AbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(m_url);
+            initTextShowFrame(fileInfo->displayName());
+            dialogManager->refreshPropertyDialogs(oldUrl, newUrl);
+        }else{
+            m_editStackWidget->setCurrentIndex(1);
+        }
     }
+}
+
+void PropertyDialog::mousePressEvent(QMouseEvent *event)
+{
+    if (m_edit->isVisible() && event->button() == Qt::RightButton){
+
+    }else{
+        m_edit->setIsCanceled(false);
+        emit m_edit->editFinished();
+    }
+    BaseDialog::mousePressEvent(event);
 }
 
 void PropertyDialog::startComputerFolderSize(const DUrl &url)
