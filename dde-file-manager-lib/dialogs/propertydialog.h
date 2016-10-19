@@ -36,6 +36,9 @@ class NameTextEdit: public QTextEdit
 public:
     explicit NameTextEdit(const QString &text="", QWidget *parent=0);
 
+    bool isCanceled() const;
+    void setIsCanceled(bool isCanceled);
+
 signals:
     void editFinished();
 
@@ -45,6 +48,9 @@ public slots:
 protected:
     void focusOutEvent(QFocusEvent *event);
     void keyPressEvent(QKeyEvent* event);
+
+private:
+    bool m_isCanceled = false;
 };
 
 
@@ -102,6 +108,7 @@ signals:
     void raised();
 
 protected:
+    void mousePressEvent(QMouseEvent* event);
     void closeEvent(QCloseEvent* event);
     void timerEvent(QTimerEvent* event);
     void resizeEvent(QResizeEvent* event);
