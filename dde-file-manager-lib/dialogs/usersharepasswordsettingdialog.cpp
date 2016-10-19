@@ -9,11 +9,12 @@ UserSharePasswordSettingDialog::UserSharePasswordSettingDialog(QWidget *parent) 
     QStringList buttonTexts;
     buttonTexts << tr("Cancle") << tr("Comfirm");
     addButtons(buttonTexts);
-    setDefaultButton(0);
+    setDefaultButton(1);
     setTitle(tr("Please enter share password"));
     setIcon(QIcon(":/icons/images/icons/share_password.png"));
     initUI();
-    initConnections();
+    setModal(true);
+    setAttribute(Qt::WA_DeleteOnClose);
 }
 
 void UserSharePasswordSettingDialog::initUI()
@@ -22,17 +23,13 @@ void UserSharePasswordSettingDialog::initUI()
     addContent(m_passwordEdit);
 }
 
-void UserSharePasswordSettingDialog::initConnections()
+void UserSharePasswordSettingDialog::onButtonClicked(const int &index)
 {
-    connect(this, &UserSharePasswordSettingDialog::buttonClicked, this, &UserSharePasswordSettingDialog::onButtonClicked);
-}
-
-void UserSharePasswordSettingDialog::onButtonClicked(const int &index, const QString& text)
-{
-    Q_UNUSED(text)
     if(index == 1){
         // set usershare password
         QString pwd = m_passwordEdit->text();
+        if(pwd.isEmpty())
+            return;
         QProcess up;
         up.start("id",QStringList() << "-u" << "-n");
         up.waitForFinished();
