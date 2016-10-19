@@ -428,10 +428,12 @@ QString DAbstractFileInfo::sizeDisplayName() const
     if (isFile()) {
         return FileUtils::formatSize(size());
     } else {
-        if (size() <= 1){
-            return QObject::tr("%1 item").arg(size());
+        int size = filesCount();
+
+        if (size <= 1){
+            return QObject::tr("%1 item").arg(size);
         }else{
-            return QObject::tr("%1 items").arg(size());
+            return QObject::tr("%1 items").arg(size);
         }
     }
 }
