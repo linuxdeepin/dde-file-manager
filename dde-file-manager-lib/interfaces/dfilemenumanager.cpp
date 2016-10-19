@@ -337,10 +337,7 @@ DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
 
 QString DFileMenuManager::getActionString(MenuAction type)
 {
-    if (DFileMenuData::actionKeys.contains(type)){
-        return DFileMenuData::actionKeys.value(type);
-    }
-    return "";
+    return DFileMenuData::actionKeys.value(type);
 }
 
 void DFileMenuManager::actionTriggered(DAction *action)

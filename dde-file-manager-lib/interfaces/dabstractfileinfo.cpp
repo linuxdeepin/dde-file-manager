@@ -464,8 +464,6 @@ DUrl DAbstractFileInfo::parentUrl() const
 
 QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuType type) const
 {
-    CALL_PROXY(menuActionList(type));
-
     QVector<MenuAction> actionKeys;
 
     if (type == SpaceArea) {
@@ -581,38 +579,30 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
 
 quint8 DAbstractFileInfo::supportViewMode() const
 {
-    CALL_PROXY(supportViewMode());
-
     return DFileView::AllViewMode;
 }
 
 QAbstractItemView::SelectionMode DAbstractFileInfo::supportSelectionMode() const
 {
-    CALL_PROXY(supportSelectionMode());
-
     return QAbstractItemView::ExtendedSelection;
 }
 
 QList<int> DAbstractFileInfo::userColumnRoles() const
 {
-    CALL_PROXY(userColumnRoles());
+    static QList<int> userColumnRoles = QList<int>() << DFileSystemModel::FileLastModifiedRole
+                                                     << DFileSystemModel::FileSizeRole
+                                                     << DFileSystemModel::FileMimeTypeRole;
 
-    return QList<int>() << DFileSystemModel::FileLastModifiedRole
-                        << DFileSystemModel::FileSizeRole
-                        << DFileSystemModel::FileMimeTypeRole;
+    return userColumnRoles;
 }
 
 QVariant DAbstractFileInfo::userColumnDisplayName(int userColumnRole) const
 {
-    CALL_PROXY(userColumnDisplayName(userColumnRole));
-
     return DFileSystemModel::roleName(userColumnRole);
 }
 
 QVariant DAbstractFileInfo::userColumnData(int userColumnRole) const
 {
-    CALL_PROXY(userColumnData(userColumnRole));
-
     switch (userColumnRole) {
     case DFileSystemModel::FileLastModifiedRole:
         return lastModifiedDisplayName();
@@ -631,8 +621,6 @@ QVariant DAbstractFileInfo::userColumnData(int userColumnRole) const
 
 int DAbstractFileInfo::userColumnWidth(int userColumnRole) const
 {
-    CALL_PROXY(userColumnWidth(userColumnRole));
-
     switch (userColumnRole) {
     case DFileSystemModel::FileSizeRole:
         return 80;
@@ -645,16 +633,12 @@ int DAbstractFileInfo::userColumnWidth(int userColumnRole) const
 
 bool DAbstractFileInfo::columnDefaultVisibleForRole(int role) const
 {
-    CALL_PROXY(columnDefaultVisibleForRole(role));
-
     return !(role == DFileSystemModel::FileCreatedRole
              || role == DFileSystemModel::FileMimeTypeRole);
 }
 
 DAbstractFileInfo::sortFunction DAbstractFileInfo::sortFunByColumn(int columnRole) const
 {
-    CALL_PROXY(sortFunByColumn(columnRole));
-
     switch (columnRole) {
     case DFileSystemModel::FileDisplayNameRole:
         return FileSortFunction::sortFileListByDisplayName;
@@ -673,8 +657,6 @@ DAbstractFileInfo::sortFunction DAbstractFileInfo::sortFunByColumn(int columnRol
 
 void DAbstractFileInfo::sortByColumnRole(QList<DAbstractFileInfoPointer> &fileList, int columnRole, Qt::SortOrder order) const
 {
-    CALL_PROXY(sortByColumnRole(fileList, columnRole, order));
-
     FileSortFunction::sortOrderGlobal = order;
     FileSortFunction::sortFun = sortFunByColumn(columnRole);
 
@@ -686,8 +668,6 @@ void DAbstractFileInfo::sortByColumnRole(QList<DAbstractFileInfoPointer> &fileLi
 
 int DAbstractFileInfo::getIndexByFileInfo(getFileInfoFun fun, const DAbstractFileInfoPointer &info, int columnType, Qt::SortOrder order) const
 {
-    CALL_PROXY(getIndexByFileInfo(fun, info, columnType, order));
-
     FileSortFunction::sortOrderGlobal = order;
     FileSortFunction::sortFun = sortFunByColumn(columnType);
 
@@ -712,15 +692,11 @@ int DAbstractFileInfo::getIndexByFileInfo(getFileInfoFun fun, const DAbstractFil
 
 bool DAbstractFileInfo::canRedirectionFileUrl() const
 {
-    CALL_PROXY(canRedirectionFileUrl());
-
     return false;
 }
 
 DUrl DAbstractFileInfo::redirectedFileUrl() const
 {
-    CALL_PROXY(redirectedFileUrl());
-
     return fileUrl();
 }
 
@@ -740,22 +716,16 @@ bool DAbstractFileInfo::isEmptyFloder(const QDir::Filters &filters) const
 
 Qt::ItemFlags DAbstractFileInfo::fileItemDisableFlags() const
 {
-    CALL_PROXY(fileItemDisableFlags());
-
     return Qt::ItemFlags();
 }
 
 bool DAbstractFileInfo::canIteratorDir() const
 {
-    CALL_PROXY(canIteratorDir());
-
     return false;
 }
 
 DUrl DAbstractFileInfo::getUrlByNewFileName(const QString &fileName) const
 {
-    CALL_PROXY(getUrlByNewFileName(fileName));
-
     DUrl url = fileUrl();
 
     url.setPath(absolutePath() + "/" + fileName);
@@ -765,8 +735,6 @@ DUrl DAbstractFileInfo::getUrlByNewFileName(const QString &fileName) const
 
 DUrl DAbstractFileInfo::mimeDataUrl() const
 {
-    CALL_PROXY(mimeDataUrl());
-
     if (canRedirectionFileUrl())
         return redirectedFileUrl();
 
@@ -775,15 +743,11 @@ DUrl DAbstractFileInfo::mimeDataUrl() const
 
 Qt::DropActions DAbstractFileInfo::supportedDragActions() const
 {
-    CALL_PROXY(supportedDragActions());
-
     return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
 }
 
 Qt::DropActions DAbstractFileInfo::supportedDropActions() const
 {
-    CALL_PROXY(supportedDropActions());
-
     if (isWritable())
         return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
 
@@ -792,15 +756,11 @@ Qt::DropActions DAbstractFileInfo::supportedDropActions() const
 
 QString DAbstractFileInfo::loadingTip() const
 {
-    CALL_PROXY(loadingTip());
-
     return QObject::tr("Loading...");
 }
 
 QString DAbstractFileInfo::subtitleForEmptyFloder() const
 {
-    CALL_PROXY(subtitleForEmptyFloder());
-
     return QString();
 }
 
@@ -844,8 +804,6 @@ QString DAbstractFileInfo::completeSuffix() const
 
 QMap<MenuAction, QVector<MenuAction> > DAbstractFileInfo::subMenuActionList() const
 {
-    CALL_PROXY(subMenuActionList());
-
     QMap<MenuAction, QVector<MenuAction> > actions;
 
     QVector<MenuAction> openwithMenuActionKeys;
@@ -885,8 +843,6 @@ QMap<MenuAction, QVector<MenuAction> > DAbstractFileInfo::subMenuActionList() co
 
 QSet<MenuAction> DAbstractFileInfo::disableMenuActionList() const
 {
-    CALL_PROXY(disableMenuActionList());
-
     QSet<MenuAction> list;
 
     if (!isWritable()) {
@@ -904,8 +860,6 @@ QSet<MenuAction> DAbstractFileInfo::disableMenuActionList() const
 
 MenuAction DAbstractFileInfo::menuActionByColumnRole(int role) const
 {
-    CALL_PROXY(menuActionByColumnRole(role));
-
     switch (role) {
     case DFileSystemModel::FileDisplayNameRole:
     case DFileSystemModel::FileNameRole:

@@ -134,7 +134,7 @@ QModelIndex DFileSystemModel::index(int row, int column, const QModelIndex &pare
 {
     Q_D(const DFileSystemModel);
 
-    if (row < 0 || column < 0 || row >= rowCount(parent) || column >= columnCount(parent))
+    if (row < 0 || column < 0/* || row >= rowCount(parent) || column >= columnCount(parent)*/)
         return QModelIndex();
 
     const FileSystemNodePointer &parentNode = parent.isValid()

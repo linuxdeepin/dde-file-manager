@@ -118,12 +118,13 @@ QSet<MenuAction> TrashFileInfo::disableMenuActionList() const
 
 QList<int> TrashFileInfo::userColumnRoles() const
 {
-    QList<int> list = DAbstractFileInfo::userColumnRoles();
+    static QList<int> userColumnRoles = QList<int>() << DFileSystemModel::FileUserRole + 1
+                                                     << DFileSystemModel::FileLastModifiedRole
+                                                     << DFileSystemModel::FileSizeRole
+                                                     << DFileSystemModel::FileMimeTypeRole
+                                                     << DFileSystemModel::FileUserRole + 2;
 
-    list.prepend(DFileSystemModel::FileUserRole + 1);
-    list << DFileSystemModel::FileUserRole + 2;
-
-    return list;
+    return userColumnRoles;
 }
 
 QVariant TrashFileInfo::userColumnData(int userColumnRole) const
@@ -143,7 +144,7 @@ QVariant TrashFileInfo::userColumnDisplayName(int userColumnRole) const
         return QObject::tr("Time deleted");
 
     if (userColumnRole == DFileSystemModel::FileUserRole + 2)
-        return QObject::tr("Path", "TrashFileInfo");
+        return QObject::tr("Source Path", "TrashFileInfo");
 
     return DAbstractFileInfo::userColumnDisplayName(userColumnRole);
 }
