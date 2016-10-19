@@ -10,12 +10,6 @@
 
 #include <QIcon>
 
-NetworkFileInfo::NetworkFileInfo():
-    DAbstractFileInfo()
-{
-
-}
-
 NetworkFileInfo::NetworkFileInfo(const DUrl &url):
     DAbstractFileInfo(url)
 {
@@ -67,7 +61,7 @@ DUrl NetworkFileInfo::parentUrl() const
     return DUrl();
 }
 
-QString NetworkFileInfo::displayName() const
+QString NetworkFileInfo::fileDisplayName() const
 {
 
     if (systemPathManager->isSystemPath(fileUrl().toString()))

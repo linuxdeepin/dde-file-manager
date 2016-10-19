@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-class FileInfo;
+class DFileInfo;
 class DFMEvent;
 class DAbstractFileInfo;
 class DeviceInfo;

@@ -1,6 +1,6 @@
 #include "propertydialog.h"
 
-#include "models/fileinfo.h"
+#include "dfileinfo.h"
 
 #include "app/define.h"
 
@@ -221,9 +221,9 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
         expandGroup->expand(0)->setContent(m_localDeviceInfoFrame);
         expandGroup->expand(0)->setExpand(true);
     }else{
-        const AbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
         m_icon->setPixmap(fileInfo->fileIcon().pixmap(160, 160));
-        m_edit->setPlainText(fileInfo->displayName());
+        m_edit->setPlainText(fileInfo->fileDisplayName());
         m_edit->setAlignment(Qt::AlignHCenter);
 
         if (!fileInfo->isCanRename()){
@@ -311,11 +311,11 @@ void PropertyDialog::updateFolderSize(qint64 size)
 
 void PropertyDialog::renameFile()
 {
-    const AbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(m_url);
-    m_edit->setPlainText(fileInfo->displayName());
+    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(m_url);
+    m_edit->setPlainText(fileInfo->fileDisplayName());
     m_editStackWidget->setCurrentIndex(0);
 
-    const AbstractFileInfoPointer pfile = fileService->createFileInfo(m_url);
+    const DAbstractFileInfoPointer pfile = fileService->createFileInfo(m_url);
     int endPos = -1;
     if(pfile->isFile()){
         endPos = m_edit->toPlainText().length() - pfile->suffix().length() - 1;
@@ -334,8 +334,8 @@ void PropertyDialog::renameFile()
 void PropertyDialog::showTextShowFrame()
 {
     if (m_edit->isCanceled()){
-        const AbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(m_url);
-        initTextShowFrame(fileInfo->displayName());
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(m_url);
+        initTextShowFrame(fileInfo->fileDisplayName());
     }else{
         DUrl oldUrl = m_url;
         DUrl newUrl = DUrl(QString("%1/%2").arg(DUrl::parentUrl(m_url).toString(), m_edit->toPlainText()));
@@ -352,8 +352,8 @@ void PropertyDialog::showTextShowFrame()
         if (result){
             m_url = newUrl;
             m_absolutePath = m_url.toLocalFile();
-            const AbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(m_url);
-            initTextShowFrame(fileInfo->displayName());
+            const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(m_url);
+            initTextShowFrame(fileInfo->fileDisplayName());
             dialogManager->refreshPropertyDialogs(oldUrl, newUrl);
         }else{
             m_editStackWidget->setCurrentIndex(1);
@@ -524,7 +524,7 @@ void PropertyDialog::initTextShowFrame(const QString &text)
 }
 
 
-QFrame *PropertyDialog::createBasicInfoWidget(const AbstractFileInfoPointer &info)
+QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &info)
 {
     QFrame *widget = new QFrame;
     SectionKeyLabel* sizeSectionLabel = new SectionKeyLabel(QObject::tr("Size"));
@@ -568,7 +568,7 @@ QFrame *PropertyDialog::createBasicInfoWidget(const AbstractFileInfoPointer &inf
     return widget;
 }
 
-ShareInfoFrame *PropertyDialog::createShareInfoFrame(const AbstractFileInfoPointer &info)
+ShareInfoFrame *PropertyDialog::createShareInfoFrame(const DAbstractFileInfoPointer &info)
 {
     ShareInfoFrame* frame = new ShareInfoFrame(info, this);
     return frame;
@@ -577,7 +577,7 @@ ShareInfoFrame *PropertyDialog::createShareInfoFrame(const AbstractFileInfoPoint
 QFrame *PropertyDialog::createLocalDeviceInfoWidget(const DUrl &url)
 {
     QStorageInfo info(url.path());
-    const AbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
+    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
     QFrame *widget = new QFrame;
     SectionKeyLabel* typeSectionLabel = new SectionKeyLabel(QObject::tr("Device type"));
     SectionKeyLabel* fileAmountSectionLabel = new SectionKeyLabel(QObject::tr("Contains"));
@@ -632,7 +632,7 @@ QFrame *PropertyDialog::createDeviceInfoWidget(UDiskDeviceInfo *info)
     return widget;
 }
 
-QListWidget *PropertyDialog::createOpenWithListWidget(const AbstractFileInfoPointer &info)
+QListWidget *PropertyDialog::createOpenWithListWidget(const DAbstractFileInfoPointer &info)
 {
     QListWidget* listWidget = new QListWidget(this);
     m_OpenWithButtonGroup = new QButtonGroup(listWidget);
@@ -702,7 +702,7 @@ QListWidget *PropertyDialog::createOpenWithListWidget(const AbstractFileInfoPoin
     return listWidget;
 }
 
-QFrame *PropertyDialog::createAuthorityManagermentWidget(const AbstractFileInfoPointer &info)
+QFrame *PropertyDialog::createAuthorityManagermentWidget(const DAbstractFileInfoPointer &info)
 {
     QFrame *widget = new QFrame;
     QFormLayout *layout = new QFormLayout;

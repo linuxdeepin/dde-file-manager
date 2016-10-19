@@ -13,14 +13,14 @@ NetworkController::~NetworkController()
 
 }
 
-const AbstractFileInfoPointer NetworkController::createFileInfo(const DUrl &fileUrl, bool &accepted) const
+const DAbstractFileInfoPointer NetworkController::createFileInfo(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
 
-    return AbstractFileInfoPointer(new NetworkFileInfo(fileUrl));
+    return DAbstractFileInfoPointer(new NetworkFileInfo(fileUrl));
 }
 
-const QList<AbstractFileInfoPointer> NetworkController::getChildren(const DUrl &fileUrl, const QStringList &nameFilters,
+const QList<DAbstractFileInfoPointer> NetworkController::getChildren(const DUrl &fileUrl, const QStringList &nameFilters,
                                                                     QDir::Filters filters, QDirIterator::IteratorFlags flags,
                                                                     bool &accepted) const
 {
@@ -28,14 +28,14 @@ const QList<AbstractFileInfoPointer> NetworkController::getChildren(const DUrl &
     Q_UNUSED(nameFilters)
     Q_UNUSED(flags)
 
-    QList<AbstractFileInfoPointer> infolist;
+    QList<DAbstractFileInfoPointer> infolist;
 
     accepted = true;
 
     foreach (const NetworkNode& node, NetworkManager::NetworkNodes.value(fileUrl)) {
         NetworkFileInfo* info = new NetworkFileInfo(DUrl(node.url()));
         info->setNetworkNode(node);
-        infolist.append(AbstractFileInfoPointer(info));
+        infolist.append(DAbstractFileInfoPointer(info));
     };
 
     return infolist;

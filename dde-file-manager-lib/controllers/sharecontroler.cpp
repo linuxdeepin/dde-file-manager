@@ -9,7 +9,7 @@
 
 #include "sharecontroler.h"
 #include "models/sharefileinfo.h"
-#include "models/fileinfo.h"
+#include "dfileinfo.h"
 
 #include "usershare/shareinfo.h"
 #include "usershare/usersharemanager.h"
@@ -30,14 +30,14 @@ ShareControler::ShareControler(QObject *parent) :
 
 }
 
-const AbstractFileInfoPointer ShareControler::createFileInfo(const DUrl &fileUrl, bool &accepted) const
+const DAbstractFileInfoPointer ShareControler::createFileInfo(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
 
-    return AbstractFileInfoPointer(new ShareFileInfo(fileUrl));
+    return DAbstractFileInfoPointer(new ShareFileInfo(fileUrl));
 }
 
-const QList<AbstractFileInfoPointer> ShareControler::getChildren(const DUrl &fileUrl, const QStringList &nameFilters, QDir::Filters filters, QDirIterator::IteratorFlags flags, bool &accepted) const
+const QList<DAbstractFileInfoPointer> ShareControler::getChildren(const DUrl &fileUrl, const QStringList &nameFilters, QDir::Filters filters, QDirIterator::IteratorFlags flags, bool &accepted) const
 {
     Q_UNUSED(filters)
     Q_UNUSED(nameFilters)
@@ -46,11 +46,11 @@ const QList<AbstractFileInfoPointer> ShareControler::getChildren(const DUrl &fil
 
     accepted = true;
 
-    QList<AbstractFileInfoPointer> infolist;
+    QList<DAbstractFileInfoPointer> infolist;
 
     ShareInfoList sharelist = userShareManager->shareInfoList();
     foreach (ShareInfo shareInfo, sharelist) {
-        AbstractFileInfoPointer fileInfo = createFileInfo(DUrl::fromUserShareFile(shareInfo.path()), accepted);
+        DAbstractFileInfoPointer fileInfo = createFileInfo(DUrl::fromUserShareFile(shareInfo.path()), accepted);
         if(fileInfo->exists())
             infolist << fileInfo;
     }

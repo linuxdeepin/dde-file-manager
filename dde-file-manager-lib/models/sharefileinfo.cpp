@@ -8,10 +8,10 @@
  **/
 
 #include "sharefileinfo.h"
-#include "fileinfo.h"
-
+#include "private/dabstractfileinfo_p.h"
 #include "usershare/usersharemanager.h"
 #include "glob.h"
+#include "dfileservices.h"
 #include "widgets/singleton.h"
 
 #include "controllers/trashmanager.h"
@@ -27,21 +27,10 @@
 #include <QMimeType>
 #include <QSettings>
 
-ShareFileInfo::ShareFileInfo()
-{
-
-}
-
 ShareFileInfo::ShareFileInfo(const DUrl &url):
-    DAbstractFileInfo()
+    DAbstractFileInfo(url)
 {
     ShareFileInfo::setUrl(url);
-}
-
-ShareFileInfo::ShareFileInfo(const QString &url):
-    DAbstractFileInfo()
-{
-    ShareFileInfo::setUrl(DUrl(url));
 }
 
 ShareFileInfo::~ShareFileInfo()
@@ -64,7 +53,7 @@ bool ShareFileInfo::isWritable() const
     return true;
 }
 
-QString ShareFileInfo::displayName() const
+QString ShareFileInfo::fileDisplayName() const
 {
     if (systemPathManager->isSystemPath(fileUrl().toString()))
         return systemPathManager->getSystemPathDisplayNameByPath(fileUrl().toString());
@@ -76,21 +65,7 @@ void ShareFileInfo::setUrl(const DUrl &fileUrl)
 {
     DAbstractFileInfo::setUrl(fileUrl);
 
-    data->fileInfo.setFile(fileUrl.path());
-}
-
-QIcon ShareFileInfo::fileIcon() const
-{
-    return fileIconProvider->getFileIcon(fileUrl(), mimeTypeName());
-}
-
-QMimeType ShareFileInfo::mimeType() const
-{
-    if (!data->mimeType.isValid()) {
-        data->mimeType = FileInfo::mimeType(data->fileInfo.absoluteFilePath());
-    }
-
-    return data->mimeType;
+    setProxy(DFileService::instance()->createFileInfo(DUrl::fromLocalFile(fileUrl.path())));
 }
 
 //QFileDevice::Permissions ShareFileInfo::vpermissions() const
@@ -212,7 +187,7 @@ bool ShareFileInfo::makeAbsolute()
 
 DUrl ShareFileInfo::mimeDataUrl() const
 {
-    return DUrl::fromLocalFile(data->fileInfo.absoluteFilePath());
+    return DUrl::fromLocalFile(absoluteFilePath());
 }
 
 DUrl ShareFileInfo::parentUrl() const

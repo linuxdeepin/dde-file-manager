@@ -578,7 +578,7 @@ bool DFileView::cd(const DUrl &url)
 
 bool DFileView::cdUp()
 {
-    const AbstractFileInfoPointer &fileInfo = model()->fileInfo(rootIndex());
+    const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(rootIndex());
 
     const DUrl &oldCurrentUrl = currentUrl();
     const DUrl& parentUrl = fileInfo ? fileInfo->parentUrl() : DUrl::parentUrl(oldCurrentUrl);
@@ -1026,7 +1026,7 @@ void DFileView::handleCommitData(QWidget *editor)
     if(!editor)
         return;
 
-    const AbstractFileInfoPointer &fileInfo = model()->fileInfo(itemDelegate()->editingIndex());
+    const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(itemDelegate()->editingIndex());
 
     if(!fileInfo)
         return;
@@ -1118,7 +1118,7 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
 void DFileView::dragEnterEvent(QDragEnterEvent *event)
 {
     for (const DUrl &url : event->mimeData()->urls()) {
-        const AbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
 
         if (!fileInfo->isWritable()) {
             event->ignore();
@@ -1146,7 +1146,7 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
     d->dragMoveHoverIndex = indexAt(event->pos());
 
     if (d->dragMoveHoverIndex.isValid()) {
-        const AbstractFileInfoPointer &fileInfo = model()->fileInfo(d->dragMoveHoverIndex);
+        const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(d->dragMoveHoverIndex);
 
         if (fileInfo) {
             if (!fileInfo->isDir()) {
@@ -1188,7 +1188,7 @@ void DFileView::dropEvent(QDropEvent *event)
         event->setDropAction(Qt::CopyAction);
 
         const QModelIndex &index = indexAt(event->pos());
-        const AbstractFileInfoPointer &fileInfo = model()->fileInfo(index.isValid() ? index : rootIndex());
+        const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(index.isValid() ? index : rootIndex());
 
         if (fileInfo && fileInfo->fileUrl().isLocalFile()) {
             if (fileInfo->isDir())
@@ -1424,7 +1424,7 @@ bool DFileView::setCurrentUrl(const DUrl &url)
         fileUrl.setPath("/");
     }
 
-    const AbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(fileUrl);
+    const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(fileUrl);
 
     if (!info){
         qDebug() << "This scheme isn't support";
@@ -1622,7 +1622,7 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
         return;
     }
 
-    const AbstractFileInfoPointer &fileInfo = model()->fileInfo(currentUrl());
+    const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(currentUrl());
 
     if (fileInfo && (fileInfo->supportViewMode() & mode) == 0) {
         return;
@@ -1697,7 +1697,7 @@ void DFileView::showEmptyAreaMenu()
     D_D(DFileView);
 
     const QModelIndex &index = rootIndex();
-    const AbstractFileInfoPointer &info = model()->fileInfo(index);
+    const DAbstractFileInfoPointer &info = model()->fileInfo(index);
     const QVector<MenuAction> &actions = info->menuActionList(DAbstractFileInfo::SpaceArea);
 
     if (actions.isEmpty())
@@ -1783,7 +1783,7 @@ void DFileView::showNormalMenu(const QModelIndex &index)
 
     DFileMenu* menu;
 
-    const AbstractFileInfoPointer &info = model()->fileInfo(index);
+    const DAbstractFileInfoPointer &info = model()->fileInfo(index);
 
     if (list.length() == 1) {
         const QVector<MenuAction> &actions = info->menuActionList(DAbstractFileInfo::SingleFile);
@@ -1836,7 +1836,7 @@ void DFileView::showNormalMenu(const QModelIndex &index)
         bool isAllCompressedFiles = true;
 
         foreach (DUrl url, list) {
-            const AbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
+            const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
 
             if(!FileUtils::isArchive(url.path()))
                 isAllCompressedFiles = false;
@@ -2055,7 +2055,7 @@ void DFileView::updateContentLabel()
     const DUrl &currentUrl = this->currentUrl();
 
     if (count <= 0) {
-        const AbstractFileInfoPointer &fileInfo = fileService->createFileInfo(currentUrl);
+        const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(currentUrl);
 
         setContentLabel(fileInfo->subtitleForEmptyFloder());
     } else {
@@ -2098,7 +2098,7 @@ void DFileView::preproccessDropEvent(QDropEvent *event) const
     if (event->source() == this && !DFMGlobal::keyCtrlIsPressed()) {
         event->setDropAction(Qt::MoveAction);
     } else {
-        AbstractFileInfoPointer info = model()->fileInfo(indexAt(event->pos()));
+        DAbstractFileInfoPointer info = model()->fileInfo(indexAt(event->pos()));
 
         if (!info)
             info = model()->fileInfo(rootIndex());

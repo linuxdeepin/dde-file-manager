@@ -18,7 +18,7 @@ public:
     void initUI();
     void initConnect();
 
-    QListWidget *createOpenWithListWidget(const AbstractFileInfoPointer &info);
+    QListWidget *createOpenWithListWidget(const DAbstractFileInfoPointer &info);
 
 signals:
 

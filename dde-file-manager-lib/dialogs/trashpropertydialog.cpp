@@ -31,7 +31,7 @@ void TrashPropertyDialog::initUI()
     setFixedSize(320, 300);
     setTitle("");
 
-    const AbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(m_url);
+    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(m_url);
 
     m_iconLabel = new QLabel(this);
     m_iconLabel->setFixedSize(160, 160);

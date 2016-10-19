@@ -70,11 +70,11 @@ public:
 
     bool openInTerminal(const DUrl &fileUrl) const;
 
-    const AbstractFileInfoPointer createFileInfo(const DUrl &fileUrl) const;
+    const DAbstractFileInfoPointer createFileInfo(const DUrl &fileUrl) const;
     const DDirIteratorPointer createDirIterator(const DUrl &fileUrl, const QStringList &nameFilters, QDir::Filters filters,
                                                 QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags) const;
 
-    const QList<AbstractFileInfoPointer> getChildren(const DUrl &fileUrl, const QStringList &nameFilters, QDir::Filters filters,
+    const QList<DAbstractFileInfoPointer> getChildren(const DUrl &fileUrl, const QStringList &nameFilters, QDir::Filters filters,
                                                      QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags, bool *ok = Q_NULLPTR);
 
     JobController *getChildrenJob(const DUrl &fileUrl, const QStringList &nameFilters,

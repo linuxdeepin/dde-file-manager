@@ -116,7 +116,7 @@ QList<QUrl> DFileDialog::selectedUrls() const
         if (list.isEmpty())
             list << getFileView()->currentUrl();
 
-        const AbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(list.first());
+        const DAbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(list.first());
         const QString &newPath = fileInfo->absoluteFilePath() + QDir::separator() + getFileView()->statusBar()->lineEdit()->text();
         QUrl url = list.first();
 
@@ -471,7 +471,7 @@ void DFileDialog::onAcceptButtonClicked()
     case QFileDialog::AnyFile:
     case QFileDialog::ExistingFile:
         if (urls.count() == 1) {
-            const AbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(urls.first());
+            const DAbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(urls.first());
 
             if (fileInfo->isDir())
                 getFileView()->cd(urls.first());
@@ -481,7 +481,7 @@ void DFileDialog::onAcceptButtonClicked()
         break;
     case QFileDialog::ExistingFiles:
         for (const DUrl &url : urls) {
-            const AbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(url);
+            const DAbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(url);
 
             if (fileInfo->isDir())
                 return;
@@ -490,7 +490,7 @@ void DFileDialog::onAcceptButtonClicked()
         break;
     default:
         if (urls.count() == 1) {
-            const AbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(urls.first());
+            const DAbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(urls.first());
 
             if (fileInfo->isDir())
                 accept();

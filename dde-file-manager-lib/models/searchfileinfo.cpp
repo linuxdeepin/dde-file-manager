@@ -1,5 +1,5 @@
 #include "searchfileinfo.h"
-
+#include "private/dabstractfileinfo_p.h"
 #include "views/dfileview.h"
 
 #include "dfileservices.h"
@@ -16,12 +16,6 @@ namespace FileSortFunction {
 SORT_FUN_DEFINE(absoluteFilePath, FilePath, SearchFileInfo)
 }
 
-SearchFileInfo::SearchFileInfo()
-    : DAbstractFileInfo()
-{
-    init();
-}
-
 SearchFileInfo::SearchFileInfo(const DUrl &url)
     : DAbstractFileInfo(url)
 {
@@ -29,230 +23,45 @@ SearchFileInfo::SearchFileInfo(const DUrl &url)
         m_parentUrl = url;
         m_parentUrl.setSearchedFileUrl(DUrl());
 
-        realFileInfo = DFileService::instance()->createFileInfo(url.searchedFileUrl());
-    } else {
-        data->fileInfo = QFileInfo();
+        setProxy(DFileService::instance()->createFileInfo(url.searchedFileUrl()));
     }
-
-    init();
 }
 
 bool SearchFileInfo::exists() const
 {
-    return !realFileInfo || realFileInfo->exists();
-}
+    Q_D(const DAbstractFileInfo);
 
-QString SearchFileInfo::filePath() const
-{
-    if (!realFileInfo)
-        return QString();
-
-    return realFileInfo->filePath();
-}
-
-QString SearchFileInfo::absoluteFilePath() const
-{
-    if (!realFileInfo)
-        return QString();
-
-    return realFileInfo->absoluteFilePath();
-}
-
-QString SearchFileInfo::fileName() const
-{
-    if (!realFileInfo)
-        return QString();
-
-    return realFileInfo->fileName();
-}
-
-QString SearchFileInfo::displayName() const
-{
-    if (!realFileInfo) {
-        return QString();
-    }
-
-    return realFileInfo->displayName();
-}
-
-QString SearchFileInfo::path() const
-{
-    if (!realFileInfo)
-        return QString();
-
-    return realFileInfo->path();
-}
-
-QString SearchFileInfo::absolutePath() const
-{
-    if (!realFileInfo)
-        return QString();
-
-    return realFileInfo->absolutePath();
-}
-
-bool SearchFileInfo::isCanRename() const
-{
-    if(!realFileInfo)
-        return false;
-
-    return realFileInfo->isCanRename();
+    return !d->proxy || d->proxy->exists();
 }
 
 bool SearchFileInfo::isReadable() const
 {
-    if(!realFileInfo)
+    Q_D(const DAbstractFileInfo);
+
+    if (!d->proxy)
         return true;
 
-    return realFileInfo->isReadable();
-}
-
-bool SearchFileInfo::isWritable() const
-{
-    if(!realFileInfo)
-        return false;
-
-    return realFileInfo->isWritable();
-}
-
-bool SearchFileInfo::isExecutable() const
-{
-    return realFileInfo && realFileInfo->isExecutable();
-}
-
-bool SearchFileInfo::isHidden() const
-{
-    return realFileInfo && realFileInfo->isHidden();
-}
-
-bool SearchFileInfo::isFile() const
-{
-    return realFileInfo && realFileInfo->isFile();
+    return d->proxy->isReadable();
 }
 
 bool SearchFileInfo::isDir() const
 {
-    if(!realFileInfo)
+    Q_D(const DAbstractFileInfo);
+
+    if (!d->proxy)
         return true;
 
-    return realFileInfo->isDir();
+    return d->proxy->isDir();
 }
 
-bool SearchFileInfo::isSymLink() const
+int SearchFileInfo::filesCount() const
 {
-    return realFileInfo && realFileInfo->isSymLink();
-}
+    Q_D(const DAbstractFileInfo);
 
-QString SearchFileInfo::owner() const
-{
-    if (!realFileInfo)
-        return QString();
-
-    return realFileInfo->owner();
-}
-
-uint SearchFileInfo::ownerId() const
-{
-    if (!realFileInfo)
+    if (!d->proxy)
         return 0;
 
-    return realFileInfo->ownerId();
-}
-
-QString SearchFileInfo::group() const
-{
-    if (!realFileInfo)
-        return QString();
-
-    return realFileInfo->group();
-}
-
-uint SearchFileInfo::groupId() const
-{
-    if (!realFileInfo)
-        return 0;
-
-    return realFileInfo->groupId();
-}
-
-qint64 SearchFileInfo::size() const
-{
-    if (!realFileInfo)
-        return 0;
-
-    return realFileInfo->size();
-}
-
-QDateTime SearchFileInfo::created() const
-{
-    if (!realFileInfo)
-        return QDateTime();
-
-    return realFileInfo->created();
-}
-
-QDateTime SearchFileInfo::lastModified() const
-{
-    if (!realFileInfo)
-        return QDateTime();
-
-    return realFileInfo->lastModified();
-}
-
-QDateTime SearchFileInfo::lastRead() const
-{
-    if (!realFileInfo)
-        return QDateTime();
-
-    return realFileInfo->lastRead();
-}
-
-QString SearchFileInfo::lastModifiedDisplayName() const
-{
-    if (!realFileInfo)
-        return QString();
-
-    return realFileInfo->lastModifiedDisplayName();
-}
-
-QString SearchFileInfo::createdDisplayName() const
-{
-    if (!realFileInfo)
-        return QString();
-
-    return realFileInfo->createdDisplayName();
-}
-
-QString SearchFileInfo::sizeDisplayName() const
-{
-    if (!realFileInfo)
-        return QString();
-
-    return realFileInfo->sizeDisplayName();
-}
-
-QString SearchFileInfo::mimeTypeDisplayName() const
-{
-    if (!realFileInfo)
-        return QString();
-
-    return realFileInfo->mimeTypeDisplayName();
-}
-
-QMimeType SearchFileInfo::mimeType() const
-{
-    if (!realFileInfo)
-        return QMimeType();
-
-    return realFileInfo->mimeType();
-}
-
-QIcon SearchFileInfo::fileIcon() const
-{
-    if(!realFileInfo)
-        return QIcon();
-
-    return realFileInfo->fileIcon();
+    return d->proxy->filesCount();
 }
 
 DUrl SearchFileInfo::parentUrl() const
@@ -260,7 +69,7 @@ DUrl SearchFileInfo::parentUrl() const
     return m_parentUrl;
 }
 
-int SearchFileInfo::getIndexByFileInfo(getFileInfoFun fun, const AbstractFileInfoPointer &info,
+int SearchFileInfo::getIndexByFileInfo(getFileInfoFun fun, const DAbstractFileInfoPointer &info,
                                        int columnRole, Qt::SortOrder order) const
 {
     Q_UNUSED(columnRole)
@@ -274,7 +83,7 @@ int SearchFileInfo::getIndexByFileInfo(getFileInfoFun fun, const AbstractFileInf
     int index = 0;
 
     forever {
-        const AbstractFileInfoPointer tmp_info = fun(index);
+        const DAbstractFileInfoPointer tmp_info = fun(index);
 
         if(!tmp_info)
             break;
@@ -289,6 +98,11 @@ int SearchFileInfo::getIndexByFileInfo(getFileInfoFun fun, const AbstractFileInf
     return index;
 }
 
+QList<int> SearchFileInfo::userColumnRoles() const
+{
+    return QList<int>() << DFileSystemModel::FileUserRole + 1 << DFileSystemModel::FileSizeRole;
+}
+
 QVariant SearchFileInfo::userColumnDisplayName(int userColumnRole) const
 {
     if (userColumnRole == DFileSystemModel::FileUserRole + 1)
@@ -299,8 +113,10 @@ QVariant SearchFileInfo::userColumnDisplayName(int userColumnRole) const
 
 QVariant SearchFileInfo::userColumnData(int userColumnRole) const
 {
+    Q_D(const DAbstractFileInfo);
+
     if (userColumnRole == DFileSystemModel::FileUserRole + 1) {
-        const DUrl &fileUrl = realFileInfo->fileUrl();
+        const DUrl &fileUrl = d->proxy->fileUrl();
 
         if (fileUrl.isLocalFile()) {
             return absoluteFilePath();
@@ -330,43 +146,54 @@ MenuAction SearchFileInfo::menuActionByColumnRole(int userColumnRole) const
 
 bool SearchFileInfo::canRedirectionFileUrl() const
 {
-    if (realFileInfo)
+    Q_D(const DAbstractFileInfo);
+
+    if (d->proxy)
         return true;
 
-    const AbstractFileInfoPointer &targetFileInfo = DFileService::instance()->createFileInfo(DUrl(QUrlQuery(data->url).queryItemValue("url")));
+    const DAbstractFileInfoPointer &targetFileInfo = DFileService::instance()->createFileInfo(fileUrl().searchTargetUrl());
 
     return targetFileInfo && !targetFileInfo->canIteratorDir();
 }
 
 DUrl SearchFileInfo::redirectedFileUrl() const
 {
-    if (realFileInfo)
-        return realFileInfo->fileUrl();
+    Q_D(const DAbstractFileInfo);
 
-    return DUrl(QUrlQuery(data->url).queryItemValue("url"));
+    if (d->proxy)
+        return d->proxy->fileUrl();
+
+    return fileUrl().searchTargetUrl();
 }
 
 QVector<MenuAction> SearchFileInfo::menuActionList(DAbstractFileInfo::MenuType type) const
 {
+    Q_D(const DAbstractFileInfo);
+
     QVector<MenuAction> actions;
-    if (!realFileInfo && type == SpaceArea){
+
+    if (!d->proxy && type == SpaceArea) {
         actions << MenuAction::DisplayAs;
         actions << MenuAction::SortBy;
         actions << MenuAction::SelectAll;
+
         return actions;
     }
 
-    actions = realFileInfo->menuActionList(type);
+    actions = d->proxy->menuActionList(type);
     actions.insert(1, MenuAction::OpenFileLocation);
+
     return actions;
 }
 
 QSet<MenuAction> SearchFileInfo::disableMenuActionList() const
 {
-    if (!realFileInfo)
+    Q_D(const DAbstractFileInfo);
+
+    if (!d->proxy)
         return QSet<MenuAction>();
 
-    QSet<MenuAction> actions = realFileInfo->disableMenuActionList();
+    QSet<MenuAction> actions = d->proxy->disableMenuActionList();
 
     actions << MenuAction::DecompressHere;
 
@@ -376,14 +203,14 @@ QSet<MenuAction> SearchFileInfo::disableMenuActionList() const
     return actions;
 }
 
-bool SearchFileInfo::isEmptyFloder() const
+bool SearchFileInfo::isEmptyFloder(const QDir::Filters &filters) const
 {
     if (path().isEmpty())
         return false;
 
-    const AbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(fileUrl().searchedFileUrl());
+    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(fileUrl().searchedFileUrl());
 
-    return fileInfo && fileInfo->isEmptyFloder();
+    return fileInfo && fileInfo->isEmptyFloder(filters);
 }
 
 DAbstractFileInfo::sortFunction SearchFileInfo::sortFunByColumn(int columnRole) const
@@ -396,10 +223,12 @@ DAbstractFileInfo::sortFunction SearchFileInfo::sortFunByColumn(int columnRole) 
 
 DUrl SearchFileInfo::getUrlByNewFileName(const QString &fileName) const
 {
+    Q_D(const DAbstractFileInfo);
+
     DUrl url = fileUrl();
 
-    if (realFileInfo)
-        url.setSearchedFileUrl(realFileInfo->getUrlByNewFileName(fileName));
+    if (d->proxy)
+        url.setSearchedFileUrl(d->proxy->getUrlByNewFileName(fileName));
 
     return url;
 }
@@ -412,10 +241,4 @@ QString SearchFileInfo::loadingTip() const
 QString SearchFileInfo::subtitleForEmptyFloder() const
 {
     return QObject::tr("No results");
-}
-
-void SearchFileInfo::init()
-{
-    m_userColumnRoles.clear();
-    m_userColumnRoles << DFileSystemModel::FileUserRole + 1 << DFileSystemModel::FileSizeRole;
 }

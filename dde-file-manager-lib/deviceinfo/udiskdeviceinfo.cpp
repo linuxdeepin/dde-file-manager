@@ -8,28 +8,30 @@
 #include "udisklistener.h"
 #include "../widgets/singleton.h"
 
-
 UDiskDeviceInfo::UDiskDeviceInfo()
 {
 
 }
 
 UDiskDeviceInfo::UDiskDeviceInfo(UDiskDeviceInfo *info)
-    : DAbstractFileInfo(DUrl::fromComputerFile("/"))
+    : DFileInfo(DUrl::fromComputerFile("/"))
 {
     m_diskInfo = info->getDiskInfo();
-    data->url = info->getMountPointUrl();
-    data->url.setQuery(info->getId());
+
+    DUrl url = info->getMountPointUrl();
+
+    url.setQuery(info->getId());
+    setUrl(url);
 }
 
 UDiskDeviceInfo::UDiskDeviceInfo(const DUrl &url)
-    : DAbstractFileInfo(url)
+    : DFileInfo(url)
 {
 
 }
 
 UDiskDeviceInfo::UDiskDeviceInfo(const QString &url)
-    : DAbstractFileInfo(url)
+    : DFileInfo(url)
 {
 
 }
@@ -37,8 +39,10 @@ UDiskDeviceInfo::UDiskDeviceInfo(const QString &url)
 UDiskDeviceInfo::UDiskDeviceInfo(const DiskInfo &diskInfo)
 {
     m_diskInfo = diskInfo;
-    data->url = getMountPointUrl();
-    data->url.setQuery(getId());
+    DUrl url = getMountPointUrl();
+
+    url.setQuery(getId());
+    setUrl(url);
 }
 
 UDiskDeviceInfo::~UDiskDeviceInfo()
@@ -49,8 +53,10 @@ UDiskDeviceInfo::~UDiskDeviceInfo()
 void UDiskDeviceInfo::setDiskInfo(const DiskInfo &diskInfo)
 {
     m_diskInfo = diskInfo;
-    data->url = getMountPointUrl();
-    data->url.setQuery(getId());
+    DUrl url = getMountPointUrl();
+
+    url.setQuery(getId());
+    setUrl(url);
 }
 
 DiskInfo UDiskDeviceInfo::getDiskInfo() const
@@ -191,7 +197,7 @@ qint64 UDiskDeviceInfo::size() const
     return m_diskInfo.Total * 1024;
 }
 
-QString UDiskDeviceInfo::displayName() const
+QString UDiskDeviceInfo::fileDisplayName() const
 {
     QString displayName = getName();
     if (!displayName.isEmpty()){
@@ -249,7 +255,7 @@ QString UDiskDeviceInfo::sizeDisplayName() const
     }
 }
 
-qint64 UDiskDeviceInfo::filesCount() const
+int UDiskDeviceInfo::filesCount() const
 {
     return FileUtils::filesCount(const_cast<UDiskDeviceInfo*>(this)->getMountPointUrl().toLocalFile());
 }

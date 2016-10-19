@@ -44,10 +44,10 @@ public:
 
     virtual bool openFileLocation(const DUrl &fileUrl, bool &accepted) const;
 
-    virtual const QList<AbstractFileInfoPointer> getChildren(const DUrl &fileUrl, const QStringList &nameFilters,
+    virtual const QList<DAbstractFileInfoPointer> getChildren(const DUrl &fileUrl, const QStringList &nameFilters,
                                                              QDir::Filters filters, QDirIterator::IteratorFlags flags,
                                                              bool &accepted) const;
-    virtual const AbstractFileInfoPointer createFileInfo(const DUrl &fileUrl, bool &accepted) const;
+    virtual const DAbstractFileInfoPointer createFileInfo(const DUrl &fileUrl, bool &accepted) const;
     virtual const DDirIteratorPointer createDirIterator(const DUrl &fileUrl, const QStringList &nameFilters,
                                                         QDir::Filters filters, QDirIterator::IteratorFlags flags,
                                                         bool &accepted) const;

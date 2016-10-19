@@ -96,7 +96,7 @@ bool RecentHistoryManager::copyFiles(const DUrlList &urlList, bool &accepted) co
     return DFileService::instance()->copyFiles(localList);
 }
 
-const QList<AbstractFileInfoPointer> RecentHistoryManager::getChildren(const DUrl &fileUrl, const QStringList &nameFilters,
+const QList<DAbstractFileInfoPointer> RecentHistoryManager::getChildren(const DUrl &fileUrl, const QStringList &nameFilters,
                                                                        QDir::Filters filters, QDirIterator::IteratorFlags flags,
                                                                        bool &accepted) const
 {
@@ -105,7 +105,7 @@ const QList<AbstractFileInfoPointer> RecentHistoryManager::getChildren(const DUr
     Q_UNUSED(nameFilters)
     Q_UNUSED(flags)
 
-    QList<AbstractFileInfoPointer> infolist;
+    QList<DAbstractFileInfoPointer> infolist;
 
     accepted = true;
 
@@ -114,17 +114,17 @@ const QList<AbstractFileInfoPointer> RecentHistoryManager::getChildren(const DUr
         if (m_lastFileOpenedTime.contains(url)){
             info->setLastOpened(m_lastFileOpenedTime.value(url));
         }
-        infolist.append(AbstractFileInfoPointer(info));
+        infolist.append(DAbstractFileInfoPointer(info));
     }
 
     return infolist;
 }
 
-const AbstractFileInfoPointer RecentHistoryManager::createFileInfo(const DUrl &fileUrl, bool &accepted) const
+const DAbstractFileInfoPointer RecentHistoryManager::createFileInfo(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
 
-    return AbstractFileInfoPointer(new RecentFileInfo(fileUrl));
+    return DAbstractFileInfoPointer(new RecentFileInfo(fileUrl));
 }
 
 QString RecentHistoryManager::cachePath()

@@ -11,7 +11,7 @@
 #include "fileoperations/filejob.h"
 #include "dfileservices.h"
 
-#include "models/fileinfo.h"
+#include "dfileinfo.h"
 #include "models/trashfileinfo.h"
 
 #include "views/windowmanager.h"
@@ -277,24 +277,24 @@ int DialogManager::showDeleteFilesClearTrashDialog(const DFMEvent &event)
     d.setIcon(QIcon(":/images/dialogs/images/user-trash-full-opened.png"));
     if (urlList.first() == DUrl::fromTrashFile("/") && event.source() == DFMEvent::Menu && urlList.size() == 1){
         buttonTexts[1]= tr("Empty");
-        const AbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(urlList.first());
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(urlList.first());
         if(fileInfo->filesCount() == 1)
             d.setTitle(ClearTrash.arg(fileInfo->filesCount()));
         else
             d.setTitle(ClearTrashMutliple.arg(fileInfo->filesCount()));
     }else if (urlList.first().isLocalFile() && event.source() == DFMEvent::FileView && urlList.size() == 1){
-        FileInfo f(urlList.first());
-        d.setTitle(DeleteFileName.arg(f.displayName()));
+        DFileInfo f(urlList.first());
+        d.setTitle(DeleteFileName.arg(f.fileDisplayName()));
     }else if (urlList.first().isLocalFile() && event.source() == DFMEvent::FileView && urlList.size() > 1){
         d.setTitle(DeleteFileItems.arg(urlList.size()));
     }else if (urlList.first().isTrashFile() && event.source() == DFMEvent::Menu && urlList.size() == 1){
         TrashFileInfo f(urlList.first());
-        d.setTitle(DeleteFileName.arg(f.displayName()));
+        d.setTitle(DeleteFileName.arg(f.fileDisplayName()));
     }else if (urlList.first().isTrashFile() && event.source() == DFMEvent::Menu && urlList.size() > 1){
         d.setTitle(DeleteFileItems.arg(urlList.size()));
     }else if (urlList.first().isTrashFile() && event.source() == DFMEvent::FileView && urlList.size() == 1 ){
         TrashFileInfo f(urlList.first());
-        d.setTitle(DeleteFileName.arg(f.displayName()));
+        d.setTitle(DeleteFileName.arg(f.fileDisplayName()));
     }else if (urlList.first().isTrashFile() && event.source() == DFMEvent::FileView && urlList.size() > 1 ){
         d.setTitle(DeleteFileItems.arg(urlList.size()));
     }else{
@@ -417,7 +417,7 @@ void DialogManager::showDiskErrorDialog(const QString & id, const QString & erro
 
 void DialogManager::showBreakSymlinkDialog(const QString &targetName, const DUrl &linkfile)
 {
-    const AbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(linkfile);
+    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(linkfile);
 
     DDialog d;
     d.setTitle(tr("%1 that this shortcut refers to has been changed or moved").arg(targetName));

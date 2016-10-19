@@ -1,7 +1,6 @@
 #include "bookmarkmanager.h"
 #include "dfileservices.h"
 
-#include "models/fileinfo.h"
 #include "shutil/standardpath.h"
 
 #include "app/define.h"
@@ -135,7 +134,7 @@ void BookMarkManager::moveBookmark(int from, int to)
     save();
 }
 
-const QList<AbstractFileInfoPointer> BookMarkManager::getChildren(const DUrl &fileUrl, const QStringList &nameFilters,
+const QList<DAbstractFileInfoPointer> BookMarkManager::getChildren(const DUrl &fileUrl, const QStringList &nameFilters,
                                                                   QDir::Filters filters, QDirIterator::IteratorFlags flags,
                                                                   bool &accepted) const
 {
@@ -147,26 +146,26 @@ const QList<AbstractFileInfoPointer> BookMarkManager::getChildren(const DUrl &fi
     {
         DUrl localUrl = DUrl::fromLocalFile(frav);
 
-        QList<AbstractFileInfoPointer> list = fileService->getChildren(localUrl, nameFilters, filters, flags);
+        QList<DAbstractFileInfoPointer> list = fileService->getChildren(localUrl, nameFilters, filters, flags);
 
         return list;
     }
 
-    QList<AbstractFileInfoPointer> infolist;
+    QList<DAbstractFileInfoPointer> infolist;
 
     for (int i = 0; i < m_bookmarks.size(); i++)
     {
         BookMark * bm = m_bookmarks.at(i);
 
-        infolist.append(AbstractFileInfoPointer(new BookMark(*bm)));
+        infolist.append(DAbstractFileInfoPointer(/*new BookMark(*bm))*/bm));
     }
 
     return infolist;
 }
 
-const AbstractFileInfoPointer BookMarkManager::createFileInfo(const DUrl &fileUrl, bool &accepted) const
+const DAbstractFileInfoPointer BookMarkManager::createFileInfo(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
 
-    return AbstractFileInfoPointer(new BookMark(fileUrl));
+    return DAbstractFileInfoPointer(new BookMark(fileUrl));
 }

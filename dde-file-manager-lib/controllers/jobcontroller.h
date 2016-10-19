@@ -40,8 +40,8 @@ public slots:
 
 signals:
     void stateChanged(State state);
-    void addChildren(const AbstractFileInfoPointer &info);
-    void childrenUpdated(const QList<AbstractFileInfoPointer> &list);
+    void addChildren(const DAbstractFileInfoPointer &info);
+    void childrenUpdated(const QList<DAbstractFileInfoPointer> &list);
 
 private:
     DDirIteratorPointer m_iterator;

@@ -2,7 +2,7 @@
 #include "dfileservices.h"
 #include "fileoperations/filejob.h"
 
-#include "models/fileinfo.h"
+#include "dfileinfo.h"
 #include "models/desktopfileinfo.h"
 
 #include "app/define.h"
@@ -41,7 +41,7 @@ public:
 
     QString fileName() const Q_DECL_OVERRIDE;
     QString filePath() const Q_DECL_OVERRIDE;
-    const AbstractFileInfoPointer fileInfo() const Q_DECL_OVERRIDE;
+    const DAbstractFileInfoPointer fileInfo() const Q_DECL_OVERRIDE;
     QString path() const Q_DECL_OVERRIDE;
 
 private:
@@ -52,7 +52,7 @@ FileController::FileController(QObject *parent)
     : DAbstractFileController(parent)
     , fileMonitor(new FileMonitor(this))
 {
-    qRegisterMetaType<QList<FileInfo*>>("QList<FileInfo*>");
+    qRegisterMetaType<QList<DFileInfo*>>("QList<DFileInfo*>");
 
     connect(fileMonitor, &FileMonitor::fileCreated,
             this, &FileController::onFileCreated);
@@ -69,14 +69,14 @@ bool FileController::findExecutable(const QString &executableName, const QString
     return !QStandardPaths::findExecutable(executableName, paths).isEmpty();
 }
 
-const AbstractFileInfoPointer FileController::createFileInfo(const DUrl &fileUrl, bool &accepted) const
+const DAbstractFileInfoPointer FileController::createFileInfo(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
 
     if (fileUrl.path().endsWith(QString(".") + DESKTOP_SURRIX))
-        return AbstractFileInfoPointer(new DesktopFileInfo(fileUrl));
+        return DAbstractFileInfoPointer(new DesktopFileInfo(fileUrl));
     else
-        return AbstractFileInfoPointer(new FileInfo(fileUrl));
+        return DAbstractFileInfoPointer(new DFileInfo(fileUrl));
 }
 
 const DDirIteratorPointer FileController::createDirIterator(const DUrl &fileUrl, const QStringList &nameFilters,
@@ -92,7 +92,7 @@ bool FileController::openFile(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
 
-    const AbstractFileInfoPointer pfile = createFileInfo(fileUrl, accepted);
+    const DAbstractFileInfoPointer pfile = createFileInfo(fileUrl, accepted);
 
     if (FileUtils::isExecutableScript(fileUrl.toLocalFile())) {
         int code = dialogManager->showRunExcutableDialog(fileUrl);
@@ -418,8 +418,6 @@ void FileController::onFileInfoChanged(const QString &filePath)
 {
     const DUrl &url = DUrl::fromLocalFile(filePath);
 
-    FileInfo::canRenameCacheMap.remove(url);
-
     emit childrenUpdated(url);
 }
 
@@ -469,16 +467,16 @@ QString FileDirIterator::filePath() const
     return iterator.filePath();
 }
 
-const AbstractFileInfoPointer FileDirIterator::fileInfo() const
+const DAbstractFileInfoPointer FileDirIterator::fileInfo() const
 {
     if (iterator.fileName().contains(QChar(0xfffd))) {
         DFMGlobal::fileNameCorrection(iterator.filePath());
     }
 
     if (fileName().endsWith(QString(".") + DESKTOP_SURRIX))
-        return AbstractFileInfoPointer(new DesktopFileInfo(iterator.fileInfo()));
+        return DAbstractFileInfoPointer(new DesktopFileInfo(iterator.fileInfo()));
 
-    return AbstractFileInfoPointer(new FileInfo(iterator.fileInfo()));
+    return DAbstractFileInfoPointer(new DFileInfo(iterator.fileInfo()));
 }
 
 QString FileDirIterator::path() const

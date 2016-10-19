@@ -42,7 +42,7 @@ OpenWithOtherDialog::~OpenWithOtherDialog()
 void OpenWithOtherDialog::initUI()
 {
     setFixedSize(300, 400);
-    const AbstractFileInfoPointer &fileInfo = fileService->createFileInfo(m_url);
+    const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(m_url);
     m_appListWidget = createOpenWithListWidget(fileInfo);
 
 
@@ -66,7 +66,7 @@ void OpenWithOtherDialog::initConnect()
     connect(this, SIGNAL(buttonClicked(int,QString)), this, SLOT(handleButtonClicked(int,QString)));
 }
 
-QListWidget *OpenWithOtherDialog::createOpenWithListWidget(const AbstractFileInfoPointer &info)
+QListWidget *OpenWithOtherDialog::createOpenWithListWidget(const DAbstractFileInfoPointer &info)
 {
     QListWidget* listWidget = new QListWidget;
     m_OpenWithButtonGroup = new QButtonGroup(listWidget);
