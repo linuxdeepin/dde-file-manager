@@ -45,11 +45,17 @@ void ThumbnailManager::init()
     m_thumbnailNormalPath = normal.path();
     m_thumbnailLargePath = large.path();
     m_thumbnailFailPath = fail.path();
+
+    m_taskTimer = new QTimer();
+    m_taskTimer->setInterval(500);
+    m_taskTimer->setSingleShot(true);
+    m_maxTaskCacheNum = 104;
 }
 
 void ThumbnailManager::initConnections()
 {
     connect(m_watcher, &QFileSystemWatcher::fileChanged, this, &ThumbnailManager::onFileChanged);
+    connect(m_taskTimer, &QTimer::timeout, this, &ThumbnailManager::runTask);
 }
 
 QString ThumbnailManager::getThumbnailCachePath() const
@@ -149,13 +155,14 @@ void ThumbnailManager::requestThumbnailPixmap(const QUrl& fileUrl, ThumbnailGene
             QFile::exists(getThumbnailPath(m_pathToMd5.value(fileUrl.toString()),size)))
         return;
 
-//    if (taskQueue.contains(task))
-//        return;
-
+//    taskCache.insert(0,task);
+//    if(taskCache.count()>200)
+//        taskCache.removeLast();
     taskQueue << task;
+//    if(taskQueue.count() > 104)
+//        taskQueue.removeFirst();
+    m_taskTimer->start();
 
-    if (!isRunning())
-        start();
 }
 
 QPixmap ThumbnailManager::getDefaultPixmap(const QUrl &fileUrl)
@@ -183,6 +190,18 @@ void ThumbnailManager::onFileChanged(const QString &path)
 
     if (!md5.isEmpty())
         emit pixmapChanged(path, QPixmap());
+}
+
+void ThumbnailManager::runTask()
+{
+    int oldCount = taskQueue.count() - m_maxTaskCacheNum;
+    while(oldCount > 0){
+        taskQueue.removeFirst();
+        oldCount --;
+    }
+    if (!isRunning())
+        start();
+
 }
 
 void ThumbnailManager::run()
