@@ -138,6 +138,8 @@ void DFileView::initUI()
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBar(new DScrollBar);
 
+    verticalScrollBar()->setContextMenuPolicy(Qt::NoContextMenu);
+
     DListView::setSelectionRectVisible(false);
 
     d->displayAsActionGroup = new QActionGroup(this);

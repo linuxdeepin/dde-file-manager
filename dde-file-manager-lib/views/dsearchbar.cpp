@@ -63,6 +63,8 @@ void DSearchBar::initUI()
     m_list->setVerticalScrollBar(new DScrollBar);
     m_list->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
+    m_list->verticalScrollBar()->setContextMenuPolicy(Qt::NoContextMenu);
+
     Q_UNUSED(new DEditorWidgetMenu(this))
 }
 
