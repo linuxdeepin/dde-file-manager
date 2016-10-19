@@ -363,11 +363,11 @@ void PropertyDialog::showTextShowFrame()
 
 void PropertyDialog::mousePressEvent(QMouseEvent *event)
 {
-    if (m_edit->isVisible() && event->button() == Qt::RightButton){
-
-    }else{
-        m_edit->setIsCanceled(false);
-        emit m_edit->editFinished();
+    if (m_edit->isVisible()){
+        if (event->button() != Qt::RightButton){
+            m_edit->setIsCanceled(false);
+            emit m_edit->editFinished();
+        }
     }
     BaseDialog::mousePressEvent(event);
 }
