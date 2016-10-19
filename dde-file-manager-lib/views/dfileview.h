@@ -105,6 +105,12 @@ public:
 
     bool isDropTarget(const QModelIndex &index) const;
 
+    bool isSelectionRectVisible() const;
+    bool canShowSelectionRect() const;
+
+    QStringList nameFilters() const;
+    QDir::Filters filters() const;
+
 public slots:
     bool cd(const DUrl &url);
     bool cdUp();
@@ -120,9 +126,7 @@ public slots:
     void sortByRole(int role);
     void sortByColumn(int column);
 
-    QStringList nameFilters() const;
     void setNameFilters(const QStringList &nameFilters);
-    QDir::Filters filters() const;
     void setFilters(QDir::Filters filters);
 
     void clearHeardView();
@@ -132,9 +136,6 @@ public slots:
     void updateStatusBar();
 
     void setSelectionRectVisible(bool visible);
-    bool isSelectionRectVisible() const;
-    bool canShowSelectionRect() const;
-
     void setContentLabel(const QString &text);
 
 signals:

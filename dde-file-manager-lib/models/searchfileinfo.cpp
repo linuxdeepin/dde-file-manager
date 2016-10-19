@@ -100,7 +100,11 @@ int SearchFileInfo::getIndexByFileInfo(getFileInfoFun fun, const DAbstractFileIn
 
 QList<int> SearchFileInfo::userColumnRoles() const
 {
-    return QList<int>() << DFileSystemModel::FileUserRole + 1 << DFileSystemModel::FileSizeRole;
+    static QList<int> userColumnRoles = QList<int>() << DFileSystemModel::FileUserRole + 1
+                                                     << DFileSystemModel::FileSizeRole
+                                                     << DFileSystemModel::FileSizeRole;
+
+    return userColumnRoles;
 }
 
 QVariant SearchFileInfo::userColumnDisplayName(int userColumnRole) const
