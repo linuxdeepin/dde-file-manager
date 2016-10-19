@@ -89,16 +89,16 @@ void AppController::actionOpen(const DFMEvent &event)
                 url.setScheme(FILE_SCHEME);
             }
 
-            if (url.isLocalFile()) {
-                QFileInfo info(url.toLocalFile());
+            if (url.isSMBFile()) {
+                emit fileSignalManager->requestOpenNewWindowByUrl(url, true);
+            } else {
+                DAbstractFileInfoPointer info = fileService->createFileInfo(url);
 
-                if (info.isFile()) {
+                if (info->isFile()) {
                     fileService->openFile(url);
-                } else if(info.isDir()) {
+                } else if(info->isDir()) {
                     emit fileSignalManager->requestOpenNewWindowByUrl(url, true);
                 }
-            } else if (url.isSMBFile()) {
-                emit fileSignalManager->requestOpenNewWindowByUrl(url, true);
             }
         }
     }
