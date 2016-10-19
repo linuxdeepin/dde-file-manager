@@ -200,7 +200,7 @@ QSet<MenuAction> DFileMenuManager::getDisableActionList(const DUrlList &urlList)
     QSet<MenuAction> disableList;
 
     for (const DUrl &fileUrl : urlList) {
-        const AbstractFileInfoPointer &fileInfo = fileService->createFileInfo(fileUrl);
+        const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(fileUrl);
 
         if (fileInfo) {
             disableList += fileInfo->disableMenuActionList();

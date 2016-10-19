@@ -22,7 +22,7 @@ public:
     static bool removeRecurse(const QString &path, const QString &name);
     static void recurseFolder(const QString &path, const QString &parent,
                             QStringList *list);
-    static qint64 filesCount(const QString& dir);
+    static int filesCount(const QString& dir);
     static qint64 totalSize(const QString& dir);
     static qint64 totalSize(const DUrlList &files);
     static bool isArchive(const QString& path);

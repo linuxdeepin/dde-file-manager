@@ -1,16 +1,15 @@
 #ifndef DESKTOPFILEINFO_H
 #define DESKTOPFILEINFO_H
 
-#include "fileinfo.h"
+#include "dfileinfo.h"
 
 #include <QObject>
 
 #define DESKTOP_SURRIX "desktop"
 
-class DesktopFileInfo : public FileInfo
+class DesktopFileInfo : public DFileInfo
 {
 public:
-    DesktopFileInfo();
     DesktopFileInfo(const QString & fileUrl);
     DesktopFileInfo(const DUrl & fileUrl);
     DesktopFileInfo(const QFileInfo &fileInfo);
@@ -26,7 +25,7 @@ public:
     QStringList getCategories() const;
 
     QIcon fileIcon() const Q_DECL_OVERRIDE;
-    QString displayName() const Q_DECL_OVERRIDE;
+    QString fileDisplayName() const Q_DECL_OVERRIDE;
 
     static QMap<QString, QVariant> getDesktopFileInfo(const DUrl &fileUrl);
 

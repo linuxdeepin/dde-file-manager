@@ -80,12 +80,12 @@ QIcon ComputerViewItem::getIcon(int size)
 }
 
 
-AbstractFileInfoPointer ComputerViewItem::info() const
+DAbstractFileInfoPointer ComputerViewItem::info() const
 {
     return m_info;
 }
 
-void ComputerViewItem::setInfo(const AbstractFileInfoPointer &info)
+void ComputerViewItem::setInfo(const DAbstractFileInfoPointer &info)
 {
     m_info = info;
 }
@@ -361,10 +361,10 @@ void ComputerView::loadSystemItems()
     foreach (QString key, m_systemPathKeys) {
         QString path = systemPathManager->getSystemPath(key);
         DUrl url = DUrl::fromLocalFile(path);
-        const AbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
         ComputerViewItem* item = new ComputerViewItem;
         item->setInfo(fileInfo);
-        item->setName(fileInfo->displayName());
+        item->setName(fileInfo->fileDisplayName());
         m_systemFlowLayout->addWidget(item);
         m_systemItems.insert(path, item);
     }
@@ -464,10 +464,10 @@ void ComputerView::mountAdded(UDiskDeviceInfo *device)
         return;
     }
     else{
-        qDebug() << device->getDiskInfo() << device->displayName();
+        qDebug() << device->getDiskInfo() << device->fileDisplayName();
         ComputerViewItem* item = new ComputerViewItem;
         item->setDeviceInfo(device);
-        item->setName(device->displayName());
+        item->setName(device->fileDisplayName());
 
         if (device->getMediaType() == UDiskDeviceInfo::native){
             m_nativeFlowLayout->addWidget(item);

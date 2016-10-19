@@ -95,7 +95,7 @@ void FileUtils::recurseFolder(const QString &path, const QString &parent,
   }
 }
 
-qint64 FileUtils::filesCount(const QString &dir)
+int FileUtils::filesCount(const QString &dir)
 {
     QDir d(dir);
     QStringList entryList = d.entryList(QDir::AllEntries | QDir::System
@@ -504,7 +504,7 @@ bool FileUtils::setBackground(const QString &pictureFilePath)
 
 QString FileUtils::getSoftLinkFileName(const QString &file, const QString &targetDir)
 {
-    const AbstractFileInfoPointer pInfo = fileService->createFileInfo(DUrl::fromLocalFile(file));
+    const DAbstractFileInfoPointer pInfo = fileService->createFileInfo(DUrl::fromLocalFile(file));
 
     if (pInfo->exists()){
         QString baseName = pInfo->baseName();

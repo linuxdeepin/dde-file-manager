@@ -23,13 +23,13 @@ public:
 
     QString fileName() const Q_DECL_OVERRIDE;
     QString filePath() const Q_DECL_OVERRIDE;
-    const AbstractFileInfoPointer fileInfo() const Q_DECL_OVERRIDE;
+    const DAbstractFileInfoPointer fileInfo() const Q_DECL_OVERRIDE;
     QString path() const Q_DECL_OVERRIDE;
     void close() Q_DECL_OVERRIDE;
 
 private:
     SearchController *parent;
-    AbstractFileInfoPointer currentFileInfo;
+    DAbstractFileInfoPointer currentFileInfo;
     mutable QQueue<DUrl> childrens;
 
     DUrl fileUrl;
@@ -108,7 +108,7 @@ bool SearchDiriterator::hasNext() const
 
             it->next();
 
-            AbstractFileInfoPointer fileInfo = it->fileInfo();
+            DAbstractFileInfoPointer fileInfo = it->fileInfo();
 
             fileInfo->makeAbsolute();
 
@@ -140,7 +140,7 @@ bool SearchDiriterator::hasNext() const
             }
         }
 
-        it = Q_NULLPTR;
+        it.clear();
     }
 
     return false;
@@ -156,7 +156,7 @@ QString SearchDiriterator::filePath() const
     return currentFileInfo ? currentFileInfo->filePath() : QString();
 }
 
-const AbstractFileInfoPointer SearchDiriterator::fileInfo() const
+const DAbstractFileInfoPointer SearchDiriterator::fileInfo() const
 {
     return currentFileInfo;
 }
@@ -178,11 +178,11 @@ SearchController::SearchController(QObject *parent)
     connect(fileService, &DFileService::childrenRemoved, this, &SearchController::onFileRemove);
 }
 
-const AbstractFileInfoPointer SearchController::createFileInfo(const DUrl &fileUrl, bool &accepted) const
+const DAbstractFileInfoPointer SearchController::createFileInfo(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
 
-    return AbstractFileInfoPointer(new SearchFileInfo(fileUrl));
+    return DAbstractFileInfoPointer(new SearchFileInfo(fileUrl));
 }
 
 bool SearchController::openFileLocation(const DUrl &fileUrl, bool &accepted) const

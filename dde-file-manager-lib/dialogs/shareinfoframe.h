@@ -15,7 +15,7 @@ class ShareInfoFrame : public QFrame
 {
     Q_OBJECT
 public:
-    explicit ShareInfoFrame(const AbstractFileInfoPointer &info, QWidget *parent = 0);
+    explicit ShareInfoFrame(const DAbstractFileInfoPointer &info, QWidget *parent = 0);
     ~ShareInfoFrame();
 
     void initUI();
@@ -32,7 +32,7 @@ public slots:
     void handShareInfoChanged();
 
 private:
-    AbstractFileInfoPointer m_fileinfo;
+    DAbstractFileInfoPointer m_fileinfo;
     DCheckBox* m_sharCheckBox = NULL;
     DLineEdit* m_shareNamelineEdit = NULL;
     DComboBox* m_permissoComBox = NULL;

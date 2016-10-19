@@ -1,19 +1,16 @@
 #include "bookmark.h"
 #include <QIcon>
 
-BookMark::BookMark()
-{
-
-}
-
 BookMark::BookMark(const DUrl &url)
-    : DAbstractFileInfo(DUrl::fromBookMarkFile("/"))
+    : DFileInfo(({DUrl tmp_url = DUrl::fromBookMarkFile("/");
+                          tmp_url.setFragment(url.toLocalFile());
+                          tmp_url;}))
 {
-    data->url.setFragment(url.toLocalFile());
+
 }
 
 BookMark::BookMark(QDateTime time, const QString &name, const DUrl &url)
-    :DAbstractFileInfo(url)
+    :DFileInfo(url)
 {
     m_time = time;
     m_name = name;

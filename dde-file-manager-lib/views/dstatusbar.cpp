@@ -210,7 +210,7 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
         int folderContains = 0;
 
         foreach (DUrl url, event.fileUrlList()) {
-            const AbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
+            const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
 
             if (fileInfo->isSymLink()) {
                 QFileInfo targetInfo(fileInfo->symLinkTarget());
@@ -269,7 +269,7 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
         if (number == 1) {
             if (event.fileUrlList().count() == 1) {
                 DUrl url = event.fileUrlList().first();
-                const AbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
+                const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
 
                 if (fileInfo->isFile()) {
                     m_label->setText(m_selectOnlyOneFile.arg(QString::number(number), FileUtils::formatSize(fileInfo->size())));
@@ -313,7 +313,7 @@ void DStatusBar::setLoadingIncatorVisible(const DFMEvent &event, bool visible)
         return;
 
     if (visible) {
-        const AbstractFileInfoPointer &fileInfo = fileService->createFileInfo(event.fileUrl());
+        const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(event.fileUrl());
 
         if (fileInfo)
             m_label->setText(fileInfo->loadingTip());

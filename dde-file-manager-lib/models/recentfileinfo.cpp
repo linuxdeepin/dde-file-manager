@@ -7,19 +7,19 @@
 #include "widgets/singleton.h"
 
 RecentFileInfo::RecentFileInfo()
-    : DAbstractFileInfo()
+    : DFileInfo()
 {
 
 }
 
 RecentFileInfo::RecentFileInfo(const DUrl &url)
-    : DAbstractFileInfo(url)
+    : DFileInfo(url)
 {
 
 }
 
 RecentFileInfo::RecentFileInfo(const QString &url)
-    : DAbstractFileInfo(url)
+    : DFileInfo(url)
 {
 
 }

@@ -1,11 +1,12 @@
 #include "dabstractfileinfo.h"
-
+#include "private/dabstractfileinfo_p.h"
 #include "views/dfileview.h"
 
 #include "dfilesystemmodel.h"
 
 #include "shutil/fileutils.h"
 #include "shutil/mimetypedisplaymanager.h"
+#include "shutil/iconprovider.h"
 
 #include "controllers/pathmanager.h"
 #include "dfileservices.h"
@@ -36,289 +37,397 @@ bool sortByString(const QString &str1, const QString &str2, Qt::SortOrder order)
     return ((order == Qt::DescendingOrder) ^ (sortCollator.compare(str1, str2) < 0)) == 0x01;
 }
 
-SORT_FUN_DEFINE(displayName, DisplayName, DAbstractFileInfo)
+SORT_FUN_DEFINE(fileDisplayName, DisplayName, DAbstractFileInfo)
 SORT_FUN_DEFINE(size, Size, DAbstractFileInfo)
 SORT_FUN_DEFINE(lastModified, Modified, DAbstractFileInfo)
-SORT_FUN_DEFINE(mimeTypeDisplayNameOrder, Mime, DAbstractFileInfo)
+SORT_FUN_DEFINE(mimeTypeDisplayName, Mime, DAbstractFileInfo)
 SORT_FUN_DEFINE(created, Created, DAbstractFileInfo)
 
-bool sort(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &info2)
+bool sort(const DAbstractFileInfoPointer &info1, const DAbstractFileInfoPointer &info2)
 {
     return sortFun(info1, info2, sortOrderGlobal);
 }
 } /// end namespace FileSortFunction
 
-class AbstractFileInfoPrivate
+#define CALL_PROXY(Fun)\
+    Q_D(const DAbstractFileInfo);\
+    if (d->proxy) return d->proxy->Fun;
+
+QMap<DUrl, DAbstractFileInfoPrivate*> DAbstractFileInfoPrivate::urlToFileInfoMap;
+
+DAbstractFileInfoPrivate::DAbstractFileInfoPrivate(const DUrl &url)
+    : url(url)
 {
+    urlToFileInfoMap[url] = this;
 
-};
+    FileSortFunction::sortCollator.setNumericMode(true);
+    FileSortFunction::sortCollator.setCaseSensitivity(Qt::CaseInsensitive);
+}
 
-QMap<DUrl, DAbstractFileInfo::FileMetaData> DAbstractFileInfo::metaDataCacheMap;
-
-DAbstractFileInfo::DAbstractFileInfo()
-    : data(new FileInfoData)
+DAbstractFileInfoPrivate::~DAbstractFileInfoPrivate()
 {
-    init();
+    urlToFileInfoMap.remove(url);
 }
 
 DAbstractFileInfo::DAbstractFileInfo(const DUrl &url)
-    : data(new FileInfoData)
+    : d_ptr(getPrivateByUrl(url))
 {
-    data->url = url;
-    data->fileInfo.setFile(url.path());
 
-    init();
-//    updateFileMetaData();
-    updateFileInfo();
 }
 
-DAbstractFileInfo::DAbstractFileInfo(const QString &url)
-    : data(new FileInfoData)
+DAbstractFileInfo::DAbstractFileInfo(const DUrl &url, createPrivateFun fun)
+    : d_ptr(getPrivateByUrl(url, fun))
 {
-    data->url = DUrl::fromUserInput(url);
-    data->fileInfo.setFile(data->url.path());
 
-    init();
-//    updateFileMetaData();
-    updateFileInfo();
 }
 
 DAbstractFileInfo::~DAbstractFileInfo()
 {
-    delete data;
+
 }
 
 void DAbstractFileInfo::setUrl(const DUrl &url)
 {
-    data->url = url;
-    data->fileInfo.setFile(url.path());
+    Q_D(DAbstractFileInfo);
 
-//    updateFileMetaData();
-    updateFileInfo();
+    if (d->url == url)
+        return;
+
+    d_ptr = getPrivateByUrl(url);
 }
 
 bool DAbstractFileInfo::exists() const
 {
-    return data->fileInfo.exists();
-}
+    CALL_PROXY(exists());
 
-QString DAbstractFileInfo::filePath() const
-{
-    if (data->filePath.isEmpty()){
-        data->filePath = data->fileInfo.filePath();
-    }
-    return data->filePath;
-}
-
-QString DAbstractFileInfo::absoluteFilePath() const
-{
-    if (data->absoluteFilePath.isEmpty()){
-        data->absoluteFilePath = data->fileInfo.absoluteFilePath();
-    }
-    return data->absoluteFilePath;
-}
-
-QString DAbstractFileInfo::baseName() const
-{
-    return data->fileInfo.baseName();
-}
-
-QString DAbstractFileInfo::fileName() const
-{
-    if (data->fileName.isEmpty()){
-        data->fileName = data->fileInfo.fileName();
-    }
-    return data->fileName;
-}
-
-QString DAbstractFileInfo::displayName() const
-{
-    return fileName();
-}
-
-QString DAbstractFileInfo::pinyinName() const
-{
-    const QString &diaplayName = this->displayName();
-
-    if (data->pinyinName.isEmpty())
-        data->pinyinName = DFMGlobal::toPinyin(diaplayName);
-
-    return data->pinyinName;
+    return false;
 }
 
 QString DAbstractFileInfo::path() const
 {
-    if (data->path.isEmpty()){
-        data->path = data->fileInfo.path();
-    }
-    return data->path;
+    CALL_PROXY(path());
+
+    const QString &filePath = this->filePath();
+
+    int index = filePath.lastIndexOf(QDir::separator());
+
+    if (index >= 0)
+        return filePath.left(index);
+
+    return filePath;
+}
+
+QString DAbstractFileInfo::filePath() const
+{
+    CALL_PROXY(filePath());
+
+    return fileUrl().path();
 }
 
 QString DAbstractFileInfo::absolutePath() const
 {
-    if (data->absolutePath.isEmpty()){
-        data->absolutePath = data->fileInfo.absolutePath();
-    }
-    return data->absolutePath;
+    CALL_PROXY(absolutePath());
+
+    if (isAbsolute())
+        return path();
+
+    QFileInfo info(filePath());
+
+    return info.absolutePath();
+}
+
+QString DAbstractFileInfo::absoluteFilePath() const
+{
+    CALL_PROXY(absoluteFilePath());
+
+    if (isAbsolute())
+        return filePath();
+
+    QFileInfo info(filePath());
+
+    return info.absoluteFilePath();
+}
+
+QString DAbstractFileInfo::baseName() const
+{
+    CALL_PROXY(baseName());
+
+    const QString &fileName = this->fileName();
+
+    int index = fileName.indexOf('.');
+
+    if (index >= 0)
+        return fileName.left(index);
+
+    return fileName;
+}
+
+QString DAbstractFileInfo::fileName() const
+{
+    CALL_PROXY(fileName());
+
+    const QString &filePath = this->filePath();
+
+    int index = filePath.lastIndexOf(QDir::separator());
+
+    if (index >= 0)
+        return filePath.mid(index + 1);
+
+    return filePath;
+}
+
+QString DAbstractFileInfo::fileDisplayName() const
+{
+    CALL_PROXY(fileDisplayName());
+
+    return fileName();
+}
+
+QString DAbstractFileInfo::fileDisplayPinyinName() const
+{
+    Q_D(const DAbstractFileInfo);
+
+    const QString &diaplayName = this->fileDisplayName();
+
+    if (d->pinyinName.isEmpty())
+        d->pinyinName = DFMGlobal::toPinyin(diaplayName);
+
+    return d->pinyinName;
+}
+
+bool DAbstractFileInfo::isCanRename() const
+{
+    CALL_PROXY(isCanRename());
+
+    return false;
 }
 
 bool DAbstractFileInfo::isCanShare() const
 {
+    CALL_PROXY(isCanShare());
+
     return false;
 }
 
 bool DAbstractFileInfo::isReadable() const
 {
-    return metaData().isReadable;
+    CALL_PROXY(isReadable());
+
+    return permission(QFile::ReadUser);
 }
 
 bool DAbstractFileInfo::isWritable() const
 {
-    return metaData().isWritable;
+    CALL_PROXY(isWritable());
+
+    return permission(QFile::WriteUser);
 }
 
 bool DAbstractFileInfo::isExecutable() const
 {
-    return metaData().isExecutable;
+    CALL_PROXY(isExecutable());
+
+    return permission(QFile::ExeUser);
 }
 
 bool DAbstractFileInfo::isHidden() const
 {
-    return data->fileInfo.isHidden();
+    CALL_PROXY(isHidden());
+
+    return false;
 }
 
 bool DAbstractFileInfo::isRelative() const
 {
-    return data->fileInfo.isRelative();
+    CALL_PROXY(isRelative());
+
+    return false;
 }
 
 bool DAbstractFileInfo::isAbsolute() const
 {
-    return data->fileInfo.isAbsolute();
+    CALL_PROXY(isAbsolute());
+
+    return false;
 }
 
 bool DAbstractFileInfo::isShared() const
 {
+    CALL_PROXY(isShared());
+
     return false;
 }
 
 bool DAbstractFileInfo::makeAbsolute()
 {
-    bool ok = data->fileInfo.makeAbsolute();
+    CALL_PROXY(makeAbsolute());
 
-    data->url.setPath(data->fileInfo.filePath());
-
-    return ok;
+    return false;
 }
 
 bool DAbstractFileInfo::isFile() const
 {
-    return data->fileInfo.isFile();
+    CALL_PROXY(isFile());
+
+    return false;
 }
 
 bool DAbstractFileInfo::isDir() const
 {
-    return data->fileInfo.isDir();
+    CALL_PROXY(isDir());
+
+    return false;
 }
 
 bool DAbstractFileInfo::isSymLink() const
 {
-    return data->fileInfo.isSymLink();
+    CALL_PROXY(isSymLink());
+
+    return false;
 }
 
 bool DAbstractFileInfo::isDesktopFile() const
 {
+    CALL_PROXY(isDesktopFile());
+
     return mimeTypeName() == "application/x-desktop";
 }
 
-QString DAbstractFileInfo::readLink() const
+QString DAbstractFileInfo::symLinkTarget()
 {
-    return data->fileInfo.readLink();
+    CALL_PROXY(symLinkTarget());
+
+    return QString();
 }
 
 QString DAbstractFileInfo::owner() const
 {
-    return data->fileInfo.owner();
+    CALL_PROXY(owner());
+
+    return QString();
 }
 
 uint DAbstractFileInfo::ownerId() const
 {
-    return data->fileInfo.ownerId();
+    CALL_PROXY(ownerId());
+
+    return 0;
 }
 
 QString DAbstractFileInfo::group() const
 {
-    return data->fileInfo.group();
+    CALL_PROXY(group());
+
+    return QString();
 }
 
 uint DAbstractFileInfo::groupId() const
 {
-    return data->fileInfo.groupId();
+    CALL_PROXY(groupId());
+
+    return 0;
+}
+
+bool DAbstractFileInfo::permission(QFileDevice::Permissions permissions) const
+{
+    CALL_PROXY(permission(permissions));
+
+    return (permissions & this->permissions()) == permissions;
 }
 
 QFileDevice::Permissions DAbstractFileInfo::permissions() const
 {
-    return metaData().permissions;
+    CALL_PROXY(permissions());
+
+    return QFileDevice::Permissions();
 }
 
 qint64 DAbstractFileInfo::size() const
 {
-    if (isFile()){
-        if (data->size == -1){
-            data->size = data->fileInfo.size();
-        }
-        return data->size;
-    }else{
-        return filesCount();
-    }
+    CALL_PROXY(size());
+
+    return -1;
 }
 
-qint64 DAbstractFileInfo::filesCount() const
+int DAbstractFileInfo::filesCount() const
 {
-    return FileUtils::filesCount(data->fileInfo.absoluteFilePath());
+    CALL_PROXY(filesCount());
+
+    const DDirIteratorPointer &iterator = fileService->createDirIterator(fileUrl(), QStringList(),
+                                                                         QDir::AllEntries | QDir::System
+                                                                         | QDir::NoDotAndDotDot | QDir::Hidden,
+                                                                         QDirIterator::NoIteratorFlags);
+
+    int count = 0;
+
+    if (!iterator)
+        return -1;
+
+    while (iterator->hasNext()) {
+        iterator->next();
+
+        ++count;
+    }
+
+    return count;
 }
 
 QDateTime DAbstractFileInfo::created() const
 {
-    if (data->created.isNull()){
-        data->created = data->fileInfo.created();
-    }
-    return data->created;
+    CALL_PROXY(created());
+
+    return QDateTime();
 }
 
 QDateTime DAbstractFileInfo::lastModified() const
 {
-    if (data->lastModified.isNull()){
-        data->lastModified = data->fileInfo.lastModified();
-    }
-    return data->lastModified;
+    CALL_PROXY(lastModified());
+
+    return QDateTime();
 }
 
 QDateTime DAbstractFileInfo::lastRead() const
 {
-    return data->fileInfo.lastRead();
+    CALL_PROXY(lastRead());
+
+    return QDateTime();
+}
+
+QMimeType DAbstractFileInfo::mimeType() const
+{
+    CALL_PROXY(mimeType());
+
+    return QMimeType();
 }
 
 QString DAbstractFileInfo::lastReadDisplayName() const
 {
+    CALL_PROXY(lastReadDisplayName());
+
     return lastRead().toString(timeFormat());
 }
 
 QString DAbstractFileInfo::lastModifiedDisplayName() const
 {
+    CALL_PROXY(lastModifiedDisplayName());
+
     return lastModified().toString(timeFormat());
 }
 
 QString DAbstractFileInfo::createdDisplayName() const
 {
+    CALL_PROXY(createdDisplayName());
+
     return created().toString(timeFormat());
 }
 
 QString DAbstractFileInfo::sizeDisplayName() const
 {
-    if (isFile()){
+    CALL_PROXY(sizeDisplayName());
+
+    if (isFile()) {
         return FileUtils::formatSize(size());
-    }else{
+    } else {
         if (size() <= 1){
             return QObject::tr("%1 item").arg(size());
         }else{
@@ -329,21 +438,33 @@ QString DAbstractFileInfo::sizeDisplayName() const
 
 QString DAbstractFileInfo::mimeTypeDisplayName() const
 {
+    CALL_PROXY(mimeTypeDisplayName());
+
     return mimeTypeDisplayManager->displayName(mimeTypeName());
 }
 
-int DAbstractFileInfo::mimeTypeDisplayNameOrder() const
+DUrl DAbstractFileInfo::fileUrl() const
 {
-    return static_cast<int>(mimeTypeDisplayManager->displayNameOrder(mimeTypeName()));
+    Q_D(const DAbstractFileInfo);
+
+    return d->url;
+}
+
+QIcon DAbstractFileInfo::fileIcon() const
+{
+    CALL_PROXY(fileIcon());
+
+    return fileIconProvider->getFileIcon(fileUrl(), mimeTypeName());
 }
 
 DUrl DAbstractFileInfo::parentUrl() const
 {
-    return DUrl::parentUrl(data->url);
+    return DUrl::parentUrl(fileUrl());
 }
 
 QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuType type) const
 {
+    CALL_PROXY(menuActionList(type));
 
     QVector<MenuAction> actionKeys;
 
@@ -460,21 +581,38 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
 
 quint8 DAbstractFileInfo::supportViewMode() const
 {
+    CALL_PROXY(supportViewMode());
+
     return DFileView::AllViewMode;
 }
 
 QAbstractItemView::SelectionMode DAbstractFileInfo::supportSelectionMode() const
 {
+    CALL_PROXY(supportSelectionMode());
+
     return QAbstractItemView::ExtendedSelection;
+}
+
+QList<int> DAbstractFileInfo::userColumnRoles() const
+{
+    CALL_PROXY(userColumnRoles());
+
+    return QList<int>() << DFileSystemModel::FileLastModifiedRole
+                        << DFileSystemModel::FileSizeRole
+                        << DFileSystemModel::FileMimeTypeRole;
 }
 
 QVariant DAbstractFileInfo::userColumnDisplayName(int userColumnRole) const
 {
+    CALL_PROXY(userColumnDisplayName(userColumnRole));
+
     return DFileSystemModel::roleName(userColumnRole);
 }
 
 QVariant DAbstractFileInfo::userColumnData(int userColumnRole) const
 {
+    CALL_PROXY(userColumnData(userColumnRole));
+
     switch (userColumnRole) {
     case DFileSystemModel::FileLastModifiedRole:
         return lastModifiedDisplayName();
@@ -493,6 +631,8 @@ QVariant DAbstractFileInfo::userColumnData(int userColumnRole) const
 
 int DAbstractFileInfo::userColumnWidth(int userColumnRole) const
 {
+    CALL_PROXY(userColumnWidth(userColumnRole));
+
     switch (userColumnRole) {
     case DFileSystemModel::FileSizeRole:
         return 80;
@@ -505,12 +645,16 @@ int DAbstractFileInfo::userColumnWidth(int userColumnRole) const
 
 bool DAbstractFileInfo::columnDefaultVisibleForRole(int role) const
 {
+    CALL_PROXY(columnDefaultVisibleForRole(role));
+
     return !(role == DFileSystemModel::FileCreatedRole
              || role == DFileSystemModel::FileMimeTypeRole);
 }
 
 DAbstractFileInfo::sortFunction DAbstractFileInfo::sortFunByColumn(int columnRole) const
 {
+    CALL_PROXY(sortFunByColumn(columnRole));
+
     switch (columnRole) {
     case DFileSystemModel::FileDisplayNameRole:
         return FileSortFunction::sortFileListByDisplayName;
@@ -527,8 +671,10 @@ DAbstractFileInfo::sortFunction DAbstractFileInfo::sortFunByColumn(int columnRol
     }
 }
 
-void DAbstractFileInfo::sortByColumnRole(QList<AbstractFileInfoPointer> &fileList, int columnRole, Qt::SortOrder order) const
+void DAbstractFileInfo::sortByColumnRole(QList<DAbstractFileInfoPointer> &fileList, int columnRole, Qt::SortOrder order) const
 {
+    CALL_PROXY(sortByColumnRole(fileList, columnRole, order));
+
     FileSortFunction::sortOrderGlobal = order;
     FileSortFunction::sortFun = sortFunByColumn(columnRole);
 
@@ -538,8 +684,10 @@ void DAbstractFileInfo::sortByColumnRole(QList<AbstractFileInfoPointer> &fileLis
     qSort(fileList.begin(), fileList.end(), FileSortFunction::sort);
 }
 
-int DAbstractFileInfo::getIndexByFileInfo(getFileInfoFun fun, const AbstractFileInfoPointer &info, int columnType, Qt::SortOrder order) const
+int DAbstractFileInfo::getIndexByFileInfo(getFileInfoFun fun, const DAbstractFileInfoPointer &info, int columnType, Qt::SortOrder order) const
 {
+    CALL_PROXY(getIndexByFileInfo(fun, info, columnType, order));
+
     FileSortFunction::sortOrderGlobal = order;
     FileSortFunction::sortFun = sortFunByColumn(columnType);
 
@@ -549,7 +697,7 @@ int DAbstractFileInfo::getIndexByFileInfo(getFileInfoFun fun, const AbstractFile
     int index = -1;
 
     forever {
-        const AbstractFileInfoPointer &tmp_info = fun(++index);
+        const DAbstractFileInfoPointer &tmp_info = fun(++index);
 
         if(!tmp_info)
             break;
@@ -564,21 +712,27 @@ int DAbstractFileInfo::getIndexByFileInfo(getFileInfoFun fun, const AbstractFile
 
 bool DAbstractFileInfo::canRedirectionFileUrl() const
 {
+    CALL_PROXY(canRedirectionFileUrl());
+
     return false;
 }
 
 DUrl DAbstractFileInfo::redirectedFileUrl() const
 {
+    CALL_PROXY(redirectedFileUrl());
+
     return fileUrl();
 }
 
-bool DAbstractFileInfo::isEmptyFloder() const
+bool DAbstractFileInfo::isEmptyFloder(const QDir::Filters &filters) const
 {
+    CALL_PROXY(isEmptyFloder(filters));
+
     if (!isDir())
         return false;
 
     DDirIteratorPointer it = DFileService::instance()->createDirIterator(fileUrl(), QStringList(),
-                                                                         QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System,
+                                                                         filters,
                                                                          QDirIterator::NoIteratorFlags);
 
     return it && !it->hasNext();
@@ -586,16 +740,22 @@ bool DAbstractFileInfo::isEmptyFloder() const
 
 Qt::ItemFlags DAbstractFileInfo::fileItemDisableFlags() const
 {
+    CALL_PROXY(fileItemDisableFlags());
+
     return Qt::ItemFlags();
 }
 
 bool DAbstractFileInfo::canIteratorDir() const
 {
+    CALL_PROXY(canIteratorDir());
+
     return false;
 }
 
 DUrl DAbstractFileInfo::getUrlByNewFileName(const QString &fileName) const
 {
+    CALL_PROXY(getUrlByNewFileName(fileName));
+
     DUrl url = fileUrl();
 
     url.setPath(absolutePath() + "/" + fileName);
@@ -605,6 +765,8 @@ DUrl DAbstractFileInfo::getUrlByNewFileName(const QString &fileName) const
 
 DUrl DAbstractFileInfo::mimeDataUrl() const
 {
+    CALL_PROXY(mimeDataUrl());
+
     if (canRedirectionFileUrl())
         return redirectedFileUrl();
 
@@ -613,11 +775,15 @@ DUrl DAbstractFileInfo::mimeDataUrl() const
 
 Qt::DropActions DAbstractFileInfo::supportedDragActions() const
 {
+    CALL_PROXY(supportedDragActions());
+
     return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
 }
 
 Qt::DropActions DAbstractFileInfo::supportedDropActions() const
 {
+    CALL_PROXY(supportedDropActions());
+
     if (isWritable())
         return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
 
@@ -626,18 +792,30 @@ Qt::DropActions DAbstractFileInfo::supportedDropActions() const
 
 QString DAbstractFileInfo::loadingTip() const
 {
+    CALL_PROXY(loadingTip());
+
     return QObject::tr("Loading...");
 }
 
 QString DAbstractFileInfo::subtitleForEmptyFloder() const
 {
+    CALL_PROXY(subtitleForEmptyFloder());
+
     return QString();
 }
 
 QString DAbstractFileInfo::suffix() const
 {
-    const QString &suffix = data->fileInfo.suffix();
-    const QString &completeSuffix = data->fileInfo.completeSuffix();
+    CALL_PROXY(suffix());
+
+    QString suffix;
+    const QString &fileName = this->fileName();
+    int index = fileName.lastIndexOf('.');
+
+    if (index >= 0)
+        suffix = fileName.mid(index);
+
+    const QString &completeSuffix = this->completeSuffix();
 
     if (completeSuffix != suffix) {
         QStringList suffixes = completeSuffix.split(".");
@@ -652,55 +830,22 @@ QString DAbstractFileInfo::suffix() const
 
 QString DAbstractFileInfo::completeSuffix() const
 {
-    return data->fileInfo.completeSuffix();
-}
+    CALL_PROXY(completeSuffix());
 
-void DAbstractFileInfo::updateFileInfo()
-{
-    metaDataCacheMap.remove(data->url);
+    const QString &fileName = this->fileName();
 
-    data->fileInfo.refresh();
-    data->size = -1;
-    data->created = QDateTime();
-    data->lastModified = QDateTime();
+    int index = fileName.indexOf('.');
 
-    updateFileMetaData();
-}
+    if (index >= 0)
+        return fileName.mid(index);
 
-void DAbstractFileInfo::updateFileMetaData()
-{
-    this->data->pinyinName = QString();
-
-    if (metaDataCacheMap.contains(this->data->url))
-        return;
-
-    QFile::Permissions permissions = this->data->fileInfo.permissions();
-
-    if (permissions == 0 && !exists()) {
-        return;
-    }
-
-    FileMetaData data;
-
-    data.isExecutable = this->data->fileInfo.isExecutable();
-    data.isReadable = this->data->fileInfo.isReadable();
-    data.isWritable = this->data->fileInfo.isWritable();
-    data.permissions = permissions;
-
-    metaDataCacheMap[this->data->url] = data;
-}
-
-void DAbstractFileInfo::init()
-{
-    m_userColumnRoles << DFileSystemModel::FileLastModifiedRole << DFileSystemModel::FileSizeRole
-                      << DFileSystemModel::FileMimeTypeRole;
-
-    FileSortFunction::sortCollator.setNumericMode(true);
-    FileSortFunction::sortCollator.setCaseSensitivity(Qt::CaseInsensitive);
+    return QString();
 }
 
 QMap<MenuAction, QVector<MenuAction> > DAbstractFileInfo::subMenuActionList() const
 {
+    CALL_PROXY(subMenuActionList());
+
     QMap<MenuAction, QVector<MenuAction> > actions;
 
     QVector<MenuAction> openwithMenuActionKeys;
@@ -740,6 +885,8 @@ QMap<MenuAction, QVector<MenuAction> > DAbstractFileInfo::subMenuActionList() co
 
 QSet<MenuAction> DAbstractFileInfo::disableMenuActionList() const
 {
+    CALL_PROXY(disableMenuActionList());
+
     QSet<MenuAction> list;
 
     if (!isWritable()) {
@@ -757,6 +904,8 @@ QSet<MenuAction> DAbstractFileInfo::disableMenuActionList() const
 
 MenuAction DAbstractFileInfo::menuActionByColumnRole(int role) const
 {
+    CALL_PROXY(menuActionByColumnRole(role));
+
     switch (role) {
     case DFileSystemModel::FileDisplayNameRole:
     case DFileSystemModel::FileNameRole:
@@ -784,3 +933,32 @@ QDebug operator<<(QDebug deg, const DAbstractFileInfo &info)
 }
 QT_END_NAMESPACE
 
+DAbstractFileInfoPrivate *DAbstractFileInfo::createPrivateByUrl(const DUrl &url) const
+{
+    return new DAbstractFileInfoPrivate(url);
+}
+
+void DAbstractFileInfo::setProxy(const DAbstractFileInfoPointer &proxy)
+{
+    Q_D(DAbstractFileInfo);
+
+    d->proxy = proxy;
+}
+
+DAbstractFileInfoPrivate *DAbstractFileInfo::getPrivateByUrl(const DUrl &url)
+{
+    return getPrivateByUrl(url, [this](const DUrl &url) {return createPrivateByUrl(url);});
+}
+
+DAbstractFileInfoPrivate *DAbstractFileInfo::getPrivateByUrl(const DUrl &url, createPrivateFun fun)
+{
+    if (url.isEmpty())
+        return fun(url);
+
+    DAbstractFileInfoPrivate *d = DAbstractFileInfoPrivate::urlToFileInfoMap.value(url);
+
+    if (d)
+        return d;
+
+    return fun(url);
+}

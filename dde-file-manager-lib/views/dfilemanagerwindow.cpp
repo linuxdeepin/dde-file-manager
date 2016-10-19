@@ -359,14 +359,14 @@ void DFileManagerWindow::closeCurrentTab(const DFMEvent &event)
 
 QString DFileManagerWindow::getDisplayNameByDiskUrl(const DUrl &url)
 {
-    const AbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
+    const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
     QString urlDisplayName;
     if(fileInfo)
-        urlDisplayName = fileInfo->displayName();
+        urlDisplayName = fileInfo->fileDisplayName();
 
     UDiskDeviceInfo* info = deviceListener->getDeviceByPath(url.path());
     if(info)
-        urlDisplayName = info->displayName();
+        urlDisplayName = info->fileDisplayName();
 
     return urlDisplayName;
 }

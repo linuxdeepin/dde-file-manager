@@ -3,19 +3,19 @@
 
 #include <functional>
 
-#include <QSharedDataPointer>
 #include <QFile>
 #include <QFileInfo>
 #include <QDateTime>
 #include <QMap>
 #include <QAbstractItemView>
 #include <QMimeType>
+#include <QDir>
 
 #include "durl.h"
 #include "dfmglobal.h"
 
 #define SORT_FUN_DEFINE(Value, Name, Type) \
-bool sortFileListBy##Name(const AbstractFileInfoPointer &info1, const AbstractFileInfoPointer &info2, Qt::SortOrder order)\
+bool sortFileListBy##Name(const DAbstractFileInfoPointer &info1, const DAbstractFileInfoPointer &info2, Qt::SortOrder order)\
 {\
     bool isDir1 = info1->isDir();\
     bool isDir2 = info2->isDir();\
@@ -23,8 +23,8 @@ bool sortFileListBy##Name(const AbstractFileInfoPointer &info1, const AbstractFi
     bool isFile1 = info1->isFile();\
     bool isFile2 = info2->isFile();\
     \
-    auto value1 = static_cast<const Type*>(info1.constData())->Value();\
-    auto value2 = static_cast<const Type*>(info2.constData())->Value();\
+    auto value1 = static_cast<const Type*>(info1.data())->Value();\
+    auto value2 = static_cast<const Type*>(info2.data())->Value();\
     \
     if (isDir1) {\
         if (!isDir2) return true;\
@@ -33,7 +33,7 @@ bool sortFileListBy##Name(const AbstractFileInfoPointer &info1, const AbstractFi
     }\
     \
     if ((isDir1 && isDir2 && (value1 == value2)) || (isFile1 && isFile2 && (value1 == value2))) {\
-        return sortByString(info1->displayName(), info2->displayName());\
+        return sortByString(info1->fileDisplayName(), info2->fileDisplayName());\
     }\
     \
     bool isStrType = typeid(value1) == typeid(QString);\
@@ -55,15 +55,15 @@ bool sortByString(T, T, Qt::SortOrder order = Qt::AscendingOrder)
 }
 
 class DAbstractFileInfo;
-typedef QExplicitlySharedDataPointer<DAbstractFileInfo> AbstractFileInfoPointer;
-typedef std::function<const AbstractFileInfoPointer(int)> getFileInfoFun;
+typedef QSharedPointer<DAbstractFileInfo> DAbstractFileInfoPointer;
+typedef std::function<const DAbstractFileInfoPointer(int)> getFileInfoFun;
 typedef DFMGlobal::MenuAction MenuAction;
-
-class DAbstractFileInfo : public QSharedData
+class DAbstractFileInfoPrivateBase : public QSharedData {public: virtual ~DAbstractFileInfoPrivateBase() {}};
+class DAbstractFileInfoPrivate;
+typedef std::function<DAbstractFileInfoPrivate*(const DUrl &)> createPrivateFun;
+class DAbstractFileInfo
 {
-
 public:
-
     enum MenuType {
         SingleFile,
         MultiFiles,
@@ -75,29 +75,23 @@ public:
         return "yyyy/MM/dd HH:mm:ss";
     }
 
-    DAbstractFileInfo();
-    DAbstractFileInfo(const DUrl &url);
-    DAbstractFileInfo(const QString &url);
-
+    explicit DAbstractFileInfo(const DUrl &url);
+    explicit DAbstractFileInfo(const DUrl &url, createPrivateFun fun);
     virtual ~DAbstractFileInfo();
-
-    inline DAbstractFileInfo &operator =(const DAbstractFileInfo &other)
-    {data = other.data; return *this;}
 
     virtual void setUrl(const DUrl &url);
     virtual bool exists() const;
 
+    virtual QString path() const;
     virtual QString filePath() const;
+    virtual QString absolutePath() const;
     virtual QString absoluteFilePath() const;
     virtual QString baseName() const;
     virtual QString fileName() const;
-    virtual QString displayName() const;
-    QString pinyinName() const;
+    virtual QString fileDisplayName() const;
+    QString fileDisplayPinyinName() const;
 
-    virtual QString path() const;
-    virtual QString absolutePath() const;
-
-    virtual bool isCanRename() const = 0;
+    virtual bool isCanRename() const;
     virtual bool isCanShare() const;
     virtual bool isReadable() const;
     virtual bool isWritable() const;
@@ -113,29 +107,24 @@ public:
     virtual bool isSymLink() const;
     virtual bool isDesktopFile() const;
 
-
-    virtual QString readLink() const;
-    inline QString symLinkTarget() const { return readLink(); }
+    virtual QString symLinkTarget();
 
     virtual QString owner() const;
     virtual uint ownerId() const;
     virtual QString group() const;
     virtual uint groupId() const;
 
-    inline bool permission(QFile::Permissions permissions) const
-    {return (permissions & this->permissions()) == permissions;}
-
+    virtual bool permission(QFile::Permissions permissions) const;
     virtual QFile::Permissions permissions() const;
 
     virtual qint64 size() const;
-    virtual qint64 filesCount() const;
+    virtual int filesCount() const;
 
     virtual QDateTime created() const;
     virtual QDateTime lastModified() const;
     virtual QDateTime lastRead() const;
 
-    virtual QMimeType mimeType() const
-    { return data->mimeType;}
+    virtual QMimeType mimeType() const;
     virtual QString mimeTypeName() const
     { return mimeType().name();}
 
@@ -144,15 +133,12 @@ public:
     virtual QString createdDisplayName() const;
     virtual QString sizeDisplayName() const;
     virtual QString mimeTypeDisplayName() const;
-    virtual int mimeTypeDisplayNameOrder() const;
 
-    inline DUrl fileUrl() const
-    {return data->url;}
-
+    virtual DUrl fileUrl() const;
     inline QString scheme() const
-    {return data->url.scheme();}
+    {return fileUrl().scheme();}
 
-    virtual QIcon fileIcon() const = 0;
+    virtual QIcon fileIcon() const;
 
     virtual DUrl parentUrl() const;
     virtual QVector<MenuAction> menuActionList(MenuType type = SingleFile) const;
@@ -165,34 +151,30 @@ public:
     /// support selection mode
     virtual QAbstractItemView::SelectionMode supportSelectionMode() const;
 
-    QList<int> userColumnRoles() const
-    { return m_userColumnRoles;}
-
+    virtual QList<int> userColumnRoles() const;
     virtual QVariant userColumnDisplayName(int userColumnRole) const;
-
     /// get custom column data
     virtual QVariant userColumnData(int userColumnRole) const;
-
     /// get custom column width
     virtual int userColumnWidth(int userColumnRole) const;
 
     /// user column default visible for role
     virtual bool columnDefaultVisibleForRole(int role) const;
 
-    typedef std::function<bool(const AbstractFileInfoPointer&, const AbstractFileInfoPointer&, Qt::SortOrder)> sortFunction;
+    typedef std::function<bool(const DAbstractFileInfoPointer&, const DAbstractFileInfoPointer&, Qt::SortOrder)> sortFunction;
     virtual sortFunction sortFunByColumn(int columnRole) const;
 
-    virtual void sortByColumnRole(QList<AbstractFileInfoPointer> &fileList, int columnRole,
+    virtual void sortByColumnRole(QList<DAbstractFileInfoPointer> &fileList, int columnRole,
                               Qt::SortOrder order = Qt::AscendingOrder) const;
 
     /// getFileInfoFun is get AbstractFileInfoPointer by index for caller. if return -1 then insert file list last
-    virtual int getIndexByFileInfo(getFileInfoFun fun, const AbstractFileInfoPointer &info, int columnType,
+    virtual int getIndexByFileInfo(getFileInfoFun fun, const DAbstractFileInfoPointer &info, int columnType,
                                    Qt::SortOrder order = Qt::AscendingOrder) const;
 
     virtual bool canRedirectionFileUrl() const;
     virtual DUrl redirectedFileUrl() const;
 
-    virtual bool isEmptyFloder() const;
+    virtual bool isEmptyFloder(const QDir::Filters &filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System) const;
 
     virtual Qt::ItemFlags fileItemDisableFlags() const;
 
@@ -210,52 +192,18 @@ public:
     virtual QString suffix() const;
     virtual QString completeSuffix() const;
 
-    void updateFileInfo();
-
 protected:
-    struct FileInfoData
-    {
-        DUrl url;
-        mutable QMimeType mimeType;
-        QFileInfo fileInfo;
+    QExplicitlySharedDataPointer<DAbstractFileInfoPrivateBase> d_ptr;
+    Q_DECLARE_PRIVATE(DAbstractFileInfo)
 
-        bool exists;
-        QString filePath;
-        QString absoluteFilePath;
-        QString fileName;
-        QString displayName;
-        QString pinyinName;
-        QString path;
-        QString absolutePath;
-
-        qint64 size = -1;
-        QDateTime created;
-        QDateTime lastModified;
-    };
-
-    FileInfoData *data;
-
-    QList<int> m_userColumnRoles;
+    virtual DAbstractFileInfoPrivate *createPrivateByUrl(const DUrl &url) const;
+    void setProxy(const DAbstractFileInfoPointer &proxy);
 
 private:
-    struct FileMetaData
-    {
-        bool isReadable;
-        bool isWritable;
-        bool isExecutable;
+    DAbstractFileInfoPrivate *getPrivateByUrl(const DUrl &url);
+    DAbstractFileInfoPrivate *getPrivateByUrl(const DUrl &url, createPrivateFun fun);
 
-        QFile::Permissions permissions;
-    };
-
-    inline const FileMetaData metaData() const
-    {
-        return metaDataCacheMap.value(data->url);
-    }
-
-    void updateFileMetaData();
-    void init();
-
-    static QMap<DUrl, FileMetaData> metaDataCacheMap;
+    Q_DISABLE_COPY(DAbstractFileInfo)
 };
 
 QT_BEGIN_NAMESPACE

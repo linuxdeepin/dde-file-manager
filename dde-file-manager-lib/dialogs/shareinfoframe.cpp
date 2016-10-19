@@ -9,7 +9,7 @@
 #include <QFormLayout>
 #include <QProcess>
 
-ShareInfoFrame::ShareInfoFrame(const AbstractFileInfoPointer &info, QWidget *parent) :
+ShareInfoFrame::ShareInfoFrame(const DAbstractFileInfoPointer &info, QWidget *parent) :
     QFrame(parent),
     m_fileinfo(info)
 {
@@ -32,7 +32,7 @@ void ShareInfoFrame::initUI()
     SectionKeyLabel* shareNameLabel = new SectionKeyLabel(tr("Share name:"));
     shareNameLabel->setFixedWidth(labelWidth);
     m_shareNamelineEdit = new DLineEdit(this);
-    m_shareNamelineEdit->setText(m_fileinfo->displayName());
+    m_shareNamelineEdit->setText(m_fileinfo->fileDisplayName());
     m_shareNamelineEdit->setFixedWidth(fieldWidth);
 
     SectionKeyLabel* permissionLabel = new SectionKeyLabel(tr("Permission:"));

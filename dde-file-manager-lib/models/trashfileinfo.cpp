@@ -1,6 +1,6 @@
 #include "trashfileinfo.h"
-#include "fileinfo.h"
-
+#include "dfileinfo.h"
+#include "private/dabstractfileinfo_p.h"
 #include "controllers/trashmanager.h"
 #include "dfileservices.h"
 #include "controllers/pathmanager.h"
@@ -10,7 +10,6 @@
 #include "shutil/iconprovider.h"
 #include "dfilesystemmodel.h"
 #include "widgets/singleton.h"
-#include "fileinfo.h"
 
 #include <QMimeType>
 #include <QSettings>
@@ -20,24 +19,10 @@ SORT_FUN_DEFINE(deletionDate, DeletionDate, TrashFileInfo)
 SORT_FUN_DEFINE(sourceFilePath, SourceFilePath, TrashFileInfo)
 }
 
-TrashFileInfo::TrashFileInfo()
-    : DAbstractFileInfo()
-{
-    init();
-}
-
 TrashFileInfo::TrashFileInfo(const DUrl &url)
-    : DAbstractFileInfo()
+    : DAbstractFileInfo(url)
 {
     TrashFileInfo::setUrl(url);
-    init();
-}
-
-TrashFileInfo::TrashFileInfo(const QString &url)
-    : DAbstractFileInfo()
-{
-    TrashFileInfo::setUrl(DUrl(url));
-    init();
 }
 
 bool TrashFileInfo::isCanRename() const
@@ -47,17 +32,15 @@ bool TrashFileInfo::isCanRename() const
 
 bool TrashFileInfo::isReadable() const
 {
-    FileInfo info(mimeDataUrl());
-    return info.isReadable();
+    return true;
 }
 
 bool TrashFileInfo::isWritable() const
 {
-    FileInfo info(mimeDataUrl());
-    return info.isWritable();
+    return true;
 }
 
-QString TrashFileInfo::displayName() const
+QString TrashFileInfo::fileDisplayName() const
 {
     return m_displayName;
 }
@@ -66,23 +49,9 @@ void TrashFileInfo::setUrl(const DUrl &fileUrl)
 {
     DAbstractFileInfo::setUrl(fileUrl);
 
-    data->fileInfo.setFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath) + fileUrl.path());
+    setProxy(DAbstractFileInfoPointer(new DFileInfo(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath) + fileUrl.path())));
 
     updateInfo();
-}
-
-QIcon TrashFileInfo::fileIcon() const
-{
-    return fileIconProvider->getFileIcon(fileUrl(), mimeTypeName());
-}
-
-QMimeType TrashFileInfo::mimeType() const
-{
-    if (!data->mimeType.isValid()) {
-        data->mimeType = FileInfo::mimeType(data->fileInfo.absoluteFilePath());
-    }
-
-    return data->mimeType;
 }
 
 QFileDevice::Permissions TrashFileInfo::permissions() const
@@ -143,6 +112,16 @@ QSet<MenuAction> TrashFileInfo::disableMenuActionList() const
         list << MenuAction::RestoreAll;
         list << MenuAction::ClearTrash;
     }
+
+    return list;
+}
+
+QList<int> TrashFileInfo::userColumnRoles() const
+{
+    QList<int> list = DAbstractFileInfo::userColumnRoles();
+
+    list.prepend(DFileSystemModel::FileUserRole + 1);
+    list << DFileSystemModel::FileUserRole + 2;
 
     return list;
 }
@@ -208,7 +187,7 @@ bool TrashFileInfo::makeAbsolute()
 
 DUrl TrashFileInfo::mimeDataUrl() const
 {
-    return DUrl::fromLocalFile(data->fileInfo.absoluteFilePath());
+    return DUrl::fromLocalFile(absoluteFilePath());
 }
 
 Qt::DropActions TrashFileInfo::supportedDragActions() const
@@ -249,7 +228,7 @@ bool TrashFileInfo::restore(const DFMEvent &event) const
         return false;
     }
 
-    DUrl srcUrl = DUrl::fromLocalFile(data->fileInfo.absoluteFilePath());
+    DUrl srcUrl = DUrl::fromLocalFile(absoluteFilePath());
     DUrl tarUrl = DUrl::fromLocalFile(originalFilePath);
     fileService->restoreFile(srcUrl, tarUrl, event);
 
@@ -268,9 +247,9 @@ QString TrashFileInfo::sourceFilePath() const
 
 void TrashFileInfo::updateInfo()
 {
-    const QString &filePath = data->fileInfo.absoluteFilePath();
+    const QString &filePath = absoluteFilePath();
     const QString &basePath = DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath);
-    const QString &fileBaseName = filePath.mid(basePath.size(), filePath.indexOf('/', basePath.size() + 1) - basePath.size());
+    const QString &fileBaseName = QDir::separator() + fileName();
 
     if (QFile::exists(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashInfosPath) + fileBaseName + ".trashinfo")) {
         QSettings setting(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashInfosPath) + fileBaseName + ".trashinfo", QSettings::NativeFormat);
@@ -293,10 +272,4 @@ void TrashFileInfo::updateInfo()
         else
             m_displayName = fileName();
     }
-}
-
-void TrashFileInfo::init()
-{
-    m_userColumnRoles.prepend(DFileSystemModel::FileUserRole + 1);
-    m_userColumnRoles << DFileSystemModel::FileUserRole + 2;
 }

@@ -68,7 +68,7 @@ void DBookmarkItem::setDeviceInfo(UDiskDeviceInfo *deviceInfo)
     m_url = deviceInfo->getMountPointUrl();
     m_isDefault = true;
     m_sysPath = deviceInfo->getDiskInfo().ID;
-    m_textContent = deviceInfo->displayName();
+    m_textContent = deviceInfo->fileDisplayName();
     m_isMounted = deviceInfo->getDiskInfo().CanUnmount;
     m_deviceInfo = deviceInfo;
 

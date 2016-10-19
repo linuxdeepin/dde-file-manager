@@ -335,7 +335,7 @@ void UDiskListener::readFstab()
     endfsent();
 }
 
-const QList<AbstractFileInfoPointer> UDiskListener::getChildren(const DUrl &fileUrl, const QStringList &nameFilters,
+const QList<DAbstractFileInfoPointer> UDiskListener::getChildren(const DUrl &fileUrl, const QStringList &nameFilters,
                                                                 QDir::Filters filters, QDirIterator::IteratorFlags flags,
                                                                 bool &accepted) const
 {
@@ -349,31 +349,31 @@ const QList<AbstractFileInfoPointer> UDiskListener::getChildren(const DUrl &file
     {
         DUrl localUrl = DUrl::fromLocalFile(frav);
 
-        QList<AbstractFileInfoPointer> list = fileService->getChildren(localUrl, nameFilters, filters, flags);
+        QList<DAbstractFileInfoPointer> list = fileService->getChildren(localUrl, nameFilters, filters, flags);
 
         return list;
     }
 
-    QList<AbstractFileInfoPointer> infolist;
+    QList<DAbstractFileInfoPointer> infolist;
 
     for (int i = 0; i < m_list.size(); i++)
     {
         UDiskDeviceInfo * info = m_list.at(i);
-        AbstractFileInfoPointer fileInfo(new UDiskDeviceInfo(info));
+        DAbstractFileInfoPointer fileInfo(new UDiskDeviceInfo(info));
         infolist.append(fileInfo);
     }
 
     return infolist;
 }
 
-const AbstractFileInfoPointer UDiskListener::createFileInfo(const DUrl &fileUrl, bool &accepted) const
+const DAbstractFileInfoPointer UDiskListener::createFileInfo(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
 
     QString path = fileUrl.fragment();
 
     if(path.isEmpty())
-        return AbstractFileInfoPointer(new UDiskDeviceInfo(fileUrl));
+        return DAbstractFileInfoPointer(new UDiskDeviceInfo(fileUrl));
 
 
     for (int i = 0; i < m_list.size(); i++)
@@ -382,10 +382,10 @@ const AbstractFileInfoPointer UDiskListener::createFileInfo(const DUrl &fileUrl,
 
         if(info->getMountPointUrl().toLocalFile() == path)
         {
-            AbstractFileInfoPointer fileInfo(new UDiskDeviceInfo(info));
+            DAbstractFileInfoPointer fileInfo(new UDiskDeviceInfo(info));
             return fileInfo;
         }
     }
 
-    return AbstractFileInfoPointer();
+    return DAbstractFileInfoPointer();
 }

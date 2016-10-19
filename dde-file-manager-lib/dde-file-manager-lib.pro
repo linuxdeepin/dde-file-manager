@@ -7,6 +7,8 @@
 #include($$PWD/../vendor/vendor.pri)
 
 QT       += core gui svg dbus x11extras network
+#private
+QT       += gui-private
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -56,7 +58,7 @@ include(dbusinterface/dbusinterface.pri)
 include(../thumbnailer/thumbnailer.pri)
 include(../usershare/usershare.pri)
 
-lessThan(QT_MAJOR_VERSION, 6): include(../xdnd/xdnd.pri)
+lessThan(QT_MINOR_VERSION, 6): include(../xdnd/xdnd.pri)
 
 PKGCONFIG += gtk+-2.0 gsettings-qt libsecret-1 dtkbase dtkutil dtkwidget
 CONFIG += c++11 link_pkgconfig
@@ -86,11 +88,9 @@ HEADERS += \
     app/filesignalmanager.h \
     views/fileitem.h \
     views/dsearchbar.h \
-    models/fileinfo.h \
     models/desktopfileinfo.h \
     shutil/iconprovider.h \
     models/bookmark.h \
-    models/imagefileinfo.h \
     models/searchhistory.h \
     models/fmsetting.h \
     models/fmstate.h \
@@ -177,7 +177,10 @@ HEADERS += \
     interfaces/dfilemenumanager.h \
     interfaces/dfileservices.h \
     interfaces/dfmevent.h \
-    dialogs/usersharepasswordsettingdialog.h
+    dialogs/usersharepasswordsettingdialog.h\
+    interfaces/private/dabstractfileinfo_p.h \
+    interfaces/dfileinfo.h \
+    interfaces/private/dfileinfo_p.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -193,11 +196,9 @@ SOURCES += \
     controllers/filecontroller.cpp \
     views/fileitem.cpp \
     views/dsearchbar.cpp \
-    models/fileinfo.cpp \
     models/desktopfileinfo.cpp \
     shutil/iconprovider.cpp \
     models/bookmark.cpp \
-    models/imagefileinfo.cpp \
     models/searchhistory.cpp \
     models/fmsetting.cpp \
     models/fmstate.cpp \
@@ -281,7 +282,8 @@ SOURCES += \
     interfaces/dfilemenumanager.cpp \
     interfaces/dfileservices.cpp \
     interfaces/dfmevent.cpp \
-    dialogs/usersharepasswordsettingdialog.cpp
+    dialogs/usersharepasswordsettingdialog.cpp\
+    interfaces/dfileinfo.cpp
 
 INCLUDEPATH += $$PWD/../ $$PWD/../utils/ $$PWD/interfaces/
 

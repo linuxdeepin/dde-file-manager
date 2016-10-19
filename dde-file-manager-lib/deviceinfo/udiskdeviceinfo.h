@@ -1,7 +1,7 @@
 #ifndef UDISKDEVICEINFO_H
 #define UDISKDEVICEINFO_H
 
-#include "dabstractfileinfo.h"
+#include "dfileinfo.h"
 
 #include <QDBusInterface>
 #include <QString>
@@ -9,9 +9,8 @@
 #include <QDBusArgument>
 #include "dbusinterface/dbustype.h"
 
-class UDiskDeviceInfo : public QObject ,public DAbstractFileInfo
+class UDiskDeviceInfo : public DFileInfo
 {
-    Q_OBJECT
 public:
     enum MediaType
     {
@@ -46,11 +45,11 @@ public:
     qulonglong getUsed() const;
     qulonglong getTotal();
     qint64 size() const Q_DECL_OVERRIDE;
-    QString displayName() const Q_DECL_OVERRIDE;
+    QString fileDisplayName() const Q_DECL_OVERRIDE;
     MediaType getMediaType() const;
     QString deviceTypeDisplayName() const;
     QString sizeDisplayName() const Q_DECL_OVERRIDE;
-    qint64 filesCount() const Q_DECL_OVERRIDE;
+    int filesCount() const Q_DECL_OVERRIDE;
 
     bool isReadable() const Q_DECL_OVERRIDE;
     bool isWritable() const Q_DECL_OVERRIDE;

@@ -1,7 +1,7 @@
 #include "trashmanager.h"
 #include "dfileservices.h"
 
-#include "models/fileinfo.h"
+#include "dfileinfo.h"
 #include "models/trashfileinfo.h"
 
 #include "app/define.h"
@@ -28,7 +28,7 @@ public:
 
     QString fileName() const Q_DECL_OVERRIDE;
     QString filePath() const Q_DECL_OVERRIDE;
-    const AbstractFileInfoPointer fileInfo() const Q_DECL_OVERRIDE;
+    const DAbstractFileInfoPointer fileInfo() const Q_DECL_OVERRIDE;
     QString path() const Q_DECL_OVERRIDE;
 
 private:
@@ -62,7 +62,7 @@ QString TrashDirIterator::filePath() const
     return iterator->filePath().remove(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath));
 }
 
-const AbstractFileInfoPointer TrashDirIterator::fileInfo() const
+const DAbstractFileInfoPointer TrashDirIterator::fileInfo() const
 {
     return DFileService::instance()->createFileInfo(DUrl::fromTrashFile(filePath()));
 }
@@ -94,11 +94,11 @@ TrashManager::TrashManager(QObject *parent)
             this, &TrashManager::onFileRemove);
 }
 
-const AbstractFileInfoPointer TrashManager::createFileInfo(const DUrl &fileUrl, bool &accepted) const
+const DAbstractFileInfoPointer TrashManager::createFileInfo(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
 
-    return AbstractFileInfoPointer(new TrashFileInfo(fileUrl));
+    return DAbstractFileInfoPointer(new TrashFileInfo(fileUrl));
 }
 
 bool TrashManager::openFile(const DUrl &fileUrl, bool &accepted) const
@@ -113,7 +113,7 @@ bool TrashManager::openFileLocation(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
 
-    const AbstractFileInfoPointer &file = createFileInfo(fileUrl, accepted);
+    const DAbstractFileInfoPointer &file = createFileInfo(fileUrl, accepted);
 
     if (!file->exists())
         return false;
@@ -217,8 +217,8 @@ bool TrashManager::restoreTrashFile(const DUrlList &fileUrl, const DFMEvent &eve
     bool ok = true;
 
     for(const DUrl &url : fileUrl) {
-        TrashFileInfo info;
-        info.setUrl(url);
+        TrashFileInfo info(url);
+
         const_cast<DFMEvent &>(event) << url;
         info.restore(event);
     }

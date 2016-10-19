@@ -112,15 +112,15 @@ public:
     void sort(int column, Qt::SortOrder order = Qt::AscendingOrder) Q_DECL_OVERRIDE;
     void sort();
 
-    const AbstractFileInfoPointer fileInfo(const QModelIndex &index) const;
-    const AbstractFileInfoPointer fileInfo(const DUrl &fileUrl) const;
-    const AbstractFileInfoPointer parentFileInfo(const QModelIndex &index) const;
-    const AbstractFileInfoPointer parentFileInfo(const DUrl &fileUrl) const;
+    const DAbstractFileInfoPointer fileInfo(const QModelIndex &index) const;
+    const DAbstractFileInfoPointer fileInfo(const DUrl &fileUrl) const;
+    const DAbstractFileInfoPointer parentFileInfo(const QModelIndex &index) const;
+    const DAbstractFileInfoPointer parentFileInfo(const DUrl &fileUrl) const;
 
     State state() const;
 
 public slots:
-    void updateChildren(QList<AbstractFileInfoPointer> list);
+    void updateChildren(QList<DAbstractFileInfoPointer> list);
     /// warning: only refresh current url
     void refresh(const DUrl &fileUrl = DUrl());
     void update();
@@ -142,18 +142,18 @@ private:
 
     bool isDir(const FileSystemNodePointer &node) const;
 
-    void sort(const AbstractFileInfoPointer &parentInfo, QList<AbstractFileInfoPointer> &list) const;
+    void sort(const DAbstractFileInfoPointer &parentInfo, QList<DAbstractFileInfoPointer> &list) const;
 
-    const FileSystemNodePointer createNode(FileSystemNode *parent, const AbstractFileInfoPointer &info);
+    const FileSystemNodePointer createNode(FileSystemNode *parent, const DAbstractFileInfoPointer &info);
 
     void deleteNode(const FileSystemNodePointer &node);
     void deleteNodeByUrl(const DUrl &url);
     void clear();
 
     void setState(State state);
-    void onJobAddChildren(const AbstractFileInfoPointer &fileInfo);
+    void onJobAddChildren(const DAbstractFileInfoPointer &fileInfo);
     void onJobFinished();
-    void addFile(const AbstractFileInfoPointer &fileInfo);
+    void addFile(const DAbstractFileInfoPointer &fileInfo);
 
     friend class FileSystemNode;
 

@@ -164,7 +164,7 @@ bool DAbstractFileController::openFileLocation(const DUrl &fileUrl, bool &accept
     return false;
 }
 
-const QList<AbstractFileInfoPointer> DAbstractFileController::getChildren(const DUrl &fileUrl, const QStringList &nameFilters,
+const QList<DAbstractFileInfoPointer> DAbstractFileController::getChildren(const DUrl &fileUrl, const QStringList &nameFilters,
                                                                          QDir::Filters filters, QDirIterator::IteratorFlags flags,
                                                                          bool &accepted) const
 {
@@ -175,16 +175,16 @@ const QList<AbstractFileInfoPointer> DAbstractFileController::getChildren(const 
 
     accepted = false;
 
-    return QList<AbstractFileInfoPointer>();
+    return QList<DAbstractFileInfoPointer>();
 }
 
-const AbstractFileInfoPointer DAbstractFileController::createFileInfo(const DUrl &fileUrl, bool &accepted) const
+const DAbstractFileInfoPointer DAbstractFileController::createFileInfo(const DUrl &fileUrl, bool &accepted) const
 {
     Q_UNUSED(fileUrl)
 
     accepted = false;
 
-    return AbstractFileInfoPointer();
+    return DAbstractFileInfoPointer();
 }
 
 const DDirIteratorPointer DAbstractFileController::createDirIterator(const DUrl &fileUrl, const QStringList &nameFilters,

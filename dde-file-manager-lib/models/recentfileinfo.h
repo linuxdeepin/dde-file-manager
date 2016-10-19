@@ -1,10 +1,10 @@
 #ifndef RECENTFILEINFO_H
 #define RECENTFILEINFO_H
 
-#include "dabstractfileinfo.h"
+#include "dfileinfo.h"
 #include <QDateTime>
 
-class RecentFileInfo : public DAbstractFileInfo
+class RecentFileInfo : public DFileInfo
 {
 public:
     RecentFileInfo();

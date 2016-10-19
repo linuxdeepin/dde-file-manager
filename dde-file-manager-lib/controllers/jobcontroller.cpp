@@ -95,7 +95,7 @@ void JobController::run()
         return;
     }
 
-    QQueue<AbstractFileInfoPointer> fileInfoQueue;
+    QQueue<DAbstractFileInfoPointer> fileInfoQueue;
 
     if (!timer)
         timer = new QElapsedTimer();

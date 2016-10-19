@@ -9,26 +9,20 @@
 
 #include <QSettings>
 
-DesktopFileInfo::DesktopFileInfo() :
-    FileInfo()
-{
-
-}
-
 DesktopFileInfo::DesktopFileInfo(const QString &fileUrl)
-    : FileInfo(fileUrl)
+    : DFileInfo(fileUrl)
 {
     init(DUrl(fileUrl));
 }
 
 DesktopFileInfo::DesktopFileInfo(const DUrl &fileUrl)
-    : FileInfo(fileUrl)
+    : DFileInfo(fileUrl)
 {
     init(fileUrl);
 }
 
 DesktopFileInfo::DesktopFileInfo(const QFileInfo &fileInfo) :
-    FileInfo(fileInfo)
+    DFileInfo(fileInfo)
 {
     init(DUrl::fromLocalFile(fileInfo.absoluteFilePath()));
 }
@@ -40,7 +34,7 @@ DesktopFileInfo::~DesktopFileInfo()
 
 void DesktopFileInfo::setUrl(const DUrl &fileUrl)
 {
-    DAbstractFileInfo::setUrl(fileUrl);
+    DFileInfo::setUrl(fileUrl);
 
     init(fileUrl);
 }
@@ -75,7 +69,7 @@ QIcon DesktopFileInfo::fileIcon() const
     return fileIconProvider->getDesktopIcon(getIconName(), 256);
 }
 
-QString DesktopFileInfo::displayName() const
+QString DesktopFileInfo::fileDisplayName() const
 {
     return name;
 }

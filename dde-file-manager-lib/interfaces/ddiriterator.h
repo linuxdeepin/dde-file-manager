@@ -3,9 +3,7 @@
 
 #include "dabstractfileinfo.h"
 
-#include <QSharedData>
-
-class DDirIterator : public QSharedData
+class DDirIterator
 {
 public:
     virtual ~DDirIterator() {};
@@ -16,10 +14,10 @@ public:
 
     virtual QString fileName() const = 0;
     virtual QString filePath() const = 0;
-    virtual const AbstractFileInfoPointer fileInfo() const = 0;
+    virtual const DAbstractFileInfoPointer fileInfo() const = 0;
     virtual QString path() const = 0;
 };
 
-typedef QExplicitlySharedDataPointer<DDirIterator> DDirIteratorPointer;
+typedef QSharedPointer<DDirIterator> DDirIteratorPointer;
 
 #endif // DDIRITERATOR_H

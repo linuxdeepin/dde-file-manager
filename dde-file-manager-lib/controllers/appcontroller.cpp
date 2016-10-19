@@ -433,7 +433,7 @@ void AppController::actionNewWindow(const DFMEvent &event)
     bool open_ok = false;
 
     for (const DUrl &fileUrl : event.fileUrlList()) {
-        const AbstractFileInfoPointer &fileInfo = fileService->createFileInfo(fileUrl);
+        const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(fileUrl);
 
         if (fileInfo->isDir()) {
             fileService->openNewWindow(fileUrl);

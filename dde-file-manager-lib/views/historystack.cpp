@@ -45,7 +45,7 @@ DUrl HistoryStack::back()
 
         url = m_list.at(m_index);
 
-        const AbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
 
         if (!fileInfo || !fileInfo->exists() || currentUrl == url) {
             removeAt(m_index);
@@ -68,7 +68,7 @@ DUrl HistoryStack::forward()
     while (++m_index < m_list.count()) {
         url = m_list.at(m_index);
 
-        const AbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
 
         if (!fileInfo || !fileInfo->exists() || currentUrl == url) {
             removeAt(m_index);

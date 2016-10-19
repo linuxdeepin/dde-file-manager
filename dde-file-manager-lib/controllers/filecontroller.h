@@ -18,7 +18,7 @@ public:
 
     static bool findExecutable(const QString & executableName, const QStringList & paths = QStringList());
 
-    const AbstractFileInfoPointer createFileInfo(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
+    const DAbstractFileInfoPointer createFileInfo(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
     const DDirIteratorPointer createDirIterator(const DUrl &fileUrl, const QStringList &nameFilters,
                                                 QDir::Filters filters, QDirIterator::IteratorFlags flags,
                                                 bool &accepted) const Q_DECL_OVERRIDE;

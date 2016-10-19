@@ -13,7 +13,7 @@ class SearchController : public DAbstractFileController
 public:
     explicit SearchController(QObject *parent = 0);
 
-    const AbstractFileInfoPointer createFileInfo(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
+    const DAbstractFileInfoPointer createFileInfo(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
     bool openFileLocation(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
 
     bool openFile(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;

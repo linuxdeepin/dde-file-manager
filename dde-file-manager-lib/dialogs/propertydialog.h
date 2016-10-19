@@ -138,13 +138,13 @@ private:
     DExpandGroup *addExpandWidget(const QStringList &titleList);
 
     void initTextShowFrame(const QString& text);
-    QFrame *createBasicInfoWidget(const AbstractFileInfoPointer &info);
-    ShareInfoFrame* createShareInfoFrame(const AbstractFileInfoPointer &info);
+    QFrame *createBasicInfoWidget(const DAbstractFileInfoPointer &info);
+    ShareInfoFrame* createShareInfoFrame(const DAbstractFileInfoPointer &info);
     QFrame *createLocalDeviceInfoWidget(const DUrl& url);
     QFrame *createDeviceInfoWidget(UDiskDeviceInfo* info);
 
-    QListWidget *createOpenWithListWidget(const AbstractFileInfoPointer &info);
-    QFrame *createAuthorityManagermentWidget(const AbstractFileInfoPointer &info);
+    QListWidget *createOpenWithListWidget(const DAbstractFileInfoPointer &info);
+    QFrame *createAuthorityManagermentWidget(const DAbstractFileInfoPointer &info);
 
 
 

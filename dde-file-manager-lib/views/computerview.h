@@ -41,8 +41,8 @@ public:
     explicit ComputerViewItem(QWidget *parent = 0);
 
     QIcon getIcon(int size);
-    AbstractFileInfoPointer info() const;
-    void setInfo(const AbstractFileInfoPointer &info);
+    DAbstractFileInfoPointer info() const;
+    void setInfo(const DAbstractFileInfoPointer &info);
 
     UDiskDeviceInfo *deviceInfo() const;
     void setDeviceInfo(UDiskDeviceInfo *deviceInfo);
@@ -74,7 +74,7 @@ protected:
 
 private:
     void setIconSizeState(int iconSize, QIcon::Mode mode = QIcon::Normal);
-    AbstractFileInfoPointer m_info;
+    DAbstractFileInfoPointer m_info;
     UDiskDeviceInfo* m_deviceInfo;
     int m_iconSize = 64;
     bool m_checked = false;

@@ -247,7 +247,7 @@ QString DFileViewHelper::selectionWhenEditing(const QModelIndex &index) const
     if (!fileInfo)
         return QString();
 
-    const QString &fileName = fileInfo->displayName();
+    const QString &fileName = fileInfo->fileDisplayName();
 
     if (fileInfo->isFile()) {
         const QString &suffix = fileInfo->suffix();

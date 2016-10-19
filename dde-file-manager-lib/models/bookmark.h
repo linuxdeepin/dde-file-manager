@@ -5,12 +5,11 @@
 #include "debugobejct.h"
 #include <QString>
 #include <QDateTime>
-#include "dabstractfileinfo.h"
+#include "dfileinfo.h"
 
-class BookMark : public DAbstractFileInfo
+class BookMark : public DFileInfo
 {
 public:
-    BookMark();
     BookMark(const DUrl &url);
     BookMark(QDateTime time, const QString &name, const DUrl &url);
     ~BookMark();

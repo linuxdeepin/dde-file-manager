@@ -76,7 +76,7 @@ int FileViewHelper::indexOfRow(const QModelIndex &index) const
 
 const DAbstractFileInfo *FileViewHelper::fileInfo(const QModelIndex &index) const
 {
-    return parent()->model()->fileInfo(index).constData();
+    return parent()->model()->fileInfo(index).data();
 }
 
 DStyledItemDelegate *FileViewHelper::itemDelegate() const

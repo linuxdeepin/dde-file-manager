@@ -17,20 +17,15 @@
 class ShareFileInfo : public DAbstractFileInfo
 {
 public:
-    ShareFileInfo();
     ShareFileInfo(const DUrl& url);
-    ShareFileInfo(const QString& url);
     ~ShareFileInfo();
 
     bool isCanRename() const Q_DECL_OVERRIDE;
     bool isReadable() const Q_DECL_OVERRIDE;
     bool isWritable() const Q_DECL_OVERRIDE;
 
-    QString displayName() const Q_DECL_OVERRIDE;
+    QString fileDisplayName() const Q_DECL_OVERRIDE;
     void setUrl(const DUrl &fileUrl) Q_DECL_OVERRIDE;
-
-    QIcon fileIcon() const Q_DECL_OVERRIDE;
-    QMimeType mimeType() const Q_DECL_OVERRIDE;
 
     QVector<MenuAction> menuActionList(MenuType type) const Q_DECL_OVERRIDE;
     QSet<MenuAction> disableMenuActionList() const Q_DECL_OVERRIDE;

@@ -7,7 +7,7 @@
 #include "app/define.h"
 #include "controllers/jobcontroller.h"
 #include "views/windowmanager.h"
-#include "models/fileinfo.h"
+#include "dfileinfo.h"
 #include "models/trashfileinfo.h"
 
 #include "shutil/fileutils.h"
@@ -49,9 +49,9 @@ QMultiHash<const HandlerType, std::function<DAbstractFileController*()>> DFileSe
 DFileService::DFileService(QObject *parent)
     : QObject(parent)
 {
-    qRegisterMetaType<DFMEvent>("FMEvent");
+    qRegisterMetaType<DFMEvent>("DFMEvent");
     qRegisterMetaType<QDir::Filters>("QDir::Filters");
-    qRegisterMetaType<QList<AbstractFileInfoPointer>>("QList<AbstractFileInfoPointer>");
+    qRegisterMetaType<QList<DAbstractFileInfoPointer>>("QList<DAbstractFileInfoPointer>");
     qRegisterMetaType<DUrl>("DUrl");
 }
 
@@ -185,10 +185,10 @@ bool DFileService::copyFiles(const DUrlList &urlList) const
 
 bool DFileService::renameFile(const DUrl &oldUrl, const DUrl &newUrl, const DFMEvent &event) const
 {
-    const AbstractFileInfoPointer &f = createFileInfo(newUrl);
+    const DAbstractFileInfoPointer &f = createFileInfo(newUrl);
 
     if (f->exists()){
-        dialogManager->showRenameNameSameErrorDialog(f->displayName(), event);
+        dialogManager->showRenameNameSameErrorDialog(f->fileDisplayName(), event);
         return false;
     }
 
@@ -494,16 +494,16 @@ void DFileService::openNewWindow(const DUrl &fileUrl) const
     emit fileSignalManager->requestOpenNewWindowByUrl(fileUrl, true);
 }
 
-const AbstractFileInfoPointer DFileService::createFileInfo(const DUrl &fileUrl) const
+const DAbstractFileInfoPointer DFileService::createFileInfo(const DUrl &fileUrl) const
 {
     TRAVERSE(fileUrl, {
-                 const AbstractFileInfoPointer &info = controller->createFileInfo(fileUrl, accepted);
+                 const DAbstractFileInfoPointer &info = controller->createFileInfo(fileUrl, accepted);
 
                  if(accepted)
                      return info;
              })
 
-    return AbstractFileInfoPointer();
+    return DAbstractFileInfoPointer();
 }
 
 const DDirIteratorPointer DFileService::createDirIterator(const DUrl &fileUrl, const QStringList &nameFilters,
@@ -519,11 +519,11 @@ const DDirIteratorPointer DFileService::createDirIterator(const DUrl &fileUrl, c
     return DDirIteratorPointer();
 }
 
-const QList<AbstractFileInfoPointer> DFileService::getChildren(const DUrl &fileUrl, const QStringList &nameFilters,
+const QList<DAbstractFileInfoPointer> DFileService::getChildren(const DUrl &fileUrl, const QStringList &nameFilters,
                                                                QDir::Filters filters, QDirIterator::IteratorFlags flags, bool *ok)
 {
     TRAVERSE(fileUrl, {
-                 const QList<AbstractFileInfoPointer> list = controller->getChildren(fileUrl, nameFilters, filters, flags, accepted);
+                 const QList<DAbstractFileInfoPointer> list = controller->getChildren(fileUrl, nameFilters, filters, flags, accepted);
 
                  if (ok)
                     *ok = accepted;
@@ -535,7 +535,7 @@ const QList<AbstractFileInfoPointer> DFileService::getChildren(const DUrl &fileU
     if (ok)
         *ok = false;
 
-    return QList<AbstractFileInfoPointer>();
+    return QList<DAbstractFileInfoPointer>();
 }
 
 JobController *DFileService::getChildrenJob(const DUrl &fileUrl, const QStringList &nameFilters,
@@ -574,7 +574,7 @@ QList<DAbstractFileController*> DFileService::getHandlerTypeByUrl(const DUrl &fi
 
 QString DFileService::getSymlinkFileName(const DUrl &fileUrl)
 {
-    const AbstractFileInfoPointer &fileInfo = instance()->createFileInfo(fileUrl);
+    const DAbstractFileInfoPointer &fileInfo = instance()->createFileInfo(fileUrl);
 
     QString fileName = fileInfo->fileName();
 
@@ -594,7 +594,7 @@ QString DFileService::getSymlinkFileName(const DUrl &fileUrl)
 
 void DFileService::openUrl(const DFMEvent &event) const
 {
-    const AbstractFileInfoPointer &fileInfo = createFileInfo(event.fileUrl());
+    const DAbstractFileInfoPointer &fileInfo = createFileInfo(event.fileUrl());
 
     if (fileInfo && fileInfo->isDir()) {
         emit fileSignalManager->requestChangeCurrentUrl(event);
