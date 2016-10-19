@@ -455,8 +455,10 @@ void DialogManager::showAboutDialog(const DFMEvent &event)
 
 void DialogManager::showUserSharePasswordSettingDialog(const DFMEvent &event)
 {
-    UserSharePasswordSettingDialog *dialog = new UserSharePasswordSettingDialog(0);
-    dialog->open();
+    QWidget* w = WindowManager::getWindowById(event.windowId());
+    UserSharePasswordSettingDialog *dialog = new UserSharePasswordSettingDialog(w);
+    int code = dialog->exec();
+    dialog->onButtonClicked(code);
 }
 
 void DialogManager::removePropertyDialog(const DUrl &url)
