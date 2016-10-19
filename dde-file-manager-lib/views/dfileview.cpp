@@ -1856,8 +1856,11 @@ void DFileView::showNormalMenu(const QModelIndex &index)
         if (actions.isEmpty())
             return;
 
-        if(isAllCompressedFiles)
-            actions<<MenuAction::Decompress<<MenuAction::DecompressHere;
+        if(isAllCompressedFiles){
+            int index = actions.indexOf(MenuAction::Compress);
+            actions.insert(index + 1, MenuAction::Decompress);
+            actions.insert(index + 2, MenuAction::DecompressHere);
+        }
 
         const QMap<MenuAction, QVector<MenuAction> > subActions;
         QSet<MenuAction> disableList = DFileMenuManager::getDisableActionList(list);
