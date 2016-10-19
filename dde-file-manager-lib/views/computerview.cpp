@@ -334,6 +334,8 @@ void ComputerView::initUI()
     setWidget(contentFrame);
     setVerticalScrollBar(new DScrollBar);
 
+    verticalScrollBar()->setContextMenuPolicy(Qt::NoContextMenu);
+
     loadSystemItems();
 
     if (isDiskConfExisted()){

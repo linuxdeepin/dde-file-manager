@@ -110,6 +110,7 @@ void DLeftSideBar::initNav()
     m_scene->setSceneRect(10, 10, 200, 500);
     m_view->setScene(m_scene);
 
+    m_view->verticalScrollBar()->setContextMenuPolicy(Qt::NoContextMenu);
 
     foreach (QString key, m_nameList) {
         if (key == "Separator"){
