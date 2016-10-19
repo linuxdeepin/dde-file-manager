@@ -8,6 +8,7 @@
 #include "thumbnailgenerator.h"
 #include <QCache>
 #include <QUrl>
+#include <QTimer>
 
 QT_BEGIN_NAMESPACE
 class QFileSystemWatcher;
@@ -47,6 +48,7 @@ signals:
     void pixmapChanged(const QString &filePath, const QPixmap &pixmap);
 public slots:
     void onFileChanged(const QString &path);
+    void runTask();
 
 protected:
     void run () Q_DECL_OVERRIDE;
@@ -57,8 +59,11 @@ private:
     QString m_thumbnailLargePath;
     QString m_thumbnailFailPath;
     QString m_thumbnailPath;
+    QTimer *m_taskTimer;
+    int m_maxTaskCacheNum;
 
     QQueue<ThumbnailTask> taskQueue;
+    QQueue<ThumbnailTask> taskCache;
     QMap<QString, QString> m_pathToMd5;
     QMap<QString, QPixmap> m_md5ToPixmap;
 
