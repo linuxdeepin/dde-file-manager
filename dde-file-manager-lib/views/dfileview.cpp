@@ -193,6 +193,7 @@ void DFileView::initConnects()
     connect(model(), &DFileSystemModel::stateChanged, this, &DFileView::onModelStateChanged);
 
     connect(this, &DFileView::viewModeChanged, this, &DFileView::handleViewModeChanged);
+    connect(this, &DFileView::iconSizeChanged, this, &DFileView::updateHorizontalOffset);
 }
 
 DFileSystemModel *DFileView::model() const
