@@ -89,16 +89,16 @@ void AppController::actionOpen(const DFMEvent &event)
                 url.setScheme(FILE_SCHEME);
             }
 
-            if (url.isSMBFile()) {
-                emit fileSignalManager->requestOpenNewWindowByUrl(url, true);
-            } else {
-                DAbstractFileInfoPointer info = fileService->createFileInfo(url);
+            if (url.isLocalFile()) {
+                QFileInfo info(url.toLocalFile());
 
-                if (info->isFile()) {
+                if (info.isFile()) {
                     fileService->openFile(url);
-                } else if(info->isDir()) {
+                } else if(info.isDir()) {
                     emit fileSignalManager->requestOpenNewWindowByUrl(url, true);
                 }
+            } else if (url.isSMBFile()) {
+                emit fileSignalManager->requestOpenNewWindowByUrl(url, true);
             }
         }
     }
@@ -308,11 +308,10 @@ void AppController::actionClearRecent(const DFMEvent &event)
 void AppController::actionClearTrash(const DFMEvent &event)
 {
     DUrlList list;
-
-    list << DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashInfosPath)) << DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath));
+    list << DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashInfosPath))
+         << DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath));
 
     fileService->deleteFiles(list, event);
-
 
     SoundEffectInterface* soundEffectInterface = new SoundEffectInterface(SoundEffectInterface::staticServerPath(),
                                                                           SoundEffectInterface::staticInterfacePath(),

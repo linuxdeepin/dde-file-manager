@@ -119,6 +119,8 @@ void DCrumbWidget::addCrumb(const QStringList &list)
 void DCrumbWidget::setCrumb(const DUrl &path)
 {
     qDebug() << path;
+    if(!path.isValid())
+        return;
     if(path.isSearchFile())
         return;
     m_url = path;
