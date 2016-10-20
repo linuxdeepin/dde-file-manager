@@ -45,9 +45,6 @@ DUrl HistoryStack::back()
 
         url = m_list.at(m_index);
 
-        if(url.isComputerFile())
-            break;
-
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
 
         if (!fileInfo || !fileInfo->exists() || currentUrl == url) {
@@ -70,9 +67,6 @@ DUrl HistoryStack::forward()
 
     while (++m_index < m_list.count()) {
         url = m_list.at(m_index);
-
-        if(url.isComputerFile())
-            break;
 
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
 
