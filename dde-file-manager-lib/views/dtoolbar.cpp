@@ -323,6 +323,7 @@ void DToolBar::searchBarChanged(QString path)
 
 void DToolBar::backButtonClicked()
 {
+    qDebug () <<m_navStack->size() << ">>>>>>>>";
     DUrl url = m_navStack->back();
     if(!url.isEmpty())
     {
@@ -330,9 +331,7 @@ void DToolBar::backButtonClicked()
         event << WindowManager::getWindowId(this);
         event << DFMEvent::BackAndForwardButton;
         event << url;
-        if(m_navStack->isFirst())
-            m_backButton->setDisabled(true);
-        m_forwardButton->setEnabled(true);
+        updateBackForwardButtonsState();
         emit fileSignalManager->requestChangeCurrentUrl(event);
     }
 }
@@ -346,8 +345,7 @@ void DToolBar::forwardButtonClicked()
         event << WindowManager::getWindowId(this);
         event << DFMEvent::BackAndForwardButton;
         event << url;
-        if(m_navStack->isLast())
-            m_forwardButton->setDisabled(true);
+        updateBackForwardButtonsState();
         m_backButton->setEnabled(true);
         emit fileSignalManager->requestChangeCurrentUrl(event);
     }
@@ -407,20 +405,12 @@ void DToolBar::setViewModeButtonVisible(bool isVisible)
 
 void DToolBar::checkNavHistory(DUrl url)
 {
-
     if (!m_navStack)
         return;
 
     m_navStack->append(url);
-    if(m_navStack->isFirst())
-        m_backButton->setEnabled(false);
-    else
-        m_backButton->setEnabled(true);
 
-    if(m_navStack->isLast())
-        m_forwardButton->setEnabled(false);
-    else
-        m_forwardButton->setEnabled(true);
+    updateBackForwardButtonsState();
 }
 
 void DToolBar::addHistoryStack(){
@@ -431,15 +421,8 @@ void DToolBar::switchHistoryStack(const int index , const DUrl &url){
     m_navStack = m_navStacks.at(index);
     if(!m_navStack)
         return;
-    if(m_navStack->size() > 1)
-        m_backButton->setEnabled(true);
-    else
-        m_backButton->setEnabled(false);
 
-    if(m_navStack->isLast())
-        m_forwardButton->setEnabled(false);
-    else
-        m_forwardButton->setEnabled(true);
+    updateBackForwardButtonsState();
     m_crumbWidget->setCrumb(url);
 }
 
@@ -476,4 +459,23 @@ int DToolBar::navStackCount() const{
 void DToolBar::setCrumb(const DUrl &url)
 {
     m_crumbWidget->setCrumb(url);
+}
+
+void DToolBar::updateBackForwardButtonsState()
+{
+    if(m_navStack->size() <= 1){
+        m_backButton->setEnabled(false);
+        m_forwardButton->setEnabled(false);
+    }
+    else{
+        if(m_navStack->isFirst())
+            m_backButton->setEnabled(false);
+        else
+            m_backButton->setEnabled(true);
+
+        if(m_navStack->isLast())
+            m_forwardButton->setEnabled(false);
+        else
+            m_forwardButton->setEnabled(true);
+    }
 }
