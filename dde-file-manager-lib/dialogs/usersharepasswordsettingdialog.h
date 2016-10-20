@@ -13,12 +13,11 @@ class UserSharePasswordSettingDialog : public DDialog
 public:
     explicit UserSharePasswordSettingDialog(QWidget *parent = 0);
     void initUI();
-    void initConnections();
 
 signals:
 
 public slots:
-    void onButtonClicked(const int& index, const QString &text);
+    void onButtonClicked(const int& index);
 
 private:
     DPasswordEdit *m_passwordEdit;
