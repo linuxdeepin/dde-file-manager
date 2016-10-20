@@ -247,13 +247,13 @@ QString DFileViewHelper::selectionWhenEditing(const QModelIndex &index) const
     if (!fileInfo)
         return QString();
 
-    const QString &fileName = fileInfo->fileDisplayName();
+    const QString &fileName = fileInfo->fileName();
 
     if (fileInfo->isFile()) {
         const QString &suffix = fileInfo->suffix();
 
         if (fileName.endsWith(suffix)) {
-            return fileName.left(fileName.length() - suffix.length() - 1);
+            return fileName.left(fileName.length() - suffix.length());
         }
     }
 
