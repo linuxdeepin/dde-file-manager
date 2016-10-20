@@ -3,6 +3,7 @@
 #include <QProcess>
 #include "../dbusinterface/usershare_interface.h"
 #include <QDBusReply>
+#include <QVBoxLayout>
 
 UserSharePasswordSettingDialog::UserSharePasswordSettingDialog(QWidget *parent) : DDialog(parent)
 {
@@ -11,7 +12,7 @@ UserSharePasswordSettingDialog::UserSharePasswordSettingDialog(QWidget *parent) 
     addButtons(buttonTexts);
     setDefaultButton(1);
     setTitle(tr("Please enter share password"));
-    setIcon(QIcon(":/icons/images/icons/share_password.png"));
+    setIcon(QIcon(":/images/dialogs/images/share_password.png"));
     initUI();
     setModal(true);
     setAttribute(Qt::WA_DeleteOnClose);
@@ -20,7 +21,11 @@ UserSharePasswordSettingDialog::UserSharePasswordSettingDialog(QWidget *parent) 
 void UserSharePasswordSettingDialog::initUI()
 {
     m_passwordEdit = new DPasswordEdit(this);
+    m_passwordEdit->setFixedSize(240,24);
+    m_passwordEdit->setFocus();
     addContent(m_passwordEdit);
+    setContentsMargins(0,0,0,0);
+//    QVBoxLayout *mainLayout = qobject_cast<QVBoxLayout*>(this->layout());
 }
 
 void UserSharePasswordSettingDialog::onButtonClicked(const int &index)
