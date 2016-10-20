@@ -132,7 +132,7 @@ void AppController::asycOpenDisk(const QString &path)
 void AppController::actionOpenInNewWindow(const DFMEvent &event)
 {
     DUrl fileUrl = event.fileUrl();
-    if(fileUrl.isUserShareFile()){
+    if(fileUrl.isUserShareFile() && fileUrl != DUrl::fromUserShareFile("/")){
         fileUrl.setScheme(FILE_SCHEME);
     }
     fileService->openNewWindow(fileUrl);
@@ -142,7 +142,7 @@ void AppController::actionOpenInNewTab(const DFMEvent &event)
 {
     const DUrlList& urls = event.fileUrlList();
     DUrl url = urls.first();
-    if(url.isUserShareFile()){
+    if(url.isUserShareFile() && url != DUrl::fromUserShareFile("/")){
         url.setScheme(FILE_SCHEME);
         const_cast<DFMEvent&>(event) << url;
     }
