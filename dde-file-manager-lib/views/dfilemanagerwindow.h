@@ -98,7 +98,7 @@ public slots:
     void openNewTab(const DFMEvent& event);
     void createNewView(const DFMEvent& event);
     void setFileView(DFileView *view);
-    void switchToView(const int index);
+    void switchToView(const int index, const DUrl &url);
     void onFileViewCurrentUrlChanged(const DUrl &url);
     void onTabAddableChanged(bool addable);
     void onCurrentTabChanged(int tabIndex);
