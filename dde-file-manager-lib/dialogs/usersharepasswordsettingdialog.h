@@ -21,6 +21,7 @@ public slots:
 
 private:
     DPasswordEdit *m_passwordEdit;
+    QWidget *m_content;
 };
 
 #endif // USERSHAREPASSWORDSETTINGDIALOG_H

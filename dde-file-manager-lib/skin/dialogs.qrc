@@ -23,6 +23,7 @@
         <file>dialogs/images/light/window_min_press.png</file>
         <file>dialogs/images/user-trash-full-opened.png</file>
         <file>dialogs/images/dialog_warning_64.png</file>
+        <file>dialogs/images/share_password.png</file>
     </qresource>
     <qresource prefix="/qss">
         <file>dialogs/qss/dark.qss</file>
