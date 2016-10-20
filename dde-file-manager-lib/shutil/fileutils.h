@@ -45,12 +45,6 @@ public:
 
     static bool setBackground(const QString& pictureFilePath);
 
-    static QString getSoftLinkFileName(const QString& file, const QString& targetDir = QDir::homePath());
-    static void createSoftLink(const QString& file, const QString& targetDir = QDir::homePath());
-    static void createSoftLink(int windowId, const QString& file);
-    static void sendToDesktop(const DUrlList& urls);
-    static void sendToDesktop(const QString& file);
-
     static QString md5(const QString& data);
     static QByteArray md5(QFile *file, const QString &filePath);
 

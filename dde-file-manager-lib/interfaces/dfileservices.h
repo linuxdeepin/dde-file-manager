@@ -98,7 +98,7 @@ private:
     static QList<DAbstractFileController*> getHandlerTypeByUrl(const DUrl &fileUrl,
                                                               bool ignoreHost = false,
                                                               bool ignoreScheme = false);
-    static QString getSymlinkFileName(const DUrl &fileUrl);
+    static QString getSymlinkFileName(const DUrl &fileUrl, const QDir &targetDir = QDir());
 
     static QMultiHash<const HandlerType, DAbstractFileController*> m_controllerHash;
     static QHash<const DAbstractFileController*, HandlerType> m_handlerHash;

@@ -443,17 +443,11 @@ bool DFileService::openFileLocation(const DUrl &fileUrl) const
 
 bool DFileService::createSymlink(const DUrl &fileUrl, const DFMEvent &event) const
 {
-//    QString linkName = getSymlinkFileName(fileUrl);
-//    QString linkPath = QFileDialog::getSaveFileName(WindowManager::getWindowById(event.windowId()),
-//                                                    QObject::tr("Create symlink"), linkName);
+    QString linkName = getSymlinkFileName(fileUrl);
+    QString linkPath = QFileDialog::getSaveFileName(WindowManager::getWindowById(event.windowId()),
+                                                    QObject::tr("Create symlink"), linkName);
 
-//    return createSymlink(fileUrl, DUrl::fromLocalFile(linkPath));
-
-    int windowId = event.windowId();
-    FileUtils::createSoftLink(windowId, fileUrl.toLocalFile());
-
-    /// TODO
-    return true;
+    return createSymlink(fileUrl, DUrl::fromLocalFile(linkPath));
 }
 
 bool DFileService::createSymlink(const DUrl &fileUrl, const DUrl &linkToUrl) const
@@ -470,11 +464,21 @@ bool DFileService::createSymlink(const DUrl &fileUrl, const DUrl &linkToUrl) con
 
 bool DFileService::sendToDesktop(const DFMEvent &event) const
 {
-    const DUrlList& urls = event.fileUrlList();
-    FileUtils::sendToDesktop(urls);
+    const QString &desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
 
-    /// TODO
-    return true;
+    if (desktopPath.isEmpty())
+        return false;
+
+    const QDir &desktopDir(desktopPath);
+    bool ok = true;
+
+    for (const DUrl &url : event.fileUrlList()) {
+        const QString &linkName = getSymlinkFileName(url, desktopDir);
+
+        ok = ok && createSymlink(url, DUrl::fromLocalFile(desktopDir.filePath(linkName)));
+    }
+
+    return ok;
 }
 
 bool DFileService::openInTerminal(const DUrl &fileUrl) const
@@ -572,24 +576,46 @@ QList<DAbstractFileController*> DFileService::getHandlerTypeByUrl(const DUrl &fi
     }
 }
 
-QString DFileService::getSymlinkFileName(const DUrl &fileUrl)
+QString DFileService::getSymlinkFileName(const DUrl &fileUrl, const QDir &targetDir)
 {
-    const DAbstractFileInfoPointer &fileInfo = instance()->createFileInfo(fileUrl);
+    const DAbstractFileInfoPointer &pInfo =  instance()->createFileInfo(fileUrl);
 
-    QString fileName = fileInfo->fileName();
+    if (pInfo->exists()) {
+        QString baseName = pInfo->baseName();
+        QString shortcut = QObject::tr("Shortcut");
+        QString linkBaseName;
 
-    if (fileInfo->isFile()) {
-        int index = fileName.lastIndexOf('.');
+        int number = 1;
 
-        if (index >= 0)
-            fileName.insert(index, " link");
-        else
-            fileName.append(" link");
-    } else {
-        return fileName + " link";
+        forever {
+            if (pInfo->isFile()) {
+                if (number == 1) {
+                    linkBaseName = QString("%1 %2.%3").arg(baseName, shortcut, pInfo->suffix());
+                } else {
+                    linkBaseName = QString("%1 %2%3.%4").arg(baseName, shortcut, QString::number(number), pInfo->suffix());
+                }
+            } else if (pInfo->isDir()) {
+                if (number == 1) {
+                    linkBaseName = QString("%1 %2").arg(baseName, shortcut);
+                }else{
+                    linkBaseName = QString("%1 %2%3").arg(baseName, shortcut, QString::number(number));
+                }
+            } else if (pInfo->isSymLink()) {
+                return QString();
+            }
+
+            if (targetDir.path().isEmpty())
+                return linkBaseName;
+
+            if (targetDir.exists(linkBaseName)) {
+                ++number;
+            } else {
+                return linkBaseName;
+            }
+        }
     }
 
-    return fileName;
+    return QString();
 }
 
 void DFileService::openUrl(const DFMEvent &event) const
