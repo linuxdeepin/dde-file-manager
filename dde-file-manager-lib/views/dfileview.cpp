@@ -1825,7 +1825,7 @@ void DFileView::showNormalMenu(const QModelIndex &index)
             foreach (QString app, recommendApps) {
                 DAction* action = new DAction(mimeAppsManager->DesktopObjs.value(app).getLocalName(), 0);
                 action->setProperty("app", app);
-                action->setProperty("url", info->redirectedFileUrl().toLocalFile());
+                action->setProperty("url", info->fileUrl());
                 openWithMenu->addAction(action);
                 d->openWithActionGroup->addAction(action);
             }
@@ -1844,7 +1844,7 @@ void DFileView::showNormalMenu(const QModelIndex &index)
             if(!FileUtils::isArchive(url.path()))
                 isAllCompressedFiles = false;
 
-            if (systemPathManager->isSystemPath(fileInfo->redirectedFileUrl().toLocalFile())) {
+            if (systemPathManager->isSystemPath(fileInfo->fileUrl().toLocalFile())) {
                 isSystemPathIncluded = true;
             }
         }
@@ -1875,7 +1875,7 @@ void DFileView::showNormalMenu(const QModelIndex &index)
 
     DFMEvent event;
 
-    event << info->redirectedFileUrl();
+    event << info->fileUrl();
     event << list;
     event << windowId();
     event << DFMEvent::FileView;
