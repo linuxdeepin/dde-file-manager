@@ -181,9 +181,6 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
                            &~ Qt::WindowMaximizeButtonHint
                            &~ Qt::WindowMinimizeButtonHint
                            &~ Qt::WindowSystemMenuHint);
-    startTimer(1000);
-    m_absolutePath = url.toLocalFile();
-    qDebug() << url;
 
     QString basicInfo = tr("Basic info");
     QString shareManager = tr("Share manager");
@@ -194,7 +191,6 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
     }
     if (diskInfo){
         qDebug() << diskInfo->getDiskInfo();
-        m_absolutePath = diskInfo->getMountPointUrl().toLocalFile();
         QString name = diskInfo->getName();
         m_icon->setPixmap(diskInfo->fileIcon().pixmap(128, 128));
         m_edit->setPlainText(name);
@@ -268,6 +264,12 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
     if (m_editDisbaled){
         m_editButton->hide();
     }
+
+    connect(fileService, &DFileService::childrenRemoved,
+            this, [this] (const DUrl &url) {
+        if (url == m_url)
+            close();
+    });
 }
 
 void PropertyDialog::initUI()
@@ -312,13 +314,13 @@ void PropertyDialog::updateFolderSize(qint64 size)
 void PropertyDialog::renameFile()
 {
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(m_url);
-    m_edit->setPlainText(fileInfo->fileDisplayName());
+    m_edit->setPlainText(fileInfo->fileName());
     m_editStackWidget->setCurrentIndex(0);
 
     const DAbstractFileInfoPointer pfile = fileService->createFileInfo(m_url);
     int endPos = -1;
     if(pfile->isFile()){
-        endPos = m_edit->toPlainText().length() - pfile->suffix().length() - 1;
+        endPos = m_edit->toPlainText().length() - pfile->suffix().length();
     }
     if(endPos == -1) {
         m_edit->selectAll();
@@ -333,29 +335,21 @@ void PropertyDialog::renameFile()
 
 void PropertyDialog::showTextShowFrame()
 {
-    if (m_edit->isCanceled()){
-        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(m_url);
+    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(m_url);
+
+    if (m_edit->isCanceled()) {
         initTextShowFrame(fileInfo->fileDisplayName());
-    }else{
-        DUrl oldUrl = m_url;
-        DUrl newUrl = DUrl(QString("%1/%2").arg(DUrl::parentUrl(m_url).toString(), m_edit->toPlainText()));
+    } else {
+        const DUrl &oldUrl = m_url;
+        const DUrl &newUrl = fileInfo->getUrlByNewFileName(m_edit->toPlainText());
 
-        QFile file(oldUrl.toLocalFile());
-        const QString &newFilePath = newUrl.toLocalFile();
-        bool result = file.rename(newFilePath);
-        if (!result) {
-            result = QProcess::execute("mv \"" + file.fileName().toUtf8() + "\" \"" + newFilePath.toUtf8() + "\"") == 0;
-        }
-
-        qDebug() << result;
-
-        if (result){
+        if (fileService->renameFile(oldUrl, newUrl)) {
             m_url = newUrl;
-            m_absolutePath = m_url.toLocalFile();
             const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(m_url);
+
             initTextShowFrame(fileInfo->fileDisplayName());
             dialogManager->refreshPropertyDialogs(oldUrl, newUrl);
-        }else{
+        } else {
             m_editStackWidget->setCurrentIndex(1);
         }
     }
@@ -424,18 +418,9 @@ void PropertyDialog::raise()
 
 void PropertyDialog::closeEvent(QCloseEvent *event)
 {
-    qDebug() << event;
     emit aboutToClosed(m_url);
     BaseDialog::closeEvent(event);
     emit closed(m_url);
-}
-
-void PropertyDialog::timerEvent(QTimerEvent *event)
-{
-    Q_UNUSED(event)
-    if (!QFile(m_absolutePath).exists()){
-        close();
-    }
 }
 
 void PropertyDialog::resizeEvent(QResizeEvent *event)

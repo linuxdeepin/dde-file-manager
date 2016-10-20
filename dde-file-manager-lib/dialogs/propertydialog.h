@@ -108,10 +108,9 @@ signals:
     void raised();
 
 protected:
-    void mousePressEvent(QMouseEvent* event);
-    void closeEvent(QCloseEvent* event);
-    void timerEvent(QTimerEvent* event);
-    void resizeEvent(QResizeEvent* event);
+    void mousePressEvent(QMouseEvent* event) Q_DECL_OVERRIDE;
+    void closeEvent(QCloseEvent* event) Q_DECL_OVERRIDE;
+    void resizeEvent(QResizeEvent* event) Q_DECL_OVERRIDE;
 
 private:
     DUrl m_url;
