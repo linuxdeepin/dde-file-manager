@@ -6,5 +6,14 @@
             <arg type="s" name="passward" direction="in"/>
             <arg type="b" name="result" direction="out"/>
         </method>
+        <method name="addGroup">
+            <arg type="s" name="groupName" direction="in"/>
+            <arg type="b" name="result" direction="out"/>
+        </method>
+        <method name="addUserToGroup">
+            <arg type="s" name="userName" direction="in"/>
+            <arg type="s" name="groupName" direction="in"/>
+            <arg type="b" name="result" direction="out"/>
+        </method>
     </interface>
 </node>
