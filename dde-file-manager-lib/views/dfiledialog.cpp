@@ -29,6 +29,8 @@ public:
     QFileDialog::AcceptMode acceptMode = QFileDialog::AcceptOpen;
     QEventLoop *eventLoop = Q_NULLPTR;
     QStringList nameFilters;
+    //bug: https://tower.im/projects/1d2977ef6b194727a97f96409f77038c/todos/f5937609238b46f1b9d1d769d2a08fad/
+    QString oldThemeName;
 };
 
 DFileDialog::DFileDialog(QWidget *parent)
@@ -37,7 +39,13 @@ DFileDialog::DFileDialog(QWidget *parent)
 {
     setWindowFlags(windowFlags() | Qt::Dialog);
 
-    DThemeManager::instance()->setTheme("light");
+    //bug: https://tower.im/projects/1d2977ef6b194727a97f96409f77038c/todos/f5937609238b46f1b9d1d769d2a08fad/
+    if (DThemeManager::instance()->theme() != "light") {
+        d_func()->oldThemeName = DThemeManager::instance()->theme();
+        QSignalBlocker blocker(DThemeManager::instance());
+        DThemeManager::instance()->setTheme("light");
+        blocker.unblock();
+    }
 
     if (titleBar())
         titleBar()->setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
@@ -53,7 +61,13 @@ DFileDialog::DFileDialog(QWidget *parent)
 
 DFileDialog::~DFileDialog()
 {
+    Q_D(const DFileDialog);
 
+    if (!d->oldThemeName.isEmpty()) {
+        QSignalBlocker blocker(DThemeManager::instance());
+        DThemeManager::instance()->setTheme(d->oldThemeName);
+        blocker.unblock();
+    }
 }
 
 void DFileDialog::setDirectory(const QString &directory)
@@ -356,12 +370,21 @@ void DFileDialog::reject()
 
 void DFileDialog::showEvent(QShowEvent *event)
 {
+    Q_D(DFileDialog);
+
     if (!event->spontaneous() && !testAttribute(Qt::WA_Moved)) {
         Qt::WindowStates  state = windowState();
         adjustPosition(parentWidget());
         setAttribute(Qt::WA_Moved, false); // not really an explicit position
         if (state != windowState())
             setWindowState(state);
+    }
+
+    if (!d->oldThemeName.isEmpty()) {
+        QSignalBlocker blocker(DThemeManager::instance());
+        DThemeManager::instance()->setTheme(d->oldThemeName);
+        blocker.unblock();
+        d->oldThemeName = QString();
     }
 }
 
