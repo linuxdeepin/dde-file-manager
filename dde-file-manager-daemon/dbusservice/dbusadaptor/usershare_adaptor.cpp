@@ -33,6 +33,18 @@ UserShareAdaptor::~UserShareAdaptor()
     // destructor
 }
 
+bool UserShareAdaptor::addGroup(const QString &groupName)
+{
+    // handle method call com.deepin.filemanager.daemon.UserShareManager.addGroup
+    return parent()->addGroup(groupName);
+}
+
+bool UserShareAdaptor::addUserToGroup(const QString &userName, const QString &groupName)
+{
+    // handle method call com.deepin.filemanager.daemon.UserShareManager.addUserToGroup
+    return parent()->addUserToGroup(userName, groupName);
+}
+
 bool UserShareAdaptor::setUserSharePassword(const QString &username, const QString &passward)
 {
     // handle method call com.deepin.filemanager.daemon.UserShareManager.setUserSharePassword

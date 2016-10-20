@@ -36,6 +36,20 @@ public:
     ~UserShareInterface();
 
 public Q_SLOTS: // METHODS
+    inline QDBusPendingReply<bool> addGroup(const QString &groupName)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(groupName);
+        return asyncCallWithArgumentList(QStringLiteral("addGroup"), argumentList);
+    }
+
+    inline QDBusPendingReply<bool> addUserToGroup(const QString &userName, const QString &groupName)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(userName) << QVariant::fromValue(groupName);
+        return asyncCallWithArgumentList(QStringLiteral("addUserToGroup"), argumentList);
+    }
+
     inline QDBusPendingReply<bool> setUserSharePassword(const QString &username, const QString &passward)
     {
         QList<QVariant> argumentList;

@@ -38,6 +38,15 @@ class UserShareAdaptor: public QDBusAbstractAdaptor
 "      <arg direction=\"in\" type=\"s\" name=\"passward\"/>\n"
 "      <arg direction=\"out\" type=\"b\" name=\"result\"/>\n"
 "    </method>\n"
+"    <method name=\"addGroup\">\n"
+"      <arg direction=\"in\" type=\"s\" name=\"groupName\"/>\n"
+"      <arg direction=\"out\" type=\"b\" name=\"result\"/>\n"
+"    </method>\n"
+"    <method name=\"addUserToGroup\">\n"
+"      <arg direction=\"in\" type=\"s\" name=\"userName\"/>\n"
+"      <arg direction=\"in\" type=\"s\" name=\"groupName\"/>\n"
+"      <arg direction=\"out\" type=\"b\" name=\"result\"/>\n"
+"    </method>\n"
 "  </interface>\n"
         "")
 public:
@@ -49,6 +58,8 @@ public:
 
 public: // PROPERTIES
 public Q_SLOTS: // METHODS
+    bool addGroup(const QString &groupName);
+    bool addUserToGroup(const QString &userName, const QString &groupName);
     bool setUserSharePassword(const QString &username, const QString &passward);
 Q_SIGNALS: // SIGNALS
 };
