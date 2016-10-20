@@ -35,6 +35,7 @@ public:
 
     int navStackCount() const;
     void setCrumb(const DUrl& url);
+    void updateBackForwardButtonsState();
 
 signals:
     void requestIconView();
