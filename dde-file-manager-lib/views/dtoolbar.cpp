@@ -443,18 +443,6 @@ void DToolBar::switchHistoryStack(const int index , const DUrl &url){
     m_crumbWidget->setCrumb(url);
 }
 
-void DToolBar::dirDeleted(const DUrl &url)
-{
-    if(m_crumbWidget->getUrl().path().startsWith(url.path())){
-        m_crumbWidget->setCrumb(url.parentUrl());
-        DFMEvent event;
-        event << WindowManager::getWindowId(this);
-        event << DFMEvent::CrumbButton;
-        event << url.parentUrl();
-        emit m_crumbWidget->crumbSelected(event);
-    }
-}
-
 void DToolBar::removeNavStackAt(int index){
     m_navStacks.removeAt(index);
 

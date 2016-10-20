@@ -303,7 +303,7 @@ void DFileManagerWindow::initConnect()
         event << windowId();
         openNewTab(event);
     });
-    connect(fileService, &DFileService::childrenRemoved, d->toolbar, &DToolBar::dirDeleted);
+    connect(fileService, &DFileService::childrenRemoved, this, &DFileManagerWindow::onFileDeleted);
 }
 
 void DFileManagerWindow::onCurrentTabClosed(const int index, const bool &remainState){
@@ -346,7 +346,7 @@ void DFileManagerWindow::closeCurrentTab(const DFMEvent &event)
 {
     D_D(DFileManagerWindow);
 
-    if(event.windowId() != winId())
+    if(event.windowId() != (int)winId())
         return;
 
     if(d->tabBar->count() == 1){
@@ -357,16 +357,45 @@ void DFileManagerWindow::closeCurrentTab(const DFMEvent &event)
     emit d->tabBar->tabCloseRequested(d->tabBar->currentIndex());
 }
 
-QString DFileManagerWindow::getDisplayNameByDiskUrl(const DUrl &url)
+void DFileManagerWindow::onFileDeleted(const DUrl &url)
 {
-    const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
-    QString urlDisplayName;
-    if(fileInfo)
-        urlDisplayName = fileInfo->fileDisplayName();
+    bool isParentUrl = false;
+    DUrl parentUrl = this->currentUrl();
 
-    UDiskDeviceInfo* info = deviceListener->getDeviceByPath(url.path());
-    if(info)
+    do {
+        if (parentUrl == url) {
+            isParentUrl = true;
+        }
+
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(parentUrl);
+
+        parentUrl = fileInfo->parentUrl();
+    } while (parentUrl.isValid() && !isParentUrl);
+
+    if (isParentUrl) {
+        DFMEvent event;
+
+        event << WindowManager::getWindowId(this);
+        event << DFMEvent::FileView;
+        event << (parentUrl.isValid() ? parentUrl : DUrl::fromLocalFile(QDir::homePath()));
+
+        preHandleCd(event);
+    }
+}
+
+QString DFileManagerWindow::getDisplayNameByUrl(const DUrl &url) const
+{
+    QString urlDisplayName;
+    UDiskDeviceInfo* info = deviceListener->getDeviceByPath(url.toLocalFile());
+
+    if (info) {
         urlDisplayName = info->fileDisplayName();
+    } else {
+        const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
+
+        if (fileInfo)
+            urlDisplayName = fileInfo->fileDisplayName();
+    }
 
     return urlDisplayName;
 }
@@ -567,7 +596,7 @@ void DFileManagerWindow::createNewView(const DFMEvent &event)
         appController->actionOpenDisk(event);
     }
 
-    QString urlDisplayName = getDisplayNameByDiskUrl(url);
+    QString urlDisplayName = getDisplayNameByUrl(url);
 
     setFileView(view);
     d->tabBar->addTabWithData(viewIndex,urlDisplayName,url);
@@ -608,7 +637,7 @@ void DFileManagerWindow::onFileViewCurrentUrlChanged(const DUrl &url)
 
     int viewIndex = d->viewStackLayout->indexOf(d->fileView);
 
-    QString urlDisplayName = getDisplayNameByDiskUrl(url);
+    QString urlDisplayName = getDisplayNameByUrl(url);
 
     d->tabBar->setTabText(viewIndex,urlDisplayName, url);
 }

@@ -76,6 +76,8 @@ public:
 
     bool tabAddable() const;
 
+    QString getDisplayNameByUrl(const DUrl& url) const;
+
 signals:
     void aboutToClose();
     void fileViewChanged(const DFileView* fileView);
@@ -102,7 +104,9 @@ public slots:
     void onCurrentTabChanged(int tabIndex);
     void onCurrentTabClosed(const int index, const bool& remainState);
     void closeCurrentTab(const DFMEvent& event);
-    QString getDisplayNameByDiskUrl(const DUrl& url);
+
+private slots:
+    void onFileDeleted(const DUrl &url);
 
 protected:
     void closeEvent(QCloseEvent* event)  Q_DECL_OVERRIDE;
