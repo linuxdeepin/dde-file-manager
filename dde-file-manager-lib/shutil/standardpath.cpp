@@ -103,3 +103,8 @@ QString StandardPath::getUserShareRootPath()
     return USERSHARE_ROOT;
 }
 
+QString StandardPath::getComputerRootPath()
+{
+    return COMPUTER_ROOT;
+}
+
