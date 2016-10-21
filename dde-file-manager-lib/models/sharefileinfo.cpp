@@ -65,7 +65,8 @@ void ShareFileInfo::setUrl(const DUrl &fileUrl)
 {
     DAbstractFileInfo::setUrl(fileUrl);
 
-    setProxy(DFileService::instance()->createFileInfo(DUrl::fromLocalFile(fileUrl.path())));
+    if (fileUrl.path() != "/")
+        setProxy(DFileService::instance()->createFileInfo(DUrl::fromLocalFile(fileUrl.path())));
 }
 
 //QFileDevice::Permissions ShareFileInfo::vpermissions() const
@@ -192,7 +193,12 @@ DUrl ShareFileInfo::mimeDataUrl() const
 
 DUrl ShareFileInfo::parentUrl() const
 {
-    return DUrl::fromUserShareFile("/");
+    Q_D(const DAbstractFileInfo);
+
+    if (d->proxy)
+        return DUrl::fromUserShareFile("/");
+
+    return DUrl();
 }
 
 bool ShareFileInfo::isShared() const

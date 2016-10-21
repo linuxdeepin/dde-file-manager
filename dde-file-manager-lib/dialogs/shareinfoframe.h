@@ -2,6 +2,7 @@
 #define SHAREINFOFRAME_H
 
 #include <QFrame>
+#include <QTimer>
 
 #include <dcheckbox.h>
 #include <dcombobox.h>
@@ -30,6 +31,7 @@ public slots:
     void handlePermissionComboxChanged(int index);
     void handleAnonymityComboxChanged(int index);
     void handShareInfoChanged();
+    void doShaeInfoSetting();
 
 private:
     DAbstractFileInfoPointer m_fileinfo;
@@ -37,6 +39,7 @@ private:
     DLineEdit* m_shareNamelineEdit = NULL;
     DComboBox* m_permissoComBox = NULL;
     DComboBox* m_anonymityCombox = NULL;
+    QTimer* m_jobTimer;
 };
 
 #endif // SHAREINFOFRAME_H
