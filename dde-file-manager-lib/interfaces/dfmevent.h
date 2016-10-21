@@ -62,8 +62,8 @@ public:
     inline DFMEvent &operator <<(const DUrl &fileUrl)
     {data->fileUrl = fileUrl; return *this;}
 
-    inline DFMEvent &operator <<(const DUrlList &list)
-    {data->fileUrlList = list; return *this;}
+    inline void operator <<(const DUrlList &list)
+    {data->fileUrlList = list; /*return *this;*/}
 
     inline int windowId() const
     {return data->windowId;}

@@ -236,28 +236,19 @@ QList<QIcon> DFileViewHelper::additionalIcon(const QModelIndex &index) const
 }
 
 /*!
- * \brief Returns the file name that needs to be selected when renaming the file.
+ * \brief Returns the complete base name of the file without the path.
+          The complete base name consists of all characters in the file up to (but not including) the file suffix.
  * \param index
  * \return
  */
-QString DFileViewHelper::selectionWhenEditing(const QModelIndex &index) const
+QString DFileViewHelper::baseName(const QModelIndex &index) const
 {
     const DAbstractFileInfo *fileInfo = this->fileInfo(index);
 
     if (!fileInfo)
         return QString();
 
-    const QString &fileName = fileInfo->fileName();
-
-    if (fileInfo->isFile()) {
-        const QString &suffix = fileInfo->suffix();
-
-        if (fileName.endsWith(suffix)) {
-            return fileName.left(fileName.length() - suffix.length());
-        }
-    }
-
-    return fileName;
+    return fileInfo->baseName();
 }
 
 /*!

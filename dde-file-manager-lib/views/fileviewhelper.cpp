@@ -149,10 +149,10 @@ void FileViewHelper::cdUp(const DFMEvent &event)
 
 void FileViewHelper::edit(const DFMEvent &event)
 {
-    if (event.windowId() != windowId())
+    if (event.windowId() != windowId() || event.fileUrlList().isEmpty())
         return;
 
-    DUrl fileUrl = event.fileUrl();
+    DUrl fileUrl = event.fileUrlList().first();
 
     if (fileUrl.isEmpty())
         return;
@@ -186,13 +186,7 @@ void FileViewHelper::selectAndRename(const DFMEvent &event)
     }
 
     parent()->select(event.fileUrlList());
-
-    DFMEvent e = event;
-
-    if (!e.fileUrlList().isEmpty())
-        e << e.fileUrlList().first();
-
-    appController->actionRename(e);
+    edit(event);
 }
 
 void FileViewHelper::setFoucsOnFileView(const DFMEvent &event)

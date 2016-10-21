@@ -92,13 +92,6 @@ QString DFileInfo::absoluteFilePath() const
     return d->fileInfo.absoluteFilePath();
 }
 
-QString DFileInfo::baseName() const
-{
-    Q_D(const DFileInfo);
-
-    return d->fileInfo.baseName();
-}
-
 QString DFileInfo::fileName() const
 {
     Q_D(const DFileInfo);

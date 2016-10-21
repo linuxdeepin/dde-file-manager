@@ -423,7 +423,7 @@ void DIconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
     if(item->edit->isReadOnly())
         return;
 
-    const QString &selectionWhenEditing = parent()->selectionWhenEditing(index);
+    const QString &selectionWhenEditing = parent()->baseName(index);
     int endPos = selectionWhenEditing.isEmpty() ? -1 : selectionWhenEditing.length();
 
     if (endPos == -1) {
