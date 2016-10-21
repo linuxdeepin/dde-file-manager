@@ -287,5 +287,7 @@ void TrashManager::onFileRemove(const QString &filePath) const
             return;
     }
 
-    emit childrenRemoved(DUrl::fromTrashFile(path));
+    // if path is root , pass this signal
+    if (path != "/")
+        emit childrenRemoved(DUrl::fromTrashFile(path));
 }
