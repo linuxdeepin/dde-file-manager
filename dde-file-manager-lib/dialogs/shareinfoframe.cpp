@@ -16,6 +16,9 @@ ShareInfoFrame::ShareInfoFrame(const DAbstractFileInfoPointer &info, QWidget *pa
     initUI();
     initShareInfo();
     initConnect();
+    m_jobTimer = new QTimer();
+    m_jobTimer->setInterval(1000);
+    m_jobTimer->setSingleShot(true);
 
 }
 
@@ -89,6 +92,7 @@ void ShareInfoFrame::initConnect()
     connect(m_shareNamelineEdit, &DLineEdit::textChanged, this, &ShareInfoFrame::handleShareNameChanged);
     connect(m_permissoComBox, SIGNAL(currentIndexChanged(int)), this, SLOT(handlePermissionComboxChanged(int)));
     connect(m_anonymityCombox, SIGNAL(currentIndexChanged(int)), this, SLOT(handleAnonymityComboxChanged(int)));
+    connect(m_jobTimer, &QTimer::timeout, this, &ShareInfoFrame::doShaeInfoSetting);
 }
 
 void ShareInfoFrame::handleCheckBoxChanged(int state)
@@ -116,6 +120,11 @@ void ShareInfoFrame::handleAnonymityComboxChanged(int index)
 }
 
 void ShareInfoFrame::handShareInfoChanged()
+{
+    m_jobTimer->start();
+}
+
+void ShareInfoFrame::doShaeInfoSetting()
 {
     QString shareName = m_shareNamelineEdit->text();
 
