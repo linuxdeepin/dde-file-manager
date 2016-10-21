@@ -13,13 +13,12 @@ ShareInfoFrame::ShareInfoFrame(const DAbstractFileInfoPointer &info, QWidget *pa
     QFrame(parent),
     m_fileinfo(info)
 {
-    initUI();
-    initShareInfo();
-    initConnect();
     m_jobTimer = new QTimer();
     m_jobTimer->setInterval(1000);
     m_jobTimer->setSingleShot(true);
-
+    initUI();
+    initShareInfo();
+    initConnect();
 }
 
 void ShareInfoFrame::initUI()
