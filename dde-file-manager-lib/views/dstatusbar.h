@@ -51,7 +51,7 @@ protected:
     void resizeEvent(QResizeEvent* event);
 
 private:
-    void clearLayout();
+    void clearLayoutAndAnchors();
 
     QString m_OnlyOneItemCounted;
     QString m_counted;

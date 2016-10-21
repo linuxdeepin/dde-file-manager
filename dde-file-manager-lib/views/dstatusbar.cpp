@@ -14,6 +14,7 @@
 #include <dtextbutton.h>
 #include <dcombobox.h>
 #include <dlineedit.h>
+#include <anchors.h>
 
 DStatusBar::DStatusBar(QWidget *parent)
     : QFrame(parent)
@@ -90,16 +91,15 @@ void DStatusBar::setMode(DStatusBar::Mode mode)
         }
 
         m_label = new QLabel(m_counted.arg("0"), this);
+        m_label->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
 
-        clearLayout();
-        m_layout->addStretch(3);
-        m_layout->addWidget(m_loadingIndicator);
-        m_layout->addWidget(m_label);
-        m_layout->addStretch(2);
-        m_layout->addWidget(m_scaleSlider);
+        clearLayoutAndAnchors();
+        m_layout->addWidget(m_loadingIndicator, 0, Qt::AlignCenter);
+        m_layout->addWidget(m_label, 0, Qt::AlignCenter);
         m_layout->setSpacing(14);
-        m_layout->addSpacing(4);
-        m_layout->setContentsMargins(0, 0, 0, 0);
+        m_layout->setContentsMargins(0, 0, 4, 0);
+
+        AnchorsBase::setAnchor(m_scaleSlider, Qt::AnchorRight, this, Qt::AnchorRight);
 
         setStyleSheet("QFrame{"
                       "background-color: white;"
@@ -153,7 +153,8 @@ void DStatusBar::setMode(DStatusBar::Mode mode)
             m_rejectButton->setFixedHeight(28);
         }
 
-        clearLayout();
+        clearLayoutAndAnchors();
+        m_scaleSlider->move(0, 0);
         m_layout->addWidget(m_scaleSlider);
         if (mode == DialogOpen)
             m_layout->addWidget(m_comboBox);
@@ -331,8 +332,11 @@ void DStatusBar::resizeEvent(QResizeEvent *event)
     QFrame::resizeEvent(event);
 }
 
-void DStatusBar::clearLayout()
+void DStatusBar::clearLayoutAndAnchors()
 {
     while (m_layout->count() > 0)
         delete m_layout->takeAt(0);
+
+    AnchorsBase::clearAnchors(this);
+    AnchorsBase::clearAnchors(m_scaleSlider);
 }
