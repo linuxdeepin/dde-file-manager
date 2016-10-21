@@ -94,8 +94,10 @@ void DStatusBar::setMode(DStatusBar::Mode mode)
         m_label->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
 
         clearLayoutAndAnchors();
-        m_layout->addWidget(m_loadingIndicator, 0, Qt::AlignCenter);
-        m_layout->addWidget(m_label, 0, Qt::AlignCenter);
+        m_layout->addStretch();
+        m_layout->addWidget(m_loadingIndicator);
+        m_layout->addWidget(m_label);
+        m_layout->addStretch();
         m_layout->setSpacing(14);
         m_layout->setContentsMargins(0, 0, 4, 0);
 
@@ -323,13 +325,6 @@ void DStatusBar::setLoadingIncatorVisible(const DFMEvent &event, bool visible)
     } else {
         m_label->setText(QString());
     }
-}
-
-void DStatusBar::resizeEvent(QResizeEvent *event)
-{
-    m_loadingIndicator->move((event->size().width() - m_loadingIndicator->width()) / 2, 0);
-
-    QFrame::resizeEvent(event);
 }
 
 void DStatusBar::clearLayoutAndAnchors()
