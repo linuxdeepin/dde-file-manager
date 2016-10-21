@@ -22,6 +22,7 @@
 #include "app/filemanagerapp.h"
 #include "deviceinfo/udisklistener.h"
 #include "usershare/usersharemanager.h"
+#include "controllers/pathmanager.h"
 
 #include "xutil.h"
 #include "utils.h"
@@ -393,10 +394,15 @@ QString DFileManagerWindow::getDisplayNameByUrl(const DUrl &url) const
     if (info) {
         urlDisplayName = info->fileDisplayName();
     } else {
-        const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
+        if(url.isComputerFile()){
+            if(systemPathManager->isSystemPath(url.toString()))
+                urlDisplayName = systemPathManager->getSystemPathDisplayNameByPath(url.toString());
+        } else{
+            const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
 
-        if (fileInfo)
-            urlDisplayName = fileInfo->fileDisplayName();
+            if (fileInfo)
+                urlDisplayName = fileInfo->fileDisplayName();
+        }
     }
 
     return urlDisplayName;
@@ -413,9 +419,10 @@ void DFileManagerWindow::onCurrentTabChanged(int tabIndex)
     D_D(DFileManagerWindow);
 
     int viewIndex = d->tabBar->tabData(tabIndex).toJsonObject()["viewIndex"].toInt();
-    switchToView(viewIndex);
+    DUrl url(d->tabBar->tabData(tabIndex).toJsonObject()["url"].toString());
+    switchToView(viewIndex, url);
 
-    d->toolbar->switchHistoryStack(tabIndex,d->fileView->currentUrl());
+    d->toolbar->switchHistoryStack(tabIndex,url);
 }
 
 
@@ -543,6 +550,8 @@ void DFileManagerWindow::cd(const DFMEvent &event)
 
     if (d->viewStackLayout->currentWidget() != d->fileView) {
         d->viewStackLayout->setCurrentWidget(d->fileView);
+        emit fileSignalManager->currentUrlChanged(event);
+        onFileViewCurrentUrlChanged(event.fileUrl());
     }
 
     d->fileView->fileViewHelper()->cd(event);
@@ -556,6 +565,7 @@ void DFileManagerWindow::showComputerView(const DFMEvent &event)
     d->viewStackLayout->setCurrentWidget(d->computerView);
     emit fileSignalManager->currentUrlChanged(event);
     d->toolbar->setViewModeButtonVisible(false);
+    onFileViewCurrentUrlChanged(DUrl::fromComputerFile("/"));
 }
 
 void DFileManagerWindow::openNewTab(const DFMEvent &event)
@@ -644,7 +654,7 @@ void DFileManagerWindow::onFileViewCurrentUrlChanged(const DUrl &url)
     d->tabBar->setTabText(viewIndex,urlDisplayName, url);
 }
 
-void DFileManagerWindow::switchToView(const int viewIndex)
+void DFileManagerWindow::switchToView(const int viewIndex, const DUrl &url)
 {
     D_D(DFileManagerWindow);
 
@@ -657,8 +667,15 @@ void DFileManagerWindow::switchToView(const int viewIndex)
         disconnect(fileSignalManager, &FileSignalManager::loadingIndicatorShowed, d->fileView->statusBar(), &DStatusBar::setLoadingIncatorVisible);
     }
 
-    d->viewStackLayout->setCurrentIndex(viewIndex);
+//    d->viewStackLayout->setCurrentIndex(viewIndex);
     d->fileView = qobject_cast<DFileView*>(d->viewStackLayout->widget(viewIndex));
+    if(url.isComputerFile()){
+        d->viewStackLayout->setCurrentWidget(d->computerView);
+        d->toolbar->setViewModeButtonVisible(false);
+    } else {
+        d->viewStackLayout->setCurrentWidget(d->fileView);
+        d->toolbar->setViewModeButtonVisible(true);
+    }
     if(!d->fileView)
         return;
 
@@ -671,10 +688,8 @@ void DFileManagerWindow::switchToView(const int viewIndex)
 
 
     emit fileViewChanged(d->fileView);
-    d->leftSideBar->scene()->setCurrentUrl(d->fileView->currentUrl());
-
+    d->leftSideBar->scene()->setCurrentUrl(url);
     d->toolbar->checkViewModeButton(d->fileView->viewMode());
-    onFileViewCurrentUrlChanged(d->fileView->currentUrl());
 }
 
 void DFileManagerWindow::moveCenter(const QPoint &cp)
