@@ -64,6 +64,18 @@ DFileMenu *DFileMenuManager::createNetworkMarkMenu(const QSet<MenuAction> &disab
     return genereteMenuByKeys(actionKeys, disableList);
 }
 
+DFileMenu *DFileMenuManager::createUserShareMarkMenu(const QSet<MenuAction> &disableList)
+{
+    QVector<MenuAction> actionKeys;;
+
+    actionKeys.reserve(1);
+
+    actionKeys << MenuAction::OpenInNewWindow
+               << MenuAction::OpenInNewTab;
+
+    return genereteMenuByKeys(actionKeys, disableList);
+}
+
 DFileMenu *DFileMenuManager::createCustomBookMarkMenu(const DUrl &url, QSet<MenuAction> disableList)
 {
 
