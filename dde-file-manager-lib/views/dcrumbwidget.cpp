@@ -52,6 +52,9 @@ void DCrumbWidget::initUI()
     m_listWidget->setFocusPolicy(Qt::NoFocus);
     setFixedHeight(24);
     setMinimumWidth(50);
+    QTimer::singleShot(100, [=](){
+        setCrumb(m_url);
+    });
 }
 
 void DCrumbWidget::addCrumb(const QStringList &list)
