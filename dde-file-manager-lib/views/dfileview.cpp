@@ -785,16 +785,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
 
             return;
         case Qt::Key_Delete:
-            if (fmevent.fileUrlList().isEmpty()) {
-                break;
-            }
-
-            if (fmevent.fileUrl().isTrashFile()) {
-                fileService->deleteFiles(fmevent.fileUrlList(), fmevent);
-            } else {
-                fileService->moveToTrash(fmevent.fileUrlList());
-            }
-
+            fileService->moveToTrash(fmevent);
             break;
         default: break;
         }
@@ -861,7 +852,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             if (fmevent.fileUrlList().isEmpty())
                 return;
 
-            fileService->deleteFiles(fmevent.fileUrlList(), fmevent);
+            fileService->deleteFiles(fmevent);
 
             return;
         } else if (event->key() == Qt::Key_T) {
@@ -1408,7 +1399,7 @@ bool DFileView::setCurrentUrl(const DUrl &url)
 
     DUrl fileUrl = url;
 
-    if (fileUrl.isTrashFile() && fileUrl.path().isEmpty()) {
+    if (fileUrl.path().isEmpty()) {
         fileUrl.setPath("/");
     }
 

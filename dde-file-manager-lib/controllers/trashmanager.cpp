@@ -14,6 +14,9 @@
 
 #include <QDebug>
 #include <QUrlQuery>
+#include <QTimer>
+#include <QCoreApplication>
+#include <QThread>
 
 class TrashDirIterator : public DDirIterator
 {
@@ -147,7 +150,14 @@ bool TrashManager::removeUrlMonitor(const DUrl &fileUrl, bool &accepted) const
     return true;
 }
 
-bool TrashManager::copyFiles(const DUrlList &urlList, bool &accepted) const
+DUrlList TrashManager::moveToTrash(const DFMEvent &event, bool &accepted) const
+{
+    deleteFiles(event, accepted);
+
+    return DUrlList();
+}
+
+bool TrashManager::copyFilesToClipboard(const DUrlList &urlList, bool &accepted) const
 {
     accepted = true;
 
@@ -163,32 +173,34 @@ bool TrashManager::copyFiles(const DUrlList &urlList, bool &accepted) const
         }
     }
 
-    fileService->copyFiles(localList);
+    fileService->copyFilesToClipboard(localList);
 
     return true;
 }
 
-DUrlList TrashManager::pasteFile(DAbstractFileController::PasteType type, const DUrlList &urlList,
+DUrlList TrashManager::pasteFile(DAbstractFileController::PasteType type, const DUrl &targetUrl,
                                  const DFMEvent &event, bool &accepted) const
 {
-    Q_UNUSED(event)
+    Q_UNUSED(type)
 
-    accepted = (type == DAbstractFileController::CutType);
+    accepted = /*(type == DAbstractFileController::CutType)*/targetUrl == DUrl::fromTrashFile("/");
 
-    if (!accepted)
+    if (!accepted || event.fileUrlList().isEmpty())
         return DUrlList();
 
-    return fileService->moveToTrashSync(urlList);
+    const_cast<DFMEvent&>(event) << event.fileUrlList().first();
+
+    return fileService->moveToTrashSync(event);
 }
 
 
-bool TrashManager::deleteFiles(const DUrlList &urlList, const DFMEvent &event, bool &accepted) const
+bool TrashManager::deleteFiles(const DFMEvent &event, bool &accepted) const
 {
     accepted = true;
 
     DUrlList localList;
 
-    for(const DUrl &url : urlList) {
+    for(const DUrl &url : event.fileUrlList()) {
         const QString &path = url.path();
 
         localList << DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath) + path);
@@ -198,7 +210,9 @@ bool TrashManager::deleteFiles(const DUrlList &urlList, const DFMEvent &event, b
         }
     }
 
-    fileService->deleteFiles(localList, event);
+    const_cast<DFMEvent&>(event) << DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath));
+    const_cast<DFMEvent&>(event) << localList;
+    TIMER_SINGLESHOT_CONNECT_TYPE(this, 0, fileService->deleteFiles(event), Qt::AutoConnection, event);
 
     return true;
 }

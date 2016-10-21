@@ -21,7 +21,7 @@ public:
     void save() Q_DECL_OVERRIDE;
 
     bool openFile(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
-    bool copyFiles(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;
+    bool copyFilesToClipboard(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;
     const QList<DAbstractFileInfoPointer> getChildren(const DUrl &fileUrl, const QStringList &nameFilters,
                                                      QDir::Filters filters, QDirIterator::IteratorFlags flags,
                                                      bool &accepted) const Q_DECL_OVERRIDE;

@@ -1,5 +1,6 @@
 #include "searchcontroller.h"
 #include "dfileservices.h"
+#include "dfmevent.h"
 
 #include "models/searchfileinfo.h"
 #include "ddiriterator.h"
@@ -119,7 +120,7 @@ bool SearchDiriterator::hasNext() const
                     searchPathList << url;
             }
 
-            if (fileInfo->fileName().indexOf(regular) >= 0) {
+            if (fileInfo->fileDisplayName().indexOf(regular) >= 0) {
                 DUrl url = fileUrl;
                 const DUrl &realUrl = fileInfo->fileUrl();
 
@@ -213,32 +214,37 @@ bool SearchController::removeUrlMonitor(const DUrl &url, bool &accepted) const
     return DFileService::instance()->removeUrlMonitor(realUrl(url));
 }
 
-bool SearchController::copyFiles(const DUrlList &urlList, bool &accepted) const
+bool SearchController::copyFilesToClipboard(const DUrlList &urlList, bool &accepted) const
 {
     accepted = true;
 
-    return DFileService::instance()->copyFiles(realUrlList(urlList));
+    return DFileService::instance()->copyFilesToClipboard(realUrlList(urlList));
 }
 
-DUrlList SearchController::moveToTrash(const DUrlList &urlList, bool &accepted) const
+DUrlList SearchController::moveToTrash(const DFMEvent &event, bool &accepted) const
 {
     accepted = true;
 
-    return DFileService::instance()->moveToTrashSync(realUrlList(urlList));
+    const_cast<DFMEvent&>(event) << event.fileUrl().searchTargetUrl();
+    const_cast<DFMEvent&>(event) << realUrlList(event.fileUrlList());
+
+    return DFileService::instance()->moveToTrashSync(event);
 }
 
-bool SearchController::cutFiles(const DUrlList &urlList, bool &accepted) const
+bool SearchController::cutFilesToClipboard(const DUrlList &urlList, bool &accepted) const
 {
     accepted = true;
 
-    return DFileService::instance()->cutFiles(realUrlList(urlList));
+    return DFileService::instance()->cutFilesToClipboard(realUrlList(urlList));
 }
 
-bool SearchController::deleteFiles(const DUrlList &urlList, const DFMEvent &event, bool &accepted) const
+bool SearchController::deleteFiles(const DFMEvent &event, bool &accepted) const
 {
     accepted = true;
 
-    return DFileService::instance()->deleteFilesSync(realUrlList(urlList), event);
+    const_cast<DFMEvent&>(event) << realUrlList(event.fileUrlList());
+
+    return DFileService::instance()->deleteFilesSync(event);
 }
 
 bool SearchController::renameFile(const DUrl &oldUrl, const DUrl &newUrl, bool &accepted) const

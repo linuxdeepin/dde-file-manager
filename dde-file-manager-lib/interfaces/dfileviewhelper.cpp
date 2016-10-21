@@ -78,7 +78,7 @@ void DFileViewHelperPrivate::init()
 
     QObject::connect(copy_action, &QAction::triggered,
             q, [q] {
-        fileService->copyFiles(q->selectedUrls());
+        fileService->copyFilesToClipboard(q->selectedUrls());
     });
 
     QAction *cut_action = new QAction(q->parent());
@@ -88,7 +88,7 @@ void DFileViewHelperPrivate::init()
 
     QObject::connect(cut_action, &QAction::triggered,
             q, [q] {
-        fileService->cutFiles(q->selectedUrls());
+        fileService->cutFilesToClipboard(q->selectedUrls());
     });
 
     QAction *paste_action = new QAction(q->parent());
@@ -102,7 +102,7 @@ void DFileViewHelperPrivate::init()
         event << q->currentUrl();
         event << q->windowId();
         event << DFMEvent::FileView;
-        fileService->pasteFile(event);
+        fileService->pasteFileByClipboard(event.fileUrl(), event);
     });
 
     q->parent()->addAction(copy_action);

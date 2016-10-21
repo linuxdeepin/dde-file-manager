@@ -27,13 +27,12 @@ public:
     virtual bool compressFiles(const DUrlList &urlList, bool &accepted) const;
     virtual bool decompressFile(const DUrlList &fileUrlList, bool &accepted) const;
     virtual bool decompressFileHere(const DUrlList &fileUrlList, bool &accepted) const;
-    virtual bool copyFiles(const DUrlList &urlList, bool &accepted) const;
+    virtual bool copyFilesToClipboard(const DUrlList &urlList, bool &accepted) const;
     virtual bool renameFile(const DUrl &oldUrl, const DUrl &newUrl, bool &accepted) const;
-    virtual bool deleteFiles(const DUrlList &urlList, const DFMEvent &event, bool &accepted) const;
-    virtual DUrlList moveToTrash(const DUrlList &urlList, bool &accepted) const;
-    virtual bool cutFiles(const DUrlList &urlList, bool &accepted) const;
-    virtual DUrlList pasteFile(PasteType type, const DUrlList &urlList,
-                               const DFMEvent &event, bool &accepted) const;
+    virtual bool deleteFiles(const DFMEvent &event, bool &accepted) const;
+    virtual DUrlList moveToTrash(const DFMEvent &event, bool &accepted) const;
+    virtual bool cutFilesToClipboard(const DUrlList &urlList, bool &accepted) const;
+    virtual DUrlList pasteFile(PasteType type, const DUrl &targetUrl, const DFMEvent &event, bool &accepted) const;
     virtual bool restoreFile(const DUrl &srcUrl, const DUrl &tarUrl, const DFMEvent &event, bool &accepted) const;
     virtual bool newFolder(const DFMEvent &event, bool &accepted) const;
     virtual bool newFile(const DUrl &toUrl, bool &accepted) const;

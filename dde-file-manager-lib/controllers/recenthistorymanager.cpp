@@ -83,7 +83,7 @@ bool RecentHistoryManager::openFile(const DUrl &fileUrl, bool &accepted) const
     return fileService->openFile(DUrl::fromLocalFile(fileUrl.path()));
 }
 
-bool RecentHistoryManager::copyFiles(const DUrlList &urlList, bool &accepted) const
+bool RecentHistoryManager::copyFilesToClipboard(const DUrlList &urlList, bool &accepted) const
 {
     accepted = true;
 
@@ -93,7 +93,7 @@ bool RecentHistoryManager::copyFiles(const DUrlList &urlList, bool &accepted) co
         localList << DUrl::fromLocalFile(url.path());
     }
 
-    return DFileService::instance()->copyFiles(localList);
+    return DFileService::instance()->copyFilesToClipboard(localList);
 }
 
 const QList<DAbstractFileInfoPointer> RecentHistoryManager::getChildren(const DUrl &fileUrl, const QStringList &nameFilters,

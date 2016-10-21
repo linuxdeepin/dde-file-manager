@@ -132,7 +132,7 @@ QString FileJob::getTargetDir()
     return m_tarPath;
 }
 
-DUrlList FileJob::doCopy(const DUrlList &files, const QString &destination)
+DUrlList FileJob::doCopy(const DUrlList &files, const DUrl &destination)
 {
     DUrlList list;
 
@@ -141,7 +141,7 @@ DUrlList FileJob::doCopy(const DUrlList &files, const QString &destination)
     m_totalSize = FileUtils::totalSize(files);
     jobPrepared();
 
-    QString tarLocal = QUrl(destination).toLocalFile();
+    QString tarLocal = destination.toLocalFile();
     QStorageInfo tarInfo(tarLocal);
     if (files.count() > 0 ){
         QStorageInfo srcInfo(files.at(0).toLocalFile());
@@ -239,14 +239,14 @@ DUrlList FileJob::doMoveToTrash(const DUrlList &files)
     return list;
 }
 
-DUrlList FileJob::doMove(const DUrlList &files, const QString &destination)
+DUrlList FileJob::doMove(const DUrlList &files, const DUrl &destination)
 {
     qDebug() << "Do move is started" << files << destination;
     m_totalSize = FileUtils::totalSize(files);
     jobPrepared();
 
     DUrlList list;
-    QString tarLocal = QUrl(destination).toLocalFile();
+    QString tarLocal = destination.toLocalFile();
     QStorageInfo tarInfo(tarLocal);
     QDir tarDir(tarLocal);
 
@@ -311,16 +311,16 @@ DUrlList FileJob::doMove(const DUrlList &files, const QString &destination)
     return list;
 }
 
-void FileJob::doTrashRestore(const QString &srcFile, const QString &tarFile)
+void FileJob::doTrashRestore(const QString &srcFilePath, const QString &tarFilePath)
 {
 //    qDebug() << srcFile << tarFile;
     qDebug() << "Do restore trash file is started";
     DUrlList files;
-    files << QUrl::fromLocalFile(srcFile);
+    files << QUrl::fromLocalFile(srcFilePath);
     m_totalSize = FileUtils::totalSize(files);
     jobPrepared();
 
-    restoreTrashFile(srcFile, tarFile);
+    restoreTrashFile(srcFilePath, tarFilePath);
 
     if(m_isJobAdded)
         jobRemoved();

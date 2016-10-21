@@ -632,12 +632,8 @@ void DBookmarkItem::dropEvent(QGraphicsSceneDragDropEvent *event)
     e << m_url;
     e << DUrl::fromQUrlList(event->mimeData()->urls());
     e << windowId();
-    qDebug() << m_url;
-    if (m_url.isTrashFile()){
-        appController->actionDelete(e);
-    }else if (m_url.isLocalFile()){
-        fileService->pasteFile(DAbstractFileController::CopyType, DUrl::fromQUrlList(event->mimeData()->urls()), e);
-    }
+
+    fileService->pasteFile(DAbstractFileController::CopyType, m_url, e);
     QGraphicsItem::dropEvent(event);
 }
 

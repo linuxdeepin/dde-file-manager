@@ -19,10 +19,10 @@ public:
     bool openFile(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
     bool addUrlMonitor(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
     bool removeUrlMonitor(const DUrl &url, bool &accepted) const Q_DECL_OVERRIDE;
-    bool copyFiles(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;
-    DUrlList moveToTrash(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;
-    bool cutFiles(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;
-    bool deleteFiles(const DUrlList &urlList, const DFMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
+    bool copyFilesToClipboard(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;
+    DUrlList moveToTrash(const DFMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
+    bool cutFilesToClipboard(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;
+    bool deleteFiles(const DFMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
     bool renameFile(const DUrl &oldUrl, const DUrl &newUrl, bool &accepted) const Q_DECL_OVERRIDE;
 
     bool compressFiles(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;

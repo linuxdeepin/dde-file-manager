@@ -94,6 +94,7 @@ public:
 
     static DUrlList childrenList(const DUrl &url);
     static DUrl parentUrl(const DUrl &url);
+    static bool hasScheme(const QString &scheme);
 
     bool operator ==(const DUrl &url) const;
     inline bool operator !=(const DUrl &url) const

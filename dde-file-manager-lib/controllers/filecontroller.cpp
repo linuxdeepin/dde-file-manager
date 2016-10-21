@@ -161,7 +161,7 @@ bool FileController::decompressFileHere(const DUrlList &fileUrlList, bool &accep
     return accepted;
 }
 
-bool FileController::copyFiles(const DUrlList &urlList, bool &accepted) const
+bool FileController::copyFilesToClipboard(const DUrlList &urlList, bool &accepted) const
 {
     accepted = true;
 
@@ -191,7 +191,7 @@ bool FileController::renameFile(const DUrl &oldUrl, const DUrl &newUrl, bool &ac
  *
  * Permanently delete file or directory with the given url.
  */
-bool FileController::deleteFiles(const DUrlList &urlList, const DFMEvent &event, bool &accepted) const
+bool FileController::deleteFiles(const DFMEvent &event, bool &accepted) const
 {
     Q_UNUSED(event);
     accepted = true;
@@ -200,7 +200,7 @@ bool FileController::deleteFiles(const DUrlList &urlList, const DFMEvent &event,
 
     dialogManager->addJob(&job);
 
-    job.doDelete(urlList);
+    job.doDelete(event.fileUrlList());
     dialogManager->removeJob(job.getJobId());
 
     return true;
@@ -212,7 +212,7 @@ bool FileController::deleteFiles(const DUrlList &urlList, const DFMEvent &event,
  *
  * Trash file or directory with the given url address.
  */
-DUrlList FileController::moveToTrash(const DUrlList &urlList, bool &accepted) const
+DUrlList FileController::moveToTrash(const DFMEvent &event, bool &accepted) const
 {
     accepted = true;
 
@@ -220,13 +220,13 @@ DUrlList FileController::moveToTrash(const DUrlList &urlList, bool &accepted) co
 
     dialogManager->addJob(&job);
 
-    DUrlList list = job.doMoveToTrash(urlList);
+    DUrlList list = job.doMoveToTrash(event.fileUrlList());
     dialogManager->removeJob(job.getJobId());
 
     return list;
 }
 
-bool FileController::cutFiles(const DUrlList &urlList, bool &accepted) const
+bool FileController::cutFilesToClipboard(const DUrlList &urlList, bool &accepted) const
 {
     accepted = true;
 
@@ -235,28 +235,30 @@ bool FileController::cutFiles(const DUrlList &urlList, bool &accepted) const
     return true;
 }
 
-DUrlList FileController::pasteFile(PasteType type, const DUrlList &urlList,
-                                   const DFMEvent &event, bool &accepted) const
+DUrlList FileController::pasteFile(PasteType type, const DUrl &targetUrl, const DFMEvent &event, bool &accepted) const
 {
     accepted = true;
 
+    const DUrlList &urlList = event.fileUrlList();
+
+    if (urlList.isEmpty())
+        return DUrlList();
+
     DUrlList list;
-    QDir dir(event.fileUrl().toLocalFile());
+    QDir dir(targetUrl.toLocalFile());
     //Make sure the target directory exists.
     if(!dir.exists())
         return list;
 
-    if(type == CutType) {
-
+    if (type == CutType) {
         DUrl parentUrl = DUrl::parentUrl(urlList.first());
-        if (parentUrl == event.fileUrl()){
 
-        }else{
+        if (parentUrl != targetUrl) {
             FileJob job(FileJob::Move);
 
             dialogManager->addJob(&job);
 
-            list = job.doMove(urlList, event.fileUrl().toString());
+            list = job.doMove(urlList, targetUrl);
             dialogManager->removeJob(job.getJobId());
         }
 
@@ -267,7 +269,7 @@ DUrlList FileController::pasteFile(PasteType type, const DUrlList &urlList,
 
         dialogManager->addJob(&job);
 
-        list = job.doCopy(urlList, event.fileUrl().toString());
+        list = job.doCopy(urlList, targetUrl);
         dialogManager->removeJob(job.getJobId());
     }
 
