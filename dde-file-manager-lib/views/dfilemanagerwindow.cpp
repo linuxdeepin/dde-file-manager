@@ -375,6 +375,8 @@ void DFileManagerWindow::onFileDeleted(const DUrl &url)
     if (isParentUrl) {
         DFMEvent event;
 
+        qDebug() << parentUrl.isValid() << parentUrl;
+
         event << WindowManager::getWindowId(this);
         event << DFMEvent::FileView;
         event << (parentUrl.isValid() ? parentUrl : DUrl::fromLocalFile(QDir::homePath()));
