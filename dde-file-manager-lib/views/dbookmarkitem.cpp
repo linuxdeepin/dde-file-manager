@@ -694,7 +694,7 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     QSet<MenuAction> disableList;
 
     const bool tabAddable = WindowManager::tabAddableByWinId(windowId());
-    if(!tabAddable)
+    if(!tabAddable || !QFile::exists(m_url.toLocalFile()))
         disableList << MenuAction::OpenInNewTab;
 
     if (m_url.isRecentFile()){
