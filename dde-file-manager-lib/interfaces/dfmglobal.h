@@ -11,49 +11,54 @@
 #define MAX_THREAD_COUNT 1000
 #define MAX_FILE_NAME_CHAR_COUNT 255
 
-#define ASYN_CALL(Fun, Code, captured...) { \
-    QDBusPendingCallWatcher * watcher = new QDBusPendingCallWatcher(Fun); \
-    auto onFinished = [watcher, captured]{ \
-        const QVariantList & args = watcher->reply().arguments(); \
+#define ASYN_CALL(Fun, Code, captured...) {\
+    QDBusPendingCallWatcher * watcher = new QDBusPendingCallWatcher(Fun);\
+    auto onFinished = [watcher, captured]{\
+        const QVariantList & args = watcher->reply().arguments();\
         Q_UNUSED(args);\
-        Code \
-        watcher->deleteLater(); \
+        Code;\
+        watcher->deleteLater();\
     };\
     if(watcher->isFinished()) onFinished();\
     else QObject::connect(watcher, &QDBusPendingCallWatcher::finished, onFinished);}
 
 #if QT_VERSION >= 0x050500
 #define TIMER_SINGLESHOT(Time, Code, captured...){ \
-    QTimer::singleShot(Time, [captured] {Code});\
+    QTimer::singleShot(Time, [captured] {Code;});\
 }
 #else
 #define TIMER_SINGLESHOT(Time, Code, captured...){ \
     QTimer *timer = new QTimer;\
     timer->setSingleShot(true);\
+    timer->setInterval(Time);\
     QObject::connect(timer, &QTimer::timeout, [timer, captured] {\
         timer->deleteLater();\
-        Code\
+        Code;\
     });\
-    timer->start(Time);\
+    if (QThread::currentThread() == qApp->thread()) timer->start();\
+    else QMetaObject::invokeMethod(timer, "start", Qt::QueuedConnection);\
 }
 #endif
 
 #define TIMER_SINGLESHOT_CONNECT_TYPE(Obj, Time, Code, ConnectType, captured...){ \
     QTimer *timer = new QTimer;\
     timer->setSingleShot(true);\
+    timer->setInterval(Time);\
+    timer->moveToThread(qApp->thread());\
     QObject::connect(timer, &QTimer::timeout, Obj, [timer, captured] {\
         timer->deleteLater();\
-        Code\
+        Code;\
     }, ConnectType);\
-    timer->start(Time);\
+    if (QThread::currentThread() == qApp->thread()) timer->start();\
+    else QMetaObject::invokeMethod(timer, "start", Qt::QueuedConnection);\
 }
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 4, 0)
 #define TIMER_SINGLESHOT_OBJECT(Obj, Time, Code, captured...)\
-    TIMER_SINGLESHOT(Obj, Time, Code, Qt::AutoConnection, captured)
+    TIMER_SINGLESHOT_CONNECT_TYPE(Obj, Time, Code, Qt::AutoConnection, captured)
 #else
 #define TIMER_SINGLESHOT_OBJECT(Obj, Time, Code, captured...)\
-    QTimer::singleShot(Time, Obj, [captured]{Code});
+    QTimer::singleShot(Time, Obj, [captured]{Code;});
 #endif
 
 #define ASYN_CALL_SLOT(obj, fun, args...) \

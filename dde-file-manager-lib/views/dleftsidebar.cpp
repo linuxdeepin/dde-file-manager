@@ -136,16 +136,6 @@ DBookmarkScene* DLeftSideBar::scene(){
     return m_scene;
 }
 
-DFileView *DLeftSideBar::fileView() const
-{
-    return m_fileView;
-}
-
-void DLeftSideBar::setFileView(DFileView *fileView)
-{
-    m_fileView = fileView;
-}
-
 DToolBar *DLeftSideBar::toolbar() const
 {
     return m_toolbar;
@@ -228,12 +218,13 @@ void DLeftSideBar::doDragLeave()
 
 void DLeftSideBar::handdleRequestDiskInfosFinihsed()
 {
-    if (m_fileView){
-        qDebug() << "current url:" << m_fileView->currentUrl();
-        if (deviceListener->getDeviceMediaType(m_fileView->currentUrl().path()) == UDiskDeviceInfo::removable){
+    const DUrl &currentUrl = WindowManager::getUrlByWindowId(WindowManager::getWindowId(this));
+
+    if (currentUrl.isValid()) {
+        if (deviceListener->getDeviceMediaType(currentUrl.path()) == UDiskDeviceInfo::removable){
             if (m_toolbar){
-                m_toolbar->setCrumb(m_fileView->currentUrl());
-                DBookmarkItem* item =  m_scene->hasBookmarkItem(m_fileView->currentUrl());
+                m_toolbar->setCrumb(currentUrl);
+                DBookmarkItem* item =  m_scene->hasBookmarkItem(currentUrl);
                 if (item){
                     item->setChecked(true);
                 }

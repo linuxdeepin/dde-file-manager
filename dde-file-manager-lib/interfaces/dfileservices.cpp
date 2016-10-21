@@ -168,13 +168,13 @@ bool DFileService::decompressFileHere(const DUrlList urllist) const{
     return false;
 }
 
-bool DFileService::copyFiles(const DUrlList &urlList) const
+bool DFileService::copyFilesToClipboard(const DUrlList &urlList) const
 {
     if(urlList.isEmpty())
         return false;
 
     TRAVERSE(urlList.first(), {
-                 bool ok = controller->copyFiles(urlList, accepted);
+                 bool ok = controller->copyFilesToClipboard(urlList, accepted);
 
                  if(accepted)
                      return ok;
@@ -219,9 +219,9 @@ bool DFileService::renameFile(const DUrl &oldUrl, const DUrl &newUrl) const
     return false;
 }
 
-void DFileService::deleteFiles(const DUrlList &urlList, const DFMEvent &event) const
+void DFileService::deleteFiles(const DFMEvent &event) const
 {
-    if (urlList.isEmpty())
+    if (event.fileUrlList().isEmpty())
         return;
 
     if (QThreadPool::globalInstance()->activeThreadCount() >= MAX_THREAD_COUNT) {
@@ -229,26 +229,22 @@ void DFileService::deleteFiles(const DUrlList &urlList, const DFMEvent &event) c
         return;
     }
 
-    if (QThread::currentThread() == qApp->thread()) {
-        int result = dialogManager->showDeleteFilesClearTrashDialog(event);
+    int result = dialogManager->showDeleteFilesClearTrashDialog(event);
 
-        if (result == 1) {
-            QtConcurrent::run(QThreadPool::globalInstance(), this, &DFileService::deleteFilesSync, urlList, event);
-        }
-
-        return;
+    if (result == 1) {
+        QtConcurrent::run(QThreadPool::globalInstance(), this, &DFileService::deleteFilesSync, event);
     }
 
-    deleteFilesSync(urlList, event);
+    return;
 }
 
-bool DFileService::deleteFilesSync(const DUrlList &urlList, const DFMEvent &event) const
+bool DFileService::deleteFilesSync(const DFMEvent &event) const
 {
-    if (urlList.isEmpty())
+    if (event.fileUrlList().isEmpty())
         return false;
 
-    TRAVERSE(urlList.first(), {
-                 bool ok =controller->deleteFiles(urlList, event, accepted);
+    TRAVERSE(event.fileUrl(), {
+                 bool ok =controller->deleteFiles(event, accepted);
 
                  if(accepted)
                     return ok;
@@ -257,9 +253,9 @@ bool DFileService::deleteFilesSync(const DUrlList &urlList, const DFMEvent &even
     return false;
 }
 
-void DFileService::moveToTrash(const DUrlList &urlList) const
+void DFileService::moveToTrash(const DFMEvent &event) const
 {
-    if (urlList.isEmpty())
+    if (event.fileUrlList().isEmpty())
         return;
 
     if (QThreadPool::globalInstance()->activeThreadCount() >= MAX_THREAD_COUNT) {
@@ -268,21 +264,21 @@ void DFileService::moveToTrash(const DUrlList &urlList) const
     }
 
     if (QThread::currentThread() == qApp->thread()) {
-        QtConcurrent::run(QThreadPool::globalInstance(), this, &DFileService::moveToTrashSync, urlList);
+        QtConcurrent::run(QThreadPool::globalInstance(), this, &DFileService::moveToTrashSync, event);
 
         return;
     }
 
-    moveToTrashSync(urlList);
+    moveToTrashSync(event);
 }
 
-DUrlList DFileService::moveToTrashSync(const DUrlList &urlList) const
+DUrlList DFileService::moveToTrashSync(const DFMEvent &event) const
 {
-    if (urlList.isEmpty())
-        return urlList;
+    if (event.fileUrlList().isEmpty())
+        return DUrlList();
 
-    TRAVERSE(urlList.first(), {
-                 DUrlList list = controller->moveToTrash(urlList, accepted);
+    TRAVERSE(event.fileUrl(), {
+                 DUrlList list = controller->moveToTrash(event, accepted);
 
                  if (accepted)
                     return list;
@@ -291,13 +287,13 @@ DUrlList DFileService::moveToTrashSync(const DUrlList &urlList) const
     return DUrlList();
 }
 
-bool DFileService::cutFiles(const DUrlList &urlList) const
+bool DFileService::cutFilesToClipboard(const DUrlList &urlList) const
 {
     if(urlList.isEmpty())
         return false;
 
     TRAVERSE(urlList.first(), {
-                 bool ok = controller->cutFiles(urlList, accepted);
+                 bool ok = controller->cutFilesToClipboard(urlList, accepted);
 
                  if(accepted)
                     return ok;
@@ -306,7 +302,7 @@ bool DFileService::cutFiles(const DUrlList &urlList) const
     return false;
 }
 
-void DFileService::pasteFile(const DFMEvent &event) const
+void DFileService::pasteFileByClipboard(const DUrl &tarUrl, const DFMEvent &event) const
 {
     DFMGlobal::ClipboardAction action = DFMGlobal::instance()->clipboardAction();
 
@@ -314,13 +310,13 @@ void DFileService::pasteFile(const DFMEvent &event) const
         return;
 
     DAbstractFileController::PasteType type = (action == DFMGlobal::CutAction) ? DAbstractFileController::CutType
-                                                                              : DAbstractFileController::CopyType;
+                                                                               : DAbstractFileController::CopyType;
 
-    pasteFile(type, DUrl::fromQUrlList(DFMGlobal::instance()->clipboardFileUrlList()), event);
+    const_cast<DFMEvent&>(event) << DUrl::fromQUrlList(DFMGlobal::instance()->clipboardFileUrlList());
+    pasteFile(type, tarUrl, event);
 }
 
-void DFileService::pasteFile(DAbstractFileController::PasteType type,
-                             const DUrlList &urlList, const DFMEvent &event) const
+void DFileService::pasteFile(DAbstractFileController::PasteType type, const DUrl &tarUrl, const DFMEvent &event) const
 {
     if(QThreadPool::globalInstance()->activeThreadCount() >= MAX_THREAD_COUNT) {
         qDebug() << "Beyond the maximum number of threads!";
@@ -328,13 +324,13 @@ void DFileService::pasteFile(DAbstractFileController::PasteType type,
     }
 
     if(QThread::currentThread() == qApp->thread()) {
-        QtConcurrent::run(QThreadPool::globalInstance(), this, &DFileService::pasteFile, type, urlList, event);
+        QtConcurrent::run(QThreadPool::globalInstance(), this, &DFileService::pasteFile, type, tarUrl, event);
 
         return;
     }
 
-    TRAVERSE(event.fileUrl(), {
-                 DUrlList list = controller->pasteFile(type, urlList, event, accepted);
+    TRAVERSE(tarUrl, {
+                 DUrlList list = controller->pasteFile(type, tarUrl, event, accepted);
 
                  if(accepted) {
                      DFMEvent e = event;

@@ -41,9 +41,6 @@ public:
     QGraphicsView *view() const;
     DBookmarkScene* scene();
 
-    DFileView *fileView() const;
-    void setFileView(DFileView *fileView);
-
     DToolBar *toolbar() const;
     void setToolbar(DToolBar *toolbar);
 
@@ -109,7 +106,6 @@ private:
     DBookmarkScene * m_tightScene;
     DBookmarkItemGroup * m_itemGroup;
     DBookmarkItemGroup * m_itemGroupTight;
-    DFileView *m_fileView = NULL;
     DToolBar *m_toolbar = NULL;
 };
 

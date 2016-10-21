@@ -42,18 +42,16 @@ public:
     bool compressFiles(const DUrlList &urlList) const ;
     bool decompressFile(const DUrlList urllist) const;
     bool decompressFileHere(const DUrlList urllist) const;
-    bool copyFiles(const DUrlList &urlList) const;
+    bool copyFilesToClipboard(const DUrlList &urlList) const;
     bool renameFile(const DUrl &oldUrl, const DUrl &newUrl, const DFMEvent &event) const;
     bool renameFile(const DUrl &oldUrl, const DUrl &newUrl) const;
-    void deleteFiles(const DUrlList &urlList, const DFMEvent &event) const;
-    bool deleteFilesSync(const DUrlList &urlList, const DFMEvent &event) const;
-    void moveToTrash(const DUrlList &urlList) const;
-    DUrlList moveToTrashSync(const DUrlList &urlList) const;
-    bool cutFiles(const DUrlList &urlList) const;
-    void pasteFile(const DFMEvent &event) const;
-    void pasteFile(DAbstractFileController::PasteType type,
-                   const DUrlList &urlList,
-                   const DFMEvent &event) const;
+    void deleteFiles(const DFMEvent &event) const;
+    bool deleteFilesSync(const DFMEvent &event) const;
+    void moveToTrash(const DFMEvent &event) const;
+    DUrlList moveToTrashSync(const DFMEvent &event) const;
+    bool cutFilesToClipboard(const DUrlList &urlList) const;
+    void pasteFileByClipboard(const DUrl &tarUrl, const DFMEvent &event) const;
+    void pasteFile(DAbstractFileController::PasteType type, const DUrl &tarUrl, const DFMEvent &event) const;
     void restoreFile(const DUrl &srcUrl, const DUrl &tarUrl, const DFMEvent &event) const;
     bool newFolder(const DFMEvent &event) const;
     bool newFile(const DUrl &toUrl) const;

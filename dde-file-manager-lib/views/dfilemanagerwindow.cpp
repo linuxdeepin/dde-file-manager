@@ -636,7 +636,6 @@ void DFileManagerWindow::setFileView(DFileView *view)
     if (!d->tabBar->isHidden())
         d->newTabButton->show();
 
-    d->leftSideBar->setFileView(d->fileView);
     d->leftSideBar->setToolbar(d->toolbar);
 }
 

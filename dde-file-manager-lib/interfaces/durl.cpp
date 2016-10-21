@@ -419,9 +419,14 @@ DUrl DUrl::parentUrl(const DUrl &url)
     return _url;
 }
 
+bool DUrl::hasScheme(const QString &scheme)
+{
+    return schemeList.contains(scheme);
+}
+
 bool DUrl::operator ==(const DUrl &url) const
 {
-    if(!schemeList.contains(url.scheme()))
+    if (!hasScheme(url.scheme()))
         return QUrl::operator ==(url);
 
     return  m_virtualPath == url.m_virtualPath &&
@@ -436,7 +441,7 @@ bool DUrl::operator ==(const DUrl &url) const
 
 void DUrl::makeAbsolutePath()
 {
-    if(!schemeList.contains(this->scheme()))
+    if (!hasScheme(this->scheme()))
         return;
 
     if(isLocalFile()) {

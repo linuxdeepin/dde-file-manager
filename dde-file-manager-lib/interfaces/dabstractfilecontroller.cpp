@@ -42,7 +42,7 @@ bool DAbstractFileController::decompressFileHere(const DUrlList &fileUrlList, bo
     return false;
 }
 
-bool DAbstractFileController::copyFiles(const DUrlList &urlList, bool &accepted) const
+bool DAbstractFileController::copyFilesToClipboard(const DUrlList &urlList, bool &accepted) const
 {
     Q_UNUSED(urlList)
 
@@ -61,25 +61,24 @@ bool DAbstractFileController::renameFile(const DUrl &oldUrl, const DUrl &newUrl,
     return false;
 }
 
-bool DAbstractFileController::deleteFiles(const DUrlList &urlList, const DFMEvent &event, bool &accepted) const
+bool DAbstractFileController::deleteFiles(const DFMEvent &event, bool &accepted) const
 {
-    Q_UNUSED(urlList)
     Q_UNUSED(event)
     accepted = false;
 
     return false;
 }
 
-DUrlList DAbstractFileController::moveToTrash(const DUrlList &urlList, bool &accepted) const
+DUrlList DAbstractFileController::moveToTrash(const DFMEvent &event, bool &accepted) const
 {
-    Q_UNUSED(urlList)
+    Q_UNUSED(event)
 
     accepted = false;
 
     return DUrlList();
 }
 
-bool DAbstractFileController::cutFiles(const DUrlList &urlList, bool &accepted) const
+bool DAbstractFileController::cutFilesToClipboard(const DUrlList &urlList, bool &accepted) const
 {
     Q_UNUSED(urlList)
 
@@ -88,12 +87,11 @@ bool DAbstractFileController::cutFiles(const DUrlList &urlList, bool &accepted) 
     return false;
 }
 
-DUrlList DAbstractFileController::pasteFile(PasteType type, const DUrlList &urlList,
-                                       const DFMEvent &event, bool &accepted) const
+DUrlList DAbstractFileController::pasteFile(PasteType type, const DUrl &targetUrl, const DFMEvent &event, bool &accepted) const
 {
     Q_UNUSED(type)
+    Q_UNUSED(targetUrl)
     Q_UNUSED(event)
-    Q_UNUSED(urlList)
 
     accepted = false;
 

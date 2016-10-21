@@ -85,12 +85,12 @@ signals:
     void finished();
 
 public slots:
-    DUrlList doCopy(const DUrlList &files, const QString &destination);
+    DUrlList doCopy(const DUrlList &files, const DUrl &destination);
     void doDelete(const DUrlList &files);
     DUrlList doMoveToTrash(const DUrlList &files);
-    DUrlList doMove(const DUrlList &files, const QString &destination);
+    DUrlList doMove(const DUrlList &files, const DUrl &destination);
 
-    void doTrashRestore(const QString &srcFile, const QString& tarFile);
+    void doTrashRestore(const QString &srcFilePath, const QString& tarFilePath);
 
     void paused();
     void started();

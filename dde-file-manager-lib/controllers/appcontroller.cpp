@@ -211,19 +211,19 @@ void AppController::actionDecompressHere(const DFMEvent &event)
 void AppController::actionCut(const DFMEvent &event)
 {
     const DUrlList& urls = event.fileUrlList();
-    fileService->cutFiles(urls);
+    fileService->cutFilesToClipboard(urls);
 
 }
 
 void AppController::actionCopy(const DFMEvent &event)
 {
     const DUrlList& urls = event.fileUrlList();
-    fileService->copyFiles(urls);
+    fileService->copyFilesToClipboard(urls);
 }
 
 void AppController::actionPaste(const DFMEvent &event)
 {
-    fileService->pasteFile(event);
+    fileService->pasteFileByClipboard(event.fileUrl(), event);
 }
 
 void AppController::actionRename(const DFMEvent &event)
@@ -251,14 +251,12 @@ void AppController::actionRemove(const DFMEvent &event)
 
 void AppController::actionDelete(const DFMEvent &event)
 {
-    const DUrlList& urls = event.fileUrlList();
-    fileService->moveToTrash(urls);
+    fileService->moveToTrash(event);
 }
 
 void AppController::actionCompleteDeletion(const DFMEvent &event)
 {
-    const DUrlList& urls = event.fileUrlList();
-    fileService->deleteFiles(urls, event);
+    fileService->deleteFiles(event);
 }
 
 void AppController::actionCreateSymlink(const DFMEvent &event)
@@ -311,7 +309,8 @@ void AppController::actionClearTrash(const DFMEvent &event)
     list << DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashInfosPath))
          << DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath));
 
-    fileService->deleteFiles(list, event);
+    const_cast<DFMEvent&>(event) << list;
+    fileService->deleteFiles(event);
 
     SoundEffectInterface* soundEffectInterface = new SoundEffectInterface(SoundEffectInterface::staticServerPath(),
                                                                           SoundEffectInterface::staticInterfacePath(),
