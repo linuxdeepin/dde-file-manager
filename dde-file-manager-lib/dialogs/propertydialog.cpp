@@ -349,6 +349,7 @@ void PropertyDialog::showTextShowFrame()
 
             initTextShowFrame(fileInfo->fileDisplayName());
             dialogManager->refreshPropertyDialogs(oldUrl, newUrl);
+            m_shareinfoFrame->setFileinfo(fileInfo);
         } else {
             m_editStackWidget->setCurrentIndex(1);
         }

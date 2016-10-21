@@ -20,8 +20,8 @@ public:
     ~ShareInfoFrame();
 
     void initUI();
-    void initShareInfo();
     void initConnect();
+    void setFileinfo(const DAbstractFileInfoPointer &fileinfo);
 
 signals:
 
@@ -32,6 +32,7 @@ public slots:
     void handleAnonymityComboxChanged(int index);
     void handShareInfoChanged();
     void doShaeInfoSetting();
+    void updateShareInfo(const QString& filePath);
 
 private:
     DAbstractFileInfoPointer m_fileinfo;

@@ -13,17 +13,12 @@
 
 UserShareManager::UserShareManager(QObject *parent) : QObject(parent)
 {
-    m_fileSystemWatcher = new QFileSystemWatcher(this);
-    m_fileSystemWatcher->addPath(UserSharePath());
+    m_fileMonitor = new FileMonitor();
+    m_fileMonitor->addMonitorPath(UserSharePath());
     initConnect();
     updateUserShareInfo();
     loadUserShareInfoPathNames();
-
-//    ShareInfo info;
-//    info.setShareName("11111");
-//    info.setPath("/home/djf/Desktop");
-//    addUserShare(info);
-//    deleteUserShareByPath("/home/djf/Desktop");
+    initMonitorPath();
 }
 
 UserShareManager::~UserShareManager()
@@ -31,9 +26,18 @@ UserShareManager::~UserShareManager()
 
 }
 
+void UserShareManager::initMonitorPath()
+{
+    const ShareInfoList& infoList = shareInfoList();
+    for(auto info : infoList){
+        m_fileMonitor->addMonitorPath(info.path());
+    }
+}
+
 void UserShareManager::initConnect()
 {
-    connect(m_fileSystemWatcher, &QFileSystemWatcher::directoryChanged, this, &UserShareManager::handleShareChanged);
+    connect(m_fileMonitor, &FileMonitor::fileDeleted, this, &UserShareManager::onFileDeleted);
+    connect(m_fileMonitor, &FileMonitor::fileCreated, this, &UserShareManager::handleShareChanged);
 }
 
 QString UserShareManager::getCacehPath()
@@ -130,10 +134,20 @@ ShareInfoList UserShareManager::shareInfoList() const
     ShareInfoList shareList;
     QList<QString> keys = m_shareInfos.keys();
     foreach (QString key, keys) {
-        shareList << m_shareInfos.value(key);
+        shareList << m_shareInfos[key];
     }
 
     return shareList;
+}
+
+int UserShareManager::validShareInfoCount() const
+{
+    int counter = 0;
+    for (auto info: shareInfoList()){
+        if(info.isValid())
+            counter ++;
+    }
+    return counter;
 }
 
 bool UserShareManager::hasValidShareFolders() const
@@ -153,7 +167,6 @@ bool UserShareManager::isShareFile(const QString &filePath) const
 void UserShareManager::handleShareChanged()
 {
     updateUserShareInfo();
-    emit userShareChanged(m_shareInfos.count());
 }
 
 void UserShareManager::updateUserShareInfo()
@@ -200,13 +213,6 @@ void UserShareManager::updateUserShareInfo()
                 }
             }
 
-            if (info.isValid() && !oldShareInfos.contains(info.shareName())) {
-                emit userShareAdded(info.path());
-            }
-            else if(info.isValid() && oldShareInfos.contains(info.shareName())){
-                oldShareInfos.removeOne(info.shareName());
-            }
-
             m_shareInfos.insert(info.shareName(), info);
 
             if (m_sharePathToNames.contains(info.path())) {
@@ -218,13 +224,25 @@ void UserShareManager::updateUserShareInfo()
                 names.append(info.shareName());
                 m_sharePathToNames.insert(info.path(), names);
             }
+
+            if (info.isValid() && !oldShareInfos.contains(info.shareName())) {
+                emit userShareAdded(info.path());
+                 m_fileMonitor->addMonitorPath(info.path());
+            }
+            else if(info.isValid() && oldShareInfos.contains(info.shareName())){
+                oldShareInfos.removeOne(info.shareName());
+            }
+
         }
 
         // emit deleted usershare
         for (const QString &shareName : oldShareInfos){
-            emit userShareDeleted(shareInfoCache.value(shareName).path());
+            const QString& filePath = shareInfoCache.value(shareName).path();
+            emit userShareDeleted(filePath);
+            m_fileMonitor->removeMonitorPath(filePath);
         }
     }
+    emit userShareChanged(validShareInfoCount());
 }
 
 void UserShareManager::addUserShare(const ShareInfo &info)
@@ -294,5 +312,13 @@ void UserShareManager::deleteUserShareByPath(const QString &path)
             deleteUserShareByShareName(shareName);
         }
     }
+}
+
+void UserShareManager::onFileDeleted(const QString &filePath)
+{
+    if(filePath.contains(UserSharePath()))
+        handleShareChanged();
+    else
+        deleteUserShareByPath(filePath);
 }
 
