@@ -90,7 +90,6 @@ public:
     /// drag drop
     QModelIndex dragMoveHoverIndex;
 
-    DSlider *scalingSlider = NULL;
     FileViewHelper *fileViewHelper;
 
     Q_DECLARE_PUBLIC(DFileView)
@@ -155,9 +154,8 @@ void DFileView::initUI()
     d->selectionRectWidget->setAttribute(Qt::WA_TransparentForMouseEvents);
 
     d->statusBar = new DStatusBar(this);
-    d->scalingSlider = d->statusBar->scalingSlider();
-    d->scalingSlider->setPageStep(1);
-    d->scalingSlider->setTickInterval(1);
+    d->statusBar->scalingSlider()->setPageStep(1);
+    d->statusBar->scalingSlider()->setTickInterval(1);
 
     addFooterWidget(d->statusBar);
 }
@@ -192,7 +190,6 @@ void DFileView::initConnects()
     connect(model(), &DFileSystemModel::dataChanged, this, &DFileView::handleDataChanged);
     connect(model(), &DFileSystemModel::stateChanged, this, &DFileView::onModelStateChanged);
 
-    connect(this, &DFileView::viewModeChanged, this, &DFileView::handleViewModeChanged);
     connect(this, &DFileView::iconSizeChanged, this, &DFileView::updateHorizontalOffset);
 }
 
@@ -218,11 +215,11 @@ void DFileView::setItemDelegate(DStyledItemDelegate *delegate)
     DListView::setItemDelegate(delegate);
 
     connect(delegate, &DStyledItemDelegate::commitData, this, &DFileView::handleCommitData);
-    connect(d->scalingSlider, &DSlider::valueChanged, delegate, &DStyledItemDelegate::setIconSizeByIconSizeLevel);
+    connect(d->statusBar->scalingSlider(), &DSlider::valueChanged, delegate, &DStyledItemDelegate::setIconSizeByIconSizeLevel);
 
-    d->scalingSlider->setMinimum(delegate->minimumIconSizeLevel());
-    d->scalingSlider->setMaximum(delegate->maximumIconSizeLevel());
-    d->scalingSlider->setValue(delegate->iconSizeLevel());
+    d->statusBar->scalingSlider()->setMinimum(delegate->minimumIconSizeLevel());
+    d->statusBar->scalingSlider()->setMaximum(delegate->maximumIconSizeLevel());
+    d->statusBar->scalingSlider()->setValue(delegate->iconSizeLevel());
 }
 
 DStatusBar *DFileView::statusBar() const
@@ -1064,18 +1061,6 @@ void DFileView::handleCommitData(QWidget *editor)
     }
 }
 
-void DFileView::handleViewModeChanged(const DFileView::ViewMode &viewMode)
-{
-    D_D(DFileView);
-    if(viewMode == DFileView::IconMode){
-        if(d->statusBar->scalingSlider()->isHidden())
-            d->statusBar->scalingSlider()->show();
-    }else{
-        if(!d->statusBar->scalingSlider()->isHidden())
-            d->statusBar->scalingSlider()->hide();
-    }
-}
-
 void DFileView::focusInEvent(QFocusEvent *event)
 {
     DListView::focusInEvent(event);
@@ -1367,10 +1352,10 @@ void DFileView::increaseIcon()
     int iconSizeLevel = itemDelegate()->increaseIcon();
 
     if (iconSizeLevel >= 0) {
-        QSignalBlocker blocker(d->scalingSlider);
+        QSignalBlocker blocker(d->statusBar->scalingSlider());
 
         Q_UNUSED(blocker)
-        d->scalingSlider->setValue(iconSizeLevel);
+        d->statusBar->scalingSlider()->setValue(iconSizeLevel);
     }
 }
 
@@ -1381,10 +1366,10 @@ void DFileView::decreaseIcon()
     int iconSizeLevel = itemDelegate()->decreaseIcon();
 
     if (iconSizeLevel >= 0) {
-        QSignalBlocker blocker(d->scalingSlider);
+        QSignalBlocker blocker(d->statusBar->scalingSlider());
 
         Q_UNUSED(blocker)
-        d->scalingSlider->setValue(iconSizeLevel);
+        d->statusBar->scalingSlider()->setValue(iconSizeLevel);
     }
 }
 
@@ -1642,10 +1627,7 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
         setOrientation(QListView::LeftToRight, true);
         setSpacing(ICON_VIEW_SPACING);
         setItemDelegate(new DIconItemDelegate(d->fileViewHelper));
-        d->scalingSlider->setMinimum(itemDelegate()->minimumIconSizeLevel());
-        d->scalingSlider->setMaximum(itemDelegate()->maximumIconSizeLevel());
-        d->scalingSlider->setValue(itemDelegate()->iconSizeLevel());
-
+        d->statusBar->scalingSlider()->show();
         break;
     }
     case ListMode: {
@@ -1680,7 +1662,7 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
 
         setOrientation(QListView::TopToBottom, false);
         setSpacing(LIST_VIEW_SPACING);
-
+        d->statusBar->scalingSlider()->hide();
         break;
     }
     case ExtendMode: {
