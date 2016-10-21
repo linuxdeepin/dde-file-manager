@@ -195,7 +195,7 @@ bool DFileService::renameFile(const DUrl &oldUrl, const DUrl &newUrl, const DFME
     if (renameFile(oldUrl, newUrl)) {
         DFMEvent e = event;
 
-        e << DUrlList() << newUrl;
+        e << (DUrlList() << newUrl);
 
         TIMER_SINGLESHOT(200, {
             emit fileSignalManager->requestSelectFile(e);

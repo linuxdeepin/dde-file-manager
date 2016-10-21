@@ -21,7 +21,6 @@ public:
     QString filePath() const Q_DECL_OVERRIDE;
     QString absolutePath() const Q_DECL_OVERRIDE;
     QString absoluteFilePath() const Q_DECL_OVERRIDE;
-    QString baseName() const Q_DECL_OVERRIDE;
     QString fileName() const Q_DECL_OVERRIDE;
 
     bool isCanRename() const Q_DECL_OVERRIDE;

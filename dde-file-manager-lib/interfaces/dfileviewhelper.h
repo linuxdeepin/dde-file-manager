@@ -41,7 +41,7 @@ public:
     virtual int rowCount() const;
     virtual int indexOfRow(const QModelIndex &index) const;
     virtual QList<QIcon> additionalIcon(const QModelIndex &index) const;
-    virtual QString selectionWhenEditing(const QModelIndex &index) const;
+    virtual QString baseName(const QModelIndex &index) const;
     virtual QList<int> columnRoleList() const;
     virtual int columnWidth(int columnIndex) const;
     virtual DUrl currentUrl() const;

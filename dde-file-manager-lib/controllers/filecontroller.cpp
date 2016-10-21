@@ -404,7 +404,7 @@ void FileController::onFileCreated(const QString &filePath)
         AppController::selectionAndRenameFile = qMakePair(DUrl(), -1);
         DFMEvent event;
         event << windowId;
-        event << DUrlList() << url;
+        event << (DUrlList() << url);
         emit fileSignalManager->requestSelectRenameFile(event);
     }
 }

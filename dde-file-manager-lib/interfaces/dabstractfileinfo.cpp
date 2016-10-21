@@ -153,13 +153,12 @@ QString DAbstractFileInfo::baseName() const
     CALL_PROXY(baseName());
 
     const QString &fileName = this->fileName();
+    const QString &suffix = this->suffix();
 
-    int index = fileName.indexOf('.');
+    if (suffix.isEmpty())
+        return fileName;
 
-    if (index >= 0)
-        return fileName.left(index);
-
-    return fileName;
+    return fileName.left(fileName.length() - suffix.length() - 1);
 }
 
 QString DAbstractFileInfo::fileName() const
@@ -775,7 +774,7 @@ QString DAbstractFileInfo::suffix() const
     int index = fileName.lastIndexOf('.');
 
     if (index >= 0)
-        suffix = fileName.mid(index);
+        suffix = fileName.mid(index + 1);
 
     const QString &completeSuffix = this->completeSuffix();
 

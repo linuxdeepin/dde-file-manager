@@ -377,7 +377,7 @@ bool DListItemDelegate::eventFilter(QObject *object, QEvent *event)
         QLineEdit *edit = qobject_cast<QLineEdit*>(object);
 
         if(edit) {
-            const QString &selectionWhenEditing = parent()->selectionWhenEditing(d->editingIndex);
+            const QString &selectionWhenEditing = parent()->baseName(d->editingIndex);
             int endPos = selectionWhenEditing.isEmpty() ? -1 : selectionWhenEditing.length();
 
             if(endPos == -1)
