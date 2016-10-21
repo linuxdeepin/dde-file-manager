@@ -24,6 +24,7 @@ public:
     static QString getDiskPath();
     static QString getNetworkRootPath();
     static QString getUserShareRootPath();
+    static QString getComputerRootPath();
 };
 
 #endif // STANDARDPATH_H

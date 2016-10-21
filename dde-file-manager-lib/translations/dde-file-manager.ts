@@ -55,7 +55,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/computerview.cpp" line="381"/>
+        <location filename="../views/computerview.cpp" line="383"/>
         <source>Disk</source>
         <translation type="unfinished"></translation>
     </message>
@@ -114,17 +114,17 @@
 <context>
     <name>DFileDialog</name>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="49"/>
+        <location filename="../views/dfiledialog.cpp" line="57"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="246"/>
+        <location filename="../views/dfiledialog.cpp" line="260"/>
         <source>Open</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="254"/>
+        <location filename="../views/dfiledialog.cpp" line="268"/>
         <source>Save</source>
         <translation type="unfinished"></translation>
     </message>
@@ -645,36 +645,41 @@
         <source>My Shares</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../controllers/pathmanager.cpp" line="37"/>
+        <source>Computer</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PropertyDialog</name>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="173"/>
+        <location filename="../dialogs/propertydialog.cpp" line="185"/>
         <source>Basic info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="174"/>
+        <location filename="../dialogs/propertydialog.cpp" line="186"/>
         <source>Share manager</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="198"/>
+        <location filename="../dialogs/propertydialog.cpp" line="209"/>
         <source>Disk</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="509"/>
+        <location filename="../dialogs/propertydialog.cpp" line="526"/>
         <source>Allow to execute as program</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="555"/>
+        <location filename="../dialogs/propertydialog.cpp" line="572"/>
         <source>Local disk</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="646"/>
+        <location filename="../dialogs/propertydialog.cpp" line="663"/>
         <source>Others</source>
         <translation type="unfinished"></translation>
     </message>
@@ -682,80 +687,80 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="498"/>
+        <location filename="../dialogs/propertydialog.cpp" line="515"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="268"/>
         <source>Size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="499"/>
-        <location filename="../dialogs/propertydialog.cpp" line="551"/>
-        <location filename="../dialogs/propertydialog.cpp" line="579"/>
+        <location filename="../dialogs/propertydialog.cpp" line="516"/>
+        <location filename="../dialogs/propertydialog.cpp" line="568"/>
+        <location filename="../dialogs/propertydialog.cpp" line="596"/>
         <source>Contains</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="500"/>
+        <location filename="../dialogs/propertydialog.cpp" line="517"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="269"/>
         <source>Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="501"/>
+        <location filename="../dialogs/propertydialog.cpp" line="518"/>
         <source>Time read</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="502"/>
+        <location filename="../dialogs/propertydialog.cpp" line="519"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="271"/>
         <source>Time modified</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="550"/>
-        <location filename="../dialogs/propertydialog.cpp" line="578"/>
+        <location filename="../dialogs/propertydialog.cpp" line="567"/>
+        <location filename="../dialogs/propertydialog.cpp" line="595"/>
         <source>Device type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="552"/>
-        <location filename="../dialogs/propertydialog.cpp" line="580"/>
+        <location filename="../dialogs/propertydialog.cpp" line="569"/>
+        <location filename="../dialogs/propertydialog.cpp" line="597"/>
         <source>Free space</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="553"/>
-        <location filename="../dialogs/propertydialog.cpp" line="581"/>
+        <location filename="../dialogs/propertydialog.cpp" line="570"/>
+        <location filename="../dialogs/propertydialog.cpp" line="598"/>
         <source>Total space</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="684"/>
+        <location filename="../dialogs/propertydialog.cpp" line="701"/>
         <source>WriteRead</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="684"/>
+        <location filename="../dialogs/propertydialog.cpp" line="701"/>
         <source>ReadOnly</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="684"/>
+        <location filename="../dialogs/propertydialog.cpp" line="701"/>
         <source>WriteOnly</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="712"/>
+        <location filename="../dialogs/propertydialog.cpp" line="729"/>
         <source>Owner</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="713"/>
+        <location filename="../dialogs/propertydialog.cpp" line="730"/>
         <source>Group</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="714"/>
+        <location filename="../dialogs/propertydialog.cpp" line="731"/>
         <source>Other</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1027,88 +1032,88 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="328"/>
-        <location filename="../controllers/appcontroller.cpp" line="330"/>
+        <location filename="../controllers/appcontroller.cpp" line="327"/>
+        <location filename="../controllers/appcontroller.cpp" line="329"/>
         <source>newDoc</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="337"/>
-        <location filename="../controllers/appcontroller.cpp" line="339"/>
+        <location filename="../controllers/appcontroller.cpp" line="336"/>
+        <location filename="../controllers/appcontroller.cpp" line="338"/>
         <source>newExcel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="346"/>
-        <location filename="../controllers/appcontroller.cpp" line="348"/>
+        <location filename="../controllers/appcontroller.cpp" line="345"/>
+        <location filename="../controllers/appcontroller.cpp" line="347"/>
         <source>newPowerPoint</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="355"/>
-        <location filename="../controllers/appcontroller.cpp" line="357"/>
+        <location filename="../controllers/appcontroller.cpp" line="354"/>
+        <location filename="../controllers/appcontroller.cpp" line="356"/>
         <source>newText</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="226"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="232"/>
         <source>Local disk</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="228"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="234"/>
         <source>Removable disk</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="230"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="236"/>
         <source>Network shared directory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="232"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="238"/>
         <source>Android mobile device</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="234"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="240"/>
         <source>Apple mobile device</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="236"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="242"/>
         <source>Camera</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="238"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="244"/>
         <source>Dvd</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="240"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="246"/>
         <source>Unknown device</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="246"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="323"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="252"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="434"/>
         <source>%1 item</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="248"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="325"/>
+        <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="254"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="436"/>
         <source>%1 items</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../shutil/fileutils.cpp" line="511"/>
+        <location filename="../interfaces/dfileservices.cpp" line="585"/>
         <source>Shortcut</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../shutil/fileutils.cpp" line="560"/>
+        <location filename="../interfaces/dfileservices.cpp" line="448"/>
         <source>Create symlink</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1119,92 +1124,92 @@
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="281"/>
-        <location filename="../models/trashfileinfo.cpp" line="164"/>
+        <location filename="../models/trashfileinfo.cpp" line="144"/>
         <source>Time deleted</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../models/trashfileinfo.cpp" line="167"/>
-        <source>Path</source>
-        <comment>TrashFileInfo</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="629"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="761"/>
         <source>Loading...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../models/fileinfo.cpp" line="100"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="304"/>
         <source>File has been moved or deleted</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../models/fileinfo.cpp" line="102"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="306"/>
         <source>You do not have permission to access this folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../models/fileinfo.cpp" line="105"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="309"/>
         <source>Folder is empty</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../models/searchfileinfo.cpp" line="295"/>
+        <location filename="../models/searchfileinfo.cpp" line="112"/>
         <source>Path</source>
         <comment>SearchFileInfo</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../models/searchfileinfo.cpp" line="409"/>
+        <location filename="../models/searchfileinfo.cpp" line="241"/>
         <source>Searching...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../models/searchfileinfo.cpp" line="414"/>
+        <location filename="../models/searchfileinfo.cpp" line="246"/>
         <source>No results</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../models/trashfileinfo.cpp" line="147"/>
+        <source>Source Path</source>
+        <comment>TrashFileInfo</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>ShareInfoFrame</name>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="29"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="32"/>
         <source>Share this folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="32"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="35"/>
         <source>Share name:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="38"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="41"/>
         <source>Permission:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="43"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="46"/>
         <source>Read and write</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="43"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="46"/>
         <source>Read only</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="46"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="49"/>
         <source>Anonymity:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="51"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="54"/>
         <source>Not allow</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="51"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="54"/>
         <source>Allow</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1533,17 +1538,17 @@
 <context>
     <name>UserSharePasswordSettingDialog</name>
     <message>
-        <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="10"/>
+        <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="11"/>
         <source>Cancle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="10"/>
+        <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="11"/>
         <source>Comfirm</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="13"/>
+        <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="14"/>
         <source>Please enter share password</source>
         <translation type="unfinished"></translation>
     </message>
