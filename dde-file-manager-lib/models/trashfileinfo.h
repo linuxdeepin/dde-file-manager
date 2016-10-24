@@ -25,7 +25,7 @@ public:
     QList<int> userColumnRoles() const Q_DECL_OVERRIDE;
     QVariant userColumnData(int userColumnRole) const Q_DECL_OVERRIDE;
     QVariant userColumnDisplayName(int userColumnRole) const Q_DECL_OVERRIDE;
-    int userColumnWidth(int userColumnRole) const Q_DECL_OVERRIDE;
+    int userColumnWidth(int userColumnRole, const QFontMetrics &fontMetrics) const Q_DECL_OVERRIDE;
 
     sortFunction sortFunByColumn(int columnRole) const Q_DECL_OVERRIDE;
     bool columnDefaultVisibleForRole(int userColumnRole) const Q_DECL_OVERRIDE;

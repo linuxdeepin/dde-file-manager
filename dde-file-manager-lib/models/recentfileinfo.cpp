@@ -104,7 +104,7 @@ DUrl RecentFileInfo::parentUrl() const
 
 QString RecentFileInfo::lastOpenedDisplayName() const
 {
-    return m_lastOpened.toString(timeFormat());
+    return m_lastOpened.toString(dateTimeFormat());
 }
 
 QDateTime RecentFileInfo::lastOpened() const

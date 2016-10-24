@@ -71,7 +71,7 @@ public:
         SpaceArea
     };
 
-    inline static QString timeFormat(){
+    inline static QString dateTimeFormat() {
         return "yyyy/MM/dd HH:mm:ss";
     }
 
@@ -156,7 +156,8 @@ public:
     /// get custom column data
     virtual QVariant userColumnData(int userColumnRole) const;
     /// get custom column width
-    virtual int userColumnWidth(int userColumnRole) const;
+    int userColumnWidth(int userColumnRole) const;
+    virtual int userColumnWidth(int userColumnRole, const QFontMetrics &fontMetrics) const;
 
     /// user column default visible for role
     virtual bool columnDefaultVisibleForRole(int role) const;

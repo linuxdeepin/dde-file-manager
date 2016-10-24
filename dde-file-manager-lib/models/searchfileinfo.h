@@ -31,7 +31,7 @@ public:
 
     QVector<MenuAction> menuActionList(MenuType type = SingleFile) const Q_DECL_OVERRIDE;
     QSet<MenuAction> disableMenuActionList() const Q_DECL_OVERRIDE;
-    int userColumnWidth(int userColumnRole) const Q_DECL_OVERRIDE;
+    int userColumnWidth(int userColumnRole, const QFontMetrics &fontMetrics) const Q_DECL_OVERRIDE;
 
     MenuAction menuActionByColumnRole(int userColumnRole) const Q_DECL_OVERRIDE;
 

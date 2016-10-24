@@ -149,12 +149,12 @@ QVariant TrashFileInfo::userColumnDisplayName(int userColumnRole) const
     return DAbstractFileInfo::userColumnDisplayName(userColumnRole);
 }
 
-int TrashFileInfo::userColumnWidth(int userColumnRole) const
+int TrashFileInfo::userColumnWidth(int userColumnRole, const QFontMetrics &fontMetrics) const
 {
     if (userColumnRole == DFileSystemModel::FileUserRole + 2)
         return -1;
 
-    return DAbstractFileInfo::userColumnWidth(userColumnRole);
+    return DAbstractFileInfo::userColumnWidth(userColumnRole, fontMetrics);
 }
 
 bool TrashFileInfo::columnDefaultVisibleForRole(int userColumnRole) const
@@ -263,7 +263,7 @@ void TrashFileInfo::updateInfo()
         m_displayName = originalFilePath.mid(originalFilePath.lastIndexOf('/') + 1);
 
         m_deletionDate = QDateTime::fromString(setting.value("DeletionDate").toString(), Qt::ISODate);
-        displayDeletionDate = m_deletionDate.toString(timeFormat());
+        displayDeletionDate = m_deletionDate.toString(dateTimeFormat());
 
         if (displayDeletionDate.isEmpty())
             displayDeletionDate = setting.value("DeletionDate").toString();
