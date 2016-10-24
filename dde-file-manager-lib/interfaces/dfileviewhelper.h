@@ -46,7 +46,7 @@ public:
     virtual int columnWidth(int columnIndex) const;
     virtual DUrl currentUrl() const;
 
-    virtual const DAbstractFileInfo *fileInfo(const QModelIndex &index) const = 0;
+    virtual const QSharedPointer<DAbstractFileInfo> fileInfo(const QModelIndex &index) const = 0;
     virtual DStyledItemDelegate *itemDelegate() const = 0;
     virtual DFileSystemModel *model() const = 0;
     virtual const DUrlList selectedUrls() const = 0;
