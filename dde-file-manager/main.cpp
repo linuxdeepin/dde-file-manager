@@ -69,7 +69,6 @@ int main(int argc, char *argv[])
             app.installTranslator(&translator);
 
         DThemeManager::instance()->setTheme("light");
-        app.setApplicationDisplayName(QObject::tr("Deepin File Manager"));
 
         if (!isBackendRun){
             fileManagerApp->show(commandlineUrl);

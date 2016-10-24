@@ -55,6 +55,7 @@ FileManagerApp::~FileManagerApp()
 
 void FileManagerApp::initApp()
 {
+    qApp->setApplicationDisplayName(QObject::tr("Deepin File Manager"));
     /// init dialog manager
     dialogManager;
 
