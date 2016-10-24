@@ -1444,12 +1444,12 @@ bool DFileView::setCurrentUrl(const DUrl &url)
         updateContentLabel();
     }
 
+    const QPair<int, int> &sort_config = FMStateManager::SortStates.value(fileUrl, QPair<int, int>(DFileSystemModel::FileDisplayNameRole, Qt::AscendingOrder));
+
+    model()->setSortRole(sort_config.first, (Qt::SortOrder)sort_config.second);
+
     if (d->currentViewMode == ListMode) {
         updateListHeaderViewProperty();
-    } else {
-        const QPair<int, int> &sort_config = FMStateManager::SortStates.value(fileUrl, QPair<int, int>(DFileSystemModel::FileDisplayNameRole, Qt::AscendingOrder));
-
-        model()->setSortRole(sort_config.first, (Qt::SortOrder)sort_config.second);
     }
 
     if(info) {
@@ -1876,11 +1876,7 @@ void DFileView::updateListHeaderViewProperty()
     d->headerView->setSectionResizeMode(QHeaderView::Fixed);
     d->headerView->setDefaultSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
     d->headerView->setMinimumSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
-
-    const QPair<int, int> &sort_config = FMStateManager::SortStates.value(currentUrl(), QPair<int, int>(DFileSystemModel::FileDisplayNameRole, Qt::AscendingOrder));
-    int sort_column = model()->roleToColumn(sort_config.first);
-
-    d->headerView->setSortIndicator(sort_column, Qt::SortOrder(sort_config.second));
+    d->headerView->setSortIndicator(model()->sortColumn(), model()->sortOrder());
 
     d->columnRoles.clear();
 

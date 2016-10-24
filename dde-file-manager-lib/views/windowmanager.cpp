@@ -28,6 +28,7 @@ int WindowManager::m_count = 0;
 WindowManager::WindowManager(QObject *parent) : QObject(parent)
 {
     m_fmStateManager = new FMStateManager(this);
+    m_fmStateManager->loadCache();
     initConnect();
 }
 
@@ -45,7 +46,6 @@ void WindowManager::initConnect()
 
 void WindowManager::loadWindowState(DFileManagerWindow *window)
 {
-    m_fmStateManager->loadCache();
     FMState* state = m_fmStateManager->fmState();
     int x = state->x();
     int y = state->y();
