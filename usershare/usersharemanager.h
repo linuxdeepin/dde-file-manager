@@ -6,6 +6,9 @@
 #include "shareinfo.h"
 #include "filemonitor/filemonitor.h"
 
+
+class QTimer;
+
 class UserShareManager : public QObject
 {
     Q_OBJECT
@@ -21,6 +24,7 @@ public:
     void initConnect();
     QString getCacehPath();
 
+    ShareInfo getOldShareInfoByNewInfo(const ShareInfo& newInfo) const;
     ShareInfo getShareInfoByPath(const QString& path) const;
     ShareInfo getsShareInfoByShareName(const QString& shareName) const;
     QString getShareNameByPath(const QString& path) const;
@@ -38,8 +42,9 @@ signals:
     void userShareDeleted(const QString& path);
 
 public slots:
-    void handleShareChanged();
+    void handleShareChanged(const QString &filePath);
     void updateUserShareInfo();
+    void testUpdateUserShareInfo();
 
     void addUserShare(const ShareInfo& info);
 
@@ -47,12 +52,14 @@ public slots:
     void deleteUserShare(const ShareInfo& info);
     void deleteUserShareByPath(const QString& path);
     void onFileDeleted(const QString& filePath);
+    void usershareCountchanged();
 
 private:
     void loadUserShareInfoPathNames();
     void saveUserShareInfoPathNames();
 
     FileMonitor *m_fileMonitor = NULL;
+    QTimer* m_shareInfosChangedTimer = NULL;
     QMap<QString, ShareInfo> m_shareInfos = {};
     QMap<QString, QString> m_sharePathByFilePath = {};
     QMap<QString, QStringList> m_sharePathToNames = {};

@@ -3,6 +3,7 @@
 
 #include "basedialog.h"
 #include "dabstractfileinfo.h"
+#include "dfmevent.h"
 #include <QLabel>
 #include <QCloseEvent>
 #include <QTextEdit>
@@ -85,10 +86,11 @@ class PropertyDialog : public BaseDialog
     Q_OBJECT
 
 public:
-    explicit PropertyDialog(const DUrl &url, QWidget *parent = 0);
+    explicit PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *parent = 0);
 
 public:
     void initUI();
+    void initConnect();
     void startComputerFolderSize(const DUrl &url);
     void toggleFileExecutable(bool isChecked);
     DUrl getUrl();
@@ -100,7 +102,7 @@ public slots:
     void updateFolderSize(qint64 size);
     void renameFile();
     void showTextShowFrame();
-
+    void onChildrenRemoved(const DUrl &fileUrl);
 
 signals:
     void requestStartComputerFolderSize();
@@ -114,6 +116,7 @@ protected:
     void resizeEvent(QResizeEvent* event) Q_DECL_OVERRIDE;
 
 private:
+    DFMEvent m_fmevent;
     DUrl m_url;
     QString m_absolutePath;
     qint64 m_size = 0;
@@ -145,9 +148,6 @@ private:
 
     QListWidget *createOpenWithListWidget(const DAbstractFileInfoPointer &info);
     QFrame *createAuthorityManagermentWidget(const DAbstractFileInfoPointer &info);
-
-
-
 };
 
 #endif // PROPERTYDIALOG_H

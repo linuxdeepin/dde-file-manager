@@ -55,10 +55,19 @@ bool ShareFileInfo::isWritable() const
 
 QString ShareFileInfo::fileDisplayName() const
 {
+    Q_D(const DAbstractFileInfo);
     if (systemPathManager->isSystemPath(fileUrl().toString()))
         return systemPathManager->getSystemPathDisplayNameByPath(fileUrl().toString());
-
-    return userShareManager->getShareNameByPath(fileUrl().path());
+    ShareInfo info = userShareManager->getShareInfoByPath(fileUrl().path());
+    QString displayName = info.shareName();
+    if (!displayName.isEmpty())
+        return displayName;
+    else{
+        if (d->proxy){
+            return d->proxy->fileDisplayName();
+        }
+    }
+    return QString("");
 }
 
 void ShareFileInfo::setUrl(const DUrl &fileUrl)
@@ -86,12 +95,9 @@ QVector<MenuAction> ShareFileInfo::menuActionList(DAbstractFileInfo::MenuType ty
     QVector<MenuAction> actionKeys;
 
     if(type == SpaceArea) {
-        actionKeys.reserve(7);
-
         actionKeys << MenuAction::DisplayAs
                    << MenuAction::SortBy;
     } else if (type == SingleFile){
-        actionKeys.reserve(12);
         if(isDir()){
             actionKeys << MenuAction::Open
                        << MenuAction::OpenInNewWindow
@@ -102,8 +108,8 @@ QVector<MenuAction> ShareFileInfo::menuActionList(DAbstractFileInfo::MenuType ty
                    << MenuAction::Property;
 
     }else if (type == MultiFiles){
-        actionKeys.reserve(12);
-        actionKeys << MenuAction::Separator
+        actionKeys << MenuAction::Open
+                   << MenuAction::Separator
                    << MenuAction::Property;
     }
 
@@ -208,7 +214,7 @@ bool ShareFileInfo::isShared() const
 
 QAbstractItemView::SelectionMode ShareFileInfo::supportSelectionMode() const
 {
-    return QAbstractItemView::SingleSelection;
+    return QAbstractItemView::ExtendedSelection;
 }
 
 Qt::ItemFlags ShareFileInfo::fileItemDisableFlags() const
@@ -219,7 +225,7 @@ Qt::ItemFlags ShareFileInfo::fileItemDisableFlags() const
 QList<QIcon> ShareFileInfo::additionalIcon() const
 {
     QList<QIcon> icons;
-
+    icons << DFMGlobal::instance()->standardIcon(DFMGlobal::ShareIcon);
     if (isSymLink()) {
         icons << DFMGlobal::instance()->standardIcon(DFMGlobal::LinkIcon);
     }

@@ -110,6 +110,7 @@ void ShareInfoFrame::doShaeInfoSetting()
 
     ShareInfo info;
     info.setPath(m_fileinfo->absoluteFilePath());
+
     info.setShareName(shareName);
     if (m_permissoComBox->currentIndex() == 0){
         info.setIsWritable(true);
@@ -122,7 +123,6 @@ void ShareInfoFrame::doShaeInfoSetting()
     }else{
         info.setIsGuestOk(true);
     }
-
     if (m_sharCheckBox->isChecked()){
         userShareManager->addUserShare(info);
     }else{
@@ -142,10 +142,12 @@ void ShareInfoFrame::updateShareInfo(const QString &filePath)
     if(filePath != m_fileinfo->absoluteFilePath())
         return;
     ShareInfo info = userShareManager->getShareInfoByPath(filePath);
-    qDebug() << info << m_fileinfo->absoluteFilePath();
+    qDebug() << info;
     if (!info.shareName().isEmpty()){
         m_sharCheckBox->setChecked(true);
+        disconnect(m_shareNamelineEdit, &DLineEdit::textChanged, this, &ShareInfoFrame::handleShareNameChanged);
         m_shareNamelineEdit->setText(info.shareName());
+        connect(m_shareNamelineEdit, &DLineEdit::textChanged, this, &ShareInfoFrame::handleShareNameChanged);
         if (info.isWritable()){
             m_permissoComBox->setCurrentIndex(0);
         }else{
