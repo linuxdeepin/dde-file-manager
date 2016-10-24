@@ -34,6 +34,7 @@ public:
 
     bool restoreTrashFile(const DUrlList &fileUrl, const DFMEvent &event) const;
     bool restoreAllTrashFile(const DFMEvent &event);
+    void cleanTrash(const DFMEvent &event) const;
 
     static bool isEmpty();
 
