@@ -32,6 +32,7 @@
 #include <dcombobox.h>
 #include <dbaseexpand.h>
 #include <dexpandgroup.h>
+#include <dcheckbox.h>
 
 #include <QTextEdit>
 #include <QFormLayout>
@@ -542,8 +543,12 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
     layout->addRow(TimeModifiedSectionLabel, timeModifiedLabel);
 
     if (info->isFile()){
-        m_executableCheckBox = new QCheckBox;
-        connect(m_executableCheckBox, &QCheckBox::toggled, this, &PropertyDialog::toggleFileExecutable);
+        m_executableCheckBox = new DCheckBox;
+        m_executableCheckBox->setFixedHeight(20);
+        connect(m_executableCheckBox, &DCheckBox::toggled, this, &PropertyDialog::toggleFileExecutable);
+        if (!info->isWritable()){
+            m_executableCheckBox->setDisabled(true);
+        }
         if(info->permission(QFile::ExeUser) || info->permission(QFile::ExeGroup) || info->permission(QFile::ExeOther)){
             m_executableCheckBox->setChecked(true);
         }
