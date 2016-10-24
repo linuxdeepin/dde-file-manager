@@ -152,7 +152,9 @@ bool TrashManager::removeUrlMonitor(const DUrl &fileUrl, bool &accepted) const
 
 DUrlList TrashManager::moveToTrash(const DFMEvent &event, bool &accepted) const
 {
-    deleteFiles(event, accepted);
+    accepted = true;
+
+    TIMER_SINGLESHOT_CONNECT_TYPE(this, 0, fileService->deleteFiles(event), Qt::AutoConnection, event);
 
     return DUrlList();
 }
@@ -201,6 +203,11 @@ bool TrashManager::deleteFiles(const DFMEvent &event, bool &accepted) const
     DUrlList localList;
 
     for(const DUrl &url : event.fileUrlList()) {
+        if (url.isTrashFile() && url.path() == "/") {
+            cleanTrash(event);
+            return true;
+        }
+
         const QString &path = url.path();
 
         localList << DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath) + path);
@@ -212,7 +219,7 @@ bool TrashManager::deleteFiles(const DFMEvent &event, bool &accepted) const
 
     const_cast<DFMEvent&>(event) << DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath));
     const_cast<DFMEvent&>(event) << localList;
-    TIMER_SINGLESHOT_CONNECT_TYPE(this, 0, fileService->deleteFiles(event), Qt::AutoConnection, event);
+    fileService->deleteFilesSync(event);
 
     return true;
 }
@@ -257,6 +264,17 @@ bool TrashManager::restoreAllTrashFile(const DFMEvent &event)
         restoreTrashFile(urlList, event);
     }
     return true;
+}
+
+void TrashManager::cleanTrash(const DFMEvent &event) const
+{
+    DUrlList list;
+    list << DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashInfosPath))
+         << DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath));
+
+    const_cast<DFMEvent&>(event) << list.last();
+    const_cast<DFMEvent&>(event) << list;
+    fileService->deleteFilesSync(event);
 }
 
 bool TrashManager::isEmpty()

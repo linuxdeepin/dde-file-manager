@@ -306,8 +306,7 @@ void AppController::actionClearRecent(const DFMEvent &event)
 void AppController::actionClearTrash(const DFMEvent &event)
 {
     DUrlList list;
-    list << DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashInfosPath))
-         << DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath));
+    list << DUrl::fromTrashFile("/");
 
     const_cast<DFMEvent&>(event) << list;
     fileService->deleteFiles(event);
