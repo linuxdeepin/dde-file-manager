@@ -145,7 +145,7 @@ int DFileViewHelper::windowId() const
  */
 bool DFileViewHelper::isCut(const QModelIndex &index) const
 {
-    const DAbstractFileInfo *fileInfo = this->fileInfo(index);
+    const DAbstractFileInfoPointer &fileInfo = this->fileInfo(index);
 
     if (!fileInfo)
         return false;
@@ -213,7 +213,7 @@ int DFileViewHelper::indexOfRow(const QModelIndex &index) const
  */
 QList<QIcon> DFileViewHelper::additionalIcon(const QModelIndex &index) const
 {
-    const DAbstractFileInfo *fileInfo = this->fileInfo(index);
+    const DAbstractFileInfoPointer &fileInfo = this->fileInfo(index);
 
     if (!fileInfo)
         return QList<QIcon>();
@@ -229,7 +229,7 @@ QList<QIcon> DFileViewHelper::additionalIcon(const QModelIndex &index) const
  */
 QString DFileViewHelper::baseName(const QModelIndex &index) const
 {
-    const DAbstractFileInfo *fileInfo = this->fileInfo(index);
+    const DAbstractFileInfoPointer &fileInfo = this->fileInfo(index);
 
     if (!fileInfo)
         return QString();
@@ -260,7 +260,7 @@ int DFileViewHelper::columnWidth(int columnIndex) const
 
 DUrl DFileViewHelper::currentUrl() const
 {
-    const DAbstractFileInfo *fileInfo = this->fileInfo(parent()->rootIndex());
+    const DAbstractFileInfoPointer &fileInfo = this->fileInfo(parent()->rootIndex());
 
     if (!fileInfo)
         return DUrl();
