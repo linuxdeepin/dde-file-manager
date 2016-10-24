@@ -225,7 +225,7 @@ int DFileSystemModel::columnWidthByRole(int role) const
         const DAbstractFileInfoPointer &currentFileInfo = d->rootNode->fileInfo;
 
         if (currentFileInfo)
-            return currentFileInfo->userColumnWidth(role);
+            return currentFileInfo->userColumnWidth(role, parent()->parent()->fontMetrics());
 
         return 140;
     }

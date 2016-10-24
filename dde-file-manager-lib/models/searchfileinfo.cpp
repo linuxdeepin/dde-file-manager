@@ -131,12 +131,12 @@ QVariant SearchFileInfo::userColumnData(int userColumnRole) const
     return DAbstractFileInfo::userColumnData(userColumnRole);
 }
 
-int SearchFileInfo::userColumnWidth(int userColumnRole) const
+int SearchFileInfo::userColumnWidth(int userColumnRole, const QFontMetrics &fontMetrics) const
 {
     if (userColumnRole == DFileSystemModel::FileUserRole + 1)
         return -1;
 
-    return DAbstractFileInfo::userColumnWidth(userColumnRole);
+    return DAbstractFileInfo::userColumnWidth(userColumnRole, fontMetrics);
 }
 
 MenuAction SearchFileInfo::menuActionByColumnRole(int userColumnRole) const

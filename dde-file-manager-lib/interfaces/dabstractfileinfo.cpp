@@ -403,21 +403,21 @@ QString DAbstractFileInfo::lastReadDisplayName() const
 {
     CALL_PROXY(lastReadDisplayName());
 
-    return lastRead().toString(timeFormat());
+    return lastRead().toString(dateTimeFormat());
 }
 
 QString DAbstractFileInfo::lastModifiedDisplayName() const
 {
     CALL_PROXY(lastModifiedDisplayName());
 
-    return lastModified().toString(timeFormat());
+    return lastModified().toString(dateTimeFormat());
 }
 
 QString DAbstractFileInfo::createdDisplayName() const
 {
     CALL_PROXY(createdDisplayName());
 
-    return created().toString(timeFormat());
+    return created().toString(dateTimeFormat());
 }
 
 QString DAbstractFileInfo::sizeDisplayName() const
@@ -622,13 +622,18 @@ QVariant DAbstractFileInfo::userColumnData(int userColumnRole) const
 
 int DAbstractFileInfo::userColumnWidth(int userColumnRole) const
 {
+    return userColumnWidth(userColumnRole, qApp->fontMetrics());
+}
+
+int DAbstractFileInfo::userColumnWidth(int userColumnRole, const QFontMetrics &fontMetrics) const
+{
     switch (userColumnRole) {
     case DFileSystemModel::FileSizeRole:
         return 80;
     case DFileSystemModel::FileMimeTypeRole:
         return 80;
     default:
-        return qApp->fontMetrics().width("0000/00/00 00:00:00");
+        return fontMetrics.width("0000/00/00 00:00:00");
     }
 }
 
