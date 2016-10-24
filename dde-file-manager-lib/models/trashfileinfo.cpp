@@ -40,6 +40,11 @@ bool TrashFileInfo::isWritable() const
     return false;
 }
 
+bool TrashFileInfo::isCanShare() const
+{
+    return false;
+}
+
 QString TrashFileInfo::fileDisplayName() const
 {
     return m_displayName;
