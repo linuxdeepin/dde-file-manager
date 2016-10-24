@@ -119,6 +119,8 @@ public:
 
     virtual qint64 size() const;
     virtual int filesCount() const;
+    // Return fileCounts() if file is folder; otherwise return size()
+    qint64 fileSize() const;
 
     virtual QDateTime created() const;
     virtual QDateTime lastModified() const;
