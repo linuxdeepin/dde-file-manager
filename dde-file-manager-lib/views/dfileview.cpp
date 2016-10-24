@@ -1042,6 +1042,12 @@ void DFileView::handleCommitData(QWidget *editor)
     DUrl old_url = fileInfo->fileUrl();
     DUrl new_url = fileInfo->getUrlByNewFileName(new_file_name);
 
+    const DAbstractFileInfoPointer &newFileInfo = DFileService::instance()->createFileInfo(new_url);
+
+    if (newFileInfo && newFileInfo->baseName().isEmpty() && newFileInfo->suffix() == fileInfo->suffix()) {
+        return;
+    }
+
     if (lineEdit) {
         /// later rename file.
         TIMER_SINGLESHOT(0, {
