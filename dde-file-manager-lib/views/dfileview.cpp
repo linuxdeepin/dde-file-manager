@@ -787,6 +787,11 @@ void DFileView::keyPressEvent(QKeyEvent *event)
         case Qt::Key_Delete:
             fileService->moveToTrash(fmevent);
             break;
+        case Qt::Key_End:
+            if (urls.isEmpty()) {
+                setCurrentIndex(model()->index(rowCount() - 1, 0));
+                return;
+            }
         default: break;
         }
 
