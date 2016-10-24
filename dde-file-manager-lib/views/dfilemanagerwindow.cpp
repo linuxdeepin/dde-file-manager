@@ -15,6 +15,7 @@
 #include "dbookmarkscene.h"
 #include "windowmanager.h"
 #include "dfileservices.h"
+#include "dfilesystemmodel.h"
 
 #include "app/define.h"
 #include "dfmevent.h"
@@ -360,30 +361,27 @@ void DFileManagerWindow::closeCurrentTab(const DFMEvent &event)
 
 void DFileManagerWindow::onFileDeleted(const DUrl &url)
 {
-    bool isParentUrl = false;
-    DUrl parentUrl = this->currentUrl();
+    Q_D(const DFileManagerWindow);
 
-    do {
-        if (parentUrl == url) {
-            isParentUrl = true;
-        }
+    const DUrl &currentUrl = this->currentUrl();
 
-        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(parentUrl);
+    if (url != currentUrl) {
+        const DAbstractFileInfoPointer &fileInfo = d->fileView->model()->fileInfo(currentUrl);
 
-        parentUrl = fileInfo->parentUrl();
-    } while (parentUrl.isValid() && !isParentUrl);
-
-    if (isParentUrl) {
-        DFMEvent event;
-
-        qDebug() << parentUrl.isValid() << parentUrl;
-
-        event << WindowManager::getWindowId(this);
-        event << DFMEvent::FileView;
-        event << (parentUrl.isValid() ? parentUrl : DUrl::fromLocalFile(QDir::homePath()));
-
-        preHandleCd(event);
+        if (!fileInfo || !fileInfo->isAncestorsUrl(url))
+            return;
     }
+
+    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
+    const DUrl &parentUrl = fileInfo->parentUrl();
+
+    DFMEvent event;
+
+    event << WindowManager::getWindowId(this);
+    event << DFMEvent::FileView;
+    event << (parentUrl.isValid() ? parentUrl : DUrl::fromLocalFile(QDir::homePath()));
+
+    preHandleCd(event);
 }
 
 QString DFileManagerWindow::getDisplayNameByUrl(const DUrl &url) const

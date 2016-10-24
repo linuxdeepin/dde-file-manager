@@ -1478,19 +1478,12 @@ bool DFileView::setCurrentUrl(const DUrl &url)
 
     if (defaultSelectUrl.isValid()) {
         d->preSelectionUrls << defaultSelectUrl;
-    } else {
-        DUrl oldCurrentUrl = currentUrl;
+    } else if (const DAbstractFileInfoPointer &current_file_info = DFileService::instance()->createFileInfo(currentUrl)) {
+        QList<DUrl> ancestors;
 
-        forever {
-            const DUrl &tmp_url = oldCurrentUrl.parentUrl();
-
-            if (tmp_url == fileUrl || !tmp_url.isValid())
-                break;
-
-            oldCurrentUrl = tmp_url;
+        if (current_file_info->isAncestorsUrl(fileUrl, &ancestors)) {
+            d->preSelectionUrls << (ancestors.count() > 1 ? ancestors.at(1) : currentUrl);
         }
-
-        d->preSelectionUrls << oldCurrentUrl;
     }
 
     return true;
@@ -2005,12 +1998,15 @@ void DFileView::onModelStateChanged(int state)
             d->headerView->setAttribute(Qt::WA_TransparentForMouseEvents);
         }
     } else if (state == DFileSystemModel::Idle) {
-        for (const DUrl &url : d->preSelectionUrls) {
-            selectionModel()->select(model()->index(url), QItemSelectionModel::SelectCurrent);
+        if (!d->preSelectionUrls.isEmpty()) {
+            const QModelIndex &index = model()->index(d->preSelectionUrls.first());
+
+            setCurrentIndex(index);
+            scrollTo(index, PositionAtTop);
         }
 
-        if (!d->preSelectionUrls.isEmpty()) {
-            scrollTo(model()->index(d->preSelectionUrls.first()), PositionAtTop);
+        for (const DUrl &url : d->preSelectionUrls) {
+            selectionModel()->select(model()->index(url), QItemSelectionModel::Select);
         }
 
         d->preSelectionUrls.clear();
