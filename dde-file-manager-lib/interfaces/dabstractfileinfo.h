@@ -139,6 +139,7 @@ public:
     {return fileUrl().scheme();}
 
     virtual QIcon fileIcon() const;
+    virtual QList<QIcon> additionalIcon() const;
 
     virtual DUrl parentUrl() const;
     virtual QVector<MenuAction> menuActionList(MenuType type = SingleFile) const;

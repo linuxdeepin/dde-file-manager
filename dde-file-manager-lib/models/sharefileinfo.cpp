@@ -50,7 +50,7 @@ bool ShareFileInfo::isReadable() const
 
 bool ShareFileInfo::isWritable() const
 {
-    return true;
+    return false;
 }
 
 QString ShareFileInfo::fileDisplayName() const
@@ -214,4 +214,15 @@ QAbstractItemView::SelectionMode ShareFileInfo::supportSelectionMode() const
 Qt::ItemFlags ShareFileInfo::fileItemDisableFlags() const
 {
     return Qt::ItemIsDragEnabled | Qt::ItemIsEditable;
+}
+
+QList<QIcon> ShareFileInfo::additionalIcon() const
+{
+    QList<QIcon> icons;
+
+    if (isSymLink()) {
+        icons << DFMGlobal::instance()->standardIcon(DFMGlobal::LinkIcon);
+    }
+
+    return icons;
 }

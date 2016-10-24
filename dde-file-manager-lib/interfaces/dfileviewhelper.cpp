@@ -213,26 +213,12 @@ int DFileViewHelper::indexOfRow(const QModelIndex &index) const
  */
 QList<QIcon> DFileViewHelper::additionalIcon(const QModelIndex &index) const
 {
-    QList<QIcon> icons;
     const DAbstractFileInfo *fileInfo = this->fileInfo(index);
 
     if (!fileInfo)
-        return icons;
+        return QList<QIcon>();
 
-    if (fileInfo->isSymLink()) {
-        icons << DFMGlobal::instance()->standardIcon(DFMGlobal::LinkIcon);
-    }
-
-    if (!fileInfo->isWritable())
-        icons << DFMGlobal::instance()->standardIcon(DFMGlobal::LockIcon);
-
-    if (!fileInfo->isReadable())
-        icons << DFMGlobal::instance()->standardIcon(DFMGlobal::UnreadableIcon);
-
-    if (fileInfo->isShared())
-        icons << DFMGlobal::instance()->standardIcon(DFMGlobal::ShareIcon);
-
-    return icons;
+    return fileInfo->additionalIcon();
 }
 
 /*!
