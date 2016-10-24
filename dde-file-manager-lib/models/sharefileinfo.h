@@ -45,6 +45,8 @@ public:
     QAbstractItemView::SelectionMode supportSelectionMode() const Q_DECL_OVERRIDE;
     Qt::ItemFlags fileItemDisableFlags() const Q_DECL_OVERRIDE;
 
+    QList<QIcon> additionalIcon() const Q_DECL_OVERRIDE;
+
 private:
     QString m_displayName;
 

@@ -37,7 +37,7 @@ bool TrashFileInfo::isReadable() const
 
 bool TrashFileInfo::isWritable() const
 {
-    return true;
+    return false;
 }
 
 QString TrashFileInfo::fileDisplayName() const
@@ -201,6 +201,17 @@ Qt::DropActions TrashFileInfo::supportedDropActions() const
     const QString &path = fileUrl().path();
 
     return path.isEmpty() || path == "/" ? Qt::MoveAction : Qt::IgnoreAction;
+}
+
+QList<QIcon> TrashFileInfo::additionalIcon() const
+{
+    QList<QIcon> icons;
+
+    if (isSymLink()) {
+        icons << DFMGlobal::instance()->standardIcon(DFMGlobal::LinkIcon);
+    }
+
+    return icons;
 }
 
 DAbstractFileInfo::sortFunction TrashFileInfo::sortFunByColumn(int columnRole) const

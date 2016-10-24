@@ -458,6 +458,26 @@ QIcon DAbstractFileInfo::fileIcon() const
     return fileIconProvider->getFileIcon(fileUrl(), mimeTypeName());
 }
 
+QList<QIcon> DAbstractFileInfo::additionalIcon() const
+{
+    QList<QIcon> icons;
+
+    if (isSymLink()) {
+        icons << DFMGlobal::instance()->standardIcon(DFMGlobal::LinkIcon);
+    }
+
+    if (!isWritable())
+        icons << DFMGlobal::instance()->standardIcon(DFMGlobal::LockIcon);
+
+    if (!isReadable())
+        icons << DFMGlobal::instance()->standardIcon(DFMGlobal::UnreadableIcon);
+
+    if (isShared())
+        icons << DFMGlobal::instance()->standardIcon(DFMGlobal::ShareIcon);
+
+    return icons;
+}
+
 DUrl DAbstractFileInfo::parentUrl() const
 {
     return DUrl::parentUrl(fileUrl());
