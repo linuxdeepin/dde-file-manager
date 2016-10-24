@@ -142,6 +142,7 @@ public:
     virtual QList<QIcon> additionalIcon() const;
 
     virtual DUrl parentUrl() const;
+    virtual bool isAncestorsUrl(const DUrl &url, QList<DUrl> *ancestors = 0) const;
     virtual QVector<MenuAction> menuActionList(MenuType type = SingleFile) const;
     virtual QMap<MenuAction, QVector<MenuAction> > subMenuActionList() const;
     virtual QSet<MenuAction> disableMenuActionList() const;

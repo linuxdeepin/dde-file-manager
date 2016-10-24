@@ -483,6 +483,33 @@ DUrl DAbstractFileInfo::parentUrl() const
     return DUrl::parentUrl(fileUrl());
 }
 
+bool DAbstractFileInfo::isAncestorsUrl(const DUrl &url, QList<DUrl> *ancestors) const
+{
+    DUrl parentUrl = this->parentUrl();
+
+    forever {
+        if (ancestors)
+            ancestors->append(parentUrl);
+
+        if (parentUrl == url)
+            return true;
+
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(parentUrl);
+
+        if (!fileInfo)
+            break;
+
+        const DUrl &pu = fileInfo->parentUrl();
+
+        if (pu == parentUrl)
+            break;
+
+        parentUrl = pu;
+    }
+
+    return false;
+}
+
 QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuType type) const
 {
     QVector<MenuAction> actionKeys;
