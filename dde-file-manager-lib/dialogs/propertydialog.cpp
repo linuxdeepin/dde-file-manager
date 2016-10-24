@@ -23,6 +23,10 @@
 #include "widgets/singleton.h"
 
 #include "shareinfoframe.h"
+#include "views/dfilemanagerwindow.h"
+#include "views/windowmanager.h"
+#include "views/dfileview.h"
+#include "interfaces/dfilesystemmodel.h"
 
 #include <dscrollbar.h>
 #include <dexpandgroup.h>
@@ -169,8 +173,9 @@ SectionValueLabel::SectionValueLabel(const QString &text, QWidget *parent, Qt::W
 }
 
 
-PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
+PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget* parent)
     : BaseDialog(parent)
+    , m_fmevent(event)
     , m_url(url)
     , m_icon(new QLabel)
     , m_edit(new NameTextEdit)
@@ -182,13 +187,12 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
                            &~ Qt::WindowMaximizeButtonHint
                            &~ Qt::WindowMinimizeButtonHint
                            &~ Qt::WindowSystemMenuHint);
-
     QString basicInfo = tr("Basic info");
     QString shareManager = tr("Share manager");
     initUI();
-    UDiskDeviceInfo* diskInfo = deviceListener->getDevice(url.query());
+    UDiskDeviceInfo* diskInfo = deviceListener->getDevice(m_url.query());
     if (diskInfo == NULL){
-        diskInfo = deviceListener->getDeviceByPath(url.path());
+        diskInfo = deviceListener->getDeviceByPath(m_url.path());
     }
     if (diskInfo){
         qDebug() << diskInfo->getDiskInfo();
@@ -205,12 +209,12 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
         expandGroup->expand(0)->setContent(m_deviceInfoFrame);
         expandGroup->expand(0)->setExpand(true);
 
-    }else if (url == DUrl::fromLocalFile("/")){
+    }else if (m_url == DUrl::fromLocalFile("/")){
         m_icon->setPixmap(svgToPixmap(":/devices/images/device/drive-harddisk-deepin.svg", 128, 128));
         m_edit->setPlainText(tr("Disk"));
         m_editDisbaled = true;
 
-        m_localDeviceInfoFrame = createLocalDeviceInfoWidget(url);
+        m_localDeviceInfoFrame = createLocalDeviceInfoWidget(m_url);
         QStringList titleList;
         titleList << basicInfo;
         DExpandGroup *expandGroup = addExpandWidget(titleList);
@@ -218,7 +222,7 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
         expandGroup->expand(0)->setContent(m_localDeviceInfoFrame);
         expandGroup->expand(0)->setExpand(true);
     }else{
-        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(m_url);
         m_icon->setPixmap(fileInfo->fileIcon().pixmap(160, 160));
         m_edit->setPlainText(fileInfo->fileDisplayName());
         m_edit->setAlignment(Qt::AlignHCenter);
@@ -266,11 +270,7 @@ PropertyDialog::PropertyDialog(const DUrl &url, QWidget* parent)
         m_editButton->hide();
     }
 
-    connect(fileService, &DFileService::childrenRemoved,
-            this, [this] (const DUrl &url) {
-        if (url == m_url)
-            close();
-    });
+    initConnect();
 }
 
 void PropertyDialog::initUI()
@@ -301,8 +301,12 @@ void PropertyDialog::initUI()
     layout->addWidget(m_icon, 0, Qt::AlignHCenter);
     layout->addWidget(m_editStackWidget, 0, Qt::AlignHCenter);
     setLayout(layout);
+}
 
+void PropertyDialog::initConnect()
+{
     connect(m_edit, &NameTextEdit::editFinished, this, &PropertyDialog::showTextShowFrame);
+    connect(fileService, &DFileService::childrenRemoved, this, &PropertyDialog::onChildrenRemoved);
 }
 
 
@@ -357,6 +361,16 @@ void PropertyDialog::showTextShowFrame()
     }
 }
 
+void PropertyDialog::onChildrenRemoved(const DUrl &fileUrl)
+{
+    if (m_url.isUserShareFile()){
+        return;
+    }
+    if (fileUrl == m_url){
+        close();
+    }
+}
+
 void PropertyDialog::mousePressEvent(QMouseEvent *event)
 {
     if (m_edit->isVisible()){
@@ -370,8 +384,12 @@ void PropertyDialog::mousePressEvent(QMouseEvent *event)
 
 void PropertyDialog::startComputerFolderSize(const DUrl &url)
 {
+    DUrl validUrl = url;
+    if (url.isUserShareFile()){
+        validUrl.setScheme(FILE_SCHEME);
+    }
     DUrlList urls;
-    urls << url;
+    urls << validUrl;
     FilesSizeWorker* worker = new FilesSizeWorker(urls);
     QThread*  workerThread = new QThread;
     worker->moveToThread(workerThread);

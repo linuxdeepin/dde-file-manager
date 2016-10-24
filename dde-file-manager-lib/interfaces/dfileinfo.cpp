@@ -12,6 +12,7 @@
 #include "app/define.h"
 #include "widgets/singleton.h"
 #include "usershare/usersharemanager.h"
+#include "deviceinfo/udisklistener.h"
 
 #include <QDateTime>
 #include <QDir>
@@ -106,7 +107,17 @@ bool DFileInfo::isCanRename() const
 
 bool DFileInfo::isCanShare() const
 {
-    return fileUrl().path().startsWith(QDir::homePath()) && isDir();
+    if (isDir() && isReadable()){
+        if (fileUrl().path().startsWith(QDir::homePath())){
+            return true;
+        }
+        UDiskDeviceInfo* info=deviceListener->getDeviceByFilePath(filePath());
+        if (info){
+            if (info->getMediaType() != UDiskDeviceInfo::unknown && info->getMediaType() !=UDiskDeviceInfo::network)
+                return true;
+        }
+    }
+    return false;
 }
 
 bool DFileInfo::isReadable() const

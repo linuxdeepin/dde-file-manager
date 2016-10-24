@@ -344,7 +344,7 @@ void DialogManager::showPropertyDialog(const DFMEvent &event)
                 dialog = m_propertyDialogs.value(url);
                 dialog->raise();
             }else{
-                dialog = new PropertyDialog(url);
+                dialog = new PropertyDialog(event, url);
                 m_propertyDialogs.insert(url, dialog);
                 QPoint pos = getPerportyPos(dialog->size().width(), dialog->size().height(), count, index);
 
@@ -390,7 +390,7 @@ void DialogManager::showDevicePropertyDialog(const DFMEvent &event)
 {
     QWidget* w = WindowManager::getWindowById(event.windowId());
     if (w){
-        PropertyDialog* dialog = new PropertyDialog(event.fileUrl());
+        PropertyDialog* dialog = new PropertyDialog(event, event.fileUrl());
         dialog->show();
     }
 }

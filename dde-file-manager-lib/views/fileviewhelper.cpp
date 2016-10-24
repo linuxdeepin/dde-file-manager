@@ -226,5 +226,9 @@ void FileViewHelper::onShareFolderCountChanged(int count)
 {
     if (count == 0) {
         parent()->cd(DUrl::fromLocalFile(QDir::homePath()));
+    }else{
+        if (parent()->rootUrl() == DUrl::fromUserShareFile("/")){
+            parent()->model()->refresh();
+        }
     }
 }
