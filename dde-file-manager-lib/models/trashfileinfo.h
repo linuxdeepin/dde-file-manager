@@ -12,6 +12,7 @@ public:
     bool isCanRename() const Q_DECL_OVERRIDE;
     bool isReadable() const Q_DECL_OVERRIDE;
     bool isWritable() const Q_DECL_OVERRIDE;
+    bool isCanShare() const Q_DECL_OVERRIDE;
 
     QString fileDisplayName() const Q_DECL_OVERRIDE;
 
