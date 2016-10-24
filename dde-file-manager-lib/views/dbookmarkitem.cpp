@@ -713,6 +713,8 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
                     disableList);
     }else if (m_url.isNetWorkFile()){
         menu = DFileMenuManager::createNetworkMarkMenu(disableList);
+    }else if(m_url.isUserShareFile()){
+        menu = DFileMenuManager::createUserShareMarkMenu(disableList);
     }else if(m_isDefault)
         menu = DFileMenuManager::createDefaultBookMarkMenu(disableList);
     else

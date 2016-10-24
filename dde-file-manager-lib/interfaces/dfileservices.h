@@ -9,6 +9,7 @@
 #include <QMultiHash>
 #include <QPair>
 #include <QDir>
+#include <QDebug>
 
 #include <functional>
 
@@ -26,7 +27,7 @@ public:
     template <class T>
     static void dRegisterUrlHandler(const QString &scheme, const QString &host)
     {
-        m_controllerCreatorHash.insertMulti(HandlerType(scheme, host), [] {
+        m_controllerCreatorHash.insertMulti(HandlerType(scheme, host), [=] {
             return (DAbstractFileController*)new T(instance());
         });
     }

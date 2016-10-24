@@ -14,10 +14,10 @@ ShareInfoFrame::ShareInfoFrame(const DAbstractFileInfoPointer &info, QWidget *pa
     m_fileinfo(info)
 {
     m_jobTimer = new QTimer();
-    m_jobTimer->setInterval(1000);
+    m_jobTimer->setInterval(500);
     m_jobTimer->setSingleShot(true);
     initUI();
-    initShareInfo();
+    updateShareInfo(m_fileinfo->absoluteFilePath());
     initConnect();
 }
 
@@ -64,27 +64,6 @@ void ShareInfoFrame::initUI()
     setLayout(mainLayoyt);
 }
 
-void ShareInfoFrame::initShareInfo()
-{
-    ShareInfo info = userShareManager->getShareInfoByPath(m_fileinfo->absoluteFilePath());
-    qDebug() << info << m_fileinfo->absoluteFilePath();
-    if (!info.shareName().isEmpty()){
-        m_sharCheckBox->setChecked(true);
-        m_shareNamelineEdit->setText(info.shareName());
-        if (info.isWritable()){
-            m_permissoComBox->setCurrentIndex(0);
-        }else{
-            m_permissoComBox->setCurrentIndex(1);
-        }
-
-        if (info.isGuestOk()){
-            m_anonymityCombox->setCurrentIndex(1);
-        }else{
-            m_anonymityCombox->setCurrentIndex(0);
-        }
-    }
-}
-
 void ShareInfoFrame::initConnect()
 {
     connect(m_sharCheckBox, &DCheckBox::stateChanged, this, &ShareInfoFrame::handleCheckBoxChanged);
@@ -92,6 +71,8 @@ void ShareInfoFrame::initConnect()
     connect(m_permissoComBox, SIGNAL(currentIndexChanged(int)), this, SLOT(handlePermissionComboxChanged(int)));
     connect(m_anonymityCombox, SIGNAL(currentIndexChanged(int)), this, SLOT(handleAnonymityComboxChanged(int)));
     connect(m_jobTimer, &QTimer::timeout, this, &ShareInfoFrame::doShaeInfoSetting);
+    connect(userShareManager, &UserShareManager::userShareAdded, this, &ShareInfoFrame::updateShareInfo);
+    connect(userShareManager, &UserShareManager::userShareDeleted, this, &ShareInfoFrame::updateShareInfo);
 }
 
 void ShareInfoFrame::handleCheckBoxChanged(int state)
@@ -153,6 +134,41 @@ void ShareInfoFrame::doShaeInfoSetting()
         }
         userShareManager->deleteUserShareByPath(info.path());
     }
+}
+
+void ShareInfoFrame::updateShareInfo(const QString &filePath)
+{
+    qDebug () <<"update:"<< filePath << ", " << m_fileinfo->absoluteFilePath();
+    if(filePath != m_fileinfo->absoluteFilePath())
+        return;
+    ShareInfo info = userShareManager->getShareInfoByPath(filePath);
+    qDebug() << info << m_fileinfo->absoluteFilePath();
+    if (!info.shareName().isEmpty()){
+        m_sharCheckBox->setChecked(true);
+        m_shareNamelineEdit->setText(info.shareName());
+        if (info.isWritable()){
+            m_permissoComBox->setCurrentIndex(0);
+        }else{
+            m_permissoComBox->setCurrentIndex(1);
+        }
+
+        if (info.isGuestOk()){
+            m_anonymityCombox->setCurrentIndex(1);
+        }else{
+            m_anonymityCombox->setCurrentIndex(0);
+        }
+    } else {
+        m_sharCheckBox->setChecked(false);
+        m_permissoComBox->setCurrentIndex(0);
+        m_anonymityCombox->setCurrentIndex(0);
+        m_shareNamelineEdit->setText(m_fileinfo->fileDisplayName());
+    }
+}
+
+void ShareInfoFrame::setFileinfo(const DAbstractFileInfoPointer &fileinfo)
+{
+    m_fileinfo = fileinfo;
+    updateShareInfo(m_fileinfo->absoluteFilePath());
 }
 
 ShareInfoFrame::~ShareInfoFrame()
