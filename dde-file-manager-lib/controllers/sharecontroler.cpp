@@ -21,13 +21,13 @@
 ShareControler::ShareControler(QObject *parent) :
     DAbstractFileController(parent)
 {
-    connect(userShareManager, &UserShareManager::userShareAdded, this, [=](const QString& filePath){
-        emit childrenAdded(DUrl::fromUserShareFile(filePath));
-    });
-    connect(userShareManager, &UserShareManager::userShareDeleted, this, [=](const QString& filePath){
-        emit childrenRemoved(DUrl::fromUserShareFile(filePath));
-    });
+    initConnections();
+}
 
+void ShareControler::initConnections()
+{
+    connect(userShareManager, &UserShareManager::userShareAdded, this, &ShareControler::onUserShareAdded);
+    connect(userShareManager, &UserShareManager::userShareDeleted, this, &ShareControler::onUserShareDeleted);
 }
 
 const DAbstractFileInfoPointer ShareControler::createFileInfo(const DUrl &fileUrl, bool &accepted) const
@@ -58,8 +58,12 @@ const QList<DAbstractFileInfoPointer> ShareControler::getChildren(const DUrl &fi
     return infolist;
 }
 
-void ShareControler::onFileInfoChanged(const QString &filePath)
+void ShareControler::onUserShareAdded(const QString &filePath)
 {
-    const DUrl &url = DUrl::fromLocalFile(filePath);
-    emit childrenUpdated(url);
+    emit childrenAdded(DUrl::fromUserShareFile(filePath));
+}
+
+void ShareControler::onUserShareDeleted(const QString &filePath)
+{
+    emit childrenRemoved(DUrl::fromUserShareFile(filePath));
 }

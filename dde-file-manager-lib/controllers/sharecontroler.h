@@ -11,6 +11,7 @@
 #define SHARECONTROLER_H
 
 #include "dabstractfilecontroller.h"
+#include "filemonitor/filemonitor.h"
 
 class ShareControler : public DAbstractFileController
 {
@@ -18,16 +19,18 @@ class ShareControler : public DAbstractFileController
 public:
     explicit ShareControler(QObject *parent = 0);
 
+    void initConnections();
+
     const DAbstractFileInfoPointer createFileInfo(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
     const QList<DAbstractFileInfoPointer> getChildren(const DUrl &fileUrl, const QStringList &nameFilters,
                                                      QDir::Filters filters, QDirIterator::IteratorFlags flags,
                                                      bool &accepted) const Q_DECL_OVERRIDE;
-
-
 signals:
 
 public slots:
-    void onFileInfoChanged(const QString &filePath);
+    void onUserShareAdded(const QString& filePath);
+    void onUserShareDeleted(const QString& filePath);
+private:
 };
 
 #endif // SHARECONTROLER_H
