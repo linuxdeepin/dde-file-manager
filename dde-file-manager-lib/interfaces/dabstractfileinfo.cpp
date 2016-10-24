@@ -38,7 +38,7 @@ bool sortByString(const QString &str1, const QString &str2, Qt::SortOrder order)
 }
 
 SORT_FUN_DEFINE(fileDisplayName, DisplayName, DAbstractFileInfo)
-SORT_FUN_DEFINE(size, Size, DAbstractFileInfo)
+SORT_FUN_DEFINE(fileSize, Size, DAbstractFileInfo)
 SORT_FUN_DEFINE(lastModified, Modified, DAbstractFileInfo)
 SORT_FUN_DEFINE(mimeTypeDisplayName, Mime, DAbstractFileInfo)
 SORT_FUN_DEFINE(created, Created, DAbstractFileInfo)
@@ -369,6 +369,14 @@ int DAbstractFileInfo::filesCount() const
     }
 
     return count;
+}
+
+qint64 DAbstractFileInfo::fileSize() const
+{
+    if (isDir())
+        return filesCount();
+
+    return size();
 }
 
 QDateTime DAbstractFileInfo::created() const
