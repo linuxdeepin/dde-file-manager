@@ -96,7 +96,7 @@ const DUrlList FileViewHelper::selectedUrls() const
 
 DUrl FileViewHelper::currentUrl() const
 {
-    return parent()->currentUrl();
+    return parent()->rootUrl();
 }
 
 QList<int> FileViewHelper::columnRoleList() const

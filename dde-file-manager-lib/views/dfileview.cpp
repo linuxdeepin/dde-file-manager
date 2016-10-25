@@ -90,6 +90,10 @@ public:
     /// drag drop
     QModelIndex dragMoveHoverIndex;
 
+    /// Saved before sorting
+    DUrlList oldSelectedUrls;
+    DUrl oldCurrentUrl;
+
     FileViewHelper *fileViewHelper;
 
     Q_DECLARE_PUBLIC(DFileView)
@@ -238,7 +242,7 @@ FileViewHelper *DFileView::fileViewHelper() const
     return d->fileViewHelper;
 }
 
-DUrl DFileView::currentUrl() const
+DUrl DFileView::rootUrl() const
 {
     return model()->getUrlByIndex(rootIndex());
 }
@@ -577,14 +581,14 @@ bool DFileView::cd(const DUrl &url)
         setFocus();
     }
 
-    return setCurrentUrl(url);
+    return setRootUrl(url);
 }
 
 bool DFileView::cdUp()
 {
     const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(rootIndex());
 
-    const DUrl &oldCurrentUrl = currentUrl();
+    const DUrl &oldCurrentUrl = rootUrl();
     const DUrl& parentUrl = fileInfo ? fileInfo->parentUrl() : DUrl::parentUrl(oldCurrentUrl);
 
     return cd(parentUrl);
@@ -648,27 +652,36 @@ void DFileView::setViewMode(DFileView::ViewMode mode)
     switchViewMode(mode);
 }
 
-void DFileView::sortByRole(int role)
+void DFileView::sortByColumn(int column)
 {
     D_D(DFileView);
 
-    Qt::SortOrder order = (model()->sortRole() == role && model()->sortOrder() == Qt::AscendingOrder)
+    Qt::SortOrder order = (model()->sortColumn() == column && model()->sortOrder() == Qt::AscendingOrder)
                             ? Qt::DescendingOrder
                             : Qt::AscendingOrder;
 
     if (d->headerView) {
-        d->headerView->setSortIndicator(model()->roleToColumn(role), order);
-    } else {
-        model()->setSortRole(role, order);
-        model()->sort();
+        QSignalBlocker blocker(d->headerView);
+        Q_UNUSED(blocker)
+        d->headerView->setSortIndicator(column, order);
     }
 
-    FMStateManager::cacheSortState(currentUrl(), role, order);
+    sort(column, order);
+
+    FMStateManager::cacheSortState(rootUrl(), model()->sortRole(), order);
 }
 
-void DFileView::sortByColumn(int column)
+void DFileView::sort(int column, Qt::SortOrder order)
 {
-    sortByRole(model()->columnToRole(column));
+    D_D(DFileView);
+
+    model()->setSortColumn(column, order);
+
+    d->oldSelectedUrls = this->selectedUrls();
+    d->oldCurrentUrl = model()->getUrlByIndex(currentIndex());
+
+    clearSelection();
+    model()->sort();
 }
 
 QStringList DFileView::nameFilters() const
@@ -761,7 +774,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
     fmevent << urls;
     fmevent << DFMEvent::FileView;
     fmevent << windowId();
-    fmevent << currentUrl();
+    fmevent << rootUrl();
 
     switch (event->modifiers()) {
     case Qt::NoModifier:
@@ -1072,7 +1085,7 @@ void DFileView::focusInEvent(QFocusEvent *event)
     DListView::focusInEvent(event);
     itemDelegate()->commitDataAndCloseActiveEditor();
 
-    const DUrl &current_url = currentUrl();
+    const DUrl &current_url = rootUrl();
 
     if (current_url.isLocalFile())
             QDir::setCurrent(current_url.toLocalFile());
@@ -1351,6 +1364,24 @@ void DFileView::rowsInserted(const QModelIndex &parent, int start, int end)
     DListView::rowsInserted(parent, start, end);
 }
 
+void DFileView::dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
+{
+    D_D(DFileView);
+
+    DListView::dataChanged(topLeft, bottomRight, roles);
+
+    if (d->oldCurrentUrl.isValid())
+        setCurrentIndex(model()->index(d->oldCurrentUrl));
+
+    for (const DUrl &url : d->oldSelectedUrls) {
+        selectionModel()->select(model()->index(url), QItemSelectionModel::Select);
+    }
+
+    /// Clean
+    d->oldCurrentUrl = DUrl();
+    d->oldSelectedUrls.clear();
+}
+
 void DFileView::increaseIcon()
 {
     D_D(DFileView);
@@ -1408,7 +1439,7 @@ void DFileView::keyboardSearch(const QString &search)
     d->fileViewHelper->keyboardSearch(search.toLocal8Bit().at(0));
 }
 
-bool DFileView::setCurrentUrl(const DUrl &url)
+bool DFileView::setRootUrl(const DUrl &url)
 {
     D_D(DFileView);
 
@@ -1433,12 +1464,12 @@ bool DFileView::setCurrentUrl(const DUrl &url)
         qDebug() << "url redirected, from:" << old_url << "to:" << fileUrl;
     }
 
-    qDebug() << "cd: current url:" << currentUrl() << "to url:" << fileUrl;
+    qDebug() << "cd: current url:" << rootUrl() << "to url:" << fileUrl;
 
-    const DUrl &currentUrl = this->currentUrl();
+    const DUrl &rootUrl = this->rootUrl();
 
 
-    if(currentUrl == fileUrl/* && !info->isShared()*/)
+    if(rootUrl == fileUrl/* && !info->isShared()*/)
         return false;
 
 //    QModelIndex index = model()->index(fileUrl);
@@ -1487,11 +1518,11 @@ bool DFileView::setCurrentUrl(const DUrl &url)
 
     if (defaultSelectUrl.isValid()) {
         d->preSelectionUrls << defaultSelectUrl;
-    } else if (const DAbstractFileInfoPointer &current_file_info = DFileService::instance()->createFileInfo(currentUrl)) {
+    } else if (const DAbstractFileInfoPointer &current_file_info = DFileService::instance()->createFileInfo(rootUrl)) {
         QList<DUrl> ancestors;
 
         if (current_file_info->isAncestorsUrl(fileUrl, &ancestors)) {
-            d->preSelectionUrls << (ancestors.count() > 1 ? ancestors.at(1) : currentUrl);
+            d->preSelectionUrls << (ancestors.count() > 1 ? ancestors.at(1) : rootUrl);
         }
     }
 
@@ -1609,7 +1640,7 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
         return;
     }
 
-    const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(currentUrl());
+    const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(rootUrl());
 
     if (fileInfo && (fileInfo->supportViewMode() & mode) == 0) {
         return;
@@ -1651,7 +1682,7 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
             connect(d->headerView, &QHeaderView::sectionResized,
                     this, static_cast<void (DFileView::*)()>(&DFileView::update));
             connect(d->headerView, &QHeaderView::sortIndicatorChanged,
-                    model(), &QAbstractItemModel::sort);
+                    this, &DFileView::sort);
             connect(d->headerView, &QHeaderView::customContextMenuRequested,
                     this, &DFileView::popupHeaderViewContextMenu);
 
@@ -1742,10 +1773,10 @@ void DFileView::showEmptyAreaMenu()
     }
 
     DUrlList urls;
-    urls.append(currentUrl());
+    urls.append(rootUrl());
 
     DFMEvent event;
-    event << currentUrl();
+    event << rootUrl();
     event << urls;
     event << windowId();
     event << DFMEvent::FileView;
@@ -1997,7 +2028,7 @@ void DFileView::onModelStateChanged(int state)
     DFMEvent event;
 
     event << windowId();
-    event << currentUrl();
+    event << rootUrl();
 
     emit fileSignalManager->loadingIndicatorShowed(event, state == DFileSystemModel::Busy);
 
@@ -2036,7 +2067,7 @@ void DFileView::updateContentLabel()
         return;
 
     int count = this->count();
-    const DUrl &currentUrl = this->currentUrl();
+    const DUrl &currentUrl = this->rootUrl();
 
     if (count <= 0) {
         const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(currentUrl);

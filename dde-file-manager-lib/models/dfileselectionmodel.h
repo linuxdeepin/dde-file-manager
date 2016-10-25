@@ -17,6 +17,7 @@ public:
 
 protected:
     void select(const QItemSelection &selection, QItemSelectionModel::SelectionFlags command) Q_DECL_OVERRIDE;
+    void clear() Q_DECL_OVERRIDE;
 
 private:
     void updateSelecteds();

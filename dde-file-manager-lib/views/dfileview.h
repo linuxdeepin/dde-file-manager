@@ -54,7 +54,7 @@ public:
     DStatusBar *statusBar() const;
     FileViewHelper *fileViewHelper() const;
 
-    DUrl currentUrl() const;
+    DUrl rootUrl() const;
     QList<DUrl> selectedUrls() const;
 
     bool isIconViewMode() const;
@@ -123,8 +123,8 @@ public slots:
     inline void setViewModeToExtend()
     { setViewMode(ExtendMode);}
     void setViewMode(ViewMode mode);
-    void sortByRole(int role);
     void sortByColumn(int column);
+    void sort(int column, Qt::SortOrder order);
 
     void setNameFilters(const QStringList &nameFilters);
     void setFilters(QDir::Filters filters);
@@ -143,7 +143,7 @@ signals:
     void viewModeChanged(ViewMode viewMode);
 
 private slots:
-    bool setCurrentUrl(const DUrl &url);
+    bool setRootUrl(const DUrl &url);
     void dislpayAsActionTriggered(QAction * action);
     void sortByActionTriggered(QAction * action);
     void openWithActionTriggered(QAction * action);
@@ -168,6 +168,8 @@ protected:
     QModelIndex moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers modifiers) Q_DECL_OVERRIDE;
     void rowsAboutToBeRemoved(const QModelIndex & parent, int start, int end) Q_DECL_OVERRIDE;
     void rowsInserted(const QModelIndex & parent, int start, int end) Q_DECL_OVERRIDE;
+    void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight,
+                     const QVector<int> &roles = QVector<int>()) Q_DECL_OVERRIDE;
 
 private:
     void increaseIcon();

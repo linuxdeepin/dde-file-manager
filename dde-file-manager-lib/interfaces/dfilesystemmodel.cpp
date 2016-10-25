@@ -767,7 +767,7 @@ void DFileSystemModel::sort()
     if(!node)
         return;
 
-    const DUrl &node_absoluteFileUrl = node->fileInfo->fileUrl();
+//    const DUrl &node_absoluteFileUrl = node->fileInfo->fileUrl();
 
 //    for(const FileSystemNodePointer &url_node : d->urlToNode) {
 //        if(node == url_node.constData())
