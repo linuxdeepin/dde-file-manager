@@ -419,7 +419,7 @@ void DFileDialog::adjustPosition(QWidget *w)
     }
 
 
-    if (w) {
+    if (w && (w->windowFlags() | Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint) != w->windowFlags()) {
         // Use pos() if the widget is embedded into a native window
         QPoint pp;
         if (w->windowHandle() && w->windowHandle()->property("_q_embedded_native_parent_handle").value<WId>())
