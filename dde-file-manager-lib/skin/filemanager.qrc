@@ -333,9 +333,6 @@
         <file>images/icons/unmount_press.png</file>
         <file>images/icons/backward_hover.png</file>
         <file>images/icons/forward_hover.png</file>
-        <file>images/icons/input_normalclear_hover.png</file>
-        <file>images/icons/input_normalclear_normal.png</file>
-        <file>images/icons/input_normalclear_press.png</file>
         <file>images/icons/up.png</file>
         <file>images/icons/down.png</file>
         <file>images/icons/down_hover.png</file>
@@ -361,5 +358,8 @@
         <file>images/icons/usershare_hover_22px.svg</file>
         <file>images/icons/usershare_normal_16px.svg</file>
         <file>images/icons/usershare_normal_22px.svg</file>
+        <file>images/icons/input_clear_normal.svg</file>
+        <file>images/icons/input_clear_hover.svg</file>
+        <file>images/icons/input_clear_press.svg</file>
     </qresource>
 </RCC>
