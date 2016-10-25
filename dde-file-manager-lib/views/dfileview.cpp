@@ -119,6 +119,7 @@ void DFileView::initDelegate()
     D_D(DFileView);
 
     setItemDelegate(new DIconItemDelegate(d->fileViewHelper));
+    d->statusBar->scalingSlider()->setValue(itemDelegate()->iconSizeLevel());
 }
 
 void DFileView::initUI()
@@ -190,7 +191,7 @@ void DFileView::initConnects()
     connect(model(), &DFileSystemModel::dataChanged, this, &DFileView::handleDataChanged);
     connect(model(), &DFileSystemModel::stateChanged, this, &DFileView::onModelStateChanged);
 
-    connect(this, &DFileView::iconSizeChanged, this, &DFileView::updateHorizontalOffset);
+    connect(this, &DFileView::iconSizeChanged, this, &DFileView::updateHorizontalOffset, Qt::QueuedConnection);
 }
 
 DFileSystemModel *DFileView::model() const
@@ -217,9 +218,10 @@ void DFileView::setItemDelegate(DStyledItemDelegate *delegate)
     connect(delegate, &DStyledItemDelegate::commitData, this, &DFileView::handleCommitData);
     connect(d->statusBar->scalingSlider(), &DSlider::valueChanged, delegate, &DStyledItemDelegate::setIconSizeByIconSizeLevel);
 
-    d->statusBar->scalingSlider()->setMinimum(delegate->minimumIconSizeLevel());
-    d->statusBar->scalingSlider()->setMaximum(delegate->maximumIconSizeLevel());
-    d->statusBar->scalingSlider()->setValue(delegate->iconSizeLevel());
+    if (isIconViewMode()) {
+        d->statusBar->scalingSlider()->setMinimum(delegate->minimumIconSizeLevel());
+        d->statusBar->scalingSlider()->setMaximum(delegate->maximumIconSizeLevel());
+    }
 }
 
 DStatusBar *DFileView::statusBar() const
@@ -254,7 +256,9 @@ QList<DUrl> DFileView::selectedUrls() const
 
 bool DFileView::isIconViewMode() const
 {
-    return orientation() == Qt::Vertical && isWrapping();
+    D_DC(DFileView);
+
+    return d->currentViewMode == IconMode;
 }
 
 int DFileView::columnWidth(int column) const
@@ -1623,6 +1627,7 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
         setSpacing(ICON_VIEW_SPACING);
         setItemDelegate(new DIconItemDelegate(d->fileViewHelper));
         d->statusBar->scalingSlider()->show();
+        itemDelegate()->setIconSizeByIconSizeLevel(d->statusBar->scalingSlider()->value());
         break;
     }
     case ListMode: {
