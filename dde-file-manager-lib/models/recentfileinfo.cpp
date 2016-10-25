@@ -7,7 +7,7 @@
 #include "widgets/singleton.h"
 
 RecentFileInfo::RecentFileInfo()
-    : DFileInfo()
+    : DFileInfo(DUrl())
 {
 
 }
