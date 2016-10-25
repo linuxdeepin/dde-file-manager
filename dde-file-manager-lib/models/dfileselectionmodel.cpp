@@ -91,6 +91,15 @@ void DFileSelectionModel::select(const QItemSelection &selection, QItemSelection
     m_timer.start(20);
 }
 
+void DFileSelectionModel::clear()
+{
+    m_timer.stop();
+    m_selectedList.clear();
+    m_selection.clear();
+
+    QItemSelectionModel::clear();
+}
+
 void DFileSelectionModel::updateSelecteds()
 {
     QItemSelectionModel::select(m_selection, m_currentCommand);

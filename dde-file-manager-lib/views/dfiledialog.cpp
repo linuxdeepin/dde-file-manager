@@ -75,7 +75,7 @@ void DFileDialog::setDirectoryUrl(const DUrl &directory)
 
 QUrl DFileDialog::directoryUrl() const
 {
-    return getFileView()->currentUrl();
+    return getFileView()->rootUrl();
 }
 
 void DFileDialog::selectFile(const QString &filename)
@@ -111,7 +111,7 @@ QList<QUrl> DFileDialog::selectedUrls() const
 
     if (d->acceptMode == QFileDialog::AcceptSave) {
         if (list.isEmpty())
-            list << getFileView()->currentUrl();
+            list << getFileView()->rootUrl();
 
         const DAbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(list.first());
         const QString &newPath = fileInfo->absoluteFilePath() + QDir::separator() + getFileView()->statusBar()->lineEdit()->text();

@@ -429,7 +429,7 @@ DUrl DFileManagerWindow::currentUrl() const
     D_DC(DFileManagerWindow);
 
     if (d->viewStackLayout->currentWidget() == d->fileView) {
-        return d->fileView->currentUrl();
+        return d->fileView->rootUrl();
     } else if (d->viewStackLayout->currentWidget() == d->computerView) {
         return DUrl::fromComputerFile("/");
     }
@@ -481,13 +481,6 @@ void DFileManagerWindow::setFileViewMode(int viewMode)
     D_D(DFileManagerWindow);
 
     d->fileView->setViewMode(static_cast<DFileView::ViewMode>(viewMode));
-}
-
-void DFileManagerWindow::setFileViewSortRole(int sortRole)
-{
-    D_D(DFileManagerWindow);
-
-    d->fileView->sortByRole(sortRole);
 }
 
 void DFileManagerWindow::setIconView()

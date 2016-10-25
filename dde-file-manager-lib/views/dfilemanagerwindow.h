@@ -89,7 +89,6 @@ public slots:
     void moveTopRightByRect(QRect rect);
 
     void setFileViewMode(int viewMode);
-    void setFileViewSortRole(int sortRole);
     void setIconView();
     void setListView();
     void preHandleCd(const DFMEvent& event);
