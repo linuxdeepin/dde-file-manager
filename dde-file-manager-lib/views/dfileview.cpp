@@ -789,7 +789,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             break;
         case Qt::Key_End:
             if (urls.isEmpty()) {
-                setCurrentIndex(model()->index(rowCount() - 1, 0));
+                setCurrentIndex(model()->index(count() - 1, 0));
                 return;
             }
         default: break;
