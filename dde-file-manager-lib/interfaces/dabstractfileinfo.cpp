@@ -75,12 +75,6 @@ DAbstractFileInfo::DAbstractFileInfo(const DUrl &url)
 
 }
 
-DAbstractFileInfo::DAbstractFileInfo(const DUrl &url, createPrivateFun fun)
-    : d_ptr(getPrivateByUrl(url, fun))
-{
-
-}
-
 DAbstractFileInfo::~DAbstractFileInfo()
 {
 
@@ -90,7 +84,7 @@ void DAbstractFileInfo::setUrl(const DUrl &url)
 {
     Q_D(DAbstractFileInfo);
 
-    if (d->url == url)
+    if (d && d->url == url)
         return;
 
     d_ptr = getPrivateByUrl(url);
@@ -863,6 +857,11 @@ QString DAbstractFileInfo::completeSuffix() const
     return QString();
 }
 
+DAbstractFileInfo::DAbstractFileInfo()
+{
+
+}
+
 QMap<MenuAction, QVector<MenuAction> > DAbstractFileInfo::subMenuActionList() const
 {
     QMap<MenuAction, QVector<MenuAction> > actions;
@@ -960,20 +959,15 @@ void DAbstractFileInfo::setProxy(const DAbstractFileInfoPointer &proxy)
     d->proxy = proxy;
 }
 
-DAbstractFileInfoPrivate *DAbstractFileInfo::getPrivateByUrl(const DUrl &url)
-{
-    return getPrivateByUrl(url, [this](const DUrl &url) {return createPrivateByUrl(url);});
-}
-
-DAbstractFileInfoPrivate *DAbstractFileInfo::getPrivateByUrl(const DUrl &url, createPrivateFun fun)
+DAbstractFileInfoPrivate *DAbstractFileInfo::getPrivateByUrl(const DUrl &url) const
 {
     if (url.isEmpty())
-        return fun(url);
+        createPrivateByUrl(url);
 
     DAbstractFileInfoPrivate *d = DAbstractFileInfoPrivate::urlToFileInfoMap.value(url);
 
     if (d)
         return d;
 
-    return fun(url);
+    return createPrivateByUrl(url);
 }

@@ -4,6 +4,7 @@
 #include "dabstractfileinfo.h"
 
 class DFMEvent;
+class TrashFileInfoPrivate;
 class TrashFileInfo : public DAbstractFileInfo
 {
 public:
@@ -47,13 +48,9 @@ public:
     QString sourceFilePath() const;
 
 private:
-    QString desktopIconName;
-    QString m_displayName;
-    QString originalFilePath;
-    QString displayDeletionDate;
-    QDateTime m_deletionDate;
+    DAbstractFileInfoPrivate *createPrivateByUrl(const DUrl &url) const Q_DECL_OVERRIDE;
 
-    void updateInfo();
+    Q_DECLARE_PRIVATE(TrashFileInfo)
 };
 
 #endif // TRASHFILEINFO_H

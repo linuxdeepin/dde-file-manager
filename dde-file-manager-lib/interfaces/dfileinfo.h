@@ -7,7 +7,6 @@ class DFileInfoPrivate;
 class DFileInfo : public DAbstractFileInfo
 {
 public:
-    explicit DFileInfo();
     explicit DFileInfo(const QString& filePath);
     explicit DFileInfo(const DUrl& fileUrl);
     explicit DFileInfo(const QFileInfo &fileInfo);
@@ -67,10 +66,8 @@ public:
 protected:
     Q_DECLARE_PRIVATE(DFileInfo)
 
+    explicit DFileInfo();
     DAbstractFileInfoPrivate *createPrivateByUrl(const DUrl &url) const Q_DECL_OVERRIDE;
-
-private:
-    static DAbstractFileInfoPrivate *createPrivate(const DUrl &url);
 };
 
 #endif // FILEINFO_H

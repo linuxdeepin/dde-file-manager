@@ -19,8 +19,51 @@ SORT_FUN_DEFINE(deletionDate, DeletionDate, TrashFileInfo)
 SORT_FUN_DEFINE(sourceFilePath, SourceFilePath, TrashFileInfo)
 }
 
+class TrashFileInfoPrivate : public DAbstractFileInfoPrivate
+{
+public:
+    TrashFileInfoPrivate(const DUrl &url)
+        : DAbstractFileInfoPrivate(url) {}
+
+    QString desktopIconName;
+    QString displayName;
+    QString originalFilePath;
+    QString displayDeletionDate;
+    QDateTime deletionDate;
+
+    void updateInfo();
+};
+
+void TrashFileInfoPrivate::updateInfo()
+{
+    const QString &filePath = proxy->absoluteFilePath();
+    const QString &basePath = DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath);
+    const QString &fileBaseName = QDir::separator() + proxy->fileName();
+
+    if (QFile::exists(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashInfosPath) + fileBaseName + ".trashinfo")) {
+        QSettings setting(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashInfosPath) + fileBaseName + ".trashinfo", QSettings::NativeFormat);
+
+        setting.beginGroup("Trash Info");
+        setting.setIniCodec("utf-8");
+
+        originalFilePath = QByteArray::fromPercentEncoding(setting.value("Path").toByteArray()) + filePath.mid(basePath.size() + fileBaseName.size());
+
+        displayName = originalFilePath.mid(originalFilePath.lastIndexOf('/') + 1);
+
+        deletionDate = QDateTime::fromString(setting.value("DeletionDate").toString(), Qt::ISODate);
+        displayDeletionDate = deletionDate.toString(DAbstractFileInfo::dateTimeFormat());
+
+        if (displayDeletionDate.isEmpty())
+            displayDeletionDate = setting.value("DeletionDate").toString();
+    } else {
+        if (systemPathManager->isSystemPath(filePath))
+            displayName = systemPathManager->getSystemPathDisplayNameByPath(filePath);
+        else
+            displayName = proxy->fileName();
+    }
+}
+
 TrashFileInfo::TrashFileInfo(const DUrl &url)
-    : DAbstractFileInfo(url)
 {
     TrashFileInfo::setUrl(url);
 }
@@ -47,16 +90,19 @@ bool TrashFileInfo::isCanShare() const
 
 QString TrashFileInfo::fileDisplayName() const
 {
-    return m_displayName;
+    Q_D(const TrashFileInfo);
+
+    return d->displayName;
 }
 
 void TrashFileInfo::setUrl(const DUrl &fileUrl)
 {
     DAbstractFileInfo::setUrl(fileUrl);
 
-    setProxy(DAbstractFileInfoPointer(new DFileInfo(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath) + fileUrl.path())));
+    Q_D(TrashFileInfo);
 
-    updateInfo();
+    setProxy(DAbstractFileInfoPointer(new DFileInfo(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath) + fileUrl.path())));
+    d->updateInfo();
 }
 
 QFileDevice::Permissions TrashFileInfo::permissions() const
@@ -134,11 +180,13 @@ QList<int> TrashFileInfo::userColumnRoles() const
 
 QVariant TrashFileInfo::userColumnData(int userColumnRole) const
 {
+    Q_D(const TrashFileInfo);
+
     if (userColumnRole == DFileSystemModel::FileUserRole + 1)
-        return displayDeletionDate;
+        return d->displayDeletionDate;
 
     if (userColumnRole == DFileSystemModel::FileUserRole + 2)
-        return originalFilePath;
+        return d->originalFilePath;
 
     return DAbstractFileInfo::userColumnData(userColumnRole);
 }
@@ -231,13 +279,15 @@ DAbstractFileInfo::sortFunction TrashFileInfo::sortFunByColumn(int columnRole) c
 
 bool TrashFileInfo::restore(const DFMEvent &event) const
 {
-    if(originalFilePath.isEmpty()) {
+    Q_D(const TrashFileInfo);
+
+    if (d->originalFilePath.isEmpty()) {
         qDebug() << "OriginalFile path ie empty.";
 
         return false;
     }
 
-    QDir dir(originalFilePath.left(originalFilePath.lastIndexOf('/')));
+    QDir dir(d->originalFilePath.left(d->originalFilePath.lastIndexOf('/')));
 
     if(dir.isAbsolute() && !dir.mkpath(dir.absolutePath())) {
         qDebug() << "mk" << dir.absolutePath() << "failed!";
@@ -246,7 +296,7 @@ bool TrashFileInfo::restore(const DFMEvent &event) const
     }
 
     DUrl srcUrl = DUrl::fromLocalFile(absoluteFilePath());
-    DUrl tarUrl = DUrl::fromLocalFile(originalFilePath);
+    DUrl tarUrl = DUrl::fromLocalFile(d->originalFilePath);
     fileService->restoreFile(srcUrl, tarUrl, event);
 
     return true;
@@ -254,39 +304,19 @@ bool TrashFileInfo::restore(const DFMEvent &event) const
 
 QDateTime TrashFileInfo::deletionDate() const
 {
-    return m_deletionDate;
+    Q_D(const TrashFileInfo);
+
+    return d->deletionDate;
 }
 
 QString TrashFileInfo::sourceFilePath() const
 {
-    return originalFilePath;
+    Q_D(const TrashFileInfo);
+
+    return d->originalFilePath;
 }
 
-void TrashFileInfo::updateInfo()
+DAbstractFileInfoPrivate *TrashFileInfo::createPrivateByUrl(const DUrl &url) const
 {
-    const QString &filePath = absoluteFilePath();
-    const QString &basePath = DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath);
-    const QString &fileBaseName = QDir::separator() + fileName();
-
-    if (QFile::exists(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashInfosPath) + fileBaseName + ".trashinfo")) {
-        QSettings setting(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashInfosPath) + fileBaseName + ".trashinfo", QSettings::NativeFormat);
-
-        setting.beginGroup("Trash Info");
-        setting.setIniCodec("utf-8");
-
-        originalFilePath = QByteArray::fromPercentEncoding(setting.value("Path").toByteArray()) + filePath.mid(basePath.size() + fileBaseName.size());
-
-        m_displayName = originalFilePath.mid(originalFilePath.lastIndexOf('/') + 1);
-
-        m_deletionDate = QDateTime::fromString(setting.value("DeletionDate").toString(), Qt::ISODate);
-        displayDeletionDate = m_deletionDate.toString(dateTimeFormat());
-
-        if (displayDeletionDate.isEmpty())
-            displayDeletionDate = setting.value("DeletionDate").toString();
-    } else {
-        if (systemPathManager->isSystemPath(filePath))
-            m_displayName = systemPathManager->getSystemPathDisplayNameByPath(filePath);
-        else
-            m_displayName = fileName();
-    }
+    return new TrashFileInfoPrivate(url);
 }

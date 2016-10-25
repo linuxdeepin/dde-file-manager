@@ -60,7 +60,6 @@ typedef std::function<const DAbstractFileInfoPointer(int)> getFileInfoFun;
 typedef DFMGlobal::MenuAction MenuAction;
 class DAbstractFileInfoPrivateBase : public QSharedData {public: virtual ~DAbstractFileInfoPrivateBase() {}};
 class DAbstractFileInfoPrivate;
-typedef std::function<DAbstractFileInfoPrivate*(const DUrl &)> createPrivateFun;
 class DAbstractFileInfo
 {
 public:
@@ -76,7 +75,7 @@ public:
     }
 
     explicit DAbstractFileInfo(const DUrl &url);
-    explicit DAbstractFileInfo(const DUrl &url, createPrivateFun fun);
+
     virtual ~DAbstractFileInfo();
 
     virtual void setUrl(const DUrl &url);
@@ -201,13 +200,15 @@ protected:
     QExplicitlySharedDataPointer<DAbstractFileInfoPrivateBase> d_ptr;
     Q_DECLARE_PRIVATE(DAbstractFileInfo)
 
+    Q_DECL_DEPRECATED_X("Wraning: The DAbstractFileInfo::DAbstractFileInfo() is not deprecated. \
+                         But d_ptr is not initialize if use the constructor")
+    explicit DAbstractFileInfo();
+
     virtual DAbstractFileInfoPrivate *createPrivateByUrl(const DUrl &url) const;
     void setProxy(const DAbstractFileInfoPointer &proxy);
+    DAbstractFileInfoPrivate *getPrivateByUrl(const DUrl &url) const;
 
 private:
-    DAbstractFileInfoPrivate *getPrivateByUrl(const DUrl &url);
-    DAbstractFileInfoPrivate *getPrivateByUrl(const DUrl &url, createPrivateFun fun);
-
     Q_DISABLE_COPY(DAbstractFileInfo)
 };
 

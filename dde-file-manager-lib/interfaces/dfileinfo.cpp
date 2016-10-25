@@ -20,31 +20,24 @@
 DFileInfoPrivate::DFileInfoPrivate(const DUrl &url)
     : DAbstractFileInfoPrivate (url)
 {
-
-}
-
-DFileInfo::DFileInfo()
-    : DAbstractFileInfo(DUrl(), &DFileInfo::createPrivate)
-{
-
+    fileInfo.setFile(url.toLocalFile());
 }
 
 DFileInfo::DFileInfo(const QString &filePath)
-    : DAbstractFileInfo(DUrl::fromLocalFile(filePath), &DFileInfo::createPrivate)
+    : DFileInfo(DUrl::fromLocalFile(filePath))
 {
-    d_func()->fileInfo.setFile(filePath);
+
 }
 
 DFileInfo::DFileInfo(const DUrl &fileUrl)
-    : DAbstractFileInfo(fileUrl, &DFileInfo::createPrivate)
 {
-    d_func()->fileInfo.setFile(fileUrl.toLocalFile());
+    d_ptr = getPrivateByUrl(fileUrl);
 }
 
 DFileInfo::DFileInfo(const QFileInfo &fileInfo)
-    : DAbstractFileInfo(DUrl::fromLocalFile(fileInfo.absoluteFilePath()), &DFileInfo::createPrivate)
+    : DFileInfo(DUrl::fromLocalFile(fileInfo.absoluteFilePath()))
 {
-    d_func()->fileInfo = fileInfo;
+
 }
 
 bool DFileInfo::exists(const DUrl &fileUrl)
@@ -317,12 +310,12 @@ QString DFileInfo::fileDisplayName() const
     }
 }
 
-DAbstractFileInfoPrivate *DFileInfo::createPrivateByUrl(const DUrl &url) const
+DFileInfo::DFileInfo()
 {
-    return createPrivate(url);
+
 }
 
-DAbstractFileInfoPrivate *DFileInfo::createPrivate(const DUrl &url)
+DAbstractFileInfoPrivate *DFileInfo::createPrivateByUrl(const DUrl &url) const
 {
     return new DFileInfoPrivate(url);
 }
