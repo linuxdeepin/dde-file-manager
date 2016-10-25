@@ -44,13 +44,11 @@ void DSearchBar::initUI()
     m_dirModel = new QDirModel;
     m_dirModel->setFilter(QDir::Dirs);
 
-    QIcon icon(":/icons/images/icons/input_normalclear_normal.png");
+    QIcon icon;
+    icon.addFile(":/icons/images/icons/input_clear_normal.svg", QSize(), QIcon::Normal);
+    icon.addFile(":/icons/images/icons/input_clear_press.svg", QSize(), QIcon::Selected);
+    icon.addFile(":/icons/images/icons/input_clear_hover.svg", QSize(), QIcon::Active);
     m_clearAction = new QAction(icon, "", this);
-
-    m_inputClearButton = new QPushButton(this);
-    m_inputClearButton->setFixedSize(14, 14);
-    m_inputClearButton->setObjectName("InputClearButton");
-    m_inputClearButton->hide();
 
     setFixedHeight(24);
     setObjectName("DSearchBar");
@@ -468,7 +466,6 @@ bool DSearchBar::eventFilter(QObject *obj, QEvent *e)
 
 void DSearchBar::resizeEvent(QResizeEvent *e)
 {
-    m_inputClearButton->move(width() - 16, (height() - 16)/ 2);
     m_list->hide();
     QLineEdit::resizeEvent(e);
 }
