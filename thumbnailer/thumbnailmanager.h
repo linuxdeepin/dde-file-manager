@@ -9,6 +9,8 @@
 #include <QCache>
 #include <QUrl>
 #include <QTimer>
+#include <QWaitCondition>
+#include <QReadWriteLock>
 
 QT_BEGIN_NAMESPACE
 class QFileSystemWatcher;
@@ -23,6 +25,10 @@ struct ThumbnailTask{
         this->size = size;
         this->quality = quality;
     }
+
+    bool operator ==(const ThumbnailTask &other) {
+        return other.fileUrl == fileUrl && other.size == size && other.quality == quality;
+    }
 };
 
 class ThumbnailManager : public QThread
@@ -31,7 +37,6 @@ class ThumbnailManager : public QThread
 public:
     explicit ThumbnailManager(QObject *parent = 0);
     void init();
-    void initConnections();
 
     QString getThumbnailCachePath() const;
     QString getThumbnailPath(const QString& name, ThumbnailGenerator::ThumbnailSize size) const;
@@ -42,13 +47,12 @@ public:
     QPixmap getDefaultPixmap(const QUrl& fileUrl);
     bool canGenerateThumbnail(const QUrl& fileUrl);
 
+    void abortGetThumbnailPixmap(const QUrl &fileUrl, ThumbnailGenerator::ThumbnailSize size, const int& quality);
+
     QString toMd5(const QString data);
 
 signals:
     void pixmapChanged(const QString &filePath, const QPixmap &pixmap);
-public slots:
-    void onFileChanged(const QString &path);
-    void runTask();
 
 protected:
     void run () Q_DECL_OVERRIDE;
@@ -59,16 +63,16 @@ private:
     QString m_thumbnailLargePath;
     QString m_thumbnailFailPath;
     QString m_thumbnailPath;
-    QTimer *m_taskTimer;
     int m_maxTaskCacheNum;
 
     QQueue<ThumbnailTask> taskQueue;
     QQueue<ThumbnailTask> taskCache;
-    QMap<QString, QString> m_pathToMd5;
-    QMap<QString, QPixmap> m_md5ToPixmap;
+    QMap<QUrl, QPixmap> m_urlToPixmap;
 
-    QFileSystemWatcher *m_watcher = Q_NULLPTR;
     ThumbnailGenerator m_thumbnailGenerator;
+
+    QWaitCondition waitCondition;
+    QReadWriteLock readWriteLockTaskQueue;
 };
 
 #endif // THUMBNAILMANAGER_H

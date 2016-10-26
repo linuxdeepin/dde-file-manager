@@ -11,14 +11,16 @@
 #include <QUrl>
 #include <QFileInfo>
 #include <QFile>
+#include <QElapsedTimer>
+
 #include "QPainter"
 
 ThumbnailManager::ThumbnailManager(QObject *parent)
     : QThread(parent)
-    , m_watcher(new QFileSystemWatcher(this))
 {
     init();
-    initConnections();
+
+    start();
 }
 
 void ThumbnailManager::init()
@@ -46,16 +48,7 @@ void ThumbnailManager::init()
     m_thumbnailLargePath = large.path();
     m_thumbnailFailPath = fail.path();
 
-    m_taskTimer = new QTimer();
-    m_taskTimer->setInterval(500);
-    m_taskTimer->setSingleShot(true);
     m_maxTaskCacheNum = 104;
-}
-
-void ThumbnailManager::initConnections()
-{
-    connect(m_watcher, &QFileSystemWatcher::fileChanged, this, &ThumbnailManager::onFileChanged);
-    connect(m_taskTimer, &QTimer::timeout, this, &ThumbnailManager::runTask);
 }
 
 QString ThumbnailManager::getThumbnailCachePath() const
@@ -108,65 +101,66 @@ QPixmap ThumbnailManager::getThumbnailPixmap(const QUrl& fileUrl, ThumbnailGener
         }
     }
 
+    const QPixmap &pixmap = m_urlToPixmap.value(fileUrl);
 
     // check last modify time
-    if(m_md5ToPixmap.contains(m_pathToMd5.value(fileUrl.toString()))&&fileUrl.isLocalFile()){
-
+    if (!pixmap.isNull() && fileUrl.isLocalFile()) {
         // first of all , check fail thumbnail path
         QString md5 = toMd5(fileUrl.toString());
-        QString thumbnailFailPath = QString("%1").arg(getThumbnailFailPath(md5));
+        QString thumbnailFailPath = getThumbnailFailPath(md5);
         QFileInfo failedFInfo(thumbnailFailPath);
-        if(failedFInfo.exists()){
+
+        if (failedFInfo.exists()) {
             QImage failedImg(thumbnailFailPath);
-            if(failedImg.text("Thumb::MTime")!=QString::number(failedFInfo.lastModified().toMSecsSinceEpoch()/1000)||
-                    failedImg.text("Thumb::Size")!= QString::number(QFile(thumbnailFailPath).size())){
-                m_md5ToPixmap.take(m_pathToMd5.value(fileUrl.toString()));
-                m_pathToMd5.take(fileUrl.toString());
+
+            if (failedImg.text("Thumb::MTime")!=QString::number(failedFInfo.lastModified().toMSecsSinceEpoch()/1000)
+                    || failedImg.text("Thumb::Size")!= QString::number(QFile(thumbnailFailPath).size())) {
+                m_urlToPixmap.take(fileUrl);
                 QFile::remove(thumbnailFailPath);
+
                 return QPixmap();
-            }
-            else
+            } else {
                 return getDefaultPixmap(fileUrl);
+            }
         }
 
         // check thumbnail path(normal or large)
-        QString thumbnailPath = QString("%1").arg(getThumbnailPath(m_pathToMd5.value(fileUrl.toString()), size));
+        QString thumbnailPath = getThumbnailPath(md5, size);
         QImage reader(thumbnailPath);
         QString dateStr = reader.text("Thumb::MTime");
         QFileInfo info(fpath);
-        if(dateStr != QString::number(info.lastModified().toMSecsSinceEpoch()/1000)){
-            m_md5ToPixmap.take(m_pathToMd5.value(fileUrl.toString()));
-            m_pathToMd5.take(fileUrl.toString());
-            QFile::remove(thumbnailPath);
-            return QPixmap();
-        }
 
-        return m_md5ToPixmap.value(m_pathToMd5.value(fileUrl.toString()));
+        if (dateStr != QString::number(info.lastModified().toMSecsSinceEpoch()/1000)) {
+            m_urlToPixmap.take(fileUrl);
+            QFile::remove(thumbnailPath);
+        }
     }
 
-    return QPixmap();
+    return pixmap;
 }
 
 void ThumbnailManager::requestThumbnailPixmap(const QUrl& fileUrl, ThumbnailGenerator::ThumbnailSize size, const int& quality)
 {
-    ThumbnailTask task(fileUrl,size, quality);
-
-    if (m_pathToMd5.contains(fileUrl.toString()) &&
-            QFile::exists(getThumbnailPath(m_pathToMd5.value(fileUrl.toString()),size)))
+    if (m_urlToPixmap.contains(fileUrl) && QFile::exists(getThumbnailPath(toMd5(fileUrl.toString()), size)))
         return;
+
+    ThumbnailTask task(fileUrl, size, quality);
 
 //    taskCache.insert(0,task);
 //    if(taskCache.count()>200)
 //        taskCache.removeLast();
+    QWriteLocker locker(&readWriteLockTaskQueue);
     taskQueue << task;
+    locker.unlock();
+    waitCondition.wakeAll();
 //    if(taskQueue.count() > 104)
 //        taskQueue.removeFirst();
-    m_taskTimer->start();
-
 }
 
 QPixmap ThumbnailManager::getDefaultPixmap(const QUrl &fileUrl)
 {
+    Q_UNUSED(fileUrl)
+
     //TODO
     return QPixmap();
 }
@@ -174,6 +168,13 @@ QPixmap ThumbnailManager::getDefaultPixmap(const QUrl &fileUrl)
 bool ThumbnailManager::canGenerateThumbnail(const QUrl& fileUrl)
 {
     return m_thumbnailGenerator.canGenerateThumbnail(fileUrl);
+}
+
+void ThumbnailManager::abortGetThumbnailPixmap(const QUrl &fileUrl, ThumbnailGenerator::ThumbnailSize size, const int &quality)
+{
+    QWriteLocker locker(&readWriteLockTaskQueue);
+    Q_UNUSED(locker)
+    taskQueue.removeOne(ThumbnailTask(fileUrl, size, quality));
 }
 
 QString ThumbnailManager::toMd5(const QString data)
@@ -184,42 +185,19 @@ QString ThumbnailManager::toMd5(const QString data)
     return md5;
 }
 
-void ThumbnailManager::onFileChanged(const QString &path)
-{
-    const QString &md5 = m_pathToMd5.take(path);
-
-    if (!md5.isEmpty())
-        emit pixmapChanged(path, QPixmap());
-}
-
-void ThumbnailManager::runTask()
-{
-    int oldCount = taskQueue.count() - m_maxTaskCacheNum;
-    while(oldCount > 0){
-        taskQueue.removeFirst();
-        oldCount --;
-    }
-    if (!isRunning())
-        start();
-
-}
-
 void ThumbnailManager::run()
 {
-    while (!taskQueue.isEmpty()) {
+    forever {
+        QWriteLocker locker(&readWriteLockTaskQueue);
+        if (taskQueue.isEmpty()) {
+            waitCondition.wait(&readWriteLockTaskQueue);
+        }
 //        const QString &fileUrl = taskQueue.dequeue();
-        const ThumbnailTask task = taskQueue.dequeue();
+        const ThumbnailTask &task = taskQueue.dequeue();
+        locker.unlock();
 
         QString fpath = task.fileUrl.path();
-
-        if(task.fileUrl.isLocalFile())
-            m_watcher->addPath(fpath);
-
-        const QString &md5 = toMd5(task.fileUrl.toString());
-
-        m_pathToMd5[task.fileUrl.toString()] = md5;
-
-        QPixmap pixmap = m_md5ToPixmap.value(md5);
+        QPixmap pixmap = m_urlToPixmap.value(task.fileUrl);
 
         if (!pixmap.isNull()) {
             emit pixmapChanged(fpath, pixmap);
@@ -227,12 +205,13 @@ void ThumbnailManager::run()
             continue;
         };
 
+        const QString &md5 = toMd5(task.fileUrl.toString());
         QString thumbnailPath = QString("%1").arg(getThumbnailPath(md5, task.size));
 
         if (QFile(thumbnailPath).exists()) {
             pixmap = QPixmap(thumbnailPath);
 
-            m_md5ToPixmap[md5] = pixmap;
+            m_urlToPixmap[task.fileUrl] = pixmap;
         }
         else if(m_thumbnailGenerator.canGenerateThumbnail(task.fileUrl)){
             const QPixmap &thumbNailedpixmap = m_thumbnailGenerator.generateThumbnail(task.fileUrl, task.size);
@@ -247,12 +226,12 @@ void ThumbnailManager::run()
                 foreach (QString key, keys) {
                     img.setText(key,attributeSet.value(key));
                 }
-                m_md5ToPixmap[md5] = QPixmap();
+                m_urlToPixmap[task.fileUrl] = QPixmap();
 
                 img.save(thumbnailFailedPath,"png");
 
                 //do not emit pixmap changed, otherwise it will turn to a death loops
-                break;
+                continue;
             }
             QImage img  = thumbNailedpixmap.toImage();
 
@@ -266,8 +245,9 @@ void ThumbnailManager::run()
 
             img.save(thumbnailPath,"png",task.quality);
             pixmap = QPixmap(thumbnailPath);
-            m_md5ToPixmap[md5] = pixmap;
+            m_urlToPixmap[task.fileUrl] = pixmap;
         }
+
         emit pixmapChanged(fpath, pixmap);
     }
 }

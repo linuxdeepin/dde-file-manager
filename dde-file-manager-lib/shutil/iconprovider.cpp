@@ -352,51 +352,14 @@ void IconProvider::setDesktopIconPaths(const QMap<QString, QString> &iconPaths)
     m_desktopIconPaths = iconPaths;
 }
 
-QIcon IconProvider:: findIcon(const DUrl& fileUrl, const QString &mimeType)
+QIcon IconProvider::getIconByMimeType(const QUrl &url, const QMimeType &mimeType)
 {
-//    qDebug() << absoluteFilePath << m_mimeDatabase->mimeTypeForFile(absoluteFilePath).iconName() << FileUtils::getFileMimetype(absoluteFilePath) << getMimeTypeByFile(absoluteFilePath) << mimeType << getFileIcon(absoluteFilePath, 256);
-    QPixmap pixmap;
-    QString _mimeType = mimeType;
-    QString absoluteFilePath = fileUrl.path();
-    if (thumbnailManager->canGenerateThumbnail(static_cast<QUrl>(fileUrl))) {
-        pixmap = thumbnailManager->getThumbnailPixmap(static_cast<QUrl>(fileUrl),ThumbnailGenerator::THUMBNAIL_LARGE);
+    const QString &mimeTypeName = mimeType.name();
+    const QString filePath = url.toLocalFile();
+    QString _mimeType = mimeTypeName;
 
-        if (pixmap.isNull())
-            thumbnailManager->requestThumbnailPixmap(static_cast<QUrl>(fileUrl),ThumbnailGenerator::THUMBNAIL_LARGE,100);
-        else{
-            if(m_icons.contains(pixmap.cacheKey())){
-                QIcon *ico = m_icons[pixmap.cacheKey()];
-                if(ico)
-                    return *ico;
-            }
-
-            QImage img(pixmap.width() + ICON_BORDER*2, pixmap.height() + ICON_BORDER*2,
-                       QImage::Format_ARGB32_Premultiplied);
-            img.fill(Qt::white);
-            QPainter pa(&img);
-            QPen pen;
-            pen.setWidth(1);
-            pen.setColor(QColor(0,0,0,0.35*255));
-            pa.setPen(pen);
-            pa.setRenderHint(pa.Antialiasing);
-            QVector<QLine> lines;
-            lines << QLine(QPoint(0,0),QPoint(img.width(),0))
-                  << QLine(QPoint(img.width(),1),QPoint(img.width(),img.height()))
-                  << QLine(QPoint(0,img.height()),QPoint(img.width()-1,img.height()))
-                  << QLine(QPoint(0,1),QPoint(0,img.height() -1));
-            pa.drawLines(lines);
-
-            pa.drawPixmap(ICON_BORDER, ICON_BORDER, pixmap);
-
-            QIcon *icon = new QIcon(QPixmap::fromImage(img));
-            m_icons.insert(pixmap.cacheKey(), icon);
-
-            return *icon;
-        }
-    } else if (mimeType == "application/x-desktop") {
-        return IconProvider::getDesktopIcon(DesktopFile(absoluteFilePath).getIcon(), 48);
-    } else if (systemPathManager->isSystemPath(absoluteFilePath)) {
-        _mimeType = systemPathManager->getSystemPathIconNameByPath(absoluteFilePath);
+    if (systemPathManager->isSystemPath(filePath)) {
+        _mimeType = systemPathManager->getSystemPathIconNameByPath(filePath);
     }
 
     // If type of file is directory, return icon of directory
@@ -405,7 +368,7 @@ QIcon IconProvider:: findIcon(const DUrl& fileUrl, const QString &mimeType)
     if (!theIcon.isNull())
         return theIcon;
 
-    QString iconName = m_mimeDatabase->mimeTypeForFile(absoluteFilePath).iconName();
+    QString iconName = mimeType.iconName();
 
     /*todo add whitelists for especial mimetype*/
     if (iconName == "application-wps-office.docx"){
@@ -414,25 +377,24 @@ QIcon IconProvider:: findIcon(const DUrl& fileUrl, const QString &mimeType)
         iconName = "application-x-deb";
     }else if (iconName == "application-vnd.ms-htmlhelp"){
         iconName = "chmsee";
-    }else if (systemPathManager->isSystemPath(absoluteFilePath)) {
+    }else if (systemPathManager->isSystemPath(filePath)) {
         iconName = _mimeType;
     }
 
     QString path = getThemeIconPath(iconName, 256);
 
     if (path.isEmpty()){
-        path = getFileIcon(absoluteFilePath, 256);
+        path = getFileIcon(filePath, 256);
     }
 
     if (path.isEmpty()) {
-        path = getThemeIconPath(mimeTypeDisplayManager->defaultIcon(mimeType), 256);
+        path = getThemeIconPath(mimeTypeDisplayManager->defaultIcon(mimeTypeName), 256);
     }
 
     if (!path.isEmpty()){
         theIcon = QIcon(path);
     }else{
         theIcon = QIcon::fromTheme(iconName);
-        qDebug() << iconName<< path;
 
         if (theIcon.isNull()){
             theIcon = QIcon(getThemeIconPath("application-default-icon"));
@@ -442,6 +404,63 @@ QIcon IconProvider:: findIcon(const DUrl& fileUrl, const QString &mimeType)
     m_mimeIcons.insert(_mimeType, theIcon);
 
     return theIcon;
+}
+
+QIcon IconProvider::getThumbnail(const DUrl &url)
+{
+    const QPixmap &pixmap = thumbnailManager->getThumbnailPixmap(url, ThumbnailGenerator::THUMBNAIL_LARGE);
+
+    if (pixmap.isNull()) {
+        return QIcon();
+    }
+
+    QIcon *ico = m_icons.object(pixmap.cacheKey());
+
+    if (ico)
+        return *ico;
+
+    QImage img(pixmap.width() + ICON_BORDER*2, pixmap.height() + ICON_BORDER*2,
+               QImage::Format_ARGB32_Premultiplied);
+    img.fill(Qt::white);
+    QPainter pa(&img);
+    QPen pen;
+    pen.setWidth(1);
+    pen.setColor(QColor(0,0,0,0.35*255));
+    pa.setPen(pen);
+    pa.setRenderHint(pa.Antialiasing);
+    QVector<QLine> lines;
+    lines << QLine(QPoint(0,0),QPoint(img.width(),0))
+          << QLine(QPoint(img.width(),1),QPoint(img.width(),img.height()))
+          << QLine(QPoint(0,img.height()),QPoint(img.width()-1,img.height()))
+          << QLine(QPoint(0,1),QPoint(0,img.height() -1));
+    pa.drawLines(lines);
+
+    pa.drawPixmap(ICON_BORDER, ICON_BORDER, pixmap);
+
+    QIcon *icon = new QIcon(QPixmap::fromImage(img));
+    m_icons.insert(pixmap.cacheKey(), icon);
+
+    return *icon;
+}
+
+void IconProvider::requestThumbnail(const DUrl &url)
+{
+    thumbnailManager->requestThumbnailPixmap(url, ThumbnailGenerator::THUMBNAIL_LARGE,100);
+}
+
+void IconProvider::abortRequestThumbnail(const DUrl &url)
+{
+    thumbnailManager->abortGetThumbnailPixmap(url, ThumbnailGenerator::THUMBNAIL_LARGE, 100);
+}
+
+QIcon IconProvider::getFileIcon(const DUrl& fileUrl, const QMimeType &mimeType)
+{
+//    qDebug() << absoluteFilePath << m_mimeDatabase->mimeTypeForFile(absoluteFilePath).iconName() << FileUtils::getFileMimetype(absoluteFilePath) << getMimeTypeByFile(absoluteFilePath) << mimeType << getFileIcon(absoluteFilePath, 256);
+    if (thumbnailManager->canGenerateThumbnail(fileUrl)) {
+        return getThumbnail(fileUrl);
+    }
+
+    return getIconByMimeType(fileUrl, mimeType);
 }
 
 

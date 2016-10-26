@@ -31,6 +31,7 @@
     QTimer *timer = new QTimer;\
     timer->setSingleShot(true);\
     timer->setInterval(Time);\
+    timer->moveToThread(qApp->thread());\
     QObject::connect(timer, &QTimer::timeout, [timer, captured] {\
         timer->deleteLater();\
         Code;\

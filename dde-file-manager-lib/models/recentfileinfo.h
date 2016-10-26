@@ -17,8 +17,6 @@ public:
 
     bool isDir() const Q_DECL_OVERRIDE;
 
-    QIcon fileIcon() const Q_DECL_OVERRIDE;
-
     QVector<MenuAction> menuActionList(MenuType type) const Q_DECL_OVERRIDE;
 
     DUrl parentUrl() const Q_DECL_OVERRIDE;

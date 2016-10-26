@@ -47,11 +47,6 @@ bool RecentFileInfo::isDir() const
     return true;
 }
 
-QIcon RecentFileInfo::fileIcon() const
-{
-    return fileIconProvider->getFileIcon(fileUrl(), mimeTypeName());
-}
-
 QVector<MenuAction> RecentFileInfo::menuActionList(DAbstractFileInfo::MenuType type) const
 {
     QVector<MenuAction> actionKeys;
