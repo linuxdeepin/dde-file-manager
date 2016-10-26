@@ -8,6 +8,7 @@
 #include "historystack.h"
 #include "dhoverbutton.h"
 #include "windowmanager.h"
+#include "dfileservices.h"
 
 #include "dfmevent.h"
 #include "app/define.h"
@@ -237,19 +238,19 @@ void DToolBar::searchBarTextEntered()
         m_searchBar->clearText();
         return;
     }
+
+    DUrl inputUrl = DUrl::fromUserInput(text, false);
+
+    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(inputUrl);
+
+    if (!fileInfo || !fileInfo->exists())
+        return;
+
     DFMEvent event;
 
     event << WindowManager::getWindowId(this);
     event << DFMEvent::SearchBar;
-
-    DUrl inputUrl = DUrl::fromUserInput(text, false);
-
     event << inputUrl;
-    if(inputUrl.isLocalFile()){
-        if(!QDir(inputUrl.path()).exists())
-            return;
-    }
-    qDebug() << event << inputUrl << text;
 
     if (!m_searchBar->hasScheme()) {
         DUrl url = m_crumbWidget->getCurrentUrl();
@@ -261,6 +262,7 @@ void DToolBar::searchBarTextEntered()
 
         event << url;
     }
+
     emit fileSignalManager->requestChangeCurrentUrl(event);
 }
 

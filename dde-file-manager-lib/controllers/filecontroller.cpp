@@ -73,7 +73,7 @@ const DAbstractFileInfoPointer FileController::createFileInfo(const DUrl &fileUr
 {
     accepted = true;
 
-    if (fileUrl.path().endsWith(QString(".") + DESKTOP_SURRIX))
+    if (fileUrl.toLocalFile().endsWith(QString(".") + DESKTOP_SURRIX))
         return DAbstractFileInfoPointer(new DesktopFileInfo(fileUrl));
     else
         return DAbstractFileInfoPointer(new DFileInfo(fileUrl));
@@ -85,7 +85,7 @@ const DDirIteratorPointer FileController::createDirIterator(const DUrl &fileUrl,
 {
     accepted = true;
 
-    return DDirIteratorPointer(new FileDirIterator(fileUrl.path(), nameFilters, filters, flags));
+    return DDirIteratorPointer(new FileDirIterator(fileUrl.toLocalFile(), nameFilters, filters, flags));
 }
 
 bool FileController::openFile(const DUrl &fileUrl, bool &accepted) const
@@ -97,14 +97,14 @@ bool FileController::openFile(const DUrl &fileUrl, bool &accepted) const
     if (FileUtils::isExecutableScript(fileUrl.toLocalFile())) {
         int code = dialogManager->showRunExcutableDialog(fileUrl);
 
-        return FileUtils::openExcutableFile(fileUrl.path(), code);
+        return FileUtils::openExcutableFile(fileUrl.toLocalFile(), code);
     }else if (pfile->isSymLink() && !QFile(pfile->symLinkTarget()).exists()){
         QString targetName = pfile->symLinkTarget().split("/").last();
         dialogManager->showBreakSymlinkDialog(targetName, fileUrl);
         return false;
     }
 
-    return FileUtils::openFile(fileUrl.path());
+    return FileUtils::openFile(fileUrl.toLocalFile());
 }
 
 bool FileController::compressFiles(const DUrlList &urlList, bool &accepted) const

@@ -1445,10 +1445,6 @@ bool DFileView::setRootUrl(const DUrl &url)
 
     DUrl fileUrl = url;
 
-    if (fileUrl.path().isEmpty()) {
-        fileUrl.setPath("/");
-    }
-
     const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(fileUrl);
 
     if (!info){
@@ -1467,7 +1463,6 @@ bool DFileView::setRootUrl(const DUrl &url)
     qDebug() << "cd: current url:" << rootUrl() << "to url:" << fileUrl;
 
     const DUrl &rootUrl = this->rootUrl();
-
 
     if(rootUrl == fileUrl/* && !info->isShared()*/)
         return false;

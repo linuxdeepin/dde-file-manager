@@ -119,43 +119,42 @@ void DCrumbWidget::addCrumb(const QStringList &list)
     m_group.buttons().last()->setChecked(true);
 }
 
-void DCrumbWidget::setCrumb(const DUrl &path)
+void DCrumbWidget::setCrumb(const DUrl &url)
 {
-    qDebug() << path;
-    if(!path.isValid())
+    if(!url.isValid())
         return;
-    if(path.isSearchFile())
+    if(url.isSearchFile())
         return;
-    m_url = path;
+    m_url = url;
     m_needArrows = false;
     clear();
-    if(path.isRecentFile())
+    if(url.isRecentFile())
     {
         addRecentCrumb();
     }
-    else if(path.isComputerFile())
+    else if(url.isComputerFile())
     {
         addComputerCrumb();
     }
-    else if(path.isTrashFile())
+    else if(url.isTrashFile())
     {
-        if (path.path().isEmpty()){
+        if (url.path().isEmpty()){
             addTrashCrumb();
         }else{
             addTrashCrumb();
-            addLocalCrumbs(path);
+            addLocalCrumbs(url);
         }
-    }else if(path.isSMBFile()){
+    }else if(url.isSMBFile()){
         addNetworkCrumb();
-        addCrumb(QStringList() << path.toString());
-    }else if(path.isNetWorkFile()){
+        addCrumb(QStringList() << url.toString());
+    }else if(url.isNetWorkFile()){
         addNetworkCrumb();
-    }else if(path.isUserShareFile()){
+    }else if(url.isUserShareFile()){
         addUserShareCrumb();
     }
     else
     {
-        addLocalCrumbs(path);
+        addLocalCrumbs(url);
     }
     createCrumbs();
     repaint();
@@ -375,7 +374,7 @@ DCrumbButton *DCrumbWidget::createDeviceCrumbButtonByType(UDiskDeviceInfo::Media
 void DCrumbWidget::addLocalCrumbs(const DUrl & url)
 {
     QStringList list;
-    QString path = url.path();
+    const QString &path = url.toLocalFile();
     qDebug() << path << isInHome(path) << isInDevice(path);
     if(isInHome(path))
     {
@@ -396,7 +395,7 @@ void DCrumbWidget::addLocalCrumbs(const DUrl & url)
         if (info){
             QString mountPoint = info->getMountPointUrl().toLocalFile();
             qDebug() << mountPoint << info << info->getDiskInfo();
-            QString tmpPath = url.toLocalFile();
+            QString tmpPath = path;
             tmpPath.replace(mountPoint, "");
             list.append(tmpPath.split("/"));
             list.insert(0, mountPoint);
