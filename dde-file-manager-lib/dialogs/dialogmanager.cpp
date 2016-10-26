@@ -158,6 +158,7 @@ void DialogManager::addJob(FileJob *job)
     connect(job, &FileJob::requestJobDataUpdated, m_taskDialog, &DTaskDialog::handleUpdateTaskWidget);
     connect(job, &FileJob::requestAbortTask, m_taskDialog, &DTaskDialog::abortTask);
     connect(job, &FileJob::requestConflictDialogShowed, m_taskDialog, &DTaskDialog::showConflictDiloagByJob);
+    connect(job, &FileJob::requestCopyMoveToSelfDialogShowed, this, &DialogManager::showCopyMoveToSelfDialog);
 }
 
 
@@ -213,6 +214,24 @@ void DialogManager::abortJobByDestinationUrl(const DUrl &url)
         if (job->getTargetDir().startsWith(url.path())){
             job->jobAborted();
         }
+    }
+}
+
+void DialogManager::showCopyMoveToSelfDialog(const QMap<QString, QString> &jobDetail)
+{
+    DDialog d;
+    d.setTitle(tr("Operation failed!"));
+    d.setMessage(tr("Target folder is inside the source folder!"));
+    QStringList buttonTexts;
+    buttonTexts << tr("OK");
+    d.addButtons(buttonTexts);
+    d.setDefaultButton(0);
+    d.setIcon(QIcon(":/images/dialogs/images/dialog_warning_64.png"));
+    QTimer::singleShot(200, &d, &DDialog::raise);
+    int code = d.exec();
+    qDebug() << code;
+    if (code == 0){
+        qDebug() << "close CopyMoveToSelf dialog" << jobDetail;
     }
 }
 

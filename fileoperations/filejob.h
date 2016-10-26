@@ -79,6 +79,9 @@ signals:
     /*copy/move job conflict dialog show */
     void requestConflictDialogShowed(const QMap<QString, QString>& jobDetail);
 
+    /*copy/move job tip dialog show when src and target are same  */
+    void requestCopyMoveToSelfDialogShowed(const QMap<QString, QString>& jobDetail);
+
     void progressPercent(int value);
     void error(QString content);
     void result(QString content);
@@ -131,10 +134,10 @@ private:
     bool m_isFinished = false;
 
     bool copyFile(const QString &srcFile, const QString &tarDir, bool isMoved=false, QString *targetPath = 0);
-    bool copyDir(const QString &srcPath, const QString &tarPath, bool isMoved=false, QString *targetPath = 0);
+    bool copyDir(const QString &srcDir, const QString &tarDir, bool isMoved=false, QString *targetPath = 0);
     bool moveFile(const QString &srcFile, const QString &tarDir, QString *targetPath = 0);
+    bool moveDir(const QString &srcDir, const QString &tarDir, QString *targetPath = 0);
     bool restoreTrashFile(const QString &srcFile, const QString &tarFile);
-    bool moveDir(const QString &srcFile, const QString &tarDir, QString *targetPath = 0);
     bool deleteFile(const QString &file);
     bool deleteDir(const QString &dir);
     bool moveDirToTrash(const QString &dir, QString *targetPath = 0);

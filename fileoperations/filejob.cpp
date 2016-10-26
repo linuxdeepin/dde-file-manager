@@ -37,6 +37,10 @@ FileJob::FileJob(JobType jobType, QObject *parent) : QObject(parent)
     m_trashLoc = "/home/" + user + "/.local/share/Trash";
     m_id = QString::number(FileJobCount);
     m_jobType = jobType;
+    m_jobDetail.insert("jobId", m_id);
+    QMetaEnum metaEnum = QMetaEnum::fromType<JobType>();
+    QString type = metaEnum.valueToKey(m_jobType);
+    m_jobDetail.insert("type", type.toLower());
     connect(this, &FileJob::finished, this, &FileJob::handleJobFinished);
 
 #ifdef SPLICE_CP
@@ -435,12 +439,6 @@ void FileJob::jobAdded()
 {
     if(m_isJobAdded)
         return;
-    m_jobDetail.insert("jobId", m_id);
-
-    QMetaEnum metaEnum = QMetaEnum::fromType<JobType>();
-    QString type = metaEnum.valueToKey(m_jobType);
-
-    m_jobDetail.insert("type", type.toLower());
     emit requestJobAdded(m_jobDetail);
     m_isJobAdded = true;
 }
@@ -677,20 +675,28 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
     return false;
 }
 
-bool FileJob::copyDir(const QString &srcPath, const QString &tarPath, bool isMoved, QString *targetPath)
+bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved, QString *targetPath)
 {
+    DUrl srcUrl(srcDir);
+    DUrl tarUrl(tarDir);
+    qDebug() << srcUrl<< tarUrl << isMoved;
+    if(DUrl::childrenList(tarUrl).contains(srcUrl) && !isMoved){
+        emit requestCopyMoveToSelfDialogShowed(m_jobDetail);
+        return false;
+    }
+
     if(m_applyToAll && m_status == FileJob::Cancelled){
         return false;
     }else if(!m_applyToAll && m_status == FileJob::Cancelled){
         m_status = Started;
     }
-    QDir sourceDir(srcPath);
-    QDir targetDir(tarPath + "/" + sourceDir.dirName());
-    QFileInfo sf(srcPath);
-    QFileInfo tf(tarPath + "/" + sourceDir.dirName());
+    QDir sourceDir(srcDir);
+    QDir targetDir(tarDir + "/" + sourceDir.dirName());
+    QFileInfo sf(srcDir);
+    QFileInfo tf(tarDir + "/" + sourceDir.dirName());
     m_srcFileName = sf.fileName();
     m_tarFileName = tf.dir().dirName();
-    m_srcPath = srcPath;
+    m_srcPath = srcDir;
     m_tarPath = targetDir.absolutePath();
     m_status = Started;
 
@@ -705,6 +711,7 @@ bool FileJob::copyDir(const QString &srcPath, const QString &tarPath, bool isMov
                 m_isReplaced = true;
             }
         }
+
     while(true)
     {
         switch(m_status)
@@ -853,6 +860,88 @@ bool FileJob::moveFile(const QString &srcFile, const QString &tarDir, QString *t
     return false;
 }
 
+bool FileJob::moveDir(const QString &srcDir, const QString &tarDir, QString *targetPath)
+{
+    DUrl srcUrl(srcDir);
+    DUrl tarUrl(tarDir);
+    if(DUrl::childrenList(tarUrl).contains(srcUrl)){
+        emit requestCopyMoveToSelfDialogShowed(m_jobDetail);
+        /*copyDir/deleteDir will excute if return false;*/
+        return true;
+    }
+
+    if(m_applyToAll && m_status == FileJob::Cancelled){
+        return false;
+    }else if(!m_applyToAll && m_status == FileJob::Cancelled){
+        m_status = Started;
+    }
+    QDir from(srcDir);
+    QFileInfo fromInfo(srcDir);
+    QDir to(tarDir);
+    m_srcFileName = from.dirName();
+    m_tarFileName = to.dirName();
+    m_srcPath = srcDir;
+    m_tarPath = tarDir;
+    m_status = Started;
+
+    //We only check the conflict of the files when
+    //they are not in the same folder
+    if(fromInfo.absolutePath()== to.path() && to.exists(fromInfo.fileName()))
+        return false;
+    else
+        if(to.exists(from.dirName()) && !m_applyToAll)
+        {
+            jobConflicted();
+        }
+
+    while(true)
+    {
+        switch(m_status)
+        {
+            case FileJob::Started:
+            {
+                if(!m_isReplaced)
+                {
+                    m_srcPath = checkDuplicateName(m_tarPath + "/" + from.dirName());
+                }
+                else
+                {
+                    if(!m_applyToAll)
+                        m_isReplaced = false;
+                    m_srcPath = m_tarPath + "/" + from.dirName();
+                }
+                m_status = Run;
+                break;
+            }
+            case FileJob::Run:
+            {
+                if(m_isReplaced)
+                {
+                    QDir localDir(to.path() + "/" + from.dirName());
+                    if(localDir.exists())
+                        localDir.removeRecursively();
+
+                }
+
+                bool ok = from.rename(from.absolutePath(), m_srcPath);
+
+                if (ok && targetPath)
+                    *targetPath = m_srcPath;
+                return ok;
+            }
+            case FileJob::Paused:
+                QThread::msleep(100);
+                break;
+            case FileJob::Cancelled:
+                return true;
+            default:
+                return false;
+         }
+
+    }
+    return false;
+}
+
 bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
 {
     QFile from(srcFile);
@@ -918,80 +1007,6 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
                 }
 //                qDebug() << m_srcPath << from.error() << from.errorString();
                 return result;
-            }
-            case FileJob::Paused:
-                QThread::msleep(100);
-                break;
-            case FileJob::Cancelled:
-                return true;
-            default:
-                return false;
-         }
-
-    }
-    return false;
-}
-
-bool FileJob::moveDir(const QString &srcFile, const QString &tarDir, QString *targetPath)
-{
-    if(m_applyToAll && m_status == FileJob::Cancelled){
-        return false;
-    }else if(!m_applyToAll && m_status == FileJob::Cancelled){
-        m_status = Started;
-    }
-    QDir from(srcFile);
-    QFileInfo fromInfo(srcFile);
-    QDir to(tarDir);
-    m_srcFileName = from.dirName();
-    m_tarFileName = to.dirName();
-    m_srcPath = srcFile;
-    m_tarPath = tarDir;
-    m_status = Started;
-
-    //We only check the conflict of the files when
-    //they are not in the same folder
-    if(fromInfo.absolutePath()== to.path() && to.exists(fromInfo.fileName()))
-        return false;
-    else
-        if(to.exists(from.dirName()) && !m_applyToAll)
-        {
-            jobConflicted();
-        }
-
-    while(true)
-    {
-        switch(m_status)
-        {
-            case FileJob::Started:
-            {
-                if(!m_isReplaced)
-                {
-                    m_srcPath = checkDuplicateName(m_tarPath + "/" + from.dirName());
-                }
-                else
-                {
-                    if(!m_applyToAll)
-                        m_isReplaced = false;
-                    m_srcPath = m_tarPath + "/" + from.dirName();
-                }
-                m_status = Run;
-                break;
-            }
-            case FileJob::Run:
-            {
-                if(m_isReplaced)
-                {
-                    QDir localDir(to.path() + "/" + from.dirName());
-                    if(localDir.exists())
-                        localDir.removeRecursively();
-
-                }
-
-                bool ok = from.rename(from.absolutePath(), m_srcPath);
-
-                if (ok && targetPath)
-                    *targetPath = m_srcPath;
-                return ok;
             }
             case FileJob::Paused:
                 QThread::msleep(100);
