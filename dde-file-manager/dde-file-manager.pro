@@ -14,7 +14,7 @@ CONFIG += c++11 link_pkgconfig
 PKGCONFIG += dtkbase dtkwidget
 
 isEmpty(VERSION) {
-    VERSION = 1.1
+    VERSION = 1.3
 }
 
 DEFINES += QMAKE_TARGET=\\\"$$TARGET\\\" QMAKE_VERSION=\\\"$$VERSION\\\"

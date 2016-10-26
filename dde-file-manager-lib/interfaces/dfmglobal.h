@@ -88,7 +88,7 @@ public:
         OpenInNewWindow,
         OpenInNewTab,
         OpenDiskInNewWindow,
-        OpenAsAdmain,
+        OpenAsAdmin,
         OpenWith,
         OpenWithCustom,
         OpenFileLocation,

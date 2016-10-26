@@ -103,6 +103,7 @@ public slots:
     void onCurrentTabChanged(int tabIndex);
     void onCurrentTabClosed(const int index, const bool& remainState);
     void closeCurrentTab(const DFMEvent& event);
+    void onUserShareCountChanged(const int& count);
 
 private slots:
     void onFileDeleted(const DUrl &url);

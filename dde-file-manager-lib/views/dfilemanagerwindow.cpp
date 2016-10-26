@@ -306,6 +306,9 @@ void DFileManagerWindow::initConnect()
         openNewTab(event);
     });
     connect(fileService, &DFileService::childrenRemoved, this, &DFileManagerWindow::onFileDeleted);
+
+    connect(fileSignalManager, &FileSignalManager::userShareCountChanged,
+            this, &DFileManagerWindow::onUserShareCountChanged);
 }
 
 void DFileManagerWindow::onCurrentTabClosed(const int index, const bool &remainState){
@@ -357,6 +360,15 @@ void DFileManagerWindow::closeCurrentTab(const DFMEvent &event)
     }
 
     emit d->tabBar->tabCloseRequested(d->tabBar->currentIndex());
+}
+
+void DFileManagerWindow::onUserShareCountChanged(const int &count)
+{
+   D_D(DFileManagerWindow);
+   if (d->fileView->rootUrl() == DUrl::fromUserShareFile("/")){
+       d->fileView->fileViewHelper()->onUserShareCountChanged(count);
+   }
+
 }
 
 void DFileManagerWindow::onFileDeleted(const DUrl &url)
@@ -418,9 +430,10 @@ void DFileManagerWindow::onCurrentTabChanged(int tabIndex)
 
     int viewIndex = d->tabBar->tabData(tabIndex).toJsonObject()["viewIndex"].toInt();
     DUrl url(d->tabBar->tabData(tabIndex).toJsonObject()["url"].toString());
-    switchToView(viewIndex, url);
 
     d->toolbar->switchHistoryStack(tabIndex,url);
+
+    switchToView(viewIndex, url);
 }
 
 
@@ -680,6 +693,16 @@ void DFileManagerWindow::switchToView(const int viewIndex, const DUrl &url)
     emit fileViewChanged(d->fileView);
     d->leftSideBar->scene()->setCurrentUrl(url);
     d->toolbar->checkViewModeButton(d->fileView->viewMode());
+
+    if (url == DUrl::fromUserShareFile("/")){
+        qDebug() << "===========" << userShareManager->validShareInfoCount();
+        if (userShareManager->validShareInfoCount() == 0){
+            DFMEvent event;
+            event << windowId();
+            event << DUrl::fromLocalFile(QDir::homePath());
+            emit fileSignalManager->requestChangeCurrentUrl(event);
+        }
+    }
 }
 
 void DFileManagerWindow::moveCenter(const QPoint &cp)

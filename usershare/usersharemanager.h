@@ -37,7 +37,7 @@ public:
     static QString readCacheFromFile(const QString &path);
 
 signals:
-    void userShareChanged(const int& count);
+    void userShareCountChanged(const int& count);
     void userShareAdded(const QString& path);
     void userShareDeleted(const QString& path);
 
