@@ -7,19 +7,18 @@
 
 UserSharePasswordSettingDialog::UserSharePasswordSettingDialog(QWidget *parent) : DDialog(parent)
 {
-    QStringList buttonTexts;
-    buttonTexts << tr("Cancle") << tr("Comfirm");
-    addButtons(buttonTexts);
-    setDefaultButton(1);
+    setModal(true);
     setTitle(tr("Please enter share password"));
     setIcon(QIcon(":/images/dialogs/images/share_password.png"));
     initUI();
-    setModal(true);
-    setAttribute(Qt::WA_DeleteOnClose);
 }
 
 void UserSharePasswordSettingDialog::initUI()
 {
+    QStringList buttonTexts;
+    buttonTexts << tr("Cancle") << tr("Comfirm");
+    addButtons(buttonTexts);
+    setDefaultButton(1);
     m_passwordEdit = new DPasswordEdit(this);
     m_passwordEdit->setFixedSize(240,24);
     m_passwordEdit->setFocus();
