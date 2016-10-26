@@ -55,7 +55,9 @@ QMimeType DFileInfo::mimeType(const QString &filePath)
 
 bool DFileInfo::exists() const
 {
-    return QFileInfo::exists(absoluteFilePath());
+    Q_D(const DFileInfo);
+
+    return d->fileInfo.exists();
 }
 
 QString DFileInfo::path() const
@@ -107,16 +109,19 @@ bool DFileInfo::isCanRename() const
 
 bool DFileInfo::isCanShare() const
 {
-    if (isDir() && isReadable()){
-        if (fileUrl().path().startsWith(QDir::homePath())){
+    if (isDir() && isReadable()) {
+        if (absoluteFilePath().startsWith(QDir::homePath())) {
             return true;
         }
-        UDiskDeviceInfo* info=deviceListener->getDeviceByFilePath(filePath());
-        if (info){
+
+        UDiskDeviceInfo* info = deviceListener->getDeviceByFilePath(filePath());
+
+        if (info) {
             if (info->getMediaType() != UDiskDeviceInfo::unknown && info->getMediaType() !=UDiskDeviceInfo::network)
                 return true;
         }
     }
+
     return false;
 }
 

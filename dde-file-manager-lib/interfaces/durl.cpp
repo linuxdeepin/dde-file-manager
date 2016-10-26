@@ -444,17 +444,17 @@ void DUrl::makeAbsolutePath()
     if (!hasScheme(this->scheme()))
         return;
 
-    if(isLocalFile()) {
-        const QString &path = this->path();
+    if (isLocalFile()) {
+        const QString &path = toLocalFile();
 
-        if(path.startsWith("~"))
+        if (path.startsWith("~"))
             QUrl::setPath(QDir::homePath() + path.mid(1));
         else
             QUrl::setPath(QFileInfo(path).absoluteFilePath());
-    } else if(schemeList.contains(scheme())) {
+    } else {
         const QString &path = this->path();
 
-        if(path.startsWith('/')) {
+        if (path.startsWith('/')) {
             QUrl::setPath(QFileInfo(this->path()).absoluteFilePath());
         }
     }
@@ -484,7 +484,7 @@ void DUrl::updateVirtualPath()
 {
     m_virtualPath = this->toAbsolutePathUrl().path();
 
-    if(m_virtualPath.endsWith('/') && m_virtualPath.count() != 1) {
+    if (m_virtualPath.endsWith('/') && m_virtualPath.count() != 1) {
         m_virtualPath.remove(m_virtualPath.count() - 1, 1);
     }
 }

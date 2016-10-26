@@ -38,7 +38,7 @@ class DCrumbWidget : public QFrame
 public:
     explicit DCrumbWidget(QWidget *parent = 0);
     void addCrumb(const QStringList &list);
-    void setCrumb(const DUrl &path);
+    void setCrumb(const DUrl &url);
     void clear();
     QString back();
     QString path();
