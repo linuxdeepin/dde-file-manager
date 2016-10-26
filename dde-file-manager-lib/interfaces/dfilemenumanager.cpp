@@ -239,7 +239,7 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::OpenInNewTab] = QObject::tr("Open in new tab");
     actionKeys[MenuAction::OpenDisk] = QObject::tr("Open");
     actionKeys[MenuAction::OpenDiskInNewWindow] = QObject::tr("Open in new window");
-    actionKeys[MenuAction::OpenAsAdmain] = QObject::tr("Open in new window as admain");
+    actionKeys[MenuAction::OpenAsAdmin] = QObject::tr("Open in new window as admin");
     actionKeys[MenuAction::OpenWith] = QObject::tr("Open with");
     actionKeys[MenuAction::OpenWithCustom] = QObject::tr("Others");
     actionKeys[MenuAction::OpenFileLocation] = QObject::tr("Open file loaction");
@@ -293,7 +293,7 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::DeletionDate] = QObject::tr("Time deleted");
     actionKeys[MenuAction::SourcePath] = QObject::tr("Source path");
     actionKeys[MenuAction::AbsolutePath] = QObject::tr("Path");
-    actionKeys[MenuAction::UnShare] = QObject::tr("Cancle sharing");
+    actionKeys[MenuAction::UnShare] = QObject::tr("Cancel sharing");
     actionKeys[MenuAction::SetUserSharePassword] = QObject::tr("Set share password");
 }
 

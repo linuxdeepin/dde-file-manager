@@ -145,17 +145,17 @@
 <context>
     <name>DFileDialog</name>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="57"/>
+        <location filename="../views/dfiledialog.cpp" line="46"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="260"/>
+        <location filename="../views/dfiledialog.cpp" line="243"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="268"/>
+        <location filename="../views/dfiledialog.cpp" line="251"/>
         <source>Save</source>
         <translation>保存</translation>
     </message>
@@ -823,32 +823,32 @@
         <translation type="vanished">打开方式</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="185"/>
+        <location filename="../dialogs/propertydialog.cpp" line="190"/>
         <source>Basic info</source>
         <translation>基本信息</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="186"/>
+        <location filename="../dialogs/propertydialog.cpp" line="191"/>
         <source>Share manager</source>
         <translation>共享管理</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="209"/>
+        <location filename="../dialogs/propertydialog.cpp" line="214"/>
         <source>Disk</source>
         <translation>磁盘</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="527"/>
+        <location filename="../dialogs/propertydialog.cpp" line="546"/>
         <source>Allow to execute as program</source>
         <translation>允许以程序执行</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="573"/>
+        <location filename="../dialogs/propertydialog.cpp" line="596"/>
         <source>Local disk</source>
         <translation>本地磁盘</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="664"/>
+        <location filename="../dialogs/propertydialog.cpp" line="687"/>
         <source>Others</source>
         <translation>其它</translation>
     </message>
@@ -864,7 +864,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="516"/>
+        <location filename="../dialogs/propertydialog.cpp" line="535"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="280"/>
         <source>Size</source>
         <translation>大小</translation>
@@ -874,7 +874,7 @@
         <translation type="vanished">文件个数</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="518"/>
+        <location filename="../dialogs/propertydialog.cpp" line="537"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="281"/>
         <source>Type</source>
         <translation>类型</translation>
@@ -893,19 +893,19 @@
         <translation>创建时间</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="519"/>
+        <location filename="../dialogs/propertydialog.cpp" line="538"/>
         <source>Time read</source>
         <translation>访问时间</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="520"/>
+        <location filename="../dialogs/propertydialog.cpp" line="539"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="283"/>
         <source>Time modified</source>
         <translation>修改时间</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="568"/>
-        <location filename="../dialogs/propertydialog.cpp" line="596"/>
+        <location filename="../dialogs/propertydialog.cpp" line="591"/>
+        <location filename="../dialogs/propertydialog.cpp" line="619"/>
         <source>Device type</source>
         <translation>设备类型</translation>
     </message>
@@ -914,51 +914,51 @@
         <translation type="vanished">使用空间</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="517"/>
-        <location filename="../dialogs/propertydialog.cpp" line="569"/>
-        <location filename="../dialogs/propertydialog.cpp" line="597"/>
+        <location filename="../dialogs/propertydialog.cpp" line="536"/>
+        <location filename="../dialogs/propertydialog.cpp" line="592"/>
+        <location filename="../dialogs/propertydialog.cpp" line="620"/>
         <source>Contains</source>
         <translation>文件个数</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="570"/>
-        <location filename="../dialogs/propertydialog.cpp" line="598"/>
+        <location filename="../dialogs/propertydialog.cpp" line="593"/>
+        <location filename="../dialogs/propertydialog.cpp" line="621"/>
         <source>Free space</source>
         <translation>可用空间</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="571"/>
-        <location filename="../dialogs/propertydialog.cpp" line="599"/>
+        <location filename="../dialogs/propertydialog.cpp" line="594"/>
+        <location filename="../dialogs/propertydialog.cpp" line="622"/>
         <source>Total space</source>
         <translation>总容量</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="702"/>
+        <location filename="../dialogs/propertydialog.cpp" line="725"/>
         <source>WriteRead</source>
         <translation>可读写</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="702"/>
+        <location filename="../dialogs/propertydialog.cpp" line="725"/>
         <source>ReadOnly</source>
         <translation>只读</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="702"/>
+        <location filename="../dialogs/propertydialog.cpp" line="725"/>
         <source>WriteOnly</source>
         <translation>只写</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="730"/>
+        <location filename="../dialogs/propertydialog.cpp" line="753"/>
         <source>Owner</source>
         <translation>所有者</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="731"/>
+        <location filename="../dialogs/propertydialog.cpp" line="754"/>
         <source>Group</source>
         <translation>群组</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="732"/>
+        <location filename="../dialogs/propertydialog.cpp" line="755"/>
         <source>Other</source>
         <translation>其他</translation>
     </message>
@@ -988,9 +988,8 @@
         <translation>在新标签中打开</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="242"/>
         <source>Open in new window as admain</source>
-        <translation>以管理员身份打开</translation>
+        <translation type="vanished">以管理员身份打开</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="243"/>
@@ -1075,6 +1074,11 @@
         <translation type="vanished">移动到回收站</translation>
     </message>
     <message>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="242"/>
+        <source>Open in new window as admin</source>
+        <translation>以管理员身份打开</translation>
+    </message>
+    <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="257"/>
         <source>Throw to Trash</source>
         <translation>丢到回收站</translation>
@@ -1136,8 +1140,12 @@
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="296"/>
-        <source>Cancle sharing</source>
+        <source>Cancel sharing</source>
         <translation>取消共享</translation>
+    </message>
+    <message>
+        <source>Cancle sharing</source>
+        <translation type="vanished">取消共享</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="297"/>
@@ -1306,26 +1314,26 @@
         <translation>设置壁纸</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="326"/>
-        <location filename="../controllers/appcontroller.cpp" line="328"/>
+        <location filename="../controllers/appcontroller.cpp" line="327"/>
+        <location filename="../controllers/appcontroller.cpp" line="329"/>
         <source>newDoc</source>
         <translation>新建word文档</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="335"/>
-        <location filename="../controllers/appcontroller.cpp" line="337"/>
+        <location filename="../controllers/appcontroller.cpp" line="336"/>
+        <location filename="../controllers/appcontroller.cpp" line="338"/>
         <source>newExcel</source>
         <translation>新建Excel文档</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="344"/>
-        <location filename="../controllers/appcontroller.cpp" line="346"/>
+        <location filename="../controllers/appcontroller.cpp" line="345"/>
+        <location filename="../controllers/appcontroller.cpp" line="347"/>
         <source>newPowerPoint</source>
         <translation>新建PowerPoint文档</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="353"/>
-        <location filename="../controllers/appcontroller.cpp" line="355"/>
+        <location filename="../controllers/appcontroller.cpp" line="354"/>
+        <location filename="../controllers/appcontroller.cpp" line="356"/>
         <source>newText</source>
         <translation>新建文本</translation>
     </message>
@@ -1415,13 +1423,13 @@
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="252"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="433"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="441"/>
         <source>%1 item</source>
         <translation>%1 项</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="254"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="435"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="443"/>
         <source>%1 items</source>
         <translation>%1 项</translation>
     </message>
@@ -1442,7 +1450,7 @@
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="293"/>
-        <location filename="../models/trashfileinfo.cpp" line="144"/>
+        <location filename="../models/trashfileinfo.cpp" line="149"/>
         <source>Time deleted</source>
         <translation>删除时间</translation>
     </message>
@@ -1473,22 +1481,22 @@
         <translation>无搜索结果</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="765"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="820"/>
         <source>Loading...</source>
         <translation>正在加载中...</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="299"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="310"/>
         <source>You do not have permission to access this folder</source>
         <translation>您没有权限读取此文件夹</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="297"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="308"/>
         <source>File has been moved or deleted</source>
         <translation>文件已被移动或删除</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="302"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="313"/>
         <source>Folder is empty</source>
         <translation>文件夹为空</translation>
     </message>
@@ -1501,7 +1509,7 @@
         <translation type="vanished">文件管理器</translation>
     </message>
     <message>
-        <location filename="../models/trashfileinfo.cpp" line="147"/>
+        <location filename="../models/trashfileinfo.cpp" line="152"/>
         <source>Source Path</source>
         <comment>TrashFileInfo</comment>
         <translation>原位置</translation>

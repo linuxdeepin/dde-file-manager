@@ -524,7 +524,7 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
                    << MenuAction::Separator
                    << MenuAction::DisplayAs
                    << MenuAction::SortBy
-                   << MenuAction::OpenAsAdmain
+//                   << MenuAction::OpenAsAdmin
                    << MenuAction::OpenInTerminal
                    << MenuAction::Separator
                    << MenuAction::Paste
@@ -537,7 +537,7 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
             actionKeys << MenuAction::Open
                        << MenuAction::OpenInNewWindow
                        << MenuAction::OpenInNewTab
-                       << MenuAction::OpenAsAdmain
+//                       << MenuAction::OpenAsAdmin
                        << MenuAction::Separator
                        << MenuAction::Copy
                        << MenuAction::CreateSymlink
@@ -557,8 +557,8 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
 
             if (isDir()){
                 actionKeys << MenuAction::OpenInNewWindow
-                           << MenuAction::OpenInNewTab
-                           << MenuAction::OpenAsAdmain;
+                           << MenuAction::OpenInNewTab;
+//                           << MenuAction::OpenAsAdmin;
             }else{
                 if (!isDesktopFile())
                     actionKeys << MenuAction::OpenWith;

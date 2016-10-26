@@ -355,6 +355,6 @@ void UserShareManager::onFileDeleted(const QString &filePath)
 void UserShareManager::usershareCountchanged()
 {
     int count = validShareInfoCount();
-    emit userShareChanged(count);
+    emit userShareCountChanged(count);
 }
 
