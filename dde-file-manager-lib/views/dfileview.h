@@ -149,6 +149,7 @@ private slots:
     void openWithActionTriggered(QAction * action);
     void onRowCountChanged();
     void handleCommitData(QWidget * editor);
+    void onVerticalScroll(int contentY);
 
 protected:
     void wheelEvent(QWheelEvent * event) Q_DECL_OVERRIDE;

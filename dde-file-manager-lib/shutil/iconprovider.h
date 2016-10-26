@@ -42,14 +42,18 @@ public slots:
     void setCurrentTheme();
     void handleThemeChanged(const QString &key);
 
-    inline QIcon getFileIcon(const DUrl& fileUrl, const QString &mimeType)
-    { return findIcon(fileUrl, mimeType);}
+    QIcon getFileIcon(const DUrl& fileUrl, const QMimeType &mimeType);
     QIcon getDesktopIcon(const QString& iconName, int size);
 
     void setDesktopIconPaths(const QMap<QString,QString>& iconPaths);
 
+    QIcon getIconByMimeType(const QUrl &url, const QMimeType &mimeType);
+    QIcon getThumbnail(const DUrl &url);
+
+    void requestThumbnail(const DUrl &url);
+    void abortRequestThumbnail(const DUrl &url);
+
 private:
-    QIcon findIcon(const DUrl& fileUrl, const QString &mimeType);
     QString getMimeTypeByFile(const QString &file);
 
 private:

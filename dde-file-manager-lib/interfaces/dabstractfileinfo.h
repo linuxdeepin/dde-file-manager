@@ -139,6 +139,9 @@ public:
     inline QString scheme() const
     {return fileUrl().scheme();}
 
+    inline bool hasThumbnail() const
+    { return hasThumbnail(mimeType());}
+    virtual bool hasThumbnail(const QMimeType &mimeTypeName) const;
     virtual QIcon fileIcon() const;
     virtual QList<QIcon> additionalIcon() const;
 
@@ -195,6 +198,9 @@ public:
 
     virtual QString suffix() const;
     virtual QString completeSuffix() const;
+
+    /// Make to inactive. stop get icon; stop watcher file
+    virtual void makeToInactive();
 
 protected:
     QExplicitlySharedDataPointer<DAbstractFileInfoPrivateBase> d_ptr;

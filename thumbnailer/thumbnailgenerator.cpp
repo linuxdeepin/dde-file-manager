@@ -5,7 +5,6 @@
 #include <QPainter>
 #include <QImage>
 #include <QFile>
-#include <QMimeDatabase>
 #include <QStandardPaths>
 #include <QDir>
 #include <QFileInfo>
@@ -73,25 +72,7 @@ bool ThumbnailGenerator::canGenerateThumbnail(const QUrl&  fileUrl) const
     return false;
 }
 
-bool ThumbnailGenerator::isTextPlainFile(const QString &fileName) const
-{
-    QString mimeTypeName = QMimeDatabase().mimeTypeForFile(fileName).name();
-    if(mimeTypeName == "text/plain")
-        return true;
-
-    return false;
-}
-
-bool ThumbnailGenerator::isPDFFile(const QString &fileName) const
-{
-    QString mimeTypeName = QMimeDatabase().mimeTypeForFile(fileName).name();
-    if(mimeTypeName == "application/pdf")
-        return true;
-
-    return false;
-}
-
-bool ThumbnailGenerator::isVideoFile(const QString &fileName) const
+bool ThumbnailGenerator::isVideoFile(const QString &fileName)
 {
     QStringList extraVideoMineTypes;
     extraVideoMineTypes<<"application/vnd.adobe.flash.movie"
@@ -106,7 +87,7 @@ bool ThumbnailGenerator::isVideoFile(const QString &fileName) const
     return false;
 }
 
-bool ThumbnailGenerator::isPictureFile(const QString &fileName) const
+bool ThumbnailGenerator::isPictureFile(const QString &fileName)
 {
     QString mimeType = QMimeDatabase().mimeTypeForFile(fileName).name();
     if(mimeType.startsWith("image"))

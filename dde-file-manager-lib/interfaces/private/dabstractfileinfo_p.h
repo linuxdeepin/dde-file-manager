@@ -12,6 +12,9 @@
 
 #include "dabstractfileinfo.h"
 
+#include <QTimer>
+#include <QPointer>
+
 class DAbstractFileInfoPrivate : public DAbstractFileInfoPrivateBase
 {
 public:
@@ -19,8 +22,13 @@ public:
 
     DUrl url;
     mutable QString pinyinName;
+//    mutable QIcon icon;
+    mutable QPointer<QTimer> getIconTimer;
+    bool requestingThumbnail = false;
 
     DAbstractFileInfoPointer proxy;
+
+    static QSet<QString> hasThumbnailMimeHash;
 
 protected:
     DAbstractFileInfoPrivate(const DUrl &url);

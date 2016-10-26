@@ -94,6 +94,8 @@ public:
     DUrlList oldSelectedUrls;
     DUrl oldCurrentUrl;
 
+    DFileView::RandeIndex visibleIndexRande;
+
     FileViewHelper *fileViewHelper;
 
     Q_DECLARE_PUBLIC(DFileView)
@@ -196,6 +198,7 @@ void DFileView::initConnects()
     connect(model(), &DFileSystemModel::stateChanged, this, &DFileView::onModelStateChanged);
 
     connect(this, &DFileView::iconSizeChanged, this, &DFileView::updateHorizontalOffset, Qt::QueuedConnection);
+    connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &DFileView::onVerticalScroll);
 }
 
 DFileSystemModel *DFileView::model() const
@@ -539,6 +542,12 @@ DFileView::RandeIndexList DFileView::visibleIndexes(QRect rect) const
             return list;
 
         int begin_index = begin_row_index * column_count;
+
+        if (end_column_index - begin_column_index + 1 == column_count) {
+            list << RandeIndex(qMax(begin_index, 0), qMin((end_row_index + 1) * column_count, count - 1));
+
+            return list;
+        }
 
         for (int i = begin_row_index; i <= end_row_index; ++i) {
             if (begin_index + begin_column_index >= count)
@@ -1078,6 +1087,29 @@ void DFileView::handleCommitData(QWidget *editor)
     } else {
         fileService->renameFile(old_url, new_url, event);
     }
+}
+
+void DFileView::onVerticalScroll(int contentY)
+{
+    Q_D(DFileView);
+
+    const RandeIndex &rande = visibleIndexes(QRect(QPoint(0, contentY), QSize(size()))).first();
+
+    for (int i = d->visibleIndexRande.first; i < rande.first; ++i) {
+        const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(model()->index(i, 0));
+
+        if (fileInfo)
+            fileInfo->makeToInactive();
+    }
+
+    for (int i = rande.second; i < d->visibleIndexRande.second; ++i) {
+        const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(model()->index(i, 0));
+
+        if (fileInfo)
+            fileInfo->makeToInactive();
+    }
+
+    d->visibleIndexRande = rande;
 }
 
 void DFileView::focusInEvent(QFocusEvent *event)
