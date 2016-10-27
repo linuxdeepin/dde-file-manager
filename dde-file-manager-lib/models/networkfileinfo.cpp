@@ -31,6 +31,11 @@ QString NetworkFileInfo::absoluteFilePath() const
     return m_networkNode.url();
 }
 
+bool NetworkFileInfo::exists() const
+{
+    return true;
+}
+
 bool NetworkFileInfo::isReadable() const
 {
     return true;
