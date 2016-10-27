@@ -635,7 +635,7 @@ void DFileManagerWindow::setFileView(DFileView *view)
     d->fileView = view;
 
     connect(view, &DFileView::viewModeChanged, d->toolbar, &DToolBar::checkViewModeButton);
-    connect(view, &DFileView::currentUrlChanged ,this, &DFileManagerWindow::onFileViewCurrentUrlChanged);
+    connect(view, &DFileView::rootUrlChanged ,this, &DFileManagerWindow::onFileViewCurrentUrlChanged);
 
     if (!d->tabBar->isHidden())
         d->newTabButton->show();
@@ -663,7 +663,7 @@ void DFileManagerWindow::switchToView(const int viewIndex, const DUrl &url)
 
     if (d->fileView) {
         disconnect(d->fileView, &DFileView::viewModeChanged, d->toolbar, &DToolBar::checkViewModeButton);
-        disconnect(d->fileView, &DFileView::currentUrlChanged ,this, &DFileManagerWindow::onFileViewCurrentUrlChanged);
+        disconnect(d->fileView, &DFileView::rootUrlChanged ,this, &DFileManagerWindow::onFileViewCurrentUrlChanged);
 
         disconnect(fileSignalManager, &FileSignalManager::statusBarItemsSelected, d->fileView->statusBar(), &DStatusBar::itemSelected);
         disconnect(fileSignalManager, &FileSignalManager::statusBarItemsCounted, d->fileView->statusBar(), &DStatusBar::itemCounted);
@@ -683,7 +683,7 @@ void DFileManagerWindow::switchToView(const int viewIndex, const DUrl &url)
         return;
 
     connect(d->fileView, &DFileView::viewModeChanged, d->toolbar, &DToolBar::checkViewModeButton);
-    connect(d->fileView, &DFileView::currentUrlChanged ,this, &DFileManagerWindow::onFileViewCurrentUrlChanged);
+    connect(d->fileView, &DFileView::rootUrlChanged ,this, &DFileManagerWindow::onFileViewCurrentUrlChanged);
 
     connect(fileSignalManager, &FileSignalManager::statusBarItemsSelected, d->fileView->statusBar(), &DStatusBar::itemSelected);
     connect(fileSignalManager, &FileSignalManager::statusBarItemsCounted, d->fileView->statusBar(), &DStatusBar::itemCounted);

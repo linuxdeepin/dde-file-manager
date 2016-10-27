@@ -188,6 +188,8 @@ public:
     virtual bool canIteratorDir() const;
 
     virtual DUrl getUrlByNewFileName(const QString &fileName) const;
+    /// Return absoluteFilePath + "/" + fileName if is dir; otherwise return DUrl()
+    virtual DUrl getUrlByChildFileName(const QString &fileName) const;
 
     virtual DUrl mimeDataUrl() const;
     virtual Qt::DropActions supportedDragActions() const;

@@ -872,7 +872,19 @@ DUrl DAbstractFileInfo::getUrlByNewFileName(const QString &fileName) const
 {
     DUrl url = fileUrl();
 
-    url.setPath(absolutePath() + "/" + fileName);
+    url.setPath(absolutePath() + QDir::separator() + fileName);
+
+    return url;
+}
+
+DUrl DAbstractFileInfo::getUrlByChildFileName(const QString &fileName) const
+{
+    if (!isDir())
+        return DUrl();
+
+    DUrl url = fileUrl();
+
+    url.setPath(absoluteFilePath() + QDir::separator() + fileName);
 
     return url;
 }

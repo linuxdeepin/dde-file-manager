@@ -628,15 +628,17 @@ void DFileView::select(const QList<DUrl> &list)
 {
     QModelIndex firstIndex;
     QModelIndex lastIndex;
+    const QModelIndex &root = rootIndex();
 
     clearSelection();
 
     for (const DUrl &url : list) {
         const QModelIndex &index = model()->index(url);
 
-        if (index.isValid()) {
-            selectionModel()->select(index, QItemSelectionModel::Select);
-        }
+        if (index == root || index.isValid())
+            continue;
+
+        selectionModel()->select(index, QItemSelectionModel::Select);
 
         if (!firstIndex.isValid())
             firstIndex = index;
@@ -1534,7 +1536,7 @@ bool DFileView::setRootUrl(const DUrl &url)
             switchViewMode(d->defaultViewMode);
         }
     }
-    emit currentUrlChanged(fileUrl);
+    emit rootUrlChanged(fileUrl);
 
     if (focusWidget() && focusWidget()->window() == window() && fileUrl.isLocalFile())
         QDir::setCurrent(fileUrl.toLocalFile());

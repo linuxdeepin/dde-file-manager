@@ -110,17 +110,21 @@ QList<QUrl> DFileDialog::selectedUrls() const
     DUrlList list = getFileView()->selectedUrls();
 
     if (d->acceptMode == QFileDialog::AcceptSave) {
-        if (list.isEmpty())
-            list << getFileView()->rootUrl();
+        const DAbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(list.isEmpty() ? getFileView()->rootUrl() : list.first());
+        DUrl fileUrl;
 
-        const DAbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(list.first());
-        const QString &newPath = fileInfo->absoluteFilePath() + QDir::separator() + getFileView()->statusBar()->lineEdit()->text();
-        QUrl url = list.first();
+        if (list.isEmpty()) {
+            fileUrl = fileInfo->getUrlByChildFileName(getFileView()->statusBar()->lineEdit()->text());
+        } else {
+            fileUrl = fileInfo->getUrlByNewFileName(getFileView()->statusBar()->lineEdit()->text());
+        }
 
-        url.setPath(newPath);
+        return QList<QUrl>() << fileUrl;
+    }
 
-        if (fileInfo->isDir())
-            return QList<QUrl>() << url;
+    if (list.isEmpty() && (d->fileMode == QFileDialog::Directory
+                           || d->fileMode == QFileDialog::DirectoryOnly)) {
+        list << getFileView()->rootUrl();
     }
 
     return DUrl::toQUrlList(list);
@@ -132,10 +136,7 @@ void DFileDialog::setNameFilters(const QStringList &filters)
 
     d->nameFilters = filters;
 
-    if (getFileView()->statusBar()->comboBox()) {
-        getFileView()->statusBar()->comboBox()->clear();
-        getFileView()->statusBar()->comboBox()->addItems(filters);
-    }
+    getFileView()->statusBar()->setComBoxItems(filters);
 
     if (selectedNameFilter().isEmpty())
         selectNameFilter(filters.isEmpty() ? QString() : filters.first());
@@ -463,9 +464,6 @@ void DFileDialog::onAcceptButtonClicked()
 
     const DUrlList &urls = getFileView()->selectedUrls();
 
-    if (urls.isEmpty())
-        return;
-
     switch (static_cast<int>(d->fileMode)) {
     case QFileDialog::AnyFile:
     case QFileDialog::ExistingFile:
@@ -485,15 +483,20 @@ void DFileDialog::onAcceptButtonClicked()
             if (fileInfo->isDir())
                 return;
         }
-        accept();
+
+        if (!urls.isEmpty())
+            accept();
         break;
     default:
         if (urls.count() == 1) {
             const DAbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(urls.first());
 
-            if (fileInfo->isDir())
-                accept();
+            if (!fileInfo->isDir())
+                return;
+        } else if (urls.count() > 1) {
+            return;
         }
+        accept();
         break;
     }
 }
