@@ -40,6 +40,8 @@ public slots:
     void abortJob(const QMap<QString, QString> &jobDetail);
     void abortJobByDestinationUrl(const DUrl& url);
 
+    void showCopyMoveToSelfDialog(const QMap<QString, QString> &jobDetail);
+
     void showUrlWrongDialog(const DUrl &url);
     int showRunExcutableDialog(const DUrl& url);
     int showRenameNameSameErrorDialog(const QString& name, const DFMEvent &event);
@@ -53,6 +55,7 @@ public slots:
     void showBreakSymlinkDialog(const QString &targetName, const DUrl& linkfile);
     void showAboutDialog(const DFMEvent &event);
     void showUserSharePasswordSettingDialog(const DFMEvent& event);
+
 
     void removePropertyDialog(const DUrl& url);
     void closeAllPropertyDialog();
