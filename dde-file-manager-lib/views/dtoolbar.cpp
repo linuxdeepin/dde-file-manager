@@ -239,7 +239,15 @@ void DToolBar::searchBarTextEntered()
         return;
     }
 
+    const QString &currentDir = QDir::currentPath();
+    const DUrl &currentUrl = m_crumbWidget->getCurrentUrl();
+
+    if (currentUrl.isLocalFile())
+        QDir::setCurrent(currentUrl.toLocalFile());
+
     DUrl inputUrl = DUrl::fromUserInput(text, false);
+
+    QDir::setCurrent(currentDir);
 
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(inputUrl);
 
