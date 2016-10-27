@@ -912,6 +912,9 @@ QString DAbstractFileInfo::suffix() const
 {
     CALL_PROXY(suffix());
 
+    if (!isFile())
+        return QString();
+
     QString suffix;
     const QString &fileName = this->fileName();
     int index = fileName.lastIndexOf('.');
@@ -935,6 +938,9 @@ QString DAbstractFileInfo::suffix() const
 QString DAbstractFileInfo::completeSuffix() const
 {
     CALL_PROXY(completeSuffix());
+
+    if (!isFile())
+        return QString();
 
     const QString &fileName = this->fileName();
 
