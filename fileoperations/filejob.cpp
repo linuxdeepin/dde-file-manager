@@ -136,20 +136,49 @@ QString FileJob::getTargetDir()
     return m_tarPath;
 }
 
+void FileJob::adjustSymlinkPath(QString &scrPath, QString &tarDirPath)
+{
+    QFileInfo srcFileInfo(scrPath);
+    QFileInfo tarDirFileInfo(tarDirPath);
+    if (!srcFileInfo.canonicalFilePath().isEmpty()){
+        scrPath = srcFileInfo.canonicalFilePath();
+    }
+    if (!tarDirFileInfo.canonicalFilePath().isEmpty()){
+        tarDirPath = tarDirFileInfo.canonicalFilePath();
+    }
+}
+
 DUrlList FileJob::doCopy(const DUrlList &files, const DUrl &destination)
 {
-    DUrlList list;
+    return doMoveCopyJob(files, destination);
+}
 
-    qDebug() << "Do copy is started" << Data_Block_Size << Data_Flush_Size;
-    //pre-calculate total size
+DUrlList FileJob::doMove(const DUrlList &files, const DUrl &destination)
+{
+    return doMoveCopyJob(files, destination);
+}
+
+DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
+{
+    qDebug() << "Do file operation is started" << m_jobDetail;
     m_totalSize = FileUtils::totalSize(files);
     jobPrepared();
 
-    QString tarLocal = destination.toLocalFile();
-    QStorageInfo tarInfo(tarLocal);
+    DUrlList list;
+    QString tarDirPath = destination.toLocalFile();
+    QDir tarDir(tarDirPath);
+
+    QStorageInfo tarStorageInfo(tarDirPath);
+
+    if(!tarDir.exists())
+    {
+        qDebug() << "Destination must be directory";
+        return list;
+    }
+
     if (files.count() > 0 ){
-        QStorageInfo srcInfo(files.at(0).toLocalFile());
-        if (srcInfo.rootPath() != tarInfo.rootPath()){
+        QStorageInfo srcStorageInfo(files.at(0).toLocalFile());
+        if (srcStorageInfo.rootPath() != tarStorageInfo.rootPath()){
             m_isInSameDisk = false;
         }
     }
@@ -157,13 +186,49 @@ DUrlList FileJob::doCopy(const DUrlList &files, const DUrl &destination)
     for(int i = 0; i < files.size(); i++)
     {
         QUrl url = files.at(i);
-        QDir srcDir(url.toLocalFile());
+        QString srcPath = url.toLocalFile();
+        QFileInfo srcInfo(srcPath);
         QString targetPath;
 
-        if(srcDir.exists())
-            copyDir(url.toLocalFile(), QUrl(destination).toLocalFile(), false,  &targetPath);
-        else
-            copyFile(url.toLocalFile(), QUrl(destination).toLocalFile(), false,  &targetPath);
+        if (srcInfo.isSymLink()){
+            handleSymlinkFile(srcPath, tarDirPath, &targetPath);
+        }else if (!srcInfo.isSymLink() && srcInfo.isDir()){
+            adjustSymlinkPath(srcPath, tarDirPath);
+            if (m_jobType == Copy){
+                copyDir(srcPath, tarDirPath, false,  &targetPath);
+            }else if (m_jobType == Move){
+                if(m_isInSameDisk)
+                {
+                    if (!moveDir(srcPath, tarDirPath, &targetPath)) {
+                        if(copyDir(srcPath, tarDirPath, true, &targetPath))
+                            deleteDir(srcPath);
+                    }
+                }
+                else
+                {
+                    if(copyDir(srcPath, tarDirPath, true, &targetPath))
+                        deleteDir(srcPath);
+                }
+            }
+        }else{
+            adjustSymlinkPath(srcPath, tarDirPath);
+            if (m_jobType == Copy){
+                copyFile(srcPath, tarDirPath, false,  &targetPath);
+            }else if (m_jobType == Move){
+                if(m_isInSameDisk)
+                {
+                    if (!moveFile(srcPath, tarDirPath, &targetPath)) {
+                        if(copyFile(srcPath, tarDirPath, true, &targetPath))
+                            deleteFile(srcPath);
+                    }
+                }
+                else
+                {
+                    if(copyFile(srcPath, tarDirPath, true, &targetPath))
+                        deleteFile(srcPath);
+                }
+            }
+        }
 
         if (!targetPath.isEmpty())
             list << DUrl::fromLocalFile(targetPath);
@@ -171,7 +236,7 @@ DUrlList FileJob::doCopy(const DUrlList &files, const DUrl &destination)
     if(m_isJobAdded)
         jobRemoved();
     emit finished();
-    qDebug() << "Do copy is done!";
+    qDebug() << "Do file operation is done" << m_jobDetail;
 
     return list;
 }
@@ -239,78 +304,6 @@ DUrlList FileJob::doMoveToTrash(const DUrlList &files)
 
     if (ok)
         qDebug() << "Move to Trash is done!";
-
-    return list;
-}
-
-DUrlList FileJob::doMove(const DUrlList &files, const DUrl &destination)
-{
-    qDebug() << "Do move is started" << files << destination;
-    m_totalSize = FileUtils::totalSize(files);
-    jobPrepared();
-
-    DUrlList list;
-    QString tarLocal = destination.toLocalFile();
-    QStorageInfo tarInfo(tarLocal);
-    QDir tarDir(tarLocal);
-
-    if(!tarDir.exists())
-    {
-        qDebug() << "Destination must be directory";
-        return list;
-    }
-
-    if (files.count() > 0 ){
-        QStorageInfo srcInfo(files.at(0).toLocalFile());
-        if (srcInfo.rootPath() != tarInfo.rootPath()){
-            m_isInSameDisk = false;
-        }
-    }
-
-    for(int i = 0; i < files.size(); i++)
-    {
-        QUrl url = files.at(i);
-        QDir srcDir(url.toLocalFile());
-        QString targetPath;
-
-        if(srcDir.exists())
-        {
-            if(m_isInSameDisk)
-            {
-                if (!moveDir(url.toLocalFile(), tarDir.path(), &targetPath)) {
-                    if(copyDir(url.toLocalFile(), tarLocal, true, &targetPath))
-                        deleteDir(url.toLocalFile());
-                }
-            }
-            else
-            {
-                if(copyDir(url.toLocalFile(), tarLocal, true, &targetPath))
-                    deleteDir(url.toLocalFile());
-            }
-        }
-        else
-        {
-            if(m_isInSameDisk)
-            {
-                if (!moveFile(url.toLocalFile(), tarDir.path(), &targetPath)) {
-                    if(copyFile(url.toLocalFile(), QUrl(destination).toLocalFile(), true, &targetPath))
-                        deleteFile(url.toLocalFile());
-                }
-            }
-            else
-            {
-                if(copyFile(url.toLocalFile(), QUrl(destination).toLocalFile(), true, &targetPath))
-                    deleteFile(url.toLocalFile());
-            }
-        }
-
-        if (!targetPath.isEmpty())
-            list << DUrl::fromLocalFile(targetPath);
-    }
-    if(m_isJobAdded)
-        jobRemoved();
-    emit finished();
-    qDebug() << "Do move is done!";
 
     return list;
 }
@@ -426,7 +419,7 @@ void FileJob::jobUpdated()
     jobDataDetail.insert("speed", speed);
     jobDataDetail.insert("file", m_srcFileName);
     jobDataDetail.insert("progress", QString::number(m_bytesCopied * 100/ m_totalSize));
-    jobDataDetail.insert("destination", m_tarFileName);
+    jobDataDetail.insert("destination", m_tarDirName);
     m_progress = jobDataDetail.value("progress");
     emit requestJobDataUpdated(m_jobDetail, jobDataDetail);
     qDebug() << jobDataDetail;
@@ -470,7 +463,7 @@ void FileJob::jobConflicted()
     jobDataDetail.insert("speed", "");
     jobDataDetail.insert("file", m_srcFileName);
     jobDataDetail.insert("progress", m_progress);
-    jobDataDetail.insert("destination", m_tarFileName);
+    jobDataDetail.insert("destination", m_tarDirName);
     emit requestJobDataUpdated(m_jobDetail, jobDataDetail);
     emit requestConflictDialogShowed(m_jobDetail);
     m_status = Paused;
@@ -487,7 +480,7 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
     QFileInfo sf(srcFile);
     QFileInfo tf(tarDir);
     m_srcFileName = sf.fileName();
-    m_tarFileName = tf.fileName();
+    m_tarDirName = tf.fileName();
     m_srcPath = srcFile;
     m_tarPath = tarDir + "/" + m_srcFileName;
     QFile to(tarDir + "/" + m_srcFileName);
@@ -695,7 +688,7 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
     QFileInfo sf(srcDir);
     QFileInfo tf(tarDir + "/" + sourceDir.dirName());
     m_srcFileName = sf.fileName();
-    m_tarFileName = tf.dir().dirName();
+    m_tarDirName = tf.dir().dirName();
     m_srcPath = srcDir;
     m_tarPath = targetDir.absolutePath();
     m_status = Started;
@@ -788,29 +781,51 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
 
 bool FileJob::moveFile(const QString &srcFile, const QString &tarDir, QString *targetPath)
 {
+    return handleMoveJob(srcFile, tarDir, targetPath);
+}
+
+bool FileJob::moveDir(const QString &srcDir, const QString &tarDir, QString *targetPath)
+{
+    return handleMoveJob(srcDir, tarDir, targetPath);
+}
+
+bool FileJob::handleMoveJob(const QString &srcPath, const QString &tarDir, QString *targetPath)
+{
+    QFileInfo scrFileInfo(srcPath);
+
+    if (scrFileInfo.isDir() && scrFileInfo.exists()){
+        DUrl srcUrl(srcPath);
+        DUrl tarUrl(tarDir);
+        if(DUrl::childrenList(tarUrl).contains(srcUrl)){
+            emit requestCopyMoveToSelfDialogShowed(m_jobDetail);
+            /*copyDir/deleteDir will excute if return false;*/
+            return true;
+        }
+    }
+
     if(m_applyToAll && m_status == FileJob::Cancelled){
         return false;
     }else if(!m_applyToAll && m_status == FileJob::Cancelled){
         m_status = Started;
     }
-    QFile from(srcFile);
+
     QDir to(tarDir);
-    QFileInfo fromInfo(srcFile);
-    m_srcFileName = fromInfo.absoluteFilePath();
-    m_tarFileName = to.dirName();
-    m_srcPath = srcFile;
+    m_srcFileName = scrFileInfo.fileName();
+    m_tarDirName = to.dirName();
+    m_srcPath = srcPath;
     m_tarPath = tarDir;
     m_status = Started;
 
     //We only check the conflict of the files when
     //they are not in the same folder
-    if(fromInfo.absolutePath() == to.path() && to.exists(fromInfo.fileName()))
-        return false;
-    else
-        if(to.exists(fromInfo.fileName()) && !m_applyToAll)
+    if(scrFileInfo.absolutePath()== tarDir && to.exists(m_srcFileName))
+        return true;
+    else{
+        if(to.exists(m_srcFileName) && !m_applyToAll)
         {
             jobConflicted();
         }
+    }
 
     while(true)
     {
@@ -820,13 +835,11 @@ bool FileJob::moveFile(const QString &srcFile, const QString &tarDir, QString *t
             {
                 if(!m_isReplaced)
                 {
-                    m_srcPath = checkDuplicateName(m_tarPath + "/" + fromInfo.fileName());
+                    m_tarPath = checkDuplicateName(m_tarPath + "/" + m_srcFileName);
                 }
                 else
                 {
-                    if(!m_applyToAll)
-                        m_isReplaced = false;
-                    m_srcPath = m_tarPath + "/" + fromInfo.fileName();
+                    m_tarPath = m_tarPath + "/" + m_srcFileName;
                 }
                 m_status = Run;
                 break;
@@ -835,16 +848,31 @@ bool FileJob::moveFile(const QString &srcFile, const QString &tarDir, QString *t
             {
                 if(m_isReplaced)
                 {
-                    QFile localFile(to.path() + "/" + fromInfo.fileName());
-                    if(localFile.exists())
-                        localFile.remove();
-
+                    QFileInfo tarInfo(m_tarPath);
+                    if (tarInfo.isDir()){
+                        QDir tarDir(m_tarPath);
+                        if(tarDir.exists())
+                            tarDir.removeRecursively();
+                    }else{
+                        QFile tarFile(m_tarPath);
+                        if(tarFile.exists()){
+                            QFile(m_tarPath).remove();
+                        }
+                    }
                 }
 
-                bool ok = from.rename(m_srcPath);
+                bool ok(false);
+                if (scrFileInfo.isDir()){
+                    ok = QDir(srcPath).rename(srcPath, m_tarPath);
+                }else{
+                    QFile srcFile(srcPath);
+                    ok = srcFile.rename(m_tarPath);
+                }
+                if (ok && targetPath)
+                    *targetPath = m_tarPath;
 
-                if (ok)
-                    *targetPath = m_srcPath;
+                if(!m_applyToAll)
+                    m_isReplaced = false;
                 return ok;
             }
             case FileJob::Paused:
@@ -858,41 +886,31 @@ bool FileJob::moveFile(const QString &srcFile, const QString &tarDir, QString *t
 
     }
     return false;
+
 }
 
-bool FileJob::moveDir(const QString &srcDir, const QString &tarDir, QString *targetPath)
+bool FileJob::handleSymlinkFile(const QString &srcFile, const QString &tarDir, QString *targetPath)
 {
-    DUrl srcUrl(srcDir);
-    DUrl tarUrl(tarDir);
-    if(DUrl::childrenList(tarUrl).contains(srcUrl)){
-        emit requestCopyMoveToSelfDialogShowed(m_jobDetail);
-        /*copyDir/deleteDir will excute if return false;*/
-        return true;
-    }
-
     if(m_applyToAll && m_status == FileJob::Cancelled){
         return false;
     }else if(!m_applyToAll && m_status == FileJob::Cancelled){
         m_status = Started;
     }
-    QDir from(srcDir);
-    QFileInfo fromInfo(srcDir);
+
     QDir to(tarDir);
-    m_srcFileName = from.dirName();
-    m_tarFileName = to.dirName();
-    m_srcPath = srcDir;
+    QFileInfo fromInfo(srcFile);
+    m_srcFileName = fromInfo.fileName();
+    m_tarDirName = to.dirName();
+    m_srcPath = srcFile;
     m_tarPath = tarDir;
     m_status = Started;
 
-    //We only check the conflict of the files when
-    //they are not in the same folder
-    if(fromInfo.absolutePath()== to.path() && to.exists(fromInfo.fileName()))
-        return false;
-    else
-        if(to.exists(from.dirName()) && !m_applyToAll)
+    if(fromInfo.absolutePath() != tarDir){
+        if(to.exists(m_srcFileName) && !m_applyToAll)
         {
             jobConflicted();
         }
+    }
 
     while(true)
     {
@@ -902,13 +920,11 @@ bool FileJob::moveDir(const QString &srcDir, const QString &tarDir, QString *tar
             {
                 if(!m_isReplaced)
                 {
-                    m_srcPath = checkDuplicateName(m_tarPath + "/" + from.dirName());
+                    m_tarPath = checkDuplicateName(m_tarPath + "/" + m_srcFileName);
                 }
                 else
                 {
-                    if(!m_applyToAll)
-                        m_isReplaced = false;
-                    m_srcPath = m_tarPath + "/" + from.dirName();
+                    m_tarPath = m_tarPath + "/" + m_srcFileName;
                 }
                 m_status = Run;
                 break;
@@ -917,16 +933,31 @@ bool FileJob::moveDir(const QString &srcDir, const QString &tarDir, QString *tar
             {
                 if(m_isReplaced)
                 {
-                    QDir localDir(to.path() + "/" + from.dirName());
-                    if(localDir.exists())
-                        localDir.removeRecursively();
+                    QFileInfo tarFileInfo(m_tarPath);
 
+                    if(tarFileInfo.exists()){
+                        if (tarFileInfo.isDir()){
+                            QDir(m_tarPath).removeRecursively();
+                        }else{
+                            QFile(m_tarPath).remove();
+                        }
+                    }
                 }
 
-                bool ok = from.rename(from.absolutePath(), m_srcPath);
+                bool ok = QFile(fromInfo.symLinkTarget()).link(m_tarPath);
 
-                if (ok && targetPath)
-                    *targetPath = m_srcPath;
+                if (ok){
+                    if (m_jobType == Move){
+                        QFile from(srcFile);
+                        from.remove();
+                    }
+                    *targetPath = m_tarPath;
+                }
+
+                if(!m_applyToAll){
+                    m_isReplaced = false;
+                }
+
                 return ok;
             }
             case FileJob::Paused:
@@ -950,7 +981,7 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
     QFileInfo toInfo(tarFile);
     m_srcFileName = toInfo.fileName();
     m_tarPath = toInfo.absoluteDir().path();
-    m_tarFileName = toInfo.absoluteDir().dirName();
+    m_tarDirName = toInfo.absoluteDir().dirName();
     m_status = Started;
 
     if(toInfo.exists())
@@ -1080,12 +1111,10 @@ bool FileJob::moveDirToTrash(const QString &dir, QString *targetPath)
     }
     QDir sourceDir(dir);
 
-    QString oldName = sourceDir.dirName();
+
     QString baseName = getNotExistsTrashFileName(sourceDir.dirName());
     QString newName = m_trashLoc + "/files/" + baseName;
     QString delTime = QDateTime::currentDateTime().toString(Qt::ISODate);
-
-    QDir tempDir(newName);
 
     if (!writeTrashInfo(baseName, dir, delTime))
         return false;

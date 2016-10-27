@@ -61,6 +61,8 @@ public:
     inline qint64 lastMsec() { return m_lastMsec; }
     inline bool isJobAdded() { return m_isJobAdded; }
 
+    void adjustSymlinkPath(QString& scrPath, QString& tarDirPath);
+
 signals:
 
     /*add copy/move/delete job to taskdialog when copy/move/delete job created*/
@@ -89,9 +91,12 @@ signals:
 
 public slots:
     DUrlList doCopy(const DUrlList &files, const DUrl &destination);
+    DUrlList doMove(const DUrlList &files, const DUrl &destination);
+
+    DUrlList doMoveCopyJob(const DUrlList &files, const DUrl &destination);
+
     void doDelete(const DUrlList &files);
     DUrlList doMoveToTrash(const DUrlList &files);
-    DUrlList doMove(const DUrlList &files, const DUrl &destination);
 
     void doTrashRestore(const QString &srcFilePath, const QString& tarFilePath);
 
@@ -119,7 +124,7 @@ private:
     float m_factor;
     bool m_isJobAdded = false;
     QString m_srcFileName;
-    QString m_tarFileName;
+    QString m_tarDirName;
     QString m_srcPath;
     QString m_tarPath;
     QElapsedTimer m_timer;
@@ -137,6 +142,9 @@ private:
     bool copyDir(const QString &srcDir, const QString &tarDir, bool isMoved=false, QString *targetPath = 0);
     bool moveFile(const QString &srcFile, const QString &tarDir, QString *targetPath = 0);
     bool moveDir(const QString &srcDir, const QString &tarDir, QString *targetPath = 0);
+    bool handleMoveJob(const QString &srcPath, const QString &tarDir, QString *targetPath = 0);
+    bool handleSymlinkFile(const QString &srcFile, const QString &tarDir, QString *targetPath = 0);
+
     bool restoreTrashFile(const QString &srcFile, const QString &tarFile);
     bool deleteFile(const QString &file);
     bool deleteDir(const QString &dir);
