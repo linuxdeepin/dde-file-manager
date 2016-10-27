@@ -64,8 +64,7 @@ void DStatusBar::initConnect()
 
 void DStatusBar::setMode(DStatusBar::Mode mode)
 {
-    switch (mode) {
-    case Normal:
+    if (mode == Normal) {
         if (m_label)
             return;
 
@@ -107,73 +106,62 @@ void DStatusBar::setMode(DStatusBar::Mode mode)
                       "background-color: white;"
                       "color: #797979;}");
 
-        break;
-    case DialogOpen:
-        if (!m_comboBox) {
-            m_comboBox = new DComboBox(this);
-            m_comboBox->setMaximumWidth(200);
-        } else if (!m_comboBox->isVisible()) {
-            m_comboBox->show();
-        } else {
-            return;
-        }
-
-        if (m_lineEdit) {
-            m_lineEdit->hide();
-            m_lineEdit->deleteLater();
-            m_lineEdit = Q_NULLPTR;
-        }
-        break;
-    case DialogSave:
-        if (m_lineEdit)
-            return;
-
-        if (!m_comboBox) {
-            m_comboBox = new DComboBox(this);
-            m_comboBox->setMaximumWidth(200);
-        }
-
-        m_comboBox->hide();
-
-        m_lineEdit = new DLineEdit(this);
-        m_lineEdit->setMaximumWidth(200);
-        break;
+        return;
     }
 
-    if (mode == DialogOpen || mode == DialogSave) {
-        if (m_label) {
-            m_label->hide();
-            m_label->deleteLater();
-            m_label = Q_NULLPTR;
-        }
-        if (!m_acceptButton) {
-            m_acceptButton = new DTextButton(QString(), this);
-            m_acceptButton->setFixedHeight(28);
-        }
-        if (!m_rejectButton) {
-            m_rejectButton = new DTextButton(QString(), this);
-            m_rejectButton->setFixedHeight(28);
-        }
-
-        clearLayoutAndAnchors();
-        m_scaleSlider->move(0, 0);
-        m_layout->addWidget(m_scaleSlider);
-        if (mode == DialogOpen)
-            m_layout->addWidget(m_comboBox);
-        else
-            m_layout->addWidget(m_lineEdit);
-        m_layout->addStretch();
-        m_layout->addWidget(m_loadingIndicator);
-        m_layout->addWidget(m_rejectButton);
-        m_layout->addWidget(m_acceptButton);
-        m_layout->setSpacing(10);
-        m_layout->setContentsMargins(10, 10, 10, 10);
-
-        setStyleSheet("QFrame{"
-                      "background-color: white;"
-                      "color: #797979;"
-                      "border-top: 1px solid rgba(0, 0, 0, 0.1);}");
+    if (m_comboBox || m_lineEdit) {
+        m_lineEdit->setVisible(mode == DialogSave);
+        return;
     }
+
+    m_comboBox = new DComboBox(this);
+    m_comboBox->setMaximumWidth(200);
+    m_comboBox->hide();
+
+    m_lineEdit = new DLineEdit(this);
+    m_lineEdit->setMaximumWidth(200);
+    m_lineEdit->setVisible(mode == DialogSave);
+
+    if (m_label) {
+        m_label->hide();
+        m_label->deleteLater();
+        m_label = Q_NULLPTR;
+    }
+    if (!m_acceptButton) {
+        m_acceptButton = new DTextButton(QString(), this);
+        m_acceptButton->setFixedHeight(28);
+    }
+    if (!m_rejectButton) {
+        m_rejectButton = new DTextButton(QString(), this);
+        m_rejectButton->setFixedHeight(28);
+    }
+
+    clearLayoutAndAnchors();
+    m_scaleSlider->move(0, 0);
+    m_layout->addWidget(m_scaleSlider);
+    m_layout->addWidget(m_comboBox);
+    m_layout->addWidget(m_lineEdit);
+    m_layout->addStretch();
+    m_layout->addWidget(m_loadingIndicator);
+    m_layout->addWidget(m_rejectButton);
+    m_layout->addWidget(m_acceptButton);
+    m_layout->setSpacing(10);
+    m_layout->setContentsMargins(10, 10, 10, 10);
+
+    setStyleSheet("QFrame{"
+                  "background-color: white;"
+                  "color: #797979;"
+                  "border-top: 1px solid rgba(0, 0, 0, 0.1);}");
+}
+
+void DStatusBar::setComBoxItems(const QStringList &filters)
+{
+    if (!m_comboBox)
+        return;
+
+    m_comboBox->clear();
+    m_comboBox->addItems(filters);
+    m_comboBox->setVisible(!filters.isEmpty());
 }
 
 DSlider *DStatusBar::scalingSlider() const

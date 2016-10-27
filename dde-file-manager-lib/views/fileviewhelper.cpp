@@ -23,7 +23,7 @@ FileViewHelper::FileViewHelper(DFileView *parent)
     , lastEventSource(DFMEvent::FileView)
 {
     connect(parent, &DFileView::triggerEdit, this, &DFileViewHelper::triggerEdit);
-    connect(parent, &DFileView::currentUrlChanged, this, &FileViewHelper::onCurrentUrlChanged);
+    connect(parent, &DFileView::rootUrlChanged, this, &FileViewHelper::onCurrentUrlChanged);
 
     connect(fileSignalManager, &FileSignalManager::requestRename,
             this, &FileViewHelper::edit);

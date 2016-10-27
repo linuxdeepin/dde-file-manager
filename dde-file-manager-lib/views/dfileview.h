@@ -139,7 +139,7 @@ public slots:
     void setContentLabel(const QString &text);
 
 signals:
-    void currentUrlChanged(const DUrl &url);
+    void rootUrlChanged(const DUrl &url);
     void viewModeChanged(ViewMode viewMode);
 
 private slots:

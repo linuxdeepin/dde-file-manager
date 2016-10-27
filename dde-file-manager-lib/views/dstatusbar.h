@@ -35,6 +35,7 @@ public:
     void initConnect();
 
     void setMode(Mode mode);
+    void setComBoxItems(const QStringList &filters);
 
     DSlider* scalingSlider() const;
     QPushButton *acceptButton() const;
