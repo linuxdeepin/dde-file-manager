@@ -100,7 +100,6 @@ DFileSystemModel::~DFileSystemModel()
         d->updateChildrenFuture.waitForFinished();
     }
 
-    QDir::setCurrent(QDir::homePath());
     clear();
 }
 

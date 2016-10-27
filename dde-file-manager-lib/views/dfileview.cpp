@@ -1118,11 +1118,6 @@ void DFileView::focusInEvent(QFocusEvent *event)
 {
     DListView::focusInEvent(event);
     itemDelegate()->commitDataAndCloseActiveEditor();
-
-    const DUrl &current_url = rootUrl();
-
-    if (current_url.isLocalFile())
-            QDir::setCurrent(current_url.toLocalFile());
 }
 
 void DFileView::resizeEvent(QResizeEvent *event)
@@ -1537,9 +1532,6 @@ bool DFileView::setRootUrl(const DUrl &url)
         }
     }
     emit rootUrlChanged(fileUrl);
-
-    if (focusWidget() && focusWidget()->window() == window() && fileUrl.isLocalFile())
-        QDir::setCurrent(fileUrl.toLocalFile());
 
     setSelectionMode(info->supportSelectionMode());
 
