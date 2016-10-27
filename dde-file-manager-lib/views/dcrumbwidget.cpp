@@ -142,7 +142,7 @@ void DCrumbWidget::setCrumb(const DUrl &url)
             addTrashCrumb();
         }else{
             addTrashCrumb();
-            addLocalCrumbs(url);
+            addCrumbs(url);
         }
     }else if(url.isSMBFile()){
         addNetworkCrumb();
@@ -154,7 +154,7 @@ void DCrumbWidget::setCrumb(const DUrl &url)
     }
     else
     {
-        addLocalCrumbs(url);
+        addCrumbs(url);
     }
     createCrumbs();
     repaint();
@@ -371,10 +371,10 @@ DCrumbButton *DCrumbWidget::createDeviceCrumbButtonByType(UDiskDeviceInfo::Media
     return button;
 }
 
-void DCrumbWidget::addLocalCrumbs(const DUrl & url)
+void DCrumbWidget::addCrumbs(const DUrl & url)
 {
     QStringList list;
-    const QString &path = url.toLocalFile();
+    const QString &path = url.isLocalFile() ? url.toLocalFile() : url.path();
     qDebug() << path << isInHome(path) << isInDevice(path);
     if(isInHome(path))
     {

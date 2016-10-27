@@ -54,7 +54,7 @@ private:
 
     DCrumbButton* createDeviceCrumbButtonByType(UDiskDeviceInfo::MediaType type, const QString& mountPoint);
 
-    void addLocalCrumbs(const DUrl & url);
+    void addCrumbs(const DUrl & url);
     void initUI();
     void prepareCrumbs(const DUrl &path);
     bool hasPath(const QString& path);

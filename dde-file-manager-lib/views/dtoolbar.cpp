@@ -243,16 +243,17 @@ void DToolBar::searchBarTextEntered()
 
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(inputUrl);
 
-    if (!fileInfo || !fileInfo->exists())
-        return;
-
     DFMEvent event;
 
     event << WindowManager::getWindowId(this);
     event << DFMEvent::SearchBar;
-    event << inputUrl;
 
-    if (!m_searchBar->hasScheme()) {
+    if (fileInfo) {
+        if (!fileInfo->exists())
+            return;
+
+        event << inputUrl;
+    } else {
         DUrl url = m_crumbWidget->getCurrentUrl();
 
         if (url.isSearchFile())
