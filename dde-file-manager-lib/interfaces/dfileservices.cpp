@@ -620,8 +620,6 @@ void DFileService::openUrl(const DFMEvent &event) const
 
     if (fileInfo && fileInfo->isDir()) {
         emit fileSignalManager->requestChangeCurrentUrl(event);
-    } else if (deviceListener->isDeviceFolder(event.fileUrl().path()) && fileInfo->isDir()) {
-        emit fileSignalManager->requestChangeCurrentUrl(event);
     } else {
         openFile(event.fileUrl());
     }

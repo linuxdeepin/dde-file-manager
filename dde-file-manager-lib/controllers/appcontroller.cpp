@@ -76,7 +76,12 @@ void AppController::actionOpen(const DFMEvent &event)
 {
     const DUrlList& urls = event.fileUrlList();
     if (urls.size() == 1) {
-        fileService->openUrl(event);
+        DFMEvent e = event;
+
+        e << urls.first();
+        e << DUrlList();
+
+        fileService->openUrl(e);
     } else {
         foreach (DUrl url, urls) {
             const DAbstractFileInfoPointer info = fileService->createFileInfo(url);

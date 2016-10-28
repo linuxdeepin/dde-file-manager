@@ -394,8 +394,10 @@ bool DListItemDelegate::eventFilter(QObject *object, QEvent *event)
 
             QLineEdit *edit = qobject_cast<QLineEdit*>(object);
 
-            if (edit)
+            if (edit) {
                 edit->close();
+                edit->parentWidget()->setFocus();
+            }
 
             return true;
         }
