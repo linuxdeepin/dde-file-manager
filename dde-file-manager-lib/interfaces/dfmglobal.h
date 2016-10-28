@@ -20,7 +20,7 @@
         watcher->deleteLater();\
     };\
     if(watcher->isFinished()) onFinished();\
-    else QObject::connect(watcher, &QDBusPendingCallWatcher::finished, onFinished);}
+    else QObject::connect(watcher, &QDBusPendingCallWatcher::finished, watcher, onFinished);}
 
 #if QT_VERSION >= 0x050500
 #define TIMER_SINGLESHOT(Time, Code, captured...){ \
@@ -32,7 +32,7 @@
     timer->setSingleShot(true);\
     timer->setInterval(Time);\
     timer->moveToThread(qApp->thread());\
-    QObject::connect(timer, &QTimer::timeout, [timer, captured] {\
+    QObject::connect(timer, &QTimer::timeout, timer, [timer, captured] {\
         timer->deleteLater();\
         Code;\
     });\

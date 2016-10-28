@@ -493,10 +493,8 @@ bool FileUtils::openFileByApp(const QString &filePath, const QString &app)
 
 bool FileUtils::setBackground(const QString &pictureFilePath)
 {
-    QGSettings* gsettings = new QGSettings("com.deepin.wrap.gnome.desktop.background",
-                                             "/com/deepin/wrap/gnome/desktop/background/");
-    gsettings->set(WallpaperKey, pictureFilePath);
-    gsettings->deleteLater();
+    QGSettings gsettings("com.deepin.wrap.gnome.desktop.background", "/com/deepin/wrap/gnome/desktop/background/");
+    gsettings.set(WallpaperKey, pictureFilePath);
 
     return true;
 }
