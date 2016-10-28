@@ -480,7 +480,7 @@ void DFileDialog::onAcceptButtonClicked()
         for (const DUrl &url : urls) {
             const DAbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(url);
 
-            if (fileInfo->isDir())
+            if (!fileInfo->isFile())
                 return;
         }
 
@@ -488,13 +488,11 @@ void DFileDialog::onAcceptButtonClicked()
             accept();
         break;
     default:
-        if (urls.count() == 1) {
-            const DAbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(urls.first());
+        for (const DUrl &url : urls) {
+            const DAbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(url);
 
             if (!fileInfo->isDir())
                 return;
-        } else if (urls.count() > 1) {
-            return;
         }
         accept();
         break;
