@@ -106,7 +106,7 @@ public:
     virtual bool isSymLink() const;
     virtual bool isDesktopFile() const;
 
-    virtual QString symLinkTarget();
+    virtual DUrl symLinkTarget() const;
 
     virtual QString owner() const;
     virtual uint ownerId() const;

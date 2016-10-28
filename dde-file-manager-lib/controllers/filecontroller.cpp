@@ -98,10 +98,14 @@ bool FileController::openFile(const DUrl &fileUrl, bool &accepted) const
         int code = dialogManager->showRunExcutableDialog(fileUrl);
 
         return FileUtils::openExcutableFile(fileUrl.toLocalFile(), code);
-    }else if (pfile->isSymLink() && !QFile(pfile->symLinkTarget()).exists()){
-        QString targetName = pfile->symLinkTarget().split("/").last();
-        dialogManager->showBreakSymlinkDialog(targetName, fileUrl);
-        return false;
+    } else if (pfile->isSymLink()) {
+        const DAbstractFileInfoPointer &linkInfo = DFileService::instance()->createFileInfo(pfile->symLinkTarget());
+
+        if (linkInfo && !linkInfo->exists()) {
+            dialogManager->showBreakSymlinkDialog(linkInfo->fileName(), fileUrl);
+
+            return false;
+        }
     }
 
     return FileUtils::openFile(fileUrl.toLocalFile());
