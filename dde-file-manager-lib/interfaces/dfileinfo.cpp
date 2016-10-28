@@ -200,11 +200,11 @@ bool DFileInfo::isSymLink() const
     return d->fileInfo.isSymLink();
 }
 
-QString DFileInfo::symLinkTarget()
+DUrl DFileInfo::symLinkTarget() const
 {
     Q_D(const DFileInfo);
 
-    return d->fileInfo.symLinkTarget();
+    return DUrl::fromLocalFile(d->fileInfo.symLinkTarget());
 }
 
 QString DFileInfo::owner() const

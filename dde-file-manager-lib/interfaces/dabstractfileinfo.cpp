@@ -288,11 +288,11 @@ bool DAbstractFileInfo::isDesktopFile() const
     return mimeTypeName() == "application/x-desktop";
 }
 
-QString DAbstractFileInfo::symLinkTarget()
+DUrl DAbstractFileInfo::symLinkTarget() const
 {
     CALL_PROXY(symLinkTarget());
 
-    return QString();
+    return fileUrl();
 }
 
 QString DAbstractFileInfo::owner() const
@@ -836,12 +836,12 @@ int DAbstractFileInfo::getIndexByFileInfo(getFileInfoFun fun, const DAbstractFil
 
 bool DAbstractFileInfo::canRedirectionFileUrl() const
 {
-    return false;
+    return isSymLink();
 }
 
 DUrl DAbstractFileInfo::redirectedFileUrl() const
 {
-    return fileUrl();
+    return symLinkTarget();
 }
 
 bool DAbstractFileInfo::isEmptyFloder(const QDir::Filters &filters) const

@@ -203,20 +203,7 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
         foreach (DUrl url, event.fileUrlList()) {
             const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
 
-            if (fileInfo->isSymLink()) {
-                QFileInfo targetInfo(fileInfo->symLinkTarget());
-
-                if (targetInfo.exists() && targetInfo.isDir()) {
-                    folderCount += 1;
-                    folderContains += fileInfo->filesCount();
-                } else if (targetInfo.exists() && targetInfo.isFile()) {
-                    fileSize += fileInfo->size();
-                    fileCount += 1;
-                } else {
-                    fileSize += fileInfo->size();
-                    fileCount += 1;
-                }
-            } else if (fileInfo->isFile()) {
+            if (fileInfo->isFile()) {
                 fileSize += fileInfo->size();
                 fileCount += 1;
             } else {
