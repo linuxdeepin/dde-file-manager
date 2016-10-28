@@ -134,7 +134,9 @@ QVector<MenuAction> TrashFileInfo::menuActionList(DAbstractFileInfo::MenuType ty
     } else if (type == SingleFile){
         actionKeys.reserve(12);
         if(isDir()){
-            actionKeys << MenuAction::OpenInNewWindow
+
+            actionKeys << MenuAction::Open
+                       << MenuAction::OpenInNewWindow
                        << MenuAction::Separator;
         }
         actionKeys << MenuAction::Restore
@@ -145,6 +147,11 @@ QVector<MenuAction> TrashFileInfo::menuActionList(DAbstractFileInfo::MenuType ty
 
     }else if (type == MultiFiles){
         actionKeys.reserve(12);
+        if(isDir()){
+            actionKeys << MenuAction::Open
+                       << MenuAction::OpenInNewWindow
+                       << MenuAction::Separator;
+        }
         actionKeys << MenuAction::Restore
                    << MenuAction::CompleteDeletion
                    << MenuAction::Copy
@@ -160,6 +167,11 @@ QSet<MenuAction> TrashFileInfo::disableMenuActionList() const
     QSet<MenuAction> list;
 
     if (TrashManager::isEmpty()) {
+        list << MenuAction::RestoreAll;
+        list << MenuAction::ClearTrash;
+    }
+
+    if (fileUrl() != DUrl::fromTrashFile("/")){
         list << MenuAction::RestoreAll;
         list << MenuAction::ClearTrash;
     }

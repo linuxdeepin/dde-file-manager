@@ -43,6 +43,7 @@ class DFileManagerWindow : public DMainWindow
     Q_OBJECT
 public:
     explicit DFileManagerWindow(QWidget *parent = 0);
+    explicit DFileManagerWindow(const DUrl &fileUrl, QWidget *parent = 0);
     ~DFileManagerWindow();
 
     void initData();
@@ -57,7 +58,7 @@ public:
     void initToolBar();
     void initTabBar();
     void initViewLayout();
-    void initFileView();
+    void initFileView(const DUrl &fileUrl);
     void initComputerView();
 
 
