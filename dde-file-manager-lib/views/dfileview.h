@@ -179,8 +179,8 @@ private:
     void keyboardSearch(const QString & search) Q_DECL_OVERRIDE;
     void updateHorizontalOffset();
     void switchViewMode(ViewMode mode);
-    void showEmptyAreaMenu();
-    void showNormalMenu(const QModelIndex &index);
+    void showEmptyAreaMenu(const Qt::ItemFlags &indexFlags);
+    void showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags);
     void updateListHeaderViewProperty();
     void updateExtendHeaderViewProperty();
     void updateColumnWidth();

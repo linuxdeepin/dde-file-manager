@@ -317,6 +317,8 @@ void DFileDialog::setOptions(QFileDialog::Options options)
     Q_D(DFileDialog);
 
     d->options = options;
+
+    getFileView()->model()->setReadOnly(options.testFlag(QFileDialog::ReadOnly));
 }
 
 bool DFileDialog::testOption(QFileDialog::Option option) const

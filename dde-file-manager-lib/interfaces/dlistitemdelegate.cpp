@@ -53,8 +53,9 @@ void DListItemDelegate::paint(QPainter *painter,
     /// judgment way of the whether drag model(another way is: painter.devType() != 1)
     bool isDragMode = ((QPaintDevice*)parent()->parent()->viewport() != painter->device());
     bool isDropTarget = parent()->isDropTarget(index);
+    bool isEnabled = option.state & QStyle::State_Enabled;
 
-    painter->setPen(QColor(TEXT_COLOR));
+    painter->setPen(isEnabled ? TEXT_COLOR : DISABLE_LABEL_COLOR);
 
     if (parent()->isCut(index))
         painter->setOpacity(0.3);
@@ -127,7 +128,7 @@ void DListItemDelegate::paint(QPainter *painter,
 
         painter->drawPixmap(icon_rect, pixmap);
     } else {
-        opt.icon.paint(painter, icon_rect);
+        opt.icon.paint(painter, icon_rect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled);
     }
 
     /// draw file additional icon
@@ -167,7 +168,7 @@ void DListItemDelegate::paint(QPainter *painter,
     if (drawBackground) {
         painter->setPen("#e9e9e9");
     } else {
-        painter->setPen("#797979");
+        painter->setPen(DISABLE_LABEL_COLOR);
     }
 
     for(int i = 1; i < columnRoleList.count(); ++i) {

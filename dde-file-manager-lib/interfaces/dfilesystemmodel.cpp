@@ -41,6 +41,8 @@ public:
     DFileSystemModelPrivate(DFileSystemModel *qq)
         : q_ptr(qq) {}
 
+    bool passNameFilters(const FileSystemNodePointer &node) const;
+
     DFileSystemModel *q_ptr;
 
     FileSystemNodePointer rootNode;
@@ -60,9 +62,30 @@ public:
     DFileSystemModel::State state = DFileSystemModel::Idle;
 
     bool childrenUpdated = false;
+    bool readOnly = false;
 
     Q_DECLARE_PUBLIC(DFileSystemModel)
 };
+
+bool DFileSystemModelPrivate::passNameFilters(const FileSystemNodePointer &node) const
+{
+    if (nameFilters.isEmpty())
+        return true;
+
+    // Check the name regularexpression filters
+    if (!(node->fileInfo->isDir() && (filters & QDir::AllDirs))) {
+        for (int i = 0; i < nameFilters.size(); ++i) {
+            const Qt::CaseSensitivity caseSensitive = (filters & QDir::CaseSensitive) ? Qt::CaseSensitive : Qt::CaseInsensitive;
+            QRegExp re(nameFilters.at(i), caseSensitive, QRegExp::Wildcard);
+            if (re.exactMatch(node->fileInfo->fileDisplayName()))
+                return true;
+        }
+
+        return false;
+    }
+
+    return true;
+}
 
 DFileSystemModel::DFileSystemModel(DFileViewHelper *parent)
     : QAbstractItemModel(parent)
@@ -441,7 +464,7 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
         }
     }
 
-    d->jobController = fileService->getChildrenJob(parentNode->fileInfo->fileUrl(), d->nameFilters, d->filters);
+    d->jobController = fileService->getChildrenJob(parentNode->fileInfo->fileUrl(), QStringList(), d->filters);
 
     if (!d->jobController)
         return;
@@ -462,19 +485,29 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
 
 Qt::ItemFlags DFileSystemModel::flags(const QModelIndex &index) const
 {
+    Q_D(const DFileSystemModel);
+
     Qt::ItemFlags flags = QAbstractItemModel::flags(index);
     if (!index.isValid())
         return flags;
 
     const FileSystemNodePointer &indexNode = getNodeByIndex(index);
 
+    if (!d->passNameFilters(indexNode)) {
+        flags &= ~(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+        // ### TODO you shouldn't be able to set this as the current item, task 119433
+        return flags & ~ indexNode->fileInfo->fileItemDisableFlags();
+    }
+
     flags |= Qt::ItemIsDragEnabled;
 
-    if(indexNode->fileInfo->isCanRename())
-        flags |= Qt::ItemIsEditable;
-
     if ((index.column() == 0)) {
+        if (d->readOnly)
+            return flags;
+
         if(indexNode->fileInfo->isWritable()) {
+            flags |= Qt::ItemIsEditable;
+
             if (isDir(indexNode))
                 flags |= Qt::ItemIsDropEnabled;
             else
@@ -649,7 +682,7 @@ void DFileSystemModel::setNameFilters(const QStringList &nameFilters)
 
     d->nameFilters = nameFilters;
 
-    refresh();
+    emitAllDateChanged();
 }
 
 void DFileSystemModel::setFilters(QDir::Filters filters)
@@ -794,12 +827,7 @@ void DFileSystemModel::sort()
         node->visibleChildren[i] = list[i]->fileUrl();
     }
 
-    QModelIndex parentIndex = createIndex(node, 0);
-    QModelIndex topLeftIndex = index(0, 0, parentIndex);
-    QModelIndex rightBottomIndex = index(node->visibleChildren.count(), columnCount(parentIndex), parentIndex);
-
-    QMetaObject::invokeMethod(this, "dataChanged", Qt::QueuedConnection,
-                              Q_ARG(QModelIndex, topLeftIndex), Q_ARG(QModelIndex, rightBottomIndex));
+    emitAllDateChanged();
 }
 
 const DAbstractFileInfoPointer DFileSystemModel::fileInfo(const QModelIndex &index) const
@@ -853,6 +881,20 @@ DFileSystemModel::State DFileSystemModel::state() const
     Q_D(const DFileSystemModel);
 
     return d->state;
+}
+
+void DFileSystemModel::setReadOnly(bool readOnly)
+{
+    Q_D(DFileSystemModel);
+
+    d->readOnly = readOnly;
+}
+
+bool DFileSystemModel::isReadOnly() const
+{
+    Q_D(const DFileSystemModel);
+
+    return d->readOnly;
 }
 
 void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
@@ -1227,4 +1269,16 @@ void DFileSystemModel::addFile(const DAbstractFileInfoPointer &fileInfo)
 
         endInsertRows();
     }
+}
+
+void DFileSystemModel::emitAllDateChanged()
+{
+    Q_D(const DFileSystemModel);
+
+    QModelIndex parentIndex = createIndex(d->rootNode, 0);
+    QModelIndex topLeftIndex = index(0, 0, parentIndex);
+    QModelIndex rightBottomIndex = index(d->rootNode->visibleChildren.count(), columnCount(parentIndex), parentIndex);
+
+    QMetaObject::invokeMethod(this, "dataChanged", Qt::QueuedConnection,
+                              Q_ARG(QModelIndex, topLeftIndex), Q_ARG(QModelIndex, rightBottomIndex));
 }

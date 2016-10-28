@@ -12,6 +12,8 @@
 
 #include <QStyledItemDelegate>
 
+#define DISABLE_LABEL_COLOR "#797979"
+
 class DFileViewHelper;
 class DStyledItemDelegatePrivate;
 class DStyledItemDelegate : public QStyledItemDelegate
