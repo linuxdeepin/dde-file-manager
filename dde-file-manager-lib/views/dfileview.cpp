@@ -635,7 +635,7 @@ void DFileView::select(const QList<DUrl> &list)
     for (const DUrl &url : list) {
         const QModelIndex &index = model()->index(url);
 
-        if (index == root || index.isValid())
+        if (index == root || !index.isValid())
             continue;
 
         selectionModel()->select(index, QItemSelectionModel::Select);
