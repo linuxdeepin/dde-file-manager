@@ -36,6 +36,7 @@ class ThumbnailManager : public QThread
     Q_OBJECT
 public:
     explicit ThumbnailManager(QObject *parent = 0);
+    ~ThumbnailManager();
     void init();
 
     QString getThumbnailCachePath() const;
@@ -71,6 +72,7 @@ private:
 
     ThumbnailGenerator m_thumbnailGenerator;
 
+    bool running = true;
     QWaitCondition waitCondition;
     QReadWriteLock readWriteLockTaskQueue;
 };

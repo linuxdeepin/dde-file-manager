@@ -23,6 +23,13 @@ ThumbnailManager::ThumbnailManager(QObject *parent)
     start();
 }
 
+ThumbnailManager::~ThumbnailManager()
+{
+    running = false;
+    waitCondition.wakeAll();
+    wait();
+}
+
 void ThumbnailManager::init()
 {
     m_cachePath = getThumbnailCachePath();
@@ -192,6 +199,10 @@ void ThumbnailManager::run()
         if (taskQueue.isEmpty()) {
             waitCondition.wait(&readWriteLockTaskQueue);
         }
+
+        if (!running)
+            return;
+
 //        const QString &fileUrl = taskQueue.dequeue();
         const ThumbnailTask &task = taskQueue.dequeue();
         locker.unlock();

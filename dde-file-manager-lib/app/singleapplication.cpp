@@ -99,12 +99,11 @@ bool SingleApplication::setSingleInstance(const QString &key)
 {
     QString userKey = userServerName(key);
 
-    QLocalSocket *localSocket = new QLocalSocket;
-    localSocket->connectToServer(userKey);
+    QLocalSocket localSocket;
+    localSocket.connectToServer(userKey);
 
     // if connect success, another instance is running.
-    bool result = localSocket->waitForConnected(1000);
-    localSocket->deleteLater();
+    bool result = localSocket.waitForConnected(1000);
 
     if (result)
         return false;
