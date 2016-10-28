@@ -101,7 +101,7 @@ void WindowManager::showNewWindow(const DUrl &url, bool isAlwaysOpen)
     }
 
     QX11Info::setAppTime(QX11Info::appUserTime());
-    DFileManagerWindow *window = new DFileManagerWindow();
+    DFileManagerWindow *window = new DFileManagerWindow(url.isEmpty() ? DUrl::fromLocalFile(QDir::homePath()) : url);
     loadWindowState(window);
     window->show();
     qDebug() << "new window" << window->winId() << url;
@@ -128,15 +128,6 @@ void WindowManager::showNewWindow(const DUrl &url, bool isAlwaysOpen)
         window->moveCenter(currentScreenGeometry.center());
     }
     window->setFileViewMode(m_fmStateManager->fmState()->viewMode());
-
-    DFMEvent event;
-    if (!url.isEmpty()){
-        event << url;
-    }else{
-        event << DUrl::fromLocalFile(QDir::homePath());
-    }
-    event << window->winId();
-    emit fileSignalManager->requestChangeCurrentUrl(event);
 
     qApp->setActiveWindow(window);
 }

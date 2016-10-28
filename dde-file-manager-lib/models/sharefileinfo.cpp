@@ -232,3 +232,17 @@ QList<QIcon> ShareFileInfo::additionalIcon() const
 
     return icons;
 }
+
+bool ShareFileInfo::canRedirectionFileUrl() const
+{
+    Q_D(const DAbstractFileInfo);
+
+    return d->proxy;
+}
+
+DUrl ShareFileInfo::redirectedFileUrl() const
+{
+    Q_D(const DAbstractFileInfo);
+
+    return d->proxy->fileUrl();
+}

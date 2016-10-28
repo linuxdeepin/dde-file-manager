@@ -47,6 +47,9 @@ public:
 
     QList<QIcon> additionalIcon() const Q_DECL_OVERRIDE;
 
+    virtual bool canRedirectionFileUrl() const Q_DECL_OVERRIDE;
+    virtual DUrl redirectedFileUrl() const Q_DECL_OVERRIDE;
+
 private:
     QString m_displayName;
 

@@ -77,6 +77,12 @@ public:
 };
 
 DFileManagerWindow::DFileManagerWindow(QWidget *parent)
+    : DFileManagerWindow(DUrl(), parent)
+{
+
+}
+
+DFileManagerWindow::DFileManagerWindow(const DUrl &fileUrl, QWidget *parent)
     : DMainWindow(parent)
     , d_ptr(new DFileManagerWindowPrivate(this))
 {
@@ -88,7 +94,7 @@ DFileManagerWindow::DFileManagerWindow(QWidget *parent)
     initData();
     initUI();
     initConnect();
-    initFileView();
+    initFileView(fileUrl);
 }
 
 DFileManagerWindow::~DFileManagerWindow()
@@ -242,10 +248,10 @@ void DFileManagerWindow::initViewLayout()
     d->viewStackLayout->setContentsMargins(0, 0, 0, 0);
 }
 
-void DFileManagerWindow::initFileView()
+void DFileManagerWindow::initFileView(const DUrl &fileUrl)
 {
     DFMEvent event;
-    event << DUrl();
+    event << fileUrl;
     event << windowId();
     createNewView(event);
 }
@@ -529,21 +535,7 @@ void DFileManagerWindow::preHandleCd(const DFMEvent &event)
     } else if (event.fileUrl().isSearchFile()
                && d->viewStackLayout->currentWidget() == d->computerView) {
         return;
-    } else if(event.fileUrl().isUserShareFile()){
-        if(event.fileUrl().toString() == USERSHARE_ROOT){
-            cd(event);
-            return;
-        }
-        QString shareName = event.fileUrl().path();
-        shareName = shareName.mid(1,shareName.length()-1);
-        ShareInfo info = userShareManager->getsShareInfoByShareName(shareName);
-        if(info.isValid()){
-            DUrl url = DUrl::fromUserInput(info.path());
-            DFMEvent e = event;
-            e << url;
-            cd(e);
-        }
-    }else {
+    } else {
         cd(event);
     }
 }

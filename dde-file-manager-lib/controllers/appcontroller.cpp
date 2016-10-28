@@ -75,31 +75,14 @@ void AppController::createUserShareManager()
 void AppController::actionOpen(const DFMEvent &event)
 {
     const DUrlList& urls = event.fileUrlList();
-
     if (urls.size() == 1) {
-        DUrl url = urls.first();
-        if(url.isUserShareFile())
-            url.setScheme(FILE_SCHEME);
-        const_cast<DFMEvent&>(event) << url;
-
         fileService->openUrl(event);
     } else {
         foreach (DUrl url, urls) {
-            if (url.isRecentFile()) {
-                url.setScheme(FILE_SCHEME);
-            }if(url.isUserShareFile() && url != DUrl::fromUserShareFile("/")){
-                url.setScheme(FILE_SCHEME);
-            }
-
-            if (url.isLocalFile()) {
-                QFileInfo info(url.toLocalFile());
-
-                if (info.isFile()) {
-                    fileService->openFile(url);
-                } else if(info.isDir()) {
-                    emit fileSignalManager->requestOpenNewWindowByUrl(url, true);
-                }
-            } else if (url.isSMBFile()) {
+            const DAbstractFileInfoPointer info = fileService->createFileInfo(url);
+            if (info->isFile()) {
+                fileService->openFile(url);
+            } else if(info->isDir()) {
                 emit fileSignalManager->requestOpenNewWindowByUrl(url, true);
             }
         }
@@ -133,21 +116,14 @@ void AppController::asycOpenDisk(const QString &path)
 
 void AppController::actionOpenInNewWindow(const DFMEvent &event)
 {
-    DUrl fileUrl = event.fileUrl();
-    if(fileUrl.isUserShareFile() && fileUrl != DUrl::fromUserShareFile("/")){
-        fileUrl.setScheme(FILE_SCHEME);
+    DUrlList urls = event.fileUrlList();;
+    foreach (DUrl url, urls) {
+        fileService->openNewWindow(url);
     }
-    fileService->openNewWindow(fileUrl);
 }
 
 void AppController::actionOpenInNewTab(const DFMEvent &event)
 {
-    const DUrlList& urls = event.fileUrlList();
-    DUrl url = urls.first();
-    if(url.isUserShareFile() && url != DUrl::fromUserShareFile("/")){
-        url.setScheme(FILE_SCHEME);
-        const_cast<DFMEvent&>(event) << url;
-    }
     emit fileSignalManager->requestOpenInNewTab(event);
 }
 
