@@ -26,6 +26,7 @@ public:
 
     QFileDialog::FileMode fileMode = QFileDialog::AnyFile;
     QFileDialog::AcceptMode acceptMode = QFileDialog::AcceptOpen;
+    QFileDialog::Options options;
     QEventLoop *eventLoop = Q_NULLPTR;
     QStringList nameFilters;
 };
@@ -130,13 +131,35 @@ QList<QUrl> DFileDialog::selectedUrls() const
     return DUrl::toQUrlList(list);
 }
 
+/*
+    Strip the filters by removing the details, e.g. (*.*).
+*/
+QStringList qt_strip_filters(const QStringList &filters)
+{
+    QStringList strippedFilters;
+    QRegExp r(QString::fromLatin1(QPlatformFileDialogHelper::filterRegExp));
+    const int numFilters = filters.count();
+    strippedFilters.reserve(numFilters);
+    for (int i = 0; i < numFilters; ++i) {
+        QString filterName;
+        int index = r.indexIn(filters[i]);
+        if (index >= 0)
+            filterName = r.cap(1);
+        strippedFilters.append(filterName.simplified());
+    }
+    return strippedFilters;
+}
+
 void DFileDialog::setNameFilters(const QStringList &filters)
 {
     D_D(DFileDialog);
 
     d->nameFilters = filters;
 
-    getFileView()->statusBar()->setComBoxItems(filters);
+    if (testOption(QFileDialog::HideNameFilterDetails))
+        getFileView()->statusBar()->setComBoxItems(qt_strip_filters(filters));
+    else
+        getFileView()->statusBar()->setComBoxItems(filters);
 
     if (selectedNameFilter().isEmpty())
         selectNameFilter(filters.isEmpty() ? QString() : filters.first());
@@ -287,6 +310,20 @@ QString DFileDialog::labelText(QFileDialog::DialogLabel label) const
     }
 
     return QString();
+}
+
+void DFileDialog::setOptions(QFileDialog::Options options)
+{
+    Q_D(DFileDialog);
+
+    d->options = options;
+}
+
+bool DFileDialog::testOption(QFileDialog::Option option) const
+{
+    Q_D(const DFileDialog);
+
+    return d->options & option;
 }
 
 void DFileDialog::accept()
