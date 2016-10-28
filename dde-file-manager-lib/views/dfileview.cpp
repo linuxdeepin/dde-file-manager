@@ -1136,14 +1136,25 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
 
 
     const QModelIndex &index = indexAt(event->pos());
-    bool isEmptyArea = d->fileViewHelper->isEmptyArea(event->pos());
+    bool indexIsSelected = this->isSelected(index);
+    bool isEmptyArea = d->fileViewHelper->isEmptyArea(event->pos()) && !indexIsSelected;
+    Qt::ItemFlags flags;
 
-    const Qt::ItemFlags &flags = model()->flags((!index.isValid() && isEmptyArea) ? rootIndex() : index);
+    if (isEmptyArea) {
+        flags = model()->flags(rootIndex());
 
-    if (!flags.testFlag(Qt::ItemIsEnabled))
-        return;
+        if (!flags.testFlag(Qt::ItemIsEnabled))
+            return;
+    } else {
+        flags = model()->flags(index);
 
-    if (isEmptyArea  && !selectionModel()->isSelected(index)) {
+        if (!flags.testFlag(Qt::ItemIsEnabled)) {
+            isEmptyArea = true;
+            flags = rootIndex().flags();
+        }
+    }
+
+    if (isEmptyArea) {
         itemDelegate()->hideNotEditingIndexWidget();
         clearSelection();
         showEmptyAreaMenu(flags);
