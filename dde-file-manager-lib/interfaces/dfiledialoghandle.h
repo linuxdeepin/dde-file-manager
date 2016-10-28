@@ -48,6 +48,8 @@ public:
     void setLabelText(QFileDialog::DialogLabel label, const QString &text);
     QString labelText(QFileDialog::DialogLabel label) const;
 
+    void setOptions(QFileDialog::Options options);
+
 Q_SIGNALS:
     void finished(int result);
     void accepted();

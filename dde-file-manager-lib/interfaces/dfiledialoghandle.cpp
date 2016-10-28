@@ -224,6 +224,13 @@ QString DFileDialogHandle::labelText(QFileDialog::DialogLabel label) const
     return d->dialog->labelText(label);
 }
 
+void DFileDialogHandle::setOptions(QFileDialog::Options options)
+{
+    D_DC(DFileDialogHandle);
+
+    return d->dialog->setOptions(options);
+}
+
 void DFileDialogHandle::show()
 {
     D_D(DFileDialogHandle);
