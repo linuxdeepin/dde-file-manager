@@ -102,11 +102,12 @@ void DIconItemDelegate::paint(QPainter *painter,
 
     /// judgment way of the whether drag model(another way is: painter.devType() != 1)
     bool isDragMode = ((QPaintDevice*)parent()->parent()->viewport() != painter->device());
+    bool isEnabled = option.state & QStyle::State_Enabled;
 
     if (parent()->isCut(index))
         painter->setOpacity(0.3);
 
-    painter->setPen(QColor(TEXT_COLOR));
+    painter->setPen(isEnabled ? TEXT_COLOR : DISABLE_LABEL_COLOR);
 
     if((index == d->expandedIndex || index == d->editingIndex) && !isDragMode)
         return;
@@ -232,7 +233,7 @@ void DIconItemDelegate::paint(QPainter *painter,
 
         painter->drawPixmap(icon_rect, pixmap);
     } else {
-        opt.icon.paint(painter, icon_rect);
+        opt.icon.paint(painter, icon_rect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled);
     }
 
     /// draw file additional icon

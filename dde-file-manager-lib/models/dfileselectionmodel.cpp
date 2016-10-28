@@ -24,8 +24,10 @@ bool DFileSelectionModel::isSelected(const QModelIndex &index) const
         return QItemSelectionModel::isSelected(index);
 
     for (const QItemSelectionRange &range : m_selection) {
-        if (range.contains(index))
-            return true;
+        if (range.contains(index)) {
+            Qt::ItemFlags flags = index.flags();
+            return (flags & Qt::ItemIsSelectable);
+        }
     }
 
     return false;

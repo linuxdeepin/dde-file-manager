@@ -119,6 +119,9 @@ public:
 
     State state() const;
 
+    void setReadOnly(bool readOnly);
+    bool isReadOnly() const;
+
 public slots:
     void updateChildren(QList<DAbstractFileInfoPointer> list);
     /// warning: only refresh current url
@@ -154,6 +157,8 @@ private:
     void onJobAddChildren(const DAbstractFileInfoPointer &fileInfo);
     void onJobFinished();
     void addFile(const DAbstractFileInfoPointer &fileInfo);
+
+    void emitAllDateChanged();
 
     friend class FileSystemNode;
 

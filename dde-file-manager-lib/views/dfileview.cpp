@@ -1018,7 +1018,7 @@ void DFileView::mousePressEvent(QMouseEvent *event)
 
 void DFileView::mouseMoveEvent(QMouseEvent *event)
 {
-    if (dragEnabled())
+    if (dragEnabled() || event->buttons() != Qt::LeftButton)
         return DListView::mouseMoveEvent(event);
 
     updateSelectionRect();
@@ -1134,20 +1134,25 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
 {
     D_DC(DFileView);
 
-    bool isEmptyArea = d->fileViewHelper->isEmptyArea(event->pos());
 
     const QModelIndex &index = indexAt(event->pos());
+    bool isEmptyArea = d->fileViewHelper->isEmptyArea(event->pos());
+
+    const Qt::ItemFlags &flags = model()->flags((!index.isValid() && isEmptyArea) ? rootIndex() : index);
+
+    if (!flags.testFlag(Qt::ItemIsEnabled))
+        return;
 
     if (isEmptyArea  && !selectionModel()->isSelected(index)) {
         itemDelegate()->hideNotEditingIndexWidget();
         clearSelection();
-        showEmptyAreaMenu();
+        showEmptyAreaMenu(flags);
     } else {
         if (!isSelected(index)) {
             setCurrentIndex(index);
         }
 
-        showNormalMenu(index);
+        showNormalMenu(index, flags);
     }
 }
 
@@ -1729,7 +1734,7 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
     emit viewModeChanged(mode);
 }
 
-void DFileView::showEmptyAreaMenu()
+void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
 {
     D_D(DFileView);
 
@@ -1747,6 +1752,9 @@ void DFileView::showEmptyAreaMenu()
     if (model()->state() != DFileSystemModel::Idle){
         disableList << MenuAction::SortBy;
     }
+
+    if (!indexFlags.testFlag(Qt::ItemIsEditable))
+        disableList << MenuAction::NewDocument << MenuAction::NewFolder << MenuAction::Paste;
 
     const bool& tabAddable = WindowManager::tabAddableByWinId(windowId());
     if(!tabAddable)
@@ -1809,7 +1817,7 @@ void DFileView::showEmptyAreaMenu()
 }
 
 
-void DFileView::showNormalMenu(const QModelIndex &index)
+void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags)
 {
     D_D(DFileView);
 
@@ -1821,6 +1829,10 @@ void DFileView::showNormalMenu(const QModelIndex &index)
     DFileMenu* menu;
 
     const DAbstractFileInfoPointer &info = model()->fileInfo(index);
+    QSet<MenuAction> disableList;
+
+    if (!indexFlags.testFlag(Qt::ItemIsEditable))
+        disableList << MenuAction::Cut << MenuAction::Rename << MenuAction::Remove << MenuAction::Delete;
 
     if (list.length() == 1) {
         const QVector<MenuAction> &actions = info->menuActionList(DAbstractFileInfo::SingleFile);
@@ -1829,7 +1841,7 @@ void DFileView::showNormalMenu(const QModelIndex &index)
             return;
 
         const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList();
-        QSet<MenuAction> disableList = DFileMenuManager::getDisableActionList(list);
+        disableList += DFileMenuManager::getDisableActionList(list);
         const bool& tabAddable = WindowManager::tabAddableByWinId(windowId());
         if(!tabAddable)
             disableList << MenuAction::OpenInNewTab;
@@ -1900,7 +1912,7 @@ void DFileView::showNormalMenu(const QModelIndex &index)
         }
 
         const QMap<MenuAction, QVector<MenuAction> > subActions;
-        QSet<MenuAction> disableList = DFileMenuManager::getDisableActionList(list);
+        disableList += DFileMenuManager::getDisableActionList(list);
         const bool& tabAddable = WindowManager::tabAddableByWinId(windowId());
         if(!tabAddable)
             disableList << MenuAction::OpenInNewTab;
