@@ -451,6 +451,7 @@ void DialogManager::showBreakSymlinkDialog(const QString &targetName, const DUrl
         DUrlList urls;
         urls << linkfile;
         DFMEvent event;
+        event << linkfile;
         event << urls;
         fileService->moveToTrash(event);
     }

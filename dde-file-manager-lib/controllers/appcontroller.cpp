@@ -42,7 +42,6 @@ QPair<DUrl, int> AppController::selectionAndRenameFile;
 
 AppController::AppController(QObject *parent) : QObject(parent)
 {
-    DFileService::instance()->setFileUrlHandler(RECENT_SCHEME, "", new RecentHistoryManager(this));
     DFileService::dRegisterUrlHandler<FileController>(FILE_SCHEME, "");
     DFileService::dRegisterUrlHandler<TrashManager>(TRASH_SCHEME, "");
     DFileService::dRegisterUrlHandler<SearchController>(SEARCH_SCHEME, "");
