@@ -50,6 +50,12 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("addUserToGroup"), argumentList);
     }
 
+    inline QDBusPendingReply<bool> restartSambaService()
+    {
+        QList<QVariant> argumentList;
+        return asyncCallWithArgumentList(QStringLiteral("restartSambaService"), argumentList);
+    }
+
     inline QDBusPendingReply<bool> setUserSharePassword(const QString &username, const QString &passward)
     {
         QList<QVariant> argumentList;

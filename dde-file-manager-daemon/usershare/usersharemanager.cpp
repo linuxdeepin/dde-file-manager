@@ -54,3 +54,12 @@ bool UserShareManager::setUserSharePassword(const QString &username, const QStri
     return ret;
 }
 
+bool UserShareManager::restartSambaService()
+{
+    QStringList args;
+    args << "smbd" << "restart";
+    bool ret = QProcess::startDetached("service", args);
+    qDebug() << "service smbd restart" << ret;
+    return ret;
+}
+
