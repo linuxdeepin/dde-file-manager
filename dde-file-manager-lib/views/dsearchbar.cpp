@@ -207,6 +207,7 @@ void DSearchBar::setCompleter(const QString &text)
     if(/*hasScheme() || */url.isLocalFile())
     {
         QFileInfo fileInfo;
+
         if (text.endsWith(".")){
             fileInfo = QFileInfo(url.path().isEmpty() ? "/" : url.toLocalFile() + "/");
         }else{
@@ -214,8 +215,12 @@ void DSearchBar::setCompleter(const QString &text)
         }
 //        qDebug() << url.toLocalFile() << fileInfo.absolutePath() << fileInfo.path() << QDir::cleanPath(url.toLocalFile());
         QDir dir;
-        if(fileInfo.exists())
+        if(fileInfo.exists()){
             dir = QDir(fileInfo.absoluteFilePath());
+            if (!text.endsWith("/")){
+                return;
+            }
+        }
         else
             dir = QDir(fileInfo.absolutePath());
         QStringList localList = splitPath(text);
