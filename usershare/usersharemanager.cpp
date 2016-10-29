@@ -12,6 +12,9 @@
 
 #include <simpleini/SimpleIni.h>
 #include "shareinfo.h"
+#include "../dde-file-manager-daemon/dbusservice/dbusinterface/usershare_interface.h"
+
+QString UserShareManager::CurrentUser = "";
 
 UserShareManager::UserShareManager(QObject *parent) : QObject(parent)
 {
@@ -20,9 +23,17 @@ UserShareManager::UserShareManager(QObject *parent) : QObject(parent)
     m_shareInfosChangedTimer = new QTimer(this);
     m_shareInfosChangedTimer->setSingleShot(true);
     m_shareInfosChangedTimer->setInterval(300);
+    m_lazyStartSambaServiceTimer = new QTimer(this);
+    m_lazyStartSambaServiceTimer->setSingleShot(true);
+    m_lazyStartSambaServiceTimer->setInterval(3000);
+    m_userShareInterface = new UserShareInterface("com.deepin.filemanager.daemon",
+                                                                    "/com/deepin/filemanager/daemon/UserShareManager",
+                                                                    QDBusConnection::systemBus(),
+                                                                    this);
     initConnect();
     updateUserShareInfo();
     initMonitorPath();
+    m_lazyStartSambaServiceTimer->start();
 }
 
 UserShareManager::~UserShareManager()
@@ -43,6 +54,7 @@ void UserShareManager::initConnect()
     connect(m_fileMonitor, &FileMonitor::fileDeleted, this, &UserShareManager::onFileDeleted);
     connect(m_fileMonitor, &FileMonitor::fileCreated, this, &UserShareManager::handleShareChanged);
     connect(m_shareInfosChangedTimer, &QTimer::timeout, this, &UserShareManager::updateUserShareInfo);
+    connect(m_lazyStartSambaServiceTimer, &QTimer::timeout, this, &UserShareManager::initSamaServiceSettings);
 }
 
 QString UserShareManager::getCacehPath()
@@ -136,6 +148,26 @@ QString UserShareManager::readCacheFromFile(const QString &path)
     QByteArray content = file.readAll();
     file.close();
     return QString(content);
+}
+
+QString UserShareManager::getCurrentUserName()
+{
+    if(CurrentUser.isEmpty()){
+        QProcess up;
+        up.start("id",QStringList() << "-u" << "-n");
+        up.waitForFinished();
+        QByteArray data = up.readAll();
+        QString userName = data.data();
+        // throw out '\n' string
+        CurrentUser = userName.trimmed();
+    }
+    return CurrentUser;
+}
+
+void UserShareManager::initSamaServiceSettings()
+{
+    addCurrentUserToSambashareGroup();
+    restartSambaService();
 }
 
 ShareInfoList UserShareManager::shareInfoList() const
@@ -276,6 +308,36 @@ void UserShareManager::testUpdateUserShareInfo()
             qDebug() << settings.value("path").toString();
             settings.endGroup();
         }
+    }
+}
+
+void UserShareManager::setSambaPassword(const QString &userName, const QString &password)
+{
+    QDBusReply<bool> reply = m_userShareInterface->setUserSharePassword(userName, password);
+    if(reply.isValid()){
+        qDebug() << "set usershare password:" << reply.value();
+    }else{
+        qDebug() <<"set usershare password:" << reply.error();
+    }
+}
+
+void UserShareManager::addCurrentUserToSambashareGroup()
+{
+    QDBusReply<bool> reply = m_userShareInterface->addUserToGroup(getCurrentUserName(), "sambashare");
+    if(reply.isValid()){
+        qDebug() << "add" << getCurrentUserName() <<  "to sambashare group" << reply.value();
+    }else{
+        qDebug() << "add" << getCurrentUserName() <<  "to sambashare group" << reply.error();
+    }
+}
+
+void UserShareManager::restartSambaService()
+{
+    QDBusReply<bool> reply = m_userShareInterface->restartSambaService();
+    if(reply.isValid()){
+        qDebug() << "restartSambaService" << reply.value();
+    }else{
+        qDebug() <<"restartSambaService" << reply.error();
     }
 }
 

@@ -45,6 +45,12 @@ bool UserShareAdaptor::addUserToGroup(const QString &userName, const QString &gr
     return parent()->addUserToGroup(userName, groupName);
 }
 
+bool UserShareAdaptor::restartSambaService()
+{
+    // handle method call com.deepin.filemanager.daemon.UserShareManager.restartSambaService
+    return parent()->restartSambaService();
+}
+
 bool UserShareAdaptor::setUserSharePassword(const QString &username, const QString &passward)
 {
     // handle method call com.deepin.filemanager.daemon.UserShareManager.setUserSharePassword

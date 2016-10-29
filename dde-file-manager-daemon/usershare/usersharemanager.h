@@ -20,7 +20,7 @@ public slots:
     bool addGroup(const QString &groupName);
     bool addUserToGroup(const QString &userName, const QString &groupName);
     bool setUserSharePassword(const QString &username, const QString &passward);
-
+    bool restartSambaService();
 private:
     UserShareAdaptor* m_userShareAdaptor = NULL;
 };

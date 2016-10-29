@@ -15,5 +15,8 @@
             <arg type="s" name="groupName" direction="in"/>
             <arg type="b" name="result" direction="out"/>
         </method>
+        <method name="restartSambaService">
+            <arg type="b" name="result" direction="out"/>
+        </method>
     </interface>
 </node>
