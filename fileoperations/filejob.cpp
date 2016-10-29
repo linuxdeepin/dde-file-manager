@@ -472,7 +472,7 @@ void FileJob::jobConflicted()
 bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMoved, QString *targetPath)
 {
     if(m_applyToAll && m_status == FileJob::Cancelled){
-        return false;
+        m_skipandApplyToAll = true;
     }else if(!m_applyToAll && m_status == FileJob::Cancelled){
         m_status = Started;
     }
@@ -488,15 +488,17 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
 
     //We only check the conflict of the files when
     //they are not in the same folder
-    bool isTarFileExists = to.exists();
+    bool isTargetExists = to.exists();
     if(sf.absolutePath() != tf.absoluteFilePath())
-        if(isTarFileExists && !m_applyToAll)
+        if(isTargetExists && !m_applyToAll)
         {
             if (!isMoved){
                 jobConflicted();
             }else{
                 m_isReplaced = true;
             }
+        }else if (isTargetExists && m_skipandApplyToAll){
+            return false;
         }
 
 #ifdef SPLICE_CP
@@ -517,7 +519,7 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
         {
             case FileJob::Started:
             {
-                if (isTarFileExists){
+                if (isTargetExists){
                     if(!m_isReplaced)
                     {
                         m_tarPath = checkDuplicateName(m_tarPath);
@@ -679,7 +681,7 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
     }
 
     if(m_applyToAll && m_status == FileJob::Cancelled){
-        return false;
+        m_skipandApplyToAll = true;
     }else if(!m_applyToAll && m_status == FileJob::Cancelled){
         m_status = Started;
     }
@@ -693,16 +695,18 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
     m_tarPath = targetDir.absolutePath();
     m_status = Started;
 
-    bool isTargetDirExists = targetDir.exists();
+    bool isTargetExists = targetDir.exists();
 
     if(sf.absolutePath() != tf.absolutePath())
-        if(isTargetDirExists && !m_applyToAll)
+        if(isTargetExists && !m_applyToAll)
         {
             if (!isMoved){
                 jobConflicted();
             }else{
                 m_isReplaced = true;
             }
+        }else if (isTargetExists && m_skipandApplyToAll){
+            return false;
         }
 
     while(true)
@@ -711,12 +715,12 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
         {
         case Started:
         {
-            if (isTargetDirExists){
+            if (isTargetExists){
                 if(!m_isReplaced)
                 {
                     m_tarPath = checkDuplicateName(m_tarPath);
                     targetDir.setPath(m_tarPath);
-                    isTargetDirExists = false;
+                    isTargetExists = false;
                 }
                 else
                 {
@@ -725,7 +729,7 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
                 }
             }
 
-            if(!isTargetDirExists)
+            if(!isTargetExists)
             {
                 if(!targetDir.mkdir(m_tarPath))
                     return false;
@@ -804,7 +808,7 @@ bool FileJob::handleMoveJob(const QString &srcPath, const QString &tarDir, QStri
     }
 
     if(m_applyToAll && m_status == FileJob::Cancelled){
-        return false;
+        m_skipandApplyToAll = true;
     }else if(!m_applyToAll && m_status == FileJob::Cancelled){
         m_status = Started;
     }
@@ -816,15 +820,20 @@ bool FileJob::handleMoveJob(const QString &srcPath, const QString &tarDir, QStri
     m_tarPath = tarDir;
     m_status = Started;
 
+    bool isTargetExists = to.exists(m_srcFileName);
+
     //We only check the conflict of the files when
     //they are not in the same folder
-    if(scrFileInfo.absolutePath()== tarDir && to.exists(m_srcFileName))
+    if(scrFileInfo.absolutePath()== tarDir && isTargetExists)
         return true;
     else{
-        if(to.exists(m_srcFileName) && !m_applyToAll)
+        if(isTargetExists && !m_applyToAll)
         {
             jobConflicted();
+        }else if (isTargetExists && m_skipandApplyToAll){
+            return false;
         }
+
     }
 
     while(true)
@@ -892,7 +901,7 @@ bool FileJob::handleMoveJob(const QString &srcPath, const QString &tarDir, QStri
 bool FileJob::handleSymlinkFile(const QString &srcFile, const QString &tarDir, QString *targetPath)
 {
     if(m_applyToAll && m_status == FileJob::Cancelled){
-        return false;
+        m_skipandApplyToAll = true;
     }else if(!m_applyToAll && m_status == FileJob::Cancelled){
         m_status = Started;
     }
@@ -905,10 +914,14 @@ bool FileJob::handleSymlinkFile(const QString &srcFile, const QString &tarDir, Q
     m_tarPath = tarDir;
     m_status = Started;
 
+    bool isTargetExists = to.exists(m_srcFileName);
+
     if(fromInfo.absolutePath() != tarDir){
-        if(to.exists(m_srcFileName) && !m_applyToAll)
+        if(isTargetExists && !m_applyToAll)
         {
             jobConflicted();
+        }else if (isTargetExists && m_skipandApplyToAll){
+            return false;
         }
     }
 
