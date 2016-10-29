@@ -94,18 +94,18 @@ bool FileController::openFile(const DUrl &fileUrl, bool &accepted) const
 
     const DAbstractFileInfoPointer pfile = createFileInfo(fileUrl, accepted);
 
-    if (FileUtils::isExecutableScript(fileUrl.toLocalFile())) {
-        int code = dialogManager->showRunExcutableDialog(fileUrl);
-
-        return FileUtils::openExcutableFile(fileUrl.toLocalFile(), code);
-    } else if (pfile->isSymLink()) {
+    if (pfile->isSymLink()) {
         const DAbstractFileInfoPointer &linkInfo = DFileService::instance()->createFileInfo(pfile->symLinkTarget());
 
         if (linkInfo && !linkInfo->exists()) {
             dialogManager->showBreakSymlinkDialog(linkInfo->fileName(), fileUrl);
-
             return false;
         }
+    }
+
+    if (FileUtils::isExecutableScript(fileUrl.toLocalFile())) {
+        int code = dialogManager->showRunExcutableDialog(fileUrl);
+        return FileUtils::openExcutableFile(fileUrl.toLocalFile(), code);
     }
 
     return FileUtils::openFile(fileUrl.toLocalFile());

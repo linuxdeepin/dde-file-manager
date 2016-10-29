@@ -1459,19 +1459,15 @@ void DFileView::openIndex(const QModelIndex &index)
 {
     D_D(DFileView);
 
-   if (model()->hasChildren(index)) {
-        DFMEvent event;
-        DUrl url = model()->getUrlByIndex(index);
-        if(url.isUserShareFile())
-            url.setScheme(FILE_SCHEME);
-        event << url;
-        event << DFMEvent::FileView;
-        event << windowId();
-
-        d->fileViewHelper->preHandleCd(event);
-    } else {
-        emit fileService->openFile(model()->getUrlByIndex(index));
-    }
+    DFMEvent event;
+    DUrl url = model()->getUrlByIndex(index);
+    DUrlList urls;
+    urls << url;
+    event << url;
+    event << urls;
+    event << DFMEvent::FileView;
+    event << windowId();
+    DFileService::instance()->openUrl(event);
 }
 
 void DFileView::keyboardSearch(const QString &search)
