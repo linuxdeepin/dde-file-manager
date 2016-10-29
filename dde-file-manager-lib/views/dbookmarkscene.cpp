@@ -160,6 +160,10 @@ DUrl DBookmarkScene::getStandardPathByKey(const QString &key)
  */
 void DBookmarkScene::addItem(DBookmarkItem *item)
 {
+    if (m_disableUrlSchemeList.contains(item->getUrl().scheme())) {
+        item->hide();
+    }
+
     m_defaultLayout->addItem(item);
     item->setBounds(0, 0, BOOKMARK_ITEM_WIDTH, BOOKMARK_ITEM_HEIGHT - BOOKMARK_ITEM_SPACE);
     connect(item, &DBookmarkItem::dragFinished, this, &DBookmarkScene::doDragFinished);
@@ -182,6 +186,10 @@ void DBookmarkScene::addItem(DBookmarkItem *item)
  */
 void DBookmarkScene::insert(int index, DBookmarkItem *item)
 {
+    if (m_disableUrlSchemeList.contains(item->getUrl().scheme())) {
+        item->hide();
+    }
+
     m_defaultLayout->insertItem(index, item);
     item->setBounds(0, 0, BOOKMARK_ITEM_WIDTH, BOOKMARK_ITEM_HEIGHT - BOOKMARK_ITEM_SPACE);
     connect(item, &DBookmarkItem::dragFinished, this, &DBookmarkScene::doDragFinished);
@@ -193,6 +201,10 @@ void DBookmarkScene::insert(int index, DBookmarkItem *item)
 
 void DBookmarkScene::insert(DBookmarkItem *before, DBookmarkItem *item)
 {
+    if (m_disableUrlSchemeList.contains(item->getUrl().scheme())) {
+        item->hide();
+    }
+
     Q_UNUSED(before)
     Q_UNUSED(item)
 }
@@ -272,7 +284,7 @@ DBookmarkItemGroup *DBookmarkScene::getGroup()
  */
 int DBookmarkScene::count()
 {
-    return m_itemGroup->items()->size();
+    return m_itemGroup->items().size();
 }
 
 int DBookmarkScene::getCustomBookmarkItemInsertIndex()
@@ -375,7 +387,7 @@ void DBookmarkScene::doDragFinished(const QPointF &point, const QPointF &scenePo
         event << DFMEvent::LeftSideBar;
         event << item->getUrl();
         event << item->windowId();
-        event.setBookmarkIndex(m_itemGroup->items()->indexOf(item));
+        event.setBookmarkIndex(m_itemGroup->items().indexOf(item));
 
         emit fileSignalManager->requestBookmarkRemove(event);
     }
@@ -384,7 +396,7 @@ void DBookmarkScene::doDragFinished(const QPointF &point, const QPointF &scenePo
         DBookmarkItem * local = itemAt(scenePoint);
         if(local == NULL)
         {
-            local = m_itemGroup->items()->last();
+            local = m_itemGroup->items().last();
             if(isBelowLastItem(scenePoint))
                 moveAfter(item, local);
             return;
@@ -411,9 +423,9 @@ void DBookmarkScene::setCurrentUrl(DUrl url)
 {
     m_itemGroup->deselectAll();
     url.setQuery("");
-    for(int i = 0; i < m_itemGroup->items()->size(); i++)
+    for(int i = 0; i < m_itemGroup->items().size(); i++)
     {
-        DBookmarkItem* item = m_itemGroup->items()->at(i);
+        DBookmarkItem* item = m_itemGroup->items().at(i);
         DUrl itemUrl = item->getUrl();
         itemUrl.setQuery("");
 
@@ -454,13 +466,13 @@ void DBookmarkScene::setNetworkDiskItem(DBookmarkItem *item)
  */
 void DBookmarkScene::doBookmarkRemoved(const DFMEvent &event)
 {
-    DBookmarkItem * item = m_itemGroup->items()->at(event.bookmarkIndex());
+    DBookmarkItem * item = m_itemGroup->items().at(event.bookmarkIndex());
     if(!item)
         return;
     remove(item);
     bookmarkManager->removeBookmark(item->getBookmarkModel());
     if (bookmarkManager->getBookmarks().count() == 0){
-        DBookmarkLine* lineItem = static_cast<DBookmarkLine*>(m_itemGroup->items()->at(event.bookmarkIndex()-1));
+        DBookmarkLine* lineItem = static_cast<DBookmarkLine*>(m_itemGroup->items().at(event.bookmarkIndex()-1));
         if (lineItem){
             if (lineItem->objectName() == "DBookmarkLine"){
                 remove(lineItem);
@@ -475,7 +487,7 @@ void DBookmarkScene::bookmarkRename(const DFMEvent &event)
         return;
 
     if(event.bookmarkIndex() != -1){
-        DBookmarkItem* item = m_itemGroup->items()->at(event.bookmarkIndex());
+        DBookmarkItem* item = m_itemGroup->items().at(event.bookmarkIndex());
         item->editMode();
     }
 }
@@ -483,7 +495,7 @@ void DBookmarkScene::bookmarkRename(const DFMEvent &event)
 void DBookmarkScene::doBookmarkRenamed(const QString &newname,const DFMEvent &event)
 {
     if(event.bookmarkIndex() != -1){
-        DBookmarkItem * item = m_itemGroup->items()->at(event.bookmarkIndex());
+        DBookmarkItem * item = m_itemGroup->items().at(event.bookmarkIndex());
         if(item)
             item->setText(newname);
     }
@@ -510,9 +522,9 @@ void DBookmarkScene::doMoveBookmark(int from, int to, const DFMEvent &event)
 {
     if(windowId() != event.windowId())
     {
-        qDebug() << m_itemGroup->items()->size();
-        m_defaultLayout->insertItem(to,  m_itemGroup->items()->at(from));
-        m_itemGroup->items()->move(from, to);
+        qDebug() << m_itemGroup->items().size();
+        m_defaultLayout->insertItem(to,  m_itemGroup->items().at(from));
+        m_itemGroup->items().move(from, to);
     }
 }
 
@@ -626,7 +638,7 @@ void DBookmarkScene::chooseMountedItem(const DFMEvent &event)
 
 bool DBookmarkScene::isBelowLastItem(const QPointF &point)
 {
-    DBookmarkItem *item = m_itemGroup->items()->last();
+    DBookmarkItem *item = m_itemGroup->items().last();
     qDebug() << item->geometry().bottomLeft().y() << point.y();
     if(!item->isDefaultItem() && item->geometry().bottomLeft().y() < point.y())
         return true;
@@ -654,8 +666,8 @@ void DBookmarkScene::decreaseSize()
 
 void DBookmarkScene::moveBefore(DBookmarkItem *from, DBookmarkItem *to)
 {
-    int indexFrom = m_itemGroup->items()->indexOf(from);
-    int indexTo = m_itemGroup->items()->indexOf(to);
+    int indexFrom = m_itemGroup->items().indexOf(from);
+    int indexTo = m_itemGroup->items().indexOf(to);
 
     if(indexFrom == -1 || indexTo == -1)
         return;
@@ -667,7 +679,7 @@ void DBookmarkScene::moveBefore(DBookmarkItem *from, DBookmarkItem *to)
 
     m_defaultLayout->insertItem(indexTo, from);
     bookmarkManager->moveBookmark(indexFrom - getCustomBookmarkItemInsertIndex(), indexTo - getCustomBookmarkItemInsertIndex());
-    m_itemGroup->items()->move(indexFrom, indexTo);
+    m_itemGroup->items().move(indexFrom, indexTo);
 
     DFMEvent event;
     event << DFMEvent::LeftSideBar;
@@ -677,15 +689,15 @@ void DBookmarkScene::moveBefore(DBookmarkItem *from, DBookmarkItem *to)
 
 void DBookmarkScene::moveAfter(DBookmarkItem *from, DBookmarkItem *to)
 {
-    int indexFrom = m_itemGroup->items()->indexOf(from);
-    int indexTo = m_itemGroup->items()->indexOf(to);
+    int indexFrom = m_itemGroup->items().indexOf(from);
+    int indexTo = m_itemGroup->items().indexOf(to);
 
     if(indexFrom == -1 || indexTo == -1)
         return;
 
     m_defaultLayout->insertItem(indexTo, from);
     bookmarkManager->moveBookmark(indexFrom - getCustomBookmarkItemInsertIndex(), indexTo - getCustomBookmarkItemInsertIndex());
-    m_itemGroup->items()->move(indexFrom, indexTo);
+    m_itemGroup->items().move(indexFrom, indexTo);
 
     DFMEvent event;
     event << DFMEvent::LeftSideBar;
@@ -695,8 +707,7 @@ void DBookmarkScene::moveAfter(DBookmarkItem *from, DBookmarkItem *to)
 
 DBookmarkItem *DBookmarkScene::hasBookmarkItem(const DUrl &url)
 {
-    QList<DBookmarkItem *> list = *m_itemGroup->items();
-    foreach(DBookmarkItem * item, list)
+    foreach(DBookmarkItem * item, m_itemGroup->items())
     {
         if(item->getUrl() == url)
         {
@@ -720,15 +731,26 @@ DBookmarkItem *DBookmarkScene::itemAt(const QPointF & point)
 
 int DBookmarkScene::indexOf(DBookmarkItem *item)
 {
-    return m_itemGroup->items()->indexOf(item);
+    return m_itemGroup->items().indexOf(item);
 }
 
 void DBookmarkScene::setTightMode(bool v)
 {
-    for(int i = 0; i < m_itemGroup->items()->size(); i++)
+    for(int i = 0; i < m_itemGroup->items().size(); i++)
     {
-        m_itemGroup->items()->at(i)->setTightMode(v);
+        m_itemGroup->items().at(i)->setTightMode(v);
     }
     m_isTightMode = v;
     update();
+}
+
+void DBookmarkScene::setDisableUrlSchemes(const QList<QString> &schemes)
+{
+    for (DBookmarkItem *item : m_itemGroup->items()) {
+        const QString &scheme = item->getUrl().scheme();
+
+        item->setVisible(!schemes.contains(scheme));
+    }
+
+    m_disableUrlSchemeList = schemes;
 }

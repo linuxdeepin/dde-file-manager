@@ -46,25 +46,6 @@ public:
     explicit DFileManagerWindow(const DUrl &fileUrl, QWidget *parent = 0);
     ~DFileManagerWindow();
 
-    void initData();
-    void initUI();
-    void initTitleFrame();
-    void initTitleBar();
-    void initSplitter();
-
-    void initLeftSideBar();
-
-    void initRightView();
-    void initToolBar();
-    void initTabBar();
-    void initViewLayout();
-    void initFileView(const DUrl &fileUrl);
-    void initComputerView();
-
-
-    void initCentralWidget();
-    void initConnect();
-
     DUrl currentUrl() const;
 
     int getFileViewMode() const;
@@ -72,6 +53,7 @@ public:
 
     DToolBar* getToolBar() const;
     DFileView *getFileView() const;
+    DLeftSideBar *getLeftSideBar() const;
 
     int windowId();
 
@@ -112,6 +94,25 @@ private slots:
 protected:
     void closeEvent(QCloseEvent* event)  Q_DECL_OVERRIDE;
     void mouseDoubleClickEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+
+    void initData();
+    void initUI();
+    void initTitleFrame();
+    void initTitleBar();
+    void initSplitter();
+
+    void initLeftSideBar();
+
+    void initRightView();
+    void initToolBar();
+    void initTabBar();
+    void initViewLayout();
+    void initFileView(const DUrl &fileUrl);
+    void initComputerView();
+
+
+    void initCentralWidget();
+    void initConnect();
 
 private:
     QScopedPointer<DFileManagerWindowPrivate> d_ptr;

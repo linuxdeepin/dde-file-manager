@@ -1,6 +1,7 @@
 #include "dfiledialog.h"
-#include "views/dstatusbar.h"
 #include "dfilesystemmodel.h"
+#include "views/dstatusbar.h"
+#include "views/dleftsidebar.h"
 
 #include <DTitlebar>
 
@@ -47,6 +48,18 @@ DFileDialog::DFileDialog(QWidget *parent)
     statusBar->rejectButton()->setText(tr("Cancel"));
     connect(statusBar->acceptButton(), &QPushButton::clicked, this, &DFileDialog::onAcceptButtonClicked);
     connect(statusBar->rejectButton(), &QPushButton::clicked, this, &DFileDialog::onRejectButtonClicked);
+
+    QSet<DFMGlobal::MenuAction> whitelist;
+
+    whitelist << DFMGlobal::NewFolder << DFMGlobal::NewDocument << DFMGlobal::DisplayAs
+              << DFMGlobal::SortBy << DFMGlobal::Open << DFMGlobal::Rename << DFMGlobal::Delete
+              << DFMGlobal::ListView << DFMGlobal::IconView << DFMGlobal::ExtendView << DFMGlobal::NewWord
+              << DFMGlobal::NewExcel << DFMGlobal::NewPowerpoint << DFMGlobal::NewText << DFMGlobal::Name
+              << DFMGlobal::Size << DFMGlobal::Type << DFMGlobal::CreatedDate << DFMGlobal::LastModifiedDate
+              << DFMGlobal::DeletionDate << DFMGlobal::SourcePath <<DFMGlobal::AbsolutePath;
+
+    getFileView()->setMenuActionWhitelist(whitelist);
+    getLeftSideBar()->setDisableUrlSchemes(QList<QString>() << "trash" << "network");
 }
 
 DFileDialog::~DFileDialog()

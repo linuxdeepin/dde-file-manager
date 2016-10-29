@@ -102,221 +102,6 @@ DFileManagerWindow::~DFileManagerWindow()
 
 }
 
-void DFileManagerWindow::initData()
-{
-
-}
-
-void DFileManagerWindow::initUI()
-{
-    D_DC(DFileManagerWindow);
-
-    resize(DEFAULT_WINDOWS_WIDTH, DEFAULT_WINDOWS_HEIGHT);
-    setMinimumSize(800, 420);
-    initCentralWidget();
-    setCentralWidget(d->centralWidget);
-    setStyleSheet(getQssFromFile(":/qss/qss/filemanager.qss"));
-}
-
-void DFileManagerWindow::initTitleFrame()
-{
-    D_D(DFileManagerWindow);
-
-    d->logoButton = new QPushButton("");
-    d->logoButton->setObjectName("LogoButton");
-    d->logoButton->setFixedSize(QSize(24, 24));
-    d->logoButton->setFocusPolicy(Qt::NoFocus);
-
-    initToolBar();
-    initTitleBar();
-
-    d->titleFrame = new QFrame;
-    d->titleFrame->setObjectName("TitleBar");
-    QHBoxLayout * titleLayout = new QHBoxLayout;
-    titleLayout->setMargin(0);
-    titleLayout->setSpacing(0);
-    titleLayout->addSpacing(12);
-    titleLayout->addWidget(d->logoButton);
-    titleLayout->addSpacing(12);
-    titleLayout->addWidget(d->toolbar);
-    titleLayout->addWidget(titleBar());
-    titleLayout->setSpacing(0);
-    titleLayout->setContentsMargins(0, 0, 0, 0);
-
-    d->titleFrame->setLayout(titleLayout);
-    d->titleFrame->setFixedHeight(TITLE_FIXED_HEIGHT);
-}
-
-void DFileManagerWindow::initTitleBar()
-{
-    if (!titleBar())
-        return;
-
-    DFileMenu* menu = fileMenuManger->createToolBarSettingsMenu();
-
-    DFMEvent event;
-    event << windowId();
-    menu->setEvent(event);
-
-    titleBar()->setMenu(menu);
-    titleBar()->setContentsMargins(0, 1, -1, 0);
-
-    QWidget *widget = new QWidget();
-
-    widget->setFixedSize(35, 0);
-    titleBar()->setCustomWidget(widget, false);
-}
-
-void DFileManagerWindow::initSplitter()
-{
-    D_D(DFileManagerWindow);
-
-    initLeftSideBar();
-    initRightView();
-
-    d->splitter = new DSplitter(Qt::Horizontal, this);
-    d->splitter->addWidget(d->leftSideBar);
-    d->splitter->addWidget(d->rightView);
-    d->splitter->setChildrenCollapsible(false);
-
-    connect(d->leftSideBar, &DLeftSideBar::moveSplitter, d->splitter, &DSplitter::moveSplitter);
-}
-
-void DFileManagerWindow::initLeftSideBar()
-{
-    D_D(DFileManagerWindow);
-
-    d->leftSideBar = new DLeftSideBar(this);
-    d->leftSideBar->setObjectName("LeftSideBar");
-    d->leftSideBar->setFixedWidth(LEFTSIDEBAR_MAX_WIDTH);
-}
-
-void DFileManagerWindow::initRightView()
-{
-    D_D(DFileManagerWindow);
-
-    initTabBar();
-    initViewLayout();
-    initComputerView();
-//    initFileView();
-
-    d->rightView = new QFrame;
-
-    QHBoxLayout *tabBarLayout = new QHBoxLayout;
-    tabBarLayout->setMargin(0);
-    tabBarLayout->setSpacing(0);
-    tabBarLayout->addWidget(d->tabBar);
-    tabBarLayout->addWidget(d->newTabButton);
-
-
-    QVBoxLayout* mainLayout = new QVBoxLayout;
-    mainLayout->addLayout(tabBarLayout);
-    mainLayout->addLayout(d->viewStackLayout);
-    mainLayout->setSpacing(0);
-    mainLayout->setContentsMargins(0, 0, 0, 0);
-    d->rightView->setLayout(mainLayout);
-}
-
-void DFileManagerWindow::initToolBar()
-{
-    D_D(DFileManagerWindow);
-
-    d->toolbar = new DToolBar(this);
-    d->toolbar->setObjectName("ToolBar");
-    d->toolbar->setFixedHeight(40);
-}
-
-void DFileManagerWindow::initTabBar()
-{
-    D_D(DFileManagerWindow);
-
-    d->tabBar = new TabBar(this);
-    d->tabBar->setFixedHeight(24);
-
-    d->newTabButton = new QPushButton(this);
-    d->newTabButton->setObjectName("NewTabButton");
-    d->newTabButton->setFixedSize(25,24);
-    d->newTabButton->hide();
-}
-
-void DFileManagerWindow::initViewLayout()
-{
-    D_D(DFileManagerWindow);
-
-    d->viewStackLayout = new QStackedLayout(this);
-    d->viewStackLayout->setSpacing(0);
-    d->viewStackLayout->setContentsMargins(0, 0, 0, 0);
-}
-
-void DFileManagerWindow::initFileView(const DUrl &fileUrl)
-{
-    DFMEvent event;
-    event << fileUrl;
-    event << windowId();
-    createNewView(event);
-}
-
-void DFileManagerWindow::initComputerView()
-{
-    D_D(DFileManagerWindow);
-
-    d->computerView = new ComputerView(this);
-    d->viewStackLayout->addWidget(d->computerView);
-    d->views.insert(ComputerView::url(), d->computerView);
-}
-
-void DFileManagerWindow::initCentralWidget()
-{
-    D_D(DFileManagerWindow);
-    initTitleFrame();
-    initSplitter();
-
-    d->centralWidget = new QFrame(this);
-    QVBoxLayout* mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(d->titleFrame);
-    mainLayout->addWidget(d->splitter);
-    mainLayout->setSpacing(0);
-    mainLayout->setContentsMargins(0, 0, 0, 0);
-    d->centralWidget->setLayout(mainLayout);
-}
-
-void DFileManagerWindow::initConnect()
-{
-    D_D(DFileManagerWindow);
-
-    if (titleBar()) {
-        connect(titleBar(), SIGNAL(minimumClicked()), parentWidget(), SLOT(showMinimized()));
-        connect(titleBar(), SIGNAL(maximumClicked()), parentWidget(), SLOT(showMaximized()));
-        connect(titleBar(), SIGNAL(restoreClicked()), parentWidget(), SLOT(showNormal()));
-        connect(titleBar(), SIGNAL(closeClicked()), parentWidget(), SLOT(close()));
-    }
-
-    connect(d->toolbar, &DToolBar::requestIconView, this, &DFileManagerWindow::setIconView);
-    connect(d->toolbar, &DToolBar::requestListView, this, &DFileManagerWindow::setListView);
-
-    connect(fileSignalManager, &FileSignalManager::requestOpenInNewTab, this, &DFileManagerWindow::openNewTab);
-
-    connect(fileSignalManager, &FileSignalManager::fetchNetworksSuccessed, this, &DFileManagerWindow::cd);
-    connect(fileSignalManager, &FileSignalManager::requestChangeCurrentUrl,this, &DFileManagerWindow::preHandleCd);
-        connect(fileSignalManager, &FileSignalManager::requestCloseCurrentTab, this, &DFileManagerWindow::closeCurrentTab);
-
-    connect(d->tabBar, &TabBar::tabMoved, d->toolbar, &DToolBar::moveNavStacks);
-    connect(d->tabBar, &TabBar::currentChanged,this, &DFileManagerWindow::onCurrentTabChanged);
-    connect(d->tabBar, &TabBar::tabCloseRequested, this,&DFileManagerWindow::onCurrentTabClosed);
-    connect(d->tabBar, &TabBar::tabAddableChanged, this, &DFileManagerWindow::onTabAddableChanged);
-    connect(d->newTabButton, &QPushButton::clicked, this, [=]{
-        DFMEvent event;
-        const DUrl url = DUrl::fromUserInput(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0));
-        event << url;
-        event << windowId();
-        openNewTab(event);
-    });
-    connect(fileService, &DFileService::childrenRemoved, this, &DFileManagerWindow::onFileDeleted);
-
-    connect(fileSignalManager, &FileSignalManager::userShareCountChanged,
-            this, &DFileManagerWindow::onUserShareCountChanged);
-}
-
 void DFileManagerWindow::onCurrentTabClosed(const int index, const bool &remainState){
 
     D_D(DFileManagerWindow);
@@ -482,6 +267,13 @@ DFileView *DFileManagerWindow::getFileView() const
     D_DC(DFileManagerWindow);
 
     return d->fileView;
+}
+
+DLeftSideBar *DFileManagerWindow::getLeftSideBar() const
+{
+    D_DC(DFileManagerWindow);
+
+    return d->leftSideBar;
 }
 
 int DFileManagerWindow::windowId()
@@ -737,6 +529,221 @@ void DFileManagerWindow::mouseDoubleClickEvent(QMouseEvent *event)
     } else {
         DMainWindow::mouseDoubleClickEvent(event);
     }
+}
+
+void DFileManagerWindow::initData()
+{
+
+}
+
+void DFileManagerWindow::initUI()
+{
+    D_DC(DFileManagerWindow);
+
+    resize(DEFAULT_WINDOWS_WIDTH, DEFAULT_WINDOWS_HEIGHT);
+    setMinimumSize(800, 420);
+    initCentralWidget();
+    setCentralWidget(d->centralWidget);
+    setStyleSheet(getQssFromFile(":/qss/qss/filemanager.qss"));
+}
+
+void DFileManagerWindow::initTitleFrame()
+{
+    D_D(DFileManagerWindow);
+
+    d->logoButton = new QPushButton("");
+    d->logoButton->setObjectName("LogoButton");
+    d->logoButton->setFixedSize(QSize(24, 24));
+    d->logoButton->setFocusPolicy(Qt::NoFocus);
+
+    initToolBar();
+    initTitleBar();
+
+    d->titleFrame = new QFrame;
+    d->titleFrame->setObjectName("TitleBar");
+    QHBoxLayout * titleLayout = new QHBoxLayout;
+    titleLayout->setMargin(0);
+    titleLayout->setSpacing(0);
+    titleLayout->addSpacing(12);
+    titleLayout->addWidget(d->logoButton);
+    titleLayout->addSpacing(12);
+    titleLayout->addWidget(d->toolbar);
+    titleLayout->addWidget(titleBar());
+    titleLayout->setSpacing(0);
+    titleLayout->setContentsMargins(0, 0, 0, 0);
+
+    d->titleFrame->setLayout(titleLayout);
+    d->titleFrame->setFixedHeight(TITLE_FIXED_HEIGHT);
+}
+
+void DFileManagerWindow::initTitleBar()
+{
+    if (!titleBar())
+        return;
+
+    DFileMenu* menu = fileMenuManger->createToolBarSettingsMenu();
+
+    DFMEvent event;
+    event << windowId();
+    menu->setEvent(event);
+
+    titleBar()->setMenu(menu);
+    titleBar()->setContentsMargins(0, 1, -1, 0);
+
+    QWidget *widget = new QWidget();
+
+    widget->setFixedSize(35, 0);
+    titleBar()->setCustomWidget(widget, false);
+}
+
+void DFileManagerWindow::initSplitter()
+{
+    D_D(DFileManagerWindow);
+
+    initLeftSideBar();
+    initRightView();
+
+    d->splitter = new DSplitter(Qt::Horizontal, this);
+    d->splitter->addWidget(d->leftSideBar);
+    d->splitter->addWidget(d->rightView);
+    d->splitter->setChildrenCollapsible(false);
+
+    connect(d->leftSideBar, &DLeftSideBar::moveSplitter, d->splitter, &DSplitter::moveSplitter);
+}
+
+void DFileManagerWindow::initLeftSideBar()
+{
+    D_D(DFileManagerWindow);
+
+    d->leftSideBar = new DLeftSideBar(this);
+    d->leftSideBar->setObjectName("LeftSideBar");
+    d->leftSideBar->setFixedWidth(LEFTSIDEBAR_MAX_WIDTH);
+}
+
+void DFileManagerWindow::initRightView()
+{
+    D_D(DFileManagerWindow);
+
+    initTabBar();
+    initViewLayout();
+    initComputerView();
+//    initFileView();
+
+    d->rightView = new QFrame;
+
+    QHBoxLayout *tabBarLayout = new QHBoxLayout;
+    tabBarLayout->setMargin(0);
+    tabBarLayout->setSpacing(0);
+    tabBarLayout->addWidget(d->tabBar);
+    tabBarLayout->addWidget(d->newTabButton);
+
+
+    QVBoxLayout* mainLayout = new QVBoxLayout;
+    mainLayout->addLayout(tabBarLayout);
+    mainLayout->addLayout(d->viewStackLayout);
+    mainLayout->setSpacing(0);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+    d->rightView->setLayout(mainLayout);
+}
+
+void DFileManagerWindow::initToolBar()
+{
+    D_D(DFileManagerWindow);
+
+    d->toolbar = new DToolBar(this);
+    d->toolbar->setObjectName("ToolBar");
+    d->toolbar->setFixedHeight(40);
+}
+
+void DFileManagerWindow::initTabBar()
+{
+    D_D(DFileManagerWindow);
+
+    d->tabBar = new TabBar(this);
+    d->tabBar->setFixedHeight(24);
+
+    d->newTabButton = new QPushButton(this);
+    d->newTabButton->setObjectName("NewTabButton");
+    d->newTabButton->setFixedSize(25,24);
+    d->newTabButton->hide();
+}
+
+void DFileManagerWindow::initViewLayout()
+{
+    D_D(DFileManagerWindow);
+
+    d->viewStackLayout = new QStackedLayout(this);
+    d->viewStackLayout->setSpacing(0);
+    d->viewStackLayout->setContentsMargins(0, 0, 0, 0);
+}
+
+void DFileManagerWindow::initFileView(const DUrl &fileUrl)
+{
+    DFMEvent event;
+    event << fileUrl;
+    event << windowId();
+    createNewView(event);
+}
+
+void DFileManagerWindow::initComputerView()
+{
+    D_D(DFileManagerWindow);
+
+    d->computerView = new ComputerView(this);
+    d->viewStackLayout->addWidget(d->computerView);
+    d->views.insert(ComputerView::url(), d->computerView);
+}
+
+void DFileManagerWindow::initCentralWidget()
+{
+    D_D(DFileManagerWindow);
+    initTitleFrame();
+    initSplitter();
+
+    d->centralWidget = new QFrame(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout;
+    mainLayout->addWidget(d->titleFrame);
+    mainLayout->addWidget(d->splitter);
+    mainLayout->setSpacing(0);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+    d->centralWidget->setLayout(mainLayout);
+}
+
+void DFileManagerWindow::initConnect()
+{
+    D_D(DFileManagerWindow);
+
+    if (titleBar()) {
+        connect(titleBar(), SIGNAL(minimumClicked()), parentWidget(), SLOT(showMinimized()));
+        connect(titleBar(), SIGNAL(maximumClicked()), parentWidget(), SLOT(showMaximized()));
+        connect(titleBar(), SIGNAL(restoreClicked()), parentWidget(), SLOT(showNormal()));
+        connect(titleBar(), SIGNAL(closeClicked()), parentWidget(), SLOT(close()));
+    }
+
+    connect(d->toolbar, &DToolBar::requestIconView, this, &DFileManagerWindow::setIconView);
+    connect(d->toolbar, &DToolBar::requestListView, this, &DFileManagerWindow::setListView);
+
+    connect(fileSignalManager, &FileSignalManager::requestOpenInNewTab, this, &DFileManagerWindow::openNewTab);
+
+    connect(fileSignalManager, &FileSignalManager::fetchNetworksSuccessed, this, &DFileManagerWindow::cd);
+    connect(fileSignalManager, &FileSignalManager::requestChangeCurrentUrl,this, &DFileManagerWindow::preHandleCd);
+        connect(fileSignalManager, &FileSignalManager::requestCloseCurrentTab, this, &DFileManagerWindow::closeCurrentTab);
+
+    connect(d->tabBar, &TabBar::tabMoved, d->toolbar, &DToolBar::moveNavStacks);
+    connect(d->tabBar, &TabBar::currentChanged,this, &DFileManagerWindow::onCurrentTabChanged);
+    connect(d->tabBar, &TabBar::tabCloseRequested, this,&DFileManagerWindow::onCurrentTabClosed);
+    connect(d->tabBar, &TabBar::tabAddableChanged, this, &DFileManagerWindow::onTabAddableChanged);
+    connect(d->newTabButton, &QPushButton::clicked, this, [=]{
+        DFMEvent event;
+        const DUrl url = DUrl::fromUserInput(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0));
+        event << url;
+        event << windowId();
+        openNewTab(event);
+    });
+    connect(fileService, &DFileService::childrenRemoved, this, &DFileManagerWindow::onFileDeleted);
+
+    connect(fileSignalManager, &FileSignalManager::userShareCountChanged,
+            this, &DFileManagerWindow::onUserShareCountChanged);
 }
 
 void DFileManagerWindow::moveCenterByRect(QRect rect)

@@ -34,7 +34,7 @@ void DBookmarkItemGroup::deselectAll()
     }
 }
 
-QList<DBookmarkItem *> * DBookmarkItemGroup::items()
+QList<DBookmarkItem *> DBookmarkItemGroup::items() const
 {
-    return &m_items;
+    return m_items;
 }

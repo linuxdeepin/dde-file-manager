@@ -20,6 +20,8 @@ namespace DFileMenuData {
 static QMap<MenuAction, QString> actionKeys;
 static QMap<MenuAction, DAction*> actions;
 static QVector<MenuAction> sortActionTypes;
+static QSet<MenuAction> whitelist;
+static QSet<MenuAction> blacklist;
 
 void initData();
 void initActions();
@@ -321,6 +323,9 @@ DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
     connect(menu, &DFileMenu::triggered, fileMenuManger, &DFileMenuManager::actionTriggered);
 
     foreach (MenuAction key, keys) {
+        if (!isAvailableAction(key))
+            continue;
+
         if (key == MenuAction::Separator){
             menu->addSeparator();
         }else{
@@ -350,6 +355,44 @@ DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
 QString DFileMenuManager::getActionString(MenuAction type)
 {
     return DFileMenuData::actionKeys.value(type);
+}
+
+void DFileMenuManager::addActionWhitelist(MenuAction action)
+{
+    DFileMenuData::whitelist << action;
+}
+
+void DFileMenuManager::setActionWhitelist(const QSet<MenuAction> &actionList)
+{
+    DFileMenuData::whitelist = actionList;
+}
+
+QSet<MenuAction> DFileMenuManager::actionWhitelist()
+{
+    return DFileMenuData::whitelist;
+}
+
+void DFileMenuManager::addActionBlacklist(MenuAction action)
+{
+    DFileMenuData::blacklist << action;
+}
+
+void DFileMenuManager::setActionBlacklist(const QSet<MenuAction> &actionList)
+{
+    DFileMenuData::blacklist = actionList;
+}
+
+QSet<MenuAction> DFileMenuManager::actionBlacklist()
+{
+    return DFileMenuData::blacklist;
+}
+
+bool DFileMenuManager::isAvailableAction(MenuAction action)
+{
+    if (DFileMenuData::whitelist.isEmpty())
+        return !DFileMenuData::blacklist.contains(action);
+
+    return DFileMenuData::whitelist.contains(action) && !DFileMenuData::blacklist.contains(action);
 }
 
 void DFileMenuManager::actionTriggered(DAction *action)

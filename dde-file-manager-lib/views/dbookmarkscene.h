@@ -50,6 +50,9 @@ public:
 
     int indexOf(DBookmarkItem * item);
     void setTightMode(bool v);
+
+    void setDisableUrlSchemes(const QList<QString> &schemes);
+
 protected:
     void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
     void dragLeaveEvent(QGraphicsSceneDragDropEvent *event);
@@ -113,6 +116,8 @@ private:
     DFMEvent m_delayCheckMountedEvent;
 
     QGraphicsLinearLayout * m_defaultLayout;
+
+    QList<QString> m_disableUrlSchemeList;
 
 };
 

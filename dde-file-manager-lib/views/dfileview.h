@@ -1,6 +1,8 @@
 #ifndef DFILEVIEW_H
 #define DFILEVIEW_H
 
+#include "dfmglobal.h"
+
 #include <dlistview.h>
 
 #include <QDir>
@@ -42,11 +44,6 @@ public:
 
     explicit DFileView(QWidget *parent = 0);
     ~DFileView();
-
-    void initDelegate();
-    void initUI();
-    void initModel();
-    void initConnects();
 
     DFileSystemModel *model() const;
     DStyledItemDelegate *itemDelegate() const;
@@ -132,11 +129,11 @@ public slots:
     void clearHeardView();
     void clearSelection();
 
-    void handleDataChanged(const QModelIndex & topLeft, const QModelIndex & bottomRight, const QVector<int> & roles = QVector<int>());
-    void updateStatusBar();
-
     void setSelectionRectVisible(bool visible);
     void setContentLabel(const QString &text);
+
+    void setMenuActionWhitelist(const QSet<DFMGlobal::MenuAction> &actionList);
+    void setMenuActionBlacklist(const QSet<DFMGlobal::MenuAction> &actionList);
 
 signals:
     void rootUrlChanged(const DUrl &url);
@@ -150,6 +147,8 @@ private slots:
     void onRowCountChanged();
     void handleCommitData(QWidget * editor);
     void onVerticalScroll(int contentY);
+    void handleDataChanged(const QModelIndex & topLeft, const QModelIndex & bottomRight, const QVector<int> & roles = QVector<int>());
+    void updateStatusBar();
 
 protected:
     void wheelEvent(QWheelEvent * event) Q_DECL_OVERRIDE;
@@ -171,6 +170,11 @@ protected:
     void rowsInserted(const QModelIndex & parent, int start, int end) Q_DECL_OVERRIDE;
     void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight,
                      const QVector<int> &roles = QVector<int>()) Q_DECL_OVERRIDE;
+
+    void initDelegate();
+    void initUI();
+    void initModel();
+    void initConnects();
 
 private:
     void increaseIcon();
