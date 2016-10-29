@@ -133,6 +133,7 @@ private:
     bool m_isReplaced = false;
     JobType m_jobType;
     int m_windowId = -1;
+    bool m_skipandApplyToAll = false;
 
     int m_filedes[2] = {0, 0};
     bool m_isInSameDisk = true;
