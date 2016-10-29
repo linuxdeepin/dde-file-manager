@@ -948,12 +948,11 @@ bool FileJob::handleSymlinkFile(const QString &srcFile, const QString &tarDir, Q
                 {
                     QFileInfo tarFileInfo(m_tarPath);
 
-                    if(tarFileInfo.exists()){
-                        if (tarFileInfo.isDir()){
-                            QDir(m_tarPath).removeRecursively();
-                        }else{
-                            QFile(m_tarPath).remove();
-                        }
+                    if(tarFileInfo.exists() && tarFileInfo.isSymLink()){
+                        QFile(m_tarPath).remove();
+                    }else{
+                        qDebug() << m_tarPath << "replace fail";
+                        return false;
                     }
                 }
 
