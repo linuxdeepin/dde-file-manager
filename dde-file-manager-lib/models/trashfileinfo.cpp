@@ -176,6 +176,10 @@ QSet<MenuAction> TrashFileInfo::disableMenuActionList() const
         list << MenuAction::ClearTrash;
     }
 
+    if (fileUrl().parentUrl() != DUrl::fromTrashFile("/")){
+        list << MenuAction::Restore;
+    }
+
     return list;
 }
 
