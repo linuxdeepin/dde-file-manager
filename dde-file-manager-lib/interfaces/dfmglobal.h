@@ -156,6 +156,7 @@ public:
     static QString applicationName();
     // libdde-file-manager version
     static QString applicationVersion();
+    static bool installTranslator();
 
     static void setUrlsToClipboard(const QList<QUrl> &list, DFMGlobal::ClipboardAction action);
     static void clearClipboard();

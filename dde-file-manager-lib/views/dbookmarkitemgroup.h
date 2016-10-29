@@ -16,7 +16,7 @@ public:
     void insert(int index, DBookmarkItem * item);
     void removeItem(DBookmarkItem * item);
     void deselectAll();
-    QList<DBookmarkItem *> * items();
+    QList<DBookmarkItem *> items() const;
 private:
     QList<DBookmarkItem *> m_items;
 signals:

@@ -1,5 +1,6 @@
 #include "dfmglobal.h"
 #include "chinese2pinyin.h"
+#include "dfmstandardpaths.h"
 
 #include <QGuiApplication>
 #include <QClipboard>
@@ -9,6 +10,7 @@
 #include <QFileInfo>
 #include <QProcess>
 #include <QDir>
+#include <QTranslator>
 
 #include <cstdio>
 
@@ -56,6 +58,21 @@ QString DFMGlobal::applicationName()
 QString DFMGlobal::applicationVersion()
 {
     return QMAKE_VERSION;
+}
+
+bool DFMGlobal::installTranslator()
+{
+    QTranslator *translator = new QTranslator(QGuiApplication::instance());
+
+    DFMStandardPaths::standardLocation(DFMStandardPaths::TranslationPath)
+            + QDir::separator() + DFMGlobal::applicationName() + "_" + QLocale::system().name();
+
+    if (translator->load(DFMStandardPaths::standardLocation(DFMStandardPaths::TranslationPath)
+                        + QDir::separator() + DFMGlobal::applicationName() + "_" + QLocale::system().name())) {
+        return qApp->installTranslator(translator);
+    }
+
+    return false;
 }
 
 void DFMGlobal::setUrlsToClipboard(const QList<QUrl> &list, DFMGlobal::ClipboardAction action)

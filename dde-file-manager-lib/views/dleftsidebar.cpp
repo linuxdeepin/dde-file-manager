@@ -146,6 +146,11 @@ void DLeftSideBar::setToolbar(DToolBar *toolbar)
     m_toolbar = toolbar;
 }
 
+void DLeftSideBar::setDisableUrlSchemes(const QList<QString> &schemes)
+{
+    m_scene->setDisableUrlSchemes(schemes);
+}
+
 void DLeftSideBar::resizeEvent(QResizeEvent *e)
 {
     QRect rect = geometry();

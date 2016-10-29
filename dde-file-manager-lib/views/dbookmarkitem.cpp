@@ -102,7 +102,7 @@ void DBookmarkItem::editFinished()
     event << windowId();
     event << m_url;
     if(m_group)
-        event.setBookmarkIndex(m_group->items()->indexOf(this));
+        event.setBookmarkIndex(m_group->items().indexOf(this));
 
     if (!m_lineEdit->text().isEmpty() && m_lineEdit->text() != m_textContent)
     {
@@ -138,7 +138,7 @@ void DBookmarkItem::checkMountedItem(const DFMEvent &event)
         e << windowId();
         e << m_url;
         e << DFMEvent::LeftSideBar;
-        e.setBookmarkIndex(m_group->items()->indexOf(this));
+        e.setBookmarkIndex(m_group->items().indexOf(this));
         qDebug() << m_isDisk << m_deviceInfo << m_url;
         m_group->url(e);
     }
@@ -546,7 +546,7 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             event << DFMEvent::LeftSideBar;
             event << windowId();
             if(m_group)
-                event.setBookmarkIndex(m_group->items()->indexOf(this));
+                event.setBookmarkIndex(m_group->items().indexOf(this));
             int result = dialogManager->showRemoveBookMarkDialog(event);
             if (result == DDialog::Accepted)
             {
@@ -689,7 +689,7 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
     Q_UNUSED(event);
     m_isMenuOpened = true;
-    DFileMenu *menu;
+    DFileMenu *menu = 0;
 
     QSet<MenuAction> disableList;
 
@@ -722,26 +722,29 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 
     QPointer<DBookmarkItem> me = this;
 
+    if (menu && !menu->actionList().isEmpty()) {
+        DUrlList urls;
+        urls.append(m_url);
 
-    DUrlList urls;
-    urls.append(m_url);
+        DFMEvent fmEvent;
+        fmEvent << m_url;
+        fmEvent << urls;
+        fmEvent << windowId();
+        fmEvent << DFMEvent::LeftSideBar;
+        if(m_group)
+            fmEvent.setBookmarkIndex(m_group->items().indexOf(this));
 
-    DFMEvent fmEvent;
-    fmEvent << m_url;
-    fmEvent << urls;
-    fmEvent << windowId();
-    fmEvent << DFMEvent::LeftSideBar;
-    if(m_group)
-        fmEvent.setBookmarkIndex(m_group->items()->indexOf(this));
+        menu->setEvent(fmEvent);
 
-    menu->setEvent(fmEvent);
+        menu->exec();
+        menu->deleteLater();
 
-    menu->exec();
-    menu->deleteLater();
+        if (me)
+            m_hovered = false;
+    }
 
-    if(me) {
+    if (me) {
         m_isMenuOpened = false;
-        m_hovered = false;
         update();
     }
 }

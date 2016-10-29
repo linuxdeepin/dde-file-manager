@@ -44,6 +44,15 @@ public:
                                          const QMap<MenuAction, QVector<MenuAction> > &subMenuList = QMap<MenuAction, QVector<MenuAction> >());
     static QString getActionString(MenuAction type);
 
+    /// actions filter(global)
+    static void addActionWhitelist(MenuAction action);
+    static void setActionWhitelist(const QSet<MenuAction> &actionList);
+    static QSet<MenuAction> actionWhitelist();
+    static void addActionBlacklist(MenuAction action);
+    static void setActionBlacklist(const QSet<MenuAction> &actionList);
+    static QSet<MenuAction> actionBlacklist();
+    static bool isAvailableAction(MenuAction action);
+
 public slots:
     void actionTriggered(DAction * action);
 };

@@ -96,6 +96,10 @@ public:
 
     DFileView::RandeIndex visibleIndexRande;
 
+    /// menu actions filter
+    QSet<MenuAction> menuWhitelist;
+    QSet<MenuAction> menuBlacklist;
+
     FileViewHelper *fileViewHelper;
 
     Q_DECLARE_PUBLIC(DFileView)
@@ -118,87 +122,6 @@ DFileView::~DFileView()
 {
     disconnect(this, &DFileView::rowCountChanged, this, &DFileView::onRowCountChanged);
     disconnect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &DFileView::updateStatusBar);
-}
-
-void DFileView::initDelegate()
-{
-    D_D(DFileView);
-
-    setItemDelegate(new DIconItemDelegate(d->fileViewHelper));
-    d->statusBar->scalingSlider()->setValue(itemDelegate()->iconSizeLevel());
-}
-
-void DFileView::initUI()
-{
-    D_D(DFileView);
-
-    setSpacing(ICON_VIEW_SPACING);
-    setResizeMode(QListView::Adjust);
-    setOrientation(QListView::LeftToRight, true);
-    setTextElideMode(Qt::ElideMiddle);
-    setDragDropMode(QAbstractItemView::DragDrop);
-    setDropIndicatorShown(false);
-    setSelectionMode(QAbstractItemView::ExtendedSelection);
-    setSelectionBehavior(QAbstractItemView::SelectRows);
-    setEditTriggers(QListView::EditKeyPressed | QListView::SelectedClicked);
-    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setVerticalScrollBar(new DScrollBar);
-
-    verticalScrollBar()->setContextMenuPolicy(Qt::NoContextMenu);
-
-    DListView::setSelectionRectVisible(false);
-
-    d->displayAsActionGroup = new QActionGroup(this);
-    d->sortByActionGroup = new QActionGroup(this);
-    d->openWithActionGroup = new QActionGroup(this);
-    d->fileViewHelper = new FileViewHelper(this);
-
-    d->selectionRectWidget = new QWidget(this);
-    d->selectionRectWidget->hide();
-    d->selectionRectWidget->resize(0, 0);
-    d->selectionRectWidget->setObjectName("SelectionRect");
-    d->selectionRectWidget->raise();
-    d->selectionRectWidget->setAttribute(Qt::WA_TransparentForMouseEvents);
-
-    d->statusBar = new DStatusBar(this);
-    d->statusBar->scalingSlider()->setPageStep(1);
-    d->statusBar->scalingSlider()->setTickInterval(1);
-
-    addFooterWidget(d->statusBar);
-}
-
-void DFileView::initModel()
-{
-    D_D(DFileView);
-
-    setModel(new DFileSystemModel(d->fileViewHelper));
-#ifndef CLASSICAL_SECTION
-    setSelectionModel(new DFileSelectionModel(model(), this));
-#endif
-}
-
-void DFileView::initConnects()
-{
-    D_D(DFileView);
-
-    connect(this, &DFileView::doubleClicked,
-            this, [this] (const QModelIndex &index) {
-        if (!DFMGlobal::keyCtrlIsPressed() && !DFMGlobal::keyShiftIsPressed())
-            openIndex(index);
-    }, Qt::QueuedConnection);
-
-    connect(this, &DFileView::rowCountChanged, this, &DFileView::onRowCountChanged, Qt::QueuedConnection);
-
-    connect(d->displayAsActionGroup, &QActionGroup::triggered, this, &DFileView::dislpayAsActionTriggered);
-    connect(d->sortByActionGroup, &QActionGroup::triggered, this, &DFileView::sortByActionTriggered);
-    connect(d->openWithActionGroup, &QActionGroup::triggered, this, &DFileView::openWithActionTriggered);
-
-    connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &DFileView::updateStatusBar);
-    connect(model(), &DFileSystemModel::dataChanged, this, &DFileView::handleDataChanged);
-    connect(model(), &DFileSystemModel::stateChanged, this, &DFileView::onModelStateChanged);
-
-    connect(this, &DFileView::iconSizeChanged, this, &DFileView::updateHorizontalOffset, Qt::QueuedConnection);
-    connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &DFileView::onVerticalScroll);
 }
 
 DFileSystemModel *DFileView::model() const
@@ -1114,10 +1037,42 @@ void DFileView::onVerticalScroll(int contentY)
     d->visibleIndexRande = rande;
 }
 
+void DFileView::handleDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
+{
+    DListView::dataChanged(topLeft, bottomRight, roles);
+
+    for (int i = topLeft.row(); i <= bottomRight.row(); ++i) {
+        update(model()->index(i, 0));
+    }
+}
+
+void DFileView::updateStatusBar()
+{
+    if (model()->state() != DFileSystemModel::Idle)
+        return;
+
+    DFMEvent event;
+    event << windowId();
+    event << selectedUrls();
+    int count = selectedIndexCount();
+
+    if (count == 0){
+        emit fileSignalManager->statusBarItemsCounted(event, this->count());
+    }else{
+        emit fileSignalManager->statusBarItemsSelected(event, count);
+    }
+}
+
 void DFileView::focusInEvent(QFocusEvent *event)
 {
+    Q_D(const DFileView);
+
     DListView::focusInEvent(event);
     itemDelegate()->commitDataAndCloseActiveEditor();
+
+    /// set menu actions filter
+    DFileMenuManager::setActionWhitelist(d->menuWhitelist);
+    DFileMenuManager::setActionBlacklist(d->menuBlacklist);
 }
 
 void DFileView::resizeEvent(QResizeEvent *event)
@@ -1427,6 +1382,87 @@ void DFileView::dataChanged(const QModelIndex &topLeft, const QModelIndex &botto
     d->oldSelectedUrls.clear();
 }
 
+void DFileView::initDelegate()
+{
+    D_D(DFileView);
+
+    setItemDelegate(new DIconItemDelegate(d->fileViewHelper));
+    d->statusBar->scalingSlider()->setValue(itemDelegate()->iconSizeLevel());
+}
+
+void DFileView::initUI()
+{
+    D_D(DFileView);
+
+    setSpacing(ICON_VIEW_SPACING);
+    setResizeMode(QListView::Adjust);
+    setOrientation(QListView::LeftToRight, true);
+    setTextElideMode(Qt::ElideMiddle);
+    setDragDropMode(QAbstractItemView::DragDrop);
+    setDropIndicatorShown(false);
+    setSelectionMode(QAbstractItemView::ExtendedSelection);
+    setSelectionBehavior(QAbstractItemView::SelectRows);
+    setEditTriggers(QListView::EditKeyPressed | QListView::SelectedClicked);
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setVerticalScrollBar(new DScrollBar);
+
+    verticalScrollBar()->setContextMenuPolicy(Qt::NoContextMenu);
+
+    DListView::setSelectionRectVisible(false);
+
+    d->displayAsActionGroup = new QActionGroup(this);
+    d->sortByActionGroup = new QActionGroup(this);
+    d->openWithActionGroup = new QActionGroup(this);
+    d->fileViewHelper = new FileViewHelper(this);
+
+    d->selectionRectWidget = new QWidget(this);
+    d->selectionRectWidget->hide();
+    d->selectionRectWidget->resize(0, 0);
+    d->selectionRectWidget->setObjectName("SelectionRect");
+    d->selectionRectWidget->raise();
+    d->selectionRectWidget->setAttribute(Qt::WA_TransparentForMouseEvents);
+
+    d->statusBar = new DStatusBar(this);
+    d->statusBar->scalingSlider()->setPageStep(1);
+    d->statusBar->scalingSlider()->setTickInterval(1);
+
+    addFooterWidget(d->statusBar);
+}
+
+void DFileView::initModel()
+{
+    D_D(DFileView);
+
+    setModel(new DFileSystemModel(d->fileViewHelper));
+#ifndef CLASSICAL_SECTION
+    setSelectionModel(new DFileSelectionModel(model(), this));
+#endif
+}
+
+void DFileView::initConnects()
+{
+    D_D(DFileView);
+
+    connect(this, &DFileView::doubleClicked,
+            this, [this] (const QModelIndex &index) {
+        if (!DFMGlobal::keyCtrlIsPressed() && !DFMGlobal::keyShiftIsPressed())
+            openIndex(index);
+    }, Qt::QueuedConnection);
+
+    connect(this, &DFileView::rowCountChanged, this, &DFileView::onRowCountChanged, Qt::QueuedConnection);
+
+    connect(d->displayAsActionGroup, &QActionGroup::triggered, this, &DFileView::dislpayAsActionTriggered);
+    connect(d->sortByActionGroup, &QActionGroup::triggered, this, &DFileView::sortByActionTriggered);
+    connect(d->openWithActionGroup, &QActionGroup::triggered, this, &DFileView::openWithActionTriggered);
+
+    connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &DFileView::updateStatusBar);
+    connect(model(), &DFileSystemModel::dataChanged, this, &DFileView::handleDataChanged);
+    connect(model(), &DFileSystemModel::stateChanged, this, &DFileView::onModelStateChanged);
+
+    connect(this, &DFileView::iconSizeChanged, this, &DFileView::updateHorizontalOffset, Qt::QueuedConnection);
+    connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &DFileView::onVerticalScroll);
+}
+
 void DFileView::increaseIcon()
 {
     D_D(DFileView);
@@ -1578,32 +1614,6 @@ void DFileView::clearSelection()
     QListView::clearSelection();
 }
 
-void DFileView::handleDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
-{
-    DListView::dataChanged(topLeft, bottomRight, roles);
-
-    for (int i = topLeft.row(); i <= bottomRight.row(); ++i) {
-        update(model()->index(i, 0));
-    }
-}
-
-void DFileView::updateStatusBar()
-{
-    if (model()->state() != DFileSystemModel::Idle)
-        return;
-
-    DFMEvent event;
-    event << windowId();
-    event << selectedUrls();
-    int count = selectedIndexCount();
-
-    if (count == 0){
-        emit fileSignalManager->statusBarItemsCounted(event, this->count());
-    }else{
-        emit fileSignalManager->statusBarItemsSelected(event, count);
-    }
-}
-
 void DFileView::setSelectionRectVisible(bool visible)
 {
     D_D(DFileView);
@@ -1648,6 +1658,20 @@ void DFileView::setContentLabel(const QString &text)
 
     d->contentLabel->setText(text);
     d->contentLabel->adjustSize();
+}
+
+void DFileView::setMenuActionWhitelist(const QSet<MenuAction> &actionList)
+{
+    Q_D(DFileView);
+
+    d->menuWhitelist = actionList;
+}
+
+void DFileView::setMenuActionBlacklist(const QSet<MenuAction> &actionList)
+{
+    Q_D(DFileView);
+
+    d->menuBlacklist = actionList;
 }
 
 void DFileView::updateHorizontalOffset()
@@ -1780,17 +1804,23 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
         d->displayAsActionGroup->removeAction(action);
     }
 
-    if (displayAsSubMenu){
+    if (displayAsSubMenu) {
         foreach (DAction* action, displayAsSubMenu->actionList()) {
             action->setActionGroup(d->displayAsActionGroup);
         }
-        if (d->currentViewMode == IconMode){
-            displayAsSubMenu->actionAt(fileMenuManger->getActionString(MenuAction::IconView))->setChecked(true);
-        }else if (d->currentViewMode == ListMode){
-            displayAsSubMenu->actionAt(fileMenuManger->getActionString(MenuAction::ListView))->setChecked(true);
-        }else if (d->currentViewMode == ExtendMode){
-            displayAsSubMenu->actionAt(fileMenuManger->getActionString(MenuAction::ExtendView))->setChecked(true);
+
+        QAction *currentViewModeAction = 0;
+
+        if (d->currentViewMode == IconMode) {
+            currentViewModeAction = displayAsSubMenu->actionAt(fileMenuManger->getActionString(MenuAction::IconView));
+        } else if (d->currentViewMode == ListMode) {
+            currentViewModeAction = displayAsSubMenu->actionAt(fileMenuManger->getActionString(MenuAction::ListView));
+        } else if (d->currentViewMode == ExtendMode) {
+            currentViewModeAction = displayAsSubMenu->actionAt(fileMenuManger->getActionString(MenuAction::ExtendView));
         }
+
+        if (currentViewModeAction)
+            currentViewModeAction->setChecked(true);
     }
 
     for (QAction *action : d->sortByActionGroup->actions()) {

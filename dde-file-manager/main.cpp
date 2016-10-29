@@ -1,4 +1,5 @@
 #include "durl.h"
+#include "dfmglobal.h"
 
 #include "app/define.h"
 #include "app/logutil.h"
@@ -63,11 +64,7 @@ int main(int argc, char *argv[])
     qDebug() << isSingleInstance << commandlineUrl;
 
     if (isSingleInstance){
-        QTranslator translator;
-
-        if (translator.load(APPSHAREDIR"/translations/" + app.applicationName() +"_" + QLocale::system().name()))
-            app.installTranslator(&translator);
-
+        DFMGlobal::installTranslator();
         DThemeManager::instance()->setTheme("light");
 
         if (!isBackendRun){

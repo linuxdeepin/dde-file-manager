@@ -15,7 +15,7 @@ public:
 
     ~DFileDialogHandlePrivate()
     {
-        if (dialog && !dialog->parent())
+        if (dialog)
             dialog->deleteLater();
     }
 

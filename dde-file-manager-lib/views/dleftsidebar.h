@@ -44,6 +44,8 @@ public:
     DToolBar *toolbar() const;
     void setToolbar(DToolBar *toolbar);
 
+    void setDisableUrlSchemes(const QList<QString> &schemes);
+
 protected:
     void resizeEvent(QResizeEvent *e);
 
@@ -103,9 +105,7 @@ private:
     bool m_navState = false;
 
     DBookmarkScene * m_scene;
-    DBookmarkScene * m_tightScene;
     DBookmarkItemGroup * m_itemGroup;
-    DBookmarkItemGroup * m_itemGroupTight;
     DToolBar *m_toolbar = NULL;
 };
 

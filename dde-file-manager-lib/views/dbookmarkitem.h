@@ -105,7 +105,6 @@ signals:
 
     void clicked();
     void doubleClicked();
-    void url(const QString &url);
 
     void dragEntered();
     void dragLeft();
