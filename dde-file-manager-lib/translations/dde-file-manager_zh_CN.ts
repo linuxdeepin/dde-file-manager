@@ -145,17 +145,17 @@
 <context>
     <name>DFileDialog</name>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="46"/>
+        <location filename="../views/dfiledialog.cpp" line="47"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="243"/>
+        <location filename="../views/dfiledialog.cpp" line="267"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="251"/>
+        <location filename="../views/dfiledialog.cpp" line="275"/>
         <source>Save</source>
         <translation>保存</translation>
     </message>
@@ -163,7 +163,7 @@
 <context>
     <name>DFileSystemModel</name>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="344"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="366"/>
         <source>Name</source>
         <translation>名称</translation>
     </message>
@@ -172,22 +172,22 @@
         <translation type="vanished">修改时间</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="346"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="368"/>
         <source>Time modified</source>
         <translation>修改时间</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="348"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="370"/>
         <source>Size</source>
         <translation>大小</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="350"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="372"/>
         <source>Type</source>
         <translation>类型</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="352"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="374"/>
         <source>Time created</source>
         <translation>创建时间</translation>
     </message>
@@ -277,7 +277,7 @@
         <translation>选中%1个文件（%2）</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="324"/>
+        <location filename="../views/dstatusbar.cpp" line="299"/>
         <source>Loading...</source>
         <translation>正在加载中...</translation>
     </message>
@@ -310,7 +310,7 @@
 <context>
     <name>DToolBar</name>
     <message>
-        <location filename="../views/dtoolbar.cpp" line="189"/>
+        <location filename="../views/dtoolbar.cpp" line="190"/>
         <source>Search or enter address</source>
         <translation>搜索或输入地址</translation>
     </message>
@@ -496,12 +496,12 @@
 <context>
     <name>FileController</name>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="305"/>
+        <location filename="../controllers/filecontroller.cpp" line="309"/>
         <source>New Folder</source>
         <translation>新建文件夹</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="317"/>
+        <location filename="../controllers/filecontroller.cpp" line="321"/>
         <source>New File</source>
         <translation>新建文本</translation>
     </message>
@@ -514,22 +514,22 @@
         <translation>副本</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="383"/>
+        <location filename="../../fileoperations/filejob.cpp" line="376"/>
         <source>%1 s</source>
         <translation>%1 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="387"/>
+        <location filename="../../fileoperations/filejob.cpp" line="380"/>
         <source>%1 m %2 s</source>
         <translation>%1 分 %2 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="393"/>
+        <location filename="../../fileoperations/filejob.cpp" line="386"/>
         <source>%1 h %2 m %3 s</source>
         <translation>%1 时 %2 分 %3 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="402"/>
+        <location filename="../../fileoperations/filejob.cpp" line="395"/>
         <source>%1 d %2 h %3 m %4 s</source>
         <translation>%1 天 %2 时 %3 分 %4 秒</translation>
     </message>
@@ -1329,26 +1329,26 @@
         <translation>设置壁纸</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="327"/>
-        <location filename="../controllers/appcontroller.cpp" line="329"/>
+        <location filename="../controllers/appcontroller.cpp" line="303"/>
+        <location filename="../controllers/appcontroller.cpp" line="305"/>
         <source>newDoc</source>
         <translation>新建word文档</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="336"/>
-        <location filename="../controllers/appcontroller.cpp" line="338"/>
+        <location filename="../controllers/appcontroller.cpp" line="312"/>
+        <location filename="../controllers/appcontroller.cpp" line="314"/>
         <source>newExcel</source>
         <translation>新建Excel文档</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="345"/>
-        <location filename="../controllers/appcontroller.cpp" line="347"/>
+        <location filename="../controllers/appcontroller.cpp" line="321"/>
+        <location filename="../controllers/appcontroller.cpp" line="323"/>
         <source>newPowerPoint</source>
         <translation>新建PowerPoint文档</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="354"/>
-        <location filename="../controllers/appcontroller.cpp" line="356"/>
+        <location filename="../controllers/appcontroller.cpp" line="330"/>
+        <location filename="../controllers/appcontroller.cpp" line="332"/>
         <source>newText</source>
         <translation>新建文本</translation>
     </message>
@@ -1438,13 +1438,13 @@
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="252"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="435"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="437"/>
         <source>%1 item</source>
         <translation>%1 项</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="254"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="437"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="439"/>
         <source>%1 items</source>
         <translation>%1 项</translation>
     </message>
@@ -1465,7 +1465,7 @@
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="293"/>
-        <location filename="../models/trashfileinfo.cpp" line="197"/>
+        <location filename="../models/trashfileinfo.cpp" line="209"/>
         <source>Time deleted</source>
         <translation>删除时间</translation>
     </message>
@@ -1496,22 +1496,22 @@
         <translation>无搜索结果</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="814"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="915"/>
         <source>Loading...</source>
         <translation>正在加载中...</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="303"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="308"/>
         <source>You do not have permission to access this folder</source>
         <translation>您没有权限读取此文件夹</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="301"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="306"/>
         <source>File has been moved or deleted</source>
         <translation>文件已被移动或删除</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="306"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="311"/>
         <source>Folder is empty</source>
         <translation>文件夹为空</translation>
     </message>
@@ -1524,7 +1524,7 @@
         <translation type="vanished">文件管理器</translation>
     </message>
     <message>
-        <location filename="../models/trashfileinfo.cpp" line="200"/>
+        <location filename="../models/trashfileinfo.cpp" line="212"/>
         <source>Source Path</source>
         <comment>TrashFileInfo</comment>
         <translation>原位置</translation>
@@ -1901,19 +1901,27 @@
 <context>
     <name>UserSharePasswordSettingDialog</name>
     <message>
-        <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="19"/>
         <source>Cancle</source>
-        <translation>取消</translation>
+        <translation type="vanished">取消</translation>
     </message>
     <message>
-        <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="19"/>
         <source>Comfirm</source>
-        <translation>确定</translation>
+        <translation type="vanished">确定</translation>
     </message>
     <message>
         <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="11"/>
         <source>Please enter share password</source>
         <translation>请输入共享密码</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="19"/>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="19"/>
+        <source>Confirm</source>
+        <translation>确定</translation>
     </message>
 </context>
 </TS>
