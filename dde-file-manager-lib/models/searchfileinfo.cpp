@@ -253,7 +253,7 @@ QString SearchFileInfo::fileDisplayName() const
     if (d->proxy)
         return d->proxy->fileDisplayName();
 
-    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(d->url.searchTargetUrl());
+    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(fileUrl().searchTargetUrl());
 
     if (fileInfo)
         return fileInfo->fileDisplayName();
