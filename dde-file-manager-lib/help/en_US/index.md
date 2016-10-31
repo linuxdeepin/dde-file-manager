@@ -159,7 +159,7 @@ User can view the information about a file/folder.
 
 ## Common Operations|../common/icon_commoncoperat.svg|
 
-Deepin File Manager is featured with many useful functions, such as breadcrumb bar, bookmarks, file sharing, accessing computers in LAN, opening file/folder in Terminal and so on. They are all designed to ease the commonly used operations.
+Deepin File Manager is featured with many useful functions, such as breadcrumb bar, tabs, bookmarks, file sharing, accessing computers in LAN, opening file/folder in Terminal and so on. They are all designed to ease the commonly used operations.
 
 ### Switch Address Bar
 
@@ -182,6 +182,19 @@ User can search for targeted item by the searching function integrated in Deepin
 ![1|search](png/search.png)
 
 > ![tips](icon/tips.svg): To search in a designated directory, enter that directory and search. To search all directories, input ![slash](icon/Slash.svg) in the search bar and press ![enter](icon/Enter.svg) to enter root directory, then search for the target item.
+
+### Manage Tabs
+
+Deepin File Manager supports multi-tab view.
+
+1. In Deepin File Manager, right click on the folder to open in new tab.
+2. In the popup context menu, select ** Open in new tab **.
+3. When the window has multi-tabs, user can:
+ - Click on + in tab bar to add a new tab.
+ - Click on × on the right tab of the tab bar to close an existing tab.
+ > ![tips](icon/tips.svg): When the Deepin File Manager has only one tab, the tab bar is hidden, you can press ![Ctrl](icon/Ctrl.svg) + ![T](icon/T.svg) to add a new tab.
+
+![0|newtab](png/newtab.png)
 
 ### Manage Bookmarks
 
@@ -210,6 +223,26 @@ User can visit computers in LAN to access files and folders.
 4. Click on ** Connect** to establish connection.
 
 ![0|network](png/network.png)
+
+### My shares
+
+#### Share folders
+
+User can share folders in Deepin File Manager, if there are some folders shared, the share icon will show on the navigation bar, if not, the share icon will be hidden.
+1. In Deepin File Manager interface, right click on a folder, select ** Property **.
+2. In the popup window, click ** Share manager **.
+3. To share this folder, click ** Share this folder **.
+4. To change share options, input ** Share name **, and select to choose ** Permission ** and ** Anonymity **.
+5. To set share password, click ![menu](icon/icon_menu.svg) and select ** Set share password **.
+
+![0|share](png/share.png)
+
+#### Manage share
+
+User can manage shared folders if it has shared some folders in Deepin File Manager.
+1. In Deepin File Manager interface, click ![share](icon/icon_share.svg) on the navigation bar.
+2. All shared folders will show on the interface.
+3. User can cancel sharing by right click the folder and select ** Cancel sharing **.
 
 ### Open in Terminal
 
