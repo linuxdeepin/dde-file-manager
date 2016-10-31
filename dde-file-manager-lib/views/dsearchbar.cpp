@@ -145,6 +145,7 @@ void DSearchBar::initConnections()
     connect(this, &DSearchBar::textChanged, this, &DSearchBar::setCompleter);
     connect(m_list, &QListWidget::itemClicked, this, &DSearchBar::completeText);
     connect(qApp, &QApplication::focusChanged, this, &DSearchBar::handleApplicationChanged);
+    connect(window(), SIGNAL(positionChanged(const QPoint&)), m_list, SLOT(hide()));
 }
 
 void DSearchBar::doTextChanged(QString text)

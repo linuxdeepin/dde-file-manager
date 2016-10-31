@@ -539,6 +539,13 @@ void DFileManagerWindow::mouseDoubleClickEvent(QMouseEvent *event)
     }
 }
 
+void DFileManagerWindow::moveEvent(QMoveEvent *event)
+{
+    DMainWindow::moveEvent(event);
+
+    emit positionChanged(event->pos());
+}
+
 void DFileManagerWindow::initData()
 {
 

@@ -93,7 +93,7 @@ void DToolBar::initAddressToolBar()
 
 
     QFrame * crumbAndSearch = new QFrame;
-    m_searchBar = new DSearchBar;
+    m_searchBar = new DSearchBar(this);
     m_searchBar->hide();
     m_searchBar->setAlignment(Qt::AlignHCenter);
     m_crumbWidget = new DCrumbWidget;
