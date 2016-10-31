@@ -19,7 +19,8 @@ class ShareFileInfo : public DAbstractFileInfo
 public:
     ShareFileInfo(const DUrl& url);
     ~ShareFileInfo();
-
+    bool exists() const Q_DECL_OVERRIDE;
+    bool isDir() const Q_DECL_OVERRIDE;
     bool isCanRename() const Q_DECL_OVERRIDE;
     bool isReadable() const Q_DECL_OVERRIDE;
     bool isWritable() const Q_DECL_OVERRIDE;
