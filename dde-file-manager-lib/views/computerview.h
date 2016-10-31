@@ -123,6 +123,7 @@ protected:
     void wheelEvent(QWheelEvent* event);
     void mousePressEvent(QMouseEvent* event);
     void showEvent(QShowEvent* event);
+    void keyPressEvent(QKeyEvent* event);
 
 private:
     TitleLine* m_systemTitleLine=NULL;
