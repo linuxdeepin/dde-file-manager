@@ -39,6 +39,20 @@ ShareFileInfo::~ShareFileInfo()
 
 }
 
+bool ShareFileInfo::exists() const
+{
+    Q_D(const DAbstractFileInfo);
+
+    return !d->proxy || d->proxy->exists();
+}
+
+bool ShareFileInfo::isDir() const
+{
+    Q_D(const DAbstractFileInfo);
+
+    return !d->proxy || d->proxy->isDir();
+}
+
 bool ShareFileInfo::isCanRename() const
 {
     return false;
