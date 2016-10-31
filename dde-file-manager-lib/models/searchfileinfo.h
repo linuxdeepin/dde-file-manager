@@ -44,6 +44,8 @@ public:
     QString loadingTip() const Q_DECL_OVERRIDE;
     QString subtitleForEmptyFloder() const Q_DECL_OVERRIDE;
 
+    QString fileDisplayName() const Q_DECL_OVERRIDE;
+
 private:
     DUrl m_parentUrl;
 };
