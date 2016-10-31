@@ -249,28 +249,11 @@ void DToolBar::searchBarTextEntered()
 
     QDir::setCurrent(currentDir);
 
-    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(inputUrl);
-
     DFMEvent event;
 
     event << WindowManager::getWindowId(this);
     event << DFMEvent::SearchBar;
-
-    if (fileInfo) {
-        if (!fileInfo->exists())
-            return;
-
-        event << inputUrl;
-    } else {
-        DUrl url = m_crumbWidget->getCurrentUrl();
-
-        if (url.isSearchFile())
-            url.setSearchKeyword(text);
-        else
-            url = DUrl::fromSearchFile(url, text);
-
-        event << url;
-    }
+    event << inputUrl;
 
     emit fileSignalManager->requestChangeCurrentUrl(event);
 }

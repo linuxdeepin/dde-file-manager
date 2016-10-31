@@ -1529,6 +1529,8 @@ bool DFileView::setRootUrl(const DUrl &url)
         return false;
     }
 
+    fileUrl = info->fileUrl();
+
     if(info->canRedirectionFileUrl()) {
         const DUrl old_url = fileUrl;
 
@@ -2142,7 +2144,8 @@ void DFileView::updateContentLabel()
     if (count <= 0) {
         const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(currentUrl);
 
-        setContentLabel(fileInfo->subtitleForEmptyFloder());
+        if (fileInfo)
+            setContentLabel(fileInfo->subtitleForEmptyFloder());
     } else {
         setContentLabel(QString());
     }

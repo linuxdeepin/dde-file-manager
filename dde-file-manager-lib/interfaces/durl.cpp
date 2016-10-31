@@ -146,7 +146,7 @@ DUrl DUrl::searchTargetUrl() const
 
     QUrlQuery query(this->query());
 
-    return DUrl(query.queryItemValue("url", FullyEncoded));
+    return DUrl(query.queryItemValue("url", FullyDecoded));
 }
 
 DUrl DUrl::searchedFileUrl() const
@@ -154,7 +154,7 @@ DUrl DUrl::searchedFileUrl() const
     if (!isSearchFile())
         return DUrl();
 
-    return DUrl(fragment(FullyEncoded));
+    return DUrl(fragment(FullyDecoded));
 }
 
 DUrl DUrl::parentUrl() const

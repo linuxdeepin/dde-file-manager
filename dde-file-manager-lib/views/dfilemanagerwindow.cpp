@@ -324,10 +324,18 @@ void DFileManagerWindow::preHandleCd(const DFMEvent &event)
         emit fileSignalManager->requestFetchNetworks(event);
     } else if (event.fileUrl().isComputerFile()) {
         showComputerView(event);
-    } else if (event.fileUrl().isSearchFile()
-               && d->viewStackLayout->currentWidget() == d->computerView) {
-        return;
     } else {
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(event.fileUrl());
+
+        if (!fileInfo || !fileInfo->exists()) {
+            const_cast<DFMEvent&>(event) << DUrl::fromSearchFile(currentUrl(), event.fileUrl().toString());
+
+            const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(event.fileUrl());
+
+            if (!fileInfo || !fileInfo->exists() || !fileInfo->canIteratorDir())
+                return;
+        }
+
         cd(event);
     }
 }

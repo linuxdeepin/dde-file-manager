@@ -64,9 +64,6 @@ bool DFMGlobal::installTranslator()
 {
     QTranslator *translator = new QTranslator(QGuiApplication::instance());
 
-    DFMStandardPaths::standardLocation(DFMStandardPaths::TranslationPath)
-            + QDir::separator() + DFMGlobal::applicationName() + "_" + QLocale::system().name();
-
     if (translator->load(DFMStandardPaths::standardLocation(DFMStandardPaths::TranslationPath)
                         + QDir::separator() + DFMGlobal::applicationName() + "_" + QLocale::system().name())) {
         return qApp->installTranslator(translator);
