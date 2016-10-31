@@ -183,7 +183,15 @@ const DAbstractFileInfoPointer SearchController::createFileInfo(const DUrl &file
 {
     accepted = true;
 
-    return DAbstractFileInfoPointer(new SearchFileInfo(fileUrl));
+    DUrl url = fileUrl.searchTargetUrl();
+
+    if (url.isSearchFile()) {
+        url.setSearchKeyword(fileUrl.searchKeyword());
+    } else {
+        url = fileUrl;
+    }
+
+    return DAbstractFileInfoPointer(new SearchFileInfo(url));
 }
 
 bool SearchController::openFileLocation(const DUrl &fileUrl, bool &accepted) const
