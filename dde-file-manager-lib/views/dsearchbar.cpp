@@ -641,6 +641,7 @@ void DSearchBar::keyPressEvent(QKeyEvent *e)
                 }
                 deselect();
                 m_list->hide();
+                m_list->clear();
 
                 QLineEdit::keyPressEvent(e);
                 break;
