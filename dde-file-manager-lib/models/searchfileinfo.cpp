@@ -245,3 +245,18 @@ QString SearchFileInfo::subtitleForEmptyFloder() const
 {
     return QObject::tr("No results");
 }
+
+QString SearchFileInfo::fileDisplayName() const
+{
+    Q_D(const DAbstractFileInfo);
+
+    if (d->proxy)
+        return d->proxy->fileDisplayName();
+
+    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(d->url.searchTargetUrl());
+
+    if (fileInfo)
+        return fileInfo->fileDisplayName();
+
+    return QString();
+}
