@@ -64,6 +64,7 @@ public:
 signals:
     void aboutToClose();
     void fileViewChanged(const DFileView* fileView);
+    void positionChanged(const QPoint &pos);
 
 public slots:
     void moveCenter(const QPoint &cp);
@@ -94,6 +95,7 @@ private slots:
 protected:
     void closeEvent(QCloseEvent* event)  Q_DECL_OVERRIDE;
     void mouseDoubleClickEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+    void moveEvent(QMoveEvent *event) Q_DECL_OVERRIDE;
 
     void initData();
     void initUI();
