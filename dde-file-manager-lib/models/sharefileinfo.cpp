@@ -30,7 +30,8 @@
 ShareFileInfo::ShareFileInfo(const DUrl &url):
     DAbstractFileInfo(url)
 {
-    ShareFileInfo::setUrl(url);
+    if (url.path() != "/")
+        setProxy(DFileService::instance()->createFileInfo(DUrl::fromLocalFile(url.path())));
 }
 
 ShareFileInfo::~ShareFileInfo()
@@ -68,14 +69,6 @@ QString ShareFileInfo::fileDisplayName() const
         }
     }
     return QString("");
-}
-
-void ShareFileInfo::setUrl(const DUrl &fileUrl)
-{
-    DAbstractFileInfo::setUrl(fileUrl);
-
-    if (fileUrl.path() != "/")
-        setProxy(DFileService::instance()->createFileInfo(DUrl::fromLocalFile(fileUrl.path())));
 }
 
 //QFileDevice::Permissions ShareFileInfo::vpermissions() const
@@ -212,9 +205,9 @@ bool ShareFileInfo::isShared() const
     return true;
 }
 
-QAbstractItemView::SelectionMode ShareFileInfo::supportSelectionMode() const
+DAbstractFileInfo::SelectionMode ShareFileInfo::supportSelectionMode() const
 {
-    return QAbstractItemView::ExtendedSelection;
+    return ExtendedSelection;
 }
 
 Qt::ItemFlags ShareFileInfo::fileItemDisableFlags() const

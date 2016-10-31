@@ -64,10 +64,9 @@ public:
     QString fileDisplayName() const Q_DECL_OVERRIDE;
 
 protected:
-    Q_DECLARE_PRIVATE(DFileInfo)
+    explicit DFileInfo(DFileInfoPrivate &dd);
 
-    explicit DFileInfo();
-    DAbstractFileInfoPrivate *createPrivateByUrl(const DUrl &url) const Q_DECL_OVERRIDE;
+    Q_DECLARE_PRIVATE(DFileInfo)
 };
 
 #endif // FILEINFO_H

@@ -15,12 +15,17 @@
 #include <QTimer>
 #include <QPointer>
 
-class DAbstractFileInfoPrivate : public DAbstractFileInfoPrivateBase
+class DAbstractFileInfoPrivate
 {
 public:
-    ~DAbstractFileInfoPrivate() Q_DECL_OVERRIDE;
+    DAbstractFileInfoPrivate(const DUrl &url, DAbstractFileInfo *qq);
+    ~DAbstractFileInfoPrivate();
 
-    DUrl url;
+    void setUrl(const DUrl &url);
+    static DAbstractFileInfo *getFileInfo(const DUrl &fileUrl);
+
+    DAbstractFileInfo *q_ptr = Q_NULLPTR;
+
     mutable QString pinyinName;
 //    mutable QIcon icon;
     mutable QPointer<QTimer> getIconTimer;
@@ -30,13 +35,11 @@ public:
 
     static QSet<QString> hasThumbnailMimeHash;
 
-protected:
-    DAbstractFileInfoPrivate(const DUrl &url);
-
 private:
-    static QMap<DUrl, DAbstractFileInfoPrivate*> urlToFileInfoMap;
+    DUrl fileUrl;
+    static QMap<DUrl, DAbstractFileInfo*> urlToFileInfoMap;
 
-    friend class DAbstractFileInfo;
+    Q_DECLARE_PUBLIC(DAbstractFileInfo)
 };
 
 #endif // DABSTRACTFILEINFO_P_H

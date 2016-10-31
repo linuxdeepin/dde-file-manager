@@ -54,13 +54,14 @@ bool sort(const DAbstractFileInfoPointer &info1, const DAbstractFileInfoPointer 
     if (d->proxy) return d->proxy->Fun;
 #define REQUEST_THUMBNAIL_DEALY 500
 
-QMap<DUrl, DAbstractFileInfoPrivate*> DAbstractFileInfoPrivate::urlToFileInfoMap;
+QMap<DUrl, DAbstractFileInfo*> DAbstractFileInfoPrivate::urlToFileInfoMap;
 QSet<QString> DAbstractFileInfoPrivate::hasThumbnailMimeHash;
 
-DAbstractFileInfoPrivate::DAbstractFileInfoPrivate(const DUrl &url)
-    : url(url)
+DAbstractFileInfoPrivate::DAbstractFileInfoPrivate(const DUrl &url, DAbstractFileInfo *qq)
+    : q_ptr(qq)
+    , fileUrl(url)
 {
-    urlToFileInfoMap[url] = this;
+    urlToFileInfoMap[url] = qq;
 
     FileSortFunction::sortCollator.setNumericMode(true);
     FileSortFunction::sortCollator.setCaseSensitivity(Qt::CaseInsensitive);
@@ -68,11 +69,29 @@ DAbstractFileInfoPrivate::DAbstractFileInfoPrivate(const DUrl &url)
 
 DAbstractFileInfoPrivate::~DAbstractFileInfoPrivate()
 {
-    urlToFileInfoMap.remove(url);
+    if (urlToFileInfoMap.value(fileUrl) == q_ptr)
+        urlToFileInfoMap.remove(fileUrl);
+}
+
+void DAbstractFileInfoPrivate::setUrl(const DUrl &url)
+{
+    if (url == fileUrl)
+        return;
+
+    if (urlToFileInfoMap.value(fileUrl) == q_ptr)
+        urlToFileInfoMap.remove(fileUrl);
+
+    urlToFileInfoMap[url] = q_ptr;
+    fileUrl = url;
+}
+
+DAbstractFileInfo *DAbstractFileInfoPrivate::getFileInfo(const DUrl &fileUrl)
+{
+    return urlToFileInfoMap.value(fileUrl);
 }
 
 DAbstractFileInfo::DAbstractFileInfo(const DUrl &url)
-    : d_ptr(getPrivateByUrl(url))
+    : d_ptr(new DAbstractFileInfoPrivate(url, this))
 {
 
 }
@@ -82,14 +101,9 @@ DAbstractFileInfo::~DAbstractFileInfo()
 
 }
 
-void DAbstractFileInfo::setUrl(const DUrl &url)
+const DAbstractFileInfoPointer DAbstractFileInfo::getFileInfo(const DUrl &fileUrl)
 {
-    Q_D(DAbstractFileInfo);
-
-    if (d && d->url == url)
-        return;
-
-    d_ptr = getPrivateByUrl(url);
+    return DAbstractFileInfoPointer(DAbstractFileInfoPrivate::getFileInfo(fileUrl));
 }
 
 bool DAbstractFileInfo::exists() const
@@ -452,7 +466,7 @@ DUrl DAbstractFileInfo::fileUrl() const
 {
     Q_D(const DAbstractFileInfo);
 
-    return d->url;
+    return d->fileUrl;
 }
 
 bool DAbstractFileInfo::hasThumbnail(const QMimeType &mt) const
@@ -529,16 +543,16 @@ QIcon DAbstractFileInfo::fileIcon() const
             QMetaObject::invokeMethod(d->getIconTimer, "start", Qt::QueuedConnection);
         } else {
             QTimer *timer = new QTimer();
-            const QExplicitlySharedDataPointer<DAbstractFileInfoPrivate> d_ptr(const_cast<DAbstractFileInfoPrivate*>(d));
+            const DAbstractFileInfoPointer me(const_cast<DAbstractFileInfo*>(this));
 
             d->getIconTimer = timer;
             timer->setSingleShot(true);
             timer->moveToThread(qApp->thread());
             timer->setInterval(REQUEST_THUMBNAIL_DEALY);
 
-            QObject::connect(timer, &QTimer::timeout, timer, [fileUrl, timer, d_ptr] {
+            QObject::connect(timer, &QTimer::timeout, timer, [fileUrl, timer, me] {
                 fileIconProvider->requestThumbnail(fileUrl);
-                d_ptr->requestingThumbnail = true;
+                me->d_func()->requestingThumbnail = true;
                 timer->deleteLater();
             });
 
@@ -721,9 +735,9 @@ quint8 DAbstractFileInfo::supportViewMode() const
     return DFileView::AllViewMode;
 }
 
-QAbstractItemView::SelectionMode DAbstractFileInfo::supportSelectionMode() const
+DAbstractFileInfo::SelectionMode DAbstractFileInfo::supportSelectionMode() const
 {
-    return QAbstractItemView::ExtendedSelection;
+    return ExtendedSelection;
 }
 
 QList<int> DAbstractFileInfo::userColumnRoles() const
@@ -976,7 +990,8 @@ void DAbstractFileInfo::makeToInactive()
     }
 }
 
-DAbstractFileInfo::DAbstractFileInfo()
+DAbstractFileInfo::DAbstractFileInfo(DAbstractFileInfoPrivate &dd)
+    : d_ptr(&dd)
 {
 
 }
@@ -1066,11 +1081,6 @@ QDebug operator<<(QDebug deg, const DAbstractFileInfo &info)
 }
 QT_END_NAMESPACE
 
-DAbstractFileInfoPrivate *DAbstractFileInfo::createPrivateByUrl(const DUrl &url) const
-{
-    return new DAbstractFileInfoPrivate(url);
-}
-
 void DAbstractFileInfo::setProxy(const DAbstractFileInfoPointer &proxy)
 {
     Q_D(DAbstractFileInfo);
@@ -1078,15 +1088,9 @@ void DAbstractFileInfo::setProxy(const DAbstractFileInfoPointer &proxy)
     d->proxy = proxy;
 }
 
-DAbstractFileInfoPrivate *DAbstractFileInfo::getPrivateByUrl(const DUrl &url) const
+void DAbstractFileInfo::setUrl(const DUrl &url)
 {
-    if (url.isEmpty())
-        createPrivateByUrl(url);
+    Q_D(DAbstractFileInfo);
 
-    DAbstractFileInfoPrivate *d = DAbstractFileInfoPrivate::urlToFileInfoMap.value(url);
-
-    if (d)
-        return d;
-
-    return createPrivateByUrl(url);
+    d->setUrl(url);
 }

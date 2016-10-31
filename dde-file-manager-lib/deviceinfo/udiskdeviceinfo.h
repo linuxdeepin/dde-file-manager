@@ -28,7 +28,7 @@ public:
     UDiskDeviceInfo(UDiskDeviceInfo * info);
     UDiskDeviceInfo(const DUrl &url);
     UDiskDeviceInfo(const QString &url);
-    UDiskDeviceInfo(const DiskInfo &diskInfo);
+    UDiskDeviceInfo(DiskInfo diskInfo);
     ~UDiskDeviceInfo();
     void setDiskInfo(const DiskInfo &diskInfo);
     DiskInfo getDiskInfo() const;
@@ -38,6 +38,7 @@ public:
     QString getPath() const;
     QString getMountPoint() const;
     DUrl getMountPointUrl();
+    static DUrl getMountPointUrl(DiskInfo &info);
     QString getIcon() const;
     bool canEject() const;
     bool canUnmount() const;

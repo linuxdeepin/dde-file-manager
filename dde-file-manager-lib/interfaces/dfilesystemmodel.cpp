@@ -13,6 +13,7 @@
 #include <QDebug>
 #include <QMimeData>
 #include <QtConcurrent/QtConcurrent>
+#include <QAbstractItemView>
 
 #define fileService DFileService::instance()
 #define DEFAULT_COLUMN_COUNT 1

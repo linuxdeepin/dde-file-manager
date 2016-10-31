@@ -1583,7 +1583,7 @@ bool DFileView::setRootUrl(const DUrl &url)
     }
     emit rootUrlChanged(fileUrl);
 
-    setSelectionMode(info->supportSelectionMode());
+    setSelectionMode((QAbstractItemView::SelectionMode)info->supportSelectionMode());
 
     const DUrl &defaultSelectUrl = DUrl(QUrlQuery(fileUrl.query()).queryItemValue("selectUrl"));
 

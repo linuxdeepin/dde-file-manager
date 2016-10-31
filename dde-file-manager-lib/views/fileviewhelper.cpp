@@ -74,7 +74,7 @@ int FileViewHelper::indexOfRow(const QModelIndex &index) const
     return parent()->indexOfRow(index);
 }
 
-const QSharedPointer<DAbstractFileInfo> FileViewHelper::fileInfo(const QModelIndex &index) const
+const DAbstractFileInfoPointer FileViewHelper::fileInfo(const QModelIndex &index) const
 {
     return parent()->model()->fileInfo(index);
 }
