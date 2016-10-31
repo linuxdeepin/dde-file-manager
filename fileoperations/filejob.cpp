@@ -900,12 +900,6 @@ bool FileJob::handleMoveJob(const QString &srcPath, const QString &tarDir, QStri
 
 bool FileJob::handleSymlinkFile(const QString &srcFile, const QString &tarDir, QString *targetPath)
 {
-    if(m_applyToAll && m_status == FileJob::Cancelled){
-        m_skipandApplyToAll = true;
-    }else if(!m_applyToAll && m_status == FileJob::Cancelled){
-        m_status = Started;
-    }
-
     QDir to(tarDir);
     QFileInfo fromInfo(srcFile);
     m_srcFileName = fromInfo.fileName();
@@ -914,48 +908,18 @@ bool FileJob::handleSymlinkFile(const QString &srcFile, const QString &tarDir, Q
     m_tarPath = tarDir;
     m_status = Started;
 
-    bool isTargetExists = to.exists(m_srcFileName);
-
-    if(fromInfo.absolutePath() != tarDir){
-        if(isTargetExists && !m_applyToAll)
-        {
-            jobConflicted();
-        }else if (isTargetExists && m_skipandApplyToAll){
-            return false;
-        }
-    }
-
     while(true)
     {
         switch(m_status)
         {
             case FileJob::Started:
             {
-                if(!m_isReplaced)
-                {
-                    m_tarPath = checkDuplicateName(m_tarPath + "/" + m_srcFileName);
-                }
-                else
-                {
-                    m_tarPath = m_tarPath + "/" + m_srcFileName;
-                }
+                m_tarPath = checkDuplicateName(m_tarPath + "/" + m_srcFileName);
                 m_status = Run;
                 break;
             }
             case FileJob::Run:
             {
-                if(m_isReplaced)
-                {
-                    QFileInfo tarFileInfo(m_tarPath);
-
-                    if(tarFileInfo.exists() && tarFileInfo.isSymLink()){
-                        QFile(m_tarPath).remove();
-                    }else{
-                        qDebug() << m_tarPath << "replace fail";
-                        return false;
-                    }
-                }
-
                 bool ok = QFile(fromInfo.symLinkTarget()).link(m_tarPath);
 
                 if (ok){
