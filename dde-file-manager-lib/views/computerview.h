@@ -7,6 +7,8 @@
 #include <QStringList>
 #include <QMouseEvent>
 #include <QShowEvent>
+#include <QIcon>
+
 #include "fileitem.h"
 #include "durl.h"
 #include "dabstractfileinfo.h"

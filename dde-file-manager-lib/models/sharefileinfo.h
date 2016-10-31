@@ -25,7 +25,6 @@ public:
     bool isWritable() const Q_DECL_OVERRIDE;
 
     QString fileDisplayName() const Q_DECL_OVERRIDE;
-    void setUrl(const DUrl &fileUrl) Q_DECL_OVERRIDE;
 
     QVector<MenuAction> menuActionList(MenuType type) const Q_DECL_OVERRIDE;
     QSet<MenuAction> disableMenuActionList() const Q_DECL_OVERRIDE;
@@ -42,7 +41,7 @@ public:
 
     bool isShared() const Q_DECL_OVERRIDE;
 
-    QAbstractItemView::SelectionMode supportSelectionMode() const Q_DECL_OVERRIDE;
+    SelectionMode supportSelectionMode() const Q_DECL_OVERRIDE;
     Qt::ItemFlags fileItemDisableFlags() const Q_DECL_OVERRIDE;
 
     QList<QIcon> additionalIcon() const Q_DECL_OVERRIDE;

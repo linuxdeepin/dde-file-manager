@@ -16,9 +16,6 @@ public:
     bool isCanShare() const Q_DECL_OVERRIDE;
 
     QString fileDisplayName() const Q_DECL_OVERRIDE;
-
-    void setUrl(const DUrl &fileUrl) Q_DECL_OVERRIDE;
-
     QFile::Permissions permissions() const Q_DECL_OVERRIDE;
 
     QVector<MenuAction> menuActionList(MenuType type) const Q_DECL_OVERRIDE;
@@ -48,8 +45,6 @@ public:
     QString sourceFilePath() const;
 
 private:
-    DAbstractFileInfoPrivate *createPrivateByUrl(const DUrl &url) const Q_DECL_OVERRIDE;
-
     Q_DECLARE_PRIVATE(TrashFileInfo)
 };
 

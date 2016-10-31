@@ -29,7 +29,7 @@ public:
     int selectedIndexsCount() const Q_DECL_OVERRIDE;
     int rowCount() const Q_DECL_OVERRIDE;
     int indexOfRow(const QModelIndex &index) const Q_DECL_OVERRIDE;
-    const QSharedPointer<DAbstractFileInfo> fileInfo(const QModelIndex &index) const Q_DECL_OVERRIDE;
+    const DAbstractFileInfoPointer fileInfo(const QModelIndex &index) const Q_DECL_OVERRIDE;
     DStyledItemDelegate *itemDelegate() const Q_DECL_OVERRIDE;
     DFileSystemModel *model() const Q_DECL_OVERRIDE;
     const DUrlList selectedUrls() const Q_DECL_OVERRIDE;

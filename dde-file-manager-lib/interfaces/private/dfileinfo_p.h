@@ -14,16 +14,14 @@
 
 #include <QFileInfo>
 
+class DFileInfo;
 class DFileInfoPrivate : public DAbstractFileInfoPrivate
 {
 public:
+    DFileInfoPrivate(const DUrl &fileUrl, DFileInfo *qq);
+
     QFileInfo fileInfo;
     mutable QMimeType mimeType;
-
-protected:
-    DFileInfoPrivate(const DUrl &url);
-
-    friend class DFileInfo;
 };
 
 #endif // DFILEINFO_P_H

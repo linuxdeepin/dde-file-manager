@@ -29,8 +29,6 @@ public:
 
 private:
     Q_DECLARE_PRIVATE(DesktopFileInfo)
-
-    DAbstractFileInfoPrivate *createPrivateByUrl(const DUrl &url) const Q_DECL_OVERRIDE;
 };
 
 #endif // DESKTOPFILEINFO_H

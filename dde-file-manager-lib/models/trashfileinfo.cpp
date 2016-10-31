@@ -22,8 +22,8 @@ SORT_FUN_DEFINE(sourceFilePath, SourceFilePath, TrashFileInfo)
 class TrashFileInfoPrivate : public DAbstractFileInfoPrivate
 {
 public:
-    TrashFileInfoPrivate(const DUrl &url)
-        : DAbstractFileInfoPrivate(url) {}
+    TrashFileInfoPrivate(const DUrl &url, TrashFileInfo *qq)
+        : DAbstractFileInfoPrivate(url, qq) {}
 
     QString desktopIconName;
     QString displayName;
@@ -64,8 +64,12 @@ void TrashFileInfoPrivate::updateInfo()
 }
 
 TrashFileInfo::TrashFileInfo(const DUrl &url)
+    : DAbstractFileInfo(*new TrashFileInfoPrivate(url, this))
 {
-    TrashFileInfo::setUrl(url);
+    Q_D(TrashFileInfo);
+
+    setProxy(DAbstractFileInfoPointer(new DFileInfo(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath) + url.path())));
+    d->updateInfo();
 }
 
 bool TrashFileInfo::isCanRename() const
@@ -93,16 +97,6 @@ QString TrashFileInfo::fileDisplayName() const
     Q_D(const TrashFileInfo);
 
     return d->displayName;
-}
-
-void TrashFileInfo::setUrl(const DUrl &fileUrl)
-{
-    DAbstractFileInfo::setUrl(fileUrl);
-
-    Q_D(TrashFileInfo);
-
-    setProxy(DAbstractFileInfoPointer(new DFileInfo(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath) + fileUrl.path())));
-    d->updateInfo();
 }
 
 QFileDevice::Permissions TrashFileInfo::permissions() const
@@ -330,9 +324,4 @@ QString TrashFileInfo::sourceFilePath() const
     Q_D(const TrashFileInfo);
 
     return d->originalFilePath;
-}
-
-DAbstractFileInfoPrivate *TrashFileInfo::createPrivateByUrl(const DUrl &url) const
-{
-    return new TrashFileInfoPrivate(url);
 }

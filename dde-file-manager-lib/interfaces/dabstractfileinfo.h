@@ -7,7 +7,6 @@
 #include <QFileInfo>
 #include <QDateTime>
 #include <QMap>
-#include <QAbstractItemView>
 #include <QMimeType>
 #include <QDir>
 
@@ -55,12 +54,11 @@ bool sortByString(T, T, Qt::SortOrder order = Qt::AscendingOrder)
 }
 
 class DAbstractFileInfo;
-typedef QSharedPointer<DAbstractFileInfo> DAbstractFileInfoPointer;
+typedef QExplicitlySharedDataPointer<DAbstractFileInfo> DAbstractFileInfoPointer;
 typedef std::function<const DAbstractFileInfoPointer(int)> getFileInfoFun;
 typedef DFMGlobal::MenuAction MenuAction;
-class DAbstractFileInfoPrivateBase : public QSharedData {public: virtual ~DAbstractFileInfoPrivateBase() {}};
 class DAbstractFileInfoPrivate;
-class DAbstractFileInfo
+class DAbstractFileInfo : public QSharedData
 {
 public:
     enum MenuType {
@@ -70,15 +68,23 @@ public:
         SpaceArea
     };
 
+    enum SelectionMode {
+        NoSelection,
+        SingleSelection,
+        MultiSelection,
+        ExtendedSelection,
+        ContiguousSelection
+    };
+
     inline static QString dateTimeFormat() {
         return "yyyy/MM/dd HH:mm:ss";
     }
 
     explicit DAbstractFileInfo(const DUrl &url);
-
     virtual ~DAbstractFileInfo();
 
-    virtual void setUrl(const DUrl &url);
+    static const DAbstractFileInfoPointer getFileInfo(const DUrl &fileUrl);
+
     virtual bool exists() const;
 
     virtual QString path() const;
@@ -155,7 +161,7 @@ public:
     /// return DFileView::ViewMode flags
     virtual quint8 supportViewMode() const;
     /// support selection mode
-    virtual QAbstractItemView::SelectionMode supportSelectionMode() const;
+    virtual SelectionMode supportSelectionMode() const;
 
     virtual QList<int> userColumnRoles() const;
     virtual QVariant userColumnDisplayName(int userColumnRole) const;
@@ -205,16 +211,12 @@ public:
     virtual void makeToInactive();
 
 protected:
-    QExplicitlySharedDataPointer<DAbstractFileInfoPrivateBase> d_ptr;
-    Q_DECLARE_PRIVATE(DAbstractFileInfo)
-
-    Q_DECL_DEPRECATED_X("Wraning: The DAbstractFileInfo::DAbstractFileInfo() is not deprecated. \
-                         But d_ptr is not initialize if use the constructor")
-    explicit DAbstractFileInfo();
-
-    virtual DAbstractFileInfoPrivate *createPrivateByUrl(const DUrl &url) const;
+    explicit DAbstractFileInfo(DAbstractFileInfoPrivate &dd);
     void setProxy(const DAbstractFileInfoPointer &proxy);
-    DAbstractFileInfoPrivate *getPrivateByUrl(const DUrl &url) const;
+    Q_DECL_DEPRECATED_X("!!!!!!!!!!!!!!!!!!!!!!!") virtual void setUrl(const DUrl &url);
+
+    QScopedPointer<DAbstractFileInfoPrivate> d_ptr;
+    Q_DECLARE_PRIVATE(DAbstractFileInfo)
 
 private:
     Q_DISABLE_COPY(DAbstractFileInfo)

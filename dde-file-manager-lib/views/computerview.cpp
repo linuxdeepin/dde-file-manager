@@ -374,7 +374,6 @@ void ComputerView::loadSystemItems()
 
 void ComputerView::loadNativeItems()
 {
-    UDiskDeviceInfo* device = new UDiskDeviceInfo();
     DiskInfo info;
     info.ID = "/";
     info.CanEject = false;
@@ -385,7 +384,8 @@ void ComputerView::loadNativeItems()
     info.Total = 0;
     info.Used = 0;
     info.MountPointUrl = DUrl::fromLocalFile("/");
-    device->setDiskInfo(info);
+    UDiskDeviceInfo* device = new UDiskDeviceInfo(info);
+
     mountAdded(device);
     foreach (UDiskDeviceInfo* device, deviceListener->getDeviceList()) {
         mountAdded(device);
@@ -404,7 +404,6 @@ void ComputerView::loadCustomItems()
 
 void ComputerView::loadCustomItemsByNameUrl(const QString &id, const QString &url)
 {
-    UDiskDeviceInfo* device = new UDiskDeviceInfo();
     DiskInfo info;
     info.ID = id;
     info.CanEject = false;
@@ -416,7 +415,7 @@ void ComputerView::loadCustomItemsByNameUrl(const QString &id, const QString &ur
     info.Used = 0;
     info.MountPointUrl = DUrl::fromLocalFile(url);
     info.isNativeCustom = true;
-    device->setDiskInfo(info);
+    UDiskDeviceInfo* device = new UDiskDeviceInfo(info);
     mountAdded(device);
 }
 

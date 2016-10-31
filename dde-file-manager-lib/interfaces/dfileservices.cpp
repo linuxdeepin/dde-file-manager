@@ -496,6 +496,11 @@ void DFileService::openNewWindow(const DUrl &fileUrl) const
 
 const DAbstractFileInfoPointer DFileService::createFileInfo(const DUrl &fileUrl) const
 {
+    const DAbstractFileInfoPointer &info = DAbstractFileInfo::getFileInfo(fileUrl);
+
+    if (info)
+        return info;
+
     TRAVERSE(fileUrl, {
                  const DAbstractFileInfoPointer &info = controller->createFileInfo(fileUrl, accepted);
 

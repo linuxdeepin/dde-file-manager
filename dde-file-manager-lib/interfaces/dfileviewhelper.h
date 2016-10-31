@@ -14,7 +14,7 @@
 #include <QMargins>
 #include <QEvent>
 
-#include "durl.h"
+#include "dabstractfileinfo.h"
 
 QT_BEGIN_NAMESPACE
 class QAbstractItemView;
@@ -46,7 +46,7 @@ public:
     virtual int columnWidth(int columnIndex) const;
     virtual DUrl currentUrl() const;
 
-    virtual const QSharedPointer<DAbstractFileInfo> fileInfo(const QModelIndex &index) const = 0;
+    virtual const DAbstractFileInfoPointer fileInfo(const QModelIndex &index) const = 0;
     virtual DStyledItemDelegate *itemDelegate() const = 0;
     virtual DFileSystemModel *model() const = 0;
     virtual const DUrlList selectedUrls() const = 0;

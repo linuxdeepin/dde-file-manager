@@ -13,9 +13,7 @@
 #include "app/define.h"
 #include "dfmevent.h"
 #include "views/windowmanager.h"
-#define protected public
 #include "dabstractfileinfo.h"
-#undef protected
 #include "dfilesystemmodel.h"
 #include "shutil/iconprovider.h"
 #include "views/fileitem.h"
@@ -24,6 +22,9 @@
 
 #include <QTimer>
 #include <QAction>
+#define protected public
+#include <QAbstractItemView>
+#undef protected
 
 class DFileViewHelperPrivate
 {

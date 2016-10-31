@@ -8,12 +8,13 @@
 #include "widgets/singleton.h"
 
 #include <QSettings>
+#include <QLocale>
 
 class DesktopFileInfoPrivate : public DFileInfoPrivate
 {
 public:
-    DesktopFileInfoPrivate(const DUrl &url)
-        : DFileInfoPrivate(url)
+    DesktopFileInfoPrivate(const DUrl &url, DesktopFileInfo *qq)
+        : DFileInfoPrivate(url, qq)
     {
         init(url);
     }
@@ -29,8 +30,9 @@ public:
 };
 
 DesktopFileInfo::DesktopFileInfo(const DUrl &fileUrl)
+    : DFileInfo(*new DesktopFileInfoPrivate(fileUrl, this))
 {
-    d_ptr = getPrivateByUrl(fileUrl);
+
 }
 
 DesktopFileInfo::DesktopFileInfo(const QFileInfo &fileInfo)
@@ -112,11 +114,6 @@ QMap<QString, QVariant> DesktopFileInfo::getDesktopFileInfo(const DUrl &fileUrl)
     map["MimeType"] = desktop.value("MimeType", settings.value("MimeType")).toString().remove(" ").split(";");
 
     return map;
-}
-
-DAbstractFileInfoPrivate *DesktopFileInfo::createPrivateByUrl(const DUrl &url) const
-{
-    return new DesktopFileInfoPrivate(url);
 }
 
 void DesktopFileInfoPrivate::init(const DUrl &fileUrl)

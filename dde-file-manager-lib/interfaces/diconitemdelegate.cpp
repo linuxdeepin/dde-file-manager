@@ -14,6 +14,7 @@
 #include <QTextBlock>
 #include <QAbstractTextDocumentLayout>
 #include <QApplication>
+#include <QAbstractItemView>
 
 #define ICON_SPACING 16
 #define ICON_MODE_RECT_RADIUS 4

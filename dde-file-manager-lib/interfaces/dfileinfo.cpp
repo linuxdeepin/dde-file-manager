@@ -18,8 +18,8 @@
 #include <QDir>
 #include <QMimeDatabase>
 
-DFileInfoPrivate::DFileInfoPrivate(const DUrl &url)
-    : DAbstractFileInfoPrivate (url)
+DFileInfoPrivate::DFileInfoPrivate(const DUrl &url, DFileInfo *qq)
+    : DAbstractFileInfoPrivate (url, qq)
 {
     fileInfo.setFile(url.toLocalFile());
 }
@@ -31,8 +31,9 @@ DFileInfo::DFileInfo(const QString &filePath)
 }
 
 DFileInfo::DFileInfo(const DUrl &fileUrl)
+    : DAbstractFileInfo(*new DFileInfoPrivate(fileUrl, this))
 {
-    d_ptr = getPrivateByUrl(fileUrl);
+
 }
 
 DFileInfo::DFileInfo(const QFileInfo &fileInfo)
@@ -326,12 +327,8 @@ QString DFileInfo::fileDisplayName() const
     }
 }
 
-DFileInfo::DFileInfo()
+DFileInfo::DFileInfo(DFileInfoPrivate &dd)
+    : DAbstractFileInfo(dd)
 {
 
-}
-
-DAbstractFileInfoPrivate *DFileInfo::createPrivateByUrl(const DUrl &url) const
-{
-    return new DFileInfoPrivate(url);
 }
