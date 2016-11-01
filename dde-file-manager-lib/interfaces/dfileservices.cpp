@@ -284,25 +284,26 @@ bool DFileService::renameFile(const DUrl &oldUrl, const DUrl &newUrl) const
     return false;
 }
 
-void DFileService::deleteFiles(const DFMEvent &event) const
+bool DFileService::deleteFiles(const DFMEvent &event) const
 {
-    FILTER_RETURN(DeleteFiles)
+    FILTER_RETURN(DeleteFiles, false)
 
     if (event.fileUrlList().isEmpty())
-        return;
+        return false;
 
     if (QThreadPool::globalInstance()->activeThreadCount() >= MAX_THREAD_COUNT) {
         qDebug() << "Beyond the maximum number of threads!";
-        return;
+        return false;
     }
 
     int result = dialogManager->showDeleteFilesClearTrashDialog(event);
 
     if (result == 1) {
         QtConcurrent::run(QThreadPool::globalInstance(), this, &DFileService::deleteFilesSync, event);
+        return true;
     }
 
-    return;
+    return false;
 }
 
 bool DFileService::deleteFilesSync(const DFMEvent &event) const
