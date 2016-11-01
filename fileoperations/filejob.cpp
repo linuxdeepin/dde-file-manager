@@ -86,29 +86,46 @@ QString FileJob::checkDuplicateName(const QString &name)
     {
         if(num == 1)
         {
-            if(startInfo.isDir())
+            if(startInfo.isDir()){
                 destUrl = QString("%1/%2(%3)").arg(startInfo.absolutePath(),
                                                    startInfo.fileName(),
                                                    cpy);
-            else
-                destUrl = QString("%1/%2(%3).%4").arg(startInfo.absolutePath(),
-                                                      startInfo.baseName(),
-                                                      cpy,
-                                                      startInfo.completeSuffix());
+            }
+            else{
+                if (startInfo.completeSuffix().isEmpty()){
+                    destUrl = QString("%1/%2(%3)").arg(startInfo.absolutePath(),
+                                                          startInfo.baseName(),
+                                                          cpy);
+                }else{
+                    destUrl = QString("%1/%2(%3).%4").arg(startInfo.absolutePath(),
+                                                          startInfo.baseName(),
+                                                          cpy,
+                                                          startInfo.completeSuffix());
+                }
+            }
         }
         else
         {
-            if(startInfo.isDir())
+            if(startInfo.isDir()){
                 destUrl = QString("%1/%2(%3 %4)").arg(startInfo.absolutePath(),
                                                       startInfo.fileName(),
                                                       cpy,
                                                       QString::number(num));
-            else
-                destUrl = QString("%1/%2(%3 %4).%5").arg(startInfo.absolutePath(),
-                                                         startInfo.baseName(),
-                                                         cpy,
-                                                         QString::number(num),
-                                                         startInfo.completeSuffix());
+            }
+            else{
+                if (startInfo.completeSuffix().isEmpty()){
+                    destUrl = QString("%1/%2(%3 %4)").arg(startInfo.absolutePath(),
+                                                             startInfo.baseName(),
+                                                             cpy,
+                                                             QString::number(num));
+                }else{
+                    destUrl = QString("%1/%2(%3 %4).%5").arg(startInfo.absolutePath(),
+                                                             startInfo.baseName(),
+                                                             cpy,
+                                                             QString::number(num),
+                                                             startInfo.completeSuffix());
+                }
+            }
         }
         num++;
         file.setFileName(destUrl);
@@ -476,20 +493,23 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
     }else if(!m_applyToAll && m_status == FileJob::Cancelled){
         m_status = Started;
     }
-    QFile from(srcFile);
-    QFileInfo sf(srcFile);
-    QFileInfo tf(tarDir);
-    m_srcFileName = sf.fileName();
-    m_tarDirName = tf.fileName();
+
+    QFileInfo srcFileInfo(srcFile);
+    QFileInfo tarDirInfo(tarDir);
+    m_srcFileName = srcFileInfo.fileName();
+    m_tarDirName = tarDirInfo.fileName();
     m_srcPath = srcFile;
     m_tarPath = tarDir + "/" + m_srcFileName;
-    QFile to(tarDir + "/" + m_srcFileName);
+    QFile from(srcFile);
+    QFile to(m_tarPath);
+    QFileInfo targetInfo(m_tarPath);
     m_status = Started;
 
     //We only check the conflict of the files when
     //they are not in the same folder
-    bool isTargetExists = to.exists();
-    if(sf.absolutePath() != tf.absoluteFilePath())
+    bool isTargetExists = targetInfo.exists();
+
+    if(srcFileInfo.absolutePath() != targetInfo.absolutePath()){
         if(isTargetExists && !m_applyToAll)
         {
             if (!isMoved){
@@ -500,6 +520,7 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
         }else if (isTargetExists && m_skipandApplyToAll){
             return false;
         }
+    }
 
 #ifdef SPLICE_CP
     loff_t in_off = 0;
@@ -524,9 +545,14 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
                     {
                         m_tarPath = checkDuplicateName(m_tarPath);
                         to.setFileName(m_tarPath);
-                    }
-                    else
+                    }else
                     {
+                        if (targetInfo.isSymLink()){
+                            QFile(m_tarPath).remove();
+                        }else if (!targetInfo.isSymLink() && targetInfo.isDir()){
+                            QDir(m_tarPath).removeRecursively();
+                        }
+
                         if(!m_applyToAll)
                             m_isReplaced = false;
                     }
@@ -555,10 +581,10 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
  #ifdef SPLICE_CP
                 in_fd = from.handle();
                 out_fd = to.handle();
-                len = sf.size();
+                len = srcFileInfo.size();
+                posix_fadvise(from.handle(), 0, len, POSIX_FADV_SEQUENTIAL);
+                posix_fadvise(from.handle(), 0, len, POSIX_FADV_WILLNEED);
  #endif
-                posix_fadvise(from.handle(), 0, sf.size(), POSIX_FADV_SEQUENTIAL);
-                posix_fadvise(from.handle(), 0, sf.size(), POSIX_FADV_WILLNEED);
                 break;
             }
             case FileJob::Run:
@@ -686,18 +712,19 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
         m_status = Started;
     }
     QDir sourceDir(srcDir);
-    QDir targetDir(tarDir + "/" + sourceDir.dirName());
-    QFileInfo sf(srcDir);
-    QFileInfo tf(tarDir + "/" + sourceDir.dirName());
-    m_srcFileName = sf.fileName();
-    m_tarDirName = tf.dir().dirName();
+    QDir targetDir(tarDir);
+    QFileInfo srcDirInfo(srcDir);
     m_srcPath = srcDir;
-    m_tarPath = targetDir.absolutePath();
+    m_srcFileName = srcDirInfo.fileName();
+    m_tarDirName = targetDir.dirName();
+    m_tarPath = tarDir + "/" + m_srcFileName;
+    QFileInfo targetInfo(m_tarPath);
+
     m_status = Started;
 
-    bool isTargetExists = targetDir.exists();
+    bool isTargetExists = targetInfo.exists();
 
-    if(sf.absolutePath() != tf.absolutePath())
+    if(srcDirInfo.absolutePath() != targetInfo.absolutePath()){
         if(isTargetExists && !m_applyToAll)
         {
             if (!isMoved){
@@ -708,6 +735,7 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
         }else if (isTargetExists && m_skipandApplyToAll){
             return false;
         }
+    }
 
     while(true)
     {
@@ -719,11 +747,18 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
                 if(!m_isReplaced)
                 {
                     m_tarPath = checkDuplicateName(m_tarPath);
-                    targetDir.setPath(m_tarPath);
                     isTargetExists = false;
                 }
                 else
                 {
+                    if (targetInfo.isSymLink()){
+                        QFile(m_tarPath).remove();
+                    }else if (!targetInfo.isSymLink() && targetInfo.isFile()){
+                        QFile(m_tarPath).remove();
+                    }
+
+                    targetDir.mkdir(m_tarPath);
+
                     if(!m_applyToAll)
                         m_isReplaced = false;
                 }
@@ -734,6 +769,7 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
                 if(!targetDir.mkdir(m_tarPath))
                     return false;
             }
+            targetDir.setPath(m_tarPath);
             m_status = Run;
             break;
         }
@@ -748,13 +784,13 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
                 tmp_iterator.next();
                 const QFileInfo fileInfo = tmp_iterator.fileInfo();
 
-                if(fileInfo.isDir())
-                {
+                if (fileInfo.isSymLink()){
+                    handleSymlinkFile(fileInfo.filePath(), targetDir.absolutePath());
+                }else if(!fileInfo.isSymLink() && fileInfo.isDir()){
                     if(!copyDir(fileInfo.filePath(), targetDir.absolutePath())){
                         qDebug() << "coye dir" << fileInfo.filePath() << "failed";
                     }
-                }
-                else
+                }else
                 {
                     if(!copyFile(fileInfo.filePath(), targetDir.absolutePath()))
                     {
@@ -764,7 +800,7 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
             }
 
             if (targetPath)
-                *targetPath = m_tarPath;
+                *targetPath = targetDir.absolutePath();
 
             return true;
         }
@@ -778,7 +814,7 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
     }
 
     if (targetPath)
-        *targetPath = m_tarPath;
+        *targetPath = targetDir.absolutePath();
 
     return true;
 }
