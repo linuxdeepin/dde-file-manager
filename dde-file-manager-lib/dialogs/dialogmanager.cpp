@@ -569,8 +569,8 @@ void DialogManager::handleConflictRepsonseConfirmed(const QMap<QString, QString>
         {
         case 0:job->started();break;
         case 1:
-            job->started();
             job->setReplace(true);
+            job->started();
             break;
         case 2:job->cancelled();break;
         default:
