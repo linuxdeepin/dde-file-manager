@@ -103,9 +103,9 @@ QVector<MenuAction> NetworkFileInfo::menuActionList(DAbstractFileInfo::MenuType 
     return actionKeys;
 }
 
-DAbstractFileInfo::SelectionMode NetworkFileInfo::supportSelectionMode() const
+QSet<DAbstractFileInfo::SelectionMode> NetworkFileInfo::supportSelectionModes() const
 {
-    return SingleSelection;
+    return QSet<SelectionMode>() << SingleSelection;
 }
 
 Qt::ItemFlags NetworkFileInfo::fileItemDisableFlags() const
