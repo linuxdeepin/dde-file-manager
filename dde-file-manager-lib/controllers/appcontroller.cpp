@@ -291,13 +291,14 @@ void AppController::actionClearTrash(const DFMEvent &event)
     list << DUrl::fromTrashFile("/");
 
     const_cast<DFMEvent&>(event) << list;
-    fileService->deleteFiles(event);
-
-    SoundEffectInterface* soundEffectInterface = new SoundEffectInterface(SoundEffectInterface::staticServerPath(),
-                                                                          SoundEffectInterface::staticInterfacePath(),
-                                                                          QDBusConnection::sessionBus(), this);
-    soundEffectInterface->PlaySystemSound("trash-empty");
-    soundEffectInterface->deleteLater();
+    bool ret = fileService->deleteFiles(event);
+    if (ret){
+        SoundEffectInterface* soundEffectInterface = new SoundEffectInterface(SoundEffectInterface::staticServerPath(),
+                                                                              SoundEffectInterface::staticInterfacePath(),
+                                                                              QDBusConnection::sessionBus(), this);
+        soundEffectInterface->PlaySystemSound("trash-empty");
+        soundEffectInterface->deleteLater();
+    }
 }
 
 void AppController::actionNewWord(const DFMEvent &event)

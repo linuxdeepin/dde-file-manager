@@ -76,7 +76,7 @@ public:
     bool copyFilesToClipboard(const DUrlList &urlList) const;
     bool renameFile(const DUrl &oldUrl, const DUrl &newUrl, const DFMEvent &event) const;
     bool renameFile(const DUrl &oldUrl, const DUrl &newUrl) const;
-    void deleteFiles(const DFMEvent &event) const;
+    bool deleteFiles(const DFMEvent &event) const;
     bool deleteFilesSync(const DFMEvent &event) const;
     void moveToTrash(const DFMEvent &event) const;
     DUrlList moveToTrashSync(const DFMEvent &event) const;
