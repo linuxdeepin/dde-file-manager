@@ -328,11 +328,16 @@ void DFileManagerWindow::preHandleCd(const DFMEvent &event)
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(event.fileUrl());
 
         if (!fileInfo || !fileInfo->exists()) {
+            const DAbstractFileInfoPointer &currentFileInfo = DFileService::instance()->createFileInfo(currentUrl());
+
+            if (!currentFileInfo || !currentFileInfo->canIteratorDir())
+                return;
+
             const_cast<DFMEvent&>(event) << DUrl::fromSearchFile(currentUrl(), event.fileUrl().toString());
 
             const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(event.fileUrl());
 
-            if (!fileInfo || !fileInfo->exists() || !fileInfo->canIteratorDir())
+            if (!fileInfo || !fileInfo->exists())
                 return;
         }
 
