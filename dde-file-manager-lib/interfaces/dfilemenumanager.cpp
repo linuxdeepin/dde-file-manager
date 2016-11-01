@@ -1,5 +1,5 @@
 #include "dfilemenumanager.h"
-
+#include "dfmglobal.h"
 #include "app/define.h"
 #include "dfmevent.h"
 #include "app/filemanagerapp.h"
@@ -13,8 +13,6 @@
 #include <QMetaObject>
 #include <QMetaEnum>
 #include <QDebug>
-
-#define CLASS_NAME(c) #c
 
 namespace DFileMenuData {
 static QMap<MenuAction, QString> actionKeys;
@@ -230,8 +228,8 @@ QSet<MenuAction> DFileMenuManager::getDisableActionList(const DUrlList &urlList)
 
 DFileMenuManager::DFileMenuManager()
 {
-    qRegisterMetaType<QMap<QString, QString>>("QMap<QString, QString>");
-    qRegisterMetaType<QList<QUrl>>("QList<QUrl>");
+    qRegisterMetaType<QMap<QString, QString>>(QT_STRINGIFY(QMap<QString, QString>));
+    qRegisterMetaType<QList<QUrl>>(QT_STRINGIFY(QList<QUrl>));
 }
 
 void DFileMenuData::initData()
@@ -414,7 +412,7 @@ void DFileMenuManager::actionTriggered(DAction *action)
         QMetaEnum metaEnum = QMetaEnum::fromType<MenuAction>();
         QString key = metaEnum.valueToKey(type);
         QString methodKey = QString("action%1").arg(key);
-        QString methodSignature = QString("action%1(" CLASS_NAME(DFMEvent) ")").arg(key);
+        QString methodSignature = QString("action%1(" QT_STRINGIFY(DFMEvent) ")").arg(key);
 
         const QMetaObject* metaObject = appController->metaObject();
 //        QStringList methods;

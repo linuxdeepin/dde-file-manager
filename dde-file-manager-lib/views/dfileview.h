@@ -101,6 +101,7 @@ public:
     using DListView::updateGeometries;
 
     bool isDropTarget(const QModelIndex &index) const;
+    bool dragEnabled() const;
 
     bool isSelectionRectVisible() const;
     bool canShowSelectionRect() const;
@@ -134,6 +135,8 @@ public slots:
 
     void setMenuActionWhitelist(const QSet<DFMGlobal::MenuAction> &actionList);
     void setMenuActionBlacklist(const QSet<DFMGlobal::MenuAction> &actionList);
+    void setFileOperatorWhitelist(int fileOperatorFlags);
+    void setFileOperatorBlacklist(int fileOperatorFlags);
 
 signals:
     void rootUrlChanged(const DUrl &url);

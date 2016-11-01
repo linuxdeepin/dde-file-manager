@@ -210,7 +210,7 @@ void FileViewHelper::onCurrentUrlChanged(const DUrl &url)
     DFMEvent e;
     e << (DFMEvent::EventSource)lastEventSource;
     e << windowId();
-    e << currentUrl();
+    e << url;
     emit fileSignalManager->currentUrlChanged(e);
 }
 

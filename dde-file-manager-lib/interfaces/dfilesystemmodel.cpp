@@ -101,8 +101,8 @@ DFileSystemModel::DFileSystemModel(DFileViewHelper *parent)
     connect(fileService, &DFileService::childrenUpdated,
             this, &DFileSystemModel::onFileUpdated);
 
-    qRegisterMetaType<State>("State");
-    qRegisterMetaType<DAbstractFileInfoPointer>("DAbstractFileInfoPointer");
+    qRegisterMetaType<State>(QT_STRINGIFY(State));
+    qRegisterMetaType<DAbstractFileInfoPointer>(QT_STRINGIFY(DAbstractFileInfoPointer));
 }
 
 DFileSystemModel::~DFileSystemModel()

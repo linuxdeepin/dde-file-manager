@@ -1,5 +1,6 @@
 #include "dfiledialog.h"
 #include "dfilesystemmodel.h"
+#include "dfileservices.h"
 #include "views/dstatusbar.h"
 #include "views/dleftsidebar.h"
 
@@ -60,6 +61,14 @@ DFileDialog::DFileDialog(QWidget *parent)
 
     getFileView()->setMenuActionWhitelist(whitelist);
     getLeftSideBar()->setDisableUrlSchemes(QList<QString>() << "trash" << "network");
+    getLeftSideBar()->setAcceptDrops(false);
+
+    DFileService::FileOperatorTypes fileServiceWhitelist = DFileService::OpenUrl | DFileService::RenameFile
+            | DFileService::MoveToTrash | DFileService::NewFolder | DFileService::NewDocument;
+
+    getFileView()->setFileOperatorWhitelist(fileServiceWhitelist);
+    getFileView()->setDragEnabled(false);
+    getFileView()->setDragDropMode(QAbstractItemView::NoDragDrop);
 }
 
 DFileDialog::~DFileDialog()
