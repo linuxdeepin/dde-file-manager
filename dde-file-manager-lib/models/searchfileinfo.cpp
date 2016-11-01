@@ -169,6 +169,13 @@ DUrl SearchFileInfo::redirectedFileUrl() const
     return fileUrl().searchTargetUrl();
 }
 
+bool SearchFileInfo::canIteratorDir() const
+{
+    Q_D(const DAbstractFileInfo);
+
+    return !d->proxy;
+}
+
 QVector<MenuAction> SearchFileInfo::menuActionList(DAbstractFileInfo::MenuType type) const
 {
     Q_D(const DAbstractFileInfo);
