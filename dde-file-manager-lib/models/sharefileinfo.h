@@ -41,9 +41,7 @@ public:
 
     bool isShared() const Q_DECL_OVERRIDE;
 
-    SelectionMode supportSelectionMode() const Q_DECL_OVERRIDE;
     Qt::ItemFlags fileItemDisableFlags() const Q_DECL_OVERRIDE;
-
     QList<QIcon> additionalIcon() const Q_DECL_OVERRIDE;
 
     virtual bool canRedirectionFileUrl() const Q_DECL_OVERRIDE;

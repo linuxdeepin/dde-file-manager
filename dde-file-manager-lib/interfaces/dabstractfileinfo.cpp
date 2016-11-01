@@ -735,9 +735,10 @@ quint8 DAbstractFileInfo::supportViewMode() const
     return DFileView::AllViewMode;
 }
 
-DAbstractFileInfo::SelectionMode DAbstractFileInfo::supportSelectionMode() const
+QSet<DAbstractFileInfo::SelectionMode> DAbstractFileInfo::supportSelectionModes() const
 {
-    return ExtendedSelection;
+    return QSet<SelectionMode>() << NoSelection << SingleSelection << MultiSelection
+                                 << ExtendedSelection << ContiguousSelection;
 }
 
 QList<int> DAbstractFileInfo::userColumnRoles() const

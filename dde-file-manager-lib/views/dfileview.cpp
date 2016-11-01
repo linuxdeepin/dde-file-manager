@@ -955,8 +955,10 @@ void DFileView::mouseMoveEvent(QMouseEvent *event)
 {
     Q_D(const DFileView);
 
-    if (dragEnabled() || event->buttons() != Qt::LeftButton)
+    if (dragEnabled() || event->buttons() != Qt::LeftButton
+            || selectionMode() == NoSelection || selectionMode() == SingleSelection) {
         return DListView::mouseMoveEvent(event);
+    }
 
     updateSelectionRect();
     doAutoScroll();
@@ -1601,7 +1603,13 @@ bool DFileView::setRootUrl(const DUrl &url)
     }
     emit rootUrlChanged(fileUrl);
 
-    setSelectionMode((QAbstractItemView::SelectionMode)info->supportSelectionMode());
+    const QSet<DAbstractFileInfo::SelectionMode> supportSelectionModes = info->supportSelectionModes();
+
+    if (!supportSelectionModes.contains((DAbstractFileInfo::SelectionMode)selectionMode())) {
+
+        if (!supportSelectionModes.isEmpty())
+            setSelectionMode((QAbstractItemView::SelectionMode)supportSelectionModes.toList().first());
+    }
 
     const DUrl &defaultSelectUrl = DUrl(QUrlQuery(fileUrl.query()).queryItemValue("selectUrl"));
 
@@ -2187,7 +2195,7 @@ void DFileView::updateSelectionRect()
 {
     D_D(DFileView);
 
-    if (dragEnabled())
+    if (dragEnabled() || selectionMode() == NoSelection || selectionMode() == SingleSelection)
         return;
 
     QPoint pos = mapFromGlobal(QCursor::pos());

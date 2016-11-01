@@ -205,11 +205,6 @@ bool ShareFileInfo::isShared() const
     return true;
 }
 
-DAbstractFileInfo::SelectionMode ShareFileInfo::supportSelectionMode() const
-{
-    return ExtendedSelection;
-}
-
 Qt::ItemFlags ShareFileInfo::fileItemDisableFlags() const
 {
     return Qt::ItemIsDragEnabled | Qt::ItemIsEditable;
