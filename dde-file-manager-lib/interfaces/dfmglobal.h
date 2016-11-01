@@ -65,6 +65,11 @@
 #define ASYN_CALL_SLOT(obj, fun, args...) \
     TIMER_SINGLESHOT_CONNECT_TYPE(obj, 0, {obj->fun(args);}, Qt::QueuedConnection, obj, args)
 
+#ifdef QT_STRINGIFY
+#undef QT_STRINGIFY
+#endif
+#define QT_STRINGIFY(x...) #x
+
 class DFMGlobal : public QObject
 {
     Q_OBJECT

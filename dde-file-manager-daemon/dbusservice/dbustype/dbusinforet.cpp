@@ -37,7 +37,7 @@ QDebug operator<<(QDebug dbg, const DBusInfoRet &obj)
 
 void DBusInfoRet::registerMetaType()
 {
-    qRegisterMetaType<DBusInfoRet>("DBusInfoRet");
+    qRegisterMetaType<DBusInfoRet>(QT_STRINGIFY(DBusInfoRet));
     qDBusRegisterMetaType<DBusInfoRet>();
 }
 

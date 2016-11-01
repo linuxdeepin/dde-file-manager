@@ -52,7 +52,7 @@ FileController::FileController(QObject *parent)
     : DAbstractFileController(parent)
     , fileMonitor(new FileMonitor(this))
 {
-    qRegisterMetaType<QList<DFileInfo*>>("QList<DFileInfo*>");
+    qRegisterMetaType<QList<DFileInfo*>>(QT_STRINGIFY(QList<DFileInfo*>));
 
     connect(fileMonitor, &FileMonitor::fileCreated,
             this, &FileController::onFileCreated);

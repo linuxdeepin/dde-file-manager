@@ -69,6 +69,7 @@ public:
     QRect selectedGeometry;
     QWidget *selectionRectWidget = Q_NULLPTR;
     bool selectionRectVisible = true;
+    bool dragEnabled = true;
 
     int horizontalOffset = 0;
 
@@ -99,6 +100,10 @@ public:
     /// menu actions filter
     QSet<MenuAction> menuWhitelist;
     QSet<MenuAction> menuBlacklist;
+
+    /// file operator function filter
+    DFileService::FileOperatorTypes fileOperatorWhitelist;
+    DFileService::FileOperatorTypes fileOperatorBlacklist;
 
     FileViewHelper *fileViewHelper;
 
@@ -498,6 +503,13 @@ bool DFileView::isDropTarget(const QModelIndex &index) const
     D_DC(DFileView);
 
     return d->dragMoveHoverIndex == index;
+}
+
+bool DFileView::dragEnabled() const
+{
+    Q_D(const DFileView);
+
+    return d->dragEnabled && DListView::dragEnabled();
 }
 
 bool DFileView::cd(const DUrl &url)
@@ -901,7 +913,7 @@ void DFileView::mousePressEvent(QMouseEvent *event)
     case Qt::LeftButton: {
         bool isEmptyArea = d->fileViewHelper->isEmptyArea(event->pos());
 
-        setDragEnabled(!isEmptyArea);
+        d->dragEnabled = !isEmptyArea;
 
         if (isEmptyArea) {
             if (!DFMGlobal::keyCtrlIsPressed()) {
@@ -941,6 +953,8 @@ void DFileView::mousePressEvent(QMouseEvent *event)
 
 void DFileView::mouseMoveEvent(QMouseEvent *event)
 {
+    Q_D(const DFileView);
+
     if (dragEnabled() || event->buttons() != Qt::LeftButton)
         return DListView::mouseMoveEvent(event);
 
@@ -1073,6 +1087,10 @@ void DFileView::focusInEvent(QFocusEvent *event)
     /// set menu actions filter
     DFileMenuManager::setActionWhitelist(d->menuWhitelist);
     DFileMenuManager::setActionBlacklist(d->menuBlacklist);
+
+    /// set file operator function filter
+    DFileService::instance()->setFileOperatorWhitelist(d->fileOperatorWhitelist);
+    DFileService::instance()->setFileOperatorBlacklist(d->fileOperatorBlacklist);
 }
 
 void DFileView::resizeEvent(QResizeEvent *event)
@@ -1674,6 +1692,20 @@ void DFileView::setMenuActionBlacklist(const QSet<MenuAction> &actionList)
     Q_D(DFileView);
 
     d->menuBlacklist = actionList;
+}
+
+void DFileView::setFileOperatorWhitelist(int fileOperatorFlags)
+{
+    Q_D(DFileView);
+
+    d->fileOperatorWhitelist = (DFileService::FileOperatorTypes)fileOperatorFlags;
+}
+
+void DFileView::setFileOperatorBlacklist(int fileOperatorFlags)
+{
+    Q_D(DFileView);
+
+    d->fileOperatorBlacklist = (DFileService::FileOperatorTypes)fileOperatorFlags;
 }
 
 void DFileView::updateHorizontalOffset()

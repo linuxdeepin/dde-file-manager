@@ -11,9 +11,9 @@ DiskInfo::~DiskInfo(){
 
 void DiskInfo::registerMetaType()
 {
-    qRegisterMetaType<DiskInfo>("DiskInfo");
+    qRegisterMetaType<DiskInfo>(QT_STRINGIFY(DiskInfo));
     qDBusRegisterMetaType<DiskInfo>();
-    qRegisterMetaType<DiskInfoList>("DiskInfoList");
+    qRegisterMetaType<DiskInfoList>(QT_STRINGIFY(DiskInfoList));
     qDBusRegisterMetaType<DiskInfoList>();
 }
 
