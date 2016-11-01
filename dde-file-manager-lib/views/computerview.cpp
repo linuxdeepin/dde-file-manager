@@ -221,7 +221,6 @@ void ComputerViewItem::updateStatus()
     }
 }
 
-
 int ComputerViewItem::iconSize() const
 {
     return m_iconSize;
@@ -584,4 +583,31 @@ void ComputerView::showEvent(QShowEvent *event)
     foreach (ComputerViewItem* item, m_removableItems) {
         item->setChecked(false);
     }
+}
+
+void ComputerView::keyPressEvent(QKeyEvent *event)
+{
+
+    DFMEvent fmevent;
+    DUrlList urls;
+    urls << url();
+    fmevent << urls;
+    fmevent << DFMEvent::FileView;
+    fmevent << WindowManager::getWindowId(this);
+    fmevent << url();
+
+    switch (event->modifiers()) {
+        case Qt::ControlModifier:
+            switch (event->key()) {
+                case Qt::Key_L:
+                    appController->actionctrlL(fmevent);
+                    return;
+                case Qt::Key_F:
+                    appController->actionctrlF(fmevent);
+                    return;
+                default: break;
+            }
+        default: break;
+    }
+    QScrollArea::keyPressEvent(event);
 }
