@@ -359,6 +359,7 @@ void DFileManagerWindow::showComputerView(const DFMEvent &event)
     D_D(DFileManagerWindow);
 
     d->viewStackLayout->setCurrentWidget(d->computerView);
+    d->computerView->setFocus();
     emit fileSignalManager->currentUrlChanged(event);
     d->toolbar->setViewModeButtonVisible(false);
     onFileViewCurrentUrlChanged(DUrl::fromComputerFile("/"));
@@ -466,6 +467,7 @@ void DFileManagerWindow::switchToView(const int viewIndex, const DUrl &url)
     d->fileView = qobject_cast<DFileView*>(d->viewStackLayout->widget(viewIndex));
     if(url.isComputerFile()){
         d->viewStackLayout->setCurrentWidget(d->computerView);
+        d->computerView->setFocus();
         d->toolbar->setViewModeButtonVisible(false);
     } else {
         d->viewStackLayout->setCurrentWidget(d->fileView);
