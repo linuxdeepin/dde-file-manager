@@ -1,6 +1,7 @@
 #include "trashmanager.h"
 #include "dfileservices.h"
-
+#include "dfilewatcher.h"
+#include "dfileproxywatcher.h"
 #include "dfileinfo.h"
 #include "models/trashfileinfo.h"
 
@@ -80,7 +81,7 @@ TrashManager *firstMe = Q_NULLPTR;
 TrashManager::TrashManager(QObject *parent)
     : DAbstractFileController(parent)
 {
-    if(!firstMe) {
+    if (!firstMe) {
         firstMe = this;
 
         connect(fileSignalManager, &FileSignalManager::requestRestoreTrashFile,
@@ -88,13 +89,6 @@ TrashManager::TrashManager(QObject *parent)
         connect(fileSignalManager, &FileSignalManager::requestRestoreAllTrashFile,
                 this, &TrashManager::restoreAllTrashFile);
     }
-
-    fileMonitor = new FileMonitor(const_cast<TrashManager*>(this));
-
-    connect(fileMonitor, &FileMonitor::fileCreated,
-            this, &TrashManager::onFileCreated);
-    connect(fileMonitor, &FileMonitor::fileDeleted,
-            this, &TrashManager::onFileRemove);
 }
 
 const DAbstractFileInfoPointer TrashManager::createFileInfo(const DUrl &fileUrl, bool &accepted) const
@@ -128,24 +122,6 @@ bool TrashManager::openFileLocation(const DUrl &fileUrl, bool &accepted) const
     parentUrl.setQuery(query);
 
     fileService->openNewWindow(parentUrl);
-
-    return true;
-}
-
-bool TrashManager::addUrlMonitor(const DUrl &fileUrl, bool &accepted) const
-{
-    accepted = true;
-
-    fileMonitor->addMonitorPath(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath) + fileUrl.path());
-
-    return true;
-}
-
-bool TrashManager::removeUrlMonitor(const DUrl &fileUrl, bool &accepted) const
-{
-    accepted = true;
-
-    fileMonitor->removeMonitorPath(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath) + fileUrl.path());
 
     return true;
 }
@@ -233,6 +209,31 @@ const DDirIteratorPointer TrashManager::createDirIterator(const DUrl &fileUrl, c
     return DDirIteratorPointer(new TrashDirIterator(fileUrl, nameFilters, filters, flags));
 }
 
+namespace TrashManagerPrivate {
+DUrl localToTrash(const DUrl &url)
+{
+    const QString &localPath = url.toLocalFile();
+    const QString &trashPath = DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath);
+
+    if (!localPath.startsWith(trashPath))
+        return DUrl();
+
+    return DUrl::fromTrashFile(localPath.mid(trashPath.length()));
+}
+QString trashToLocal(const DUrl &url)
+{
+    return DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath) + url.path();
+}
+}
+
+DAbstractFileWatcher *TrashManager::createFileWatcher(const DUrl &fileUrl, QObject *parent, bool &accepted) const
+{
+    accepted = true;
+
+    return new DFileProxyWatcher(fileUrl, new DFileWatcher(TrashManagerPrivate::trashToLocal(fileUrl)),
+                                 TrashManagerPrivate::localToTrash, parent);
+}
+
 bool TrashManager::restoreTrashFile(const DUrlList &fileUrl, const DFMEvent &event) const
 {
     bool ok = true;
@@ -288,42 +289,4 @@ bool TrashManager::isEmpty()
         return true;
     }
     return false;
-}
-
-void TrashManager::onFileCreated(const QString &filePath) const
-{
-    QString path;
-
-    if (QString(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath)).startsWith(filePath)) {
-        path = "/";
-    } else {
-        path = filePath.mid((DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath)).size());
-
-        if (path.isEmpty())
-            return;
-    }
-
-    emit childrenAdded(DUrl::fromTrashFile(path));
-}
-
-void TrashManager::onFileRemove(const QString &filePath) const
-{
-    QString path;
-
-    if (QString(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath)).startsWith(filePath)) {
-        path = "/";
-    } else {
-        path = filePath.mid((DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath)).size());
-
-        if (path.isEmpty())
-            return;
-    }
-
-    // if path is root , pass this signal
-    if (path != "/")
-        emit childrenRemoved(DUrl::fromTrashFile(path));
-
-    //make sure that the root path is exist
-    if(filePath == DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath))
-        QDir().home().mkdir(filePath);
 }

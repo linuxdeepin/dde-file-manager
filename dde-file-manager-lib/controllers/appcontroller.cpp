@@ -49,6 +49,16 @@ AppController *AppController::instance()
     return acGlobal;
 }
 
+void AppController::registerUrlHandle()
+{
+    DFileService::dRegisterUrlHandler<FileController>(FILE_SCHEME, "");
+    DFileService::dRegisterUrlHandler<TrashManager>(TRASH_SCHEME, "");
+    DFileService::dRegisterUrlHandler<SearchController>(SEARCH_SCHEME, "");
+    DFileService::dRegisterUrlHandler<NetworkController>(NETWORK_SCHEME, "");
+    DFileService::dRegisterUrlHandler<NetworkController>(SMB_SCHEME, "");
+    DFileService::dRegisterUrlHandler<ShareControler>(USERSHARE_SCHEME, "");
+}
+
 void AppController::actionOpen(const DFMEvent &event)
 {
     const DUrlList& urls = event.fileUrlList();
@@ -579,16 +589,10 @@ void AppController::doSubscriberAction(const QString &path)
 
 AppController::AppController(QObject *parent) : QObject(parent)
 {
-    DFileService::dRegisterUrlHandler<FileController>(FILE_SCHEME, "");
-    DFileService::dRegisterUrlHandler<TrashManager>(TRASH_SCHEME, "");
-    DFileService::dRegisterUrlHandler<SearchController>(SEARCH_SCHEME, "");
-    DFileService::dRegisterUrlHandler<NetworkController>(NETWORK_SCHEME, "");
-    DFileService::dRegisterUrlHandler<NetworkController>(SMB_SCHEME, "");
-    DFileService::dRegisterUrlHandler<ShareControler>(USERSHARE_SCHEME, "");
-    DFileService::dRegisterUrlHandler<UDiskListener>(COMPUTER_SCHEME, "");
     createGVfSManager();
     createUserShareManager();
     initConnect();
+    registerUrlHandle();
 }
 
 void AppController::initConnect()

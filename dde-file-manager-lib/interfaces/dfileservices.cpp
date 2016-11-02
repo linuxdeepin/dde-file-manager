@@ -6,6 +6,7 @@
 #include "dfmevent.h"
 #include "app/define.h"
 #include "controllers/jobcontroller.h"
+#include "controllers/appcontroller.h"
 #include "views/windowmanager.h"
 #include "dfileinfo.h"
 #include "models/trashfileinfo.h"
@@ -83,6 +84,9 @@ DFileService::DFileService(QObject *parent)
     qRegisterMetaType<DUrl>(QT_STRINGIFY(DUrl));
 
     d_ptr->fileOperatorTypeEnum = metaObject()->enumerator(metaObject()->indexOfEnumerator(QT_STRINGIFY(FileOperatorType)));
+
+    /// init url handler register
+    AppController::registerUrlHandle();
 }
 
 DFileService::~DFileService()
@@ -107,13 +111,6 @@ void DFileService::setFileUrlHandler(const QString &scheme, const QString &host,
 
     DFileServicePrivate::handlerHash[controller] = type;
     DFileServicePrivate::controllerHash.insertMulti(type, controller);
-
-    connect(controller, &DAbstractFileController::childrenAdded,
-            instance(), &DFileService::childrenAdded);
-    connect(controller, &DAbstractFileController::childrenRemoved,
-            instance(), &DFileService::childrenRemoved);
-    connect(controller, &DAbstractFileController::childrenUpdated,
-            instance(), &DFileService::childrenUpdated);
 }
 
 void DFileService::unsetFileUrlHandler(DAbstractFileController *controller)
@@ -122,27 +119,11 @@ void DFileService::unsetFileUrlHandler(DAbstractFileController *controller)
         return;
 
     DFileServicePrivate::controllerHash.remove(DFileServicePrivate::handlerHash.value(controller), controller);
-
-    disconnect(controller, &DAbstractFileController::childrenAdded,
-            instance(), &DFileService::childrenAdded);
-    disconnect(controller, &DAbstractFileController::childrenRemoved,
-            instance(), &DFileService::childrenRemoved);
-    disconnect(controller, &DAbstractFileController::childrenUpdated,
-            instance(), &DFileService::childrenUpdated);
 }
 
 void DFileService::clearFileUrlHandler(const QString &scheme, const QString &host)
 {
     const HandlerType handler(scheme, host);
-
-    for(const DAbstractFileController *controller : DFileServicePrivate::controllerHash.values(handler)) {
-        disconnect(controller, &DAbstractFileController::childrenAdded,
-                instance(), &DFileService::childrenAdded);
-        disconnect(controller, &DAbstractFileController::childrenRemoved,
-                instance(), &DFileService::childrenRemoved);
-        disconnect(controller, &DAbstractFileController::childrenUpdated,
-                instance(), &DFileService::childrenUpdated);
-    }
 
     DFileServicePrivate::controllerHash.remove(handler);
     m_controllerCreatorHash.remove(handler);
@@ -486,30 +467,6 @@ bool DFileService::newDocument(const DUrl &toUrl) const
     return false;
 }
 
-bool DFileService::addUrlMonitor(const DUrl &fileUrl) const
-{
-    TRAVERSE(fileUrl, {
-                 bool ok = controller->addUrlMonitor(fileUrl, accepted);
-
-                 if(accepted)
-                    return ok;
-             })
-
-    return false;
-}
-
-bool DFileService::removeUrlMonitor(const DUrl &fileUrl) const
-{
-    TRAVERSE(fileUrl, {
-                 bool ok = controller->removeUrlMonitor(fileUrl, accepted);
-
-                 if(accepted)
-                    return ok;
-             })
-
-    return false;
-}
-
 bool DFileService::openFileLocation(const DUrl &fileUrl) const
 {
     TRAVERSE(fileUrl, {
@@ -639,6 +596,18 @@ JobController *DFileService::getChildrenJob(const DUrl &fileUrl, const QStringLi
         return new JobController(iterator, const_cast<DFileService*>(this));
 
     return new JobController(fileUrl, nameFilters, filters, const_cast<DFileService*>(this));
+}
+
+DAbstractFileWatcher *DFileService::createFileWatcher(const DUrl &fileUrl, QObject *parent) const
+{
+    TRAVERSE(fileUrl, {
+                 DAbstractFileWatcher *watcher = controller->createFileWatcher(fileUrl, parent, accepted);
+
+                 if (accepted)
+                    return watcher;
+             })
+
+    return 0;
 }
 
 QList<DAbstractFileController*> DFileService::getHandlerTypeByUrl(const DUrl &fileUrl,

@@ -133,8 +133,6 @@ bool SearchDiriterator::hasNext() const
                     parent->urlToTargetUrlMapInsertCount[QPair<DUrl, DUrl>(realUrl, fileUrl)] = 0;
                 }
 
-                fileService->addUrlMonitor(realUrl);
-
                 childrens << url;
 
                 return true;
@@ -175,8 +173,7 @@ void SearchDiriterator::close()
 SearchController::SearchController(QObject *parent)
     : DAbstractFileController(parent)
 {
-    connect(fileService, &DFileService::childrenAdded, this, &SearchController::onFileCreated);
-    connect(fileService, &DFileService::childrenRemoved, this, &SearchController::onFileRemove);
+
 }
 
 const DAbstractFileInfoPointer SearchController::createFileInfo(const DUrl &fileUrl, bool &accepted) const
@@ -212,20 +209,6 @@ bool SearchController::openFileByApp(const DUrl &fileUrl, const QString &app, bo
 {
     accepted = true;
     return DFileService::instance()->openFileByApp(realUrl(fileUrl), app);
-}
-
-bool SearchController::addUrlMonitor(const DUrl &fileUrl, bool &accepted) const
-{
-    accepted = true;
-
-    return DFileService::instance()->addUrlMonitor(realUrl(fileUrl));
-}
-
-bool SearchController::removeUrlMonitor(const DUrl &url, bool &accepted) const
-{
-    accepted = true;
-
-    return DFileService::instance()->removeUrlMonitor(realUrl(url));
 }
 
 bool SearchController::copyFilesToClipboard(const DUrlList &urlList, bool &accepted) const
@@ -310,7 +293,7 @@ void SearchController::onFileCreated(const DUrl &fileUrl)
     for (DUrl url : urlToTargetUrlMap.values(fileUrl)) {
         url.setSearchedFileUrl(fileUrl);
 
-        emit childrenAdded(url);
+//        emit childrenAdded(url);
     }
 }
 
@@ -319,7 +302,7 @@ void SearchController::onFileRemove(const DUrl &fileUrl)
     for (DUrl url : urlToTargetUrlMap.values(fileUrl)) {
         url.setSearchedFileUrl(fileUrl);
 
-        emit childrenRemoved(url);
+//        emit childrenRemoved(url);
     }
 }
 

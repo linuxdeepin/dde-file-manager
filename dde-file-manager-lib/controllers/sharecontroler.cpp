@@ -10,24 +10,58 @@
 #include "sharecontroler.h"
 #include "models/sharefileinfo.h"
 #include "dfileinfo.h"
-
+#include "dabstractfilewatcher.h"
 #include "usershare/shareinfo.h"
 #include "usershare/usersharemanager.h"
 #include "widgets/singleton.h"
 #include "app/define.h"
 #include "dfileservices.h"
 
+class ShareFileWatcher : public DAbstractFileWatcher
+{
+public:
+    explicit ShareFileWatcher(QObject *parent = 0);
+
+private slots:
+    void onUserShareAdded(const QString &filePath);
+    void onUserShareDeleted(const QString &filePath);
+
+private:
+    bool start() Q_DECL_OVERRIDE;
+    bool stop() Q_DECL_OVERRIDE;
+};
+
+ShareFileWatcher::ShareFileWatcher(QObject *parent)
+    : DAbstractFileWatcher(DUrl::fromUserShareFile("/"), parent)
+{
+
+}
+
+bool ShareFileWatcher::start()
+{
+    return connect(userShareManager, &UserShareManager::userShareAdded, this, &ShareFileWatcher::onUserShareAdded)
+            && connect(userShareManager, &UserShareManager::userShareDeleted, this, &ShareFileWatcher::onUserShareDeleted);
+}
+
+bool ShareFileWatcher::stop()
+{
+    return disconnect(userShareManager, 0, this, 0);
+}
+
+void ShareFileWatcher::onUserShareAdded(const QString &filePath)
+{
+    emit subfileCreated(DUrl::fromUserShareFile(filePath));
+}
+
+void ShareFileWatcher::onUserShareDeleted(const QString &filePath)
+{
+    emit fileDeleted(DUrl::fromUserShareFile(filePath));
+}
 
 ShareControler::ShareControler(QObject *parent) :
     DAbstractFileController(parent)
 {
-    initConnections();
-}
 
-void ShareControler::initConnections()
-{
-    connect(userShareManager, &UserShareManager::userShareAdded, this, &ShareControler::onUserShareAdded);
-    connect(userShareManager, &UserShareManager::userShareDeleted, this, &ShareControler::onUserShareDeleted);
 }
 
 const DAbstractFileInfoPointer ShareControler::createFileInfo(const DUrl &fileUrl, bool &accepted) const
@@ -58,12 +92,12 @@ const QList<DAbstractFileInfoPointer> ShareControler::getChildren(const DUrl &fi
     return infolist;
 }
 
-void ShareControler::onUserShareAdded(const QString &filePath)
+DAbstractFileWatcher *ShareControler::createFileWatcher(const DUrl &fileUrl, QObject *parent, bool &accepted) const
 {
-    emit childrenAdded(DUrl::fromUserShareFile(filePath));
-}
+    if (fileUrl.path() != "/")
+        return 0;
 
-void ShareControler::onUserShareDeleted(const QString &filePath)
-{
-    emit childrenRemoved(DUrl::fromUserShareFile(filePath));
+    accepted = true;
+
+    return new ShareFileWatcher(parent);
 }

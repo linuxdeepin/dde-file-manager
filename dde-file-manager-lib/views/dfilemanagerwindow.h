@@ -89,9 +89,6 @@ public slots:
     void closeCurrentTab(const DFMEvent& event);
     void onUserShareCountChanged(const int& count);
 
-private slots:
-    void onFileDeleted(const DUrl &url);
-
 protected:
     void closeEvent(QCloseEvent* event)  Q_DECL_OVERRIDE;
     void mouseDoubleClickEvent(QMouseEvent *event) Q_DECL_OVERRIDE;

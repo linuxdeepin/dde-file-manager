@@ -43,7 +43,8 @@ public:
         OpenInTerminal = 0x00008000,
         OpenNewWindow = 0x00010000,
         OpenUrl = 0x00020000,
-        PasteFileByClipboard = 0x00040000
+        PasteFileByClipboard = 0x00040000,
+        CreateFileWatcher = 0x00080000
     };
 
     Q_ENUMS(FileOperatorType)
@@ -88,10 +89,6 @@ public:
     bool newFolder(const DFMEvent &event) const;
     bool newFile(const DUrl &toUrl) const;
     bool newDocument(const DUrl &toUrl) const;
-
-    bool addUrlMonitor(const DUrl &url) const;
-    bool removeUrlMonitor(const DUrl &url) const;
-
     bool openFileLocation(const DUrl &fileUrl) const;
 
     bool createSymlink(const DUrl &fileUrl, const DFMEvent &event) const;
@@ -110,14 +107,13 @@ public:
     JobController *getChildrenJob(const DUrl &fileUrl, const QStringList &nameFilters,
                                   QDir::Filters filters, QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags) const;
 
+    DAbstractFileWatcher *createFileWatcher(const DUrl &fileUrl, QObject *parent = 0) const;
+
 public slots:
     void openNewWindow(const DUrl &fileUrl) const;
     void openUrl(const DFMEvent &event) const;
 
 signals:
-    void childrenAdded(const DUrl &fileUrl) const;
-    void childrenRemoved(const DUrl &fileUrl) const;
-    void childrenUpdated(const DUrl &fileUrl) const;
     void fileOpened(const DUrl &fileUrl) const;
 
 private slots:

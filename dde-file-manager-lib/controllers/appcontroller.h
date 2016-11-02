@@ -22,6 +22,7 @@ public:
     };
 
     static AppController *instance();
+    static void registerUrlHandle();
 
 public slots:
     void actionOpen(const DFMEvent& event);

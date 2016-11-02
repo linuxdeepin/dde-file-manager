@@ -155,6 +155,7 @@ private slots:
     void onVerticalScroll(int contentY);
     void handleDataChanged(const QModelIndex & topLeft, const QModelIndex & bottomRight, const QVector<int> & roles = QVector<int>());
     void updateStatusBar();
+    void onRootUrlDeleted(const DUrl &rootUrl);
 
 protected:
     void wheelEvent(QWheelEvent * event) Q_DECL_OVERRIDE;

@@ -54,6 +54,7 @@ bool sortByString(T, T, Qt::SortOrder order = Qt::AscendingOrder)
 }
 
 class DAbstractFileInfo;
+class DAbstractFileWatcher;
 typedef QExplicitlySharedDataPointer<DAbstractFileInfo> DAbstractFileInfoPointer;
 typedef std::function<const DAbstractFileInfoPointer(int)> getFileInfoFun;
 typedef DFMGlobal::MenuAction MenuAction;
@@ -152,6 +153,8 @@ public:
     virtual QList<QIcon> additionalIcon() const;
 
     virtual DUrl parentUrl() const;
+    /// from parentUrl() to top level parent url
+    virtual DUrlList parentUrlList() const;
     virtual bool isAncestorsUrl(const DUrl &url, QList<DUrl> *ancestors = 0) const;
     virtual QVector<MenuAction> menuActionList(MenuType type = SingleFile) const;
     virtual QMap<MenuAction, QVector<MenuAction> > subMenuActionList() const;
@@ -209,8 +212,11 @@ public:
 
     /// Make to inactive. stop get icon; stop watcher file
     virtual void makeToInactive();
+    virtual void makeToActive();
+    bool isActive() const;
+    virtual void refresh();
 
-    virtual DUrl goToUrl() const;
+    virtual DUrl goToUrlWhenDeleted() const;
 
 protected:
     explicit DAbstractFileInfo(DAbstractFileInfoPrivate &dd);

@@ -85,6 +85,9 @@ DFileManagerWindow::DFileManagerWindow(const DUrl &fileUrl, QWidget *parent)
     : DMainWindow(parent)
     , d_ptr(new DFileManagerWindowPrivate(this))
 {
+    /// init global AppController
+    Q_UNUSED(AppController::instance());
+
     setWindowIcon(QIcon(":/images/images/dde-file-manager.svg"));
 
     initData();
@@ -156,30 +159,6 @@ void DFileManagerWindow::onUserShareCountChanged(const int &count)
        d->fileView->fileViewHelper()->onUserShareCountChanged(count);
    }
 
-}
-
-void DFileManagerWindow::onFileDeleted(const DUrl &url)
-{
-    Q_D(const DFileManagerWindow);
-
-    const DUrl &currentUrl = this->currentUrl();
-
-    if (url != currentUrl) {
-        const DAbstractFileInfoPointer &fileInfo = d->fileView->model()->fileInfo(currentUrl);
-
-        if (!fileInfo || !fileInfo->isAncestorsUrl(url))
-            return;
-    }
-
-    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
-
-    DFMEvent event;
-
-    event << WindowManager::getWindowId(this);
-    event << DFMEvent::FileView;
-    event << fileInfo->goToUrl();
-
-    preHandleCd(event);
 }
 
 QString DFileManagerWindow::getDisplayNameByUrl(const DUrl &url) const
@@ -754,7 +733,6 @@ void DFileManagerWindow::initConnect()
         event << windowId();
         openNewTab(event);
     });
-    connect(fileService, &DFileService::childrenRemoved, this, &DFileManagerWindow::onFileDeleted);
 
     connect(fileSignalManager, &FileSignalManager::userShareCountChanged,
             this, &DFileManagerWindow::onUserShareCountChanged);

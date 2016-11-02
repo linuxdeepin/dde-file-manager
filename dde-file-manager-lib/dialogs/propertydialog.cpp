@@ -1,5 +1,5 @@
 #include "propertydialog.h"
-
+#include "dabstractfilewatcher.h"
 #include "dfileinfo.h"
 
 #include "app/define.h"
@@ -306,7 +306,15 @@ void PropertyDialog::initUI()
 void PropertyDialog::initConnect()
 {
     connect(m_edit, &NameTextEdit::editFinished, this, &PropertyDialog::showTextShowFrame);
-    connect(fileService, &DFileService::childrenRemoved, this, &PropertyDialog::onChildrenRemoved);
+
+    DAbstractFileWatcher *fileWatcher = DFileService::instance()->createFileWatcher(m_url, this);
+
+    connect(fileWatcher, &DAbstractFileWatcher::fileDeleted, this, &PropertyDialog::onChildrenRemoved);
+    connect(fileWatcher, &DAbstractFileWatcher::fileMoved, this, [this](const DUrl &from, const DUrl &to) {
+        Q_UNUSED(to)
+
+        onChildrenRemoved(from);
+    });
 }
 
 

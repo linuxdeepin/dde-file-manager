@@ -1,7 +1,7 @@
 #include "filecontroller.h"
 #include "dfileservices.h"
 #include "fileoperations/filejob.h"
-
+#include "dfilewatcher.h"
 #include "dfileinfo.h"
 #include "models/desktopfileinfo.h"
 
@@ -50,18 +50,11 @@ private:
 
 FileController::FileController(QObject *parent)
     : DAbstractFileController(parent)
-    , fileMonitor(new FileMonitor(this))
 {
     qRegisterMetaType<QList<DFileInfo*>>(QT_STRINGIFY(QList<DFileInfo*>));
 
-    connect(fileMonitor, &FileMonitor::fileCreated,
-            this, &FileController::onFileCreated);
-    connect(fileMonitor, &FileMonitor::fileDeleted,
-            this, &FileController::onFileRemove);
-    connect(fileMonitor, &FileMonitor::fileMetaDataChanged,
-            this, &FileController::onFileInfoChanged);
-    connect(userShareManager, &UserShareManager::userShareAdded, this, &FileController::onFileInfoChanged);
-    connect(userShareManager, &UserShareManager::userShareDeleted, this, &FileController::onFileInfoChanged);
+//    connect(userShareManager, &UserShareManager::userShareAdded, this, &FileController::onFileInfoChanged);
+//    connect(userShareManager, &UserShareManager::userShareDeleted, this, &FileController::onFileInfoChanged);
 }
 
 bool FileController::findExecutable(const QString &executableName, const QStringList &paths)
@@ -347,24 +340,6 @@ bool FileController::newDocument(const DUrl &toUrl, bool &accepted) const
     return false;
 }
 
-bool FileController::addUrlMonitor(const DUrl &fileUrl, bool &accepted) const
-{
-    accepted = true;
-
-    fileMonitor->addMonitorPath(fileUrl.toLocalFile());
-
-    return true;
-}
-
-bool FileController::removeUrlMonitor(const DUrl &fileUrl, bool &accepted) const
-{
-    accepted = true;
-
-    fileMonitor->removeMonitorPath(fileUrl.toLocalFile());
-
-    return true;
-}
-
 bool FileController::openFileLocation(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
@@ -407,31 +382,26 @@ bool FileController::createSymlink(const DUrl &fileUrl, const DUrl &linkToUrl, b
     return QFile::link(fileUrl.toLocalFile(), linkToUrl.toLocalFile());
 }
 
-void FileController::onFileCreated(const QString &filePath)
+DAbstractFileWatcher *FileController::createFileWatcher(const DUrl &fileUrl, QObject *parent, bool &accepted) const
 {
-    DUrl url = DUrl::fromLocalFile(filePath);
-    emit childrenAdded(url);
-    if (AppController::selectionAndRenameFile.first == url) {
-        int windowId = AppController::selectionAndRenameFile.second;
-        AppController::selectionAndRenameFile = qMakePair(DUrl(), -1);
-        DFMEvent event;
-        event << windowId;
-        event << (DUrlList() << url);
-        emit fileSignalManager->requestSelectRenameFile(event);
-    }
+    accepted = true;
+
+    return new DFileWatcher(fileUrl.toLocalFile(), parent);
 }
 
-void FileController::onFileRemove(const QString &filePath)
-{
-    emit childrenRemoved(DUrl::fromLocalFile(filePath));
-}
+//void FileController::onFileCreated(const QString &filePath)
+//{
+//    DUrl url = DUrl::fromLocalFile(filePath);
 
-void FileController::onFileInfoChanged(const QString &filePath)
-{
-    const DUrl &url = DUrl::fromLocalFile(filePath);
-
-    emit childrenUpdated(url);
-}
+//    if (AppController::selectionAndRenameFile.first == url) {
+//        int windowId = AppController::selectionAndRenameFile.second;
+//        AppController::selectionAndRenameFile = qMakePair(DUrl(), -1);
+//        DFMEvent event;
+//        event << windowId;
+//        event << (DUrlList() << url);
+//        emit fileSignalManager->requestSelectRenameFile(event);
+//    }
+//}
 
 QString FileController::checkDuplicateName(const QString &name) const
 {

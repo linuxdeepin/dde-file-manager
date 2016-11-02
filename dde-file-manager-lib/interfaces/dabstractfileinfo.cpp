@@ -588,12 +588,21 @@ DUrl DAbstractFileInfo::parentUrl() const
     return DUrl::parentUrl(fileUrl());
 }
 
+DUrlList DAbstractFileInfo::parentUrlList() const
+{
+    QList<DUrl> urlList;
+
+    Q_UNUSED(isAncestorsUrl(DUrl(), &urlList));
+
+    return urlList;
+}
+
 bool DAbstractFileInfo::isAncestorsUrl(const DUrl &url, QList<DUrl> *ancestors) const
 {
     DUrl parentUrl = this->parentUrl();
 
     forever {
-        if (ancestors)
+        if (ancestors && parentUrl.isValid())
             ancestors->append(parentUrl);
 
         if (parentUrl == url)
@@ -983,6 +992,9 @@ void DAbstractFileInfo::makeToInactive()
 {
     CALL_PROXY(makeToInactive());
 
+    if (!d->active)
+        return;
+
     if (d->getIconTimer) {
         d->getIconTimer->stop();
     } else if (d->requestingThumbnail) {
@@ -991,10 +1003,43 @@ void DAbstractFileInfo::makeToInactive()
     }
 }
 
-DUrl DAbstractFileInfo::goToUrl() const
+DUrl DAbstractFileInfo::goToUrlWhenDeleted() const
 {
-    CALL_PROXY(goToUrl())
-    return parentUrl().isValid() ? parentUrl() : DUrl::fromLocalFile(QDir::homePath());
+    CALL_PROXY(goToUrlWhenDeleted());
+
+    DUrl extistParentUrl;
+
+    foreach (const DUrl &url, parentUrlList()) {
+        extistParentUrl = url;
+
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
+
+        if (fileInfo && fileInfo->exists()) {
+            break;
+        }
+    }
+
+    return extistParentUrl.isValid() ? extistParentUrl : DUrl::fromLocalFile(QDir::homePath());
+}
+
+void DAbstractFileInfo::makeToActive()
+{
+    CALL_PROXY(makeToActive());
+
+    if (d->active)
+        return;
+}
+
+bool DAbstractFileInfo::isActive() const
+{
+    CALL_PROXY(isActive());
+
+    return d->active;
+}
+
+void DAbstractFileInfo::refresh()
+{
+    CALL_PROXY(refresh());
 }
 
 DAbstractFileInfo::DAbstractFileInfo(DAbstractFileInfoPrivate &dd)

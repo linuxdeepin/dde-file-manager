@@ -30,6 +30,7 @@ public:
 //    mutable QIcon icon;
     mutable QPointer<QTimer> getIconTimer;
     bool requestingThumbnail = false;
+    bool active = false;
 
     DAbstractFileInfoPointer proxy;
 

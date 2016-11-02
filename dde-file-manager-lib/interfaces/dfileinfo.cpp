@@ -334,11 +334,20 @@ QString DFileInfo::fileDisplayName() const
     }
 }
 
-DUrl DFileInfo::goToUrl() const
+void DFileInfo::refresh()
+{
+    Q_D(DFileInfo);
+
+    if (d->fileInfo.caching())
+        d->fileInfo.refresh();
+}
+
+DUrl DFileInfo::goToUrlWhenDeleted() const
 {
     if (deviceListener->isDeviceFolder(absoluteFilePath()))
         return DUrl::fromLocalFile(QDir::homePath());
-    return DAbstractFileInfo::goToUrl();
+
+    return DAbstractFileInfo::goToUrlWhenDeleted();
 }
 
 DFileInfo::DFileInfo(DFileInfoPrivate &dd)
