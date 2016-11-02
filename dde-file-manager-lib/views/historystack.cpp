@@ -55,6 +55,7 @@ DUrl HistoryStack::back()
 
         if (!fileInfo || !fileInfo->exists() || currentUrl == url) {
             removeAt(m_index);
+            url = m_list.at(m_index);
         } else {
             break;
         }
@@ -85,6 +86,7 @@ DUrl HistoryStack::forward()
         if (!fileInfo || !fileInfo->exists() || currentUrl == url) {
             removeAt(m_index);
             --m_index;
+            url = m_list.at(m_index);
         } else {
             break;
         }
@@ -100,11 +102,17 @@ void HistoryStack::setThreshold(int threshold)
 
 bool HistoryStack::isFirst()
 {
+    if(m_index < 0){
+        m_index = 0;
+    }
     return m_index == 0;
 }
 
 bool HistoryStack::isLast()
 {
+    if(m_index > m_list.size() - 1){
+        m_index = m_list.size() - 1;
+    }
     return m_index == m_list.size() - 1;
 }
 
