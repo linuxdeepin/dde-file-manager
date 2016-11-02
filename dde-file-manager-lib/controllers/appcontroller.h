@@ -13,21 +13,14 @@ class FileMonitor;
 class AppController : public QObject, public Subscriber
 {
     Q_OBJECT
-public:
 
+public:
     enum ActionType {
         Open,
         OpenNewWindow
     };
 
-    static QPair<DUrl, int> selectionAndRenameFile;
-
-    explicit AppController(QObject *parent = 0);
-    ~AppController();
-
-    void initConnect();
-    void createGVfSManager();
-    void createUserShareManager();
+    static AppController *instance();
 
 public slots:
     void actionOpen(const DFMEvent& event);
@@ -94,8 +87,18 @@ public slots:
 public:
     void doSubscriberAction(const QString &path);
 
+protected:
+    explicit AppController(QObject *parent = 0);
+
 private:
+    void initConnect();
+    void createGVfSManager();
+    void createUserShareManager();
+
     DFMEvent m_fmEvent;
+    static QPair<DUrl, int> selectionAndRenameFile;
+
+    friend class FileController;
 };
 
 #endif // APPCONTROLLER_H

@@ -4,6 +4,7 @@
 #
 #-------------------------------------------------
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+QT += network
 
 isEmpty(TARGET) {
     TARGET = dde-file-manager
@@ -11,7 +12,7 @@ isEmpty(TARGET) {
 
 TEMPLATE = app
 CONFIG += c++11 link_pkgconfig
-PKGCONFIG += dtkbase dtkwidget
+PKGCONFIG += dtkbase dtkwidget dtkutil
 
 isEmpty(VERSION) {
     VERSION = 1.3
@@ -36,7 +37,10 @@ CONFIG(debug, debug|release) {
 }
 
 SOURCES += \
-    main.cpp
+    main.cpp \
+    filemanagerapp.cpp \
+    logutil.cpp \
+    singleapplication.cpp
 
 INCLUDEPATH += $$PWD/../dde-file-manager-lib $$PWD/.. \
                $$PWD/../utils \
@@ -88,3 +92,16 @@ isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../dde-file-manager-lib/release -ldde-file-manager
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../dde-file-manager-lib/debug -ldde-file-manager
 else:unix: LIBS += -L$$OUT_PWD/../dde-file-manager-lib -ldde-file-manager
+
+HEADERS += \
+    filemanagerapp.h \
+    logutil.h \
+    singleapplication.h
+
+DISTFILES += \
+    mips/dde-file-manager-autostart.desktop \
+    mips/dde-file-manager.desktop \
+    mips/dde-computer.sh \
+    mips/dde-trash.sh \
+    mips/file-manager.sh \
+    generate_translations.sh

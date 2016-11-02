@@ -47,8 +47,7 @@ void WindowManager::initConnect()
 void WindowManager::loadWindowState(DFileManagerWindow *window)
 {
     FMState* state = m_fmStateManager->fmState();
-    int x = state->x();
-    int y = state->y();
+
     int width = state->width();
     int height = state->height();
     int windowState = state->windowState();

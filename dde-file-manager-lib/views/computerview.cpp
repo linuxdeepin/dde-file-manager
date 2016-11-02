@@ -7,7 +7,6 @@
 #include "app/define.h"
 #include "app/filesignalmanager.h"
 #include "dfmevent.h"
-#include "app/filemanagerapp.h"
 #include "dfileservices.h"
 #include "controllers/pathmanager.h"
 #include "controllers/appcontroller.h"

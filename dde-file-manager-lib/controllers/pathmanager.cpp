@@ -10,9 +10,7 @@
 
 PathManager::PathManager(QObject *parent) : QObject(parent)
 {
-    m_fileSystemWatcher = new QFileSystemWatcher(this);
     initPaths();
-    initConnect();
 }
 
 PathManager::~PathManager()
@@ -44,11 +42,6 @@ void PathManager::initPaths()
     m_systemPathIconNamesMap["Pictures"] = "folder-pictures";
     m_systemPathIconNamesMap["Documents"] = "folder-documents";
     m_systemPathIconNamesMap["Downloads"] = "folder-downloads";
-}
-
-void PathManager::initConnect()
-{
-    connect(m_fileSystemWatcher, &QFileSystemWatcher::directoryChanged, this, &PathManager::handleDirectoryChanged);
 }
 
 QString PathManager::getSystemPath(QString key)
@@ -139,7 +132,6 @@ void PathManager::loadSystemPaths()
         if(key == "Desktop" || key == "Videos" || key == "Music" ||
            key == "Pictures" || key == "Documents" || key == "Downloads" ||
            key == "Trash"){
-            m_fileSystemWatcher->addPath(path);
             mkPath(path);
         }
     }
@@ -151,12 +143,6 @@ void PathManager::mkPath(const QString &path)
         bool flag = QDir::home().mkpath(path);
         qDebug() << "mkpath" << path << flag;
     }
-}
-
-void PathManager::handleDirectoryChanged(const QString &path)
-{
-    qDebug() << path;
-    loadSystemPaths();
 }
 
 QMap<QString, QString> PathManager::systemPathDisplayNamesMap() const

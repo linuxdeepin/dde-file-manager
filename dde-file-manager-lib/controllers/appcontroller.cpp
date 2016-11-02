@@ -40,35 +40,12 @@
 
 QPair<DUrl, int> AppController::selectionAndRenameFile;
 
-AppController::AppController(QObject *parent) : QObject(parent)
-{
-    DFileService::dRegisterUrlHandler<FileController>(FILE_SCHEME, "");
-    DFileService::dRegisterUrlHandler<TrashManager>(TRASH_SCHEME, "");
-    DFileService::dRegisterUrlHandler<SearchController>(SEARCH_SCHEME, "");
-    DFileService::dRegisterUrlHandler<NetworkController>(NETWORK_SCHEME, "");
-    DFileService::dRegisterUrlHandler<NetworkController>(SMB_SCHEME, "");
-    DFileService::dRegisterUrlHandler<ShareControler>(USERSHARE_SCHEME, "");
-    createGVfSManager();
-    createUserShareManager();
-    initConnect();
-}
+class AppControllerPrivate : public AppController {};
+Q_GLOBAL_STATIC(AppControllerPrivate, acGlobal);
 
-void AppController::initConnect()
+AppController *AppController::instance()
 {
-    connect(userShareManager, &UserShareManager::userShareCountChanged,
-            fileSignalManager, &FileSignalManager::userShareCountChanged);
-}
-
-void AppController::createGVfSManager()
-{
-    networkManager;
-    gvfsMountClient;
-    secrectManager;
-}
-
-void AppController::createUserShareManager()
-{
-    userShareManager;
+    return acGlobal;
 }
 
 void AppController::actionOpen(const DFMEvent &event)
@@ -574,8 +551,33 @@ void AppController::doSubscriberAction(const QString &path)
     deviceListener->removeSubscriber(this);
 }
 
-AppController::~AppController()
+AppController::AppController(QObject *parent) : QObject(parent)
 {
-
+    DFileService::dRegisterUrlHandler<FileController>(FILE_SCHEME, "");
+    DFileService::dRegisterUrlHandler<TrashManager>(TRASH_SCHEME, "");
+    DFileService::dRegisterUrlHandler<SearchController>(SEARCH_SCHEME, "");
+    DFileService::dRegisterUrlHandler<NetworkController>(NETWORK_SCHEME, "");
+    DFileService::dRegisterUrlHandler<NetworkController>(SMB_SCHEME, "");
+    DFileService::dRegisterUrlHandler<ShareControler>(USERSHARE_SCHEME, "");
+    createGVfSManager();
+    createUserShareManager();
+    initConnect();
 }
 
+void AppController::initConnect()
+{
+    connect(userShareManager, &UserShareManager::userShareCountChanged,
+            fileSignalManager, &FileSignalManager::userShareCountChanged);
+}
+
+void AppController::createGVfSManager()
+{
+    networkManager;
+    gvfsMountClient;
+    secrectManager;
+}
+
+void AppController::createUserShareManager()
+{
+    userShareManager;
+}

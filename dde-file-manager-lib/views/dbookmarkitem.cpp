@@ -25,7 +25,6 @@
 #include "app/define.h"
 #include "dfmevent.h"
 #include "app/filesignalmanager.h"
-#include "app/filemanagerapp.h"
 
 #include "shutil/iconprovider.h"
 

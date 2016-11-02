@@ -22,15 +22,11 @@ public:
 
     void initApp();
     void initView();
-    void initController();
-    void initGtk();
     void initManager();
     void initTranslation();
     void initConnect();
 
     QString getFileJobConfigPath();
-
-    AppController *getAppController() const;
 
 public slots:
     void show(const DUrl& url);
@@ -41,7 +37,6 @@ public slots:
 
 private:
     WindowManager* m_windowManager = NULL;
-    AppController* m_appController = NULL;
     QTimer* m_taskTimer = NULL;
 };
 

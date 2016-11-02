@@ -2,7 +2,6 @@
 #include "dfmglobal.h"
 #include "app/define.h"
 #include "dfmevent.h"
-#include "app/filemanagerapp.h"
 #include "dfilemenu.h"
 #include "dfileservices.h"
 #include "controllers/appcontroller.h"

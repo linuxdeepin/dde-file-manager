@@ -12,7 +12,6 @@
 #include "dfmevent.h"
 #include "app/define.h"
 #include "app/filesignalmanager.h"
-#include "app/filemanagerapp.h"
 #include "controllers/appcontroller.h"
 #include "dfilesystemmodel.h"
 #include "widgets/singleton.h"

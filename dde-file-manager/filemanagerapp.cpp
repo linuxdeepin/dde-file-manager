@@ -1,11 +1,11 @@
 #include "filemanagerapp.h"
-#include "filesignalmanager.h"
+#include "app/filesignalmanager.h"
 #include "dfmglobal.h"
 #include "views/windowmanager.h"
 #include "views/dfilemanagerwindow.h"
 
 #include "controllers/appcontroller.h"
-
+#include "controllers/pathmanager.h"
 #include "app/define.h"
 
 #include "dialogs/dialogmanager.h"
@@ -23,28 +23,25 @@
 #include "xdnd/xdndworkaround.h"
 #endif
 
-#include <QLocalServer>
-#include <QLocalSocket>
 #include <QDataStream>
 #include <QGuiApplication>
 #include <QTimer>
 #include <QThreadPool>
 #include <QSettings>
-
-#undef signals
-extern "C" {
-  #include <gtk/gtk.h>
-}
-#define signals public
+#include <QFileSystemWatcher>
 
 FileManagerApp::FileManagerApp(QObject *parent) : QObject(parent)
 {
     initApp();
     initView();
-    initController();
-    initGtk();
     initConnect();
     lazyRunCacheTask();
+
+    QFileSystemWatcher *watcherHome = new QFileSystemWatcher(this);
+
+    connect(watcherHome, &QFileSystemWatcher::directoryChanged, systemPathManager, &PathManager::loadSystemPaths);
+
+    watcherHome->addPath(QDir::homePath());
 }
 
 FileManagerApp::~FileManagerApp()
@@ -55,7 +52,6 @@ FileManagerApp::~FileManagerApp()
 
 void FileManagerApp::initApp()
 {
-    qApp->setApplicationDisplayName(QObject::tr("Deepin File Manager"));
     /// init dialog manager
     dialogManager;
 
@@ -65,30 +61,11 @@ void FileManagerApp::initApp()
 #endif
 
     QThreadPool::globalInstance()->setMaxThreadCount(MAX_THREAD_COUNT);
-
-    QFont font;
-    font.setPixelSize(14);
-    qApp->setFont(font);
-//#ifndef QT_DEBUG
-//    qApp->setQuitOnLastWindowClosed(false);
-//#endif
 }
 
 void FileManagerApp::initView()
 {
     m_windowManager = new WindowManager;
-}
-
-
-void FileManagerApp::initController()
-{
-    m_appController = new AppController(this);
-}
-
-void FileManagerApp::initGtk()
-{
-    gtk_init(NULL, NULL);
-    gdk_error_trap_push();
 }
 
 void FileManagerApp::initManager()
@@ -109,11 +86,6 @@ void FileManagerApp::initConnect()
 QString FileManagerApp::getFileJobConfigPath()
 {
     return QString("%1/filejob.conf").arg(StandardPath::getConfigPath());
-}
-
-AppController *FileManagerApp::getAppController() const
-{
-    return m_appController;
 }
 
 void FileManagerApp::show(const DUrl &url)

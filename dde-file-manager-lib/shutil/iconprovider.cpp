@@ -53,6 +53,10 @@ IconProvider::IconProvider(QObject *parent) : QObject(parent)
         m_supportImageMimeTypesSet << mime;
     }
 
+    // init gtk
+    gtk_init(NULL, NULL);
+    gdk_error_trap_push();
+
     initConnect();
     setCurrentTheme();
 
