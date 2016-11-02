@@ -1,10 +1,11 @@
 #include "durl.h"
 #include "dfmglobal.h"
 
+#include "filemanagerapp.h"
+#include "logutil.h"
+#include "singleapplication.h"
+
 #include "app/define.h"
-#include "app/logutil.h"
-#include "app/filemanagerapp.h"
-#include "app/singleapplication.h"
 
 #include "widgets/commandlinemanager.h"
 
@@ -29,6 +30,8 @@
 #include <gperftools/profiler.h>
 #endif
 
+#define fileManagerApp Singleton<FileManagerApp>::instance()
+
 DWIDGET_USE_NAMESPACE
 
 int main(int argc, char *argv[])
@@ -43,6 +46,11 @@ int main(int argc, char *argv[])
     app.setOrganizationName(QMAKE_ORGANIZATION_NAME);
     app.setApplicationName(QMAKE_TARGET);
     app.setApplicationVersion(QMAKE_VERSION);
+    app.setApplicationDisplayName(QObject::tr("Deepin File Manager"));
+
+    QFont font;
+    font.setPixelSize(14);
+    app.setFont(font);
 
     LogUtil::registerLogger();
 

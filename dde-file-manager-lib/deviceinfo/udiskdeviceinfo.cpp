@@ -2,11 +2,12 @@
 #include "app/define.h"
 #include "shutil/fileutils.h"
 #include <QIcon>
-#include "app/singleapplication.h"
 #include "utils.h"
 #include "durl.h"
 #include "udisklistener.h"
 #include "../widgets/singleton.h"
+
+#include <unistd.h>
 
 UDiskDeviceInfo::UDiskDeviceInfo()
     : DFileInfo("")
@@ -92,7 +93,7 @@ DUrl UDiskDeviceInfo::getMountPointUrl()
 
 DUrl UDiskDeviceInfo::getMountPointUrl(DiskInfo &info)
 {
-    QString path = QString("/run/user/%1/gvfs").arg(SingleApplication::userId());
+    QString path = QString("/run/user/%1/gvfs").arg(getuid());
 
     if (info.MountPoint.startsWith(AFC_SCHEME)){
         info.MountPointUrl = DUrl::fromLocalFile(QString("%1/afc:host=%2").arg(path, info.ID));

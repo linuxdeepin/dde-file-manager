@@ -6,7 +6,7 @@
 #system($$PWD/../vendor/prebuild)
 #include($$PWD/../vendor/vendor.pri)
 
-QT       += core gui svg dbus x11extras network
+QT       += core gui svg dbus x11extras
 #private
 QT       += gui-private
 
@@ -60,7 +60,7 @@ include(../usershare/usershare.pri)
 
 lessThan(QT_MINOR_VERSION, 6): include(../xdnd/xdnd.pri)
 
-PKGCONFIG += gtk+-2.0 gsettings-qt libsecret-1 dtkbase dtkutil dtkwidget
+PKGCONFIG += gtk+-2.0 gsettings-qt libsecret-1 dtkbase dtkwidget
 CONFIG += c++11 link_pkgconfig
 #DEFINES += QT_NO_DEBUG_OUTPUT
 DEFINES += QT_MESSAGELOGCONTEXT
@@ -75,7 +75,6 @@ RESOURCES += \
 
 HEADERS += \
     controllers/appcontroller.h \
-    app/filemanagerapp.h \
     views/dmovablemainwindow.h \
     views/dleftsidebar.h \
     views/dtoolbar.h \
@@ -119,8 +118,6 @@ HEADERS += \
     controllers/trashmanager.h \
     views/dsplitter.h \
     models/recentfileinfo.h \
-    app/singleapplication.h \
-    app/logutil.h \
     models/trashfileinfo.h \
     shutil/mimesappsmanager.h \
     views/dbookmarkline.h \
@@ -184,7 +181,6 @@ HEADERS += \
 
 SOURCES += \
     controllers/appcontroller.cpp \
-    app/filemanagerapp.cpp \
     views/dmovablemainwindow.cpp \
     views/dleftsidebar.cpp \
     views/dtoolbar.cpp \
@@ -227,8 +223,6 @@ SOURCES += \
     controllers/trashmanager.cpp \
     views/dsplitter.cpp \
     models/recentfileinfo.cpp \
-    app/singleapplication.cpp \
-    app/logutil.cpp \
     models/trashfileinfo.cpp \
     shutil/mimesappsmanager.cpp \
     views/dbookmarkline.cpp \

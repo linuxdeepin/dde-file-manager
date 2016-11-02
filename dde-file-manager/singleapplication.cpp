@@ -1,6 +1,6 @@
 #include "singleapplication.h"
-#include "define.h"
-#include "filesignalmanager.h"
+#include "app/define.h"
+#include "app/filesignalmanager.h"
 #include "durl.h"
 
 #include "widgets/commandlinemanager.h"

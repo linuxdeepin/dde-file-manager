@@ -1,14 +1,13 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
-#define fileManagerApp Singleton<FileManagerApp>::instance()
 #define searchHistoryManager  Singleton<SearchHistroyManager>::instance()
 #define bookmarkManager  Singleton<BookMarkManager>::instance()
 #define trashManager  Singleton<TrashManager>::instance()
 #define fileMenuManger  Singleton<DFileMenuManager>::instance()
 #define fileSignalManager Singleton<FileSignalManager>::instance()
 #define dialogManager Singleton<DialogManager>::instance()
-#define appController fileManagerApp->getAppController()
+#define appController AppController::instance()
 #define fileIconProvider Singleton<IconProvider>::instance()
 #define fileService DFileService::instance()
 #define deviceListener Singleton<UDiskListener>::instance()

@@ -3,9 +3,7 @@
 
 #include "app/define.h"
 #include "dfmevent.h"
-#include "app/filemanagerapp.h"
 #include "controllers/appcontroller.h"
-#include <QThread>
 
 #include <dutility.h>
 
@@ -372,6 +370,9 @@ QRectF TabCloseButton::boundingRect() const
 
 void TabCloseButton::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    Q_UNUSED(option);
+    Q_UNUSED(widget);
+
     QString imgSrc;
     if(m_mousePressed){
         if(m_activeWidthTab)
@@ -417,6 +418,8 @@ void TabCloseButton::setActiveWidthTab(bool active)
 
 void TabCloseButton::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+    Q_UNUSED(event);
+
     m_mousePressed = true;
     if(m_mouseHovered)
         m_mouseHovered = false;
@@ -425,6 +428,8 @@ void TabCloseButton::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void TabCloseButton::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
+    Q_UNUSED(event);
+
     m_mousePressed = false;
     emit clicked();
     update();

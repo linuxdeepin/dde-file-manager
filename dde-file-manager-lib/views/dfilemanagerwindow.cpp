@@ -20,7 +20,6 @@
 #include "app/define.h"
 #include "dfmevent.h"
 #include "app/filesignalmanager.h"
-#include "app/filemanagerapp.h"
 #include "deviceinfo/udisklistener.h"
 #include "usershare/usersharemanager.h"
 #include "controllers/pathmanager.h"
@@ -87,9 +86,6 @@ DFileManagerWindow::DFileManagerWindow(const DUrl &fileUrl, QWidget *parent)
     , d_ptr(new DFileManagerWindowPrivate(this))
 {
     setWindowIcon(QIcon(":/images/images/dde-file-manager.svg"));
-
-    /// ensure AppController object is defined
-    Q_UNUSED(fileManagerApp->getAppController())
 
     initData();
     initUI();
@@ -363,6 +359,9 @@ void DFileManagerWindow::showComputerView(const DFMEvent &event)
 {
     D_D(DFileManagerWindow);
 
+    if (!d->computerView)
+        initComputerView();
+
     d->viewStackLayout->setCurrentWidget(d->computerView);
     d->computerView->setFocus();
     emit fileSignalManager->currentUrlChanged(event);
@@ -471,6 +470,9 @@ void DFileManagerWindow::switchToView(const int viewIndex, const DUrl &url)
 //    d->viewStackLayout->setCurrentIndex(viewIndex);
     d->fileView = qobject_cast<DFileView*>(d->viewStackLayout->widget(viewIndex));
     if(url.isComputerFile()){
+        if (!d->computerView)
+            initComputerView();
+
         d->viewStackLayout->setCurrentWidget(d->computerView);
         d->computerView->setFocus();
         d->toolbar->setViewModeButtonVisible(false);
@@ -648,8 +650,6 @@ void DFileManagerWindow::initRightView()
 
     initTabBar();
     initViewLayout();
-    initComputerView();
-//    initFileView();
 
     d->rightView = new QFrame;
 

@@ -6,7 +6,6 @@
 #include "dstatusbar.h"
 #include "fileviewhelper.h"
 #include "app/define.h"
-#include "app/filemanagerapp.h"
 #include "app/filesignalmanager.h"
 
 #include "interfaces/dfmglobal.h"

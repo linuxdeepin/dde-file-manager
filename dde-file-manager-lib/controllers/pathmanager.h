@@ -4,7 +4,6 @@
 #include <QObject>
 #include <QMap>
 #include <QSet>
-#include <QFileSystemWatcher>
 
 #include "basemanager.h"
 #include "durl.h"
@@ -18,7 +17,6 @@ public:
     ~PathManager();
 
     void initPaths();
-    void initConnect();
 
     QString getSystemPath(QString key);
     QString getSystemPathDisplayName(QString key);
@@ -37,14 +35,12 @@ public:
 public slots:
     void loadSystemPaths();
     void mkPath(const QString& path);
-    void handleDirectoryChanged(const QString& path);
 
 private:
     QMap<QString, QString> m_systemPathsMap;
     QMap<QString, QString> m_systemPathDisplayNamesMap;
     QMap<QString, QString> m_systemPathIconNamesMap;
     QSet<QString> m_systemPathsSet;
-    QFileSystemWatcher* m_fileSystemWatcher = NULL;
 };
 
 #endif // PATHMANAGER_H

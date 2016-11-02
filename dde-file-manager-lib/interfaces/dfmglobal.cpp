@@ -1,6 +1,9 @@
 #include "dfmglobal.h"
 #include "chinese2pinyin.h"
 #include "dfmstandardpaths.h"
+#include "dfileservices.h"
+
+#include "controllers/appcontroller.h"
 
 #include <QGuiApplication>
 #include <QClipboard>
@@ -140,6 +143,8 @@ DFMGlobal::DFMGlobal()
 {
     connect(qApp->clipboard(), &QClipboard::dataChanged, this, &DFMGlobal::onClipboardDataChanged);
     GlobalData::onClipboardDataChanged();
+
+    Q_UNUSED(AppController::instance());
 }
 
 void DFMGlobal::onClipboardDataChanged()
