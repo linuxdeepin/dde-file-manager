@@ -470,3 +470,13 @@ void DToolBar::updateBackForwardButtonsState()
             m_forwardButton->setEnabled(true);
     }
 }
+
+void DToolBar::setListModeButtonEnabled(const bool &flag)
+{
+    m_listViewButton->setEnabled(flag);
+}
+
+void DToolBar::setIconModeButtonEnabled(const bool &flag)
+{
+    m_iconViewButton->setEnabled(flag);
+}

@@ -35,6 +35,8 @@ public:
     QList<SelectionMode> supportSelectionModes() const Q_DECL_OVERRIDE;
     Qt::ItemFlags fileItemDisableFlags() const Q_DECL_OVERRIDE;
 
+    quint8 supportViewMode() const Q_DECL_OVERRIDE;
+
 private:
     NetworkNode m_networkNode;
 };
