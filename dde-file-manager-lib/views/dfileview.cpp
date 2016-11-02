@@ -5,6 +5,8 @@
 #include "windowmanager.h"
 #include "dstatusbar.h"
 #include "fileviewhelper.h"
+#include "dfilemanagerwindow.h"
+#include "dtoolbar.h"
 #include "app/define.h"
 #include "app/filesignalmanager.h"
 
@@ -1607,6 +1609,22 @@ bool DFileView::setRootUrl(const DUrl &url)
 
     if(info) {
         ViewModes modes = (ViewModes)info->supportViewMode();
+
+        DFileManagerWindow *fmWindow = qobject_cast<DFileManagerWindow*>(window());
+
+        //view mode support handler
+        if (fmWindow) {
+            if (testViewMode(modes, ListMode))
+                fmWindow->getToolBar()->setListModeButtonEnabled(true);
+            else{
+                fmWindow->getToolBar()->setListModeButtonEnabled(false);
+            }
+
+            if(testViewMode(modes, IconMode))
+                fmWindow->getToolBar()->setIconModeButtonEnabled(true);
+            else
+                fmWindow->getToolBar()->setIconModeButtonEnabled(false);
+        }
 
         if(!testViewMode(modes, d->defaultViewMode)) {
             if(testViewMode(modes, IconMode)) {

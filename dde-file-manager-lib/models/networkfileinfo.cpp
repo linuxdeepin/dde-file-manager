@@ -8,6 +8,8 @@
 
 #include "controllers/pathmanager.h"
 
+#include "views/dfileview.h"
+
 #include <QIcon>
 
 NetworkFileInfo::NetworkFileInfo(const DUrl &url):
@@ -111,4 +113,9 @@ QList<DAbstractFileInfo::SelectionMode> NetworkFileInfo::supportSelectionModes()
 Qt::ItemFlags NetworkFileInfo::fileItemDisableFlags() const
 {
     return Qt::ItemIsDragEnabled | Qt::ItemIsEditable;
+}
+
+quint8 NetworkFileInfo::supportViewMode() const
+{
+    return DFileView::IconMode;
 }
