@@ -90,6 +90,7 @@ bool ThumbnailGenerator::isVideoFile(const QString &fileName)
 bool ThumbnailGenerator::isPictureFile(const QString &fileName)
 {
     QString mimeType = QMimeDatabase().mimeTypeForFile(fileName).name();
+    qDebug () << mimeType << fileName;
     if(mimeType.startsWith("image"))
         return true;
     else
@@ -256,12 +257,19 @@ QPixmap ThumbnailGenerator::getPictureThumbnail(const QString &fpath, const Thum
     QFile file(fpath);
     QImageReader reader(&file);
 
+    if(!reader.canRead())
+        return QPixmap();
+
     /// ensure image size < 30MB
     if (file.size() > 1024 * 1024 * 30&&reader.canRead()) {
         return QPixmap();
     }
 
     QSize imgsize = reader.size();
+    if(!imgsize.isValid()){
+        qDebug () << "Cannot reader this image:" <<fpath;
+        return QPixmap();
+    }
 
     bool canScale = imgsize.width() > size || imgsize.height() > size;
 
