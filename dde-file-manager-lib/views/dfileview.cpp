@@ -1100,6 +1100,22 @@ void DFileView::updateStatusBar()
     }
 }
 
+void DFileView::onRootUrlDeleted(const DUrl &rootUrl)
+{
+    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(rootUrl);
+
+    if (!fileInfo)
+        return;
+
+    DFMEvent event;
+
+    event << windowId();
+    event << DFMEvent::FileView;
+    event << fileInfo->goToUrlWhenDeleted();
+
+    fileSignalManager->requestChangeCurrentUrl(event);
+}
+
 void DFileView::focusInEvent(QFocusEvent *event)
 {
     Q_D(const DFileView);
@@ -1499,6 +1515,7 @@ void DFileView::initConnects()
     connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &DFileView::updateStatusBar);
     connect(model(), &DFileSystemModel::dataChanged, this, &DFileView::handleDataChanged);
     connect(model(), &DFileSystemModel::stateChanged, this, &DFileView::onModelStateChanged);
+    connect(model(), &DFileSystemModel::rootUrlDeleted, this, &DFileView::onRootUrlDeleted);
 
     connect(this, &DFileView::iconSizeChanged, this, &DFileView::updateHorizontalOffset, Qt::QueuedConnection);
     connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &DFileView::onVerticalScroll);

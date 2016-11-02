@@ -145,24 +145,6 @@ bool DAbstractFileController::newDocument(const DUrl &toUrl, bool &accepted) con
     return false;
 }
 
-bool DAbstractFileController::addUrlMonitor(const DUrl &url, bool &accepted) const
-{
-    Q_UNUSED(url)
-
-    accepted = false;
-
-    return false;
-}
-
-bool DAbstractFileController::removeUrlMonitor(const DUrl &url, bool &accepted) const
-{
-    Q_UNUSED(url)
-
-    accepted = false;
-
-    return false;
-}
-
 bool DAbstractFileController::openFileLocation(const DUrl &fileUrl, bool &accepted) const
 {
     Q_UNUSED(fileUrl)
@@ -226,4 +208,14 @@ bool DAbstractFileController::openInTerminal(const DUrl &fileUrl, bool &accepted
     accepted = false;
 
     return false;
+}
+
+DAbstractFileWatcher *DAbstractFileController::createFileWatcher(const DUrl &fileUrl, QObject *parent, bool &accepted) const
+{
+    Q_UNUSED(fileUrl);
+    Q_UNUSED(parent)
+
+    accepted = false;
+
+    return 0;
 }

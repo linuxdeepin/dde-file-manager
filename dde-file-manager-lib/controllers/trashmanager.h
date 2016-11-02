@@ -22,8 +22,6 @@ public:
 
     bool openFile(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
     bool openFileLocation(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
-    bool addUrlMonitor(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
-    bool removeUrlMonitor(const DUrl &url, bool &accepted) const Q_DECL_OVERRIDE;
     DUrlList moveToTrash(const DFMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
     bool copyFilesToClipboard(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;
     DUrlList pasteFile(PasteType type, const DUrl &targetUrl, const DFMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
@@ -32,18 +30,13 @@ public:
                                                 QDir::Filters filters, QDirIterator::IteratorFlags flags,
                                                 bool &accepted) const Q_DECL_OVERRIDE;
 
+    DAbstractFileWatcher *createFileWatcher(const DUrl &fileUrl, QObject *parent, bool &accepted) const Q_DECL_OVERRIDE;
+
     bool restoreTrashFile(const DUrlList &fileUrl, const DFMEvent &event) const;
     bool restoreAllTrashFile(const DFMEvent &event);
     void cleanTrash(const DFMEvent &event) const;
 
     static bool isEmpty();
-
-private slots:
-    void onFileCreated(const QString &filePath) const;
-    void onFileRemove(const QString &filePath) const;
-
-private:
-    mutable FileMonitor *fileMonitor = Q_NULLPTR;
 };
 
 #endif // TRASHMANAGER_H

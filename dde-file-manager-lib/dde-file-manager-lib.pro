@@ -177,7 +177,13 @@ HEADERS += \
     dialogs/usersharepasswordsettingdialog.h\
     interfaces/private/dabstractfileinfo_p.h \
     interfaces/dfileinfo.h \
-    interfaces/private/dfileinfo_p.h
+    interfaces/private/dfileinfo_p.h \
+    interfaces/dfilesystemwatcher.h \
+    interfaces/private/dfilesystemwatcher_p.h \
+    interfaces/dabstractfilewatcher.h \
+    interfaces/dfilewatcher.h \
+    interfaces/private/dabstractfilewatcher_p.h \
+    interfaces/dfileproxywatcher.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -277,7 +283,11 @@ SOURCES += \
     interfaces/dfileservices.cpp \
     interfaces/dfmevent.cpp \
     dialogs/usersharepasswordsettingdialog.cpp\
-    interfaces/dfileinfo.cpp
+    interfaces/dfileinfo.cpp \
+    interfaces/dfilesystemwatcher.cpp \
+    interfaces/dabstractfilewatcher.cpp \
+    interfaces/dfilewatcher.cpp \
+    interfaces/dfileproxywatcher.cpp
 
 INCLUDEPATH += $$PWD/../ $$PWD/../utils/ $$PWD/interfaces/
 

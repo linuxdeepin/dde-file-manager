@@ -108,6 +108,9 @@ DBusInfoRet FileOperation::NewDeleteJob(const QStringList &filelist)
 
 QString FileOperation::test(const QString &oldFile, const QString &newFile, QDBusObjectPath &result2, bool &result3)
 {
+    Q_UNUSED(oldFile)
+    Q_UNUSED(newFile)
+
     result2.setPath("m_renameJobBasePath");
     result3 = true;
 

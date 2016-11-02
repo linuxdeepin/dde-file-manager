@@ -10,6 +10,7 @@
 
 class DFMEvent;
 class DUrl;
+class DAbstractFileWatcher;
 typedef QList<DUrl> DUrlList;
 class DAbstractFileController : public QObject
 {
@@ -39,9 +40,6 @@ public:
     virtual bool newFile(const DUrl &toUrl, bool &accepted) const;
     virtual bool newDocument(const DUrl &toUrl, bool &accepted) const;
 
-    virtual bool addUrlMonitor(const DUrl &url, bool &accepted) const;
-    virtual bool removeUrlMonitor(const DUrl &url, bool &accepted) const;
-
     virtual bool openFileLocation(const DUrl &fileUrl, bool &accepted) const;
 
     virtual const QList<DAbstractFileInfoPointer> getChildren(const DUrl &fileUrl, const QStringList &nameFilters,
@@ -55,10 +53,7 @@ public:
     virtual bool createSymlink(const DUrl &fileUrl, const DUrl &linkToUrl, bool &accepted) const;
     virtual bool openInTerminal(const DUrl &fileUrl, bool &accepted) const;
 
-signals:
-    void childrenAdded(const DUrl &fileUrl) const;
-    void childrenRemoved(const DUrl &fileUrl) const;
-    void childrenUpdated(const DUrl &fileUrl) const;
+    virtual DAbstractFileWatcher *createFileWatcher(const DUrl &fileUrl, QObject *parent, bool &accepted) const;
 };
 
 #endif // ABSTRACTFILECONTROLLER_H

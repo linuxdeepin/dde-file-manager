@@ -39,22 +39,14 @@ public:
     bool newFile(const DUrl &toUrl, bool &accepted) const Q_DECL_OVERRIDE;
     bool newDocument(const DUrl &toUrl, bool &accepted) const Q_DECL_OVERRIDE;
 
-    bool addUrlMonitor(const DUrl &url, bool &accepted) const Q_DECL_OVERRIDE;
-    bool removeUrlMonitor(const DUrl &url, bool &accepted) const Q_DECL_OVERRIDE;
-
     bool openFileLocation(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
     bool openInTerminal(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
 
     bool createSymlink(const DUrl &fileUrl, const DUrl &linkToUrl, bool &accepted) const Q_DECL_OVERRIDE;
 
-private slots:
-    void onFileCreated(const QString &filePath);
-    void onFileRemove(const QString &filePath);
-    void onFileInfoChanged(const QString &filePath);
+    DAbstractFileWatcher *createFileWatcher(const DUrl &fileUrl, QObject *parent, bool &accepted) const Q_DECL_OVERRIDE;
 
 private:
-    FileMonitor *fileMonitor;
-
     QString checkDuplicateName(const QString &name) const;
 };
 

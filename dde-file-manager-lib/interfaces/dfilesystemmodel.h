@@ -130,7 +130,7 @@ public slots:
     void toggleHiddenFiles(const DUrl &fileUrl);
 
 signals:
-    void rootUrlDeleted();
+    void rootUrlDeleted(const DUrl &rootUrl);
     void stateChanged(State state);
 
 private slots:

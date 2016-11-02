@@ -18,8 +18,6 @@ public:
 
     bool openFile(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
     bool openFileByApp(const DUrl &fileUrl, const QString& app, bool &accepted) const Q_DECL_OVERRIDE;
-    bool addUrlMonitor(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
-    bool removeUrlMonitor(const DUrl &url, bool &accepted) const Q_DECL_OVERRIDE;
     bool copyFilesToClipboard(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;
     DUrlList moveToTrash(const DFMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
     bool cutFilesToClipboard(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;

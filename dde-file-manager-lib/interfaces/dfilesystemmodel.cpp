@@ -2,6 +2,7 @@
 #include "dabstractfileinfo.h"
 #include "dfileservices.h"
 #include "dfmevent.h"
+#include "dabstractfilewatcher.h"
 
 #include "app/define.h"
 
@@ -59,6 +60,7 @@ public:
     QPointer<JobController> jobController;
     QEventLoop *eventLoop = Q_NULLPTR;
     QFuture<void> updateChildrenFuture;
+    DAbstractFileWatcher *watcher = Q_NULLPTR;
 
     DFileSystemModel::State state = DFileSystemModel::Idle;
 
@@ -92,15 +94,6 @@ DFileSystemModel::DFileSystemModel(DFileViewHelper *parent)
     : QAbstractItemModel(parent)
     , d_ptr(new DFileSystemModelPrivate(this))
 {
-    connect(fileService, &DFileService::childrenAdded,
-            this, &DFileSystemModel::onFileCreated,
-            Qt::DirectConnection);
-    connect(fileService, &DFileService::childrenRemoved,
-            this, &DFileSystemModel::onFileDeleted,
-            Qt::DirectConnection);
-    connect(fileService, &DFileService::childrenUpdated,
-            this, &DFileSystemModel::onFileUpdated);
-
     qRegisterMetaType<State>(QT_STRINGIFY(State));
     qRegisterMetaType<DAbstractFileInfoPointer>(QT_STRINGIFY(DAbstractFileInfoPointer));
 }
@@ -108,12 +101,6 @@ DFileSystemModel::DFileSystemModel(DFileViewHelper *parent)
 DFileSystemModel::~DFileSystemModel()
 {
     Q_D(DFileSystemModel);
-//    for(const FileSystemNodePointer &node : d->urlToNode) {
-//        if(node->fileInfo->isDir())
-//            fileService->removeUrlMonitor(node->fileInfo->fileUrl());
-//    }
-
-//    setRootUrl(DUrl());
 
     if (d->jobController) {
         d->jobController->stopAndDeleteLater();
@@ -474,7 +461,12 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
     connect(d->jobController, &JobController::finished, this, &DFileSystemModel::onJobFinished, Qt::QueuedConnection);
     connect(d->jobController, &JobController::childrenUpdated, this, &DFileSystemModel::updateChildren, Qt::QueuedConnection);
 
-    fileService->addUrlMonitor(parentNode->fileInfo->fileUrl());
+    /// make root file to active
+    d->rootNode->fileInfo->makeToActive();
+
+    /// start file watcher
+    if (d->watcher)
+        d->watcher->startWatcher();
 
     parentNode->populatedChildren = true;
 
@@ -637,9 +629,23 @@ QModelIndex DFileSystemModel::setRootUrl(const DUrl &fileUrl)
         clear();
     }
 
+    if (d->watcher) {
+        disconnect(d->watcher, 0, this, 0);
+        d->watcher->deleteLater();
+    }
+
 //    d->rootNode = d->urlToNode.value(fileUrl);
 
     d->rootNode = createNode(Q_NULLPTR, fileService->createFileInfo(fileUrl));
+
+    if (d->watcher = DFileService::instance()->createFileWatcher(fileUrl, this)) {
+        connect(d->watcher, &DAbstractFileWatcher::fileAttributeChanged,
+                this, &DFileSystemModel::onFileUpdated);
+        connect(d->watcher, &DAbstractFileWatcher::fileDeleted,
+                this,&DFileSystemModel::onFileDeleted);
+        connect(d->watcher, &DAbstractFileWatcher::subfileCreated,
+                this, &DFileSystemModel::onFileCreated);
+    }
 
     return index(fileUrl);
 }
@@ -1036,6 +1042,8 @@ void DFileSystemModel::onFileDeleted(const DUrl &fileUrl)
     const DUrl &rootUrl = this->rootUrl();
 
     if (fileUrl == rootUrl) {
+        emit rootUrlDeleted(rootUrl);
+
         return refresh();
     }
 
@@ -1158,12 +1166,13 @@ void DFileSystemModel::deleteNode(const FileSystemNodePointer &node)
 //            deleteNode(children);
 //        }
 //    }
-    deleteNodeByUrl(node->fileInfo->fileUrl());
+    node->fileInfo->makeToInactive();
+//    deleteNodeByUrl(node->fileInfo->fileUrl());
 }
 
 void DFileSystemModel::deleteNodeByUrl(const DUrl &url)
 {
-    fileService->removeUrlMonitor(url);
+//    fileService->removeUrlMonitor(url);
     //    d->urlToNode.take(url);
 }
 
@@ -1178,7 +1187,7 @@ void DFileSystemModel::clear()
 
     beginRemoveRows(index, 0, d->rootNode->visibleChildren.count() - 1);
 
-    deleteNode((d->rootNode));
+    deleteNode(d->rootNode);
 
     endRemoveRows();
 }

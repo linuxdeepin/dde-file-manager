@@ -168,7 +168,6 @@ void RecentHistoryManager::removeRecentFiles(const DUrlList &urlList)
     for(const DUrl &url : urlList) {
         m_openedFileList.removeOne(url);
         m_lastFileOpenedTime.remove(url);
-        emit childrenRemoved(url);
     }
 
     save();
@@ -176,10 +175,6 @@ void RecentHistoryManager::removeRecentFiles(const DUrlList &urlList)
 
 void RecentHistoryManager::clearRecentFiles()
 {
-    for(const DUrl &url : m_openedFileList) {
-        emit childrenRemoved(url);
-    }
-
     m_openedFileList.clear();
     m_lastFileOpenedTime.clear();
     save();
@@ -198,8 +193,6 @@ void RecentHistoryManager::addOpenedFile(const DUrl &url)
         return;
 
     m_openedFileList << recent_url;
-
-    emit childrenAdded(recent_url);
 
     save();
 }
