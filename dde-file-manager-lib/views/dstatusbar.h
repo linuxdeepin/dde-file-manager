@@ -70,6 +70,8 @@ private:
     QPushButton *m_rejectButton = Q_NULLPTR;
     QLineEdit *m_lineEdit = Q_NULLPTR;
     QComboBox *m_comboBox = Q_NULLPTR;
+    QLabel *m_lineEditLabel = Q_NULLPTR;
+    QLabel *m_comboBoxLabel = Q_NULLPTR;
 };
 
 #endif // DSTATUSBAR_H

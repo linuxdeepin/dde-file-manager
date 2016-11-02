@@ -111,16 +111,24 @@ void DStatusBar::setMode(DStatusBar::Mode mode)
 
     if (m_comboBox || m_lineEdit) {
         m_lineEdit->setVisible(mode == DialogSave);
+        m_lineEditLabel->setVisible(m_lineEdit->isVisible());
         return;
     }
 
     m_comboBox = new DComboBox(this);
     m_comboBox->setMaximumWidth(200);
     m_comboBox->hide();
+    m_comboBoxLabel = new QLabel(this);
+    m_comboBoxLabel->setObjectName("comboBoxLabel");
+    m_comboBoxLabel->setText(tr("Filter"));
+    m_comboBoxLabel->hide();
 
     m_lineEdit = new DLineEdit(this);
     m_lineEdit->setMaximumWidth(200);
     m_lineEdit->setVisible(mode == DialogSave);
+    m_lineEditLabel = new QLabel(this);
+    m_lineEditLabel->setObjectName("lineEditLabel");
+    m_lineEditLabel->setText(tr("Save as:"));
 
     if (m_label) {
         m_label->hide();
@@ -139,7 +147,9 @@ void DStatusBar::setMode(DStatusBar::Mode mode)
     clearLayoutAndAnchors();
     m_scaleSlider->move(0, 0);
     m_layout->addWidget(m_scaleSlider);
+    m_layout->addWidget(m_comboBoxLabel);
     m_layout->addWidget(m_comboBox);
+    m_layout->addWidget(m_lineEditLabel);
     m_layout->addWidget(m_lineEdit);
     m_layout->addStretch();
     m_layout->addWidget(m_loadingIndicator);
@@ -148,10 +158,10 @@ void DStatusBar::setMode(DStatusBar::Mode mode)
     m_layout->setSpacing(10);
     m_layout->setContentsMargins(10, 10, 10, 10);
 
-    setStyleSheet("QFrame{"
+    setStyleSheet("DStatusBar{"
                   "background-color: white;"
-                  "color: #797979;"
-                  "border-top: 1px solid rgba(0, 0, 0, 0.1);}");
+                  "border-top: 1px solid rgba(0, 0, 0, 0.1);}"
+                  "QLabel{color: #797979; margin-bottom: 2px;}");
 }
 
 void DStatusBar::setComBoxItems(const QStringList &filters)
@@ -162,6 +172,7 @@ void DStatusBar::setComBoxItems(const QStringList &filters)
     m_comboBox->clear();
     m_comboBox->addItems(filters);
     m_comboBox->setVisible(!filters.isEmpty());
+    m_comboBoxLabel->setVisible(m_comboBox->isVisible());
 }
 
 DSlider *DStatusBar::scalingSlider() const
