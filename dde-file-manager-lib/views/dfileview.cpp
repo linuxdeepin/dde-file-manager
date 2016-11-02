@@ -105,6 +105,8 @@ public:
     DFileService::FileOperatorTypes fileOperatorWhitelist;
     DFileService::FileOperatorTypes fileOperatorBlacklist;
 
+    QSet<DFileView::SelectionMode> enabledSelectionModes;
+
     FileViewHelper *fileViewHelper;
 
     Q_DECLARE_PUBLIC(DFileView)
@@ -116,6 +118,10 @@ DFileView::DFileView(QWidget *parent)
 {
     D_THEME_INIT_WIDGET(DFileView);
     D_D(DFileView);
+
+    d_ptr->enabledSelectionModes << NoSelection << SingleSelection
+                                 << MultiSelection << ExtendedSelection
+                                 << ContiguousSelection;
 
     initUI();
     initDelegate();
@@ -643,6 +649,20 @@ void DFileView::setNameFilters(const QStringList &nameFilters)
 QDir::Filters DFileView::filters() const
 {
     return model()->filters();
+}
+
+void DFileView::setEnabledSelectionModes(const QSet<QAbstractItemView::SelectionMode> &list)
+{
+    Q_D(DFileView);
+
+    d->enabledSelectionModes = list;
+}
+
+QSet<QAbstractItemView::SelectionMode> DFileView::enabledSelectionModes() const
+{
+    Q_D(const DFileView);
+
+    return d->enabledSelectionModes;
 }
 
 void DFileView::setFilters(QDir::Filters filters)
@@ -1603,12 +1623,13 @@ bool DFileView::setRootUrl(const DUrl &url)
     }
     emit rootUrlChanged(fileUrl);
 
-    const QSet<DAbstractFileInfo::SelectionMode> supportSelectionModes = info->supportSelectionModes();
+    const QList<DAbstractFileInfo::SelectionMode> &supportSelectionModes = info->supportSelectionModes();
 
-    if (!supportSelectionModes.contains((DAbstractFileInfo::SelectionMode)selectionMode())) {
-
-        if (!supportSelectionModes.isEmpty())
-            setSelectionMode((QAbstractItemView::SelectionMode)supportSelectionModes.toList().first());
+    for (DAbstractFileInfo::SelectionMode mode : supportSelectionModes) {
+        if (d->enabledSelectionModes.contains((SelectionMode)mode)) {
+            setSelectionMode((SelectionMode)mode);
+            break;
+        }
     }
 
     const DUrl &defaultSelectUrl = DUrl(QUrlQuery(fileUrl.query()).queryItemValue("selectUrl"));

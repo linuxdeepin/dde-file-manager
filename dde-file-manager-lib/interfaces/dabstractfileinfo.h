@@ -161,7 +161,7 @@ public:
     /// return DFileView::ViewMode flags
     virtual quint8 supportViewMode() const;
     /// support selection mode
-    virtual QSet<SelectionMode> supportSelectionModes() const;
+    virtual QList<SelectionMode> supportSelectionModes() const;
 
     virtual QList<int> userColumnRoles() const;
     virtual QVariant userColumnDisplayName(int userColumnRole) const;

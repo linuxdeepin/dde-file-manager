@@ -109,6 +109,9 @@ public:
     QStringList nameFilters() const;
     QDir::Filters filters() const;
 
+    void setEnabledSelectionModes(const QSet<SelectionMode> &list);
+    QSet<SelectionMode> enabledSelectionModes() const;
+
 public slots:
     bool cd(const DUrl &url);
     bool cdUp();
@@ -204,5 +207,7 @@ private:
 
     Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_ptr), DFileView)
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(DFileView::ViewModes)
 
 #endif // DFILEVIEW_H

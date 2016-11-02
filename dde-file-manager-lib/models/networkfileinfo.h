@@ -32,7 +32,7 @@ public:
 
     QVector<MenuAction> menuActionList(MenuType type) const Q_DECL_OVERRIDE;
 
-    QSet<SelectionMode> supportSelectionModes() const Q_DECL_OVERRIDE;
+    QList<SelectionMode> supportSelectionModes() const Q_DECL_OVERRIDE;
     Qt::ItemFlags fileItemDisableFlags() const Q_DECL_OVERRIDE;
 
 private:

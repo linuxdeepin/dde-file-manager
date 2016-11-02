@@ -270,10 +270,10 @@ void DFileDialog::setFileMode(QFileDialog::FileMode mode)
 
     switch (static_cast<int>(mode)) {
     case QFileDialog::ExistingFiles:
-        getFileView()->setSelectionMode(QAbstractItemView::ExtendedSelection);
+        getFileView()->setEnabledSelectionModes(QSet<DFileView::SelectionMode>() << QAbstractItemView::ExtendedSelection);
         break;
     default:
-        getFileView()->setSelectionMode(QAbstractItemView::SingleSelection);
+        getFileView()->setEnabledSelectionModes(QSet<DFileView::SelectionMode>() << QAbstractItemView::SingleSelection);
         break;
     }
 }
