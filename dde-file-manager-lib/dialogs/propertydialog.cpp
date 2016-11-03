@@ -190,8 +190,8 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget* p
     QString basicInfo = tr("Basic info");
     QString shareManager = tr("Share manager");
     initUI();
-    UDiskDeviceInfo* diskInfo = deviceListener->getDevice(m_url.query());
-    if (diskInfo == NULL){
+    UDiskDeviceInfoPointer diskInfo = deviceListener->getDevice(m_url.query());
+    if (!diskInfo){
         diskInfo = deviceListener->getDeviceByPath(m_url.path());
     }
     if (diskInfo){
@@ -614,7 +614,7 @@ QFrame *PropertyDialog::createLocalDeviceInfoWidget(const DUrl &url)
     return widget;
 }
 
-QFrame *PropertyDialog::createDeviceInfoWidget(UDiskDeviceInfo *info)
+QFrame *PropertyDialog::createDeviceInfoWidget(UDiskDeviceInfoPointer info)
 {
     QFrame *widget = new QFrame;
     SectionKeyLabel* typeSectionLabel = new SectionKeyLabel(QObject::tr("Device type"));

@@ -418,7 +418,7 @@ void DialogManager::showDiskErrorDialog(const QString & id, const QString & erro
 {
     Q_UNUSED(errorText)
 
-    UDiskDeviceInfo* info = deviceListener->getDevice(id);
+    UDiskDeviceInfoPointer info = deviceListener->getDevice(id);
     if (info){
         DDialog d;
         d.setTitle(tr("Disk file is being used, can not unmount now"));

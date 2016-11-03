@@ -115,7 +115,7 @@ bool DFileInfo::isCanShare() const
             return true;
         }
 
-        UDiskDeviceInfo* info = deviceListener->getDeviceByFilePath(filePath());
+        UDiskDeviceInfoPointer info = deviceListener->getDeviceByFilePath(filePath());
 
         if (info) {
             if (info->getMediaType() != UDiskDeviceInfo::unknown && info->getMediaType() !=UDiskDeviceInfo::network)
@@ -322,7 +322,14 @@ QString DFileInfo::fileDisplayName() const
         else
             return displayName;
 
-    } else {
+    }else if (deviceListener->isDeviceFolder(filePath())){
+        UDiskDeviceInfoPointer deviceInfo = deviceListener->getDeviceByPath(filePath());
+        if (!deviceInfo->fileDisplayName().isEmpty())
+            return deviceInfo->fileDisplayName();
+        else
+            return fileName();
+    }
+    else {
         return fileName();
     }
 }

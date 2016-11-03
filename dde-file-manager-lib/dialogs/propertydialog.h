@@ -3,6 +3,7 @@
 
 #include "basedialog.h"
 #include "dabstractfileinfo.h"
+#include "deviceinfo/udiskdeviceinfo.h"
 #include "dfmevent.h"
 #include <QLabel>
 #include <QCloseEvent>
@@ -144,7 +145,7 @@ private:
     QFrame *createBasicInfoWidget(const DAbstractFileInfoPointer &info);
     ShareInfoFrame* createShareInfoFrame(const DAbstractFileInfoPointer &info);
     QFrame *createLocalDeviceInfoWidget(const DUrl& url);
-    QFrame *createDeviceInfoWidget(UDiskDeviceInfo* info);
+    QFrame *createDeviceInfoWidget(UDiskDeviceInfoPointer info);
 
     QListWidget *createOpenWithListWidget(const DAbstractFileInfoPointer &info);
     QFrame *createAuthorityManagermentWidget(const DAbstractFileInfoPointer &info);

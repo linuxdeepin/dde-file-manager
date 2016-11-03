@@ -40,6 +40,7 @@
 
 QPair<DUrl, int> AppController::selectionAndRenameFile;
 
+
 class AppControllerPrivate : public AppController {};
 Q_GLOBAL_STATIC(AppControllerPrivate, acGlobal);
 
@@ -106,6 +107,25 @@ void AppController::actionOpenInNewWindow(const DFMEvent &event)
 void AppController::actionOpenInNewTab(const DFMEvent &event)
 {
     emit fileSignalManager->requestOpenInNewTab(event);
+}
+
+void AppController::actionOpenDiskInNewTab(const DFMEvent &event)
+{
+    const DUrl& fileUrl = event.fileUrl();
+    if (!QStorageInfo(fileUrl.toLocalFile()).isValid()){
+        m_fmEvent = event;
+        actionMount(event);
+        setEventKey(OpenNewTab);
+        deviceListener->addSubscriber(this);
+    }else{
+        emit fileSignalManager->requestOpenInNewTab(event);
+    }
+}
+
+void AppController::asycOpenDiskInNewTab(const QString &path)
+{
+    m_fmEvent << DUrl(path);
+    actionOpenDiskInNewTab(m_fmEvent);
 }
 
 void AppController::actionOpenDiskInNewWindow(const DFMEvent &event)
@@ -545,6 +565,9 @@ void AppController::doSubscriberAction(const QString &path)
     case OpenNewWindow:
         asycOpenDiskInNewWindow(path);
         break;
+    case OpenNewTab:
+        asycOpenDiskInNewTab(path);
+        break;
     default:
         break;
     }
@@ -559,6 +582,7 @@ AppController::AppController(QObject *parent) : QObject(parent)
     DFileService::dRegisterUrlHandler<NetworkController>(NETWORK_SCHEME, "");
     DFileService::dRegisterUrlHandler<NetworkController>(SMB_SCHEME, "");
     DFileService::dRegisterUrlHandler<ShareControler>(USERSHARE_SCHEME, "");
+    DFileService::dRegisterUrlHandler<UDiskListener>(COMPUTER_SCHEME, "");
     createGVfSManager();
     createUserShareManager();
     initConnect();

@@ -9,7 +9,8 @@
 
 #include "widgets/singleton.h"
 
-UDiskListener::UDiskListener()
+UDiskListener::UDiskListener(QObject *parent):
+    DAbstractFileController(parent)
 {
 //    readFstab();
     m_diskMountInterface = new DiskMountInterface(DiskMountInterface::staticServerPath(),
@@ -22,25 +23,24 @@ UDiskListener::UDiskListener()
     loadCustomVolumeLetters();
 }
 
-UDiskDeviceInfo *UDiskListener::getDevice(const QString &id)
+UDiskDeviceInfoPointer UDiskListener::getDevice(const QString &id)
 {
     if (m_map.contains(id))
         return m_map[id];
     else
-        return NULL;
+        return UDiskDeviceInfoPointer();
 }
 
-void UDiskListener::addDevice(UDiskDeviceInfo *device)
+void UDiskListener::addDevice(UDiskDeviceInfoPointer device)
 {
     m_map.insert(device->getDiskInfo().ID, device);
     m_list.append(device);
 }
 
-void UDiskListener::removeDevice(UDiskDeviceInfo *device)
+void UDiskListener::removeDevice(UDiskDeviceInfoPointer device)
 {
     m_list.removeOne(device);
     m_map.remove(device->getDiskInfo().ID);
-    delete device;
 }
 
 void UDiskListener::update()
@@ -63,7 +63,7 @@ bool UDiskListener::isSystemDisk(const QString &path) const
         return false;
 }
 
-UDiskDeviceInfo *UDiskListener::hasDeviceInfo(const QString &id)
+UDiskDeviceInfoPointer UDiskListener::hasDeviceInfo(const QString &id)
 {
     return m_map.value(id);
 }
@@ -82,12 +82,12 @@ void UDiskListener::removeSubscriber(Subscriber *sub)
     }
 }
 
-QMap<QString, UDiskDeviceInfo *> UDiskListener::getAllDeviceInfos()
+QMap<QString, UDiskDeviceInfoPointer> UDiskListener::getAllDeviceInfos()
 {
     return m_map;
 }
 
-QList<UDiskDeviceInfo *> UDiskListener::getDeviceList()
+QList<UDiskDeviceInfoPointer> UDiskListener::getDeviceList()
 {
     return m_list;
 }
@@ -96,7 +96,7 @@ bool UDiskListener::isDeviceFolder(const QString &path) const
 {
     for (int i = 0; i < m_list.size(); i++)
     {
-        UDiskDeviceInfo * info = m_list.at(i);
+       UDiskDeviceInfoPointer info = m_list.at(i);
         if (info->getMountPointUrl().toLocalFile() == path){
             return true;
         }
@@ -108,8 +108,8 @@ bool UDiskListener::isInDeviceFolder(const QString &path) const
 {
     for (int i = 0; i < m_list.size(); i++)
     {
-        UDiskDeviceInfo * info = m_list.at(i);
-        if (!info->getMountPointUrl().isEmpty()){
+        UDiskDeviceInfoPointer info = m_list.at(i);
+        if (info && !info->getMountPointUrl().isEmpty()){
             if (path.startsWith(info->getMountPointUrl().toLocalFile())){
                 return true;
             }
@@ -118,12 +118,12 @@ bool UDiskListener::isInDeviceFolder(const QString &path) const
     return false;
 }
 
-UDiskDeviceInfo *UDiskListener::getDeviceByPath(const QString &path)
+UDiskDeviceInfoPointer UDiskListener::getDeviceByPath(const QString &path)
 {
     for (int i = 0; i < m_list.size(); i++)
     {
-        UDiskDeviceInfo * info = m_list.at(i);
-        if (!info->getMountPointUrl().isEmpty()){
+        UDiskDeviceInfoPointer info = m_list.at(i);
+        if (info && !info->getMountPointUrl().isEmpty()){
             bool flag = (DUrl::fromLocalFile(path) == info->getMountPointUrl());
 
             if (path.startsWith(info->getMountPointUrl().toLocalFile()) && flag){
@@ -131,15 +131,15 @@ UDiskDeviceInfo *UDiskListener::getDeviceByPath(const QString &path)
             }
         }
     }
-    return NULL;
+    return UDiskDeviceInfoPointer();
 }
 
-UDiskDeviceInfo *UDiskListener::getDeviceByFilePath(const QString &path)
+UDiskDeviceInfoPointer UDiskListener::getDeviceByFilePath(const QString &path)
 {
     for (int i = 0; i < m_list.size(); i++)
     {
-        UDiskDeviceInfo * info = m_list.at(i);
-        if (!info->getMountPointUrl().isEmpty()){
+        UDiskDeviceInfoPointer info = m_list.at(i);
+        if (info && !info->getMountPointUrl().isEmpty()){
             bool flag = (DUrl::fromLocalFile(path) == info->getMountPointUrl());
 
             if (path.startsWith(info->getMountPointUrl().toLocalFile()) && !flag){
@@ -147,15 +147,15 @@ UDiskDeviceInfo *UDiskListener::getDeviceByFilePath(const QString &path)
             }
         }
     }
-    return NULL;
+    return UDiskDeviceInfoPointer();
 }
 
 UDiskDeviceInfo::MediaType UDiskListener::getDeviceMediaType(const QString &path)
 {
     for (int i = 0; i < m_list.size(); i++)
     {
-        UDiskDeviceInfo * info = m_list.at(i);
-        if (info->getMountPointUrl().toLocalFile() == path){
+        UDiskDeviceInfoPointer info = m_list.at(i);
+        if (info && info->getMountPointUrl().toLocalFile() == path){
             return info->getMediaType();
         }
     }
@@ -238,7 +238,7 @@ void UDiskListener::asyncRequestDiskInfosFinihsed(QDBusPendingCallWatcher *call)
                 info.Type = "dvd";
             }
 
-            UDiskDeviceInfo *device;
+            UDiskDeviceInfoPointer device;
             if(m_map.value(info.ID))
             {
                 device = m_map.value(info.ID);
@@ -262,7 +262,7 @@ void UDiskListener::changed(int in0, const QString &in1)
 {
     qDebug() << in0 << in1;
 
-    UDiskDeviceInfo *device = hasDeviceInfo(in1);
+    UDiskDeviceInfoPointer device = hasDeviceInfo(in1);
     DiskInfo info = m_diskMountInterface->QueryDisk(in1);
 
     if (info.Icon == "drive-optical" && info.Name.startsWith("CD")){
@@ -270,7 +270,7 @@ void UDiskListener::changed(int in0, const QString &in1)
     }
 
     qDebug() << device << info;
-    if(device == NULL && !info.ID.isEmpty())
+    if(!device && !info.ID.isEmpty())
     {
         device = new UDiskDeviceInfo(info);
         addDevice(device);
@@ -305,7 +305,7 @@ void UDiskListener::forceUnmount(const QString &id)
 {
     qDebug() << id;
     if (m_map.contains(id)){
-        UDiskDeviceInfo *device = m_map.value(id);
+        UDiskDeviceInfoPointer device = m_map.value(id);
         QStringList args;
         args << "-f" ;
         if (device->canEject()){
@@ -355,7 +355,7 @@ const QList<DAbstractFileInfoPointer> UDiskListener::getChildren(const DUrl &fil
 
     for (int i = 0; i < m_list.size(); i++)
     {
-        UDiskDeviceInfo * info = m_list.at(i);
+        UDiskDeviceInfoPointer info = m_list.at(i);
         DAbstractFileInfoPointer fileInfo(new UDiskDeviceInfo(info));
         infolist.append(fileInfo);
     }
@@ -375,7 +375,7 @@ const DAbstractFileInfoPointer UDiskListener::createFileInfo(const DUrl &fileUrl
 
     for (int i = 0; i < m_list.size(); i++)
     {
-        UDiskDeviceInfo * info = m_list.at(i);
+        UDiskDeviceInfoPointer info = m_list.at(i);
 
         if(info->getMountPointUrl().toLocalFile() == path)
         {

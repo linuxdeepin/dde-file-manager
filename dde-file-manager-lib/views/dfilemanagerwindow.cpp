@@ -186,22 +186,15 @@ void DFileManagerWindow::onFileDeleted(const DUrl &url)
 QString DFileManagerWindow::getDisplayNameByUrl(const DUrl &url) const
 {
     QString urlDisplayName;
-    UDiskDeviceInfo* info = deviceListener->getDeviceByPath(url.toLocalFile());
+    if(url.isComputerFile()){
+        if(systemPathManager->isSystemPath(url.toString()))
+            urlDisplayName = systemPathManager->getSystemPathDisplayNameByPath(url.toString());
+    } else{
+        const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
 
-    if (info) {
-        urlDisplayName = info->fileDisplayName();
-    } else {
-        if(url.isComputerFile()){
-            if(systemPathManager->isSystemPath(url.toString()))
-                urlDisplayName = systemPathManager->getSystemPathDisplayNameByPath(url.toString());
-        } else{
-            const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
-
-            if (fileInfo)
-                urlDisplayName = fileInfo->fileDisplayName();
-        }
+        if (fileInfo)
+            urlDisplayName = fileInfo->fileDisplayName();
     }
-
     return urlDisplayName;
 }
 

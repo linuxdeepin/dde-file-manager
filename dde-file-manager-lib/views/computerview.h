@@ -46,8 +46,8 @@ public:
     DAbstractFileInfoPointer info() const;
     void setInfo(const DAbstractFileInfoPointer &info);
 
-    UDiskDeviceInfo *deviceInfo() const;
-    void setDeviceInfo(UDiskDeviceInfo *deviceInfo);
+    UDiskDeviceInfoPointer deviceInfo() const;
+    void setDeviceInfo(UDiskDeviceInfoPointer deviceInfo);
 
     int windowId();
 
@@ -77,7 +77,7 @@ protected:
 private:
     void setIconSizeState(int iconSize, QIcon::Mode mode = QIcon::Normal);
     DAbstractFileInfoPointer m_info;
-    UDiskDeviceInfo* m_deviceInfo;
+    UDiskDeviceInfoPointer m_deviceInfo;
     int m_iconSize = 64;
     bool m_checked = false;
     QString m_name;
@@ -110,10 +110,10 @@ public:
 signals:
 
 public slots:
-    void volumeAdded(UDiskDeviceInfo * device);
-    void volumeRemoved(UDiskDeviceInfo * device);
-    void mountAdded(UDiskDeviceInfo * device);
-    void mountRemoved(UDiskDeviceInfo * device);
+    void volumeAdded(UDiskDeviceInfoPointer device);
+    void volumeRemoved(UDiskDeviceInfoPointer device);
+    void mountAdded(UDiskDeviceInfoPointer device);
+    void mountRemoved(UDiskDeviceInfoPointer device);
     void enlargeIcon();
     void shrinkIcon();
     void resizeItemBySizeIndex(int index);
