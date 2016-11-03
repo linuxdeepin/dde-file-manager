@@ -40,8 +40,13 @@ void TrashPropertyDialog::initUI()
     m_nameLable = new QLabel(tr("Trash"), this);
     m_nameLable->setAlignment(Qt::AlignCenter);
 
+    const int fCount = fileInfo->filesCount();
+    QString itemStr = tr("item");
+    if(fCount > 1)
+        itemStr = tr("items");
+
     DSeparatorHorizontal* hLine = new DSeparatorHorizontal(this);
-    m_countLabel = new QLabel(tr("Contains %1").arg(QString::number(fileInfo->filesCount())), this);
+    m_countLabel = new QLabel(tr("Contains %1 %2").arg(QString::number(fCount),itemStr), this);
     m_sizeLabel = new QLabel(this);
 
     QHBoxLayout* infoLayout = new QHBoxLayout;
