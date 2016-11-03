@@ -34,6 +34,7 @@ void DStatusBar::initUI()
     m_selectFolders = tr("%1 folders selected(contains %2)");
     m_selectOnlyOneFile = tr("%1 file selected(%2)");
     m_selectFiles = tr("%1 files selected(%2)");
+    m_selectedNetworkOnlyOneFolder = tr("%1 folder selected");
     m_layout = new QHBoxLayout(this);
 
     QStringList seq;
@@ -260,15 +261,20 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
                 DUrl url = event.fileUrlList().first();
                 const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
 
-                if (fileInfo->isFile()) {
-                    m_label->setText(m_selectOnlyOneFile.arg(QString::number(number), FileUtils::formatSize(fileInfo->size())));
-                } else if (fileInfo->isDir()) {
-                    if (fileInfo->filesCount() <= 1) {
-                        m_label->setText(m_selectOnlyOneFolder.arg(QString::number(number),
-                                                                   m_OnlyOneItemCounted.arg(QString::number(fileInfo->filesCount()))));
-                    } else {
-                        m_label->setText(m_selectOnlyOneFolder.arg(QString::number(number),
-                                                                   m_counted.arg(QString::number(fileInfo->filesCount()))));
+                //check network folder at first
+                if(event.fileUrlList().first().isSMBFile()){
+                    m_label->setText(m_selectedNetworkOnlyOneFolder.arg(QString::number(number)));
+                } else{
+                    if (fileInfo->isFile()) {
+                        m_label->setText(m_selectOnlyOneFile.arg(QString::number(number), FileUtils::formatSize(fileInfo->size())));
+                    }else if (fileInfo->isDir()) {
+                        if (fileInfo->filesCount() <= 1) {
+                            m_label->setText(m_selectOnlyOneFolder.arg(QString::number(number),
+                                                                       m_OnlyOneItemCounted.arg(QString::number(fileInfo->filesCount()))));
+                        } else {
+                            m_label->setText(m_selectOnlyOneFolder.arg(QString::number(number),
+                                                                       m_counted.arg(QString::number(fileInfo->filesCount()))));
+                        }
                     }
                 }
             }
