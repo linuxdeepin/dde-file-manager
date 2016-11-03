@@ -9,6 +9,7 @@
 
 #include <QPropertyAnimation>
 #include <QDebug>
+#include <QDrag>
 
 DWIDGET_USE_NAMESPACE
 
@@ -269,7 +270,7 @@ void Tab::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             update();
             emit aboutToNewWindow(tabIndex());
             emit draggingFinished();
-            m_dragWidget = new DDragWidget((QObject*)event->widget());
+            m_dragObject = new QDrag(this);
             QMimeData *mimeData = new QMimeData;
             int radius = 20;
 
@@ -279,10 +280,11 @@ void Tab::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
             pa.drawPixmap(radius, radius, pixmap);
 
-            m_dragWidget->setPixmap(QPixmap::fromImage(image));
-            m_dragWidget->setMimeData(mimeData);
-            m_dragWidget->setHotSpot(QPoint(150+radius, 12+radius));
-            m_dragWidget->startDrag();
+            m_dragObject->setPixmap(QPixmap::fromImage(image));
+            m_dragObject->setMimeData(mimeData);
+            m_dragObject->setHotSpot(QPoint(150+radius, 12+radius));
+            m_dragObject->exec();
+            m_dragObject->deleteLater();
             m_pressed = false;
 
             emit requestNewWindow(DUrl(tabData().toJsonObject().value("url").toString()));
@@ -327,9 +329,7 @@ void Tab::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
         m_dragOutSide = false;
         m_isDragging = false;
-        if(m_dragWidget){
-            m_dragWidget = NULL;
-        }        return;
+        return;
     }
 
     emit clicked();
