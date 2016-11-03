@@ -143,7 +143,10 @@ void AppController::actionOpenDiskInNewWindow(const DFMEvent &event)
 
 void AppController::asycOpenDiskInNewWindow(const QString &path)
 {
+    DUrlList urls;
+    urls << DUrl(path);
     m_fmEvent << DUrl(path);
+    m_fmEvent << urls;
     actionOpenInNewWindow(m_fmEvent);
 }
 
