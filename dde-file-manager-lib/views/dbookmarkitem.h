@@ -13,6 +13,7 @@
 #include <QGraphicsTextItem>
 
 #include "durl.h"
+#include "deviceinfo/udiskdeviceinfo.h"
 
 #define MARGIN_IMAGE_BOUND 5
 
@@ -30,10 +31,10 @@ class DBookmarkItem : public QGraphicsWidget
 public:
     DBookmarkItem();
 
-    DBookmarkItem(UDiskDeviceInfo * deviceInfo);
+    DBookmarkItem(UDiskDeviceInfoPointer deviceInfo);
 
     DBookmarkItem(BookMark * bookmark);
-    void setDeviceInfo(UDiskDeviceInfo * deviceInfo);
+    void setDeviceInfo(UDiskDeviceInfoPointer deviceInfo);
     QRectF boundingRect() const;
     void setTightMode(bool v);
     bool isTightModel();
@@ -131,7 +132,7 @@ private:
     QLineEdit * m_lineEdit;
     DEditorWidgetMenu* m_eidtMenu;
     QGraphicsProxyWidget * m_widget = NULL;
-    UDiskDeviceInfo * m_deviceInfo = NULL;
+    UDiskDeviceInfoPointer m_deviceInfo;
     DBookmarkItemGroup * m_group = NULL;
 
     DBookmarkMountedIndicatorItem* m_mountBookmarkItem = NULL;

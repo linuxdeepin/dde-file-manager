@@ -15,7 +15,7 @@ UDiskDeviceInfo::UDiskDeviceInfo()
 
 }
 
-UDiskDeviceInfo::UDiskDeviceInfo(UDiskDeviceInfo *info)
+UDiskDeviceInfo::UDiskDeviceInfo(UDiskDeviceInfoPointer info)
     : UDiskDeviceInfo(info->getDiskInfo())
 {
 
@@ -44,7 +44,7 @@ UDiskDeviceInfo::~UDiskDeviceInfo()
 
 }
 
-void UDiskDeviceInfo::setDiskInfo(const DiskInfo &diskInfo)
+void UDiskDeviceInfo::setDiskInfo(DiskInfo diskInfo)
 {
     m_diskInfo = diskInfo;
     DUrl url = getMountPointUrl();
@@ -88,7 +88,10 @@ QString UDiskDeviceInfo::getMountPoint() const
 
 DUrl UDiskDeviceInfo::getMountPointUrl()
 {
-    return getMountPointUrl(m_diskInfo);
+    if (!m_diskInfo.ID.isEmpty())
+        return getMountPointUrl(m_diskInfo);
+    else
+        return DUrl();
 }
 
 DUrl UDiskDeviceInfo::getMountPointUrl(DiskInfo &info)
@@ -322,7 +325,7 @@ QVector<MenuAction> UDiskDeviceInfo::menuActionList(DAbstractFileInfo::MenuType 
 
     actionKeys << MenuAction::OpenDisk
                << MenuAction::OpenDiskInNewWindow
-               << MenuAction::OpenInNewTab
+               << MenuAction::OpenDiskInNewTab
                << MenuAction::Separator;
 
     if(m_diskInfo.CanEject){
@@ -356,6 +359,6 @@ bool UDiskDeviceInfo::exists() const
     if (fileUrl().isComputerFile())
         return true;
 
-    return false;
+    return true;
 }
 

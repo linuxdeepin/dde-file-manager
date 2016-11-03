@@ -94,6 +94,7 @@ public:
         OpenInNewWindow,
         OpenInNewTab,
         OpenDiskInNewWindow,
+        OpenDiskInNewTab,
         OpenAsAdmin,
         OpenWith,
         OpenWithCustom,

@@ -308,7 +308,7 @@ void DLeftSideBar::loadDevices()
     if (deviceListener->getAllDeviceInfos().count() == 0){
         deviceListener->update();
     }else{
-        foreach (UDiskDeviceInfo* device, deviceListener->getDeviceList()) {
+        foreach (UDiskDeviceInfoPointer device, deviceListener->getDeviceList()) {
             m_scene->mountAdded(device);
         }
     }

@@ -90,12 +90,12 @@ void ComputerViewItem::setInfo(const DAbstractFileInfoPointer &info)
 }
 
 
-UDiskDeviceInfo *ComputerViewItem::deviceInfo() const
+UDiskDeviceInfoPointer ComputerViewItem::deviceInfo() const
 {
     return m_deviceInfo;
 }
 
-void ComputerViewItem::setDeviceInfo(UDiskDeviceInfo *deviceInfo)
+void ComputerViewItem::setDeviceInfo(UDiskDeviceInfoPointer deviceInfo)
 {
     m_deviceInfo = deviceInfo;
 }
@@ -382,10 +382,10 @@ void ComputerView::loadNativeItems()
     info.Total = 0;
     info.Used = 0;
     info.MountPointUrl = DUrl::fromLocalFile("/");
-    UDiskDeviceInfo* device = new UDiskDeviceInfo(info);
+    UDiskDeviceInfoPointer device(new UDiskDeviceInfo(info));
 
     mountAdded(device);
-    foreach (UDiskDeviceInfo* device, deviceListener->getDeviceList()) {
+    foreach (UDiskDeviceInfoPointer device, deviceListener->getDeviceList()) {
         mountAdded(device);
     }
 }
@@ -413,7 +413,7 @@ void ComputerView::loadCustomItemsByNameUrl(const QString &id, const QString &ur
     info.Used = 0;
     info.MountPointUrl = DUrl::fromLocalFile(url);
     info.isNativeCustom = true;
-    UDiskDeviceInfo* device = new UDiskDeviceInfo(info);
+    UDiskDeviceInfoPointer device(new UDiskDeviceInfo(info));
     mountAdded(device);
 }
 
@@ -430,12 +430,12 @@ QString ComputerView::getDiskConfPath()
     return QString("%1/%2").arg(StandardPath::getConfigPath(), "disk.conf");
 }
 
-void ComputerView::volumeAdded(UDiskDeviceInfo *device)
+void ComputerView::volumeAdded(UDiskDeviceInfoPointer device)
 {
     Q_UNUSED(device)
 }
 
-void ComputerView::volumeRemoved(UDiskDeviceInfo *device)
+void ComputerView::volumeRemoved(UDiskDeviceInfoPointer device)
 {
     if (m_nativeItems.contains(device->getId())){
         ComputerViewItem* item = m_nativeItems.value(device->getId());
@@ -453,7 +453,7 @@ void ComputerView::volumeRemoved(UDiskDeviceInfo *device)
     }
 }
 
-void ComputerView::mountAdded(UDiskDeviceInfo *device)
+void ComputerView::mountAdded(UDiskDeviceInfoPointer device)
 {
     if (m_nativeItems.contains(device->getId())){
         m_nativeItems.value(device->getId())->setDeviceInfo(device);
@@ -482,7 +482,7 @@ void ComputerView::mountAdded(UDiskDeviceInfo *device)
     }
 }
 
-void ComputerView::mountRemoved(UDiskDeviceInfo *device)
+void ComputerView::mountRemoved(UDiskDeviceInfoPointer device)
 {
     Q_UNUSED(device);
 }

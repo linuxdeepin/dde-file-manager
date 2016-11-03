@@ -12,8 +12,6 @@
 #include "app/define.h"
 #include "dfmevent.h"
 #include "app/filesignalmanager.h"
-
-#include "deviceinfo/udiskdeviceinfo.h"
 #include "deviceinfo/udisklistener.h"
 
 #include "widgets/singleton.h"
@@ -529,12 +527,12 @@ void DBookmarkScene::doMoveBookmark(int from, int to, const DFMEvent &event)
 }
 
 
-void DBookmarkScene::volumeAdded(UDiskDeviceInfo *device)
+void DBookmarkScene::volumeAdded(UDiskDeviceInfoPointer device)
 {
     Q_UNUSED(device);
 }
 
-void DBookmarkScene::volumeRemoved(UDiskDeviceInfo *device)
+void DBookmarkScene::volumeRemoved(UDiskDeviceInfoPointer device)
 {
     DBookmarkItem * item = m_diskItems.value(device->getDiskInfo().ID);
     if(item)
@@ -552,7 +550,7 @@ void DBookmarkScene::volumeRemoved(UDiskDeviceInfo *device)
     }
 }
 
-void DBookmarkScene::mountAdded(UDiskDeviceInfo *device)
+void DBookmarkScene::mountAdded(UDiskDeviceInfoPointer device)
 {
     DBookmarkItem * item = m_diskItems.value(device->getDiskInfo().ID);
     if(item)
@@ -596,7 +594,7 @@ void DBookmarkScene::mountAdded(UDiskDeviceInfo *device)
     }
 }
 
-void DBookmarkScene::mountRemoved(UDiskDeviceInfo *device)
+void DBookmarkScene::mountRemoved(UDiskDeviceInfoPointer device)
 {
     DBookmarkItem * item = m_diskItems.value(device->getDiskInfo().ID);
     if(item)

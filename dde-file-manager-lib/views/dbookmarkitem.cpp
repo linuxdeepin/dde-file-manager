@@ -33,9 +33,6 @@
 #include "dfileservices.h"
 
 #include "dialogs/dialogmanager.h"
-
-#include "deviceinfo/udiskdeviceinfo.h"
-
 #include "widgets/singleton.h"
 
 DWIDGET_USE_NAMESPACE
@@ -46,7 +43,7 @@ DBookmarkItem::DBookmarkItem()
     m_isDefault = true;
 }
 
-DBookmarkItem::DBookmarkItem(UDiskDeviceInfo * deviceInfo)
+DBookmarkItem::DBookmarkItem(UDiskDeviceInfoPointer deviceInfo)
 {
     init();
     setDeviceInfo(deviceInfo);
@@ -59,7 +56,7 @@ DBookmarkItem::DBookmarkItem(BookMark *bookmark)
     m_textContent = bookmark->getName();
 }
 
-void DBookmarkItem::setDeviceInfo(UDiskDeviceInfo *deviceInfo)
+void DBookmarkItem::setDeviceInfo(UDiskDeviceInfoPointer deviceInfo)
 {
     setHighlightDiskBackgroundEnable(true);
     m_isDisk = true;

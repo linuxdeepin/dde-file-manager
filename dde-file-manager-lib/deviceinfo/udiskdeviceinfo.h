@@ -9,6 +9,9 @@
 #include <QDBusArgument>
 #include "dbusinterface/dbustype.h"
 
+class UDiskDeviceInfo;
+typedef QExplicitlySharedDataPointer<UDiskDeviceInfo> UDiskDeviceInfoPointer;
+
 class UDiskDeviceInfo : public DFileInfo
 {
 public:
@@ -25,12 +28,12 @@ public:
     };
 
     UDiskDeviceInfo();
-    UDiskDeviceInfo(UDiskDeviceInfo * info);
+    UDiskDeviceInfo(UDiskDeviceInfoPointer info);
     UDiskDeviceInfo(const DUrl &url);
     UDiskDeviceInfo(const QString &url);
     UDiskDeviceInfo(DiskInfo diskInfo);
     ~UDiskDeviceInfo();
-    void setDiskInfo(const DiskInfo &diskInfo);
+    void setDiskInfo(DiskInfo diskInfo);
     DiskInfo getDiskInfo() const;
     QString getId() const;
     QString getName() const;

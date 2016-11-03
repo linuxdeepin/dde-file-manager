@@ -4,6 +4,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsWidget>
 #include <QGraphicsLinearLayout>
+#include "deviceinfo/udiskdeviceinfo.h"
 #include "dfmevent.h"
 
 #define BOOKMARK_ITEM_HEIGHT 30
@@ -77,10 +78,10 @@ public slots:
     void doBookmarkAdded(const QString &name, const DFMEvent &event);
     void doMoveBookmark(int from, int to, const DFMEvent &event);
 
-    void volumeAdded(UDiskDeviceInfo * device);
-    void volumeRemoved(UDiskDeviceInfo * device);
-    void mountAdded(UDiskDeviceInfo * device);
-    void mountRemoved(UDiskDeviceInfo * device);
+    void volumeAdded(UDiskDeviceInfoPointer device);
+    void volumeRemoved(UDiskDeviceInfoPointer device);
+    void mountAdded(UDiskDeviceInfoPointer device);
+    void mountRemoved(UDiskDeviceInfoPointer device);
 
     void backHome();
 

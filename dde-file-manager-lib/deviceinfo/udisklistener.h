@@ -28,26 +28,27 @@ class Subscriber;
 class UDiskListener : public DAbstractFileController
 {
     Q_OBJECT
+
 public:
-    UDiskListener();
-    UDiskDeviceInfo * getDevice(const QString &id);
-    void addDevice(UDiskDeviceInfo * device);
-    void removeDevice(UDiskDeviceInfo * device);
+    explicit UDiskListener(QObject *parent = 0);
+    UDiskDeviceInfoPointer getDevice(const QString &id);
+    void addDevice(UDiskDeviceInfoPointer device);
+    void removeDevice(UDiskDeviceInfoPointer device);
     void update();
     QString lastPart(const QString &path);
     bool isSystemDisk(const QString &path) const;
-    UDiskDeviceInfo * hasDeviceInfo(const QString &id);
+    UDiskDeviceInfoPointer hasDeviceInfo(const QString &id);
 
     void addSubscriber(Subscriber* sub);
     void removeSubscriber(Subscriber* sub);
 
-    QMap<QString, UDiskDeviceInfo *> getAllDeviceInfos();
-    QList<UDiskDeviceInfo *> getDeviceList();
+    QMap<QString, UDiskDeviceInfoPointer> getAllDeviceInfos();
+    QList<UDiskDeviceInfoPointer> getDeviceList();
 
     bool isDeviceFolder(const QString &path) const;
     bool isInDeviceFolder(const QString &path) const;
-    UDiskDeviceInfo * getDeviceByPath(const QString &path);
-    UDiskDeviceInfo * getDeviceByFilePath(const QString &path);
+    UDiskDeviceInfoPointer getDeviceByPath(const QString &path);
+    UDiskDeviceInfoPointer getDeviceByFilePath(const QString &path);
     UDiskDeviceInfo::MediaType getDeviceMediaType(const QString &path);
 
     QString getVolumeConfPath();
@@ -56,10 +57,10 @@ public:
     QMap<QString, QString> getVolumeLetters();
 
 signals:
-    void volumeAdded(UDiskDeviceInfo * device);
-    void volumeRemoved(UDiskDeviceInfo * device);
-    void mountAdded(UDiskDeviceInfo * device);
-    void mountRemoved(UDiskDeviceInfo * device);
+    void volumeAdded(UDiskDeviceInfoPointer device);
+    void volumeRemoved(UDiskDeviceInfoPointer device);
+    void mountAdded(UDiskDeviceInfoPointer device);
+    void mountRemoved(UDiskDeviceInfoPointer device);
     void requestDiskInfosFinihsed();
 
 public slots:
@@ -73,8 +74,8 @@ public slots:
     void forceUnmount(const QString &id);
 private:
     void readFstab();
-    QList<UDiskDeviceInfo *> m_list;
-    QMap<QString, UDiskDeviceInfo *> m_map;
+    QList<UDiskDeviceInfoPointer> m_list;
+    QMap<QString, UDiskDeviceInfoPointer> m_map;
     QMap<QString, QString> m_volumeLetters;
     QList<QString> fstab;
 

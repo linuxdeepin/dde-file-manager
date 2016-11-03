@@ -10,16 +10,16 @@ class  DiskInfo
 {
 
 public:
-    QString ID;
-    QString Name;
-    QString Type;
-    QString Path;
-    QString MountPoint;
-    QString Icon;
-    bool CanUnmount;
-    bool CanEject;
-    qulonglong Used;
-    qulonglong Total;
+    QString ID = "";
+    QString Name = "";
+    QString Type = "";
+    QString Path = "";
+    QString MountPoint = "";
+    QString Icon = "";
+    bool CanUnmount = false;
+    bool CanEject = false;
+    qulonglong Used = 0;
+    qulonglong Total = 0;
 
     DUrl MountPointUrl;
 

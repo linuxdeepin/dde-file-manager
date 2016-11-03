@@ -17,7 +17,8 @@ class AppController : public QObject, public Subscriber
 public:
     enum ActionType {
         Open,
-        OpenNewWindow
+        OpenNewWindow,
+        OpenNewTab
     };
 
     static AppController *instance();
@@ -29,8 +30,10 @@ public slots:
 
     void actionOpenInNewWindow(const DFMEvent& event);
     void actionOpenInNewTab(const DFMEvent& event);
+    void actionOpenDiskInNewTab(const DFMEvent& event);
+    void asycOpenDiskInNewTab(const QString& path);
     void actionOpenDiskInNewWindow(const DFMEvent& event);
-    void asycOpenDiskInNewWindow(const QString& event);
+    void asycOpenDiskInNewWindow(const QString& path);
     void actionOpenAsAdmain(const DFMEvent& event);
 
     void actionOpenWithCustom(const DFMEvent& event);

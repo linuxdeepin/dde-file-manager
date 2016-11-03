@@ -238,6 +238,7 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::OpenInNewTab] = QObject::tr("Open in new tab");
     actionKeys[MenuAction::OpenDisk] = QObject::tr("Open");
     actionKeys[MenuAction::OpenDiskInNewWindow] = QObject::tr("Open in new window");
+    actionKeys[MenuAction::OpenDiskInNewTab] = QObject::tr("Open in new tab");
     actionKeys[MenuAction::OpenAsAdmin] = QObject::tr("Open in new window as admin");
     actionKeys[MenuAction::OpenWith] = QObject::tr("Open with");
     actionKeys[MenuAction::OpenWithCustom] = QObject::tr("Others");

@@ -72,7 +72,7 @@ void DCrumbWidget::addCrumb(const QStringList &list)
                     QIcon(":/icons/images/icons/home_checked_16px.svg"),
                     text, this);
         }else if(isDeviceFolder(text)){
-            UDiskDeviceInfo* info = deviceListener->getDeviceByPath(text);
+            UDiskDeviceInfoPointer info = deviceListener->getDeviceByPath(text);
             if (info->getMediaType() == UDiskDeviceInfo::camera && info->getName() == "iPhone"){
                 button = createDeviceCrumbButtonByType(UDiskDeviceInfo::iphone, text);
             }else{
@@ -376,6 +376,8 @@ void DCrumbWidget::addCrumbs(const DUrl & url)
     QStringList list;
     const QString &path = url.isLocalFile() ? url.toLocalFile() : url.path();
     qDebug() << path << isInHome(path) << isInDevice(path);
+    if (path.isEmpty())
+        return;
     if(isInHome(path))
     {
         QString tmpPath = url.toLocalFile();
@@ -386,7 +388,7 @@ void DCrumbWidget::addCrumbs(const DUrl & url)
     }else if (url == DUrl(FILE_ROOT)){
         list.insert(0, "/");
     }else if(isInDevice(path)){
-        UDiskDeviceInfo* info;
+        UDiskDeviceInfoPointer info;
         if (deviceListener->isDeviceFolder(path)){
             info = deviceListener->getDeviceByPath(path);
         }else{
