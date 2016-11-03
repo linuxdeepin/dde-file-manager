@@ -79,7 +79,7 @@ private:
     bool m_isDragging = false;
     QPointF m_originPos;
     bool m_dragOutSide = false;
-    DDragWidget *m_dragWidget = NULL;
+    QDrag *m_dragObject = NULL;
     bool m_checked = false;
     bool m_borderLeft = false;
 };
