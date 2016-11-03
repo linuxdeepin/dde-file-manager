@@ -322,4 +322,8 @@ void TrashManager::onFileRemove(const QString &filePath) const
     // if path is root , pass this signal
     if (path != "/")
         emit childrenRemoved(DUrl::fromTrashFile(path));
+
+    //make sure that the root path is exist
+    if(filePath == DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath))
+        QDir().home().mkdir(filePath);
 }
