@@ -338,9 +338,8 @@ void ComputerView::initUI()
 
     if (isDiskConfExisted()){
         loadCustomItems();
-    }else{
-        loadNativeItems();
     }
+    loadNativeItems();
 
     resizeItemBySizeIndex(m_currentIconSizeIndex);
 
