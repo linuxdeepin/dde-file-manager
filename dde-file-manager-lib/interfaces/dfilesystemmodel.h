@@ -151,7 +151,6 @@ private:
     const FileSystemNodePointer createNode(FileSystemNode *parent, const DAbstractFileInfoPointer &info);
 
     void deleteNode(const FileSystemNodePointer &node);
-    void deleteNodeByUrl(const DUrl &url);
     void clear();
 
     void setState(State state);

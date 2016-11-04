@@ -14,6 +14,10 @@
 #include "dabstractfileinfo.h"
 #include "dfilesystemwatcher.h"
 
+#include "app/define.h"
+#include "widgets/singleton.h"
+#include "usershare/usersharemanager.h"
+
 #include <QDir>
 #include <QDebug>
 
@@ -27,6 +31,7 @@ public:
     void _q_handleFileAttributeChanged(const DUrl &url, const DUrl &parentUrl);
     void _q_handleFileMoved(const DUrl &from, const DUrl &fromParent, const DUrl &to, const DUrl &toParent);
     void _q_handleFileCreated(const DUrl &url, const DUrl &parentUrl);
+    void _q_onUserShareInfoChanged(const QString &path);
 
     DUrlList watchUrlList;
 
@@ -82,12 +87,31 @@ void DFileWatcherPrivate::_q_handleFileCreated(const DUrl &url, const DUrl &pare
     emit q->subfileCreated(url);
 }
 
+void DFileWatcherPrivate::_q_onUserShareInfoChanged(const QString &path)
+{
+    QFileInfo info(path);
+
+    if (path == url.toLocalFile()
+            || info.absolutePath() == url.toLocalFile()) {
+        Q_Q(DFileWatcher);
+
+        emit q->fileAttributeChanged(url);
+    }
+}
+
 Q_GLOBAL_STATIC(DFileSystemWatcher, watcher_file_private)
 
 DFileWatcher::DFileWatcher(const QString &filePath, QObject *parent)
     : DAbstractFileWatcher(*new DFileWatcherPrivate(this), DUrl::fromLocalFile(filePath), parent)
 {
+    connect(userShareManager, SIGNAL(userShareAdded(QString)), this, SLOT(_q_onUserShareInfoChanged(QString)));
+    connect(userShareManager, SIGNAL(userShareDeleted(QString)), this, SLOT(_q_onUserShareInfoChanged(QString)));
+}
 
+DFileWatcher::~DFileWatcher()
+{
+    d_func()->started = false;
+    DFileWatcher::stop();
 }
 
 void DFileWatcher::onFileDeleted(const QString &path, const QString &name)
@@ -203,3 +227,5 @@ bool DFileWatcher::stop()
 
     return ok;
 }
+
+#include "moc_dfilewatcher.cpp"
