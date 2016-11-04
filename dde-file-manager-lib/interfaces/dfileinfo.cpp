@@ -334,6 +334,13 @@ QString DFileInfo::fileDisplayName() const
     }
 }
 
+DUrl DFileInfo::goToUrl() const
+{
+    if (deviceListener->isDeviceFolder(absoluteFilePath()))
+        return DUrl::fromLocalFile(QDir::homePath());
+    return DAbstractFileInfo::goToUrl();
+}
+
 DFileInfo::DFileInfo(DFileInfoPrivate &dd)
     : DAbstractFileInfo(dd)
 {

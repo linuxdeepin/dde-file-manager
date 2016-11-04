@@ -172,13 +172,12 @@ void DFileManagerWindow::onFileDeleted(const DUrl &url)
     }
 
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
-    const DUrl &parentUrl = fileInfo->parentUrl();
 
     DFMEvent event;
 
     event << WindowManager::getWindowId(this);
     event << DFMEvent::FileView;
-    event << (parentUrl.isValid() ? parentUrl : DUrl::fromLocalFile(QDir::homePath()));
+    event << fileInfo->goToUrl();
 
     preHandleCd(event);
 }

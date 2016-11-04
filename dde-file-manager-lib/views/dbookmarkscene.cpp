@@ -541,6 +541,7 @@ void DBookmarkScene::volumeRemoved(UDiskDeviceInfoPointer device)
         bool isHighlightDisk = item->isHighlightDisk();
         remove(item);
         m_diskItems.remove(device->getDiskInfo().ID);
+        //ToDo backHome action should be excute by filemonitor drivered
         if(isChecked || isHighlightDisk){
             backHome();
         }
@@ -602,9 +603,6 @@ void DBookmarkScene::mountRemoved(UDiskDeviceInfoPointer device)
         item->setMounted(false);
         qDebug() << device->getDiskInfo() << item << device->getMountPointUrl();
         emit fileSignalManager->requestAbortJob(device->getMountPointUrl());
-        if (item->isChecked() || item->isHighlightDisk()){
-            backHome();
-        }
         return;
     }
 }
