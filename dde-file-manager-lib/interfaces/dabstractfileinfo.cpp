@@ -991,6 +991,12 @@ void DAbstractFileInfo::makeToInactive()
     }
 }
 
+DUrl DAbstractFileInfo::goToUrl() const
+{
+    CALL_PROXY(goToUrl())
+    return parentUrl().isValid() ? parentUrl() : DUrl::fromLocalFile(QDir::homePath());
+}
+
 DAbstractFileInfo::DAbstractFileInfo(DAbstractFileInfoPrivate &dd)
     : d_ptr(&dd)
 {

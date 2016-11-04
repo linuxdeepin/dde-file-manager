@@ -210,6 +210,8 @@ public:
     /// Make to inactive. stop get icon; stop watcher file
     virtual void makeToInactive();
 
+    virtual DUrl goToUrl() const;
+
 protected:
     explicit DAbstractFileInfo(DAbstractFileInfoPrivate &dd);
     void setProxy(const DAbstractFileInfoPointer &proxy);

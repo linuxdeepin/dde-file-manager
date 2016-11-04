@@ -63,6 +63,8 @@ public:
 
     QString fileDisplayName() const Q_DECL_OVERRIDE;
 
+    DUrl goToUrl() const Q_DECL_OVERRIDE;
+
 protected:
     explicit DFileInfo(DFileInfoPrivate &dd);
 
