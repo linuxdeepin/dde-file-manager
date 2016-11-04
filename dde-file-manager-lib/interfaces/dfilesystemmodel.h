@@ -137,6 +137,7 @@ private slots:
     void onFileCreated(const DUrl &fileUrl);
     void onFileDeleted(const DUrl &fileUrl);
     void onFileUpdated(const DUrl &fileUrl);
+    void onFileRename(const DUrl &from, const DUrl &to);
 
 private:
     inline const FileSystemNodePointer getNodeByIndex(const QModelIndex &index) const;

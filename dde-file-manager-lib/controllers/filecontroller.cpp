@@ -297,7 +297,6 @@ bool FileController::restoreFile(const DUrl &srcUrl, const DUrl &tarUrl, const D
     return true;
 }
 
-
 bool FileController::newFolder(const DFMEvent &event, bool &accepted) const
 {
     accepted = true;
@@ -388,20 +387,6 @@ DAbstractFileWatcher *FileController::createFileWatcher(const DUrl &fileUrl, QOb
 
     return new DFileWatcher(fileUrl.toLocalFile(), parent);
 }
-
-//void FileController::onFileCreated(const QString &filePath)
-//{
-//    DUrl url = DUrl::fromLocalFile(filePath);
-
-//    if (AppController::selectionAndRenameFile.first == url) {
-//        int windowId = AppController::selectionAndRenameFile.second;
-//        AppController::selectionAndRenameFile = qMakePair(DUrl(), -1);
-//        DFMEvent event;
-//        event << windowId;
-//        event << (DUrlList() << url);
-//        emit fileSignalManager->requestSelectRenameFile(event);
-//    }
-//}
 
 QString FileController::checkDuplicateName(const QString &name) const
 {
