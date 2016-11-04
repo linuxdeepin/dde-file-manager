@@ -88,10 +88,15 @@ DFileMenu *DFileMenuManager::createCustomBookMarkMenu(const DUrl &url, QSet<Menu
                << MenuAction::Remove
                << MenuAction::Property;
 
-    if (!QDir(url.path()).exists()){
+    const DAbstractFileInfoPointer& info = fileService->createFileInfo(url);
+    if (!info->exists()){
         disableList << MenuAction::OpenInNewWindow
                           << MenuAction::Rename
                           << MenuAction::Property;
+    }else{
+        if (!info->isCanRename()){
+            disableList << MenuAction::Rename;
+        }
     }
 
     return genereteMenuByKeys(actionKeys, disableList);

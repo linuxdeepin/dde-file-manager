@@ -41,16 +41,6 @@ QString BookMark::getName()
     return m_name;
 }
 
-bool BookMark::isCanRename() const
-{
-    return false;
-}
-
-bool BookMark::isDir() const
-{
-    return true;
-}
-
 QIcon BookMark::fileIcon() const
 {
     return QIcon(":/icons/images/icons/bookmarks_normal_22px.svg");

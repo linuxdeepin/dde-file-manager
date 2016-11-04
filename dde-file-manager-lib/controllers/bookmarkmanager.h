@@ -18,17 +18,17 @@ public:
     ~BookMarkManager();
     void load();
     void save();
-    QList<BookMark *> getBookmarks();
+    QList<BookMarkPointer> getBookmarks();
     static QString cachePath();
 private:
     void loadJson(const QJsonObject &json);
     void writeJson(QJsonObject &json);
-    QList<BookMark *> m_bookmarks;
+    QList<BookMarkPointer> m_bookmarks;
 
 public slots:
-    BookMark *writeIntoBookmark(int index, const QString &name, const DUrl &url);
-    void removeBookmark(BookMark* bookmark);
-    void renameBookmark(BookMark* bookmark, const QString &newname);
+    BookMarkPointer writeIntoBookmark(int index, const QString &name, const DUrl &url);
+    void removeBookmark(BookMarkPointer bookmark);
+    void renameBookmark(BookMarkPointer bookmark, const QString &newname);
     void moveBookmark(int from, int to);
     // AbstractFileController interface
 public:

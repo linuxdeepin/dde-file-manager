@@ -14,6 +14,7 @@
 
 #include "durl.h"
 #include "deviceinfo/udiskdeviceinfo.h"
+#include "models/bookmark.h"
 
 #define MARGIN_IMAGE_BOUND 5
 
@@ -96,8 +97,8 @@ public:
     void setSysPath(const QString &path);
     QString getSysPath();
     int windowId();
-    BookMark* getBookmarkModel();
-    void setBookmarkModel(BookMark* bookmark);
+    BookMarkPointer getBookmarkModel();
+    void setBookmarkModel(BookMarkPointer bookmark);
     static DBookmarkItem* makeBookmark(const QString &name, const DUrl &url);
     static DBookmarkMountedIndicatorItem* makeMountBookmark(DBookmarkItem* parentItem);
     void editMode();
@@ -194,7 +195,7 @@ private:
     QString m_sysPath;
 
     /*bookmark model map */
-    BookMark* m_bookmarkModel;
+    BookMarkPointer m_bookmarkModel;
 public slots:
     void editFinished();
     void checkMountedItem(const DFMEvent& event);
