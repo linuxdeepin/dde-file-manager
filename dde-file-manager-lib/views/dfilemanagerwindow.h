@@ -80,14 +80,15 @@ public slots:
     void showComputerView(const DFMEvent& event);
     void openNewTab(const DFMEvent& event);
     void createNewView(const DFMEvent& event);
-    void setFileView(DFileView *view);
-    void switchToView(const int index, const DUrl& url);
-    void onFileViewCurrentUrlChanged(const DUrl &url);
+    void switchToView(DFileView *view);
     void onTabAddableChanged(bool addable);
     void onCurrentTabChanged(int tabIndex);
-    void onCurrentTabClosed(const int index, const bool& remainState);
+    void onRequestCloseTab(const int index, const bool& remainState);
     void closeCurrentTab(const DFMEvent& event);
     void onUserShareCountChanged(const int& count);
+    void showNewTabButton();
+    void hideNewTabButton();
+    void onNewTabButtonClicked();
 
 protected:
     void closeEvent(QCloseEvent* event)  Q_DECL_OVERRIDE;

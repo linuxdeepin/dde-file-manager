@@ -15,24 +15,24 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QCursor>
 #include "ddragwidget.h"
-
+#include "dfileview.h"
 
 #define TAB_CLOSE_BUTTON_WIDTH 18
 #define TAB_CLOSE_BUTTON_HEIGHT 24
+#define TAB_MAX_COUNT 8
 
 class Tab:public QGraphicsObject{
     Q_OBJECT
     Q_PROPERTY(QRect geometry READ geometry WRITE setGeometry)
 
 public:
-    explicit Tab(QGraphicsObject *parent = 0,int viewIndex = 0,QString text = "");
+    explicit Tab(QGraphicsObject *parent = 0,DFileView* view = NULL);
     ~Tab();
-    void setTabIndex(int index);
-    int tabIndex();
-    void setTabData(QVariant data);
-    QVariant tabData();
+    void initConnect();
     void setTabText(QString text);
     QString tabText();
+    DFileView *fileView();
+
     void setFixedSize(QSize size);
     void setGeometry(QRect rect);
     QRect geometry();
@@ -46,10 +46,14 @@ public:
     void setChecked(const bool check);
     bool borderLeft() const;
     void setBorderLeft(const bool flag);
+    QString getDisplayNameByUrl(const DUrl& url) const;
 
-    QRectF boundingRect() const;
-    QPainterPath shape();
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    QRectF boundingRect() const Q_DECL_OVERRIDE;
+    QPainterPath shape() const Q_DECL_OVERRIDE;
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) Q_DECL_OVERRIDE;
+
+public slots:
+    void onFileRootUrlChanged(const DUrl& url);
 
 protected:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
@@ -60,10 +64,10 @@ protected:
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) Q_DECL_OVERRIDE;
 signals:
     void clicked();
-    void moveNext(const int fromTabIndex);
-    void movePrevius(const int fromTabIndex);
+    void moveNext(Tab *who);
+    void movePrevius(Tab *who);
     void requestNewWindow(const DUrl url);
-    void aboutToNewWindow(const int tabIndex);
+    void aboutToNewWindow(Tab *who);
     void draggingFinished();
     void draggingStarted();
 
@@ -82,14 +86,15 @@ private:
     QDrag *m_dragObject = NULL;
     bool m_checked = false;
     bool m_borderLeft = false;
+    DFileView* m_fileView = NULL;
 };
 
 class TabCloseButton:public QGraphicsObject{
     Q_OBJECT
 public:
     explicit TabCloseButton(QGraphicsItem * parent = 0);
-    QRectF boundingRect() const;
-    void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0);
+    QRectF boundingRect() const Q_DECL_OVERRIDE;
+    void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0) Q_DECL_OVERRIDE;
     int closingIndex();
     void setClosingIndex(int index);
     void setActiveWidthTab(bool active);
@@ -103,7 +108,7 @@ protected:
     void mousePressEvent(QGraphicsSceneMouseEvent * event) Q_DECL_OVERRIDE;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent * event) Q_DECL_OVERRIDE;
     void hoverMoveEvent(QGraphicsSceneHoverEvent * event) Q_DECL_OVERRIDE;
-    void hoverLeaveEvent(QGraphicsSceneHoverEvent * event);
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent * event) Q_DECL_OVERRIDE;
 
 private:
     bool m_mouseHovered = false;
@@ -117,41 +122,44 @@ class TabBar:public QGraphicsView{
     Q_OBJECT
 public:
     explicit TabBar(QWidget *parent = 0);
-    int addTabWithData(const int &viewIndex, const QString text, const DUrl url);
-    QVariant tabData(const int index);
-    int count() const;
-    void removeTab(const int index, const bool& remainState);
-    int currentIndex() const;
-    void setCurrentIndex(const int index);
-    bool tabAddable();
-    void setTabData(const int &index, const QVariant &tabData);
-    void setTabText(const int viewIndex, const QString text, const DUrl url);
-    QSize tabSizeHint(const int &index);
-    void updateScreen();
     void initConnections();
+    int createTab(DFileView* view);
+    void removeTab(const int index, const bool& remainState = false);
+    void setCurrentIndex(const int index);
+    void setTabText(const int& index, const QString&text);
+    int count() const;
+    int currentIndex() const;
+    bool tabAddable() const;
+    Tab* currentTab();
+    Tab* tabAt(const int& index);
 
 signals:
     void currentChanged(const int &index);
     void tabCloseRequested(const int &index, const bool& remainState = false);
     void tabAddableChanged(const bool &tabAddable);
     void tabMoved(const int &from, const int &to);
+    void tabBarShown();
+    void tabBarHidden();
 
 public slots:
     void onTabCloseButtonHovered(int closingIndex);
     void onTabCloseButtonUnHovered(int closingIndex);
-    void onMoveNext(const int fromTabIndex);
-    void onMovePrevius(const int fromTabIndex);
+    void onMoveNext(Tab* who);
+    void onMovePrevius(Tab *who);
     void onRequestNewWindow(const DUrl url);
-    void onAboutToNewWindow(const int tabIndex);
+    void onAboutToNewWindow(Tab *who);
+    void onTabClicked();
+    void onTabDragFinished();
+    void onTabDragStarted();
 
 protected:
-    void resizeEvent(QResizeEvent *e);
+    void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
     bool event(QEvent *event) Q_DECL_OVERRIDE;
     void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
 private:
     QGraphicsScene *m_scene = NULL;
     int m_currentIndex = -1;
-    QList<Tab*>     m_tabs;
+    QList<Tab*> m_tabs;
     bool m_barHovered = false;
     bool m_lastStateOndelete = false;
     int m_lastDeletedAverageWidth = 0;
@@ -162,6 +170,9 @@ private:
     bool m_lastDeleteState = false;
     bool m_lastAddTabState = false;
     int m_historyWidth = 0;
+
+    QSize tabSizeHint(const int &index);
+    void updateScreen();
 };
 
 

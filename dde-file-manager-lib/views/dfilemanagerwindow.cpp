@@ -101,40 +101,20 @@ DFileManagerWindow::~DFileManagerWindow()
 
 }
 
-void DFileManagerWindow::onCurrentTabClosed(const int index, const bool &remainState){
+void DFileManagerWindow::onRequestCloseTab(const int index, const bool &remainState){
 
     D_D(DFileManagerWindow);
 
-    int viewIndex = d->tabBar->tabData(index).toJsonObject()["viewIndex"].toInt();
-    DFileView *currentView =qobject_cast<DFileView*>(d->viewStackLayout->widget(viewIndex));
+    Tab * tab = d->tabBar->tabAt(index);
+    if(!tab)
+        return;
+    DFileView *view = tab->fileView();
 
-    currentView->close();
-    d->viewStackLayout->removeWidget(currentView);
-    d->fileView = NULL;
-    delete currentView;
-
-    //recorrect view index
-    for(int i = 0; i<d->tabBar->count(); i++){
-        int newViewIndex = d->tabBar->tabData(i).toJsonObject()["viewIndex"].toInt();
-        if(newViewIndex > viewIndex){
-            newViewIndex--;
-            QJsonObject tabData = d->tabBar->tabData(i).toJsonObject();
-            tabData["viewIndex"] = newViewIndex;
-            d->tabBar->setTabData(i,tabData);
-        }
-    }
+    d->viewStackLayout->removeWidget(view);
+    view->deleteLater();
 
     d->toolbar->removeNavStackAt(index);
     d->tabBar->removeTab(index, remainState);
-
-    if(d->tabBar->count()<8)
-        emit d->tabBar->tabAddableChanged(true);
-
-    if(d->tabBar->count()<2)
-        d->tabBar->hide();
-
-    if(d->tabBar->isHidden())
-        d->newTabButton->hide();
 }
 
 void DFileManagerWindow::closeCurrentTab(const DFMEvent &event)
@@ -159,6 +139,27 @@ void DFileManagerWindow::onUserShareCountChanged(const int &count)
        d->fileView->fileViewHelper()->onUserShareCountChanged(count);
    }
 
+}
+
+void DFileManagerWindow::showNewTabButton()
+{
+    D_D(DFileManagerWindow);
+    d->newTabButton->show();
+}
+
+void DFileManagerWindow::hideNewTabButton()
+{
+    D_D(DFileManagerWindow);
+    d->newTabButton->hide();
+}
+
+void DFileManagerWindow::onNewTabButtonClicked()
+{
+    DFMEvent event;
+    const DUrl url = DUrl::fromLocalFile(QDir::homePath());
+    event << url;
+    event << windowId();
+    openNewTab(event);
 }
 
 QString DFileManagerWindow::getDisplayNameByUrl(const DUrl &url) const
@@ -186,12 +187,11 @@ void DFileManagerWindow::onCurrentTabChanged(int tabIndex)
 {
     D_D(DFileManagerWindow);
 
-    int viewIndex = d->tabBar->tabData(tabIndex).toJsonObject()["viewIndex"].toInt();
-    DUrl url(d->tabBar->tabData(tabIndex).toJsonObject()["url"].toString());
-
-    d->toolbar->switchHistoryStack(tabIndex,url);
-
-    switchToView(viewIndex, url);
+    Tab* tab = d->tabBar->tabAt(tabIndex);
+    if(tab){
+        d->toolbar->switchHistoryStack(tabIndex,tab->fileView()->rootUrl());
+        switchToView(tab->fileView());
+    }
 }
 
 
@@ -290,7 +290,9 @@ void DFileManagerWindow::preHandleCd(const DFMEvent &event)
     } else if (event.fileUrl().isSMBFile()) {
         emit fileSignalManager->requestFetchNetworks(event);
     } else if (event.fileUrl().isComputerFile()) {
+        const_cast<DFMEvent&>(event) << DUrl::fromComputerFile("/");
         showComputerView(event);
+        d->fileView->fileViewHelper()->cd(event);
     } else {
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(event.fileUrl());
 
@@ -319,7 +321,6 @@ void DFileManagerWindow::cd(const DFMEvent &event)
     if (d->viewStackLayout->currentWidget() != d->fileView) {
         d->viewStackLayout->setCurrentWidget(d->fileView);
         emit fileSignalManager->currentUrlChanged(event);
-        onFileViewCurrentUrlChanged(event.fileUrl());
     }
 
     d->fileView->fileViewHelper()->cd(event);
@@ -337,7 +338,6 @@ void DFileManagerWindow::showComputerView(const DFMEvent &event)
     d->computerView->setFocus();
     emit fileSignalManager->currentUrlChanged(event);
     d->toolbar->setViewModeButtonVisible(false);
-    onFileViewCurrentUrlChanged(DUrl::fromComputerFile("/"));
 }
 
 void DFileManagerWindow::openNewTab(const DFMEvent &event)
@@ -350,12 +350,7 @@ void DFileManagerWindow::openNewTab(const DFMEvent &event)
     if (event.windowId() != windowId()){
         return;
     }
-
     createNewView(event);
-
-    if (d->views.count() >= 3){
-        d->newTabButton->show();
-    }
 }
 
 void DFileManagerWindow::createNewView(const DFMEvent &event)
@@ -367,80 +362,32 @@ void DFileManagerWindow::createNewView(const DFMEvent &event)
     setFocusProxy(view);
     d->views.insert(event.fileUrl(), view);
 
-    int viewIndex = d->viewStackLayout->addWidget(view);
+    d->viewStackLayout->addWidget(view);
     d->toolbar->addHistoryStack();
 
     DUrl url;
     if (event.fileUrl().isEmpty())
-        url = DUrl::fromUserInput(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0));
+        url = DUrl::fromLocalFile(QDir::homePath());
     else
         url = event.fileUrl();
 
-    if(deviceListener->isDeviceFolder(url.path())){
-        appController->actionOpenDisk(event);
-    }
-
-    QString urlDisplayName = getDisplayNameByUrl(url);
-
-    setFileView(view);
-    d->tabBar->addTabWithData(viewIndex,urlDisplayName,url);
     view->cd(url);
+    d->tabBar->createTab(view);
 }
 
-void DFileManagerWindow::setFileView(DFileView *view)
+void DFileManagerWindow::switchToView(DFileView *view)
 {
     D_D(DFileManagerWindow);
 
-    d->viewStackLayout->setCurrentWidget(view);
-
-    if(d->fileView){
-        view->setViewMode(d->fileView->getDefaultViewMode());
+    if (d->fileView) {
+        disconnect(d->fileView, &DFileView::viewModeChanged, d->toolbar, &DToolBar::checkViewModeButton);
         disconnect(fileSignalManager, &FileSignalManager::statusBarItemsSelected, d->fileView->statusBar(), &DStatusBar::itemSelected);
         disconnect(fileSignalManager, &FileSignalManager::statusBarItemsCounted, d->fileView->statusBar(), &DStatusBar::itemCounted);
         disconnect(fileSignalManager, &FileSignalManager::loadingIndicatorShowed, d->fileView->statusBar(), &DStatusBar::setLoadingIncatorVisible);
     }
 
     d->fileView = view;
-
-    connect(view, &DFileView::viewModeChanged, d->toolbar, &DToolBar::checkViewModeButton);
-    connect(view, &DFileView::rootUrlChanged ,this, &DFileManagerWindow::onFileViewCurrentUrlChanged);
-
-    if (!d->tabBar->isHidden())
-        d->newTabButton->show();
-
-    d->leftSideBar->setToolbar(d->toolbar);
-}
-
-void DFileManagerWindow::onFileViewCurrentUrlChanged(const DUrl &url)
-{
-    D_D(DFileManagerWindow);
-
-    if(!url.isValid())
-        return;
-
-    int viewIndex = d->viewStackLayout->indexOf(d->fileView);
-
-    QString urlDisplayName = getDisplayNameByUrl(url);
-
-    d->tabBar->setTabText(viewIndex,urlDisplayName, url);
-}
-
-void DFileManagerWindow::switchToView(const int viewIndex, const DUrl &url)
-{
-    D_D(DFileManagerWindow);
-
-    if (d->fileView) {
-        disconnect(d->fileView, &DFileView::viewModeChanged, d->toolbar, &DToolBar::checkViewModeButton);
-        disconnect(d->fileView, &DFileView::rootUrlChanged ,this, &DFileManagerWindow::onFileViewCurrentUrlChanged);
-
-        disconnect(fileSignalManager, &FileSignalManager::statusBarItemsSelected, d->fileView->statusBar(), &DStatusBar::itemSelected);
-        disconnect(fileSignalManager, &FileSignalManager::statusBarItemsCounted, d->fileView->statusBar(), &DStatusBar::itemCounted);
-        disconnect(fileSignalManager, &FileSignalManager::loadingIndicatorShowed, d->fileView->statusBar(), &DStatusBar::setLoadingIncatorVisible);
-    }
-
-//    d->viewStackLayout->setCurrentIndex(viewIndex);
-    d->fileView = qobject_cast<DFileView*>(d->viewStackLayout->widget(viewIndex));
-    if(url.isComputerFile()){
+    if(view->rootUrl().isComputerFile()){
         if (!d->computerView)
             initComputerView();
 
@@ -451,23 +398,17 @@ void DFileManagerWindow::switchToView(const int viewIndex, const DUrl &url)
         d->viewStackLayout->setCurrentWidget(d->fileView);
         d->toolbar->setViewModeButtonVisible(true);
     }
-    if(!d->fileView)
-        return;
 
     connect(d->fileView, &DFileView::viewModeChanged, d->toolbar, &DToolBar::checkViewModeButton);
-    connect(d->fileView, &DFileView::rootUrlChanged ,this, &DFileManagerWindow::onFileViewCurrentUrlChanged);
 
     connect(fileSignalManager, &FileSignalManager::statusBarItemsSelected, d->fileView->statusBar(), &DStatusBar::itemSelected);
     connect(fileSignalManager, &FileSignalManager::statusBarItemsCounted, d->fileView->statusBar(), &DStatusBar::itemCounted);
     connect(fileSignalManager, &FileSignalManager::loadingIndicatorShowed, d->fileView->statusBar(), &DStatusBar::setLoadingIncatorVisible);
 
-
-    emit fileViewChanged(d->fileView);
-    d->leftSideBar->scene()->setCurrentUrl(url);
+    d->leftSideBar->scene()->setCurrentUrl(view->rootUrl());
     d->toolbar->checkViewModeButton(d->fileView->viewMode());
 
-    if (url == DUrl::fromUserShareFile("/")){
-        qDebug() << "===========" << userShareManager->validShareInfoCount();
+    if (view->rootUrl() == DUrl::fromUserShareFile("/")){
         if (userShareManager->validShareInfoCount() == 0){
             DFMEvent event;
             event << windowId();
@@ -720,19 +661,16 @@ void DFileManagerWindow::initConnect()
 
     connect(fileSignalManager, &FileSignalManager::fetchNetworksSuccessed, this, &DFileManagerWindow::cd);
     connect(fileSignalManager, &FileSignalManager::requestChangeCurrentUrl,this, &DFileManagerWindow::preHandleCd);
-        connect(fileSignalManager, &FileSignalManager::requestCloseCurrentTab, this, &DFileManagerWindow::closeCurrentTab);
+    connect(fileSignalManager, &FileSignalManager::requestCloseCurrentTab, this, &DFileManagerWindow::closeCurrentTab);
 
     connect(d->tabBar, &TabBar::tabMoved, d->toolbar, &DToolBar::moveNavStacks);
     connect(d->tabBar, &TabBar::currentChanged,this, &DFileManagerWindow::onCurrentTabChanged);
-    connect(d->tabBar, &TabBar::tabCloseRequested, this,&DFileManagerWindow::onCurrentTabClosed);
+    connect(d->tabBar, &TabBar::tabCloseRequested, this,&DFileManagerWindow::onRequestCloseTab);
     connect(d->tabBar, &TabBar::tabAddableChanged, this, &DFileManagerWindow::onTabAddableChanged);
-    connect(d->newTabButton, &QPushButton::clicked, this, [=]{
-        DFMEvent event;
-        const DUrl url = DUrl::fromUserInput(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0));
-        event << url;
-        event << windowId();
-        openNewTab(event);
-    });
+
+    connect(d->tabBar, &TabBar::tabBarShown, this, &DFileManagerWindow::showNewTabButton);
+    connect(d->tabBar, &TabBar::tabBarHidden, this, &DFileManagerWindow::hideNewTabButton);
+    connect(d->newTabButton, &QPushButton::clicked, this, &DFileManagerWindow::onNewTabButtonClicked);
 
     connect(fileSignalManager, &FileSignalManager::userShareCountChanged,
             this, &DFileManagerWindow::onUserShareCountChanged);

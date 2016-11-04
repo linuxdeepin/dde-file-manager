@@ -11,16 +11,22 @@
 #include <QDebug>
 #include <QDrag>
 
+#include "app/define.h"
+#include "dfmevent.h"
+#include "app/filesignalmanager.h"
+#include "deviceinfo/udisklistener.h"
+#include "usershare/usersharemanager.h"
+#include "controllers/pathmanager.h"
+#include "interfaces/dfileservices.h"
+
 DWIDGET_USE_NAMESPACE
 
-Tab::Tab(QGraphicsObject *parent, int viewIndex, QString text):
+Tab::Tab(QGraphicsObject *parent, DFileView *view):
     QGraphicsObject(parent)
 {
-    m_tabText = text;
-    QJsonObject tabData;
-    tabData["viewIndex"] = viewIndex;
-    tabData["text"] = text;
-    m_tabData = tabData;
+    m_fileView = view;
+    setTabText(getDisplayNameByUrl(view->rootUrl()));
+    initConnect();
     setAcceptHoverEvents(true);
     setFlags(ItemIsSelectable);
     setAcceptedMouseButtons(Qt::LeftButton);
@@ -30,24 +36,9 @@ Tab::~Tab()
 {
 }
 
-void Tab::setTabIndex(int index)
+void Tab::initConnect()
 {
-    m_tabIndex = index;
-}
-
-int Tab::tabIndex()
-{
-    return m_tabIndex;
-}
-
-void Tab::setTabData(QVariant data)
-{
-    m_tabData = data;
-}
-
-QVariant Tab::tabData()
-{
-    return m_tabData;
+    connect(m_fileView, &DFileView::rootUrlChanged, this,&Tab::onFileRootUrlChanged);
 }
 
 void Tab::setTabText(QString text)
@@ -59,6 +50,11 @@ void Tab::setTabText(QString text)
 QString Tab::tabText()
 {
     return m_tabText;
+}
+
+DFileView *Tab::fileView()
+{
+    return m_fileView;
 }
 
 void Tab::setFixedSize(QSize size)
@@ -166,12 +162,27 @@ void Tab::setBorderLeft(const bool flag)
     m_borderLeft = flag;
 }
 
+QString Tab::getDisplayNameByUrl(const DUrl &url) const
+{
+    QString urlDisplayName;
+    if(url.isComputerFile()){
+        if(systemPathManager->isSystemPath(url.toString()))
+            urlDisplayName = systemPathManager->getSystemPathDisplayNameByPath(url.toString());
+    } else{
+        const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
+
+        if (fileInfo)
+            urlDisplayName = fileInfo->fileDisplayName();
+    }
+    return urlDisplayName;
+}
+
 QRectF Tab::boundingRect() const
 {
     return QRectF(0,0,m_width,m_height);
 }
 
-QPainterPath Tab::shape()
+QPainterPath Tab::shape() const
 {
     QPainterPath path;
     path.addRect(boundingRect());
@@ -182,8 +193,6 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
 {
     Q_UNUSED(option)
     Q_UNUSED(widget)
-//    if(tabIndex() == 0||tabIndex() ==1)
-//        qDebug()<<tabIndex()<<","<<boundingRect()<<","<<shape();
 
     if(m_dragOutSide)
         return;
@@ -246,6 +255,11 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
     }
 }
 
+void Tab::onFileRootUrlChanged(const DUrl &url)
+{
+    setTabText(getDisplayNameByUrl(url));
+}
+
 void Tab::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     if(event->button() == Qt::LeftButton){
@@ -268,7 +282,7 @@ void Tab::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         if(!m_dragOutSide){
             m_dragOutSide = true;
             update();
-            emit aboutToNewWindow(tabIndex());
+            emit aboutToNewWindow(this);
             emit draggingFinished();
             m_dragObject = new QDrag(this);
             QMimeData *mimeData = new QMimeData;
@@ -287,7 +301,7 @@ void Tab::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             m_dragObject->deleteLater();
             m_pressed = false;
 
-            emit requestNewWindow(DUrl(tabData().toJsonObject().value("url").toString()));
+            emit requestNewWindow(fileView()->rootUrl());
         }
     }
 
@@ -309,11 +323,11 @@ void Tab::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         setX(scene()->width() - m_width);
 
     if(pos().x()> m_originPos.x()+m_width/2){
-        emit moveNext(tabIndex());
+        emit moveNext(this);
         m_originPos.setX(m_originPos.x() + m_width);
     }
     else if(pos().x()< m_originPos.x() - m_width/2){
-        emit movePrevius(tabIndex());
+        emit movePrevius(this);
         m_originPos.setX(m_originPos.x() - m_width);
     }
 
@@ -459,7 +473,6 @@ void TabCloseButton::hoverEnterEvent(QGraphicsSceneHoverEvent * event)
     update();
 }
 
-
 TabBar::TabBar(QWidget *parent):QGraphicsView(parent){
     m_scene = new QGraphicsScene(this);
     setObjectName("TabBar");
@@ -475,214 +488,6 @@ TabBar::TabBar(QWidget *parent):QGraphicsView(parent){
 
     initConnections();
     hide();
-}
-
-int TabBar::addTabWithData(const int &viewIndex, const QString text, const DUrl url)
-{
-    Tab *tab = new Tab(0,viewIndex,text);
-    m_tabs.append(tab);
-    m_scene->addItem(tab);
-
-    if(isHidden()&&count()>=2)
-        show();
-
-    int index = count() - 1;
-    tab->setTabIndex(index);
-    QJsonObject tabData;
-    tabData["viewIndex"] = viewIndex;
-    tabData["text"] = text;
-    tabData["url"] = url.toString();
-    tab->setTabData(QVariant(tabData));
-
-    connect(tab, &Tab::clicked, this, [=]{
-       setCurrentIndex(tab->tabIndex());
-       m_TabCloseButton->setActiveWidthTab(true);
-    });
-    connect(tab, &Tab::moveNext, this, &TabBar::onMoveNext);
-    connect(tab, &Tab::movePrevius, this, &TabBar::onMovePrevius);
-    connect(tab, &Tab::requestNewWindow, this, &TabBar::onRequestNewWindow);
-    connect(tab, &Tab::aboutToNewWindow, this, &TabBar::onAboutToNewWindow);
-    connect(tab, &Tab::draggingFinished, this, [=]{
-        m_TabCloseButton->setZValue(2);
-        if(tab->isDragOutSide())
-            m_TabCloseButton->hide();
-        m_lastDeleteState = false;
-        updateScreen();
-
-        //hide border left line
-        for(auto it: m_tabs)
-            if(it->borderLeft())
-                it->setBorderLeft(false);
-    });
-    connect(tab, &Tab::draggingStarted, this, [=]{
-       m_TabCloseButton->setZValue(0);
-    });
-    connect(tab, &Tab::draggingStarted, this, [=]{
-        int pairIndex = tab->tabIndex() +1;
-        int counter = 0;
-        for(auto it: m_tabs){
-            if(counter == tab->tabIndex() || counter == pairIndex)
-                it->setBorderLeft(true);
-            else
-                it->setBorderLeft(false);
-            counter ++;
-        }
-    });
-
-    m_lastAddTabState = true;
-    setCurrentIndex(index);
-    m_lastAddTabState = false;
-
-    tabAddableChanged(count()<8);
-
-    return index;
-}
-
-QVariant TabBar::tabData(const int index)
-{
-    if(index>=count()||index<0)
-        return QVariant();
-    return m_tabs.at(index)->tabData();
-}
-
-int TabBar::count() const
-{
-    return m_tabs.count();
-}
-
-void TabBar::removeTab(const int index, const bool &remainState)
-{
-    Tab *tab = m_tabs.at(index);
-
-    m_tabs.removeAt(index);
-    tab->deleteLater();
-
-    for(int i = index; i<count(); i++){
-        tab = m_tabs.at(i);
-        tab->setTabIndex(tab->tabIndex() - 1);
-    }
-    if(m_TabCloseButton->closingIndex() <=count()-1 &&m_TabCloseButton->closingIndex()>=0){
-        m_lastDeleteState = remainState;
-    }
-    else{
-        m_lastAddTabState = false;
-        // handle tab close button display position
-        QMouseEvent * event = new QMouseEvent(QMouseEvent::MouseMove,
-                                              mapFromGlobal(QCursor::pos()),
-                                              Qt::NoButton,
-                                              Qt::NoButton,
-                                              Qt::NoModifier);
-        mouseMoveEvent(event);
-    }
-
-    if(index<count())
-        setCurrentIndex(index);
-    else
-        setCurrentIndex(count()-1);
-}
-
-int TabBar::currentIndex() const
-{
-    return m_currentIndex;
-}
-
-void TabBar::setCurrentIndex(const int index)
-{
-    m_currentIndex = index;
-
-    int counter = 0;
-    for(auto tab: m_tabs){
-        if(counter == index){
-            tab->setChecked(true);
-        }
-        else{
-            tab->setChecked(false);
-        }
-        counter ++;
-    }
-    emit currentChanged(index);
-    updateScreen();
-}
-
-bool TabBar::tabAddable()
-{
-    return count()<8;
-}
-
-void TabBar::setTabData(const int &index, const QVariant &tabData)
-{
-    if(index<0||index>=count())
-        return;
-    m_tabs.at(index)->setTabData(tabData);
-}
-
-void TabBar::setTabText(const int viewIndex, const QString text, const DUrl url)
-{
-    int counter = 0;
-    for(auto it:m_tabs){
-        if(it->tabData().toJsonObject()["viewIndex"].toInt() == viewIndex){
-            it->setTabText(text);
-            QJsonObject tabData = it->tabData().toJsonObject();
-            tabData["text"] = text;
-            tabData["url"] = url.toString();
-            it->setTabData(QVariant(tabData));
-            it->update();
-        }
-        counter++;
-    }
-}
-
-QSize TabBar::tabSizeHint(const int &index)
-{
-
-    if(m_lastDeleteState)
-        return QSize(m_tabs.at(0)->width(),m_tabs.at(0)->height());
-
-    int averageWidth = m_historyWidth/count();
-
-    if(index == count() -1)
-        return (QSize(m_historyWidth - averageWidth*(count()-1),24));
-    else
-        return (QSize(averageWidth,24));
-}
-
-void TabBar:: updateScreen()
-{
-    int counter = 0;
-    int lastX = 0;
-    for(auto tab:m_tabs){
-        QRect rect(lastX,0,tabSizeHint(counter).width(),tabSizeHint(counter).height());
-        lastX = rect.x() + rect.width();
-        if(tab->isDragging()){
-            counter ++ ;
-            continue;
-        }
-        if(!m_lastAddTabState){
-            QPropertyAnimation *animation = new QPropertyAnimation(tab,"geometry");
-            animation->setDuration(100);
-            animation->setStartValue(tab->geometry());
-            animation->setEndValue(rect);
-            animation->start();
-
-            connect(animation,&QPropertyAnimation::finished,[=]{
-                animation->deleteLater();
-
-                if(m_TabCloseButton->closingIndex() == counter){
-                    m_TabCloseButton->setPos(tab->x()+tab->width()-26,0);
-                }
-                if((m_TabCloseButton->closingIndex()>=count()||m_TabCloseButton->closingIndex()<0)
-                        &&m_lastDeleteState){
-                    m_lastDeleteState = false;
-                }
-
-            });
-        }
-        else
-            tab->setGeometry(rect);
-        counter ++;
-    }
-
-    updateSceneRect(m_scene->sceneRect());
 }
 
 void TabBar::initConnections()
@@ -707,26 +512,142 @@ void TabBar::initConnections()
     });
 }
 
-void TabBar::onMoveNext(const int fromTabIndex)
+int TabBar::createTab(DFileView *view)
 {
-    Tab *fromTab = m_tabs.at(fromTabIndex);
-    Tab *toTab = m_tabs.at(fromTabIndex+1);
-    m_tabs.swap(fromTabIndex,fromTabIndex+1);
-    fromTab->setTabIndex(fromTabIndex +1);
-    toTab->setTabIndex(fromTabIndex);
-    emit tabMoved(fromTabIndex,fromTabIndex+1);
-    setCurrentIndex(fromTabIndex+1);
+    Tab *tab = new Tab(0,view);
+    m_tabs.append(tab);
+    m_scene->addItem(tab);
+
+    if(isHidden()&&count()>=2){
+        show();
+        emit tabBarShown();
+    }
+
+    int index = count() - 1;
+
+    connect(tab, &Tab::clicked, this, &TabBar::onTabClicked);
+    connect(tab, &Tab::moveNext, this, &TabBar::onMoveNext);
+    connect(tab, &Tab::movePrevius, this, &TabBar::onMovePrevius);
+    connect(tab, &Tab::requestNewWindow, this, &TabBar::onRequestNewWindow);
+    connect(tab, &Tab::aboutToNewWindow, this, &TabBar::onAboutToNewWindow);
+    connect(tab, &Tab::draggingFinished, this, &TabBar::onTabDragFinished);
+    connect(tab, &Tab::draggingStarted, this, &TabBar::onTabDragStarted);
+
+    m_lastAddTabState = true;
+    setCurrentIndex(index);
+    m_lastAddTabState = false;
+
+    tabAddableChanged(count()<TAB_MAX_COUNT);
+
+    return index;
 }
 
-void TabBar::onMovePrevius(const int fromTabIndex)
+void TabBar::removeTab(const int index, const bool &remainState)
 {
-    Tab *fromTab = m_tabs.at(fromTabIndex);
-    Tab *toTab = m_tabs.at(fromTabIndex-1);
-    m_tabs.swap(fromTabIndex,fromTabIndex-1);
-    fromTab->setTabIndex(fromTabIndex -1);
-    toTab->setTabIndex(fromTabIndex);
-    emit tabMoved(fromTabIndex,fromTabIndex-1);
-    setCurrentIndex(fromTabIndex-1);
+    Tab *tab = m_tabs.at(index);
+
+    m_tabs.removeAt(index);
+    tab->deleteLater();
+
+    if(count() <2){
+        hide();
+        emit tabBarHidden();
+    }
+
+    if(m_TabCloseButton->closingIndex() <=count()-1 &&
+            m_TabCloseButton->closingIndex()>=0){
+        m_lastDeleteState = remainState;
+    }
+    else{
+        m_lastAddTabState = false;
+        // handle tab close button display position
+        if(remainState){
+            QMouseEvent * event = new QMouseEvent(QMouseEvent::MouseMove,
+                                                  mapFromGlobal(QCursor::pos()),
+                                                  Qt::NoButton,
+                                                  Qt::NoButton,
+                                                  Qt::NoModifier);
+            mouseMoveEvent(event);
+        }
+    }
+
+if(index<count())
+        setCurrentIndex(index);
+    else
+        setCurrentIndex(count()-1);
+    emit tabAddableChanged(count() < TAB_MAX_COUNT);
+}
+
+void TabBar::setCurrentIndex(const int index)
+{
+    m_currentIndex = index;
+
+    int counter = 0;
+    for(auto tab: m_tabs){
+        if(counter == index){
+            tab->setChecked(true);
+        }
+        else{
+            tab->setChecked(false);
+        }
+        counter ++;
+    }
+    emit currentChanged(index);
+    updateScreen();
+}
+
+void TabBar::setTabText(const int &index, const QString &text)
+{
+    if(index>0 && index<count()){
+        m_tabs.at(index)->setTabText(text);
+    }
+}
+
+int TabBar::count() const
+{
+    return m_tabs.count();
+}
+
+int TabBar::currentIndex() const
+{
+    return m_currentIndex;
+}
+
+bool TabBar::tabAddable() const
+{
+    return count() < TAB_MAX_COUNT;
+}
+
+Tab *TabBar::currentTab()
+{
+    if(m_currentIndex>=0 && m_currentIndex < count())
+        return m_tabs.at(currentIndex());
+    return NULL;
+}
+
+Tab *TabBar::tabAt(const int &index)
+{
+    if(index>=0 && index < count())
+        return m_tabs.at(index);
+    return NULL;
+}
+
+void TabBar::onMoveNext(Tab *who)
+{
+    if(m_tabs.indexOf(who) >= count()-1)
+        return;
+    m_tabs.swap(m_tabs.indexOf(who),m_tabs.indexOf(who)+1);
+    emit tabMoved(m_tabs.indexOf(who) -1,m_tabs.indexOf(who));
+    setCurrentIndex(m_tabs.indexOf(who));
+}
+
+void TabBar::onMovePrevius(Tab* who)
+{
+    if(m_tabs.indexOf(who) <= 0)
+        return;
+    m_tabs.swap(m_tabs.indexOf(who),m_tabs.indexOf(who)-1);
+    emit tabMoved(m_tabs.indexOf(who)+1,m_tabs.indexOf(who));
+    setCurrentIndex(m_tabs.indexOf(who));
 }
 
 void TabBar::onRequestNewWindow(const DUrl url)
@@ -738,9 +659,54 @@ void TabBar::onRequestNewWindow(const DUrl url)
     appController->actionNewWindow(event);
 }
 
-void TabBar::onAboutToNewWindow(const int tabIndex)
+void TabBar::onAboutToNewWindow(Tab* who)
 {
-    emit tabCloseRequested(tabIndex);
+    emit tabCloseRequested(m_tabs.indexOf(who));
+}
+
+void TabBar::onTabClicked()
+{
+    Tab *tab = qobject_cast<Tab*>(sender());
+    if(!tab)
+        return;
+    setCurrentIndex(m_tabs.indexOf(tab));
+    m_TabCloseButton->setActiveWidthTab(true);
+}
+
+void TabBar::onTabDragFinished()
+{
+    Tab* tab = qobject_cast<Tab*>(sender());
+    if(!tab)
+        return;
+    m_TabCloseButton->setZValue(2);
+    if(tab->isDragOutSide())
+        m_TabCloseButton->hide();
+    m_lastDeleteState = false;
+    updateScreen();
+
+    //hide border left line
+    for(auto it: m_tabs)
+        if(it->borderLeft())
+            it->setBorderLeft(false);
+}
+
+void TabBar::onTabDragStarted()
+{
+    m_TabCloseButton->setZValue(0);
+
+    Tab* tab = qobject_cast<Tab*>(sender());
+    if(!tab)
+        return;
+
+    int pairIndex = m_tabs.indexOf(tab) +1;
+    int counter = 0;
+    for(auto it: m_tabs){
+        if(counter == m_tabs.indexOf(tab) || counter == pairIndex)
+            it->setBorderLeft(true);
+        else
+            it->setBorderLeft(false);
+        counter ++;
+    }
 }
 
 void TabBar::onTabCloseButtonUnHovered(int closingIndex)
@@ -815,4 +781,57 @@ void TabBar::mouseMoveEvent(QMouseEvent *event)
     }
 
     QGraphicsView::mouseMoveEvent(event);
+}
+
+QSize TabBar::tabSizeHint(const int &index)
+{
+
+    if(m_lastDeleteState)
+        return QSize(m_tabs.at(0)->width(),m_tabs.at(0)->height());
+
+    int averageWidth = m_historyWidth/count();
+
+    if(index == count() -1)
+        return (QSize(m_historyWidth - averageWidth*(count()-1),24));
+    else
+        return (QSize(averageWidth,24));
+}
+
+void TabBar:: updateScreen()
+{
+    int counter = 0;
+    int lastX = 0;
+    for(auto tab:m_tabs){
+        QRect rect(lastX,0,tabSizeHint(counter).width(),tabSizeHint(counter).height());
+        lastX = rect.x() + rect.width();
+        if(tab->isDragging()){
+            counter ++ ;
+            continue;
+        }
+        if(!m_lastAddTabState){
+            QPropertyAnimation *animation = new QPropertyAnimation(tab,"geometry");
+            animation->setDuration(100);
+            animation->setStartValue(tab->geometry());
+            animation->setEndValue(rect);
+            animation->start();
+
+            connect(animation,&QPropertyAnimation::finished,[=]{
+                animation->deleteLater();
+
+                if(m_TabCloseButton->closingIndex() == counter){
+                    m_TabCloseButton->setPos(tab->x()+tab->width()-26,0);
+                }
+                if((m_TabCloseButton->closingIndex()>=count()||m_TabCloseButton->closingIndex()<0)
+                        &&m_lastDeleteState){
+                    m_lastDeleteState = false;
+                }
+
+            });
+        }
+        else
+            tab->setGeometry(rect);
+        counter ++;
+    }
+
+    updateSceneRect(m_scene->sceneRect());
 }
