@@ -208,6 +208,12 @@ bool SearchController::openFile(const DUrl &fileUrl, bool &accepted) const
     return DFileService::instance()->openFile(realUrl(fileUrl));
 }
 
+bool SearchController::openFileByApp(const DUrl &fileUrl, const QString &app, bool &accepted) const
+{
+    accepted = true;
+    return DFileService::instance()->openFileByApp(realUrl(fileUrl), app);
+}
+
 bool SearchController::addUrlMonitor(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;

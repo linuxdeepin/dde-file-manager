@@ -24,6 +24,7 @@ public:
     explicit DAbstractFileController(QObject *parent = 0);
 
     virtual bool openFile(const DUrl &fileUrl, bool &accepted) const;
+    virtual bool openFileByApp(const DUrl &fileUrl, const QString& app, bool &accepted) const;
     virtual bool compressFiles(const DUrlList &urlList, bool &accepted) const;
     virtual bool decompressFile(const DUrlList &fileUrlList, bool &accepted) const;
     virtual bool decompressFileHere(const DUrlList &fileUrlList, bool &accepted) const;

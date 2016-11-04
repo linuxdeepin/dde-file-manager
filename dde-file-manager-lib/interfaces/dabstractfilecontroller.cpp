@@ -15,6 +15,16 @@ bool DAbstractFileController::openFile(const DUrl &fileUrl, bool &accepted) cons
     return false;
 }
 
+bool DAbstractFileController::openFileByApp(const DUrl &fileUrl, const QString &app, bool &accepted) const
+{
+    Q_UNUSED(fileUrl)
+    Q_UNUSED(app)
+
+    accepted = false;
+
+    return false;
+}
+
 bool DAbstractFileController::compressFiles(const DUrlList &urlList, bool &accepted) const
 {
     Q_UNUSED(urlList)
