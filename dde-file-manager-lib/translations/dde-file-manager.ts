@@ -200,17 +200,22 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="123"/>
+        <location filename="../views/dstatusbar.cpp" line="37"/>
+        <source>%1 folder selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../views/dstatusbar.cpp" line="124"/>
         <source>Filter</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="131"/>
+        <location filename="../views/dstatusbar.cpp" line="132"/>
         <source>Save as:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="310"/>
+        <location filename="../views/dstatusbar.cpp" line="316"/>
         <source>Loading...</source>
         <translation type="unfinished"></translation>
     </message>

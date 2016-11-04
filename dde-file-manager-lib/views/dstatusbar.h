@@ -60,6 +60,7 @@ private:
     QString m_selectOnlyOneFolder;
     QString m_selectFiles;
     QString m_selectOnlyOneFile;
+    QString m_selectedNetworkOnlyOneFolder;
 
     QHBoxLayout * m_layout;
     QLabel * m_label = Q_NULLPTR;
