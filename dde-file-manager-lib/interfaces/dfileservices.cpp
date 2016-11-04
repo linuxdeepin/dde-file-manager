@@ -191,6 +191,19 @@ bool DFileService::openFile(const DUrl &fileUrl) const
     return false;
 }
 
+bool DFileService::openFileByApp(const DUrl &fileUrl, const QString &app) const
+{
+    TRAVERSE(fileUrl, {
+                 bool ok = controller->openFileByApp(fileUrl, app, accepted);
+
+                 if(accepted) {
+                     return ok;
+                 }
+             })
+
+    return false;
+}
+
 bool DFileService::compressFiles(const DUrlList &urlList) const
 {
     if (urlList.isEmpty())

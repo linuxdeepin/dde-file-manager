@@ -70,6 +70,7 @@ public:
     FileOperatorTypes fileOperatorBlacklist() const;
 
     bool openFile(const DUrl &fileUrl) const;
+    bool openFileByApp(const DUrl &fileUrl, const QString& app) const;
     bool compressFiles(const DUrlList &urlList) const ;
     bool decompressFile(const DUrlList urllist) const;
     bool decompressFileHere(const DUrlList urllist) const;

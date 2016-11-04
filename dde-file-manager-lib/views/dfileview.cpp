@@ -701,8 +701,8 @@ void DFileView::openWithActionTriggered(QAction *action)
 {
     DAction* dAction = static_cast<DAction*>(action);
     QString app = dAction->property("app").toString();
-    QString url = dAction->property("url").toString();
-    FileUtils::openFileByApp(url, app);
+    DUrl fileUrl(dAction->property("url").toUrl());
+    fileService->openFileByApp(fileUrl, app);
 }
 
 void DFileView::onRowCountChanged()

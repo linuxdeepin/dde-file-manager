@@ -111,6 +111,12 @@ bool FileController::openFile(const DUrl &fileUrl, bool &accepted) const
     return FileUtils::openFile(fileUrl.toLocalFile());
 }
 
+bool FileController::openFileByApp(const DUrl &fileUrl, const QString& app, bool &accepted) const
+{
+    accepted = true;
+    return FileUtils::openFileByApp(fileUrl.toLocalFile(), app);
+}
+
 bool FileController::compressFiles(const DUrlList &urlList, bool &accepted) const
 {
     accepted = false;
