@@ -446,12 +446,12 @@ int DBookmarkItem::windowId()
     return WindowManager::getWindowId(scene()->views().at(0));
 }
 
-BookMark *DBookmarkItem::getBookmarkModel()
+BookMarkPointer DBookmarkItem::getBookmarkModel()
 {
     return m_bookmarkModel;
 }
 
-void DBookmarkItem::setBookmarkModel(BookMark *bookmark)
+void DBookmarkItem::setBookmarkModel(BookMarkPointer bookmark)
 {
     m_bookmarkModel = bookmark;
 }

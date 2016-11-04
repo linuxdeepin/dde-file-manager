@@ -268,14 +268,14 @@ void DLeftSideBar::paintEvent(QPaintEvent *event)
 
 void DLeftSideBar::loadBookmark()
 {
-    QList<BookMark *> m_list = bookmarkManager->getBookmarks();
+    QList<BookMarkPointer> m_list = bookmarkManager->getBookmarks();
     if(m_list.size())
     {
         m_scene->addSeparator();
     }
     for(int i = 0; i < m_list.size(); i++)
     {
-        BookMark * bm = m_list.at(i);
+        BookMarkPointer bm = m_list.at(i);
         DBookmarkItem * item = DBookmarkItem::makeBookmark(bm->getName(), bm->getUrl());
         item->setBookmarkModel(bm);
         m_scene->addItem(item);

@@ -7,6 +7,9 @@
 #include <QDateTime>
 #include "dfileinfo.h"
 
+class BookMark;
+typedef QExplicitlySharedDataPointer<BookMark> BookMarkPointer;
+
 class BookMark : public DFileInfo
 {
 public:
@@ -26,8 +29,6 @@ private:
 
     // AbstractFileInfo interface
 public:
-    bool isCanRename() const Q_DECL_OVERRIDE;
-    bool isDir() const Q_DECL_OVERRIDE;
     QIcon fileIcon() const Q_DECL_OVERRIDE;
 };
 
