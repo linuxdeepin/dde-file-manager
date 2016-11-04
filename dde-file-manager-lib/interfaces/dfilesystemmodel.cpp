@@ -5,8 +5,11 @@
 #include "dabstractfilewatcher.h"
 
 #include "app/define.h"
+#include "app/filesignalmanager.h"
+#include "widgets/singleton.h"
 
 #include "controllers/jobcontroller.h"
+#include "controllers/appcontroller.h"
 
 #include "filemonitor/filemonitor.h"
 #include "interfaces/dfileviewhelper.h"
@@ -637,14 +640,17 @@ QModelIndex DFileSystemModel::setRootUrl(const DUrl &fileUrl)
 //    d->rootNode = d->urlToNode.value(fileUrl);
 
     d->rootNode = createNode(Q_NULLPTR, fileService->createFileInfo(fileUrl));
+    d->watcher = DFileService::instance()->createFileWatcher(fileUrl, this);
 
-    if (d->watcher = DFileService::instance()->createFileWatcher(fileUrl, this)) {
+    if (d->watcher) {
         connect(d->watcher, &DAbstractFileWatcher::fileAttributeChanged,
                 this, &DFileSystemModel::onFileUpdated);
         connect(d->watcher, &DAbstractFileWatcher::fileDeleted,
                 this,&DFileSystemModel::onFileDeleted);
         connect(d->watcher, &DAbstractFileWatcher::subfileCreated,
                 this, &DFileSystemModel::onFileCreated);
+        connect(d->watcher, &DAbstractFileWatcher::fileMoved,
+                this, &DFileSystemModel::onFileRename);
     }
 
     return index(fileUrl);
@@ -1027,6 +1033,20 @@ void DFileSystemModel::onFileCreated(const DUrl &fileUrl)
         return;
 
     addFile(info);
+
+    /// TODO: 暂时放在此处实现，后面将移动到DFileService中实现。
+    if (AppController::selectionAndRenameFile.first == fileUrl) {
+        int windowId = AppController::selectionAndRenameFile.second;
+
+        if (windowId != parent()->windowId())
+            return;
+
+        AppController::selectionAndRenameFile = qMakePair(DUrl(), -1);
+        DFMEvent event;
+        event << windowId;
+        event << (DUrlList() << fileUrl);
+        emit fileSignalManager->requestSelectRenameFile(event);
+    }
 }
 
 void DFileSystemModel::onFileDeleted(const DUrl &fileUrl)
@@ -1091,6 +1111,12 @@ void DFileSystemModel::onFileUpdated(const DUrl &fileUrl)
         return;
 
     emit dataChanged(index, index);
+}
+
+void DFileSystemModel::onFileRename(const DUrl &from, const DUrl &to)
+{
+    onFileDeleted(from);
+    onFileCreated(to);
 }
 
 const FileSystemNodePointer DFileSystemModel::getNodeByIndex(const QModelIndex &index) const

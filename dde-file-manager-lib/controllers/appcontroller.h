@@ -103,6 +103,7 @@ private:
     static QPair<DUrl, int> selectionAndRenameFile;
 
     friend class FileController;
+    friend class DFileSystemModel;
 };
 
 #endif // APPCONTROLLER_H
