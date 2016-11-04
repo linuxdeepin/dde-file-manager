@@ -16,8 +16,6 @@
 #include "widgets/singleton.h"
 #include "interfaces/dfmglobal.h"
 
-#include "usershare/usersharemanager.h"
-
 #include "filemonitor/filemonitor.h"
 #include "appcontroller.h"
 
@@ -52,9 +50,6 @@ FileController::FileController(QObject *parent)
     : DAbstractFileController(parent)
 {
     qRegisterMetaType<QList<DFileInfo*>>(QT_STRINGIFY(QList<DFileInfo*>));
-
-//    connect(userShareManager, &UserShareManager::userShareAdded, this, &FileController::onFileInfoChanged);
-//    connect(userShareManager, &UserShareManager::userShareDeleted, this, &FileController::onFileInfoChanged);
 }
 
 bool FileController::findExecutable(const QString &executableName, const QStringList &paths)

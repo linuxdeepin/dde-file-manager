@@ -934,10 +934,6 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
     if (job)
         job->pause();
 
-    for (const DUrl url : node->visibleChildren) {
-        deleteNodeByUrl(url);
-    }
-
     node->children.clear();
     node->visibleChildren.clear();
 
@@ -1110,6 +1106,10 @@ void DFileSystemModel::onFileUpdated(const DUrl &fileUrl)
     if(!index.isValid())
         return;
 
+    if (const DAbstractFileInfoPointer &fileInfo = this->fileInfo(index)) {
+        fileInfo->refresh();
+    }
+
     emit dataChanged(index, index);
 }
 
@@ -1194,12 +1194,6 @@ void DFileSystemModel::deleteNode(const FileSystemNodePointer &node)
 //    }
     node->fileInfo->makeToInactive();
 //    deleteNodeByUrl(node->fileInfo->fileUrl());
-}
-
-void DFileSystemModel::deleteNodeByUrl(const DUrl &url)
-{
-//    fileService->removeUrlMonitor(url);
-    //    d->urlToNode.take(url);
 }
 
 void DFileSystemModel::clear()
