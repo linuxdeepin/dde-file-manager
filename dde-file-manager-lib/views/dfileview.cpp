@@ -832,6 +832,9 @@ void DFileView::keyPressEvent(QKeyEvent *event)
         case Qt::Key_W:
             emit fileSignalManager->requestCloseCurrentTab(fmevent);
             return;
+        case Qt::Key_Tab:
+            emit DFileView::requestActiveNextTab();
+            return;
         default: break;
         }
 
@@ -852,7 +855,11 @@ void DFileView::keyPressEvent(QKeyEvent *event)
 
         break;
     case Qt::ControlModifier | Qt::ShiftModifier:
-        if (event->key() == Qt::Key_N) {
+        qDebug () <<event;
+        if (event->key() == Qt::Key_Backtab){
+            emit DFileView::requestActivePreviousTab();
+            return;
+        } if (event->key() == Qt::Key_N) {
             if (itemDelegate()->editingIndex().isValid())
                 return;
 
