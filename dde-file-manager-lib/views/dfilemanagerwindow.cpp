@@ -94,6 +94,8 @@ DFileManagerWindow::DFileManagerWindow(const DUrl &fileUrl, QWidget *parent)
     initUI();
     initConnect();
     initFileView(fileUrl);
+
+    preHandleCd(fileUrl, DFMEvent::Unknow);
 }
 
 DFileManagerWindow::~DFileManagerWindow()
@@ -277,20 +279,21 @@ void DFileManagerWindow::setListView()
     d->fileView->setViewModeToList();
 }
 
-void DFileManagerWindow::preHandleCd(const DFMEvent &event)
+void DFileManagerWindow::preHandleCd(const DUrl &fileUrl, int source)
 {
     D_DC(DFileManagerWindow);
 
-    if (event.windowId() != windowId()) {
-        return;
-    }
+    DFMEvent event;
+
+    event << fileUrl;
+    event << (DFMEvent::EventSource)(source);
 
     if (event.fileUrl().isNetWorkFile()) {
         emit fileSignalManager->requestFetchNetworks(event);
     } else if (event.fileUrl().isSMBFile()) {
         emit fileSignalManager->requestFetchNetworks(event);
     } else if (event.fileUrl().isComputerFile()) {
-        const_cast<DFMEvent&>(event) << DUrl::fromComputerFile("/");
+        event << DUrl::fromComputerFile("/");
         showComputerView(event);
         d->fileView->fileViewHelper()->cd(event);
     } else {
@@ -312,6 +315,15 @@ void DFileManagerWindow::preHandleCd(const DFMEvent &event)
 
         cd(event);
     }
+}
+
+void DFileManagerWindow::preHandleCd(const DFMEvent &event)
+{
+    if (event.windowId() != windowId()) {
+        return;
+    }
+
+    preHandleCd(event.fileUrl(), event.source());
 }
 
 void DFileManagerWindow::cd(const DFMEvent &event)
@@ -660,7 +672,8 @@ void DFileManagerWindow::initConnect()
     connect(fileSignalManager, &FileSignalManager::requestOpenInNewTab, this, &DFileManagerWindow::openNewTab);
 
     connect(fileSignalManager, &FileSignalManager::fetchNetworksSuccessed, this, &DFileManagerWindow::cd);
-    connect(fileSignalManager, &FileSignalManager::requestChangeCurrentUrl,this, &DFileManagerWindow::preHandleCd);
+    connect(fileSignalManager, &FileSignalManager::requestChangeCurrentUrl,
+            this, static_cast<void (DFileManagerWindow::*)(const DFMEvent&)>(&DFileManagerWindow::preHandleCd));
     connect(fileSignalManager, &FileSignalManager::requestCloseCurrentTab, this, &DFileManagerWindow::closeCurrentTab);
 
     connect(d->tabBar, &TabBar::tabMoved, d->toolbar, &DToolBar::moveNavStacks);

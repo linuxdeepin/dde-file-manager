@@ -75,6 +75,7 @@ public slots:
     void setFileViewMode(int viewMode);
     void setIconView();
     void setListView();
+    void preHandleCd(const DUrl &fileUrl, int source);
     void preHandleCd(const DFMEvent& event);
     void cd(const DFMEvent& event);
     void showComputerView(const DFMEvent& event);
