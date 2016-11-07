@@ -39,6 +39,8 @@ Tab::~Tab()
 void Tab::initConnect()
 {
     connect(m_fileView, &DFileView::rootUrlChanged, this,&Tab::onFileRootUrlChanged);
+    connect(m_fileView, &DFileView::requestActiveNextTab, this, &Tab::requestActiveNextTab);
+    connect(m_fileView, &DFileView::requestActivePreviousTab, this, &Tab::requestActivePreviousTab);
 }
 
 void Tab::setTabText(QString text)
@@ -532,6 +534,8 @@ int TabBar::createTab(DFileView *view)
     connect(tab, &Tab::aboutToNewWindow, this, &TabBar::onAboutToNewWindow);
     connect(tab, &Tab::draggingFinished, this, &TabBar::onTabDragFinished);
     connect(tab, &Tab::draggingStarted, this, &TabBar::onTabDragStarted);
+    connect(tab, &Tab::requestActiveNextTab, this, &TabBar::activateNextTab);
+    connect(tab, &Tab::requestActivePreviousTab, this, &TabBar::activatePreviousTab);
 
     m_lastAddTabState = true;
     setCurrentIndex(index);
@@ -709,9 +713,26 @@ void TabBar::onTabDragStarted()
     }
 }
 
+void TabBar::activateNextTab()
+{
+    if(m_currentIndex == count() - 1)
+        setCurrentIndex(0);
+    else
+        setCurrentIndex(currentIndex() +1);
+
+}
+
+void TabBar::activatePreviousTab()
+{
+    if(m_currentIndex == 0)
+        setCurrentIndex(count() - 1);
+    else
+        setCurrentIndex(currentIndex() - 1);
+}
+
 void TabBar::onTabCloseButtonUnHovered(int closingIndex)
 {
-    if(closingIndex<0 || closingIndex>= count())
+    if(closingIndex<0 || closingIndex >= count())
         return;
     Tab *tab = m_tabs.at(closingIndex);
     tab->setHovered(false);
@@ -720,6 +741,8 @@ void TabBar::onTabCloseButtonUnHovered(int closingIndex)
 
 void TabBar::onTabCloseButtonHovered(int closingIndex)
 {
+    if(closingIndex < 0 || closingIndex >= count())
+        return;
     Tab *tab = m_tabs.at(closingIndex);
     if(!tab)
         return;
@@ -749,16 +772,16 @@ void TabBar::mouseMoveEvent(QMouseEvent *event)
 {
     if(!m_TabCloseButton->isVisible())
         m_TabCloseButton->show();
-    int closingIndex = 0;
-    closingIndex = event->pos().x()/m_tabs.at(0)->width();
 
-    int counter = 0;
-    for(auto it:m_tabs){
-        if(counter != closingIndex){
-            it->setHovered(false);
-            it->update();
+    int closingIndex = -1;
+    for(int i =0; i<m_tabs.count(); i++){
+        Tab *tab = m_tabs.at(i);
+        if(tab->sceneBoundingRect().contains(event->pos()))
+            closingIndex = i;
+        else{
+            tab->setHovered(false);
+            tab->update();
         }
-        counter ++;
     }
 
     if(closingIndex<count() && closingIndex>=0){
