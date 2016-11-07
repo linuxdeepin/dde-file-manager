@@ -19,17 +19,9 @@ DAbstractFileWatcherPrivate::DAbstractFileWatcherPrivate(DAbstractFileWatcher *q
 
 }
 
-DAbstractFileWatcher::DAbstractFileWatcher(const DUrl &url, QObject *parent)
-    : DAbstractFileWatcher(*new DAbstractFileWatcherPrivate(this), url, parent)
-{
-
-}
-
 DAbstractFileWatcher::~DAbstractFileWatcher()
 {
-    Q_D(const DAbstractFileWatcher);
-
-    Q_ASSERT_X(!d->started, "DAbstractFileWatcher::~DAbstractFileWatcher()", "Watcher is started, Plase call stopWatcher()");
+    stopWatcher();
 }
 
 DUrl DAbstractFileWatcher::fileUrl() const
@@ -46,7 +38,7 @@ bool DAbstractFileWatcher::startWatcher()
     if (d->started)
         return true;
 
-    if (start()) {
+    if (d->start()) {
         d->started = true;
 
         return true;
@@ -62,7 +54,7 @@ bool DAbstractFileWatcher::stopWatcher()
     if (!d->started)
         return false;
 
-    if (stop()) {
+    if (d->stop()) {
         d->started = false;
 
         return true;
@@ -79,15 +71,6 @@ DAbstractFileWatcher::DAbstractFileWatcher(DAbstractFileWatcherPrivate &dd,
     Q_ASSERT(url.isValid());
 
     d_ptr->url = url;
-}
-
-bool DAbstractFileWatcher::event(QEvent *event)
-{
-    if (event->type() == QEvent::DeferredDelete) {
-        stopWatcher();
-    }
-
-    return QObject::event(event);
 }
 
 #include "moc_dabstractfilewatcher.cpp"

@@ -19,7 +19,6 @@ class DFileWatcher : public DAbstractFileWatcher
 
 public:
     explicit DFileWatcher(const QString &filePath, QObject *parent = 0);
-    ~DFileWatcher();
 
 private slots:
     void onFileDeleted(const QString &path, const QString &name);
@@ -29,9 +28,6 @@ private slots:
     void onFileCreated(const QString &path, const QString &name);
 
 private:
-    bool start() Q_DECL_OVERRIDE;
-    bool stop() Q_DECL_OVERRIDE;
-
     Q_PRIVATE_SLOT(d_func(), void _q_onUserShareInfoChanged(const QString &))
     Q_DECLARE_PRIVATE(DFileWatcher)
 };

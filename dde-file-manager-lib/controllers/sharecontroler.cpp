@@ -16,7 +16,9 @@
 #include "widgets/singleton.h"
 #include "app/define.h"
 #include "dfileservices.h"
+#include "private/dabstractfilewatcher_p.h"
 
+class ShareFileWatcherPrivate;
 class ShareFileWatcher : public DAbstractFileWatcher
 {
 public:
@@ -27,25 +29,40 @@ private slots:
     void onUserShareDeleted(const QString &filePath);
 
 private:
+    Q_DECLARE_PRIVATE(ShareFileWatcher)
+};
+
+class ShareFileWatcherPrivate : public DAbstractFileWatcherPrivate
+{
+public:
+    ShareFileWatcherPrivate(ShareFileWatcher *qq)
+        : DAbstractFileWatcherPrivate(qq) {}
+
     bool start() Q_DECL_OVERRIDE;
     bool stop() Q_DECL_OVERRIDE;
+
+    Q_DECLARE_PUBLIC(ShareFileWatcher)
 };
 
 ShareFileWatcher::ShareFileWatcher(QObject *parent)
-    : DAbstractFileWatcher(DUrl::fromUserShareFile("/"), parent)
+    : DAbstractFileWatcher(*new ShareFileWatcherPrivate(this), DUrl::fromUserShareFile("/"), parent)
 {
 
 }
 
-bool ShareFileWatcher::start()
+bool ShareFileWatcherPrivate::start()
 {
-    return connect(userShareManager, &UserShareManager::userShareAdded, this, &ShareFileWatcher::onUserShareAdded)
-            && connect(userShareManager, &UserShareManager::userShareDeleted, this, &ShareFileWatcher::onUserShareDeleted);
+    Q_Q(ShareFileWatcher);
+
+    return q->connect(userShareManager, &UserShareManager::userShareAdded, q, &ShareFileWatcher::onUserShareAdded)
+               && q->connect(userShareManager, &UserShareManager::userShareDeleted, q, &ShareFileWatcher::onUserShareDeleted);
 }
 
-bool ShareFileWatcher::stop()
+bool ShareFileWatcherPrivate::stop()
 {
-    return disconnect(userShareManager, 0, this, 0);
+    Q_Q(ShareFileWatcher);
+
+    return q->disconnect(userShareManager, 0, q, 0);
 }
 
 void ShareFileWatcher::onUserShareAdded(const QString &filePath)

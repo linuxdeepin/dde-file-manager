@@ -11,7 +11,6 @@
 #include "private/dabstractfilewatcher_p.h"
 
 #include "dfileservices.h"
-#include "dabstractfileinfo.h"
 #include "dfilesystemwatcher.h"
 
 #include "app/define.h"
@@ -27,205 +26,190 @@ public:
     DFileWatcherPrivate(DFileWatcher *qq)
         : DAbstractFileWatcherPrivate(qq) {}
 
-    void _q_handleFileDeleted(const DUrl &url, const DUrl &parentUrl);
-    void _q_handleFileAttributeChanged(const DUrl &url, const DUrl &parentUrl);
-    void _q_handleFileMoved(const DUrl &from, const DUrl &fromParent, const DUrl &to, const DUrl &toParent);
-    void _q_handleFileCreated(const DUrl &url, const DUrl &parentUrl);
+    bool start() Q_DECL_OVERRIDE;
+    bool stop() Q_DECL_OVERRIDE;
+
+    void _q_handleFileDeleted(const QString &path, const QString &parentPath);
+    void _q_handleFileAttributeChanged(const QString &path, const QString &parentPath);
+    void _q_handleFileMoved(const QString &from, const QString &fromParent, const QString &to, const QString &toParent);
+    void _q_handleFileCreated(const QString &path, const QString &parentPath);
     void _q_onUserShareInfoChanged(const QString &path);
 
-    DUrlList watchUrlList;
+    QString path;
+    QStringList watchFileList;
 
-    static QMap<DUrl, int> urlToWatcherCount;
+    static QMap<QString, int> filePathToWatcherCount;
 
     Q_DECLARE_PUBLIC(DFileWatcher)
 };
 
-QMap<DUrl, int> DFileWatcherPrivate::urlToWatcherCount;
+QMap<QString, int> DFileWatcherPrivate::filePathToWatcherCount;
+Q_GLOBAL_STATIC(DFileSystemWatcher, watcher_file_private)
 
-void DFileWatcherPrivate::_q_handleFileDeleted(const DUrl &url, const DUrl &parentUrl)
+QStringList parentPathList(const QString &path)
 {
-    if (url != this->url && parentUrl != this->url)
+    QStringList list;
+    QDir dir(path);
+
+    list << path;
+
+    while (dir.cdUp()) {
+        list << dir.absolutePath();
+    }
+
+    return list;
+}
+
+bool DFileWatcherPrivate::start()
+{
+    Q_Q(DFileWatcher);
+
+    started = true;
+
+    foreach (const QString &path, parentPathList(this->path)) {
+        if (watchFileList.contains(path))
+            continue;
+
+        if (filePathToWatcherCount.value(path, -1) <= 0) {
+            if (!watcher_file_private->addPath(path)) {
+                qWarning() << Q_FUNC_INFO << "start watch failed, file path =" << path;
+                q->stopWatcher();
+                started = false;
+                return false;
+            }
+        }
+
+        watchFileList << path;
+        filePathToWatcherCount[path] = filePathToWatcherCount.value(path, 0) + 1;
+    }
+
+    q->connect(watcher_file_private, &DFileSystemWatcher::fileDeleted,
+               q, &DFileWatcher::onFileDeleted);
+    q->connect(watcher_file_private, &DFileSystemWatcher::fileAttributeChanged,
+               q, &DFileWatcher::onFileAttributeChanged);
+    q->connect(watcher_file_private, &DFileSystemWatcher::fileMoved,
+               q, &DFileWatcher::onFileMoved);
+    q->connect(watcher_file_private, &DFileSystemWatcher::fileCreated,
+               q, &DFileWatcher::onFileCreated);
+
+    return true;
+}
+
+bool DFileWatcherPrivate::stop()
+{
+    Q_Q(DFileWatcher);
+
+    q->disconnect(watcher_file_private, 0, q, 0);
+
+    bool ok = true;
+
+    foreach (const QString &path, watchFileList) {
+        int count = filePathToWatcherCount.value(path, 0);
+
+        --count;
+
+        if (count <= 0) {
+            filePathToWatcherCount.remove(path);
+            watchFileList.removeOne(path);
+            ok = ok && watcher_file_private->removePath(path);
+        } else {
+            filePathToWatcherCount[path] = count;
+        }
+    }
+
+    return ok;
+}
+
+void DFileWatcherPrivate::_q_handleFileDeleted(const QString &path, const QString &parentPath)
+{
+    if (path != this->path && parentPath != this->path)
         return;
 
     Q_Q(DFileWatcher);
 
-    emit q->fileDeleted(url);
+    emit q->fileDeleted(DUrl::fromLocalFile(path));
 }
 
-void DFileWatcherPrivate::_q_handleFileAttributeChanged(const DUrl &url, const DUrl &parentUrl)
+void DFileWatcherPrivate::_q_handleFileAttributeChanged(const QString &path, const QString &parentPath)
 {
-    if (url != this->url && parentUrl != this->url)
+    if (path != this->path && parentPath != this->path)
         return;
 
     Q_Q(DFileWatcher);
 
-    emit q->fileAttributeChanged(url);
+    emit q->fileAttributeChanged(DUrl::fromLocalFile(path));
 }
 
-void DFileWatcherPrivate::_q_handleFileMoved(const DUrl &from, const DUrl &fromParent, const DUrl &to, const DUrl &toParent)
+void DFileWatcherPrivate::_q_handleFileMoved(const QString &from, const QString &fromParent, const QString &to, const QString &toParent)
 {
     Q_Q(DFileWatcher);
 
-    if ((fromParent == this->url && toParent == this->url) || from == this->url) {
-        emit q->fileMoved(from, to);
-    } else if (fromParent == this->url) {
-        emit q->fileDeleted(from);
-    } else if (watchUrlList.contains(fromParent)) {
-        emit q->fileDeleted(this->url);
-    } else if (toParent == this->url) {
-        emit q->subfileCreated(to);
+    if ((fromParent == this->path && toParent == this->path) || from == this->path) {
+        emit q->fileMoved(DUrl::fromLocalFile(from), DUrl::fromLocalFile(to));
+    } else if (fromParent == this->path) {
+        emit q->fileDeleted(DUrl::fromLocalFile(from));
+    } else if (watchFileList.contains(fromParent)) {
+        emit q->fileDeleted(url);
+    } else if (toParent == this->path) {
+        emit q->subfileCreated(DUrl::fromLocalFile(to));
     }
 }
 
-void DFileWatcherPrivate::_q_handleFileCreated(const DUrl &url, const DUrl &parentUrl)
+void DFileWatcherPrivate::_q_handleFileCreated(const QString &path, const QString &parentPath)
 {
-    if (parentUrl != this->url)
+    if (parentPath != this->path)
         return;
 
     Q_Q(DFileWatcher);
 
-    emit q->subfileCreated(url);
+    emit q->subfileCreated(DUrl::fromLocalFile(path));
 }
 
 void DFileWatcherPrivate::_q_onUserShareInfoChanged(const QString &path)
 {
     QFileInfo info(path);
 
-    if (path == url.toLocalFile()
-            || info.absolutePath() == url.toLocalFile()) {
+    if (path == this->path
+            || info.absolutePath() == this->path) {
         Q_Q(DFileWatcher);
 
         emit q->fileAttributeChanged(url);
     }
 }
 
-Q_GLOBAL_STATIC(DFileSystemWatcher, watcher_file_private)
-
 DFileWatcher::DFileWatcher(const QString &filePath, QObject *parent)
     : DAbstractFileWatcher(*new DFileWatcherPrivate(this), DUrl::fromLocalFile(filePath), parent)
 {
+    d_func()->path = filePath;
+
     connect(userShareManager, SIGNAL(userShareAdded(QString)), this, SLOT(_q_onUserShareInfoChanged(QString)));
     connect(userShareManager, SIGNAL(userShareDeleted(QString)), this, SLOT(_q_onUserShareInfoChanged(QString)));
-}
-
-DFileWatcher::~DFileWatcher()
-{
-    d_func()->started = false;
-    DFileWatcher::stop();
 }
 
 void DFileWatcher::onFileDeleted(const QString &path, const QString &name)
 {
     if (name.isEmpty())
-        d_func()->_q_handleFileDeleted(DUrl::fromLocalFile(path), DUrl());
+        d_func()->_q_handleFileDeleted(path, QString());
     else
-        d_func()->_q_handleFileDeleted(DUrl::fromLocalFile(path + QDir::separator() + name),
-                                       DUrl::fromLocalFile(path));
+        d_func()->_q_handleFileDeleted(path + QDir::separator() + name, path);
 }
 
 void DFileWatcher::onFileAttributeChanged(const QString &path, const QString &name)
 {
     if (name.isEmpty())
-        d_func()->_q_handleFileAttributeChanged(DUrl::fromLocalFile(path), DUrl());
+        d_func()->_q_handleFileAttributeChanged(path, QString());
     else
-        d_func()->_q_handleFileAttributeChanged(DUrl::fromLocalFile(path + QDir::separator() + name),
-                                                DUrl::fromLocalFile(path));
+        d_func()->_q_handleFileAttributeChanged(path + QDir::separator() + name, path);
 }
 
 void DFileWatcher::onFileMoved(const QString &from, const QString &fname, const QString &to, const QString &tname)
 {
-    DUrl furl, fpurl;
-    DUrl turl, tpurl;
-
-    if (fname.isEmpty()) {
-        furl = DUrl::fromLocalFile(from);
-    } else {
-        furl = DUrl::fromLocalFile(from + QDir::separator() + fname);
-        fpurl = DUrl::fromLocalFile(from);
-    }
-
-    if (tname.isEmpty()) {
-        turl = DUrl::fromLocalFile(to);
-    } else {
-        turl = DUrl::fromLocalFile(to + QDir::separator() + tname);
-        tpurl = DUrl::fromLocalFile(to);
-    }
-
-    d_func()->_q_handleFileMoved(furl, fpurl, turl, tpurl);
+    d_func()->_q_handleFileMoved(from, fname, to, tname);
 }
 
 void DFileWatcher::onFileCreated(const QString &path, const QString &name)
 {
-    d_func()->_q_handleFileCreated(DUrl::fromLocalFile(path + QDir::separator() + name), DUrl::fromLocalFile(path));
-}
-
-bool DFileWatcher::start()
-{
-    Q_D(DFileWatcher);
-
-    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(d->url);
-
-    if (!fileInfo)
-        return false;
-
-    d->started = true;
-
-    DUrlList parentList = fileInfo->parentUrlList();
-
-    parentList.prepend(d->url);
-
-    foreach (const DUrl &url, parentList) {
-        if (d->watchUrlList.contains(url))
-            continue;
-
-        if (d->urlToWatcherCount.value(url, -1) <= 0) {
-            if (!watcher_file_private->addPath(url.toLocalFile())) {
-                qWarning() << Q_FUNC_INFO << "start watch failed, url =" << d->url;
-                stopWatcher();
-                d->started = false;
-                return false;
-            }
-        }
-
-        d->watchUrlList << url;
-        d->urlToWatcherCount[url] = d->urlToWatcherCount.value(url, 0) + 1;
-    }
-
-    connect(watcher_file_private, &DFileSystemWatcher::fileDeleted,
-            this, &DFileWatcher::onFileDeleted);
-    connect(watcher_file_private, &DFileSystemWatcher::fileAttributeChanged,
-            this, &DFileWatcher::onFileAttributeChanged);
-    connect(watcher_file_private, &DFileSystemWatcher::fileMoved,
-            this, &DFileWatcher::onFileMoved);
-    connect(watcher_file_private, &DFileSystemWatcher::fileCreated,
-            this, &DFileWatcher::onFileCreated);
-
-    return true;
-}
-
-bool DFileWatcher::stop()
-{
-    Q_D(DFileWatcher);
-
-    disconnect(watcher_file_private, 0, this, 0);
-
-    bool ok = true;
-
-    foreach (const DUrl &url, d->watchUrlList) {
-        int count = d->urlToWatcherCount.value(url, 0);
-
-        --count;
-
-        if (count <= 0) {
-            d->urlToWatcherCount.remove(url);
-            d->watchUrlList.removeOne(url);
-            ok = ok && watcher_file_private->removePath(url.toLocalFile());
-        } else {
-            d->urlToWatcherCount[url] = count;
-        }
-    }
-
-    return ok;
+    d_func()->_q_handleFileCreated(path + QDir::separator() + name, path);
 }
 
 #include "moc_dfilewatcher.cpp"
