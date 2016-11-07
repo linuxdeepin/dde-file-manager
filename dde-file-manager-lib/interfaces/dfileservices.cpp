@@ -487,6 +487,16 @@ bool DFileService::createSymlink(const DUrl &fileUrl, const DFMEvent &event) con
     QString linkPath = QFileDialog::getSaveFileName(WindowManager::getWindowById(event.windowId()),
                                                     QObject::tr("Create symlink"), linkName);
 
+    Q_D(const DFileService);
+
+    DFileServicePrivate *ptr = const_cast<DFileServicePrivate*>(d);
+
+    if (ptr->whitelist >= OpenFile) {
+        ptr->whitelist |= CreateSymlink;
+    } else {
+        ptr->blacklist &= (~CreateSymlink);
+    }
+
     return createSymlink(fileUrl, DUrl::fromLocalFile(linkPath));
 }
 
