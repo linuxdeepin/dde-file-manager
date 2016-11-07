@@ -40,9 +40,3 @@ QString BookMark::getName()
 {
     return m_name;
 }
-
-QIcon BookMark::fileIcon() const
-{
-    return QIcon(":/icons/images/icons/bookmarks_normal_22px.svg");
-}
-

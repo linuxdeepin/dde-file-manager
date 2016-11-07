@@ -89,10 +89,12 @@ DFileMenu *DFileMenuManager::createCustomBookMarkMenu(const DUrl &url, QSet<Menu
                << MenuAction::Property;
 
     const DAbstractFileInfoPointer& info = fileService->createFileInfo(url);
+    info->refresh();
     if (!info->exists()){
         disableList << MenuAction::OpenInNewWindow
-                          << MenuAction::Rename
-                          << MenuAction::Property;
+                    << MenuAction::OpenInNewTab
+                    << MenuAction::Rename
+                    << MenuAction::Property;
     }else{
         if (!info->isCanRename()){
             disableList << MenuAction::Rename;
