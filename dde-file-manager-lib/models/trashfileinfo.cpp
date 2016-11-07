@@ -68,8 +68,19 @@ TrashFileInfo::TrashFileInfo(const DUrl &url)
 {
     Q_D(TrashFileInfo);
 
-    setProxy(DAbstractFileInfoPointer(new DFileInfo(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath) + url.path())));
+    const QString &trashFilesPath = DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath);
+
+    if (!QDir().mkpath(trashFilesPath)) {
+        qWarning() << "mkpath trash files path failed, path =" << trashFilesPath;
+    }
+
+    setProxy(DAbstractFileInfoPointer(new DFileInfo(trashFilesPath + url.path())));
     d->updateInfo();
+}
+
+bool TrashFileInfo::exists() const
+{
+    return DAbstractFileInfo::exists() || fileUrl() == DUrl::fromTrashFile("/");
 }
 
 bool TrashFileInfo::isCanRename() const
@@ -275,6 +286,15 @@ QList<QIcon> TrashFileInfo::additionalIcon() const
     }
 
     return icons;
+}
+
+DUrl TrashFileInfo::goToUrlWhenDeleted() const
+{
+    if (fileUrl() == DUrl::fromTrashFile("/")) {
+        return fileUrl();
+    }
+
+    return DAbstractFileInfo::goToUrlWhenDeleted();
 }
 
 DAbstractFileInfo::sortFunction TrashFileInfo::sortFunByColumn(int columnRole) const
