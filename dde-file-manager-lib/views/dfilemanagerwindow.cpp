@@ -400,8 +400,8 @@ void DFileManagerWindow::createNewView(const DFMEvent &event)
     else
         url = event.fileUrl();
 
-    view->cd(url);
     d->tabBar->createTab(view);
+    view->cd(url);
 }
 
 void DFileManagerWindow::switchToView(DFileView *view)
