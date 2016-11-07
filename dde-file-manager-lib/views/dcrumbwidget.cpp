@@ -123,9 +123,9 @@ void DCrumbWidget::setCrumb(const DUrl &url)
 {
     if(!url.isValid())
         return;
+    m_url = url;
     if(url.isSearchFile())
         return;
-    m_url = url;
     m_needArrows = false;
     clear();
     if(url.isRecentFile())
@@ -189,8 +189,9 @@ DUrl DCrumbWidget::getCurrentUrl()
         result = DUrl::fromTrashFile(path);
     }else if (m_url.isComputerFile()){
         result = DUrl::fromComputerFile("/");
-    }
-    else
+    }else if(m_url.isSearchFile()){
+        result = m_url.searchTargetUrl();
+    }else
     {
         result = m_url;
     }
