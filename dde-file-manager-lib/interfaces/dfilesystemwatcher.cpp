@@ -134,7 +134,7 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
     char *at = buffer.data();
     char * const end = at + buffSize;
 
-    QHash<int, inotify_event *> eventForId;
+    QList<inotify_event *> eventList;
     QHash<int, QString> pathForId;
     /// only save event: IN_MOVE_TO
     QMap<int, QString> cookieToFilePath;
@@ -146,26 +146,19 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
 
         at += sizeof(inotify_event) + event->len;
 
-        if (eventForId.contains(event->wd)) {
-            if (!(event->mask & IN_MOVED_TO) || !hasMoveFromByCookie.contains(event->cookie))
-                eventForId[event->wd]->mask |= event->mask;
-
-            path = pathForId.value(event->wd);
-        } else {
-            int id = event->wd;
+        int id = event->wd;
+        path = getPathFromID(id);
+        if (path.isEmpty()) {
+            // perhaps a directory?
+            id = -id;
             path = getPathFromID(id);
-            if (path.isEmpty()) {
-                // perhaps a directory?
-                id = -id;
-                path = getPathFromID(id);
-                if (path.isEmpty())
-                    continue;
-            }
+            if (path.isEmpty())
+                continue;
+        }
 
-            if (!(event->mask & IN_MOVED_TO) || !hasMoveFromByCookie.contains(event->cookie)) {
-                eventForId.insert(event->wd, event);
-                pathForId.insert(event->wd, path);
-            }
+        if (!(event->mask & IN_MOVED_TO) || !hasMoveFromByCookie.contains(event->cookie)) {
+            eventList.append(event);
+            pathForId.insert(event->wd, path);
         }
 
         if (event->mask & IN_MOVED_TO) {
@@ -179,8 +172,8 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
 
 //    qDebug() << "event count:" << eventForId.count();
 
-    QHash<int, inotify_event *>::const_iterator it = eventForId.constBegin();
-    while (it != eventForId.constEnd()) {
+    QList<inotify_event *>::const_iterator it = eventList.constBegin();
+    while (it != eventList.constEnd()) {
         const inotify_event &event = **it;
         ++it;
 
