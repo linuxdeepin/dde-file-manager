@@ -113,6 +113,7 @@ void DFileManagerWindow::onRequestCloseTab(const int index, const bool &remainSt
     DFileView *view = tab->fileView();
 
     d->viewStackLayout->removeWidget(view);
+    view->close();
     view->deleteLater();
 
     d->toolbar->removeNavStackAt(index);

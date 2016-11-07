@@ -70,6 +70,8 @@ signals:
     void aboutToNewWindow(Tab *who);
     void draggingFinished();
     void draggingStarted();
+    void requestActiveNextTab();
+    void requestActivePreviousTab();
 
 private:
     int m_tabIndex;
@@ -151,6 +153,8 @@ public slots:
     void onTabClicked();
     void onTabDragFinished();
     void onTabDragStarted();
+    void activateNextTab();
+    void activatePreviousTab();
 
 protected:
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
