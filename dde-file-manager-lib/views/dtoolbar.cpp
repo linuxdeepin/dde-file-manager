@@ -275,7 +275,6 @@ void DToolBar::crumbSelected(const DFMEvent &e)
 
 void DToolBar::crumbChanged(const DFMEvent &event)
 {
-    qDebug() << event;
     if(event.windowId() != WindowManager::getWindowId(this))
         return;
 
