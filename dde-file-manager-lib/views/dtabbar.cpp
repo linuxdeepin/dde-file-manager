@@ -315,7 +315,7 @@ void Tab::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             m_dragObject->deleteLater();
             m_pressed = false;
 
-            emit requestNewWindow(fileView()->rootUrl());
+            emit requestNewWindow(currentUrl());
         }
     }
 
