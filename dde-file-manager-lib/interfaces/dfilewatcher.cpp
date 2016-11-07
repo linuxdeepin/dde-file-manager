@@ -217,7 +217,24 @@ void DFileWatcher::onFileAttributeChanged(const QString &path, const QString &na
 
 void DFileWatcher::onFileMoved(const QString &from, const QString &fname, const QString &to, const QString &tname)
 {
-    d_func()->_q_handleFileMoved(from, fname, to, tname);
+    QString fromPath, fpPath;
+    QString toPath, tpPath;
+
+    if (fname.isEmpty()) {
+        fromPath = from;
+    } else {
+        fromPath = from + QDir::separator() + fname;
+        fpPath = from;
+    }
+
+    if (tname.isEmpty()) {
+        toPath = to;
+    } else {
+        toPath = to + QDir::separator() + tname;
+        tpPath = to;
+    }
+
+    d_func()->_q_handleFileMoved(fromPath, fpPath, toPath, tpPath);
 }
 
 void DFileWatcher::onFileCreated(const QString &path, const QString &name)
