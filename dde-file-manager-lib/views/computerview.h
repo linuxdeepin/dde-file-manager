@@ -93,7 +93,7 @@ public:
     explicit ComputerView(QWidget *parent = 0);
     ~ComputerView();
 
-    static DUrl url();
+    static DUrl rootUrl();
 
     void initData();
     void initUI();
@@ -102,7 +102,7 @@ public:
     void loadSystemItems();
     void loadNativeItems();
     void loadCustomItems();
-    void loadCustomItemsByNameUrl(const QString& id, const QString& url);
+    void loadCustomItemsByNameUrl(const QString& id, const QString& rootUrl);
 
     bool isDiskConfExisted();
     QString getDiskConfPath();

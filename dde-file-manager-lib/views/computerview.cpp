@@ -274,7 +274,7 @@ ComputerView::~ComputerView()
 
 }
 
-DUrl ComputerView::url()
+DUrl ComputerView::rootUrl()
 {
     return DUrl::fromComputerFile("/");
 }
@@ -588,11 +588,11 @@ void ComputerView::keyPressEvent(QKeyEvent *event)
 
     DFMEvent fmevent;
     DUrlList urls;
-    urls << url();
+    urls << rootUrl();
     fmevent << urls;
     fmevent << DFMEvent::FileView;
     fmevent << WindowManager::getWindowId(this);
-    fmevent << url();
+    fmevent << rootUrl();
 
     switch (event->modifiers()) {
         case Qt::ControlModifier:

@@ -307,7 +307,9 @@ void DFileManagerWindow::preHandleCd(const DUrl &fileUrl, int source)
     } else if (event.fileUrl().isComputerFile()) {
         event << DUrl::fromComputerFile("/");
         showComputerView(event);
-        d->fileView->fileViewHelper()->cd(event);
+        d->tabBar->currentTab()->setCurrentUrl(event.fileUrl());
+        emit d->tabBar->currentChanged(d->tabBar->currentIndex());
+        d->toolbar->setCrumb(event.fileUrl());
     } else {
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(event.fileUrl());
 
@@ -414,13 +416,14 @@ void DFileManagerWindow::switchToView(DFileView *view)
     }
 
     d->fileView = view;
-    if(view->rootUrl().isComputerFile()){
+    if(d->tabBar->currentTab()->currentUrl().isComputerFile()){
         if (!d->computerView)
             initComputerView();
 
         d->viewStackLayout->setCurrentWidget(d->computerView);
         d->computerView->setFocus();
         d->toolbar->setViewModeButtonVisible(false);
+        d->toolbar->setCrumb(d->tabBar->currentTab()->currentUrl());
     } else {
         d->viewStackLayout->setCurrentWidget(d->fileView);
         d->toolbar->setViewModeButtonVisible(true);
@@ -652,7 +655,7 @@ void DFileManagerWindow::initComputerView()
 
     d->computerView = new ComputerView(this);
     d->viewStackLayout->addWidget(d->computerView);
-    d->views.insert(ComputerView::url(), d->computerView);
+    d->views.insert(ComputerView::rootUrl(), d->computerView);
 }
 
 void DFileManagerWindow::initCentralWidget()
