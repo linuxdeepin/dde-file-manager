@@ -38,8 +38,10 @@ Shortcut::Shortcut(QObject *parent) : QObject(parent)
     group5.groupName = tr("Others");
     group5.groupItems << ShortcutItem(tr("Close"),tr("Alt + F4 "))
                       << ShortcutItem(tr("Close current tab"), tr("Ctrl + w"))
-                      << ShortcutItem(tr("Back"),tr("Alt + left "))
-                      << ShortcutItem(tr("Forward"),tr("Alt + right "));
+                      << ShortcutItem(tr("Back"),tr("Alt + Left "))
+                      << ShortcutItem(tr("Forward"),tr("Alt + Right "))
+                      << ShortcutItem(tr("Switch to next tab"),tr("Alt + Tab "))
+                      << ShortcutItem(tr("Switch to previous tab"),tr("Alt + Shift + Tab "));
     m_shortcutGroups << group1 << group2 << group3 << group4 << group5;
 
     //convert to json object
