@@ -1051,10 +1051,12 @@ void DFileSystemModel::onFileCreated(const DUrl &fileUrl)
 
 void DFileSystemModel::onFileDeleted(const DUrl &fileUrl)
 {
-    Q_D(const DFileSystemModel);
     qDebug() << "file deleted:" << fileUrl;
 
+    Q_D(const DFileSystemModel);
+
     const DAbstractFileInfoPointer &info = fileService->createFileInfo(fileUrl);
+
     if(!info)
         return;
 

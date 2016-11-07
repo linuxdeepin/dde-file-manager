@@ -1604,12 +1604,12 @@ bool DFileView::setRootUrl(const DUrl &url)
         qDebug() << "url redirected, from:" << old_url << "to:" << fileUrl;
     }
 
-    qDebug() << "cd: current url:" << rootUrl() << "to url:" << fileUrl;
-
     const DUrl &rootUrl = this->rootUrl();
 
-    if(rootUrl == fileUrl/* && !info->isShared()*/)
-        return false;
+    qDebug() << "cd: current url:" << rootUrl << "to url:" << fileUrl;
+
+    if (rootUrl == fileUrl)
+        return true;
 
 //    QModelIndex index = model()->index(fileUrl);
 

@@ -218,7 +218,12 @@ DUrl localToTrash(const DUrl &url)
     if (!localPath.startsWith(trashPath))
         return DUrl();
 
-    return DUrl::fromTrashFile(localPath.mid(trashPath.length()));
+    DUrl u = DUrl::fromTrashFile(localPath.mid(trashPath.length()));
+
+    if (u.path().isEmpty())
+        u.setPath("/");
+
+    return u;
 }
 QString trashToLocal(const DUrl &url)
 {
