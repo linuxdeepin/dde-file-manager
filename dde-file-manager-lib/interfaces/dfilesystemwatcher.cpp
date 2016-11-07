@@ -65,6 +65,7 @@ QStringList DFileSystemWatcherPrivate::addPaths(const QStringList &paths, QStrin
                                        | IN_CREATE
                                        | IN_DELETE
                                        | IN_DELETE_SELF
+                                       | IN_MODIFY
                                        )
                                     : (0
                                        | IN_ATTRIB
@@ -175,20 +176,20 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
             hasMoveFromByCookie << event->cookie;
     }
 
-    qDebug() << "event count:" << eventForId.count();
+//    qDebug() << "event count:" << eventForId.count();
 
     QHash<int, inotify_event *>::const_iterator it = eventForId.constBegin();
     while (it != eventForId.constEnd()) {
         const inotify_event &event = **it;
         ++it;
 
-        qDebug() << "inotify event, wd" << event.wd << "cookie" << event.cookie << "mask" << hex << event.mask;
+//        qDebug() << "inotify event, wd" << event.wd << "cookie" << event.cookie << "mask" << hex << event.mask;
 
         int id = event.wd;
         const QString &path = pathForId.value(id);
         const QString &name = QString::fromUtf8(event.name);
 
-        qDebug() << "event for path" << path;
+//        qDebug() << "event for path" << path;
 
         if ((event.mask & (IN_DELETE_SELF | IN_MOVE_SELF | IN_UNMOUNT)) != 0) {
             do {
@@ -261,9 +262,15 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
         }
 
         if (event.mask & IN_ATTRIB) {
-            qDebug() << event.mask << filePath;
+            qDebug() << "IN_ATTRIB" <<  event.mask << filePath;
 
             emit q->fileAttributeChanged(path, name, DFileSystemWatcher::QPrivateSignal());
+        }
+
+        if (event.mask & IN_MODIFY) {
+//            qDebug() << "IN_MODIFY" <<  event.mask << filePath;
+
+            emit q->fileModified(path, name, DFileSystemWatcher::QPrivateSignal());
         }
     }
 }

@@ -26,6 +26,7 @@ private slots:
     void onFileMoved(const QString &fromPath, const QString &fromName,
                    const QString &toPath, const QString &toName);
     void onFileCreated(const QString &path, const QString &name);
+    void onFileModified(const QString &path, const QString &name);
 
 private:
     Q_PRIVATE_SLOT(d_func(), void _q_onUserShareInfoChanged(const QString &))
