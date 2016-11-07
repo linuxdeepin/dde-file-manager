@@ -745,8 +745,9 @@ void DBookmarkScene::setDisableUrlSchemes(const QList<QString> &schemes)
     for (DBookmarkItem *item : m_itemGroup->items()) {
         const QString &scheme = item->getUrl().scheme();
 
-        item->setVisible(!schemes.contains(scheme));
+        if (schemes.contains(scheme)){
+            item->hide();
+        }
     }
-
     m_disableUrlSchemeList = schemes;
 }
