@@ -34,6 +34,7 @@ public:
     void _q_handleFileMoved(const QString &from, const QString &fromParent, const QString &to, const QString &toParent);
     void _q_handleFileCreated(const QString &path, const QString &parentPath);
     void _q_onUserShareInfoChanged(const QString &path);
+    void _q_handleFileModified(const QString &path, const QString &parentPath);
 
     QString path;
     QStringList watchFileList;
@@ -91,6 +92,8 @@ bool DFileWatcherPrivate::start()
                q, &DFileWatcher::onFileMoved);
     q->connect(watcher_file_private, &DFileSystemWatcher::fileCreated,
                q, &DFileWatcher::onFileCreated);
+    q->connect(watcher_file_private, &DFileSystemWatcher::fileModified,
+               q, &DFileWatcher::onFileModified);
 
     return true;
 }
@@ -177,6 +180,16 @@ void DFileWatcherPrivate::_q_onUserShareInfoChanged(const QString &path)
     }
 }
 
+void DFileWatcherPrivate::_q_handleFileModified(const QString &path, const QString &parentPath)
+{
+    if (path != this->path && parentPath != this->path)
+        return;
+
+    Q_Q(DFileWatcher);
+
+    emit q->fileModified(DUrl::fromLocalFile(path));
+}
+
 DFileWatcher::DFileWatcher(const QString &filePath, QObject *parent)
     : DAbstractFileWatcher(*new DFileWatcherPrivate(this), DUrl::fromLocalFile(filePath), parent)
 {
@@ -210,6 +223,14 @@ void DFileWatcher::onFileMoved(const QString &from, const QString &fname, const 
 void DFileWatcher::onFileCreated(const QString &path, const QString &name)
 {
     d_func()->_q_handleFileCreated(path + QDir::separator() + name, path);
+}
+
+void DFileWatcher::onFileModified(const QString &path, const QString &name)
+{
+    if (name.isEmpty())
+        d_func()->_q_handleFileModified(path, QString());
+    else
+        d_func()->_q_handleFileModified(path + QDir::separator() + name, path);
 }
 
 #include "moc_dfilewatcher.cpp"

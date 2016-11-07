@@ -37,6 +37,7 @@ Q_SIGNALS:
     void fileMoved(const QString &fromPath, const QString &fromName,
                    const QString &toPath, const QString &toName, QPrivateSignal);
     void fileCreated(const QString &path, const QString &name, QPrivateSignal);
+    void fileModified(const QString &path, const QString &name, QPrivateSignal);
 
 private:
     QScopedPointer<DFileSystemWatcherPrivate> d_ptr;

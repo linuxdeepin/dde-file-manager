@@ -651,6 +651,8 @@ QModelIndex DFileSystemModel::setRootUrl(const DUrl &fileUrl)
                 this, &DFileSystemModel::onFileCreated);
         connect(d->watcher, &DAbstractFileWatcher::fileMoved,
                 this, &DFileSystemModel::onFileRename);
+        connect(d->watcher, &DAbstractFileWatcher::fileModified,
+                this, &DFileSystemModel::onFileUpdated);
     }
 
     return index(fileUrl);
