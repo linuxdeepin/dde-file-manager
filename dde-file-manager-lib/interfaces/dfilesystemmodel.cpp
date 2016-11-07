@@ -114,7 +114,9 @@ DFileSystemModel::~DFileSystemModel()
         d->updateChildrenFuture.waitForFinished();
     }
 
-    clear();
+    if (d->watcher) {
+        d->watcher->deleteLater();
+    }
 }
 
 DFileViewHelper *DFileSystemModel::parent() const
