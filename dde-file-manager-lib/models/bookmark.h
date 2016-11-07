@@ -29,7 +29,7 @@ private:
 
     // AbstractFileInfo interface
 public:
-    QIcon fileIcon() const Q_DECL_OVERRIDE;
+
 };
 
 #endif // BOOKMARK_H
