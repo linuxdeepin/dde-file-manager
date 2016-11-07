@@ -301,6 +301,9 @@ void DFileManagerWindow::preHandleCd(const DUrl &fileUrl, int source)
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(event.fileUrl());
 
         if (!fileInfo || !fileInfo->exists()) {
+            if (DUrl::hasScheme(event.fileUrl().scheme()))
+                return;
+
             const DAbstractFileInfoPointer &currentFileInfo = DFileService::instance()->createFileInfo(currentUrl());
 
             if (!currentFileInfo || !currentFileInfo->canIteratorDir())
