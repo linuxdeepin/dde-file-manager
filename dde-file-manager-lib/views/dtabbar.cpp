@@ -25,6 +25,7 @@ Tab::Tab(QGraphicsObject *parent, DFileView *view):
     QGraphicsObject(parent)
 {
     m_fileView = view;
+    setCurrentUrl(view->rootUrl());
     setTabText(getDisplayNameByUrl(view->rootUrl()));
     initConnect();
     setAcceptHoverEvents(true);
@@ -57,6 +58,17 @@ QString Tab::tabText()
 DFileView *Tab::fileView()
 {
     return m_fileView;
+}
+
+DUrl Tab::currentUrl() const
+{
+    return m_url;
+}
+
+void Tab::setCurrentUrl(const DUrl &url)
+{
+    m_url = url;
+    setTabText(getDisplayNameByUrl(url));
 }
 
 void Tab::setFixedSize(QSize size)
@@ -259,7 +271,7 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
 
 void Tab::onFileRootUrlChanged(const DUrl &url)
 {
-    setTabText(getDisplayNameByUrl(url));
+    setCurrentUrl(url);
 }
 
 void Tab::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -553,11 +565,6 @@ void TabBar::removeTab(const int index, const bool &remainState)
     m_tabs.removeAt(index);
     tab->deleteLater();
 
-    if(count() <2){
-        hide();
-        emit tabBarHidden();
-    }
-
     if(m_TabCloseButton->closingIndex() <=count()-1 &&
             m_TabCloseButton->closingIndex()>=0){
         m_lastDeleteState = remainState;
@@ -575,11 +582,17 @@ void TabBar::removeTab(const int index, const bool &remainState)
         }
     }
 
-if(index<count())
+    if(index<count())
         setCurrentIndex(index);
     else
         setCurrentIndex(count()-1);
     emit tabAddableChanged(count() < TAB_MAX_COUNT);
+
+    if(count() <2){
+        m_lastDeleteState = false;
+        hide();
+        emit tabBarHidden();
+    }
 }
 
 void TabBar::setCurrentIndex(const int index)
