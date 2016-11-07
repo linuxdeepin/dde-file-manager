@@ -194,7 +194,7 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
         if ((event.mask & (IN_DELETE_SELF | IN_MOVE_SELF | IN_UNMOUNT)) != 0) {
             do {
                 if (event.mask & IN_MOVE_SELF) {
-                    const QMap<int, QString>::const_iterator &iterator = cookieToFilePath.constBegin();
+                    QMap<int, QString>::const_iterator iterator = cookieToFilePath.constBegin();
 
                     bool isMove = false;
 
@@ -206,6 +206,8 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
                             isMove = true;
                             break;
                         }
+
+                        ++iterator;
                     }
 
                     if (isMove)
