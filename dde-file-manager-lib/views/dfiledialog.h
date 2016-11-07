@@ -65,6 +65,7 @@ public Q_SLOTS:
 protected:
     void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
     void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
+    bool eventFilter(QObject *watched, QEvent *event) Q_DECL_OVERRIDE;
     void adjustPosition(QWidget *w);
 
 private:
