@@ -16,11 +16,24 @@ public:
     DFileProxyWatcherPrivate(DFileProxyWatcher *qq)
         : DAbstractFileWatcherPrivate(qq) {}
 
+    bool start() Q_DECL_OVERRIDE;
+    bool stop() Q_DECL_OVERRIDE;
+
     DAbstractFileWatcher *proxy;
     std::function<DUrl (const DUrl&)> urlConvertFun;
 
     Q_DECLARE_PUBLIC(DFileProxyWatcher)
 };
+
+bool DFileProxyWatcherPrivate::start()
+{
+    return proxy->startWatcher();
+}
+
+bool DFileProxyWatcherPrivate::stop()
+{
+    return proxy->stopWatcher();
+}
 
 DFileProxyWatcher::DFileProxyWatcher(const DUrl &url, DAbstractFileWatcher *proxy,
                                      std::function<DUrl (const DUrl &)> urlConvertFun,
@@ -69,18 +82,4 @@ void DFileProxyWatcher::onSubfileCreated(const DUrl &url)
     Q_D(const DFileProxyWatcher);
 
     emit subfileCreated(d->urlConvertFun(url));
-}
-
-bool DFileProxyWatcher::start()
-{
-    Q_D(DFileProxyWatcher);
-
-    return d->proxy->startWatcher();
-}
-
-bool DFileProxyWatcher::stop()
-{
-    Q_D(DFileProxyWatcher);
-
-    return d->proxy->stopWatcher();
 }

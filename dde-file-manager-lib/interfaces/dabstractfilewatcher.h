@@ -19,7 +19,6 @@ class DAbstractFileWatcher : public QObject
     Q_OBJECT
 
 public:
-    explicit DAbstractFileWatcher(const DUrl &url, QObject *parent = 0);
     ~DAbstractFileWatcher();
 
     DUrl fileUrl() const;
@@ -35,10 +34,6 @@ signals:
 
 protected:
     explicit DAbstractFileWatcher(DAbstractFileWatcherPrivate &dd, const DUrl &url, QObject *parent = 0);
-    bool event(QEvent *event) Q_DECL_OVERRIDE;
-
-    virtual bool start() = 0;
-    virtual bool stop() = 0;
 
     QScopedPointer<DAbstractFileWatcherPrivate> d_ptr;
 

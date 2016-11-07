@@ -29,9 +29,6 @@ private slots:
     void onSubfileCreated(const DUrl &url);
 
 private:
-    bool start() Q_DECL_OVERRIDE;
-    bool stop() Q_DECL_OVERRIDE;
-
     Q_DECLARE_PRIVATE(DFileProxyWatcher)
 };
 
