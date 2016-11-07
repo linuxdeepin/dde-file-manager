@@ -353,8 +353,8 @@ void PropertyDialog::showTextShowFrame()
     if (m_edit->isCanceled()) {
         initTextShowFrame(fileInfo->fileDisplayName());
     } else {
-        const DUrl &oldUrl = m_url;
-        const DUrl &newUrl = fileInfo->getUrlByNewFileName(m_edit->toPlainText());
+        DUrl oldUrl = m_url;
+        DUrl newUrl = fileInfo->getUrlByNewFileName(m_edit->toPlainText());
 
         if (fileService->renameFile(oldUrl, newUrl)) {
             m_url = newUrl;
