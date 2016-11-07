@@ -9,6 +9,7 @@
 
 #include "dfilesystemwatcher.h"
 #include "private/dfilesystemwatcher_p.h"
+#include "dfmglobal.h"
 
 #include <QFileInfo>
 #include <QDir>
@@ -190,6 +191,13 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
         const QString &name = QString::fromUtf8(event.name);
 
 //        qDebug() << "event for path" << path;
+
+        /// TODO: Existence of invalid utf8 characters QFile can not read the file information
+        if (event.name != QString::fromLocal8Bit(event.name).toLocal8Bit()) {
+            if (event.mask & (IN_CREATE | IN_MOVED_TO)) {
+                DFMGlobal::fileNameCorrection(path);
+            }
+        }
 
         if ((event.mask & (IN_DELETE_SELF | IN_MOVE_SELF | IN_UNMOUNT)) != 0) {
             do {
