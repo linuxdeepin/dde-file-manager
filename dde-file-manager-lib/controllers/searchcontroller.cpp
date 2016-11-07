@@ -248,7 +248,11 @@ bool SearchController::renameFile(const DUrl &oldUrl, const DUrl &newUrl, bool &
 {
     accepted = true;
 
-    return DFileService::instance()->renameFile(realUrl(oldUrl), realUrl(newUrl));
+    Q_UNUSED(oldUrl)
+    Q_UNUSED(newUrl)
+
+    return false;
+//    return DFileService::instance()->renameFile(realUrl(oldUrl), realUrl(newUrl));
 }
 
 bool SearchController::compressFiles(const DUrlList &urlList, bool &accepted) const
