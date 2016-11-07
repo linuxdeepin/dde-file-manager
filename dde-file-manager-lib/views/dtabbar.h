@@ -32,6 +32,8 @@ public:
     void setTabText(QString text);
     QString tabText();
     DFileView *fileView();
+    DUrl currentUrl() const;
+    void setCurrentUrl(const DUrl& url);
 
     void setFixedSize(QSize size);
     void setGeometry(QRect rect);
@@ -89,6 +91,7 @@ private:
     bool m_checked = false;
     bool m_borderLeft = false;
     DFileView* m_fileView = NULL;
+    DUrl m_url;
 };
 
 class TabCloseButton:public QGraphicsObject{
