@@ -217,9 +217,10 @@ QPixmap ThumbnailGenerator::getPDFThumbnail(const QString &fpath, const Thumbnai
 
     QImage img;
     img = pdfPage->thumbnail();
-    if(img.isNull()){
-        img = pdfPage->renderToImage(72,72,0,0,pdfPage->pageSize().width(),pdfPage->pageSize().height());
-    }
+    //It has a inner bug for using this function
+//    if(img.isNull()){
+//        img = pdfPage->renderToImage(72,72,0,0,pdfPage->pageSize().width(),pdfPage->pageSize().height());
+//    }
     if(img.isNull()){
         qDebug()<<"render error";
         return QPixmap();
