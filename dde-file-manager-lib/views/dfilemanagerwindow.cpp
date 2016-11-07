@@ -287,6 +287,7 @@ void DFileManagerWindow::preHandleCd(const DUrl &fileUrl, int source)
 
     event << fileUrl;
     event << (DFMEvent::EventSource)(source);
+    event << this->windowId();
 
     if (event.fileUrl().isNetWorkFile()) {
         emit fileSignalManager->requestFetchNetworks(event);
