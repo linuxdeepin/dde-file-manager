@@ -69,6 +69,7 @@ DFileDialog::DFileDialog(QWidget *parent)
     getFileView()->setFileOperatorWhitelist(fileServiceWhitelist);
     getFileView()->setDragEnabled(false);
     getFileView()->setDragDropMode(QAbstractItemView::NoDragDrop);
+    getFileView()->installEventFilter(this);
 }
 
 DFileDialog::~DFileDialog()
@@ -440,6 +441,23 @@ void DFileDialog::closeEvent(QCloseEvent *event)
     } else {
         event->accept();
     }
+}
+
+bool DFileDialog::eventFilter(QObject *watched, QEvent *event)
+{
+    if (watched == getFileView()
+            && (event->type() == QEvent::KeyPress
+                || event->type() == QEvent::KeyRelease)) {
+        QKeyEvent *e = static_cast<QKeyEvent*>(event);
+
+        if (e->modifiers() == Qt::ControlModifier
+                && (e->key() == Qt::Key_T
+                    || e->key() == Qt::Key_W)) {
+            return true;
+        }
+    }
+
+    return DFileManagerWindow::eventFilter(watched, event);
 }
 
 void DFileDialog::adjustPosition(QWidget *w)
