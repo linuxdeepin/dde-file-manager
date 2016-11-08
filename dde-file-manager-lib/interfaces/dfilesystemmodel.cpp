@@ -43,10 +43,23 @@ public:
 class DFileSystemModelPrivate
 {
 public:
+    enum EventType {
+        AddFile,
+        RmFile
+    };
+
     DFileSystemModelPrivate(DFileSystemModel *qq)
         : q_ptr(qq) {}
 
     bool passNameFilters(const FileSystemNodePointer &node) const;
+
+    void _q_onFileCreated(const DUrl &fileUrl);
+    void _q_onFileDeleted(const DUrl &fileUrl);
+    void _q_onFileUpdated(const DUrl &fileUrl);
+    void _q_onFileRename(const DUrl &from, const DUrl &to);
+
+    /// add/rm file event
+    void _q_processFileEvent();
 
     DFileSystemModel *q_ptr;
 
@@ -70,6 +83,9 @@ public:
     bool childrenUpdated = false;
     bool readOnly = false;
 
+    /// add/rm file event
+    QQueue<QPair<EventType, DUrl>> fileEventQueue;
+
     Q_DECLARE_PUBLIC(DFileSystemModel)
 };
 
@@ -91,6 +107,109 @@ bool DFileSystemModelPrivate::passNameFilters(const FileSystemNodePointer &node)
     }
 
     return true;
+}
+
+void DFileSystemModelPrivate::_q_onFileCreated(const DUrl &fileUrl)
+{
+    Q_Q(DFileSystemModel);
+
+    fileEventQueue.enqueue(qMakePair(AddFile, fileUrl));
+    q->metaObject()->invokeMethod(q, QT_STRINGIFY(_q_processFileEvent), Qt::QueuedConnection);
+}
+
+void DFileSystemModelPrivate::_q_onFileDeleted(const DUrl &fileUrl)
+{
+    Q_Q(DFileSystemModel);
+
+    fileEventQueue.enqueue(qMakePair(RmFile, fileUrl));
+    q->metaObject()->invokeMethod(q, QT_STRINGIFY(_q_processFileEvent), Qt::QueuedConnection);
+}
+
+void DFileSystemModelPrivate::_q_onFileUpdated(const DUrl &fileUrl)
+{
+    Q_Q(DFileSystemModel);
+
+    const FileSystemNodePointer &node = rootNode;
+
+    if (!node)
+        return;
+
+    const QModelIndex &index = q->index(fileUrl);
+
+    if (!index.isValid())
+        return;
+
+    if (const DAbstractFileInfoPointer &fileInfo = q->fileInfo(index)) {
+        fileInfo->refresh();
+    }
+
+    emit q->dataChanged(index, index);
+}
+
+void DFileSystemModelPrivate::_q_onFileRename(const DUrl &from, const DUrl &to)
+{
+    _q_onFileDeleted(from);
+    _q_onFileCreated(to);
+}
+
+void DFileSystemModelPrivate::_q_processFileEvent()
+{
+    static bool _q_processFileEvent_runing = false;
+
+    if (_q_processFileEvent_runing)
+        return;
+
+    _q_processFileEvent_runing = true;
+
+    Q_Q(DFileSystemModel);
+
+    while (!fileEventQueue.isEmpty()) {
+        const QPair<EventType, DUrl> &event = fileEventQueue.dequeue();
+        const DUrl &fileUrl = event.second;
+
+        const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(fileUrl);
+
+        if (!info)
+            continue;
+
+        const DUrl &rootUrl = q->rootUrl();
+
+        if (fileUrl == rootUrl) {
+            if (event.first == RmFile)
+                emit q->rootUrlDeleted(rootUrl);
+
+            q->refresh();
+            continue;
+        }
+
+        if (info->parentUrl() != rootUrl)
+            continue;
+
+        if (event.first == AddFile) {
+            qDebug() << "file creatored" << fileUrl;
+
+            q->addFile(info);
+            q->selectAndRenameFile(fileUrl);
+        } else {// rm file event
+            qDebug() << "file deleted:" << fileUrl;
+
+            const FileSystemNodePointer &parentNode = rootNode;
+
+            if (parentNode && parentNode->populatedChildren) {
+                int index = parentNode->visibleChildren.indexOf(fileUrl);
+
+                if (index < 0)
+                    continue;
+
+                q->beginRemoveRows(q->createIndex(parentNode, 0), index, index);
+                parentNode->visibleChildren.removeAt(index);
+                parentNode->children.remove(fileUrl);
+                q->endRemoveRows();
+            }
+        }
+    }
+
+    _q_processFileEvent_runing = false;
 }
 
 DFileSystemModel::DFileSystemModel(DFileViewHelper *parent)
@@ -645,16 +764,16 @@ QModelIndex DFileSystemModel::setRootUrl(const DUrl &fileUrl)
     d->watcher = DFileService::instance()->createFileWatcher(fileUrl, this);
 
     if (d->watcher) {
-        connect(d->watcher, &DAbstractFileWatcher::fileAttributeChanged,
-                this, &DFileSystemModel::onFileUpdated);
-        connect(d->watcher, &DAbstractFileWatcher::fileDeleted,
-                this,&DFileSystemModel::onFileDeleted);
-        connect(d->watcher, &DAbstractFileWatcher::subfileCreated,
-                this, &DFileSystemModel::onFileCreated);
-        connect(d->watcher, &DAbstractFileWatcher::fileMoved,
-                this, &DFileSystemModel::onFileRename);
-        connect(d->watcher, &DAbstractFileWatcher::fileModified,
-                this, &DFileSystemModel::onFileUpdated);
+        connect(d->watcher, SIGNAL(fileAttributeChanged(DUrl)),
+                this, SLOT(_q_onFileUpdated(DUrl)));
+        connect(d->watcher, SIGNAL(fileDeleted(DUrl)),
+                this, SLOT(_q_onFileDeleted(DUrl)));
+        connect(d->watcher, SIGNAL(subfileCreated(DUrl)),
+                this, SLOT(_q_onFileCreated(DUrl)));
+        connect(d->watcher, SIGNAL(fileMoved(DUrl, DUrl)),
+                this, SLOT(_q_onFileRename(DUrl, DUrl)));
+        connect(d->watcher, SIGNAL(fileModified(DUrl)),
+                this, SLOT(_q_onFileUpdated(DUrl)));
     }
 
     return index(fileUrl);
@@ -1014,117 +1133,6 @@ void DFileSystemModel::toggleHiddenFiles(const DUrl &fileUrl)
     refresh(fileUrl);
 }
 
-
-void DFileSystemModel::onFileCreated(const DUrl &fileUrl)
-{
-    qDebug() << "file creatored" << fileUrl;
-
-    const DAbstractFileInfoPointer &info = fileService->createFileInfo(fileUrl);
-
-    if (!info)
-        return;
-
-//    const FileSystemNodePointer &parentNode = d->urlToNode.value(info->parentUrl());
-    if (fileUrl == rootUrl()) {
-        return refresh();
-    }
-
-    if (info->parentUrl() != rootUrl())
-        return;
-
-    addFile(info);
-
-    /// TODO: 暂时放在此处实现，后面将移动到DFileService中实现。
-    if (AppController::selectionAndRenameFile.first == fileUrl) {
-        int windowId = AppController::selectionAndRenameFile.second;
-
-        if (windowId != parent()->windowId())
-            return;
-
-        AppController::selectionAndRenameFile = qMakePair(DUrl(), -1);
-        DFMEvent event;
-        event << windowId;
-        event << (DUrlList() << fileUrl);
-        emit fileSignalManager->requestSelectRenameFile(event);
-    }
-}
-
-void DFileSystemModel::onFileDeleted(const DUrl &fileUrl)
-{
-    qDebug() << "file deleted:" << fileUrl;
-
-    Q_D(const DFileSystemModel);
-
-    const DAbstractFileInfoPointer &info = fileService->createFileInfo(fileUrl);
-
-    if(!info)
-        return;
-
-//    const FileSystemNodePointer &parentNode = d->urlToNode.value(info->parentUrl());
-    const DUrl &rootUrl = this->rootUrl();
-
-    if (fileUrl == rootUrl) {
-        emit rootUrlDeleted(rootUrl);
-
-        return refresh();
-    }
-
-    if (info->parentUrl() != rootUrl)
-        return;
-
-    const FileSystemNodePointer &parentNode = d->rootNode;
-    if(parentNode && parentNode->populatedChildren) {
-        int index = parentNode->visibleChildren.indexOf(fileUrl);
-        beginRemoveRows(createIndex(parentNode, 0), index, index);
-        parentNode->visibleChildren.removeAt(index);
-        parentNode->children.remove(fileUrl);
-        endRemoveRows();
-
-//        const FileSystemNodePointer &node = d->urlToNode.value(fileUrl);
-
-//        if(!node)
-//            return;
-
-//        if(hasChildren(createIndex(node, 0))) {
-//            for(const DUrl &url : d->urlToNode.keys()) {
-//                if(fileUrl.toString().startsWith(url.toString())) {
-//                    deleteNodeByUrl(url);
-//                }
-//            }
-//        }
-
-//        deleteNode(node);
-    }
-}
-
-void DFileSystemModel::onFileUpdated(const DUrl &fileUrl)
-{
-    Q_D(const DFileSystemModel);
-//    const FileSystemNodePointer &node = d->urlToNode.value(fileUrl);
-
-    const FileSystemNodePointer &node = d->rootNode;
-
-    if(!node)
-        return;
-
-    const QModelIndex &index = this->index(fileUrl);
-
-    if(!index.isValid())
-        return;
-
-    if (const DAbstractFileInfoPointer &fileInfo = this->fileInfo(index)) {
-        fileInfo->refresh();
-    }
-
-    emit dataChanged(index, index);
-}
-
-void DFileSystemModel::onFileRename(const DUrl &from, const DUrl &to)
-{
-    onFileDeleted(from);
-    onFileCreated(to);
-}
-
 const FileSystemNodePointer DFileSystemModel::getNodeByIndex(const QModelIndex &index) const
 {
     Q_D(const DFileSystemModel);
@@ -1267,19 +1275,24 @@ void DFileSystemModel::addFile(const DAbstractFileInfoPointer &fileInfo)
 {
     Q_D(const DFileSystemModel);
 
-    const FileSystemNodePointer &parentNode = d->rootNode;
+    const FileSystemNodePointer parentNode = d->rootNode;
     const DUrl &fileUrl = fileInfo->fileUrl();
 
-    if (parentNode && parentNode->populatedChildren && !parentNode->visibleChildren.contains(fileUrl)) {
+    if (parentNode && parentNode->populatedChildren && !parentNode->children.contains(fileUrl)) {
         QPointer<DFileSystemModel> me = this;
 
-        auto getFileInfoFun =   [&parentNode, &me] (int index)->const DAbstractFileInfoPointer {
+        auto getFileInfoFun =   [parentNode, &me] (int index)->const DAbstractFileInfoPointer {
                                     qApp->processEvents();
 
                                     if (!me || index >= parentNode->visibleChildren.count())
                                         return DAbstractFileInfoPointer();
 
-                                    return parentNode->children.value(parentNode->visibleChildren.value(index))->fileInfo;
+                                    const DUrl &url = parentNode->visibleChildren.value(index);
+                                    const FileSystemNodePointer &node = parentNode->children.value(url);
+
+                                    Q_ASSERT_X(node, "DFileSystemModel::addFile", url.toString().toUtf8().constData());
+
+                                    return node->fileInfo;
                                 };
 
         int row = parentNode->fileInfo->getIndexByFileInfo(getFileInfoFun, fileInfo, d->sortRole, d->srotOrder);
@@ -1318,3 +1331,22 @@ void DFileSystemModel::emitAllDateChanged()
     QMetaObject::invokeMethod(this, "dataChanged", Qt::QueuedConnection,
                               Q_ARG(QModelIndex, topLeftIndex), Q_ARG(QModelIndex, rightBottomIndex));
 }
+
+void DFileSystemModel::selectAndRenameFile(const DUrl &fileUrl) const
+{
+    /// TODO: 暂时放在此处实现，后面将移动到DFileService中实现。
+    if (AppController::selectionAndRenameFile.first == fileUrl) {
+        int windowId = AppController::selectionAndRenameFile.second;
+
+        if (windowId != parent()->windowId())
+            return;
+
+        AppController::selectionAndRenameFile = qMakePair(DUrl(), -1);
+        DFMEvent event;
+        event << windowId;
+        event << (DUrlList() << fileUrl);
+        emit fileSignalManager->requestSelectRenameFile(event);
+    }
+}
+
+#include "moc_dfilesystemmodel.cpp"

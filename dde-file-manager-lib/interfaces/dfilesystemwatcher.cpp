@@ -127,7 +127,7 @@ QStringList DFileSystemWatcherPrivate::removePaths(const QStringList &paths, QSt
 void DFileSystemWatcherPrivate::_q_readFromInotify()
 {
     Q_Q(DFileSystemWatcher);
-    // qDebug() << "QInotifyFileSystemWatcherEngine::readFromInotify";
+//    qDebug() << "QInotifyFileSystemWatcherEngine::readFromInotify";
 
     int buffSize = 0;
     ioctl(inotifyFd, FIONREAD, (char *) &buffSize);
@@ -242,14 +242,14 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
         if (event.mask & IN_CREATE) {
             qDebug() << "IN_CREATE" << filePath;
 
-            if (pathToID.contains(filePath)) {
+            if (name.isEmpty()) {
+                if (pathToID.contains(path)) {
+                    q->removePath(path);
+                    q->addPath(path);
+                }
+            } else if (pathToID.contains(filePath)) {
                 q->removePath(filePath);
                 q->addPath(filePath);
-            }
-
-            if (pathToID.contains(path)) {
-                q->removePath(path);
-                q->addPath(path);
             }
 
             emit q->fileCreated(path, name, DFileSystemWatcher::QPrivateSignal());
