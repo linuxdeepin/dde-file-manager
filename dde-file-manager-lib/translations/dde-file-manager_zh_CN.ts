@@ -1981,4 +1981,12 @@
         <translation>确定</translation>
     </message>
 </context>
+<context>
+    <name>WindowManager</name>
+    <message>
+        <location filename="../views/windowmanager.cpp" line="32"/>
+        <source>Deepin File Manager</source>
+        <translation>深度文件管理器</translation>
+    </message>
+</context>
 </TS>
