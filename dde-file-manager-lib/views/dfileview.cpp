@@ -1615,6 +1615,11 @@ bool DFileView::setRootUrl(const DUrl &url)
 
     if (defaultSelectUrl.isValid()) {
         d->preSelectionUrls << defaultSelectUrl;
+
+        QUrlQuery qq(fileUrl.query());
+
+        qq.removeQueryItem("selectUrl");
+        fileUrl.setQuery(qq);
     } else if (const DAbstractFileInfoPointer &current_file_info = DFileService::instance()->createFileInfo(rootUrl)) {
         QList<DUrl> ancestors;
 
@@ -1622,8 +1627,6 @@ bool DFileView::setRootUrl(const DUrl &url)
             d->preSelectionUrls << (ancestors.count() > 1 ? ancestors.at(1) : rootUrl);
         }
     }
-
-    fileUrl.setQuery(QString());
 
     QModelIndex index = model()->setRootUrl(fileUrl);
 
