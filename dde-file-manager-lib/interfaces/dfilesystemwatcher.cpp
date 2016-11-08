@@ -242,6 +242,16 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
         if (event.mask & IN_CREATE) {
             qDebug() << "IN_CREATE" << filePath;
 
+            if (pathToID.contains(filePath)) {
+                q->removePath(filePath);
+                q->addPath(filePath);
+            }
+
+            if (pathToID.contains(path)) {
+                q->removePath(path);
+                q->addPath(path);
+            }
+
             emit q->fileCreated(path, name, DFileSystemWatcher::QPrivateSignal());
         }
 
