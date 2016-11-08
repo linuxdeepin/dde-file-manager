@@ -207,6 +207,9 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
         QFileInfo srcInfo(srcPath);
         QString targetPath;
 
+        if (m_isAborted)
+            break;
+
         if (srcInfo.isSymLink()){
             handleSymlinkFile(srcPath, tarDirPath, &targetPath);
         }else if (!srcInfo.isSymLink() && srcInfo.isDir()){
@@ -460,6 +463,7 @@ void FileJob::jobRemoved()
 
 void FileJob::jobAborted()
 {
+    m_isAborted = true;
     emit requestAbortTask(m_jobDetail);
 }
 
@@ -485,9 +489,20 @@ void FileJob::jobConflicted()
     emit requestConflictDialogShowed(m_jobDetail);
     m_status = Paused;
 }
+bool FileJob::isAborted() const
+{
+    return m_isAborted;
+}
+
+void FileJob::setIsAborted(bool isAborted)
+{
+    m_isAborted = isAborted;
+}
 
 bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMoved, QString *targetPath)
 {
+    if (m_isAborted)
+        return false;
     if(m_applyToAll && m_status == FileJob::Cancelled){
         m_skipandApplyToAll = true;
     }else if(!m_applyToAll && m_status == FileJob::Cancelled){
@@ -706,6 +721,9 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
         return false;
     }
 
+    if (m_isAborted)
+        return false;
+
     if(m_applyToAll && m_status == FileJob::Cancelled){
         m_skipandApplyToAll = true;
     }else if(!m_applyToAll && m_status == FileJob::Cancelled){
@@ -781,6 +799,10 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
                                       | QDir::Hidden);
 
             while (tmp_iterator.hasNext()) {
+
+                if (m_isAborted)
+                    break;
+
                 tmp_iterator.next();
                 const QFileInfo fileInfo = tmp_iterator.fileInfo();
 
@@ -842,6 +864,9 @@ bool FileJob::handleMoveJob(const QString &srcPath, const QString &tarDir, QStri
             return true;
         }
     }
+
+    if (m_isAborted)
+        return false;
 
     if(m_applyToAll && m_status == FileJob::Cancelled){
         m_skipandApplyToAll = true;
@@ -936,6 +961,8 @@ bool FileJob::handleMoveJob(const QString &srcPath, const QString &tarDir, QStri
 
 bool FileJob::handleSymlinkFile(const QString &srcFile, const QString &tarDir, QString *targetPath)
 {
+    if (m_isAborted)
+        return false;
     QDir to(tarDir);
     QFileInfo fromInfo(srcFile);
     m_srcFileName = fromInfo.fileName();
@@ -956,14 +983,17 @@ bool FileJob::handleSymlinkFile(const QString &srcFile, const QString &tarDir, Q
             }
             case FileJob::Run:
             {
-                bool ok = QFile(fromInfo.symLinkTarget()).link(m_tarPath);
+                QFile targetFile(fromInfo.symLinkTarget());
+                bool ok = targetFile.link(m_tarPath);
 
                 if (ok){
                     if (m_jobType == Move){
                         QFile from(srcFile);
                         from.remove();
                     }
-                    *targetPath = m_tarPath;
+                    if (targetPath){
+                        *targetPath = m_tarPath;
+                    }
                 }
 
                 if(!m_applyToAll){
