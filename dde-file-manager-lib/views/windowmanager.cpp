@@ -103,6 +103,7 @@ void WindowManager::showNewWindow(const DUrl &url, bool isAlwaysOpen)
     QX11Info::setAppTime(QX11Info::appUserTime());
     DFileManagerWindow *window = new DFileManagerWindow(url.isEmpty() ? DUrl::fromLocalFile(QDir::homePath()) : url);
     loadWindowState(window);
+    window->setAttribute(Qt::WA_DeleteOnClose);
     window->show();
     qDebug() << "new window" << window->winId() << url;
 

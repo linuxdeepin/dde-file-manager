@@ -84,6 +84,7 @@ public:
     bool readOnly = false;
 
     /// add/rm file event
+    bool _q_processFileEvent_runing = false;
     QQueue<QPair<EventType, DUrl>> fileEventQueue;
 
     Q_DECLARE_PUBLIC(DFileSystemModel)
@@ -154,8 +155,6 @@ void DFileSystemModelPrivate::_q_onFileRename(const DUrl &from, const DUrl &to)
 
 void DFileSystemModelPrivate::_q_processFileEvent()
 {
-    static bool _q_processFileEvent_runing = false;
-
     if (_q_processFileEvent_runing)
         return;
 
