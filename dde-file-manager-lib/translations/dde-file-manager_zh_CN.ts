@@ -150,12 +150,12 @@
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="289"/>
+        <location filename="../views/dfiledialog.cpp" line="290"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="297"/>
+        <location filename="../views/dfiledialog.cpp" line="298"/>
         <source>Save</source>
         <translation>保存</translation>
     </message>
@@ -284,12 +284,12 @@
     <message>
         <location filename="../views/dstatusbar.cpp" line="124"/>
         <source>Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>过滤</translation>
     </message>
     <message>
         <location filename="../views/dstatusbar.cpp" line="132"/>
         <source>Save as:</source>
-        <translation type="unfinished"></translation>
+        <translation>保存为：</translation>
     </message>
     <message>
         <location filename="../views/dstatusbar.cpp" line="316"/>
@@ -895,7 +895,7 @@
     <name>QObject</name>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="544"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="285"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="287"/>
         <source>Size</source>
         <translation>大小</translation>
     </message>
@@ -905,7 +905,7 @@
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="546"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="286"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="288"/>
         <source>Type</source>
         <translation>类型</translation>
     </message>
@@ -918,7 +918,7 @@
         <translation type="vanished">修改时间</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="287"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="289"/>
         <source>Time created</source>
         <translation>创建时间</translation>
     </message>
@@ -929,7 +929,7 @@
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="548"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="288"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="290"/>
         <source>Time modified</source>
         <translation>修改时间</translation>
     </message>
@@ -1001,20 +1001,20 @@
         <translation type="vanished">绝对路径</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="241"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="244"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="243"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="246"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="242"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="245"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="244"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="247"/>
         <source>Open in new window</source>
         <translation>在新窗口打开</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="243"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="246"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="245"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="248"/>
         <source>Open in new tab</source>
         <translation>在新标签中打开</translation>
     </message>
@@ -1023,22 +1023,22 @@
         <translation type="vanished">以管理员身份打开</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="248"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="250"/>
         <source>Open with</source>
         <translation>打开方式</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="249"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="251"/>
         <source>Others</source>
         <translation>其它</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="250"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="252"/>
         <source>Open file loaction</source>
         <translation>打开文件所在位置</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="251"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="253"/>
         <source>Compress</source>
         <translation>压缩</translation>
     </message>
@@ -1051,52 +1051,52 @@
         <translation type="vanished">解压到当前文件夹</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="252"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="254"/>
         <source>Extract</source>
         <translation>解压缩</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="253"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="255"/>
         <source>Extract here</source>
         <translation>解压到当前文件夹</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="254"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="256"/>
         <source>Cut</source>
         <translation>剪切</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="255"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="257"/>
         <source>Copy</source>
         <translation>复制</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="256"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="258"/>
         <source>Paste</source>
         <translation>粘贴</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="257"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="259"/>
         <source>Rename</source>
         <translation>重命名</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="258"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="260"/>
         <source>Remove</source>
         <translation>移除</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="259"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="261"/>
         <source>Create link</source>
         <translation>创建链接</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="260"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="262"/>
         <source>Send to desktop</source>
         <translation>发送到桌面</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="261"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="263"/>
         <source>Add to bookmark</source>
         <translation>添加书签</translation>
     </message>
@@ -1105,72 +1105,72 @@
         <translation type="vanished">移动到回收站</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="247"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="249"/>
         <source>Open in new window as admin</source>
         <translation>以管理员身份打开</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="262"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="264"/>
         <source>Throw to Trash</source>
         <translation>丢到回收站</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="263"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="265"/>
         <source>Permanently delete</source>
         <translation>彻底删除</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="266"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="268"/>
         <source>New folder</source>
         <translation>新建文件夹</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="267"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="269"/>
         <source>New window</source>
         <translation>新建窗口</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="268"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="270"/>
         <source>Select all</source>
         <translation>全选</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="269"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="271"/>
         <source>Clear recent history</source>
         <translation>清除最近访问</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="270"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="272"/>
         <source>Empty Trash</source>
         <translation>清空回收站</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="271"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="273"/>
         <source>Display as</source>
         <translation>显示方式</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="272"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="274"/>
         <source>Sort by</source>
         <translation>排序方式</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="273"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="275"/>
         <source>New document</source>
         <translation>新建文档</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="297"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="299"/>
         <source>Log out and unmount</source>
         <translation>退出登录并卸载</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="299"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="301"/>
         <source>Source path</source>
         <translation>原始路径</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="301"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="303"/>
         <source>Cancel sharing</source>
         <translation>取消共享</translation>
     </message>
@@ -1179,7 +1179,7 @@
         <translation type="vanished">取消共享</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="302"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="304"/>
         <source>Set share password</source>
         <translation>设置共享密码</translation>
     </message>
@@ -1192,7 +1192,7 @@
         <translation type="vanished">彻底删除</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="264"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="266"/>
         <source>Property</source>
         <translation>属性</translation>
     </message>
@@ -1233,38 +1233,38 @@
         <translation type="vanished">新建文档</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="274"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="276"/>
         <source>Word</source>
         <translatorcomment>新建Excel</translatorcomment>
         <translation>新建Word</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="275"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="277"/>
         <source>Excel</source>
         <translation>新建Excel</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="276"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="278"/>
         <source>PowerPoint</source>
         <translation>新建PowerPoint</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="277"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="279"/>
         <source>Text</source>
         <translation>新建文本</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="278"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="280"/>
         <source>Open in terminal</source>
         <translation>在终端中打开</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="279"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="281"/>
         <source>Restore</source>
         <translation>还原</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="280"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="282"/>
         <source>Restore all</source>
         <translation>全部还原</translation>
     </message>
@@ -1273,22 +1273,22 @@
         <translation type="vanished">彻底删除</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="281"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="283"/>
         <source>Mount</source>
         <translation>挂载</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="282"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="284"/>
         <source>Unmount</source>
         <translation>卸载</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="283"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="285"/>
         <source>Eject</source>
         <translation>弹出</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="284"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="286"/>
         <source>Name</source>
         <translation>名称</translation>
     </message>
@@ -1305,42 +1305,42 @@
         <translation type="vanished">修改时间</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="289"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="291"/>
         <source>Settings</source>
         <translation>设置</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="290"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="292"/>
         <source>Help</source>
         <translation>帮助</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="291"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="293"/>
         <source>About</source>
         <translation>关于</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="292"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="294"/>
         <source>Exit</source>
         <translation>退出</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="293"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="295"/>
         <source>Icon</source>
         <translation>图标视图</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="294"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="296"/>
         <source>List</source>
         <translation>列表视图</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="295"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="297"/>
         <source>Extend</source>
         <translation>扩展视图</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="296"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="298"/>
         <source>Set as wallpaper</source>
         <translation>设置壁纸</translation>
     </message>
@@ -1475,13 +1475,13 @@
         <translation>创建链接</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="300"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="302"/>
         <source>Path</source>
         <translation>路径</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="298"/>
-        <location filename="../models/trashfileinfo.cpp" line="207"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="300"/>
+        <location filename="../models/trashfileinfo.cpp" line="218"/>
         <source>Time deleted</source>
         <translation>删除时间</translation>
     </message>
@@ -1539,7 +1539,7 @@
         <translation type="vanished">文件管理器</translation>
     </message>
     <message>
-        <location filename="../models/trashfileinfo.cpp" line="210"/>
+        <location filename="../models/trashfileinfo.cpp" line="221"/>
         <source>Source Path</source>
         <comment>TrashFileInfo</comment>
         <translation>原位置</translation>
