@@ -107,7 +107,7 @@ bool FileController::openFileByApp(const DUrl &fileUrl, const QString& app, bool
 
 bool FileController::compressFiles(const DUrlList &urlList, bool &accepted) const
 {
-    accepted = false;
+    accepted = true;
 
     if (findExecutable("file-roller")){
         QStringList args;
