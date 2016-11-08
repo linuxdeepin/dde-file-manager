@@ -104,6 +104,9 @@ QStringList DFileSystemWatcherPrivate::removePaths(const QStringList &paths, QSt
         QString path = it.next();
         int id = pathToID.take(path);
         QString x = idToPath.take(id);
+
+        it.remove();
+
         if (x.isEmpty() || x != path)
             continue;
 
@@ -111,7 +114,6 @@ QStringList DFileSystemWatcherPrivate::removePaths(const QStringList &paths, QSt
         // qDebug() << "removing watch for path" << path << "wd" << wd;
         inotify_rm_watch(inotifyFd, wd);
 
-        it.remove();
         if (id < 0) {
             directories->removeAll(path);
         } else {
@@ -170,7 +172,7 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
             hasMoveFromByCookie << event->cookie;
     }
 
-//    qDebug() << "event count:" << eventForId.count();
+//    qDebug() << "event count:" << eventList.count();
 
     QList<inotify_event *>::const_iterator it = eventList.constBegin();
     while (it != eventList.constEnd()) {
@@ -215,15 +217,16 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
                         break;
                 }
 
-                pathToID.remove(path);
-                idToPath.remove(id, getPathFromID(id));
-                if (!idToPath.contains(id))
-                    inotify_rm_watch(inotifyFd, event.wd);
+                /// Keep watcher
+//                pathToID.remove(path);
+//                idToPath.remove(id, getPathFromID(id));
+//                if (!idToPath.contains(id))
+//                    inotify_rm_watch(inotifyFd, event.wd);
 
-                if (id < 0)
-                    onDirectoryChanged(path, true);
-                else
-                    onFileChanged(path, true);
+//                if (id < 0)
+//                    onDirectoryChanged(path, true);
+//                else
+//                    onFileChanged(path, true);
 
                 emit q->fileDeleted(path, QString(), DFileSystemWatcher::QPrivateSignal());
             } while (false);

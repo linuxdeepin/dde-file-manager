@@ -10,6 +10,7 @@ class TrashFileInfo : public DAbstractFileInfo
 public:
     TrashFileInfo(const DUrl &url);
 
+    bool exists() const Q_DECL_OVERRIDE;
     bool isCanRename() const Q_DECL_OVERRIDE;
     bool isReadable() const Q_DECL_OVERRIDE;
     bool isWritable() const Q_DECL_OVERRIDE;
@@ -39,6 +40,8 @@ public:
     Qt::DropActions supportedDropActions() const Q_DECL_OVERRIDE;
 
     QList<QIcon> additionalIcon() const Q_DECL_OVERRIDE;
+
+    DUrl goToUrlWhenDeleted() const Q_DECL_OVERRIDE;
 
     bool restore(const DFMEvent &event) const;
     QDateTime deletionDate() const;

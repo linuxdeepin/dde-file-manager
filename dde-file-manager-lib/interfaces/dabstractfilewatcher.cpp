@@ -63,6 +63,12 @@ bool DAbstractFileWatcher::stopWatcher()
     return false;
 }
 
+bool DAbstractFileWatcher::restartWatcher()
+{
+    stopWatcher();
+    startWatcher();
+}
+
 DAbstractFileWatcher::DAbstractFileWatcher(DAbstractFileWatcherPrivate &dd,
                                            const DUrl &url, QObject *parent)
     : QObject(parent)
