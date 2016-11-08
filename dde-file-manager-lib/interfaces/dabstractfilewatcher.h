@@ -25,6 +25,7 @@ public:
 
     bool startWatcher();
     bool stopWatcher();
+    bool restartWatcher();
 
 signals:
     void fileDeleted(const DUrl &url);
