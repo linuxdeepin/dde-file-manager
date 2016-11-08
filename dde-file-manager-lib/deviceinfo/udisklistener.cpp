@@ -277,12 +277,15 @@ void UDiskListener::changed(int in0, const QString &in1)
         emit mountAdded(device);
     }else if (device && !info.ID.isEmpty())
     {
+        DUrl oldMountUrl = device->getMountPointUrl();
         bool oldCanUnmount = device->getDiskInfo().CanUnmount;
         device->setDiskInfo(info);
         if (oldCanUnmount != info.CanUnmount){
             if (info.CanUnmount){
                 emit mountAdded(device);
             }else{
+                info.MountPointUrl = oldMountUrl;
+                device->setDiskInfo(info);
                 emit mountRemoved(device);
             }
 

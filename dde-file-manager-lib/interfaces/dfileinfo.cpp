@@ -344,7 +344,7 @@ void DFileInfo::refresh()
 
 DUrl DFileInfo::goToUrlWhenDeleted() const
 {
-    if (deviceListener->isDeviceFolder(absoluteFilePath()))
+    if (deviceListener->isInDeviceFolder(absoluteFilePath()))
         return DUrl::fromLocalFile(QDir::homePath());
 
     return DAbstractFileInfo::goToUrlWhenDeleted();
