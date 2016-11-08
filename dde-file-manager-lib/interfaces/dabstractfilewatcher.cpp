@@ -65,8 +65,8 @@ bool DAbstractFileWatcher::stopWatcher()
 
 bool DAbstractFileWatcher::restartWatcher()
 {
-    stopWatcher();
-    startWatcher();
+    bool ok = stopWatcher();
+    return ok && startWatcher();
 }
 
 DAbstractFileWatcher::DAbstractFileWatcher(DAbstractFileWatcherPrivate &dd,

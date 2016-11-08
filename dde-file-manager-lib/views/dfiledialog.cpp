@@ -63,8 +63,8 @@ DFileDialog::DFileDialog(QWidget *parent)
     getLeftSideBar()->setDisableUrlSchemes(QList<QString>() << "trash" << "network");
     getLeftSideBar()->setAcceptDrops(false);
 
-    DFileService::FileOperatorTypes fileServiceWhitelist = DFileService::OpenUrl | DFileService::RenameFile
-            | DFileService::MoveToTrash | DFileService::NewFolder | DFileService::NewDocument;
+    DFileService::FileOperatorTypes fileServiceWhitelist = DFileService::OpenUrl | DFileService::OpenFile
+            | DFileService::RenameFile | DFileService::MoveToTrash | DFileService::NewFolder | DFileService::NewDocument;
 
     getFileView()->setFileOperatorWhitelist(fileServiceWhitelist);
     getFileView()->setDragEnabled(false);
@@ -454,6 +454,8 @@ bool DFileDialog::eventFilter(QObject *watched, QEvent *event)
                 && (e->key() == Qt::Key_T
                     || e->key() == Qt::Key_W)) {
             return true;
+        } else if (e->modifiers() == Qt::NoModifier && e->key() == Qt::Key_Escape) {
+            close();
         }
     }
 
