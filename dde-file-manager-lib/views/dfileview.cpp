@@ -1611,12 +1611,22 @@ bool DFileView::setRootUrl(const DUrl &url)
     if (rootUrl == fileUrl)
         return true;
 
-//    QModelIndex index = model()->index(fileUrl);
+    const DUrl &defaultSelectUrl = DUrl(QUrlQuery(fileUrl.query()).queryItemValue("selectUrl"));
 
-//    if(!index.isValid())
+    if (defaultSelectUrl.isValid()) {
+        d->preSelectionUrls << defaultSelectUrl;
+    } else if (const DAbstractFileInfoPointer &current_file_info = DFileService::instance()->createFileInfo(rootUrl)) {
+        QList<DUrl> ancestors;
+
+        if (current_file_info->isAncestorsUrl(fileUrl, &ancestors)) {
+            d->preSelectionUrls << (ancestors.count() > 1 ? ancestors.at(1) : rootUrl);
+        }
+    }
+
+    fileUrl.setQuery(QString());
+
     QModelIndex index = model()->setRootUrl(fileUrl);
 
-//    model()->setActiveIndex(index);
     setRootIndex(index);
 
     if (!model()->canFetchMore(index)) {
@@ -1670,18 +1680,6 @@ bool DFileView::setRootUrl(const DUrl &url)
         if (d->enabledSelectionModes.contains((SelectionMode)mode)) {
             setSelectionMode((SelectionMode)mode);
             break;
-        }
-    }
-
-    const DUrl &defaultSelectUrl = DUrl(QUrlQuery(fileUrl.query()).queryItemValue("selectUrl"));
-
-    if (defaultSelectUrl.isValid()) {
-        d->preSelectionUrls << defaultSelectUrl;
-    } else if (const DAbstractFileInfoPointer &current_file_info = DFileService::instance()->createFileInfo(rootUrl)) {
-        QList<DUrl> ancestors;
-
-        if (current_file_info->isAncestorsUrl(fileUrl, &ancestors)) {
-            d->preSelectionUrls << (ancestors.count() > 1 ? ancestors.at(1) : rootUrl);
         }
     }
 
