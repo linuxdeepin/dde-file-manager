@@ -46,7 +46,6 @@ int main(int argc, char *argv[])
     app.setOrganizationName(QMAKE_ORGANIZATION_NAME);
     app.setApplicationName(QMAKE_TARGET);
     app.setApplicationVersion(QMAKE_VERSION);
-    app.setApplicationDisplayName(QObject::tr("Deepin File Manager"));
 
     QFont font;
     font.setPixelSize(14);

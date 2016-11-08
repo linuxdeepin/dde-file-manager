@@ -29,6 +29,7 @@ WindowManager::WindowManager(QObject *parent) : QObject(parent)
 {
     m_fmStateManager = new FMStateManager(this);
     m_fmStateManager->loadCache();
+    qApp->setApplicationDisplayName(tr("Deepin File Manager"));
     initConnect();
 }
 
