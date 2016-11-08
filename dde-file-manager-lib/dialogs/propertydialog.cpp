@@ -333,7 +333,7 @@ void PropertyDialog::renameFile()
     const DAbstractFileInfoPointer pfile = fileService->createFileInfo(m_url);
     int endPos = -1;
     if(pfile->isFile()){
-        endPos = m_edit->toPlainText().length() - pfile->suffix().length();
+        endPos = m_edit->toPlainText().length() - pfile->suffix().length()-1;
     }
     if(endPos == -1) {
         m_edit->selectAll();
