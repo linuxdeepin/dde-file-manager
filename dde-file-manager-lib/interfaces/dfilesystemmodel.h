@@ -133,12 +133,6 @@ signals:
     void rootUrlDeleted(const DUrl &rootUrl);
     void stateChanged(State state);
 
-private slots:
-    void onFileCreated(const DUrl &fileUrl);
-    void onFileDeleted(const DUrl &fileUrl);
-    void onFileUpdated(const DUrl &fileUrl);
-    void onFileRename(const DUrl &from, const DUrl &to);
-
 private:
     inline const FileSystemNodePointer getNodeByIndex(const QModelIndex &index) const;
     QModelIndex createIndex(const FileSystemNodePointer &node, int column) const;
@@ -159,10 +153,17 @@ private:
     void addFile(const DAbstractFileInfoPointer &fileInfo);
 
     void emitAllDateChanged();
+    void selectAndRenameFile(const DUrl &fileUrl) const;
 
     friend class FileSystemNode;
 
     QScopedPointer<DFileSystemModelPrivate> d_ptr;
+
+    Q_PRIVATE_SLOT(d_func(), void _q_onFileCreated(const DUrl &fileUrl))
+    Q_PRIVATE_SLOT(d_func(), void _q_onFileDeleted(const DUrl &fileUrl))
+    Q_PRIVATE_SLOT(d_func(), void _q_onFileUpdated(const DUrl &fileUrl))
+    Q_PRIVATE_SLOT(d_func(), void _q_onFileRename(const DUrl &from, const DUrl &to))
+    Q_PRIVATE_SLOT(d_func(), void _q_processFileEvent())
 
     Q_DECLARE_PRIVATE(DFileSystemModel)
     Q_DISABLE_COPY(DFileSystemModel)
