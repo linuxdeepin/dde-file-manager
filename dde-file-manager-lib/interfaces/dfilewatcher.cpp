@@ -153,7 +153,7 @@ void DFileWatcherPrivate::_q_handleFileMoved(const QString &from, const QString 
         emit q->fileMoved(DUrl::fromLocalFile(from), DUrl::fromLocalFile(to));
     } else if (fromParent == this->path) {
         emit q->fileDeleted(DUrl::fromLocalFile(from));
-    } else if (watchFileList.contains(fromParent)) {
+    } else if (watchFileList.contains(from)) {
         emit q->fileDeleted(url);
     } else if (toParent == this->path) {
         emit q->subfileCreated(DUrl::fromLocalFile(to));
