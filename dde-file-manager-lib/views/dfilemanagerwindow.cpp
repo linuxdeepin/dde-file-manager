@@ -135,15 +135,6 @@ void DFileManagerWindow::closeCurrentTab(const DFMEvent &event)
     emit d->tabBar->tabCloseRequested(d->tabBar->currentIndex());
 }
 
-void DFileManagerWindow::onUserShareCountChanged(const int &count)
-{
-   D_D(DFileManagerWindow);
-   if (d->fileView->rootUrl() == DUrl::fromUserShareFile("/")){
-       d->fileView->fileViewHelper()->onUserShareCountChanged(count);
-   }
-
-}
-
 void DFileManagerWindow::showNewTabButton()
 {
     D_D(DFileManagerWindow);
@@ -437,15 +428,7 @@ void DFileManagerWindow::switchToView(DFileView *view)
 
     d->leftSideBar->scene()->setCurrentUrl(view->rootUrl());
     d->toolbar->checkViewModeButton(d->fileView->viewMode());
-
-    if (view->rootUrl() == DUrl::fromUserShareFile("/")){
-        if (userShareManager->validShareInfoCount() == 0){
-            DFMEvent event;
-            event << windowId();
-            event << DUrl::fromLocalFile(QDir::homePath());
-            emit fileSignalManager->requestChangeCurrentUrl(event);
-        }
-    }
+    view->updateStatusBar();
 }
 
 void DFileManagerWindow::moveCenter(const QPoint &cp)
@@ -702,9 +685,6 @@ void DFileManagerWindow::initConnect()
     connect(d->tabBar, &TabBar::tabBarShown, this, &DFileManagerWindow::showNewTabButton);
     connect(d->tabBar, &TabBar::tabBarHidden, this, &DFileManagerWindow::hideNewTabButton);
     connect(d->newTabButton, &QPushButton::clicked, this, &DFileManagerWindow::onNewTabButtonClicked);
-
-    connect(fileSignalManager, &FileSignalManager::userShareCountChanged,
-            this, &DFileManagerWindow::onUserShareCountChanged);
 }
 
 void DFileManagerWindow::moveCenterByRect(QRect rect)

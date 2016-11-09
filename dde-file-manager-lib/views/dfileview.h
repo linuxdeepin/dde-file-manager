@@ -141,6 +141,8 @@ public slots:
     void setFileOperatorWhitelist(int fileOperatorFlags);
     void setFileOperatorBlacklist(int fileOperatorFlags);
 
+    void updateStatusBar();
+
 signals:
     void rootUrlChanged(const DUrl &url);
     void viewModeChanged(ViewMode viewMode);
@@ -156,7 +158,6 @@ private slots:
     void handleCommitData(QWidget * editor);
     void onVerticalScroll(int contentY);
     void handleDataChanged(const QModelIndex & topLeft, const QModelIndex & bottomRight, const QVector<int> & roles = QVector<int>());
-    void updateStatusBar();
     void onRootUrlDeleted(const DUrl &rootUrl);
 
 protected:

@@ -212,14 +212,3 @@ void FileViewHelper::onCurrentUrlChanged(const DUrl &url)
     e << url;
     emit fileSignalManager->currentUrlChanged(e);
 }
-
-void FileViewHelper::onUserShareCountChanged(int count)
-{
-    if (count == 0) {
-        parent()->cd(DUrl::fromLocalFile(QDir::homePath()));
-    }else{
-        if (parent()->rootUrl() == DUrl::fromUserShareFile("/")){
-            parent()->model()->refresh();
-        }
-    }
-}
