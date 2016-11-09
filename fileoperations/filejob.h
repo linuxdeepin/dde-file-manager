@@ -63,6 +63,9 @@ public:
 
     void adjustSymlinkPath(QString& scrPath, QString& tarDirPath);
 
+    bool isAborted() const;
+    void setIsAborted(bool isAborted);
+
 signals:
 
     /*add copy/move/delete job to taskdialog when copy/move/delete job created*/
@@ -131,6 +134,7 @@ private:
     qint64 m_lastMsec;
     bool m_applyToAll  = false;
     bool m_isReplaced = false;
+    bool m_isAborted = false;
     JobType m_jobType;
     int m_windowId = -1;
     bool m_skipandApplyToAll = false;
