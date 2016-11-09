@@ -180,7 +180,7 @@ void FileViewHelper::selectAll(int windowId)
 
 void FileViewHelper::selectAndRename(const DFMEvent &event)
 {
-    if (event.windowId() != windowId()) {
+    if (event.windowId() != windowId() || !parent()->isVisible()) {
         return;
     }
 
