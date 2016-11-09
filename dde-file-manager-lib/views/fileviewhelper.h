@@ -48,7 +48,6 @@ public slots:
     void selectAndRename(const DFMEvent &event);
     void setFoucsOnFileView(const DFMEvent& event);
     void refreshFileView(const DFMEvent& event);
-    void onUserShareCountChanged(int count);
 
 private:
     void onCurrentUrlChanged(const DUrl &url);

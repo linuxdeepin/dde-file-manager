@@ -289,6 +289,11 @@ void UserShareManager::updateUserShareInfo()
         emit userShareDeleted(filePath);
         m_fileMonitor->removeMonitorPath(filePath);
     }
+
+    if (validShareInfoCount() <= 0) {
+        emit userShareDeleted("/");
+    }
+
     usershareCountchanged();
 }
 

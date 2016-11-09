@@ -86,7 +86,6 @@ public slots:
     void onCurrentTabChanged(int tabIndex);
     void onRequestCloseTab(const int index, const bool& remainState);
     void closeCurrentTab(const DFMEvent& event);
-    void onUserShareCountChanged(const int& count);
     void showNewTabButton();
     void hideNewTabButton();
     void onNewTabButtonClicked();
