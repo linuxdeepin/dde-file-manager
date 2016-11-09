@@ -1344,7 +1344,10 @@ void DFileSystemModel::selectAndRenameFile(const DUrl &fileUrl) const
         DFMEvent event;
         event << windowId;
         event << (DUrlList() << fileUrl);
-        emit fileSignalManager->requestSelectRenameFile(event);
+
+        TIMER_SINGLESHOT_OBJECT(const_cast<DFileSystemModel*>(this), 100, {
+                                    emit fileSignalManager->requestSelectRenameFile(event);
+                                }, event)
     }
 }
 
