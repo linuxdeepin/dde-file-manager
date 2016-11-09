@@ -64,7 +64,8 @@ DFileDialog::DFileDialog(QWidget *parent)
     getLeftSideBar()->setAcceptDrops(false);
 
     DFileService::FileOperatorTypes fileServiceWhitelist = DFileService::OpenUrl | DFileService::OpenFile
-            | DFileService::RenameFile | DFileService::MoveToTrash | DFileService::NewFolder | DFileService::NewDocument;
+            | DFileService::RenameFile | DFileService::MoveToTrash | DFileService::NewFolder
+            | DFileService::NewDocument | DFileService::CreateFileWatcher;
 
     getFileView()->setFileOperatorWhitelist(fileServiceWhitelist);
     getFileView()->setDragEnabled(false);
