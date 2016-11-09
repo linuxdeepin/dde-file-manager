@@ -85,8 +85,9 @@ void DCrumbButton::mouseMoveEvent(QMouseEvent *e)
 void DCrumbButton::mousePressEvent(QMouseEvent *e)
 {
     oldGlobalPos = e->globalPos();
+    if(e->button() == Qt::LeftButton)
+        return QPushButton::mousePressEvent(e);
 
-    return QPushButton::mousePressEvent(e);
 }
 
 void DCrumbButton::mouseReleaseEvent(QMouseEvent *e)
