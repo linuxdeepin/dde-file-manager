@@ -200,6 +200,7 @@ void DialogManager::abortJob(const QMap<QString, QString> &jobDetail)
     QString jobId = jobDetail.value("jobId");
     FileJob * job = m_jobs.value(jobId);
     if (job){
+        job->setIsAborted(true);
         job->setApplyToAll(true);
         job->setStatus(FileJob::Cancelled);
     }
