@@ -3,7 +3,7 @@ host = https://www.transifex.com
 minimum_perc = 80
 mode = developer
 
-[dde-file-manager]
+[deepin-file-manager.dde-file-managerts]
 file_filter = dde-file-manager-lib/translations/dde-file-manager_<lang>.ts
 source_file = dde-file-manager-lib/translations/dde-file-manager.ts
 source_lang = en
