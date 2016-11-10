@@ -1,5 +1,5 @@
 CONFIG += link_pkgconfig
-PKGCONFIG += poppler-qt5
+PKGCONFIG += poppler-cpp
 
 HEADERS += \
     $$PWD/thumbnailmanager.h \
