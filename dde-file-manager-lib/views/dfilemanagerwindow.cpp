@@ -393,6 +393,10 @@ void DFileManagerWindow::createNewView(const DFMEvent &event)
 
     d->tabBar->createTab(view);
     view->cd(url);
+
+    if (url == DUrl::fromComputerFile("/")){
+        emit fileSignalManager->requestChangeCurrentUrl(event);
+    }
 }
 
 void DFileManagerWindow::switchToView(DFileView *view)

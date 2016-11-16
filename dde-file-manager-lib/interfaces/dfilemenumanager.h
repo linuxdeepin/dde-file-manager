@@ -29,6 +29,7 @@ public:
     static DFileMenu *createUserShareMarkMenu(const QSet<MenuAction> &disableList = QSet<MenuAction>());
     static DFileMenu *createCustomBookMarkMenu(const DUrl& url, QSet<MenuAction> disableList = QSet<MenuAction>());
     static DFileMenu *createTrashLeftBarMenu(const QSet<MenuAction> &disableList = QSet<MenuAction>());
+    static DFileMenu *createComputerLeftBarMenu(const QSet<MenuAction> &disableList = QSet<MenuAction>());
     static DFileMenu *createDiskLeftBarMenu(const QSet<MenuAction> &disableList = QSet<MenuAction>());
     static DFileMenu *createDiskViewMenu(const QSet<MenuAction> &disableList = QSet<MenuAction>());
     static DFileMenu *createToolBarSettingsMenu(const QSet<MenuAction> &disableList = QSet<MenuAction>());
