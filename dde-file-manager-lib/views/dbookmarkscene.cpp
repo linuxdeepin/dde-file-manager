@@ -41,6 +41,7 @@ void DBookmarkScene::initData()
              << "Documents"
              << "Downloads"
              << "Trash"
+             << "Computer"
              << "Disk"
              << "Usb"
              << "Iphone"
@@ -69,6 +70,7 @@ void DBookmarkScene::initData()
                      << "Documents"
                      << "Downloads"
                      << "Trash"
+                     << "Computer"
                      << "Disk"
                      << "Network"
                      << "UserShare";
@@ -146,6 +148,8 @@ DUrl DBookmarkScene::getStandardPathByKey(const QString &key)
         url = DUrl::fromTrashFile("/");
     }else if (key == "Disks"){
         url = DUrl::fromLocalFile("/");
+    }else if (key == "Computer"){
+        url = DUrl::fromComputerFile("/");
     }else if (m_systemPathKeys.contains(key)){
         url =  DUrl::fromLocalFile(systemPathManager->getSystemPath(key));
     }else{

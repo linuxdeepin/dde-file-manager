@@ -418,17 +418,17 @@ void DFileManagerWindow::switchToView(DFileView *view)
     } else {
         d->viewStackLayout->setCurrentWidget(d->fileView);
         d->toolbar->setViewModeButtonVisible(true);
+
+        connect(d->fileView, &DFileView::viewModeChanged, d->toolbar, &DToolBar::checkViewModeButton);
+
+        connect(fileSignalManager, &FileSignalManager::statusBarItemsSelected, d->fileView->statusBar(), &DStatusBar::itemSelected);
+        connect(fileSignalManager, &FileSignalManager::statusBarItemsCounted, d->fileView->statusBar(), &DStatusBar::itemCounted);
+        connect(fileSignalManager, &FileSignalManager::loadingIndicatorShowed, d->fileView->statusBar(), &DStatusBar::setLoadingIncatorVisible);
+
+        d->leftSideBar->scene()->setCurrentUrl(view->rootUrl());
+        d->toolbar->checkViewModeButton(d->fileView->viewMode());
+        view->updateStatusBar();
     }
-
-    connect(d->fileView, &DFileView::viewModeChanged, d->toolbar, &DToolBar::checkViewModeButton);
-
-    connect(fileSignalManager, &FileSignalManager::statusBarItemsSelected, d->fileView->statusBar(), &DStatusBar::itemSelected);
-    connect(fileSignalManager, &FileSignalManager::statusBarItemsCounted, d->fileView->statusBar(), &DStatusBar::itemCounted);
-    connect(fileSignalManager, &FileSignalManager::loadingIndicatorShowed, d->fileView->statusBar(), &DStatusBar::setLoadingIncatorVisible);
-
-    d->leftSideBar->scene()->setCurrentUrl(view->rootUrl());
-    d->toolbar->checkViewModeButton(d->fileView->viewMode());
-    view->updateStatusBar();
 }
 
 void DFileManagerWindow::moveCenter(const QPoint &cp)

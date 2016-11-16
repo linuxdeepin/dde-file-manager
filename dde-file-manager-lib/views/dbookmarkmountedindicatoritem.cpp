@@ -26,10 +26,10 @@ void DBookmarkMountedIndicatorItem::init()
     setParentItem(m_parentItem);
     setDefaultItem(true);
     setIsMountedIndicator(true);
-    boundImageToHover(":/leftsidebar/images/leftsidebar/unmount_hover.png");
-    boundImageToPress(":/leftsidebar/images/leftsidebar/unmount_press.png");
-    boundImageToRelease(":/leftsidebar/images/leftsidebar/unmount_normal.png");
-    boundImageToChecked(":/leftsidebar/images/leftsidebar/unmount_active.png");
+    boundImageToHover(":/leftsidebar/images/leftsidebar/unmount_hover_16px.png");
+    boundImageToPress(":/leftsidebar/images/leftsidebar/unmount_press_16px.png");
+    boundImageToRelease(":/leftsidebar/images/leftsidebar/unmount_normal_16px.png");
+    boundImageToChecked(":/leftsidebar/images/leftsidebar/unmount_active_16px.png");
     setReleaseBackgroundColor(QColor(Qt::transparent));
     setPressBackgroundColor(QColor(Qt::transparent));
     setHoverBackgroundColor(QColor(Qt::transparent));

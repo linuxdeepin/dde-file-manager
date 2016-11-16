@@ -304,6 +304,8 @@
         <file>images/icons/input_clear_normal.svg</file>
         <file>images/icons/input_clear_hover.svg</file>
         <file>images/icons/input_clear_press.svg</file>
+        <file>images/icons/computer_checked_16px.svg</file>
+        <file>images/icons/computer_hover_16px.svg</file>
     </qresource>
     <qresource prefix="/leftsidebar">
         <file>images/leftsidebar/android_active_16px.svg</file>
@@ -346,5 +348,7 @@
         <file>images/leftsidebar/usershare_normal_16px.svg</file>
         <file>images/leftsidebar/videos_active_16px.svg</file>
         <file>images/leftsidebar/videos_normal_16px.svg</file>
+        <file>images/leftsidebar/computer_active_16px.svg</file>
+        <file>images/leftsidebar/computer_normal_16px.svg</file>
     </qresource>
 </RCC>
