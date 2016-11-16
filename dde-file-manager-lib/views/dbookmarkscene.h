@@ -30,6 +30,7 @@ public:
     void initConnect();
 
     DBookmarkItem * createBookmarkByKey(const QString& key);
+    DBookmarkItem * createCustomBookmark(const QString &name, const DUrl &url);
 
     DUrl getStandardPathByKey(const QString& key);
 
@@ -97,9 +98,6 @@ private:
     QMap<QString, QString> m_smallIcons;
     QMap<QString, QString> m_smallHoverIcons;
     QMap<QString, QString> m_smallCheckedIcons;
-    QMap<QString, QString> m_bigIcons;
-    QMap<QString, QString> m_bigHoverIcons;
-    QMap<QString, QString> m_bigCheckedIcons;
     QStringList m_systemPathKeys;
     QMap<QString, QString> m_systemBookMarks;
 

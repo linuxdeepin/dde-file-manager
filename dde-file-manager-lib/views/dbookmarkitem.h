@@ -67,10 +67,21 @@ public:
     int boundY();
     int boundWidth();
     int boundHeight();
-    void setText(const QString & text);
     QString text();
-    void setTextColor(const QColor &color);
+    void setText(const QString & text);
+
     QColor getTextColor();
+    void setTextColor(const QColor &color);
+
+    QColor textHoverColor() const;
+    void setTextHoverColor(const QColor &textHoverColor);
+
+    QColor textPressColor() const;
+    void setTextPressColor(const QColor &textPressColor);
+
+    QColor textCheckedColor() const;
+    void setTextCheckedColor(const QColor &textCheckedColor);
+
     void setPress(bool b);
     void setPressBackgroundEnable(bool b);
     void setReleaseBackgroundEnable(bool b);
@@ -103,6 +114,10 @@ public:
     static DBookmarkMountedIndicatorItem* makeMountBookmark(DBookmarkItem* parentItem);
     void editMode();
     void updateMountIndicator();
+
+    bool isMountedIndicator() const;
+    void setIsMountedIndicator(bool isMountedIndicator);
+
 signals:
 
     void clicked();
@@ -183,10 +198,14 @@ private:
     QColor m_pressBackgroundColor;
     QColor m_highlightDiskBackgroundColor;
     QColor m_textColor;
+    QColor m_textHoverColor;
+    QColor m_textPressColor;
+    QColor m_textCheckedColor;
     QColor m_backGroundColor;
     DDragWidget * drag = NULL;
     /* bookmark */
     bool m_isDefault = false;
+    bool m_isMountedIndicator = false;
 
     /* device */
     bool m_isDisk = false;

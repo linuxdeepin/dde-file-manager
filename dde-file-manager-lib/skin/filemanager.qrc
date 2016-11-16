@@ -5,65 +5,8 @@
         <file>qss/passwordAskDialog.qss</file>
     </qresource>
     <qresource prefix="/images">
-        <file>images/light/appbar.app.png</file>
-        <file>images/light/appbar.close.png</file>
-        <file>images/light/appbar.control.down.png</file>
-        <file>images/light/appbar.minus.png</file>
-        <file>images/dark/appbar.app.png</file>
-        <file>images/dark/appbar.close.png</file>
-        <file>images/dark/appbar.control.down.png</file>
-        <file>images/dark/appbar.minus.png</file>
-        <file>images/dark/appbar.fullscreen.box.png</file>
-        <file>images/light/appbar.fullscreen.box.png</file>
-        <file>images/dark/appbar.arrow.left.png</file>
-        <file>images/dark/appbar.arrow.right.png</file>
-        <file>images/dark/appbar.delete.png</file>
-        <file>images/dark/appbar.folder.png</file>
-        <file>images/dark/appbar.layout.body.png</file>
-        <file>images/dark/appbar.layout.sidebar.png</file>
-        <file>images/dark/appbar.list.png</file>
-        <file>images/dark/appbar.magnify.png</file>
-        <file>images/dark/appbar.refresh.png</file>
-        <file>images/dark/appbar.sort.png</file>
-        <file>images/dark/appbar.tiles.four.png</file>
-        <file>images/light/appbar.arrow.left.png</file>
-        <file>images/light/appbar.arrow.right.png</file>
-        <file>images/light/appbar.delete.png</file>
-        <file>images/light/appbar.folder.png</file>
-        <file>images/light/appbar.layout.body.png</file>
-        <file>images/light/appbar.layout.sidebar.png</file>
-        <file>images/light/appbar.list.png</file>
-        <file>images/light/appbar.magnify.png</file>
-        <file>images/light/appbar.refresh.png</file>
-        <file>images/light/appbar.sort.png</file>
-        <file>images/light/appbar.tiles.four.png</file>
-        <file>images/dark/appbar.eye.hide.png</file>
-        <file>images/dark/appbar.eye.png</file>
-        <file>images/light/appbar.eye.hide.png</file>
-        <file>images/light/appbar.eye.png</file>
-        <file>images/dark/appbar.clock.png</file>
-        <file>images/dark/appbar.home.png</file>
-        <file>images/light/appbar.clock.png</file>
-        <file>images/light/appbar.home.png</file>
-        <file>images/dark/appbar.download.png</file>
-        <file>images/dark/appbar.film.png</file>
-        <file>images/dark/appbar.image.png</file>
-        <file>images/dark/appbar.music.png</file>
-        <file>images/dark/appbar.page.png</file>
-        <file>images/light/appbar.download.png</file>
-        <file>images/light/appbar.film.png</file>
-        <file>images/light/appbar.image.png</file>
-        <file>images/light/appbar.music.png</file>
-        <file>images/light/appbar.page.png</file>
-        <file>images/dark/appbar.laptop.png</file>
-        <file>images/light/appbar.laptop.png</file>
-        <file>images/dark/appbar.arrow.up.png</file>
-        <file>images/dark/appbar.lines.horizontal.4.png</file>
-        <file>images/dark/appbar.app.favorite.png</file>
-        <file>images/dark/appbar.iphone.png</file>
         <file>images/light/checkbox-checked.png</file>
         <file>images/light/checkbox-unchecked.png</file>
-        <file>images/light/appbar.check.png</file>
         <file>images/light/checkbox-unchecked-transparent.png</file>
         <file>images/light/pencil_hover.svg</file>
         <file>images/light/pencil_normal.svg</file>
@@ -361,5 +304,47 @@
         <file>images/icons/input_clear_normal.svg</file>
         <file>images/icons/input_clear_hover.svg</file>
         <file>images/icons/input_clear_press.svg</file>
+    </qresource>
+    <qresource prefix="/leftsidebar">
+        <file>images/leftsidebar/android_active_16px.svg</file>
+        <file>images/leftsidebar/android_normal_16px.svg</file>
+        <file>images/leftsidebar/bookmarks_active_16px.svg</file>
+        <file>images/leftsidebar/bookmarks_normal_16px.svg</file>
+        <file>images/leftsidebar/desktop_active_16px.svg</file>
+        <file>images/leftsidebar/desktop_normal_16px.svg</file>
+        <file>images/leftsidebar/disk_active_16px.svg</file>
+        <file>images/leftsidebar/disk_normal_16px.svg</file>
+        <file>images/leftsidebar/documents_active_16px.svg</file>
+        <file>images/leftsidebar/documents_normal_16px.svg</file>
+        <file>images/leftsidebar/downloads_active_16px.svg</file>
+        <file>images/leftsidebar/downloads_normal_16px.svg</file>
+        <file>images/leftsidebar/dvd_active_16px.svg</file>
+        <file>images/leftsidebar/dvd_normal_16px.svg</file>
+        <file>images/leftsidebar/file_active_16px.svg</file>
+        <file>images/leftsidebar/file_normal_16px.svg</file>
+        <file>images/leftsidebar/home_active_16px.svg</file>
+        <file>images/leftsidebar/home_normal_16px.svg</file>
+        <file>images/leftsidebar/iphone_active_16px.svg</file>
+        <file>images/leftsidebar/iphone_normal_16px.svg</file>
+        <file>images/leftsidebar/music_active_16px.svg</file>
+        <file>images/leftsidebar/music_normal_16px.svg</file>
+        <file>images/leftsidebar/network_active_16px.svg</file>
+        <file>images/leftsidebar/network_normal_16px.svg</file>
+        <file>images/leftsidebar/pictures_active_16px.svg</file>
+        <file>images/leftsidebar/pictures_normal_16px.svg</file>
+        <file>images/leftsidebar/recent_active_16px.svg</file>
+        <file>images/leftsidebar/recent_normal_16px.svg</file>
+        <file>images/leftsidebar/trash_active_16px.svg</file>
+        <file>images/leftsidebar/trash_normal_16px.svg</file>
+        <file>images/leftsidebar/unmount_active_16px.png</file>
+        <file>images/leftsidebar/unmount_hover_16px.png</file>
+        <file>images/leftsidebar/unmount_normal_16px.png</file>
+        <file>images/leftsidebar/unmount_press_16px.png</file>
+        <file>images/leftsidebar/usb_active_16px.svg</file>
+        <file>images/leftsidebar/usb_normal_16px.svg</file>
+        <file>images/leftsidebar/usershare_active_16px.svg</file>
+        <file>images/leftsidebar/usershare_normal_16px.svg</file>
+        <file>images/leftsidebar/videos_active_16px.svg</file>
+        <file>images/leftsidebar/videos_normal_16px.svg</file>
     </qresource>
 </RCC>
