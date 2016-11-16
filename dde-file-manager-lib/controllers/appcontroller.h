@@ -73,6 +73,7 @@ public slots:
     void actionAbout(const DFMEvent& event);
     void actionExit(const DFMEvent& event);
     void actionSetAsWallpaper(const DFMEvent& event);
+    void actionShare(const DFMEvent& event);
     void actionUnShare(const DFMEvent& event);
     void actionSetUserSharePassword(const DFMEvent& event);
 

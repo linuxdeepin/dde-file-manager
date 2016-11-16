@@ -652,15 +652,17 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
 //                       << MenuAction::OpenAsAdmin
                        << MenuAction::Separator
                        << MenuAction::Copy
-                       << MenuAction::CreateSymlink
+                       << MenuAction::Compress;
+
+            if (isCanShare() && !isShared()){
+                actionKeys << MenuAction::Share;
+            }else if(isShared()){
+                actionKeys << MenuAction::UnShare;
+            }
+            actionKeys << MenuAction::CreateSymlink
                        << MenuAction::SendToDesktop
                        << MenuAction::OpenInTerminal
-                       << MenuAction::Separator
-                       << MenuAction::Compress
                        << MenuAction::Separator;
-            if(isShared())
-                actionKeys << MenuAction::UnShare
-                           << MenuAction::Separator;
 
             actionKeys  << MenuAction::Property;
 
@@ -678,37 +680,45 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
             actionKeys << MenuAction::Separator
                        << MenuAction::Cut
                        << MenuAction::Copy
-                       << MenuAction::CreateSymlink
-                       << MenuAction::SendToDesktop;
-            if (isDir()){
-                actionKeys << MenuAction::AddToBookMark;
-            }
-
-
-            actionKeys << MenuAction::Rename;
+                       << MenuAction::Rename;
 
             if (isDir()) {
-                actionKeys << MenuAction::Compress << MenuAction::OpenInTerminal;
-            } else if(isFile()) {
-                if (mimeTypeName().startsWith("image") && isReadable()) {
-                    actionKeys << MenuAction::SetAsWallpaper;
+                actionKeys << MenuAction::Compress;
+
+                if (isCanShare() && !isShared()){
+                    actionKeys << MenuAction::Share;
+                }else if(isShared()){
+                    actionKeys << MenuAction::UnShare;
                 }
 
-                actionKeys << MenuAction::Separator;
-
-                if (FileUtils::isArchive(absoluteFilePath())){
-                    actionKeys << MenuAction::Decompress << MenuAction::DecompressHere;
-                }else{
+            }else if(isFile()) {
+                if (!FileUtils::isArchive(absoluteFilePath())){
                     actionKeys << MenuAction::Compress;
                 }
             }
 
-            actionKeys << MenuAction::Separator
-                       << MenuAction::Delete
+            actionKeys << MenuAction::CreateSymlink
+                       << MenuAction::SendToDesktop;
+
+            if (isDir()) {
+                actionKeys << MenuAction::AddToBookMark
+                           << MenuAction::OpenInTerminal;
+            } else if(isFile()) {
+                if (mimeTypeName().startsWith("image") && isReadable()) {
+                    actionKeys << MenuAction::SetAsWallpaper;
+                }
+            }
+
+            actionKeys << MenuAction::Delete
                        << MenuAction::Separator;
-            if(isDir() && isShared())
-                actionKeys << MenuAction::UnShare
-                           << MenuAction::Separator;
+
+            if (isFile()){
+                if (FileUtils::isArchive(absoluteFilePath())){
+                    actionKeys << MenuAction::Decompress
+                               << MenuAction::DecompressHere
+                               << MenuAction::Separator;
+                }
+            }
 
             actionKeys  << MenuAction::Property;
         }
@@ -717,10 +727,8 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
                    << MenuAction::Separator
                    << MenuAction::Cut
                    << MenuAction::Copy
-                   << MenuAction::SendToDesktop
-                   << MenuAction::Separator
                    << MenuAction::Compress
-                   << MenuAction::Separator
+                   << MenuAction::SendToDesktop
                    << MenuAction::Delete
                    << MenuAction::Separator
                    << MenuAction::Property;
@@ -728,9 +736,8 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
         actionKeys << MenuAction::Open
                    << MenuAction::Separator
                    << MenuAction::Copy
-                   << MenuAction::SendToDesktop
-                   << MenuAction::Separator
                    << MenuAction::Compress
+                   << MenuAction::SendToDesktop
                    << MenuAction::Separator
                    << MenuAction::Property;
     }

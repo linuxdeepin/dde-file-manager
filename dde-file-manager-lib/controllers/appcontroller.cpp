@@ -455,6 +455,11 @@ void AppController::actionSetAsWallpaper(const DFMEvent &event)
     FileUtils::setBackground(fileUrl.toLocalFile());
 }
 
+void AppController::actionShare(const DFMEvent &event)
+{
+    emit fileSignalManager->requestShowShareOptionsInPropertyDialog(event);
+}
+
 void AppController::actionUnShare(const DFMEvent &event)
 {
     const ShareInfo& info = userShareManager->getShareInfoByPath(event.fileUrl().path());

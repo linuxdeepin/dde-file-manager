@@ -204,10 +204,10 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget* p
 
         QStringList titleList;
         titleList << basicInfo;
-        DExpandGroup *expandGroup = addExpandWidget(titleList);
-        expandGroup->expand(0)->setExpandedSeparatorVisible(false);
-        expandGroup->expand(0)->setContent(m_deviceInfoFrame);
-        expandGroup->expand(0)->setExpand(true);
+        m_expandGroup = addExpandWidget(titleList);
+        m_expandGroup->expand(0)->setExpandedSeparatorVisible(false);
+        m_expandGroup->expand(0)->setContent(m_deviceInfoFrame);
+        m_expandGroup->expand(0)->setExpand(true);
 
     }else if (m_url == DUrl::fromLocalFile("/")){
         m_icon->setPixmap(svgToPixmap(":/devices/images/device/drive-harddisk-deepin.svg", 128, 128));
@@ -217,10 +217,10 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget* p
         m_localDeviceInfoFrame = createLocalDeviceInfoWidget(m_url);
         QStringList titleList;
         titleList << basicInfo;
-        DExpandGroup *expandGroup = addExpandWidget(titleList);
-        expandGroup->expand(0)->setExpandedSeparatorVisible(false);
-        expandGroup->expand(0)->setContent(m_localDeviceInfoFrame);
-        expandGroup->expand(0)->setExpand(true);
+        m_expandGroup = addExpandWidget(titleList);
+        m_expandGroup->expand(0)->setExpandedSeparatorVisible(false);
+        m_expandGroup->expand(0)->setContent(m_localDeviceInfoFrame);
+        m_expandGroup->expand(0)->setExpand(true);
     }else{
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(m_url);
         m_icon->setPixmap(fileInfo->fileIcon().pixmap(160, 160));
@@ -242,10 +242,10 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget* p
                 titleList << shareManager;
             }
         }
-        DExpandGroup *expandGroup = addExpandWidget(titleList);
-        expandGroup->expand(0)->setExpandedSeparatorVisible(false);
-        expandGroup->expand(0)->setContent(m_basicInfoFrame);
-        expandGroup->expand(0)->setExpand(true);
+        m_expandGroup = addExpandWidget(titleList);
+        m_expandGroup->expand(0)->setExpandedSeparatorVisible(false);
+        m_expandGroup->expand(0)->setContent(m_basicInfoFrame);
+        m_expandGroup->expand(0)->setExpand(true);
 
         if (fileInfo->isFile()){
     //        m_OpenWithListWidget = createOpenWithListWidget(fileInfo);
@@ -256,10 +256,10 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget* p
             if (fileInfo->isCanShare()){
                 setFixedSize(QSize(320, 500));
                 m_shareinfoFrame = createShareInfoFrame(fileInfo);
-                expandGroup->expand(0)->setExpandedSeparatorVisible(true);
-                expandGroup->expand(1)->setExpandedSeparatorVisible(false);
-                expandGroup->expand(1)->setContent(m_shareinfoFrame);
-                expandGroup->expand(1)->setExpand(false);
+                m_expandGroup->expand(0)->setExpandedSeparatorVisible(true);
+                m_expandGroup->expand(1)->setExpandedSeparatorVisible(false);
+                m_expandGroup->expand(1)->setContent(m_shareinfoFrame);
+                m_expandGroup->expand(1)->setExpand(false);
             }
             startComputerFolderSize(m_url);
             m_fileCount = fileInfo->size();
@@ -456,7 +456,10 @@ void PropertyDialog::resizeEvent(QResizeEvent *event)
 {
     BaseDialog::resizeEvent(event);
 }
-
+DExpandGroup *PropertyDialog::expandGroup() const
+{
+    return m_expandGroup;
+}
 
 DExpandGroup *PropertyDialog::addExpandWidget(const QStringList &titleList)
 {

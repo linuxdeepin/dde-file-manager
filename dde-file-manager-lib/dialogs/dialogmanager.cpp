@@ -34,6 +34,7 @@
 #include <ddialog.h>
 #include <DAboutDialog>
 #include <dscrollbar.h>
+#include <dexpandgroup.h>
 
 #include <QTimer>
 #include <QDesktopWidget>
@@ -90,6 +91,7 @@ void DialogManager::initConnect()
     connect(fileSignalManager, &FileSignalManager::requestShowUrlWrongDialog, this, &DialogManager::showUrlWrongDialog);
     connect(fileSignalManager, &FileSignalManager::requestShowOpenWithDialog, this, &DialogManager::showOpenWithDialog);
     connect(fileSignalManager, &FileSignalManager::requestShowPropertyDialog, this, &DialogManager::showPropertyDialog);
+    connect(fileSignalManager, &FileSignalManager::requestShowShareOptionsInPropertyDialog, this, &DialogManager::showShareOptionsInPropertyDialog);
     connect(fileSignalManager, &FileSignalManager::requestShowTrashPropertyDialog, this, &DialogManager::showTrashPropertyDialog);
     connect(fileSignalManager, &FileSignalManager::requestShowDevicePropertyDialog, this, &DialogManager::showDevicePropertyDialog);
     connect(fileSignalManager, &FileSignalManager::showDiskErrorDialog,
@@ -380,6 +382,19 @@ void DialogManager::showPropertyDialog(const DFMEvent &event)
         if (urlList.count() >= 2){
             m_closeIndicatorDialog->show();
             m_closeIndicatorTimer->start();
+        }
+    }
+}
+
+void DialogManager::showShareOptionsInPropertyDialog(const DFMEvent &event)
+{
+    DUrl url = event.fileUrl();
+    showPropertyDialog(event);
+    PropertyDialog *dialog;
+    if (m_propertyDialogs.contains(url)){
+        dialog = m_propertyDialogs.value(url);
+        if (dialog->expandGroup()->expands().count() > 1){
+            dialog->expandGroup()->expand(1)->setExpand(true);
         }
     }
 }

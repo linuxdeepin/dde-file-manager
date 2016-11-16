@@ -109,6 +109,7 @@ QVector<MenuAction> ShareFileInfo::menuActionList(DAbstractFileInfo::MenuType ty
             actionKeys << MenuAction::Open
                        << MenuAction::OpenInNewWindow
                        << MenuAction::OpenInNewTab
+                       << MenuAction::Separator
                        << MenuAction::UnShare;
         }
         actionKeys << MenuAction::Separator
