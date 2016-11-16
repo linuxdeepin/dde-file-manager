@@ -167,7 +167,7 @@ void DToolBar::initConnect()
     connect(m_crumbWidget, &DCrumbWidget::crumbSelected, this, &DToolBar::crumbSelected);
     connect(m_crumbWidget, &DCrumbWidget::searchBarActivated, this, &DToolBar::searchBarActivated);
     connect(m_searchButton, &DStateButton::clicked, this, &DToolBar::searchBarClicked);
-    connect(m_searchBar, SIGNAL(focusedOut()), this, SLOT(searchBarDeactivated()));
+    connect(m_searchBar, &DSearchBar::focusedOut, this,  &DToolBar::searchBarDeactivated);
     connect(fileSignalManager, &FileSignalManager::currentUrlChanged, this, &DToolBar::crumbChanged);
     connect(fileSignalManager, &FileSignalManager::requestBack, this, &DToolBar::handleHotkeyBack);
     connect(fileSignalManager, &FileSignalManager::requestForward, this, &DToolBar::handleHotkeyForward);
@@ -294,6 +294,8 @@ void DToolBar::crumbChanged(const DFMEvent &event)
         m_searchBar->setText(event.fileUrl().searchKeyword());
         m_searchBar->getPopupList()->hide();
     }else{
+        m_searchBar->hide();
+        m_crumbWidget->show();
         m_crumbWidget->setCrumb(event.fileUrl());
     }
 
