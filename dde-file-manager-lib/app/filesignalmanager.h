@@ -23,6 +23,15 @@ signals:
     /* change currentUrl*/
     void requestChangeCurrentUrl(const DFMEvent &event);
 
+    /*change view mode*/
+    void requestChangeIconViewMode(const DFMEvent &event);
+
+    /*change view mode*/
+    void requestChangeListViewMode(const DFMEvent &event);
+
+    /*change view mode*/
+    void requestChangeExtendViewMode(const DFMEvent &event);
+
     /* emit usershare status changed*/
     void userShareCountChanged(const int count);
 

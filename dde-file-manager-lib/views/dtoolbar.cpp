@@ -173,6 +173,9 @@ void DToolBar::initConnect()
     connect(fileSignalManager, &FileSignalManager::requestForward, this, &DToolBar::handleHotkeyForward);
     connect(fileSignalManager, &FileSignalManager::requestSearchCtrlF, this, &DToolBar::handleHotkeyCtrlF);
     connect(fileSignalManager, &FileSignalManager::requestSearchCtrlL, this, &DToolBar::handleHotkeyCtrlL);
+    connect(fileSignalManager, &FileSignalManager::requestChangeIconViewMode, this, &DToolBar::handleChangeIconMode);
+    connect(fileSignalManager, &FileSignalManager::requestChangeListViewMode, this, &DToolBar::handleChangeListMode);
+    connect(fileSignalManager, &FileSignalManager::requestChangeExtendViewMode, this, &DToolBar::handleChangeExtendMode);
 }
 
 DSearchBar *DToolBar::getSearchBar()
@@ -388,6 +391,27 @@ void DToolBar::handleHotkeyCtrlL(const DFMEvent &event)
 {
     if (event.windowId() == WindowManager::getWindowId(this)) {
         searchBarActivated();
+    }
+}
+
+void DToolBar::handleChangeIconMode(const DFMEvent &event)
+{
+    if (event.windowId() == WindowManager::getWindowId(this)) {
+        m_iconViewButton->click();
+    }
+}
+
+void DToolBar::handleChangeListMode(const DFMEvent &event)
+{
+    if (event.windowId() == WindowManager::getWindowId(this)) {
+        m_listViewButton->click();
+    }
+}
+
+void DToolBar::handleChangeExtendMode(const DFMEvent &event)
+{
+    if (event.windowId() == WindowManager::getWindowId(this)) {
+        m_extendButton->click();
     }
 }
 

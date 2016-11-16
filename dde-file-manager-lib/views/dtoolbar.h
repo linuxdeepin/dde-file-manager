@@ -63,6 +63,9 @@ public slots:
     void handleHotkeyForward(const DFMEvent &event);
     void handleHotkeyCtrlF(const DFMEvent &event);
     void handleHotkeyCtrlL(const DFMEvent &event);
+    void handleChangeIconMode(const DFMEvent &event);
+    void handleChangeListMode(const DFMEvent &event);
+    void handleChangeExtendMode(const DFMEvent &event);
 
     void setViewModeButtonVisible(bool isVisible);
     void moveNavStacks(int from, int to);

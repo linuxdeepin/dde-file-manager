@@ -676,12 +676,24 @@ void DFileView::dislpayAsActionTriggered(QAction *action)
     DAction* dAction = static_cast<DAction*>(action);
     dAction->setChecked(true);
     MenuAction type = (MenuAction)dAction->data().toInt();
+
+    const DUrlList& urls = selectedUrls();
+
+    DFMEvent fmevent;
+    fmevent << urls;
+    fmevent << DFMEvent::FileView;
+    fmevent << windowId();
+    fmevent << rootUrl();
+
     switch(type){
         case MenuAction::IconView:
-            setViewMode(IconMode);
+            emit fileSignalManager->requestChangeIconViewMode(fmevent);
             break;
         case MenuAction::ListView:
-            setViewMode(ListMode);
+            emit fileSignalManager->requestChangeListViewMode(fmevent);
+            break;
+    case MenuAction::ExtendView:
+            emit fileSignalManager->requestChangeExtendViewMode(fmevent);
             break;
         default:
             break;
