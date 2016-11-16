@@ -47,22 +47,17 @@ void DBookmarkScene::initData()
              << "Android"
              << "Network"
              << "UserShare"
-             << "Dvd";
+             << "Dvd"
+             << "BookMarks";
 
     foreach (QString key, IconKeys) {
         QString _key = key.toLower();
-        QString smallNormal = QString(":/icons/images/icons/%1_normal_16px.svg").arg(_key);
-        QString smallHover = QString(":/icons/images/icons/%1_hover_16px.svg").arg(_key);
-        QString smallChecked = QString(":/icons/images/icons/%1_checked_16px.svg").arg(_key);
-        QString bigNormal = QString(":/icons/images/icons/%1_normal_22px.svg").arg(_key);
-        QString bigHover = QString(":/icons/images/icons/%1_hover_22px.svg").arg(_key);
-        QString bigChecked = QString(":/icons/images/icons/%1_checked_22px.svg").arg(_key);
+        QString smallNormal = QString(":/leftsidebar/images/leftsidebar/%1_normal_16px.svg").arg(_key);
+        QString smallHover = QString(":/leftsidebar/images/leftsidebar/%1_active_16px.svg").arg(_key);
+        QString smallChecked = QString(":/leftsidebar/images/leftsidebar/%1_active_16px.svg").arg(_key);
         m_smallIcons.insert(key, smallNormal);
         m_smallHoverIcons.insert(key, smallHover);
         m_smallCheckedIcons.insert(key, smallChecked);
-        m_bigIcons.insert(key, bigNormal);
-        m_bigHoverIcons.insert(key, bigHover);
-        m_bigCheckedIcons.insert(key, bigChecked);
     }
 
 
@@ -121,15 +116,24 @@ DBookmarkItem *DBookmarkScene::createBookmarkByKey(const QString &key)
     item->boundImageToHover(m_smallIcons.value(key));
     item->boundImageToPress(m_smallCheckedIcons.value(key));
     item->boundImageToRelease(m_smallIcons.value(key));
-    item->boundBigImageToHover(m_bigHoverIcons.value(key));
-    item->boundBigImageToPress(m_bigCheckedIcons.value(key));
-    item->boundBigImageToRelease(m_bigIcons.value(key));
     item->setText(m_systemBookMarks.value(key));
     item->setUrl(getStandardPathByKey(key));
     item->setDefaultItem(true);
     return item;
 }
 
+DBookmarkItem *DBookmarkScene::createCustomBookmark(const QString &name, const DUrl &url)
+{
+    QString key = "BookMarks";
+    DBookmarkItem * item = new DBookmarkItem;
+    item->boundImageToHover(m_smallIcons.value(key));
+    item->boundImageToPress(m_smallCheckedIcons.value(key));
+    item->boundImageToRelease(m_smallIcons.value(key));
+    item->setText(name);
+    item->setUrl(url);
+    item->setDefaultItem(false);
+    return item;
+}
 
 DUrl DBookmarkScene::getStandardPathByKey(const QString &key)
 {

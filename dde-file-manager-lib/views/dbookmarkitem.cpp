@@ -77,17 +77,30 @@ void DBookmarkItem::init()
 {
     setAcceptHoverEvents(true);
     setReleaseBackgroundColor(QColor(238,232,205,0));
-    setPressBackgroundColor(QColor(44,167,248,255));
+    setPressBackgroundColor(QColor("#D5EDFE"));
     setHoverBackgroundColor(QColor(0, 0, 0, 12));
-    setHighlightDiskBackgroundColor(QColor("#C0C0C0"));
+    setHighlightDiskBackgroundColor(QColor("#E9E9E9"));
     setPressBackgroundEnable(true);
     setReleaseBackgroundEnable(true);
     setHoverBackgroundEnable(true);
     setHighlightDiskBackgroundEnable(false);
     setTextColor(Qt::black);
+    setTextHoverColor(Qt::black);
+    setTextPressColor(QColor("#2ca7f8"));
+    setTextCheckedColor(QColor("#2ca7f8"));
     setAcceptDrops(true);
     m_checkable = true;
 }
+bool DBookmarkItem::isMountedIndicator() const
+{
+    return m_isMountedIndicator;
+}
+
+void DBookmarkItem::setIsMountedIndicator(bool isMountedIndicator)
+{
+    m_isMountedIndicator = isMountedIndicator;
+}
+
 
 void DBookmarkItem::editFinished()
 {
@@ -201,6 +214,7 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
             painter->setBrush(m_hoverBackgroundColor);
             painter->setPen(QColor(0,0,0,0));
             painter->drawRect(m_x_axis, m_y_axis, m_width, m_height);
+            textColor = m_textHoverColor;
         }
         painter->drawPixmap(leftPadding, dy,  hover.width(), hover.height(), hover);
     }
@@ -211,7 +225,7 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
             painter->setPen(m_pressBackgroundColor);
             painter->setBrush(m_pressBackgroundColor);
             painter->drawRect(m_x_axis, m_y_axis, m_width, m_height);
-            textColor = Qt::white;
+            textColor = m_textPressColor;
         }
         painter->drawPixmap(leftPadding, dy, press.width(), press.height(), press);
     }else if(!m_hovered && (m_checked && m_checkable))
@@ -221,18 +235,33 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
             painter->setPen(m_pressBackgroundColor);
             painter->setBrush(m_pressBackgroundColor);
             painter->drawRect(m_x_axis, m_y_axis, m_width, m_height);
-            textColor = Qt::white;
+            textColor = m_textCheckedColor;
         }
         painter->drawPixmap(leftPadding, dy, checked.width(), checked.height(), checked);
+        if (!m_isMountedIndicator){
+            painter->setPen(QColor(43,167,248,25));
+            painter->drawLine(0, 0, m_width-3, 0);
+            painter->drawLine(0, m_height-1, m_width-3, m_height-1);
+            painter->setBrush(QColor("#2ca7f8"));
+            painter->drawRect(m_width-3, 0, 3, m_height);
+        }
     }else if (m_isHighlightDisk){
         if(m_highlightDiskBackgroundEnabled)
         {
             painter->setPen(m_highlightDiskBackgroundColor);
             painter->setBrush(m_highlightDiskBackgroundColor);
             painter->drawRect(m_x_axis, m_y_axis, m_width, m_height);
-            textColor = Qt::white;
+            textColor = m_textCheckedColor;
         }
         painter->drawPixmap(leftPadding, dy, release.width(), release.height(), checked);
+
+        if (!m_isMountedIndicator){
+            painter->setPen(QColor(0,0,0,25));
+            painter->drawLine(0, 0, m_width-3, 0);
+            painter->drawLine(0, m_height-1, m_width-3, m_height-1);
+            painter->setBrush(QColor("#BDBDBD"));
+            painter->drawRect(m_width-3, 0, 3, m_height);
+        }
     }
     else
     {
@@ -244,10 +273,16 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
         }
 
         painter->drawPixmap(leftPadding, dy, release.width(), release.height(), release);
-        textColor = Qt::black;
+        textColor = m_textColor;
     }
 
     double textTopPadding = 4;
+    if (m_checkable && m_checked){
+        m_font.setWeight(QFont::Normal + 10);
+    }else{
+        m_font.setWeight(QFont::Normal);
+    }
+
     if(!m_isTightMode)
     {
         painter->setPen(textColor);
@@ -263,9 +298,9 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
         {
             QString text = m_textContent.at(0);
             painter->setPen(QColor(0x2CA7F8));
-            QFont font;
-            font.setPointSize(8);
-            painter->setFont(font);
+            m_font.setPointSize(8);
+
+            painter->setFont(m_font);
 
             painter->drawText(leftPadding + 6, m_y_axis + m_height*3/4 - textTopPadding, text);
         }
@@ -465,9 +500,6 @@ DBookmarkItem *DBookmarkItem::makeBookmark(const QString &name, const DUrl &url)
     item->boundImageToHover(":/icons/images/icons/bookmarks_normal_16px.svg");
     item->boundImageToPress(":/icons/images/icons/bookmarks_checked_16px.svg");
     item->boundImageToRelease(":/icons/images/icons/bookmarks_normal_16px.svg");
-    item->boundBigImageToHover(":/icons/images/icons/favourite_hover.svg");
-    item->boundBigImageToPress(":/icons/images/icons/favourite_checked.svg");
-    item->boundBigImageToRelease(":/icons/images/icons/favourite_normal.svg");
     return item;
 }
 
@@ -839,14 +871,44 @@ QString DBookmarkItem::text()
     return m_textContent;
 }
 
+QColor DBookmarkItem::getTextColor()
+{
+    return m_textColor;
+}
+
 void DBookmarkItem::setTextColor(const QColor &color)
 {
     m_textColor = color;
 }
 
-QColor DBookmarkItem::getTextColor()
+QColor DBookmarkItem::textCheckedColor() const
 {
-    return m_textColor;
+    return m_textCheckedColor;
+}
+
+void DBookmarkItem::setTextCheckedColor(const QColor &textCheckedColor)
+{
+    m_textCheckedColor = textCheckedColor;
+}
+
+QColor DBookmarkItem::textPressColor() const
+{
+    return m_textPressColor;
+}
+
+void DBookmarkItem::setTextPressColor(const QColor &textPressColor)
+{
+    m_textPressColor = textPressColor;
+}
+
+QColor DBookmarkItem::textHoverColor() const
+{
+    return m_textHoverColor;
+}
+
+void DBookmarkItem::setTextHoverColor(const QColor &textHoverColor)
+{
+    m_textHoverColor = textHoverColor;
 }
 
 void DBookmarkItem::setPress(bool b)
