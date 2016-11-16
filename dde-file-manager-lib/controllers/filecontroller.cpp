@@ -19,6 +19,9 @@
 #include "filemonitor/filemonitor.h"
 #include "appcontroller.h"
 
+#include "models/sharefileinfo.h"
+#include "usershare/usersharemanager.h"
+
 #include <QDesktopServices>
 #include <QDirIterator>
 #include <QFileInfo>
@@ -352,6 +355,13 @@ bool FileController::openFileLocation(const DUrl &fileUrl, bool &accepted) const
     }
 
     return true;
+}
+
+bool FileController::unShareFolder(const DUrl &fileUrl, bool &accepted) const
+{
+    accepted = true;
+    const ShareInfo& info = userShareManager->getShareInfoByPath(fileUrl.path());
+    userShareManager->deleteUserShare(info);
 }
 
 bool FileController::openInTerminal(const DUrl &fileUrl, bool &accepted) const

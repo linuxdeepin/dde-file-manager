@@ -201,6 +201,15 @@ bool DAbstractFileController::createSymlink(const DUrl &fileUrl, const DUrl &lin
     return false;
 }
 
+bool DAbstractFileController::unShareFolder(const DUrl &fileUrl, bool &accepted) const
+{
+    Q_UNUSED(fileUrl)
+
+    accepted = false;
+
+    return false;
+}
+
 bool DAbstractFileController::openInTerminal(const DUrl &fileUrl, bool &accepted) const
 {
     Q_UNUSED(fileUrl)

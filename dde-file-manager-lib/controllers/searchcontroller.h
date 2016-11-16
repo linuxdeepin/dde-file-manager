@@ -29,6 +29,7 @@ public:
 
     bool createSymlink(const DUrl &fileUrl, const DUrl &linkToUrl, bool &accepted) const Q_DECL_OVERRIDE;
 
+    bool unShareFolder(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
     bool openInTerminal(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
 
     const DDirIteratorPointer createDirIterator(const DUrl &fileUrl, const QStringList &nameFilters,

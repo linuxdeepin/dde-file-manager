@@ -51,6 +51,7 @@ public:
                                                         bool &accepted) const;
 
     virtual bool createSymlink(const DUrl &fileUrl, const DUrl &linkToUrl, bool &accepted) const;
+    virtual bool unShareFolder(const DUrl &fileUrl, bool &accepted) const;
     virtual bool openInTerminal(const DUrl &fileUrl, bool &accepted) const;
 
     virtual DAbstractFileWatcher *createFileWatcher(const DUrl &fileUrl, QObject *parent, bool &accepted) const;

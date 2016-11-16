@@ -531,6 +531,18 @@ bool DFileService::sendToDesktop(const DFMEvent &event) const
     return ok;
 }
 
+bool DFileService::unShareFolder(const DUrl &fileUrl) const
+{
+    TRAVERSE(fileUrl, {
+                 bool ok = controller->unShareFolder(fileUrl, accepted);
+
+                 if(accepted)
+                     return ok;
+             })
+
+    return false;
+}
+
 bool DFileService::openInTerminal(const DUrl &fileUrl) const
 {
     TRAVERSE(fileUrl, {

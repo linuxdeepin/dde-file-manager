@@ -24,6 +24,11 @@ public:
                                                      QDir::Filters filters, QDirIterator::IteratorFlags flags,
                                                      bool &accepted) const Q_DECL_OVERRIDE;
     DAbstractFileWatcher *createFileWatcher(const DUrl &fileUrl, QObject *parent, bool &accepted) const Q_DECL_OVERRIDE;
+
+    bool unShareFolder(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
+
+private:
+    static DUrl realUrl(const DUrl &shareUrl);
 };
 
 #endif // SHARECONTROLER_H

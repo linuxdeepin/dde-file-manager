@@ -95,6 +95,7 @@ public:
     bool createSymlink(const DUrl &fileUrl, const DUrl &linkToUrl) const;
     bool sendToDesktop(const DFMEvent &event) const;
 
+    bool unShareFolder(const DUrl &fileUrl) const;
     bool openInTerminal(const DUrl &fileUrl) const;
 
     const DAbstractFileInfoPointer createFileInfo(const DUrl &fileUrl) const;

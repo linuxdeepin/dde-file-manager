@@ -462,8 +462,7 @@ void AppController::actionShare(const DFMEvent &event)
 
 void AppController::actionUnShare(const DFMEvent &event)
 {
-    const ShareInfo& info = userShareManager->getShareInfoByPath(event.fileUrl().path());
-    userShareManager->deleteUserShare(info);
+    fileService->unShareFolder(event.fileUrl());
 }
 
 void AppController::actionSetUserSharePassword(const DFMEvent &event)

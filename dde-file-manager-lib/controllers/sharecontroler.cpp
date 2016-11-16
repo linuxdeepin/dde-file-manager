@@ -118,3 +118,16 @@ DAbstractFileWatcher *ShareControler::createFileWatcher(const DUrl &fileUrl, QOb
 
     return new ShareFileWatcher(parent);
 }
+
+bool ShareControler::unShareFolder(const DUrl &fileUrl, bool &accepted) const
+{
+    accepted = true;
+    return DFileService::instance()->unShareFolder(realUrl(fileUrl));
+}
+
+DUrl ShareControler::realUrl(const DUrl &shareUrl)
+{
+    DUrl ret = shareUrl;
+    ret.setScheme(FILE_SCHEME);
+    return ret;
+}
