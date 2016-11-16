@@ -276,6 +276,13 @@ bool SearchController::createSymlink(const DUrl &fileUrl, const DUrl &linkToUrl,
     return DFileService::instance()->createSymlink(realUrl(fileUrl), linkToUrl);
 }
 
+bool SearchController::unShareFolder(const DUrl &fileUrl, bool &accepted) const
+{
+    accepted = true;
+
+    return DFileService::instance()->unShareFolder(realUrl(fileUrl));
+}
+
 bool SearchController::openInTerminal(const DUrl &fileUrl, bool &accepted) const
 {
     accepted = true;
