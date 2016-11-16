@@ -220,6 +220,13 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
     //draw text
     QFont font;
     font.setPixelSize(12);
+
+    if (isChecked()){
+        font.setWeight(QFont::Normal + 10);
+    }else{
+        font.setWeight(QFont::Normal);
+    }
+
     painter->setFont(font);
     QFontMetrics fm(font);
     QString str = fm.elidedText(m_tabText,Qt::ElideRight,m_width-10);
@@ -228,7 +235,7 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
     if(isChecked()){
         color.setNamedColor("#FFFFFF");
         painter->fillRect(boundingRect(),color);
-        color.setNamedColor("#303030");
+        color.setNamedColor("#2ca7f8");
         pen.setColor(color);
         painter->setPen(pen);
         painter->drawText((m_width-fm.width(str))/2,(m_height-fm.height())/2,
