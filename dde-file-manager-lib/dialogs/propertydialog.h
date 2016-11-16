@@ -98,6 +98,8 @@ public:
     int getFileCount();
     qint64 getFileSize();
 
+    DExpandGroup *expandGroup() const;
+
 public slots:
     void raise();
     void updateFolderSize(qint64 size);
@@ -137,7 +139,8 @@ private:
     QFrame *m_deviceInfoFrame = NULL;
     QFrame *m_OpenWithFrame = NULL;
     QListWidget* m_OpenWithListWidget = NULL;
-    QButtonGroup* m_OpenWithButtonGroup;
+    QButtonGroup* m_OpenWithButtonGroup = NULL;
+    DExpandGroup* m_expandGroup = NULL;
 
     DExpandGroup *addExpandWidget(const QStringList &titleList);
 

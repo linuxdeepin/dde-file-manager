@@ -99,6 +99,9 @@ signals:
     void requestShowPropertyDialog(const DFMEvent &event);
 
     /*request show PropertyDialog*/
+    void requestShowShareOptionsInPropertyDialog(const DFMEvent &event);
+
+    /*request show PropertyDialog*/
     void requestShowTrashPropertyDialog(const DFMEvent &event);
 
     /*request show PropertyDialog*/

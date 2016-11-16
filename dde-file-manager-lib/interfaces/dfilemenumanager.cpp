@@ -300,6 +300,7 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::DeletionDate] = QObject::tr("Time deleted");
     actionKeys[MenuAction::SourcePath] = QObject::tr("Source path");
     actionKeys[MenuAction::AbsolutePath] = QObject::tr("Path");
+    actionKeys[MenuAction::Share] = QObject::tr("Share folder");
     actionKeys[MenuAction::UnShare] = QObject::tr("Cancel sharing");
     actionKeys[MenuAction::SetUserSharePassword] = QObject::tr("Set share password");
 }

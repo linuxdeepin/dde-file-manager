@@ -149,6 +149,7 @@ public:
         ExtendView,
         SetAsWallpaper,
         ForgetPassword,
+        Share,
         UnShare,
         SetUserSharePassword,
         Unknow
