@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 41 (35326) - http://www.bohemiancoding.com/sketch -->
+    <title>computer_checked</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="主窗口" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="computer_checked">
+            <g id="computer-normal-16px" transform="translate(1.000000, 1.000000)">
+                <g id="Page-1">
+                    <g>
+                        <g id="computer-normal-16px">
+                            <polygon id="Rectangle-3" stroke="#FFFFFF" points="0.5 0.5 13.5 0.5 13.5 10.5 0.5 10.5"></polygon>
+                            <path d="M3.5,12.5 L10.5,12.5" id="Path-4" stroke="#FFFFFF"></path>
+                            <rect id="Rectangle-2" fill="#FFFFFF" x="1" y="9" width="12" height="1"></rect>
+                            <rect id="Rectangle" fill="#FFFFFF" x="2" y="2" width="10" height="6"></rect>
+                            <rect id="Rectangle-4" stroke="#FFFFFF" x="5.5" y="10.5" width="3" height="2"></rect>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

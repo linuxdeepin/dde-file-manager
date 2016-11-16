@@ -221,9 +221,9 @@ void DCrumbWidget::addComputerCrumb()
     QString text = COMPUTER_ROOT;
     DCrumbButton * button = new DCrumbIconButton(
                 m_group.buttons().size(),
-                QIcon(":/leftsidebar/images/leftsidebar/disk_normal_16px.svg"),
-                QIcon(":/icons/images/icons/disk_hover_16px.svg"),
-                QIcon(":/icons/images/icons/disk_checked_16px.svg"),
+                QIcon(":/leftsidebar/images/leftsidebar/computer_normal_16px.svg"),
+                QIcon(":/icons/images/icons/computer_hover_16px.svg"),
+                QIcon(":/icons/images/icons/computer_checked_16px.svg"),
                 text, this);
     button->setFocusPolicy(Qt::NoFocus);
     button->adjustSize();

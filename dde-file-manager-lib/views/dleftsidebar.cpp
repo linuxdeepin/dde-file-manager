@@ -57,6 +57,7 @@ void DLeftSideBar::initData()
                << "Downloads"
                << "Trash"
                << "Separator"
+               << "Computer"
                << "Disk";
 
     m_navState = true;
