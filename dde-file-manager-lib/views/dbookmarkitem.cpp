@@ -729,6 +729,8 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
         menu = DFileMenuManager::createRecentLeftBarMenu(disableList);
     }else if (m_url.isTrashFile()){
         menu = DFileMenuManager::createTrashLeftBarMenu(disableList);
+    }else if (m_url.isComputerFile()){
+        menu = DFileMenuManager::createComputerLeftBarMenu(disableList);
     }else if(m_isDisk && m_deviceInfo)
     {
         disableList |= m_deviceInfo->disableMenuActionList();

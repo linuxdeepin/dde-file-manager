@@ -126,6 +126,18 @@ DFileMenu *DFileMenuManager::createTrashLeftBarMenu(const QSet<MenuAction> &disa
     return genereteMenuByKeys(actionKeys, disableList);
 }
 
+DFileMenu *DFileMenuManager::createComputerLeftBarMenu(const QSet<MenuAction> &disableList)
+{
+    QVector<MenuAction> actionKeys;
+
+    actionKeys.reserve(2);
+
+    actionKeys << MenuAction::OpenInNewWindow;
+    actionKeys << MenuAction::OpenInNewTab;
+
+    return genereteMenuByKeys(actionKeys, disableList);
+}
+
 DFileMenu *DFileMenuManager::createDiskLeftBarMenu(const QSet<MenuAction> &disableList)
 {
     QVector<MenuAction> actionKeys;
