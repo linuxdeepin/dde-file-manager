@@ -60,7 +60,7 @@ include(../usershare/usershare.pri)
 
 lessThan(QT_MINOR_VERSION, 6): include(../xdnd/xdnd.pri)
 
-PKGCONFIG += gtk+-2.0 gsettings-qt libsecret-1 dtkbase dtkwidget
+PKGCONFIG += gtk+-2.0 gsettings-qt libsecret-1 dtkbase dtkwidget gio-unix-2.0
 CONFIG += c++11 link_pkgconfig
 #DEFINES += QT_NO_DEBUG_OUTPUT
 DEFINES += QT_MESSAGELOGCONTEXT
