@@ -9,7 +9,6 @@ public:
     SearchFileInfo(const DUrl &url);
 
     bool exists() const Q_DECL_OVERRIDE;
-    bool isCanRename() const Q_DECL_OVERRIDE;
     bool isReadable() const Q_DECL_OVERRIDE;
     bool isDir() const Q_DECL_OVERRIDE;
 

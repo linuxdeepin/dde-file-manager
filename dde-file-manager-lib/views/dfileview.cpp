@@ -1090,6 +1090,13 @@ void DFileView::onVerticalScroll(int contentY)
             fileInfo->makeToInactive();
     }
 
+    for (int i = rande.first; i < rande.second; ++i) {
+        const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(model()->index(i, 0));
+
+        if (fileInfo)
+            fileInfo->makeToActive();
+    }
+
     d->visibleIndexRande = rande;
 }
 

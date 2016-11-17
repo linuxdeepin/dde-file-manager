@@ -98,7 +98,7 @@ bool ThumbnailGenerator::isVideoFile(const QString &fileName)
 bool ThumbnailGenerator::isPictureFile(const QString &fileName)
 {
     QString mimeType = QMimeDatabase().mimeTypeForFile(fileName).name();
-    qDebug () << mimeType << fileName;
+
     if(mimeType.startsWith("image"))
         return true;
     else

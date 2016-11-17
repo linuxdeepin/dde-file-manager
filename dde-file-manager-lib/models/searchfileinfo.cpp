@@ -34,11 +34,6 @@ bool SearchFileInfo::exists() const
     return !d->proxy || d->proxy->exists();
 }
 
-bool SearchFileInfo::isCanRename() const
-{
-    return false;
-}
-
 bool SearchFileInfo::isReadable() const
 {
     Q_D(const DAbstractFileInfo);
