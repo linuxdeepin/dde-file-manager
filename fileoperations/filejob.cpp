@@ -205,7 +205,13 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
     {
         QUrl url = files.at(i);
         QString srcPath = url.toLocalFile();
+        if (srcPath.isEmpty()){
+            continue;
+        }
         QFileInfo srcInfo(srcPath);
+        if (!srcInfo.exists()){
+            continue;
+        }
         QString targetPath;
 
         if (m_isAborted)
