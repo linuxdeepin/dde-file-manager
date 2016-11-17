@@ -31,6 +31,7 @@ qint64 FileJob::Data_Flush_Size = 16777216;
 
 FileJob::FileJob(JobType jobType, QObject *parent) : QObject(parent)
 {
+    qRegisterMetaType<QMap<QString, QString>>();
     FileJobCount += 1;
     m_status = FileJob::Started;
     QString user = getenv("USER");
