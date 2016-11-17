@@ -36,7 +36,10 @@ void onClipboardDataChanged()
         clipboardAction = DFMGlobal::UnknowAction;
     }
 
-    for (const QUrl &url : qApp->clipboard()->mimeData()->urls()) {
+    for (QUrl url : qApp->clipboard()->mimeData()->urls()) {
+        if (url.scheme().isEmpty()){
+            url.setScheme("file");
+        }
         clipboardFileUrls << url;
     }
 }
