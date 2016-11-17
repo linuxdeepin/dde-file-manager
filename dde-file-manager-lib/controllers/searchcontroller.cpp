@@ -1,6 +1,8 @@
 #include "searchcontroller.h"
 #include "dfileservices.h"
 #include "dfmevent.h"
+#include "dfileproxywatcher.h"
+#include "private/dabstractfilewatcher_p.h"
 
 #include "models/searchfileinfo.h"
 #include "ddiriterator.h"
@@ -11,6 +13,151 @@
 #include <QDebug>
 #include <QRegularExpression>
 #include <QQueue>
+
+class SearchFileWatcherPrivate;
+class SearchFileWatcher : public DAbstractFileWatcher
+{
+public:
+    explicit SearchFileWatcher(const DUrl &url, QObject *parent = 0);
+    ~SearchFileWatcher();
+
+    void addWatcher(const DUrl &url);
+    void removeWatcher(const DUrl &url);
+
+private:
+    void onFileDeleted(const DUrl &url);
+    void onFileAttributeChanged(const DUrl &url);
+    void onFileMoved(const DUrl &fromUrl, const DUrl &toUrl);
+    void onSubfileCreated(const DUrl &url);
+    void onFileModified(const DUrl &url);
+
+    Q_DECLARE_PRIVATE(SearchFileWatcher)
+};
+
+class SearchFileWatcherPrivate : public DAbstractFileWatcherPrivate
+{
+public:
+    SearchFileWatcherPrivate(SearchFileWatcher *qq)
+        : DAbstractFileWatcherPrivate(qq) {}
+
+    bool start() Q_DECL_OVERRIDE;
+    bool stop() Q_DECL_OVERRIDE;
+
+    QMap<DUrl, DAbstractFileWatcher*> urlToWatcherMap;
+
+    Q_DECLARE_PUBLIC(SearchFileWatcher)
+};
+
+SearchFileWatcher::SearchFileWatcher(const DUrl &url, QObject *parent)
+    : DAbstractFileWatcher(*new SearchFileWatcherPrivate(this), url, parent)
+{
+
+}
+
+SearchFileWatcher::~SearchFileWatcher()
+{
+    Q_D(SearchFileWatcher);
+    d->urlToWatcherMap.clear();
+    SearchController::urlToSearchFileWatcher.remove(fileUrl());
+}
+
+void SearchFileWatcher::addWatcher(const DUrl &url)
+{
+    Q_D(SearchFileWatcher);
+
+    if (!url.isValid() || d->urlToWatcherMap.contains(url))
+        return;
+
+    DAbstractFileWatcher *watcher = DFileService::instance()->createFileWatcher(url, this);
+
+    if (!watcher)
+        return;
+
+    watcher->moveToThread(this->thread());
+    watcher->setParent(this);
+
+    d->urlToWatcherMap[url] = watcher;
+
+    connect(watcher, &DAbstractFileWatcher::fileAttributeChanged, this, &SearchFileWatcher::onFileAttributeChanged);
+    connect(watcher, &DAbstractFileWatcher::fileDeleted, this, &SearchFileWatcher::onFileDeleted);
+    connect(watcher, &DAbstractFileWatcher::fileModified, this, &SearchFileWatcher::onFileModified);
+    connect(watcher, &DAbstractFileWatcher::fileMoved, this, &SearchFileWatcher::onFileMoved);
+
+    if (d->started)
+        watcher->startWatcher();
+}
+
+void SearchFileWatcher::removeWatcher(const DUrl &url)
+{
+    Q_D(SearchFileWatcher);
+
+    DAbstractFileWatcher *watcher = d->urlToWatcherMap.value(url);
+
+    if (!watcher)
+        return;
+
+    watcher->deleteLater();
+}
+
+void SearchFileWatcher::onFileDeleted(const DUrl &url)
+{
+    removeWatcher(url);
+
+    DUrl newUrl = fileUrl();
+    newUrl.setSearchedFileUrl(url);
+
+    emit fileDeleted(newUrl);
+}
+
+void SearchFileWatcher::onFileAttributeChanged(const DUrl &url)
+{
+    DUrl newUrl = fileUrl();
+    newUrl.setSearchedFileUrl(url);
+
+    emit fileAttributeChanged(newUrl);
+}
+
+void SearchFileWatcher::onFileMoved(const DUrl &fromUrl, const DUrl &toUrl)
+{
+    DUrl newFromUrl = fileUrl();
+    newFromUrl.setSearchedFileUrl(fromUrl);
+
+    DUrl newToUrl = fileUrl();
+    newToUrl.setSearchedFileUrl(toUrl);
+
+    removeWatcher(fromUrl);
+    addWatcher(toUrl);
+
+    emit fileMoved(newFromUrl, newToUrl);
+}
+
+void SearchFileWatcher::onFileModified(const DUrl &url)
+{
+    DUrl newUrl = fileUrl();
+    newUrl.setSearchedFileUrl(url);
+
+    emit fileModified(newUrl);
+}
+
+bool SearchFileWatcherPrivate::start()
+{
+    bool ok = true;
+
+    for (DAbstractFileWatcher *watcher : urlToWatcherMap)
+        ok = ok && watcher->startWatcher();
+
+    return ok;
+}
+
+bool SearchFileWatcherPrivate::stop()
+{
+    bool ok = true;
+
+    for (DAbstractFileWatcher *watcher : urlToWatcherMap)
+        ok = ok && watcher->stopWatcher();
+
+    return ok;
+}
 
 class SearchDiriterator : public DDirIterator
 {
@@ -28,7 +175,6 @@ public:
     QString path() const Q_DECL_OVERRIDE;
     void close() Q_DECL_OVERRIDE;
 
-private:
     SearchController *parent;
     DAbstractFileInfoPointer currentFileInfo;
     mutable QQueue<DUrl> childrens;
@@ -43,6 +189,8 @@ private:
     mutable QList<DUrl> searchPathList;
     mutable DDirIteratorPointer it;
 
+    SearchFileWatcher *fileWatcher = Q_NULLPTR;
+
     bool closed = false;
 };
 
@@ -55,6 +203,7 @@ SearchDiriterator::SearchDiriterator(const DUrl &url, const QStringList &nameFil
     , m_nameFilters(nameFilters)
     , m_filter(filter)
     , m_flags(flags)
+    , fileWatcher(new SearchFileWatcher(url))
 {
     targetUrl = url.searchTargetUrl();
     keyword = url.searchKeyword();
@@ -74,6 +223,9 @@ DUrl SearchDiriterator::next()
         bool accpeted;
 
         currentFileInfo = parent->createFileInfo(url, accpeted);
+
+        if (fileWatcher)
+            fileWatcher->addWatcher(url.searchedFileUrl());
 
         return url;
     }
@@ -96,7 +248,7 @@ bool SearchDiriterator::hasNext() const
 
             const DUrl &url = searchPathList.takeAt(0);
 
-            it = DFileService::instance()->createDirIterator(url, m_nameFilters,QDir::NoDotAndDotDot | m_filter, m_flags);
+            it = DFileService::instance()->createDirIterator(url, m_nameFilters, QDir::NoDotAndDotDot | m_filter, m_flags);
 
             if (!it) {
                 continue;
@@ -169,6 +321,8 @@ void SearchDiriterator::close()
 {
     closed = true;
 }
+
+QMap<DUrl, SearchFileWatcher*> SearchController::urlToSearchFileWatcher;
 
 SearchController::SearchController(QObject *parent)
     : DAbstractFileController(parent)
@@ -248,11 +402,7 @@ bool SearchController::renameFile(const DUrl &oldUrl, const DUrl &newUrl, bool &
 {
     accepted = true;
 
-    Q_UNUSED(oldUrl)
-    Q_UNUSED(newUrl)
-
-    return false;
-//    return DFileService::instance()->renameFile(realUrl(oldUrl), realUrl(newUrl));
+    return DFileService::instance()->renameFile(realUrl(oldUrl), realUrl(newUrl));
 }
 
 bool SearchController::compressFiles(const DUrlList &urlList, bool &accepted) const
@@ -296,25 +446,27 @@ const DDirIteratorPointer SearchController::createDirIterator(const DUrl &fileUr
 {
     accepted = true;
 
-    return DDirIteratorPointer(new SearchDiriterator(fileUrl, nameFilters, filters, flags, const_cast<SearchController*>(this)));
+    SearchDiriterator *diriterator = new SearchDiriterator(fileUrl, nameFilters, filters, flags, const_cast<SearchController*>(this));
+
+    diriterator->fileWatcher = urlToSearchFileWatcher.value(fileUrl);
+
+    return DDirIteratorPointer(diriterator);
 }
 
-void SearchController::onFileCreated(const DUrl &fileUrl)
+DAbstractFileWatcher *SearchController::createFileWatcher(const DUrl &fileUrl, QObject *parent, bool &accepted) const
 {
-    for (DUrl url : urlToTargetUrlMap.values(fileUrl)) {
-        url.setSearchedFileUrl(fileUrl);
+    Q_UNUSED(parent)
 
-//        emit childrenAdded(url);
-    }
-}
+    accepted = !fileUrl.searchedFileUrl().isValid();
 
-void SearchController::onFileRemove(const DUrl &fileUrl)
-{
-    for (DUrl url : urlToTargetUrlMap.values(fileUrl)) {
-        url.setSearchedFileUrl(fileUrl);
+    if (!accepted)
+        return 0;
 
-//        emit childrenRemoved(url);
-    }
+    SearchFileWatcher *watcher = new SearchFileWatcher(fileUrl, parent);
+
+    urlToSearchFileWatcher[fileUrl] = watcher;
+
+    return watcher;
 }
 
 void SearchController::removeJob(const DUrl &fileUrl)
@@ -331,6 +483,8 @@ void SearchController::removeJob(const DUrl &fileUrl)
             urlToTargetUrlMapInsertCount[key] = count;
         }
     }
+
+    urlToTargetUrlMap.remove(fileUrl);
 }
 
 DUrl SearchController::realUrl(const DUrl &searchUrl)

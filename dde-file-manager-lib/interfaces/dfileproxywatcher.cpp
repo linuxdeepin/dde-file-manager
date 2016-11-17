@@ -10,6 +10,8 @@
 #include "dfileproxywatcher.h"
 #include "private/dabstractfilewatcher_p.h"
 
+#include <QPointer>
+
 class DFileProxyWatcherPrivate : public DAbstractFileWatcherPrivate
 {
 public:
@@ -19,7 +21,7 @@ public:
     bool start() Q_DECL_OVERRIDE;
     bool stop() Q_DECL_OVERRIDE;
 
-    DAbstractFileWatcher *proxy;
+    QPointer<DAbstractFileWatcher> proxy;
     std::function<DUrl (const DUrl&)> urlConvertFun;
 
     Q_DECLARE_PUBLIC(DFileProxyWatcher)
@@ -27,12 +29,12 @@ public:
 
 bool DFileProxyWatcherPrivate::start()
 {
-    return proxy->startWatcher();
+    return proxy && proxy->startWatcher();
 }
 
 bool DFileProxyWatcherPrivate::stop()
 {
-    return proxy->stopWatcher();
+    return proxy && proxy->stopWatcher();
 }
 
 DFileProxyWatcher::DFileProxyWatcher(const DUrl &url, DAbstractFileWatcher *proxy,

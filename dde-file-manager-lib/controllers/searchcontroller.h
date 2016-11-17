@@ -6,6 +6,7 @@
 #include <QSet>
 #include <QPair>
 
+class SearchFileWatcher;
 class SearchController : public DAbstractFileController
 {
     Q_OBJECT
@@ -36,12 +37,9 @@ public:
                                                 QDir::Filters filters, QDirIterator::IteratorFlags flags,
                                                 bool &accepted) const Q_DECL_OVERRIDE;
 
-private slots:
-    void onFileCreated(const DUrl &fileUrl);
-    void onFileRemove(const DUrl &fileUrl);
+    DAbstractFileWatcher *createFileWatcher(const DUrl &fileUrl, QObject *parent, bool &accepted) const Q_DECL_OVERRIDE;
 
 private:
-    void searchStart(const DUrl &fileUrl, QDir::Filters filter);
     void removeJob(const DUrl &fileUrl);
 
     static DUrl realUrl(const DUrl &searchUrl);
@@ -49,8 +47,10 @@ private:
 
     QMultiMap<DUrl, DUrl> urlToTargetUrlMap;
     QMap<QPair<DUrl, DUrl>, int> urlToTargetUrlMapInsertCount;
+    static QMap<DUrl, SearchFileWatcher*> urlToSearchFileWatcher;
 
     friend class SearchDiriterator;
+    friend class SearchFileWatcher;
 };
 
 #endif // SEARCHCONTROLLER_H
