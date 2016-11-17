@@ -53,7 +53,7 @@ FileManagerApp::~FileManagerApp()
 void FileManagerApp::initApp()
 {
     /// init dialog manager
-    dialogManager;
+    DFMGlobal::initDialogManager();
 
 #if QT_VERSION_MINOR < 6
     /// fix Qt drag drop to google chrome bug

@@ -2,6 +2,10 @@
 #include "chinese2pinyin.h"
 #include "dfmstandardpaths.h"
 #include "dfileservices.h"
+#include "widgets/singleton.h"
+#include "dialogs/dialogmanager.h"
+#include "app/define.h"
+
 
 #include <QGuiApplication>
 #include <QClipboard>
@@ -104,6 +108,11 @@ void DFMGlobal::setUrlsToClipboard(const QList<QUrl> &list, DFMGlobal::Clipboard
 void DFMGlobal::clearClipboard()
 {
     qApp->clipboard()->clear();
+}
+
+void DFMGlobal::initDialogManager()
+{
+    dialogManager;
 }
 
 QList<QUrl> DFMGlobal::clipboardFileUrlList() const

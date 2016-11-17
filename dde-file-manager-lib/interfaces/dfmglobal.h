@@ -168,6 +168,8 @@ public:
     static void setUrlsToClipboard(const QList<QUrl> &list, DFMGlobal::ClipboardAction action);
     static void clearClipboard();
 
+    static void initDialogManager();
+
     QList<QUrl> clipboardFileUrlList() const;
     ClipboardAction clipboardAction() const;
     QIcon standardIcon(Icon iconType) const;
