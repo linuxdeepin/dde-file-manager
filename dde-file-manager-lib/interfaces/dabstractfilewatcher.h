@@ -27,6 +27,8 @@ public:
     bool stopWatcher();
     bool restartWatcher();
 
+    virtual void setEnabledSubfileWatcher(const DUrl &subfileUrl, bool enabled = true);
+
 signals:
     void fileDeleted(const DUrl &url);
     void fileAttributeChanged(const DUrl &url);

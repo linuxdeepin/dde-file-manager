@@ -362,6 +362,8 @@ bool FileController::unShareFolder(const DUrl &fileUrl, bool &accepted) const
     accepted = true;
     const ShareInfo& info = userShareManager->getShareInfoByPath(fileUrl.path());
     userShareManager->deleteUserShare(info);
+
+    return true;
 }
 
 bool FileController::openInTerminal(const DUrl &fileUrl, bool &accepted) const

@@ -69,6 +69,12 @@ bool DAbstractFileWatcher::restartWatcher()
     return ok && startWatcher();
 }
 
+void DAbstractFileWatcher::setEnabledSubfileWatcher(const DUrl &subfileUrl, bool enabled)
+{
+    Q_UNUSED(subfileUrl)
+    Q_UNUSED(enabled)
+}
+
 DAbstractFileWatcher::DAbstractFileWatcher(DAbstractFileWatcherPrivate &dd,
                                            const DUrl &url, QObject *parent)
     : QObject(parent)
