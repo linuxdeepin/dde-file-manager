@@ -7,6 +7,7 @@
 #include "fileviewhelper.h"
 #include "dfilemanagerwindow.h"
 #include "dtoolbar.h"
+#include "dabstractfilewatcher.h"
 #include "app/define.h"
 #include "app/filesignalmanager.h"
 
@@ -725,6 +726,7 @@ void DFileView::onRowCountChanged()
 
     updateStatusBar();
     updateContentLabel();
+    updateModelActiveIndex();
 }
 
 void DFileView::wheelEvent(QWheelEvent *event)
@@ -1070,31 +1072,47 @@ void DFileView::handleCommitData(QWidget *editor)
     }
 }
 
-void DFileView::onVerticalScroll(int contentY)
+void DFileView::updateModelActiveIndex()
 {
     Q_D(DFileView);
 
-    const RandeIndex &rande = visibleIndexes(QRect(QPoint(0, contentY), QSize(size()))).first();
+    const RandeIndexList randeList = visibleIndexes(QRect(QPoint(0, verticalScrollBar()->value()), QSize(size())));
+
+    if (randeList.isEmpty())
+        return;
+
+    const RandeIndex &rande = randeList.first();
+    DAbstractFileWatcher *fileWatcher = model()->fileWatcher();
 
     for (int i = d->visibleIndexRande.first; i < rande.first; ++i) {
         const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(model()->index(i, 0));
 
-        if (fileInfo)
+        if (fileInfo) {
             fileInfo->makeToInactive();
+
+            if (fileWatcher)
+                fileWatcher->setEnabledSubfileWatcher(fileInfo->fileUrl(), false);
+        }
     }
 
     for (int i = rande.second; i < d->visibleIndexRande.second; ++i) {
         const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(model()->index(i, 0));
 
-        if (fileInfo)
+        if (fileInfo) {
             fileInfo->makeToInactive();
+            if (fileWatcher)
+                fileWatcher->setEnabledSubfileWatcher(fileInfo->fileUrl(), false);
+        }
     }
 
-    for (int i = rande.first; i < rande.second; ++i) {
+    for (int i = rande.first; i <= rande.second; ++i) {
         const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(model()->index(i, 0));
 
-        if (fileInfo)
+        if (fileInfo) {
             fileInfo->makeToActive();
+            if (fileWatcher)
+                fileWatcher->setEnabledSubfileWatcher(fileInfo->fileUrl());
+        }
     }
 
     d->visibleIndexRande = rande;
@@ -1166,6 +1184,8 @@ void DFileView::resizeEvent(QResizeEvent *event)
 
     if (itemDelegate()->editingIndex().isValid())
         doItemsLayout();
+
+    updateModelActiveIndex();
 }
 
 void DFileView::contextMenuEvent(QContextMenuEvent *event)
@@ -1544,7 +1564,7 @@ void DFileView::initConnects()
     connect(model(), &DFileSystemModel::rootUrlDeleted, this, &DFileView::onRootUrlDeleted);
 
     connect(this, &DFileView::iconSizeChanged, this, &DFileView::updateHorizontalOffset, Qt::QueuedConnection);
-    connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &DFileView::onVerticalScroll);
+    connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &DFileView::updateModelActiveIndex);
 }
 
 void DFileView::increaseIcon()

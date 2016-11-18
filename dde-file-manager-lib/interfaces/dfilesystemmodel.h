@@ -122,6 +122,8 @@ public:
     void setReadOnly(bool readOnly);
     bool isReadOnly() const;
 
+    DAbstractFileWatcher *fileWatcher() const;
+
 public slots:
     void updateChildren(QList<DAbstractFileInfoPointer> list);
     /// warning: only refresh current url

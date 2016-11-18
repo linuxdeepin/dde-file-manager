@@ -301,7 +301,7 @@ void DFileManagerWindow::preHandleCd(const DUrl &fileUrl, int source)
         d->tabBar->currentTab()->setCurrentUrl(event.fileUrl());
         emit d->tabBar->currentChanged(d->tabBar->currentIndex());
         d->toolbar->setCrumb(event.fileUrl());
-    } else {
+    } else if (!fileUrl.toString().isEmpty()) {
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(event.fileUrl());
 
         if (!fileInfo || !fileInfo->exists()) {

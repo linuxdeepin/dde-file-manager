@@ -156,7 +156,7 @@ private slots:
     void openWithActionTriggered(QAction * action);
     void onRowCountChanged();
     void handleCommitData(QWidget * editor);
-    void onVerticalScroll(int contentY);
+    void updateModelActiveIndex();
     void handleDataChanged(const QModelIndex & topLeft, const QModelIndex & bottomRight, const QVector<int> & roles = QVector<int>());
     void onRootUrlDeleted(const DUrl &rootUrl);
 

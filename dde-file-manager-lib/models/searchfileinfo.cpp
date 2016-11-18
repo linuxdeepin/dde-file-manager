@@ -192,23 +192,6 @@ QVector<MenuAction> SearchFileInfo::menuActionList(DAbstractFileInfo::MenuType t
 
     actions = d->proxy->menuActionList(type);
     actions.insert(1, MenuAction::OpenFileLocation);
-    actions.removeOne(MenuAction::Cut);
-    actions.removeOne(MenuAction::Rename);
-    actions.removeOne(MenuAction::Remove);
-    actions.removeOne(MenuAction::Delete);
-    actions.removeOne(MenuAction::CompleteDeletion);
-    actions.removeOne(MenuAction::Restore);
-
-    MenuAction lastAction;
-
-    for (int i = 0; i < actions.count(); ++i) {
-        if (lastAction == MenuAction::Separator && actions.at(i) == MenuAction::Separator) {
-            actions.removeAt(i);
-            --i;
-        } else {
-            lastAction = actions.at(i);
-        }
-    }
 
     return actions;
 }

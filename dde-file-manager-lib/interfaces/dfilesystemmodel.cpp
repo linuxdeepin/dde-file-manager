@@ -174,10 +174,10 @@ void DFileSystemModelPrivate::_q_processFileEvent()
         const DUrl &rootUrl = q->rootUrl();
 
         if (fileUrl == rootUrl) {
-            if (event.first == RmFile)
+            if (event.first == RmFile) {
                 emit q->rootUrlDeleted(rootUrl);
-
-            q->refresh();
+                q->refresh();
+            }
             continue;
         }
 
@@ -1030,6 +1030,13 @@ bool DFileSystemModel::isReadOnly() const
     Q_D(const DFileSystemModel);
 
     return d->readOnly;
+}
+
+DAbstractFileWatcher *DFileSystemModel::fileWatcher() const
+{
+    Q_D(const DFileSystemModel);
+
+    return d->watcher;
 }
 
 void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)

@@ -40,14 +40,8 @@ public:
     DAbstractFileWatcher *createFileWatcher(const DUrl &fileUrl, QObject *parent, bool &accepted) const Q_DECL_OVERRIDE;
 
 private:
-    void removeJob(const DUrl &fileUrl);
-
     static DUrl realUrl(const DUrl &searchUrl);
     static DUrlList realUrlList(const DUrlList &searchUrls);
-
-    QMultiMap<DUrl, DUrl> urlToTargetUrlMap;
-    QMap<QPair<DUrl, DUrl>, int> urlToTargetUrlMapInsertCount;
-    static QMap<DUrl, SearchFileWatcher*> urlToSearchFileWatcher;
 
     friend class SearchDiriterator;
     friend class SearchFileWatcher;

@@ -554,6 +554,10 @@ QSizeF DBookmarkItem::sizeHint(Qt::SizeHint which, const QSizeF &constraint) con
 void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event);
+
+    if (!m_url.isValid())
+        return;
+
     if(m_group && m_pressed)
     {
         emit clicked();
@@ -590,7 +594,6 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             else
                 e << m_url;
             e << DFMEvent::LeftSideBar;
-            qDebug() << m_isDisk << m_deviceInfo << m_url;
 
             if (m_isDisk){
                 if (m_deviceInfo){
