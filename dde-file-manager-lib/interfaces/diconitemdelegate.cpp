@@ -105,13 +105,13 @@ void DIconItemDelegate::paint(QPainter *painter,
     bool isDragMode = ((QPaintDevice*)parent()->parent()->viewport() != painter->device());
     bool isEnabled = option.state & QStyle::State_Enabled;
 
-    if (parent()->isCut(index))
-        painter->setOpacity(0.3);
-
     painter->setPen(isEnabled ? TEXT_COLOR : DISABLE_LABEL_COLOR);
 
     if((index == d->expandedIndex || index == d->editingIndex) && !isDragMode)
         return;
+
+    if (parent()->isCut(index))
+        painter->setOpacity(0.3);
 
     QStyleOptionViewItem opt = option;
     initStyleOption(&opt, index);
