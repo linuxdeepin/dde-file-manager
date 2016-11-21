@@ -869,7 +869,6 @@ void DFileView::keyPressEvent(QKeyEvent *event)
 
         break;
     case Qt::ControlModifier | Qt::ShiftModifier:
-        qDebug () <<event;
         if (event->key() == Qt::Key_Backtab){
             emit DFileView::requestActivePreviousTab();
             return;
@@ -1483,6 +1482,24 @@ void DFileView::dataChanged(const QModelIndex &topLeft, const QModelIndex &botto
     /// Clean
     d->oldCurrentUrl = DUrl();
     d->oldSelectedUrls.clear();
+}
+
+bool DFileView::event(QEvent *e)
+{
+    if(e->type() == QEvent::KeyPress){
+        QKeyEvent *keyEvent = static_cast<QKeyEvent*>(e);
+        if(keyEvent->key() == Qt::Key_Tab || keyEvent->key() == Qt::Key_Backtab){
+            e->accept();
+
+            if(keyEvent->modifiers() == Qt::ShiftModifier)
+                keyPressEvent(new QKeyEvent(keyEvent->type(), Qt::Key_Left, Qt::NoModifier));
+            else
+                keyPressEvent(new QKeyEvent(keyEvent->type(), Qt::Key_Right, Qt::NoModifier));
+
+            return true;
+        }
+    }
+    return DListView::event(e);
 }
 
 void DFileView::initDelegate()
