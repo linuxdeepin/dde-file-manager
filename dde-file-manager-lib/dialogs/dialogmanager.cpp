@@ -434,6 +434,11 @@ void DialogManager::showDiskErrorDialog(const QString & id, const QString & erro
 {
     Q_UNUSED(errorText)
 
+    static bool dialogHadShow = false;
+
+    if (dialogHadShow)
+        return;
+
     UDiskDeviceInfoPointer info = deviceListener->getDevice(id);
     if (info){
         DDialog d;
@@ -443,7 +448,13 @@ void DialogManager::showDiskErrorDialog(const QString & id, const QString & erro
         d.addButtons(buttonTexts);
         d.setDefaultButton(0);
         d.setIcon(info->fileIcon(64, 64));
+
+        dialogHadShow = true;
+
         int code = d.exec();
+
+        dialogHadShow = false;
+
         if (code == 1){
             deviceListener->forceUnmount(id);
         }
