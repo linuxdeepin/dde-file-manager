@@ -403,7 +403,6 @@ QPushButton#InputClearButton:pressed{
     /*border-image: url(:/icons/images/icons/input_normalclear_press.png);*/
 }
 
-
 QListWidget#SearchList{
     background-color: white;
     border:1px solid rgba(0, 0, 0, 50);
@@ -415,8 +414,11 @@ QListWidget#SearchList::item{
     padding: 0px;
     margins:10px;
 }
+QListWidget#SearchList::item:hover{
+    background: #2ca7f8
+}
 QListWidget#SearchList::item:selected{
-    background: #61B5F8;
+    background: #2ca7f8;
 }
 /*******************End of DSearchBar****************** */
 

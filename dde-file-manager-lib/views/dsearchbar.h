@@ -26,6 +26,10 @@ public:
     QListWidget * getPopupList();
     QAction * setClearAction();
     QAction * removeClearAction();
+    QAction * setJumpToAction();
+    QAction * removeJumpToAction();
+    QAction * setSearchAction();
+    QAction * removeSearchAction();
     bool isActive();
     void setActive(bool active);
     QAction * getClearAction();
@@ -49,6 +53,8 @@ private:
     QCompleter * m_completer;
     QCompleter * m_historyCompleter;
     QAction * m_clearAction;
+    QAction * m_searchAction;
+    QAction * m_jumpToAction;
     QStringListModel * m_stringListMode;
     QStringList m_historyList;
     QDirModel * m_dirModel;
@@ -69,6 +75,8 @@ public slots:
     void hideCompleter();
     void handleApplicationChanged(QWidget * old, QWidget * now);
     void setText(const QString &text);
+    void jumpTo();
+    void search();
 protected:
     void keyPressEvent(QKeyEvent *e);
     void focusInEvent(QFocusEvent *e);

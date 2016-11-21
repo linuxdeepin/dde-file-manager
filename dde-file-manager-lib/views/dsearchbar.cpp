@@ -18,6 +18,7 @@
 #include <QDebug>
 #include <QApplication>
 #include <QFocusEvent>
+#include <QPainter>
 
 DSearchBar::DSearchBar(QWidget *parent):QLineEdit(parent)
 {
@@ -49,6 +50,15 @@ void DSearchBar::initUI()
     icon.addFile(":/icons/images/icons/input_clear_press.svg", QSize(), QIcon::Selected);
     icon.addFile(":/icons/images/icons/input_clear_hover.svg", QSize(), QIcon::Active);
     m_clearAction = new QAction(icon, "", this);
+
+    QIcon searchIcon;
+    searchIcon.addFile(":/icons/images/icons/search.svg"
+                       "");
+    m_searchAction = new QAction(searchIcon, "", this);
+
+    QIcon jumpToIcon;
+    jumpToIcon.addFile(":/icons/images/icons/jump_to.svg");
+    m_jumpToAction = new QAction(jumpToIcon, "", this);
 
     setFixedHeight(24);
     setObjectName("DSearchBar");
@@ -115,6 +125,34 @@ QAction * DSearchBar::removeClearAction()
 {
     removeAction(m_clearAction);
     return m_clearAction;
+}
+
+QAction *DSearchBar::setJumpToAction()
+{
+    addAction(m_jumpToAction, QLineEdit::LeadingPosition);
+    connect(m_jumpToAction, &QAction::triggered, this, &DSearchBar::jumpTo);
+    return m_jumpToAction;
+}
+
+QAction *DSearchBar::removeJumpToAction()
+{
+    removeAction(m_jumpToAction);
+    disconnect(m_jumpToAction, &QAction::triggered, this, &DSearchBar::jumpTo);
+    return m_jumpToAction;
+}
+
+QAction *DSearchBar::setSearchAction()
+{
+    addAction(m_searchAction, QLineEdit::LeadingPosition);
+    connect(m_searchAction, &QAction::triggered, this, &DSearchBar::search);
+    return m_searchAction;
+}
+
+QAction *DSearchBar::removeSearchAction()
+{
+    removeAction(m_searchAction);
+    disconnect(m_searchAction, &QAction::triggered, this, &DSearchBar::search);
+    return m_searchAction;
 }
 
 bool DSearchBar::isActive()
@@ -188,6 +226,7 @@ void DSearchBar::setCompleter(const QString &text)
     else
         m_clearAction->setVisible(true);
 
+
     if (text.isEmpty())
     {
         m_list->hide();
@@ -207,6 +246,10 @@ void DSearchBar::setCompleter(const QString &text)
 //    qDebug() << text << url << url.isLocalFile() << url.path().isEmpty() << url.toLocalFile();
     if(/*hasScheme() || */url.isLocalFile())
     {
+        if(actions().contains(m_searchAction))
+            removeSearchAction();
+
+        setJumpToAction();
         QFileInfo fileInfo;
 
         if (text.endsWith(".")){
@@ -254,6 +297,10 @@ void DSearchBar::setCompleter(const QString &text)
     }
     else
     {
+        if(actions().contains(m_jumpToAction))
+            removeJumpToAction();
+
+        setSearchAction();
         QStringList sl;
         foreach(QString word, m_historyList)
         {
@@ -266,7 +313,7 @@ void DSearchBar::setCompleter(const QString &text)
 //        m_list->addItems(m_stringListMode->stringList());
 
         foreach (QString itemText, m_stringListMode->stringList()) {
-            QListWidgetItem* item = new QListWidgetItem(itemText);
+            QListWidgetItem* item = new QListWidgetItem(" " + itemText);
             item->setTextAlignment(Qt::AlignVCenter);
             QPixmap p(":/icons/images/light/space16.png");
             item->setIcon(QIcon(p));
@@ -282,7 +329,7 @@ void DSearchBar::setCompleter(const QString &text)
     if (m_list->count() < 10){
         m_list->setFixedHeight(24 * m_list->count() + 8);
     }else{
-        m_list->setFixedHeight(24 * 10);
+        m_list->setFixedHeight(24 * 10 + 8);
     }
 
 
@@ -375,6 +422,16 @@ void DSearchBar::setText(const QString &text)
 {
     m_text = text;
     QLineEdit::setText(text);
+}
+
+void DSearchBar::jumpTo()
+{
+    emit returnPressed();
+}
+
+void DSearchBar::search()
+{
+    emit returnPressed();
 }
 
 void DSearchBar::focusInEvent(QFocusEvent *e)
@@ -576,7 +633,7 @@ void DSearchBar::recomended(const QString& inputText)
         }
         else
         {
-            setText(modelText);
+            setText(modelText.replace(" ",""));
             setSelection(inputText.length(), modelText.length());
         }
 //        m_text = text();
