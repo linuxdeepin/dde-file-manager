@@ -168,8 +168,9 @@ SectionValueLabel::SectionValueLabel(const QString &text, QWidget *parent, Qt::W
     QLabel(text, parent, f)
 {
     setObjectName("SectionValueLabel");
-    setFixedWidth(180);
+    setFixedWidth(150);
     setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
+    setWordWrap(true);
 }
 
 
