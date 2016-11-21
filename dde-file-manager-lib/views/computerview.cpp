@@ -16,6 +16,7 @@
 #include "widgets/singleton.h"
 
 #include <dscrollbar.h>
+#include <dslider.h>
 
 #include <QVBoxLayout>
 #include <QLabel>
@@ -45,13 +46,13 @@ void TitleLine::initUI()
     m_lineLable->setFixedHeight(1);
     m_lineLable->setStyleSheet("background-color:rgba(0, 0, 0, 0.1)");
 
-    QHBoxLayout* mainLayout = new QHBoxLayout;
-    mainLayout->addWidget(m_titleLable);
-    mainLayout->addSpacing(20);
-    mainLayout->addWidget(m_lineLable, 100, Qt::AlignCenter);
-    mainLayout->setSpacing(0);
-    mainLayout->setContentsMargins(0, 0, 0, 0);
-    setLayout(mainLayout);
+    QHBoxLayout* contentLayout = new QHBoxLayout;
+    contentLayout->addWidget(m_titleLable);
+    contentLayout->addSpacing(20);
+    contentLayout->addWidget(m_lineLable, 100, Qt::AlignCenter);
+    contentLayout->setSpacing(0);
+    contentLayout->setContentsMargins(0, 0, 0, 0);
+    setLayout(contentLayout);
 }
 
 void TitleLine::resizeEvent(QResizeEvent *event)
@@ -262,7 +263,7 @@ void ComputerViewItem::setDisplayName(const QString &displayName)
 
 
 
-ComputerView::ComputerView(QWidget *parent) : QScrollArea(parent)
+ComputerView::ComputerView(QWidget *parent) : QFrame(parent)
 {
     initData();
     initUI();
@@ -293,8 +294,15 @@ void ComputerView::initData()
 
 void ComputerView::initUI()
 {
-    setObjectName("ComputerView");
-    setWidgetResizable(true);
+    m_contentArea = new DScrollArea(this);
+    m_contentArea->setObjectName("ComputerView");
+    m_contentArea->setWidgetResizable(true);
+    m_statusBar = new DStatusBar(this);
+    m_statusBar->setFixedHeight(22);
+    m_statusBar->scalingSlider()->setMaximum(m_iconSizes.count()-1);
+    m_statusBar->scalingSlider()->setMinimum(0);
+    m_statusBar->scalingSlider()->setValue(m_currentIconSizeIndex);
+
     QFrame* contentFrame = new QFrame(this);
     contentFrame->setStyleSheet("background-color: transparent");
 
@@ -316,23 +324,30 @@ void ComputerView::initUI()
     m_removableFlowLayout->setHorizontalSpacing(40);
     m_removableFlowLayout->setVorizontalSpacing(40);
 
+    QVBoxLayout* contentLayout = new QVBoxLayout;
+    contentLayout->addWidget(m_systemTitleLine);
+    contentLayout->addLayout(m_systemFlowLayout);
+    contentLayout->addSpacing(20);
+    contentLayout->addWidget(m_nativeTitleLine);
+    contentLayout->addLayout(m_nativeFlowLayout);
+    contentLayout->addSpacing(20);
+    contentLayout->addWidget(m_removableTitleLine);
+    contentLayout->addLayout(m_removableFlowLayout);
+    contentLayout->addStretch();
+    contentLayout->setContentsMargins(20, 20, 20, 20);
+    contentFrame->setLayout(contentLayout);
+
     QVBoxLayout* mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(m_systemTitleLine);
-    mainLayout->addLayout(m_systemFlowLayout);
-    mainLayout->addSpacing(20);
-    mainLayout->addWidget(m_nativeTitleLine);
-    mainLayout->addLayout(m_nativeFlowLayout);
-    mainLayout->addSpacing(20);
-    mainLayout->addWidget(m_removableTitleLine);
-    mainLayout->addLayout(m_removableFlowLayout);
-    mainLayout->addStretch();
-    mainLayout->setContentsMargins(20, 20, 20, 20);
-    contentFrame->setLayout(mainLayout);
+    mainLayout->setSpacing(0);
+    mainLayout->setContentsMargins(0,0,0,0);
+    mainLayout->addWidget(m_contentArea);
+    mainLayout->addWidget(m_statusBar);
+    setLayout(mainLayout);
 
-    setWidget(contentFrame);
-    setVerticalScrollBar(new DScrollBar);
+    m_contentArea->setWidget(contentFrame);
+    m_contentArea->setVerticalScrollBar(new DScrollBar);
 
-    verticalScrollBar()->setContextMenuPolicy(Qt::NoContextMenu);
+    m_contentArea->verticalScrollBar()->setContextMenuPolicy(Qt::NoContextMenu);
 
     loadSystemItems();
 
@@ -346,6 +361,11 @@ void ComputerView::initUI()
     if (m_removableItems.count() == 0){
         m_removableTitleLine->hide();
     }
+
+    DFMEvent event;
+    event << window()->winId();
+    const int number = m_systemItems.count() + m_nativeItems.count() + m_removableItems.count();
+    m_statusBar->itemCounted(event, number);
 }
 
 void ComputerView::initConnect()
@@ -353,6 +373,7 @@ void ComputerView::initConnect()
     connect(deviceListener, &UDiskListener::volumeRemoved, this, &ComputerView::volumeRemoved);
     connect(deviceListener, &UDiskListener::mountAdded, this, &ComputerView::mountAdded);
     connect(deviceListener, &UDiskListener::mountRemoved, this, &ComputerView::mountRemoved);
+    connect(m_statusBar->scalingSlider(), &DSlider::valueChanged, this, &ComputerView::resizeItemBySizeIndex);
 }
 
 void ComputerView::loadSystemItems()
@@ -491,15 +512,14 @@ void ComputerView::enlargeIcon()
 
     if(m_currentIconSizeIndex < m_iconSizes.count() - 1)
         ++m_currentIconSizeIndex;
-    resizeItemBySizeIndex(m_currentIconSizeIndex);
+    m_statusBar->scalingSlider()->setValue(m_currentIconSizeIndex);
 }
 
 void ComputerView::shrinkIcon()
 {
     if(m_currentIconSizeIndex > 0)
         --m_currentIconSizeIndex;
-
-    resizeItemBySizeIndex(m_currentIconSizeIndex);
+    m_statusBar->scalingSlider()->setValue(m_currentIconSizeIndex);
 }
 
 void ComputerView::resizeItemBySizeIndex(int index)
@@ -524,8 +544,8 @@ void ComputerView::resizeItemBySizeIndex(int index)
 
 void ComputerView::resizeEvent(QResizeEvent *event)
 {
-    widget()->setFixedWidth(event->size().width());
-    QScrollArea::resizeEvent(event);
+    m_contentArea->widget()->setFixedWidth(event->size().width() - 16);
+    QFrame::resizeEvent(event);
 }
 
 void ComputerView::wheelEvent(QWheelEvent *event)
@@ -537,18 +557,27 @@ void ComputerView::wheelEvent(QWheelEvent *event)
             shrinkIcon();
         }
     }else{
-        verticalScrollBar()->setSliderPosition(verticalScrollBar()->sliderPosition() - event->angleDelta().y());
+        m_contentArea->verticalScrollBar()->setSliderPosition(m_contentArea->verticalScrollBar()->sliderPosition() - event->angleDelta().y());
     }
 }
 
 void ComputerView::mousePressEvent(QMouseEvent *event)
 {
-    QPoint pos = widget()->mapFromParent(event->pos());
+    QPoint pos = m_contentArea->widget()->mapFromParent(event->pos());
 
+    bool isEmptyArea = true;
     foreach (ComputerViewItem* item, m_systemItems) {
 
         if (item->geometry().contains(pos)){
             item->setChecked(true);
+            DFMEvent event;
+            DUrlList urlList;
+            if(item->info())
+                urlList << item->info()->fileUrl();
+            event << window()->winId();
+            event << urlList;
+            m_statusBar->itemSelected(event, 1);
+            isEmptyArea = false;
         }else{
             item->setChecked(false);
         }
@@ -556,6 +585,15 @@ void ComputerView::mousePressEvent(QMouseEvent *event)
     foreach (ComputerViewItem* item, m_nativeItems) {
         if (item->geometry().contains(pos)){
             item->setChecked(true);
+
+            DFMEvent event;
+            DUrlList urlList;
+            if(item->info())
+                urlList << item->info()->fileUrl();
+            event << window()->winId();
+            event << urlList;
+            m_statusBar->itemSelected(event, 1);
+            isEmptyArea = false;
         }else{
             item->setChecked(false);
         }
@@ -563,9 +601,25 @@ void ComputerView::mousePressEvent(QMouseEvent *event)
     foreach (ComputerViewItem* item, m_removableItems) {
         if (item->geometry().contains(pos)){
             item->setChecked(true);
+
+            DFMEvent event;
+            DUrlList urlList;
+            if(item->info())
+                urlList << item->info()->fileUrl();
+            event << window()->winId();
+            event << urlList;
+            m_statusBar->itemSelected(event, 1);
+            isEmptyArea = false;
         }else{
             item->setChecked(false);
         }
+    }
+
+    if(isEmptyArea){
+        DFMEvent event;
+        event << window()->winId();
+        const int number = m_systemItems.count() + m_nativeItems.count() + m_removableItems.count();
+        m_statusBar->itemCounted(event, number);
     }
 }
 
@@ -607,5 +661,18 @@ void ComputerView::keyPressEvent(QKeyEvent *event)
             }
         default: break;
     }
-    QScrollArea::keyPressEvent(event);
+    QFrame::keyPressEvent(event);
+}
+
+DScrollArea::DScrollArea(QWidget *parent):
+    QScrollArea(parent)
+{
+
+}
+
+void DScrollArea::wheelEvent(QWheelEvent *event)
+{
+    if(DFMGlobal::keyCtrlIsPressed())
+        return;
+    QScrollArea::wheelEvent(event);
 }
