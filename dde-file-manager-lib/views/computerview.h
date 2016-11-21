@@ -8,11 +8,13 @@
 #include <QMouseEvent>
 #include <QShowEvent>
 #include <QIcon>
+#include <QFrame>
 
 #include "fileitem.h"
 #include "durl.h"
 #include "dabstractfileinfo.h"
 #include "deviceinfo/udiskdeviceinfo.h"
+#include "dstatusbar.h"
 
 class FlowLayout;
 
@@ -33,6 +35,14 @@ private:
     QLabel* m_titleLable=NULL;
     QLabel* m_lineLable=NULL;
 
+};
+
+class DScrollArea: public QScrollArea{
+public:
+    explicit DScrollArea(QWidget* parent =0);
+
+protected:
+    void wheelEvent(QWheelEvent *event) Q_DECL_OVERRIDE;
 };
 
 class ComputerViewItem: public FileIconItem
@@ -85,7 +95,7 @@ private:
 };
 
 
-class ComputerView : public QScrollArea
+class ComputerView : public QFrame
 {
     Q_OBJECT
 
@@ -133,6 +143,9 @@ private:
     TitleLine* m_removableTitleLine=NULL;
     FlowLayout* m_removableFlowLayout = NULL;
     QTimer* m_testTimer;
+
+    DStatusBar* m_statusBar;
+    DScrollArea* m_contentArea;
 
     QList<int> m_iconSizes;
     int m_currentIconSizeIndex = 1;

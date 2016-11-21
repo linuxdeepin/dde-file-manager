@@ -277,6 +277,8 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
                         }
                     }
                 }
+            } else{
+                m_label->setText(m_OnlyOneItemSelected.arg(QString::number(1)));
             }
         }
     }
