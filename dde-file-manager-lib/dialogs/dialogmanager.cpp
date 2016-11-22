@@ -434,26 +434,28 @@ void DialogManager::showDiskErrorDialog(const QString & id, const QString & erro
 {
     Q_UNUSED(errorText)
 
-    static bool dialogHadShow = false;
+    static QSet<QString> dialogHadShowForId;
 
-    if (dialogHadShow)
+    if (dialogHadShowForId.contains(id))
         return;
 
     UDiskDeviceInfoPointer info = deviceListener->getDevice(id);
+
     if (info){
         DDialog d;
         d.setTitle(tr("Disk file is being used, can not unmount now"));
+        d.setMessage(tr("Name: ") + info->fileDisplayName()/* + ", " + tr("Path: ") + info->getPath()*/);
         QStringList buttonTexts;
         buttonTexts << tr("Cancel") << tr("Force unmount");
         d.addButtons(buttonTexts);
         d.setDefaultButton(0);
         d.setIcon(info->fileIcon(64, 64));
 
-        dialogHadShow = true;
+        dialogHadShowForId << id;
 
         int code = d.exec();
 
-        dialogHadShow = false;
+        dialogHadShowForId.remove(id);
 
         if (code == 1){
             deviceListener->forceUnmount(id);
