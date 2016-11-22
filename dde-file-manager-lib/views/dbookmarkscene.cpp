@@ -588,6 +588,10 @@ void DBookmarkScene::mountAdded(UDiskDeviceInfoPointer device)
         item->setDeviceInfo(device);
         item->setUrl(device->getMountPointUrl());
 
+        //mount point url is empty on unmounted state
+        if(!item->isMounted())
+            item->setUrl(DUrl::fromUserInput(device->getDiskInfo().ID));
+
         insert(indexOf(m_defaultDiskItem) + 1 + m_diskItems.count(), item);
 
 
