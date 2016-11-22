@@ -453,6 +453,10 @@ DFileView::RandeIndexList DFileView::visibleIndexes(QRect rect) const
         rect -= QMargins(spacing, spacing, spacing, spacing);
 
         int column_count = (width() - spacing * 2.9) / item_width;
+
+        if (column_count <= 0)
+            return list;
+
         int begin_row_index = rect.top() / item_height;
         int end_row_index = rect.bottom() / item_height;
         int begin_column_index = rect.left() / item_width;
