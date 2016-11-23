@@ -194,7 +194,7 @@ Deepin File Manager supports multi-tab view.
  - Click on × on the right tab of the tab bar to close an existing tab.
  > ![tips](icon/tips.svg): When the Deepin File Manager has only one tab, the tab bar is hidden, you can press ![Ctrl](icon/Ctrl.svg) + ![T](icon/T.svg) to add a new tab.
 
-![0|newtab](png/newtab.png)
+![1|newtab](png/newtab.png)
 
 ### Manage Bookmarks
 
@@ -243,6 +243,8 @@ User can manage shared folders if it has shared some folders in Deepin File Mana
 1. In Deepin File Manager interface, click ![share](icon/icon_share.svg) on the navigation bar.
 2. All shared folders will show on the interface.
 3. User can cancel sharing by right click the folder and select ** Cancel sharing **.
+
+![1|viewshare](png/viewshare.png)
 
 ### Open in Terminal
 
