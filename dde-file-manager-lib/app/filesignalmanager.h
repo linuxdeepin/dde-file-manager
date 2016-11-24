@@ -11,13 +11,14 @@ class DUrl;
 
 typedef QList<DUrl> DUrlList;
 
+
+
 class FileSignalManager : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit FileSignalManager(QObject *parent = 0) :
-        QObject(parent){}
+    explicit FileSignalManager(QObject *parent = 0);
 
 signals:
     /* change currentUrl*/
@@ -121,12 +122,6 @@ signals:
 
     /* request select file view item and rename*/
     void requestSelectRenameFile(const DFMEvent &event);
-
-    /* request restore trash file*/
-    void requestRestoreTrashFile(const DUrlList &urlList, const DFMEvent &event);
-
-    /* request restore trash file*/
-    void requestRestoreAllTrashFile(const DFMEvent &event);
 
     /*request update mime cache*/
     void requestUpdateMimeAppsCache();

@@ -2,6 +2,7 @@
 #define ZURL_H
 
 #include <QUrl>
+#include <QMetaType>
 
 #define TRASH_SCHEME "trash"
 #define RECENT_SCHEME "recent"
@@ -112,6 +113,9 @@ private:
 };
 
 typedef QList<DUrl> DUrlList;
+
+Q_DECLARE_METATYPE(DUrl)
+Q_DECLARE_METATYPE(DUrlList)
 
 QT_BEGIN_NAMESPACE
 QDebug operator<<(QDebug deg, const DUrl &url);

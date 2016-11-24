@@ -287,7 +287,8 @@ SOURCES += \
     interfaces/dfilesystemwatcher.cpp \
     interfaces/dabstractfilewatcher.cpp \
     interfaces/dfilewatcher.cpp \
-    interfaces/dfileproxywatcher.cpp
+    interfaces/dfileproxywatcher.cpp \
+    app/filesignalmanager.cpp
 
 INCLUDEPATH += $$PWD/../ $$PWD/../utils/ $$PWD/interfaces/
 
