@@ -1132,6 +1132,7 @@ void DFileView::handleDataChanged(const QModelIndex &topLeft, const QModelIndex 
 
 void DFileView::updateStatusBar()
 {
+    Q_D(DFileView);
     if (model()->state() != DFileSystemModel::Idle)
         return;
 
@@ -1141,9 +1142,9 @@ void DFileView::updateStatusBar()
     int count = selectedIndexCount();
 
     if (count == 0){
-        emit fileSignalManager->statusBarItemsCounted(event, this->count());
+        d->statusBar->itemCounted(event, this->count());
     }else{
-        emit fileSignalManager->statusBarItemsSelected(event, count);
+        d->statusBar->itemSelected(event, count);
     }
 }
 
