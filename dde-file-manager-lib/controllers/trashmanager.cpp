@@ -76,19 +76,9 @@ QString TrashDirIterator::path() const
     return iterator->path().remove(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath));
 }
 
-TrashManager *firstMe = Q_NULLPTR;
-
 TrashManager::TrashManager(QObject *parent)
     : DAbstractFileController(parent)
 {
-    if (!firstMe) {
-        firstMe = this;
-
-        connect(fileSignalManager, &FileSignalManager::requestRestoreTrashFile,
-                this, &TrashManager::restoreTrashFile);
-        connect(fileSignalManager, &FileSignalManager::requestRestoreAllTrashFile,
-                this, &TrashManager::restoreAllTrashFile);
-    }
 }
 
 const DAbstractFileInfoPointer TrashManager::createFileInfo(const DUrl &fileUrl, bool &accepted) const
@@ -239,7 +229,7 @@ DAbstractFileWatcher *TrashManager::createFileWatcher(const DUrl &fileUrl, QObje
                                  TrashManagerPrivate::localToTrash, parent);
 }
 
-bool TrashManager::restoreTrashFile(const DUrlList &fileUrl, const DFMEvent &event) const
+bool TrashManager::restoreTrashFile(const DUrlList &fileUrl, const DFMEvent &event)
 {
     bool ok = true;
 
