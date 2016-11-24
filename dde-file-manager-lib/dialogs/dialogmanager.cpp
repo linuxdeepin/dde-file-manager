@@ -493,14 +493,14 @@ void DialogManager::showAboutDialog(const DFMEvent &event)
     DAboutDialog *dialog = new DAboutDialog(icon,
                                             icon,
                                             qApp->applicationDisplayName(),
-                                            tr("Version:") + qApp->applicationVersion(),
+                                            tr("Version: V") + qApp->applicationVersion(),
                                             QString("<a href='%1' style='text-decoration: none; font-size:13px; color: #004EE5;'>%2</a><br/><br/>")
                                             .arg("https://www.deepin.org/acknowledgments.html#" + qApp->applicationName())
                                             .arg(tr("Acknowledgements"))
                                             + tr("File Manager is a file management tool independently "
                                                  "developed by Deepin Technology, featured with searching, "
                                                  "copying, trash, compression/decompression, file property "
-                                                 "and other file management functions.<br/>"), w);
+                                                 "and other file management functions.") + "<br/>", w);
     dialog->setTitle("");
     const QPoint global = w->mapToGlobal(w->rect().center());
     dialog->move(global.x() - dialog->width() / 2, global.y() - dialog->height() / 2);
