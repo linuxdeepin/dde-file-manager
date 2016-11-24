@@ -922,9 +922,6 @@ DUrl DAbstractFileInfo::getUrlByChildFileName(const QString &fileName) const
 
 DUrl DAbstractFileInfo::mimeDataUrl() const
 {
-    if (canRedirectionFileUrl())
-        return redirectedFileUrl();
-
     return fileUrl();
 }
 
