@@ -41,6 +41,7 @@ application/x-lzip-compressed-tar
 application/x-lzma-compressed-tar
 application/x-lzop-compressed-tar
 application/x-war
+application/x-webarchive
 application/x-xz
 application/x-gzip
 application/x-compress
