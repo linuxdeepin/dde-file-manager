@@ -621,7 +621,7 @@ Qt::ItemFlags DFileSystemModel::flags(const QModelIndex &index) const
         if (d->readOnly)
             return flags;
 
-        if(indexNode->fileInfo->isWritable()) {
+        if (indexNode->fileInfo->isWritable()) {
             flags |= Qt::ItemIsEditable;
 
             if (isDir(indexNode))

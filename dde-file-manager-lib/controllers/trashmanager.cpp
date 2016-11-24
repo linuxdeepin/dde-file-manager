@@ -161,7 +161,7 @@ DUrlList TrashManager::pasteFile(DAbstractFileController::PasteType type, const 
 {
     Q_UNUSED(type)
 
-    accepted = /*(type == DAbstractFileController::CutType)*/targetUrl == DUrl::fromTrashFile("/");
+    accepted = (type == DAbstractFileController::CutType) && targetUrl == DUrl::fromTrashFile("/");
 
     if (!accepted || event.fileUrlList().isEmpty())
         return DUrlList();

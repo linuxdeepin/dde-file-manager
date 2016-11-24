@@ -95,7 +95,7 @@ bool TrashFileInfo::isReadable() const
 
 bool TrashFileInfo::isWritable() const
 {
-    return false;
+    return true;
 }
 
 bool TrashFileInfo::isCanShare() const
