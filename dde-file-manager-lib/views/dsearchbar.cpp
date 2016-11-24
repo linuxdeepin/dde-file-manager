@@ -207,7 +207,7 @@ void DSearchBar::historySaved()
     if(text().isEmpty())
         return;
     QString str = text();
-    if (!hasScheme()){
+    if (!isLocalFile()){
         if(!m_historyList.contains(str))
         {
 
