@@ -179,7 +179,7 @@ bool FileUtils::isArchive(const QString &path)
                     << "application/x-tarz" << "application/x-tarz" << "application/x-compressed-tar"
                     << "application/x-xz-compressed-tar" << "application/x-lzip-compressed-tar"
                     << "application/x-lzma-compressed-tar" << "application/x-lzop-compressed-tar"
-                    << "application/x-war" << "application/x-xz" << "application/x-gzip"
+                    << "application/x-war" << "application/x-webarchive" << "application/x-xz" << "application/x-gzip"
                     << "application/x-compress" << "application/zip" << "application/x-zoo";
         return archiveMimes.contains(QMimeDatabase().mimeTypeForFile(f).name());
     }else{
