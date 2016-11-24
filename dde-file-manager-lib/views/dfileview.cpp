@@ -484,7 +484,7 @@ DFileView::RandeIndexList DFileView::visibleIndexes(QRect rect) const
         int begin_index = begin_row_index * column_count;
 
         if (end_column_index - begin_column_index + 1 == column_count) {
-            list << RandeIndex(qMax(begin_index, 0), qMin((end_row_index + 1) * column_count, count - 1));
+            list << RandeIndex(qMax(begin_index, 0), qMin((end_row_index + 1) * column_count - 1, count - 1));
 
             return list;
         }
