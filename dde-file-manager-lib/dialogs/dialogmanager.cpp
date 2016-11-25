@@ -493,7 +493,7 @@ void DialogManager::showAboutDialog(const DFMEvent &event)
     DAboutDialog *dialog = new DAboutDialog(icon,
                                             icon,
                                             qApp->applicationDisplayName(),
-                                            tr("Version: V") + qApp->applicationVersion(),
+                                            tr("Version:") + " V" + qApp->applicationVersion(),
                                             QString("<a href='%1' style='text-decoration: none; font-size:13px; color: #004EE5;'>%2</a><br/><br/>")
                                             .arg("https://www.deepin.org/acknowledgments.html#" + qApp->applicationName())
                                             .arg(tr("Acknowledgements"))
