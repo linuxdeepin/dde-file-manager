@@ -185,6 +185,9 @@ void DFileSystemModelPrivate::_q_processFileEvent()
         if (info->parentUrl() != rootUrl)
             continue;
 
+        // Will refreshing the file info meta data
+        info->refresh();
+
         if (event.first == AddFile) {
             qDebug() << "file creatored" << fileUrl;
 
