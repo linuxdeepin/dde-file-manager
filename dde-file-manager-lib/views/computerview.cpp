@@ -302,6 +302,8 @@ void ComputerView::initUI()
     m_statusBar->scalingSlider()->setMaximum(m_iconSizes.count()-1);
     m_statusBar->scalingSlider()->setMinimum(0);
     m_statusBar->scalingSlider()->setValue(m_currentIconSizeIndex);
+    m_statusBar->scalingSlider()->setTickInterval(1);
+    m_statusBar->scalingSlider()->setPageStep(1);
 
     QFrame* contentFrame = new QFrame(this);
     contentFrame->setStyleSheet("background-color: transparent");
@@ -592,9 +594,8 @@ void ComputerView::wheelEvent(QWheelEvent *event)
         } else {
             shrinkIcon();
         }
-    }else{
-        m_contentArea->verticalScrollBar()->setSliderPosition(m_contentArea->verticalScrollBar()->sliderPosition() - event->angleDelta().y());
     }
+    QFrame::wheelEvent(event);
 }
 
 void ComputerView::mousePressEvent(QMouseEvent *event)
