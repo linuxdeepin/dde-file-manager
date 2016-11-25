@@ -185,7 +185,7 @@ void DFileManagerWindow::onCurrentTabChanged(int tabIndex)
     if(tab){
         d->toolbar->switchHistoryStack(tabIndex,tab->fileView()->rootUrl());
         switchToView(tab->fileView());
-        if(tab->fileView()->rootUrl().isSearchFile()){
+        if(currentUrl().isSearchFile()){
             if(!d->toolbar->getSearchBar()->isVisible()){
                 d->toolbar->searchBarActivated();
                 d->toolbar->getSearchBar()->setText(tab->fileView()->rootUrl().searchKeyword());
