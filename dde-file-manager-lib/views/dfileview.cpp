@@ -1996,6 +1996,7 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
     if (sortBySubMenu){
         foreach (DAction* action, sortBySubMenu->actionList()) {
             action->setActionGroup(d->sortByActionGroup);
+            action->setChecked(false);
         }
 
         DAction *action = sortBySubMenu->actionAt(model()->sortColumn());
