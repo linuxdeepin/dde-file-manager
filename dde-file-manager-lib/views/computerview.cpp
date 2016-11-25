@@ -437,6 +437,38 @@ void ComputerView::loadCustomItemsByNameUrl(const QString &id, const QString &ur
     mountAdded(device);
 }
 
+void ComputerView::updateStatusBar()
+{
+    ComputerViewItem *checkedItem = NULL;
+    foreach (ComputerViewItem* item, m_systemItems) {
+        if (item->checked())
+            checkedItem = item;
+    }
+    foreach (ComputerViewItem* item, m_nativeItems) {
+        if (item->checked())
+            checkedItem = item;
+    }
+    foreach (ComputerViewItem* item, m_removableItems) {
+        if (item->checked())
+            checkedItem = item;
+    }
+
+    if(checkedItem){
+        DFMEvent event;
+        DUrlList urlList;
+        if(checkedItem->info())
+            urlList << checkedItem->info()->fileUrl();
+        event << window()->winId();
+        event << urlList;
+        m_statusBar->itemSelected(event, 1);
+    }else{
+        DFMEvent event;
+        event << window()->winId();
+        const int number = m_systemItems.count() + m_nativeItems.count() + m_removableItems.count();
+        m_statusBar->itemCounted(event, number);
+    }
+}
+
 bool ComputerView::isDiskConfExisted()
 {
     if (QFile(getDiskConfPath()).exists()){
@@ -453,6 +485,7 @@ QString ComputerView::getDiskConfPath()
 void ComputerView::volumeAdded(UDiskDeviceInfoPointer device)
 {
     Q_UNUSED(device)
+    updateStatusBar();
 }
 
 void ComputerView::volumeRemoved(UDiskDeviceInfoPointer device)
@@ -471,6 +504,8 @@ void ComputerView::volumeRemoved(UDiskDeviceInfoPointer device)
             m_removableTitleLine->hide();
         }
     }
+
+    updateStatusBar();
 }
 
 void ComputerView::mountAdded(UDiskDeviceInfoPointer device)
@@ -500,6 +535,7 @@ void ComputerView::mountAdded(UDiskDeviceInfoPointer device)
         }
         resizeItemBySizeIndex(m_currentIconSizeIndex);
     }
+    updateStatusBar();
 }
 
 void ComputerView::mountRemoved(UDiskDeviceInfoPointer device)
@@ -565,62 +601,29 @@ void ComputerView::mousePressEvent(QMouseEvent *event)
 {
     QPoint pos = m_contentArea->widget()->mapFromParent(event->pos());
 
-    bool isEmptyArea = true;
     foreach (ComputerViewItem* item, m_systemItems) {
 
-        if (item->geometry().contains(pos)){
+        if (item->geometry().contains(pos))
             item->setChecked(true);
-            DFMEvent event;
-            DUrlList urlList;
-            if(item->info())
-                urlList << item->info()->fileUrl();
-            event << window()->winId();
-            event << urlList;
-            m_statusBar->itemSelected(event, 1);
-            isEmptyArea = false;
-        }else{
+        else
             item->setChecked(false);
-        }
     }
     foreach (ComputerViewItem* item, m_nativeItems) {
-        if (item->geometry().contains(pos)){
-            item->setChecked(true);
 
-            DFMEvent event;
-            DUrlList urlList;
-            if(item->info())
-                urlList << item->info()->fileUrl();
-            event << window()->winId();
-            event << urlList;
-            m_statusBar->itemSelected(event, 1);
-            isEmptyArea = false;
-        }else{
+        if (item->geometry().contains(pos))
+            item->setChecked(true);
+        else
             item->setChecked(false);
-        }
     }
     foreach (ComputerViewItem* item, m_removableItems) {
-        if (item->geometry().contains(pos)){
+
+        if (item->geometry().contains(pos))
             item->setChecked(true);
-
-            DFMEvent event;
-            DUrlList urlList;
-            if(item->info())
-                urlList << item->info()->fileUrl();
-            event << window()->winId();
-            event << urlList;
-            m_statusBar->itemSelected(event, 1);
-            isEmptyArea = false;
-        }else{
+        else
             item->setChecked(false);
-        }
     }
 
-    if(isEmptyArea){
-        DFMEvent event;
-        event << window()->winId();
-        const int number = m_systemItems.count() + m_nativeItems.count() + m_removableItems.count();
-        m_statusBar->itemCounted(event, number);
-    }
+    updateStatusBar();
 }
 
 void ComputerView::showEvent(QShowEvent *event)
