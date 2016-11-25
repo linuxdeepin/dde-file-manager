@@ -495,7 +495,7 @@ void DialogManager::showAboutDialog(const DFMEvent &event)
                                             qApp->applicationDisplayName(),
                                             tr("Version:") + " V" + qApp->applicationVersion(),
                                             QString("<a href='%1' style='text-decoration: none; font-size:13px; color: #004EE5;'>%2</a><br/><br/>")
-                                            .arg("https://www.deepin.org/acknowledgments.html#" + qApp->applicationName())
+                                            .arg("https://www.deepin.org/acknowledgments/" + qApp->applicationName())
                                             .arg(tr("Acknowledgements"))
                                             + tr("File Manager is a file management tool independently "
                                                  "developed by Deepin Technology, featured with searching, "
