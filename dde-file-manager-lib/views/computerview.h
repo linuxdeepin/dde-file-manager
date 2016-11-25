@@ -113,6 +113,7 @@ public:
     void loadNativeItems();
     void loadCustomItems();
     void loadCustomItemsByNameUrl(const QString& id, const QString& rootUrl);
+    void updateStatusBar();
 
     bool isDiskConfExisted();
     QString getDiskConfPath();
