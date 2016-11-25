@@ -176,8 +176,9 @@ void DFileSystemModelPrivate::_q_processFileEvent()
         if (fileUrl == rootUrl) {
             if (event.first == RmFile) {
                 emit q->rootUrlDeleted(rootUrl);
-                q->refresh();
             }
+            // It must be refreshed when the root url itself is deleted or newly created
+            q->refresh();
             continue;
         }
 
