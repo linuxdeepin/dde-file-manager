@@ -132,27 +132,27 @@
 <context>
     <name>DFileSystemModel</name>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="477"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="478"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="479"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="480"/>
         <source>Time modified</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="481"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="482"/>
         <source>Size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="483"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="484"/>
         <source>Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="485"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="486"/>
         <source>Time created</source>
         <translation type="unfinished"></translation>
     </message>
@@ -379,13 +379,13 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="499"/>
-        <source>Acknowledgements</source>
+        <location filename="../dialogs/dialogmanager.cpp" line="500"/>
+        <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="500"/>
-        <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions.&lt;br/&gt;</source>
+        <location filename="../dialogs/dialogmanager.cpp" line="499"/>
+        <source>Acknowledgements</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1175,7 +1175,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="946"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="943"/>
         <source>Loading...</source>
         <translation type="unfinished"></translation>
     </message>

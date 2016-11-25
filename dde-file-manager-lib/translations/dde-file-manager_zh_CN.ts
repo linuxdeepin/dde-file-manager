@@ -163,7 +163,7 @@
 <context>
     <name>DFileSystemModel</name>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="477"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="478"/>
         <source>Name</source>
         <translation>名称</translation>
     </message>
@@ -172,22 +172,22 @@
         <translation type="vanished">修改时间</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="479"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="480"/>
         <source>Time modified</source>
         <translation>修改时间</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="481"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="482"/>
         <source>Size</source>
         <translation>大小</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="483"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="484"/>
         <source>Type</source>
         <translation>类型</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="485"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="486"/>
         <source>Time created</source>
         <translation>创建时间</translation>
     </message>
@@ -294,7 +294,7 @@
     <message>
         <location filename="../views/dstatusbar.cpp" line="318"/>
         <source>Loading...</source>
-        <translation>正在加载中...</translation>
+        <translation>正在加载...</translation>
     </message>
     <message>
         <source>Searching...</source>
@@ -436,7 +436,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="447"/>
         <source>Name: </source>
-        <translation type="unfinished"></translation>
+        <translation>名字：</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="449"/>
@@ -454,6 +454,11 @@
         <translation>是否删除此快捷方式?</translation>
     </message>
     <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="500"/>
+        <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions.</source>
+        <translation>文件管理器是深度科技自主研发的一款管理文件的工具， 它包括搜索、复制、回收站、压缩/解压缩， 文件属性等管理文件的功能。</translation>
+    </message>
+    <message>
         <location filename="../dialogs/dialogmanager.cpp" line="496"/>
         <source>Version:</source>
         <translation>版本:</translation>
@@ -464,9 +469,8 @@
         <translation>鸣谢</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="500"/>
         <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions.&lt;br/&gt;</source>
-        <translation type="unfinished">文件管理器是深度科技自主研发的一款管理文件的工具， 它包括搜索、复制、回收站、压缩/解压缩， 文件属性等管理文件的功能。</translation>
+        <translation type="vanished">文件管理器是深度科技自主研发的一款管理文件的工具， 它包括搜索、复制、回收站、压缩/解压缩， 文件属性等管理文件的功能。</translation>
     </message>
     <message>
         <source>Are you sure to permanently delete %1?</source>
@@ -1522,7 +1526,7 @@
     <message>
         <location filename="../models/searchfileinfo.cpp" line="248"/>
         <source>Searching...</source>
-        <translation>正在搜索中...</translation>
+        <translation>正在搜索...</translation>
     </message>
     <message>
         <location filename="../models/searchfileinfo.cpp" line="253"/>
@@ -1530,9 +1534,9 @@
         <translation>无搜索结果</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="946"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="943"/>
         <source>Loading...</source>
-        <translation>正在加载中...</translation>
+        <translation>正在加载...</translation>
     </message>
     <message>
         <location filename="../interfaces/dfileinfo.cpp" line="312"/>
