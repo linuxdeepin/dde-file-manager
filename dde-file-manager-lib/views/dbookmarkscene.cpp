@@ -509,7 +509,7 @@ void DBookmarkScene::doBookmarkRenamed(const QString &newname,const DFMEvent &ev
 
 void DBookmarkScene::doBookmarkAdded(const QString &name, const DFMEvent &event)
 {
-    DBookmarkItem * item = DBookmarkItem::makeBookmark(name, event.fileUrl());
+    DBookmarkItem * item = createCustomBookmark(name, event.fileUrl());
     item->setBookmarkModel(bookmarkManager->getBookmarks().at(0));
 
     int insertIndex  = getCustomBookmarkItemInsertIndex();
