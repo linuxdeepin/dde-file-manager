@@ -3,7 +3,6 @@
 
 #define searchHistoryManager  Singleton<SearchHistroyManager>::instance()
 #define bookmarkManager  Singleton<BookMarkManager>::instance()
-#define trashManager  Singleton<TrashManager>::instance()
 #define fileMenuManger  Singleton<DFileMenuManager>::instance()
 #define fileSignalManager Singleton<FileSignalManager>::instance()
 #define dialogManager Singleton<DialogManager>::instance()

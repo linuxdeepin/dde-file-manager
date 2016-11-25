@@ -78,11 +78,6 @@ DFileService::DFileService(QObject *parent)
     : QObject(parent)
     , d_ptr(new DFileServicePrivate())
 {
-    qRegisterMetaType<DFMEvent>(QT_STRINGIFY(DFMEvent));
-    qRegisterMetaType<QDir::Filters>(QT_STRINGIFY(QDir::Filters));
-    qRegisterMetaType<QList<DAbstractFileInfoPointer>>(QT_STRINGIFY(QList<DAbstractFileInfoPointer>));
-    qRegisterMetaType<DUrl>(QT_STRINGIFY(DUrl));
-
     d_ptr->fileOperatorTypeEnum = metaObject()->enumerator(metaObject()->indexOfEnumerator(QT_STRINGIFY(FileOperatorType)));
 
     /// init url handler register

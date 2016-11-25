@@ -664,7 +664,11 @@ void DBookmarkItem::dropEvent(QGraphicsSceneDragDropEvent *event)
     e << DUrl::fromQUrlList(event->mimeData()->urls());
     e << windowId();
 
-    fileService->pasteFile(DAbstractFileController::CopyType, m_url, e);
+    if (m_url == DUrl::fromTrashFile("/")){
+        fileService->pasteFile(DAbstractFileController::CutType, m_url, e);
+    }else{
+        fileService->pasteFile(DAbstractFileController::CopyType, m_url, e);
+    }
     QGraphicsItem::dropEvent(event);
 }
 
