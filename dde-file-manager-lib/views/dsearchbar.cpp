@@ -129,6 +129,9 @@ QAction * DSearchBar::removeClearAction()
 
 QAction *DSearchBar::setJumpToAction()
 {
+    if(actions().contains(m_searchAction))
+        removeSearchAction();
+
     addAction(m_jumpToAction, QLineEdit::LeadingPosition);
     connect(m_jumpToAction, &QAction::triggered, this, &DSearchBar::jumpTo);
     return m_jumpToAction;
@@ -143,6 +146,9 @@ QAction *DSearchBar::removeJumpToAction()
 
 QAction *DSearchBar::setSearchAction()
 {
+    if(actions().contains(m_jumpToAction))
+        removeJumpToAction();
+
     addAction(m_searchAction, QLineEdit::LeadingPosition);
     connect(m_searchAction, &QAction::triggered, this, &DSearchBar::search);
     return m_searchAction;
@@ -233,6 +239,12 @@ void DSearchBar::setCompleter(const QString &text)
         return;
     }
 
+    // show search/jumpto action
+    if(hasScheme())
+        setJumpToAction();
+    else
+        setSearchAction();
+
     if(m_disableCompletion)
     {
         m_disableCompletion = false;
@@ -246,10 +258,6 @@ void DSearchBar::setCompleter(const QString &text)
 //    qDebug() << text << url << url.isLocalFile() << url.path().isEmpty() << url.toLocalFile();
     if(/*hasScheme() || */url.isLocalFile())
     {
-        if(actions().contains(m_searchAction))
-            removeSearchAction();
-
-        setJumpToAction();
         QFileInfo fileInfo;
 
         if (text.endsWith(".")){
@@ -297,10 +305,6 @@ void DSearchBar::setCompleter(const QString &text)
     }
     else
     {
-        if(actions().contains(m_jumpToAction))
-            removeJumpToAction();
-
-        setSearchAction();
         QStringList sl;
         foreach(QString word, m_historyList)
         {
@@ -313,7 +317,7 @@ void DSearchBar::setCompleter(const QString &text)
 //        m_list->addItems(m_stringListMode->stringList());
 
         foreach (QString itemText, m_stringListMode->stringList()) {
-            QListWidgetItem* item = new QListWidgetItem(" " + itemText);
+            QListWidgetItem* item = new QListWidgetItem(itemText);
             item->setTextAlignment(Qt::AlignVCenter);
             QPixmap p(":/icons/images/light/space16.png");
             item->setIcon(QIcon(p));
@@ -324,6 +328,7 @@ void DSearchBar::setCompleter(const QString &text)
             return;
         }
     }
+
     recomended(text);
 
     if (m_list->count() < 10){
@@ -633,7 +638,7 @@ void DSearchBar::recomended(const QString& inputText)
         }
         else
         {
-            setText(modelText.replace(" ",""));
+            setText(modelText);
             setSelection(inputText.length(), modelText.length());
         }
 //        m_text = text();
