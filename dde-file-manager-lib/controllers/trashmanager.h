@@ -32,8 +32,8 @@ public:
 
     DAbstractFileWatcher *createFileWatcher(const DUrl &fileUrl, QObject *parent, bool &accepted) const Q_DECL_OVERRIDE;
 
-    bool restoreTrashFile(const DUrlList &fileUrl, const DFMEvent &event) const;
-    bool restoreAllTrashFile(const DFMEvent &event);
+    static bool restoreTrashFile(const DUrlList &fileUrl, const DFMEvent &event);
+    static bool restoreAllTrashFile(const DFMEvent &event);
     void cleanTrash(const DFMEvent &event) const;
 
     static bool isEmpty();

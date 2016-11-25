@@ -370,12 +370,12 @@ void AppController::actionRestore(const DFMEvent &event)
             urls << url;
     }
 
-    emit fileSignalManager->requestRestoreTrashFile(urls, event);
+    TrashManager::restoreTrashFile(urls, event);
 }
 
 void AppController::actionRestoreAll(const DFMEvent &event)
 {
-    emit fileSignalManager->requestRestoreAllTrashFile(event);
+    TrashManager::restoreAllTrashFile(event);
 }
 
 void AppController::actionEject(const DFMEvent &event)
