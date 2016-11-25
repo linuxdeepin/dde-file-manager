@@ -158,5 +158,10 @@ void MimeTypeDisplayManager::loadSupportMimeTypes()
     AudioMimeTypes = readlines(audioPath);
     ImageMimeTypes = readlines(imagePath);
     ExecutableMimeTypes = readlines(executablePath);
- }
+}
+
+QStringList MimeTypeDisplayManager::supportArchiveMimetypes()
+{
+    return ArchiveMimeTypes;
+}
 
