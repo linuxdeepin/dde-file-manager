@@ -4,6 +4,7 @@
 #include "views/windowmanager.h"
 
 #include "app/define.h"
+#include "widgets/singleton.h"
 #include "mimetypedisplaymanager.h"
 
 #include "dfileservices.h"
@@ -163,7 +164,7 @@ bool FileUtils::isArchive(const QString &path)
 {
     QFileInfo f(path);
     if (f.exists()){
-        return MimeTypeDisplayManager::supportArchiveMimetypes().contains(QMimeDatabase().mimeTypeForFile(f).name());
+        return mimeTypeDisplayManager->supportArchiveMimetypes().contains(QMimeDatabase().mimeTypeForFile(f).name());
     }else{
         return false;
     }
