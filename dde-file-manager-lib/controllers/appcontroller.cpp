@@ -31,12 +31,15 @@
 #include "widgets/singleton.h"
 
 #include "../deviceinfo/udisklistener.h"
+#include <DAction>
 
 #include <QProcess>
 #include <QStorageInfo>
 #include <DAboutDialog>
 #include <qprocess.h>
 #include "shutil/shortcut.h"
+
+DWIDGET_USE_NAMESPACE
 
 QPair<DUrl, int> AppController::selectionAndRenameFile;
 
@@ -571,6 +574,14 @@ void AppController::actionForgetPassword(const DFMEvent &event)
         secrectManager->clearPasswordByLoginObj(obj);
     }
     actionUnmount(event);
+}
+
+void AppController::actionOpenFileByApp()
+{
+    DAction* dAction = static_cast<DAction*>(sender());
+    QString app = dAction->property("app").toString();
+    DUrl fileUrl(dAction->property("url").toUrl());
+    fileService->openFileByApp(fileUrl, app);
 }
 
 void AppController::doSubscriberAction(const QString &path)

@@ -169,7 +169,10 @@ public:
     static void clearClipboard();
 
 
+    static void initPluginManager();
+    static void initMimesAppsManager();
     static void initDialogManager();
+
 
     QList<QUrl> clipboardFileUrlList() const;
     ClipboardAction clipboardAction() const;

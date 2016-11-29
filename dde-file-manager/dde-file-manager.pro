@@ -3,11 +3,14 @@
 # Project created by QtCreator 2015-06-24T09:14:17
 #
 #-------------------------------------------------
+
+include(../common/common.pri)
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 QT += network
 
 isEmpty(TARGET) {
-    TARGET = dde-file-manager
+    TARGET = $$ProjectName
 }
 
 TEMPLATE = app

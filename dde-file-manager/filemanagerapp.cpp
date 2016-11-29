@@ -36,7 +36,7 @@ FileManagerApp::FileManagerApp(QObject *parent) : QObject(parent)
     initApp();
     initView();
     initConnect();
-    lazyRunCacheTask();
+//    lazyRunCacheTask();
 
     QFileSystemWatcher *watcherHome = new QFileSystemWatcher(this);
 
@@ -53,7 +53,13 @@ FileManagerApp::~FileManagerApp()
 
 void FileManagerApp::initApp()
 {
-    /// init dialog manager
+    /*init plugin manager */
+    DFMGlobal::initPluginManager();
+
+    /*init mimeAppsManager*/
+    DFMGlobal::initMimesAppsManager();
+
+    /* init dialog manager */
     DFMGlobal::initDialogManager();
 
 #if QT_VERSION_MINOR < 6
@@ -81,7 +87,7 @@ void FileManagerApp::initTranslation()
 
 void FileManagerApp::initConnect()
 {
-    connect(fileSignalManager, &FileSignalManager::requestUpdateMimeAppsCache, mimeAppsManager, &MimesAppsManager::requestUpdateCache);
+//    connect(fileSignalManager, &FileSignalManager::requestUpdateMimeAppsCache, mimeAppsManager, &MimesAppsManager::requestUpdateCache);
 }
 
 QString FileManagerApp::getFileJobConfigPath()
@@ -92,21 +98,6 @@ QString FileManagerApp::getFileJobConfigPath()
 void FileManagerApp::show(const DUrl &url)
 {
     m_windowManager->showNewWindow(url);
-    m_taskTimer->start();
-}
-
-void FileManagerApp::lazyRunCacheTask()
-{
-    m_taskTimer = new QTimer;
-    m_taskTimer->setSingleShot(true);
-    m_taskTimer->setInterval(2000);
-    connect(m_taskTimer, &QTimer::timeout, fileSignalManager, &FileSignalManager::requestUpdateMimeAppsCache);
-    connect(m_taskTimer, &QTimer::timeout, m_taskTimer, &QTimer::deleteLater);
-}
-
-void FileManagerApp::runCacheTask()
-{
-    emit fileSignalManager->requestUpdateMimeAppsCache();
 }
 
 void FileManagerApp::loadFileJobConfig()

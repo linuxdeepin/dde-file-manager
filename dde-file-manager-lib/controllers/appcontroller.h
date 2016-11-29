@@ -88,6 +88,8 @@ public slots:
 
     void actionForgetPassword(const DFMEvent& event);
 
+    void actionOpenFileByApp();
+
     // Subscriber interface
 public:
     void doSubscriberAction(const QString &path);

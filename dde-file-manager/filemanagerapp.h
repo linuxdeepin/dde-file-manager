@@ -30,15 +30,12 @@ public:
 
 public slots:
     void show(const DUrl& url);
-    void lazyRunCacheTask();
-    void runCacheTask();
 
     void loadFileJobConfig();
     void showPropertyDialog(const QStringList paths);
 
 private:
     WindowManager* m_windowManager = NULL;
-    QTimer* m_taskTimer = NULL;
 };
 
 #endif // FILEMANAGERAPP_H

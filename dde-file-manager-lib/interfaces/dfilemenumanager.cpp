@@ -8,9 +8,16 @@
 #include "controllers/trashmanager.h"
 
 #include "widgets/singleton.h"
+#include "views/windowmanager.h"
+#include "shutil/fileutils.h"
+#include "shutil/mimesappsmanager.h"
+#include "controllers/pathmanager.h"
+#include "plugins/pluginmanager.h"
+#include "dde-file-manager-plugins/plugininterfaces/menu/menuinterface.h"
 
 #include <QMetaObject>
 #include <QMetaEnum>
+#include <QMenu>
 #include <QDebug>
 
 namespace DFileMenuData {
@@ -216,6 +223,134 @@ DFileMenu *DFileMenuManager::createListViewHeaderMenu(const QSet<MenuAction> &di
     return menu;
 }
 
+DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrlList &urlList, QSet<MenuAction> disableList, QSet<MenuAction> unusedList, int windowId)
+{
+    DAbstractFileInfoPointer info = fileService->createFileInfo(currentUrl);
+    DFileMenu *menu = NULL;
+    if (urlList.length() == 1) {
+        QVector<MenuAction> actions = info->menuActionList(DAbstractFileInfo::SingleFile);
+        foreach (MenuAction action, unusedList) {
+            if (actions.contains(action)){
+                actions.remove(actions.indexOf(action));
+            }
+        }
+
+        if (actions.isEmpty())
+            return menu;
+
+        const QMap<MenuAction, QVector<MenuAction> > &subActions = info->subMenuActionList();
+        disableList += DFileMenuManager::getDisableActionList(urlList);
+        const bool& tabAddable = WindowManager::tabAddableByWinId(windowId);
+        if(!tabAddable)
+            disableList << MenuAction::OpenInNewTab;
+
+        menu = DFileMenuManager::genereteMenuByKeys(actions, disableList, true, subActions);
+
+
+        DAction *openWithAction = menu->actionAt(DFileMenuManager::getActionString(DFMGlobal::OpenWith));
+        DFileMenu* openWithMenu = openWithAction ? qobject_cast<DFileMenu*>(openWithAction->menu()) : Q_NULLPTR;
+
+        if (openWithMenu) {
+            QMimeType mimeType = info->mimeType();
+            QStringList recommendApps = mimeAppsManager->MimeApps.value(mimeType.name());
+
+            foreach (QString name, mimeType.aliases()) {
+                QStringList apps = mimeAppsManager->MimeApps.value(name);
+                foreach (QString app, apps) {
+                    if (!recommendApps.contains(app)){
+                        recommendApps.append(app);
+                    }
+                }
+            }
+
+            foreach (QString app, recommendApps) {
+                DAction* action = new DAction(mimeAppsManager->DesktopObjs.value(app).getLocalName(), 0);
+                action->setProperty("app", app);
+                action->setProperty("url", info->fileUrl());
+                openWithMenu->addAction(action);
+                connect(action, &DAction::triggered, appController, &AppController::actionOpenFileByApp);
+            }
+
+            DAction* action = new DAction(fileMenuManger->getActionString(MenuAction::OpenWithCustom), 0);
+            action->setData((int)MenuAction::OpenWithCustom);
+            openWithMenu->addAction(action);
+
+        }
+    } else {
+        bool isSystemPathIncluded = false;
+        bool isAllCompressedFiles = true;
+
+        foreach (DUrl url, urlList) {
+            const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
+
+            if(!FileUtils::isArchive(url.path()))
+                isAllCompressedFiles = false;
+
+            if (systemPathManager->isSystemPath(fileInfo->fileUrl().toLocalFile())) {
+                isSystemPathIncluded = true;
+            }
+        }
+
+        QVector<MenuAction> actions;
+
+        if (isSystemPathIncluded)
+            actions = info->menuActionList(DAbstractFileInfo::MultiFilesSystemPathIncluded);
+        else
+            actions = info->menuActionList(DAbstractFileInfo::MultiFiles);
+
+        if (actions.isEmpty())
+            return menu;
+
+        if(isAllCompressedFiles){
+            int index = actions.indexOf(MenuAction::Compress);
+            actions.insert(index + 1, MenuAction::Decompress);
+            actions.insert(index + 2, MenuAction::DecompressHere);
+        }
+
+        const QMap<MenuAction, QVector<MenuAction> > subActions;
+        disableList += DFileMenuManager::getDisableActionList(urlList);
+        const bool& tabAddable = WindowManager::tabAddableByWinId(windowId);
+        if(!tabAddable)
+            disableList << MenuAction::OpenInNewTab;
+        menu = DFileMenuManager::genereteMenuByKeys(actions, disableList, true, subActions);
+    }
+
+    loadNormalPluginMenu(menu, urlList);
+
+    return menu;
+}
+
+void DFileMenuManager::loadNormalPluginMenu(DFileMenu *menu, const DUrlList &urlList)
+{
+    QStringList files;
+    foreach (DUrl url, urlList) {
+        files << url.toString();
+    }
+
+    DAction* lastAction = menu->actionAt(menu->actionList().count() - 1);
+
+    foreach (MenuInterface* menuInterface, PluginManager::instance()->getMenuInterfaces()) {
+        QList<QAction *> actions = menuInterface->additionalMenu(files);
+        foreach (QAction* action, actions) {
+            DAction* dAction  = qActionToDAction(action);
+            menu->insertAction(lastAction, dAction);
+        }
+    }
+}
+
+void DFileMenuManager::loadEmptyPluginMenu(DFileMenu *menu)
+{
+    DAction* lastAction = menu->actionAt(menu->actionList().count() - 1);
+
+    foreach (MenuInterface* menuInterface, PluginManager::instance()->getMenuInterfaces()) {
+        QList<QAction *> actions = menuInterface->additionalEmptyMenu();
+        foreach (QAction* action, actions) {
+            DAction* dAction  = qActionToDAction(action);
+            menu->insertAction(lastAction, dAction);
+        }
+    }
+}
+
 QSet<MenuAction> DFileMenuManager::getDisableActionList(const DUrl &fileUrl)
 {
     DUrlList list;
@@ -411,6 +546,25 @@ bool DFileMenuManager::isAvailableAction(MenuAction action)
         return !DFileMenuData::blacklist.contains(action);
 
     return DFileMenuData::whitelist.contains(action) && !DFileMenuData::blacklist.contains(action);
+}
+
+DAction *DFileMenuManager::qActionToDAction(QAction* action, DAction *parentAction, DMenu *dMenu)
+{
+    DAction* dAction  = new DAction(action->icon(), action->text(), action->parent());
+    connect(dAction, &DAction::triggered, action, &QAction::triggered);
+    if (dMenu){
+        dMenu->addAction(dAction);
+        dMenu->setParent(parentAction);
+        parentAction->setMenu(dMenu);
+    }
+    QMenu* menu = action->menu();
+    if (menu){
+        dMenu = new DMenu;
+        foreach (QAction* childAction, menu->actions()) {
+            qActionToDAction(childAction, dAction, dMenu);
+        }
+    }
+    return dAction;
 }
 
 void DFileMenuManager::actionTriggered(DAction *action)
