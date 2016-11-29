@@ -1494,6 +1494,8 @@ bool DFileView::event(QEvent *e)
     if(e->type() == QEvent::KeyPress){
         QKeyEvent *keyEvent = static_cast<QKeyEvent*>(e);
         if(keyEvent->key() == Qt::Key_Tab || keyEvent->key() == Qt::Key_Backtab){
+            if(keyEvent->modifiers() == Qt::ControlModifier || keyEvent->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
+                return DListView::event(e);
             e->accept();
 
             if(keyEvent->modifiers() == Qt::ShiftModifier)
