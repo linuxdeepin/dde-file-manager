@@ -6,7 +6,7 @@
 #include <QJsonArray>
 #include <QDebug>
 
-CommandLineManager::CommandLineManager():
+CommandLineManager::    CommandLineManager():
     m_commandParser(new QCommandLineParser)
 {
 
@@ -26,8 +26,10 @@ void CommandLineManager::process(){
 void CommandLineManager::initOptions(){
     QCommandLineOption newWindowOption(QStringList() << "n" << "new-window", "show new window");
     QCommandLineOption backendOption(QStringList() << "d" << "none window process", "start dde-file-manager in no window mode");
+    QCommandLineOption openPropertyDialogOption(QStringList() << "p" << "property", "show property dialog");
     addOption(newWindowOption);
     addOption(backendOption);
+    addOption(openPropertyDialogOption);
 }
 
 void CommandLineManager::addOption(const QCommandLineOption &option){

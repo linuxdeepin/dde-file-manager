@@ -34,6 +34,7 @@ public slots:
     void runCacheTask();
 
     void loadFileJobConfig();
+    void showPropertyDialog(const QStringList paths);
 
 private:
     WindowManager* m_windowManager = NULL;

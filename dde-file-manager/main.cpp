@@ -6,6 +6,7 @@
 #include "singleapplication.h"
 
 #include "app/define.h"
+#include "app/filesignalmanager.h"
 
 #include "widgets/commandlinemanager.h"
 
@@ -67,6 +68,7 @@ int main(int argc, char *argv[])
 
     bool isSingleInstance  = app.setSingleInstance(uniqueKey);
     bool isBackendRun = CommandLineManager::instance()->isSet("d");
+    bool isShowPropertyRequest = CommandLineManager::instance()->isSet("p");
 
     qDebug() << isSingleInstance << commandlineUrl;
 
@@ -78,6 +80,11 @@ int main(int argc, char *argv[])
             fileManagerApp->show(commandlineUrl);
         }else{
             fileManagerApp->runCacheTask();
+        }
+
+        if(isShowPropertyRequest){
+            QStringList paths = CommandLineManager::instance()->positionalArguments();
+            fileManagerApp->showPropertyDialog(paths);
         }
 
         FileUtils::setDefaultFileManager();

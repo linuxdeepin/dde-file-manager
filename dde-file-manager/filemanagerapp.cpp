@@ -18,6 +18,7 @@
 
 #include "widgets/singleton.h"
 #include "widgets/commandlinemanager.h"
+#include "interfaces/durl.h"
 
 #if QT_VERSION_MINOR < 6
 #include "xdnd/xdndworkaround.h"
@@ -119,4 +120,23 @@ void FileManagerApp::loadFileJobConfig()
         FileJob::Data_Flush_Size = filejobSettings.value("Data_Flush_Size", 16777216).toLongLong();
         filejobSettings.endGroup();
     }
+}
+
+void FileManagerApp::showPropertyDialog(const QStringList paths)
+{
+    DUrlList urlList;
+    foreach (QString path, paths) {
+        if(path.endsWith("/")){
+            path = path.mid(0,path.length()-1);
+        }
+        DUrl url = DUrl::fromLocalFile(path);
+        if(url.isValid() && QFile::exists(url.path()))
+            urlList << url;
+    }
+    if(urlList.isEmpty())
+        return;
+    DFMEvent event;
+    event << urlList.first();
+    event << urlList;
+    emit fileSignalManager->requestShowPropertyDialog(event);
 }

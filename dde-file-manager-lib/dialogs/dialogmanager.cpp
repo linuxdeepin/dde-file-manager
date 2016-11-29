@@ -355,28 +355,25 @@ void DialogManager::showOpenWithDialog(const DFMEvent &event)
 
 void DialogManager::showPropertyDialog(const DFMEvent &event)
 {
-    QWidget* w = WindowManager::getWindowById(event.windowId());
-    if (w){
-        const DUrlList& urlList  = event.fileUrlList();
-        int count = urlList.count();
-        foreach (const DUrl& url, urlList) {
-            int index = urlList.indexOf(url);
-            PropertyDialog *dialog;
-            if (m_propertyDialogs.contains(url)){
-                dialog = m_propertyDialogs.value(url);
-                dialog->raise();
-            }else{
-                dialog = new PropertyDialog(event, url);
-                m_propertyDialogs.insert(url, dialog);
-                QPoint pos = getPerportyPos(dialog->size().width(), dialog->size().height(), count, index);
+    const DUrlList& urlList  = event.fileUrlList();
+    int count = urlList.count();
+    foreach (const DUrl& url, urlList) {
+        int index = urlList.indexOf(url);
+        PropertyDialog *dialog;
+        if (m_propertyDialogs.contains(url)){
+            dialog = m_propertyDialogs.value(url);
+            dialog->raise();
+        }else{
+            dialog = new PropertyDialog(event, url);
+            m_propertyDialogs.insert(url, dialog);
+            QPoint pos = getPerportyPos(dialog->size().width(), dialog->size().height(), count, index);
 
-                dialog->show();
-                dialog->move(pos);
+            dialog->show();
+            dialog->move(pos);
 
-                connect(dialog, &PropertyDialog::closed, this, &DialogManager::removePropertyDialog);
+            connect(dialog, &PropertyDialog::closed, this, &DialogManager::removePropertyDialog);
 //                connect(dialog, &PropertyDialog::raised, this, &DialogManager::raiseAllPropertyDialog);
-                QTimer::singleShot(100, dialog, &PropertyDialog::raise);
-            }
+            QTimer::singleShot(100, dialog, &PropertyDialog::raise);
         }
 
         if (urlList.count() >= 2){
