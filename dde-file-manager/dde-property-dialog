@@ -1,0 +1,10 @@
+#!/bin/bash
+#shell name: dde-property-dialog.sh
+#description: reuqest show files's or folders's property dialog. 
+#usage: just use it in bash like dde-property-dialog path1 path2 ...
+args="";
+for arg in $@
+do
+    args=$args" "$arg;
+done;
+dde-file-manager -d -p ${args}

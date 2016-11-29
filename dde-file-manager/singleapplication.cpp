@@ -5,6 +5,7 @@
 
 #include "widgets/commandlinemanager.h"
 #include "widgets/singleton.h"
+#include "filemanagerapp.h"
 
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -12,6 +13,10 @@
 #include <QDir>
 #include <QLocalServer>
 #include <QLocalSocket>
+#include <QJsonArray>
+#include <QJsonValue>
+
+#define fileManagerApp Singleton<FileManagerApp>::instance()
 
 QString SingleApplication::UserID = "1000";
 
@@ -49,14 +54,25 @@ void SingleApplication::newClientProcess(const QString &key)
                 qDebug() << "start write";
                 QString commandlineUrl;
                 bool isNewWindow = false;
+                bool isShowPropertyDialogRequest = false;
                 if (CommandLineManager::instance()->positionalArguments().count() > 0){
                     commandlineUrl = CommandLineManager::instance()->positionalArguments().at(0);
+                    isShowPropertyDialogRequest = CommandLineManager::instance()->isSet("p");
                 }else{
                     isNewWindow = CommandLineManager::instance()->isSet("n");
                 }
                 QJsonObject message;
                 message.insert("url", DUrl::fromUserInput(commandlineUrl).toString());
                 message.insert("isNewWindow", isNewWindow);
+
+                message.insert("isShowPropertyDialogRequest",isShowPropertyDialogRequest);
+                QStringList paths = CommandLineManager::instance()->positionalArguments();
+                QJsonArray jsPaths;
+                foreach (QString path, paths) {
+                    jsPaths.append(QJsonValue(path));
+                }
+                message.insert("paths",jsPaths);
+
                 QJsonDocument  obj(message);
                 localSocket->write(obj.toJson().data());
                 localSocket->flush();
@@ -134,6 +150,23 @@ void SingleApplication::readData()
     qDebug() << messageObj << error.errorString();
 
     DUrl url = DUrl::fromLocalFile(QDir::homePath());
+
+    bool isShowPropertyDialogRequest = false;
+    if(messageObj.contains("isShowPropertyDialogRequest"))
+        isShowPropertyDialogRequest = messageObj.value("isShowPropertyDialogRequest").toBool();
+
+    if(isShowPropertyDialogRequest){
+        QJsonArray jsPaths;
+        if(messageObj.contains("paths"))
+            jsPaths = messageObj.value("paths").toArray();
+        QStringList paths;
+        foreach (QJsonValue val, jsPaths) {
+            paths << val.toString();
+        }
+        fileManagerApp->showPropertyDialog(paths);
+        return;
+    }
+
     bool isNewWindow = false;
     if (messageObj.contains("url")){
         QString _url = messageObj.value("url").toString();
@@ -157,3 +190,4 @@ void SingleApplication::closeServer()
         m_localServer->close();
     }
 }
+
