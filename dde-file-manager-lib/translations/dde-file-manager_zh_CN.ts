@@ -48,22 +48,22 @@
 <context>
     <name>ComputerView</name>
     <message>
-        <location filename="../views/computerview.cpp" line="309"/>
+        <location filename="../views/computerview.cpp" line="311"/>
         <source>My Directories</source>
         <translation>我的目录</translation>
     </message>
     <message>
-        <location filename="../views/computerview.cpp" line="315"/>
+        <location filename="../views/computerview.cpp" line="317"/>
         <source>Internal Disk</source>
         <translation>内置磁盘</translation>
     </message>
     <message>
-        <location filename="../views/computerview.cpp" line="321"/>
+        <location filename="../views/computerview.cpp" line="323"/>
         <source>External Disk</source>
         <translation>外置磁盘</translation>
     </message>
     <message>
-        <location filename="../views/computerview.cpp" line="400"/>
+        <location filename="../views/computerview.cpp" line="402"/>
         <source>Disk</source>
         <translation>磁盘</translation>
     </message>
@@ -163,7 +163,7 @@
 <context>
     <name>DFileSystemModel</name>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="478"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="481"/>
         <source>Name</source>
         <translation>名称</translation>
     </message>
@@ -172,22 +172,22 @@
         <translation type="vanished">修改时间</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="480"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="483"/>
         <source>Time modified</source>
         <translation>修改时间</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="482"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="485"/>
         <source>Size</source>
         <translation>大小</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="484"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="487"/>
         <source>Type</source>
         <translation>类型</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="486"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="489"/>
         <source>Time created</source>
         <translation>创建时间</translation>
     </message>
@@ -338,7 +338,7 @@
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="277"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="474"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="471"/>
         <source>Confirm</source>
         <translation>确定</translation>
     </message>
@@ -358,8 +358,8 @@
         <location filename="../dialogs/dialogmanager.cpp" line="255"/>
         <location filename="../dialogs/dialogmanager.cpp" line="295"/>
         <location filename="../dialogs/dialogmanager.cpp" line="338"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="449"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="474"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="446"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="471"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
@@ -429,42 +429,42 @@
         <translation>您确定要彻底删除选中的%1项内容？</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="446"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="443"/>
         <source>Disk file is being used, can not unmount now</source>
         <translation>磁盘文件被占用，无法卸载</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="447"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="444"/>
         <source>Name: </source>
         <translation>名字：</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="449"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="446"/>
         <source>Force unmount</source>
         <translation>强制卸载</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="471"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="468"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
         <translation>此快捷方式所指向的“%1”已被更改或移动</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="472"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="469"/>
         <source>Do you want to delete this shortcut？</source>
         <translation>是否删除此快捷方式?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="500"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="497"/>
         <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions.</source>
         <translation>文件管理器是深度科技自主研发的一款管理文件的工具， 它包括搜索、复制、回收站、压缩/解压缩， 文件属性等管理文件的功能。</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="496"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="493"/>
         <source>Version:</source>
         <translation>版本:</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="499"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="496"/>
         <source>Acknowledgements</source>
         <translation>鸣谢</translation>
     </message>
@@ -1488,12 +1488,12 @@
         <translation>%1 项</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="664"/>
+        <location filename="../interfaces/dfileservices.cpp" line="659"/>
         <source>Shortcut</source>
         <translation>快捷方式</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="488"/>
+        <location filename="../interfaces/dfileservices.cpp" line="483"/>
         <source>Create symlink</source>
         <translation>创建链接</translation>
     </message>
@@ -1920,18 +1920,18 @@
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="43"/>
-        <source>Alt + Tab </source>
+        <source>Ctrl + Tab </source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../shutil/shortcut.cpp" line="44"/>
+        <source>Ctrl + Shift + Tab </source>
         <translation></translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="44"/>
         <source>Switch to previous tab</source>
         <translation>切换到上一个标签</translation>
-    </message>
-    <message>
-        <location filename="../shutil/shortcut.cpp" line="44"/>
-        <source>Alt + Shift + Tab </source>
-        <translation></translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="45"/>
