@@ -6,13 +6,15 @@
 #system($$PWD/../vendor/prebuild)
 #include($$PWD/../vendor/vendor.pri)
 
+include(../common/common.pri)
+
 QT       += core gui svg dbus x11extras
 #private
 QT       += gui-private
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = dde-file-manager
+TARGET = $$ProjectName
 
 TEMPLATE = lib
 CONFIG += create_pc create_prl no_install_prl
@@ -20,6 +22,7 @@ CONFIG += create_pc create_prl no_install_prl
 isEmpty(VERSION) {
     VERSION = 1.0
 }
+
 
 DEFINES += QMAKE_TARGET=\\\"$$TARGET\\\" QMAKE_VERSION=\\\"$$VERSION\\\"
 
@@ -57,6 +60,7 @@ include(deviceinfo/deviceinfo.pri)
 include(dbusinterface/dbusinterface.pri)
 include(../thumbnailer/thumbnailer.pri)
 include(../usershare/usershare.pri)
+include(../dde-file-manager-plugins/plugininterfaces/plugininterfaces.pri)
 
 lessThan(QT_MINOR_VERSION, 6): include(../xdnd/xdnd.pri)
 
@@ -183,7 +187,9 @@ HEADERS += \
     interfaces/dabstractfilewatcher.h \
     interfaces/dfilewatcher.h \
     interfaces/private/dabstractfilewatcher_p.h \
-    interfaces/dfileproxywatcher.h
+    interfaces/dfileproxywatcher.h \
+    plugins/pluginmanager.h \
+    plugins/plugininterfaces/menu/menuinterface.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -288,9 +294,10 @@ SOURCES += \
     interfaces/dabstractfilewatcher.cpp \
     interfaces/dfilewatcher.cpp \
     interfaces/dfileproxywatcher.cpp \
-    app/filesignalmanager.cpp
+    app/filesignalmanager.cpp \
+    plugins/pluginmanager.cpp
 
-INCLUDEPATH += $$PWD/../ $$PWD/../utils/ $$PWD/interfaces/
+INCLUDEPATH += $$PWD/../ $$PWD/../utils/ $$PWD/interfaces/ $$PWD/../dde-file-manager-plugins/plugininterfaces/
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 HELPSHAREDIR = $$PREFIX/share/dman/$$TARGET

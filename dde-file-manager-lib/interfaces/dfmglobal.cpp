@@ -5,7 +5,9 @@
 #include "widgets/singleton.h"
 #include "dialogs/dialogmanager.h"
 #include "app/define.h"
-
+#include "plugins/pluginmanager.h"
+#include "app/filesignalmanager.h"
+#include "shutil/mimesappsmanager.h"
 
 #include <QGuiApplication>
 #include <QClipboard>
@@ -16,6 +18,7 @@
 #include <QProcess>
 #include <QDir>
 #include <QTranslator>
+#include <QTimer>
 
 #include <cstdio>
 
@@ -111,6 +114,19 @@ void DFMGlobal::setUrlsToClipboard(const QList<QUrl> &list, DFMGlobal::Clipboard
 void DFMGlobal::clearClipboard()
 {
     qApp->clipboard()->clear();
+}
+
+void DFMGlobal::initPluginManager()
+{
+    PluginManager::instance()->loadPlugin();
+}
+
+void DFMGlobal::initMimesAppsManager()
+{
+    mimeAppsManager;
+    QTimer::singleShot(1000, [](){
+        mimeAppsManager->requestUpdateCache();
+    });
 }
 
 void DFMGlobal::initDialogManager()

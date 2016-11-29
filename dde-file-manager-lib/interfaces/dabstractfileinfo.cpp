@@ -14,6 +14,8 @@
 #include "app/define.h"
 
 #include "widgets/singleton.h"
+#include "plugins/pluginmanager.h"
+#include "dde-file-manager-plugins/plugininterfaces/menu/menuinterface.h"
 
 #include <QDateTime>
 #include <QDebug>
@@ -579,6 +581,14 @@ QList<QIcon> DAbstractFileInfo::additionalIcon() const
 
     if (isShared())
         icons << DFMGlobal::instance()->standardIcon(DFMGlobal::ShareIcon);
+
+
+    foreach (MenuInterface* menuInterface, PluginManager::instance()->getMenuInterfaces()) {
+        QList<QIcon> pluginIcons = menuInterface->additionalIcons(filePath());
+        foreach (const QIcon &icon, pluginIcons) {
+            icons << icon;
+        }
+    }
 
     return icons;
 }

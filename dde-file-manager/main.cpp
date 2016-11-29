@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
         if (!isBackendRun){
             fileManagerApp->show(commandlineUrl);
         }else{
-            fileManagerApp->runCacheTask();
+            fileManagerApp;
         }
 
         if(isShowPropertyRequest){

@@ -35,6 +35,12 @@ public:
     static DFileMenu *createToolBarSettingsMenu(const QSet<MenuAction> &disableList = QSet<MenuAction>());
     static DFileMenu *createToolBarSortMenu(const QSet<MenuAction> &disableList = QSet<MenuAction>());
     static DFileMenu *createListViewHeaderMenu(const QSet<MenuAction> &disableList = QSet<MenuAction>());
+
+    static DFileMenu *createNormalMenu(const DUrl &currentUrl, const DUrlList &urlList, QSet<MenuAction> disableList, QSet<MenuAction> unusedList, int windowId);
+
+    static void loadNormalPluginMenu(DFileMenu* menu, const DUrlList &urlList);
+    static void loadEmptyPluginMenu(DFileMenu* menu);
+
     static QString checkDuplicateName(const QString &name);
     static QSet<MenuAction> getDisableActionList(const DUrl &fileUrl);
     static QSet<MenuAction> getDisableActionList(const DUrlList &urlList);
@@ -53,6 +59,8 @@ public:
     static void setActionBlacklist(const QSet<MenuAction> &actionList);
     static QSet<MenuAction> actionBlacklist();
     static bool isAvailableAction(MenuAction action);
+
+    static DAction* qActionToDAction(QAction* action, DAction* parentAction=NULL, DMenu* dMenu=NULL);
 
 public slots:
     void actionTriggered(DAction * action);
