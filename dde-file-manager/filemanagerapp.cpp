@@ -117,17 +117,31 @@ void FileManagerApp::showPropertyDialog(const QStringList paths)
 {
     DUrlList urlList;
     foreach (QString path, paths) {
-        if(path.endsWith("/")){
-            path = path.mid(0,path.length()-1);
+        DUrl url = DUrl::fromUserInput(path);
+
+        if (!url.scheme().isEmpty()){
+            if(url.scheme() == FILE_SCHEME && !QFile::exists(url.path()))
+                continue;
+            if(url == DUrl::fromTrashFile("/")){
+                DFMEvent event;
+                event << url;
+                DUrlList urls;
+                urls << url;
+                event << urls;
+                emit fileSignalManager->requestShowTrashPropertyDialog(event);
+                continue;
+            }
+        }else{
+            if(!QFile::exists(DUrl::fromLocalFile(path).path()))
+                continue;
         }
-        DUrl url = DUrl::fromLocalFile(path);
-        if(url.isValid() && QFile::exists(url.path()))
-            urlList << url;
+        urlList << url;
     }
     if(urlList.isEmpty())
         return;
     DFMEvent event;
     event << urlList.first();
     event << urlList;
+
     emit fileSignalManager->requestShowPropertyDialog(event);
 }
