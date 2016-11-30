@@ -8,9 +8,12 @@ unix {
     }
 
     isEmpty(LIB_INSTALL_DIR) {
-        PLUGINDIR = ../dde-file-manager-plugins
+        CONFIG(debug, debug|release) {
+            PLUGINDIR = ../dde-file-manager-plugins
+        }
     } else {
         PLUGINDIR = $$LIB_INSTALL_DIR/$$ProjectName/plugins
     }
+
     DEFINES += PLUGINDIR=\\\"$$PLUGINDIR\\\"
 }
