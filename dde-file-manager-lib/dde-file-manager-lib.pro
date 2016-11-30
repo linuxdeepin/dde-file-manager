@@ -311,7 +311,7 @@ win32* {
 }
 
 isEmpty(LIB_INSTALL_DIR) {
-    target.path = $$PREFIX/lib
+    target.path = $$[QT_INSTALL_LIBS]
 } else {
     target.path = $$LIB_INSTALL_DIR
 }
