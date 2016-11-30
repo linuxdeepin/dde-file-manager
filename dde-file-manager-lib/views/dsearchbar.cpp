@@ -1,7 +1,6 @@
 #include "dsearchbar.h"
 
 #include "windowmanager.h"
-#include "deditorwidgetmenu.h"
 
 #include "controllers/searchhistroymanager.h"
 
@@ -10,8 +9,6 @@
 #include "dfmevent.h"
 
 #include "widgets/singleton.h"
-
-#include <dscrollbar.h>
 
 #include <QDirModel>
 #include <QLabel>
@@ -68,12 +65,7 @@ void DSearchBar::initUI()
     setClearAction();
 
     m_list->installEventFilter(this);
-    m_list->setVerticalScrollBar(new DScrollBar);
     m_list->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
-    m_list->verticalScrollBar()->setContextMenuPolicy(Qt::NoContextMenu);
-
-    Q_UNUSED(new DEditorWidgetMenu(this))
 }
 
 QStringList DSearchBar::splitPath(const QString &path)

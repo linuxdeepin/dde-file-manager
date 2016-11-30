@@ -23,8 +23,6 @@
 #include "dfileview.h"
 #include "dtoolbar.h"
 
-#include <dscrollbar.h>
-
 #include <QVBoxLayout>
 #include <QButtonGroup>
 #include <QStandardPaths>
@@ -96,22 +94,19 @@ void DLeftSideBar::initConnect()
 void DLeftSideBar::initNav()
 {
     m_nav = new QFrame;
-    m_nav->setStyleSheet("border:0px solid red");
+    m_nav->setStyleSheet("QFrame{border:0px solid red}");
     m_nav->setFocusPolicy(Qt::NoFocus);
     m_nav->setFixedWidth(200);
     QVBoxLayout* navLayout = new QVBoxLayout;
 
     m_view = new QGraphicsView;
     m_view->setAcceptDrops(true);
-    m_view->setVerticalScrollBar(new DScrollBar);
     m_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_view->setObjectName("Bookmark");
     m_view->setAlignment(Qt::AlignTop);
     m_scene = new DBookmarkScene(this);
     m_scene->setSceneRect(10, 10, 200, 500);
     m_view->setScene(m_scene);
-
-    m_view->verticalScrollBar()->setContextMenuPolicy(Qt::NoContextMenu);
 
     foreach (QString key, m_nameList) {
         if (key == "Separator"){

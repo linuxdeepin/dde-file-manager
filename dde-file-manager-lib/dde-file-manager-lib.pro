@@ -148,7 +148,6 @@ HEADERS += \
     dialogs/openwithotherdialog.h \
     dialogs/trashpropertydialog.h \
     views/dbookmarkmountedindicatoritem.h \
-    views/deditorwidgetmenu.h \
     controllers/jobcontroller.h \
     shutil/filessizeworker.h \
     views/computerview.h \
@@ -261,7 +260,6 @@ SOURCES += \
     dialogs/openwithotherdialog.cpp \
     dialogs/trashpropertydialog.cpp \
     views/dbookmarkmountedindicatoritem.cpp \
-    views/deditorwidgetmenu.cpp \
     controllers/jobcontroller.cpp \
     shutil/filessizeworker.cpp \
     views/computerview.cpp \

@@ -12,8 +12,6 @@
 #include "shutil/filessizeworker.h"
 #include "shutil/fileutils.h"
 
-#include "views/deditorwidgetmenu.h"
-
 #include "dialogs/dialogmanager.h"
 
 #include "deviceinfo/udisklistener.h"
@@ -28,7 +26,6 @@
 #include "views/dfileview.h"
 #include "interfaces/dfilesystemmodel.h"
 
-#include <dscrollbar.h>
 #include <dexpandgroup.h>
 #include <dseparatorhorizontal.h>
 #include <darrowlineexpand.h>
@@ -60,7 +57,6 @@ NameTextEdit::NameTextEdit(const QString &text, QWidget *parent):
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setFrameShape(QFrame::NoFrame);
     setFixedSize(200, 60);
-    Q_UNUSED(new DEditorWidgetMenu(this))
 
     connect(this, &QTextEdit::textChanged, this, [this] {
         QSignalBlocker blocker(this);
@@ -663,7 +659,6 @@ QListWidget *PropertyDialog::createOpenWithListWidget(const DAbstractFileInfoPoi
     QListWidget* listWidget = new QListWidget(this);
     m_OpenWithButtonGroup = new QButtonGroup(listWidget);
     listWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    listWidget->setVerticalScrollBar(new DScrollBar);
 
     QString path = info->absoluteFilePath();
     QMimeType mimeType = mimeAppsManager->getMimeType(path);

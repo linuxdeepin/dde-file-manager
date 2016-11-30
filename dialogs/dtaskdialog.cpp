@@ -8,8 +8,6 @@
 #include <QDesktopWidget>
 #include <QCloseEvent>
 
-#include <dscrollbar.h>
-
 #include "xutil.h"
 
 MoveCopyTaskWidget::MoveCopyTaskWidget(const QMap<QString, QString> &jobDetail, QWidget *parent):
@@ -328,7 +326,6 @@ void DTaskDialog::initUI(){
     lineLabel->setObjectName("LineLabel");
 
     m_taskListWidget = new QListWidget;
-    m_taskListWidget->setVerticalScrollBar(new DScrollBar);
     m_taskListWidget->setSelectionMode(QListWidget::NoSelection);
 
     QFrame* titleFrame = new QFrame;

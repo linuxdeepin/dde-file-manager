@@ -9,7 +9,6 @@
 #include <QPushButton>
 #include <QLabel>
 
-#include <dscrollbar.h>
 #include <dthememanager.h>
 
 #include "app/define.h"
@@ -71,7 +70,6 @@ QListWidget *OpenWithOtherDialog::createOpenWithListWidget(const DAbstractFileIn
     QListWidget* listWidget = new QListWidget;
     m_OpenWithButtonGroup = new QButtonGroup(listWidget);
     listWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    listWidget->setVerticalScrollBar(new DScrollBar);
 
     QString path = info->absoluteFilePath();
     QMimeType mimeType = mimeAppsManager->getMimeType(path);

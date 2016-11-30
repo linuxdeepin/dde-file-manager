@@ -33,7 +33,6 @@
 
 #include <ddialog.h>
 #include <DAboutDialog>
-#include <dscrollbar.h>
 #include <dexpandgroup.h>
 
 #include <QTimer>

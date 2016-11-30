@@ -22,7 +22,7 @@
 
 namespace DFileMenuData {
 static QMap<MenuAction, QString> actionKeys;
-static QMap<MenuAction, DAction*> actions;
+static QMap<MenuAction, QAction*> actions;
 static QVector<MenuAction> sortActionTypes;
 static QSet<MenuAction> whitelist;
 static QSet<MenuAction> blacklist;
@@ -247,7 +247,7 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
         menu = DFileMenuManager::genereteMenuByKeys(actions, disableList, true, subActions);
 
 
-        DAction *openWithAction = menu->actionAt(DFileMenuManager::getActionString(DFMGlobal::OpenWith));
+        QAction *openWithAction = menu->actionAt(DFileMenuManager::getActionString(DFMGlobal::OpenWith));
         DFileMenu* openWithMenu = openWithAction ? qobject_cast<DFileMenu*>(openWithAction->menu()) : Q_NULLPTR;
 
         if (openWithMenu) {
@@ -264,14 +264,14 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
             }
 
             foreach (QString app, recommendApps) {
-                DAction* action = new DAction(mimeAppsManager->DesktopObjs.value(app).getLocalName(), 0);
+                QAction* action = new QAction(mimeAppsManager->DesktopObjs.value(app).getLocalName(), 0);
                 action->setProperty("app", app);
                 action->setProperty("url", info->fileUrl());
                 openWithMenu->addAction(action);
-                connect(action, &DAction::triggered, appController, &AppController::actionOpenFileByApp);
+                connect(action, &QAction::triggered, appController, &AppController::actionOpenFileByApp);
             }
 
-            DAction* action = new DAction(fileMenuManger->getActionString(MenuAction::OpenWithCustom), 0);
+            QAction* action = new QAction(fileMenuManger->getActionString(MenuAction::OpenWithCustom), 0);
             action->setData((int)MenuAction::OpenWithCustom);
             openWithMenu->addAction(action);
 
@@ -327,12 +327,12 @@ void DFileMenuManager::loadNormalPluginMenu(DFileMenu *menu, const DUrlList &url
         files << url.toString();
     }
 
-    DAction* lastAction = menu->actionAt(menu->actionList().count() - 1);
+    QAction* lastAction = menu->actions().last();
 
     foreach (MenuInterface* menuInterface, PluginManager::instance()->getMenuInterfaces()) {
         QList<QAction *> actions = menuInterface->additionalMenu(files);
         foreach (QAction* action, actions) {
-            DAction* dAction  = qActionToDAction(action);
+            QAction* dAction  = qActionToDAction(action);
             menu->insertAction(lastAction, dAction);
         }
     }
@@ -340,12 +340,12 @@ void DFileMenuManager::loadNormalPluginMenu(DFileMenu *menu, const DUrlList &url
 
 void DFileMenuManager::loadEmptyPluginMenu(DFileMenu *menu)
 {
-    DAction* lastAction = menu->actionAt(menu->actionList().count() - 1);
+    QAction* lastAction = menu->actions().last();
 
     foreach (MenuInterface* menuInterface, PluginManager::instance()->getMenuInterfaces()) {
         QList<QAction *> actions = menuInterface->additionalEmptyMenu();
         foreach (QAction* action, actions) {
-            DAction* dAction  = qActionToDAction(action);
+            QAction* dAction  = qActionToDAction(action);
             menu->insertAction(lastAction, dAction);
         }
     }
@@ -455,7 +455,7 @@ void DFileMenuData::initData()
 void DFileMenuData::initActions()
 {
     foreach (MenuAction key, actionKeys.keys()) {
-        DAction* action = new DAction(actionKeys.value(key), 0);
+        QAction* action = new QAction(actionKeys.value(key), 0);
         action->setData(key);
         actions.insert(key, action);
     }
@@ -482,7 +482,7 @@ DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
         if (key == MenuAction::Separator){
             menu->addSeparator();
         }else{
-            DAction *action = DFileMenuData::actions.value(key);
+            QAction *action = DFileMenuData::actions.value(key);
 
             if(!action)
                 continue;
@@ -497,7 +497,7 @@ DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
 
             DFileMenu *subMenu = genereteMenuByKeys(subMenuList.value(key), disableList, checkable);
 
-            subMenu->setParent(action);
+//            subMenu->setParent(action);
             action->setMenu(subMenu);
         }
     }
@@ -548,18 +548,17 @@ bool DFileMenuManager::isAvailableAction(MenuAction action)
     return DFileMenuData::whitelist.contains(action) && !DFileMenuData::blacklist.contains(action);
 }
 
-DAction *DFileMenuManager::qActionToDAction(QAction* action, DAction *parentAction, DMenu *dMenu)
+QAction *DFileMenuManager::qActionToDAction(QAction* action, QAction *parentAction, QMenu *dMenu)
 {
-    DAction* dAction  = new DAction(action->icon(), action->text(), action->parent());
-    connect(dAction, &DAction::triggered, action, &QAction::triggered);
+    QAction* dAction  = new QAction(action->icon(), action->text(), action->parent());
+    connect(dAction, &QAction::triggered, action, &QAction::triggered);
     if (dMenu){
         dMenu->addAction(dAction);
-        dMenu->setParent(parentAction);
         parentAction->setMenu(dMenu);
     }
     QMenu* menu = action->menu();
     if (menu){
-        dMenu = new DMenu;
+        dMenu = new QMenu;
         foreach (QAction* childAction, menu->actions()) {
             qActionToDAction(childAction, dAction, dMenu);
         }
@@ -567,7 +566,7 @@ DAction *DFileMenuManager::qActionToDAction(QAction* action, DAction *parentActi
     return dAction;
 }
 
-void DFileMenuManager::actionTriggered(DAction *action)
+void DFileMenuManager::actionTriggered(QAction *action)
 {
     DFileMenu *menu = qobject_cast<DFileMenu *>(sender());
     DFMEvent event = menu->event();

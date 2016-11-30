@@ -2,6 +2,7 @@
 #define DFILEVIEW_H
 
 #include "dfmglobal.h"
+#include "durl.h"
 
 #include <dlistview.h>
 
@@ -14,13 +15,8 @@ class QHeaderView;
 class QTimer;
 QT_END_NAMESPACE
 
-DWIDGET_BEGIN_NAMESPACE
-class DAction;
-DWIDGET_END_NAMESPACE
-
 DWIDGET_USE_NAMESPACE
 
-class DUrl;
 class FileController;
 class DFileMenuManager;
 class DFileSystemModel;
