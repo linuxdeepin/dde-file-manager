@@ -3,9 +3,9 @@ unix {
     PREFIX = /usr
     APPSHAREDIR = $$PREFIX/share/$$ProjectName
 
-#    CONFIG(release, debug|release) {
-#        LIB_INSTALL_DIR = /usr/lib/x86_64-linux-gnu
-#    }
+    CONFIG(release, debug|release) {
+        LIB_INSTALL_DIR = $$[QT_INSTALL_LIBS]
+    }
 
     isEmpty(LIB_INSTALL_DIR) {
         PLUGINDIR = ../dde-file-manager-plugins
