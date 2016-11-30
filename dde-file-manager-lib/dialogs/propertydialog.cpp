@@ -224,6 +224,10 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget* p
         m_expandGroup->expand(0)->setExpand(true);
     }else{
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(m_url);
+        if(!fileInfo){
+            close();
+            return;
+        }
         m_icon->setPixmap(fileInfo->fileIcon().pixmap(160, 160));
         m_edit->setPlainText(fileInfo->fileDisplayName());
         m_edit->setAlignment(Qt::AlignHCenter);
