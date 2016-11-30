@@ -31,7 +31,6 @@
 #include "widgets/singleton.h"
 
 #include "../deviceinfo/udisklistener.h"
-#include <DAction>
 
 #include <QProcess>
 #include <QStorageInfo>
@@ -578,7 +577,7 @@ void AppController::actionForgetPassword(const DFMEvent &event)
 
 void AppController::actionOpenFileByApp()
 {
-    DAction* dAction = static_cast<DAction*>(sender());
+    QAction* dAction = static_cast<QAction*>(sender());
     QString app = dAction->property("app").toString();
     DUrl fileUrl(dAction->property("url").toUrl());
     fileService->openFileByApp(fileUrl, app);

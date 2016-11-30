@@ -29,7 +29,6 @@
 #include "widgets/singleton.h"
 #include "interfaces/dfilemenumanager.h"
 #include <dthememanager.h>
-#include <dscrollbar.h>
 #include <anchors.h>
 
 #include <QLineEdit>
@@ -39,6 +38,7 @@
 #include <QContextMenuEvent>
 #include <QHeaderView>
 #include <QMimeData>
+#include <QScrollBar>
 
 DWIDGET_USE_NAMESPACE
 
@@ -678,7 +678,7 @@ void DFileView::setFilters(QDir::Filters filters)
 
 void DFileView::dislpayAsActionTriggered(QAction *action)
 {
-    DAction* dAction = static_cast<DAction*>(action);
+    QAction* dAction = static_cast<QAction*>(action);
     dAction->setChecked(true);
     MenuAction type = (MenuAction)dAction->data().toInt();
 
@@ -709,14 +709,14 @@ void DFileView::sortByActionTriggered(QAction *action)
 {
     D_DC(DFileView);
 
-    DAction* dAction = static_cast<DAction*>(action);
+    QAction* dAction = static_cast<QAction*>(action);
 
     sortByColumn(d->sortByActionGroup->actions().indexOf(dAction));
 }
 
 void DFileView::openWithActionTriggered(QAction *action)
 {
-    DAction* dAction = static_cast<DAction*>(action);
+    QAction* dAction = static_cast<QAction*>(action);
     QString app = dAction->property("app").toString();
     DUrl fileUrl(dAction->property("url").toUrl());
     fileService->openFileByApp(fileUrl, app);
@@ -1531,9 +1531,6 @@ void DFileView::initUI()
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setEditTriggers(QListView::EditKeyPressed | QListView::SelectedClicked);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setVerticalScrollBar(new DScrollBar);
-
-    verticalScrollBar()->setContextMenuPolicy(Qt::NoContextMenu);
 
     DListView::setSelectionRectVisible(false);
 
@@ -1963,7 +1960,7 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
         disableList << MenuAction::SelectAll;
 
     DFileMenu *menu = DFileMenuManager::genereteMenuByKeys(actions, disableList, true, subActions);
-    DAction *tmp_action = menu->actionAt(fileMenuManger->getActionString(MenuAction::DisplayAs));
+    QAction *tmp_action = menu->actionAt(fileMenuManger->getActionString(MenuAction::DisplayAs));
     DFileMenu *displayAsSubMenu = static_cast<DFileMenu*>(tmp_action ? tmp_action->menu() : Q_NULLPTR);
     tmp_action = menu->actionAt(fileMenuManger->getActionString(MenuAction::SortBy));
     DFileMenu *sortBySubMenu = static_cast<DFileMenu*>(tmp_action ? tmp_action->menu() : Q_NULLPTR);
@@ -1973,7 +1970,7 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
     }
 
     if (displayAsSubMenu) {
-        foreach (DAction* action, displayAsSubMenu->actionList()) {
+        foreach (QAction* action, displayAsSubMenu->actions()) {
             action->setActionGroup(d->displayAsActionGroup);
         }
 
@@ -1996,12 +1993,12 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
     }
 
     if (sortBySubMenu){
-        foreach (DAction* action, sortBySubMenu->actionList()) {
+        foreach (QAction* action, sortBySubMenu->actions()) {
             action->setActionGroup(d->sortByActionGroup);
             action->setChecked(false);
         }
 
-        DAction *action = sortBySubMenu->actionAt(model()->sortColumn());
+        QAction *action = sortBySubMenu->actionAt(model()->sortColumn());
 
         if (action)
             action->setChecked(true);
@@ -2023,8 +2020,6 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
     event << windowId();
     event << DFMEvent::FileView;
     menu->setEvent(event);
-
-
     menu->exec();
     menu->deleteLater();
 }
@@ -2166,16 +2161,16 @@ void DFileView::popupHeaderViewContextMenu(const QPoint &/*pos*/)
 {
     D_D(DFileView);
 
-    DMenu *menu = new DMenu();
+    QMenu *menu = new QMenu();
 
     for (int i = 1; i < d->headerView->count(); ++i) {
-        DAction *action = new DAction(menu);
+        QAction *action = new QAction(menu);
 
         action->setText(model()->columnNameByRole(model()->columnToRole(i)).toString());
         action->setCheckable(true);
         action->setChecked(!d->headerView->isSectionHidden(i));
 
-        connect(action, &DAction::triggered, this, [this, action, i, d] {
+        connect(action, &QAction::triggered, this, [this, action, i, d] {
             d->columnForRoleHiddenMap[action->text()] = action->isChecked();
 
             d->headerView->setSectionHidden(i, action->isChecked());

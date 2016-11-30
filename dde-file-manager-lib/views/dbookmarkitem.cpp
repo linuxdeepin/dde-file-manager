@@ -7,7 +7,6 @@
 #include "ddragwidget.h"
 #include "ddialog.h"
 #include "dbookmarkmountedindicatoritem.h"
-#include "deditorwidgetmenu.h"
 
 #include <QDebug>
 #include <QDrag>
@@ -104,7 +103,7 @@ void DBookmarkItem::setIsMountedIndicator(bool isMountedIndicator)
 
 void DBookmarkItem::editFinished()
 {
-    if (!m_lineEdit || m_eidtMenu->isVisible())
+    if (!m_lineEdit)
         return;
 
     DFMEvent event;
@@ -512,9 +511,6 @@ DBookmarkMountedIndicatorItem *DBookmarkItem::makeMountBookmark(DBookmarkItem *p
 void DBookmarkItem::editMode()
 {
     m_lineEdit = new QLineEdit;
-//    m_lineEdit->setContextMenuPolicy(Qt::NoContextMenu);
-
-    m_eidtMenu = new DEditorWidgetMenu(m_lineEdit);
 
     connect(m_lineEdit, &QLineEdit::editingFinished, this, &DBookmarkItem::editFinished);
     m_widget = scene()->addWidget(m_lineEdit);
@@ -759,7 +755,7 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 
     QPointer<DBookmarkItem> me = this;
 
-    if (menu && !menu->actionList().isEmpty()) {
+    if (menu && !menu->actions().isEmpty()) {
         DUrlList urls;
         urls.append(m_url);
 

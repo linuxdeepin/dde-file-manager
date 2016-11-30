@@ -3,13 +3,11 @@
 
 #include "dfmglobal.h"
 
-#include <DAction>
+#include <QAction>
 
 #include <QObject>
 #include <QMap>
 #include <QSet>
-
-DWIDGET_USE_NAMESPACE
 
 class DFileMenu;
 class DUrl;
@@ -60,10 +58,10 @@ public:
     static QSet<MenuAction> actionBlacklist();
     static bool isAvailableAction(MenuAction action);
 
-    static DAction* qActionToDAction(QAction* action, DAction* parentAction=NULL, DMenu* dMenu=NULL);
+    static QAction* qActionToDAction(QAction* action, QAction* parentAction=NULL, QMenu* dMenu=NULL);
 
 public slots:
-    void actionTriggered(DAction * action);
+    void actionTriggered(QAction * action);
 };
 
 #endif // FILEMENUMANAGER_H

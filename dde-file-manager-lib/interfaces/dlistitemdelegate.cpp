@@ -10,7 +10,6 @@
 #include "dlistitemdelegate.h"
 #include "dfileviewhelper.h"
 #include "app/define.h"
-#include "views/deditorwidgetmenu.h"
 #include "dfilesystemmodel.h"
 #include "private/dstyleditemdelegate_p.h"
 
@@ -259,8 +258,6 @@ QWidget *DListItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
     edit->setFrame(false);
     edit->setAttribute(Qt::WA_TranslucentBackground);
     edit->setContentsMargins(0, 0, 0, 0);
-
-    Q_UNUSED(new DEditorWidgetMenu(edit))
 
     return edit;
 }

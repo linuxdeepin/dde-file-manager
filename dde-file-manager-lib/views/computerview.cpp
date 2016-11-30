@@ -15,7 +15,6 @@
 #include "shutil/standardpath.h"
 #include "widgets/singleton.h"
 
-#include <dscrollbar.h>
 #include <dslider.h>
 
 #include <QVBoxLayout>
@@ -347,9 +346,6 @@ void ComputerView::initUI()
     setLayout(mainLayout);
 
     m_contentArea->setWidget(contentFrame);
-    m_contentArea->setVerticalScrollBar(new DScrollBar);
-
-    m_contentArea->verticalScrollBar()->setContextMenuPolicy(Qt::NoContextMenu);
 
     loadSystemItems();
 

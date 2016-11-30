@@ -43,7 +43,6 @@ void OpenWithDialog::initUI()
     setTitle(tr("Open with"));
     m_listWidget = new QListWidget;
     m_listWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-//    m_listWidget->setVerticalScrollBar(new DScrollBar);
 
     m_cancelButton = new QPushButton(tr("Cancel"));
     m_chooseButton = new QPushButton(tr("Choose"));

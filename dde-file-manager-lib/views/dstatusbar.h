@@ -37,7 +37,7 @@ public:
     void setMode(Mode mode);
     void setComBoxItems(const QStringList &filters);
 
-    DSlider* scalingSlider() const;
+    QSlider* scalingSlider() const;
     QPushButton *acceptButton() const;
     QPushButton *rejectButton() const;
     QLineEdit *lineEdit() const;
@@ -65,7 +65,7 @@ private:
     QHBoxLayout * m_layout;
     QLabel * m_label = Q_NULLPTR;
     DPictureSequenceView* m_loadingIndicator;
-    DSlider* m_scaleSlider;
+    QSlider* m_scaleSlider;
 
     QPushButton *m_acceptButton = Q_NULLPTR;
     QPushButton *m_rejectButton = Q_NULLPTR;

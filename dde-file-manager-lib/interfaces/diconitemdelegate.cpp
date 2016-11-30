@@ -1,7 +1,6 @@
 #include "diconitemdelegate.h"
 #include "dfileviewhelper.h"
 #include "views/fileitem.h"
-#include "views/deditorwidgetmenu.h"
 #include "private/dstyleditemdelegate_p.h"
 
 #include "dfilesystemmodel.h"
@@ -349,8 +348,6 @@ QWidget *DIconItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
     connect(item, &FileIconItem::destroyed, this, [this, d] {
         d->editingIndex = QModelIndex();
     });
-
-    Q_UNUSED(new DEditorWidgetMenu(item->edit))
 
     return item;
 }
