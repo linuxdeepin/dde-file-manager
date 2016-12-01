@@ -135,6 +135,9 @@ void FileManagerApp::showPropertyDialog(const QStringList paths)
             if(!QFile::exists(DUrl::fromLocalFile(path).path()))
                 continue;
         }
+
+        if(urlList.contains(url))
+            continue;
         urlList << url;
     }
     if(urlList.isEmpty())
