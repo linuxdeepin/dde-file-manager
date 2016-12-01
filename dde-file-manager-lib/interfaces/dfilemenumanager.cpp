@@ -487,7 +487,6 @@ DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
             if(!action)
                 continue;
 
-            action->setCheckable(true);
             action->setDisabled(disableList.contains(key));
 
             menu->addAction(action);
