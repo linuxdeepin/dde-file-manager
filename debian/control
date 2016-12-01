@@ -20,7 +20,7 @@ Description: File manager front end of Deepin OS
 
 Package: libdde-file-manager
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, libdtkbase (>=0.1.7), libdtkutil (>=0.1.7), libdtkwidget (>=0.1.7), libpoppler-cpp0v5 (>= 0.48.0)
 Breaks: dde-file-manager(<=1.2.3-3)
 Multi-Arch: same
 Description: DDE File Manager library
