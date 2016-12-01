@@ -420,6 +420,10 @@ QRect DFileView::visualRect(const QModelIndex &index) const
     } else {
         int item_width = item_size.width() + ICON_VIEW_SPACING * 2;
         int column_count = (width() - ICON_VIEW_SPACING * 2.9) / item_width;
+
+        if (column_count == 0)
+            return rect;
+
         int column_index = index.row() % column_count;
         int row_index = index.row() / column_count;
 
@@ -1972,6 +1976,8 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
     if (displayAsSubMenu) {
         foreach (QAction* action, displayAsSubMenu->actions()) {
             action->setActionGroup(d->displayAsActionGroup);
+            action->setCheckable(true);
+            action->setChecked(false);
         }
 
         QAction *currentViewModeAction = 0;
@@ -1995,6 +2001,7 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
     if (sortBySubMenu){
         foreach (QAction* action, sortBySubMenu->actions()) {
             action->setActionGroup(d->sortByActionGroup);
+            action->setCheckable(true);
             action->setChecked(false);
         }
 
