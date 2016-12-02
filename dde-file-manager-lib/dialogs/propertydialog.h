@@ -10,6 +10,7 @@
 #include <QTextEdit>
 #include <QStackedWidget>
 #include <QPushButton>
+#define EXTEND_FRAME_MAXHEIGHT 150
 
 QT_BEGIN_NAMESPACE
 class QFrame;
@@ -99,6 +100,9 @@ public:
     qint64 getFileSize();
 
     DExpandGroup *expandGroup() const;
+    int contentHeight() const;
+    
+    void loadPluginExpandWidgets();
 
 public slots:
     void raise();
