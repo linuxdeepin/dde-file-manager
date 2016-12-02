@@ -36,8 +36,15 @@ public:
 
     static DFileMenu *createNormalMenu(const DUrl &currentUrl, const DUrlList &urlList, QSet<MenuAction> disableList, QSet<MenuAction> unusedList, int windowId);
 
-    static void loadNormalPluginMenu(DFileMenu* menu, const DUrlList &urlList);
-    static void loadEmptyPluginMenu(DFileMenu* menu);
+    static QList<QAction*> loadNormalPluginMenu(DFileMenu* menu, const DUrlList &urlList, const DUrl& currentUrl);
+    static QList<QAction*> loadNormalExtensionMenu(DFileMenu* menu, const DUrlList &urlList, const DUrl& currentUrl);
+
+    static QList<QAction*> loadEmptyAreaPluginMenu(DFileMenu* menu, const DUrl& currentUrl);
+    static QList<QAction*> loadEmptyAreaExtensionMenu(DFileMenu* menu, const DUrl& currentUrl);
+
+    static QList<QAction*> loadMenuExtemsionActions(const DUrlList &urlList, const DUrl& currentUrl);
+    static QList<QAction*> jsonToActions(const QJsonArray& data, const DUrlList &urlList, const DUrl& currentUrl, const QString& menuExtensionType);
+
 
     static QString checkDuplicateName(const QString &name);
     static QSet<MenuAction> getDisableActionList(const DUrl &fileUrl);
@@ -58,7 +65,7 @@ public:
     static QSet<MenuAction> actionBlacklist();
     static bool isAvailableAction(MenuAction action);
 
-    static QAction* qActionToDAction(QAction* action, QAction* parentAction=NULL, QMenu* dMenu=NULL);
+    static QList<QMap<QString, QString>> ExtensionMenuItems;
 
 public slots:
     void actionTriggered(QAction * action);

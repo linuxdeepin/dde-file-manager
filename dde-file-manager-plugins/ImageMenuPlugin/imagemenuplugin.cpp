@@ -19,7 +19,7 @@ QList<QIcon> ImageMenuPlugin::additionalIcons(const QString &file)
     return icons;
 }
 
-QList<QAction *> ImageMenuPlugin::additionalMenu(const QStringList &files)
+QList<QAction *> ImageMenuPlugin::additionalMenu(const QStringList &files, const QString& currentDir)
 {
     QList<QAction *> actions;
     QAction* formatAction = new QAction(tr("Format convert"), this);
@@ -63,7 +63,7 @@ QList<QAction *> ImageMenuPlugin::additionalMenu(const QStringList &files)
     return actions;
 }
 
-QList<QAction *> ImageMenuPlugin::additionalEmptyMenu()
+QList<QAction *> ImageMenuPlugin::additionalEmptyMenu(const QString &currentDir)
 {
     QList<QAction *> actions;
     QAction* formatAction = new QAction(tr("dssdds"), this);

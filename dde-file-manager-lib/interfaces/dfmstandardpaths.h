@@ -10,10 +10,13 @@ public:
         TrashPath,
         TrashFilesPath,
         TrashInfosPath,
-        TranslationPath
+        TranslationPath,
+        ApplicationConfigPath
     };
 
     static QString standardLocation(StandardLocation type);
+
+    static QString getConfigPath();
 
 private:
     DFMStandardPaths();

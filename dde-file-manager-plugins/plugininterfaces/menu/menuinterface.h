@@ -17,13 +17,15 @@ public:
         return icons;
     }
 
-    virtual QList<QAction*> additionalMenu(const QStringList &files){
+    virtual QList<QAction*> additionalMenu(const QStringList &files, const QString& currentDir){
         Q_UNUSED(files)
+        Q_UNUSED(currentDir)
         QList<QAction*> actions;
         return actions;
     }
 
-    virtual QList<QAction*> additionalEmptyMenu(){
+    virtual QList<QAction*> additionalEmptyMenu(const QString &currentDir){
+        Q_UNUSED(currentDir)
         QList<QAction*> actions;
         return actions;
     }

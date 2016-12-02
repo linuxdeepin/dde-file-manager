@@ -51,6 +51,10 @@ class DFMGlobalPrivate : public DFMGlobal {};
 Q_GLOBAL_STATIC(DFMGlobalPrivate, dfmGlobal);
 }
 
+
+QStringList DFMGlobal::PluginLibraryPaths;
+QStringList DFMGlobal::MenuExtensionPaths;
+
 DFMGlobal *DFMGlobal::instance()
 {
     return GlobalData::dfmGlobal;
@@ -116,9 +120,47 @@ void DFMGlobal::clearClipboard()
     qApp->clipboard()->clear();
 }
 
+void DFMGlobal::addPluginLibraryPath(const QString &path)
+{
+    PluginLibraryPaths.append(path);
+    refreshPlugins();
+}
+
+void DFMGlobal::addPluginLibraryPaths(const QStringList &paths)
+{
+    foreach (QString path, paths) {
+        PluginLibraryPaths.append(path);
+    }
+    refreshPlugins();
+}
+
+void DFMGlobal::addMenuExtensionPath(const QString &path)
+{
+    MenuExtensionPaths.append(path);
+}
+
+void DFMGlobal::addMenuExtensionPaths(const QStringList &paths)
+{
+    foreach (QString path, paths) {
+        MenuExtensionPaths.append(path);
+    }
+}
+
+void DFMGlobal::autoLoadDefaultPlugins()
+{
+    addPluginLibraryPath(PluginManager::PluginDir());
+}
+
+void DFMGlobal::autoLoadDefaultMenuExtensions()
+{
+    QString configPath = DFMStandardPaths::standardLocation(DFMStandardPaths::ApplicationConfigPath);
+    QString menuExtensionPath = QString("%1/%2").arg(configPath, "menuextensions");
+    DFMGlobal::addMenuExtensionPath(menuExtensionPath);
+}
+
 void DFMGlobal::initPluginManager()
 {
-    PluginManager::instance()->loadPlugin();
+    refreshPlugins();
 }
 
 void DFMGlobal::initMimesAppsManager()
@@ -176,6 +218,11 @@ void DFMGlobal::onClipboardDataChanged()
     GlobalData::onClipboardDataChanged();
 
     emit clipboardDataChanged();
+}
+
+void DFMGlobal::refreshPlugins()
+{
+    PluginManager::instance()->loadPlugin();
 }
 
 QString DFMGlobal::wordWrapText(const QString &text, int width, QTextOption::WrapMode wrapMode, int *height)
