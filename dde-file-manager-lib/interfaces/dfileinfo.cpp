@@ -93,6 +93,9 @@ QString DFileInfo::fileName() const
 {
     Q_D(const DFileInfo);
 
+    if (d->fileInfo.absoluteFilePath().endsWith(QDir::separator()))
+        return QFileInfo(d->fileInfo.absolutePath()).fileName();
+
     return d->fileInfo.fileName();
 }
 
