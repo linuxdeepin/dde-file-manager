@@ -6,7 +6,7 @@
 
 class MenuInterface;
 class PluginManager;
-
+class PropertyDialogExpandInfoInterface;
 
 class PluginManagerPrivate {
 
@@ -14,6 +14,7 @@ public:
     PluginManagerPrivate(PluginManager* parent);
 
     QList<MenuInterface*> menuInterfaces;
+    QList<PropertyDialogExpandInfoInterface*> expandInfoInterfaces;
 
 private:
     PluginManager* q_ptr=NULL;
@@ -37,6 +38,7 @@ public:
 
     void loadPlugin();
     QList<MenuInterface*> getMenuInterfaces();
+    QList<PropertyDialogExpandInfoInterface*> getExpandInfoInterfaces();
 
 signals:
 
