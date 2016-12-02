@@ -177,7 +177,10 @@ QString DAbstractFileInfo::fileName() const
 {
     CALL_PROXY(fileName());
 
-    const QString &filePath = this->filePath();
+    QString filePath = this->filePath();
+
+    if (filePath.endsWith(QDir::separator()))
+        filePath.chop(1);
 
     int index = filePath.lastIndexOf(QDir::separator());
 
