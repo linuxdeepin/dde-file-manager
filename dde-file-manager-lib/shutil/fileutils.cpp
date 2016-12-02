@@ -662,3 +662,32 @@ void FileUtils::setDefaultFileManager()
         writeTextFile(mimeAppsListPath, QString::fromStdString(strData));
     }
 }
+
+DFMGlobal::MenuExtension FileUtils::getMenuExtension(const DUrlList &urlList)
+{
+    int fileCount = 0;
+    int dirCount = 0;
+    foreach (DUrl url, urlList) {
+        QFileInfo info(url.toLocalFile());
+        if (info.isDir()){
+            dirCount += 1;
+        }else if (info.isFile()){
+            fileCount += 1;
+        }
+    }
+    if (urlList.count() == 0){
+            return DFMGlobal::MenuExtension::EmptyArea;
+    }else if (fileCount == 1 && dirCount == 0 && fileCount == urlList.count()){
+        return DFMGlobal::MenuExtension::SingleFile;
+    }else if (fileCount > 1 && dirCount == 0 && fileCount == urlList.count()){
+        return DFMGlobal::MenuExtension::MultiFiles;
+    }else if (fileCount == 0 && dirCount == 1 && dirCount == urlList.count()){
+        return DFMGlobal::MenuExtension::SingleDir;
+    }else if (fileCount ==0 && dirCount > 1 && dirCount == urlList.count()){
+        return DFMGlobal::MenuExtension::MultiDirs;
+    }else if (urlList.count() > 1){
+        return DFMGlobal::MenuExtension::MultiFileDirs;
+    }else{
+        return DFMGlobal::MenuExtension::UnknowMenuExtension;
+    }
+}

@@ -1,5 +1,6 @@
 #include "pluginmanager.h"
 #include "menu/menuinterface.h"
+#include "interfaces/dfmglobal.h"
 #include <QDir>
 #include <QPluginLoader>
 #include <QDebug>
@@ -27,23 +28,29 @@ void PluginManager::loadPlugin()
 {
     Q_D(PluginManager);
     QStringList pluginChildDirs;
-    pluginChildDirs << "menu" << "view";
-    QDir pluginsDir(PluginDir());
-    qDebug() << PluginDir();
-    foreach (QString childDir, pluginChildDirs) {
-        QDir childPluginDir(pluginsDir.absoluteFilePath(childDir));
-        qDebug() << "load plugin in: " << childPluginDir.absolutePath();
-        foreach (QString fileName, childPluginDir.entryList(QDir::Files))
-        {
-            QPluginLoader pluginLoader(childPluginDir.absoluteFilePath(fileName));
-            QObject *plugin = pluginLoader.instance();
-            if (plugin)
+    d->menuInterfaces.clear();
+
+    QStringList pluginDirs = DFMGlobal::PluginLibraryPaths;
+
+    foreach (QString dir, pluginDirs) {
+        QDir pluginDir(dir);
+        qDebug() << dir;
+        pluginChildDirs << "menu" << "view";
+        foreach (QString childDir, pluginChildDirs) {
+            QDir childPluginDir(pluginDir.absoluteFilePath(childDir));
+            qDebug() << "load plugin in: " << childPluginDir.absolutePath();
+            foreach (QString fileName, childPluginDir.entryList(QDir::Files))
             {
-                qDebug() << plugin;
-                MenuInterface *menuInterface = qobject_cast<MenuInterface *>(plugin);
-                if (menuInterface)
+                QPluginLoader pluginLoader(childPluginDir.absoluteFilePath(fileName));
+                QObject *plugin = pluginLoader.instance();
+                if (plugin)
                 {
-                    d->menuInterfaces.append(menuInterface);
+                    qDebug() << plugin;
+                    MenuInterface *menuInterface = qobject_cast<MenuInterface *>(plugin);
+                    if (menuInterface)
+                    {
+                        d->menuInterfaces.append(menuInterface);
+                    }
                 }
             }
         }

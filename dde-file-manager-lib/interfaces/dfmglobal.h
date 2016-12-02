@@ -88,6 +88,18 @@ public:
         ShareIcon
     };
 
+    enum MenuExtension {
+        SingleFile,
+        MultiFiles,
+        SingleDir,
+        MultiDirs,
+        MultiFileDirs,
+        EmptyArea,
+        UnknowMenuExtension
+    };
+
+    Q_ENUM(MenuExtension)
+
     enum MenuAction {
         Open,
         OpenDisk,
@@ -159,6 +171,9 @@ public:
 
     static DFMGlobal *instance();
 
+    static QStringList PluginLibraryPaths;
+    static QStringList MenuExtensionPaths;
+
     static QString organizationName();
     static QString applicationName();
     // libdde-file-manager version
@@ -168,10 +183,18 @@ public:
     static void setUrlsToClipboard(const QList<QUrl> &list, DFMGlobal::ClipboardAction action);
     static void clearClipboard();
 
+    static void addPluginLibraryPath(const QString& path);
+    static void addPluginLibraryPaths(const QStringList& paths);
+    static void addMenuExtensionPath(const QString& path);
+    static void addMenuExtensionPaths(const QStringList& paths);
+
+    static void autoLoadDefaultPlugins();
+    static void autoLoadDefaultMenuExtensions();
 
     static void initPluginManager();
     static void initMimesAppsManager();
     static void initDialogManager();
+
 
 
     QList<QUrl> clipboardFileUrlList() const;
@@ -207,6 +230,7 @@ protected:
 
 private:
     void onClipboardDataChanged();
+    static void refreshPlugins();
 };
 
 #endif // DFMGLOBAL_H

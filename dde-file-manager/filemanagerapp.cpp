@@ -19,6 +19,8 @@
 #include "widgets/singleton.h"
 #include "widgets/commandlinemanager.h"
 #include "interfaces/durl.h"
+#include "plugins/pluginmanager.h"
+#include "interfaces/dfmstandardpaths.h"
 
 #if QT_VERSION_MINOR < 6
 #include "xdnd/xdndworkaround.h"
@@ -53,6 +55,12 @@ FileManagerApp::~FileManagerApp()
 
 void FileManagerApp::initApp()
 {
+    /*add menuextensions path*/
+    DFMGlobal::autoLoadDefaultMenuExtensions();
+
+    /*add plugin path*/
+    DFMGlobal::autoLoadDefaultPlugins();
+
     /*init plugin manager */
     DFMGlobal::initPluginManager();
 

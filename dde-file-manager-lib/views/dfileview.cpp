@@ -2012,7 +2012,8 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
     }
 
 
-    DFileMenuManager::loadEmptyPluginMenu(menu);
+    DFileMenuManager::loadEmptyAreaPluginMenu(menu, rootUrl());
+    DFileMenuManager::loadEmptyAreaExtensionMenu(menu, rootUrl());
 
     if (!menu){
         return;

@@ -14,10 +14,16 @@
 #include "controllers/pathmanager.h"
 #include "plugins/pluginmanager.h"
 #include "dde-file-manager-plugins/plugininterfaces/menu/menuinterface.h"
-
+#include "dfmstandardpaths.h"
 #include <QMetaObject>
 #include <QMetaEnum>
 #include <QMenu>
+#include <QSettings>
+#include <QTextCodec>
+#include <QProcess>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
 #include <QDebug>
 
 namespace DFileMenuData {
@@ -312,43 +318,243 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
         const bool& tabAddable = WindowManager::tabAddableByWinId(windowId);
         if(!tabAddable)
             disableList << MenuAction::OpenInNewTab;
+
+        foreach (MenuAction action, unusedList) {
+            if (actions.contains(action)){
+                actions.remove(actions.indexOf(action));
+            }
+        }
+
         menu = DFileMenuManager::genereteMenuByKeys(actions, disableList, true, subActions);
     }
 
-    loadNormalPluginMenu(menu, urlList);
+    loadNormalPluginMenu(menu, urlList, currentUrl);
+    loadNormalExtensionMenu(menu, urlList, currentUrl);
 
     return menu;
 }
 
-void DFileMenuManager::loadNormalPluginMenu(DFileMenu *menu, const DUrlList &urlList)
+QList<QAction*> DFileMenuManager::loadNormalPluginMenu(DFileMenu *menu, const DUrlList &urlList, const DUrl &currentUrl)
 {
+    qDebug() << "load normal plugin menu";
     QStringList files;
     foreach (DUrl url, urlList) {
         files << url.toString();
     }
 
     QAction* lastAction = menu->actions().last();
+    if (lastAction->isSeparator()){
+        lastAction = menu->actionAt(menu->actions().count() - 2);
+    }
 
+    QList<QAction *> actions;
     foreach (MenuInterface* menuInterface, PluginManager::instance()->getMenuInterfaces()) {
-        QList<QAction *> actions = menuInterface->additionalMenu(files);
+        actions = menuInterface->additionalMenu(files, currentUrl.toString());
         foreach (QAction* action, actions) {
-            QAction* dAction  = qActionToDAction(action);
-            menu->insertAction(lastAction, dAction);
+            menu->insertAction(lastAction, action);
         }
     }
+    menu->insertSeparator(lastAction);
+    return actions;
 }
 
-void DFileMenuManager::loadEmptyPluginMenu(DFileMenu *menu)
+QList<QAction*> DFileMenuManager::loadNormalExtensionMenu(DFileMenu *menu, const DUrlList &urlList, const DUrl &currentUrl)
 {
+    qDebug() << "load normal extension menu";
     QAction* lastAction = menu->actions().last();
+    if (lastAction->isSeparator()){
+        lastAction = menu->actionAt(menu->actions().count() - 2);
+    }
 
+    QList<QAction *> actions = loadMenuExtemsionActions(urlList, currentUrl);
+    foreach (QAction* action, actions) {
+        menu->insertAction(lastAction, action);
+    }
+
+    menu->insertSeparator(lastAction);
+    return actions;
+}
+
+QList<QAction*> DFileMenuManager::loadEmptyAreaPluginMenu(DFileMenu *menu, const DUrl &currentUrl)
+{
+    qDebug() << "load empty area plugin menu";
+    QAction* lastAction = menu->actions().last();
+    if (lastAction->isSeparator()){
+        lastAction = menu->actionAt(menu->actions().count() - 2);
+    }
+
+    QList<QAction *> actions;
     foreach (MenuInterface* menuInterface, PluginManager::instance()->getMenuInterfaces()) {
-        QList<QAction *> actions = menuInterface->additionalEmptyMenu();
+        actions = menuInterface->additionalEmptyMenu(currentUrl.toString());
         foreach (QAction* action, actions) {
-            QAction* dAction  = qActionToDAction(action);
-            menu->insertAction(lastAction, dAction);
+            menu->insertAction(lastAction, action);
         }
     }
+    menu->insertSeparator(lastAction);
+    return actions;
+}
+
+QList<QAction *> DFileMenuManager::loadEmptyAreaExtensionMenu(DFileMenu *menu, const DUrl &currentUrl)
+{
+    qDebug() << "load empty area extension menu";
+    QAction* lastAction = menu->actions().last();
+
+    if (lastAction->isSeparator()){
+        lastAction = menu->actionAt(menu->actions().count() - 2);
+    }
+
+    DUrlList urlList;
+    QList<QAction *> actions = loadMenuExtemsionActions(urlList, currentUrl);
+    foreach (QAction* action, actions) {
+        menu->insertAction(lastAction, action);
+    }
+    menu->insertSeparator(lastAction);
+
+    return actions;
+}
+
+QList<QAction *> DFileMenuManager::loadMenuExtemsionActions(const DUrlList &urlList, const DUrl& currentUrl)
+{
+    QList<QAction *>  actions;
+
+    QStringList menuExtensionPaths = DFMGlobal::MenuExtensionPaths;
+
+    foreach (QString path, menuExtensionPaths) {
+        QFileInfo info(path);
+        qDebug() << info.absoluteFilePath();
+        QDir menuExtensionDir(path);
+        menuExtensionDir.makeAbsolute();
+
+        qDebug() << path << menuExtensionDir.absolutePath();
+
+        DFMGlobal::MenuExtension menuExtensionType = FileUtils::getMenuExtension(urlList);
+
+        QMetaEnum metaEnum = QMetaEnum::fromType<DFMGlobal::MenuExtension>();
+        QString menuType = metaEnum.valueToKey(menuExtensionType);
+
+        foreach (QFileInfo fileInfo, menuExtensionDir.entryInfoList(QDir::Files)){
+            if (fileInfo.fileName().endsWith(".json")){
+                qDebug() << fileInfo.absoluteFilePath();
+                QFile file(fileInfo.absoluteFilePath());
+                if (!file.open(QIODevice::ReadOnly))
+                {
+                    qDebug() << "Couldn't open" << fileInfo.absoluteFilePath();
+                    return actions;
+                }
+                QByteArray data = file.readAll();
+                QJsonDocument jsonDoc(QJsonDocument::fromJson(data));
+
+                actions = jsonToActions(jsonDoc.array(), urlList, currentUrl, menuType);
+            }
+        }
+    }
+
+    return actions;
+}
+
+QList<QAction *> DFileMenuManager::jsonToActions(const QJsonArray& data, const DUrlList &urlList, const DUrl &currentUrl, const QString& menuExtensionType)
+{
+    QList<QAction *> actions;
+
+    foreach (const QJsonValue& value, data) {
+        QJsonObject v = value.toObject();
+        QString menuType = v.toVariantMap().value("MenuType").toString();
+        QString mimeType = v.toVariantMap().value("MimeType").toString();
+        QString suffix = v.toVariantMap().value("Suffix").toString();
+
+        QString icon = v.toVariantMap().value("Icon").toString();
+
+        QString textKey = QString("Text[%1]").arg(QLocale::system().name());
+        QString text = v.toVariantMap().value(textKey).toString();
+
+        QString exec = v.toVariantMap().value("Exec").toString();
+
+        QVariantList subMenuDataList = v.toVariantMap().value("SubMenu").toList();
+
+        bool isCanCreateAction = false;
+
+        if (menuType == menuExtensionType){
+            isCanCreateAction = true;
+        }
+
+        if (isCanCreateAction){
+            if (menuExtensionType == "SingleFile" ||
+                    menuExtensionType== "MultiFiles"){
+
+                if (mimeType.isEmpty() && suffix.isEmpty()){
+                    isCanCreateAction = true;
+                }
+                if (!mimeType.isEmpty()){
+                    QStringList supportMimeTypes = mimeType.split(";");
+                    int count = 0;
+                    foreach (DUrl url, urlList) {
+                        QString mimeType = FileUtils::getFileMimetype(url.toLocalFile());
+
+                        if (supportMimeTypes.isEmpty() || supportMimeTypes.contains(mimeType)){
+                            count += 1;
+                        }
+                    }
+                    if (count == urlList.count()){
+                        isCanCreateAction = true;
+                    }else{
+                        isCanCreateAction = false;
+                    }
+                }
+                if (!suffix.isEmpty()){
+                    QStringList supportsuffixs = suffix.split(";");
+                    int count = 0;
+                    foreach (DUrl url, urlList) {
+                        QString _suxffix = QFileInfo(url.toLocalFile()).suffix();
+
+                        if (supportsuffixs.isEmpty() || supportsuffixs.contains(_suxffix)){
+                            count += 1;
+                        }
+                    }
+                    if (count == urlList.count()){
+                        isCanCreateAction = true;
+                    }else{
+                        isCanCreateAction = false;
+                    }
+                }
+            }
+        }
+
+        if (isCanCreateAction){
+            QAction* action = new QAction(QIcon(icon), text, NULL);
+
+            if (subMenuDataList.count() > 1){
+                QJsonArray subActionsArray;
+                QJsonArray _subActionsArray = QJsonArray::fromVariantList(subMenuDataList);
+                foreach (QJsonValue v, _subActionsArray) {
+                    QJsonObject obj = v.toObject();
+                    obj.insert("MenuType", menuType);
+                    subActionsArray.append(QJsonValue(obj));
+                }
+                QList<QAction *> subActions = jsonToActions(subActionsArray, urlList, currentUrl, menuExtensionType);
+                QMenu* menu = new QMenu;
+                menu->addActions(subActions);
+                action->setMenu(menu);
+            }else{
+                connect(action, &QAction::triggered, [=](){
+
+                    QProcess p;
+
+                    foreach (DUrl url, urlList) {
+                        const_cast<QString&>(exec) += " " + url.toString();
+                    }
+
+                    if (urlList.isEmpty()){
+                        const_cast<QString&>(exec) += " " + currentUrl.toString();
+                    }
+
+                    p.startDetached(exec);
+                    qDebug() << exec;
+                });
+            }
+            actions << action;
+        }
+    }
+    return actions;
 }
 
 QSet<MenuAction> DFileMenuManager::getDisableActionList(const DUrl &fileUrl)
@@ -545,24 +751,6 @@ bool DFileMenuManager::isAvailableAction(MenuAction action)
         return !DFileMenuData::blacklist.contains(action);
 
     return DFileMenuData::whitelist.contains(action) && !DFileMenuData::blacklist.contains(action);
-}
-
-QAction *DFileMenuManager::qActionToDAction(QAction* action, QAction *parentAction, QMenu *dMenu)
-{
-    QAction* dAction  = new QAction(action->icon(), action->text(), action->parent());
-    connect(dAction, &QAction::triggered, action, &QAction::triggered);
-    if (dMenu){
-        dMenu->addAction(dAction);
-        parentAction->setMenu(dMenu);
-    }
-    QMenu* menu = action->menu();
-    if (menu){
-        dMenu = new QMenu;
-        foreach (QAction* childAction, menu->actions()) {
-            qActionToDAction(childAction, dAction, dMenu);
-        }
-    }
-    return dAction;
 }
 
 void DFileMenuManager::actionTriggered(QAction *action)

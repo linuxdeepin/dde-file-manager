@@ -9,6 +9,7 @@
 #include "desktopfile.h"
 #include "properties.h"
 #include "durl.h"
+#include "dfmglobal.h"
 
 /**
  * @class FileUtils
@@ -58,6 +59,8 @@ public:
     static QString getFileContent(const QString &file);
     static bool writeTextFile(QString filePath, QString content);
     static void setDefaultFileManager();
+
+    static DFMGlobal::MenuExtension getMenuExtension(const DUrlList& urlList);
 };
 
 #endif // FILEUTILS_H

@@ -16,8 +16,8 @@ public:
     ImageMenuPlugin(QObject *parent = 0);
 
     QList<QIcon> additionalIcons(const QString &file);
-    QList<QAction *> additionalMenu(const QStringList &files);
-    QList<QAction*> additionalEmptyMenu();
+    QList<QAction *> additionalMenu(const QStringList &files, const QString& currentDir);
+    QList<QAction*> additionalEmptyMenu(const QString& currentDir);
 
 public:
     void handleFormat();
