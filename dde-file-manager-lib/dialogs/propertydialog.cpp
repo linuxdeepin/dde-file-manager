@@ -26,6 +26,9 @@
 #include "views/dfileview.h"
 #include "interfaces/dfilesystemmodel.h"
 
+#include "plugins/pluginmanager.h"
+#include "../plugininterfaces/menu/menuinterface.h"
+
 #include <dexpandgroup.h>
 #include <dseparatorhorizontal.h>
 #include <darrowlineexpand.h>
@@ -202,7 +205,6 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget* p
         QStringList titleList;
         titleList << basicInfo;
         m_expandGroup = addExpandWidget(titleList);
-        m_expandGroup->expand(0)->setExpandedSeparatorVisible(false);
         m_expandGroup->expand(0)->setContent(m_deviceInfoFrame);
         m_expandGroup->expand(0)->setExpand(true);
 
@@ -215,7 +217,6 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget* p
         QStringList titleList;
         titleList << basicInfo;
         m_expandGroup = addExpandWidget(titleList);
-        m_expandGroup->expand(0)->setExpandedSeparatorVisible(false);
         m_expandGroup->expand(0)->setContent(m_localDeviceInfoFrame);
         m_expandGroup->expand(0)->setExpand(true);
     }else{
@@ -244,7 +245,6 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget* p
             }
         }
         m_expandGroup = addExpandWidget(titleList);
-        m_expandGroup->expand(0)->setExpandedSeparatorVisible(false);
         m_expandGroup->expand(0)->setContent(m_basicInfoFrame);
         m_expandGroup->expand(0)->setExpand(true);
 
@@ -255,10 +255,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget* p
             m_size = fileInfo->size();
         }else if (fileInfo->isDir()){
             if (fileInfo->isCanShare()){
-                setFixedSize(QSize(320, 500));
                 m_shareinfoFrame = createShareInfoFrame(fileInfo);
-                m_expandGroup->expand(0)->setExpandedSeparatorVisible(true);
-                m_expandGroup->expand(1)->setExpandedSeparatorVisible(false);
                 m_expandGroup->expand(1)->setContent(m_shareinfoFrame);
                 m_expandGroup->expand(1)->setExpand(false);
             }
@@ -271,16 +268,17 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget* p
         m_editButton->hide();
     }
 
+    loadPluginExpandWidgets();
+
     initConnect();
 }
 
 void PropertyDialog::initUI()
 {
     setTitle("");
-    setFixedSize(QSize(320, 480));
+//    setFixedSize(QSize(320, 480));
     m_icon->setFixedHeight(150);
-
-
+    m_icon->setParent(this);
     QFrame* m_editFrame = new QFrame;
 
     QHBoxLayout* editLayout = new QHBoxLayout;
@@ -290,12 +288,13 @@ void PropertyDialog::initUI()
     editLayout->setSpacing(0);
     editLayout->setContentsMargins(0, 0, 0, 0);
     m_editFrame->setLayout(editLayout);
+    m_edit->setParent(m_editFrame);
 
     m_editStackWidget = new QStackedWidget(this);
     m_editStackWidget->setFixedHeight(60);
     m_editStackWidget->addWidget(m_editFrame);
 
-    QVBoxLayout *layout = new QVBoxLayout(this);
+    QVBoxLayout *layout = new QVBoxLayout;
 
     layout->setMargin(5);
     layout->setSpacing(0);
@@ -462,9 +461,41 @@ DExpandGroup *PropertyDialog::expandGroup() const
     return m_expandGroup;
 }
 
+int PropertyDialog::contentHeight() const
+{
+    return  (m_icon->height()+
+            m_editStackWidget->height()+
+            expandGroup()->expands().first()->getContent()->height()+
+            expandGroup()->expands().size()*30 +
+            contentsMargins().top()+
+            contentsMargins().bottom()+
+            80);
+}
+
+void PropertyDialog::loadPluginExpandWidgets()
+{
+    QVBoxLayout *layout = qobject_cast<QVBoxLayout*>(this->layout());
+    QList<PropertyDialogExpandInfoInterface*> plugins = PluginManager::instance()->getExpandInfoInterfaces();
+    foreach (PropertyDialogExpandInfoInterface *plugin, plugins) {
+        DArrowLineExpand *expand = new DArrowLineExpand;
+        QWidget* frame = plugin->expandWidget(m_url.toString());
+        frame->setMaximumHeight(EXTEND_FRAME_MAXHEIGHT);
+        frame->setParent(this);
+        expand->setTitle(plugin->expandWidgetTitle());
+        expand->setFixedHeight(30);
+        expand->setExpand(false);
+        expand->setContent(frame);
+        layout->addWidget(expand, 0, Qt::AlignTop);
+        m_expandGroup->addExpand(expand);
+    }
+    layout->addStretch();
+    m_expandGroup->expands().last()->setExpand(false);
+    setFixedSize(320, contentHeight());
+}
+
 DExpandGroup *PropertyDialog::addExpandWidget(const QStringList &titleList)
 {
-    QBoxLayout *layout = qobject_cast<QBoxLayout*>(this->layout());
+    QVBoxLayout *layout = qobject_cast<QVBoxLayout*>(this->layout());
     DExpandGroup *group = new DExpandGroup;
 
     for(const QString &title : titleList) {
@@ -477,7 +508,6 @@ DExpandGroup *PropertyDialog::addExpandWidget(const QStringList &titleList)
 
         group->addExpand(expand);
     }
-    layout->addStretch();
     return group;
 }
 
@@ -544,7 +574,7 @@ void PropertyDialog::initTextShowFrame(const QString &text)
 
 QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &info)
 {
-    QFrame *widget = new QFrame;
+    QFrame *widget = new QFrame(this);
     SectionKeyLabel* sizeSectionLabel = new SectionKeyLabel(QObject::tr("Size"));
     SectionKeyLabel* fileAmountSectionLabel = new SectionKeyLabel(QObject::tr("Contains"));
     SectionKeyLabel* typeSectionLabel = new SectionKeyLabel(QObject::tr("Type"));
@@ -586,6 +616,7 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
         layout->addRow(m_executableCheckBox, executableLabel);
     }
     widget->setLayout(layout);
+    widget->setFixedHeight(EXTEND_FRAME_MAXHEIGHT);
 
     return widget;
 }
@@ -600,7 +631,7 @@ QFrame *PropertyDialog::createLocalDeviceInfoWidget(const DUrl &url)
 {
     QStorageInfo info(url.path());
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
-    QFrame *widget = new QFrame;
+    QFrame *widget = new QFrame(this);
     SectionKeyLabel* typeSectionLabel = new SectionKeyLabel(QObject::tr("Device type"));
     SectionKeyLabel* fileAmountSectionLabel = new SectionKeyLabel(QObject::tr("Contains"));
     SectionKeyLabel* freeSectionLabel = new SectionKeyLabel(QObject::tr("Free space"));
@@ -622,13 +653,13 @@ QFrame *PropertyDialog::createLocalDeviceInfoWidget(const DUrl &url)
     layout->addRow(freeSectionLabel, freeLabel);
 
     widget->setLayout(layout);
-
+    widget->setFixedHeight(EXTEND_FRAME_MAXHEIGHT);
     return widget;
 }
 
 QFrame *PropertyDialog::createDeviceInfoWidget(UDiskDeviceInfoPointer info)
 {
-    QFrame *widget = new QFrame;
+    QFrame *widget = new QFrame(this);
     SectionKeyLabel* typeSectionLabel = new SectionKeyLabel(QObject::tr("Device type"));
     SectionKeyLabel* fileAmountSectionLabel = new SectionKeyLabel(QObject::tr("Contains"));
     SectionKeyLabel* freeSectionLabel = new SectionKeyLabel(QObject::tr("Free space"));
@@ -650,7 +681,7 @@ QFrame *PropertyDialog::createDeviceInfoWidget(UDiskDeviceInfoPointer info)
     layout->addRow(freeSectionLabel, freeLabel);
 
     widget->setLayout(layout);
-
+    widget->setFixedHeight(EXTEND_FRAME_MAXHEIGHT);
     return widget;
 }
 
