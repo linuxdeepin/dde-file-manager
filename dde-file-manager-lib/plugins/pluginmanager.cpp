@@ -29,8 +29,9 @@ void PluginManager::loadPlugin()
     Q_D(PluginManager);
     QStringList pluginChildDirs;
     d->menuInterfaces.clear();
+    d->expandInfoInterfaces.clear();
 
-    QStringList pluginDirs = DFMGlobal::PluginLibraryPaths;
+    QStringList pluginDirs = DFMGlobal::PluginLibraryPaths;\
 
     foreach (QString dir, pluginDirs) {
         QDir pluginDir(dir);
@@ -51,15 +52,27 @@ void PluginManager::loadPlugin()
                     {
                         d->menuInterfaces.append(menuInterface);
                     }
+
+                    PropertyDialogExpandInfoInterface *expandInfoInterface = qobject_cast<PropertyDialogExpandInfoInterface*>(plugin);
+                    if(expandInfoInterface){
+                        d->expandInfoInterfaces.append(expandInfoInterface);
+                    }
                 }
             }
         }
     }
-    qDebug(  ) << "loadPlugin size:" << d->menuInterfaces.size();
+    qDebug(  ) << "menu plugin size:" << d->menuInterfaces.size();
+    qDebug(  ) << "expand info size:" << d->expandInfoInterfaces.size();
 }
 
 QList<MenuInterface *> PluginManager::getMenuInterfaces()
 {
     Q_D(PluginManager);
     return d->menuInterfaces;
+}
+
+QList<PropertyDialogExpandInfoInterface *> PluginManager::getExpandInfoInterfaces()
+{
+    Q_D(PluginManager);
+    return d->expandInfoInterfaces;
 }
