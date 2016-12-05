@@ -218,7 +218,6 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget* p
         titleList << basicInfo;
         m_expandGroup = addExpandWidget(titleList);
         m_expandGroup->expand(0)->setContent(m_localDeviceInfoFrame);
-        m_expandGroup->expand(0)->setExpand(true);
     }else{
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(m_url);
         if(!fileInfo){
@@ -246,7 +245,6 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget* p
         }
         m_expandGroup = addExpandWidget(titleList);
         m_expandGroup->expand(0)->setContent(m_basicInfoFrame);
-        m_expandGroup->expand(0)->setExpand(true);
 
         if (fileInfo->isFile()){
     //        m_OpenWithListWidget = createOpenWithListWidget(fileInfo);
@@ -269,6 +267,9 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget* p
     }
 
     loadPluginExpandWidgets();
+
+    m_expandGroup->expands().first()->setExpand(true);
+    m_expandGroup->expands().last()->setExpandedSeparatorVisible(false);
 
     initConnect();
 }
@@ -489,7 +490,6 @@ void PropertyDialog::loadPluginExpandWidgets()
         m_expandGroup->addExpand(expand);
     }
     layout->addStretch();
-    m_expandGroup->expands().last()->setExpand(false);
     setFixedSize(320, contentHeight());
 }
 
