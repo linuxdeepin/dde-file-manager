@@ -87,6 +87,8 @@ public:
     bool _q_processFileEvent_runing = false;
     QQueue<QPair<EventType, DUrl>> fileEventQueue;
 
+    bool enabledSort = true;
+
     Q_DECLARE_PUBLIC(DFileSystemModel)
 };
 
@@ -915,6 +917,9 @@ void DFileSystemModel::sort()
 {
     Q_D(const DFileSystemModel);
 
+    if (!enabledSort())
+        return;
+
     if (state() == Busy) {
         qWarning() << "I'm busying";
 
@@ -1043,6 +1048,13 @@ DAbstractFileWatcher *DFileSystemModel::fileWatcher() const
     return d->watcher;
 }
 
+bool DFileSystemModel::enabledSort() const
+{
+    Q_D(const DFileSystemModel);
+
+    return d->enabledSort;
+}
+
 void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
 {
     Q_D(DFileSystemModel);
@@ -1141,6 +1153,17 @@ void DFileSystemModel::toggleHiddenFiles(const DUrl &fileUrl)
     d->filters = ~(d->filters ^ QDir::Filter(~QDir::Hidden));
 
     refresh(fileUrl);
+}
+
+void DFileSystemModel::setEnabledSort(bool enabledSort)
+{
+    Q_D(DFileSystemModel);
+
+    if (d->enabledSort == enabledSort)
+        return;
+
+    d->enabledSort = enabledSort;
+    emit enabledSortChanged(enabledSort);
 }
 
 const FileSystemNodePointer DFileSystemModel::getNodeByIndex(const QModelIndex &index) const
@@ -1305,7 +1328,10 @@ void DFileSystemModel::addFile(const DAbstractFileInfoPointer &fileInfo)
                                     return node->fileInfo;
                                 };
 
-        int row = parentNode->fileInfo->getIndexByFileInfo(getFileInfoFun, fileInfo, d->sortRole, d->srotOrder);
+        int row = 0;
+
+        if (enabledSort())
+            row = parentNode->fileInfo->getIndexByFileInfo(getFileInfoFun, fileInfo, d->sortRole, d->srotOrder);
 
         if (!me)
             return;
