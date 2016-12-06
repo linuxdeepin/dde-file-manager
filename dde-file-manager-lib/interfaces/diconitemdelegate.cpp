@@ -441,7 +441,23 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
 {
     Q_D(const DIconItemDelegate);
 
-    QList<QRect> geomertys;
+    QList<QRect> geometrys;
+
+    if (index == d->expandedIndex) {
+        QRect geometry = d->expandedItem->icon->geometry();
+
+        geometry.moveTopLeft(geometry.topLeft() + d->expandedItem->pos());
+
+        geometrys << geometry;
+
+        geometry = d->expandedItem->edit->geometry();
+        geometry.moveTopLeft(geometry.topLeft() + d->expandedItem->pos());
+        geometry.setTop(d->expandedItem->icon->y() + d->expandedItem->icon->height() + d->expandedItem->y());
+
+        geometrys << geometry;
+
+        return geometrys;
+    }
 
     /// init icon geomerty
 
@@ -451,41 +467,63 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
     icon_rect.moveCenter(option.rect.center());
     icon_rect.moveTop(option.rect.top());
 
-    geomertys << icon_rect;
+    geometrys << icon_rect;
 
     QString str = index.data(Qt::DisplayRole).toString();
 
     if(str.isEmpty()) {
-        return geomertys;
+        return geometrys;
     }
 
     /// init file name geometry
 
     QRect label_rect = option.rect;
+    QStyleOptionViewItem opt = option;
+    initStyleOption(&opt, index);
 
-    label_rect.setTop(icon_rect.bottom() + TEXT_PADDING  + ICON_MODE_ICON_SPACING);
+    bool isSelected = (opt.state & QStyle::State_Selected) && opt.showDecorationSelected;
+    /// if has selected show all file name else show elide file name.
+    bool singleSelected = parent()->selectedIndexsCount() < 2;
 
-    /// init file name text
+    if (isSelected && singleSelected) {
+        int height = 0;
 
-    if(d->elideMap.contains(str)) {
-        str = d->elideMap.value(str);
+        if (d->wordWrapMap.contains(str)) {
+            str = d->wordWrapMap.value(str);
+            height = d->textHeightMap.value(str);
+        } else {
+            QString wordWrap_str = DFMGlobal::wordWrapText(str, label_rect.width(),
+                                                        QTextOption::WrapAtWordBoundaryOrAnywhere,
+                                                        &height);
+
+            wordWrap_str = trimmedEnd(wordWrap_str);
+
+            d->wordWrapMap[str] = wordWrap_str;
+            d->textHeightMap[wordWrap_str] = height;
+            str = wordWrap_str;
+        }
     } else {
-        QString elide_str = DFMGlobal::elideText(str, label_rect.size(),
-                                              option.fontMetrics,
-                                              QTextOption::WrapAtWordBoundaryOrAnywhere,
-                                              option.textElideMode);
+        if (d->elideMap.contains(str)) {
+            str = d->elideMap.value(str);
+        } else {
+            QString elide_str = DFMGlobal::elideText(str, label_rect.size(),
+                                                     option.fontMetrics,
+                                                     QTextOption::WrapAtWordBoundaryOrAnywhere,
+                                                     option.textElideMode);
 
-        d->elideMap[str] = elide_str;
-
-        str = elide_str;
+            d->elideMap[str] = elide_str;
+            str = elide_str;
+        }
     }
 
     /// draw icon and file name label
 
-    geomertys << option.fontMetrics.boundingRect(label_rect, Qt::AlignHCenter, str);
-    geomertys.last().setTop(icon_rect.bottom());
+    label_rect = option.fontMetrics.boundingRect(label_rect, Qt::AlignHCenter, str);
+    label_rect.moveTop(icon_rect.bottom() + TEXT_PADDING + ICON_MODE_ICON_SPACING);
 
-    return geomertys;
+    geometrys << label_rect;
+
+    return geometrys;
 }
 
 QModelIndexList DIconItemDelegate::hasWidgetIndexs() const

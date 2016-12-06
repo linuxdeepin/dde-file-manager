@@ -357,16 +357,6 @@ QList<QRect> DListItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
     return geomertys;
 }
 
-QRect DListItemDelegate::fileNameRect(const QStyleOptionViewItem &option, const QModelIndex &index) const
-{
-    const QList<QRect> &rects = paintGeomertys(option, index);
-
-    if (rects.count() > 1)
-        return rects.at(1);
-
-    return QRect();
-}
-
 bool DListItemDelegate::eventFilter(QObject *object, QEvent *event)
 {
     Q_D(DListItemDelegate);

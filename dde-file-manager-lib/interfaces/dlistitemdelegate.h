@@ -28,7 +28,6 @@ public:
     void setEditorData(QWidget * editor, const QModelIndex & index) const Q_DECL_OVERRIDE;
 
     QList<QRect> paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index) const Q_DECL_OVERRIDE;
-    QRect fileNameRect(const QStyleOptionViewItem &option, const QModelIndex &index) const Q_DECL_OVERRIDE;
 
 protected:
     bool eventFilter(QObject *object, QEvent *event) Q_DECL_OVERRIDE;
