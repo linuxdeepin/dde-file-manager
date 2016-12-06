@@ -7,6 +7,11 @@ unix {
         LIB_INSTALL_DIR = $$[QT_INSTALL_LIBS]
     }
 
+    ARCH = $$QMAKE_HOST.arch
+    isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
+        DEFINES += MENU_DIALOG_PLUGIN
+    }
+
     isEmpty(LIB_INSTALL_DIR) {
         CONFIG(debug, debug|release) {
             PLUGINDIR = ../dde-file-manager-plugins
