@@ -13,6 +13,9 @@
 #include <QStyledItemDelegate>
 
 #define DISABLE_LABEL_COLOR "#797979"
+#define SELECTED_BACKGROUND_COLOR "#2da6f7"
+#define FOCUS_BACKGROUND_COLOR "#0076F9"
+#define TEXT_COLOR "#303030"
 
 class DFileViewHelper;
 class DStyledItemDelegatePrivate;

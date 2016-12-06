@@ -14,6 +14,9 @@ class DIconItemDelegatePrivate;
 class DIconItemDelegate : public DStyledItemDelegate
 {
     Q_OBJECT
+
+    Q_PROPERTY(QColor focusTextBackgroundBorderColor READ focusTextBackgroundBorderColor WRITE setFocusTextBackgroundBorderColor)
+
 public:
     explicit DIconItemDelegate(DFileViewHelper *parent);
     ~DIconItemDelegate();
@@ -44,6 +47,11 @@ public:
     int decreaseIcon() Q_DECL_OVERRIDE;
     int setIconSizeByIconSizeLevel(int level) Q_DECL_OVERRIDE;
 
+    QColor focusTextBackgroundBorderColor() const;
+
+public slots:
+    void setFocusTextBackgroundBorderColor(QColor focusTextBackgroundBorderColor);
+
 protected:
     bool eventFilter(QObject *object, QEvent *event) Q_DECL_OVERRIDE;
 
@@ -54,6 +62,7 @@ private:
     QSize iconSizeByIconSizeLevel() const;
 
     Q_DECLARE_PRIVATE(DIconItemDelegate)
+    QColor m_hasFocusTextBackgroundBorderColor;
 };
 
 #endif // DFILEITEMDELEGATE_H

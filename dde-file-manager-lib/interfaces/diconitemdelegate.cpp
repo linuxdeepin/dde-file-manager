@@ -17,8 +17,6 @@
 
 #define ICON_SPACING 16
 #define ICON_MODE_RECT_RADIUS 4
-#define SELECTED_BACKGROUND_COLOR "#2da6f7"
-#define TEXT_COLOR "#303030"
 
 class DIconItemDelegatePrivate : public DStyledItemDelegatePrivate
 {
@@ -38,6 +36,8 @@ public:
     QList<int> iconSizes;
     /// default icon size is 64px.
     int currentIconSizeIndex = 1;
+
+    QColor focusTextBackgroundBorderColor = FOCUS_BACKGROUND_COLOR;
 };
 
 DIconItemDelegate::DIconItemDelegate(DFileViewHelper *parent) :
@@ -103,6 +103,7 @@ void DIconItemDelegate::paint(QPainter *painter,
     /// judgment way of the whether drag model(another way is: painter.devType() != 1)
     bool isDragMode = ((QPaintDevice*)parent()->parent()->viewport() != painter->device());
     bool isEnabled = option.state & QStyle::State_Enabled;
+    bool hasFocus = option.state & QStyle::State_HasFocus;
 
     painter->setPen(isEnabled ? TEXT_COLOR : DISABLE_LABEL_COLOR);
 
@@ -309,7 +310,11 @@ void DIconItemDelegate::paint(QPainter *painter,
             path.addRoundedRect(rect, ICON_MODE_RECT_RADIUS, ICON_MODE_RECT_RADIUS);
             painter->save();
             painter->setRenderHint(QPainter::Antialiasing);
-            painter->fillPath(path, QColor(SELECTED_BACKGROUND_COLOR));
+            painter->fillPath(path, QColor(hasFocus ? FOCUS_BACKGROUND_COLOR : SELECTED_BACKGROUND_COLOR));
+            if (hasFocus) {
+                painter->setPen(QPen(focusTextBackgroundBorderColor(), 2));
+                painter->drawPath(path);
+            }
             painter->restore();
         } else {
             painter->fillRect(label_rect, Qt::transparent);
@@ -624,6 +629,20 @@ int DIconItemDelegate::setIconSizeByIconSizeLevel(int level)
     }
 
     return -1;
+}
+
+QColor DIconItemDelegate::focusTextBackgroundBorderColor() const
+{
+    Q_D(const DIconItemDelegate);
+
+    return d->focusTextBackgroundBorderColor;
+}
+
+void DIconItemDelegate::setFocusTextBackgroundBorderColor(QColor focusTextBackgroundBorderColor)
+{
+    Q_D(DIconItemDelegate);
+
+    d->focusTextBackgroundBorderColor = focusTextBackgroundBorderColor;
 }
 
 bool DIconItemDelegate::eventFilter(QObject *object, QEvent *event)
