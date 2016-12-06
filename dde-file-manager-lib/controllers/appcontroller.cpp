@@ -37,6 +37,8 @@
 #include <DAboutDialog>
 #include <qprocess.h>
 #include "shutil/shortcut.h"
+#include "models/computerdesktopfileinfo.h"
+#include "models/trashdesktopfileinfo.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -403,6 +405,31 @@ void AppController::actionProperty(const DFMEvent &event)
 {
     if (event.fileUrlList().isEmpty())
         return;
+
+#ifdef DDE_COMPUTER_TRASH
+    if(event.fileUrlList().count() == 1){
+        if(event.fileUrlList().first() == TrashDesktopFileInfo::trashDesktopFileUrl()){
+            const_cast<DFMEvent&>(event) << DUrl::fromTrashFile("/");
+            emit fileSignalManager->requestShowTrashPropertyDialog(event);
+            return;
+        }
+    } else{
+        DUrlList urlList = event.fileUrlList();
+        if(urlList.contains(TrashDesktopFileInfo::trashDesktopFileUrl())){
+            const_cast<DFMEvent&>(event) << DUrl::fromTrashFile("/");
+            emit fileSignalManager->requestShowTrashPropertyDialog(event);
+            urlList.removeOne(TrashDesktopFileInfo::trashDesktopFileUrl());
+        }
+
+        if(urlList.contains(ComputerDesktopFileInfo::computerDesktopFileUrl()))
+            urlList.removeOne(ComputerDesktopFileInfo::computerDesktopFileUrl());
+
+        if(urlList.isEmpty())
+            return;
+
+        const_cast<DFMEvent&>(event) << urlList;
+    }
+#endif
 
     if (event.fileUrlList().first() == DUrl::fromTrashFile("/")){
         emit fileSignalManager->requestShowTrashPropertyDialog(event);

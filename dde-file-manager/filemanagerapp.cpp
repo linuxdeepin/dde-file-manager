@@ -21,6 +21,8 @@
 #include "interfaces/durl.h"
 #include "plugins/pluginmanager.h"
 #include "interfaces/dfmstandardpaths.h"
+#include "models/trashdesktopfileinfo.h"
+#include "models/computerdesktopfileinfo.h"
 
 #if QT_VERSION_MINOR < 6
 #include "xdnd/xdndworkaround.h"
@@ -127,12 +129,16 @@ void FileManagerApp::showPropertyDialog(const QStringList paths)
     foreach (QString path, paths) {
         DUrl url = DUrl::fromUserInput(path);
 
+        if(url == ComputerDesktopFileInfo::computerDesktopFileUrl())
+            continue;
+
         if (!url.scheme().isEmpty()){
             if(url.scheme() == FILE_SCHEME && !QFile::exists(url.path()))
                 continue;
-            if(url == DUrl::fromTrashFile("/")){
+            if(url == DUrl::fromTrashFile("/") ||
+                    url == TrashDesktopFileInfo::trashDesktopFileUrl()){
                 DFMEvent event;
-                event << url;
+                event << DUrl::fromTrashFile("/");
                 DUrlList urls;
                 urls << url;
                 event << urls;
