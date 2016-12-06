@@ -23,9 +23,7 @@
 #define LIST_MODE_RECT_RADIUS 2
 #define LIST_EDITER_HEIGHT 22
 #define LIST_MODE_EDITOR_LEFT_PADDING -9
-#define SELECTED_BACKGROUND_COLOR "#2da6f7"
 #define LIST_VIEW_ICON_SIZE 28
-#define TEXT_COLOR "#303030"
 
 class DListItemDelegatePrivate : public DStyledItemDelegatePrivate
 {
@@ -53,6 +51,7 @@ void DListItemDelegate::paint(QPainter *painter,
     bool isDragMode = ((QPaintDevice*)parent()->parent()->viewport() != painter->device());
     bool isDropTarget = parent()->isDropTarget(index);
     bool isEnabled = option.state & QStyle::State_Enabled;
+    bool hasFocus = option.state & QStyle::State_HasFocus;
 
     painter->setPen(isEnabled ? TEXT_COLOR : DISABLE_LABEL_COLOR);
 
@@ -80,7 +79,7 @@ void DListItemDelegate::paint(QPainter *painter,
 
         painter->save();
         painter->setRenderHint(QPainter::Antialiasing);
-        painter->fillPath(path, QColor(SELECTED_BACKGROUND_COLOR));
+        painter->fillPath(path, QColor(hasFocus ? FOCUS_BACKGROUND_COLOR : SELECTED_BACKGROUND_COLOR));
         painter->restore();
         painter->setPen(Qt::white);
     } else {
