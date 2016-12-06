@@ -69,8 +69,11 @@ QString PathManager::getSystemPathDisplayName(QString key)
     return QString();
 }
 
-QString PathManager::getSystemPathDisplayNameByPath(const QString &path)
+QString PathManager::getSystemPathDisplayNameByPath(QString path)
 {
+    if (path.size() > 1 && path.endsWith(QDir::separator()))
+        path.chop(1);
+
     if (isSystemPath(path)){
         foreach (QString key, systemPathsMap().keys()) {
             if (systemPathsMap().value(key) == path){
@@ -148,6 +151,14 @@ void PathManager::mkPath(const QString &path)
 QMap<QString, QString> PathManager::systemPathDisplayNamesMap() const
 {
     return m_systemPathDisplayNamesMap;
+}
+
+bool PathManager::isSystemPath(QString path) const
+{
+    if (path.size() > 1 && path.endsWith(QDir::separator()))
+        path.chop(1);
+
+    return m_systemPathsSet.contains(path);
 }
 
 QMap<QString, QString> PathManager::systemPathsMap() const
