@@ -30,21 +30,6 @@ isEmpty(QMAKE_ORGANIZATION_NAME) {
     DEFINES += QMAKE_ORGANIZATION_NAME=\\\"deepin\\\"
 }
 
-ARCH = $$QMAKE_HOST.arch
-isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
-    DEFINES += ARCH_MIPSEL
-
-    #use classical file section mode
-    DEFINES += CLASSICAL_SECTION
-    DEFINES += AUTO_RESTART_DEAMON
-
-    DEFINES += LOAD_FILE_INTERVAL=150
-}
-
-isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
-    DEFINES += SPLICE_CP
-}
-
 isEmpty(PREFIX){
     PREFIX = /usr
 }
@@ -188,7 +173,9 @@ HEADERS += \
     interfaces/private/dabstractfilewatcher_p.h \
     interfaces/dfileproxywatcher.h \
     plugins/pluginmanager.h \
-    plugins/plugininterfaces/menu/menuinterface.h
+    plugins/plugininterfaces/menu/menuinterface.h \
+    models/computerdesktopfileinfo.h \
+    models/trashdesktopfileinfo.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -293,7 +280,9 @@ SOURCES += \
     interfaces/dfilewatcher.cpp \
     interfaces/dfileproxywatcher.cpp \
     app/filesignalmanager.cpp \
-    plugins/pluginmanager.cpp
+    plugins/pluginmanager.cpp \
+    models/computerdesktopfileinfo.cpp \
+    models/trashdesktopfileinfo.cpp
 
 INCLUDEPATH += $$PWD/../ $$PWD/../utils/ $$PWD/interfaces/ $$PWD/../dde-file-manager-plugins/plugininterfaces/
 
