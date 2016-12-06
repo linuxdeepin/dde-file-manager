@@ -59,6 +59,9 @@ public:
     void keyboardSearch(char key);
     bool isEmptyArea(const QPoint &pos) const;
 
+public slots:
+    void handleCommitData(QWidget *editor) const;
+
 signals:
     void triggerEdit(const QModelIndex &index);
 

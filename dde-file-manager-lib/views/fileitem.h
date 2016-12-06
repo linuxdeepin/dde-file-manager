@@ -41,6 +41,7 @@ private:
 
     friend class DIconItemDelegate;
     friend class DFileView;
+    friend class DFileViewHelper;
 };
 
 #endif // FILEITEM_H

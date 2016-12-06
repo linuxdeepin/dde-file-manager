@@ -25,6 +25,8 @@
 #define protected public
 #include <QAbstractItemView>
 #undef protected
+#include <QLineEdit>
+#include <QTextEdit>
 
 class DFileViewHelperPrivate
 {
@@ -372,4 +374,50 @@ bool DFileViewHelper::isEmptyArea(const QPoint &pos) const
     }
 
     return true;
+}
+
+void DFileViewHelper::handleCommitData(QWidget *editor) const
+{
+    if (!editor)
+        return;
+
+    const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(itemDelegate()->editingIndex());
+
+    if (!fileInfo)
+        return;
+
+    QLineEdit *lineEdit = qobject_cast<QLineEdit*>(editor);
+    FileIconItem *item = qobject_cast<FileIconItem*>(editor);
+
+    DFMEvent event;
+    event << fileInfo->fileUrl();
+    event << windowId();
+    event << DFMEvent::FileView;
+
+    QString new_file_name = lineEdit ? lineEdit->text() : item ? item->edit->toPlainText() : "";
+
+    new_file_name.remove('/');
+    new_file_name.remove(QChar(0));
+
+    if (fileInfo->fileName() == new_file_name || new_file_name.isEmpty()) {
+        return;
+    }
+
+    DUrl old_url = fileInfo->fileUrl();
+    DUrl new_url = fileInfo->getUrlByNewFileName(new_file_name);
+
+    const DAbstractFileInfoPointer &newFileInfo = DFileService::instance()->createFileInfo(new_url);
+
+    if (newFileInfo && newFileInfo->baseName().isEmpty() && newFileInfo->suffix() == fileInfo->suffix()) {
+        return;
+    }
+
+    if (lineEdit) {
+        /// later rename file.
+        TIMER_SINGLESHOT(0, {
+                             fileService->renameFile(old_url, new_url, event);
+                         }, old_url, new_url, event)
+    } else {
+        fileService->renameFile(old_url, new_url, event);
+    }
 }
