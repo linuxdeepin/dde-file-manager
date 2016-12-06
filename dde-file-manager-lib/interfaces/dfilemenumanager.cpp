@@ -557,6 +557,11 @@ QList<QAction *> DFileMenuManager::jsonToActions(const QJsonArray& data, const D
     return actions;
 }
 
+QAction *DFileMenuManager::getAction(MenuAction action)
+{
+    return DFileMenuData::actions.value(action);
+}
+
 QSet<MenuAction> DFileMenuManager::getDisableActionList(const DUrl &fileUrl)
 {
     DUrlList list;

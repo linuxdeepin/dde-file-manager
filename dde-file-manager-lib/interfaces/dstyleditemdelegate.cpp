@@ -11,9 +11,10 @@
 #include "dfileviewhelper.h"
 #include "private/dstyleditemdelegate_p.h"
 
+#include <QDebug>
+
 DStyledItemDelegate::DStyledItemDelegate(DFileViewHelper *parent)
-    : QStyledItemDelegate(parent)
-    , d_ptr(new DStyledItemDelegatePrivate(this))
+    : DStyledItemDelegate(*new DStyledItemDelegatePrivate(this), parent)
 {
 
 }
@@ -152,7 +153,7 @@ DStyledItemDelegate::DStyledItemDelegate(DStyledItemDelegatePrivate &dd, DFileVi
     : QStyledItemDelegate(parent)
     , d_ptr(&dd)
 {
-
+    connect(this, &DStyledItemDelegate::commitData, parent, &DFileViewHelper::handleCommitData);
 }
 
 void DStyledItemDelegate::initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const

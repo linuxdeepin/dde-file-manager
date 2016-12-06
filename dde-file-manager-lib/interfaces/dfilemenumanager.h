@@ -45,6 +45,7 @@ public:
     static QList<QAction*> loadMenuExtemsionActions(const DUrlList &urlList, const DUrl& currentUrl);
     static QList<QAction*> jsonToActions(const QJsonArray& data, const DUrlList &urlList, const DUrl& currentUrl, const QString& menuExtensionType);
 
+    static QAction *getAction(MenuAction action);
 
     static QString checkDuplicateName(const QString &name);
     static QSet<MenuAction> getDisableActionList(const DUrl &fileUrl);
