@@ -20,7 +20,7 @@ public:
 
     QString getSystemPath(QString key);
     QString getSystemPathDisplayName(QString key);
-    QString getSystemPathDisplayNameByPath(const QString& path);
+    QString getSystemPathDisplayNameByPath(QString path);
     QString getSystemPathIconName(QString key);
     QString getSystemPathIconNameByPath(const QString& path);
 
@@ -29,8 +29,7 @@ public:
     QMap<QString, QString> systemPathsMap() const;
     QMap<QString, QString> systemPathDisplayNamesMap() const;
 
-    inline bool isSystemPath(const QString& path)
-    { return m_systemPathsSet.contains(path);}
+    bool isSystemPath(QString path) const;
 
 public slots:
     void loadSystemPaths();
