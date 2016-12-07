@@ -585,7 +585,6 @@ QList<QIcon> DAbstractFileInfo::additionalIcon() const
     if (isShared())
         icons << DFMGlobal::instance()->standardIcon(DFMGlobal::ShareIcon);
 
-
     foreach (MenuInterface* menuInterface, PluginManager::instance()->getMenuInterfaces()) {
         QList<QIcon> pluginIcons = menuInterface->additionalIcons(filePath());
         foreach (const QIcon &icon, pluginIcons) {

@@ -10,6 +10,8 @@
 #include "views/windowmanager.h"
 #include "dfileinfo.h"
 #include "models/trashfileinfo.h"
+#include "models/computerdesktopfileinfo.h"
+#include "models/trashdesktopfileinfo.h"
 
 #include "shutil/fileutils.h"
 
@@ -277,6 +279,17 @@ bool DFileService::deleteFiles(const DFMEvent &event) const
 {
     FILTER_RETURN(DeleteFiles, false)
 
+#ifdef DDE_COMPUTER_TRASH
+    DUrlList urlList = event.fileUrlList();
+    if(urlList.contains(ComputerDesktopFileInfo::computerDesktopFileUrl()))
+        urlList.removeOne(ComputerDesktopFileInfo::computerDesktopFileUrl());
+
+    if(urlList.contains(TrashDesktopFileInfo::trashDesktopFileUrl()))
+        urlList.removeOne(TrashDesktopFileInfo::trashDesktopFileUrl());
+
+    const_cast<DFMEvent&>(event) << urlList;
+#endif
+
     if (event.fileUrlList().isEmpty())
         return false;
 
@@ -314,6 +327,16 @@ void DFileService::moveToTrash(const DFMEvent &event) const
 {
     FILTER_RETURN(MoveToTrash)
 
+#ifdef DDE_COMPUTER_TRASH
+    DUrlList urlList = event.fileUrlList();
+    if(urlList.contains(ComputerDesktopFileInfo::computerDesktopFileUrl()))
+        urlList.removeOne(ComputerDesktopFileInfo::computerDesktopFileUrl());
+
+    if(urlList.contains(TrashDesktopFileInfo::trashDesktopFileUrl()))
+        urlList.removeOne(TrashDesktopFileInfo::trashDesktopFileUrl());
+    const_cast<DFMEvent&>(event) << urlList;
+#endif
+
     if (event.fileUrlList().isEmpty())
         return;
 
@@ -348,6 +371,15 @@ DUrlList DFileService::moveToTrashSync(const DFMEvent &event) const
 
 bool DFileService::cutFilesToClipboard(const DUrlList &urlList) const
 {
+
+#ifdef DDE_COMPUTER_TRASH
+    if(urlList.contains(ComputerDesktopFileInfo::computerDesktopFileUrl()))
+        const_cast<DUrlList&>(urlList).removeOne(ComputerDesktopFileInfo::computerDesktopFileUrl());
+
+    if(urlList.contains(TrashDesktopFileInfo::trashDesktopFileUrl()))
+        const_cast<DUrlList&>(urlList).removeOne(TrashDesktopFileInfo::trashDesktopFileUrl());
+#endif
+
     if(urlList.isEmpty())
         return false;
 

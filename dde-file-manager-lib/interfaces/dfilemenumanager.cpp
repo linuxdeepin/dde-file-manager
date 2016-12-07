@@ -7,6 +7,9 @@
 #include "controllers/appcontroller.h"
 #include "controllers/trashmanager.h"
 
+#include "models/computerdesktopfileinfo.h"
+#include "models/trashdesktopfileinfo.h"
+
 #include "widgets/singleton.h"
 #include "views/windowmanager.h"
 #include "shutil/fileutils.h"
@@ -234,6 +237,8 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
     DAbstractFileInfoPointer info = fileService->createFileInfo(currentUrl);
     DFileMenu *menu = NULL;
     if (urlList.length() == 1) {
+        if(currentUrl == ComputerDesktopFileInfo::computerDesktopFileUrl())
+            unusedList << MenuAction::Property;
         QVector<MenuAction> actions = info->menuActionList(DAbstractFileInfo::SingleFile);
         foreach (MenuAction action, unusedList) {
             if (actions.contains(action)){
@@ -327,6 +332,10 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
 
         menu = DFileMenuManager::genereteMenuByKeys(actions, disableList, true, subActions);
     }
+
+    if(currentUrl == ComputerDesktopFileInfo::computerDesktopFileUrl() ||
+            currentUrl == TrashDesktopFileInfo::trashDesktopFileUrl())
+        return menu;
 
     loadNormalPluginMenu(menu, urlList, currentUrl);
     loadNormalExtensionMenu(menu, urlList, currentUrl);
