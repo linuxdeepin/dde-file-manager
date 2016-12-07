@@ -25,7 +25,6 @@ FileIconItem::FileIconItem(QWidget *parent) :
     edit->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     edit->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     edit->setFrameShape(QFrame::NoFrame);
-    edit->setContextMenuPolicy(Qt::NoContextMenu);
     edit->installEventFilter(this);
 
     AnchorsBase::setAnchor(icon, Qt::AnchorHorizontalCenter, this, Qt::AnchorHorizontalCenter);
@@ -103,6 +102,22 @@ void FileIconItem::setOpacity(qreal opacity)
 QSize FileIconItem::sizeHint() const
 {
     return QSize(width(), icon->height() + edit->height());
+}
+
+QColor FileIconItem::borderColor() const
+{
+    return m_borderColor;
+}
+
+void FileIconItem::setBorderColor(QColor borderColor)
+{
+    if (m_borderColor == borderColor)
+        return;
+
+    m_borderColor = borderColor;
+    emit borderColorChanged(borderColor);
+
+    setStyleSheet(QString("FileIconItem[showBackground=true] QTextEdit {border: 2px solid %1;}").arg(m_borderColor.name()));
 }
 
 bool FileIconItem::event(QEvent *ee)

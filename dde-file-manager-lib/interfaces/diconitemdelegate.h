@@ -62,7 +62,6 @@ private:
     QSize iconSizeByIconSizeLevel() const;
 
     Q_DECLARE_PRIVATE(DIconItemDelegate)
-    QColor m_hasFocusTextBackgroundBorderColor;
 };
 
 #endif // DFILEITEMDELEGATE_H
