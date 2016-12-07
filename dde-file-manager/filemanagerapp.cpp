@@ -128,10 +128,12 @@ void FileManagerApp::showPropertyDialog(const QStringList paths)
     DUrlList urlList;
     foreach (QString path, paths) {
         DUrl url = DUrl::fromUserInput(path);
-
+        QString uPath = url.path();
+        if(uPath.endsWith(QDir::separator()) && uPath.size() > 1)
+            uPath.chop(1);
+        url.setPath(uPath);
         if(url == ComputerDesktopFileInfo::computerDesktopFileUrl())
             continue;
-
         if (!url.scheme().isEmpty()){
             if(url.scheme() == FILE_SCHEME && !QFile::exists(url.path()))
                 continue;
