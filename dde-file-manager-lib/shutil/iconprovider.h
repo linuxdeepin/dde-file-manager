@@ -25,6 +25,7 @@ public:
     static QString getFileIcon(const QString& path, int size);
     static QPixmap getIconPixmap(QString iconPath, int width=48, int height=48);
     static QString getThemeIconPath(QString iconName, int size=48);
+    static QIcon DefaultIcon;
 
     void initConnect();
     void gtkInit();

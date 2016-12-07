@@ -41,6 +41,7 @@ extern "C" {
 
 
 static GtkIconTheme* them = NULL;
+QIcon IconProvider::DefaultIcon;
 
 IconProvider::IconProvider(QObject *parent) : QObject(parent)
 {
@@ -237,6 +238,7 @@ QString IconProvider::getThemeIconPath(QString iconName, int size)
     gtk_icon_info_free(info);
 #endif
     g_debug("get icon from icon theme is: %s", path);
+
     return QString(path);
 }
 
@@ -340,7 +342,9 @@ QIcon IconProvider::getDesktopIcon(const QString &iconName, int size)
             }else{
                 icon = QIcon::fromTheme(iconName);
                 if (icon.isNull()){
-                    icon = QIcon(getThemeIconPath("application-default-icon"));
+                    if (DefaultIcon.isNull())
+                        DefaultIcon = QIcon(getThemeIconPath("application-default-icon"));
+                    return DefaultIcon;
                 }
             }
 
@@ -401,7 +405,9 @@ QIcon IconProvider::getIconByMimeType(const QUrl &url, const QMimeType &mimeType
         theIcon = QIcon::fromTheme(iconName);
 
         if (theIcon.isNull()){
-            theIcon = QIcon(getThemeIconPath("application-default-icon"));
+            if (DefaultIcon.isNull())
+                DefaultIcon = QIcon(getThemeIconPath("application-default-icon"));
+            return DefaultIcon;
         }
     }
 
