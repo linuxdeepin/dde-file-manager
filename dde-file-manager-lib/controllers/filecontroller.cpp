@@ -4,12 +4,15 @@
 #include "dfilewatcher.h"
 #include "dfileinfo.h"
 #include "models/desktopfileinfo.h"
+#include "models/computerdesktopfileinfo.h"
+#include "models/trashdesktopfileinfo.h"
 
 #include "app/define.h"
 #include "dfmevent.h"
 #include "app/filesignalmanager.h"
 
 #include "shutil/fileutils.h"
+#include "shutil/standardpath.h"
 
 #include "dialogs/dialogmanager.h"
 
@@ -64,8 +67,17 @@ const DAbstractFileInfoPointer FileController::createFileInfo(const DUrl &fileUr
 {
     accepted = true;
 
-    if (fileUrl.toLocalFile().endsWith(QString(".") + DESKTOP_SURRIX))
+    if (fileUrl.toLocalFile().endsWith(QString(".") + DESKTOP_SURRIX)){
+#ifdef DDE_COMPUTER_TRASH
+        if(fileUrl == ComputerDesktopFileInfo::computerDesktopFileUrl())
+            return DAbstractFileInfoPointer(new ComputerDesktopFileInfo());
+        else if(fileUrl == TrashDesktopFileInfo::trashDesktopFileUrl())
+            return DAbstractFileInfoPointer(new TrashDesktopFileInfo());
+#endif
+
         return DAbstractFileInfoPointer(new DesktopFileInfo(fileUrl));
+    }
+
     else
         return DAbstractFileInfoPointer(new DFileInfo(fileUrl));
 }
@@ -447,9 +459,17 @@ const DAbstractFileInfoPointer FileDirIterator::fileInfo() const
         DFMGlobal::fileNameCorrection(iterator.filePath());
     }
 
-    if (fileName().endsWith(QString(".") + DESKTOP_SURRIX))
-        return DAbstractFileInfoPointer(new DesktopFileInfo(iterator.fileInfo()));
+    if (fileName().endsWith(QString(".") + DESKTOP_SURRIX)){
 
+        #ifdef DDE_COMPUTER_TRASH
+        if(filePath() == ComputerDesktopFileInfo::computerDesktopFileUrl().toLocalFile())
+            return DAbstractFileInfoPointer(new ComputerDesktopFileInfo());
+        else if(filePath() == TrashDesktopFileInfo::trashDesktopFileUrl().toLocalFile())
+            return DAbstractFileInfoPointer(new TrashDesktopFileInfo());
+        #endif
+
+        return DAbstractFileInfoPointer(new DesktopFileInfo(iterator.fileInfo()));
+    }
     return DAbstractFileInfoPointer(new DFileInfo(iterator.fileInfo()));
 }
 

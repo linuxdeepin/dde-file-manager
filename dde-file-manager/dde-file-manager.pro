@@ -52,11 +52,6 @@ INCLUDEPATH += $$PWD/../dde-file-manager-lib $$PWD/.. \
 BINDIR = $$PREFIX/bin
 DEFINES += APPSHAREDIR=\\\"$$PREFIX/share/$$TARGET\\\"
 
-isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
-    DEFINES += AUTO_RESTART_DEAMON
-}
-
-
 target.path = $$BINDIR
 
 desktop.path = $${PREFIX}/share/applications/
