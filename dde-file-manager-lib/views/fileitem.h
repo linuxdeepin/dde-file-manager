@@ -12,6 +12,8 @@ class FileIconItem : public QFrame
 {
     Q_OBJECT
 
+    Q_PROPERTY(QColor borderColor READ borderColor WRITE setBorderColor NOTIFY borderColorChanged)
+
 public:
     explicit FileIconItem(QWidget *parent = 0);
 
@@ -24,8 +26,14 @@ public:
     inline QTextEdit* getTextEdit() const
     { return edit; }
 
+    QColor borderColor() const;
+
+public slots:
+    void setBorderColor(QColor borderColor);
+
 signals:
     void inputFocusOut();
+    void borderColorChanged(QColor borderColor);
 
 protected:
     bool event(QEvent *ee) Q_DECL_OVERRIDE;
@@ -38,6 +46,7 @@ private:
     QLabel *icon;
     QTextEdit *edit;
     QGraphicsOpacityEffect *opacityEffect = Q_NULLPTR;
+    QColor m_borderColor;
 
     friend class DIconItemDelegate;
     friend class DFileView;

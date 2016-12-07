@@ -53,6 +53,7 @@ DIconItemDelegate::DIconItemDelegate(DFileViewHelper *parent) :
     d->expandedItem->icon->setFixedSize(parent->parent()->iconSize());
     /// prevent flash when first call show()
     d->expandedItem->setFixedWidth(0);
+    d->expandedItem->setBorderColor(d->focusTextBackgroundBorderColor);
 
     d->iconSizes << 48 << 64 << 96 << 128 << 256;
 
@@ -288,7 +289,7 @@ void DIconItemDelegate::paint(QPainter *painter,
             path.addRoundedRect(rect, ICON_MODE_RECT_RADIUS, ICON_MODE_RECT_RADIUS);
             painter->save();
             painter->setRenderHint(QPainter::Antialiasing);
-            painter->fillPath(path, QColor(SELECTED_BACKGROUND_COLOR));
+            painter->fillPath(path, QColor(hasFocus ? FOCUS_BACKGROUND_COLOR : SELECTED_BACKGROUND_COLOR));
             painter->restore();
         } else {
             painter->fillRect(label_rect, Qt::transparent);
@@ -643,6 +644,9 @@ void DIconItemDelegate::setFocusTextBackgroundBorderColor(QColor focusTextBackgr
     Q_D(DIconItemDelegate);
 
     d->focusTextBackgroundBorderColor = focusTextBackgroundBorderColor;
+
+    if (d->expandedItem)
+        d->expandedItem->setBorderColor(focusTextBackgroundBorderColor);
 }
 
 bool DIconItemDelegate::eventFilter(QObject *object, QEvent *event)
