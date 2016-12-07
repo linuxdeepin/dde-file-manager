@@ -1,7 +1,7 @@
 TEMPLATE = subdirs
-!isEmpty(MENU_DIALOG_PLUGIN){
-    SUBDIRS += \
-        ImageMenuPlugin \
-        showfile \
-}
 
+include(../common/common.pri)
+
+!isEmpty(MENU_DIALOG_PLUGIN){
+    SUBDIRS +=　showfile
+}
