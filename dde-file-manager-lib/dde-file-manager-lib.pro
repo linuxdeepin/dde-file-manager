@@ -19,10 +19,6 @@ TARGET = $$ProjectName
 TEMPLATE = lib
 CONFIG += create_pc create_prl no_install_prl
 
-isEmpty(VERSION) {
-    VERSION = 1.0
-}
-
 
 DEFINES += QMAKE_TARGET=\\\"$$TARGET\\\" QMAKE_VERSION=\\\"$$VERSION\\\"
 
@@ -304,12 +300,14 @@ isEmpty(LIB_INSTALL_DIR) {
 }
 
 isEmpty(INCLUDE_INSTALL_DIR) {
-    includes.path = $$PREFIX/include/dde-file-manager-$$VERSION
+    includes.path = $$PREFIX/include/dde-file-manager
 } else {
-    includes.path = $$INCLUDE_INSTALL_DIR/dde-file-manager-$$VERSION
+    includes.path = $$INCLUDE_INSTALL_DIR/dde-file-manager
 }
 
-includes.files += $$PWD/interfaces/*.h
+includes.files += $$PWD/interfaces/*.h \
+                $$PWD/../dde-file-manager-plugins/plugininterfaces/menu/*.h
+
 
 QMAKE_PKGCONFIG_LIBDIR = $$target.path
 QMAKE_PKGCONFIG_VERSION = $$VERSION

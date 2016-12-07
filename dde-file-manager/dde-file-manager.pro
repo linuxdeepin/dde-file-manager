@@ -17,9 +17,6 @@ TEMPLATE = app
 CONFIG += c++11 link_pkgconfig
 PKGCONFIG += dtkbase dtkwidget dtkutil
 
-isEmpty(VERSION) {
-    VERSION = 1.3
-}
 
 DEFINES += QMAKE_TARGET=\\\"$$TARGET\\\" QMAKE_VERSION=\\\"$$VERSION\\\"
 
