@@ -16,6 +16,7 @@ class DIconItemDelegate : public DStyledItemDelegate
     Q_OBJECT
 
     Q_PROPERTY(QColor focusTextBackgroundBorderColor READ focusTextBackgroundBorderColor WRITE setFocusTextBackgroundBorderColor)
+    Q_PROPERTY(bool enabledTextShadow READ enabledTextShadow WRITE setEnabledTextShadow)
 
 public:
     explicit DIconItemDelegate(DFileViewHelper *parent);
@@ -48,9 +49,11 @@ public:
     int setIconSizeByIconSizeLevel(int level) Q_DECL_OVERRIDE;
 
     QColor focusTextBackgroundBorderColor() const;
+    bool enabledTextShadow() const;
 
 public slots:
     void setFocusTextBackgroundBorderColor(QColor focusTextBackgroundBorderColor);
+    void setEnabledTextShadow(bool enabledTextShadow);
 
 protected:
     bool eventFilter(QObject *object, QEvent *event) Q_DECL_OVERRIDE;

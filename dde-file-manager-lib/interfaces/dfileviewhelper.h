@@ -18,6 +18,7 @@
 
 QT_BEGIN_NAMESPACE
 class QAbstractItemView;
+class QStyleOptionViewItem;
 QT_END_NAMESPACE
 class DAbstractFileInfo;
 class DStyledItemDelegate;
@@ -50,6 +51,8 @@ public:
     virtual DStyledItemDelegate *itemDelegate() const = 0;
     virtual DFileSystemModel *model() const = 0;
     virtual const DUrlList selectedUrls() const = 0;
+
+    virtual void initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const;
 
     void setIndexWidget(const QModelIndex &index, QWidget *widget);
     QWidget *indexWidget(const QModelIndex &index) const;
