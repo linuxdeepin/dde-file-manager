@@ -304,6 +304,11 @@ void AppController::actionClearTrash(const DFMEvent &event)
     DUrlList list;
     list << DUrl::fromTrashFile("/");
 
+#ifdef DDE_COMPUTER_TRASH
+    if(event.fileUrl() == TrashDesktopFileInfo::trashDesktopFileUrl())
+        const_cast<DFMEvent&>(event) << DUrl::fromTrashFile("/");
+#endif
+
     const_cast<DFMEvent&>(event) << list;
     bool ret = fileService->deleteFiles(event);
     if (ret){

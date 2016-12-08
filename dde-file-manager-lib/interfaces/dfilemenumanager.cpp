@@ -240,6 +240,16 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
         if(currentUrl == ComputerDesktopFileInfo::computerDesktopFileUrl())
             unusedList << MenuAction::Property;
         QVector<MenuAction> actions = info->menuActionList(DAbstractFileInfo::SingleFile);
+
+#ifdef DDE_COMPUTER_TRASH
+        actions << MenuAction::ClearTrash;
+        if(currentUrl == TrashDesktopFileInfo::trashDesktopFileUrl()){
+            DAbstractFileInfoPointer trashFileInfo = fileService->createFileInfo(DUrl::fromTrashFile("/"));
+            if(trashFileInfo->filesCount() <= 0)
+                disableList += MenuAction::ClearTrash;
+        }
+#endif
+
         foreach (MenuAction action, unusedList) {
             if (actions.contains(action)){
                 actions.remove(actions.indexOf(action));
