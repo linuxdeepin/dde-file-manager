@@ -51,9 +51,6 @@ void DListItemDelegate::paint(QPainter *painter,
     bool isDragMode = ((QPaintDevice*)parent()->parent()->viewport() != painter->device());
     bool isDropTarget = parent()->isDropTarget(index);
     bool isEnabled = option.state & QStyle::State_Enabled;
-    bool hasFocus = option.state & QStyle::State_HasFocus;
-
-    painter->setPen(isEnabled ? TEXT_COLOR : DISABLE_LABEL_COLOR);
 
     if (parent()->isCut(index))
         painter->setOpacity(0.3);
@@ -79,9 +76,8 @@ void DListItemDelegate::paint(QPainter *painter,
 
         painter->save();
         painter->setRenderHint(QPainter::Antialiasing);
-        painter->fillPath(path, QColor(hasFocus ? FOCUS_BACKGROUND_COLOR : SELECTED_BACKGROUND_COLOR));
+        painter->fillPath(path, opt.backgroundBrush);
         painter->restore();
-        painter->setPen(Qt::white);
     } else {
         if (!isDragMode){
             if (index.row() % 2 == 0){
@@ -155,6 +151,7 @@ void DListItemDelegate::paint(QPainter *painter,
         const QString &file_name = DFMGlobal::elideText(index.data(role).toString().remove('\n'), rect.size(),
                                                         painter->fontMetrics(), QTextOption::NoWrap, Qt::ElideRight);
 
+        painter->setPen(opt.palette.color(QPalette::Text));
         painter->drawText(rect, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()), file_name);
     }
 
@@ -162,12 +159,7 @@ void DListItemDelegate::paint(QPainter *painter,
         return;
 
     const DFileSystemModel *model = qobject_cast<const DFileSystemModel*>(index.model());
-
-    if (drawBackground) {
-        painter->setPen("#e9e9e9");
-    } else {
-        painter->setPen(DISABLE_LABEL_COLOR);
-    }
+    painter->setPen(opt.palette.color(QPalette::Inactive, QPalette::Text));
 
     for(int i = 1; i < columnRoleList.count(); ++i) {
         int column_width = parent()->columnWidth(i);
@@ -202,7 +194,7 @@ void DListItemDelegate::paint(QPainter *painter,
 
         rect += QMarginsF(-0.5 + LEFT_PADDING, -0.5, -0.5 + RIGHT_PADDING, -0.5);
 
-        pen.setColor(SELECTED_BACKGROUND_COLOR);
+        pen.setColor(opt.backgroundBrush.color());
 
         painter->setPen(pen);
         painter->setRenderHint(QPainter::Antialiasing, true);

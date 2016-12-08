@@ -1460,6 +1460,11 @@ void DFileView::initUI()
 {
     D_D(DFileView);
 
+    QPalette palette = this->palette();
+
+    palette.setColor(QPalette::Text, Qt::red);
+    setPalette(palette);
+
     setSpacing(ICON_VIEW_SPACING);
     setResizeMode(QListView::Adjust);
     setOrientation(QListView::LeftToRight, true);

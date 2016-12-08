@@ -159,11 +159,7 @@ DStyledItemDelegate::DStyledItemDelegate(DStyledItemDelegatePrivate &dd, DFileVi
 void DStyledItemDelegate::initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const
 {
     QStyledItemDelegate::initStyleOption(option, index);
-
-    if (parent()->isSelected(index))
-        option->state |= QStyle::State_Selected;
-    else
-        option->state &= QStyle::StateFlag(~QStyle::State_Selected);
+    parent()->initStyleOption(option, index);
 }
 
 QList<QRect> DStyledItemDelegate::getCornerGeometryList(const QRect &baseRect, const QSize &cornerSize) const

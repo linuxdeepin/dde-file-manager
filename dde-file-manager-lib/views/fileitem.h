@@ -41,6 +41,7 @@ protected:
 
 private:
     void updateEditorGeometry();
+    void updateStyleSheet();
 
     bool canDeferredDelete = true;
     QLabel *icon;

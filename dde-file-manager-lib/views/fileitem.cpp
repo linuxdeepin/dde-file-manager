@@ -117,7 +117,7 @@ void FileIconItem::setBorderColor(QColor borderColor)
     m_borderColor = borderColor;
     emit borderColorChanged(borderColor);
 
-    setStyleSheet(QString("FileIconItem[showBackground=true] QTextEdit {border: 2px solid %1;}").arg(m_borderColor.name()));
+    updateStyleSheet();
 }
 
 bool FileIconItem::event(QEvent *ee)
@@ -197,4 +197,17 @@ void FileIconItem::updateEditorGeometry()
     } else {
         edit->setFixedHeight(TEXT_LINE_HEIGHT * 3 + TEXT_PADDING * 2);
     }
+}
+
+void FileIconItem::updateStyleSheet()
+{
+    QString base = "FileIconItem[showBackground=true] QTextEdit {background: %1; color: %2; border: 2px solid %3;}";
+
+    base.append("FileIconItem QTextEdit {color: %4}");
+    base = base.arg(palette().color(QPalette::Background).name(QColor::HexArgb))
+            .arg(palette().color(QPalette::BrightText).name(QColor::HexArgb))
+            .arg(m_borderColor.name(QColor::HexArgb))
+            .arg(palette().color(QPalette::Text).name(QColor::HexArgb));
+
+    setStyleSheet(base);
 }

@@ -271,6 +271,29 @@ DUrl DFileViewHelper::currentUrl() const
     return fileInfo->fileUrl();
 }
 
+void DFileViewHelper::initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const
+{
+    if (isSelected(index))
+        option->state |= QStyle::State_Selected;
+    else
+        option->state &= QStyle::StateFlag(~QStyle::State_Selected);
+
+    option->palette.setColor(QPalette::Text, QColor("#303030"));
+    option->palette.setColor(QPalette::Disabled, QPalette::Text, QColor("#797979"));
+    if ((option->state & QStyle::State_Selected) && option->showDecorationSelected)
+        option->palette.setColor(QPalette::Inactive, QPalette::Text, QColor("#e9e9e9"));
+    else
+        option->palette.setColor(QPalette::Inactive, QPalette::Text, QColor("#797979"));
+    option->palette.setColor(QPalette::BrightText, Qt::white);
+    option->palette.setBrush(QPalette::Shadow, QColor(0, 0, 0, 178));
+
+    if ((option->state & QStyle::State_HasFocus) && option->showDecorationSelected && selectedIndexsCount() > 1) {
+        option->backgroundBrush = QColor("#0076F9");
+    } else {
+        option->backgroundBrush = QColor("#2da6f7");
+    }
+}
+
 /*!
  * \brief Sets the given widget on the item at the given index, passing the ownership of the widget to the view viewport.
  * If index is invalid (e.g., if you pass the root index), this function will do nothing.

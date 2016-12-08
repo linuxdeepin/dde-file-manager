@@ -37,7 +37,8 @@ public:
     /// default icon size is 64px.
     int currentIconSizeIndex = 1;
 
-    QColor focusTextBackgroundBorderColor = FOCUS_BACKGROUND_COLOR;
+    QColor focusTextBackgroundBorderColor = Qt::transparent;
+    bool enabledTextShadow = false;
 };
 
 DIconItemDelegate::DIconItemDelegate(DFileViewHelper *parent) :
@@ -53,7 +54,7 @@ DIconItemDelegate::DIconItemDelegate(DFileViewHelper *parent) :
     d->expandedItem->icon->setFixedSize(parent->parent()->iconSize());
     /// prevent flash when first call show()
     d->expandedItem->setFixedWidth(0);
-    d->expandedItem->setBorderColor(d->focusTextBackgroundBorderColor);
+    d->expandedItem->setBorderColor(Qt::transparent);
 
     d->iconSizes << 48 << 64 << 96 << 128 << 256;
 
@@ -95,6 +96,10 @@ QString trimmedEnd(QString str)
     return str;
 }
 
+QT_BEGIN_NAMESPACE
+Q_WIDGETS_EXPORT void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int transposed = 0);
+QT_END_NAMESPACE
+
 void DIconItemDelegate::paint(QPainter *painter,
                               const QStyleOptionViewItem &option,
                               const QModelIndex &index) const
@@ -105,8 +110,6 @@ void DIconItemDelegate::paint(QPainter *painter,
     bool isDragMode = ((QPaintDevice*)parent()->parent()->viewport() != painter->device());
     bool isEnabled = option.state & QStyle::State_Enabled;
     bool hasFocus = option.state & QStyle::State_HasFocus;
-
-    painter->setPen(isEnabled ? TEXT_COLOR : DISABLE_LABEL_COLOR);
 
     if((index == d->expandedIndex || index == d->editingIndex) && !isDragMode)
         return;
@@ -121,22 +124,17 @@ void DIconItemDelegate::paint(QPainter *painter,
     bool isDropTarget = parent()->isDropTarget(index);
 
     if (isDropTarget && !isSelected) {
-        QPen pen;
         QRectF rect = opt.rect;
         QPainterPath path;
 
         rect.moveTopLeft(QPointF(0.5, 0.5) + rect.topLeft());
-
-        pen.setColor(SELECTED_BACKGROUND_COLOR);
-
         path.addRoundedRect(rect, ICON_MODE_RECT_RADIUS, ICON_MODE_RECT_RADIUS);
 
-        painter->setPen(pen);
         painter->setRenderHint(QPainter::Antialiasing, true);
         painter->fillPath(path, QColor(43, 167, 248, 0.50 * 255));
+        painter->setPen(opt.backgroundBrush.color());
         painter->drawPath(path);
         painter->setRenderHint(QPainter::Antialiasing, false);
-        painter->setPen(Qt::black);
     }
 
     /// init icon geomerty
@@ -190,6 +188,14 @@ void DIconItemDelegate::paint(QPainter *painter,
             setEditorData(d->expandedItem, index);
             parent()->setIndexWidget(index, d->expandedItem);
 
+            QPalette palette = d->expandedItem->palette();
+
+            palette.setColor(QPalette::Text, opt.palette.color(QPalette::Text));
+            palette.setColor(QPalette::BrightText, opt.palette.color(QPalette::BrightText));
+            palette.setColor(QPalette::Background, opt.backgroundBrush.color());
+            d->expandedItem->setPalette(palette);
+            d->expandedItem->updateStyleSheet();
+
             if (parent()->indexOfRow(index) == parent()->rowCount() - 1) {
                 d->lastAndExpandedInde = index;
             }
@@ -222,7 +228,6 @@ void DIconItemDelegate::paint(QPainter *painter,
     /// draw icon
 
     if (isSelected) {
-        painter->setPen(Qt::white);
         opt.icon.paint(painter, icon_rect, Qt::AlignCenter, QIcon::Selected);
     } else if (isDropTarget) {
         QPixmap pixmap = opt.icon.pixmap(icon_rect.size());
@@ -248,9 +253,10 @@ void DIconItemDelegate::paint(QPainter *painter,
     }
 
     /// draw file name label
-
+    QRect label_background_rect = opt.rect;
+    QTextDocument *doc = Q_NULLPTR;
     if(str.indexOf("\n") >=0 && !str.endsWith("\n")) {
-        QTextDocument *doc = d->documentMap.value(str);
+        doc = d->documentMap.value(str);
 
         if(!doc) {
             doc = new QTextDocument(str, const_cast<DIconItemDelegate*>(this));
@@ -274,54 +280,78 @@ void DIconItemDelegate::paint(QPainter *painter,
             d->documentMap[str] = doc;
         }
 
+        if (isSelected) {
+            label_background_rect = opt.rect;
+            label_background_rect.moveTop(label_rect.top() - TEXT_PADDING);
+            label_background_rect.setHeight(doc->size().height());
+        }
+    } else {
+        if(isSelected) {
+            QRect &rect = label_background_rect;
+
+            painter->drawText(label_rect, Qt::AlignHCenter, str, &rect);
+            rect += QMargins(TEXT_PADDING, TEXT_PADDING, TEXT_PADDING, TEXT_PADDING);
+        }
+    }
+
+    if (isSelected) {
+        QPainterPath path;
+
+        path.addRoundedRect(label_background_rect, ICON_MODE_RECT_RADIUS, ICON_MODE_RECT_RADIUS);
+        painter->save();
+        painter->setRenderHint(QPainter::Antialiasing);
+        painter->fillPath(path, opt.backgroundBrush);
+        if (hasFocus && !singleSelected) {
+            painter->setPen(QPen(focusTextBackgroundBorderColor(), 2));
+            painter->drawPath(path);
+        }
+        painter->restore();
+    } else {
+        painter->fillRect(label_rect, Qt::transparent);
+    }
+
+    QImage text_image(label_rect.size(), QImage::Format_ARGB32_Premultiplied);
+    text_image.fill(Qt::transparent);
+
+    if (isSelected)
+        painter->setPen(opt.palette.color(QPalette::BrightText));
+    else
+        painter->setPen(opt.palette.color(QPalette::Text));
+
+    if (doc) {
         QAbstractTextDocumentLayout::PaintContext ctx;
 
         ctx.palette.setColor(QPalette::Text, painter->pen().color());
 
-        if (isSelected) {
-            QRect rect = opt.rect;
-
-            rect.moveTop(label_rect.top() - TEXT_PADDING);
-            rect.setHeight(doc->size().height());
-
-            QPainterPath path;
-
-            path.addRoundedRect(rect, ICON_MODE_RECT_RADIUS, ICON_MODE_RECT_RADIUS);
+        if (isSelected || !d->enabledTextShadow) {
             painter->save();
-            painter->setRenderHint(QPainter::Antialiasing);
-            painter->fillPath(path, QColor(hasFocus ? FOCUS_BACKGROUND_COLOR : SELECTED_BACKGROUND_COLOR));
+            painter->translate(label_rect.left(), label_rect.top() - TEXT_PADDING);
+            doc->documentLayout()->draw(painter, ctx);
             painter->restore();
         } else {
-            painter->fillRect(label_rect, Qt::transparent);
+            QPainter p(&text_image);
+            p.translate(0, 1 - TEXT_PADDING);
+            doc->documentLayout()->draw(&p, ctx);
         }
-
-        painter->save();
-        painter->translate(label_rect.left(), label_rect.top() - TEXT_PADDING);
-        doc->documentLayout()->draw(painter, ctx);
-        painter->restore();
     } else {
-        if(isSelected) {
-            QRect rect;
-
-            painter->drawText(label_rect, Qt::AlignHCenter, str, &rect);
-            rect += QMargins(TEXT_PADDING, TEXT_PADDING, TEXT_PADDING, TEXT_PADDING);
-
-            QPainterPath path;
-
-            path.addRoundedRect(rect, ICON_MODE_RECT_RADIUS, ICON_MODE_RECT_RADIUS);
-            painter->save();
-            painter->setRenderHint(QPainter::Antialiasing);
-            painter->fillPath(path, QColor(hasFocus ? FOCUS_BACKGROUND_COLOR : SELECTED_BACKGROUND_COLOR));
-            if (hasFocus) {
-                painter->setPen(QPen(focusTextBackgroundBorderColor(), 2));
-                painter->drawPath(path);
-            }
-            painter->restore();
+        if (isSelected || !d->enabledTextShadow) {
+            painter->drawText(label_rect, Qt::AlignHCenter, str);
         } else {
-            painter->fillRect(label_rect, Qt::transparent);
+            QPainter p(&text_image);
+            p.setPen(painter->pen());
+            p.drawText(QRect(QPoint(0, 0), label_rect.size()), Qt::AlignHCenter, str);
         }
+    }
 
-        painter->drawText(label_rect, Qt::AlignHCenter, str);
+    if (!isSelected && d->enabledTextShadow) {
+        const QPixmap &text_pixmap = QPixmap::fromImage(text_image);
+
+        qt_blurImage(text_image, 3, false);
+        QPainter tmpPainter(&text_image);
+        tmpPainter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+        tmpPainter.fillRect(text_image.rect(), opt.palette.color(QPalette::Shadow));
+        painter->drawImage(label_rect.translated(0, 1), text_image);
+        painter->drawPixmap(label_rect, text_pixmap);
     }
 
     painter->setOpacity(1);
@@ -639,14 +669,28 @@ QColor DIconItemDelegate::focusTextBackgroundBorderColor() const
     return d->focusTextBackgroundBorderColor;
 }
 
+bool DIconItemDelegate::enabledTextShadow() const
+{
+    Q_D(const DIconItemDelegate);
+
+    return d->enabledTextShadow;
+}
+
 void DIconItemDelegate::setFocusTextBackgroundBorderColor(QColor focusTextBackgroundBorderColor)
 {
     Q_D(DIconItemDelegate);
 
     d->focusTextBackgroundBorderColor = focusTextBackgroundBorderColor;
 
-    if (d->expandedItem)
-        d->expandedItem->setBorderColor(focusTextBackgroundBorderColor);
+//    if (d->expandedItem)
+    //        d->expandedItem->setBorderColor(focusTextBackgroundBorderColor);
+}
+
+void DIconItemDelegate::setEnabledTextShadow(bool enabledTextShadow)
+{
+    Q_D(DIconItemDelegate);
+
+    d->enabledTextShadow = enabledTextShadow;
 }
 
 bool DIconItemDelegate::eventFilter(QObject *object, QEvent *event)
