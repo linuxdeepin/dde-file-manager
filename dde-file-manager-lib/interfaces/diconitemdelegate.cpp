@@ -514,6 +514,9 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
     /// init file name geometry
 
     QRect label_rect = option.rect;
+
+    label_rect.setTop(icon_rect.bottom() + TEXT_PADDING + ICON_MODE_ICON_SPACING);
+
     QStyleOptionViewItem opt = option;
     initStyleOption(&opt, index);
 
@@ -555,7 +558,7 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
     /// draw icon and file name label
 
     label_rect = option.fontMetrics.boundingRect(label_rect, Qt::AlignHCenter, str);
-    label_rect.moveTop(icon_rect.bottom() + TEXT_PADDING + ICON_MODE_ICON_SPACING);
+    label_rect.setTop(icon_rect.bottom());
 
     geometrys << label_rect;
 
