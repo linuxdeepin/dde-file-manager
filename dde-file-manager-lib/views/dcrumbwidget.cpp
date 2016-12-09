@@ -63,6 +63,8 @@ void DCrumbWidget::addCrumb(const QStringList &list)
     for(int i = 0; i < list.size(); i++)
     {
         QString text = list.at(i);
+        text.replace("&", "&&");
+
         DCrumbButton * button;
         if(isHomeFolder(text)){
             button = new DCrumbIconButton(
