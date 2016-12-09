@@ -34,6 +34,7 @@
 
 #include <QProcess>
 #include <QStorageInfo>
+#include <QAction>
 #include <DAboutDialog>
 #include <qprocess.h>
 #include "shutil/shortcut.h"
@@ -609,7 +610,7 @@ void AppController::actionForgetPassword(const DFMEvent &event)
 
 void AppController::actionOpenFileByApp()
 {
-    QAction* dAction = static_cast<QAction*>(sender());
+    QAction* dAction = qobject_cast<QAction*>(sender());
     QString app = dAction->property("app").toString();
     DUrl fileUrl(dAction->property("url").toUrl());
     fileService->openFileByApp(fileUrl, app);
