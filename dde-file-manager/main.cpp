@@ -47,6 +47,7 @@ int main(int argc, char *argv[])
     app.setOrganizationName(QMAKE_ORGANIZATION_NAME);
     app.setApplicationName(QMAKE_TARGET);
     app.setApplicationVersion(QMAKE_VERSION);
+    app.loadTranslator();
 
     QFont font;
     font.setPixelSize(14);
