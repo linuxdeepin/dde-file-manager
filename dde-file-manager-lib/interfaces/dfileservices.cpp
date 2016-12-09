@@ -340,6 +340,17 @@ void DFileService::moveToTrash(const DFMEvent &event) const
     if (event.fileUrlList().isEmpty())
         return;
 
+    //handle files whom could not be moved to trash
+    DUrlList enableList;
+    foreach (const DUrl& url, event.fileUrlList()) {
+        const DAbstractFileInfoPointer& info = createFileInfo(url);
+        if(info->isDir() && !info->isWritable())
+            continue;
+
+        enableList << url;
+    }
+    const_cast<DFMEvent&>(event) << enableList;
+
     if (QThreadPool::globalInstance()->activeThreadCount() >= MAX_THREAD_COUNT) {
         qDebug() << "Beyond the maximum number of threads!";
         return;
