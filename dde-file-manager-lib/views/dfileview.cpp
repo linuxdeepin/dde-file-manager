@@ -1135,7 +1135,6 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
 {
     D_DC(DFileView);
 
-
     const QModelIndex &index = indexAt(event->pos());
     bool indexIsSelected = this->isSelected(index);
     bool isEmptyArea = d->fileViewHelper->isEmptyArea(event->pos()) && !indexIsSelected;
@@ -1988,8 +1987,16 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
     QSet<MenuAction> disableList;
     QSet<MenuAction> unusedList;
 
+    if(!info->isReadable())
+        disableList << MenuAction::Copy;
+
+    if(!info->isWritable() && !info->isFile())
+        disableList << MenuAction::Delete;
+
     if (!indexFlags.testFlag(Qt::ItemIsEditable))
-        disableList << MenuAction::Cut << MenuAction::Rename << MenuAction::Remove << MenuAction::Delete;
+            disableList << MenuAction::Rename ;
+//    if (!indexFlags.testFlag(Qt::ItemIsEditable))
+//        disableList << MenuAction::Cut << MenuAction::Rename << MenuAction::Remove << MenuAction::Delete;
 
     menu = DFileMenuManager::createNormalMenu(info->fileUrl(), list, disableList, unusedList, windowId());
 
