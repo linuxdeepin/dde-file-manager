@@ -17,6 +17,9 @@
 #include "controllers/appcontroller.h"
 #include "widgets/singleton.h"
 
+#include "filedialogmanager_adaptor.h"
+#include "filedialog/dbusfiledialogmanager.h"
+
 #include <dthememanager.h>
 #include <dwindow.h>
 
@@ -35,6 +38,32 @@
 
 DWIDGET_USE_NAMESPACE
 
+bool registerDialogDBus()
+{
+    if (!QDBusConnection::sessionBus().isConnected()) {
+        qWarning("Cannot connect to the D-Bus session bus.\n"
+                 "Please check your system settings and try again.\n");
+        return false;
+    }
+
+    // add our D-Bus interface and connect to D-Bus
+    if (!QDBusConnection::sessionBus().registerService("com.deepin.filemanager.filedialog")) {
+        qWarning("Cannot register the \"com.deepin.filemanager.filedialog\" service.\n");
+        return false;
+    }
+
+    DBusFileDialogManager *manager = new DBusFileDialogManager();
+    Q_UNUSED(new FiledialogmanagerAdaptor(manager));
+
+    if (!QDBusConnection::sessionBus().registerObject("/com/deepin/filemanager/filedialogmanager", manager)) {
+        qWarning("Cannot register to the D-Bus object.\n");
+        manager->deleteLater();
+        return false;
+    }
+
+    return true;
+}
+
 int main(int argc, char *argv[])
 {
 #ifdef ENABLE_PPROF
@@ -49,6 +78,9 @@ int main(int argc, char *argv[])
     app.setApplicationVersion(QMAKE_VERSION);
     app.loadTranslator();
 
+    DFMGlobal::installTranslator();
+    DThemeManager::instance()->setTheme("light");
+
     QFont font;
     font.setPixelSize(14);
     app.setFont(font);
@@ -57,6 +89,18 @@ int main(int argc, char *argv[])
 
     CommandLineManager::instance()->process();
 
+    // show file selection dialog
+    if (CommandLineManager::instance()->isSet("f")) {
+        if (!registerDialogDBus()) {
+            qWarning() << "register dialog dbus failed.";
+
+            return 1;
+        }
+
+        app.setQuitOnLastWindowClosed(false);
+
+        return app.exec();
+    }
 
     DUrlList commandlineUrlList;
     foreach (QString path, CommandLineManager::instance()->positionalArguments()) {

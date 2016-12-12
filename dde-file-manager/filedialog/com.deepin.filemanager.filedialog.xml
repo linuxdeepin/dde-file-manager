@@ -1,0 +1,65 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="com.deepin.filemanager.filedialog">
+    <property name="directory" type="s" access="readwrite"></property>
+    <property name="directoryUrl" type="s" access="readwrite"></property>
+    <property name="nameFilters" type="as" access="readwrite">
+        <annotation name="org.qtproject.QtDBus.QtTypeName" value="QStringList"/>
+    </property>
+    <property name="filter" type="i" access="readwrite"></property>
+    <property name="viewMode" type="i" access="readwrite"></property>
+    <property name="acceptMode" type="i" access="readwrite"></property>
+    <method name="selectFile">
+        <arg name="filename" type="s" direction="in"/>
+    </method>
+    <method name="selectedFiles">
+        <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QStringList"/>
+        <arg name="filelist" type="as" direction="out"/>
+    </method>
+    <method name="selectUrl">
+        <arg name="url" type="s" direction="in"/>
+    </method>
+    <method name="selectedUrls">
+        <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QStringList"/>
+        <arg name="urllist" type="as" direction="out"/>
+    </method>
+    <method name="selectNameFilter">
+        <arg name="filter" type="s" direction="in"/>
+    </method>
+    <method name="selectedNameFilter">
+        <arg name="filter" type="s" direction="out"/>
+    </method>
+    <method name="setFileMode">
+        <arg name="fileMode" type="i" direction="in"/>
+    </method>
+    <method name="setLabelText">
+        <arg name="label" type="i" direction="in"/>
+        <arg name="text" type="s" direction="in"/>
+    </method>
+    <method name="labelText">
+        <arg name="label" type="i" direction="in"/>
+        <arg name="text" type="s" direction="out"/>
+    </method>
+    <method name="setOptions">
+        <arg name="options" type="i" direction="in"/>
+    </method>
+    <method name="show"></method>
+    <method name="open"></method>
+    <method name="hide"></method>
+    <method name="accept"></method>
+    <method name="reject"></method>
+    <method name="winId">
+        <arg name="windowId" type="t" direction="out"/>
+    </method>
+    <method name="setWindowTitle">
+        <arg name="title" type="s" direction="in"/>
+    </method>
+    <method name="deleteLater"></method>
+    <signal name="finished">
+      <arg name="result" type="i" direction="out"/>
+    </signal>
+    <signal name="accepted"></signal>
+    <signal name="rejected"></signal>
+  </interface>
+</node>

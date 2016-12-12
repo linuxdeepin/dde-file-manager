@@ -27,9 +27,11 @@ void CommandLineManager::initOptions(){
     QCommandLineOption newWindowOption(QStringList() << "n" << "new-window", "show new window");
     QCommandLineOption backendOption(QStringList() << "d" << "none window process", "start dde-file-manager in no window mode");
     QCommandLineOption openPropertyDialogOption(QStringList() << "p" << "property", "show property dialog");
+    QCommandLineOption openFileDialogOption(QStringList() << "f" << "filedialog", "show file selection dialog");
     addOption(newWindowOption);
     addOption(backendOption);
     addOption(openPropertyDialogOption);
+    addOption(openFileDialogOption);
 }
 
 void CommandLineManager::addOption(const QCommandLineOption &option){

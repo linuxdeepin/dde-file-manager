@@ -1,0 +1,19 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="com.deepin.filemanager.filedialogmanager">
+    <method name="createDialog">
+        <arg name="key" type="s" direction="in"/>
+        <arg name="path" type="o" direction="out"/>
+    </method>
+    <method name="destroyDialog">
+        <arg name="path" type="o" direction="in"/>
+    </method>
+    <method name="dialogs">
+        <arg name="dialogObjectList" type="ao" direction="out"/>
+    </method>
+    <method name="errorString">
+        <arg name="error" type="s" direction="out"/>
+    </method>
+  </interface>
+</node>
