@@ -1,6 +1,6 @@
 #!/bin/bash
 
-process=`ps aux | grep dde-file-manager | grep -v grep`;
+process=`ps ax -o 'cmd' |grep 'dde-file-manager$'`;
   
 if [ "$process" == "" ]; then
     dde-file-manager trash:///

@@ -103,6 +103,9 @@ int main(int argc, char *argv[])
         quick_exit(ret);
 #endif
     }else{
+        if (isBackendRun){
+            return 0;
+        }
         SingleApplication::newClientProcess(uniqueKey);
         QWidget w;
         w.setWindowFlags(Qt::FramelessWindowHint);
