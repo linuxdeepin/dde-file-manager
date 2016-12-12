@@ -41,7 +41,7 @@ public:
     static qint64 Msec_For_Display;
     static qint64 Data_Block_Size;
     static qint64 Data_Flush_Size;
-
+    static bool setDirPermissions(const QString& scrPath, const QString& tarDirPath);
 
     explicit FileJob(JobType jobType, QObject *parent = 0);
     ~FileJob();

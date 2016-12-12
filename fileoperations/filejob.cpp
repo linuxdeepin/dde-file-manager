@@ -29,6 +29,16 @@ qint64 FileJob::Data_Block_Size = 65536;
 qint64 FileJob::Data_Flush_Size = 16777216;
 
 
+bool FileJob::setDirPermissions(const QString &scrPath, const QString& tarDirPath)
+{
+    struct stat buf;
+    std::string stdSrcPath = scrPath.toStdString();
+    stat(stdSrcPath.data(), &buf);
+    std::string stdTarDirPath = tarDirPath.toStdString();
+    bool success = ::chmod(stdTarDirPath.data(), buf.st_mode & 0777) == 0;
+    return success;
+}
+
 FileJob::FileJob(JobType jobType, QObject *parent) : QObject(parent)
 {
     qRegisterMetaType<QMap<QString, QString>>();
@@ -599,6 +609,9 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
                         return false;
                     }
                 }
+                if (!to.setPermissions(from.permissions())){
+                    qDebug() << "Set permissions from " << srcFile << "to" << m_tarPath << "failed";
+                };
                 m_status = Run;
  #ifdef SPLICE_CP
                 in_fd = from.handle();
@@ -795,6 +808,11 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
                     return false;
             }
             targetDir.setPath(m_tarPath);
+            bool isSetPermissionsSuccess = setDirPermissions(srcDir, targetDir.path());
+            if (!isSetPermissionsSuccess){
+                qDebug() << "Set Permissions of "<< m_tarPath << "same as" <<  srcDir << "failed";
+                return false;
+            }
             m_status = Run;
             break;
         }
