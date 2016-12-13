@@ -406,6 +406,7 @@ void DFileManagerWindow::switchToView(DFileView *view)
     if (d->fileView) {
         disconnect(d->fileView, &DFileView::viewModeChanged, d->toolbar, &DToolBar::checkViewModeButton);
         disconnect(fileSignalManager, &FileSignalManager::loadingIndicatorShowed, d->fileView->statusBar(), &DStatusBar::setLoadingIncatorVisible);
+        disconnect(d->fileView, &DFileView::requestActivateTabByIndex, d->tabBar, &TabBar::setCurrentIndex);
     }
 
     d->fileView = view;
@@ -423,6 +424,8 @@ void DFileManagerWindow::switchToView(DFileView *view)
 
         connect(d->fileView, &DFileView::viewModeChanged, d->toolbar, &DToolBar::checkViewModeButton);
         connect(fileSignalManager, &FileSignalManager::loadingIndicatorShowed, d->fileView->statusBar(), &DStatusBar::setLoadingIncatorVisible);
+        connect(d->fileView, &DFileView::requestActivateTabByIndex, d->tabBar, &TabBar::setCurrentIndex);
+
 
         d->leftSideBar->scene()->setCurrentUrl(view->rootUrl());
         d->toolbar->checkViewModeButton(d->fileView->viewMode());
