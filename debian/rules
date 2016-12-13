@@ -1,6 +1,8 @@
 #!/usr/bin/make -f
+include /usr/share/dpkg/default.mk
 
 VERSION=$(shell dpkg-parsechangelog -ldebian/changelog -SVersion | awk -F'-' '{print $$1}')
+DEB_BUILD_ARCH ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
 
 %:
 	dh $@ --parallel
@@ -8,3 +10,16 @@ VERSION=$(shell dpkg-parsechangelog -ldebian/changelog -SVersion | awk -F'-' '{p
 override_dh_auto_configure:
 	dh_auto_configure -- DAPP_VERSION=$(VERSION) LIB_INSTALL_DIR=/usr/lib/$(DEB_HOST_MULTIARCH)
 
+ifeq ($(DEB_BUILD_ARCH), mipsel)
+override_dh_install:
+	dh_install --
+	mkdir -p debian/libdde-file-manager/usr/lib/$(DEB_HOST_MULTIARCH)/dde-file-manager/plugins
+	cp -r debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)/dde-file-manager/plugins/*  debian/libdde-file-manager/usr/lib/$(DEB_HOST_MULTIARCH)/dde-file-manager/plugins/
+endif
+
+ifeq ($(DEB_BUILD_ARCH), mips64el)
+override_dh_install:
+	dh_install --
+	mkdir -p debian/libdde-file-manager/usr/lib/$(DEB_HOST_MULTIARCH)/dde-file-manager/plugins
+	cp -r debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)/dde-file-manager/plugins/*  debian/libdde-file-manager/usr/lib/$(DEB_HOST_MULTIARCH)/dde-file-manager/plugins/
+endif
