@@ -35,6 +35,7 @@ public:
     void _q_handleFileCreated(const QString &path, const QString &parentPath);
     void _q_onUserShareInfoChanged(const QString &path);
     void _q_handleFileModified(const QString &path, const QString &parentPath);
+    void _q_handleFileClose(const QString &path, const QString &parentPath);
 
     static QString formatPath(const QString &path);
 
@@ -96,6 +97,8 @@ bool DFileWatcherPrivate::start()
                q, &DFileWatcher::onFileCreated);
     q->connect(watcher_file_private, &DFileSystemWatcher::fileModified,
                q, &DFileWatcher::onFileModified);
+    q->connect(watcher_file_private, &DFileSystemWatcher::fileClosed,
+               q, &DFileWatcher::onFileClosed);
 
     return true;
 }
@@ -192,6 +195,16 @@ void DFileWatcherPrivate::_q_handleFileModified(const QString &path, const QStri
     emit q->fileModified(DUrl::fromLocalFile(path));
 }
 
+void DFileWatcherPrivate::_q_handleFileClose(const QString &path, const QString &parentPath)
+{
+    if (path != this->path && parentPath != this->path)
+        return;
+
+    Q_Q(DFileWatcher);
+
+    emit q->fileClosed(DUrl::fromLocalFile(path));
+}
+
 QString DFileWatcherPrivate::formatPath(const QString &path)
 {
     QString p = QFileInfo(path).absoluteFilePath();
@@ -260,6 +273,14 @@ void DFileWatcher::onFileModified(const QString &path, const QString &name)
         d_func()->_q_handleFileModified(path, QString());
     else
         d_func()->_q_handleFileModified(path + QDir::separator() + name, path);
+}
+
+void DFileWatcher::onFileClosed(const QString &path, const QString &name)
+{
+    if (name.isEmpty())
+        d_func()->_q_handleFileClose(path, QString());
+    else
+        d_func()->_q_handleFileClose(path + QDir::separator() + name, path);
 }
 
 #include "moc_dfilewatcher.cpp"
