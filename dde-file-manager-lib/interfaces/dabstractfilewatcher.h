@@ -29,6 +29,11 @@ public:
 
     virtual void setEnabledSubfileWatcher(const DUrl &subfileUrl, bool enabled = true);
 
+    using SignalType1 = void(DAbstractFileWatcher::*)(const DUrl&);
+    using SignalType2 = void(DAbstractFileWatcher::*)(const DUrl&, const DUrl&);
+    static bool ghostSignal(const DUrl &targetUrl, SignalType1 signal, const DUrl &arg1);
+    static bool ghostSignal(const DUrl &targetUrl, SignalType2 signal, const DUrl &arg1, const DUrl &arg2);
+
 signals:
     void fileDeleted(const DUrl &url);
     void fileAttributeChanged(const DUrl &url);
