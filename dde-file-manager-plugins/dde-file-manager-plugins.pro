@@ -2,6 +2,7 @@ TEMPLATE = subdirs
 
 include(../common/common.pri)
 
-!isEmpty(MENU_DIALOG_PLUGIN){
-    SUBDIRS +=　showfile
+isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
+    SUBDIRS += \
+        showfile
 }
