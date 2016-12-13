@@ -298,6 +298,8 @@ void IconProvider::handleThemeChanged(const QString &key)
         qDebug() << "Theme change from" << QIcon::themeName() << "to" << theme;
         setTheme(theme);
         m_mimeIcons.clear();
+        m_desktopIcons.clear();
+        m_desktopIconPaths.clear();
         emit themeChanged(theme);
     }
 }
