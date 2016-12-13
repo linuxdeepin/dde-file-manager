@@ -110,6 +110,7 @@ public slots:
     void renameFile();
     void showTextShowFrame();
     void onChildrenRemoved(const DUrl &fileUrl);
+    void flickFolderToLeftsidBar();
 
 signals:
     void requestStartComputerFolderSize();
