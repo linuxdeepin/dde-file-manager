@@ -186,6 +186,7 @@ DFileMenu *DFileMenuManager::createDiskViewMenu(const QSet<MenuAction> &disableL
 DFileMenu *DFileMenuManager::createToolBarSettingsMenu(const QSet<MenuAction> &disableList)
 {
     QVector<MenuAction> actionKeys;
+    QMap<MenuAction, QVector<MenuAction> >  subMenuKeys;
 
     actionKeys.reserve(5);
 
@@ -199,7 +200,7 @@ DFileMenu *DFileMenuManager::createToolBarSettingsMenu(const QSet<MenuAction> &d
     actionKeys  << MenuAction::About
                 << MenuAction::Exit;
 
-    return genereteMenuByKeys(actionKeys, disableList);
+    return genereteMenuByKeys(actionKeys, disableList, false, subMenuKeys, false);
 }
 
 DFileMenu *DFileMenuManager::createToolBarSortMenu(const QSet<MenuAction> &disableList)
@@ -684,7 +685,12 @@ void DFileMenuData::initData()
 
 void DFileMenuData::initActions()
 {
+    QList<MenuAction> unCachedActions;
+    unCachedActions << MenuAction::NewWindow;
     foreach (MenuAction key, actionKeys.keys()) {
+        if (unCachedActions.contains(key)){
+            continue;
+        }
         QAction* action = new QAction(actionKeys.value(key), 0);
         action->setData(key);
         actions.insert(key, action);
@@ -694,11 +700,17 @@ void DFileMenuData::initActions()
 DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
                                                const QSet<MenuAction> &disableList,
                                                bool checkable,
-                                               const QMap<MenuAction, QVector<MenuAction> > &subMenuList)
+                                               const QMap<MenuAction, QVector<MenuAction> > &subMenuList, bool isUseCachedAction)
 {
     if(DFileMenuData::actions.isEmpty()) {
         DFileMenuData::initData();
         DFileMenuData::initActions();
+    }
+
+    if (!isUseCachedAction){
+        foreach (MenuAction actionKey, keys) {
+            DFileMenuData::actions.remove(actionKey);
+        }
     }
 
     DFileMenu* menu = new DFileMenu;
@@ -714,8 +726,10 @@ DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
         }else{
             QAction *action = DFileMenuData::actions.value(key);
 
-            if(!action)
-                continue;
+            if(!action){
+                action = new QAction(DFileMenuData::actionKeys.value(key), 0);
+                action->setData(key);
+            }
 
             action->setDisabled(disableList.contains(key));
 
