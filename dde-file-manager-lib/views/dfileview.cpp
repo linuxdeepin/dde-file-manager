@@ -53,6 +53,8 @@ public:
     DFileViewPrivate(DFileView *qq)
         : q_ptr(qq) {}
 
+    int iconModeColumnCount(int itemWidth = 0) const;
+
     DFileView *q_ptr;
 
     DFileMenuManager* fileMenuManager;
@@ -237,12 +239,12 @@ int DFileView::rowCount() const
 
 int DFileView::itemCountForRow() const
 {
+    Q_D(const DFileView);
+
     if (!isIconViewMode())
         return 1;
 
-    int itemWidth = itemSizeHint().width() + ICON_VIEW_SPACING * 2;
-
-    return (width() - ICON_VIEW_SPACING * 2.9) / itemWidth;
+    return d->iconModeColumnCount();
 }
 
 QList<int> DFileView::columnRoleList() const
@@ -325,6 +327,8 @@ QModelIndexList DFileView::selectedIndexes() const
 
 QModelIndex DFileView::indexAt(const QPoint &point) const
 {
+    Q_D(const DFileView);
+
     if (isIconViewMode()) {
         for (QModelIndex &index : itemDelegate()->hasWidgetIndexs()) {
             if (index == itemDelegate()->editingIndex())
@@ -357,7 +361,7 @@ QModelIndex DFileView::indexAt(const QPoint &point) const
             return QModelIndex();
 
         int row_index = pos.y() / (item_size.height() + ICON_VIEW_SPACING * 2);
-        int column_count = (width() - ICON_VIEW_SPACING * 2.9) / item_width;
+        int column_count = d->iconModeColumnCount(item_width);
         int column_index = pos.x() / item_width;
 
         if (column_index >= column_count)
@@ -386,6 +390,8 @@ QModelIndex DFileView::indexAt(const QPoint &point) const
 
 QRect DFileView::visualRect(const QModelIndex &index) const
 {
+    Q_D(const DFileView);
+
     QRect rect;
 
     if (index.column() != 0)
@@ -400,7 +406,7 @@ QRect DFileView::visualRect(const QModelIndex &index) const
         rect.setHeight(item_size.height());
     } else {
         int item_width = item_size.width() + ICON_VIEW_SPACING * 2;
-        int column_count = (width() - ICON_VIEW_SPACING * 2.9) / item_width;
+        int column_count = d->iconModeColumnCount(item_width);
 
         if (column_count == 0)
             return rect;
@@ -421,6 +427,8 @@ QRect DFileView::visualRect(const QModelIndex &index) const
 
 DFileView::RandeIndexList DFileView::visibleIndexes(QRect rect) const
 {
+    Q_D(const DFileView);
+
     RandeIndexList list;
 
     QSize item_size = itemSizeHint();
@@ -437,7 +445,7 @@ DFileView::RandeIndexList DFileView::visibleIndexes(QRect rect) const
     } else {
         rect -= QMargins(spacing, spacing, spacing, spacing);
 
-        int column_count = (width() - spacing * 2.9) / item_width;
+        int column_count = d->iconModeColumnCount(item_width);
 
         if (column_count <= 0)
             return list;
@@ -1787,9 +1795,9 @@ void DFileView::updateHorizontalOffset()
     D_D(DFileView);
 
     if (isIconViewMode()) {
-        int contentWidth = width();
-        int itemWidth = itemSizeHint().width() + ICON_VIEW_SPACING * 2;
-        int itemColumn = (contentWidth - ICON_VIEW_SPACING * 2.9) / itemWidth;
+        int contentWidth = maximumViewportSize().width();
+        int itemWidth = itemSizeHint().width() + spacing() * 2;
+        int itemColumn = d->iconModeColumnCount(itemWidth);
 
         d->horizontalOffset = -(contentWidth - itemWidth * itemColumn) / 2;
     } else {
@@ -2252,4 +2260,24 @@ void DFileView::preproccessDropEvent(QDropEvent *event) const
             }
         }
     }
+}
+
+int DFileViewPrivate::iconModeColumnCount(int itemWidth) const
+{
+    Q_Q(const DFileView);
+
+    int frameAroundContents = 0;
+    if (q->style()->styleHint(QStyle::SH_ScrollView_FrameOnlyAroundContents))
+        frameAroundContents = q->style()->pixelMetric(QStyle::PM_DefaultFrameWidth) * 2;
+
+    int horizontalMargin = q->verticalScrollBarPolicy()==Qt::ScrollBarAsNeeded
+            ? q->style()->pixelMetric(QStyle::PM_ScrollBarExtent, 0, q->verticalScrollBar()) + frameAroundContents
+            : 0;
+
+    int contentWidth = q->maximumViewportSize().width();
+
+    if (itemWidth <= 0)
+        itemWidth = q->itemSizeHint().width() + q->spacing() * 2;
+
+    return (contentWidth - horizontalMargin - 1) / itemWidth;
 }
