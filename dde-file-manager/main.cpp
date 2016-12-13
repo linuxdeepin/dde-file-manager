@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
         DFMGlobal::installTranslator();
         DThemeManager::instance()->setTheme("light");
 
-        if (!isBackendRun){
+        if (!isBackendRun && !isShowPropertyRequest){
             fileManagerApp->show(commandlineUrl);
         }else{
             fileManagerApp;
