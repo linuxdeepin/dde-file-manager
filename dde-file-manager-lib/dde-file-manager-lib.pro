@@ -173,7 +173,8 @@ HEADERS += \
     models/computerdesktopfileinfo.h \
     models/trashdesktopfileinfo.h \
     interfaces/dthumbnailprovider.h \
-    views/viewmanager.h
+    views/viewmanager.h \
+    views/progressline.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -282,8 +283,8 @@ SOURCES += \
     models/computerdesktopfileinfo.cpp \
     models/trashdesktopfileinfo.cpp \
     interfaces/dthumbnailprovider.cpp \
-    views/viewmanager.cpp
-
+    views/viewmanager.cpp \
+    views/progressline.cpp
 
 INCLUDEPATH += $$PWD/../ $$PWD/../utils/ $$PWD/interfaces/ $$PWD/../dde-file-manager-plugins/plugininterfaces/
 

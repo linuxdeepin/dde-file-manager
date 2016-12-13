@@ -28,7 +28,6 @@
 
 DWIDGET_USE_NAMESPACE
 
-
 TitleLine::TitleLine(const QString &title, QWidget *parent):
     QFrame(parent),
     m_title(title)
@@ -218,6 +217,14 @@ void ComputerViewItem::updateStatus()
         getTextEdit()->setStyleSheet("background-color: transparent");
         setDisplayName(ds.remove('\n'));
     }
+
+    if(getHasMemoryInfo()){
+        updateIconPixelWidth();
+        getProgressLine()->setFixedSize(getPixelWidth(), 2);
+        getProgressLine()->setMax(m_deviceInfo->getTotal());
+        getProgressLine()->setValue(m_deviceInfo->getUsed());
+    } else
+        getProgressLine()->setFixedHeight(0);
 }
 
 int ComputerViewItem::iconSize() const
@@ -238,6 +245,38 @@ void ComputerViewItem::setIconSizeState(int iconSize, QIcon::Mode mode)
     }else if (m_deviceInfo){
         getIconLabel()->setPixmap(getIcon(iconSize).pixmap(iconSize, iconSize, mode));
     }
+}
+
+int ComputerViewItem::getPixelWidth() const
+{
+    return m_pixelWidth;
+}
+
+void ComputerViewItem::setPixelWidth(int pixelWidth)
+{
+    m_pixelWidth = pixelWidth;
+}
+
+void ComputerViewItem::updateIconPixelWidth()
+{
+    const QImage img = getIconLabel()->pixmap()->toImage();
+    int pixelWidth = 0;
+    for(int i = 0; i < img.width(); i++){
+        QColor color = img.pixelColor(i, (int)img.height()/2);
+        if(color.alpha() > 0)
+            pixelWidth ++;
+    }
+    setPixelWidth(pixelWidth);
+}
+
+bool ComputerViewItem::getHasMemoryInfo() const
+{
+    return m_hasMemoryInfo;
+}
+
+void ComputerViewItem::setHasMemoryInfo(bool hasMemoryInfo)
+{
+    m_hasMemoryInfo = hasMemoryInfo;
 }
 QString ComputerViewItem::name() const
 {
@@ -530,6 +569,7 @@ void ComputerView::mountAdded(UDiskDeviceInfoPointer device)
     else{
         qDebug() << device->getDiskInfo() << device->fileDisplayName();
         ComputerViewItem* item = new ComputerViewItem;
+        item->setHasMemoryInfo(true);
         item->setDeviceInfo(device);
         item->setName(device->fileDisplayName());
 

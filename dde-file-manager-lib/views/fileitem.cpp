@@ -14,11 +14,16 @@ FileIconItem::FileIconItem(QWidget *parent) :
     QFrame(parent)
 {
     icon = new QLabel(this);
+    progressLine = new ProgressLine(this);
     edit = new QTextEdit(this);
 
     icon->setAlignment(Qt::AlignCenter);
     icon->setFrameShape(QFrame::NoFrame);
     icon->installEventFilter(this);
+
+    progressLine->setAlignment(Qt::AlignHCenter);
+    progressLine->setFrameShape(QFrame::NoFrame);
+    progressLine->setFixedSize(icon->width(), 2);
 
     edit->setWordWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
     edit->setAlignment(Qt::AlignHCenter);
@@ -28,8 +33,10 @@ FileIconItem::FileIconItem(QWidget *parent) :
     edit->installEventFilter(this);
 
     AnchorsBase::setAnchor(icon, Qt::AnchorHorizontalCenter, this, Qt::AnchorHorizontalCenter);
-    AnchorsBase::setAnchor(edit, Qt::AnchorTop, icon, Qt::AnchorBottom);
-    AnchorsBase::setAnchor(edit, Qt::AnchorHorizontalCenter, icon, Qt::AnchorHorizontalCenter);
+    AnchorsBase::setAnchor(progressLine, Qt::AnchorTop, icon, Qt::AnchorBottom);
+    AnchorsBase::setAnchor(progressLine, Qt::AnchorHorizontalCenter, icon, Qt::AnchorHorizontalCenter);
+    AnchorsBase::setAnchor(edit, Qt::AnchorTop, progressLine, Qt::AnchorBottom);
+    AnchorsBase::setAnchor(edit, Qt::AnchorHorizontalCenter, progressLine, Qt::AnchorHorizontalCenter);
 
     AnchorsBase::getAnchorBaseByWidget(edit)->setTopMargin(ICON_MODE_ICON_SPACING);
 
