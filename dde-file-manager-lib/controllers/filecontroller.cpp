@@ -190,10 +190,30 @@ bool FileController::renameFile(const DUrl &oldUrl, const DUrl &newUrl, bool &ac
 
     QFile file(oldUrl.toLocalFile());
     const QString &newFilePath = newUrl.toLocalFile();
-    bool result = file.rename(newFilePath);
 
-    if (!result) {
-        result = QProcess::execute("mv \"" + file.fileName().toUtf8() + "\" \"" + newFilePath.toUtf8() + "\"") == 0;
+    const DAbstractFileInfoPointer oldfilePointer = createFileInfo(oldUrl, accepted);
+    const DAbstractFileInfoPointer newfilePointer = createFileInfo(newUrl, accepted);
+
+    bool result(false);
+
+    if (oldfilePointer->isDesktopFile()){
+        QString filePath = oldUrl.toLocalFile();
+        Properties desktop(filePath, "Desktop Entry");
+        QString key;
+        QString localKey = QString("Name[%1]").arg(QLocale::system().name());
+        if (desktop.contains(localKey)){
+            key = localKey;
+        }else{
+            key = "Name";
+        }
+        desktop.set(key, newfilePointer->fileName());
+        result = desktop.save(filePath, "Desktop Entry");
+    }else{
+        bool result = file.rename(newFilePath);
+
+        if (!result) {
+            result = QProcess::execute("mv \"" + file.fileName().toUtf8() + "\" \"" + newFilePath.toUtf8() + "\"") == 0;
+        }
     }
 
     return result;

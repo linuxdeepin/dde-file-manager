@@ -25,6 +25,7 @@ public:
 
     DUrl url;
     bool started = false;
+    static QList<DAbstractFileWatcher*> watcherList;
 
     Q_DECLARE_PUBLIC(DAbstractFileWatcher)
 };

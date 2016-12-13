@@ -16,7 +16,7 @@ public:
     DesktopFileInfoPrivate(const DUrl &url, DesktopFileInfo *qq)
         : DFileInfoPrivate(url, qq)
     {
-        init(url);
+        updateInfo(url);
     }
 
     QString name;
@@ -26,7 +26,7 @@ public:
     QStringList categories;
     QStringList mimeType;
 
-    void init(const DUrl &fileUrl);
+    void updateInfo(const DUrl &fileUrl);
 };
 
 DesktopFileInfo::DesktopFileInfo(const DUrl &fileUrl)
@@ -86,6 +86,19 @@ QIcon DesktopFileInfo::fileIcon() const
     return fileIconProvider->getDesktopIcon(getIconName(), 256);
 }
 
+QString DesktopFileInfo::fileName() const
+{
+    return getName();
+}
+
+void DesktopFileInfo::refresh()
+{
+    Q_D(DesktopFileInfo);
+
+    DFileInfo::refresh();
+    d->updateInfo(fileUrl());
+}
+
 QString DesktopFileInfo::fileDisplayName() const
 {
     return getName();
@@ -116,7 +129,7 @@ QMap<QString, QVariant> DesktopFileInfo::getDesktopFileInfo(const DUrl &fileUrl)
     return map;
 }
 
-void DesktopFileInfoPrivate::init(const DUrl &fileUrl)
+void DesktopFileInfoPrivate::updateInfo(const DUrl &fileUrl)
 {
     const QMap<QString, QVariant> &map = DesktopFileInfo::getDesktopFileInfo(fileUrl);
 

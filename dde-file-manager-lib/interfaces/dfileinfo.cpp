@@ -344,8 +344,7 @@ void DFileInfo::refresh()
 {
     Q_D(DFileInfo);
 
-    if (d->fileInfo.caching())
-        d->fileInfo.refresh();
+    d->fileInfo.refresh();
 }
 
 DUrl DFileInfo::goToUrlWhenDeleted() const

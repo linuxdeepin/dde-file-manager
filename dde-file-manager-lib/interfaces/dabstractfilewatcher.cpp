@@ -13,6 +13,7 @@
 #include <QEvent>
 #include <QDebug>
 
+QList<DAbstractFileWatcher*> DAbstractFileWatcherPrivate::watcherList;
 DAbstractFileWatcherPrivate::DAbstractFileWatcherPrivate(DAbstractFileWatcher *qq)
     : q_ptr(qq)
 {
@@ -22,6 +23,7 @@ DAbstractFileWatcherPrivate::DAbstractFileWatcherPrivate(DAbstractFileWatcher *q
 DAbstractFileWatcher::~DAbstractFileWatcher()
 {
     stopWatcher();
+    DAbstractFileWatcherPrivate::watcherList.removeOne(this);
 }
 
 DUrl DAbstractFileWatcher::fileUrl() const
@@ -75,6 +77,40 @@ void DAbstractFileWatcher::setEnabledSubfileWatcher(const DUrl &subfileUrl, bool
     Q_UNUSED(enabled)
 }
 
+bool DAbstractFileWatcher::ghostSignal(const DUrl &targetUrl, DAbstractFileWatcher::SignalType1 signal, const DUrl &arg1)
+{
+    if (!signal)
+        return false;
+
+    bool ok = false;
+
+    for (DAbstractFileWatcher *watcher : DAbstractFileWatcherPrivate::watcherList) {
+        if (watcher->fileUrl() == targetUrl) {
+            ok = true;
+            (watcher->*signal)(arg1);
+        }
+    }
+
+    return ok;
+}
+
+bool DAbstractFileWatcher::ghostSignal(const DUrl &targetUrl, DAbstractFileWatcher::SignalType2 signal, const DUrl &arg1, const DUrl &arg2)
+{
+    if (!signal)
+        return false;
+
+    bool ok = false;
+
+    for (DAbstractFileWatcher *watcher : DAbstractFileWatcherPrivate::watcherList) {
+        if (watcher->fileUrl() == targetUrl) {
+            ok = true;
+            (watcher->*signal)(arg1, arg2);
+        }
+    }
+
+    return ok;
+}
+
 DAbstractFileWatcher::DAbstractFileWatcher(DAbstractFileWatcherPrivate &dd,
                                            const DUrl &url, QObject *parent)
     : QObject(parent)
@@ -83,6 +119,7 @@ DAbstractFileWatcher::DAbstractFileWatcher(DAbstractFileWatcherPrivate &dd,
     Q_ASSERT(url.isValid());
 
     d_ptr->url = url;
+    DAbstractFileWatcherPrivate::watcherList << this;
 }
 
 #include "moc_dabstractfilewatcher.cpp"
