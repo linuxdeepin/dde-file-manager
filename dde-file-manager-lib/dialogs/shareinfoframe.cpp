@@ -129,6 +129,7 @@ void ShareInfoFrame::doShaeInfoSetting()
     }
     if (m_sharCheckBox->isChecked()){
         userShareManager->addUserShare(info);
+        emit folderShared(info.path());
     }else{
         if(info.isWritable()){
             QString cmd = "chmod";

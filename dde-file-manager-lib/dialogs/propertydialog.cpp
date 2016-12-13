@@ -49,7 +49,8 @@
 #include <QPushButton>
 #include <QStackedWidget>
 #include <QStorageInfo>
-
+#include <QVariantAnimation>
+#include "views/dleftsidebar.h"
 
 NameTextEdit::NameTextEdit(const QString &text, QWidget *parent):
     QTextEdit(text, parent)
@@ -316,6 +317,9 @@ void PropertyDialog::initConnect()
 
         onChildrenRemoved(from);
     });
+
+    //play animation after a folder is shared
+    connect(m_shareinfoFrame, &ShareInfoFrame::folderShared, this, &PropertyDialog::flickFolderToLeftsidBar);
 }
 
 
@@ -379,6 +383,68 @@ void PropertyDialog::onChildrenRemoved(const DUrl &fileUrl)
     if (fileUrl == m_url){
         close();
     }
+}
+
+void PropertyDialog::flickFolderToLeftsidBar()
+{
+    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(m_url);
+
+    QLabel* aniLabel = new QLabel();
+    aniLabel->setFixedSize(m_icon->size());
+    aniLabel->setWindowFlags(Qt::Popup | Qt::FramelessWindowHint);
+    aniLabel->setAttribute(Qt::WA_TranslucentBackground);
+    aniLabel->setPixmap(fileInfo->fileIcon().pixmap(160, 160));
+    aniLabel->move(m_icon->mapToGlobal(m_icon->pos()));
+
+    DFileManagerWindow* window = qobject_cast<DFileManagerWindow*>(WindowManager::getWindowById(m_fmevent.windowId()));
+    QPoint targetPos = window->getLeftSideBar()->getMyShareItemCenterPos();
+
+    int angle;
+    if(targetPos.x() > aniLabel->x())
+        angle = 45;
+    else
+        angle = -45;
+
+    QVariantAnimation* xani = new QVariantAnimation(this);
+    xani->setStartValue(QPoint(aniLabel->x(), 0));
+    xani->setEndValue(QPoint(targetPos.x(), angle));
+    xani->setDuration(440);
+
+    QVariantAnimation* gani = new QVariantAnimation(this);
+    gani->setStartValue(aniLabel->geometry());
+    gani->setEndValue(QRect(targetPos.x(), targetPos.y(), 20, 20));
+    gani->setEasingCurve(QEasingCurve::InBack);
+    gani->setDuration(440);
+
+    connect(xani, &QVariantAnimation::valueChanged, [=](const QVariant& val){
+        if(aniLabel){
+            aniLabel->move(QPoint(val.toPoint().x() - aniLabel->width()/2,aniLabel->y()));
+            QImage img = fileInfo->fileIcon().pixmap(aniLabel->size()).toImage();
+            QMatrix ma;
+            ma.rotate(val.toPoint().y());
+            img = img.transformed(ma, Qt::SmoothTransformation);
+            img = img.scaled(aniLabel->width()/2, aniLabel->height()/2, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+            aniLabel->setPixmap(QPixmap::fromImage(img));
+            if(aniLabel->isHidden())
+                aniLabel->show();
+        }
+    });
+    connect(xani, &QVariantAnimation::finished, [=]{
+        xani->deleteLater();
+    });
+
+    connect(gani, &QVariantAnimation::valueChanged, [=](const QVariant& val){
+        aniLabel->move(QPoint(aniLabel->x(),
+                              val.toRect().y() - val.toRect().width()/2));
+        aniLabel->setFixedSize(val.toRect().size()* 2);
+    });
+    connect(gani, &QVariantAnimation::finished, [=]{
+        gani->deleteLater();
+        aniLabel->deleteLater();
+        window->getLeftSideBar()->playtShareAddedAnimation();
+    });
+    xani->start();
+    gani->start();
 }
 
 void PropertyDialog::mousePressEvent(QMouseEvent *event)

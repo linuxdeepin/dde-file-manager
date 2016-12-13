@@ -226,6 +226,7 @@ private:
 public slots:
     void editFinished();
     void checkMountedItem(const DFMEvent& event);
+    void playAnimation();
 };
 
 #endif // DBOOKMARKITEM_H

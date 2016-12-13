@@ -60,6 +60,9 @@ public slots:
     void doDragLeave();
     void handdleRequestDiskInfosFinihsed();
     void handleUserShareCountChanged(const int &count);
+    void centerOnMyShareItem(const QString& path);
+    QPoint getMyShareItemCenterPos();
+    void playtShareAddedAnimation();
 
 protected:
     void paintEvent(QPaintEvent *event);

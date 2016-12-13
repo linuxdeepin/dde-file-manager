@@ -155,6 +155,35 @@ void DBookmarkItem::checkMountedItem(const DFMEvent &event)
     }
 }
 
+void DBookmarkItem::playAnimation()
+{
+    setTransformOriginPoint(26, size().height()/2);
+    QVariantAnimation* scaleUpAni = new QVariantAnimation(this);
+    scaleUpAni->setStartValue(qreal(1.0));
+    scaleUpAni->setEndValue(qreal(1.2));
+    scaleUpAni->setDuration(80);
+
+    QVariantAnimation* scaleDownAni = new QVariantAnimation(this);
+    scaleDownAni->setStartValue(qreal(1.2));
+    scaleDownAni->setEndValue(qreal(1.0));
+    scaleDownAni->setDuration(220);
+
+    connect(scaleUpAni, &QVariantAnimation::valueChanged, [=](const QVariant& fac){
+        setScale(fac.toReal());
+    });
+    connect(scaleDownAni, &QVariantAnimation::valueChanged, [=](const QVariant& fac){
+        setScale(fac.toReal());
+    });
+    connect(scaleUpAni, &QVariantAnimation::finished, [=]{
+        scaleDownAni->start();
+        scaleUpAni->deleteLater();
+    });
+    connect(scaleDownAni, &QVariantAnimation::finished, [=]{
+        scaleDownAni->deleteLater();
+    });
+    scaleUpAni->start();
+}
+
 QRectF DBookmarkItem::boundingRect() const
 {
     return QRectF(m_x_axis - m_adjust,

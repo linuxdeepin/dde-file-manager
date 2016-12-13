@@ -24,6 +24,7 @@ public:
     void setFileinfo(const DAbstractFileInfoPointer &fileinfo);
 
 signals:
+    void folderShared(const QString& filePath);
 
 public slots:
     void handleCheckBoxChanged(int state);

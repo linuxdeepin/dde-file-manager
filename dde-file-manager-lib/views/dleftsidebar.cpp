@@ -92,6 +92,7 @@ void DLeftSideBar::initConnect()
     connect(m_scene, &DBookmarkScene::dropped, this, &DLeftSideBar::doDragLeave);
     connect(deviceListener, &UDiskListener::requestDiskInfosFinihsed, this, &DLeftSideBar::handdleRequestDiskInfosFinihsed);
     connect(fileSignalManager, &FileSignalManager::userShareCountChanged, this, &DLeftSideBar::handleUserShareCountChanged);
+    connect(userShareManager, &UserShareManager::userShareAdded, this, &DLeftSideBar::centerOnMyShareItem);
 }
 
 void DLeftSideBar::initNav()
@@ -247,6 +248,34 @@ void DLeftSideBar::handleUserShareCountChanged(const int &count)
         else
             item->hide();
     }
+}
+
+void DLeftSideBar::centerOnMyShareItem(const QString &path)
+{
+    Q_UNUSED(path)
+
+    DBookmarkItem* item = m_scene->hasBookmarkItem(DUrl(USERSHARE_ROOT));
+    if(item){
+        m_view->centerOn(item);
+    }
+}
+
+QPoint DLeftSideBar::getMyShareItemCenterPos()
+{
+    DBookmarkItem* item = m_scene->hasBookmarkItem(DUrl(USERSHARE_ROOT));
+    if(item){
+        m_view->centerOn(item);
+        return mapToGlobal(m_view->mapFromScene(item->x() + 80,
+                                                item->y()));
+    }
+    return QPoint(0, 0);
+}
+
+void DLeftSideBar::playtShareAddedAnimation()
+{
+    DBookmarkItem* item = m_scene->hasBookmarkItem(DUrl(USERSHARE_ROOT));
+    if(item)
+        item->playAnimation();
 }
 
 void DLeftSideBar::paintEvent(QPaintEvent *event)
