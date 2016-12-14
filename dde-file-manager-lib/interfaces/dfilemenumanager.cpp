@@ -558,17 +558,17 @@ QList<QAction *> DFileMenuManager::jsonToActions(const QJsonArray& data, const D
                 connect(action, &QAction::triggered, [=](){
 
                     QProcess p;
-
+                    QStringList args;
                     foreach (DUrl url, urlList) {
-                        const_cast<QString&>(exec) += " " + url.toString();
+                        args << url.toString();
                     }
 
                     if (urlList.isEmpty()){
-                        const_cast<QString&>(exec) += " " + currentUrl.toString();
+                        args << currentUrl.toString();
                     }
 
-                    p.startDetached(exec);
-                    qDebug() << exec;
+                    p.startDetached(exec, args);
+                    qDebug() << exec << args;
                 });
             }
             actions << action;
