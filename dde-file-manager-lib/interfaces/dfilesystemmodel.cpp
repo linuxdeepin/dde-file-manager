@@ -52,6 +52,7 @@ public:
         : q_ptr(qq) {}
 
     bool passNameFilters(const FileSystemNodePointer &node) const;
+    bool passFileFilters(const DAbstractFileInfoPointer &info) const;
 
     void _q_onFileCreated(const DUrl &fileUrl);
     void _q_onFileDeleted(const DUrl &fileUrl);
@@ -112,9 +113,40 @@ bool DFileSystemModelPrivate::passNameFilters(const FileSystemNodePointer &node)
     return true;
 }
 
+bool DFileSystemModelPrivate::passFileFilters(const DAbstractFileInfoPointer &info) const
+{
+    if (!(filters & QDir::Dirs) && info->isDir())
+        return false;
+
+    if (!(filters & QDir::Files) && info->isFile())
+        return false;
+
+    if ((filters & QDir::NoSymLinks) && info->isSymLink())
+        return false;
+
+    if (!(filters & QDir::Hidden) && info->isHidden())
+        return false;
+
+    if ((filters & QDir::Readable) && !info->isReadable())
+        return false;
+
+    if ((filters & QDir::Writable) && !info->isWritable())
+        return false;
+
+    if ((filters & QDir::Executable) && !info->isExecutable())
+        return false;
+
+    return true;
+}
+
 void DFileSystemModelPrivate::_q_onFileCreated(const DUrl &fileUrl)
 {
     Q_Q(DFileSystemModel);
+
+    const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(fileUrl);
+
+    if (!info || !passFileFilters(info))
+        return;
 
     fileEventQueue.enqueue(qMakePair(AddFile, fileUrl));
     q->metaObject()->invokeMethod(q, QT_STRINGIFY(_q_processFileEvent), Qt::QueuedConnection);
