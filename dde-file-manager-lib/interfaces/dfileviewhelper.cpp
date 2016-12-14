@@ -11,6 +11,7 @@
 #include "dfmglobal.h"
 #include "dstyleditemdelegate.h"
 #include "app/define.h"
+#include "app/filesignalmanager.h"
 #include "dfmevent.h"
 #include "views/windowmanager.h"
 #include "dabstractfileinfo.h"
@@ -35,6 +36,9 @@ public:
         : q_ptr(qq) {}
 
     void init();
+
+    void _q_edit(const DFMEvent &event);
+    void _q_selectAndRename(const DFMEvent &event);
 
     QByteArray keyboardSearchKeys;
     QTimer keyboardSearchTimer;
@@ -111,6 +115,38 @@ void DFileViewHelperPrivate::init()
     q->parent()->addAction(copy_action);
     q->parent()->addAction(cut_action);
     q->parent()->addAction(paste_action);
+
+    q->connect(fileSignalManager, SIGNAL(requestRename(DFMEvent)), q, SLOT(_q_edit(DFMEvent)));
+    q->connect(fileSignalManager, SIGNAL(requestSelectRenameFile(DFMEvent)), q, SLOT(_q_selectAndRename(DFMEvent)));
+}
+
+void DFileViewHelperPrivate::_q_edit(const DFMEvent &event)
+{
+    Q_Q(DFileViewHelper);
+
+    if (event.windowId() != q->windowId() || event.fileUrlList().isEmpty())
+        return;
+
+    DUrl fileUrl = event.fileUrlList().first();
+
+    if (fileUrl.isEmpty())
+        return;
+
+    const QModelIndex &index = q->model()->index(fileUrl);
+
+    q->parent()->edit(index, QAbstractItemView::EditKeyPressed, 0);
+}
+
+void DFileViewHelperPrivate::_q_selectAndRename(const DFMEvent &event)
+{
+    Q_Q(DFileViewHelper);
+
+    if (event.windowId() != q->windowId() || !q->parent()->isVisible()) {
+        return;
+    }
+
+    q->select(event.fileUrlList());
+    _q_edit(event);
 }
 
 DFileViewHelper::DFileViewHelper(QAbstractItemView *parent)
@@ -444,3 +480,5 @@ void DFileViewHelper::handleCommitData(QWidget *editor) const
         fileService->renameFile(old_url, new_url, event);
     }
 }
+
+#include "moc_dfileviewhelper.cpp"
