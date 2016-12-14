@@ -54,7 +54,8 @@ public:
     static DFileMenu *genereteMenuByKeys(const QVector<MenuAction> &keys,
                                          const QSet<MenuAction> &disableList,
                                          bool checkable = false,
-                                         const QMap<MenuAction, QVector<MenuAction> > &subMenuList = QMap<MenuAction, QVector<MenuAction> >());
+                                         const QMap<MenuAction, QVector<MenuAction> > &subMenuList = QMap<MenuAction, QVector<MenuAction> >(),
+                                         bool isUseCachedAction = true);
     static QString getActionString(MenuAction type);
 
     /// actions filter(global)
