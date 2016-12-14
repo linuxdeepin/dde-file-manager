@@ -2134,17 +2134,18 @@ void DFileView::popupHeaderViewContextMenu(const QPoint &/*pos*/)
         action->setChecked(!d->headerView->isSectionHidden(i));
 
         connect(action, &QAction::triggered, this, [this, action, i, d] {
+            action->setChecked(!action->isChecked());
             d->columnForRoleHiddenMap[action->text()] = action->isChecked();
 
             d->headerView->setSectionHidden(i, action->isChecked());
-
             updateColumnWidth();
         });
 
         menu->addAction(action);
     }
 
-    menu->exec();
+    menu->exec(QCursor::pos());
+    menu->deleteLater();
 }
 
 void DFileView::onModelStateChanged(int state)
