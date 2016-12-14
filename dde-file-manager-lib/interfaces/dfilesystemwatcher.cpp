@@ -70,6 +70,7 @@ QStringList DFileSystemWatcherPrivate::addPaths(const QStringList &paths, QStrin
                                        )
                                     : (0
                                        | IN_ATTRIB
+                                       | IN_CLOSE
                                        | IN_MODIFY
                                        | IN_MOVE
                                        | IN_MOVE_SELF
@@ -237,10 +238,13 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
                 onFileChanged(path, false);
         }
 
-        const QString &filePath = path + QDir::separator() + name;
+        QString filePath = path;
+
+        if (id < 0)
+            filePath = path  + QDir::separator() + name;
 
         if (event.mask & IN_CREATE) {
-            qDebug() << "IN_CREATE" << filePath;
+            qDebug() << "IN_CREATE" << filePath << name;
 
             if (name.isEmpty()) {
                 if (pathToID.contains(path)) {
@@ -283,8 +287,14 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
             emit q->fileAttributeChanged(path, name, DFileSystemWatcher::QPrivateSignal());
         }
 
+        if (event.mask & IN_CLOSE) {
+            qDebug() << "IN_CLOSE" <<  event.mask << filePath;
+
+            emit q->fileClosed(path, id < 0 ? name : QString(), DFileSystemWatcher::QPrivateSignal());
+        }
+
         if (event.mask & IN_MODIFY) {
-//            qDebug() << "IN_MODIFY" <<  event.mask << filePath;
+//            qDebug() << "IN_MODIFY" <<  event.mask << filePath << name;
 
             emit q->fileModified(path, name, DFileSystemWatcher::QPrivateSignal());
         }

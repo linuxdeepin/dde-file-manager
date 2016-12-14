@@ -34,6 +34,7 @@ public:
 Q_SIGNALS:
     void fileDeleted(const QString &path, const QString &name, QPrivateSignal);
     void fileAttributeChanged(const QString &path, const QString &name, QPrivateSignal);
+    void fileClosed(const QString &path, const QString &name, QPrivateSignal);
     void fileMoved(const QString &fromPath, const QString &fromName,
                    const QString &toPath, const QString &toName, QPrivateSignal);
     void fileCreated(const QString &path, const QString &name, QPrivateSignal);
