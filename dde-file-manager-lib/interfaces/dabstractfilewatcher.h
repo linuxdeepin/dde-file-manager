@@ -35,6 +35,7 @@ signals:
     void fileMoved(const DUrl &fromUrl, const DUrl &toUrl);
     void subfileCreated(const DUrl &url);
     void fileModified(const DUrl &url);
+    void fileClosed(const DUrl &url);
 
 protected:
     explicit DAbstractFileWatcher(DAbstractFileWatcherPrivate &dd, const DUrl &url, QObject *parent = 0);
