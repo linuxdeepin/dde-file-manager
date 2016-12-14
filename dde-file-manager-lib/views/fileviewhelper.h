@@ -36,16 +36,15 @@ public:
     DUrl currentUrl() const Q_DECL_OVERRIDE;
     QList<int> columnRoleList() const Q_DECL_OVERRIDE;
     int columnWidth(int columnIndex) const Q_DECL_OVERRIDE;
+    void select(const QList<DUrl> &list) Q_DECL_OVERRIDE;
 
 public slots:
     // helper fm event
     void preHandleCd(const DFMEvent &event);
     void cd(const DFMEvent &event);
     void cdUp(const DFMEvent &event);
-    void edit(const DFMEvent &event);
-    void select(const DFMEvent &event);
+    void handleSelectEvent(const DFMEvent &event);
     void selectAll(int windowId);
-    void selectAndRename(const DFMEvent &event);
     void setFoucsOnFileView(const DFMEvent& event);
     void refreshFileView(const DFMEvent& event);
 

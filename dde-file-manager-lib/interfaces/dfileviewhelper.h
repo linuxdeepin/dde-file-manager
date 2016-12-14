@@ -51,6 +51,7 @@ public:
     virtual DStyledItemDelegate *itemDelegate() const = 0;
     virtual DFileSystemModel *model() const = 0;
     virtual const DUrlList selectedUrls() const = 0;
+    virtual void select(const QList<DUrl> &list) = 0;
 
     virtual void initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const;
 
@@ -70,6 +71,9 @@ signals:
 
 private:
     QScopedPointer<DFileViewHelperPrivate> d_ptr;
+
+    Q_PRIVATE_SLOT(d_func(), void _q_edit(const DFMEvent &event))
+    Q_PRIVATE_SLOT(d_func(), void _q_selectAndRename(const DFMEvent &event))
 
     Q_DECLARE_PRIVATE(DFileViewHelper)
     Q_DISABLE_COPY(DFileViewHelper)

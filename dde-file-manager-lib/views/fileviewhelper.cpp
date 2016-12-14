@@ -24,14 +24,10 @@ FileViewHelper::FileViewHelper(DFileView *parent)
     connect(parent, &DFileView::triggerEdit, this, &DFileViewHelper::triggerEdit);
     connect(parent, &DFileView::rootUrlChanged, this, &FileViewHelper::onCurrentUrlChanged);
 
-    connect(fileSignalManager, &FileSignalManager::requestRename,
-            this, &FileViewHelper::edit);
     connect(fileSignalManager, &FileSignalManager::requestViewSelectAll,
             this, &FileViewHelper::selectAll);
     connect(fileSignalManager, &FileSignalManager::requestSelectFile,
-            this, &FileViewHelper::select);
-    connect(fileSignalManager, &FileSignalManager::requestSelectRenameFile,
-            this, &FileViewHelper::selectAndRename);
+            this, &FileViewHelper::handleSelectEvent);
     connect(fileSignalManager, &FileSignalManager::requestFoucsOnFileView,
             this, &FileViewHelper::setFoucsOnFileView);
     connect(fileSignalManager, &FileSignalManager::requestFreshFileView,
@@ -108,6 +104,11 @@ int FileViewHelper::columnWidth(int columnIndex) const
     return parent()->columnWidth(columnIndex);
 }
 
+void FileViewHelper::select(const QList<DUrl> &list)
+{
+    parent()->select(list);
+}
+
 void FileViewHelper::preHandleCd(const DFMEvent &event)
 {
     if (event.windowId() != windowId())
@@ -146,28 +147,13 @@ void FileViewHelper::cdUp(const DFMEvent &event)
     lastEventSource = DFMEvent::FileView;
 }
 
-void FileViewHelper::edit(const DFMEvent &event)
-{
-    if (event.windowId() != windowId() || event.fileUrlList().isEmpty())
-        return;
-
-    DUrl fileUrl = event.fileUrlList().first();
-
-    if (fileUrl.isEmpty())
-        return;
-
-    const QModelIndex &index = model()->index(fileUrl);
-
-    parent()->edit(index, QAbstractItemView::EditKeyPressed, 0);
-}
-
-void FileViewHelper::select(const DFMEvent &event)
+void FileViewHelper::handleSelectEvent(const DFMEvent &event)
 {
     if (event.windowId() != windowId()) {
         return;
     }
 
-    parent()->select(event.fileUrlList());
+    select(event.fileUrlList());
 }
 
 void FileViewHelper::selectAll(int windowId)
@@ -176,16 +162,6 @@ void FileViewHelper::selectAll(int windowId)
         return;
 
     parent()->selectAll();
-}
-
-void FileViewHelper::selectAndRename(const DFMEvent &event)
-{
-    if (event.windowId() != windowId() || !parent()->isVisible()) {
-        return;
-    }
-
-    parent()->select(event.fileUrlList());
-    edit(event);
 }
 
 void FileViewHelper::setFoucsOnFileView(const DFMEvent &event)
