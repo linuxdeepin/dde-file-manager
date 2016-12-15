@@ -13,7 +13,7 @@
 #include "models/fmstate.h"
 
 #include "shutil/mimesappsmanager.h"
-#include "../shutil/standardpath.h"
+#include "interfaces/dfmstandardpaths.h"
 #include "fileoperations/filejob.h"
 
 #include "widgets/singleton.h"
@@ -151,7 +151,7 @@ void FileManagerApp::initConnect()
 
 QString FileManagerApp::getFileJobConfigPath()
 {
-    return QString("%1/filejob.conf").arg(StandardPath::getConfigPath());
+    return QString("%1/filejob.conf").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::ApplicationConfigPath));
 }
 
 void FileManagerApp::show(const DUrl &url)

@@ -1,6 +1,6 @@
 #include "computerdesktopfileinfo.h"
 #include <QIcon>
-#include <shutil/standardpath.h>
+#include "interfaces/dfmstandardpaths.h"
 
 ComputerDesktopFileInfo::ComputerDesktopFileInfo(const DUrl &fileUrl):
     DesktopFileInfo(fileUrl)
@@ -40,5 +40,5 @@ QList<QIcon> ComputerDesktopFileInfo::additionalIcon() const
 
 DUrl ComputerDesktopFileInfo::computerDesktopFileUrl()
 {
-    return DUrl::fromLocalFile(StandardPath::getDesktopPath() + "/dde-computer.desktop");
+    return DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::DesktopPath) + "/dde-computer.desktop");
 }

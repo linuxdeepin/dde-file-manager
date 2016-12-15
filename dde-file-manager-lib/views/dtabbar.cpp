@@ -18,9 +18,9 @@
 #include "usershare/usersharemanager.h"
 #include "controllers/pathmanager.h"
 #include "interfaces/dfileservices.h"
-#include "shutil/standardpath.h"
 #include "plugins/pluginmanager.h"
 #include "view/viewinterface.h"
+#include "interfaces/dfmstandardpaths.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -185,12 +185,10 @@ QString Tab::getDisplayNameByUrl(const DUrl &url) const
     if(url.isComputerFile()){
         if(systemPathManager->isSystemPath(url.toString()))
             urlDisplayName = systemPathManager->getSystemPathDisplayNameByPath(url.toString());
-    } else if(url == DUrl::fromTrashFile("/")){
-        urlDisplayName = systemPathManager->getSystemPathDisplayNameByPath(StandardPath::getTrashFilesPath());
-    }else if (PluginManager::instance()->getViewInterfacesMap().keys().contains(url.scheme())){
+    } else if(url == DUrl::fromTrashFile("/")){        urlDisplayName = systemPathManager->getSystemPathDisplayNameByPath(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath));
+    } else if (PluginManager::instance()->getViewInterfacesMap().keys().contains(url.scheme())){
         urlDisplayName = PluginManager::instance()->getViewInterfaceByScheme(url.scheme())->bookMarkText();
-    }
-    else{
+    } else{
         const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
 
         if (fileInfo)

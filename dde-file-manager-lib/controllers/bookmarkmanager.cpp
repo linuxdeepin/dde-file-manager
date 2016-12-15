@@ -1,8 +1,6 @@
 #include "bookmarkmanager.h"
 #include "dfileservices.h"
 
-#include "shutil/standardpath.h"
-
 #include "app/define.h"
 
 #include <QJsonObject>

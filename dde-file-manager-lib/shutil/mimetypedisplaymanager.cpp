@@ -2,7 +2,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QDebug>
-#include "standardpath.h"
+#include "dfmstandardpaths.h"
 
 QStringList MimeTypeDisplayManager::ArchiveMimeTypes;
 QStringList MimeTypeDisplayManager::TextMimeTypes;
@@ -146,12 +146,12 @@ QStringList MimeTypeDisplayManager::readlines(const QString &path)
 
 void MimeTypeDisplayManager::loadSupportMimeTypes()
 {
-    QString textPath = QString("%1/%2/%3").arg(StandardPath::getAppConfigPath(), "mimetypes", "text.mimetype");
-    QString archivePath = QString("%1/%2/%3").arg(StandardPath::getAppConfigPath(), "mimetypes", "archive.mimetype");
-    QString videoPath = QString("%1/%2/%3").arg(StandardPath::getAppConfigPath(), "mimetypes", "video.mimetype");
-    QString audioPath = QString("%1/%2/%3").arg(StandardPath::getAppConfigPath(), "mimetypes", "audio.mimetype");
-    QString imagePath = QString("%1/%2/%3").arg(StandardPath::getAppConfigPath(), "mimetypes", "image.mimetype");
-    QString executablePath = QString("%1/%2/%3").arg(StandardPath::getAppConfigPath(), "mimetypes", "executable.mimetype");
+    QString textPath = QString("%1/%2/%3").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::ApplicationSharePath), "mimetypes", "text.mimetype");
+    QString archivePath = QString("%1/%2/%3").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::ApplicationSharePath), "mimetypes", "archive.mimetype");
+    QString videoPath = QString("%1/%2/%3").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::ApplicationSharePath), "mimetypes", "video.mimetype");
+    QString audioPath = QString("%1/%2/%3").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::ApplicationSharePath), "mimetypes", "audio.mimetype");
+    QString imagePath = QString("%1/%2/%3").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::ApplicationSharePath), "mimetypes", "image.mimetype");
+    QString executablePath = QString("%1/%2/%3").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::ApplicationSharePath), "mimetypes", "executable.mimetype");
     TextMimeTypes = readlines(textPath);
     ArchiveMimeTypes = readlines(archivePath);
     VideoMimeTypes = readlines(videoPath);

@@ -3,7 +3,7 @@
 #include "app/define.h"
 #include "app/filesignalmanager.h"
 
-#include "shutil/standardpath.h"
+#include "interfaces/dfmstandardpaths.h"
 
 #include "widgets/singleton.h"
 
@@ -93,7 +93,7 @@ QJsonObject SecrectManager::getLoginDatas()
 
 QString SecrectManager::cachePath()
 {
-    return QString("%1/samba.json").arg(StandardPath::getCachePath());
+    return QString("%1/samba.json").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::CachePath));
 }
 
 void SecrectManager::cacheSambaLoginData(const QJsonObject &obj)

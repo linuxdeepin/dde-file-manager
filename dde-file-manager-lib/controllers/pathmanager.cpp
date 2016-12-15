@@ -6,7 +6,7 @@
 #include <QVariant>
 #include <QDebug>
 #include <QDir>
-#include "shutil/standardpath.h"
+#include "interfaces/dfmstandardpaths.h"
 
 PathManager::PathManager(QObject *parent) : QObject(parent)
 {
@@ -111,18 +111,18 @@ QString PathManager::getSystemCachePath()
 
 void PathManager::loadSystemPaths()
 {
-    m_systemPathsMap["Home"] = StandardPath::getHomePath();
-    m_systemPathsMap["Desktop"] = StandardPath::getDesktopPath();
-    m_systemPathsMap["Videos"] = StandardPath::getVideosPath();
-    m_systemPathsMap["Music"] = StandardPath::getMusicPath();
-    m_systemPathsMap["Pictures"] = StandardPath::getPicturesPath();
-    m_systemPathsMap["Documents"] = StandardPath::getDocumentsPath();
-    m_systemPathsMap["Downloads"] = StandardPath::getDownloadsPath();
-    m_systemPathsMap["Trash"] = StandardPath::getTrashFilesPath();
-    m_systemPathsMap["Disk"] = StandardPath::getDiskPath();
-    m_systemPathsMap["Network"] = StandardPath::getNetworkRootPath();
-    m_systemPathsMap["UserShare"] = StandardPath::getUserShareRootPath();
-    m_systemPathsMap["Computer"] = StandardPath::getComputerRootPath();
+    m_systemPathsMap["Home"] = DFMStandardPaths::standardLocation(DFMStandardPaths::HomePath);
+    m_systemPathsMap["Desktop"] = DFMStandardPaths::standardLocation(DFMStandardPaths::DesktopPath);
+    m_systemPathsMap["Videos"] = DFMStandardPaths::standardLocation(DFMStandardPaths::VideosPath);
+    m_systemPathsMap["Music"] = DFMStandardPaths::standardLocation(DFMStandardPaths::MusicPath);
+    m_systemPathsMap["Pictures"] = DFMStandardPaths::standardLocation(DFMStandardPaths::PicturesPath);
+    m_systemPathsMap["Documents"] = DFMStandardPaths::standardLocation(DFMStandardPaths::DocumentsPath);
+    m_systemPathsMap["Downloads"] = DFMStandardPaths::standardLocation(DFMStandardPaths::DownloadsPath);
+    m_systemPathsMap["Trash"] = DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath);
+    m_systemPathsMap["Disk"] = DFMStandardPaths::standardLocation(DFMStandardPaths::DiskPath);
+    m_systemPathsMap["Network"] = DFMStandardPaths::standardLocation(DFMStandardPaths::NetworkRootPath);
+    m_systemPathsMap["UserShare"] = DFMStandardPaths::standardLocation(DFMStandardPaths::UserShareRootPath);
+    m_systemPathsMap["Computer"] = DFMStandardPaths::standardLocation(DFMStandardPaths::ComputerRoorPath);
 
     m_systemPathsSet.reserve(m_systemPathsMap.size());
 

@@ -5,8 +5,6 @@
 #include "app/define.h"
 #include "app/filesignalmanager.h"
 
-#include "shutil/standardpath.h"
-
 #include <QJsonParseError>
 #include <QJsonObject>
 
