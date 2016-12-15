@@ -85,7 +85,7 @@ QString StandardPath::getTrashPath()
 
 QString StandardPath::getTrashFilesPath()
 {
-    return QDir::homePath() + "/.local/share/Trash/files/";
+    return QDir::homePath() + "/.local/share/Trash/files";
 }
 
 QString StandardPath::getDiskPath()
