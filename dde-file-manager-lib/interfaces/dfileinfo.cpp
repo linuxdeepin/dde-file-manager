@@ -202,6 +202,9 @@ bool DFileInfo::isDir() const
 {
     Q_D(const DFileInfo);
 
+    if(FileUtils::isArchive(fileUrl().toLocalFile()))
+        return true;
+
     return d->fileInfo.isDir();
 }
 
