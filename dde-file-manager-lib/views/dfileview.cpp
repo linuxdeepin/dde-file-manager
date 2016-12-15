@@ -1180,7 +1180,7 @@ void DFileView::dragEnterEvent(QDragEnterEvent *event)
     for (const DUrl &url : event->mimeData()->urls()) {
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
 
-        if (!fileInfo->isWritable()) {
+        if (!fileInfo || !fileInfo->isWritable()) {
             event->ignore();
 
             return;
