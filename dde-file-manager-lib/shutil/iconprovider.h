@@ -26,6 +26,7 @@ public:
     QPixmap getIconPixmap(QString iconPath, int width=48, int height=48);
     QString getThemeIconPath(QString iconName, int size=48);
     static QIcon DefaultIcon;
+    static QString CurrentTheme;
 
     void initConnect();
     void gtkInit();
