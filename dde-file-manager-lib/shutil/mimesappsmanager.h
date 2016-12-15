@@ -25,13 +25,9 @@ public slots:
     void handleDirectoryChanged();
     void handleFileChanged();
     void updateCache();
-    void saveCache();
     void writeData(const QString& path, const QByteArray& content);
     QByteArray readData(const QString& path);
-    void loadCache();
-    void loadMimeAppsCache();
-    void loadDesktopFilesCache();
-    void loadDesktopIconsCache();
+
 
 private:
     QFileSystemWatcher* m_fileSystemWatcher = NULL;

@@ -31,8 +31,8 @@ public:
     void gtkInit();
     QString getCurrentTheme();
 
-    QMap<QString,QIcon> getDesktopIcons();
-    QMap<QString,QString> getDesktopIconPaths();
+    QMap<int, QMap<QString,QIcon>> getDesktopIcons();
+    QMap<int, QMap<QString,QString>> getDesktopIconPaths();
 
 signals:
     void themeChanged(const QString& theme);
@@ -46,8 +46,6 @@ public slots:
     QIcon getFileIcon(const DUrl& fileUrl, const QMimeType &mimeType);
     QIcon getDesktopIcon(const QString& iconName, int size);
 
-    void setDesktopIconPaths(const QMap<QString,QString>& iconPaths);
-
     QIcon getIconByMimeType(const QUrl &url, const QMimeType &mimeType);
     QIcon getThumbnail(const DUrl &url);
 
@@ -59,8 +57,8 @@ private:
 
 private:
     mutable QHash<QString,QIcon> m_mimeIcons;
-    mutable QMap<QString,QIcon> m_desktopIcons;
-    mutable QMap<QString,QString> m_desktopIconPaths;
+    mutable QMap<int, QMap<QString,QIcon>> m_desktopIcons;
+    mutable QMap<int, QMap<QString,QString>> m_desktopIconPaths;
     mutable QCache<qint64,QIcon> m_icons;
     mutable QMap<QString,QIcon> m_thumbnailIcons;
 
