@@ -265,12 +265,12 @@ QString IconProvider::getCurrentTheme()
     }
 }
 
-QMap<QString, QIcon> IconProvider::getDesktopIcons()
+QMap<int, QMap<QString, QIcon> > IconProvider::getDesktopIcons()
 {
     return m_desktopIcons;
 }
 
-QMap<QString, QString> IconProvider::getDesktopIconPaths()
+QMap<int, QMap<QString, QString> > IconProvider::getDesktopIconPaths()
 {
     return m_desktopIconPaths;
 }
@@ -306,8 +306,8 @@ void IconProvider::handleThemeChanged(const QString &key)
 
 QIcon IconProvider::getDesktopIcon(const QString &iconName, int size)
 {
-    if (m_desktopIcons.contains(iconName)){
-        return m_desktopIcons.value(iconName);
+    if (m_desktopIcons[size].contains(iconName)){
+        return m_desktopIcons[size].value(iconName);
     }else{
         QPixmap pixmap(size, size);
         if (iconName.startsWith("data:image/")){
@@ -320,21 +320,21 @@ QIcon IconProvider::getDesktopIcon(const QString &iconName, int size)
 
             QIcon icon = QIcon(pixmap);
 
-            m_desktopIcons[iconName] = icon;
+            m_desktopIcons[size][iconName] = icon;
 
             return icon;
         }else {
             // try to read the iconPath as a icon name.
 
             QString path;
-            if (m_desktopIconPaths.contains(iconName)){
-                path = m_desktopIconPaths.value(iconName);
+            if (m_desktopIconPaths[size].contains(iconName)){
+                path = m_desktopIconPaths[size].value(iconName);
             }else{
                 path = getThemeIconPath(iconName, size);
                 if (path.isEmpty()){
 //                    path = getThemeIconPath("application-default-icon");
                 }else{
-                    m_desktopIconPaths[iconName] = path;
+                    m_desktopIconPaths[size][iconName] = path;
                 }
             }
 
@@ -350,16 +350,11 @@ QIcon IconProvider::getDesktopIcon(const QString &iconName, int size)
                 }
             }
 
-            m_desktopIcons[iconName] = icon;
+            m_desktopIcons[size][iconName] = icon;
 
             return icon;
         }
     }
-}
-
-void IconProvider::setDesktopIconPaths(const QMap<QString, QString> &iconPaths)
-{
-    m_desktopIconPaths = iconPaths;
 }
 
 QIcon IconProvider::getIconByMimeType(const QUrl &url, const QMimeType &mimeType)
