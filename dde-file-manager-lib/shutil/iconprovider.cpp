@@ -216,9 +216,10 @@ QString IconProvider::getThemeIconPath(QString iconName, int size)
     // In pratice, default icon theme may not gets the right icon path when program starting.
     if (them == NULL)
         them = gtk_icon_theme_new();
-    char* icon_theme_name = get_icon_theme_name();
+//    char* icon_theme_name = get_icon_theme_name();
+    auto icon_theme_name = getCurrentTheme().toStdString().c_str();
     gtk_icon_theme_set_custom_theme(them, icon_theme_name);
-    g_free(icon_theme_name);
+//    g_free(icon_theme_name);
 
     char* pic_name = g_strndup(name, pic_name_len);
     GtkIconInfo* info = gtk_icon_theme_lookup_icon(them, pic_name, size, GTK_ICON_LOOKUP_GENERIC_FALLBACK);
