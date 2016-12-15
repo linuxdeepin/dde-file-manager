@@ -223,8 +223,6 @@ void DFileSystemModelPrivate::_q_processFileEvent()
         info->refresh();
 
         if (event.first == AddFile) {
-            qDebug() << "file creatored" << fileUrl;
-
             q->addFile(info);
             q->selectAndRenameFile(fileUrl);
         } else {// rm file event

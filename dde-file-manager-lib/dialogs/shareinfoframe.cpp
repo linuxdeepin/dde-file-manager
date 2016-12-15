@@ -83,7 +83,11 @@ void ShareInfoFrame::handleCheckBoxChanged(int state)
 
 void ShareInfoFrame::handleShareNameChanged(const QString &name)
 {
-    qDebug() << name;
+//    qDebug() << name;
+    if(name.isEmpty() || name == ""){
+        m_jobTimer->stop();
+        return;
+    }
     handShareInfoChanged();
 }
 

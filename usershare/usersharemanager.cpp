@@ -217,6 +217,7 @@ void UserShareManager::updateUserShareInfo()
     //cache
     QStringList oldShareInfos = m_shareInfos.keys();
     QMap<QString,ShareInfo> shareInfoCache = m_shareInfos;
+    ShareInfoList newInfos;
 
     m_shareInfos.clear();
     m_sharePathToNames.clear();
@@ -275,12 +276,10 @@ void UserShareManager::updateUserShareInfo()
 
     foreach (ShareInfo info, m_shareInfos.values()) {
         if (info.isValid() && !oldShareInfos.contains(info.shareName())) {
-            emit userShareAdded(info.path());
-            m_fileMonitor->addMonitorPath(info.path());
+            newInfos << info;
         }else if(info.isValid() && oldShareInfos.contains(info.shareName())){
             oldShareInfos.removeOne(info.shareName());
         }
-
     }
 
     // emit deleted usershare
@@ -288,6 +287,12 @@ void UserShareManager::updateUserShareInfo()
         const QString& filePath = shareInfoCache.value(shareName).path();
         emit userShareDeleted(filePath);
         m_fileMonitor->removeMonitorPath(filePath);
+    }
+
+    //emit new encoming shared info
+    foreach (const ShareInfo& info, newInfos) {
+        emit userShareAdded(info.path());
+        m_fileMonitor->addMonitorPath(info.path());
     }
 
     if (validShareInfoCount() <= 0) {
