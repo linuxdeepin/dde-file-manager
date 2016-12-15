@@ -565,6 +565,11 @@ QIcon DAbstractFileInfo::fileIcon() const
         }
     }
 
+    if (isSymLink()){
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(redirectedFileUrl());
+        return fileInfo->fileIcon();
+    }
+
     return fileIconProvider->getIconByMimeType(fileUrl, mimeType);
 }
 

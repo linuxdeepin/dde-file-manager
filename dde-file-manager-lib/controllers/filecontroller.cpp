@@ -104,6 +104,7 @@ bool FileController::openFile(const DUrl &fileUrl, bool &accepted) const
             dialogManager->showBreakSymlinkDialog(linkInfo->fileName(), fileUrl);
             return false;
         }
+        const_cast<DUrl&>(fileUrl) = linkInfo->redirectedFileUrl();
     }
 
     if (FileUtils::isExecutableScript(fileUrl.toLocalFile())) {
