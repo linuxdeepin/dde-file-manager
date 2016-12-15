@@ -18,6 +18,7 @@
 #include "usershare/usersharemanager.h"
 #include "controllers/pathmanager.h"
 #include "interfaces/dfileservices.h"
+#include "shutil/standardpath.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -182,6 +183,8 @@ QString Tab::getDisplayNameByUrl(const DUrl &url) const
     if(url.isComputerFile()){
         if(systemPathManager->isSystemPath(url.toString()))
             urlDisplayName = systemPathManager->getSystemPathDisplayNameByPath(url.toString());
+    } else if(url == DUrl::fromTrashFile("/")){
+        urlDisplayName = systemPathManager->getSystemPathDisplayNameByPath(StandardPath::getTrashFilesPath());
     } else{
         const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
 
