@@ -62,7 +62,6 @@ void SingleApplication::newClientProcess(const QString &key)
                     isNewWindow = CommandLineManager::instance()->isSet("n");
                 }
                 QJsonObject message;
-                message.insert("url", DUrl::fromUserInput(commandlineUrl).toString());
                 message.insert("isNewWindow", isNewWindow);
 
                 message.insert("isShowPropertyDialogRequest",isShowPropertyDialogRequest);
@@ -155,31 +154,35 @@ void SingleApplication::readData()
     if(messageObj.contains("isShowPropertyDialogRequest"))
         isShowPropertyDialogRequest = messageObj.value("isShowPropertyDialogRequest").toBool();
 
+    QJsonArray jsPaths;
+    if(messageObj.contains("paths"))
+        jsPaths = messageObj.value("paths").toArray();
+    QStringList paths;
+    foreach (QJsonValue val, jsPaths) {
+        paths << val.toString();
+    }
+
     if(isShowPropertyDialogRequest){
-        QJsonArray jsPaths;
-        if(messageObj.contains("paths"))
-            jsPaths = messageObj.value("paths").toArray();
-        QStringList paths;
-        foreach (QJsonValue val, jsPaths) {
-            paths << val.toString();
-        }
         fileManagerApp->showPropertyDialog(paths);
         return;
     }
 
     bool isNewWindow = false;
-    if (messageObj.contains("url")){
-        QString _url = messageObj.value("url").toString();
-        if (!_url.isEmpty()){
-            url = DUrl::fromUserInput(_url);
-        }
-    }
+
     if (messageObj.contains("isNewWindow")){
         if (messageObj.value("isNewWindow").toBool()){
             isNewWindow = true;
         }
     }
-    qDebug() << url << isNewWindow;
+
+    foreach (QString path, paths) {
+        if (!path.isEmpty()){
+            url = DUrl::fromUserInput(path);
+        }
+        qDebug() << url << isNewWindow;
+        emit fileSignalManager->requestOpenNewWindowByUrl(url, isNewWindow);
+    }
+
     emit fileSignalManager->requestOpenNewWindowByUrl(url, isNewWindow);
 }
 

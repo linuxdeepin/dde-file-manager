@@ -57,12 +57,13 @@ int main(int argc, char *argv[])
 
     CommandLineManager::instance()->process();
 
-    DUrl commandlineUrl;
 
-    if (CommandLineManager::instance()->positionalArguments().count() > 0){
-        commandlineUrl = DUrl::fromUserInput(CommandLineManager::instance()->positionalArguments().at(0));
-    } else {
-        commandlineUrl = DUrl::fromLocalFile(QDir::homePath());
+    DUrlList commandlineUrlList;
+    foreach (QString path, CommandLineManager::instance()->positionalArguments()) {
+        commandlineUrlList << DUrl::fromUserInput(path);
+    }
+    if (commandlineUrlList.isEmpty()){
+        commandlineUrlList << DUrl::fromLocalFile(QDir::homePath());
     }
 
     QString uniqueKey = app.applicationName();
@@ -71,14 +72,16 @@ int main(int argc, char *argv[])
     bool isBackendRun = CommandLineManager::instance()->isSet("d");
     bool isShowPropertyRequest = CommandLineManager::instance()->isSet("p");
 
-    qDebug() << isSingleInstance << commandlineUrl;
+    qDebug() << isSingleInstance << commandlineUrlList;
 
     if (isSingleInstance){
         DFMGlobal::installTranslator();
         DThemeManager::instance()->setTheme("light");
 
         if (!isBackendRun && !isShowPropertyRequest){
-            fileManagerApp->show(commandlineUrl);
+            foreach (DUrl url, commandlineUrlList) {
+                fileManagerApp->show(url);
+            }
         }else{
             fileManagerApp;
         }
