@@ -16,6 +16,7 @@
 #define MTP_SCHEME "mtp"
 #define GPHOTO2_SCHEME "gphoto2"
 #define USERSHARE_SCHEME "usershare"
+#define AVFS_SCHEME "avfs"
 
 #define TRASH_ROOT "trash:///"
 #define RECENT_ROOT "recent:///"
@@ -25,6 +26,7 @@
 #define NETWORK_ROOT "network:///"
 #define SMB_ROOT "smb:///"
 #define USERSHARE_ROOT "usershare:///"
+#define AVFS_ROOT "avfs:///"
 
 class DUrl;
 
@@ -59,6 +61,7 @@ public:
     bool isAFCFile() const;
     bool isMTPFile() const;
     bool isUserShareFile() const;
+    bool isAVFSFile() const;
 
     QString toString(FormattingOptions options = FormattingOptions( PrettyDecoded )) const;
 
@@ -83,6 +86,7 @@ public:
     static DUrl fromAFCFile(const QString &filePath);
     static DUrl fromMTPFile(const QString &filePath);
     static DUrl fromUserShareFile(const QString &filePath);
+    static DUrl fromAVFSFile(const QString& filePath);
     static DUrlList fromStringList(const QStringList &urls, ParsingMode mode = TolerantMode);
     static DUrlList fromQUrlList(const QList<QUrl> &urls);
     static DUrl fromUserInput(const QString &userInput, bool preferredLocalPath = true);

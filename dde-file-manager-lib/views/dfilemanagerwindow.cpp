@@ -23,6 +23,7 @@
 #include "deviceinfo/udisklistener.h"
 #include "usershare/usersharemanager.h"
 #include "controllers/pathmanager.h"
+#include "shutil/fileutils.h"
 
 #include "xutil.h"
 #include "utils.h"
@@ -298,7 +299,13 @@ void DFileManagerWindow::preHandleCd(const DUrl &fileUrl, int source)
         event << DUrl(viewId);
         emit fileSignalManager->currentUrlChanged(event);
 
-    }else if (!fileUrl.toString().isEmpty()) {
+    } else if (event.fileUrl().isComputerFile()) {
+        event << DUrl::fromComputerFile("/");
+        d->tabBar->currentTab()->setCurrentUrl(event.fileUrl());
+        emit d->tabBar->currentChanged(d->tabBar->currentIndex());
+        d->toolbar->setCrumb(event.fileUrl());
+    } else if (!fileUrl.toString().isEmpty()) {
+
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(event.fileUrl());
 
         if (!fileInfo || !fileInfo->exists()) {
