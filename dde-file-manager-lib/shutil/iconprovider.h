@@ -19,12 +19,12 @@ public:
     explicit IconProvider(QObject *parent = 0);
     ~IconProvider();
 
-    static char* icon_name_to_path(const char* name, int size);
-    static char* get_icon_for_file(char* giconstr, int size);
-    static char* get_icon_theme_name();
-    static QString getFileIcon(const QString& path, int size);
-    static QPixmap getIconPixmap(QString iconPath, int width=48, int height=48);
-    static QString getThemeIconPath(QString iconName, int size=48);
+    char* icon_name_to_path(const char* name, int size);
+    char* get_icon_for_file(char* giconstr, int size);
+    char* get_icon_theme_name();
+    QString getFileIcon(const QString& path, int size);
+    QPixmap getIconPixmap(QString iconPath, int width=48, int height=48);
+    QString getThemeIconPath(QString iconName, int size=48);
     static QIcon DefaultIcon;
 
     void initConnect();
