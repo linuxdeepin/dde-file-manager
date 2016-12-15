@@ -5,7 +5,6 @@
 #include "app/define.h"
 
 #include "models/recentfileinfo.h"
-#include "shutil/standardpath.h"
 
 #include "widgets/singleton.h"
 

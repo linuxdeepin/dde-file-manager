@@ -12,7 +12,6 @@
 #include "app/filesignalmanager.h"
 
 #include "shutil/fileutils.h"
-#include "shutil/standardpath.h"
 
 #include "dialogs/dialogmanager.h"
 

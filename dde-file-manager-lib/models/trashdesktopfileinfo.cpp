@@ -1,6 +1,6 @@
 #include "trashdesktopfileinfo.h"
 #include <QIcon>
-#include "shutil/standardpath.h"
+#include "interfaces/dfmstandardpaths.h"
 
 TrashDesktopFileInfo::TrashDesktopFileInfo(const DUrl& fileUrl):
     DesktopFileInfo(fileUrl)
@@ -44,5 +44,5 @@ QList<QIcon> TrashDesktopFileInfo::additionalIcon() const
 
 DUrl TrashDesktopFileInfo::trashDesktopFileUrl()
 {
-    return DUrl::fromLocalFile(StandardPath::getDesktopPath() + "/dde-trash.desktop");
+    return DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::DesktopPath) + "/dde-trash.desktop");
 }

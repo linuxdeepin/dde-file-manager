@@ -110,7 +110,6 @@ HEADERS += \
     dialogs/openwithdialog.h \
     controllers/searchcontroller.h \
     models/searchfileinfo.h\
-    shutil/standardpath.h \
     dialogs/basedialog.h \
     views/extendview.h \
     controllers/pathmanager.h \
@@ -229,7 +228,6 @@ SOURCES += \
     dialogs/openwithdialog.cpp \
     controllers/searchcontroller.cpp \
     models/searchfileinfo.cpp\
-    shutil/standardpath.cpp \
     dialogs/basedialog.cpp \
     views/extendview.cpp \
     controllers/pathmanager.cpp \

@@ -2,6 +2,7 @@
 #define DFMSTANDARDPATHS_H
 
 #include <QString>
+#include <QStandardPaths>
 
 class DFMStandardPaths
 {
@@ -11,17 +12,31 @@ public:
         TrashFilesPath,
         TrashInfosPath,
         TranslationPath,
-        ApplicationConfigPath,
         ThumbnailPath,
         ThumbnailFailPath,
         ThumbnailLargePath,
         ThumbnailNormalPath,
-        ThumbnailSmallPath
+        ThumbnailSmallPath,
+        ApplicationConfigPath,  /* ~/.config */
+        ApplicationSharePath,   /* /usr/share/dde-file-manager */
+        HomePath,
+        DesktopPath,
+        VideosPath,
+        MusicPath,
+        PicturesPath,
+        DocumentsPath,
+        DownloadsPath,
+        CachePath,              /* ~/.cache/dde-file-manager */
+        DiskPath,
+        NetworkRootPath,
+        UserShareRootPath,
+        ComputerRoorPath
     };
 
     static QString standardLocation(StandardLocation type);
 
     static QString getConfigPath();
+    static QString getCachePath();
 
 private:
     DFMStandardPaths();

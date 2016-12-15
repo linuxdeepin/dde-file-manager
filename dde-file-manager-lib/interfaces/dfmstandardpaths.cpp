@@ -3,6 +3,7 @@
 #include <QDir>
 #include <QApplication>
 #include <QStandardPaths>
+#include "durl.h"
 
 QString DFMStandardPaths::standardLocation(DFMStandardPaths::StandardLocation type)
 {
@@ -27,6 +28,32 @@ QString DFMStandardPaths::standardLocation(DFMStandardPaths::StandardLocation ty
         return standardLocation(ThumbnailPath) + "/normal";
     case ThumbnailSmallPath:
         return standardLocation(ThumbnailPath) + "/small";
+    case ApplicationSharePath:
+        return APPSHAREDIR;
+    case HomePath:
+        return QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first();
+    case DesktopPath:
+        return QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first();
+    case VideosPath:
+        return QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).first();
+    case MusicPath:
+        return QStandardPaths::standardLocations(QStandardPaths::MusicLocation).first();
+    case PicturesPath:
+        return QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).first();
+    case DocumentsPath:
+        return QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first();
+    case DownloadsPath:
+        return QStandardPaths::standardLocations(QStandardPaths::DownloadLocation).first();
+    case CachePath:
+        return getCachePath();
+    case DiskPath:
+        return QDir::rootPath();
+    case NetworkRootPath:
+        return NETWORK_ROOT;
+    case UserShareRootPath:
+        return USERSHARE_ROOT;
+    case ComputerRoorPath:
+        return COMPUTER_ROOT;
     }
 
     return QString();
@@ -41,7 +68,15 @@ QString DFMStandardPaths::getConfigPath()
     return defaultPath;
 }
 
+QString DFMStandardPaths::getCachePath()
+{
+    QString projectName = qApp->applicationName();
+    QDir::home().mkpath(".cache");
+    QDir::home().mkpath(QString("%1/%2/").arg(".cache", projectName));
+    QString defaultPath = QString("%1/%2/%3").arg(QDir::homePath(), ".cache", projectName);
+    return defaultPath;
+}
+
 DFMStandardPaths::DFMStandardPaths()
 {
-
 }

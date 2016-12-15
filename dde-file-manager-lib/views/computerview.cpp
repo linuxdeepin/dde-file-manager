@@ -12,7 +12,7 @@
 #include "controllers/appcontroller.h"
 #include "deviceinfo/udisklistener.h"
 #include "dabstractfileinfo.h"
-#include "shutil/standardpath.h"
+#include "interfaces/dfmstandardpaths.h"
 #include "widgets/singleton.h"
 
 #include <dslider.h>
@@ -528,7 +528,7 @@ bool ComputerView::isDiskConfExisted()
 
 QString ComputerView::getDiskConfPath()
 {
-    return QString("%1/%2").arg(StandardPath::getConfigPath(), "disk.conf");
+    return QString("%1/%2").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::ApplicationConfigPath), "disk.conf");
 }
 
 void ComputerView::volumeAdded(UDiskDeviceInfoPointer device)

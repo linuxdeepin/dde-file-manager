@@ -15,7 +15,7 @@
 #include <QStandardPaths>
 #include <QDebug>
 #include "desktopfile.h"
-#include "standardpath.h"
+#include "interfaces/dfmstandardpaths.h"
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
@@ -299,17 +299,17 @@ QStringList MimesAppsManager::getApplicationsFolders()
 
 QString MimesAppsManager::getMimeAppsCacheFile()
 {
-    return QString("%1/%2").arg(StandardPath::getCachePath(), "MimeApps.json");
+    return QString("%1/%2").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::CachePath), "MimeApps.json");
 }
 
 QString MimesAppsManager::getDesktopFilesCacheFile()
 {
-    return QString("%1/%2").arg(StandardPath::getCachePath(), "DesktopFiles.json");
+    return QString("%1/%2").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::CachePath), "DesktopFiles.json");
 }
 
 QString MimesAppsManager::getDesktopIconsCacheFile()
 {
-    return QString("%1/%2").arg(StandardPath::getCachePath(), "DesktopIcons.json");
+    return QString("%1/%2").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::CachePath), "DesktopIcons.json");
 }
 
 QStringList MimesAppsManager::getDesktopFiles()
