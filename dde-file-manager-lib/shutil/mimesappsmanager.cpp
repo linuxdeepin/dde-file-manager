@@ -40,22 +40,126 @@ MimeAppsWorker::~MimeAppsWorker()
 void MimeAppsWorker::initConnect()
 {
     connect(m_fileSystemWatcher, &QFileSystemWatcher::directoryChanged, this, &MimeAppsWorker::handleDirectoryChanged);
-    connect(m_fileSystemWatcher, &QFileSystemWatcher::fileChanged, this, &MimeAppsWorker::handleDirectoryChanged);
+    connect(m_fileSystemWatcher, &QFileSystemWatcher::fileChanged, this, &MimeAppsWorker::handleFileChanged);
 }
 
 void MimeAppsWorker::startWatch()
 {
     m_fileSystemWatcher->addPaths(MimesAppsManager::getDesktopFiles());
+    m_fileSystemWatcher->addPaths(MimesAppsManager::getApplicationsFolders());
 }
 
-void MimeAppsWorker::handleDirectoryChanged()
+void MimeAppsWorker::handleDirectoryChanged(const QString &filePath)
 {
+    Q_UNUSED(filePath)
+
+    //for 1.4
+//    if(QFile::exists(filePath)){
+//        m_fileSystemWatcher->addPath(filePath);
+
+//        QMap<QString, QSet<QString>> mimeAppsSet;
+
+//        DesktopFile desktopFile(filePath);
+//        MimesAppsManager::DesktopFiles.append(filePath);
+//        MimesAppsManager::DesktopObjs.insert(filePath, desktopFile);
+//        QStringList mimeTypes = desktopFile.getMimeType();
+//        foreach (QString mimeType, mimeTypes) {
+//            if (!mimeType.isEmpty()){
+//                QSet<QString> apps;
+//                if (mimeAppsSet.contains(mimeType)){
+//                    apps = mimeAppsSet.value(mimeType);
+//                    apps.insert(filePath);
+//                }else{
+//                    apps.insert(filePath);
+//                }
+//                mimeAppsSet.insert(mimeType, apps);
+//            }
+//        }
+
+//        foreach (QString key, mimeAppsSet.keys()) {
+//            QSet<QString> apps = mimeAppsSet.value(key);
+//            QStringList orderApps;
+//            if (apps.count() > 1){
+//                QFileInfoList fileInfos;
+//                foreach (QString app, apps) {
+//                    QFileInfo info(app);
+//                    fileInfos.append(info);
+//                }
+
+//                std::sort(fileInfos.begin(), fileInfos.end(), MimesAppsManager::lessByDateTime);
+
+//                foreach (QFileInfo info, fileInfos) {
+//                    orderApps.append(info.absoluteFilePath());
+//                }
+//            }else{
+//                orderApps.append(apps.toList());
+//            }
+//            MimesAppsManager::MimeApps.insert(key, orderApps);
+//        }
+
+//        foreach (QString desktopFile, MimesAppsManager::DesktopObjs.keys()) {
+//            QString iconName = MimesAppsManager::DesktopObjs.value(desktopFile).getIcon();
+//            fileIconProvider->getDesktopIcon(iconName, 48);
+//        }
+
+//    }else{
+//        m_fileSystemWatcher->removePath(filePath);
+//        MimesAppsManager::DesktopFiles.removeOne(filePath);
+//        MimesAppsManager::DesktopObjs.remove(filePath);
+//    }
     updateCache();
 }
 
-void MimeAppsWorker::handleFileChanged()
+void MimeAppsWorker::handleFileChanged(const QString &filePath)
 {
     updateCache();
+    //for 1.4
+//    DesktopFile desktopFile(filePath);
+//    MimesAppsManager::DesktopObjs.remove(filePath);
+//    MimesAppsManager::DesktopObjs.insert(filePath, desktopFile);
+
+//    QMap<QString, QSet<QString>> mimeAppsSet;
+
+//    QStringList mimeTypes = desktopFile.getMimeType();
+//    foreach (QString mimeType, mimeTypes) {
+//        if (!mimeType.isEmpty()){
+//            QSet<QString> apps;
+//            if (mimeAppsSet.contains(mimeType)){
+//                apps = mimeAppsSet.value(mimeType);
+//                apps.insert(filePath);
+//            }else{
+//                apps.insert(filePath);
+//            }
+//            mimeAppsSet.insert(mimeType, apps);
+//        }
+//    }
+
+//    foreach (QString key, mimeAppsSet.keys()) {
+//        QSet<QString> apps = mimeAppsSet.value(key);
+//        QStringList orderApps;
+//        if (apps.count() > 1){
+//            QFileInfoList fileInfos;
+//            foreach (QString app, apps) {
+//                QFileInfo info(app);
+//                fileInfos.append(info);
+//            }
+
+//            std::sort(fileInfos.begin(), fileInfos.end(), MimesAppsManager::lessByDateTime);
+
+//            foreach (QFileInfo info, fileInfos) {
+//                orderApps.append(info.absoluteFilePath());
+//            }
+//        }else{
+//            orderApps.append(apps.toList());
+//        }
+//        MimesAppsManager::MimeApps.insert(key, orderApps);
+//    }
+
+//    foreach (QString desktopFile, MimesAppsManager::DesktopObjs.keys()) {
+//        QString iconName = MimesAppsManager::DesktopObjs.value(desktopFile).getIcon();
+//        fileIconProvider->getDesktopIcon(iconName, 48);
+//    }
+
 }
 
 void MimeAppsWorker::updateCache()
