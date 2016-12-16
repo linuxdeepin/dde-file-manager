@@ -24,12 +24,15 @@ public:
     DIconItemDelegatePrivate(DIconItemDelegate *qq)
         : DStyledItemDelegatePrivate(qq) {}
 
+    QSize textSize(const QString &text, const QFontMetrics &metrics, int lineHeight = -1) const;
+    void drawText(QPainter *painter, const QRect &r, const QString &text,
+                  int lineHeight = -1, QRect *br = Q_NULLPTR) const;
+
     QPointer<FileIconItem> expandedItem;
 
     mutable QHash<QString, QString> elideMap;
     mutable QHash<QString, QString> wordWrapMap;
     mutable QHash<QString, int> textHeightMap;
-    mutable QHash<QString, QTextDocument*> documentMap;
     mutable QModelIndex expandedIndex;
     mutable QModelIndex lastAndExpandedInde;
 
@@ -40,6 +43,53 @@ public:
     QColor focusTextBackgroundBorderColor = Qt::transparent;
     bool enabledTextShadow = false;
 };
+
+QSize DIconItemDelegatePrivate::textSize(const QString &text, const QFontMetrics &metrics, int lineHeight) const
+{
+    QString str = text;
+
+    if (str.endsWith('\n'))
+        str.chop(1);
+
+    int max_width = 0;
+    int height = 0;
+
+    for (const QString &line : str.split('\n')) {
+        max_width = qMax(metrics.width(line), max_width);
+
+        if (lineHeight > 0)
+            height += lineHeight;
+        else
+            height += metrics.height();
+    }
+
+    return QSize(max_width, height);
+}
+
+void DIconItemDelegatePrivate::drawText(QPainter *painter, const QRect &r, const QString &text, int lineHeight, QRect *br) const
+{
+    if (lineHeight <= 0)
+        lineHeight = painter->fontMetrics().height();
+
+    QString str = text;
+
+    if (str.endsWith('\n'))
+        str.chop(1);
+
+    QRect textRect = QRect(0, r.top(), 0, 0);
+
+    for (const QString &line : str.split('\n')) {
+        QRect br;
+
+        painter->drawText(r.left(), textRect.bottom(), r.width(), lineHeight, Qt::AlignCenter, line, &br);
+        textRect.setWidth(qMax(textRect.width(), br.width()));
+        textRect.setBottom(textRect.bottom() + lineHeight);
+    }
+
+    if (br)
+        *br = textRect;
+}
+
 
 DIconItemDelegate::DIconItemDelegate(DFileViewHelper *parent) :
     DStyledItemDelegate(*new DIconItemDelegatePrivate(this), parent)
@@ -253,49 +303,14 @@ void DIconItemDelegate::paint(QPainter *painter,
     }
 
     /// draw file name label
-    QRect label_background_rect = opt.rect;
-    QTextDocument *doc = Q_NULLPTR;
-    if(str.indexOf("\n") >=0 && !str.endsWith("\n")) {
-        doc = d->documentMap.value(str);
-
-        if(!doc) {
-            doc = new QTextDocument(str, const_cast<DIconItemDelegate*>(this));
-
-            QTextCursor cursor(doc);
-            QTextOption text_option(Qt::AlignHCenter);
-
-            text_option.setWrapMode(QTextOption::NoWrap);
-//            doc->setDefaultFont(painter->font());
-            doc->setDefaultTextOption(text_option);
-            doc->setTextWidth(label_rect.width());
-            cursor.movePosition(QTextCursor::Start);
-
-            do {
-                QTextBlockFormat format = cursor.blockFormat();
-
-                format.setLineHeight(TEXT_LINE_HEIGHT, QTextBlockFormat::FixedHeight);
-                cursor.setBlockFormat(format);
-            } while (cursor.movePosition(QTextCursor::NextBlock));
-
-            d->documentMap[str] = doc;
-        }
-
-        if (isSelected) {
-            label_background_rect = opt.rect;
-            label_background_rect.moveTop(label_rect.top() - TEXT_PADDING);
-            label_background_rect.setHeight(doc->size().height());
-        }
-    } else {
-        if(isSelected) {
-            QRect &rect = label_background_rect;
-
-            painter->drawText(label_rect, Qt::AlignHCenter, str, &rect);
-            rect += QMargins(TEXT_PADDING, TEXT_PADDING, TEXT_PADDING, TEXT_PADDING);
-        }
-    }
-
     if (isSelected) {
         QPainterPath path;
+
+        QRect label_background_rect = label_rect;
+
+        label_background_rect.setSize(d->textSize(str, painter->fontMetrics(), TEXT_LINE_HEIGHT));
+        label_background_rect.moveLeft(label_rect.left() + (label_rect.width() - label_background_rect.width()) / 2);
+        label_background_rect += QMargins(TEXT_PADDING, TEXT_PADDING, TEXT_PADDING, TEXT_PADDING);
 
         path.addRoundedRect(label_background_rect, ICON_MODE_RECT_RADIUS, ICON_MODE_RECT_RADIUS);
         painter->save();
@@ -318,29 +333,12 @@ void DIconItemDelegate::paint(QPainter *painter,
     else
         painter->setPen(opt.palette.color(QPalette::Text));
 
-    if (doc) {
-        QAbstractTextDocumentLayout::PaintContext ctx;
-
-        ctx.palette.setColor(QPalette::Text, painter->pen().color());
-
-        if (isSelected || !d->enabledTextShadow) {
-            painter->save();
-            painter->translate(label_rect.left(), label_rect.top() - TEXT_PADDING);
-            doc->documentLayout()->draw(painter, ctx);
-            painter->restore();
-        } else {
-            QPainter p(&text_image);
-            p.translate(0, 1 - TEXT_PADDING);
-            doc->documentLayout()->draw(&p, ctx);
-        }
+    if (isSelected || !d->enabledTextShadow) {
+        d->drawText(painter, label_rect, str, TEXT_LINE_HEIGHT);
     } else {
-        if (isSelected || !d->enabledTextShadow) {
-            painter->drawText(label_rect, Qt::AlignHCenter, str);
-        } else {
-            QPainter p(&text_image);
-            p.setPen(painter->pen());
-            p.drawText(QRect(QPoint(0, 0), label_rect.size()), Qt::AlignHCenter, str);
-        }
+        QPainter p(&text_image);
+        p.setPen(painter->pen());
+        d->drawText(&p, QRect(QPoint(0, 0), label_rect.size()), str, TEXT_LINE_HEIGHT);
     }
 
     if (!isSelected && d->enabledTextShadow) {
