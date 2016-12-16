@@ -394,6 +394,7 @@ bool SearchController::deleteFiles(const DFMEvent &event, bool &accepted) const
 {
     accepted = true;
 
+    const_cast<DFMEvent&>(event) << event.fileUrl().searchTargetUrl();
     const_cast<DFMEvent&>(event) << realUrlList(event.fileUrlList());
 
     return DFileService::instance()->deleteFilesSync(event);
