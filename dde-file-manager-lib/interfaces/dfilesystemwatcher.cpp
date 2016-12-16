@@ -70,7 +70,7 @@ QStringList DFileSystemWatcherPrivate::addPaths(const QStringList &paths, QStrin
                                        )
                                     : (0
                                        | IN_ATTRIB
-                                       | IN_CLOSE
+                                       | IN_CLOSE_WRITE
                                        | IN_MODIFY
                                        | IN_MOVE
                                        | IN_MOVE_SELF
@@ -287,14 +287,15 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
             emit q->fileAttributeChanged(path, name, DFileSystemWatcher::QPrivateSignal());
         }
 
-        if (event.mask & IN_CLOSE) {
-            qDebug() << "IN_CLOSE" <<  event.mask << filePath;
+        /*only monitor file close event which is opend by write mode*/
+        if (event.mask & IN_CLOSE_WRITE) {
+            qDebug() << "IN_CLOSE_WRITE" <<  event.mask << filePath;
 
             emit q->fileClosed(path, id < 0 ? name : QString(), DFileSystemWatcher::QPrivateSignal());
         }
 
         if (event.mask & IN_MODIFY) {
-//            qDebug() << "IN_MODIFY" <<  event.mask << filePath << name;
+            qDebug() << "IN_MODIFY" <<  event.mask << filePath << name;
 
             emit q->fileModified(path, name, DFileSystemWatcher::QPrivateSignal());
         }
