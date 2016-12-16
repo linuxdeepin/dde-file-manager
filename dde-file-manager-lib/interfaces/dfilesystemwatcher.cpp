@@ -161,7 +161,7 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
 
         if (!(event->mask & IN_MOVED_TO) || !hasMoveFromByCookie.contains(event->cookie)) {
             eventList.append(event);
-            pathForId.insert(event->wd, path);
+            pathForId.insert(id, path);
         }
 
         if (event->mask & IN_MOVED_TO) {
@@ -183,7 +183,15 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
 //        qDebug() << "inotify event, wd" << event.wd << "cookie" << event.cookie << "mask" << hex << event.mask;
 
         int id = event.wd;
-        const QString &path = pathForId.value(id);
+        QString path = pathForId.value(id);
+
+        if (path.isEmpty()) {
+            id = -id;
+            path = pathForId.value(id);
+
+            if (path.isEmpty())
+                continue;
+        }
         const QString &name = QString::fromUtf8(event.name);
 
 //        qDebug() << "event for path" << path;
