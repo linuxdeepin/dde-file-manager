@@ -42,6 +42,7 @@ extern "C" {
 
 static GtkIconTheme* them = NULL;
 QIcon IconProvider::DefaultIcon;
+QString IconProvider::CurrentTheme = "Deepin";
 
 IconProvider::IconProvider(QObject *parent) : QObject(parent)
 {
@@ -217,7 +218,7 @@ QString IconProvider::getThemeIconPath(QString iconName, int size)
     if (them == NULL)
         them = gtk_icon_theme_new();
 //    char* icon_theme_name = get_icon_theme_name();
-    auto icon_theme_name = getCurrentTheme().toStdString().c_str();
+    auto icon_theme_name = CurrentTheme.toStdString().c_str();
     gtk_icon_theme_set_custom_theme(them, icon_theme_name);
 //    g_free(icon_theme_name);
 
@@ -258,12 +259,11 @@ void IconProvider::gtkInit()
 
 QString IconProvider::getCurrentTheme()
 {
-    QString temp = m_gsettings->get("icon-theme").toString();
-    if (!temp.isEmpty()){
-        return temp;
-    }else{
-        return QIcon::themeName();
+    CurrentTheme = m_gsettings->get("icon-theme").toString();
+    if (CurrentTheme.isEmpty()){
+        CurrentTheme = QIcon::themeName();
     }
+    return CurrentTheme;
 }
 
 QMap<int, QMap<QString, QIcon> > IconProvider::getDesktopIcons()
