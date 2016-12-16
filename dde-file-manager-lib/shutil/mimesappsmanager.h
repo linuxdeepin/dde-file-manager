@@ -22,8 +22,8 @@ public:
     void initConnect();
 public slots:
     void startWatch();
-    void handleDirectoryChanged();
-    void handleFileChanged();
+    void handleDirectoryChanged(const QString& filePath);
+    void handleFileChanged(const QString& filePath);
     void updateCache();
     void writeData(const QString& path, const QByteArray& content);
     QByteArray readData(const QString& path);
