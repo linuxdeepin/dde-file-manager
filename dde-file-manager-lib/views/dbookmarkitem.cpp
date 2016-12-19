@@ -736,7 +736,10 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
         menu = DFileMenuManager::createComputerLeftBarMenu(disableList);
     }else if(m_isDisk && m_deviceInfo)
     {
-        disableList |= m_deviceInfo->disableMenuActionList();
+        if(!tabAddable)
+            disableList << MenuAction::OpenDiskInNewTab;
+
+        disableList |= m_deviceInfo->disableMenuActionList() ;
         m_url.setQuery(m_sysPath);
 
         m_deviceInfo->canUnmount();
