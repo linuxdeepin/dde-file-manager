@@ -13,6 +13,7 @@
 #include "shutil/fileutils.h"
 
 #include "dialogs/dialogmanager.h"
+#include "app/filesignalmanager.h"
 
 #include "deviceinfo/udisklistener.h"
 
@@ -51,6 +52,7 @@
 #include <QStorageInfo>
 #include <QVariantAnimation>
 #include "views/dleftsidebar.h"
+#include <QScrollArea>
 
 NameTextEdit::NameTextEdit(const QString &text, QWidget *parent):
     QTextEdit(text, parent)
@@ -189,6 +191,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget* p
                            &~ Qt::WindowMinimizeButtonHint
                            &~ Qt::WindowSystemMenuHint);
     QString basicInfo = tr("Basic info");
+    QString openMethod = tr("Open with");
     QString shareManager = tr("Share manager");
     initUI();
     UDiskDeviceInfoPointer diskInfo = deviceListener->getDevice(m_url.query());
@@ -238,6 +241,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget* p
         QStringList titleList;
         if (fileInfo->isFile()){
             titleList << basicInfo;
+            titleList << openMethod;
         }else{
             titleList << basicInfo;
             if (fileInfo->isCanShare()){
@@ -248,10 +252,13 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget* p
         m_expandGroup->expand(0)->setContent(m_basicInfoFrame);
 
         if (fileInfo->isFile()){
-    //        m_OpenWithListWidget = createOpenWithListWidget(fileInfo);
-    //        expandGroup->expand(1)->setContent(m_OpenWithListWidget);
             m_fileCount = 1;
             m_size = fileInfo->size();
+
+            m_OpenWithListWidget = createOpenWithListWidget(fileInfo);
+            m_expandGroup->expand(1)->setContent(m_OpenWithListWidget);
+            m_expandGroup->expand(1)->setExpand(false);
+
         }else if (fileInfo->isDir()){
             if (fileInfo->isCanShare()){
                 m_shareinfoFrame = createShareInfoFrame(fileInfo);
@@ -446,6 +453,13 @@ void PropertyDialog::flickFolderToLeftsidBar()
     xani->start();
     gani->start();
 }
+void PropertyDialog::onOpenWithBntsChecked(QAbstractButton *w)
+{
+    if(w){
+        MimesAppsManager::setDefautlAppForType(w->property("mimeTypeName").toString(),
+                                                 w->property("appName").toString());
+    }
+}
 
 void PropertyDialog::mousePressEvent(QMouseEvent *event)
 {
@@ -639,7 +653,6 @@ void PropertyDialog::initTextShowFrame(const QString &text)
     m_editStackWidget->setCurrentIndex(1);
 }
 
-
 QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &info)
 {
     QFrame *widget = new QFrame(this);
@@ -762,46 +775,29 @@ QListWidget *PropertyDialog::createOpenWithListWidget(const DAbstractFileInfoPoi
     QString path = info->absoluteFilePath();
     QMimeType mimeType = mimeAppsManager->getMimeType(path);
 
-    QStringList recommendApps = mimeAppsManager->MimeApps.value(MimesAppsManager::getMimeTypeByFileName(path));;
-    foreach (QString name, mimeType.aliases()) {
-        QStringList apps = mimeAppsManager->MimeApps.value(name);
-        foreach (QString app, apps) {
-            if (!recommendApps.contains(app)){
-                recommendApps.append(app);
-            }
-        }
-    }
-    QString defaultApp = mimeAppsManager->getDefaultAppByMimeType(mimeType);
+    QList<AppContext> recommendApps = MimesAppsManager::getRecommendedAppsForType(mimeType.name());
+    QString defaultApp = mimeAppsManager->getDefaultAppByMimeType(info->mimeTypeName());
 
-    foreach (QString f, recommendApps){
-        QString iconName = mimeAppsManager->DesktopObjs.value(f).getIcon();
-        QIcon icon(fileIconProvider->getDesktopIcon(iconName, 48));
+    foreach (AppContext app, recommendApps){
         QListWidgetItem* item = new QListWidgetItem;
 
-        QCheckBox* itemBox = new QCheckBox(mimeAppsManager->DesktopObjs.value(f).getLocalName());
+        QCheckBox* itemBox = new QCheckBox(app.appName);
         itemBox->setObjectName("OpenWithItem");
-        itemBox->setIcon(icon);
+        itemBox->setIcon(app.appIcon);
         itemBox->setFixedHeight(36);
         itemBox->setIconSize(QSize(16, 16));
+        itemBox->setProperty("appName",app.appName);
+        itemBox->setProperty("mimeTypeName",info->mimeTypeName());
         m_OpenWithButtonGroup->addButton(itemBox);
-        item->setData(Qt::UserRole, f);
+        item->setData(Qt::UserRole, app.appName);
         listWidget->addItem(item);
         listWidget->setItemWidget(item, itemBox);
 
-        if (QFileInfo(f).fileName() == defaultApp){
+        if (app.appName == defaultApp){
             itemBox->setChecked(true);
         }
 
     }
-
-    QListWidgetItem* item = new QListWidgetItem;
-    QPushButton* otherButton = new QPushButton(tr("Others"));
-    otherButton->setObjectName("OtherButton");
-    otherButton->setFixedHeight(36);
-    otherButton->setFixedWidth(100);
-    listWidget->addItem(item);
-    listWidget->setItemWidget(item, otherButton);
-
 
     int listHeight = 2;
     for(int i=0; i < listWidget->count(); i++){
@@ -812,12 +808,11 @@ QListWidget *PropertyDialog::createOpenWithListWidget(const DAbstractFileInfoPoi
         listHeight += h;
     }
 
-    if (listHeight >= 36 * 4){
-        listWidget->setFixedHeight(36 * 4);
-    }else{
-        listWidget->setFixedHeight(listHeight);
-    }
+    listWidget->setFixedHeight(EXTEND_FRAME_MAXHEIGHT);
+    listWidget->setFixedWidth(300);
 
+    connect(m_OpenWithButtonGroup, SIGNAL(buttonClicked(QAbstractButton*)),
+            this, SLOT(onOpenWithBntsChecked(QAbstractButton*)));
 
     return listWidget;
 }

@@ -10,7 +10,13 @@
 #include <QFileSystemWatcher>
 #include <QTimer>
 #include "desktopfile.h"
+#include <QIcon>
 
+struct AppContext{
+    QString appName;
+    QString commandLine;
+    QIcon appIcon;
+};
 
 class MimeAppsWorker: public QObject
 {
@@ -53,6 +59,10 @@ public:
     static QString getDefaultAppByFileName(const QString& fileName);
     static QString getDefaultAppByMimeType(const QMimeType& mimeType);
     static QString getDefaultAppByMimeType(const QString& mimeType);
+    static void setDefautlAppForType(const QString& mimeType,
+                                     const QString& targetAppName);
+    static QList<AppContext> getRecommendedAppsForType(const QString& mimeType);
+
 
     static QStringList getApplicationsFolders();
     static QString getMimeAppsCacheFile();
