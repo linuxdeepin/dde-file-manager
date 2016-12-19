@@ -21,6 +21,14 @@
 #include <QJsonArray>
 #include <QApplication>
 
+#undef signals
+extern "C" {
+    #include <gio/gio.h>
+    #include <gio/gdesktopappinfo.h>
+    #include <gio/gappinfo.h>
+}
+#define signals public
+
 QStringList MimesAppsManager::DesktopFiles = {};
 QMap<QString, QStringList> MimesAppsManager::MimeApps = {};
 QMap<QString, DesktopFile> MimesAppsManager::DesktopObjs = {};
@@ -248,43 +256,60 @@ QString MimesAppsManager::getDefaultAppByMimeType(const QString &mimeType)
         *
     */
 
-    QStringList files;
-    files << QDir::homePath() + QString( "/.config/mimeapps.list" );
-    files << QDir::homePath() + QString( "/.local/share/applications/mimeapps.list" );
-    files << QDir::homePath() + QString( "/.local/share/applications/defaults.list" );
-    files << QDir::homePath() + QString( "/.local/share/applications/mimeinfo.cache" );
-
-    files << QString( "/usr/local/share/applications/mimeapps.list" );
-    files << QString( "/usr/local/share/applications/defaults.list" );
-    files << QString( "/usr/local/share/applications/mimeinfo.cache" );
-
-    files << QString( "/usr/share/applications/mimeapps.list" );
-    files << QString( "/usr/share/applications/defaults.list" );
-    files << QString( "/usr/share/applications/mimeinfo.cache" );
-
-    QString app = "";
-    foreach( QString file, files) {
-        if (QFile(file).exists()){
-            QSettings defaults(file, QSettings::IniFormat);
-            QString app;
-
-            app = defaults.value(QString("Default Applications/%1" ).arg(mimeType)).toString();
-            if (app.length() > 0){
-                return app;
-            }
-
-            app = defaults.value(QString("Added Associations/%1" ).arg(mimeType)).toString();
-            if (app.length() > 0){
-                return app;
-            }
-
-            app = defaults.value(QString("MIME Cache/%1" ).arg(mimeType)).toString();
-            if (app.length() > 0){
-                return app;
-            }
-        }
+    GAppInfo* defaultApp = g_app_info_get_default_for_type(mimeType.toStdString().c_str(), FALSE);
+    QString appDisplayName = "";
+    if(defaultApp){
+        appDisplayName = g_app_info_get_name(defaultApp);
     }
-    return app;
+    return appDisplayName;
+}
+
+void MimesAppsManager::setDefautlAppForType(const QString &mimeType,
+                                            const QString &targetAppName)
+{
+    GAppInfo* app;
+    GList* apps = g_app_info_get_all();
+    GList* iterator = apps;
+
+    while(iterator){
+        QString appName = g_app_info_get_name((GAppInfo*)iterator->data);
+        if(appName == targetAppName){
+            app = (GAppInfo*)iterator->data;
+            break;
+        }
+        iterator = iterator->next;
+    }
+
+    if(!app)
+        return;
+
+    g_app_info_set_as_default_for_type(app,
+                                       mimeType.toStdString().c_str(),
+                                       NULL);
+}
+
+QList<AppContext> MimesAppsManager::getRecommendedAppsForType(const QString &mimeType)
+{
+    QList<AppContext> appContexts;
+    GList* apps = g_app_info_get_recommended_for_type(mimeType.toStdString().c_str());
+    GList* iterator = apps;
+    while (iterator) {
+        GAppInfo* appInfo = (GAppInfo*)iterator->data;
+        AppContext appContext;
+        const QString& appName = g_app_info_get_name(appInfo);
+        const QString& commandLine = g_app_info_get_commandline(appInfo);
+        const char* desktopId = g_app_info_get_id(appInfo);
+        GDesktopAppInfo* dekstopAppInfo = g_desktop_app_info_new(desktopId);
+        QString iconName = g_desktop_app_info_get_string(dekstopAppInfo, "Icon");
+        QIcon icon(fileIconProvider->getDesktopIcon(iconName, 48));
+
+        appContext.appName = appName;
+        appContext.commandLine = commandLine;
+        appContext.appIcon = icon;
+        appContexts << appContext;
+        iterator = iterator->next;
+    }
+    return appContexts;
 }
 
 QStringList MimesAppsManager::getApplicationsFolders()

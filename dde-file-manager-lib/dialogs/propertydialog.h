@@ -111,6 +111,7 @@ public slots:
     void showTextShowFrame();
     void onChildrenRemoved(const DUrl &fileUrl);
     void flickFolderToLeftsidBar();
+    void onOpenWithBntsChecked(QAbstractButton *w);
 
 signals:
     void requestStartComputerFolderSize();
@@ -154,7 +155,6 @@ private:
     ShareInfoFrame* createShareInfoFrame(const DAbstractFileInfoPointer &info);
     QFrame *createLocalDeviceInfoWidget(const DUrl& url);
     QFrame *createDeviceInfoWidget(UDiskDeviceInfoPointer info);
-
     QListWidget *createOpenWithListWidget(const DAbstractFileInfoPointer &info);
     QFrame *createAuthorityManagermentWidget(const DAbstractFileInfoPointer &info);
 };
