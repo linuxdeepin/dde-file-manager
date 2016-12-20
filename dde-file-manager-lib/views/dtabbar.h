@@ -130,6 +130,7 @@ public:
     void initConnections();
     int createTab(DFileView* view);
     void removeTab(const int index, const bool& remainState = false);
+    void setCurrentIndex(const int index);
     void setTabText(const int& index, const QString&text);
     int count() const;
     int currentIndex() const;
@@ -146,7 +147,6 @@ signals:
     void tabBarHidden();
 
 public slots:
-    void setCurrentIndex(const int index);
     void onTabCloseButtonHovered(int closingIndex);
     void onTabCloseButtonUnHovered(int closingIndex);
     void onMoveNext(Tab* who);

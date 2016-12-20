@@ -41,8 +41,8 @@ Tab::~Tab()
 void Tab::initConnect()
 {
     connect(m_fileView, &DFileView::rootUrlChanged, this,&Tab::onFileRootUrlChanged);
-    connect(m_fileView, &DFileView::requestActivateNextTab, this, &Tab::requestActiveNextTab);
-    connect(m_fileView, &DFileView::requestActivatePreviousTab, this, &Tab::requestActivePreviousTab);
+    connect(m_fileView, &DFileView::requestActiveNextTab, this, &Tab::requestActiveNextTab);
+    connect(m_fileView, &DFileView::requestActivePreviousTab, this, &Tab::requestActivePreviousTab);
 }
 
 void Tab::setTabText(QString text)
@@ -605,6 +605,24 @@ void TabBar::removeTab(const int index, const bool &remainState)
     }
 }
 
+void TabBar::setCurrentIndex(const int index)
+{
+    m_currentIndex = index;
+
+    int counter = 0;
+    for(auto tab: m_tabs){
+        if(counter == index){
+            tab->setChecked(true);
+        }
+        else{
+            tab->setChecked(false);
+        }
+        counter ++;
+    }
+    emit currentChanged(index);
+    updateScreen();
+}
+
 void TabBar::setTabText(const int &index, const QString &text)
 {
     if(index>0 && index<count()){
@@ -639,27 +657,6 @@ Tab *TabBar::tabAt(const int &index)
     if(index>=0 && index < count())
         return m_tabs.at(index);
     return NULL;
-}
-
-void TabBar::setCurrentIndex(const int index)
-{
-    if(index<0 && index >= m_tabs.count())
-        return;
-    m_currentIndex = index;
-
-    int counter = 0;
-    for(auto tab: m_tabs){
-        if(counter == index){
-            tab->setChecked(true);
-        }
-        else{
-            tab->setChecked(false);
-        }
-        counter ++;
-    }
-
-    emit currentChanged(index);
-    updateScreen();
 }
 
 void TabBar::onMoveNext(Tab *who)

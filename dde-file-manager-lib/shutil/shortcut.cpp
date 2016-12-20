@@ -43,8 +43,7 @@ Shortcut::Shortcut(QObject *parent) : QObject(parent)
                       << ShortcutItem(tr("Switch to next tab"),tr("Ctrl + Tab "))
                       << ShortcutItem(tr("Switch to previous tab"),tr("Ctrl + Shift + Tab "))
                       << ShortcutItem(tr("Next file"),tr("Tab "))
-                      << ShortcutItem(tr("Previous file"),tr("Shift + Tab "))
-                      << ShortcutItem(tr("Switch tab by specified number between 1 to 8"),tr("Alt + [1-8] "));
+                      << ShortcutItem(tr("Previous file"),tr("Shift + Tab "));
 
     m_shortcutGroups << group1 << group2 << group3 << group4 << group5;
 
