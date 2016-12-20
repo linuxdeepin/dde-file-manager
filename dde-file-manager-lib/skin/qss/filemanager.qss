@@ -73,6 +73,22 @@ QFrame#ControllerToolBar{
     background-color: transparent;
 }
 
+QPushButton#EmptyTrashButton{
+    background-color: white;
+    border-top: 1px solid rgba(0, 0, 0, 0);
+    border-right: 1px solid rgba(0, 0, 0, 0);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    border-left: 1px solid rgba(0, 0, 0, 0, 0);
+    image: url(:/icons/images/icons/empty_trash_normal.png);
+}
+
+QPushButton#EmptyTrashButton:hover{
+    image: url(:/icons/images/icons/empty_trash_hover.png);
+}
+
+QPushButton#EmptyTrashButton::pressed{
+    image: url(:/icons/images/icons/empty_trash_press.png);
+}
 
 QFrame#FileView{
     background-color: white;

@@ -70,6 +70,7 @@ public:
     DSplitter* splitter = NULL;
     QFrame * titleFrame = NULL;
     QStackedLayout* viewStackLayout = NULL;
+    QPushButton* emptyTrashButton = NULL;
 
     QMap<DUrl, QWidget*> views;
     ViewManager* viewManager = NULL;
@@ -159,6 +160,67 @@ void DFileManagerWindow::onNewTabButtonClicked()
     event << url;
     event << windowId();
     openNewTab(event);
+}
+
+void DFileManagerWindow::onFileViewSelectionChanged()
+{
+    D_D(DFileManagerWindow);
+
+    if(currentUrl() == DUrl::fromTrashFile("/") && d->fileView->selectedIndexCount()>0){
+        if(d->emptyTrashButton->isHidden())
+            showEmptyButton();
+    }
+    else{
+        if(!d->emptyTrashButton->isHidden())
+            hideEmptyButton();
+    }
+}
+
+void DFileManagerWindow::requestEmptyTrashFiles()
+{
+    D_D(DFileManagerWindow);
+    DFMEvent event;
+    event << windowId();
+    event << currentUrl();
+    event << d->fileView->selectedUrls();
+    appController->actionCompleteDeletion(event);
+}
+
+void DFileManagerWindow::showEmptyButton()
+{
+    D_D(DFileManagerWindow);
+    d->emptyTrashButton->show();
+    QVariantAnimation* ani = new QVariantAnimation(this);
+    ani->setStartValue(0);
+    ani->setEndValue(25);
+    ani->setDuration(240);
+    ani->setEasingCurve(QEasingCurve::OutQuad);
+    connect(ani, &QVariantAnimation::valueChanged,[=] (const QVariant& val){
+        d->emptyTrashButton->setFixedHeight(val.toInt());
+    });
+    connect(ani, &QVariantAnimation::finished, [=]{
+        ani->deleteLater();
+    });
+    ani->start();
+}
+
+void DFileManagerWindow::hideEmptyButton()
+{
+    D_D(DFileManagerWindow);
+    d->emptyTrashButton->show();
+    QVariantAnimation* ani = new QVariantAnimation(this);
+    ani->setStartValue(25);
+    ani->setEndValue(0);
+    ani->setDuration(240);
+    ani->setEasingCurve(QEasingCurve::OutQuad);
+    connect(ani, &QVariantAnimation::valueChanged, [=] (const QVariant& val){
+        d->emptyTrashButton->setFixedHeight(val.toInt());
+    });
+    connect(ani, &QVariantAnimation::finished, [=]{
+        ani->deleteLater();
+        d->emptyTrashButton->hide();
+    });
+    ani->start();
 }
 
 void DFileManagerWindow::onTabAddableChanged(bool addable)
@@ -349,6 +411,14 @@ void DFileManagerWindow::cd(const DFMEvent &event)
 
     d->fileView->fileViewHelper()->cd(event);
     d->toolbar->setViewModeButtonVisible(true);
+
+    if(event.fileUrl() == DUrl::fromTrashFile("/") && d->fileView->selectedIndexCount()>0){
+        if(d->emptyTrashButton->isHidden())
+            showEmptyButton();
+    } else{
+        if(!d->emptyTrashButton->isHidden())
+            hideEmptyButton();
+    }
 }
 
 void DFileManagerWindow::showPluginView(const DUrl &fileUrl)
@@ -428,6 +498,7 @@ void DFileManagerWindow::switchToView(DFileView *view)
     if (d->fileView) {
         disconnect(d->fileView, &DFileView::viewModeChanged, d->toolbar, &DToolBar::checkViewModeButton);
         disconnect(fileSignalManager, &FileSignalManager::loadingIndicatorShowed, d->fileView->statusBar(), &DStatusBar::setLoadingIncatorVisible);
+        disconnect(d->fileView->selectionModel(), &QItemSelectionModel::selectionChanged, this, &DFileManagerWindow::onFileViewSelectionChanged);
     }
 
     d->fileView = view;
@@ -442,10 +513,18 @@ void DFileManagerWindow::switchToView(DFileView *view)
 
         connect(d->fileView, &DFileView::viewModeChanged, d->toolbar, &DToolBar::checkViewModeButton);
         connect(fileSignalManager, &FileSignalManager::loadingIndicatorShowed, d->fileView->statusBar(), &DStatusBar::setLoadingIncatorVisible);
+        connect(d->fileView->selectionModel(), &QItemSelectionModel::selectionChanged, this, &DFileManagerWindow::onFileViewSelectionChanged);
 
         d->leftSideBar->scene()->setCurrentUrl(view->rootUrl());
         d->toolbar->checkViewModeButton(d->fileView->viewMode());
         view->updateStatusBar();
+        if(d->fileView->rootUrl() == DUrl::fromTrashFile("/") && d->fileView->selectedIndexCount()>0){
+            if(d->emptyTrashButton->isHidden())
+                showEmptyButton();
+        } else{
+            if(!d->emptyTrashButton->isHidden())
+                hideEmptyButton();
+        }
     }
 }
 
@@ -605,6 +684,12 @@ void DFileManagerWindow::initRightView()
 
     d->rightView = new QFrame;
 
+    d->emptyTrashButton = new QPushButton(this);
+    d->emptyTrashButton->setFixedHeight(0);
+    d->emptyTrashButton->hide();
+    d->emptyTrashButton->setContentsMargins(0,0,0,0);
+    d->emptyTrashButton->setObjectName("EmptyTrashButton");
+
     QHBoxLayout *tabBarLayout = new QHBoxLayout;
     tabBarLayout->setMargin(0);
     tabBarLayout->setSpacing(0);
@@ -614,6 +699,7 @@ void DFileManagerWindow::initRightView()
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->addLayout(tabBarLayout);
+    mainLayout->addWidget(d->emptyTrashButton);
     mainLayout->addLayout(d->viewStackLayout);
     mainLayout->setSpacing(0);
     mainLayout->setContentsMargins(0, 0, 0, 0);
@@ -722,6 +808,9 @@ void DFileManagerWindow::initConnect()
     connect(d->tabBar, &TabBar::tabBarShown, this, &DFileManagerWindow::showNewTabButton);
     connect(d->tabBar, &TabBar::tabBarHidden, this, &DFileManagerWindow::hideNewTabButton);
     connect(d->newTabButton, &QPushButton::clicked, this, &DFileManagerWindow::onNewTabButtonClicked);
+
+    connect(d->emptyTrashButton, &QPushButton::clicked, this, &DFileManagerWindow::requestEmptyTrashFiles);
+
 }
 
 void DFileManagerWindow::moveCenterByRect(QRect rect)
