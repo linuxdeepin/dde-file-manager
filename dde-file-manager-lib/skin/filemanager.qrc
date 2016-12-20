@@ -307,6 +307,9 @@
         <file>images/icons/computer_hover_16px.svg</file>
         <file>images/icons/jump_to.svg</file>
         <file>images/icons/search.svg</file>
+        <file>images/icons/empty_trash_press.png</file>
+        <file>images/icons/empty_trash_hover.png</file>
+        <file>images/icons/empty_trash_normal.png</file>
     </qresource>
     <qresource prefix="/leftsidebar">
         <file>images/leftsidebar/android_active_16px.svg</file>

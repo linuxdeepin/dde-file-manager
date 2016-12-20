@@ -90,6 +90,10 @@ public slots:
     void showNewTabButton();
     void hideNewTabButton();
     void onNewTabButtonClicked();
+    void onFileViewSelectionChanged();
+    void requestEmptyTrashFiles();
+    void showEmptyButton();
+    void hideEmptyButton();
 
 protected:
     void closeEvent(QCloseEvent* event)  Q_DECL_OVERRIDE;
