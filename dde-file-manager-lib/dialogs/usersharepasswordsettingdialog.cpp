@@ -20,7 +20,8 @@ void UserSharePasswordSettingDialog::initUI()
 {
     QStringList buttonTexts;
     buttonTexts << tr("Cancel") << tr("Confirm");
-    addButtons(buttonTexts);
+    addButton(buttonTexts[0], true);
+    addButton(buttonTexts[1], false, DDialog::ButtonRecommend);
     setDefaultButton(1);
     m_passwordEdit = new DPasswordEdit();
     m_passwordEdit->setParent(this);
