@@ -415,11 +415,12 @@ QListWidget#SearchList::item{
     padding: 0px;
     margins: 10px;
 }
-QListWidget#SearchList::item:hover{
-    background: #2ca7f8
-}
 QListWidget#SearchList::item:selected{
     background: #2ca7f8;
+}
+QListWidget#SearchList::item:hover{
+    color: white;
+    background-color: #2ca7f8
 }
 /*******************End of DSearchBar****************** */
 
