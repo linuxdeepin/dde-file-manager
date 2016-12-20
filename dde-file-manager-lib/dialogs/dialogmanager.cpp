@@ -235,7 +235,7 @@ void DialogManager::showCopyMoveToSelfDialog(const QMap<QString, QString> &jobDe
     d.setMessage(tr("Target folder is inside the source folder!"));
     QStringList buttonTexts;
     buttonTexts << tr("OK");
-    d.addButtons(buttonTexts);
+    d.addButton(buttonTexts[0], true, DDialog::ButtonRecommend);
     d.setDefaultButton(0);
     d.setIcon(QIcon(":/images/dialogs/images/dialog_warning_64.png"));
     QTimer::singleShot(200, &d, &DDialog::raise);
@@ -269,7 +269,11 @@ int DialogManager::showRunExcutableDialog(const DUrl &url)
 #endif
     d.setTitle(message);
     d.setMessage(tipMessage);
-    d.addButtons(buttonTexts);
+//    d.addButtons(buttonTexts);
+    d.addButton(buttonTexts[0], true);
+    d.addButton(buttonTexts[1], false);
+    d.addButton(buttonTexts[2], false);
+    d.addButton(buttonTexts[3], false, DDialog::ButtonRecommend);
     d.setDefaultButton(2);
     d.setFixedWidth(480);
     int code = d.exec();
@@ -283,7 +287,7 @@ int DialogManager::showRenameNameSameErrorDialog(const QString &name, const DFME
     d.setTitle(tr("\"%1\" already exists, please use another name.").arg(name));
     QStringList buttonTexts;
     buttonTexts << tr("Confirm");
-    d.addButtons(buttonTexts);
+    d.addButton(buttonTexts[0], true, DDialog::ButtonRecommend);
     d.setDefaultButton(0);
     d.setIcon(QIcon(":/images/dialogs/images/dialog_warning_64.png"));
     int code = d.exec();
@@ -332,7 +336,8 @@ int DialogManager::showDeleteFilesClearTrashDialog(const DFMEvent &event)
     }
     d.setMaximumWidth(480);
     d.setMessage(tr("This action cannot be restored"));
-    d.addButtons(buttonTexts);
+    d.addButton(buttonTexts[0], true, DDialog::ButtonNormal);
+    d.addButton(buttonTexts[1], false, DDialog::ButtonWarning);
     d.setDefaultButton(1);
     int code = d.exec();
     return code;
@@ -344,7 +349,8 @@ int DialogManager::showRemoveBookMarkDialog(const DFMEvent &event)
     d.setTitle(tr("Sorry, unable to locate your bookmark directory, remove it?"));
     QStringList buttonTexts;
     buttonTexts << tr("Cancel") << tr("Remove");
-    d.addButtons(buttonTexts);
+    d.addButton(buttonTexts[0], true);
+    d.addButton(buttonTexts[1], false, DDialog::ButtonWarning);
     d.setDefaultButton(1);
     d.setIcon(fileIconProvider->getDesktopIcon("folder", 64));
     int code = d.exec();
@@ -448,7 +454,8 @@ void DialogManager::showDiskErrorDialog(const QString & id, const QString & erro
         d.setMessage(tr("Name: ") + info->fileDisplayName()/* + ", " + tr("Path: ") + info->getPath()*/);
         QStringList buttonTexts;
         buttonTexts << tr("Cancel") << tr("Force unmount");
-        d.addButtons(buttonTexts);
+        d.addButton(buttonTexts[0], true);
+        d.addButton(buttonTexts[1], false, DDialog::ButtonWarning);
         d.setDefaultButton(0);
         d.setIcon(info->fileIcon(64, 64));
 
@@ -473,7 +480,8 @@ void DialogManager::showBreakSymlinkDialog(const QString &targetName, const DUrl
     d.setMessage(tr("Do you want to delete this shortcut？"));
     QStringList buttonTexts;
     buttonTexts << tr("Cancel") << tr("Confirm");
-    d.addButtons(buttonTexts);
+    d.addButton(buttonTexts[0], true);
+    d.addButton(buttonTexts[1], false, DDialog::ButtonRecommend);
     d.setDefaultButton(1);
     d.setIcon(fileInfo->fileIcon().pixmap(64, 64));
     int code = d.exec();
