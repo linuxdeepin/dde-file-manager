@@ -142,9 +142,8 @@ public slots:
 signals:
     void rootUrlChanged(const DUrl &url);
     void viewModeChanged(ViewMode viewMode);
-    void requestActivateNextTab();
-    void requestActivatePreviousTab();
-    void requestActivateTabByIndex(const int& index);
+    void requestActiveNextTab();
+    void requestActivePreviousTab();
 
 private slots:
     bool setRootUrl(const DUrl &url);
