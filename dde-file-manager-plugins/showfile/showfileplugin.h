@@ -29,7 +29,7 @@ public:
     QList<QAction *> additionalEmptyMenu(const QString& currentDir);
 
     QWidget* expandWidget(const QString &file);
-    QString expandWidgetTitle();
+    QString expandWidgetTitle(const QString& file);
 
 public slots:
     void onActionTriggered();
