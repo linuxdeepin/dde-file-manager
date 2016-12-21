@@ -209,7 +209,7 @@ bool FileController::renameFile(const DUrl &oldUrl, const DUrl &newUrl, bool &ac
         desktop.set(key, newfilePointer->fileName());
         result = desktop.save(filePath, "Desktop Entry");
     }else{
-        bool result = file.rename(newFilePath);
+        result = file.rename(newFilePath);
 
         if (!result) {
             result = QProcess::execute("mv \"" + file.fileName().toUtf8() + "\" \"" + newFilePath.toUtf8() + "\"") == 0;
