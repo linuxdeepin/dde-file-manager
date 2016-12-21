@@ -38,26 +38,32 @@ void DCrumbButton::setItem(QListWidgetItem *item)
     m_item = item;
 }
 
+void DCrumbButton::setListWidget(QListWidget *widget)
+{
+    m_listWidget = widget;
+}
+
 QListWidgetItem *DCrumbButton::getItem()
 {
     return m_item;
 }
-QString DCrumbButton::path() const
+
+DUrl DCrumbButton::url() const
 {
-    return m_path;
+    return m_url;
 }
 
-void DCrumbButton::setPath(const QString &path)
+void DCrumbButton::setUrl(const DUrl &url)
 {
-    m_path = path;
+    m_url = url;
 }
-
 
 void DCrumbButton::paintEvent(QPaintEvent *e)
 {
-    const QPushButton *button = qobject_cast<QPushButton*>(m_item->listWidget()->itemWidget(m_item->listWidget()->item(m_index + 1)));
 
-    if (!isChecked() && (!button || !button->isChecked())) {
+    QPushButton *button = qobject_cast<QPushButton*>(m_listWidget->itemWidget(m_listWidget->item(m_index + 1)));
+
+    if (!isChecked() && (!button || (button &&  !button->isChecked()))) {
         QPainter painter;
         painter.begin(this);
         painter.setRenderHint(QPainter::Antialiasing);
@@ -73,6 +79,7 @@ void DCrumbButton::paintEvent(QPaintEvent *e)
         painter.drawPolygon(polygon);
         painter.end();
     }
+
 
     QPushButton::paintEvent(e);
 }

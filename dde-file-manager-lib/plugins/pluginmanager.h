@@ -3,10 +3,12 @@
 
 #include <QObject>
 #include <QScopedPointer>
+#include <QMap>
 
 class MenuInterface;
 class PluginManager;
 class PropertyDialogExpandInfoInterface;
+class ViewInterface;
 
 class PluginManagerPrivate {
 
@@ -15,6 +17,8 @@ public:
 
     QList<MenuInterface*> menuInterfaces;
     QList<PropertyDialogExpandInfoInterface*> expandInfoInterfaces;
+    QList<ViewInterface*> viewInterfaces;
+    QMap<QString, ViewInterface*> viewInterfacesMap;
 
 private:
     PluginManager* q_ptr=NULL;
@@ -39,6 +43,9 @@ public:
     void loadPlugin();
     QList<MenuInterface*> getMenuInterfaces();
     QList<PropertyDialogExpandInfoInterface*> getExpandInfoInterfaces();
+    QList<ViewInterface*> getViewInterfaces();
+    QMap<QString, ViewInterface*> getViewInterfacesMap();
+    ViewInterface* getViewInterfaceByScheme(const QString& scheme);
 
 signals:
 

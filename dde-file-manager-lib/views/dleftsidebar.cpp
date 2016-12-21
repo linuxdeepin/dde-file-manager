@@ -22,6 +22,8 @@
 #include "dbookmarkrootitem.h"
 #include "dfileview.h"
 #include "dtoolbar.h"
+#include "plugins/pluginmanager.h"
+#include "view/viewinterface.h"
 
 #include <QVBoxLayout>
 #include <QButtonGroup>
@@ -76,6 +78,7 @@ void DLeftSideBar::initUI()
     addNetworkBookmarkItem();
     addUserShareBookmarkItem();
     loadDevices();
+    loadPluginBookmarks();
 
     m_view->centerOn(0,0);
 }
@@ -307,6 +310,25 @@ void DLeftSideBar::loadDevices()
         foreach (UDiskDeviceInfoPointer device, deviceListener->getDeviceList()) {
             m_scene->mountAdded(device);
         }
+    }
+}
+
+void DLeftSideBar::loadPluginBookmarks()
+{
+    foreach (ViewInterface* viewInterface,PluginManager::instance()->getViewInterfaces()) {
+        if (viewInterface->isAddSeparator()){
+            m_scene->addSeparator();
+        }
+        QString name = viewInterface->bookMarkText();
+        DUrl url = DUrl::fromUserInput(viewInterface->scheme() + ":///");
+        qDebug() << viewInterface->scheme() << url;
+        DBookmarkItem * item = m_scene->createCustomBookmark(name, url);
+        item->setReleaseIcon(viewInterface->bookMarkNormalIcon());
+        item->setHoverIcon(viewInterface->bookMarkHoverIcon());
+        item->setPressedIcon(viewInterface->bookMarkPressedIcon());
+        item->setCheckedIcon(viewInterface->bookMarkCheckedIcon());
+        item->setDefaultItem(true);
+        m_scene->addItem(item);
     }
 }
 QGraphicsView *DLeftSideBar::view() const

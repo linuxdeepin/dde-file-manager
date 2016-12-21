@@ -261,6 +261,7 @@ void ComputerViewItem::setDisplayName(const QString &displayName)
 }
 
 
+int ComputerView::ViewInstanceCount = -1;
 
 ComputerView::ComputerView(QWidget *parent) : QFrame(parent)
 {
@@ -271,12 +272,21 @@ ComputerView::ComputerView(QWidget *parent) : QFrame(parent)
 
 ComputerView::~ComputerView()
 {
-
 }
 
 DUrl ComputerView::rootUrl()
 {
     return DUrl::fromComputerFile("/");
+}
+
+QString ComputerView::scheme()
+{
+    return COMPUTER_SCHEME;
+}
+
+QString ComputerView::viewId() const
+{
+    return m_viewId;
 }
 
 void ComputerView::initData()
@@ -288,6 +298,8 @@ void ComputerView::initData()
                      << "Pictures"
                      << "Documents"
                      << "Downloads";
+    ViewInstanceCount += 1;
+    m_viewId = QString("ComputerView%1").arg(QString::number(ViewInstanceCount));
 
 }
 

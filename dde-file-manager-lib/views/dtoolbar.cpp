@@ -96,7 +96,7 @@ void DToolBar::initAddressToolBar()
     m_searchBar = new DSearchBar(this);
     m_searchBar->hide();
     m_searchBar->setAlignment(Qt::AlignHCenter);
-    m_crumbWidget = new DCrumbWidget;
+    m_crumbWidget = new DCrumbWidget(this);
     crumbAndSearch->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
     QHBoxLayout * comboLayout = new QHBoxLayout;
@@ -299,11 +299,12 @@ void DToolBar::crumbChanged(const DFMEvent &event)
     }else{
         m_searchBar->hide();
         m_crumbWidget->show();
-        m_crumbWidget->setCrumb(event.fileUrl());
+        setCrumb(event.fileUrl());
     }
 
     if(event.source() == DFMEvent::BackAndForwardButton)
         return;
+
     checkNavHistory(event.fileUrl());
 }
 
@@ -323,6 +324,7 @@ void DToolBar::searchBarChanged(QString path)
 void DToolBar::backButtonClicked()
 {
     DUrl url = m_navStack->back();
+
     if(!url.isEmpty())
     {
         DFMEvent event;
@@ -337,6 +339,7 @@ void DToolBar::backButtonClicked()
 void DToolBar::forwardButtonClicked()
 {
     DUrl url = m_navStack->forward();
+    qDebug() << url << *m_navStack;
     if(!url.isEmpty())
     {
         DFMEvent event;
@@ -440,7 +443,7 @@ void DToolBar::switchHistoryStack(const int index , const DUrl &url){
     if(!m_navStack)
         return;
     updateBackForwardButtonsState();
-    m_crumbWidget->setCrumb(url);
+    setCrumb(url);
 }
 
 void DToolBar::removeNavStackAt(int index){

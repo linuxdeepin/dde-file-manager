@@ -172,7 +172,8 @@ HEADERS += \
     plugins/plugininterfaces/menu/menuinterface.h \
     models/computerdesktopfileinfo.h \
     models/trashdesktopfileinfo.h \
-    interfaces/dthumbnailprovider.h
+    interfaces/dthumbnailprovider.h \
+    views/viewmanager.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -280,7 +281,9 @@ SOURCES += \
     plugins/pluginmanager.cpp \
     models/computerdesktopfileinfo.cpp \
     models/trashdesktopfileinfo.cpp \
-    interfaces/dthumbnailprovider.cpp
+    interfaces/dthumbnailprovider.cpp \
+    views/viewmanager.cpp
+
 
 INCLUDEPATH += $$PWD/../ $$PWD/../utils/ $$PWD/interfaces/ $$PWD/../dde-file-manager-plugins/plugininterfaces/
 
@@ -308,7 +311,8 @@ isEmpty(INCLUDE_INSTALL_DIR) {
 }
 
 includes.files += $$PWD/interfaces/*.h \
-                $$PWD/../dde-file-manager-plugins/plugininterfaces/menu/*.h
+                $$PWD/../dde-file-manager-plugins/plugininterfaces/menu/*.h \
+                $$PWD/../dde-file-manager-plugins/plugininterfaces/view/*.h
 
 
 QMAKE_PKGCONFIG_LIBDIR = $$target.path

@@ -55,6 +55,8 @@ public:
 
     int iconModeColumnCount(int itemWidth = 0) const;
 
+    QString viewId;
+
     DFileView *q_ptr;
 
     DFileMenuManager* fileMenuManager;
@@ -111,6 +113,9 @@ public:
     Q_DECLARE_PUBLIC(DFileView)
 };
 
+
+int DFileView::ViewInstanceCount = -1;
+
 DFileView::DFileView(QWidget *parent)
     : DListView(parent)
     , d_ptr(new DFileViewPrivate(this))
@@ -126,12 +131,16 @@ DFileView::DFileView(QWidget *parent)
     initDelegate();
     initModel();
     initConnects();
+
+    ViewInstanceCount += 1;
+    d->viewId = QString("fileview%1").arg(QString::number(ViewInstanceCount));
 }
 
 DFileView::~DFileView()
 {
     disconnect(this, &DFileView::rowCountChanged, this, &DFileView::onRowCountChanged);
     disconnect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &DFileView::updateStatusBar);
+    ViewInstanceCount -= 1;
 }
 
 DFileSystemModel *DFileView::model() const
@@ -666,6 +675,20 @@ QSet<QAbstractItemView::SelectionMode> DFileView::enabledSelectionModes() const
     Q_D(const DFileView);
 
     return d->enabledSelectionModes;
+}
+
+QString DFileView::viewId() const
+{
+    Q_D(const DFileView);
+
+    return d->viewId;
+}
+
+void DFileView::setViewId(const QString viewId)
+{
+    Q_D(DFileView);
+
+    d->viewId = viewId;
 }
 
 void DFileView::setFilters(QDir::Filters filters)

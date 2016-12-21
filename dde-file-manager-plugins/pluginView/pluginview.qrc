@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/checked.svg</file>
+        <file>images/hover.png</file>
+        <file>images/pressed.svg</file>
+        <file>images/release.png</file>
+    </qresource>
+</RCC>

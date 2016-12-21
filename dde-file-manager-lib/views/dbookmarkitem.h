@@ -44,6 +44,16 @@ public:
     void boundImageToHover(QString imagePath);
     void boundImageToChecked(QString imagePath);
 
+    void setPressedIcon(const QString& iconPath);
+    void setPressedIcon(const QIcon& icon);
+    void setHoverIcon(const QString& iconPath);
+    void setHoverIcon(const QIcon& icon);
+    void setReleaseIcon(const QString& iconPath);
+    void setReleaseIcon(const QIcon& icon);
+    void setCheckedIcon(const QString& iconPath);
+    void setCheckedIcon(const QIcon& icon);
+
+
     QPixmap getCheckedPixmap();
 
     void boundBigImageToPress(QString imagePath);

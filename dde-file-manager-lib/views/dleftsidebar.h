@@ -69,6 +69,7 @@ private:
     void addNetworkBookmarkItem();
     void addUserShareBookmarkItem();
     void loadDevices();
+    void loadPluginBookmarks();
     bool m_isTight = false;
     bool m_entered = false;
     QFrame* m_homeBar = NULL;
