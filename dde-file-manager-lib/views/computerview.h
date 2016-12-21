@@ -103,7 +103,11 @@ public:
     explicit ComputerView(QWidget *parent = 0);
     ~ComputerView();
 
+    static int ViewInstanceCount;
+
     static DUrl rootUrl();
+    static QString scheme();
+    QString viewId() const;
 
     void initData();
     void initUI();
@@ -137,6 +141,7 @@ protected:
     void keyPressEvent(QKeyEvent* event);
 
 private:
+    QString m_viewId;
     TitleLine* m_systemTitleLine=NULL;
     FlowLayout* m_systemFlowLayout = NULL;
     TitleLine* m_nativeTitleLine=NULL;

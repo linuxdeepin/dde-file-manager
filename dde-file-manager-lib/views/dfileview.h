@@ -38,6 +38,8 @@ public:
 
     Q_DECLARE_FLAGS(ViewModes, ViewMode)
 
+    static int ViewInstanceCount;
+
     explicit DFileView(QWidget *parent = 0);
     ~DFileView();
 
@@ -103,6 +105,9 @@ public:
 
     void setEnabledSelectionModes(const QSet<SelectionMode> &list);
     QSet<SelectionMode> enabledSelectionModes() const;
+
+    QString viewId() const;
+    void setViewId(const QString viewId);
 
 public slots:
     bool cd(const DUrl &url);

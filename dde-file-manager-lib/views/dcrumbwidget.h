@@ -48,9 +48,9 @@ private:
     void addRecentCrumb();
     void addComputerCrumb();
     void addTrashCrumb();
-    void addHomeCrumb();
     void addNetworkCrumb();
     void addUserShareCrumb();
+    void addPluginViewCrumb(const DUrl &url);
 
     DCrumbButton* createDeviceCrumbButtonByType(UDiskDeviceInfo::MediaType type, const QString& mountPoint);
 

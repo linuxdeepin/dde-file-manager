@@ -30,7 +30,9 @@
 #include "widgets/singleton.h"
 #include "dfileservices.h"
 #include "controllers/appcontroller.h"
-
+#include "viewmanager.h"
+#include "view/viewinterface.h"
+#include "plugins/pluginmanager.h"
 #include <dplatformwindowhandle.h>
 #include <DTitlebar>
 
@@ -69,6 +71,7 @@ public:
     QStackedLayout* viewStackLayout = NULL;
 
     QMap<DUrl, QWidget*> views;
+    ViewManager* viewManager = NULL;
 
     DFileManagerWindow *q_ptr;
 
@@ -93,9 +96,11 @@ DFileManagerWindow::DFileManagerWindow(const DUrl &fileUrl, QWidget *parent)
     initData();
     initUI();
     initConnect();
-    initFileView(fileUrl);
 
-    preHandleCd(fileUrl, DFMEvent::Unknow);
+    if (d_ptr->viewManager->isSchemeRegistered(fileUrl.scheme())){
+        const_cast<DUrl&>(fileUrl) = DUrl(fileUrl.scheme() + ":///");
+    }
+    initFileView(fileUrl);
 }
 
 DFileManagerWindow::~DFileManagerWindow()
@@ -113,8 +118,7 @@ void DFileManagerWindow::onRequestCloseTab(const int index, const bool &remainSt
     DFileView *view = tab->fileView();
 
     d->viewStackLayout->removeWidget(view);
-    view->close();
-    view->deleteLater();
+    d->viewManager->unRegisterView(view->viewId());
 
     d->toolbar->removeNavStackAt(index);
     d->tabBar->removeTab(index, remainState);
@@ -156,21 +160,6 @@ void DFileManagerWindow::onNewTabButtonClicked()
     openNewTab(event);
 }
 
-QString DFileManagerWindow::getDisplayNameByUrl(const DUrl &url) const
-{
-    QString urlDisplayName;
-    if(url.isComputerFile()){
-        if(systemPathManager->isSystemPath(url.toString()))
-            urlDisplayName = systemPathManager->getSystemPathDisplayNameByPath(url.toString());
-    } else{
-        const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
-
-        if (fileInfo)
-            urlDisplayName = fileInfo->fileDisplayName();
-    }
-    return urlDisplayName;
-}
-
 void DFileManagerWindow::onTabAddableChanged(bool addable)
 {
     D_D(DFileManagerWindow);
@@ -206,7 +195,7 @@ DUrl DFileManagerWindow::currentUrl() const
     if (d->viewStackLayout->currentWidget() == d->fileView) {
         return d->fileView->rootUrl();
     } else if (d->viewStackLayout->currentWidget() == d->computerView) {
-        return DUrl::fromComputerFile("/");
+        return d->computerView->rootUrl();
     }
 
     return DUrl();
@@ -247,6 +236,13 @@ DLeftSideBar *DFileManagerWindow::getLeftSideBar() const
     return d->leftSideBar;
 }
 
+ViewManager *DFileManagerWindow::getViewManager() const
+{
+    D_DC(DFileManagerWindow);
+
+    return d->viewManager;
+}
+
 int DFileManagerWindow::windowId()
 {
     return WindowManager::getWindowId(this);
@@ -284,7 +280,7 @@ void DFileManagerWindow::setListView()
 void DFileManagerWindow::preHandleCd(const DUrl &fileUrl, int source)
 {
     D_DC(DFileManagerWindow);
-
+    qDebug() << fileUrl << source << d->viewManager->supportSchemes() << d->viewManager->views() << d->viewManager->isSchemeRegistered(fileUrl.scheme());
     DFMEvent event;
 
     event << fileUrl;
@@ -293,15 +289,16 @@ void DFileManagerWindow::preHandleCd(const DUrl &fileUrl, int source)
 
     if (event.fileUrl().isNetWorkFile()) {
         emit fileSignalManager->requestFetchNetworks(event);
-    } else if (event.fileUrl().isSMBFile()) {
+    }else if (event.fileUrl().isSMBFile()) {
         emit fileSignalManager->requestFetchNetworks(event);
-    } else if (event.fileUrl().isComputerFile()) {
-        event << DUrl::fromComputerFile("/");
-        showComputerView(event);
-        d->tabBar->currentTab()->setCurrentUrl(event.fileUrl());
-        emit d->tabBar->currentChanged(d->tabBar->currentIndex());
-        d->toolbar->setCrumb(event.fileUrl());
-    } else if (!fileUrl.toString().isEmpty()) {
+    }else if (d->viewManager->isSchemeRegistered(fileUrl.scheme())){
+        showPluginView(fileUrl);
+
+        QString viewId = fileUrl.scheme() + ":///";
+        event << DUrl(viewId);
+        emit fileSignalManager->currentUrlChanged(event);
+
+    }else if (!fileUrl.toString().isEmpty()) {
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(event.fileUrl());
 
         if (!fileInfo || !fileInfo->exists()) {
@@ -347,16 +344,32 @@ void DFileManagerWindow::cd(const DFMEvent &event)
     d->toolbar->setViewModeButtonVisible(true);
 }
 
-void DFileManagerWindow::showComputerView(const DFMEvent &event)
+void DFileManagerWindow::showPluginView(const DUrl &fileUrl)
 {
     D_D(DFileManagerWindow);
+    QString scheme = fileUrl.scheme();
+    QString viewId = scheme + "0";
+    QWidget* view;
+    if (!d->viewManager->isViewIdRegistered(viewId)){
+        ViewInterface* viewInterface = PluginManager::instance()->getViewInterfaceByScheme(scheme);
+        if (viewInterface){
+            view = viewInterface->createView();
+        }else if (scheme == COMPUTER_SCHEME){
+            d->computerView = new ComputerView(this);
+            view = d->computerView;
+        }
+        qDebug() << "Delay create view" << viewId << view;
+        d->viewManager->registerView(viewId, view);
+        d->viewStackLayout->addWidget(view);
+    }else{
+        view = d->viewManager->getViewById(viewId);
+    }
 
-    if (!d->computerView)
-        initComputerView();
+    DUrl currentUrl(fileUrl.scheme() + ":///");
 
-    d->viewStackLayout->setCurrentWidget(d->computerView);
-    d->computerView->setFocus();
-    emit fileSignalManager->currentUrlChanged(event);
+    d->viewStackLayout->setCurrentWidget(view);
+    view->setFocus();
+    d->tabBar->currentTab()->setCurrentUrl(currentUrl);
     d->toolbar->setViewModeButtonVisible(false);
 }
 
@@ -371,6 +384,10 @@ void DFileManagerWindow::openNewTab(const DFMEvent &event)
         return;
     }
     createNewView(event);
+
+    if(d->viewManager->isSchemeRegistered(event.fileUrl().scheme())){
+        preHandleCd(event.fileUrl(), DFMEvent::Unknow);
+    }
 }
 
 void DFileManagerWindow::createNewView(const DFMEvent &event)
@@ -380,23 +397,21 @@ void DFileManagerWindow::createNewView(const DFMEvent &event)
     DFileView* view = new DFileView(this);
     view->setObjectName("FileView");
     setFocusProxy(view);
-    d->views.insert(event.fileUrl(), view);
 
     d->viewStackLayout->addWidget(view);
     d->toolbar->addHistoryStack();
 
-    DUrl url;
+    DUrl fileUrl;
     if (event.fileUrl().isEmpty())
-        url = DUrl::fromLocalFile(QDir::homePath());
+        fileUrl = DUrl::fromLocalFile(QDir::homePath());
     else
-        url = event.fileUrl();
+        fileUrl = event.fileUrl();
 
     d->tabBar->createTab(view);
-    view->cd(url);
 
-    if (url == DUrl::fromComputerFile("/")){
-        emit fileSignalManager->requestChangeCurrentUrl(event);
-    }
+    d->viewManager->registerView(view->viewId(), view);
+
+    view->cd(fileUrl);
 }
 
 void DFileManagerWindow::switchToView(DFileView *view)
@@ -409,14 +424,11 @@ void DFileManagerWindow::switchToView(DFileView *view)
     }
 
     d->fileView = view;
-    if(d->tabBar->currentTab()->currentUrl().isComputerFile()){
-        if (!d->computerView)
-            initComputerView();
 
-        d->viewStackLayout->setCurrentWidget(d->computerView);
-        d->computerView->setFocus();
-        d->toolbar->setViewModeButtonVisible(false);
-        d->toolbar->setCrumb(d->tabBar->currentTab()->currentUrl());
+    DUrl currentUrl = d->tabBar->currentTab()->currentUrl();
+    if(d->viewManager->isSchemeRegistered(currentUrl.scheme())){
+        showPluginView(currentUrl);
+        d->toolbar->setCrumb(currentUrl);
     } else {
         d->viewStackLayout->setCurrentWidget(d->fileView);
         d->toolbar->setViewModeButtonVisible(true);
@@ -560,6 +572,14 @@ void DFileManagerWindow::initSplitter()
     connect(d->leftSideBar, &DLeftSideBar::moveSplitter, d->splitter, &DSplitter::moveSplitter);
 }
 
+void DFileManagerWindow::initViewManager()
+{
+    D_D(DFileManagerWindow);
+    d->viewManager = new ViewManager(this);
+    d->viewManager->registerScheme(ComputerView::scheme());
+    loadPluginRegisteredSchemes();
+}
+
 void DFileManagerWindow::initLeftSideBar()
 {
     D_D(DFileManagerWindow);
@@ -630,6 +650,7 @@ void DFileManagerWindow::initFileView(const DUrl &fileUrl)
     event << fileUrl;
     event << windowId();
     createNewView(event);
+    preHandleCd(fileUrl, DFMEvent::Unknow);
 }
 
 void DFileManagerWindow::initComputerView()
@@ -638,7 +659,15 @@ void DFileManagerWindow::initComputerView()
 
     d->computerView = new ComputerView(this);
     d->viewStackLayout->addWidget(d->computerView);
-    d->views.insert(ComputerView::rootUrl(), d->computerView);
+    d->viewManager->registerView(d->computerView->viewId(), d->computerView);
+}
+
+void DFileManagerWindow::loadPluginRegisteredSchemes()
+{
+    D_D(DFileManagerWindow);
+    foreach (ViewInterface* viewInterface, PluginManager::instance()->getViewInterfaces()) {
+        d->viewManager->registerScheme(viewInterface->scheme());
+    }
 }
 
 void DFileManagerWindow::initCentralWidget()
@@ -646,6 +675,7 @@ void DFileManagerWindow::initCentralWidget()
     D_D(DFileManagerWindow);
     initTitleFrame();
     initSplitter();
+    initViewManager();
 
     d->centralWidget = new QFrame(this);
     QVBoxLayout* mainLayout = new QVBoxLayout;

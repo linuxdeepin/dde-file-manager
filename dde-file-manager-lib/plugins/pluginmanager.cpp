@@ -1,5 +1,6 @@
 #include "pluginmanager.h"
 #include "menu/menuinterface.h"
+#include "view/viewinterface.h"
 #include "interfaces/dfmglobal.h"
 #include <QDir>
 #include <QPluginLoader>
@@ -30,8 +31,9 @@ void PluginManager::loadPlugin()
     QStringList pluginChildDirs;
     d->menuInterfaces.clear();
     d->expandInfoInterfaces.clear();
+    d->viewInterfaces.clear();
 
-    QStringList pluginDirs = DFMGlobal::PluginLibraryPaths;\
+    QStringList pluginDirs = DFMGlobal::PluginLibraryPaths;
 
     foreach (QString dir, pluginDirs) {
         QDir pluginDir(dir);
@@ -57,12 +59,19 @@ void PluginManager::loadPlugin()
                     if(expandInfoInterface){
                         d->expandInfoInterfaces.append(expandInfoInterface);
                     }
+
+                    ViewInterface *viewInterface = qobject_cast<ViewInterface *>(plugin);
+                    if (viewInterface){
+                        d->viewInterfaces.append(viewInterface);
+                        d->viewInterfacesMap.insert(viewInterface->scheme(), viewInterface);
+                    }
                 }
             }
         }
     }
     qDebug(  ) << "menu plugin size:" << d->menuInterfaces.size();
     qDebug(  ) << "expand info size:" << d->expandInfoInterfaces.size();
+    qDebug(  ) << "view size:" << d->viewInterfaces.size();
 }
 
 QList<MenuInterface *> PluginManager::getMenuInterfaces()
@@ -75,4 +84,25 @@ QList<PropertyDialogExpandInfoInterface *> PluginManager::getExpandInfoInterface
 {
     Q_D(PluginManager);
     return d->expandInfoInterfaces;
+}
+
+QList<ViewInterface *> PluginManager::getViewInterfaces()
+{
+    Q_D(PluginManager);
+    return d->viewInterfaces;
+}
+
+QMap<QString, ViewInterface *> PluginManager::getViewInterfacesMap()
+{
+    Q_D(PluginManager);
+    return d->viewInterfacesMap;
+}
+
+ViewInterface *PluginManager::getViewInterfaceByScheme(const QString &scheme)
+{
+    Q_D(PluginManager);
+    if (d->viewInterfacesMap.contains(scheme)){
+        return d->viewInterfacesMap.value(scheme);
+    }
+    return NULL;
 }

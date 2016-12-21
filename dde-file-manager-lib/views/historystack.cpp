@@ -1,6 +1,7 @@
 #include "historystack.h"
 
 #include "dfileservices.h"
+#include "plugins/pluginmanager.h"
 
 #include <QDebug>
 
@@ -51,6 +52,9 @@ DUrl HistoryStack::back()
         if(url.isUserShareFile())
             break;
 
+        if (PluginManager::instance()->getViewInterfacesMap().keys().contains(url.scheme()))
+            break;
+
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
 
         if (!fileInfo || !fileInfo->exists() || currentUrl == url) {
@@ -79,6 +83,9 @@ DUrl HistoryStack::forward()
             break;
 
         if(url.isUserShareFile())
+            break;
+
+        if (PluginManager::instance()->getViewInterfacesMap().keys().contains(url.scheme()))
             break;
 
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);

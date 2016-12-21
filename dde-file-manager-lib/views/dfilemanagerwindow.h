@@ -34,6 +34,7 @@ class DStatusBar;
 class DFMEvent;
 class ComputerView;
 class TabBar;
+class ViewManager;
 
 DWIDGET_USE_NAMESPACE
 
@@ -54,12 +55,11 @@ public:
     DToolBar* getToolBar() const;
     DFileView *getFileView() const;
     DLeftSideBar *getLeftSideBar() const;
+    ViewManager* getViewManager() const;
 
     int windowId();
 
     bool tabAddable() const;
-
-    QString getDisplayNameByUrl(const DUrl& url) const;
 
 signals:
     void aboutToClose();
@@ -78,7 +78,8 @@ public slots:
     void preHandleCd(const DUrl &fileUrl, int source);
     void preHandleCd(const DFMEvent& event);
     void cd(const DFMEvent& event);
-    void showComputerView(const DFMEvent& event);
+
+    void showPluginView(const DUrl& fileUrl);
     void openNewTab(const DFMEvent& event);
     void createNewView(const DFMEvent& event);
     void switchToView(DFileView *view);
@@ -97,9 +98,11 @@ protected:
 
     void initData();
     void initUI();
+
     void initTitleFrame();
     void initTitleBar();
     void initSplitter();
+    void initViewManager();
 
     void initLeftSideBar();
 
@@ -109,7 +112,7 @@ protected:
     void initViewLayout();
     void initFileView(const DUrl &fileUrl);
     void initComputerView();
-
+    void loadPluginRegisteredSchemes();
 
     void initCentralWidget();
     void initConnect();

@@ -34,6 +34,9 @@
 #include "dialogs/dialogmanager.h"
 #include "widgets/singleton.h"
 
+#include "plugins/pluginmanager.h"
+#include "view/viewinterface.h"
+
 DWIDGET_USE_NAMESPACE
 
 DBookmarkItem::DBookmarkItem()
@@ -340,6 +343,46 @@ void DBookmarkItem::boundImageToHover(QString imagePath)
 void DBookmarkItem::boundImageToChecked(QString imagePath)
 {
     m_checkedImage.load(imagePath);
+}
+
+void DBookmarkItem::setPressedIcon(const QString &iconPath)
+{
+    setPressedIcon(QIcon(iconPath));
+}
+
+void DBookmarkItem::setPressedIcon(const QIcon &icon)
+{
+    m_pressImage = icon.pixmap(16, 16);
+}
+
+void DBookmarkItem::setHoverIcon(const QString &iconPath)
+{
+    setHoverIcon(QIcon(iconPath));
+}
+
+void DBookmarkItem::setHoverIcon(const QIcon &icon)
+{
+    m_hoverImage = icon.pixmap(16, 16);
+}
+
+void DBookmarkItem::setReleaseIcon(const QString &iconPath)
+{
+    setReleaseIcon(QIcon(iconPath));
+}
+
+void DBookmarkItem::setReleaseIcon(const QIcon &icon)
+{
+    m_releaseImage = icon.pixmap(16, 16);
+}
+
+void DBookmarkItem::setCheckedIcon(const QString &iconPath)
+{
+    setCheckedIcon(QIcon(iconPath));
+}
+
+void DBookmarkItem::setCheckedIcon(const QIcon &icon)
+{
+    m_checkedImage = icon.pixmap(16, 16);
 }
 
 QPixmap DBookmarkItem::getCheckedPixmap()
@@ -751,6 +794,8 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
         menu = DFileMenuManager::createNetworkMarkMenu(disableList);
     }else if(m_url.isUserShareFile()){
         menu = DFileMenuManager::createUserShareMarkMenu(disableList);
+    }else if(PluginManager::instance()->getViewInterfaceByScheme(m_url.scheme())){
+        menu = DFileMenuManager::createPluginBookMarkMenu(disableList);
     }else if(m_isDefault)
         menu = DFileMenuManager::createDefaultBookMarkMenu(disableList);
     else

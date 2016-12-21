@@ -19,6 +19,13 @@
 
 #include "widgets/singleton.h"
 
+#include "dfilemanagerwindow.h"
+#include "viewmanager.h"
+#include "view/viewinterface.h"
+#include "plugins/pluginmanager.h"
+
+#include <QApplication>
+
 DWIDGET_USE_NAMESPACE
 
 DCrumbWidget::DCrumbWidget(QWidget *parent)
@@ -52,7 +59,7 @@ void DCrumbWidget::initUI()
     m_listWidget->setFocusPolicy(Qt::NoFocus);
     setFixedHeight(24);
     setMinimumWidth(50);
-    QTimer::singleShot(100, [=](){
+    QTimer::singleShot(1000, [=](){
         setCrumb(m_url);
     });
 }
@@ -97,7 +104,7 @@ void DCrumbWidget::addCrumb(const QStringList &list)
             if (!path.startsWith("/"))
                 path.prepend('/');
 
-            button->setPath(path);
+            button->setUrl(DUrl(path));
 
             if (systemPathManager->systemPathsMap().values().contains(path)){
                 foreach (QString key, systemPathManager->systemPathsMap().keys()) {
@@ -123,6 +130,10 @@ void DCrumbWidget::addCrumb(const QStringList &list)
 
 void DCrumbWidget::setCrumb(const DUrl &url)
 {
+
+    DFileManagerWindow* w = qobject_cast<DFileManagerWindow*>(WindowManager::getWindowById(window()->winId()));
+    qDebug() << url << w->getViewManager()->getViewById(url.toString());
+
     if(!url.isValid())
         return;
     m_url = url;
@@ -153,13 +164,15 @@ void DCrumbWidget::setCrumb(const DUrl &url)
         addNetworkCrumb();
     }else if(url.isUserShareFile()){
         addUserShareCrumb();
+    }else if (w->getViewManager()->isSchemeRegistered(url.scheme())){
+        addPluginViewCrumb(url);
     }
     else
     {
         addCrumbs(url);
     }
     createCrumbs();
-    repaint();
+    update();
 }
 
 void DCrumbWidget::clear()
@@ -184,7 +197,7 @@ DUrl DCrumbWidget::getCurrentUrl()
     DUrl result;
 
     const DCrumbButton *button = qobject_cast<DCrumbButton*>(m_group.checkedButton());
-    const QString &path = button ? button->path() : QString();
+    const QString &path = button ? button->url().path() : QString();
     if (m_url.isLocalFile()){
         result = DUrl::fromLocalFile(path);
     }else if (m_url.isTrashFile()){
@@ -212,7 +225,8 @@ void DCrumbWidget::addRecentCrumb()
                 text, this);
     button->setFocusPolicy(Qt::NoFocus);
     button->adjustSize();
-    button->setPath("/");
+
+    button->setUrl(DUrl::fromRecentFile("/"));
     m_group.addButton(button, button->getIndex());
     button->setChecked(true);
     connect(button, &DCrumbButton::clicked, this, &DCrumbWidget::buttonPressed);
@@ -229,7 +243,7 @@ void DCrumbWidget::addComputerCrumb()
                 text, this);
     button->setFocusPolicy(Qt::NoFocus);
     button->adjustSize();
-    button->setPath("/");
+    button->setUrl(DUrl::fromComputerFile("/"));
     m_group.addButton(button, button->getIndex());
     button->setChecked(true);
     connect(button, &DCrumbButton::clicked, this, &DCrumbWidget::buttonPressed);
@@ -246,24 +260,9 @@ void DCrumbWidget::addTrashCrumb()
                 text, this);
     button->setFocusPolicy(Qt::NoFocus);
     button->adjustSize();
-    button->setPath("/");
+    button->setUrl(DUrl::fromTrashFile("/"));
     m_group.addButton(button, button->getIndex());
     button->setChecked(true);
-    connect(button, &DCrumbButton::clicked, this, &DCrumbWidget::buttonPressed);
-}
-
-void DCrumbWidget::addHomeCrumb()
-{
-    QString text = m_homePath;
-    DCrumbButton * button = new DCrumbIconButton(
-                m_group.buttons().size(),
-                QIcon(":/leftsidebar/images/leftsidebar/home_normal_16px.svg"),
-                QIcon(":/icons/images/icons/home_hover_16px.svg"),
-                QIcon(":/icons/images/icons/home_checked_16px.svg"),
-                text, this);
-    button->setFocusPolicy(Qt::NoFocus);
-    button->adjustSize();
-    m_group.addButton(button, button->getIndex());
     connect(button, &DCrumbButton::clicked, this, &DCrumbWidget::buttonPressed);
 }
 
@@ -278,7 +277,7 @@ void DCrumbWidget::addNetworkCrumb()
                 text, this);
     button->setFocusPolicy(Qt::NoFocus);
     button->adjustSize();
-    button->setPath("/");
+    button->setUrl(DUrl::fromNetworkFile("/"));
     m_group.addButton(button, button->getIndex());
     button->setChecked(true);
     connect(button, &DCrumbButton::clicked, this, &DCrumbWidget::buttonPressed);
@@ -295,11 +294,34 @@ void DCrumbWidget::addUserShareCrumb()
                 text, this);
     button->setFocusPolicy(Qt::NoFocus);
     button->adjustSize();
-    button->setPath("/");
+    button->setUrl(DUrl::fromUserShareFile("/"));
     m_group.addButton(button, button->getIndex());
     button->setChecked(true);
     connect(button, &DCrumbButton::clicked, this, &DCrumbWidget::buttonPressed);
 }
+
+void DCrumbWidget::addPluginViewCrumb(const DUrl &url)
+{
+    QString text = url.toString();
+    ViewInterface* viewInterface = PluginManager::instance()->getViewInterfaceByScheme(url.scheme());
+    if (viewInterface){
+        DCrumbIconButton* button = new DCrumbIconButton(
+                    m_group.buttons().size(),
+                    viewInterface->crumbNormalIcon(),
+                    viewInterface->crumbHoverIcon(),
+                    viewInterface->crumbCheckedIcon(),
+                    text, this);
+        button->setText(viewInterface->crumbText());
+
+        button->setFocusPolicy(Qt::NoFocus);
+        button->adjustSize();
+        button->setUrl(url);
+        m_group.addButton(button, button->getIndex());
+        button->setChecked(true);
+        connect(button, &DCrumbButton::clicked, this, &DCrumbWidget::buttonPressed);
+    }
+}
+
 
 DCrumbButton *DCrumbWidget::createDeviceCrumbButtonByType(UDiskDeviceInfo::MediaType type, const QString &mountPoint)
 {
@@ -454,11 +476,12 @@ void DCrumbWidget::createCrumbs()
     m_items.clear();
     foreach(QAbstractButton * button, m_group.buttons())
     {
-        QListWidgetItem * item = new QListWidgetItem(m_listWidget);
+        QListWidgetItem* item = new QListWidgetItem(m_listWidget);
         item->setSizeHint(QSize(button->size().width(), 18));
         m_listWidget->setItemWidget(item, button);
         DCrumbButton * localButton = (DCrumbButton *)button;
         localButton->setItem(item);
+        localButton->setListWidget(m_listWidget);
         m_items.append(item);
         m_crumbTotalLen += button->size().width();
     }
@@ -527,46 +550,19 @@ void DCrumbWidget::buttonPressed()
     DFMEvent event;
     event << WindowManager::getWindowId(this);
     event << DFMEvent::CrumbButton;
-    QString text = button->path();
+    DUrl url = button->url();
     DCrumbButton * localButton = qobject_cast<DCrumbButton*>(m_group.buttons().at(0));
 
-    if(localButton->getName() == RECENT_ROOT)
-    {
-        event << DUrl::fromRecentFile(text.isEmpty() ? "/":text);
+    if (localButton->url().scheme().isEmpty()){
+        url.setScheme(FILE_SCHEME);
+    }else{
+        url.setScheme(localButton->url().scheme());
     }
-    else if(localButton->getName() == COMPUTER_ROOT)
-    {
-        event << DUrl::fromComputerFile(text.isEmpty() ? "/":text);
-    }
-    else if(localButton->getName() == TRASH_ROOT)
-    {
-        event << DUrl::fromTrashFile(text.isEmpty() ? "/":text);
-    }else if(localButton->getName() == NETWORK_ROOT)
-    {
-        if (!text.isEmpty()){
-            if (text.startsWith("/")){
-                text.remove(0, 1);
-            }
 
-            event << DUrl(text);
-        }else{
-            event << DUrl(NETWORK_ROOT);
-        }
-    }else if(localButton->getName() == USERSHARE_ROOT){
-        event << DUrl(USERSHARE_ROOT);
-    }
-    else if(localButton->getName() == m_homePath)
-    {
-        event << DUrl::fromLocalFile(text);
-    }
-    else
-    {
-        event << DUrl::fromLocalFile(text.isEmpty() ? "/":text);
-    }
+    event << url;
 
     m_listWidget->scrollToItem(button->getItem());
     emit crumbSelected(event);
-
     m_listWidget->update();
 }
 
