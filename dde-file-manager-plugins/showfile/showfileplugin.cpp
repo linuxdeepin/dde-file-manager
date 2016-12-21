@@ -113,6 +113,15 @@ QList<QAction *> ShowFilePlugin::additionalEmptyMenu(const QString &currentDir)
 
 QWidget *ShowFilePlugin::expandWidget(const QString &file)
 {
+
+    int a;
+    int b;
+    int ret = analyzeFile(QUrl(file).path(), a, b );
+    if( ret )
+    {
+        return NULL;
+    }
+
     QWidget*w = new QWidget();
     QVBoxLayout* layout = new QVBoxLayout;
     QTextBrowser* tb = new QTextBrowser(w);
@@ -129,8 +138,15 @@ QWidget *ShowFilePlugin::expandWidget(const QString &file)
     return w;
 }
 
-QString ShowFilePlugin::expandWidgetTitle()
+QString ShowFilePlugin::expandWidgetTitle(const QString &file)
 {
+    int a;
+    int b;
+    int ret = analyzeFile(QUrl(file).path(), a, b );
+    if( ret )
+    {
+        return "";
+    }
     return "title 1";
 }
 

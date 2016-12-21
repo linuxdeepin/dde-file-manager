@@ -103,8 +103,8 @@ public:
      * \brief expandWidgetTitle　属性子控件对应的标题即可
      * \return QString:　返回对应扩展属性控件的标题
      */
-    virtual QString expandWidgetTitle(){
-        return "";
+    virtual QString expandWidgetTitle(const QString& file){
+        return file;
     }
 
 };

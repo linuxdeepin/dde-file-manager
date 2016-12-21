@@ -480,9 +480,11 @@ void PropertyDialog::loadPluginExpandWidgets()
     foreach (PropertyDialogExpandInfoInterface *plugin, plugins) {
         DArrowLineExpand *expand = new DArrowLineExpand;
         QWidget* frame = plugin->expandWidget(m_url.toString());
+        if(!frame)
+            continue;
         frame->setMaximumHeight(EXTEND_FRAME_MAXHEIGHT);
         frame->setParent(this);
-        expand->setTitle(plugin->expandWidgetTitle());
+        expand->setTitle(plugin->expandWidgetTitle(m_url.toString()));
         expand->setFixedHeight(30);
         expand->setExpand(false);
         expand->setContent(frame);
