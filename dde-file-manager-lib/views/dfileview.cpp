@@ -71,7 +71,8 @@ public:
     DFileView::ViewMode currentViewMode = DFileView::IconMode;
 
     QRect selectedGeometry;
-    QWidget *selectionRectWidget = Q_NULLPTR;
+    QRect drawSelectionGeometry;
+    bool enableDrawSelectionRect = false;
     bool selectionRectVisible = true;
     bool dragEnabled = true;
 
@@ -959,8 +960,9 @@ void DFileView::mousePressEvent(QMouseEvent *event)
                 clearSelection();
             }
 
-            if (canShowSelectionRect())
-                d->selectionRectWidget->show();
+            if (canShowSelectionRect()) {
+                d->enableDrawSelectionRect = true;
+            }
 
             d->selectedGeometry.setTop(event->pos().y() + verticalOffset());
             d->selectedGeometry.setLeft(event->pos().x() + horizontalOffset());
@@ -1018,8 +1020,8 @@ void DFileView::mouseReleaseEvent(QMouseEvent *event)
     if (dragEnabled())
         return DListView::mouseReleaseEvent(event);
 
-    d->selectionRectWidget->resize(0, 0);
-    d->selectionRectWidget->hide();
+    d->enableDrawSelectionRect = false;
+    viewport()->update(d->drawSelectionGeometry);
 }
 
 void DFileView::updateModelActiveIndex()
@@ -1455,6 +1457,21 @@ bool DFileView::event(QEvent *e)
     return DListView::event(e);
 }
 
+void DFileView::paintEvent(QPaintEvent *event)
+{
+    DListView::paintEvent(event);
+
+    Q_D(DFileView);
+
+    if (d->enableDrawSelectionRect) {
+        QPainter pa(viewport());
+
+        pa.fillRect(d->drawSelectionGeometry, QColor(43, 167, 248, 0.3 * 255));
+        pa.setPen(QColor(30, 126, 255, 0.2 * 255));
+        pa.drawRect(d->drawSelectionGeometry.adjusted(0, 0, -1, -1));
+    }
+}
+
 void DFileView::initDelegate()
 {
     D_D(DFileView);
@@ -1489,13 +1506,6 @@ void DFileView::initUI()
     d->sortByActionGroup = new QActionGroup(this);
     d->openWithActionGroup = new QActionGroup(this);
     d->fileViewHelper = new FileViewHelper(this);
-
-    d->selectionRectWidget = new QWidget(this);
-    d->selectionRectWidget->hide();
-    d->selectionRectWidget->resize(0, 0);
-    d->selectionRectWidget->setObjectName("SelectionRect");
-    d->selectionRectWidget->raise();
-    d->selectionRectWidget->setAttribute(Qt::WA_TransparentForMouseEvents);
 
     d->statusBar = new DStatusBar(this);
     d->statusBar->scalingSlider()->setPageStep(1);
@@ -2215,7 +2225,7 @@ void DFileView::updateSelectionRect()
 
     QPoint pos = mapFromGlobal(QCursor::pos());
 
-    if (d->selectionRectWidget->isVisible()) {
+    if (d->enableDrawSelectionRect) {
         QRect rect;
         QPoint pressedPos = viewport()->mapToParent(d->selectedGeometry.topLeft());
 
@@ -2225,7 +2235,8 @@ void DFileView::updateSelectionRect()
         rect.setCoords(qMin(pressedPos.x(), pos.x()), qMin(pressedPos.y(), pos.y()),
                        qMax(pos.x(), pressedPos.x()), qMax(pos.y(), pressedPos.y()));
 
-        d->selectionRectWidget->setGeometry(rect);
+        viewport()->update(d->drawSelectionGeometry);
+        d->drawSelectionGeometry = rect;
     }
 
     pos = viewport()->mapFromParent(pos);

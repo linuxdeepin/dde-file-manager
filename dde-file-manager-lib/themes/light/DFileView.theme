@@ -94,11 +94,6 @@ QLineEdit {
     border-radius: 4px;
 }
 
-DFileView QWidget#SelectionRect {
-    background: rgba(43,167,248,0.30);
-    border: 1px solid rgba(30,126,255,0.20);
-}
-
 DFileView QLabel#contentLabel {
     font-family: SourceHanSansSC-Light;
     font-size: 20px;
