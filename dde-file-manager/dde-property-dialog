@@ -2,4 +2,20 @@
 #shell name: dde-property-dialog.sh
 #description: reuqest show files's or folders's property dialog. 
 #usage: just use it in bash like dde-property-dialog path1 path2 ...
-dde-file-manager -p "$@";
+
+#!/bin/bash
+process=`ps ax -o 'cmd' |grep 'dde-file-manager$'`;
+processd=`ps ax -o 'cmd' |grep 'dde-file-manager -d$'`;
+
+paths=\"\";
+
+if [[ "$process" == ""&&"$processd" == "" ]]; then
+    dde-file-manager -p "$@";
+else
+    for path in $@;
+     do
+        paths=$paths,\"$path\";
+    done;
+    json="{\"paths\":[$paths],\"isShowPropertyDialogRequest\":true}";
+    echo $json |socat - $XDG_RUNTIME_DIR/dde-file-manager;
+fi

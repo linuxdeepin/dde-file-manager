@@ -1,9 +1,10 @@
 #!/bin/bash
 
 process=`ps ax -o 'cmd' |grep 'dde-file-manager$'`;
+processd=`ps ax -o 'cmd' |grep 'dde-file-manager -d$'`;
 
 
-if [ "$process" == "" ]; then
+if [[ "$process" == ""&&"$processd" == "" ]]; then
     if [[ $# -ge 1 ]]; then
         dde-file-manager "$@"
     else
