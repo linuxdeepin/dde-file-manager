@@ -657,9 +657,10 @@ Qt::ItemFlags DFileSystemModel::flags(const QModelIndex &index) const
         if (d->readOnly)
             return flags;
 
-        if (indexNode->fileInfo->isWritable()) {
+        if (indexNode->fileInfo->isCanRename())
             flags |= Qt::ItemIsEditable;
 
+        if (indexNode->fileInfo->isWritable()) {
             if (isDir(indexNode))
                 flags |= Qt::ItemIsDropEnabled;
             else
