@@ -1910,8 +1910,8 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
         disableList << MenuAction::SortBy;
     }
 
-    if (!indexFlags.testFlag(Qt::ItemIsEditable))
-        disableList << MenuAction::NewDocument << MenuAction::NewFolder << MenuAction::Paste;
+//    if (!indexFlags.testFlag(Qt::ItemIsEditable))
+//        disableList << MenuAction::NewDocument << MenuAction::NewFolder << MenuAction::Paste;
 
     const bool& tabAddable = WindowManager::tabAddableByWinId(windowId());
     if(!tabAddable)
