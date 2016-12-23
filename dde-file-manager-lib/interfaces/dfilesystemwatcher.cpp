@@ -252,7 +252,7 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
             filePath = path  + QDir::separator() + name;
 
         if (event.mask & IN_CREATE) {
-            qDebug() << "IN_CREATE" << filePath << name;
+//            qDebug() << "IN_CREATE" << filePath << name;
 
             if (name.isEmpty()) {
                 if (pathToID.contains(path)) {
@@ -268,7 +268,7 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
         }
 
         if (event.mask & IN_DELETE) {
-            qDebug() << "IN_DELETE" << filePath;
+//            qDebug() << "IN_DELETE" << filePath;
 
             emit q->fileDeleted(path, name, DFileSystemWatcher::QPrivateSignal());
         }
@@ -277,33 +277,33 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
             const QString &toPath = cookieToFilePath.value(event.cookie);
             const QString toName = cookieToFileName.value(event.cookie);
 
-            qDebug() << "IN_MOVED_FROM" << filePath << "to path:" << toPath << "to name:" << toName;
+//            qDebug() << "IN_MOVED_FROM" << filePath << "to path:" << toPath << "to name:" << toName;
 
             emit q->fileMoved(path, name, toPath, toName, DFileSystemWatcher::QPrivateSignal());
         }
 
         if (event.mask & IN_MOVED_TO) {
-            qDebug() << "IN_MOVED_TO" << filePath;
+//            qDebug() << "IN_MOVED_TO" << filePath;
 
             if (!hasMoveFromByCookie.contains(event.cookie))
                 emit q->fileMoved(QString(), QString(), path, name, DFileSystemWatcher::QPrivateSignal());
         }
 
         if (event.mask & IN_ATTRIB) {
-            qDebug() << "IN_ATTRIB" <<  event.mask << filePath;
+//            qDebug() << "IN_ATTRIB" <<  event.mask << filePath;
 
             emit q->fileAttributeChanged(path, name, DFileSystemWatcher::QPrivateSignal());
         }
 
         /*only monitor file close event which is opend by write mode*/
         if (event.mask & IN_CLOSE_WRITE) {
-            qDebug() << "IN_CLOSE_WRITE" <<  event.mask << filePath;
+//            qDebug() << "IN_CLOSE_WRITE" <<  event.mask << filePath;
 
             emit q->fileClosed(path, id < 0 ? name : QString(), DFileSystemWatcher::QPrivateSignal());
         }
 
         if (event.mask & IN_MODIFY) {
-            qDebug() << "IN_MODIFY" <<  event.mask << filePath << name;
+//            qDebug() << "IN_MODIFY" <<  event.mask << filePath << name;
 
             emit q->fileModified(path, name, DFileSystemWatcher::QPrivateSignal());
         }
