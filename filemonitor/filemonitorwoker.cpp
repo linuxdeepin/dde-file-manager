@@ -305,7 +305,7 @@ void FileMonitorWoker::handleInotifyEvent(const inotify_event *event)
     }
 
     if (event->mask & IN_CREATE) {
-        qDebug() << "IN_CREATE" << path;
+//        qDebug() << "IN_CREATE" << path;
 
         emit fileCreated(event->cookie, path);
 
@@ -323,7 +323,7 @@ void FileMonitorWoker::handleInotifyEvent(const inotify_event *event)
     }
 
     if (event->mask & IN_MOVED_FROM) {
-        qDebug() << "IN_MOVED_FROM" << path;
+//        qDebug() << "IN_MOVED_FROM" << path;
         emit fileMovedFrom(event->cookie, path);
 
         for (const QString &tmp_path : m_pathToID.keys()) {
@@ -336,7 +336,7 @@ void FileMonitorWoker::handleInotifyEvent(const inotify_event *event)
     }
 
     if (event->mask & IN_MOVED_TO) {
-        qDebug() << "IN_MOVED_TO" << path;
+//        qDebug() << "IN_MOVED_TO" << path;
         emit fileMovedTo(event->cookie, path);
 
         if (m_pathToID.contains(path)) {
@@ -355,7 +355,7 @@ void FileMonitorWoker::handleInotifyEvent(const inotify_event *event)
     }
 
     if (event->mask & IN_DELETE) {
-        qDebug() << "IN_DELETE" << path;
+//        qDebug() << "IN_DELETE" << path;
 
         emit fileDeleted(event->cookie, path);
     }
