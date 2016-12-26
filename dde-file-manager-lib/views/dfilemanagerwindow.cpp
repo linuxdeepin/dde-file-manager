@@ -86,7 +86,7 @@ DFileManagerWindow::DFileManagerWindow(const DUrl &fileUrl, QWidget *parent)
     , d_ptr(new DFileManagerWindowPrivate(this))
 {
     /// init global AppController
-    Q_UNUSED(AppController::instance());
+//    Q_UNUSED(AppController::instance());
 
     setWindowIcon(QIcon(":/images/images/dde-file-manager.svg"));
 

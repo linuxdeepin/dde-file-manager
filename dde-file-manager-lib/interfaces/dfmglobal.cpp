@@ -8,6 +8,18 @@
 #include "plugins/pluginmanager.h"
 #include "app/filesignalmanager.h"
 #include "shutil/mimesappsmanager.h"
+#include "controllers/searchhistroymanager.h"
+#include "controllers/bookmarkmanager.h"
+#include "interfaces/dfilemenumanager.h"
+#include "controllers/pathmanager.h"
+#include "../thumbnailer/thumbnailmanager.h"
+#include "gvfs/gvfsmountclient.h"
+#include "gvfs/networkmanager.h"
+#include "gvfs/secrectmanager.h"
+#include "shutil/iconprovider.h"
+#include "controllers/appcontroller.h"
+#include "../deviceinfo/udisklistener.h"
+#include "../usershare/usersharemanager.h"
 
 #include <QGuiApplication>
 #include <QClipboard>
@@ -163,6 +175,26 @@ void DFMGlobal::initPluginManager()
     refreshPlugins();
 }
 
+void DFMGlobal::initSearchHistoryManager()
+{
+    searchHistoryManager;
+}
+
+void DFMGlobal::initBookmarkManager()
+{
+    bookmarkManager;
+}
+
+void DFMGlobal::initFileMenuManager()
+{
+    fileMenuManger;
+}
+
+void DFMGlobal::initFileSiganlManager()
+{
+    fileSignalManager;
+}
+
 void DFMGlobal::initMimesAppsManager()
 {
     mimeAppsManager;
@@ -171,9 +203,64 @@ void DFMGlobal::initMimesAppsManager()
     });
 }
 
+void DFMGlobal::initSystemPathManager()
+{
+    systemPathManager;
+}
+
+void DFMGlobal::initMimeTypeDisplayManager()
+{
+    mimeAppsManager;
+}
+
+void DFMGlobal::initThumbnailManager()
+{
+    thumbnailManager;
+}
+
+void DFMGlobal::initNetworkManager()
+{
+    networkManager;
+}
+
+void DFMGlobal::initGvfsMountClient()
+{
+    gvfsMountClient;
+}
+
+void DFMGlobal::initSecretManager()
+{
+    secrectManager;
+}
+
 void DFMGlobal::initDialogManager()
 {
     dialogManager;
+}
+
+void DFMGlobal::initIconProvider()
+{
+    fileIconProvider;
+}
+
+void DFMGlobal::initFileService()
+{
+    fileService;
+}
+
+void DFMGlobal::initAppcontroller()
+{
+    appController;
+}
+
+void DFMGlobal::initDeviceListener()
+{
+    deviceListener;
+}
+
+void DFMGlobal::initUserShareManager()
+{
+    userShareManager;
 }
 
 QList<QUrl> DFMGlobal::clipboardFileUrlList() const
