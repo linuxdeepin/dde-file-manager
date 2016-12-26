@@ -220,8 +220,10 @@ void DIconItemDelegate::paint(QPainter *painter,
             height = d->textHeightMap.value(str);
         } else {
             QString wordWrap_str = DFMGlobal::wordWrapText(str, label_rect.width(),
-                                                        QTextOption::WrapAtWordBoundaryOrAnywhere,
-                                                        &height);
+                                                           QTextOption::WrapAtWordBoundaryOrAnywhere,
+                                                           opt.font,
+                                                           TEXT_LINE_HEIGHT,
+                                                           &height);
 
             wordWrap_str = trimmedEnd(wordWrap_str);
 
@@ -530,8 +532,10 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
             height = d->textHeightMap.value(str);
         } else {
             QString wordWrap_str = DFMGlobal::wordWrapText(str, label_rect.width(),
-                                                        QTextOption::WrapAtWordBoundaryOrAnywhere,
-                                                        &height);
+                                                           QTextOption::WrapAtWordBoundaryOrAnywhere,
+                                                           opt.font,
+                                                           TEXT_LINE_HEIGHT,
+                                                           &height);
 
             wordWrap_str = trimmedEnd(wordWrap_str);
 

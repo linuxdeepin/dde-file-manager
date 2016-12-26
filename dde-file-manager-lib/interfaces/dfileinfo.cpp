@@ -14,9 +14,16 @@
 #include "usershare/usersharemanager.h"
 #include "deviceinfo/udisklistener.h"
 
+#include "dfileservices.h"
+#include "dthumbnailprovider.h"
+
 #include <QDateTime>
 #include <QDir>
 #include <QMimeDatabase>
+
+DFM_USE_NAMESPACE
+
+#define REQUEST_THUMBNAIL_DEALY 500
 
 DFileInfoPrivate::DFileInfoPrivate(const DUrl &url, DFileInfo *qq)
     : DAbstractFileInfoPrivate (url, qq)
@@ -345,6 +352,7 @@ void DFileInfo::refresh()
     Q_D(DFileInfo);
 
     d->fileInfo.refresh();
+    d->icon = QIcon();
 }
 
 DUrl DFileInfo::goToUrlWhenDeleted() const
@@ -353,6 +361,81 @@ DUrl DFileInfo::goToUrlWhenDeleted() const
         return DUrl::fromLocalFile(QDir::homePath());
 
     return DAbstractFileInfo::goToUrlWhenDeleted();
+}
+
+void DFileInfo::makeToInactive()
+{
+    Q_D(DFileInfo);
+
+    if (d->getIconTimer) {
+        d->getIconTimer->stop();
+    } else if (d->requestingThumbnail) {
+        d->requestingThumbnail = false;
+        DThumbnailProvider::instance()->removeInProduceQueue(d->fileInfo, DThumbnailProvider::Large);
+    }
+}
+
+QIcon DFileInfo::fileIcon() const
+{
+    Q_D(const DFileInfo);
+
+    if (!d->icon.isNull())
+        return d->icon;
+
+    const DUrl &fileUrl = this->fileUrl();
+    bool has_thumbnail = DThumbnailProvider::instance()->hasThumbnail(d->fileInfo);
+
+    if (has_thumbnail) {
+        const QIcon icon(DThumbnailProvider::instance()->thumbnailFilePath(d->fileInfo, DThumbnailProvider::Large));
+
+        if (!icon.isNull()) {
+            d->icon = icon;
+
+            return d->icon;
+        }
+
+        if (d->getIconTimer) {
+            QMetaObject::invokeMethod(d->getIconTimer, "start", Qt::QueuedConnection);
+        } else {
+            QTimer *timer = new QTimer();
+            const QExplicitlySharedDataPointer<DFileInfo> me(const_cast<DFileInfo*>(this));
+
+            d->getIconTimer = timer;
+            timer->setSingleShot(true);
+            timer->moveToThread(qApp->thread());
+            timer->setInterval(REQUEST_THUMBNAIL_DEALY);
+
+            QObject::connect(timer, &QTimer::timeout, timer, [fileUrl, timer, me] {
+                DThumbnailProvider::instance()->appendToProduceQueue(me->d_func()->fileInfo, DThumbnailProvider::Large,
+                                                                     [me] (const QString &path) {
+                    if (path.isEmpty())
+                        me->d_func()->icon = me->DAbstractFileInfo::fileIcon();
+                });
+                me->d_func()->requestingThumbnail = true;
+                timer->deleteLater();
+            });
+
+            QMetaObject::invokeMethod(timer, "start", Qt::QueuedConnection);
+        }
+
+        return DAbstractFileInfo::fileIcon();
+    }
+
+    if (isSymLink()) {
+        const DUrl &symLinkTarget = this->symLinkTarget();
+
+        if (symLinkTarget != fileUrl) {
+            const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(symLinkTarget);
+
+            d->icon = fileInfo->fileIcon();
+
+            return d->icon;
+        }
+    }
+
+    d->icon = DAbstractFileInfo::fileIcon();
+
+    return d->icon;
 }
 
 DFileInfo::DFileInfo(DFileInfoPrivate &dd)

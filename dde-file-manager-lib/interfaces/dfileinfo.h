@@ -66,6 +66,9 @@ public:
     void refresh() Q_DECL_OVERRIDE;
     DUrl goToUrlWhenDeleted() const Q_DECL_OVERRIDE;
 
+    void makeToInactive() Q_DECL_OVERRIDE;
+    QIcon fileIcon() const Q_DECL_OVERRIDE;
+
 protected:
     explicit DFileInfo(DFileInfoPrivate &dd);
 

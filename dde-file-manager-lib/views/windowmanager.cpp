@@ -1,5 +1,9 @@
 #include "windowmanager.h"
 #include "dfilemanagerwindow.h"
+#include "dthumbnailprovider.h"
+#include "dabstractfilewatcher.h"
+#include "dabstractfileinfo.h"
+#include "dfileservices.h"
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
@@ -22,6 +26,8 @@
 #include <QX11Info>
 #include <QScreen>
 
+DFM_USE_NAMESPACE
+
 QHash<const QWidget*, int> WindowManager::m_windows;
 int WindowManager::m_count = 0;
 
@@ -43,6 +49,18 @@ void WindowManager::initConnect()
     connect(fileSignalManager, &FileSignalManager::requestOpenNewWindowByUrl, this, &WindowManager::showNewWindow);
     connect(fileSignalManager, &FileSignalManager::aboutToCloseLastActivedWindow, this, &WindowManager::onLastActivedWindowClosed);
     connect(fileSignalManager, &FileSignalManager::requestQuitApplication, this, &WindowManager::quit);
+
+    connect(DThumbnailProvider::instance(), &DThumbnailProvider::createThumbnailFinished,
+                     this, [] (const QString &filePath) {
+        const DUrl &fileUrl = DUrl::fromLocalFile(filePath);
+
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(fileUrl);
+
+        if (!fileInfo)
+            return;
+
+        DAbstractFileWatcher::ghostSignal(fileInfo->parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, fileUrl);
+    });
 }
 
 void WindowManager::loadWindowState(DFileManagerWindow *window)
