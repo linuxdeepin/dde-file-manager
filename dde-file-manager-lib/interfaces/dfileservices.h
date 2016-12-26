@@ -14,6 +14,7 @@
 #include <functional>
 
 typedef QPair<QString,QString> HandlerType;
+typedef QPair<QString, std::function<DAbstractFileController*()>> HandlerCreatorType;
 
 class DAbstractFileInfo;
 class DFMEvent;
@@ -53,9 +54,14 @@ public:
     template <class T>
     static void dRegisterUrlHandler(const QString &scheme, const QString &host)
     {
-        m_controllerCreatorHash.insertMulti(HandlerType(scheme, host), [=] {
+        foreach (const HandlerCreatorType &value, m_controllerCreatorHash.values(HandlerType(scheme, host))) {
+            if (value.first == typeid(T).name())
+                return;
+        }
+
+        m_controllerCreatorHash.insertMulti(HandlerType(scheme, host), HandlerCreatorType(typeid(T).name(), [=] {
             return (DAbstractFileController*)new T(instance());
-        });
+        }));
     }
 
     static DFileService *instance();
@@ -128,7 +134,7 @@ private:
                                                               bool ignoreScheme = false);
     static QString getSymlinkFileName(const DUrl &fileUrl, const QDir &targetDir = QDir());
 
-    static QMultiHash<const HandlerType, std::function<DAbstractFileController*()>> m_controllerCreatorHash;
+    static QMultiHash<const HandlerType, HandlerCreatorType> m_controllerCreatorHash;
 
     QScopedPointer<DFileServicePrivate> d_ptr;
     Q_DECLARE_PRIVATE(DFileService)

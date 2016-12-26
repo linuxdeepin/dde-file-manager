@@ -74,7 +74,7 @@ public:
 
 QMultiHash<const HandlerType, DAbstractFileController*> DFileServicePrivate::controllerHash;
 QHash<const DAbstractFileController*, HandlerType> DFileServicePrivate::handlerHash;
-QMultiHash<const HandlerType, std::function<DAbstractFileController*()>> DFileService::m_controllerCreatorHash;
+QMultiHash<const HandlerType, HandlerCreatorType> DFileService::m_controllerCreatorHash;
 
 DFileService::DFileService(QObject *parent)
     : QObject(parent)
@@ -677,8 +677,8 @@ QList<DAbstractFileController*> DFileService::getHandlerTypeByUrl(const DUrl &fi
     if(m_controllerCreatorHash.contains(handlerType)) {
         QList<DAbstractFileController*> list = DFileServicePrivate::controllerHash.values(handlerType);
 
-        for(const std::function<DAbstractFileController*()> &creator : m_controllerCreatorHash.values(handlerType)) {
-            DAbstractFileController *controller = creator();
+        for(const HandlerCreatorType &creator : m_controllerCreatorHash.values(handlerType)) {
+            DAbstractFileController *controller = (creator.second)();
 
             setFileUrlHandler(handlerType.first, handlerType.second, controller);
 
