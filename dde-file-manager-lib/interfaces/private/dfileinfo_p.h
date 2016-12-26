@@ -13,6 +13,8 @@
 #include "dabstractfileinfo_p.h"
 
 #include <QFileInfo>
+#include <QIcon>
+#include <QTimer>
 
 class DFileInfo;
 class DFileInfoPrivate : public DAbstractFileInfoPrivate
@@ -22,6 +24,9 @@ public:
 
     QFileInfo fileInfo;
     mutable QMimeType mimeType;
+    mutable QIcon icon;
+    mutable QPointer<QTimer> getIconTimer;
+    bool requestingThumbnail = false;
 };
 
 #endif // DFILEINFO_P_H

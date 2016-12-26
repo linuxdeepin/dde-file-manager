@@ -63,9 +63,6 @@ void DFileViewHelperPrivate::init()
     QObject::connect(fileIconProvider, &IconProvider::themeChanged, q, [q] {
         q->model()->update();
     });
-    QObject::connect(fileIconProvider, &IconProvider::iconChanged, q, [q] (const QString &filePath) {
-        q->parent()->update(q->model()->index(DUrl::fromLocalFile(filePath)));
-    });
     QObject::connect(DFMGlobal::instance(), &DFMGlobal::clipboardDataChanged, q, [q] {
         for (const QModelIndex &index : q->itemDelegate()->hasWidgetIndexs()) {
             FileIconItem *item = qobject_cast<FileIconItem*>(q->indexWidget(index));

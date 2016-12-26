@@ -54,10 +54,8 @@ bool sort(const DAbstractFileInfoPointer &info1, const DAbstractFileInfoPointer 
 #define CALL_PROXY(Fun)\
     Q_D(const DAbstractFileInfo);\
     if (d->proxy) return d->proxy->Fun;
-#define REQUEST_THUMBNAIL_DEALY 500
 
 QMap<DUrl, DAbstractFileInfo*> DAbstractFileInfoPrivate::urlToFileInfoMap;
-QSet<QString> DAbstractFileInfoPrivate::hasThumbnailMimeHash;
 
 DAbstractFileInfoPrivate::DAbstractFileInfoPrivate(const DUrl &url, DAbstractFileInfo *qq)
     : q_ptr(qq)
@@ -474,108 +472,11 @@ DUrl DAbstractFileInfo::fileUrl() const
     return d->fileUrl;
 }
 
-bool DAbstractFileInfo::hasThumbnail(const QMimeType &mt) const
-{
-    CALL_PROXY(hasThumbnail());
-
-    const QString &mime = mt.name();
-
-    if (d->hasThumbnailMimeHash.contains(mime))
-        return true;
-
-    if (mime.startsWith("image") || mime.startsWith("video/")) {
-        d->hasThumbnailMimeHash << mime;
-
-        return true;
-    }
-
-    if (mime == "text/plain" || mime == "application/pdf"
-            || mime == "application/vnd.adobe.flash.movie"
-            || mime == "application/vnd.rn-realmedia"
-            || mime == "application/vnd.ms-asf"
-            || mime == "application/mxf") {
-        d->hasThumbnailMimeHash << mime;
-
-        return true;
-    }
-
-    return false;
-}
-
 QIcon DAbstractFileInfo::fileIcon() const
 {
     CALL_PROXY(fileIcon());
 
-//    if (!d->icon.isNull())
-//        return d->icon;
-
-    const DUrl &fileUrl = this->fileUrl();
-    const QMimeType &mimeType = this->mimeType();
-
-//    d->icon = fileIconProvider->getIconByMimeType(fileUrl, mimeType);
-    bool has_thumbnail = hasThumbnail(mimeType);
-
-//    if (has_thumbnail && !d->getIconTimer.isActive()) {
-//        d->getIconTimer.disconnect();
-
-//        QExplicitlySharedDataPointer<DAbstractFileInfoPrivate> d_ptr(const_cast<DAbstractFileInfoPrivate*>(d));
-
-//        QObject::connect(&d->getIconTimer, &QTimer::timeout, [d_ptr, fileUrl, mimeType] {
-//            d_ptr->getIconTimer.disconnect();
-
-//            const QIcon &icon = fileIconProvider->getFileThumbnail(fileUrl);
-
-//            if (icon.isNull()) {
-//                return;
-//            }
-
-//            d_ptr->icon = icon;
-//            DFileService::instance()->childrenUpdated(fileUrl);
-//        });
-
-//        QMetaObject::invokeMethod(&d->getIconTimer, "start", Qt::QueuedConnection);
-//    }
-
-//    return d->icon;
-    if (has_thumbnail) {
-        const QIcon &icon = fileIconProvider->getThumbnail(fileUrl);
-
-        if (!icon.isNull()) {
-            return icon;
-        }
-
-        if (d->getIconTimer) {
-            QMetaObject::invokeMethod(d->getIconTimer, "start", Qt::QueuedConnection);
-        } else {
-            QTimer *timer = new QTimer();
-            const DAbstractFileInfoPointer me(const_cast<DAbstractFileInfo*>(this));
-
-            d->getIconTimer = timer;
-            timer->setSingleShot(true);
-            timer->moveToThread(qApp->thread());
-            timer->setInterval(REQUEST_THUMBNAIL_DEALY);
-
-            QObject::connect(timer, &QTimer::timeout, timer, [fileUrl, timer, me] {
-                fileIconProvider->requestThumbnail(fileUrl);
-                me->d_func()->requestingThumbnail = true;
-                timer->deleteLater();
-            });
-
-            QMetaObject::invokeMethod(timer, "start", Qt::QueuedConnection);
-        }
-    }
-
-    if (isSymLink()){
-        const DUrl &symLinkTarget = this->symLinkTarget();
-
-        if (symLinkTarget != fileUrl) {
-            const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(symLinkTarget);
-
-            return fileInfo->fileIcon();
-        }
-    }
-
-    return fileIconProvider->getIconByMimeType(fileUrl, mimeType);
+    return fileIconProvider->getIconByMimeType(fileUrl(), mimeType());
 }
 
 QList<QIcon> DAbstractFileInfo::additionalIcon() const
@@ -1023,13 +924,6 @@ void DAbstractFileInfo::makeToInactive()
 
     if (!d->active)
         return;
-
-    if (d->getIconTimer) {
-        d->getIconTimer->stop();
-    } else if (d->requestingThumbnail) {
-        d_func()->requestingThumbnail = false;
-        fileIconProvider->abortRequestThumbnail(fileUrl());
-    }
 }
 
 DUrl DAbstractFileInfo::goToUrlWhenDeleted() const

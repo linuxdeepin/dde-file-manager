@@ -2,6 +2,7 @@
 
 #include <QDir>
 #include <QApplication>
+#include <QStandardPaths>
 
 QString DFMStandardPaths::standardLocation(DFMStandardPaths::StandardLocation type)
 {
@@ -16,6 +17,16 @@ QString DFMStandardPaths::standardLocation(DFMStandardPaths::StandardLocation ty
         return APPSHAREDIR"/translations";
     case ApplicationConfigPath:
         return getConfigPath();
+    case ThumbnailPath:
+        return QDir::homePath() + "/.cache/thumbnails";
+    case ThumbnailFailPath:
+        return standardLocation(ThumbnailPath) + "/fail";
+    case ThumbnailLargePath:
+        return standardLocation(ThumbnailPath) + "/large";
+    case ThumbnailNormalPath:
+        return standardLocation(ThumbnailPath) + "/normal";
+    case ThumbnailSmallPath:
+        return standardLocation(ThumbnailPath) + "/small";
     }
 
     return QString();

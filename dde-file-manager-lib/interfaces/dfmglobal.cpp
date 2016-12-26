@@ -312,12 +312,14 @@ void DFMGlobal::refreshPlugins()
     PluginManager::instance()->loadPlugin();
 }
 
-QString DFMGlobal::wordWrapText(const QString &text, int width, QTextOption::WrapMode wrapMode, int *height)
+QString DFMGlobal::wordWrapText(const QString &text, int width, QTextOption::WrapMode wrapMode,
+                                const QFont &font, int lineHeight, int *height)
 {
     QTextLayout textLayout(text);
     QTextOption &text_option = *const_cast<QTextOption*>(&textLayout.textOption());
     text_option.setWrapMode(wrapMode);
 
+    textLayout.setFont(font);
     textLayout.beginLayout();
 
     QTextLine line = textLayout.createLine();
@@ -333,9 +335,9 @@ QString DFMGlobal::wordWrapText(const QString &text, int width, QTextOption::Wra
         str += tmp_str;
 
         if (tmp_str.indexOf('\n') >= 0)
-            text_height += TEXT_LINE_HEIGHT;
+            text_height += lineHeight;
 
-        text_height += TEXT_LINE_HEIGHT;
+        text_height += lineHeight;
         line = textLayout.createLine();
 
         if(line.isValid())
@@ -351,7 +353,7 @@ QString DFMGlobal::wordWrapText(const QString &text, int width, QTextOption::Wra
 }
 
 QString DFMGlobal::elideText(const QString &text, const QSize &size, const QFontMetrics &fontMetrics,
-                          QTextOption::WrapMode wordWrap, Qt::TextElideMode mode, int flags)
+                          QTextOption::WrapMode wordWrap, Qt::TextElideMode mode, int lineHeight, int flags)
 {
     int height = 0;
 
@@ -365,9 +367,9 @@ QString DFMGlobal::elideText(const QString &text, const QSize &size, const QFont
     QTextLine line = textLayout.createLine();
 
     while (line.isValid()) {
-        height += TEXT_LINE_HEIGHT;
+        height += lineHeight;
 
-        if(height + TEXT_LINE_HEIGHT >= size.height()) {
+        if(height + lineHeight >= size.height()) {
             str += fontMetrics.elidedText(text.mid(line.textStart() + line.textLength() + 1), mode, size.width(), flags);
 
             break;
@@ -378,7 +380,7 @@ QString DFMGlobal::elideText(const QString &text, const QSize &size, const QFont
         const QString &tmp_str = text.mid(line.textStart(), line.textLength());
 
         if (tmp_str.indexOf('\n'))
-            height += TEXT_LINE_HEIGHT;
+            height += lineHeight;
 
         str += tmp_str;
 

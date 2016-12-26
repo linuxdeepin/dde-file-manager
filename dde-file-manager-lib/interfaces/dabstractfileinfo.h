@@ -146,9 +146,6 @@ public:
     inline QString scheme() const
     {return fileUrl().scheme();}
 
-    inline bool hasThumbnail() const
-    { return hasThumbnail(mimeType());}
-    virtual bool hasThumbnail(const QMimeType &mimeTypeName) const;
     virtual QIcon fileIcon() const;
     virtual QList<QIcon> additionalIcon() const;
 

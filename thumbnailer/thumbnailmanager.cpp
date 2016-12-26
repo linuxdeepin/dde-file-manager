@@ -20,7 +20,7 @@ ThumbnailManager::ThumbnailManager(QObject *parent)
 {
     init();
 
-    start();
+//    start();
 }
 
 ThumbnailManager::~ThumbnailManager()

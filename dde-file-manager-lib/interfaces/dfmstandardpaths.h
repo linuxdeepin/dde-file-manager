@@ -11,7 +11,12 @@ public:
         TrashFilesPath,
         TrashInfosPath,
         TranslationPath,
-        ApplicationConfigPath
+        ApplicationConfigPath,
+        ThumbnailPath,
+        ThumbnailFailPath,
+        ThumbnailLargePath,
+        ThumbnailNormalPath,
+        ThumbnailSmallPath
     };
 
     static QString standardLocation(StandardLocation type);

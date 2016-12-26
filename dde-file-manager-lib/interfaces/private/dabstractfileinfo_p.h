@@ -12,7 +12,6 @@
 
 #include "dabstractfileinfo.h"
 
-#include <QTimer>
 #include <QPointer>
 
 class DAbstractFileInfoPrivate
@@ -27,14 +26,9 @@ public:
     DAbstractFileInfo *q_ptr = Q_NULLPTR;
 
     mutable QString pinyinName;
-//    mutable QIcon icon;
-    mutable QPointer<QTimer> getIconTimer;
-    bool requestingThumbnail = false;
     bool active = false;
 
     DAbstractFileInfoPointer proxy;
-
-    static QSet<QString> hasThumbnailMimeHash;
 
 private:
     DUrl fileUrl;

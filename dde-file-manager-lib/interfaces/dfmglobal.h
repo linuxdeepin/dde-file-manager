@@ -70,6 +70,10 @@
 #endif
 #define QT_STRINGIFY(x...) #x
 
+#define DFM_BEGIN_NAMESPACE namespace dde_file_manager {
+#define DFM_END_NAMESPACE }
+#define DFM_USE_NAMESPACE using namespace dde_file_manager;
+
 class DFMGlobal : public QObject
 {
     Q_OBJECT
@@ -216,14 +220,17 @@ public:
     QIcon standardIcon(Icon iconType) const;
 
     static QString wordWrapText(const QString &text, int width,
-                         QTextOption::WrapMode wrapMode,
-                         int *height = 0);
+                                QTextOption::WrapMode wrapMode,
+                                const QFont &font = QFont(),
+                                int lineHeight = TEXT_LINE_HEIGHT,
+                                int *height = 0);
 
     static QString elideText(const QString &text, const QSize &size,
-                      const QFontMetrics &fontMetrics,
-                      QTextOption::WrapMode wordWrap,
-                      Qt::TextElideMode mode,
-                      int flags = 0);
+                             const QFontMetrics &fontMetrics,
+                             QTextOption::WrapMode wordWrap,
+                             Qt::TextElideMode mode,
+                             int lineHeight = TEXT_LINE_HEIGHT,
+                             int flags = 0);
 
     static QString toPinyin(const QString &text);
     static bool startWithHanzi(const QString &text);

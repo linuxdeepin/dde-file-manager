@@ -178,7 +178,8 @@ void DFileSystemModelPrivate::_q_onFileUpdated(const DUrl &fileUrl)
         fileInfo->refresh();
     }
 
-    emit q->dataChanged(index, index);
+    q->parent()->parent()->update(index);
+//    emit q->dataChanged(index, index);
 }
 
 void DFileSystemModelPrivate::_q_onFileRename(const DUrl &from, const DUrl &to)
