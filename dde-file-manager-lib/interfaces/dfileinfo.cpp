@@ -208,7 +208,7 @@ DUrl DFileInfo::symLinkTarget() const
 {
     Q_D(const DFileInfo);
 
-    if (isSymLink())
+    if (d->fileInfo.isSymLink())
         return DUrl::fromLocalFile(d->fileInfo.symLinkTarget());
 
     return DAbstractFileInfo::symLinkTarget();

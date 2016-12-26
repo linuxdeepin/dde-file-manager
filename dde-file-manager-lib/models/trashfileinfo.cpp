@@ -260,11 +260,6 @@ bool TrashFileInfo::makeAbsolute()
     return true;
 }
 
-DUrl TrashFileInfo::symLinkTarget() const
-{
-    return fileUrl();
-}
-
 DUrl TrashFileInfo::mimeDataUrl() const
 {
     return DUrl::fromLocalFile(absoluteFilePath());
