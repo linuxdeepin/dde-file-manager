@@ -25,6 +25,7 @@
 #include "dialogs/messagewrongdialog.h"
 #include "dialogs/propertydialog.h"
 #include "dialogs/openwithdialog.h"
+#include "dialogs/diskspaceoutofusedtipdialog.h"
 
 #include "deviceinfo/udisklistener.h"
 #include "deviceinfo/udiskdeviceinfo.h"
@@ -166,6 +167,7 @@ void DialogManager::addJob(FileJob *job)
     connect(job, &FileJob::requestAbortTask, m_taskDialog, &DTaskDialog::abortTask);
     connect(job, &FileJob::requestConflictDialogShowed, m_taskDialog, &DTaskDialog::showConflictDiloagByJob);
     connect(job, &FileJob::requestCopyMoveToSelfDialogShowed, this, &DialogManager::showCopyMoveToSelfDialog);
+    connect(job, &FileJob::requestNoEnoughSpaceDialogShowed, this, &DialogManager::showDiskSpaceOutOfUsedDialog);
 }
 
 
@@ -510,6 +512,17 @@ void DialogManager::showUserSharePasswordSettingDialog(const DFMEvent &event)
     int code = dialog.exec();
     qDebug() << code;
     dialog.onButtonClicked(code);
+}
+
+void DialogManager::showDiskSpaceOutOfUsedDialog()
+{
+    QTimer::singleShot(200,[=]{
+        DiskSpaceOutOfUsedTipDialog d;
+        QRect rect = d.geometry();
+        rect.moveCenter(qApp->desktop()->geometry().center());
+        d.move(rect.x(), rect.y());
+        d.exec();
+    });
 }
 
 void DialogManager::removePropertyDialog(const DUrl &url)
