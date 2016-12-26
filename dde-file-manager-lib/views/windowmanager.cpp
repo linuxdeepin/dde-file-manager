@@ -187,11 +187,14 @@ void WindowManager::onLastActivedWindowClosed(int winId)
         }
     }
     getWindowById(winId)->close();
+    qApp->quit();
 }
 
 void WindowManager::quit()
 {
     if (m_windows.count() == 0){
-        qApp->quit();
+        if (dialogManager->isTaskDialogEmpty()){
+            qApp->quit();
+        }
     }
 }
