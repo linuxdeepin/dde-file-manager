@@ -311,7 +311,7 @@ DUrl DAbstractFileInfo::symLinkTarget() const
 {
     CALL_PROXY(symLinkTarget());
 
-    return fileUrl();
+    return DUrl();
 }
 
 QString DAbstractFileInfo::owner() const
@@ -566,8 +566,13 @@ QIcon DAbstractFileInfo::fileIcon() const
     }
 
     if (isSymLink()){
-        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(redirectedFileUrl());
-        return fileInfo->fileIcon();
+        const DUrl &symLinkTarget = this->symLinkTarget();
+
+        if (symLinkTarget != fileUrl) {
+            const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(symLinkTarget);
+
+            return fileInfo->fileIcon();
+        }
     }
 
     return fileIconProvider->getIconByMimeType(fileUrl, mimeType);
@@ -889,7 +894,10 @@ bool DAbstractFileInfo::canRedirectionFileUrl() const
 
 DUrl DAbstractFileInfo::redirectedFileUrl() const
 {
-    return symLinkTarget();
+    if (isSymLink())
+        return symLinkTarget();
+
+    return fileUrl();
 }
 
 bool DAbstractFileInfo::isEmptyFloder(const QDir::Filters &filters) const
