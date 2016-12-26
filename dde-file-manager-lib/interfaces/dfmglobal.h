@@ -191,11 +191,25 @@ public:
     static void autoLoadDefaultPlugins();
     static void autoLoadDefaultMenuExtensions();
 
+    /* Global instance initialization */
     static void initPluginManager();
-    static void initMimesAppsManager();
+    static void initSearchHistoryManager();
+    static void initBookmarkManager();
+    static void initFileMenuManager();
+    static void initFileSiganlManager();
     static void initDialogManager();
-
-
+    static void initAppcontroller();
+    static void initIconProvider();
+    static void initFileService();
+    static void initDeviceListener();
+    static void initMimesAppsManager();
+    static void initSystemPathManager();
+    static void initMimeTypeDisplayManager();
+    static void initThumbnailManager();
+    static void initNetworkManager();
+    static void initGvfsMountClient();
+    static void initSecretManager();
+    static void initUserShareManager();
 
     QList<QUrl> clipboardFileUrlList() const;
     ClipboardAction clipboardAction() const;

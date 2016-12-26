@@ -66,11 +66,56 @@ void FileManagerApp::initApp()
     /*init plugin manager */
     DFMGlobal::initPluginManager();
 
-    /*init mimeAppsManager*/
-    DFMGlobal::initMimesAppsManager();
+    /*init searchHistoryManager */
+    DFMGlobal::initSearchHistoryManager();
+
+    /*init bookmarkManager */
+    DFMGlobal::initBookmarkManager();
+
+    /*init fileMenuManager */
+    DFMGlobal::initFileMenuManager();
+
+    /*init fileSignalManger */
+    DFMGlobal::initFileSiganlManager();
 
     /* init dialog manager */
     DFMGlobal::initDialogManager();
+
+    /*init appController */
+    DFMGlobal::initAppcontroller();
+
+    /*init iconProvider */
+    DFMGlobal::initIconProvider();
+
+    /*init fileService */
+    DFMGlobal::initFileService();
+
+    /*init deviceListener */
+    DFMGlobal::initDeviceListener();
+
+    /*init mimeAppsManager*/
+    DFMGlobal::initMimesAppsManager();
+
+    /*init systemPathMnager */
+    DFMGlobal::initSystemPathManager();
+
+    /*init mimeTypeDisplayManager */
+    DFMGlobal::initMimeTypeDisplayManager();
+
+    /*init thumbnailManager */
+    DFMGlobal::initThumbnailManager();
+
+    /*init networkManager */
+    DFMGlobal::initNetworkManager();
+
+    /*init gvfsMountClient */
+    DFMGlobal::initGvfsMountClient();
+
+    /*init secretManger */
+    DFMGlobal::initSecretManager();
+
+    /*init userShareManager */
+    DFMGlobal::initUserShareManager();
 
 #if QT_VERSION_MINOR < 6
     /// fix Qt drag drop to google chrome bug
