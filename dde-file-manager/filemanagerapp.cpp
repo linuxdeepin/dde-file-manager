@@ -23,6 +23,7 @@
 #include "interfaces/dfmstandardpaths.h"
 #include "models/trashdesktopfileinfo.h"
 #include "models/computerdesktopfileinfo.h"
+#include "interfaces/dfileservices.h"
 
 #if QT_VERSION_MINOR < 6
 #include "xdnd/xdndworkaround.h"
@@ -116,6 +117,9 @@ void FileManagerApp::initApp()
 
     /*init userShareManager */
     DFMGlobal::initUserShareManager();
+
+    /*init controllers for different scheme*/
+    fileService->initHandlersByCreators();
 
 #if QT_VERSION_MINOR < 6
     /// fix Qt drag drop to google chrome bug
