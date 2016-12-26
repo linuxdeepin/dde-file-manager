@@ -160,6 +160,33 @@ qint64 FileUtils::totalSize(const DUrlList &files) {
   return total;
 }
 
+qint64 FileUtils::totalSize(const DUrlList &files, const qint64 &maxLimit, bool &isInLimit)
+{
+    qint64 total = 1;
+    foreach (QUrl url, files) {
+      QFileInfo file = url.path();
+      if (file.isFile()) total += file.size();
+      if(total > maxLimit){
+          isInLimit = false;
+          return total;
+      }
+      else {
+        QDirIterator it(url.path(), QDir::AllEntries | QDir::System
+                        | QDir::NoDotAndDotDot | QDir::NoSymLinks
+                        | QDir::Hidden, QDirIterator::Subdirectories);
+        while (it.hasNext()) {
+          it.next();
+          total += it.fileInfo().size();
+          if(total > maxLimit){
+              isInLimit = false;
+              return total;
+          }
+        }
+      }
+    }
+    return total;
+}
+
 bool FileUtils::isArchive(const QString &path)
 {
     QFileInfo f(path);
