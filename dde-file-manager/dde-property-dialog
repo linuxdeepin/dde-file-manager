@@ -12,7 +12,7 @@ paths=\"\";
 if [[ "$process" == ""&&"$processd" == "" ]]; then
     dde-file-manager -p "$@";
 else
-    for path in $@;
+    for path in "$@";
      do
         paths=$paths,\"$path\";
     done;
