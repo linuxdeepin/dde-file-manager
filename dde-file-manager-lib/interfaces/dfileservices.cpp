@@ -66,6 +66,7 @@ class DFileServicePrivate
 public:
     static QMultiHash<const HandlerType, DAbstractFileController*> controllerHash;
     static QHash<const DAbstractFileController*, HandlerType> handlerHash;
+    static QMultiHash<const HandlerType, HandlerCreatorType> controllerCreatorHash;
 
     DFileService::FileOperatorTypes whitelist;
     DFileService::FileOperatorTypes blacklist;
@@ -74,7 +75,7 @@ public:
 
 QMultiHash<const HandlerType, DAbstractFileController*> DFileServicePrivate::controllerHash;
 QHash<const DAbstractFileController*, HandlerType> DFileServicePrivate::handlerHash;
-QMultiHash<const HandlerType, HandlerCreatorType> DFileService::m_controllerCreatorHash;
+QMultiHash<const HandlerType, HandlerCreatorType> DFileServicePrivate::controllerCreatorHash;
 
 DFileService::DFileService(QObject *parent)
     : QObject(parent)
@@ -91,6 +92,35 @@ DFileService::~DFileService()
 
 }
 
+bool DFileService::isRegisted(const QString &scheme, const QString &host, const std::type_info &info)
+{
+    const HandlerType &type = HandlerType(scheme, host);
+
+    foreach (const HandlerCreatorType &value, DFileServicePrivate::controllerCreatorHash.values(type)) {
+        if (value.first == info.name())
+            return true;
+    }
+
+    foreach (const DAbstractFileController *controller, DFileServicePrivate::controllerHash.values(type)) {
+        if (typeid(*controller) == info)
+            return true;
+    }
+
+    return false;
+}
+
+void DFileService::initHandlersByCreators()
+{
+    QMultiHash<const HandlerType, HandlerCreatorType>::const_iterator begin = DFileServicePrivate::controllerCreatorHash.constBegin();
+
+    while (begin != DFileServicePrivate::controllerCreatorHash.constEnd()) {
+        setFileUrlHandler(begin.key().first, begin.key().second, (begin.value().second)());
+        ++begin;
+    }
+
+    DFileServicePrivate::controllerCreatorHash.clear();
+}
+
 DFileService *DFileService::instance()
 {
     static DFileService services;
@@ -98,16 +128,25 @@ DFileService *DFileService::instance()
     return &services;
 }
 
-void DFileService::setFileUrlHandler(const QString &scheme, const QString &host,
+bool DFileService::setFileUrlHandler(const QString &scheme, const QString &host,
                                      DAbstractFileController *controller)
 {
-    if(DFileServicePrivate::handlerHash.contains(controller))
-        return;
+    if (DFileServicePrivate::handlerHash.contains(controller))
+        return true;
 
     const HandlerType &type = HandlerType(scheme, host);
 
+    foreach (const DAbstractFileController *value, DFileServicePrivate::controllerHash.values(type)) {
+        if (typeid(*value) == typeid(*controller)) {
+            controller->deleteLater();
+            return false;
+        }
+    }
+
     DFileServicePrivate::handlerHash[controller] = type;
     DFileServicePrivate::controllerHash.insertMulti(type, controller);
+
+    return true;
 }
 
 void DFileService::unsetFileUrlHandler(DAbstractFileController *controller)
@@ -123,7 +162,7 @@ void DFileService::clearFileUrlHandler(const QString &scheme, const QString &hos
     const HandlerType handler(scheme, host);
 
     DFileServicePrivate::controllerHash.remove(handler);
-    m_controllerCreatorHash.remove(handler);
+    DFileServicePrivate::controllerCreatorHash.remove(handler);
 }
 
 void DFileService::setFileOperatorWhitelist(FileOperatorTypes list)
@@ -674,10 +713,11 @@ QList<DAbstractFileController*> DFileService::getHandlerTypeByUrl(const DUrl &fi
                                                                  bool ignoreHost, bool ignoreScheme)
 {
     HandlerType handlerType(ignoreScheme ? "" : fileUrl.scheme(), ignoreHost ? "" : fileUrl.path());
-    if(m_controllerCreatorHash.contains(handlerType)) {
+
+    if (DFileServicePrivate::controllerCreatorHash.contains(handlerType)) {
         QList<DAbstractFileController*> list = DFileServicePrivate::controllerHash.values(handlerType);
 
-        for(const HandlerCreatorType &creator : m_controllerCreatorHash.values(handlerType)) {
+        for (const HandlerCreatorType &creator : DFileServicePrivate::controllerCreatorHash.values(handlerType)) {
             DAbstractFileController *controller = (creator.second)();
 
             setFileUrlHandler(handlerType.first, handlerType.second, controller);
@@ -685,12 +725,10 @@ QList<DAbstractFileController*> DFileService::getHandlerTypeByUrl(const DUrl &fi
             list << controller;
         }
 
-        m_controllerCreatorHash.remove(handlerType);
-
-        return list;
-    } else {
-        return DFileServicePrivate::controllerHash.values(handlerType);
+        DFileServicePrivate::controllerCreatorHash.remove(handlerType);
     }
+
+    return DFileServicePrivate::controllerHash.values(handlerType);
 }
 
 QString DFileService::getSymlinkFileName(const DUrl &fileUrl, const QDir &targetDir)
@@ -733,6 +771,11 @@ QString DFileService::getSymlinkFileName(const DUrl &fileUrl, const QDir &target
     }
 
     return QString();
+}
+
+void DFileService::insertToCreatorHash(const HandlerType &type, const HandlerCreatorType &creator)
+{
+    DFileServicePrivate::controllerCreatorHash.insertMulti(type, creator);
 }
 
 void DFileService::openUrl(const DFMEvent &event) const

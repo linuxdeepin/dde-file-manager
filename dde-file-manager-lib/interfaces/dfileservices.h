@@ -54,22 +54,32 @@ public:
     template <class T>
     static void dRegisterUrlHandler(const QString &scheme, const QString &host)
     {
-        foreach (const HandlerCreatorType &value, m_controllerCreatorHash.values(HandlerType(scheme, host))) {
-            if (value.first == typeid(T).name())
-                return;
-        }
+        if (isRegisted<T>(scheme, host))
+            return;
 
-        m_controllerCreatorHash.insertMulti(HandlerType(scheme, host), HandlerCreatorType(typeid(T).name(), [=] {
+        insertToCreatorHash(HandlerType(scheme, host), HandlerCreatorType(typeid(T).name(), [=] {
             return (DAbstractFileController*)new T(instance());
         }));
     }
+    static bool isRegisted(const QString &scheme, const QString &host, const std::type_info &info);
+    template <class T>
+    static bool isRegisted(const QString &scheme, const QString &host)
+    {
+        return isRegisted(scheme, host, typeid(T));
+    }
+
+    static void initHandlersByCreators();
 
     static DFileService *instance();
 
-    static void setFileUrlHandler(const QString &scheme, const QString &host,
+    static bool setFileUrlHandler(const QString &scheme, const QString &host,
                                   DAbstractFileController *controller);
     static void unsetFileUrlHandler(DAbstractFileController *controller);
     static void clearFileUrlHandler(const QString &scheme, const QString &host);
+
+    static QList<DAbstractFileController*> getHandlerTypeByUrl(const DUrl &fileUrl,
+                                                               bool ignoreHost = false,
+                                                               bool ignoreScheme = false);
 
     void setFileOperatorWhitelist(FileOperatorTypes list);
     FileOperatorTypes fileOperatorWhitelist() const;
@@ -129,12 +139,9 @@ private slots:
 private:
     explicit DFileService(QObject *parent = 0);
     ~DFileService();
-    static QList<DAbstractFileController*> getHandlerTypeByUrl(const DUrl &fileUrl,
-                                                              bool ignoreHost = false,
-                                                              bool ignoreScheme = false);
-    static QString getSymlinkFileName(const DUrl &fileUrl, const QDir &targetDir = QDir());
 
-    static QMultiHash<const HandlerType, HandlerCreatorType> m_controllerCreatorHash;
+    static QString getSymlinkFileName(const DUrl &fileUrl, const QDir &targetDir = QDir());
+    static void insertToCreatorHash(const HandlerType &type, const HandlerCreatorType &creator);
 
     QScopedPointer<DFileServicePrivate> d_ptr;
     Q_DECLARE_PRIVATE(DFileService)
