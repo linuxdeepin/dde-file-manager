@@ -27,6 +27,7 @@ public:
     void initCloseIndicatorDialog();
     void initConnect();
     QPoint getPerportyPos(int dialogWidth, int dialogHeight, int count, int index);
+    bool isTaskDialogEmpty();
 signals:
 
 public slots:

@@ -82,7 +82,6 @@ void DialogManager::initConnect()
     connect(fileSignalManager, &FileSignalManager::requestAbortJob, this, &DialogManager::abortJobByDestinationUrl);
 
     connect(m_taskDialog, &DTaskDialog::conflictRepsonseConfirmed, this, &DialogManager::handleConflictRepsonseConfirmed);
-    connect(m_taskDialog, &DTaskDialog::closed, fileSignalManager, &FileSignalManager::requestQuitApplication);
 
     connect(m_taskDialog, &DTaskDialog::abortTask, this, &DialogManager::abortJob);
     connect(m_closeIndicatorDialog, &CloseAllDialogIndicator::allClosed, this, &DialogManager::closeAllPropertyDialog);
@@ -148,6 +147,13 @@ QPoint DialogManager::getPerportyPos(int dialogWidth, int dialogHeight, int coun
     y = (desktopHeight - dialogsHeight) / 2 + (index / numberPerRow) * SpaceHeight;
 
     return QPoint(x, y) + cursor_screen->geometry().topLeft();
+}
+
+bool DialogManager::isTaskDialogEmpty()
+{
+    if (m_taskDialog->getTaskListWidget()->count() == 0)
+        return true;
+    return false;
 }
 
 void DialogManager::addJob(FileJob *job)

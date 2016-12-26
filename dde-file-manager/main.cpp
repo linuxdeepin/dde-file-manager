@@ -77,6 +77,7 @@ int main(int argc, char *argv[])
     app.setApplicationName(QMAKE_TARGET);
     app.setApplicationVersion(QMAKE_VERSION);
     app.loadTranslator();
+    app.setQuitOnLastWindowClosed(false);
 
     DFMGlobal::installTranslator();
     DThemeManager::instance()->setTheme("light");
@@ -128,6 +129,13 @@ int main(int argc, char *argv[])
             }
         }else{
             fileManagerApp;
+#ifdef AUTO_RESTART_DEAMON
+            QWidget w;
+            w.setWindowFlags(Qt::FramelessWindowHint);
+            w.setAttribute(Qt::WA_TranslucentBackground);
+            w.resize(0, 0);
+            w.show();
+#endif
         }
 
         if(isShowPropertyRequest){

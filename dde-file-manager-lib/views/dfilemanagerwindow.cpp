@@ -456,6 +456,7 @@ void DFileManagerWindow::closeEvent(QCloseEvent *event)
 {
     emit aboutToClose();
     DMainWindow::closeEvent(event);
+    emit fileSignalManager->requestQuitApplication();
 }
 
 void DFileManagerWindow::mouseDoubleClickEvent(QMouseEvent *event)
