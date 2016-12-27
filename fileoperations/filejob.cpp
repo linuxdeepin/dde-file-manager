@@ -2,6 +2,11 @@
 
 #include "shutil/fileutils.h"
 #include "interfaces/dfmstandardpaths.h"
+#include "../deviceinfo/udiskdeviceinfo.h"
+#include "../deviceinfo/udisklistener.h"
+#include "../app/define.h"
+#include "../widgets/singleton.h"
+#include "../interfaces/dfmglobal.h"
 
 #include <QFile>
 #include <QThread>
@@ -13,6 +18,7 @@
 #include <QProcess>
 #include <QCryptographicHash>
 #include <QMetaEnum>
+#include <QStorageInfo>
 
 #include <fcntl.h>
 #include <unistd.h>
@@ -189,7 +195,15 @@ DUrlList FileJob::doMove(const DUrlList &files, const DUrl &destination)
 DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
 {
     qDebug() << "Do file operation is started" << m_jobDetail;
-    m_totalSize = FileUtils::totalSize(files);
+
+    jobAdded();
+    const bool diskSpaceAvailable = checkDiskSpaceAvailable(files, destination);
+    if(!diskSpaceAvailable){
+        emit requestNoEnoughSpaceDialogShowed();
+        jobRemoved();
+        return DUrlList();
+    }
+
     jobPrepared();
 
     DUrlList list;
@@ -502,6 +516,8 @@ void FileJob::jobConflicted()
     jobDataDetail.insert("file", m_srcFileName);
     jobDataDetail.insert("progress", m_progress);
     jobDataDetail.insert("destination", m_tarDirName);
+    jobDataDetail.insert("sourcePath",m_srcPath);
+    jobDataDetail.insert("targetPath", m_tarPath);
     emit requestJobDataUpdated(m_jobDetail, jobDataDetail);
     emit requestConflictDialogShowed(m_jobDetail);
     m_status = Paused;
@@ -1284,4 +1300,37 @@ bool FileJob::writeTrashInfo(const QString &fileBaseName, const QString &path, c
     }
 
     return size > 0;
+}
+
+bool FileJob::checkDiskSpaceAvailable(const DUrlList &files, const DUrl &destination)
+{
+    UDiskDeviceInfoPointer info = deviceListener->getDeviceByPath(destination.path()); // get disk info from mount point
+    if(!info)
+        info = deviceListener->getDeviceByFilePath(destination.path()); // get disk infor from mount mount point sub path
+
+    qint64 freeBytes;
+    if(!info)
+        freeBytes = QStorageInfo(destination.path()).bytesFree();
+    else
+        freeBytes = info->getFree();
+
+    bool isInLimit = true;
+    QMap<QString, QString> jobDataDetail;
+
+    jobDataDetail.insert("status", "calculating");
+    jobDataDetail.insert("file", files.first().fileName());
+    jobDataDetail.insert("progress", m_progress);
+    jobDataDetail.insert("destination", destination.fileName());
+    emit requestJobDataUpdated(m_jobDetail, jobDataDetail);
+
+    //calculate files's sizes
+    m_totalSize = FileUtils::totalSize(files, freeBytes, isInLimit);
+
+    jobDataDetail["status"] = "working";
+    emit requestJobDataUpdated(m_jobDetail, jobDataDetail);
+
+    if(!isInLimit)
+        qDebug() << QString ("Can't copy or move files to target disk, disk free: %1MB").arg(FileUtils::formatSize(freeBytes));
+
+    return isInLimit;
 }
