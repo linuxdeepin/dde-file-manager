@@ -518,9 +518,9 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
     label_rect.setTop(icon_rect.bottom() + TEXT_PADDING + ICON_MODE_ICON_SPACING);
 
     QStyleOptionViewItem opt = option;
-    initStyleOption(&opt, index);
+//    initStyleOption(&opt, index);
 
-    bool isSelected = (opt.state & QStyle::State_Selected) && opt.showDecorationSelected;
+    bool isSelected = parent()->isSelected(index) && opt.showDecorationSelected;
     /// if has selected show all file name else show elide file name.
     bool singleSelected = parent()->selectedIndexsCount() < 2;
 
