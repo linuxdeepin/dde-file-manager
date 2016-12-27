@@ -182,8 +182,6 @@ void SingleApplication::readData()
         qDebug() << url << isNewWindow;
         emit fileSignalManager->requestOpenNewWindowByUrl(url, isNewWindow);
     }
-
-    emit fileSignalManager->requestOpenNewWindowByUrl(url, isNewWindow);
 }
 
 void SingleApplication::closeServer()
