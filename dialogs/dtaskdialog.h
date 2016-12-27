@@ -2,6 +2,7 @@
 #define DTASKDIALOG_H
 
 #include "dmoveablewidget.h"
+#include "circleprogressanimatepad.h"
 #include <dcircleprogress.h>
 #include <QLabel>
 #include <QListWidget>
@@ -73,6 +74,7 @@ private:
     QFrame* m_buttonFrame=NULL;
     QCheckBox* m_checkBox=NULL;
     QPushButton* m_enterButton=NULL;
+    CircleProgressAnimatePad* m_animatePad;
 };
 
 

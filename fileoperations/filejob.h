@@ -87,6 +87,9 @@ signals:
     /*copy/move job tip dialog show when src and target are same  */
     void requestCopyMoveToSelfDialogShowed(const QMap<QString, QString>& jobDetail);
 
+    /*when target disk has no enough storage space for job needs, show dialog for tip*/
+    void requestNoEnoughSpaceDialogShowed();
+
     void progressPercent(int value);
     void error(QString content);
     void result(QString content);
@@ -157,6 +160,8 @@ private:
     bool moveFileToTrash(const QString &file, QString *targetPath = 0);
     bool writeTrashInfo(const QString &fileBaseName, const QString &path, const QString &time);
 
+    //check disk space available before do copy/move job
+    bool checkDiskSpaceAvailable(const DUrlList& files, const DUrl& destination);
     QString getNotExistsTrashFileName(const QString &fileName);
 };
 

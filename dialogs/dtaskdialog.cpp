@@ -26,17 +26,17 @@ MoveCopyTaskWidget::MoveCopyTaskWidget(const QMap<QString, QString> &jobDetail, 
 }
 
 void MoveCopyTaskWidget::initUI(){
-    m_cirleWidget = new DCircleProgress;
-    m_cirleWidget->setObjectName("DCircleProgress");
-    m_cirleWidget->setFixedSize(32, 32);
-    m_cirleWidget->setBackgroundColor(QColor(20, 20, 20));
-    m_cirleWidget->setChunkColor(QColor("#3cadff"));
-    m_cirleWidget->setLineWidth(2);
-    m_cirleWidget->setValue(0);
     m_closeButton = new QPushButton;
     m_closeButton->setObjectName("CloseButton");
     m_closeButton->setFixedSize(27, 23);
     m_closeButton->setAttribute(Qt::WA_NoMousePropagation);
+
+    m_animatePad = new CircleProgressAnimatePad;
+    m_animatePad->setFixedSize(54, 54);
+    m_animatePad->setBackgroundColor(QColor("#E9E9E9"));
+    m_animatePad->setChunkColor(QColor("#3cadff"));
+    m_animatePad->setLineWidth(3);
+    m_animatePad->setFontSize(14);
 
     m_messageLabel = new QLabel;
     m_messageLabel->setFixedHeight(32);
@@ -70,11 +70,12 @@ void MoveCopyTaskWidget::initUI(){
     rightLayout->setContentsMargins(0, 0, 0, 0);
 
     QHBoxLayout* mainLayout = new QHBoxLayout;
-    mainLayout->addWidget(m_cirleWidget);
+    mainLayout->addWidget(m_animatePad);
     mainLayout->addSpacing(10);
     mainLayout->addLayout(rightLayout);
     mainLayout->setContentsMargins(5, 0, 5, 0);
     setLayout(mainLayout);
+    setFixedHeight(80);
 }
 
 void MoveCopyTaskWidget::initButtonFrame(){
@@ -131,7 +132,7 @@ void MoveCopyTaskWidget::initConnect(){
 }
 
 void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data){
-    QString file, destination, speed, remainTime, progress;
+    QString file, destination, speed, remainTime, progress, status;
     QString message, tipMessage;
     if (data.contains("file")){
         file = data.value("file");
@@ -149,6 +150,11 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data){
     if (data.contains("progress")){
         progress = data.value("progress");
     }
+
+    if(data.contains("status"))
+        status = data.value("status");
+
+
 
     int fileMaxWidth = 180;
     int destinationMaxWidth = 90;
@@ -187,6 +193,13 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data){
             message = tr("<span style=\"color: #3cadff\"> %1 </span> is being deleted ").arg(file);
             tipMessage = speedTime.arg(speed, remainTime);
         }
+        if(status == "calculating"){
+            tipMessage = tr("Calculating space, please wait");
+            m_animatePad->startAnimation();
+        } else{
+            m_animatePad->stopAnimation();
+        }
+
         setMessage(message);
         setTipMessage(tipMessage);
     }
@@ -249,14 +262,12 @@ int MoveCopyTaskWidget::getProgress(){
 
 void MoveCopyTaskWidget::setProgress(int value){
     m_progress = value;
-    m_cirleWidget->setValue(value);
-    m_cirleWidget->setText(QString("%1%").arg(QString::number(value)));
+    m_animatePad->setCurrentValue(value);
 }
 
 void MoveCopyTaskWidget::setProgress(QString value){
     m_progress = value.toInt();
-    m_cirleWidget->setValue(m_progress);
-    m_cirleWidget->setText(QString("%1%").arg(value));
+    m_animatePad->setCurrentValue(value.toInt());
 }
 
 float MoveCopyTaskWidget::getSpeed(){
