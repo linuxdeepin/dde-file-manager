@@ -16,6 +16,8 @@
 #include <dlineedit.h>
 #include <anchors.h>
 
+DWIDGET_USE_NAMESPACE
+
 DStatusBar::DStatusBar(QWidget *parent)
     : QFrame(parent)
 {
@@ -101,7 +103,12 @@ void DStatusBar::setMode(DStatusBar::Mode mode)
         m_layout->setSpacing(14);
         m_layout->setContentsMargins(0, 0, 4, 0);
 
-        AnchorsBase::setAnchor(m_scaleSlider, Qt::AnchorRight, this, Qt::AnchorRight);
+        Anchors<QSlider> sliderAnchor(m_scaleSlider);
+
+        sliderAnchor.setAnchor(Qt::AnchorRight, this, Qt::AnchorRight);
+        sliderAnchor.setAnchor(Qt::AnchorTop, this, Qt::AnchorTop);
+        sliderAnchor.setRightMargin(20);
+        sliderAnchor.setTopMargin(2);
 
         setStyleSheet("QFrame{"
                       "background-color: white;"
