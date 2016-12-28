@@ -43,6 +43,8 @@ public:
     QLineEdit *lineEdit() const;
     QComboBox *comboBox() const;
 
+    QSize sizeHint() const Q_DECL_OVERRIDE;
+
 public slots:
     void itemSelected(const DFMEvent &event, int number);
     void itemCounted(const DFMEvent &event, int number);

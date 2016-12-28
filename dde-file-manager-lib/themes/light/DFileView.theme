@@ -71,17 +71,6 @@ QHeaderView::section {
     margin-bottom: 1px;
 }
 
-QHeaderView::down-arrow {
-    image: url(:/icons/images/icons/down.png);
-    padding-bottom: 1px;
-}
-
-QHeaderView::up-arrow {
-    image: url(:/icons/images/icons/up.png);
-    padding-bottom: 1px;
-}
-
-
 QHeaderView::section:checked {
 
 }
