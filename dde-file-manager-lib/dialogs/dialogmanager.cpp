@@ -163,6 +163,7 @@ void DialogManager::addJob(FileJob *job)
     emit fileSignalManager->requestStartUpdateJobTimer();
     connect(job, &FileJob::requestJobAdded, m_taskDialog, &DTaskDialog::addTask);
     connect(job, &FileJob::requestJobRemoved, m_taskDialog, &DTaskDialog::delayRemoveTask);
+    connect(job, &FileJob::requestJobRemovedImmediately, m_taskDialog, &DTaskDialog::removeTaskImmediately);
     connect(job, &FileJob::requestJobDataUpdated, m_taskDialog, &DTaskDialog::handleUpdateTaskWidget);
     connect(job, &FileJob::requestAbortTask, m_taskDialog, &DTaskDialog::abortTask);
     connect(job, &FileJob::requestConflictDialogShowed, m_taskDialog, &DTaskDialog::showConflictDiloagByJob);

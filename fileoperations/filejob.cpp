@@ -200,7 +200,7 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
     const bool diskSpaceAvailable = checkDiskSpaceAvailable(files, destination);
     if(!diskSpaceAvailable){
         emit requestNoEnoughSpaceDialogShowed();
-        jobRemoved();
+        emit requestJobRemovedImmediately(m_jobDetail);
         return DUrlList();
     }
 
@@ -473,7 +473,6 @@ void FileJob::jobUpdated()
     jobDataDetail.insert("destination", m_tarDirName);
     m_progress = jobDataDetail.value("progress");
     emit requestJobDataUpdated(m_jobDetail, jobDataDetail);
-    qDebug() << jobDataDetail;
 
     m_lastMsec = m_timer.elapsed();
     m_bytesPerSec = 0;
@@ -1330,7 +1329,7 @@ bool FileJob::checkDiskSpaceAvailable(const DUrlList &files, const DUrl &destina
     emit requestJobDataUpdated(m_jobDetail, jobDataDetail);
 
     if(!isInLimit)
-        qDebug() << QString ("Can't copy or move files to target disk, disk free: %1MB").arg(FileUtils::formatSize(freeBytes));
+        qDebug() << QString ("Can't copy or move files to target disk, disk free: %1").arg(FileUtils::formatSize(freeBytes));
 
     return isInLimit;
 }
