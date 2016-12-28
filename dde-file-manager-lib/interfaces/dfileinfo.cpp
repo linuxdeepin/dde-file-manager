@@ -25,26 +25,26 @@ DFM_USE_NAMESPACE
 
 #define REQUEST_THUMBNAIL_DEALY 500
 
-DFileInfoPrivate::DFileInfoPrivate(const DUrl &url, DFileInfo *qq)
-    : DAbstractFileInfoPrivate (url, qq)
+DFileInfoPrivate::DFileInfoPrivate(const DUrl &url, DFileInfo *qq, bool hasCache)
+    : DAbstractFileInfoPrivate (url, qq, hasCache)
 {
     fileInfo.setFile(url.toLocalFile());
 }
 
-DFileInfo::DFileInfo(const QString &filePath)
-    : DFileInfo(DUrl::fromLocalFile(filePath))
+DFileInfo::DFileInfo(const QString &filePath, bool hasCache)
+    : DFileInfo(DUrl::fromLocalFile(filePath), hasCache)
 {
 
 }
 
-DFileInfo::DFileInfo(const DUrl &fileUrl)
-    : DAbstractFileInfo(*new DFileInfoPrivate(fileUrl, this))
+DFileInfo::DFileInfo(const DUrl &fileUrl, bool hasCache)
+    : DAbstractFileInfo(*new DFileInfoPrivate(fileUrl, this, hasCache))
 {
 
 }
 
-DFileInfo::DFileInfo(const QFileInfo &fileInfo)
-    : DFileInfo(DUrl::fromLocalFile(fileInfo.absoluteFilePath()))
+DFileInfo::DFileInfo(const QFileInfo &fileInfo, bool hasCache)
+    : DFileInfo(DUrl::fromLocalFile(fileInfo.absoluteFilePath()), hasCache)
 {
 
 }

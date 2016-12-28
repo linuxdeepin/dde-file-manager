@@ -7,9 +7,9 @@ class DFileInfoPrivate;
 class DFileInfo : public DAbstractFileInfo
 {
 public:
-    explicit DFileInfo(const QString& filePath);
-    explicit DFileInfo(const DUrl& fileUrl);
-    explicit DFileInfo(const QFileInfo &fileInfo);
+    explicit DFileInfo(const QString& filePath, bool hasCache = true);
+    explicit DFileInfo(const DUrl& fileUrl, bool hasCache = true);
+    explicit DFileInfo(const QFileInfo &fileInfo, bool hasCache = true);
 
     static bool exists(const DUrl &fileUrl);
     static QMimeType mimeType(const QString &filePath);

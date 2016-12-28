@@ -10,7 +10,7 @@
 #include <unistd.h>
 
 UDiskDeviceInfo::UDiskDeviceInfo()
-    : DFileInfo("")
+    : DFileInfo("", false)
 {
 
 }
@@ -22,19 +22,19 @@ UDiskDeviceInfo::UDiskDeviceInfo(UDiskDeviceInfoPointer info)
 }
 
 UDiskDeviceInfo::UDiskDeviceInfo(const DUrl &url)
-    : DFileInfo(url)
+    : DFileInfo(url, false)
 {
 
 }
 
 UDiskDeviceInfo::UDiskDeviceInfo(const QString &url)
-    : DFileInfo(url)
+    : DFileInfo(url, false)
 {
 
 }
 
 UDiskDeviceInfo::UDiskDeviceInfo(DiskInfo diskInfo)
-    : DFileInfo(({DUrl url = getMountPointUrl(diskInfo); url.setQuery(diskInfo.ID); url;}))
+    : DFileInfo(({DUrl url = getMountPointUrl(diskInfo); url.setQuery(diskInfo.ID); url;}), false)
 {
     m_diskInfo = diskInfo;
 }

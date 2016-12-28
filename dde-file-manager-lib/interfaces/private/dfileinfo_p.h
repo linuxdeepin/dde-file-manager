@@ -20,7 +20,7 @@ class DFileInfo;
 class DFileInfoPrivate : public DAbstractFileInfoPrivate
 {
 public:
-    DFileInfoPrivate(const DUrl &fileUrl, DFileInfo *qq);
+    DFileInfoPrivate(const DUrl &fileUrl, DFileInfo *qq, bool hasCache = true);
 
     QFileInfo fileInfo;
     mutable QMimeType mimeType;

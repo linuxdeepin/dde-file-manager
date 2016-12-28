@@ -57,11 +57,13 @@ bool sort(const DAbstractFileInfoPointer &info1, const DAbstractFileInfoPointer 
 
 QMap<DUrl, DAbstractFileInfo*> DAbstractFileInfoPrivate::urlToFileInfoMap;
 
-DAbstractFileInfoPrivate::DAbstractFileInfoPrivate(const DUrl &url, DAbstractFileInfo *qq)
+DAbstractFileInfoPrivate::DAbstractFileInfoPrivate(const DUrl &url, DAbstractFileInfo *qq, bool hasCache)
     : q_ptr(qq)
     , fileUrl(url)
 {
-    urlToFileInfoMap[url] = qq;
+    if (hasCache) {
+        urlToFileInfoMap[url] = qq;
+    }
 
     FileSortFunction::sortCollator.setNumericMode(true);
     FileSortFunction::sortCollator.setCaseSensitivity(Qt::CaseInsensitive);
@@ -90,8 +92,8 @@ DAbstractFileInfo *DAbstractFileInfoPrivate::getFileInfo(const DUrl &fileUrl)
     return urlToFileInfoMap.value(fileUrl);
 }
 
-DAbstractFileInfo::DAbstractFileInfo(const DUrl &url)
-    : d_ptr(new DAbstractFileInfoPrivate(url, this))
+DAbstractFileInfo::DAbstractFileInfo(const DUrl &url, bool hasCache)
+    : d_ptr(new DAbstractFileInfoPrivate(url, this, hasCache))
 {
 
 }
