@@ -133,7 +133,14 @@ void AppController::actionOpenDiskInNewTab(const DFMEvent &event)
         setEventKey(OpenNewTab);
         deviceListener->addSubscriber(this);
     }else{
-        emit fileSignalManager->requestOpenInNewTab(event);
+        //FIXME(zccrs): 为了菜单中能卸载/挂载U盘，url中被设置了query字段，今后应该将此字段移动到继承的FMEvent中
+        DFMEvent newEvent = event;
+        DUrl newUrl = fileUrl;
+
+        newUrl.setQuery(QString());
+        newEvent << newUrl;
+
+        emit fileSignalManager->requestOpenInNewTab(newEvent);
     }
 }
 
@@ -152,7 +159,14 @@ void AppController::actionOpenDiskInNewWindow(const DFMEvent &event)
         setEventKey(OpenNewWindow);
         deviceListener->addSubscriber(this);
     }else{
-        actionOpenInNewWindow(event);
+        //FIXME(zccrs): 为了菜单中能卸载/挂载U盘，url中被设置了query字段，今后应该将此字段移动到继承的FMEvent中
+        DFMEvent newEvent = event;
+        DUrl newUrl = fileUrl;
+
+        newUrl.setQuery(QString());
+        newEvent << (DUrlList() << newUrl);
+
+        actionOpenInNewWindow(newEvent);
     }
 }
 
