@@ -102,6 +102,7 @@ public slots:
     void addConflictTask(const QMap<QString, QString>& jobDetail);
     void handleTaskClose(const QMap<QString, QString>& jobDetail);
     void removeTask(const QMap<QString, QString>& jobDetail);
+    void removeTaskImmediately(const QMap<QString, QString>& jobDetail);
     void delayRemoveTask(const QMap<QString, QString>& jobDetail);
     void removeTaskByPath(QString jobId);
     void handleUpdateTaskWidget(const QMap<QString, QString>& jobDetail,
