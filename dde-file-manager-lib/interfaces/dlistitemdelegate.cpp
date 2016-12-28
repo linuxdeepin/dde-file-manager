@@ -151,7 +151,7 @@ void DListItemDelegate::paint(QPainter *painter,
         const QString &file_name = DFMGlobal::elideText(index.data(role).toString().remove('\n'), rect.size(),
                                                         painter->fontMetrics(), QTextOption::NoWrap, Qt::ElideRight);
 
-        painter->setPen(opt.palette.color(QPalette::Text));
+        painter->setPen(opt.palette.color(drawBackground ? QPalette::BrightText : QPalette::Text));
         painter->drawText(rect, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()), file_name);
     }
 
