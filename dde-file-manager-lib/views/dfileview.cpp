@@ -70,10 +70,6 @@ public:
     DFileView::ViewMode defaultViewMode = DFileView::IconMode;
     DFileView::ViewMode currentViewMode = DFileView::IconMode;
 
-    QRect selectedGeometry;
-    QRect drawSelectionGeometry;
-    bool enableDrawSelectionRect = false;
-    bool selectionRectVisible = true;
     bool dragEnabled = true;
 
     int horizontalOffset = 0;
@@ -959,15 +955,6 @@ void DFileView::mousePressEvent(QMouseEvent *event)
                 itemDelegate()->hideNotEditingIndexWidget();
                 clearSelection();
             }
-
-            if (canShowSelectionRect()) {
-                d->enableDrawSelectionRect = true;
-            }
-
-            d->selectedGeometry.setTop(event->pos().y() + verticalOffset());
-            d->selectedGeometry.setLeft(event->pos().x() + horizontalOffset());
-
-            connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &DFileView::updateSelectionRect);
         } else if (DFMGlobal::keyCtrlIsPressed()) {
             const QModelIndex &index = indexAt(event->pos());
 
@@ -991,37 +978,18 @@ void DFileView::mousePressEvent(QMouseEvent *event)
     }
 }
 
-void DFileView::mouseMoveEvent(QMouseEvent *event)
-{
-    Q_D(const DFileView);
-
-    if (dragEnabled() || event->buttons() != Qt::LeftButton
-            || selectionMode() == NoSelection || selectionMode() == SingleSelection) {
-        return DListView::mouseMoveEvent(event);
-    }
-
-    updateSelectionRect();
-    doAutoScroll();
-}
-
 void DFileView::mouseReleaseEvent(QMouseEvent *event)
 {
     D_D(DFileView);
 
     d->dragMoveHoverIndex = QModelIndex();
 
-    disconnect(verticalScrollBar(), &QScrollBar::valueChanged, this, &DFileView::updateSelectionRect);
-
     if (d->mouseLastPressedIndex.isValid() && DFMGlobal::keyCtrlIsPressed()) {
         if (d->mouseLastPressedIndex == indexAt(event->pos()))
             selectionModel()->select(d->mouseLastPressedIndex, QItemSelectionModel::Deselect);
     }
 
-    if (dragEnabled())
-        return DListView::mouseReleaseEvent(event);
-
-    d->enableDrawSelectionRect = false;
-    viewport()->update(d->drawSelectionGeometry);
+    return DListView::mouseReleaseEvent(event);
 }
 
 void DFileView::updateModelActiveIndex()
@@ -1309,10 +1277,11 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
     }
 
     if (flags == (QItemSelectionModel::Current|QItemSelectionModel::Rows|QItemSelectionModel::ClearAndSelect)) {
-        QRect tmp_rect;
+        QRect tmp_rect = rect;
 
-        tmp_rect.setCoords(qMin(rect.left(), rect.right()), qMin(rect.top(), rect.bottom()),
-                           qMax(rect.left(), rect.right()), qMax(rect.top(), rect.bottom()));
+        tmp_rect.translate(horizontalOffset(), verticalOffset());
+        tmp_rect.setCoords(qMin(tmp_rect.left(), tmp_rect.right()), qMin(tmp_rect.top(), tmp_rect.bottom()),
+                           qMax(tmp_rect.left(), tmp_rect.right()), qMax(tmp_rect.top(), tmp_rect.bottom()));
 
         const RandeIndexList &list = visibleIndexes(tmp_rect);
 
@@ -1457,21 +1426,6 @@ bool DFileView::event(QEvent *e)
     return DListView::event(e);
 }
 
-void DFileView::paintEvent(QPaintEvent *event)
-{
-    DListView::paintEvent(event);
-
-    Q_D(DFileView);
-
-    if (d->enableDrawSelectionRect) {
-        QPainter pa(viewport());
-
-        pa.fillRect(d->drawSelectionGeometry, QColor(43, 167, 248, 0.3 * 255));
-        pa.setPen(QColor(30, 126, 255, 0.2 * 255));
-        pa.drawRect(d->drawSelectionGeometry.adjusted(0, 0, -1, -1));
-    }
-}
-
 void DFileView::initDelegate()
 {
     D_D(DFileView);
@@ -1500,7 +1454,7 @@ void DFileView::initUI()
     setEditTriggers(QListView::EditKeyPressed | QListView::SelectedClicked);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    DListView::setSelectionRectVisible(false);
+    DListView::setSelectionRectVisible(true);
 
     d->displayAsActionGroup = new QActionGroup(this);
     d->sortByActionGroup = new QActionGroup(this);
@@ -1724,27 +1678,6 @@ void DFileView::clearHeardView()
 void DFileView::clearSelection()
 {
     QListView::clearSelection();
-}
-
-void DFileView::setSelectionRectVisible(bool visible)
-{
-    D_D(DFileView);
-
-    d->selectionRectVisible = visible;
-}
-
-bool DFileView::isSelectionRectVisible() const
-{
-    D_DC(DFileView);
-
-    return d->selectionRectVisible;
-}
-
-bool DFileView::canShowSelectionRect() const
-{
-    D_DC(DFileView);
-
-    return d->selectionRectVisible && selectionMode() != NoSelection && selectionMode() != SingleSelection;
 }
 
 void DFileView::setContentLabel(const QString &text)
@@ -2214,37 +2147,6 @@ void DFileView::updateContentLabel()
     } else {
         setContentLabel(QString());
     }
-}
-
-void DFileView::updateSelectionRect()
-{
-    D_D(DFileView);
-
-    if (dragEnabled() || selectionMode() == NoSelection || selectionMode() == SingleSelection)
-        return;
-
-    QPoint pos = mapFromGlobal(QCursor::pos());
-
-    if (d->enableDrawSelectionRect) {
-        QRect rect;
-        QPoint pressedPos = viewport()->mapToParent(d->selectedGeometry.topLeft());
-
-        pressedPos.setX(pressedPos.x() - horizontalOffset());
-        pressedPos.setY(pressedPos.y() - verticalOffset());
-
-        rect.setCoords(qMin(pressedPos.x(), pos.x()), qMin(pressedPos.y(), pos.y()),
-                       qMax(pos.x(), pressedPos.x()), qMax(pos.y(), pressedPos.y()));
-
-        viewport()->update(d->drawSelectionGeometry);
-        d->drawSelectionGeometry = rect;
-    }
-
-    pos = viewport()->mapFromParent(pos);
-
-    d->selectedGeometry.setBottom(pos.y() + verticalOffset());
-    d->selectedGeometry.setRight(pos.x() + horizontalOffset());
-
-    setSelection(d->selectedGeometry, QItemSelectionModel::Current|QItemSelectionModel::Rows|QItemSelectionModel::ClearAndSelect);
 }
 
 void DFileView::preproccessDropEvent(QDropEvent *event) const
