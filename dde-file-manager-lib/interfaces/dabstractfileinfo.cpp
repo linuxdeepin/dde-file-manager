@@ -75,7 +75,7 @@ DAbstractFileInfoPrivate::~DAbstractFileInfoPrivate()
         urlToFileInfoMap.remove(fileUrl);
 }
 
-void DAbstractFileInfoPrivate::setUrl(const DUrl &url)
+void DAbstractFileInfoPrivate::setUrl(const DUrl &url, bool hasCache)
 {
     if (url == fileUrl)
         return;
@@ -83,7 +83,9 @@ void DAbstractFileInfoPrivate::setUrl(const DUrl &url)
     if (urlToFileInfoMap.value(fileUrl) == q_ptr)
         urlToFileInfoMap.remove(fileUrl);
 
-    urlToFileInfoMap[url] = q_ptr;
+    if (hasCache)
+        urlToFileInfoMap[url] = q_ptr;
+
     fileUrl = url;
 }
 
@@ -1069,5 +1071,5 @@ void DAbstractFileInfo::setUrl(const DUrl &url)
 {
     Q_D(DAbstractFileInfo);
 
-    d->setUrl(url);
+    d->setUrl(url, false);
 }
