@@ -52,7 +52,8 @@ void DStatusBar::initUI()
 
     m_scaleSlider = new QSlider(this);
     m_scaleSlider->setOrientation(Qt::Horizontal);
-    m_scaleSlider->setFixedSize(120,20);
+    m_scaleSlider->adjustSize();
+    m_scaleSlider->setFixedWidth(120);
 
     setFocusPolicy(Qt::NoFocus);
     setLayout(m_layout);
@@ -106,9 +107,8 @@ void DStatusBar::setMode(DStatusBar::Mode mode)
         Anchors<QSlider> sliderAnchor(m_scaleSlider);
 
         sliderAnchor.setAnchor(Qt::AnchorRight, this, Qt::AnchorRight);
-        sliderAnchor.setAnchor(Qt::AnchorTop, this, Qt::AnchorTop);
+        sliderAnchor.setAnchor(Qt::AnchorVerticalCenter, this, Qt::AnchorVerticalCenter);
         sliderAnchor.setRightMargin(20);
-        sliderAnchor.setTopMargin(2);
 
         setStyleSheet("QFrame{"
                       "background-color: white;"
@@ -206,6 +206,15 @@ QLineEdit *DStatusBar::lineEdit() const
 QComboBox *DStatusBar::comboBox() const
 {
     return m_comboBox;
+}
+
+QSize DStatusBar::sizeHint() const
+{
+    QSize size = QFrame::sizeHint();
+
+    size.setHeight(qMax(22, size.height()));
+
+    return size;
 }
 
 void DStatusBar::itemSelected(const DFMEvent &event, int number)
