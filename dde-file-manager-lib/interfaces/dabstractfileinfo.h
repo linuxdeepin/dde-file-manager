@@ -81,7 +81,7 @@ public:
         return "yyyy/MM/dd HH:mm:ss";
     }
 
-    explicit DAbstractFileInfo(const DUrl &url);
+    explicit DAbstractFileInfo(const DUrl &url, bool hasCache = true);
     virtual ~DAbstractFileInfo();
 
     static const DAbstractFileInfoPointer getFileInfo(const DUrl &fileUrl);

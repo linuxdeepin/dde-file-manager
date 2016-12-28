@@ -23,7 +23,7 @@ class TrashFileInfoPrivate : public DAbstractFileInfoPrivate
 {
 public:
     TrashFileInfoPrivate(const DUrl &url, TrashFileInfo *qq)
-        : DAbstractFileInfoPrivate(url, qq) {}
+        : DAbstractFileInfoPrivate(url, qq, true) {}
 
     QString desktopIconName;
     QString displayName;
