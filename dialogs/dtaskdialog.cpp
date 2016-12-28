@@ -523,6 +523,14 @@ void DTaskDialog::removeTask(const QMap<QString, QString> &jobDetail){
     }
 }
 
+void DTaskDialog::removeTaskImmediately(const QMap<QString, QString> &jobDetail)
+{
+    if(m_taskListWidget->count() > 1)
+        delayRemoveTask(jobDetail);
+    else
+        removeTask(jobDetail);
+}
+
 void DTaskDialog::delayRemoveTask(const QMap<QString, QString> &jobDetail)
 {
     QTimer::singleShot(2000, this, [=](){

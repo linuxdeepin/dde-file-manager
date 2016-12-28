@@ -74,6 +74,9 @@ signals:
     /*remove copy/move/delete job to taskdialog when copy/move/delete job finished*/
     void requestJobRemoved(const QMap<QString, QString>& jobDetail);
 
+    /*remove copy/move/delelte job to taskdialog immediately*/
+    void requestJobRemovedImmediately(const QMap<QString, QString>& jobDetail);
+
     /*update copy/move/delete job taskdialog ui*/
     void requestJobDataUpdated(const QMap<QString, QString>& jobDetail,
                            const QMap<QString, QString>& data);
