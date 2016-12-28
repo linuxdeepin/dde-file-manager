@@ -99,9 +99,6 @@ public:
     bool isDropTarget(const QModelIndex &index) const;
     bool dragEnabled() const;
 
-    bool isSelectionRectVisible() const;
-    bool canShowSelectionRect() const;
-
     QStringList nameFilters() const;
     QDir::Filters filters() const;
 
@@ -129,7 +126,6 @@ public slots:
     void clearHeardView();
     void clearSelection();
 
-    void setSelectionRectVisible(bool visible);
     void setContentLabel(const QString &text);
 
     void setMenuActionWhitelist(const QSet<DFMGlobal::MenuAction> &actionList);
@@ -160,7 +156,6 @@ protected:
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
     void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
     void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-    void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void focusInEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
@@ -176,7 +171,6 @@ protected:
     void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight,
                      const QVector<int> &roles = QVector<int>()) Q_DECL_OVERRIDE;
     bool event(QEvent *e) Q_DECL_OVERRIDE;
-    void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
 
     void initDelegate();
     void initUI();
@@ -198,7 +192,6 @@ private:
     void popupHeaderViewContextMenu(const QPoint &pos);
     void onModelStateChanged(int state);
     void updateContentLabel();
-    void updateSelectionRect();
 
     using DListView::setOrientation;
 
