@@ -4,6 +4,7 @@
 
 #include "shutil/properties.h"
 #include "shutil/iconprovider.h"
+#include "interfaces/dfileservices.h"
 
 #include "widgets/singleton.h"
 
@@ -63,6 +64,14 @@ QString DesktopFileInfo::getExec() const
 QString DesktopFileInfo::getIconName() const
 {
     Q_D(const DesktopFileInfo);
+
+     //special handling for trash desktop file which has tash datas
+    if(d->iconName == "user-trash"){
+        const DAbstractFileInfoPointer& info = fileService->createFileInfo(DUrl::fromTrashFile("/"));
+        if(info)
+            if(info->filesCount() > 0)
+                return "user-trash-full";
+    }
 
     return d->iconName;
 }
