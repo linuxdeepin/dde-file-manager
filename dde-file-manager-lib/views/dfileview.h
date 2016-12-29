@@ -97,7 +97,6 @@ public:
     using DListView::updateGeometries;
 
     bool isDropTarget(const QModelIndex &index) const;
-    bool dragEnabled() const;
 
     QStringList nameFilters() const;
     QDir::Filters filters() const;

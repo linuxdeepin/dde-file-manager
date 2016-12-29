@@ -70,8 +70,6 @@ public:
     DFileView::ViewMode defaultViewMode = DFileView::IconMode;
     DFileView::ViewMode currentViewMode = DFileView::IconMode;
 
-    bool dragEnabled = true;
-
     int horizontalOffset = 0;
 
     /// move cursor later selecte index when pressed key shift
@@ -505,13 +503,6 @@ bool DFileView::isDropTarget(const QModelIndex &index) const
     D_DC(DFileView);
 
     return d->dragMoveHoverIndex == index;
-}
-
-bool DFileView::dragEnabled() const
-{
-    Q_D(const DFileView);
-
-    return d->dragEnabled && DListView::dragEnabled();
 }
 
 bool DFileView::cd(const DUrl &url)
@@ -948,12 +939,13 @@ void DFileView::mousePressEvent(QMouseEvent *event)
     case Qt::LeftButton: {
         bool isEmptyArea = d->fileViewHelper->isEmptyArea(event->pos());
 
-        d->dragEnabled = !isEmptyArea;
+        setDragDropMode(DragDrop);
 
         if (isEmptyArea) {
             if (!DFMGlobal::keyCtrlIsPressed()) {
                 itemDelegate()->hideNotEditingIndexWidget();
                 clearSelection();
+                setDragDropMode(DropOnly);
             }
         } else if (DFMGlobal::keyCtrlIsPressed()) {
             const QModelIndex &index = indexAt(event->pos());
