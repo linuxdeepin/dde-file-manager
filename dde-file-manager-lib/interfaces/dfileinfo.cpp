@@ -20,6 +20,7 @@
 #include <QDateTime>
 #include <QDir>
 #include <QMimeDatabase>
+#include <QPainter>
 
 DFM_USE_NAMESPACE
 
@@ -389,7 +390,12 @@ QIcon DFileInfo::fileIcon() const
         const QIcon icon(DThumbnailProvider::instance()->thumbnailFilePath(d->fileInfo, DThumbnailProvider::Large));
 
         if (!icon.isNull()) {
-            d->icon = icon;
+            QPixmap pixmap = icon.pixmap(DThumbnailProvider::Large, DThumbnailProvider::Large);
+            QPainter pa(&pixmap);
+
+            pa.setPen(Qt::gray);
+            pa.drawRect(pixmap.rect().adjusted(0, 0, -1, -1));
+            d->icon.addPixmap(pixmap);
 
             return d->icon;
         }

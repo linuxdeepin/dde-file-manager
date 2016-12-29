@@ -247,7 +247,11 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
             goto _return;
         }
 
-        reader.setScaledSize(reader.size().scaled(size, size, Qt::KeepAspectRatio));
+        const QSize &imageSize = reader.size();
+
+        if (imageSize.width() >= size || imageSize.height() >= size) {
+            reader.setScaledSize(reader.size().scaled(size, size, Qt::KeepAspectRatio));
+        }
 
         if (!reader.read(image.data())) {
             d->errorString = reader.errorString();
