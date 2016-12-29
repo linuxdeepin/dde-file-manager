@@ -28,6 +28,9 @@ QMap<QString, DesktopFile> MimesAppsManager::DesktopObjs = {};
 MimeAppsWorker::MimeAppsWorker(QObject *parent): QObject(parent)
 {
     m_fileSystemWatcher = new QFileSystemWatcher;
+    m_updateCacheTimer = new QTimer(this);
+    m_updateCacheTimer->setInterval(2000);
+    m_updateCacheTimer->setSingleShot(true);
     startWatch();
     initConnect();
 }
@@ -41,6 +44,7 @@ void MimeAppsWorker::initConnect()
 {
     connect(m_fileSystemWatcher, &QFileSystemWatcher::directoryChanged, this, &MimeAppsWorker::handleDirectoryChanged);
     connect(m_fileSystemWatcher, &QFileSystemWatcher::fileChanged, this, &MimeAppsWorker::handleFileChanged);
+    connect(m_updateCacheTimer, &QTimer::timeout, this, &MimeAppsWorker::updateCache);
 }
 
 void MimeAppsWorker::startWatch()
@@ -107,12 +111,14 @@ void MimeAppsWorker::handleDirectoryChanged(const QString &filePath)
 //        MimesAppsManager::DesktopFiles.removeOne(filePath);
 //        MimesAppsManager::DesktopObjs.remove(filePath);
 //    }
-    updateCache();
+//    updateCache();
+    m_updateCacheTimer->start();
 }
 
 void MimeAppsWorker::handleFileChanged(const QString &filePath)
 {
-    updateCache();
+//    updateCache();
+    m_updateCacheTimer->start();
     //for 1.4
 //    DesktopFile desktopFile(filePath);
 //    MimesAppsManager::DesktopObjs.remove(filePath);
