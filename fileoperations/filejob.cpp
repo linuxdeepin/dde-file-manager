@@ -197,32 +197,34 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
     qDebug() << "Do file operation is started" << m_jobDetail;
 
     jobAdded();
-    const bool diskSpaceAvailable = checkDiskSpaceAvailable(files, destination);
-    if(!diskSpaceAvailable){
-        emit requestNoEnoughSpaceDialogShowed();
-        emit requestJobRemovedImmediately(m_jobDetail);
-        return DUrlList();
-    }
-
-    jobPrepared();
 
     DUrlList list;
     QString tarDirPath = destination.toLocalFile();
     QDir tarDir(tarDirPath);
-
     QStorageInfo tarStorageInfo(tarDirPath);
-
-    if(!tarDir.exists())
-    {
-        qDebug() << "Destination must be directory";
-        return list;
-    }
-
     if (files.count() > 0 ){
         QStorageInfo srcStorageInfo(files.at(0).toLocalFile());
         if (srcStorageInfo.rootPath() != tarStorageInfo.rootPath()){
             m_isInSameDisk = false;
         }
+    }
+
+    //No need to check dist usage for moving job in same disk
+    if(!(m_jobType == Move && m_isInSameDisk)){
+        const bool diskSpaceAvailable = checkDiskSpaceAvailable(files, destination);
+        if(!diskSpaceAvailable){
+            emit requestNoEnoughSpaceDialogShowed();
+            emit requestJobRemovedImmediately(m_jobDetail);
+            return DUrlList();
+        }
+    }
+
+    jobPrepared();
+
+    if(!tarDir.exists())
+    {
+        qDebug() << "Destination must be directory";
+        return list;
     }
 
     for(int i = 0; i < files.size(); i++)
