@@ -715,16 +715,14 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
                 m_bytesCopied += inBytes;
                 m_bytesPerSec += inBytes;
 
-                if (!m_isInSameDisk){
-                    if (m_bytesCopied % (Data_Flush_Size) == 0){
-                        to.flush();
-                        to.close();
-                        if(!to.open(QIODevice::WriteOnly | QIODevice::Append))
-                        {
-                            //Operation failed
-                            qDebug() << tarDir << "isn't write only";
-                            return false;
-                        }
+                if (m_bytesCopied % (Data_Flush_Size) == 0){
+                    to.flush();
+                    to.close();
+                    if(!to.open(QIODevice::WriteOnly | QIODevice::Append))
+                    {
+                        //Operation failed
+                        qDebug() << tarDir << "isn't write only";
+                        return false;
                     }
                 }
 #endif
