@@ -8,6 +8,7 @@
 #include <QMap>
 #include <QFileInfo>
 #include <QFileSystemWatcher>
+#include <QTimer>
 #include "desktopfile.h"
 
 
@@ -31,6 +32,7 @@ public slots:
 
 private:
     QFileSystemWatcher* m_fileSystemWatcher = NULL;
+    QTimer* m_updateCacheTimer;
 };
 
 
