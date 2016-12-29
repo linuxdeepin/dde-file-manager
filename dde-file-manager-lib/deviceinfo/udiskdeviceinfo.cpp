@@ -169,7 +169,7 @@ bool UDiskDeviceInfo::canUnmount() const
 
 qulonglong UDiskDeviceInfo::getFree()
 {
-    if (getType() == "dvd"){
+    if (getMediaType() == dvd || getMediaType() == native || getMediaType() == removable){
         return QStorageInfo(getMountPointUrl().toLocalFile()).bytesFree();
     }
     if (m_diskInfo.Total == 0){
