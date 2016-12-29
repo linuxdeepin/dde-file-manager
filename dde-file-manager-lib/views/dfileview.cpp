@@ -643,6 +643,22 @@ void DFileView::setEnabledSelectionModes(const QSet<QAbstractItemView::Selection
     Q_D(DFileView);
 
     d->enabledSelectionModes = list;
+
+    if (!list.contains(selectionMode())) {
+        const DAbstractFileInfoPointer &info = model()->fileInfo(rootIndex());
+
+        if (!info)
+            return;
+
+        const QList<DAbstractFileInfo::SelectionMode> &supportSelectionModes = info->supportSelectionModes();
+
+        for (DAbstractFileInfo::SelectionMode mode : supportSelectionModes) {
+            if (list.contains((SelectionMode)mode)) {
+                setSelectionMode((SelectionMode)mode);
+                break;
+            }
+        }
+    }
 }
 
 QSet<QAbstractItemView::SelectionMode> DFileView::enabledSelectionModes() const
