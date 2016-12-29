@@ -32,10 +32,15 @@ void TrashPropertyDialog::initUI()
     setTitle("");
 
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(m_url);
+    QString iconPath;
+    if(fileInfo->filesCount()>0)
+        iconPath = ":/images/images/trash_full.png";
+    else
+        iconPath = ":/images/images/trash.png";
 
     m_iconLabel = new QLabel(this);
     m_iconLabel->setFixedSize(160, 160);
-    m_iconLabel->setPixmap(QPixmap(":/images/images/trash.png"));
+    m_iconLabel->setPixmap(QPixmap(iconPath));
     m_iconLabel->setAlignment(Qt::AlignCenter);
     m_nameLable = new QLabel(tr("Trash"), this);
     m_nameLable->setAlignment(Qt::AlignCenter);
