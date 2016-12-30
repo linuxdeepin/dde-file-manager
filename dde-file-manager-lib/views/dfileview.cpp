@@ -1593,6 +1593,9 @@ bool DFileView::setRootUrl(const DUrl &url)
 
     DUrl fileUrl = url;
 
+    if(fileUrl.isLocalFile() && FileUtils::isArchive(fileUrl.path()))
+        fileUrl.setScheme(AVFS_SCHEME);
+
     const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(fileUrl);
 
     if (!info){

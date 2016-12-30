@@ -174,7 +174,9 @@ HEADERS += \
     models/trashdesktopfileinfo.h \
     interfaces/dthumbnailprovider.h \
     views/viewmanager.h \
-    views/progressline.h
+    views/progressline.h \
+    controllers/avfsfilecontroller.h \
+    models/avfsfileinfo.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -284,7 +286,9 @@ SOURCES += \
     models/trashdesktopfileinfo.cpp \
     interfaces/dthumbnailprovider.cpp \
     views/viewmanager.cpp \
-    views/progressline.cpp
+    views/progressline.cpp \
+    controllers/avfsfilecontroller.cpp \
+    models/avfsfileinfo.cpp
 
 INCLUDEPATH += $$PWD/../ $$PWD/../utils/ $$PWD/interfaces/ $$PWD/../dde-file-manager-plugins/plugininterfaces/
 

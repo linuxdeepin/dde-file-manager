@@ -18,6 +18,7 @@
 #include "deviceinfo/udisklistener.h"
 
 #include "widgets/singleton.h"
+#include "controllers/avfsfilecontroller.h"
 
 #include "dfilemanagerwindow.h"
 #include "viewmanager.h"
@@ -104,7 +105,17 @@ void DCrumbWidget::addCrumb(const QStringList &list)
             if (!path.startsWith("/"))
                 path.prepend('/');
 
-            button->setUrl(DUrl(path));
+            if(m_url.isAVFSFile()){
+                QString archRootPath = AVFSFileController::findArchFileRootPath(m_url);
+                if(!archRootPath.startsWith(path) || archRootPath == path)
+                    button->setUrl(DUrl::fromAVFSFile(path));
+                else
+                    button->setUrl(DUrl::fromLocalFile(path));
+            } else if(m_url.isTrashFile()){
+                button->setUrl(DUrl::fromTrashFile(path));
+            } else{
+                button->setUrl(DUrl::fromLocalFile(path));
+            }
 
             if (systemPathManager->systemPathsMap().values().contains(path)){
                 foreach (QString key, systemPathManager->systemPathsMap().keys()) {
@@ -403,7 +414,7 @@ void DCrumbWidget::addCrumbs(const DUrl & url)
     qDebug() << path << isInHome(path) << isInDevice(path);
     if (path.isEmpty())
         return;
-    if(isInHome(path))
+    if(isInHome(path) && !url.isAVFSFile())
     {
         QString tmpPath = url.toLocalFile();
         tmpPath.replace(m_homePath, "");
@@ -551,14 +562,6 @@ void DCrumbWidget::buttonPressed()
     event << WindowManager::getWindowId(this);
     event << DFMEvent::CrumbButton;
     DUrl url = button->url();
-    DCrumbButton * localButton = qobject_cast<DCrumbButton*>(m_group.buttons().at(0));
-
-    if (localButton->url().scheme().isEmpty()){
-        url.setScheme(FILE_SCHEME);
-    }else{
-        url.setScheme(localButton->url().scheme());
-    }
-
     event << url;
 
     m_listWidget->scrollToItem(button->getItem());
