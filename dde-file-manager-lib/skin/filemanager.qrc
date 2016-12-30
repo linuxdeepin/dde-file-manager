@@ -310,6 +310,9 @@
         <file>images/icons/empty_trash_press.png</file>
         <file>images/icons/empty_trash_hover.png</file>
         <file>images/icons/empty_trash_normal.png</file>
+        <file>images/icons/stop_press.png</file>
+        <file>images/icons/stop_normal.png</file>
+        <file>images/icons/stop_hover.png</file>
     </qresource>
     <qresource prefix="/leftsidebar">
         <file>images/leftsidebar/android_active_16px.svg</file>

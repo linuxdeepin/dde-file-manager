@@ -99,27 +99,27 @@
 <context>
     <name>DFileSystemModel</name>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="513"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="514"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="515"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="516"/>
         <source>Time modified</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="517"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="518"/>
         <source>Size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="519"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="520"/>
         <source>Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="521"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="522"/>
         <source>Time created</source>
         <translation type="unfinished"></translation>
     </message>
@@ -190,12 +190,12 @@
 <context>
     <name>DTaskDialog</name>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="384"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="419"/>
         <source>1 task in progress</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="386"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="421"/>
         <source>%1 tasks in progress</source>
         <translation type="unfinished"></translation>
     </message>
@@ -211,142 +211,142 @@
 <context>
     <name>DialogManager</name>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="227"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="234"/>
         <source>Operation failed!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="228"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="235"/>
         <source>Target folder is inside the source folder!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="230"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="237"/>
         <source>OK</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="252"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="259"/>
         <source>Do you wan to run %1 or display its content?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="253"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="260"/>
         <source>It is an executable text file.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="256"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="296"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="339"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="443"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="468"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="263"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="303"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="346"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="450"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="475"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="256"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="263"/>
         <source>Run</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="256"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="263"/>
         <source>Run in terminal</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="256"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="263"/>
         <source>Display</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="276"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="283"/>
         <source>&quot;%1&quot; already exists, please use another name.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="278"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="468"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="285"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="475"/>
         <source>Confirm</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="289"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="296"/>
         <source>Are you sure to empty %1 item?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="290"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="297"/>
         <source>Are you sure to empty %1 items?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="291"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="298"/>
         <source>Permanently delete %1?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="292"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="299"/>
         <source>Permanently delete %1 items?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="296"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="303"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="302"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="309"/>
         <source>Empty</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="327"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="334"/>
         <source>This action cannot be restored</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="337"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="344"/>
         <source>Sorry, unable to locate your bookmark directory, remove it?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="339"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="346"/>
         <source>Remove</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="440"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="447"/>
         <source>Disk file is being used, can not unmount now</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="441"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="448"/>
         <source>Name: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="443"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="450"/>
         <source>Force unmount</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="465"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="472"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="466"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="473"/>
         <source>Do you want to delete this shortcut？</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="491"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="498"/>
         <source>Version:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="493"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="500"/>
         <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -380,27 +380,27 @@
 <context>
     <name>FileJob</name>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="96"/>
+        <location filename="../../fileoperations/filejob.cpp" line="101"/>
         <source>copy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="438"/>
+        <location filename="../../fileoperations/filejob.cpp" line="428"/>
         <source>%1 s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="442"/>
+        <location filename="../../fileoperations/filejob.cpp" line="432"/>
         <source>%1 m %2 s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="448"/>
+        <location filename="../../fileoperations/filejob.cpp" line="438"/>
         <source>%1 h %2 m %3 s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="457"/>
+        <location filename="../../fileoperations/filejob.cpp" line="447"/>
         <source>%1 d %2 h %3 m %4 s</source>
         <translation type="unfinished"></translation>
     </message>
@@ -512,63 +512,73 @@
 <context>
     <name>MoveCopyTaskWidget</name>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="89"/>
-        <source>Replace</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="89"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="137"/>
         <source>Skip</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="89"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="136"/>
         <source>Keep both</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="114"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="138"/>
+        <source>Repalce</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="158"/>
         <source>Do not ask again</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="173"/>
-        <source>Current speed:%1 Time left:%2 </source>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="209"/>
+        <source>Copying %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="177"/>
-        <source>&lt;span style=&quot;color: #3cadff&quot;&gt; %1 &lt;/span&gt; is being copied to &lt;span style=&quot;color: #3cadff&quot;&gt; %2 &lt;/span&gt;</source>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="210"/>
+        <source>Copy to %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="182"/>
-        <source>&lt;span style=&quot;color: #3cadff&quot;&gt; %1 &lt;/span&gt; is being moved to &lt;span style=&quot;color: #3cadff&quot;&gt; %2 &lt;/span&gt;</source>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="213"/>
+        <source>Moving %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="187"/>
-        <source>&lt;span style=&quot;color: #3cadff&quot;&gt; %1 &lt;/span&gt; is being restored to &lt;span style=&quot;color: #3cadff&quot;&gt; %2 &lt;/span&gt;</source>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="214"/>
+        <source>Move to %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="192"/>
-        <source>&lt;span style=&quot;color: #3cadff&quot;&gt; %1 &lt;/span&gt; is being deleted </source>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="216"/>
+        <source>Restoring %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="196"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="217"/>
+        <source>Restore to %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="219"/>
+        <source>Deleting %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="223"/>
         <source>Calculating space, please wait</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="205"/>
-        <source>Current speed:%1 time left:%2 </source>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="227"/>
+        <source>Target folder already exists file named %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="115"/>
-        <source>Ok</source>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="228"/>
+        <source>Original path %1 target path %2</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1123,13 +1133,13 @@
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="254"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="456"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="454"/>
         <source>%1 item</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="256"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="458"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="456"/>
         <source>%1 items</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1155,22 +1165,22 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="968"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="869"/>
         <source>Loading...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="313"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="320"/>
         <source>File has been moved or deleted</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="315"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="322"/>
         <source>You do not have permission to access this folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="318"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="325"/>
         <source>Folder is empty</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1632,7 +1642,7 @@
 <context>
     <name>WindowManager</name>
     <message>
-        <location filename="../views/windowmanager.cpp" line="32"/>
+        <location filename="../views/windowmanager.cpp" line="38"/>
         <source>Deepin File Manager</source>
         <translation type="unfinished"></translation>
     </message>

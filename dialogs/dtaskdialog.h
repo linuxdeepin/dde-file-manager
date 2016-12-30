@@ -10,6 +10,9 @@
 #include <QListWidgetItem>
 #include <QButtonGroup>
 #include <QCheckBox>
+#include <ddialog.h>
+#include <dplatformwindowhandle.h>
+#include <DTitlebar>
 
 
 DWIDGET_USE_NAMESPACE
@@ -45,8 +48,8 @@ public slots:
     void setProgress(QString value);
     void setSpeed(float speed);
     void setTimeLeft(int time);
-    void setMessage(QString message);
-    void setTipMessage(QString tipMessage);
+    void setMessage(const QString &operateStr, const QString &destinateStr);
+    void setTipMessage(const QString &speedStr, const QString &remainStr);
     void handleClose();
     void handleResponse();
     void updateMessage(const QMap<QString, QString>& data);
@@ -55,6 +58,7 @@ public slots:
     void showConflict();
     void hideConflict();
 protected:
+    bool event(QEvent *e) Q_DECL_OVERRIDE;
 
 private:
     int m_progress = 0;
@@ -62,12 +66,23 @@ private:
     int m_timeLeft;
     QString m_targetObj;
     QString m_destinationObj;
-    QString m_message;
-    QString m_tipMessage;
+    QString m_speedMessage;
+    QString m_remainMessage;
+    QString m_operateMessage;
+    QString m_destinationMessage;
+    QString m_sourcePath;
+    QString m_targetPath;
     DCircleProgress* m_cirleWidget=NULL;
-    QLabel* m_messageLabel;
-    QLabel* m_tipMessageLabel;
+    QLabel* m_speedLabel;
+    QLabel* m_remainLabel;
+    QLabel* m_msg1Label;
+    QLabel* m_msg2Label;
+
     QPushButton* m_closeButton;
+    QPushButton* m_pauseBuuton;
+    QPushButton* m_keepBothButton;
+    QPushButton* m_skipButton;
+    QPushButton* m_replaceButton;
     QMap<QString, QString> m_jobDetail;
     QMap<QString, QVariant> m_response;
     QButtonGroup* m_buttonGroup;
@@ -75,10 +90,11 @@ private:
     QCheckBox* m_checkBox=NULL;
     QPushButton* m_enterButton=NULL;
     CircleProgressAnimatePad* m_animatePad;
+    QLabel* m_bgLabel;
 };
 
 
-class DTaskDialog : public DMoveableWidget
+class DTaskDialog : public QWidget
 {
     Q_OBJECT
 public:
@@ -125,6 +141,7 @@ private:
     QPushButton* m_titleBarCloseButton;
     QListWidget* m_taskListWidget=NULL;
     QMap<QString, QListWidgetItem*> m_jobIdItems;
+    DTitlebar* m_titleBar;
 };
 
 #endif // DTASKDIALOG_H
