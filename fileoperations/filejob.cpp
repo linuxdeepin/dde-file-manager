@@ -196,7 +196,7 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
 {
     qDebug() << "Do file operation is started" << m_jobDetail;
 
-    jobAdded();
+    jobPrepared();
 
     DUrlList list;
     QString tarDirPath = destination.toLocalFile();
@@ -212,6 +212,7 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
     //No need to check dist usage for moving job in same disk
     if(!(m_jobType == Move && m_isInSameDisk)){
         const bool diskSpaceAvailable = checkDiskSpaceAvailable(files, destination);
+        m_isCheckingDisk = false;
         if(!diskSpaceAvailable){
             emit requestNoEnoughSpaceDialogShowed();
             emit requestJobRemovedImmediately(m_jobDetail);
@@ -219,7 +220,6 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
         }
     }
 
-    jobPrepared();
 
     if(!tarDir.exists())
     {
@@ -404,6 +404,9 @@ void FileJob::handleJobFinished()
 
 void FileJob::jobUpdated()
 {
+    if (m_isCheckingDisk){
+        emit requestJobDataUpdated(m_jobDetail, m_checkDiskJobDataDetail);
+    }
 
     QMap<QString, QString> jobDataDetail;
     if (!m_isFinished){
@@ -1313,6 +1316,8 @@ bool FileJob::checkDiskSpaceAvailable(const DUrlList &files, const DUrl &destina
     else
         freeBytes = info->getFree();
 
+    m_isCheckingDisk = true;
+
     bool isInLimit = true;
     QMap<QString, QString> jobDataDetail;
 
@@ -1320,13 +1325,15 @@ bool FileJob::checkDiskSpaceAvailable(const DUrlList &files, const DUrl &destina
     jobDataDetail.insert("file", files.first().fileName());
     jobDataDetail.insert("progress", m_progress);
     jobDataDetail.insert("destination", destination.fileName());
-    emit requestJobDataUpdated(m_jobDetail, jobDataDetail);
+
+    m_checkDiskJobDataDetail = jobDataDetail;
 
     //calculate files's sizes
     m_totalSize = FileUtils::totalSize(files, freeBytes, isInLimit);
 
     jobDataDetail["status"] = "working";
-    emit requestJobDataUpdated(m_jobDetail, jobDataDetail);
+
+    m_checkDiskJobDataDetail = jobDataDetail;
 
     if(!isInLimit)
         qDebug() << QString ("Can't copy or move files to target disk, disk free: %1").arg(FileUtils::formatSize(freeBytes));
