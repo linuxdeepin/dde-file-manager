@@ -8,6 +8,7 @@
 #include "trashmanager.h"
 #include "searchcontroller.h"
 #include "sharecontroler.h"
+#include "avfsfilecontroller.h"
 #include "bookmarkmanager.h"
 #include "networkcontroller.h"
 #include "deviceinfo/udisklistener.h"
@@ -62,6 +63,7 @@ void AppController::registerUrlHandle()
     DFileService::dRegisterUrlHandler<NetworkController>(NETWORK_SCHEME, "");
     DFileService::dRegisterUrlHandler<NetworkController>(SMB_SCHEME, "");
     DFileService::dRegisterUrlHandler<ShareControler>(USERSHARE_SCHEME, "");
+    DFileService::dRegisterUrlHandler<AVFSFileController>(AVFS_SCHEME, "");
 }
 
 void AppController::actionOpen(const DFMEvent &event)

@@ -17,7 +17,8 @@ QSet<QString> schemeList = QSet<QString>() << QString(TRASH_SCHEME)
                                            << QString(SMB_SCHEME)
                                            << QString(AFC_SCHEME)
                                            << QString(MTP_SCHEME)
-                                           << QString(USERSHARE_SCHEME);
+                                           << QString(USERSHARE_SCHEME)
+                                           << QString(AVFS_SCHEME);
 
 DUrl::DUrl()
     : QUrl()
@@ -115,6 +116,11 @@ bool DUrl::isMTPFile() const
 bool DUrl::isUserShareFile() const
 {
     return scheme() == USERSHARE_SCHEME;
+}
+
+bool DUrl::isAVFSFile() const
+{
+    return scheme() == AVFS_SCHEME;
 }
 
 QString DUrl::toString(QUrl::FormattingOptions options) const
@@ -303,6 +309,16 @@ DUrl DUrl::fromUserShareFile(const QString &filePath)
     DUrl url;
 
     url.setScheme(USERSHARE_SCHEME);
+    url.setPath(filePath);
+
+    return url;
+}
+
+DUrl DUrl::fromAVFSFile(const QString &filePath)
+{
+    DUrl url;
+
+    url.setScheme(AVFS_SCHEME);
     url.setPath(filePath);
 
     return url;
