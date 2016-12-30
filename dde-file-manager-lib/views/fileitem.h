@@ -2,6 +2,7 @@
 #define FILEITEM_H
 
 #include <QLabel>
+#include "progressline.h"
 
 QT_BEGIN_NAMESPACE
 class QTextEdit;
@@ -25,6 +26,8 @@ public:
     { return icon; }
     inline QTextEdit* getTextEdit() const
     { return edit; }
+    inline ProgressLine* getProgressLine()
+    { return progressLine; }
 
     QColor borderColor() const;
 
@@ -46,6 +49,7 @@ private:
     bool canDeferredDelete = true;
     QLabel *icon;
     QTextEdit *edit;
+    ProgressLine* progressLine;
     QGraphicsOpacityEffect *opacityEffect = Q_NULLPTR;
     QColor m_borderColor;
 
