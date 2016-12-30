@@ -26,9 +26,15 @@ MoveCopyTaskWidget::MoveCopyTaskWidget(const QMap<QString, QString> &jobDetail, 
 }
 
 void MoveCopyTaskWidget::initUI(){
+
+    m_bgLabel = new QLabel(this);
+    m_bgLabel->setObjectName("Background");
+    m_bgLabel->setAutoFillBackground(true);
+    m_bgLabel->setWindowFlags(Qt::WindowStaysOnBottomHint);
+
     m_closeButton = new QPushButton;
-    m_closeButton->setObjectName("CloseButton");
-    m_closeButton->setFixedSize(27, 23);
+    m_closeButton->setObjectName("StopButton");
+    m_closeButton->setFixedSize(24, 24);
     m_closeButton->setAttribute(Qt::WA_NoMousePropagation);
 
     m_animatePad = new CircleProgressAnimatePad;
@@ -38,23 +44,37 @@ void MoveCopyTaskWidget::initUI(){
     m_animatePad->setLineWidth(3);
     m_animatePad->setFontSize(14);
 
-    m_messageLabel = new QLabel;
-    m_messageLabel->setFixedHeight(32);
-    m_messageLabel->setObjectName("MessageLabel");
-    m_tipMessageLabel = new QLabel;
-    m_tipMessageLabel->setFixedHeight(18);
-    m_tipMessageLabel->setObjectName("TaskTipMessageLabel");
+    m_closeButton->hide();
+    setMouseTracking(true);
 
-    QVBoxLayout* messageLayout = new QVBoxLayout;
-    messageLayout->addWidget(m_messageLabel);
-    messageLayout->addWidget(m_tipMessageLabel);
+    m_speedLabel = new QLabel;
+    m_remainLabel = new QLabel;
+    m_speedLabel->setFixedHeight(18);
+    m_remainLabel->setFixedHeight(18);
+    m_speedLabel->setObjectName("TaskTipMessageLabel");
+    m_remainLabel->setObjectName("TaskTipMessageLabel");
+
+    m_msg1Label = new QLabel;
+    m_msg2Label = new QLabel;
+    m_msg1Label->setFixedHeight(32);
+    m_msg2Label->setFixedHeight(32);
+    m_msg1Label->setObjectName("MessageLabel");
+    m_msg2Label->setObjectName("MessageLabel");
+
+    QGridLayout* msgGridLayout = new QGridLayout;
+    msgGridLayout->addWidget(m_msg1Label, 0, 0);
+    msgGridLayout->addWidget(m_speedLabel, 0, 1,Qt::AlignRight);
+    msgGridLayout->addWidget(m_msg2Label, 1, 0);
+    msgGridLayout->addWidget(m_remainLabel, 1, 1,Qt::AlignRight);
+    msgGridLayout->setColumnMinimumWidth(0, 300);
 
     QHBoxLayout* messageBoxLayout = new QHBoxLayout;
-    messageBoxLayout->addLayout(messageLayout);
+    messageBoxLayout->addLayout(msgGridLayout);
     messageBoxLayout->addWidget(m_closeButton);
 
     initButtonFrame();
     m_buttonFrame->hide();
+    m_buttonFrame->setAttribute(Qt::WA_AlwaysStackOnTop);
 
     QFrame* lineLabel = new QFrame;
     lineLabel->setFixedHeight(1);
@@ -73,54 +93,73 @@ void MoveCopyTaskWidget::initUI(){
     mainLayout->addWidget(m_animatePad);
     mainLayout->addSpacing(10);
     mainLayout->addLayout(rightLayout);
+    mainLayout->addSpacing(5);
     mainLayout->setContentsMargins(5, 0, 5, 0);
     setLayout(mainLayout);
     setFixedHeight(80);
+
+    setStyleSheet("QPushButton#StopButton{"
+                    "image: url(:/icons/images/icons/stop_normal.png);"
+                    "border: none;"
+                  "}"
+                  "QPushButton#StopButton:hover{"
+                    "image: url(:/icons/images/icons/stop_hover.png);"
+                  "}"
+                  "QPushButton#StopButton:pressed{"
+                    "image: url(:/icons/images/icons/stop_press.png);"
+                  "}"
+                  "QPushButton#OptionButton{"
+                    "border: 1px solid #eeeeee;"
+                    "border-radius: 4px;"
+                    "background: white;"
+                  "}"
+                  "QPushButton#OptionButton:hover{"
+                    "border: 1px solid #66ccf9;"
+                    "border-radius: 4px;"
+                    "background: white;"
+                  "}"
+                  "QPushButton#OptionButton:pressed{"
+                    "border: 1px solid #66ccf9;"
+                    "border-radius: 4px;"
+                    "background: #66ccf9;"
+                    "color: white;"
+                  "}"
+                  );
 }
 
 void MoveCopyTaskWidget::initButtonFrame(){
     m_buttonFrame = new QFrame;
 
-    QFrame* leftButtonFrame = new QFrame;
-    leftButtonFrame->setFixedHeight(22);
-    leftButtonFrame->setFixedWidth(208);
-    leftButtonFrame->setObjectName("ButtonFrame");
-    QStringList buttonKeys, buttonTexts;
-    buttonKeys << "Coexists" << "Replace" << "Skip";
-    buttonTexts << tr("Keep both") << tr("Replace") << tr("Skip");
     m_buttonGroup = new QButtonGroup;
     QHBoxLayout* buttonLayout = new QHBoxLayout;
-    foreach (QString label, buttonKeys) {
-        int index = buttonKeys.indexOf(label);
-        QPushButton* button = new QPushButton(buttonTexts.at(index));
-        button->setObjectName("ConflictButton");
-        button->setAttribute(Qt::WA_NoMousePropagation);
-        button->setCheckable(true);
-        button->setFixedHeight(20);
-        button->setFixedWidth(68);
-        m_buttonGroup->addButton(button, index);
-        buttonLayout->addWidget(button);
-        if (index < buttonKeys.length() - 1){
-            QLabel* label = new QLabel;
-            label->setObjectName("VLine");
-            label->setFixedWidth(1);
-            buttonLayout->addWidget(label);
-        }
-    }
-    buttonLayout->setSpacing(0);
+    buttonLayout->setSpacing(12);
+    m_keepBothButton = new QPushButton(tr("Keep both"));
+    m_skipButton = new QPushButton(tr("Skip"));
+    m_replaceButton = new QPushButton(tr("Repalce"));
+    m_keepBothButton->setFixedSize(80, 25);
+    m_skipButton->setFixedSize(80, 25);
+    m_replaceButton->setFixedSize(80, 25);
+
+    m_keepBothButton->setProperty("code", 0);
+    m_replaceButton->setProperty("code", 1);
+    m_skipButton->setProperty("code", 2);
+
+    m_keepBothButton->setObjectName("OptionButton");
+    m_replaceButton->setObjectName("OptionButton");
+    m_skipButton->setObjectName("OptionButton");
+
+    buttonLayout->addWidget(m_skipButton);
+    buttonLayout->addWidget(m_replaceButton);
+    buttonLayout->addWidget(m_keepBothButton);
+    buttonLayout->addStretch(1);
+
     buttonLayout->setContentsMargins(0, 0, 0, 0);
-    leftButtonFrame->setLayout(buttonLayout);
-    m_buttonGroup->button(1)->setChecked(true);
 
     m_checkBox = new QCheckBox(tr("Do not ask again"));
-    m_enterButton = new QPushButton(tr("Ok"));
-    m_enterButton->setObjectName("NormalButton");
-    m_enterButton->setFixedSize(60, 20);
-    QHBoxLayout* mainLayout = new QHBoxLayout;
-    mainLayout->addSpacing(2);
-    mainLayout->addWidget(leftButtonFrame);
+    QVBoxLayout* mainLayout = new QVBoxLayout;
+    mainLayout->addSpacing(10);
     mainLayout->addWidget(m_checkBox);
-    mainLayout->addWidget(m_enterButton);
+    mainLayout->addLayout(buttonLayout);
 
     mainLayout->setContentsMargins(0, 0, 0, 0);
     m_buttonFrame->setLayout(mainLayout);
@@ -128,12 +167,14 @@ void MoveCopyTaskWidget::initButtonFrame(){
 
 void MoveCopyTaskWidget::initConnect(){
     connect(m_closeButton, SIGNAL(clicked()), this, SLOT(handleClose()));
-    connect(m_enterButton, SIGNAL(clicked()), this, SLOT(handleResponse()));
+    connect(m_keepBothButton, &QPushButton::clicked, this, &MoveCopyTaskWidget::handleResponse);
+    connect(m_skipButton, &QPushButton::clicked, this, &MoveCopyTaskWidget::handleResponse);
+    connect(m_replaceButton, &QPushButton::clicked, this, &MoveCopyTaskWidget::handleResponse);
 }
 
 void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data){
-    QString file, destination, speed, remainTime, progress, status;
-    QString message, tipMessage;
+    QString file, destination, speed, remainTime, progress, status, srcPath, targetPath;
+    QString msg1, msg2;
     if (data.contains("file")){
         file = data.value("file");
     }
@@ -151,79 +192,100 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data){
         progress = data.value("progress");
     }
 
+    if(data.contains("sourcePath"))
+        srcPath = data.value("sourcePath");
+
+    if(data.contains("targetPath"))
+        targetPath = data.value("targetPath");
+
     if(data.contains("status"))
         status = data.value("status");
 
-
-
-    int fileMaxWidth = 180;
-    int destinationMaxWidth = 90;
-
-    QFontMetrics fm = m_messageLabel->fontMetrics();
-
-    if (fm.width(destination) > destinationMaxWidth){
-        destination = fm.elidedText(destination, Qt::ElideMiddle, destinationMaxWidth);
-    }else{
-        fileMaxWidth = 260 - fm.width(destination);
-    }
-
-    if (fm.width(file) > fileMaxWidth){
-        file = fm.elidedText(file, Qt::ElideMiddle, fileMaxWidth);
-    }
-
-    QString speedTime(tr("Current speed:%1 Time left:%2 "));
+    QString speedStr = "%1";
+    QString remainStr = "%1";
 
     if (m_jobDetail.contains("type")){
         if (m_jobDetail.value("type") == "copy"){
-            message = tr("<span style=\"color: #3cadff\"> %1 </span> is being copied to <span style=\"color: #3cadff\"> %2 </span>")
-                    .arg(file, destination);
-            tipMessage = speedTime.arg(speed, remainTime);
+            msg1 = tr("Copying %1").arg(file);
+            msg2 = tr("Copy to %2").arg(destination);
 
         }else if (m_jobDetail.value("type") == "move"){
-            message = tr("<span style=\"color: #3cadff\"> %1 </span> is being moved to <span style=\"color: #3cadff\"> %2 </span>")
-                    .arg(file, destination);
-
-            tipMessage = speedTime.arg(speed, remainTime);
+            msg1 = tr("Moving %1").arg(file);
+            msg2 = tr("Move to %2").arg(destination);
         }else if (m_jobDetail.value("type") == "restore"){
-            message = tr("<span style=\"color: #3cadff\"> %1 </span> is being restored to <span style=\"color: #3cadff\"> %2 </span>")
-                    .arg(file, destination);
-
-            tipMessage = speedTime.arg(speed, remainTime);
+            msg1 = tr("Restoring %1").arg(file);
+            msg2 = tr("Restore to %2").arg(destination);
         }else if (m_jobDetail.value("type") == "delete"){
-            message = tr("<span style=\"color: #3cadff\"> %1 </span> is being deleted ").arg(file);
-            tipMessage = speedTime.arg(speed, remainTime);
+            msg1 = tr("Deleting %1").arg(file);
+            msg2 = tr("");
         }
         if(status == "calculating"){
-            tipMessage = tr("Calculating space, please wait");
+            msg2 = tr("Calculating space, please wait");
             m_animatePad->startAnimation();
+        } else if(status == "conflict"){
+            m_animatePad->stopAnimation();
+            msg1 = QString(tr("Target folder already exists file named %1")).arg(file);
+            msg2 = QString(tr("Original path %1 target path %2")).arg(srcPath, targetPath);
         } else{
             m_animatePad->stopAnimation();
         }
 
-        setMessage(message);
-        setTipMessage(tipMessage);
+
+        QFontMetrics fm(m_msg1Label->font());
+        msg1 = fm.elidedText(msg1, Qt::ElideRight, m_msg1Label->width());
+        msg2 = fm.elidedText(msg2, Qt::ElideRight, m_msg2Label->width());
+
+        speedStr = speedStr.arg(speed);
+        remainStr = remainStr.arg(remainTime);
+        setMessage(msg1, msg2);
+        setTipMessage(speedStr, remainStr);
     }
     setProgress(progress);
 }
 
 void MoveCopyTaskWidget::updateTipMessage(){
-    QString tipMessage = tr("Current speed:%1 time left:%2 ")
-               .arg(QString::number(m_speed), QString::number(m_timeLeft));
-    setTipMessage(tipMessage);
+//    QString tipMessage = tr("Current speed:%1 time left:%2 ")
+//               .arg(QString::number(m_speed), QString::number(m_timeLeft));
+//    setTipMessage(tipMessage);
+    setTipMessage(QString::number(m_speed), QString::number(m_timeLeft));
 }
 
 void MoveCopyTaskWidget::showConflict(){
-    setFixedHeight(85);
+    setFixedHeight(150);
     m_buttonFrame->show();
     emit heightChanged();
     emit conflictShowed(m_jobDetail);
 }
 
 void MoveCopyTaskWidget::hideConflict(){
-    setFixedHeight(60);
+    setFixedHeight(100);
     m_buttonFrame->hide();
     emit heightChanged();
     emit conflictHided(m_jobDetail);
+}
+
+bool MoveCopyTaskWidget::event(QEvent *e)
+{
+    if(e->type() == QEvent::Enter){
+        m_closeButton->show();
+        m_speedLabel->hide();
+        m_remainLabel->hide();
+        m_bgLabel->setStyleSheet("QLabel#Background{"
+                                    "background-color: #f3f3f3;"
+                                    "border: 1px solid #f3f3f3;"
+                                 "}");
+        m_bgLabel->setFixedSize(size());
+    } else if (e->type() == QEvent::Leave ){
+        m_speedLabel->show();
+        m_remainLabel->show();
+        m_closeButton->hide();
+        m_bgLabel->setStyleSheet("QLabel#Background{"
+                                    "background-color: #fff;"
+                                    "border: 1px solid #fff;"
+                                 "}");
+    }
+
+    return QFrame::event(e);
 }
 
 void MoveCopyTaskWidget::handleClose()
@@ -232,11 +294,11 @@ void MoveCopyTaskWidget::handleClose()
 }
 
 void MoveCopyTaskWidget::handleResponse(){
-    m_response.insert("code", m_buttonGroup->checkedId());
-    m_response.insert("applyToAll", m_checkBox->isChecked());\
-    if (m_buttonGroup->checkedId() < 2){
-        hideConflict();
-    }
+    QObject* who = sender();
+    const int& code = who->property("code").toInt();
+    m_response.insert("code", code);
+    m_response.insert("applyToAll", m_checkBox->isChecked());
+    hideConflict();
     emit conflictResponseConfirmed(m_jobDetail, m_response);
 }
 
@@ -286,90 +348,60 @@ void MoveCopyTaskWidget::setTimeLeft(int time){
     m_timeLeft = time;
 }
 
-QString MoveCopyTaskWidget::getMessage(){
-    return m_message;
+void MoveCopyTaskWidget::setMessage(const QString& operateStr, const QString& destinateStr){
+    m_operateMessage = operateStr;
+    m_destinationMessage = destinateStr;
+    m_msg1Label->setText(m_operateMessage);
+    m_msg2Label->setText(m_destinationMessage);
 }
 
-void MoveCopyTaskWidget::setMessage(QString message){
-    m_message = message;
-    m_messageLabel->setText(m_message);
-}
-
-QString MoveCopyTaskWidget::getTipMessage(){
-    return m_tipMessage;
-}
-
-void MoveCopyTaskWidget::setTipMessage(QString tipMessage){
-    m_tipMessage = tipMessage;
-    m_tipMessageLabel->setText(tipMessage);
+void MoveCopyTaskWidget::setTipMessage(const QString& speedStr, const QString& remainStr){
+    m_speedMessage = speedStr;
+    m_remainMessage = remainStr;
+    m_speedLabel->setText(m_speedMessage);
+    m_remainLabel->setText(m_remainMessage);
 }
 
 
 DTaskDialog::DTaskDialog(QWidget *parent) :
-    DMoveableWidget(parent)
+    QWidget(parent)
 {
-    resize(m_defaultWidth, 0);
+    DPlatformWindowHandle handle(this);
+    Q_UNUSED(handle)
+
+    setFixedWidth(m_defaultWidth);
     initUI();
     initConnect();
-    moveCenter();
+
+    QRect rect = geometry();
+    QPoint center = qApp->desktop()->geometry().center();
+    rect.moveCenter(center);
+    move(rect.x(), rect.y());
 }
 
 void DTaskDialog::initUI(){
-    QFrame* contentFrame = new QFrame;
-    contentFrame->setObjectName("ContentFrame");
 
-    m_titleLabel = new QLabel;
-    m_titleLabel->setObjectName("titleLable");
-
-    m_titleBarCloseButton = new QPushButton(this);
-    m_titleBarCloseButton->setObjectName("CloseButton");
-    m_titleBarCloseButton->setFixedSize(27, 23);
-    m_titleBarCloseButton->setAttribute(Qt::WA_NoMousePropagation);
-
-    m_titleBarMinimizeButton = new QPushButton(this);
-    m_titleBarMinimizeButton->setObjectName("MinimizeButton");
-    m_titleBarMinimizeButton->setFixedSize(27, 23);
-    m_titleBarMinimizeButton->setAttribute(Qt::WA_NoMousePropagation);
-
-
-    QFrame* lineLabel = new QFrame;
-    lineLabel->setFixedHeight(1);
-    lineLabel->setObjectName("LineLabel");
+    setContentsMargins(0, 0, 0, 0);
+    setWindowFlags(Qt::FramelessWindowHint|Qt::Dialog);
 
     m_taskListWidget = new QListWidget;
     m_taskListWidget->setSelectionMode(QListWidget::NoSelection);
 
-    QFrame* titleFrame = new QFrame;
-    titleFrame->setFixedHeight(25);
-    QHBoxLayout* m_titleLayout = new QHBoxLayout;
-    m_titleLayout->addWidget(m_titleLabel);
-    m_titleLayout->addStretch();
-    m_titleLayout->addWidget(m_titleBarMinimizeButton);
-    m_titleLayout->addWidget(m_titleBarCloseButton);
-    m_titleLayout->setSpacing(0);
-    m_titleLayout->setContentsMargins(0, 0, 0, 0);
-    QVBoxLayout* titleBoxLayout = new QVBoxLayout;
-    titleBoxLayout->addLayout(m_titleLayout);
-    titleBoxLayout->addWidget(lineLabel);
+    m_titleBar = new DTitlebar;
+    m_titleBar->setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
+    m_titleBar->setFixedHeight(20);
 
-    QVBoxLayout* m_layout = new QVBoxLayout;
-    m_layout->addLayout(titleBoxLayout);
-    m_layout->addWidget(m_taskListWidget);
-//    m_layout->setSpacing(0);
-    contentFrame->setLayout(m_layout);
-
-    QHBoxLayout* contentlayout = new QHBoxLayout;
-    contentlayout->addWidget(contentFrame);
-
-    contentlayout->setContentsMargins(5, 5, 5, 5);
-    setLayout(contentlayout);
-
-//    setStyleSheet(getQssFromFile(":/qss/dialogs/qss/dark.qss"));
+    QVBoxLayout* mainLayout = new QVBoxLayout;
+    mainLayout->setContentsMargins(0, 8, 0, 0);
+    mainLayout->addWidget(m_titleBar);
+    mainLayout->addWidget(m_taskListWidget);
+    mainLayout->addStretch(1);
+    mainLayout->setSpacing(0);
+    setLayout(mainLayout);
 }
 
 void DTaskDialog::initConnect(){
-    connect(m_titleBarCloseButton, SIGNAL(clicked()), this, SLOT(close()));
-    connect(m_titleBarMinimizeButton, SIGNAL(clicked()), this, SLOT(handleMinimizeButtonClick()));
+
 }
 
 QListWidget *DTaskDialog::getTaskListWidget()
@@ -378,7 +410,7 @@ QListWidget *DTaskDialog::getTaskListWidget()
 }
 
 void DTaskDialog::setTitle(QString title){
-    m_titleLabel->setText(title);
+    m_titleBar->setTitle(title);
 }
 
 void DTaskDialog::setTitle(int taskCount){
@@ -560,6 +592,6 @@ void DTaskDialog::closeEvent(QCloseEvent *event){
             }
         }
     }
-    DMoveableWidget::closeEvent(event);
+    QWidget::closeEvent(event);
     emit closed();
 }

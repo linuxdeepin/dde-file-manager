@@ -220,7 +220,6 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
         }
     }
 
-
     if(!tarDir.exists())
     {
         qDebug() << "Destination must be directory";
@@ -522,6 +521,8 @@ void FileJob::jobConflicted()
     jobDataDetail.insert("destination", m_tarDirName);
     jobDataDetail.insert("sourcePath",m_srcPath);
     jobDataDetail.insert("targetPath", m_tarPath);
+    jobDataDetail.insert("status", "conflict");
+
     emit requestJobDataUpdated(m_jobDetail, jobDataDetail);
     emit requestConflictDialogShowed(m_jobDetail);
     m_status = Paused;
