@@ -222,7 +222,7 @@ void ComputerViewItem::updateStatus()
         updateIconPixelWidth();
         getProgressLine()->setFixedSize(getPixelWidth(), 2);
         getProgressLine()->setMax(m_deviceInfo->getTotal());
-        getProgressLine()->setValue(m_deviceInfo->getUsed());
+        getProgressLine()->setValue((m_deviceInfo->getTotal() - m_deviceInfo->getFree()));
     } else
         getProgressLine()->setFixedHeight(0);
 }
