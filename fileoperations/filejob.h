@@ -126,6 +126,8 @@ private:
     QString m_trashLoc;
     QString m_id;
     QMap<QString, QString> m_jobDetail;
+    QMap<QString, QString> m_checkDiskJobDataDetail;
+    bool m_isCheckingDisk = false;
     qint64 m_bytesCopied;
     qint64 m_totalSize;
     qint64 m_bytesPerSec;
