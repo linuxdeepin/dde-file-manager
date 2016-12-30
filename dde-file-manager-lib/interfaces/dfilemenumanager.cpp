@@ -299,6 +299,7 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
 
             foreach (QString app, recommendApps) {
                 QAction* action = new QAction(mimeAppsManager->DesktopObjs.value(app).getLocalName(), 0);
+                action->setIcon(FileUtils::searchAppIcon(mimeAppsManager->DesktopObjs.value(app)));
                 action->setProperty("app", app);
                 action->setProperty("url", info->fileUrl());
                 openWithMenu->addAction(action);
