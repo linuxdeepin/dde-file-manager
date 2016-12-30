@@ -73,6 +73,13 @@ public:
     QString name() const;
     void setName(const QString &name);
 
+    bool getHasMemoryInfo() const;
+    void setHasMemoryInfo(bool hasMemoryInfo);
+
+    int getPixelWidth() const;
+    void setPixelWidth(int pixelWidth);
+    void updateIconPixelWidth();
+
 public slots:
     void updateStatus();
 
@@ -92,6 +99,8 @@ private:
     bool m_checked = false;
     QString m_name;
     QString m_displayName;
+    bool m_hasMemoryInfo = false;
+    int m_pixelWidth;
 };
 
 
