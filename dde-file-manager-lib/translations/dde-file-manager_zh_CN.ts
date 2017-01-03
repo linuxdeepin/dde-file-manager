@@ -1231,6 +1231,26 @@
         <translation>新建文档</translation>
     </message>
     <message>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="667"/>
+        <source>Office Text Document</source>
+        <translation>办公文档</translation>
+    </message>
+    <message>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="668"/>
+        <source>Spreadsheet Document</source>
+        <translation>电子表格</translation>
+    </message>
+    <message>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="669"/>
+        <source>Presentation Document</source>
+        <translation>演示文档</translation>
+    </message>
+    <message>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="670"/>
+        <source>Plain Text Document</source>
+        <translation>文本文档</translation>
+    </message>
+    <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="690"/>
         <source>Log out and unmount</source>
         <translation>退出登录并卸载</translation>
@@ -1309,25 +1329,21 @@
         <translation type="vanished">新建文档</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="667"/>
         <source>Word</source>
         <translatorcomment>新建Excel</translatorcomment>
-        <translation>新建Word</translation>
+        <translation type="vanished">新建Word</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="668"/>
         <source>Excel</source>
-        <translation>新建Excel</translation>
+        <translation type="vanished">新建Excel</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="669"/>
         <source>PowerPoint</source>
-        <translation>新建PowerPoint</translation>
+        <translation type="vanished">新建PowerPoint</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="670"/>
         <source>Text</source>
-        <translation>新建文本</translation>
+        <translation type="vanished">新建文本</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="671"/>

@@ -933,6 +933,26 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="667"/>
+        <source>Office Text Document</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="668"/>
+        <source>Spreadsheet Document</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="669"/>
+        <source>Presentation Document</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="670"/>
+        <source>Plain Text Document</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="680"/>
         <source>Time created</source>
         <translation type="unfinished"></translation>
@@ -970,26 +990,6 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="640"/>
         <source>Open in new window as admin</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="667"/>
-        <source>Word</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="668"/>
-        <source>Excel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="669"/>
-        <source>PowerPoint</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="670"/>
-        <source>Text</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
