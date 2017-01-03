@@ -13,8 +13,8 @@
 #include "durl.h"
 #include "dfmglobal.h"
 
-#define SORT_FUN_DEFINE(Value, Name, Type) \
-bool sortFileListBy##Name(const DAbstractFileInfoPointer &info1, const DAbstractFileInfoPointer &info2, Qt::SortOrder order)\
+#define COMPARE_FUN_DEFINE(Value, Name, Type) \
+bool compareFileListBy##Name(const DAbstractFileInfoPointer &info1, const DAbstractFileInfoPointer &info2, Qt::SortOrder order)\
 {\
     bool isDir1 = info1->isDir();\
     bool isDir2 = info2->isDir();\
@@ -32,20 +32,20 @@ bool sortFileListBy##Name(const DAbstractFileInfoPointer &info1, const DAbstract
     }\
     \
     if ((isDir1 && isDir2 && (value1 == value2)) || (isFile1 && isFile2 && (value1 == value2))) {\
-        return sortByString(info1->fileDisplayName(), info2->fileDisplayName());\
+        return compareByString(info1->fileDisplayName(), info2->fileDisplayName());\
     }\
     \
     bool isStrType = typeid(value1) == typeid(QString);\
     if (isStrType)\
-        return sortByString(value1, value2, order);\
+        return compareByString(value1, value2, order);\
     \
     return ((order == Qt::DescendingOrder) ^ (value1 < value2)) == 0x01;\
 }
 
 namespace FileSortFunction {
-bool sortByString(const QString &str1, const QString &str2, Qt::SortOrder order = Qt::AscendingOrder);
+bool compareByString(const QString &str1, const QString &str2, Qt::SortOrder order = Qt::AscendingOrder);
 template<typename T>
-bool sortByString(T, T, Qt::SortOrder order = Qt::AscendingOrder)
+bool compareByString(T, T, Qt::SortOrder order = Qt::AscendingOrder)
 {
     Q_UNUSED(order)
 
@@ -174,15 +174,10 @@ public:
     /// user column default visible for role
     virtual bool columnDefaultVisibleForRole(int role) const;
 
-    typedef std::function<bool(const DAbstractFileInfoPointer&, const DAbstractFileInfoPointer&, Qt::SortOrder)> sortFunction;
-    virtual sortFunction sortFunByColumn(int columnRole) const;
-
-    virtual void sortByColumnRole(QList<DAbstractFileInfoPointer> &fileList, int columnRole,
-                              Qt::SortOrder order = Qt::AscendingOrder) const;
-
-    /// getFileInfoFun is get AbstractFileInfoPointer by index for caller. if return -1 then insert file list last
-    virtual int getIndexByFileInfo(getFileInfoFun fun, const DAbstractFileInfoPointer &info, int columnType,
-                                   Qt::SortOrder order = Qt::AscendingOrder) const;
+    typedef std::function<bool(const DAbstractFileInfoPointer&, const DAbstractFileInfoPointer&, Qt::SortOrder)> CompareFunction;
+    virtual CompareFunction compareFunByColumn(int columnRole) const;
+    /// Whether the file should be inserted into a position according to the current sort type and order
+    virtual bool hasOrderly() const;
 
     virtual bool canRedirectionFileUrl() const;
     virtual DUrl redirectedFileUrl() const;

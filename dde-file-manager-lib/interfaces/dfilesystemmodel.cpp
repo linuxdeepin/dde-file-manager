@@ -582,7 +582,7 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
     if (d->jobController) {
         disconnect(d->jobController, &JobController::addChildren, this, &DFileSystemModel::onJobAddChildren);
         disconnect(d->jobController, &JobController::finished, this, &DFileSystemModel::onJobFinished);
-        disconnect(d->jobController, &JobController::childrenUpdated, this, &DFileSystemModel::updateChildren);
+        disconnect(d->jobController, &JobController::childrenUpdated, this, &DFileSystemModel::updateChildrenOnNewThread);
 
         if (d->jobController->isFinished()) {
             d->jobController->deleteLater();
@@ -619,7 +619,7 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
 
     connect(d->jobController, &JobController::addChildren, this, &DFileSystemModel::onJobAddChildren, Qt::DirectConnection);
     connect(d->jobController, &JobController::finished, this, &DFileSystemModel::onJobFinished, Qt::QueuedConnection);
-    connect(d->jobController, &JobController::childrenUpdated, this, &DFileSystemModel::updateChildren, Qt::QueuedConnection);
+    connect(d->jobController, &JobController::childrenUpdated, this, &DFileSystemModel::updateChildrenOnNewThread, Qt::DirectConnection);
 
     /// make root file to active
     d->rootNode->fileInfo->makeToActive();
@@ -1091,15 +1091,6 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
 {
     Q_D(DFileSystemModel);
 
-    if (qApp->thread() == QThread::currentThread()) {
-        if (QThreadPool::globalInstance()->activeThreadCount() >= QThreadPool::globalInstance()->maxThreadCount())
-            QThreadPool::globalInstance()->setMaxThreadCount(QThreadPool::globalInstance()->maxThreadCount() + 10);
-
-        d->updateChildrenFuture = QtConcurrent::run(QThreadPool::globalInstance(), this, &DFileSystemModel::updateChildren, list);
-
-        return;
-    };
-
     const FileSystemNodePointer &node = d->rootNode;
 
     if(!node) {
@@ -1138,6 +1129,19 @@ void DFileSystemModel::updateChildren(QList<DAbstractFileInfoPointer> list)
 
     if (job && job->state() == JobController::Paused)
         job->start();
+}
+
+void DFileSystemModel::updateChildrenOnNewThread(QList<DAbstractFileInfoPointer> list)
+{
+    Q_D(DFileSystemModel);
+
+    if (d->jobController)
+        d->jobController->pause();
+
+    if (QThreadPool::globalInstance()->activeThreadCount() >= QThreadPool::globalInstance()->maxThreadCount())
+        QThreadPool::globalInstance()->setMaxThreadCount(QThreadPool::globalInstance()->maxThreadCount() + 10);
+
+    d->updateChildrenFuture = QtConcurrent::run(QThreadPool::globalInstance(), this, &DFileSystemModel::updateChildren, list);
 }
 
 void DFileSystemModel::refresh(const DUrl &fileUrl)
@@ -1236,7 +1240,14 @@ void DFileSystemModel::sort(const DAbstractFileInfoPointer &parentInfo, QList<DA
     if (!parentInfo)
         return;
 
-    parentInfo->sortByColumnRole(list, d->sortRole, d->srotOrder);
+    DAbstractFileInfo::CompareFunction sortFun = parentInfo->compareFunByColumn(d->sortRole);
+
+    if (!sortFun)
+        return;
+
+    qSort(list.begin(), list.end(), [sortFun, d] (const DAbstractFileInfoPointer &info1, const DAbstractFileInfoPointer &info2) {
+        return sortFun(info1, info2, d->srotOrder);
+    });
 }
 
 const FileSystemNodePointer DFileSystemModel::createNode(FileSystemNode *parent, const DAbstractFileInfoPointer &info)
@@ -1346,24 +1357,61 @@ void DFileSystemModel::addFile(const DAbstractFileInfoPointer &fileInfo)
     if (parentNode && parentNode->populatedChildren && !parentNode->children.contains(fileUrl)) {
         QPointer<DFileSystemModel> me = this;
 
-        auto getFileInfoFun =   [parentNode, &me] (int index)->const DAbstractFileInfoPointer {
-                                    qApp->processEvents();
-
-                                    if (!me || index >= parentNode->visibleChildren.count())
-                                        return DAbstractFileInfoPointer();
-
-                                    const DUrl &url = parentNode->visibleChildren.value(index);
-                                    const FileSystemNodePointer &node = parentNode->children.value(url);
-
-                                    Q_ASSERT_X(node, "DFileSystemModel::addFile", url.toString().toUtf8().constData());
-
-                                    return node->fileInfo;
-                                };
-
         int row = 0;
 
-        if (enabledSort())
-            row = parentNode->fileInfo->getIndexByFileInfo(getFileInfoFun, fileInfo, d->sortRole, d->srotOrder);
+        if (enabledSort()) {
+            QFuture<void> result;
+
+            if (fileInfo->hasOrderly()) {
+                DAbstractFileInfo::CompareFunction compareFun = fileInfo->compareFunByColumn(d->sortRole);
+
+                if (compareFun) {
+                    result = QtConcurrent::run(QThreadPool::globalInstance(), [&] {
+                        forever {
+                            if (!me || row >= parentNode->visibleChildren.count())
+                                break;
+
+                            const DUrl &url = parentNode->visibleChildren.value(row);
+                            const FileSystemNodePointer &node = parentNode->children.value(url);
+
+                            Q_ASSERT_X(node, "DFileSystemModel::addFile", url.toString().toUtf8().constData());
+
+                            if (compareFun(fileInfo, node->fileInfo, d->srotOrder)) {
+                                break;
+                            }
+
+                            ++row;
+                        }
+                    });
+                } else {
+                    row = -1;
+                }
+            } else if (fileInfo->isFile()) {
+                row = -1;
+            } else {
+                result = QtConcurrent::run(QThreadPool::globalInstance(), [&] {
+                    forever {
+                        if (!me || row >= parentNode->visibleChildren.count())
+                            break;
+
+                        const DUrl &url = parentNode->visibleChildren.value(row);
+                        const FileSystemNodePointer &node = parentNode->children.value(url);
+
+                        Q_ASSERT_X(node, "DFileSystemModel::addFile", url.toString().toUtf8().constData());
+
+                        if (node->fileInfo->isFile()) {
+                            break;
+                        }
+
+                        ++row;
+                    }
+                });
+            }
+
+            while (!result.isFinished()) {
+                qApp->processEvents();
+            }
+        }
 
         if (!me)
             return;
