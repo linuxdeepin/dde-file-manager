@@ -13,7 +13,7 @@
 #include <QUrlQuery>
 
 namespace FileSortFunction {
-SORT_FUN_DEFINE(absoluteFilePath, FilePath, SearchFileInfo)
+COMPARE_FUN_DEFINE(absoluteFilePath, FilePath, SearchFileInfo)
 }
 
 SearchFileInfo::SearchFileInfo(const DUrl &url)
@@ -67,35 +67,6 @@ int SearchFileInfo::filesCount() const
 DUrl SearchFileInfo::parentUrl() const
 {
     return m_parentUrl;
-}
-
-int SearchFileInfo::getIndexByFileInfo(getFileInfoFun fun, const DAbstractFileInfoPointer &info,
-                                       int columnRole, Qt::SortOrder order) const
-{
-    Q_UNUSED(columnRole)
-    Q_UNUSED(order)
-
-    /// if is file then return -1(insert last)
-
-    if(info->isFile())
-        return -1;
-
-    int index = 0;
-
-    forever {
-        const DAbstractFileInfoPointer tmp_info = fun(index);
-
-        if(!tmp_info)
-            break;
-
-        if(tmp_info->isFile()) {
-            break;
-        }
-
-        ++index;
-    }
-
-    return index;
 }
 
 QList<int> SearchFileInfo::userColumnRoles() const
@@ -223,12 +194,17 @@ bool SearchFileInfo::isEmptyFloder(const QDir::Filters &filters) const
     return fileInfo && fileInfo->isEmptyFloder(filters);
 }
 
-DAbstractFileInfo::sortFunction SearchFileInfo::sortFunByColumn(int columnRole) const
+DAbstractFileInfo::CompareFunction SearchFileInfo::compareFunByColumn(int columnRole) const
 {
     if (columnRole == DFileSystemModel::FileUserRole + 1)
-        return FileSortFunction::sortFileListByFilePath;
+        return FileSortFunction::compareFileListByFilePath;
 
-    return DAbstractFileInfo::sortFunByColumn(columnRole);
+    return DAbstractFileInfo::compareFunByColumn(columnRole);
+}
+
+bool SearchFileInfo::hasOrderly() const
+{
+    return false;
 }
 
 DUrl SearchFileInfo::getUrlByNewFileName(const QString &fileName) const

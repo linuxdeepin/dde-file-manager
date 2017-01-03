@@ -692,7 +692,7 @@ JobController *DFileService::getChildrenJob(const DUrl &fileUrl, const QStringLi
     const DDirIteratorPointer &iterator = createDirIterator(fileUrl, nameFilters, filters, flags);
 
     if (iterator)
-        return new JobController(iterator, const_cast<DFileService*>(this));
+        return new JobController(fileUrl, iterator, const_cast<DFileService*>(this));
 
     return new JobController(fileUrl, nameFilters, filters, const_cast<DFileService*>(this));
 }

@@ -15,8 +15,8 @@
 #include <QSettings>
 
 namespace FileSortFunction {
-SORT_FUN_DEFINE(deletionDate, DeletionDate, TrashFileInfo)
-SORT_FUN_DEFINE(sourceFilePath, SourceFilePath, TrashFileInfo)
+COMPARE_FUN_DEFINE(deletionDate, DeletionDate, TrashFileInfo)
+COMPARE_FUN_DEFINE(sourceFilePath, SourceFilePath, TrashFileInfo)
 }
 
 class TrashFileInfoPrivate : public DAbstractFileInfoPrivate
@@ -297,14 +297,14 @@ DUrl TrashFileInfo::goToUrlWhenDeleted() const
     return DAbstractFileInfo::goToUrlWhenDeleted();
 }
 
-DAbstractFileInfo::sortFunction TrashFileInfo::sortFunByColumn(int columnRole) const
+DAbstractFileInfo::CompareFunction TrashFileInfo::compareFunByColumn(int columnRole) const
 {
     if (columnRole == DFileSystemModel::FileUserRole + 1)
-        return FileSortFunction::sortFileListByDeletionDate;
+        return FileSortFunction::compareFileListByDeletionDate;
     else if (columnRole == DFileSystemModel::FileUserRole + 2)
-        return FileSortFunction::sortFileListBySourceFilePath;
+        return FileSortFunction::compareFileListBySourceFilePath;
     else
-        return DAbstractFileInfo::sortFunByColumn(columnRole);
+        return DAbstractFileInfo::compareFunByColumn(columnRole);
 }
 
 bool TrashFileInfo::restore(const DFMEvent &event) const

@@ -130,6 +130,7 @@ public:
 
 public slots:
     void updateChildren(QList<DAbstractFileInfoPointer> list);
+    void updateChildrenOnNewThread(QList<DAbstractFileInfoPointer> list);
     /// warning: only refresh current url
     void refresh(const DUrl &fileUrl = DUrl());
     void update();

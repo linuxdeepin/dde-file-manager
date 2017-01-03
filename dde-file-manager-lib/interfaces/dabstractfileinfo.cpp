@@ -23,11 +23,9 @@
 #include <QCollator>
 
 namespace FileSortFunction {
-Qt::SortOrder sortOrderGlobal;
-DAbstractFileInfo::sortFunction sortFun;
 QCollator sortCollator;
 
-bool sortByString(const QString &str1, const QString &str2, Qt::SortOrder order)
+bool compareByString(const QString &str1, const QString &str2, Qt::SortOrder order)
 {
     if (DFMGlobal::startWithHanzi(str1)) {
         if (!DFMGlobal::startWithHanzi(str2))
@@ -39,16 +37,11 @@ bool sortByString(const QString &str1, const QString &str2, Qt::SortOrder order)
     return ((order == Qt::DescendingOrder) ^ (sortCollator.compare(str1, str2) < 0)) == 0x01;
 }
 
-SORT_FUN_DEFINE(fileDisplayName, DisplayName, DAbstractFileInfo)
-SORT_FUN_DEFINE(fileSize, Size, DAbstractFileInfo)
-SORT_FUN_DEFINE(lastModified, Modified, DAbstractFileInfo)
-SORT_FUN_DEFINE(mimeTypeDisplayName, Mime, DAbstractFileInfo)
-SORT_FUN_DEFINE(created, Created, DAbstractFileInfo)
-
-bool sort(const DAbstractFileInfoPointer &info1, const DAbstractFileInfoPointer &info2)
-{
-    return sortFun(info1, info2, sortOrderGlobal);
-}
+COMPARE_FUN_DEFINE(fileDisplayName, DisplayName, DAbstractFileInfo)
+COMPARE_FUN_DEFINE(fileSize, Size, DAbstractFileInfo)
+COMPARE_FUN_DEFINE(lastModified, Modified, DAbstractFileInfo)
+COMPARE_FUN_DEFINE(mimeTypeDisplayName, Mime, DAbstractFileInfo)
+COMPARE_FUN_DEFINE(created, Created, DAbstractFileInfo)
 } /// end namespace FileSortFunction
 
 #define CALL_PROXY(Fun)\
@@ -739,57 +732,27 @@ bool DAbstractFileInfo::columnDefaultVisibleForRole(int role) const
              || role == DFileSystemModel::FileMimeTypeRole);
 }
 
-DAbstractFileInfo::sortFunction DAbstractFileInfo::sortFunByColumn(int columnRole) const
+DAbstractFileInfo::CompareFunction DAbstractFileInfo::compareFunByColumn(int columnRole) const
 {
     switch (columnRole) {
     case DFileSystemModel::FileDisplayNameRole:
-        return FileSortFunction::sortFileListByDisplayName;
+        return FileSortFunction::compareFileListByDisplayName;
     case DFileSystemModel::FileLastModifiedRole:
-        return FileSortFunction::sortFileListByModified;
+        return FileSortFunction::compareFileListByModified;
     case DFileSystemModel::FileSizeRole:
-        return FileSortFunction::sortFileListBySize;
+        return FileSortFunction::compareFileListBySize;
     case DFileSystemModel::FileMimeTypeRole:
-        return FileSortFunction::sortFileListByMime;
+        return FileSortFunction::compareFileListByMime;
     case DFileSystemModel::FileCreatedRole:
-        return FileSortFunction::sortFileListByCreated;
+        return FileSortFunction::compareFileListByCreated;
     default:
-        return sortFunction();
+        return CompareFunction();
     }
 }
 
-void DAbstractFileInfo::sortByColumnRole(QList<DAbstractFileInfoPointer> &fileList, int columnRole, Qt::SortOrder order) const
+bool DAbstractFileInfo::hasOrderly() const
 {
-    FileSortFunction::sortOrderGlobal = order;
-    FileSortFunction::sortFun = sortFunByColumn(columnRole);
-
-    if (!FileSortFunction::sortFun)
-        return;
-
-    qSort(fileList.begin(), fileList.end(), FileSortFunction::sort);
-}
-
-int DAbstractFileInfo::getIndexByFileInfo(getFileInfoFun fun, const DAbstractFileInfoPointer &info, int columnType, Qt::SortOrder order) const
-{
-    FileSortFunction::sortOrderGlobal = order;
-    FileSortFunction::sortFun = sortFunByColumn(columnType);
-
-    if (!FileSortFunction::sortFun)
-        return -1;
-
-    int index = -1;
-
-    forever {
-        const DAbstractFileInfoPointer &tmp_info = fun(++index);
-
-        if(!tmp_info)
-            break;
-
-        if(FileSortFunction::sort(info, tmp_info)) {
-            break;
-        }
-    }
-
-    return index;
+    return true;
 }
 
 bool DAbstractFileInfo::canRedirectionFileUrl() const

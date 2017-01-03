@@ -7,9 +7,10 @@
 #define LOAD_FILE_INTERVAL 50
 #endif
 
-JobController::JobController(const DDirIteratorPointer &iterator, QObject *parent)
+JobController::JobController(const DUrl &fileUrl, const DDirIteratorPointer &iterator, QObject *parent)
     : QThread(parent)
     , m_iterator(iterator)
+    , m_fileUrl(fileUrl)
 {
 
 }
@@ -103,6 +104,11 @@ void JobController::run()
     timer->restart();
 
     bool update_children = true;
+
+    const DAbstractFileInfoPointer &rootInfo = DFileService::instance()->createFileInfo(m_fileUrl);
+
+    if (rootInfo && !rootInfo->hasOrderly())
+        update_children = false;
 
     while (m_iterator->hasNext()) {
         if (m_state == Paused) {

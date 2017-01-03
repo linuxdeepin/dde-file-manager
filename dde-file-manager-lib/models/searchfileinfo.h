@@ -16,10 +16,6 @@ public:
 
     DUrl parentUrl() const Q_DECL_OVERRIDE;
 
-    /// getFileInfoFun is get AbstractFileInfoPointer by index for caller
-    int getIndexByFileInfo(getFileInfoFun fun, const DAbstractFileInfoPointer &info, int columnRole,
-                                   Qt::SortOrder order = Qt::AscendingOrder) const Q_DECL_OVERRIDE;
-
     QList<int> userColumnRoles() const Q_DECL_OVERRIDE;
     QVariant userColumnDisplayName(int userColumnRole) const Q_DECL_OVERRIDE;
     /// get custom column data
@@ -38,7 +34,8 @@ public:
 
     bool isEmptyFloder(const QDir::Filters &filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System) const Q_DECL_OVERRIDE;
 
-    sortFunction sortFunByColumn(int columnRole) const Q_DECL_OVERRIDE;
+    CompareFunction compareFunByColumn(int columnRole) const Q_DECL_OVERRIDE;
+    bool hasOrderly() const Q_DECL_OVERRIDE;
 
     DUrl getUrlByNewFileName(const QString &fileName) const Q_DECL_OVERRIDE;
 
