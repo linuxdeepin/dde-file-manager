@@ -79,7 +79,7 @@ void DThumbnailProviderPrivate::init()
     sizeLimitHash.reserve(28);
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName("text/plain"), 1024 * 1024);
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName("application/pdf"), INT64_MAX);
-    sizeLimitHash.insert(mimeDatabase.mimeTypeForName("application/vnd.adobe.flash.movie"), INT64_MAX);
+//    sizeLimitHash.insert(mimeDatabase.mimeTypeForName("application/vnd.adobe.flash.movie"), INT64_MAX);
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName("application/vnd.rn-realmedia"), INT64_MAX);
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName("application/vnd.ms-asf"), INT64_MAX);
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName("application/mxf"), INT64_MAX);
@@ -128,7 +128,7 @@ bool DThumbnailProvider::hasThumbnail(const QFileInfo &info) const
     if (fileSize <= 0)
         return false;
 
-    const QMimeType &mime = d->mimeDatabase.mimeTypeForFile(info);
+    const QMimeType &mime = d->mimeDatabase.mimeTypeForFile(info, QMimeDatabase::MatchContent);
 
     if (fileSize > sizeLimit(mime) && !mime.name().startsWith("video/"))
         return false;
@@ -150,7 +150,7 @@ bool DThumbnailProvider::hasThumbnail(const QMimeType &mimeType) const
     }
 
     if (Q_LIKELY(mime == "text/plain" || mime == "application/pdf"
-            || mime == "application/vnd.adobe.flash.movie"
+//            || mime == "application/vnd.adobe.flash.movie"
             || mime == "application/vnd.rn-realmedia"
             || mime == "application/vnd.ms-asf"
             || mime == "application/mxf")) {
