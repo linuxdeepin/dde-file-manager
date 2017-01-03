@@ -938,8 +938,12 @@
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="32"/>
+        <source>System Disk</source>
+        <translation>系统盘</translation>
+    </message>
+    <message>
         <source>Disk</source>
-        <translation>磁盘</translation>
+        <translation type="vanished">磁盘</translation>
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="33"/>
@@ -980,8 +984,12 @@
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="217"/>
+        <source>System Disk</source>
+        <translation>系统盘</translation>
+    </message>
+    <message>
         <source>Disk</source>
-        <translation>磁盘</translation>
+        <translation type="vanished">磁盘</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="670"/>

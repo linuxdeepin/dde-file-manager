@@ -702,7 +702,7 @@
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="32"/>
-        <source>Disk</source>
+        <source>System Disk</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -740,7 +740,7 @@
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="217"/>
-        <source>Disk</source>
+        <source>System Disk</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
