@@ -3,6 +3,7 @@
 #include "openwithotherdialog.h"
 #include "trashpropertydialog.h"
 #include "usersharepasswordsettingdialog.h"
+#include "dialogs/movetotrashconflictdialog.h"
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
@@ -169,6 +170,7 @@ void DialogManager::addJob(FileJob *job)
     connect(job, &FileJob::requestConflictDialogShowed, m_taskDialog, &DTaskDialog::showConflictDiloagByJob);
     connect(job, &FileJob::requestCopyMoveToSelfDialogShowed, this, &DialogManager::showCopyMoveToSelfDialog);
     connect(job, &FileJob::requestNoEnoughSpaceDialogShowed, this, &DialogManager::showDiskSpaceOutOfUsedDialog);
+    connect(job, &FileJob::requestMoveToTrashConflictDialogShowed, this, &DialogManager::showMoveToTrashConflictDialog);
 }
 
 
@@ -541,6 +543,18 @@ void DialogManager::showFailToCreateSymlinkDialog()
     d.setIcon(QIcon(":/images/dialogs/images/dialog_warning_64.png"));
     d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
     d.exec();
+}
+
+void DialogManager::showMoveToTrashConflictDialog(const DUrlList &urls)
+{
+    MoveToTrashConflictDialog d(0, urls);
+    int code = d.exec();
+    if(code == 1){
+        DFMEvent event;
+        event << urls;
+        event << urls.first();
+        fileService->deleteFilesSync(event);
+    }
 }
 
 void DialogManager::removePropertyDialog(const DUrl &url)
