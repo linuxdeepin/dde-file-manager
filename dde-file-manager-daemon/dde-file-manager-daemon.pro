@@ -15,6 +15,8 @@ CONFIG   -= app_bundle
 PKGCONFIG += x11 polkit-agent-1 polkit-qt5-1 dtkbase dtkutil
 CONFIG += c++11 link_pkgconfig
 
+include(../partman/partman.pri)
+
 TEMPLATE = app
 
 #include(../utils/utils.pri)
@@ -54,7 +56,10 @@ SOURCES += main.cpp \
     dbusservice/dbusinterface/movejob_interface.cpp \
     usershare/usersharemanager.cpp \
     dbusservice/dbusadaptor/usershare_adaptor.cpp \
-    dbusservice/dbusinterface/usershare_interface.cpp
+    dbusservice/dbusinterface/usershare_interface.cpp \
+    usbformatter/usbformatter.cpp \
+    dbusservice/dbusadaptor/usbformatter_adaptor.cpp \
+    dbusservice/dbusinterface/usbformatter_interface.cpp
 
 HEADERS += \
     app/filemanagerdaemon.h \
@@ -87,7 +92,10 @@ HEADERS += \
     dbusservice/dbusinterface/movejob_interface.h \
     usershare/usersharemanager.h \
     dbusservice/dbusadaptor/usershare_adaptor.h \
-    dbusservice/dbusinterface/usershare_interface.h
+    dbusservice/dbusinterface/usershare_interface.h \
+    usbformatter/usbformatter.h \
+    dbusservice/dbusadaptor/usbformatter_adaptor.h \
+    dbusservice/dbusinterface/usbformatter_interface.h
 
 
 target.path = /usr/bin
