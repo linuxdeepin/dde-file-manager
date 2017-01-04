@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 3.8.3 (29802) - http://www.bohemiancoding.com/sketch -->
+    <title>drive-removable-media-ieee1394</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-1">
+            <feOffset dx="0" dy="1" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="1" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.3 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+        <linearGradient x1="50%" y1="1.4588648%" x2="50%" y2="97.9233099%" id="linearGradient-2">
+            <stop stop-color="#CE85FE" offset="0%"></stop>
+            <stop stop-color="#A170FC" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="drive-removable-media-ieee1394">
+            <g id="Group-3" filter="url(#filter-1)" transform="translate(7.000000, 4.000000)">
+                <rect id="Rectangle-1" fill="url(#linearGradient-2)" x="0" y="0" width="34" height="35" rx="1"></rect>
+                <g id="Group" transform="translate(9.000000, 7.000000)" fill="#FFFFFF">
+                    <path d="M8.017,4.977 C6.215,4.977 4.753,6.438 4.753,8.241 C4.753,10.044 6.214,11.505 8.017,11.505 C9.819,11.505 11.281,10.044 11.281,8.241 C11.281,6.438 9.819,4.977 8.017,4.977 L8.017,4.977 Z M8.017,10.689 C6.665,10.689 5.569,9.593 5.569,8.241 C5.569,6.889 6.665,5.793 8.017,5.793 C9.369,5.793 10.465,6.889 10.465,8.241 C10.465,9.593 9.369,10.689 8.017,10.689 L8.017,10.689 Z" id="Shape"></path>
+                    <rect id="Rectangle-path" x="4.99" y="13.004" width="6" height="1"></rect>
+                    <rect id="Rectangle-path" x="4.99" y="15.004" width="6" height="1"></rect>
+                    <rect id="Rectangle-path" transform="translate(4.278076, 4.070916) rotate(135.000000) translate(-4.278076, -4.070916) " x="1.83059912" y="3.66292006" width="4.89495306" height="0.815992175"></rect>
+                    <rect id="Rectangle-path" transform="translate(2.547556, 2.340216) rotate(135.000000) translate(-2.547556, -2.340216) " x="0.100079322" y="1.93222006" width="4.89495306" height="0.815992175"></rect>
+                    <rect id="Rectangle-path" transform="translate(12.651772, 3.217677) rotate(225.000000) translate(-12.651772, -3.217677) " x="10.2042956" y="1.56869236" width="4.89495306" height="3.29796837"></rect>
+                </g>
+                <rect id="Rectangle-3" fill="#FFFFFF" x="0" y="30" width="34" height="6"></rect>
+                <rect id="Rectangle-1" fill="#DCDDDD" x="0" y="34" width="34" height="6" rx="1"></rect>
+                <g id="Group" transform="translate(19.000000, 35.000000)" fill="#A744FF">
+                    <rect id="Rectangle-path" x="10.987" y="0.996" width="1" height="2"></rect>
+                    <rect id="Rectangle-path" x="8.987" y="0.996" width="1" height="2"></rect>
+                    <rect id="Rectangle-path" x="6.987" y="0.996" width="1" height="2"></rect>
+                    <rect id="Rectangle-path" x="4.987" y="0.996" width="1" height="2"></rect>
+                    <rect id="Rectangle-path" x="2.987" y="0.996" width="1" height="2"></rect>
+                    <rect id="Rectangle-path" x="0.987" y="0.996" width="1" height="2"></rect>
+                </g>
+                <circle id="Oval" fill="#A743FF" cx="5" cy="37" r="1"></circle>
+            </g>
+        </g>
+    </g>
+</svg>

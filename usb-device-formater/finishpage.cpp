@@ -1,0 +1,25 @@
+#include "finishpage.h"
+#include <QIcon>
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QPixmap>
+
+FinishPage::FinishPage(QWidget *parent) : QFrame(parent)
+{
+    initUI();
+}
+
+void FinishPage::initUI()
+{
+    QVBoxLayout* mainLayout = new QVBoxLayout;
+    QLabel* warnIconLabel = new QLabel(this);
+    warnIconLabel->setPixmap(QPixmap(":/icoms/icons/success.png"));
+    QLabel* warnTextLabel = new QLabel(this);
+    QString warnText = tr("Format successfuly");
+    warnTextLabel->setText(warnText);
+    warnTextLabel->setWordWrap(true);
+
+    mainLayout->addWidget(warnIconLabel, 0, Qt::AlignHCenter);
+    mainLayout->addWidget(warnTextLabel, 0, Qt::AlignHCenter);
+    setLayout(mainLayout);
+}
