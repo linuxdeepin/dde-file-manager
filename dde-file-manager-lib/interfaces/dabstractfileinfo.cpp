@@ -204,18 +204,25 @@ QString DAbstractFileInfo::fileDisplayPinyinName() const
     return d->pinyinName;
 }
 
-bool DAbstractFileInfo::isCanRename() const
+bool DAbstractFileInfo::canRename() const
 {
-    CALL_PROXY(isCanRename());
+    CALL_PROXY(canRename());
 
     return false;
 }
 
-bool DAbstractFileInfo::isCanShare() const
+bool DAbstractFileInfo::canShare() const
 {
-    CALL_PROXY(isCanShare());
+    CALL_PROXY(canShare());
 
     return false;
+}
+
+bool DAbstractFileInfo::canFetch() const
+{
+    CALL_PROXY(canFetch());
+
+    return isDir();
 }
 
 bool DAbstractFileInfo::isReadable() const
@@ -574,7 +581,7 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
                        << MenuAction::Copy
                        << MenuAction::Compress;
 
-            if (isCanShare() && !isShared()){
+            if (canShare() && !isShared()){
                 actionKeys << MenuAction::Share;
             }else if(isShared()){
                 actionKeys << MenuAction::UnShare;
@@ -605,7 +612,7 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
             if (isDir()) {
                 actionKeys << MenuAction::Compress;
 
-                if (isCanShare() && !isShared()){
+                if (canShare() && !isShared()){
                     actionKeys << MenuAction::Share;
                 }else if(isShared()){
                     actionKeys << MenuAction::UnShare;
@@ -987,7 +994,7 @@ QSet<MenuAction> DAbstractFileInfo::disableMenuActionList() const
              << MenuAction::Paste;
     }
 
-    if (!isCanRename()) {
+    if (!canRename()) {
         list << MenuAction::Cut << MenuAction::Rename << MenuAction::Remove << MenuAction::Delete;
     }
 

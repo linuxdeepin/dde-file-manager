@@ -13,12 +13,12 @@ ComputerDesktopFileInfo::~ComputerDesktopFileInfo()
 
 }
 
-bool ComputerDesktopFileInfo::isCanRename() const
+bool ComputerDesktopFileInfo::canRename() const
 {
     return false;
 }
 
-bool ComputerDesktopFileInfo::isCanShare() const
+bool ComputerDesktopFileInfo::canShare() const
 {
     return false;
 }

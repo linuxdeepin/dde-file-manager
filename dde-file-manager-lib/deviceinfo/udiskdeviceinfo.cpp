@@ -272,7 +272,7 @@ bool UDiskDeviceInfo::isWritable() const
     return true;
 }
 
-bool UDiskDeviceInfo::isCanRename() const
+bool UDiskDeviceInfo::canRename() const
 {
     return false;
 }

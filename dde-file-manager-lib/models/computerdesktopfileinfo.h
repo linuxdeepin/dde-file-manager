@@ -9,8 +9,8 @@ public:
 
     ~ComputerDesktopFileInfo();
 
-    bool isCanRename() const Q_DECL_OVERRIDE;
-    bool isCanShare() const Q_DECL_OVERRIDE;
+    bool canRename() const Q_DECL_OVERRIDE;
+    bool canShare() const Q_DECL_OVERRIDE;
     bool isWritable() const Q_DECL_OVERRIDE;
 
     QVector<MenuAction> menuActionList(MenuType type = SingleFile) const;

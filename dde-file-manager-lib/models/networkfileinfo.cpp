@@ -48,7 +48,7 @@ bool NetworkFileInfo::isWritable() const
     return true;
 }
 
-bool NetworkFileInfo::isCanRename() const
+bool NetworkFileInfo::canRename() const
 {
     return false;
 }

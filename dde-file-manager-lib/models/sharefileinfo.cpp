@@ -53,7 +53,7 @@ bool ShareFileInfo::isDir() const
     return !d->proxy || d->proxy->isDir();
 }
 
-bool ShareFileInfo::isCanRename() const
+bool ShareFileInfo::canRename() const
 {
     return false;
 }

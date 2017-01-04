@@ -9,9 +9,9 @@ class AVFSFileInfo : public DAbstractFileInfo
 public:
     AVFSFileInfo(const QString &archRootPath, const DUrl& avfsUrl);
 
-    bool isCanRename() const Q_DECL_OVERRIDE;
+    bool canRename() const Q_DECL_OVERRIDE;
     bool isWritable() const Q_DECL_OVERRIDE;
-    bool isCanShare() const Q_DECL_OVERRIDE;
+    bool canShare() const Q_DECL_OVERRIDE;
     bool canIteratorDir() const Q_DECL_OVERRIDE;
     bool isDir() const Q_DECL_OVERRIDE;
 

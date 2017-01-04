@@ -83,7 +83,7 @@ bool TrashFileInfo::exists() const
     return DAbstractFileInfo::exists() || fileUrl() == DUrl::fromTrashFile("/");
 }
 
-bool TrashFileInfo::isCanRename() const
+bool TrashFileInfo::canRename() const
 {
     return false;
 }
@@ -98,7 +98,7 @@ bool TrashFileInfo::isWritable() const
     return true;
 }
 
-bool TrashFileInfo::isCanShare() const
+bool TrashFileInfo::canShare() const
 {
     return false;
 }

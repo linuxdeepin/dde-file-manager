@@ -784,7 +784,7 @@ void DFileService::openUrl(const DFMEvent &event) const
 
     const DAbstractFileInfoPointer &fileInfo = createFileInfo(event.fileUrl());
 
-    if (fileInfo && fileInfo->isDir()) {
+    if (fileInfo && fileInfo->canFetch()) {
         emit fileSignalManager->requestChangeCurrentUrl(event);
     } else {
         openFile(event.fileUrl());

@@ -11,10 +11,10 @@ public:
     TrashFileInfo(const DUrl &url);
 
     bool exists() const Q_DECL_OVERRIDE;
-    bool isCanRename() const Q_DECL_OVERRIDE;
+    bool canRename() const Q_DECL_OVERRIDE;
     bool isReadable() const Q_DECL_OVERRIDE;
     bool isWritable() const Q_DECL_OVERRIDE;
-    bool isCanShare() const Q_DECL_OVERRIDE;
+    bool canShare() const Q_DECL_OVERRIDE;
 
     QString fileDisplayName() const Q_DECL_OVERRIDE;
     QFile::Permissions permissions() const Q_DECL_OVERRIDE;

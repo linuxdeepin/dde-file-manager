@@ -29,7 +29,7 @@ AVFSFileInfo::AVFSFileInfo(const QString &archRootPath, const DUrl &avfsUrl):
     setProxy(DAbstractFileInfoPointer(new DFileInfo(realFileUrl(archRootPath, avfsUrl))));
 }
 
-bool AVFSFileInfo::isCanRename() const
+bool AVFSFileInfo::canRename() const
 {
     return false;
 }
@@ -39,7 +39,7 @@ bool AVFSFileInfo::isWritable() const
     return false;
 }
 
-bool AVFSFileInfo::isCanShare() const
+bool AVFSFileInfo::canShare() const
 {
     return false;
 }
