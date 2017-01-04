@@ -1,0 +1,72 @@
+QWidget#UsbDeviceFormatter{
+    /* background: white; */
+}
+
+QLabel#TagLabel{
+    font-size: 10px;
+    color: #999999;
+}
+
+QProgressBar::chunk {
+    height: 2px;
+    background-color: #ff0000;
+}
+
+QLabel#Line{
+    height: 2px;
+    background-color: rgba(0,0,0,20);
+}
+
+QComboBox{
+    background-color: #fafafa;
+    border: 1px solid rgba(0,0,0,50);
+    border-radius: 3px;
+
+}
+
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 25px;
+    background: transparent;
+}
+
+QComboBox::down-arrow {
+    image: url(:/icoms/icons/down.png);
+}
+
+QComboBox::down-arrow:on {
+    image: url(:/icoms/icons/up.png);
+}
+
+QPushButton#ComfirmButton{
+    font-family: SourceHanSansSC-Medium;
+    font-size: 14px;
+    color: #0599FF;
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,stop: 0 #FFFFFF,stop: 1 #FDFDFD);
+    border: 1px solid rgba(0,131,255,0.40);
+    box-shadow: 0 2px 1px 0 rgba(0,115,255,0.05), inset 0 -1px 0 0 #FFFFFF, inset 0 2px 0 0 rgba(255,255,255,0.15);
+    border-radius: 4px;
+}
+
+
+QPushButton#ComfirmButton:hover{
+    color: #FFFFFF;
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,stop: 0 #8CCFFF,stop: 1 #4BB8FF);
+    border: 1px solid rgba(0,117,243,0.20);
+    box-shadow: 0 1px 1px 0 rgba(0,0,0,0.05);
+}
+
+QPushButton#ComfirmButton:pressed{
+    color: #FFFFFF;
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,stop: 0 #0B8CFF,stop: 1 #0AA1FF);
+    border: 1px solid rgba(29,129,255,0.30);
+    box-shadow: 0 1px 1px 0 rgba(0,0,0,0.05);
+}
+
+QPushButton#ComfirmButton::disabled{
+    color: #999999;
+    background-color: #F9F9F9;
+    border: 1px solid rgba(0,0,0,0.05);
+    box-shadow: 0 1px 1px 0 rgba(0,0,0,0.05);
+}

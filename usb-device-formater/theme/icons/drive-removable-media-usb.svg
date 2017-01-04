@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 3.8.3 (29802) - http://www.bohemiancoding.com/sketch -->
+    <title>drive-removable-media-usb</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-1">
+            <feOffset dx="0" dy="1" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="1" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.3 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+        <linearGradient x1="50%" y1="1.4588648%" x2="50%" y2="97.9233099%" id="linearGradient-2">
+            <stop stop-color="#CE85FE" offset="0%"></stop>
+            <stop stop-color="#A170FC" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="drive-removable-media-usb">
+            <g id="Group-3" filter="url(#filter-1)" transform="translate(7.000000, 4.000000)">
+                <rect id="Rectangle-1" fill="url(#linearGradient-2)" x="0" y="0" width="34" height="35" rx="1"></rect>
+                <g id="Group" transform="translate(12.000000, 4.000000)" fill="#FFFFFF">
+                    <circle id="Oval" cx="5.447" cy="18.394" r="2.064"></circle>
+                    <polygon id="Shape" points="3.72 3.718 7.125 3.718 5.452 0.944"></polygon>
+                    <circle id="Oval" cx="2.044" cy="8.348" r="1.493"></circle>
+                    <rect id="Rectangle-path" x="7.388" y="5.23" width="3.042" height="3.042"></rect>
+                    <polygon id="Shape" points="5.867 2.949 5.107 2.949 5.107 17.962 5.107 19.68 5.867 19.68"></polygon>
+                    <path d="M8.552,6.849 L8.552,9.262 C8.552,9.662 8.506,9.819 8.189,10.121 L5.447,12.042 L5.447,12.864 L8.65,10.543 C8.65,10.543 9.202,10.212 9.202,9.315 L9.2,9.315 L9.2,6.848 L8.552,6.848 L8.552,6.849 Z" id="Shape"></path>
+                    <path d="M2.387,9.157 L2.387,11.522 C2.387,11.914 2.433,12.068 2.75,12.364 L5.492,14.247 L5.492,15.053 L2.289,12.778 C2.289,12.778 1.737,12.453 1.737,11.575 L1.74,11.575 L1.74,9.158 L2.387,9.158 L2.387,9.157 Z" id="Shape"></path>
+                </g>
+                <rect id="Rectangle-3" fill="#FFFFFF" x="0" y="30" width="34" height="6"></rect>
+                <rect id="Rectangle-1" fill="#DCDDDD" x="0" y="34" width="34" height="6" rx="1"></rect>
+                <g id="Group" transform="translate(19.000000, 35.000000)" fill="#A744FF">
+                    <rect id="Rectangle-path" x="10.987" y="0.996" width="1" height="2"></rect>
+                    <rect id="Rectangle-path" x="8.987" y="0.996" width="1" height="2"></rect>
+                    <rect id="Rectangle-path" x="6.987" y="0.996" width="1" height="2"></rect>
+                    <rect id="Rectangle-path" x="4.987" y="0.996" width="1" height="2"></rect>
+                    <rect id="Rectangle-path" x="2.987" y="0.996" width="1" height="2"></rect>
+                    <rect id="Rectangle-path" x="0.987" y="0.996" width="1" height="2"></rect>
+                </g>
+                <circle id="Oval" fill="#A743FF" cx="5" cy="37" r="1"></circle>
+            </g>
+        </g>
+    </g>
+</svg>
