@@ -871,7 +871,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             emit fileSignalManager->requestCloseCurrentTab(fmevent);
             return;
         case Qt::Key_Tab:
-            emit DFileView::requestActiveNextTab();
+            emit DFileView::requestActivateNextTab();
             return;
         default: break;
         }
@@ -894,7 +894,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
         break;
     case Qt::ControlModifier | Qt::ShiftModifier:
         if (event->key() == Qt::Key_Backtab){
-            emit DFileView::requestActivePreviousTab();
+            emit DFileView::requestActivatePreviousTab();
             return;
         } if (event->key() == Qt::Key_N) {
             if (itemDelegate()->editingIndex().isValid())
@@ -932,6 +932,30 @@ void DFileView::keyPressEvent(QKeyEvent *event)
         case Qt::Key_Home:
             cd(DUrl::fromLocalFile(QDir::homePath()));
 
+            return;
+        case Qt::Key_1:
+            emit requestActivateTabByIndex(0);
+            return;
+        case Qt::Key_2:
+            emit requestActivateTabByIndex(1);
+            return;
+        case Qt::Key_3:
+            emit requestActivateTabByIndex(2);
+            return;
+        case Qt::Key_4:
+            emit requestActivateTabByIndex(3);
+            return;
+        case Qt::Key_5:
+            emit requestActivateTabByIndex(4);
+            return;
+        case Qt::Key_6:
+            emit requestActivateTabByIndex(5);
+            return;
+        case Qt::Key_7:
+            emit requestActivateTabByIndex(6);
+            return;
+        case Qt::Key_8:
+            emit requestActivateTabByIndex(7);
             return;
         default: break;
         }
