@@ -50,11 +50,10 @@ void OpenWithOtherDialog::initUI()
     m_titleLabel->move(50, 0);
     m_titleLabel->setAlignment(Qt::AlignCenter);
 
-    QStringList buttonTexts;
-    buttonTexts << tr("Cancel") << tr("Choose");
+    addButton(tr("Cancel"));
+    addButton(tr("Choose"), true, ButtonRecommend);
 
     addContent(m_appListWidget);
-    addButtons(buttonTexts);
     setSpacing(0);
     setDefaultButton(1);
 
