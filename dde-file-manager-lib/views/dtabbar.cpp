@@ -43,8 +43,8 @@ Tab::~Tab()
 void Tab::initConnect()
 {
     connect(m_fileView, &DFileView::rootUrlChanged, this,&Tab::onFileRootUrlChanged);
-    connect(m_fileView, &DFileView::requestActiveNextTab, this, &Tab::requestActiveNextTab);
-    connect(m_fileView, &DFileView::requestActivePreviousTab, this, &Tab::requestActivePreviousTab);
+    connect(m_fileView, &DFileView::requestActivateNextTab, this, &Tab::requestActiveNextTab);
+    connect(m_fileView, &DFileView::requestActivatePreviousTab, this, &Tab::requestActivePreviousTab);
 }
 
 void Tab::setTabText(QString text)
@@ -610,6 +610,8 @@ void TabBar::removeTab(const int index, const bool &remainState)
 
 void TabBar::setCurrentIndex(const int index)
 {
+    if(index<0 || index >= m_tabs.count())
+        return;
     m_currentIndex = index;
 
     int counter = 0;
@@ -622,6 +624,7 @@ void TabBar::setCurrentIndex(const int index)
         }
         counter ++;
     }
+
     emit currentChanged(index);
     updateScreen();
 }

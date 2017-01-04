@@ -2007,6 +2007,16 @@
         <translation></translation>
     </message>
     <message>
+        <location filename="../shutil/shortcut.cpp" line="47"/>
+        <source>Switch tab by specified number between 1 to 8</source>
+        <translation>在1-8之间切换标签到指定序号</translation>
+    </message>
+    <message>
+        <location filename="../shutil/shortcut.cpp" line="47"/>
+        <source>Alt + [1-8] </source>
+        <translation></translation>
+    </message>
+    <message>
         <source>Alt + left </source>
         <translation type="vanished">Alt + left</translation>
     </message>
