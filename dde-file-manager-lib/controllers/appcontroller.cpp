@@ -277,7 +277,10 @@ void AppController::actionCreateSymlink(const DFMEvent &event)
 //    const DUrl& fileUrl = event.fileUrl();
 //    int windowId = event.windowId();
 //    FileUtils::createSoftLink(windowId, fileUrl.toLocalFile());
-    fileService->createSymlink(event.fileUrl(), event);
+    bool result = fileService->createSymlink(event.fileUrl(), event);
+    if(!result){
+        dialogManager->showFailToCreateSymlinkDialog();
+    }
 }
 
 void AppController::actionSendToDesktop(const DFMEvent &event)

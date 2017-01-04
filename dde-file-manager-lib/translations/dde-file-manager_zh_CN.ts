@@ -374,6 +374,7 @@
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="237"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="542"/>
         <source>OK</source>
         <translation>确定</translation>
     </message>
@@ -451,6 +452,11 @@
         <location filename="../dialogs/dialogmanager.cpp" line="508"/>
         <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions.</source>
         <translation>文件管理器是深度科技自主研发的一款管理文件的工具， 它包括搜索、复制、回收站、压缩/解压缩， 文件属性等管理文件的功能。</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="540"/>
+        <source>Target disk format incorrect, unable to create link!</source>
+        <translation>目标磁盘格式不正确，无法创建链接！</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="506"/>
@@ -1437,26 +1443,26 @@
         <translation>设置壁纸</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="344"/>
-        <location filename="../controllers/appcontroller.cpp" line="346"/>
+        <location filename="../controllers/appcontroller.cpp" line="347"/>
+        <location filename="../controllers/appcontroller.cpp" line="349"/>
         <source>newDoc</source>
         <translation>新建word文档</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="353"/>
-        <location filename="../controllers/appcontroller.cpp" line="355"/>
+        <location filename="../controllers/appcontroller.cpp" line="356"/>
+        <location filename="../controllers/appcontroller.cpp" line="358"/>
         <source>newExcel</source>
         <translation>新建Excel文档</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="362"/>
-        <location filename="../controllers/appcontroller.cpp" line="364"/>
+        <location filename="../controllers/appcontroller.cpp" line="365"/>
+        <location filename="../controllers/appcontroller.cpp" line="367"/>
         <source>newPowerPoint</source>
         <translation>新建PowerPoint文档</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="371"/>
-        <location filename="../controllers/appcontroller.cpp" line="373"/>
+        <location filename="../controllers/appcontroller.cpp" line="374"/>
+        <location filename="../controllers/appcontroller.cpp" line="376"/>
         <source>newText</source>
         <translation>新建文本</translation>
     </message>
@@ -1546,13 +1552,13 @@
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="254"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="458"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="451"/>
         <source>%1 item</source>
         <translation>%1 项</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="256"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="460"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="453"/>
         <source>%1 items</source>
         <translation>%1 项</translation>
     </message>
@@ -1587,23 +1593,23 @@
         <translation type="vanished">深度文件管理器</translation>
     </message>
     <message>
-        <location filename="../models/searchfileinfo.cpp" line="112"/>
+        <location filename="../models/searchfileinfo.cpp" line="83"/>
         <source>Path</source>
         <comment>SearchFileInfo</comment>
         <translation>路径</translation>
     </message>
     <message>
-        <location filename="../models/searchfileinfo.cpp" line="248"/>
+        <location filename="../models/searchfileinfo.cpp" line="224"/>
         <source>Searching...</source>
         <translation>正在搜索...</translation>
     </message>
     <message>
-        <location filename="../models/searchfileinfo.cpp" line="253"/>
+        <location filename="../models/searchfileinfo.cpp" line="229"/>
         <source>No results</source>
         <translation>无搜索结果</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="873"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="836"/>
         <source>Loading...</source>
         <translation>正在加载...</translation>
     </message>
