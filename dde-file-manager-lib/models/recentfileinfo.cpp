@@ -24,7 +24,7 @@ RecentFileInfo::RecentFileInfo(const QString &url)
 
 }
 
-bool RecentFileInfo::isCanRename() const
+bool RecentFileInfo::canRename() const
 {
     return false;
 }

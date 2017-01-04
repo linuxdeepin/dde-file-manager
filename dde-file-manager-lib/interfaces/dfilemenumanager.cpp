@@ -124,7 +124,7 @@ DFileMenu *DFileMenuManager::createCustomBookMarkMenu(const DUrl &url, QSet<Menu
                     << MenuAction::Rename
                     << MenuAction::Property;
     }else{
-        if (!info->isCanRename()){
+        if (!info->canRename()){
             disableList << MenuAction::Rename;
         }
     }

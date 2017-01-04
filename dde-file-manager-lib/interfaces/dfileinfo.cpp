@@ -107,7 +107,7 @@ QString DFileInfo::fileName() const
     return d->fileInfo.fileName();
 }
 
-bool DFileInfo::isCanRename() const
+bool DFileInfo::canRename() const
 {
     if (systemPathManager->isSystemPath(absoluteFilePath()))
         return false;
@@ -119,7 +119,7 @@ bool DFileInfo::isCanRename() const
     return canRename;
 }
 
-bool DFileInfo::isCanShare() const
+bool DFileInfo::canShare() const
 {
     if (isDir() && isReadable()) {
         if (absoluteFilePath().startsWith(QDir::homePath())) {
@@ -135,6 +135,11 @@ bool DFileInfo::isCanShare() const
     }
 
     return false;
+}
+
+bool DFileInfo::canFetch() const
+{
+    return isDir() || FileUtils::isArchive(absoluteFilePath());
 }
 
 bool DFileInfo::isReadable() const
@@ -201,9 +206,6 @@ bool DFileInfo::isFile() const
 bool DFileInfo::isDir() const
 {
     Q_D(const DFileInfo);
-
-    if(FileUtils::isArchive(fileUrl().toLocalFile()))
-        return true;
 
     return d->fileInfo.isDir();
 }

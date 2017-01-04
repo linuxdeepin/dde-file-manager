@@ -11,7 +11,7 @@ public:
     RecentFileInfo(const DUrl &url);
     RecentFileInfo(const QString &url);
 
-    bool isCanRename() const Q_DECL_OVERRIDE;
+    bool canRename() const Q_DECL_OVERRIDE;
     bool isWritable() const Q_DECL_OVERRIDE;
     bool isReadable() const Q_DECL_OVERRIDE;
 

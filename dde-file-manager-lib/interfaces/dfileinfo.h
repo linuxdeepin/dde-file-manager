@@ -22,8 +22,9 @@ public:
     QString absoluteFilePath() const Q_DECL_OVERRIDE;
     QString fileName() const Q_DECL_OVERRIDE;
 
-    bool isCanRename() const Q_DECL_OVERRIDE;
-    bool isCanShare() const Q_DECL_OVERRIDE;
+    bool canRename() const Q_DECL_OVERRIDE;
+    bool canShare() const Q_DECL_OVERRIDE;
+    bool canFetch() const Q_DECL_OVERRIDE;
 
     bool isReadable() const Q_DECL_OVERRIDE;
     bool isWritable() const Q_DECL_OVERRIDE;

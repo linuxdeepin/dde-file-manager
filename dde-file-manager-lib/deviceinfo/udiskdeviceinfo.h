@@ -58,7 +58,7 @@ public:
     bool isReadable() const Q_DECL_OVERRIDE;
     bool isWritable() const Q_DECL_OVERRIDE;
 
-    bool isCanRename() const Q_DECL_OVERRIDE;
+    bool canRename() const Q_DECL_OVERRIDE;
     QIcon fileIcon() const Q_DECL_OVERRIDE;
     QIcon fileIcon(int width, int height) const;
     bool isDir() const Q_DECL_OVERRIDE;

@@ -12,12 +12,12 @@ TrashDesktopFileInfo::~TrashDesktopFileInfo()
 
 }
 
-bool TrashDesktopFileInfo::isCanRename() const
+bool TrashDesktopFileInfo::canRename() const
 {
     return false;
 }
 
-bool TrashDesktopFileInfo::isCanShare() const
+bool TrashDesktopFileInfo::canShare() const
 {
     return false;
 }

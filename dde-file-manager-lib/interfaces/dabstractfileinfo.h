@@ -97,8 +97,9 @@ public:
     virtual QString fileDisplayName() const;
     QString fileDisplayPinyinName() const;
 
-    virtual bool isCanRename() const;
-    virtual bool isCanShare() const;
+    virtual bool canRename() const;
+    virtual bool canShare() const;
+    virtual bool canFetch() const;
     virtual bool isReadable() const;
     virtual bool isWritable() const;
     virtual bool isExecutable() const;

@@ -21,7 +21,7 @@ public:
     ~ShareFileInfo();
     bool exists() const Q_DECL_OVERRIDE;
     bool isDir() const Q_DECL_OVERRIDE;
-    bool isCanRename() const Q_DECL_OVERRIDE;
+    bool canRename() const Q_DECL_OVERRIDE;
     bool isReadable() const Q_DECL_OVERRIDE;
     bool isWritable() const Q_DECL_OVERRIDE;
 

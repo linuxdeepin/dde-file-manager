@@ -232,7 +232,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget* p
         m_edit->setPlainText(fileInfo->fileDisplayName());
         m_edit->setAlignment(Qt::AlignHCenter);
 
-        if (!fileInfo->isCanRename()){
+        if (!fileInfo->canRename()){
             m_editDisbaled = true;
         }
 
@@ -244,7 +244,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget* p
             titleList << openMethod;
         }else{
             titleList << basicInfo;
-            if (fileInfo->isCanShare()){
+            if (fileInfo->canShare()){
                 titleList << shareManager;
             }
         }
@@ -260,7 +260,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget* p
             m_expandGroup->expand(1)->setExpand(false);
 
         }else if (fileInfo->isDir()){
-            if (fileInfo->isCanShare()){
+            if (fileInfo->canShare()){
                 m_shareinfoFrame = createShareInfoFrame(fileInfo);
                 m_expandGroup->expand(1)->setContent(m_shareinfoFrame);
                 m_expandGroup->expand(1)->setExpand(false);
