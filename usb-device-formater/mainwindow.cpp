@@ -1,0 +1,138 @@
+#include "mainwindow.h"
+#include <QPainter>
+#include <QImage>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QPixmap>
+#include <QComboBox>
+#include <QPushButton>
+#include <QGridLayout>
+#include <QImage>
+#include <QProgressBar>
+#include <QLineEdit>
+#include <QCheckBox>
+#include <QTextBrowser>
+#include <QFile>
+#include <QDebug>
+#include <QMouseEvent>
+#include <QApplication>
+
+MainWindow::MainWindow(const QString &title, QWidget *parent):
+    QWidget(parent)
+{
+    DPlatformWindowHandle handle(this);
+    Q_UNUSED(handle)
+
+    setObjectName("UsbDeviceFormatter");
+    initUI();
+    initStyleSheet();
+    initConnect();
+}
+
+MainWindow::~MainWindow()
+{
+
+}
+
+void MainWindow::initUI()
+{
+    setFixedSize(WINDOW_SIZE);
+    setWindowFlags(Qt::WindowCloseButtonHint | Qt::FramelessWindowHint);
+
+    QVBoxLayout* mainLayout = new QVBoxLayout;
+    mainLayout->setContentsMargins(0, 2, 0, 0);
+
+    QString title = tr("Format");
+    DTitlebar* titleBar = new DTitlebar(this);
+    titleBar->setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
+    titleBar->setTitle(title);
+    titleBar->setFixedHeight(20);
+
+    m_pageStack = new QStackedWidget(this);
+    m_pageStack->setFixedSize(width(), 300);
+    m_mainPage = new MainPage(this);
+    m_warnPage = new WarnPage(this);
+    m_formatingPage = new FormatingPage(this);
+    m_finishPage = new FinishPage(this);
+    m_errorPage = new ErrorPage(this);
+
+    m_pageStack->addWidget(m_mainPage);
+    m_pageStack->addWidget(m_warnPage);
+    m_pageStack->addWidget(m_formatingPage);
+    m_pageStack->addWidget(m_finishPage);
+    m_pageStack->addWidget(m_errorPage);
+
+    m_comfirmButton = new QPushButton(tr("Format"), this);
+    m_comfirmButton->setFixedSize(120, 30);
+    m_comfirmButton->setObjectName("ComfirmButton");
+
+    mainLayout->addWidget(titleBar);
+    mainLayout->addWidget(m_pageStack);
+    mainLayout->addSpacing(10);
+    mainLayout->addWidget(m_comfirmButton, 0, Qt::AlignHCenter);
+    mainLayout->addSpacing(10);
+    mainLayout->addStretch(1);
+    setLayout(mainLayout);
+}
+
+void MainWindow::initStyleSheet()
+{
+    QFile file(":/light/main-window.qss");
+    bool ret = file.open(QIODevice::ReadOnly);
+    if(!ret)
+        qDebug () << "Cannot load style sheet!";
+    QTextStream ts(&file);
+    QString styleStr = ts.readAll();
+    file.close();
+    this->setStyleSheet(styleStr);
+
+}
+
+void MainWindow::initConnect()
+{
+    connect(m_comfirmButton, &QPushButton::clicked, this, &MainWindow::nextStep);
+    connect(m_formatingPage, &FormatingPage::finished, this, &MainWindow::onFormatingFinished);
+}
+
+void MainWindow::nextStep()
+{
+    switch (m_currentStep) {
+    case Normal:
+        m_pageStack->setCurrentWidget(m_warnPage);
+        m_currentStep = Warn;
+        m_comfirmButton->setText(tr("Continue"));
+        break;
+    case Warn:
+        m_pageStack->setCurrentWidget(m_formatingPage);
+        m_currentStep = Formating;
+        m_comfirmButton->setText(tr("Formating"));
+        m_comfirmButton->setEnabled(false);
+    case Finished:
+//        close();
+        break;
+    case Error:
+        m_pageStack->setCurrentWidget(m_mainPage);
+        m_currentStep = Normal;
+        break;
+    default:
+        break;
+    }
+}
+
+void MainWindow::onFormatingFinished(const bool &successful)
+{
+    if(successful){
+        m_currentStep = Finished;
+        m_comfirmButton->setText(tr("Complete"));
+        m_comfirmButton->setEnabled(true);
+//        m_pageStack->setCurrentIndex(m_pageStack->currentIndex() +1);
+        m_pageStack->setCurrentWidget(m_finishPage);
+    } else{
+        m_currentStep = Error;
+        m_comfirmButton->setText(tr("Reformat"));
+        m_comfirmButton->setEnabled(true);
+        m_pageStack->setCurrentWidget(m_errorPage);
+    }
+}
+
