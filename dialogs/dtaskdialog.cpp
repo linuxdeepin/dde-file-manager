@@ -56,21 +56,17 @@ void MoveCopyTaskWidget::initUI(){
 
     m_msg1Label = new QLabel;
     m_msg2Label = new QLabel;
-    m_msg1Label->setFixedHeight(32);
-    m_msg2Label->setFixedHeight(32);
+    m_msg1Label->setFixedHeight(22);
+    m_msg2Label->setFixedHeight(22);
     m_msg1Label->setObjectName("MessageLabel");
     m_msg2Label->setObjectName("MessageLabel");
 
     QGridLayout* msgGridLayout = new QGridLayout;
-    msgGridLayout->addWidget(m_msg1Label, 0, 0);
-    msgGridLayout->addWidget(m_speedLabel, 0, 1,Qt::AlignRight);
-    msgGridLayout->addWidget(m_msg2Label, 1, 0);
-    msgGridLayout->addWidget(m_remainLabel, 1, 1,Qt::AlignRight);
+    msgGridLayout->addWidget(m_msg1Label, 0, 0, Qt::AlignVCenter);
+    msgGridLayout->addWidget(m_speedLabel, 0, 1,Qt::AlignRight|Qt::AlignVCenter);
+    msgGridLayout->addWidget(m_msg2Label, 1, 0, Qt::AlignVCenter);
+    msgGridLayout->addWidget(m_remainLabel, 1, 1,Qt::AlignRight|Qt::AlignVCenter);
     msgGridLayout->setColumnMinimumWidth(0, 300);
-
-    QHBoxLayout* messageBoxLayout = new QHBoxLayout;
-    messageBoxLayout->addLayout(msgGridLayout);
-    messageBoxLayout->addWidget(m_closeButton);
 
     initButtonFrame();
     m_buttonFrame->hide();
@@ -81,20 +77,25 @@ void MoveCopyTaskWidget::initUI(){
     lineLabel->setObjectName("LineLabel");
 
     QVBoxLayout* rightLayout = new QVBoxLayout;
-    rightLayout->addLayout(messageBoxLayout);
+    rightLayout->addStretch(1);
+    rightLayout->addLayout(msgGridLayout);
     if ((m_buttonFrame)){
         rightLayout->addWidget(m_buttonFrame);
     }
-    rightLayout->addWidget(lineLabel);
+    rightLayout->addStretch(1);
+    rightLayout->addWidget(lineLabel, 0, Qt::AlignBottom);
     rightLayout->setSpacing(0);
     rightLayout->setContentsMargins(0, 0, 0, 0);
 
     QHBoxLayout* mainLayout = new QHBoxLayout;
+    mainLayout->addSpacing(20);
     mainLayout->addWidget(m_animatePad);
-    mainLayout->addSpacing(10);
+    mainLayout->addSpacing(20);
     mainLayout->addLayout(rightLayout);
     mainLayout->addSpacing(5);
-    mainLayout->setContentsMargins(5, 0, 5, 0);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+    mainLayout->addWidget(m_closeButton, 0, Qt::AlignCenter);
+    mainLayout->addSpacing(24);
     setLayout(mainLayout);
     setFixedHeight(80);
 
@@ -157,8 +158,9 @@ void MoveCopyTaskWidget::initButtonFrame(){
 
     m_checkBox = new QCheckBox(tr("Do not ask again"));
     QVBoxLayout* mainLayout = new QVBoxLayout;
-    mainLayout->addSpacing(10);
+    mainLayout->addSpacing(8);
     mainLayout->addWidget(m_checkBox);
+    mainLayout->addSpacing(5);
     mainLayout->addLayout(buttonLayout);
 
     mainLayout->setContentsMargins(0, 0, 0, 0);
@@ -251,7 +253,7 @@ void MoveCopyTaskWidget::updateTipMessage(){
 }
 
 void MoveCopyTaskWidget::showConflict(){
-    setFixedHeight(150);
+    setFixedHeight(130);
     m_buttonFrame->show();
     emit heightChanged();
     emit conflictShowed(m_jobDetail);
@@ -273,8 +275,10 @@ bool MoveCopyTaskWidget::event(QEvent *e)
         m_bgLabel->setStyleSheet("QLabel#Background{"
                                     "background-color: #f3f3f3;"
                                     "border: 1px solid #f3f3f3;"
+                                    "border-radius: 4px;"
                                  "}");
-        m_bgLabel->setFixedSize(size());
+        m_bgLabel->setFixedSize(size()- QSize(20,0));
+        m_bgLabel->move(10,0);
     } else if (e->type() == QEvent::Leave ){
         m_speedLabel->show();
         m_remainLabel->show();
@@ -282,6 +286,7 @@ bool MoveCopyTaskWidget::event(QEvent *e)
         m_bgLabel->setStyleSheet("QLabel#Background{"
                                     "background-color: #fff;"
                                     "border: 1px solid #fff;"
+                                    "border-radius: 4px;"
                                  "}");
     }
 
@@ -426,7 +431,7 @@ void DTaskDialog::setTitle(int taskCount){
 void DTaskDialog::addTask(const QMap<QString, QString> &jobDetail){
     if (jobDetail.contains("jobId")){
         MoveCopyTaskWidget* moveWidget = new MoveCopyTaskWidget(jobDetail);
-        moveWidget->setFixedHeight(60);
+        moveWidget->setFixedHeight(80);
         connect(moveWidget, SIGNAL(closed(QMap<QString,QString>)),
                 this, SLOT(handleTaskClose(QMap<QString,QString>)));
         connect(moveWidget, SIGNAL(conflictResponseConfirmed(QMap<QString,QString>,QMap<QString,QVariant>)),
