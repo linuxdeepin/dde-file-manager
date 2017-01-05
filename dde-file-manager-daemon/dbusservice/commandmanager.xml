@@ -1,0 +1,12 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+    <interface name="com.deepin.filemanager.daemon.CommandManager">
+        <method name="process">
+            <arg type="s" name="cmd" direction="in"/>
+            <arg type="as" name="args" direction="in"/>
+            <arg type="b" name="result" direction="out"/>
+            <arg type="s" name="output" direction="out"/>
+            <arg type="s" name="error" direction="out"/>
+        </method>
+    </interface>
+</node>

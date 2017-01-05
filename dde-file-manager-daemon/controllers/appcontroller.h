@@ -8,6 +8,7 @@
 class FileOperation;
 class UserShareManager;
 class UsbFormatter;
+class CommandManager;
 
 class AppController : public QObject
 {
@@ -27,6 +28,7 @@ private:
     FileOperation* m_fileOperationController = NULL;
     UserShareManager* m_userShareManager = NULL;
     UsbFormatter* m_usbFormatter = NULL;
+    CommandManager* m_commandManager = NULL;
 };
 
 #endif // APPCONTROLLER_H
