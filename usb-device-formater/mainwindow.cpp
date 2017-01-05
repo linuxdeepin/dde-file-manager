@@ -24,7 +24,7 @@ MainWindow::MainWindow(const QString &title, QWidget *parent):
     DPlatformWindowHandle handle(this);
     Q_UNUSED(handle)
 
-    setObjectName("UsbDeviceFormatter");
+    setObjectName("UsbDeviceFormater");
     initUI();
     initStyleSheet();
     initConnect();
