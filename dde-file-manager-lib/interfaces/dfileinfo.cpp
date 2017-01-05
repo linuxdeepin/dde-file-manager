@@ -16,10 +16,10 @@
 
 #include "dfileservices.h"
 #include "dthumbnailprovider.h"
+#include "dfileiconprovider.h"
 
 #include <QDateTime>
 #include <QDir>
-#include <QMimeDatabase>
 #include <QPainter>
 
 DFM_USE_NAMESPACE
@@ -55,11 +55,11 @@ bool DFileInfo::exists(const DUrl &fileUrl)
     return QFileInfo::exists(fileUrl.toLocalFile());
 }
 
-QMimeType DFileInfo::mimeType(const QString &filePath)
+QMimeType DFileInfo::mimeType(const QString &filePath, QMimeDatabase::MatchMode mode)
 {
     QMimeDatabase db;
 
-    return db.mimeTypeForFile(filePath);
+    return db.mimeTypeForFile(filePath, mode);
 }
 
 bool DFileInfo::exists() const
@@ -305,12 +305,12 @@ QDateTime DFileInfo::lastRead() const
     return d->fileInfo.lastRead();
 }
 
-QMimeType DFileInfo::mimeType() const
+QMimeType DFileInfo::mimeType(QMimeDatabase::MatchMode mode) const
 {
     Q_D(const DFileInfo);
 
     if (!d->mimeType.isValid())
-        d->mimeType = mimeType(absoluteFilePath());
+        d->mimeType = mimeType(absoluteFilePath(), mode);
 
     return d->mimeType;
 }
@@ -429,7 +429,7 @@ QIcon DFileInfo::fileIcon() const
             QMetaObject::invokeMethod(timer, "start", Qt::QueuedConnection);
         }
 
-        return DAbstractFileInfo::fileIcon();
+        return DFileIconProvider::globalProvider()->icon(*this);
     }
 
     if (isSymLink()) {
@@ -444,9 +444,24 @@ QIcon DFileInfo::fileIcon() const
         }
     }
 
-    d->icon = DAbstractFileInfo::fileIcon();
+    d->icon = DFileIconProvider::globalProvider()->icon(*this);
 
     return d->icon;
+}
+
+QString DFileInfo::iconName() const
+{
+    if (systemPathManager->isSystemPath(absoluteFilePath()))
+        return systemPathManager->getSystemPathIconNameByPath(absoluteFilePath());
+
+    return DAbstractFileInfo::iconName();
+}
+
+QFileInfo DFileInfo::toQFileInfo() const
+{
+    Q_D(const DFileInfo);
+
+    return d->fileInfo;
 }
 
 DFileInfo::DFileInfo(DFileInfoPrivate &dd)

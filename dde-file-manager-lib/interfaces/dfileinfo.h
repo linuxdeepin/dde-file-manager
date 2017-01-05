@@ -12,7 +12,7 @@ public:
     explicit DFileInfo(const QFileInfo &fileInfo, bool hasCache = true);
 
     static bool exists(const DUrl &fileUrl);
-    static QMimeType mimeType(const QString &filePath);
+    static QMimeType mimeType(const QString &filePath, QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault);
 
     bool exists() const Q_DECL_OVERRIDE;
 
@@ -56,7 +56,7 @@ public:
     QDateTime lastModified() const Q_DECL_OVERRIDE;
     QDateTime lastRead() const Q_DECL_OVERRIDE;
 
-    QMimeType mimeType() const Q_DECL_OVERRIDE;
+    QMimeType mimeType(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault) const Q_DECL_OVERRIDE;
 
     bool canIteratorDir() const Q_DECL_OVERRIDE;
 
@@ -69,6 +69,10 @@ public:
 
     void makeToInactive() Q_DECL_OVERRIDE;
     QIcon fileIcon() const Q_DECL_OVERRIDE;
+
+    QString iconName() const Q_DECL_OVERRIDE;
+
+    QFileInfo toQFileInfo() const;
 
 protected:
     explicit DFileInfo(DFileInfoPrivate &dd);

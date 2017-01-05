@@ -175,7 +175,8 @@ HEADERS += \
     views/viewmanager.h \
     views/progressline.h \
     controllers/avfsfilecontroller.h \
-    models/avfsfileinfo.h
+    models/avfsfileinfo.h \
+    interfaces/dfileiconprovider.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -286,7 +287,8 @@ SOURCES += \
     views/viewmanager.cpp \
     views/progressline.cpp \
     controllers/avfsfilecontroller.cpp \
-    models/avfsfileinfo.cpp
+    models/avfsfileinfo.cpp \
+    interfaces/dfileiconprovider.cpp
 
 INCLUDEPATH += $$PWD/../ $$PWD/../utils/ $$PWD/interfaces/ $$PWD/../dde-file-manager-plugins/plugininterfaces/
 
