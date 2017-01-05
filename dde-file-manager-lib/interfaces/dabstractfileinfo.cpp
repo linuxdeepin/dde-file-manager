@@ -417,11 +417,16 @@ QDateTime DAbstractFileInfo::lastRead() const
     return QDateTime();
 }
 
-QMimeType DAbstractFileInfo::mimeType() const
+QMimeType DAbstractFileInfo::mimeType(QMimeDatabase::MatchMode mode) const
 {
-    CALL_PROXY(mimeType());
+    CALL_PROXY(mimeType(mode));
 
     return QMimeType();
+}
+
+QString DAbstractFileInfo::iconName() const
+{
+    return mimeType().iconName();
 }
 
 QString DAbstractFileInfo::lastReadDisplayName() const
@@ -480,7 +485,12 @@ QIcon DAbstractFileInfo::fileIcon() const
 {
     CALL_PROXY(fileIcon());
 
-    return fileIconProvider->getIconByMimeType(fileUrl(), mimeType());
+    QIcon icon = QIcon::fromTheme(iconName());
+
+    if (icon.isNull())
+        icon = QIcon::fromTheme("application-default-icon");
+
+    return icon;
 }
 
 QList<QIcon> DAbstractFileInfo::additionalIcon() const
@@ -488,17 +498,17 @@ QList<QIcon> DAbstractFileInfo::additionalIcon() const
     QList<QIcon> icons;
 
     if (isSymLink()) {
-        icons << DFMGlobal::instance()->standardIcon(DFMGlobal::LinkIcon);
+        icons << QIcon::fromTheme("emblem-symbolic-link", DFMGlobal::instance()->standardIcon(DFMGlobal::LinkIcon));
     }
 
     if (!isWritable())
-        icons << DFMGlobal::instance()->standardIcon(DFMGlobal::LockIcon);
+        icons << QIcon::fromTheme("emblem-readonly", DFMGlobal::instance()->standardIcon(DFMGlobal::LockIcon));
 
     if (!isReadable())
-        icons << DFMGlobal::instance()->standardIcon(DFMGlobal::UnreadableIcon);
+        icons << QIcon::fromTheme("emblem-unreadable", DFMGlobal::instance()->standardIcon(DFMGlobal::UnreadableIcon));
 
     if (isShared())
-        icons << DFMGlobal::instance()->standardIcon(DFMGlobal::ShareIcon);
+        icons << QIcon::fromTheme("emblem-shared", DFMGlobal::instance()->standardIcon(DFMGlobal::ShareIcon));
 
     foreach (MenuInterface* menuInterface, PluginManager::instance()->getMenuInterfaces()) {
         QList<QIcon> pluginIcons = menuInterface->additionalIcons(filePath());

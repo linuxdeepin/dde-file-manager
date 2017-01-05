@@ -53,10 +53,10 @@ bool NetworkFileInfo::canRename() const
     return false;
 }
 
-QIcon NetworkFileInfo::fileIcon() const
-{
-    return QIcon(fileIconProvider->getThemeIconPath(mimeTypeName(), 256));
-}
+//QIcon NetworkFileInfo::fileIcon() const
+//{
+//    return QIcon(fileIconProvider->getThemeIconPath(mimeTypeName(), 256));
+//}
 
 bool NetworkFileInfo::isDir() const
 {
@@ -77,10 +77,12 @@ QString NetworkFileInfo::fileDisplayName() const
     return m_networkNode.displayName();
 }
 
-QString NetworkFileInfo::mimeTypeName() const
-{
-    return m_networkNode.iconType();
-}
+//QString NetworkFileInfo::mimeTypeName(QMimeDatabase::MatchMode mode) const
+//{
+//    Q_UNUSED(mode)
+
+//    return m_networkNode.iconType();
+//}
 NetworkNode NetworkFileInfo::networkNode() const
 {
     return m_networkNode;
@@ -118,4 +120,9 @@ Qt::ItemFlags NetworkFileInfo::fileItemDisableFlags() const
 quint8 NetworkFileInfo::supportViewMode() const
 {
     return DFileView::IconMode;
+}
+
+QString NetworkFileInfo::iconName() const
+{
+    return m_networkNode.iconType();
 }

@@ -230,7 +230,7 @@ QList<QIcon> ShareFileInfo::additionalIcon() const
     QList<QIcon> icons;
     icons << DFMGlobal::instance()->standardIcon(DFMGlobal::ShareIcon);
     if (isSymLink()) {
-        icons << DFMGlobal::instance()->standardIcon(DFMGlobal::LinkIcon);
+        icons << QIcon::fromTheme("emblem-symbolic-link", DFMGlobal::instance()->standardIcon(DFMGlobal::LinkIcon));
     }
 
     return icons;

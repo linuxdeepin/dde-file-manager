@@ -60,7 +60,7 @@ IconProvider::IconProvider(QObject *parent) : QObject(parent)
     gdk_error_trap_push();
 
     initConnect();
-    setCurrentTheme();
+//    setCurrentTheme();
 
     connect(thumbnailManager, &ThumbnailManager::pixmapChanged, this, &IconProvider::iconChanged);
 }
