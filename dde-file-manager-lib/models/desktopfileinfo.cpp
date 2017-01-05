@@ -1,6 +1,7 @@
 #include "desktopfileinfo.h"
 #include "private/dfileinfo_p.h"
 #include "app/define.h"
+#include "controllers/trashmanager.h"
 
 #include "shutil/properties.h"
 #include "shutil/iconprovider.h"
@@ -66,11 +67,9 @@ QString DesktopFileInfo::getIconName() const
     Q_D(const DesktopFileInfo);
 
      //special handling for trash desktop file which has tash datas
-    if(d->iconName == "user-trash"){
-        const DAbstractFileInfoPointer& info = fileService->createFileInfo(DUrl::fromTrashFile("/"));
-        if(info)
-            if(info->filesCount() > 0)
-                return "user-trash-full";
+    if (d->iconName == "user-trash") {
+        if (!TrashManager::isEmpty())
+            return "user-trash-full";
     }
 
     return d->iconName;
@@ -92,7 +91,40 @@ QStringList DesktopFileInfo::getCategories() const
 
 QIcon DesktopFileInfo::fileIcon() const
 {
-    return fileIconProvider->getDesktopIcon(getIconName(), 256);
+    Q_D(const DesktopFileInfo);
+
+    if (Q_LIKELY(!d->icon.isNull()))
+        return d->icon;
+
+    const QString &iconName = this->iconName();
+
+    if (iconName.startsWith("data:image/")) {
+        int first_semicolon  = iconName.indexOf(';', 11);
+
+        if (first_semicolon > 11) {
+            // iconPath is a string representing an inline image.
+//            const QString &format = iconName.mid(11, first_semicolon - 11);
+
+            int base64str_pos = iconName.indexOf("base64,", first_semicolon);
+
+            if (base64str_pos > 0) {
+                QPixmap pixmap;
+
+                bool ok = pixmap.loadFromData(QByteArray::fromBase64(iconName.mid(base64str_pos + 7).toLatin1())/*, format.toLatin1().constData()*/);
+
+                if (ok) {
+                    d->icon = QIcon(pixmap);
+                } else {
+                    d->icon = QIcon::fromTheme("application-default-icon");
+                }
+            }
+        }
+    }
+
+    if (d->icon.isNull())
+        return DFileInfo::fileIcon();
+
+    return d->icon;
 }
 
 QString DesktopFileInfo::fileName() const
@@ -106,6 +138,11 @@ void DesktopFileInfo::refresh()
 
     DFileInfo::refresh();
     d->updateInfo(fileUrl());
+}
+
+QString DesktopFileInfo::iconName() const
+{
+    return getIconName();
 }
 
 QString DesktopFileInfo::fileDisplayName() const
