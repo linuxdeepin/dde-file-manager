@@ -282,7 +282,7 @@ QList<QIcon> TrashFileInfo::additionalIcon() const
     QList<QIcon> icons;
 
     if (isSymLink()) {
-        icons << DFMGlobal::instance()->standardIcon(DFMGlobal::LinkIcon);
+        icons << QIcon::fromTheme("emblem-symbolic-link", DFMGlobal::instance()->standardIcon(DFMGlobal::LinkIcon));
     }
 
     return icons;

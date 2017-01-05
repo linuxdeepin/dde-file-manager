@@ -8,6 +8,7 @@
 #include <QDateTime>
 #include <QMap>
 #include <QMimeType>
+#include <QMimeDatabase>
 #include <QDir>
 
 #include "durl.h"
@@ -133,9 +134,10 @@ public:
     virtual QDateTime lastModified() const;
     virtual QDateTime lastRead() const;
 
-    virtual QMimeType mimeType() const;
-    virtual QString mimeTypeName() const
-    { return mimeType().name();}
+    virtual QMimeType mimeType(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault) const;
+    virtual QString mimeTypeName(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault) const
+    { return mimeType(mode).name();}
+    virtual QString iconName() const;
 
     virtual QString lastReadDisplayName() const;
     virtual QString lastModifiedDisplayName() const;
