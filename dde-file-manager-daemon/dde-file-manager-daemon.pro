@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core dbus
+QT       += core dbus concurrent
 
 QT       -= gui
 
@@ -59,7 +59,10 @@ SOURCES += main.cpp \
     dbusservice/dbusinterface/usershare_interface.cpp \
     usbformatter/usbformatter.cpp \
     dbusservice/dbusadaptor/usbformatter_adaptor.cpp \
-    dbusservice/dbusinterface/usbformatter_interface.cpp
+    dbusservice/dbusinterface/usbformatter_interface.cpp \
+    commandmanager/commandmanager.cpp \
+    dbusservice/dbusadaptor/commandmanager_adaptor.cpp \
+    dbusservice/dbusinterface/commandmanager_interface.cpp
 
 HEADERS += \
     app/filemanagerdaemon.h \
@@ -95,7 +98,10 @@ HEADERS += \
     dbusservice/dbusinterface/usershare_interface.h \
     usbformatter/usbformatter.h \
     dbusservice/dbusadaptor/usbformatter_adaptor.h \
-    dbusservice/dbusinterface/usbformatter_interface.h
+    dbusservice/dbusinterface/usbformatter_interface.h \
+    commandmanager/commandmanager.h \
+    dbusservice/dbusadaptor/commandmanager_adaptor.h \
+    dbusservice/dbusinterface/commandmanager_interface.h
 
 
 target.path = /usr/bin

@@ -41,3 +41,7 @@ qdbusxml2cpp -c UserShareInterface -p dbusinterface/usershare_interface usershar
 echo "=====usbformatter====="
 qdbusxml2cpp -i usbformatter/usbformatter.h -c UsbFormatterAdaptor -l UsbFormatter -a dbusadaptor/usbformatter_adaptor usbformatter.xml
 qdbusxml2cpp -c UsbFormatterInterface -p dbusinterface/usbformatter_interface usbformatter.xml
+
+echo "=====commandmanager====="
+qdbusxml2cpp -i commandmanager/commandmanager.h -c CommandManagerAdaptor -l CommandManager -a dbusadaptor/commandmanager_adaptor commandmanager.xml
+qdbusxml2cpp -c CommandManagerInterface -p dbusinterface/commandmanager_interface commandmanager.xml
