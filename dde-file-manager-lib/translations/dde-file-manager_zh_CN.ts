@@ -331,8 +331,8 @@
         <translation type="vanished">文件 &quot;%1&quot; 已被占用，请使用其他名称。</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="289"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="482"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="291"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="484"/>
         <source>Confirm</source>
         <translation>确定</translation>
     </message>
@@ -349,107 +349,107 @@
         <translation type="vanished">您确定要彻底删除选中的%1项内容？</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="263"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="307"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="351"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="456"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="482"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="265"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="309"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="353"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="458"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="484"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="259"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="261"/>
         <source>Do you wan to run %1 or display its content?</source>
         <translation>您是要运行 “%1”，还是显示它的内容？</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="234"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="236"/>
         <source>Operation failed!</source>
         <translation>操作失败！</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="235"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="237"/>
         <source>Target folder is inside the source folder!</source>
         <translation>目标文件夹位于源文件夹内！</translation>
     </message>
-    <message>
         <location filename="../dialogs/dialogmanager.cpp" line="237"/>
         <location filename="../dialogs/dialogmanager.cpp" line="542"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="239"/>
         <source>OK</source>
         <translation>确定</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="260"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="262"/>
         <source>It is an executable text file.</source>
         <translation>它是可执行的文本文件。</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="263"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="265"/>
         <source>Run</source>
         <translation>运行</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="263"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="265"/>
         <source>Run in terminal</source>
         <translation>在终端中运行</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="263"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="265"/>
         <source>Display</source>
         <translation>显示</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="287"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="289"/>
         <source>&quot;%1&quot; already exists, please use another name.</source>
         <translation>文件 &quot;%1&quot; 已被占用，请使用其他名称。</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="300"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="302"/>
         <source>Are you sure to empty %1 item?</source>
         <translation>您确定要清空回收站里的 %1 项内容吗？</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="301"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="303"/>
         <source>Are you sure to empty %1 items?</source>
         <translation>您确定要清空回收站里的 %1 项内容吗？</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="302"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="304"/>
         <source>Permanently delete %1?</source>
         <translation>您确定要彻底删除 %1？</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="303"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="305"/>
         <source>Permanently delete %1 items?</source>
         <translation>您确定要彻底删除选中的%1项内容？</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="453"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="455"/>
         <source>Disk file is being used, can not unmount now</source>
         <translation>磁盘文件被占用，无法卸载</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="454"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="456"/>
         <source>Name: </source>
         <translation>名字：</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="456"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="458"/>
         <source>Force unmount</source>
         <translation>强制卸载</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="479"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="481"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
         <translation>此快捷方式所指向的“%1”已被更改或移动</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="480"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="482"/>
         <source>Do you want to delete this shortcut？</source>
         <translation>是否删除此快捷方式?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="508"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="510"/>
         <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions.</source>
         <translation>文件管理器是深度科技自主研发的一款管理文件的工具， 它包括搜索、复制、回收站、压缩/解压缩， 文件属性等管理文件的功能。</translation>
     </message>
@@ -460,6 +460,7 @@
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="506"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="508"/>
         <source>Version:</source>
         <translation>版本:</translation>
     </message>
@@ -480,27 +481,27 @@
         <translation type="vanished">您确定要彻底删除选中的%1项内容？</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="307"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="309"/>
         <source>Delete</source>
         <translation>删除</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="313"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="315"/>
         <source>Empty</source>
         <translation>清空</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="338"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="340"/>
         <source>This action cannot be restored</source>
         <translation>此操作不可以恢复</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="349"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="351"/>
         <source>Sorry, unable to locate your bookmark directory, remove it?</source>
         <translation>抱歉， 找不到您的书签目录， 是否移除？</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="351"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="353"/>
         <source>Remove</source>
         <translation>移除</translation>
     </message>
@@ -559,22 +560,22 @@
         <translation>副本</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="431"/>
+        <location filename="../../fileoperations/filejob.cpp" line="450"/>
         <source>%1 s</source>
         <translation>%1 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="435"/>
+        <location filename="../../fileoperations/filejob.cpp" line="454"/>
         <source>%1 m %2 s</source>
         <translation>%1 分 %2 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="441"/>
+        <location filename="../../fileoperations/filejob.cpp" line="460"/>
         <source>%1 h %2 m %3 s</source>
         <translation>%1 时 %2 分 %3 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="450"/>
+        <location filename="../../fileoperations/filejob.cpp" line="469"/>
         <source>%1 d %2 h %3 m %4 s</source>
         <translation>%1 天 %2 时 %3 分 %4 秒</translation>
     </message>
@@ -818,6 +819,43 @@
     <message>
         <source>current speed:%1 time Left:%2 </source>
         <translation type="vanished">当前速度：%1 剩余时间：%2</translation>
+    </message>
+</context>
+<context>
+    <name>MoveToTrashConflictDialog</name>
+    <message>
+        <location filename="../../dialogs/movetotrashconflictdialog.cpp" line="13"/>
+        <source>This file is too large to put into trash</source>
+        <translation>该文件太大，无法放入回收站</translation>
+    </message>
+    <message>
+        <location filename="../../dialogs/movetotrashconflictdialog.cpp" line="14"/>
+        <source>Are you sure to completely delete %1 ?</source>
+        <translation>您确定要彻底删除%1吗？</translation>
+    </message>
+    <message>
+        <location filename="../../dialogs/movetotrashconflictdialog.cpp" line="17"/>
+        <source>The rest files are too large to put into trash</source>
+        <translation>剩余的文件太大，无法放到回收站</translation>
+    </message>
+    <message>
+        <location filename="../../dialogs/movetotrashconflictdialog.cpp" line="18"/>
+        <source>Are you sure to completely delete %1 files ?</source>
+        <translation>您确定要彻底删除这%1个文件吗？</translation>
+    </message>
+    <message>
+        <location filename="../../dialogs/movetotrashconflictdialog.cpp" line="33"/>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <location filename="../../dialogs/movetotrashconflictdialog.cpp" line="34"/>
+        <source>Delete</source>
+        <translation>删除</translation>
+    </message>
+    <message>
+        <source>Comfirm</source>
+        <translation type="vanished">确定</translation>
     </message>
 </context>
 <context>
