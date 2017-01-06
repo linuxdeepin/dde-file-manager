@@ -93,6 +93,9 @@ signals:
     /*when target disk has no enough storage space for job needs, show dialog for tip*/
     void requestNoEnoughSpaceDialogShowed();
 
+    /* file's size which is locate at other disk is out of range 1GB, show movto trash coflict dialog */
+    void requestMoveToTrashConflictDialogShowed(const DUrlList& urls);
+
     void progressPercent(int value);
     void error(QString content);
     void result(QString content);
@@ -167,6 +170,10 @@ private:
 
     //check disk space available before do copy/move job
     bool checkDiskSpaceAvailable(const DUrlList& files, const DUrl& destination);
+
+    //check if is moving to trash file out of size range of 1GB;
+    bool checkTrashFileOutOf1GB(const DUrl& url);
+
     QString getNotExistsTrashFileName(const QString &fileName);
 };
 

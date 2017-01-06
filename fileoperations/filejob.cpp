@@ -335,11 +335,25 @@ DUrlList FileJob::doMoveToTrash(const DUrlList &files)
 
     bool ok = true;
 
+    //store url list whom cannot be moved to trash
+    DUrlList conflictList;
+
     for(int i = 0; i < files.size(); i++)
     {
         QUrl url = files.at(i);
         QDir dir(url.path());
         QString targetPath;
+
+        //check if is target file in the /home disk
+        QStorageInfo storageInfo(url.toLocalFile());
+        bool canMoveToTrash = true;
+        if(storageInfo.rootPath() != "/home")
+            canMoveToTrash = checkTrashFileOutOf1GB(url);
+
+        if(!canMoveToTrash){
+            conflictList << url;
+            continue;
+        }
 
         if(dir.exists())
             ok = ok && moveDirToTrash(url.path(), &targetPath);
@@ -349,6 +363,11 @@ DUrlList FileJob::doMoveToTrash(const DUrlList &files)
         if (!targetPath.isEmpty())
             list << DUrl::fromLocalFile(targetPath);
     }
+
+    if(conflictList.size() > 0){
+        emit requestMoveToTrashConflictDialogShowed(conflictList);
+    }
+
     if(m_isJobAdded)
         jobRemoved();
 
@@ -1338,6 +1357,32 @@ bool FileJob::checkDiskSpaceAvailable(const DUrlList &files, const DUrl &destina
 
     if(!isInLimit)
         qDebug() << QString ("Can't copy or move files to target disk, disk free: %1").arg(FileUtils::formatSize(freeBytes));
+
+    return isInLimit;
+}
+
+bool FileJob::checkTrashFileOutOf1GB(const DUrl &url)
+{
+    DUrlList list;
+    list << url;
+    m_isCheckingDisk = true;
+
+    bool isInLimit = true;
+    QMap<QString, QString> jobDataDetail;
+
+    jobDataDetail.insert("status", "calculating");
+    jobDataDetail.insert("file", url.fileName());
+    jobDataDetail.insert("progress", m_progress);
+    jobDataDetail.insert("destination", "");
+
+    m_checkDiskJobDataDetail = jobDataDetail;
+
+    //calculate files's sizes
+    m_totalSize = FileUtils::totalSize(list, 1024*1024*1024, isInLimit);
+
+    jobDataDetail["status"] = "working";
+
+    m_checkDiskJobDataDetail = jobDataDetail;
 
     return isInLimit;
 }
