@@ -181,6 +181,7 @@ bool ReadUsageManager::readFat16Usage(const QString &path, qlonglong &freespace,
 
     total = total_clusters * cluster_size;
     freespace = total - start_byte - used_clusters * cluster_size;
+
     return true;
 }
 

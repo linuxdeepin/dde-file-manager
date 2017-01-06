@@ -138,9 +138,11 @@ public slots:
     void volumeRemoved(UDiskDeviceInfoPointer device);
     void mountAdded(UDiskDeviceInfoPointer device);
     void mountRemoved(UDiskDeviceInfoPointer device);
+    void updateComputerItemByDevice(UDiskDeviceInfoPointer device);
     void enlargeIcon();
     void shrinkIcon();
-    void resizeItemBySizeIndex(int index);
+    void resizeAllItemsBySizeIndex(int index);
+    void updateItemBySizeIndex(const int& index, ComputerViewItem* item);
 
 protected:
     void resizeEvent(QResizeEvent* event);

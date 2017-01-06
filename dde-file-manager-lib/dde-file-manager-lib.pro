@@ -40,6 +40,7 @@ include(deviceinfo/deviceinfo.pri)
 include(dbusinterface/dbusinterface.pri)
 include(../usershare/usershare.pri)
 include(../dde-file-manager-plugins/plugininterfaces/plugininterfaces.pri)
+include(../partman/partman.pri)
 
 PKGCONFIG += gtk+-2.0 gsettings-qt libsecret-1 dtkbase dtkwidget gio-unix-2.0 poppler-cpp
 CONFIG += c++11 link_pkgconfig

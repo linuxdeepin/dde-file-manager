@@ -20,6 +20,7 @@ public:
     bool CanEject = false;
     qulonglong Used = 0;
     qulonglong Total = 0;
+    qulonglong Free = 0;
 
     DUrl MountPointUrl;
 

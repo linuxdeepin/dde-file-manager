@@ -17,12 +17,13 @@ DeviceInfoManager::DeviceInfoManager(QObject *parent) : QObject(parent)
 
 bool DeviceInfoManager::readUsage(const QString &path, qlonglong &freespace, qlonglong &total)
 {
-    typedef bool (PartMan::ReadUsageManager::*readUsageFun) (const QString&, qlonglong& , qlonglong&);
-    readUsageFun f = &PartMan::ReadUsageManager::readUsage;
-    QFuture<bool> future = QtConcurrent::run(m_readUsageManager,
-                                             f,
-                                             path, freespace, total);
-    future.waitForFinished();
-    bool ret = future.result();
+//    typedef bool (PartMan::ReadUsageManager::*readUsageFun) (const QString&, qlonglong& , qlonglong&);
+//    readUsageFun f = &PartMan::ReadUsageManager::readUsage;
+//    QFuture<bool> future = QtConcurrent::run(m_readUsageManager,
+//                                             f,
+//                                             path, freespace, total);
+//    future.waitForFinished();
+//    bool ret = future.result();
+    bool ret = m_readUsageManager->readUsage(path , freespace, total);
     return ret;
 }

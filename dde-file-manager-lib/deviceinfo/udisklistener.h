@@ -23,6 +23,7 @@
 
 class UDiskDeviceInfo;
 class Subscriber;
+class DeviceInfoManagerInterface;
 
 
 class UDiskListener : public DAbstractFileController
@@ -47,6 +48,7 @@ public:
 
     bool isDeviceFolder(const QString &path) const;
     bool isInDeviceFolder(const QString &path) const;
+    UDiskDeviceInfoPointer getDeviceByDevicePath(const QString &deveicePath);
     UDiskDeviceInfoPointer getDeviceByPath(const QString &path);
     UDiskDeviceInfoPointer getDeviceByFilePath(const QString &path);
     UDiskDeviceInfo::MediaType getDeviceMediaType(const QString &path);
@@ -61,6 +63,7 @@ signals:
     void volumeRemoved(UDiskDeviceInfoPointer device);
     void mountAdded(UDiskDeviceInfoPointer device);
     void mountRemoved(UDiskDeviceInfoPointer device);
+    void deviecInfoChanged(UDiskDeviceInfoPointer device);
     void requestDiskInfosFinihsed();
 
 public slots:
@@ -72,8 +75,13 @@ public slots:
     void asyncRequestDiskInfosFinihsed(QDBusPendingCallWatcher *call);
     void changed(int in0, const QString &in1);
     void forceUnmount(const QString &id);
+
+    bool requestAsycGetUsage(const QString &devicePath);
+    void asyncRequestGetUsageFinihsed(QDBusPendingCallWatcher *call);
+    void refreshAsycGetAllDeviceUsage();
+
+
 private:
-    void readFstab();
     QList<UDiskDeviceInfoPointer> m_list;
     QMap<QString, UDiskDeviceInfoPointer> m_map;
     QMap<QString, QString> m_volumeLetters;
@@ -81,7 +89,8 @@ private:
 
     QList<Subscriber*> m_subscribers;
 
-    DiskMountInterface* m_diskMountInterface;
+    DiskMountInterface* m_diskMountInterface = NULL;
+    DeviceInfoManagerInterface* m_deviceInfoManagerInterface = NULL;
 public:
     const QList<DAbstractFileInfoPointer> getChildren(const DUrl &fileUrl, const QStringList &nameFilters,
                                                      QDir::Filters filters, QDirIterator::IteratorFlags flags,

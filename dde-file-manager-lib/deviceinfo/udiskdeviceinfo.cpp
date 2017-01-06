@@ -169,34 +169,28 @@ bool UDiskDeviceInfo::canUnmount() const
 
 qulonglong UDiskDeviceInfo::getFree()
 {
-    if (getMediaType() == dvd || getMediaType() == native || getMediaType() == removable){
-        return QStorageInfo(getMountPointUrl().toLocalFile()).bytesFree();
+    //when device is mounted, use QStorageInfo to get datas
+    if(canUnmount()){
+        if (getMediaType() == dvd || getMediaType() == native || getMediaType() == removable){
+            return QStorageInfo(getMountPointUrl().toLocalFile()).bytesFree();
+        }
     }
-    if (m_diskInfo.Total == 0){
-        return QStorageInfo(getMountPointUrl().toLocalFile()).bytesFree();
-    }
-    return (m_diskInfo.Total - m_diskInfo.Used) * 1024;
-}
-
-qulonglong UDiskDeviceInfo::getUsed() const
-{
-    return m_diskInfo.Used * 1024;
+    return m_diskInfo.Free;
 }
 
 qulonglong UDiskDeviceInfo::getTotal()
 {
-    if (getType() == "dvd"){
-        return QStorageInfo(getMountPointUrl().toLocalFile()).bytesTotal();
+    if(canUnmount()){
+        if (getMediaType() == dvd || getMediaType() == native || getMediaType() == removable){
+            return QStorageInfo(getMountPointUrl().toLocalFile()).bytesTotal();
+        }
     }
-    if (m_diskInfo.Total == 0){
-        return QStorageInfo(getMountPointUrl().toLocalFile()).bytesTotal();
-    }
-    return m_diskInfo.Total * 1024;
+    return m_diskInfo.Total;
 }
 
 qint64 UDiskDeviceInfo::size() const
 {
-    return m_diskInfo.Total * 1024;
+    return m_diskInfo.Total;
 }
 
 QString UDiskDeviceInfo::fileDisplayName() const
@@ -205,7 +199,7 @@ QString UDiskDeviceInfo::fileDisplayName() const
     if (!displayName.isEmpty()){
         return displayName;
     }
-    return FileUtils::formatSize(m_diskInfo.Total * 1024);
+    return FileUtils::formatSize(m_diskInfo.Total);
 }
 
 UDiskDeviceInfo::MediaType UDiskDeviceInfo::getMediaType() const

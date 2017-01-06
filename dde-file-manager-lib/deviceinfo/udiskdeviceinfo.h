@@ -46,7 +46,6 @@ public:
     bool canEject() const;
     bool canUnmount() const;
     qulonglong getFree();
-    qulonglong getUsed() const;
     qulonglong getTotal();
     qint64 size() const Q_DECL_OVERRIDE;
     QString fileDisplayName() const Q_DECL_OVERRIDE;
