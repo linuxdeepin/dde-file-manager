@@ -13,14 +13,18 @@ void ProgressLine::paintEvent(QPaintEvent *event){
     QRect bRect;
     QRect cRect;
     qreal percent = (m_value - m_min)/(m_max - m_min);
-    int hue = 188 - 188*percent;
 
     bRect.setSize(size());
     cRect.setSize(QSize(width() * percent, height()));
 
     QColor bColor = QColor(0,0,0,50);
     QColor cColor;
-    cColor.setHsv(hue, 255, 233);
+    if(percent <= 0.5)
+        cColor = QColor("#2ca7f8");
+    else if(percent > 0.5 && percent <= 0.8)
+        cColor = QColor("#F89B2C");
+    else
+        cColor = QColor("#FF4E78");
 
     p.fillRect(bRect, bColor);
     p.fillRect(cRect, cColor);
