@@ -45,3 +45,7 @@ qdbusxml2cpp -c UsbFormatterInterface -p dbusinterface/usbformatter_interface us
 echo "=====commandmanager====="
 qdbusxml2cpp -i commandmanager/commandmanager.h -c CommandManagerAdaptor -l CommandManager -a dbusadaptor/commandmanager_adaptor commandmanager.xml
 qdbusxml2cpp -c CommandManagerInterface -p dbusinterface/commandmanager_interface commandmanager.xml
+
+echo "=====deviceinfomanager====="
+qdbusxml2cpp -i deviceinfo/deviceinfomanager.h -c DeviceInfoManagerAdaptor -l DeviceInfoManager -a dbusadaptor/deviceinfomanager_adaptor deviceinfo.xml
+qdbusxml2cpp -c DeviceInfoManagerInterface -p dbusinterface/deviceinfomanager_interface deviceinfo.xml
