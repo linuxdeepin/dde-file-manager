@@ -4,7 +4,7 @@ QWidget#UsbDeviceFormatter{
 
 QLabel#TagLabel{
     font-size: 10px;
-    color: #999999;
+    color: #777777;
 }
 
 QProgressBar::chunk {
@@ -17,25 +17,24 @@ QLabel#Line{
     background-color: rgba(0,0,0,20);
 }
 
-QComboBox{
-    background-color: #fafafa;
-    border: 1px solid rgba(0,0,0,50);
-    border-radius: 3px;
-
+QComboBox#TypeCombo{
+    border: 1px solid rgba(0,0,0,0.2);
+    border-radius: 2px;
+    background: white;
 }
 
-QComboBox::drop-down {
+QComboBox#TypeCombo::drop-down {
     subcontrol-origin: padding;
     subcontrol-position: top right;
     width: 25px;
     background: transparent;
 }
 
-QComboBox::down-arrow {
+QComboBox#TypeCombo::down-arrow {
     image: url(:/icoms/icons/down.png);
 }
 
-QComboBox::down-arrow:on {
+QComboBox#TypeCombo::down-arrow:on {
     image: url(:/icoms/icons/up.png);
 }
 
@@ -45,7 +44,6 @@ QPushButton#ComfirmButton{
     color: #0599FF;
     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,stop: 0 #FFFFFF,stop: 1 #FDFDFD);
     border: 1px solid rgba(0,131,255,0.40);
-    box-shadow: 0 2px 1px 0 rgba(0,115,255,0.05), inset 0 -1px 0 0 #FFFFFF, inset 0 2px 0 0 rgba(255,255,255,0.15);
     border-radius: 4px;
 }
 
@@ -69,4 +67,9 @@ QPushButton#ComfirmButton::disabled{
     background-color: #F9F9F9;
     border: 1px solid rgba(0,0,0,0.05);
     box-shadow: 0 1px 1px 0 rgba(0,0,0,0.05);
+}
+
+QLineEdit{
+    border: 1px solid rgba(0,0,0,0.2);
+    border-radius: 2px;
 }

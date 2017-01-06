@@ -7,6 +7,6 @@ SUBDIRS  += \
     dde-file-manager-daemon \
     dde-file-manager-lib \
     dde-file-manager-plugins \
-    usb-device-formater
+    usb-device-formatter
 
 dde-file-manager.depends = dde-file-manager-lib

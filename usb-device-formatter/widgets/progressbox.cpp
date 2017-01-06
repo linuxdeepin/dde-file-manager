@@ -1,7 +1,6 @@
 #include "progressbox.h"
 #include <QPen>
 #include <QPainter>
-#include <QVariantAnimation>
 #include <QLine>
 #include <QtMath>
 #include <QDebug>
@@ -10,10 +9,10 @@ ProgressBox::ProgressBox(QWidget *parent) : ProgressLine(parent)
 {
     m_taskTimer = new QTimer(this);
     m_updateTimer = new QTimer(this);
+    m_taskAni = new QVariantAnimation(this);
     initConnections();
-    m_taskTimer->setInterval(5000);
+    m_taskTimer->setInterval(100);
     m_taskTimer->setSingleShot(true);
-    m_taskTimer->start();
 
     m_updateTimer->setInterval(10);
     m_updateTimer->start();
@@ -50,19 +49,35 @@ void ProgressBox::updateAnimation()
 
 void ProgressBox::taskTimeOut()
 {
+    m_taskAni->stop();
+    m_taskAni->setDuration(4000);
+    m_taskAni->setStartValue(qreal(0));
+    m_taskAni->setEndValue(qreal(99));
+    connect(m_taskAni, &QVariantAnimation::valueChanged, this, [=] (const QVariant& val){
+            setValue(val.toReal());
+    });
+    m_taskAni->start();
+}
+
+void ProgressBox::startTask()
+{
+    m_taskTimer->start();
+}
+
+void ProgressBox::finishedTask(const bool result)
+{
+    m_taskAni->stop();
     QVariantAnimation* ani = new QVariantAnimation(this);
-    ani->setDuration(4000);
-    ani->setStartValue(QVariant(value()));
-    if(value() == 0)
-        ani->setEndValue(qreal(100));
-    else
-        ani->setEndValue(qreal(0));
+    ani->setDuration(500);
+    ani->setStartValue(value());
+    ani->setEndValue(qreal(100));
     connect(ani, &QVariantAnimation::valueChanged, this, [=] (const QVariant& val){
             setValue(val.toReal());
     });
     connect(ani, &QVariantAnimation::finished, [=]{
         ani->deleteLater();
-        emit finished(false);
+        setValue(0);
+        emit finished(result);
     });
     ani->start();
 }

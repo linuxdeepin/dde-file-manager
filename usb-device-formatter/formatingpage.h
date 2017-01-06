@@ -2,6 +2,7 @@
 #define FORMATINGPAGE_H
 
 #include <QFrame>
+#include "widgets/progressbox.h"
 
 class FormatingPage : public QFrame
 {
@@ -9,11 +10,15 @@ class FormatingPage : public QFrame
 public:
     explicit FormatingPage(QWidget *parent = 0);
     void initUI();
+    void animateToFinish(const bool& result);
+    void startAnimate();
 
 signals:
     void finished(const bool& successful);
 
 public slots:
+private:
+    ProgressBox* m_progressBox;
 };
 
 #endif // FORMATINGPAGE_H

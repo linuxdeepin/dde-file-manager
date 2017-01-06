@@ -17,16 +17,24 @@
 #include <QDebug>
 #include <QMouseEvent>
 #include <QApplication>
+#include <QtConcurrent>
+#include <QMetaObject>
+#include "../partman/partition.h"
 
-MainWindow::MainWindow(const QString &title, QWidget *parent):
+using namespace PartMan;
+MainWindow::MainWindow(const QString &path, QWidget *parent):
     QWidget(parent)
 {
     DPlatformWindowHandle handle(this);
     Q_UNUSED(handle)
 
-    setObjectName("UsbDeviceFormater");
-    initUI();
+    setObjectName("UsbDeviceFormatter");
     initStyleSheet();
+    m_formatPath = path;
+    m_formatType = Partition::getPartitionByDevicePath(path).fs().toLower();
+    if(m_formatType == "vfat")
+        m_formatType = "fat32";
+    initUI();
     initConnect();
 }
 
@@ -51,7 +59,8 @@ void MainWindow::initUI()
 
     m_pageStack = new QStackedWidget(this);
     m_pageStack->setFixedSize(width(), 300);
-    m_mainPage = new MainPage(this);
+    m_mainPage = new MainPage(m_formatType, this);
+    m_mainPage->setTargetPath(m_formatPath);
     m_warnPage = new WarnPage(this);
     m_formatingPage = new FormatingPage(this);
     m_finishPage = new FinishPage(this);
@@ -93,6 +102,41 @@ void MainWindow::initConnect()
 {
     connect(m_comfirmButton, &QPushButton::clicked, this, &MainWindow::nextStep);
     connect(m_formatingPage, &FormatingPage::finished, this, &MainWindow::onFormatingFinished);
+    connect(this, &MainWindow::taskFinished, this, &MainWindow::preHandleTaskFinished);
+}
+
+void MainWindow::formartDevice()
+{
+    QtConcurrent::run([=]{
+        bool result = false;
+        const QString _invokeMethod = "actionFormat";
+        QString format = m_mainPage->selectedFormat();
+        QString first = format.left(1);
+        format.remove(0, 1);
+        format.insert(0, first.toUpper());
+        const QString invokeMethod = _invokeMethod + format;
+
+        //First of all to unmount device
+        unMountDevice();
+
+        //Format deivice
+        QMetaObject::invokeMethod(&partitionManager,
+                              invokeMethod.toLocal8Bit().constData(),
+                              Qt::DirectConnection,
+                              Q_RETURN_ARG(bool, result),
+                              Q_ARG(const QString&, m_formatPath),
+                              Q_ARG(const QString&, m_mainPage->getLabel().toUpper()));
+
+        emit taskFinished(result);
+    });
+}
+
+void MainWindow::unMountDevice()
+{
+    QStringList args;
+    args << m_formatPath;
+    QString cmd = "umount";
+    QProcess::execute(cmd, args);
 }
 
 void MainWindow::nextStep()
@@ -108,8 +152,11 @@ void MainWindow::nextStep()
         m_currentStep = Formating;
         m_comfirmButton->setText(tr("Formating"));
         m_comfirmButton->setEnabled(false);
+        m_formatingPage->startAnimate();
+        formartDevice();
+        break;
     case Finished:
-//        close();
+        qApp->quit();
         break;
     case Error:
         m_pageStack->setCurrentWidget(m_mainPage);
@@ -126,7 +173,6 @@ void MainWindow::onFormatingFinished(const bool &successful)
         m_currentStep = Finished;
         m_comfirmButton->setText(tr("Complete"));
         m_comfirmButton->setEnabled(true);
-//        m_pageStack->setCurrentIndex(m_pageStack->currentIndex() +1);
         m_pageStack->setCurrentWidget(m_finishPage);
     } else{
         m_currentStep = Error;
@@ -136,3 +182,7 @@ void MainWindow::onFormatingFinished(const bool &successful)
     }
 }
 
+void MainWindow::preHandleTaskFinished(const bool &result)
+{
+    m_formatingPage->animateToFinish(result);
+}
