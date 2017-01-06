@@ -1,0 +1,11 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+    <interface name="com.deepin.filemanager.daemon.DeviceInfoManager">
+        <method name="readUsage">
+            <arg type="s" name="path" direction="in"/>
+            <arg type="b" name="result" direction="out"/>
+            <arg type="x" name="freespace" direction="out"/>
+            <arg type="x" name="total" direction="out"/>
+        </method>
+    </interface>
+</node>
