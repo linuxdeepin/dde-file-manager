@@ -107,8 +107,10 @@ void JobController::run()
 
     const DAbstractFileInfoPointer &rootInfo = DFileService::instance()->createFileInfo(m_fileUrl);
 
-    if (rootInfo && !rootInfo->hasOrderly())
+    if (rootInfo && !rootInfo->hasOrderly()) {
         update_children = false;
+        emit childrenUpdated(fileInfoQueue);
+    }
 
     while (m_iterator->hasNext()) {
         if (m_state == Paused) {
