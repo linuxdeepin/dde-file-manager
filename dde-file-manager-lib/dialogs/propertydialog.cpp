@@ -8,7 +8,6 @@
 
 #include "shutil/fileutils.h"
 #include "shutil/mimesappsmanager.h"
-#include "shutil/iconprovider.h"
 #include "shutil/filessizeworker.h"
 #include "shutil/fileutils.h"
 

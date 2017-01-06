@@ -18,7 +18,6 @@
 #include "widgets/singleton.h"
 #include "interfaces/dfmglobal.h"
 
-#include "filemonitor/filemonitor.h"
 #include "appcontroller.h"
 
 #include "models/sharefileinfo.h"

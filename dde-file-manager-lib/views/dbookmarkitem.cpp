@@ -25,8 +25,6 @@
 #include "dfmevent.h"
 #include "app/filesignalmanager.h"
 
-#include "shutil/iconprovider.h"
-
 #include "controllers/bookmarkmanager.h"
 #include "controllers/appcontroller.h"
 #include "dfileservices.h"

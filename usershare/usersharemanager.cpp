@@ -14,12 +14,17 @@
 #include "shareinfo.h"
 #include "../dde-file-manager-daemon/dbusservice/dbusinterface/usershare_interface.h"
 
+#include "dfilewatchermanager.h"
+#include "dabstractfileinfo.h"
+#include "dfileservices.h"
+#include "dabstractfilewatcher.h"
+
 QString UserShareManager::CurrentUser = "";
 
 UserShareManager::UserShareManager(QObject *parent) : QObject(parent)
 {
-    m_fileMonitor = new FileMonitor(this);
-    m_fileMonitor->addMonitorPath(UserSharePath());
+    m_fileMonitor = new DFileWatcherManager(this);
+    m_fileMonitor->add(UserSharePath());
     m_shareInfosChangedTimer = new QTimer(this);
     m_shareInfosChangedTimer->setSingleShot(true);
     m_shareInfosChangedTimer->setInterval(300);
@@ -34,6 +39,9 @@ UserShareManager::UserShareManager(QObject *parent) : QObject(parent)
     updateUserShareInfo();
     initMonitorPath();
     m_lazyStartSambaServiceTimer->start();
+
+    connect(this, &UserShareManager::userShareAdded, this, &UserShareManager::updateFileAttributeInfo);
+    connect(this, &UserShareManager::userShareDeleted, this, &UserShareManager::updateFileAttributeInfo);
 }
 
 UserShareManager::~UserShareManager()
@@ -45,14 +53,18 @@ void UserShareManager::initMonitorPath()
 {
     const ShareInfoList& infoList = shareInfoList();
     for(auto info : infoList){
-        m_fileMonitor->addMonitorPath(info.path());
+        m_fileMonitor->add(info.path());
     }
 }
 
 void UserShareManager::initConnect()
 {
-    connect(m_fileMonitor, &FileMonitor::fileDeleted, this, &UserShareManager::onFileDeleted);
-    connect(m_fileMonitor, &FileMonitor::fileCreated, this, &UserShareManager::handleShareChanged);
+    connect(m_fileMonitor, &DFileWatcherManager::fileDeleted, this, &UserShareManager::onFileDeleted);
+    connect(m_fileMonitor, &DFileWatcherManager::subfileCreated, this, &UserShareManager::handleShareChanged);
+    connect(m_fileMonitor, &DFileWatcherManager::fileMoved, this, [this](const QString &from, const QString &to) {
+        onFileDeleted(from);
+        handleShareChanged(to);
+    });
     connect(m_shareInfosChangedTimer, &QTimer::timeout, this, &UserShareManager::updateUserShareInfo);
     connect(m_lazyStartSambaServiceTimer, &QTimer::timeout, this, &UserShareManager::initSamaServiceSettings);
 }
@@ -126,6 +138,18 @@ void UserShareManager::saveUserShareInfoPathNames()
 
     QJsonDocument doc(QJsonObject::fromVariantMap(cache));
     writeCacheToFile(getCacehPath(), doc.toJson());
+}
+
+void UserShareManager::updateFileAttributeInfo(const QString &filePath) const
+{
+    const DUrl &fileUrl = DUrl::fromLocalFile(filePath);
+    qDebug() << fileUrl;
+    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(fileUrl);
+
+    if (!fileInfo)
+        return;
+    qDebug() << fileInfo->parentUrl();
+    DAbstractFileWatcher::ghostSignal(fileInfo->parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, fileUrl);
 }
 
 void UserShareManager::writeCacheToFile(const QString &path, const QString &content)
@@ -286,13 +310,13 @@ void UserShareManager::updateUserShareInfo()
     for (const QString &shareName : oldShareInfos){
         const QString& filePath = shareInfoCache.value(shareName).path();
         emit userShareDeleted(filePath);
-        m_fileMonitor->removeMonitorPath(filePath);
+        m_fileMonitor->remove(filePath);
     }
 
     //emit new encoming shared info
     foreach (const ShareInfo& info, newInfos) {
         emit userShareAdded(info.path());
-        m_fileMonitor->addMonitorPath(info.path());
+        m_fileMonitor->add(info.path());
     }
 
     if (validShareInfoCount() <= 0) {

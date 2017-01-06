@@ -10,7 +10,6 @@
 #include "sharefileinfo.h"
 #include "private/dabstractfileinfo_p.h"
 #include "usershare/usersharemanager.h"
-#include "glob.h"
 #include "dfileservices.h"
 #include "widgets/singleton.h"
 
@@ -20,12 +19,12 @@
 
 #include "app/define.h"
 #include "interfaces/dfmstandardpaths.h"
-#include "shutil/iconprovider.h"
 #include "dfilesystemmodel.h"
 #include "widgets/singleton.h"
 
 #include <QMimeType>
 #include <QSettings>
+#include <QIcon>
 
 ShareFileInfo::ShareFileInfo(const DUrl &url):
     DAbstractFileInfo(url)
@@ -228,7 +227,7 @@ Qt::ItemFlags ShareFileInfo::fileItemDisableFlags() const
 QList<QIcon> ShareFileInfo::additionalIcon() const
 {
     QList<QIcon> icons;
-    icons << DFMGlobal::instance()->standardIcon(DFMGlobal::ShareIcon);
+    icons << QIcon::fromTheme("emblem-shared", DFMGlobal::instance()->standardIcon(DFMGlobal::ShareIcon));
     if (isSymLink()) {
         icons << QIcon::fromTheme("emblem-symbolic-link", DFMGlobal::instance()->standardIcon(DFMGlobal::LinkIcon));
     }

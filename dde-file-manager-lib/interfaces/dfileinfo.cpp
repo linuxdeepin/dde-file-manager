@@ -2,7 +2,6 @@
 #include "private/dfileinfo_p.h"
 #include "app/define.h"
 
-#include "shutil/iconprovider.h"
 #include "shutil/fileutils.h"
 
 #include "controllers/pathmanager.h"

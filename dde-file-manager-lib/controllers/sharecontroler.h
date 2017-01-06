@@ -11,7 +11,6 @@
 #define SHARECONTROLER_H
 
 #include "dabstractfilecontroller.h"
-#include "filemonitor/filemonitor.h"
 
 class ShareControler : public DAbstractFileController
 {

@@ -33,7 +33,6 @@ public:
     void _q_handleFileAttributeChanged(const QString &path, const QString &parentPath);
     void _q_handleFileMoved(const QString &from, const QString &fromParent, const QString &to, const QString &toParent);
     void _q_handleFileCreated(const QString &path, const QString &parentPath);
-    void _q_onUserShareInfoChanged(const QString &path);
     void _q_handleFileModified(const QString &path, const QString &parentPath);
     void _q_handleFileClose(const QString &path, const QString &parentPath);
 
@@ -173,18 +172,6 @@ void DFileWatcherPrivate::_q_handleFileCreated(const QString &path, const QStrin
     emit q->subfileCreated(DUrl::fromLocalFile(path));
 }
 
-void DFileWatcherPrivate::_q_onUserShareInfoChanged(const QString &path)
-{
-    QFileInfo info(path);
-
-    if (path == this->path
-            || info.absolutePath() == this->path) {
-        Q_Q(DFileWatcher);
-
-        emit q->fileAttributeChanged(url);
-    }
-}
-
 void DFileWatcherPrivate::_q_handleFileModified(const QString &path, const QString &parentPath)
 {
     if (path != this->path && parentPath != this->path)
@@ -219,9 +206,6 @@ DFileWatcher::DFileWatcher(const QString &filePath, QObject *parent)
     : DAbstractFileWatcher(*new DFileWatcherPrivate(this), DUrl::fromLocalFile(filePath), parent)
 {
     d_func()->path = DFileWatcherPrivate::formatPath(filePath);
-
-    connect(userShareManager, SIGNAL(userShareAdded(QString)), this, SLOT(_q_onUserShareInfoChanged(QString)));
-    connect(userShareManager, SIGNAL(userShareDeleted(QString)), this, SLOT(_q_onUserShareInfoChanged(QString)));
 }
 
 void DFileWatcher::onFileDeleted(const QString &path, const QString &name)

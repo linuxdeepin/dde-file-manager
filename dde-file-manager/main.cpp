@@ -34,7 +34,7 @@
 #include <gperftools/profiler.h>
 #endif
 
-#define fileManagerApp Singleton<FileManagerApp>::instance()
+#define fileManagerApp FileManagerApp::instance()
 
 DWIDGET_USE_NAMESPACE
 

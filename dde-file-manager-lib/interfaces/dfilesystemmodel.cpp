@@ -11,7 +11,6 @@
 #include "controllers/jobcontroller.h"
 #include "controllers/appcontroller.h"
 
-#include "filemonitor/filemonitor.h"
 #include "interfaces/dfileviewhelper.h"
 
 #include <QDebug>

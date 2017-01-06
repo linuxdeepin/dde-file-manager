@@ -17,7 +17,6 @@
 
 #include "shutil/mimesappsmanager.h"
 #include "shutil/desktopfile.h"
-#include "shutil/iconprovider.h"
 #include "shutil/fileutils.h"
 
 #include "utils.h"
@@ -89,7 +88,7 @@ QListWidget *OpenWithOtherDialog::createOpenWithListWidget(const DAbstractFileIn
             continue;
         }
         QString iconName = mimeAppsManager->DesktopObjs.value(f).getIcon();
-        QIcon icon(fileIconProvider->getDesktopIcon(iconName, 48));
+        QIcon icon(QIcon::fromTheme(iconName));
         QListWidgetItem* item = new QListWidgetItem;
 
         QCheckBox* itemBox = new QCheckBox(mimeAppsManager->DesktopObjs.value(f).getLocalName());

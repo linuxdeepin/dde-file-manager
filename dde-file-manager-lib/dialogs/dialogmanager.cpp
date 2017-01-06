@@ -17,8 +17,6 @@
 
 #include "views/windowmanager.h"
 
-#include "shutil/iconprovider.h"
-
 #include "xutil.h"
 #include "utils.h"
 
@@ -267,7 +265,7 @@ int DialogManager::showRunExcutableDialog(const DUrl &url)
 #ifdef ARCH_MIPSEL
     d.setIcon(QIcon(svgToPixmap(":/images/images/application-x-shellscript.svg", 64, 64)));
 #else
-    d.setIcon(fileIconProvider->getDesktopIcon("application-x-shellscript", 256));
+    d.setIcon(QIcon::fromTheme("application-x-shellscript"));
 #endif
     d.setTitle(message);
     d.setMessage(tipMessage);
@@ -354,7 +352,7 @@ int DialogManager::showRemoveBookMarkDialog(const DFMEvent &event)
     d.addButton(buttonTexts[0], true);
     d.addButton(buttonTexts[1], false, DDialog::ButtonWarning);
     d.setDefaultButton(1);
-    d.setIcon(fileIconProvider->getDesktopIcon("folder", 64));
+    d.setIcon(QIcon::fromTheme("folder"));
     int code = d.exec();
     return code;
 }

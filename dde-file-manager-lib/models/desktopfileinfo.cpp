@@ -4,7 +4,6 @@
 #include "controllers/trashmanager.h"
 
 #include "shutil/properties.h"
-#include "shutil/iconprovider.h"
 #include "interfaces/dfileservices.h"
 
 #include "widgets/singleton.h"

@@ -6,7 +6,6 @@
 
 #include "shutil/fileutils.h"
 #include "shutil/mimetypedisplaymanager.h"
-#include "shutil/iconprovider.h"
 
 #include "controllers/pathmanager.h"
 #include "dfileservices.h"

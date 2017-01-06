@@ -12,11 +12,9 @@
 #include "controllers/bookmarkmanager.h"
 #include "interfaces/dfilemenumanager.h"
 #include "controllers/pathmanager.h"
-#include "../thumbnailer/thumbnailmanager.h"
 #include "gvfs/gvfsmountclient.h"
 #include "gvfs/networkmanager.h"
 #include "gvfs/secrectmanager.h"
-#include "shutil/iconprovider.h"
 #include "controllers/appcontroller.h"
 #include "../deviceinfo/udisklistener.h"
 #include "../usershare/usersharemanager.h"
@@ -213,11 +211,6 @@ void DFMGlobal::initMimeTypeDisplayManager()
     mimeAppsManager;
 }
 
-void DFMGlobal::initThumbnailManager()
-{
-    thumbnailManager;
-}
-
 void DFMGlobal::initNetworkManager()
 {
     networkManager;
@@ -236,11 +229,6 @@ void DFMGlobal::initSecretManager()
 void DFMGlobal::initDialogManager()
 {
     dialogManager;
-}
-
-void DFMGlobal::initIconProvider()
-{
-    fileIconProvider;
 }
 
 void DFMGlobal::initFileService()

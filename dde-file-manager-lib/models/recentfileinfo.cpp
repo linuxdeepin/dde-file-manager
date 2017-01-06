@@ -2,8 +2,6 @@
 
 #include "app/define.h"
 
-#include "shutil/iconprovider.h"
-
 #include "widgets/singleton.h"
 
 RecentFileInfo::RecentFileInfo()
