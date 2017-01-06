@@ -29,6 +29,10 @@
 #include <QLineEdit>
 #include <QTextEdit>
 
+#include <DApplication>
+
+DWIDGET_USE_NAMESPACE
+
 class DFileViewHelperPrivate
 {
 public:
@@ -60,7 +64,7 @@ void DFileViewHelperPrivate::init()
                     q , [this] {
         keyboardSearchKeys.clear();
     });
-    QObject::connect(fileIconProvider, &IconProvider::themeChanged, q, [q] {
+    QObject::connect(qApp, &DApplication::iconThemeChanged, q, [q] {
         q->model()->update();
     });
     QObject::connect(DFMGlobal::instance(), &DFMGlobal::clipboardDataChanged, q, [q] {

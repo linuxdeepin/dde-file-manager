@@ -1179,6 +1179,9 @@ void DFileSystemModel::update()
 
     const QModelIndex &rootIndex = createIndex(d->rootNode, 0);
 
+    for (const FileSystemNodePointer &node : d->rootNode->children)
+        node->fileInfo->refresh();
+
     emit dataChanged(rootIndex.child(0, 0), rootIndex.child(rootIndex.row() - 1, 0));
 }
 
