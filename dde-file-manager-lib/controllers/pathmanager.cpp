@@ -29,7 +29,7 @@ void PathManager::initPaths()
     m_systemPathDisplayNamesMap["Documents"] = tr("Documents");
     m_systemPathDisplayNamesMap["Downloads"] = tr("Downloads");
     m_systemPathDisplayNamesMap["Trash"] = tr("Trash");
-    m_systemPathDisplayNamesMap["Disk"] = tr("Disk");
+    m_systemPathDisplayNamesMap["System Disk"] = tr("System Disk");
     m_systemPathDisplayNamesMap["Network"] = tr("Computers in LAN");
     m_systemPathDisplayNamesMap["UserShare"] = tr("My Shares");
     m_systemPathDisplayNamesMap["Computer"] = tr("Computer");
@@ -119,7 +119,7 @@ void PathManager::loadSystemPaths()
     m_systemPathsMap["Documents"] = DFMStandardPaths::standardLocation(DFMStandardPaths::DocumentsPath);
     m_systemPathsMap["Downloads"] = DFMStandardPaths::standardLocation(DFMStandardPaths::DownloadsPath);
     m_systemPathsMap["Trash"] = DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath);
-    m_systemPathsMap["Disk"] = DFMStandardPaths::standardLocation(DFMStandardPaths::DiskPath);
+    m_systemPathsMap["System Disk"] = DFMStandardPaths::standardLocation(DFMStandardPaths::DiskPath);
     m_systemPathsMap["Network"] = DFMStandardPaths::standardLocation(DFMStandardPaths::NetworkRootPath);
     m_systemPathsMap["UserShare"] = DFMStandardPaths::standardLocation(DFMStandardPaths::UserShareRootPath);
     m_systemPathsMap["Computer"] = DFMStandardPaths::standardLocation(DFMStandardPaths::ComputerRoorPath);
