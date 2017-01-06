@@ -112,6 +112,7 @@ public slots:
     void onChildrenRemoved(const DUrl &fileUrl);
     void flickFolderToLeftsidBar();
     void onOpenWithBntsChecked(QAbstractButton *w);
+    void onExpandChanged(const bool& e);
 
 signals:
     void requestStartComputerFolderSize();

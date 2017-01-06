@@ -191,7 +191,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget* p
                            &~ Qt::WindowMinimizeButtonHint
                            &~ Qt::WindowSystemMenuHint);
     QString basicInfo = tr("Basic info");
-    QString openMethod = tr("Open with");
+    QString openWith = tr("Open with");
     QString shareManager = tr("Share manager");
     initUI();
     UDiskDeviceInfoPointer diskInfo = deviceListener->getDevice(m_url.query());
@@ -241,7 +241,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget* p
         QStringList titleList;
         if (fileInfo->isFile()){
             titleList << basicInfo;
-            titleList << openMethod;
+            titleList << openWith;
         }else{
             titleList << basicInfo;
             if (fileInfo->canShare()){
@@ -461,6 +461,17 @@ void PropertyDialog::onOpenWithBntsChecked(QAbstractButton *w)
     }
 }
 
+void PropertyDialog::onExpandChanged(const bool &e)
+{
+    DArrowLineExpand* expand = qobject_cast<DArrowLineExpand*>(sender());
+    if(expand){
+        if(e)
+            expand->setSeparatorVisible(false);
+        else
+            expand->setSeparatorVisible(true);
+    }
+}
+
 void PropertyDialog::mousePressEvent(QMouseEvent *event)
 {
     if (m_edit->isVisible()){
@@ -585,6 +596,9 @@ DExpandGroup *PropertyDialog::addExpandWidget(const QStringList &titleList)
 
         expand->setTitle(title);
         expand->setFixedHeight(30);
+
+        if(title == tr("Open with"))
+            connect(expand, &DArrowLineExpand::expandChange, this, &PropertyDialog::onExpandChanged);
 
         layout->addWidget(expand, 0, Qt::AlignTop);
 
@@ -769,6 +783,7 @@ QFrame *PropertyDialog::createDeviceInfoWidget(UDiskDeviceInfoPointer info)
 QListWidget *PropertyDialog::createOpenWithListWidget(const DAbstractFileInfoPointer &info)
 {
     QListWidget* listWidget = new QListWidget(this);
+    listWidget->setObjectName("OpenWithListWidget");
     m_OpenWithButtonGroup = new QButtonGroup(listWidget);
     listWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
@@ -810,6 +825,12 @@ QListWidget *PropertyDialog::createOpenWithListWidget(const DAbstractFileInfoPoi
 
     listWidget->setFixedHeight(EXTEND_FRAME_MAXHEIGHT);
     listWidget->setFixedWidth(300);
+
+    listWidget->setStyleSheet("QListWidget#OpenWithListWidget{"
+                                "border: 1px solid #eaeaea;"
+                                "padding-left: 8px;"
+                                "border-radius: 2px;"
+                              "}");
 
     connect(m_OpenWithButtonGroup, SIGNAL(buttonClicked(QAbstractButton*)),
             this, SLOT(onOpenWithBntsChecked(QAbstractButton*)));
