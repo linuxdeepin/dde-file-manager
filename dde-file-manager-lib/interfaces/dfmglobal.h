@@ -203,13 +203,11 @@ public:
     static void initFileSiganlManager();
     static void initDialogManager();
     static void initAppcontroller();
-    static void initIconProvider();
     static void initFileService();
     static void initDeviceListener();
     static void initMimesAppsManager();
     static void initSystemPathManager();
     static void initMimeTypeDisplayManager();
-    static void initThumbnailManager();
     static void initNetworkManager();
     static void initGvfsMountClient();
     static void initSecretManager();

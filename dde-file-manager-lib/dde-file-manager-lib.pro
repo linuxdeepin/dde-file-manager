@@ -33,19 +33,15 @@ isEmpty(PREFIX){
 include(../widgets/widgets.pri)
 include(../dialogs/dialogs.pri)
 include(../utils/utils.pri)
-include(../filemonitor/filemonitor.pri)
 include(../chinese2pinyin/chinese2pinyin.pri)
 include(../simpleini/simpleini.pri)
 include(../fileoperations/fileoperations.pri)
 include(deviceinfo/deviceinfo.pri)
 include(dbusinterface/dbusinterface.pri)
-include(../thumbnailer/thumbnailer.pri)
 include(../usershare/usershare.pri)
 include(../dde-file-manager-plugins/plugininterfaces/plugininterfaces.pri)
 
-lessThan(QT_MINOR_VERSION, 6): include(../xdnd/xdnd.pri)
-
-PKGCONFIG += gtk+-2.0 gsettings-qt libsecret-1 dtkbase dtkwidget gio-unix-2.0
+PKGCONFIG += gtk+-2.0 gsettings-qt libsecret-1 dtkbase dtkwidget gio-unix-2.0 poppler-cpp
 CONFIG += c++11 link_pkgconfig
 #DEFINES += QT_NO_DEBUG_OUTPUT
 DEFINES += QT_MESSAGELOGCONTEXT
@@ -73,7 +69,6 @@ HEADERS += \
     views/fileitem.h \
     views/dsearchbar.h \
     models/desktopfileinfo.h \
-    shutil/iconprovider.h \
     models/bookmark.h \
     models/searchhistory.h \
     models/fmsetting.h \
@@ -176,7 +171,8 @@ HEADERS += \
     views/progressline.h \
     controllers/avfsfilecontroller.h \
     models/avfsfileinfo.h \
-    interfaces/dfileiconprovider.h
+    interfaces/dfileiconprovider.h \
+    interfaces/dfilewatchermanager.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -192,7 +188,6 @@ SOURCES += \
     views/fileitem.cpp \
     views/dsearchbar.cpp \
     models/desktopfileinfo.cpp \
-    shutil/iconprovider.cpp \
     models/bookmark.cpp \
     models/searchhistory.cpp \
     models/fmsetting.cpp \
@@ -288,7 +283,8 @@ SOURCES += \
     views/progressline.cpp \
     controllers/avfsfilecontroller.cpp \
     models/avfsfileinfo.cpp \
-    interfaces/dfileiconprovider.cpp
+    interfaces/dfileiconprovider.cpp \
+    interfaces/dfilewatchermanager.cpp
 
 INCLUDEPATH += $$PWD/../ $$PWD/../utils/ $$PWD/interfaces/ $$PWD/../dde-file-manager-plugins/plugininterfaces/
 

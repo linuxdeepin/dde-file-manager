@@ -30,7 +30,6 @@ private slots:
     void onFileClosed(const QString &path, const QString &name);
 
 private:
-    Q_PRIVATE_SLOT(d_func(), void _q_onUserShareInfoChanged(const QString &))
     Q_DECLARE_PRIVATE(DFileWatcher)
 };
 

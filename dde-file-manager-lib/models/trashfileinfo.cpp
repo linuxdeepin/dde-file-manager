@@ -7,12 +7,12 @@
 
 #include "app/define.h"
 #include "interfaces/dfmstandardpaths.h"
-#include "shutil/iconprovider.h"
 #include "dfilesystemmodel.h"
 #include "widgets/singleton.h"
 
 #include <QMimeType>
 #include <QSettings>
+#include <QIcon>
 
 namespace FileSortFunction {
 COMPARE_FUN_DEFINE(deletionDate, DeletionDate, TrashFileInfo)

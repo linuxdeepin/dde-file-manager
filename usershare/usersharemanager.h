@@ -2,13 +2,19 @@
 #define USERSHAREMANAGER_H
 
 #include <QObject>
-#include <QFileSystemWatcher>
+
+#include "dfmglobal.h"
 #include "shareinfo.h"
-#include "filemonitor/filemonitor.h"
 
-
+QT_BEGIN_NAMESPACE
 class QTimer;
+QT_END_NAMESPACE
 class UserShareInterface;
+DFM_BEGIN_NAMESPACE
+class DFileWatcherManager;
+DFM_END_NAMESPACE
+
+DFM_USE_NAMESPACE
 
 class UserShareManager : public QObject
 {
@@ -64,8 +70,9 @@ public slots:
 private:
     void loadUserShareInfoPathNames();
     void saveUserShareInfoPathNames();
+    void updateFileAttributeInfo(const QString &filePath) const;
 
-    FileMonitor *m_fileMonitor = NULL;
+    DFileWatcherManager *m_fileMonitor = NULL;
     QTimer* m_shareInfosChangedTimer = NULL;
     QTimer* m_lazyStartSambaServiceTimer = NULL;
     QMap<QString, ShareInfo> m_shareInfos = {};

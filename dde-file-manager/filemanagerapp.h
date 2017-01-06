@@ -15,10 +15,11 @@ QT_END_NAMESPACE
 class FileManagerApp : public QObject
 {
     Q_OBJECT
-public:
-    explicit FileManagerApp(QObject *parent = 0);
-    ~FileManagerApp();
 
+public:
+    static FileManagerApp *instance();
+
+    ~FileManagerApp();
 
     void initApp();
     void initView();
@@ -33,6 +34,9 @@ public slots:
 
     void loadFileJobConfig();
     void showPropertyDialog(const QStringList paths);
+
+protected:
+    explicit FileManagerApp(QObject *parent = 0);
 
 private:
     WindowManager* m_windowManager = NULL;

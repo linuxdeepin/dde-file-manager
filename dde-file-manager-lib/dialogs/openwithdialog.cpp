@@ -2,7 +2,6 @@
 
 #include "shutil/mimesappsmanager.h"
 #include "shutil/desktopfile.h"
-#include "shutil/iconprovider.h"
 #include "shutil/fileutils.h"
 
 #include "app/define.h"
@@ -94,7 +93,7 @@ void OpenWithDialog::addItems()
 
     foreach (QString f, recommendApps){
         QString iconName = mimeAppsManager->DesktopObjs.value(f).getIcon();
-        QIcon icon(fileIconProvider->getDesktopIcon(iconName, 48));
+        QIcon icon = QIcon::fromTheme(iconName);
         QListWidgetItem* item = new QListWidgetItem(icon, mimeAppsManager->DesktopObjs.value(f).getLocalName());
         item->setData(Qt::UserRole, f);
         m_listWidget->addItem(item);
@@ -112,7 +111,7 @@ void OpenWithDialog::addItems()
             continue;
         }
         QString iconName = mimeAppsManager->DesktopObjs.value(f).getIcon();
-        QIcon icon(fileIconProvider->getDesktopIcon(iconName, 48));
+        QIcon icon(QIcon::fromTheme(iconName));
         QListWidgetItem* item = new QListWidgetItem(icon, mimeAppsManager->DesktopObjs.value(f).getLocalName());
         item->setData(Qt::UserRole, f);
         m_listWidget->addItem(item);

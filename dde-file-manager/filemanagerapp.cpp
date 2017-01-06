@@ -25,16 +25,15 @@
 #include "models/computerdesktopfileinfo.h"
 #include "interfaces/dfileservices.h"
 
-#if QT_VERSION_MINOR < 6
-#include "xdnd/xdndworkaround.h"
-#endif
-
 #include <QDataStream>
 #include <QGuiApplication>
 #include <QTimer>
 #include <QThreadPool>
 #include <QSettings>
 #include <QFileSystemWatcher>
+
+class FileManagerAppGlobal : public FileManagerApp {};
+Q_GLOBAL_STATIC(FileManagerAppGlobal, fmaGlobal)
 
 FileManagerApp::FileManagerApp(QObject *parent) : QObject(parent)
 {
@@ -50,11 +49,15 @@ FileManagerApp::FileManagerApp(QObject *parent) : QObject(parent)
     watcherHome->addPath(QDir::homePath());
 }
 
+FileManagerApp *FileManagerApp::instance()
+{
+    return fmaGlobal;
+}
+
 FileManagerApp::~FileManagerApp()
 {
 
 }
-
 
 void FileManagerApp::initApp()
 {
@@ -85,9 +88,6 @@ void FileManagerApp::initApp()
     /*init appController */
     DFMGlobal::initAppcontroller();
 
-    /*init iconProvider */
-    DFMGlobal::initIconProvider();
-
     /*init fileService */
     DFMGlobal::initFileService();
 
@@ -103,9 +103,6 @@ void FileManagerApp::initApp()
     /*init mimeTypeDisplayManager */
     DFMGlobal::initMimeTypeDisplayManager();
 
-    /*init thumbnailManager */
-    DFMGlobal::initThumbnailManager();
-
     /*init networkManager */
     DFMGlobal::initNetworkManager();
 
@@ -120,11 +117,6 @@ void FileManagerApp::initApp()
 
     /*init controllers for different scheme*/
     fileService->initHandlersByCreators();
-
-#if QT_VERSION_MINOR < 6
-    /// fix Qt drag drop to google chrome bug
-    new XdndWorkaround();
-#endif
 
     QThreadPool::globalInstance()->setMaxThreadCount(MAX_THREAD_COUNT);
 }

@@ -1,5 +1,4 @@
 #include "mimesappsmanager.h"
-#include "iconprovider.h"
 
 #include "app/define.h"
 
@@ -301,7 +300,7 @@ QList<AppContext> MimesAppsManager::getRecommendedAppsForType(const QString &mim
         const char* desktopId = g_app_info_get_id(appInfo);
         GDesktopAppInfo* dekstopAppInfo = g_desktop_app_info_new(desktopId);
         QString iconName = g_desktop_app_info_get_string(dekstopAppInfo, "Icon");
-        QIcon icon(fileIconProvider->getDesktopIcon(iconName, 48));
+        QIcon icon(QIcon::fromTheme(iconName));
 
         appContext.appName = appName;
         appContext.commandLine = commandLine;
@@ -417,10 +416,9 @@ QMap<QString, QStringList> MimesAppsManager::getMimeTypeApps()
         MimeApps.insert(key, orderApps);
     }
 
-    foreach (QString desktopFile, DesktopObjs.keys()) {
-        QString iconName = DesktopObjs.value(desktopFile).getIcon();
-        fileIconProvider->getDesktopIcon(iconName, 48);
-    }
+//    foreach (QString desktopFile, DesktopObjs.keys()) {
+//        QString iconName = DesktopObjs.value(desktopFile).getIcon();
+//    }
 
     return MimeApps;
 }

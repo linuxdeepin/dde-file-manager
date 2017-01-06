@@ -16,7 +16,6 @@
 #include "views/windowmanager.h"
 #include "dabstractfileinfo.h"
 #include "dfilesystemmodel.h"
-#include "shutil/iconprovider.h"
 #include "views/fileitem.h"
 #include "widgets/singleton.h"
 #include "dfileservices.h"

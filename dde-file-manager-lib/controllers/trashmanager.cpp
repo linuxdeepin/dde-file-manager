@@ -9,7 +9,6 @@
 #include "app/filesignalmanager.h"
 #include "dfmevent.h"
 
-#include "filemonitor/filemonitor.h"
 #include "interfaces/dfmstandardpaths.h"
 #include "widgets/singleton.h"
 
