@@ -55,4 +55,5 @@ qreal ProgressLine::value() const
 void ProgressLine::setValue(const qreal &value)
 {
     m_value = value;
+    update();
 }

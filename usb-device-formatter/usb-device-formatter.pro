@@ -4,16 +4,21 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui concurrent
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = usb-device-formater
+TARGET = usb-device-formatter
 TEMPLATE = app
 
-PKGCONFIG += dtkwidget dtkbase
+include(../partman/partman.pri)
+
+PKGCONFIG += dtkwidget dtkbase dtkutil
 
 CONFIG += c++11 link_pkgconfig
+
+TRANSLATIONS += $$PWD/translations/$${TARGET}.ts \
+    $$PWD/translations/$${TARGET}_zh_CN.ts
 
 SOURCES += main.cpp \
     mainwindow.cpp \
@@ -23,7 +28,8 @@ SOURCES += main.cpp \
     formatingpage.cpp \
     widgets/progressbox.cpp \
     finishpage.cpp \
-    errorpage.cpp
+    errorpage.cpp \
+    app/cmdmanager.cpp
 
 HEADERS  += \
     mainwindow.h \
@@ -33,7 +39,8 @@ HEADERS  += \
     formatingpage.h \
     widgets/progressbox.h \
     finishpage.h \
-    errorpage.h
+    errorpage.h \
+    app/cmdmanager.h
 
 RESOURCES += \
     theme/theme.qrc

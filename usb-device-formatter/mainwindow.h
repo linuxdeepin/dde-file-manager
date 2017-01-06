@@ -18,6 +18,8 @@
 #include "finishpage.h"
 #include "errorpage.h"
 
+#include "../partman/partitionmanager.h"
+
 #define BORDER_WIDTH 1
 #define BORDER_COLOR QColor(0,0,0,120)
 #define BORDER_RADIUS 5
@@ -44,16 +46,22 @@ class MainWindow : public QWidget
     };
 
 public:
-    MainWindow(const QString& title, QWidget *parent = 0);
+    MainWindow(const QString& path, QWidget *parent = 0);
     ~MainWindow();
 
     void initUI();
     void initStyleSheet();
     void initConnect();
+    void formartDevice();
+    void unMountDevice();
+
+signals:
+    void taskFinished(const bool& result);
 
 public slots:
     void nextStep();
     void onFormatingFinished(const bool& successful);
+    void preHandleTaskFinished(const bool& result);
 
 private:
     QPushButton* m_comfirmButton;
@@ -64,6 +72,10 @@ private:
     FormatingPage* m_formatingPage;
     FinishPage* m_finishPage;
     ErrorPage* m_errorPage;
+    QString m_formatPath;
+    QString m_formatType;
+
+    PartMan::PartitionManager partitionManager;
 
 };
 
