@@ -214,7 +214,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget* p
 
     }else if (m_url == DUrl::fromLocalFile("/")){
         m_icon->setPixmap(svgToPixmap(":/devices/images/device/drive-harddisk-deepin.svg", 128, 128));
-        m_edit->setPlainText(tr("Disk"));
+        m_edit->setPlainText(tr("System Disk"));
         m_editDisbaled = true;
 
         m_localDeviceInfoFrame = createLocalDeviceInfoWidget(m_url);

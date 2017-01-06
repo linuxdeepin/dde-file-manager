@@ -49,10 +49,15 @@ void DBookmarkScene::initData()
              << "Network"
              << "UserShare"
              << "Dvd"
-             << "BookMarks";
+             << "BookMarks"
+             << "System Disk";
 
     foreach (QString key, IconKeys) {
         QString _key = key.toLower();
+
+        /* specially handle for system disk icon(disk icon)*/
+        if(key == "System Disk")
+            _key = "disk";
         QString smallNormal = QString(":/leftsidebar/images/leftsidebar/%1_normal_16px.svg").arg(_key);
         QString smallHover = QString(":/leftsidebar/images/leftsidebar/%1_active_16px.svg").arg(_key);
         QString smallChecked = QString(":/leftsidebar/images/leftsidebar/%1_active_16px.svg").arg(_key);
@@ -71,7 +76,7 @@ void DBookmarkScene::initData()
                      << "Downloads"
                      << "Trash"
                      << "Computer"
-                     << "Disk"
+                     << "System Disk"
                      << "Network"
                      << "UserShare";
 

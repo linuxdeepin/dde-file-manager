@@ -58,7 +58,7 @@ void DLeftSideBar::initData()
                << "Trash"
                << "Separator"
                << "Computer"
-               << "Disk";
+               << "System Disk";
 
     m_navState = true;
     setAcceptDrops(true);
@@ -121,7 +121,7 @@ void DLeftSideBar::initNav()
             if (key == "Home"){
                 m_scene->setHomeItem(item);
             }
-            if (key == "Disk"){
+            if (key == "System Disk"){
                 m_scene->setDefaultDiskItem(item);
             }
         }
