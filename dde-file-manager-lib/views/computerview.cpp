@@ -14,6 +14,7 @@
 #include "dabstractfileinfo.h"
 #include "interfaces/dfmstandardpaths.h"
 #include "widgets/singleton.h"
+#include "../shutil/fileutils.h"
 
 #include <dslider.h>
 
@@ -221,8 +222,10 @@ void ComputerViewItem::updateStatus()
     if(getHasMemoryInfo()){
         updateIconPixelWidth();
         getProgressLine()->setFixedSize(getPixelWidth(), 2);
-        getProgressLine()->setMax(m_deviceInfo->getTotal());
-        getProgressLine()->setValue((m_deviceInfo->getTotal() - m_deviceInfo->getFree()));
+        const qlonglong total = m_deviceInfo->getTotal();
+        const qlonglong used = total - m_deviceInfo->getFree();
+        getProgressLine()->setMax(total);
+        getProgressLine()->setValue(used);
     } else
         getProgressLine()->setFixedHeight(0);
 }
@@ -405,7 +408,7 @@ void ComputerView::initUI()
     }
     loadNativeItems();
 
-    resizeItemBySizeIndex(m_currentIconSizeIndex);
+    resizeAllItemsBySizeIndex(m_currentIconSizeIndex);
 
     if (m_removableItems.count() == 0){
         m_removableTitleLine->hide();
@@ -422,7 +425,9 @@ void ComputerView::initConnect()
     connect(deviceListener, &UDiskListener::volumeRemoved, this, &ComputerView::volumeRemoved);
     connect(deviceListener, &UDiskListener::mountAdded, this, &ComputerView::mountAdded);
     connect(deviceListener, &UDiskListener::mountRemoved, this, &ComputerView::mountRemoved);
-    connect(m_statusBar->scalingSlider(), &DSlider::valueChanged, this, &ComputerView::resizeItemBySizeIndex);
+    connect(deviceListener, &UDiskListener::volumeAdded, this, &ComputerView::volumeAdded);
+    connect(deviceListener, &UDiskListener::deviecInfoChanged, this, &ComputerView::updateComputerItemByDevice);
+    connect(m_statusBar->scalingSlider(), &DSlider::valueChanged, this, &ComputerView::resizeAllItemsBySizeIndex);
 }
 
 void ComputerView::loadSystemItems()
@@ -583,7 +588,7 @@ void ComputerView::mountAdded(UDiskDeviceInfoPointer device)
                 m_removableTitleLine->show();
             }
         }
-        resizeItemBySizeIndex(m_currentIconSizeIndex);
+        updateItemBySizeIndex(m_currentIconSizeIndex, item);
     }
     updateStatusBar();
 }
@@ -591,6 +596,22 @@ void ComputerView::mountAdded(UDiskDeviceInfoPointer device)
 void ComputerView::mountRemoved(UDiskDeviceInfoPointer device)
 {
     Q_UNUSED(device);
+}
+
+void ComputerView::updateComputerItemByDevice(UDiskDeviceInfoPointer device)
+{
+    foreach (ComputerViewItem* item, m_nativeItems) {
+        if (item->deviceInfo() == device){
+            item->updateStatus();
+            return;
+        }
+    }
+    foreach (ComputerViewItem* item, m_removableItems) {
+        if (item->deviceInfo() == device){
+            item->updateStatus();
+            return;
+        }
+    }
 }
 
 void ComputerView::enlargeIcon()
@@ -608,24 +629,25 @@ void ComputerView::shrinkIcon()
     m_statusBar->scalingSlider()->setValue(m_currentIconSizeIndex);
 }
 
-void ComputerView::resizeItemBySizeIndex(int index)
+void ComputerView::resizeAllItemsBySizeIndex(int index)
+{
+    foreach (ComputerViewItem* item, m_systemItems) {
+        updateItemBySizeIndex(index, item);
+    }
+//    foreach (ComputerViewItem* item, m_nativeItems) {
+//        updateItemBySizeIndex(index, item);
+//    }
+//    foreach (ComputerViewItem* item, m_removableItems) {
+//        updateItemBySizeIndex(index, item);
+//    }
+}
+
+void ComputerView::updateItemBySizeIndex(const int &index, ComputerViewItem *item)
 {
     int size = m_iconSizes.at(index);
-    foreach (ComputerViewItem* item, m_systemItems) {
-        item->setFixedWidth(size+30);
-        item->setIconSize(size);
-        item->updateStatus();
-    }
-    foreach (ComputerViewItem* item, m_nativeItems) {
-        item->setFixedWidth(size+30);
-        item->setIconSize(size);
-        item->updateStatus();
-    }
-    foreach (ComputerViewItem* item, m_removableItems) {
-        item->setFixedWidth(size+30);
-        item->setIconSize(size);
-        item->updateStatus();
-    }
+    item->setFixedWidth(size+30);
+    item->setIconSize(size);
+    item->updateStatus();
 }
 
 void ComputerView::resizeEvent(QResizeEvent *event)
@@ -678,6 +700,9 @@ void ComputerView::mousePressEvent(QMouseEvent *event)
 void ComputerView::showEvent(QShowEvent *event)
 {
     Q_UNUSED(event)
+
+    deviceListener->refreshAsycGetAllDeviceUsage();
+
     foreach (ComputerViewItem* item, m_systemItems) {
         item->setChecked(false);
     }
