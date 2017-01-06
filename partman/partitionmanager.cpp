@@ -347,7 +347,7 @@ bool PartitionManager::actionFormatLvm2pv(const Partition &partition)
 
 bool PartitionManager::actionFormatLvm2pv(const QString &path, const QString &label)
 {
-
+    return actionFormatUnknown(path, label);
 }
 
 bool PartitionManager::actionFormatNilfs2(const Partition &partition)

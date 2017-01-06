@@ -62,7 +62,10 @@ SOURCES += main.cpp \
     dbusservice/dbusinterface/usbformatter_interface.cpp \
     commandmanager/commandmanager.cpp \
     dbusservice/dbusadaptor/commandmanager_adaptor.cpp \
-    dbusservice/dbusinterface/commandmanager_interface.cpp
+    dbusservice/dbusinterface/commandmanager_interface.cpp \
+    deviceinfo/deviceinfomanager.cpp \
+    dbusservice/dbusadaptor/deviceinfomanager_adaptor.cpp \
+    dbusservice/dbusinterface/deviceinfomanager_interface.cpp
 
 HEADERS += \
     app/filemanagerdaemon.h \
@@ -101,7 +104,10 @@ HEADERS += \
     dbusservice/dbusinterface/usbformatter_interface.h \
     commandmanager/commandmanager.h \
     dbusservice/dbusadaptor/commandmanager_adaptor.h \
-    dbusservice/dbusinterface/commandmanager_interface.h
+    dbusservice/dbusinterface/commandmanager_interface.h \
+    deviceinfo/deviceinfomanager.h \
+    dbusservice/dbusadaptor/deviceinfomanager_adaptor.h \
+    dbusservice/dbusinterface/deviceinfomanager_interface.h
 
 
 target.path = /usr/bin
