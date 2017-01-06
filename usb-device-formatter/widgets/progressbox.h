@@ -3,6 +3,7 @@
 
 #include "progressline.h"
 #include <QTimer>
+#include <QVariantAnimation>
 
 struct Bled{
     QPointF pos;
@@ -21,6 +22,8 @@ signals:
 public slots:
     void updateAnimation();
     void taskTimeOut();
+    void startTask();
+    void finishedTask(const bool result);
 protected:
     void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
 
@@ -28,6 +31,7 @@ private:
     QTimer* m_taskTimer;
     QTimer* m_updateTimer;
     QList<Bled> m_bleds;
+    QVariantAnimation* m_taskAni;
 };
 
 #endif // PROGRESSBOX_H
