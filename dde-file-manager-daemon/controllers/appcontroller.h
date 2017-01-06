@@ -9,6 +9,7 @@ class FileOperation;
 class UserShareManager;
 class UsbFormatter;
 class CommandManager;
+class DeviceInfoManager;
 
 class AppController : public QObject
 {
@@ -29,6 +30,7 @@ private:
     UserShareManager* m_userShareManager = NULL;
     UsbFormatter* m_usbFormatter = NULL;
     CommandManager* m_commandManager = NULL;
+    DeviceInfoManager* m_deviceInfoManager = NULL;
 };
 
 #endif // APPCONTROLLER_H
