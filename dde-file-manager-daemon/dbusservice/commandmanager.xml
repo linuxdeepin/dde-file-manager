@@ -8,5 +8,10 @@
             <arg type="s" name="output" direction="out"/>
             <arg type="s" name="error" direction="out"/>
         </method>
+        <method name="startDetached">
+            <arg type="s" name="cmd" direction="in"/>
+            <arg type="as" name="args" direction="in"/>
+            <arg type="b" name="result" direction="out"/>
+        </method>
     </interface>
 </node>

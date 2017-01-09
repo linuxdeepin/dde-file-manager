@@ -26,3 +26,9 @@ bool CommandManager::process(const QString &cmd, const QStringList &args,  QStri
     bool ret = future.result();
     return ret;
 }
+
+bool CommandManager::startDetached(const QString &cmd, const QStringList &args)
+{
+    bool ret = QProcess::startDetached(cmd, args);
+    return ret;
+}

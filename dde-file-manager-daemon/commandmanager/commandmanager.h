@@ -16,6 +16,7 @@ signals:
 
 public slots:
     bool process(const QString& cmd, const QStringList& args, QString &output, QString &error);
+    bool startDetached(const QString &cmd, const QStringList &args);
 
 private:
     CommandManagerAdaptor* m_commandManagerAdaptor = NULL;
