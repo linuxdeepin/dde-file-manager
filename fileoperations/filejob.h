@@ -132,7 +132,7 @@ private:
     QMap<QString, QString> m_checkDiskJobDataDetail;
     bool m_isCheckingDisk = false;
     qint64 m_bytesCopied;
-    qint64 m_totalSize;
+    qint64 m_totalSize = 1;
     qint64 m_bytesPerSec;
     QString m_progress;
     float m_factor;
