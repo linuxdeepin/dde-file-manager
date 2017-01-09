@@ -222,6 +222,7 @@ SearchDiriterator::SearchDiriterator(const DUrl &url, const QStringList &nameFil
     keyword = url.searchKeyword();
     regular = QRegularExpression(QRegularExpression::escape((keyword)), QRegularExpression::CaseInsensitiveOption);
     searchPathList << targetUrl;
+    m_nameFilters << keyword;
 }
 
 SearchDiriterator::~SearchDiriterator()
@@ -265,6 +266,8 @@ bool SearchDiriterator::hasNext() const
             }
         }
 
+        bool hasIteratorOfSubdir = it->hasIteratorOfSubdir();
+
         while (it->hasNext()) {
             if (closed)
                 return false;
@@ -275,7 +278,7 @@ bool SearchDiriterator::hasNext() const
 
             fileInfo->makeAbsolute();
 
-            if (fileInfo->isDir() && !fileInfo->isSymLink()) {
+            if (!hasIteratorOfSubdir && fileInfo->isDir() && !fileInfo->isSymLink()) {
                 const DUrl &url = fileInfo->fileUrl();
 
                 if (!searchPathList.contains(url))

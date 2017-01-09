@@ -37,6 +37,7 @@ public:
                     const QStringList &nameFilters,
                     QDir::Filters filter,
                     QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags);
+    ~FileDirIterator();
 
     DUrl next() Q_DECL_OVERRIDE;
     bool hasNext() const Q_DECL_OVERRIDE;
@@ -46,8 +47,12 @@ public:
     const DAbstractFileInfoPointer fileInfo() const Q_DECL_OVERRIDE;
     QString path() const Q_DECL_OVERRIDE;
 
+    bool hasIteratorOfSubdir() const Q_DECL_OVERRIDE;
+
 private:
     QDirIterator iterator;
+    QProcess *processRlocate = Q_NULLPTR;
+    QFileInfo currentFileInfo;
 };
 
 FileController::FileController(QObject *parent)
@@ -449,33 +454,71 @@ FileDirIterator::FileDirIterator(const QString &path, const QStringList &nameFil
     : DDirIterator()
     , iterator(path, nameFilters, filter, flags)
 {
+    if (system("which rlocate") == 0 && !nameFilters.isEmpty()) {
+        QString arg = path + QString(".*%1[^/]*$").arg(nameFilters.first());
 
+        processRlocate = new QProcess();
+        processRlocate->start("rlocate", QStringList() << "-r" << arg << "-i", QIODevice::ReadOnly);
+    }
+}
+
+FileDirIterator::~FileDirIterator()
+{
+    if (processRlocate) {
+        processRlocate->kill();
+        processRlocate->terminate();
+        processRlocate->waitForFinished();
+        processRlocate->deleteLater();
+    }
 }
 
 DUrl FileDirIterator::next()
 {
-    return DUrl::fromLocalFile(iterator.next());
+    if (!processRlocate)
+        return DUrl::fromLocalFile(iterator.next());
+
+    processRlocate->waitForReadyRead();
+    QString filePath = processRlocate->readLine();
+
+    if (filePath.isEmpty()) {
+        return DUrl();
+    }
+
+    filePath.chop(1);
+
+    currentFileInfo.setFile(filePath);
+
+    return DUrl::fromLocalFile(filePath);
 }
 
 bool FileDirIterator::hasNext() const
 {
-    return iterator.hasNext();
+    if (!processRlocate)
+        return iterator.hasNext();
+
+    return processRlocate->state() != QProcess::NotRunning || processRlocate->canReadLine();
 }
 
 QString FileDirIterator::fileName() const
 {
-    return iterator.fileName();
+    if (!processRlocate)
+        return iterator.fileName();
+
+    return currentFileInfo.fileName();
 }
 
 QString FileDirIterator::filePath() const
 {
-    return iterator.filePath();
+    if (!processRlocate)
+        return iterator.filePath();
+
+    return currentFileInfo.filePath();
 }
 
 const DAbstractFileInfoPointer FileDirIterator::fileInfo() const
 {
-    if (iterator.fileName().contains(QChar(0xfffd))) {
-        DFMGlobal::fileNameCorrection(iterator.filePath());
+    if (fileName().contains(QChar(0xfffd))) {
+        DFMGlobal::fileNameCorrection(filePath());
     }
 
     if (fileName().endsWith(QString(".") + DESKTOP_SURRIX)){
@@ -487,12 +530,20 @@ const DAbstractFileInfoPointer FileDirIterator::fileInfo() const
             return DAbstractFileInfoPointer(new TrashDesktopFileInfo());
         #endif
 
-        return DAbstractFileInfoPointer(new DesktopFileInfo(iterator.fileInfo()));
+        return DAbstractFileInfoPointer(new DesktopFileInfo(processRlocate ? currentFileInfo : iterator.fileInfo()));
     }
-    return DAbstractFileInfoPointer(new DFileInfo(iterator.fileInfo()));
+    return DAbstractFileInfoPointer(new DFileInfo(processRlocate ? currentFileInfo : iterator.fileInfo()));
 }
 
 QString FileDirIterator::path() const
 {
-    return iterator.filePath();
+    if (!processRlocate)
+        return iterator.filePath();
+
+    return currentFileInfo.filePath();
+}
+
+bool FileDirIterator::hasIteratorOfSubdir() const
+{
+    return processRlocate;
 }
