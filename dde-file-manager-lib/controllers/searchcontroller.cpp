@@ -275,7 +275,7 @@ bool SearchDiriterator::hasNext() const
 
             fileInfo->makeAbsolute();
 
-            if (fileInfo->isDir()) {
+            if (fileInfo->isDir() && !fileInfo->isSymLink()) {
                 const DUrl &url = fileInfo->fileUrl();
 
                 if (!searchPathList.contains(url))
