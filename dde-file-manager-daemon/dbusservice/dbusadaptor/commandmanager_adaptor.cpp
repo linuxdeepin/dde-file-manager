@@ -39,3 +39,9 @@ bool CommandManagerAdaptor::process(const QString &cmd, const QStringList &args,
     return parent()->process(cmd, args, output, error);
 }
 
+bool CommandManagerAdaptor::startDetached(const QString &cmd, const QStringList &args)
+{
+    // handle method call com.deepin.filemanager.daemon.CommandManager.startDetached
+    return parent()->startDetached(cmd, args);
+}
+

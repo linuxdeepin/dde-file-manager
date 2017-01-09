@@ -40,6 +40,11 @@ class CommandManagerAdaptor: public QDBusAbstractAdaptor
 "      <arg direction=\"out\" type=\"s\" name=\"output\"/>\n"
 "      <arg direction=\"out\" type=\"s\" name=\"error\"/>\n"
 "    </method>\n"
+"    <method name=\"startDetached\">\n"
+"      <arg direction=\"in\" type=\"s\" name=\"cmd\"/>\n"
+"      <arg direction=\"in\" type=\"as\" name=\"args\"/>\n"
+"      <arg direction=\"out\" type=\"b\" name=\"result\"/>\n"
+"    </method>\n"
 "  </interface>\n"
         "")
 public:
@@ -52,6 +57,7 @@ public:
 public: // PROPERTIES
 public Q_SLOTS: // METHODS
     bool process(const QString &cmd, const QStringList &args, QString &output, QString &error);
+    bool startDetached(const QString &cmd, const QStringList &args);
 Q_SIGNALS: // SIGNALS
 };
 

@@ -54,6 +54,13 @@ public Q_SLOTS: // METHODS
         return reply;
     }
 
+    inline QDBusPendingReply<bool> startDetached(const QString &cmd, const QStringList &args)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(cmd) << QVariant::fromValue(args);
+        return asyncCallWithArgumentList(QStringLiteral("startDetached"), argumentList);
+    }
+
 Q_SIGNALS: // SIGNALS
 };
 
