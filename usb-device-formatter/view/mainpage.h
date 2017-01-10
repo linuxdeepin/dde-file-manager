@@ -57,6 +57,7 @@ private:
     QString m_targetPath;
     QLabel* m_remainLabel = NULL;
     QLabel* m_warnLabel = NULL;
+    QLabel* m_nameLabel = NULL;
 };
 
 #endif // MAINPAGE_H

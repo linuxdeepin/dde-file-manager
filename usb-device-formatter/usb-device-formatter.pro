@@ -29,7 +29,8 @@ SOURCES += main.cpp \
     widgets/progressbox.cpp \
     view/finishpage.cpp \
     view/errorpage.cpp \
-    app/cmdmanager.cpp
+    app/cmdmanager.cpp \
+    dialogs/messagedialog.cpp
 
 HEADERS  += \
     view/mainwindow.h \
@@ -40,7 +41,8 @@ HEADERS  += \
     widgets/progressbox.h \
     view/finishpage.h \
     view/errorpage.h \
-    app/cmdmanager.h
+    app/cmdmanager.h \
+    dialogs/messagedialog.h
 
 RESOURCES += \
     theme/theme.qrc

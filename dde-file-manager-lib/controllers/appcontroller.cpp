@@ -533,7 +533,7 @@ void AppController::actionFormatDevice(const DFMEvent &event)
 
     QString cmd = "usb-device-formatter-pkexec";
     QStringList args;
-    args << "-f" << devicePath;
+    args << devicePath;
     QProcess::startDetached(cmd,args);
 }
 

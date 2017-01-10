@@ -21,7 +21,7 @@ Partition Partition::getPartitionByDevicePath(const QString &devicePath)
     QString output;
     QString err;
 
-    bool status = SpawnCmd("lsblk", {"-f", "-J", devicePath},
+    bool status = SpawnCmd("lsblk", {"-O", "-J", devicePath},
                   output, err);
     if(status){
         QJsonParseError error;
@@ -45,6 +45,13 @@ Partition Partition::getPartitionByDevicePath(const QString &devicePath)
                     }
                     if (obj.contains("mountpoint")){
                         p.setMountPoint(obj.value("mountpoint").toString());
+                    }
+                    if(obj.contains("rm")){
+                        QString data = obj.value("rm").toString();
+                        if(data == "1")
+                            p.setIsRemovable(true);
+                        else
+                            p.setIsRemovable(false);
                     }
                 }
             }
@@ -117,11 +124,21 @@ void Partition::setMountPoint(const QString &mountPoint)
     m_mountPoint = mountPoint;
 }
 
+bool Partition::getIsRemovable() const
+{
+    return m_isRemovable;
+}
+
+void Partition::setIsRemovable(bool isRemovable)
+{
+    m_isRemovable = isRemovable;
+}
+
 QDebug operator<<(QDebug dbg, const Partition &partion)
 {
     dbg << "Partition: {"
-          << "path:" << partion.path()
-          << "name:" << partion.name()
+        << "path:" << partion.path()
+        << "name:" << partion.name()
           << "fstype:" << partion.fs()
           << "label:" << partion.label()
           << "uuid:" << partion.uuid()

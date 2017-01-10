@@ -33,6 +33,9 @@ public:
     QString mountPoint() const;
     void setMountPoint(const QString &mountPoint);
 
+    bool getIsRemovable() const;
+    void setIsRemovable(bool isRemovable);
+
 private:
     QString m_path;
     QString m_fs;
@@ -40,6 +43,7 @@ private:
     QString m_name;
     QString m_uuid;
     QString m_mountPoint;
+    bool m_isRemovable = false;
 };
 
 QDebug operator<<(QDebug dbg, const Partition& partion);
