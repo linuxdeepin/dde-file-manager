@@ -555,6 +555,15 @@ void DialogManager::showMoveToTrashConflictDialog(const DUrlList &urls)
     }
 }
 
+void DialogManager::showDeleteSystemPathWarnDialog()
+{
+    DDialog d;
+    d.setTitle(tr("The selected files contain system file/directory, and it cannot be deleted"));
+    d.setIcon(QIcon(":/images/dialogs/images/dialog_warning_64.png"));
+    d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
+    d.exec();
+}
+
 void DialogManager::removePropertyDialog(const DUrl &url)
 {
     if (m_propertyDialogs.contains(url)){

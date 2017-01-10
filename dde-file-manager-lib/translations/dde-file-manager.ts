@@ -223,6 +223,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="237"/>
         <location filename="../dialogs/dialogmanager.cpp" line="542"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="563"/>
         <source>OK</source>
         <translation type="unfinished"></translation>
     </message>
@@ -354,6 +355,11 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="540"/>
         <source>Target disk format incorrect, unable to create link!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="561"/>
+        <source>The selected files contain system file/directory, and it cannot be deleted</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1189,12 +1195,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="740"/>
+        <location filename="../interfaces/dfileservices.cpp" line="748"/>
         <source>Shortcut</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="565"/>
+        <location filename="../interfaces/dfileservices.cpp" line="573"/>
         <source>Create symlink</source>
         <translation type="unfinished"></translation>
     </message>
