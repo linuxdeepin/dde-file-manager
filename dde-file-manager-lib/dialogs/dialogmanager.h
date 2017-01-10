@@ -60,6 +60,7 @@ public slots:
     void showDiskSpaceOutOfUsedDialog();
     void showFailToCreateSymlinkDialog();
     void showMoveToTrashConflictDialog(const DUrlList& urls);
+    void showDeleteSystemPathWarnDialog();
 
     void removePropertyDialog(const DUrl& url);
     void closeAllPropertyDialog();

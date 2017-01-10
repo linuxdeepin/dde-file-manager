@@ -12,6 +12,7 @@
 #include "models/trashfileinfo.h"
 #include "models/computerdesktopfileinfo.h"
 #include "models/trashdesktopfileinfo.h"
+#include "controllers/pathmanager.h"
 
 #include "shutil/fileutils.h"
 
@@ -332,6 +333,13 @@ bool DFileService::deleteFiles(const DFMEvent &event) const
     if (event.fileUrlList().isEmpty())
         return false;
 
+    foreach (const DUrl& url, event.fileUrlList()) {
+        if(systemPathManager->isSystemPath(url.toLocalFile())){
+            dialogManager->showDeleteSystemPathWarnDialog();
+            return false;
+        }
+    }
+
     if (QThreadPool::globalInstance()->activeThreadCount() >= MAX_THREAD_COUNT) {
         qDebug() << "Beyond the maximum number of threads!";
         return false;
@@ -378,6 +386,14 @@ void DFileService::moveToTrash(const DFMEvent &event) const
 
     if (event.fileUrlList().isEmpty())
         return;
+
+    //handle system files should not be able to move to trash
+    foreach (const DUrl& url, event.fileUrlList()) {
+        if(systemPathManager->isSystemPath(url.toLocalFile())){
+            dialogManager->showDeleteSystemPathWarnDialog();
+            return;
+        }
+    }
 
     //handle files whom could not be moved to trash
     DUrlList enableList;
