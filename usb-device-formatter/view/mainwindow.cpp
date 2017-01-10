@@ -18,7 +18,6 @@
 #include <QMouseEvent>
 #include <QApplication>
 #include <QtConcurrent>
-#include <QMetaObject>
 #include "../partman/partition.h"
 
 using namespace PartMan;
@@ -29,12 +28,12 @@ MainWindow::MainWindow(const QString &path, QWidget *parent):
     Q_UNUSED(handle)
 
     setObjectName("UsbDeviceFormatter");
-    initStyleSheet();
     m_formatPath = path;
-    m_formatType = Partition::getPartitionByDevicePath(path).fs().toLower();
+    m_formatType = Partition::getPartitionByDevicePath(path).fs();
     if(m_formatType == "vfat")
         m_formatType = "fat32";
     initUI();
+    initStyleSheet();
     initConnect();
 }
 
@@ -46,14 +45,16 @@ MainWindow::~MainWindow()
 void MainWindow::initUI()
 {
     setFixedSize(WINDOW_SIZE);
-    setWindowFlags(Qt::WindowCloseButtonHint | Qt::FramelessWindowHint);
+    setWindowFlags(Qt::WindowCloseButtonHint |
+                   Qt::FramelessWindowHint |
+                   Qt::Dialog);
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->setContentsMargins(0, 2, 0, 0);
 
     QString title = tr("Format");
     DTitlebar* titleBar = new DTitlebar(this);
-    titleBar->setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
+    titleBar->setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint | Qt::FramelessWindowHint);
     titleBar->setTitle(title);
     titleBar->setFixedHeight(20);
 
@@ -114,19 +115,15 @@ void MainWindow::formartDevice()
         QString first = format.left(1);
         format.remove(0, 1);
         format.insert(0, first.toUpper());
-        const QString invokeMethod = _invokeMethod + format;
 
         //First of all to unmount device
         unMountDevice();
 
         //Format deivice
-        QMetaObject::invokeMethod(&partitionManager,
-                              invokeMethod.toLocal8Bit().constData(),
-                              Qt::DirectConnection,
-                              Q_RETURN_ARG(bool, result),
-                              Q_ARG(const QString&, m_formatPath),
-                              Q_ARG(const QString&, m_mainPage->getLabel().toUpper()));
-
+        PartMan::PartitionManager partitonManager;
+        result = partitonManager.mkfs(m_formatPath,
+                             m_mainPage->getSelectedFs(),
+                             m_mainPage->getLabel());
         emit taskFinished(result);
     });
 }
