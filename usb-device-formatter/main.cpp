@@ -1,26 +1,29 @@
-#include "view/mainwindow.h"
 #include <DApplication>
 #include <QDesktopWidget>
-#include "dplatformwindowhandle.h"
 #include <DLog>
-#include "app/cmdmanager.h"
 #include <QDebug>
 #include <QFile>
 #include <QTranslator>
 #include <QLocale>
 #include <QIcon>
+#include "app/cmdmanager.h"
+#include "view/mainwindow.h"
+#include "dplatformwindowhandle.h"
+#include "dialogs/messagedialog.h"
+#include "../partman/partition.h"
 DUTIL_USE_NAMESPACE
 //DWIDGET_BEGIN_NAMESPACE
 
 int main(int argc, char *argv[])
 {
-    //logger
+    //Logger
     DLogManager::registerConsoleAppender();
 
+    //Load DXcbPlugin
     DApplication::loadDXcbPlugin();
     DApplication a(argc, argv);
 
-    //load translation
+    //Load translation
     QTranslator *translator = new QTranslator(QCoreApplication::instance());
 
     translator->load("/usr/share/usb-device-formatter/translations/usb-device-formatter_"
@@ -35,16 +38,26 @@ int main(int argc, char *argv[])
     a.setWindowIcon(QIcon(":/app/usb-device-formatter.png"));
     a.setQuitOnLastWindowClosed(true);
 
-            //command line
+    //Command line
     CMDManager::instance()->process(a);
-    const bool isOrderFormat = CMDManager::instance()->isSet("f");
 
-    if(!isOrderFormat)
-        return 1;
-
+    //Check if exists path
     const QString path = CMDManager::instance()->getPath();
-    if(path.isEmpty() || !QFile::exists(path))
-        return 1;
+    if(path.isEmpty() || !QFile::exists(path)){
+        QString message = QObject::tr("Device does not exit");
+        MessageDialog d(message, 0);
+        d.exec();
+        return 0;
+    }
+
+    //Check if is a removable device
+    PartMan::Partition p = PartMan::Partition::getPartitionByDevicePath(path);
+    if(!p.getIsRemovable()){
+        QString message = QObject::tr("Cannot format native device");
+        MessageDialog d(message, 0);
+        d.exec();
+        return 0;
+    }
 
     MainWindow* w = new MainWindow(path);
     w->show();

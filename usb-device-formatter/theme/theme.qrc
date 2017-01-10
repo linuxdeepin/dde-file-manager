@@ -18,5 +18,6 @@
     </qresource>
     <qresource prefix="/">
         <file>app/usb-device-formatter.png</file>
+        <file>dialog/dialog_warning_64.png</file>
     </qresource>
 </RCC>
