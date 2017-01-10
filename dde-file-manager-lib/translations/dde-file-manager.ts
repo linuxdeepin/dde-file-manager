@@ -56,7 +56,7 @@
     </message>
     <message>
         <location filename="../views/computerview.cpp" line="454"/>
-        <source>Disk</source>
+        <source>System Disk</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -373,12 +373,12 @@
 <context>
     <name>FileController</name>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="336"/>
+        <location filename="../controllers/filecontroller.cpp" line="341"/>
         <source>New Folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="348"/>
+        <location filename="../controllers/filecontroller.cpp" line="353"/>
         <source>New File</source>
         <translation type="unfinished"></translation>
     </message>
@@ -391,22 +391,22 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="450"/>
+        <location filename="../../fileoperations/filejob.cpp" line="452"/>
         <source>%1 s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="454"/>
+        <location filename="../../fileoperations/filejob.cpp" line="456"/>
         <source>%1 m %2 s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="460"/>
+        <location filename="../../fileoperations/filejob.cpp" line="462"/>
         <source>%1 h %2 m %3 s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="469"/>
+        <location filename="../../fileoperations/filejob.cpp" line="471"/>
         <source>%1 d %2 h %3 m %4 s</source>
         <translation type="unfinished"></translation>
     </message>

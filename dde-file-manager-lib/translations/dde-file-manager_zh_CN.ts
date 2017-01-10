@@ -64,8 +64,12 @@
     </message>
     <message>
         <location filename="../views/computerview.cpp" line="454"/>
+        <source>System Disk</source>
+        <translation>系统盘</translation>
+    </message>
+    <message>
         <source>Disk</source>
-        <translation>磁盘</translation>
+        <translation type="vanished">磁盘</translation>
     </message>
 </context>
 <context>
@@ -541,12 +545,12 @@
 <context>
     <name>FileController</name>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="336"/>
+        <location filename="../controllers/filecontroller.cpp" line="341"/>
         <source>New Folder</source>
         <translation>新建文件夹</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="348"/>
+        <location filename="../controllers/filecontroller.cpp" line="353"/>
         <source>New File</source>
         <translation>新建文本</translation>
     </message>
@@ -559,22 +563,22 @@
         <translation>副本</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="450"/>
+        <location filename="../../fileoperations/filejob.cpp" line="452"/>
         <source>%1 s</source>
         <translation>%1 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="454"/>
+        <location filename="../../fileoperations/filejob.cpp" line="456"/>
         <source>%1 m %2 s</source>
         <translation>%1 分 %2 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="460"/>
+        <location filename="../../fileoperations/filejob.cpp" line="462"/>
         <source>%1 h %2 m %3 s</source>
         <translation>%1 时 %2 分 %3 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="469"/>
+        <location filename="../../fileoperations/filejob.cpp" line="471"/>
         <source>%1 d %2 h %3 m %4 s</source>
         <translation>%1 天 %2 时 %3 分 %4 秒</translation>
     </message>
