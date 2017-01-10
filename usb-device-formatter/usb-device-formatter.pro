@@ -21,25 +21,25 @@ TRANSLATIONS += $$PWD/translations/$${TARGET}.ts \
     $$PWD/translations/$${TARGET}_zh_CN.ts
 
 SOURCES += main.cpp \
-    mainwindow.cpp \
+    view/mainwindow.cpp \
     widgets/progressline.cpp \
-    mainpage.cpp \
-    warnpage.cpp \
-    formatingpage.cpp \
+    view/mainpage.cpp \
+    view/warnpage.cpp \
+    view/formatingpage.cpp \
     widgets/progressbox.cpp \
-    finishpage.cpp \
-    errorpage.cpp \
+    view/finishpage.cpp \
+    view/errorpage.cpp \
     app/cmdmanager.cpp
 
 HEADERS  += \
-    mainwindow.h \
+    view/mainwindow.h \
     widgets/progressline.h \
-    mainpage.h \
-    warnpage.h \
-    formatingpage.h \
+    view/mainpage.h \
+    view/warnpage.h \
+    view/formatingpage.h \
     widgets/progressbox.h \
-    finishpage.h \
-    errorpage.h \
+    view/finishpage.h \
+    view/errorpage.h \
     app/cmdmanager.h
 
 RESOURCES += \

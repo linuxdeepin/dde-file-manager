@@ -3,6 +3,7 @@
 #include <QGridLayout>
 #include <QCheckBox>
 #include "../partman/partitionmanager.h"
+#include "../partman/readusagemanager.h"
 #include <QMetaEnum>
 #include <QDebug>
 #include <QProcess>
@@ -82,24 +83,25 @@ void MainPage::initUI()
     m_typeCombo = new QComboBox(this);
     m_typeCombo->setObjectName("TypeCombo");
 
-    QMetaEnum metaEnum = QMetaEnum::fromType<PartitionManager::FsType>();
+    QMetaEnum metaEnum = QMetaEnum::fromType<FsType>();
+    int index = 0;
     for(int i = 0; i < metaEnum.keyCount(); i++){
         QString key = metaEnum.key(i);
-        m_fileFormat << key.toLower();
+        m_fileFormat << key;
+        if(m_defautlFormat == key.toLower())
+            index = i;
     }
     m_fileFormat.removeLast();
 
     m_typeCombo->addItems(m_fileFormat);
-    int index = m_fileFormat.indexOf(m_defautlFormat);
-    if(index >= 0)
-        m_typeCombo->setCurrentIndex(index);
+    m_typeCombo->setCurrentIndex(index);
 
     m_typeCombo->setFixedSize(160,22);
 
     QLabel* labelText = new QLabel(tr("Label"),this);
     labelText->setObjectName("TagLabel");
     m_labelLineEdit = new QLineEdit(this);
-    m_labelLineEdit->setText(m_defautlFormat);
+    m_labelLineEdit->setText(m_typeCombo->currentText());
     m_labelLineEdit->setFixedSize(160, 22);
 
     QCheckBox* fastFormatCheckBox = new QCheckBox(this);
@@ -120,10 +122,11 @@ void MainPage::initUI()
     mainLayout->addLayout(optGridLayout);
 
     QString warmMsg = tr("This operation will clear all datas from your device.");
-    QLabel* warmLabel = new QLabel(this);
-    warmLabel->setText(warmMsg);
-    warmLabel->setWordWrap(true);
-    mainLayout->addWidget(warmLabel, 0, Qt::AlignHCenter);
+    m_warnLabel = new QLabel(this);
+    m_warnLabel->setText(warmMsg);
+    m_warnLabel->setWordWrap(true);
+    m_warnLabel->setAlignment(Qt::AlignHCenter);
+    mainLayout->addWidget(m_warnLabel, 0, Qt::AlignHCenter);
     setLayout(mainLayout);
 }
 
@@ -147,6 +150,12 @@ void MainPage::onCurrentSelectedTypeChanged(const QString &type)
     m_labelLineEdit->setText(type);
 }
 
+void MainPage::resizeEvent(QResizeEvent *event)
+{
+    m_warnLabel->setFixedWidth(this->width());
+    QWidget::resizeEvent(event);
+}
+
 QString MainPage::getTargetPath() const
 {
     return m_targetPath;
@@ -154,40 +163,19 @@ QString MainPage::getTargetPath() const
 
 void MainPage::setTargetPath(const QString &targetPath)
 {
-    m_targetPath = targetPath;
-    QProcess p;
-    QString cmd = "df";
-    QStringList args;
-    args << "-BK" << "--output=avail,used" << m_targetPath;
-    p.start(cmd, args);
-    p.waitForFinished();
-    p.readLine();
-    QString result = p.readLine();
-    result.chop(1);
-    QStringList datas = result.split(" ");
+    qlonglong total, free;
+    PartMan::ReadUsageManager readUsageManager;
+    readUsageManager.readUsage(targetPath, free, total);
 
-    for(int i = 0; i < datas.size(); i++){
-        QString data = datas.at(i);
-        if(data.isEmpty()){
-            datas.removeAt(i);
-            i--;
-            continue;
-        }
-        data.chop(1);
-        datas.replace(i,data);
-    }
-    const qint64 max = QString(datas.at(0)).toLongLong();
-    const qint64 used = QString(datas.at(1)).toLongLong();
-    qDebug () << datas << "targetPath:" << targetPath;
-    m_storageProgressBar->setMax(max);
-    m_storageProgressBar->setValue(used);
-    m_remainLabel->setText(tr("%1/ %2").arg(formatSize(used), formatSize(max)));
+    m_storageProgressBar->setMax(total);
+    m_storageProgressBar->setValue(total - free);
+    m_remainLabel->setText(tr("%1/ %2").arg(formatSize(total - free), formatSize(total)));
 }
 
 QString MainPage::formatSize(const qint64 &num)
 {
     QString total;
-    const qint64 kb = 1;
+    const qint64 kb = 1024;
     const qint64 mb = 1024 * kb;
     const qint64 gb = 1024 * mb;
     const qint64 tb = 1024 * gb;
@@ -205,5 +193,10 @@ QString MainPage::formatSize(const qint64 &num)
     }
 
     return total;
+}
+
+QString MainPage::getSelectedFs() const
+{
+    return m_typeCombo->currentText();
 }
 
