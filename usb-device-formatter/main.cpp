@@ -6,6 +6,9 @@
 #include "app/cmdmanager.h"
 #include <QDebug>
 #include <QFile>
+#include <QTranslator>
+#include <QLocale>
+#include <QIcon>
 DUTIL_USE_NAMESPACE
 //DWIDGET_BEGIN_NAMESPACE
 
@@ -17,14 +20,21 @@ int main(int argc, char *argv[])
     DApplication::loadDXcbPlugin();
     DApplication a(argc, argv);
 
+    QTranslator *translator = new QTranslator(QCoreApplication::instance());
+
+    translator->load("/usr/share/usb-device-formatter/translations/usb-device-formatter_"
+                     +QLocale::system().name()+".qm");
+    a.installTranslator(translator);
+
     a.setTheme("light");
     a.setFont(QFont("",10));
     a.setOrganizationName("deepin");
     a.setApplicationName("Deepin usb device formatter");
     a.setApplicationVersion("1.0");
+    a.setWindowIcon(QIcon(":/app/usb-device-formatter.png"));
     a.setQuitOnLastWindowClosed(true);
 
-    //command line
+            //command line
     CMDManager::instance()->process(a);
     const bool isOrderFormat = CMDManager::instance()->isSet("f");
 

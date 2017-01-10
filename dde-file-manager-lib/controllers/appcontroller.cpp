@@ -23,6 +23,7 @@
 #include "shutil/fileutils.h"
 #include "views/windowmanager.h"
 #include "dbusinterface/soundeffect_interface.h"
+#include "dbusinterface/commandmanager_interface.h"
 
 #include "gvfs/networkmanager.h"
 #include "gvfs/gvfsmountclient.h"
@@ -522,6 +523,18 @@ void AppController::actionUnShare(const DFMEvent &event)
 void AppController::actionSetUserSharePassword(const DFMEvent &event)
 {
     dialogManager->showUserSharePasswordSettingDialog(event);
+}
+
+void AppController::actionFormatDevice(const DFMEvent &event)
+{
+
+    UDiskDeviceInfoPointer info = deviceListener->getDeviceByDeviceID(event.fileUrl().query());
+    QString devicePath = info->getPath();
+
+    QString cmd = "usb-device-formatter-pkexec";
+    QStringList args;
+    args << "-f" << devicePath;
+    QProcess::startDetached(cmd,args);
 }
 
 void AppController::actionctrlL(const DFMEvent &event)

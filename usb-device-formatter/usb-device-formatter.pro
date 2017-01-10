@@ -44,3 +44,24 @@ HEADERS  += \
 
 RESOURCES += \
     theme/theme.qrc
+
+PREFIX = /usr
+BINDIR = $$PREFIX/bin
+SHAREDIR = $$PREFIX/share/$${TARGET}
+
+target.path = $$BINDIR
+
+translations.files = $$PWD/translations/*.qm
+translations.path = $$SHAREDIR/translations
+
+policy.path = $${PREFIX}/share/polkit-1/actions/
+policy.files = pkexec/com.deepin.pkexec.usb-device-formatter.policy
+
+pkexec.files = pkexec/usb-device-formatter-pkexec
+pkexec.path = /usr/bin
+
+DISTFILES += \
+    pkexec/com.deepin.pkexec.usb-device-formatter.policy \
+    pkexec/usb-device-formatter-pkexec
+
+INSTALLS += target translations policy pkexec

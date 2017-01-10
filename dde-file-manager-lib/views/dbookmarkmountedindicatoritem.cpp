@@ -61,7 +61,7 @@ void DBookmarkMountedIndicatorItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *
 
     setPress(false);
     setHovered(false);
-    deviceListener->unmount(m_parentItem->getSysPath());
+    deviceListener->unmount(m_parentItem->getDeviceID());
     update();
 }
 

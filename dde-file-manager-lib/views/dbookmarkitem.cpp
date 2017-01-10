@@ -63,7 +63,7 @@ void DBookmarkItem::setDeviceInfo(UDiskDeviceInfoPointer deviceInfo)
     m_checkable = true;
     m_url = deviceInfo->getMountPointUrl();
     m_isDefault = true;
-    m_sysPath = deviceInfo->getDiskInfo().ID;
+    m_deviceID = deviceInfo->getDiskInfo().ID;
     m_textContent = deviceInfo->fileDisplayName();
     m_isMounted = deviceInfo->getDiskInfo().CanUnmount;
     m_deviceInfo = deviceInfo;
@@ -535,14 +535,14 @@ QString DBookmarkItem::getDeviceLabel()
     return m_deviceLabel;
 }
 
-void DBookmarkItem::setSysPath(const QString &path)
+void DBookmarkItem::setDeviceID(const QString &deviceID)
 {
-    m_sysPath = path;
+    m_deviceID = deviceID;
 }
 
-QString DBookmarkItem::getSysPath()
+QString DBookmarkItem::getDeviceID()
 {
-    return m_sysPath;
+    return m_deviceID;
 }
 
 int DBookmarkItem::windowId()
@@ -666,7 +666,7 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
                     DiskInfo info = m_deviceInfo->getDiskInfo();
                     qDebug() << info << m_url << m_isMounted;
                     if (!m_isMounted){
-                        m_url.setQuery(m_sysPath);
+                        m_url.setQuery(m_deviceID);
                         e << m_url;
                         DUrlList urls;
                         urls.append(m_url);
@@ -810,9 +810,7 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
             disableList << MenuAction::OpenDiskInNewTab;
 
         disableList |= m_deviceInfo->disableMenuActionList() ;
-        m_url.setQuery(m_sysPath);
-
-        m_deviceInfo->canUnmount();
+        m_url.setQuery(m_deviceID);
 
         menu = DFileMenuManager::genereteMenuByKeys(
                     m_deviceInfo->menuActionList(DAbstractFileInfo::SingleFile),

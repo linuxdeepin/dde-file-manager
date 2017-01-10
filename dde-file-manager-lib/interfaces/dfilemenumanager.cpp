@@ -694,6 +694,7 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::Share] = QObject::tr("Share folder");
     actionKeys[MenuAction::UnShare] = QObject::tr("Cancel sharing");
     actionKeys[MenuAction::SetUserSharePassword] = QObject::tr("Set share password");
+    actionKeys[MenuAction::FormatDevice] = QObject::tr("Format");
 }
 
 void DFileMenuData::initActions()

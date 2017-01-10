@@ -168,6 +168,7 @@ public:
         Share,
         UnShare,
         SetUserSharePassword,
+        FormatDevice,
         Unknow
     };
 
