@@ -446,6 +446,7 @@ void ComputerView::loadSystemItems()
 
 void ComputerView::loadNativeItems()
 {
+    QStorageInfo storageInfo("/");
     DiskInfo info;
     info.ID = "/";
     info.CanEject = false;
@@ -453,8 +454,9 @@ void ComputerView::loadNativeItems()
     info.Type = "native";
     info.Name = tr("System Disk");
     info.MountPoint = "/";
-    info.Total = 0;
-    info.Used = 0;
+    info.Total = storageInfo.bytesTotal();
+    info.Free = storageInfo.bytesFree();
+    info.Used = info.Total - info.Free;
     info.MountPointUrl = DUrl::fromLocalFile("/");
     UDiskDeviceInfoPointer device(new UDiskDeviceInfo(info));
 
@@ -484,7 +486,8 @@ void ComputerView::loadCustomItemsByNameUrl(const QString &id, const QString &ur
     info.Name = id;
     info.MountPoint = url;
     info.Total = 0;
-    info.Used = 0;
+    info.Free = 0;
+    info.Used = info.Total - info.Free;
     info.MountPointUrl = DUrl::fromLocalFile(url);
     info.isNativeCustom = true;
     UDiskDeviceInfoPointer device(new UDiskDeviceInfo(info));
@@ -572,7 +575,6 @@ void ComputerView::mountAdded(UDiskDeviceInfoPointer device)
         return;
     }
     else{
-        qDebug() << device->getDiskInfo() << device->fileDisplayName();
         ComputerViewItem* item = new ComputerViewItem;
         item->setHasMemoryInfo(true);
         item->setDeviceInfo(device);
