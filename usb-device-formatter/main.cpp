@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+#include "view/mainwindow.h"
 #include <DApplication>
 #include <QDesktopWidget>
 #include "dplatformwindowhandle.h"
@@ -20,6 +20,7 @@ int main(int argc, char *argv[])
     DApplication::loadDXcbPlugin();
     DApplication a(argc, argv);
 
+    //load translation
     QTranslator *translator = new QTranslator(QCoreApplication::instance());
 
     translator->load("/usr/share/usb-device-formatter/translations/usb-device-formatter_"

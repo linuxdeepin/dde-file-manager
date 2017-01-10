@@ -18,7 +18,7 @@ signals:
 
 public slots:
 private:
-    ProgressBox* m_progressBox;
+    ProgressBox* m_progressBox = NULL;
 };
 
 #endif // FORMATINGPAGE_H
