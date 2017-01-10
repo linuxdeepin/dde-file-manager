@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=usb-device-formatter
+Exec=/usr/bin/usb-device-formatter-pkexec
+Icon=usb-device-formatter
+NoShowIn=GNOME;Unity;Deepin

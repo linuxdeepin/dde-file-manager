@@ -50,9 +50,10 @@ void ProgressBox::updateAnimation()
 void ProgressBox::taskTimeOut()
 {
     m_taskAni->stop();
-    m_taskAni->setDuration(4000);
+    m_taskAni->setDuration(10000); //10 seconds
     m_taskAni->setStartValue(qreal(0));
     m_taskAni->setEndValue(qreal(99));
+    m_taskAni->setEasingCurve(QEasingCurve::OutCirc);
     connect(m_taskAni, &QVariantAnimation::valueChanged, this, [=] (const QVariant& val){
             setValue(val.toReal());
     });
@@ -71,6 +72,7 @@ void ProgressBox::finishedTask(const bool result)
     ani->setDuration(500);
     ani->setStartValue(value());
     ani->setEndValue(qreal(100));
+    ani->setEasingCurve(QEasingCurve::InQuint);
     connect(ani, &QVariantAnimation::valueChanged, this, [=] (const QVariant& val){
             setValue(val.toReal());
     });

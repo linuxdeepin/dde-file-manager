@@ -155,15 +155,15 @@ QString MainPage::getTargetPath() const
 void MainPage::setTargetPath(const QString &targetPath)
 {
     m_targetPath = targetPath;
-
     QProcess p;
     QString cmd = "df";
     QStringList args;
-    args << "-BK" << m_targetPath;
+    args << "-BK" << "--output=avail,used" << m_targetPath;
     p.start(cmd, args);
     p.waitForFinished();
     p.readLine();
     QString result = p.readLine();
+    result.chop(1);
     QStringList datas = result.split(" ");
 
     for(int i = 0; i < datas.size(); i++){
@@ -176,9 +176,9 @@ void MainPage::setTargetPath(const QString &targetPath)
         data.chop(1);
         datas.replace(i,data);
     }
-    qDebug () << datas;
-    const qint64 max = QString(datas.at(1)).toLongLong();
-    const qint64 used = QString(datas.at(2)).toLongLong();
+    const qint64 max = QString(datas.at(0)).toLongLong();
+    const qint64 used = QString(datas.at(1)).toLongLong();
+    qDebug () << datas << "targetPath:" << targetPath;
     m_storageProgressBar->setMax(max);
     m_storageProgressBar->setValue(used);
     m_remainLabel->setText(tr("%1/ %2").arg(formatSize(used), formatSize(max)));

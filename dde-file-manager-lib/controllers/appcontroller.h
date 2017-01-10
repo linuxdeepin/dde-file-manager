@@ -76,6 +76,7 @@ public slots:
     void actionShare(const DFMEvent& event);
     void actionUnShare(const DFMEvent& event);
     void actionSetUserSharePassword(const DFMEvent& event);
+    void actionFormatDevice(const DFMEvent& event);
 
 
     void actionctrlL(const DFMEvent& event);
