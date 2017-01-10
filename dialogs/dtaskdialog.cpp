@@ -72,9 +72,9 @@ void MoveCopyTaskWidget::initUI(){
     m_buttonFrame->hide();
     m_buttonFrame->setAttribute(Qt::WA_AlwaysStackOnTop);
 
-    QFrame* lineLabel = new QFrame;
-    lineLabel->setFixedHeight(1);
-    lineLabel->setObjectName("LineLabel");
+    m_lineLabel = new QFrame;
+    m_lineLabel->setFixedHeight(1);
+    m_lineLabel->setObjectName("LineLabel");
 
     QVBoxLayout* rightLayout = new QVBoxLayout;
     rightLayout->addStretch(1);
@@ -83,7 +83,7 @@ void MoveCopyTaskWidget::initUI(){
         rightLayout->addWidget(m_buttonFrame);
     }
     rightLayout->addStretch(1);
-    rightLayout->addWidget(lineLabel, 0, Qt::AlignBottom);
+    rightLayout->addWidget(m_lineLabel, 0, Qt::AlignBottom);
     rightLayout->setSpacing(0);
     rightLayout->setContentsMargins(0, 0, 0, 0);
 
@@ -279,10 +279,12 @@ bool MoveCopyTaskWidget::event(QEvent *e)
                                  "}");
         m_bgLabel->setFixedSize(size()- QSize(20,0));
         m_bgLabel->move(10,0);
+        m_lineLabel->hide();
     } else if (e->type() == QEvent::Leave ){
         m_speedLabel->show();
         m_remainLabel->show();
         m_closeButton->hide();
+        m_lineLabel->show();
         m_bgLabel->setStyleSheet("QLabel#Background{"
                                     "background-color: #fff;"
                                     "border: 1px solid #fff;"
