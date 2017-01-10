@@ -451,7 +451,7 @@ void ComputerView::loadNativeItems()
     info.CanEject = false;
     info.CanUnmount = false;
     info.Type = "native";
-    info.Name = tr("Disk");
+    info.Name = tr("System Disk");
     info.MountPoint = "/";
     info.Total = 0;
     info.Used = 0;
