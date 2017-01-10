@@ -114,8 +114,8 @@ public:
     void setMounted(bool v);
     void setDeviceLabel(const QString &label);
     QString getDeviceLabel();
-    void setSysPath(const QString &path);
-    QString getSysPath();
+    void setDeviceID(const QString &deviceID);
+    QString getDeviceID();
     int windowId();
     BookMarkPointer getBookmarkModel();
     void setBookmarkModel(BookMarkPointer bookmark);
@@ -219,7 +219,7 @@ private:
     bool m_isDisk = false;
     bool m_isMounted = false;
     QString m_deviceLabel;
-    QString m_sysPath;
+    QString m_deviceID;
 
     /*bookmark model map */
     BookMarkPointer m_bookmarkModel;

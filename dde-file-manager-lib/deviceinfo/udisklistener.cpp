@@ -166,6 +166,15 @@ UDiskDeviceInfoPointer UDiskListener::getDeviceByFilePath(const QString &path)
     return UDiskDeviceInfoPointer();
 }
 
+UDiskDeviceInfoPointer UDiskListener::getDeviceByDeviceID(const QString &deviceID)
+{
+    foreach (const UDiskDeviceInfoPointer& info, m_list) {
+        if(info->getId() == deviceID)
+            return info;
+    }
+    return UDiskDeviceInfoPointer();
+}
+
 UDiskDeviceInfo::MediaType UDiskListener::getDeviceMediaType(const QString &path)
 {
     for (int i = 0; i < m_list.size(); i++)
