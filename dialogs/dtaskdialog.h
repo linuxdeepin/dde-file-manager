@@ -91,6 +91,7 @@ private:
     QPushButton* m_enterButton=NULL;
     CircleProgressAnimatePad* m_animatePad;
     QLabel* m_bgLabel;
+    QFrame* m_lineLabel = NULL;
 };
 
 
