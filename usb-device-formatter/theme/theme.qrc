@@ -16,4 +16,7 @@
         <file>icons/info.png</file>
         <file>icons/success.png</file>
     </qresource>
+    <qresource prefix="/">
+        <file>app/usb-device-formatter.png</file>
+    </qresource>
 </RCC>

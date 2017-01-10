@@ -30,5 +30,6 @@ bool CommandManager::process(const QString &cmd, const QStringList &args,  QStri
 bool CommandManager::startDetached(const QString &cmd, const QStringList &args)
 {
     bool ret = QProcess::startDetached(cmd, args);
+    qDebug() << ret << cmd << args;
     return ret;
 }
