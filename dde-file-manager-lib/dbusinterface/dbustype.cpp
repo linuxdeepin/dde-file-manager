@@ -39,6 +39,11 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, DiskInfo &obj)
     argument >> obj.MountPoint >>  obj.Icon;
     argument >> obj.CanUnmount >> obj.CanEject;
     argument >> obj.Used >> obj.Total;
+
+    obj.Total = obj.Total * 1024;
+    obj.Used = obj.Used * 1024;
+    obj.Free = obj.Total - obj.Used;
+
     argument.endStructure();
 
     obj.MountPointUrl.setUrl(obj.MountPoint);
