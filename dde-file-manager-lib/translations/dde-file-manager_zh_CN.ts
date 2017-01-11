@@ -832,9 +832,8 @@
         <translation>该文件太大，无法放入回收站</translation>
     </message>
     <message>
-        <location filename="../../dialogs/movetotrashconflictdialog.cpp" line="14"/>
         <source>Are you sure to completely delete %1 ?</source>
-        <translation>您确定要彻底删除%1吗？</translation>
+        <translation type="vanished">您确定要彻底删除%1吗？</translation>
     </message>
     <message>
         <source>The rest files are too large to put into trash</source>
@@ -846,17 +845,26 @@
         <translation>文件太大，无法放入回收站</translation>
     </message>
     <message>
-        <location filename="../../dialogs/movetotrashconflictdialog.cpp" line="18"/>
         <source>Are you sure to completely delete %1 files ?</source>
-        <translation>您确定要彻底删除这%1个文件吗？</translation>
+        <translation type="vanished">您确定要彻底删除这%1个文件吗？</translation>
     </message>
     <message>
-        <location filename="../../dialogs/movetotrashconflictdialog.cpp" line="33"/>
+        <location filename="../../dialogs/movetotrashconflictdialog.cpp" line="14"/>
+        <source>Are you sure to completely delete %1</source>
+        <translation>您确定要彻底删除%1吗</translation>
+    </message>
+    <message>
+        <location filename="../../dialogs/movetotrashconflictdialog.cpp" line="18"/>
+        <source>Are you sure to completely delete %1 files</source>
+        <translation>您确定要彻底删除这%1个文件吗</translation>
+    </message>
+    <message>
+        <location filename="../../dialogs/movetotrashconflictdialog.cpp" line="38"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../../dialogs/movetotrashconflictdialog.cpp" line="34"/>
+        <location filename="../../dialogs/movetotrashconflictdialog.cpp" line="39"/>
         <source>Delete</source>
         <translation>删除</translation>
     </message>
