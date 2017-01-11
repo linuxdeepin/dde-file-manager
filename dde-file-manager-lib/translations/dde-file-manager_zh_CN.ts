@@ -310,12 +310,12 @@
         <translation type="vanished">有%1个任务在进行</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="426"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="440"/>
         <source>1 task in progress</source>
         <translation>有1个任务正在进行</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="428"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="442"/>
         <source>%1 tasks in progress</source>
         <translation>有%1个任务正在进行</translation>
     </message>
@@ -460,8 +460,12 @@
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="540"/>
+        <source>Fail to create symlink,cause:</source>
+        <translation>创建链接失败，失败原因：</translation>
+    </message>
+    <message>
         <source>Target disk format incorrect, unable to create link!</source>
-        <translation>目标磁盘格式不正确，无法创建链接！</translation>
+        <translation type="vanished">目标磁盘格式不正确，无法创建链接！</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="561"/>
@@ -551,12 +555,12 @@
 <context>
     <name>FileController</name>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="341"/>
+        <location filename="../controllers/filecontroller.cpp" line="342"/>
         <source>New Folder</source>
         <translation>新建文件夹</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="353"/>
+        <location filename="../controllers/filecontroller.cpp" line="354"/>
         <source>New File</source>
         <translation>新建文本</translation>
     </message>
@@ -1516,26 +1520,26 @@
         <translation>设置壁纸</translation>
     </message>
     <message>
+        <location filename="../controllers/appcontroller.cpp" line="346"/>
         <location filename="../controllers/appcontroller.cpp" line="348"/>
-        <location filename="../controllers/appcontroller.cpp" line="350"/>
         <source>newDoc</source>
         <translation>新建word文档</translation>
     </message>
     <message>
+        <location filename="../controllers/appcontroller.cpp" line="355"/>
         <location filename="../controllers/appcontroller.cpp" line="357"/>
-        <location filename="../controllers/appcontroller.cpp" line="359"/>
         <source>newExcel</source>
         <translation>新建Excel文档</translation>
     </message>
     <message>
+        <location filename="../controllers/appcontroller.cpp" line="364"/>
         <location filename="../controllers/appcontroller.cpp" line="366"/>
-        <location filename="../controllers/appcontroller.cpp" line="368"/>
         <source>newPowerPoint</source>
         <translation>新建PowerPoint文档</translation>
     </message>
     <message>
+        <location filename="../controllers/appcontroller.cpp" line="373"/>
         <location filename="../controllers/appcontroller.cpp" line="375"/>
-        <location filename="../controllers/appcontroller.cpp" line="377"/>
         <source>newText</source>
         <translation>新建文本</translation>
     </message>
@@ -1636,12 +1640,12 @@
         <translation>%1 项</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="748"/>
+        <location filename="../interfaces/dfileservices.cpp" line="759"/>
         <source>Shortcut</source>
         <translation>快捷方式</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="573"/>
+        <location filename="../interfaces/dfileservices.cpp" line="581"/>
         <source>Create symlink</source>
         <translation>创建链接</translation>
     </message>
