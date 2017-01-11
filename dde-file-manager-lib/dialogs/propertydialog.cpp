@@ -258,7 +258,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget* p
                 m_expandGroup->expand(1)->setExpand(false);
             }
             startComputerFolderSize(m_url);
-            m_fileCount = fileInfo->size();
+            m_fileCount = fileInfo->filesCount();
         }
     }
     initTextShowFrame(m_edit->toPlainText());

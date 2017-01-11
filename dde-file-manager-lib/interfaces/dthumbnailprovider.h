@@ -12,6 +12,12 @@ QT_BEGIN_NAMESPACE
 class QMimeType;
 QT_END_NAMESPACE
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 6, 0)
+QT_BEGIN_NAMESPACE
+Q_CORE_EXPORT uint qHash(const QMimeType &key, uint seed = 0) Q_DECL_NOTHROW;
+QT_END_NAMESPACE
+#endif
+
 DFM_BEGIN_NAMESPACE
 
 class DThumbnailProviderPrivate;

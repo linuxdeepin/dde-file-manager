@@ -22,6 +22,15 @@
 // ffmpeg
 #include <libffmpegthumbnailer/videothumbnailer.h>
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 6, 0)
+QT_BEGIN_NAMESPACE
+uint qHash(const QMimeType &key, uint seed) Q_DECL_NOTHROW
+{
+    return qHash(key.name(), seed);
+}
+QT_END_NAMESPACE
+#endif
+
 DFM_BEGIN_NAMESPACE
 
 #define FORMAT ".png"

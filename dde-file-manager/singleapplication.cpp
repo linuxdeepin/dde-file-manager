@@ -52,24 +52,25 @@ void SingleApplication::newClientProcess(const QString &key)
         if (localSocket->state() == QLocalSocket::ConnectedState){
             if (localSocket->isValid()){
                 qDebug() << "start write";
-                QString commandlineUrl;
+
                 bool isNewWindow = false;
                 bool isShowPropertyDialogRequest = false;
+                QStringList paths = CommandLineManager::instance()->positionalArguments();
                 if (CommandLineManager::instance()->positionalArguments().count() > 0){
-                    commandlineUrl = CommandLineManager::instance()->positionalArguments().at(0);
                     isShowPropertyDialogRequest = CommandLineManager::instance()->isSet("p");
                 }else{
                     isNewWindow = CommandLineManager::instance()->isSet("n");
+                    paths << QDir::homePath();
                 }
-                QJsonObject message;
-                message.insert("isNewWindow", isNewWindow);
 
-                message.insert("isShowPropertyDialogRequest",isShowPropertyDialogRequest);
-                QStringList paths = CommandLineManager::instance()->positionalArguments();
                 QJsonArray jsPaths;
                 foreach (QString path, paths) {
                     jsPaths.append(QJsonValue(path));
                 }
+
+                QJsonObject message;
+                message.insert("isNewWindow", isNewWindow);
+                message.insert("isShowPropertyDialogRequest",isShowPropertyDialogRequest);
                 message.insert("paths",jsPaths);
 
                 QJsonDocument  obj(message);
