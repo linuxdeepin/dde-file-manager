@@ -579,6 +579,9 @@ bool DFileService::createSymlink(const DUrl &fileUrl, const DFMEvent &event) con
     QString linkName = getSymlinkFileName(fileUrl);
     QString linkPath = QFileDialog::getSaveFileName(WindowManager::getWindowById(event.windowId()),
                                                     QObject::tr("Create symlink"), linkName);
+    //handle for cancel select file
+    if(linkPath.isEmpty())
+        return false;
 
     Q_D(const DFileService);
 

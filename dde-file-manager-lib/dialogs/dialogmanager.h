@@ -58,7 +58,7 @@ public slots:
     void showAboutDialog(const DFMEvent &event);
     void showUserSharePasswordSettingDialog(const DFMEvent& event);
     void showDiskSpaceOutOfUsedDialog();
-    void showFailToCreateSymlinkDialog();
+    void showFailToCreateSymlinkDialog(const QString &errorString);
     void showMoveToTrashConflictDialog(const DUrlList& urls);
     void showDeleteSystemPathWarnDialog();
 

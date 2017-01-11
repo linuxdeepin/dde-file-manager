@@ -534,10 +534,10 @@ void DialogManager::showDiskSpaceOutOfUsedDialog()
     });
 }
 
-void DialogManager::showFailToCreateSymlinkDialog()
+void DialogManager::showFailToCreateSymlinkDialog(const QString& errorString)
 {
     DDialog d;
-    d.setTitle(tr("Target disk format incorrect, unable to create link!"));
+    d.setTitle(tr("Fail to create symlink,cause:") + errorString);
     d.setIcon(QIcon(":/images/dialogs/images/dialog_warning_64.png"));
     d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
     d.exec();
