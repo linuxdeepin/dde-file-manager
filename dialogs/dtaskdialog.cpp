@@ -252,6 +252,19 @@ void MoveCopyTaskWidget::updateTipMessage(){
     setTipMessage(QString::number(m_speed), QString::number(m_timeLeft));
 }
 
+void MoveCopyTaskWidget::handleLineDisplay(const int &row)
+{
+    if(row == this->property("row").toInt())
+        return;
+
+    if((row -1) == property("row").toInt())
+        m_lineLabel->hide();
+    else{
+        if(m_lineLabel->isHidden())
+            m_lineLabel->show();
+    }
+}
+
 void MoveCopyTaskWidget::showConflict(){
     setFixedHeight(130);
     m_buttonFrame->show();
@@ -280,6 +293,7 @@ bool MoveCopyTaskWidget::event(QEvent *e)
         m_bgLabel->setFixedSize(size()- QSize(20,0));
         m_bgLabel->move(10,0);
         m_lineLabel->hide();
+        emit hovered();
     } else if (e->type() == QEvent::Leave ){
         m_speedLabel->show();
         m_remainLabel->show();
@@ -371,7 +385,7 @@ void MoveCopyTaskWidget::setTipMessage(const QString& speedStr, const QString& r
 
 
 DTaskDialog::DTaskDialog(QWidget *parent) :
-    QWidget(parent)
+    QDialog(parent)
 {
     DPlatformWindowHandle handle(this);
     Q_UNUSED(handle)
@@ -389,7 +403,7 @@ DTaskDialog::DTaskDialog(QWidget *parent) :
 void DTaskDialog::initUI(){
 
     setContentsMargins(0, 0, 0, 0);
-    setWindowFlags(Qt::FramelessWindowHint|Qt::Dialog);
+    setWindowFlags(Qt::FramelessWindowHint|Qt::Window);
 
     m_taskListWidget = new QListWidget;
     m_taskListWidget->setSelectionMode(QListWidget::NoSelection);
@@ -399,11 +413,11 @@ void DTaskDialog::initUI(){
     m_titleBar->setFixedHeight(20);
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
-    mainLayout->setContentsMargins(0, 8, 0, 0);
+    mainLayout->setSpacing(0);
     mainLayout->addWidget(m_titleBar);
+    mainLayout->addStretch(1);
     mainLayout->addWidget(m_taskListWidget);
     mainLayout->addStretch(1);
-    mainLayout->setSpacing(0);
     setLayout(mainLayout);
 }
 
@@ -443,6 +457,10 @@ void DTaskDialog::addTask(const QMap<QString, QString> &jobDetail){
                 this, SIGNAL(conflictShowed(QMap<QString,QString>)));
         connect(moveWidget, SIGNAL(conflictHided(QMap<QString,QString>)),
                 this, SIGNAL(conflictHided(QMap<QString,QString>)));
+
+        //handle item line display logic
+        connect(moveWidget, &MoveCopyTaskWidget::hovered, this, &DTaskDialog::onItemHovered);
+        connect(this, &DTaskDialog::currentHoverRowChanged, moveWidget, &MoveCopyTaskWidget::handleLineDisplay);
         QListWidgetItem* item = new QListWidgetItem();
         item->setFlags(Qt::NoItemFlags);
         item->setSizeHint(QSize(item->sizeHint().width(), 60));
@@ -453,6 +471,7 @@ void DTaskDialog::addTask(const QMap<QString, QString> &jobDetail){
         adjustSize();
         show();
         QTimer::singleShot(100, this, &DTaskDialog::raise);
+        moveWidget->setProperty("row",m_taskListWidget->count() -1);
     }
 }
 
@@ -496,10 +515,10 @@ void DTaskDialog::adjustSize(){
     }
     if (m_taskListWidget->count() >= 6){
         m_taskListWidget->setFixedHeight(maxHeight);
-        resize(width(), maxHeight + 60);
+        setFixedSize(width(), maxHeight + 40);
     }else{
         m_taskListWidget->setFixedHeight(listHeight);
-        resize(width(), listHeight + 60);
+        setFixedSize(width(), listHeight + 40);
     }
 //    if (listHeight < qApp->desktop()->availableGeometry().height() - 40){
 //        m_taskListWidget->setFixedHeight(listHeight);
@@ -544,6 +563,14 @@ void DTaskDialog::handleConflictResponse(const QMap<QString, QString> &jobDetail
 void DTaskDialog::handleMinimizeButtonClick()
 {
     showMinimized();
+}
+
+void DTaskDialog::onItemHovered()
+{
+    MoveCopyTaskWidget* w = qobject_cast<MoveCopyTaskWidget*>(sender());
+    int row = w->property("row").toInt();
+    if(row >= 0)
+        emit currentHoverRowChanged(row);
 }
 
 void DTaskDialog::handleTaskClose(const QMap<QString, QString> &jobDetail){
@@ -599,6 +626,6 @@ void DTaskDialog::closeEvent(QCloseEvent *event){
             }
         }
     }
-    QWidget::closeEvent(event);
+    QDialog::closeEvent(event);
     emit closed();
 }
