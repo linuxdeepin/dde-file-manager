@@ -284,6 +284,16 @@ DUrl DUrl::fromNetworkFile(const QString &filePath)
     return url;
 }
 
+DUrl DUrl::fromSMBFile(const QString &filePath)
+{
+    DUrl url;
+
+    url.setScheme(SMB_SCHEME, false);
+    url.setPath(filePath);
+
+    return url;
+}
+
 DUrl DUrl::fromAFCFile(const QString &filePath)
 {
     DUrl url;

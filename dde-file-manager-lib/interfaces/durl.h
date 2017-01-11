@@ -83,6 +83,7 @@ public:
     static DUrl fromSearchFile(const DUrl &targetUrl, const QString &keyword, const DUrl &searchedFileUrl = DUrl());
     static DUrl fromComputerFile(const QString &filePath);
     static DUrl fromNetworkFile(const QString &filePath);
+    static DUrl fromSMBFile(const QString &filePath);
     static DUrl fromAFCFile(const QString &filePath);
     static DUrl fromMTPFile(const QString &filePath);
     static DUrl fromUserShareFile(const QString &filePath);

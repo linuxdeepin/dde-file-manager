@@ -4,6 +4,7 @@
 #include "app/define.h"
 
 #include "widgets/singleton.h"
+#include "deviceinfo/udisklistener.h"
 
 
 NetworkNode::NetworkNode()
@@ -225,7 +226,21 @@ void NetworkManager::fetchNetworks(const DFMEvent &event)
     qDebug() << event;
     DFMEvent* e = new DFMEvent(event);
     QString path = event.fileUrl().toString();
-    std::string stdPath = path.toStdString();
-    gchar *url = const_cast<gchar*>(stdPath.c_str());
-    fetch_networks(url, e);
+    UDiskDeviceInfoPointer p1 = deviceListener->getDeviceByMountPoint(path);
+    UDiskDeviceInfoPointer p2 = deviceListener->getDeviceByMountPointFilePath(path);
+    if (p1){
+        *e << p1->getMountPointUrl();
+        emit fileSignalManager->requestChangeCurrentUrl(*e);
+    }else if (p2){
+        QString childPath = path.right(path.length() - p2->getMountPoint().length());
+        DUrl realUrl = DUrl(QString("%1/%2").arg(p2->getMountPointUrl().toString(), childPath));
+        *e << realUrl;
+        if (QDir(realUrl.toLocalFile()).exists()){
+            emit fileSignalManager->requestChangeCurrentUrl(*e);
+        }
+    }else{
+        std::string stdPath = path.toStdString();
+        gchar *url = const_cast<gchar*>(stdPath.c_str());
+        fetch_networks(url, e);
+    }
 }
