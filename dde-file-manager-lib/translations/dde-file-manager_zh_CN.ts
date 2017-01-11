@@ -63,7 +63,7 @@
         <translation>外置磁盘</translation>
     </message>
     <message>
-        <location filename="../views/computerview.cpp" line="454"/>
+        <location filename="../views/computerview.cpp" line="455"/>
         <source>System Disk</source>
         <translation>系统盘</translation>
     </message>
@@ -310,12 +310,12 @@
         <translation type="vanished">有%1个任务在进行</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="424"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="426"/>
         <source>1 task in progress</source>
         <translation>有1个任务正在进行</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="426"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="428"/>
         <source>%1 tasks in progress</source>
         <translation>有%1个任务正在进行</translation>
     </message>
@@ -837,9 +837,13 @@
         <translation>您确定要彻底删除%1吗？</translation>
     </message>
     <message>
-        <location filename="../../dialogs/movetotrashconflictdialog.cpp" line="17"/>
         <source>The rest files are too large to put into trash</source>
-        <translation>剩余的文件太大，无法放到回收站</translation>
+        <translation type="vanished">剩余的文件太大，无法放到回收站</translation>
+    </message>
+    <message>
+        <location filename="../../dialogs/movetotrashconflictdialog.cpp" line="17"/>
+        <source>Files are too large to put into trash</source>
+        <translation>文件太大，无法放入回收站</translation>
     </message>
     <message>
         <location filename="../../dialogs/movetotrashconflictdialog.cpp" line="18"/>
@@ -972,7 +976,7 @@
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="193"/>
-        <location filename="../dialogs/propertydialog.cpp" line="599"/>
+        <location filename="../dialogs/propertydialog.cpp" line="600"/>
         <source>Open with</source>
         <translation>打开方式</translation>
     </message>
@@ -987,7 +991,7 @@
         <translation>共享管理</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="216"/>
+        <location filename="../dialogs/propertydialog.cpp" line="217"/>
         <source>System Disk</source>
         <translation>系统盘</translation>
     </message>
@@ -996,12 +1000,12 @@
         <translation type="vanished">磁盘</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="683"/>
+        <location filename="../dialogs/propertydialog.cpp" line="684"/>
         <source>Allow to execute as program</source>
         <translation>允许以程序执行</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="734"/>
+        <location filename="../dialogs/propertydialog.cpp" line="735"/>
         <source>Local disk</source>
         <translation>本地磁盘</translation>
     </message>
@@ -1021,7 +1025,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="672"/>
+        <location filename="../dialogs/propertydialog.cpp" line="673"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="678"/>
         <source>Size</source>
         <translation>大小</translation>
@@ -1031,7 +1035,7 @@
         <translation type="vanished">文件个数</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="674"/>
+        <location filename="../dialogs/propertydialog.cpp" line="675"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="679"/>
         <source>Type</source>
         <translation>类型</translation>
@@ -1050,19 +1054,19 @@
         <translation>创建时间</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="675"/>
+        <location filename="../dialogs/propertydialog.cpp" line="676"/>
         <source>Time read</source>
         <translation>访问时间</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="676"/>
+        <location filename="../dialogs/propertydialog.cpp" line="677"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="681"/>
         <source>Time modified</source>
         <translation>修改时间</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="729"/>
-        <location filename="../dialogs/propertydialog.cpp" line="757"/>
+        <location filename="../dialogs/propertydialog.cpp" line="730"/>
+        <location filename="../dialogs/propertydialog.cpp" line="758"/>
         <source>Device type</source>
         <translation>设备类型</translation>
     </message>
@@ -1071,51 +1075,51 @@
         <translation type="vanished">使用空间</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="673"/>
-        <location filename="../dialogs/propertydialog.cpp" line="730"/>
-        <location filename="../dialogs/propertydialog.cpp" line="758"/>
+        <location filename="../dialogs/propertydialog.cpp" line="674"/>
+        <location filename="../dialogs/propertydialog.cpp" line="731"/>
+        <location filename="../dialogs/propertydialog.cpp" line="759"/>
         <source>Contains</source>
         <translation>文件个数</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="731"/>
-        <location filename="../dialogs/propertydialog.cpp" line="759"/>
+        <location filename="../dialogs/propertydialog.cpp" line="732"/>
+        <location filename="../dialogs/propertydialog.cpp" line="760"/>
         <source>Free space</source>
         <translation>可用空间</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="732"/>
-        <location filename="../dialogs/propertydialog.cpp" line="760"/>
+        <location filename="../dialogs/propertydialog.cpp" line="733"/>
+        <location filename="../dialogs/propertydialog.cpp" line="761"/>
         <source>Total space</source>
         <translation>总容量</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="851"/>
+        <location filename="../dialogs/propertydialog.cpp" line="852"/>
         <source>WriteRead</source>
         <translation>可读写</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="851"/>
+        <location filename="../dialogs/propertydialog.cpp" line="852"/>
         <source>ReadOnly</source>
         <translation>只读</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="851"/>
+        <location filename="../dialogs/propertydialog.cpp" line="852"/>
         <source>WriteOnly</source>
         <translation>只写</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="879"/>
+        <location filename="../dialogs/propertydialog.cpp" line="880"/>
         <source>Owner</source>
         <translation>所有者</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="880"/>
+        <location filename="../dialogs/propertydialog.cpp" line="881"/>
         <source>Group</source>
         <translation>群组</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="881"/>
+        <location filename="../dialogs/propertydialog.cpp" line="882"/>
         <source>Other</source>
         <translation>其他</translation>
     </message>

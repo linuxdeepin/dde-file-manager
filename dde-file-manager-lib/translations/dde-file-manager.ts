@@ -55,7 +55,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/computerview.cpp" line="454"/>
+        <location filename="../views/computerview.cpp" line="455"/>
         <source>System Disk</source>
         <translation type="unfinished"></translation>
     </message>
@@ -190,12 +190,12 @@
 <context>
     <name>DTaskDialog</name>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="424"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="426"/>
         <source>1 task in progress</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="426"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="428"/>
         <source>%1 tasks in progress</source>
         <translation type="unfinished"></translation>
     </message>
@@ -602,7 +602,7 @@
     </message>
     <message>
         <location filename="../../dialogs/movetotrashconflictdialog.cpp" line="17"/>
-        <source>The rest files are too large to put into trash</source>
+        <source>Files are too large to put into trash</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -729,7 +729,7 @@
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="193"/>
-        <location filename="../dialogs/propertydialog.cpp" line="599"/>
+        <location filename="../dialogs/propertydialog.cpp" line="600"/>
         <source>Open with</source>
         <translation type="unfinished"></translation>
     </message>
@@ -739,17 +739,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="216"/>
+        <location filename="../dialogs/propertydialog.cpp" line="217"/>
         <source>System Disk</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="683"/>
+        <location filename="../dialogs/propertydialog.cpp" line="684"/>
         <source>Allow to execute as program</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="734"/>
+        <location filename="../dialogs/propertydialog.cpp" line="735"/>
         <source>Local disk</source>
         <translation type="unfinished"></translation>
     </message>
@@ -757,80 +757,80 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="672"/>
+        <location filename="../dialogs/propertydialog.cpp" line="673"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="678"/>
         <source>Size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="673"/>
-        <location filename="../dialogs/propertydialog.cpp" line="730"/>
-        <location filename="../dialogs/propertydialog.cpp" line="758"/>
+        <location filename="../dialogs/propertydialog.cpp" line="674"/>
+        <location filename="../dialogs/propertydialog.cpp" line="731"/>
+        <location filename="../dialogs/propertydialog.cpp" line="759"/>
         <source>Contains</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="674"/>
+        <location filename="../dialogs/propertydialog.cpp" line="675"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="679"/>
         <source>Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="675"/>
+        <location filename="../dialogs/propertydialog.cpp" line="676"/>
         <source>Time read</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="676"/>
+        <location filename="../dialogs/propertydialog.cpp" line="677"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="681"/>
         <source>Time modified</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="729"/>
-        <location filename="../dialogs/propertydialog.cpp" line="757"/>
+        <location filename="../dialogs/propertydialog.cpp" line="730"/>
+        <location filename="../dialogs/propertydialog.cpp" line="758"/>
         <source>Device type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../dialogs/propertydialog.cpp" line="731"/>
-        <location filename="../dialogs/propertydialog.cpp" line="759"/>
-        <source>Free space</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="732"/>
         <location filename="../dialogs/propertydialog.cpp" line="760"/>
+        <source>Free space</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialogs/propertydialog.cpp" line="733"/>
+        <location filename="../dialogs/propertydialog.cpp" line="761"/>
         <source>Total space</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="851"/>
+        <location filename="../dialogs/propertydialog.cpp" line="852"/>
         <source>WriteRead</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="851"/>
+        <location filename="../dialogs/propertydialog.cpp" line="852"/>
         <source>ReadOnly</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="851"/>
+        <location filename="../dialogs/propertydialog.cpp" line="852"/>
         <source>WriteOnly</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="879"/>
+        <location filename="../dialogs/propertydialog.cpp" line="880"/>
         <source>Owner</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="880"/>
+        <location filename="../dialogs/propertydialog.cpp" line="881"/>
         <source>Group</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="881"/>
+        <location filename="../dialogs/propertydialog.cpp" line="882"/>
         <source>Other</source>
         <translation type="unfinished"></translation>
     </message>

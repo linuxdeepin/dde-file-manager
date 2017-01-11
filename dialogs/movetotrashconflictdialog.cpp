@@ -14,7 +14,7 @@ MoveToTrashConflictDialog::MoveToTrashConflictDialog(QWidget *parent, const DUrl
         tip = tr("Are you sure to completely delete %1 ?").arg(urls.first().fileName());
     }
     else{
-        title = tr("The rest files are too large to put into trash");
+        title = tr("Files are too large to put into trash");
         tip = tr("Are you sure to completely delete %1 files ?").arg(QString::number(urls.size()));
     }
 
