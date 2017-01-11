@@ -40,6 +40,7 @@ signals:
     void heightChanged();
     void conflictShowed(const QMap<QString, QString>& jobDetail);
     void conflictHided(const QMap<QString, QString>& jobDetail);
+    void hovered();
 
 public slots:
     void setTargetObj(QString targetObj);
@@ -54,6 +55,7 @@ public slots:
     void handleResponse();
     void updateMessage(const QMap<QString, QString>& data);
     void updateTipMessage();
+    void handleLineDisplay(const int& row);
 
     void showConflict();
     void hideConflict();
@@ -95,7 +97,7 @@ private:
 };
 
 
-class DTaskDialog : public QWidget
+class DTaskDialog : public QDialog
 {
     Q_OBJECT
 public:
@@ -111,6 +113,7 @@ signals:
     void conflictShowed(const QMap<QString, QString>& jobDetail);
     void conflictHided(const QMap<QString, QString>& jobDetail);
     void closed();
+    void currentHoverRowChanged(const int& row);
 
 public slots:
     void setTitle(QString title);
@@ -130,6 +133,7 @@ public slots:
     void handleConflictResponse(const QMap<QString, QString>& jobDetail, const QMap<QString, QVariant>& response);
 
     void handleMinimizeButtonClick();
+    void onItemHovered();
 protected:
     void closeEvent(QCloseEvent* event);
 
