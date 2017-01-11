@@ -257,10 +257,6 @@ void UDiskListener::asyncRequestDiskInfosFinihsed(QDBusPendingCallWatcher *call)
         DiskInfoList diskinfos = qdbus_cast<DiskInfoList>(reply.argumentAt(0));
         foreach(DiskInfo info, diskinfos)
         {
-            info.Total = info.Total * 1024;
-            info.Used = info.Used * 1024;
-            info.Free = info.Total - info.Used;
-
             if (info.Icon == "drive-optical" && info.Name.startsWith("CD")){
                 info.Type = "dvd";
             }
