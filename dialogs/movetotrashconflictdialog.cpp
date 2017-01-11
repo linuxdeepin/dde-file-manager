@@ -11,22 +11,27 @@ MoveToTrashConflictDialog::MoveToTrashConflictDialog(QWidget *parent, const DUrl
 
     if(urls.size() == 1){
         title = tr("This file is too large to put into trash");
-        tip = tr("Are you sure to completely delete %1 ?").arg(urls.first().fileName());
+        tip = tr("Are you sure to completely delete %1").arg(urls.first().fileName());
     }
     else{
         title = tr("Files are too large to put into trash");
-        tip = tr("Are you sure to completely delete %1 files ?").arg(QString::number(urls.size()));
+        tip = tr("Are you sure to completely delete %1 files").arg(QString::number(urls.size()));
     }
 
     setIcon(QIcon(":/images/dialogs/images/dialog_warning_64.png"));
     setTitle(title);
 
-    QLabel* label = new QLabel(tip,this);
-    label->setWordWrap(true);
+    QLabel* label = new QLabel(this);
+//    label->setWordWrap(true);
 
     QFont font;
     font.setPixelSize(12);
     label->setFont(font);
+
+    QFontMetrics fm(font);
+    QString elidedTipStr = fm.elidedText(tip,Qt::ElideRight,240);
+    elidedTipStr += "?";
+    label->setText(elidedTipStr);
 
     addContent(label);
 
