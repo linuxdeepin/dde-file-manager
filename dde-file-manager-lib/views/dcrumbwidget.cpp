@@ -414,7 +414,7 @@ void DCrumbWidget::addCrumbs(const DUrl & url)
     qDebug() << path << isInHome(path) << isInDevice(path);
     if (path.isEmpty())
         return;
-    if(isInHome(path) && !url.isAVFSFile())
+    if(isInHome(path))
     {
         QString tmpPath = url.toLocalFile();
         tmpPath.replace(m_homePath, "");
