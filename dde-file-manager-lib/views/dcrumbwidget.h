@@ -49,6 +49,7 @@ private:
     void addComputerCrumb();
     void addTrashCrumb();
     void addNetworkCrumb();
+    void addSmbCrumb();
     void addUserShareCrumb();
     void addPluginViewCrumb(const DUrl &url);
 

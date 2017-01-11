@@ -134,6 +134,33 @@ UDiskDeviceInfoPointer UDiskListener::getDeviceByDevicePath(const QString &devei
     return UDiskDeviceInfoPointer();
 }
 
+UDiskDeviceInfoPointer UDiskListener::getDeviceByMountPoint(const QString &mountPoint)
+{
+    for (int i = 0; i < m_list.size(); i++)
+    {
+        UDiskDeviceInfoPointer info = m_list.at(i);
+        if (info && !info->getMountPoint().isEmpty()){
+            if (DUrl(info->getMountPoint()) == DUrl(mountPoint))
+                return info;
+        }
+    }
+    return UDiskDeviceInfoPointer();
+}
+
+UDiskDeviceInfoPointer UDiskListener::getDeviceByMountPointFilePath(const QString &filePath)
+{
+    for (int i = 0; i < m_list.size(); i++)
+    {
+        UDiskDeviceInfoPointer info = m_list.at(i);
+        if (info && !info->getMountPoint().isEmpty()){
+            bool flag = DUrl(info->getMountPoint()) == DUrl(filePath);
+            if (!flag && filePath.startsWith(DUrl(info->getMountPoint()).toString()))
+                return info;
+        }
+    }
+    return UDiskDeviceInfoPointer();
+}
+
 UDiskDeviceInfoPointer UDiskListener::getDeviceByPath(const QString &path)
 {
     for (int i = 0; i < m_list.size(); i++)
