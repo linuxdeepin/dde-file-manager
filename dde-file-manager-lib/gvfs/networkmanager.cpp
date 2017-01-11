@@ -5,6 +5,7 @@
 
 #include "widgets/singleton.h"
 
+
 NetworkNode::NetworkNode()
 {
 
@@ -56,6 +57,7 @@ QDebug operator<<(QDebug dbg, const NetworkNode &node)
 
 
 QMap<DUrl, NetworkNodeList> NetworkManager::NetworkNodes = {};
+GCancellable* NetworkManager::m_networks_fetching_cancellable = NULL;
 
 
 NetworkManager::NetworkManager(QObject *parent) : QObject(parent)
@@ -88,13 +90,20 @@ void NetworkManager::fetch_networks(gchar* url, DFMEvent* e)
     GFile *network_file;
     network_file = g_file_new_for_uri (url);
 
+    if (m_networks_fetching_cancellable){
+        g_cancellable_cancel (m_networks_fetching_cancellable);
+        g_clear_object (&m_networks_fetching_cancellable);
+    }
+    m_networks_fetching_cancellable = g_cancellable_new ();
+
     g_file_enumerate_children_async (network_file,
-                                      "standard::type,standard::target-uri,standard::name,standard::display-name,standard::icon,mountable::can-mount",
+                                     "standard::type,standard::target-uri,standard::name,standard::display-name,standard::icon,mountable::can-mount",
                                       G_FILE_QUERY_INFO_NONE,
                                       G_PRIORITY_DEFAULT,
-                                      NULL,
+                                      m_networks_fetching_cancellable,
                                       network_enumeration_finished,
                                       e);
+    g_clear_object (&network_file);
 }
 
 void NetworkManager::network_enumeration_finished(GObject *source_object, GAsyncResult *res, gpointer user_data)
@@ -122,7 +131,7 @@ void NetworkManager::network_enumeration_finished(GObject *source_object, GAsync
         g_file_enumerator_next_files_async (enumerator,
                                           G_MAXINT32,
                                           G_PRIORITY_DEFAULT,
-                                          NULL,
+                                          m_networks_fetching_cancellable,
                                           network_enumeration_next_files_finished,
                                           user_data);
     }
@@ -216,6 +225,7 @@ void NetworkManager::fetchNetworks(const DFMEvent &event)
     qDebug() << event;
     DFMEvent* e = new DFMEvent(event);
     QString path = event.fileUrl().toString();
-    gchar *url = const_cast<char*>(path.toStdString().c_str());
+    std::string stdPath = path.toStdString();
+    gchar *url = const_cast<gchar*>(stdPath.c_str());
     fetch_networks(url, e);
 }
