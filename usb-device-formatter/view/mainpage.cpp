@@ -4,6 +4,7 @@
 #include <QCheckBox>
 #include "../partman/partitionmanager.h"
 #include "../partman/readusagemanager.h"
+#include "../partman/partition.h"
 #include <QMetaEnum>
 #include <QDebug>
 #include <QProcess>
@@ -44,14 +45,14 @@ void MainPage::initUI()
     mainLayout->addWidget(m_iconLabel, 0, Qt::AlignHCenter);
 
     QVBoxLayout* storageProgressLayout = new QVBoxLayout;
-    QLabel* docLabel = new QLabel(tr("My Documents"), this);
+    m_nameLabel = new QLabel(this);
     m_remainLabel = new QLabel(this);
-    docLabel->setObjectName("TagLabel");
+    m_nameLabel->setObjectName("TagLabel");
     m_remainLabel->setObjectName("TagLabel");
 
     QHBoxLayout* shLayout = new QHBoxLayout;
     shLayout->addSpacing(35);
-    shLayout->addWidget(docLabel);
+    shLayout->addWidget(m_nameLabel);
     shLayout->addStretch(1);
     shLayout->addWidget(m_remainLabel);
     shLayout->addSpacing(35);
@@ -152,7 +153,7 @@ void MainPage::onCurrentSelectedTypeChanged(const QString &type)
 
 void MainPage::resizeEvent(QResizeEvent *event)
 {
-    m_warnLabel->setFixedWidth(this->width());
+    m_warnLabel->setFixedWidth(this->width() -80);
     QWidget::resizeEvent(event);
 }
 
@@ -170,6 +171,7 @@ void MainPage::setTargetPath(const QString &targetPath)
     m_storageProgressBar->setMax(total);
     m_storageProgressBar->setValue(total - free);
     m_remainLabel->setText(tr("%1/ %2").arg(formatSize(total - free), formatSize(total)));
+    m_nameLabel->setText(Partition::getPartitionByDevicePath(targetPath).label());
 }
 
 QString MainPage::formatSize(const qint64 &num)

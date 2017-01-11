@@ -16,8 +16,6 @@ void CMDManager::process(const QApplication &app)
 
 void CMDManager::init()
 {
-    QCommandLineOption formatOption(QStringList()<<"f"<<"format","format device");
-    parser.addOption(formatOption);
 }
 
 bool CMDManager::isSet(const QString &name)
