@@ -597,7 +597,7 @@
     </message>
     <message>
         <location filename="../../dialogs/movetotrashconflictdialog.cpp" line="14"/>
-        <source>Are you sure to completely delete %1 ?</source>
+        <source>Are you sure to completely delete %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -607,16 +607,16 @@
     </message>
     <message>
         <location filename="../../dialogs/movetotrashconflictdialog.cpp" line="18"/>
-        <source>Are you sure to completely delete %1 files ?</source>
+        <source>Are you sure to completely delete %1 files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/movetotrashconflictdialog.cpp" line="33"/>
+        <location filename="../../dialogs/movetotrashconflictdialog.cpp" line="38"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/movetotrashconflictdialog.cpp" line="34"/>
+        <location filename="../../dialogs/movetotrashconflictdialog.cpp" line="39"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
