@@ -49,6 +49,8 @@ public:
     bool isDeviceFolder(const QString &path) const;
     bool isInDeviceFolder(const QString &path) const;
     UDiskDeviceInfoPointer getDeviceByDevicePath(const QString &deveicePath);
+    UDiskDeviceInfoPointer getDeviceByMountPoint(const QString &mountPoint);
+    UDiskDeviceInfoPointer getDeviceByMountPointFilePath(const QString &filePath);
     UDiskDeviceInfoPointer getDeviceByPath(const QString &path);
     UDiskDeviceInfoPointer getDeviceByFilePath(const QString &path);
     UDiskDeviceInfoPointer getDeviceByDeviceID(const QString &deviceID);

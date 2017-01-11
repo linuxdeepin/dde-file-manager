@@ -113,7 +113,7 @@ void DCrumbWidget::addCrumb(const QStringList &list)
                     button->setUrl(DUrl::fromLocalFile(path));
             } else if(m_url.isTrashFile()){
                 button->setUrl(DUrl::fromTrashFile(path));
-            } else{
+            }else{
                 button->setUrl(DUrl::fromLocalFile(path));
             }
 
@@ -169,8 +169,7 @@ void DCrumbWidget::setCrumb(const DUrl &url)
             addCrumbs(url);
         }
     }else if(url.isSMBFile()){
-        addNetworkCrumb();
-        addCrumb(QStringList() << url.toString());
+        addSmbCrumb();
     }else if(url.isNetWorkFile()){
         addNetworkCrumb();
     }else if(url.isUserShareFile()){
@@ -289,6 +288,24 @@ void DCrumbWidget::addNetworkCrumb()
     button->setFocusPolicy(Qt::NoFocus);
     button->adjustSize();
     button->setUrl(DUrl::fromNetworkFile("/"));
+    m_group.addButton(button, button->getIndex());
+    button->setChecked(true);
+    connect(button, &DCrumbButton::clicked, this, &DCrumbWidget::buttonPressed);
+}
+
+void DCrumbWidget::addSmbCrumb()
+{
+    QString text = NETWORK_ROOT;
+    DCrumbButton * button = new DCrumbIconButton(
+                m_group.buttons().size(),
+                QIcon(":/leftsidebar/images/leftsidebar/network_normal_16px.svg"),
+                QIcon(":/icons/images/icons/network_hover_16px.svg"),
+                QIcon(":/icons/images/icons/network_checked_16px.svg"),
+                text, this);
+    button->setFocusPolicy(Qt::NoFocus);
+    button->setUrl(m_url);
+    button->setText(m_url.toString());
+    button->adjustSize();
     m_group.addButton(button, button->getIndex());
     button->setChecked(true);
     connect(button, &DCrumbButton::clicked, this, &DCrumbWidget::buttonPressed);
