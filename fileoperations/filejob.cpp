@@ -218,6 +218,8 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
             emit requestJobRemovedImmediately(m_jobDetail);
             return DUrlList();
         }
+    }else{
+        m_totalSize = FileUtils::totalSize(files);
     }
 
 
