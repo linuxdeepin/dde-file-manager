@@ -29,6 +29,7 @@
 #include <QProcess>
 #include <QGuiApplication>
 #include <QUrlQuery>
+#include "unistd.h"
 
 class FileDirIterator : public DDirIterator
 {
@@ -421,7 +422,17 @@ bool FileController::createSymlink(const DUrl &fileUrl, const DUrl &linkToUrl, b
 {
     accepted = true;
 
-    return QFile::link(fileUrl.toLocalFile(), linkToUrl.toLocalFile());
+    bool ok;
+    int code = ::symlink(fileUrl.toLocalFile().toStdString().data(), linkToUrl.toLocalFile().toStdString().data());
+    if(code == -1){
+        ok = false;
+        QString errorString = strerror(errno);
+        dialogManager->showFailToCreateSymlinkDialog(errorString);
+    } else{
+        ok = true;
+    }
+
+    return ok;
 }
 
 DAbstractFileWatcher *FileController::createFileWatcher(const DUrl &fileUrl, QObject *parent, bool &accepted) const
