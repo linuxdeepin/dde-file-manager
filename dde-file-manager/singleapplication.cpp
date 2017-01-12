@@ -57,6 +57,7 @@ void SingleApplication::newClientProcess(const QString &key)
 
                 //Prehandle for none url arguments command on requesting opening new window
                 QStringList paths = CommandLineManager::instance()->positionalArguments();
+
                 if (paths.size() > 0){
                     isShowPropertyDialogRequest = CommandLineManager::instance()->isSet("p");
                 }else{
