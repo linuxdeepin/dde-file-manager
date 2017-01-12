@@ -190,12 +190,12 @@
 <context>
     <name>DTaskDialog</name>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="426"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="440"/>
         <source>1 task in progress</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="428"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="442"/>
         <source>%1 tasks in progress</source>
         <translation type="unfinished"></translation>
     </message>
@@ -354,7 +354,7 @@
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="540"/>
-        <source>Target disk format incorrect, unable to create link!</source>
+        <source>Fail to create symlink,cause:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -379,12 +379,12 @@
 <context>
     <name>FileController</name>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="341"/>
+        <location filename="../controllers/filecontroller.cpp" line="342"/>
         <source>New Folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="353"/>
+        <location filename="../controllers/filecontroller.cpp" line="354"/>
         <source>New File</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1119,26 +1119,26 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../controllers/appcontroller.cpp" line="346"/>
         <location filename="../controllers/appcontroller.cpp" line="348"/>
-        <location filename="../controllers/appcontroller.cpp" line="350"/>
         <source>newDoc</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../controllers/appcontroller.cpp" line="355"/>
         <location filename="../controllers/appcontroller.cpp" line="357"/>
-        <location filename="../controllers/appcontroller.cpp" line="359"/>
         <source>newExcel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../controllers/appcontroller.cpp" line="364"/>
         <location filename="../controllers/appcontroller.cpp" line="366"/>
-        <location filename="../controllers/appcontroller.cpp" line="368"/>
         <source>newPowerPoint</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../controllers/appcontroller.cpp" line="373"/>
         <location filename="../controllers/appcontroller.cpp" line="375"/>
-        <location filename="../controllers/appcontroller.cpp" line="377"/>
         <source>newText</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1195,12 +1195,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="748"/>
+        <location filename="../interfaces/dfileservices.cpp" line="759"/>
         <source>Shortcut</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="573"/>
+        <location filename="../interfaces/dfileservices.cpp" line="581"/>
         <source>Create symlink</source>
         <translation type="unfinished"></translation>
     </message>
