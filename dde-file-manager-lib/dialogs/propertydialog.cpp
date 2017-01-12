@@ -394,6 +394,13 @@ void PropertyDialog::onChildrenRemoved(const DUrl &fileUrl)
 
 void PropertyDialog::flickFolderToLeftsidBar()
 {
+
+    DFileManagerWindow* window = qobject_cast<DFileManagerWindow*>(WindowManager::getWindowById(m_fmevent.windowId()));
+    if(!window)
+        return;
+
+    QPoint targetPos = window->getLeftSideBar()->getMyShareItemCenterPos();
+
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(m_url);
 
     QLabel* aniLabel = new QLabel();
@@ -402,9 +409,6 @@ void PropertyDialog::flickFolderToLeftsidBar()
     aniLabel->setAttribute(Qt::WA_TranslucentBackground);
     aniLabel->setPixmap(fileInfo->fileIcon().pixmap(160, 160));
     aniLabel->move(m_icon->mapToGlobal(m_icon->pos()));
-
-    DFileManagerWindow* window = qobject_cast<DFileManagerWindow*>(WindowManager::getWindowById(m_fmevent.windowId()));
-    QPoint targetPos = window->getLeftSideBar()->getMyShareItemCenterPos();
 
     int angle;
     if(targetPos.x() > aniLabel->x())
