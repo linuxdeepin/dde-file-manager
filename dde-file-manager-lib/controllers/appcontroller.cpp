@@ -437,6 +437,13 @@ void AppController::actionProperty(const DFMEvent &event)
             emit fileSignalManager->requestShowTrashPropertyDialog(event);
             return;
         }
+
+        if(event.fileUrlList().first() == ComputerDesktopFileInfo::computerDesktopFileUrl()){
+            const_cast<DFMEvent&>(event) << DUrl::fromComputerFile("/");
+            emit fileSignalManager->requestShowComputerPropertyDialog(event);
+            return;
+        }
+
     } else{
         DUrlList urlList = event.fileUrlList();
         if(urlList.contains(TrashDesktopFileInfo::trashDesktopFileUrl())){

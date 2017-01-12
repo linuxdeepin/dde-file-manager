@@ -173,7 +173,8 @@ HEADERS += \
     controllers/avfsfilecontroller.h \
     models/avfsfileinfo.h \
     interfaces/dfileiconprovider.h \
-    interfaces/dfilewatchermanager.h
+    interfaces/dfilewatchermanager.h \
+    dialogs/computerpropertydialog.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -285,7 +286,8 @@ SOURCES += \
     controllers/avfsfilecontroller.cpp \
     models/avfsfileinfo.cpp \
     interfaces/dfileiconprovider.cpp \
-    interfaces/dfilewatchermanager.cpp
+    interfaces/dfilewatchermanager.cpp \
+    dialogs/computerpropertydialog.cpp
 
 INCLUDEPATH += $$PWD/../ $$PWD/../utils/ $$PWD/interfaces/ $$PWD/../dde-file-manager-plugins/plugininterfaces/
 

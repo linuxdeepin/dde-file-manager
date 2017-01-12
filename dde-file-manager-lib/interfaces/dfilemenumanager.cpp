@@ -250,8 +250,6 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
     DAbstractFileInfoPointer info = fileService->createFileInfo(currentUrl);
     DFileMenu *menu = NULL;
     if (urlList.length() == 1) {
-        if(currentUrl == ComputerDesktopFileInfo::computerDesktopFileUrl())
-            unusedList << MenuAction::Property;
         QVector<MenuAction> actions = info->menuActionList(DAbstractFileInfo::SingleFile);
 
 #ifdef DDE_COMPUTER_TRASH
