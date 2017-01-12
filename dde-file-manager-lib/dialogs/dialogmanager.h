@@ -14,6 +14,7 @@ class DFMEvent;
 class PropertyDialog;
 class CloseAllDialogIndicator;
 class TrashPropertyDialog;
+class ComputerPropertyDialog;
 class QTimer;
 
 class DialogManager : public QObject
@@ -52,6 +53,7 @@ public slots:
     void showPropertyDialog(const DFMEvent &event);
     void showShareOptionsInPropertyDialog(const DFMEvent &event);
     void showTrashPropertyDialog(const DFMEvent &event);
+    void showComputerPropertyDialog(const DFMEvent& event);
     void showDevicePropertyDialog(const DFMEvent &event);
     void showDiskErrorDialog(const QString &id, const QString &errorText);
     void showBreakSymlinkDialog(const QString &targetName, const DUrl& linkfile);
@@ -73,6 +75,7 @@ private:
     DTaskDialog* m_taskDialog = NULL;
     CloseAllDialogIndicator* m_closeIndicatorDialog;
     TrashPropertyDialog* m_trashDialog;
+    ComputerPropertyDialog* m_computerDialog;
     QMap<QString, FileJob*> m_jobs;
     QMap<DUrl, PropertyDialog*> m_propertyDialogs;
     QTimer* m_closeIndicatorTimer = NULL;

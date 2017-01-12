@@ -2,6 +2,7 @@
 #include "closealldialogindicator.h"
 #include "openwithotherdialog.h"
 #include "trashpropertydialog.h"
+#include "computerpropertydialog.h"
 #include "usersharepasswordsettingdialog.h"
 #include "dialogs/movetotrashconflictdialog.h"
 
@@ -90,7 +91,8 @@ void DialogManager::initConnect()
     connect(fileSignalManager, &FileSignalManager::requestShowOpenWithDialog, this, &DialogManager::showOpenWithDialog);
     connect(fileSignalManager, &FileSignalManager::requestShowPropertyDialog, this, &DialogManager::showPropertyDialog);
     connect(fileSignalManager, &FileSignalManager::requestShowShareOptionsInPropertyDialog, this, &DialogManager::showShareOptionsInPropertyDialog);
-    connect(fileSignalManager, &FileSignalManager::requestShowTrashPropertyDialog, this, &DialogManager::showTrashPropertyDialog);
+    connect(fileSignalManager, &FileSignalManager::requestShowComputerPropertyDialog, this, &DialogManager::showComputerPropertyDialog);
+        connect(fileSignalManager, &FileSignalManager::requestShowTrashPropertyDialog, this, &DialogManager::showTrashPropertyDialog);
     connect(fileSignalManager, &FileSignalManager::requestShowDevicePropertyDialog, this, &DialogManager::showDevicePropertyDialog);
     connect(fileSignalManager, &FileSignalManager::showDiskErrorDialog,
             this, &DialogManager::showDiskErrorDialog);
@@ -425,6 +427,24 @@ void DialogManager::showTrashPropertyDialog(const DFMEvent &event)
 
     TIMER_SINGLESHOT(100, {
                          m_trashDialog->raise();
+                     }, this)
+}
+
+void DialogManager::showComputerPropertyDialog(const DFMEvent &event)
+{
+    if (m_computerDialog){
+        m_computerDialog->close();
+    }
+    m_computerDialog = new ComputerPropertyDialog;
+    connect(m_computerDialog, &ComputerPropertyDialog::closed, [=](){
+           m_computerDialog = NULL;
+    });
+    QPoint pos = getPerportyPos(m_computerDialog->size().width(), m_computerDialog->size().height(), 1, 0);
+    m_computerDialog->show();
+    m_computerDialog->move(pos);
+
+    TIMER_SINGLESHOT(100, {
+                         m_computerDialog->raise();
                      }, this)
 }
 

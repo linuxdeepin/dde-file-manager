@@ -111,8 +111,11 @@ signals:
     /*request show PropertyDialog*/
     void requestShowShareOptionsInPropertyDialog(const DFMEvent &event);
 
-    /*request show PropertyDialog*/
+    /*request show TrashPropertyDialog*/
     void requestShowTrashPropertyDialog(const DFMEvent &event);
+
+    /*request show ComputerPropertyDialog*/
+    void requestShowComputerPropertyDialog(const DFMEvent &event);
 
     /*request show PropertyDialog*/
     void requestShowDevicePropertyDialog(const DFMEvent &event);
