@@ -50,8 +50,8 @@ FileJob::FileJob(JobType jobType, QObject *parent) : QObject(parent)
     qRegisterMetaType<QMap<QString, QString>>();
     FileJobCount += 1;
     m_status = FileJob::Started;
-    QString user = getenv("USER");
-    m_trashLoc = "/home/" + user + "/.local/share/Trash";
+
+    m_trashLoc = QString("%1/.local/share/Trash").arg(QDir::homePath());
     m_id = QString::number(FileJobCount);
     m_jobType = jobType;
     m_jobDetail.insert("jobId", m_id);
