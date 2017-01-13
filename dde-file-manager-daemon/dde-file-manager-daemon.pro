@@ -12,7 +12,8 @@ TARGET = dde-file-manager-daemon
 CONFIG   += console
 CONFIG   -= app_bundle
 
-PKGCONFIG += x11 polkit-agent-1 polkit-qt5-1 dtkbase dtkutil
+PKGCONFIG += x11 polkit-agent-1 polkit-qt5-1
+PKGCONFIG += dtkbase-0-2 dtkutil-0-2
 CONFIG += c++11 link_pkgconfig
 
 include(../partman/partman.pri)
