@@ -3,6 +3,8 @@
 
 #include "dfiledialoghandle.h"
 
+#include <QTimer>
+
 class DBusFileDialogHandle : public DFileDialogHandle
 {
     Q_OBJECT
@@ -14,6 +16,7 @@ class DBusFileDialogHandle : public DFileDialogHandle
     Q_PROPERTY(int viewMode READ viewMode WRITE setViewMode)
     Q_PROPERTY(int acceptMode READ acceptMode WRITE setAcceptMode)
     Q_PROPERTY(bool windowActive READ windowActive NOTIFY windowActiveChanged)
+    Q_PROPERTY(int heartbeatInterval READ heartbeatInterval WRITE setHeartbeatInterval)
 
 public:
     explicit DBusFileDialogHandle(QWidget *parent = 0);
@@ -48,8 +51,17 @@ public:
 
     void activateWindow();
 
+    int heartbeatInterval() const;
+    void makeHeartbeat();
+
+public slots:
+    void setHeartbeatInterval(int heartbeatInterval);
+
 signals:
     void windowActiveChanged();
+
+private:
+    QTimer m_heartbeatTimer;
 };
 
 #endif // DBUSFILEDIALOGHANDLE_H

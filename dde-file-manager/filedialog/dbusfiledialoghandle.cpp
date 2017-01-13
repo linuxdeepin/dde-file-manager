@@ -11,6 +11,12 @@ DBusFileDialogHandle::DBusFileDialogHandle(QWidget *parent)
 
     if (window)
         connect(window, &QWindow::activeChanged, this, &DBusFileDialogHandle::windowActiveChanged);
+
+    connect(&m_heartbeatTimer, &QTimer::timeout, this, &QObject::deleteLater);
+    connect(widget(), &QWidget::destroyed, this, &QObject::deleteLater);
+
+    m_heartbeatTimer.setInterval(6 * 1000);
+    m_heartbeatTimer.start();
 }
 
 QString DBusFileDialogHandle::directory() const
@@ -111,4 +117,19 @@ bool DBusFileDialogHandle::windowActive() const
 void DBusFileDialogHandle::activateWindow()
 {
     widget()->activateWindow();
+}
+
+int DBusFileDialogHandle::heartbeatInterval() const
+{
+    return m_heartbeatTimer.interval();
+}
+
+void DBusFileDialogHandle::makeHeartbeat()
+{
+    m_heartbeatTimer.start();
+}
+
+void DBusFileDialogHandle::setHeartbeatInterval(int heartbeatInterval)
+{
+    m_heartbeatTimer.setInterval(heartbeatInterval);
 }
