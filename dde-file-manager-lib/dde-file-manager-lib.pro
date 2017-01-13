@@ -45,7 +45,8 @@ include(../dde-file-manager-plugins/plugininterfaces/plugininterfaces.pri)
 
 lessThan(QT_MINOR_VERSION, 6): include(../xdnd/xdnd.pri)
 
-PKGCONFIG += gtk+-2.0 gsettings-qt libsecret-1 dtkbase dtkwidget gio-unix-2.0
+PKGCONFIG += gtk+-2.0 gsettings-qt libsecret-1 gio-unix-2.0
+PKGCONFIG += dtkbase-0-2 dtkwidget-0-2
 CONFIG += c++11 link_pkgconfig
 #DEFINES += QT_NO_DEBUG_OUTPUT
 DEFINES += QT_MESSAGELOGCONTEXT
