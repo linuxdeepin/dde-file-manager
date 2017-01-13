@@ -11,6 +11,7 @@
     <property name="viewMode" type="i" access="readwrite"></property>
     <property name="acceptMode" type="i" access="readwrite"></property>
     <property name="windowActive" type="b" access="read"></property>
+    <property name="heartbeatInterval" type="i" access="readwrite"></property>
     <method name="selectFile">
         <arg name="filename" type="s" direction="in"/>
     </method>
@@ -58,11 +59,13 @@
     </method>
     <method name="deleteLater"></method>
     <method name="activateWindow"></method>
+    <method name="makeHeartbeat"></method>
     <signal name="finished">
       <arg name="result" type="i" direction="out"/>
     </signal>
     <signal name="accepted"></signal>
     <signal name="rejected"></signal>
     <signal name="windowActiveChanged"></signal>
+    <signal name="destroyed"></signal>
   </interface>
 </node>
