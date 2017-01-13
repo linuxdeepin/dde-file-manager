@@ -10,6 +10,7 @@
     <property name="filter" type="i" access="readwrite"></property>
     <property name="viewMode" type="i" access="readwrite"></property>
     <property name="acceptMode" type="i" access="readwrite"></property>
+    <property name="windowActive" type="b" access="read"></property>
     <method name="selectFile">
         <arg name="filename" type="s" direction="in"/>
     </method>
@@ -56,10 +57,12 @@
         <arg name="title" type="s" direction="in"/>
     </method>
     <method name="deleteLater"></method>
+    <method name="activateWindow"></method>
     <signal name="finished">
       <arg name="result" type="i" direction="out"/>
     </signal>
     <signal name="accepted"></signal>
     <signal name="rejected"></signal>
+    <signal name="windowActiveChanged"></signal>
   </interface>
 </node>
