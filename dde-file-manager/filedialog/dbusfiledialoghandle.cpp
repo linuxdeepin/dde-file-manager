@@ -1,9 +1,16 @@
 #include "dbusfiledialoghandle.h"
 
+#include <QWindow>
+
 DBusFileDialogHandle::DBusFileDialogHandle(QWidget *parent)
     : DFileDialogHandle(parent)
 {
+    widget()->setAttribute(Qt::WA_NativeWindow);
 
+    QWindow *window = widget()->windowHandle();
+
+    if (window)
+        connect(window, &QWindow::activeChanged, this, &DBusFileDialogHandle::windowActiveChanged);
 }
 
 QString DBusFileDialogHandle::directory() const
@@ -94,4 +101,14 @@ WId DBusFileDialogHandle::winId() const
 void DBusFileDialogHandle::setWindowTitle(const QString &title)
 {
     widget()->setWindowTitle(title);
+}
+
+bool DBusFileDialogHandle::windowActive() const
+{
+    return widget()->isActiveWindow();
+}
+
+void DBusFileDialogHandle::activateWindow()
+{
+    widget()->activateWindow();
 }

@@ -13,6 +13,7 @@ class DBusFileDialogHandle : public DFileDialogHandle
     Q_PROPERTY(int filter READ filter WRITE setFilter)
     Q_PROPERTY(int viewMode READ viewMode WRITE setViewMode)
     Q_PROPERTY(int acceptMode READ acceptMode WRITE setAcceptMode)
+    Q_PROPERTY(bool windowActive READ windowActive NOTIFY windowActiveChanged)
 
 public:
     explicit DBusFileDialogHandle(QWidget *parent = 0);
@@ -43,6 +44,12 @@ public:
 
     WId winId() const;
     void setWindowTitle(const QString &title);
+    bool windowActive() const;
+
+    void activateWindow();
+
+signals:
+    void windowActiveChanged();
 };
 
 #endif // DBUSFILEDIALOGHANDLE_H
