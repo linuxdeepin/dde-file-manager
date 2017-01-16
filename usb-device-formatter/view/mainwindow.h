@@ -23,7 +23,7 @@
 #define BORDER_WIDTH 1
 #define BORDER_COLOR QColor(0,0,0,120)
 #define BORDER_RADIUS 5
-#define WINDOW_SIZE QSize(320, 420)
+#define WINDOW_SIZE QSize(320, 410)
 
 #define SHADOW_BLUR_RADIUS 10
 #define SHADOW_COLOR QColor(0,0,0,20)
@@ -42,7 +42,8 @@ class MainWindow : public QWidget
         Warn,
         Formating,
         Finished,
-        Error
+        FormattError,
+        RemovedWhenFormattingError
     };
 
 public:
@@ -54,6 +55,7 @@ public:
     void initConnect();
     void formartDevice();
     void unMountDevice();
+    bool checkBackup();
 
 signals:
     void taskFinished(const bool& result);

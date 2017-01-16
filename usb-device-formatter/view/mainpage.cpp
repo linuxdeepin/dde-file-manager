@@ -31,9 +31,13 @@ QString sizeString(const QString &str)
 
 MainPage::MainPage(const QString& defautFormat, QWidget *parent) : QWidget(parent)
 {
-     m_defautlFormat = defautFormat;
+    m_defautlFormat = defautFormat;
+    animator = new QVariantAnimation(this);
+    animator->setDuration(100);
     initUI();
     initConnections();
+
+    onCurrentSelectedTypeChanged(m_typeCombo->currentText());
 }
 
 void MainPage::initUI()
@@ -89,14 +93,13 @@ void MainPage::initUI()
     for(int i = 0; i < metaEnum.keyCount(); i++){
         QString key = metaEnum.key(i);
         m_fileFormat << key;
-        if(m_defautlFormat == key.toLower())
+        if(m_defautlFormat == key.toLower()){
             index = i;
+        }
     }
-    m_fileFormat.removeLast();
 
     m_typeCombo->addItems(m_fileFormat);
     m_typeCombo->setCurrentIndex(index);
-
     m_typeCombo->setFixedSize(160,22);
 
     QLabel* labelText = new QLabel(tr("Label"),this);
@@ -125,6 +128,7 @@ void MainPage::initUI()
     QString warmMsg = tr("This operation will clear all datas from your device.");
     m_warnLabel = new QLabel(this);
     m_warnLabel->setText(warmMsg);
+    m_warnLabel->setObjectName("WarnMsg");
     m_warnLabel->setWordWrap(true);
     m_warnLabel->setAlignment(Qt::AlignHCenter);
     mainLayout->addWidget(m_warnLabel, 0, Qt::AlignHCenter);
@@ -149,12 +153,24 @@ QString MainPage::getLabel()
 void MainPage::onCurrentSelectedTypeChanged(const QString &type)
 {
     m_labelLineEdit->setText(type);
+    m_maxLabelNameLength = PartMan::PartitionManager::getMaxNameLengthByTypeString(type);
+    m_labelLineEdit->setMaxLength(m_maxLabelNameLength);
 }
 
 void MainPage::resizeEvent(QResizeEvent *event)
 {
     m_warnLabel->setFixedWidth(this->width() -80);
     QWidget::resizeEvent(event);
+}
+
+int MainPage::getMaxLabelNameLength() const
+{
+    return m_maxLabelNameLength;
+}
+
+void MainPage::setMaxLabelNameLength(int maxLabelNameLength)
+{
+    m_maxLabelNameLength = maxLabelNameLength;
 }
 
 QString MainPage::getTargetPath() const
@@ -170,8 +186,19 @@ void MainPage::setTargetPath(const QString &targetPath)
 
     m_storageProgressBar->setMax(total);
     m_storageProgressBar->setValue(total - free);
-    m_remainLabel->setText(tr("%1/ %2").arg(formatSize(total - free), formatSize(total)));
-    m_nameLabel->setText(Partition::getPartitionByDevicePath(targetPath).label());
+    m_remainLabel->setText(QString("%1/ %2").arg(formatSize(total - free), formatSize(total)));
+    QString deviceName = Partition::getPartitionByDevicePath(targetPath).label();
+    QFontMetrics fm(QFont("",10));
+    m_nameLabel->setText(fm.elidedText(deviceName, Qt::ElideRight, 100  ));
+
+    qint64 max = 4;
+    max = max * 1024;
+    max = max * 1024;
+    max = max * 1024;
+
+    //If removable disk size is larger than 4GB,Just support fat32 and ntfs type
+    if(total > max)
+        m_typeCombo->removeItem(0);
 }
 
 QString MainPage::formatSize(const qint64 &num)
