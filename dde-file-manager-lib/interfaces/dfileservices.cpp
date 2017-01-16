@@ -13,6 +13,7 @@
 #include "models/computerdesktopfileinfo.h"
 #include "models/trashdesktopfileinfo.h"
 #include "controllers/pathmanager.h"
+#include "dfmstandardpaths.h"
 
 #include "shutil/fileutils.h"
 
@@ -657,9 +658,27 @@ bool DFileService::openInTerminal(const DUrl &fileUrl) const
     return false;
 }
 
-void DFileService::openNewWindow(const DUrl &fileUrl) const
+void DFileService::openNewWindow(const DFMEvent &event, const bool &isNewWindow) const
 {
-    emit fileSignalManager->requestOpenNewWindowByUrl(fileUrl, true);
+    foreach (const DUrl& url, event.fileUrlList()) {
+        emit fileSignalManager->requestOpenNewWindowByUrl(url, isNewWindow);
+    }
+}
+
+void DFileService::openInCurrentWindow(const DFMEvent &event) const
+{
+    const DAbstractFileInfoPointer &fileInfo = createFileInfo(event.fileUrl());
+
+    if (fileInfo && fileInfo->isDir()){
+        emit fileSignalManager->requestChangeCurrentUrl(event);
+    }
+}
+
+void DFileService::openFile(const DFMEvent &event) const
+{
+    foreach (const DUrl& url, event.fileUrlList()) {
+        openFile(url);
+    }
 }
 
 const DAbstractFileInfoPointer DFileService::createFileInfo(const DUrl &fileUrl) const
@@ -731,7 +750,28 @@ DAbstractFileWatcher *DFileService::createFileWatcher(const DUrl &fileUrl, QObje
                     return watcher;
              })
 
-    return 0;
+            return 0;
+}
+
+bool DFileService::isAvfsMounted() const
+{
+    QProcess p;
+    QString cmd = "/bin/bash";
+    QStringList args;
+    args << "-c" << "ps -ax -o 'cmd'|grep '.avfs$'";
+    p.start(cmd, args);
+    p.waitForFinished();
+    QString result = p.readAll().trimmed();
+    if(!result.isEmpty()){
+        QStringList datas = result.split(" ");
+
+        if(datas.count() == 2){
+            if(datas.at(0) == "avfsd" && QFile::exists(datas.at(1)))
+                return true;
+        }
+
+    }
+    return false;
 }
 
 QList<DAbstractFileController*> DFileService::getHandlerTypeByUrl(const DUrl &fileUrl,
@@ -803,17 +843,55 @@ void DFileService::insertToCreatorHash(const HandlerType &type, const HandlerCre
     DFileServicePrivate::controllerCreatorHash.insertMulti(type, creator);
 }
 
-void DFileService::openUrl(const DFMEvent &event) const
+void DFileService::openUrl(const DFMEvent &event, const bool &isOpenInNewWindow, const bool &isOpenInCurrentWindow) const
 {
     FILTER_RETURN(OpenUrl)
 
-    const DAbstractFileInfoPointer &fileInfo = createFileInfo(event.fileUrl());
-
-    if (fileInfo && fileInfo->canFetch()) {
-        emit fileSignalManager->requestChangeCurrentUrl(event);
-    } else {
-        openFile(event.fileUrl());
+    if(event.fileUrlList().count() == 0){
+        DUrlList urlList;
+        urlList << event.fileUrl();
+        const_cast<DFMEvent&>(event) << urlList;
     }
+
+    //sort urls by files and dirs`
+    DUrlList fileList, dirList;
+    DFMEvent filesEvent(event),dirsEvent(event);
+    foreach (const DUrl& url, event.fileUrlList()) {
+
+        if(isAvfsMounted() && FileUtils::isArchive(url.toLocalFile())){
+            const_cast<DUrl&>(url).setScheme(AVFS_SCHEME);
+            dirList << url;
+        } else{
+            const DAbstractFileInfoPointer &fileInfo = createFileInfo(url);
+            if(fileInfo){
+                bool isDir = fileInfo->isDir();
+                if(isDir)
+                    dirList << url;
+                else
+                    fileList << url;
+            }
+        }
+    }
+
+    filesEvent << fileList;
+    dirsEvent << dirList;
+
+    if(!isOpenInCurrentWindow){
+        if(dirList.count() > 0)
+            openNewWindow(dirsEvent, isOpenInNewWindow);
+    } else{
+
+        if(dirsEvent.fileUrlList().count() == 1){
+            //replace dirsEvent's file url with dirsEvent file list's first url which is avfs file
+            if(dirsEvent.fileUrlList().first().isAVFSFile())
+                dirsEvent << dirsEvent.fileUrlList().first();
+
+            openInCurrentWindow(dirsEvent);
+        }
+    }
+
+    if(fileList.count() > 0)
+        openFile(filesEvent);
 }
 
 void DFileService::laterRequestSelectFiles(const DFMEvent &event) const

@@ -32,7 +32,7 @@ signals:
     void start(const QString &src);
 
 public slots:
-    void showNewWindow(const DUrl &url, bool isAlwaysOpen=false);
+    void showNewWindow(const DUrl &url, const bool &isNewWindow=false);
     static int getWindowId(const QWidget *window);
     static QWidget* getWindowById(int winId);
 
