@@ -11,6 +11,8 @@
 #include "dplatformwindowhandle.h"
 #include "dialogs/messagedialog.h"
 #include "../partman/partition.h"
+#include "app/singletonapp.h"
+#include <QProcessEnvironment>
 DUTIL_USE_NAMESPACE
 //DWIDGET_BEGIN_NAMESPACE
 
@@ -22,6 +24,33 @@ int main(int argc, char *argv[])
     //Load DXcbPlugin
     DApplication::loadDXcbPlugin();
     DApplication a(argc, argv);
+
+    qputenv("QT_IM_MODULE", "xim");
+    qputenv("GTK_IM_MODULE", "xim");
+    qputenv("QT4_IM_MODULE", "xim");
+    qputenv("IM_CONFIG_PHASE", "1");
+    qputenv("XMODIFIERS", "@im");
+    qputenv("IBUS_DISABLE_SNOOPER", "1");
+    qputenv("QT_LINUX_ACCESSIBILITY_ALWAYS_ON", "1");
+    qputenv("WINDOWPATH","2");
+    qputenv("XDG_SESSION_TYPE","x11");
+    qputenv("PAGER", "less");
+    qputenv("PAGER", "-R");
+    qputenv("SHLVL", "1");
+    qputenv("DBUS_STARTER_BUS_TYPE", "session");
+    qputenv("GDMSESSION", "deepin");
+    qputenv("DESKTOP_SESSION", "deepin");
+
+    qDebug () << a.libraryPaths();
+//    qDebug () << QProcessEnvironment::systemEnvironment().keys();
+    foreach(QString key ,QProcessEnvironment::systemEnvironment().keys()){
+        qDebug () << key << "=" << QProcessEnvironment::systemEnvironment().value(key);
+    }
+
+    //Singleton app handle
+    bool isSingletonApp = SingletonApp::instance()->setSingletonApplication("usb-device-formatter");
+    if(!isSingletonApp)
+        return 0;
 
     //Load translation
     QTranslator *translator = new QTranslator(QCoreApplication::instance());

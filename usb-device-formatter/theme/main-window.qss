@@ -17,6 +17,15 @@ QLabel#Line{
     background-color: rgba(0,0,0,20);
 }
 
+QLabel#WarnMsg{
+    font-size: 10;
+    color: #888888;
+}
+
+QLabel#WarnText{
+    color: #ff0000;
+}
+
 QComboBox#TypeCombo{
     border: 1px solid rgba(0,0,0,0.2);
     border-radius: 2px;
@@ -43,10 +52,9 @@ QPushButton#ComfirmButton{
     font-size: 14px;
     color: #0599FF;
     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,stop: 0 #FFFFFF,stop: 1 #FDFDFD);
-    border: 1px solid rgba(0,131,255,0.40);
+    border: 1px solid rgba(0, 131, 255, 0.4);
     border-radius: 4px;
 }
-
 
 QPushButton#ComfirmButton:hover{
     color: #FFFFFF;
@@ -64,9 +72,8 @@ QPushButton#ComfirmButton:pressed{
 
 QPushButton#ComfirmButton::disabled{
     color: #999999;
-    background-color: #F9F9F9;
-    border: 1px solid rgba(0,0,0,0.05);
-    box-shadow: 0 1px 1px 0 rgba(0,0,0,0.05);
+    background-color: #fdfdfd;
+    border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 QLineEdit{

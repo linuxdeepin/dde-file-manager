@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui concurrent
+QT       += core gui concurrent network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -30,7 +30,8 @@ SOURCES += main.cpp \
     view/finishpage.cpp \
     view/errorpage.cpp \
     app/cmdmanager.cpp \
-    dialogs/messagedialog.cpp
+    dialogs/messagedialog.cpp \
+    app/singletonapp.cpp
 
 HEADERS  += \
     view/mainwindow.h \
@@ -42,7 +43,8 @@ HEADERS  += \
     view/finishpage.h \
     view/errorpage.h \
     app/cmdmanager.h \
-    dialogs/messagedialog.h
+    dialogs/messagedialog.h \
+    app/singletonapp.h
 
 RESOURCES += \
     theme/theme.qrc
