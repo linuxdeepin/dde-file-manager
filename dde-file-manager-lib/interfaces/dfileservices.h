@@ -126,9 +126,12 @@ public:
 
     DAbstractFileWatcher *createFileWatcher(const DUrl &fileUrl, QObject *parent = 0) const;
 
+    bool isAvfsMounted() const;
 public slots:
-    void openNewWindow(const DUrl &fileUrl) const;
-    void openUrl(const DFMEvent &event) const;
+    void openNewWindow(const DFMEvent& event, const bool &isNewWindow = true) const;
+    void openInCurrentWindow(const DFMEvent& event) const;
+    void openFile(const DFMEvent& event) const;
+    void openUrl(const DFMEvent &event, const bool& isOpenInNewWindow = true,const bool& isOpenInCurrentWindow = false) const;
 
 signals:
     void fileOpened(const DUrl &fileUrl) const;

@@ -76,16 +76,9 @@ void AppController::actionOpen(const DFMEvent &event)
         e << urls.first();
         e << DUrlList();
 
-        fileService->openUrl(e);
+        fileService->openUrl(e, false, true);
     } else {
-        foreach (DUrl url, urls) {
-            const DAbstractFileInfoPointer info = fileService->createFileInfo(url);
-            if (info->isFile()) {
-                fileService->openFile(url);
-            } else if(info->isDir()) {
-                emit fileSignalManager->requestOpenNewWindowByUrl(url, true);
-            }
-        }
+        fileService->openUrl(event, true);
     }
 }
 
@@ -116,10 +109,12 @@ void AppController::asycOpenDisk(const QString &path)
 
 void AppController::actionOpenInNewWindow(const DFMEvent &event)
 {
-    DUrlList urls = event.fileUrlList();;
-    foreach (DUrl url, urls) {
-        fileService->openNewWindow(url);
+    if(event.fileUrlList().count() == 0){
+        DUrlList urlList;
+        urlList << event.fileUrl();
+        const_cast<DFMEvent&>(event) << urlList;
     }
+    fileService->openNewWindow(event, true);
 }
 
 void AppController::actionOpenInNewTab(const DFMEvent &event)
@@ -471,22 +466,12 @@ void AppController::actionProperty(const DFMEvent &event)
 
 void AppController::actionNewWindow(const DFMEvent &event)
 {
-    bool open_ok = false;
-
-    for (const DUrl &fileUrl : event.fileUrlList()) {
-        const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(fileUrl);
-
-        if (fileInfo->isDir()) {
-            fileService->openNewWindow(fileUrl);
-            open_ok = true;
-        }
+    if(event.fileUrlList().count() == 0){
+        DUrlList urlList;
+        urlList << event.fileUrl();
+        const_cast<DFMEvent&>(event) << urlList;
     }
-
-    if (!open_ok) {
-        fileService->openNewWindow(event.fileUrl());
-
-        return;
-    }
+    fileService->openNewWindow(event, true);
 }
 
 void AppController::actionHelp(const DFMEvent &event)

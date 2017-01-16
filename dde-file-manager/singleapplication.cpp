@@ -6,6 +6,8 @@
 #include "widgets/commandlinemanager.h"
 #include "widgets/singleton.h"
 #include "filemanagerapp.h"
+#include "dfmevent.h"
+#include "interfaces/dfileservices.h"
 
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -61,9 +63,10 @@ void SingleApplication::newClientProcess(const QString &key)
                 if (paths.size() > 0){
                     isShowPropertyDialogRequest = CommandLineManager::instance()->isSet("p");
                 }else{
-                    isNewWindow = CommandLineManager::instance()->isSet("n");
                     paths << QDir::homePath();
                 }
+
+                isNewWindow = CommandLineManager::instance()->isSet("n");
 
                 QJsonArray jsPaths;
                 foreach (QString path, paths) {
@@ -178,13 +181,18 @@ void SingleApplication::readData()
         }
     }
 
+    DFMEvent event;
+    DUrlList urlList;
     foreach (QString path, paths) {
         if (!path.isEmpty()){
             url = DUrl::fromUserInput(path);
+            urlList << url;
         }
-        qDebug() << url << isNewWindow;
-        emit fileSignalManager->requestOpenNewWindowByUrl(url, isNewWindow);
     }
+    event << urlList;
+    event << urlList.first();
+
+    fileService->openUrl(event, isNewWindow);
 }
 
 void SingleApplication::closeServer()
