@@ -48,7 +48,7 @@ public:
     const DAbstractFileInfoPointer fileInfo() const Q_DECL_OVERRIDE;
     QString path() const Q_DECL_OVERRIDE;
 
-    bool hasIteratorOfSubdir() const Q_DECL_OVERRIDE;
+    bool enableIteratorByKeyword(const QString &keyword) Q_DECL_OVERRIDE;
 
 private:
     QDirIterator iterator;
@@ -465,12 +465,7 @@ FileDirIterator::FileDirIterator(const QString &path, const QStringList &nameFil
     : DDirIterator()
     , iterator(path, nameFilters, filter, flags)
 {
-    if (system("which rlocate") == 0 && !nameFilters.isEmpty()) {
-        QString arg = path + QString(".*%1[^/]*$").arg(nameFilters.first());
 
-        processRlocate = new QProcess();
-        processRlocate->start("rlocate", QStringList() << "-r" << arg << "-i", QIODevice::ReadOnly);
-    }
 }
 
 FileDirIterator::~FileDirIterator()
@@ -548,13 +543,29 @@ const DAbstractFileInfoPointer FileDirIterator::fileInfo() const
 
 QString FileDirIterator::path() const
 {
-    if (!processRlocate)
-        return iterator.filePath();
-
-    return currentFileInfo.filePath();
+    return iterator.filePath();
 }
 
-bool FileDirIterator::hasIteratorOfSubdir() const
+bool FileDirIterator::enableIteratorByKeyword(const QString &keyword)
 {
-    return processRlocate;
+    if (processRlocate)
+        return true;
+
+    QProcess process;
+
+    process.closeReadChannel(QProcess::StandardError);
+    process.closeReadChannel(QProcess::StandardOutput);
+    process.start("which rlocate");
+    process.waitForFinished();
+
+    if (process.exitCode() == 0 && !keyword.isEmpty()) {
+        QString arg = path() + QString(".*%1[^/]*$").arg(keyword);
+
+        processRlocate = new QProcess();
+        processRlocate->start("rlocate", QStringList() << "-r" << arg << "-i", QIODevice::ReadOnly);
+
+        return true;
+    }
+
+    return false;
 }

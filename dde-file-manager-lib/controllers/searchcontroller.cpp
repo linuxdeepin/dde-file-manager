@@ -204,6 +204,7 @@ public:
     QDirIterator::IteratorFlags m_flags;
     mutable QList<DUrl> searchPathList;
     mutable DDirIteratorPointer it;
+    mutable bool m_hasIteratorByKeywordOfCurrentIt;
 
     bool closed = false;
 };
@@ -222,7 +223,6 @@ SearchDiriterator::SearchDiriterator(const DUrl &url, const QStringList &nameFil
     keyword = url.searchKeyword();
     regular = QRegularExpression(QRegularExpression::escape((keyword)), QRegularExpression::CaseInsensitiveOption);
     searchPathList << targetUrl;
-    m_nameFilters << keyword;
 }
 
 SearchDiriterator::~SearchDiriterator()
@@ -264,9 +264,9 @@ bool SearchDiriterator::hasNext() const
             if (!it) {
                 continue;
             }
-        }
 
-        bool hasIteratorOfSubdir = it->hasIteratorOfSubdir();
+            m_hasIteratorByKeywordOfCurrentIt = it->enableIteratorByKeyword(keyword);
+        }
 
         while (it->hasNext()) {
             if (closed)
@@ -278,7 +278,7 @@ bool SearchDiriterator::hasNext() const
 
             fileInfo->makeAbsolute();
 
-            if (!hasIteratorOfSubdir && fileInfo->isDir() && !fileInfo->isSymLink()) {
+            if (!m_hasIteratorByKeywordOfCurrentIt && fileInfo->isDir() && !fileInfo->isSymLink()) {
                 const DUrl &url = fileInfo->fileUrl();
 
                 if (!searchPathList.contains(url))
@@ -320,7 +320,7 @@ const DAbstractFileInfoPointer SearchDiriterator::fileInfo() const
 
 QString SearchDiriterator::path() const
 {
-    return currentFileInfo ? currentFileInfo->path() : QString();
+    return it ? it->path() : QString();
 }
 
 void SearchDiriterator::close()
