@@ -36,6 +36,9 @@ public:
 
     Q_ENUM(FsType)
 
+    static int getMaxNameLengthByTypeString(const QString& typeStr);
+    static int getMaxNameLengthByType(const FsType& type);
+
     explicit PartitionManager(QObject *parent = 0);
 
 signals:

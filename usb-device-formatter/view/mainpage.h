@@ -7,6 +7,7 @@
 #include <QComboBox>
 #include <QLineEdit>
 #include "widgets/progressline.h"
+#include <QVariantAnimation>
 
 class MainPage : public QWidget
 {
@@ -14,17 +15,9 @@ class MainPage : public QWidget
 
 public:
     enum FsType {
-        Efi,
-        Ext2,
-        Ext3,
-        Ext4,
         Fat16,
         Fat32,
-        Hfsplus,
-        Jfs,
-        Linuxswap,
         Ntfs,
-        Xfs
     };
     Q_ENUM(FsType)
 
@@ -38,6 +31,9 @@ public:
     void setTargetPath(const QString &targetPath);
     QString formatSize(const qint64& num);
     QString getSelectedFs() const;
+
+    int getMaxLabelNameLength() const;
+    void setMaxLabelNameLength(int maxLabelNameLength);
 
 signals:
 
@@ -54,10 +50,12 @@ private:
     QStringList m_fileFormat;
     QString m_defautlFormat;
     QLineEdit* m_labelLineEdit = NULL;
+    QLabel* m_warnLabel = NULL;
     QString m_targetPath;
     QLabel* m_remainLabel = NULL;
-    QLabel* m_warnLabel = NULL;
     QLabel* m_nameLabel = NULL;
+    int m_maxLabelNameLength = 0;
+    QVariantAnimation* animator;
 };
 
 #endif // MAINPAGE_H
