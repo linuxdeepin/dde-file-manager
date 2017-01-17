@@ -13,7 +13,7 @@
 #include <ddialog.h>
 #include <dplatformwindowhandle.h>
 #include <DTitlebar>
-
+#include "dcheckbox.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -40,7 +40,7 @@ signals:
     void heightChanged();
     void conflictShowed(const QMap<QString, QString>& jobDetail);
     void conflictHided(const QMap<QString, QString>& jobDetail);
-    void hovered();
+    void hovereChanged(const bool& hover);
 
 public slots:
     void setTargetObj(QString targetObj);
@@ -55,7 +55,7 @@ public slots:
     void handleResponse();
     void updateMessage(const QMap<QString, QString>& data);
     void updateTipMessage();
-    void handleLineDisplay(const int& row);
+    void handleLineDisplay(const int& row, const bool &hover, const int &taskNum);
 
     void showConflict();
     void hideConflict();
@@ -113,7 +113,7 @@ signals:
     void conflictShowed(const QMap<QString, QString>& jobDetail);
     void conflictHided(const QMap<QString, QString>& jobDetail);
     void closed();
-    void currentHoverRowChanged(const int& row);
+    void currentHoverRowChanged(const int& row, const bool& hover, const int& taskNum);
 
 public slots:
     void setTitle(QString title);
@@ -133,7 +133,7 @@ public slots:
     void handleConflictResponse(const QMap<QString, QString>& jobDetail, const QMap<QString, QVariant>& response);
 
     void handleMinimizeButtonClick();
-    void onItemHovered();
+    void onItemHovered(const bool &hover);
 protected:
     void closeEvent(QCloseEvent* event);
 
