@@ -1,4 +1,5 @@
 #include "cmdmanager.h"
+#include <QStringList>
 
 CMDManager *CMDManager::instance()
 {
@@ -11,11 +12,16 @@ CMDManager *CMDManager::instance()
 
 void CMDManager::process(const QApplication &app)
 {
+    init();
     parser.process(app);
 }
 
 void CMDManager::init()
 {
+    parser.addOption(m_modelModeOpt);
+    parser.setApplicationDescription("Usb Device Formatter");
+    parser.addHelpOption();
+    parser.addVersionOption();
 }
 
 bool CMDManager::isSet(const QString &name)
@@ -28,7 +34,18 @@ const QString CMDManager::getPath()
     return parser.positionalArguments().at(0);
 }
 
-CMDManager::CMDManager(QObject *parent) : QObject(parent)
+const int CMDManager::getWinId()
 {
-    init();
+    QString winId = parser.value(m_modelModeOpt);
+    if(winId.isEmpty())
+        return -1;
+    return winId.toInt();
+}
+
+CMDManager::CMDManager(QObject *parent) :
+    QObject(parent),
+    m_modelModeOpt(QStringList() << "m" << "model-mode",
+                   QCoreApplication::translate("main", "Enable model mode."),
+                   QCoreApplication::translate("main", "window ID"))
+{
 }
