@@ -66,6 +66,12 @@ ComputerViewItem::ComputerViewItem(QWidget *parent):
     getTextEdit()->setReadOnly(true);
     getTextEdit()->setTextInteractionFlags(Qt::NoTextInteraction);
     getTextEdit()->setStyleSheet("border:1px solid red");
+
+    progressLine = new ProgressLine(this);
+    progressLine->setAlignment(Qt::AlignHCenter);
+    progressLine->setFrameShape(QFrame::NoFrame);
+    progressLine->setFixedSize(width(), 2);
+    progressLine->hide();
 }
 
 QIcon ComputerViewItem::getIcon(int size)
@@ -226,6 +232,9 @@ void ComputerViewItem::updateStatus()
         const qlonglong used = total - m_deviceInfo->getFree();
         getProgressLine()->setMax(total);
         getProgressLine()->setValue(used);
+        if(progressLine->isHidden())
+            progressLine->show();
+        progressLine->move((this->width() - progressLine->width())/2, getIconLabel()->y() + getIconLabel()->height() + 3);
     } else
         getProgressLine()->setFixedHeight(0);
 }
