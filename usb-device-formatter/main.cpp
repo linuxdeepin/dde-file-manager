@@ -13,6 +13,8 @@
 #include "../partman/partition.h"
 #include "app/singletonapp.h"
 #include <QProcessEnvironment>
+#include <QX11Info>
+#include <X11/Xlib.h>
 DUTIL_USE_NAMESPACE
 //DWIDGET_BEGIN_NAMESPACE
 
@@ -40,12 +42,6 @@ int main(int argc, char *argv[])
     qputenv("DBUS_STARTER_BUS_TYPE", "session");
     qputenv("GDMSESSION", "deepin");
     qputenv("DESKTOP_SESSION", "deepin");
-
-    qDebug () << a.libraryPaths();
-//    qDebug () << QProcessEnvironment::systemEnvironment().keys();
-    foreach(QString key ,QProcessEnvironment::systemEnvironment().keys()){
-        qDebug () << key << "=" << QProcessEnvironment::systemEnvironment().value(key);
-    }
 
     //Singleton app handle
     bool isSingletonApp = SingletonApp::instance()->setSingletonApplication("usb-device-formatter");
@@ -92,6 +88,14 @@ int main(int argc, char *argv[])
     QRect rect = w->geometry();
     rect.moveCenter(qApp->desktop()->geometry().center());
     w->move(rect.x(), rect.y());
+
+    if(CMDManager::instance()->isSet("m")){
+        int parentWinId = CMDManager::instance()->getWinId();
+        int winId = w->winId();
+
+        if(parentWinId != -1)
+            XSetTransientForHint(QX11Info::display(), (Window)winId, (Window)parentWinId);
+    }
 
     int code = a.exec();
     quick_exit(code);

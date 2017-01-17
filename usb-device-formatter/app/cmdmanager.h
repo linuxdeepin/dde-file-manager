@@ -15,6 +15,7 @@ public:
     void init();
     bool isSet(const QString& name);
     const QString getPath();
+    const int getWinId();
 
 signals:
 
@@ -23,6 +24,7 @@ public slots:
 private:
     explicit CMDManager(QObject *parent = 0);
     QCommandLineParser parser;
+    QCommandLineOption m_modelModeOpt;
 };
 
 #endif // CMDMANAGER_H

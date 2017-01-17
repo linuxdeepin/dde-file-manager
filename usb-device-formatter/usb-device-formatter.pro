@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui concurrent network
+QT       += core gui concurrent network x11extras
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -13,7 +13,7 @@ TEMPLATE = app
 
 include(../partman/partman.pri)
 
-PKGCONFIG += dtkwidget dtkbase dtkutil
+PKGCONFIG += dtkwidget dtkbase dtkutil x11
 
 CONFIG += c++11 link_pkgconfig
 
