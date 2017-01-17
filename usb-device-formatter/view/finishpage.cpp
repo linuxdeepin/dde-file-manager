@@ -18,8 +18,12 @@ void FinishPage::initUI()
     QString warnText = tr("Format successfuly");
     warnTextLabel->setText(warnText);
     warnTextLabel->setWordWrap(true);
+    warnTextLabel->setObjectName("StatusLabel");
 
+    mainLayout->addStretch(1);
     mainLayout->addWidget(warnIconLabel, 0, Qt::AlignHCenter);
+    mainLayout->addSpacing(10);
     mainLayout->addWidget(warnTextLabel, 0, Qt::AlignHCenter);
     setLayout(mainLayout);
+    mainLayout->addStretch(1);
 }

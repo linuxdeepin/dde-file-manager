@@ -8,7 +8,9 @@
 #include <QLineEdit>
 #include "widgets/progressline.h"
 #include <QVariantAnimation>
+#include "dcombobox.h"
 
+DWIDGET_USE_NAMESPACE
 class MainPage : public QWidget
 {
     Q_OBJECT
@@ -44,7 +46,7 @@ protected:
 
 private:
     QLabel* m_iconLabel = NULL;
-    QComboBox* m_typeCombo = NULL;
+    DComboBox* m_typeCombo = NULL;
     QPushButton* m_formatButton = NULL;
     ProgressLine* m_storageProgressBar = NULL;
     QStringList m_fileFormat;

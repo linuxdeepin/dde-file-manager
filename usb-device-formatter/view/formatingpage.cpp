@@ -17,12 +17,13 @@ void FormatingPage::initUI()
     QLabel* formatingLabel = new QLabel(this);
     QString formatingText = tr("Formating,please wait for a minute...");
     formatingLabel->setText(formatingText);
+    formatingLabel->setObjectName("StatusLabel");
 
     connect(m_progressBox, &ProgressBox::finished, this, &FormatingPage::finished);
 
     mainLayout->addStretch(1);
     mainLayout->addWidget(m_progressBox, 0 , Qt::AlignHCenter);
-    mainLayout->addSpacing(20);
+    mainLayout->addSpacing(30);
     mainLayout->addWidget(formatingLabel, 0 , Qt::AlignHCenter);
     mainLayout->addStretch(1);
     setLayout(mainLayout);

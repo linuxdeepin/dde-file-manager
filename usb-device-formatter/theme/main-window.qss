@@ -2,8 +2,12 @@ QWidget#UsbDeviceFormatter{
     /* background: white; */
 }
 
+QLabel{
+    font-family: SourceHanSansCN-Normal;
+}
+
 QLabel#TagLabel{
-    font-size: 10px;
+    font-size: 11px;
     color: #777777;
 }
 
@@ -17,34 +21,18 @@ QLabel#Line{
     background-color: rgba(0,0,0,20);
 }
 
+QLabel#StatusLabel{
+    font-size: 14px;
+    color: #444444;
+}
+
 QLabel#WarnMsg{
-    font-size: 10;
+    font-size: 11px;
     color: #888888;
 }
 
 QLabel#WarnText{
     color: #ff0000;
-}
-
-QComboBox#TypeCombo{
-    border: 1px solid rgba(0,0,0,0.2);
-    border-radius: 2px;
-    background: white;
-}
-
-QComboBox#TypeCombo::drop-down {
-    subcontrol-origin: padding;
-    subcontrol-position: top right;
-    width: 25px;
-    background: transparent;
-}
-
-QComboBox#TypeCombo::down-arrow {
-    image: url(:/icoms/icons/down.png);
-}
-
-QComboBox#TypeCombo::down-arrow:on {
-    image: url(:/icoms/icons/up.png);
 }
 
 QPushButton#ComfirmButton{
@@ -79,4 +67,8 @@ QPushButton#ComfirmButton::disabled{
 QLineEdit{
     border: 1px solid rgba(0,0,0,0.2);
     border-radius: 2px;
+}
+
+QCheckBox{
+    font-size: 11px;
 }

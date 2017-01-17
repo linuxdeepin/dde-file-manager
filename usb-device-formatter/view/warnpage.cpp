@@ -18,8 +18,14 @@ void WarnPage::initUI()
     QString warnText = tr("Formating operation will clear all datas from your disk, are you sure to continue?This option can not be restored.");
     warnTextLabel->setText(warnText);
     warnTextLabel->setWordWrap(true);
+    warnTextLabel->setObjectName("StatusLabel");
+    warnTextLabel->setAlignment(Qt::AlignHCenter);
 
+    mainLayout->addStretch(1);
     mainLayout->addWidget(warnIconLabel, 0, Qt::AlignHCenter);
+    mainLayout->addSpacing(10);
     mainLayout->addWidget(warnTextLabel, 0, Qt::AlignHCenter);
+    mainLayout->addStretch(1);
     setLayout(mainLayout);
+    setContentsMargins(20, 0, 20, 0);
 }
