@@ -11,6 +11,7 @@
 #include <QFrame>
 
 #include "fileitem.h"
+#include "progressline.h"
 #include "durl.h"
 #include "dabstractfileinfo.h"
 #include "deviceinfo/udiskdeviceinfo.h"
@@ -59,6 +60,9 @@ public:
     UDiskDeviceInfoPointer deviceInfo() const;
     void setDeviceInfo(UDiskDeviceInfoPointer deviceInfo);
 
+    inline ProgressLine* getProgressLine()
+    { return progressLine; }
+
     int windowId();
 
     int iconSize() const;
@@ -93,6 +97,7 @@ protected:
 
 private:
     void setIconSizeState(int iconSize, QIcon::Mode mode = QIcon::Normal);
+    ProgressLine* progressLine;
     DAbstractFileInfoPointer m_info;
     UDiskDeviceInfoPointer m_deviceInfo;
     int m_iconSize = 64;
