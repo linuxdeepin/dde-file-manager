@@ -19,3 +19,4 @@ void MessageDialog::initUI()
     addButton(tr("Ok"), true, DDialog::ButtonRecommend);
     setTitle(m_msg);
 }
+

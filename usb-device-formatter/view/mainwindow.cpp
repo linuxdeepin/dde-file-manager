@@ -19,6 +19,7 @@
 #include <QApplication>
 #include <QtConcurrent>
 #include "../partman/partition.h"
+#include "dialogs/messagedialog.h"
 
 using namespace PartMan;
 MainWindow::MainWindow(const QString &path, QWidget *parent):
@@ -65,7 +66,7 @@ void MainWindow::initUI()
     m_warnPage = new WarnPage(this);
     m_formatingPage = new FormatingPage(this);
     m_finishPage = new FinishPage(this);
-    m_errorPage = new ErrorPage(this);
+    m_errorPage = new ErrorPage("", this);
 
     m_pageStack->addWidget(m_mainPage);
     m_pageStack->addWidget(m_warnPage);
@@ -74,15 +75,15 @@ void MainWindow::initUI()
     m_pageStack->addWidget(m_errorPage);
 
     m_comfirmButton = new QPushButton(tr("Format"), this);
-    m_comfirmButton->setFixedSize(120, 30);
+    m_comfirmButton->setFixedSize(160, 36);
     m_comfirmButton->setObjectName("ComfirmButton");
 
     mainLayout->addWidget(titleBar);
     mainLayout->addWidget(m_pageStack);
     mainLayout->addSpacing(10);
-    mainLayout->addWidget(m_comfirmButton, 0, Qt::AlignHCenter);
-    mainLayout->addSpacing(10);
     mainLayout->addStretch(1);
+    mainLayout->addWidget(m_comfirmButton, 0, Qt::AlignHCenter);
+    mainLayout->addSpacing(35);
     setLayout(mainLayout);
 }
 
@@ -110,7 +111,6 @@ void MainWindow::formartDevice()
 {
     QtConcurrent::run([=]{
         bool result = false;
-        const QString _invokeMethod = "actionFormat";
         QString format = m_mainPage->selectedFormat();
         QString first = format.left(1);
         format.remove(0, 1);
@@ -124,7 +124,17 @@ void MainWindow::formartDevice()
         result = partitonManager.mkfs(m_formatPath,
                              m_mainPage->getSelectedFs(),
                              m_mainPage->getLabel());
-        emit taskFinished(result);
+
+        //Delay on checking out disk status
+        QTimer::singleShot(300,this, [=]{
+            if(result){
+                bool f = checkBackup();
+                emit taskFinished(f);
+                return;
+            }
+
+            emit taskFinished(result);
+        });
     });
 }
 
@@ -134,6 +144,13 @@ void MainWindow::unMountDevice()
     args << m_formatPath;
     QString cmd = "umount";
     QProcess::execute(cmd, args);
+}
+
+bool MainWindow::checkBackup()
+{
+    PartMan::Partition p = PartMan::Partition::getPartitionByDevicePath(m_formatPath);
+    if(p.fs().isEmpty())
+        return false;
 }
 
 void MainWindow::nextStep()
@@ -147,7 +164,7 @@ void MainWindow::nextStep()
     case Warn:
         m_pageStack->setCurrentWidget(m_formatingPage);
         m_currentStep = Formating;
-        m_comfirmButton->setText(tr("Formating"));
+        m_comfirmButton->setText(tr("Formatting..."));
         m_comfirmButton->setEnabled(false);
         m_formatingPage->startAnimate();
         formartDevice();
@@ -155,9 +172,12 @@ void MainWindow::nextStep()
     case Finished:
         qApp->quit();
         break;
-    case Error:
+    case FormattError:
         m_pageStack->setCurrentWidget(m_mainPage);
         m_currentStep = Normal;
+        break;
+    case RemovedWhenFormattingError :
+        qApp->quit();
         break;
     default:
         break;
@@ -172,8 +192,16 @@ void MainWindow::onFormatingFinished(const bool &successful)
         m_comfirmButton->setEnabled(true);
         m_pageStack->setCurrentWidget(m_finishPage);
     } else{
-        m_currentStep = Error;
-        m_comfirmButton->setText(tr("Reformat"));
+
+        if(!QFile::exists(m_formatPath)){
+            m_currentStep = RemovedWhenFormattingError;
+            m_comfirmButton->setText(tr("Quit"));
+            m_errorPage->setErrorMsg(tr("Your disk is removed when formatting"));
+        } else{
+            m_currentStep = FormattError;
+            m_errorPage->setErrorMsg(tr("Format failed"));
+            m_comfirmButton->setText(tr("Reformat"));
+        }
         m_comfirmButton->setEnabled(true);
         m_pageStack->setCurrentWidget(m_errorPage);
     }

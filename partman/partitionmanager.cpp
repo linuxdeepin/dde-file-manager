@@ -9,6 +9,76 @@
 
 namespace PartMan {
 
+int PartitionManager::getMaxNameLengthByTypeString(const QString &typeStr)
+{
+    QMetaEnum fsType = QMetaEnum::fromType<FsType>();
+    FsType type = (FsType)fsType.keyToValue(typeStr.toStdString().data());
+    return getMaxNameLengthByType(type);
+}
+
+int PartitionManager::getMaxNameLengthByType(const PartitionManager::FsType &type)
+{
+    switch (type) {
+    case Btrfs:
+        return 255;
+        break;
+    case Efi:
+        return 255;
+        break;
+    case Ext2:
+        return 16;
+        break;
+    case Ext3:
+        return 16;
+        break;
+    case Ext4:
+        return 16;
+        break;
+    case F2fs:
+        return 19;
+        break;
+    case Fat16:
+        return 11;
+        break;
+    case Fat32:
+        return 11;
+        break;
+    case Hfs:
+        return 27;
+        break;
+    case Hfsplus:
+        return 63;
+        break;
+    case Jfs:
+        return 11;
+        break;
+    case Linuxswap:
+        return 15;
+        break;
+    case Lvm2pv:
+        return 255;
+        break;
+    case Nilfs2:
+        return 1;
+        break;
+    case Ntfs:
+        return 128;
+        break;
+    case Reiser4:
+        return 16;
+        break;
+    case Reiserfs:
+        return 16;
+        break;
+    case Xfs:
+        return 16;
+        break;
+    default:
+        return 0;
+        break;
+    }
+}
+
 PartitionManager::PartitionManager(QObject *parent) : QObject(parent)
 {
 
@@ -392,7 +462,7 @@ bool PartitionManager::actionFormatNtfs(const QString &path, const QString &labe
     } else {
       const QString real_label = label.left(128);
       ok = SpawnCmd("mkntfs",
-                    {"-Q", "-v", "-F", QString("-L%1").arg(real_label), path},
+                    {"-Q", "-v", "-F", "-L", QString("%1").arg(real_label), path},
                     output, err);
     }
     if (!ok) {
