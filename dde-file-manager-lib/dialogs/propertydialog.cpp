@@ -399,6 +399,10 @@ void PropertyDialog::flickFolderToLeftsidBar()
     if(!window)
         return;
 
+    //when current window is minimized,cancle animation
+    if(window->windowState() == Qt::WindowMinimized)
+        return;
+
     QPoint targetPos = window->getLeftSideBar()->getMyShareItemCenterPos();
 
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(m_url);
