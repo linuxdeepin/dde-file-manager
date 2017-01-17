@@ -14,6 +14,11 @@
 #define ONE_MB_SIZE 1048576
 #define ONE_KB_SIZE 1024
 
+#undef signals
+extern "C" {
+    #include <gio/gio.h>
+}
+#define signals public
 
 class FileJob : public QObject
 {
@@ -131,9 +136,17 @@ private:
     QMap<QString, QString> m_jobDetail;
     QMap<QString, QString> m_checkDiskJobDataDetail;
     bool m_isCheckingDisk = false;
+
     qint64 m_bytesCopied;
     qint64 m_totalSize = 1;
     qint64 m_bytesPerSec;
+
+    bool m_isGvfsFileOperationUsed = false;
+    qint64 m_bytesCopied = 0;
+    qint64 m_totalSize = 1;
+    qint64 m_bytesPerSec = 0;
+    qint64 m_last_current_num_bytes = 0;
+
     QString m_progress;
     float m_factor;
     bool m_isJobAdded = false;
@@ -154,15 +167,21 @@ private:
     bool m_isInSameDisk = true;
     bool m_isFinished = false;
 
+    GCancellable* m_abortGCancellable = NULL;
+
     bool copyFile(const QString &srcFile, const QString &tarDir, bool isMoved=false, QString *targetPath = 0);
+    static void showProgress(goffset current_num_bytes, goffset total_num_bytes, gpointer user_data);
+    bool copyFileByGio(const QString &srcFile, const QString &tarDir, bool isMoved=false, QString *targetPath = 0);
     bool copyDir(const QString &srcDir, const QString &tarDir, bool isMoved=false, QString *targetPath = 0);
     bool moveFile(const QString &srcFile, const QString &tarDir, QString *targetPath = 0);
+    bool moveFileByGio(const QString &srcFile, const QString &tarDir, QString *targetPath = 0);
     bool moveDir(const QString &srcDir, const QString &tarDir, QString *targetPath = 0);
     bool handleMoveJob(const QString &srcPath, const QString &tarDir, QString *targetPath = 0);
     bool handleSymlinkFile(const QString &srcFile, const QString &tarDir, QString *targetPath = 0);
 
     bool restoreTrashFile(const QString &srcFile, const QString &tarFile);
     bool deleteFile(const QString &file);
+    bool deleteFileByGio(const QString &srcFile);
     bool deleteDir(const QString &dir);
     bool moveDirToTrash(const QString &dir, QString *targetPath = 0);
     bool moveFileToTrash(const QString &file, QString *targetPath = 0);
@@ -175,6 +194,8 @@ private:
     bool checkTrashFileOutOf1GB(const DUrl& url);
 
     QString getNotExistsTrashFileName(const QString &fileName);
+    bool checkUseGvfsFileOperation(const DUrlList &files, const DUrl &destination);
+    bool checkUseGvfsFileOperation(const QString& path);
 };
 
 #endif // FILEJOB_H
