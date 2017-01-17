@@ -35,6 +35,7 @@ qint64 FileJob::Msec_For_Display = 1000;
 qint64 FileJob::Data_Block_Size = 65536;
 qint64 FileJob::Data_Flush_Size = 16777216;
 
+#define IS_IO_ERROR(__error, KIND) (((__error)->domain == G_IO_ERROR && (__error)->code == G_IO_ERROR_ ## KIND))
 
 bool FileJob::setDirPermissions(const QString &scrPath, const QString& tarDirPath)
 {
@@ -51,6 +52,8 @@ FileJob::FileJob(JobType jobType, QObject *parent) : QObject(parent)
     qRegisterMetaType<QMap<QString, QString>>();
     FileJobCount += 1;
     m_status = FileJob::Started;
+
+    m_abortGCancellable = g_cancellable_new();
 
     m_trashLoc = QString("%1/.local/share/Trash").arg(QDir::homePath());
     m_id = QString::number(FileJobCount);
@@ -198,6 +201,8 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
     qDebug() << "Do file operation is started" << m_jobDetail;
 
     jobPrepared();
+
+    m_isGvfsFileOperationUsed = checkUseGvfsFileOperation(files, destination);
 
     DUrlList list;
     QString tarDirPath = destination.toLocalFile();
@@ -425,6 +430,7 @@ void FileJob::started()
 
 void FileJob::cancelled()
 {
+    g_cancellable_cancel(m_abortGCancellable);
     m_status = FileJob::Cancelled;
 }
 
@@ -575,6 +581,11 @@ void FileJob::setIsAborted(bool isAborted)
 
 bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMoved, QString *targetPath)
 {
+    if (m_isGvfsFileOperationUsed){
+        return copyFileByGio(srcFile, tarDir, isMoved, targetPath);
+    }
+    qDebug() << "copy file by qtio" << srcFile << tarDir;
+
     if (m_isAborted)
         return false;
     if(m_applyToAll && m_status == FileJob::Cancelled){
@@ -738,41 +749,51 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
                     }
                 }
 #else
-                if(from.atEnd())
+                qint64 inBytes = from.read(block, Data_Block_Size);
+
+                if(inBytes == 0)
                 {
                     if ((m_totalSize - m_bytesCopied) <= 1){
                         m_bytesCopied = m_totalSize;
                     }
-                    to.flush();
-                    from.close();
-                    to.close();
-
-                    if (targetPath)
-                        *targetPath = m_tarPath;
-
                     if (from.size() == to.size()){
+                        int fsyncRet = fsync(to.handle());
+                        if(fsyncRet == -1)
+                        {
+                            //Operation failed
+                            qWarning() << "fsync data to disk failed";
+                        }
+                        to.flush();
+                        to.close();
+                        from.close();
+                        if (targetPath)
+                            *targetPath = m_tarPath;
                         return true;
                     }else{
-                        qWarning() << m_srcPath << "size:" << from.size() << FileUtils::formatSize(from.size());
-                        qWarning() << m_tarPath << "size:" << to.size() << FileUtils::formatSize(to.size());
-                        return false;
+                        qWarning() << m_srcPath << "from size:" << from.size() << FileUtils::formatSize(from.size());
+                        qWarning() << m_tarPath << "to size:" << to.size() << FileUtils::formatSize(to.size());
                     }
                 }
-                to.waitForBytesWritten(-1);
 
-                qint64 inBytes = from.read(block, Data_Block_Size);
-                to.write(block, inBytes);
+                qint64 availableBytes = inBytes;
+
+                while (true) {
+                    qint64 writtenBytes = to.write(block, availableBytes);
+                    availableBytes = availableBytes - writtenBytes;
+                    if (writtenBytes == 0 && availableBytes == 0){
+                        break;
+                    }
+                }
+
                 m_bytesCopied += inBytes;
                 m_bytesPerSec += inBytes;
 
                 if (m_bytesCopied % (Data_Flush_Size) == 0){
-                    to.flush();
-                    to.close();
-                    if(!to.open(QIODevice::WriteOnly | QIODevice::Append))
+                    int fsyncRet = fsync(to.handle());
+                    if(fsyncRet == -1)
                     {
                         //Operation failed
-                        qDebug() << tarDir << "isn't write only";
-                        return false;
+                        qWarning() << "fsync data to disk failed";
                     }
                 }
 #endif
@@ -794,6 +815,140 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
 
     }
     return false;
+}
+
+void FileJob::showProgress(goffset current_num_bytes, goffset total_num_bytes, gpointer user_data)
+{
+    Q_UNUSED(total_num_bytes)
+
+    FileJob* job = static_cast<FileJob*>(user_data);
+//    qDebug() << current_num_bytes << total_num_bytes;
+    qint64 writtenBytes = current_num_bytes - job->m_last_current_num_bytes;
+    job->m_bytesPerSec += writtenBytes;
+    job->m_bytesCopied += writtenBytes;
+    job->m_last_current_num_bytes = current_num_bytes;
+}
+
+bool FileJob::copyFileByGio(const QString &srcFile, const QString &tarDir, bool isMoved, QString *targetPath)
+{
+    qDebug() << "copy file by gvfs" << srcFile << tarDir;
+    if (m_isAborted)
+        return false;
+    if(m_applyToAll && m_status == FileJob::Cancelled){
+        m_skipandApplyToAll = true;
+    }else if(!m_applyToAll && m_status == FileJob::Cancelled){
+        m_status = Started;
+    }
+
+    QFileInfo srcFileInfo(srcFile);
+    QFileInfo tarDirInfo(tarDir);
+    m_srcFileName = srcFileInfo.fileName();
+    m_tarDirName = tarDirInfo.fileName();
+    m_srcPath = srcFile;
+    m_tarPath = tarDir + "/" + m_srcFileName;
+
+    QFileInfo targetInfo(m_tarPath);
+    m_status = Started;
+
+    //We only check the conflict of the files when
+    //they are not in the same folder
+    bool isTargetExists = targetInfo.exists();
+
+    if(srcFileInfo.absolutePath() != targetInfo.absolutePath()){
+        if(isTargetExists && !m_applyToAll)
+        {
+            if (!isMoved){
+                jobConflicted();
+            }else{
+                m_isReplaced = true;
+            }
+        }else if (isTargetExists && m_skipandApplyToAll){
+            return false;
+        }
+    }
+
+    GError *error;
+    GFile *source = NULL, *target=NULL;
+    GFileCopyFlags flags;
+
+    flags = static_cast<GFileCopyFlags>(G_FILE_COPY_NONE | G_FILE_COPY_ALL_METADATA);
+    error = NULL;
+    bool result = false;
+    while(true)
+    {
+        switch(m_status)
+        {
+            case FileJob::Started:
+            {
+                if (isTargetExists){
+                    if(!m_isReplaced)
+                    {
+                        m_tarPath = checkDuplicateName(m_tarPath);
+                    }else
+                    {
+                        if (targetInfo.isSymLink()){
+                            QFile(m_tarPath).remove();
+                        }else if (!targetInfo.isSymLink() && targetInfo.isDir()){
+                            QDir(m_tarPath).removeRecursively();
+                        }else{
+                            flags = static_cast<GFileCopyFlags>(flags | G_FILE_COPY_OVERWRITE);
+                        }
+
+                        if(!m_applyToAll)
+                            m_isReplaced = false;
+                    }
+                }
+
+                std::string std_srcPath = m_srcPath.toStdString();
+                source = g_file_new_for_path(std_srcPath.data());
+
+                std::string std_tarPath = m_tarPath.toStdString();
+                target = g_file_new_for_path(std_tarPath.data());
+
+                m_last_current_num_bytes = 0;
+
+                m_status = Run;
+                break;
+            }
+            case FileJob::Run:
+            {
+                GFileProgressCallback progress_callback = FileJob::showProgress;
+                if (!g_file_copy (source, target, flags, m_abortGCancellable, progress_callback, this, &error)){
+                    if (error){
+                        qDebug() << error->message;
+                        g_error_free (error);
+                        cancelled();
+                    }
+                    result = true;
+                }else{
+                    m_last_current_num_bytes = 0;
+                    if (error && IS_IO_ERROR (error, CANCELLED)) {
+                        qDebug() << error->message;
+                        g_error_free (error);
+                    }
+                    if (targetPath)
+                        *targetPath = m_tarPath;
+                    result = true;
+                }
+                goto unref;
+            }
+            case FileJob::Paused:
+                QThread::msleep(100);
+                m_lastMsec = m_timer.elapsed();
+                break;
+            case FileJob::Cancelled:
+                goto unref;
+            default:
+                goto unref;
+         }
+
+    }
+unref:
+    if (source)
+        g_object_unref (source);
+    if (target)
+        g_object_unref (target);
+    return result;
 }
 
 bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved, QString *targetPath)
@@ -936,7 +1091,142 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
 
 bool FileJob::moveFile(const QString &srcFile, const QString &tarDir, QString *targetPath)
 {
+    /*use fuse to moveFile file if file is samba/mtp/afc which can be monitor by inotify*/
+//    if (m_isGvfsFileOperationUsed){
+//        return moveFileByGio(srcFile, tarDir, targetPath);
+//    }else{
+//        qDebug() << "move file by qtio" << srcFile << tarDir;
+//    }
+
     return handleMoveJob(srcFile, tarDir, targetPath);
+}
+
+bool FileJob::moveFileByGio(const QString &srcFile, const QString &tarDir, QString *targetPath)
+{
+    qDebug() << "move file by gvfs" << srcFile << tarDir;
+    QString srcPath(srcFile);
+
+    QFileInfo scrFileInfo(srcPath);
+
+    if (scrFileInfo.isDir() && scrFileInfo.exists()){
+        DUrl srcUrl(srcPath);
+        DUrl tarUrl(tarDir);
+        if(DUrl::childrenList(tarUrl).contains(srcUrl)){
+            emit requestCopyMoveToSelfDialogShowed(m_jobDetail);
+            /*copyDir/deleteDir will excute if return false;*/
+            return true;
+        }
+    }
+
+    if (m_isAborted)
+        return false;
+
+    if(m_applyToAll && m_status == FileJob::Cancelled){
+        m_skipandApplyToAll = true;
+    }else if(!m_applyToAll && m_status == FileJob::Cancelled){
+        m_status = Started;
+    }
+
+    QDir to(tarDir);
+    m_srcFileName = scrFileInfo.fileName();
+    m_tarDirName = to.dirName();
+    m_srcPath = srcPath;
+    m_tarPath = tarDir;
+    m_status = Started;
+
+    bool isTargetExists = to.exists(m_srcFileName);
+
+    //We only check the conflict of the files when
+    //they are not in the same folder
+    if(scrFileInfo.absolutePath()== tarDir && isTargetExists)
+        return true;
+    else{
+        if(isTargetExists && !m_applyToAll)
+        {
+            jobConflicted();
+        }else if (isTargetExists && m_skipandApplyToAll){
+            return false;
+        }
+    }
+
+    GError *error;
+    GFile *source = NULL, *target=NULL;
+    GFileCopyFlags flags;
+
+    flags = static_cast<GFileCopyFlags>(G_FILE_COPY_NONE | G_FILE_COPY_ALL_METADATA);
+    error = NULL;
+
+    bool result = false;
+
+    while(true)
+    {
+        switch(m_status)
+        {
+            case FileJob::Started:
+            {
+                if(!m_isReplaced)
+                {
+                    m_tarPath = checkDuplicateName(m_tarPath + "/" + m_srcFileName);
+                }
+                else
+                {
+                    m_tarPath = m_tarPath + "/" + m_srcFileName;
+
+                    flags = static_cast<GFileCopyFlags>(flags | G_FILE_COPY_OVERWRITE);
+
+                    if(!m_applyToAll)
+                        m_isReplaced = false;
+                }
+
+                std::string std_srcPath = m_srcPath.toStdString();
+                source = g_file_new_for_path(std_srcPath.data());
+
+                std::string std_tarPath = m_tarPath.toStdString();
+                target = g_file_new_for_path(std_tarPath.data());
+
+                m_last_current_num_bytes = 0;
+
+
+                m_status = Run;
+                break;
+            }
+            case FileJob::Run:
+            {
+                GFileProgressCallback progress_callback = FileJob::showProgress;
+                if (!g_file_move (source, target, flags, m_abortGCancellable, progress_callback, this, &error)){
+                    if (error){
+                        qDebug() << error->message;
+                        g_error_free (error);
+                        cancelled();
+                    }
+                    result = true;
+                }else{
+                    m_last_current_num_bytes = 0;
+                    if (error && IS_IO_ERROR (error, CANCELLED)) {
+                        qDebug() << error->message;
+                        g_error_free (error);
+                    }
+                    if (targetPath)
+                        *targetPath = m_tarPath;
+                    result = true;
+                }
+                goto unref;
+            }
+            case FileJob::Paused:
+                QThread::msleep(100);
+                break;
+            case FileJob::Cancelled:
+                goto unref;
+            default:
+                goto unref;
+        }
+    }
+unref:
+    if (source)
+        g_object_unref (source);
+    if (target)
+        g_object_unref (target);
+    return result;
 }
 
 bool FileJob::moveDir(const QString &srcDir, const QString &tarDir, QString *targetPath)
@@ -1042,7 +1332,7 @@ bool FileJob::handleMoveJob(const QString &srcPath, const QString &tarDir, QStri
                 QThread::msleep(100);
                 break;
             case FileJob::Cancelled:
-                return true;
+                return false;
             default:
                 return false;
          }
@@ -1189,6 +1479,13 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
 
 bool FileJob::deleteFile(const QString &file)
 {
+    /*use fuse to delete file if file is samba/mtp/afc which can be monitor by inotify*/
+//    if (checkUseGvfsFileOperation(file)){
+//        return deleteFileByGio(file);
+//    }
+
+    qDebug() << "delete file by qtio" << file;
+
     if(QFile::remove(file)){
         qDebug() << " delete file:" << file << "successfully";
         return true;
@@ -1198,6 +1495,29 @@ bool FileJob::deleteFile(const QString &file)
         qDebug() << "unable to delete file:" << file;
         return false;
     }
+}
+
+bool FileJob::deleteFileByGio(const QString &srcFile)
+{
+    qDebug() << "delete file by gvfs" << srcFile;
+    GFile *source;
+    GError* error = NULL;
+
+    std::string std_srcPath = srcFile.toStdString();
+    source = g_file_new_for_path(std_srcPath.data());
+
+    bool result = false;
+    if (!g_file_delete (source, NULL, &error)){
+        if (error){
+            qDebug() << error->message;
+            g_error_free (error);
+        }
+    }else{
+        result = true;
+    }
+    if (source)
+        g_object_unref (source);
+    return result;
 }
 
 bool FileJob::deleteDir(const QString &dir)
@@ -1249,6 +1569,9 @@ bool FileJob::moveDirToTrash(const QString &dir, QString *targetPath)
         emit result("cancelled");
         return false;
     }
+
+    qDebug() << "moveDirToTrash" << dir;
+
     QDir sourceDir(dir);
 
 
@@ -1313,6 +1636,8 @@ bool FileJob::moveFileToTrash(const QString &file, QString *targetPath)
     QString baseName = getNotExistsTrashFileName(localFile.fileName());
     QString newName = path + baseName;
     QString delTime = QDateTime::currentDateTime().toString(Qt::ISODate);
+
+    qDebug() << "moveFileToTrash" << file;
 
     if (!writeTrashInfo(baseName, file, delTime))
         return false;
@@ -1421,4 +1746,22 @@ bool FileJob::checkTrashFileOutOf1GB(const DUrl &url)
     m_checkDiskJobDataDetail = jobDataDetail;
 
     return isInLimit;
+}
+
+bool FileJob::checkUseGvfsFileOperation(const DUrlList &files, const DUrl &destination)
+{
+    if (checkUseGvfsFileOperation(destination.path())){
+        return true;
+    }
+    foreach (DUrl url, files) {
+        if (checkUseGvfsFileOperation(url.path())){
+            return true;
+        }
+    }
+    return false;
+}
+
+bool FileJob::checkUseGvfsFileOperation(const QString &path)
+{
+    return DMimeDatabase::isGvfsFile(path);
 }

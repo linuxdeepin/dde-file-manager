@@ -166,7 +166,7 @@ void DialogManager::addJob(FileJob *job)
     connect(job, &FileJob::requestJobRemoved, m_taskDialog, &DTaskDialog::delayRemoveTask);
     connect(job, &FileJob::requestJobRemovedImmediately, m_taskDialog, &DTaskDialog::removeTaskImmediately);
     connect(job, &FileJob::requestJobDataUpdated, m_taskDialog, &DTaskDialog::handleUpdateTaskWidget);
-    connect(job, &FileJob::requestAbortTask, m_taskDialog, &DTaskDialog::abortTask);
+    connect(job, &FileJob::requestAbortTask, m_taskDialog, &DTaskDialog::handleTaskClose);
     connect(job, &FileJob::requestConflictDialogShowed, m_taskDialog, &DTaskDialog::showConflictDiloagByJob);
     connect(job, &FileJob::requestCopyMoveToSelfDialogShowed, this, &DialogManager::showCopyMoveToSelfDialog);
     connect(job, &FileJob::requestNoEnoughSpaceDialogShowed, this, &DialogManager::showDiskSpaceOutOfUsedDialog);
@@ -214,7 +214,7 @@ void DialogManager::abortJob(const QMap<QString, QString> &jobDetail)
     if (job){
         job->setIsAborted(true);
         job->setApplyToAll(true);
-        job->setStatus(FileJob::Cancelled);
+        job->cancelled();
     }
 }
 

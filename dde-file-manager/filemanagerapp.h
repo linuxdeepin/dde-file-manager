@@ -27,12 +27,11 @@ public:
     void initTranslation();
     void initConnect();
 
-    QString getFileJobConfigPath();
+//    QString getFileJobConfigPath();
 
 public slots:
     void show(const DUrl& url);
 
-    void loadFileJobConfig();
     void showPropertyDialog(const QStringList paths);
 
 protected:

@@ -16,6 +16,7 @@
 #include "interfaces/dfmstandardpaths.h"
 #include "fileoperations/filejob.h"
 
+
 #include "widgets/singleton.h"
 #include "widgets/commandlinemanager.h"
 #include "interfaces/durl.h"
@@ -141,27 +142,11 @@ void FileManagerApp::initConnect()
 //    connect(fileSignalManager, &FileSignalManager::requestUpdateMimeAppsCache, mimeAppsManager, &MimesAppsManager::requestUpdateCache);
 }
 
-QString FileManagerApp::getFileJobConfigPath()
-{
-    return QString("%1/filejob.conf").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::ApplicationConfigPath));
-}
+
 
 void FileManagerApp::show(const DUrl &url)
 {
     m_windowManager->showNewWindow(url);
-}
-
-void FileManagerApp::loadFileJobConfig()
-{
-    QString configPath = getFileJobConfigPath();
-    if (QFile(configPath).exists()){
-        QSettings filejobSettings(configPath, QSettings::IniFormat);
-        filejobSettings.beginGroup("FileJob");
-        FileJob::Msec_For_Display = filejobSettings.value("Msec_For_Display", 1000).toLongLong();
-        FileJob::Data_Block_Size = filejobSettings.value("Data_Block_Size", 65536).toLongLong();
-        FileJob::Data_Flush_Size = filejobSettings.value("Data_Flush_Size", 16777216).toLongLong();
-        filejobSettings.endGroup();
-    }
 }
 
 void FileManagerApp::showPropertyDialog(const QStringList paths)
