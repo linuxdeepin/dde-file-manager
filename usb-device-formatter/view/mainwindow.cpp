@@ -58,6 +58,7 @@ void MainWindow::initUI()
     titleBar->setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint | Qt::FramelessWindowHint);
     titleBar->setTitle(title);
     titleBar->setFixedHeight(20);
+    titleBar->layout()->setContentsMargins(0, 0, 0, 0);
 
     m_pageStack = new QStackedWidget(this);
     m_pageStack->setFixedSize(width(), 300);

@@ -60,7 +60,6 @@ int main(int argc, char *argv[])
     a.installTranslator(translator);
 
     a.setTheme("light");
-    a.setFont(QFont("",10));
     a.setOrganizationName("deepin");
     a.setApplicationName("Deepin usb device formatter");
     a.setApplicationVersion("1.0");

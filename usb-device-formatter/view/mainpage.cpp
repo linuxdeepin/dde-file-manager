@@ -84,8 +84,7 @@ void MainPage::initUI()
 
     QLabel* typeLable =new  QLabel(tr("Type"), this);
     typeLable->setObjectName("TagLabel");
-    typeLable->setFont(QFont("",10));
-    m_typeCombo = new QComboBox(this);
+    m_typeCombo = new DComboBox(this);
     m_typeCombo->setObjectName("TypeCombo");
 
     QMetaEnum metaEnum = QMetaEnum::fromType<FsType>();
@@ -109,6 +108,7 @@ void MainPage::initUI()
     m_labelLineEdit->setFixedSize(160, 22);
 
     QCheckBox* fastFormatCheckBox = new QCheckBox(this);
+
     QLabel* fastFormatLabel = new QLabel(tr("Fast format"), this);
 
     optGridLayout->addWidget(typeLable,0,0,Qt::AlignVCenter|Qt::AlignRight);

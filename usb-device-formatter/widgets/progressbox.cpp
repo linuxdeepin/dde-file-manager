@@ -143,7 +143,7 @@ void ProgressBox::paintEvent(QPaintEvent *event)
     QFontMetrics fm(f);
     QRect rect;
     rect.setWidth(fm.width(progressStr));
-    rect.setHeight(25);
+    rect.setHeight(27);
     rect.moveCenter(QPoint(width()/2, height()/2));
     pen.setColor(Qt::white);
     p.setPen(pen);
