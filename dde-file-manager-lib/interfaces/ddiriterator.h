@@ -17,7 +17,7 @@ public:
     virtual const DAbstractFileInfoPointer fileInfo() const = 0;
     virtual QString path() const = 0;
 
-    virtual bool hasIteratorOfSubdir() const {return false;}
+    virtual bool enableIteratorByKeyword(const QString &keyword) {Q_UNUSED(keyword); return false;}
 };
 
 typedef QSharedPointer<DDirIterator> DDirIteratorPointer;
