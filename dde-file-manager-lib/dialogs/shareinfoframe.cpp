@@ -26,7 +26,7 @@ void ShareInfoFrame::initUI()
     int labelWidth = 100;
     int fieldWidth = 160;
 
-    m_sharCheckBox = new DCheckBox(this);
+    m_sharCheckBox = new QCheckBox(this);
     m_sharCheckBox->setFixedHeight(20);
     SectionValueLabel* shareCheckLabel = new SectionValueLabel(tr("Share this folder"));
     shareCheckLabel->setFixedWidth(fieldWidth);
@@ -66,7 +66,7 @@ void ShareInfoFrame::initUI()
 
 void ShareInfoFrame::initConnect()
 {
-    connect(m_sharCheckBox, &DCheckBox::stateChanged, this, &ShareInfoFrame::handleCheckBoxChanged);
+    connect(m_sharCheckBox, &QCheckBox::stateChanged, this, &ShareInfoFrame::handleCheckBoxChanged);
     connect(m_shareNamelineEdit, &DLineEdit::textChanged, this, &ShareInfoFrame::handleShareNameChanged);
     connect(m_permissoComBox, SIGNAL(currentIndexChanged(int)), this, SLOT(handlePermissionComboxChanged(int)));
     connect(m_anonymityCombox, SIGNAL(currentIndexChanged(int)), this, SLOT(handleAnonymityComboxChanged(int)));

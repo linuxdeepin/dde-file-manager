@@ -38,7 +38,7 @@ QListWidget{
     border: none;
 }
 
-QCheckBox::indicator:unchecked {
+/*QCheckBox::indicator:unchecked {
     image: url(:/images/images/light/checkbox-unchecked.png);
 }
 
@@ -73,7 +73,7 @@ QCheckBox#OpenWithItem::indicator:unchecked {
 QCheckBox#OpenWithItem::indicator:checked {
     image: url(:/images/images/light/select.png);
 }
-
+*/
 
 QPushButton#OtherButton{
     color: #222222;

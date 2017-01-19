@@ -37,7 +37,7 @@ public slots:
 
 private:
     DAbstractFileInfoPointer m_fileinfo;
-    DCheckBox* m_sharCheckBox = NULL;
+    QCheckBox* m_sharCheckBox = NULL;
     DLineEdit* m_shareNamelineEdit = NULL;
     DComboBox* m_permissoComBox = NULL;
     DComboBox* m_anonymityCombox = NULL;

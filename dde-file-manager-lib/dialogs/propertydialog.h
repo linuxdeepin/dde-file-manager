@@ -22,7 +22,6 @@ QT_END_NAMESPACE
 
 DWIDGET_BEGIN_NAMESPACE
 class DExpandGroup;
-class DCheckBox;
 DWIDGET_END_NAMESPACE
 
 class DAbstractFileInfo;
@@ -138,7 +137,7 @@ private:
     QFrame* m_textShowFrame = NULL;
     QLabel* m_textShowLastLabel = NULL;
     QPushButton* m_editButton = NULL;
-    DCheckBox * m_executableCheckBox = NULL;
+    QCheckBox * m_executableCheckBox = NULL;
     SectionValueLabel* m_folderSizeLabel = NULL;
     QFrame *m_basicInfoFrame = NULL;
     ShareInfoFrame* m_shareinfoFrame = NULL;

@@ -703,9 +703,9 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
     layout->addRow(TimeModifiedSectionLabel, timeModifiedLabel);
 
     if (info->isFile()){
-        m_executableCheckBox = new DCheckBox;
+        m_executableCheckBox = new QCheckBox;
         m_executableCheckBox->setFixedHeight(20);
-        connect(m_executableCheckBox, &DCheckBox::toggled, this, &PropertyDialog::toggleFileExecutable);
+        connect(m_executableCheckBox, &QCheckBox::toggled, this, &PropertyDialog::toggleFileExecutable);
         if (!info->isWritable()){
             m_executableCheckBox->setDisabled(true);
         }
