@@ -103,32 +103,6 @@ QLabel#VLine{
     background-color:rgba(0, 0, 0, 0.1);
 }
 
-QCheckBox{
-  color: rgba(0, 0, 0, 0.8);
-  font-size: 12px;
-}
-
-QCheckBox::indicator {
-    width: 13px;
-    height: 13px;
-}
-
-QCheckBox::indicator:unchecked {
-    image: url(:/images/dialogs/images/light/checkbox-unchecked.png);
-}
-
-QCheckBox::indicator:unchecked:hover {
-    image: url(:/images/dialogs/images/light/checkbox-hover.png);
-}
-
-QCheckBox::indicator:checked {
-    image: url(:/images/dialogs/images/light/checkbox-checked.png);
-}
-
-QCheckBox::indicator:checked:hover {
-    image: url(:/images/dialogs/images/light/checkbox-checked-hover.png);
-}
-
 QLabel#MessageLabel{
     padding-top: 2px;
     padding-bottom: 2px;
@@ -157,6 +131,7 @@ QLabel#titleLable{
 
 QListWidget{
     background-color: transparent;
+    border: none;
 }
 
 
@@ -176,4 +151,46 @@ QPushButton#AllCloseButton:hover{
 QPushButton#AllCloseButton:pressed{
     background-color: transparent;
     color: #01bdff;
+}
+
+
+QPushButton#StopButton{
+    image: url(:/icons/images/icons/stop_normal.png);
+    border: none;
+}
+QPushButton#StopButton:hover{
+    image: url(:/icons/images/icons/stop_hover.png);
+}
+QPushButton#StopButton:pressed{
+    image: url(:/icons/images/icons/stop_press.png);
+}
+QPushButton#OptionButton{
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 4px;
+    background: white;
+    font-size: 12px;
+}
+QPushButton#OptionButton:checked{
+    border: 1px solid rgba(0, 131, 255, 0.4);
+    background: white;
+}
+
+QPushButton#OptionButton:hover{
+    color: white;
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,stop: 0 #8ccfff,stop: 1 #4bb8ff);
+    border: 1px solid rgba(0, 117, 243, 0.2);
+}
+
+QPushButton#OptionButton:pressed{
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,stop: 0 #0b8cff,stop: 1 #0aa1ff);
+    border: 1px solid rgba(29, 129, 255, 0.3);
+    color: white;
+}
+
+QLabel#MessageLabel1{
+    font-size: 12px;
+}
+
+QLabel#MessageLabel2{
+    font-size: 11px;
 }
