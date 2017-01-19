@@ -29,6 +29,7 @@ public:
     bool active = false;
 
     DAbstractFileInfoPointer proxy;
+    static QMimeDatabase mimeDatabase;
 
 private:
     DUrl fileUrl;

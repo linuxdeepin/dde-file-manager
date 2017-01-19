@@ -48,6 +48,7 @@ COMPARE_FUN_DEFINE(created, Created, DAbstractFileInfo)
     if (d->proxy) return d->proxy->Fun;
 
 QMap<DUrl, DAbstractFileInfo*> DAbstractFileInfoPrivate::urlToFileInfoMap;
+QMimeDatabase DAbstractFileInfoPrivate::mimeDatabase;
 
 DAbstractFileInfoPrivate::DAbstractFileInfoPrivate(const DUrl &url, DAbstractFileInfo *qq, bool hasCache)
     : q_ptr(qq)
@@ -864,24 +865,7 @@ QString DAbstractFileInfo::suffix() const
     if (!isFile())
         return QString();
 
-    QString suffix;
-    const QString &fileName = this->fileName();
-    int index = fileName.lastIndexOf('.');
-
-    if (index >= 0)
-        suffix = fileName.mid(index + 1);
-
-    const QString &completeSuffix = this->completeSuffix();
-
-    if (completeSuffix != suffix) {
-        QStringList suffixes = completeSuffix.split(".");
-
-        if (suffixes.length() >= 2 && suffixes.at(suffixes.length() - 2) == "tar") {
-            return QString("%1.%2").arg("tar", suffix);
-        }
-    }
-
-    return suffix;
+    return d->mimeDatabase.suffixForFileName(this->fileName());
 }
 
 QString DAbstractFileInfo::completeSuffix() const
