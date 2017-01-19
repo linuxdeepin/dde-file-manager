@@ -16,7 +16,7 @@ QListWidget#OpenWithOtherListWidget::item:selected{
 }
 
 
-QCheckBox{
+/*QCheckBox{
     spacing: 5px;
     color: #222222;
     font-size: 12px;
@@ -41,3 +41,4 @@ QCheckBox::indicator:unchecked {
 QCheckBox::indicator:checked {
     image: url(:/images/images/light/select.png);
 }
+*/

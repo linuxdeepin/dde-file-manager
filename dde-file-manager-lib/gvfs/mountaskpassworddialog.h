@@ -49,7 +49,7 @@ private:
     DLineEdit* m_domainLineEdit;
     DPasswordEdit* m_passwordLineEdit;
 
-    DCheckBox* m_passwordCheckBox;
+    QCheckBox* m_passwordCheckBox;
 
     QButtonGroup* m_passwordButtonGroup;
 

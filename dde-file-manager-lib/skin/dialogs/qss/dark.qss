@@ -99,7 +99,7 @@ QLabel#VLine{
     background-color:rgba(255, 255, 255, 0.3);
 }
 
-QCheckBox{
+/*QCheckBox{
   color: white;
   font-size: 12px;
 }
@@ -123,7 +123,7 @@ QCheckBox::indicator:checked {
 
 QCheckBox::indicator:checked:hover {
     image: url(:/images/dialogs/images/dark_check_checked_hover.png);
-}
+}*/
 
 QLabel#MessageLabel{
     padding-top: 2px;
