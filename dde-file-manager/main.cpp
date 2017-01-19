@@ -1,5 +1,7 @@
 #include "durl.h"
 #include "dfmglobal.h"
+#include "dabstractfileinfo.h"
+#include "dfileservices.h"
 
 #include "filemanagerapp.h"
 #include "logutil.h"
@@ -105,7 +107,21 @@ int main(int argc, char *argv[])
 
     DUrlList commandlineUrlList;
     foreach (QString path, CommandLineManager::instance()->positionalArguments()) {
-        commandlineUrlList << DUrl::fromUserInput(path);
+        DUrl url = DUrl::fromUserInput(path);
+
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
+
+        if (!fileInfo)
+            continue;
+
+        if (CommandLineManager::instance()->isSet("show-item")) {
+            DUrl newUrl = fileInfo->parentUrl();
+
+            newUrl.setQuery("selectUrl=" + url.toString());
+            url = newUrl;
+        }
+
+        commandlineUrlList << url;
     }
     if (commandlineUrlList.isEmpty()){
         commandlineUrlList << DUrl::fromLocalFile(QDir::homePath());
