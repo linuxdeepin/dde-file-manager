@@ -543,7 +543,7 @@ const DAbstractFileInfoPointer FileDirIterator::fileInfo() const
 
 QString FileDirIterator::path() const
 {
-    return iterator.filePath();
+    return iterator.path();
 }
 
 bool FileDirIterator::enableIteratorByKeyword(const QString &keyword)
