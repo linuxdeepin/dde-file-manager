@@ -58,8 +58,8 @@ void MoveCopyTaskWidget::initUI(){
     m_msg2Label = new QLabel;
     m_msg1Label->setFixedHeight(22);
     m_msg2Label->setFixedHeight(22);
-    m_msg1Label->setObjectName("MessageLabel");
-    m_msg2Label->setObjectName("MessageLabel");
+    m_msg1Label->setObjectName("MessageLabel1");
+    m_msg2Label->setObjectName("MessageLabel2");
 
     QGridLayout* msgGridLayout = new QGridLayout;
     msgGridLayout->addWidget(m_msg1Label, 0, 0, Qt::AlignVCenter);
@@ -75,6 +75,7 @@ void MoveCopyTaskWidget::initUI(){
     m_lineLabel = new QFrame;
     m_lineLabel->setFixedHeight(1);
     m_lineLabel->setObjectName("LineLabel");
+    m_lineLabel->hide();
 
     QVBoxLayout* rightLayout = new QVBoxLayout;
     rightLayout->addStretch(1);
@@ -98,34 +99,6 @@ void MoveCopyTaskWidget::initUI(){
     mainLayout->addSpacing(24);
     setLayout(mainLayout);
     setFixedHeight(80);
-
-    setStyleSheet("QPushButton#StopButton{"
-                    "image: url(:/icons/images/icons/stop_normal.png);"
-                    "border: none;"
-                  "}"
-                  "QPushButton#StopButton:hover{"
-                    "image: url(:/icons/images/icons/stop_hover.png);"
-                  "}"
-                  "QPushButton#StopButton:pressed{"
-                    "image: url(:/icons/images/icons/stop_press.png);"
-                  "}"
-                  "QPushButton#OptionButton{"
-                    "border: 1px solid #eeeeee;"
-                    "border-radius: 4px;"
-                    "background: white;"
-                  "}"
-                  "QPushButton#OptionButton:hover{"
-                    "border: 1px solid #66ccf9;"
-                    "border-radius: 4px;"
-                    "background: white;"
-                  "}"
-                  "QPushButton#OptionButton:pressed{"
-                    "border: 1px solid #66ccf9;"
-                    "border-radius: 4px;"
-                    "background: #66ccf9;"
-                    "color: white;"
-                  "}"
-                  );
 }
 
 void MoveCopyTaskWidget::initButtonFrame(){
@@ -148,6 +121,8 @@ void MoveCopyTaskWidget::initButtonFrame(){
     m_keepBothButton->setObjectName("OptionButton");
     m_replaceButton->setObjectName("OptionButton");
     m_skipButton->setObjectName("OptionButton");
+    m_keepBothButton->setCheckable(true);
+    m_keepBothButton->setChecked(true);
 
     buttonLayout->addWidget(m_skipButton);
     buttonLayout->addWidget(m_replaceButton);
@@ -252,17 +227,20 @@ void MoveCopyTaskWidget::updateTipMessage(){
     setTipMessage(QString::number(m_speed), QString::number(m_timeLeft));
 }
 
-void MoveCopyTaskWidget::handleLineDisplay(const int &row)
+void MoveCopyTaskWidget::handleLineDisplay(const int &row, const bool& hover, const int& taskNum)
 {
-    if(row == this->property("row").toInt())
-        return;
-
-    if((row -1) == property("row").toInt())
-        m_lineLabel->hide();
-    else{
+    if((row -1) == property("row").toInt() || row == property("row").toInt()){
+        if(hover)
+            m_lineLabel->hide();
+        else
+            m_lineLabel->show();
+    } else{
         if(m_lineLabel->isHidden())
             m_lineLabel->show();
     }
+
+    if(property("row").toInt() == taskNum-1)
+        m_lineLabel->hide();
 }
 
 void MoveCopyTaskWidget::showConflict(){
@@ -288,21 +266,20 @@ bool MoveCopyTaskWidget::event(QEvent *e)
         m_bgLabel->setStyleSheet("QLabel#Background{"
                                     "background-color: #f3f3f3;"
                                     "border: 1px solid #f3f3f3;"
-                                    "border-radius: 4px;"
+                                    "border-radius: 8px;"
                                  "}");
         m_bgLabel->setFixedSize(size()- QSize(20,0));
         m_bgLabel->move(10,0);
-        m_lineLabel->hide();
-        emit hovered();
+        emit hovereChanged(true);
     } else if (e->type() == QEvent::Leave ){
+        hovereChanged(false);
         m_speedLabel->show();
         m_remainLabel->show();
         m_closeButton->hide();
-        m_lineLabel->show();
         m_bgLabel->setStyleSheet("QLabel#Background{"
                                     "background-color: #fff;"
                                     "border: 1px solid #fff;"
-                                    "border-radius: 4px;"
+                                    "border-radius: 8px;"
                                  "}");
     }
 
@@ -410,12 +387,14 @@ void DTaskDialog::initUI(){
 
     m_titleBar = new DTitlebar;
     m_titleBar->setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
-    m_titleBar->setFixedHeight(20);
+    m_titleBar->setFixedHeight(27);
+    m_titleBar->layout()->setContentsMargins(0, 0, 0, 0);
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
+    mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setSpacing(0);
     mainLayout->addWidget(m_titleBar);
-    mainLayout->addStretch(1);
+    mainLayout->addSpacing(3);
     mainLayout->addWidget(m_taskListWidget);
     mainLayout->addStretch(1);
     setLayout(mainLayout);
@@ -459,7 +438,7 @@ void DTaskDialog::addTask(const QMap<QString, QString> &jobDetail){
                 this, SIGNAL(conflictHided(QMap<QString,QString>)));
 
         //handle item line display logic
-        connect(moveWidget, &MoveCopyTaskWidget::hovered, this, &DTaskDialog::onItemHovered);
+        connect(moveWidget, &MoveCopyTaskWidget::hovereChanged, this, &DTaskDialog::onItemHovered);
         connect(this, &DTaskDialog::currentHoverRowChanged, moveWidget, &MoveCopyTaskWidget::handleLineDisplay);
         QListWidgetItem* item = new QListWidgetItem();
         item->setFlags(Qt::NoItemFlags);
@@ -471,7 +450,9 @@ void DTaskDialog::addTask(const QMap<QString, QString> &jobDetail){
         adjustSize();
         show();
         QTimer::singleShot(100, this, &DTaskDialog::raise);
+
         moveWidget->setProperty("row",m_taskListWidget->count() -1);
+        emit currentHoverRowChanged(1, false, m_taskListWidget->count());
     }
 }
 
@@ -515,10 +496,10 @@ void DTaskDialog::adjustSize(){
     }
     if (m_taskListWidget->count() >= 6){
         m_taskListWidget->setFixedHeight(maxHeight);
-        setFixedSize(width(), maxHeight + 40);
+        setFixedSize(width(), maxHeight + 37);
     }else{
         m_taskListWidget->setFixedHeight(listHeight);
-        setFixedSize(width(), listHeight + 40);
+        setFixedSize(width(), listHeight + 37);
     }
 //    if (listHeight < qApp->desktop()->availableGeometry().height() - 40){
 //        m_taskListWidget->setFixedHeight(listHeight);
@@ -540,6 +521,15 @@ void DTaskDialog::removeTaskByPath(QString jobId){
         if (m_taskListWidget->count() == 0){
             close();
         }
+
+        for(int i = 0; i < m_taskListWidget->count(); i++){
+            QListWidgetItem* item = m_taskListWidget->item(i);
+            MoveCopyTaskWidget* w =  qobject_cast<MoveCopyTaskWidget*>(m_taskListWidget->itemWidget(item));
+            if(w)
+                w->setProperty("row", i);
+        }
+
+        emit currentHoverRowChanged(0, false, m_taskListWidget->count());
     }
 }
 
@@ -565,12 +555,12 @@ void DTaskDialog::handleMinimizeButtonClick()
     showMinimized();
 }
 
-void DTaskDialog::onItemHovered()
+void DTaskDialog::onItemHovered(const bool& hover)
 {
     MoveCopyTaskWidget* w = qobject_cast<MoveCopyTaskWidget*>(sender());
     int row = w->property("row").toInt();
     if(row >= 0)
-        emit currentHoverRowChanged(row);
+        emit currentHoverRowChanged(row, hover, m_taskListWidget->count());
 }
 
 void DTaskDialog::handleTaskClose(const QMap<QString, QString> &jobDetail){
