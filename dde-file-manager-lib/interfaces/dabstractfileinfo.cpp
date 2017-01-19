@@ -928,6 +928,16 @@ DUrl DAbstractFileInfo::goToUrlWhenDeleted() const
     return extistParentUrl.isValid() ? extistParentUrl : DUrl::fromLocalFile(QDir::homePath());
 }
 
+DUrl DAbstractFileInfo::toLocalFile() const
+{
+    const QString &filePath = fileUrl().toLocalFile();
+
+    if (!filePath.isEmpty())
+        return DUrl::fromLocalFile(filePath);
+
+    return DUrl();
+}
+
 void DAbstractFileInfo::makeToActive()
 {
     CALL_PROXY(makeToActive());
