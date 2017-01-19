@@ -212,6 +212,7 @@ public:
     virtual void refresh();
 
     virtual DUrl goToUrlWhenDeleted() const;
+    virtual DUrl toLocalFile() const;
 
 protected:
     explicit DAbstractFileInfo(DAbstractFileInfoPrivate &dd);

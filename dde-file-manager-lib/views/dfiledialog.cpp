@@ -134,6 +134,22 @@ QList<QUrl> DFileDialog::selectedUrls() const
 
     DUrlList list = getFileView()->selectedUrls();
 
+    DUrlList::iterator begin = list.begin();
+
+    while (begin != list.end()) {
+        const DAbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(*begin);
+
+        if (fileInfo) {
+            DUrl newUrl = fileInfo->toLocalFile();
+
+            if (newUrl.isValid()) {
+                *begin = newUrl;
+            }
+        }
+
+        ++begin;
+    }
+
     if (d->acceptMode == QFileDialog::AcceptSave) {
         const DAbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(list.isEmpty() ? getFileView()->rootUrl() : list.first());
         DUrl fileUrl;
