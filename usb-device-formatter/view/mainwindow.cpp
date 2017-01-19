@@ -23,7 +23,7 @@
 
 using namespace PartMan;
 MainWindow::MainWindow(const QString &path, QWidget *parent):
-    QWidget(parent)
+    QDialog(parent)
 {
     DPlatformWindowHandle handle(this);
     Q_UNUSED(handle)
