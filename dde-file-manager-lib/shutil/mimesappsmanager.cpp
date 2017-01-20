@@ -4,6 +4,7 @@
 #include "app/define.h"
 
 #include "widgets/singleton.h"
+#include "shutil/dmimedatabase.h"
 
 #include <QDir>
 #include <QSettings>
