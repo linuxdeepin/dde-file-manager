@@ -304,12 +304,15 @@ int DialogManager::showDeleteFilesClearTrashDialog(const DFMEvent &event)
     QString DeleteFileName = tr("Permanently delete %1?");
     QString DeleteFileItems = tr("Permanently delete %1 items?");
 
+    const int maxFileNameWidth = 160;
+
     DUrlList urlList = event.fileUrlList();
     QStringList buttonTexts;
     buttonTexts << tr("Cancel") << tr("Delete");
 
     qDebug() << event;
     DDialog d(WindowManager::getWindowById(event.windowId()));
+    QFontMetrics fm(d.font());
     d.setIcon(QIcon(":/images/dialogs/images/user-trash-full-opened.png"));
     if (urlList.first() == DUrl::fromTrashFile("/") && event.source() == DFMEvent::Menu && urlList.size() == 1){
         buttonTexts[1]= tr("Empty");
@@ -320,17 +323,17 @@ int DialogManager::showDeleteFilesClearTrashDialog(const DFMEvent &event)
             d.setTitle(ClearTrashMutliple.arg(fileInfo->filesCount()));
     }else if (urlList.first().isLocalFile() && event.source() == DFMEvent::FileView && urlList.size() == 1){
         DFileInfo f(urlList.first());
-        d.setTitle(DeleteFileName.arg(f.fileDisplayName()));
+        d.setTitle(DeleteFileName.arg(fm.elidedText(f.fileDisplayName(),Qt::ElideMiddle, maxFileNameWidth)));
     }else if (urlList.first().isLocalFile() && event.source() == DFMEvent::FileView && urlList.size() > 1){
         d.setTitle(DeleteFileItems.arg(urlList.size()));
     }else if (urlList.first().isTrashFile() && event.source() == DFMEvent::Menu && urlList.size() == 1){
         TrashFileInfo f(urlList.first());
-        d.setTitle(DeleteFileName.arg(f.fileDisplayName()));
+        d.setTitle(DeleteFileName.arg(fm.elidedText(f.fileDisplayName(),Qt::ElideMiddle, maxFileNameWidth)));
     }else if (urlList.first().isTrashFile() && event.source() == DFMEvent::Menu && urlList.size() > 1){
         d.setTitle(DeleteFileItems.arg(urlList.size()));
     }else if (urlList.first().isTrashFile() && event.source() == DFMEvent::FileView && urlList.size() == 1 ){
         TrashFileInfo f(urlList.first());
-        d.setTitle(DeleteFileName.arg(f.fileDisplayName()));
+        d.setTitle(DeleteFileName.arg(fm.elidedText(f.fileDisplayName(),Qt::ElideMiddle, maxFileNameWidth)));
     }else if (urlList.first().isTrashFile() && event.source() == DFMEvent::FileView && urlList.size() > 1 ){
         d.setTitle(DeleteFileItems.arg(urlList.size()));
     }else{
@@ -496,7 +499,10 @@ void DialogManager::showBreakSymlinkDialog(const QString &targetName, const DUrl
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(linkfile);
 
     DDialog d;
-    d.setTitle(tr("%1 that this shortcut refers to has been changed or moved").arg(targetName));
+    QString warnText = tr("%1 that this shortcut refers to has been changed or moved");
+    QFontMetrics fm(d.font());
+    QString _targetName = fm.elidedText(targetName, Qt::ElideMiddle, 120);
+    d.setTitle(warnText.arg(_targetName));
     d.setMessage(tr("Do you want to delete this shortcut？"));
     QStringList buttonTexts;
     buttonTexts << tr("Cancel") << tr("Confirm");
