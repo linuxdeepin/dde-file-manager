@@ -19,8 +19,11 @@
 #include "controllers/appcontroller.h"
 #include "widgets/singleton.h"
 
+// DBus
 #include "filedialogmanager_adaptor.h"
-#include "filedialog/dbusfiledialogmanager.h"
+#include "dbusfiledialogmanager.h"
+#include "filemanager1_adaptor.h"
+#include "dbusfilemanager1.h"
 
 #include <dthememanager.h>
 #include <dwindow.h>
@@ -40,7 +43,7 @@
 
 DWIDGET_USE_NAMESPACE
 
-bool registerDialogDBus()
+static bool registerDialogDBus()
 {
     if (!QDBusConnection::sessionBus().isConnected()) {
         qWarning("Cannot connect to the D-Bus session bus.\n"
@@ -58,7 +61,33 @@ bool registerDialogDBus()
     Q_UNUSED(new FiledialogmanagerAdaptor(manager));
 
     if (!QDBusConnection::sessionBus().registerObject("/com/deepin/filemanager/filedialogmanager", manager)) {
-        qWarning("Cannot register to the D-Bus object.\n");
+        qWarning("Cannot register to the D-Bus object: \"/com/deepin/filemanager/filedialogmanager\"\n");
+        manager->deleteLater();
+        return false;
+    }
+
+    return true;
+}
+
+static bool registerFileManager1DBus()
+{
+    if (!QDBusConnection::sessionBus().isConnected()) {
+        qWarning("Cannot connect to the D-Bus session bus.\n"
+                 "Please check your system settings and try again.\n");
+        return false;
+    }
+
+    // add our D-Bus interface and connect to D-Bus
+    if (!QDBusConnection::sessionBus().registerService("org.freedesktop.FileManager1")) {
+        qWarning("Cannot register the \"org.freedesktop.FileManager1\" service.\n");
+        return false;
+    }
+
+    DBusFileManager1 *manager = new DBusFileManager1();
+    Q_UNUSED(new FileManager1Adaptor(manager));
+
+    if (!QDBusConnection::sessionBus().registerObject("/org/freedesktop/FileManager1", manager)) {
+        qWarning("Cannot register to the D-Bus object: \"/org/freedesktop/FileManager1\"\n");
         manager->deleteLater();
         return false;
     }
@@ -95,9 +124,13 @@ int main(int argc, char *argv[])
     // show file selection dialog
     if (CommandLineManager::instance()->isSet("f")) {
         if (!registerDialogDBus()) {
-            qWarning() << "register dialog dbus failed.";
+            qWarning() << "Register dialog dbus failed.";
 
             return 1;
+        }
+
+        if (!registerFileManager1DBus()) {
+            qWarning() << "Register org.freedesktop.FileManager1 DBus service is failed";
         }
 
         app.setQuitOnLastWindowClosed(false);

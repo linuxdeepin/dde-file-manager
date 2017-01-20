@@ -1,5 +1,3 @@
-QT += dbus
-
 dialog.files = $$PWD/com.deepin.filemanager.filedialog.xml
 dialog.header_flags += -l DBusFileDialogHandle -i $$PWD/dbusfiledialoghandle.h
 dialog.source_flags += -l DBusFileDialogHandle
@@ -25,3 +23,5 @@ HEADERS += \
 SOURCES += \
     $$PWD/dbusfiledialoghandle.cpp \
     $$PWD/dbusfiledialogmanager.cpp
+
+INCLUDEPATH += $$PWD
