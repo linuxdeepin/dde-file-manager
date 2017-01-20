@@ -1,5 +1,6 @@
 #include "dthumbnailprovider.h"
 #include "dfmstandardpaths.h"
+#include "shutil/dmimedatabase.h"
 
 #include <QCryptographicHash>
 #include <QDir>
@@ -7,7 +8,7 @@
 #include <QImageReader>
 #include <QQueue>
 #include <QMimeType>
-#include <QMimeDatabase>
+
 #include <QReadWriteLock>
 #include <QWaitCondition>
 #include <QPainter>
@@ -45,7 +46,7 @@ public:
     // 5MB
     qint64 defaultSizeLimit = 1024 * 1024 * 20;
     QHash<QMimeType, qint64> sizeLimitHash;
-    QMimeDatabase mimeDatabase;
+    DMimeDatabase mimeDatabase;
 
     static QSet<QString> hasThumbnailMimeHash;
 

@@ -17,9 +17,10 @@
 #include "dfileservices.h"
 #include "dthumbnailprovider.h"
 
+#include "shutil/dmimedatabase.h"
+
 #include <QDateTime>
 #include <QDir>
-#include <QMimeDatabase>
 #include <QPainter>
 
 DFM_USE_NAMESPACE
@@ -57,7 +58,7 @@ bool DFileInfo::exists(const DUrl &fileUrl)
 
 QMimeType DFileInfo::mimeType(const QString &filePath)
 {
-    QMimeDatabase db;
+    DMimeDatabase db;
 
     return db.mimeTypeForFile(filePath);
 }

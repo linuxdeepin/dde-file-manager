@@ -16,6 +16,8 @@
 #include <QJsonArray>
 #include <QJsonValue>
 
+#include <stdlib.h>
+
 #define fileManagerApp Singleton<FileManagerApp>::instance()
 
 QString SingleApplication::UserID = "1000";
@@ -90,7 +92,7 @@ QString SingleApplication::userServerName(const QString &key)
     if (getUserID() == "0"){
         userKey = QString("%1/%2").arg("/tmp", key);
     }else{
-        userKey = QString("%1/%2/%3").arg("/var/run/user", getUserID(), key);
+        userKey = QString("%1/%2").arg(getenv("XDG_RUNTIME_DIR"), key);
     }
     qDebug() << userKey;
     return userKey;

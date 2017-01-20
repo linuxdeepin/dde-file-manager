@@ -4,11 +4,12 @@
 #include "app/define.h"
 
 #include "widgets/singleton.h"
+#include "shutil/dmimedatabase.h"
 
 #include <QDir>
 #include <QSettings>
 #include <QMimeType>
-#include <QMimeDatabase>
+
 #include <QDirIterator>
 #include <QDateTime>
 #include <QThread>
@@ -212,21 +213,21 @@ MimesAppsManager::~MimesAppsManager()
 
 QMimeType MimesAppsManager::getMimeType(const QString &fileName)
 {
-    QMimeDatabase db;
+    DMimeDatabase db;
     QMimeType mimeType = db.mimeTypeForFile(fileName);
     return mimeType;
 }
 
 QString MimesAppsManager::getMimeTypeByFileName(const QString &fileName)
 {
-    QMimeDatabase db;
+    DMimeDatabase db;
     QMimeType mimeType = db.mimeTypeForFile(fileName);
     return mimeType.name();
 }
 
 
 QString MimesAppsManager::getDefaultAppByFileName(const QString& fileName){
-    QMimeDatabase db;
+    DMimeDatabase db;
     QMimeType mimeType = db.mimeTypeForFile(fileName);
     return getDefaultAppByMimeType(mimeType);
 }

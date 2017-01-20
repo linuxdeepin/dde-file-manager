@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QPixmap>
 #include <QUrl>
-#include <QMimeDatabase>
+#include "shutil/dmimedatabase.h"
 
 #define THUMBNAIL_SIZE_NORMAL 128
 #define THUMBNAIL_SIZE_LARGE 256
@@ -24,9 +24,9 @@ public:
     bool canGenerateThumbnail(const QUrl&  fileUrl)const;
 
     inline static bool isTextPlainFile(const QString &fileName)
-    { return QMimeDatabase().mimeTypeForFile(fileName).name() == "text/plain";}
+    { return DMimeDatabase().mimeTypeForFile(fileName).name() == "text/plain";}
     inline static bool isPDFFile(const QString &fileName)
-    { return QMimeDatabase().mimeTypeForFile(fileName).name() == "application/pdf";}
+    { return DMimeDatabase().mimeTypeForFile(fileName).name() == "application/pdf";}
     static bool isVideoFile(const QString &fileName);
     static bool isPictureFile(const QString &fileName);
     static QMap<QString,QString> getAttributeSet(const QUrl&  fileUrl);

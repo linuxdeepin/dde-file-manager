@@ -173,7 +173,8 @@ HEADERS += \
     plugins/plugininterfaces/menu/menuinterface.h \
     models/computerdesktopfileinfo.h \
     models/trashdesktopfileinfo.h \
-    interfaces/dthumbnailprovider.h
+    interfaces/dthumbnailprovider.h \
+    shutil/dmimedatabase.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -281,7 +282,8 @@ SOURCES += \
     plugins/pluginmanager.cpp \
     models/computerdesktopfileinfo.cpp \
     models/trashdesktopfileinfo.cpp \
-    interfaces/dthumbnailprovider.cpp
+    interfaces/dthumbnailprovider.cpp \
+    shutil/dmimedatabase.cpp
 
 INCLUDEPATH += $$PWD/../ $$PWD/../utils/ $$PWD/interfaces/ $$PWD/../dde-file-manager-plugins/plugininterfaces/
 

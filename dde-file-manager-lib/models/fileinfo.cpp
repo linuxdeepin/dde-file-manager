@@ -11,10 +11,11 @@
 #include "app/define.h"
 #include "widgets/singleton.h"
 #include "usershare/usersharemanager.h"
+#include "shutil/dmimedatabase.h"
 
 #include <QDateTime>
 #include <QDir>
-#include <QMimeDatabase>
+
 
 QMap<DUrl, bool> FileInfo::canRenameCacheMap;
 
@@ -49,7 +50,7 @@ bool FileInfo::exists(const DUrl &fileUrl)
 
 QMimeType FileInfo::mimeType(const QString &filePath)
 {
-    QMimeDatabase db;
+    DMimeDatabase db;
 
     return db.mimeTypeForFile(filePath);
 }

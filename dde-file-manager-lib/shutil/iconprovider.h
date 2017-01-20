@@ -10,7 +10,7 @@
 #include <QSet>
 #include <QFileIconProvider>
 #include <QGSettings>
-#include <QMimeDatabase>
+#include "shutil/dmimedatabase.h"
 
 class IconProvider : public QObject
 {
@@ -18,7 +18,7 @@ class IconProvider : public QObject
 public:
     explicit IconProvider(QObject *parent = 0);
     ~IconProvider();
-
+    static QString getMimeTypeByGio(const QString &file);
     char* icon_name_to_path(const char* name, int size);
     char* get_icon_for_file(char* giconstr, int size);
     char* get_icon_theme_name();
@@ -66,7 +66,7 @@ private:
     QSet<QString> m_supportImageMimeTypesSet;
     QList<QSize> m_iconSizes;
     QGSettings* m_gsettings;
-    QMimeDatabase* m_mimeDatabase;
+    DMimeDatabase* m_mimeDatabase;
 };
 
 #endif // ICONPROVIDER_H

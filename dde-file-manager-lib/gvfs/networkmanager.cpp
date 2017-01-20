@@ -216,6 +216,7 @@ void NetworkManager::fetchNetworks(const DFMEvent &event)
     qDebug() << event;
     DFMEvent* e = new DFMEvent(event);
     QString path = event.fileUrl().toString();
-    gchar *url = const_cast<char*>(path.toStdString().c_str());
+    std::string stdPath = path.toStdString();
+    gchar *url = const_cast<char*>(stdPath.c_str());
     fetch_networks(url, e);
 }

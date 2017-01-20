@@ -10,9 +10,11 @@
 #include "dfileservices.h"
 #include "simpleini/SimpleIni.h"
 
+#include "shutil/dmimedatabase.h"
+
 #include <QDirIterator>
 #include <QUrl>
-#include <QMimeDatabase>
+
 #include <QProcess>
 #include <QGSettings>
 #include <QFileDialog>
@@ -191,7 +193,7 @@ bool FileUtils::isArchive(const QString &path)
 {
     QFileInfo f(path);
     if (f.exists()){
-        return mimeTypeDisplayManager->supportArchiveMimetypes().contains(QMimeDatabase().mimeTypeForFile(f).name());
+        return mimeTypeDisplayManager->supportArchiveMimetypes().contains(DMimeDatabase().mimeTypeForFile(f).name());
     }else{
         return false;
     }

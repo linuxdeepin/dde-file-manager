@@ -48,7 +48,7 @@ IconProvider::IconProvider(QObject *parent) : QObject(parent)
 {
     m_gsettings = new QGSettings("com.deepin.dde.appearance",
                                  "/com/deepin/dde/appearance/");
-    m_mimeDatabase = new QMimeDatabase;
+    m_mimeDatabase = new DMimeDatabase;
     m_iconSizes << QSize(48, 48) << QSize(64, 64) << QSize(96, 96) << QSize(128, 128) << QSize(256, 256);
 
     for (const QByteArray &mime : QImageReader::supportedMimeTypes()) {
@@ -68,6 +68,36 @@ IconProvider::IconProvider(QObject *parent) : QObject(parent)
 IconProvider::~IconProvider()
 {
 
+}
+
+QString IconProvider::getMimeTypeByGio(const QString &file)
+{
+    GFile* gFile;
+    GFileQueryInfoFlags flags;
+    GFileInfo* gFileinfo;
+    GError* error;
+    const char* content_type="";
+    error = NULL;
+    flags = G_FILE_QUERY_INFO_NONE;
+    std::string std_srcPath = file.toStdString();
+    gFile = g_file_new_for_path(std_srcPath.data());
+    if (gFile){
+        gFileinfo = g_file_query_info (gFile, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE, flags, NULL, &error);
+        if (gFileinfo){
+            content_type = g_file_info_get_content_type(gFileinfo);
+        }else{
+            qDebug() << error->message;
+        }
+    }
+    if (gFile)
+        g_object_unref(gFile);
+    if (gFileinfo)
+        g_object_unref(gFileinfo);
+    if (error){
+        g_error_free(error);
+    }
+
+    return QString(content_type);
 }
 
 char *IconProvider::icon_name_to_path(const char *name, int size)

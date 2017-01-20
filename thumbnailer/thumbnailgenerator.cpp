@@ -88,7 +88,7 @@ bool ThumbnailGenerator::isVideoFile(const QString &fileName)
                       <<"application/vnd.ms-asf"
                       <<"application/mxf";
 
-    QString mimeTypeName = QMimeDatabase().mimeTypeForFile(fileName).name();
+    QString mimeTypeName = DMimeDatabase().mimeTypeForFile(fileName).name();
     if(mimeTypeName.startsWith("video/") || extraVideoMineTypes.contains(mimeTypeName))
         return true;
 
@@ -97,7 +97,7 @@ bool ThumbnailGenerator::isVideoFile(const QString &fileName)
 
 bool ThumbnailGenerator::isPictureFile(const QString &fileName)
 {
-    QString mimeType = QMimeDatabase().mimeTypeForFile(fileName).name();
+    QString mimeType = DMimeDatabase().mimeTypeForFile(fileName).name();
 
     if(mimeType.startsWith("image"))
         return true;
@@ -111,7 +111,7 @@ QMap<QString,QString> ThumbnailGenerator::getAttributeSet(const QUrl&  fileUrl)
     if(fileUrl.isLocalFile()){
         QString fileName = fileUrl.path();
         QFileInfo info(fileName);
-        QString mimetype = QMimeDatabase().mimeTypeForFile(fileName).name();
+        QString mimetype = DMimeDatabase().mimeTypeForFile(fileName).name();
         set.insert("Thumb::Mimetype",mimetype);
         set.insert("Thumb::Size",QString::number(info.size()));
         set.insert("Thumb::URI",fileUrl.toString());
