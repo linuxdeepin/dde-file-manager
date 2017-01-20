@@ -19,11 +19,13 @@ void FinishPage::initUI()
     warnTextLabel->setText(warnText);
     warnTextLabel->setWordWrap(true);
     warnTextLabel->setObjectName("StatusLabel");
+    warnTextLabel->setAlignment(Qt::AlignHCenter);
 
-    mainLayout->addStretch(1);
+    mainLayout->addSpacing(30);
     mainLayout->addWidget(warnIconLabel, 0, Qt::AlignHCenter);
     mainLayout->addSpacing(10);
     mainLayout->addWidget(warnTextLabel, 0, Qt::AlignHCenter);
-    setLayout(mainLayout);
     mainLayout->addStretch(1);
+    setLayout(mainLayout);
+    setContentsMargins(20, 0, 20, 0);
 }

@@ -110,6 +110,7 @@ void MainPage::initUI()
     QCheckBox* fastFormatCheckBox = new QCheckBox(this);
 
     QLabel* fastFormatLabel = new QLabel(tr("Fast format"), this);
+    fastFormatLabel->setObjectName("CheckBoxLabel");
 
     optGridLayout->addWidget(typeLable,0,0,Qt::AlignVCenter|Qt::AlignRight);
     optGridLayout->addWidget(m_typeCombo,0,1,Qt::AlignVCenter|Qt::AlignLeft);
