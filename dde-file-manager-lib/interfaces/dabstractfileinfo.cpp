@@ -16,6 +16,7 @@
 #include "widgets/singleton.h"
 #include "plugins/pluginmanager.h"
 #include "dde-file-manager-plugins/plugininterfaces/menu/menuinterface.h"
+#include "shutil/dmimedatabase.h"
 
 #include <QDateTime>
 #include <QDebug>
@@ -1000,6 +1001,10 @@ QSet<MenuAction> DAbstractFileInfo::disableMenuActionList() const
 
     if (!canRename()) {
         list << MenuAction::Cut << MenuAction::Rename << MenuAction::Remove << MenuAction::Delete;
+    }
+
+    if (DMimeDatabase::isGvfsFile(absoluteFilePath())){
+        list << MenuAction::Delete;
     }
 
     return list;

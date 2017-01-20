@@ -21,6 +21,7 @@
 #include "deviceinfo/udisklistener.h"
 #include "interfaces/dfmglobal.h"
 #include "widgets/singleton.h"
+#include "shutil/dmimedatabase.h"
 
 #include <ddialog.h>
 
@@ -387,12 +388,17 @@ void DFileService::moveToTrash(const DFMEvent &event) const
     if (event.fileUrlList().isEmpty())
         return;
 
+
     //handle system files should not be able to move to trash
     foreach (const DUrl& url, event.fileUrlList()) {
         if(systemPathManager->isSystemPath(url.toLocalFile())){
             dialogManager->showDeleteSystemPathWarnDialog();
             return;
         }
+
+    if (DMimeDatabase::isGvfsFile(event.fileUrlList().first().toLocalFile())){
+        deleteFiles(event);
+        return;
     }
 
     //handle files whom could not be moved to trash

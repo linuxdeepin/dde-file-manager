@@ -7,6 +7,7 @@
 #include "../app/define.h"
 #include "../widgets/singleton.h"
 #include "../interfaces/dfmglobal.h"
+#include "shutil/dmimedatabase.h"
 
 #include <QFile>
 #include <QThread>
@@ -206,8 +207,20 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
         QStorageInfo srcStorageInfo(files.at(0).toLocalFile());
         if (srcStorageInfo.rootPath() != tarStorageInfo.rootPath()){
             m_isInSameDisk = false;
+        }else if (DMimeDatabase::isGvfsFile(destination.toLocalFile())){
+            UDiskDeviceInfoPointer pSrc = deviceListener->getDeviceByFilePath(files.at(0).toLocalFile());
+            UDiskDeviceInfoPointer pDes = deviceListener->getDeviceByFilePath(destination.toLocalFile());
+            if (pSrc && pDes){
+                qDebug() << pSrc->getMountPointUrl() << pDes->getMountPointUrl();
+                if (pSrc->getMountPointUrl() != pDes->getMountPointUrl()){
+                    m_isInSameDisk = false;
+                }
+            }
         }
     }
+
+    qDebug() << "m_isInSameDisk" << m_isInSameDisk;
+    qDebug() << "mountpoint" << tarStorageInfo.rootPath();
 
     //No need to check dist usage for moving job in same disk
     if(!(m_jobType == Move && m_isInSameDisk)){
@@ -221,6 +234,8 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
     } else{
         m_totalSize = FileUtils::totalSize(files);
     }
+
+    qDebug() << "m_totalSize" << FileUtils::formatSize(m_totalSize);
 
     if(!tarDir.exists())
     {
@@ -651,9 +666,13 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
                         return false;
                     }
                 }
-                if (!to.setPermissions(from.permissions())){
-                    qDebug() << "Set permissions from " << srcFile << "to" << m_tarPath << "failed";
-                };
+                if (!DMimeDatabase::isGvfsFile(to.fileName())){
+                    if (!to.setPermissions(from.permissions())){
+                        qDebug() << "Set permissions from " << srcFile << "to" << m_tarPath << "failed";
+                    };
+                }else{
+                    qWarning() << "Set permissions from file" << srcFile << "to vfs file" << m_tarPath << "failed";
+                }
                 m_status = Run;
  #ifdef SPLICE_CP
                 in_fd = from.handle();
@@ -731,7 +750,13 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
                     if (targetPath)
                         *targetPath = m_tarPath;
 
-                    return true;
+                    if (from.size() == to.size()){
+                        return true;
+                    }else{
+                        qWarning() << m_srcPath << "size:" << from.size() << FileUtils::formatSize(from.size());
+                        qWarning() << m_tarPath << "size:" << to.size() << FileUtils::formatSize(to.size());
+                        return false;
+                    }
                 }
                 to.waitForBytesWritten(-1);
 
@@ -848,10 +873,13 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
                     return false;
             }
             targetDir.setPath(m_tarPath);
-            bool isSetPermissionsSuccess = setDirPermissions(srcDir, targetDir.path());
-            if (!isSetPermissionsSuccess){
-                qDebug() << "Set Permissions of "<< m_tarPath << "same as" <<  srcDir << "failed";
-                return false;
+
+            if (!DMimeDatabase::isGvfsFile(targetDir.path())){
+                bool isSetPermissionsSuccess = setDirPermissions(srcDir, targetDir.path());
+                if (!isSetPermissionsSuccess){
+                    qDebug() << "Set Permissions of "<< m_tarPath << "same as" <<  srcDir << "failed";
+                    return false;
+                }
             }
             m_status = Run;
             break;
@@ -1187,18 +1215,23 @@ bool FileJob::deleteDir(const QString &dir)
 
     while (iterator.hasNext()) {
         const QFileInfo &fileInfo = iterator.next();
-
-        if (fileInfo.isFile() || fileInfo.isSymLink()) {
-            if (!deleteFile(fileInfo.filePath())) {
-                emit error("Unable to remove file");
-                return false;
+        if (fileInfo.exists()){
+            if (fileInfo.isFile() || fileInfo.isSymLink()) {
+                if (!deleteFile(fileInfo.filePath())) {
+                    qDebug() << "Unable to remove file:" << fileInfo.filePath();
+                    emit error("Unable to remove file");
+                    return false;
+                }
+            } else {
+                qDebug() << fileInfo.filePath() << fileInfo.isDir() << fileInfo.isFile() << fileInfo.isSymLink();
+                if (fileInfo.isDir()){
+                    if (!deleteDir(fileInfo.filePath()))
+                        return false;
+                }
             }
-        } else {
-            if (!deleteDir(fileInfo.filePath()))
-                return false;
         }
     }
-
+    qDebug() << "delete dir:" <<sourceDir.path();
     if (!sourceDir.rmdir(QDir::toNativeSeparators(sourceDir.path()))) {
         qDebug() << "Unable to remove dir:" << sourceDir.path();
         emit("Unable to remove dir: " + sourceDir.path());
@@ -1328,15 +1361,16 @@ bool FileJob::writeTrashInfo(const QString &fileBaseName, const QString &path, c
 
 bool FileJob::checkDiskSpaceAvailable(const DUrlList &files, const DUrl &destination)
 {
-    UDiskDeviceInfoPointer info = deviceListener->getDeviceByPath(destination.path()); // get disk info from mount point
-    if(!info)
-        info = deviceListener->getDeviceByFilePath(destination.path()); // get disk infor from mount mount point sub path
+//    UDiskDeviceInfoPointer info = deviceListener->getDeviceByPath(destination.path()); // get disk info from mount point
+//    if(!info)
+//        info = deviceListener->getDeviceByFilePath(destination.path()); // get disk infor from mount mount point sub path
+    if (DMimeDatabase::isGvfsFile(destination.toLocalFile())){
+        m_totalSize = FileUtils::totalSize(files);
+        return true;
+    }
 
     qint64 freeBytes;
-    if(!info)
-        freeBytes = QStorageInfo(destination.path()).bytesFree();
-    else
-        freeBytes = info->getFree();
+    freeBytes = QStorageInfo(destination.toLocalFile()).bytesFree();
 
     m_isCheckingDisk = true;
 

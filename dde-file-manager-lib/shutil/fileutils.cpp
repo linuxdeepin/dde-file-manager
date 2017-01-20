@@ -10,8 +10,14 @@
 #include "simpleini/SimpleIni.h"
 #include "dmimedatabase.h"
 
+#include "shutil/dmimedatabase.h"
+
 #include <QDirIterator>
 #include <QUrl>
+<<<<<<< HEAD
+=======
+
+>>>>>>> fix copy file to smb/afc/mtp device which lost content error
 #include <QProcess>
 #include <QGSettings>
 #include <QFileDialog>

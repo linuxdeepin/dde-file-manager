@@ -1,7 +1,11 @@
 #include "dthumbnailprovider.h"
 #include "dfmstandardpaths.h"
+<<<<<<< HEAD
 #include "dmimedatabase.h"
 #include "shutil/fileutils.h"
+=======
+#include "shutil/dmimedatabase.h"
+>>>>>>> fix copy file to smb/afc/mtp device which lost content error
 
 #include <QCryptographicHash>
 #include <QDir>
@@ -9,6 +13,10 @@
 #include <QImageReader>
 #include <QQueue>
 #include <QMimeType>
+<<<<<<< HEAD
+=======
+
+>>>>>>> fix copy file to smb/afc/mtp device which lost content error
 #include <QReadWriteLock>
 #include <QWaitCondition>
 #include <QPainter>

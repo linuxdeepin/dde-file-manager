@@ -2,8 +2,11 @@
 #include <QSvgRenderer>
 #include <QPainter>
 #include "utils.h"
+
 #include "utils.h"
 #include "dmimedatabase.h"
+#include "shutil/dmimedatabase.h"
+
 
 DFM_USE_NAMESPACE
 
