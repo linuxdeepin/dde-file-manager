@@ -1,0 +1,14 @@
+<interface name='org.freedesktop.FileManager1'>
+    <method name='ShowFolders'>
+        <arg type='as' name='URIs' direction='in'/>
+        <arg type='s' name='StartupId' direction='in'/>
+    </method>
+    <method name='ShowItems'>
+        <arg type='as' name='URIs' direction='in'/>
+        <arg type='s' name='StartupId' direction='in'/>
+    </method>
+    <method name='ShowItemProperties'>
+        <arg type='as' name='URIs' direction='in'/>
+        <arg type='s' name='StartupId' direction='in'/>
+    </method>
+</interface>

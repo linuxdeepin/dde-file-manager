@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 include(../common/common.pri)
-include(filedialog/filedialog.pri)
+include(dbus/dbus.pri)
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 QT += network
