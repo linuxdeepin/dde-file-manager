@@ -8,10 +8,10 @@
 
 #include "dfileservices.h"
 #include "simpleini/SimpleIni.h"
+#include "dmimedatabase.h"
 
 #include <QDirIterator>
 #include <QUrl>
-#include <QMimeDatabase>
 #include <QProcess>
 #include <QGSettings>
 #include <QFileDialog>
@@ -28,6 +28,8 @@ extern "C" {
     #include <gio/gdesktopappinfo.h>
 }
 #define signals public
+
+DFM_USE_NAMESPACE
 
 QString FileUtils::WallpaperKey = "pictureUri";
 
@@ -190,7 +192,7 @@ bool FileUtils::isArchive(const QString &path)
 {
     QFileInfo f(path);
     if (f.exists()){
-        return mimeTypeDisplayManager->supportArchiveMimetypes().contains(QMimeDatabase().mimeTypeForFile(f).name());
+        return mimeTypeDisplayManager->supportArchiveMimetypes().contains(DMimeDatabase().mimeTypeForFile(f).name());
     }else{
         return false;
     }
@@ -716,4 +718,16 @@ DFMGlobal::MenuExtension FileUtils::getMenuExtension(const DUrlList &urlList)
     }else{
         return DFMGlobal::MenuExtension::UnknowMenuExtension;
     }
+}
+
+bool FileUtils::isGvfsMountFile(const QString &filePath)
+{
+    static const QString xdg_runtime = QString::fromLocal8Bit(qgetenv("XDG_RUNTIME_DIR"));
+    QString gvfsDir = QString("%1/gvfs").arg(xdg_runtime);
+
+    if (filePath.startsWith(gvfsDir) && DUrl(filePath) != DUrl(gvfsDir)) {
+        return true;
+    }
+
+    return false;
 }

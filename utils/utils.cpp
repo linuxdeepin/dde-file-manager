@@ -1,10 +1,11 @@
-#include <QMimeDatabase>
 #include <QStandardPaths>
 #include <QSvgRenderer>
 #include <QPainter>
 #include "utils.h"
 #include "utils.h"
+#include "dmimedatabase.h"
 
+DFM_USE_NAMESPACE
 
 QString getThumbnailsPath(){
     QString cachePath = QStandardPaths::standardLocations(QStandardPaths::CacheLocation).at(0);
@@ -142,19 +143,19 @@ bool isRequestThumbnail(QString url){
 }
 
 QString getMimeTypeGenericIconName(QString url){
-    QMimeDatabase mimeDataBae;
+    DMimeDatabase mimeDataBae;
     QMimeType mimeType = mimeDataBae.mimeTypeForFile(deleteFilePrefix(url));
     return mimeType.genericIconName();
 }
 
 QString getMimeTypeIconName(QString url){
-    QMimeDatabase mimeDataBae;
+    DMimeDatabase mimeDataBae;
     QMimeType mimeType = mimeDataBae.mimeTypeForFile(deleteFilePrefix(url));
     return mimeType.iconName();
 }
 
 QString getMimeTypeName(QString url){
-    QMimeDatabase mimeDataBae;
+    DMimeDatabase mimeDataBae;
     QMimeType mimeType = mimeDataBae.mimeTypeForFile(deleteFilePrefix(url));
     return mimeType.name();
 }

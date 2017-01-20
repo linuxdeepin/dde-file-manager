@@ -25,7 +25,7 @@ public:
     DUrl parentUrl() const Q_DECL_OVERRIDE;
     QString fileDisplayName() const Q_DECL_OVERRIDE;
 
-//    QString mimeTypeName(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault) const Q_DECL_OVERRIDE;
+//    QString mimeTypeName(DMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault) const Q_DECL_OVERRIDE;
 
     NetworkNode networkNode() const;
     void setNetworkNode(const NetworkNode& networkNode);

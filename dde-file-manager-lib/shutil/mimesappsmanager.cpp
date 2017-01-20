@@ -1,4 +1,5 @@
 #include "mimesappsmanager.h"
+#include "dmimedatabase.h"
 
 #include "app/define.h"
 
@@ -7,7 +8,6 @@
 #include <QDir>
 #include <QSettings>
 #include <QMimeType>
-#include <QMimeDatabase>
 #include <QDirIterator>
 #include <QDateTime>
 #include <QThread>
@@ -27,6 +27,8 @@ extern "C" {
     #include <gio/gappinfo.h>
 }
 #define signals public
+
+DFM_USE_NAMESPACE
 
 QStringList MimesAppsManager::DesktopFiles = {};
 QMap<QString, QStringList> MimesAppsManager::MimeApps = {};
@@ -219,21 +221,21 @@ MimesAppsManager::~MimesAppsManager()
 
 QMimeType MimesAppsManager::getMimeType(const QString &fileName)
 {
-    QMimeDatabase db;
+    DMimeDatabase db;
     QMimeType mimeType = db.mimeTypeForFile(fileName);
     return mimeType;
 }
 
 QString MimesAppsManager::getMimeTypeByFileName(const QString &fileName)
 {
-    QMimeDatabase db;
+    DMimeDatabase db;
     QMimeType mimeType = db.mimeTypeForFile(fileName);
     return mimeType.name();
 }
 
 
 QString MimesAppsManager::getDefaultAppByFileName(const QString& fileName){
-    QMimeDatabase db;
+    DMimeDatabase db;
     QMimeType mimeType = db.mimeTypeForFile(fileName);
     return getDefaultAppByMimeType(mimeType);
 }

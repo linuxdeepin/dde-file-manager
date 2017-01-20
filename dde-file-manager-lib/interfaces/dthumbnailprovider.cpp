@@ -1,5 +1,7 @@
 #include "dthumbnailprovider.h"
 #include "dfmstandardpaths.h"
+#include "dmimedatabase.h"
+#include "shutil/fileutils.h"
 
 #include <QCryptographicHash>
 #include <QDir>
@@ -7,7 +9,6 @@
 #include <QImageReader>
 #include <QQueue>
 #include <QMimeType>
-#include <QMimeDatabase>
 #include <QReadWriteLock>
 #include <QWaitCondition>
 #include <QPainter>
@@ -45,7 +46,7 @@ public:
     // 5MB
     qint64 defaultSizeLimit = 1024 * 1024 * 20;
     QHash<QMimeType, qint64> sizeLimitHash;
-    QMimeDatabase mimeDatabase;
+    DMimeDatabase mimeDatabase;
 
     static QSet<QString> hasThumbnailMimeHash;
 
@@ -126,6 +127,9 @@ bool DThumbnailProvider::hasThumbnail(const QFileInfo &info) const
     qint64 fileSize = info.size();
 
     if (fileSize <= 0)
+        return false;
+
+    if (FileUtils::isGvfsMountFile(info.absoluteFilePath()))
         return false;
 
     const QMimeType &mime = d->mimeDatabase.mimeTypeForFile(info, QMimeDatabase::MatchContent);
