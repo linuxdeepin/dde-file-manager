@@ -62,6 +62,7 @@ public:
     static void setDefaultFileManager();
 
     static DFMGlobal::MenuExtension getMenuExtension(const DUrlList& urlList);
+    static bool isGvfsMountFile(const QString &filePath);
 };
 
 #endif // FILEUTILS_H

@@ -16,6 +16,7 @@
 #include "dfileservices.h"
 #include "dthumbnailprovider.h"
 #include "dfileiconprovider.h"
+#include "dmimedatabase.h"
 
 #include <QDateTime>
 #include <QDir>
@@ -56,7 +57,7 @@ bool DFileInfo::exists(const DUrl &fileUrl)
 
 QMimeType DFileInfo::mimeType(const QString &filePath, QMimeDatabase::MatchMode mode)
 {
-    QMimeDatabase db;
+    DMimeDatabase db;
 
     return db.mimeTypeForFile(filePath, mode);
 }

@@ -9,6 +9,7 @@
 
 #include "controllers/pathmanager.h"
 #include "dfileservices.h"
+#include "dmimedatabase.h"
 
 #include "app/define.h"
 
@@ -48,7 +49,7 @@ COMPARE_FUN_DEFINE(created, Created, DAbstractFileInfo)
     if (d->proxy) return d->proxy->Fun;
 
 QMap<DUrl, DAbstractFileInfo*> DAbstractFileInfoPrivate::urlToFileInfoMap;
-QMimeDatabase DAbstractFileInfoPrivate::mimeDatabase;
+DMimeDatabase DAbstractFileInfoPrivate::mimeDatabase;
 
 DAbstractFileInfoPrivate::DAbstractFileInfoPrivate(const DUrl &url, DAbstractFileInfo *qq, bool hasCache)
     : q_ptr(qq)

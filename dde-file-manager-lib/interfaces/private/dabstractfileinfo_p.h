@@ -11,8 +11,11 @@
 #define DABSTRACTFILEINFO_P_H
 
 #include "dabstractfileinfo.h"
+#include "dmimedatabase.h"
 
 #include <QPointer>
+
+DFM_USE_NAMESPACE
 
 class DAbstractFileInfoPrivate
 {
@@ -29,7 +32,7 @@ public:
     bool active = false;
 
     DAbstractFileInfoPointer proxy;
-    static QMimeDatabase mimeDatabase;
+    static DMimeDatabase mimeDatabase;
 
 private:
     DUrl fileUrl;
