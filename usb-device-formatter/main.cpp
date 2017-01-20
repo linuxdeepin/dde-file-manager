@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
         int winId = w->winId();
 
         if(parentWinId != -1)
-            XSetTransientForHint(QX11Info::display(), (Window)winId, (Window)parentWinId);
+            qDebug() << XSetTransientForHint(QX11Info::display(), (Window)winId, (Window)parentWinId);
     }
 
     int code = a.exec();

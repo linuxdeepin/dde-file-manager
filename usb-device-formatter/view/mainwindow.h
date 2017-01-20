@@ -8,6 +8,7 @@
 
 #include <DTitlebar>
 #include <dwidget.h>
+#include <QDialog>
 #include <dplatformwindowhandle.h>
 
 #include "widgets/progressline.h"
@@ -34,7 +35,7 @@ class QPushButton;
 
 DWIDGET_USE_NAMESPACE
 
-class MainWindow : public QWidget
+class MainWindow : public QDialog
 {
     Q_OBJECT
     enum FormatStep{

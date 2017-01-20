@@ -538,11 +538,29 @@ void AppController::actionFormatDevice(const DFMEvent &event)
     QString cmd = "usb-device-formatter-pkexec";
     QStringList args;
     args << "-m="+QString::number(event.windowId()) <<devicePath;
+    QWidget* w = WindowManager::getWindowById(event.windowId());
 
-    //block UI
-    QProcess p;
-    p.start(cmd, args);
-    p.waitForFinished(-1);
+    QProcess *process = new QProcess(this);
+
+    connect(process, &QProcess::started, this, [w, process] {
+        QWidget *tmpWidget = new QWidget(w);
+
+        tmpWidget->setWindowModality(Qt::WindowModal);
+        tmpWidget->setWindowFlags(Qt::Dialog);
+        tmpWidget->setAttribute(Qt::WA_DontShowOnScreen);
+        tmpWidget->show();
+
+        connect(process, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
+                tmpWidget, &QWidget::deleteLater);
+        connect(process, static_cast<void (QProcess::*)(QProcess::ProcessError)>(&QProcess::error),
+                tmpWidget, &QWidget::deleteLater);
+    });
+
+    connect(process, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
+            process, &QProcess::deleteLater);
+    connect(process, static_cast<void (QProcess::*)(QProcess::ProcessError)>(&QProcess::error),
+            process, &QProcess::deleteLater);
+    process->start(cmd, args);
 }
 
 void AppController::actionctrlL(const DFMEvent &event)
