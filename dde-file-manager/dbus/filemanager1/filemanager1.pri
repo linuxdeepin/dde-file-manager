@@ -4,13 +4,13 @@ filemanager.source_flags += -l DBusFileManager1
 
 DBUS_ADAPTORS += filemanager
 
-xmls.path = /usr/share/dbus-1/interfaces
-xmls.files = $$filemanager.files
+filemanager_xmls.path = /usr/share/dbus-1/interfaces
+filemanager_xmls.files = $$filemanager.files
 
-service.path = /usr/share/dbus-1/services
-service.files = $$PWD/org.freedesktop.FileManager.service
+filemanager_service.path = /usr/share/dbus-1/services
+filemanager_service.files = $$PWD/org.freedesktop.FileManager.service
 
-INSTALLS += service xmls
+INSTALLS += filemanager_service filemanager_xmls
 
 HEADERS += \
     $$PWD/dbusfilemanager1.h

@@ -8,13 +8,13 @@ manager.source_flags += -l DBusFileDialogManager
 
 DBUS_ADAPTORS += dialog manager
 
-xmls.path = /usr/share/dbus-1/interfaces
-xmls.files = $$dialog.files $$manager.files
+filedialog_xmls.path = /usr/share/dbus-1/interfaces
+filedialog_xmls.files = $$dialog.files $$manager.files
 
-service.path = /usr/share/dbus-1/services
-service.files = $$PWD/com.deepin.filemanager.filedialog.service
+filedialog_service.path = /usr/share/dbus-1/services
+filedialog_service.files = $$PWD/com.deepin.filemanager.filedialog.service
 
-INSTALLS += service xmls
+INSTALLS += filedialog_service filedialog_xmls
 
 HEADERS += \
     $$PWD/dbusfiledialoghandle.h \
