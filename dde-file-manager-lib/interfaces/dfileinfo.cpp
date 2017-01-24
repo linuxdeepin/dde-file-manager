@@ -18,8 +18,6 @@
 #include "dfileiconprovider.h"
 #include "dmimedatabase.h"
 
-#include "shutil/dmimedatabase.h"
-
 #include <QDateTime>
 #include <QDir>
 #include <QPainter>

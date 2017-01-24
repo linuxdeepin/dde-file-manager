@@ -185,8 +185,7 @@ HEADERS += \
     interfaces/dfileiconprovider.h \
     interfaces/dfilewatchermanager.h \
     dialogs/computerpropertydialog.h \
-    interfaces/dmimedatabase.h \
-    shutil/dmimedatabase.h
+    interfaces/dmimedatabase.h
 
 
 SOURCES += \
@@ -301,8 +300,7 @@ SOURCES += \
     interfaces/dfileiconprovider.cpp \
     interfaces/dfilewatchermanager.cpp \
     dialogs/computerpropertydialog.cpp \
-    interfaces/dmimedatabase.cpp \
-    shutil/dmimedatabase.cpp
+    interfaces/dmimedatabase.cpp
 
 INCLUDEPATH += $$PWD/../ $$PWD/../utils/ $$PWD/interfaces/ $$PWD/../dde-file-manager-plugins/plugininterfaces/
 

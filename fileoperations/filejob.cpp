@@ -6,8 +6,7 @@
 #include "../deviceinfo/udisklistener.h"
 #include "../app/define.h"
 #include "../widgets/singleton.h"
-#include "../interfaces/dfmglobal.h"
-#include "shutil/dmimedatabase.h"
+#include "interfaces/dfmglobal.h"
 
 #include <QFile>
 #include <QThread>
@@ -29,6 +28,8 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/syscall.h>
+
+//DFM_USE_NAMESPACE
 
 int FileJob::FileJobCount = 0;
 qint64 FileJob::Msec_For_Display = 1000;
@@ -212,7 +213,7 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
         QStorageInfo srcStorageInfo(files.at(0).toLocalFile());
         if (srcStorageInfo.rootPath() != tarStorageInfo.rootPath()){
             m_isInSameDisk = false;
-        }else if (DMimeDatabase::isGvfsFile(destination.toLocalFile())){
+        }else if (FileUtils::isGvfsMountFile(destination.toLocalFile())){
             UDiskDeviceInfoPointer pSrc = deviceListener->getDeviceByFilePath(files.at(0).toLocalFile());
             UDiskDeviceInfoPointer pDes = deviceListener->getDeviceByFilePath(destination.toLocalFile());
             if (pSrc && pDes){
@@ -677,7 +678,7 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
                         return false;
                     }
                 }
-                if (!DMimeDatabase::isGvfsFile(to.fileName())){
+                if (!FileUtils::isGvfsMountFile(to.fileName())){
                     if (!to.setPermissions(from.permissions())){
                         qDebug() << "Set permissions from " << srcFile << "to" << m_tarPath << "failed";
                     };
@@ -1029,7 +1030,7 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
             }
             targetDir.setPath(m_tarPath);
 
-            if (!DMimeDatabase::isGvfsFile(targetDir.path())){
+            if (!FileUtils::isGvfsMountFile(targetDir.path())){
                 bool isSetPermissionsSuccess = setDirPermissions(srcDir, targetDir.path());
                 if (!isSetPermissionsSuccess){
                     qDebug() << "Set Permissions of "<< m_tarPath << "same as" <<  srcDir << "failed";
@@ -1689,7 +1690,7 @@ bool FileJob::checkDiskSpaceAvailable(const DUrlList &files, const DUrl &destina
 //    UDiskDeviceInfoPointer info = deviceListener->getDeviceByPath(destination.path()); // get disk info from mount point
 //    if(!info)
 //        info = deviceListener->getDeviceByFilePath(destination.path()); // get disk infor from mount mount point sub path
-    if (DMimeDatabase::isGvfsFile(destination.toLocalFile())){
+    if (FileUtils::isGvfsMountFile(destination.toLocalFile())){
         m_totalSize = FileUtils::totalSize(files);
         return true;
     }
@@ -1763,5 +1764,5 @@ bool FileJob::checkUseGvfsFileOperation(const DUrlList &files, const DUrl &desti
 
 bool FileJob::checkUseGvfsFileOperation(const QString &path)
 {
-    return DMimeDatabase::isGvfsFile(path);
+    return FileUtils::isGvfsMountFile(path);
 }

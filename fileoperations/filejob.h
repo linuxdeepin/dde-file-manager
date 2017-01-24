@@ -137,10 +137,6 @@ private:
     QMap<QString, QString> m_checkDiskJobDataDetail;
     bool m_isCheckingDisk = false;
 
-    qint64 m_bytesCopied;
-    qint64 m_totalSize = 1;
-    qint64 m_bytesPerSec;
-
     bool m_isGvfsFileOperationUsed = false;
     qint64 m_bytesCopied = 0;
     qint64 m_totalSize = 1;
