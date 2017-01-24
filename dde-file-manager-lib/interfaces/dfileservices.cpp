@@ -21,7 +21,6 @@
 #include "deviceinfo/udisklistener.h"
 #include "interfaces/dfmglobal.h"
 #include "widgets/singleton.h"
-#include "shutil/dmimedatabase.h"
 
 #include <ddialog.h>
 
@@ -395,8 +394,9 @@ void DFileService::moveToTrash(const DFMEvent &event) const
             dialogManager->showDeleteSystemPathWarnDialog();
             return;
         }
+    }
 
-    if (DMimeDatabase::isGvfsFile(event.fileUrlList().first().toLocalFile())){
+    if (FileUtils::isGvfsMountFile(event.fileUrlList().first().toLocalFile())){
         deleteFiles(event);
         return;
     }

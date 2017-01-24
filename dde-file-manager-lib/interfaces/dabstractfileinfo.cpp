@@ -16,12 +16,12 @@
 #include "widgets/singleton.h"
 #include "plugins/pluginmanager.h"
 #include "dde-file-manager-plugins/plugininterfaces/menu/menuinterface.h"
-#include "shutil/dmimedatabase.h"
 
 #include <QDateTime>
 #include <QDebug>
 #include <QApplication>
 #include <QCollator>
+
 
 namespace FileSortFunction {
 QCollator sortCollator;
@@ -1003,7 +1003,7 @@ QSet<MenuAction> DAbstractFileInfo::disableMenuActionList() const
         list << MenuAction::Cut << MenuAction::Rename << MenuAction::Remove << MenuAction::Delete;
     }
 
-    if (DMimeDatabase::isGvfsFile(absoluteFilePath())){
+    if (FileUtils::isGvfsMountFile(absoluteFilePath())){
         list << MenuAction::Delete;
     }
 

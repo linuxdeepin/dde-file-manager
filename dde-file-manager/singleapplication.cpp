@@ -17,8 +17,6 @@
 #include <QJsonValue>
 
 #define fileManagerApp FileManagerApp::instance()
-#include <stdlib.h>
-#define fileManagerApp Singleton<FileManagerApp>::instance()
 
 QString SingleApplication::UserID = "1000";
 

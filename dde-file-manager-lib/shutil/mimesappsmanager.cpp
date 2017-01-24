@@ -5,6 +5,9 @@
 
 #include "widgets/singleton.h"
 #include "shutil/dmimedatabase.h"
+#include "desktopfile.h"
+#include "interfaces/dfmstandardpaths.h"
+#include "interfaces/dfmglobal.h"
 
 #include <QDir>
 #include <QSettings>
@@ -14,8 +17,7 @@
 #include <QThread>
 #include <QStandardPaths>
 #include <QDebug>
-#include "desktopfile.h"
-#include "interfaces/dfmstandardpaths.h"
+
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>

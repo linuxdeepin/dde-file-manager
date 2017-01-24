@@ -14,8 +14,6 @@
 
 #include "shutil/mimesappsmanager.h"
 #include "interfaces/dfmstandardpaths.h"
-#include "fileoperations/filejob.h"
-
 
 #include "widgets/singleton.h"
 #include "widgets/commandlinemanager.h"

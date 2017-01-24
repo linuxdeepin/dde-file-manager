@@ -6,6 +6,7 @@
 #include "utils.h"
 #include "dmimedatabase.h"
 #include "shutil/dmimedatabase.h"
+#include "interfaces/dfmglobal.h"
 
 
 DFM_USE_NAMESPACE
