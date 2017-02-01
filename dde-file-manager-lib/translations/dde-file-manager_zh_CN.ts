@@ -96,22 +96,22 @@
 <context>
     <name>ComputerView</name>
     <message>
-        <location filename="../views/computerview.cpp" line="364"/>
+        <location filename="../views/computerview.cpp" line="373"/>
         <source>My Directories</source>
         <translation>我的目录</translation>
     </message>
     <message>
-        <location filename="../views/computerview.cpp" line="370"/>
+        <location filename="../views/computerview.cpp" line="379"/>
         <source>Internal Disk</source>
         <translation>内置磁盘</translation>
     </message>
     <message>
-        <location filename="../views/computerview.cpp" line="376"/>
+        <location filename="../views/computerview.cpp" line="385"/>
         <source>External Disk</source>
         <translation>外置磁盘</translation>
     </message>
     <message>
-        <location filename="../views/computerview.cpp" line="455"/>
+        <location filename="../views/computerview.cpp" line="464"/>
         <source>System Disk</source>
         <translation>系统盘</translation>
     </message>
@@ -196,12 +196,12 @@
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="291"/>
+        <location filename="../views/dfiledialog.cpp" line="307"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="299"/>
+        <location filename="../views/dfiledialog.cpp" line="315"/>
         <source>Save</source>
         <translation>保存</translation>
     </message>
@@ -358,12 +358,12 @@
         <translation type="vanished">有%1个任务在进行</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="440"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="419"/>
         <source>1 task in progress</source>
         <translation>有1个任务正在进行</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="442"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="421"/>
         <source>%1 tasks in progress</source>
         <translation>有%1个任务正在进行</translation>
     </message>
@@ -384,7 +384,7 @@
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="291"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="502"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="508"/>
         <source>Confirm</source>
         <translation>确定</translation>
     </message>
@@ -402,10 +402,10 @@
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="265"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="309"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="353"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="476"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="502"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="311"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="356"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="479"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="508"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
@@ -426,8 +426,8 @@
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="239"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="562"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="583"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="568"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="589"/>
         <source>OK</source>
         <translation>确定</translation>
     </message>
@@ -477,47 +477,51 @@
         <translation>您确定要彻底删除选中的%1项内容？</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="473"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="476"/>
         <source>Disk file is being used, can not unmount now</source>
         <translation>磁盘文件被占用，无法卸载</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="474"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="477"/>
         <source>Name: </source>
         <translation>名字：</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="476"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="479"/>
         <source>Force unmount</source>
         <translation>强制卸载</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="499"/>
+        <source>that this shortcut refers to has been changed or moved</source>
+        <translation type="vanished">此快捷方式所指向的“%1”已被更改或移动</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="502"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
         <translation>此快捷方式所指向的“%1”已被更改或移动</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="500"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="506"/>
         <source>Do you want to delete this shortcut？</source>
         <translation>是否删除此快捷方式?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="528"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="534"/>
         <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions.</source>
         <translation>文件管理器是深度科技自主研发的一款管理文件的工具， 它包括搜索、复制、回收站、压缩/解压缩， 文件属性等管理文件的功能。</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="560"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="566"/>
         <source>Fail to create symlink,cause:</source>
         <translation>创建链接失败，失败原因：</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="581"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="587"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
         <translation>选择的文件中包含系统目录，不能被删除</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="526"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="532"/>
         <source>Version:</source>
         <translation>版本:</translation>
     </message>
@@ -538,27 +542,27 @@
         <translation type="vanished">您确定要彻底删除选中的%1项内容？</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="309"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="311"/>
         <source>Delete</source>
         <translation>删除</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="315"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="318"/>
         <source>Empty</source>
         <translation>清空</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="340"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="343"/>
         <source>This action cannot be restored</source>
         <translation>此操作不可以恢复</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="351"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="354"/>
         <source>Sorry, unable to locate your bookmark directory, remove it?</source>
         <translation>抱歉， 找不到您的书签目录， 是否移除？</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="353"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="356"/>
         <source>Remove</source>
         <translation>移除</translation>
     </message>
@@ -756,67 +760,67 @@
         <translation type="vanished">替换</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="138"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="111"/>
         <source>Skip</source>
         <translation>跳过</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="137"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="110"/>
         <source>Keep both</source>
         <translation>共存</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="139"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="112"/>
         <source>Repalce</source>
         <translation>替换</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="159"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="134"/>
         <source>Do not ask again</source>
         <translation>不再询问</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="211"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="186"/>
         <source>Copying %1</source>
         <translation>正在复制%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="212"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="187"/>
         <source>Copy to %2</source>
         <translation>复制到%2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="215"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="190"/>
         <source>Moving %1</source>
         <translation>正在移动%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="216"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="191"/>
         <source>Move to %2</source>
         <translation>移动到%2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="218"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="193"/>
         <source>Restoring %1</source>
         <translation>整修恢复%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="219"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="194"/>
         <source>Restore to %2</source>
         <translation>恢复到%2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="221"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="196"/>
         <source>Deleting %1</source>
         <translation>正在删除%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="229"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="204"/>
         <source>Target folder already exists file named %1</source>
         <translation>目标文件夹中已存在名为%1的文件</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="230"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="205"/>
         <source>Original path %1 target path %2</source>
         <translation>原路径%1 目标路径%2</translation>
     </message>
@@ -841,7 +845,7 @@
         <translation type="vanished">&lt;span style=&quot;color: #3cadff&quot;&gt; %1 &lt;/span&gt; 被删除</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="225"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="200"/>
         <source>Calculating space, please wait</source>
         <translation>正在计算大小，请稍后</translation>
     </message>
@@ -1038,7 +1042,7 @@
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="193"/>
-        <location filename="../dialogs/propertydialog.cpp" line="604"/>
+        <location filename="../dialogs/propertydialog.cpp" line="608"/>
         <source>Open with</source>
         <translation>打开方式</translation>
     </message>
@@ -1062,12 +1066,12 @@
         <translation type="vanished">磁盘</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="688"/>
+        <location filename="../dialogs/propertydialog.cpp" line="692"/>
         <source>Allow to execute as program</source>
         <translation>允许以程序执行</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="739"/>
+        <location filename="../dialogs/propertydialog.cpp" line="743"/>
         <source>Local disk</source>
         <translation>本地磁盘</translation>
     </message>
@@ -1087,7 +1091,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="677"/>
+        <location filename="../dialogs/propertydialog.cpp" line="681"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="676"/>
         <source>Size</source>
         <translation>大小</translation>
@@ -1097,7 +1101,7 @@
         <translation type="vanished">文件个数</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="679"/>
+        <location filename="../dialogs/propertydialog.cpp" line="683"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="677"/>
         <source>Type</source>
         <translation>类型</translation>
@@ -1116,19 +1120,19 @@
         <translation>创建时间</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="680"/>
+        <location filename="../dialogs/propertydialog.cpp" line="684"/>
         <source>Time read</source>
         <translation>访问时间</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="681"/>
+        <location filename="../dialogs/propertydialog.cpp" line="685"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="679"/>
         <source>Time modified</source>
         <translation>修改时间</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="734"/>
-        <location filename="../dialogs/propertydialog.cpp" line="762"/>
+        <location filename="../dialogs/propertydialog.cpp" line="738"/>
+        <location filename="../dialogs/propertydialog.cpp" line="766"/>
         <source>Device type</source>
         <translation>设备类型</translation>
     </message>
@@ -1137,51 +1141,51 @@
         <translation type="vanished">使用空间</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="678"/>
-        <location filename="../dialogs/propertydialog.cpp" line="735"/>
-        <location filename="../dialogs/propertydialog.cpp" line="763"/>
+        <location filename="../dialogs/propertydialog.cpp" line="682"/>
+        <location filename="../dialogs/propertydialog.cpp" line="739"/>
+        <location filename="../dialogs/propertydialog.cpp" line="767"/>
         <source>Contains</source>
         <translation>文件个数</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="736"/>
-        <location filename="../dialogs/propertydialog.cpp" line="764"/>
+        <location filename="../dialogs/propertydialog.cpp" line="740"/>
+        <location filename="../dialogs/propertydialog.cpp" line="768"/>
         <source>Free space</source>
         <translation>可用空间</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="737"/>
-        <location filename="../dialogs/propertydialog.cpp" line="765"/>
+        <location filename="../dialogs/propertydialog.cpp" line="741"/>
+        <location filename="../dialogs/propertydialog.cpp" line="769"/>
         <source>Total space</source>
         <translation>总容量</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="856"/>
+        <location filename="../dialogs/propertydialog.cpp" line="860"/>
         <source>WriteRead</source>
         <translation>可读写</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="856"/>
+        <location filename="../dialogs/propertydialog.cpp" line="860"/>
         <source>ReadOnly</source>
         <translation>只读</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="856"/>
+        <location filename="../dialogs/propertydialog.cpp" line="860"/>
         <source>WriteOnly</source>
         <translation>只写</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="884"/>
+        <location filename="../dialogs/propertydialog.cpp" line="888"/>
         <source>Owner</source>
         <translation>所有者</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="885"/>
+        <location filename="../dialogs/propertydialog.cpp" line="889"/>
         <source>Group</source>
         <translation>群组</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="886"/>
+        <location filename="../dialogs/propertydialog.cpp" line="890"/>
         <source>Other</source>
         <translation>其他</translation>
     </message>
@@ -1673,13 +1677,13 @@
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="248"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="462"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="463"/>
         <source>%1 item</source>
         <translation>%1 项</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="250"/>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="464"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="465"/>
         <source>%1 items</source>
         <translation>%1 项</translation>
     </message>
@@ -1730,7 +1734,7 @@
         <translation>无搜索结果</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="852"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="853"/>
         <source>Loading...</source>
         <translation>正在加载...</translation>
     </message>
