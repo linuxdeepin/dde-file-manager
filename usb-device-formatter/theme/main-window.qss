@@ -11,6 +11,11 @@ QLabel#TagLabel{
     color: #777777;
 }
 
+QLabel#CheckBoxLabel{
+    font-size: 11px;
+    color: #444444;
+}
+
 QProgressBar::chunk {
     height: 2px;
     background-color: #ff0000;
@@ -48,14 +53,12 @@ QPushButton#ComfirmButton:hover{
     color: #FFFFFF;
     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,stop: 0 #8CCFFF,stop: 1 #4BB8FF);
     border: 1px solid rgba(0,117,243,0.20);
-    box-shadow: 0 1px 1px 0 rgba(0,0,0,0.05);
 }
 
 QPushButton#ComfirmButton:pressed{
     color: #FFFFFF;
     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,stop: 0 #0B8CFF,stop: 1 #0AA1FF);
     border: 1px solid rgba(29,129,255,0.30);
-    box-shadow: 0 1px 1px 0 rgba(0,0,0,0.05);
 }
 
 QPushButton#ComfirmButton::disabled{
@@ -72,3 +75,4 @@ QLineEdit{
 QCheckBox{
     font-size: 11px;
 }
+
