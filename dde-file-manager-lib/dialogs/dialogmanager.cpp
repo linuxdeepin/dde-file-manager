@@ -286,7 +286,8 @@ int DialogManager::showRunExcutableDialog(const DUrl &url)
 int DialogManager::showRenameNameSameErrorDialog(const QString &name, const DFMEvent &event)
 {
     DDialog d(WindowManager::getWindowById(event.windowId()));
-    d.setTitle(tr("\"%1\" already exists, please use another name.").arg(name));
+    QFontMetrics fm(d.font());
+    d.setTitle(tr("\"%1\" already exists, please use another name.").arg(fm.elidedText(name, Qt::ElideMiddle, 150)));
     QStringList buttonTexts;
     buttonTexts << tr("Confirm");
     d.addButton(buttonTexts[0], true, DDialog::ButtonRecommend);
