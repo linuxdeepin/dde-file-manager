@@ -135,7 +135,6 @@ private:
     NameTextEdit *m_edit = NULL;
     QStackedWidget *m_editStackWidget = NULL;
     QFrame* m_textShowFrame = NULL;
-    QLabel* m_textShowLastLabel = NULL;
     QPushButton* m_editButton = NULL;
     QCheckBox * m_executableCheckBox = NULL;
     SectionValueLabel* m_folderSizeLabel = NULL;
