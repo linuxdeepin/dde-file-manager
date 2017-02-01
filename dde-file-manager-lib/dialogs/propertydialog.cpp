@@ -618,7 +618,7 @@ DExpandGroup *PropertyDialog::addExpandWidget(const QStringList &titleList)
 void PropertyDialog::initTextShowFrame(const QString &text)
 {
     m_textShowFrame = new QFrame(this);
-    m_textShowFrame->setFixedHeight(60);
+    m_textShowFrame->setFixedHeight(80);
 
     m_editButton = new QPushButton(m_textShowFrame);
     m_editButton->setObjectName("EditButton");
@@ -628,27 +628,27 @@ void PropertyDialog::initTextShowFrame(const QString &text)
     QFontMetrics font = m_edit->fontMetrics();
     QString t = DFMGlobal::elideText(text, m_edit->size(), font, QTextOption::WrapAtWordBoundaryOrAnywhere, Qt::ElideMiddle, 0);
     QStringList labelTexts = t.split("\n");
+    const int maxLineCount = 3;
 
 
     qDebug() << text << labelTexts;
     QVBoxLayout* textShowLayout = new QVBoxLayout;
 
-    textShowLayout->addStretch();
     for(int i=0; i< labelTexts.length(); i++){
+        if(i > (maxLineCount-1))
+            break;
         QString labelText = labelTexts.at(i);
         QLabel* label = new QLabel(labelText, m_textShowFrame);
-        label->setFixedHeight(20);
-        label->setAlignment(Qt::AlignCenter);
+        label->setAlignment(Qt::AlignHCenter);
         QHBoxLayout* hLayout = new QHBoxLayout;
-        hLayout->addStretch();
 
-        if (i < (labelTexts.length() - 1)){
+        hLayout->addStretch(1);
+        hLayout->addWidget(label);
+        if (i < (labelTexts.length() - 1 ) && i != (maxLineCount-1)){
             if (label->fontMetrics().width(labelText) > (m_edit->width() - 10) ){
                 label->setFixedWidth(m_edit->width());
             }
-            hLayout->addWidget(label);
-        }else{
-            hLayout->addWidget(label);
+        } else{
             if (label->fontMetrics().width(labelText) > (m_edit->width() - 2*m_editButton->width()) && labelTexts.length() >=3){
                 labelText = label->fontMetrics().elidedText(labelText, Qt::ElideMiddle, m_edit->width() - 2*m_editButton->width());
             }
@@ -656,16 +656,14 @@ void PropertyDialog::initTextShowFrame(const QString &text)
             hLayout->addSpacing(2);
             hLayout->addWidget(m_editButton);
         }
-        hLayout->addStretch();
-
-        textShowLayout->addLayout(hLayout, Qt::AlignCenter);
-        m_textShowLastLabel = label;
-
+        textShowLayout->addLayout(hLayout);
+        hLayout->addStretch(1);
     }
-    textShowLayout->addStretch();
-    textShowLayout->setSpacing(0);
+
     textShowLayout->setContentsMargins(0, 0, 0, 0);
+    textShowLayout->setSpacing(0);
     m_textShowFrame->setLayout(textShowLayout);
+    textShowLayout->addStretch(1);
 
     if (m_editStackWidget->count() == 1){
         m_editStackWidget->addWidget(m_textShowFrame);
