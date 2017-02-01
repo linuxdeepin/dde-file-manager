@@ -2,10 +2,8 @@
 #include <QSvgRenderer>
 #include <QPainter>
 #include "utils.h"
-
 #include "utils.h"
 #include "dmimedatabase.h"
-#include "shutil/dmimedatabase.h"
 #include "interfaces/dfmglobal.h"
 
 

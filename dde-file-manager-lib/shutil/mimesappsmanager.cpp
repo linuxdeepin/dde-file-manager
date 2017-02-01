@@ -4,7 +4,6 @@
 #include "app/define.h"
 
 #include "widgets/singleton.h"
-#include "shutil/dmimedatabase.h"
 #include "desktopfile.h"
 #include "interfaces/dfmstandardpaths.h"
 #include "interfaces/dfmglobal.h"
