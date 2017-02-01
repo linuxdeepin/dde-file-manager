@@ -23,12 +23,13 @@ void ErrorPage::initUI()
     m_errorLabel->setWordWrap(true);
     m_errorLabel->setAlignment(Qt::AlignHCenter);
 
-    mainLayout->addStretch(1);
+    mainLayout->addSpacing(30);
     mainLayout->addWidget(warnIconLabel, 0, Qt::AlignHCenter);
     mainLayout->addSpacing(10);
     mainLayout->addWidget(m_errorLabel, 0, Qt::AlignHCenter);
     mainLayout->addStretch(1);
     setLayout(mainLayout);
+    setContentsMargins(20, 0, 20, 0);
 }
 
 void ErrorPage::setErrorMsg(const QString &errorMsg)
