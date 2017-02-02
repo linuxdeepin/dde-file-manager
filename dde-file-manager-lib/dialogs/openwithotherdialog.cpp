@@ -84,9 +84,12 @@ QListWidget *OpenWithOtherDialog::createOpenWithListWidget(const DAbstractFileIn
     QString defaultApp = mimeAppsManager->getDefaultAppByMimeType(mimeType);
 
     foreach (QString f, mimeAppsManager->DesktopObjs.keys()) {
-        if (recommendApps.contains(f)){
+
+        //Filter out unsupport mime apps and recommended apps
+        const DesktopFile& df = mimeAppsManager->DesktopObjs.value(f);
+        if(df.getMimeType().first() == "" || recommendApps.contains(f))
             continue;
-        }
+
         QString iconName = mimeAppsManager->DesktopObjs.value(f).getIcon();
         QIcon icon(QIcon::fromTheme(iconName));
         QListWidgetItem* item = new QListWidgetItem;
