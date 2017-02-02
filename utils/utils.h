@@ -29,6 +29,7 @@ bool isFolder(QString url);
 bool isInDesktop(QString url);
 bool isInDesktopFolder(QString url);
 bool isDesktopAppFile(QString url);
+bool isAvfsMounted();
 
 bool isRequestThumbnail(QString url);
 QString getMimeTypeGenericIconName(QString url);
