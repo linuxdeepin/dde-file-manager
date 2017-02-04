@@ -27,6 +27,7 @@
 
 #include "gvfs/networkmanager.h"
 #include "gvfs/gvfsmountclient.h"
+#include "gvfs/gvfsmountmanager.h"
 #include "gvfs/secrectmanager.h"
 #include "usershare/usersharemanager.h"
 #include "dialogs/dialogmanager.h"
@@ -86,15 +87,19 @@ void AppController::actionOpenDisk(const DFMEvent &event)
 {
 
     const DUrl& fileUrl = event.fileUrl();
-    if (!QStorageInfo(fileUrl.toLocalFile()).isValid()){
-        m_fmEvent = event;
-        setEventKey(Open);
-        actionMount(event);
-        deviceListener->addSubscriber(this);
-    }else{
-        actionOpen(event);
-    }
+    QString id = fileUrl.query();
+    if (!id.isEmpty()){
+        const QDiskInfo& diskInfo = gvfsMountManager->getDiskInfo(id);
 
+        if (diskInfo.can_mount()){
+            m_fmEvent = event;
+            setEventKey(Open);
+            actionMount(event);
+            deviceListener->addSubscriber(this);
+        }else{
+            actionOpen(event);
+        }
+    }
 }
 
 

@@ -48,4 +48,4 @@ qdbusxml2cpp -c CommandManagerInterface -p dbusinterface/commandmanager_interfac
 
 echo "=====deviceinfomanager====="
 qdbusxml2cpp -i deviceinfo/deviceinfomanager.h -c DeviceInfoManagerAdaptor -l DeviceInfoManager -a dbusadaptor/deviceinfomanager_adaptor deviceinfo.xml
-qdbusxml2cpp -c DeviceInfoManagerInterface -p dbusinterface/deviceinfomanager_interface deviceinfo.xml
+qdbusxml2cpp -i ../partman/partition.h -c DeviceInfoManagerInterface -p dbusinterface/deviceinfomanager_interface deviceinfo.xml

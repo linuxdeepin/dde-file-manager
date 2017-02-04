@@ -17,6 +17,7 @@
 #include <QGraphicsView>
 #include <QKeyEvent>
 #include <QSvgRenderer>
+#include <QVariantAnimation>
 
 
 #include "models/bookmark.h"
@@ -63,9 +64,9 @@ void DBookmarkItem::setDeviceInfo(UDiskDeviceInfoPointer deviceInfo)
     m_checkable = true;
     m_url = deviceInfo->getMountPointUrl();
     m_isDefault = true;
-    m_deviceID = deviceInfo->getDiskInfo().ID;
+    m_deviceID = deviceInfo->getDiskInfo().id();
     m_textContent = deviceInfo->fileDisplayName();
-    m_isMounted = deviceInfo->getDiskInfo().CanUnmount;
+    m_isMounted = deviceInfo->getDiskInfo().can_unmount();
     m_deviceInfo = deviceInfo;
 
     if (!m_mountBookmarkItem)
@@ -621,7 +622,7 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event);
 
-    if (!m_url.isValid())
+    if (!m_url.isValid() && !m_isDisk)
         return;
 
     if(m_group && m_pressed)
@@ -663,10 +664,10 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
             if (m_isDisk){
                 if (m_deviceInfo){
-                    DiskInfo info = m_deviceInfo->getDiskInfo();
+                    QDiskInfo info = m_deviceInfo->getDiskInfo();
                     qDebug() << info << m_url << m_isMounted;
                     if (!m_isMounted){
-                        m_url.setQuery(m_deviceID);
+                        m_url.setQuery(info.id());
                         e << m_url;
                         DUrlList urls;
                         urls.append(m_url);

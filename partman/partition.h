@@ -1,12 +1,15 @@
 #ifndef PARTITION_H
 #define PARTITION_H
 
+#include<QtCore>
+#include<QtDBus>
 #include<QString>
 #include<QDebug>
 
 namespace PartMan {
 
 class Partition;
+
 
 class Partition
 {
@@ -36,6 +39,16 @@ public:
     bool getIsRemovable() const;
     void setIsRemovable(bool isRemovable);
 
+    qlonglong freespace() const;
+    void setFreespace(const qlonglong &freespace);
+
+    qlonglong total() const;
+    void setTotal(const qlonglong &total);
+
+    friend QDBusArgument &operator<<(QDBusArgument &argument, const Partition &obj);
+    friend const QDBusArgument &operator>>(const QDBusArgument &argument, Partition &obj);
+    static void registerMetaType();
+
 private:
     QString m_path;
     QString m_fs;
@@ -44,9 +57,14 @@ private:
     QString m_uuid;
     QString m_mountPoint;
     bool m_isRemovable = false;
+    qlonglong m_freespace = 0;
+    qlonglong m_total = 0;
 };
 
 QDebug operator<<(QDebug dbg, const Partition& partion);
 
 }
+
+Q_DECLARE_METATYPE(PartMan::Partition)
+
 #endif // PARTITION_H

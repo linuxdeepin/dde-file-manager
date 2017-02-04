@@ -229,6 +229,9 @@ void NetworkManager::fetchNetworks(const DFMEvent &event)
 
     UDiskDeviceInfoPointer p1 = deviceListener->getDeviceByMountPoint(path);
     UDiskDeviceInfoPointer p2 = deviceListener->getDeviceByMountPointFilePath(path);
+
+    qDebug() << p1 << p2;
+
     if (p1){
         *e << p1->getMountPointUrl();
         emit fileSignalManager->requestChangeCurrentUrl(*e);

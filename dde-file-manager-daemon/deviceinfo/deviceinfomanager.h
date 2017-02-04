@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include "../partman/readusagemanager.h"
+#include "../partman/partition.h"
 
 class DeviceInfoManagerAdaptor;
 
@@ -17,6 +18,7 @@ public:
 signals:
 
 public slots:
+    PartMan::Partition getPartitionByDevicePath(const QString& devicePath);
     bool readUsage(const QString &path, qlonglong &freespace, qlonglong &total);
 
 private:

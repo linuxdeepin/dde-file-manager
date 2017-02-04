@@ -41,18 +41,19 @@ bool ReadUsageManager::readUsage(const QString &path, qlonglong &freespace, qlon
     qDebug() << "Start read usage of " << path;
     freespace = 0;
     total = 0;
-    Partition p = Partition::Partition::getPartitionByDevicePath(path);
-    QString fs;
-    if(!p.uuid().isEmpty()){
-       fs = p.fs();
-       if (fs == "vfat")
-           fs = "fat16";
-    }
+    Partition p = Partition::getPartitionByDevicePath(path);
+    return readUsage(path, p.fs(), freespace, total);
+}
+
+bool ReadUsageManager::readUsage(const QString &path, const QString &fs, qlonglong &freespace, qlonglong &total)
+{
     if (fs.isEmpty()){
         return false;
     }
-
-    QString key = fs.left(1).toUpper() + fs.right(fs.length()-1);
+    QString _fs = fs;
+    if (_fs == "vfat")
+         _fs = "fat16";
+    QString key = _fs.left(1).toUpper() + _fs.right(_fs.length()-1);
     QString methodKey = QString("read%1Usage").arg(key);
     QString methodSignature = QString("read%1Usage(QString,qlonglong&,qlonglong&)").arg(key);
 

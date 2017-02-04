@@ -136,7 +136,9 @@ void DCrumbWidget::addCrumb(const QStringList &list)
             }
         }
     }
-    m_group.buttons().last()->setChecked(true);
+    if (m_group.buttons().count() > 0){
+        m_group.buttons().last()->setChecked(true);
+    }
 }
 
 void DCrumbWidget::setCrumb(const DUrl &url)

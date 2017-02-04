@@ -10,9 +10,17 @@
 QString DeviceInfoManager::ObjectPath = "/com/deepin/filemanager/daemon/DeviceInfoManager";
 DeviceInfoManager::DeviceInfoManager(QObject *parent) : QObject(parent)
 {
+    PartMan::Partition::registerMetaType();
     QDBusConnection::systemBus().registerObject(ObjectPath, this);
     m_deviceInfoManagerAdaptor = new DeviceInfoManagerAdaptor(this);
     m_readUsageManager = new PartMan::ReadUsageManager(this);
+}
+
+PartMan::Partition DeviceInfoManager::getPartitionByDevicePath(const QString &devicePath)
+{
+    PartMan::Partition p = PartMan::Partition::getPartitionByDevicePath(devicePath);
+    qDebug() << p;
+    return p;
 }
 
 bool DeviceInfoManager::readUsage(const QString &path, qlonglong &freespace, qlonglong &total)

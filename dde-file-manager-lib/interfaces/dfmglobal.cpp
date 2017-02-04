@@ -13,6 +13,7 @@
 #include "interfaces/dfilemenumanager.h"
 #include "controllers/pathmanager.h"
 #include "gvfs/gvfsmountclient.h"
+#include "gvfs/gvfsmountmanager.h"
 #include "gvfs/networkmanager.h"
 #include "gvfs/secrectmanager.h"
 #include "controllers/appcontroller.h"
@@ -29,6 +30,8 @@
 #include <QDir>
 #include <QTranslator>
 #include <QTimer>
+#include <QThread>
+#include <QtConcurrent>
 
 #include <cstdio>
 
@@ -219,6 +222,13 @@ void DFMGlobal::initNetworkManager()
 void DFMGlobal::initGvfsMountClient()
 {
     gvfsMountClient;
+}
+
+void DFMGlobal::initGvfsMountManager()
+{
+    gvfsMountManager;
+    QtConcurrent::run(QThreadPool::globalInstance(), gvfsMountManager,
+                                             &GvfsMountManager::startMonitor);
 }
 
 void DFMGlobal::initSecretManager()

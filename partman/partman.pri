@@ -1,3 +1,5 @@
+QT       += dbus
+
 HEADERS += \
     $$PWD/command.h \
     $$PWD/partitionmanager.h \

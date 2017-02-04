@@ -21,6 +21,7 @@
 #include <QDateTime>
 #include <QDir>
 #include <QPainter>
+#include <QApplication>
 
 DFM_USE_NAMESPACE
 

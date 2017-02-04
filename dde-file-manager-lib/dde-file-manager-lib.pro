@@ -8,7 +8,7 @@
 
 include(../common/common.pri)
 
-QT       += core gui svg dbus x11extras
+QT       += core gui svg dbus x11extras concurrent
 #private
 QT       += gui-private
 
@@ -176,7 +176,12 @@ HEADERS += \
     interfaces/dfileiconprovider.h \
     interfaces/dfilewatchermanager.h \
     dialogs/computerpropertydialog.h \
-    interfaces/dmimedatabase.h
+    interfaces/dmimedatabase.h \
+    gvfs/qdrive.h \
+    gvfs/qvolume.h \
+    gvfs/qmount.h \
+    gvfs/gvfsmountmanager.h \
+    gvfs/qdiskinfo.h
 
 
 SOURCES += \
@@ -291,7 +296,12 @@ SOURCES += \
     interfaces/dfileiconprovider.cpp \
     interfaces/dfilewatchermanager.cpp \
     dialogs/computerpropertydialog.cpp \
-    interfaces/dmimedatabase.cpp
+    interfaces/dmimedatabase.cpp \
+    gvfs/qdrive.cpp \
+    gvfs/qvolume.cpp \
+    gvfs/qmount.cpp \
+    gvfs/gvfsmountmanager.cpp \
+    gvfs/qdiskinfo.cpp
 
 INCLUDEPATH += $$PWD/../ $$PWD/../utils/ $$PWD/interfaces/ $$PWD/../dde-file-manager-plugins/plugininterfaces/
 

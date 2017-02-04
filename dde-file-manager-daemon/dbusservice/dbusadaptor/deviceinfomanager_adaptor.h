@@ -33,6 +33,11 @@ class DeviceInfoManagerAdaptor: public QDBusAbstractAdaptor
     Q_CLASSINFO("D-Bus Interface", "com.deepin.filemanager.daemon.DeviceInfoManager")
     Q_CLASSINFO("D-Bus Introspection", ""
 "  <interface name=\"com.deepin.filemanager.daemon.DeviceInfoManager\">\n"
+"    <method name=\"getPartitionByDevicePath\">\n"
+"      <arg direction=\"in\" type=\"s\" name=\"devicePath\"/>\n"
+"      <arg direction=\"out\" type=\"(ssssssbtt)\"/>\n"
+"      <annotation value=\"PartMan::Partition\" name=\"org.qtproject.QtDBus.QtTypeName.Out0\"/>\n"
+"    </method>\n"
 "    <method name=\"readUsage\">\n"
 "      <arg direction=\"in\" type=\"s\" name=\"path\"/>\n"
 "      <arg direction=\"out\" type=\"b\" name=\"result\"/>\n"
@@ -50,6 +55,7 @@ public:
 
 public: // PROPERTIES
 public Q_SLOTS: // METHODS
+    PartMan::Partition getPartitionByDevicePath(const QString &devicePath);
     bool readUsage(const QString &path, qlonglong &freespace, qlonglong &total);
 Q_SIGNALS: // SIGNALS
 };

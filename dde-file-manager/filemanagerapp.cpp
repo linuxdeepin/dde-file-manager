@@ -105,6 +105,9 @@ void FileManagerApp::initApp()
     /*init gvfsMountClient */
     DFMGlobal::initGvfsMountClient();
 
+    /*init gvfsMountClient */
+    DFMGlobal::initGvfsMountManager();
+
     /*init secretManger */
     DFMGlobal::initSecretManager();
 

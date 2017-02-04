@@ -1,0 +1,103 @@
+#ifndef QDISKINFO_H
+#define QDISKINFO_H
+
+#include <QString>
+#include <QDebug>
+#include "interfaces/durl.h"
+
+class QDiskInfo
+{
+public:
+    QDiskInfo();
+
+    QString id() const;
+    void setId(const QString &id);
+
+    QString name() const;
+    void setName(const QString &name);
+
+    QString type() const;
+    void setType(const QString &type);
+
+    QString unix_device() const;
+    void setUnix_device(const QString &unix_device);
+
+    QString uuid() const;
+    void setUuid(const QString &uuid);
+
+    QString mounted_root_uri() const;
+    void setMounted_root_uri(const QString &mounted_root_uri);
+
+    QString iconName() const;
+    void setIconName(const QString &iconName);
+
+    bool can_unmount() const;
+    void setCan_unmount(bool can_unmount);
+
+    bool can_eject() const;
+    void setCan_eject(bool can_eject);
+
+    qulonglong used() const;
+    void setUsed(const qulonglong &used);
+
+    qulonglong total() const;
+    void setTotal(const qulonglong &total);
+
+    qulonglong free() const;
+    void setFree(const qulonglong &free);
+
+    DUrl mounted_url() const;
+    void setMounted_url(const DUrl &mounted_url);
+
+    bool isNativeCustom() const;
+    void setIsNativeCustom(bool isNativeCustom);
+
+    bool can_mount() const;
+    void setCan_mount(bool can_mount);
+
+
+    void updateGvfsFileSystemInfo();
+
+    bool read_only() const;
+    void setRead_only(bool read_only);
+
+    QString activation_root_uri() const;
+    void setActivation_root_uri(const QString &activation_root_uri);
+
+    bool isValid();
+
+    bool is_removable() const;
+    void setIs_removable(bool is_removable);
+
+private:
+    QString m_id;
+    QString m_name;
+    QString m_type;
+    QString m_unix_device;
+    QString m_uuid;
+    QString m_activation_root_uri;
+    QString m_mounted_root_uri;
+    QString m_iconName;
+    bool m_is_removable = false;
+    bool m_can_mount = false;
+    bool m_can_unmount = false;
+    bool m_can_eject = false;
+    bool m_read_only = false;
+    qulonglong m_used = 0;
+    qulonglong m_total = 0;
+    qulonglong m_free = 0;
+
+    DUrl m_mounted_url;
+    /*if true show in computerview for especially used*/
+    bool m_isNativeCustom = false;
+
+};
+
+typedef QList<QDiskInfo> QDiskInfoList;
+
+Q_DECLARE_METATYPE(QDiskInfo)
+Q_DECLARE_METATYPE(QDiskInfoList)
+
+QDebug operator<<(QDebug dbg, const QDiskInfo &info);
+
+#endif // QDISKINFO_H
