@@ -517,13 +517,19 @@ void AppController::actionSetUserSharePassword(const DFMEvent &event)
 
 void AppController::actionFormatDevice(const DFMEvent &event)
 {
+    QWidget* w = WindowManager::getWindowById(event.windowId());
+    if(!w)
+        return;
+
     UDiskDeviceInfoPointer info = deviceListener->getDeviceByDeviceID(event.fileUrl().query());
+    if(!info)
+        return;
+
     QString devicePath = info->getPath();
 
     QString cmd = "usb-device-formatter-pkexec";
     QStringList args;
     args << "-m="+QString::number(event.windowId()) <<devicePath;
-    QWidget* w = WindowManager::getWindowById(event.windowId());
 
     QProcess *process = new QProcess(this);
 
@@ -545,7 +551,7 @@ void AppController::actionFormatDevice(const DFMEvent &event)
             process, &QProcess::deleteLater);
     connect(process, static_cast<void (QProcess::*)(QProcess::ProcessError)>(&QProcess::error),
             process, &QProcess::deleteLater);
-    process->start(cmd, args);
+    process->startDetached(cmd, args);
 }
 
 void AppController::actionctrlL(const DFMEvent &event)
