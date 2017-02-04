@@ -525,8 +525,12 @@ void DialogManager::showBreakSymlinkDialog(const QString &targetName, const DUrl
 void DialogManager::showAboutDialog(const DFMEvent &event)
 {
     QWidget* w = WindowManager::getWindowById(event.windowId());
+    if(!w || w->property("AboutDialogShown").toBool())
+        return;
+
     QString icon(":/images/images/dde-file-manager_96.png");
     DAboutDialog *dialog = new DAboutDialog(w);
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
     dialog->setWindowTitle("");
     dialog->setProductIcon(QIcon(icon));
     dialog->setProductName(qApp->applicationDisplayName());
@@ -539,15 +543,26 @@ void DialogManager::showAboutDialog(const DFMEvent &event)
     const QPoint global = w->mapToGlobal(w->rect().center());
     dialog->move(global.x() - dialog->width() / 2, global.y() - dialog->height() / 2);
     dialog->show();
+    w->setProperty("AboutDialogShown", true);
+    connect(dialog, &DAboutDialog::closed, [=]{
+        w->setProperty("AboutDialogShown", false);
+    });
 }
 
 void DialogManager::showUserSharePasswordSettingDialog(const DFMEvent &event)
 {
     QWidget* w = WindowManager::getWindowById(event.windowId());
-    UserSharePasswordSettingDialog dialog(w);
-    int code = dialog.exec();
-    qDebug() << code;
-    dialog.onButtonClicked(code);
+    if(!w || w->property("UserSharePwdSettingDialogShown").toBool())
+        return;
+
+    UserSharePasswordSettingDialog* dialog = new UserSharePasswordSettingDialog(w);
+    dialog->show();
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    connect(dialog, &UserSharePasswordSettingDialog::finished, dialog, &UserSharePasswordSettingDialog::onButtonClicked);
+    w->setProperty("UserSharePwdSettingDialogShown", true);
+    connect(dialog, &UserSharePasswordSettingDialog::closed, [=]{
+        w->setProperty("UserSharePwdSettingDialogShown", false);
+    });
 }
 
 void DialogManager::showDiskSpaceOutOfUsedDialog()
