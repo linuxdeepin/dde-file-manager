@@ -589,7 +589,7 @@ bool FileUtils::isExecutableScript(const QString &path)
     return false;
 }
 
-bool FileUtils::openExcutableFile(const QString &path, int flag)
+bool FileUtils::openExcutableScriptFile(const QString &path, int flag)
 {
     bool result = false;
     switch (flag) {
@@ -608,6 +608,29 @@ bool FileUtils::openExcutableFile(const QString &path, int flag)
     }
     case 3:
         result = openFile(path);
+        break;
+    default:
+        break;
+    }
+
+    return result;
+}
+
+bool FileUtils::openExcutableFile(const QString &path, int flag)
+{
+    bool result = false;
+    switch (flag) {
+    case 0:
+        break;
+    case 1:{
+        QStringList args;
+        args << "-e" << path;
+        result = QProcess::startDetached("x-terminal-emulator", args);
+        break;
+    }
+    case 2:
+        qDebug () << ">>>>>>>>>>>> prgram:" << path;
+        result = QProcess::startDetached(path,QStringList());
         break;
     default:
         break;

@@ -53,6 +53,7 @@ public:
     static bool isFileExecutable(const QString& path);
     static QString getFileMimetype(const QString& path);
     static bool isExecutableScript(const QString& path);
+    static bool openExcutableScriptFile(const QString& path, int flag);
     static bool openExcutableFile(const QString& path, int flag);
 
     static QByteArray imageFormatName(QImage::Format f);

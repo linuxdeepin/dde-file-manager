@@ -112,7 +112,12 @@ bool FileController::openFile(const DUrl &fileUrl, bool &accepted) const
     }
 
     if (FileUtils::isExecutableScript(fileUrl.toLocalFile())) {
-        int code = dialogManager->showRunExcutableDialog(fileUrl);
+        int code = dialogManager->showRunExcutableScriptDialog(fileUrl);
+        return FileUtils::openExcutableScriptFile(fileUrl.toLocalFile(), code);
+    }
+
+    if(FileUtils::isFileExecutable(fileUrl.toLocalFile()) && !pfile->isDesktopFile()){
+        int code = dialogManager->showRunExcutableFileDialog(fileUrl);
         return FileUtils::openExcutableFile(fileUrl.toLocalFile(), code);
     }
 
