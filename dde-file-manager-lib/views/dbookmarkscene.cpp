@@ -110,6 +110,7 @@ void DBookmarkScene::initConnect()
     connect(fileSignalManager, &FileSignalManager::requestBookmarkRename, this, &DBookmarkScene::bookmarkRename);
     connect(fileSignalManager, &FileSignalManager::bookmarkRenamed, this, &DBookmarkScene::doBookmarkRenamed);
 
+    connect(deviceListener, &UDiskListener::volumeAdded, this, &DBookmarkScene::volumeAdded);
     connect(deviceListener, &UDiskListener::volumeRemoved, this, &DBookmarkScene::volumeRemoved);
     connect(deviceListener, &UDiskListener::mountAdded, this, &DBookmarkScene::mountAdded);
     connect(deviceListener, &UDiskListener::mountRemoved, this, &DBookmarkScene::mountRemoved);
@@ -237,6 +238,7 @@ void DBookmarkScene::remove(DBookmarkItem *item)
 {
     m_defaultLayout->removeItem(item);
     m_itemGroup->removeItem(item);
+    removeItem(item);
     item->deleteLater();
     decreaseSize();
     if(item->isDefaultItem())
@@ -542,18 +544,41 @@ void DBookmarkScene::doMoveBookmark(int from, int to, const DFMEvent &event)
 
 void DBookmarkScene::volumeAdded(UDiskDeviceInfoPointer device)
 {
-    Q_UNUSED(device);
+    QString key = "Disk";
+    if (device->getMediaType() == UDiskDeviceInfo::removable){
+        key = "Usb";
+    }else if (device->getMediaType() == UDiskDeviceInfo::iphone){
+        key = "Iphone";
+    }else if (device->getMediaType() == UDiskDeviceInfo::phone){
+        key = "Android";
+    }else if (device->getMediaType() == UDiskDeviceInfo::network){
+        key = "Network";
+    }else if (device->getMediaType() == UDiskDeviceInfo::camera && device->getName() == "iPhone"){
+        key = "Iphone";
+    }else if (device->getMediaType() == UDiskDeviceInfo::camera){
+        key = "Android";
+    }else if (device->getMediaType() == UDiskDeviceInfo::dvd){
+        key = "Dvd";
+    }
+    DBookmarkItem * item = createBookmarkByKey(key);
+    item->setDeviceInfo(device);
+
+    insert(indexOf(m_defaultDiskItem) + 1 + m_diskItems.count(), item);
+
+    item->setTightMode(m_isTightMode);
+    m_diskItems.insert(device->getDiskInfo().id(), item);
+
 }
 
 void DBookmarkScene::volumeRemoved(UDiskDeviceInfoPointer device)
 {
-    DBookmarkItem * item = m_diskItems.value(device->getDiskInfo().ID);
+    DBookmarkItem * item = m_diskItems.value(device->getDiskInfo().id());
     if(item)
     {
         bool isChecked = item->isChecked();
         bool isHighlightDisk = item->isHighlightDisk();
         remove(item);
-        m_diskItems.remove(device->getDiskInfo().ID);
+        m_diskItems.remove(device->getDiskInfo().id());
         //ToDo backHome action should be excute by filemonitor drivered
         if(isChecked || isHighlightDisk){
             backHome();
@@ -566,43 +591,14 @@ void DBookmarkScene::volumeRemoved(UDiskDeviceInfoPointer device)
 
 void DBookmarkScene::mountAdded(UDiskDeviceInfoPointer device)
 {
-    DBookmarkItem * item = m_diskItems.value(device->getDiskInfo().ID);
+    DBookmarkItem * item = m_diskItems.value(device->getDiskInfo().id());
     if(item)
     {
         item->setDeviceInfo(device);
         item->setMounted(true);
         item->setUrl(device->getMountPointUrl());
     }else{
-        QString key = "Disk";
-        if (device->getMediaType() == UDiskDeviceInfo::removable){
-            key = "Usb";
-        }else if (device->getMediaType() == UDiskDeviceInfo::iphone){
-            key = "Iphone";
-        }else if (device->getMediaType() == UDiskDeviceInfo::phone){
-            key = "Android";
-        }else if (device->getMediaType() == UDiskDeviceInfo::network){
-            key = "Network";
-        }else if (device->getMediaType() == UDiskDeviceInfo::camera && device->getName() == "iPhone"){
-            key = "Iphone";
-        }else if (device->getMediaType() == UDiskDeviceInfo::camera){
-            key = "Android";
-        }else if (device->getMediaType() == UDiskDeviceInfo::dvd){
-            key = "Dvd";
-        }
-        item = createBookmarkByKey(key);
-        item->setDeviceInfo(device);
-        item->setUrl(device->getMountPointUrl());
-
-        //mount point url is empty on unmounted state
-        if(!item->isMounted())
-            item->setUrl(DUrl::fromUserInput(device->getDiskInfo().ID));
-
-        insert(indexOf(m_defaultDiskItem) + 1 + m_diskItems.count(), item);
-
-
-        item->setTightMode(m_isTightMode);
-        m_diskItems.insert(device->getDiskInfo().ID, item);
-
+        volumeAdded(device);
 
         qDebug() << m_delayCheckMountedItem << m_delayCheckMountedEvent;
         if (m_delayCheckMountedItem){
@@ -614,12 +610,16 @@ void DBookmarkScene::mountAdded(UDiskDeviceInfoPointer device)
 
 void DBookmarkScene::mountRemoved(UDiskDeviceInfoPointer device)
 {
-    DBookmarkItem * item = m_diskItems.value(device->getDiskInfo().ID);
+    DBookmarkItem * item = m_diskItems.value(device->getDiskInfo().id());
     if(item)
     {
-        item->setMounted(false);
-        qDebug() << device->getDiskInfo() << item << device->getMountPointUrl();
-        emit fileSignalManager->requestAbortJob(device->getMountPointUrl());
+        if (device->getDiskInfo().can_mount()){
+            item->setDeviceInfo(device);
+            item->setMounted(false);
+            emit fileSignalManager->requestAbortJob(device->getMountPointUrl());
+        }else{
+            volumeRemoved(device);
+        }
         return;
     }
 }

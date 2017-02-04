@@ -6,25 +6,26 @@
 #include "app/filesignalmanager.h"
 
 #include "controllers/subscriber.h"
-#include "dbusinterface/deviceinfomanager_interface.h"
 #include "widgets/singleton.h"
+
+#include "gvfs/gvfsmountmanager.h"
+
+#include <QSettings>
+#include <QProcess>
 
 UDiskListener::UDiskListener(QObject *parent):
     DAbstractFileController(parent)
 {
-//    readFstab();
-    m_diskMountInterface = new DiskMountInterface(DiskMountInterface::staticServerPath(),
-                                                  DiskMountInterface::staticInterfacePath(),
-                                                  QDBusConnection::sessionBus(), this);
-    m_deviceInfoManagerInterface = new DeviceInfoManagerInterface(
-                                                  "com.deepin.filemanager.daemon",
-                                                  "/com/deepin/filemanager/daemon/DeviceInfoManager",
-                                                                  QDBusConnection::systemBus(), this);
-    connect(m_diskMountInterface, &DiskMountInterface::Changed, this, &UDiskListener::changed);
-//    connect(m_diskMountInterface, &DiskMountInterface::Error, this, &UDiskListener::handleError);
-    connect(m_diskMountInterface, &DiskMountInterface::Error,
-            fileSignalManager, &FileSignalManager::showDiskErrorDialog);
+    initConnect();
     loadCustomVolumeLetters();
+}
+
+void UDiskListener::initConnect()
+{
+    connect(gvfsMountManager, &GvfsMountManager::mount_added, this, &UDiskListener::addMountDiskInfo);
+    connect(gvfsMountManager, &GvfsMountManager::mount_removed, this, &UDiskListener::removeMountDiskInfo);
+    connect(gvfsMountManager, &GvfsMountManager::volume_added, this, &UDiskListener::addVolumeDiskInfo);
+    connect(gvfsMountManager, &GvfsMountManager::volume_removed, this, &UDiskListener::removeVolumeDiskInfo);
 }
 
 UDiskDeviceInfoPointer UDiskListener::getDevice(const QString &id)
@@ -37,21 +38,29 @@ UDiskDeviceInfoPointer UDiskListener::getDevice(const QString &id)
 
 void UDiskListener::addDevice(UDiskDeviceInfoPointer device)
 {
-    m_map.insert(device->getDiskInfo().ID, device);
+    m_map.insert(device->getDiskInfo().id(), device);
     m_list.append(device);
 }
 
 void UDiskListener::removeDevice(UDiskDeviceInfoPointer device)
 {
     m_list.removeOne(device);
-    m_map.remove(device->getDiskInfo().ID);
+    m_map.remove(device->getDiskInfo().id());
 }
 
 void UDiskListener::update()
 {
-    asyncRequestDiskInfos();
+    QStringList keys;
+    keys.append(GvfsMountManager::Volumes_Drive_Keys);
+    keys.append(GvfsMountManager::Volumes_No_Drive_Keys);
+    keys.append(GvfsMountManager::NoVolumes_Mounts_Keys);
+    foreach (QString key, keys) {
+        QDiskInfo diskInfo = GvfsMountManager::DiskInfos.value(key);
+        if (diskInfo.isValid()){
+            addMountDiskInfo(diskInfo);
+        }
+    }
 }
-
 
 
 QString UDiskListener::lastPart(const QString &path)
@@ -59,13 +68,6 @@ QString UDiskListener::lastPart(const QString &path)
     return path.split('/').last();
 }
 
-bool UDiskListener::isSystemDisk(const QString &path) const
-{
-    if(fstab.contains(path))
-        return true;
-    else
-        return false;
-}
 
 UDiskDeviceInfoPointer UDiskListener::hasDeviceInfo(const QString &id)
 {
@@ -140,6 +142,7 @@ UDiskDeviceInfoPointer UDiskListener::getDeviceByMountPoint(const QString &mount
     {
         UDiskDeviceInfoPointer info = m_list.at(i);
         if (info && !info->getMountPoint().isEmpty()){
+            qDebug() << info->getMountPoint() << mountPoint;
             if (DUrl(info->getMountPoint()) == DUrl(mountPoint))
                 return info;
         }
@@ -244,122 +247,90 @@ QMap<QString, QString> UDiskListener::getVolumeLetters()
     return m_volumeLetters;
 }
 
-void UDiskListener::mount(const QString &path)
+void UDiskListener::addMountDiskInfo(const QDiskInfo &diskInfo)
 {
-    QDBusPendingReply<> reply = m_diskMountInterface->Mount(path);
-    reply.waitForFinished();
-    if (reply.isValid() && reply.isFinished()){
-        qDebug() << "mount" << path << "successed";
+    qDebug() << diskInfo;
+    UDiskDeviceInfoPointer device;
+    if(m_map.value(diskInfo.id())){
+        device = m_map.value(diskInfo.id());
+        device->setDiskInfo(diskInfo);
+    }else{
+        device = new UDiskDeviceInfo();
+        device->setDiskInfo(diskInfo);
+        addDevice(device);
+    }
+    emit mountAdded(device);
+
+    qDebug() << m_subscribers;
+    foreach (Subscriber* sub, m_subscribers) {
+        QString url = device->getMountPointUrl().toString();
+        qDebug() << url;
+        sub->doSubscriberAction(url);
+    }
+
+}
+
+void UDiskListener::removeMountDiskInfo(const QDiskInfo &diskInfo)
+{
+    UDiskDeviceInfoPointer device;
+    qDebug() << diskInfo;
+    qDebug() << m_map.contains(diskInfo.id());
+    qDebug() << m_map;
+    if (m_map.value(diskInfo.id())){
+        device = m_map.value(diskInfo.id());
+        qDebug() << device->getMediaType();
+        if (device->getMediaType() == UDiskDeviceInfo::iphone ||
+            device->getMediaType() == UDiskDeviceInfo::phone ||
+            device->getMediaType() == UDiskDeviceInfo::removable){
+            device->setDiskInfo(diskInfo);
+        }else{
+            removeDevice(device);
+        }
+        emit mountRemoved(device);
     }
 }
 
-DiskInfo UDiskListener::queryDisk(const QString &path)
+void UDiskListener::addVolumeDiskInfo(const QDiskInfo &diskInfo)
 {
-    DiskInfo info = m_diskMountInterface->QueryDisk(path);
-    return info;
+    UDiskDeviceInfoPointer device;
+    if(m_map.value(diskInfo.id())){
+        device = m_map.value(diskInfo.id());
+        device->setDiskInfo(diskInfo);
+    }else{
+        device = new UDiskDeviceInfo();
+        device->setDiskInfo(diskInfo);
+        addDevice(device);
+    }
+    emit volumeAdded(device);
+}
+
+void UDiskListener::removeVolumeDiskInfo(const QDiskInfo &diskInfo)
+{
+    UDiskDeviceInfoPointer device;
+    qDebug() << diskInfo << m_map.contains(diskInfo.id()) << m_map;
+    if (m_map.value(diskInfo.id())){
+        device = m_map.value(diskInfo.id());
+        removeDevice(device);
+        emit volumeRemoved(device);
+    }
+}
+
+void UDiskListener::mount(const QString &path)
+{
+    qDebug() << path;
+    GvfsMountManager::mount(path);
 }
 
 void UDiskListener::unmount(const QString &path)
 {
-    m_diskMountInterface->Unmount(path);
+    qDebug() << path;
+    GvfsMountManager::unmount(path);
 }
 
 void UDiskListener::eject(const QString &path)
 {
-    m_diskMountInterface->Eject(path);
+    GvfsMountManager::eject(path);
 }
-
-void UDiskListener::asyncRequestDiskInfos()
-{
-    QDBusPendingReply<DiskInfoList> reply = m_diskMountInterface->ListDisk();
-    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply);
-    connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
-                        this, SLOT(asyncRequestDiskInfosFinihsed(QDBusPendingCallWatcher*)));
-}
-
-void UDiskListener::asyncRequestDiskInfosFinihsed(QDBusPendingCallWatcher *call)
-{
-    QDBusPendingReply<DiskInfoList> reply = *call;
-    if (!reply.isError()){
-        DiskInfoList diskinfos = qdbus_cast<DiskInfoList>(reply.argumentAt(0));
-        foreach(DiskInfo info, diskinfos)
-        {
-            if (info.Icon == "drive-optical" && info.Name.startsWith("CD")){
-                info.Type = "dvd";
-            }
-
-            UDiskDeviceInfoPointer device;
-            if(m_map.value(info.ID))
-            {
-                device = m_map.value(info.ID);
-                device->setDiskInfo(info);
-            }
-            else
-            {
-                device = new UDiskDeviceInfo(info);
-                addDevice(device);
-            }
-            mountAdded(device);
-
-            if (device->getMediaType() == UDiskDeviceInfo::native ||
-                    device->getMediaType() == UDiskDeviceInfo::removable){
-                QString devicePath = info.Path;
-                if(!devicePath.isEmpty())
-                    deviceListener->requestAsycGetUsage(devicePath);
-            }
-        }
-    }else{
-        qCritical() << reply.error().message();
-    }
-    call->deleteLater();
-    emit requestDiskInfosFinihsed();
-}
-
-void UDiskListener::changed(int in0, const QString &in1)
-{
-    qDebug() << in0 << in1;
-
-    UDiskDeviceInfoPointer device = hasDeviceInfo(in1);
-    DiskInfo info = m_diskMountInterface->QueryDisk(in1);
-
-    if (info.Icon == "drive-optical" && info.Name.startsWith("CD")){
-        info.Type = "dvd";
-    }
-
-    qDebug() << device << info;
-    if(!device && !info.ID.isEmpty())
-    {
-        device = new UDiskDeviceInfo(info);
-        addDevice(device);
-        emit mountAdded(device);
-    }else if (device && !info.ID.isEmpty())
-    {
-        DUrl oldMountUrl = device->getMountPointUrl();
-        bool oldCanUnmount = device->getDiskInfo().CanUnmount;
-        device->setDiskInfo(info);
-        if (oldCanUnmount != info.CanUnmount){
-            if (info.CanUnmount){
-                emit mountAdded(device);
-            }else{
-                info.MountPointUrl = oldMountUrl;
-                device->setDiskInfo(info);
-                emit mountRemoved(device);
-            }
-
-            qDebug() << m_subscribers;
-            foreach (Subscriber* sub, m_subscribers) {
-                QString url = device->getMountPointUrl().toString();
-                qDebug() << url;
-                sub->doSubscriberAction(url);
-            }
-        }
-
-    }else if (device && info.ID.isEmpty()){
-        emit volumeRemoved(device);
-        removeDevice(device);
-    }
-}
-
 
 void UDiskListener::forceUnmount(const QString &id)
 {
@@ -377,53 +348,6 @@ void UDiskListener::forceUnmount(const QString &id)
         qDebug() << "gvfs-mount" << args << reslut;
     }
 }
-
-bool UDiskListener::requestAsycGetUsage(const QString &devicePath)
-{
-    QDBusPendingReply<bool, qlonglong, qlonglong> reply = m_deviceInfoManagerInterface->readUsage(devicePath);
-    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply);
-    watcher->setProperty("devicePath", devicePath);
-    connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
-            this, SLOT(asyncRequestGetUsageFinihsed(QDBusPendingCallWatcher*)));
-}
-
-void UDiskListener::asyncRequestGetUsageFinihsed(QDBusPendingCallWatcher *call)
-{
-    QDBusPendingReply<bool, qlonglong, qlonglong> reply = *call;
-    if (!reply.isError()){
-        QString devicePath = call->property("devicePath").toString();
-        bool ret = qdbus_cast<bool>(reply.argumentAt(0));
-        qlonglong freeSpace  = qdbus_cast<qlonglong>(reply.argumentAt(1));
-        qlonglong total = qdbus_cast<qlonglong>(reply.argumentAt(2));
-        if (ret){
-            UDiskDeviceInfoPointer device = getDeviceByDevicePath(devicePath);
-            if (device){
-                DiskInfo info = device->getDiskInfo();
-                info.Total = total;
-                info.Free = freeSpace;
-                info.Used = total - freeSpace;
-                device->setDiskInfo(info);
-                emit deviecInfoChanged(device);
-            }
-        }
-
-    }else{
-        qCritical() << reply.error().message();
-    }
-    call->deleteLater();
-}
-
-void UDiskListener::refreshAsycGetAllDeviceUsage()
-{
-    for (int i = 0; i < m_list.size(); i++)
-    {
-        UDiskDeviceInfoPointer info = m_list.at(i);
-        if (!info->getPath().isEmpty()){
-            requestAsycGetUsage(info->getPath());
-        }
-    }
-}
-
 
 const QList<DAbstractFileInfoPointer> UDiskListener::getChildren(const DUrl &fileUrl, const QStringList &nameFilters,
                                                                 QDir::Filters filters, QDirIterator::IteratorFlags flags,

@@ -14,6 +14,7 @@
 #define mimeTypeDisplayManager Singleton<MimeTypeDisplayManager>::instance()
 #define networkManager Singleton<NetworkManager>::instance()
 #define gvfsMountClient Singleton<GvfsMountClient>::instance()
+#define gvfsMountManager Singleton<GvfsMountManager>::instance()
 #define secrectManager Singleton<SecrectManager>::instance()
 #define userShareManager Singleton<UserShareManager>::instance()
 

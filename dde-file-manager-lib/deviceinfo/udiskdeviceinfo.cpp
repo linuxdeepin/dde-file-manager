@@ -16,9 +16,9 @@ UDiskDeviceInfo::UDiskDeviceInfo()
 }
 
 UDiskDeviceInfo::UDiskDeviceInfo(UDiskDeviceInfoPointer info)
-    : UDiskDeviceInfo(info->getDiskInfo())
+    : UDiskDeviceInfo()
 {
-
+    setDiskInfo(info->getDiskInfo());
 }
 
 UDiskDeviceInfo::UDiskDeviceInfo(const DUrl &url)
@@ -33,80 +33,78 @@ UDiskDeviceInfo::UDiskDeviceInfo(const QString &url)
 
 }
 
-UDiskDeviceInfo::UDiskDeviceInfo(DiskInfo diskInfo)
-    : DFileInfo(({DUrl url = getMountPointUrl(diskInfo); url.setQuery(diskInfo.ID); url;}), false)
-{
-    m_diskInfo = diskInfo;
-}
-
 UDiskDeviceInfo::~UDiskDeviceInfo()
 {
 
 }
 
-void UDiskDeviceInfo::setDiskInfo(DiskInfo diskInfo)
+void UDiskDeviceInfo::setDiskInfo(QDiskInfo diskInfo)
 {
     m_diskInfo = diskInfo;
     DUrl url = getMountPointUrl();
 
-    url.setQuery(getId());
+    url.setQuery(getMountPoint());
     setUrl(url);
 }
 
-DiskInfo UDiskDeviceInfo::getDiskInfo() const
+QDiskInfo UDiskDeviceInfo::getDiskInfo() const
 {
     return m_diskInfo;
 }
 
 QString UDiskDeviceInfo::getId() const
 {
-    return m_diskInfo.ID;
+    return m_diskInfo.id();
 }
 
 QString UDiskDeviceInfo::getName() const
 {
     QString letter = deviceListener->getVolumeLetters().value(getId().toLower());
     if (!letter.isEmpty())
-        return QString("%1 (%2:)").arg(m_diskInfo.Name, letter);
-    return m_diskInfo.Name;
+        return QString("%1 (%2:)").arg(m_diskInfo.name(), letter);
+    return m_diskInfo.name();
 }
 
 QString UDiskDeviceInfo::getType() const
 {
-    return m_diskInfo.Type;
+    return m_diskInfo.type();
 }
 
 QString UDiskDeviceInfo::getPath() const
 {
-    return m_diskInfo.Path;
+    return m_diskInfo.unix_device();
 }
 
 QString UDiskDeviceInfo::getMountPoint() const
 {
-    return m_diskInfo.MountPoint;
+    return m_diskInfo.mounted_root_uri();
 }
 
 DUrl UDiskDeviceInfo::getMountPointUrl()
 {
-    if (!m_diskInfo.ID.isEmpty())
+    if (!getId().isEmpty())
         return getMountPointUrl(m_diskInfo);
     else
         return DUrl();
 }
 
-DUrl UDiskDeviceInfo::getMountPointUrl(DiskInfo &info)
+DUrl UDiskDeviceInfo::getMountPointUrl(QDiskInfo &info)
 {
     QString path = QString("/run/user/%1/gvfs").arg(getuid());
+    QString mounted_root_uri = info.mounted_root_uri();
+    DUrl MountPointUrl = DUrl(mounted_root_uri);
 
-    if (info.MountPoint.startsWith(AFC_SCHEME)){
-        info.MountPointUrl = DUrl::fromLocalFile(QString("%1/afc:host=%2").arg(path, info.ID));
-    }else if (info.MountPoint.startsWith(MTP_SCHEME)){
-        QStringList ids = info.MountPoint.split("/");
+    if (mounted_root_uri == "/"){
+        MountPointUrl = DUrl::fromLocalFile("/");
+    }else if (mounted_root_uri.startsWith(AFC_SCHEME)){
+        MountPointUrl = DUrl::fromLocalFile(QString("%1/afc:host=%2").arg(path, info.id()));
+    }else if (mounted_root_uri.startsWith(MTP_SCHEME)){
+        QStringList ids = mounted_root_uri.split("/");
         QString key = QUrl::toPercentEncoding(ids[2]);
-        info.MountPointUrl = DUrl::fromLocalFile(QString("%1/mtp:host=%2").arg(path, key));
-    }else if (info.MountPoint.startsWith(SMB_SCHEME)){
+        MountPointUrl = DUrl::fromLocalFile(QString("%1/mtp:host=%2").arg(path, key));
+    }else if (mounted_root_uri.startsWith(SMB_SCHEME)){
         QString mountPath = QString("%1/smb-share:").arg(path);
-        QStringList ids = info.MountPoint.split("/");
+        QStringList ids = mounted_root_uri.split("/");
         QString share = ids[3];
         QString domain;
         QString user;
@@ -142,29 +140,31 @@ DUrl UDiskDeviceInfo::getMountPointUrl(DiskInfo &info)
         }
 //        qDebug() << domain << ip << share << user << mountPath << QUrl::fromPercentEncoding(mountPath.toLatin1());
         mountPath = QUrl::fromPercentEncoding(mountPath.toLatin1());
-        info.MountPointUrl = DUrl::fromLocalFile(mountPath.left(mountPath.length()-1));
-    }else if(info.MountPoint.startsWith(GPHOTO2_SCHEME)){
-        QStringList ids = info.MountPoint.split("/");
+        MountPointUrl = DUrl::fromLocalFile(mountPath.left(mountPath.length()-1));
+    }else if(mounted_root_uri.startsWith(GPHOTO2_SCHEME)){
+        QStringList ids = mounted_root_uri.split("/");
         QString key = QUrl::toPercentEncoding(ids[2]);
-        info.MountPointUrl = DUrl::fromLocalFile(QString("%1/gphoto2:host=%2").arg(path, key));
+        MountPointUrl = DUrl::fromLocalFile(QString("%1/gphoto2:host=%2").arg(path, key));
     }
 
-    return info.MountPointUrl;
+    info.setMounted_url(MountPointUrl);
+
+    return MountPointUrl;
 }
 
 QString UDiskDeviceInfo::getIcon() const
 {
-    return m_diskInfo.Icon;
+    return m_diskInfo.iconName();
 }
 
 bool UDiskDeviceInfo::canEject() const
 {
-    return m_diskInfo.CanEject;
+    return m_diskInfo.can_eject();
 }
 
 bool UDiskDeviceInfo::canUnmount() const
 {
-    return m_diskInfo.CanUnmount;
+    return m_diskInfo.can_unmount();
 }
 
 qulonglong UDiskDeviceInfo::getFree()
@@ -175,7 +175,7 @@ qulonglong UDiskDeviceInfo::getFree()
             return QStorageInfo(getMountPointUrl().toLocalFile()).bytesFree();
         }
     }
-    return m_diskInfo.Free;
+    return m_diskInfo.free();
 }
 
 qulonglong UDiskDeviceInfo::getTotal()
@@ -185,12 +185,12 @@ qulonglong UDiskDeviceInfo::getTotal()
             return QStorageInfo(getMountPointUrl().toLocalFile()).bytesTotal();
         }
     }
-    return m_diskInfo.Total;
+    return m_diskInfo.total();
 }
 
 qint64 UDiskDeviceInfo::size() const
 {
-    return m_diskInfo.Total;
+    return m_diskInfo.total();
 }
 
 QString UDiskDeviceInfo::fileDisplayName() const
@@ -199,7 +199,7 @@ QString UDiskDeviceInfo::fileDisplayName() const
     if (!displayName.isEmpty()){
         return displayName;
     }
-    return FileUtils::formatSize(m_diskInfo.Total);
+    return FileUtils::formatSize(size());
 }
 
 UDiskDeviceInfo::MediaType UDiskDeviceInfo::getMediaType() const
@@ -209,6 +209,8 @@ UDiskDeviceInfo::MediaType UDiskDeviceInfo::getMediaType() const
     else if(getType() == "removable")
         return removable;
     else if(getType() == "network")
+        return network;
+    else if(getType() == "smb")
         return network;
     else if(getType() == "phone")
         return phone;
@@ -322,11 +324,11 @@ QVector<MenuAction> UDiskDeviceInfo::menuActionList(DAbstractFileInfo::MenuType 
                << MenuAction::OpenDiskInNewTab
                << MenuAction::Separator;
 
-    if(m_diskInfo.CanEject){
+    if(canEject()){
         actionKeys << MenuAction::Eject;
     }
 
-    if (m_diskInfo.CanUnmount){
+    if (canUnmount()){
         actionKeys << MenuAction::Unmount;
     }else{
         actionKeys << MenuAction::Mount;
@@ -335,7 +337,7 @@ QVector<MenuAction> UDiskDeviceInfo::menuActionList(DAbstractFileInfo::MenuType 
     if(getMediaType() == removable)
         actionKeys << MenuAction::FormatDevice;
 
-    if (m_diskInfo.ID.startsWith("smb://"))
+    if (getId().startsWith("smb://"))
         actionKeys << MenuAction::ForgetPassword;
     actionKeys << MenuAction::Separator << MenuAction::Property;
 
@@ -345,7 +347,7 @@ QVector<MenuAction> UDiskDeviceInfo::menuActionList(DAbstractFileInfo::MenuType 
 QSet<MenuAction> UDiskDeviceInfo::disableMenuActionList() const
 {
     QSet<MenuAction> actionKeys = DAbstractFileInfo::disableMenuActionList();
-    if (!m_diskInfo.CanUnmount){
+    if (!canUnmount()){
         actionKeys << MenuAction::Property;
     }
     return actionKeys;

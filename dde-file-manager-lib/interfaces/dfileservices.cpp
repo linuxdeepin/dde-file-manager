@@ -33,6 +33,8 @@
 #include <QApplication>
 #include <QMimeData>
 #include <QTimer>
+#include <QStandardPaths>
+#include <QProcess>
 
 DWIDGET_USE_NAMESPACE
 

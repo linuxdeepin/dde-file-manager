@@ -90,7 +90,7 @@ void DLeftSideBar::initConnect()
     connect(m_scene, &DBookmarkScene::dragEntered, this, &DLeftSideBar::doDragEnter);
     connect(m_scene, &DBookmarkScene::dragLeft, this, &DLeftSideBar::doDragLeave);
     connect(m_scene, &DBookmarkScene::dropped, this, &DLeftSideBar::doDragLeave);
-    connect(deviceListener, &UDiskListener::requestDiskInfosFinihsed, this, &DLeftSideBar::handdleRequestDiskInfosFinihsed);
+//    connect(deviceListener, &UDiskListener::requestDiskInfosFinihsed, this, &DLeftSideBar::handdleRequestDiskInfosFinihsed);
     connect(fileSignalManager, &FileSignalManager::userShareCountChanged, this, &DLeftSideBar::handleUserShareCountChanged);
     connect(userShareManager, &UserShareManager::userShareAdded, this, &DLeftSideBar::centerOnMyShareItem);
 }

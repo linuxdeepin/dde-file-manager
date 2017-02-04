@@ -211,6 +211,7 @@ public:
     static void initMimeTypeDisplayManager();
     static void initNetworkManager();
     static void initGvfsMountClient();
+    static void initGvfsMountManager();
     static void initSecretManager();
     static void initUserShareManager();
 

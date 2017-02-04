@@ -13,6 +13,7 @@
 #include "deviceinfo/udisklistener.h"
 #include "dabstractfileinfo.h"
 #include "interfaces/dfmstandardpaths.h"
+#include "gvfs/gvfsmountmanager.h"
 #include "widgets/singleton.h"
 #include "../shutil/fileutils.h"
 
@@ -26,6 +27,8 @@
 #include <QTextEdit>
 #include <QSizePolicy>
 #include <QFile>
+#include <QStorageInfo>
+#include <QSettings>
 
 DWIDGET_USE_NAMESPACE
 
@@ -125,10 +128,15 @@ void ComputerViewItem::contextMenuEvent(QContextMenuEvent *event)
         menu = DFileMenuManager::createDefaultBookMarkMenu(disableList);
         url = m_info->fileUrl();
     }else if (m_deviceInfo){
-        if (m_deviceInfo->getMountPoint() == "/" && !m_deviceInfo->getDiskInfo().isNativeCustom){
+
+        QDiskInfo diskInfo = gvfsMountManager->getDiskInfo(m_deviceInfo->getDiskInfo().id());
+        if (diskInfo.isValid())
+            m_deviceInfo->setDiskInfo(diskInfo);
+
+        if (m_deviceInfo->getMountPoint() == "/" && m_deviceInfo->getDiskInfo().isNativeCustom()){
             menu = DFileMenuManager::createDefaultBookMarkMenu(disableList);
-            url = m_deviceInfo->getMountPointUrl();
-        }else if (m_deviceInfo->getDiskInfo().isNativeCustom){
+            url =  m_deviceInfo->getMountPointUrl();
+        }else if (m_deviceInfo->getDiskInfo().isNativeCustom()){
             menu = DFileMenuManager::createDefaultBookMarkMenu(disableList);
             url = m_deviceInfo->getMountPointUrl();
         }
@@ -173,7 +181,12 @@ void ComputerViewItem::mouseDoubleClickEvent(QMouseEvent *event)
             emit fileSignalManager->requestChangeCurrentUrl(fevent);
         }else if (m_deviceInfo){
             DUrl url = m_deviceInfo->getMountPointUrl();
-            if (!m_deviceInfo->getDiskInfo().CanUnmount){
+
+            QDiskInfo diskInfo = gvfsMountManager->getDiskInfo(m_deviceInfo->getDiskInfo().id());
+            if (diskInfo.isValid())
+                m_deviceInfo->setDiskInfo(diskInfo);
+
+            if (diskInfo.can_mount() && !diskInfo.can_unmount()){
                 url.setQuery(m_deviceInfo->getId());
                 fevent << url;
                 DUrlList urls;
@@ -431,11 +444,10 @@ void ComputerView::initUI()
 
 void ComputerView::initConnect()
 {
-    connect(deviceListener, &UDiskListener::volumeRemoved, this, &ComputerView::volumeRemoved);
     connect(deviceListener, &UDiskListener::mountAdded, this, &ComputerView::mountAdded);
     connect(deviceListener, &UDiskListener::mountRemoved, this, &ComputerView::mountRemoved);
     connect(deviceListener, &UDiskListener::volumeAdded, this, &ComputerView::volumeAdded);
-    connect(deviceListener, &UDiskListener::deviecInfoChanged, this, &ComputerView::updateComputerItemByDevice);
+    connect(deviceListener, &UDiskListener::volumeRemoved, this, &ComputerView::volumeRemoved);
     connect(m_statusBar->scalingSlider(), &DSlider::valueChanged, this, &ComputerView::resizeAllItemsBySizeIndex);
 }
 
@@ -456,22 +468,26 @@ void ComputerView::loadSystemItems()
 void ComputerView::loadNativeItems()
 {
     QStorageInfo storageInfo("/");
-    DiskInfo info;
-    info.ID = "/";
-    info.CanEject = false;
-    info.CanUnmount = false;
-    info.Type = "native";
-    info.Name = tr("System Disk");
-    info.MountPoint = "/";
-    info.Total = storageInfo.bytesTotal();
-    info.Free = storageInfo.bytesFree();
-    info.Used = info.Total - info.Free;
-    info.MountPointUrl = DUrl::fromLocalFile("/");
-    UDiskDeviceInfoPointer device(new UDiskDeviceInfo(info));
+    QDiskInfo diskInfo;
+    diskInfo.setId("/");
+    diskInfo.setType("native");
+    diskInfo.setName(tr("System Disk"));
+    diskInfo.setMounted_root_uri("/");
+    diskInfo.setCan_mount(false);
+    diskInfo.setCan_unmount(false);
+    diskInfo.setIsNativeCustom(true);
+    diskInfo.setTotal(storageInfo.bytesTotal());
+    diskInfo.setFree(storageInfo.bytesFree());
+    diskInfo.setUsed(diskInfo.total() - diskInfo.free());
+    diskInfo.setMounted_url(DUrl::fromLocalFile("/"));
 
-    mountAdded(device);
+    UDiskDeviceInfo* deviceInfo = new UDiskDeviceInfo;
+    deviceInfo->setDiskInfo(diskInfo);
+    UDiskDeviceInfoPointer device(deviceInfo);
+
+    volumeAdded(device);
     foreach (UDiskDeviceInfoPointer device, deviceListener->getDeviceList()) {
-        mountAdded(device);
+        volumeAdded(device);
     }
 }
 
@@ -487,20 +503,20 @@ void ComputerView::loadCustomItems()
 
 void ComputerView::loadCustomItemsByNameUrl(const QString &id, const QString &url)
 {
-    DiskInfo info;
-    info.ID = id;
-    info.CanEject = false;
-    info.CanUnmount = false;
-    info.Type = "native";
-    info.Name = id;
-    info.MountPoint = url;
-    info.Total = 0;
-    info.Free = 0;
-    info.Used = info.Total - info.Free;
-    info.MountPointUrl = DUrl::fromLocalFile(url);
-    info.isNativeCustom = true;
-    UDiskDeviceInfoPointer device(new UDiskDeviceInfo(info));
-    mountAdded(device);
+    QDiskInfo diskInfo;
+    diskInfo.setId(id);
+    diskInfo.setType("native");
+    diskInfo.setName(id);
+    diskInfo.setCan_mount(false);
+    diskInfo.setCan_unmount(false);
+    diskInfo.setMounted_root_uri(url);
+    diskInfo.setMounted_url(DUrl::fromLocalFile(url));
+    diskInfo.setIsNativeCustom(true);
+
+    UDiskDeviceInfo* deviceInfo = new UDiskDeviceInfo;
+    deviceInfo->setDiskInfo(diskInfo);
+    UDiskDeviceInfoPointer device(deviceInfo);
+    volumeAdded(device);
 }
 
 void ComputerView::updateStatusBar()
@@ -550,12 +566,31 @@ QString ComputerView::getDiskConfPath()
 
 void ComputerView::volumeAdded(UDiskDeviceInfoPointer device)
 {
-    Q_UNUSED(device)
+    qDebug() << "===========volumeAdded=============" << device->getId() << m_nativeItems.contains(device->getId()) << m_removableItems.contains(device->getId());
+    ComputerViewItem* item = new ComputerViewItem;
+    item->setHasMemoryInfo(true);
+    item->setDeviceInfo(device);
+    item->setName(device->fileDisplayName());
+
+    if (device->getMediaType() == UDiskDeviceInfo::native){
+        m_nativeFlowLayout->addWidget(item);
+        m_nativeItems.insert(device->getId(), item);
+    }else{
+        m_removableFlowLayout->addWidget(item);
+        m_removableItems.insert(device->getId(), item);
+        if (m_removableItems.count() > 0){
+            m_removableTitleLine->show();
+        }
+    }
+    updateItemBySizeIndex(m_currentIconSizeIndex, item);
+
     updateStatusBar();
 }
 
 void ComputerView::volumeRemoved(UDiskDeviceInfoPointer device)
 {
+    qDebug() << "===========volumeRemoved=============" << device->getId() << m_nativeItems.contains(device->getId()) << m_removableItems.contains(device->getId());
+
     if (m_nativeItems.contains(device->getId())){
         ComputerViewItem* item = m_nativeItems.value(device->getId());
         m_nativeFlowLayout->removeWidget(item);
@@ -565,7 +600,8 @@ void ComputerView::volumeRemoved(UDiskDeviceInfoPointer device)
         ComputerViewItem* item = m_removableItems.value(device->getId());
         m_removableFlowLayout->removeWidget(item);
         m_removableItems.remove(device->getId());
-        item->deleteLater();
+        item->setParent(NULL);
+        delete item;
         if (m_removableItems.count() == 0){
             m_removableTitleLine->hide();
         }
@@ -576,6 +612,7 @@ void ComputerView::volumeRemoved(UDiskDeviceInfoPointer device)
 
 void ComputerView::mountAdded(UDiskDeviceInfoPointer device)
 {
+    qDebug() << "===========mountAdded=============" << device->getId() << m_nativeItems.contains(device->getId()) << m_removableItems.contains(device->getId());
     if (m_nativeItems.contains(device->getId())){
         m_nativeItems.value(device->getId())->setDeviceInfo(device);
         return;
@@ -584,29 +621,38 @@ void ComputerView::mountAdded(UDiskDeviceInfoPointer device)
         return;
     }
     else{
-        ComputerViewItem* item = new ComputerViewItem;
-        item->setHasMemoryInfo(true);
-        item->setDeviceInfo(device);
-        item->setName(device->fileDisplayName());
-
-        if (device->getMediaType() == UDiskDeviceInfo::native){
-            m_nativeFlowLayout->addWidget(item);
-            m_nativeItems.insert(device->getId(), item);
-        }else{
-            m_removableFlowLayout->addWidget(item);
-            m_removableItems.insert(device->getId(), item);
-            if (m_removableItems.count() > 0){
-                m_removableTitleLine->show();
-            }
-        }
-        updateItemBySizeIndex(m_currentIconSizeIndex, item);
+        volumeAdded(device);
+        return;
     }
     updateStatusBar();
 }
 
 void ComputerView::mountRemoved(UDiskDeviceInfoPointer device)
 {
-    Q_UNUSED(device);
+    qDebug() << "===========mountRemoved=============" << device->getId() << m_nativeItems.contains(device->getId()) << m_removableItems.contains(device->getId());
+    qDebug() << device->getDiskInfo();
+
+    if (m_nativeItems.contains(device->getId())){
+        m_nativeItems.value(device->getId())->setDeviceInfo(device);
+        return;
+    }else if (m_removableItems.contains(device->getId())){
+
+        if (device->getMediaType() == UDiskDeviceInfo::iphone ||
+            device->getMediaType() == UDiskDeviceInfo::phone ||
+            device->getMediaType() == UDiskDeviceInfo::removable){
+            m_removableItems.value(device->getId())->setDeviceInfo(device);
+        }else{
+            ComputerViewItem* item = m_removableItems.value(device->getId());
+            m_removableFlowLayout->removeWidget(item);
+            m_removableItems.remove(device->getId());
+            item->setParent(NULL);
+            delete item;
+            if (m_removableItems.count() == 0){
+                m_removableTitleLine->hide();
+            }
+        }
+    }
+    updateStatusBar();
 }
 
 void ComputerView::updateComputerItemByDevice(UDiskDeviceInfoPointer device)
@@ -645,12 +691,12 @@ void ComputerView::resizeAllItemsBySizeIndex(int index)
     foreach (ComputerViewItem* item, m_systemItems) {
         updateItemBySizeIndex(index, item);
     }
-//    foreach (ComputerViewItem* item, m_nativeItems) {
-//        updateItemBySizeIndex(index, item);
-//    }
-//    foreach (ComputerViewItem* item, m_removableItems) {
-//        updateItemBySizeIndex(index, item);
-//    }
+    foreach (ComputerViewItem* item, m_nativeItems) {
+        updateItemBySizeIndex(index, item);
+    }
+    foreach (ComputerViewItem* item, m_removableItems) {
+        updateItemBySizeIndex(index, item);
+    }
 }
 
 void ComputerView::updateItemBySizeIndex(const int &index, ComputerViewItem *item)
@@ -712,7 +758,7 @@ void ComputerView::showEvent(QShowEvent *event)
 {
     Q_UNUSED(event)
 
-    deviceListener->refreshAsycGetAllDeviceUsage();
+//    deviceListener->refreshAsycGetAllDeviceUsage();
 
     foreach (ComputerViewItem* item, m_systemItems) {
         item->setChecked(false);

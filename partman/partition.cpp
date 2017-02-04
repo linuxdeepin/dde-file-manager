@@ -1,5 +1,6 @@
 #include "partition.h"
 #include "command.h"
+#include "readusagemanager.h"
 #include <QString>
 #include <QJsonDocument>
 #include <QJsonArray>
@@ -52,6 +53,18 @@ Partition Partition::getPartitionByDevicePath(const QString &devicePath)
                             p.setIsRemovable(true);
                         else
                             p.setIsRemovable(false);
+                    }
+
+                    if (!p.fs().isEmpty()){
+                        ReadUsageManager readUsageManager;
+                        qlonglong freespace = 0;
+                        qlonglong total = 0;
+                        bool ret = readUsageManager.readUsage(p.path(), p.fs(), freespace, total);
+                        if (ret){
+                            p.setFreespace(freespace);
+                            p.setTotal(total);
+                        }
+                        qDebug() << "read usgae of" << p.path() << ret;
                     }
                 }
             }
@@ -134,6 +147,64 @@ void Partition::setIsRemovable(bool isRemovable)
     m_isRemovable = isRemovable;
 }
 
+qlonglong Partition::freespace() const
+{
+    return m_freespace;
+}
+
+void Partition::setFreespace(const qlonglong &freespace)
+{
+    m_freespace = freespace;
+}
+
+qlonglong Partition::total() const
+{
+    return m_total;
+}
+
+void Partition::setTotal(const qlonglong &total)
+{
+    m_total = total;
+}
+
+QDBusArgument &operator<<(QDBusArgument &argument, const Partition &obj)
+{
+    argument.beginStructure();
+    argument << obj.m_path;
+    argument << obj.m_fs;
+    argument << obj.m_label;
+    argument << obj.m_name;
+    argument << obj.m_uuid;
+    argument << obj.m_mountPoint;
+    argument << obj.m_isRemovable;
+    argument << obj.m_freespace;
+    argument << obj.m_total;
+    argument.endStructure();
+    return argument;
+}
+
+const QDBusArgument &operator>>(const QDBusArgument &argument, Partition &obj)
+{
+    argument.beginStructure();
+    argument >> obj.m_path;
+    argument >> obj.m_fs;
+    argument >> obj.m_label;
+    argument >> obj.m_name;
+    argument >> obj.m_uuid;
+    argument >> obj.m_mountPoint;
+    argument >> obj.m_isRemovable;
+    argument >> obj.m_freespace;
+    argument >> obj.m_total;
+    argument.endStructure();
+    return argument;
+}
+
+void Partition::registerMetaType()
+{
+    qRegisterMetaType<Partition>(QT_STRINGIFY(Partition));
+    qDBusRegisterMetaType<Partition>();
+}
+
 QDebug operator<<(QDebug dbg, const Partition &partion)
 {
     dbg << "Partition: {"
@@ -143,6 +214,8 @@ QDebug operator<<(QDebug dbg, const Partition &partion)
           << "label:" << partion.label()
           << "uuid:" << partion.uuid()
           << "mountPoint:" << partion.mountPoint()
+          << "freespace:" << partion.freespace()
+          << "total:" << partion.total()
           << "}";
      return dbg;
 }

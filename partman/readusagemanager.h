@@ -17,6 +17,7 @@ signals:
 
 public slots:
     bool readUsage(const QString& path, qlonglong& freespace, qlonglong& total);
+    bool readUsage(const QString& path, const QString& fs, qlonglong& freespace, qlonglong& total);
     bool readBtrfsUsage(const QString& path, qlonglong& freespace, qlonglong& total);
     bool readEfiUsage(const QString& path, qlonglong& freespace, qlonglong& total);
     bool readExt2Usage(const QString& path, qlonglong& freespace, qlonglong& total);

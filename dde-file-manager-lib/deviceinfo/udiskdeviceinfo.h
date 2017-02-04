@@ -7,7 +7,7 @@
 #include <QString>
 #include <QDebug>
 #include <QDBusArgument>
-#include "dbusinterface/dbustype.h"
+#include "gvfs/qdiskinfo.h"
 
 class UDiskDeviceInfo;
 typedef QExplicitlySharedDataPointer<UDiskDeviceInfo> UDiskDeviceInfoPointer;
@@ -31,17 +31,17 @@ public:
     UDiskDeviceInfo(UDiskDeviceInfoPointer info);
     UDiskDeviceInfo(const DUrl &url);
     UDiskDeviceInfo(const QString &url);
-    UDiskDeviceInfo(DiskInfo diskInfo);
+
     ~UDiskDeviceInfo();
-    void setDiskInfo(DiskInfo diskInfo);
-    DiskInfo getDiskInfo() const;
+    void setDiskInfo(QDiskInfo diskInfo);
+    QDiskInfo getDiskInfo() const;
     QString getId() const;
     QString getName() const;
     QString getType() const;
     QString getPath() const;
     QString getMountPoint() const;
     DUrl getMountPointUrl();
-    static DUrl getMountPointUrl(DiskInfo &info);
+    static DUrl getMountPointUrl(QDiskInfo &info);
     QString getIcon() const;
     bool canEject() const;
     bool canUnmount() const;
@@ -69,7 +69,7 @@ public:
     bool exists() const Q_DECL_OVERRIDE;
 
 private:
-    DiskInfo m_diskInfo;
+    QDiskInfo m_diskInfo;
 };
 
 #endif // UDISKDEVICEINFO_H

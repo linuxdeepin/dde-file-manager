@@ -33,6 +33,12 @@ DeviceInfoManagerAdaptor::~DeviceInfoManagerAdaptor()
     // destructor
 }
 
+PartMan::Partition DeviceInfoManagerAdaptor::getPartitionByDevicePath(const QString &devicePath)
+{
+    // handle method call com.deepin.filemanager.daemon.DeviceInfoManager.getPartitionByDevicePath
+    return parent()->getPartitionByDevicePath(devicePath);
+}
+
 bool DeviceInfoManagerAdaptor::readUsage(const QString &path, qlonglong &freespace, qlonglong &total)
 {
     // handle method call com.deepin.filemanager.daemon.DeviceInfoManager.readUsage
