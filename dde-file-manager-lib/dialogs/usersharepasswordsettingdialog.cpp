@@ -10,7 +10,6 @@
 
 UserSharePasswordSettingDialog::UserSharePasswordSettingDialog(QWidget *parent) : DDialog(parent)
 {
-    setModal(true);
     setTitle(tr("Please enter share password"));
     setIcon(QIcon(":/images/dialogs/images/share_password.png"));
     initUI();
