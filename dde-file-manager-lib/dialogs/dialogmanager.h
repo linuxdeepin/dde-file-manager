@@ -45,7 +45,8 @@ public slots:
     void showCopyMoveToSelfDialog(const QMap<QString, QString> &jobDetail);
 
     void showUrlWrongDialog(const DUrl &url);
-    int showRunExcutableDialog(const DUrl& url);
+    int showRunExcutableScriptDialog(const DUrl& url);
+    int showRunExcutableFileDialog(const DUrl &url);
     int showRenameNameSameErrorDialog(const QString& name, const DFMEvent &event);
     int showDeleteFilesClearTrashDialog(const DFMEvent &event);
     int showRemoveBookMarkDialog(const DFMEvent &event);

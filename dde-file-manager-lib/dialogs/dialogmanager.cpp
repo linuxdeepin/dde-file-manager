@@ -255,19 +255,21 @@ void DialogManager::showUrlWrongDialog(const DUrl &url)
     d.exec();
 }
 
-int DialogManager::showRunExcutableDialog(const DUrl &url)
+int DialogManager::showRunExcutableScriptDialog(const DUrl &url)
 {
-    QString fileDisplayName = QFileInfo(url.path()).fileName();
-    QString message = tr("Do you wan to run %1 or display its content?").arg(fileDisplayName);
+    DDialog d;
+    int maxDisplayNameLength = 250;
+    QString _fileDisplayName = QFileInfo(url.path()).fileName();
+    QString fileDisplayName = d.fontMetrics().elidedText(_fileDisplayName,Qt::ElideRight, maxDisplayNameLength);
+    QString message = tr("Do you want to run %1 or display its content?").arg(fileDisplayName);
     QString tipMessage = tr("It is an executable text file.");
     QStringList buttonKeys, buttonTexts;
     buttonKeys << "OptionCancel" << "OptionRun" << "OptionRunInTerminal" << "OptionDisplay";
     buttonTexts << tr("Cancel") << tr("Run") << tr("Run in terminal") << tr("Display");
-    DDialog d;
 #ifdef ARCH_MIPSEL
     d.setIcon(QIcon(svgToPixmap(":/images/images/application-x-shellscript.svg", 64, 64)));
 #else
-    d.setIcon(QIcon::fromTheme("application-x-shellscript"));
+    d.setIconPixmap(QIcon::fromTheme("application-x-shellscript").pixmap(64, 64));
 #endif
     d.setTitle(message);
     d.setMessage(tipMessage);
@@ -278,6 +280,25 @@ int DialogManager::showRunExcutableDialog(const DUrl &url)
     d.addButton(buttonTexts[3], false, DDialog::ButtonRecommend);
     d.setDefaultButton(2);
     d.setFixedWidth(480);
+    int code = d.exec();
+    return code;
+}
+
+int DialogManager::showRunExcutableFileDialog(const DUrl &url)
+{
+    DDialog d;
+    const DAbstractFileInfoPointer& pfileInfo = fileService->createFileInfo(url);
+    int maxDisplayNameLength = 200;
+    QString _fileDisplayName = QFileInfo(url.path()).fileName();
+    QString fileDisplayName = d.fontMetrics().elidedText(_fileDisplayName, Qt::ElideRight, maxDisplayNameLength);
+    QString message = tr("Do you sure to run %1?").arg(fileDisplayName);
+    QString tipMessage = tr("It is an executable file.");
+    d.addButton(tr("Cancel"));
+    d.addButton(tr("Run in terminal"));
+    d.addButton(tr("Run"), true, DDialog::ButtonRecommend);
+    d.setTitle(message);
+    d.setMessage(tipMessage);
+    d.setIconPixmap(pfileInfo->fileIcon().pixmap(64, 64));
     int code = d.exec();
     return code;
 }
