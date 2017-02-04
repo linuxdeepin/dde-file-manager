@@ -23,6 +23,7 @@
 #include "models/trashdesktopfileinfo.h"
 #include "models/computerdesktopfileinfo.h"
 #include "interfaces/dfileservices.h"
+#include "utils/utils.h"
 
 #include <QDataStream>
 #include <QGuiApplication>
@@ -30,6 +31,7 @@
 #include <QThreadPool>
 #include <QSettings>
 #include <QFileSystemWatcher>
+#include <QProcess>
 
 class FileManagerAppGlobal : public FileManagerApp {};
 Q_GLOBAL_STATIC(FileManagerAppGlobal, fmaGlobal)
@@ -38,14 +40,9 @@ FileManagerApp::FileManagerApp(QObject *parent) : QObject(parent)
 {
     initApp();
     initView();
+    lazyRunInitServiceTask();
+    initSysPathWatcher();
     initConnect();
-//    lazyRunCacheTask();
-
-    QFileSystemWatcher *watcherHome = new QFileSystemWatcher(this);
-
-    connect(watcherHome, &QFileSystemWatcher::directoryChanged, systemPathManager, &PathManager::loadSystemPaths);
-
-    watcherHome->addPath(QDir::homePath());
 }
 
 FileManagerApp *FileManagerApp::instance()
@@ -135,12 +132,29 @@ void FileManagerApp::initTranslation()
 
 }
 
-void FileManagerApp::initConnect()
+void FileManagerApp::lazyRunInitServiceTask()
 {
-//    connect(fileSignalManager, &FileSignalManager::requestUpdateMimeAppsCache, mimeAppsManager, &MimesAppsManager::requestUpdateCache);
+    QTimer::singleShot(1500, initService);
 }
 
+void FileManagerApp::initSysPathWatcher()
+{
+    m_sysPathWatcher = new QFileSystemWatcher(this);
+    m_sysPathWatcher->addPath(QDir::homePath());
+}
 
+void FileManagerApp::initConnect()
+{
+    //    connect(fileSignalManager, &FileSignalManager::requestUpdateMimeAppsCache, mimeAppsManager, &MimesAppsManager::requestUpdateCache);
+    connect(m_sysPathWatcher, &QFileSystemWatcher::directoryChanged, systemPathManager, &PathManager::loadSystemPaths);
+
+}
+
+void FileManagerApp::initService()
+{
+    if(!isAvfsMounted())
+        QProcess::startDetached("mountavfs");
+}
 
 void FileManagerApp::show(const DUrl &url)
 {
@@ -188,3 +202,4 @@ void FileManagerApp::showPropertyDialog(const QStringList paths)
 
     emit fileSignalManager->requestShowPropertyDialog(event);
 }
+

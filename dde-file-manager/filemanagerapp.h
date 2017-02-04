@@ -6,7 +6,7 @@
 class WindowManager;
 class AppController;
 class DUrl;
-class QTimer;
+class QFileSystemWatcher;
 
 QT_BEGIN_NAMESPACE
 class QLocalServer;
@@ -25,13 +25,16 @@ public:
     void initView();
     void initManager();
     void initTranslation();
+    void lazyRunInitServiceTask();
+    void initSysPathWatcher();
     void initConnect();
+
+    static void initService();
 
 //    QString getFileJobConfigPath();
 
 public slots:
     void show(const DUrl& url);
-
     void showPropertyDialog(const QStringList paths);
 
 protected:
@@ -39,6 +42,7 @@ protected:
 
 private:
     WindowManager* m_windowManager = NULL;
+    QFileSystemWatcher* m_sysPathWatcher;
 };
 
 #endif // FILEMANAGERAPP_H
