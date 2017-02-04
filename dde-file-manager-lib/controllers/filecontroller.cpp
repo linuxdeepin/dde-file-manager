@@ -386,7 +386,12 @@ bool FileController::openFileLocation(const DUrl &fileUrl, bool &accepted) const
         query.addQueryItem("selectUrl", fileUrl.toString());
         parentUrl.setQuery(query);
 
-        fileService->openNewWindow(parentUrl);
+        DFMEvent event;
+        DUrlList urlList;
+        urlList << parentUrl;
+        event << urlList;
+        event << parentUrl;
+        fileService->openNewWindow(event, true);
     } else {
         return false;
     }

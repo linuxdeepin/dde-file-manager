@@ -1598,7 +1598,7 @@ void DFileView::openIndex(const QModelIndex &index)
     event << urls;
     event << DFMEvent::FileView;
     event << windowId();
-    DFileService::instance()->openUrl(event);
+    DFileService::instance()->openUrl(event, false, true);
 }
 
 void DFileView::keyboardSearch(const QString &search)
@@ -1616,9 +1616,6 @@ bool DFileView::setRootUrl(const DUrl &url)
     D_D(DFileView);
 
     DUrl fileUrl = url;
-
-    if(fileUrl.isLocalFile() && FileUtils::isArchive(fileUrl.path()))
-        fileUrl.setScheme(AVFS_SCHEME);
 
     const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(fileUrl);
 

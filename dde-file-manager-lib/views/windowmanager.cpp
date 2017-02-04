@@ -104,9 +104,9 @@ bool WindowManager::tabAddableByWinId(const int &winId)
 
 }
 
-void WindowManager::showNewWindow(const DUrl &url, bool isAlwaysOpen)
+void WindowManager::showNewWindow(const DUrl &url, const bool& isNewWindow)
 {
-    if (!isAlwaysOpen){
+    if (!isNewWindow){
         for(int i=0; i< m_windows.count(); i++){
             QWidget* window = const_cast<QWidget *>(m_windows.keys().at(i));
             DUrl currentUrl = static_cast<DFileManagerWindow *>(window)->currentUrl();
