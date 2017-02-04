@@ -1,6 +1,7 @@
 #include <QStandardPaths>
 #include <QSvgRenderer>
 #include <QPainter>
+#include <QProcess>
 #include "utils.h"
 #include "utils.h"
 #include "dmimedatabase.h"
@@ -198,4 +199,25 @@ QPixmap svgToPixmap(const QString &path, int w, int h)
 QString joinPath(const QString &path, const QString &fileName)
 {
     return path + QDir::separator() + fileName;
+}
+
+bool isAvfsMounted()
+{
+    QProcess p;
+    QString cmd = "/bin/bash";
+    QStringList args;
+    args << "-c" << "ps -ax -o 'cmd'|grep '.avfs$'";
+    p.start(cmd, args);
+    p.waitForFinished();
+    QString result = p.readAll().trimmed();
+    if(!result.isEmpty()){
+        QStringList datas = result.split(" ");
+
+        if(datas.count() == 2){
+            if(datas.at(0) == "avfsd" && QFile::exists(datas.at(1)))
+                return true;
+        }
+
+    }
+    return false;
 }
