@@ -25,6 +25,8 @@
 #include "app/define.h"
 #include "dfmevent.h"
 #include "app/filesignalmanager.h"
+#include "models/trashdesktopfileinfo.h"
+#include "models/computerdesktopfileinfo.h"
 
 #include "controllers/bookmarkmanager.h"
 #include "controllers/appcontroller.h"
@@ -725,10 +727,20 @@ void DBookmarkItem::dropEvent(QGraphicsSceneDragDropEvent *event)
         return;
     if(m_isDisk)
         return;
+
+    //filter out trash desktop file and computer desktop file on desktop path
+    DUrlList urlList = DUrl::fromQUrlList(event->mimeData()->urls());
+    if(m_url == DUrl::fromTrashFile("/")){
+        if(urlList.contains(TrashDesktopFileInfo::trashDesktopFileUrl()))
+            urlList.removeOne(TrashDesktopFileInfo::trashDesktopFileUrl());
+        if(urlList.contains(ComputerDesktopFileInfo::computerDesktopFileUrl()))
+            urlList.removeOne(ComputerDesktopFileInfo::computerDesktopFileUrl());
+    }
+
     DFMEvent e;
     e << DFMEvent::LeftSideBar;
     e << m_url;
-    e << DUrl::fromQUrlList(event->mimeData()->urls());
+    e << urlList;
     e << windowId();
 
     if (m_url == DUrl::fromTrashFile("/")){

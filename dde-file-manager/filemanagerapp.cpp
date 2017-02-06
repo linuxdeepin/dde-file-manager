@@ -173,8 +173,17 @@ void FileManagerApp::showPropertyDialog(const QStringList paths)
         if(uPath.endsWith(QDir::separator()) && uPath.size() > 1)
             uPath.chop(1);
         url.setPath(uPath);
-        if(url == ComputerDesktopFileInfo::computerDesktopFileUrl())
+        if(url == ComputerDesktopFileInfo::computerDesktopFileUrl() || url == DUrl::fromComputerFile("/")){
+            dialogManager->showComputerPropertyDialog(DFMEvent());
             continue;
+        }
+
+        if(url == TrashDesktopFileInfo::trashDesktopFileUrl() || url == DUrl::fromTrashFile("/")){
+            DFMEvent event;
+            event << DUrl::fromTrashFile("/");
+            dialogManager->showTrashPropertyDialog(event);
+            continue;
+        }
         if (!url.scheme().isEmpty()){
             if(url.scheme() == FILE_SCHEME && !QFile::exists(url.path()))
                 continue;

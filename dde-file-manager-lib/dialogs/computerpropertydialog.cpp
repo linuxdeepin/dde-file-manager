@@ -22,7 +22,9 @@ void ComputerPropertyDialog::initUI()
     setWindowFlags(Qt::FramelessWindowHint);
     DTitlebar* titleBar = new DTitlebar(this);
     titleBar->setWindowFlags(Qt::WindowCloseButtonHint);
-    titleBar->setFixedHeight(20);
+    titleBar->setFixedHeight(30);
+    titleBar->setContentsMargins(0, 0, 0, 0);
+    titleBar->layout()->setContentsMargins(0, 6, 6, 0);
 
     QLabel* iconLabel = new QLabel(this);
     iconLabel->setPixmap(QPixmap(":/images/dialogs/images/deepin_logo.png"));
