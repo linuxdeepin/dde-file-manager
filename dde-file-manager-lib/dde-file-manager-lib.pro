@@ -30,8 +30,8 @@ isEmpty(PREFIX){
     PREFIX = /usr
 }
 
-PKGCONFIG += gtk+-2.0 gsettings-qt libsecret-1 gio-unix-2.0
-PKGCONFIG += dtkbase-0-2 dtkwidget-0-2
+PKGCONFIG += gtk+-2.0 gsettings-qt libsecret-1 gio-unix-2.0 poppler-cpp
+PKGCONFIG += dtkbase dtkwidget
 CONFIG += c++11 link_pkgconfig
 #DEFINES += QT_NO_DEBUG_OUTPUT
 DEFINES += QT_MESSAGELOGCONTEXT
@@ -49,15 +49,6 @@ include(dbusinterface/dbusinterface.pri)
 include(../usershare/usershare.pri)
 include(../dde-file-manager-plugins/plugininterfaces/plugininterfaces.pri)
 include(../partman/partman.pri)
-
-
-
-PKGCONFIG += gtk+-2.0 gsettings-qt libsecret-1 dtkbase dtkwidget gio-unix-2.0 poppler-cpp
-lessThan(QT_MINOR_VERSION, 6): include(../xdnd/xdnd.pri)
-CONFIG += c++11 link_pkgconfig
-#DEFINES += QT_NO_DEBUG_OUTPUT
-DEFINES += QT_MESSAGELOGCONTEXT
-
 
 RESOURCES += \
     skin/skin.qrc \
