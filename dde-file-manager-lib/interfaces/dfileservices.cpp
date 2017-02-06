@@ -14,6 +14,7 @@
 #include "models/trashdesktopfileinfo.h"
 #include "controllers/pathmanager.h"
 #include "dfmstandardpaths.h"
+#include "views/windowmanager.h"
 
 #include "shutil/fileutils.h"
 
@@ -322,7 +323,6 @@ bool DFileService::deleteFiles(const DFMEvent &event) const
 {
     FILTER_RETURN(DeleteFiles, false)
 
-#ifdef DDE_COMPUTER_TRASH
     DUrlList urlList = event.fileUrlList();
     if(urlList.contains(ComputerDesktopFileInfo::computerDesktopFileUrl()))
         urlList.removeOne(ComputerDesktopFileInfo::computerDesktopFileUrl());
@@ -331,7 +331,6 @@ bool DFileService::deleteFiles(const DFMEvent &event) const
         urlList.removeOne(TrashDesktopFileInfo::trashDesktopFileUrl());
 
     const_cast<DFMEvent&>(event) << urlList;
-#endif
 
     if (event.fileUrlList().isEmpty())
         return false;
@@ -377,7 +376,6 @@ void DFileService::moveToTrash(const DFMEvent &event) const
 {
     FILTER_RETURN(MoveToTrash)
 
-#ifdef DDE_COMPUTER_TRASH
     DUrlList urlList = event.fileUrlList();
     if(urlList.contains(ComputerDesktopFileInfo::computerDesktopFileUrl()))
         urlList.removeOne(ComputerDesktopFileInfo::computerDesktopFileUrl());
@@ -385,7 +383,6 @@ void DFileService::moveToTrash(const DFMEvent &event) const
     if(urlList.contains(TrashDesktopFileInfo::trashDesktopFileUrl()))
         urlList.removeOne(TrashDesktopFileInfo::trashDesktopFileUrl());
     const_cast<DFMEvent&>(event) << urlList;
-#endif
 
     if (event.fileUrlList().isEmpty())
         return;
@@ -872,6 +869,10 @@ void DFileService::openUrl(const DFMEvent &event, const bool &isOpenInNewWindow,
                 else
                     fileList << url;
             }
+
+            //computer url is virtual dir
+            if(url == DUrl::fromComputerFile("/"))
+                dirList << url;
         }
     }
 

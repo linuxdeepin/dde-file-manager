@@ -430,7 +430,6 @@ void AppController::actionProperty(const DFMEvent &event)
     if (event.fileUrlList().isEmpty())
         return;
 
-#ifdef DDE_COMPUTER_TRASH
     if(event.fileUrlList().count() == 1){
         if(event.fileUrlList().first() == TrashDesktopFileInfo::trashDesktopFileUrl()){
             const_cast<DFMEvent&>(event) << DUrl::fromTrashFile("/");
@@ -452,15 +451,16 @@ void AppController::actionProperty(const DFMEvent &event)
             urlList.removeOne(TrashDesktopFileInfo::trashDesktopFileUrl());
         }
 
-        if(urlList.contains(ComputerDesktopFileInfo::computerDesktopFileUrl()))
+        if(urlList.contains(ComputerDesktopFileInfo::computerDesktopFileUrl())){
+            dialogManager->showComputerPropertyDialog(event);
             urlList.removeOne(ComputerDesktopFileInfo::computerDesktopFileUrl());
+        }
 
         if(urlList.isEmpty())
             return;
 
         const_cast<DFMEvent&>(event) << urlList;
     }
-#endif
 
     if (event.fileUrlList().first() == DUrl::fromTrashFile("/")){
         emit fileSignalManager->requestShowTrashPropertyDialog(event);

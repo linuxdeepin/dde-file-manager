@@ -457,6 +457,7 @@ void DialogManager::showTrashPropertyDialog(const DFMEvent &event)
 
 void DialogManager::showComputerPropertyDialog(const DFMEvent &event)
 {
+    Q_UNUSED(event)
     if (m_computerDialog){
         m_computerDialog->close();
     }
