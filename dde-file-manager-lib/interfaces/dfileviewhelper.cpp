@@ -63,9 +63,7 @@ void DFileViewHelperPrivate::init()
                     q , [this] {
         keyboardSearchKeys.clear();
     });
-//    QObject::connect(qApp, &DApplication::iconThemeChanged, q, [q] {
-//        q->model()->update();
-//    });
+    QObject::connect(qApp, &DApplication::iconThemeChanged, q->parent(), static_cast<void (QWidget::*)()>(&QWidget::update));
     QObject::connect(DFMGlobal::instance(), &DFMGlobal::clipboardDataChanged, q, [q] {
         for (const QModelIndex &index : q->itemDelegate()->hasWidgetIndexs()) {
             FileIconItem *item = qobject_cast<FileIconItem*>(q->indexWidget(index));
