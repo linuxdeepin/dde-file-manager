@@ -525,6 +525,11 @@ void AppController::actionSetUserSharePassword(const DFMEvent &event)
     dialogManager->showUserSharePasswordSettingDialog(event);
 }
 
+void AppController::actionSettings(const DFMEvent &event)
+{
+    dialogManager->showGlobalSettingsDialog(event);
+}
+
 void AppController::actionFormatDevice(const DFMEvent &event)
 {
     QWidget* w = WindowManager::getWindowById(event.windowId());

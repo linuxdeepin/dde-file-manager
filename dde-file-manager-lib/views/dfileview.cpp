@@ -14,6 +14,7 @@
 #include "interfaces/dfmglobal.h"
 #include "interfaces/diconitemdelegate.h"
 #include "interfaces/dlistitemdelegate.h"
+#include "interfaces/dfmsetting.h"
 
 #include "controllers/appcontroller.h"
 #include "dfileservices.h"
@@ -134,6 +135,7 @@ DFileView::DFileView(QWidget *parent)
 
     ViewInstanceCount += 1;
     d->viewId = QString("fileview%1").arg(QString::number(ViewInstanceCount));
+    d->statusBar->scalingSlider()->setValue(globalSetting->iconSizeIndex());
 }
 
 DFileView::~DFileView()
@@ -828,10 +830,13 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             appController->actionctrlL(fmevent);
 
             return;
-        case Qt::Key_N:
+        case Qt::Key_N:{
+            const QString& path = globalSetting->newTabPath();
+            if(path != "Current Path")
+                fmevent << DUrl::fromUserInput(path);
             appController->actionNewWindow(fmevent);
-
             return;
+        }
         case Qt::Key_H:
             d->preSelectionUrls = urls;
 
@@ -864,9 +869,13 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             appController->actionForward(fmevent);
 
             return;
-        case Qt::Key_T:
+        case Qt::Key_T:{
+            const QString& path = globalSetting->newTabPath();
+            if(path != "Current Path")
+                fmevent << DUrl::fromUserInput(path);
             emit fileSignalManager->requestOpenInNewTab(fmevent);
             return;
+        }
         case Qt::Key_W:
             emit fileSignalManager->requestCloseCurrentTab(fmevent);
             return;
@@ -1537,7 +1546,14 @@ void DFileView::initConnects()
 {
     D_D(DFileView);
 
-    connect(this, &DFileView::doubleClicked,
+    if(globalSetting->openFileAction() == DFMSetting::DoubleClick)
+        connect(this, &DFileView::doubleClicked,
+            this, [this] (const QModelIndex &index) {
+        if (!DFMGlobal::keyCtrlIsPressed() && !DFMGlobal::keyShiftIsPressed())
+            openIndex(index);
+    }, Qt::QueuedConnection);
+    else
+        connect(this, &DFileView::clicked,
             this, [this] (const QModelIndex &index) {
         if (!DFMGlobal::keyCtrlIsPressed() && !DFMGlobal::keyShiftIsPressed())
             openIndex(index);

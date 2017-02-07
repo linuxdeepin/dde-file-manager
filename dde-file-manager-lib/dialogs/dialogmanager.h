@@ -60,6 +60,7 @@ public slots:
     void showBreakSymlinkDialog(const QString &targetName, const DUrl& linkfile);
     void showAboutDialog(const DFMEvent &event);
     void showUserSharePasswordSettingDialog(const DFMEvent& event);
+    void showGlobalSettingsDialog(const DFMEvent &event);
     void showDiskSpaceOutOfUsedDialog();
     void showFailToCreateSymlinkDialog(const QString &errorString);
     void showMoveToTrashConflictDialog(const DUrlList& urls);

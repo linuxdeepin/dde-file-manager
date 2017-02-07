@@ -31,7 +31,7 @@ isEmpty(PREFIX){
 }
 
 PKGCONFIG += gtk+-2.0 gsettings-qt libsecret-1 gio-unix-2.0 poppler-cpp
-PKGCONFIG += dtkbase dtkwidget
+PKGCONFIG += dtkbase dtkwidget dtksettings dtksettingsview
 CONFIG += c++11 link_pkgconfig
 #DEFINES += QT_NO_DEBUG_OUTPUT
 DEFINES += QT_MESSAGELOGCONTEXT
@@ -54,7 +54,8 @@ RESOURCES += \
     skin/skin.qrc \
     skin/dialogs.qrc \
     skin/filemanager.qrc \
-    themes/themes.qrc
+    themes/themes.qrc \
+    configure.qrc
 
 HEADERS += \
     controllers/appcontroller.h \
@@ -181,8 +182,8 @@ HEADERS += \
     gvfs/qvolume.h \
     gvfs/qmount.h \
     gvfs/gvfsmountmanager.h \
-    gvfs/qdiskinfo.h
-
+    gvfs/qdiskinfo.h \
+    interfaces/dfmsetting.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -301,7 +302,8 @@ SOURCES += \
     gvfs/qvolume.cpp \
     gvfs/qmount.cpp \
     gvfs/gvfsmountmanager.cpp \
-    gvfs/qdiskinfo.cpp
+    gvfs/qdiskinfo.cpp \
+    interfaces/dfmsetting.cpp
 
 INCLUDEPATH += $$PWD/../ $$PWD/../utils/ $$PWD/interfaces/ $$PWD/../dde-file-manager-plugins/plugininterfaces/
 
@@ -374,3 +376,5 @@ icon.path = $$ICONDIR
 icon.files = skin/images/$${TARGET}.svg
 
 INSTALLS += target templateFiles translations mimetypeFiles help icon includes
+
+DISTFILES +=

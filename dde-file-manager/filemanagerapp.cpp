@@ -57,6 +57,9 @@ FileManagerApp::~FileManagerApp()
 
 void FileManagerApp::initApp()
 {
+    /*init configure*/
+    DFMGlobal::initGlobalSettings();
+
     /*add menuextensions path*/
     DFMGlobal::autoLoadDefaultMenuExtensions();
 
