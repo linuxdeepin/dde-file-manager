@@ -12,7 +12,7 @@ Homepage: http://www.deepin.org
 
 Package: dde-file-manager
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, dde-daemon (>=3.0.16+r1),
+Depends: ${shlibs:Depends}, ${misc:Depends}
  libdde-file-manager( =${binary:Version}), socat, samba
 Recommends: dde-qt5integration
 Description: File manager front end of Deepin OS
