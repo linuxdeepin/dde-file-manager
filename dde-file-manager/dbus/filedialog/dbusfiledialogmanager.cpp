@@ -18,19 +18,23 @@ QDBusObjectPath DBusFileDialogManager::createDialog(QString key)
     DBusFileDialogHandle *handle = new DBusFileDialogHandle();
     Q_UNUSED(new FiledialogAdaptor(handle));
 
-    const QString &path = "/com/deepin/filemanager/filedialog/" + key;
+    const QDBusObjectPath path("/com/deepin/filemanager/filedialog/" + key);
 
-    if (!QDBusConnection::sessionBus().registerObject(path, handle)) {
+    if (m_dialogObjectMap.contains(path)) {
+        return path;
+    }
+
+    if (!QDBusConnection::sessionBus().registerObject(path.path(), handle)) {
         qWarning("Cannot register to the D-Bus object.\n");
         handle->deleteLater();
 
         return QDBusObjectPath();
     }
 
-    m_dialogObjectMap[QDBusObjectPath(path)] = handle;
+    m_dialogObjectMap[path] = handle;
     connect(handle, &DBusFileDialogHandle::destroyed, this, &DBusFileDialogManager::onDialogDestroy);
 
-    return QDBusObjectPath(path);
+    return path;
 }
 
 void DBusFileDialogManager::destroyDialog(const QDBusObjectPath &path)
