@@ -214,6 +214,7 @@ public:
     static void initGvfsMountManager();
     static void initSecretManager();
     static void initUserShareManager();
+    static void initGlobalSettings();
 
     QList<QUrl> clipboardFileUrlList() const;
     ClipboardAction clipboardAction() const;

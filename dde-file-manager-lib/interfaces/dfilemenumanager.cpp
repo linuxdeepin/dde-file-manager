@@ -204,8 +204,8 @@ DFileMenu *DFileMenuManager::createToolBarSettingsMenu(const QSet<MenuAction> &d
 
     actionKeys << MenuAction::NewWindow
                << MenuAction::Separator
-               << MenuAction::SetUserSharePassword;
-//               << MenuAction::Settings
+               << MenuAction::SetUserSharePassword
+               << MenuAction::Settings;
     #ifndef ARCH_MIPSEL
         actionKeys  << MenuAction::Help;
     #endif

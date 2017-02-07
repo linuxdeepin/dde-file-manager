@@ -12,6 +12,7 @@
 
 #include "fileoperations/filejob.h"
 #include "dfileservices.h"
+#include "interfaces/dfmstandardpaths.h"
 
 #include "dfileinfo.h"
 #include "models/trashfileinfo.h"
@@ -26,6 +27,7 @@
 #include "dialogs/propertydialog.h"
 #include "dialogs/openwithdialog.h"
 #include "dialogs/diskspaceoutofusedtipdialog.h"
+#include "interfaces/dfmsetting.h"
 
 #include "deviceinfo/udisklistener.h"
 #include "deviceinfo/udiskdeviceinfo.h"
@@ -35,12 +37,17 @@
 #include <ddialog.h>
 #include <DAboutDialog>
 #include <dexpandgroup.h>
+#include <settings.h>
+#include <dsettingsdialog.h>
+#include <QTemporaryFile>
 
 #include <QTimer>
 #include <QDesktopWidget>
 #include <QApplication>
 #include <QScreen>
+#include <qsettingbackend.h>
 
+DTK_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
 DialogManager::DialogManager(QObject *parent) : QObject(parent)
@@ -585,6 +592,39 @@ void DialogManager::showUserSharePasswordSettingDialog(const DFMEvent &event)
     connect(dialog, &UserSharePasswordSettingDialog::closed, [=]{
         w->setProperty("UserSharePwdSettingDialogShown", false);
     });
+}
+
+void DialogManager::showGlobalSettingsDialog(const DFMEvent& event)
+{
+    QWidget* w = WindowManager::getWindowById(event.windowId());
+    if(!w)
+        return;
+
+    QString configFile = QString("%1/%2").arg(DFMStandardPaths::getConfigPath(), "dde-file-manager-global-settting.json");
+    if(!QFile::exists(configFile))
+        globalSetting->reCreateConfigTemplate(configFile);
+
+    QTemporaryFile tmpFile;
+    tmpFile.open();
+    auto backend = new QSettingBackend(tmpFile.fileName());
+
+    auto settings = Settings::fromJsonFile(configFile);
+
+    //handle for artifically changing config file and causing that file manager couldn't parse it normally.
+    if(settings->keys().isEmpty()){
+        globalSetting->reCreateConfigTemplate(configFile);
+        settings = Settings::fromJsonFile(configFile);
+    }
+
+    settings->setBackend(backend);
+
+    DSettingsDialog dsd(w);
+    dsd.updateSettings(settings);
+    dsd.exec();
+    settings->sync();
+    foreach (QString key, settings->keys()) {
+        qDebug () << key << ":" << settings->value(key);
+    }
 }
 
 void DialogManager::showDiskSpaceOutOfUsedDialog()

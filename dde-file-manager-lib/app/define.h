@@ -17,6 +17,7 @@
 #define gvfsMountManager Singleton<GvfsMountManager>::instance()
 #define secrectManager Singleton<SecrectManager>::instance()
 #define userShareManager Singleton<UserShareManager>::instance()
+#define globalSetting Singleton<DFMSetting>::instance()
 
 #define defaut_icon ":/images/images/default.png"
 #define defaut_computerIcon ":/images/images/computer.png"

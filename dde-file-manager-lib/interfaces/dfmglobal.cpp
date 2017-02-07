@@ -19,6 +19,8 @@
 #include "controllers/appcontroller.h"
 #include "../deviceinfo/udisklistener.h"
 #include "../usershare/usersharemanager.h"
+#include "dfmsetting.h"
+#include <dfmstandardpaths.h>
 
 #include <QGuiApplication>
 #include <QClipboard>
@@ -259,6 +261,14 @@ void DFMGlobal::initDeviceListener()
 void DFMGlobal::initUserShareManager()
 {
     userShareManager;
+}
+
+void DFMGlobal::initGlobalSettings()
+{
+    globalSetting;
+    QString configFilePath = QString("%1/%2").arg(DFMStandardPaths::getConfigPath(), "dde-file-manager-global-settting.json");
+
+    globalSetting->loadConfigDataFromJsonFile(configFilePath);
 }
 
 QList<QUrl> DFMGlobal::clipboardFileUrlList() const
