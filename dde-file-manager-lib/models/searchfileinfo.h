@@ -44,6 +44,8 @@ public:
 
     QString fileDisplayName() const Q_DECL_OVERRIDE;
 
+    DUrl mimeDataUrl() const Q_DECL_OVERRIDE;
+
 private:
     DUrl m_parentUrl;
 };

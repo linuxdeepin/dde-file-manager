@@ -243,3 +243,8 @@ QString SearchFileInfo::fileDisplayName() const
 
     return QString();
 }
+
+DUrl SearchFileInfo::mimeDataUrl() const
+{
+    return fileUrl().searchedFileUrl();
+}
