@@ -626,7 +626,7 @@ void DBookmarkScene::mountRemoved(UDiskDeviceInfoPointer device)
     DBookmarkItem * item = m_diskItems.value(device->getDiskInfo().id());
     if(item)
     {
-        if (device->getDiskInfo().can_mount()){
+        if (device->getDiskInfo().has_volume()){
             item->setDeviceInfo(device);
             item->setMounted(false);
             handleVolumeMountRemove(device, item);

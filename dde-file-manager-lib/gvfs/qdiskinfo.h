@@ -69,6 +69,9 @@ public:
     bool is_removable() const;
     void setIs_removable(bool is_removable);
 
+    bool has_volume() const;
+    void setHas_volume(bool has_volume);
+
 private:
     QString m_id;
     QString m_name;
@@ -83,6 +86,7 @@ private:
     bool m_can_unmount = false;
     bool m_can_eject = false;
     bool m_read_only = false;
+    bool m_has_volume = false;
     qulonglong m_used = 0;
     qulonglong m_total = 0;
     qulonglong m_free = 0;

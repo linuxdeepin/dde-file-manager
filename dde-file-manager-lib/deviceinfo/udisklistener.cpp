@@ -281,11 +281,7 @@ void UDiskListener::removeMountDiskInfo(const QDiskInfo &diskInfo)
     if (m_map.value(diskInfo.id())){
         device = m_map.value(diskInfo.id());
         qDebug() << device->getMediaType();
-        if (device->getMediaType() == UDiskDeviceInfo::iphone ||
-            device->getMediaType() == UDiskDeviceInfo::phone ||
-            device->getMediaType() == UDiskDeviceInfo::removable ||
-            device->getMediaType() == UDiskDeviceInfo::native ||
-            device->getMediaType() == UDiskDeviceInfo::dvd){
+        if (diskInfo.has_volume()){
             device->setDiskInfo(diskInfo);
         }else{
             removeDevice(device);

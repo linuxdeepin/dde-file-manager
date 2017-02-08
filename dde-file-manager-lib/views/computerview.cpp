@@ -630,9 +630,7 @@ void ComputerView::mountRemoved(UDiskDeviceInfoPointer device)
         return;
     }else if (m_removableItems.contains(device->getId())){
 
-        if (device->getMediaType() == UDiskDeviceInfo::iphone ||
-            device->getMediaType() == UDiskDeviceInfo::phone ||
-            device->getMediaType() == UDiskDeviceInfo::removable){
+        if (device->getDiskInfo().has_volume()){
             m_removableItems.value(device->getId())->setDeviceInfo(device);
         }else{
             ComputerViewItem* item = m_removableItems.value(device->getId());
