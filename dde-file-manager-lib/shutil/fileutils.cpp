@@ -554,6 +554,24 @@ bool FileUtils::isFileExecutable(const QString &path)
     return (file.permissions() & QFile::ReadUser) && (file.permissions() & QFile::ExeUser);
 }
 
+bool FileUtils::istFileRunnable(const QString &path)
+{
+    QString _path = path;
+    QFileInfo info(path);
+    QString mimetype = getFileMimetype(path);
+    qDebug() << info.isSymLink() << mimetype;
+    if (info.isSymLink()){
+        _path = QFile(path).symLinkTarget();
+        mimetype = getFileMimetype(path);
+    }
+
+    if (mimetype == "application/x-executable" || mimetype == "application/x-sharedlib") {
+        return isFileExecutable(_path);
+    }
+
+    return false;
+}
+
 QString FileUtils::getFileMimetype(const QString &path)
 {
     GFile *file;
@@ -581,8 +599,7 @@ bool FileUtils::isExecutableScript(const QString &path)
     }
 
     if (mimetype.startsWith("text/") ||
-            (mimetype == "application/x-shellscript") ||
-            (mimetype == "application/x-executable")) {
+            (mimetype == "application/x-shellscript")) {
         return isFileExecutable(_path);
     }
 
