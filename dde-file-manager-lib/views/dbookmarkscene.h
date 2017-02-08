@@ -81,6 +81,7 @@ public slots:
 
     void volumeAdded(UDiskDeviceInfoPointer device);
     void volumeRemoved(UDiskDeviceInfoPointer device);
+    void volumeChanged(UDiskDeviceInfoPointer device);
     void mountAdded(UDiskDeviceInfoPointer device);
     void mountRemoved(UDiskDeviceInfoPointer device);
     void handleVolumeMountRemove(UDiskDeviceInfoPointer device, DBookmarkItem * item);

@@ -38,7 +38,7 @@ void GvfsMountManager::initConnect()
 {
     g_signal_connect (m_gVolumeMonitor, "mount-added", (GCallback)&GvfsMountManager::monitor_mount_added, NULL);
     g_signal_connect (m_gVolumeMonitor, "mount-removed", (GCallback)&GvfsMountManager::monitor_mount_removed, NULL);
-//    g_signal_connect (m_gVolumeMonitor, "mount-changed", (GCallback)&GvfsMountManager::monitor_mount_changed, NULL);
+    g_signal_connect (m_gVolumeMonitor, "mount-changed", (GCallback)&GvfsMountManager::monitor_mount_changed, NULL);
     g_signal_connect (m_gVolumeMonitor, "volume-added", (GCallback)&GvfsMountManager::monitor_volume_added, NULL);
     g_signal_connect (m_gVolumeMonitor, "volume-removed", (GCallback)&GvfsMountManager::monitor_volume_removed, NULL);
 //    g_signal_connect (m_gVolumeMonitor, "volume-changed", (GCallback)&GvfsMountManager::monitor_volume_changed, NULL);
@@ -207,6 +207,12 @@ QVolume GvfsMountManager::gVolumeToqVolume(GVolume *volume)
         g_free(action_root_uri);
     }
 
+    GDrive *gDrive = g_volume_get_drive(volume);
+    if (gDrive){
+        QDrive qDrive = gDriveToqDrive(gDrive);
+        qVolume.setDrive(qDrive);
+    }
+
     return qVolume;
 }
 
@@ -293,13 +299,11 @@ QDiskInfo GvfsMountManager::qVolumeToqDiskInfo(const QVolume &volume)
         diskInfo.setType("phone");
     }else if (diskInfo.iconName() == "camera"){
         diskInfo.setType("camera");
-    }else if (diskInfo.iconName() == "dvd"){
-        diskInfo.setType("dvd");
-    }else if (diskInfo.iconName().startsWith("CD")){
-        diskInfo.setType("dvd");
     }else if (diskInfo.iconName() == "drive-harddisk-usb"){
         diskInfo.setType("removable");
         diskInfo.setIs_removable(true);
+    }else if (isDVD(volume)){
+        diskInfo.setType("dvd");
     }else{
         diskInfo.setType("native");
     }
@@ -449,6 +453,19 @@ void GvfsMountManager::monitor_mount_changed(GVolumeMonitor *volume_monitor, GMo
     GVolume *volume = g_mount_get_volume(mount);
     if (volume != NULL){
         qDebug() << "==============================changed removed==============================" ;
+
+        QVolume qVolume = gVolumeToqVolume(volume);
+        QDiskInfo diskInfo = qVolumeToqDiskInfo(qVolume);
+
+        bool isDVDChanged = isDVD(qVolume);
+        if (isDVDChanged){
+            diskInfo.setType("dvd");
+            qDebug() << diskInfo;
+            if (diskInfo.can_unmount()){
+                diskInfo.updateGvfsFileSystemInfo();
+                emit gvfsMountManager->volume_changed(diskInfo);
+            }
+        }
     }else{
         qDebug() << "==============================changed volume empty==============================" ;
 
@@ -589,6 +606,14 @@ QDiskInfo GvfsMountManager::getDiskInfo(const QString &path)
     }
     info.updateGvfsFileSystemInfo();
     return info;
+}
+
+bool GvfsMountManager::isDVD(const QVolume volume)
+{
+    if (volume.drive().isValid() && volume.unix_device().startsWith("/dev/sr")){
+        return true;
+    }
+    return false;
 }
 
 void GvfsMountManager::startMonitor()

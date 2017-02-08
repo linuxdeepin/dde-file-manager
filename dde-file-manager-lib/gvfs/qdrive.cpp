@@ -165,6 +165,11 @@ void QDrive::setUnix_device(const QString &unix_device)
     m_unix_device = unix_device;
 }
 
+bool QDrive::isValid()
+{
+    return !name().isEmpty();
+}
+
 QDebug operator<<(QDebug dbg, const QDrive &drive)
 {
     dbg << "QDrive: {"

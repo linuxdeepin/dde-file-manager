@@ -63,6 +63,7 @@ public:
 signals:
     void volumeAdded(UDiskDeviceInfoPointer device);
     void volumeRemoved(UDiskDeviceInfoPointer device);
+    void volumeChanged(UDiskDeviceInfoPointer device);
     void mountAdded(UDiskDeviceInfoPointer device);
     void mountRemoved(UDiskDeviceInfoPointer device);
 
@@ -71,6 +72,7 @@ public slots:
     void removeMountDiskInfo(const QDiskInfo& diskInfo);
     void addVolumeDiskInfo(const QDiskInfo& diskInfo);
     void removeVolumeDiskInfo(const QDiskInfo& diskInfo);
+    void changeVolumeDiskInfo(const QDiskInfo& diskInfo);
     void mount(const QString &path);
     void unmount(const QString &path);
     void eject(const QString &path);

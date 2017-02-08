@@ -63,6 +63,8 @@ public:
     QString unix_device() const;
     void setUnix_device(const QString &unix_device);
 
+    bool isValid();
+
 private:
     QString m_name;
     QString m_unix_device;
