@@ -259,6 +259,7 @@ void UDiskListener::addMountDiskInfo(const QDiskInfo &diskInfo)
         device->setDiskInfo(diskInfo);
         addDevice(device);
     }
+
     emit mountAdded(device);
 
     qDebug() << m_subscribers;
@@ -281,7 +282,8 @@ void UDiskListener::removeMountDiskInfo(const QDiskInfo &diskInfo)
         qDebug() << device->getMediaType();
         if (device->getMediaType() == UDiskDeviceInfo::iphone ||
             device->getMediaType() == UDiskDeviceInfo::phone ||
-            device->getMediaType() == UDiskDeviceInfo::removable){
+            device->getMediaType() == UDiskDeviceInfo::removable ||
+            device->getMediaType() == UDiskDeviceInfo::native){
             device->setDiskInfo(diskInfo);
         }else{
             removeDevice(device);
