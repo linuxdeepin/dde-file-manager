@@ -22,7 +22,6 @@
 #include "interfaces/dfmstandardpaths.h"
 #include "shutil/fileutils.h"
 #include "views/windowmanager.h"
-#include "dbusinterface/soundeffect_interface.h"
 #include "dbusinterface/commandmanager_interface.h"
 
 #include "gvfs/networkmanager.h"
@@ -40,6 +39,7 @@
 #include <QAction>
 #include <DAboutDialog>
 #include <qprocess.h>
+#include <QMediaPlayer>
 #include "shutil/shortcut.h"
 #include "models/computerdesktopfileinfo.h"
 #include "models/trashdesktopfileinfo.h"
@@ -330,12 +330,17 @@ void AppController::actionClearTrash(const DFMEvent &event)
 
     const_cast<DFMEvent&>(event) << list;
     bool ret = fileService->deleteFiles(event);
-    if (ret){
-        SoundEffectInterface* soundEffectInterface = new SoundEffectInterface(SoundEffectInterface::staticServerPath(),
-                                                                              SoundEffectInterface::staticInterfacePath(),
-                                                                              QDBusConnection::sessionBus(), this);
-        soundEffectInterface->PlaySystemSound("trash-empty");
-        soundEffectInterface->deleteLater();
+
+    if(ret){
+        QMediaPlayer* player = new QMediaPlayer;
+        player->setMedia(QUrl::fromLocalFile("/usr/share/sounds/deepin/stereo/trash-empty.ogg"));
+        player->setVolume(100);
+        player->play();
+        connect(player, &QMediaPlayer::positionChanged, [=](const qint64& position){
+            if(position >= player->duration()){
+                player->deleteLater();
+            }
+        });
     }
 }
 
