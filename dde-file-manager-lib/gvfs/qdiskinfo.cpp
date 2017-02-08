@@ -237,6 +237,17 @@ void QDiskInfo::setIs_removable(bool is_removable)
     m_is_removable = is_removable;
 }
 
+bool QDiskInfo::has_volume() const
+{
+    return m_has_volume;
+}
+
+void QDiskInfo::setHas_volume(bool has_volume)
+{
+    m_has_volume = has_volume;
+}
+
+
 QDebug operator<<(QDebug dbg, const QDiskInfo &info)
 {
     dbg.nospace() << "QDiskInfo(";

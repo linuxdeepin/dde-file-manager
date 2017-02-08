@@ -307,6 +307,9 @@ QDiskInfo GvfsMountManager::qVolumeToqDiskInfo(const QVolume &volume)
     }else{
         diskInfo.setType("native");
     }
+
+    diskInfo.setHas_volume(true);
+
     diskInfo.updateGvfsFileSystemInfo();
     return diskInfo;
 }
@@ -434,11 +437,13 @@ void GvfsMountManager::monitor_mount_removed(GVolumeMonitor *volume_monitor, GMo
         if (volume.isValid()){
             QDiskInfo diskInfo = qVolumeToqDiskInfo(volume);
             DiskInfos.insert(diskInfo.id(), diskInfo);
+            diskInfo.setHas_volume(true);
             emit gvfsMountManager->mount_removed(diskInfo);
         }else{
             QDiskInfo diskInfo = qMountToqDiskinfo(qMount);
             bool diskInfoRemoved = DiskInfos.remove(diskInfo.id());
             if (diskInfoRemoved){
+                diskInfo.setHas_volume(false);
                 emit gvfsMountManager->mount_removed(diskInfo);
             }
         }
@@ -492,6 +497,13 @@ void GvfsMountManager::monitor_volume_added(GVolumeMonitor *volume_monitor, GVol
     }
 
     QDiskInfo diskInfo = qVolumeToqDiskInfo(qVolume);
+
+    if (diskInfo.type() == "iphone"){
+        if (diskInfo.activation_root_uri() != QString("afc://%1/").arg(diskInfo.uuid())){
+            return;
+        }
+    }
+
     DiskInfos.insert(diskInfo.id(), diskInfo);
     emit gvfsMountManager->volume_added(diskInfo);
 }
@@ -723,6 +735,11 @@ void GvfsMountManager::updateDiskInfos()
         if (Volumes.contains(key)){
             QVolume volume = Volumes.value(key);
             QDiskInfo diskInfo = qVolumeToqDiskInfo(volume);
+            if (diskInfo.type() == "iphone"){
+                if (diskInfo.activation_root_uri() != QString("afc://%1/").arg(diskInfo.uuid())){
+                    continue;
+                }
+            }
             DiskInfos.insert(diskInfo.id(), diskInfo);
             qDebug() << diskInfo;
         }
