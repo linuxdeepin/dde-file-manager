@@ -26,6 +26,7 @@ void UDiskListener::initConnect()
     connect(gvfsMountManager, &GvfsMountManager::mount_removed, this, &UDiskListener::removeMountDiskInfo);
     connect(gvfsMountManager, &GvfsMountManager::volume_added, this, &UDiskListener::addVolumeDiskInfo);
     connect(gvfsMountManager, &GvfsMountManager::volume_removed, this, &UDiskListener::removeVolumeDiskInfo);
+    connect(gvfsMountManager, &GvfsMountManager::volume_changed, this, &UDiskListener::changeVolumeDiskInfo);
 }
 
 UDiskDeviceInfoPointer UDiskListener::getDevice(const QString &id)
@@ -283,7 +284,8 @@ void UDiskListener::removeMountDiskInfo(const QDiskInfo &diskInfo)
         if (device->getMediaType() == UDiskDeviceInfo::iphone ||
             device->getMediaType() == UDiskDeviceInfo::phone ||
             device->getMediaType() == UDiskDeviceInfo::removable ||
-            device->getMediaType() == UDiskDeviceInfo::native){
+            device->getMediaType() == UDiskDeviceInfo::native ||
+            device->getMediaType() == UDiskDeviceInfo::dvd){
             device->setDiskInfo(diskInfo);
         }else{
             removeDevice(device);
@@ -314,6 +316,18 @@ void UDiskListener::removeVolumeDiskInfo(const QDiskInfo &diskInfo)
         device = m_map.value(diskInfo.id());
         removeDevice(device);
         emit volumeRemoved(device);
+    }
+}
+
+void UDiskListener::changeVolumeDiskInfo(const QDiskInfo &diskInfo)
+{
+    UDiskDeviceInfoPointer device;
+    qDebug() << diskInfo;
+    qDebug() << m_map.value(diskInfo.id());
+    if(m_map.value(diskInfo.id())){
+        device = m_map.value(diskInfo.id());
+        device->setDiskInfo(diskInfo);
+        emit volumeChanged(device);
     }
 }
 

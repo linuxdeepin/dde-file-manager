@@ -5,6 +5,8 @@
 #include <QMap>
 #include <QDebug>
 
+#include "qdrive.h"
+
 
 class QVolume
 {
@@ -61,6 +63,9 @@ public:
     bool is_removable() const;
     void setIs_removable(bool is_removable);
 
+    QDrive drive() const;
+    void setDrive(const QDrive &drive);
+
 private:
     QString m_name;
     QString m_unix_device;
@@ -77,6 +82,7 @@ private:
     bool m_isMounted = false;
     bool m_is_removable = false;
     QString m_sort_key;
+    QDrive m_drive;
 };
 
 QDebug operator<<(QDebug dbg, const QVolume& volume);

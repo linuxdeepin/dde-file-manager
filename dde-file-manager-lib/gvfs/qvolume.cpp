@@ -160,6 +160,16 @@ void QVolume::setIs_removable(bool is_removable)
     m_is_removable = is_removable;
 }
 
+QDrive QVolume::drive() const
+{
+    return m_drive;
+}
+
+void QVolume::setDrive(const QDrive &drive)
+{
+    m_drive = drive;
+}
+
 QDebug operator<<(QDebug dbg, const QVolume &volume)
 {
     dbg << "QVolume: {"

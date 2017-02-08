@@ -80,12 +80,14 @@ public:
     static void printVolumeMounts();
 
     static QDiskInfo getDiskInfo(const QString& path);
+    static bool isDVD(const QVolume volume);
 
 signals:
     void mount_added(const QDiskInfo& diskInfo);
     void mount_removed(const QDiskInfo& diskInfo);
     void volume_added(const QDiskInfo& diskInfo);
     void volume_removed(const QDiskInfo& diskInfo);
+    void volume_changed(const QDiskInfo& diskInfo); // only for cd/dvd
 
 public slots:
     void startMonitor();

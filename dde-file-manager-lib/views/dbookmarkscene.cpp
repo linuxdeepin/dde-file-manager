@@ -112,6 +112,7 @@ void DBookmarkScene::initConnect()
 
     connect(deviceListener, &UDiskListener::volumeAdded, this, &DBookmarkScene::volumeAdded);
     connect(deviceListener, &UDiskListener::volumeRemoved, this, &DBookmarkScene::volumeRemoved);
+    connect(deviceListener, &UDiskListener::volumeChanged, this, &DBookmarkScene::volumeChanged);
     connect(deviceListener, &UDiskListener::mountAdded, this, &DBookmarkScene::mountAdded);
     connect(deviceListener, &UDiskListener::mountRemoved, this, &DBookmarkScene::mountRemoved);
 
@@ -579,6 +580,25 @@ void DBookmarkScene::volumeRemoved(UDiskDeviceInfoPointer device)
         m_diskItems.remove(device->getDiskInfo().id());
         remove(item);
         item->deleteLater();
+    }
+}
+
+void DBookmarkScene::volumeChanged(UDiskDeviceInfoPointer device)
+{
+    DBookmarkItem * item = m_diskItems.value(device->getDiskInfo().id());
+    if(item)
+    {
+        item->setDeviceInfo(device);
+        item->update();
+        bool isChecked = item->isChecked();
+        bool isHighlightDisk = item->isHighlightDisk();
+        if(isChecked || isHighlightDisk){
+            DFMEvent event;
+            event << windowId();
+            event << device->getMountPointUrl();
+            emit fileSignalManager->requestChangeCurrentUrl(event);
+            emit fileSignalManager->requestFreshFileView(event);
+        }
     }
 }
 
