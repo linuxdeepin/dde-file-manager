@@ -128,11 +128,6 @@ void ComputerViewItem::contextMenuEvent(QContextMenuEvent *event)
         menu = DFileMenuManager::createDefaultBookMarkMenu(disableList);
         url = m_info->fileUrl();
     }else if (m_deviceInfo){
-
-        QDiskInfo diskInfo = gvfsMountManager->getDiskInfo(m_deviceInfo->getDiskInfo().id());
-        if (diskInfo.isValid())
-            m_deviceInfo->setDiskInfo(diskInfo);
-
         if (m_deviceInfo->getMountPoint() == "/" && m_deviceInfo->getDiskInfo().isNativeCustom()){
             menu = DFileMenuManager::createDefaultBookMarkMenu(disableList);
             url =  m_deviceInfo->getMountPointUrl();
@@ -182,9 +177,7 @@ void ComputerViewItem::mouseDoubleClickEvent(QMouseEvent *event)
         }else if (m_deviceInfo){
             DUrl url = m_deviceInfo->getMountPointUrl();
 
-            QDiskInfo diskInfo = gvfsMountManager->getDiskInfo(m_deviceInfo->getDiskInfo().id());
-            if (diskInfo.isValid())
-                m_deviceInfo->setDiskInfo(diskInfo);
+            QDiskInfo diskInfo = m_deviceInfo->getDiskInfo();
 
             if (diskInfo.can_mount() && !diskInfo.can_unmount()){
                 url.setQuery(m_deviceInfo->getId());

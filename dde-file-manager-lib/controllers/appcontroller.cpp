@@ -90,13 +90,13 @@ void AppController::actionOpenDisk(const DFMEvent &event)
     QString id = fileUrl.query();
     if (!id.isEmpty()){
         const QDiskInfo& diskInfo = gvfsMountManager->getDiskInfo(id);
-
         if (diskInfo.can_mount()){
             m_fmEvent = event;
             setEventKey(Open);
             actionMount(event);
             deviceListener->addSubscriber(this);
-        }else{
+        }
+        if (diskInfo.can_unmount()){
             actionOpen(event);
         }
     }
