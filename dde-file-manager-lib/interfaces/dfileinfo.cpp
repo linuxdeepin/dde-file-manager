@@ -147,21 +147,31 @@ bool DFileInfo::isReadable() const
 {
     Q_D(const DFileInfo);
 
-    return d->fileInfo.isReadable();
+    if (FileUtils::isGvfsMountFile(absoluteFilePath())){
+        return true;
+    }else{
+        return d->fileInfo.isReadable();
+    }
 }
 
 bool DFileInfo::isWritable() const
 {
     Q_D(const DFileInfo);
-
-    return d->fileInfo.isWritable();
+    if (FileUtils::isGvfsMountFile(absoluteFilePath())){
+        return true;
+    }else{
+        return d->fileInfo.isWritable();
+    }
 }
 
 bool DFileInfo::isExecutable() const
 {
     Q_D(const DFileInfo);
-
-    return d->fileInfo.isExecutable();
+    if (FileUtils::isGvfsMountFile(absoluteFilePath())){
+        return true;
+    }else{
+        return d->fileInfo.isExecutable();
+    }
 }
 
 bool DFileInfo::isHidden() const

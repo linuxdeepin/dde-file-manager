@@ -137,6 +137,7 @@ public slots:
     void setFileOperatorWhitelist(int fileOperatorFlags);
     void setFileOperatorBlacklist(int fileOperatorFlags);
 
+    void delayUpdateStatusBar();
     void updateStatusBar();
 
 signals:
