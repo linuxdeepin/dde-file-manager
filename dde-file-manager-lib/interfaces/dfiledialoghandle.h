@@ -54,6 +54,7 @@ Q_SIGNALS:
     void finished(int result);
     void accepted();
     void rejected();
+    void selectionFilesChanged();
 
 public Q_SLOTS:
     void show();
