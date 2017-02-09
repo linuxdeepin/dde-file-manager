@@ -6,7 +6,7 @@ Build-Depends: debhelper (>=9), pkg-config, qt5-qmake, qt5-default, qtbase5-dev,
  libgtk2.0-dev, libqt5x11extras5-dev, libgsettings-qt-dev, libqt5svg5-dev, libmagic-dev, libsecret-1-dev, 
  libpoppler-cpp-dev, libpolkit-agent-1-dev, libpolkit-qt5-1-dev, qtmultimedia5-dev, libffmpegthumbnailer-dev,
  libdtkbase-dev, libdtkutil-dev, libdtkwidget-dev, libxcb1-dev, x11proto-core-dev, libx11-dev, qttools5-dev-tools,
- libglib2.0-dev
+ libglib2.0-dev, libdtksettings-dev, libdtksettingsview-dev
 Standards-Version: 3.9.6
 Homepage: http://www.deepin.org
 
@@ -20,7 +20,7 @@ Description: File manager front end of Deepin OS
 
 Package: libdde-file-manager
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libdtkbase, libdtkutil, libdtkwidget, libpoppler-cpp0v5 (>= 0.48.0)
+Depends: ${shlibs:Depends}, ${misc:Depends}, libdtkbase, libdtkutil, libdtkwidget, libpoppler-cpp0v5 (>= 0.48.0), libdtksettings, libdtksettingsview
 Breaks: dde-file-manager(<=1.2.3-3)
 Multi-Arch: same
 Description: DDE File Manager library
