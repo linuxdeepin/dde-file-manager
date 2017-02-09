@@ -80,7 +80,8 @@ public:
     static void printVolumeMounts();
 
     static QDiskInfo getDiskInfo(const QString& path);
-    static bool isDVD(const QVolume volume);
+    static bool isDVD(const QVolume& volume);
+    static bool isIgnoreUnusedMounts(const QMount& mount);
 
 signals:
     void mount_added(const QDiskInfo& diskInfo);

@@ -297,7 +297,7 @@ QDiskInfo GvfsMountManager::qVolumeToqDiskInfo(const QVolume &volume)
         diskInfo.setType("iphone");
     }else if (diskInfo.iconName() == "phone"){
         diskInfo.setType("phone");
-    }else if (diskInfo.iconName() == "camera"){
+    }else if (diskInfo.iconName() == "camera-photo" || diskInfo.iconName() == "camera"){
         diskInfo.setType("camera");
     }else if (diskInfo.iconName() == "drive-harddisk-usb"){
         diskInfo.setType("removable");
@@ -331,11 +331,7 @@ QDiskInfo GvfsMountManager::qMountToqDiskinfo(const QMount &mount)
     diskInfo.setCan_unmount(mount.can_unmount());
     diskInfo.setCan_eject(mount.can_eject());
 
-    if (diskInfo.iconName() == "phone-apple-iphone" && diskInfo.mounted_root_uri().startsWith("afc://")){
-        diskInfo.setType("iphone");
-    }else if (diskInfo.iconName() == "phone" && diskInfo.mounted_root_uri().startsWith("mtp://")){
-        diskInfo.setType("phone");
-    }else if (diskInfo.mounted_root_uri().startsWith("smb://")){
+    if (diskInfo.mounted_root_uri().startsWith("smb://")){
         diskInfo.setType("smb");
     }else if (diskInfo.iconName() == "drive-optical" && diskInfo.iconName().startsWith("CD")){
         diskInfo.setType("dvd");
@@ -393,12 +389,9 @@ void GvfsMountManager::monitor_mount_added(GVolumeMonitor *volume_monitor, GMoun
 
     }else{
         // ignore afc first mounted event
-        if (qMount.mounted_root_uri().startsWith("afc://")){
-            return;
-        }else if (qMount.mounted_root_uri().startsWith("mtp://")){
+        if (isIgnoreUnusedMounts(qMount)){
             return;
         }
-
 
         if (!NoVolumes_Mounts_Keys.contains(qMount.mounted_root_uri())){
             NoVolumes_Mounts_Keys.append(qMount.mounted_root_uri());
@@ -620,9 +613,20 @@ QDiskInfo GvfsMountManager::getDiskInfo(const QString &path)
     return info;
 }
 
-bool GvfsMountManager::isDVD(const QVolume volume)
+bool GvfsMountManager::isDVD(const QVolume &volume)
 {
     if (volume.drive().isValid() && volume.unix_device().startsWith("/dev/sr")){
+        return true;
+    }
+    return false;
+}
+
+bool GvfsMountManager::isIgnoreUnusedMounts(const QMount &mount)
+{
+    /*the following protocol has two mounts event, ignore unused one*/
+    if (mount.mounted_root_uri().startsWith("afc://") ||
+        mount.mounted_root_uri().startsWith("mtp://") ||
+        mount.mounted_root_uri().startsWith("gphoto2://")){
         return true;
     }
     return false;
@@ -768,10 +772,7 @@ void GvfsMountManager::getMounts(GList *mounts)
         if (volume != NULL){
             continue;
         }else{
-
-            if (qMount.mounted_root_uri().startsWith("afc://")){
-                continue;
-            }if (qMount.mounted_root_uri().startsWith("mtp://")){
+            if (isIgnoreUnusedMounts(qMount)){
                 continue;
             }
         }
