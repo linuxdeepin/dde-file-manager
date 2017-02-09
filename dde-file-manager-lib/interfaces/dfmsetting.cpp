@@ -20,20 +20,19 @@ DFMSetting::DFMSetting(QObject *parent) : QObject(parent)
           << "/"
           << DFMStandardPaths::standardLocation(DFMStandardPaths::NetworkRootPath)
           << DFMStandardPaths::standardLocation(DFMStandardPaths::UserShareRootPath);
-}
 
-void DFMSetting::loadConfigDataFromJsonFile(const QString &filePath)
-{
-
+    //load configure file
+    const QString& filePath = getConfigFilePath();
     if(!QFile::exists(filePath)){
-        reCreateConfigTemplate(filePath);
+        reCreateConfigTemplate();
     }
 
-    settings = Settings::fromJsonFile(filePath);
+    m_settings = Settings::fromJsonFile(filePath);
 }
 
-void DFMSetting::reCreateConfigTemplate(const QString &filePath)
+void DFMSetting::reCreateConfigTemplate()
 {
+    const QString& filePath = getConfigFilePath();
     QByteArray jsonData;
     QFile templateFile(":/configure/global-setting-template.json");
     if(!templateFile.open(QIODevice::ReadOnly)){
@@ -60,17 +59,17 @@ void DFMSetting::reCreateConfigTemplate(const QString &filePath)
 
 bool DFMSetting::isAllwayOpenOnNewWindow()
 {
-    settings->value("base.new_tab_windows.alway_open_on_new").toBool();
+    return m_settings->value("base.new_tab_windows.alway_open_on_new").toBool();
 }
 
 int DFMSetting::iconSizeIndex()
 {
-    return settings->value("base.default_view.icon_size").toInt();
+    return m_settings->value("base.default_view.icon_size").toInt();
 }
 
 DFMSetting::OpenFileAction DFMSetting::openFileAction()
 {
-    const int& index = settings->value("base.open_action.open_file_action").toInt();
+    const int& index = m_settings->value("base.open_action.open_file_action").toInt();
     switch (index) {
     case 0:
         return Click;
@@ -84,7 +83,7 @@ DFMSetting::OpenFileAction DFMSetting::openFileAction()
 
 QString DFMSetting::newWindowPath()
 {
-    const int& index = settings->value("base.new_tab_windows.new_window_path").toInt();
+    const int& index = m_settings->value("base.new_tab_windows.new_window_path").toInt();
     if(index < paths.count() && index >= 0)
         return paths[index];
     return QDir::homePath();
@@ -92,7 +91,7 @@ QString DFMSetting::newWindowPath()
 
 QString DFMSetting::newTabPath()
 {
-    const int& index = settings->value("base.new_tab_windows.new_tab_path").toInt();
+    const int& index = m_settings->value("base.new_tab_windows.new_tab_path").toInt();
     if(index < paths.count() && index >= 0)
         return paths[index];
     return QDir::homePath();
@@ -101,4 +100,9 @@ QString DFMSetting::newTabPath()
 DFileView::ViewMode DFMSetting::viewMode()
 {
     return DFileView::IconMode;
+}
+
+QString DFMSetting::getConfigFilePath()
+{
+    return QString("%1/%2").arg(DFMStandardPaths::getConfigPath(), "dde-file-manager-global-settting.json");
 }
