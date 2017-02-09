@@ -266,9 +266,6 @@ void DFMGlobal::initUserShareManager()
 void DFMGlobal::initGlobalSettings()
 {
     globalSetting;
-    QString configFilePath = QString("%1/%2").arg(DFMStandardPaths::getConfigPath(), "dde-file-manager-global-settting.json");
-
-    globalSetting->loadConfigDataFromJsonFile(configFilePath);
 }
 
 QList<QUrl> DFMGlobal::clipboardFileUrlList() const

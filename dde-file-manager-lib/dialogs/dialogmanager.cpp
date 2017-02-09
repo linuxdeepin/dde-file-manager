@@ -600,20 +600,20 @@ void DialogManager::showGlobalSettingsDialog(const DFMEvent& event)
     if(!w)
         return;
 
-    QString configFile = QString("%1/%2").arg(DFMStandardPaths::getConfigPath(), "dde-file-manager-global-settting.json");
-    if(!QFile::exists(configFile))
-        globalSetting->reCreateConfigTemplate(configFile);
+    const QString& filePath = globalSetting->getConfigFilePath();
+    if(!QFile::exists(filePath))
+        globalSetting->reCreateConfigTemplate();
 
     QTemporaryFile tmpFile;
     tmpFile.open();
     auto backend = new QSettingBackend(tmpFile.fileName());
 
-    auto settings = Settings::fromJsonFile(configFile);
+    auto settings = Settings::fromJsonFile(filePath);
 
     //handle for artifically changing config file and causing that file manager couldn't parse it normally.
     if(settings->keys().isEmpty()){
-        globalSetting->reCreateConfigTemplate(configFile);
-        settings = Settings::fromJsonFile(configFile);
+        globalSetting->reCreateConfigTemplate();
+        settings = Settings::fromJsonFile(filePath);
     }
 
     settings->setBackend(backend);

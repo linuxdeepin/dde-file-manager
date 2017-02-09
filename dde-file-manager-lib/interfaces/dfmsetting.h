@@ -16,21 +16,21 @@ public:
         DoubleClick
     };
     explicit DFMSetting(QObject *parent = 0);
-    void loadConfigDataFromJsonFile(const QString& filePath);
-    void reCreateConfigTemplate(const QString& filePath);
+    void reCreateConfigTemplate();
     bool isAllwayOpenOnNewWindow();
     int iconSizeIndex();
     OpenFileAction openFileAction();
     QString newWindowPath();
     QString newTabPath();
     DFileView::ViewMode viewMode();
+    QString getConfigFilePath();
 
 signals:
 
 public slots:
 
 private:
-    QPointer<Settings> settings;
+    QPointer<Settings> m_settings;
     QStringList paths;
 };
 
