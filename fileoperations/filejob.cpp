@@ -582,9 +582,9 @@ void FileJob::setIsAborted(bool isAborted)
 
 bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMoved, QString *targetPath)
 {
-    if (m_isGvfsFileOperationUsed){
-        return copyFileByGio(srcFile, tarDir, isMoved, targetPath);
-    }
+//    if (m_isGvfsFileOperationUsed){
+//        return copyFileByGio(srcFile, tarDir, isMoved, targetPath);
+//    }
     qDebug() << "copy file by qtio" << srcFile << tarDir;
 
     if (m_isAborted)
