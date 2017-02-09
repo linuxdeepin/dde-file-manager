@@ -67,5 +67,6 @@
     <signal name="rejected"></signal>
     <signal name="windowActiveChanged"></signal>
     <signal name="destroyed"></signal>
+    <signal name="selectionFilesChanged"></signal>
   </interface>
 </node>

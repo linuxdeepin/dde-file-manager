@@ -71,6 +71,9 @@ DFileDialog::DFileDialog(QWidget *parent)
     getFileView()->setDragEnabled(false);
     getFileView()->setDragDropMode(QAbstractItemView::NoDragDrop);
     getFileView()->installEventFilter(this);
+
+    connect(getFileView()->selectionModel(), &QItemSelectionModel::selectionChanged,
+            this, &DFileDialog::selectionFilesChanged);
 }
 
 DFileDialog::~DFileDialog()

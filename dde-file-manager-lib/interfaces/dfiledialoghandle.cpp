@@ -41,6 +41,8 @@ DFileDialogHandle::DFileDialogHandle(QWidget *parent)
     connect(d_func()->dialog, &DFileDialog::accepted, this, &DFileDialogHandle::accepted);
     connect(d_func()->dialog, &DFileDialog::rejected, this, &DFileDialogHandle::rejected);
     connect(d_func()->dialog, &DFileDialog::finished, this, &DFileDialogHandle::finished);
+    connect(d_func()->dialog, &DFileDialog::selectionFilesChanged,
+            this, &DFileDialogHandle::selectionFilesChanged);
 }
 
 DFileDialogHandle::~DFileDialogHandle()
