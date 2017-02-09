@@ -106,7 +106,8 @@ QDebug operator<<(QDebug dbg, const QMount &mount)
         << "name:" << mount.name() << ","
         << "mounted root uri:" << mount.mounted_root_uri() << ","
         << "can_unmount:" << mount.can_unmount() << ","
-        << "icon:" << mount.icons()
+        << "icon:" << mount.icons() << ","
+        << "is_shadowed:" << mount.is_shadowed()
         << "}";
     return dbg;
 }
