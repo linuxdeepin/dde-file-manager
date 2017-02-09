@@ -369,7 +369,7 @@ void DFileManagerWindow::preHandleCd(const DUrl &fileUrl, int source)
     } else if (!fileUrl.toString().isEmpty()) {
 
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(event.fileUrl());
-        qDebug() << fileInfo << fileInfo->exists();
+
         if (!fileInfo || !fileInfo->exists()) {
             if (DUrl::hasScheme(event.fileUrl().scheme()))
                 return;
