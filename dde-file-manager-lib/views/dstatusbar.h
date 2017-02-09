@@ -8,6 +8,8 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QSizeGrip>
+#include <QPair>
+#include "durl.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -45,8 +47,14 @@ public:
 
     QSize sizeHint() const Q_DECL_OVERRIDE;
 
+    qint64 computerSize(const DUrlList& urllist);
+    int computerFolderContains(const DUrlList& urllist);
+
 public slots:
     void itemSelected(const DFMEvent &event, int number);
+    void updateStatusMessage();
+    void handdleComputerFileSizeFinished();
+    void handdleComputerFolderContainsFinished();
     void itemCounted(const DFMEvent &event, int number);
     void setLoadingIncatorVisible(const DFMEvent &event, bool visible);
 
@@ -63,6 +71,11 @@ private:
     QString m_selectFiles;
     QString m_selectOnlyOneFile;
     QString m_selectedNetworkOnlyOneFolder;
+
+    int m_fileCount = 0;
+    qint64 m_fileSize = 0;
+    int m_folderCount = 0;
+    int m_folderContains = 0;
 
     QHBoxLayout * m_layout;
     QLabel * m_label = Q_NULLPTR;

@@ -111,6 +111,8 @@ public:
 
     FileViewHelper *fileViewHelper;
 
+    QTimer* updateStatusBarTimer;
+
     Q_DECLARE_PUBLIC(DFileView)
 };
 
@@ -136,12 +138,16 @@ DFileView::DFileView(QWidget *parent)
     ViewInstanceCount += 1;
     d->viewId = QString("fileview%1").arg(QString::number(ViewInstanceCount));
     d->statusBar->scalingSlider()->setValue(globalSetting->iconSizeIndex());
+    d->updateStatusBarTimer = new QTimer;
+    d->updateStatusBarTimer->setInterval(100);
+    d->updateStatusBarTimer->setSingleShot(true);
+    connect(d->updateStatusBarTimer, &QTimer::timeout, this, &DFileView::updateStatusBar);
 }
 
 DFileView::~DFileView()
 {
     disconnect(this, &DFileView::rowCountChanged, this, &DFileView::onRowCountChanged);
-    disconnect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &DFileView::updateStatusBar);
+    disconnect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &DFileView::delayUpdateStatusBar);
     ViewInstanceCount -= 1;
 }
 
@@ -750,7 +756,7 @@ void DFileView::onRowCountChanged()
     static_cast<DFileSelectionModel*>(selectionModel())->m_selectedList.clear();
 #endif
 
-    updateStatusBar();
+    delayUpdateStatusBar();
     updateContentLabel();
     updateModelActiveIndex();
 }
@@ -1108,6 +1114,17 @@ void DFileView::handleDataChanged(const QModelIndex &topLeft, const QModelIndex 
 
     for (int i = topLeft.row(); i <= bottomRight.row(); ++i) {
         update(model()->index(i, 0));
+    }
+}
+
+void DFileView::delayUpdateStatusBar()
+{
+    Q_D(DFileView);
+
+    if (FileUtils::isGvfsMountFile(rootUrl().toLocalFile())){
+        d->updateStatusBarTimer->start();
+    }else{
+        updateStatusBar();
     }
 }
 
@@ -1565,7 +1582,7 @@ void DFileView::initConnects()
     connect(d->sortByActionGroup, &QActionGroup::triggered, this, &DFileView::sortByActionTriggered);
     connect(d->openWithActionGroup, &QActionGroup::triggered, this, &DFileView::openWithActionTriggered);
 
-    connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &DFileView::updateStatusBar);
+    connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &DFileView::delayUpdateStatusBar);
     connect(model(), &DFileSystemModel::dataChanged, this, &DFileView::handleDataChanged);
     connect(model(), &DFileSystemModel::stateChanged, this, &DFileView::onModelStateChanged);
     connect(model(), &DFileSystemModel::rootUrlDeleted, this, &DFileView::onRootUrlDeleted);
@@ -2193,7 +2210,7 @@ void DFileView::onModelStateChanged(int state)
 
         d->preSelectionUrls.clear();
 
-        updateStatusBar();
+        delayUpdateStatusBar();
         updateContentLabel();
 
         if (d->headerView) {

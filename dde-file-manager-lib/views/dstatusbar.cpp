@@ -15,6 +15,9 @@
 #include <dcombobox.h>
 #include <dlineedit.h>
 #include <anchors.h>
+#include <QFutureWatcher>
+#include <QFuture>
+#include <QtConcurrent>
 
 DWIDGET_USE_NAMESPACE
 
@@ -217,60 +220,74 @@ QSize DStatusBar::sizeHint() const
     return size;
 }
 
+qint64 DStatusBar::computerSize(const DUrlList &urllist)
+{
+    qint64 fileSize = 0;
+    foreach (DUrl url, urllist) {
+        const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
+        if (fileInfo->isFile()) {
+            fileSize += fileInfo->size();
+        }
+    }
+    return fileSize;
+}
+
+int DStatusBar::computerFolderContains(const DUrlList &urllist)
+{
+    int folderContains = 0;
+    foreach (DUrl url, urllist) {
+        const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
+        if (fileInfo->isDir()) {
+            folderContains += fileInfo->filesCount();
+        }
+    }
+    return folderContains;
+}
+
 void DStatusBar::itemSelected(const DFMEvent &event, int number)
 {
     if (!m_label || event.windowId() != WindowManager::getWindowId(this))
         return;
 
     if (number > 1) {
-        int fileCount = 0;
-        qint64 fileSize = 0;
-        int folderCount = 0;
-        int folderContains = 0;
+
+        bool isInGVFs = FileUtils::isGvfsMountFile(event.fileUrlList().first().toLocalFile());
+
+        m_fileCount = 0;
+        m_fileSize = 0;
+        m_folderCount = 0;
+        m_folderContains = 0;
 
         foreach (DUrl url, event.fileUrlList()) {
             const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
-
             if (fileInfo->isFile()) {
-                fileSize += fileInfo->size();
-                fileCount += 1;
+                if (!isInGVFs){
+                    m_fileSize += fileInfo->size();
+                }
+                m_fileCount += 1;
             } else {
-                folderCount += 1;
-                folderContains += fileInfo->filesCount();
+                m_folderCount += 1;
+                if (!isInGVFs){
+                    m_folderContains += fileInfo->filesCount();
+                }
             }
         }
 
-        QString selectedFolders;
+        if (isInGVFs){
+             QFutureWatcher<qint64>* fileWatcher = new QFutureWatcher<qint64>();
+             connect(fileWatcher, SIGNAL(finished()), this, SLOT(handdleComputerFileSizeFinished()));
+             // Start the computation.
+             QFuture<qint64> fileFuture = QtConcurrent::run(this, &DStatusBar::computerSize, event.fileUrlList());
+             fileWatcher->setFuture(fileFuture);
 
-        if (folderCount == 1 && folderContains <= 1) {
-            selectedFolders = m_selectOnlyOneFolder.arg(QString::number(folderCount), m_OnlyOneItemCounted.arg(folderContains));
-        } else if (folderCount == 1 && folderContains > 1) {
-            selectedFolders = m_selectOnlyOneFolder.arg(QString::number(folderCount), m_counted.arg(folderContains));
-        } else if (folderCount > 1 && folderContains <= 1) {
-            selectedFolders = m_selectFolders.arg(QString::number(folderCount), m_OnlyOneItemCounted.arg(folderContains));
-        } else if (folderCount > 1 && folderContains > 1) {
-            selectedFolders = m_selectFolders.arg(QString::number(folderCount), m_counted.arg(folderContains));
-        } else {
-            selectedFolders = "";
+             QFutureWatcher<int>* folderWatcher = new QFutureWatcher<int>();
+             connect(folderWatcher, SIGNAL(finished()), this, SLOT(handdleComputerFolderContainsFinished()));
+             // Start the computation.
+             QFuture<int> folderFuture = QtConcurrent::run(this, &DStatusBar::computerFolderContains, event.fileUrlList());
+             folderWatcher->setFuture(folderFuture);
         }
+        updateStatusMessage();
 
-        QString selectedFiles;
-
-        if (fileCount == 1) {
-            selectedFiles = m_selectOnlyOneFile.arg(QString::number(fileCount), FileUtils::formatSize(fileSize));
-        } else if (fileCount > 1 ) {
-            selectedFiles = m_selectFiles.arg(QString::number(fileCount), FileUtils::formatSize(fileSize));
-        } else {
-            selectedFiles = "";
-        }
-
-        if (selectedFolders.isEmpty()) {
-            m_label->setText(QString("%1").arg(selectedFiles));
-        } else if (selectedFiles.isEmpty()) {
-            m_label->setText(QString("%1").arg(selectedFolders));
-        } else {
-            m_label->setText(QString("%1,%2").arg(selectedFolders, selectedFiles));
-        }
     } else {
         if (number == 1) {
             if (event.fileUrlList().count() == 1) {
@@ -298,6 +315,57 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
             }
         }
     }
+}
+
+void DStatusBar::updateStatusMessage()
+{
+    QString selectedFolders;
+
+    if (m_folderCount == 1 && m_folderContains <= 1) {
+        selectedFolders = m_selectOnlyOneFolder.arg(QString::number(m_folderCount), m_OnlyOneItemCounted.arg(m_folderContains));
+    } else if (m_folderCount == 1 && m_folderContains > 1) {
+        selectedFolders = m_selectOnlyOneFolder.arg(QString::number(m_folderCount), m_counted.arg(m_folderContains));
+    } else if (m_folderCount > 1 && m_folderContains <= 1) {
+        selectedFolders = m_selectFolders.arg(QString::number(m_folderCount), m_OnlyOneItemCounted.arg(m_folderContains));
+    } else if (m_folderCount > 1 && m_folderContains > 1) {
+        selectedFolders = m_selectFolders.arg(QString::number(m_folderCount), m_counted.arg(m_folderContains));
+    } else {
+        selectedFolders = "";
+    }
+
+    QString selectedFiles;
+
+    if (m_fileCount == 1) {
+        selectedFiles = m_selectOnlyOneFile.arg(QString::number(m_fileCount), FileUtils::formatSize(m_fileSize));
+    } else if (m_fileCount > 1 ) {
+        selectedFiles = m_selectFiles.arg(QString::number(m_fileCount), FileUtils::formatSize(m_fileSize));
+    } else {
+        selectedFiles = "";
+    }
+
+    if (selectedFolders.isEmpty()) {
+        m_label->setText(QString("%1").arg(selectedFiles));
+    } else if (selectedFiles.isEmpty()) {
+        m_label->setText(QString("%1").arg(selectedFolders));
+    } else {
+        m_label->setText(QString("%1,%2").arg(selectedFolders, selectedFiles));
+    }
+}
+
+void DStatusBar::handdleComputerFolderContainsFinished()
+{
+    QFutureWatcher<int>* watcher = static_cast<QFutureWatcher<int>*>(sender());
+    int result = watcher->future().result();
+    m_folderContains = result;
+    updateStatusMessage();
+}
+
+void DStatusBar::handdleComputerFileSizeFinished()
+{
+    QFutureWatcher<qint64>* watcher = static_cast<QFutureWatcher<qint64>*>(sender());
+    qint64 result = watcher->future().result();
+    m_fileSize = result;
+    updateStatusMessage();
 }
 
 void DStatusBar::itemCounted(const DFMEvent &event, int number)
