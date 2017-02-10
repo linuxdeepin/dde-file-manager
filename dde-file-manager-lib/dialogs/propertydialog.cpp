@@ -499,15 +499,15 @@ void PropertyDialog::startComputerFolderSize(const DUrl &url)
     }
     DUrlList urls;
     urls << validUrl;
-    FilesSizeWorker* worker = new FilesSizeWorker(urls);
+    m_sizeWorker = new FilesSizeWorker(urls);
     QThread*  workerThread = new QThread;
-    worker->moveToThread(workerThread);
+    m_sizeWorker->moveToThread(workerThread);
 
-    connect(workerThread, &QThread::finished, worker, &FilesSizeWorker::deleteLater);
+    connect(workerThread, &QThread::finished, m_sizeWorker, &FilesSizeWorker::deleteLater);
     connect(workerThread, &QThread::finished, workerThread, &QThread::deleteLater);
 
-    connect(this, &PropertyDialog::requestStartComputerFolderSize, worker, &FilesSizeWorker::coumpueteSize);
-    connect(worker, &FilesSizeWorker::sizeUpdated, this, &PropertyDialog::updateFolderSize);
+    connect(this, &PropertyDialog::requestStartComputerFolderSize, m_sizeWorker, &FilesSizeWorker::coumpueteSize);
+    connect(m_sizeWorker, &FilesSizeWorker::sizeUpdated, this, &PropertyDialog::updateFolderSize);
 
     workerThread->start();
 
@@ -550,6 +550,7 @@ void PropertyDialog::closeEvent(QCloseEvent *event)
     emit aboutToClosed(m_url);
     BaseDialog::closeEvent(event);
     emit closed(m_url);
+    m_sizeWorker->stop();
 }
 
 void PropertyDialog::resizeEvent(QResizeEvent *event)
