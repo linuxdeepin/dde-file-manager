@@ -28,6 +28,7 @@ class DAbstractFileInfo;
 class UDiskDeviceInfo;
 class DUrl;
 class ShareInfoFrame;
+class FilesSizeWorker;
 
 DWIDGET_USE_NAMESPACE
 
@@ -146,6 +147,7 @@ private:
     QListWidget* m_OpenWithListWidget = NULL;
     QButtonGroup* m_OpenWithButtonGroup = NULL;
     DExpandGroup* m_expandGroup = NULL;
+    FilesSizeWorker* m_sizeWorker = NULL;
 
     DExpandGroup *addExpandWidget(const QStringList &titleList);
 
