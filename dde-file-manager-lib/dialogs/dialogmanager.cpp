@@ -333,7 +333,7 @@ int DialogManager::showDeleteFilesClearTrashDialog(const DFMEvent &event)
     QString DeleteFileName = tr("Permanently delete %1?");
     QString DeleteFileItems = tr("Permanently delete %1 items?");
 
-    const int maxFileNameWidth = 160;
+    const int maxFileNameWidth = 250;
 
     DUrlList urlList = event.fileUrlList();
     QStringList buttonTexts;
@@ -368,7 +368,6 @@ int DialogManager::showDeleteFilesClearTrashDialog(const DFMEvent &event)
     }else{
         d.setTitle(DeleteFileItems.arg(urlList.size()));
     }
-    d.setMaximumWidth(480);
     d.setMessage(tr("This action cannot be restored"));
     d.addButton(buttonTexts[0], true, DDialog::ButtonNormal);
     d.addButton(buttonTexts[1], false, DDialog::ButtonWarning);
