@@ -14,6 +14,8 @@ DBusFileDialogHandle::DBusFileDialogHandle(QWidget *parent)
 
     connect(&m_heartbeatTimer, &QTimer::timeout, this, &QObject::deleteLater);
     connect(widget(), &QWidget::destroyed, this, &QObject::deleteLater);
+    connect(this, &DBusFileDialogHandle::currentUrlChanged, this, &DBusFileDialogHandle::directoryChanged);
+    connect(this, &DBusFileDialogHandle::currentUrlChanged, this, &DBusFileDialogHandle::directoryUrlChanged);
 
     m_heartbeatTimer.setInterval(30 * 1000);
     m_heartbeatTimer.start();

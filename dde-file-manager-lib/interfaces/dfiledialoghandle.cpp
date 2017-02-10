@@ -43,6 +43,8 @@ DFileDialogHandle::DFileDialogHandle(QWidget *parent)
     connect(d_func()->dialog, &DFileDialog::finished, this, &DFileDialogHandle::finished);
     connect(d_func()->dialog, &DFileDialog::selectionFilesChanged,
             this, &DFileDialogHandle::selectionFilesChanged);
+    connect(d_func()->dialog, &DFileDialog::currentUrlChanged,
+            this, &DFileDialogHandle::currentUrlChanged);
 }
 
 DFileDialogHandle::~DFileDialogHandle()
