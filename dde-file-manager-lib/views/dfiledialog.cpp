@@ -74,6 +74,8 @@ DFileDialog::DFileDialog(QWidget *parent)
 
     connect(getFileView()->selectionModel(), &QItemSelectionModel::selectionChanged,
             this, &DFileDialog::selectionFilesChanged);
+    connect(getFileView(), &DFileView::rootUrlChanged,
+            this, &DFileDialog::currentUrlChanged);
 }
 
 DFileDialog::~DFileDialog()

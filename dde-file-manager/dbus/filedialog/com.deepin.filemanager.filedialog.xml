@@ -68,5 +68,8 @@
     <signal name="windowActiveChanged"></signal>
     <signal name="destroyed"></signal>
     <signal name="selectionFilesChanged"></signal>
+    <signal name="currentUrlChanged"></signal>
+    <signal name="directoryChanged"></signal>
+    <signal name="directoryUrlChanged"></signal>
   </interface>
 </node>

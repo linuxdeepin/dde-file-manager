@@ -9,8 +9,8 @@ class DBusFileDialogHandle : public DFileDialogHandle
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString directory READ directory WRITE setDirectory)
-    Q_PROPERTY(QString directoryUrl READ directoryUrl WRITE setDirectoryUrl)
+    Q_PROPERTY(QString directory READ directory WRITE setDirectory NOTIFY directoryChanged)
+    Q_PROPERTY(QString directoryUrl READ directoryUrl WRITE setDirectoryUrl NOTIFY directoryUrlChanged)
     Q_PROPERTY(QStringList nameFilters READ nameFilters WRITE setNameFilters)
     Q_PROPERTY(int filter READ filter WRITE setFilter)
     Q_PROPERTY(int viewMode READ viewMode WRITE setViewMode)
@@ -59,6 +59,8 @@ public slots:
 
 signals:
     void windowActiveChanged();
+    void directoryChanged();
+    void directoryUrlChanged();
 
 private:
     QTimer m_heartbeatTimer;

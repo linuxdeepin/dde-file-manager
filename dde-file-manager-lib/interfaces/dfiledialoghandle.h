@@ -55,6 +55,7 @@ Q_SIGNALS:
     void accepted();
     void rejected();
     void selectionFilesChanged();
+    void currentUrlChanged();
 
 public Q_SLOTS:
     void show();
