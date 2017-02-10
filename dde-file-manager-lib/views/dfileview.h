@@ -1,6 +1,7 @@
 #ifndef DFILEVIEW_H
 #define DFILEVIEW_H
 
+#include "interfaces/dfmsetting.h"
 #include "dfmglobal.h"
 #include "durl.h"
 
@@ -139,6 +140,7 @@ public slots:
 
     void delayUpdateStatusBar();
     void updateStatusBar();
+    void openIndexByOpenAction(const int &action, const QModelIndex& index);
 
 signals:
     void rootUrlChanged(const DUrl &url);

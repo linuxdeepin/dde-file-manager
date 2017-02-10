@@ -601,30 +601,18 @@ void DialogManager::showGlobalSettingsDialog(const DFMEvent& event)
         return;
 
     const QString& filePath = globalSetting->getConfigFilePath();
-    if(!QFile::exists(filePath))
-        globalSetting->reCreateConfigTemplate();
 
-    QTemporaryFile tmpFile;
-    tmpFile.open();
-    auto backend = new QSettingBackend(tmpFile.fileName());
+    auto backend = new QSettingBackend(filePath);
 
-    auto settings = Settings::fromJsonFile(filePath);
-
-    //handle for artifically changing config file and causing that file manager couldn't parse it normally.
-    if(settings->keys().isEmpty()){
-        globalSetting->reCreateConfigTemplate();
-        settings = Settings::fromJsonFile(filePath);
-    }
+    auto settings = Settings::fromJsonFile(":/configure/global-setting-template.json");
 
     settings->setBackend(backend);
 
     DSettingsDialog dsd(w);
     dsd.updateSettings(settings);
     dsd.exec();
-    settings->sync();
-    foreach (QString key, settings->keys()) {
-        qDebug () << key << ":" << settings->value(key);
-    }
+    globalSetting->setSettings(settings);
+
 }
 
 void DialogManager::showDiskSpaceOutOfUsedDialog()
