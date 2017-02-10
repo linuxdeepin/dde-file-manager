@@ -11,19 +11,14 @@ class DFMSetting : public QObject
     Q_OBJECT
 
 public:
-    enum OpenFileAction{
-        Click,
-        DoubleClick
-    };
     explicit DFMSetting(QObject *parent = 0);
-    void reCreateConfigTemplate();
     bool isAllwayOpenOnNewWindow();
     int iconSizeIndex();
-    OpenFileAction openFileAction();
+    int openFileAction();
     QString newWindowPath();
     QString newTabPath();
-    DFileView::ViewMode viewMode();
     QString getConfigFilePath();
+    void setSettings(Settings* settings);
 
 signals:
 

@@ -837,7 +837,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
 
             return;
         case Qt::Key_N:{
-            const QString& path = globalSetting->newTabPath();
+            const QString& path = globalSetting->newWindowPath();
             if(path != "Current Path")
                 fmevent << DUrl::fromUserInput(path);
             appController->actionNewWindow(fmevent);
@@ -1144,6 +1144,13 @@ void DFileView::updateStatusBar()
     }else{
         d->statusBar->itemSelected(event, count);
     }
+}
+
+void DFileView::openIndexByOpenAction(const int& action, const QModelIndex &index)
+{
+    if(action == globalSetting->openFileAction())
+        if(!DFMGlobal::keyCtrlIsPressed() && !DFMGlobal::keyShiftIsPressed())
+            openIndex(index);
 }
 
 void DFileView::onRootUrlDeleted(const DUrl &rootUrl)
@@ -1563,18 +1570,13 @@ void DFileView::initConnects()
 {
     D_D(DFileView);
 
-    if(globalSetting->openFileAction() == DFMSetting::DoubleClick)
-        connect(this, &DFileView::doubleClicked,
-            this, [this] (const QModelIndex &index) {
-        if (!DFMGlobal::keyCtrlIsPressed() && !DFMGlobal::keyShiftIsPressed())
-            openIndex(index);
-    }, Qt::QueuedConnection);
-    else
-        connect(this, &DFileView::clicked,
-            this, [this] (const QModelIndex &index) {
-        if (!DFMGlobal::keyCtrlIsPressed() && !DFMGlobal::keyShiftIsPressed())
-            openIndex(index);
-    }, Qt::QueuedConnection);
+    connect(this, &DFileView::clicked, [=] (const QModelIndex &index){
+        openIndexByOpenAction(0, index);
+    });
+
+    connect(this, &DFileView::doubleClicked, [=] (const QModelIndex &index){
+        openIndexByOpenAction(1, index);
+    });
 
     connect(this, &DFileView::rowCountChanged, this, &DFileView::onRowCountChanged, Qt::QueuedConnection);
 
