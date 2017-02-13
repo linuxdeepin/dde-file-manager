@@ -6,17 +6,17 @@
             "groups": [
                 {
                     "key": "open_action",
-                    "name": "Open Action",
+                    "name": "Open action",
                     "options": [
                         {
-                            "key": "alway_open_on_new",
+                            "key": "allways_open_on_new_window",
                             "type": "checkbox",
-                            "text": "Always Open On New Windows",
+                            "text": "Always open on new windows",
                             "default": false
                         },
                         {
                             "key": "open_file_action",
-                            "name": "Open File:",
+                            "name": "Open file:",
                             "type": "combobox",
                             "items": [
                                 "Click",
@@ -28,11 +28,11 @@
                 },
                 {
                     "key": "new_tab_windows",
-                    "name": "New Tab & Window",
+                    "name": "New window and tab",
                     "options": [
                         {
                             "key": "new_window_path",
-                            "name": "New Window Open:",
+                            "name": "Open new window:",
                             "type": "combobox",
                             "items": [
                                 "Current Path",
@@ -52,7 +52,7 @@
                         },
                         {
                             "key": "new_tab_path",
-                            "name": "New Tab Open:",
+                            "name": "Open new tab:",
                             "type": "combobox",
                             "items": [
                                 "Current Path",
@@ -74,11 +74,11 @@
                 },
                 {
                     "key": "default_view",
-                    "name": "Default View",
+                    "name": "Default view",
                     "options": [
                         {
                             "key": "icon_size",
-                            "name": "Icon Size:",
+                            "name": "Icon size:",
                             "type": "combobox",
                             "items": [
                                 "48px",
@@ -95,52 +95,86 @@
         },
         {
             "key": "advance",
-            "name": "Advance",
+            "name": "Advanced settings",
             "groups": [
                 {
-                    "key": "common_setting",
-                    "name": "Common Setting",
+                    "key": "search",
+                    "name": "Search",
                     "options": [
                         {
-                            "key": "rlocate_advance_search",
-                            "text": "Rlocate Advance search",
+                            "key": "quick_search",
+                            "text": "Quick search",
+                            "type": "checkbox",
+                            "default": true
+                        }
+                    ]
+                },
+                {
+                    "key": "preview",
+                    "name": "Preview",
+                    "options": [
+                        {
+                            "key": "compress_file_preview",
+                            "text": "Compress file preview",
                             "type": "checkbox",
                             "default": true
                         },
                         {
-                            "key": "avfs_archive_file_fast_preview",
-                            "text": "AVFS Archive File Fast Preview",
+                            "key": "text_file_preview",
+                            "text": "Text preview",
                             "type": "checkbox",
                             "default": true
                         },
+                        {
+                            "key": "document_file_preview",
+                            "text": "Document preview",
+                            "type": "checkbox",
+                            "default": true
+                        },
+                        {
+                            "key": "image_file_preview",
+                            "text": "Image preview",
+                            "type": "checkbox",
+                            "default": true
+                        },
+                        {
+                            "key": "video_file_preview",
+                            "text": "Video preview",
+                            "type": "checkbox",
+                            "default": true
+                        }
+                    ]
+                },
+                {
+                    "key": "mount",
+                    "name": "Mount",
+                    "options": [
                         {
                             "key": "auto_mount",
-                            "text": "Auto Mount",
+                            "text": "Auto mount",
                             "type": "checkbox",
                             "default": true
                         },
                         {
                             "key": "auto_mount_and_open",
-                            "text": "Auto Mount And Open",
-                            "type": "checkbox",
-                            "default": true
-                        },
-                        {
-                            "key": "set_as_default_file_dialog",
-                            "text": "Set As Default File Dialog",
-                            "type": "checkbox",
-                            "default": true
-                        },
-                        {
-                            "key": "enable_all_thumbnail_preview",
-                            "text": "Enable all thumbnail preview",
+                            "text": "Auto mount and open",
                             "type": "checkbox",
                             "default": true
                         }
-
+                    ]
+                },
+                {
+                    "key": "dialog",
+                    "name": "Dialog",
+                    "options": [
+                        {
+                            "key": "default_chooser_dialog",
+                            "text": "Use the file chooser dialog of Deepin File Manager",
+                            "type": "checkbox",
+                            "default": true
+                        }
                     ]
                 }
-
             ]
         }
 
