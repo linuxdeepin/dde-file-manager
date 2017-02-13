@@ -10,6 +10,7 @@
 #include "widgets/singleton.h"
 
 #include <QDebug>
+#include <QTimer>
 
 
 bool GvfsMountClient::AskingPassword = false;
@@ -90,6 +91,7 @@ void GvfsMountClient::mount_done_cb(GObject *object, GAsyncResult *res, gpointer
             qDebug() << "username" << g_mount_operation_get_username(op);
         }
     }
+
     emit fileSignalManager->requestChooseSmbMountedFile(MountEvent);
 }
 
