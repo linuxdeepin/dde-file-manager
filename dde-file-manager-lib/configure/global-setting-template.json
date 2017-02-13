@@ -6,12 +6,12 @@
             "groups": [
                 {
                     "key": "open_action",
-                    "name": "Open action",
+                    "name": "Open behavior",
                     "options": [
                         {
                             "key": "allways_open_on_new_window",
                             "type": "checkbox",
-                            "text": "Always open on new windows",
+                            "text": "Always open folder in new window",
                             "default": false
                         },
                         {
@@ -35,38 +35,30 @@
                             "name": "Open new window:",
                             "type": "combobox",
                             "items": [
-                                "Current Path",
+                                "Current Directory",
                                 "Home",
                                 "Desktop",
-                                "Video",
+                                "Videos",
                                 "Music",
-                                "Picture",
-                                "Document",
-                                "Download",
-                                "Computer",
-                                "System",
-                                "Network",
-                                "MyShare"
+                                "Pictures",
+                                "Documents",
+                                "Downloads"
                             ],
                             "default": 0
                         },
                         {
                             "key": "new_tab_path",
-                            "name": "Open new tab:",
+                            "name": "Open in new tab:",
                             "type": "combobox",
                             "items": [
-                                "Current Path",
+                                "Current Directory",
                                 "Home",
                                 "Desktop",
-                                "Video",
+                                "Videos",
                                 "Music",
-                                "Picture",
-                                "Document",
-                                "Download",
-                                "Computer",
-                                "System",
-                                "Network",
-                                "MyShare"
+                                "Pictures",
+                                "Documents",
+                                "Downloads"
                                 ],
                             "default": 0
                         }
@@ -74,23 +66,36 @@
                 },
                 {
                     "key": "default_view",
-                    "name": "Default view",
+                    "name": "View",
                     "options": [
                         {
                             "key": "icon_size",
-                            "name": "Icon size:",
+                            "name": "Default size:",
                             "type": "combobox",
                             "items": [
-                                "48px",
-                                "64px",
-                                "96px",
-                                "128px",
-                                "256px"
+                                "Small",
+                                "Medium",
+                                "Large",
+                                "Extra large"
                             ],
                             "default": 1
                         }
                     ]
+                },
+                {
+                    "key": "search",
+                    "name": "Search",
+                    "options": [
+                        {
+                            "key": "show_hidden",
+                            "text": "Show hidden files in search results",
+                            "type": "checkbox",
+                            "default": false
+                        }
+
+                    ]
                 }
+
             ]
         },
         {

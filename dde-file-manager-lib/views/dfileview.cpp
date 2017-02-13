@@ -1157,6 +1157,11 @@ void DFileView::openIndexByOpenAction(const int& action, const QModelIndex &inde
             openIndex(index);
 }
 
+void DFileView::setIconSizeBySizeIndex(const int &sizeIndex)
+{
+    itemDelegate()->setIconSizeByIconSizeLevel(sizeIndex);
+}
+
 void DFileView::onRootUrlDeleted(const DUrl &rootUrl)
 {
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(rootUrl);
@@ -1595,6 +1600,8 @@ void DFileView::initConnects()
 
     connect(this, &DFileView::iconSizeChanged, this, &DFileView::updateHorizontalOffset, Qt::QueuedConnection);
     connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &DFileView::updateModelActiveIndex);
+
+    connect(fileSignalManager, &FileSignalManager::requestChangeIconSizeBySizeIndex, this, &DFileView::setIconSizeBySizeIndex);
 }
 
 void DFileView::increaseIcon()
@@ -1637,7 +1644,10 @@ void DFileView::openIndex(const QModelIndex &index)
     event << urls;
     event << DFMEvent::FileView;
     event << windowId();
-    DFileService::instance()->openUrl(event, false, true);
+    if(globalSetting->isAllwayOpenOnNewWindow())
+        DFileService::instance()->openUrl(event, true, false);
+    else
+        DFileService::instance()->openUrl(event, false, true);
 }
 
 void DFileView::keyboardSearch(const QString &search)

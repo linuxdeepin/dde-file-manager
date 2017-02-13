@@ -24,6 +24,7 @@
 #include "usershare/usersharemanager.h"
 #include "controllers/pathmanager.h"
 #include "shutil/fileutils.h"
+#include "interfaces/dfmsetting.h"
 
 #include "xutil.h"
 #include "utils.h"
@@ -162,7 +163,12 @@ void DFileManagerWindow::hideNewTabButton()
 void DFileManagerWindow::onNewTabButtonClicked()
 {
     DFMEvent event;
-    const DUrl url = DUrl::fromLocalFile(QDir::homePath());
+    DUrl url;
+    const QString& path = globalSetting->newTabPath();
+    if(path == "Current Path")
+        url = currentUrl();
+    else
+        url = DUrl::fromUserInput(path);
     event << url;
     event << windowId();
     openNewTab(event);

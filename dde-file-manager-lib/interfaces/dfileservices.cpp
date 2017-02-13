@@ -15,6 +15,7 @@
 #include "controllers/pathmanager.h"
 #include "dfmstandardpaths.h"
 #include "views/windowmanager.h"
+#include "dfmsetting.h"
 
 #include "shutil/fileutils.h"
 
@@ -857,7 +858,9 @@ void DFileService::openUrl(const DFMEvent &event, const bool &isOpenInNewWindow,
     DFMEvent filesEvent(event),dirsEvent(event);
     foreach (const DUrl& url, event.fileUrlList()) {
 
-        if(isAvfsMounted() && FileUtils::isArchive(url.toLocalFile())){
+        if(isAvfsMounted()
+                && FileUtils::isArchive(url.toLocalFile())
+                && globalSetting->isCompressFilePreview()){
             const_cast<DUrl&>(url).setScheme(AVFS_SCHEME);
             dirList << url;
         } else{

@@ -5,6 +5,8 @@
 #include "computerpropertydialog.h"
 #include "usersharepasswordsettingdialog.h"
 #include "dialogs/movetotrashconflictdialog.h"
+#include "views/dfilemanagerwindow.h"
+#include "interfaces/dstyleditemdelegate.h"
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
@@ -598,20 +600,20 @@ void DialogManager::showGlobalSettingsDialog(const DFMEvent& event)
     QWidget* w = WindowManager::getWindowById(event.windowId());
     if(!w)
         return;
+    if(w->property("isSettingDialogShown").toBool())
+        return;
 
-    const QString& filePath = globalSetting->getConfigFilePath();
+    w->setProperty("isSettingDialogShown", true);
 
-    auto backend = new QSettingBackend(filePath);
+    DSettingsDialog* dsd = new DSettingsDialog(w);
+    dsd->updateSettings(globalSetting->settings());
+    dsd->show();
 
-    auto settings = Settings::fromJsonFile(":/configure/global-setting-template.json");
-
-    settings->setBackend(backend);
-
-    DSettingsDialog dsd(w);
-    dsd.updateSettings(settings);
-    dsd.exec();
-    globalSetting->setSettings(settings);
-
+    connect(dsd, &DSettingsDialog::finished, [=]{
+        //synchonize current file view size index
+        emit fileSignalManager->requestChangeIconSizeBySizeIndex(globalSetting->iconSizeIndex());
+        w->setProperty("isSettingDialogShown", false);
+    });
 }
 
 void DialogManager::showDiskSpaceOutOfUsedDialog()

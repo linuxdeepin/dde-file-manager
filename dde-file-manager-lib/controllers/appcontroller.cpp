@@ -20,6 +20,7 @@
 #include "app/define.h"
 
 #include "interfaces/dfmstandardpaths.h"
+#include "interfaces/dfmsetting.h"
 #include "shutil/fileutils.h"
 #include "views/windowmanager.h"
 #include "dbusinterface/commandmanager_interface.h"
@@ -77,7 +78,10 @@ void AppController::actionOpen(const DFMEvent &event)
         e << urls.first();
         e << DUrlList();
 
-        fileService->openUrl(e, false, true);
+        if(globalSetting->isAllwayOpenOnNewWindow())
+            fileService->openUrl(e, true, false);
+        else
+            fileService->openUrl(e, false, true);
     } else {
         fileService->openUrl(event, true);
     }
