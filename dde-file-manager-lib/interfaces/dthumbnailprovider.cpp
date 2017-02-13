@@ -254,6 +254,11 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
 
         const QSize &imageSize = reader.size();
 
+        if(!imageSize.isValid()){
+            d->errorString = "Fail to read image file attribute data:" + info.absoluteFilePath();
+            goto _return;
+        }
+
         if (imageSize.width() >= size || imageSize.height() >= size) {
             reader.setScaledSize(reader.size().scaled(size, size, Qt::KeepAspectRatio));
         }
