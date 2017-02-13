@@ -35,7 +35,7 @@
                             "name": "New Window Open:",
                             "type": "combobox",
                             "items": [
-                                "Current path",
+                                "Current Path",
                                 "Home",
                                 "Desktop",
                                 "Video",
@@ -43,10 +43,10 @@
                                 "Picture",
                                 "Document",
                                 "Download",
+                                "Computer",
                                 "System",
                                 "Network",
-                                "MyShare",
-                                "Computer"
+                                "MyShare"
                             ],
                             "default": 0
                         },
@@ -63,10 +63,10 @@
                                 "Picture",
                                 "Document",
                                 "Download",
+                                "Computer",
                                 "System",
                                 "Network",
-                                "MyShare",
-                                "Computer"
+                                "MyShare"
                                 ],
                             "default": 0
                         }
@@ -92,6 +92,57 @@
                     ]
                 }
             ]
+        },
+        {
+            "key": "advance",
+            "name": "Advance",
+            "groups": [
+                {
+                    "key": "common_setting",
+                    "name": "Common Setting",
+                    "options": [
+                        {
+                            "key": "rlocate_advance_search",
+                            "text": "Rlocate Advance search",
+                            "type": "checkbox",
+                            "default": true
+                        },
+                        {
+                            "key": "avfs_archive_file_fast_preview",
+                            "text": "AVFS Archive File Fast Preview",
+                            "type": "checkbox",
+                            "default": true
+                        },
+                        {
+                            "key": "auto_mount",
+                            "text": "Auto Mount",
+                            "type": "checkbox",
+                            "default": true
+                        },
+                        {
+                            "key": "auto_mount_and_open",
+                            "text": "Auto Mount And Open",
+                            "type": "checkbox",
+                            "default": true
+                        },
+                        {
+                            "key": "set_as_default_file_dialog",
+                            "text": "Set As Default File Dialog",
+                            "type": "checkbox",
+                            "default": true
+                        },
+                        {
+                            "key": "enable_all_thumbnail_preview",
+                            "text": "Enable all thumbnail preview",
+                            "type": "checkbox",
+                            "default": true
+                        }
+
+                    ]
+                }
+
+            ]
         }
+
       ]
 }

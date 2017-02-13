@@ -303,7 +303,8 @@ SOURCES += \
     gvfs/qmount.cpp \
     gvfs/gvfsmountmanager.cpp \
     gvfs/qdiskinfo.cpp \
-    interfaces/dfmsetting.cpp
+    interfaces/dfmsetting.cpp \
+    configure/dfmconfigdict.cpp
 
 INCLUDEPATH += $$PWD/../ $$PWD/../utils/ $$PWD/interfaces/ $$PWD/../dde-file-manager-plugins/plugininterfaces/
 
