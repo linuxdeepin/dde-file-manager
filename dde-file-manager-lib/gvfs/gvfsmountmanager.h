@@ -2,6 +2,7 @@
 #define GVFSMOUNTMANAGER_H
 
 #include <QObject>
+#include <QStringList>
 
 class QDrive;
 class QVolume;
@@ -26,11 +27,11 @@ public:
     static QMap<QString, QMount> Mounts;
     static QMap<QString, QDiskInfo> DiskInfos;
 
-    static QList<QString> Drives_Keys;
-    static QList<QString> Volumes_Drive_Keys;
-    static QList<QString> Volumes_No_Drive_Keys;
+    static QStringList Drives_Keys;
+    static QStringList Volumes_Drive_Keys;
+    static QStringList Volumes_No_Drive_Keys;
 
-    static QList<QString> NoVolumes_Mounts_Keys;
+    static QStringList NoVolumes_Mounts_Keys;
 
     static QStringList getIconNames(GThemedIcon *icon);
     static QDrive gDriveToqDrive(GDrive *drive);
@@ -84,6 +85,7 @@ public:
     static bool isIgnoreUnusedMounts(const QMount& mount);
 
 signals:
+    void loadDiskInfoFinished();
     void mount_added(const QDiskInfo& diskInfo);
     void mount_removed(const QDiskInfo& diskInfo);
     void volume_added(const QDiskInfo& diskInfo);
