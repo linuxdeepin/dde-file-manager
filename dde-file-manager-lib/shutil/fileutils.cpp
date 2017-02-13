@@ -771,3 +771,13 @@ bool FileUtils::isGvfsMountFile(const QString &filePath)
 
     return false;
 }
+
+bool FileUtils::isFileExists(const QString &filePath)
+{
+    GFile *file;
+    std::string fstdPath = filePath.toStdString();
+    file = g_file_new_for_path(fstdPath.data());
+    bool isExists = g_file_query_exists(file, NULL);
+    g_object_unref(file);
+    return isExists;
+}
