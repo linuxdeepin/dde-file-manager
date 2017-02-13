@@ -612,13 +612,13 @@ void DBookmarkScene::mountAdded(UDiskDeviceInfoPointer device)
         item->setUrl(device->getMountPointUrl());
     }else{
         volumeAdded(device);
-
-        qDebug() << m_delayCheckMountedItem << m_delayCheckMountedEvent;
-        if (m_delayCheckMountedItem){
-            item->checkMountedItem(m_delayCheckMountedEvent);
-        }
-        m_delayCheckMountedItem = false;
+        item = m_diskItems.value(device->getDiskInfo().id());
     }
+    qDebug() << m_delayCheckMountedItem << m_delayCheckMountedEvent;
+    if (m_delayCheckMountedItem){
+        item->checkMountedItem(m_delayCheckMountedEvent);
+    }
+    m_delayCheckMountedItem = false;
 }
 
 void DBookmarkScene::mountRemoved(UDiskDeviceInfoPointer device)
