@@ -5,6 +5,7 @@
 #include "qdiskinfo.h"
 #include "widgets/singleton.h"
 #include "../app/define.h"
+#include "../partman/partition.h"
 
 #include <QThread>
 #include <QApplication>
@@ -293,13 +294,14 @@ QDiskInfo GvfsMountManager::qVolumeToqDiskInfo(const QVolume &volume)
         diskInfo.setCan_unmount(true);
     }
 
+    PartMan::Partition partion = PartMan::Partition::getPartitionByDevicePath(volume.unix_device());
     if (diskInfo.iconName() == "phone-apple-iphone"){
         diskInfo.setType("iphone");
     }else if (diskInfo.iconName() == "phone"){
         diskInfo.setType("phone");
     }else if (diskInfo.iconName() == "camera-photo" || diskInfo.iconName() == "camera"){
         diskInfo.setType("camera");
-    }else if (diskInfo.iconName() == "drive-harddisk-usb"){
+    }else if (partion.fs() == "vfat"){
         diskInfo.setType("removable");
         diskInfo.setIs_removable(true);
     }else if (isDVD(volume)){
