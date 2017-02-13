@@ -190,6 +190,8 @@ signals:
     void requestStartUpdateJobTimer();
 
     void requestStopUpdateJobTimer();
+
+    void requestChangeIconSizeBySizeIndex(const int& sizeIndex);
 };
 
 #endif // FILESIGNALMANAGER_H

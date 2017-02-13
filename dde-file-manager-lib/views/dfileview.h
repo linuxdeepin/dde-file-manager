@@ -142,6 +142,8 @@ public slots:
     void updateStatusBar();
     void openIndexByOpenAction(const int &action, const QModelIndex& index);
 
+    void setIconSizeBySizeIndex(const int& sizeIndex);
+
 signals:
     void rootUrlChanged(const DUrl &url);
     void viewModeChanged(ViewMode viewMode);

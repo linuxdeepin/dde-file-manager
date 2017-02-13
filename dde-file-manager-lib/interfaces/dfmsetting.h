@@ -19,7 +19,6 @@ public:
     QString newWindowPath();
     QString newTabPath();
     QString getConfigFilePath();
-    void setSettings(Settings* settings);
     bool isQuickSearch();
     bool isCompressFilePreview();
     bool isTextFilePreview();
@@ -29,6 +28,10 @@ public:
     bool isAutoMount();
     bool isAutoMountAndOpen();
     bool isDefaultChooserDialog();
+    bool isShowHiddenForSearch();
+
+    void setSettings(Settings* settings);
+    QPointer<Settings> settings();
 
 signals:
 

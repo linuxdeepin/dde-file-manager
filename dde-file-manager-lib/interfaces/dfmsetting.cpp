@@ -12,15 +12,11 @@ DFMSetting::DFMSetting(QObject *parent) : QObject(parent)
     paths << "Current Path"
           << DFMStandardPaths::standardLocation(DFMStandardPaths::HomePath)
           << DFMStandardPaths::standardLocation(DFMStandardPaths::DesktopPath)
+          << DFMStandardPaths::standardLocation(DFMStandardPaths::DocumentsPath)
+          << DFMStandardPaths::standardLocation(DFMStandardPaths::PicturesPath)
           << DFMStandardPaths::standardLocation(DFMStandardPaths::VideosPath)
           << DFMStandardPaths::standardLocation(DFMStandardPaths::MusicPath)
-          << DFMStandardPaths::standardLocation(DFMStandardPaths::PicturesPath)
-          << DFMStandardPaths::standardLocation(DFMStandardPaths::DocumentsPath)
-          << DFMStandardPaths::standardLocation(DFMStandardPaths::DownloadsPath)
-          << DFMStandardPaths::standardLocation(DFMStandardPaths::ComputerRoorPath)
-          << "/"
-          << DFMStandardPaths::standardLocation(DFMStandardPaths::NetworkRootPath)
-          << DFMStandardPaths::standardLocation(DFMStandardPaths::UserShareRootPath);
+          << DFMStandardPaths::standardLocation(DFMStandardPaths::DownloadsPath);
 
     //load temlate
     m_settings = Settings::fromJsonFile(":/configure/global-setting-template.json");
@@ -37,12 +33,15 @@ QVariant DFMSetting::getValueByKey(const QString &key)
 
 bool DFMSetting::isAllwayOpenOnNewWindow()
 {
-    return m_settings->value("base.new_tab_windows.allways_open_on_new_window").toBool();
+    return m_settings->value("base.open_action.allways_open_on_new_window").toBool();
 }
 
 int DFMSetting::iconSizeIndex()
 {
-    return m_settings->value("base.default_view.icon_size").toInt();
+    int index = m_settings->value("base.default_view.icon_size").toInt();
+    if(index == 3)
+        return index+1;
+    return index;
 }
 
 int DFMSetting::openFileAction()
@@ -75,6 +74,11 @@ QString DFMSetting::getConfigFilePath()
 void DFMSetting::setSettings(Settings *settings)
 {
     m_settings = settings;
+}
+
+QPointer<Settings> DFMSetting::settings()
+{
+    return m_settings;
 }
 
 bool DFMSetting::isQuickSearch()
@@ -120,4 +124,9 @@ bool DFMSetting::isAutoMountAndOpen()
 bool DFMSetting::isDefaultChooserDialog()
 {
     return m_settings->value("advance.dialog.default_chooser_dialog").toBool();
+}
+
+bool DFMSetting::isShowHiddenForSearch()
+{
+    return m_settings->value("base.search.show_hidden").toBool();
 }

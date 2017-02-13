@@ -2,6 +2,9 @@
 #include "dfmstandardpaths.h"
 #include "dmimedatabase.h"
 #include "shutil/fileutils.h"
+#include "interfaces/dfmsetting.h"
+#include "app/define.h"
+#include "../widgets/singleton.h"
 
 
 #include <QCryptographicHash>
@@ -144,6 +147,20 @@ bool DThumbnailProvider::hasThumbnail(const QFileInfo &info) const
 bool DThumbnailProvider::hasThumbnail(const QMimeType &mimeType) const
 {
     const QString &mime = mimeType.name();
+
+    if(mime.startsWith("image") && !globalSetting->isImageFilePreview())
+        return false;
+
+    if(mime.startsWith("video") && !globalSetting->isVideoFilePreview())
+        return false;
+
+    if(mime == "text/plain" && !globalSetting->isTextFilePreview())
+        return false;
+
+    if(Q_LIKELY(mime == "application/pdf"
+                || mime == "application/cnd.rn-realmedia"
+                || mime == "application/mxf") &&!globalSetting->isDocumentFilePreview())
+        return false;
 
     if (DThumbnailProviderPrivate::hasThumbnailMimeHash.contains(mime))
         return true;
