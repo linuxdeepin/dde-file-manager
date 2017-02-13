@@ -550,7 +550,9 @@ void PropertyDialog::closeEvent(QCloseEvent *event)
     emit aboutToClosed(m_url);
     BaseDialog::closeEvent(event);
     emit closed(m_url);
-    m_sizeWorker->stop();
+    if (m_sizeWorker){
+        m_sizeWorker->stop();
+    }
 }
 
 void PropertyDialog::resizeEvent(QResizeEvent *event)
