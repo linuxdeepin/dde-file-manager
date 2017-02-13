@@ -12,6 +12,7 @@ class DFMSetting : public QObject
 
 public:
     explicit DFMSetting(QObject *parent = 0);
+    QVariant getValueByKey(const QString& key);
     bool isAllwayOpenOnNewWindow();
     int iconSizeIndex();
     int openFileAction();
@@ -19,6 +20,15 @@ public:
     QString newTabPath();
     QString getConfigFilePath();
     void setSettings(Settings* settings);
+    bool isQuickSearch();
+    bool isCompressFilePreview();
+    bool isTextFilePreview();
+    bool isDocumentFilePreview();
+    bool isImageFilePreview();
+    bool isVideoFilePreview();
+    bool isAutoMount();
+    bool isAutoMountAndOpen();
+    bool isDefaultChooserDialog();
 
 signals:
 
