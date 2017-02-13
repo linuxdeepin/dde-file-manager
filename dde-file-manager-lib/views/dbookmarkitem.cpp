@@ -550,7 +550,10 @@ QString DBookmarkItem::getDeviceID()
 
 int DBookmarkItem::windowId()
 {
-    return WindowManager::getWindowId(scene()->views().at(0));
+    if (scene() && scene()->views().count() > 0){
+        return WindowManager::getWindowId(scene()->views().at(0));
+    }
+    return -1;
 }
 
 BookMarkPointer DBookmarkItem::getBookmarkModel()

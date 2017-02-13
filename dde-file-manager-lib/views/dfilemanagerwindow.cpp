@@ -48,6 +48,12 @@
 #include <QStackedLayout>
 #include <QTabBar>
 
+#undef signals
+extern "C" {
+    #include <gio/gio.h>
+}
+#define signals public
+
 DWIDGET_USE_NAMESPACE;
 
 class DFileManagerWindowPrivate
@@ -369,24 +375,31 @@ void DFileManagerWindow::preHandleCd(const DUrl &fileUrl, int source)
     } else if (!fileUrl.toString().isEmpty()) {
 
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(event.fileUrl());
-
-        if (!fileInfo || !fileInfo->exists()) {
-            if (DUrl::hasScheme(event.fileUrl().scheme()))
-                return;
-
-            const DAbstractFileInfoPointer &currentFileInfo = DFileService::instance()->createFileInfo(currentUrl());
-
-            if (!currentFileInfo || !currentFileInfo->canIteratorDir())
-                return;
-
-            const_cast<DFMEvent&>(event) << DUrl::fromSearchFile(currentUrl(), event.fileUrl().toString());
-
-            const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(event.fileUrl());
-
-            if (!fileInfo || !fileInfo->exists())
-                return;
+        if(fileInfo){
+            /*call fileInfo->exists() twice, Firsrly result is false;Secondly result is true;
+              May be this is bug of fuse when smb://10.0.10.30/people is mounted and cd to mounted folder immediately.
+            */
+            qDebug() << fileInfo->exists() << fileUrl.toString();
+            qDebug() << fileInfo->exists() << fileUrl.toString();
         }
+        if (!fileInfo || !fileInfo->exists()) {
+            if (!FileUtils::isFileExists(fileUrl.toString())){
+                if (DUrl::hasScheme(event.fileUrl().scheme()))
+                    return;
 
+                const DAbstractFileInfoPointer &currentFileInfo = DFileService::instance()->createFileInfo(currentUrl());
+
+                if (!currentFileInfo || !currentFileInfo->canIteratorDir())
+                    return;
+
+                const_cast<DFMEvent&>(event) << DUrl::fromSearchFile(currentUrl(), event.fileUrl().toString());
+
+                const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(event.fileUrl());
+
+                if (!fileInfo || !fileInfo->exists())
+                    return;
+            }
+        }
         cd(event);
     }
 }

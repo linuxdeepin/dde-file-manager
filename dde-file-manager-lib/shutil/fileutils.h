@@ -65,6 +65,7 @@ public:
 
     static DFMGlobal::MenuExtension getMenuExtension(const DUrlList& urlList);
     static bool isGvfsMountFile(const QString &filePath);
+    static bool isFileExists(const QString& filePath);
 };
 
 #endif // FILEUTILS_H
