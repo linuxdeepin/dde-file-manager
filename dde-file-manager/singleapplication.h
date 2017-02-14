@@ -4,6 +4,7 @@
 #include <QtGlobal>
 
 #include <DApplication>
+#include <durl.h>
 
 QT_BEGIN_NAMESPACE
 class QLocalServer;
@@ -20,7 +21,7 @@ public:
     void initConnect();
 
     static void initSources();
-    static void newClientProcess(const QString& key);
+    static void newClientProcess(const QString& key, const DUrlList& urllist);
     static QString userServerName(const QString& key);
     static QString userId();
 

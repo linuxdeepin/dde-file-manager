@@ -45,7 +45,7 @@ void SingleApplication::initSources()
     Q_INIT_RESOURCE(dui_theme_light);
 }
 
-void SingleApplication::newClientProcess(const QString &key)
+void SingleApplication::newClientProcess(const QString &key, const DUrlList& urllist)
 {
     qDebug() << "The dde-file-manager is running!";
     QLocalSocket *localSocket = new QLocalSocket;
@@ -58,7 +58,11 @@ void SingleApplication::newClientProcess(const QString &key)
                 bool isShowPropertyDialogRequest = false;
 
                 //Prehandle for none url arguments command on requesting opening new window
-                QStringList paths = CommandLineManager::instance()->positionalArguments();
+                QStringList paths;
+
+                foreach (DUrl url, urllist) {
+                    paths << url.toString();
+                }
 
                 if (paths.size() > 0){
                     isShowPropertyDialogRequest = CommandLineManager::instance()->isSet("p");
@@ -192,6 +196,7 @@ void SingleApplication::readData()
     event << urlList;
     event << urlList.first();
 
+    qDebug() << event << isNewWindow;
     fileService->openUrl(event, isNewWindow);
 }
 

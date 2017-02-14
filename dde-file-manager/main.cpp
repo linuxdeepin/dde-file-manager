@@ -212,7 +212,7 @@ int main(int argc, char *argv[])
         if (isBackendRun){
             return 0;
         }
-        SingleApplication::newClientProcess(uniqueKey);
+        SingleApplication::newClientProcess(uniqueKey, commandlineUrlList);
         QWidget w;
         w.setWindowFlags(Qt::FramelessWindowHint);
         w.setAttribute(Qt::WA_TranslucentBackground);
