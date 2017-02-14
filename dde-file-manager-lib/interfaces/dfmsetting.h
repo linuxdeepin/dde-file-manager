@@ -28,7 +28,8 @@ public:
     bool isAutoMount();
     bool isAutoMountAndOpen();
     bool isDefaultChooserDialog();
-    bool isShowHiddenForSearch();
+    bool isShowedHiddenOnSearch();
+    bool isShowedHiddenOnView();
 
     void setSettings(Settings* settings);
     QPointer<Settings> settings();
