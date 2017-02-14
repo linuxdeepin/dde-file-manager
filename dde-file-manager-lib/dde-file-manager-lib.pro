@@ -331,9 +331,13 @@ isEmpty(INCLUDE_INSTALL_DIR) {
     includes.path = $$INCLUDE_INSTALL_DIR/dde-file-manager
 }
 
-includes.files += $$PWD/interfaces/*.h \
-                $$PWD/../dde-file-manager-plugins/plugininterfaces/menu/*.h \
-                $$PWD/../dde-file-manager-plugins/plugininterfaces/view/*.h
+isEmpty(INCLUDE_INSTALL_DIR) {
+    gvfs_includes.path = $$PREFIX/include/dde-file-manager/gvfs
+} else {
+    gvfs_includes.path = $$INCLUDE_INSTALL_DIR/dde-file-manager/gvfs
+}
+
+gvfs_includes.files += $$PWD/gvfs/*.h
 
 
 QMAKE_PKGCONFIG_LIBDIR = $$target.path
@@ -376,6 +380,6 @@ help.files = help/*
 icon.path = $$ICONDIR
 icon.files = skin/images/$${TARGET}.svg
 
-INSTALLS += target templateFiles translations mimetypeFiles help icon includes
+INSTALLS += target templateFiles translations mimetypeFiles help icon includes gvfs_includes
 
 DISTFILES +=
