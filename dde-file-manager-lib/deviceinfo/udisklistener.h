@@ -35,7 +35,7 @@ public:
     UDiskDeviceInfoPointer getDevice(const QString &id);
     void addDevice(UDiskDeviceInfoPointer device);
     void removeDevice(UDiskDeviceInfoPointer device);
-    void update();
+
     QString lastPart(const QString &path);
     UDiskDeviceInfoPointer hasDeviceInfo(const QString &id);
 
@@ -68,6 +68,7 @@ signals:
     void mountRemoved(UDiskDeviceInfoPointer device);
 
 public slots:
+    void update();
     void addMountDiskInfo(const QDiskInfo& diskInfo);
     void removeMountDiskInfo(const QDiskInfo& diskInfo);
     void addVolumeDiskInfo(const QDiskInfo& diskInfo);

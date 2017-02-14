@@ -333,12 +333,8 @@ void DLeftSideBar::addUserShareBookmarkItem()
 
 void DLeftSideBar::loadDevices()
 {
-    if (deviceListener->getAllDeviceInfos().count() == 0){
-        deviceListener->update();
-    }else{
-        foreach (UDiskDeviceInfoPointer device, deviceListener->getDeviceList()) {
-            m_scene->mountAdded(device);
-        }
+    foreach (UDiskDeviceInfoPointer device, deviceListener->getDeviceList()) {
+        m_scene->mountAdded(device);
     }
 }
 
