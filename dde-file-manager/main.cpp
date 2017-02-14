@@ -18,6 +18,7 @@
 #include "dialogs/openwithdialog.h"
 #include "controllers/appcontroller.h"
 #include "widgets/singleton.h"
+#include "gvfs/gvfsmountmanager.h"
 
 // DBus
 #include "filedialogmanager_adaptor.h"
@@ -134,7 +135,8 @@ int main(int argc, char *argv[])
         }
 
         app.setQuitOnLastWindowClosed(false);
-
+        fileManagerApp;
+        gvfsMountManager->setAutoMountSwitch(false);
         return app.exec();
     }
 
