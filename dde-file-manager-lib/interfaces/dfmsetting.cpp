@@ -6,6 +6,7 @@
 #include <QTemporaryFile>
 #include "dfmstandardpaths.h"
 #include <qsettingbackend.h>
+#include <settings.h>
 
 DFMSetting::DFMSetting(QObject *parent) : QObject(parent)
 {
@@ -19,7 +20,7 @@ DFMSetting::DFMSetting(QObject *parent) : QObject(parent)
           << DFMStandardPaths::standardLocation(DFMStandardPaths::DownloadsPath);
 
     //load temlate
-    m_settings = Settings::fromJsonFile(":/configure/global-setting-template.json");
+    m_settings = Settings::fromJsonFile(":/configure/global-setting-template.json").data();
 
     //load conf value
     auto backen = new QSettingBackend(getConfigFilePath());

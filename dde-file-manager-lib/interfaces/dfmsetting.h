@@ -3,8 +3,15 @@
 
 #include <QObject>
 #include "views/dfileview.h"
+#include "dtk_global.h"
 #include <QJsonObject>
-#include <settings.h>
+
+DTK_BEGIN_NAMESPACE
+
+class Settings;
+
+DTK_END_NAMESPACE
+
 DTK_USE_NAMESPACE
 class DFMSetting : public QObject
 {
@@ -39,7 +46,7 @@ signals:
 public slots:
 
 private:
-    QPointer<Settings> m_settings;
+    Settings* m_settings;
     QStringList paths;
 };
 

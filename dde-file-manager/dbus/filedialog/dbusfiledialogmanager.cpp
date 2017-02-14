@@ -1,6 +1,9 @@
 #include "dbusfiledialogmanager.h"
 #include "dbusfiledialoghandle.h"
 #include "filedialog_adaptor.h"
+#include "app/define.h"
+#include "widgets/singleton.h"
+#include "interfaces/dfmsetting.h"
 
 #include <QDBusConnection>
 
@@ -53,6 +56,11 @@ QList<QDBusObjectPath> DBusFileDialogManager::dialogs() const
 QString DBusFileDialogManager::errorString() const
 {
     return m_errorString;
+}
+
+bool DBusFileDialogManager::isUseFileChooserDialog() const
+{
+    return globalSetting->isDefaultChooserDialog();
 }
 
 void DBusFileDialogManager::onDialogDestroy()
