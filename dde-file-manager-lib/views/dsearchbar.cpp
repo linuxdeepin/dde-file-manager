@@ -440,6 +440,9 @@ void DSearchBar::focusOutEvent(QFocusEvent *e)
 {
     if(e->reason() == Qt::ActiveWindowFocusReason)
         return;
+    if(e->reason() == Qt::PopupFocusReason)
+        return;
+
     if(m_searchStart)
         return;
     if(window()->rect().contains(window()->mapFromGlobal(QCursor::pos())))
