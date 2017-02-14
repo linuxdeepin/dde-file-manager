@@ -130,7 +130,7 @@ bool DThumbnailProvider::hasThumbnail(const QFileInfo &info) const
     if (fileSize <= 0)
         return false;
 
-    const QMimeType &mime = d->mimeDatabase.mimeTypeForFile(info, QMimeDatabase::MatchContent);
+    const QMimeType &mime = d->mimeDatabase.mimeTypeForFile(info);
 
     if (FileUtils::isGvfsMountFile(info.absoluteFilePath()) && mime.name().startsWith("video/"))
         return false;
