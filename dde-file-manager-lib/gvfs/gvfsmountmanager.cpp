@@ -6,6 +6,9 @@
 #include "widgets/singleton.h"
 #include "../app/define.h"
 #include "../partman/partition.h"
+#include "../interfaces/dfmsetting.h"
+#include "../interfaces/dfileservices.h"
+#include "../interfaces/dfmevent.h"
 
 #include <QThread>
 #include <QApplication>
@@ -43,11 +46,6 @@ void GvfsMountManager::initConnect()
     g_signal_connect (m_gVolumeMonitor, "volume-added", (GCallback)&GvfsMountManager::monitor_volume_added, NULL);
     g_signal_connect (m_gVolumeMonitor, "volume-removed", (GCallback)&GvfsMountManager::monitor_volume_removed, NULL);
 //    g_signal_connect (m_gVolumeMonitor, "volume-changed", (GCallback)&GvfsMountManager::monitor_volume_changed, NULL);
-
-//    connect(gvfsMountManager, &GvfsMountManager::mount_added, gvfsMountManager, &GvfsMountManager::handleMount_added);
-//    connect(gvfsMountManager, &GvfsMountManager::mount_removed, gvfsMountManager, &GvfsMountManager::handleMount_removed);
-//    connect(gvfsMountManager, &GvfsMountManager::volume_added, gvfsMountManager, &GvfsMountManager::handleVolume_added);
-//    connect(gvfsMountManager, &GvfsMountManager::volume_removed, gvfsMountManager, &GvfsMountManager::handleVolume_removed);
 }
 
 QStringList GvfsMountManager::getIconNames(GThemedIcon *icon)
@@ -501,6 +499,20 @@ void GvfsMountManager::monitor_volume_added(GVolumeMonitor *volume_monitor, GVol
 
     DiskInfos.insert(diskInfo.id(), diskInfo);
     emit gvfsMountManager->volume_added(diskInfo);
+    if (gvfsMountManager->getAutoMountSwitch()){
+        if(globalSetting->isAutoMount() && !globalSetting->isAutoMountAndOpen()){
+            mount(diskInfo);
+        }else if (globalSetting->isAutoMountAndOpen()){
+            mount(diskInfo);
+            DFMEvent event;
+            DUrl url = DUrl::fromComputerFile("/");
+            DUrlList urls;
+            urls << url;
+            event << url;
+            event << urls;
+            fileService->openNewWindow(event, false);
+        }
+    }
 }
 
 void GvfsMountManager::monitor_volume_removed(GVolumeMonitor *volume_monitor, GVolume *volume)
@@ -782,6 +794,16 @@ void GvfsMountManager::getMounts(GList *mounts)
         }
         NoVolumes_Mounts_Keys.append(qMount.mounted_root_uri());
     }
+}
+
+bool GvfsMountManager::getAutoMountSwitch() const
+{
+    return m_autoMountSwitch;
+}
+
+void GvfsMountManager::setAutoMountSwitch(bool autoMountSwitch)
+{
+    m_autoMountSwitch = autoMountSwitch;
 }
 
 void GvfsMountManager::mount(const QString &path)
@@ -1093,32 +1115,4 @@ void GvfsMountManager::eject_with_mounted_file_cb(GObject *object, GAsyncResult 
     }else{
         qDebug() << "eject" << g_mount_get_name (mount)  << "succeeded";
     }
-}
-
-void GvfsMountManager::handleMount_added(const QDiskInfo &diskInfo)
-{
-    qDebug() << "==============================mount_added==============================";
-    qDebug() << diskInfo;
-    qDebug() << DiskInfos.count();
-}
-
-void GvfsMountManager::handleMount_removed(const QDiskInfo &diskInfo)
-{
-    qDebug() << "==============================mount_removed==============================";
-    qDebug() << diskInfo;
-    qDebug() << DiskInfos.count();
-}
-
-void GvfsMountManager::handleVolume_added(const QDiskInfo &diskInfo)
-{
-    qDebug() << "==============================volume_added==============================";
-    qDebug() << diskInfo;
-    qDebug() << DiskInfos.count();
-}
-
-void GvfsMountManager::handleVolume_removed(const QDiskInfo &diskInfo)
-{
-    qDebug() << "==============================volume_removed==============================";
-    qDebug() << diskInfo;
-    qDebug() << DiskInfos.count();
 }
