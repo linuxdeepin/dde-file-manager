@@ -126,7 +126,12 @@ bool DFMSetting::isDefaultChooserDialog()
     return m_settings->value("advance.dialog.default_chooser_dialog").toBool();
 }
 
-bool DFMSetting::isShowHiddenForSearch()
+bool DFMSetting::isShowedHiddenOnSearch()
 {
     return m_settings->value("base.search.show_hidden").toBool();
+}
+
+bool DFMSetting::isShowedHiddenOnView()
+{
+    return m_settings->value("base.hidden_files.show_hidden").toBool();
 }

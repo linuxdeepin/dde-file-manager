@@ -93,6 +93,19 @@
                             "default": false
                         }
                     ]
+                },
+                {
+                    "key": "hidden_files",
+                    "name": "Hidden files",
+                    "options": [
+                        {
+                            "key": "show_hidden",
+                            "text": "Show hidden files",
+                            "type": "checkbox",
+                            "default": false
+                        }
+
+                    ]
                 }
 
             ]
