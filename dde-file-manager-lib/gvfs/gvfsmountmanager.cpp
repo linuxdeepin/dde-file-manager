@@ -17,11 +17,11 @@ QMap<QString, QVolume> GvfsMountManager::Volumes = {}; // key is unix-device or 
 QMap<QString, QMount> GvfsMountManager::Mounts = {}; // key is mount point root uri
 QMap<QString, QDiskInfo> GvfsMountManager::DiskInfos = {};
 
-QList<QString> GvfsMountManager::Drives_Keys = {};//key is unix-device
-QList<QString> GvfsMountManager::Volumes_Drive_Keys = {}; // key is unix-device
-QList<QString> GvfsMountManager::Volumes_No_Drive_Keys = {}; // key is unix-device or uuid
+QStringList GvfsMountManager::Drives_Keys = {};//key is unix-device
+QStringList GvfsMountManager::Volumes_Drive_Keys = {}; // key is unix-device
+QStringList GvfsMountManager::Volumes_No_Drive_Keys = {}; // key is unix-device or uuid
 
-QList<QString> GvfsMountManager::NoVolumes_Mounts_Keys = {}; // key is mount point root uri
+QStringList GvfsMountManager::NoVolumes_Mounts_Keys = {}; // key is mount point root uri
 
 GvfsMountManager::GvfsMountManager(QObject *parent) : QObject(parent)
 {
@@ -301,7 +301,7 @@ QDiskInfo GvfsMountManager::qVolumeToqDiskInfo(const QVolume &volume)
         diskInfo.setType("phone");
     }else if (diskInfo.iconName() == "camera-photo" || diskInfo.iconName() == "camera"){
         diskInfo.setType("camera");
-    }else if (partion.fs() == "vfat"){
+    }else if (diskInfo.can_eject() && (diskInfo.iconName() == "drive-harddisk-usb" || diskInfo.iconName() == "drive-removable-media-usb")){
         diskInfo.setType("removable");
         diskInfo.setIs_removable(true);
     }else if (isDVD(volume)){
@@ -728,6 +728,7 @@ void GvfsMountManager::listMounts()
 
 void GvfsMountManager::updateDiskInfos()
 {
+    Volumes_Drive_Keys.sort();
     foreach (QString key, Volumes_Drive_Keys) {
         if (Volumes.contains(key)){
             QVolume volume = Volumes.value(key);
@@ -736,7 +737,7 @@ void GvfsMountManager::updateDiskInfos()
             qDebug() << diskInfo;
         }
     }
-
+    Volumes_No_Drive_Keys.sort();
     foreach (QString key, Volumes_No_Drive_Keys) {
         if (Volumes.contains(key)){
             QVolume volume = Volumes.value(key);
@@ -750,7 +751,7 @@ void GvfsMountManager::updateDiskInfos()
             qDebug() << diskInfo;
         }
     }
-
+    NoVolumes_Mounts_Keys.sort();
     foreach (QString key, NoVolumes_Mounts_Keys) {
         if (Mounts.contains(key)){
             QMount mount = Mounts.value(key);
@@ -760,6 +761,7 @@ void GvfsMountManager::updateDiskInfos()
         }
     }
     qDebug() << Mounts;
+    emit loadDiskInfoFinished();
 }
 
 void GvfsMountManager::getMounts(GList *mounts)

@@ -22,6 +22,7 @@ UDiskListener::UDiskListener(QObject *parent):
 
 void UDiskListener::initConnect()
 {
+    connect(gvfsMountManager, &GvfsMountManager::loadDiskInfoFinished, this, &UDiskListener::update);
     connect(gvfsMountManager, &GvfsMountManager::mount_added, this, &UDiskListener::addMountDiskInfo);
     connect(gvfsMountManager, &GvfsMountManager::mount_removed, this, &UDiskListener::removeMountDiskInfo);
     connect(gvfsMountManager, &GvfsMountManager::volume_added, this, &UDiskListener::addVolumeDiskInfo);
