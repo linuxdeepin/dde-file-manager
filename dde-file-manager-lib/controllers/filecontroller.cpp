@@ -22,6 +22,7 @@
 
 #include "models/sharefileinfo.h"
 #include "usershare/usersharemanager.h"
+#include "dfmsetting.h"
 
 #include <QDesktopServices>
 #include <QDirIterator>
@@ -558,6 +559,10 @@ QString FileDirIterator::path() const
 
 bool FileDirIterator::enableIteratorByKeyword(const QString &keyword)
 {
+    if (!globalSetting->isQuickSearch()){
+        return false;
+    }
+
     if (processRlocate)
         return true;
 
