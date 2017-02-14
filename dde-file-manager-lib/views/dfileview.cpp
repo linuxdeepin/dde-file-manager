@@ -15,6 +15,7 @@
 #include "interfaces/diconitemdelegate.h"
 #include "interfaces/dlistitemdelegate.h"
 #include "interfaces/dfmsetting.h"
+#include "dcrumbwidget.h"
 
 #include "controllers/appcontroller.h"
 #include "dfileservices.h"
@@ -806,9 +807,15 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             }
 
             break;
-        case Qt::Key_Backspace:
-            cdUp();
-
+        case Qt::Key_Backspace:{
+            DFileManagerWindow* w = qobject_cast<DFileManagerWindow*>(WindowManager::getWindowById(windowId()));
+            if(!w){
+                cdUp();
+            } else{
+                const DUrl& url = w->getToolBar()->getCrumWidget()->backUrl();
+                cd(url);
+            }
+        }
             return;
         case Qt::Key_F1:
             appController->actionHelp(fmevent);

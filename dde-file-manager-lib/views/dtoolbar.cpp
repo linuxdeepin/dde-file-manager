@@ -183,6 +183,11 @@ DSearchBar *DToolBar::getSearchBar()
     return m_searchBar;
 }
 
+DCrumbWidget *DToolBar::getCrumWidget()
+{
+    return m_crumbWidget;
+}
+
 void DToolBar::searchBarClicked()
 {
     searchBarActivated();

@@ -31,6 +31,7 @@ public:
     void initContollerToolBar();
     void initConnect();
     DSearchBar * getSearchBar();
+    DCrumbWidget* getCrumWidget();
     void addHistoryStack();
 
     int navStackCount() const;
