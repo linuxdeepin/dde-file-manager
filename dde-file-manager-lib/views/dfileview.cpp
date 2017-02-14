@@ -201,9 +201,13 @@ DUrl DFileView::rootUrl() const
 
 QList<DUrl> DFileView::selectedUrls() const
 {
+    QModelIndex rootIndex = this->rootIndex();
     DUrlList list;
 
     for(const QModelIndex &index : selectedIndexes()) {
+        if (index.parent() != rootIndex)
+            continue;
+
         list << model()->getUrlByIndex(index);
     }
 
@@ -1689,7 +1693,7 @@ bool DFileView::setRootUrl(const DUrl &url)
         QList<DUrl> ancestors;
 
         if (current_file_info->isAncestorsUrl(fileUrl, &ancestors)) {
-            d->preSelectionUrls << (ancestors.count() > 1 ? ancestors.at(1) : rootUrl);
+            d->preSelectionUrls << (ancestors.count() > 1 ? ancestors.at(ancestors.count() - 2) : rootUrl);
         }
     }
 

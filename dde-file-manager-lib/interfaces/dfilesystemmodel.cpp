@@ -1213,9 +1213,12 @@ const FileSystemNodePointer DFileSystemModel::getNodeByIndex(const QModelIndex &
 
     FileSystemNode *indexNode = static_cast<FileSystemNode*>(index.internalPointer());
 
-    if (indexNode == d->rootNode.constData()
-            || d->rootNode->children.value(d->rootNode->visibleChildren.value(index.row())).constData() != indexNode) {
+    if (indexNode == d->rootNode.constData()) {
         return d->rootNode;
+    }
+
+    if (d->rootNode->children.value(d->rootNode->visibleChildren.value(index.row())).constData() != indexNode) {
+        return FileSystemNodePointer();
     }
 
     return FileSystemNodePointer(indexNode);
