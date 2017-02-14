@@ -28,6 +28,8 @@ class DFileViewHelper : public QObject
 {
     Q_OBJECT
 
+    Q_PROPERTY(bool isActive READ isActive WRITE setIsActive NOTIFY isActiveChanged)
+
 public:
     explicit DFileViewHelper(QAbstractItemView *parent);
     ~DFileViewHelper();
@@ -63,11 +65,16 @@ public:
     void keyboardSearch(char key);
     bool isEmptyArea(const QPoint &pos) const;
 
+    bool isActive() const;
+
 public slots:
     void handleCommitData(QWidget *editor) const;
 
+    void setIsActive(bool isActive);
+
 signals:
-    void triggerEdit(const QModelIndex &index);
+    void triggerEdit(const QModelIndex &index); 
+    void isActiveChanged(bool isActive);
 
 private:
     QScopedPointer<DFileViewHelperPrivate> d_ptr;
