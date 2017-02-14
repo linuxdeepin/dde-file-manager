@@ -15,5 +15,8 @@
     <method name="errorString">
         <arg name="error" type="s" direction="out"/>
     </method>
+    <method name="isUseFileChooserDialog">
+        <arg name="ok" type="b" direction="out"/>
+    </method>
   </interface>
 </node>

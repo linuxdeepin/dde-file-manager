@@ -14,6 +14,8 @@ public:
     QList<QDBusObjectPath> dialogs() const;
     QString errorString() const;
 
+    bool isUseFileChooserDialog() const;
+
 private:
     void onDialogDestroy();
 
