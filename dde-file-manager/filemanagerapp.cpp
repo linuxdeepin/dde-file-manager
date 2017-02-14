@@ -14,6 +14,7 @@
 
 #include "shutil/mimesappsmanager.h"
 #include "interfaces/dfmstandardpaths.h"
+#include "gvfs/gvfsmountmanager.h"
 
 #include "widgets/singleton.h"
 #include "widgets/commandlinemanager.h"
@@ -110,6 +111,9 @@ void FileManagerApp::initApp()
 
     /*init gvfsMountClient */
     DFMGlobal::initGvfsMountManager();
+#ifdef AUTOMOUNT
+    gvfsMountManager->setAutoMountSwitch(true);
+#endif
 
     /*init secretManger */
     DFMGlobal::initSecretManager();

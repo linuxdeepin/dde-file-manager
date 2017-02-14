@@ -16,7 +16,7 @@ isEmpty(TARGET) {
 
 TEMPLATE = app
 CONFIG += c++11 link_pkgconfig
-PKGCONFIG += dtkbase dtkutil dtkwidget
+PKGCONFIG += dtkbase dtkutil dtkwidget gio-unix-2.0
 
 DEFINES += QMAKE_TARGET=\\\"$$TARGET\\\" QMAKE_VERSION=\\\"$$VERSION\\\"
 
@@ -48,6 +48,8 @@ INCLUDEPATH += $$PWD/../dde-file-manager-lib $$PWD/.. \
 
 BINDIR = $$PREFIX/bin
 DEFINES += APPSHAREDIR=\\\"$$PREFIX/share/$$TARGET\\\"
+
+DEFINES += AUTOMOUNT
 
 target.path = $$BINDIR
 

@@ -3,7 +3,7 @@
 
 #include <QString>
 #include <QDebug>
-#include "interfaces/durl.h"
+#include "durl.h"
 
 class QDiskInfo
 {

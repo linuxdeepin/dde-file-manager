@@ -84,6 +84,9 @@ public:
     static bool isDVD(const QVolume& volume);
     static bool isIgnoreUnusedMounts(const QMount& mount);
 
+    bool getAutoMountSwitch() const;
+    void setAutoMountSwitch(bool autoMountSwitch);
+
 signals:
     void loadDiskInfoFinished();
     void mount_added(const QDiskInfo& diskInfo);
@@ -102,13 +105,9 @@ public slots:
     void updateDiskInfos();
     void getMounts(GList *mounts);
 
-    void handleMount_added(const QDiskInfo& diskInfo);
-    void handleMount_removed(const QDiskInfo& diskInfo);
-    void handleVolume_added(const QDiskInfo& diskInfo);
-    void handleVolume_removed(const QDiskInfo& diskInfo);
-
 private:
     GVolumeMonitor* m_gVolumeMonitor = NULL;
+    bool m_autoMountSwitch = false;
 };
 
 #endif // GVFSMOUNTMANAGER_H
