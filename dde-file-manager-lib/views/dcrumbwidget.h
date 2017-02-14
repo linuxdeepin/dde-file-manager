@@ -39,8 +39,8 @@ public:
     explicit DCrumbWidget(QWidget *parent = 0);
     void addCrumb(const QStringList &list);
     void setCrumb(const DUrl &url);
+    DUrl backUrl();
     void clear();
-    QString back();
     QString path();
     DUrl getUrl();
     DUrl getCurrentUrl();

@@ -187,6 +187,16 @@ void DCrumbWidget::setCrumb(const DUrl &url)
     update();
 }
 
+DUrl DCrumbWidget::backUrl()
+{
+    int backId = m_group.checkedId() - 1;
+    if(backId >= 0){
+        DCrumbButton* bnt = qobject_cast<DCrumbButton*>(m_group.button(backId));
+        return bnt->url();
+    }
+    return DUrl::fromLocalFile(QDir::homePath());
+}
+
 void DCrumbWidget::clear()
 {
     m_listWidget->clear();
