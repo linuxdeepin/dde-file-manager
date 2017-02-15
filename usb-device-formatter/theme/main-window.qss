@@ -76,3 +76,7 @@ QCheckBox{
     font-size: 11px;
 }
 
+QLabel#Progress{
+    font-size: 20px;
+    color: white;
+}
