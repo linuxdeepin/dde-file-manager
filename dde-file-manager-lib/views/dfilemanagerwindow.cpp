@@ -519,9 +519,11 @@ void DFileManagerWindow::switchToView(DFileView *view)
         disconnect(fileSignalManager, &FileSignalManager::loadingIndicatorShowed, d->fileView->statusBar(), &DStatusBar::setLoadingIncatorVisible);
         disconnect(d->fileView->selectionModel(), &QItemSelectionModel::selectionChanged, this, &DFileManagerWindow::onFileViewSelectionChanged);
         disconnect(d->fileView, &DFileView::requestActivateTabByIndex, d->tabBar, &TabBar::setCurrentIndex);
+        d->fileView->fileViewHelper()->setIsActive(false);
     }
 
     d->fileView = view;
+    d->fileView->fileViewHelper()->setIsActive(true);
 
     DUrl currentUrl = d->tabBar->currentTab()->currentUrl();
     if(d->viewManager->isSchemeRegistered(currentUrl.scheme())){
