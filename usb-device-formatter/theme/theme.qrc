@@ -15,6 +15,9 @@
         <file>icons/fail.png</file>
         <file>icons/info.png</file>
         <file>icons/success.png</file>
+        <file>icons/water_shadow.png</file>
+        <file>icons/water_front.png</file>
+        <file>icons/water_back.png</file>
     </qresource>
     <qresource prefix="/">
         <file>app/usb-device-formatter.png</file>
