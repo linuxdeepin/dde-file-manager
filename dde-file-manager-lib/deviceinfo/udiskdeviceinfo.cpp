@@ -91,60 +91,22 @@ DUrl UDiskDeviceInfo::getMountPointUrl()
 DUrl UDiskDeviceInfo::getMountPointUrl(QDiskInfo &info)
 {
     QString path = QString("/run/user/%1/gvfs").arg(getuid());
+
     QString mounted_root_uri = info.mounted_root_uri();
     DUrl MountPointUrl = DUrl(mounted_root_uri);
 
     if (mounted_root_uri == "/"){
         MountPointUrl = DUrl::fromLocalFile("/");
-    }else if (mounted_root_uri.startsWith(AFC_SCHEME)){
-        MountPointUrl = DUrl::fromLocalFile(QString("%1/afc:host=%2").arg(path, info.id()));
-    }else if (mounted_root_uri.startsWith(MTP_SCHEME)){
-        QStringList ids = mounted_root_uri.split("/");
-        QString key = QUrl::toPercentEncoding(ids[2]);
-        MountPointUrl = DUrl::fromLocalFile(QString("%1/mtp:host=%2").arg(path, key));
-    }else if (mounted_root_uri.startsWith(SMB_SCHEME)){
-        QString mountPath = QString("%1/smb-share:").arg(path);
-        QStringList ids = mounted_root_uri.split("/");
-        QString share = ids[3];
-        QString domain;
-        QString user;
-        QString ip;
-        if (ids.at(2).contains(";")){
-            domain = ids.at(2).split(";").at(0);
-            QString userIps = ids.at(2).split(";").at(1);
-            if (userIps.contains("@")){
-                user = userIps.split("@").at(0);
-                ip = userIps.split("@").at(1);
-            }
-        }else{
-            QString userIps = ids.at(2);
-            if (userIps.contains("@")){
-                user = userIps.split("@").at(0);
-                ip = userIps.split("@").at(1);
+    }else{
+        if ((info.type() != "native" &&
+             info.type() != "removable" &&
+             info.type() != "dvd") && !info.id_filesystem().isEmpty()){
+            if (info.type() == "network"){
+                MountPointUrl = DUrl::fromLocalFile(QString("%1/%2%3").arg(path, info.id_filesystem(), DUrl(info.default_location()).path()));
             }else{
-                ip = userIps;
+                MountPointUrl = DUrl::fromLocalFile(QString("%1/%2").arg(path, info.id_filesystem()));
             }
         }
-
-        if (!domain.isEmpty()){
-            mountPath = QString("%1domain=%2,").arg(mountPath, domain);
-        }
-        if (!ip.isEmpty()){
-            mountPath = QString("%1server=%2,").arg(mountPath, ip);
-        }
-        if (!share.isEmpty()){
-            mountPath = QString("%1share=%2,").arg(mountPath, share);
-        }
-        if (!user.isEmpty()){
-            mountPath = QString("%1user=%2,").arg(mountPath, user);
-        }
-//        qDebug() << domain << ip << share << user << mountPath << QUrl::fromPercentEncoding(mountPath.toLatin1());
-        mountPath = QUrl::fromPercentEncoding(mountPath.toLatin1());
-        MountPointUrl = DUrl::fromLocalFile(mountPath.left(mountPath.length()-1));
-    }else if(mounted_root_uri.startsWith(GPHOTO2_SCHEME)){
-        QStringList ids = mounted_root_uri.split("/");
-        QString key = QUrl::toPercentEncoding(ids[2]);
-        MountPointUrl = DUrl::fromLocalFile(QString("%1/gphoto2:host=%2").arg(path, key));
     }
 
     info.setMounted_url(MountPointUrl);
@@ -337,7 +299,7 @@ QVector<MenuAction> UDiskDeviceInfo::menuActionList(DAbstractFileInfo::MenuType 
     if(getMediaType() == removable)
         actionKeys << MenuAction::FormatDevice;
 
-    if (getId().startsWith("smb://"))
+    if (getId().startsWith("smb://") || getId().startsWith("ftp://"))
         actionKeys << MenuAction::ForgetPassword;
     actionKeys << MenuAction::Separator << MenuAction::Property;
 

@@ -669,7 +669,7 @@ void AppController::actionForgetPassword(const DFMEvent &event)
         QJsonObject obj;
         obj.insert("user", smbObj.value("username").toString());
         obj.insert("domain", smbObj.value("domain").toString());
-        obj.insert("protocol", "smb");
+        obj.insert("protocol", DUrl(smbObj.value("id").toString()).scheme());
         obj.insert("server", server);
         secrectManager->clearPasswordByLoginObj(obj);
     }

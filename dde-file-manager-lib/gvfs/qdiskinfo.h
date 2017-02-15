@@ -72,6 +72,12 @@ public:
     bool has_volume() const;
     void setHas_volume(bool has_volume);
 
+    QString id_filesystem() const;
+    void setId_filesystem(const QString &id_filesystem);
+
+    QString default_location() const;
+    void setDefault_location(const QString &default_location);
+
 private:
     QString m_id;
     QString m_name;
@@ -81,6 +87,8 @@ private:
     QString m_activation_root_uri;
     QString m_mounted_root_uri;
     QString m_iconName;
+    QString m_id_filesystem;
+    QString m_default_location;
     bool m_is_removable = false;
     bool m_can_mount = false;
     bool m_can_unmount = false;

@@ -57,6 +57,12 @@ QDebug operator<<(QDebug dbg, const NetworkNode &node)
 }
 
 
+QStringList NetworkManager::SupportScheme = {
+    "network",
+    "smb",
+    "ftp",
+    "sftp"
+};
 QMap<DUrl, NetworkNodeList> NetworkManager::NetworkNodes = {};
 GCancellable* NetworkManager::m_networks_fetching_cancellable = NULL;
 
@@ -187,10 +193,6 @@ void NetworkManager::populate_networks(GFileEnumerator *enumerator, GList *detec
         else
             uri = g_file_get_uri (file);
 
-        if (!QString(uri).startsWith("smb://")){
-            continue;
-        }
-
         activatable_file = g_file_new_for_uri (uri);
 //        name = g_file_info_get_attribute_as_string (fileInfo, G_FILE_ATTRIBUTE_STANDARD_NAME);
         display_name = g_file_info_get_attribute_as_string (fileInfo, G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME);
@@ -230,18 +232,11 @@ void NetworkManager::fetchNetworks(const DFMEvent &event)
     UDiskDeviceInfoPointer p1 = deviceListener->getDeviceByMountPoint(path);
     UDiskDeviceInfoPointer p2 = deviceListener->getDeviceByMountPointFilePath(path);
 
-    qDebug() << p1 << p2;
+    qDebug() << path << p1 << p2;
 
     if (p1){
         *e << p1->getMountPointUrl();
         emit fileSignalManager->requestChangeCurrentUrl(*e);
-    }else if (p2){
-        QString childPath = path.right(path.length() - p2->getMountPoint().length());
-        DUrl realUrl = DUrl(QString("%1/%2").arg(p2->getMountPointUrl().toString(), childPath));
-        *e << realUrl;
-        if (QDir(realUrl.toLocalFile()).exists()){
-            emit fileSignalManager->requestChangeCurrentUrl(*e);
-        }
     }else{
         std::string stdPath = path.toStdString();
         gchar *url = const_cast<gchar*>(stdPath.c_str());

@@ -660,7 +660,18 @@ void DBookmarkScene::chooseMountedItem(const DFMEvent &event)
     qDebug() << event << m_diskItems;
     bool checkMountItem = false;
     foreach (QString url, m_diskItems.keys()) {
-        if (event.fileUrl() == DUrl(url)){
+        DUrl url1 = event.fileUrl();
+        DUrl url2(url);
+
+        if (url1.path().isEmpty()){
+            url1.setPath("/");
+        }
+
+        if (url2.path().isEmpty()){
+            url2.setPath("/");
+        }
+
+        if (url1 == url2){
             m_diskItems.value(url)->checkMountedItem(event);
             checkMountItem = true;
         }

@@ -49,6 +49,21 @@ const SecretSchema *SecrectManager::SMBSecretSchema()
     return &the_schema;
 }
 
+const SecretSchema *SecrectManager::FTPSecretSchema()
+{
+    static const SecretSchema the_schema = {
+        "org.gnome.keyring.NetworkPassword", SECRET_SCHEMA_DONT_MATCH_NAME,
+        {
+            {"user", SECRET_SCHEMA_ATTRIBUTE_STRING },
+            {"server", SECRET_SCHEMA_ATTRIBUTE_STRING },
+            {"protocol", SECRET_SCHEMA_ATTRIBUTE_STRING }
+        },
+        0, 0, 0, 0, 0, 0, 0, 0
+    };
+
+    return &the_schema;
+}
+
 void SecrectManager::on_password_cleared(GObject *source, GAsyncResult *result, gpointer unused)
 {
     Q_UNUSED(source)
@@ -73,12 +88,20 @@ void SecrectManager::on_password_cleared(GObject *source, GAsyncResult *result, 
 
 void SecrectManager::clearPasswordByLoginObj(const QJsonObject &obj)
 {
-    secret_password_clear(SMBSecretSchema(), NULL, on_password_cleared, NULL,
-                          "user", obj.value("user").toString().toStdString().c_str(),
-                          "domain", obj.value("domain").toString().toStdString().c_str(),
-                          "server", obj.value("server").toString().toStdString().c_str(),
-                          "protocol", obj.value("protocol").toString().toStdString().c_str(),
-                          NULL);
+    if (obj.value("protocol") == "smb"){
+        secret_password_clear(SMBSecretSchema(), NULL, on_password_cleared, NULL,
+                              "user", obj.value("user").toString().toStdString().c_str(),
+                              "domain", obj.value("domain").toString().toStdString().c_str(),
+                              "server", obj.value("server").toString().toStdString().c_str(),
+                              "protocol", obj.value("protocol").toString().toStdString().c_str(),
+                              NULL);
+    }else if (obj.value("protocol") == "ftp"){
+        secret_password_clear(FTPSecretSchema(), NULL, on_password_cleared, NULL,
+                              "user", obj.value("user").toString().toStdString().c_str(),
+                              "server", obj.value("server").toString().toStdString().c_str(),
+                              "protocol", obj.value("protocol").toString().toStdString().c_str(),
+                              NULL);
+    }
 }
 
 QJsonObject SecrectManager::getLoginData(const QString &id)

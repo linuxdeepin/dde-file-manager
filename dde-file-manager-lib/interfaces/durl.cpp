@@ -18,7 +18,9 @@ QSet<QString> schemeList = QSet<QString>() << QString(TRASH_SCHEME)
                                            << QString(AFC_SCHEME)
                                            << QString(MTP_SCHEME)
                                            << QString(USERSHARE_SCHEME)
-                                           << QString(AVFS_SCHEME);
+                                           << QString(AVFS_SCHEME)
+                                           << QString(FTP_SCHEME)
+                                           << QString(SFTP_SCHEME);
 
 DUrl::DUrl()
     : QUrl()
@@ -121,6 +123,16 @@ bool DUrl::isUserShareFile() const
 bool DUrl::isAVFSFile() const
 {
     return scheme() == AVFS_SCHEME;
+}
+
+bool DUrl::isFTPFile() const
+{
+    return scheme() == FTP_SCHEME;
+}
+
+bool DUrl::isSFTPFile() const
+{
+    return scheme() == SFTP_SCHEME;
 }
 
 QString DUrl::toString(QUrl::FormattingOptions options) const
@@ -455,7 +467,10 @@ bool DUrl::operator ==(const DUrl &url) const
     if (!hasScheme(url.scheme()))
         return QUrl::operator ==(url);
 
-    return  m_virtualPath == url.m_virtualPath &&
+    QString path1 = m_virtualPath;
+    QString path2 = url.m_virtualPath;
+
+    return  path1 == path2 &&
             scheme() == url.scheme() &&
             fragment() == url.fragment() &&
             query() == url.query() &&

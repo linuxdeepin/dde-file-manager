@@ -17,6 +17,8 @@
 #define GPHOTO2_SCHEME "gphoto2"
 #define USERSHARE_SCHEME "usershare"
 #define AVFS_SCHEME "avfs"
+#define FTP_SCHEME "ftp"
+#define SFTP_SCHEME "http"
 
 #define TRASH_ROOT "trash:///"
 #define RECENT_ROOT "recent:///"
@@ -62,6 +64,8 @@ public:
     bool isMTPFile() const;
     bool isUserShareFile() const;
     bool isAVFSFile() const;
+    bool isFTPFile() const;
+    bool isSFTPFile() const;
 
     QString toString(FormattingOptions options = FormattingOptions( PrettyDecoded )) const;
 
