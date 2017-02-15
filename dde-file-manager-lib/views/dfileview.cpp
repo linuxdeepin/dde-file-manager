@@ -1166,7 +1166,7 @@ void DFileView::openIndexByOpenAction(const int& action, const QModelIndex &inde
 
 void DFileView::setIconSizeBySizeIndex(const int &sizeIndex)
 {
-    itemDelegate()->setIconSizeByIconSizeLevel(sizeIndex);
+    statusBar()->scalingSlider()->setValue(sizeIndex);
 }
 
 void DFileView::onRootUrlDeleted(const DUrl &rootUrl)

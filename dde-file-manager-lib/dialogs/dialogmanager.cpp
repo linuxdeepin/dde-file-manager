@@ -612,6 +612,7 @@ void DialogManager::showGlobalSettingsDialog(const DFMEvent& event)
     connect(dsd, &DSettingsDialog::finished, [=]{
         //synchonize current file view size index
         emit fileSignalManager->requestChangeIconSizeBySizeIndex(globalSetting->iconSizeIndex());
+
         w->setProperty("isSettingDialogShown", false);
     });
 }
