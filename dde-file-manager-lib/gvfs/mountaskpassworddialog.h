@@ -30,6 +30,9 @@ public:
     void initConnect();
     QJsonObject getLoginData();
 
+    bool getDomainLineVisible() const;
+    void setDomainLineVisible(bool domainLineVisible);
+
 signals:
 
 public slots:
@@ -40,6 +43,7 @@ public slots:
 
 private:
     QLabel* m_messageLabel;
+    QLabel* m_domainLabel;
 
     QFrame* m_passwordFrame;
 
@@ -55,6 +59,8 @@ private:
 
 
     QJsonObject m_loginObj;
+
+    bool m_domainLineVisible = true;
 };
 
 #endif // MOUNTASKPASSWORDDIALOG_H

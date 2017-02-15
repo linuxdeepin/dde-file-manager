@@ -61,7 +61,7 @@ public:
     void initData();
     void initConnect();
 
-
+    static QStringList SupportScheme;
     static QMap<DUrl, NetworkNodeList> NetworkNodes;
     static GCancellable * m_networks_fetching_cancellable;
     static void fetch_networks(gchar* url, DFMEvent* e);

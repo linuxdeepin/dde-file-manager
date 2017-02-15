@@ -25,6 +25,7 @@
 #include "controllers/pathmanager.h"
 #include "shutil/fileutils.h"
 #include "interfaces/dfmsetting.h"
+#include "gvfs/networkmanager.h"
 
 #include "xutil.h"
 #include "utils.h"
@@ -362,9 +363,7 @@ void DFileManagerWindow::preHandleCd(const DUrl &fileUrl, int source)
     event << (DFMEvent::EventSource)(source);
     event << this->windowId();
 
-    if (event.fileUrl().isNetWorkFile()) {
-        emit fileSignalManager->requestFetchNetworks(event);
-    }else if (event.fileUrl().isSMBFile()) {
+    if (NetworkManager::SupportScheme.contains(event.fileUrl().scheme())) {
         emit fileSignalManager->requestFetchNetworks(event);
     }else if (d->viewManager->isSchemeRegistered(fileUrl.scheme())){
         showPluginView(fileUrl);

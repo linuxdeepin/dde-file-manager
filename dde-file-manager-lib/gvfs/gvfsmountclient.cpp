@@ -126,6 +126,13 @@ void GvfsMountClient::ask_password_cb(GMountOperation *op, const char *message, 
 
     AskPasswordDialog = new MountAskPasswordDialog(WindowManager::getWindowById(MountEvent.windowId()));
     AskPasswordDialog->setLoginData(obj);
+
+    if (MountEvent.fileUrl().isSMBFile()){
+        AskPasswordDialog->setDomainLineVisible(true);
+    }else{
+        AskPasswordDialog->setDomainLineVisible(false);
+    }
+
     int code = AskPasswordDialog->exec();
 
     if (code){

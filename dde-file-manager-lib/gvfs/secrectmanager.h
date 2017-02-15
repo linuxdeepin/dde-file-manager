@@ -20,6 +20,7 @@ public:
     void initConnect();
 
     static const SecretSchema * SMBSecretSchema();
+    static const SecretSchema * FTPSecretSchema();
 
     static void on_password_cleared (GObject *source,
                                 GAsyncResult *result,

@@ -144,7 +144,6 @@ UDiskDeviceInfoPointer UDiskListener::getDeviceByMountPoint(const QString &mount
     {
         UDiskDeviceInfoPointer info = m_list.at(i);
         if (info && !info->getMountPoint().isEmpty()){
-            qDebug() << info->getMountPoint() << mountPoint;
             if (DUrl(info->getMountPoint()) == DUrl(mountPoint))
                 return info;
         }

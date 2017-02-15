@@ -330,6 +330,7 @@ QDiskInfo GvfsMountManager::qMountToqDiskinfo(const QMount &mount)
 
     diskInfo.setCan_unmount(mount.can_unmount());
     diskInfo.setCan_eject(mount.can_eject());
+    diskInfo.setDefault_location(mount.default_location());
 
     if (diskInfo.mounted_root_uri().startsWith("smb://")){
         diskInfo.setType("smb");

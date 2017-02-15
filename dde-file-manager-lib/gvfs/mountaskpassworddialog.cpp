@@ -58,10 +58,10 @@ void MountAskPasswordDialog::initUI()
     m_usernameLineEdit->setStyleSheet(getQssFromFile(":/qss/qss/passwordAskDialog.qss"));
     m_usernameLineEdit->setFixedHeight(24);
 
-    QLabel* domainLable = new QLabel(tr("Domain"));
-    domainLable->setStyleSheet(getQssFromFile(":/qss/qss/passwordAskDialog.qss"));
-    domainLable->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
-    domainLable->setFixedWidth(80);
+    m_domainLabel = new QLabel(tr("Domain"));
+    m_domainLabel->setStyleSheet(getQssFromFile(":/qss/qss/passwordAskDialog.qss"));
+    m_domainLabel->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+    m_domainLabel->setFixedWidth(80);
 
     m_domainLineEdit = new DLineEdit;
     m_domainLineEdit->setStyleSheet(getQssFromFile(":/qss/qss/passwordAskDialog.qss"));
@@ -106,7 +106,7 @@ void MountAskPasswordDialog::initUI()
     inputLayout->setLabelAlignment(Qt::AlignVCenter | Qt::AlignRight);
     inputLayout->setFormAlignment(Qt::AlignVCenter | Qt::AlignRight);
     inputLayout->addRow(usernameLable, m_usernameLineEdit);
-    inputLayout->addRow(domainLable, m_domainLineEdit);
+    inputLayout->addRow(m_domainLabel, m_domainLineEdit);
     inputLayout->addRow(passwordLable, m_passwordLineEdit);
     inputLayout->addRow(m_passwordCheckBox, rememberLabel);
     inputLayout->setSpacing(10);
@@ -213,6 +213,23 @@ void MountAskPasswordDialog::handleButtonClicked(int index, QString text)
     if (index == 1){
         handleConnect();
     }
+}
+
+bool MountAskPasswordDialog::getDomainLineVisible() const
+{
+    return m_domainLineVisible;
+}
+
+void MountAskPasswordDialog::setDomainLineVisible(bool domainLineVisible)
+{
+    if (domainLineVisible){
+        m_domainLabel->show();
+        m_domainLineEdit->show();
+    }else{
+        m_domainLabel->hide();
+        m_domainLineEdit->hide();
+    }
+    m_domainLineVisible = domainLineVisible;
 }
 
 
