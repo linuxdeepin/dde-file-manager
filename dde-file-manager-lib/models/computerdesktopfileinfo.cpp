@@ -30,7 +30,17 @@ bool ComputerDesktopFileInfo::isWritable() const
 
 QVector<MenuAction> ComputerDesktopFileInfo::menuActionList(DAbstractFileInfo::MenuType type) const
 {
-    return QVector<MenuAction> ();
+    Q_UNUSED(type);
+    QVector<MenuAction> actions;
+    actions << MenuAction::Open
+    << MenuAction::Separator;
+
+    if(type == SingleFile)
+        actions << MenuAction::CreateSymlink;
+
+    actions << MenuAction::Property;
+
+    return actions;
 }
 
 QList<QIcon> ComputerDesktopFileInfo::additionalIcon() const
