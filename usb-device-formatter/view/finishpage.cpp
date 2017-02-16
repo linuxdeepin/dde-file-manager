@@ -23,7 +23,7 @@ void FinishPage::initUI()
 
     mainLayout->addSpacing(30);
     mainLayout->addWidget(warnIconLabel, 0, Qt::AlignHCenter);
-    mainLayout->addSpacing(10);
+    mainLayout->addSpacing(15);
     mainLayout->addWidget(warnTextLabel, 0, Qt::AlignHCenter);
     mainLayout->addStretch(1);
     setLayout(mainLayout);

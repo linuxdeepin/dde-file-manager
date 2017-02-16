@@ -61,7 +61,7 @@ void MainWindow::initUI()
     titleBar->layout()->setContentsMargins(0, 0, 0, 0);
 
     m_pageStack = new QStackedWidget(this);
-    m_pageStack->setFixedSize(width(), 300);
+    m_pageStack->setFixedSize(width(), 340);
     m_mainPage = new MainPage(m_formatType, this);
     m_mainPage->setTargetPath(m_formatPath);
     m_warnPage = new WarnPage(this);
@@ -84,7 +84,8 @@ void MainWindow::initUI()
     mainLayout->addSpacing(10);
     mainLayout->addStretch(1);
     mainLayout->addWidget(m_comfirmButton, 0, Qt::AlignHCenter);
-    mainLayout->addSpacing(35);
+    mainLayout->addSpacing(34);
+    setFixedHeight(titleBar->height() + m_pageStack->height() + 10 + m_comfirmButton->height() + 34);
     setLayout(mainLayout);
 }
 
