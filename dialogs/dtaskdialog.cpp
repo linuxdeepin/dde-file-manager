@@ -619,3 +619,11 @@ void DTaskDialog::closeEvent(QCloseEvent *event){
     QDialog::closeEvent(event);
     emit closed();
 }
+
+void DTaskDialog::keyPressEvent(QKeyEvent *event)
+{
+    //handle escape key press event for emitting close event
+    if(event->key() == Qt::Key_Escape)
+        emit close();
+    QDialog::keyPressEvent(event);
+}
