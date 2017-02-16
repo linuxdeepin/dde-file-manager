@@ -37,6 +37,7 @@
 
 #include "plugins/pluginmanager.h"
 #include "view/viewinterface.h"
+#include "shutil/fileutils.h"
 
 #include "dfmglobal.h"
 
@@ -645,6 +646,9 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         update();
 
         QDir dir(m_url.path());
+
+        qDebug() << FileUtils::isFileExists(m_url.path());
+
         if(!dir.exists() && !m_isDefault)
         {
             DFMEvent event;
