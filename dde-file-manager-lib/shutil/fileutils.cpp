@@ -197,6 +197,7 @@ bool FileUtils::isArchive(const QString &path)
         return false;
     }
 }
+
 //---------------------------------------------------------------------------
 
 /**

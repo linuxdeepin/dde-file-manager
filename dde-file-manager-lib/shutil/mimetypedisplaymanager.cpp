@@ -164,4 +164,3 @@ QStringList MimeTypeDisplayManager::supportArchiveMimetypes()
 {
     return ArchiveMimeTypes;
 }
-

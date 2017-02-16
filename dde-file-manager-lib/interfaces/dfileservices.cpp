@@ -858,25 +858,29 @@ void DFileService::openUrl(const DFMEvent &event, const bool &isOpenInNewWindow,
     DFMEvent filesEvent(event),dirsEvent(event);
     foreach (const DUrl& url, event.fileUrlList()) {
 
-        if(isAvfsMounted()
-                && FileUtils::isArchive(url.toLocalFile())
-                && globalSetting->isCompressFilePreview()){
-            const_cast<DUrl&>(url).setScheme(AVFS_SCHEME);
-            dirList << url;
-        } else{
-            const DAbstractFileInfoPointer &fileInfo = createFileInfo(url);
-            if(fileInfo){
-                bool isDir = fileInfo->isDir();
-                if(isDir)
-                    dirList << url;
-                else
-                    fileList << url;
-            }
-
-            //computer url is virtual dir
-            if(url == DUrl::fromComputerFile("/"))
+        if(globalSetting->isCompressFilePreview()
+                && isAvfsMounted()
+                && FileUtils::isArchive(url.toLocalFile())){
+            DAbstractFileInfoPointer info = createFileInfo(DUrl::fromAVFSFile(url.path()));
+            if(info->exists()){
+                const_cast<DUrl&>(url).setScheme(AVFS_SCHEME);
                 dirList << url;
+                continue;
+            }
         }
+
+        const DAbstractFileInfoPointer &fileInfo = createFileInfo(url);
+        if(fileInfo){
+            bool isDir = fileInfo->isDir();
+            if(isDir)
+                dirList << url;
+            else
+                fileList << url;
+        }
+
+        //computer url is virtual dir
+        if(url == DUrl::fromComputerFile("/"))
+            dirList << url;
     }
 
     filesEvent << fileList;
