@@ -38,6 +38,8 @@
 #include "plugins/pluginmanager.h"
 #include "view/viewinterface.h"
 
+#include "dfmglobal.h"
+
 DWIDGET_USE_NAMESPACE
 
 DBookmarkItem::DBookmarkItem()
@@ -1032,6 +1034,9 @@ void DBookmarkItem::setHighlightDiskBackgroundEnable(bool b)
 
 void DBookmarkItem::setHighlightDisk(bool isHighlight)
 {
+    if (m_isHighlightDisk == isHighlight)
+        return;
+
     m_isHighlightDisk = isHighlight;
     if (!m_checked){
         update();
@@ -1060,11 +1065,15 @@ void DBookmarkItem::setCheckable(bool b)
 
 void DBookmarkItem::setChecked(bool b)
 {
+    if (m_checked == b)
+        return;
+
     m_checked = b;
     if (m_mountBookmarkItem){
         m_mountBookmarkItem->setChecked(b);
     }
-    update();
+
+    TIMER_SINGLESHOT(0, update(), this)
 }
 
 bool DBookmarkItem::isChecked()
