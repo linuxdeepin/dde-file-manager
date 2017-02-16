@@ -63,7 +63,7 @@ DFileDialog::DFileDialog(QWidget *parent)
     getLeftSideBar()->setDisableUrlSchemes(QList<QString>() << "trash" << "network");
     getLeftSideBar()->setAcceptDrops(false);
 
-    DFileService::FileOperatorTypes fileServiceWhitelist = DFileService::OpenUrl | DFileService::OpenFile
+    DFileService::FileOperatorTypes fileServiceWhitelist = DFileService::OpenUrl/* | DFileService::OpenFile*/
             | DFileService::RenameFile | DFileService::MoveToTrash | DFileService::NewFolder
             | DFileService::NewDocument | DFileService::CreateFileWatcher;
 
