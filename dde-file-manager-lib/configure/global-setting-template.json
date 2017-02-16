@@ -83,18 +83,6 @@
                     ]
                 },
                 {
-                    "key": "search",
-                    "name": "Search",
-                    "options": [
-                        {
-                            "key": "show_hidden",
-                            "text": "Show hidden files in search results",
-                            "type": "checkbox",
-                            "default": false
-                        }
-                    ]
-                },
-                {
                     "key": "hidden_files",
                     "name": "Hidden files",
                     "options": [
@@ -123,6 +111,12 @@
                             "text": "Quick search",
                             "type": "checkbox",
                             "default": true
+                        },
+                        {
+                            "key": "show_hidden",
+                            "text": "Show hidden files in search results",
+                            "type": "checkbox",
+                            "default": false
                         }
                     ]
                 },
