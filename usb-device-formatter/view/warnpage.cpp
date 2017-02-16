@@ -15,6 +15,7 @@ void WarnPage::initUI()
     QLabel* warnIconLabel = new QLabel(this);
     warnIconLabel->setPixmap(QPixmap(":/icoms/icons/info.png"));
     QLabel* warnTextLabel = new QLabel(this);
+    warnTextLabel->setWordWrap(true);
     QString warnText = tr("Formating operation will clear all datas from your disk, are you sure to continue?This option can not be restored.");
     warnTextLabel->setText(warnText);
     warnTextLabel->setWordWrap(true);
@@ -23,7 +24,7 @@ void WarnPage::initUI()
 
     mainLayout->addSpacing(30);
     mainLayout->addWidget(warnIconLabel, 0, Qt::AlignHCenter);
-    mainLayout->addSpacing(10);
+    mainLayout->addSpacing(15);
     mainLayout->addWidget(warnTextLabel, 0, Qt::AlignHCenter);
     mainLayout->addStretch(1);
     setLayout(mainLayout);

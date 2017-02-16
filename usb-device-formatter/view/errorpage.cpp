@@ -25,7 +25,7 @@ void ErrorPage::initUI()
 
     mainLayout->addSpacing(30);
     mainLayout->addWidget(warnIconLabel, 0, Qt::AlignHCenter);
-    mainLayout->addSpacing(10);
+    mainLayout->addSpacing(15);
     mainLayout->addWidget(m_errorLabel, 0, Qt::AlignHCenter);
     mainLayout->addStretch(1);
     setLayout(mainLayout);
@@ -40,4 +40,5 @@ void ErrorPage::setErrorMsg(const QString &errorMsg)
 void ErrorPage::resizeEvent(QResizeEvent *event)
 {
     m_errorLabel->setFixedWidth(event->size().width() - 80);
+    m_errorLabel->setFixedHeight(80);
 }
