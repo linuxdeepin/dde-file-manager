@@ -13,10 +13,10 @@ DFMSetting::DFMSetting(QObject *parent) : QObject(parent)
     paths << "Current Path"
           << DFMStandardPaths::standardLocation(DFMStandardPaths::HomePath)
           << DFMStandardPaths::standardLocation(DFMStandardPaths::DesktopPath)
-          << DFMStandardPaths::standardLocation(DFMStandardPaths::DocumentsPath)
-          << DFMStandardPaths::standardLocation(DFMStandardPaths::PicturesPath)
           << DFMStandardPaths::standardLocation(DFMStandardPaths::VideosPath)
           << DFMStandardPaths::standardLocation(DFMStandardPaths::MusicPath)
+          << DFMStandardPaths::standardLocation(DFMStandardPaths::PicturesPath)
+          << DFMStandardPaths::standardLocation(DFMStandardPaths::DocumentsPath)
           << DFMStandardPaths::standardLocation(DFMStandardPaths::DownloadsPath);
 
     //load temlate
@@ -40,7 +40,7 @@ bool DFMSetting::isAllwayOpenOnNewWindow()
 int DFMSetting::iconSizeIndex()
 {
     int index = m_settings->value("base.default_view.icon_size").toInt();
-    if(index == 3)
+    if(index > 1)
         return index+1;
     return index;
 }
