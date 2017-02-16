@@ -49,6 +49,12 @@ HEADERS  += \
 RESOURCES += \
     theme/theme.qrc
 
+# Automating generation .qm files from .ts files
+CONFIG(release, debug|release) {
+    system($$PWD/generate_translations.sh)
+#    DEFINES += QT_NO_DEBUG_OUTPUT
+}
+
 PREFIX = /usr
 BINDIR = $$PREFIX/bin
 SHAREDIR = $$PREFIX/share/$${TARGET}

@@ -33,3 +33,4 @@ Depends: ${shlibs:Depends}, ${misc:Depends}, libdde-file-manager( =${binary:Vers
 Description: DDE File Manager Devel library
  .
  This package contains the header files and static libraries of libdde-file-manager
+
