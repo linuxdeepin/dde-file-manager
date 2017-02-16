@@ -191,7 +191,11 @@ signals:
 
     void requestStopUpdateJobTimer();
 
+    /*icon size changed by setting dialog*/
     void requestChangeIconSizeBySizeIndex(const int& sizeIndex);
+
+    /*show hidden by setting dialog changed*/
+    void showHiddenOnViewChanged();
 };
 
 #endif // FILESIGNALMANAGER_H

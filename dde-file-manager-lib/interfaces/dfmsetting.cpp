@@ -136,3 +136,11 @@ bool DFMSetting::isShowedHiddenOnView()
 {
     return m_settings->value("base.hidden_files.show_hidden").toBool();
 }
+
+QDir::Filters DFMSetting::viewFilters()
+{
+    if(isShowedHiddenOnView())
+        return QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden;
+    else
+        return QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System;
+}

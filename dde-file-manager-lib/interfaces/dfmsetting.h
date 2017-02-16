@@ -5,6 +5,7 @@
 #include "views/dfileview.h"
 #include "dtk_global.h"
 #include <QJsonObject>
+#include <QDir>
 
 DTK_BEGIN_NAMESPACE
 
@@ -37,6 +38,7 @@ public:
     bool isDefaultChooserDialog();
     bool isShowedHiddenOnSearch();
     bool isShowedHiddenOnView();
+    QDir::Filters viewFilters();
 
     void setSettings(Settings* settings);
     QPointer<Settings> settings();
