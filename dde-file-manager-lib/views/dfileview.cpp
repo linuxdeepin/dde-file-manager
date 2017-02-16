@@ -15,6 +15,7 @@
 #include "interfaces/diconitemdelegate.h"
 #include "interfaces/dlistitemdelegate.h"
 #include "interfaces/dfmsetting.h"
+#include "settings.h"
 #include "dcrumbwidget.h"
 
 #include "controllers/appcontroller.h"
@@ -860,7 +861,12 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             itemDelegate()->hideAllIIndexWidget();
             clearSelection();
 
-            model()->toggleHiddenFiles(fmevent.fileUrl());
+            if(globalSetting->isShowedHiddenOnView())
+                globalSetting->settings()->setOption("base.hidden_files.show_hidden", false);
+             else
+                globalSetting->settings()->setOption("base.hidden_files.show_hidden", true);
+
+            emit fileSignalManager->showHiddenOnViewChanged();
 
             return;
         case Qt::Key_I:
@@ -1530,6 +1536,11 @@ bool DFileView::event(QEvent *e)
     return DListView::event(e);
 }
 
+void DFileView::onShowHiddenFileChanged()
+{
+    model()->toggleHiddenFiles(rootUrl());
+}
+
 void DFileView::initDelegate()
 {
     D_D(DFileView);
@@ -1609,6 +1620,7 @@ void DFileView::initConnects()
     connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &DFileView::updateModelActiveIndex);
 
     connect(fileSignalManager, &FileSignalManager::requestChangeIconSizeBySizeIndex, this, &DFileView::setIconSizeBySizeIndex);
+    connect(fileSignalManager, &FileSignalManager::showHiddenOnViewChanged, this, &DFileView::onShowHiddenFileChanged);
 }
 
 void DFileView::increaseIcon()

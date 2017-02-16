@@ -12,6 +12,7 @@
 #include "controllers/appcontroller.h"
 
 #include "interfaces/dfileviewhelper.h"
+#include "interfaces/dfmsetting.h"
 
 #include <QDebug>
 #include <QMimeData>
@@ -69,7 +70,7 @@ public:
 
     int sortRole = DFileSystemModel::FileDisplayNameRole;
     QStringList nameFilters;
-    QDir::Filters filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System;
+    QDir::Filters filters = globalSetting->viewFilters();
     Qt::SortOrder srotOrder = Qt::AscendingOrder;
 //    QModelIndex d->activeIndex;
 
@@ -1188,7 +1189,11 @@ void DFileSystemModel::toggleHiddenFiles(const DUrl &fileUrl)
 {
     Q_D(DFileSystemModel);
 
-    d->filters = ~(d->filters ^ QDir::Filter(~QDir::Hidden));
+//    d->filters = ~(d->filters ^ QDir::Filter(~QDir::Hidden));
+    if(globalSetting->isShowedHiddenOnView())
+        d->filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden;
+    else
+        d->filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System;
 
     refresh(fileUrl);
 }
