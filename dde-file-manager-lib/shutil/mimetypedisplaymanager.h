@@ -48,6 +48,7 @@ private:
     QMap<QString, QString> m_displayNames;
     QMap<QString, QString> m_defaultIconNames;
     static QStringList ArchiveMimeTypes;
+    static QStringList AvfsBlackList;
     static QStringList TextMimeTypes;
     static QStringList VideoMimeTypes;
     static QStringList AudioMimeTypes;
