@@ -3,6 +3,7 @@
 #include <QIcon>
 #include <QVBoxLayout>
 #include <QLabel>
+#include "widgets/progressbox.h"
 
 FormatingPage::FormatingPage(QWidget *parent) : QFrame(parent)
 {
@@ -13,7 +14,7 @@ void FormatingPage::initUI()
 {
     QVBoxLayout* mainLayout = new QVBoxLayout;
     m_progressBox = new ProgressBox(this);
-    m_progressBox->setFixedSize(100, 100);
+    m_progressBox->setFixedSize(128,128);
     QLabel* formatingLabel = new QLabel(this);
     QString formatingText = tr("Formating,please wait for a minute...");
     formatingLabel->setText(formatingText);
@@ -21,7 +22,7 @@ void FormatingPage::initUI()
 
     connect(m_progressBox, &ProgressBox::finished, this, &FormatingPage::finished);
 
-    mainLayout->addSpacing(43);
+    mainLayout->addSpacing(29);
     mainLayout->addWidget(m_progressBox, 0 , Qt::AlignHCenter);
     mainLayout->addSpacing(30);
     mainLayout->addWidget(formatingLabel, 0 , Qt::AlignHCenter);

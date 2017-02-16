@@ -2,7 +2,8 @@
 #define FORMATINGPAGE_H
 
 #include <QFrame>
-#include "widgets/progressbox.h"
+
+class ProgressBox;
 
 class FormatingPage : public QFrame
 {
