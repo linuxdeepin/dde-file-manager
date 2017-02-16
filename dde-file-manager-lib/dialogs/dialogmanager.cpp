@@ -94,6 +94,7 @@ void DialogManager::initConnect()
     connect(m_taskDialog, &DTaskDialog::conflictRepsonseConfirmed, this, &DialogManager::handleConflictRepsonseConfirmed);
 
     connect(m_taskDialog, &DTaskDialog::abortTask, this, &DialogManager::abortJob);
+    connect(m_taskDialog, &DTaskDialog::closed, this, &DialogManager::removeAllJobs);
     connect(m_closeIndicatorDialog, &CloseAllDialogIndicator::allClosed, this, &DialogManager::closeAllPropertyDialog);
 
     connect(fileSignalManager, &FileSignalManager::requestShowUrlWrongDialog, this, &DialogManager::showUrlWrongDialog);
@@ -726,6 +727,15 @@ void DialogManager::refreshPropertyDialogs(const DUrl &oldUrl, const DUrl &newUr
     if (d){
         m_propertyDialogs.remove(oldUrl);
         m_propertyDialogs.insert(newUrl, d);
+    }
+}
+
+void DialogManager::removeAllJobs()
+{
+    foreach (const QString& jobId, m_jobs.keys()) {
+        FileJob* job = m_jobs.value(jobId);
+        job->cancelled();
+        removeJob(jobId);
     }
 }
 

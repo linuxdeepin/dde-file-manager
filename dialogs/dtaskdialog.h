@@ -136,6 +136,7 @@ public slots:
     void onItemHovered(const bool &hover);
 protected:
     void closeEvent(QCloseEvent* event);
+    void keyPressEvent(QKeyEvent *event);
 
 
 private:
