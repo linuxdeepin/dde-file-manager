@@ -109,7 +109,7 @@ DUrl UDiskDeviceInfo::getMountPointUrl(QDiskInfo &info)
         }
     }
 
-    info.setMounted_url(MountPointUrl);
+//    info.setMounted_url(MountPointUrl);
 
     return MountPointUrl;
 }

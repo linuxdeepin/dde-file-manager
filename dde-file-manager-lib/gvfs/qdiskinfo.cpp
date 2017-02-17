@@ -131,15 +131,15 @@ void QDiskInfo::setFree(const qulonglong &free)
     m_free = free;
 }
 
-DUrl QDiskInfo::mounted_url() const
-{
-    return m_mounted_url;
-}
+//DUrl QDiskInfo::mounted_url() const
+//{
+//    return m_mounted_url;
+//}
 
-void QDiskInfo::setMounted_url(const DUrl &mounted_url)
-{
-    m_mounted_url = mounted_url;
-}
+//void QDiskInfo::setMounted_url(const DUrl &mounted_url)
+//{
+//    m_mounted_url = mounted_url;
+//}
 
 bool QDiskInfo::isNativeCustom() const
 {
@@ -290,7 +290,7 @@ QDebug operator<<(QDebug dbg, const QDiskInfo &info)
     dbg.nospace() << "can_eject: " << info.can_eject() << ",";
     dbg.nospace() << "used: " << info.used() << ",";
     dbg.nospace() << "total: " << info.total() << ",";
-    dbg.nospace() << "mounted_url: " << info.mounted_url() << ",";
+//    dbg.nospace() << "mounted_url: " << info.mounted_url() << ",";
     dbg.nospace() << ")";
     return dbg;
 }

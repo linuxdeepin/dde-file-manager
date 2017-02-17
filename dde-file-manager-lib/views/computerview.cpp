@@ -472,7 +472,7 @@ void ComputerView::loadNativeItems()
     diskInfo.setTotal(storageInfo.bytesTotal());
     diskInfo.setFree(storageInfo.bytesFree());
     diskInfo.setUsed(diskInfo.total() - diskInfo.free());
-    diskInfo.setMounted_url(DUrl::fromLocalFile("/"));
+//    diskInfo.setMounted_url(DUrl::fromLocalFile("/"));
 
     UDiskDeviceInfo* deviceInfo = new UDiskDeviceInfo;
     deviceInfo->setDiskInfo(diskInfo);
@@ -503,7 +503,7 @@ void ComputerView::loadCustomItemsByNameUrl(const QString &id, const QString &ur
     diskInfo.setCan_mount(false);
     diskInfo.setCan_unmount(false);
     diskInfo.setMounted_root_uri(url);
-    diskInfo.setMounted_url(DUrl::fromLocalFile(url));
+//    diskInfo.setMounted_url(DUrl::fromLocalFile(url));
     diskInfo.setIsNativeCustom(true);
 
     UDiskDeviceInfo* deviceInfo = new UDiskDeviceInfo;
