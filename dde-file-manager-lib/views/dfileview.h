@@ -160,6 +160,7 @@ private slots:
     void updateModelActiveIndex();
     void handleDataChanged(const QModelIndex & topLeft, const QModelIndex & bottomRight, const QVector<int> & roles = QVector<int>());
     void onRootUrlDeleted(const DUrl &rootUrl);
+    void freshView();
 
 protected:
     void wheelEvent(QWheelEvent * event) Q_DECL_OVERRIDE;
