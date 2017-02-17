@@ -186,9 +186,20 @@ void DialogManager::addJob(FileJob *job)
 
 void DialogManager::removeJob(const QString &jobId)
 {
-    m_jobs.remove(jobId);
+    if (m_jobs.contains(jobId)){
+        FileJob* job = m_jobs.value(jobId);
+        job->cancelled();
+        m_jobs.remove(jobId);
+    }
     if (m_jobs.count() == 0){
         emit fileSignalManager->requestStopUpdateJobTimer();
+    }
+}
+
+void DialogManager::removeAllJobs()
+{
+    foreach (const QString& jobId, m_jobs.keys()) {
+        removeJob(jobId);
     }
 }
 
@@ -196,12 +207,14 @@ void DialogManager::updateJob()
 {
     foreach (QString jobId, m_jobs.keys()) {
         FileJob* job = m_jobs.value(jobId);
-        if (job->currentMsec() - job->lastMsec() > FileJob::Msec_For_Display){
-            if (!job->isJobAdded()){
-                job->jobAdded();
-                job->jobUpdated();
-            }else{
-                job->jobUpdated();
+        if (job){
+            if (job->currentMsec() - job->lastMsec() > FileJob::Msec_For_Display){
+                if (!job->isJobAdded()){
+                    job->jobAdded();
+                    job->jobUpdated();
+                }else{
+                    job->jobUpdated();
+                }
             }
         }
     }
@@ -220,12 +233,7 @@ void DialogManager::stopUpdateJobTimer()
 void DialogManager::abortJob(const QMap<QString, QString> &jobDetail)
 {
     QString jobId = jobDetail.value("jobId");
-    FileJob * job = m_jobs.value(jobId);
-    if (job){
-        job->setIsAborted(true);
-        job->setApplyToAll(true);
-        job->cancelled();
-    }
+    removeJob(jobId);
 }
 
 void DialogManager::abortJobByDestinationUrl(const DUrl &url)
@@ -730,14 +738,6 @@ void DialogManager::refreshPropertyDialogs(const DUrl &oldUrl, const DUrl &newUr
     }
 }
 
-void DialogManager::removeAllJobs()
-{
-    foreach (const QString& jobId, m_jobs.keys()) {
-        FileJob* job = m_jobs.value(jobId);
-        job->cancelled();
-        removeJob(jobId);
-    }
-}
 
 void DialogManager::handleConflictRepsonseConfirmed(const QMap<QString, QString> &jobDetail, const QMap<QString, QVariant> &response)
 {
