@@ -86,7 +86,7 @@ void MountAskPasswordDialog::initUI()
 
 
     m_passwordCheckBox = new QCheckBox();
-    m_passwordCheckBox->setFixedSize(12,22);
+    m_passwordCheckBox->setFixedSize(22, 22);
     QLabel* rememberLabel = new QLabel(tr("Remember password"));
 
 
