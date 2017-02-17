@@ -144,12 +144,11 @@ int main(int argc, char *argv[])
     foreach (QString path, CommandLineManager::instance()->positionalArguments()) {
         DUrl url = DUrl::fromUserInput(path);
 
-        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
-
-        if (!fileInfo)
-            continue;
-
         if (CommandLineManager::instance()->isSet("show-item")) {
+            const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
+            if (!fileInfo)
+                continue;
+
             DUrl newUrl = fileInfo->parentUrl();
 
             newUrl.setQuery("selectUrl=" + url.toString());
@@ -158,6 +157,7 @@ int main(int argc, char *argv[])
 
         commandlineUrlList << url;
     }
+
     if (commandlineUrlList.isEmpty()){
         commandlineUrlList << DUrl::fromLocalFile(QDir::homePath());
     }

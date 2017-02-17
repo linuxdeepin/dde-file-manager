@@ -792,7 +792,6 @@ QAction *DSearchBar::getClearAction()
 bool DSearchBar::hasScheme()
 {
     DUrl url = DUrl::fromUserInput(text(), false);
-
     if( url.isBookMarkFile() ||
             url.isComputerFile() ||
             url.isLocalFile() ||
@@ -801,7 +800,9 @@ bool DSearchBar::hasScheme()
             url.isSearchFile() ||
             url.isNetWorkFile() ||
             url.isSMBFile() ||
-            url.isUserShareFile())
+            url.isUserShareFile() ||
+            url.isFTPFile() ||
+            url.isSFTPFile())
         return true;
     else
         return false;
