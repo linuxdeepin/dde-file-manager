@@ -18,7 +18,7 @@
 #define USERSHARE_SCHEME "usershare"
 #define AVFS_SCHEME "avfs"
 #define FTP_SCHEME "ftp"
-#define SFTP_SCHEME "http"
+#define SFTP_SCHEME "sftp"
 
 #define TRASH_ROOT "trash:///"
 #define RECENT_ROOT "recent:///"
