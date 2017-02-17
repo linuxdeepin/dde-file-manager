@@ -24,7 +24,7 @@ void FormatingPage::initUI()
 
     mainLayout->addSpacing(29);
     mainLayout->addWidget(m_progressBox, 0 , Qt::AlignHCenter);
-    mainLayout->addSpacing(30);
+    mainLayout->addSpacing(15);
     mainLayout->addWidget(formatingLabel, 0 , Qt::AlignHCenter);
     mainLayout->addStretch(1);
     setLayout(mainLayout);
