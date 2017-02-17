@@ -129,7 +129,7 @@ bool DFMSetting::isDefaultChooserDialog()
 
 bool DFMSetting::isShowedHiddenOnSearch()
 {
-    return m_settings->value("base.search.show_hidden").toBool();
+    return m_settings->value("advance.search.show_hidden").toBool();
 }
 
 bool DFMSetting::isShowedHiddenOnView()
