@@ -95,7 +95,7 @@ void SecrectManager::clearPasswordByLoginObj(const QJsonObject &obj)
                               "server", obj.value("server").toString().toStdString().c_str(),
                               "protocol", obj.value("protocol").toString().toStdString().c_str(),
                               NULL);
-    }else if (obj.value("protocol") == "ftp"){
+    }else if (obj.value("protocol") == "ftp" || obj.value("protocol") == "sftp"){
         secret_password_clear(FTPSecretSchema(), NULL, on_password_cleared, NULL,
                               "user", obj.value("user").toString().toStdString().c_str(),
                               "server", obj.value("server").toString().toStdString().c_str(),
