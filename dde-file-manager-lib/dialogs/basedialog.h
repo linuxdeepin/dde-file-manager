@@ -1,28 +1,31 @@
 #ifndef BASEDIALOG_H
 #define BASEDIALOG_H
 
-#include <dwidget.h>
+#include <ddialog.h>
 
 DWIDGET_USE_NAMESPACE
+
+DWIDGET_BEGIN_NAMESPACE
+class DTitlebar;
+DWIDGET_END_NAMESPACE
 
 class QShowEvent;
 class QWidget;
 
-class BaseDialog : public DWidget
+class BaseDialog : public DAbstractDialog
 {
     Q_OBJECT
 public:
     explicit BaseDialog(QWidget *parent = 0);
     ~BaseDialog();
 
-signals:
-
-public slots:
+    void setTitle(const QString &title);
 
 protected:
-    void adjustPosition(QWidget* w);
-    void showEvent(QShowEvent* event);
-    void keyPressEvent(QKeyEvent* event);
+    void resizeEvent(QResizeEvent *event);
+
+private:
+    DTitlebar *m_titlebar;
 };
 
 #endif // BASEDIALOG_H
