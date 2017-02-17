@@ -35,6 +35,7 @@ public slots:
     void handleConflictRepsonseConfirmed(const QMap<QString, QString> &jobDetail, const QMap<QString, QVariant> &response);
     void addJob(FileJob * job);
     void removeJob(const QString &jobId);
+    void removeAllJobs();
     void updateJob();
     void startUpdateJobTimer();
     void stopUpdateJobTimer();
@@ -73,7 +74,7 @@ public slots:
     void handleFocusChanged(QWidget* old, QWidget* now);
 
     void refreshPropertyDialogs(const DUrl& oldUrl, const DUrl& newUrl);
-    void removeAllJobs();
+
 private:
     DTaskDialog* m_taskDialog = NULL;
     CloseAllDialogIndicator* m_closeIndicatorDialog;
