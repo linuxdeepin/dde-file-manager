@@ -20,6 +20,7 @@ class DFMSetting : public QObject
 
 public:
     explicit DFMSetting(QObject *parent = 0);
+    void initConnections();
     QVariant getValueByKey(const QString& key);
     bool isAllwayOpenOnNewWindow();
     int iconSizeIndex();
@@ -40,12 +41,12 @@ public:
     bool isShowedHiddenOnView();
     QDir::Filters viewFilters();
 
-    void setSettings(Settings* settings);
     QPointer<Settings> settings();
 
 signals:
 
 public slots:
+    void onValueChanged(const QString& key, const QVariant& value);
 
 private:
     Settings* m_settings;
