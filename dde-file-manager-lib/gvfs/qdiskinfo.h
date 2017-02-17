@@ -46,8 +46,8 @@ public:
     qulonglong free() const;
     void setFree(const qulonglong &free);
 
-    DUrl mounted_url() const;
-    void setMounted_url(const DUrl &mounted_url);
+//    DUrl mounted_url() const;
+//    void setMounted_url(const DUrl &mounted_url);
 
     bool isNativeCustom() const;
     void setIsNativeCustom(bool isNativeCustom);
@@ -99,7 +99,7 @@ private:
     qulonglong m_total = 0;
     qulonglong m_free = 0;
 
-    DUrl m_mounted_url;
+//    DUrl m_mounted_url;
     /*if true show in computerview for especially used*/
     bool m_isNativeCustom = false;
 

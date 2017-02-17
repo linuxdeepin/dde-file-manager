@@ -423,9 +423,8 @@ bool DFileSystemModel::hasChildren(const QModelIndex &parent) const
         return false;
 
     const FileSystemNodePointer &indexNode = getNodeByIndex(parent);
-    Q_ASSERT(indexNode);
 
-    return isDir(indexNode);
+    return indexNode && isDir(indexNode);
 }
 
 QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
@@ -645,6 +644,9 @@ Qt::ItemFlags DFileSystemModel::flags(const QModelIndex &index) const
         return flags;
 
     const FileSystemNodePointer &indexNode = getNodeByIndex(index);
+
+    if (!indexNode)
+        return flags;
 
     if (!d->passNameFilters(indexNode)) {
         flags &= ~(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
