@@ -1191,6 +1191,11 @@ void DFileView::onRootUrlDeleted(const DUrl &rootUrl)
     fileSignalManager->requestChangeCurrentUrl(event);
 }
 
+void DFileView::freshView()
+{
+    model()->refresh(rootUrl());
+}
+
 void DFileView::focusInEvent(QFocusEvent *event)
 {
     Q_D(const DFileView);
@@ -1621,6 +1626,7 @@ void DFileView::initConnects()
 
     connect(fileSignalManager, &FileSignalManager::requestChangeIconSizeBySizeIndex, this, &DFileView::setIconSizeBySizeIndex);
     connect(fileSignalManager, &FileSignalManager::showHiddenOnViewChanged, this, &DFileView::onShowHiddenFileChanged);
+    connect(fileSignalManager, &FileSignalManager::requestFreshAllFileView, this, &DFileView::freshView);
 }
 
 void DFileView::increaseIcon()

@@ -182,6 +182,7 @@ signals:
 
     /*request fresh file view*/
     void requestFreshFileView(const DFMEvent &event);
+    void requestFreshAllFileView();
 
     /*request abort copy/move job*/
     void requestAbortJob(const DUrl& url);

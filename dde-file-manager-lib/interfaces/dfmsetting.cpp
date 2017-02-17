@@ -7,6 +7,9 @@
 #include "dfmstandardpaths.h"
 #include <qsettingbackend.h>
 #include <settings.h>
+#include "../widgets/singleton.h"
+#include "app/filesignalmanager.h"
+#include "app/define.h"
 
 DFMSetting::DFMSetting(QObject *parent) : QObject(parent)
 {
@@ -25,6 +28,13 @@ DFMSetting::DFMSetting(QObject *parent) : QObject(parent)
     //load conf value
     auto backen = new QSettingBackend(getConfigFilePath());
     m_settings->setBackend(backen);
+
+    initConnections();
+}
+
+void DFMSetting::initConnections()
+{
+    connect(m_settings, &Dtk::Settings::valueChanged, this, &DFMSetting::onValueChanged);
 }
 
 QVariant DFMSetting::getValueByKey(const QString &key)
@@ -72,14 +82,24 @@ QString DFMSetting::getConfigFilePath()
     return QString("%1/%2").arg(DFMStandardPaths::getConfigPath(), "dde-file-manager.conf");
 }
 
-void DFMSetting::setSettings(Settings *settings)
-{
-    m_settings = settings;
-}
-
 QPointer<Settings> DFMSetting::settings()
 {
     return m_settings;
+}
+
+void DFMSetting::onValueChanged(const QString &key, const QVariant &value)
+{
+    Q_UNUSED(value);
+    QStringList reactKeys;
+    reactKeys << "advance.preview.text_file_preview"
+              << "advance.preview.document_file_preview"
+              << "advance.preview.image_file_preview"
+              << "advance.preview.video_file_preview"
+              << "base.default_view.icon_size";
+    if(reactKeys.contains(key)){
+        emit fileSignalManager->requestChangeIconSizeBySizeIndex(iconSizeIndex());
+        emit fileSignalManager->requestFreshAllFileView();
+    }
 }
 
 bool DFMSetting::isQuickSearch()
