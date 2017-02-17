@@ -590,6 +590,7 @@ void PropertyDialog::loadPluginExpandWidgets()
         expand->setFixedHeight(30);
         expand->setExpand(false);
         expand->setContent(frame);
+        expand->setStyleSheet("background: transparent;");
         layout->addWidget(expand, 0, Qt::AlignTop);
         m_expandGroup->addExpand(expand);
     }
@@ -607,6 +608,7 @@ DExpandGroup *PropertyDialog::addExpandWidget(const QStringList &titleList)
 
         expand->setTitle(title);
         expand->setFixedHeight(30);
+        expand->setStyleSheet("background: transparent;");
 
         if(title == tr("Open with"))
             connect(expand, &DArrowLineExpand::expandChange, this, &PropertyDialog::onExpandChanged);
