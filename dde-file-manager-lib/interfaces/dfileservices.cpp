@@ -269,6 +269,13 @@ bool DFileService::decompressFileHere(const DUrlList urllist) const{
 
 bool DFileService::copyFilesToClipboard(const DUrlList &urlList) const
 {
+#ifdef DDE_COMPUTER_TRASH
+    if(urlList.contains(ComputerDesktopFileInfo::computerDesktopFileUrl()))
+        const_cast<DUrlList&>(urlList).removeOne(ComputerDesktopFileInfo::computerDesktopFileUrl());
+
+    if(urlList.contains(TrashDesktopFileInfo::trashDesktopFileUrl()))
+        const_cast<DUrlList&>(urlList).removeOne(TrashDesktopFileInfo::trashDesktopFileUrl());
+#endif
     if(urlList.isEmpty())
         return false;
 
@@ -324,6 +331,7 @@ bool DFileService::deleteFiles(const DFMEvent &event) const
 {
     FILTER_RETURN(DeleteFiles, false)
 
+#ifdef DDE_COMPUTER_TRASH
     DUrlList urlList = event.fileUrlList();
     if(urlList.contains(ComputerDesktopFileInfo::computerDesktopFileUrl()))
         urlList.removeOne(ComputerDesktopFileInfo::computerDesktopFileUrl());
@@ -332,6 +340,7 @@ bool DFileService::deleteFiles(const DFMEvent &event) const
         urlList.removeOne(TrashDesktopFileInfo::trashDesktopFileUrl());
 
     const_cast<DFMEvent&>(event) << urlList;
+#endif
 
     if (event.fileUrlList().isEmpty())
         return false;
@@ -377,6 +386,7 @@ void DFileService::moveToTrash(const DFMEvent &event) const
 {
     FILTER_RETURN(MoveToTrash)
 
+#ifdef DDE_COMPUTER_TRASH
     DUrlList urlList = event.fileUrlList();
     if(urlList.contains(ComputerDesktopFileInfo::computerDesktopFileUrl()))
         urlList.removeOne(ComputerDesktopFileInfo::computerDesktopFileUrl());
@@ -387,7 +397,7 @@ void DFileService::moveToTrash(const DFMEvent &event) const
 
     if (event.fileUrlList().isEmpty())
         return;
-
+#endif
 
     //handle system files should not be able to move to trash
     foreach (const DUrl& url, event.fileUrlList()) {
@@ -683,10 +693,12 @@ void DFileService::openFile(const DFMEvent &event) const
 
 const DAbstractFileInfoPointer DFileService::createFileInfo(const DUrl &fileUrl) const
 {
-    const DAbstractFileInfoPointer &info = DAbstractFileInfo::getFileInfo(fileUrl);
+    if(fileUrl != TrashDesktopFileInfo::trashDesktopFileUrl() && fileUrl != ComputerDesktopFileInfo::computerDesktopFileUrl()){
+        const DAbstractFileInfoPointer &info = DAbstractFileInfo::getFileInfo(fileUrl);
 
-    if (info)
-        return info;
+        if (info)
+            return info;
+    }
 
     TRAVERSE(fileUrl, {
                  const DAbstractFileInfoPointer &info = controller->createFileInfo(fileUrl, accepted);
