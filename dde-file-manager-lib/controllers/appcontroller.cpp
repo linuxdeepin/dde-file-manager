@@ -72,7 +72,9 @@ void AppController::registerUrlHandle()
 void AppController::actionOpen(const DFMEvent &event)
 {
     const DUrlList& urls = event.fileUrlList();
-    if (urls.size() == 1) {
+    if (urls.size() == 0) {
+
+    }else if (urls.size() == 1) {
         DFMEvent e = event;
 
         e << urls.first();
@@ -82,7 +84,7 @@ void AppController::actionOpen(const DFMEvent &event)
             fileService->openUrl(e, true, false);
         else
             fileService->openUrl(e, false, true);
-    } else {
+    } else{
         fileService->openUrl(event, true);
     }
 }
