@@ -14,7 +14,7 @@ ShareInfoFrame::ShareInfoFrame(const DAbstractFileInfoPointer &info, QWidget *pa
     m_fileinfo(info)
 {
     m_jobTimer = new QTimer();
-    m_jobTimer->setInterval(500);
+    m_jobTimer->setInterval(1000);
     m_jobTimer->setSingleShot(true);
     initUI();
     updateShareInfo(m_fileinfo->absoluteFilePath());
@@ -151,7 +151,9 @@ void ShareInfoFrame::updateShareInfo(const QString &filePath)
     if (!info.shareName().isEmpty()){
         m_sharCheckBox->setChecked(true);
         disconnect(m_shareNamelineEdit, &DLineEdit::textChanged, this, &ShareInfoFrame::handleShareNameChanged);
+        int cursorPos = m_shareNamelineEdit->cursorPosition();
         m_shareNamelineEdit->setText(info.shareName());
+        m_shareNamelineEdit->setCursorPosition(cursorPos);
         connect(m_shareNamelineEdit, &DLineEdit::textChanged, this, &ShareInfoFrame::handleShareNameChanged);
         if (info.isWritable()){
             m_permissoComBox->setCurrentIndex(0);
