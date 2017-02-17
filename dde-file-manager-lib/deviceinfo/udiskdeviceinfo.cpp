@@ -299,7 +299,9 @@ QVector<MenuAction> UDiskDeviceInfo::menuActionList(DAbstractFileInfo::MenuType 
     if(getMediaType() == removable)
         actionKeys << MenuAction::FormatDevice;
 
-    if (getId().startsWith("smb://") || getId().startsWith("ftp://"))
+    if (getId().startsWith("smb://")
+            || getId().startsWith("ftp://")
+            || getId().startsWith("sftp://"))
         actionKeys << MenuAction::ForgetPassword;
     actionKeys << MenuAction::Separator << MenuAction::Property;
 
