@@ -29,10 +29,15 @@ bool TrashDesktopFileInfo::isWritable() const
 
 QVector<MenuAction> TrashDesktopFileInfo::menuActionList(DAbstractFileInfo::MenuType type) const
 {
+    Q_UNUSED(type);
     QVector<MenuAction> actions;
     actions << MenuAction::Open
-    << MenuAction::Separator
-    << MenuAction::Property;
+    << MenuAction::Separator;
+
+    if(type == SingleFile)
+        actions << MenuAction::CreateSymlink;
+
+    actions << MenuAction::Property;
 
     return actions;
 }

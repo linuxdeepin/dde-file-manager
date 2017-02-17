@@ -73,12 +73,12 @@ const DAbstractFileInfoPointer FileController::createFileInfo(const DUrl &fileUr
     accepted = true;
 
     if (fileUrl.toLocalFile().endsWith(QString(".") + DESKTOP_SURRIX)){
-#ifdef DDE_COMPUTER_TRASH
+
         if(fileUrl == ComputerDesktopFileInfo::computerDesktopFileUrl())
             return DAbstractFileInfoPointer(new ComputerDesktopFileInfo());
-        else if(fileUrl == TrashDesktopFileInfo::trashDesktopFileUrl())
+
+        if(fileUrl == TrashDesktopFileInfo::trashDesktopFileUrl())
             return DAbstractFileInfoPointer(new TrashDesktopFileInfo());
-#endif
 
         return DAbstractFileInfoPointer(new DesktopFileInfo(fileUrl));
     }
