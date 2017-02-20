@@ -164,3 +164,8 @@ QStringList MimeTypeDisplayManager::supportArchiveMimetypes()
 {
     return ArchiveMimeTypes;
 }
+
+QStringList MimeTypeDisplayManager::supportVideoMimeTypes()
+{
+    return VideoMimeTypes;
+}

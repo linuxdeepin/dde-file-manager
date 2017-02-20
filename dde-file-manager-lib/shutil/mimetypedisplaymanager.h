@@ -38,6 +38,7 @@ public:
     static QStringList readlines(const QString& path);
     static void loadSupportMimeTypes();
     static QStringList supportArchiveMimetypes();
+    static QStringList supportVideoMimeTypes();
 
 signals:
 
