@@ -11,11 +11,13 @@ void GenerateSettingTranslate()
     auto advance_preview_text_file_previewText = QObject::tr("Text preview");
     auto advance_preview_video_file_previewText = QObject::tr("Video preview");
     auto advance_search_quick_searchText = QObject::tr("Quick search");
+    auto advance_search_show_hiddenText = QObject::tr("Show hidden files in search results");
     auto base_default_view_icon_sizeName = QObject::tr("Default size:");
-    auto base_default_view_icon_sizeText0 = QObject::tr("Small");
-    auto base_default_view_icon_sizeText1 = QObject::tr("Medium");
-    auto base_default_view_icon_sizeText2 = QObject::tr("Large");
-    auto base_default_view_icon_sizeText3 = QObject::tr("Extra large");
+    auto base_default_view_icon_sizeText0 = QObject::tr("Extra small");
+    auto base_default_view_icon_sizeText1 = QObject::tr("Small");
+    auto base_default_view_icon_sizeText2 = QObject::tr("Medium");
+    auto base_default_view_icon_sizeText3 = QObject::tr("Large");
+    auto base_default_view_icon_sizeText4 = QObject::tr("Extra large");
     auto base_hidden_files_show_hiddenText = QObject::tr("Show hidden files");
     auto base_new_tab_windows_new_tab_pathName = QObject::tr("Open in new tab:");
     auto base_new_tab_windows_new_tab_pathText0 = QObject::tr("Current Directory");
@@ -39,7 +41,6 @@ void GenerateSettingTranslate()
     auto base_open_action_open_file_actionName = QObject::tr("Open file:");
     auto base_open_action_open_file_actionText0 = QObject::tr("Click");
     auto base_open_action_open_file_actionText1 = QObject::tr("Double click");
-    auto base_search_show_hiddenText = QObject::tr("Show hidden files in search results");
     auto group_advanceName = QObject::tr("Advanced settings");
     auto group_advance_dialogName = QObject::tr("Dialog");
     auto group_advance_mountName = QObject::tr("Mount");
@@ -50,6 +51,5 @@ void GenerateSettingTranslate()
     auto group_base_hidden_filesName = QObject::tr("Hidden files");
     auto group_base_new_tab_windowsName = QObject::tr("New window and tab");
     auto group_base_open_actionName = QObject::tr("Open behavior");
-    auto group_base_searchName = QObject::tr("Search");
     auto reset_button_name = QObject::tr("Restore to default");
 }
