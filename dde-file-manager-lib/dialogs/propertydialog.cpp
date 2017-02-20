@@ -228,7 +228,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget* p
             close();
             return;
         }
-        m_icon->setPixmap(fileInfo->fileIcon().pixmap(160, 160));
+        m_icon->setPixmap(fileInfo->fileIcon().pixmap(128, 128));
         m_edit->setPlainText(fileInfo->fileDisplayName());
         m_edit->setAlignment(Qt::AlignHCenter);
 
