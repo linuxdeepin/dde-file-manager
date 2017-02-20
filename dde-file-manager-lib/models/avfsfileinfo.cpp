@@ -16,17 +16,14 @@ public:
     AVFSFileInfoPrivate(const DUrl &url, AVFSFileInfo *qq)
         : DAbstractFileInfoPrivate(url, qq, true) {
     }
-
-    QString archRootPath;
 };
 
-AVFSFileInfo::AVFSFileInfo(const QString &archRootPath, const DUrl &avfsUrl):
+AVFSFileInfo::AVFSFileInfo(const DUrl &avfsUrl):
     DAbstractFileInfo(*new AVFSFileInfoPrivate(avfsUrl, this))
 {
     Q_D(AVFSFileInfo);
 
-    d->archRootPath = archRootPath;
-    setProxy(DAbstractFileInfoPointer(new DFileInfo(realFileUrl(archRootPath, avfsUrl))));
+    setProxy(DAbstractFileInfoPointer(new DFileInfo(realFileUrl(avfsUrl))));
 }
 
 bool AVFSFileInfo::canRename() const
@@ -78,10 +75,10 @@ bool AVFSFileInfo::isDir() const
 {
     Q_D(const AVFSFileInfo);
     //Temporarily just support one lay arch file parser
-    QString realFilePath = realFileUrl(d->archRootPath, fileUrl()).toLocalFile();
+    QString realFilePath = realFileUrl(fileUrl()).toLocalFile();
     if(FileUtils::isArchive(realFilePath)){
-        if(d->archRootPath != fileUrl().path())
-            return false;
+        realFilePath += "#/";
+        return QFileInfo(realFilePath).isDir();
     }
     return d->proxy->isDir();
 }
@@ -91,26 +88,67 @@ AVFSFileInfo::AVFSFileInfo(AVFSFileInfoPrivate &dd):
 {
 }
 
-DUrl AVFSFileInfo::realFileUrl(QString archRootPath, const DUrl &avfsUrl)
+DUrl AVFSFileInfo::realFileUrl(const DUrl &avfsUrl)
 {
-    if (archRootPath.endsWith("/"))
-        archRootPath.chop(1);
-
     QString avfsPath = avfsUrl.path();
 
     if (avfsPath.endsWith("/"))
         avfsPath.chop(1);
 
-    QString realPath;
+    QString mountPath = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first();
+    mountPath = mountPath + "/.avfs";
+
+    QString virtualPath = mountPath + avfsPath;
+    QStringList pathItems = virtualPath.split("/");
+    QString iterPath = "/";
+    int archLength = 0;
+    foreach (QString item, pathItems) {
+        if(item == "")
+            continue;
+        iterPath += item;
+        if(FileUtils::isArchive(iterPath)){
+            archLength++;
+            iterPath += "#/";
+        }
+        else
+            iterPath += "/";
+    }
+
+    if(archLength > 1){
+        if(iterPath.endsWith("#/"))
+            iterPath.chop(2);
+        else
+            iterPath.chop(1);
+    } else
+        iterPath.chop(1);
+
+    return DUrl::fromLocalFile(iterPath);
+}
+
+DUrl AVFSFileInfo::realDirUrl(const DUrl &avfsUrl)
+{
+    QString avfsPath = avfsUrl.path();
+
+    if (avfsPath.endsWith("/"))
+        avfsPath.chop(1);
 
     QString mountPath = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first();
     mountPath = mountPath + "/.avfs";
 
-    //Check if is the url of an arch's root path
-    if (archRootPath == avfsPath)
-        realPath = mountPath + avfsPath.replace(archRootPath, (archRootPath+ "#/"));
-    else
-        realPath = mountPath + avfsPath.replace(archRootPath, (archRootPath+ "#"));
+    QString virtualPath = mountPath + avfsPath;
+    QStringList pathItems = virtualPath.split("/");
+    QString iterPath = "/";
+    foreach (QString item, pathItems) {
+        if(item == "")
+            continue;
+        iterPath += item;
+        if(FileUtils::isArchive(iterPath))
+            iterPath += "#/";
+        else
+            iterPath += "/";
+    }
 
-    return DUrl::fromLocalFile(realPath);
+    iterPath.chop(1);
+
+    return DUrl::fromLocalFile(iterPath);
 }
