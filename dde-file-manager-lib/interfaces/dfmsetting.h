@@ -39,7 +39,6 @@ public:
     bool isDefaultChooserDialog();
     bool isShowedHiddenOnSearch();
     bool isShowedHiddenOnView();
-    QDir::Filters viewFilters();
 
     QPointer<Settings> settings();
 

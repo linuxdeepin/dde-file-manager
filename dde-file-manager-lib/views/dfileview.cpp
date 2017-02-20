@@ -860,13 +860,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
 
             itemDelegate()->hideAllIIndexWidget();
             clearSelection();
-
-            if(globalSetting->isShowedHiddenOnView())
-                globalSetting->settings()->setOption("base.hidden_files.show_hidden", false);
-             else
-                globalSetting->settings()->setOption("base.hidden_files.show_hidden", true);
-
-            emit fileSignalManager->showHiddenOnViewChanged();
+            model()->toggleHiddenFiles(rootUrl());
 
             return;
         case Qt::Key_I:
@@ -1955,6 +1949,7 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
 
 void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
 {
+    Q_UNUSED(indexFlags)
     D_D(DFileView);
 
     const QModelIndex &index = rootIndex();
