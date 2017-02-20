@@ -49,7 +49,12 @@ public:
     };
 
     DFileSystemModelPrivate(DFileSystemModel *qq)
-        : q_ptr(qq) {}
+        : q_ptr(qq) {
+        if (globalSetting->isShowedHiddenOnView())
+            filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden;
+        else
+            filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System;
+    }
 
     bool passNameFilters(const FileSystemNodePointer &node) const;
     bool passFileFilters(const DAbstractFileInfoPointer &info) const;
@@ -70,7 +75,7 @@ public:
 
     int sortRole = DFileSystemModel::FileDisplayNameRole;
     QStringList nameFilters;
-    QDir::Filters filters = globalSetting->viewFilters();
+    QDir::Filters filters;
     Qt::SortOrder srotOrder = Qt::AscendingOrder;
 //    QModelIndex d->activeIndex;
 
@@ -1192,11 +1197,7 @@ void DFileSystemModel::toggleHiddenFiles(const DUrl &fileUrl)
 {
     Q_D(DFileSystemModel);
 
-//    d->filters = ~(d->filters ^ QDir::Filter(~QDir::Hidden));
-    if(globalSetting->isShowedHiddenOnView())
-        d->filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden;
-    else
-        d->filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System;
+    d->filters = ~(d->filters ^ QDir::Filter(~QDir::Hidden));
 
     refresh(fileUrl);
 }
