@@ -331,6 +331,8 @@ isEmpty(INCLUDE_INSTALL_DIR) {
     includes.path = $$INCLUDE_INSTALL_DIR/dde-file-manager
 }
 
+includes.files += $$PWD/interfaces/*.h
+
 isEmpty(INCLUDE_INSTALL_DIR) {
     gvfs_includes.path = $$PREFIX/include/dde-file-manager/gvfs
 } else {
