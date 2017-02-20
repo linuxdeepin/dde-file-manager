@@ -73,6 +73,7 @@
                             "name": "Default size:",
                             "type": "combobox",
                             "items": [
+                                "Extra small",
                                 "Small",
                                 "Medium",
                                 "Large",
