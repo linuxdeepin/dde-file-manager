@@ -396,7 +396,7 @@ int DialogManager::showRemoveBookMarkDialog(const DFMEvent &event)
     d.addButton(buttonTexts[0], true);
     d.addButton(buttonTexts[1], false, DDialog::ButtonWarning);
     d.setDefaultButton(1);
-    d.setIcon(QIcon::fromTheme("folder"));
+    d.setIconPixmap(QIcon::fromTheme("folder").pixmap(64, 64));
     int code = d.exec();
     return code;
 }
