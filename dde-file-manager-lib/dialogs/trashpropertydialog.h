@@ -18,13 +18,9 @@ public:
 
 signals:
     void requestStartComputerFolderSize();
-    void closed();
 
 public slots:
     void updateFolderSize(qint64 size);
-
-protected:
-    void closeEvent(QCloseEvent* event);
 
 private:
     DUrl m_url;

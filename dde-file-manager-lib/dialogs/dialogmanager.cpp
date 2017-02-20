@@ -460,7 +460,7 @@ void DialogManager::showTrashPropertyDialog(const DFMEvent &event)
         m_trashDialog->close();
     }
     m_trashDialog = new TrashPropertyDialog(event.fileUrl());
-    connect(m_trashDialog, &TrashPropertyDialog::closed, [=](){
+    connect(m_trashDialog, &TrashPropertyDialog::finished, [=](){
            m_trashDialog = NULL;
     });
     QPoint pos = getPerportyPos(m_trashDialog->size().width(), m_trashDialog->size().height(), 1, 0);
