@@ -49,10 +49,7 @@ bool DFMSetting::isAllwayOpenOnNewWindow()
 
 int DFMSetting::iconSizeIndex()
 {
-    int index = m_settings->value("base.default_view.icon_size").toInt();
-    if(index > 1)
-        return index+1;
-    return index;
+    return m_settings->value("base.default_view.icon_size").toInt();
 }
 
 int DFMSetting::openFileAction()
