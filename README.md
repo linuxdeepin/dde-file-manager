@@ -10,11 +10,16 @@ Deepin File Manager is a file management tool independently  developed by Deepin
 * gtk+-2.0 
 * xcb 
 * xcb-ewmh 
-* gsettings-qt 
+* libgsettings-qt 
 * libudev 
 * xext 
 * libsecret-1 
 * gio-unix-2.0
+* dtkbase 
+* dtkutil 
+* dtkwidget
+* libpoppler-cpp0v5
+* libffmpegthumbnailer4v5
 
 
 ## Installation
@@ -51,4 +56,4 @@ Execute `dde-file-manager`
 
 ## License
 
-dde-file-manager is licensed under [GPLv3](https://github.com/linuxdeepin/developer-center/wiki/LICENSE).
+dde-file-manager is licensed under [GPLv3](LICENSE)
