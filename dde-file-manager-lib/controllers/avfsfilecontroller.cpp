@@ -34,7 +34,7 @@ private:
 AVFSIterator::AVFSIterator(const DUrl &url, const QStringList &nameFilters, QDir::Filters filter, QDirIterator::IteratorFlags flags):
     DDirIterator()
 {
-    QString realPath = AVFSFileInfo::realFileUrl(AVFSFileController::findArchFileRootPath(url), url).toLocalFile();
+    QString realPath = AVFSFileInfo::realDirUrl(url).toLocalFile();
     iterator = new QDirIterator(realPath, nameFilters, filter, flags);
     currentUrl = url;
 }
@@ -65,8 +65,7 @@ QString AVFSIterator::filePath() const
 const DAbstractFileInfoPointer AVFSIterator::fileInfo() const
 {
     DUrl url = DUrl::fromAVFSFile(currentUrl.path() + "/" + iterator->fileName());
-    QString archRootFilePath = AVFSFileController::findArchFileRootPath(url);
-    return DAbstractFileInfoPointer(new AVFSFileInfo(archRootFilePath, url));
+    return DAbstractFileInfoPointer(new AVFSFileInfo(url));
 }
 
 QString AVFSIterator::path() const
@@ -84,9 +83,7 @@ const DAbstractFileInfoPointer AVFSFileController::createFileInfo(const DUrl &fi
 {
     accepted = true;
 
-    QString archRootFilePath = findArchFileRootPath(fileUrl);
-
-    DAbstractFileInfoPointer info(new AVFSFileInfo(archRootFilePath, fileUrl));
+    DAbstractFileInfoPointer info(new AVFSFileInfo(fileUrl));
 
     return info;
 }
@@ -102,7 +99,7 @@ DAbstractFileWatcher *AVFSFileController::createFileWatcher(const DUrl &fileUrl,
 {
     accepted = true;
 
-    QString realPath = AVFSFileInfo::realFileUrl(findArchFileRootPath(fileUrl), fileUrl).toLocalFile();
+    QString realPath = AVFSFileInfo::realDirUrl(fileUrl).toLocalFile();
 
     return new DFileWatcher(realPath, parent);
 }
@@ -145,8 +142,7 @@ bool AVFSFileController::openInTerminal(const DUrl &fileUrl, bool &accepted) con
 
 DUrl AVFSFileController::realUrl(const DUrl &url)
 {
-    QString archRootPath = findArchFileRootPath(url);
-    return AVFSFileInfo::realFileUrl(archRootPath, url);
+    return AVFSFileInfo::realFileUrl(url);
 }
 
 QString AVFSFileController::findArchFileRootPath(const DUrl &url)
