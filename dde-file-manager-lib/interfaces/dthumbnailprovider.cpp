@@ -5,6 +5,7 @@
 #include "interfaces/dfmsetting.h"
 #include "app/define.h"
 #include "../widgets/singleton.h"
+#include "shutil/mimetypedisplaymanager.h"
 
 
 #include <QCryptographicHash>
@@ -151,7 +152,7 @@ bool DThumbnailProvider::hasThumbnail(const QMimeType &mimeType) const
     if(mime.startsWith("image") && !globalSetting->isImageFilePreview())
         return false;
 
-    if(mime.startsWith("video") && !globalSetting->isVideoFilePreview())
+    if((mime.startsWith("video") || mimeTypeDisplayManager->supportVideoMimeTypes().contains(mime)) && !globalSetting->isVideoFilePreview())
         return false;
 
     if(mime == "text/plain" && !globalSetting->isTextFilePreview())
