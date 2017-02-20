@@ -7,7 +7,7 @@ class AVFSFileInfoPrivate;
 class AVFSFileInfo : public DAbstractFileInfo
 {
 public:
-    AVFSFileInfo(const QString &archRootPath, const DUrl& avfsUrl);
+    AVFSFileInfo(const DUrl& avfsUrl);
 
     bool canRename() const Q_DECL_OVERRIDE;
     bool isWritable() const Q_DECL_OVERRIDE;
@@ -17,7 +17,8 @@ public:
 
     QVector<MenuAction> menuActionList(MenuType type) const Q_DECL_OVERRIDE;
 
-    static DUrl realFileUrl(QString archRootPath, const DUrl& avfsUrl);
+    static DUrl realFileUrl(const DUrl& avfsUrl);
+    static DUrl realDirUrl(const DUrl& avfsUrl);
 protected:
     explicit AVFSFileInfo(AVFSFileInfoPrivate &dd);
 
