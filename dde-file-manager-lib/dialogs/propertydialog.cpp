@@ -545,10 +545,10 @@ void PropertyDialog::raise()
     emit raised();
 }
 
-void PropertyDialog::closeEvent(QCloseEvent *event)
+void PropertyDialog::hideEvent(QHideEvent *event)
 {
     emit aboutToClosed(m_url);
-    BaseDialog::closeEvent(event);
+    BaseDialog::hideEvent(event);
     emit closed(m_url);
     if (m_sizeWorker){
         m_sizeWorker->stop();
