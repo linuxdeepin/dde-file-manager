@@ -434,7 +434,8 @@ QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
 
     const FileSystemNodePointer &indexNode = getNodeByIndex(index);
 
-    Q_ASSERT(indexNode);
+    if (!indexNode)
+        return QVariant();
 
     switch (role) {
     case Qt::EditRole:
