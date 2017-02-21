@@ -138,6 +138,7 @@ public:
     virtual QString mimeTypeName(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault) const
     { return mimeType(mode).name();}
     virtual QString iconName() const;
+    virtual QString genericIconName() const;
 
     virtual QString lastReadDisplayName() const;
     virtual QString lastModifiedDisplayName() const;
