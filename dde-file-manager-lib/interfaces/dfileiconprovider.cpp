@@ -40,6 +40,7 @@ public:
 
     void init();
     QIcon getFilesystemIcon(const QFileInfo &info) const;
+    QIcon fromTheme(QString iconName) const;
 
     static Ptr_gnome_icon_lookup_sync gnome_icon_lookup_sync;
     static Ptr_gnome_vfs_init gnome_vfs_init;
@@ -67,7 +68,7 @@ void DFileIconProviderPrivate::init()
 QIcon DFileIconProviderPrivate::getFilesystemIcon(const QFileInfo &info) const
 {
     QIcon icon;
-    if (gnome_vfs_init && gnome_icon_lookup_sync) {
+    if (gnome_vfs_init && gnome_icon_lookup_sync && gtk_icon_theme_get_default) {
         gnome_vfs_init();
         GtkIconTheme *theme = gtk_icon_theme_get_default();
         QByteArray fileurl = QUrl::fromLocalFile(info.absoluteFilePath()).toEncoded();
@@ -83,6 +84,28 @@ QIcon DFileIconProviderPrivate::getFilesystemIcon(const QFileInfo &info) const
             return QIcon(iconName);
         return QIcon::fromTheme(iconName);
     }
+    return icon;
+}
+
+QIcon DFileIconProviderPrivate::fromTheme(QString iconName) const
+{
+    QIcon icon = QIcon::fromTheme(iconName);
+
+    if (Q_LIKELY(!icon.isNull()))
+        return icon;
+
+    if (iconName == "application-vnd.debian.binary-package") {
+        iconName = "application-x-deb";
+    } else if (iconName == "application-vnd.rar") {
+        iconName = "application-zip";
+    } else if (iconName == "application-vnd.ms-htmlhelp") {
+        iconName = "chmsee";
+    } else {
+        return icon;
+    }
+
+    icon = QIcon::fromTheme(iconName);
+
     return icon;
 }
 
@@ -123,29 +146,24 @@ QIcon DFileIconProvider::icon(const QFileInfo &info, const QIcon &feedback) cons
 
 QIcon DFileIconProvider::icon(const DFileInfo &info, const QIcon &feedback) const
 {
-    QString iconName = info.iconName();
+    Q_D(const DFileIconProvider);
 
-    QIcon icon = QIcon::fromTheme(iconName);
-
-    if (Q_LIKELY(!icon.isNull()))
-        return icon;
-
-    if (iconName == "application-vnd.debian.binary-package") {
-        iconName = "application-x-deb";
-    } else if (iconName == "application-vnd.rar") {
-        iconName = "application-zip";
-    } else if (iconName == "application-vnd.ms-htmlhelp") {
-        iconName = "chmsee";
-    } else {
-        return this->icon(info.toQFileInfo(), feedback);
-    }
-
-    icon = QIcon::fromTheme(iconName);
+    QIcon icon = d->fromTheme(info.iconName());
 
     if (Q_LIKELY(!icon.isNull()))
         return icon;
 
-    return this->icon(info.toQFileInfo(), feedback);
+    icon = this->icon(info.toQFileInfo());
+
+    if (Q_LIKELY(!icon.isNull()))
+        return icon;
+
+    icon = d->fromTheme(info.genericIconName());
+
+    if (icon.isNull())
+        return feedback;
+
+    return icon;
 }
 
 DFM_END_NAMESPACE

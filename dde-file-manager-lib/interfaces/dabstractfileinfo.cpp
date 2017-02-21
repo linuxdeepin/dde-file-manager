@@ -431,6 +431,11 @@ QString DAbstractFileInfo::iconName() const
     return mimeType().iconName();
 }
 
+QString DAbstractFileInfo::genericIconName() const
+{
+    return mimeType().genericIconName();
+}
+
 QString DAbstractFileInfo::lastReadDisplayName() const
 {
     CALL_PROXY(lastReadDisplayName());
