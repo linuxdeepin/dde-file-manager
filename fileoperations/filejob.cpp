@@ -432,8 +432,6 @@ void FileJob::started()
 void FileJob::cancelled()
 {
     g_cancellable_cancel(m_abortGCancellable);
-    setIsAborted(true);
-    setApplyToAll(true);
     m_status = FileJob::Cancelled;
 }
 
