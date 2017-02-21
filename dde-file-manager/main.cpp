@@ -216,7 +216,7 @@ int main(int argc, char *argv[])
         QWidget w;
         w.setWindowFlags(Qt::FramelessWindowHint);
         w.setAttribute(Qt::WA_TranslucentBackground);
-        w.resize(0, 0);
+        w.resize(1, 1);
         w.show();
     }
 }
