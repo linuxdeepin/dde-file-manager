@@ -357,6 +357,11 @@ void DFileManagerWindow::preHandleCd(const DUrl &fileUrl, int source)
 {
     D_DC(DFileManagerWindow);
     qDebug() << fileUrl << source << d->viewManager->supportSchemes() << d->viewManager->views() << d->viewManager->isSchemeRegistered(fileUrl.scheme());
+
+    if (d->viewStackLayout->currentWidget() == d->computerView && source == DFMEvent::FileView){
+        return;
+    }
+
     DFMEvent event;
 
     event << fileUrl;
