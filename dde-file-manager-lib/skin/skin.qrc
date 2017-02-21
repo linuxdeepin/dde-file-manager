@@ -18,27 +18,27 @@
         <file>images/trash_full.png</file>
     </qresource>
     <qresource prefix="/devices">
-        <file>images/device/drive-harddisk-deepin.svg</file>
-        <file>images/device/drive-harddisk-ieee1394.svg</file>
-        <file>images/device/drive-harddisk-linux.svg</file>
-        <file>images/device/drive-harddisk-mac.svg</file>
-        <file>images/device/drive-harddisk-scsi.svg</file>
-        <file>images/device/drive-harddisk-usb.svg</file>
-        <file>images/device/drive-harddisk-Windows.svg</file>
-        <file>images/device/drive-harddisk.svg</file>
-        <file>images/device/drive-optical.svg</file>
-        <file>images/device/drive-removable-media-ieee1394.svg</file>
-        <file>images/device/drive-removable-media-scsi.svg</file>
-        <file>images/device/drive-removable-media-usb.svg</file>
-        <file>images/device/drive-removable-media.svg</file>
-        <file>images/device/media-cdr.svg</file>
-        <file>images/device/media-cdrw.svg</file>
-        <file>images/device/media-dvd.svg</file>
-        <file>images/device/media-flash.svg</file>
-        <file>images/device/media-optical.svg</file>
-        <file>images/device/android-device.svg</file>
-        <file>images/device/camera.svg</file>
-        <file>images/device/drive-network.svg</file>
-        <file>images/device/ios-device.svg</file>
+        <file>images/device/drive-harddisk-deepin-256px.svg</file>
+        <file>images/device/drive-harddisk-ieee1394-256px.svg</file>
+        <file>images/device/drive-harddisk-linux-256px.svg</file>
+        <file>images/device/drive-harddisk-mac-256px.svg</file>
+        <file>images/device/drive-harddisk-scsi-256px.svg</file>
+        <file>images/device/drive-harddisk-usb-256px.svg</file>
+        <file>images/device/drive-harddisk-Windows-256px.svg</file>
+        <file>images/device/drive-harddisk-256px.svg</file>
+        <file>images/device/drive-optical-256px.svg</file>
+        <file>images/device/drive-removable-media-ieee1394-256px.svg</file>
+        <file>images/device/drive-removable-media-scsi-256px.svg</file>
+        <file>images/device/drive-removable-media-usb-256px.svg</file>
+        <file>images/device/drive-removable-media-256px.svg</file>
+        <file>images/device/media-cdr-256px.svg</file>
+        <file>images/device/media-cdrw-256px.svg</file>
+        <file>images/device/media-dvd-256px.svg</file>
+        <file>images/device/media-flash-256px.svg</file>
+        <file>images/device/media-optical-256px.svg</file>
+        <file>images/device/android-device-256px.svg</file>
+        <file>images/device/camera-256px.svg</file>
+        <file>images/device/drive-network-256px.svg</file>
+        <file>images/device/ios-device-256px.svg</file>
     </qresource>
 </RCC>
