@@ -188,6 +188,8 @@ void DialogManager::removeJob(const QString &jobId)
 {
     if (m_jobs.contains(jobId)){
         FileJob* job = m_jobs.value(jobId);
+        job->setIsAborted(true);
+        job->setApplyToAll(true);
         job->cancelled();
         m_jobs.remove(jobId);
     }
