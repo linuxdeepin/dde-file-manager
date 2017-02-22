@@ -32,6 +32,7 @@ public:
     QDateTime deletionDate;
 
     void updateInfo();
+    void inheritParentTrashInfo();
 };
 
 void TrashFileInfoPrivate::updateInfo()
@@ -56,10 +57,41 @@ void TrashFileInfoPrivate::updateInfo()
         if (displayDeletionDate.isEmpty())
             displayDeletionDate = setting.value("DeletionDate").toString();
     } else {
+        //inherits from parent trash info
+        inheritParentTrashInfo();
+
         if (systemPathManager->isSystemPath(filePath))
             displayName = systemPathManager->getSystemPathDisplayNameByPath(filePath);
         else
             displayName = proxy->fileName();
+    }
+}
+
+void TrashFileInfoPrivate::inheritParentTrashInfo()
+{
+    const QString &filePath = proxy->absoluteFilePath();
+    QString nameLayer = filePath.right(filePath.length() - DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath).length() - 1);
+    QStringList names = nameLayer.split("/");
+
+    QString name = names.takeFirst();
+    QString restPath;
+    foreach (QString str, names) {
+        restPath += "/" + str;
+    }
+
+    if(QFile::exists(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashInfosPath) + QDir::separator() + name + ".trashinfo")){
+        QSettings setting(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashInfosPath) + QDir::separator() + name + ".trashinfo", QSettings::NativeFormat);
+
+        setting.beginGroup("Trash Info");
+        setting.setIniCodec("utf-8");
+
+        originalFilePath = QByteArray::fromPercentEncoding(setting.value("Path").toByteArray()) + restPath;
+
+        deletionDate = QDateTime::fromString(setting.value("DeletionDate").toString(), Qt::ISODate);
+        displayDeletionDate = deletionDate.toString(DAbstractFileInfo::dateTimeFormat());
+
+        if (displayDeletionDate.isEmpty())
+            displayDeletionDate = setting.value("DeletionDate").toString();
     }
 }
 
