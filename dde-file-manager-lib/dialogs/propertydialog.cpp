@@ -368,6 +368,11 @@ void PropertyDialog::showTextShowFrame()
         DUrl oldUrl = m_url;
         DUrl newUrl = fileInfo->getUrlByNewFileName(m_edit->toPlainText());
 
+        if(oldUrl == newUrl){
+            m_editStackWidget->setCurrentIndex(1);
+            return;
+        }
+
         if (fileService->renameFile(oldUrl, newUrl, m_fmevent)) {
             m_url = newUrl;
             const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(m_url);
