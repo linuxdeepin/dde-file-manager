@@ -29,11 +29,13 @@ void CommandLineManager::initOptions(){
     QCommandLineOption openPropertyDialogOption(QStringList() << "p" << "property", "show property dialog");
     QCommandLineOption openFileDialogOption(QStringList() << "f" << "filedialog", "Register file selection dialog manager DBus\
                                                                                    \nRegister org.freedesktop.FileManager1 DBus");
+    QCommandLineOption rootOption(QStringList() << "r"<< "root", "exec dde-file-manager in root mode");
     QCommandLineOption showFileItem(QStringList() << "show-item", "Show a file item in a new window");
     addOption(newWindowOption);
     addOption(backendOption);
     addOption(openPropertyDialogOption);
     addOption(openFileDialogOption);
+    addOption(rootOption);
     addOption(showFileItem);
 }
 

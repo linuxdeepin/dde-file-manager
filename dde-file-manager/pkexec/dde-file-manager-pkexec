@@ -1,2 +1,2 @@
 #!/bin/bash
-pkexec dde-file-manager "$@"
+pkexec dde-file-manager "$@" -r

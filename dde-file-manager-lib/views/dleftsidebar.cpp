@@ -312,6 +312,10 @@ void DLeftSideBar::loadBookmark()
 
 void DLeftSideBar::addNetworkBookmarkItem()
 {
+    if (DFMGlobal::isStartedByPkexec()){
+        m_scene->addSeparator();
+        return;
+    };
     QString key = "Network";
     m_scene->addSeparator();
     DBookmarkItem * item = m_scene->createBookmarkByKey(key);

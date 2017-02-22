@@ -35,7 +35,7 @@ public slots:
     void asycOpenDiskInNewTab(const QString& path);
     void actionOpenDiskInNewWindow(const DFMEvent& event);
     void asycOpenDiskInNewWindow(const QString& path);
-    void actionOpenAsAdmain(const DFMEvent& event);
+    void actionOpenAsAdmin(const DFMEvent& event);
 
     void actionOpenWithCustom(const DFMEvent& event);
     void actionOpenFileLocation(const DFMEvent& event);

@@ -6,9 +6,11 @@
 #include "widgets/singleton.h"
 #include "../app/define.h"
 #include "../partman/partition.h"
+#include "../partman/readusagemanager.h"
 #include "../interfaces/dfmsetting.h"
 #include "../interfaces/dfileservices.h"
 #include "../interfaces/dfmevent.h"
+#include "partman/command.h"
 
 #include <QThread>
 #include <QApplication>
@@ -25,6 +27,7 @@ QStringList GvfsMountManager::Volumes_Drive_Keys = {}; // key is unix-device
 QStringList GvfsMountManager::Volumes_No_Drive_Keys = {}; // key is unix-device or uuid
 
 QStringList GvfsMountManager::NoVolumes_Mounts_Keys = {}; // key is mount point root uri
+QStringList GvfsMountManager::Lsblk_Keys = {}; // key is got by lsblk
 
 GvfsMountManager::GvfsMountManager(QObject *parent) : QObject(parent)
 {
@@ -40,11 +43,16 @@ GvfsMountManager::GvfsMountManager(QObject *parent) : QObject(parent)
 
 void GvfsMountManager::initConnect()
 {
-    g_signal_connect (m_gVolumeMonitor, "mount-added", (GCallback)&GvfsMountManager::monitor_mount_added, NULL);
-    g_signal_connect (m_gVolumeMonitor, "mount-removed", (GCallback)&GvfsMountManager::monitor_mount_removed, NULL);
-    g_signal_connect (m_gVolumeMonitor, "mount-changed", (GCallback)&GvfsMountManager::monitor_mount_changed, NULL);
-    g_signal_connect (m_gVolumeMonitor, "volume-added", (GCallback)&GvfsMountManager::monitor_volume_added, NULL);
-    g_signal_connect (m_gVolumeMonitor, "volume-removed", (GCallback)&GvfsMountManager::monitor_volume_removed, NULL);
+    if (DFMGlobal::isStartedByPkexec()){
+        g_signal_connect (m_gVolumeMonitor, "mount-added", (GCallback)&GvfsMountManager::monitor_mount_added_root, NULL);
+        g_signal_connect (m_gVolumeMonitor, "mount-removed", (GCallback)&GvfsMountManager::monitor_mount_removed_root, NULL);
+    }else{
+        g_signal_connect (m_gVolumeMonitor, "mount-added", (GCallback)&GvfsMountManager::monitor_mount_added, NULL);
+        g_signal_connect (m_gVolumeMonitor, "mount-removed", (GCallback)&GvfsMountManager::monitor_mount_removed, NULL);
+        g_signal_connect (m_gVolumeMonitor, "mount-changed", (GCallback)&GvfsMountManager::monitor_mount_changed, NULL);
+        g_signal_connect (m_gVolumeMonitor, "volume-added", (GCallback)&GvfsMountManager::monitor_volume_added, NULL);
+        g_signal_connect (m_gVolumeMonitor, "volume-removed", (GCallback)&GvfsMountManager::monitor_volume_removed, NULL);
+    }
 //    g_signal_connect (m_gVolumeMonitor, "volume-changed", (GCallback)&GvfsMountManager::monitor_volume_changed, NULL);
 }
 
@@ -362,6 +370,39 @@ QVolume GvfsMountManager::getVolumeByUnixDevice(const QString &unix_device)
     return QVolume();
 }
 
+void GvfsMountManager::monitor_mount_added_root(GVolumeMonitor *volume_monitor, GMount *mount)
+{
+    Q_UNUSED(volume_monitor)
+    qDebug() << "==============================monitor_mount_added_root==============================";
+    QMount qMount = gMountToqMount(mount);
+    qDebug() << qMount;
+
+    foreach (QString key, DiskInfos.keys()) {
+        QDiskInfo info = DiskInfos.value(key);
+        if (info.mounted_root_uri() == qMount.mounted_root_uri()){
+            emit gvfsMountManager->volume_added(info);
+            return;
+        }
+    }
+
+
+}
+
+void GvfsMountManager::monitor_mount_removed_root(GVolumeMonitor *volume_monitor, GMount *mount)
+{
+    Q_UNUSED(volume_monitor)
+    qDebug() << "==============================monitor_mount_removed_root==============================";
+    QMount qMount = gMountToqMount(mount);
+    qDebug() << qMount;
+    foreach (QString key, DiskInfos.keys()) {
+        QDiskInfo info = DiskInfos.value(key);
+        if (info.mounted_root_uri() == qMount.mounted_root_uri()){
+            emit gvfsMountManager->volume_removed(info);
+            return;
+        }
+    }
+}
+
 
 void GvfsMountManager::monitor_mount_added(GVolumeMonitor *volume_monitor, GMount *mount)
 {
@@ -648,11 +689,16 @@ bool GvfsMountManager::isIgnoreUnusedMounts(const QMount &mount)
 
 void GvfsMountManager::startMonitor()
 {
-    listDrives();
-    listVolumes();
-    listMounts();
-    updateDiskInfos();
+    if (DFMGlobal::isStartedByPkexec()){
+        listMountsBylsblk();
+    }else{
+        listDrives();
+        listVolumes();
+        listMounts();
+        updateDiskInfos();
+    }
     initConnect();
+    emit loadDiskInfoFinished();
 }
 
 void GvfsMountManager::listDrives()
@@ -773,7 +819,6 @@ void GvfsMountManager::updateDiskInfos()
         }
     }
     qDebug() << Mounts;
-    emit loadDiskInfoFinished();
 }
 
 void GvfsMountManager::getMounts(GList *mounts)
@@ -793,6 +838,100 @@ void GvfsMountManager::getMounts(GList *mounts)
             }
         }
         NoVolumes_Mounts_Keys.append(qMount.mounted_root_uri());
+    }
+}
+
+void GvfsMountManager::listMountsBylsblk()
+{
+    PartMan::Partition p;
+    QString output;
+    QString err;
+    bool status = PartMan::SpawnCmd("lsblk", {"-O", "-J", "-l"},
+                  output, err);
+    if(status){
+        QJsonParseError error;
+        QJsonDocument doc=QJsonDocument::fromJson(output.toLocal8Bit(),&error);
+        if (error.error == QJsonParseError::NoError){
+            QJsonObject devObj = doc.object();
+            foreach (QString key, devObj.keys()) {
+                if (key == "blockdevices"){
+                    QJsonArray objArray = devObj.value(key).toArray();
+                    for(int i=0; i< objArray.count(); i++){
+
+
+                        QJsonObject obj = objArray.at(i).toObject();
+
+                        if (obj.contains("mountpoint")){
+                            QString mountPoint = obj.value("mountpoint").toString();
+                            if (mountPoint.isEmpty() || mountPoint=="/"){
+                                continue;
+                            }else{
+                                p.setMountPoint(obj.value("mountpoint").toString());
+                            }
+                        }
+
+                        if (obj.contains("name")){
+                            p.setName(obj.value("name").toString());
+                        }
+                        if (obj.contains("fstype")){
+                            p.setFs(obj.value("fstype").toString());
+                        }
+                        if (obj.contains("label")){
+                            p.setLabel(obj.value("label").toString());
+                        }
+                        if (obj.contains("uuid")){
+                            p.setUuid(obj.value("uuid").toString());
+                        }
+                        if(obj.contains("rm")){
+                            QString data = obj.value("rm").toString();
+                            if(data == "1")
+                                p.setIsRemovable(true);
+                            else
+                                p.setIsRemovable(false);
+                        }
+
+                        p.setPath(QString("/dev/%1").arg(p.name()));
+
+                        if (!p.fs().isEmpty()){
+                            PartMan::ReadUsageManager readUsageManager;
+                            qlonglong freespace = 0;
+                            qlonglong total = 0;
+                            bool ret = readUsageManager.readUsage(p.path(), p.fs(), freespace, total);
+                            if (ret){
+                                p.setFreespace(freespace);
+                                p.setTotal(total);
+                            }
+                        }
+
+
+                        QDiskInfo diskInfo;
+
+                        diskInfo.setName(p.name());
+                        diskInfo.setUnix_device(p.path());
+                        diskInfo.setUuid(p.uuid());
+                        diskInfo.setId(p.path());
+                        diskInfo.setFree(p.freespace());
+                        diskInfo.setTotal(p.total());
+                        diskInfo.setIs_removable(p.getIsRemovable());
+                        diskInfo.setMounted_root_uri(QString("file://%1").arg(p.mountPoint()));
+                        diskInfo.setCan_unmount(true);
+                        diskInfo.setCan_mount(false);
+                        diskInfo.setCan_eject(false);
+                        if (diskInfo.is_removable()){
+                            diskInfo.setType("removable");
+                        }else{
+                            diskInfo.setType("native");
+                        }
+                        Lsblk_Keys.append(p.path());
+                        DiskInfos.insert(diskInfo.id(), diskInfo);
+                    }
+                }
+            }
+        }else{
+            qDebug() << error.errorString();
+        }
+    }else{
+        qDebug() << status << output << err;
     }
 }
 

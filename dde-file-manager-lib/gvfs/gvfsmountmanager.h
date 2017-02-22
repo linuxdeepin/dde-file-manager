@@ -32,6 +32,7 @@ public:
     static QStringList Volumes_No_Drive_Keys;
 
     static QStringList NoVolumes_Mounts_Keys;
+    static QStringList Lsblk_Keys;
 
     static QStringList getIconNames(GThemedIcon *icon);
     static QDrive gDriveToqDrive(GDrive *drive);
@@ -43,6 +44,9 @@ public:
 
     static QVolume getVolumeByMountedRootUri(const QString& mounted_root_uri);
     static QVolume getVolumeByUnixDevice(const QString& unix_device);
+
+    static void monitor_mount_added_root(GVolumeMonitor *volume_monitor, GMount *mount);
+    static void monitor_mount_removed_root(GVolumeMonitor *volume_monitor, GMount *mount);
 
     static void monitor_mount_added(GVolumeMonitor *volume_monitor, GMount *mount);
     static void monitor_mount_removed (GVolumeMonitor *volume_monitor, GMount *mount);
@@ -104,6 +108,8 @@ public slots:
     void listMounts();
     void updateDiskInfos();
     void getMounts(GList *mounts);
+
+    void listMountsBylsblk();
 
 private:
     GVolumeMonitor* m_gVolumeMonitor = NULL;

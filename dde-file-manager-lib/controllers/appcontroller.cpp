@@ -188,7 +188,7 @@ void AppController::asycOpenDiskInNewWindow(const QString &path)
     actionOpenInNewWindow(m_fmEvent);
 }
 
-void AppController::actionOpenAsAdmain(const DFMEvent &event)
+void AppController::actionOpenAsAdmin(const DFMEvent &event)
 {
     QStringList args;
     args << event.fileUrl().toLocalFile();
