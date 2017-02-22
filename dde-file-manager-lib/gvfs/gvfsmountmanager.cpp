@@ -95,7 +95,6 @@ QDrive GvfsMountManager::gDriveToqDrive(GDrive *drive)
     qDrive.setCan_stop(g_drive_can_stop (drive));
     qDrive.setHas_media(g_drive_has_media (drive));
     qDrive.setIs_media_check_automatic(g_drive_is_media_check_automatic(drive));
-    qDrive.setIs_removable(g_drive_is_removable(drive));
     qDrive.setIs_media_removable(g_drive_is_media_removable(drive));
 
     icon = g_drive_get_icon(drive);
