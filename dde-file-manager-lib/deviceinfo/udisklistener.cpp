@@ -53,9 +53,14 @@ void UDiskListener::removeDevice(UDiskDeviceInfoPointer device)
 void UDiskListener::update()
 {
     QStringList keys;
-    keys.append(GvfsMountManager::Volumes_Drive_Keys);
-    keys.append(GvfsMountManager::Volumes_No_Drive_Keys);
-    keys.append(GvfsMountManager::NoVolumes_Mounts_Keys);
+
+    if (DFMGlobal::isStartedByPkexec()){
+        keys.append(GvfsMountManager::Lsblk_Keys);
+    }else{
+        keys.append(GvfsMountManager::Volumes_Drive_Keys);
+        keys.append(GvfsMountManager::Volumes_No_Drive_Keys);
+        keys.append(GvfsMountManager::NoVolumes_Mounts_Keys);
+    }
     foreach (QString key, keys) {
         QDiskInfo diskInfo = GvfsMountManager::DiskInfos.value(key);
         if (diskInfo.isValid()){

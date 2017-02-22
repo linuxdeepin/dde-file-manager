@@ -614,6 +614,9 @@ void DBookmarkItem::updateMountIndicator()
     qDebug() << m_isMounted << m_mountBookmarkItem;
     if (m_isMounted && m_mountBookmarkItem){
         m_mountBookmarkItem->show();
+        if(DFMGlobal::isStartedByPkexec()){
+            m_mountBookmarkItem->setEnabled(false);
+        }
     }else{
         m_mountBookmarkItem->hide();
     }

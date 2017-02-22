@@ -285,6 +285,7 @@ QDebug operator<<(QDebug dbg, const QDiskInfo &info)
     dbg.nospace() << "id_filesystem: " << info.id_filesystem() << ",";
     dbg.nospace() << "default_location: " << info.default_location() << ",";
     dbg.nospace() << "iconName: " << info.iconName() << ",";
+    dbg.nospace() << "is_removable: " << info.is_removable() << ",";
     dbg.nospace() << "can_mount: " << info.can_mount() << ",";
     dbg.nospace() << "can_unmount: " << info.can_unmount() << ",";
     dbg.nospace() << "can_eject: " << info.can_eject() << ",";

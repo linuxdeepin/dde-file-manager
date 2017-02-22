@@ -178,6 +178,8 @@ public:
 
     static QStringList PluginLibraryPaths;
     static QStringList MenuExtensionPaths;
+    static QString USER;
+    static int USERID;
 
     static QString organizationName();
     static QString applicationName();
@@ -215,6 +217,10 @@ public:
     static void initSecretManager();
     static void initUserShareManager();
     static void initGlobalSettings();
+
+    static QString getUser();
+    static int getUserId();
+    static bool isStartedByPkexec();
 
     QList<QUrl> clipboardFileUrlList() const;
     ClipboardAction clipboardAction() const;

@@ -19,6 +19,7 @@
 #include "controllers/appcontroller.h"
 #include "../deviceinfo/udisklistener.h"
 #include "../usershare/usersharemanager.h"
+#include "widgets/commandlinemanager.h"
 #include "dfmsetting.h"
 #include <dfmstandardpaths.h>
 
@@ -69,6 +70,8 @@ Q_GLOBAL_STATIC(DFMGlobalPrivate, dfmGlobal);
 
 QStringList DFMGlobal::PluginLibraryPaths;
 QStringList DFMGlobal::MenuExtensionPaths;
+QString DFMGlobal::USER = "";
+int DFMGlobal::USERID = -1;
 
 DFMGlobal *DFMGlobal::instance()
 {
@@ -266,6 +269,31 @@ void DFMGlobal::initUserShareManager()
 void DFMGlobal::initGlobalSettings()
 {
     globalSetting;
+}
+
+QString DFMGlobal::getUser()
+{
+    if (USER.isEmpty()){
+        USER = getenv("USER");
+    }
+    return USER;
+}
+
+int DFMGlobal::getUserId()
+{
+    if (USERID == -1){
+        QProcess userID;
+        userID.start("id", QStringList() << "-u");
+        userID.waitForFinished();
+        QByteArray id = userID.readAll();
+        USERID = QString(id).trimmed().toInt();
+    }
+    return USERID;
+}
+
+bool DFMGlobal::isStartedByPkexec()
+{
+    return CommandLineManager::instance()->isSet("r");
 }
 
 QList<QUrl> DFMGlobal::clipboardFileUrlList() const

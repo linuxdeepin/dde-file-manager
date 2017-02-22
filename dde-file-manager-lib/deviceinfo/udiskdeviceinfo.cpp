@@ -311,9 +311,16 @@ QVector<MenuAction> UDiskDeviceInfo::menuActionList(DAbstractFileInfo::MenuType 
 QSet<MenuAction> UDiskDeviceInfo::disableMenuActionList() const
 {
     QSet<MenuAction> actionKeys = DAbstractFileInfo::disableMenuActionList();
+
+    if(DFMGlobal::isStartedByPkexec()){
+        actionKeys << MenuAction::Unmount;
+    }
+
     if (!canUnmount()){
         actionKeys << MenuAction::Property;
     }
+
+
     return actionKeys;
 }
 
