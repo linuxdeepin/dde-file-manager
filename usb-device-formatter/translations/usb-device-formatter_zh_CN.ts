@@ -135,7 +135,7 @@
     <message>
         <location filename="../view/warnpage.cpp" line="18"/>
         <source>Formating operation will clear all datas from your disk, are you sure to continue?This option can not be restored.</source>
-        <translation>格式化操作将会清楚磁盘所有内容发，确定继续操作？该操作无法恢复。</translation>
+        <translation>格式化操作将会清除磁盘上所有内容，确定继续操作？该操作无法恢复。</translation>
     </message>
 </context>
 </TS>
