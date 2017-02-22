@@ -888,8 +888,14 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             return;
         case Qt::Key_T:{
             const QString& path = globalSetting->newTabPath();
-            if(path != "Current Path")
-                fmevent << DUrl::fromUserInput(path);
+            if(selectedIndexCount() == 1 && model()->fileInfo(selectedIndexes().first())->isDir()){
+                fmevent << model()->fileInfo(selectedIndexes().first())->fileUrl();
+            } else{
+                if(path != "Current Path")
+                    fmevent << DUrl::fromUserInput(path);
+                else
+                    fmevent << rootUrl();
+            }
             emit fileSignalManager->requestOpenInNewTab(fmevent);
             return;
         }
