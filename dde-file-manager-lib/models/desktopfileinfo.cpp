@@ -5,6 +5,7 @@
 
 #include "shutil/properties.h"
 #include "interfaces/dfileservices.h"
+#include "interfaces/dfmstandardpaths.h"
 
 #include "widgets/singleton.h"
 
@@ -26,6 +27,7 @@ public:
     QString type;
     QStringList categories;
     QStringList mimeType;
+    QString deepinID;
 
     void updateInfo(const DUrl &fileUrl);
 };
@@ -170,8 +172,53 @@ QMap<QString, QVariant> DesktopFileInfo::getDesktopFileInfo(const DUrl &fileUrl)
     map["Type"] = desktop.value("Type", settings.value("Type", "Application"));
     map["Categories"] = desktop.value("Categories", settings.value("Categories")).toString().remove(" ").split(";");
     map["MimeType"] = desktop.value("MimeType", settings.value("MimeType")).toString().remove(" ").split(";");
+    map["DeepinID"] = desktop.value("X-Deepin-AppID", settings.value("X-Deepin-AppID")).toString();
 
     return map;
+}
+
+QVector<MenuAction> DesktopFileInfo::menuActionList(DAbstractFileInfo::MenuType type) const
+{
+    Q_D(const DesktopFileInfo);
+    if(d->deepinID == "dde-trash" || d->deepinID == "dde-computer"){
+        QVector<MenuAction> actions;
+        actions << MenuAction::Open
+        << MenuAction::Separator;
+
+        if(type == SingleFile)
+            actions << MenuAction::CreateSymlink;
+
+        actions << MenuAction::Property;
+
+        return actions;
+    } else{
+        return DFileInfo::menuActionList(type);
+    }
+}
+
+QList<QIcon> DesktopFileInfo::additionalIcon() const
+{
+    return QList<QIcon>();
+}
+
+Qt::DropActions DesktopFileInfo::supportedDragActions() const
+{
+    Q_D(const DesktopFileInfo);
+    if(d->deepinID == "dde-trash" || d->deepinID == "dde-computer"){
+        return Qt::IgnoreAction;
+    }
+
+    return DFileInfo::supportedDragActions();
+}
+
+DUrl DesktopFileInfo::trashDesktopFileUrl()
+{
+    return DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::DesktopPath) + "/dde-trash.desktop");
+}
+
+DUrl DesktopFileInfo::computerDesktopFileUrl()
+{
+    return DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::DesktopPath) + "/dde-computer.desktop");
 }
 
 void DesktopFileInfoPrivate::updateInfo(const DUrl &fileUrl)
@@ -184,6 +231,7 @@ void DesktopFileInfoPrivate::updateInfo(const DUrl &fileUrl)
     type = map.value("Type").toString();
     categories = map.value("Categories").toStringList();
     mimeType = map.value("MimeType").toStringList();
+    deepinID = map.value("DeepinID").toString();
     // Fix categories
     if (categories.first().compare("") == 0) {
       categories.removeFirst();

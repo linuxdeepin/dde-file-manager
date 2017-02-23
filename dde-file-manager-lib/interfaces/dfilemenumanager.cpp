@@ -6,9 +6,7 @@
 #include "dfileservices.h"
 #include "controllers/appcontroller.h"
 #include "controllers/trashmanager.h"
-
-#include "models/computerdesktopfileinfo.h"
-#include "models/trashdesktopfileinfo.h"
+#include "models/desktopfileinfo.h"
 
 #include "widgets/singleton.h"
 #include "views/windowmanager.h"
@@ -253,15 +251,6 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
     if (urlList.length() == 1) {
         QVector<MenuAction> actions = info->menuActionList(DAbstractFileInfo::SingleFile);
 
-#ifdef DDE_COMPUTER_TRASH
-        if(currentUrl == TrashDesktopFileInfo::trashDesktopFileUrl()){
-            DAbstractFileInfoPointer trashFileInfo = fileService->createFileInfo(DUrl::fromTrashFile("/"));
-            actions << MenuAction::ClearTrash;
-            if(trashFileInfo->filesCount() <= 0)
-                disableList += MenuAction::ClearTrash;
-        }
-#endif
-
         foreach (MenuAction action, unusedList) {
             if (actions.contains(action)){
                 actions.remove(actions.indexOf(action));
@@ -355,9 +344,8 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
 
         menu = DFileMenuManager::genereteMenuByKeys(actions, disableList, true, subActions);
     }
-
-    if(currentUrl == ComputerDesktopFileInfo::computerDesktopFileUrl() ||
-            currentUrl == TrashDesktopFileInfo::trashDesktopFileUrl())
+    if(currentUrl == DesktopFileInfo::computerDesktopFileUrl() ||
+            currentUrl == DesktopFileInfo::trashDesktopFileUrl())
         return menu;
 
     loadNormalPluginMenu(menu, urlList, currentUrl);
