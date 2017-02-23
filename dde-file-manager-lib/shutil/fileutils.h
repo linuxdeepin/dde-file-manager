@@ -44,6 +44,7 @@ public:
 
     static bool openFile(const QString& filePath);
     static bool openDesktopFile(const QString& filePath);
+    static bool openDesktopFileWithParams(const QString& filePath, const DUrlList &urlList);
     static bool openFileByApp(const QString& filePath, const QString& app);
 
     static bool setBackground(const QString& pictureFilePath);

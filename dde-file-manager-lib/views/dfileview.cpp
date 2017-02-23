@@ -1296,7 +1296,7 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
         const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(d->dragMoveHoverIndex);
 
         if (fileInfo) {
-            if (!fileInfo->isDir()) {
+            if (!fileInfo->canDrop()) {
                 d->dragMoveHoverIndex = QModelIndex();
             } else if(!fileInfo->supportedDropActions().testFlag(event->dropAction())) {
                 d->dragMoveHoverIndex = QModelIndex();

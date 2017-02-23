@@ -10,9 +10,11 @@
 
 #include "controllers/jobcontroller.h"
 #include "controllers/appcontroller.h"
+#include "shutil/desktopfile.h"
 
 #include "interfaces/dfileviewhelper.h"
 #include "interfaces/dfmsetting.h"
+#include "shutil/fileutils.h"
 
 #include <QDebug>
 #include <QMimeData>
@@ -670,7 +672,7 @@ Qt::ItemFlags DFileSystemModel::flags(const QModelIndex &index) const
             flags |= Qt::ItemIsEditable;
 
         if (indexNode->fileInfo->isWritable()) {
-            if (isDir(indexNode))
+            if (indexNode->fileInfo->canDrop())
                 flags |= Qt::ItemIsDropEnabled;
             else
                 flags |= Qt::ItemNeverHasChildren;
@@ -728,6 +730,22 @@ bool DFileSystemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
     event << this->parent()->windowId();
     event << toUrl;
     event << urlList;
+
+    const DAbstractFileInfoPointer& info = fileService->createFileInfo(toUrl);
+    if (info->isSymLink()){
+        toUrl = info->rootSymLinkTarget();
+    }
+    qDebug() << toUrl;
+     if(DFMGlobal::isTrashDesktopFile(toUrl)){
+         toUrl = DUrl::fromTrashFile("/");
+         fileService->moveToTrash(event);
+         return true;
+     } else if(DFMGlobal::isComputerDesktopFile(toUrl)){
+         return true;
+     } else{
+         return FileUtils::openDesktopFileWithParams(toUrl.path(), urlList);
+     }
+
 
     switch (action) {
     case Qt::CopyAction:

@@ -458,6 +458,49 @@ bool FileUtils::openDesktopFile(const QString &filePath)
     return ok;
 }
 
+bool FileUtils::openDesktopFileWithParams(const QString &filePath, const DUrlList& urlList)
+{
+    if (filePath.isEmpty()) {
+        qDebug() << "Failed to open desktop file with gio: desktop file path is empty";
+        return false;
+    }
+
+    std::string stdFilePath = filePath.toStdString();
+
+    const char* cPath = stdFilePath.data();
+
+    GDesktopAppInfo* appInfo = g_desktop_app_info_new_from_filename(cPath);
+    if (!appInfo) {
+        qDebug() << "Failed to open desktop file with gio: g_desktop_app_info_new_from_filename returns NULL. Check PATH maybe?";
+        return false;
+    }
+
+    GList* g_files = NULL;
+    g_list_prepend(g_files, const_cast<char*>(cPath));
+    foreach (const DUrl& url, urlList) {
+        GFile* f = g_file_new_for_uri(url.toString().toUtf8());
+        g_files = g_list_append(g_files, f);
+    }
+
+    GError* gError = nullptr;
+
+    const auto ok = g_app_info_launch(reinterpret_cast<GAppInfo*>(appInfo), g_files, NULL, &gError);
+
+    if (gError) {
+        qWarning() << "Error when trying to open desktop file with gio:" << gError->message;
+        g_error_free(gError);
+    }
+
+    if (!ok) {
+        qWarning() << "Failed to open desktop file with gio: g_app_info_launch returns false";
+    }
+    g_object_unref(appInfo);
+
+    g_list_free(g_files);
+
+    return ok;
+}
+
 bool FileUtils::openFileByApp(const QString &filePath, const QString &app)
 {
     if (filePath.isEmpty()) {
@@ -647,7 +690,6 @@ bool FileUtils::openExcutableFile(const QString &path, int flag)
         break;
     }
     case 2:
-        qDebug () << ">>>>>>>>>>>> prgram:" << path;
         result = QProcess::startDetached(path,QStringList());
         break;
     default:

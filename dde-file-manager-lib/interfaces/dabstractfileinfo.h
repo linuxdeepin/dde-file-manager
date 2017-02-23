@@ -116,6 +116,7 @@ public:
     virtual bool isDesktopFile() const;
 
     virtual DUrl symLinkTarget() const;
+    virtual DUrl rootSymLinkTarget() const;
 
     virtual QString owner() const;
     virtual uint ownerId() const;
@@ -214,6 +215,8 @@ public:
 
     virtual DUrl goToUrlWhenDeleted() const;
     virtual DUrl toLocalFile() const;
+
+    virtual bool canDrop() const;
 
 protected:
     explicit DAbstractFileInfo(DAbstractFileInfoPrivate &dd);

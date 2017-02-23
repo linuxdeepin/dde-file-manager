@@ -128,11 +128,6 @@ QIcon DesktopFileInfo::fileIcon() const
     return d->icon;
 }
 
-QString DesktopFileInfo::fileName() const
-{
-    return getName();
-}
-
 void DesktopFileInfo::refresh()
 {
     Q_D(DesktopFileInfo);
