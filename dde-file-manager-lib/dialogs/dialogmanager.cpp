@@ -419,26 +419,32 @@ void DialogManager::showPropertyDialog(const DFMEvent &event)
     int count = urlList.count();
     foreach (const DUrl& url, urlList) {
         int index = urlList.indexOf(url);
-        PropertyDialog *dialog;
-        if (m_propertyDialogs.contains(url)){
-            dialog = m_propertyDialogs.value(url);
-            dialog->raise();
+
+        if (url.isComputerFile()){
+            showComputerPropertyDialog(event);
         }else{
-            dialog = new PropertyDialog(event, url);
-            m_propertyDialogs.insert(url, dialog);
-            QPoint pos = getPerportyPos(dialog->size().width(), dialog->size().height(), count, index);
 
-            dialog->show();
-            dialog->move(pos);
+            PropertyDialog *dialog;
+            if (m_propertyDialogs.contains(url)){
+                dialog = m_propertyDialogs.value(url);
+                dialog->raise();
+            }else{
+                dialog = new PropertyDialog(event, url);
+                m_propertyDialogs.insert(url, dialog);
+                QPoint pos = getPerportyPos(dialog->size().width(), dialog->size().height(), count, index);
 
-            connect(dialog, &PropertyDialog::closed, this, &DialogManager::removePropertyDialog);
-//                connect(dialog, &PropertyDialog::raised, this, &DialogManager::raiseAllPropertyDialog);
-            QTimer::singleShot(100, dialog, &PropertyDialog::raise);
-        }
+                dialog->show();
+                dialog->move(pos);
 
-        if (urlList.count() >= 2){
-            m_closeIndicatorDialog->show();
-            m_closeIndicatorTimer->start();
+                connect(dialog, &PropertyDialog::closed, this, &DialogManager::removePropertyDialog);
+    //                connect(dialog, &PropertyDialog::raised, this, &DialogManager::raiseAllPropertyDialog);
+                QTimer::singleShot(100, dialog, &PropertyDialog::raise);
+            }
+
+            if (urlList.count() >= 2){
+                m_closeIndicatorDialog->show();
+                m_closeIndicatorTimer->start();
+            }
         }
     }
 }
