@@ -213,7 +213,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget* p
         m_expandGroup->expand(0)->setExpand(true);
 
     }else if (m_url == DUrl::fromLocalFile("/")){
-        m_icon->setPixmap(svgToPixmap(":/devices/images/device/drive-harddisk-deepin.svg", 128, 128));
+        m_icon->setPixmap(svgToPixmap(":/devices/images/device/drive-harddisk-256px.svg", 128, 128));
         m_edit->setPlainText(tr("System Disk"));
         m_editDisbaled = true;
 

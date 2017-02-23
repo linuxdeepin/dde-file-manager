@@ -162,6 +162,7 @@ DFileMenu *DFileMenuManager::createComputerLeftBarMenu(const QSet<MenuAction> &d
 
     actionKeys << MenuAction::OpenInNewWindow;
     actionKeys << MenuAction::OpenInNewTab;
+    actionKeys << MenuAction::Property;
 
     return genereteMenuByKeys(actionKeys, disableList);
 }
