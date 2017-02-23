@@ -358,12 +358,12 @@
         <translation type="vanished">有%1个任务在进行</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="419"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="421"/>
         <source>1 task in progress</source>
         <translation>有1个任务正在进行</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="421"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="423"/>
         <source>%1 tasks in progress</source>
         <translation>有%1个任务正在进行</translation>
     </message>
@@ -821,22 +821,22 @@
         <translation>副本</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="474"/>
+        <location filename="../../fileoperations/filejob.cpp" line="492"/>
         <source>%1 s</source>
         <translation>%1 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="478"/>
+        <location filename="../../fileoperations/filejob.cpp" line="496"/>
         <source>%1 m %2 s</source>
         <translation>%1 分 %2 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="484"/>
+        <location filename="../../fileoperations/filejob.cpp" line="502"/>
         <source>%1 h %2 m %3 s</source>
         <translation>%1 时 %2 分 %3 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="493"/>
+        <location filename="../../fileoperations/filejob.cpp" line="511"/>
         <source>%1 d %2 h %3 m %4 s</source>
         <translation>%1 天 %2 时 %3 分 %4 秒</translation>
     </message>
@@ -1002,7 +1002,7 @@
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="193"/>
         <source>Restoring %1</source>
-        <translation>整修恢复%1</translation>
+        <translation>正在恢复%1</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="194"/>
@@ -1015,12 +1015,12 @@
         <translation>正在删除%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="204"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="207"/>
         <source>Target folder already exists file named %1</source>
         <translation>目标文件夹中已存在名为%1的文件</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="205"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="208"/>
         <source>Original path %1 target path %2</source>
         <translation>原路径%1 目标路径%2</translation>
     </message>
@@ -1045,7 +1045,7 @@
         <translation type="vanished">&lt;span style=&quot;color: #3cadff&quot;&gt; %1 &lt;/span&gt; 被删除</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="200"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="203"/>
         <source>Calculating space, please wait</source>
         <translation>正在计算大小，请稍后</translation>
     </message>
@@ -1152,27 +1152,27 @@
 <context>
     <name>OpenWithOtherDialog</name>
     <message>
-        <location filename="../dialogs/openwithotherdialog.cpp" line="96"/>
+        <location filename="../dialogs/openwithotherdialog.cpp" line="100"/>
         <source>Open with</source>
         <translation>打开方式</translation>
     </message>
     <message>
-        <location filename="../dialogs/openwithotherdialog.cpp" line="105"/>
+        <location filename="../dialogs/openwithotherdialog.cpp" line="109"/>
         <source>Search</source>
         <translation>搜索</translation>
     </message>
     <message>
-        <location filename="../dialogs/openwithotherdialog.cpp" line="112"/>
+        <location filename="../dialogs/openwithotherdialog.cpp" line="116"/>
         <source>No results</source>
         <translation>无搜索结果</translation>
     </message>
     <message>
-        <location filename="../dialogs/openwithotherdialog.cpp" line="124"/>
+        <location filename="../dialogs/openwithotherdialog.cpp" line="128"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../dialogs/openwithotherdialog.cpp" line="125"/>
+        <location filename="../dialogs/openwithotherdialog.cpp" line="129"/>
         <source>Choose</source>
         <translation>选择</translation>
     </message>
