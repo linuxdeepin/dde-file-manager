@@ -1333,18 +1333,22 @@ void DFileSystemModel::onJobAddChildren(const DAbstractFileInfoPointer &fileInfo
     static QMutex mutex;
     static QWaitCondition condition;
 
-    QTimer *timer = new QTimer;
+    QTimer *volatile timer = new QTimer;
     timer->setSingleShot(true);
     timer->moveToThread(qApp->thread());
     timer->setParent(this);
-    connect(timer, &QTimer::timeout, this, [this, fileInfo, timer] {
+    connect(timer, &QTimer::timeout, this, [this, fileInfo, &timer] {
         timer->deleteLater();
         addFile(fileInfo);
+        timer = Q_NULLPTR;
         condition.wakeAll();
     });
-    timer->metaObject()->invokeMethod(timer, "start", Q_ARG(int, 0));
     mutex.lock();
-    condition.wait(&mutex);
+    timer->metaObject()->invokeMethod(timer, "start", Q_ARG(int, 0));
+
+    if (timer)
+        condition.wait(&mutex);
+
     mutex.unlock();
 }
 
