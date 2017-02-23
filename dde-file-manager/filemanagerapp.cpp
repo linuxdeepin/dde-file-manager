@@ -15,14 +15,14 @@
 #include "shutil/mimesappsmanager.h"
 #include "interfaces/dfmstandardpaths.h"
 #include "gvfs/gvfsmountmanager.h"
+#include "interfaces/dfileinfo.h"
 
 #include "widgets/singleton.h"
 #include "widgets/commandlinemanager.h"
 #include "interfaces/durl.h"
 #include "plugins/pluginmanager.h"
 #include "interfaces/dfmstandardpaths.h"
-#include "models/trashdesktopfileinfo.h"
-#include "models/computerdesktopfileinfo.h"
+#include "models/desktopfileinfo.h"
 #include "interfaces/dfileservices.h"
 #include "utils/utils.h"
 
@@ -180,12 +180,33 @@ void FileManagerApp::showPropertyDialog(const QStringList paths)
         if(uPath.endsWith(QDir::separator()) && uPath.size() > 1)
             uPath.chop(1);
         url.setPath(uPath);
-        if(url == ComputerDesktopFileInfo::computerDesktopFileUrl() || url == DUrl::fromComputerFile("/")){
+
+        //symlink , desktop files filters
+        const DAbstractFileInfoPointer& info = fileService->createFileInfo(url);
+        DUrl testUrl = url;
+        if(info->isSymLink()){
+            testUrl = info->symLinkTarget();
+        }
+
+        if(testUrl.toLocalFile().endsWith(".desktop")){
+            DesktopFile df(testUrl.toLocalFile());
+            if(df.getDeepinId() == "dde-trash"){
+                DFMEvent event;
+                event << DUrl::fromTrashFile("/");
+                dialogManager->showTrashPropertyDialog(event);
+                continue;
+            } else if(df.getDeepinId() == "dde-computer"){
+                dialogManager->showComputerPropertyDialog(DFMEvent());
+                continue;
+            }
+        }
+
+        //trash:/// and computer:///
+        if(url == DUrl::fromComputerFile("/")){
             dialogManager->showComputerPropertyDialog(DFMEvent());
             continue;
         }
-
-        if(url == TrashDesktopFileInfo::trashDesktopFileUrl() || url == DUrl::fromTrashFile("/")){
+        if(url == DUrl::fromTrashFile("/")){
             DFMEvent event;
             event << DUrl::fromTrashFile("/");
             dialogManager->showTrashPropertyDialog(event);
@@ -195,7 +216,7 @@ void FileManagerApp::showPropertyDialog(const QStringList paths)
             if(url.scheme() == FILE_SCHEME && !QFile::exists(url.path()))
                 continue;
             if(url == DUrl::fromTrashFile("/") ||
-                    url == TrashDesktopFileInfo::trashDesktopFileUrl()){
+                    url == DesktopFileInfo::trashDesktopFileUrl()){
                 DFMEvent event;
                 event << DUrl::fromTrashFile("/");
                 DUrlList urls;

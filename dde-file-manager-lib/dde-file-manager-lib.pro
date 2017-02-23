@@ -167,8 +167,6 @@ HEADERS += \
     interfaces/dfileproxywatcher.h \
     plugins/pluginmanager.h \
     plugins/plugininterfaces/menu/menuinterface.h \
-    models/computerdesktopfileinfo.h \
-    models/trashdesktopfileinfo.h \
     interfaces/dthumbnailprovider.h \
     views/viewmanager.h \
     views/progressline.h \
@@ -287,8 +285,6 @@ SOURCES += \
     interfaces/dfileproxywatcher.cpp \
     app/filesignalmanager.cpp \
     plugins/pluginmanager.cpp \
-    models/computerdesktopfileinfo.cpp \
-    models/trashdesktopfileinfo.cpp \
     interfaces/dthumbnailprovider.cpp \
     views/viewmanager.cpp \
     views/progressline.cpp \

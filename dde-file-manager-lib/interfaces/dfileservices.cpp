@@ -10,8 +10,7 @@
 #include "views/windowmanager.h"
 #include "dfileinfo.h"
 #include "models/trashfileinfo.h"
-#include "models/computerdesktopfileinfo.h"
-#include "models/trashdesktopfileinfo.h"
+#include "models/desktopfileinfo.h"
 #include "controllers/pathmanager.h"
 #include "dfmstandardpaths.h"
 #include "views/windowmanager.h"
@@ -271,11 +270,17 @@ bool DFileService::decompressFileHere(const DUrlList urllist) const{
 bool DFileService::copyFilesToClipboard(const DUrlList &urlList) const
 {
 #ifdef DDE_COMPUTER_TRASH
-    if(urlList.contains(ComputerDesktopFileInfo::computerDesktopFileUrl()))
-        const_cast<DUrlList&>(urlList).removeOne(ComputerDesktopFileInfo::computerDesktopFileUrl());
+    if(urlList.contains(DesktopFileInfo::computerDesktopFileUrl())){
+        DesktopFile df(DesktopFileInfo::computerDesktopFileUrl().toLocalFile());
+        if(df.getDeepinId() == "dde-computer")
+            const_cast<DUrlList&>(urlList).removeOne(DesktopFileInfo::computerDesktopFileUrl());
+    }
 
-    if(urlList.contains(TrashDesktopFileInfo::trashDesktopFileUrl()))
-        const_cast<DUrlList&>(urlList).removeOne(TrashDesktopFileInfo::trashDesktopFileUrl());
+    if(urlList.contains(DesktopFileInfo::trashDesktopFileUrl())){
+        DesktopFile df(DesktopFileInfo::trashDesktopFileUrl().toLocalFile());
+        if(df.getDeepinId() == "dde-trash")
+            const_cast<DUrlList&>(urlList).removeOne(DesktopFileInfo::trashDesktopFileUrl());
+    }
 #endif
     if(urlList.isEmpty())
         return false;
@@ -334,13 +339,20 @@ bool DFileService::deleteFiles(const DFMEvent &event) const
 
 #ifdef DDE_COMPUTER_TRASH
     DUrlList urlList = event.fileUrlList();
-    if(urlList.contains(ComputerDesktopFileInfo::computerDesktopFileUrl()))
-        urlList.removeOne(ComputerDesktopFileInfo::computerDesktopFileUrl());
+    if(urlList.contains(DesktopFileInfo::computerDesktopFileUrl())){
+        DesktopFile df(DesktopFileInfo::computerDesktopFileUrl().toLocalFile());
+        if(df.getDeepinId() == "dde-computer")
+            urlList.removeOne(DesktopFileInfo::computerDesktopFileUrl());
+    }
 
-    if(urlList.contains(TrashDesktopFileInfo::trashDesktopFileUrl()))
-        urlList.removeOne(TrashDesktopFileInfo::trashDesktopFileUrl());
-
+    if(urlList.contains(DesktopFileInfo::trashDesktopFileUrl())){
+        DesktopFile df(DesktopFileInfo::trashDesktopFileUrl().toLocalFile());
+        if(df.getDeepinId() == "dde-trash")
+            urlList.removeOne(DesktopFileInfo::trashDesktopFileUrl());
+    }
     const_cast<DFMEvent&>(event) << urlList;
+    if (event.fileUrlList().isEmpty())
+        return false;
 #endif
 
     if (event.fileUrlList().isEmpty())
@@ -388,14 +400,19 @@ void DFileService::moveToTrash(const DFMEvent &event) const
     FILTER_RETURN(MoveToTrash)
 
 #ifdef DDE_COMPUTER_TRASH
-    DUrlList urlList = event.fileUrlList();
-    if(urlList.contains(ComputerDesktopFileInfo::computerDesktopFileUrl()))
-        urlList.removeOne(ComputerDesktopFileInfo::computerDesktopFileUrl());
+     DUrlList urlList = event.fileUrlList();
+    if(urlList.contains(DesktopFileInfo::computerDesktopFileUrl())){
+        DesktopFile df(DesktopFileInfo::computerDesktopFileUrl().toLocalFile());
+        if(df.getDeepinId() == "dde-computer")
+            urlList.removeOne(DesktopFileInfo::computerDesktopFileUrl());
+    }
 
-    if(urlList.contains(TrashDesktopFileInfo::trashDesktopFileUrl()))
-        urlList.removeOne(TrashDesktopFileInfo::trashDesktopFileUrl());
+    if(urlList.contains(DesktopFileInfo::trashDesktopFileUrl())){
+        DesktopFile df(DesktopFileInfo::trashDesktopFileUrl().toLocalFile());
+        if(df.getDeepinId() == "dde-trash")
+            urlList.removeOne(DesktopFileInfo::trashDesktopFileUrl());
+    }
     const_cast<DFMEvent&>(event) << urlList;
-
     if (event.fileUrlList().isEmpty())
         return;
 #endif
@@ -457,11 +474,19 @@ bool DFileService::cutFilesToClipboard(const DUrlList &urlList) const
 {
 
 #ifdef DDE_COMPUTER_TRASH
-    if(urlList.contains(ComputerDesktopFileInfo::computerDesktopFileUrl()))
-        const_cast<DUrlList&>(urlList).removeOne(ComputerDesktopFileInfo::computerDesktopFileUrl());
+    if(urlList.contains(DesktopFileInfo::computerDesktopFileUrl())){
+        DesktopFile df(DesktopFileInfo::computerDesktopFileUrl().toLocalFile());
+        if(df.getDeepinId() == "dde-computer")
+            const_cast<DUrlList&>(urlList).removeOne(DesktopFileInfo::computerDesktopFileUrl());
+    }
 
-    if(urlList.contains(TrashDesktopFileInfo::trashDesktopFileUrl()))
-        const_cast<DUrlList&>(urlList).removeOne(TrashDesktopFileInfo::trashDesktopFileUrl());
+    if(urlList.contains(DesktopFileInfo::trashDesktopFileUrl())){
+        DesktopFile df(DesktopFileInfo::trashDesktopFileUrl().toLocalFile());
+        if(df.getDeepinId() == "dde-trash")
+            const_cast<DUrlList&>(urlList).removeOne(DesktopFileInfo::trashDesktopFileUrl());
+    }
+    if (urlList.isEmpty())
+        return false;
 #endif
 
     if(urlList.isEmpty())
@@ -694,12 +719,10 @@ void DFileService::openFile(const DFMEvent &event) const
 
 const DAbstractFileInfoPointer DFileService::createFileInfo(const DUrl &fileUrl) const
 {
-    if(fileUrl != TrashDesktopFileInfo::trashDesktopFileUrl() && fileUrl != ComputerDesktopFileInfo::computerDesktopFileUrl()){
-        const DAbstractFileInfoPointer &info = DAbstractFileInfo::getFileInfo(fileUrl);
+    const DAbstractFileInfoPointer &info = DAbstractFileInfo::getFileInfo(fileUrl);
 
-        if (info)
-            return info;
-    }
+    if (info)
+        return info;
 
     TRAVERSE(fileUrl, {
                  const DAbstractFileInfoPointer &info = controller->createFileInfo(fileUrl, accepted);
