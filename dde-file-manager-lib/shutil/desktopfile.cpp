@@ -24,6 +24,9 @@ DesktopFile::DesktopFile(const QString &fileName) {
     Properties desktop(fileName, "Desktop Entry");
     m_name = desktop.value("Name", settings.value("Name")).toString();
 
+    if(desktop.contains("X-Deepin-AppID")){
+        m_deepinId = desktop.value("X-Deepin-AppID", settings.value("X-Deepin-AppID")).toString();
+    }
 
     QString localKey = QString("Name[%1]").arg(QLocale::system().name());
     if (desktop.contains(localKey)){
@@ -74,6 +77,11 @@ QString DesktopFile::getIcon() const {
 
 QString DesktopFile::getType() const {
     return m_type;
+}
+
+QString DesktopFile::getDeepinId() const
+{
+    return m_deepinId;
 }
 //---------------------------------------------------------------------------
 

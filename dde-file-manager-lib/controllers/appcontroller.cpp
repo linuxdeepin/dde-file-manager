@@ -42,8 +42,7 @@
 #include <qprocess.h>
 #include <QMediaPlayer>
 #include "shutil/shortcut.h"
-#include "models/computerdesktopfileinfo.h"
-#include "models/trashdesktopfileinfo.h"
+#include "models/desktopfileinfo.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -330,7 +329,7 @@ void AppController::actionClearTrash(const DFMEvent &event)
     list << DUrl::fromTrashFile("/");
 
 #ifdef DDE_COMPUTER_TRASH
-    if(event.fileUrl() == TrashDesktopFileInfo::trashDesktopFileUrl())
+    if(event.fileUrl() == DesktopFileInfo::trashDesktopFileUrl())
         const_cast<DFMEvent&>(event) << DUrl::fromTrashFile("/");
 #endif
 
@@ -441,37 +440,32 @@ void AppController::actionProperty(const DFMEvent &event)
     if (event.fileUrlList().isEmpty())
         return;
 
-    if(event.fileUrlList().count() == 1){
-        if(event.fileUrlList().first() == TrashDesktopFileInfo::trashDesktopFileUrl()){
-            const_cast<DFMEvent&>(event) << DUrl::fromTrashFile("/");
-            emit fileSignalManager->requestShowTrashPropertyDialog(event);
-            return;
+    DUrlList urlList = event.fileUrlList();
+    foreach (const DUrl& url, urlList) {
+        DUrl testUrl = url;
+
+        //consider symlink file that links to trash/computer desktop files
+        const DAbstractFileInfoPointer& info = fileService->createFileInfo(url);
+        if(info->isSymLink()){
+            testUrl = info->symLinkTarget();
         }
 
-        if(event.fileUrlList().first() == ComputerDesktopFileInfo::computerDesktopFileUrl()){
-            const_cast<DFMEvent&>(event) << DUrl::fromComputerFile("/");
-            emit fileSignalManager->requestShowComputerPropertyDialog(event);
-            return;
+        if(testUrl.toLocalFile().endsWith(QString(".") + DESKTOP_SURRIX)){
+            DesktopFile df(testUrl.toLocalFile());
+            if(df.getDeepinId() == "dde-trash"){
+                dialogManager->showTrashPropertyDialog(event);
+                urlList.removeOne(url);
+            } else if(df.getDeepinId() == "dde-computer"){
+                dialogManager->showComputerPropertyDialog(event);
+                urlList.removeOne(url);
+            }
         }
-
-    } else{
-        DUrlList urlList = event.fileUrlList();
-        if(urlList.contains(TrashDesktopFileInfo::trashDesktopFileUrl())){
-            const_cast<DFMEvent&>(event) << DUrl::fromTrashFile("/");
-            emit fileSignalManager->requestShowTrashPropertyDialog(event);
-            urlList.removeOne(TrashDesktopFileInfo::trashDesktopFileUrl());
-        }
-
-        if(urlList.contains(ComputerDesktopFileInfo::computerDesktopFileUrl())){
-            dialogManager->showComputerPropertyDialog(event);
-            urlList.removeOne(ComputerDesktopFileInfo::computerDesktopFileUrl());
-        }
-
-        if(urlList.isEmpty())
-            return;
-
-        const_cast<DFMEvent&>(event) << urlList;
     }
+
+    if(urlList.isEmpty())
+        return;
+
+    const_cast<DFMEvent&>(event) << urlList;
 
     if (event.fileUrlList().first() == DUrl::fromTrashFile("/")){
         emit fileSignalManager->requestShowTrashPropertyDialog(event);
