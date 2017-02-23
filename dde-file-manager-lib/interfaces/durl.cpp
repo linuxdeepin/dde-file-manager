@@ -211,7 +211,7 @@ void DUrl::setSearchedFileUrl(const DUrl &url)
     if (!isSearchFile())
         return;
 
-    setFragment(url.toString());
+    setFragment(url.toString(QUrl::FullyEncoded), QUrl::DecodedMode);
 }
 
 DUrl DUrl::fromLocalFile(const QString &filePath)
