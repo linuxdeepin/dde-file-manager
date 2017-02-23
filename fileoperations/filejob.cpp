@@ -44,7 +44,8 @@ bool FileJob::setDirPermissions(const QString &scrPath, const QString& tarDirPat
     std::string stdSrcPath = scrPath.toStdString();
     stat(stdSrcPath.data(), &buf);
     std::string stdTarDirPath = tarDirPath.toStdString();
-    bool success = ::chmod(stdTarDirPath.data(), buf.st_mode & 0777) == 0;
+    /*07777 represent permission of Linux*/
+    bool success = ::chmod(stdTarDirPath.data(), buf.st_mode & 07777) == 0;
     return success;
 }
 
