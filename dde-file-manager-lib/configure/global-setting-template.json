@@ -111,7 +111,8 @@
                             "key": "quick_search",
                             "text": "Quick search",
                             "type": "checkbox",
-                            "default": true
+                            "default": false,
+                            "hide": true
                         },
                         {
                             "key": "show_hidden",
@@ -171,7 +172,7 @@
                             "key": "auto_mount_and_open",
                             "text": "Auto mount and open",
                             "type": "checkbox",
-                            "default": true
+                            "default": false
                         }
                     ]
                 },
