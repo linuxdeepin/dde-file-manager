@@ -140,6 +140,7 @@ void DStatusBar::setMode(DStatusBar::Mode mode)
     m_lineEditLabel = new QLabel(this);
     m_lineEditLabel->setObjectName("lineEditLabel");
     m_lineEditLabel->setText(tr("Save as:"));
+    m_lineEditLabel->hide();
 
     if (m_label) {
         m_label->hide();

@@ -159,6 +159,20 @@ QString DFileDialogHandle::selectedNameFilter() const
     return d->dialog->selectedNameFilter();
 }
 
+void DFileDialogHandle::selectNameFilterByIndex(int index)
+{
+    D_DC(DFileDialogHandle);
+
+    d->dialog->selectNameFilterByIndex(index);
+}
+
+int DFileDialogHandle::selectedNameFilterIndex() const
+{
+    D_DC(DFileDialogHandle);
+
+    return d->dialog->selectedNameFilterIndex();
+}
+
 QDir::Filters DFileDialogHandle::filter() const
 {
     D_DC(DFileDialogHandle);

@@ -63,6 +63,20 @@ bool DBusFileDialogManager::isUseFileChooserDialog() const
     return globalSetting->isDefaultChooserDialog();
 }
 
+QStringList DBusFileDialogManager::globPatternsForMime(const QString &mimeType) const
+{
+    QMimeDatabase db;
+    QMimeType mime(db.mimeTypeForName(mimeType));
+    if (mime.isValid()) {
+        if (mime.isDefault()) {
+            return QStringList(QStringLiteral("*"));
+        } else {
+            return mime.globPatterns();
+        }
+    }
+    return QStringList();
+}
+
 void DBusFileDialogManager::onDialogDestroy()
 {
     const QDBusObjectPath &path = m_dialogObjectMap.key(QObject::sender());

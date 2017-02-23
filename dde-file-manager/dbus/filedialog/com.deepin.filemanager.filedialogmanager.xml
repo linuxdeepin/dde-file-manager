@@ -18,5 +18,9 @@
     <method name="isUseFileChooserDialog">
         <arg name="ok" type="b" direction="out"/>
     </method>
+    <method name="globPatternsForMime">
+        <arg name="mime" type="s" direction="in"/>
+        <arg name="patterns" type="as" direction="out"/>
+    </method>
   </interface>
 </node>

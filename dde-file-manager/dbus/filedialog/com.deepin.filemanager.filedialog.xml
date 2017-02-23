@@ -32,6 +32,12 @@
     <method name="selectedNameFilter">
         <arg name="filter" type="s" direction="out"/>
     </method>
+    <method name="selectNameFilterByIndex">
+        <arg name="index" type="i" direction="in"/>
+    </method>
+    <method name="selectedNameFilterIndex">
+        <arg name="index" type="i" direction="out"/>
+    </method>
     <method name="setFileMode">
         <arg name="fileMode" type="i" direction="in"/>
     </method>
