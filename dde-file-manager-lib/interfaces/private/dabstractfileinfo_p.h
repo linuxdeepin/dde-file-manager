@@ -15,6 +15,10 @@
 
 #include <QPointer>
 
+QT_BEGIN_NAMESPACE
+class QReadWriteLock;
+QT_END_NAMESPACE
+
 DFM_USE_NAMESPACE
 
 class DAbstractFileInfoPrivate
@@ -36,6 +40,7 @@ public:
 
 private:
     DUrl fileUrl;
+    static QReadWriteLock *urlToFileInfoMapLock;
     static QMap<DUrl, DAbstractFileInfo*> urlToFileInfoMap;
 
     Q_DECLARE_PUBLIC(DAbstractFileInfo)
