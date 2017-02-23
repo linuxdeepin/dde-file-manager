@@ -33,6 +33,8 @@ public:
     QStringList nameFilters() const;
     void selectNameFilter(const QString &filter);
     QString selectedNameFilter() const;
+    void selectNameFilterByIndex(int index);
+    int selectedNameFilterIndex() const;
 
     QDir::Filters filter() const;
     void setFilter(QDir::Filters filters);

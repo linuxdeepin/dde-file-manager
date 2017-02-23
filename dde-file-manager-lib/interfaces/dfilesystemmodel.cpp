@@ -104,7 +104,7 @@ bool DFileSystemModelPrivate::passNameFilters(const FileSystemNodePointer &node)
         return true;
 
     // Check the name regularexpression filters
-    if (!(node->fileInfo->isDir() && (filters & QDir::AllDirs))) {
+    if (!(node->fileInfo->isDir() && (filters & (QDir::AllDirs | QDir::Dirs)))) {
         for (int i = 0; i < nameFilters.size(); ++i) {
             const Qt::CaseSensitivity caseSensitive = (filters & QDir::CaseSensitive) ? Qt::CaseSensitive : Qt::CaseInsensitive;
             QRegExp re(nameFilters.at(i), caseSensitive, QRegExp::Wildcard);

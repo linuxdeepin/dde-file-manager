@@ -219,12 +219,37 @@ QStringList DFileDialog::nameFilters() const
 
 void DFileDialog::selectNameFilter(const QString &filter)
 {
+    QString key;
+
+    if (testOption(QFileDialog::HideNameFilterDetails)) {
+        key = qt_strip_filters(QStringList(filter)).first();
+    } else {
+        key = filter;
+    }
+
+    int index = getFileView()->statusBar()->comboBox()->findText(key);
+
+    selectNameFilterByIndex(index);
+}
+
+QString DFileDialog::selectedNameFilter() const
+{
+    const QStringList &filters = getFileView()->nameFilters();
+
+    if (filters.isEmpty())
+        return QString();
+
+    return filters.first();
+}
+
+void DFileDialog::selectNameFilterByIndex(int index)
+{
     D_D(DFileDialog);
 
-    int index = getFileView()->statusBar()->comboBox()->findText(filter);
-
-    if (index < 0)
+    if (index < 0 || index >= getFileView()->statusBar()->comboBox()->count())
         return;
+
+    getFileView()->statusBar()->comboBox()->setCurrentIndex(index);
 
     QStringList nameFilters = d->nameFilters;
 
@@ -255,14 +280,9 @@ void DFileDialog::selectNameFilter(const QString &filter)
     getFileView()->setNameFilters(newNameFilters);
 }
 
-QString DFileDialog::selectedNameFilter() const
+int DFileDialog::selectedNameFilterIndex() const
 {
-    const QStringList &filters = getFileView()->nameFilters();
-
-    if (filters.isEmpty())
-        return QString();
-
-    return filters.first();
+    return getFileView()->statusBar()->comboBox()->findText(selectedNameFilter());
 }
 
 QDir::Filters DFileDialog::filter() const

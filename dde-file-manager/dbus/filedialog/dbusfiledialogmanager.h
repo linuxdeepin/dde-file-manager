@@ -16,6 +16,8 @@ public:
 
     bool isUseFileChooserDialog() const;
 
+    QStringList globPatternsForMime(const QString &mimeType) const;
+
 private:
     void onDialogDestroy();
 
