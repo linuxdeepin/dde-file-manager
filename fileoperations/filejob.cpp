@@ -451,74 +451,94 @@ void FileJob::jobUpdated()
     }
 
     QMap<QString, QString> jobDataDetail;
-    if (!m_isFinished){
 
-        qint64 currentMsec = m_timer.elapsed();
-
-        m_factor = (currentMsec - m_lastMsec) / 1000;
-
-        if (m_factor <= 0)
-            return;
-
-        m_bytesPerSec /= m_factor;
-
-        if (m_bytesPerSec == 0){
-            return;
-        }
-
-        if(m_bytesPerSec > 0)
-        {
-            int remainTime = (m_totalSize - m_bytesCopied) / m_bytesPerSec;
-
-            if (remainTime < 60){
-                jobDataDetail.insert("remainTime", tr("%1 s").arg(QString::number(remainTime)));
-            }else if (remainTime >=60  && remainTime < 3600){
-                int min = remainTime / 60;
-                int second = remainTime % 60;
-                jobDataDetail.insert("remainTime", tr("%1 m %2 s").arg(QString::number(min),
-                                                                            QString::number(second)));
-            }else if (remainTime >=3600  && remainTime < 86400){
-                int hour = remainTime / 3600;
-                int min = (remainTime % 3600) / 60;
-                int second = (remainTime % 3600) % 60;
-                jobDataDetail.insert("remainTime", tr("%1 h %2 m %3 s").arg(QString::number(hour),
-                                                                                 QString::number(min),
-                                                                                 QString::number(second)));
+    if (m_jobType == Restore){
+        jobDataDetail.insert("file", m_srcFileName);
+        jobDataDetail.insert("destination", m_tarDirName);
+        if (!m_isFinished){
+            if (m_status == Run){
+                jobDataDetail.insert("file", m_srcFileName);
+                jobDataDetail.insert("destination", m_tarDirName);
+                jobDataDetail.insert("status", "restoring");
             }else{
-                int day = remainTime / 86400;
-                int left = remainTime % 86400;
-                int hour = left / 3600;
-                int min = (left % 3600) / 60;
-                int second = (left % 3600) % 60;
-                jobDataDetail.insert("remainTime", tr("%1 d %2 h %3 m %4 s").arg(QString::number(day),
-                                                                                      QString::number(hour),
-                                                                                      QString::number(min),
-                                                                                      QString::number(second)));
+                return;
+            }
+        }else{
+            if (m_status != Cancelled){
+                jobDataDetail.insert("progress", "100");
             }
         }
-    }
-    QString speed;
-
-    if (m_bytesCopied == m_totalSize){
-        speed = QString("0 MB/s");
     }else{
-        if(m_bytesPerSec > ONE_MB_SIZE)
-        {
-            m_bytesPerSec = m_bytesPerSec / ONE_MB_SIZE;
-            speed = QString("%1 MB/s").arg(QString::number(m_bytesPerSec));
-        }
-        else
-        {
-            m_bytesPerSec = m_bytesPerSec / ONE_KB_SIZE;
-            speed = QString("%1 KB/s").arg(QString::number(m_bytesPerSec));
-        }
-    }
+        if (!m_isFinished){
 
-    jobDataDetail.insert("speed", speed);
-    jobDataDetail.insert("file", m_srcFileName);
-    jobDataDetail.insert("progress", QString::number(m_bytesCopied * 100/ m_totalSize));
-    jobDataDetail.insert("destination", m_tarDirName);
-    m_progress = jobDataDetail.value("progress");
+            qint64 currentMsec = m_timer.elapsed();
+
+            m_factor = (currentMsec - m_lastMsec) / 1000;
+
+            if (m_factor <= 0)
+                return;
+
+            m_bytesPerSec /= m_factor;
+
+            if (m_bytesPerSec == 0){
+                return;
+            }
+
+            if(m_bytesPerSec > 0)
+            {
+                int remainTime = (m_totalSize - m_bytesCopied) / m_bytesPerSec;
+
+                if (remainTime < 60){
+                    jobDataDetail.insert("remainTime", tr("%1 s").arg(QString::number(remainTime)));
+                }else if (remainTime >=60  && remainTime < 3600){
+                    int min = remainTime / 60;
+                    int second = remainTime % 60;
+                    jobDataDetail.insert("remainTime", tr("%1 m %2 s").arg(QString::number(min),
+                                                                                QString::number(second)));
+                }else if (remainTime >=3600  && remainTime < 86400){
+                    int hour = remainTime / 3600;
+                    int min = (remainTime % 3600) / 60;
+                    int second = (remainTime % 3600) % 60;
+                    jobDataDetail.insert("remainTime", tr("%1 h %2 m %3 s").arg(QString::number(hour),
+                                                                                     QString::number(min),
+                                                                                     QString::number(second)));
+                }else{
+                    int day = remainTime / 86400;
+                    int left = remainTime % 86400;
+                    int hour = left / 3600;
+                    int min = (left % 3600) / 60;
+                    int second = (left % 3600) % 60;
+                    jobDataDetail.insert("remainTime", tr("%1 d %2 h %3 m %4 s").arg(QString::number(day),
+                                                                                          QString::number(hour),
+                                                                                          QString::number(min),
+                                                                                          QString::number(second)));
+                }
+            }
+        }
+        QString speed;
+
+        if (m_bytesCopied == m_totalSize){
+            speed = QString("0 MB/s");
+        }else{
+            if(m_bytesPerSec > ONE_MB_SIZE)
+            {
+                m_bytesPerSec = m_bytesPerSec / ONE_MB_SIZE;
+                speed = QString("%1 MB/s").arg(QString::number(m_bytesPerSec));
+            }
+            else
+            {
+                m_bytesPerSec = m_bytesPerSec / ONE_KB_SIZE;
+                speed = QString("%1 KB/s").arg(QString::number(m_bytesPerSec));
+            }
+        }
+
+        jobDataDetail.insert("speed", speed);
+        jobDataDetail.insert("file", m_srcFileName);
+        jobDataDetail.insert("progress", QString::number(m_bytesCopied * 100/ m_totalSize));
+        jobDataDetail.insert("destination", m_tarDirName);
+        m_progress = jobDataDetail.value("progress");
+    }
+    qDebug() << m_jobDetail << jobDataDetail;
     emit requestJobDataUpdated(m_jobDetail, jobDataDetail);
 
     m_lastMsec = m_timer.elapsed();
@@ -1409,14 +1429,6 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
     if(toInfo.exists())
     {
         jobConflicted();
-    }else{
-        bool result = from.rename(tarFile);
-
-        if (!result) {
-            result = (QProcess::execute("mv -T \"" + from.fileName().toUtf8() + "\" \"" + tarFile.toUtf8() + "\"") == 0);
-        }
-
-        return result;
     }
 
     while(true)
@@ -1453,12 +1465,14 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
                         }
                     }
                 }
+
                 bool result = from.rename(m_srcPath);
 
                 if (!result) {
+                    qDebug() << m_srcPath << from.error() << from.errorString();
                     result = (QProcess::execute("mv -T \"" + from.fileName().toUtf8() + "\" \"" + m_srcPath.toUtf8() + "\"") == 0);
                 }
-//                qDebug() << m_srcPath << from.error() << from.errorString();
+
                 return result;
             }
             case FileJob::Paused:

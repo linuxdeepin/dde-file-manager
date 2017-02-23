@@ -196,7 +196,10 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data){
             msg1 = tr("Deleting %1").arg(file);
             msg2 = tr("");
         }
-        if(status == "calculating"){
+
+        if (status == "restoring"){
+            m_animatePad->startAnimation();
+        }else if(status == "calculating"){
             msg2 = tr("Calculating space, please wait");
             m_animatePad->startAnimation();
         } else if(status == "conflict"){
@@ -206,7 +209,6 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data){
         } else{
             m_animatePad->stopAnimation();
         }
-
 
         QFontMetrics fm(m_msg1Label->font());
         msg1 = fm.elidedText(msg1, Qt::ElideRight, m_msg1Label->width());
