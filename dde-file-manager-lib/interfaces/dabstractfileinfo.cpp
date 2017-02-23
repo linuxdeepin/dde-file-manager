@@ -21,7 +21,7 @@
 #include <QDebug>
 #include <QApplication>
 #include <QCollator>
-
+#include <QWriteLocker>
 
 namespace FileSortFunction {
 QCollator sortCollator;
@@ -50,6 +50,7 @@ COMPARE_FUN_DEFINE(created, Created, DAbstractFileInfo)
     if (d->proxy) return d->proxy->Fun;
 
 QMap<DUrl, DAbstractFileInfo*> DAbstractFileInfoPrivate::urlToFileInfoMap;
+QReadWriteLock *DAbstractFileInfoPrivate::urlToFileInfoMapLock = new QReadWriteLock();
 DMimeDatabase DAbstractFileInfoPrivate::mimeDatabase;
 
 DAbstractFileInfoPrivate::DAbstractFileInfoPrivate(const DUrl &url, DAbstractFileInfo *qq, bool hasCache)
@@ -57,6 +58,9 @@ DAbstractFileInfoPrivate::DAbstractFileInfoPrivate(const DUrl &url, DAbstractFil
     , fileUrl(url)
 {
     if (hasCache) {
+        QWriteLocker locker(urlToFileInfoMapLock);
+        Q_UNUSED(locker)
+
         urlToFileInfoMap[url] = qq;
     }
 
@@ -66,8 +70,11 @@ DAbstractFileInfoPrivate::DAbstractFileInfoPrivate(const DUrl &url, DAbstractFil
 
 DAbstractFileInfoPrivate::~DAbstractFileInfoPrivate()
 {
-    if (urlToFileInfoMap.value(fileUrl) == q_ptr)
+    if (urlToFileInfoMap.value(fileUrl) == q_ptr) {
+        QWriteLocker locker(urlToFileInfoMapLock);
+        Q_UNUSED(locker)
         urlToFileInfoMap.remove(fileUrl);
+    }
 }
 
 void DAbstractFileInfoPrivate::setUrl(const DUrl &url, bool hasCache)
@@ -75,11 +82,17 @@ void DAbstractFileInfoPrivate::setUrl(const DUrl &url, bool hasCache)
     if (url == fileUrl)
         return;
 
-    if (urlToFileInfoMap.value(fileUrl) == q_ptr)
+    if (urlToFileInfoMap.value(fileUrl) == q_ptr) {
+        QWriteLocker locker(urlToFileInfoMapLock);
+        Q_UNUSED(locker)
         urlToFileInfoMap.remove(fileUrl);
+    }
 
-    if (hasCache)
+    if (hasCache) {
+        QWriteLocker locker(urlToFileInfoMapLock);
+        Q_UNUSED(locker)
         urlToFileInfoMap[url] = q_ptr;
+    }
 
     fileUrl = url;
 }
