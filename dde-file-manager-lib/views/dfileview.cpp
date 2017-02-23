@@ -640,7 +640,9 @@ void DFileView::sort(int column, Qt::SortOrder order)
     model()->setSortColumn(column, order);
 
     d->oldSelectedUrls = this->selectedUrls();
-    d->oldCurrentUrl = model()->getUrlByIndex(currentIndex());
+
+    if (!d->oldSelectedUrls.isEmpty())
+        d->oldCurrentUrl = model()->getUrlByIndex(currentIndex());
 
     clearSelection();
     model()->sort();
