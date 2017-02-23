@@ -4,8 +4,6 @@
 #include "dfilewatcher.h"
 #include "dfileinfo.h"
 #include "models/desktopfileinfo.h"
-#include "models/computerdesktopfileinfo.h"
-#include "models/trashdesktopfileinfo.h"
 
 #include "app/define.h"
 #include "dfmevent.h"
@@ -73,12 +71,6 @@ const DAbstractFileInfoPointer FileController::createFileInfo(const DUrl &fileUr
     accepted = true;
 
     if (fileUrl.toLocalFile().endsWith(QString(".") + DESKTOP_SURRIX)){
-
-        if(fileUrl == ComputerDesktopFileInfo::computerDesktopFileUrl())
-            return DAbstractFileInfoPointer(new ComputerDesktopFileInfo());
-
-        if(fileUrl == TrashDesktopFileInfo::trashDesktopFileUrl())
-            return DAbstractFileInfoPointer(new TrashDesktopFileInfo());
 
         return DAbstractFileInfoPointer(new DesktopFileInfo(fileUrl));
     }
@@ -539,13 +531,6 @@ const DAbstractFileInfoPointer FileDirIterator::fileInfo() const
     }
 
     if (fileName().endsWith(QString(".") + DESKTOP_SURRIX)){
-
-        #ifdef DDE_COMPUTER_TRASH
-        if(filePath() == ComputerDesktopFileInfo::computerDesktopFileUrl().toLocalFile())
-            return DAbstractFileInfoPointer(new ComputerDesktopFileInfo());
-        else if(filePath() == TrashDesktopFileInfo::trashDesktopFileUrl().toLocalFile())
-            return DAbstractFileInfoPointer(new TrashDesktopFileInfo());
-        #endif
 
         return DAbstractFileInfoPointer(new DesktopFileInfo(processRlocate ? currentFileInfo : iterator.fileInfo()));
     }

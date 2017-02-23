@@ -25,8 +25,7 @@
 #include "app/define.h"
 #include "dfmevent.h"
 #include "app/filesignalmanager.h"
-#include "models/trashdesktopfileinfo.h"
-#include "models/computerdesktopfileinfo.h"
+#include "models/desktopfileinfo.h"
 
 #include "controllers/bookmarkmanager.h"
 #include "controllers/appcontroller.h"
@@ -740,14 +739,25 @@ void DBookmarkItem::dropEvent(QGraphicsSceneDragDropEvent *event)
     if(m_isDisk)
         return;
 
+    DUrlList urlList;
+#ifdef DDE_COMPUTER_TRASH
     //filter out trash desktop file and computer desktop file on desktop path
-    DUrlList urlList = DUrl::fromQUrlList(event->mimeData()->urls());
-    if(m_url == DUrl::fromTrashFile("/")){
-        if(urlList.contains(TrashDesktopFileInfo::trashDesktopFileUrl()))
-            urlList.removeOne(TrashDesktopFileInfo::trashDesktopFileUrl());
-        if(urlList.contains(ComputerDesktopFileInfo::computerDesktopFileUrl()))
-            urlList.removeOne(ComputerDesktopFileInfo::computerDesktopFileUrl());
+    foreach (const DUrl& url, DUrl::fromQUrlList(event->mimeData()->urls())) {
+        if(url == DesktopFileInfo::trashDesktopFileUrl() || url == DesktopFileInfo::computerDesktopFileUrl()){
+
+            //prevent user unexpectedly creating new desktop file named as dde-trash/dde-computer on desktop,without specified deepinId
+            DesktopFile df(url.toLocalFile());
+            if(df.getDeepinId() == "dde-trash" || df.getDeepinId() == "dde-computer")
+                continue;
+        }
+        urlList << url;
     }
+
+    if(urlList.count() == 0)
+        return;
+#else
+    urlList = DUrl::fromQUrlList(event->mimeData()->urls());
+#endif
 
     DFMEvent e;
     e << DFMEvent::LeftSideBar;

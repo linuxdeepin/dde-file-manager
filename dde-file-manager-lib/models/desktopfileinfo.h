@@ -32,6 +32,13 @@ public:
 
     static QMap<QString, QVariant> getDesktopFileInfo(const DUrl &fileUrl);
 
+    QVector<MenuAction> menuActionList(MenuType type = SingleFile) const;
+    QList<QIcon> additionalIcon() const;
+    Qt::DropActions supportedDragActions() const Q_DECL_OVERRIDE;
+
+    static DUrl trashDesktopFileUrl();
+    static DUrl computerDesktopFileUrl();
+
 private:
     Q_DECLARE_PRIVATE(DesktopFileInfo)
 };
