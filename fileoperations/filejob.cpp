@@ -606,7 +606,7 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
 //    if (m_isGvfsFileOperationUsed){
 //        return copyFileByGio(srcFile, tarDir, isMoved, targetPath);
 //    }
-    qDebug() << "copy file by qtio" << srcFile << tarDir;
+    qDebug() << "copy file by qtio" << srcFile << tarDir << isMoved;
 
     if (m_isAborted)
         return false;

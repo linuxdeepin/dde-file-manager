@@ -6,10 +6,14 @@
 #include <QTextOption>
 #include <QTextLayout>
 
+class DUrl;
+
 // begin file item global define
 #define TEXT_LINE_HEIGHT 18
 #define MAX_THREAD_COUNT 1000
 #define MAX_FILE_NAME_CHAR_COUNT 255
+#define DDE_TRASH_ID "dde-trash"
+#define DDE_COMPUTER_ID "dde-computer"
 
 #define ASYN_CALL(Fun, Code, captured...) {\
     QDBusPendingCallWatcher * watcher = new QDBusPendingCallWatcher(Fun);\
@@ -221,6 +225,14 @@ public:
     static QString getUser();
     static int getUserId();
     static bool isStartedByPkexec();
+
+    //check if is trash/computer desktop file containing Deepin_id of dde-trash/dde-computer
+    static bool isTrashDesktopFile(const DUrl& url);
+    static bool isComputerDesktopFile(const DUrl& url);
+
+    //check the unique trash/computer dekstop file on desktop
+    static bool isTrashDesktopFileUrl(const DUrl& url);
+    static bool isComputerDesktopFileUrl(const DUrl& url);
 
     QList<QUrl> clipboardFileUrlList() const;
     ClipboardAction clipboardAction() const;

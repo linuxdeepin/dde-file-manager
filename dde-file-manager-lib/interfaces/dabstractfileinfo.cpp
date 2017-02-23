@@ -331,6 +331,22 @@ DUrl DAbstractFileInfo::symLinkTarget() const
     return DUrl();
 }
 
+DUrl DAbstractFileInfo::rootSymLinkTarget() const
+{
+    DAbstractFileInfoPointer info = fileService->createFileInfo(fileUrl());
+    while (info->isSymLink()) {
+        DUrl targetUrl = info->symLinkTarget();
+        if (targetUrl == fileUrl()){
+            break;
+        }
+        info = fileService->createFileInfo(targetUrl);
+        if (!info){
+            return fileUrl();
+        }
+    }
+    return info->fileUrl();
+}
+
 QString DAbstractFileInfo::owner() const
 {
     CALL_PROXY(owner());
@@ -865,6 +881,9 @@ Qt::DropActions DAbstractFileInfo::supportedDropActions() const
     if (isWritable())
         return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
 
+    if (canDrop())
+        return Qt::CopyAction | Qt::MoveAction;
+
     return Qt::IgnoreAction;
 }
 
@@ -940,6 +959,28 @@ DUrl DAbstractFileInfo::toLocalFile() const
         return DUrl::fromLocalFile(filePath);
 
     return DUrl();
+}
+
+bool DAbstractFileInfo::canDrop() const
+{
+
+    if (isDir()){
+        return true;
+    }
+
+    DAbstractFileInfoPointer info = fileService->createFileInfo(fileUrl());
+    while (info->isSymLink()) {
+        DUrl targetUrl = info->symLinkTarget();
+        if (targetUrl == fileUrl()){
+            break;
+        }
+        info = fileService->createFileInfo(targetUrl);
+        if (!info){
+            return false;
+        }
+    }
+
+    return info->suffix() == "desktop";
 }
 
 void DAbstractFileInfo::makeToActive()

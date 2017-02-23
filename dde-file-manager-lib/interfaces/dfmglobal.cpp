@@ -21,6 +21,7 @@
 #include "../usershare/usersharemanager.h"
 #include "widgets/commandlinemanager.h"
 #include "dfmsetting.h"
+#include "models/desktopfileinfo.h"
 #include <dfmstandardpaths.h>
 
 #include <QGuiApplication>
@@ -481,4 +482,36 @@ bool DFMGlobal::fileNameCorrection(const QByteArray &filePath)
         return true;
 
     return std::rename(filePath.constData(), newFilePath.constData());
+}
+
+bool DFMGlobal::isTrashDesktopFile(const DUrl &url)
+{
+    if(url.toLocalFile().endsWith(".desktop")){
+        DesktopFile df(url.toLocalFile());
+        return df.getDeepinId() == DDE_TRASH_ID;
+    }
+    return false;
+}
+
+bool DFMGlobal::isComputerDesktopFile(const DUrl &url)
+{
+    if(url.toLocalFile().endsWith(".desktop")){
+        DesktopFile df(url.toLocalFile());
+        return df.getDeepinId() == DDE_COMPUTER_ID;
+    }
+    return false;
+}
+
+bool DFMGlobal::isTrashDesktopFileUrl(const DUrl &url)
+{
+    if (DesktopFileInfo::trashDesktopFileUrl() == url)
+        return isTrashDesktopFile(url);
+    return false;
+}
+
+bool DFMGlobal::isComputerDesktopFileUrl(const DUrl &url)
+{
+    if (DesktopFileInfo::computerDesktopFileUrl() == url)
+        return isComputerDesktopFile(url);
+    return false;
 }
