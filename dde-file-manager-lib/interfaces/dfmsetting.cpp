@@ -9,6 +9,8 @@
 #include <settings.h>
 #include "../widgets/singleton.h"
 #include "app/filesignalmanager.h"
+#include "interfaces/dfileservices.h"
+#include "interfaces/dabstractfilewatcher.h"
 #include "app/define.h"
 
 DFMSetting::DFMSetting(QObject *parent) : QObject(parent)
@@ -29,12 +31,16 @@ DFMSetting::DFMSetting(QObject *parent) : QObject(parent)
     auto backen = new QSettingBackend(getConfigFilePath());
     m_settings->setBackend(backen);
 
+    m_fileSystemWathcer = fileService->createFileWatcher(DUrl::fromLocalFile(getConfigFilePath()).parentUrl());
+    m_fileSystemWathcer->startWatcher();
+
     initConnections();
 }
 
 void DFMSetting::initConnections()
 {
     connect(m_settings, &Dtk::Settings::valueChanged, this, &DFMSetting::onValueChanged);
+    connect(m_fileSystemWathcer, &DAbstractFileWatcher::fileMoved, this, &DFMSetting::onConfigFileChanged);
 }
 
 QVariant DFMSetting::getValueByKey(const QString &key)
@@ -96,6 +102,16 @@ void DFMSetting::onValueChanged(const QString &key, const QVariant &value)
     if(reactKeys.contains(key)){
         emit fileSignalManager->requestChangeIconSizeBySizeIndex(iconSizeIndex());
         emit fileSignalManager->requestFreshAllFileView();
+    }
+}
+
+void DFMSetting::onConfigFileChanged(const DUrl &fromUrl, const DUrl &toUrl)
+{
+    Q_UNUSED(fromUrl)
+    if (toUrl == DUrl::fromLocalFile(getConfigFilePath())){
+        auto backen = new QSettingBackend(getConfigFilePath());
+        m_settings->setBackend(backen);
+        qDebug() << toUrl;
     }
 }
 
