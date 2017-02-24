@@ -90,15 +90,15 @@ QPushButton#OtherButton:pressed{
 
 
 QPushButton#EditButton{
-    border-image: url(:/images/images/light/pencil_normal.svg)
+    border-image: url(:/images/images/light/pencil_normal.svg);
 }
 
 QPushButton#EditButton:hover{
-    border-image: url(:/images/images/light/pencil_hover.svg)
+    border-image: url(:/images/images/light/pencil_hover.svg);
 }
 
 QPushButton#EditButton:pressed{
-    border-image: url(:/images/images/light/pencil_press.svg)
+    border-image: url(:/images/images/light/pencil_press.svg);
 }
 
 

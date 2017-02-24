@@ -162,6 +162,9 @@ SectionKeyLabel::SectionKeyLabel(const QString &text, QWidget *parent, Qt::Windo
     setObjectName("SectionKeyLabel");
     setFixedWidth(120);
     setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+    QFont font;
+    font.setPixelSize(12);
+    setFont(font);
 }
 
 
@@ -172,6 +175,9 @@ SectionValueLabel::SectionValueLabel(const QString &text, QWidget *parent, Qt::W
     setFixedWidth(150);
     setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
     setWordWrap(true);
+    QFont font;
+    font.setPixelSize(12);
+    setFont(font);
 }
 
 
@@ -633,6 +639,17 @@ void PropertyDialog::initTextShowFrame(const QString &text)
     m_editButton = new QPushButton(m_textShowFrame);
     m_editButton->setObjectName("EditButton");
     m_editButton->setFixedSize(16, 16);
+    m_editButton->setStyleSheet("QPushButton#EditButton{\
+                                border-image: url(:/images/images/light/pencil_normal.svg);\
+                            }\
+                            \
+                            QPushButton#EditButton:hover{\
+                                border-image: url(:/images/images/light/pencil_hover.svg);\
+                            }\
+                            \
+                            QPushButton#EditButton:pressed{\
+                                border-image: url(:/images/images/light/pencil_press.svg);\
+                            }");
     connect(m_editButton, &QPushButton::clicked, this, &PropertyDialog::renameFile);
 
     QFontMetrics font = m_edit->fontMetrics();
