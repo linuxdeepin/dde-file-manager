@@ -300,7 +300,7 @@ void PropertyDialog::initUI()
     m_edit->setParent(m_editFrame);
 
     m_editStackWidget = new QStackedWidget(this);
-    m_editStackWidget->setFixedHeight(60);
+    m_editStackWidget->setFixedHeight(80);
     m_editStackWidget->addWidget(m_editFrame);
 
     QVBoxLayout *layout = new QVBoxLayout;
