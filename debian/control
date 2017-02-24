@@ -14,7 +14,7 @@ Package: dde-file-manager
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
  libdde-file-manager( =${binary:Version}), socat, samba
-Recommends: dde-qt5integration
+Recommends: dde-qt5integration, avfs
 Description: File manager front end of Deepin OS
  File manager front end of Deepin OS
 
