@@ -15,6 +15,7 @@ public:
     QString errorString() const;
 
     bool isUseFileChooserDialog() const;
+    bool canUseFileChooserDialog(const QString &group, const QString &executableFileName) const;
 
     QStringList globPatternsForMime(const QString &mimeType) const;
 

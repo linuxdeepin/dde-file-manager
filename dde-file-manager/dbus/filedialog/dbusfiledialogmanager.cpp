@@ -1,5 +1,6 @@
 #include "dbusfiledialogmanager.h"
 #include "dbusfiledialoghandle.h"
+#include "dfmstandardpaths.h"
 #include "filedialog_adaptor.h"
 #include "app/define.h"
 #include "widgets/singleton.h"
@@ -61,6 +62,19 @@ QString DBusFileDialogManager::errorString() const
 bool DBusFileDialogManager::isUseFileChooserDialog() const
 {
     return globalSetting->isDefaultChooserDialog();
+}
+
+bool DBusFileDialogManager::canUseFileChooserDialog(const QString &group, const QString &executableFileName) const
+{
+#ifdef QT_NO_DEBUG
+    QSettings blackList(QString("/usr/share/%1/dbusfiledialog/%2").arg(qApp->applicationName()).arg("dbus_filedialog_blacklist.conf"), QSettings::NativeFormat);
+#else
+    QSettings blackList(QString("%1/dbus/filedialog/%2").arg(PRO_FILE_PWD).arg("dbus_filedialog_blacklist.conf"), QSettings::NativeFormat);
+#endif
+
+    blackList.beginGroup(group);
+
+    return !blackList.value(executableFileName, false).toBool();
 }
 
 QStringList DBusFileDialogManager::globPatternsForMime(const QString &mimeType) const

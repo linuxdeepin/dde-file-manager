@@ -18,6 +18,11 @@
     <method name="isUseFileChooserDialog">
         <arg name="ok" type="b" direction="out"/>
     </method>
+    <method name="canUseFileChooserDialog">
+        <arg name="ok" type="b" direction="out"/>
+        <arg name="group" type="s" direction="in"/>
+        <arg name="executableFileName" type="s" direction="in"/>
+    </method>
     <method name="globPatternsForMime">
         <arg name="mime" type="s" direction="in"/>
         <arg name="patterns" type="as" direction="out"/>
