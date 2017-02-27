@@ -32,6 +32,7 @@ public:
     void initConnect();
     DSearchBar * getSearchBar();
     DCrumbWidget* getCrumWidget();
+    QPushButton* getSettingsButton();
     void addHistoryStack();
 
     int navStackCount() const;
@@ -90,6 +91,7 @@ private:
     QPushButton* m_iconViewButton=NULL;
     QPushButton* m_listViewButton=NULL;
     QPushButton* m_extendButton = NULL;
+    QPushButton* m_settingsButton = NULL;
     DHoverButton* m_sortingButton=NULL;
 
     bool m_switchState = false;
