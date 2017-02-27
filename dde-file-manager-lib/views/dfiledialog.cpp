@@ -249,7 +249,11 @@ void DFileDialog::selectNameFilterByIndex(int index)
     if (index < 0 || index >= getFileView()->statusBar()->comboBox()->count())
         return;
 
+    qDebug() << getFileView()->statusBar()->comboBox()->currentIndex() << getFileView()->statusBar()->comboBox()->count();
+
     getFileView()->statusBar()->comboBox()->setCurrentIndex(index);
+
+    qDebug() << getFileView()->statusBar()->comboBox()->currentIndex() << index;
 
     QStringList nameFilters = d->nameFilters;
 
