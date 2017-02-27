@@ -736,15 +736,15 @@ bool DFileSystemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
         toUrl = info->rootSymLinkTarget();
     }
     qDebug() << toUrl;
-     if(DFMGlobal::isTrashDesktopFile(toUrl)){
+    if(DFMGlobal::isTrashDesktopFile(toUrl)){
          toUrl = DUrl::fromTrashFile("/");
          fileService->moveToTrash(event);
          return true;
-     } else if(DFMGlobal::isComputerDesktopFile(toUrl)){
+    } else if(DFMGlobal::isComputerDesktopFile(toUrl)){
          return true;
-     } else{
+    } else if (DFMGlobal::isDesktopFile(toUrl)){
          return FileUtils::openDesktopFileWithParams(toUrl.path(), urlList);
-     }
+    }
 
 
     switch (action) {

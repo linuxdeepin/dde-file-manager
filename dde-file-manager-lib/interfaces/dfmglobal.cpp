@@ -484,9 +484,14 @@ bool DFMGlobal::fileNameCorrection(const QByteArray &filePath)
     return std::rename(filePath.constData(), newFilePath.constData());
 }
 
+bool DFMGlobal::isDesktopFile(const DUrl &url)
+{
+    return url.toLocalFile().endsWith(".desktop");
+}
+
 bool DFMGlobal::isTrashDesktopFile(const DUrl &url)
 {
-    if(url.toLocalFile().endsWith(".desktop")){
+    if(isDesktopFile(url)){
         DesktopFile df(url.toLocalFile());
         return df.getDeepinId() == DDE_TRASH_ID;
     }
@@ -495,7 +500,7 @@ bool DFMGlobal::isTrashDesktopFile(const DUrl &url)
 
 bool DFMGlobal::isComputerDesktopFile(const DUrl &url)
 {
-    if(url.toLocalFile().endsWith(".desktop")){
+    if(isDesktopFile(url)){
         DesktopFile df(url.toLocalFile());
         return df.getDeepinId() == DDE_COMPUTER_ID;
     }
