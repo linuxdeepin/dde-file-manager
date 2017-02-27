@@ -26,6 +26,7 @@
 #include "shutil/fileutils.h"
 #include "interfaces/dfmsetting.h"
 #include "gvfs/networkmanager.h"
+#include "dde-file-manager/singleapplication.h"
 
 #include "xutil.h"
 #include "utils.h"
@@ -652,8 +653,7 @@ void DFileManagerWindow::initTitleFrame()
 
 void DFileManagerWindow::initTitleBar()
 {
-    if (!titleBar())
-        return;
+    D_D(DFileManagerWindow);
 
     DFileMenu* menu = fileMenuManger->createToolBarSettingsMenu();
 
@@ -661,13 +661,24 @@ void DFileManagerWindow::initTitleBar()
     event << windowId();
     menu->setEvent(event);
 
-    titleBar()->setMenu(menu);
-    titleBar()->setContentsMargins(0, 1, -1, 0);
+    bool isDXcbPlatform = false;
+    SingleApplication* app = static_cast<SingleApplication*>(qApp);
+    if (app){
+        isDXcbPlatform = app->isDXcbPlatform();
+    }
 
-    QWidget *widget = new QWidget();
+    if (isDXcbPlatform){
+        d->toolbar->getSettingsButton()->hide();
+        titleBar()->setMenu(menu);
+        titleBar()->setContentsMargins(0, 1, -1, 0);
 
-    widget->setFixedSize(35, 0);
-    titleBar()->setCustomWidget(widget, false);
+        QWidget *widget = new QWidget();
+
+        widget->setFixedSize(35, 0);
+        titleBar()->setCustomWidget(widget, false);
+    }else{
+       d->toolbar->getSettingsButton()->setMenu(menu);
+    }
 }
 
 void DFileManagerWindow::initSplitter()

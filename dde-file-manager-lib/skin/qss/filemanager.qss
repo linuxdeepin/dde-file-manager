@@ -300,6 +300,34 @@ QPushButton#listViewButton:unchecked{
     icon-size: 16px 16px;
 }
 
+QPushButton#settingsButton{
+    background-color:white;
+    image: url(:/images/images/setting_normal.png);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: black;
+    border-radius: 4px;
+}
+
+QPushButton#settingsButton:pressed{
+    background-color:white;
+    image: url(:/images/images/setting_press.png);
+    border: 1px solid #1088ff;
+    color: white;
+}
+
+QPushButton#settingsButton:hover{
+    background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                        stop: 0 #8CCFFF,
+                        stop: 1  #4BB8FF);
+    image: url(:/images/images/setting_hover.png);
+    border: 1px solid #3caafd;
+    color: white;
+}
+
+QPushButton#settingsButton::menu-indicator {
+     image: url();
+ }
+
 QPushButton#hierarchicalButton{
     background-color:white;
     border: 1px;

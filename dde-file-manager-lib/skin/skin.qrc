@@ -16,6 +16,9 @@
         <file>images/unreadable_small.png</file>
         <file>images/unreadable_large.png</file>
         <file>images/trash_full.png</file>
+        <file>images/setting_hover.png</file>
+        <file>images/setting_normal.png</file>
+        <file>images/setting_press.png</file>
     </qresource>
     <qresource prefix="/devices">
         <file>images/device/drive-harddisk-deepin-256px.svg</file>
