@@ -73,6 +73,7 @@ QStringList DFMGlobal::PluginLibraryPaths;
 QStringList DFMGlobal::MenuExtensionPaths;
 QString DFMGlobal::USER = "";
 int DFMGlobal::USERID = -1;
+bool DFMGlobal::IsFileManagerDiloagProcess = false;
 
 DFMGlobal *DFMGlobal::instance()
 {

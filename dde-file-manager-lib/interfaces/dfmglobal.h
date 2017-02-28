@@ -184,6 +184,7 @@ public:
     static QStringList MenuExtensionPaths;
     static QString USER;
     static int USERID;
+    static bool IsFileManagerDiloagProcess;
 
     static QString organizationName();
     static QString applicationName();

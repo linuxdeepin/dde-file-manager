@@ -50,23 +50,29 @@ QVariant DFMSetting::getValueByKey(const QString &key)
 
 bool DFMSetting::isAllwayOpenOnNewWindow()
 {
-    return m_settings->value("base.open_action.allways_open_on_new_window").toBool();
+    if (DFMGlobal::IsFileManagerDiloagProcess){
+        return false;
+    }
+    return getValueByKey("base.open_action.allways_open_on_new_window").toBool();
 }
 
 int DFMSetting::iconSizeIndex()
 {
-    return m_settings->value("base.default_view.icon_size").toInt();
+    return getValueByKey("base.default_view.icon_size").toInt();
 }
 
 int DFMSetting::openFileAction()
 {
-    const int& index = m_settings->value("base.open_action.open_file_action").toInt();
+    if (DFMGlobal::IsFileManagerDiloagProcess){
+        return 1;
+    }
+    const int& index = getValueByKey("base.open_action.open_file_action").toInt();
     return index;
 }
 
 QString DFMSetting::newWindowPath()
 {
-    const int& index = m_settings->value("base.new_tab_windows.new_window_path").toInt();
+    const int& index = getValueByKey("base.new_tab_windows.new_window_path").toInt();
     if(index < paths.count() && index >= 0)
         return paths[index];
     return "Current Path";
@@ -74,7 +80,7 @@ QString DFMSetting::newWindowPath()
 
 QString DFMSetting::newTabPath()
 {
-    const int& index = m_settings->value("base.new_tab_windows.new_tab_path").toInt();
+    const int& index = getValueByKey("base.new_tab_windows.new_tab_path").toInt();
     if(index < paths.count() && index >= 0)
         return paths[index];
     return "Current Path";
@@ -117,55 +123,55 @@ void DFMSetting::onConfigFileChanged(const DUrl &fromUrl, const DUrl &toUrl)
 
 bool DFMSetting::isQuickSearch()
 {
-    return m_settings->value("advance.search.quick_search").toBool();
+    return getValueByKey("advance.search.quick_search").toBool();
 }
 
 bool DFMSetting::isCompressFilePreview()
 {
-    return m_settings->value("advance.preview.compress_file_preview").toBool();
+    return getValueByKey("advance.preview.compress_file_preview").toBool();
 }
 
 bool DFMSetting::isTextFilePreview()
 {
-    return m_settings->value("advance.preview.text_file_preview").toBool();
+    return getValueByKey("advance.preview.text_file_preview").toBool();
 }
 
 bool DFMSetting::isDocumentFilePreview()
 {
-    return m_settings->value("advance.preview.document_file_preview").toBool();
+    return getValueByKey("advance.preview.document_file_preview").toBool();
 }
 
 bool DFMSetting::isImageFilePreview()
 {
-    return m_settings->value("advance.preview.image_file_preview").toBool();
+    return getValueByKey("advance.preview.image_file_preview").toBool();
 }
 
 bool DFMSetting::isVideoFilePreview()
 {
-    return m_settings->value("advance.preview.video_file_preview").toBool();
+    return getValueByKey("advance.preview.video_file_preview").toBool();
 }
 
 bool DFMSetting::isAutoMount()
 {
-    return m_settings->value("advance.mount.auto_mount").toBool();
+    return getValueByKey("advance.mount.auto_mount").toBool();
 }
 
 bool DFMSetting::isAutoMountAndOpen()
 {
-    return m_settings->value("advance.mount.auto_mount_and_open").toBool();
+    return getValueByKey("advance.mount.auto_mount_and_open").toBool();
 }
 
 bool DFMSetting::isDefaultChooserDialog()
 {
-    return m_settings->value("advance.dialog.default_chooser_dialog").toBool();
+    return getValueByKey("advance.dialog.default_chooser_dialog").toBool();
 }
 
 bool DFMSetting::isShowedHiddenOnSearch()
 {
-    return m_settings->value("advance.search.show_hidden").toBool();
+    return getValueByKey("advance.search.show_hidden").toBool();
 }
 
 bool DFMSetting::isShowedHiddenOnView()
 {
-    return m_settings->value("base.hidden_files.show_hidden").toBool();
+    return getValueByKey("base.hidden_files.show_hidden").toBool();
 }

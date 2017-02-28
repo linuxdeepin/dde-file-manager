@@ -133,7 +133,7 @@ int main(int argc, char *argv[])
         if (!registerFileManager1DBus()) {
             qWarning() << "Register org.freedesktop.FileManager1 DBus service is failed";
         }
-
+        DFMGlobal::IsFileManagerDiloagProcess = true;
         app.setQuitOnLastWindowClosed(false);
         fileManagerApp;
         gvfsMountManager->setAutoMountSwitch(false);
