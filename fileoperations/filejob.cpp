@@ -539,7 +539,7 @@ void FileJob::jobUpdated()
         jobDataDetail.insert("destination", m_tarDirName);
         m_progress = jobDataDetail.value("progress");
     }
-    qDebug() << m_jobDetail << jobDataDetail;
+
     emit requestJobDataUpdated(m_jobDetail, jobDataDetail);
 
     m_lastMsec = m_timer.elapsed();
