@@ -397,6 +397,19 @@ bool DFileDialog::testOption(QFileDialog::Option option) const
     return d->options & option;
 }
 
+void DFileDialog::setCurrentInputName(const QString &name)
+{
+    getFileView()->statusBar()->lineEdit()->setText(name);
+
+    QMimeDatabase db;
+
+    const QString &suffix = db.suffixForFileName(name);
+
+    if (!suffix.isEmpty()) {
+        getFileView()->statusBar()->lineEdit()->setSelection(0, name.length() - suffix.length() - 1);
+    }
+}
+
 void DFileDialog::accept()
 {
     done(QDialog::Accepted);

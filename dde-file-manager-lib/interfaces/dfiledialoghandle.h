@@ -52,6 +52,8 @@ public:
 
     void setOptions(QFileDialog::Options options);
 
+    void setCurrentInputName(const QString &name);
+
 Q_SIGNALS:
     void finished(int result);
     void accepted();
