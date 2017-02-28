@@ -249,6 +249,13 @@ void DFileDialogHandle::setOptions(QFileDialog::Options options)
     return d->dialog->setOptions(options);
 }
 
+void DFileDialogHandle::setCurrentInputName(const QString &name)
+{
+    D_DC(DFileDialogHandle);
+
+    d->dialog->setCurrentInputName(name);
+}
+
 void DFileDialogHandle::show()
 {
     D_D(DFileDialogHandle);

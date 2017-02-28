@@ -52,6 +52,9 @@
     <method name="setOptions">
         <arg name="options" type="i" direction="in"/>
     </method>
+    <method name="setCurrentInputName">
+        <arg name="name" type="s" direction="in"/>
+    </method>
     <method name="show"></method>
     <method name="open"></method>
     <method name="hide"></method>
