@@ -118,7 +118,8 @@
                             "key": "show_hidden",
                             "text": "Show hidden files in search results",
                             "type": "checkbox",
-                            "default": false
+                            "default": false,
+                            "hide": true
                         }
                     ]
                 },
