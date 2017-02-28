@@ -10,7 +10,7 @@ filemanager_xmls.files = $$filemanager.files
 filemanager_service.path = /usr/share/dbus-1/services
 filemanager_service.files = $$PWD/org.freedesktop.FileManager.service
 
-INSTALLS += filemanager_service filemanager_xmls
+INSTALLS += filemanager_service #filemanager_xmls
 
 HEADERS += \
     $$PWD/dbusfilemanager1.h
