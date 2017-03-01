@@ -242,15 +242,15 @@ public:
 
     static QString wordWrapText(const QString &text, int width,
                                 QTextOption::WrapMode wrapMode,
-                                const QFont &font = QFont(),
-                                int lineHeight = TEXT_LINE_HEIGHT,
+                                const QFont &font,
+                                int lineHeight,
                                 int *height = 0);
 
     static QString elideText(const QString &text, const QSize &size,
-                             const QFontMetrics &fontMetrics,
                              QTextOption::WrapMode wordWrap,
+                             const QFont &font,
                              Qt::TextElideMode mode,
-                             int lineHeight = TEXT_LINE_HEIGHT,
+                             int lineHeight,
                              int flags = 0);
 
     static QString toPinyin(const QString &text);

@@ -51,6 +51,8 @@ public:
     virtual int decreaseIcon();
     virtual int setIconSizeByIconSizeLevel(int level);
 
+    virtual void updateItemSizeHint() = 0;
+
 protected:
     DStyledItemDelegate(DStyledItemDelegatePrivate &dd, DFileViewHelper *parent);
 

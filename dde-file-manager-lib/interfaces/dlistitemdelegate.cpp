@@ -35,9 +35,6 @@ public:
 DListItemDelegate::DListItemDelegate(DFileViewHelper *parent) :
     DStyledItemDelegate(parent)
 {
-    connect(parent->parent(), &QAbstractItemView::iconSizeChanged,
-            this, &DListItemDelegate::onIconSizeChanged);
-
     parent->parent()->setIconSize(QSize(LIST_VIEW_ICON_SIZE, LIST_VIEW_ICON_SIZE));
 }
 
@@ -60,8 +57,21 @@ void DListItemDelegate::paint(QPainter *painter,
     int column_x = 0;
 
     QStyleOptionViewItem opt = option;
-
     initStyleOption(&opt, index);
+    painter->setFont(opt.font);
+
+    static QFont old_font = opt.font;
+
+    if (old_font != opt.font) {
+        QWidget *editing_widget = editingIndexWidget();
+
+        if (editing_widget)
+            editing_widget->setFont(opt.font);
+
+        const_cast<DListItemDelegate*>(this)->updateItemSizeHint();
+    }
+
+    old_font = opt.font;
 
     opt.rect += QMargins(-LIST_MODE_LEFT_MARGIN, 0, -LIST_MODE_RIGHT_MARGIN, 0);
 
@@ -148,8 +158,10 @@ void DListItemDelegate::paint(QPainter *painter,
 
     if(index != d->editingIndex || role != DFileSystemModel::FileNameRole) {
         /// draw file name label
-        const QString &file_name = DFMGlobal::elideText(index.data(role).toString().remove('\n'), rect.size(),
-                                                        painter->fontMetrics(), QTextOption::NoWrap, Qt::ElideRight);
+        const QString &file_name = DFMGlobal::elideText(index.data(role).toString().remove('\n'),
+                                                        rect.size(), QTextOption::NoWrap,
+                                                        opt.font, Qt::ElideRight,
+                                                        d->textLineHeight);
 
         painter->setPen(opt.palette.color(drawBackground ? QPalette::BrightText : QPalette::Text));
         painter->drawText(rect, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()), file_name);
@@ -183,7 +195,8 @@ void DListItemDelegate::paint(QPainter *painter,
         QModelIndex tmp_index = model->createIndex(index.row(), model->roleToColumn(role), index.internalId());
 
         const QString &text = DFMGlobal::elideText(index.data(role).toString(), rect.size(),
-                                                   painter->fontMetrics(), QTextOption::NoWrap, Qt::ElideRight);
+                                                   QTextOption::NoWrap, opt.font,
+                                                   Qt::ElideRight, d->textLineHeight);
 
         painter->drawText(rect, Qt::Alignment(tmp_index.data(Qt::TextAlignmentRole).toInt()), text);
     }
@@ -348,6 +361,14 @@ QList<QRect> DListItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
     return geomertys;
 }
 
+void DListItemDelegate::updateItemSizeHint()
+{
+    Q_D(DListItemDelegate);
+
+    d->textLineHeight = parent()->parent()->fontMetrics().height();
+    d->itemSizeHint = QSize(-1, qMax(int(parent()->parent()->iconSize().height() * 1.1), d->textLineHeight));
+}
+
 bool DListItemDelegate::eventFilter(QObject *object, QEvent *event)
 {
     Q_D(DListItemDelegate);
@@ -382,11 +403,4 @@ bool DListItemDelegate::eventFilter(QObject *object, QEvent *event)
     }
 
     return QStyledItemDelegate::eventFilter(object, event);
-}
-
-void DListItemDelegate::onIconSizeChanged()
-{
-    Q_D(DListItemDelegate);
-
-    d->itemSizeHint = QSize(-1, parent()->parent()->iconSize().height() * 1.1);
 }

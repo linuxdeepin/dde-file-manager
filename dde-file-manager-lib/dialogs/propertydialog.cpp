@@ -652,8 +652,7 @@ void PropertyDialog::initTextShowFrame(const QString &text)
                             }");
     connect(m_editButton, &QPushButton::clicked, this, &PropertyDialog::renameFile);
 
-    QFontMetrics font = m_edit->fontMetrics();
-    QString t = DFMGlobal::elideText(text, m_edit->size(), font, QTextOption::WrapAtWordBoundaryOrAnywhere, Qt::ElideMiddle, 0);
+    QString t = DFMGlobal::elideText(text, m_edit->size(), QTextOption::WrapAtWordBoundaryOrAnywhere, m_edit->font(), Qt::ElideMiddle, 0);
     QStringList labelTexts = t.split("\n");
     const int maxLineCount = 3;
 

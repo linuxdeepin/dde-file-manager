@@ -12,11 +12,12 @@
 #include "private/dstyleditemdelegate_p.h"
 
 #include <QDebug>
+#include <QAbstractItemView>
 
 DStyledItemDelegate::DStyledItemDelegate(DFileViewHelper *parent)
     : DStyledItemDelegate(*new DStyledItemDelegatePrivate(this), parent)
 {
-
+    d_func()->init();
 }
 
 DStyledItemDelegate::~DStyledItemDelegate()
@@ -153,7 +154,7 @@ DStyledItemDelegate::DStyledItemDelegate(DStyledItemDelegatePrivate &dd, DFileVi
     : QStyledItemDelegate(parent)
     , d_ptr(&dd)
 {
-    connect(this, &DStyledItemDelegate::commitData, parent, &DFileViewHelper::handleCommitData);
+    dd.init();
 }
 
 void DStyledItemDelegate::initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const
@@ -175,4 +176,14 @@ QList<QRect> DStyledItemDelegate::getCornerGeometryList(const QRect &baseRect, c
     list << QRect(QPoint(list.first().left(), list.at(2).top()), cornerSize);
 
     return list;
+}
+
+void DStyledItemDelegatePrivate::init()
+{
+    Q_Q(DStyledItemDelegate);
+
+    q->connect(q, &DStyledItemDelegate::commitData, q->parent(), &DFileViewHelper::handleCommitData);
+    q->connect(q->parent()->parent(), &QAbstractItemView::iconSizeChanged, q, &DStyledItemDelegate::updateItemSizeHint);
+
+    textLineHeight = q->parent()->parent()->fontMetrics().height();
 }

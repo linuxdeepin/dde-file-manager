@@ -44,6 +44,7 @@ FileIconItem::FileIconItem(QWidget *parent) :
         const QString old_text = text;
 
         int text_length = text.length();
+        int text_line_height = fontMetrics().height();
 
         text.remove('/');
         text.remove(QChar(0));
@@ -68,7 +69,7 @@ FileIconItem::FileIconItem(QWidget *parent) :
         do {
             QTextBlockFormat format = cursor.blockFormat();
 
-            format.setLineHeight(TEXT_LINE_HEIGHT, QTextBlockFormat::FixedHeight);
+            format.setLineHeight(text_line_height, QTextBlockFormat::FixedHeight);
             cursor.setBlockFormat(format);
         } while (cursor.movePosition(QTextCursor::NextBlock));
 
@@ -132,6 +133,8 @@ bool FileIconItem::event(QEvent *ee)
         updateEditorGeometry();
 
         resize(width(), icon->height() + edit->height() + ICON_MODE_ICON_SPACING);
+    } else if (ee->type() == QEvent::FontChange) {
+        edit->setFont(font());
     }
 
     return QFrame::event(ee);
@@ -195,7 +198,7 @@ void FileIconItem::updateEditorGeometry()
         if (edit->isVisible())
             edit->setFixedHeight(text_height);
     } else {
-        edit->setFixedHeight(TEXT_LINE_HEIGHT * 3 + TEXT_PADDING * 2);
+        edit->setFixedHeight(fontMetrics().height() * 3 + TEXT_PADDING * 2);
     }
 }
 

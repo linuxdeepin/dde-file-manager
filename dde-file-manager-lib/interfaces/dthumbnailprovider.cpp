@@ -308,7 +308,8 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
         QPainter painter(image.data());
         painter.setFont(font);
         painter.setPen(pen);
-        painter.drawText(image->rect(), DFMGlobal::wordWrapText(text, size, QTextOption::WrapAtWordBoundaryOrAnywhere, font));
+        painter.drawText(image->rect(), DFMGlobal::wordWrapText(text, size, QTextOption::WrapAtWordBoundaryOrAnywhere,
+                                                                font, painter.fontMetrics().height()));
     } else if (mime.name() == "application/pdf") {
         //FIXME(zccrs): This should be done using the image plugin?
         QScopedPointer<poppler::document> doc(poppler::document::load_from_file(absoluteFilePath.toStdString()));
