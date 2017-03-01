@@ -224,9 +224,9 @@ void ComputerViewItem::updateStatus()
         setIconSizeState(m_iconSize, QIcon::Normal);
         QString ds = DFMGlobal::elideText(m_name,
                           QSize(width(), 40),
-                          fontMetrics(),
                           QTextOption::WrapAtWordBoundaryOrAnywhere,
-                          Qt::ElideMiddle);
+                          font(),
+                          Qt::ElideMiddle, TEXT_LINE_HEIGHT);
         getTextEdit()->setStyleSheet("background-color: transparent");
         setDisplayName(ds.remove('\n'));
     }

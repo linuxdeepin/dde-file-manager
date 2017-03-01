@@ -387,14 +387,17 @@ QString DFMGlobal::wordWrapText(const QString &text, int width, QTextOption::Wra
     return str;
 }
 
-QString DFMGlobal::elideText(const QString &text, const QSize &size, const QFontMetrics &fontMetrics,
-                          QTextOption::WrapMode wordWrap, Qt::TextElideMode mode, int lineHeight, int flags)
+QString DFMGlobal::elideText(const QString &text, const QSize &size,
+                          QTextOption::WrapMode wordWrap, const QFont &font,
+                             Qt::TextElideMode mode, int lineHeight, int flags)
 {
     int height = 0;
 
     QTextLayout textLayout(text);
     QString str;
+    QFontMetrics fontMetrics(font);
 
+    textLayout.setFont(font);
     const_cast<QTextOption*>(&textLayout.textOption())->setWrapMode(wordWrap);
 
     textLayout.beginLayout();

@@ -48,6 +48,8 @@ public:
     int decreaseIcon() Q_DECL_OVERRIDE;
     int setIconSizeByIconSizeLevel(int level) Q_DECL_OVERRIDE;
 
+    void updateItemSizeHint() Q_DECL_OVERRIDE;
+
     QColor focusTextBackgroundBorderColor() const;
     bool enabledTextShadow() const;
 
@@ -60,7 +62,6 @@ protected:
 
 private:
     void onEditWidgetFocusOut();
-    void onIconSizeChanged();
     void onTriggerEdit(const QModelIndex &index);
     QSize iconSizeByIconSizeLevel() const;
 

@@ -18,9 +18,12 @@ public:
     DStyledItemDelegatePrivate(DStyledItemDelegate *qq)
         : q_ptr(qq) {}
 
+    void init();
+
     DStyledItemDelegate *q_ptr;
     mutable QModelIndex editingIndex;
     QSize itemSizeHint;
+    int textLineHeight = -1;
 
     Q_DECLARE_PUBLIC(DStyledItemDelegate)
 };

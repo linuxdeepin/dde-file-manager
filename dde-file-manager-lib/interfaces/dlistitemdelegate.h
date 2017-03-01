@@ -29,12 +29,12 @@ public:
 
     QList<QRect> paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index) const Q_DECL_OVERRIDE;
 
+    void updateItemSizeHint() Q_DECL_OVERRIDE;
+
 protected:
     bool eventFilter(QObject *object, QEvent *event) Q_DECL_OVERRIDE;
 
 private:
-    void onIconSizeChanged();
-
     Q_DECLARE_PRIVATE(DListItemDelegate)
 };
 

@@ -69,7 +69,7 @@ QSize DIconItemDelegatePrivate::textSize(const QString &text, const QFontMetrics
 void DIconItemDelegatePrivate::drawText(QPainter *painter, const QRect &r, const QString &text, int lineHeight, QRect *br) const
 {
     if (lineHeight <= 0)
-        lineHeight = painter->fontMetrics().height();
+        lineHeight = textLineHeight;
 
     QString str = text;
 
@@ -109,8 +109,6 @@ DIconItemDelegate::DIconItemDelegate(DFileViewHelper *parent) :
     d->iconSizes << 48 << 64 << 96 << 128 << 256;
 
     connect(parent, &DFileViewHelper::triggerEdit, this, &DIconItemDelegate::onTriggerEdit);
-    connect(parent->parent(), &QAbstractItemView::iconSizeChanged,
-            this, &DIconItemDelegate::onIconSizeChanged);
 
     parent->parent()->setIconSize(iconSizeByIconSizeLevel());
 }
@@ -169,6 +167,24 @@ void DIconItemDelegate::paint(QPainter *painter,
 
     QStyleOptionViewItem opt = option;
     initStyleOption(&opt, index);
+    painter->setFont(opt.font);
+
+    static QFont old_font = opt.font;
+
+    if (old_font != opt.font) {
+        if (d->expandedItem)
+            d->expandedItem->setFont(opt.font);
+
+        QWidget *editing_widget = editingIndexWidget();
+
+        if (editing_widget)
+            editing_widget->setFont(opt.font);
+
+        const_cast<DIconItemDelegate*>(this)->updateItemSizeHint();
+//        parent()->parent()->updateEditorGeometries();
+    }
+
+    old_font = opt.font;
 
     bool isSelected = !isDragMode && (opt.state & QStyle::State_Selected) && opt.showDecorationSelected;
     bool isDropTarget = parent()->isDropTarget(index);
@@ -222,7 +238,7 @@ void DIconItemDelegate::paint(QPainter *painter,
             QString wordWrap_str = DFMGlobal::wordWrapText(str, label_rect.width(),
                                                            QTextOption::WrapAtWordBoundaryOrAnywhere,
                                                            opt.font,
-                                                           TEXT_LINE_HEIGHT,
+                                                           d->textLineHeight,
                                                            &height);
 
             wordWrap_str = trimmedEnd(wordWrap_str);
@@ -261,9 +277,9 @@ void DIconItemDelegate::paint(QPainter *painter,
             str = d->elideMap.value(str);
         } else {
             QString elide_str = DFMGlobal::elideText(str, label_rect.size(),
-                                                  painter->fontMetrics(),
-                                                  QTextOption::WrapAtWordBoundaryOrAnywhere,
-                                                  opt.textElideMode);
+                                                     QTextOption::WrapAtWordBoundaryOrAnywhere,
+                                                     opt.font,
+                                                     opt.textElideMode, d->textLineHeight);
 
             elide_str = trimmedEnd(elide_str);
 
@@ -310,7 +326,7 @@ void DIconItemDelegate::paint(QPainter *painter,
 
         QRect label_background_rect = label_rect;
 
-        label_background_rect.setSize(d->textSize(str, painter->fontMetrics(), TEXT_LINE_HEIGHT));
+        label_background_rect.setSize(d->textSize(str, painter->fontMetrics(), d->textLineHeight));
         label_background_rect.moveLeft(label_rect.left() + (label_rect.width() - label_background_rect.width()) / 2);
         label_background_rect += QMargins(TEXT_PADDING, TEXT_PADDING, TEXT_PADDING, TEXT_PADDING);
 
@@ -336,11 +352,11 @@ void DIconItemDelegate::paint(QPainter *painter,
         painter->setPen(opt.palette.color(QPalette::Text));
 
     if (isSelected || !d->enabledTextShadow) {
-        d->drawText(painter, label_rect, str, TEXT_LINE_HEIGHT);
+        d->drawText(painter, label_rect, str, d->textLineHeight);
     } else {
         QPainter p(&text_image);
         p.setPen(painter->pen());
-        d->drawText(&p, QRect(QPoint(0, 0), label_rect.size()), str, TEXT_LINE_HEIGHT);
+        d->drawText(&p, QRect(QPoint(0, 0), label_rect.size()), str, d->textLineHeight);
     }
 
     if (!isSelected && d->enabledTextShadow) {
@@ -534,7 +550,7 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
             QString wordWrap_str = DFMGlobal::wordWrapText(str, label_rect.width(),
                                                            QTextOption::WrapAtWordBoundaryOrAnywhere,
                                                            opt.font,
-                                                           TEXT_LINE_HEIGHT,
+                                                           d->textLineHeight,
                                                            &height);
 
             wordWrap_str = trimmedEnd(wordWrap_str);
@@ -547,10 +563,8 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
         if (d->elideMap.contains(str)) {
             str = d->elideMap.value(str);
         } else {
-            QString elide_str = DFMGlobal::elideText(str, label_rect.size(),
-                                                     option.fontMetrics,
-                                                     QTextOption::WrapAtWordBoundaryOrAnywhere,
-                                                     option.textElideMode);
+            QString elide_str = DFMGlobal::elideText(str, label_rect.size(), QTextOption::WrapAtWordBoundaryOrAnywhere,
+                                                     opt.font, opt.textElideMode, d->textLineHeight);
 
             d->elideMap[str] = elide_str;
             str = elide_str;
@@ -667,6 +681,20 @@ int DIconItemDelegate::setIconSizeByIconSizeLevel(int level)
     return -1;
 }
 
+void DIconItemDelegate::updateItemSizeHint()
+{
+    Q_D(DIconItemDelegate);
+
+    d->elideMap.clear();
+    d->wordWrapMap.clear();
+    d->textHeightMap.clear();
+    d->textLineHeight = parent()->parent()->fontMetrics().height();
+
+    int width = parent()->parent()->iconSize().width() * 1.8;
+
+    d->itemSizeHint = QSize(width, parent()->parent()->iconSize().height() + 2 * TEXT_PADDING  + ICON_MODE_ICON_SPACING + 3 * d->textLineHeight);
+}
+
 QColor DIconItemDelegate::focusTextBackgroundBorderColor() const
 {
     Q_D(const DIconItemDelegate);
@@ -724,19 +752,6 @@ void DIconItemDelegate::onEditWidgetFocusOut()
 
         hideAllIIndexWidget();
     }
-}
-
-void DIconItemDelegate::onIconSizeChanged()
-{
-    Q_D(DIconItemDelegate);
-
-    d->elideMap.clear();
-    d->wordWrapMap.clear();
-    d->textHeightMap.clear();
-
-    int width = parent()->parent()->iconSize().width() * 1.8;
-
-    d->itemSizeHint = QSize(width, parent()->parent()->iconSize().height() + 2 * TEXT_PADDING  + ICON_MODE_ICON_SPACING + 3 * TEXT_LINE_HEIGHT);
 }
 
 void DIconItemDelegate::onTriggerEdit(const QModelIndex &index)

@@ -1540,6 +1540,7 @@ bool DFileView::event(QEvent *e)
             return true;
         }
     }
+
     return DListView::event(e);
 }
 
