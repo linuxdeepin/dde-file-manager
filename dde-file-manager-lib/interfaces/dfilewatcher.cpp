@@ -199,7 +199,7 @@ QString DFileWatcherPrivate::formatPath(const QString &path)
     if (p.endsWith(QDir::separator()))
         p.chop(1);
 
-    return p;
+    return p.isEmpty() ? path : p;
 }
 
 DFileWatcher::DFileWatcher(const QString &filePath, QObject *parent)
