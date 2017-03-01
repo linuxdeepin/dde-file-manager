@@ -37,7 +37,7 @@ unix {
     DEFINES += PLUGINDIR=\\\"$$PLUGINDIR\\\"
 
     isEmpty(VERSION) {
-        VERSION = 1.3
+        VERSION = 1.4
     }
 
 }
