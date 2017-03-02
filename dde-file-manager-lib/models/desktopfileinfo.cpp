@@ -4,6 +4,8 @@
 #include "controllers/trashmanager.h"
 
 #include "shutil/properties.h"
+#include "shutil/fileutils.h"
+#include "interfaces/dfmstandardpaths.h"
 #include "interfaces/dfileservices.h"
 #include "interfaces/dfmstandardpaths.h"
 
@@ -180,6 +182,11 @@ QVector<MenuAction> DesktopFileInfo::menuActionList(DAbstractFileInfo::MenuType 
         actions << MenuAction::Open
         << MenuAction::Separator;
 
+        if(d->deepinID == "dde-trash"){
+            actions << MenuAction::ClearTrash
+                    << MenuAction::Separator;
+        }
+
         if(type == SingleFile)
             actions << MenuAction::CreateSymlink;
 
@@ -189,6 +196,18 @@ QVector<MenuAction> DesktopFileInfo::menuActionList(DAbstractFileInfo::MenuType 
     } else{
         return DFileInfo::menuActionList(type);
     }
+}
+
+QSet<MenuAction> DesktopFileInfo::disableMenuActionList() const
+{
+    Q_D(const DesktopFileInfo);
+    if(d->deepinID == "dde-trash"){
+        QSet<MenuAction> actions;
+        if(FileUtils::filesCount(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath)) <= 0)
+            actions << MenuAction::ClearTrash;
+        return actions;
+    }
+    return DFileInfo::disableMenuActionList();
 }
 
 QList<QIcon> DesktopFileInfo::additionalIcon() const
