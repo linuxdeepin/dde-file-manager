@@ -26,6 +26,7 @@ FileIconItem::FileIconItem(QWidget *parent) :
     edit->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     edit->setFrameShape(QFrame::NoFrame);
     edit->installEventFilter(this);
+    edit->setAcceptRichText(false);
 
     AnchorsBase::setAnchor(icon, Qt::AnchorHorizontalCenter, this, Qt::AnchorHorizontalCenter);
     AnchorsBase::setAnchor(edit, Qt::AnchorTop, icon, Qt::AnchorBottom);
@@ -59,7 +60,11 @@ FileIconItem::FileIconItem(QWidget *parent) :
         }
 
         if (text.count() != old_text.count()) {
-            edit->setText(text);
+            edit->setPlainText(text);
+        }
+
+        if (editTextStackCurrentItem() != text) {
+            pushItemToEditTextStack(text);
         }
 
         QTextCursor cursor = edit->textCursor();
@@ -156,8 +161,25 @@ bool FileIconItem::eventFilter(QObject *obj, QEvent *ee)
 
         QKeyEvent *event = static_cast<QKeyEvent*>(ee);
 
-        if(event->key() != Qt::Key_Enter && event->key() != Qt::Key_Return) {
-            return QFrame::eventFilter(obj, ee);
+        if (event->key() != Qt::Key_Enter && event->key() != Qt::Key_Return) {
+            if (event == QKeySequence::Undo) {
+                disableEditTextStack = true;
+                QTextCursor cursor = edit->textCursor();
+                edit->setPlainText(editTextStackBack());
+                edit->setTextCursor(cursor);
+            } else if (event == QKeySequence::Redo) {
+                disableEditTextStack = true;
+                QTextCursor cursor = edit->textCursor();
+                edit->setPlainText(editTextStackAdvance());
+                edit->setTextCursor(cursor);
+            } else {
+                return QFrame::eventFilter(obj, ee);
+            }
+
+            disableEditTextStack = false;
+            ee->accept();
+
+            return true;
         }
 
         if(!(event->modifiers() & Qt::ShiftModifier)) {
@@ -213,4 +235,35 @@ void FileIconItem::updateStyleSheet()
             .arg(palette().color(QPalette::Text).name(QColor::HexArgb));
 
     setStyleSheet(base);
+}
+
+QString FileIconItem::editTextStackCurrentItem() const
+{
+    return editTextStack.value(editTextStackCurrentIndex);
+}
+
+QString FileIconItem::editTextStackBack()
+{
+    editTextStackCurrentIndex = qMax(0, editTextStackCurrentIndex - 1);
+    const QString &text = editTextStackCurrentItem();
+
+    return text;
+}
+
+QString FileIconItem::editTextStackAdvance()
+{
+    editTextStackCurrentIndex = qMin(editTextStack.count() - 1, editTextStackCurrentIndex + 1);
+    const QString &text = editTextStackCurrentItem();
+
+    return text;
+}
+
+void FileIconItem::pushItemToEditTextStack(const QString &item)
+{
+    if (disableEditTextStack)
+        return;
+
+    editTextStack.remove(editTextStackCurrentIndex + 1, editTextStack.count() - editTextStackCurrentIndex - 1);
+    editTextStack.push(item);
+    ++editTextStackCurrentIndex;
 }

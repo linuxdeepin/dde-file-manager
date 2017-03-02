@@ -2,6 +2,7 @@
 #define FILEITEM_H
 
 #include <QLabel>
+#include <QStack>
 
 QT_BEGIN_NAMESPACE
 class QTextEdit;
@@ -43,9 +44,17 @@ private:
     void updateEditorGeometry();
     void updateStyleSheet();
 
+    QString editTextStackCurrentItem() const;
+    QString editTextStackBack();
+    QString editTextStackAdvance();
+    void pushItemToEditTextStack(const QString &item);
+
     bool canDeferredDelete = true;
     QLabel *icon;
     QTextEdit *edit;
+    int editTextStackCurrentIndex = -1;
+    bool disableEditTextStack = false;
+    QStack<QString> editTextStack;
     QGraphicsOpacityEffect *opacityEffect = Q_NULLPTR;
     QColor m_borderColor;
 
