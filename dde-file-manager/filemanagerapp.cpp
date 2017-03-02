@@ -184,8 +184,8 @@ void FileManagerApp::showPropertyDialog(const QStringList paths)
         //symlink , desktop files filters
         const DAbstractFileInfoPointer& info = fileService->createFileInfo(url);
         DUrl testUrl = url;
-        if(info->isSymLink()){
-            testUrl = info->symLinkTarget();
+        if(info && info->isSymLink()){
+            testUrl = info->rootSymLinkTarget();
         }
 
         if(testUrl.toLocalFile().endsWith(".desktop")){

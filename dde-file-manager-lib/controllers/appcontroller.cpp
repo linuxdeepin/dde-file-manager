@@ -446,8 +446,8 @@ void AppController::actionProperty(const DFMEvent &event)
 
         //consider symlink file that links to trash/computer desktop files
         const DAbstractFileInfoPointer& info = fileService->createFileInfo(url);
-        if(info->isSymLink()){
-            testUrl = info->symLinkTarget();
+        if(info && info->isSymLink()){
+            testUrl = info->rootSymLinkTarget();
         }
 
         if(testUrl.toLocalFile().endsWith(QString(".") + DESKTOP_SURRIX)){
