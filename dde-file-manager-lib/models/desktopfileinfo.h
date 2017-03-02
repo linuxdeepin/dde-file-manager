@@ -31,7 +31,8 @@ public:
 
     static QMap<QString, QVariant> getDesktopFileInfo(const DUrl &fileUrl);
 
-    QVector<MenuAction> menuActionList(MenuType type = SingleFile) const;
+    QVector<MenuAction> menuActionList(MenuType type = SingleFile) const Q_DECL_OVERRIDE;
+    QSet<MenuAction> disableMenuActionList() const Q_DECL_OVERRIDE;
     QList<QIcon> additionalIcon() const;
     Qt::DropActions supportedDragActions() const Q_DECL_OVERRIDE;
 
