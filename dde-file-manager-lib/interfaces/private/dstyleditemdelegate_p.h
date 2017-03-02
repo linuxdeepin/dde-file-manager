@@ -19,6 +19,8 @@ public:
         : q_ptr(qq) {}
 
     void init();
+    void _q_onRowsInserted(const QModelIndex &parent, int first, int last);
+    void _q_onRowsRemoved(const QModelIndex &parent, int first, int last);
 
     DStyledItemDelegate *q_ptr;
     mutable QModelIndex editingIndex;

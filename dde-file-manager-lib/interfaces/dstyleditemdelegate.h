@@ -61,6 +61,9 @@ protected:
 
     QScopedPointer<DStyledItemDelegatePrivate> d_ptr;
 
+    Q_PRIVATE_SLOT(d_ptr, void _q_onRowsInserted(const QModelIndex &parent, int first, int last))
+    Q_PRIVATE_SLOT(d_ptr, void _q_onRowsRemoved(const QModelIndex &parent, int first, int last))
+
     Q_DECLARE_PRIVATE(DStyledItemDelegate)
     Q_DISABLE_COPY(DStyledItemDelegate)
 };

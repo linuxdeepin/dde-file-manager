@@ -185,5 +185,27 @@ void DStyledItemDelegatePrivate::init()
     q->connect(q, &DStyledItemDelegate::commitData, q->parent(), &DFileViewHelper::handleCommitData);
     q->connect(q->parent()->parent(), &QAbstractItemView::iconSizeChanged, q, &DStyledItemDelegate::updateItemSizeHint);
 
+    QAbstractItemModel *model = q->parent()->parent()->model();
+    Q_ASSERT(model);
+
+    q->connect(model, SIGNAL(rowsInserted(QModelIndex,int,int)), SLOT(_q_onRowsInserted(QModelIndex,int,int)));
+    q->connect(model, SIGNAL(rowsRemoved(QModelIndex,int,int)), SLOT(_q_onRowsRemoved(QModelIndex,int,int)));
+
     textLineHeight = q->parent()->parent()->fontMetrics().height();
 }
+
+void DStyledItemDelegatePrivate::_q_onRowsInserted(const QModelIndex &parent, int first, int last)
+{
+    if (editingIndex.isValid() && first <= editingIndex.row() && !editingIndex.parent().isValid()) {
+        editingIndex = parent.child(editingIndex.row() + last - first + 1, editingIndex.column());
+    }
+}
+
+void DStyledItemDelegatePrivate::_q_onRowsRemoved(const QModelIndex &parent, int first, int last)
+{
+    if (editingIndex.isValid() && first <= editingIndex.row() && !editingIndex.parent().isValid()) {
+        editingIndex = parent.child(editingIndex.row() - last + first - 1, editingIndex.column());
+    }
+}
+
+#include "moc_dstyleditemdelegate.cpp"
