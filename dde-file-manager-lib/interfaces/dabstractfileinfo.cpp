@@ -622,18 +622,23 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
             actionKeys << MenuAction::Open
                        << MenuAction::OpenInNewWindow
                        << MenuAction::OpenInNewTab
-                       << MenuAction::OpenAsAdmin
                        << MenuAction::Separator
                        << MenuAction::Copy
-                       << MenuAction::Compress;
+                       << MenuAction::Separator
+                       << MenuAction::Compress
+                       << MenuAction::Separator;
 
             if (canShare() && !isShared()){
-                actionKeys << MenuAction::Share;
+                actionKeys << MenuAction::Share
+                           << MenuAction::Separator;
             }else if(isShared()){
-                actionKeys << MenuAction::UnShare;
+                actionKeys << MenuAction::UnShare
+                           << MenuAction::Separator;
             }
             actionKeys << MenuAction::CreateSymlink
                        << MenuAction::SendToDesktop
+                       << MenuAction::Separator
+                       << MenuAction::OpenAsAdmin
                        << MenuAction::OpenInTerminal
                        << MenuAction::Separator;
 
@@ -644,8 +649,7 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
 
             if (isDir()){
                 actionKeys << MenuAction::OpenInNewWindow
-                           << MenuAction::OpenInNewTab
-                           << MenuAction::OpenAsAdmin;
+                           << MenuAction::OpenInNewTab;
             }else{
                 if (!isDesktopFile())
                     actionKeys << MenuAction::OpenWith;
@@ -653,20 +657,35 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
             actionKeys << MenuAction::Separator
                        << MenuAction::Cut
                        << MenuAction::Copy
-                       << MenuAction::Rename;
+                       << MenuAction::Rename
+                       << MenuAction::Delete
+                       << MenuAction::Separator;
 
             if (isDir()) {
                 actionKeys << MenuAction::Compress;
 
+                actionKeys << MenuAction::Separator;
+
                 if (canShare() && !isShared()){
-                    actionKeys << MenuAction::Share;
+                    actionKeys << MenuAction::Share
+                               << MenuAction::Separator;
                 }else if(isShared()){
-                    actionKeys << MenuAction::UnShare;
+                    actionKeys << MenuAction::UnShare
+                               << MenuAction::Separator;
                 }
 
             }else if(isFile()) {
                 if (!FileUtils::isArchive(absoluteFilePath())){
-                    actionKeys << MenuAction::Compress;
+                    actionKeys << MenuAction::Compress
+                               << MenuAction::Separator;
+                }
+            }
+
+            if (isFile()){
+                if (FileUtils::isArchive(absoluteFilePath())){
+                    actionKeys << MenuAction::Decompress
+                               << MenuAction::DecompressHere
+                               << MenuAction::Separator;
                 }
             }
 
@@ -675,20 +694,13 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
 
             if (isDir()) {
                 actionKeys << MenuAction::AddToBookMark
-                           << MenuAction::OpenInTerminal;
+                           << MenuAction::Separator
+                           << MenuAction::OpenAsAdmin
+                           << MenuAction::OpenInTerminal
+                           << MenuAction::Separator;
             } else if(isFile()) {
                 if (mimeTypeName().startsWith("image") && isReadable()) {
-                    actionKeys << MenuAction::SetAsWallpaper;
-                }
-            }
-
-            actionKeys << MenuAction::Delete
-                       << MenuAction::Separator;
-
-            if (isFile()){
-                if (FileUtils::isArchive(absoluteFilePath())){
-                    actionKeys << MenuAction::Decompress
-                               << MenuAction::DecompressHere
+                    actionKeys << MenuAction::SetAsWallpaper
                                << MenuAction::Separator;
                 }
             }
