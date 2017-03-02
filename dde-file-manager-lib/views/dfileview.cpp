@@ -866,6 +866,9 @@ void DFileView::keyPressEvent(QKeyEvent *event)
 
             return;
         case Qt::Key_I:
+            if(fmevent.fileUrl().isNetWorkFile())
+                return;
+
             if (fmevent.fileUrlList().isEmpty())
                 fmevent << (DUrlList() << fmevent.fileUrl());
 
