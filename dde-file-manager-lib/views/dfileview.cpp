@@ -133,8 +133,8 @@ DFileView::DFileView(QWidget *parent)
                                  << ContiguousSelection;
 
     initUI();
-    initDelegate();
     initModel();
+    initDelegate();
     initConnects();
 
     ViewInstanceCount += 1;
