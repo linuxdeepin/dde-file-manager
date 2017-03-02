@@ -892,6 +892,10 @@ void DFileView::keyPressEvent(QKeyEvent *event)
 
             return;
         case Qt::Key_T:{
+            //do not handle key press event of autoRepeat type
+            if(event->isAutoRepeat())
+                return;
+
             const QString& path = globalSetting->newTabPath();
             if(selectedIndexCount() == 1 && model()->fileInfo(selectedIndexes().first())->isDir()){
                 fmevent << model()->fileInfo(selectedIndexes().first())->fileUrl();
