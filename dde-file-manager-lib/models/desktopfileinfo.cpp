@@ -225,6 +225,16 @@ Qt::DropActions DesktopFileInfo::supportedDragActions() const
     return DFileInfo::supportedDragActions();
 }
 
+bool DesktopFileInfo::canDrop() const
+{
+    //ignore drop event for computer desktop file
+    Q_D(const DesktopFileInfo);
+    if(d->deepinID == "dde-computer")
+        return false;
+
+    return DFileInfo::canDrop();
+}
+
 DUrl DesktopFileInfo::trashDesktopFileUrl()
 {
     return DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::DesktopPath) + "/dde-trash.desktop");

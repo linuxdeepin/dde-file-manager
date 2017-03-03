@@ -36,6 +36,8 @@ public:
     QList<QIcon> additionalIcon() const;
     Qt::DropActions supportedDragActions() const Q_DECL_OVERRIDE;
 
+    bool canDrop() const Q_DECL_OVERRIDE;
+
     static DUrl trashDesktopFileUrl();
     static DUrl computerDesktopFileUrl();
 
