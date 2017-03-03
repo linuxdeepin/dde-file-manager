@@ -5,6 +5,7 @@
 #include "app/define.h"
 #include "widgets/singleton.h"
 #include "interfaces/dfmsetting.h"
+#include "interfaces/dfmstandardpaths.h"
 
 #include <QDBusConnection>
 
@@ -67,7 +68,7 @@ bool DBusFileDialogManager::isUseFileChooserDialog() const
 bool DBusFileDialogManager::canUseFileChooserDialog(const QString &group, const QString &executableFileName) const
 {
 #ifdef QT_NO_DEBUG
-    QSettings blackList(QString("/usr/share/%1/dbusfiledialog/%2").arg(qApp->applicationName()).arg("dbus_filedialog_blacklist.conf"), QSettings::NativeFormat);
+    QSettings blackList(DFMStandardPaths::standardLocation(DFMStandardPaths::DbusFileDialogConfPath), QSettings::NativeFormat);
 #else
     QSettings blackList(QString("%1/dbus/filedialog/%2").arg(PRO_FILE_PWD).arg("dbus_filedialog_blacklist.conf"), QSettings::NativeFormat);
 #endif
