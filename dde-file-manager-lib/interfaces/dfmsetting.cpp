@@ -99,15 +99,18 @@ QPointer<Settings> DFMSetting::settings()
 void DFMSetting::onValueChanged(const QString &key, const QVariant &value)
 {
     Q_UNUSED(value);
-    QStringList reactKeys;
-    reactKeys << "advance.preview.text_file_preview"
+    QStringList previewKeys;
+    previewKeys << "advance.preview.text_file_preview"
               << "advance.preview.document_file_preview"
               << "advance.preview.image_file_preview"
-              << "advance.preview.video_file_preview"
-              << "base.default_view.icon_size";
-    if(reactKeys.contains(key)){
-        emit fileSignalManager->requestChangeIconSizeBySizeIndex(iconSizeIndex());
+              << "advance.preview.video_file_preview";
+
+    if(previewKeys.contains(key)){
         emit fileSignalManager->requestFreshAllFileView();
+    } else if(key == "base.default_view.icon_size"){
+        emit fileSignalManager->requestChangeIconSizeBySizeIndex(iconSizeIndex());
+    } else if(key == "base.hidden_files.show_hidden"){
+        emit fileSignalManager->showHiddenOnViewChanged();
     }
 }
 
