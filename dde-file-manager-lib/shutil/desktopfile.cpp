@@ -34,6 +34,13 @@ DesktopFile::DesktopFile(const QString &fileName) {
     }else{
         m_localName = m_name;
     }
+    if(desktop.contains("NoDisplay")){
+        m_noDisplay = desktop.value("NoDisplay", settings.value("NoDisplay").toBool()).toBool();
+    }
+    if(desktop.contains("Hidden")){
+        m_hidden = desktop.value("Hidden", settings.value("Hidden").toBool()).toBool();
+    }
+
     m_exec = desktop.value("Exec", settings.value("Exec")).toString();
     m_icon = desktop.value("Icon", settings.value("Icon")).toString();
     m_type = desktop.value("Type", settings.value("Type", "Application")).toString();
@@ -83,6 +90,12 @@ QString DesktopFile::getDeepinId() const
 {
     return m_deepinId;
 }
+
+bool DesktopFile::getNoShow() const
+{
+    return m_noDisplay || m_hidden;
+}
+
 //---------------------------------------------------------------------------
 
 QStringList DesktopFile::getCategories() const {

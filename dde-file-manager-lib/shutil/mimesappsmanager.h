@@ -12,12 +12,6 @@
 #include "desktopfile.h"
 #include <QIcon>
 
-struct AppContext{
-    QString appName;
-    QString commandLine;
-    QIcon appIcon;
-};
-
 class MimeAppsWorker: public QObject
 {
    Q_OBJECT
@@ -52,6 +46,11 @@ public:
 
     static QStringList DesktopFiles;
     static QMap<QString, QStringList> MimeApps;
+    //specially cache for video, image, text and audio
+    static QMap<QString, DesktopFile> VideoMimeApps;
+    static QMap<QString, DesktopFile> ImageMimeApps;
+    static QMap<QString, DesktopFile> TextMimeApps;
+    static QMap<QString, DesktopFile> AudioMimeApps;
     static QMap<QString, DesktopFile> DesktopObjs;
 
     static QMimeType getMimeType(const QString& fileName);
@@ -63,16 +62,19 @@ public:
     static QString getDefaultAppDisplayNameByMimeType(const QString& mimeType);
     static void setDefautlAppForType(const QString& mimeType,
                                      const QString& targetAppName);
-    static QList<AppContext> getRecommendedAppsForType(const QString& mimeType);
+
+    static QStringList getRecommendedAppsByMimeType(const QMimeType& mimeType);
 
 
     static QStringList getApplicationsFolders();
     static QString getMimeAppsCacheFile();
+    static QString getMimeInfoCacheFilePath();
+    static QString getMimeInfoCacheFileRootPath();
     static QString getDesktopFilesCacheFile();
     static QString getDesktopIconsCacheFile();
     static QStringList getDesktopFiles();
     static QMap<QString, DesktopFile> getDesktopObjs();
-    static QMap<QString, QStringList> getMimeTypeApps();
+    static void initMimeTypeApps();
     static bool lessByDateTime(const QFileInfo& f1,  const QFileInfo& f2);
 
 signals:
