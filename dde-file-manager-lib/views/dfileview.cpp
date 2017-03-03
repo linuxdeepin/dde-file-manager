@@ -1553,7 +1553,12 @@ bool DFileView::event(QEvent *e)
 
 void DFileView::onShowHiddenFileChanged()
 {
-    model()->toggleHiddenFiles(rootUrl());
+    QDir::Filters filters;
+    if (globalSetting->isShowedHiddenOnView())
+        filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden;
+    else
+        filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System;
+    model()->setFilters(filters);
 }
 
 void DFileView::initDelegate()
