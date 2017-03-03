@@ -21,6 +21,7 @@
 #include "shutil/mimesappsmanager.h"
 #include "shutil/desktopfile.h"
 #include "shutil/fileutils.h"
+#include "interfaces/dfileiconprovider.h"
 
 #include "utils.h"
 
@@ -55,30 +56,34 @@ OpenWithOtherDialog::~OpenWithOtherDialog()
 
 }
 
-void OpenWithOtherDialog::initDataAsync()
+void OpenWithOtherDialog::initData()
 {
-    QtConcurrent::run([=]{
-        const DAbstractFileInfoPointer &info = fileService->createFileInfo(m_url);
-        QString path = info->absoluteFilePath();
+    const DAbstractFileInfoPointer &info = fileService->createFileInfo(m_url);
+    QString path = info->absoluteFilePath();
 
-        QMimeType mimeType = mimeAppsManager->getMimeType(path);
-        QStringList recommendApps = mimeAppsManager->MimeApps.value(MimesAppsManager::getMimeTypeByFileName(path));;
+    QMimeType mimeType = mimeAppsManager->getMimeType(path);
+    QStringList recommendApps = mimeAppsManager->getRecommendedAppsByMimeType(mimeType);
 
-        foreach (QString name, mimeType.aliases()) {
-            QStringList apps = mimeAppsManager->MimeApps.value(name);
-            foreach (QString app, apps) {
-                if (!recommendApps.contains(app)){
-                    recommendApps.append(app);
-                }
-            }
+    bool hasItems = false;
+    foreach (const QString& f, mimeAppsManager->DesktopObjs.keys()) {
+        //filter recommend apps , no show apps and no mime support apps
+        const DesktopFile& app = mimeAppsManager->DesktopObjs.value(f);
+        if(recommendApps.contains(f))
+            continue;
+
+        if(mimeAppsManager->DesktopObjs.value(f).getNoShow())
+            continue;
+
+        if(mimeAppsManager->DesktopObjs.value(f).getMimeType().first() == "")
+            continue;
+
+        bool isSameDesktop = false;
+        foreach (const DesktopFile& otherApp, m_otherAppList) {
+            if(otherApp.getExec() == app.getExec() && otherApp.getLocalName() == app.getLocalName())
+                isSameDesktop = true;
         }
 
-        bool hasItems = false;
-        foreach (const QString& f, mimeAppsManager->DesktopObjs.keys()) {
-
-            if(recommendApps.contains(f))
-                continue;
-
+        if(!isSameDesktop){
             m_otherAppList << mimeAppsManager->DesktopObjs.value(f);
             m_appQueue << mimeAppsManager->DesktopObjs.value(f);
             if(!hasItems && m_appQueue.count() == 25){
@@ -86,8 +91,16 @@ void OpenWithOtherDialog::initDataAsync()
                 hasItems = true;
             }
         }
-        if(!hasItems)
-            emit requestAppendPageItems();
+    }
+
+    if(!hasItems)
+        emit requestAppendPageItems();
+}
+
+void OpenWithOtherDialog::initDataAsync()
+{
+    QtConcurrent::run([=]{
+        initData();
     });
 }
 
@@ -97,7 +110,7 @@ void OpenWithOtherDialog::initUI()
     m_OpenWithButtonGroup = new QButtonGroup(m_appListWidget);
     m_appListWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    QLabel* titleLabel = new QLabel(tr("Open with"), this);
+    QLabel* titleLabel = new QLabel(tr("All Programs"), this);
     titleLabel->setFixedSize(200, 40);
     titleLabel->move(50, 0);
     titleLabel->setAlignment(Qt::AlignCenter);
@@ -206,7 +219,16 @@ void OpenWithOtherDialog::appendPageItems()
             QString defaultApp = mimeAppsManager->getDefaultAppDisplayNameByMimeType(info->mimeTypeName());
             const DesktopFile& desktopApp = m_appQueue.dequeue();
             QString iconName = desktopApp.getIcon();
-            QIcon icon(QIcon::fromTheme(iconName));
+
+            //some dekstop file's icon is set as file path not from icon theme
+            QIcon icon = QIcon::fromTheme(iconName);
+            if(icon.isNull())
+                icon = QIcon(iconName);
+            if(icon.pixmap(16,16).isNull()){
+                const DAbstractFileInfoPointer& info = fileService->createFileInfo(DUrl::fromLocalFile(desktopApp.getFileName()));
+                icon = info->fileIcon();
+            }
+
             QListWidgetItem* item = new QListWidgetItem;
 
             QCheckBox* itemBox = new QCheckBox(desktopApp.getLocalName());

@@ -814,33 +814,34 @@ QFrame *PropertyDialog::createDeviceInfoWidget(UDiskDeviceInfoPointer info)
 
 QListWidget *PropertyDialog::createOpenWithListWidget(const DAbstractFileInfoPointer &info)
 {
-    QListWidget* listWidget = new QListWidget(this);
+    QListWidget* listWidget = new QListWidget;
     listWidget->setObjectName("OpenWithListWidget");
     m_OpenWithButtonGroup = new QButtonGroup(listWidget);
     listWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    QString path = info->absoluteFilePath();
-    QMimeType mimeType = mimeAppsManager->getMimeType(path);
-
-    QList<AppContext> recommendApps = MimesAppsManager::getRecommendedAppsForType(mimeType.name());
+    QStringList recommendApps = mimeAppsManager->getRecommendedAppsByMimeType(info->mimeType());
     QString defaultApp = mimeAppsManager->getDefaultAppDisplayNameByMimeType(info->mimeTypeName());
 
-    foreach (AppContext app, recommendApps){
+    foreach (const QString& appFile, recommendApps){
+        if(!QFile::exists(appFile))
+            continue;
+        DesktopFile df (appFile);
+
         QListWidgetItem* item = new QListWidgetItem;
 
-        QCheckBox* itemBox = new QCheckBox(app.appName);
+        QCheckBox* itemBox = new QCheckBox(df.getLocalName());
         itemBox->setObjectName("OpenWithItem");
-        itemBox->setIcon(app.appIcon);
+        itemBox->setIcon(QIcon::fromTheme(df.getIcon()));
         itemBox->setFixedHeight(36);
         itemBox->setIconSize(QSize(16, 16));
-        itemBox->setProperty("appName",app.appName);
+        itemBox->setProperty("appName",df.getLocalName());
         itemBox->setProperty("mimeTypeName",info->mimeTypeName());
         m_OpenWithButtonGroup->addButton(itemBox);
-        item->setData(Qt::UserRole, app.appName);
+        item->setData(Qt::UserRole, df.getName());
         listWidget->addItem(item);
         listWidget->setItemWidget(item, itemBox);
 
-        if (app.appName == defaultApp){
+        if (df.getLocalName() == defaultApp){
             itemBox->setChecked(true);
         }
 
@@ -857,12 +858,6 @@ QListWidget *PropertyDialog::createOpenWithListWidget(const DAbstractFileInfoPoi
 
     listWidget->setFixedHeight(EXTEND_FRAME_MAXHEIGHT);
     listWidget->setFixedWidth(300);
-
-    listWidget->setStyleSheet("QListWidget#OpenWithListWidget{"
-                                "border: 1px solid #eaeaea;"
-                                "padding-left: 8px;"
-                                "border-radius: 2px;"
-                              "}");
 
     connect(m_OpenWithButtonGroup, SIGNAL(buttonClicked(QAbstractButton*)),
             this, SLOT(onOpenWithBntsChecked(QAbstractButton*)));

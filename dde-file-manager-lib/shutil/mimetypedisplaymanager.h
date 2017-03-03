@@ -35,6 +35,8 @@ public:
     QString defaultIcon(const QString& mimeType);
 
 
+
+    QMap<QString, QString> displayNames();
     static QStringList readlines(const QString& path);
     static void loadSupportMimeTypes();
     static QStringList supportArchiveMimetypes();

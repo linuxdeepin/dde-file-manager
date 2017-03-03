@@ -20,6 +20,7 @@ public:
   QString getIcon() const;
   QString getType() const;
   QString getDeepinId() const;
+  bool getNoShow() const;
   QStringList getCategories() const;
   QStringList getMimeType() const;
 private:
@@ -32,6 +33,8 @@ private:
   QStringList m_categories;
   QStringList m_mimeType;
   QString m_deepinId;
+  bool m_noDisplay = false;
+  bool m_hidden = false;
 };
 
 #endif // DESKTOPFILE_H

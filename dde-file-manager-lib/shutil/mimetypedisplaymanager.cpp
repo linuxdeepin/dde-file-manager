@@ -123,6 +123,11 @@ QString MimeTypeDisplayManager::defaultIcon(const QString &mimeType)
     }
 }
 
+QMap<QString, QString> MimeTypeDisplayManager::displayNames()
+{
+    return m_displayNames;
+}
+
 QStringList MimeTypeDisplayManager::readlines(const QString &path)
 {
     QStringList result;
@@ -146,12 +151,12 @@ QStringList MimeTypeDisplayManager::readlines(const QString &path)
 
 void MimeTypeDisplayManager::loadSupportMimeTypes()
 {
-    QString textPath = QString("%1/%2/%3").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::MimeTypePath), "text.mimetype");
-    QString archivePath = QString("%1/%2/%3").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::MimeTypePath), "archive.mimetype");
-    QString videoPath = QString("%1/%2/%3").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::MimeTypePath), "video.mimetype");
-    QString audioPath = QString("%1/%2/%3").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::MimeTypePath), "audio.mimetype");
-    QString imagePath = QString("%1/%2/%3").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::MimeTypePath), "image.mimetype");
-    QString executablePath = QString("%1/%2/%3").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::MimeTypePath), "executable.mimetype");
+    QString textPath = QString("%1/%2").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::MimeTypePath), "text.mimetype");
+    QString archivePath = QString("%1/%2").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::MimeTypePath), "archive.mimetype");
+    QString videoPath = QString("%1/%2").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::MimeTypePath), "video.mimetype");
+    QString audioPath = QString("%1/%2").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::MimeTypePath), "audio.mimetype");
+    QString imagePath = QString("%1/%2").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::MimeTypePath), "image.mimetype");
+    QString executablePath = QString("%1/%2").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::MimeTypePath), "executable.mimetype");
     TextMimeTypes = readlines(textPath);
     ArchiveMimeTypes = readlines(archivePath);
     VideoMimeTypes = readlines(videoPath);

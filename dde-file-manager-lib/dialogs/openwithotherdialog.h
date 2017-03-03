@@ -27,6 +27,7 @@ public:
     explicit OpenWithOtherDialog(const DUrl& url, QWidget *parent = 0);
     ~OpenWithOtherDialog();
 
+    void initData();
     void initDataAsync();
     void initUI();
     void initConnect();

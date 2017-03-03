@@ -7,6 +7,7 @@
 #include "controllers/appcontroller.h"
 #include "controllers/trashmanager.h"
 #include "models/desktopfileinfo.h"
+#include "shutil/mimetypedisplaymanager.h"
 
 #include "widgets/singleton.h"
 #include "views/windowmanager.h"
@@ -274,18 +275,13 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
 
         if (openWithMenu) {
             QMimeType mimeType = info->mimeType();
-            QStringList recommendApps = mimeAppsManager->MimeApps.value(mimeType.name());
-
-            foreach (QString name, mimeType.aliases()) {
-                QStringList apps = mimeAppsManager->MimeApps.value(name);
-                foreach (QString app, apps) {
-                    if (!recommendApps.contains(app)){
-                        recommendApps.append(app);
-                    }
-                }
-            }
+            QStringList recommendApps = mimeAppsManager->getRecommendedAppsByMimeType(mimeType);
 
             foreach (QString app, recommendApps) {
+                const DesktopFile& df = mimeAppsManager->DesktopObjs.value(app);
+                //ignore no show apps
+                if(df.getNoShow())
+                    continue;
                 QAction* action = new QAction(mimeAppsManager->DesktopObjs.value(app).getLocalName(), 0);
                 action->setIcon(FileUtils::searchAppIcon(mimeAppsManager->DesktopObjs.value(app)));
                 action->setProperty("app", app);
