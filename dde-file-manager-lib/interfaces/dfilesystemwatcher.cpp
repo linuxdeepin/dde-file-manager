@@ -248,8 +248,12 @@ void DFileSystemWatcherPrivate::_q_readFromInotify()
 
         QString filePath = path;
 
-        if (id < 0)
-            filePath = path  + QDir::separator() + name;
+        if (id < 0) {
+            if (path.endsWith(QDir::separator()))
+                filePath = path + name;
+            else
+                filePath = path  + QDir::separator() + name;
+        }
 
         if (event.mask & IN_CREATE) {
 //            qDebug() << "IN_CREATE" << filePath << name;

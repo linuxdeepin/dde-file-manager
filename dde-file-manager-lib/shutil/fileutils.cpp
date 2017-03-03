@@ -380,8 +380,14 @@ QString FileUtils::formatSize( qint64 num )
     return total;
 }
 
-QString FileUtils::newDocmentName(const QString &targetdir, const QString &baseName, const QString &suffix)
+QString FileUtils::newDocmentName(QString targetdir, const QString &baseName, const QString &suffix)
 {
+    if (targetdir.isEmpty())
+        return QString();
+
+    if (targetdir.endsWith(QDir::separator()))
+        targetdir.chop(1);
+
     int i = 0;
     QString filePath = QString("%1/%2.%4").arg(targetdir, baseName, suffix);
     while (true) {
@@ -393,25 +399,31 @@ QString FileUtils::newDocmentName(const QString &targetdir, const QString &baseN
             return filePath;
         }
     }
+
+    return QString();
 }
 
-void FileUtils::cpTemplateFileToTargetDir(const QString& targetdir, const QString& baseName, const QString& suffix)
+bool FileUtils::cpTemplateFileToTargetDir(const QString& targetdir, const QString& baseName, const QString& suffix)
 {
     QString templateFile;
     QDirIterator it(APPSHAREDIR"/templates", QDir::Files);
     while (it.hasNext()) {
       it.next();
-      if (it.filePath().endsWith(suffix)){
+      if (it.fileInfo().suffix() == suffix){
           templateFile = it.filePath();
           break;
       }
     }
 
+    if (templateFile.isEmpty())
+        return false;
+
     QString targetFile = FileUtils::newDocmentName(targetdir, baseName, suffix);
-    QStringList args;
-    args << templateFile;
-    args << targetFile;
-    QProcess::startDetached("cp", args);
+
+    if (targetFile.isEmpty())
+        return false;
+
+    return QFile::copy(templateFile, targetFile);
 }
 
 bool FileUtils::openFile(const QString &filePath)
