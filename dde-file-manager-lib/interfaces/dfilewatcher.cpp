@@ -20,6 +20,14 @@
 #include <QDir>
 #include <QDebug>
 
+static QString joinFilePath(const QString &path, const QString &name)
+{
+    if (path.endsWith(QDir::separator()))
+        return path + name;
+
+    return path + QDir::separator() + name;
+}
+
 class DFileWatcherPrivate : DAbstractFileWatcherPrivate
 {
 public:
@@ -213,7 +221,7 @@ void DFileWatcher::onFileDeleted(const QString &path, const QString &name)
     if (name.isEmpty())
         d_func()->_q_handleFileDeleted(path, QString());
     else
-        d_func()->_q_handleFileDeleted(path + QDir::separator() + name, path);
+        d_func()->_q_handleFileDeleted(joinFilePath(path, name), path);
 }
 
 void DFileWatcher::onFileAttributeChanged(const QString &path, const QString &name)
@@ -221,7 +229,7 @@ void DFileWatcher::onFileAttributeChanged(const QString &path, const QString &na
     if (name.isEmpty())
         d_func()->_q_handleFileAttributeChanged(path, QString());
     else
-        d_func()->_q_handleFileAttributeChanged(path + QDir::separator() + name, path);
+        d_func()->_q_handleFileAttributeChanged(joinFilePath(path, name), path);
 }
 
 void DFileWatcher::onFileMoved(const QString &from, const QString &fname, const QString &to, const QString &tname)
@@ -232,14 +240,14 @@ void DFileWatcher::onFileMoved(const QString &from, const QString &fname, const 
     if (fname.isEmpty()) {
         fromPath = from;
     } else {
-        fromPath = from + QDir::separator() + fname;
+        fromPath = joinFilePath(from, fname);
         fpPath = from;
     }
 
     if (tname.isEmpty()) {
         toPath = to;
     } else {
-        toPath = to + QDir::separator() + tname;
+        toPath = joinFilePath(to, tname);
         tpPath = to;
     }
 
@@ -248,7 +256,7 @@ void DFileWatcher::onFileMoved(const QString &from, const QString &fname, const 
 
 void DFileWatcher::onFileCreated(const QString &path, const QString &name)
 {
-    d_func()->_q_handleFileCreated(path + QDir::separator() + name, path);
+    d_func()->_q_handleFileCreated(joinFilePath(path, name), path);
 }
 
 void DFileWatcher::onFileModified(const QString &path, const QString &name)
@@ -256,7 +264,7 @@ void DFileWatcher::onFileModified(const QString &path, const QString &name)
     if (name.isEmpty())
         d_func()->_q_handleFileModified(path, QString());
     else
-        d_func()->_q_handleFileModified(path + QDir::separator() + name, path);
+        d_func()->_q_handleFileModified(joinFilePath(path, name), path);
 }
 
 void DFileWatcher::onFileClosed(const QString &path, const QString &name)
@@ -264,7 +272,7 @@ void DFileWatcher::onFileClosed(const QString &path, const QString &name)
     if (name.isEmpty())
         d_func()->_q_handleFileClose(path, QString());
     else
-        d_func()->_q_handleFileClose(path + QDir::separator() + name, path);
+        d_func()->_q_handleFileClose(joinFilePath(path, name), path);
 }
 
 #include "moc_dfilewatcher.cpp"
