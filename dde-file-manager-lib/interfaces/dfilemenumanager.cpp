@@ -701,7 +701,7 @@ void DFileMenuData::initActions()
 DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
                                                const QSet<MenuAction> &disableList,
                                                bool checkable,
-                                               const QMap<MenuAction, QVector<MenuAction> > &subMenuList, bool isUseCachedAction)
+                                               const QMap<MenuAction, QVector<MenuAction> > &subMenuList, bool isUseCachedAction, bool isRecursiveCall)
 {
     if(DFileMenuData::actions.isEmpty()) {
         DFileMenuData::initData();
@@ -716,7 +716,9 @@ DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
 
     DFileMenu* menu = new DFileMenu;
 
-    connect(menu, &DFileMenu::triggered, fileMenuManger, &DFileMenuManager::actionTriggered);
+    if (!isRecursiveCall){
+        connect(menu, &DFileMenu::triggered, fileMenuManger, &DFileMenuManager::actionTriggered);
+    }
 
     foreach (MenuAction key, keys) {
         if (!isAvailableAction(key))
@@ -739,9 +741,9 @@ DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
             if(!subMenuList.contains(key))
                 continue;
 
-            DFileMenu *subMenu = genereteMenuByKeys(subMenuList.value(key), disableList, checkable);
+            DFileMenu *subMenu = genereteMenuByKeys(subMenuList.value(key), disableList, checkable, QMap<MenuAction, QVector<MenuAction> >(), true, true);
 
-//            subMenu->setParent(action);
+            subMenu->QObject::setParent(menu);
             action->setMenu(subMenu);
         }
     }
@@ -795,6 +797,7 @@ bool DFileMenuManager::isAvailableAction(MenuAction action)
 void DFileMenuManager::actionTriggered(QAction *action)
 {
     DFileMenu *menu = qobject_cast<DFileMenu *>(sender());
+    qDebug() << menu << action;
     DFMEvent event = menu->event();
     event << DFMEvent::Menu;
     if (action->data().isValid()){

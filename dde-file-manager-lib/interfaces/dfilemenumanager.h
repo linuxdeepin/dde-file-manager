@@ -56,7 +56,8 @@ public:
                                          const QSet<MenuAction> &disableList,
                                          bool checkable = false,
                                          const QMap<MenuAction, QVector<MenuAction> > &subMenuList = QMap<MenuAction, QVector<MenuAction> >(),
-                                         bool isUseCachedAction = true);
+                                         bool isUseCachedAction = true,
+                                         bool isRecursiveCall = false);
     static QString getActionString(MenuAction type);
 
     /// actions filter(global)
