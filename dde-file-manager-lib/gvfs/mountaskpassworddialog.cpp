@@ -34,7 +34,7 @@ void MountAskPasswordDialog::initUI()
 
     m_anonymousButtonGroup = new QButtonGroup(this);
     m_anonymousButtonGroup->setExclusive(true);
-    QPushButton* anonymousButton = new QPushButton(tr("Anonymity"));
+    QPushButton* anonymousButton = new QPushButton(tr("Anonymous"));
     anonymousButton->setObjectName("AnonymousButton");
     anonymousButton->setCheckable(true);
     anonymousButton->setFixedHeight(28);
