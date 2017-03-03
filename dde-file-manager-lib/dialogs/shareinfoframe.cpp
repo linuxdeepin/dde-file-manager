@@ -45,7 +45,7 @@ void ShareInfoFrame::initUI()
     permissions << tr("Read and write") << tr("Read only");
     m_permissoComBox->addItems(permissions);
 
-    SectionKeyLabel* anonymityLabel = new SectionKeyLabel(tr("Anonymity:"));
+    SectionKeyLabel* anonymityLabel = new SectionKeyLabel(tr("Anonymous:"));
     anonymityLabel->setFixedWidth(labelWidth);
     m_anonymityCombox = new DComboBox(this);
     m_anonymityCombox->setFixedWidth(fieldWidth);
