@@ -20,6 +20,8 @@ PKGCONFIG += dtkbase-0-2 dtkutil-0-2 dtkwidget-0-2 gio-unix-2.0
 
 DEFINES += QMAKE_TARGET=\\\"$$TARGET\\\" QMAKE_VERSION=\\\"$$VERSION\\\"
 
+DEFINES += QT_MESSAGELOGCONTEXT
+
 isEmpty(QMAKE_ORGANIZATION_NAME) {
     DEFINES += QMAKE_ORGANIZATION_NAME=\\\"deepin\\\"
 }

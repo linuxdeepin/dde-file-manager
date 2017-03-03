@@ -36,9 +36,8 @@ public:
         return instance;
     }
 
-    inline static QString PluginDir(){
-        return PLUGINDIR;
-    }
+    static QString PluginDir();
+
 
     void loadPlugin();
     QList<MenuInterface*> getMenuInterfaces();

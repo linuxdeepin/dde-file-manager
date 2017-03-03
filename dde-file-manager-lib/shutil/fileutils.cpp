@@ -5,7 +5,7 @@
 #include "app/define.h"
 #include "widgets/singleton.h"
 #include "mimetypedisplaymanager.h"
-
+#include "dfmstandardpaths.h"
 #include "dfileservices.h"
 #include "simpleini/SimpleIni.h"
 #include "dmimedatabase.h"
@@ -406,7 +406,7 @@ QString FileUtils::newDocmentName(QString targetdir, const QString &baseName, co
 bool FileUtils::cpTemplateFileToTargetDir(const QString& targetdir, const QString& baseName, const QString& suffix)
 {
     QString templateFile;
-    QDirIterator it(APPSHAREDIR"/templates", QDir::Files);
+    QDirIterator it(DFMStandardPaths::standardLocation(DFMStandardPaths::TemplatesPath), QDir::Files);
     while (it.hasNext()) {
       it.next();
       if (it.fileInfo().suffix() == suffix){

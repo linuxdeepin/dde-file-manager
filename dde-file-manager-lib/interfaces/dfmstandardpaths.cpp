@@ -14,8 +14,41 @@ QString DFMStandardPaths::standardLocation(DFMStandardPaths::StandardLocation ty
         return QDir::homePath() + "/.local/share/Trash/files";
     case TrashInfosPath:
         return QDir::homePath() + "/.local/share/Trash/info";
-    case TranslationPath:
-        return APPSHAREDIR"/translations";
+    case TranslationPath:{
+        QString path = APPSHAREDIR"/translations";
+        if (!QDir(path).exists()){
+            path = qApp->applicationDirPath() + "/translations";
+        }
+        return path;
+    }
+    case TemplatesPath:{
+        QString path = APPSHAREDIR"/templates";
+        if (!QDir(path).exists()){
+            path = qApp->applicationDirPath() + "/templates";
+        }
+        return path;
+    }
+    case MimeTypePath:{
+        QString path = APPSHAREDIR"/mimetypes";
+        if (!QDir(path).exists()){
+            path = qApp->applicationDirPath() + "/mimetypes";
+        }
+        return path;
+    }
+    case PluginsPath:{
+        QString path = PLUGINDIR;
+        if (!QDir(path).exists()){
+            path = qApp->applicationDirPath() + QDir::separator() + "plugins";
+        }
+        return path;
+    }
+    case DbusFileDialogConfPath:{
+        QString path = APPSHAREDIR"/dbusfiledialog/dbus_filedialog_blacklist.conf";
+        if (!QDir(path).exists()){
+            path = QDir::currentPath() + "/dbusfiledialog/dbus_filedialog_blacklist.conf";
+        }
+        return path;
+    }
     case ApplicationConfigPath:
         return getConfigPath();
     case ThumbnailPath:

@@ -2,6 +2,7 @@
 #include "menu/menuinterface.h"
 #include "view/viewinterface.h"
 #include "interfaces/dfmglobal.h"
+#include "interfaces/dfmstandardpaths.h"
 #include <QDir>
 #include <QPluginLoader>
 #include <QDebug>
@@ -23,6 +24,11 @@ PluginManager::PluginManager(QObject *parent) :
 PluginManager::~PluginManager()
 {
 
+}
+
+QString PluginManager::PluginDir()
+{
+    return DFMStandardPaths::standardLocation(DFMStandardPaths::PluginsPath);
 }
 
 void PluginManager::loadPlugin()
