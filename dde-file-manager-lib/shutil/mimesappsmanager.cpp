@@ -249,6 +249,21 @@ QString MimesAppsManager::getDefaultAppByMimeType(const QMimeType &mimeType)
 
 QString MimesAppsManager::getDefaultAppByMimeType(const QString &mimeType)
 {
+    GAppInfo* defaultApp = g_app_info_get_default_for_type(mimeType.toStdString().c_str(), FALSE);
+    QString url = "";
+    if(defaultApp){
+        url = g_app_info_get_id(defaultApp);
+    }
+    return url;
+}
+
+QString MimesAppsManager::getDefaultAppDisplayNameByMimeType(const QMimeType &mimeType)
+{
+    return getDefaultAppDisplayNameByMimeType(mimeType.name());
+}
+
+QString MimesAppsManager::getDefaultAppDisplayNameByMimeType(const QString &mimeType)
+{
     /*
         *
         * We have the appsForMimeList. Now we need to filter some applications out as per user's choice and get the default value

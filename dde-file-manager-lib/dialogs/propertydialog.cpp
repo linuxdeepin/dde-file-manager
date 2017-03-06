@@ -823,7 +823,7 @@ QListWidget *PropertyDialog::createOpenWithListWidget(const DAbstractFileInfoPoi
     QMimeType mimeType = mimeAppsManager->getMimeType(path);
 
     QList<AppContext> recommendApps = MimesAppsManager::getRecommendedAppsForType(mimeType.name());
-    QString defaultApp = mimeAppsManager->getDefaultAppByMimeType(info->mimeTypeName());
+    QString defaultApp = mimeAppsManager->getDefaultAppDisplayNameByMimeType(info->mimeTypeName());
 
     foreach (AppContext app, recommendApps){
         QListWidgetItem* item = new QListWidgetItem;

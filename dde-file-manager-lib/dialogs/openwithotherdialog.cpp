@@ -203,7 +203,7 @@ void OpenWithOtherDialog::appendPageItems()
     for(int i = 0; i < 25; i ++){
         if(m_appQueue.count() > 0){
             DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(m_url);
-            QString defaultApp = mimeAppsManager->getDefaultAppByMimeType(info->mimeTypeName());
+            QString defaultApp = mimeAppsManager->getDefaultAppDisplayNameByMimeType(info->mimeTypeName());
             const DesktopFile& desktopApp = m_appQueue.dequeue();
             QString iconName = desktopApp.getIcon();
             QIcon icon(QIcon::fromTheme(iconName));

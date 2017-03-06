@@ -9,6 +9,7 @@
 #include "dfileservices.h"
 #include "simpleini/SimpleIni.h"
 #include "dmimedatabase.h"
+#include "mimesappsmanager.h"
 
 #include <QDirIterator>
 #include <QUrl>
@@ -431,8 +432,17 @@ bool FileUtils::openFile(const QString &filePath)
     if (QFileInfo(filePath).suffix() == "desktop"){
         return FileUtils::openDesktopFile(filePath);
     }
+    qDebug() << mimeAppsManager->getDefaultAppByFileName(filePath);
+    if (mimeAppsManager->getDefaultAppByFileName(filePath) == "org.gnome.font-viewer.desktop"){
+        QProcess::startDetached("gvfs-open", QStringList() << filePath);
+        QTimer::singleShot(200, [=]{
+            QProcess::startDetached("gvfs-open", QStringList() << filePath);
+        });
+        return true;
+    }
 
     bool result = QProcess::startDetached("gvfs-open", QStringList() << filePath);
+
     if (!result)
         return QDesktopServices::openUrl(QUrl::fromLocalFile(filePath));
     return result;
@@ -610,7 +620,7 @@ bool FileUtils::isFileExecutable(const QString &path)
     return (file.permissions() & QFile::ReadUser) && (file.permissions() & QFile::ExeUser);
 }
 
-bool FileUtils::istFileRunnable(const QString &path)
+bool FileUtils::isFileRunnable(const QString &path)
 {
     QString _path = path;
     QFileInfo info(path);
