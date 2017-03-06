@@ -109,7 +109,7 @@ bool FileController::openFile(const DUrl &fileUrl, bool &accepted) const
         return FileUtils::openExcutableScriptFile(fileUrl.toLocalFile(), code);
     }
 
-    if(FileUtils::istFileRunnable(fileUrl.toLocalFile()) && !pfile->isDesktopFile()){
+    if(FileUtils::isFileRunnable(fileUrl.toLocalFile()) && !pfile->isDesktopFile()){
         int code = dialogManager->showRunExcutableFileDialog(fileUrl);
         return FileUtils::openExcutableFile(fileUrl.toLocalFile(), code);
     }

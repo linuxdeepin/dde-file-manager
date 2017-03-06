@@ -53,7 +53,7 @@ public:
     static QByteArray md5(QFile *file, const QString &filePath);
 
     static bool isFileExecutable(const QString& path);
-    static bool istFileRunnable(const QString& path);
+    static bool isFileRunnable(const QString& path);
     static QString getFileMimetype(const QString& path);
     static bool isExecutableScript(const QString& path);
     static bool openExcutableScriptFile(const QString& path, int flag);

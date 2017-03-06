@@ -59,6 +59,8 @@ public:
     static QString getDefaultAppByFileName(const QString& fileName);
     static QString getDefaultAppByMimeType(const QMimeType& mimeType);
     static QString getDefaultAppByMimeType(const QString& mimeType);
+    static QString getDefaultAppDisplayNameByMimeType(const QMimeType& mimeType);
+    static QString getDefaultAppDisplayNameByMimeType(const QString& mimeType);
     static void setDefautlAppForType(const QString& mimeType,
                                      const QString& targetAppName);
     static QList<AppContext> getRecommendedAppsForType(const QString& mimeType);
