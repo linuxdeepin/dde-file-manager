@@ -53,7 +53,12 @@ void GvfsMountManager::initConnect()
         g_signal_connect (m_gVolumeMonitor, "volume-added", (GCallback)&GvfsMountManager::monitor_volume_added, NULL);
         g_signal_connect (m_gVolumeMonitor, "volume-removed", (GCallback)&GvfsMountManager::monitor_volume_removed, NULL);
     }
-//    g_signal_connect (m_gVolumeMonitor, "volume-changed", (GCallback)&GvfsMountManager::monitor_volume_changed, NULL);
+    //    g_signal_connect (m_gVolumeMonitor, "volume-changed", (GCallback)&GvfsMountManager::monitor_volume_changed, NULL);
+}
+
+GvfsMountManager *GvfsMountManager::instance()
+{
+    return gvfsMountManager;
 }
 
 QStringList GvfsMountManager::getIconNames(GThemedIcon *icon)

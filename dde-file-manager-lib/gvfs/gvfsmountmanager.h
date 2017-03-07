@@ -22,6 +22,8 @@ public:
     explicit GvfsMountManager(QObject *parent = 0);
     void initConnect();
 
+    static GvfsMountManager* instance();
+
     static QMap<QString, QDrive> Drives;
     static QMap<QString, QVolume> Volumes;
     static QMap<QString, QMount> Mounts;
