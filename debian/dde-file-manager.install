@@ -5,3 +5,4 @@ usr/share/usb-device-formatter/translations/*
 etc/xdg/autostart/*
 etc/dbus-1/system.d/*
 usr/share/dbus-1/*
+usr/lib/dde-dock/plugins/*
