@@ -218,5 +218,6 @@ int main(int argc, char *argv[])
         w.setAttribute(Qt::WA_TranslucentBackground);
         w.resize(1, 1);
         w.show();
+        quick_exit(1);
     }
 }
