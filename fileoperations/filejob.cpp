@@ -7,6 +7,7 @@
 #include "../app/define.h"
 #include "../widgets/singleton.h"
 #include "interfaces/dfmglobal.h"
+#include "dfmstandardpaths.h"
 
 #include <QFile>
 #include <QThread>
@@ -230,7 +231,7 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
     qDebug() << "mountpoint" << tarStorageInfo.rootPath();
 
     //No need to check dist usage for moving job in same disk
-    if(!(m_jobType == Move && m_isInSameDisk)){
+    if(!((m_jobType == Move || m_jobType == Trash || m_jobType == Restore) && m_isInSameDisk)){
         const bool diskSpaceAvailable = checkDiskSpaceAvailable(files, destination);
         m_isCheckingDisk = false;
         if(!diskSpaceAvailable){
@@ -285,6 +286,24 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
                     if(copyDir(srcPath, tarDirPath, true, &targetPath))
                         deleteDir(srcPath);
                 }
+            }else if (m_jobType == Trash){
+                bool canTrash = moveDirToTrash(srcPath, &targetPath);
+                if(m_isInSameDisk)
+                {
+                    if (canTrash){
+                        QDir sourceDir(srcPath);
+                        if (!sourceDir.rename(srcPath, targetPath)) {
+                            if (QProcess::execute("mv -T \"" + srcPath.toUtf8() + "\" \"" + targetPath.toUtf8() + "\"") != 0) {
+                                qDebug() << "Unable to trash dir:" << srcPath;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    if(copyDir(srcPath, tarDirPath, true, &targetPath))
+                        deleteDir(srcPath);
+                }
             }
         }else{
             adjustSymlinkPath(srcPath, tarDirPath);
@@ -296,6 +315,26 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
                     if (!moveFile(srcPath, tarDirPath, &targetPath)) {
                         if(copyFile(srcPath, tarDirPath, true, &targetPath))
                             deleteFile(srcPath);
+                    }
+                }
+                else
+                {
+                    if(copyFile(srcPath, tarDirPath, true, &targetPath))
+                        deleteFile(srcPath);
+                }
+            }else if (m_jobType == Trash){
+                bool canTrash = moveFileToTrash(srcPath, &targetPath);
+                if(m_isInSameDisk)
+                {
+                    if (canTrash){
+                        QFile localFile(srcPath);
+                        if (!localFile.rename(targetPath))
+                        {
+                            if (QProcess::execute("mv -T \"" + srcPath.toUtf8() + "\" \"" + targetPath.toUtf8() + "\"") != 0) {
+                                //Todo: find reason
+                                qDebug() << "Unable to trash file:" << localFile.fileName();
+                            }
+                        }
                     }
                 }
                 else
@@ -357,39 +396,35 @@ DUrlList FileJob::doMoveToTrash(const DUrlList &files)
         return list;
     }
 
-    bool ok = true;
+    QStorageInfo storageInfo(files.at(0).toLocalFile());
+    if(storageInfo.rootPath() != "/"){
+        m_isInSameDisk = false;
+    }
+
+
 
     //store url list whom cannot be moved to trash
-    DUrlList conflictList;
+    DUrlList canMoveToTrashList;
+    DUrlList canNotMoveToTrashList;
 
     for(int i = 0; i < files.size(); i++)
     {
-        QUrl url = files.at(i);
-        QDir dir(url.path());
-        QString targetPath;
-
-        //check if is target file in the /home disk
-        QStorageInfo storageInfo(url.toLocalFile());
-        bool canMoveToTrash = true;
-        if(storageInfo.rootPath() != "/home")
-            canMoveToTrash = checkTrashFileOutOf1GB(url);
-
-        if(!canMoveToTrash){
-            conflictList << url;
-            continue;
+        DUrl url = files.at(i);
+        if (!m_isInSameDisk){
+            //check if is target file in the / disk
+            bool canMoveToTrash = checkTrashFileOutOf1GB(url);
+            if(!canMoveToTrash){
+                canNotMoveToTrashList << url;
+                continue;
+            }
         }
-
-        if(dir.exists())
-            ok = ok && moveDirToTrash(url.path(), &targetPath);
-        else
-            ok = ok && moveFileToTrash(url.path(), &targetPath);
-
-        if (!targetPath.isEmpty())
-            list << DUrl::fromLocalFile(targetPath);
+        canMoveToTrashList << url;
     }
 
-    if(conflictList.size() > 0){
-        emit requestMoveToTrashConflictDialogShowed(conflictList);
+    if(canNotMoveToTrashList.size() > 0){
+        emit requestCanNotMoveToTrashDialogShowed(canNotMoveToTrashList);
+    }else{
+        doMove(files, DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath)));
     }
 
     if(m_isJobAdded)
@@ -397,8 +432,8 @@ DUrlList FileJob::doMoveToTrash(const DUrlList &files)
 
     emit finished();
 
-    if (ok)
-        qDebug() << "Move to Trash is done!";
+
+    qDebug() << "Move to Trash is done!";
 
     return list;
 }
@@ -412,7 +447,20 @@ void FileJob::doTrashRestore(const QString &srcFilePath, const QString &tarFileP
     m_totalSize = FileUtils::totalSize(files);
     jobPrepared();
 
-    restoreTrashFile(srcFilePath, tarFilePath);
+    QStorageInfo srcStorageInfo(srcFilePath);
+    QString tarDir = DUrl::fromLocalFile(tarFilePath).parentUrl().toLocalFile();
+    QStorageInfo tarStorageInfo(tarDir);
+    if (srcStorageInfo.rootPath() != tarStorageInfo.rootPath()){
+        m_isInSameDisk = false;
+    }
+
+    if (m_isInSameDisk){
+        restoreTrashFile(srcFilePath, tarFilePath);
+    }else{
+        QString _tarFilePath = tarFilePath;
+        if(copyFile(srcFilePath, tarDir, true, &_tarFilePath))
+            deleteFile(srcFilePath);
+    }
 
     if(m_isJobAdded)
         jobRemoved();
@@ -453,7 +501,7 @@ void FileJob::jobUpdated()
 
     QMap<QString, QString> jobDataDetail;
 
-    if (m_jobType == Restore){
+    if (m_jobType == Restore && m_isInSameDisk){
         jobDataDetail.insert("file", m_srcFileName);
         jobDataDetail.insert("destination", m_tarDirName);
         if (!m_isFinished){
@@ -539,7 +587,7 @@ void FileJob::jobUpdated()
         jobDataDetail.insert("destination", m_tarDirName);
         m_progress = jobDataDetail.value("progress");
     }
-
+    qDebug() << m_jobDetail << jobDataDetail;
     emit requestJobDataUpdated(m_jobDetail, jobDataDetail);
 
     m_lastMsec = m_timer.elapsed();
@@ -621,7 +669,12 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
     m_srcFileName = srcFileInfo.fileName();
     m_tarDirName = tarDirInfo.fileName();
     m_srcPath = srcFile;
-    m_tarPath = tarDir + "/" + m_srcFileName;
+
+    if (m_jobType != Trash && m_jobType!=Restore){
+        m_tarPath = tarDir + "/" + m_srcFileName;
+    }else{
+        m_tarPath = *targetPath;
+    }
     QFile from(srcFile);
     QFile to(m_tarPath);
     QFileInfo targetInfo(m_tarPath);
@@ -993,7 +1046,12 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
     m_srcPath = srcDir;
     m_srcFileName = srcDirInfo.fileName();
     m_tarDirName = targetDir.dirName();
-    m_tarPath = tarDir + "/" + m_srcFileName;
+
+    if (m_jobType != Trash){
+        m_tarPath = tarDir + "/" + m_srcFileName;
+    }else{
+        m_tarPath = *targetPath;
+    }
     QFileInfo targetInfo(m_tarPath);
 
     m_status = Started;
@@ -1378,7 +1436,14 @@ bool FileJob::handleSymlinkFile(const QString &srcFile, const QString &tarDir, Q
         {
             case FileJob::Started:
             {
-                m_tarPath = checkDuplicateName(m_tarPath + "/" + m_srcFileName);
+                if (m_jobType != Trash){
+                    m_tarPath = checkDuplicateName(m_tarPath + "/" + m_srcFileName);
+                }else{
+                    bool canTrash = moveFileToTrash(srcFile, targetPath);
+                    if (canTrash){
+                        m_tarPath = *targetPath;
+                    }
+                }
                 m_status = Run;
                 break;
             }
@@ -1594,13 +1659,6 @@ bool FileJob::moveDirToTrash(const QString &dir, QString *targetPath)
     if (!writeTrashInfo(baseName, dir, delTime))
         return false;
 
-    if (!sourceDir.rename(sourceDir.path(), newName)) {
-        if (QProcess::execute("mv -T \"" + sourceDir.path().toUtf8() + "\" \"" + newName.toUtf8() + "\"") != 0) {
-            qDebug() << "Unable to trash dir:" << sourceDir.path();
-            return false;
-        }
-    }
-
     if (targetPath)
         *targetPath = newName;
 
@@ -1652,16 +1710,7 @@ bool FileJob::moveFileToTrash(const QString &file, QString *targetPath)
     qDebug() << "moveFileToTrash" << file;
 
     if (!writeTrashInfo(baseName, file, delTime))
-        return false;
-
-    if (!localFile.rename(newName))
-    {
-        if (QProcess::execute("mv -T \"" + file.toUtf8() + "\" \"" + newName.toUtf8() + "\"") != 0) {
-            //Todo: find reason
-            qDebug() << "Unable to trash file:" << localFile.fileName();
-            return false;
-        }
-    }
+        return false; 
 
     if (targetPath)
         *targetPath = newName;
