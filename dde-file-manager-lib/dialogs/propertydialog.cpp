@@ -162,9 +162,6 @@ SectionKeyLabel::SectionKeyLabel(const QString &text, QWidget *parent, Qt::Windo
     setObjectName("SectionKeyLabel");
     setFixedWidth(120);
     setAlignment(Qt::AlignVCenter | Qt::AlignRight);
-    QFont font;
-    font.setPixelSize(12);
-    setFont(font);
 }
 
 
@@ -175,14 +172,11 @@ SectionValueLabel::SectionValueLabel(const QString &text, QWidget *parent, Qt::W
     setFixedWidth(150);
     setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
     setWordWrap(true);
-    QFont font;
-    font.setPixelSize(12);
-    setFont(font);
 }
 
 
 PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget* parent)
-    : BaseDialog(parent)
+    : DDialog(parent)
     , m_fmevent(event)
     , m_url(url)
     , m_icon(new QLabel)
@@ -290,8 +284,6 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget* p
 
 void PropertyDialog::initUI()
 {
-    setTitle("");
-//    setFixedSize(QSize(320, 480));
     m_icon->setFixedHeight(150);
     m_icon->setParent(this);
     QFrame* m_editFrame = new QFrame;
@@ -306,16 +298,19 @@ void PropertyDialog::initUI()
     m_edit->setParent(m_editFrame);
 
     m_editStackWidget = new QStackedWidget(this);
-    m_editStackWidget->setFixedHeight(80);
     m_editStackWidget->addWidget(m_editFrame);
 
-    QVBoxLayout *layout = new QVBoxLayout;
+    m_mainLayout = new QVBoxLayout;
 
-    layout->setMargin(5);
-    layout->setSpacing(0);
-    layout->addWidget(m_icon, 0, Qt::AlignHCenter);
-    layout->addWidget(m_editStackWidget, 0, Qt::AlignHCenter);
-    setLayout(layout);
+    m_mainLayout->setContentsMargins(0, 0, 0, 0);
+    m_mainLayout->setMargin(0);
+    m_mainLayout->setSpacing(0);
+    m_mainLayout->addWidget(m_icon, 0, Qt::AlignHCenter | Qt::AlignTop);
+    m_mainLayout->addWidget(m_editStackWidget, 0, Qt::AlignHCenter | Qt::AlignTop);
+
+    QFrame* frame = new QFrame(this);
+    frame->setLayout(m_mainLayout);
+    addContent(frame);
 }
 
 void PropertyDialog::initConnect()
@@ -347,6 +342,7 @@ void PropertyDialog::renameFile()
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(m_url);
     m_edit->setPlainText(fileInfo->fileName());
     m_editStackWidget->setCurrentIndex(0);
+    m_edit->setFixedHeight(m_textShowFrame->height());
 
     const DAbstractFileInfoPointer pfile = fileService->createFileInfo(m_url);
     int endPos = -1;
@@ -486,8 +482,11 @@ void PropertyDialog::onExpandChanged(const bool &e)
     if(expand){
         if(e)
             expand->setSeparatorVisible(false);
-        else
-            expand->setSeparatorVisible(true);
+        else{
+            QTimer::singleShot(200, [=]{
+                expand->setSeparatorVisible(true);
+            });
+        }
     }
 }
 
@@ -499,7 +498,7 @@ void PropertyDialog::mousePressEvent(QMouseEvent *event)
             emit m_edit->editFinished();
         }
     }
-    BaseDialog::mousePressEvent(event);
+    DDialog::mousePressEvent(event);
 }
 
 void PropertyDialog::startComputerFolderSize(const DUrl &url)
@@ -552,14 +551,14 @@ qint64 PropertyDialog::getFileSize()
 
 void PropertyDialog::raise()
 {
-    BaseDialog::raise();
+    DDialog::raise();
     emit raised();
 }
 
 void PropertyDialog::hideEvent(QHideEvent *event)
 {
     emit aboutToClosed(m_url);
-    BaseDialog::hideEvent(event);
+    DDialog::hideEvent(event);
     emit closed(m_url);
     if (m_sizeWorker){
         m_sizeWorker->stop();
@@ -568,7 +567,7 @@ void PropertyDialog::hideEvent(QHideEvent *event)
 
 void PropertyDialog::resizeEvent(QResizeEvent *event)
 {
-    BaseDialog::resizeEvent(event);
+    DDialog::resizeEvent(event);
 }
 DExpandGroup *PropertyDialog::expandGroup() const
 {
@@ -583,12 +582,12 @@ int PropertyDialog::contentHeight() const
             expandGroup()->expands().size()*30 +
             contentsMargins().top()+
             contentsMargins().bottom()+
-            80);
+            40);
 }
 
 void PropertyDialog::loadPluginExpandWidgets()
 {
-    QVBoxLayout *layout = qobject_cast<QVBoxLayout*>(this->layout());
+    QVBoxLayout* layout = qobject_cast<QVBoxLayout*>(this->layout());
     QList<PropertyDialogExpandInfoInterface*> plugins = PluginManager::instance()->getExpandInfoInterfaces();
     foreach (PropertyDialogExpandInfoInterface *plugin, plugins) {
         DArrowLineExpand *expand = new DArrowLineExpand;
@@ -601,28 +600,30 @@ void PropertyDialog::loadPluginExpandWidgets()
         expand->setFixedHeight(30);
         expand->setExpand(false);
         expand->setContent(frame);
-        expand->setStyleSheet("background: transparent;");
         layout->addWidget(expand, 0, Qt::AlignTop);
         m_expandGroup->addExpand(expand);
     }
     layout->addStretch();
     setFixedSize(320, contentHeight());
+    layout->setContentsMargins(5, 0, 5, 0);
 }
 
 DExpandGroup *PropertyDialog::addExpandWidget(const QStringList &titleList)
 {
-    QVBoxLayout *layout = qobject_cast<QVBoxLayout*>(this->layout());
+    QVBoxLayout* layout = qobject_cast<QVBoxLayout*>(this->layout());
     DExpandGroup *group = new DExpandGroup;
+    QLabel* line = new QLabel(this);
+    line->setObjectName("Line");
+    line->setFixedHeight(1);
+    layout->addWidget(line);
 
     for(const QString &title : titleList) {
         DArrowLineExpand *expand = new DArrowLineExpand;
 
         expand->setTitle(title);
         expand->setFixedHeight(30);
-        expand->setStyleSheet("background: transparent;");
 
-        if(title == tr("Open with"))
-            connect(expand, &DArrowLineExpand::expandChange, this, &PropertyDialog::onExpandChanged);
+        connect(expand, &DArrowLineExpand::expandChange, this, &PropertyDialog::onExpandChanged);
 
         layout->addWidget(expand, 0, Qt::AlignTop);
 
@@ -634,22 +635,10 @@ DExpandGroup *PropertyDialog::addExpandWidget(const QStringList &titleList)
 void PropertyDialog::initTextShowFrame(const QString &text)
 {
     m_textShowFrame = new QFrame(this);
-    m_textShowFrame->setFixedHeight(80);
 
     m_editButton = new QPushButton(m_textShowFrame);
     m_editButton->setObjectName("EditButton");
     m_editButton->setFixedSize(16, 16);
-    m_editButton->setStyleSheet("QPushButton#EditButton{\
-                                border-image: url(:/images/images/light/pencil_normal.svg);\
-                            }\
-                            \
-                            QPushButton#EditButton:hover{\
-                                border-image: url(:/images/images/light/pencil_hover.svg);\
-                            }\
-                            \
-                            QPushButton#EditButton:pressed{\
-                                border-image: url(:/images/images/light/pencil_press.svg);\
-                            }");
     connect(m_editButton, &QPushButton::clicked, this, &PropertyDialog::renameFile);
 
     QString t = DFMGlobal::elideText(text, m_edit->size(), QTextOption::WrapAtWordBoundaryOrAnywhere, m_edit->font(), Qt::ElideMiddle, 0);
@@ -657,12 +646,14 @@ void PropertyDialog::initTextShowFrame(const QString &text)
     const int maxLineCount = 3;
 
 
-    qDebug() << text << labelTexts;
+    int textLineCount = 1;
     QVBoxLayout* textShowLayout = new QVBoxLayout;
 
     for(int i=0; i< labelTexts.length(); i++){
-        if(i > (maxLineCount-1))
+        if(i > (maxLineCount-1)){
+            textLineCount = i + 1;
             break;
+        }
         QString labelText = labelTexts.at(i);
         QLabel* label = new QLabel(labelText, m_textShowFrame);
         label->setAlignment(Qt::AlignHCenter);
@@ -684,6 +675,7 @@ void PropertyDialog::initTextShowFrame(const QString &text)
         }
         textShowLayout->addLayout(hLayout);
         hLayout->addStretch(1);
+        textLineCount = i + 1;
     }
 
     textShowLayout->setContentsMargins(0, 0, 0, 0);
@@ -691,12 +683,15 @@ void PropertyDialog::initTextShowFrame(const QString &text)
     m_textShowFrame->setLayout(textShowLayout);
     textShowLayout->addStretch(1);
 
+    m_textShowFrame->setFixedHeight(textLineCount * 14 + 15);
+
     if (m_editStackWidget->count() == 1){
         m_editStackWidget->addWidget(m_textShowFrame);
     }else{
         m_editStackWidget->insertWidget(1, m_textShowFrame);
     }
     m_editStackWidget->setCurrentIndex(1);
+    m_editStackWidget->setFixedHeight(m_textShowFrame->height());
 }
 
 QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &info)
@@ -742,8 +737,9 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
         }
         layout->addRow(m_executableCheckBox, executableLabel);
     }
+    layout->setContentsMargins(0, 0, 40, 0);
     widget->setLayout(layout);
-    widget->setFixedHeight(EXTEND_FRAME_MAXHEIGHT);
+    widget->setFixedSize(width(), EXTEND_FRAME_MAXHEIGHT);
 
     return widget;
 }
@@ -814,7 +810,8 @@ QFrame *PropertyDialog::createDeviceInfoWidget(UDiskDeviceInfoPointer info)
 
 QListWidget *PropertyDialog::createOpenWithListWidget(const DAbstractFileInfoPointer &info)
 {
-    QListWidget* listWidget = new QListWidget;
+    QListWidget* listWidget = new QListWidget(this);
+    listWidget->setSpacing(8);
     listWidget->setObjectName("OpenWithListWidget");
     m_OpenWithButtonGroup = new QButtonGroup(listWidget);
     listWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -832,7 +829,6 @@ QListWidget *PropertyDialog::createOpenWithListWidget(const DAbstractFileInfoPoi
         QCheckBox* itemBox = new QCheckBox(df.getLocalName());
         itemBox->setObjectName("OpenWithItem");
         itemBox->setIcon(QIcon::fromTheme(df.getIcon()));
-        itemBox->setFixedHeight(36);
         itemBox->setIconSize(QSize(16, 16));
         itemBox->setProperty("appName",df.getLocalName());
         itemBox->setProperty("mimeTypeName",info->mimeTypeName());

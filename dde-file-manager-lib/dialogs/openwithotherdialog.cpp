@@ -109,6 +109,8 @@ void OpenWithOtherDialog::initUI()
     setFixedSize(300, 435);
     m_OpenWithButtonGroup = new QButtonGroup(m_appListWidget);
     m_appListWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_appListWidget->setSpacing(8);
+    m_appListWidget->setStyleSheet(getQssFromFile(":/light/OpenWithOtherDialog.theme"));
 
     QLabel* titleLabel = new QLabel(tr("All Programs"), this);
     titleLabel->setFixedSize(200, 40);
@@ -117,10 +119,12 @@ void OpenWithOtherDialog::initUI()
 
     QFrame* frame = new QFrame(this);
     QVBoxLayout* frameLayout = new QVBoxLayout;
-    frameLayout->setContentsMargins(7, 0, 7, 0);
+    frameLayout->setContentsMargins(0, 0, 0, 0);
+    frame->setContentsMargins(0, 0, 0, 0);
 
     m_searchEdit->setPlaceHolder(tr("Search"));
     m_searchEdit->setFixedHeight(24);
+    m_searchEdit->setFixedWidth(260);
     frameLayout->addWidget(m_searchEdit);
     frameLayout->addWidget(m_appListWidget);
 
@@ -146,6 +150,7 @@ void OpenWithOtherDialog::initUI()
     setDefaultButton(1);
     m_searchEdit->setFocus();
     m_appListWidget->setFixedHeight(36*9);
+    frame->setFixedWidth(this->width() - 18);
 }
 
 void OpenWithOtherDialog::  initConnect()
@@ -216,7 +221,7 @@ void OpenWithOtherDialog::appendPageItems()
     for(int i = 0; i < 25; i ++){
         if(m_appQueue.count() > 0){
             DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(m_url);
-            QString defaultApp = mimeAppsManager->getDefaultAppDisplayNameByMimeType(info->mimeTypeName());
+            QString defaultApp = mimeAppsManager->getDefaultAppByMimeType(info->mimeTypeName());
             const DesktopFile& desktopApp = m_appQueue.dequeue();
             QString iconName = desktopApp.getIcon();
 
@@ -232,9 +237,7 @@ void OpenWithOtherDialog::appendPageItems()
             QListWidgetItem* item = new QListWidgetItem;
 
             QCheckBox* itemBox = new QCheckBox(desktopApp.getLocalName());
-            itemBox->setStyleSheet(getQssFromFile(":/light/OpenWithOtherDialog.theme"));
             itemBox->setIcon(icon);
-            itemBox->setFixedHeight(36);
             itemBox->setIconSize(QSize(16, 16));
             m_OpenWithButtonGroup->addButton(itemBox);
             itemBox->setProperty("app", desktopApp.getFileName());

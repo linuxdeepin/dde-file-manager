@@ -10,9 +10,8 @@
 #include "dfileservices.h"
 
 #include "widgets/singleton.h"
-
+#include <QComboBox>
 #include <dtextbutton.h>
-#include <dcombobox.h>
 #include <dlineedit.h>
 #include <anchors.h>
 #include <QFutureWatcher>
@@ -126,7 +125,7 @@ void DStatusBar::setMode(DStatusBar::Mode mode)
         return;
     }
 
-    m_comboBox = new DComboBox(this);
+    m_comboBox = new QComboBox(this);
     m_comboBox->setMaximumWidth(200);
     m_comboBox->hide();
     m_comboBoxLabel = new QLabel(this);

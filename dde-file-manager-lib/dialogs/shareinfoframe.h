@@ -5,10 +5,11 @@
 #include <QTimer>
 
 #include <dcheckbox.h>
-#include <dcombobox.h>
 #include <dlineedit.h>
 
 #include "dabstractfileinfo.h"
+
+class QComboBox;
 
 DWIDGET_USE_NAMESPACE
 
@@ -39,8 +40,8 @@ private:
     DAbstractFileInfoPointer m_fileinfo;
     QCheckBox* m_sharCheckBox = NULL;
     DLineEdit* m_shareNamelineEdit = NULL;
-    DComboBox* m_permissoComBox = NULL;
-    DComboBox* m_anonymityCombox = NULL;
+    QComboBox* m_permissoComBox = NULL;
+    QComboBox* m_anonymityCombox = NULL;
     QTimer* m_jobTimer;
 };
 

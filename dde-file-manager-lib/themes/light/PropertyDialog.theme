@@ -1,5 +1,5 @@
 PropertyDialog {
-    background: #f5f5f8;
+    background: #ffffff;
 }
 
 PropertyDialog QTextEdit {
@@ -24,35 +24,25 @@ QLabel#GroupTitleLabel{
 
 
 QLabel#SectionKeyLabel{
-    color: #b4b4b4;
-    font-size: 12px;
+    color: #606060;
+    font-size: 11px;
 }
 
-
 QLabel#SectionValueLabel{
-    color: #222222;
-    font-size: 12px;
+    color: black;
+    font-size: 11px;
 }
 
 QListWidget{
     border: none;
 }
 
-/*QCheckBox::indicator:unchecked {
-    image: url(:/images/images/light/checkbox-unchecked.png);
-}
-
-QCheckBox::indicator:checked {
-    image: url(:/images/images/light/checkbox-checked.png);
-}
-
-
-
-QCheckBox#OpenWithItem {
+QCheckBox#OpenWithItem{
     spacing: 5px;
     color: #222222;
     font-size: 12px;
     text-align: center;
+    margin-left: 4px;
 }
 
 QCheckBox#OpenWithItem:pressed{
@@ -65,15 +55,13 @@ QCheckBox#OpenWithItem::indicator {
     height: 16px;
 }
 
-
 QCheckBox#OpenWithItem::indicator:unchecked {
-    image: url(:/images/images/light/select_deactive.png);
+    image: none;
 }
 
 QCheckBox#OpenWithItem::indicator:checked {
     image: url(:/images/images/light/select.png);
 }
-*/
 
 QPushButton#OtherButton{
     color: #222222;
@@ -87,8 +75,6 @@ QPushButton#OtherButton:pressed{
     color: #4b4b4b;
 }
 
-
-
 QPushButton#EditButton{
     border-image: url(:/images/images/light/pencil_normal.svg);
 }
@@ -101,35 +87,18 @@ QPushButton#EditButton:pressed{
     border-image: url(:/images/images/light/pencil_press.svg);
 }
 
-
-QScrollBar#DScrollBar:vertical{
-     border: 0px;
-     background: transparent;
-     width: 6px;
+QListWidget{
+    border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-QScrollBar#DScrollBar::handle:vertical:hover{
-     background: rgba(16,16,16,0.7);
+QLabel#Line{
+    background: #66aaaaaa;
 }
 
-QScrollBar#DScrollBar::handle:vertical{
-     border: 0px;
-     background-color: rgba(16,16,16,0);
-     width: 6px;
+QLineEdit#ShareNameEdit{
+    font-size: 12px;
 }
 
-QScrollBar#DScrollBar::add-line:vertical {
-      border: none;
-      background: none;
-}
-
-QScrollBar#DScrollBar::sub-line:vertical {
-      border: none;
-      background: none;
-}
-
-QScrollBar#DScrollBar::up-arrow:vertical, QScrollBar#DScrollBar::down-arrow:vertical {
-     width: 0px;
-     height: 0px;
-     background: transparent;
+QComboBox{
+    font-size: 11px;
 }
