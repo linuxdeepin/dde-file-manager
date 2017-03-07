@@ -432,7 +432,7 @@ void GvfsMountManager::monitor_mount_added(GVolumeMonitor *volume_monitor, GMoun
 
         DiskInfos.insert(diskInfo.id(), diskInfo);
         emit gvfsMountManager->mount_added(diskInfo);
-
+        qDebug() << "========mount_added===========" << diskInfo;
     }else{
         // ignore afc first mounted event
         if (isIgnoreUnusedMounts(qMount)){

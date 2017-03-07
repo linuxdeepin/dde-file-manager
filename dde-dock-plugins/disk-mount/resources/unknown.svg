@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 39.1 (31720) - http://www.bohemiancoding.com/sketch -->
+    <title>drive-unknown</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-1">
+            <feOffset dx="0" dy="1" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="1" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.3 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+        <linearGradient x1="50%" y1="0.410554847%" x2="50%" y2="100%" id="linearGradient-2">
+            <stop stop-color="#9DDA00" offset="0%"></stop>
+            <stop stop-color="#73C300" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="UI图标" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="drive-unknown">
+            <g id="Group-3" filter="url(#filter-1)" transform="translate(7.000000, 4.000000)">
+                <rect id="Rectangle-1" fill="url(#linearGradient-2)" x="0" y="0" width="34" height="35" rx="1"></rect>
+                <path d="M17.1411765,9 C15.8235294,9 14.7882353,9.42304585 14.0541176,10.3075963 C13.3764706,11.1152293 13.0188235,12.1536145 13,13.4612108 L14.1294118,13.4612108 C14.1482353,12.4612843 14.3741176,11.6536513 14.8258824,11.0575412 C15.3341176,10.3652843 16.0870588,10.0383853 17.0847059,10.0383853 C17.9694118,10.0383853 18.6658824,10.2691376 19.1552941,10.7691008 C19.6070588,11.2498348 19.8517647,11.9036329 19.8517647,12.7304952 C19.8517647,13.307376 19.6447059,13.845798 19.2682353,14.3649906 C19.1176471,14.5572842 18.8164706,14.8649539 18.3835294,15.2879997 C17.48,16.0956327 16.9152941,16.8071189 16.6517647,17.3839996 C16.4258824,17.8455042 16.3129412,18.3646968 16.3129412,18.9223482 L16.3129412,19.4799995 L17.4611765,19.4799995 L17.4611765,18.9223482 C17.4611765,18.3839262 17.5929412,17.8839629 17.8564706,17.4416877 C18.0447059,17.0955593 18.3647059,16.7302015 18.8164706,16.3456144 C19.5882353,15.6148988 20.0776471,15.1341649 20.3035294,14.8649539 C20.7552941,14.2303851 21,13.4996695 21,12.6920365 C21,11.5767338 20.6611765,10.6921834 19.9835294,10.0383853 C19.2870588,9.34612843 18.3458824,9 17.1411765,9 L17.1411765,9 Z M16.9221053,21.0769231 C16.6568421,21.0769231 16.4294737,21.1538462 16.2589474,21.3461538 C16.0505263,21.5192308 15.9557895,21.75 15.9557895,22.0384615 C15.9557895,22.3076923 16.0505263,22.5192308 16.2589474,22.7115385 C16.4294737,22.9038462 16.6568421,23 16.9221053,23 C17.1873684,23 17.4147368,22.9038462 17.6042105,22.7307692 C17.7936842,22.5384615 17.8884211,22.3076923 17.8884211,22.0384615 C17.8884211,21.75 17.7936842,21.5192308 17.6042105,21.3461538 C17.4147368,21.1538462 17.1873684,21.0769231 16.9221053,21.0769231 L16.9221053,21.0769231 Z" id="?" fill="#FFFFFF"></path>
+                <rect id="Rectangle-3" fill="#FFFFFF" x="0" y="30" width="34" height="6"></rect>
+                <rect id="Rectangle-1" fill="#DCDDDD" x="0" y="34" width="34" height="6" rx="1"></rect>
+                <g id="Group" transform="translate(19.000000, 35.000000)" fill="#75C500">
+                    <rect id="Rectangle-path" x="10.987" y="0.996" width="1" height="2"></rect>
+                    <rect id="Rectangle-path" x="8.987" y="0.996" width="1" height="2"></rect>
+                    <rect id="Rectangle-path" x="6.987" y="0.996" width="1" height="2"></rect>
+                    <rect id="Rectangle-path" x="4.987" y="0.996" width="1" height="2"></rect>
+                    <rect id="Rectangle-path" x="2.987" y="0.996" width="1" height="2"></rect>
+                    <rect id="Rectangle-path" x="0.987" y="0.996" width="1" height="2"></rect>
+                </g>
+                <path d="M5,38 C5.55228475,38 6,37.5522847 6,37 C6,36.4477153 5.55228475,36 5,36 C4.44771525,36 4,36.4477153 4,37 C4,37.5522847 4.44771525,38 5,38 Z" id="Oval" fill="#75C600"></path>
+            </g>
+        </g>
+    </g>
+</svg>
