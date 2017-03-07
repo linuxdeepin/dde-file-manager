@@ -13,7 +13,12 @@ TEMPLATE = app
 
 include(../partman/partman.pri)
 
-PKGCONFIG += dtkwidget-0-2 dtkbase-0-2 dtkutil-0-2 x11
+PKGCONFIG += x11
+CONFIG(release, release|debug) {
+    PKGCONFIG += dtkbase-0-2 dtkwidget-0-2 dtkutil-0-2
+} else {
+    PKGCONFIG += dtkbase dtkwidget dtkutil
+}
 
 CONFIG += c++11 link_pkgconfig
 

@@ -1,6 +1,6 @@
 #include "dfilemenu.h"
 
-DFileMenu::DFileMenu(QMenu *parent)
+DFileMenu::DFileMenu(QWidget *parent)
     : QMenu(parent)
 {
 
