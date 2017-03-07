@@ -16,7 +16,12 @@ isEmpty(TARGET) {
 
 TEMPLATE = app
 CONFIG += c++11 link_pkgconfig
-PKGCONFIG += dtkbase-0-2 dtkutil-0-2 dtkwidget-0-2 gio-unix-2.0
+PKGCONFIG += gio-unix-2.0
+CONFIG(release, release|debug) {
+    PKGCONFIG += dtkbase-0-2 dtkwidget-0-2 dtkutil-0-2
+} else {
+    PKGCONFIG += dtkbase dtkwidget dtkutil
+}
 
 DEFINES += QMAKE_TARGET=\\\"$$TARGET\\\" QMAKE_VERSION=\\\"$$VERSION\\\"
 

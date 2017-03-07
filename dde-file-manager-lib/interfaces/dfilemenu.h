@@ -10,7 +10,7 @@ class DFileMenu : public QMenu
     Q_OBJECT
 
 public:
-    explicit DFileMenu(QMenu * parent = 0);
+    explicit DFileMenu(QWidget * parent = 0);
     DFMEvent event() const;
     void setEvent(const DFMEvent &event);
 
