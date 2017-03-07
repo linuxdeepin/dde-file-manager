@@ -252,7 +252,7 @@ DUrlList FileController::moveToTrash(const DFMEvent &event, bool &accepted) cons
 {
     accepted = true;
 
-    FileJob job(FileJob::Delete);
+    FileJob job(FileJob::Trash);
 
     dialogManager->addJob(&job);
 

@@ -36,6 +36,7 @@ public:
     enum JobType{
         Copy,
         Move,
+        Trash,
         Delete,
         Restore
     };
@@ -92,14 +93,14 @@ signals:
     /*copy/move job conflict dialog show */
     void requestConflictDialogShowed(const QMap<QString, QString>& jobDetail);
 
-    /*copy/move job tip dialog show when src and target are same  */
+    /*copy/move job tip dialog shows when src and target are same  */
     void requestCopyMoveToSelfDialogShowed(const QMap<QString, QString>& jobDetail);
 
-    /*when target disk has no enough storage space for job needs, show dialog for tip*/
+    /*tip dialog show when target disk has no enough storage space for job needs*/
     void requestNoEnoughSpaceDialogShowed();
 
-    /* file's size which is locate at other disk is out of range 1GB, show movto trash coflict dialog */
-    void requestMoveToTrashConflictDialogShowed(const DUrlList& urls);
+    /*tip dialog show when move file which size is large than of 1GB to trash*/
+    void requestCanNotMoveToTrashDialogShowed(const DUrlList& urls);
 
     void progressPercent(int value);
     void error(QString content);

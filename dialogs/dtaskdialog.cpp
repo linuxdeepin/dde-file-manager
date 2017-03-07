@@ -195,6 +195,9 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data){
         }else if (m_jobDetail.value("type") == "delete"){
             msg1 = tr("Deleting %1").arg(file);
             msg2 = tr("");
+        }else if (m_jobDetail.value("type") == "trash"){
+            msg1 = tr("Trashing %1").arg(file);
+            msg2 = tr("");
         }
 
         if (status == "restoring"){

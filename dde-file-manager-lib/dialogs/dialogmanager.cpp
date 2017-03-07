@@ -180,7 +180,7 @@ void DialogManager::addJob(FileJob *job)
     connect(job, &FileJob::requestConflictDialogShowed, m_taskDialog, &DTaskDialog::showConflictDiloagByJob);
     connect(job, &FileJob::requestCopyMoveToSelfDialogShowed, this, &DialogManager::showCopyMoveToSelfDialog);
     connect(job, &FileJob::requestNoEnoughSpaceDialogShowed, this, &DialogManager::showDiskSpaceOutOfUsedDialog);
-    connect(job, &FileJob::requestMoveToTrashConflictDialogShowed, this, &DialogManager::showMoveToTrashConflictDialog);
+    connect(job, &FileJob::requestCanNotMoveToTrashDialogShowed, this, &DialogManager::showMoveToTrashConflictDialog);
 }
 
 
