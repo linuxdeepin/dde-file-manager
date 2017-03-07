@@ -83,7 +83,7 @@ public:
 };
 
 
-class PropertyDialog : public BaseDialog
+class PropertyDialog : public DDialog
 {
     Q_OBJECT
 
@@ -148,6 +148,7 @@ private:
     QButtonGroup* m_OpenWithButtonGroup = NULL;
     DExpandGroup* m_expandGroup = NULL;
     FilesSizeWorker* m_sizeWorker = NULL;
+    QVBoxLayout* m_mainLayout = NULL;
 
     DExpandGroup *addExpandWidget(const QStringList &titleList);
 

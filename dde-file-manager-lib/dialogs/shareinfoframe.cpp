@@ -8,6 +8,7 @@
 
 #include <QFormLayout>
 #include <QProcess>
+#include <QComboBox>
 
 ShareInfoFrame::ShareInfoFrame(const DAbstractFileInfoPointer &info, QWidget *parent) :
     QFrame(parent),
@@ -34,12 +35,14 @@ void ShareInfoFrame::initUI()
     SectionKeyLabel* shareNameLabel = new SectionKeyLabel(tr("Share name:"));
     shareNameLabel->setFixedWidth(labelWidth);
     m_shareNamelineEdit = new DLineEdit(this);
+    m_shareNamelineEdit->setObjectName("ShareNameEdit");
     m_shareNamelineEdit->setText(m_fileinfo->fileDisplayName());
     m_shareNamelineEdit->setFixedWidth(fieldWidth);
 
     SectionKeyLabel* permissionLabel = new SectionKeyLabel(tr("Permission:"));
     permissionLabel->setFixedWidth(labelWidth);
-    m_permissoComBox = new DComboBox(this);
+    m_permissoComBox = new QComboBox(this);
+    m_permissoComBox->setFixedHeight(23);
     m_permissoComBox->setFixedWidth(fieldWidth);
     QStringList permissions;
     permissions << tr("Read and write") << tr("Read only");
@@ -47,7 +50,8 @@ void ShareInfoFrame::initUI()
 
     SectionKeyLabel* anonymityLabel = new SectionKeyLabel(tr("Anonymous:"));
     anonymityLabel->setFixedWidth(labelWidth);
-    m_anonymityCombox = new DComboBox(this);
+    m_anonymityCombox = new QComboBox(this);
+    m_anonymityCombox->setFixedHeight(23);
     m_anonymityCombox->setFixedWidth(fieldWidth);
     QStringList anonymityChoices;
     anonymityChoices << tr("Not allow") << tr("Allow");
