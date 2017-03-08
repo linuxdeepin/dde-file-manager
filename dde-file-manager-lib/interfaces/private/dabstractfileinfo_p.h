@@ -25,7 +25,7 @@ class DAbstractFileInfoPrivate
 {
 public:
     DAbstractFileInfoPrivate(const DUrl &url, DAbstractFileInfo *qq, bool hasCache);
-    ~DAbstractFileInfoPrivate();
+    virtual ~DAbstractFileInfoPrivate();
 
     void setUrl(const DUrl &url, bool hasCache);
     static DAbstractFileInfo *getFileInfo(const DUrl &fileUrl);
