@@ -159,7 +159,10 @@ void DIconItemDelegate::paint(QPainter *painter,
     bool isEnabled = option.state & QStyle::State_Enabled;
     bool hasFocus = option.state & QStyle::State_HasFocus;
 
-    if((index == d->expandedIndex || index == d->editingIndex) && !isDragMode)
+    if (index == d->expandedIndex && !parent()->isSelected(index))
+        const_cast<DIconItemDelegate*>(this)->hideNotEditingIndexWidget();
+
+    if ((index == d->expandedIndex || index == d->editingIndex) && !isDragMode)
         return;
 
     if (parent()->isCut(index))
