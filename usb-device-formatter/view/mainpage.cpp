@@ -108,6 +108,7 @@ void MainPage::initUI()
     m_labelLineEdit->setFixedSize(160, 22);
 
     QCheckBox* fastFormatCheckBox = new QCheckBox(this);
+    fastFormatCheckBox->setChecked(true);
 
     QLabel* fastFormatLabel = new QLabel(tr("Fast format"), this);
     fastFormatLabel->setObjectName("CheckBoxLabel");
