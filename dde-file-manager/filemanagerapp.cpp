@@ -183,13 +183,13 @@ void FileManagerApp::showPropertyDialog(const QStringList paths)
 
         //symlink , desktop files filters
         const DAbstractFileInfoPointer& info = fileService->createFileInfo(url);
-        DUrl testUrl = url;
+        DUrl realTargetUrl = url;
         if(info && info->isSymLink()){
-            testUrl = info->rootSymLinkTarget();
+            realTargetUrl = info->rootSymLinkTarget();
         }
 
-        if(testUrl.toLocalFile().endsWith(".desktop")){
-            DesktopFile df(testUrl.toLocalFile());
+        if(realTargetUrl.toLocalFile().endsWith(".desktop")){
+            DesktopFile df(realTargetUrl.toLocalFile());
             if(df.getDeepinId() == "dde-trash"){
                 DFMEvent event;
                 event << DUrl::fromTrashFile("/");

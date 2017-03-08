@@ -440,16 +440,16 @@ void AppController::actionProperty(const DFMEvent &event)
 
     DUrlList urlList = event.fileUrlList();
     foreach (const DUrl& url, urlList) {
-        DUrl testUrl = url;
+        DUrl realTargetUrl = url;
 
         //consider symlink file that links to trash/computer desktop files
         const DAbstractFileInfoPointer& info = fileService->createFileInfo(url);
         if(info && info->isSymLink()){
-            testUrl = info->rootSymLinkTarget();
+            realTargetUrl = info->rootSymLinkTarget();
         }
 
-        if(testUrl.toLocalFile().endsWith(QString(".") + DESKTOP_SURRIX)){
-            DesktopFile df(testUrl.toLocalFile());
+        if(realTargetUrl.toLocalFile().endsWith(QString(".") + DESKTOP_SURRIX)){
+            DesktopFile df(realTargetUrl.toLocalFile());
             if(df.getDeepinId() == "dde-trash"){
                 dialogManager->showTrashPropertyDialog(event);
                 urlList.removeOne(url);
