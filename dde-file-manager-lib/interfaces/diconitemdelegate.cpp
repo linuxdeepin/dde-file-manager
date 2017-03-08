@@ -269,6 +269,8 @@ void DIconItemDelegate::paint(QPainter *painter,
             }
 
             parent()->updateGeometries();
+
+            return;
         }
     } else {
         /// init file name text
