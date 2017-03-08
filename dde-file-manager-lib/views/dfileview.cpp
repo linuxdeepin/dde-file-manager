@@ -118,7 +118,6 @@ public:
     Q_DECLARE_PUBLIC(DFileView)
 };
 
-
 int DFileView::ViewInstanceCount = -1;
 
 DFileView::DFileView(QWidget *parent)
@@ -138,6 +137,7 @@ DFileView::DFileView(QWidget *parent)
     initConnects();
 
     ViewInstanceCount += 1;
+
     d->viewId = QString("fileview%1").arg(QString::number(ViewInstanceCount));
     d->statusBar->scalingSlider()->setValue(globalSetting->iconSizeIndex());
     d->updateStatusBarTimer = new QTimer;
@@ -150,7 +150,6 @@ DFileView::~DFileView()
 {
     disconnect(this, &DFileView::rowCountChanged, this, &DFileView::onRowCountChanged);
     disconnect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &DFileView::delayUpdateStatusBar);
-    ViewInstanceCount -= 1;
 }
 
 DFileSystemModel *DFileView::model() const
