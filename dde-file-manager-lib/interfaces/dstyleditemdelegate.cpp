@@ -17,7 +17,7 @@
 DStyledItemDelegate::DStyledItemDelegate(DFileViewHelper *parent)
     : DStyledItemDelegate(*new DStyledItemDelegatePrivate(this), parent)
 {
-    d_func()->init();
+
 }
 
 DStyledItemDelegate::~DStyledItemDelegate()
