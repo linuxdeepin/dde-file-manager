@@ -13,6 +13,11 @@
 #include "interfaces/dabstractfilewatcher.h"
 #include "app/define.h"
 
+DFMSetting *DFMSetting::instance()
+{
+    return globalSetting;
+}
+
 DFMSetting::DFMSetting(QObject *parent) : QObject(parent)
 {
     paths << "Current Path"
