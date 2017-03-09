@@ -162,8 +162,11 @@ void FileManagerApp::initConnect()
 
 void FileManagerApp::initService()
 {
-    if(!isAvfsMounted())
-        QProcess::startDetached("mountavfs");
+    QProcess p;
+    p.start("umountavfs");
+    p.waitForFinished();
+    QProcess::startDetached("mountavfs");
+
 }
 
 void FileManagerApp::show(const DUrl &url)
