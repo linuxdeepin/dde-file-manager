@@ -425,9 +425,11 @@ void DFileService::moveToTrash(const DFMEvent &event) const
         }
     }
 
-    if (FileUtils::isGvfsMountFile(event.fileUrlList().first().toLocalFile())){
-        deleteFiles(event);
-        return;
+    if (event.fileUrlList().count() > 0){
+        if (FileUtils::isGvfsMountFile(event.fileUrlList().first().toLocalFile())){
+            deleteFiles(event);
+            return;
+        }
     }
 
     //handle files whom could not be moved to trash
