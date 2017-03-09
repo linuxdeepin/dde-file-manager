@@ -74,6 +74,7 @@ public:
                                              gpointer      user_data);
 
     static void populate_networks (GFileEnumerator *enumerator, GList *detected_networks, gpointer user_data);
+    static void restartGVFSD();
 
 signals:
 

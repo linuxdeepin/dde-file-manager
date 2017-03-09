@@ -6,6 +6,8 @@
 #include "widgets/singleton.h"
 #include "deviceinfo/udisklistener.h"
 
+#include <QProcess>
+
 
 NetworkNode::NetworkNode()
 {
@@ -125,11 +127,15 @@ void NetworkManager::network_enumeration_finished(GObject *source_object, GAsync
 
     if (error)
     {
-        if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED) &&
-            !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED))
-            qWarning ("Failed to fetch network locations: %s", error->message);
-        qDebug() << error->message;
         DFMEvent* event = static_cast<DFMEvent*>(user_data);
+        if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED) &&
+            !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED)){
+            qWarning ("Failed to fetch network locations: %s", error->message);
+            if (event->fileUrl() == DUrl::fromNetworkFile("/")){
+                NetworkManager::restartGVFSD();
+            }
+        }
+        qDebug() << error->message;
         emit fileSignalManager->requestSMBMount(*event);
         g_clear_error (&error);
     }
@@ -157,8 +163,13 @@ void NetworkManager::network_enumeration_next_files_finished(GObject *source_obj
 
     if (error)
     {
-        if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
+        if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED)){
             qWarning ("Failed to fetch network locations: %s", error->message);
+            DFMEvent* event = static_cast<DFMEvent*>(user_data);
+            if (event->fileUrl() == DUrl::fromNetworkFile("/")){
+                NetworkManager::restartGVFSD();
+            }
+        }
         g_clear_error (&error);
     }
     else
@@ -221,6 +232,19 @@ void NetworkManager::populate_networks(GFileEnumerator *enumerator, GList *detec
     NetworkNodes.insert(event->fileUrl(), nodeList);
     qDebug() << "request NetworkNodeList successfully";
     emit fileSignalManager->fetchNetworksSuccessed(*event);
+}
+
+void NetworkManager::restartGVFSD()
+{
+    QProcess p;
+    p.start("killall", {"gvfsd"});
+    bool ret = p.waitForFinished();
+    if (ret){
+        bool result = QProcess::startDetached("/usr/lib/gvfs/gvfsd");
+        qDebug() << "restart gvfsd" << result;
+    }else{
+        qDebug() << "killall gvfsd failed";
+    }
 }
 
 void NetworkManager::fetchNetworks(const DFMEvent &event)
