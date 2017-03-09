@@ -11,3 +11,4 @@ SUBDIRS  += \
     usb-device-formatter
 
 dde-file-manager.depends = dde-file-manager-lib
+dde-dock-plugins.depends = dde-file-manager-lib
