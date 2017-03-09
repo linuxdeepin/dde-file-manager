@@ -27,8 +27,8 @@ void ShareInfoFrame::initUI()
     int labelWidth = 100;
     int fieldWidth = 160;
 
-    m_sharCheckBox = new QCheckBox(this);
-    m_sharCheckBox->setFixedHeight(20);
+    m_shareCheckBox = new QCheckBox(this);
+    m_shareCheckBox->setFixedHeight(20);
     SectionValueLabel* shareCheckLabel = new SectionValueLabel(tr("Share this folder"));
     shareCheckLabel->setFixedWidth(fieldWidth);
 
@@ -59,7 +59,7 @@ void ShareInfoFrame::initUI()
 
     QFormLayout* mainLayoyt = new QFormLayout(this);
 
-    mainLayoyt->addRow(m_sharCheckBox, shareCheckLabel);
+    mainLayoyt->addRow(m_shareCheckBox, shareCheckLabel);
     mainLayoyt->addRow(shareNameLabel, m_shareNamelineEdit);
     mainLayoyt->addRow(permissionLabel, m_permissoComBox);
     mainLayoyt->addRow(anonymityLabel, m_anonymityCombox);
@@ -70,24 +70,29 @@ void ShareInfoFrame::initUI()
 
 void ShareInfoFrame::initConnect()
 {
-    connect(m_sharCheckBox, &QCheckBox::stateChanged, this, &ShareInfoFrame::handleCheckBoxChanged);
+    connect(m_shareCheckBox, &QCheckBox::clicked, this, &ShareInfoFrame::handleCheckBoxChanged);
     connect(m_shareNamelineEdit, &DLineEdit::textChanged, this, &ShareInfoFrame::handleShareNameChanged);
     connect(m_permissoComBox, SIGNAL(currentIndexChanged(int)), this, SLOT(handlePermissionComboxChanged(int)));
     connect(m_anonymityCombox, SIGNAL(currentIndexChanged(int)), this, SLOT(handleAnonymityComboxChanged(int)));
-    connect(m_jobTimer, &QTimer::timeout, this, &ShareInfoFrame::doShaeInfoSetting);
+    connect(m_jobTimer, &QTimer::timeout, this, &ShareInfoFrame::doShareInfoSetting);
     connect(userShareManager, &UserShareManager::userShareAdded, this, &ShareInfoFrame::updateShareInfo);
     connect(userShareManager, &UserShareManager::userShareDeleted, this, &ShareInfoFrame::updateShareInfo);
 }
 
-void ShareInfoFrame::handleCheckBoxChanged(int state)
+void ShareInfoFrame::handleCheckBoxChanged(const bool& checked)
 {
-    qDebug() << state;
-    handShareInfoChanged();
+    if(checked){
+        emit folderShared(m_fileinfo->absoluteFilePath());
+        activateWidgets();
+        m_permissoComBox->setCurrentIndex(1);
+    } else{
+        disactivateWidgets();
+    }
+    doShareInfoSetting();
 }
 
 void ShareInfoFrame::handleShareNameChanged(const QString &name)
 {
-//    qDebug() << name;
     if(name.isEmpty() || name == ""){
         m_jobTimer->stop();
         return;
@@ -95,16 +100,16 @@ void ShareInfoFrame::handleShareNameChanged(const QString &name)
     handShareInfoChanged();
 }
 
-void ShareInfoFrame::handlePermissionComboxChanged(int index)
+void ShareInfoFrame::handlePermissionComboxChanged(const int &index)
 {
-    qDebug() << index;
-    handShareInfoChanged();
+    Q_UNUSED(index);
+    doShareInfoSetting();
 }
 
-void ShareInfoFrame::handleAnonymityComboxChanged(int index)
+void ShareInfoFrame::handleAnonymityComboxChanged(const int &index)
 {
-    qDebug() << index;
-    handShareInfoChanged();
+    Q_UNUSED(index);
+    doShareInfoSetting();
 }
 
 void ShareInfoFrame::handShareInfoChanged()
@@ -112,7 +117,7 @@ void ShareInfoFrame::handShareInfoChanged()
     m_jobTimer->start();
 }
 
-void ShareInfoFrame::doShaeInfoSetting()
+void ShareInfoFrame::doShareInfoSetting()
 {
     QString shareName = m_shareNamelineEdit->text();
 
@@ -131,9 +136,8 @@ void ShareInfoFrame::doShaeInfoSetting()
     }else{
         info.setIsGuestOk(true);
     }
-    if (m_sharCheckBox->isChecked()){
+    if (m_shareCheckBox->isChecked()){
         userShareManager->addUserShare(info);
-        emit folderShared(info.path());
     }else{
         if(info.isWritable()){
             QString cmd = "chmod";
@@ -147,13 +151,12 @@ void ShareInfoFrame::doShaeInfoSetting()
 
 void ShareInfoFrame::updateShareInfo(const QString &filePath)
 {
-    qDebug () <<"update:"<< filePath << ", " << m_fileinfo->absoluteFilePath();
     if(filePath != m_fileinfo->absoluteFilePath())
         return;
     ShareInfo info = userShareManager->getShareInfoByPath(filePath);
     qDebug() << info;
     if (!info.shareName().isEmpty()){
-        m_sharCheckBox->setChecked(true);
+        m_shareCheckBox->setChecked(true);
         disconnect(m_shareNamelineEdit, &DLineEdit::textChanged, this, &ShareInfoFrame::handleShareNameChanged);
         int cursorPos = m_shareNamelineEdit->cursorPosition();
         m_shareNamelineEdit->setText(info.shareName());
@@ -171,11 +174,26 @@ void ShareInfoFrame::updateShareInfo(const QString &filePath)
             m_anonymityCombox->setCurrentIndex(0);
         }
     } else {
-        m_sharCheckBox->setChecked(false);
+        m_shareCheckBox->setChecked(false);
         m_permissoComBox->setCurrentIndex(0);
         m_anonymityCombox->setCurrentIndex(0);
         m_shareNamelineEdit->setText(m_fileinfo->fileDisplayName());
+        disactivateWidgets();
     }
+}
+
+void ShareInfoFrame::activateWidgets()
+{
+    m_shareNamelineEdit->setEnabled(true);
+    m_permissoComBox->setEnabled(true);
+    m_anonymityCombox->setEnabled(true);
+}
+
+void ShareInfoFrame::disactivateWidgets()
+{
+    m_shareNamelineEdit->setEnabled(false);
+    m_permissoComBox->setEnabled(false);
+    m_anonymityCombox->setEnabled(false);
 }
 
 void ShareInfoFrame::setFileinfo(const DAbstractFileInfoPointer &fileinfo)
