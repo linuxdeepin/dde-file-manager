@@ -325,9 +325,6 @@ void PropertyDialog::initConnect()
 
         onChildrenRemoved(from);
     });
-
-    //play animation after a folder is shared
-    connect(m_shareinfoFrame, &ShareInfoFrame::folderShared, this, &PropertyDialog::flickFolderToLeftsidBar);
 }
 
 
@@ -747,6 +744,9 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
 ShareInfoFrame *PropertyDialog::createShareInfoFrame(const DAbstractFileInfoPointer &info)
 {
     ShareInfoFrame* frame = new ShareInfoFrame(info, this);
+    //play animation after a folder is shared
+    connect(frame, &ShareInfoFrame::folderShared, this, &PropertyDialog::flickFolderToLeftsidBar);
+
     return frame;
 }
 

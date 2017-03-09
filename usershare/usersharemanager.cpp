@@ -284,6 +284,8 @@ void UserShareManager::updateUserShareInfo()
             shareInfo.setComment(info.value("comment"));
             shareInfo.setGuest_ok(info.value("guest_ok"));
             shareInfo.setUsershare_acl(info.value("usershare_acl"));
+            const DAbstractFileInfoPointer& fileInfo = DFileService::instance()->createFileInfo(DUrl::fromLocalFile(sharePath));
+            shareInfo.setIsWritable(fileInfo->isWritable());
             m_shareInfos.insert(shareInfo.shareName(), shareInfo);
 
             if (m_sharePathToNames.contains(shareInfo.path())) {
@@ -395,13 +397,12 @@ void UserShareManager::addUserShare(const ShareInfo &info)
         if(info.isWritable()){
             QString cmd = "chmod";
             QStringList args;
-            args << "-R"<<"777"<<info.path();
+            args << "-R"<<"755"<<info.path();
             ret = QProcess::startDetached(cmd, args);
-        }
-        else {
+        } else {
             QString cmd = "chmod";
             QStringList args;
-            args << "-R"<<"755"<<info.path();
+            args << "-R" << "555" <<info.path();
             ret = QProcess::startDetached(cmd, args);
         }
 

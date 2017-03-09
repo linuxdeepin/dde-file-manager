@@ -28,17 +28,19 @@ signals:
     void folderShared(const QString& filePath);
 
 public slots:
-    void handleCheckBoxChanged(int state);
+    void handleCheckBoxChanged(const bool &checked);
     void handleShareNameChanged(const QString& name);
-    void handlePermissionComboxChanged(int index);
-    void handleAnonymityComboxChanged(int index);
+    void handlePermissionComboxChanged(const int& index);
+    void handleAnonymityComboxChanged(const int& index);
     void handShareInfoChanged();
-    void doShaeInfoSetting();
+    void doShareInfoSetting();
     void updateShareInfo(const QString& filePath);
+    void activateWidgets();
+    void disactivateWidgets();
 
 private:
     DAbstractFileInfoPointer m_fileinfo;
-    QCheckBox* m_sharCheckBox = NULL;
+    QCheckBox* m_shareCheckBox = NULL;
     DLineEdit* m_shareNamelineEdit = NULL;
     QComboBox* m_permissoComBox = NULL;
     QComboBox* m_anonymityCombox = NULL;
