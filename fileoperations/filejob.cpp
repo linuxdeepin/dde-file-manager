@@ -1119,7 +1119,7 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
         {
             QDirIterator tmp_iterator(sourceDir.absolutePath(),
                                       QDir::AllEntries | QDir::System
-                                      | QDir::NoDotAndDotDot | QDir::NoSymLinks
+                                      | QDir::NoDotAndDotDot
                                       | QDir::Hidden);
 
             while (tmp_iterator.hasNext()) {
@@ -1420,6 +1420,7 @@ bool FileJob::handleMoveJob(const QString &srcPath, const QString &tarDir, QStri
 
 bool FileJob::handleSymlinkFile(const QString &srcFile, const QString &tarDir, QString *targetPath)
 {
+    qDebug() << srcFile << tarDir;
     if (m_isAborted)
         return false;
     QDir to(tarDir);
@@ -1449,17 +1450,19 @@ bool FileJob::handleSymlinkFile(const QString &srcFile, const QString &tarDir, Q
             }
             case FileJob::Run:
             {
+
                 QFile targetFile(fromInfo.symLinkTarget());
                 bool ok = targetFile.link(m_tarPath);
-
                 if (ok){
-                    if (m_jobType == Move){
+                    if (m_jobType == Move || m_jobType == Trash){
                         QFile from(srcFile);
                         from.remove();
                     }
                     if (targetPath){
                         *targetPath = m_tarPath;
                     }
+                }else{
+                    qDebug() << targetFile.errorString();
                 }
 
                 if(!m_applyToAll){
