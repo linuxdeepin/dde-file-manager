@@ -2,9 +2,8 @@
 #define DFMSETTING_H
 
 #include <QObject>
-#include "views/dfileview.h"
 #include "dtk_global.h"
-#include "interfaces/durl.h"
+#include "durl.h"
 #include <QJsonObject>
 #include <QDir>
 
@@ -23,6 +22,9 @@ class DFMSetting : public QObject
     Q_OBJECT
 
 public:
+
+    static DFMSetting* instance();
+
     explicit DFMSetting(QObject *parent = 0);
     void initConnections();
     QVariant getValueByKey(const QString& key);

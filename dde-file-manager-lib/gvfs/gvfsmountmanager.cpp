@@ -545,20 +545,6 @@ void GvfsMountManager::monitor_volume_added(GVolumeMonitor *volume_monitor, GVol
 
     DiskInfos.insert(diskInfo.id(), diskInfo);
     emit gvfsMountManager->volume_added(diskInfo);
-    if (gvfsMountManager->getAutoMountSwitch()){
-        if(globalSetting->isAutoMount() && !globalSetting->isAutoMountAndOpen()){
-            mount(diskInfo);
-        }else if (globalSetting->isAutoMountAndOpen()){
-            mount(diskInfo);
-            DFMEvent event;
-            DUrl url = DUrl::fromComputerFile("/");
-            DUrlList urls;
-            urls << url;
-            event << url;
-            event << urls;
-            fileService->openNewWindow(event, false);
-        }
-    }
 }
 
 void GvfsMountManager::monitor_volume_removed(GVolumeMonitor *volume_monitor, GVolume *volume)
