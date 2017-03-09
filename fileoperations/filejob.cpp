@@ -202,7 +202,6 @@ DUrlList FileJob::doMove(const DUrlList &files, const DUrl &destination)
 DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
 {
     qDebug() << "Do file operation is started" << m_jobDetail;
-
     jobPrepared();
 
     m_isGvfsFileOperationUsed = checkUseGvfsFileOperation(files, destination);
@@ -211,7 +210,7 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
     QString tarDirPath = destination.toLocalFile();
     QDir tarDir(tarDirPath);
     QStorageInfo tarStorageInfo(tarDirPath);
-    if (files.count() > 0 ){
+    if (files.count() > 0){
         QStorageInfo srcStorageInfo(files.at(0).toLocalFile());
         if (srcStorageInfo.rootPath() != tarStorageInfo.rootPath()){
             m_isInSameDisk = false;
@@ -396,12 +395,13 @@ DUrlList FileJob::doMoveToTrash(const DUrlList &files)
         return list;
     }
 
-    QStorageInfo storageInfo(files.at(0).toLocalFile());
-    if(storageInfo.rootPath() != "/"){
-        m_isInSameDisk = false;
+    if (files.count() > 0){
+        QStorageInfo storageInfo(files.at(0).toLocalFile());
+        QStorageInfo trashStorageInfo(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath));
+        if(storageInfo.rootPath() != trashStorageInfo.rootPath()){
+            m_isInSameDisk = false;
+        }
     }
-
-
 
     //store url list whom cannot be moved to trash
     DUrlList canMoveToTrashList;
