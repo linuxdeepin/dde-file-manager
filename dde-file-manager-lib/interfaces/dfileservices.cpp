@@ -896,9 +896,11 @@ void DFileService::openUrl(const DFMEvent &event, const bool &isOpenInNewWindow,
     DFMEvent filesEvent(event),dirsEvent(event);
     foreach (const DUrl& url, event.fileUrlList()) {
 
+        const DAbstractFileInfoPointer &fileInfo = createFileInfo(url);
         if(globalSetting->isCompressFilePreview()
                 && isAvfsMounted()
-                && FileUtils::isArchive(url.toLocalFile())){
+                && FileUtils::isArchive(url.toLocalFile())
+                && fileInfo->mimeType().name() != "application/vnd.debian.binary-package"){
             DAbstractFileInfoPointer info = createFileInfo(DUrl::fromAVFSFile(url.path()));
             if(info->exists()){
                 const_cast<DUrl&>(url).setScheme(AVFS_SCHEME);
@@ -907,7 +909,6 @@ void DFileService::openUrl(const DFMEvent &event, const bool &isOpenInNewWindow,
             }
         }
 
-        const DAbstractFileInfoPointer &fileInfo = createFileInfo(url);
         if(fileInfo){
             bool isDir = fileInfo->isDir();
             if(isDir)
