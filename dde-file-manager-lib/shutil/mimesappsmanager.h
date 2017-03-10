@@ -64,6 +64,7 @@ public:
                                      const QString& targetAppName);
 
     static QStringList getRecommendedAppsByMimeType(const QMimeType& mimeType);
+    static QStringList getRecommendedAppsByGio(const QString& mimeType);
 
 
     static QStringList getApplicationsFolders();

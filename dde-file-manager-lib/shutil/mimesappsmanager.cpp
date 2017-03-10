@@ -328,34 +328,6 @@ QStringList MimesAppsManager::getRecommendedAppsByMimeType(const QMimeType &mime
 {
     QStringList recommendApps = MimeApps.value(mimeType.name());
 
-    QString mimeDisPlayName = mimeTypeDisplayManager->displayName(mimeType.name());
-
-    if(mimeDisPlayName == mimeTypeDisplayManager->displayNames().value("audio")){
-        foreach (const QString& key, AudioMimeApps.keys()) {
-            if(recommendApps.contains(key))
-                continue;
-             recommendApps << key;
-        }
-    } else if(mimeDisPlayName == mimeTypeDisplayManager->displayNames().value("image")){
-        foreach (const QString& key, ImageMimeApps.keys()) {
-            if(recommendApps.contains(key))
-                continue;
-             recommendApps << key;
-        }
-    } else if(mimeDisPlayName == mimeTypeDisplayManager->displayNames().value("text")){
-        foreach (const QString& key, TextMimeApps.keys()) {
-            if(recommendApps.contains(key))
-                continue;
-             recommendApps << key;
-        }
-    } else if(mimeDisPlayName == mimeTypeDisplayManager->displayNames().value("video")){
-        foreach (const QString& key, VideoMimeApps.keys()) {
-            if(recommendApps.contains(key))
-                continue;
-             recommendApps << key;
-        }
-    }
-
     foreach (QString name, mimeType.aliases()) {
         QStringList apps = mimeAppsManager->MimeApps.value(name);
         foreach (QString app, apps) {
@@ -365,6 +337,68 @@ QStringList MimesAppsManager::getRecommendedAppsByMimeType(const QMimeType &mime
         }
     }
 
+    //use gvfs when no recommend apps with mimetype
+    if(recommendApps.count() <= 0){
+        recommendApps = getRecommendedAppsByGio(mimeType.name());
+    }
+
+    //use mime associations white list for no results
+    if(recommendApps.count() <= 0){
+        QString aliasMimeType = mimeType.name();
+
+        QString mimeAssociationsFile = QString("%1/%2/%3").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::ApplicationSharePath),
+                                                               "mimetypeassociations",
+                                                               "mimetypeassociations.json");
+        QFile file(mimeAssociationsFile);
+        if(!file.open(QIODevice::ReadOnly | QIODevice::Text)){
+            qDebug () << "could not open file :" << mimeAssociationsFile << ", error:" << file.errorString();
+            return recommendApps;
+        }
+        const QByteArray data = file.readAll();
+        file.close();
+
+        QJsonParseError* jsonPaserError = NULL;
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(data, jsonPaserError);
+        if(jsonPaserError){
+           qDebug () << "json file paser error:" << jsonPaserError->errorString();
+           return recommendApps;
+        }
+        QJsonObject obj = jsonDoc.object();
+
+        if(obj.contains("associations")){
+            QJsonArray mimesArr = obj.value("associations").toArray();
+            foreach (const QJsonValue& mime, mimesArr) {
+                if(mime.toObject().contains(mimeType.name())){
+                    aliasMimeType = mime.toObject().value(mimeType.name()).toString();
+                    return getRecommendedAppsByGio(aliasMimeType);
+                }
+            }
+        }
+    }
+
+    return recommendApps;
+}
+
+QStringList MimesAppsManager::getRecommendedAppsByGio(const QString &mimeType)
+{
+    QStringList recommendApps;
+    GList* recomendAppInfoList = g_app_info_get_recommended_for_type(mimeType.toLocal8Bit().constData());
+    GList* iterator = recomendAppInfoList;
+
+    while(iterator){
+        GAppInfo* appInfo = (GAppInfo*)iterator->data;
+        if(appInfo){
+        const char* desktopId = g_app_info_get_id(appInfo);
+
+        GDesktopAppInfo* dekstopAppInfo = g_desktop_app_info_new(desktopId);
+        QString app = g_desktop_app_info_get_filename(dekstopAppInfo);
+
+        recommendApps << app;
+        g_object_unref(dekstopAppInfo);
+        }
+        iterator = iterator->next;
+    }
+    g_list_free(recomendAppInfoList);
     return recommendApps;
 }
 

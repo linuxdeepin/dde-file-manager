@@ -365,6 +365,9 @@ mimetypeFiles.files += \
     mimetypes/image.mimetype \
     mimetypes/executable.mimetype
 
+mimetypeAssociations.path = $$APPSHAREDIR/mimeassociations
+mimetypeAssociations.files += mimeassociations/mimeassociations.json
+
 TRANSLATIONS += $$PWD/translations/$${TARGET}.ts \
     $$PWD/translations/$${TARGET}_zh_CN.ts
 
@@ -383,6 +386,7 @@ help.files = help/*
 icon.path = $$ICONDIR
 icon.files = skin/images/$${TARGET}.svg
 
-INSTALLS += target templateFiles translations mimetypeFiles help icon includes gvfs_includes
+INSTALLS += target templateFiles translations mimetypeFiles mimetypeAssociations help icon includes gvfs_includes
 
-DISTFILES +=
+DISTFILES += \
+    mimetypeassociations/mimetypeassociations.json
