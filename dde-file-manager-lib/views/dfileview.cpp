@@ -949,9 +949,10 @@ void DFileView::keyPressEvent(QKeyEvent *event)
 
             return;
         }
-
         break;
+
     case Qt::AltModifier:
+    case Qt::AltModifier | Qt::KeypadModifier:
         switch (event->key()) {
         case Qt::Key_Up:
             cdUp();
@@ -997,10 +998,9 @@ void DFileView::keyPressEvent(QKeyEvent *event)
         case Qt::Key_8:
             emit requestActivateTabByIndex(7);
             return;
-        default: break;
         }
-
         break;
+
     default: break;
     }
 
