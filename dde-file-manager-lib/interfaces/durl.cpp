@@ -265,8 +265,8 @@ DUrl DUrl::fromSearchFile(const DUrl &targetUrl, const QString &keyword, const D
 
     QUrlQuery query;
 
-    query.addQueryItem("keyword", QUrl::toPercentEncoding(keyword, QByteArray(), "%"));
     query.addQueryItem("url", targetUrl.toString());
+    query.addQueryItem("keyword", QUrl::toPercentEncoding(keyword, QByteArray(), "%"));
 
     url.setQuery(query);
 
