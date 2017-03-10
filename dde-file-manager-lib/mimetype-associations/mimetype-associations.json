@@ -1,0 +1,8 @@
+{
+    "associations":[
+        {
+            "mimetype": "application/json",
+            "alias": "text/plain"
+        }
+    ]
+}
