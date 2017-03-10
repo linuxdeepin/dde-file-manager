@@ -244,7 +244,7 @@ void DialogManager::abortJobByDestinationUrl(const DUrl &url)
     foreach (QString jobId, m_jobs.keys()) {
         FileJob* job = m_jobs.value(jobId);
         qDebug() << jobId << job->getTargetDir();
-        if (job->getTargetDir().startsWith(url.path())){
+        if (!QFile(job->getTargetDir()).exists()){
             job->jobAborted();
         }
     }
