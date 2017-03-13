@@ -278,6 +278,15 @@ DUrl DFileManagerWindow::currentUrl() const
     return DUrl();
 }
 
+bool DFileManagerWindow::isCurrentUrlSupportSearch(const DUrl &currentUrl)
+{
+    const DAbstractFileInfoPointer &currentFileInfo = DFileService::instance()->createFileInfo(currentUrl);
+
+    if (!currentFileInfo || !currentFileInfo->canIteratorDir())
+        return false;
+    return true;
+}
+
 int DFileManagerWindow::getFileViewMode() const
 {
     D_DC(DFileManagerWindow);
@@ -394,22 +403,14 @@ void DFileManagerWindow::preHandleCd(const DUrl &fileUrl, int source)
             qDebug() << fileInfo->exists() << fileUrl.toString();
         }
         if (!fileInfo || !fileInfo->exists()) {
-            if (!FileUtils::isFileExists(fileUrl.toString())){
-                if (DUrl::hasScheme(event.fileUrl().scheme()))
-                    return;
+            if (!isCurrentUrlSupportSearch(currentUrl()))
+                return;
 
-                const DAbstractFileInfoPointer &currentFileInfo = DFileService::instance()->createFileInfo(currentUrl());
+            const_cast<DFMEvent&>(event) << DUrl::fromSearchFile(currentUrl(), event.fileUrl().toString());
 
-                if (!currentFileInfo || !currentFileInfo->canIteratorDir())
-                    return;
-
-                const_cast<DFMEvent&>(event) << DUrl::fromSearchFile(currentUrl(), event.fileUrl().toString());
-
-                const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(event.fileUrl());
-
-                if (!fileInfo || !fileInfo->exists())
-                    return;
-            }
+            const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(event.fileUrl());
+            if (!fileInfo || !fileInfo->exists())
+                return;
         }
         cd(event);
     }
