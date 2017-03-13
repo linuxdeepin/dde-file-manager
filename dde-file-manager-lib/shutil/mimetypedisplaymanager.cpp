@@ -25,26 +25,26 @@ MimeTypeDisplayManager::~MimeTypeDisplayManager()
 
 void MimeTypeDisplayManager::initData()
 {
-    m_displayNames["directory"] = tr("directory");
-    m_displayNames["desktop"] = tr("application");
-    m_displayNames["video"] = tr("video");
-    m_displayNames["audio"] = tr("audio");
-    m_displayNames["image"] = tr("image");
-    m_displayNames["archive"] = tr("archive");
-    m_displayNames["text"] = tr("text");
-    m_displayNames["executable"] = tr("executable");
-    m_displayNames["unknown"] = tr("unknown");
+    m_displayNames[FileType::Directory] = tr("directory");
+    m_displayNames[FileType::DesktopApplication] = tr("application");
+    m_displayNames[FileType::Videos] = tr("video");
+    m_displayNames[FileType::Audios] = tr("audio");
+    m_displayNames[FileType::Images] = tr("image");
+    m_displayNames[FileType::Archives] = tr("archive");
+    m_displayNames[FileType::Documents] = tr("text");
+    m_displayNames[FileType::Executable] = tr("executable");
+    m_displayNames[FileType::Unknown] = tr("unknown");
 
 
-    m_defaultIconNames["directory"] = "folder";
-    m_defaultIconNames["desktop"] = "application-default-icon";
-    m_defaultIconNames["video"] = "video";
-    m_defaultIconNames["audio"] = "music";
-    m_defaultIconNames["image"] = "image";
-    m_defaultIconNames["archive"] = "application-x-archive";
-    m_defaultIconNames["text"] = "text-plain";
-    m_defaultIconNames["executable"] = "application-x-executable";
-    m_defaultIconNames["unknown"] = "application-default-icon";
+    m_defaultIconNames[FileType::Directory] = "folder";
+    m_defaultIconNames[FileType::DesktopApplication] = "application-default-icon";
+    m_defaultIconNames[FileType::Videos] = "video";
+    m_defaultIconNames[FileType::Audios] = "music";
+    m_defaultIconNames[FileType::Images] = "image";
+    m_defaultIconNames[FileType::Archives] = "application-x-archive";
+    m_defaultIconNames[FileType::Documents] = "text-plain";
+    m_defaultIconNames[FileType::Executable] = "application-x-executable";
+    m_defaultIconNames[FileType::Unknown] = "application-default-icon";
 
     loadSupportMimeTypes();
 }
@@ -56,74 +56,38 @@ void MimeTypeDisplayManager::initConnect()
 
 QString MimeTypeDisplayManager::displayName(const QString &mimeType)
 {
-    if (mimeType == "application/x-desktop"){
-        return m_displayNames.value("desktop");
-    }else if (mimeType == "inode/directory"){
-        return m_displayNames.value("directory");
-    }else if (mimeType == "application/x-executable" || ExecutableMimeTypes.contains(mimeType)){
-        return m_displayNames.value("executable");
-    }else if (mimeType.startsWith("video/") || VideoMimeTypes.contains(mimeType)){
-        return m_displayNames.value("video");
-    }else if (mimeType.startsWith("audio/") || AudioMimeTypes.contains(mimeType)){
-        return m_displayNames.value("audio");
-    }else if (mimeType.startsWith("image/") || ImageMimeTypes.contains(mimeType)){
-        return m_displayNames.value("image");
-    }else if (mimeType.startsWith("text/") || TextMimeTypes.contains(mimeType)){
-        return m_displayNames.value("text");
-    }else if (ArchiveMimeTypes.contains(mimeType)){
-        return m_displayNames.value("archive");
-    }else{
-        return m_displayNames.value("unknown");
-    }
+    return m_displayNames.value(displayNameToEnum(mimeType));
 }
 
-MimeTypeDisplayManager::MimeDisplayNameOrder MimeTypeDisplayManager::displayNameOrder(const QString &mimeType)
+DAbstractFileInfo::FileType MimeTypeDisplayManager::displayNameToEnum(const QString &mimeType)
 {
     if (mimeType == "application/x-desktop"){
-        return DesktopApplication;
+        return FileType::DesktopApplication;
     }else if (mimeType == "inode/directory"){
-        return Directory;
+        return FileType::Directory;
     }else if (mimeType == "application/x-executable" || ExecutableMimeTypes.contains(mimeType)){
-        return Executable;
+        return FileType::Executable;
     }else if (mimeType.startsWith("video/") || VideoMimeTypes.contains(mimeType)){
-        return Video;
+        return FileType::Videos;
     }else if (mimeType.startsWith("audio/") || AudioMimeTypes.contains(mimeType)){
-        return Audio;
+        return FileType::Audios;
     }else if (mimeType.startsWith("image/") || ImageMimeTypes.contains(mimeType)){
-        return Image;
+        return FileType::Images;
     }else if (mimeType.startsWith("text/") || TextMimeTypes.contains(mimeType)){
-        return Text;
+        return FileType::Documents;
     }else if (ArchiveMimeTypes.contains(mimeType)){
-        return Archive;
+        return FileType::Archives;
     }else{
-        return Unknown;
+        return FileType::Unknown;
     }
 }
 
 QString MimeTypeDisplayManager::defaultIcon(const QString &mimeType)
 {
-    if (mimeType == "application/x-desktop"){
-        return m_defaultIconNames.value("desktop");
-    }else if (mimeType == "inode/directory"){
-        return m_defaultIconNames.value("directory");
-    }else if (mimeType == "application/x-executable" || ExecutableMimeTypes.contains(mimeType)){
-        return m_defaultIconNames.value("executable");
-    }else if (mimeType.startsWith("video/") || VideoMimeTypes.contains(mimeType)){
-        return m_defaultIconNames.value("video");
-    }else if (mimeType.startsWith("audio/") || AudioMimeTypes.contains(mimeType)){
-        return m_defaultIconNames.value("audio");
-    }else if (mimeType.startsWith("image/") || ImageMimeTypes.contains(mimeType)){
-        return m_defaultIconNames.value("image");
-    }else if (mimeType.startsWith("text/") || TextMimeTypes.contains(mimeType)){
-        return m_defaultIconNames.value("text");
-    }else if (ArchiveMimeTypes.contains(mimeType)){
-        return m_defaultIconNames.value("archive");
-    }else{
-        return m_defaultIconNames.value("unknown");
-    }
+    return m_defaultIconNames.value(displayNameToEnum(mimeType));
 }
 
-QMap<QString, QString> MimeTypeDisplayManager::displayNames()
+QMap<DAbstractFileInfo::FileType, QString> MimeTypeDisplayManager::displayNames()
 {
     return m_displayNames;
 }

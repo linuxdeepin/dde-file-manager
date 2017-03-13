@@ -4,25 +4,15 @@
 #include <QObject>
 #include <QMap>
 
+#include "dabstractfileinfo.h"
+
 class MimeTypeDisplayManager : public QObject
 {
     Q_OBJECT
 
 public:
 
-    enum MimeDisplayNameOrder{
-        Unknown,
-        Executable,
-        DesktopApplication,
-        Archive,
-        Audio,
-        Video,
-        Image,
-        Text,
-        Directory
-    };
-
-    Q_ENUM(MimeDisplayNameOrder)
+    typedef DAbstractFileInfo::FileType FileType;
 
     explicit MimeTypeDisplayManager(QObject *parent = 0);
     ~MimeTypeDisplayManager();
@@ -31,25 +21,18 @@ public:
     void initConnect();
 
     QString displayName(const QString& mimeType);
-    MimeDisplayNameOrder displayNameOrder(const QString& mimeType);
+    FileType displayNameToEnum(const QString& mimeType);
     QString defaultIcon(const QString& mimeType);
 
-
-
-    QMap<QString, QString> displayNames();
+    QMap<FileType, QString> displayNames();
     static QStringList readlines(const QString& path);
     static void loadSupportMimeTypes();
     static QStringList supportArchiveMimetypes();
     static QStringList supportVideoMimeTypes();
 
-signals:
-
-public slots:
-
 private:
-
-    QMap<QString, QString> m_displayNames;
-    QMap<QString, QString> m_defaultIconNames;
+    QMap<FileType, QString> m_displayNames;
+    QMap<FileType, QString> m_defaultIconNames;
     static QStringList ArchiveMimeTypes;
     static QStringList AvfsBlackList;
     static QStringList TextMimeTypes;

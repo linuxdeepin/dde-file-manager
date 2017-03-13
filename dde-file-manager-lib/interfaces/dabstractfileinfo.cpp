@@ -41,7 +41,7 @@ bool compareByString(const QString &str1, const QString &str2, Qt::SortOrder ord
 COMPARE_FUN_DEFINE(fileDisplayName, DisplayName, DAbstractFileInfo)
 COMPARE_FUN_DEFINE(fileSize, Size, DAbstractFileInfo)
 COMPARE_FUN_DEFINE(lastModified, Modified, DAbstractFileInfo)
-COMPARE_FUN_DEFINE(mimeTypeDisplayName, Mime, DAbstractFileInfo)
+COMPARE_FUN_DEFINE(fileType, Mime, DAbstractFileInfo)
 COMPARE_FUN_DEFINE(created, Created, DAbstractFileInfo)
 } /// end namespace FileSortFunction
 
@@ -508,6 +508,13 @@ QString DAbstractFileInfo::mimeTypeDisplayName() const
     CALL_PROXY(mimeTypeDisplayName());
 
     return mimeTypeDisplayManager->displayName(mimeTypeName());
+}
+
+DAbstractFileInfo::FileType DAbstractFileInfo::fileType() const
+{
+    CALL_PROXY(fileType());
+
+    return mimeTypeDisplayManager->displayNameToEnum(mimeTypeName());
 }
 
 DUrl DAbstractFileInfo::fileUrl() const
