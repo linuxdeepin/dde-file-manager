@@ -1,7 +1,7 @@
 #include "diskcontrolwidget.h"
 #include "diskcontrolitem.h"
-#include "dde-file-manager/gvfs/gvfsmountmanager.h"
-#include "dde-file-manager/dfmsetting.h"
+#include "gvfsmountmanager.h"
+#include "dfmsetting.h"
 #include <QDebug>
 #include <QProcess>
 

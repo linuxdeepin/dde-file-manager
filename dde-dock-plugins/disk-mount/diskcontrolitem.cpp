@@ -1,5 +1,5 @@
 #include "diskcontrolitem.h"
-#include "dde-file-manager/gvfs/qdiskinfo.h"
+#include "qdiskinfo.h"
 #include <QVBoxLayout>
 #include <QIcon>
 

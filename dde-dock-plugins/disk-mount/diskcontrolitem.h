@@ -7,7 +7,7 @@
 #include <QLabel>
 #include <QProgressBar>
 #include <QIcon>
-#include "dde-file-manager/gvfs/qdiskinfo.h"
+#include "qdiskinfo.h"
 
 class DiskControlItem : public QFrame
 {

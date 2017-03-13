@@ -5,7 +5,8 @@ CONFIG          += plugin c++11 link_pkgconfig
 PKGCONFIG       += dtkbase-0-2 dtkwidget-0-2 gio-unix-2.0
 
 INCLUDEPATH += /usr/include/dde-dock
-INCLUDEPATH += $$PWD/../../dde-file-manager-lib/interfaces
+INCLUDEPATH += $$PWD/../../dde-file-manager-lib/interfaces \
+               $$PWD/../../dde-file-manager-lib/gvfs
 
 TARGET          = $$qtLibraryTarget(disk-mount)
 DESTDIR          = $$_PRO_FILE_PWD_/../
@@ -13,7 +14,7 @@ DISTFILES       += disk-mount.json
 
 DEFINES += QT_MESSAGELOGCONTEXT
 
-unix: LIBS += -L$$OUT_PWD/../dde-file-manager-lib -ldde-file-manager
+unix: LIBS += -L$$OUT_PWD/../../dde-file-manager-lib -ldde-file-manager
 
 HEADERS += \
     diskmountplugin.h \
