@@ -2,9 +2,10 @@ PREFIX = /usr
 QT              += widgets
 TEMPLATE         = lib
 CONFIG          += plugin c++11 link_pkgconfig
-PKGCONFIG       += dtkbase-0-2 dtkwidget-0-2 dde-file-manager gio-unix-2.0
+PKGCONFIG       += dtkbase-0-2 dtkwidget-0-2 gio-unix-2.0
 
 INCLUDEPATH += /usr/include/dde-dock
+INCLUDEPATH += $$PWD/../../dde-file-manager-lib/interfaces
 
 TARGET          = $$qtLibraryTarget(disk-mount)
 DESTDIR          = $$_PRO_FILE_PWD_/../
