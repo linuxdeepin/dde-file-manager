@@ -48,6 +48,7 @@ public:
     ~DFileManagerWindow();
 
     DUrl currentUrl() const;
+    bool isCurrentUrlSupportSearch(const DUrl& currentUrl);
 
     int getFileViewMode() const;
     int getFileViewSortRole() const;
