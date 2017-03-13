@@ -78,6 +78,18 @@ public:
         ContiguousSelection
     };
 
+    enum FileType {
+        Directory,
+        Documents,
+        Images,
+        Videos,
+        Audios,
+        Archives,
+        DesktopApplication,
+        Executable,
+        Unknown
+    };
+
     inline static QString dateTimeFormat() {
         return "yyyy/MM/dd HH:mm:ss";
     }
@@ -146,6 +158,7 @@ public:
     virtual QString createdDisplayName() const;
     virtual QString sizeDisplayName() const;
     virtual QString mimeTypeDisplayName() const;
+    virtual FileType fileType() const;
 
     virtual DUrl fileUrl() const;
     inline QString scheme() const
