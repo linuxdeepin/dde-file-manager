@@ -76,8 +76,15 @@ QString TrashDirIterator::path() const
 }
 
 TrashManager::TrashManager(QObject *parent)
-    : DAbstractFileController(parent)
+    : DAbstractFileController(parent),
+      m_trashFileWatcher(new DFileWatcher(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath),this))
 {
+    m_isTrashEmpty = isEmpty();
+    connect(m_trashFileWatcher, &DFileWatcher::fileModified, this, &TrashManager::trashFilesChanged);
+    connect(m_trashFileWatcher, &DFileWatcher::fileDeleted, this, &TrashManager::trashFilesChanged);
+    connect(m_trashFileWatcher, &DFileWatcher::subfileCreated, this, &TrashManager::trashFilesChanged);
+    m_trashFileWatcher->startWatcher();
+
 }
 
 const DAbstractFileInfoPointer TrashManager::createFileInfo(const DUrl &fileUrl, bool &accepted) const
@@ -288,4 +295,14 @@ bool TrashManager::isEmpty()
         return true;
     }
     return false;
+}
+
+void TrashManager::trashFilesChanged(const DUrl& url)
+{
+    Q_UNUSED(url);
+    if(m_isTrashEmpty == isEmpty())
+        return;
+
+    m_isTrashEmpty = isEmpty();
+    emit fileSignalManager->trashStateChanged();
 }

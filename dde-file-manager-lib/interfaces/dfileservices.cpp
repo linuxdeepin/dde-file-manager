@@ -465,10 +465,10 @@ DUrlList DFileService::moveToTrashSync(const DFMEvent &event) const
     TRAVERSE(event.fileUrl(), {
                  DUrlList list = controller->moveToTrash(event, accepted);
 
-                 if (accepted)
-                    return list;
+                 if (accepted) {
+                     return list;
+                 }
              })
-
     return DUrlList();
 }
 

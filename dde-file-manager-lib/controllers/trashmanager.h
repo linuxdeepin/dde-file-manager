@@ -10,6 +10,7 @@
 
 class DAbstractFileInfo;
 class FileMonitor;
+class DFileWatcher;
 
 class TrashManager : public DAbstractFileController
 {
@@ -37,6 +38,11 @@ public:
     void cleanTrash(const DFMEvent &event) const;
 
     static bool isEmpty();
+public slots:
+    void trashFilesChanged(const DUrl &url);
+private:
+    bool m_isTrashEmpty;
+    DFileWatcher* m_trashFileWatcher;
 };
 
 #endif // TRASHMANAGER_H
