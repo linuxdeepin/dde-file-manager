@@ -59,10 +59,8 @@ OpenWithOtherDialog::~OpenWithOtherDialog()
 void OpenWithOtherDialog::initData()
 {
     const DAbstractFileInfoPointer &info = fileService->createFileInfo(m_url);
-    QString path = info->absoluteFilePath();
 
-    QMimeType mimeType = mimeAppsManager->getMimeType(path);
-    QStringList recommendApps = mimeAppsManager->getRecommendedAppsByMimeType(mimeType);
+    QStringList recommendApps = mimeAppsManager->getRecommendedApps(info->fileUrl());
 
     bool hasItems = false;
     foreach (const QString& f, mimeAppsManager->DesktopObjs.keys()) {

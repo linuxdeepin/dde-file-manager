@@ -274,14 +274,13 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
         DFileMenu* openWithMenu = openWithAction ? qobject_cast<DFileMenu*>(openWithAction->menu()) : Q_NULLPTR;
 
         if (openWithMenu) {
-            QMimeType mimeType = info->mimeType();
-            QStringList recommendApps = mimeAppsManager->getRecommendedAppsByMimeType(mimeType);
+            QStringList recommendApps = mimeAppsManager->getRecommendedApps(info->fileUrl());
 
             foreach (QString app, recommendApps) {
-                const DesktopFile& df = mimeAppsManager->DesktopObjs.value(app);
+//                const DesktopFile& df = mimeAppsManager->DesktopObjs.value(app);
                 //ignore no show apps
-                if(df.getNoShow())
-                    continue;
+//                if(df.getNoShow())
+//                    continue;
                 QAction* action = new QAction(mimeAppsManager->DesktopObjs.value(app).getLocalName(), 0);
                 action->setIcon(FileUtils::searchAppIcon(mimeAppsManager->DesktopObjs.value(app)));
                 action->setProperty("app", app);

@@ -12,6 +12,8 @@
 #include "desktopfile.h"
 #include <QIcon>
 
+class DUrl;
+
 class MimeAppsWorker: public QObject
 {
    Q_OBJECT
@@ -59,12 +61,16 @@ public:
     static QString getDefaultAppByMimeType(const QMimeType& mimeType);
     static QString getDefaultAppByMimeType(const QString& mimeType);
     static QString getDefaultAppDisplayNameByMimeType(const QMimeType& mimeType);
-    static QString getDefaultAppDisplayNameByMimeType(const QString& mimeType);
-    static void setDefautlAppForType(const QString& mimeType,
+    static QString getDefaultAppDisplayNameByGio(const QString& mimeType);
+    static QString getDefaultAppDesktopFileByMimeType(const QString& mimeType);
+
+    static void setDefautlAppForTypeByGio(const QString& mimeType,
                                      const QString& targetAppName);
 
-    static QStringList getRecommendedAppsByMimeType(const QMimeType& mimeType);
+    static QStringList getRecommendedApps(const DUrl& url);
+    static QStringList getRecommendedAppsByQio(const QMimeType& mimeType);
     static QStringList getRecommendedAppsByGio(const QString& mimeType);
+    static QStringList getrecommendedAppsFromMimeWhiteList(const DUrl& url);
 
 
     static QStringList getApplicationsFolders();
