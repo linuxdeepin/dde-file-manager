@@ -33,6 +33,7 @@
 //DFM_USE_NAMESPACE
 
 int FileJob::FileJobCount = 0;
+DUrlList FileJob::CopyingFiles = {};
 qint64 FileJob::Msec_For_Display = 1000;
 qint64 FileJob::Data_Block_Size = 65536;
 qint64 FileJob::Data_Flush_Size = 16777216;
@@ -587,7 +588,7 @@ void FileJob::jobUpdated()
         jobDataDetail.insert("destination", m_tarDirName);
         m_progress = jobDataDetail.value("progress");
     }
-    qDebug() << m_jobDetail << jobDataDetail;
+//    qDebug() << m_jobDetail << jobDataDetail;
     emit requestJobDataUpdated(m_jobDetail, jobDataDetail);
 
     m_lastMsec = m_timer.elapsed();
@@ -748,6 +749,9 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
                         return false;
                     }
                 }
+
+                CopyingFiles.append(DUrl::fromLocalFile(m_tarPath));
+
                 if (!FileUtils::isGvfsMountFile(to.fileName())){
                     if (!to.setPermissions(from.permissions())){
                         qDebug() << "Set permissions from " << srcFile << "to" << m_tarPath << "failed";
@@ -837,8 +841,10 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
                         to.flush();
                         to.close();
                         from.close();
-                        if (targetPath)
+                        if (targetPath){
                             *targetPath = m_tarPath;
+                            CopyingFiles.removeOne(DUrl::fromLocalFile(m_tarPath));
+                        }
                         return true;
                     }else{
                         qWarning() << m_srcPath << "from size:" << from.size() << FileUtils::formatSize(from.size());

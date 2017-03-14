@@ -43,6 +43,7 @@ public:
     Q_ENUM(JobType)
 
     static int FileJobCount;
+    static DUrlList CopyingFiles;
 
     static qint64 Msec_For_Display;
     static qint64 Data_Block_Size;
