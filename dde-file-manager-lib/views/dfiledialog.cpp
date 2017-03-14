@@ -206,7 +206,7 @@ void DFileDialog::setNameFilters(const QStringList &filters)
     else
         getFileView()->statusBar()->setComBoxItems(filters);
 
-    if (selectedNameFilter().isEmpty())
+    if (modelCurrentNameFilter().isEmpty())
         selectNameFilter(filters.isEmpty() ? QString() : filters.first());
 }
 
@@ -232,7 +232,7 @@ void DFileDialog::selectNameFilter(const QString &filter)
     selectNameFilterByIndex(index);
 }
 
-QString DFileDialog::selectedNameFilter() const
+QString DFileDialog::modelCurrentNameFilter() const
 {
     const QStringList &filters = getFileView()->nameFilters();
 
@@ -242,6 +242,13 @@ QString DFileDialog::selectedNameFilter() const
     return filters.first();
 }
 
+QString DFileDialog::selectedNameFilter() const
+{
+    const QComboBox *box = getFileView()->statusBar()->comboBox();
+
+    return box ? box->currentText() : QString();
+}
+
 void DFileDialog::selectNameFilterByIndex(int index)
 {
     D_D(DFileDialog);
@@ -249,11 +256,7 @@ void DFileDialog::selectNameFilterByIndex(int index)
     if (index < 0 || index >= getFileView()->statusBar()->comboBox()->count())
         return;
 
-    qDebug() << getFileView()->statusBar()->comboBox()->currentIndex() << getFileView()->statusBar()->comboBox()->count();
-
     getFileView()->statusBar()->comboBox()->setCurrentIndex(index);
-
-    qDebug() << getFileView()->statusBar()->comboBox()->currentIndex() << index;
 
     QStringList nameFilters = d->nameFilters;
 
@@ -271,7 +274,9 @@ void DFileDialog::selectNameFilterByIndex(int index)
             newNameFilterExtension = QFileInfo(newNameFilters.at(0)).suffix();
 
         QString fileName = getFileView()->statusBar()->lineEdit()->text();
-        const QString fileNameExtension = QFileInfo(fileName).suffix();
+        QMimeDatabase db;
+
+        const QString fileNameExtension = db.suffixForFileName(fileName);
         if (!fileNameExtension.isEmpty() && !newNameFilterExtension.isEmpty()) {
             const int fileNameExtensionLength = fileNameExtension.count();
             fileName.replace(fileName.count() - fileNameExtensionLength,
@@ -286,7 +291,9 @@ void DFileDialog::selectNameFilterByIndex(int index)
 
 int DFileDialog::selectedNameFilterIndex() const
 {
-    return getFileView()->statusBar()->comboBox()->findText(selectedNameFilter());
+    const QComboBox *box = getFileView()->statusBar()->comboBox();
+
+    return box ? box->currentIndex() : -1;
 }
 
 QDir::Filters DFileDialog::filter() const
@@ -339,6 +346,9 @@ void DFileDialog::setAcceptMode(QFileDialog::AcceptMode mode)
         connect(getFileView()->statusBar()->comboBox(),
                 static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::activated),
                 this, &DFileDialog::selectNameFilter);
+        connect(getFileView()->statusBar()->comboBox(),
+                static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::activated),
+                this, &DFileDialog::selectedNameFilterChanged);
     } else {
         getFileView()->statusBar()->setMode(DStatusBar::DialogSave);
         getFileView()->statusBar()->acceptButton()->setText(tr("Save"));

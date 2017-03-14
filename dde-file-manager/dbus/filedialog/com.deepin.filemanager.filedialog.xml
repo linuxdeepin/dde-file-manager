@@ -80,5 +80,6 @@
     <signal name="currentUrlChanged"></signal>
     <signal name="directoryChanged"></signal>
     <signal name="directoryUrlChanged"></signal>
+    <signal name="selectedNameFilterChanged"></signal>
   </interface>
 </node>

@@ -60,6 +60,7 @@ Q_SIGNALS:
     void rejected();
     void selectionFilesChanged();
     void currentUrlChanged();
+    void selectedNameFilterChanged();
 
 public Q_SLOTS:
     void show();

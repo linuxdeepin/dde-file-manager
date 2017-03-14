@@ -31,6 +31,7 @@ public:
     void setNameFilters(const QStringList &filters);
     QStringList nameFilters() const;
     void selectNameFilter(const QString &filter);
+    QString modelCurrentNameFilter() const;
     QString selectedNameFilter() const;
     void selectNameFilterByIndex(int index);
     int selectedNameFilterIndex() const;
@@ -60,6 +61,7 @@ Q_SIGNALS:
     void rejected();
     void selectionFilesChanged();
     void currentUrlChanged();
+    void selectedNameFilterChanged();
 
 public Q_SLOTS:
     void accept();
