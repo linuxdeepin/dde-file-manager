@@ -6,6 +6,7 @@
 #include "app/define.h"
 #include "../widgets/singleton.h"
 #include "shutil/mimetypedisplaymanager.h"
+#include "fileoperations/filejob.h"
 
 
 #include <QCryptographicHash>
@@ -136,7 +137,10 @@ bool DThumbnailProvider::hasThumbnail(const QFileInfo &info) const
 
     const QMimeType &mime = d->mimeDatabase.mimeTypeForFile(info);
 
-    if (FileUtils::isGvfsMountFile(info.absoluteFilePath()) && mime.name().startsWith("video/"))
+    if (mime.name().startsWith("video/") && FileJob::CopyingFiles.contains(DUrl::fromLocalFile(info.filePath())))
+        return false;
+
+    if (mime.name().startsWith("video/") && FileUtils::isGvfsMountFile(info.absoluteFilePath()))
         return false;
 
     if (fileSize > sizeLimit(mime) && !mime.name().startsWith("video/"))
