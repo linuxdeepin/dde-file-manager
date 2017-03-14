@@ -1,6 +1,8 @@
 #include <QTextEdit>
 #include <QTextBlock>
 #include <QGraphicsOpacityEffect>
+#include <QApplication>
+#include <QMenu>
 
 #include <anchors.h>
 
@@ -27,6 +29,7 @@ FileIconItem::FileIconItem(QWidget *parent) :
     edit->setFrameShape(QFrame::NoFrame);
     edit->installEventFilter(this);
     edit->setAcceptRichText(false);
+    edit->setContextMenuPolicy(Qt::CustomContextMenu);
 
     AnchorsBase::setAnchor(icon, Qt::AnchorHorizontalCenter, this, Qt::AnchorHorizontalCenter);
     AnchorsBase::setAnchor(edit, Qt::AnchorTop, icon, Qt::AnchorBottom);
@@ -86,6 +89,7 @@ FileIconItem::FileIconItem(QWidget *parent) :
         if (edit->isReadOnly() && edit->isVisible())
             edit->setFixedHeight(edit->document()->size().height());
     });
+//    connect(edit, &QTextEdit::customContextMenuRequested, this, &FileIconItem::popupEditContentMenu);
 }
 
 void FileIconItem::setOpacity(qreal opacity)
@@ -126,6 +130,40 @@ void FileIconItem::setBorderColor(QColor borderColor)
     updateStyleSheet();
 }
 
+void FileIconItem::popupEditContentMenu()
+{
+    QMenu *menu = edit->createStandardContextMenu();
+    QAction *undo_action = menu->findChild<QAction*>(QStringLiteral("edit-undo"));
+    QAction *redo_action = menu->findChild<QAction*>(QStringLiteral("edit-redo"));
+
+    undo_action->setEnabled(editTextStackCurrentIndex > 0);
+    redo_action->setEnabled(editTextStackCurrentIndex < editTextStack.count() - 1);
+
+    disconnect(undo_action, SIGNAL(triggered(bool)));
+    disconnect(redo_action, SIGNAL(triggered(bool)));
+    connect(undo_action, &QAction::triggered, this, &FileIconItem::editUndo);
+    connect(redo_action, &QAction::triggered, this, &FileIconItem::editRedo);
+
+    menu->exec(QCursor::pos());
+    menu->deleteLater();
+}
+
+void FileIconItem::editUndo()
+{
+    disableEditTextStack = true;
+    QTextCursor cursor = edit->textCursor();
+    edit->setPlainText(editTextStackBack());
+    edit->setTextCursor(cursor);
+}
+
+void FileIconItem::editRedo()
+{
+    disableEditTextStack = true;
+    QTextCursor cursor = edit->textCursor();
+    edit->setPlainText(editTextStackAdvance());
+    edit->setTextCursor(cursor);
+}
+
 bool FileIconItem::event(QEvent *ee)
 {
     if (ee->type() == QEvent::DeferredDelete) {
@@ -163,15 +201,9 @@ bool FileIconItem::eventFilter(QObject *obj, QEvent *ee)
 
         if (event->key() != Qt::Key_Enter && event->key() != Qt::Key_Return) {
             if (event == QKeySequence::Undo) {
-                disableEditTextStack = true;
-                QTextCursor cursor = edit->textCursor();
-                edit->setPlainText(editTextStackBack());
-                edit->setTextCursor(cursor);
+                editUndo();
             } else if (event == QKeySequence::Redo) {
-                disableEditTextStack = true;
-                QTextCursor cursor = edit->textCursor();
-                edit->setPlainText(editTextStackAdvance());
-                edit->setTextCursor(cursor);
+                editRedo();
             } else {
                 return QFrame::eventFilter(obj, ee);
             }
@@ -195,8 +227,9 @@ bool FileIconItem::eventFilter(QObject *obj, QEvent *ee)
         break;
     }
     case QEvent::FocusOut:
-        if (obj == edit)
+        if (obj == edit && qApp->focusWidget() != edit) {
             emit inputFocusOut();
+        }
 
         break;
     case QEvent::Show:
