@@ -816,27 +816,27 @@
 <context>
     <name>FileJob</name>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="108"/>
+        <location filename="../../fileoperations/filejob.cpp" line="109"/>
         <source>copy</source>
         <translation>副本</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="541"/>
+        <location filename="../../fileoperations/filejob.cpp" line="542"/>
         <source>%1 s</source>
         <translation>%1 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="545"/>
+        <location filename="../../fileoperations/filejob.cpp" line="546"/>
         <source>%1 m %2 s</source>
         <translation>%1 分 %2 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="551"/>
+        <location filename="../../fileoperations/filejob.cpp" line="552"/>
         <source>%1 h %2 m %3 s</source>
         <translation>%1 时 %2 分 %3 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="560"/>
+        <location filename="../../fileoperations/filejob.cpp" line="561"/>
         <source>%1 d %2 h %3 m %4 s</source>
         <translation>%1 天 %2 时 %3 分 %4 秒</translation>
     </message>
@@ -1876,9 +1876,8 @@
         <translation>双击</translation>
     </message>
     <message>
-        <location filename="../configure/dfmconfigdict.cpp" line="54"/>
         <source>Restore defaults</source>
-        <translation>恢复默认</translation>
+        <translation type="vanished">恢复默认</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="14"/>
@@ -1907,38 +1906,38 @@
         <translation>预览</translation>
     </message>
     <message>
-        <location filename="../configure/dfmconfigdict.cpp" line="48"/>
         <source>Search</source>
-        <translation>搜索</translation>
+        <translation type="vanished">搜索</translation>
     </message>
     <message>
-        <location filename="../configure/dfmconfigdict.cpp" line="49"/>
+        <location filename="../configure/dfmconfigdict.cpp" line="48"/>
         <source>Basic settings</source>
         <translation>基本设置</translation>
     </message>
     <message>
-        <location filename="../configure/dfmconfigdict.cpp" line="50"/>
+        <location filename="../configure/dfmconfigdict.cpp" line="49"/>
         <source>View</source>
         <translation>视图</translation>
     </message>
     <message>
-        <location filename="../configure/dfmconfigdict.cpp" line="51"/>
+        <location filename="../configure/dfmconfigdict.cpp" line="50"/>
         <source>Hidden files</source>
         <translation>隐藏文件</translation>
     </message>
     <message>
-        <location filename="../configure/dfmconfigdict.cpp" line="52"/>
+        <location filename="../configure/dfmconfigdict.cpp" line="51"/>
         <source>New window and tab</source>
         <translation>新窗口和新标签</translation>
     </message>
     <message>
-        <location filename="../configure/dfmconfigdict.cpp" line="53"/>
+        <location filename="../configure/dfmconfigdict.cpp" line="52"/>
         <source>Open behavior</source>
         <translation>打开行为</translation>
     </message>
     <message>
+        <location filename="../configure/dfmconfigdict.cpp" line="53"/>
         <source>Restore to default</source>
-        <translation type="vanished">恢复默认</translation>
+        <translation>恢复默认</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="658"/>

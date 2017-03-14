@@ -45,11 +45,10 @@ void GenerateSettingTranslate()
     auto group_advance_dialogName = QObject::tr("Dialog");
     auto group_advance_mountName = QObject::tr("Mount");
     auto group_advance_previewName = QObject::tr("Preview");
-    auto group_advance_searchName = QObject::tr("Search");
     auto group_baseName = QObject::tr("Basic settings");
     auto group_base_default_viewName = QObject::tr("View");
     auto group_base_hidden_filesName = QObject::tr("Hidden files");
     auto group_base_new_tab_windowsName = QObject::tr("New window and tab");
     auto group_base_open_actionName = QObject::tr("Open behavior");
-    auto reset_button_name = QObject::tr("Restore defaults");
+    auto reset_button_name = QObject::tr("Restore to default");
 }

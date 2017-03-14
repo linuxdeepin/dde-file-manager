@@ -453,27 +453,27 @@
 <context>
     <name>FileJob</name>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="108"/>
+        <location filename="../../fileoperations/filejob.cpp" line="109"/>
         <source>copy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="541"/>
+        <location filename="../../fileoperations/filejob.cpp" line="542"/>
         <source>%1 s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="545"/>
+        <location filename="../../fileoperations/filejob.cpp" line="546"/>
         <source>%1 m %2 s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="551"/>
+        <location filename="../../fileoperations/filejob.cpp" line="552"/>
         <source>%1 h %2 m %3 s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="560"/>
+        <location filename="../../fileoperations/filejob.cpp" line="561"/>
         <source>%1 d %2 h %3 m %4 s</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1292,8 +1292,8 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../configure/dfmconfigdict.cpp" line="54"/>
-        <source>Restore defaults</source>
+        <location filename="../configure/dfmconfigdict.cpp" line="53"/>
+        <source>Restore to default</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1324,31 +1324,26 @@
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="48"/>
-        <source>Search</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../configure/dfmconfigdict.cpp" line="49"/>
         <source>Basic settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../configure/dfmconfigdict.cpp" line="50"/>
+        <location filename="../configure/dfmconfigdict.cpp" line="49"/>
         <source>View</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../configure/dfmconfigdict.cpp" line="51"/>
+        <location filename="../configure/dfmconfigdict.cpp" line="50"/>
         <source>Hidden files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../configure/dfmconfigdict.cpp" line="52"/>
+        <location filename="../configure/dfmconfigdict.cpp" line="51"/>
         <source>New window and tab</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../configure/dfmconfigdict.cpp" line="53"/>
+        <location filename="../configure/dfmconfigdict.cpp" line="52"/>
         <source>Open behavior</source>
         <translation type="unfinished"></translation>
     </message>
