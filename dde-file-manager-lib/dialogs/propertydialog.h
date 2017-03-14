@@ -10,7 +10,7 @@
 #include <QTextEdit>
 #include <QStackedWidget>
 #include <QPushButton>
-#define EXTEND_FRAME_MAXHEIGHT 150
+#define EXTEND_FRAME_MAXHEIGHT 160
 
 QT_BEGIN_NAMESPACE
 class QFrame;
