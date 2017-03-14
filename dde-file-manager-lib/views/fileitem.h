@@ -36,6 +36,11 @@ signals:
     void inputFocusOut();
     void borderColorChanged(QColor borderColor);
 
+private slots:
+    void popupEditContentMenu();
+    void editUndo();
+    void editRedo();
+
 protected:
     bool event(QEvent *ee) Q_DECL_OVERRIDE;
     bool eventFilter(QObject *obj, QEvent *ee) Q_DECL_OVERRIDE;
