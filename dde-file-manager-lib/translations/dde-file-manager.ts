@@ -596,7 +596,7 @@
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="112"/>
-        <source>Repalce</source>
+        <source>Replace</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
