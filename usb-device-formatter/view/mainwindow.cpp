@@ -190,7 +190,7 @@ void MainWindow::onFormatingFinished(const bool &successful)
 {
     if(successful){
         m_currentStep = Finished;
-        m_comfirmButton->setText(tr("Complete"));
+        m_comfirmButton->setText(tr("Done"));
         m_comfirmButton->setEnabled(true);
         m_pageStack->setCurrentWidget(m_finishPage);
     } else{
@@ -201,7 +201,7 @@ void MainWindow::onFormatingFinished(const bool &successful)
             m_errorPage->setErrorMsg(tr("Your disk is removed when formatting"));
         } else{
             m_currentStep = FormattError;
-            m_errorPage->setErrorMsg(tr("Format failed"));
+            m_errorPage->setErrorMsg(tr("Failed to format"));
             m_comfirmButton->setText(tr("Reformat"));
         }
         m_comfirmButton->setEnabled(true);
