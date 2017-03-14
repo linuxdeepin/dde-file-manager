@@ -197,6 +197,9 @@ signals:
 
     /*show hidden by setting dialog changed*/
     void showHiddenOnViewChanged();
+
+    /*trash state changed when trash is empty or is filled*/
+    void trashStateChanged();
 };
 
 #endif // FILESIGNALMANAGER_H

@@ -117,6 +117,10 @@ void DFileViewHelperPrivate::init()
 
     q->connect(fileSignalManager, SIGNAL(requestRename(DFMEvent)), q, SLOT(_q_edit(DFMEvent)));
     q->connect(fileSignalManager, SIGNAL(requestSelectRenameFile(DFMEvent)), q, SLOT(_q_selectAndRename(DFMEvent)));
+    // call later
+    TIMER_SINGLESHOT(0, {
+                         q->connect(fileSignalManager, SIGNAL(trashStateChanged()), q->model(), SLOT(update()));
+                     }, q);
 }
 
 void DFileViewHelperPrivate::_q_edit(const DFMEvent &event)

@@ -62,7 +62,8 @@ AppController *AppController::instance()
 void AppController::registerUrlHandle()
 {
     DFileService::dRegisterUrlHandler<FileController>(FILE_SCHEME, "");
-    DFileService::dRegisterUrlHandler<TrashManager>(TRASH_SCHEME, "");
+//    DFileService::dRegisterUrlHandler<TrashManager>(TRASH_SCHEME, "");
+    DFileService::setFileUrlHandler(TRASH_SCHEME, "", new TrashManager());
     DFileService::dRegisterUrlHandler<SearchController>(SEARCH_SCHEME, "");
     DFileService::dRegisterUrlHandler<NetworkController>(NETWORK_SCHEME, "");
     DFileService::dRegisterUrlHandler<NetworkController>(SMB_SCHEME, "");
@@ -337,7 +338,6 @@ void AppController::actionClearTrash(const DFMEvent &event)
     bool ret = fileService->deleteFiles(event);
 
     if(ret){
-
         //check if is sound effect enabled
         QGSettings settings("com.deepin.dde.sound-effect", "/com/deepin/dde/sound-effect/");
         if(!settings.get("enabled").toBool())
