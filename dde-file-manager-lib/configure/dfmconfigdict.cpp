@@ -51,5 +51,5 @@ void GenerateSettingTranslate()
     auto group_base_hidden_filesName = QObject::tr("Hidden files");
     auto group_base_new_tab_windowsName = QObject::tr("New window and tab");
     auto group_base_open_actionName = QObject::tr("Open behavior");
-    auto reset_button_name = QObject::tr("Restore to default");
+    auto reset_button_name = QObject::tr("Restore defaults");
 }
