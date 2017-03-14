@@ -960,8 +960,9 @@
         <translation type="vanished">共存</translation>
     </message>
     <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="112"/>
         <source>Replace</source>
-        <translation type="vanished">替换</translation>
+        <translation>替换</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="111"/>
@@ -974,9 +975,8 @@
         <translation>共存</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="112"/>
         <source>Repalce</source>
-        <translation>替换</translation>
+        <translation type="vanished">替换</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="134"/>
