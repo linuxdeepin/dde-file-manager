@@ -365,8 +365,9 @@ mimetypeFiles.files += \
     mimetypes/image.mimetype \
     mimetypes/executable.mimetype
 
-mimetypeAssociations.path = $$APPSHAREDIR/mimeassociations
-mimetypeAssociations.files += mimeassociations/mimeassociations.json
+mimetypeAssociations.path = $$APPSHAREDIR/mimetypeassociations
+mimetypeAssociations.files += \
+    mimetypeassociations/mimetypeassociations.json
 
 TRANSLATIONS += $$PWD/translations/$${TARGET}.ts \
     $$PWD/translations/$${TARGET}_zh_CN.ts

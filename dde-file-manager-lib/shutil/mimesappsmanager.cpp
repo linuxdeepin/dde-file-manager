@@ -23,6 +23,11 @@
 #include <QJsonArray>
 #include <QApplication>
 
+#include "interfaces/durl.h"
+#include "interfaces/dfileinfo.h"
+#include "interfaces/dfileservices.h"
+#include "fileutils.h"
+
 #undef signals
 extern "C" {
     #include <gio/gio.h>
@@ -265,10 +270,10 @@ QString MimesAppsManager::getDefaultAppByMimeType(const QString &mimeType)
 
 QString MimesAppsManager::getDefaultAppDisplayNameByMimeType(const QMimeType &mimeType)
 {
-    return getDefaultAppDisplayNameByMimeType(mimeType.name());
+    return getDefaultAppDisplayNameByGio(mimeType.name());
 }
 
-QString MimesAppsManager::getDefaultAppDisplayNameByMimeType(const QString &mimeType)
+QString MimesAppsManager::getDefaultAppDisplayNameByGio(const QString &mimeType)
 {
     /*
         *
@@ -280,21 +285,41 @@ QString MimesAppsManager::getDefaultAppDisplayNameByMimeType(const QString &mime
         *
     */
 
-    GAppInfo* defaultApp = g_app_info_get_default_for_type(mimeType.toStdString().c_str(), FALSE);
+    GAppInfo* defaultApp = g_app_info_get_default_for_type(mimeType.toLocal8Bit().constData(), FALSE);
     QString appDisplayName = "";
     if(defaultApp){
         appDisplayName = g_app_info_get_name(defaultApp);
     }
+    g_object_unref(defaultApp);
     return appDisplayName;
 }
 
-void MimesAppsManager::setDefautlAppForType(const QString &mimeType,
+QString MimesAppsManager::getDefaultAppDesktopFileByMimeType(const QString &mimeType)
+{
+    GAppInfo* defaultApp = g_app_info_get_default_for_type(mimeType.toLocal8Bit().constData(), FALSE);
+    if(!defaultApp)
+        return "";
+
+    const char* desktop_id = g_app_info_get_id(defaultApp);
+    GDesktopAppInfo* desktopAppInfo = g_desktop_app_info_new(desktop_id);
+    if(!desktopAppInfo)
+        return "";
+    QString desktopFile = g_desktop_app_info_get_filename(desktopAppInfo);
+
+    g_object_unref(defaultApp);
+    g_object_unref(desktopAppInfo);
+
+    return desktopFile;
+}
+
+void MimesAppsManager::setDefautlAppForTypeByGio(const QString &mimeType,
                                             const QString &targetAppName)
 {
     GAppInfo* app = NULL;
-    GList* apps = g_app_info_get_all();
-    GList* iterator = apps;
+    GList* apps = NULL;
+    apps = g_app_info_get_all();
 
+    GList* iterator = apps;
     while(iterator){
         QString appName = g_app_info_get_name((GAppInfo*)iterator->data);
         if(appName == targetAppName){
@@ -324,7 +349,35 @@ void MimesAppsManager::setDefautlAppForType(const QString &mimeType,
     g_list_free(apps);
 }
 
-QStringList MimesAppsManager::getRecommendedAppsByMimeType(const QMimeType &mimeType)
+QStringList MimesAppsManager::getRecommendedApps(const DUrl &url)
+{
+    QStringList recommendedApps;
+    QStringList gio_recommendedApps;
+    QString gio_mimeType;
+
+    //first find reommendApps from qio
+    const DAbstractFileInfoPointer& info = DFileService::instance()->createFileInfo(url);
+    if(info)
+        recommendedApps = getRecommendedAppsByQio(info->mimeType());
+
+    gio_mimeType = FileUtils::getMimeTypeByGIO(url.toString());
+    gio_recommendedApps = getRecommendedAppsByGio(gio_mimeType);
+
+    //append new recommended apps from gio
+    foreach (const QString& app, gio_recommendedApps) {
+        if(!recommendedApps.contains(app))
+            recommendedApps << app;
+    }
+
+    //use mime white list to find apps first of all
+    if(recommendedApps.isEmpty() && info){
+        recommendedApps = getrecommendedAppsFromMimeWhiteList(info->fileUrl());
+    }
+
+    return recommendedApps;
+}
+
+QStringList MimesAppsManager::getRecommendedAppsByQio(const QMimeType &mimeType)
 {
     QStringList recommendApps = MimeApps.value(mimeType.name());
 
@@ -333,45 +386,6 @@ QStringList MimesAppsManager::getRecommendedAppsByMimeType(const QMimeType &mime
         foreach (QString app, apps) {
             if (!recommendApps.contains(app)){
                 recommendApps.append(app);
-            }
-        }
-    }
-
-    //use gvfs when no recommend apps with mimetype
-    if(recommendApps.count() <= 0){
-        recommendApps = getRecommendedAppsByGio(mimeType.name());
-    }
-
-    //use mime associations white list for no results
-    if(recommendApps.count() <= 0){
-        QString aliasMimeType = mimeType.name();
-
-        QString mimeAssociationsFile = QString("%1/%2/%3").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::ApplicationSharePath),
-                                                               "mimetypeassociations",
-                                                               "mimetypeassociations.json");
-        QFile file(mimeAssociationsFile);
-        if(!file.open(QIODevice::ReadOnly | QIODevice::Text)){
-            qDebug () << "could not open file :" << mimeAssociationsFile << ", error:" << file.errorString();
-            return recommendApps;
-        }
-        const QByteArray data = file.readAll();
-        file.close();
-
-        QJsonParseError* jsonPaserError = NULL;
-        QJsonDocument jsonDoc = QJsonDocument::fromJson(data, jsonPaserError);
-        if(jsonPaserError){
-           qDebug () << "json file paser error:" << jsonPaserError->errorString();
-           return recommendApps;
-        }
-        QJsonObject obj = jsonDoc.object();
-
-        if(obj.contains("associations")){
-            QJsonArray mimesArr = obj.value("associations").toArray();
-            foreach (const QJsonValue& mime, mimesArr) {
-                if(mime.toObject().contains(mimeType.name())){
-                    aliasMimeType = mime.toObject().value(mimeType.name()).toString();
-                    return getRecommendedAppsByGio(aliasMimeType);
-                }
             }
         }
     }
@@ -400,6 +414,43 @@ QStringList MimesAppsManager::getRecommendedAppsByGio(const QString &mimeType)
     }
     g_list_free(recomendAppInfoList);
     return recommendApps;
+}
+
+QStringList MimesAppsManager::getrecommendedAppsFromMimeWhiteList(const DUrl &url)
+{
+    const DAbstractFileInfoPointer& info = fileService->createFileInfo(url);
+    QString aliasMimeType = info->mimeTypeName();
+    QStringList recommendedApps;
+    QString mimeAssociationsFile = QString("%1/%2/%3").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::ApplicationSharePath),
+                                                           "mimetypeassociations",
+                                                           "mimetypeassociations.json");
+    QFile file(mimeAssociationsFile);
+    if(!file.open(QIODevice::ReadOnly | QIODevice::Text)){
+        qDebug () << "could not open file :" << mimeAssociationsFile << ", error:" << file.errorString();
+        return recommendedApps;
+    }
+    const QByteArray data = file.readAll();
+    file.close();
+
+    QJsonParseError* jsonPaserError = NULL;
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(data, jsonPaserError);
+    if(jsonPaserError){
+       qDebug () << "json file paser error:" << jsonPaserError->errorString();
+       return recommendedApps;
+    }
+    QJsonObject obj = jsonDoc.object();
+
+    if(obj.contains("associations")){
+        QJsonArray mimesArr = obj.value("associations").toArray();
+        foreach (const QJsonValue& mime, mimesArr) {
+            if(mime.toObject().contains(info->mimeTypeName())){
+                aliasMimeType = mime.toObject().value(info->mimeTypeName()).toString();
+                recommendedApps = getRecommendedAppsByGio(aliasMimeType);
+            }
+        }
+    }
+
+    return recommendedApps;
 }
 
 QStringList MimesAppsManager::getApplicationsFolders()

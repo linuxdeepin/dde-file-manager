@@ -468,7 +468,7 @@ void PropertyDialog::flickFolderToLeftsidBar()
 void PropertyDialog::onOpenWithBntsChecked(QAbstractButton *w)
 {
     if(w){
-        MimesAppsManager::setDefautlAppForType(w->property("mimeTypeName").toString(),
+        MimesAppsManager::setDefautlAppForTypeByGio(w->property("mimeTypeName").toString(),
                                                  w->property("appName").toString());
     }
 }
@@ -816,8 +816,10 @@ QListWidget *PropertyDialog::createOpenWithListWidget(const DAbstractFileInfoPoi
     m_OpenWithButtonGroup = new QButtonGroup(listWidget);
     listWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    QStringList recommendApps = mimeAppsManager->getRecommendedAppsByMimeType(info->mimeType());
-    QString defaultApp = mimeAppsManager->getDefaultAppDisplayNameByMimeType(info->mimeTypeName());
+    QStringList recommendApps = mimeAppsManager->getRecommendedApps(info->fileUrl());
+
+    QString gio_mimeType = FileUtils::getMimeTypeByGIO(info->fileUrl().toString());
+    QString defaultApp = mimeAppsManager->getDefaultAppDisplayNameByGio(gio_mimeType);
 
     foreach (const QString& appFile, recommendApps){
         if(!QFile::exists(appFile))
@@ -831,7 +833,9 @@ QListWidget *PropertyDialog::createOpenWithListWidget(const DAbstractFileInfoPoi
         itemBox->setIcon(QIcon::fromTheme(df.getIcon()));
         itemBox->setIconSize(QSize(16, 16));
         itemBox->setProperty("appName",df.getLocalName());
-        itemBox->setProperty("mimeTypeName",info->mimeTypeName());
+        //for future we use our api for getting mimeType
+//        itemBox->setProperty("mimeTypeName",info->mimeTypeName());
+        itemBox->setProperty("mimeTypeName", FileUtils::getMimeTypeByGIO(info->fileUrl().toString()));
         m_OpenWithButtonGroup->addButton(itemBox);
         item->setData(Qt::UserRole, df.getName());
         listWidget->addItem(item);
