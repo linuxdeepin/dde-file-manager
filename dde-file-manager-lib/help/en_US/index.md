@@ -131,14 +131,23 @@ User can select to open a file with different applications.
 2. In the context menu, select ** Open with**.
 3. Select an application to open the file.
 
+> ![notes](icon/notes.svg)：It will use the default application to open the file when you double clicked on it. User can right click on the file, select ** Property ** and choose a default application in ** Open with ** list. User can also set the options in the [Default Applcation Settings](dman:///dde-control-center#Default Applcation Settings) of the Control Center to change the global default applications of the specified file types.
+
 ![0|openwith](png/openwith.png)
 
 ### Display Modes
 
-1. Click on ![icon](icon/icon_view_normal.svg) in Deepin File Manager interface to switch to icon display.
-2. Click on ![list](icon/list_view_normal.svg) in Deepin File Manager interface to switch to list display.
+Click on ![icon](icon/icon_view_normal.svg) or ![list](icon/list_view_normal.svg) in Deepin File Manager interface to switch between icon display and list display.
 
 ![0|display](png/display.png)
+
+- Icon display: It will show the icon, name and thumbnail of the files.
+
+![1|normal-view](png/normal-view.png)
+
+- List display：It will show the icon, name, modified time, size and type of the files.
+
+![1|list-view](png/list-view.png)
 
 > ![tips](icon/tips.svg): User can right click in blank area in Deepin File Manager interface, select ** Display as** in the context menu, then choose between ** Icon** and ** List**.
 
@@ -148,6 +157,8 @@ User can select to open a file with different applications.
 2. Choose among the sorting options, which include ** Name**, ** Size**, ** Type** and ** Time modified**.
 
 ![0|sort](png/sort.png)
+
+> ![tips](icon/tips.svg)：User can click on the head of the columns in the list view to change the sort order.
 
 ### File/Folder Properties
 
@@ -212,14 +223,14 @@ User can move bookmarks within the bookmark area. In Deepin File Manager, drag a
 
 #### Delete Bookmarks
 
-User can remove bookmarks by right clicking on the bookmark and select ** Remove**, or drag and drop the bookmark out of the navigation bar to remove it.
+User can remove bookmarks by right clicking on the bookmark and select ** Remove **, or drag and drop the bookmark out of the navigation bar to remove it.
 
 ### Computers in LAN
 
 User can visit computers in LAN to access files and folders.
 1. In Deepin File Manager interface, click on ![network](icon/network_server.svg).
 2. Double click on the computer icon to access.
-3. Select to connect as ** Anonymity** or ** Registered user**. For ** Registered user**, user needs to input username and password to connect.
+3. Select to connect as ** Anonymous ** or ** Registered user**. For ** Registered user**, user needs to input username and password to connect.
 4. Click on ** Connect** to establish connection.
 
 ![0|network](png/network.png)
@@ -288,30 +299,56 @@ User can choose to unmount/eject disks.
 
 > ![tips](icon/tips.svg): User can click on ![unmount](icon/unmount_normal.svg) in the navigation bar to eject the disks.
 
-## Settings|../common/icon_optionsetting.svg|
+### Format Disks
 
-In Settings, user can create new window, read manual, view information on Deepin File Manager and Exit the application.
+User can format disks in Deepin File Manager.
+1. In the navigation bar of Deepin File Manager, right click on the disk to format.
+2. Select ** Format **.
+3. In the popup window, choose the type and volume label for the disk.
+4. Click on ** Format **.
 
-In Deepin File Manager interface, click on ![menu](icon/icon_menu.svg) to enter ** Settings**.
+> ![notes](icon/notes.svg): Fast format can be finished in a few seconds, but the data could be restored by file recovery tools. If you don't want these data to be restored, you can uncheck this option box and format the disk.
+
+![0|format](png/format.png)
+
+## Main Menu|../common/icon_optionsetting.svg|
+
+In ** Main Menu **, user can create new window, read manual, view information on Deepin File Manager and Exit the application.
+
+In Deepin File Manager interface, click on ![menu](icon/icon_menu.svg) to enter ** Main Menu **.
 
 ### New Window
 
-In ** Settings**, click on ** New window** to create a new window.
+In ** Main Menu **, click on ** New window ** to create a new window.
 
 ![0|newwindow](png/newwindow.png)
 
+### Settings
+
+1. In ** Main Menu **, click on ** Settings **  to enter ** Settings **.
+2. Adjust the settings to let the File Manager more suitable for your needs:
+ - In ** Open behavior **, user can set whether to open folder in current folder or new window, one click or double click to open it.
+ - In ** New window and tab **, user can set the default path to open in a new window/tab.
+ - In ** View **, user can set the icon size of the files.
+ - In ** Hidden files **, user can set whether to show the hidden files or not.
+ - In ** Preview **, user can set whether to show the preview image of the specified file types.
+ - In ** Mount **, user can set the auto mount function.
+ - In ** Dialog **, user can set whether to use the file chooser dialog of the Deepin File Manager or not.
+
+![1|setting](png/setting.png)
+
 ### Help
 
-In ** Settings**, click on ** Help** to view this manual.
+In ** Main Menu **, click on ** Help ** to view this manual.
 
 ![1|help](png/help.png)
 
 ### About
 
-In ** Settings**, click on ** About** to view the version and introduction of Deepin File Manager.
+In ** Main Menu **, click on ** About ** to view the version and introduction of Deepin File Manager.
 
 ![0|about](png/about.png)
 
 ### Exit
 
-In ** Settings**, click on ** Exit** to exit Deepin File Manager.
+In ** Main Menu **, click on ** Exit ** to exit Deepin File Manager.
