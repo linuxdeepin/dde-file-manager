@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QMouseEvent>
 #include <QIcon>
+#include <QtMath>
 
 DiskPluginItem::DiskPluginItem(QWidget *parent)
     : QWidget(parent),

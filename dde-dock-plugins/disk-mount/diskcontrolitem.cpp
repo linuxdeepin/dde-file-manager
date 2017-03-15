@@ -2,6 +2,7 @@
 #include "qdiskinfo.h"
 #include <QVBoxLayout>
 #include <QIcon>
+#include <QtMath>
 
 DWIDGET_USE_NAMESPACE
 
@@ -94,18 +95,55 @@ void DiskControlItem::updateInfo(const QDiskInfo &info)
     m_capacityValueBar->setValue(info.used());
 }
 
-const QString DiskControlItem::formatDiskSize(const quint64 size) const
+QString DiskControlItem::sizeString(const QString &str)
 {
-    const quint64 mSize = 1000;
-    const quint64 gSize = mSize * 1000;
-    const quint64 tSize = gSize * 1000;
+    int begin_pos = str.indexOf('.');
 
-    if (size >= tSize)
-        return QString::number(double(size) / tSize, 'f', 2) + 'T';
-    else if (size >= gSize)
-        return QString::number(double(size) / gSize, 'f', 2) + "G";
-    else if (size >= mSize)
-        return QString::number(double(size) / mSize, 'f', 1) + "M";
-    else
-        return QString::number(size) + "K";
+    if (begin_pos < 0)
+        return str;
+
+    QString size = str;
+
+    while (size.count() - 1 > begin_pos) {
+        if (!size.endsWith('0'))
+            return size;
+
+        size = size.left(size.count() - 1);
+    }
+
+    return size.left(size.count() - 1);
+}
+
+qreal DiskControlItem::dRound64(qreal num, int count)
+{
+    if (count <= 0)
+        return qRound64(num);
+
+    qreal base = qPow(10, count);
+
+    return qRound64(num * base) / base;
+}
+
+
+const QString DiskControlItem::formatDiskSize(const quint64 num) const
+{
+    QString total;
+    const qint64 kb = 1024;
+    const qint64 mb = 1024 * kb;
+    const qint64 gb = 1024 * mb;
+    const qint64 tb = 1024 * gb;
+
+    if ( num >= tb ) {
+        total = QString( "%1 TB" ).arg( sizeString(QString::number( dRound64(qreal( num ) / tb), 'f', 1 )) );
+    } else if( num >= gb ) {
+        total = QString( "%1 GB" ).arg( sizeString(QString::number( dRound64(qreal( num ) / gb), 'f', 1 )) );
+    } else if( num >= mb ) {
+        total = QString( "%1 MB" ).arg( sizeString(QString::number( dRound64(qreal( num ) / mb), 'f', 1 )) );
+    } else if( num >= kb ) {
+        total = QString( "%1 KB" ).arg( sizeString(QString::number( dRound64(qreal( num ) / kb),'f',1 )) );
+    } else {
+        total = QString( "%1 B" ).arg( num );
+    }
+
+    return total;
 }

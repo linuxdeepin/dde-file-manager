@@ -84,11 +84,13 @@ void DiskControlWidget::onDiskListChanged()
 
 void DiskControlWidget::onMount_added(const QDiskInfo &diskInfo)
 {
+    Q_UNUSED(diskInfo)
     onDiskListChanged();
 }
 
 void DiskControlWidget::onMount_removed(const QDiskInfo &diskInfo)
 {
+    Q_UNUSED(diskInfo)
     onDiskListChanged();
 }
 
@@ -113,11 +115,13 @@ void DiskControlWidget::onVolume_added(const QDiskInfo &diskInfo)
 
 void DiskControlWidget::onVolume_removed(const QDiskInfo &diskInfo)
 {
+    Q_UNUSED(diskInfo)
     onDiskListChanged();
 }
 
 void DiskControlWidget::onVolume_changed(const QDiskInfo &diskInfo)
 {
+    Q_UNUSED(diskInfo)
     onDiskListChanged();
 }
 
