@@ -458,9 +458,19 @@ void FileJob::doTrashRestore(const QString &srcFilePath, const QString &tarFileP
     if (m_isInSameDisk){
         restoreTrashFile(srcFilePath, tarFilePath);
     }else{
+
         QString _tarFilePath = tarFilePath;
-        if(copyFile(srcFilePath, tarDir, true, &_tarFilePath))
-            deleteFile(srcFilePath);
+        QFileInfo srcInfo(srcFilePath);
+
+        if (srcInfo.isSymLink()){
+
+        }else if (srcInfo.isDir()){
+            if(copyDir(srcFilePath, tarDir, true, &_tarFilePath))
+                deleteDir(srcFilePath);
+        }else if (srcInfo.isFile()){
+            if(copyFile(srcFilePath, tarDir, true, &_tarFilePath))
+                deleteFile(srcFilePath);
+        }
     }
 
     if(m_isJobAdded)
@@ -671,10 +681,14 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
     m_tarDirName = tarDirInfo.fileName();
     m_srcPath = srcFile;
 
-    if (m_jobType != Trash && m_jobType!=Restore){
+    if (m_jobType != Trash && m_jobType != Restore){
         m_tarPath = tarDir + "/" + m_srcFileName;
     }else{
-        m_tarPath = *targetPath;
+        if (targetPath){
+            m_tarPath = *targetPath;
+        }else{
+            m_tarPath = tarDir + "/" + m_srcFileName;
+        }
     }
     QFile from(srcFile);
     QFile to(m_tarPath);
@@ -683,6 +697,7 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
 
     //We only check the conflict of the files when
     //they are not in the same folder
+
     bool isTargetExists = targetInfo.exists();
 
     if(srcFileInfo.absolutePath() != targetInfo.absolutePath()){
@@ -1056,7 +1071,11 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
     if (m_jobType != Trash){
         m_tarPath = tarDir + "/" + m_srcFileName;
     }else{
-        m_tarPath = *targetPath;
+        if (targetPath){
+            m_tarPath = *targetPath;
+        }else{
+            m_tarPath = tarDir + "/" + m_srcFileName;
+        }
     }
     QFileInfo targetInfo(m_tarPath);
 
@@ -1135,16 +1154,15 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
 
                 tmp_iterator.next();
                 const QFileInfo fileInfo = tmp_iterator.fileInfo();
-
                 if (fileInfo.isSymLink()){
                     handleSymlinkFile(fileInfo.filePath(), targetDir.absolutePath());
                 }else if(!fileInfo.isSymLink() && fileInfo.isDir()){
-                    if(!copyDir(fileInfo.filePath(), targetDir.absolutePath())){
+                    if(!copyDir(fileInfo.filePath(), targetDir.absolutePath(), isMoved)){
                         qDebug() << "coye dir" << fileInfo.filePath() << "failed";
                     }
                 }else
                 {
-                    if(!copyFile(fileInfo.filePath(), targetDir.absolutePath()))
+                    if(!copyFile(fileInfo.filePath(), targetDir.absolutePath(), isMoved))
                     {
                         qDebug() << "coye file" << fileInfo.filePath() << "failed";
                     }
