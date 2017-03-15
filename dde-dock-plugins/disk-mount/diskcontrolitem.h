@@ -21,7 +21,9 @@ signals:
 
 private slots:
     void updateInfo(const QDiskInfo &info);
-    const QString formatDiskSize(const quint64 size) const;
+    static QString sizeString(const QString &str);
+    static qreal dRound64(qreal num, int count = 1);
+    const QString formatDiskSize(const quint64 num) const;
 
 private:
     QDiskInfo m_info;
