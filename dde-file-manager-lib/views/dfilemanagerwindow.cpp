@@ -461,8 +461,10 @@ void DFileManagerWindow::showPluginView(const DUrl &fileUrl)
             view = d->computerView;
         }
         qDebug() << "Delay create view" << viewId << view;
-        d->viewManager->registerView(viewId, view);
-        d->viewStackLayout->addWidget(view);
+        if (view){
+            d->viewManager->registerView(viewId, view);
+            d->viewStackLayout->addWidget(view);
+        }
     }else{
         view = d->viewManager->getViewById(viewId);
     }
