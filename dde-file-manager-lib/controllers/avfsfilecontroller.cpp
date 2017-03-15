@@ -70,7 +70,7 @@ const DAbstractFileInfoPointer AVFSIterator::fileInfo() const
 
 QString AVFSIterator::path() const
 {
-
+    return fileInfo()->filePath();
 }
 
 AVFSFileController::AVFSFileController(QObject *parent):
