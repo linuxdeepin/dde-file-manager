@@ -1,0 +1,22 @@
+QListWidget::item{
+    height: 24px;
+    padding: 0px;
+    margins:10px;
+    color: black;
+    background: white;
+}
+
+QListWidget::item:selected{
+    background: white;
+}
+
+QLabel{
+    font-size: 11px;
+}
+
+QLineEdit{
+    font-size: 11px;
+    border: 1px solid rgba(0, 0, 0, 0);
+    border-radius: 2px;
+    background: rgba(0, 40, 60, 0.1);
+}
