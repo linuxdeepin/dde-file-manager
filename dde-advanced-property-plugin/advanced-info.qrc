@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/theme">
+        <file>advanced-info.theme</file>
+    </qresource>
+</RCC>
