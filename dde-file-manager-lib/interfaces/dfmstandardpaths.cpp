@@ -9,10 +9,13 @@ QString DFMStandardPaths::standardLocation(DFMStandardPaths::StandardLocation ty
 {
     switch (type) {
     case TrashPath:
+        QDir::home().mkpath(".local/share/Trash/");
         return QDir::homePath() + "/.local/share/Trash";
     case TrashFilesPath:
+        QDir::home().mkpath("/.local/share/Trash/files");
         return QDir::homePath() + "/.local/share/Trash/files";
     case TrashInfosPath:
+        QDir::home().mkpath("/.local/share/Trash/info");
         return QDir::homePath() + "/.local/share/Trash/info";
     case TranslationPath:{
         QString path = APPSHAREDIR"/translations";

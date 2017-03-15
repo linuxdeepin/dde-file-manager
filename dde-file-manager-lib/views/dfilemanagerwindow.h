@@ -90,11 +90,11 @@ public slots:
     void closeCurrentTab(const DFMEvent& event);
     void showNewTabButton();
     void hideNewTabButton();
+    void showEmptyTrashButton();
+    void hideEmptyTrashButton();
     void onNewTabButtonClicked();
-    void onFileViewSelectionChanged();
     void requestEmptyTrashFiles();
-    void showEmptyButton();
-    void hideEmptyButton();
+    void onTrashStateChanged();
 
 protected:
     void closeEvent(QCloseEvent* event)  Q_DECL_OVERRIDE;
