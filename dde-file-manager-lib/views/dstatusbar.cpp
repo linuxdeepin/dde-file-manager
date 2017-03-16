@@ -250,8 +250,14 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
         return;
 
     if (number > 1) {
+        DUrl fileUrl;
+        if (event.fileUrlList().count() > 0){
+            fileUrl = event.fileUrlList().first();
+        }else{
+            fileUrl = event.fileUrl();
+        }
 
-        bool isInGVFs = FileUtils::isGvfsMountFile(event.fileUrlList().first().toLocalFile());
+        bool isInGVFs = FileUtils::isGvfsMountFile(fileUrl.toLocalFile());
 
         m_fileCount = 0;
         m_fileSize = 0;
