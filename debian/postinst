@@ -1,0 +1,5 @@
+#!/bin/sh
+
+if [ -f /usr/lib/dde-dock/plugins/libdisk-mount.so ];then
+	rm /usr/lib/dde-dock/plugins/libdisk-mount.so
+fi
