@@ -26,6 +26,9 @@
         },
         {
             "text/x-qml": "text/plain"
+        },
+        {
+            "text/x-log": "text/plain"
         }
 
     ]
