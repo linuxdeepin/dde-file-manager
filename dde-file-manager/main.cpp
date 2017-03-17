@@ -199,14 +199,15 @@ int main(int argc, char *argv[])
         int request = app.exec();
 
         ProfilerStop();
-        quick_exit(request);
+
+        return request;
 #else
         int ret = app.exec();
 #ifdef AUTO_RESTART_DEAMON
         app.closeServer();
         QProcess::startDetached(QString("%1 -d").arg(QString(argv[0])));
 #endif
-        quick_exit(ret);
+        return ret;
 #endif
     }else{
         if (isBackendRun){
@@ -218,6 +219,7 @@ int main(int argc, char *argv[])
         w.setAttribute(Qt::WA_TranslucentBackground);
         w.resize(1, 1);
         w.show();
-        quick_exit(1);
+
+        return 1;
     }
 }
