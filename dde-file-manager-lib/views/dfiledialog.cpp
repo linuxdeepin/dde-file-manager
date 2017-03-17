@@ -268,15 +268,23 @@ void DFileDialog::selectNameFilterByIndex(int index)
 
     QString nameFilter = nameFilters.at(index);
     QStringList newNameFilters = QPlatformFileDialogHelper::cleanFilterList(nameFilter);
-    if (d->acceptMode == QFileDialog::AcceptSave) {
+    if (d->acceptMode == QFileDialog::AcceptSave && !newNameFilters.isEmpty()) {
         QString newNameFilterExtension;
-        if (newNameFilters.count() > 0)
-            newNameFilterExtension = QFileInfo(newNameFilters.at(0)).suffix();
-
-        QString fileName = getFileView()->statusBar()->lineEdit()->text();
         QMimeDatabase db;
-
+        QString fileName = getFileView()->statusBar()->lineEdit()->text();
         const QString fileNameExtension = db.suffixForFileName(fileName);
+
+        for (const QString &filter : newNameFilters) {
+            newNameFilterExtension = db.suffixForFileName(filter);
+
+            QRegExp  re(newNameFilterExtension, Qt::CaseInsensitive, QRegExp::Wildcard);
+
+            if (re.exactMatch(fileNameExtension))
+                return getFileView()->setNameFilters(newNameFilters);
+        }
+
+        newNameFilterExtension = db.suffixForFileName(newNameFilters.at(0));
+
         if (!fileNameExtension.isEmpty() && !newNameFilterExtension.isEmpty()) {
             const int fileNameExtensionLength = fileNameExtension.count();
             fileName.replace(fileName.count() - fileNameExtensionLength,
