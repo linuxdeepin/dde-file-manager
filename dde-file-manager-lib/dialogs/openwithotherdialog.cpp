@@ -13,6 +13,7 @@
 #include <QtConcurrent>
 #include <QMutex>
 #include <QScrollBar>
+#include <QtMath>
 
 #include "app/define.h"
 
@@ -32,10 +33,11 @@
 OpenWithOtherDialog::OpenWithOtherDialog(const DUrl &url, QWidget *parent) :
     DDialog(parent),
     m_appMatchWorker(new AppMatchWorker),
-    m_searchEdit(new DSearchEdit(this)),
+    m_searchEdit(new DSearchLineEdit(this)),
     m_appListWidget(new QListWidget(this)),
     m_verticalScrollBar(m_appListWidget->verticalScrollBar()),
-    m_emptyPage(new QFrame(this))
+    m_emptyPage(new QWidget(this)),
+    m_mainFrame(new QWidget(this))
 {
     qRegisterMetaType<DesktopAppList>();
     m_searchTimer = new QTimer(this);
@@ -107,7 +109,7 @@ void OpenWithOtherDialog::initUI()
     setFixedSize(300, 435);
     m_OpenWithButtonGroup = new QButtonGroup(m_appListWidget);
     m_appListWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    m_appListWidget->setSpacing(8);
+    m_appListWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     m_appListWidget->setStyleSheet(getQssFromFile(":/light/OpenWithOtherDialog.theme"));
 
     QLabel* titleLabel = new QLabel(tr("All Programs"), this);
@@ -115,19 +117,18 @@ void OpenWithOtherDialog::initUI()
     titleLabel->move(50, 0);
     titleLabel->setAlignment(Qt::AlignCenter);
 
-    QFrame* frame = new QFrame(this);
     QVBoxLayout* frameLayout = new QVBoxLayout;
     frameLayout->setContentsMargins(0, 0, 0, 0);
-    frame->setContentsMargins(0, 0, 0, 0);
+    m_mainFrame->setContentsMargins(0, 0, 0, 0);
 
     m_searchEdit->setPlaceHolder(tr("Search"));
     m_searchEdit->setFixedHeight(24);
     m_searchEdit->setFixedWidth(260);
-    frameLayout->addWidget(m_searchEdit);
+    frameLayout->addWidget(m_searchEdit, 0 , Qt::AlignHCenter);
     frameLayout->addWidget(m_appListWidget);
 
     m_emptyPage->setFixedHeight(36*9);
-    frameLayout->addWidget(m_emptyPage);
+    frameLayout->addWidget(m_emptyPage, Qt::AlignHCenter);
     QLabel* emptyTipLabel = new QLabel(tr("No results"), this);
     emptyTipLabel->setObjectName("contentLabel");
     emptyTipLabel->setStyleSheet(getQssFromFile(":/light/OpenWithOtherDialog.theme"));
@@ -138,28 +139,45 @@ void OpenWithOtherDialog::initUI()
     m_emptyPage->setLayout(emptyPageLayout);
     m_emptyPage->hide();
 
-    frame->setLayout(frameLayout);
+    m_mainFrame->setLayout(frameLayout);
 
     addButton(tr("Cancel"));
     addButton(tr("Choose"), true, ButtonRecommend);
 
-    addContent(frame);
     setSpacing(0);
     setDefaultButton(1);
     m_searchEdit->setFocus();
+    m_appListWidget->setMouseTracking(true);
     m_appListWidget->setFixedHeight(36*9);
-    frame->setFixedWidth(this->width() - 18);
+
+    m_emptyPage->setFocusPolicy(Qt::NoFocus);
+    m_appListWidget->setFocusPolicy(Qt::NoFocus);
+    setFocusPolicy(Qt::NoFocus);
+
+    m_mainFrame->setFixedWidth(width());
+    addContent(m_mainFrame, Qt::AlignHCenter);
+    m_verticalScrollBar->setParent(m_mainFrame);
+    m_verticalScrollBar->setFixedSize(10, m_appListWidget->height());
+    setContentLayoutContentsMargins(QMargins(0, 0, 0, 0));
+
+    //ddialog still has bug for ibheriting qss from parent
+//    setStyleSheet(getQssFromFile(":/light/OpenWithOtherDialog.theme"));
 }
 
 void OpenWithOtherDialog::  initConnect()
 {
-    connect(this, SIGNAL(buttonClicked(int,QString)), this, SLOT(handleButtonClicked(int,QString)));
-    connect(m_searchEdit, &DSearchEdit::textChanged, this, &OpenWithOtherDialog::onSearchTextChanged);
+    connect(m_searchEdit, &DSearchLineEdit::textChanged, this, &OpenWithOtherDialog::onSearchTextChanged);
     connect(m_searchTimer, &QTimer::timeout, this, &OpenWithOtherDialog::searchApps);
     connect(this, &OpenWithOtherDialog::requestAppendPageItems, this, &OpenWithOtherDialog::appendPageItems);
     connect(this, &OpenWithOtherDialog::requestMatchApps, m_appMatchWorker, &AppMatchWorker::matchApps);
     connect(m_appMatchWorker, &AppMatchWorker::finishedMatchTask, this, &OpenWithOtherDialog::updateAppList);
     connect(m_verticalScrollBar, &QScrollBar::valueChanged, this, &OpenWithOtherDialog::onScrollBarValueChanged);
+    connect(m_appListWidget, &QListWidget::currentItemChanged, this, &OpenWithOtherDialog::selectByItem);
+
+    connect(m_searchEdit, &DSearchLineEdit::keyUpPressed, this, &OpenWithOtherDialog::selectUp);
+    connect(m_searchEdit, &DSearchLineEdit::keyDownPressed, this, &OpenWithOtherDialog::selectDown);
+
+    connect(m_appListWidget, &QListWidget::itemEntered, this, &OpenWithOtherDialog::onItemEntered);
 }
 
 void OpenWithOtherDialog::updateAppList(DesktopAppList desktopAppList)
@@ -195,18 +213,6 @@ void OpenWithOtherDialog::updateAppList(DesktopAppList desktopAppList)
     });
 }
 
-void OpenWithOtherDialog::handleButtonClicked(int index, QString text)
-{
-    Q_UNUSED(text)
-    if (index == 1){
-        if (m_OpenWithButtonGroup->checkedButton()){
-            QString app = m_OpenWithButtonGroup->checkedButton()->property("app").toString();
-            QString file = m_url.toString();
-            FileUtils::openFileByApp(file, app);
-        }
-    }
-}
-
 void OpenWithOtherDialog::onSearchTextChanged()
 {
     m_searchKeyword = m_searchEdit->text();
@@ -235,6 +241,13 @@ void OpenWithOtherDialog::appendPageItems()
             QListWidgetItem* item = new QListWidgetItem;
 
             QCheckBox* itemBox = new QCheckBox(desktopApp.getLocalName());
+            itemBox->setFocusPolicy(Qt::NoFocus);
+
+            connect(itemBox, &QCheckBox::clicked, [=](const bool& checked){
+                if(checked){
+                    m_appListWidget->setCurrentItem(item);
+                }
+            });
             itemBox->setIcon(icon);
             itemBox->setIconSize(QSize(16, 16));
             m_OpenWithButtonGroup->addButton(itemBox);
@@ -246,9 +259,11 @@ void OpenWithOtherDialog::appendPageItems()
                 itemBox->setChecked(true);
             }
         } else{
-            return;
+            break;
         }
     }
+//    if(m_appListWidget->currentRow() < 0 || m_appListWidget->currentRow() >= m_appListWidget->count())
+//        m_appListWidget->setCurrentRow(0);
 }
 
 void OpenWithOtherDialog::onScrollBarValueChanged(const int &value)
@@ -273,6 +288,85 @@ void OpenWithOtherDialog::hideEmptyPage()
     m_isPageEmpty = false;
     m_appListWidget->show();
     m_emptyPage->hide();
+}
+
+void OpenWithOtherDialog::selectUp()
+{
+    int currentRow = m_appListWidget->currentRow();
+    int upRow = currentRow -1;
+
+    if(upRow < 0)
+        upRow = m_appListWidget->count() -1;
+
+    m_appListWidget->setCurrentRow(upRow);
+}
+
+void OpenWithOtherDialog::selectDown()
+{
+    int currentRow = m_appListWidget->currentRow();
+    int downRow = currentRow + 1;
+
+    if(downRow >= m_appListWidget->count())
+        downRow = 0;
+
+    m_appListWidget->setCurrentRow(downRow);
+}
+
+void OpenWithOtherDialog::selectByItem(QListWidgetItem *item)
+{
+    if(!item)
+        return;
+    QCheckBox* itemBox = qobject_cast<QCheckBox*> (m_appListWidget->itemWidget(item));
+    itemBox->setChecked(true);
+}
+
+bool OpenWithOtherDialog::confirmSelection()
+{
+    QString app;
+    QString file = m_url.toString();
+    QListWidgetItem* item = NULL;
+    QWidget* bnt = NULL;
+    QWidget* checkedBnt = NULL;
+
+    checkedBnt = m_OpenWithButtonGroup->checkedButton();
+    if(checkedBnt){
+        app = checkedBnt->property("app").toString();
+    }
+
+    if(app.isEmpty()){
+        item = m_appListWidget->currentItem();
+        if(item)
+            bnt = m_appListWidget->itemWidget(item);
+
+        if(bnt)
+            app = bnt->property("app").toString();
+    }
+
+    return FileUtils::openFileByApp(file, app);
+}
+
+void OpenWithOtherDialog::onItemEntered(QListWidgetItem *item)
+{
+    if(!item)
+        return;
+    item->setSelected(true);
+}
+
+void OpenWithOtherDialog::done(int r)
+{
+    if(r == 1){
+        bool ret = confirmSelection();
+        if(!ret)
+            return;
+    }
+    DDialog::done(r);
+}
+
+void OpenWithOtherDialog::resizeEvent(QResizeEvent *event)
+{
+    DDialog::resizeEvent(event);
+    m_verticalScrollBar->move(m_mainFrame->width() - m_verticalScrollBar->width(),
+                              m_mainFrame->height() - m_verticalScrollBar->height());
 }
 
 void OpenWithOtherDialog::searchApps()
@@ -450,4 +544,31 @@ AppMatchWorker::WorkerState AppMatchWorker::workerState() const
 void AppMatchWorker::setWorkerState(const WorkerState &workerState)
 {
     m_workerState = workerState;
+}
+
+DSearchLineEdit::DSearchLineEdit(QWidget *parent):
+    DSearchEdit(parent)
+{
+
+}
+
+void DSearchLineEdit::focusOutEvent(QFocusEvent *event)
+{
+    Q_UNUSED(event);
+    return;
+}
+
+void DSearchLineEdit::keyPressEvent(QKeyEvent *event)
+{
+    switch (event->key()) {
+    case Qt::Key_Up:
+        emit keyUpPressed();
+        break;
+    case Qt::Key_Down:
+        emit keyDownPressed();
+    default:
+        break;
+    }
+
+    DSearchEdit::keyPressEvent(event);
 }

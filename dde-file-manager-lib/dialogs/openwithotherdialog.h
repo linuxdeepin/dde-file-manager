@@ -10,6 +10,7 @@
 #include "../shutil/mimesappsmanager.h"
 
 class QScrollBar;
+class DSearchLineEdit;
 
 typedef QList<DesktopFile> DesktopAppList;
 Q_DECLARE_METATYPE(DesktopAppList)
@@ -38,25 +39,36 @@ signals:
 
 public slots:
     void updateAppList(DesktopAppList desktopAppList);
-    void handleButtonClicked(int index, QString text);
     void onSearchTextChanged();
     void appendPageItems();
     void onScrollBarValueChanged(const int& value);
     void showEmptyPage();
     void hideEmptyPage();
+    void selectUp();
+    void selectDown();
+    void selectByItem(QListWidgetItem* item);
+    bool confirmSelection();
+    void onItemEntered(QListWidgetItem* item);
+
+    //overrided function for done action
+    void done(int r) Q_DECL_OVERRIDE;
+
+protected:
+    void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
 
 private:
     DUrl m_url;
-    AppMatchWorker* m_appMatchWorker;
+    AppMatchWorker* m_appMatchWorker = NULL;
     QListWidget* m_appListWidget = NULL;
     QButtonGroup* m_OpenWithButtonGroup = NULL;
-    DSearchEdit* m_searchEdit;
-    QTimer* m_searchTimer;
+    DSearchLineEdit* m_searchEdit = NULL;
+    QTimer* m_searchTimer = NULL;
+    QScrollBar* m_verticalScrollBar = NULL;
+    QWidget* m_emptyPage = NULL;
+    QWidget* m_mainFrame = NULL;
     QString m_searchKeyword;
     DesktopAppList m_otherAppList;
     DesktopAppQueue m_appQueue;
-    QScrollBar* m_verticalScrollBar;
-    QFrame* m_emptyPage;
     bool m_isPageEmpty = false;
     void searchApps();
 };
@@ -86,6 +98,21 @@ private:
     bool matchByFullName(const QString& pattern, const QString& source);
     bool matchByCharactorQueue(const QString& pattern, const QString& source);
     WorkerState m_workerState;
+};
+
+class DSearchLineEdit: public DSearchEdit{
+    Q_OBJECT
+public:
+    explicit DSearchLineEdit(QWidget* parent = 0);
+
+signals:
+    void keyUpPressed();
+    void keyDownPressed();
+
+protected:
+    void focusOutEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
+    void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
+
 };
 
 #endif // OPENWITHOTHERDIALOG_H
