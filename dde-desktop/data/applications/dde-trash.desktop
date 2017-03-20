@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=Trash
+Name[zh_CN]=回收站
+Comment=Open trash.
+GenericName=Open Trash.
+Icon=user-trash
+Terminal=false
+Categories=System;
+Exec=gvfs-open trash:///
+OnlyShowIn=Deepin;
+X-AppStream-Ignore=true

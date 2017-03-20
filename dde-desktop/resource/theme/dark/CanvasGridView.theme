@@ -1,0 +1,32 @@
+CanvasGridView {
+    border: 0px solid darkgray;
+}
+
+#SelectRect{
+    background: rgba(43,167,248,0.30);
+    border: 1px solid rgba(30,126,255,0.20);
+}
+
+
+FileIconItem[showBackground=true] QTextEdit {
+    background: #2da6f7;
+    border-radius: 4px;
+}
+
+FileIconItem QLabel {
+    background: transparent;
+}
+
+FileIconItem QTextEdit {
+    background: transparent;
+    color: white;
+    selection-background-color: #61B5F8;
+}
+
+FileIconItem QTextEdit[readOnly=false] {
+    background: #e6e6ec;
+    border: 1px solid rgba(44, 167, 248, 0.3);
+    border-radius: 4px;
+    color: black;
+    min-height: 42px;
+}
