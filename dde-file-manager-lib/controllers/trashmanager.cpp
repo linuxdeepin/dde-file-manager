@@ -80,11 +80,14 @@ TrashManager::TrashManager(QObject *parent)
       m_trashFileWatcher(new DFileWatcher(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath),this))
 {
     m_isTrashEmpty = isEmpty();
-    connect(m_trashFileWatcher, &DFileWatcher::fileModified, this, &TrashManager::trashFilesChanged);
+    QString trashFilePath = DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath);
+    //make sure trash file is existed
+    if(!QFile::exists(trashFilePath))
+        QDir().mkdir(trashFilePath);
+
     connect(m_trashFileWatcher, &DFileWatcher::fileDeleted, this, &TrashManager::trashFilesChanged);
     connect(m_trashFileWatcher, &DFileWatcher::subfileCreated, this, &TrashManager::trashFilesChanged);
     m_trashFileWatcher->startWatcher();
-
 }
 
 const DAbstractFileInfoPointer TrashManager::createFileInfo(const DUrl &fileUrl, bool &accepted) const
