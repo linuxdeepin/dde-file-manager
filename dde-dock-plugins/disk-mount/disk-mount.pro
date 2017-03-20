@@ -8,7 +8,7 @@ INCLUDEPATH += /usr/include/dde-dock
 INCLUDEPATH += $$PWD/../../dde-file-manager-lib/interfaces \
                $$PWD/../../dde-file-manager-lib/gvfs
 
-TARGET          = $$qtLibraryTarget(dde-disk-mount)
+TARGET          = $$qtLibraryTarget(dde-disk-mount-plugin)
 DESTDIR          = $$_PRO_FILE_PWD_/../
 DISTFILES       += disk-mount.json
 

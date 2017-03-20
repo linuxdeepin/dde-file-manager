@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>dark/CanvasGridView.theme</file>
+        <file>light/CanvasGridView.theme</file>
+    </qresource>
+</RCC>
