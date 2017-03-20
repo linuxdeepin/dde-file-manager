@@ -1,15 +1,29 @@
+OpenWithOtherDialog{
+    background-color: blue;
+}
+
 QListWidget{
     background-color: white;
 }
 QListWidget::item{
-    height: 24px;
-    padding: 0px;
-    margins:10px;
+    height: 32px;
     color: black;
+    border-radius: 4px;
     background: white;
 }
 
+QListWidget::item:selected{
+    background: rgba(0, 0, 0, 0.05);
+}
+
 QCheckBox{
+    spacing: 5px;
+    color: #222222;
+    font-size: 12px;
+    text-align: center;
+}
+
+QCheckBox:disable{
     spacing: 5px;
     color: #222222;
     font-size: 12px;
