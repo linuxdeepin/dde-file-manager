@@ -72,6 +72,7 @@ DUrl SearchFileInfo::parentUrl() const
 QList<int> SearchFileInfo::userColumnRoles() const
 {
     static QList<int> userColumnRoles = QList<int>() << DFileSystemModel::FileUserRole + 1
+                                                     << DFileSystemModel::FileLastModifiedRole
                                                      << DFileSystemModel::FileSizeRole;
 
     return userColumnRoles;
