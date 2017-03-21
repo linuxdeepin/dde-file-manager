@@ -1762,7 +1762,7 @@ bool DFileView::setRootUrl(const DUrl &url)
         updateListHeaderViewProperty();
     }
 
-    if(info) {
+    if (info) {
         ViewModes modes = (ViewModes)info->supportViewMode();
 
         DFileManagerWindow *fmWindow = qobject_cast<DFileManagerWindow*>(window());
@@ -1793,6 +1793,11 @@ bool DFileView::setRootUrl(const DUrl &url)
             switchViewMode(d->defaultViewMode);
         }
     }
+
+    if (fileUrl.isSearchFile()) {
+        switchViewMode(ListMode);
+    }
+
     emit rootUrlChanged(fileUrl);
 
     const QList<DAbstractFileInfo::SelectionMode> &supportSelectionModes = info->supportSelectionModes();
