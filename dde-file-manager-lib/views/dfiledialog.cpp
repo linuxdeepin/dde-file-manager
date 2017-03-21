@@ -3,6 +3,7 @@
 #include "dfileservices.h"
 #include "views/dstatusbar.h"
 #include "views/dleftsidebar.h"
+#include "views/dsearchbar.h"
 
 #include <DTitlebar>
 
@@ -47,6 +48,7 @@ DFileDialog::DFileDialog(QWidget *parent)
     DStatusBar *statusBar = getFileView()->statusBar();
 
     statusBar->rejectButton()->setText(tr("Cancel"));
+
     connect(statusBar->acceptButton(), &QPushButton::clicked, this, &DFileDialog::onAcceptButtonClicked);
     connect(statusBar->rejectButton(), &QPushButton::clicked, this, &DFileDialog::onRejectButtonClicked);
 
@@ -289,8 +291,7 @@ void DFileDialog::selectNameFilterByIndex(int index)
             const int fileNameExtensionLength = fileNameExtension.count();
             fileName.replace(fileName.count() - fileNameExtensionLength,
                              fileNameExtensionLength, newNameFilterExtension);
-            getFileView()->clearSelection();
-            getFileView()->statusBar()->lineEdit()->setText(fileName);
+            setCurrentInputName(fileName);
         }
     }
 
@@ -423,9 +424,7 @@ void DFileDialog::setCurrentInputName(const QString &name)
 
     const QString &suffix = db.suffixForFileName(name);
 
-    if (!suffix.isEmpty()) {
-        getFileView()->statusBar()->lineEdit()->setSelection(0, name.length() - suffix.length() - 1);
-    }
+    getFileView()->statusBar()->lineEdit()->setSelection(0, name.length() - suffix.length() - 1);
 }
 
 void DFileDialog::accept()
@@ -522,17 +521,18 @@ void DFileDialog::closeEvent(QCloseEvent *event)
 
 bool DFileDialog::eventFilter(QObject *watched, QEvent *event)
 {
-    if (watched == getFileView()
-            && (event->type() == QEvent::KeyPress
-                || event->type() == QEvent::KeyRelease)) {
+    if (watched == getFileView() && event->type() == QEvent::KeyPress) {
         QKeyEvent *e = static_cast<QKeyEvent*>(event);
 
         if (e->modifiers() == Qt::ControlModifier
                 && (e->key() == Qt::Key_T
                     || e->key() == Qt::Key_W)) {
             return true;
-        } else if (e->modifiers() == Qt::NoModifier && e->key() == Qt::Key_Escape) {
-            close();
+        } else if (e->modifiers() == Qt::NoModifier) {
+            if (e == QKeySequence::Cancel)
+                close();
+            else if (e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return)
+                handleEnterPressed();
         }
     }
 
@@ -660,4 +660,18 @@ void DFileDialog::onAcceptButtonClicked()
 void DFileDialog::onRejectButtonClicked()
 {
     reject();
+}
+
+void DFileDialog::handleEnterPressed()
+{
+    if (!qobject_cast<DSearchBar*>(qApp->focusWidget())) {
+        for (const QModelIndex &index : getFileView()->selectedIndexes()) {
+            const DAbstractFileInfoPointer &info = getFileView()->model()->fileInfo(index);
+
+            if (info->isDir())
+                return;
+        }
+
+        getFileView()->statusBar()->acceptButton()->animateClick();
+    }
 }
