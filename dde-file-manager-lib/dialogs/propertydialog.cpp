@@ -374,7 +374,7 @@ void PropertyDialog::showTextShowFrame()
             return;
         }
 
-        if (fileService->renameFile(oldUrl, newUrl, m_fmevent)) {
+        if (fileService->renameFile(oldUrl, newUrl, this)) {
             m_url = newUrl;
             const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(m_url);
 

@@ -1,5 +1,6 @@
 #include "bookmarkmanager.h"
 #include "dfileservices.h"
+#include "dfmevent.h"
 
 #include "app/define.h"
 
@@ -129,19 +130,13 @@ void BookMarkManager::moveBookmark(int from, int to)
     save();
 }
 
-const QList<DAbstractFileInfoPointer> BookMarkManager::getChildren(const DUrl &fileUrl, const QStringList &nameFilters,
-                                                                  QDir::Filters filters, QDirIterator::IteratorFlags flags,
-                                                                  bool &accepted) const
+const QList<DAbstractFileInfoPointer> BookMarkManager::getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const
 {
-    accepted = true;
+    const QString &frav = event->fileUrl().fragment();
 
-    const QString &frav = fileUrl.fragment();
-
-    if(!frav.isEmpty())
-    {
-        DUrl localUrl = DUrl::fromLocalFile(frav);
-
-        QList<DAbstractFileInfoPointer> list = fileService->getChildren(localUrl, nameFilters, filters, flags);
+    if (!frav.isEmpty()) {
+        const QList<DAbstractFileInfoPointer> &list = fileService->getChildren(DUrl::fromLocalFile(frav), event->nameFilters(),
+                                                                               event->filters(), event->flags());
 
         return list;
     }
@@ -150,17 +145,13 @@ const QList<DAbstractFileInfoPointer> BookMarkManager::getChildren(const DUrl &f
 
     for (int i = 0; i < m_bookmarks.size(); i++)
     {
-        BookMarkPointer bm = m_bookmarks.at(i);
-
-        infolist.append(DAbstractFileInfoPointer(/*new BookMark(*bm))*/bm));
+        infolist.append(DAbstractFileInfoPointer(m_bookmarks.at(i)));
     }
 
     return infolist;
 }
 
-const DAbstractFileInfoPointer BookMarkManager::createFileInfo(const DUrl &fileUrl, bool &accepted) const
+const DAbstractFileInfoPointer BookMarkManager::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const
 {
-    accepted = true;
-
-    return DAbstractFileInfoPointer(new BookMark(fileUrl));
+    return DAbstractFileInfoPointer(new BookMark(event->fileUrl()));
 }

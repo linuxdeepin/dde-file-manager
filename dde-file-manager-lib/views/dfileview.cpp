@@ -768,7 +768,7 @@ void DFileView::openWithActionTriggered(QAction *action)
     QAction* dAction = static_cast<QAction*>(action);
     QString app = dAction->property("app").toString();
     DUrl fileUrl(dAction->property("url").toUrl());
-    fileService->openFileByApp(fileUrl, app);
+    fileService->openFileByApp(app, fileUrl, this);
 }
 
 void DFileView::onRowCountChanged()
@@ -842,7 +842,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
 
             return;
         case Qt::Key_Delete:
-            fileService->moveToTrash(fmevent);
+            fileService->moveToTrash(fmevent.fileUrlList(), this);
             break;
         case Qt::Key_End:
             if (urls.isEmpty()) {
@@ -933,7 +933,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             if (fmevent.fileUrlList().isEmpty())
                 return;
 
-            fileService->deleteFiles(fmevent);
+            fileService->deleteFiles(fmevent.fileUrlList(), this);
 
             return;
         } else if (event->key() == Qt::Key_T) {

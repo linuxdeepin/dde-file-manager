@@ -247,5 +247,6 @@ private:
 QT_BEGIN_NAMESPACE
 QDebug operator<<(QDebug deg, const DAbstractFileInfo &info);
 QT_END_NAMESPACE
+Q_DECLARE_METATYPE(DAbstractFileInfoPointer)
 
 #endif // ABSTRACTFILEINFO_H

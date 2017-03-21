@@ -561,10 +561,7 @@ void DialogManager::showBreakSymlinkDialog(const QString &targetName, const DUrl
     if (code == 1){
         DUrlList urls;
         urls << linkfile;
-        DFMEvent event;
-        event << linkfile;
-        event << urls;
-        fileService->moveToTrash(event);
+        fileService->moveToTrash(urls, this);
     }
 }
 
@@ -654,11 +651,8 @@ void DialogManager::showMoveToTrashConflictDialog(const DUrlList &urls)
 {
     MoveToTrashConflictDialog d(0, urls);
     int code = d.exec();
-    if(code == 1){
-        DFMEvent event;
-        event << urls;
-        event << urls.first();
-        fileService->deleteFilesSync(event);
+    if (code == 1) {
+        fileService->deleteFilesSync(urls, this);
     }
 }
 

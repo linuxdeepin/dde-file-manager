@@ -90,62 +90,37 @@ TrashManager::TrashManager(QObject *parent)
     m_trashFileWatcher->startWatcher();
 }
 
-const DAbstractFileInfoPointer TrashManager::createFileInfo(const DUrl &fileUrl, bool &accepted) const
+const DAbstractFileInfoPointer TrashManager::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const
 {
-    accepted = true;
-
-    return DAbstractFileInfoPointer(new TrashFileInfo(fileUrl));
+    return DAbstractFileInfoPointer(new TrashFileInfo(event->fileUrl()));
 }
 
-bool TrashManager::openFile(const DUrl &fileUrl, bool &accepted) const
+bool TrashManager::openFile(const QSharedPointer<DFMOpenFileEvent> &event) const
 {
-    accepted = true;
-    qDebug() << "trash open action is disable : " << fileUrl;
+    Q_UNUSED(event)
+
+    qWarning() << "trash open action is disable : " << event->url();
 //    return FileServices::instance()->openFile(DUrl::fromLocalFile(TRASHFILEPATH + fileUrl.path()));
-    return true;
+    return false;
 }
 
-bool TrashManager::openFileLocation(const DUrl &fileUrl, bool &accepted) const
+DUrlList TrashManager::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const
 {
-    accepted = true;
-
-    const DAbstractFileInfoPointer &file = createFileInfo(fileUrl, accepted);
-
-    if (!file->exists())
-        return false;
-
-    DUrl parentUrl = file->parentUrl();
-    QUrlQuery query;
-
-    query.addQueryItem("selectUrl", fileUrl.toString());
-    parentUrl.setQuery(query);
-
-    DFMEvent event;
-    DUrlList urlList;
-    urlList << parentUrl;
-    event << urlList;
-    event << parentUrl;
-    fileService->openNewWindow(event, true);
-
-    return true;
-}
-
-DUrlList TrashManager::moveToTrash(const DFMEvent &event, bool &accepted) const
-{
-    accepted = true;
-
-    TIMER_SINGLESHOT_CONNECT_TYPE(this, 0, fileService->deleteFiles(event), Qt::AutoConnection, event);
+    TIMER_SINGLESHOT_CONNECT_TYPE(this, 0, fileService->deleteFiles(event->urlList(), event->sender()), Qt::AutoConnection, event);
 
     return DUrlList();
 }
 
-bool TrashManager::copyFilesToClipboard(const DUrlList &urlList, bool &accepted) const
+bool TrashManager::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const
 {
-    accepted = true;
+    if (event->action() != DFMGlobal::CopyAction) {
+        event->ignore();
+        return false;
+    }
 
     DUrlList localList;
 
-    for(const DUrl &url : urlList) {
+    for(const DUrl &url : event->urlList()) {
         const QString &path = url.path();
 
         localList << DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath) + path);
@@ -155,34 +130,31 @@ bool TrashManager::copyFilesToClipboard(const DUrlList &urlList, bool &accepted)
         }
     }
 
-    fileService->copyFilesToClipboard(localList);
+    fileService->writeFilesToClipboard(event->action(), localList, event->sender());
 
     return true;
 }
 
-DUrlList TrashManager::pasteFile(DAbstractFileController::PasteType type, const DUrl &targetUrl,
-                                 const DFMEvent &event, bool &accepted) const
+DUrlList TrashManager::pasteFile(const QSharedPointer<DFMPasteEvent> &event) const
 {
-    Q_UNUSED(type)
+    if (event->action() != DFMGlobal::CutAction || event->targetUrl() != DUrl::fromTrashFile("/")) {
+        event->ignore();
 
-    accepted = (type == DAbstractFileController::CutType) && targetUrl == DUrl::fromTrashFile("/");
+        return DUrlList();
+    }
 
-    if (!accepted || event.fileUrlList().isEmpty())
+    if (event->urlList().isEmpty())
         return DUrlList();
 
-    const_cast<DFMEvent&>(event) << event.fileUrlList().first();
-
-    return fileService->moveToTrashSync(event);
+    return fileService->moveToTrashSync(event->urlList(), event->sender());
 }
 
 
-bool TrashManager::deleteFiles(const DFMEvent &event, bool &accepted) const
+bool TrashManager::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const
 {
-    accepted = true;
-
     DUrlList localList;
 
-    for(const DUrl &url : event.fileUrlList()) {
+    for(const DUrl &url : event->urlList()) {
         if (url.isTrashFile() && url.path() == "/") {
             cleanTrash(event);
             return true;
@@ -197,20 +169,14 @@ bool TrashManager::deleteFiles(const DFMEvent &event, bool &accepted) const
         }
     }
 
-    const_cast<DFMEvent&>(event) << DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath));
-    const_cast<DFMEvent&>(event) << localList;
-    fileService->deleteFilesSync(event);
+    fileService->deleteFilesSync(localList, event->sender());
 
     return true;
 }
 
-const DDirIteratorPointer TrashManager::createDirIterator(const DUrl &fileUrl, const QStringList &nameFilters,
-                                                          QDir::Filters filters, QDirIterator::IteratorFlags flags,
-                                                          bool &accepted) const
+const DDirIteratorPointer TrashManager::createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const
 {
-    accepted = true;
-
-    return DDirIteratorPointer(new TrashDirIterator(fileUrl, nameFilters, filters, flags));
+    return DDirIteratorPointer(new TrashDirIterator(event->fileUrl(), event->nameFilters(), event->filters(), event->flags()));
 }
 
 namespace TrashManagerPrivate {
@@ -235,12 +201,11 @@ QString trashToLocal(const DUrl &url)
 }
 }
 
-DAbstractFileWatcher *TrashManager::createFileWatcher(const DUrl &fileUrl, QObject *parent, bool &accepted) const
+DAbstractFileWatcher *TrashManager::createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const
 {
-    accepted = true;
-
-    return new DFileProxyWatcher(fileUrl, new DFileWatcher(TrashManagerPrivate::trashToLocal(fileUrl)),
-                                 TrashManagerPrivate::localToTrash, parent);
+    return new DFileProxyWatcher(event->fileUrl(),
+                                 new DFileWatcher(TrashManagerPrivate::trashToLocal(event->fileUrl())),
+                                 TrashManagerPrivate::localToTrash);
 }
 
 bool TrashManager::restoreTrashFile(const DUrlList &fileUrl, const DFMEvent &event)
@@ -276,15 +241,13 @@ bool TrashManager::restoreAllTrashFile(const DFMEvent &event)
     return true;
 }
 
-void TrashManager::cleanTrash(const DFMEvent &event) const
+void TrashManager::cleanTrash(const QSharedPointer<DFMDeleteEvent> &event) const
 {
     DUrlList list;
     list << DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashInfosPath))
          << DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath));
 
-    const_cast<DFMEvent&>(event) << list.last();
-    const_cast<DFMEvent&>(event) << list;
-    fileService->deleteFilesSync(event);
+    fileService->deleteFilesSync(list, event->sender());
 }
 
 bool TrashManager::isEmpty()

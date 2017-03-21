@@ -32,9 +32,9 @@ isEmpty(PREFIX){
 
 PKGCONFIG += gtk+-2.0 gsettings-qt libsecret-1 gio-unix-2.0 poppler-cpp
 CONFIG(release, release|debug) {
-    PKGCONFIG += dtkbase dtkwidget
+    PKGCONFIG += dtkbase dtkwidget dtkutil
 } else {
-    PKGCONFIG += dtkbase dtkwidget
+    PKGCONFIG += dtkbase dtkwidget dtkutil
 }
 PKGCONFIG += dtksettings dtksettingsview
 CONFIG += c++11 link_pkgconfig
@@ -82,7 +82,6 @@ HEADERS += \
     models/fmsetting.h \
     models/fmstate.h \
     controllers/bookmarkmanager.h \
-    controllers/recenthistorymanager.h \
     controllers/fmstatemanager.h \
     controllers/basemanager.h \
     dialogs/dialogmanager.h \
@@ -208,7 +207,6 @@ SOURCES += \
     models/fmsetting.cpp \
     models/fmstate.cpp \
     controllers/bookmarkmanager.cpp \
-    controllers/recenthistorymanager.cpp \
     controllers/fmstatemanager.cpp \
     controllers/basemanager.cpp \
     dialogs/dialogmanager.cpp \

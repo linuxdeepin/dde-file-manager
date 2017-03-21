@@ -383,7 +383,7 @@ void UserShareManager::addUserShare(const ShareInfo &info)
     ShareInfo oldInfo = getOldShareInfoByNewInfo(info);
     qDebug() << oldInfo << info;
     if(oldInfo.isValid()){
-        deleteUserShare(oldInfo);
+        deleteUserShareByPath(oldInfo.path());
     }
     if (!info.shareName().isEmpty() && QFile(info.path()).exists()){
         QString cmd = "net";
@@ -412,26 +412,6 @@ void UserShareManager::addUserShare(const ShareInfo &info)
     }
 }
 
-void UserShareManager::deleteUserShareByShareName(const QString &shareName)
-{
-    QString cmd = "net";
-    QStringList args;
-    args << "usershare" << "delete"
-         << shareName;
-    QProcess p;
-    p.start(cmd, args);
-    p.waitForFinished();
-}
-
-void UserShareManager::deleteUserShare(const ShareInfo &info)
-{
-    if (!info.shareName().isEmpty()){
-        QStringList names = m_sharePathToNames.value(info.path());
-        names.removeOne(info.shareName());
-        m_sharePathToNames.insert(info.path(), names);
-        deleteUserShareByShareName(info.shareName());
-    }
-}
 
 void UserShareManager::deleteUserShareByPath(const QString &path)
 {
@@ -455,3 +435,13 @@ void UserShareManager::usershareCountchanged()
     emit userShareCountChanged(count);
 }
 
+void UserShareManager::deleteUserShareByShareName(const QString &shareName)
+{
+    QString cmd = "net";
+    QStringList args;
+    args << "usershare" << "delete"
+         << shareName;
+    QProcess p;
+    p.start(cmd, args);
+    p.waitForFinished();
+}

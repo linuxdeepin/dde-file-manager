@@ -84,7 +84,7 @@ void DFileViewHelperPrivate::init()
 
     QObject::connect(copy_action, &QAction::triggered,
             q, [q] {
-        fileService->copyFilesToClipboard(q->selectedUrls());
+        fileService->writeFilesToClipboard(DFMGlobal::CopyAction, q->selectedUrls(), q);
     });
 
     QAction *cut_action = new QAction(q->parent());
@@ -94,7 +94,7 @@ void DFileViewHelperPrivate::init()
 
     QObject::connect(cut_action, &QAction::triggered,
             q, [q] {
-        fileService->cutFilesToClipboard(q->selectedUrls());
+        fileService->writeFilesToClipboard(DFMGlobal::CutAction, q->selectedUrls(), q);
     });
 
     QAction *paste_action = new QAction(q->parent());
@@ -108,7 +108,7 @@ void DFileViewHelperPrivate::init()
         event << q->currentUrl();
         event << q->windowId();
         event << DFMEvent::FileView;
-        fileService->pasteFileByClipboard(event.fileUrl(), event);
+        fileService->pasteFileByClipboard(event.fileUrl(), event.sender());
     });
 
     q->parent()->addAction(copy_action);
@@ -485,10 +485,10 @@ void DFileViewHelper::handleCommitData(QWidget *editor) const
     if (lineEdit) {
         /// later rename file.
         TIMER_SINGLESHOT(0, {
-                             fileService->renameFile(old_url, new_url, event);
-                         }, old_url, new_url, event)
+                             fileService->renameFile(old_url, new_url, this);
+                         }, old_url, new_url, this)
     } else {
-        fileService->renameFile(old_url, new_url, event);
+        fileService->renameFile(old_url, new_url, this);
     }
 }
 

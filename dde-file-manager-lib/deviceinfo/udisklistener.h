@@ -87,10 +87,8 @@ private:
     QList<Subscriber*> m_subscribers;
 
 public:
-    const QList<DAbstractFileInfoPointer> getChildren(const DUrl &fileUrl, const QStringList &nameFilters,
-                                                     QDir::Filters filters, QDirIterator::IteratorFlags flags,
-                                                     bool &accepted) const Q_DECL_OVERRIDE;
-    const DAbstractFileInfoPointer createFileInfo(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
+    const QList<DAbstractFileInfoPointer> getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const Q_DECL_OVERRIDE;
+    const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const Q_DECL_OVERRIDE;
 };
 
 #endif // UDISKLISTENER_H

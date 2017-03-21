@@ -9,6 +9,26 @@
 #include <QDirIterator>
 
 class DFMEvent;
+class DFMOpenFileEvent;
+class DFMOpenFileByAppEvent;
+class DFMCompressEvnet;
+class DFMDecompressEvnet;
+class DFMWriteUrlsToClipboardEvent;
+class DFMRenameEvent;
+class DFMDeleteEvent;
+class DFMMoveToTrashEvent;
+class DFMPasteEvent;
+class DFMNewFolderEvent;
+class DFMNewFileEvent;
+class DFMOpenFileLocation;
+class DFMCreateSymlinkEvent;
+class DFMGetChildrensEvent;
+class DFMCreateDiriterator;
+class DFMCreateFileInfoEvnet;
+class DFMCreateFileWatcherEvent;
+class DFMOpenInTerminalEvent;
+class DFMFileShareEvnet;
+class DFMCancelFileShareEvent;
 class DUrl;
 class DAbstractFileWatcher;
 typedef QList<DUrl> DUrlList;
@@ -17,44 +37,34 @@ class DAbstractFileController : public QObject
     Q_OBJECT
 
 public:
-    enum PasteType {
-        CutType,
-        CopyType
-    };
-
     explicit DAbstractFileController(QObject *parent = 0);
 
-    virtual bool openFile(const DUrl &fileUrl, bool &accepted) const;
-    virtual bool openFileByApp(const DUrl &fileUrl, const QString& app, bool &accepted) const;
-    virtual bool compressFiles(const DUrlList &urlList, bool &accepted) const;
-    virtual bool decompressFile(const DUrlList &fileUrlList, bool &accepted) const;
-    virtual bool decompressFileHere(const DUrlList &fileUrlList, bool &accepted) const;
-    virtual bool copyFilesToClipboard(const DUrlList &urlList, bool &accepted) const;
-    virtual bool renameFile(const DUrl &oldUrl, const DUrl &newUrl, bool &accepted) const;
-    virtual bool deleteFiles(const DFMEvent &event, bool &accepted) const;
-    virtual DUrlList moveToTrash(const DFMEvent &event, bool &accepted) const;
-    virtual bool cutFilesToClipboard(const DUrlList &urlList, bool &accepted) const;
-    virtual DUrlList pasteFile(PasteType type, const DUrl &targetUrl, const DFMEvent &event, bool &accepted) const;
+    virtual bool openFile(const QSharedPointer<DFMOpenFileEvent> &event) const;
+    virtual bool openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const;
+    virtual bool compressFiles(const QSharedPointer<DFMCompressEvnet> &event) const;
+    virtual bool decompressFile(const QSharedPointer<DFMDecompressEvnet> &event) const;
+    virtual bool decompressFileHere(const QSharedPointer<DFMDecompressEvnet> &event) const;
+    virtual bool writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const;
+    virtual bool renameFile(const QSharedPointer<DFMRenameEvent> &event) const;
+    virtual bool deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const;
+    virtual DUrlList moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const;
+    virtual DUrlList pasteFile(const QSharedPointer<DFMPasteEvent> &event) const;
     virtual bool restoreFile(const DUrl &srcUrl, const DUrl &tarUrl, const DFMEvent &event, bool &accepted) const;
-    virtual bool newFolder(const DFMEvent &event, bool &accepted) const;
-    virtual bool newFile(const DUrl &toUrl, bool &accepted) const;
-    virtual bool newDocument(const DUrl &toUrl, bool &accepted) const;
+    virtual bool newFolder(const QSharedPointer<DFMNewFolderEvent> &event) const;
+    virtual bool newFile(const QSharedPointer<DFMNewFileEvent> &event) const;
 
-    virtual bool openFileLocation(const DUrl &fileUrl, bool &accepted) const;
+    virtual bool openFileLocation(const QSharedPointer<DFMOpenFileLocation> &event) const;
 
-    virtual const QList<DAbstractFileInfoPointer> getChildren(const DUrl &fileUrl, const QStringList &nameFilters,
-                                                             QDir::Filters filters, QDirIterator::IteratorFlags flags,
-                                                             bool &accepted) const;
-    virtual const DAbstractFileInfoPointer createFileInfo(const DUrl &fileUrl, bool &accepted) const;
-    virtual const DDirIteratorPointer createDirIterator(const DUrl &fileUrl, const QStringList &nameFilters,
-                                                        QDir::Filters filters, QDirIterator::IteratorFlags flags,
-                                                        bool &accepted) const;
+    virtual const QList<DAbstractFileInfoPointer> getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const;
+    virtual const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const;
+    virtual const DDirIteratorPointer createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const;
 
-    virtual bool createSymlink(const DUrl &fileUrl, const DUrl &linkToUrl, bool &accepted) const;
-    virtual bool unShareFolder(const DUrl &fileUrl, bool &accepted) const;
-    virtual bool openInTerminal(const DUrl &fileUrl, bool &accepted) const;
+    virtual bool createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const;
+    virtual bool shareFolder(const QSharedPointer<DFMFileShareEvnet> &event) const;
+    virtual bool unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const;
+    virtual bool openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const;
 
-    virtual DAbstractFileWatcher *createFileWatcher(const DUrl &fileUrl, QObject *parent, bool &accepted) const;
+    virtual DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const;
 };
 
 #endif // ABSTRACTFILECONTROLLER_H

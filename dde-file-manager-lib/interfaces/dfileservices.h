@@ -17,8 +17,8 @@ typedef QPair<QString,QString> HandlerType;
 typedef QPair<QString, std::function<DAbstractFileController*()>> HandlerCreatorType;
 
 class DAbstractFileInfo;
-class DFMEvent;
 class JobController;
+class DFMCreateGetChildrensJob;
 class DFileServicePrivate;
 class DFileService : public QObject
 {
@@ -86,51 +86,53 @@ public:
     void setFileOperatorBlacklist(FileOperatorTypes list);
     FileOperatorTypes fileOperatorBlacklist() const;
 
-    bool openFile(const DUrl &fileUrl) const;
-    bool openFileByApp(const DUrl &fileUrl, const QString& app) const;
-    bool compressFiles(const DUrlList &urlList) const ;
-    bool decompressFile(const DUrlList urllist) const;
-    bool decompressFileHere(const DUrlList urllist) const;
-    bool copyFilesToClipboard(const DUrlList &urlList) const;
-    bool renameFile(const DUrl &oldUrl, const DUrl &newUrl, const DFMEvent &event) const;
-    bool renameFile(const DUrl &oldUrl, const DUrl &newUrl) const;
-    bool deleteFiles(const DFMEvent &event) const;
-    bool deleteFilesSync(const DFMEvent &event) const;
-    void moveToTrash(const DFMEvent &event) const;
-    DUrlList moveToTrashSync(const DFMEvent &event) const;
-    bool cutFilesToClipboard(const DUrlList &urlList) const;
-    void pasteFileByClipboard(const DUrl &tarUrl, const DFMEvent &event) const;
-    void pasteFile(DAbstractFileController::PasteType type, const DUrl &tarUrl, const DFMEvent &event) const;
+    bool openFile(const DUrl &url, const QObject *sender = 0) const;
+    bool openFileByApp(const QString &appName, const DUrl &url, const QObject *sender = 0) const;
+    bool compressFiles(const DUrlList &list, const QObject *sender = 0) const;
+    bool decompressFile(const DUrlList &list, const QObject *sender = 0) const;
+    bool decompressFileHere(const DUrlList &list, const QObject *sender = 0) const;
+    bool writeFilesToClipboard(DFMGlobal::ClipboardAction action, const DUrlList &list, const QObject *sender = 0) const;
+    bool renameFile(const DUrl &from, const DUrl &to, const QObject *sender = 0) const;
+    bool deleteFiles(const DUrlList &list, const QObject *sender = 0) const;
+    bool deleteFilesSync(const DUrlList &list, const QObject *sender = 0) const;
+    void moveToTrash(const DUrlList &list, const QObject *sender = 0) const;
+    DUrlList moveToTrashSync(const DUrlList &list, const QObject *sender = 0) const;
+    void pasteFileByClipboard(const DUrl &targetUrl, const QObject *sender = 0) const;
+    void pasteFile(DFMGlobal::ClipboardAction action, const DUrl &targetUrl,
+                   const DUrlList &list, const QObject *sender = 0) const;
     void restoreFile(const DUrl &srcUrl, const DUrl &tarUrl, const DFMEvent &event) const;
-    bool newFolder(const DFMEvent &event) const;
-    bool newFile(const DUrl &toUrl) const;
-    bool newDocument(const DUrl &toUrl) const;
-    bool openFileLocation(const DUrl &fileUrl) const;
+    bool newFolder(const DUrl &targetUrl, const QObject *sender = 0) const;
+    bool newFile(const DUrl &targetUrl, const QString &fileSuffix, const QObject *sender = 0) const;
+    bool openFileLocation(const DUrl &url, const QObject *sender = 0) const;
 
-    bool createSymlink(const DUrl &fileUrl, const DFMEvent &event) const;
-    bool createSymlink(const DUrl &fileUrl, const DUrl &linkToUrl) const;
-    bool sendToDesktop(const DFMEvent &event) const;
+    bool createSymlink(const DUrl &fileUrl, const QObject *sender = 0) const;
+    bool createSymlink(const DUrl &fileUrl, const DUrl &linkToUrl, const QObject *sender = 0) const;
+    bool sendToDesktop(const DUrlList &urlList, const QObject *sender = 0) const;
 
-    bool unShareFolder(const DUrl &fileUrl) const;
-    bool openInTerminal(const DUrl &fileUrl) const;
+    bool shareFolder(const DUrl &fileUrl, const QString &name, bool isWritable = false, bool allowGuest = false, const QObject *sender = 0);
+    bool unShareFolder(const DUrl &fileUrl, const QObject *sender = 0) const;
+    bool openInTerminal(const DUrl &fileUrl, const QObject *sender = 0) const;
 
-    const DAbstractFileInfoPointer createFileInfo(const DUrl &fileUrl) const;
+    const DAbstractFileInfoPointer createFileInfo(const DUrl &fileUrl, const QObject *sender = 0) const;
     const DDirIteratorPointer createDirIterator(const DUrl &fileUrl, const QStringList &nameFilters, QDir::Filters filters,
-                                                QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags) const;
+                                                QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags, const QObject *sender = 0) const;
 
     const QList<DAbstractFileInfoPointer> getChildren(const DUrl &fileUrl, const QStringList &nameFilters, QDir::Filters filters,
-                                                     QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags, bool *ok = Q_NULLPTR);
+                                                     QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags, const QObject *sender = 0);
 
     JobController *getChildrenJob(const DUrl &fileUrl, const QStringList &nameFilters,
-                                  QDir::Filters filters, QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags) const;
+                                  QDir::Filters filters, QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags, const QObject *sender = 0) const;
 
-    DAbstractFileWatcher *createFileWatcher(const DUrl &fileUrl, QObject *parent = 0) const;
+    DAbstractFileWatcher *createFileWatcher(const DUrl &fileUrl, QObject *parent = 0, const QObject *sender = 0) const;
 
     bool isAvfsMounted() const;
+
+    QVariant processEventSync(const QSharedPointer<DFMEvent> &event) const;
+    void processEvent(const QSharedPointer<DFMEvent> &event) const;
+
 public slots:
     void openNewWindow(const DFMEvent& event, const bool &isNewWindow = true) const;
     void openInCurrentWindow(const DFMEvent& event) const;
-    void openFile(const DFMEvent& event) const;
     void openUrl(const DFMEvent &event, const bool& isOpenInNewWindow = true,const bool& isOpenInCurrentWindow = false) const;
 
 signals:

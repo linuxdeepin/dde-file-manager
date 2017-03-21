@@ -762,29 +762,29 @@ bool DFileSystemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
     event << urlList;
 
     const DAbstractFileInfoPointer& info = fileService->createFileInfo(toUrl);
-    if (info->isSymLink()){
+
+    if (info->isSymLink()) {
         toUrl = info->rootSymLinkTarget();
     }
-    qDebug() << toUrl;
-    if(DFMGlobal::isTrashDesktopFile(toUrl)){
+
+    if (DFMGlobal::isTrashDesktopFile(toUrl)) {
          toUrl = DUrl::fromTrashFile("/");
-         fileService->moveToTrash(event);
+         fileService->moveToTrash(urlList, this);
          return true;
-    } else if(DFMGlobal::isComputerDesktopFile(toUrl)){
+    } else if(DFMGlobal::isComputerDesktopFile(toUrl)) {
          return true;
-    } else if (DFMGlobal::isDesktopFile(toUrl)){
+    } else if (DFMGlobal::isDesktopFile(toUrl)) {
          return FileUtils::openDesktopFileWithParams(toUrl.path(), urlList);
     }
 
-
     switch (action) {
     case Qt::CopyAction:
-        fileService->pasteFile(DAbstractFileController::CopyType, toUrl, event);
+        fileService->pasteFile(DFMGlobal::CopyAction, toUrl, urlList, this);
         break;
     case Qt::LinkAction:
         break;
     case Qt::MoveAction:
-        fileService->pasteFile(DAbstractFileController::CutType, toUrl, event);
+        fileService->pasteFile(DFMGlobal::CutAction, toUrl, urlList, this);
         break;
     default:
         return false;

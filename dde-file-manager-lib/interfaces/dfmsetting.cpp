@@ -43,7 +43,7 @@ DFMSetting::DFMSetting(QObject *parent) : QObject(parent)
     auto backen = new QSettingBackend(getConfigFilePath());
     m_settings->setBackend(backen);
 
-    m_fileSystemWathcer = fileService->createFileWatcher(DUrl::fromLocalFile(getConfigFilePath()).parentUrl());
+    m_fileSystemWathcer = fileService->createFileWatcher(DUrl::fromLocalFile(getConfigFilePath()).parentUrl(), this, this);
     m_fileSystemWathcer->startWatcher();
 
     initConnections();

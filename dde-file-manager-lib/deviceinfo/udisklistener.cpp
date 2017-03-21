@@ -1,6 +1,7 @@
 #include "udisklistener.h"
 #include "fstab.h"
 #include "dfileservices.h"
+#include "dfmevent.h"
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
@@ -366,21 +367,13 @@ void UDiskListener::forceUnmount(const QString &id)
     }
 }
 
-const QList<DAbstractFileInfoPointer> UDiskListener::getChildren(const DUrl &fileUrl, const QStringList &nameFilters,
-                                                                QDir::Filters filters, QDirIterator::IteratorFlags flags,
-                                                                bool &accepted) const
+const QList<DAbstractFileInfoPointer> UDiskListener::getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const
 {
-    Q_UNUSED(filters)
+   const QString &frav = event->fileUrl().fragment();
 
-    accepted = true;
-
-    const QString &frav = fileUrl.fragment();
-
-    if(!frav.isEmpty())
-    {
-        DUrl localUrl = DUrl::fromLocalFile(frav);
-
-        QList<DAbstractFileInfoPointer> list = fileService->getChildren(localUrl, nameFilters, filters, flags);
+    if (!frav.isEmpty()) {
+        const QList<DAbstractFileInfoPointer> &list = fileService->getChildren(DUrl::fromLocalFile(frav), event->nameFilters(),
+                                                                               event->filters(), event->flags(), event->sender());
 
         return list;
     }
@@ -389,22 +382,19 @@ const QList<DAbstractFileInfoPointer> UDiskListener::getChildren(const DUrl &fil
 
     for (int i = 0; i < m_list.size(); i++)
     {
-        UDiskDeviceInfoPointer info = m_list.at(i);
-        DAbstractFileInfoPointer fileInfo(new UDiskDeviceInfo(info));
+        DAbstractFileInfoPointer fileInfo(new UDiskDeviceInfo(m_list.at(i)));
         infolist.append(fileInfo);
     }
 
     return infolist;
 }
 
-const DAbstractFileInfoPointer UDiskListener::createFileInfo(const DUrl &fileUrl, bool &accepted) const
+const DAbstractFileInfoPointer UDiskListener::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const
 {
-    accepted = true;
-
-    QString path = fileUrl.fragment();
+    const QString &path = event->fileUrl().fragment();
 
     if(path.isEmpty())
-        return DAbstractFileInfoPointer(new UDiskDeviceInfo(fileUrl));
+        return DAbstractFileInfoPointer(new UDiskDeviceInfo(event->fileUrl()));
 
 
     for (int i = 0; i < m_list.size(); i++)

@@ -18,13 +18,11 @@ class ShareControler : public DAbstractFileController
 public:
     explicit ShareControler(QObject *parent = 0);
 
-    const DAbstractFileInfoPointer createFileInfo(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
-    const QList<DAbstractFileInfoPointer> getChildren(const DUrl &fileUrl, const QStringList &nameFilters,
-                                                     QDir::Filters filters, QDirIterator::IteratorFlags flags,
-                                                     bool &accepted) const Q_DECL_OVERRIDE;
-    DAbstractFileWatcher *createFileWatcher(const DUrl &fileUrl, QObject *parent, bool &accepted) const Q_DECL_OVERRIDE;
+    const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const Q_DECL_OVERRIDE;
+    const QList<DAbstractFileInfoPointer> getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const Q_DECL_OVERRIDE;
+    DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const Q_DECL_OVERRIDE;
 
-    bool unShareFolder(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
+    bool unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const Q_DECL_OVERRIDE;
 
 private:
     static DUrl realUrl(const DUrl &shareUrl);
