@@ -510,11 +510,11 @@ QString DAbstractFileInfo::mimeTypeDisplayName() const
     return mimeTypeDisplayManager->displayName(mimeTypeName());
 }
 
-DAbstractFileInfo::FileType DAbstractFileInfo::fileType() const
+QString DAbstractFileInfo::fileType() const
 {
     CALL_PROXY(fileType());
 
-    return mimeTypeDisplayManager->displayNameToEnum(mimeTypeName());
+    return QString::number(mimeTypeDisplayManager->displayNameToEnum(mimeTypeName())).append(suffix());
 }
 
 DUrl DAbstractFileInfo::fileUrl() const
