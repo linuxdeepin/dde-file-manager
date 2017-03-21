@@ -800,8 +800,7 @@ int DAbstractFileInfo::userColumnWidth(int userColumnRole, const QFontMetrics &f
 
 bool DAbstractFileInfo::columnDefaultVisibleForRole(int role) const
 {
-    return !(role == DFileSystemModel::FileCreatedRole
-             || role == DFileSystemModel::FileMimeTypeRole);
+    return !(role == DFileSystemModel::FileCreatedRole);
 }
 
 DAbstractFileInfo::CompareFunction DAbstractFileInfo::compareFunByColumn(int columnRole) const
