@@ -187,11 +187,6 @@ void DSearchBar::initConnections()
 void DSearchBar::doTextChanged(QString text)
 {
     m_text = text;
-
-    if(text.isEmpty())
-        m_clearAction->setVisible(false);
-    else
-        m_clearAction->setVisible(true);
 }
 
 void DSearchBar::searchHistoryLoaded(const QStringList &list)
@@ -219,11 +214,7 @@ void DSearchBar::historySaved()
 
 void DSearchBar::setCompleter(const QString &text)
 {
-    if(text.isEmpty())
-        m_clearAction->setVisible(false);
-    else
-        m_clearAction->setVisible(true);
-
+    m_clearAction->setVisible(true);
 
     if (text.isEmpty())
     {
