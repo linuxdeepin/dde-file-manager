@@ -85,7 +85,7 @@ QString DFMStandardPaths::standardLocation(DFMStandardPaths::StandardLocation ty
         return NETWORK_ROOT;
     case UserShareRootPath:
         return USERSHARE_ROOT;
-    case ComputerRoorPath:
+    case ComputerRootPath:
         return COMPUTER_ROOT;
     }
 

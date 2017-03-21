@@ -22,14 +22,19 @@ DFMSetting *DFMSetting::instance()
 
 DFMSetting::DFMSetting(QObject *parent) : QObject(parent)
 {
-    paths << "Current Path"
-          << DFMStandardPaths::standardLocation(DFMStandardPaths::HomePath)
-          << DFMStandardPaths::standardLocation(DFMStandardPaths::DesktopPath)
-          << DFMStandardPaths::standardLocation(DFMStandardPaths::VideosPath)
-          << DFMStandardPaths::standardLocation(DFMStandardPaths::MusicPath)
-          << DFMStandardPaths::standardLocation(DFMStandardPaths::PicturesPath)
-          << DFMStandardPaths::standardLocation(DFMStandardPaths::DocumentsPath)
-          << DFMStandardPaths::standardLocation(DFMStandardPaths::DownloadsPath);
+    m_newTabOptionPaths
+            << "Current Path"
+            << DFMStandardPaths::standardLocation(DFMStandardPaths::ComputerRootPath)
+            << DFMStandardPaths::standardLocation(DFMStandardPaths::HomePath)
+            << DFMStandardPaths::standardLocation(DFMStandardPaths::DesktopPath)
+            << DFMStandardPaths::standardLocation(DFMStandardPaths::VideosPath)
+            << DFMStandardPaths::standardLocation(DFMStandardPaths::MusicPath)
+            << DFMStandardPaths::standardLocation(DFMStandardPaths::PicturesPath)
+            << DFMStandardPaths::standardLocation(DFMStandardPaths::DocumentsPath)
+            << DFMStandardPaths::standardLocation(DFMStandardPaths::DownloadsPath);
+
+    m_defaultWindowOptionPaths = m_newTabOptionPaths;
+    m_defaultWindowOptionPaths.removeFirst();
 
     //load temlate
     m_settings = Settings::fromJsonFile(":/configure/global-setting-template.json").data();
@@ -77,19 +82,19 @@ int DFMSetting::openFileAction()
     return index;
 }
 
-QString DFMSetting::newWindowPath()
+QString DFMSetting::defaultWindowPath()
 {
-    const int& index = getValueByKey("base.new_tab_windows.new_window_path").toInt();
-    if(index < paths.count() && index >= 0)
-        return paths[index];
-    return "Current Path";
+    const int& index = getValueByKey("base.new_tab_windows.default_window_path").toInt();
+    if(index < m_defaultWindowOptionPaths.count() && index >= 0)
+        return m_defaultWindowOptionPaths[index];
+    return DFMStandardPaths::standardLocation(DFMStandardPaths::HomePath);
 }
 
 QString DFMSetting::newTabPath()
 {
     const int& index = getValueByKey("base.new_tab_windows.new_tab_path").toInt();
-    if(index < paths.count() && index >= 0)
-        return paths[index];
+    if(index < m_newTabOptionPaths.count() && index >= 0)
+        return m_newTabOptionPaths[index];
     return "Current Path";
 }
 

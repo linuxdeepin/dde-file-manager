@@ -122,7 +122,7 @@ void PathManager::loadSystemPaths()
     m_systemPathsMap["System Disk"] = DFMStandardPaths::standardLocation(DFMStandardPaths::DiskPath);
     m_systemPathsMap["Network"] = DFMStandardPaths::standardLocation(DFMStandardPaths::NetworkRootPath);
     m_systemPathsMap["UserShare"] = DFMStandardPaths::standardLocation(DFMStandardPaths::UserShareRootPath);
-    m_systemPathsMap["Computer"] = DFMStandardPaths::standardLocation(DFMStandardPaths::ComputerRoorPath);
+    m_systemPathsMap["Computer"] = DFMStandardPaths::standardLocation(DFMStandardPaths::ComputerRootPath);
 
     m_systemPathsSet.reserve(m_systemPathsMap.size());
 
