@@ -31,7 +31,7 @@ public:
     bool isAllwayOpenOnNewWindow();
     int iconSizeIndex();
     int openFileAction();
-    QString newWindowPath();
+    QString defaultWindowPath();
     QString newTabPath();
     QString getConfigFilePath();
     bool isQuickSearch();
@@ -56,7 +56,8 @@ public slots:
 
 private:
     Settings* m_settings;
-    QStringList paths;
+    QStringList m_newTabOptionPaths;
+    QStringList m_defaultWindowOptionPaths;
     DAbstractFileWatcher* m_fileSystemWathcer;
 };
 

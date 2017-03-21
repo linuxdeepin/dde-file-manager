@@ -850,9 +850,6 @@ void DFileView::keyPressEvent(QKeyEvent *event)
 
             return;
         case Qt::Key_N:{
-            const QString& path = globalSetting->newWindowPath();
-            if(path != "Current Path")
-                fmevent << DUrl::fromUserInput(path);
             appController->actionNewWindow(fmevent);
             return;
         }

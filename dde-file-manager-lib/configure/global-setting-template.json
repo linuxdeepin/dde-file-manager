@@ -31,11 +31,11 @@
                     "name": "New window and tab",
                     "options": [
                         {
-                            "key": "new_window_path",
-                            "name": "Open new window:",
+                            "key": "default_window_path",
+                            "name": "Open from default window:",
                             "type": "combobox",
                             "items": [
-                                "Current Directory",
+                                "Computer",
                                 "Home",
                                 "Desktop",
                                 "Videos",
@@ -52,6 +52,7 @@
                             "type": "combobox",
                             "items": [
                                 "Current Directory",
+                                "Computer",
                                 "Home",
                                 "Desktop",
                                 "Videos",

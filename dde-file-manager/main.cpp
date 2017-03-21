@@ -19,6 +19,7 @@
 #include "controllers/appcontroller.h"
 #include "widgets/singleton.h"
 #include "gvfs/gvfsmountmanager.h"
+#include "dfmsetting.h"
 
 // DBus
 #include "filedialogmanager_adaptor.h"
@@ -159,7 +160,7 @@ int main(int argc, char *argv[])
     }
 
     if (commandlineUrlList.isEmpty()){
-        commandlineUrlList << DUrl::fromLocalFile(QDir::homePath());
+        commandlineUrlList << DUrl::fromUserInput(globalSetting->defaultWindowPath());
     }
 
     QString uniqueKey = app.applicationName();

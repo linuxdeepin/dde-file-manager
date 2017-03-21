@@ -17,6 +17,7 @@
 #include "dialogs/dialogmanager.h"
 
 #include "qobjecthelper.h"
+#include "dfmsetting.h"
 
 #include "widgets/singleton.h"
 
@@ -119,7 +120,7 @@ void WindowManager::showNewWindow(const DUrl &url, const bool& isNewWindow)
     }
 
     QX11Info::setAppTime(QX11Info::appUserTime());
-    DFileManagerWindow *window = new DFileManagerWindow(url.isEmpty() ? DUrl::fromLocalFile(QDir::homePath()) : url);
+    DFileManagerWindow *window = new DFileManagerWindow(url.isEmpty() ? DUrl::fromUserInput(globalSetting->defaultWindowPath()) : url);
     loadWindowState(window);
     window->setAttribute(Qt::WA_DeleteOnClose);
     window->show();
