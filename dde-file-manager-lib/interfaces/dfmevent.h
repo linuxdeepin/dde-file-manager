@@ -41,8 +41,10 @@ public:
         PasteFile,
         NewFolder,
         NewFile,
+        OpenFileLocation,
         CreateSymlink,
-        SetFileShareEnabled,
+        FileShare,
+        CancelFileShare,
         OpenInTerminal,
         GetChildrens,
         CreateFileInfo,
@@ -66,7 +68,7 @@ public:
     };
 
     explicit DFMEvent(int wId = -1, EventSource source = Unknow, const DUrl &fileUrl = DUrl());
-    explicit DFMEvent(Type type, QObject *sender = 0);
+    explicit DFMEvent(Type type, const QObject *sender = 0);
 
     DFMEvent(const DFMEvent &other);
 
@@ -75,7 +77,7 @@ public:
     DFMEvent &operator =(const DFMEvent &other);
 
     inline Type type() const { return static_cast<Type>(m_type);}
-    inline QPointer<QObject> sender() const {return m_sender;}
+    inline QPointer<const QObject> sender() const {return m_sender;}
 
     inline void setAccepted(bool accepted) { m_accept = accepted; }
     inline bool isAccepted() const { return m_accept; }
@@ -120,9 +122,19 @@ public:
     inline void setBookmarkIndex(const int& index)
     {data->bookMarkIndex = index;}
 
+    //! 在DFileServices中通过此url列表来获取处理此事件的Controller
+    virtual DUrlList handleUrlList() const;
+    inline void setData(const QVariant &data) { m_data = data;}
+    template <typename T>
+    void setData(T&& data)
+    {
+        m_data = QVariant::fromValue(std::forward<T>(data));
+    }
+
 protected:
     ushort m_type;
-    QPointer<QObject> m_sender;
+    QVariant m_data;
+    QPointer<const QObject> m_sender;
 
 private:
     ushort m_accept : 1;
@@ -134,163 +146,184 @@ QT_BEGIN_NAMESPACE
 QDebug operator<<(QDebug deg, const DFMEvent &info);
 QT_END_NAMESPACE
 
+template<class T, typename... Args>
+QSharedPointer<T> dMakeEventPointer(Args&&... args)
+{
+    return QSharedPointer<T>(new T(std::forward<Args>(args)...));
+}
+
 class DFMOpenFileEvent : public DFMEvent
 {
 public:
-    explicit DFMOpenFileEvent(const DUrl &url, QObject *sender = 0);
+    explicit DFMOpenFileEvent(const DUrl &url, const QObject *sender = 0);
 
-    inline DUrl url() const { return m_url;}
+    inline DUrl url() const { return qvariant_cast<DUrl>(m_data);}
+};
+
+class DFMOpenFileByAppEvent : public DFMOpenFileEvent
+{
+public:
+    explicit DFMOpenFileByAppEvent(const QString &appName, const DUrl &url, const QObject *sender = 0);
+
+    inline QString appName() const { return m_appName;}
 
 private:
-    DUrl m_url;
+    QString m_appName;
 };
 
 class DFMCompressEvnet : public DFMEvent
 {
 public:
-    explicit DFMCompressEvnet(const DUrlList &list, QObject *sender = 0);
+    explicit DFMCompressEvnet(const DUrlList &list, const QObject *sender = 0);
 
-    inline DUrlList urlList() const { return m_list;}
-
-private:
-    DUrlList m_list;
+    inline DUrlList urlList() const { return qvariant_cast<DUrlList>(m_data);}
 };
 
 class DFMDecompressEvnet : public DFMEvent
 {
 public:
-    explicit DFMDecompressEvnet(const DUrlList &list, QObject *sender = 0);
+    explicit DFMDecompressEvnet(const DUrlList &list, const QObject *sender = 0);
 
-    inline DUrlList urlList() const { return m_list;}
-
-private:
-    DUrlList m_list;
+    inline DUrlList urlList() const { return qvariant_cast<DUrlList>(m_data);}
 };
 
+class DFMDecompressHereEvnet : public DFMDecompressEvnet
+{
+public:
+    explicit DFMDecompressHereEvnet(const DUrlList &list, const QObject *sender = 0);
+};
 
 class DFMWriteUrlsToClipboardEvent : public DFMEvent
 {
 public:
-    explicit DFMWriteUrlsToClipboardEvent(DFMGlobal::ClipboardAction action, const DUrlList &list, QObject *sender = 0);
+    explicit DFMWriteUrlsToClipboardEvent(DFMGlobal::ClipboardAction action, const DUrlList &list, const QObject *sender = 0);
 
     inline DFMGlobal::ClipboardAction action() const { return m_action;}
-    inline DUrlList urlList() const { return m_list;}
+    inline DUrlList urlList() const { return qvariant_cast<DUrlList>(m_data);}
 
 private:
     DFMGlobal::ClipboardAction m_action;
-    DUrlList m_list;
 };
 
 class DFMRenameEvent : public DFMEvent
 {
 public:
-    explicit DFMRenameEvent(const DUrl &from, const DUrl &to, QObject *sender = 0);
+    explicit DFMRenameEvent(const DUrl &from, const DUrl &to, const QObject *sender = 0);
 
-    inline DUrl fromUrl() const { return m_from;}
-    inline DUrl toUrl() const { return m_to;}
+    inline DUrl fromUrl() const { return qvariant_cast<QPair<DUrl, DUrl>>(m_data).first;}
+    inline DUrl toUrl() const { return qvariant_cast<QPair<DUrl, DUrl>>(m_data).second;}
 
-private:
-    DUrl m_from;
-    DUrl m_to;
+    DUrlList handleUrlList() const Q_DECL_OVERRIDE;
+
+    inline static QVariant makeData(const DUrl &from, const DUrl &to)
+    { return QVariant::fromValue(QPair<DUrl, DUrl>(from, to));}
 };
 
 class DFMDeleteEvent : public DFMEvent
 {
 public:
-    explicit DFMDeleteEvent(const DUrlList &list, QObject *sender = 0);
+    explicit DFMDeleteEvent(const DUrlList &list, const QObject *sender = 0);
 
-    inline DUrlList urlList() const { return m_list;}
-
-private:
-    DUrlList m_list;
+    inline DUrlList urlList() const { return qvariant_cast<DUrlList>(m_data);}
 };
 
 class DFMMoveToTrashEvent : public DFMEvent
 {
 public:
-    explicit DFMMoveToTrashEvent(const DUrlList &list, QObject *sender = 0);
+    explicit DFMMoveToTrashEvent(const DUrlList &list, const QObject *sender = 0);
 
-    inline DUrlList urlList() const { return m_list;}
-
-private:
-    DUrlList m_list;
+    inline DUrlList urlList() const { return qvariant_cast<DUrlList>(m_data);}
 };
 
 class DFMPasteEvent : public DFMEvent
 {
 public:
     explicit DFMPasteEvent(DFMGlobal::ClipboardAction action, const DUrl &targetUrl,
-                           const DUrlList &list, QObject *sender = 0);
+                           const DUrlList &list, const QObject *sender = 0);
 
     inline DFMGlobal::ClipboardAction action() const { return m_action;}
     inline DUrl targetUrl() const { return m_target;}
-    inline DUrlList urlList() const { return m_list;}
+    inline DUrlList urlList() const { return qvariant_cast<DUrlList>(m_data);}
+
+    DUrlList handleUrlList() const Q_DECL_OVERRIDE;
 
 private:
     DFMGlobal::ClipboardAction m_action;
     DUrl m_target;
-    DUrlList m_list;
 };
 
 class DFMNewFolderEvent : public DFMEvent
 {
 public:
-    explicit DFMNewFolderEvent(const DUrl &targetUrl, QObject *sender = 0);
+    explicit DFMNewFolderEvent(const DUrl &targetUrl, const QObject *sender = 0);
 
-    inline DUrl targetUrl() const { return m_target;}
-
-private:
-    DUrl m_target;
+    inline DUrl targetUrl() const { return qvariant_cast<DUrl>(m_data);}
 };
 
 class DFMNewFileEvent : public DFMEvent
 {
 public:
-    explicit DFMNewFileEvent(const DUrl &targetUrl, const QString &fileSuffix, QObject *sender = 0);
+    explicit DFMNewFileEvent(const DUrl &targetUrl, const QString &fileSuffix, const QObject *sender = 0);
 
-    inline DUrl targetUrl() const { return m_target;}
+    inline DUrl targetUrl() const { return qvariant_cast<DUrl>(m_data);}
     inline QString fileSuffix() const { return m_suffix;}
 
 private:
-    DUrl m_target;
     QString m_suffix;
+};
+
+class DFMOpenFileLocation : public DFMEvent
+{
+public:
+    explicit DFMOpenFileLocation(const DUrl &url, const QObject *sender = 0);
+
+    inline DUrl url() const { return qvariant_cast<DUrl>(m_data);}
 };
 
 class DFMCreateSymlinkEvent : public DFMEvent
 {
 public:
-    explicit DFMCreateSymlinkEvent(const DUrl &fileUrl, const DUrl &toUrl, QObject *sender = 0);
+    explicit DFMCreateSymlinkEvent(const DUrl &fileUrl, const DUrl &toUrl, const QObject *sender = 0);
 
-    inline DUrl fileUrl() const { return m_fileUrl;}
-    inline DUrl toUrl() const { return m_toUrl;}
+    inline DUrl fileUrl() const { return qvariant_cast<QPair<DUrl, DUrl>>(m_data).first;}
+    inline DUrl toUrl() const { return qvariant_cast<QPair<DUrl, DUrl>>(m_data).second;}
 
-private:
-    DUrl m_fileUrl;
-    DUrl m_toUrl;
+    DUrlList handleUrlList() const Q_DECL_OVERRIDE;
+
+    inline static QVariant makeData(const DUrl &url, const DUrl &to)
+    { return QVariant::fromValue(QPair<DUrl, DUrl>(url, to));}
 };
 
-class DFMSetFileShareEnabledEvnet : public DFMEvent
+class DFMFileShareEvnet : public DFMEvent
 {
 public:
-    explicit DFMSetFileShareEnabledEvnet(const DUrl &fileUrl, bool enabled, QObject *sender = 0);
+    explicit DFMFileShareEvnet(const DUrl &fileUrl, const QString &name, bool isWritable = false, bool allowGuest = false, const QObject *sender = 0);
 
-    inline DUrl fileUrl() const { return m_fileUrl;}
-    inline bool enabled() const { return m_enabled;}
+    inline DUrl fileUrl() const { return qvariant_cast<DUrl>(m_data);}
+    inline QString name() const { return m_name;}
+    inline bool isWritable() const { return m_writable;}
+    inline bool allowGuest() const { return m_allowGuest;}
 
 private:
-    DUrl m_fileUrl;
-    bool m_enabled;
+    QString m_name;
+    bool m_writable;
+    bool m_allowGuest;
+};
+
+class DFMCancelFileShareEvent : public DFMEvent
+{
+public:
+    explicit DFMCancelFileShareEvent(const DUrl &fileUrl, const QObject *sender = 0);
+
+    inline DUrl fileUrl() const { return qvariant_cast<DUrl>(m_data);}
 };
 
 class DFMOpenInTerminalEvent : public DFMEvent
 {
 public:
-    explicit DFMOpenInTerminalEvent(const DUrl &fileUrl, QObject *sender = 0);
+    explicit DFMOpenInTerminalEvent(const DUrl &fileUrl, const QObject *sender = 0);
 
-    inline DUrl fileUrl() const { return m_fileUrl;}
-
-private:
-    DUrl m_fileUrl;
+    inline DUrl fileUrl() const { return qvariant_cast<DUrl>(m_data);}
 };
 
 class DFMGetChildrensEvent : public DFMEvent
@@ -298,17 +331,16 @@ class DFMGetChildrensEvent : public DFMEvent
 public:
     explicit DFMGetChildrensEvent(const DUrl &fileUrl, const QStringList &nameFilters,
                                   QDir::Filters filters, QDirIterator::IteratorFlags flags,
-                                  QObject *sender = 0);
+                                  const QObject *sender = 0);
     explicit DFMGetChildrensEvent(const DUrl &fileUrl, const QStringList &nameFilters,
-                                  QDir::Filters filters, QObject *sender = 0);
+                                  QDir::Filters filters, const QObject *sender = 0);
 
-    inline DUrl fileUrl() const { return m_fileUrl;}
+    inline DUrl fileUrl() const { return qvariant_cast<DUrl>(m_data);}
     inline QStringList nameFilters() const { return m_nameFilters;}
     inline QDir::Filters filters() const { return m_filters;}
     inline QDirIterator::IteratorFlags flags() const { return m_flags;}
 
 private:
-    DUrl m_fileUrl;
     QStringList m_nameFilters;
     QDir::Filters m_filters;
     QDirIterator::IteratorFlags m_flags;
@@ -319,41 +351,35 @@ class DFMCreateDiriterator : public DFMGetChildrensEvent
 public:
     explicit DFMCreateDiriterator(const DUrl &fileUrl, const QStringList &nameFilters,
                                   QDir::Filters filters, QDirIterator::IteratorFlags flags,
-                                  QObject *sender = 0);
+                                  const QObject *sender = 0);
     explicit DFMCreateDiriterator(const DUrl &fileUrl, const QStringList &nameFilters,
-                                  QDir::Filters filters, QObject *sender = 0);
+                                  QDir::Filters filters, const QObject *sender = 0);
 };
 
-class DFMCreateGetChildrensJob : public DFMGetChildrensEvent
+class DFMCreateGetChildrensJob : public DFMCreateDiriterator
 {
 public:
     explicit DFMCreateGetChildrensJob(const DUrl &fileUrl, const QStringList &nameFilters,
                                   QDir::Filters filters, QDirIterator::IteratorFlags flags,
-                                  QObject *sender = 0);
+                                  const QObject *sender = 0);
     explicit DFMCreateGetChildrensJob(const DUrl &fileUrl, const QStringList &nameFilters,
-                                  QDir::Filters filters, QObject *sender = 0);
+                                  QDir::Filters filters, const QObject *sender = 0);
 };
 
 class DFMCreateFileInfoEvnet : public DFMEvent
 {
 public:
-    explicit DFMCreateFileInfoEvnet(const DUrl &fileUrl, QObject *sender = 0);
+    explicit DFMCreateFileInfoEvnet(const DUrl &fileUrl, const QObject *sender = 0);
 
-    inline DUrl fileUrl() const { return m_fileUrl;}
-
-private:
-    DUrl m_fileUrl;
+    inline DUrl fileUrl() const { return qvariant_cast<DUrl>(m_data);}
 };
 
 class DFMCreateFileWatcherEvent : public DFMEvent
 {
 public:
-    explicit DFMCreateFileWatcherEvent(const DUrl &fileUrl, QObject *sender = 0);
+    explicit DFMCreateFileWatcherEvent(const DUrl &fileUrl, const QObject *sender = 0);
 
-    inline DUrl fileUrl() const { return m_fileUrl;}
-
-private:
-    DUrl m_fileUrl;
+    inline DUrl fileUrl() const { return qvariant_cast<DUrl>(m_data);}
 };
 
 #endif // FMEVENT_H

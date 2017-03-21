@@ -61,13 +61,12 @@ public slots:
 
     void addUserShare(const ShareInfo& info);
 
-    void deleteUserShareByShareName(const QString& shareName);
-    void deleteUserShare(const ShareInfo& info);
     void deleteUserShareByPath(const QString& path);
     void onFileDeleted(const QString& filePath);
     void usershareCountchanged();
 
 private:
+    void deleteUserShareByShareName(const QString& shareName);
     void loadUserShareInfoPathNames();
     void saveUserShareInfoPathNames();
     void updateFileAttributeInfo(const QString &filePath) const;

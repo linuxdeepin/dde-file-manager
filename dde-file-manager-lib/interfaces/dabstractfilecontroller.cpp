@@ -1,4 +1,9 @@
 #include "dabstractfilecontroller.h"
+#include "dfmevent.h"
+
+#include <DDesktopServices>
+
+DUTIL_USE_NAMESPACE
 
 DAbstractFileController::DAbstractFileController(QObject *parent)
     : QObject(parent)
@@ -6,104 +11,72 @@ DAbstractFileController::DAbstractFileController(QObject *parent)
 
 }
 
-bool DAbstractFileController::openFile(const DUrl &fileUrl, bool &accepted) const
+bool DAbstractFileController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) const
 {
-    Q_UNUSED(fileUrl)
-
-    accepted = false;
+    event->ignore();
 
     return false;
 }
 
-bool DAbstractFileController::openFileByApp(const DUrl &fileUrl, const QString &app, bool &accepted) const
+bool DAbstractFileController::openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const
 {
-    Q_UNUSED(fileUrl)
-    Q_UNUSED(app)
-
-    accepted = false;
+    event->ignore();
 
     return false;
 }
 
-bool DAbstractFileController::compressFiles(const DUrlList &urlList, bool &accepted) const
+bool DAbstractFileController::compressFiles(const QSharedPointer<DFMCompressEvnet> &event) const
 {
-    Q_UNUSED(urlList)
-
-    accepted = false;
+    event->ignore();
 
     return false;
 }
 
-bool DAbstractFileController::decompressFile(const DUrlList &fileUrlList, bool &accepted) const
+bool DAbstractFileController::decompressFile(const QSharedPointer<DFMDecompressEvnet> &event) const
 {
-    Q_UNUSED(fileUrlList)
-
-    accepted = false;
+    event->ignore();
 
     return false;
 }
 
-bool DAbstractFileController::decompressFileHere(const DUrlList &fileUrlList, bool &accepted) const
+bool DAbstractFileController::decompressFileHere(const QSharedPointer<DFMDecompressEvnet> &event) const
 {
-    Q_UNUSED(fileUrlList)
-
-    accepted = false;
+    event->ignore();
 
     return false;
 }
 
-bool DAbstractFileController::copyFilesToClipboard(const DUrlList &urlList, bool &accepted) const
+bool DAbstractFileController::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const
 {
-    Q_UNUSED(urlList)
-
-    accepted = false;
+    event->ignore();
 
     return false;
 }
 
-bool DAbstractFileController::renameFile(const DUrl &oldUrl, const DUrl &newUrl, bool &accepted) const
+bool DAbstractFileController::renameFile(const QSharedPointer<DFMRenameEvent> &event) const
 {
-    Q_UNUSED(oldUrl)
-    Q_UNUSED(newUrl)
-
-    accepted = false;
+    event->ignore();
 
     return false;
 }
 
-bool DAbstractFileController::deleteFiles(const DFMEvent &event, bool &accepted) const
+bool DAbstractFileController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const
 {
-    Q_UNUSED(event)
-    accepted = false;
+    event->ignore();
 
     return false;
 }
 
-DUrlList DAbstractFileController::moveToTrash(const DFMEvent &event, bool &accepted) const
+DUrlList DAbstractFileController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const
 {
-    Q_UNUSED(event)
-
-    accepted = false;
+    event->ignore();
 
     return DUrlList();
 }
 
-bool DAbstractFileController::cutFilesToClipboard(const DUrlList &urlList, bool &accepted) const
+DUrlList DAbstractFileController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) const
 {
-    Q_UNUSED(urlList)
-
-    accepted = false;
-
-    return false;
-}
-
-DUrlList DAbstractFileController::pasteFile(PasteType type, const DUrl &targetUrl, const DFMEvent &event, bool &accepted) const
-{
-    Q_UNUSED(type)
-    Q_UNUSED(targetUrl)
-    Q_UNUSED(event)
-
-    accepted = false;
+    event->ignore();
 
     return DUrlList();
 }
@@ -118,113 +91,77 @@ bool DAbstractFileController::restoreFile(const DUrl &srcUrl, const DUrl &tarUrl
     return false;
 }
 
-bool DAbstractFileController::newFolder(const DFMEvent &event, bool &accepted) const
+bool DAbstractFileController::newFolder(const QSharedPointer<DFMNewFolderEvent> &event) const
 {
-    Q_UNUSED(event)
-
-    accepted = false;
+    event->ignore();
 
     return false;
 }
 
-bool DAbstractFileController::newFile(const DUrl &toUrl, bool &accepted) const
+bool DAbstractFileController::newFile(const QSharedPointer<DFMNewFileEvent> &event) const
 {
-    Q_UNUSED(toUrl)
-
-    accepted = false;
+    event->ignore();
 
     return false;
 }
 
-bool DAbstractFileController::newDocument(const DUrl &toUrl, bool &accepted) const
+bool DAbstractFileController::openFileLocation(const QSharedPointer<DFMOpenFileLocation> &event) const
 {
-    Q_UNUSED(toUrl)
-
-    accepted = false;
-
-    return false;
+    return DDesktopServices::showFileItem(event->url());
 }
 
-bool DAbstractFileController::openFileLocation(const DUrl &fileUrl, bool &accepted) const
+const QList<DAbstractFileInfoPointer> DAbstractFileController::getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const
 {
-    Q_UNUSED(fileUrl)
-
-    accepted = false;
-
-    return false;
-}
-
-const QList<DAbstractFileInfoPointer> DAbstractFileController::getChildren(const DUrl &fileUrl, const QStringList &nameFilters,
-                                                                         QDir::Filters filters, QDirIterator::IteratorFlags flags,
-                                                                         bool &accepted) const
-{
-    Q_UNUSED(fileUrl)
-    Q_UNUSED(nameFilters)
-    Q_UNUSED(filters)
-    Q_UNUSED(flags)
-
-    accepted = false;
+    event->ignore();
 
     return QList<DAbstractFileInfoPointer>();
 }
 
-const DAbstractFileInfoPointer DAbstractFileController::createFileInfo(const DUrl &fileUrl, bool &accepted) const
+const DAbstractFileInfoPointer DAbstractFileController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const
 {
-    Q_UNUSED(fileUrl)
-
-    accepted = false;
+    event->ignore();
 
     return DAbstractFileInfoPointer();
 }
 
-const DDirIteratorPointer DAbstractFileController::createDirIterator(const DUrl &fileUrl, const QStringList &nameFilters,
-                                                                    QDir::Filters filters, QDirIterator::IteratorFlags flags,
-                                                                    bool &accepted) const
+const DDirIteratorPointer DAbstractFileController::createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const
 {
-    Q_UNUSED(fileUrl)
-    Q_UNUSED(nameFilters)
-    Q_UNUSED(filters)
-    Q_UNUSED(flags)
-
-    accepted = false;
+    event->ignore();
 
     return DDirIteratorPointer();
 }
 
-bool DAbstractFileController::createSymlink(const DUrl &fileUrl, const DUrl &linkToUrl, bool &accepted) const
+bool DAbstractFileController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const
 {
-    Q_UNUSED(fileUrl)
-    Q_UNUSED(linkToUrl)
-
-    accepted = false;
+    event->ignore();
 
     return false;
 }
 
-bool DAbstractFileController::unShareFolder(const DUrl &fileUrl, bool &accepted) const
+bool DAbstractFileController::shareFolder(const QSharedPointer<DFMFileShareEvnet> &event) const
 {
-    Q_UNUSED(fileUrl)
-
-    accepted = false;
+    event->ignore();
 
     return false;
 }
 
-bool DAbstractFileController::openInTerminal(const DUrl &fileUrl, bool &accepted) const
+bool DAbstractFileController::unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const
 {
-    Q_UNUSED(fileUrl)
-
-    accepted = false;
+    event->ignore();
 
     return false;
 }
 
-DAbstractFileWatcher *DAbstractFileController::createFileWatcher(const DUrl &fileUrl, QObject *parent, bool &accepted) const
+bool DAbstractFileController::openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const
 {
-    Q_UNUSED(fileUrl);
-    Q_UNUSED(parent)
+    event->ignore();
 
-    accepted = false;
+    return false;
+}
+
+DAbstractFileWatcher *DAbstractFileController::createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const
+{
+    event->ignore();
 
     return 0;
 }

@@ -12,19 +12,19 @@ class AVFSFileController : public DAbstractFileController
 public:
     explicit AVFSFileController(QObject* parent = 0);
 
-    const DAbstractFileInfoPointer createFileInfo(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
+    const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const Q_DECL_OVERRIDE;
 
-    const DDirIteratorPointer createDirIterator(const DUrl &fileUrl, const QStringList &nameFilters, QDir::Filters filters, QDirIterator::IteratorFlags flags, bool &accepted) const Q_DECL_OVERRIDE;
+    const DDirIteratorPointer createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const Q_DECL_OVERRIDE;
 
-    DAbstractFileWatcher *createFileWatcher(const DUrl &fileUrl, QObject *parent, bool &accepted) const Q_DECL_OVERRIDE;
+    DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const Q_DECL_OVERRIDE;
 
-    bool openFileLocation(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
+    bool openFileLocation(const QSharedPointer<DFMOpenFileLocation> &event) const Q_DECL_OVERRIDE;
 
-    bool openFile(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
-    bool openFileByApp(const DUrl &fileUrl, const QString& app, bool &accepted) const Q_DECL_OVERRIDE;
-    bool copyFilesToClipboard(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;
+    bool openFile(const QSharedPointer<DFMOpenFileEvent> &event) const Q_DECL_OVERRIDE;
+    bool openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const Q_DECL_OVERRIDE;
+    bool writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const Q_DECL_OVERRIDE;
 
-    bool openInTerminal(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
+    bool openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const Q_DECL_OVERRIDE;
 
     static DUrl realUrl(const DUrl& url);
     static QString findArchFileRootPath(const DUrl& url);

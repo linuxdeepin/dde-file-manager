@@ -4,7 +4,6 @@
 #include "copyjobcontroller.h"
 #include "deletejobcontroller.h"
 #include "filecontroller.h"
-#include "recenthistorymanager.h"
 #include "trashmanager.h"
 #include "searchcontroller.h"
 #include "sharecontroler.h"
@@ -214,38 +213,49 @@ void AppController::actionOpenFileLocation(const DFMEvent &event)
 void AppController::actionCompress(const DFMEvent &event)
 {
     const DUrlList& urls = event.fileUrlList();
-    fileService->compressFiles(urls);
+
+    if (urls.isEmpty())
+        return;
+
+    fileService->compressFiles(urls, event.sender());
 }
 
 void AppController::actionDecompress(const DFMEvent &event)
 {
     const DUrlList &list = event.fileUrlList();
-    fileService->decompressFile(list);
 
+    if (list.isEmpty())
+        return;
+
+    fileService->decompressFile(list, event.sender());
 }
 
 void AppController::actionDecompressHere(const DFMEvent &event)
 {
     const DUrlList &list = event.fileUrlList();
-    fileService->decompressFileHere(list);
+
+    if (list.isEmpty())
+        return;
+
+    fileService->decompressFileHere(list, event.sender());
 }
 
 void AppController::actionCut(const DFMEvent &event)
 {
     const DUrlList& urls = event.fileUrlList();
-    fileService->cutFilesToClipboard(urls);
+    fileService->writeFilesToClipboard(DFMGlobal::CutAction, urls, event.sender());
 
 }
 
 void AppController::actionCopy(const DFMEvent &event)
 {
     const DUrlList& urls = event.fileUrlList();
-    fileService->copyFilesToClipboard(urls);
+    fileService->writeFilesToClipboard(DFMGlobal::CopyAction, urls, event.sender());
 }
 
 void AppController::actionPaste(const DFMEvent &event)
 {
-    fileService->pasteFileByClipboard(event.fileUrl(), event);
+    fileService->pasteFileByClipboard(event.fileUrl(), event.sender());
 }
 
 void AppController::actionRename(const DFMEvent &event)
@@ -273,12 +283,12 @@ void AppController::actionRemove(const DFMEvent &event)
 
 void AppController::actionDelete(const DFMEvent &event)
 {
-    fileService->moveToTrash(event);
+    fileService->moveToTrash(event.fileUrlList(), event.sender());
 }
 
 void AppController::actionCompleteDeletion(const DFMEvent &event)
 {
-    fileService->deleteFiles(event);
+    fileService->deleteFiles(event.fileUrlList(), event.sender());
 }
 
 void AppController::actionCreateSymlink(const DFMEvent &event)
@@ -286,13 +296,13 @@ void AppController::actionCreateSymlink(const DFMEvent &event)
 //    const DUrl& fileUrl = event.fileUrl();
 //    int windowId = event.windowId();
 //    FileUtils::createSoftLink(windowId, fileUrl.toLocalFile());
-    fileService->createSymlink(event.fileUrl(), event);
+    fileService->createSymlink(event.fileUrl(), event.sender());
 
 }
 
 void AppController::actionSendToDesktop(const DFMEvent &event)
 {
-    fileService->sendToDesktop(event);
+    fileService->sendToDesktop(event.fileUrlList());
 }
 
 void AppController::actionAddToBookMark(const DFMEvent &event)
@@ -305,13 +315,12 @@ void AppController::actionAddToBookMark(const DFMEvent &event)
 
 void AppController::actionNewFolder(const DFMEvent &event)
 {
-    fileService->newFolder(event);
+    fileService->newFolder(event.fileUrl(), event.sender());
 }
 
 void AppController::actionNewFile(const DFMEvent &event)
 {
-    const DUrl& fileUrl = event.fileUrl();
-    fileService->newFile(fileUrl);
+    fileService->newFile(event.fileUrl(), "txt", event.sender());
 }
 
 void AppController::actionSelectAll(const DFMEvent &event)
@@ -335,7 +344,7 @@ void AppController::actionClearTrash(const DFMEvent &event)
         const_cast<DFMEvent&>(event) << DUrl::fromTrashFile("/");
 
     const_cast<DFMEvent&>(event) << list;
-    bool ret = fileService->deleteFiles(event);
+    bool ret = fileService->deleteFiles(event.fileUrlList(), event.sender());
 
     if(ret){
         //check if is sound effect enabled
@@ -700,7 +709,7 @@ void AppController::actionOpenFileByApp()
     QAction* dAction = qobject_cast<QAction*>(sender());
     QString app = dAction->property("app").toString();
     DUrl fileUrl(dAction->property("url").toUrl());
-    fileService->openFileByApp(fileUrl, app);
+    fileService->openFileByApp(app, fileUrl, this);
 }
 
 void AppController::doSubscriberAction(const QString &path)

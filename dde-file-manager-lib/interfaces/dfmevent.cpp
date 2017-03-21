@@ -10,7 +10,7 @@ DFMEvent::DFMEvent(int wId, DFMEvent::EventSource source, const DUrl &fileUrl)
     data->fileUrl = fileUrl;
 }
 
-DFMEvent::DFMEvent(DFMEvent::Type type, QObject *sender)
+DFMEvent::DFMEvent(DFMEvent::Type type, const QObject *sender)
     : m_type(type)
     , m_sender(sender)
     , m_accept(true)
@@ -36,7 +36,23 @@ DFMEvent &DFMEvent::operator =(const DFMEvent &other)
     m_type = other.m_type;
     m_sender = other.m_sender;
     m_accept = other.m_accept;
+    m_data = other.m_data;
+
     return *this;
+}
+
+DUrlList DFMEvent::handleUrlList() const
+{
+    DUrlList list = qvariant_cast<DUrlList>(m_data);
+
+    if (list.isEmpty()) {
+        const DUrl &url = qvariant_cast<DUrl>(m_data);
+
+        if (url.isValid())
+            list << url;
+    }
+
+    return list;
 }
 
 QT_BEGIN_NAMESPACE
@@ -52,120 +68,149 @@ QDebug operator<<(QDebug deg, const DFMEvent &info)
 }
 QT_END_NAMESPACE
 
-DFMOpenFileEvent::DFMOpenFileEvent(const DUrl &url, QObject *sender)
+DFMOpenFileEvent::DFMOpenFileEvent(const DUrl &url, const QObject *sender)
     : DFMEvent(OpenFile, sender)
-    , m_url(url)
+{
+    setData(url);
+}
+
+DFMOpenFileByAppEvent::DFMOpenFileByAppEvent(const QString &appName, const DUrl &url, const QObject *sender)
+    : DFMOpenFileEvent(url, sender)
+    , m_appName(appName)
 {
 
 }
 
-DFMCompressEvnet::DFMCompressEvnet(const DUrlList &list, QObject *sender)
+DFMCompressEvnet::DFMCompressEvnet(const DUrlList &list, const QObject *sender)
     : DFMEvent(CompressFiles, sender)
-    , m_list(list)
 {
-
+    setData(list);
 }
 
-DFMDecompressEvnet::DFMDecompressEvnet(const DUrlList &list, QObject *sender)
+DFMDecompressEvnet::DFMDecompressEvnet(const DUrlList &list, const QObject *sender)
     : DFMEvent(DecompressFile, sender)
-    , m_list(list)
 {
+    setData(list);
+}
 
+DFMDecompressHereEvnet::DFMDecompressHereEvnet(const DUrlList &list, const QObject *sender)
+    : DFMDecompressEvnet(list, sender)
+{
+    m_type = DecompressFileHere;
 }
 
 DFMWriteUrlsToClipboardEvent::DFMWriteUrlsToClipboardEvent(DFMGlobal::ClipboardAction action,
-                                                           const DUrlList &list, QObject *sender)
+                                                           const DUrlList &list, const QObject *sender)
     : DFMEvent(WriteUrlsToClipboard, sender)
     , m_action(action)
-    , m_list(list)
 {
-
+    setData(list);
 }
 
-DFMRenameEvent::DFMRenameEvent(const DUrl &from, const DUrl &to, QObject *sender)
+DFMRenameEvent::DFMRenameEvent(const DUrl &from, const DUrl &to, const QObject *sender)
     : DFMEvent(RenameFile, sender)
-    , m_from(from)
-    , m_to(to)
 {
-
+    setData(QPair<DUrl, DUrl>(from, to));
 }
 
-DFMDeleteEvent::DFMDeleteEvent(const DUrlList &list, QObject *sender)
+DUrlList DFMRenameEvent::handleUrlList() const
+{
+    const auto&& d = qvariant_cast<QPair<DUrl, DUrl>>(m_data);
+
+    return DUrlList() << d.first << d.second;
+}
+
+DFMDeleteEvent::DFMDeleteEvent(const DUrlList &list, const QObject *sender)
     : DFMEvent(DeleteFiles, sender)
-    , m_list(list)
 {
-
+    setData(list);
 }
 
-DFMMoveToTrashEvent::DFMMoveToTrashEvent(const DUrlList &list, QObject *sender)
+DFMMoveToTrashEvent::DFMMoveToTrashEvent(const DUrlList &list, const QObject *sender)
     : DFMEvent(MoveToTrash, sender)
-    , m_list(list)
 {
-
+    setData(list);
 }
 
 DFMPasteEvent::DFMPasteEvent(DFMGlobal::ClipboardAction action, const DUrl &targetUrl,
-                             const DUrlList &list, QObject *sender)
+                             const DUrlList &list, const QObject *sender)
     : DFMEvent(PasteFile, sender)
     , m_action(action)
     , m_target(targetUrl)
-    , m_list(list)
 {
-
+    setData(list);
 }
 
-DFMNewFolderEvent::DFMNewFolderEvent(const DUrl &targetUrl, QObject *sender)
+DUrlList DFMPasteEvent::handleUrlList() const
+{
+    return DUrlList() << targetUrl() << urlList();
+}
+
+DFMNewFolderEvent::DFMNewFolderEvent(const DUrl &targetUrl, const QObject *sender)
     : DFMEvent(NewFolder, sender)
-    , m_target(targetUrl)
 {
-
+    setData(targetUrl);
 }
 
-DFMNewFileEvent::DFMNewFileEvent(const DUrl &targetUrl, const QString &fileSuffix, QObject *sender)
+DFMNewFileEvent::DFMNewFileEvent(const DUrl &targetUrl, const QString &fileSuffix, const QObject *sender)
     : DFMEvent(NewFile, sender)
-    , m_target(targetUrl)
     , m_suffix(fileSuffix)
 {
-
+    setData(targetUrl);
 }
 
-DFMCreateSymlinkEvent::DFMCreateSymlinkEvent(const DUrl &fileUrl, const DUrl &toUrl, QObject *sender)
+DFMOpenFileLocation::DFMOpenFileLocation(const DUrl &url, const QObject *sender)
+    : DFMEvent(OpenFileLocation, sender)
+{
+    setData(url);
+}
+
+DFMCreateSymlinkEvent::DFMCreateSymlinkEvent(const DUrl &fileUrl, const DUrl &toUrl, const QObject *sender)
     : DFMEvent(CreateSymlink, sender)
-    , m_fileUrl(fileUrl)
-    , m_toUrl(toUrl)
 {
-
+    setData(makeData(fileUrl, toUrl));
 }
 
-DFMSetFileShareEnabledEvnet::DFMSetFileShareEnabledEvnet(const DUrl &fileUrl, bool enabled, QObject *sender)
-    : DFMEvent(SetFileShareEnabled, sender)
-    , m_fileUrl(fileUrl)
-    , m_enabled(enabled)
+DUrlList DFMCreateSymlinkEvent::handleUrlList() const
 {
-
+    return DUrlList() << fileUrl() << toUrl();
 }
 
-DFMOpenInTerminalEvent::DFMOpenInTerminalEvent(const DUrl &fileUrl, QObject *sender)
+DFMFileShareEvnet::DFMFileShareEvnet(const DUrl &fileUrl, const QString &name, bool isWritable,
+                                                 bool allowGuest, const QObject *sender)
+    : DFMEvent(FileShare, sender)
+    , m_name(name)
+    , m_writable(isWritable)
+    , m_allowGuest(allowGuest)
+{
+    setData(fileUrl);
+}
+
+DFMCancelFileShareEvent::DFMCancelFileShareEvent(const DUrl &fileUrl, const QObject *sender)
+    : DFMEvent(CancelFileShare, sender)
+{
+    setData(fileUrl);
+}
+
+DFMOpenInTerminalEvent::DFMOpenInTerminalEvent(const DUrl &fileUrl, const QObject *sender)
     : DFMEvent(OpenInTerminal, sender)
-    , m_fileUrl(fileUrl)
 {
-
+    setData(fileUrl);
 }
 
 DFMGetChildrensEvent::DFMGetChildrensEvent(const DUrl &fileUrl, const QStringList &nameFilters,
                                            QDir::Filters filters, QDirIterator::IteratorFlags flags,
-                                           QObject *sender)
+                                           const QObject *sender)
     : DFMEvent(GetChildrens, sender)
-    , m_fileUrl(fileUrl)
     , m_nameFilters(nameFilters)
     , m_filters(filters)
     , m_flags(flags)
 {
-
+    setData(fileUrl);
 }
 
 DFMGetChildrensEvent::DFMGetChildrensEvent(const DUrl &fileUrl, const QStringList &nameFilters,
-                                           QDir::Filters filters, QObject *sender)
+                                           QDir::Filters filters, const QObject *sender)
     : DFMGetChildrensEvent(fileUrl, nameFilters, filters, QDirIterator::NoIteratorFlags, sender)
 {
 
@@ -173,14 +218,14 @@ DFMGetChildrensEvent::DFMGetChildrensEvent(const DUrl &fileUrl, const QStringLis
 
 DFMCreateDiriterator::DFMCreateDiriterator(const DUrl &fileUrl, const QStringList &nameFilters,
                                            QDir::Filters filters, QDirIterator::IteratorFlags flags,
-                                           QObject *sender)
+                                           const QObject *sender)
     : DFMGetChildrensEvent(fileUrl, nameFilters, filters, flags, sender)
 {
     m_type = CreateDiriterator;
 }
 
 DFMCreateDiriterator::DFMCreateDiriterator(const DUrl &fileUrl, const QStringList &nameFilters,
-                                           QDir::Filters filters, QObject *sender)
+                                           QDir::Filters filters, const QObject *sender)
     : DFMGetChildrensEvent(fileUrl, nameFilters, filters, sender)
 {
     m_type = CreateDiriterator;
@@ -188,29 +233,27 @@ DFMCreateDiriterator::DFMCreateDiriterator(const DUrl &fileUrl, const QStringLis
 
 DFMCreateGetChildrensJob::DFMCreateGetChildrensJob(const DUrl &fileUrl, const QStringList &nameFilters,
                                                    QDir::Filters filters, QDirIterator::IteratorFlags flags,
-                                                   QObject *sender)
-    : DFMGetChildrensEvent(fileUrl, nameFilters, filters, flags, sender)
+                                                   const QObject *sender)
+    : DFMCreateDiriterator(fileUrl, nameFilters, filters, flags, sender)
 {
     m_type = CreateGetChildrensJob;
 }
 
 DFMCreateGetChildrensJob::DFMCreateGetChildrensJob(const DUrl &fileUrl, const QStringList &nameFilters,
-                                                   QDir::Filters filters, QObject *sender)
-    : DFMGetChildrensEvent(fileUrl, nameFilters, filters, sender)
+                                                   QDir::Filters filters, const QObject *sender)
+    : DFMCreateDiriterator(fileUrl, nameFilters, filters, sender)
 {
     m_type = CreateGetChildrensJob;
 }
 
-DFMCreateFileInfoEvnet::DFMCreateFileInfoEvnet(const DUrl &fileUrl, QObject *sender)
+DFMCreateFileInfoEvnet::DFMCreateFileInfoEvnet(const DUrl &fileUrl, const QObject *sender)
     : DFMEvent(CreateFileInfo, sender)
-    , m_fileUrl(fileUrl)
 {
-
+    setData(fileUrl);
 }
 
-DFMCreateFileWatcherEvent::DFMCreateFileWatcherEvent(const DUrl &fileUrl, QObject *sender)
+DFMCreateFileWatcherEvent::DFMCreateFileWatcherEvent(const DUrl &fileUrl, const QObject *sender)
     : DFMEvent(CreateFileWatcher, sender)
-    , m_fileUrl(fileUrl)
 {
-
+    setData(fileUrl);
 }

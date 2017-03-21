@@ -81,48 +81,39 @@ ShareControler::ShareControler(QObject *parent) :
 
 }
 
-const DAbstractFileInfoPointer ShareControler::createFileInfo(const DUrl &fileUrl, bool &accepted) const
+const DAbstractFileInfoPointer ShareControler::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const
 {
-    accepted = true;
-
-    return DAbstractFileInfoPointer(new ShareFileInfo(fileUrl));
+    return DAbstractFileInfoPointer(new ShareFileInfo(event->fileUrl()));
 }
 
-const QList<DAbstractFileInfoPointer> ShareControler::getChildren(const DUrl &fileUrl, const QStringList &nameFilters, QDir::Filters filters, QDirIterator::IteratorFlags flags, bool &accepted) const
+const QList<DAbstractFileInfoPointer> ShareControler::getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const
 {
-    Q_UNUSED(filters)
-    Q_UNUSED(nameFilters)
-    Q_UNUSED(flags)
-    Q_UNUSED(fileUrl)
-
-    accepted = true;
+    Q_UNUSED(event)
 
     QList<DAbstractFileInfoPointer> infolist;
 
     ShareInfoList sharelist = userShareManager->shareInfoList();
     foreach (ShareInfo shareInfo, sharelist) {
-        DAbstractFileInfoPointer fileInfo = createFileInfo(DUrl::fromUserShareFile(shareInfo.path()), accepted);
-        if(fileInfo->exists())
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(DUrl::fromUserShareFile(shareInfo.path()));
+
+        if (fileInfo->exists())
             infolist << fileInfo;
     }
 
     return infolist;
 }
 
-DAbstractFileWatcher *ShareControler::createFileWatcher(const DUrl &fileUrl, QObject *parent, bool &accepted) const
+DAbstractFileWatcher *ShareControler::createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const
 {
-    if (fileUrl.path() != "/")
+    if (event->fileUrl().path() != "/")
         return 0;
 
-    accepted = true;
-
-    return new ShareFileWatcher(parent);
+    return new ShareFileWatcher();
 }
 
-bool ShareControler::unShareFolder(const DUrl &fileUrl, bool &accepted) const
+bool ShareControler::unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const
 {
-    accepted = true;
-    return DFileService::instance()->unShareFolder(realUrl(fileUrl));
+    return DFileService::instance()->unShareFolder(realUrl(event->fileUrl()), event->sender());
 }
 
 DUrl ShareControler::realUrl(const DUrl &shareUrl)

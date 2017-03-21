@@ -9,6 +9,7 @@
 #include <dfilewatcher.h>
 #include "dfileservices.h"
 #include "shutil/fileutils.h"
+#include "dfmevent.h"
 
 class AVFSIterator : public DDirIterator
 {
@@ -79,65 +80,54 @@ AVFSFileController::AVFSFileController(QObject *parent):
 
 }
 
-const DAbstractFileInfoPointer AVFSFileController::createFileInfo(const DUrl &fileUrl, bool &accepted) const
+const DAbstractFileInfoPointer AVFSFileController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const
 {
-    accepted = true;
-
-    DAbstractFileInfoPointer info(new AVFSFileInfo(fileUrl));
+    DAbstractFileInfoPointer info(new AVFSFileInfo(event->fileUrl()));
 
     return info;
 }
 
-const DDirIteratorPointer AVFSFileController::createDirIterator(const DUrl &fileUrl, const QStringList &nameFilters, QDir::Filters filters, QDirIterator::IteratorFlags flags, bool &accepted) const
+const DDirIteratorPointer AVFSFileController::createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const
 {
-    accepted = true;
-
-    return DDirIteratorPointer(new AVFSIterator(fileUrl, nameFilters, filters, flags));
+    return DDirIteratorPointer(new AVFSIterator(event->fileUrl(), event->nameFilters(), event->filters(), event->flags()));
 }
 
-DAbstractFileWatcher *AVFSFileController::createFileWatcher(const DUrl &fileUrl, QObject *parent, bool &accepted) const
+DAbstractFileWatcher *AVFSFileController::createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const
 {
-    accepted = true;
+    QString realPath = AVFSFileInfo::realDirUrl(event->fileUrl()).toLocalFile();
 
-    QString realPath = AVFSFileInfo::realDirUrl(fileUrl).toLocalFile();
-
-    return new DFileWatcher(realPath, parent);
+    return new DFileWatcher(realPath);
 }
 
-bool AVFSFileController::openFileLocation(const DUrl &fileUrl, bool &accepted) const
+bool AVFSFileController::openFileLocation(const QSharedPointer<DFMOpenFileLocation> &event) const
 {
-    accepted = true;
-    return DFileService::instance()->openFileLocation(realUrl(fileUrl));
+    return DFileService::instance()->openFileLocation(realUrl(event->url()), event->sender());
 }
 
-bool AVFSFileController::openFile(const DUrl &fileUrl, bool &accepted) const
+bool AVFSFileController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) const
 {
-    accepted = true;
-    return DFileService::instance()->openFile(realUrl(fileUrl));
+    return DFileService::instance()->openFile(realUrl(event->url()), event->sender());
 }
 
-bool AVFSFileController::openFileByApp(const DUrl &fileUrl, const QString &app, bool &accepted) const
+bool AVFSFileController::openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const
 {
-    accepted = true;
-    return DFileService::instance()->openFileByApp(realUrl(fileUrl), app);
+    return DFileService::instance()->openFileByApp(event->appName(), realUrl(event->url()), event->sender());
 }
 
-bool AVFSFileController::copyFilesToClipboard(const DUrlList &urlList, bool &accepted) const
+bool AVFSFileController::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const
 {
-    accepted = true;
-
     DUrlList realUrlList;
-    foreach (const DUrl& url, urlList) {
+
+    foreach (const DUrl& url, event->urlList()) {
         realUrlList << realUrl(url);
     }
 
-    return DFileService::instance()->copyFilesToClipboard(realUrlList);
+    return DFileService::instance()->writeFilesToClipboard(event->action(), realUrlList, event->sender());
 }
 
-bool AVFSFileController::openInTerminal(const DUrl &fileUrl, bool &accepted) const
+bool AVFSFileController::openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const
 {
-    accepted = true;
-    return DFileService::instance()->openInTerminal(fileUrl);
+    return DFileService::instance()->openInTerminal(realUrl(event->fileUrl()), event->sender());
 }
 
 DUrl AVFSFileController::realUrl(const DUrl &url)

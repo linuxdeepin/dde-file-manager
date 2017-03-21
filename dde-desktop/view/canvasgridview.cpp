@@ -496,7 +496,7 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
         case Qt::Key_Enter:
             if (!itemDelegate()->editingIndex().isValid()) {
                 for (auto const &value : selectUrls) {
-                    DFileService::instance()->openFile(value);
+                    DFileService::instance()->openFile(value, this);
                 }
                 return;
             }
@@ -509,7 +509,7 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
             return;
         case Qt::Key_Delete:
             if (canDeleted && !selectUrls.contains(rootUrl.toString())) {
-                DFileService::instance()->moveToTrash(fmevent);
+                DFileService::instance()->moveToTrash(fmevent.fileUrlList(), this);
             }
             break;
         default: break;
@@ -522,7 +522,7 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
                 return;
             }
 
-            DFileService::instance()->deleteFiles(fmevent);
+            DFileService::instance()->deleteFiles(fmevent.fileUrlList(), this);
 
             return;
         } else if (event->key() == Qt::Key_T) {
@@ -1418,7 +1418,7 @@ void CanvasGridView::initConnection()
         if (info.isDir()) {
             QProcess::startDetached("gvfs-open", QStringList() << url.toLocalFile());
         } else {
-            DFileService::instance()->openFile(url);
+            DFileService::instance()->openFile(url, this);
         }
     }, Qt::QueuedConnection);
 

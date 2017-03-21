@@ -19,23 +19,20 @@ class TrashManager : public DAbstractFileController
 public:
     explicit TrashManager(QObject *parent = 0);
 
-    const DAbstractFileInfoPointer createFileInfo(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
+    const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const Q_DECL_OVERRIDE;
 
-    bool openFile(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
-    bool openFileLocation(const DUrl &fileUrl, bool &accepted) const Q_DECL_OVERRIDE;
-    DUrlList moveToTrash(const DFMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
-    bool copyFilesToClipboard(const DUrlList &urlList, bool &accepted) const Q_DECL_OVERRIDE;
-    DUrlList pasteFile(PasteType type, const DUrl &targetUrl, const DFMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
-    bool deleteFiles(const DFMEvent &event, bool &accepted) const Q_DECL_OVERRIDE;
-    const DDirIteratorPointer createDirIterator(const DUrl &fileUrl, const QStringList &nameFilters,
-                                                QDir::Filters filters, QDirIterator::IteratorFlags flags,
-                                                bool &accepted) const Q_DECL_OVERRIDE;
+    bool openFile(const QSharedPointer<DFMOpenFileEvent> &event) const Q_DECL_OVERRIDE;
+    DUrlList moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const Q_DECL_OVERRIDE;
+    bool writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const Q_DECL_OVERRIDE;
+    DUrlList pasteFile(const QSharedPointer<DFMPasteEvent> &event) const Q_DECL_OVERRIDE;
+    bool deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const Q_DECL_OVERRIDE;
+    const DDirIteratorPointer createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const Q_DECL_OVERRIDE;
 
-    DAbstractFileWatcher *createFileWatcher(const DUrl &fileUrl, QObject *parent, bool &accepted) const Q_DECL_OVERRIDE;
+    DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const Q_DECL_OVERRIDE;
 
     static bool restoreTrashFile(const DUrlList &fileUrl, const DFMEvent &event);
     static bool restoreAllTrashFile(const DFMEvent &event);
-    void cleanTrash(const DFMEvent &event) const;
+    void cleanTrash(const QSharedPointer<DFMDeleteEvent> &event) const;
 
     static bool isEmpty();
 public slots:

@@ -22,4 +22,5 @@ public:
 
 typedef QSharedPointer<DDirIterator> DDirIteratorPointer;
 
+Q_DECLARE_METATYPE(DDirIteratorPointer)
 #endif // DDIRITERATOR_H

@@ -66,33 +66,27 @@ bool FileController::findExecutable(const QString &executableName, const QString
     return !QStandardPaths::findExecutable(executableName, paths).isEmpty();
 }
 
-const DAbstractFileInfoPointer FileController::createFileInfo(const DUrl &fileUrl, bool &accepted) const
+const DAbstractFileInfoPointer FileController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const
 {
-    accepted = true;
+    if (event->fileUrl().toLocalFile().endsWith(QString(".") + DESKTOP_SURRIX)){
 
-    if (fileUrl.toLocalFile().endsWith(QString(".") + DESKTOP_SURRIX)){
-
-        return DAbstractFileInfoPointer(new DesktopFileInfo(fileUrl));
+        return DAbstractFileInfoPointer(new DesktopFileInfo(event->fileUrl()));
     }
 
-    else
-        return DAbstractFileInfoPointer(new DFileInfo(fileUrl));
+    return DAbstractFileInfoPointer(new DFileInfo(event->fileUrl()));
 }
 
-const DDirIteratorPointer FileController::createDirIterator(const DUrl &fileUrl, const QStringList &nameFilters,
-                                                            QDir::Filters filters, QDirIterator::IteratorFlags flags,
-                                                            bool &accepted) const
+const DDirIteratorPointer FileController::createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const
 {
-    accepted = true;
-
-    return DDirIteratorPointer(new FileDirIterator(fileUrl.toLocalFile(), nameFilters, filters, flags));
+    return DDirIteratorPointer(new FileDirIterator(event->fileUrl().toLocalFile(), event->nameFilters(),
+                                                   event->filters(), event->flags()));
 }
 
-bool FileController::openFile(const DUrl &fileUrl, bool &accepted) const
+bool FileController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) const
 {
-    accepted = true;
+    DUrl fileUrl = event->url();
 
-    const DAbstractFileInfoPointer pfile = createFileInfo(fileUrl, accepted);
+    const DAbstractFileInfoPointer pfile = createFileInfo(dMakeEventPointer<DFMCreateFileInfoEvnet>(fileUrl));
 
     if (pfile->isSymLink()) {
         const DAbstractFileInfoPointer &linkInfo = DFileService::instance()->createFileInfo(pfile->symLinkTarget());
@@ -117,38 +111,35 @@ bool FileController::openFile(const DUrl &fileUrl, bool &accepted) const
     return FileUtils::openFile(fileUrl.toLocalFile());
 }
 
-bool FileController::openFileByApp(const DUrl &fileUrl, const QString& app, bool &accepted) const
+bool FileController::openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const
 {
-    accepted = true;
-    return FileUtils::openFileByApp(fileUrl.toLocalFile(), app);
+    return FileUtils::openFileByApp(event->url().toLocalFile(), event->appName());
 }
 
-bool FileController::compressFiles(const DUrlList &urlList, bool &accepted) const
+bool FileController::compressFiles(const QSharedPointer<DFMCompressEvnet> &event) const
 {
-    accepted = true;
-
-    if (findExecutable("file-roller")){
+    if (findExecutable("file-roller")) {
         QStringList args;
         args << "-d";
-        foreach (DUrl url, urlList) {
+        foreach (DUrl url, event->urlList()) {
             args << url.toLocalFile();
         }
         qDebug() << args;
         bool result = QProcess::startDetached("file-roller", args);
         return result;
-    }else{
+    } else {
         qDebug() << "file-roller is not installed";
     }
 
-    return accepted;
+    return false;
 }
 
-bool FileController::decompressFile(const DUrlList &fileUrlList, bool &accepted) const{
-    accepted = true;
-    if (findExecutable("file-roller")){
+bool FileController::decompressFile(const QSharedPointer<DFMDecompressEvnet> &event) const
+{
+    if (findExecutable("file-roller")) {
         QStringList args;
         args << "-f";
-        for(auto it : fileUrlList){
+        for(auto it : event->urlList()) {
             args << it.toLocalFile();
         }
         qDebug() << args;
@@ -157,15 +148,16 @@ bool FileController::decompressFile(const DUrlList &fileUrlList, bool &accepted)
     }else{
         qDebug() << "file-roller is not installed";
     }
-    return accepted;
+
+    return false;
 }
 
-bool FileController::decompressFileHere(const DUrlList &fileUrlList, bool &accepted) const{
-    accepted = true;
-    if (findExecutable("file-roller")){
+bool FileController::decompressFileHere(const QSharedPointer<DFMDecompressEvnet> &event) const
+{
+    if (findExecutable("file-roller")) {
         QStringList args;
         args << "-h";
-        for(auto it : fileUrlList){
+        for(auto it : event->urlList()) {
             args << it.toLocalFile();
         }
         qDebug() << args;
@@ -174,27 +166,27 @@ bool FileController::decompressFileHere(const DUrlList &fileUrlList, bool &accep
     }else{
         qDebug() << "file-roller is not installed";
     }
-    return accepted;
+
+    return false;
 }
 
-bool FileController::copyFilesToClipboard(const DUrlList &urlList, bool &accepted) const
+bool FileController::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const
 {
-    accepted = true;
-
-    DFMGlobal::setUrlsToClipboard(DUrl::toQUrlList(urlList), DFMGlobal::CopyAction);
+    DFMGlobal::setUrlsToClipboard(DUrl::toQUrlList(event->urlList()), event->action());
 
     return true;
 }
 
-bool FileController::renameFile(const DUrl &oldUrl, const DUrl &newUrl, bool &accepted) const
+bool FileController::renameFile(const QSharedPointer<DFMRenameEvent> &event) const
 {
-    accepted = true;
+    const DUrl &oldUrl = event->fromUrl();
+    const DUrl &newUrl = event->toUrl();
 
     QFile file(oldUrl.toLocalFile());
     const QString &newFilePath = newUrl.toLocalFile();
 
-    const DAbstractFileInfoPointer oldfilePointer = createFileInfo(oldUrl, accepted);
-    const DAbstractFileInfoPointer newfilePointer = createFileInfo(newUrl, accepted);
+    const DAbstractFileInfoPointer &oldfilePointer = DFileService::instance()->createFileInfo(oldUrl);
+    const DAbstractFileInfoPointer &newfilePointer = DFileService::instance()->createFileInfo(newUrl);
 
     bool result(false);
 
@@ -227,16 +219,13 @@ bool FileController::renameFile(const DUrl &oldUrl, const DUrl &newUrl, bool &ac
  *
  * Permanently delete file or directory with the given url.
  */
-bool FileController::deleteFiles(const DFMEvent &event, bool &accepted) const
+bool FileController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const
 {
-    Q_UNUSED(event);
-    accepted = true;
-
     FileJob job(FileJob::Delete);
 
     dialogManager->addJob(&job);
 
-    job.doDelete(event.fileUrlList());
+    job.doDelete(event->urlList());
     dialogManager->removeJob(job.getJobId());
 
     return true;
@@ -248,53 +237,40 @@ bool FileController::deleteFiles(const DFMEvent &event, bool &accepted) const
  *
  * Trash file or directory with the given url address.
  */
-DUrlList FileController::moveToTrash(const DFMEvent &event, bool &accepted) const
+DUrlList FileController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const
 {
-    accepted = true;
-
     FileJob job(FileJob::Trash);
 
     dialogManager->addJob(&job);
 
-    DUrlList list = job.doMoveToTrash(event.fileUrlList());
+    DUrlList list = job.doMoveToTrash(event->urlList());
     dialogManager->removeJob(job.getJobId());
 
     return list;
 }
 
-bool FileController::cutFilesToClipboard(const DUrlList &urlList, bool &accepted) const
+DUrlList FileController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) const
 {
-    accepted = true;
-
-    DFMGlobal::setUrlsToClipboard(DUrl::toQUrlList(urlList), DFMGlobal::CutAction);
-
-    return true;
-}
-
-DUrlList FileController::pasteFile(PasteType type, const DUrl &targetUrl, const DFMEvent &event, bool &accepted) const
-{
-    accepted = true;
-
-    const DUrlList &urlList = event.fileUrlList();
+    const DUrlList &urlList = event->urlList();
 
     if (urlList.isEmpty())
         return DUrlList();
 
     DUrlList list;
-    QDir dir(targetUrl.toLocalFile());
+    QDir dir(event->targetUrl().toLocalFile());
     //Make sure the target directory exists.
     if(!dir.exists())
         return list;
 
-    if (type == CutType) {
+    if (event->action() == DFMGlobal::CutAction) {
         DUrl parentUrl = DUrl::parentUrl(urlList.first());
 
-        if (parentUrl != targetUrl) {
+        if (parentUrl != event->targetUrl()) {
             FileJob job(FileJob::Move);
 
             dialogManager->addJob(&job);
 
-            list = job.doMove(urlList, targetUrl);
+            list = job.doMove(urlList, event->targetUrl());
             dialogManager->removeJob(job.getJobId());
         }
 
@@ -305,7 +281,7 @@ DUrlList FileController::pasteFile(PasteType type, const DUrl &targetUrl, const 
 
         dialogManager->addJob(&job);
 
-        list = job.doCopy(urlList, targetUrl);
+        list = job.doCopy(urlList, event->targetUrl());
         dialogManager->removeJob(job.getJobId());
     }
 
@@ -330,25 +306,21 @@ bool FileController::restoreFile(const DUrl &srcUrl, const DUrl &tarUrl, const D
     return true;
 }
 
-bool FileController::newFolder(const DFMEvent &event, bool &accepted) const
+bool FileController::newFolder(const QSharedPointer<DFMNewFolderEvent> &event) const
 {
-    accepted = true;
-
     //Todo:: check if mkdir is ok
-    QDir dir(event.fileUrl().toLocalFile());
+    QDir dir(event->targetUrl().toLocalFile());
 
     QString folderName = checkDuplicateName(dir.absolutePath() + "/" + tr("New Folder"));
 
-    AppController::selectionAndRenameFile = qMakePair(DUrl::fromLocalFile(folderName), event.windowId());
+    AppController::selectionAndRenameFile = qMakePair(DUrl::fromLocalFile(folderName), event->windowId());
     return dir.mkdir(folderName);
 }
 
-bool FileController::newFile(const DUrl &toUrl, bool &accepted) const
+bool FileController::newFile(const QSharedPointer<DFMNewFileEvent> &event) const
 {
-    accepted = true;
-
     //Todo:: check if mkdir is ok
-    QDir dir(toUrl.toLocalFile());
+    QDir dir(event->targetUrl().toLocalFile());
     QString name = checkDuplicateName(dir.absolutePath() + "/" + tr("New File"));
 
     QFile file(name);
@@ -362,57 +334,32 @@ bool FileController::newFile(const DUrl &toUrl, bool &accepted) const
     return true;
 }
 
-bool FileController::newDocument(const DUrl &toUrl, bool &accepted) const
+bool FileController::shareFolder(const QSharedPointer<DFMFileShareEvnet> &event) const
 {
-    Q_UNUSED(toUrl)
-    Q_UNUSED(accepted)
+    ShareInfo info;
+    info.setPath(event->fileUrl().toLocalFile());
 
-    accepted = false;
+    info.setShareName(event->name());
+    info.setIsGuestOk(event->allowGuest());
+    info.setIsWritable(event->isWritable());
 
-    return false;
-}
-
-bool FileController::openFileLocation(const DUrl &fileUrl, bool &accepted) const
-{
-    accepted = true;
-    QFileInfo file(fileUrl.toLocalFile());
-
-    if(file.exists()) {
-        DUrl parentUrl = DUrl::fromLocalFile(file.absolutePath());
-        QUrlQuery query;
-
-        query.addQueryItem("selectUrl", fileUrl.toString());
-        parentUrl.setQuery(query);
-
-        DFMEvent event;
-        DUrlList urlList;
-        urlList << parentUrl;
-        event << urlList;
-        event << parentUrl;
-        fileService->openNewWindow(event, true);
-    } else {
-        return false;
-    }
+    userShareManager->addUserShare(info);
 
     return true;
 }
 
-bool FileController::unShareFolder(const DUrl &fileUrl, bool &accepted) const
+bool FileController::unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const
 {
-    accepted = true;
-    const ShareInfo& info = userShareManager->getShareInfoByPath(fileUrl.path());
-    userShareManager->deleteUserShare(info);
+    userShareManager->deleteUserShareByPath(event->fileUrl().toLocalFile());
 
     return true;
 }
 
-bool FileController::openInTerminal(const DUrl &fileUrl, bool &accepted) const
+bool FileController::openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const
 {
-    accepted = true;
-
     const QString &current_dir = QDir::currentPath();
 
-    QDir::setCurrent(fileUrl.toLocalFile());
+    QDir::setCurrent(event->fileUrl().toLocalFile());
 
     bool ok = QProcess::startDetached("x-terminal-emulator");
 
@@ -421,28 +368,31 @@ bool FileController::openInTerminal(const DUrl &fileUrl, bool &accepted) const
     return ok;
 }
 
-bool FileController::createSymlink(const DUrl &fileUrl, const DUrl &linkToUrl, bool &accepted) const
+bool FileController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const
 {
-    accepted = true;
+    QFile file(event->fileUrl().toLocalFile());
 
-    bool ok;
-    int code = ::symlink(fileUrl.toLocalFile().toStdString().data(), linkToUrl.toLocalFile().toStdString().data());
-    if(code == -1){
+    bool ok = file.link(event->toUrl().toLocalFile());
+
+    if (ok)
+        return true;
+
+    int code = ::symlink(event->fileUrl().toLocalFile().toLocal8Bit().constData(),
+                         event->toUrl().toLocalFile().toLocal8Bit().constData());
+    if (code == -1) {
         ok = false;
         QString errorString = strerror(errno);
         dialogManager->showFailToCreateSymlinkDialog(errorString);
-    } else{
+    } else {
         ok = true;
     }
 
     return ok;
 }
 
-DAbstractFileWatcher *FileController::createFileWatcher(const DUrl &fileUrl, QObject *parent, bool &accepted) const
+DAbstractFileWatcher *FileController::createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const
 {
-    accepted = true;
-
-    return new DFileWatcher(fileUrl.toLocalFile(), parent);
+    return new DFileWatcher(event->fileUrl().toLocalFile());
 }
 
 QString FileController::checkDuplicateName(const QString &name) const

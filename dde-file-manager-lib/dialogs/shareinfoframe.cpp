@@ -119,34 +119,14 @@ void ShareInfoFrame::handShareInfoChanged()
 
 void ShareInfoFrame::doShareInfoSetting()
 {
-    QString shareName = m_shareNamelineEdit->text();
-
-    ShareInfo info;
-    info.setPath(m_fileinfo->absoluteFilePath());
-
-    info.setShareName(shareName);
-    if (m_permissoComBox->currentIndex() == 0){
-        info.setIsWritable(true);
-    }else{
-        info.setIsWritable(false);
+    if (!m_shareCheckBox->isChecked()) {
+        DFileService::instance()->unShareFolder(m_fileinfo->fileUrl(), this);
+        return;
     }
 
-    if (m_anonymityCombox->currentIndex() == 0){
-        info.setIsGuestOk(false);
-    }else{
-        info.setIsGuestOk(true);
-    }
-    if (m_shareCheckBox->isChecked()){
-        userShareManager->addUserShare(info);
-    }else{
-        if(info.isWritable()){
-            QString cmd = "chmod";
-            QStringList args;
-            args << "-R"<<"755"<<info.path();
-            QProcess::startDetached(cmd, args);
-        }
-        userShareManager->deleteUserShareByPath(info.path());
-    }
+    DFileService::instance()->shareFolder(m_fileinfo->fileUrl(), m_shareNamelineEdit->text(),
+                                          m_permissoComBox->currentIndex() == 0,
+                                          m_anonymityCombox->currentIndex() != 0);
 }
 
 void ShareInfoFrame::updateShareInfo(const QString &filePath)
