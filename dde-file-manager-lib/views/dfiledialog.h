@@ -79,6 +79,7 @@ protected:
 private:
     void onAcceptButtonClicked();
     void onRejectButtonClicked();
+    void handleEnterPressed();
 
     QScopedPointer<DFileDialogPrivate> d_ptr;
 

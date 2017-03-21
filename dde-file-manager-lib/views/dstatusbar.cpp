@@ -133,9 +133,10 @@ void DStatusBar::setMode(DStatusBar::Mode mode)
     m_comboBoxLabel->setText(tr("Filter"));
     m_comboBoxLabel->hide();
 
-    m_lineEdit = new DLineEdit(this);
+    m_lineEdit = new QLineEdit(this);
     m_lineEdit->setMaximumWidth(200);
     m_lineEdit->setVisible(mode == DialogSave);
+    m_lineEdit->installEventFilter(this);
     m_lineEditLabel = new QLabel(this);
     m_lineEditLabel->setObjectName("lineEditLabel");
     m_lineEditLabel->setText(tr("Save as:"));
@@ -409,6 +410,20 @@ void DStatusBar::setLoadingIncatorVisible(const DFMEvent &event, bool visible)
     } else {
         m_label->setText(QString());
     }
+}
+
+bool DStatusBar::eventFilter(QObject *watched, QEvent *event)
+{
+    if (watched == m_lineEdit && (event->type() == QEvent::FocusIn || event->type() == QEvent::Show)) {
+        TIMER_SINGLESHOT_OBJECT(this, 10, {
+                                    QMimeDatabase db;
+                                    const QString &name = m_lineEdit->text();
+                                    const QString &suffix = db.suffixForFileName(name);
+                                    m_lineEdit->setSelection(0, name.length() - suffix.length() - 1);
+                                }, this)
+    }
+
+    return false;
 }
 
 void DStatusBar::clearLayoutAndAnchors()

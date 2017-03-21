@@ -58,6 +58,9 @@ public slots:
     void itemCounted(const DFMEvent &event, int number);
     void setLoadingIncatorVisible(const DFMEvent &event, bool visible);
 
+protected:
+    bool eventFilter(QObject *watched, QEvent *event) Q_DECL_OVERRIDE;
+
 private:
     void clearLayoutAndAnchors();
 
