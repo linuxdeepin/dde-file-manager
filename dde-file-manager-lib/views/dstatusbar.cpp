@@ -147,11 +147,11 @@ void DStatusBar::setMode(DStatusBar::Mode mode)
         m_label = Q_NULLPTR;
     }
     if (!m_acceptButton) {
-        m_acceptButton = new DTextButton(QString(), this);
+        m_acceptButton = new QPushButton(QString(), this);
         m_acceptButton->setFixedHeight(28);
     }
     if (!m_rejectButton) {
-        m_rejectButton = new DTextButton(QString(), this);
+        m_rejectButton = new QPushButton(QString(), this);
         m_rejectButton->setFixedHeight(28);
     }
 
