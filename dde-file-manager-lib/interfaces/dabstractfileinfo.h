@@ -158,7 +158,8 @@ public:
     virtual QString createdDisplayName() const;
     virtual QString sizeDisplayName() const;
     virtual QString mimeTypeDisplayName() const;
-    virtual FileType fileType() const;
+    /// Used for sorting
+    virtual QString fileType() const;
 
     virtual DUrl fileUrl() const;
     inline QString scheme() const
