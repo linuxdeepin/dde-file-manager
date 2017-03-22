@@ -32,7 +32,7 @@ isEmpty(PREFIX){
 
 PKGCONFIG += gtk+-2.0 gsettings-qt libsecret-1 gio-unix-2.0 poppler-cpp
 CONFIG(release, release|debug) {
-    PKGCONFIG += dtkbase-0-2 dtkwidget-0-2
+    PKGCONFIG += dtkbase dtkwidget
 } else {
     PKGCONFIG += dtkbase dtkwidget
 }

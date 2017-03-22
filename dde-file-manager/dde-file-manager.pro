@@ -18,7 +18,7 @@ TEMPLATE = app
 CONFIG += c++11 link_pkgconfig
 PKGCONFIG += gio-unix-2.0
 CONFIG(release, release|debug) {
-    PKGCONFIG += dtkbase-0-2 dtkwidget-0-2 dtkutil-0-2
+    PKGCONFIG += dtkbase dtkwidget dtkutil
 } else {
     PKGCONFIG += dtkbase dtkwidget dtkutil
 }
