@@ -44,6 +44,9 @@ public:
     QString labelText(int label) const;
 
     void setOptions(int options);
+    void setOption(int option, bool on = true);
+    int options() const;
+    bool testOption(int option) const;
 
     WId winId() const;
     void setWindowTitle(const QString &title);

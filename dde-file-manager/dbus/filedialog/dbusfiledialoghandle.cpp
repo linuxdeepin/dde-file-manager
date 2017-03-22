@@ -101,6 +101,21 @@ void DBusFileDialogHandle::setOptions(int options)
     DFileDialogHandle::setOptions(static_cast<QFileDialog::Options>(options));
 }
 
+void DBusFileDialogHandle::setOption(int option, bool on)
+{
+    DFileDialogHandle::setOption(static_cast<QFileDialog::Option>(option), on);
+}
+
+int DBusFileDialogHandle::options() const
+{
+    return DFileDialogHandle::options();
+}
+
+bool DBusFileDialogHandle::testOption(int option) const
+{
+    return DFileDialogHandle::testOption(static_cast<QFileDialog::Option>(option));
+}
+
 WId DBusFileDialogHandle::winId() const
 {
     return widget()->winId();

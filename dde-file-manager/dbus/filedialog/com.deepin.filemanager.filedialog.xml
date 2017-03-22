@@ -52,6 +52,17 @@
     <method name="setOptions">
         <arg name="options" type="i" direction="in"/>
     </method>
+    <method name="setOption">
+        <arg name="option" type="i" direction="in"/>
+        <arg name="on" type="b" direction="in"/>
+    </method>
+    <method name="options">
+        <arg name="options" type="i" direction="out"/>
+    </method>
+    <method name="testOption">
+        <arg name="option" type="i" direction="in"/>
+        <arg name="on" type="b" direction="out"/>
+    </method>
     <method name="setCurrentInputName">
         <arg name="name" type="s" direction="in"/>
     </method>

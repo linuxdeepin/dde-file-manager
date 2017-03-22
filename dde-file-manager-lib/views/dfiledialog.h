@@ -51,7 +51,9 @@ public:
     QString labelText(QFileDialog::DialogLabel label) const;
 
     void setOptions(QFileDialog::Options options);
+    void setOption(QFileDialog::Option option, bool on = true);
     bool testOption(QFileDialog::Option option) const;
+    QFileDialog::Options options() const;
 
     void setCurrentInputName(const QString &name);
 
