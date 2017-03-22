@@ -125,7 +125,7 @@ HEADERS += \
     gvfs/gvfsmountclient.h \
     gvfs/mountaskpassworddialog.h \
     gvfs/networkmanager.h \
-    gvfs/secrectmanager.h \
+    gvfs/secretmanager.h \
     models/networkfileinfo.h \
     controllers/networkcontroller.h \
     dialogs/openwithotherdialog.h \
@@ -250,7 +250,7 @@ SOURCES += \
     gvfs/gvfsmountclient.cpp \
     gvfs/mountaskpassworddialog.cpp \
     gvfs/networkmanager.cpp \
-    gvfs/secrectmanager.cpp \
+    gvfs/secretmanager.cpp \
     models/networkfileinfo.cpp \
     controllers/networkcontroller.cpp \
     dialogs/openwithotherdialog.cpp \

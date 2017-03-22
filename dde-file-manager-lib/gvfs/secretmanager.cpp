@@ -1,4 +1,4 @@
-#include "secrectmanager.h"
+#include "secretmanager.h"
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
@@ -11,29 +11,29 @@
 #include <QJsonDocument>
 #include <QFile>
 
-SecrectManager::SecrectManager(QObject *parent) : QObject(parent)
+SecretManager::SecretManager(QObject *parent) : QObject(parent)
 {
-    qDebug() << "Create SecrectManager";
+    qDebug() << "Create SecretManager";
     initData();
     initConnect();
 }
 
-SecrectManager::~SecrectManager()
+SecretManager::~SecretManager()
 {
 
 }
 
-void SecrectManager::initData()
+void SecretManager::initData()
 {
     loadCache();
 }
 
-void SecrectManager::initConnect()
+void SecretManager::initConnect()
 {
-    connect(fileSignalManager, &FileSignalManager::requsetCacheLoginData, this, &SecrectManager::cacheSambaLoginData);
+    connect(fileSignalManager, &FileSignalManager::requsetCacheLoginData, this, &SecretManager::cacheSambaLoginData);
 }
 
-const SecretSchema *SecrectManager::SMBSecretSchema()
+const SecretSchema *SecretManager::SMBSecretSchema()
 {
     static const SecretSchema the_schema = {
         "org.gnome.keyring.NetworkPassword", SECRET_SCHEMA_DONT_MATCH_NAME,
@@ -49,7 +49,7 @@ const SecretSchema *SecrectManager::SMBSecretSchema()
     return &the_schema;
 }
 
-const SecretSchema *SecrectManager::FTPSecretSchema()
+const SecretSchema *SecretManager::FTPSecretSchema()
 {
     static const SecretSchema the_schema = {
         "org.gnome.keyring.NetworkPassword", SECRET_SCHEMA_DONT_MATCH_NAME,
@@ -64,7 +64,7 @@ const SecretSchema *SecrectManager::FTPSecretSchema()
     return &the_schema;
 }
 
-void SecrectManager::on_password_cleared(GObject *source, GAsyncResult *result, gpointer unused)
+void SecretManager::on_password_cleared(GObject *source, GAsyncResult *result, gpointer unused)
 {
     Q_UNUSED(source)
     Q_UNUSED(unused)
@@ -86,7 +86,7 @@ void SecrectManager::on_password_cleared(GObject *source, GAsyncResult *result, 
     }
 }
 
-void SecrectManager::clearPasswordByLoginObj(const QJsonObject &obj)
+void SecretManager::clearPasswordByLoginObj(const QJsonObject &obj)
 {
     if (obj.value("protocol") == "smb"){
         secret_password_clear(SMBSecretSchema(), NULL, on_password_cleared, NULL,
@@ -104,29 +104,29 @@ void SecrectManager::clearPasswordByLoginObj(const QJsonObject &obj)
     }
 }
 
-QJsonObject SecrectManager::getLoginData(const QString &id)
+QJsonObject SecretManager::getLoginData(const QString &id)
 {
     return m_smbLoginObjs.value(id).toObject();
 }
 
-QJsonObject SecrectManager::getLoginDatas()
+QJsonObject SecretManager::getLoginDatas()
 {
     return m_smbLoginObjs;
 }
 
-QString SecrectManager::cachePath()
+QString SecretManager::cachePath()
 {
     return QString("%1/samba.json").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::CachePath));
 }
 
-void SecrectManager::cacheSambaLoginData(const QJsonObject &obj)
+void SecretManager::cacheSambaLoginData(const QJsonObject &obj)
 {
     QJsonValue v(obj);
     m_smbLoginObjs.insert(obj.value("id").toString(), v);
     saveCache();
 }
 
-void SecrectManager::loadCache()
+void SecretManager::loadCache()
 {
     QFile file(cachePath());
     if (!file.open(QIODevice::ReadOnly))
@@ -141,7 +141,7 @@ void SecrectManager::loadCache()
     qDebug() << m_smbLoginObjs;
 }
 
-void SecrectManager::saveCache()
+void SecretManager::saveCache()
 {
     QFile file(cachePath());
     if (!file.open(QIODevice::WriteOnly))

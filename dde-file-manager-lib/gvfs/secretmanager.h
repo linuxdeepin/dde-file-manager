@@ -1,5 +1,5 @@
-#ifndef SECRECTMANAGER_H
-#define SECRECTMANAGER_H
+#ifndef SECRETMANAGER_H
+#define SECRETMANAGER_H
 
 #include <QObject>
 #include <QJsonObject>
@@ -9,12 +9,12 @@ extern "C" {
 }
 #define signals public
 
-class SecrectManager : public QObject
+class SecretManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit SecrectManager(QObject *parent = 0);
-    ~SecrectManager();
+    explicit SecretManager(QObject *parent = 0);
+    ~SecretManager();
 
     void initData();
     void initConnect();
@@ -42,4 +42,4 @@ private:
     QJsonObject m_smbLoginObjs;
 };
 
-#endif // SECRECTMANAGER_H
+#endif // SECRETMANAGER_H

@@ -15,7 +15,7 @@
 #include "gvfs/gvfsmountclient.h"
 #include "gvfs/gvfsmountmanager.h"
 #include "gvfs/networkmanager.h"
-#include "gvfs/secrectmanager.h"
+#include "gvfs/secretmanager.h"
 #include "controllers/appcontroller.h"
 #include "../deviceinfo/udisklistener.h"
 #include "../usershare/usersharemanager.h"
@@ -242,7 +242,7 @@ void DFMGlobal::initGvfsMountManager()
 
 void DFMGlobal::initSecretManager()
 {
-    secrectManager;
+    secretManager;
 }
 
 void DFMGlobal::initDialogManager()
