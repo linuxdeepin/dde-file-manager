@@ -498,7 +498,8 @@ bool FileUtils::openDesktopFileWithParams(const QString &filePath, const DUrlLis
     }
 
     GList* g_files = NULL;
-    g_list_prepend(g_files, const_cast<char*>(cPath));
+    GList* result_g_files = g_list_prepend(g_files, const_cast<char*>(cPath));
+    Q_UNUSED(result_g_files)
     foreach (const DUrl& url, urlList) {
         GFile* f = g_file_new_for_uri(url.toString().toUtf8());
         g_files = g_list_append(g_files, f);
@@ -873,4 +874,17 @@ QString FileUtils::getMimeTypeByGIO(const QString &uri)
     g_object_unref(file);
     g_object_unref(fileInfo);
     return mimeType;
+}
+
+void FileUtils::mountAVFS()
+{
+    QProcess p;
+    p.start("/usr/bin/umountavfs");
+    p.waitForFinished();
+    QProcess::startDetached("/usr/bin/mountavfs");
+}
+
+void FileUtils::umountAVFS()
+{
+    QProcess::startDetached("/usr/bin/umountavfs");
 }

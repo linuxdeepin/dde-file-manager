@@ -24,6 +24,8 @@
 #include "interfaces/dfmstandardpaths.h"
 #include "models/desktopfileinfo.h"
 #include "interfaces/dfileservices.h"
+#include "interfaces/dfmsetting.h"
+#include "shutil/fileutils.h"
 #include "utils/utils.h"
 
 #include <QDataStream>
@@ -155,18 +157,14 @@ void FileManagerApp::initSysPathWatcher()
 
 void FileManagerApp::initConnect()
 {
-    //    connect(fileSignalManager, &FileSignalManager::requestUpdateMimeAppsCache, mimeAppsManager, &MimesAppsManager::requestUpdateCache);
     connect(m_sysPathWatcher, &QFileSystemWatcher::directoryChanged, systemPathManager, &PathManager::loadSystemPaths);
-
 }
 
 void FileManagerApp::initService()
 {
-    QProcess p;
-    p.start("umountavfs");
-    p.waitForFinished();
-    QProcess::startDetached("mountavfs");
-
+    if (globalSetting->isCompressFilePreview()){
+        FileUtils::mountAVFS();
+    }
 }
 
 void FileManagerApp::show(const DUrl &url)

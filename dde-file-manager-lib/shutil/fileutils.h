@@ -69,6 +69,9 @@ public:
     static bool isGvfsMountFile(const QString &filePath);
     static bool isFileExists(const QString& filePath);
     static QString getMimeTypeByGIO(const QString& uri);
+
+    static void mountAVFS();
+    static void umountAVFS();
 };
 
 #endif // FILEUTILS_H
