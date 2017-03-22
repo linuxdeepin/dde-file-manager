@@ -3,7 +3,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QDebug>
-#include <QTemporaryFile>
+#include <QProcess>
 #include "dfmstandardpaths.h"
 #include <qsettingbackend.h>
 #include <settings.h>
@@ -12,6 +12,8 @@
 #include "interfaces/dfileservices.h"
 #include "interfaces/dabstractfilewatcher.h"
 #include "app/define.h"
+#include "shutil/fileutils.h"
+
 
 DFMSetting *DFMSetting::instance()
 {
@@ -116,6 +118,12 @@ void DFMSetting::onValueChanged(const QString &key, const QVariant &value)
         emit fileSignalManager->requestChangeIconSizeBySizeIndex(iconSizeIndex());
     } else if(key == "base.hidden_files.show_hidden"){
         emit fileSignalManager->showHiddenOnViewChanged();
+    } else if (key == "advance.preview.compress_file_preview"){
+        if (value.toBool()){
+            FileUtils::mountAVFS();
+        }else{
+            FileUtils::umountAVFS();
+        }
     }
 }
 

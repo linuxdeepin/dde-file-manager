@@ -41,7 +41,6 @@
 #include <dexpandgroup.h>
 #include <settings.h>
 #include <dsettingsdialog.h>
-#include <QTemporaryFile>
 
 #include <QTimer>
 #include <QDesktopWidget>
