@@ -28,6 +28,7 @@
 #include "gvfs/networkmanager.h"
 #include "dde-file-manager/singleapplication.h"
 #include "widgets/commandlinemanager.h"
+#include "shutil/viewstatesmanager.h"
 
 #include "xutil.h"
 #include "utils.h"
@@ -270,7 +271,7 @@ int DFileManagerWindow::getFileViewSortRole() const
 {
     D_DC(DFileManagerWindow);
 
-    return d->fileView->getSortRoles();
+    return d->fileView->getSortRoles().first;
 }
 
 DToolBar *DFileManagerWindow::getToolBar() const

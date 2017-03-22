@@ -36,6 +36,7 @@ public:
         ExtendMode = 0x04,
         AllViewMode = IconMode | ListMode | ExtendMode
     };
+    Q_ENUM(ViewMode)
 
     Q_DECLARE_FLAGS(ViewModes, ViewMode)
 
@@ -77,7 +78,8 @@ public:
     ViewMode getDefaultViewMode() const;
     ViewMode viewMode() const;
 
-    int getSortRoles() const;
+    QPair<int, Qt::SortOrder> getSortRoles() const;
+    void setSortRoles(const int& role, const Qt::SortOrder& order);
 
     bool testViewMode(ViewModes modes, ViewMode mode) const;
 
@@ -150,6 +152,7 @@ signals:
     void requestActivateNextTab();
     void requestActivatePreviousTab();
     void requestActivateTabByIndex(const int& index);
+    void viewStateChanged();
 
 private slots:
     bool setRootUrl(const DUrl &url);
@@ -161,6 +164,8 @@ private slots:
     void handleDataChanged(const QModelIndex & topLeft, const QModelIndex & bottomRight, const QVector<int> & roles = QVector<int>());
     void onRootUrlDeleted(const DUrl &rootUrl);
     void freshView();
+    void loadViewState(const DUrl &url);
+    void saveViewState();
 
 protected:
     void wheelEvent(QWheelEvent * event) Q_DECL_OVERRIDE;

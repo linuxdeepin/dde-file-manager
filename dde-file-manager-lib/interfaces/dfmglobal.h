@@ -222,6 +222,7 @@ public:
     static void initSecretManager();
     static void initUserShareManager();
     static void initGlobalSettings();
+    static void initViewStatesManager();
 
     static QString getUser();
     static int getUserId();

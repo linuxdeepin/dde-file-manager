@@ -18,6 +18,7 @@
 #define secretManager Singleton<SecretManager>::instance()
 #define userShareManager Singleton<UserShareManager>::instance()
 #define globalSetting Singleton<DFMSetting>::instance()
+#define viewStatesManager Singleton<ViewStatesManager>::instance()
 
 #define defaut_icon ":/images/images/default.png"
 #define defaut_computerIcon ":/images/images/computer.png"

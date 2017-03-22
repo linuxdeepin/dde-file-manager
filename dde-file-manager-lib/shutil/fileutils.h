@@ -70,6 +70,11 @@ public:
     static bool isFileExists(const QString& filePath);
     static QString getMimeTypeByGIO(const QString& uri);
 
+    static QJsonObject getJsonObjectFromFile(const QString& filePath);
+    static QJsonArray getJsonArrayFromFile(const QString& filePath);
+    static bool writeJsonObjectFile(const QString& filePath, const QJsonObject& obj);
+    static bool writeJsonnArrayFile(const QString& filePath, const QJsonArray& array);
+
     static void mountAVFS();
     static void umountAVFS();
 };

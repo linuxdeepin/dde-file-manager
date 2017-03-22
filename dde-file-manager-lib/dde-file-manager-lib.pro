@@ -186,7 +186,8 @@ HEADERS += \
     gvfs/qmount.h \
     gvfs/gvfsmountmanager.h \
     gvfs/qdiskinfo.h \
-    interfaces/dfmsetting.h
+    interfaces/dfmsetting.h \
+    shutil/viewstatesmanager.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -305,7 +306,8 @@ SOURCES += \
     gvfs/gvfsmountmanager.cpp \
     gvfs/qdiskinfo.cpp \
     interfaces/dfmsetting.cpp \
-    configure/dfmconfigdict.cpp
+    configure/dfmconfigdict.cpp \
+    shutil/viewstatesmanager.cpp
 
 INCLUDEPATH += $$PWD/../ $$PWD/../utils/ $$PWD/interfaces/ $$PWD/../dde-file-manager-plugins/plugininterfaces/
 

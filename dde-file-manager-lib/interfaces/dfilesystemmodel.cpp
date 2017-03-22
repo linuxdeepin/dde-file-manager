@@ -927,6 +927,12 @@ Qt::SortOrder DFileSystemModel::sortOrder() const
     return d->srotOrder;
 }
 
+void DFileSystemModel::setSortOrder(const Qt::SortOrder &order)
+{
+    Q_D(DFileSystemModel);
+    d->srotOrder = order;
+}
+
 int DFileSystemModel::sortColumn() const
 {
     Q_D(const DFileSystemModel);
