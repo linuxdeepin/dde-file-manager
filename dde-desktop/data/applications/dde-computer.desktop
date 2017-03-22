@@ -1,12 +1,17 @@
 [Desktop Entry]
-Type=Application
-Name=Computer
-Name[zh_CN]=计算机
+Categories=System;
 Comment=Show storage of this computer.
+Exec=gvfs-open computer:///
 GenericName=Computer
 Icon=computer
-Terminal=false
-Categories=System;
-Exec=gvfs-open computer:///
+Name=Computer
 OnlyShowIn=Deepin;
+Terminal=false
+Type=Application
 X-AppStream-Ignore=true
+
+# Translations:
+# Do not manually modify!
+GenericName[zh_CN]=计算机
+Name[zh_CN]=计算机
+

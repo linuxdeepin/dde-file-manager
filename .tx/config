@@ -3,8 +3,44 @@ host = https://www.transifex.com
 minimum_perc = 80
 mode = developer
 
-[deepin-file-manager.dde-file-managerts]
+[dde-file-manager.dde-file-manager]
 file_filter = dde-file-manager-lib/translations/dde-file-manager_<lang>.ts
 source_file = dde-file-manager-lib/translations/dde-file-manager.ts
+source_lang = en
+type = QT
+
+[dde-file-manager.dde-desktop]
+file_filter = dde-desktop/translations/dde-desktop_<lang>.ts
+source_file = dde-desktop/translations/dde-desktop.ts
+source_lang = en
+type = QT
+
+[dde-file-manager.usb-device-formatter]
+file_filter = usb-device-formatter/translations/usb-device-formatter_<lang>.ts
+source_file = usb-device-formatter/translations/usb-device-formatter.ts
+source_lang = en
+type = QT
+
+[dde-file-manager.dde-file-manager-desktop]
+file_filter = dde-file-manager/translations/dde-file-manager-desktop/desktop_<lang>.ts
+source_file = dde-file-manager/translations/dde-file-manager-desktop/desktop.ts
+source_lang = en
+type = QT
+
+[dde-file-manager.dde-computer-desktop]
+file_filter = dde-desktop/translations/dde-computer-desktop/desktop_<lang>.ts
+source_file = dde-desktop/translations/dde-computer-desktop/desktop.ts
+source_lang = en
+type = QT
+
+[dde-file-manager.dde-trash-desktop]
+file_filter = dde-desktop/translations/dde-trash-desktop/desktop_<lang>.ts
+source_file = dde-desktop/translations/dde-trash-desktop/desktop.ts
+source_lang = en
+type = QT
+
+[dde-file-manager.usb-device-formatter-desktop]
+file_filter = usb-device-formatter/translations/usb-device-formatter-desktop/desktop_<lang>.ts
+source_file = usb-device-formatter/translations/usb-device-formatter-desktop/desktop.ts
 source_lang = en
 type = QT
