@@ -414,13 +414,22 @@ void DStatusBar::setLoadingIncatorVisible(const DFMEvent &event, bool visible)
 
 bool DStatusBar::eventFilter(QObject *watched, QEvent *event)
 {
-    if (watched == m_lineEdit && (event->type() == QEvent::FocusIn || event->type() == QEvent::Show)) {
+    if (watched != m_lineEdit)
+        return false;
+
+    if (event->type() == QEvent::FocusIn) {
         TIMER_SINGLESHOT_OBJECT(this, 10, {
                                     QMimeDatabase db;
                                     const QString &name = m_lineEdit->text();
                                     const QString &suffix = db.suffixForFileName(name);
-                                    m_lineEdit->setSelection(0, name.length() - suffix.length() - 1);
+
+                                    if (suffix.isEmpty())
+                                        m_lineEdit->selectAll();
+                                    else
+                                        m_lineEdit->setSelection(0, name.length() - suffix.length() - 1);
                                 }, this)
+    } else if (event->type() == QEvent::Show) {
+        TIMER_SINGLESHOT_OBJECT(this, 10, m_lineEdit->setFocus(), this);
     }
 
     return false;

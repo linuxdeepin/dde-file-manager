@@ -78,6 +78,24 @@ DFileDialog::DFileDialog(QWidget *parent)
             this, &DFileDialog::selectionFilesChanged);
     connect(getFileView(), &DFileView::rootUrlChanged,
             this, &DFileDialog::currentUrlChanged);
+
+    connect(getFileView(), static_cast<void (DFileView::*)(const QModelIndex&)>(&DFileView::currentChanged),
+            this, [this] {
+        Q_D(const DFileDialog);
+
+        if (d->acceptMode != QFileDialog::AcceptSave) {
+            return;
+        }
+
+        const QModelIndex &index = getFileView()->currentIndex();
+
+        const DAbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(index);
+
+        if (!fileInfo)
+            return;
+
+        setCurrentInputName(fileInfo->fileName());
+    });
 }
 
 DFileDialog::~DFileDialog()
@@ -445,7 +463,10 @@ void DFileDialog::setCurrentInputName(const QString &name)
 
     const QString &suffix = db.suffixForFileName(name);
 
-    getFileView()->statusBar()->lineEdit()->setSelection(0, name.length() - suffix.length() - 1);
+    if (suffix.isEmpty())
+        getFileView()->statusBar()->lineEdit()->selectAll();
+    else
+        getFileView()->statusBar()->lineEdit()->setSelection(0, name.length() - suffix.length() - 1);
 }
 
 void DFileDialog::accept()
