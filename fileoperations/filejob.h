@@ -73,6 +73,12 @@ public:
     bool isAborted() const;
     void setIsAborted(bool isAborted);
 
+    bool getIsSkip() const;
+    void setIsSkip(bool isSkip);
+
+    bool getIsCoExisted() const;
+    void setIsCoExisted(bool isCoExisted);
+
 signals:
 
     /*add copy/move/delete job to taskdialog when copy/move/delete job created*/
@@ -156,6 +162,8 @@ private:
     qint64 m_lastMsec;
     bool m_applyToAll  = false;
     bool m_isReplaced = false;
+    bool m_isSkip = false;
+    bool m_isCoExisted = false;
     bool m_isAborted = false;
     JobType m_jobType;
     int m_windowId = -1;
