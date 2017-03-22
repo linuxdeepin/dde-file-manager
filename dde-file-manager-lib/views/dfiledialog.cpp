@@ -409,11 +409,32 @@ void DFileDialog::setOptions(QFileDialog::Options options)
     getFileView()->model()->setReadOnly(options.testFlag(QFileDialog::ReadOnly));
 }
 
+void DFileDialog::setOption(QFileDialog::Option option, bool on)
+{
+    Q_D(DFileDialog);
+
+    QFileDialog::Options options = d->options;
+
+    if (on)
+        options |= option;
+    else
+        options &= ~option;
+
+    setOptions(options);
+}
+
 bool DFileDialog::testOption(QFileDialog::Option option) const
 {
     Q_D(const DFileDialog);
 
-    return d->options & option;
+    return d->options.testFlag(option);
+}
+
+QFileDialog::Options DFileDialog::options() const
+{
+    Q_D(const DFileDialog);
+
+    return d->options;
 }
 
 void DFileDialog::setCurrentInputName(const QString &name)
