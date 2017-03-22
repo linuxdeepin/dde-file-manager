@@ -15,7 +15,7 @@
 #define networkManager Singleton<NetworkManager>::instance()
 #define gvfsMountClient Singleton<GvfsMountClient>::instance()
 #define gvfsMountManager Singleton<GvfsMountManager>::instance()
-#define secrectManager Singleton<SecrectManager>::instance()
+#define secretManager Singleton<SecretManager>::instance()
 #define userShareManager Singleton<UserShareManager>::instance()
 #define globalSetting Singleton<DFMSetting>::instance()
 

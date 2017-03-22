@@ -28,7 +28,7 @@
 #include "gvfs/networkmanager.h"
 #include "gvfs/gvfsmountclient.h"
 #include "gvfs/gvfsmountmanager.h"
-#include "gvfs/secrectmanager.h"
+#include "gvfs/secretmanager.h"
 #include "usershare/usersharemanager.h"
 #include "dialogs/dialogmanager.h"
 #include "widgets/singleton.h"
@@ -635,28 +635,28 @@ void AppController::actionForgetPassword(const DFMEvent &event)
 {
     QString path = event.fileUrl().query();
 
-    QJsonObject smbObj = secrectManager->getLoginData(path);
+    QJsonObject smbObj = secretManager->getLoginData(path);
     if (smbObj.empty()){
         if (path.endsWith("/")){
             path = path.left(path.length() - 1);
-            smbObj = secrectManager->getLoginData(path);
+            smbObj = secretManager->getLoginData(path);
 
             if (smbObj.isEmpty()){
                 QString share = path.split("/").last();
                 path = path.left(path.length() - share.length());
                 path += share.toUpper();
-                smbObj = secrectManager->getLoginData(path);
+                smbObj = secretManager->getLoginData(path);
             }
         }else{
             path += "/";
-            smbObj = secrectManager->getLoginData(path);
+            smbObj = secretManager->getLoginData(path);
             if (smbObj.isEmpty()){
                 QStringList _pl = path.split("/");
                 QString share = _pl.at(_pl.length() - 2);
                 path = path.left(path.length() - share.length() - 1);
                 path += share.toUpper();
                 path += "/";
-                smbObj = secrectManager->getLoginData(path);
+                smbObj = secretManager->getLoginData(path);
             }
         }
     }
@@ -690,7 +690,7 @@ void AppController::actionForgetPassword(const DFMEvent &event)
         obj.insert("domain", smbObj.value("domain").toString());
         obj.insert("protocol", DUrl(smbObj.value("id").toString()).scheme());
         obj.insert("server", server);
-        secrectManager->clearPasswordByLoginObj(obj);
+        secretManager->clearPasswordByLoginObj(obj);
     }
     actionUnmount(event);
 }
@@ -739,7 +739,7 @@ void AppController::createGVfSManager()
 {
     networkManager;
     gvfsMountClient;
-    secrectManager;
+    secretManager;
 }
 
 void AppController::createUserShareManager()
