@@ -60,7 +60,12 @@ RESOURCES += \
     resource/theme/theme.qrc
 
 # Automating generation .qm files from .ts files
-system($$PWD/translate_generation.sh)
+
+CONFIG(release, debug|release) {
+    system($$PWD/translate_generation.sh)
+    system($$PWD/translate_ts2desktop.sh)
+}
+
 TRANSLATIONS += $$PWD/translations/$${TARGET}.ts \
                 $$PWD/translations/$${TARGET}_zh_CN.ts
 

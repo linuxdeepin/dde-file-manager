@@ -57,7 +57,7 @@ RESOURCES += \
 # Automating generation .qm files from .ts files
 CONFIG(release, debug|release) {
     system($$PWD/generate_translations.sh)
-#    DEFINES += QT_NO_DEBUG_OUTPUT
+    system($$PWD/translate_ts2desktop.sh)
 }
 
 PREFIX = /usr

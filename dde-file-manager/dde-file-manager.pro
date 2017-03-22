@@ -35,8 +35,11 @@ isEmpty(PREFIX){
     PREFIX = /usr
 }
 
-# Automating generation .qm files from .ts files
-# system($$PWD/desktop/translate_generation.sh)
+
+
+CONFIG(release, debug|release) {
+    system($$PWD/translate_ts2desktop.sh)
+}
 
 CONFIG(debug, debug|release) {
 #    LIBS += -lprofiler
