@@ -122,6 +122,24 @@ QIcon DesktopFileInfo::fileIcon() const
                 }
             }
         }
+    } else {
+        const QString &currentDir = QDir::currentPath();
+
+        QDir::setCurrent(absolutePath());
+
+        QFileInfo fileInfo(iconName.startsWith("~") ? (QDir::homePath() + iconName.mid(1)) : iconName);
+
+        if (!fileInfo.exists())
+            fileInfo.setFile(QUrl::fromUserInput(iconName).toLocalFile());
+
+        if (fileInfo.exists()) {
+            d->icon = QIcon(fileInfo.absoluteFilePath());
+        }
+
+        QDir::setCurrent(currentDir);
+
+        if (!d->icon.isNull() && QPixmap(fileInfo.absoluteFilePath()).isNull())
+            d->icon = QIcon();
     }
 
     if (d->icon.isNull())
