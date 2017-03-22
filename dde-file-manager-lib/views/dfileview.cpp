@@ -28,6 +28,7 @@
 
 #include "shutil/fileutils.h"
 #include "shutil/mimesappsmanager.h"
+#include "shutil/viewstatesmanager.h"
 
 #include "widgets/singleton.h"
 #include "interfaces/dfilemenumanager.h"
@@ -72,7 +73,7 @@ public:
 
     QList<int> columnRoles;
 
-    DFileView::ViewMode defaultViewMode = DFileView::IconMode;
+    const DFileView::ViewMode defaultViewMode = DFileView::IconMode;
     DFileView::ViewMode currentViewMode = DFileView::IconMode;
 
     int horizontalOffset = 0;
@@ -298,9 +299,14 @@ DFileView::ViewMode DFileView::viewMode() const
     return d->currentViewMode;
 }
 
-int DFileView::getSortRoles() const
+QPair<int, Qt::SortOrder> DFileView::getSortRoles() const
 {
-    return model()->sortRole();
+    return QPair<int, Qt::SortOrder>(model()->sortRole(), model()->sortOrder());
+}
+
+void DFileView::setSortRoles(const int &role, const Qt::SortOrder &order)
+{
+    model()->setSortRole(role, order);
 }
 
 bool DFileView::testViewMode(ViewModes modes, DFileView::ViewMode mode) const
@@ -607,10 +613,8 @@ void DFileView::setViewMode(DFileView::ViewMode mode)
 {
     D_D(DFileView);
 
-    if(mode != d->defaultViewMode)
-        d->defaultViewMode = mode;
-
     switchViewMode(mode);
+    emit viewStateChanged();
 }
 
 void DFileView::sortByColumn(int column)
@@ -645,6 +649,7 @@ void DFileView::sort(int column, Qt::SortOrder order)
 
     clearSelection();
     model()->sort();
+    emit viewStateChanged();
 }
 
 QStringList DFileView::nameFilters() const
@@ -776,7 +781,7 @@ void DFileView::wheelEvent(QWheelEvent *event)
         } else {
             decreaseIcon();
         }
-
+        emit viewStateChanged();
         event->accept();
     } else {
         verticalScrollBar()->setSliderPosition(verticalScrollBar()->sliderPosition() - event->angleDelta().y());
@@ -1199,6 +1204,47 @@ void DFileView::onRootUrlDeleted(const DUrl &rootUrl)
 void DFileView::freshView()
 {
     model()->refresh(rootUrl());
+}
+
+void DFileView::loadViewState(const DUrl& url)
+{
+    Q_D(DFileView);
+    ViewState viewState = viewStatesManager->viewstate(url.toString());
+
+    if(viewState.isValid()){
+        switchViewMode(viewState.viewMode);
+        setSortRoles(viewState.sortRole, viewState.sortOrder);
+        if(viewState.viewMode != ListMode)
+            d->statusBar->scalingSlider()->setValue(viewState.iconSize);
+    } else{
+        statusBar()->scalingSlider()->setValue(globalSetting->iconSizeIndex());
+        switchViewMode(d->defaultViewMode);
+    }
+
+    //update list header view property when current view mode is list mode
+    if(d->currentViewMode == ListMode){
+        updateListHeaderViewProperty();
+    }
+}
+
+void DFileView::saveViewState()
+{
+    //filter url that we are not interesting on
+    const DUrl& url = rootUrl();
+    if(url.isSearchFile() || url.isEmpty()
+            || !url.isValid() || url.isComputerFile()){
+        return;
+    }
+
+    ViewState viewState;
+    QPair<int, Qt::SortOrder> roles = getSortRoles();
+    viewState.viewMode = viewMode();
+    viewState.iconSize = statusBar()->scalingSlider()->value();
+    viewState.sortRole = roles.first;
+    viewState.sortOrder = roles.second;
+    viewState.dataValid = true;
+
+    viewStatesManager->saveViewState(url.toString(), viewState);
 }
 
 void DFileView::focusInEvent(QFocusEvent *event)
@@ -1638,6 +1684,10 @@ void DFileView::initConnects()
     connect(fileSignalManager, &FileSignalManager::requestChangeIconSizeBySizeIndex, this, &DFileView::setIconSizeBySizeIndex);
     connect(fileSignalManager, &FileSignalManager::showHiddenOnViewChanged, this, &DFileView::onShowHiddenFileChanged);
     connect(fileSignalManager, &FileSignalManager::requestFreshAllFileView, this, &DFileView::freshView);
+
+    connect(d->statusBar->scalingSlider(), &QSlider::valueChanged, this, &DFileView::viewStateChanged);
+    connect(this, &DFileView::rootUrlChanged, this, &DFileView::loadViewState);
+    connect(this, &DFileView::viewStateChanged, this, &DFileView::saveViewState);
 }
 
 void DFileView::increaseIcon()
@@ -1755,10 +1805,6 @@ bool DFileView::setRootUrl(const DUrl &url)
 
     model()->setSortRole(sort_config.first, (Qt::SortOrder)sort_config.second);
 
-    if (d->currentViewMode == ListMode) {
-        updateListHeaderViewProperty();
-    }
-
     if (info) {
         ViewModes modes = (ViewModes)info->supportViewMode();
 
@@ -1777,24 +1823,11 @@ bool DFileView::setRootUrl(const DUrl &url)
             else
                 fmWindow->getToolBar()->setIconModeButtonEnabled(false);
         }
-
-        if(!testViewMode(modes, d->defaultViewMode)) {
-            if(testViewMode(modes, IconMode)) {
-                switchViewMode(IconMode);
-            } else if(testViewMode(modes, ListMode)) {
-                switchViewMode(ListMode);
-            } else if(testViewMode(modes, ExtendMode)) {
-                switchViewMode(ExtendMode);
-            }
-        } else {
-            switchViewMode(d->defaultViewMode);
-        }
     }
 
     if (fileUrl.isSearchFile()) {
         switchViewMode(ListMode);
     }
-
     emit rootUrlChanged(fileUrl);
 
     const QList<DAbstractFileInfo::SelectionMode> &supportSelectionModes = info->supportSelectionModes();
@@ -1805,7 +1838,6 @@ bool DFileView::setRootUrl(const DUrl &url)
             break;
         }
     }
-
     return true;
 }
 

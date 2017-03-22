@@ -22,6 +22,7 @@
 #include "widgets/commandlinemanager.h"
 #include "dfmsetting.h"
 #include "models/desktopfileinfo.h"
+#include "shutil/viewstatesmanager.h"
 #include <dfmstandardpaths.h>
 
 #include <QGuiApplication>
@@ -273,6 +274,11 @@ void DFMGlobal::initUserShareManager()
 void DFMGlobal::initGlobalSettings()
 {
     globalSetting;
+}
+
+void DFMGlobal::initViewStatesManager()
+{
+    viewStatesManager;
 }
 
 QString DFMGlobal::getUser()

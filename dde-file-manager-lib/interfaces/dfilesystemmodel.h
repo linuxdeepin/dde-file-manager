@@ -106,6 +106,7 @@ public:
     void setFilters(QDir::Filters filters);
 
     Qt::SortOrder sortOrder() const;
+    void setSortOrder(const Qt::SortOrder& order);
     int sortColumn() const;
     int sortRole() const;
     QStringList nameFilters() const;

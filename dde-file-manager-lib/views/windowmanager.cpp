@@ -147,7 +147,7 @@ void WindowManager::showNewWindow(const DUrl &url, const bool& isNewWindow)
 
         window->moveCenter(currentScreenGeometry.center());
     }
-    window->setFileViewMode(m_fmStateManager->fmState()->viewMode());
+//    window->setFileViewMode(m_fmStateManager->fmState()->viewMode());
 
     qApp->setActiveWindow(window);
 }

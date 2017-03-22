@@ -126,6 +126,9 @@ void FileManagerApp::initApp()
     /*init controllers for different scheme*/
     fileService->initHandlersByCreators();
 
+    /*init viewStatesManager*/
+    DFMGlobal::initViewStatesManager();
+
     QThreadPool::globalInstance()->setMaxThreadCount(MAX_THREAD_COUNT);
 }
 

@@ -20,6 +20,9 @@
 #include <QDebug>
 #include <QDesktopServices>
 #include <QtMath>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <QJsonArray>
 
 #include <sys/vfs.h>
 
@@ -874,6 +877,78 @@ QString FileUtils::getMimeTypeByGIO(const QString &uri)
     g_object_unref(file);
     g_object_unref(fileInfo);
     return mimeType;
+}
+
+QJsonObject FileUtils::getJsonObjectFromFile(const QString &filePath)
+{
+    QJsonObject obj;
+    QJsonDocument doc;
+    if(!QFile::exists(filePath))
+        return obj;
+
+    QFile file(filePath);
+
+    if(!file.open(QIODevice::ReadOnly | QIODevice::Text)){
+        qDebug () << "cannot read file " << filePath << ":" << file.errorString();
+        file.close();
+        return obj;
+    }
+    QByteArray data = file.readAll();
+    file.close();
+
+    QJsonParseError *jsError = NULL;
+    doc = QJsonDocument::fromJson(data, jsError);
+
+    if(jsError){
+        qDebug () << "cache data pase error:" << jsError->errorString();
+        return obj;
+    }
+
+    obj = doc.object();
+    return obj;
+}
+
+QJsonArray FileUtils::getJsonArrayFromFile(const QString &filePath)
+{
+    QJsonArray array;
+    QJsonDocument doc;
+    if(!QFile::exists(filePath))
+        return array;
+
+    QFile file(filePath);
+
+    if(!file.open(QIODevice::ReadOnly | QIODevice::Text)){
+        qDebug () << "cannot read file " << filePath << ":" << file.errorString();
+        file.close();
+        return array;
+    }
+    QByteArray data = file.readAll();
+    file.close();
+
+    QJsonParseError *jsError = NULL;
+    doc = QJsonDocument::fromJson(data, jsError);
+
+    if(jsError){
+        qDebug () << "cache data pase error:" << jsError->errorString();
+        return array;
+    }
+
+    array = doc.array();
+    return array;
+}
+
+bool FileUtils::writeJsonObjectFile(const QString &filePath, const QJsonObject &obj)
+{
+    QJsonDocument doc;
+    doc.setObject(obj);
+    return writeTextFile(filePath, doc.toJson().data());
+}
+
+bool FileUtils::writeJsonnArrayFile(const QString &filePath, const QJsonArray &array)
+{
+    QJsonDocument doc;
+    doc.setArray(array);
+    return writeTextFile(filePath, doc.toJson().data());
 }
 
 void FileUtils::mountAVFS()
