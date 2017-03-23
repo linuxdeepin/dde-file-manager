@@ -5,7 +5,7 @@
         <name>desktop</name>
         <message>
             <location filename="Desktop Entry]Name" line="0"/>
-            <source>usb-device-formatter</source>
+            <source>USB Device Formatter</source>
             <translation type="unfinished"/>
         </message>
     </context>
