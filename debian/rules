@@ -12,14 +12,18 @@ override_dh_auto_configure:
 
 ifeq ($(DEB_BUILD_ARCH), mipsel)
 override_dh_install:
+	sed -i '/dde-file-manager-xdg-autostart.desktop/d' debian/dde-file-manager.install
 	dh_install --
-	mkdir -p debian/libdde-file-manager/usr/lib/$(DEB_HOST_MULTIARCH)/dde-file-manager/plugins
-	cp -r debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)/dde-file-manager/plugins/*  debian/libdde-file-manager/usr/lib/$(DEB_HOST_MULTIARCH)/dde-file-manager/plugins/
 endif
 
 ifeq ($(DEB_BUILD_ARCH), mips64el)
 override_dh_install:
+	sed -i '/dde-file-manager-xdg-autostart.desktop/d' debian/dde-file-manager.install
 	dh_install --
-	mkdir -p debian/libdde-file-manager/usr/lib/$(DEB_HOST_MULTIARCH)/dde-file-manager/plugins
-	cp -r debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)/dde-file-manager/plugins/*  debian/libdde-file-manager/usr/lib/$(DEB_HOST_MULTIARCH)/dde-file-manager/plugins/
+endif
+
+ifeq ($(DEB_BUILD_ARCH), sw_64)
+override_dh_install:
+	sed -i '/dde-file-manager-xdg-autostart.desktop/d' debian/dde-file-manager.install
+	dh_install --
 endif
