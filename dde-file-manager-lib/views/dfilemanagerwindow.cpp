@@ -27,6 +27,7 @@
 #include "interfaces/dfmsetting.h"
 #include "gvfs/networkmanager.h"
 #include "dde-file-manager/singleapplication.h"
+#include "widgets/commandlinemanager.h"
 
 #include "xutil.h"
 #include "utils.h"
@@ -579,7 +580,30 @@ void DFileManagerWindow::initUI()
     setMinimumSize(800, 420);
     initCentralWidget();
     setCentralWidget(d->centralWidget);
+
+
+
     setStyleSheet(getQssFromFile(":/qss/qss/filemanager.qss"));
+
+    if (CommandLineManager::instance()->isSet("r")){
+        d->titleFrame->setStyleSheet("\
+                                 QFrame#TitleBar{\
+                                     background-color:  #B8B8B8;\
+                                     border-bottom: 1px solid rgba(0, 0, 0, 0.1);\
+                                 }\
+                                 QFrame#ToolBar{\
+                                     background-color:  #B8B8B8;\
+                                 }\
+                                 \
+                                 QFrame#AddressToolBar{\
+                                     background-color: #B8B8B8;\
+                                 }\
+                                 \
+                                 QFrame#ControllerToolBar{\
+                                     background-color: #B8B8B8;\
+                                 }");
+    }
+
 }
 
 void DFileManagerWindow::initTitleFrame()
