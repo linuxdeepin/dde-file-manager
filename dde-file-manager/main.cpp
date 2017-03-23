@@ -141,6 +141,10 @@ int main(int argc, char *argv[])
         return app.exec();
     }
 
+    if (CommandLineManager::instance()->isSet("h") || CommandLineManager::instance()->isSet("v")) {
+        return app.exec();
+    }
+
     DUrlList commandlineUrlList;
     foreach (QString path, CommandLineManager::instance()->positionalArguments()) {
         DUrl url = DUrl::fromUserInput(path);
