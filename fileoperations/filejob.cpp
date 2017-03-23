@@ -259,7 +259,7 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
             continue;
         }
         QFileInfo srcInfo(srcPath);
-        if (!srcInfo.exists()){
+        if (!srcInfo.exists() && !srcInfo.isSymLink()){
             continue;
         }
         QString targetPath;
@@ -463,6 +463,11 @@ void FileJob::doTrashRestore(const QString &srcFilePath, const QString &tarFileP
         QFileInfo srcInfo(srcFilePath);
 
         if (srcInfo.isSymLink()){
+            DUrlList urls;
+            DUrl url =DUrl::fromLocalFile(srcFilePath);
+            urls << url;
+//            qDebug() << srcInfo.symLinkTarget() << DUrl::fromLocalFile(srcInfo.symLinkTarget()).parentUrl() << tarFilePath;
+            doMove(urls, DUrl::fromLocalFile(_tarFilePath).parentUrl());
 
         }else if (srcInfo.isDir()){
             if(copyDir(srcFilePath, tarDir, true, &_tarFilePath))
@@ -1563,7 +1568,7 @@ bool FileJob::handleSymlinkFile(const QString &srcFile, const QString &tarDir, Q
                 QFile targetFile(fromInfo.symLinkTarget());
                 bool ok = targetFile.link(m_tarPath);
                 if (ok){
-                    if (m_jobType == Move || m_jobType == Trash){
+                    if (m_jobType == Move || m_jobType == Trash || m_jobType == Restore){
                         QFile from(srcFile);
                         from.remove();
                     }
@@ -1627,6 +1632,7 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
                 if (m_isReplaced){
                     m_srcPath = m_tarPath + "/" + toInfo.fileName();
                 }
+
                 m_status = Run;
                 break;
             }

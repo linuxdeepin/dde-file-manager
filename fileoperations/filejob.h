@@ -163,7 +163,7 @@ private:
     bool m_applyToAll  = false;
     bool m_isReplaced = false;
     bool m_isSkip = false;
-    bool m_isCoExisted = false;
+    bool m_isCoExisted = true;
     bool m_isAborted = false;
     JobType m_jobType;
     int m_windowId = -1;
