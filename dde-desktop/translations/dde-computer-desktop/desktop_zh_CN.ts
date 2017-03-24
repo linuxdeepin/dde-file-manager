@@ -11,7 +11,7 @@
         </message>
         <message>
             <location filename="Desktop Entry]Comment" line="0"/>
-            <source>Show storage of this computer.</source>
+            <source>Show basic info of the computer.</source>
             <translation type="unfinished"/>
         </message>
     </context>

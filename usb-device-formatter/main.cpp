@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
     //Check if exists path
     const QString path = CMDManager::instance()->getPath();
     if(path.isEmpty() || !QFile::exists(path)){
-        QString message = QObject::tr("Device does not exit");
+        QString message = QObject::tr("Device does not exist");
         MessageDialog d(message, 0);
         d.exec();
         return 0;
@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
     //Check if is a removable device
     PartMan::Partition p = PartMan::Partition::getPartitionByDevicePath(path);
     if(!p.getIsRemovable()){
-        QString message = QObject::tr("Cannot format native device");
+        QString message = QObject::tr("Cannot format local device");
         MessageDialog d(message, 0);
         d.exec();
         return 0;

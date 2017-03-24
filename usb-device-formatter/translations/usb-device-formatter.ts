@@ -36,7 +36,7 @@
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="130"/>
-        <source>This operation will clear all datas from your device.</source>
+        <source>This operation will clear all data from your device.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -88,7 +88,7 @@
     <name>MessageDialog</name>
     <message>
         <location filename="../dialogs/messagedialog.cpp" line="19"/>
-        <source>Ok</source>
+        <source>OK</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -96,12 +96,12 @@
     <name>QObject</name>
     <message>
         <location filename="../main.cpp" line="71"/>
-        <source>Device does not exit</source>
+        <source>Device does not exist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../main.cpp" line="80"/>
-        <source>Cannot format native device</source>
+        <source>Cannot format local device</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -109,20 +109,7 @@
     <name>WarnPage</name>
     <message>
         <location filename="../view/warnpage.cpp" line="19"/>
-        <source>Formating operation will clear all datas from your disk, are you sure to continue?This option can not be restored.</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>main</name>
-    <message>
-        <location filename="../app/cmdmanager.cpp" line="48"/>
-        <source>Enable model mode.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../app/cmdmanager.cpp" line="49"/>
-        <source>window ID</source>
+        <source>Formating operation will clear all data from your disk, are you sure to continue? This option can not be restored.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

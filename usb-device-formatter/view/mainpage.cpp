@@ -127,7 +127,7 @@ void MainPage::initUI()
     }
     mainLayout->addLayout(optGridLayout);
 
-    QString warmMsg = tr("This operation will clear all datas from your device.");
+    QString warmMsg = tr("This operation will clear all data from your device.");
     m_warnLabel = new QLabel(this);
     m_warnLabel->setText(warmMsg);
     m_warnLabel->setObjectName("WarnMsg");
