@@ -13,7 +13,7 @@
     <name>FormatingPage</name>
     <message>
         <location filename="../view/formatingpage.cpp" line="19"/>
-        <source>Formating,please wait for a minute...</source>
+        <source>Formating, please wait for a minute...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

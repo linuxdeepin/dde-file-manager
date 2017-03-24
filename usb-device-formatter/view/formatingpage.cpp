@@ -16,7 +16,7 @@ void FormatingPage::initUI()
     m_progressBox = new ProgressBox(this);
     m_progressBox->setFixedSize(128,128);
     QLabel* formatingLabel = new QLabel(this);
-    QString formatingText = tr("Formating,please wait for a minute...");
+    QString formatingText = tr("Formating, please wait for a minute...");
     formatingLabel->setText(formatingText);
     formatingLabel->setObjectName("StatusLabel");
 

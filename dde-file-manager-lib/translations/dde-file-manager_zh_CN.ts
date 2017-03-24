@@ -211,7 +211,7 @@
     </message>
     <message>
         <location filename="../views/dstatusbar.cpp" line="40"/>
-        <source>%1 files selected(%2)</source>
+        <source>%1 files selected (%2)</source>
         <translation>选中%1个文件（%2）</translation>
     </message>
     <message>
