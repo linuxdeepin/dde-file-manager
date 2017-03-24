@@ -51,6 +51,7 @@
 #include "../presenter/display.h"
 #include "../presenter/dfmsocketinterface.h"
 #include "../desktop.h"
+#include "../dbus/dbusdock.h"
 #include "../config/config.h"
 
 #include "canvasviewhelper.h"
@@ -1184,6 +1185,8 @@ bool CanvasGridView::edit(const QModelIndex &index, QAbstractItemView::EditTrigg
 
 void CanvasGridView::initUI()
 {
+    d->dbusDock = new DBusDock(this);
+
     setAttribute(Qt::WA_TranslucentBackground);
     viewport()->setAttribute(Qt::WA_TranslucentBackground);
     Xcb::XcbMisc::instance().set_window_type(winId(), Xcb::XcbMisc::Desktop);
@@ -1254,12 +1257,13 @@ static inline QRect getValidNewGeometry(const QRect &geometry, const QRect &oldG
     return oldGeometry;
 }
 
-
 void CanvasGridView::updateGeometry(const QRect &geometry)
 {
     auto newGeometry =  getValidNewGeometry(geometry, this->geometry());
     qDebug() << "set newGeometry" << newGeometry;
     setGeometry(qApp->primaryScreen()->geometry());
+
+
     d->canvasRect = newGeometry;
     updateCanvas();
     repaint();
@@ -1427,9 +1431,24 @@ void CanvasGridView::initConnection()
             Presenter::instance(), &Presenter::OnIconLevelChanged);
 
 
-//    connect(selectionModel(), &QItemSelectionModel::selectionChanged,
-//    this, [ = ](const QItemSelection & /*selected*/, const QItemSelection & /*deselected*/) {
-//    });
+    connect(d->dbusDock, &DBusDock::HideModeChanged,
+    this, [ = ]() {
+        if (3 == d->dbusDock->hideMode() || 1 == d->dbusDock->hideMode() ) {
+            this->updateCanvas();
+        }
+    });
+    connect(d->dbusDock, &DBusDock::PositionChanged,
+    this, [ = ]() {
+        if (3 == d->dbusDock->hideMode()) {
+            this->updateCanvas();
+        }
+    });
+    connect(d->dbusDock, &DBusDock::IconSizeChanged,
+    this, [ = ]() {
+        if (3 == d->dbusDock->hideMode()) {
+            this->updateCanvas();
+        }
+    });
 }
 
 
@@ -1445,10 +1464,41 @@ void CanvasGridView::updateCanvas()
     geometryMargins.setTop(inRect.top() - outRect.top());
     geometryMargins.setBottom(outRect.bottom() - inRect.bottom());
 
-    d->updateCanvasSize(d->canvasRect.size(), geometryMargins, itemSize);
+    if (3 == d->dbusDock->hideMode()) {
+        auto margin = 80;
+        auto iconSize = d->dbusDock->iconSize();
+        if (iconSize <= 30) {
+            margin = 50;
+        } else if (iconSize <= 36) {
+            margin = 60;
+        }
+
+        QMargins dockMargin = QMargins(0, 0, 0, 0);
+        auto position = d->dbusDock->position();
+        switch (position) {
+        case 0:
+            dockMargin.setTop(margin);
+            break;
+        case 1:
+            dockMargin.setRight(margin);
+            break;
+        case 2:
+            dockMargin.setBottom(margin);
+            break;
+        case 3:
+            dockMargin.setLeft(margin);
+            break;
+        }
+        d->canvasRect = outRect.marginsRemoved(dockMargin);
+        geometryMargins = dockMargin;
+    } else {
+        d->canvasRect = inRect;
+    }
+    d->updateCanvasSize(outRect.size(), d->canvasRect.size(), geometryMargins, itemSize);
     GridManager::instance()->updateGridSize(d->colCount, d->rowCount);
 
-    repaint();
+    updateEditorGeometries();
+    update();
 }
 
 void CanvasGridView::increaseIcon()
