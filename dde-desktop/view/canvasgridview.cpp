@@ -494,7 +494,9 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
         case Qt::Key_Return:
         case Qt::Key_Enter:
             if (!itemDelegate()->editingIndex().isValid()) {
-//  TODO:              appController->actionOpen(fmevent);
+                for (auto const &value : selectUrls) {
+                    DFileService::instance()->openFile(value);
+                }
                 return;
             }
             break;
