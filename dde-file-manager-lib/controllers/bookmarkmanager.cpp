@@ -13,6 +13,8 @@
 
 #include <stdlib.h>
 
+#include "shutil/fileutils.h"
+
 
 BookMarkManager::BookMarkManager(QObject *parent)
     : DAbstractFileController(parent)
@@ -29,6 +31,16 @@ BookMarkManager::~BookMarkManager()
 
 void BookMarkManager::load()
 {
+    //Migration for old config files, and rmove that codes for further
+    QString oldFilePath = QString("%1/%2").arg(QDir().homePath(), ".cache/dde-file-manager/bookmark.json");
+    if(QFile::exists(oldFilePath)){
+        QString oldData = FileUtils::getFileContent(oldFilePath);
+        if(!oldData.isEmpty()){
+            FileUtils::writeTextFile(cachePath(), oldData);
+            QFile(oldFilePath).remove();
+        }
+    }
+
     //TODO: check permission and existence of the path
     QString configPath = cachePath();
     QFile file(configPath);
@@ -67,7 +79,7 @@ QList<BookMarkPointer> BookMarkManager::getBookmarks()
 
 QString BookMarkManager::cachePath()
 {
-    return getCachePath("bookmark");
+    return getConfigPath("bookmark");
 }
 
 void BookMarkManager::loadJson(const QJsonObject &json)

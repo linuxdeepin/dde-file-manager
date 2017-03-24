@@ -1,6 +1,7 @@
 #include "searchhistroymanager.h"
 
 #include "models/searchhistory.h"
+#include "shutil/fileutils.h"
 
 #include <QList>
 #include <QJsonObject>
@@ -10,6 +11,7 @@
 #include <QJsonArray>
 #include <QByteArray>
 #include <QDateTime>
+#include <QDir>
 
 SearchHistroyManager::SearchHistroyManager(QObject *parent)
     : QObject(parent)
@@ -26,6 +28,16 @@ SearchHistroyManager::~SearchHistroyManager()
 
 void SearchHistroyManager::load()
 {
+    //Migration for old config files, and rmove that codes for further
+    QString oldFilePath = QString("%1/%2").arg(QDir().homePath(), ".cache/dde-file-manager/searchhistory.json");
+    if(QFile::exists(oldFilePath)){
+        QString oldData = FileUtils::getFileContent(oldFilePath);
+        if(!oldData.isEmpty()){
+            FileUtils::writeTextFile(getSearchHistroyCachePath(), oldData);
+            QFile(oldFilePath).remove();
+        }
+    }
+
     //TODO: check permission and existence of the path
     QString filePath = getSearchHistroyCachePath();
     QFile file(filePath);
@@ -70,7 +82,7 @@ QStringList SearchHistroyManager::toStringList()
 
 QString SearchHistroyManager::getSearchHistroyCachePath()
 {
-    return getCachePath("searchhistory");
+    return getConfigPath("searchhistory");
 }
 
 void SearchHistroyManager::loadJson(const QJsonObject &json)

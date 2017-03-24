@@ -5,6 +5,7 @@
 #include "app/define.h"
 
 #include "models/recentfileinfo.h"
+#include "shutil/fileutils.h"
 
 #include "widgets/singleton.h"
 
@@ -46,6 +47,16 @@ RecentHistoryManager::~RecentHistoryManager()
 
 void RecentHistoryManager::load()
 {
+    //Migration for old config files, and rmove that codes for further
+    QString oldFilePath = QString("%1/%2").arg(QDir().homePath(), ".cache/dde-file-manager/recentHistory.json");
+    if(QFile::exists(oldFilePath)){
+        QString oldData = FileUtils::getFileContent(oldFilePath);
+        if(!oldData.isEmpty()){
+            FileUtils::writeTextFile(cachePath(), oldData);
+            QFile(oldFilePath).remove();
+        }
+    }
+
     //TODO: check permission and existence of the path
     QString filePath = cachePath();
     QFile file(filePath);
@@ -128,7 +139,7 @@ const DAbstractFileInfoPointer RecentHistoryManager::createFileInfo(const DUrl &
 
 QString RecentHistoryManager::cachePath()
 {
-    return getCachePath("recentHistory");
+    return getConfigPath("recenthistory");
 }
 
 void RecentHistoryManager::loadJson(const QJsonObject &json)

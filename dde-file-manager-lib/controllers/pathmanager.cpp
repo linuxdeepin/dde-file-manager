@@ -105,7 +105,7 @@ QString PathManager::getSystemPathIconNameByPath(const QString &path)
 QString PathManager::getSystemCachePath()
 {
 //    return QString("%1/%2").arg(StandardPath::getCachePath(), "systempath.json");
-    return getCachePath("systempath");
+    return getConfigPath("systempath");
 }
 
 

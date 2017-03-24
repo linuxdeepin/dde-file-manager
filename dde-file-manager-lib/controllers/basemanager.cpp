@@ -23,9 +23,14 @@ void BaseManager::save()
 
 }
 
-QString BaseManager::getCachePath(const QString &key)
+QString BaseManager::getCachePath(const QString &fileBaseName)
 {
-    return QString("%1/%2").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::CachePath), QString("%1.json").arg(key));
+    return QString("%1/%2").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::CachePath), QString("%1.json").arg(fileBaseName));
+}
+
+QString BaseManager::getConfigPath(const QString &fileBaseName)
+{
+    return QString("%1/%2").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::ApplicationConfigPath), QString("%1.json").arg(fileBaseName));
 }
 
 void BaseManager::writeCacheToFile(const QString &path, const QString &content)
