@@ -671,7 +671,7 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::SetAsWallpaper] = QObject::tr("Set as wallpaper");
     actionKeys[MenuAction::ForgetPassword] = QObject::tr("Log out and unmount");
     actionKeys[MenuAction::DeletionDate] = QObject::tr("Time deleted");
-    actionKeys[MenuAction::SourcePath] = QObject::tr("Source path");
+    actionKeys[MenuAction::SourcePath] = QObject::tr("Original path");
     actionKeys[MenuAction::AbsolutePath] = QObject::tr("Path");
     actionKeys[MenuAction::Share] = QObject::tr("Share folder");
     actionKeys[MenuAction::UnShare] = QObject::tr("Cancel sharing");

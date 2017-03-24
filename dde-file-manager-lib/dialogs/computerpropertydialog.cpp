@@ -49,7 +49,7 @@ void ComputerPropertyDialog::initUI()
 
     QStringList msgsTitle;
     msgsTitle << tr("Computer Name")
-         << tr("Brand")
+         << tr("Version")
          << tr("Type")
          << tr("Processor")
          << tr("Memory")

@@ -13,30 +13,30 @@ CMDManager *CMDManager::instance()
 void CMDManager::process(const QApplication &app)
 {
     init();
-    parser.process(app);
+    m_parser.process(app);
 }
 
 void CMDManager::init()
 {
-    parser.addOption(m_modelModeOpt);
-    parser.setApplicationDescription("Usb Device Formatter");
-    parser.addHelpOption();
-    parser.addVersionOption();
+    m_parser.addOption(m_modelModeOpt);
+    m_parser.setApplicationDescription("Usb Device Formatter");
+    m_parser.addHelpOption();
+    m_parser.addVersionOption();
 }
 
 bool CMDManager::isSet(const QString &name)
 {
-    return parser.isSet(name);
+    return m_parser.isSet(name);
 }
 
-const QString CMDManager::getPath()
+QString CMDManager::getPath()
 {
-    return parser.positionalArguments().at(0);
+    return m_parser.positionalArguments().at(0);
 }
 
-const int CMDManager::getWinId()
+int CMDManager::getWinId()
 {
-    QString winId = parser.value(m_modelModeOpt);
+    QString winId = m_parser.value(m_modelModeOpt);
     if(winId.isEmpty())
         return -1;
     return winId.toInt();
@@ -45,7 +45,7 @@ const int CMDManager::getWinId()
 CMDManager::CMDManager(QObject *parent) :
     QObject(parent),
     m_modelModeOpt(QStringList() << "m" << "model-mode",
-                   QCoreApplication::translate("main", "Enable model mode."),
-                   QCoreApplication::translate("main", "window ID"))
+                   "Enable model mode.",
+                   "window ID")
 {
 }

@@ -191,10 +191,10 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget* p
                            &~ Qt::WindowSystemMenuHint);
     QString basicInfo = tr("Basic info");
     QString openWith = tr("Open with");
-    QString shareManager = tr("Share manager");
+    QString shareManager = tr("Share Management");
     initUI();
     QString query = m_url.query();
-    UDiskDeviceInfoPointer diskInfo = deviceListener->getDevice(m_url.query());
+    UDiskDeviceInfoPointer diskInfo = deviceListener->getDevice(query);
     if (!diskInfo){
         diskInfo = deviceListener->getDeviceByPath(m_url.path());
     }

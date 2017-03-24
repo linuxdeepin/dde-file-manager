@@ -16,7 +16,7 @@ MessageDialog::MessageDialog(const QString &message, QWidget *parent):
 void MessageDialog::initUI()
 {
     setIcon(QIcon(":/dialog/dialog_warning_64.png"));
-    addButton(tr("Ok"), true, DDialog::ButtonRecommend);
+    addButton(tr("OK"), true, DDialog::ButtonRecommend);
     setTitle(m_msg);
 }
 

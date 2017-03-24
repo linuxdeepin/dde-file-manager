@@ -1,6 +1,6 @@
 [Desktop Entry]
 Categories=System;
-Comment=Show storage of this computer.
+Comment=Show basic info of the computer.
 Exec=gvfs-open computer:///
 GenericName=Computer
 Icon=computer

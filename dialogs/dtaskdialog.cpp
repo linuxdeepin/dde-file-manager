@@ -207,7 +207,7 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data){
             m_animatePad->startAnimation();
         } else if(status == "conflict"){
             m_animatePad->stopAnimation();
-            msg1 = QString(tr("Target folder already exists file named %1")).arg(file);
+            msg1 = QString(tr("File named %1 already exists in target folder")).arg(file);
             msg2 = QString(tr("Original path %1 target path %2")).arg(srcPath, targetPath);
         } else{
             m_animatePad->stopAnimation();

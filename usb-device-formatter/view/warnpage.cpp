@@ -16,7 +16,7 @@ void WarnPage::initUI()
     warnIconLabel->setPixmap(QPixmap(":/icoms/icons/info.png"));
     QLabel* warnTextLabel = new QLabel(this);
     warnTextLabel->setWordWrap(true);
-    QString warnText = tr("Formating operation will clear all datas from your disk, are you sure to continue?This option can not be restored.");
+    QString warnText = tr("Formating operation will clear all data from your disk, are you sure to continue? This option can not be restored.");
     warnTextLabel->setText(warnText);
     warnTextLabel->setWordWrap(true);
     warnTextLabel->setObjectName("StatusLabel");

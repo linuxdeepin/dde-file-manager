@@ -34,9 +34,9 @@ void DStatusBar::initUI()
     m_counted = tr("%1 items");
     m_OnlyOneItemSelected = tr("%1 item selected");
     m_selected = tr("%1 items selected");
-    m_selectOnlyOneFolder = tr("%1 folder selected(contains %2)");
-    m_selectFolders = tr("%1 folders selected(contains %2)");
-    m_selectOnlyOneFile = tr("%1 file selected(%2)");
+    m_selectOnlyOneFolder = tr("%1 folder selected (contains %2)");
+    m_selectFolders = tr("%1 folders selected (contains %2)");
+    m_selectOnlyOneFile = tr("%1 file selected (%2)");
     m_selectFiles = tr("%1 files selected(%2)");
     m_selectedNetworkOnlyOneFolder = tr("%1 folder selected");
     m_layout = new QHBoxLayout(this);
