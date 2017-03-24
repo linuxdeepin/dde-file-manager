@@ -6,6 +6,7 @@
 #include "interfaces/dfmstandardpaths.h"
 
 #include "widgets/singleton.h"
+#include "shutil/fileutils.h"
 
 #include <QDebug>
 #include <QJsonDocument>
@@ -116,7 +117,7 @@ QJsonObject SecretManager::getLoginDatas()
 
 QString SecretManager::cachePath()
 {
-    return QString("%1/samba.json").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::CachePath));
+    return QString("%1/samba.json").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::ApplicationConfigPath));
 }
 
 void SecretManager::cacheSambaLoginData(const QJsonObject &obj)
@@ -128,6 +129,16 @@ void SecretManager::cacheSambaLoginData(const QJsonObject &obj)
 
 void SecretManager::loadCache()
 {
+    //Migration for old config files, and rmove that codes for further
+    QString oldFilePath = QString("%1/%2").arg(QDir().homePath(), ".cache/dde-file-manager/samba.json");
+    if(QFile::exists(oldFilePath)){
+        QString oldData = FileUtils::getFileContent(oldFilePath);
+        if(!oldData.isEmpty()){
+            FileUtils::writeTextFile(cachePath(), oldData);
+            QFile(oldFilePath).remove();
+        }
+    }
+
     QFile file(cachePath());
     if (!file.open(QIODevice::ReadOnly))
     {

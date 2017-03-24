@@ -4,9 +4,12 @@
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
+#include "shutil/fileutils.h"
 
 #include <QJsonParseError>
 #include <QJsonObject>
+#include <QFile>
+#include <QDir>
 
 QMap<DUrl, QPair<int, int>> FMStateManager::SortStates;
 
@@ -32,17 +35,27 @@ void FMStateManager::initConnect()
 QString FMStateManager::cacheFilePath()
 {
 //    return QString("%1/%2").arg(StandardPath::getCachePath(), "FMState.json");
-    return getCachePath("FMState");
+    return getConfigPath("fmstate");
 }
 
 QString FMStateManager::sortCacheFilePath()
 {
 //    return QString("%1/%2").arg(StandardPath::getCachePath(), "sort.json");
-    return getCachePath("sort");
+    return getConfigPath("sort");
 }
 
 void FMStateManager::loadCache()
 {
+    //Migration for old config files, and rmove that codes for further
+    QString oldFilePath = QString("%1/%2").arg(QDir().homePath(), ".cache/dde-file-manager/FMState.json");
+    if(QFile::exists(oldFilePath)){
+        QString oldData = FileUtils::getFileContent(oldFilePath);
+        if(!oldData.isEmpty()){
+            FileUtils::writeTextFile(cacheFilePath(), oldData);
+            QFile(oldFilePath).remove();
+        }
+    }
+
     QString cache = readCacheFromFile(cacheFilePath());
     if (!cache.isEmpty()){
         QObjectHelper::json2qobject(cache, m_fmState);
@@ -59,6 +72,16 @@ void FMStateManager::saveCache()
 
 void FMStateManager::loadSortCache()
 {
+    //Migration for old config files, and rmove that codes for further
+    QString oldFilePath = QString("%1/%2").arg(QDir().homePath(), ".cache/dde-file-manager/sort.json");
+    if(QFile::exists(oldFilePath)){
+        QString oldData = FileUtils::getFileContent(oldFilePath);
+        if(!oldData.isEmpty()){
+            FileUtils::writeTextFile(sortCacheFilePath(), oldData);
+            QFile(oldFilePath).remove();
+        }
+    }
+
     QString cache = readCacheFromFile(sortCacheFilePath());
     if (!cache.isEmpty()){
         QJsonParseError error;

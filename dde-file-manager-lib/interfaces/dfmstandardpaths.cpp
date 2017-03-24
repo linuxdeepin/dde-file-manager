@@ -96,8 +96,8 @@ QString DFMStandardPaths::getConfigPath()
 {
     QString projectName = QMAKE_TARGET;
     QDir::home().mkpath(".config");
-    QDir::home().mkpath(QString("%1/%2/").arg(".config", projectName));
-    QString defaultPath = QString("%1/%2/%3").arg(QDir::homePath(), ".config", projectName);
+    QDir::home().mkpath(QString("%1/deepin/%2/").arg(".config", projectName));
+    QString defaultPath = QString("%1/%2/deepin/%3").arg(QDir::homePath(), ".config", projectName);
     return defaultPath;
 }
 
@@ -105,8 +105,8 @@ QString DFMStandardPaths::getCachePath()
 {
     QString projectName = qApp->applicationName();
     QDir::home().mkpath(".cache");
-    QDir::home().mkpath(QString("%1/%2/").arg(".cache", projectName));
-    QString defaultPath = QString("%1/%2/%3").arg(QDir::homePath(), ".cache", projectName);
+    QDir::home().mkpath(QString("%1/deepin/%2/").arg(".cache", projectName));
+    QString defaultPath = QString("%1/%2/deepin/%3").arg(QDir::homePath(), ".cache", projectName);
     return defaultPath;
 }
 

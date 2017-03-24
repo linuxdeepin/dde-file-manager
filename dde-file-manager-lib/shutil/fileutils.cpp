@@ -756,6 +756,8 @@ QString FileUtils::getFileContent(const QString &file)
     {
         fileContent = QString(f.readAll());
         f.close();
+    } else {
+        qDebug () << "Could not read file " << file << ":" << f.errorString();
     }
     return fileContent;
 }
@@ -768,6 +770,8 @@ bool FileUtils::writeTextFile(QString filePath, QString content)
         in << content << endl;
         file.close();
         return true;
+    } else {
+        qDebug () << "Failed to write content to file " << filePath << ":" << file.errorString();
     }
     return false;
 }
