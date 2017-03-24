@@ -62,8 +62,10 @@ void ComputerPropertyDialog::initUI()
         QLabel* keyLabel = new QLabel(key,this);
         keyLabel->setObjectName("KeyLabel");
         QLabel* valLabel = new QLabel(datas.value(key), this);
+        valLabel->setTextFormat(Qt::PlainText);
         valLabel->setObjectName("ValLabel");
         valLabel->setWordWrap(true);
+        valLabel->setFixedWidth(200);
 
         gridLayout->addWidget(keyLabel,row, 0, Qt::AlignRight|Qt::AlignTop);
         gridLayout->addWidget(valLabel,row, 1, Qt::AlignLeft|Qt::AlignTop);
@@ -110,7 +112,7 @@ QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList& da
 {
     QHash<QString, QString> datas;
     datas.insert(data.at(0),getComputerName());
-    datas.insert(data.at(1),getBrand());
+    datas.insert(data.at(1),getVersion());
     datas.insert(data.at(2),getArch());
     datas.insert(data.at(3),getProcessor());
     datas.insert(data.at(4),getMemory());
@@ -134,7 +136,7 @@ QString ComputerPropertyDialog::getComputerName()
     return result.trimmed();
 }
 
-QString ComputerPropertyDialog::getBrand()
+QString ComputerPropertyDialog::getVersion()
 {
     QString cmd = "cat";
     QStringList args;
@@ -142,26 +144,32 @@ QString ComputerPropertyDialog::getBrand()
     QProcess p;
     p.start(cmd, args);
     p.waitForFinished(-1);
-    QString result = "deepin ";
-    QString local = QLocale::system().name();
+
+    QMap<QString, QString> msgMap;
     while(p.canReadLine()){
         QString str = p.readLine();
+        if(!str.contains("="))
+            continue;
+
         str = str.trimmed();
-        if(str.contains("Version")){
-            result = result + str.split("=").last() + " ";
-        }
+        QStringList vals = str.split("=");
 
-        if(local == "zh_CN"){
-            if(str.contains("Type[zh_CN]")){
-                result = result + str.split("=").last() + " ";
-            }
-        } else{
-            if(str.contains("Type")){
-                result = result + str.split("=").last() + " ";
-            }
-        }
-
+        msgMap.insert(vals.first(), vals.last());
     }
+
+    QString result;
+
+    QString companyName = "deepin";
+    QString version = msgMap.value("Version");
+    QString type;
+
+    QString local = QLocale::system().name();
+    if(msgMap.contains(QString("Type[%1]").arg(local)))
+        type = msgMap.value(QString("Type[%1]").arg(local));
+    else
+        type = msgMap.value("Type");
+
+    result = result + QString("%1 %2 %3").arg(companyName, version, type);
     return result.trimmed();
 }
 
@@ -185,26 +193,27 @@ QString ComputerPropertyDialog::getProcessor()
     p.start(cmd, args);
     p.waitForFinished(-1);
     QString result;
+
+    QMap<QString, QString> msgMap;
     while (p.canReadLine()) {
-        result = p.readLine();
-        if(result.contains("Model name:")){
-            result.remove("Model name:");
-            QStringList datas = result.split(" ");
-            result = "";
-            for(int i = 0; i < datas.count(); i++){
-                if(datas.at(i) != ""){
-                    result += datas.at(i) + " ";
-                }
-            }
-            break;
+        QString str = p.readLine();
+        QStringList vals = str.split(":");
+        if(vals.first() == "Model name"){
+            QString val = vals.last();
+            msgMap.insert(vals.first(), val.trimmed());
         }
     }
+
+    QString modelName = msgMap.value("Model name");
+    QString num;
     cmd = "nproc";
     QProcess nproc;
     nproc.start(cmd, args);
     nproc.waitForFinished(-1);
-    result = result.trimmed();
-    result = result + " X" + nproc.readLine();
+    num = nproc.readLine();
+
+    result = QString("%1 x %2").arg(modelName, num);
+
     return result.trimmed();
 }
 

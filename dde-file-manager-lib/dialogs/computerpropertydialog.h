@@ -21,7 +21,7 @@ protected:
     void closeEvent(QCloseEvent *e);
 private:
     QString getComputerName();
-    QString getBrand();
+    QString getVersion();
     QString getArch();
     QString getProcessor();
     QString getMemory();
