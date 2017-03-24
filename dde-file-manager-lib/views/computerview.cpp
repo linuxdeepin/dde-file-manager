@@ -784,6 +784,15 @@ void ComputerView::keyPressEvent(QKeyEvent *event)
                     return;
                 default: break;
             }
+
+    case Qt::ControlModifier | Qt::ShiftModifier:
+        switch (event->key()) {
+        case Qt::Key_Question:
+            appController->actionShowHotkeyHelp(fmevent);
+            return;
+        default:
+            break;
+        }
         default: break;
     }
     QFrame::keyPressEvent(event);
