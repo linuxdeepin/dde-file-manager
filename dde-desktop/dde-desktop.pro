@@ -36,7 +36,8 @@ SOURCES += \
     dbus/dbusdisplay.cpp \
     presenter/display.cpp \
     presenter/dfmsocketinterface.cpp \
-    view/watermaskframe.cpp
+    view/watermaskframe.cpp \
+    dbus/dbusdock.cpp
 
 
 
@@ -54,7 +55,8 @@ HEADERS += \
     dbus/dbusdisplay.h \
     presenter/display.h \
     presenter/dfmsocketinterface.h \
-    view/watermaskframe.h
+    view/watermaskframe.h \
+    dbus/dbusdock.h
 
 RESOURCES += \
     resource/theme/theme.qrc

@@ -22,11 +22,12 @@
 #include <dfilesystemwatcher.h>
 
 #include "../../global/coorinate.h"
-
+#include "../../dbus/dbusdock.h"
 
 class QFrame;
 class CanvasViewHelper;
 class WaterMaskFrame;
+class DbusDock;
 
 class CanvasViewPrivate
 {
@@ -52,15 +53,15 @@ public:
         resortCount = 0;
     }
 
-    void updateCanvasSize(const QSize &szCanvas, const QMargins &geometryMargins, const QSize &szItem)
+    void updateCanvasSize(const QSize &szSceeen, const QSize &szCanvas, const QMargins &geometryMargins, const QSize &szItem)
     {
-        QMargins miniMargin(3, 3, 3, 3);
+        QMargins miniMargin(4, 4, 4, 4);
         auto miniCellWidth = szItem.width() + miniMargin.left() + miniMargin.right();
-        colCount = szCanvas.width() / miniCellWidth;
+        colCount = (szSceeen.width() - dockReserveArea.width()) / miniCellWidth;
         cellWidth = szCanvas.width() / colCount;
 
         auto miniCellHeigh = szItem.height() + miniMargin.top() + miniMargin.bottom();
-        rowCount = szCanvas.height() / miniCellHeigh;
+        rowCount = (szSceeen.height() - dockReserveArea.height()) / miniCellHeigh;
         cellHeight = szCanvas.height() / rowCount;
 
         updateCellMargins(szItem, QSize(cellWidth, cellHeight));
@@ -71,8 +72,13 @@ public:
         auto rightMargin = horizontalMargin - leftMargin;
         auto topMargin = verticalMargin / 2;
         auto bottom = verticalMargin - topMargin;
-
         viewMargins = geometryMargins + QMargins(leftMargin, topMargin, rightMargin, bottom);
+
+//        qDebug() << "------------------------------";
+//        qDebug() << miniCellWidth << miniCellHeigh;
+//        qDebug() << szCanvas << colCount << rowCount;
+//        qDebug() << viewMargins << cellWidth << cellHeight;
+//        qDebug() << "------------------------------";
     }
 
     Coordinate indexCoordinate(int index)
@@ -101,7 +107,7 @@ public:
     }
 
 public:
-
+    QRect    dockReserveArea = QRect(0, 0, 80, 80);
     QMargins viewMargins;
     QMargins cellMargins;
 
@@ -133,5 +139,8 @@ public:
     QTimer              *syncTimer          = nullptr;
 //    qint64              lastRepaintTime     = 0;
     DFileSystemWatcher  *filesystemWatcher  = nullptr;
-    WaterMaskFrame* waterMaskFrame = nullptr;
+    WaterMaskFrame *waterMaskFrame          = nullptr;
+
+
+    DBusDock            *dbusDock           = nullptr;
 };
