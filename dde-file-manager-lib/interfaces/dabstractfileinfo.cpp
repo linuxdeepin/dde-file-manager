@@ -490,9 +490,7 @@ QString DAbstractFileInfo::sizeDisplayName() const
 {
     CALL_PROXY(sizeDisplayName());
 
-    if (isFile()) {
-        return FileUtils::formatSize(size());
-    } else {
+    if (isDir()) {
         int size = filesCount();
 
         if (size <= 1){
@@ -500,6 +498,8 @@ QString DAbstractFileInfo::sizeDisplayName() const
         }else{
             return QObject::tr("%1 items").arg(size);
         }
+    } else {
+        return FileUtils::formatSize(size());
     }
 }
 
