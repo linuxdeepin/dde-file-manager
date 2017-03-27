@@ -22,7 +22,7 @@
 #define ICON_SPACING 16
 #define LIST_MODE_RECT_RADIUS 2
 #define LIST_EDITER_HEIGHT 22
-#define LIST_MODE_EDITOR_LEFT_PADDING -9
+#define LIST_MODE_EDITOR_LEFT_PADDING -3
 #define LIST_VIEW_ICON_SIZE 28
 
 class DListItemDelegatePrivate : public DStyledItemDelegatePrivate
@@ -156,7 +156,7 @@ void DListItemDelegate::paint(QPainter *painter,
 
     int role = columnRoleList.at(0);
 
-    if(index != d->editingIndex || role != DFileSystemModel::FileNameRole) {
+    if (index != d->editingIndex || (role != DFileSystemModel::FileNameRole && role != DFileSystemModel::FileDisplayNameRole)) {
         /// draw file name label
         const QString &file_name = DFMGlobal::elideText(index.data(role).toString().remove('\n'),
                                                         rect.size(), QTextOption::NoWrap,
