@@ -1825,10 +1825,11 @@ bool DFileView::setRootUrl(const DUrl &url)
         }
     }
 
+    emit rootUrlChanged(fileUrl);
+
     if (fileUrl.isSearchFile()) {
         switchViewMode(ListMode);
     }
-    emit rootUrlChanged(fileUrl);
 
     const QList<DAbstractFileInfo::SelectionMode> &supportSelectionModes = info->supportSelectionModes();
 
