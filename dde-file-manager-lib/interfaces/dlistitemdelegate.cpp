@@ -335,8 +335,8 @@ QList<QRect> DListItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
 
     /// draw file name label
 
-    geomertys << option.fontMetrics.boundingRect(rect, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()),
-                                                 index.data(role).toString());
+    rect.setWidth(qMin(rect.width(), option.fontMetrics.width(index.data(role).toString(), -1, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()))));
+    geomertys << rect;
 
     for(int i = 1; i < columnRoleList.count(); ++i) {
         QRect rect = opt_rect;
@@ -354,8 +354,8 @@ QList<QRect> DListItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
 
         /// draw file name label
 
-        geomertys << option.fontMetrics.boundingRect(rect, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()),
-                                                     index.data(role).toString());
+        rect.setWidth(qMin(rect.width(), option.fontMetrics.width(index.data(role).toString(), -1, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()))));
+        geomertys << rect;
     }
 
     return geomertys;
