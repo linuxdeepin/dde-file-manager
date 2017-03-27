@@ -115,10 +115,6 @@ int main(int argc, char *argv[])
     DFMGlobal::installTranslator();
     DThemeManager::instance()->setTheme("light");
 
-    QFont font = qApp->font();
-    font.setPixelSize(14);
-    app.setFont(font);
-
     LogUtil::registerLogger();
 
     CommandLineManager::instance()->process();
