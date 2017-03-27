@@ -63,6 +63,7 @@ public slots:
     void centerOnMyShareItem(const QString& path);
     QPoint getMyShareItemCenterPos();
     void playtShareAddedAnimation();
+    void updateVerticalScrollBar();
 
 protected:
     void paintEvent(QPaintEvent *event);
@@ -111,6 +112,7 @@ private:
     DBookmarkScene * m_scene;
     DBookmarkItemGroup * m_itemGroup;
     DToolBar *m_toolbar = NULL;
+    QScrollBar* m_verticalScrollBar = NULL;
 };
 
 #endif // DLEFTSIDEBAR_H

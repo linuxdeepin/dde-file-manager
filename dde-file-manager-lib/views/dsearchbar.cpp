@@ -16,6 +16,7 @@
 #include <QApplication>
 #include <QFocusEvent>
 #include <QPainter>
+#include <QScrollBar>
 
 DSearchBar::DSearchBar(QWidget *parent):QLineEdit(parent)
 {
@@ -66,6 +67,9 @@ void DSearchBar::initUI()
 
     m_list->installEventFilter(this);
     m_list->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_list->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_listVerticalScrollBar = m_list->verticalScrollBar();
+    m_listVerticalScrollBar->setParent(m_list);
 }
 
 QStringList DSearchBar::splitPath(const QString &path)
@@ -323,6 +327,9 @@ void DSearchBar::setCompleter(const QString &text)
 
     m_list->setMinimumWidth(width());
     m_list->setMaximumWidth(width());
+    m_listVerticalScrollBar->setFixedSize(8, m_list->height());
+    m_listVerticalScrollBar->move(m_list->width() - m_listVerticalScrollBar->width(), 0);
+
     QPoint p(0, height());
     int x = mapToGlobal(p).x();
     int y = mapToGlobal(p).y() + 4;
@@ -330,6 +337,12 @@ void DSearchBar::setCompleter(const QString &text)
 
     if (m_list->count() >= 1){
         m_list->show();
+        if(m_listVerticalScrollBar->maximum() <= 0){
+            m_listVerticalScrollBar->hide();
+        } else {
+            m_listVerticalScrollBar->show();
+            m_listVerticalScrollBar->raise();
+        }
     }
 }
 
