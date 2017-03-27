@@ -181,7 +181,7 @@ void DBookmarkScene::addItem(DBookmarkItem *item)
     item->setBounds(0, 0, BOOKMARK_ITEM_WIDTH, BOOKMARK_ITEM_HEIGHT - BOOKMARK_ITEM_SPACE);
     connect(item, &DBookmarkItem::dragFinished, this, &DBookmarkScene::doDragFinished);
     m_itemGroup->addItem(item);
-    increaseSize();
+    updateSceneRect();
     if(item->isDefaultItem())
         m_defaultCount++;
 }
@@ -207,7 +207,7 @@ void DBookmarkScene::insert(int index, DBookmarkItem *item)
     item->setBounds(0, 0, BOOKMARK_ITEM_WIDTH, BOOKMARK_ITEM_HEIGHT - BOOKMARK_ITEM_SPACE);
     connect(item, &DBookmarkItem::dragFinished, this, &DBookmarkScene::doDragFinished);
     m_itemGroup->insert(index, item);
-    increaseSize();
+    updateSceneRect();
     if(item->isDefaultItem())
         m_defaultCount++;
 }
@@ -241,7 +241,7 @@ void DBookmarkScene::remove(DBookmarkItem *item)
     m_itemGroup->removeItem(item);
     removeItem(item);
     item->deleteLater();
-    decreaseSize();
+    updateSceneRect();
     if(item->isDefaultItem())
         m_defaultCount--;
 }
@@ -693,22 +693,15 @@ bool DBookmarkScene::isBelowLastItem(const QPointF &point)
         return false;
 }
 
-void DBookmarkScene::increaseSize()
+void DBookmarkScene::updateSceneRect()
 {
+    int height = 0;
     QRectF rect = sceneRect();
-    if(count() * 30 > rect.height())
-    {
-        setSceneRect(rect.x(), rect.y(), rect.width(), rect.height() + 30);
+    foreach (DBookmarkItem* item, m_itemGroup->items()) {
+        height += item->boundHeight();
     }
-}
-
-void DBookmarkScene::decreaseSize()
-{
-    QRectF rect = sceneRect();
-    if(count() * 30 < rect.height())
-    {
-        setSceneRect(rect.x(), rect.y(), rect.width(), rect.height() - 30);
-    }
+    setSceneRect(10, 10, rect.width(), height);
+    emit sceneRectChanged();
 }
 
 void DBookmarkScene::moveBefore(DBookmarkItem *from, DBookmarkItem *to)

@@ -66,6 +66,7 @@ signals:
     void dragEntered();
     void dragLeft();
     void dropped();
+    void sceneRectChanged();
 public slots:
     void doDragFinished(const QPointF &point, const QPointF &scenePoint, DBookmarkItem *item);
     void setCurrentUrl(DUrl url);
@@ -91,8 +92,7 @@ public slots:
     void chooseMountedItem(const DFMEvent &event);
 private:
     bool isBelowLastItem(const QPointF &point);
-    void increaseSize();
-    void decreaseSize();
+    void updateSceneRect();
     void moveBefore(DBookmarkItem * from, DBookmarkItem* to);
     void moveAfter(DBookmarkItem * from, DBookmarkItem* to);
     int m_defaultCount = 0;

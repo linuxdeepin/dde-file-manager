@@ -93,6 +93,7 @@ void DLeftSideBar::initConnect()
 //    connect(deviceListener, &UDiskListener::requestDiskInfosFinihsed, this, &DLeftSideBar::handdleRequestDiskInfosFinihsed);
     connect(fileSignalManager, &FileSignalManager::userShareCountChanged, this, &DLeftSideBar::handleUserShareCountChanged);
     connect(userShareManager, &UserShareManager::userShareAdded, this, &DLeftSideBar::centerOnMyShareItem);
+    connect(m_scene, &DBookmarkScene::sceneRectChanged, this, &DLeftSideBar::updateVerticalScrollBar);
 }
 
 void DLeftSideBar::initNav()
@@ -106,11 +107,16 @@ void DLeftSideBar::initNav()
     m_view = new QGraphicsView;
     m_view->setAcceptDrops(true);
     m_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_view->setObjectName("Bookmark");
     m_view->setAlignment(Qt::AlignTop);
     m_scene = new DBookmarkScene(this);
-    m_scene->setSceneRect(10, 10, 200, 500);
+//    m_scene->setSceneRect(10, 10, 200, 200);
     m_view->setScene(m_scene);
+
+    m_verticalScrollBar = m_view->verticalScrollBar();
+    m_verticalScrollBar->setParent(this);
+    m_verticalScrollBar->setObjectName("LeftsideBar");
 
     foreach (QString key, m_nameList) {
         if (key == "Separator"){
@@ -158,6 +164,7 @@ void DLeftSideBar::resizeEvent(QResizeEvent *e)
         toTightNav();
     else if(rect.width() > 70 && m_isTight)
         toNormalNav();
+    updateVerticalScrollBar();
     QFrame::resizeEvent(e);
 }
 
@@ -276,6 +283,18 @@ void DLeftSideBar::playtShareAddedAnimation()
     DBookmarkItem* item = m_scene->hasBookmarkItem(DUrl(USERSHARE_ROOT));
     if(item)
         item->playAnimation();
+}
+
+void DLeftSideBar::updateVerticalScrollBar()
+{
+    m_verticalScrollBar->setFixedSize(8, m_view->height());
+    m_verticalScrollBar->move(width() - m_verticalScrollBar->width(), 0);
+    if(m_verticalScrollBar->maximum() <= 0){
+        m_verticalScrollBar->hide();
+    } else{
+        m_verticalScrollBar->show();
+        m_verticalScrollBar->raise();
+    }
 }
 
 void DLeftSideBar::paintEvent(QPaintEvent *event)

@@ -64,6 +64,7 @@ private:
     bool m_disableCompletion = false;
     bool m_searchStart = false;
     DUrl m_currentPath;
+    QScrollBar* m_listVerticalScrollBar = NULL;
 public slots:
     void doTextChanged(QString text);
     void searchHistoryLoaded(const QStringList &list);
