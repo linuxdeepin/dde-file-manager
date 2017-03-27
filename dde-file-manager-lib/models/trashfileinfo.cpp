@@ -238,8 +238,12 @@ QVariant TrashFileInfo::userColumnData(int userColumnRole) const
     if (userColumnRole == DFileSystemModel::FileUserRole + 1)
         return d->displayDeletionDate;
 
-    if (userColumnRole == DFileSystemModel::FileUserRole + 2)
-        return d->originalFilePath;
+    if (userColumnRole == DFileSystemModel::FileUserRole + 2) {
+        if (d->originalFilePath.isEmpty())
+            return d->originalFilePath;
+
+        return QFileInfo(d->originalFilePath).absolutePath();
+    }
 
     return DAbstractFileInfo::userColumnData(userColumnRole);
 }

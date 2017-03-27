@@ -95,9 +95,13 @@ QVariant SearchFileInfo::userColumnData(int userColumnRole) const
         const DUrl &fileUrl = d->proxy->fileUrl();
 
         if (fileUrl.isLocalFile()) {
-            return absoluteFilePath();
+            return absolutePath();
         } else {
-            return fileUrl.toString();
+            DUrl newUrl = fileUrl;
+
+            newUrl.setPath(QFileInfo(newUrl.path()).path());
+
+            return newUrl.toString();
         }
     }
 

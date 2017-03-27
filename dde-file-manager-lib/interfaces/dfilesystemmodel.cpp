@@ -3,6 +3,7 @@
 #include "dfileservices.h"
 #include "dfmevent.h"
 #include "dabstractfilewatcher.h"
+#include "dstyleditemdelegate.h"
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
@@ -475,6 +476,35 @@ QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
         return indexNode->fileInfo->createdDisplayName();
     case FilePinyinName:
         return indexNode->fileInfo->fileDisplayPinyinName();
+    case Qt::ToolTipRole: {
+        const QList<int> column_role_list = parent()->columnRoleList();
+
+        if (column_role_list.length() < 2)
+            break;
+
+        const QPoint &cursor_pos = parent()->parent()->mapFromGlobal(QCursor::pos());
+        QStyleOptionViewItem option;
+
+        option.init(parent()->parent());
+        parent()->initStyleOption(&option, index);
+        option.rect = parent()->parent()->visualRect(index);
+        const QList<QRect> &geometrys = parent()->itemDelegate()->paintGeomertys(option, index);
+
+        for (int i = 1; i < geometrys.length() && i <= column_role_list.length(); ++i) {
+            const QRect &rect = geometrys.at(i);
+
+            if (rect.left() <= cursor_pos.x() && rect.right() >= cursor_pos.x()) {
+                const QString &tooltip = data(index, column_role_list.at(i - 1)).toString();
+
+                if (option.fontMetrics.width(tooltip, -1, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt())) > rect.width())
+                    return tooltip;
+                else
+                    break;
+            }
+        }
+
+        return QString();
+    }
     default: {
         const DAbstractFileInfoPointer &fileInfo = indexNode->fileInfo;
 
