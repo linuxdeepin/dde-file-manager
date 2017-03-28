@@ -50,7 +50,7 @@ void WaterMaskFrame::loadConfig(const QString &fileName)
 {
     QFile file(fileName);
     if (!file.open(QFile::ReadOnly)) {
-        qDebug() << "WaterMask config file isn't exists!";
+        qDebug() << "WaterMask config file doesn't exist!";
     }
     QJsonParseError error;
     QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
