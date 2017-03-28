@@ -81,7 +81,7 @@ TrashManager::TrashManager(QObject *parent)
 {
     m_isTrashEmpty = isEmpty();
     QString trashFilePath = DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath);
-    //make sure trash file is existed
+    //make sure trash file exists
     if(!QFile::exists(trashFilePath))
         QDir().mkdir(trashFilePath);
 

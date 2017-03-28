@@ -95,7 +95,7 @@ public:
     static DUrlList fromStringList(const QStringList &urls, ParsingMode mode = TolerantMode);
     static DUrlList fromQUrlList(const QList<QUrl> &urls);
     static DUrl fromUserInput(const QString &userInput, bool preferredLocalPath = true);
-    // Return "file://$CURRENT_DIR/userInput" if preferredLocalPath is true and directory is exists
+    // Return "file://$CURRENT_DIR/userInput" if preferredLocalPath is true and directory exists
     static DUrl fromUserInput(const QString &userInput, QString workingDirectory,
                               bool preferredLocalPath = true, UserInputResolutionOptions options = AssumeLocalFile);
     static QStringList toStringList(const DUrlList &urls,
