@@ -20,6 +20,8 @@
 
 DWIDGET_USE_NAMESPACE
 
+#define STATUSBAR_WIDGET_DEFAULT_HEIGHT 24
+
 DStatusBar::DStatusBar(QWidget *parent)
     : QFrame(parent)
 {
@@ -127,6 +129,7 @@ void DStatusBar::setMode(DStatusBar::Mode mode)
 
     m_comboBox = new QComboBox(this);
     m_comboBox->setMaximumWidth(200);
+    m_comboBox->setFixedHeight(STATUSBAR_WIDGET_DEFAULT_HEIGHT);
     m_comboBox->hide();
     m_comboBoxLabel = new QLabel(this);
     m_comboBoxLabel->setObjectName("comboBoxLabel");
@@ -134,7 +137,8 @@ void DStatusBar::setMode(DStatusBar::Mode mode)
     m_comboBoxLabel->hide();
 
     m_lineEdit = new QLineEdit(this);
-    m_lineEdit->setMaximumWidth(200);
+    m_lineEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    m_lineEdit->setFixedHeight(STATUSBAR_WIDGET_DEFAULT_HEIGHT);
     m_lineEdit->setVisible(mode == DialogSave);
     m_lineEdit->installEventFilter(this);
     m_lineEditLabel = new QLabel(this);
@@ -149,11 +153,13 @@ void DStatusBar::setMode(DStatusBar::Mode mode)
     }
     if (!m_acceptButton) {
         m_acceptButton = new QPushButton(QString(), this);
-        m_acceptButton->setFixedHeight(28);
+        m_acceptButton->setFixedHeight(STATUSBAR_WIDGET_DEFAULT_HEIGHT);
+        m_acceptButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     }
     if (!m_rejectButton) {
         m_rejectButton = new QPushButton(QString(), this);
-        m_rejectButton->setFixedHeight(28);
+        m_rejectButton->setFixedHeight(STATUSBAR_WIDGET_DEFAULT_HEIGHT);
+        m_rejectButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     }
 
     clearLayoutAndAnchors();
@@ -162,11 +168,11 @@ void DStatusBar::setMode(DStatusBar::Mode mode)
     m_layout->addWidget(m_comboBoxLabel);
     m_layout->addWidget(m_comboBox);
     m_layout->addWidget(m_lineEditLabel);
-    m_layout->addWidget(m_lineEdit);
+    m_layout->addWidget(m_lineEdit, 1);
     m_layout->addStretch();
-    m_layout->addWidget(m_loadingIndicator);
-    m_layout->addWidget(m_rejectButton);
-    m_layout->addWidget(m_acceptButton);
+    m_layout->addWidget(m_loadingIndicator, 0, Qt::AlignRight);
+    m_layout->addWidget(m_rejectButton, 0, Qt::AlignRight);
+    m_layout->addWidget(m_acceptButton, 0, Qt::AlignRight);
     m_layout->setSpacing(10);
     m_layout->setContentsMargins(10, 10, 10, 10);
 
