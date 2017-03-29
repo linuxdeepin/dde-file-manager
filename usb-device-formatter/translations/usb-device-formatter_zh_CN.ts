@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>FinishPage</name>
     <message>
@@ -14,7 +12,7 @@
     <message>
         <location filename="../view/formatingpage.cpp" line="19"/>
         <source>Formating, please wait for a minute...</source>
-        <translation>正在格式化，请稍候...</translation>
+        <translation>正在格式化，请稍候……</translation>
     </message>
 </context>
 <context>
@@ -56,7 +54,7 @@
     <message>
         <location filename="../view/mainwindow.cpp" line="169"/>
         <source>Formatting...</source>
-        <translation>格式化中...</translation>
+        <translation>格式化中……</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="193"/>

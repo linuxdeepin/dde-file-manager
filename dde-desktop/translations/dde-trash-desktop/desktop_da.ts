@@ -1,0 +1,20 @@
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="da" version="2.1">
+    <context>
+        <name>desktop</name>
+        <message>
+            <location filename="Desktop Entry]GenericName" line="0"/>
+            <source>Open Trash.</source>
+            <translation>Åbn papirkurv.</translation>
+        </message>
+        <message>
+            <location filename="Desktop Entry]Comment" line="0"/>
+            <source>Open trash.</source>
+            <translation>Åbn papirkurv.</translation>
+        </message>
+        <message>
+            <location filename="Desktop Entry]Name" line="0"/>
+            <source>Trash</source>
+            <translation>Papirkurv</translation>
+        </message>
+    </context>
+</TS>

@@ -1,17 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="pt_BR">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="pt_BR" version="2.1">
     <context>
         <name>desktop</name>
         <message>
             <location filename="Desktop Entry]Comment" line="0"/>
             <source>Browse the file system</source>
-            <translation>Navegar pelo sistema de arquivos</translation>
+            <translation>Navegar pelo sistema de arquivos </translation>
         </message>
         <message>
             <location filename="Desktop Entry]Name" line="0"/>
             <source>Deepin File Manager</source>
-            <translation>Gerenciador de arquivos</translation>
+            <translation>Gerenciador de Arquivos </translation>
         </message>
         <message>
             <location filename="Desktop Action new-window]Name" line="0"/>
