@@ -1280,7 +1280,11 @@ const FileSystemNodePointer DFileSystemModel::getNodeByIndex(const QModelIndex &
         return d->rootNode;
     }
 
-    if (d->rootNode->children.value(d->rootNode->visibleChildren.value(index.row())).constData() != indexNode) {
+    if (enabledSort()) {
+        if (d->rootNode->children.value(d->rootNode->visibleChildren.value(index.row())).constData() != indexNode) {
+            return FileSystemNodePointer();
+        }
+    } else if (!d->rootNode->children.key(FileSystemNodePointer(indexNode)).isValid()) {
         return FileSystemNodePointer();
     }
 
