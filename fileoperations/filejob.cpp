@@ -762,12 +762,12 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
                         return false;
                     }
 
-                    if(m_isCoExisted)
+                    if(m_isCoExisted && !m_isReplaced)
                     {
                         m_tarPath = checkDuplicateName(m_tarPath);
                         to.setFileName(m_tarPath);
                         if(!m_applyToAll)
-                            m_isCoExisted = false;
+                            m_isCoExisted = true;
                     }
 
                     if (m_isReplaced){
@@ -776,6 +776,8 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
                             QFile(m_tarPath).remove();
                         }else if (!targetInfo.isSymLink() && targetInfo.isDir()){
                             QDir(m_tarPath).removeRecursively();
+                        }else if (!targetInfo.isSymLink() && targetInfo.isFile()){
+                            QFile(m_tarPath).remove();
                         }
 
                         if(!m_applyToAll)
@@ -936,7 +938,10 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
             case FileJob::Cancelled:
                 from.close();
                 to.close();
-                return false;
+                if (m_isSkip)
+                    return true;
+                else
+                    return false;
             default:
                 from.close();
                 to.close();
@@ -1015,14 +1020,14 @@ bool FileJob::copyFileByGio(const QString &srcFile, const QString &tarDir, bool 
                     if (m_isSkip){
                         if(!m_applyToAll)
                             m_isSkip = false;
-                        return false;
+                        return true;
                     }
 
-                    if(m_isCoExisted)
+                    if(m_isCoExisted && !m_isReplaced)
                     {
                         m_tarPath = checkDuplicateName(m_tarPath);
                         if(!m_applyToAll)
-                            m_isCoExisted = false;
+                            m_isCoExisted = true;
                     }
 
                     if (m_isReplaced){
@@ -1158,16 +1163,16 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
                     if(!m_applyToAll)
                         m_isSkip = false;
 
-                    return false;
+                    return true;
                 }
 
-                if(m_isCoExisted)
+                if(m_isCoExisted && !m_isReplaced)
                 {
                     m_tarPath = checkDuplicateName(m_tarPath);
                     isTargetExists = false;
 
                     if(!m_applyToAll)
-                        m_isCoExisted = false;
+                        m_isCoExisted = true;
                 }
 
                 if (m_isReplaced){
@@ -1262,8 +1267,10 @@ bool FileJob::moveFile(const QString &srcFile, const QString &tarDir, QString *t
 //    }else{
 //        qDebug() << "move file by qtio" << srcFile << tarDir;
 //    }
-
-    return handleMoveJob(srcFile, tarDir, targetPath);
+    qDebug() << "moveFile start:" << srcFile << tarDir << targetPath;
+    bool ret = handleMoveJob(srcFile, tarDir, targetPath);
+    qDebug() << "moveFile end:" << srcFile << tarDir << ret << targetPath;
+    return ret;
 }
 
 bool FileJob::moveFileByGio(const QString &srcFile, const QString &tarDir, QString *targetPath)
@@ -1334,15 +1341,15 @@ bool FileJob::moveFileByGio(const QString &srcFile, const QString &tarDir, QStri
                     if(!m_applyToAll)
                         m_isSkip = false;
 
-                    return false;
+                    return true;
                 }
 
-                if(m_isCoExisted)
+                if(m_isCoExisted && !m_isReplaced)
                 {
                     m_tarPath = checkDuplicateName(m_tarPath + "/" + m_srcFileName);
 
                     if(!m_applyToAll)
-                        m_isCoExisted = false;
+                        m_isCoExisted = true;
                 }
 
                 if (m_isReplaced){
@@ -1463,36 +1470,26 @@ bool FileJob::handleMoveJob(const QString &srcPath, const QString &tarDir, QStri
         {
             case FileJob::Started:
             {
+                qDebug() << m_isSkip << m_isCoExisted << m_isReplaced << m_applyToAll;
                 if (m_isSkip){
 
                     if(!m_applyToAll)
                         m_isSkip = false;
 
-                    return false;
+                    return true;
                 }
 
-                if(m_isCoExisted){
+                if(m_isCoExisted && !m_isReplaced){
                     m_tarPath = checkDuplicateName(m_tarPath + "/" + m_srcFileName);
 
                     if(!m_applyToAll)
-                        m_isCoExisted = false;
+                        m_isCoExisted = true;
 
                 }
 
                 if (m_isReplaced){
                     m_tarPath = m_tarPath + "/" + m_srcFileName;
 
-                    if(!m_applyToAll)
-                        m_isReplaced = false;
-                }
-
-                m_status = Run;
-                break;
-            }
-            case FileJob::Run:
-            {
-                if(m_isReplaced)
-                {
                     QFileInfo tarInfo(m_tarPath);
                     if (tarInfo.isDir()){
                         QDir tarDir(m_tarPath);
@@ -1504,8 +1501,16 @@ bool FileJob::handleMoveJob(const QString &srcPath, const QString &tarDir, QStri
                             QFile(m_tarPath).remove();
                         }
                     }
+
+                    if(!m_applyToAll)
+                        m_isReplaced = false;
                 }
 
+                m_status = Run;
+                break;
+            }
+            case FileJob::Run:
+            {
                 bool ok(false);
                 if (scrFileInfo.isDir()){
                     ok = QDir(srcPath).rename(srcPath, m_tarPath);
@@ -1513,6 +1518,7 @@ bool FileJob::handleMoveJob(const QString &srcPath, const QString &tarDir, QStri
                     QFile srcFile(srcPath);
                     ok = srcFile.rename(m_tarPath);
                 }
+
                 if (ok && targetPath)
                     *targetPath = m_tarPath;
 
@@ -1522,7 +1528,10 @@ bool FileJob::handleMoveJob(const QString &srcPath, const QString &tarDir, QStri
                 QThread::msleep(100);
                 break;
             case FileJob::Cancelled:
-                return false;
+                if (m_isSkip)
+                    return true;
+                else
+                    return false;
             default:
                 return false;
          }
@@ -1589,7 +1598,10 @@ bool FileJob::handleSymlinkFile(const QString &srcFile, const QString &tarDir, Q
                 QThread::msleep(100);
                 break;
             case FileJob::Cancelled:
-                return true;
+                if (m_isSkip)
+                    return true;
+                else
+                    return false;
             default:
                 return false;
          }
@@ -1624,22 +1636,14 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
                     return true;
                 }
 
-                if(m_isCoExisted)
+                if(m_isCoExisted && !m_isReplaced)
                 {
                     m_srcPath = checkDuplicateName(m_tarPath + "/" + toInfo.fileName());
                 }
 
                 if (m_isReplaced){
                     m_srcPath = m_tarPath + "/" + toInfo.fileName();
-                }
 
-                m_status = Run;
-                break;
-            }
-            case FileJob::Run:
-            {
-                if(m_isReplaced)
-                {
                     if(to.exists()){
                         if (toInfo.isDir()){
                             bool result = QDir(tarFile).removeRecursively();
@@ -1654,6 +1658,11 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
                     }
                 }
 
+                m_status = Run;
+                break;
+            }
+            case FileJob::Run:
+            {
                 bool result = from.rename(m_srcPath);
 
                 if (!result) {
