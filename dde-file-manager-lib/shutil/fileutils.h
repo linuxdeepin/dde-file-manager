@@ -62,7 +62,8 @@ public:
     static QByteArray imageFormatName(QImage::Format f);
 
     static QString getFileContent(const QString &file);
-    static bool writeTextFile(QString filePath, QString content);
+    static bool writeTextFile(const QString& filePath, const QString& content);
+    static void migrateConfigFileFromCache(const QString& key);
     static void setDefaultFileManager();
 
     static DFMGlobal::MenuExtension getMenuExtension(const DUrlList& urlList);

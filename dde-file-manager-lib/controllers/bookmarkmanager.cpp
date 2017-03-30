@@ -32,14 +32,7 @@ BookMarkManager::~BookMarkManager()
 void BookMarkManager::load()
 {
     //Migration for old config files, and rmove that codes for further
-    QString oldFilePath = QString("%1/%2").arg(QDir().homePath(), ".cache/dde-file-manager/bookmark.json");
-    if(QFile::exists(oldFilePath)){
-        QString oldData = FileUtils::getFileContent(oldFilePath);
-        if(!oldData.isEmpty()){
-            FileUtils::writeTextFile(cachePath(), oldData);
-            QFile(oldFilePath).remove();
-        }
-    }
+    FileUtils::migrateConfigFileFromCache("bookmark");
 
     //TODO: check permission and existence of the path
     QString configPath = cachePath();

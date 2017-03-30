@@ -130,14 +130,7 @@ void SecretManager::cacheSambaLoginData(const QJsonObject &obj)
 void SecretManager::loadCache()
 {
     //Migration for old config files, and rmove that codes for further
-    QString oldFilePath = QString("%1/%2").arg(QDir().homePath(), ".cache/dde-file-manager/samba.json");
-    if(QFile::exists(oldFilePath)){
-        QString oldData = FileUtils::getFileContent(oldFilePath);
-        if(!oldData.isEmpty()){
-            FileUtils::writeTextFile(cachePath(), oldData);
-            QFile(oldFilePath).remove();
-        }
-    }
+    FileUtils::migrateConfigFileFromCache("samba");
 
     QFile file(cachePath());
     if (!file.open(QIODevice::ReadOnly))
