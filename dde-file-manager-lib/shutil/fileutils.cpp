@@ -793,7 +793,7 @@ void FileUtils::migrateConfigFileFromCache(const QString& key)
         if(ret){
             int code = desFile.write(data);
             if(code < 0){
-                qDebug () << "Error occured when writing data";
+                qDebug () << "Error occurred when writing data";
                 ret = false;
             } else {
                 ret = srcFile.remove();
