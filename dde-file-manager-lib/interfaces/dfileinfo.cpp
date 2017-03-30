@@ -23,6 +23,8 @@
 #include <QPainter>
 #include <QApplication>
 
+#include <sys/stat.h>
+
 DFM_USE_NAMESPACE
 
 #define REQUEST_THUMBNAIL_DEALY 500
@@ -305,6 +307,13 @@ QDateTime DFileInfo::created() const
 QDateTime DFileInfo::lastModified() const
 {
     Q_D(const DFileInfo);
+
+    if (isSymLink() && !exists()) {
+        struct stat attrib;
+
+        if (lstat(d->fileInfo.filePath().toLocal8Bit().constData(), &attrib) >= 0)
+            return QDateTime::fromTime_t(attrib.st_mtime);
+    }
 
     return d->fileInfo.lastModified();
 }
