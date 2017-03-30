@@ -47,14 +47,7 @@ QString FMStateManager::sortCacheFilePath()
 void FMStateManager::loadCache()
 {
     //Migration for old config files, and rmove that codes for further
-    QString oldFilePath = QString("%1/%2").arg(QDir().homePath(), ".cache/dde-file-manager/FMState.json");
-    if(QFile::exists(oldFilePath)){
-        QString oldData = FileUtils::getFileContent(oldFilePath);
-        if(!oldData.isEmpty()){
-            FileUtils::writeTextFile(cacheFilePath(), oldData);
-            QFile(oldFilePath).remove();
-        }
-    }
+    FileUtils::migrateConfigFileFromCache("FMState");
 
     QString cache = readCacheFromFile(cacheFilePath());
     if (!cache.isEmpty()){
@@ -73,14 +66,7 @@ void FMStateManager::saveCache()
 void FMStateManager::loadSortCache()
 {
     //Migration for old config files, and rmove that codes for further
-    QString oldFilePath = QString("%1/%2").arg(QDir().homePath(), ".cache/dde-file-manager/sort.json");
-    if(QFile::exists(oldFilePath)){
-        QString oldData = FileUtils::getFileContent(oldFilePath);
-        if(!oldData.isEmpty()){
-            FileUtils::writeTextFile(sortCacheFilePath(), oldData);
-            QFile(oldFilePath).remove();
-        }
-    }
+    FileUtils::migrateConfigFileFromCache("sort");
 
     QString cache = readCacheFromFile(sortCacheFilePath());
     if (!cache.isEmpty()){

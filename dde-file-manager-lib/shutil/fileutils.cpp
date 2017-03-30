@@ -10,6 +10,7 @@
 #include "simpleini/SimpleIni.h"
 #include "dmimedatabase.h"
 #include "mimesappsmanager.h"
+#include "interfaces/dfmstandardpaths.h"
 
 #include <QDirIterator>
 #include <QUrl>
@@ -762,7 +763,7 @@ QString FileUtils::getFileContent(const QString &file)
     return fileContent;
 }
 
-bool FileUtils::writeTextFile(QString filePath, QString content)
+bool FileUtils::writeTextFile(const QString &filePath, const QString &content)
 {
     QFile file(filePath);
     if (file.open(QIODevice::WriteOnly|QIODevice::Text)) {
@@ -774,6 +775,45 @@ bool FileUtils::writeTextFile(QString filePath, QString content)
         qDebug () << "Failed to write content to file " << filePath << ":" << file.errorString();
     }
     return false;
+}
+
+void FileUtils::migrateConfigFileFromCache(const QString& key)
+{
+    bool ret = false;
+    QString oldPath = QString("%1/%2/%3.%4").arg(QDir().homePath(), ".cache/dde-file-manager",key,"json");
+    QString newPath = QString("%1/%2.%3").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::ApplicationConfigPath),key.toLower(), "json");
+    QFile srcFile(oldPath);
+    ret = srcFile.open(QIODevice::ReadOnly);
+    if(ret){
+        QByteArray data = srcFile.readAll();
+        srcFile.close();
+
+        QFile desFile(newPath);
+        ret = desFile.open(QIODevice::WriteOnly);
+        if(ret){
+            int code = desFile.write(data);
+            if(code < 0){
+                qDebug () << "Error occured when writing data";
+                ret = false;
+            } else {
+                ret = srcFile.remove();
+                if(!ret){
+                    qDebug () << "Failed to remove source file " << oldPath;
+                }
+            }
+            desFile.close();
+
+        } else {
+            qDebug () << "Failed to write data :" << desFile.errorString();
+        }
+
+    } else {
+        qDebug () << "Could not read source file " << oldPath << ":" << srcFile.errorString();
+    }
+
+    if(!ret){
+        qDebug () << "Failed to migrate config file from cache";
+    }
 }
 
 void FileUtils::setDefaultFileManager()
