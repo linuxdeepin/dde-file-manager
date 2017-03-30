@@ -317,7 +317,7 @@ int DBookmarkScene::windowId()
  * @param event
  *
  * A dummy item will be temporarily added
- * if a drag carrying valid url has occured.
+ * if a drag carrying valid url has occurred.
  * Note that a separator line will be added
  * if no custom bookmark exists in the list.
  */
@@ -361,7 +361,7 @@ void DBookmarkScene::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
  * @param event
  *
  * The dummy item will be cleared(not be deleted)
- * as drop event has occured.
+ * as drop event has occurred.
  */
 void DBookmarkScene::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
