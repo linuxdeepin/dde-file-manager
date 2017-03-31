@@ -389,7 +389,11 @@ help.files = help/*
 icon.path = $$ICONDIR
 icon.files = skin/images/$${TARGET}.svg
 
-INSTALLS += target templateFiles translations mimetypeFiles mimetypeAssociations help icon includes gvfs_includes
+defaultConfig.path = $$APPSHAREDIR/config
+defaultConfig.files = configure/default-view-states.json
+
+INSTALLS += target templateFiles translations mimetypeFiles mimetypeAssociations help icon includes gvfs_includes defaultConfig
 
 DISTFILES += \
-    mimetypeassociations/mimetypeassociations.json
+    mimetypeassociations/mimetypeassociations.json \
+    configure/default-view-states.json

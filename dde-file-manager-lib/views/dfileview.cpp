@@ -17,6 +17,7 @@
 #include "interfaces/dfmsetting.h"
 #include "settings.h"
 #include "dcrumbwidget.h"
+#include "controllers/fmstatemanager.h"
 
 #include "controllers/appcontroller.h"
 #include "dfileservices.h"
@@ -1209,7 +1210,7 @@ void DFileView::freshView()
 void DFileView::loadViewState(const DUrl& url)
 {
     Q_D(DFileView);
-    ViewState viewState = viewStatesManager->viewstate(url.toString());
+    ViewState viewState = viewStatesManager->viewstate(url);
 
     if(viewState.isValid()){
         switchViewMode(viewState.viewMode);
@@ -1242,9 +1243,8 @@ void DFileView::saveViewState()
     viewState.iconSize = statusBar()->scalingSlider()->value();
     viewState.sortRole = roles.first;
     viewState.sortOrder = roles.second;
-    viewState.dataValid = true;
 
-    viewStatesManager->saveViewState(url.toString(), viewState);
+    viewStatesManager->saveViewState(url, viewState);
 }
 
 void DFileView::focusInEvent(QFocusEvent *event)
