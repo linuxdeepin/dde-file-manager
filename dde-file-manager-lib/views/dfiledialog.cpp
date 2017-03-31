@@ -94,7 +94,8 @@ DFileDialog::DFileDialog(QWidget *parent)
         if (!fileInfo)
             return;
 
-        setCurrentInputName(fileInfo->fileName());
+        if (fileInfo->isFile())
+            setCurrentInputName(fileInfo->fileName());
     });
 }
 
