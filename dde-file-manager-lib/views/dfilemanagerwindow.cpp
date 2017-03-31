@@ -370,8 +370,8 @@ void DFileManagerWindow::preHandleCd(const DUrl &fileUrl, int source)
 
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(event.fileUrl());
         if(fileInfo){
-            /*call fileInfo->exists() twice, Firsrly result is false;Secondly result is true;
-              May be this is bug of fuse when smb://10.0.10.30/people is mounted and cd to mounted folder immediately.
+            /* Call fileInfo->exists() twice. First result is false and the second one is true;
+               Maybe this is a bug of fuse when smb://10.0.10.30/people is mounted and cd to mounted folder immediately.
             */
             qDebug() << fileInfo->exists() << fileUrl.toString();
             qDebug() << fileInfo->exists() << fileUrl.toString();
