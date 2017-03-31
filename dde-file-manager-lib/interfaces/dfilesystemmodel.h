@@ -44,6 +44,8 @@ public:
         UnknowRole = Qt::UserRole + 999
     };
 
+    Q_ENUM(Roles)
+
     enum State {
         Idle,
         Busy,
