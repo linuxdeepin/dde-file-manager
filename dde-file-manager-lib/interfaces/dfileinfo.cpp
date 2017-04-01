@@ -458,9 +458,10 @@ QIcon DFileInfo::fileIcon() const
         if (symLinkTarget != fileUrl) {
             const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(symLinkTarget);
 
-            d->icon = fileInfo->fileIcon();
-
-            return d->icon;
+            if (fileInfo){
+                d->icon = fileInfo->fileIcon();
+                return d->icon;
+            }
         }
     }
 
