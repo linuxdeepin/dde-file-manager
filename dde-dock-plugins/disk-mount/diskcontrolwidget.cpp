@@ -4,6 +4,8 @@
 #include "dfmsetting.h"
 #include <QDebug>
 #include <QProcess>
+#include <QThreadPool>
+#include <QtConcurrent>
 
 #define WIDTH           300
 
@@ -40,7 +42,9 @@ void DiskControlWidget::initConnect()
 
 void DiskControlWidget::startMonitor()
 {
-    m_gvfsMountManager->startMonitor();
+
+    QtConcurrent::run(QThreadPool::globalInstance(), m_gvfsMountManager,
+                                             &GvfsMountManager::startMonitor);
 }
 
 void DiskControlWidget::unmountAll()
