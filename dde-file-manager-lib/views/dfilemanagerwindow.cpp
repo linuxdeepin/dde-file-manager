@@ -195,6 +195,7 @@ void DFileManagerWindow::requestEmptyTrashFiles()
 {
     D_D(DFileManagerWindow);
     DFMEvent event;
+    event << DFMEvent::Menu;
     event << windowId();
     event << DUrl::fromTrashFile("/");
     appController->actionClearTrash(event);
