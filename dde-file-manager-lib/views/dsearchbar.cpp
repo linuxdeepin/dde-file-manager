@@ -319,7 +319,7 @@ void DSearchBar::setCompleter(const QString &text)
         }
     }
 
-    recomended(text);
+    recommended(text);
 
     if (m_list->count() < 10){
         m_list->setFixedHeight(24 * m_list->count() + 8);
@@ -604,7 +604,7 @@ void DSearchBar::keyUpDown(int key)
     qDebug() << text();
 }
 
-void DSearchBar::recomended(const QString& inputText)
+void DSearchBar::recommended(const QString& inputText)
 {
     if(m_list->count() == 1)
     {
