@@ -26,8 +26,22 @@
 #include <QApplication>
 #include <QX11Info>
 #include <QScreen>
+#include <QWindow>
 
 DFM_USE_NAMESPACE
+
+enum NetWmState {
+    NetWmStateAbove = 0x1,
+    NetWmStateBelow = 0x2,
+    NetWmStateFullScreen = 0x4,
+    NetWmStateMaximizedHorz = 0x8,
+    NetWmStateMaximizedVert = 0x10,
+    NetWmStateModal = 0x20,
+    NetWmStateStaysOnTop = 0x40,
+    NetWmStateDemandsAttention = 0x80
+};
+
+Q_DECLARE_FLAGS(NetWmStates, NetWmState)
 
 QHash<const QWidget*, int> WindowManager::m_windows;
 int WindowManager::m_count = 0;
@@ -79,10 +93,16 @@ void WindowManager::loadWindowState(DFileManagerWindow *window)
 void WindowManager::saveWindowState(DFileManagerWindow *window)
 {
     m_fmStateManager->fmState()->setViewMode(window->getFileViewMode());
-    m_fmStateManager->fmState()->setX(window->x());
-    m_fmStateManager->fmState()->setY(window->y());
-    m_fmStateManager->fmState()->setWidth(window->size().width());
-    m_fmStateManager->fmState()->setHeight(window->size().height());
+
+    /// The power by dxcb platform plugin
+    NetWmStates states = (NetWmStates)window->window()->windowHandle()->property("_d_netWmStates").toInt();
+
+    if ((states & (NetWmStateMaximizedHorz | NetWmStateMaximizedVert)) == 0) {
+        m_fmStateManager->fmState()->setX(window->x());
+        m_fmStateManager->fmState()->setY(window->y());
+        m_fmStateManager->fmState()->setWidth(window->size().width());
+        m_fmStateManager->fmState()->setHeight(window->size().height());
+    }
     m_fmStateManager->fmState()->setWindowState(window->windowState());
     m_fmStateManager->saveCache();
 }
