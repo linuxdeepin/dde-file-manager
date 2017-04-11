@@ -194,6 +194,7 @@ public:
 
     static void setUrlsToClipboard(const QList<QUrl> &list, DFMGlobal::ClipboardAction action);
     static void clearClipboard();
+    static void clearTrash();
 
     static void addPluginLibraryPath(const QString& path);
     static void addPluginLibraryPaths(const QStringList& paths);

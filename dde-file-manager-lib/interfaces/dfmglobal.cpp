@@ -143,6 +143,12 @@ void DFMGlobal::clearClipboard()
     qApp->clipboard()->clear();
 }
 
+void DFMGlobal::clearTrash()
+{
+    DFMEvent event;
+    appController->actionClearTrash(event);
+}
+
 void DFMGlobal::addPluginLibraryPath(const QString &path)
 {
     PluginLibraryPaths.append(path);
