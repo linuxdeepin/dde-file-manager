@@ -30,6 +30,11 @@ Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, libdde-file-manager( =${binary:Version})
 Description: Disk mount plugin of dde-dock which is created by libdde-file-manager
 
+Package: dde-trash-plugin
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libdde-file-manager( =${binary:Version})
+Description: Trash plugin of dde-dock which is created by libdde-file-manager
+
 
 Package: libdde-file-manager
 Architecture: any

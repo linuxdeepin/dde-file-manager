@@ -1,3 +1,4 @@
 TEMPLATE = subdirs
 
-SUBDIRS += disk-mount
+SUBDIRS += disk-mount\
+           trash

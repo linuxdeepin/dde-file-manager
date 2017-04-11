@@ -7,3 +7,7 @@ fi
 if [ -f /usr/lib/dde-dock/plugins/libdde-disk-mount.so ];then
     rm /usr/lib/dde-dock/plugins/libdde-disk-mount.so
 fi
+
+if [ -f /usr/lib/dde-dock/plugins/libtrash.so ];then
+    rm /usr/lib/dde-dock/plugins/libtrash.so
+fi

@@ -330,7 +330,7 @@ void AppController::actionClearTrash(const DFMEvent &event)
 {
     DUrlList list;
     list << DUrl::fromTrashFile("/");
-
+    const_cast<DFMEvent&>(event) << DUrl::fromTrashFile("/");
     if(DFMGlobal::isTrashDesktopFile(event.fileUrl()))
         const_cast<DFMEvent&>(event) << DUrl::fromTrashFile("/");
 

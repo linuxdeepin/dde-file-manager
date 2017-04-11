@@ -382,6 +382,7 @@ bool DFileService::deleteFiles(const DFMEvent &event) const
 
 bool DFileService::deleteFilesSync(const DFMEvent &event) const
 {
+
     if (event.fileUrlList().isEmpty())
         return false;
 
