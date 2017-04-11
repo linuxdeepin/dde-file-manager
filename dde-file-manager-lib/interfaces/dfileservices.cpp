@@ -799,15 +799,29 @@ bool DFileService::isAvfsMounted() const
     args << "-c" << "ps -ax -o 'cmd'|grep '.avfs$'";
     p.start(cmd, args);
     p.waitForFinished();
-    QString result = p.readAll().trimmed();
-    if(!result.isEmpty()){
-        QStringList datas = result.split(" ");
+    QString avfsBase = qgetenv("AVFSBASE");
+    QString avfsdDir;
+    if(avfsBase.isEmpty()){
+        QString home = qgetenv("HOME");
+        avfsdDir = home + "/.avfs";
+    } else{
+        avfsdDir = avfsBase + "/.avfs";
+    }
 
-        if(datas.count() == 2){
-            if(datas.at(0) == "avfsd" && QFile::exists(datas.at(1)))
-                return true;
+    while (!p.atEnd()) {
+        QString result = p.readLine().trimmed();
+        if(!result.isEmpty()){
+            QStringList datas = result.split(" ");
+
+            if(datas.count() == 2){
+                //compare current user's avfs path
+                if(datas.last() != avfsdDir)
+                    continue;
+
+                if(datas.first() == "avfsd" && QFile::exists(datas.last()))
+                    return true;
+            }
         }
-
     }
     return false;
 }
@@ -897,6 +911,7 @@ void DFileService::openUrl(const DFMEvent &event, const bool &isOpenInNewWindow,
     foreach (const DUrl& url, event.fileUrlList()) {
 
         const DAbstractFileInfoPointer &fileInfo = createFileInfo(url);
+
         if(globalSetting->isCompressFilePreview()
                 && isAvfsMounted()
                 && FileUtils::isArchive(url.toLocalFile())
