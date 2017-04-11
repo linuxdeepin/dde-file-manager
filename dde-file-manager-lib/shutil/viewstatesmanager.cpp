@@ -88,7 +88,14 @@ ViewState ViewStatesManager::viewstate(const DUrl &url)
 
 QString ViewStatesManager::getViewStateFilePath()
 {
-    return QString("%1/%2").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::ApplicationConfigPath), "viewstates.json");
+    //viewstate config file choosing between dialog mode and window mode
+    QString confFile;
+    if(DFMGlobal::IsFileManagerDiloagProcess)
+        confFile = "dialogviewstates.json";
+    else
+        confFile = "windowviewstates.json";
+
+    return QString("%1/%2").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::ApplicationConfigPath), confFile);
 }
 
 ViewState ViewStatesManager::objectToViewState(const QJsonObject &obj)
