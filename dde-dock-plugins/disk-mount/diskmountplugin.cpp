@@ -95,7 +95,7 @@ void DiskMountPlugin::invokedMenuItem(const QString &itemKey, const QString &men
     Q_UNUSED(checked)
 
     if (menuId == OPEN)
-        QProcess::startDetached("gvfs-open", QStringList() << "computer://");
+        QProcess::startDetached("gvfs-open", QStringList() << "computer:///");
     else if (menuId == UNMOUNT_ALL)
         m_diskControlApplet->unmountAll();
 }
