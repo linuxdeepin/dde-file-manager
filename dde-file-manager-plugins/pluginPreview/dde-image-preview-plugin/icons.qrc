@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>icons/close_round_press.png</file>
+        <file>icons/close_round_normal.png</file>
+        <file>icons/close_round_hover.png</file>
+    </qresource>
+</RCC>

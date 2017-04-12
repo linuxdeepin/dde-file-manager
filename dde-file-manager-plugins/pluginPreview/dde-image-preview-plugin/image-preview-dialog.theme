@@ -1,0 +1,13 @@
+QPushButton#CloseButton{
+    image: url(:/icons/icons/close_round_normal.png);
+}
+
+QPushButton#CloseButton:pressed{
+    image: url(:/icons/icons/close_round_normal.png);
+}
+
+QPushButton#CloseButton:hover{
+    image: url(:/icons/icons/close_round_normal.png);
+}
+
+

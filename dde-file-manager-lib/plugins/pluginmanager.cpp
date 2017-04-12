@@ -1,11 +1,13 @@
 #include "pluginmanager.h"
-#include "menu/menuinterface.h"
+#include "preview/previewinterface.h"
+#include <menu/menuinterface.h>
 #include "view/viewinterface.h"
 #include "interfaces/dfmglobal.h"
 #include "interfaces/dfmstandardpaths.h"
 #include <QDir>
 #include <QPluginLoader>
 #include <QDebug>
+#include <QMetaEnum>
 
 PluginManagerPrivate::PluginManagerPrivate(PluginManager *parent):
     q_ptr(parent)
@@ -38,13 +40,14 @@ void PluginManager::loadPlugin()
     d->menuInterfaces.clear();
     d->expandInfoInterfaces.clear();
     d->viewInterfaces.clear();
+    d->previewInterfaces.clear();
 
     QStringList pluginDirs = DFMGlobal::PluginLibraryPaths;
 
     foreach (QString dir, pluginDirs) {
         QDir pluginDir(dir);
         qDebug() << dir;
-        pluginChildDirs << "menu" << "view";
+        pluginChildDirs << "menu" << "view" << "preview";
         foreach (QString childDir, pluginChildDirs) {
             QDir childPluginDir(pluginDir.absoluteFilePath(childDir));
             qDebug() << "load plugin in: " << childPluginDir.absolutePath();
@@ -70,6 +73,13 @@ void PluginManager::loadPlugin()
                     if (viewInterface){
                         d->viewInterfaces.append(viewInterface);
                         d->viewInterfacesMap.insert(viewInterface->scheme(), viewInterface);
+                    }
+
+                    PreviewInterface* previewInterface = qobject_cast<PreviewInterface*> (plugin);
+                    if(previewInterface){
+                        static int counter = 0;
+                        counter ++;
+                        d->previewInterfaces << previewInterface;
                     }
                 }
             }
@@ -102,6 +112,12 @@ QMap<QString, ViewInterface *> PluginManager::getViewInterfacesMap()
 {
     Q_D(PluginManager);
     return d->viewInterfacesMap;
+}
+
+QList<PreviewInterface *> PluginManager::getPreviewInterfaces()
+{
+    Q_D(PluginManager);
+    return d->previewInterfaces;
 }
 
 ViewInterface *PluginManager::getViewInterfaceByScheme(const QString &scheme)

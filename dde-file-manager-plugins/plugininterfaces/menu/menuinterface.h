@@ -5,7 +5,9 @@
 #include <QIcon>
 #include <QAction>
 #include <QWidget>
-
+#include <QDialog>
+#include <QSlider>
+#include <QLabel>
 
 /*
  * The menu interface of dde-file-manager
