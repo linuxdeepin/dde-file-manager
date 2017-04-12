@@ -94,9 +94,9 @@ isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
     dde-file-manager-autostart.files = $$PWD/mips/dde-file-manager-autostart.desktop
     INSTALLS += dde-mips-shs dde-file-manager-autostart
 }else{
-    xdg_autostart.path = /etc/xdg/autostart
-    xdg_autostart.files = dde-file-manager-xdg-autostart.desktop
-    INSTALLS += xdg_autostart
+    autostart.path = /etc/xdg/autostart
+    autostart.files = dde-file-manager-xdg-autostart.desktop dde-file-manager-dialog-autostart.desktop
+    INSTALLS += autostart
 }
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../dde-file-manager-lib/release -ldde-file-manager
