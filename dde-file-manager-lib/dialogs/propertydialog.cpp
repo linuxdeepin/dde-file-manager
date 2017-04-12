@@ -62,6 +62,7 @@ NameTextEdit::NameTextEdit(const QString &text, QWidget *parent):
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setFrameShape(QFrame::NoFrame);
     setFixedSize(200, 60);
+    setContextMenuPolicy(Qt::NoContextMenu);
 
     connect(this, &QTextEdit::textChanged, this, [this] {
         QSignalBlocker blocker(this);
@@ -135,6 +136,7 @@ void NameTextEdit::keyPressEvent(QKeyEvent *event)
     }
     QTextEdit::keyPressEvent(event);
 }
+
 bool NameTextEdit::isCanceled() const
 {
     return m_isCanceled;
