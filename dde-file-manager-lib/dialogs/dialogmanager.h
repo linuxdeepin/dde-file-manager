@@ -67,7 +67,7 @@ public slots:
     void showFailToCreateSymlinkDialog(const QString &errorString);
     void showMoveToTrashConflictDialog(const DUrlList& urls);
     void showDeleteSystemPathWarnDialog(quint64 winId);
-
+    void showFilePreviewDialog(const QSharedPointer<DFMUrlListBaseEvent> &event);
     void removePropertyDialog(const DUrl& url);
     void closeAllPropertyDialog();
     void updateCloseIndicator();

@@ -4,5 +4,8 @@
         <file>light/PropertyDialog.theme</file>
         <file>light/OpenWithOtherDialog.theme</file>
         <file>light/DFileViewRoot.theme</file>
+        <file>light/PreviewDialogDefault.theme</file>
+        <file>light/MusicPreviewDialog.theme</file>
+        <file>light/DocPreviewDialog.theme</file>
     </qresource>
 </RCC>

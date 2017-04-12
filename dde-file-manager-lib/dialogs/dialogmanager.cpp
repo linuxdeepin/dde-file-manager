@@ -7,6 +7,8 @@
 #include "dialogs/movetotrashconflictdialog.h"
 #include "views/dfilemanagerwindow.h"
 #include "interfaces/dstyleditemdelegate.h"
+#include "shutil/mimetypedisplaymanager.h"
+#include "previewdialog.h"
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
@@ -30,6 +32,8 @@
 #include "dialogs/openwithdialog.h"
 #include "dialogs/diskspaceoutofusedtipdialog.h"
 #include "interfaces/dfmsetting.h"
+#include "plugins/pluginmanager.h"
+#include "preview/previewinterface.h"
 
 #include "deviceinfo/udisklistener.h"
 #include "deviceinfo/udiskdeviceinfo.h"
@@ -107,6 +111,8 @@ void DialogManager::initConnect()
             this, &DialogManager::showDiskErrorDialog);
     connect(fileSignalManager, &FileSignalManager::showAboutDialog,
             this, &DialogManager::showAboutDialog);
+
+    connect(fileSignalManager, &FileSignalManager::requestShowFilePreviewDialog, this, &DialogManager::showFilePreviewDialog);
 
 //    connect(qApp, &QApplication::focusChanged, this, &DialogManager::handleFocusChanged);
 
@@ -667,6 +673,33 @@ void DialogManager::showDeleteSystemPathWarnDialog(quint64 winId)
     d.setIcon(QIcon(":/images/dialogs/images/dialog_warning_64.png"));
     d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
     d.exec();
+}
+
+void DialogManager::showFilePreviewDialog(const QSharedPointer<DFMUrlListBaseEvent> &event)
+{
+    //Filter out all folders
+    DUrlList urlList;
+    foreach (const DUrl& url, event->fileUrlList()) {
+        const DAbstractFileInfoPointer& info = fileService->createFileInfo(this, url);
+        if(info->isFile())
+            urlList << url;
+    }
+
+    if(urlList.count() <= 0)
+        return;
+
+    QWidget* w = WindowManager::getWindowById(event->windowId());
+    if(!w || w->property("AboutDialogShown").toBool())
+        return;
+
+    PreviewDialog* d = new PreviewDialog(urlList);
+
+    w->setProperty("UserSharePwdSettingDialogShown", true);
+    connect(d, &PreviewDialog::finished, [=]{
+        w->setProperty("UserSharePwdSettingDialogShown", false);
+    });
+
+    d->show();
 }
 
 void DialogManager::removePropertyDialog(const DUrl &url)

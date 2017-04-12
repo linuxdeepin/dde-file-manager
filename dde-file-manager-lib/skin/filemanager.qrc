@@ -314,6 +314,9 @@
         <file>images/icons/stop_press.png</file>
         <file>images/icons/stop_normal.png</file>
         <file>images/icons/stop_hover.png</file>
+        <file>images/icons/preview-dialog-close_round_press.png</file>
+        <file>images/icons/preview_dialog_close_round_hover.png</file>
+        <file>images/icons/preview-dialog-close_round_normal.png</file>
     </qresource>
     <qresource prefix="/leftsidebar">
         <file>images/leftsidebar/android_active_16px.svg</file>

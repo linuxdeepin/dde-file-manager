@@ -194,6 +194,9 @@ signals:
 
     /*trash state changed when trash is empty or is filled*/
     void trashStateChanged();
+
+    /*show file preview dialog*/
+    void requestShowFilePreviewDialog(const QSharedPointer<DFMUrlListBaseEvent> &event);
 };
 
 #endif // FILESIGNALMANAGER_H

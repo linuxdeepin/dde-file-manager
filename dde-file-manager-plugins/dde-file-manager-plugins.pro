@@ -13,3 +13,6 @@ isEqual(IS_TEST_VIEW_PLUGIN, True){
     SUBDIRS += \
         pluginView
 }
+
+SUBDIRS += \
+    pluginPreview

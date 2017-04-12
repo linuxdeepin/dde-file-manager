@@ -9,6 +9,7 @@ class MenuInterface;
 class PluginManager;
 class PropertyDialogExpandInfoInterface;
 class ViewInterface;
+class PreviewInterface;
 
 class PluginManagerPrivate {
 
@@ -19,6 +20,7 @@ public:
     QList<PropertyDialogExpandInfoInterface*> expandInfoInterfaces;
     QList<ViewInterface*> viewInterfaces;
     QMap<QString, ViewInterface*> viewInterfacesMap;
+    QList<PreviewInterface*> previewInterfaces;
 
 private:
     PluginManager* q_ptr=NULL;
@@ -44,6 +46,7 @@ public:
     QList<PropertyDialogExpandInfoInterface*> getExpandInfoInterfaces();
     QList<ViewInterface*> getViewInterfaces();
     QMap<QString, ViewInterface*> getViewInterfacesMap();
+    QList<PreviewInterface*> getPreviewInterfaces();
     ViewInterface* getViewInterfaceByScheme(const QString& scheme);
 
 signals:

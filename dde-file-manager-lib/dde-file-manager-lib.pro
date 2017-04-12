@@ -188,8 +188,8 @@ HEADERS += \
     shutil/viewstatesmanager.h \
     interfaces/dfmeventdispatcher.h \
     interfaces/dfmabstracteventhandler.h \
-    controllers/fileeventprocessor.h
-
+    controllers/fileeventprocessor.h \
+    dialogs/previewdialog.h
 SOURCES += \
     controllers/appcontroller.cpp \
     views/dmovablemainwindow.cpp \
@@ -309,7 +309,8 @@ SOURCES += \
     shutil/viewstatesmanager.cpp \
     interfaces/dfmeventdispatcher.cpp \
     interfaces/dfmabstracteventhandler.cpp \
-    controllers/fileeventprocessor.cpp
+    controllers/fileeventprocessor.cpp \
+    dialogs/previewdialog.cpp
 
 INCLUDEPATH += $$PWD/../ $$PWD/../utils/ $$PWD/interfaces/ $$PWD/../dde-file-manager-plugins/plugininterfaces/
 
@@ -400,4 +401,6 @@ DISTFILES += \
     mimetypeassociations/mimetypeassociations.json \
     configure/default-view-states.json \
     skin/qss/filemanageradmin.qss \
-    themes/light/DFileViewRoot.theme
+    themes/light/DFileViewRoot.theme \
+    themes/light/PreviewDialogDefault \
+    themes/light/MusicPreviewDialog.theme
