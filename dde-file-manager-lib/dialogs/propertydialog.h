@@ -50,8 +50,8 @@ public slots:
     void setPlainText(const QString & text);
 
 protected:
-    void focusOutEvent(QFocusEvent *event);
-    void keyPressEvent(QKeyEvent* event);
+    void focusOutEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
+    void keyPressEvent(QKeyEvent* event) Q_DECL_OVERRIDE;
 
 private:
     bool m_isCanceled = false;
