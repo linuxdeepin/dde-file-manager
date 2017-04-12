@@ -544,6 +544,8 @@ void DFileDialog::showEvent(QShowEvent *event)
         if (state != windowState())
             setWindowState(state);
     }
+
+    activateWindow();
 }
 
 void DFileDialog::closeEvent(QCloseEvent *event)
