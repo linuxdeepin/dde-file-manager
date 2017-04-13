@@ -3,19 +3,19 @@
 /***********************************************************/
 QMainWindow{
     /*background-color: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:1, fx:0.5, fy:0.5, stop:0 rgba(119, 255, 255, 255), stop:1 rgba(32, 127, 155, 255));*/
-    background-color: white;
+    background-color: #f9f9fa;
 }
 
 
 QPushButton#LogoButton{
    border: none;
-   image: url(:/images/images/dde-file-manager.svg);
+   image: url(:/images/images/dde-file-manager-admin.png);
 }
 QPushButton#LogoButton:hover{
-   image: url(:/images/images/dde-file-manager.svg);
+   image: url(:/images/images/dde-file-manager-admin.png);
 }
 QPushButton#LogoButton:press{
-   image: url(:/images/images/dde-file-manager.svg);
+   image: url(:/images/images/dde-file-manager-admin.png);
 }
 
 QFrame#TitleBar{
@@ -116,7 +116,7 @@ QStatusBar QLabel#datatimelabel{
 }
 
 QSizeGrip {
-    
+
     width: 16px;
     height: 16px;
 }
@@ -155,9 +155,9 @@ QPushButton#backButton{
 
 QPushButton#backButton:hover{
     background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                        stop: 0 #8CCFFF,
-                        stop: 1  #4BB8FF);
-    border: 1px solid #3caafd;
+                stop: 0 #B1B1B1,
+                stop: 1  #9D9D9D);
+    border: 1px solid #909090;
     color: white;
     image: url(:/icons/images/icons/backward_hover.png);
     icon-size: 16px 16px;
@@ -176,7 +176,6 @@ QPushButton#backButton:disabled{
     image: url(:/icons/images/icons/backward_disabled.png);
 }
 
-
 QPushButton#forwardButton{
     background-color:white;
     border-top: 1px solid rgba(0, 0, 0, 0.1);
@@ -191,9 +190,9 @@ QPushButton#forwardButton{
 
 QPushButton#forwardButton:hover{
     background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                        stop: 0 #8CCFFF,
-                        stop: 1  #4BB8FF);
-    border: 1px solid #3caafd;
+                stop: 0 #B1B1B1,
+                stop: 1  #9D9D9D);
+    border: 1px solid #909090;
     color: white;
     image: url(:/icons/images/icons/forward_hover.png);
     icon-size: 16px 16px;
@@ -234,10 +233,8 @@ QListWidget#DCrumbList{
 
 QPushButton#iconViewButton{
     background-color:white;
-    border-left: 1px solid rgba(0, 0, 0, 0.1);
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    color: black;
+    border: 1px solid #5f5f5f5;
+    color: white;
     border-top-left-radius: 4px;
     border-bottom-left-radius: 4px;
     image: url(:/icons/images/icons/icon_view_normal.png);
@@ -246,16 +243,16 @@ QPushButton#iconViewButton{
 
 QPushButton#iconViewButton:hover{
     background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                        stop: 0 #8CCFFF,
-                        stop: 1  #4BB8FF);
+                        stop: 0 #B1B1B1,
+                        stop: 1  #9D9D9D);
     image: url(:/icons/images/icons/icon_view_hover.png);
-    border: 1px solid #3caafd;
+    border: 1px solid #909090;
     color: white;
 }
 
 QPushButton#iconViewButton:checked{
-    border: 1px solid #2794ff;
-    background-color:#2ca7f8;
+    border: 1px solid #5f5f5f;
+    background-color:#6a6a6a;
     image: url(:/icons/images/icons/icon_view_checked.png);
     icon-size: 16px 16px;
 }
@@ -280,16 +277,16 @@ QPushButton#listViewButton{
 
 QPushButton#listViewButton:hover{
     background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                        stop: 0 #8CCFFF,
-                        stop: 1  #4BB8FF);
+                    stop: 0 #B1B1B1,
+                    stop: 1  #9D9D9D);
     image: url(:/icons/images/icons/list_view_hover.png);
-    border: 1px solid #3caafd;
+    border: 1px solid #909090;
     color: white;
 }
 
 QPushButton#listViewButton:checked{
-    border: 1px solid #2794ff;
-    background-color:#2ca7f8;
+    border: 1px solid #5f5f5f;
+    background-color:#6a6a6a;
     image: url(:/icons/images/icons/list_view_checked.png);
     icon-size: 16px 16px;
 }
@@ -358,20 +355,12 @@ QPushButton#searchButton{
     border-radius: 4px;
 }
 
-QPushButton#searchButton:pressed{
-    background-color:white;
-    image: url(:/icons/images/icons/search_pressed.png);
-    border: 1px solid #1088ff;
-    color: white;
-}
-
-
 QPushButton#searchButton:hover{
     background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                        stop: 0 #8CCFFF,
-                        stop: 1  #4BB8FF);
+                    stop: 0 #B1B1B1,
+                    stop: 1  #9D9D9D);
     image: url(:/icons/images/icons/search_hover.png);
-    border: 1px solid #3caafd;
+    border: 1px solid #909090;
     color: white;
 }
 
@@ -399,10 +388,11 @@ QPushButton#DCrumbButton:hover{
 }
 
 QPushButton#DCrumbButton:checked{
-    background-color: #2ca7f8;
-    border: 1px solid #1088ff;
+    background-color: #6a6a6a;
+    border: 1px solid #5f5f5f;
     color: white;
 }
+
 
 QPushButton#DCrumbIconButton{
     background-color:transparent;
@@ -419,7 +409,7 @@ QPushButton#DCrumbIconButton:hover{
 }
 
 QPushButton#DCrumbIconButton:checked{
-    background-color: #2ca7f8;
+    background-color: #6a6a6a;
     color: white;
 }
 /* ******************End of DCrumbButton****************** */
@@ -641,3 +631,4 @@ QPushButton#NewTabButton:disabled {
     border: none;
     image: url(:/icons/images/icons/new_tab_disabled.png);
 }
+

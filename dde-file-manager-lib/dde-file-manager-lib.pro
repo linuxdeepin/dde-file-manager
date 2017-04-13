@@ -396,4 +396,6 @@ INSTALLS += target templateFiles translations mimetypeFiles mimetypeAssociations
 
 DISTFILES += \
     mimetypeassociations/mimetypeassociations.json \
-    configure/default-view-states.json
+    configure/default-view-states.json \
+    skin/qss/filemanageradmin.qss \
+    themes/light/DFileViewRoot.theme

@@ -3,5 +3,6 @@
         <file>light/DFileView.theme</file>
         <file>light/PropertyDialog.theme</file>
         <file>light/OpenWithOtherDialog.theme</file>
+        <file>light/DFileViewRoot.theme</file>
     </qresource>
 </RCC>

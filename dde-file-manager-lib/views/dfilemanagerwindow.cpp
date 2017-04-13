@@ -583,27 +583,10 @@ void DFileManagerWindow::initUI()
     initCentralWidget();
     setCentralWidget(d->centralWidget);
 
-
-
-    setStyleSheet(getQssFromFile(":/qss/qss/filemanager.qss"));
-
     if (CommandLineManager::instance()->isSet("r")){
-        d->titleFrame->setStyleSheet("\
-                                 QFrame#TitleBar{\
-                                     background-color:  #B8B8B8;\
-                                     border-bottom: 1px solid rgba(0, 0, 0, 0.1);\
-                                 }\
-                                 QFrame#ToolBar{\
-                                     background-color:  #B8B8B8;\
-                                 }\
-                                 \
-                                 QFrame#AddressToolBar{\
-                                     background-color: #B8B8B8;\
-                                 }\
-                                 \
-                                 QFrame#ControllerToolBar{\
-                                     background-color: #B8B8B8;\
-                                 }");
+        setStyleSheet(getQssFromFile(":/qss/qss/filemanageradmin.qss"));
+    } else{
+        setStyleSheet(getQssFromFile(":/qss/qss/filemanager.qss"));
     }
 
 }
