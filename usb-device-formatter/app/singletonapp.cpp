@@ -40,11 +40,6 @@ QString SingletonApp::getServerRootPath()
     return path;
 }
 
-QString SingletonApp::handleReLuanchRequest()
-{
-    m_server.removeServer(getServerPathByKey(m_key));
-}
-
 SingletonApp *SingletonApp::instance()
 {
     static SingletonApp* app = new SingletonApp;
