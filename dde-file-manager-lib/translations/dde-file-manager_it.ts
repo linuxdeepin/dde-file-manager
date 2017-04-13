@@ -281,7 +281,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="284"/>
         <source>It is an executable text file.</source>
-        <translation>E&apos; un file eseguibile</translation>
+        <translation>E&apos; un file eseguibile di testo.</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="287"/>
@@ -929,7 +929,7 @@
         <location filename="../interfaces/dfilemenumanager.cpp" line="618"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="621"/>
         <source>Open in new tab</source>
-        <translation>Apri in una nuova finestra</translation>
+        <translation>Apri in una nuova scheda</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="623"/>
@@ -1225,7 +1225,7 @@
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="31"/>
         <source>Open in new tab:</source>
-        <translation>Apri in una nuova tab</translation>
+        <translation>Apri in una nuova scheda:</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="32"/>
@@ -1343,7 +1343,7 @@
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="52"/>
         <source>New window and tab</source>
-        <translation>Nuova finestra e tab</translation>
+        <translation>Nuove finestre e schede</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="53"/>
@@ -1783,7 +1783,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="30"/>
         <source>New tab</source>
-        <translation>Nuova tab</translation>
+        <translation>Nuova scheda</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="30"/>
@@ -1868,7 +1868,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="40"/>
         <source>Close current tab</source>
-        <translation>Chiudi Tab attuale</translation>
+        <translation>Chiudi scheda attuale</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="40"/>
@@ -1893,7 +1893,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="43"/>
         <source>Switch to next tab</source>
-        <translation>Passa alla Tab successiva</translation>
+        <translation>Passa alla scheda successiva</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="43"/>
@@ -1908,7 +1908,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="44"/>
         <source>Switch to previous tab</source>
-        <translation>Torna alla Tab precedente</translation>
+        <translation>Torna alla scheda precedente</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="45"/>
@@ -1918,7 +1918,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="45"/>
         <source>Tab </source>
-        <translation>Tab</translation>
+        <translation>Scheda</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="46"/>
@@ -1933,7 +1933,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="47"/>
         <source>Switch tab by specified number between 1 to 8</source>
-        <translation>Cambia tab specificando un numero tra 1 e 8</translation>
+        <translation>Cambia scheda specificando un numero tra 1 e 8</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="47"/>

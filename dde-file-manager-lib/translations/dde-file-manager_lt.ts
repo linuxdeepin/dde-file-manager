@@ -50,7 +50,7 @@
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="51"/>
         <source>Computer Name</source>
-        <translation type="unfinished"/>
+        <translation>Kompiuterio vardas</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="52"/>
@@ -80,7 +80,7 @@
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="177"/>
         <source>Bit</source>
-        <translation type="unfinished"/>
+        <translation>Bitų</translation>
     </message>
 </context>
 <context>
@@ -103,7 +103,7 @@
     <message>
         <location filename="../views/computerview.cpp" line="467"/>
         <source>System Disk</source>
-        <translation type="unfinished"/>
+        <translation>Sistemos diskas</translation>
     </message>
 </context>
 <context>
@@ -427,12 +427,12 @@
     <message>
         <location filename="../../dialogs/diskspaceoutofusedtipdialog.cpp" line="16"/>
         <source>Target disk doesn&apos;t have enough space, unable to copy!</source>
-        <translation type="unfinished"/>
+        <translation>Paskirties diske nėra pakankamai vietos, nepavyko nukopijuoti!</translation>
     </message>
     <message>
         <location filename="../../dialogs/diskspaceoutofusedtipdialog.cpp" line="18"/>
         <source>OK</source>
-        <translation type="unfinished"/>
+        <translation>Gerai</translation>
     </message>
 </context>
 <context>
@@ -714,12 +714,12 @@
     <message>
         <location filename="../dialogs/openwithotherdialog.cpp" line="113"/>
         <source>All Programs</source>
-        <translation type="unfinished"/>
+        <translation>Visos programos</translation>
     </message>
     <message>
         <location filename="../dialogs/openwithotherdialog.cpp" line="123"/>
         <source>Search</source>
-        <translation type="unfinished"/>
+        <translation>Ieškoti</translation>
     </message>
     <message>
         <location filename="../dialogs/openwithotherdialog.cpp" line="131"/>
@@ -782,7 +782,7 @@
     <message>
         <location filename="../controllers/pathmanager.cpp" line="32"/>
         <source>System Disk</source>
-        <translation type="unfinished"/>
+        <translation>Sistemos diskas</translation>
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="33"/>
@@ -820,7 +820,7 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="217"/>
         <source>System Disk</source>
-        <translation type="unfinished"/>
+        <translation>System Disk</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="708"/>
@@ -1134,42 +1134,42 @@
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="5"/>
         <source>Use the file chooser dialog of Deepin File Manager</source>
-        <translation type="unfinished"/>
+        <translation>Naudoti Deepin failų tvarkytuvės failų parinkiklio dialogą</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="6"/>
         <source>Auto mount</source>
-        <translation type="unfinished"/>
+        <translation>Automatiškai prijungti</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="7"/>
         <source>Auto mount and open</source>
-        <translation type="unfinished"/>
+        <translation>Automatiškai prijungti ir atverti</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="8"/>
         <source>Compress file preview</source>
-        <translation type="unfinished"/>
+        <translation>Suglaudinto failo peržiūra</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="9"/>
         <source>Document preview</source>
-        <translation type="unfinished"/>
+        <translation>Dokumentų peržiūra</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="10"/>
         <source>Image preview</source>
-        <translation type="unfinished"/>
+        <translation>Paveikslų peržiūra</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="11"/>
         <source>Text preview</source>
-        <translation type="unfinished"/>
+        <translation>Tekstų peržiūra</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="12"/>
         <source>Video preview</source>
-        <translation type="unfinished"/>
+        <translation>Vaizdo įrašų peržiūra</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="13"/>
@@ -1179,32 +1179,32 @@
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="15"/>
         <source>Default size:</source>
-        <translation type="unfinished"/>
+        <translation>Numatytasis dydis:</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="16"/>
         <source>Extra small</source>
-        <translation type="unfinished"/>
+        <translation>Ypač mažas</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="17"/>
         <source>Small</source>
-        <translation type="unfinished"/>
+        <translation>Mažas</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="18"/>
         <source>Medium</source>
-        <translation type="unfinished"/>
+        <translation>Vidutinis</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="19"/>
         <source>Large</source>
-        <translation type="unfinished"/>
+        <translation>Didelis</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="20"/>
         <source>Extra large</source>
-        <translation type="unfinished"/>
+        <translation>Ypač didelis</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="21"/>
@@ -1287,22 +1287,22 @@
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="43"/>
         <source>Click</source>
-        <translation type="unfinished"/>
+        <translation>Spustelėjimu</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="44"/>
         <source>Double click</source>
-        <translation type="unfinished"/>
+        <translation>Dvikarčiu spustelėjimu</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="54"/>
         <source>Restore to default</source>
-        <translation type="unfinished"/>
+        <translation>Atkurti numatytuosius</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="14"/>
         <source>Show hidden files in search results</source>
-        <translation type="unfinished"/>
+        <translation>Paieškos rezultatuose rodyti paslėptus failus</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="45"/>
@@ -1312,7 +1312,7 @@
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="46"/>
         <source>Dialog</source>
-        <translation type="unfinished"/>
+        <translation>Dialogas</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="47"/>
@@ -1323,7 +1323,7 @@
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="48"/>
         <source>Preview</source>
-        <translation type="unfinished"/>
+        <translation>Peržiūra</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="49"/>
@@ -1333,22 +1333,22 @@
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="50"/>
         <source>View</source>
-        <translation type="unfinished"/>
+        <translation>Rodinys</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="51"/>
         <source>Hidden files</source>
-        <translation type="unfinished"/>
+        <translation>Paslėpti failai</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="52"/>
         <source>New window and tab</source>
-        <translation type="unfinished"/>
+        <translation>Naujas langas ir kortelė</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="53"/>
         <source>Open behavior</source>
-        <translation type="unfinished"/>
+        <translation>Atvėrimo elgsena</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="657"/>
@@ -1898,12 +1898,12 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="43"/>
         <source>Ctrl + Tab </source>
-        <translation type="unfinished"/>
+        <translation>Vald + Tab </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="44"/>
         <source>Ctrl + Shift + Tab </source>
-        <translation type="unfinished"/>
+        <translation>Vald + Lyg2 + Tab </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="44"/>
@@ -1938,7 +1938,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="47"/>
         <source>Alt + [1-8] </source>
-        <translation type="unfinished"/>
+        <translation>Alt + [1-8] </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="42"/>

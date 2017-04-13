@@ -27,7 +27,7 @@
     <message>
         <location filename="../dialogs/closealldialogindicator.cpp" line="31"/>
         <source>Close all</source>
-        <translation>Fechar Todos</translation>
+        <translation>Fechar todos</translation>
     </message>
     <message>
         <location filename="../dialogs/closealldialogindicator.cpp" line="61"/>
@@ -180,7 +180,7 @@
     <message>
         <location filename="../views/dstatusbar.cpp" line="34"/>
         <source>%1 items</source>
-        <translation>%1 elementos</translation>
+        <translation>%1 itens</translation>
     </message>
     <message>
         <location filename="../views/dstatusbar.cpp" line="35"/>
@@ -190,7 +190,7 @@
     <message>
         <location filename="../views/dstatusbar.cpp" line="36"/>
         <source>%1 items selected</source>
-        <translation>%1 elementos selecionados</translation>
+        <translation>%1 itens selecionados</translation>
     </message>
     <message>
         <location filename="../views/dstatusbar.cpp" line="37"/>
@@ -334,12 +334,12 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="343"/>
         <source>Are you sure to empty %1 item?</source>
-        <translation>Tem a certeza que deseja esvaziar %1 elemento?</translation>
+        <translation>Tem a certeza que deseja excluir %1 item?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="344"/>
         <source>Are you sure to empty %1 items?</source>
-        <translation>Tem a certeza que deseja esvaziar %1 items?</translation>
+        <translation>Tem a certeza que deseja excluir %1 itens?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="345"/>
@@ -349,7 +349,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="346"/>
         <source>Permanently delete %1 items?</source>
-        <translation>Eliminar permanentemente %1 elementos?</translation>
+        <translation>Eliminar permanentemente %1 itens?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="352"/>
@@ -787,7 +787,7 @@
     <message>
         <location filename="../controllers/pathmanager.cpp" line="33"/>
         <source>Computers in LAN</source>
-        <translation>Computadores em LAN</translation>
+        <translation>Computadores na LAN</translation>
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="34"/>
@@ -825,7 +825,7 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="708"/>
         <source>Allow to execute as program</source>
-        <translation>Permitir executar como um programa</translation>
+        <translation>Executar como um programa</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="763"/>
@@ -1833,7 +1833,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="36"/>
         <source>Hide item</source>
-        <translation>Esconder item</translation>
+        <translation>Ocultar item</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="36"/>

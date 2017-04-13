@@ -1,10 +1,10 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="sk" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="fr" version="2.1">
 <context>
     <name>FinishPage</name>
     <message>
         <location filename="../view/finishpage.cpp" line="18"/>
         <source>Format successfully</source>
-        <translation>Formátovanie úspešné</translation>
+        <translation>Formatage réussi</translation>
     </message>
 </context>
 <context>
@@ -12,7 +12,7 @@
     <message>
         <location filename="../view/formatingpage.cpp" line="19"/>
         <source>Formating, please wait for a minute...</source>
-        <translation>Formátujem, prosím chvíľu počkajte...</translation>
+        <translation>Formatage, veuillez patienter une minute ...</translation>
     </message>
 </context>
 <context>
@@ -20,22 +20,22 @@
     <message>
         <location filename="../view/mainpage.cpp" line="85"/>
         <source>Type</source>
-        <translation>Typ</translation>
+        <translation>Genre</translation>
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="104"/>
         <source>Label</source>
-        <translation>Označenie</translation>
+        <translation>Étiquette</translation>
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="113"/>
         <source>Fast format</source>
-        <translation>Rýchly formátovanie</translation>
+        <translation>Formatage rapide</translation>
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="130"/>
         <source>This operation will clear all data from your device.</source>
-        <translation>Táto operácia zmaže všetky dáta z vášho zariadenia.</translation>
+        <translation>Cette opération effacera toutes les données de votre appareil.</translation>
     </message>
 </context>
 <context>
@@ -44,42 +44,42 @@
         <location filename="../view/mainwindow.cpp" line="56"/>
         <location filename="../view/mainwindow.cpp" line="78"/>
         <source>Format</source>
-        <translation>Formátovanie</translation>
+        <translation>Formater</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="164"/>
         <source>Continue</source>
-        <translation>Pokračovať</translation>
+        <translation>Continuer</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="169"/>
         <source>Formatting...</source>
-        <translation>Formátujem...</translation>
+        <translation>Formatage...</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="193"/>
         <source>Done</source>
-        <translation>Hotovo</translation>
+        <translation>Terminé</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="204"/>
         <source>Failed to format</source>
-        <translation>Nepodarilo sa naformátovať</translation>
+        <translation>Échec du formatage</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="200"/>
         <source>Quit</source>
-        <translation>Odísť</translation>
+        <translation>Quitter</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="201"/>
         <source>Your disk is removed when formatting</source>
-        <translation>Váš disk je odobratý pri formátovaní</translation>
+        <translation>Votre disque est supprimé lors du formatage</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="205"/>
         <source>Reformat</source>
-        <translation>Preformátovanie</translation>
+        <translation>Reformater</translation>
     </message>
 </context>
 <context>
@@ -95,12 +95,12 @@
     <message>
         <location filename="../main.cpp" line="71"/>
         <source>Device does not exist</source>
-        <translation>Zariadenie neexistuje</translation>
+        <translation>Le périphérique n&apos;existe pas</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="80"/>
         <source>Cannot format local device</source>
-        <translation>Neformátovať lokálne zariadenie</translation>
+        <translation>Impossible de formater un périphérique local</translation>
     </message>
 </context>
 <context>
@@ -108,7 +108,7 @@
     <message>
         <location filename="../view/warnpage.cpp" line="19"/>
         <source>Formating operation will clear all data from your disk, are you sure to continue? This option can not be restored.</source>
-        <translation>Operácia formátovania zmaže všetky dáta z vášho disku, naozaj chcete pokračovať? Túto operáciu nemôžete vrátiť späť.</translation>
+        <translation>L&apos;opération de formatage effacera toutes les données de votre disque, êtes-vous sür de vouloir continuer ? Cette option est irréversible.</translation>
     </message>
 </context>
 </TS>

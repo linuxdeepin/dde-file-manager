@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="fr">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="fr" version="2.1">
     <context>
         <name>desktop</name>
         <message>
@@ -11,12 +9,12 @@
         <message>
             <location filename="Desktop Entry]Name" line="0"/>
             <source>Deepin File Manager</source>
-            <translation>Gestionnaire de fichiers</translation>
+            <translation>Gestionnaire de Fichier Deepin</translation>
         </message>
         <message>
             <location filename="Desktop Action new-window]Name" line="0"/>
             <source>New Window</source>
-            <translation>Nouvelle fenêtre</translation>
+            <translation>Nouvelle fenêtre </translation>
         </message>
     </context>
 </TS>

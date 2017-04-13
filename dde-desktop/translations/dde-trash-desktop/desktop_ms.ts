@@ -1,20 +1,20 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="lt" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="ms" version="2.1">
     <context>
         <name>desktop</name>
         <message>
             <location filename="Desktop Entry]GenericName" line="0"/>
             <source>Open Trash.</source>
-            <translation>Atverti šiukšlinę.</translation>
+            <translation>Buka Tong Sampah.</translation>
         </message>
         <message>
             <location filename="Desktop Entry]Comment" line="0"/>
             <source>Open trash.</source>
-            <translation>Atverti šiukšlinę.</translation>
+            <translation>Buka tong sampah.</translation>
         </message>
         <message>
             <location filename="Desktop Entry]Name" line="0"/>
             <source>Trash</source>
-            <translation>Šiukšlinė</translation>
+            <translation>Tong Sampah</translation>
         </message>
     </context>
 </TS>

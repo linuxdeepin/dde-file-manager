@@ -1,10 +1,10 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="sk" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="sr" version="2.1">
 <context>
     <name>FinishPage</name>
     <message>
         <location filename="../view/finishpage.cpp" line="18"/>
         <source>Format successfully</source>
-        <translation>Formátovanie úspešné</translation>
+        <translation>Успешно форматирано</translation>
     </message>
 </context>
 <context>
@@ -12,7 +12,7 @@
     <message>
         <location filename="../view/formatingpage.cpp" line="19"/>
         <source>Formating, please wait for a minute...</source>
-        <translation>Formátujem, prosím chvíľu počkajte...</translation>
+        <translation>Форматирам. Причекајте мало...</translation>
     </message>
 </context>
 <context>
@@ -20,22 +20,22 @@
     <message>
         <location filename="../view/mainpage.cpp" line="85"/>
         <source>Type</source>
-        <translation>Typ</translation>
+        <translation>Тип</translation>
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="104"/>
         <source>Label</source>
-        <translation>Označenie</translation>
+        <translation>Ознака</translation>
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="113"/>
         <source>Fast format</source>
-        <translation>Rýchly formátovanie</translation>
+        <translation>Брзи формат</translation>
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="130"/>
         <source>This operation will clear all data from your device.</source>
-        <translation>Táto operácia zmaže všetky dáta z vášho zariadenia.</translation>
+        <translation>Ова радња ће обрисати све податке са вашег уређаја.</translation>
     </message>
 </context>
 <context>
@@ -44,42 +44,42 @@
         <location filename="../view/mainwindow.cpp" line="56"/>
         <location filename="../view/mainwindow.cpp" line="78"/>
         <source>Format</source>
-        <translation>Formátovanie</translation>
+        <translation>Формат</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="164"/>
         <source>Continue</source>
-        <translation>Pokračovať</translation>
+        <translation>Настави</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="169"/>
         <source>Formatting...</source>
-        <translation>Formátujem...</translation>
+        <translation>Форматирам...</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="193"/>
         <source>Done</source>
-        <translation>Hotovo</translation>
+        <translation>Завршено</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="204"/>
         <source>Failed to format</source>
-        <translation>Nepodarilo sa naformátovať</translation>
+        <translation>Неуспело форматирање</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="200"/>
         <source>Quit</source>
-        <translation>Odísť</translation>
+        <translation>Напусти</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="201"/>
         <source>Your disk is removed when formatting</source>
-        <translation>Váš disk je odobratý pri formátovaní</translation>
+        <translation>Ваш диск ће се уклонити при форматирању</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="205"/>
         <source>Reformat</source>
-        <translation>Preformátovanie</translation>
+        <translation>Преформатирај</translation>
     </message>
 </context>
 <context>
@@ -87,7 +87,7 @@
     <message>
         <location filename="../dialogs/messagedialog.cpp" line="19"/>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation>У реду</translation>
     </message>
 </context>
 <context>
@@ -95,12 +95,12 @@
     <message>
         <location filename="../main.cpp" line="71"/>
         <source>Device does not exist</source>
-        <translation>Zariadenie neexistuje</translation>
+        <translation>Уређај не постоји</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="80"/>
         <source>Cannot format local device</source>
-        <translation>Neformátovať lokálne zariadenie</translation>
+        <translation>Не могу да форматирам локални уређај</translation>
     </message>
 </context>
 <context>
@@ -108,7 +108,7 @@
     <message>
         <location filename="../view/warnpage.cpp" line="19"/>
         <source>Formating operation will clear all data from your disk, are you sure to continue? This option can not be restored.</source>
-        <translation>Operácia formátovania zmaže všetky dáta z vášho disku, naozaj chcete pokračovať? Túto operáciu nemôžete vrátiť späť.</translation>
+        <translation>Форматирањем се бришу сви подаци са вашег диска. Заиста желите да наставите? Ово се не може опозвати.</translation>
     </message>
 </context>
 </TS>

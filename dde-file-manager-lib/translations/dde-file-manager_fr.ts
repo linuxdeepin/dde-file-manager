@@ -1,25 +1,25 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_TW" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="fr" version="2.1">
 <context>
     <name>ClearTrashDialog</name>
     <message>
         <location filename="../../dialogs/cleartrashdialog.cpp" line="12"/>
         <source>Are you sure to empty trash?</source>
-        <translation>確定清除回收桶？</translation>
+        <translation>Êtes-vous sûr de vider la corbeille?</translation>
     </message>
     <message>
         <location filename="../../dialogs/cleartrashdialog.cpp" line="13"/>
         <source>This action cannot be restored</source>
-        <translation>這個動作無法復原</translation>
+        <translation>Cette action ne pourra pas être restaurée</translation>
     </message>
     <message>
         <location filename="../../dialogs/cleartrashdialog.cpp" line="16"/>
         <source>Cancel</source>
-        <translation>取消</translation>
+        <translation>Annuler</translation>
     </message>
     <message>
         <location filename="../../dialogs/cleartrashdialog.cpp" line="16"/>
         <source>Empty</source>
-        <translation>清理</translation>
+        <translation>Vide</translation>
     </message>
 </context>
 <context>
@@ -27,12 +27,12 @@
     <message>
         <location filename="../dialogs/closealldialogindicator.cpp" line="31"/>
         <source>Close all</source>
-        <translation>關閉全部</translation>
+        <translation>Fermer tout</translation>
     </message>
     <message>
         <location filename="../dialogs/closealldialogindicator.cpp" line="61"/>
         <source>Total size is %1, contains %2 files</source>
-        <translation>總空間為 %1，包含 %2 個檔案</translation>
+        <translation>La taille totale est de %1,et contient %2 fichiers</translation>
     </message>
 </context>
 <context>
@@ -40,47 +40,47 @@
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="31"/>
         <source>Computer</source>
-        <translation>電腦</translation>
+        <translation>Ordinateur</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="42"/>
         <source>Basic Info</source>
-        <translation>基本資訊</translation>
+        <translation>Infos de base</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="51"/>
         <source>Computer Name</source>
-        <translation>電腦名稱</translation>
+        <translation>Nom de l&apos;ordinateur</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="52"/>
         <source>Version</source>
-        <translation>版本</translation>
+        <translation>Version</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="53"/>
         <source>Type</source>
-        <translation>類型</translation>
+        <translation>Genre</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="54"/>
         <source>Processor</source>
-        <translation>處理器</translation>
+        <translation>Processeur</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="55"/>
         <source>Memory</source>
-        <translation>記憶體</translation>
+        <translation>Mémoire </translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="56"/>
         <source>Disk</source>
-        <translation>磁碟機空間</translation>
+        <translation>Disque</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="177"/>
         <source>Bit</source>
-        <translation> 位元</translation>
+        <translation>Bit </translation>
     </message>
 </context>
 <context>
@@ -88,22 +88,22 @@
     <message>
         <location filename="../views/computerview.cpp" line="379"/>
         <source>My Directories</source>
-        <translation>我的資料夾</translation>
+        <translation>Mes dossiers</translation>
     </message>
     <message>
         <location filename="../views/computerview.cpp" line="385"/>
         <source>Internal Disk</source>
-        <translation>內接磁碟機</translation>
+        <translation>Disque Interne</translation>
     </message>
     <message>
         <location filename="../views/computerview.cpp" line="391"/>
         <source>External Disk</source>
-        <translation>外接磁碟機</translation>
+        <translation>Disque Externe</translation>
     </message>
     <message>
         <location filename="../views/computerview.cpp" line="467"/>
         <source>System Disk</source>
-        <translation>系統磁碟機</translation>
+        <translation>Disque système </translation>
     </message>
 </context>
 <context>
@@ -111,17 +111,17 @@
     <message>
         <location filename="../../dialogs/confirmdeletedialog.cpp" line="11"/>
         <source>This action cannot be restored</source>
-        <translation>這個動作無法復原</translation>
+        <translation>Cette action ne pourra pas être restaurée</translation>
     </message>
     <message>
         <location filename="../../dialogs/confirmdeletedialog.cpp" line="14"/>
         <source>Cancel</source>
-        <translation>取消</translation>
+        <translation>Annuler</translation>
     </message>
     <message>
         <location filename="../../dialogs/confirmdeletedialog.cpp" line="14"/>
         <source>Delete</source>
-        <translation>刪除</translation>
+        <translation>Supprimer</translation>
     </message>
 </context>
 <context>
@@ -129,17 +129,17 @@
     <message>
         <location filename="../views/dfiledialog.cpp" line="50"/>
         <source>Cancel</source>
-        <translation>取消</translation>
+        <translation>Annuler</translation>
     </message>
     <message>
         <location filename="../views/dfiledialog.cpp" line="370"/>
         <source>Open</source>
-        <translation>開啟</translation>
+        <translation>Ouvrir</translation>
     </message>
     <message>
         <location filename="../views/dfiledialog.cpp" line="381"/>
         <source>Save</source>
-        <translation>儲存</translation>
+        <translation>Sauvegarder</translation>
     </message>
 </context>
 <context>
@@ -147,27 +147,27 @@
     <message>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="521"/>
         <source>Name</source>
-        <translation>名稱</translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="523"/>
         <source>Time modified</source>
-        <translation>修改時間</translation>
+        <translation>Heure de modification</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="525"/>
         <source>Size</source>
-        <translation>檔案大小</translation>
+        <translation>Taille</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="527"/>
         <source>Type</source>
-        <translation>檔案類型</translation>
+        <translation>Genre</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="529"/>
         <source>Time created</source>
-        <translation>建立時間</translation>
+        <translation>Heure de création</translation>
     </message>
 </context>
 <context>
@@ -175,62 +175,62 @@
     <message>
         <location filename="../views/dstatusbar.cpp" line="33"/>
         <source>%1 item</source>
-        <translation>%1 個項目</translation>
+        <translation>%1 élément</translation>
     </message>
     <message>
         <location filename="../views/dstatusbar.cpp" line="34"/>
         <source>%1 items</source>
-        <translation>%1 個項目</translation>
+        <translation>%1 objets</translation>
     </message>
     <message>
         <location filename="../views/dstatusbar.cpp" line="35"/>
         <source>%1 item selected</source>
-        <translation>已選取 %1 個項目</translation>
+        <translation>%1 élément sélectionné</translation>
     </message>
     <message>
         <location filename="../views/dstatusbar.cpp" line="36"/>
         <source>%1 items selected</source>
-        <translation>已選取 %1 個項目</translation>
+        <translation>%1 objets sélectionnés</translation>
     </message>
     <message>
         <location filename="../views/dstatusbar.cpp" line="37"/>
         <source>%1 folder selected (contains %2)</source>
-        <translation>已選取 %1 個資料夾（包含 %2 ）</translation>
+        <translation>%1 dossier selectionné (contient %2)</translation>
     </message>
     <message>
         <location filename="../views/dstatusbar.cpp" line="38"/>
         <source>%1 folders selected (contains %2)</source>
-        <translation>已選取 %1 個資料夾（包含 %2 ）</translation>
+        <translation>%1 dossiers selectionnés (contiennent %2)</translation>
     </message>
     <message>
         <location filename="../views/dstatusbar.cpp" line="39"/>
         <source>%1 file selected (%2)</source>
-        <translation>已選取 %1 個檔案（%2）</translation>
+        <translation>%1 fichier sélectionné (%2)</translation>
     </message>
     <message>
         <location filename="../views/dstatusbar.cpp" line="40"/>
         <source>%1 files selected (%2)</source>
-        <translation>已選取 %1 個檔案（%2）</translation>
+        <translation>%1 fichiers sélectionnés (%2)</translation>
     </message>
     <message>
         <location filename="../views/dstatusbar.cpp" line="41"/>
         <source>%1 folder selected</source>
-        <translation>已選取 %1 個資料夾</translation>
+        <translation>%1 dossier sélectionné</translation>
     </message>
     <message>
         <location filename="../views/dstatusbar.cpp" line="133"/>
         <source>Filter</source>
-        <translation>檔案類型</translation>
+        <translation>Filtre</translation>
     </message>
     <message>
         <location filename="../views/dstatusbar.cpp" line="142"/>
         <source>Save as:</source>
-        <translation>另存為：</translation>
+        <translation>Enregistrer sous:</translation>
     </message>
     <message>
         <location filename="../views/dstatusbar.cpp" line="409"/>
         <source>Loading...</source>
-        <translation>正在載入…</translation>
+        <translation>Chargement...</translation>
     </message>
 </context>
 <context>
@@ -238,12 +238,12 @@
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="424"/>
         <source>1 task in progress</source>
-        <translation>正在進行 1 項作業</translation>
+        <translation>1 tâche en cours</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="426"/>
         <source>%1 tasks in progress</source>
-        <translation>正在進行 %1 項作業</translation>
+        <translation>%1 tâches en cours</translation>
     </message>
 </context>
 <context>
@@ -251,7 +251,7 @@
     <message>
         <location filename="../views/dtoolbar.cpp" line="212"/>
         <source>Search or enter address</source>
-        <translation>搜尋或輸入位址</translation>
+        <translation>Rechercher ou entrez une adresse</translation>
     </message>
 </context>
 <context>
@@ -259,29 +259,29 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="255"/>
         <source>Operation failed!</source>
-        <translation>作業失敗！</translation>
+        <translation>Opération échouée!</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="256"/>
         <source>Target folder is inside the source folder!</source>
-        <translation>目標資料夾在來源資料夾中！</translation>
+        <translation>Le dossier cible est dans le dossier source!</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="258"/>
         <location filename="../dialogs/dialogmanager.cpp" line="649"/>
         <location filename="../dialogs/dialogmanager.cpp" line="670"/>
         <source>OK</source>
-        <translation>確定</translation>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="283"/>
         <source>Do you want to run %1 or display its content?</source>
-        <translation>執行 %1 或顯示內容？</translation>
+        <translation>Voulez-vous executer %1 ou afficher son contenu ?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="284"/>
         <source>It is an executable text file.</source>
-        <translation>此為文字執行檔案。</translation>
+        <translation>C&apos;est un fichier texte exécutable.</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="287"/>
@@ -291,135 +291,135 @@
         <location filename="../dialogs/dialogmanager.cpp" line="526"/>
         <location filename="../dialogs/dialogmanager.cpp" line="555"/>
         <source>Cancel</source>
-        <translation>取消</translation>
+        <translation>Annuler</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="287"/>
         <location filename="../dialogs/dialogmanager.cpp" line="317"/>
         <source>Run</source>
-        <translation>執行</translation>
+        <translation>Exécuter</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="287"/>
         <location filename="../dialogs/dialogmanager.cpp" line="316"/>
         <source>Run in terminal</source>
-        <translation>終端機執行</translation>
+        <translation>Exécuter dans un terminal</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="287"/>
         <source>Display</source>
-        <translation>顯示</translation>
+        <translation>Afficher</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="313"/>
         <source>Do you sure to run %1?</source>
-        <translation>確定執行 %1？</translation>
+        <translation>Êtes-vous sûr de vouloir exécuter %1 ?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="314"/>
         <source>It is an executable file.</source>
-        <translation>此為執行檔案。</translation>
+        <translation>C&apos;est un fichier exécutable.</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="330"/>
         <source>&quot;%1&quot; already exists, please use another name.</source>
-        <translation>「%1」已存在，請使用其他檔案名稱。</translation>
+        <translation>&quot;%1&quot; existe déjà,veuillez utiliser un autre nom.</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="332"/>
         <location filename="../dialogs/dialogmanager.cpp" line="555"/>
         <source>Confirm</source>
-        <translation>確定</translation>
+        <translation>Confirmer</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="343"/>
         <source>Are you sure to empty %1 item?</source>
-        <translation>確定清除 %1 個項目？</translation>
+        <translation>Êtes-vous sûr de vider %1 élément?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="344"/>
         <source>Are you sure to empty %1 items?</source>
-        <translation>確定清除 %1 個項目？</translation>
+        <translation>Êtes-vous sûr de vider %1 éléments?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="345"/>
         <source>Permanently delete %1?</source>
-        <translation>完全刪除 %1？</translation>
+        <translation>Supprimer définitivement %1?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="346"/>
         <source>Permanently delete %1 items?</source>
-        <translation>完全刪除 %1 個項目？</translation>
+        <translation>Supprimer définitivement %1 éléments?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="352"/>
         <source>Delete</source>
-        <translation>刪除</translation>
+        <translation>Supprimer</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="359"/>
         <source>Empty</source>
-        <translation>清除</translation>
+        <translation>Vide</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="383"/>
         <source>This action cannot be restored</source>
-        <translation>這個動作無法復原</translation>
+        <translation>Cette action ne pourra pas être restaurée</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="394"/>
         <source>Sorry, unable to locate your bookmark directory, remove it?</source>
-        <translation>抱歉，找不到書籤位置，是否移除？</translation>
+        <translation>Désolé,impossible de localiser votre dossier de favoris, le supprimer?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="396"/>
         <source>Remove</source>
-        <translation>移除</translation>
+        <translation>Enlever</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="523"/>
         <source>Disk file is being used, can not unmount now</source>
-        <translation>磁碟機正在使用，無法退出</translation>
+        <translation>Le périphérique est en cours d&apos;utilisation, il ne peut être démonté pour le moment</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="524"/>
         <source>Name: </source>
-        <translation>名稱：</translation>
+        <translation>Nom:</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="526"/>
         <source>Force unmount</source>
-        <translation>強制退出</translation>
+        <translation>Forcer le démontage</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="549"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
-        <translation>%1 捷徑連結的檔案或資料夾已更改或移除</translation>
+        <translation>%1 vers lequel pointe ce raccourci a été modifié ou déplacé</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="553"/>
         <source>Do you want to delete this shortcut？</source>
-        <translation>確定刪除快速鍵？</translation>
+        <translation>Voulez-vous supprimer ce raccourci?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="583"/>
         <source>Version:</source>
-        <translation>版本：</translation>
+        <translation>Version:</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="585"/>
         <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions.</source>
-        <translation>Deepin 檔案是由武漢深之度科技有限公司獨立開發的檔案管理工具，具備搜尋、複製、回收桶、壓縮／解壓縮、檢視檔案內容等功能。</translation>
+        <translation>File Manager est un gestionnaire de fichiers développé par Deepin Technologie, il peut faire la recherche, la copie, la compression / décompression, afficher la propriété d&apos;un fichier et autres fonctions.</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="647"/>
         <source>Fail to create symlink, cause:</source>
-        <translation>建立連結失敗，由於：</translation>
+        <translation>Echec de la création du lien symbolique parce que :</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="668"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
-        <translation>已選取的檔案中包含系統檔案╱資料夾，無法刪除</translation>
+        <translation>Les fichiers sélectionnés contiennent des fichiers/dossier système et ne peuvent donc pas être supprimés</translation>
     </message>
 </context>
 <context>
@@ -427,12 +427,12 @@
     <message>
         <location filename="../../dialogs/diskspaceoutofusedtipdialog.cpp" line="16"/>
         <source>Target disk doesn&apos;t have enough space, unable to copy!</source>
-        <translation>目標磁碟機空間不足，無法複製！</translation>
+        <translation>Le disque cible n&apos;a pas assez d&apos;espace, impossible de copier !</translation>
     </message>
     <message>
         <location filename="../../dialogs/diskspaceoutofusedtipdialog.cpp" line="18"/>
         <source>OK</source>
-        <translation>確定</translation>
+        <translation>OK</translation>
     </message>
 </context>
 <context>
@@ -440,12 +440,12 @@
     <message>
         <location filename="../controllers/filecontroller.cpp" line="340"/>
         <source>New Folder</source>
-        <translation>新增資料夾</translation>
+        <translation>Nouveau Dossier</translation>
     </message>
     <message>
         <location filename="../controllers/filecontroller.cpp" line="352"/>
         <source>New File</source>
-        <translation>新增檔案</translation>
+        <translation>Nouveau fichier</translation>
     </message>
 </context>
 <context>
@@ -453,27 +453,27 @@
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="109"/>
         <source>copy</source>
-        <translation>複製</translation>
+        <translation>copier</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="552"/>
         <source>%1 s</source>
-        <translation>剩餘 %1 秒</translation>
+        <translation>%1 s </translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="556"/>
         <source>%1 m %2 s</source>
-        <translation>剩餘 %1 分 %2 秒</translation>
+        <translation>%1 m %2 s </translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="562"/>
         <source>%1 h %2 m %3 s</source>
-        <translation>剩餘 %1 時 %2 分 %3 秒</translation>
+        <translation>%1 h %2 m %3 s </translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="571"/>
         <source>%1 d %2 h %3 m %4 s</source>
-        <translation>剩餘 %1 天 %2 時 %3 分 %4 秒</translation>
+        <translation>%1 d %2 h %3 m %4 s </translation>
     </message>
 </context>
 <context>
@@ -481,7 +481,7 @@
     <message>
         <location filename="../../dialogs/messagewrongdialog.cpp" line="12"/>
         <source>Confirm</source>
-        <translation>確定</translation>
+        <translation>Confirmer</translation>
     </message>
 </context>
 <context>
@@ -489,47 +489,47 @@
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="28"/>
         <source>directory</source>
-        <translation>資料夾</translation>
+        <translation>dossier</translation>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="29"/>
         <source>application</source>
-        <translation>應用程式</translation>
+        <translation>application </translation>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="30"/>
         <source>video</source>
-        <translation>影片</translation>
+        <translation>Vidéo</translation>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="31"/>
         <source>audio</source>
-        <translation>音樂</translation>
+        <translation>audio </translation>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="32"/>
         <source>image</source>
-        <translation>圖片</translation>
+        <translation>image </translation>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="33"/>
         <source>archive</source>
-        <translation>壓縮檔案</translation>
+        <translation>archive </translation>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="34"/>
         <source>text</source>
-        <translation>文字檔案</translation>
+        <translation>texte</translation>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="35"/>
         <source>executable</source>
-        <translation>執行檔案</translation>
+        <translation>exécutable </translation>
     </message>
     <message>
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="36"/>
         <source>unknown</source>
-        <translation>未知</translation>
+        <translation>inconnu</translation>
     </message>
 </context>
 <context>
@@ -537,47 +537,47 @@
     <message>
         <location filename="../gvfs/mountaskpassworddialog.cpp" line="24"/>
         <source>Cancel</source>
-        <translation>取消</translation>
+        <translation>Annuler</translation>
     </message>
     <message>
         <location filename="../gvfs/mountaskpassworddialog.cpp" line="24"/>
         <source>Connect</source>
-        <translation>連線</translation>
+        <translation>Connection</translation>
     </message>
     <message>
         <location filename="../gvfs/mountaskpassworddialog.cpp" line="30"/>
         <source>Log in as</source>
-        <translation>登入身份</translation>
+        <translation>Se connecter en tant que</translation>
     </message>
     <message>
         <location filename="../gvfs/mountaskpassworddialog.cpp" line="37"/>
         <source>Anonymous</source>
-        <translation>匿名</translation>
+        <translation>Anonyme</translation>
     </message>
     <message>
         <location filename="../gvfs/mountaskpassworddialog.cpp" line="42"/>
         <source>Registered user</source>
-        <translation>登入使用者</translation>
+        <translation>Utilisateur enregistré</translation>
     </message>
     <message>
         <location filename="../gvfs/mountaskpassworddialog.cpp" line="52"/>
         <source>Username</source>
-        <translation>使用者名稱</translation>
+        <translation>Nom d&apos;utilisateur</translation>
     </message>
     <message>
         <location filename="../gvfs/mountaskpassworddialog.cpp" line="61"/>
         <source>Domain</source>
-        <translation>網域</translation>
+        <translation>Domaine</translation>
     </message>
     <message>
         <location filename="../gvfs/mountaskpassworddialog.cpp" line="70"/>
         <source>Password</source>
-        <translation>密碼</translation>
+        <translation>Mot de passe</translation>
     </message>
     <message>
         <location filename="../gvfs/mountaskpassworddialog.cpp" line="90"/>
         <source>Remember password</source>
-        <translation>記住密碼</translation>
+        <translation>Se rappeler du mot de passe</translation>
     </message>
 </context>
 <context>
@@ -585,77 +585,77 @@
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="111"/>
         <source>Skip</source>
-        <translation>略過</translation>
+        <translation>Passer</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="110"/>
         <source>Keep both</source>
-        <translation>兩者皆保留</translation>
+        <translation>Garder les deux</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="112"/>
         <source>Replace</source>
-        <translation>取代</translation>
+        <translation>Remplacer</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="134"/>
         <source>Do not ask again</source>
-        <translation>不再詢問</translation>
+        <translation>Ne plus demander</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="186"/>
         <source>Copying %1</source>
-        <translation>正在複製 %1</translation>
+        <translation>Copie %1</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="187"/>
         <source>Copy to %2</source>
-        <translation>複製到 %2</translation>
+        <translation>Copier vers %2</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="190"/>
         <source>Moving %1</source>
-        <translation>正在移動 %1</translation>
+        <translation>Déplacement %1</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="191"/>
         <source>Move to %2</source>
-        <translation>移動到 %2</translation>
+        <translation>Déplacer vers %2</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="193"/>
         <source>Restoring %1</source>
-        <translation>正在還原 %1</translation>
+        <translation>Restauration %1</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="194"/>
         <source>Restore to %2</source>
-        <translation>還原到 %2</translation>
+        <translation>Restaurer vers %2</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="196"/>
         <source>Deleting %1</source>
-        <translation>正在刪除 %1</translation>
+        <translation>Suppression %1</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="199"/>
         <source>Trashing %1</source>
-        <translation>正在清理 %1</translation>
+        <translation>Jeter %1</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="206"/>
         <source>Calculating space, please wait</source>
-        <translation>正在計算空間，請稍候</translation>
+        <translation>Calcul de l&apos;espace, veuillez patienter</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="210"/>
         <source>File named %1 already exists in target folder</source>
-        <translation>%1 已存在目標資料夾</translation>
+        <translation>Le fichier nommé %1 existe déjà dans le dossier cible</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="211"/>
         <source>Original path %1 target path %2</source>
-        <translation>原始路徑 %1 目標路徑 %2</translation>
+        <translation>Chemin original %1 chemin cible %2</translation>
     </message>
 </context>
 <context>
@@ -663,32 +663,32 @@
     <message>
         <location filename="../../dialogs/movetotrashconflictdialog.cpp" line="13"/>
         <source>This file is too large to put into trash</source>
-        <translation>檔案過大無法丟到回收桶</translation>
+        <translation>Ce fichier est trop volumineux pour être mis à la corbeille</translation>
     </message>
     <message>
         <location filename="../../dialogs/movetotrashconflictdialog.cpp" line="14"/>
         <source>Are you sure to completely delete %1</source>
-        <translation>確定完全刪除 %1？</translation>
+        <translation>Êtes-vous sûr de vouloir supprimer complètement %1</translation>
     </message>
     <message>
         <location filename="../../dialogs/movetotrashconflictdialog.cpp" line="17"/>
         <source>Files are too large to put into trash</source>
-        <translation>檔案過大無法丟到回收桶</translation>
+        <translation>Les fichiers sont trop volumineux pour être mis à la corbeille</translation>
     </message>
     <message>
         <location filename="../../dialogs/movetotrashconflictdialog.cpp" line="18"/>
         <source>Are you sure to completely delete %1 files</source>
-        <translation>確定完全刪除 %1 個檔案？</translation>
+        <translation>Êtes-vous sûr de vouloir supprimer complètement %1 fichiers</translation>
     </message>
     <message>
         <location filename="../../dialogs/movetotrashconflictdialog.cpp" line="38"/>
         <source>Cancel</source>
-        <translation>取消</translation>
+        <translation>Annuler</translation>
     </message>
     <message>
         <location filename="../../dialogs/movetotrashconflictdialog.cpp" line="39"/>
         <source>Delete</source>
-        <translation>刪除</translation>
+        <translation>Supprimer</translation>
     </message>
 </context>
 <context>
@@ -696,17 +696,17 @@
     <message>
         <location filename="../dialogs/openwithdialog.cpp" line="42"/>
         <source>Open with</source>
-        <translation>其他程式開啟</translation>
+        <translation>Ouvrir avec</translation>
     </message>
     <message>
         <location filename="../dialogs/openwithdialog.cpp" line="46"/>
         <source>Cancel</source>
-        <translation>取消</translation>
+        <translation>Annuler</translation>
     </message>
     <message>
         <location filename="../dialogs/openwithdialog.cpp" line="47"/>
         <source>Choose</source>
-        <translation>選擇</translation>
+        <translation>Choisir</translation>
     </message>
 </context>
 <context>
@@ -714,27 +714,27 @@
     <message>
         <location filename="../dialogs/openwithotherdialog.cpp" line="113"/>
         <source>All Programs</source>
-        <translation>所有程式</translation>
+        <translation>Tous les programmes</translation>
     </message>
     <message>
         <location filename="../dialogs/openwithotherdialog.cpp" line="123"/>
         <source>Search</source>
-        <translation>搜尋</translation>
+        <translation>Chercher</translation>
     </message>
     <message>
         <location filename="../dialogs/openwithotherdialog.cpp" line="131"/>
         <source>No results</source>
-        <translation>找不到結果</translation>
+        <translation>Aucun résultat</translation>
     </message>
     <message>
         <location filename="../dialogs/openwithotherdialog.cpp" line="143"/>
         <source>Cancel</source>
-        <translation>取消</translation>
+        <translation>Annuler</translation>
     </message>
     <message>
         <location filename="../dialogs/openwithotherdialog.cpp" line="144"/>
         <source>Choose</source>
-        <translation>選擇</translation>
+        <translation>Choisir</translation>
     </message>
 </context>
 <context>
@@ -742,62 +742,62 @@
     <message>
         <location filename="../controllers/pathmanager.cpp" line="24"/>
         <source>Home</source>
-        <translation>主資料夾</translation>
+        <translation>Accueil</translation>
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="25"/>
         <source>Desktop</source>
-        <translation>桌面</translation>
+        <translation>Bureau</translation>
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="26"/>
         <source>Videos</source>
-        <translation>影片</translation>
+        <translation>Vidéos</translation>
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="27"/>
         <source>Music</source>
-        <translation>音樂</translation>
+        <translation>Musique</translation>
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="28"/>
         <source>Pictures</source>
-        <translation>圖片</translation>
+        <translation>Images</translation>
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="29"/>
         <source>Documents</source>
-        <translation>文件</translation>
+        <translation>Documents</translation>
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="30"/>
         <source>Downloads</source>
-        <translation>下載</translation>
+        <translation>Téléchargements</translation>
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="31"/>
         <source>Trash</source>
-        <translation>回收桶</translation>
+        <translation>Corbeille</translation>
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="32"/>
         <source>System Disk</source>
-        <translation>系統磁碟機</translation>
+        <translation>Disque système </translation>
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="33"/>
         <source>Computers in LAN</source>
-        <translation>共用的電腦</translation>
+        <translation>Ordinateurs en LAN</translation>
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="34"/>
         <source>My Shares</source>
-        <translation>我的共用</translation>
+        <translation>Mes partages</translation>
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="35"/>
         <source>Computer</source>
-        <translation>電腦</translation>
+        <translation>Ordinateur</translation>
     </message>
 </context>
 <context>
@@ -805,32 +805,32 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="192"/>
         <source>Basic info</source>
-        <translation>基本資訊</translation>
+        <translation>Infos basiques</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="193"/>
         <source>Open with</source>
-        <translation>其他程式開啟</translation>
+        <translation>Ouvrir avec</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="194"/>
         <source>Share Management</source>
-        <translation>共用管理</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="217"/>
         <source>System Disk</source>
-        <translation>系統磁碟機</translation>
+        <translation>Disque système </translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="708"/>
         <source>Allow to execute as program</source>
-        <translation>允許作為程式執行</translation>
+        <translation>Exécuter comme</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="763"/>
         <source>Local disk</source>
-        <translation>本機磁碟</translation>
+        <translation>Disque local</translation>
     </message>
 </context>
 <context>
@@ -839,710 +839,710 @@
         <location filename="../dialogs/propertydialog.cpp" line="697"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="660"/>
         <source>Size</source>
-        <translation>大小</translation>
+        <translation>Taille</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="698"/>
         <location filename="../dialogs/propertydialog.cpp" line="759"/>
         <location filename="../dialogs/propertydialog.cpp" line="787"/>
         <source>Contains</source>
-        <translation>檔案數量</translation>
+        <translation>Contenu</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="699"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="661"/>
         <source>Type</source>
-        <translation>類型</translation>
+        <translation>Genre</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="700"/>
         <source>Time read</source>
-        <translation>讀取時間</translation>
+        <translation>Heure de lecture</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="701"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="663"/>
         <source>Time modified</source>
-        <translation>修改時間</translation>
+        <translation>Heure de modification</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="758"/>
         <location filename="../dialogs/propertydialog.cpp" line="786"/>
         <source>Device type</source>
-        <translation>裝置類型</translation>
+        <translation>Type de périphérique </translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="760"/>
         <location filename="../dialogs/propertydialog.cpp" line="788"/>
         <source>Free space</source>
-        <translation>剩餘空間</translation>
+        <translation>Espace libre</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="761"/>
         <location filename="../dialogs/propertydialog.cpp" line="789"/>
         <source>Total space</source>
-        <translation>總空間</translation>
+        <translation>Espace total</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="879"/>
         <source>WriteRead</source>
-        <translation>讀寫</translation>
+        <translation>LectureEcriture</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="879"/>
         <source>ReadOnly</source>
-        <translation>唯讀</translation>
+        <translation>LectureSeule</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="879"/>
         <source>WriteOnly</source>
-        <translation>唯寫</translation>
+        <translation>EcritureSeule</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="907"/>
         <source>Owner</source>
-        <translation>擁有者</translation>
+        <translation>Propriétaire </translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="908"/>
         <source>Group</source>
-        <translation>群組</translation>
+        <translation>Groupe</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="909"/>
         <source>Other</source>
-        <translation>其他</translation>
+        <translation>Autre</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="616"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="619"/>
         <source>Open</source>
-        <translation>開啟</translation>
+        <translation>Ouvrir </translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="617"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="620"/>
         <source>Open in new window</source>
-        <translation>在新視窗中開啟</translation>
+        <translation>Ouvrir dans une nouvelle fenêtre </translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="618"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="621"/>
         <source>Open in new tab</source>
-        <translation>在新分頁中開啟</translation>
+        <translation>Ouvrir dans un nouvel onglet</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="623"/>
         <source>Open with</source>
-        <translation>用其他程式開啟</translation>
+        <translation>Ouvrir avec</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="624"/>
         <source>Others</source>
-        <translation>其他</translation>
+        <translation>Autres</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="625"/>
         <source>Open file loaction</source>
-        <translation>開啟檔案位置</translation>
+        <translation>Ouvrir emplacement du fichier</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="626"/>
         <source>Compress</source>
-        <translation>壓縮</translation>
+        <translation>Compresser</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="627"/>
         <source>Extract</source>
-        <translation>解壓縮</translation>
+        <translation>Extraire</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="628"/>
         <source>Extract here</source>
-        <translation>在此解壓縮</translation>
+        <translation>Extraire ici</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="629"/>
         <source>Cut</source>
-        <translation>剪下</translation>
+        <translation>Couper</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="630"/>
         <source>Copy</source>
-        <translation>複製</translation>
+        <translation>Copier</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="631"/>
         <source>Paste</source>
-        <translation>貼上</translation>
+        <translation>Coller</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="632"/>
         <source>Rename</source>
-        <translation>重新命名</translation>
+        <translation>Renommer</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="633"/>
         <source>Remove</source>
-        <translation>移除</translation>
+        <translation>Supprimer</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="634"/>
         <source>Create link</source>
-        <translation>建立連結</translation>
+        <translation>Créer lien</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="635"/>
         <source>Send to desktop</source>
-        <translation>傳送到桌面</translation>
+        <translation>Envoyer au bureau</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="636"/>
         <source>Add to bookmark</source>
-        <translation>加到書籤</translation>
+        <translation>Ajouter aux favoris</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="637"/>
         <source>Throw to Trash</source>
-        <translation>丟到回收桶</translation>
+        <translation>Envoyer à la corbeille</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="638"/>
         <source>Permanently delete</source>
-        <translation>完全刪除</translation>
+        <translation>Supprimer définitivement</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="641"/>
         <source>New folder</source>
-        <translation>新增資料夾</translation>
+        <translation>Nouveau dossier</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="642"/>
         <source>New window</source>
-        <translation>新增視窗</translation>
+        <translation>Nouvelle fenêtre </translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="643"/>
         <source>Select all</source>
-        <translation>全選</translation>
+        <translation>Tout sélectionner</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="644"/>
         <source>Clear recent history</source>
-        <translation>清除最近使用的位置</translation>
+        <translation>Nettoyer historique récent</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="645"/>
         <source>Empty Trash</source>
-        <translation>清除回收桶</translation>
+        <translation>Vider la corbeille</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="646"/>
         <source>Display as</source>
-        <translation>顯示方式</translation>
+        <translation>Afficher comme</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="647"/>
         <source>Sort by</source>
-        <translation>排列順序</translation>
+        <translation>Trier par</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="648"/>
         <source>New document</source>
-        <translation>新增文件</translation>
+        <translation>Nouveau document</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="649"/>
         <source>Office Text Document</source>
-        <translation>Writer 文件</translation>
+        <translation>Document Word</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="650"/>
         <source>Spreadsheet Document</source>
-        <translation>Spreadsheet 文件</translation>
+        <translation>Document Excel</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="651"/>
         <source>Presentation Document</source>
-        <translation>Presentation 文件</translation>
+        <translation>Document PowerPoint</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="652"/>
         <source>Plain Text Document</source>
-        <translation>純文字文件</translation>
+        <translation>Document Texte</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="662"/>
         <source>Time created</source>
-        <translation>建立時間</translation>
+        <translation>Heure de création</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="672"/>
         <source>Log out and unmount</source>
-        <translation>登出並卸載</translation>
+        <translation>Déconnexion et démonter</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="674"/>
         <source>Original path</source>
-        <translation>原始路徑</translation>
+        <translation>Chemin d&apos;origine</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="676"/>
         <source>Share folder</source>
-        <translation>共用資料夾</translation>
+        <translation>Dossier de partage</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="677"/>
         <source>Cancel sharing</source>
-        <translation>取消共用</translation>
+        <translation>Annuler le partage</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="678"/>
         <source>Set share password</source>
-        <translation>設定共用密碼</translation>
+        <translation>Configurer le mot de passe du partage</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="679"/>
         <source>Format</source>
-        <translation>格式化</translation>
+        <translation>Formater</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="639"/>
         <source>Property</source>
-        <translation>內容</translation>
+        <translation>Propriété</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="622"/>
         <source>Open in new window as admin</source>
-        <translation>以管理員身份開新視窗</translation>
+        <translation>Ouvrir dans une nouvelle fenêtre comme admin</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="653"/>
         <source>Open in terminal</source>
-        <translation>開啟終端機</translation>
+        <translation>Ouvrir dans un terminal</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="654"/>
         <source>Restore</source>
-        <translation>還原</translation>
+        <translation>Restaurer</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="655"/>
         <source>Restore all</source>
-        <translation>全部還原</translation>
+        <translation>Tout restaurer</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="5"/>
         <source>Use the file chooser dialog of Deepin File Manager</source>
-        <translation>使用 Deepin 檔案的選擇檔案對話框</translation>
+        <translation>Utilisez la boite de dialogue du sélecteur de fichiers de Gestionnaire de Fichier Deepin</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="6"/>
         <source>Auto mount</source>
-        <translation>自動掛載</translation>
+        <translation>Montage automatique</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="7"/>
         <source>Auto mount and open</source>
-        <translation>自動掛載並開啟</translation>
+        <translation>Montage automatique et ouverture</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="8"/>
         <source>Compress file preview</source>
-        <translation>預覽壓縮檔案</translation>
+        <translation>Compresser l&apos;aperçu du fichier</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="9"/>
         <source>Document preview</source>
-        <translation>預覽文件檔案</translation>
+        <translation>Aperçu du document</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="10"/>
         <source>Image preview</source>
-        <translation>預覽圖片</translation>
+        <translation>Aperçu de l&apos;image</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="11"/>
         <source>Text preview</source>
-        <translation>預覽文字檔案</translation>
+        <translation>Aperçu du texte</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="12"/>
         <source>Video preview</source>
-        <translation>預覽影片</translation>
+        <translation>Aperçu vidéo</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="13"/>
         <source>Quick search</source>
-        <translation>快速搜尋</translation>
+        <translation>Recherche rapide</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="15"/>
         <source>Default size:</source>
-        <translation>預設大小：</translation>
+        <translation>Taille par défaut :</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="16"/>
         <source>Extra small</source>
-        <translation>最小</translation>
+        <translation>Minuscule</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="17"/>
         <source>Small</source>
-        <translation>小</translation>
+        <translation>Petit</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="18"/>
         <source>Medium</source>
-        <translation>中</translation>
+        <translation>Moyen</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="19"/>
         <source>Large</source>
-        <translation>大</translation>
+        <translation>Grand</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="20"/>
         <source>Extra large</source>
-        <translation>最大</translation>
+        <translation>Très grand</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="21"/>
         <source>Show hidden files</source>
-        <translation>顯示隱藏檔案</translation>
+        <translation>Afficher les fichiers cachés</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="22"/>
         <source>Open from default window:</source>
-        <translation>視窗預設開啟：</translation>
+        <translation>Ouvrir à partir de la fenêtre par défaut :</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="25"/>
         <location filename="../configure/dfmconfigdict.cpp" line="35"/>
         <source>Computer</source>
-        <translation>電腦</translation>
+        <translation>Ordinateur</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="31"/>
         <source>Open in new tab:</source>
-        <translation>新建分頁時開啟：</translation>
+        <translation>Ouvrir dans un nouvel onglet :</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="32"/>
         <source>Current Directory</source>
-        <translation>目前目錄</translation>
+        <translation>Répertoire actuel</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="23"/>
         <location filename="../configure/dfmconfigdict.cpp" line="33"/>
         <source>Home</source>
-        <translation>主資料夾</translation>
+        <translation>Accueil</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="24"/>
         <location filename="../configure/dfmconfigdict.cpp" line="34"/>
         <source>Desktop</source>
-        <translation>桌面</translation>
+        <translation>Bureau</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="26"/>
         <location filename="../configure/dfmconfigdict.cpp" line="36"/>
         <source>Videos</source>
-        <translation>影片</translation>
+        <translation>Vidéos</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="27"/>
         <location filename="../configure/dfmconfigdict.cpp" line="37"/>
         <source>Music</source>
-        <translation>音樂</translation>
+        <translation>Musique</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="28"/>
         <location filename="../configure/dfmconfigdict.cpp" line="38"/>
         <source>Pictures</source>
-        <translation>圖片</translation>
+        <translation>Images</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="29"/>
         <location filename="../configure/dfmconfigdict.cpp" line="39"/>
         <source>Documents</source>
-        <translation>文件</translation>
+        <translation>Documents</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="30"/>
         <location filename="../configure/dfmconfigdict.cpp" line="40"/>
         <source>Downloads</source>
-        <translation>下載</translation>
+        <translation>Téléchargements</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="41"/>
         <source>Always open folder in new window</source>
-        <translation>永遠在新視窗開啟</translation>
+        <translation>Toujours ouvrir le dossier dans une nouvelle fenêtre</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="42"/>
         <source>Open file:</source>
-        <translation>檔案開啟方式：</translation>
+        <translation>Ouvrir fichier :</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="43"/>
         <source>Click</source>
-        <translation>滑鼠按一下</translation>
+        <translation>Clic</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="44"/>
         <source>Double click</source>
-        <translation>滑鼠連按兩下</translation>
+        <translation>Double clic</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="54"/>
         <source>Restore to default</source>
-        <translation>還原預設值</translation>
+        <translation>Rétablir les options par défaut</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="14"/>
         <source>Show hidden files in search results</source>
-        <translation>搜尋結果顯示隱藏檔案</translation>
+        <translation>Afficher les fichiers cachés dans les résultats de recherche</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="45"/>
         <source>Advanced settings</source>
-        <translation>進階設定</translation>
+        <translation>Réglages avancés</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="46"/>
         <source>Dialog</source>
-        <translation>對話框</translation>
+        <translation>Dialogue</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="47"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="656"/>
         <source>Mount</source>
-        <translation>掛載</translation>
+        <translation>Monter</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="48"/>
         <source>Preview</source>
-        <translation>預覽</translation>
+        <translation>Aperçu</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="49"/>
         <source>Basic settings</source>
-        <translation>基本設定</translation>
+        <translation>Paramètres de base</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="50"/>
         <source>View</source>
-        <translation>顯示大小</translation>
+        <translation>Affichage</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="51"/>
         <source>Hidden files</source>
-        <translation>隱藏檔案</translation>
+        <translation>Fichiers cachés</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="52"/>
         <source>New window and tab</source>
-        <translation>新視窗與新分頁</translation>
+        <translation>Nouvelle fenêtre et onglet</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="53"/>
         <source>Open behavior</source>
-        <translation>開啟方式</translation>
+        <translation>Comportement d&apos;ouverture</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="657"/>
         <source>Unmount</source>
-        <translation>卸載</translation>
+        <translation>Démonter</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="658"/>
         <source>Eject</source>
-        <translation>退出</translation>
+        <translation>Ejecter</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="659"/>
         <source>Name</source>
-        <translation>檔案名稱</translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="664"/>
         <source>Settings</source>
-        <translation>設定</translation>
+        <translation>Paramètres</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="665"/>
         <source>Help</source>
-        <translation>說明</translation>
+        <translation>Aide</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="666"/>
         <source>About</source>
-        <translation>關於</translation>
+        <translation>A propos</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="667"/>
         <source>Exit</source>
-        <translation>離開</translation>
+        <translation>Sortir</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="668"/>
         <source>Icon</source>
-        <translation>圖示顯示</translation>
+        <translation>Icône</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="669"/>
         <source>List</source>
-        <translation>列表顯示</translation>
+        <translation>Liste</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="670"/>
         <source>Extend</source>
-        <translation>延伸</translation>
+        <translation>Extension</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="671"/>
         <source>Set as wallpaper</source>
-        <translation>設定為桌布</translation>
+        <translation>Définir en tant que fond d&apos;écran </translation>
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="379"/>
         <location filename="../controllers/appcontroller.cpp" line="381"/>
         <source>newDoc</source>
-        <translation>新 Doc 檔案</translation>
+        <translation>nouveauDoc</translation>
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="388"/>
         <location filename="../controllers/appcontroller.cpp" line="390"/>
         <source>newExcel</source>
-        <translation>新 Excel 檔案</translation>
+        <translation>nouveauExcel</translation>
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="397"/>
         <location filename="../controllers/appcontroller.cpp" line="399"/>
         <source>newPowerPoint</source>
-        <translation>新 PowerPoint 檔案</translation>
+        <translation>nouveauPowerPoint</translation>
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="406"/>
         <location filename="../controllers/appcontroller.cpp" line="408"/>
         <source>newText</source>
-        <translation>新文字檔案</translation>
+        <translation>nouveauText</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="192"/>
         <source>Local disk</source>
-        <translation>本機磁碟</translation>
+        <translation>Disque local</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="194"/>
         <source>Removable disk</source>
-        <translation>卸除式磁碟機</translation>
+        <translation>Disque amovible</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="196"/>
         <source>Network shared directory</source>
-        <translation>網路共用資料夾</translation>
+        <translation>Dossier de réseau partagé</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="198"/>
         <source>Android mobile device</source>
-        <translation>Android 行動裝置</translation>
+        <translation>Périphérique Android</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="200"/>
         <source>Apple mobile device</source>
-        <translation>Apple 行動裝置</translation>
+        <translation>Périphérique Apple</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="202"/>
         <source>Camera</source>
-        <translation>相機</translation>
+        <translation>Appareil photo</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="204"/>
         <source>Dvd</source>
-        <translation>DVD</translation>
+        <translation>Dvd</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="206"/>
         <source>Unknown device</source>
-        <translation>未知裝置</translation>
+        <translation>Périphérique inconnu</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="212"/>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="499"/>
         <source>%1 item</source>
-        <translation>%1 個項目</translation>
+        <translation>%1 élément</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="214"/>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="501"/>
         <source>%1 items</source>
-        <translation>%1 個項目</translation>
+        <translation>%1 éléments</translation>
     </message>
     <message>
         <location filename="../interfaces/dfileservices.cpp" line="843"/>
         <source>Shortcut</source>
-        <translation>快速鍵</translation>
+        <translation>Raccourci</translation>
     </message>
     <message>
         <location filename="../interfaces/dfileservices.cpp" line="626"/>
         <source>Create symlink</source>
-        <translation>建立連結</translation>
+        <translation>Créer symlink </translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="675"/>
         <source>Path</source>
-        <translation>路徑</translation>
+        <translation>Chemin</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="673"/>
         <location filename="../models/trashfileinfo.cpp" line="250"/>
         <source>Time deleted</source>
-        <translation>刪除時間</translation>
+        <translation>Heure de suppression</translation>
     </message>
     <message>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="910"/>
         <source>Loading...</source>
-        <translation>正在載入…</translation>
+        <translation>Chargement...</translation>
     </message>
     <message>
         <location filename="../interfaces/dfileinfo.cpp" line="337"/>
         <source>File has been moved or deleted</source>
-        <translation>檔案已移動或刪除</translation>
+        <translation>Le fichier a été déplacé ou supprimé</translation>
     </message>
     <message>
         <location filename="../interfaces/dfileinfo.cpp" line="339"/>
         <source>You do not have permission to access this folder</source>
-        <translation>無權進入資料夾</translation>
+        <translation>Vous n&apos;avez pas la permission d’accéder à ce dossier</translation>
     </message>
     <message>
         <location filename="../interfaces/dfileinfo.cpp" line="342"/>
         <source>Folder is empty</source>
-        <translation>空資料夾</translation>
+        <translation>Le dossier est vide</translation>
     </message>
     <message>
         <location filename="../models/searchfileinfo.cpp" line="84"/>
         <source>Path</source>
         <comment>SearchFileInfo</comment>
-        <translation>路徑</translation>
+        <translation>Chemin</translation>
     </message>
     <message>
         <location filename="../models/searchfileinfo.cpp" line="225"/>
         <source>Searching...</source>
-        <translation>正在搜尋…</translation>
+        <translation>Recherche en cours...</translation>
     </message>
     <message>
         <location filename="../models/searchfileinfo.cpp" line="230"/>
         <source>No results</source>
-        <translation>找不到結果</translation>
+        <translation>Aucun résultat</translation>
     </message>
     <message>
         <location filename="../models/trashfileinfo.cpp" line="253"/>
         <source>Source Path</source>
         <comment>TrashFileInfo</comment>
-        <translation>來源路徑</translation>
+        <translation>Chemin d&apos;origine</translation>
     </message>
 </context>
 <context>
@@ -1550,42 +1550,42 @@
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="32"/>
         <source>Share this folder</source>
-        <translation>共用資料夾</translation>
+        <translation>Partager ce dossier</translation>
     </message>
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="35"/>
         <source>Share name:</source>
-        <translation>共用名稱：</translation>
+        <translation>Nom du partage</translation>
     </message>
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="42"/>
         <source>Permission:</source>
-        <translation>存取權限：</translation>
+        <translation>Permission:</translation>
     </message>
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="48"/>
         <source>Read and write</source>
-        <translation>讀寫</translation>
+        <translation>Lecture et écriture </translation>
     </message>
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="48"/>
         <source>Read only</source>
-        <translation>唯讀</translation>
+        <translation>Lecture uniquement </translation>
     </message>
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="51"/>
         <source>Anonymous:</source>
-        <translation>匿名：</translation>
+        <translation>Anonyme:</translation>
     </message>
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="57"/>
         <source>Not allow</source>
-        <translation>不允許</translation>
+        <translation>Non autorisé</translation>
     </message>
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="57"/>
         <source>Allow</source>
-        <translation>允許</translation>
+        <translation>Autorisé</translation>
     </message>
 </context>
 <context>
@@ -1593,222 +1593,222 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="10"/>
         <source>Item</source>
-        <translation>項目</translation>
+        <translation>Élément</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="11"/>
         <source>Select to the first item</source>
-        <translation>選取到第一個項目</translation>
+        <translation>Sélectionner jusqu&apos;au premier élément</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="11"/>
         <source>Shift + Home </source>
-        <translation>Shift + Home </translation>
+        <translation>Shift + Home</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="12"/>
         <source>Select to the last item</source>
-        <translation>選取到最後一個項目</translation>
+        <translation>Sélectionner jusqu&apos;au dernier élément</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="12"/>
         <source>Shift + End </source>
-        <translation>Shift + End </translation>
+        <translation>Shift + Fin</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="13"/>
         <source>Select leftwards</source>
-        <translation>向左選取</translation>
+        <translation>Sélectionner à gauche</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="13"/>
         <source>Shift + Left </source>
-        <translation>Shift + Left </translation>
+        <translation>Shift + Gauche</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="14"/>
         <source>Select rightwards</source>
-        <translation>向右選取</translation>
+        <translation>Sélectionner à droite</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="14"/>
         <source>Shift + Right </source>
-        <translation>Shift + Right </translation>
+        <translation>Shift + Right</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="15"/>
         <source>Select to upper row</source>
-        <translation>向上選取</translation>
+        <translation>Sélectionnez la rangée supérieure</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="15"/>
         <source>Shift + Up </source>
-        <translation>Shift + Up </translation>
+        <translation>Shift + Haut</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="16"/>
         <source>Select to lower row</source>
-        <translation>向下選取</translation>
+        <translation>Sélectionnez la rangée inférieure</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="16"/>
         <source>Shift + Down </source>
-        <translation>Shift + Down </translation>
+        <translation>Shift + Bas</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="17"/>
         <source>Open</source>
-        <translation>開啟</translation>
+        <translation>Ouvrir </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="17"/>
         <source>Ctrl + Down </source>
-        <translation>Ctrl + Down </translation>
+        <translation>Ctrl + Bas</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="18"/>
         <source>To parent directory</source>
-        <translation>返回上層資料夾</translation>
+        <translation>Au répertoire parent</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="18"/>
         <source>Ctrl + Up </source>
-        <translation>Ctrl + Up </translation>
+        <translation>Ctrl + Haut</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="19"/>
         <source>Permanently delete</source>
-        <translation>完全刪除</translation>
+        <translation>Supprimer définitivement</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="19"/>
         <source>Shift + Delete </source>
-        <translation>Shift + Delete </translation>
+        <translation>Shift + Suppr</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="20"/>
         <source>Delete file</source>
-        <translation>刪除檔案</translation>
+        <translation>Supprimer fichier</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="20"/>
         <source>Delete</source>
-        <translation>刪除</translation>
+        <translation>Supprimer</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="21"/>
         <source>Select all</source>
-        <translation>全選</translation>
+        <translation>Tout sélectionner</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="21"/>
         <source>Ctrl + a </source>
-        <translation>Ctrl + A</translation>
+        <translation>Ctrl + a  </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="22"/>
         <source>Copy</source>
-        <translation>複製</translation>
+        <translation>Copier</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="22"/>
         <source>Ctrl + c </source>
-        <translation>Ctrl + C</translation>
+        <translation>Ctrl + c  </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="23"/>
         <source>Cut</source>
-        <translation>剪下</translation>
+        <translation>Couper</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="23"/>
         <source>Ctrl + x </source>
-        <translation>Ctrl + X</translation>
+        <translation>Ctrl + x  </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="24"/>
         <source>Paste</source>
-        <translation>貼上</translation>
+        <translation>Coller</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="24"/>
         <source>Ctrl + v </source>
-        <translation>Ctrl + V</translation>
+        <translation>Ctrl + v  </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="25"/>
         <source>Rename</source>
-        <translation>重新命名</translation>
+        <translation>Renommer</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="25"/>
         <source>F2 </source>
-        <translation>F2</translation>
+        <translation>F2  </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="26"/>
         <source>New/Search</source>
-        <translation>新增╱搜尋</translation>
+        <translation>Nouveau/Chercher</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="27"/>
         <source>New window</source>
-        <translation>新增視窗</translation>
+        <translation>Nouvelle fenêtre </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="27"/>
         <source>Ctrl + n </source>
-        <translation>Ctrl + N</translation>
+        <translation>Ctrl + n  </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="28"/>
         <source>New folder</source>
-        <translation>新增資料夾</translation>
+        <translation>Nouveau dossier</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="28"/>
         <source>Ctrl + Shift + n </source>
-        <translation>Ctrl + Shift + N</translation>
+        <translation>Ctrl + Shift + n  </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="29"/>
         <source>Search</source>
-        <translation>搜尋</translation>
+        <translation>Chercher</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="29"/>
         <source>Ctrl + f</source>
-        <translation>Ctrl + F</translation>
+        <translation>Ctrl + f </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="30"/>
         <source>New tab</source>
-        <translation>新增分頁</translation>
+        <translation>Nouvel onglet</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="30"/>
         <source>Ctrl + t </source>
-        <translation>Ctrl + T</translation>
+        <translation>Ctrl + t </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="31"/>
         <source>View</source>
-        <translation>檢視</translation>
+        <translation>Affichage</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="32"/>
         <source>Item information</source>
-        <translation>項目內容</translation>
+        <translation>Informations</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="32"/>
         <source>Ctrl + i </source>
-        <translation>Ctrl + I</translation>
+        <translation>Ctrl + i</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="33"/>
         <source>Help</source>
-        <translation>說明</translation>
+        <translation>Aide</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="33"/>
@@ -1818,132 +1818,132 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="34"/>
         <source>Keyboard shortcuts</source>
-        <translation>鍵盤快速鍵</translation>
+        <translation>Raccourcis clavier</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="34"/>
         <source>Ctrl + Shift + / </source>
-        <translation>Ctrl + Shift + / </translation>
+        <translation>Ctrl + Shift + /</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="35"/>
         <source>Switch display status</source>
-        <translation>切換顯示狀態</translation>
+        <translation>Statut affichage actuel</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="36"/>
         <source>Hide item</source>
-        <translation>隱藏項目</translation>
+        <translation>Cacher l&apos;élément</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="36"/>
         <source>Ctrl + h </source>
-        <translation>Ctrl + H</translation>
+        <translation>Ctrl + h</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="37"/>
         <source>Input in address bar</source>
-        <translation>位址列輸入</translation>
+        <translation>Insérer dans la barre d&apos;adresse</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="37"/>
         <source>Ctrl + l </source>
-        <translation>Ctrl + L</translation>
+        <translation>Ctrl + l</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="38"/>
         <source>Others</source>
-        <translation>其他</translation>
+        <translation>Autres</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="39"/>
         <source>Close</source>
-        <translation>關閉視窗</translation>
+        <translation>Fermer</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="39"/>
         <source>Alt + F4 </source>
-        <translation>Alt + F4 </translation>
+        <translation>Alt + F4</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="40"/>
         <source>Close current tab</source>
-        <translation>關閉目前分頁</translation>
+        <translation>Fermer l&apos;onglet actif</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="40"/>
         <source>Ctrl + w</source>
-        <translation>Ctrl + W</translation>
+        <translation>Ctrl + w</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="41"/>
         <source>Back</source>
-        <translation>返回</translation>
+        <translation>Retour</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="41"/>
         <source>Alt + Left </source>
-        <translation>Alt + Left </translation>
+        <translation>Alt + Gauche</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="42"/>
         <source>Alt + Right </source>
-        <translation>Alt + Right </translation>
+        <translation>Alt + Droite</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="43"/>
         <source>Switch to next tab</source>
-        <translation>切換到下個分頁</translation>
+        <translation>Aller à l&apos;onglet suivant</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="43"/>
         <source>Ctrl + Tab </source>
-        <translation>Ctrl + Tab </translation>
+        <translation>Ctrl + Tab</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="44"/>
         <source>Ctrl + Shift + Tab </source>
-        <translation>Ctrl + Shift + Tab </translation>
+        <translation>Ctrl + Shift + Tab</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="44"/>
         <source>Switch to previous tab</source>
-        <translation>切換到上個分頁</translation>
+        <translation>Aller à l&apos;onglet précédent</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="45"/>
         <source>Next file</source>
-        <translation>下個項目</translation>
+        <translation>Fichier suivant</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="45"/>
         <source>Tab </source>
-        <translation>Tab </translation>
+        <translation>Tabulation</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="46"/>
         <source>Previous file</source>
-        <translation>上個項目</translation>
+        <translation>Fichier précédent </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="46"/>
         <source>Shift + Tab </source>
-        <translation>Shift + Tab </translation>
+        <translation>Shift + Tab  </translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="47"/>
         <source>Switch tab by specified number between 1 to 8</source>
-        <translation>透過數字 1 到 8 切換到指定分頁</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="47"/>
         <source>Alt + [1-8] </source>
-        <translation>Alt + [1-8] </translation>
+        <translation>Alt + [1-8]</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="42"/>
         <source>Forward</source>
-        <translation>下一頁</translation>
+        <translation>Suivant</translation>
     </message>
 </context>
 <context>
@@ -1951,22 +1951,22 @@
     <message>
         <location filename="../dialogs/trashpropertydialog.cpp" line="45"/>
         <source>Trash</source>
-        <translation>回收桶</translation>
+        <translation>Corbeille</translation>
     </message>
     <message>
         <location filename="../dialogs/trashpropertydialog.cpp" line="49"/>
         <source>item</source>
-        <translation>項目</translation>
+        <translation>élément</translation>
     </message>
     <message>
         <location filename="../dialogs/trashpropertydialog.cpp" line="51"/>
         <source>items</source>
-        <translation>項目</translation>
+        <translation>éléments</translation>
     </message>
     <message>
         <location filename="../dialogs/trashpropertydialog.cpp" line="54"/>
         <source>Contains %1 %2</source>
-        <translation>包含 %1 %2</translation>
+        <translation>Contient %1 %2</translation>
     </message>
 </context>
 <context>
@@ -1974,17 +1974,17 @@
     <message>
         <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="13"/>
         <source>Please enter share password</source>
-        <translation>請輸入共用密碼</translation>
+        <translation>Veuillez entrer le mot de passe du partage</translation>
     </message>
     <message>
         <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="21"/>
         <source>Cancel</source>
-        <translation>取消</translation>
+        <translation>Annuler</translation>
     </message>
     <message>
         <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="21"/>
         <source>Confirm</source>
-        <translation>確定</translation>
+        <translation>Confirmer</translation>
     </message>
 </context>
 <context>
@@ -1992,7 +1992,7 @@
     <message>
         <location filename="../views/windowmanager.cpp" line="39"/>
         <source>Deepin File Manager</source>
-        <translation>Deepin 檔案</translation>
+        <translation>Gestionnaire de Fichier Deepin</translation>
     </message>
 </context>
 </TS>

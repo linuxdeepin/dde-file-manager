@@ -1109,7 +1109,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="639"/>
         <source>Property</source>
-        <translation>Собственность</translation>
+        <translation>Свойство</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="622"/>
