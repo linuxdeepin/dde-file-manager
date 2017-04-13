@@ -260,7 +260,11 @@ void NetworkManager::fetchNetworks(const DFMEvent &event)
 
     if (p1){
         *e << p1->getMountPointUrl();
-        emit fileSignalManager->requestChangeCurrentUrl(*e);
+        if (DUrl(path) != p1->getMountPointUrl()){
+            emit fileSignalManager->requestChangeCurrentUrl(*e);
+        }else{
+            qWarning() << p1->getMountPointUrl() << "can't get data";
+        }
     }else{
         std::string stdPath = path.toStdString();
         gchar *url = const_cast<gchar*>(stdPath.c_str());
