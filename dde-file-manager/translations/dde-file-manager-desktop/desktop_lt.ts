@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="lt">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="lt" version="2.1">
     <context>
         <name>desktop</name>
         <message>
@@ -11,7 +9,7 @@
         <message>
             <location filename="Desktop Entry]Name" line="0"/>
             <source>Deepin File Manager</source>
-            <translation>Failų tvarkytuvė</translation>
+            <translation>Deepin failų tvarkytuvė</translation>
         </message>
         <message>
             <location filename="Desktop Action new-window]Name" line="0"/>

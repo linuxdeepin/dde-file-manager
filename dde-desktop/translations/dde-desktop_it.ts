@@ -15,7 +15,7 @@
     <message>
         <location filename="../view/canvasgridview.cpp" line="1727"/>
         <source>Display Settings</source>
-        <translation>Impostazioni Display</translation>
+        <translation>Impostazioni visualizzazione</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="1732"/>

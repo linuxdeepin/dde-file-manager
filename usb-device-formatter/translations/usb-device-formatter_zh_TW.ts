@@ -12,7 +12,7 @@
     <message>
         <location filename="../view/formatingpage.cpp" line="19"/>
         <source>Formating, please wait for a minute...</source>
-        <translation>正在格式化，請等一下…</translation>
+        <translation>正在格式化，請稍候…</translation>
     </message>
 </context>
 <context>
@@ -35,7 +35,7 @@
     <message>
         <location filename="../view/mainpage.cpp" line="130"/>
         <source>This operation will clear all data from your device.</source>
-        <translation>這個操作會清除裝置上的所有資料。</translation>
+        <translation>這個操作會清除裝置上所有資料。</translation>
     </message>
 </context>
 <context>
@@ -74,7 +74,7 @@
     <message>
         <location filename="../view/mainwindow.cpp" line="201"/>
         <source>Your disk is removed when formatting</source>
-        <translation>你的磁碟機已在格式化時移除</translation>
+        <translation>磁碟機在格式化時被移除</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="205"/>
@@ -108,7 +108,7 @@
     <message>
         <location filename="../view/warnpage.cpp" line="19"/>
         <source>Formating operation will clear all data from your disk, are you sure to continue? This option can not be restored.</source>
-        <translation>格式化作業會清除磁碟機的所有資料，確定要繼續嗎？這個動作無法復原。</translation>
+        <translation>格式化會清除磁碟機的所有資料，確定繼續嗎？這個動作無法復原。</translation>
     </message>
 </context>
 </TS>
