@@ -12,7 +12,6 @@ public:
     QString getServerPathByKey(const QString& key);
     QString getUserId();
     QString getServerRootPath();
-    QString handleReLuanchRequest();
     static SingletonApp* instance();
 
 signals:

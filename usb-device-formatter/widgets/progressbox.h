@@ -31,11 +31,14 @@ protected:
     void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
 
 private:
-    QTimer* m_taskTimer;
-    QTimer* m_updateTimer;
+    QTimer* m_taskTimer = NULL;
+    QTimer* m_updateTimer = NULL;
     QList<Bled> m_bleds;
-    QVariantAnimation* m_taskAni;
-    QLabel* m_textLabel;
+    QVariantAnimation* m_taskAni = NULL;
+    QLabel* m_textLabel = NULL;
+    QImage* m_BackImage = NULL;
+    QImage* m_FrontImage = NULL;
+    QImage* m_shadow = NULL;
 
     int m_ForntXOffset1;
     int m_ForntXOffset2;
@@ -54,9 +57,6 @@ private:
     double m_Pop11YOffset;
     double m_Pop11XOffset;
 
-    QImage* m_BackImage;
-    QImage* m_FrontImage;
-    QImage* m_shadow;
 };
 
 #endif // PROGRESSBOX_H

@@ -10,13 +10,13 @@
 
 ProgressBox::ProgressBox(QWidget *parent) :
     ProgressLine(parent),
-    m_shadow(new QImage(":/icoms/icons/water_shadow.png")),
-    m_BackImage(new QImage(":/icoms/icons/water_back.png")),
-    m_FrontImage(new QImage(":/icoms/icons/water_front.png")),
     m_taskTimer(new QTimer(this)),
     m_updateTimer(new QTimer(this)),
     m_taskAni(new QVariantAnimation(this)),
-    m_textLabel(new QLabel(this))
+    m_textLabel(new QLabel(this)),
+    m_BackImage(new QImage(":/icoms/icons/water_back.png")),
+    m_FrontImage(new QImage(":/icoms/icons/water_front.png")),
+    m_shadow(new QImage(":/icoms/icons/water_shadow.png"))
 {
     m_taskTimer->setInterval(100);
     m_taskTimer->setSingleShot(true);

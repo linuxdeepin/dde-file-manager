@@ -153,6 +153,7 @@ bool MainWindow::checkBackup()
     PartMan::Partition p = PartMan::Partition::getPartitionByDevicePath(m_formatPath);
     if(p.fs().isEmpty())
         return false;
+    return true;
 }
 
 void MainWindow::nextStep()
