@@ -91,9 +91,9 @@ void DListItemDelegate::paint(QPainter *painter,
     } else {
         if (!isDragMode){
             if (index.row() % 2 == 0){
-                painter->fillRect(opt.rect, QColor(252, 252, 252));
+                painter->fillRect(opt.rect, QColor(0, 0, 0, 3));
             }else{
-                painter->fillRect(opt.rect, QColor(255, 255, 255));
+                painter->fillRect(opt.rect, QColor(255, 255, 255, 0));
             }
         }
 

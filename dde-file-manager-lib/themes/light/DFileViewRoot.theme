@@ -1,0 +1,79 @@
+QListView {
+    background: #f9f9fa;
+    border: none;
+}
+
+FileIconItem[showBackground=true] QTextEdit {
+    background: "#0076F9";
+    border-radius: 4px;
+}
+
+FileIconItem QLabel {
+    background: transparent;
+}
+
+FileIconItem QTextEdit {
+    background: transparent;
+    color: white;
+    selection-background-color: #61B5F8;
+}
+
+FileIconItem QTextEdit[readOnly=false] {
+    background: #e6e6ec;
+    border: 1px solid rgba(44, 167, 248, 0.3);
+    border-radius: 4px;
+    color: black;
+    min-height: 42px;
+}
+
+/*QListView::item {
+    color: red;
+}
+QListView::item:alternate {
+    background: #EEEEEE;
+}
+
+QListView::item:selected {
+    border: 1px solid #6a6ea9;
+}
+
+QListView::item:selected:!active {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                stop: 0 #ABAFE5, stop: 1 #8588B2);
+}
+
+QListView::item:selected:active {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                stop: 0 #6a6ea9, stop: 1 #888dd9);
+}
+
+QListView::item:hover {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                stop: 0 #FAFBFE, stop: 1 #DCDEF1);
+}*/
+
+QHeaderView {
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                  stop:0 #f8f8f8, stop:1 rgba(255, 255, 255, 0.8));
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    max-height: 21px;
+}
+
+QHeaderView::section {
+    color: #797979;
+    background: transparent;
+    border: none;
+    padding-left: 10px inset transparent;
+    border-right: 1px inset rgba(0, 0, 0, 0.1);
+    margin-bottom: 1px;
+}
+
+QHeaderView::section:checked {
+
+}
+
+DFileView QLabel#contentLabel {
+    font-family: SourceHanSansSC-Light;
+    font-size: 20px;
+    color: #D0D0D0;
+}

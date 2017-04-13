@@ -16,6 +16,7 @@
 #include "gvfs/gvfsmountmanager.h"
 #include "widgets/singleton.h"
 #include "../shutil/fileutils.h"
+#include "widgets/commandlinemanager.h"
 
 #include <dslider.h>
 
@@ -374,7 +375,6 @@ void ComputerView::initUI()
     m_statusBar->scalingSlider()->setPageStep(1);
 
     QFrame* contentFrame = new QFrame(this);
-    contentFrame->setStyleSheet("background-color: transparent");
 
     m_systemTitleLine = new TitleLine(tr("My Directories"));
     m_systemFlowLayout = new FlowLayout();
@@ -433,6 +433,16 @@ void ComputerView::initUI()
     event << window()->winId();
     const int number = m_systemItems.count() + m_nativeItems.count() + m_removableItems.count();
     m_statusBar->itemCounted(event, number);
+
+    if(CommandLineManager::instance()->isSet("r")){
+        m_contentArea->setStyleSheet("QScrollArea{"
+                                        "background: #f9f9fa;"
+                                     "}");
+        m_statusBar->setStyleSheet("background: #f9f9fa;");
+        contentFrame->setStyleSheet("background-color: #f9f9fa;");
+    } else{
+        contentFrame->setStyleSheet("background-color: transparent;");
+    }
 }
 
 void ComputerView::initConnect()

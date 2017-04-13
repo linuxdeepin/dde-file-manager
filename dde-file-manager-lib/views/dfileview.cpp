@@ -10,6 +10,7 @@
 #include "dabstractfilewatcher.h"
 #include "app/define.h"
 #include "app/filesignalmanager.h"
+#include "widgets/commandlinemanager.h"
 
 #include "interfaces/dfmglobal.h"
 #include "interfaces/diconitemdelegate.h"
@@ -126,7 +127,12 @@ DFileView::DFileView(QWidget *parent)
     : DListView(parent)
     , d_ptr(new DFileViewPrivate(this))
 {
-    D_THEME_INIT_WIDGET(DFileView);
+    if(CommandLineManager::instance()->isSet("r")){
+        D_THEME_INIT_WIDGET(DFileViewRoot)
+    } else {
+        D_THEME_INIT_WIDGET(DFileView);
+    }
+
     D_D(DFileView);
 
     d_ptr->enabledSelectionModes << NoSelection << SingleSelection
@@ -1643,6 +1649,12 @@ void DFileView::initUI()
     d->statusBar->scalingSlider()->setTickInterval(1);
 
     addFooterWidget(d->statusBar);
+
+    if(CommandLineManager::instance()->isSet("r")){
+        d->statusBar->setStyleSheet("DStatusBar{"
+                                       "background: #f9f9fa;"
+                                    "}");
+    }
 }
 
 void DFileView::initModel()
