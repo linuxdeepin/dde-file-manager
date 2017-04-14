@@ -17,6 +17,8 @@
 #include "widgets/singleton.h"
 #include "../shutil/fileutils.h"
 #include "widgets/commandlinemanager.h"
+#include "dfmsetting.h"
+#include "shutil/viewstatesmanager.h"
 
 #include <dslider.h>
 
@@ -423,8 +425,6 @@ void ComputerView::initUI()
     }
     loadNativeItems();
 
-    resizeAllItemsBySizeIndex(m_currentIconSizeIndex);
-
     if (m_removableItems.count() == 0){
         m_removableTitleLine->hide();
     }
@@ -443,6 +443,10 @@ void ComputerView::initUI()
     } else{
         contentFrame->setStyleSheet("background-color: transparent;");
     }
+
+    //icon size
+    resizeAllItemsBySizeIndex(globalSetting->iconSizeIndex());
+    loadViewState();
 }
 
 void ComputerView::initConnect()
@@ -452,6 +456,8 @@ void ComputerView::initConnect()
     connect(deviceListener, &UDiskListener::volumeAdded, this, &ComputerView::volumeAdded);
     connect(deviceListener, &UDiskListener::volumeRemoved, this, &ComputerView::volumeRemoved);
     connect(m_statusBar->scalingSlider(), &DSlider::valueChanged, this, &ComputerView::resizeAllItemsBySizeIndex);
+    connect(m_statusBar->scalingSlider(), &DSlider::valueChanged, this, &ComputerView::saveViewState);
+    connect(fileSignalManager, &FileSignalManager::requestChangeIconSizeBySizeIndex, this, &ComputerView::resizeAllItemsBySizeIndex);
 }
 
 void ComputerView::loadSystemItems()
@@ -565,6 +571,28 @@ bool ComputerView::isDiskConfExisted()
 QString ComputerView::getDiskConfPath()
 {
     return QString("%1/%2").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::ApplicationConfigPath), "disk.conf");
+}
+
+void ComputerView::loadViewState()
+{
+    ViewState state = viewStatesManager->viewstate(DUrl::fromComputerFile("/"));
+
+    if(!state.isValid())
+        return;
+
+    resizeAllItemsBySizeIndex(state.iconSize);
+}
+
+void ComputerView::saveViewState()
+{
+    m_currentIconSizeIndex = m_statusBar->scalingSlider()->value();
+    ViewState state;
+    state.sortOrder = Qt::AscendingOrder;
+    state.sortRole = DFileSystemModel::FileDisplayNameRole;
+    state.viewMode = DFileView::IconMode;
+    state.iconSize = m_currentIconSizeIndex;
+
+    viewStatesManager->saveViewState(DUrl::fromComputerFile("/"), state);
 }
 
 void ComputerView::volumeAdded(UDiskDeviceInfoPointer device)
@@ -698,6 +726,9 @@ void ComputerView::resizeAllItemsBySizeIndex(int index)
     foreach (ComputerViewItem* item, m_removableItems) {
         updateItemBySizeIndex(index, item);
     }
+
+    m_currentIconSizeIndex = index;
+    m_statusBar->scalingSlider()->setValue(index);
 }
 
 void ComputerView::updateItemBySizeIndex(const int &index, ComputerViewItem *item)
