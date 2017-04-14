@@ -118,6 +118,8 @@ public:
 
     QTimer* updateStatusBarTimer;
 
+    QScrollBar* verticalScrollBar = NULL;
+
     Q_DECLARE_PUBLIC(DFileView)
 };
 
@@ -1271,12 +1273,21 @@ void DFileView::focusInEvent(QFocusEvent *event)
 
 void DFileView::resizeEvent(QResizeEvent *event)
 {
+    Q_D(DFileView);
+
     DListView::resizeEvent(event);
 
     updateHorizontalOffset();
 
     if (itemDelegate()->editingIndex().isValid())
         doItemsLayout();
+
+    d->verticalScrollBar->setFixedSize(8, event->size().height());
+    if(d->currentViewMode == IconMode){
+        d->verticalScrollBar->move(event->size().width(), 0);
+    } else if (d->currentViewMode == ListMode){
+        d->verticalScrollBar->move(event->size().width(), d->headerView->height());
+    }
 
     updateModelActiveIndex();
 }
@@ -1655,6 +1666,9 @@ void DFileView::initUI()
                                        "background: #f9f9fa;"
                                     "}");
     }
+
+    d->verticalScrollBar = verticalScrollBar();
+    d->verticalScrollBar->setParent(this);
 }
 
 void DFileView::initModel()
