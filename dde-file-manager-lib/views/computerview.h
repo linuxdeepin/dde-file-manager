@@ -136,6 +136,9 @@ public:
     bool isDiskConfExisted();
     QString getDiskConfPath();
 
+    void loadViewState();
+    void saveViewState();
+
 signals:
 
 public slots:
