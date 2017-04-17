@@ -110,6 +110,13 @@ QString DFileInfo::fileName() const
     return d->fileInfo.fileName();
 }
 
+QString DFileInfo::fileSharedName() const
+{
+    const ShareInfo &info = userShareManager->getShareInfoByPath(absoluteFilePath());
+
+    return info.shareName();
+}
+
 bool DFileInfo::canRename() const
 {
     if (systemPathManager->isSystemPath(absoluteFilePath()))
@@ -200,6 +207,20 @@ bool DFileInfo::isAbsolute() const
 bool DFileInfo::isShared() const
 {
     return userShareManager->isShareFile(absoluteFilePath());
+}
+
+bool DFileInfo::isWritableShared() const
+{
+    const ShareInfo &info = userShareManager->getShareInfoByPath(absoluteFilePath());
+
+    return info.isWritable();
+}
+
+bool DFileInfo::isAllowGuestShared() const
+{
+    const ShareInfo &info = userShareManager->getShareInfoByPath(absoluteFilePath());
+
+    return info.isGuestOk();
 }
 
 bool DFileInfo::makeAbsolute()

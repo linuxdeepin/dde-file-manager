@@ -108,6 +108,7 @@ public:
     virtual QString baseName() const;
     virtual QString fileName() const;
     virtual QString fileDisplayName() const;
+    virtual QString fileSharedName() const;
     QString fileDisplayPinyinName() const;
 
     virtual bool canRename() const;
@@ -120,6 +121,8 @@ public:
     virtual bool isRelative() const;
     virtual bool isAbsolute() const;
     virtual bool isShared() const;
+    virtual bool isWritableShared() const;
+    virtual bool isAllowGuestShared() const;
     virtual bool makeAbsolute();
 
     virtual bool isFile() const;
