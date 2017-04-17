@@ -207,6 +207,13 @@ QString DAbstractFileInfo::fileDisplayName() const
     return fileName();
 }
 
+QString DAbstractFileInfo::fileSharedName() const
+{
+    CALL_PROXY(fileSharedName());
+
+    return QString();
+}
+
 QString DAbstractFileInfo::fileDisplayPinyinName() const
 {
     Q_D(const DAbstractFileInfo);
@@ -285,6 +292,20 @@ bool DAbstractFileInfo::isAbsolute() const
 bool DAbstractFileInfo::isShared() const
 {
     CALL_PROXY(isShared());
+
+    return false;
+}
+
+bool DAbstractFileInfo::isWritableShared() const
+{
+    CALL_PROXY(isWritableShared());
+
+    return false;
+}
+
+bool DAbstractFileInfo::isAllowGuestShared() const
+{
+    CALL_PROXY(isAllowGuestShared());
 
     return false;
 }

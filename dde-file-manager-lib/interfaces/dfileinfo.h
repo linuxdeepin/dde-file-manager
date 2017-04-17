@@ -21,6 +21,7 @@ public:
     QString absolutePath() const Q_DECL_OVERRIDE;
     QString absoluteFilePath() const Q_DECL_OVERRIDE;
     QString fileName() const Q_DECL_OVERRIDE;
+    QString fileSharedName() const Q_DECL_OVERRIDE;
 
     bool canRename() const Q_DECL_OVERRIDE;
     bool canShare() const Q_DECL_OVERRIDE;
@@ -33,6 +34,8 @@ public:
     bool isRelative() const Q_DECL_OVERRIDE;
     bool isAbsolute() const Q_DECL_OVERRIDE;
     bool isShared() const Q_DECL_OVERRIDE;
+    bool isWritableShared() const Q_DECL_OVERRIDE;
+    bool isAllowGuestShared() const Q_DECL_OVERRIDE;
     bool makeAbsolute() Q_DECL_OVERRIDE;
 
     bool isFile() const Q_DECL_OVERRIDE;

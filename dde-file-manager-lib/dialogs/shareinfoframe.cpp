@@ -131,26 +131,26 @@ void ShareInfoFrame::doShareInfoSetting()
 
 void ShareInfoFrame::updateShareInfo(const QString &filePath)
 {
-    if(filePath != m_fileinfo->absoluteFilePath())
+    if (filePath != m_fileinfo->absoluteFilePath())
         return;
-    ShareInfo info = userShareManager->getShareInfoByPath(filePath);
-    qDebug() << info;
-    if (!info.shareName().isEmpty()){
+
+    if (!m_fileinfo->fileSharedName().isEmpty()) {
         m_shareCheckBox->setChecked(true);
         disconnect(m_shareNamelineEdit, &DLineEdit::textChanged, this, &ShareInfoFrame::handleShareNameChanged);
         int cursorPos = m_shareNamelineEdit->cursorPosition();
-        m_shareNamelineEdit->setText(info.shareName());
+        m_shareNamelineEdit->setText(m_fileinfo->fileSharedName());
         m_shareNamelineEdit->setCursorPosition(cursorPos);
         connect(m_shareNamelineEdit, &DLineEdit::textChanged, this, &ShareInfoFrame::handleShareNameChanged);
-        if (info.isWritable()){
+
+        if (m_fileinfo->isWritableShared()) {
             m_permissoComBox->setCurrentIndex(0);
-        }else{
+        } else {
             m_permissoComBox->setCurrentIndex(1);
         }
 
-        if (info.isGuestOk()){
+        if (m_fileinfo->isAllowGuestShared()) {
             m_anonymityCombox->setCurrentIndex(1);
-        }else{
+        } else {
             m_anonymityCombox->setCurrentIndex(0);
         }
     } else {
