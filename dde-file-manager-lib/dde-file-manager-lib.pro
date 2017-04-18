@@ -104,7 +104,6 @@ HEADERS += \
     views/dbookmarkview.h \
     controllers/trashmanager.h \
     views/dsplitter.h \
-    models/recentfileinfo.h \
     models/trashfileinfo.h \
     shutil/mimesappsmanager.h \
     views/dbookmarkline.h \
@@ -231,7 +230,6 @@ SOURCES += \
     views/dbookmarkview.cpp \
     controllers/trashmanager.cpp \
     views/dsplitter.cpp \
-    models/recentfileinfo.cpp \
     models/trashfileinfo.cpp \
     shutil/mimesappsmanager.cpp \
     views/dbookmarkline.cpp \

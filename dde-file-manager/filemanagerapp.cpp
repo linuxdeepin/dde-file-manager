@@ -195,8 +195,8 @@ void FileManagerApp::showPropertyDialog(const QStringList paths)
         if(realTargetUrl.toLocalFile().endsWith(".desktop")){
             DesktopFile df(realTargetUrl.toLocalFile());
             if(df.getDeepinId() == "dde-trash"){
-                DFMEvent event;
-                event << DUrl::fromTrashFile("/");
+                DFMEvent event(this);
+                event.setData(DUrl::fromTrashFile("/"));
                 dialogManager->showTrashPropertyDialog(event);
                 continue;
             } else if(df.getDeepinId() == "dde-computer"){
@@ -211,8 +211,8 @@ void FileManagerApp::showPropertyDialog(const QStringList paths)
             continue;
         }
         if(url == DUrl::fromTrashFile("/")){
-            DFMEvent event;
-            event << DUrl::fromTrashFile("/");
+            DFMEvent event(this);
+            event.setData(DUrl::fromTrashFile("/"));
             dialogManager->showTrashPropertyDialog(event);
             continue;
         }
@@ -221,11 +221,10 @@ void FileManagerApp::showPropertyDialog(const QStringList paths)
                 continue;
             if(url == DUrl::fromTrashFile("/") ||
                     url == DesktopFileInfo::trashDesktopFileUrl()){
-                DFMEvent event;
-                event << DUrl::fromTrashFile("/");
+                DFMEvent event(this);
                 DUrlList urls;
                 urls << url;
-                event << urls;
+                event.setData(urls);
                 emit fileSignalManager->requestShowTrashPropertyDialog(event);
                 continue;
             }
@@ -240,9 +239,8 @@ void FileManagerApp::showPropertyDialog(const QStringList paths)
     }
     if(urlList.isEmpty())
         return;
-    DFMEvent event;
-    event << urlList.first();
-    event << urlList;
+    DFMEvent event(this);
+    event.setData(urlList);
 
     emit fileSignalManager->requestShowPropertyDialog(event);
 }

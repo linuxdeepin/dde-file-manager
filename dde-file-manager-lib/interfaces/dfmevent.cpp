@@ -1,19 +1,19 @@
 #include "dfmevent.h"
 
 #include <QDebug>
+#include <QWidget>
 
-DFMEvent::DFMEvent(int wId, DFMEvent::EventSource source, const DUrl &fileUrl)
-    : _data(new FMEventData)
+DFMEvent::DFMEvent(const QObject *sender)
+    : DFMEvent(UnknowType, sender)
 {
-    _data->windowId = wId;
-    _data->source = source;
-    _data->fileUrl = fileUrl;
+
 }
 
 DFMEvent::DFMEvent(DFMEvent::Type type, const QObject *sender)
     : m_type(type)
     , m_sender(sender)
     , m_accept(true)
+    , m_id(0)
 {
 
 }
@@ -22,7 +22,9 @@ DFMEvent::DFMEvent(const DFMEvent &other)
     : DFMEvent((DFMEvent::Type)other.m_type, other.m_sender)
 {
     m_accept = other.m_accept;
-    _data = other._data;
+    m_data = other.m_data;
+    m_propertys = other.m_propertys;
+    m_id = other.m_id;
 }
 
 DFMEvent::~DFMEvent()
@@ -32,13 +34,29 @@ DFMEvent::~DFMEvent()
 
 DFMEvent &DFMEvent::operator =(const DFMEvent &other)
 {
-    _data = other._data;
     m_type = other.m_type;
     m_sender = other.m_sender;
     m_accept = other.m_accept;
     m_data = other.m_data;
+    m_propertys = other.m_propertys;
+    m_id = other.m_id;
 
     return *this;
+}
+
+quint64 DFMEvent::eventId() const
+{
+    if (m_id > 0)
+        return m_id;
+
+    const QWidget *w = qobject_cast<const QWidget*>(m_sender.data());
+
+    return w ? w->window()->winId() : 0;
+}
+
+void DFMEvent::setEventId(quint64 id)
+{
+    m_id = id;
 }
 
 DUrlList DFMEvent::handleUrlList() const
@@ -59,6 +77,8 @@ QT_BEGIN_NAMESPACE
 QString fmeventType2String(DFMEvent::Type type)
 {
     switch (type) {
+    case DFMEvent::UnknowType:
+        return QStringLiteral(QT_STRINGIFY(Unknow));
     case DFMEvent::OpenFile:
         return QStringLiteral(QT_STRINGIFY(OpenFile));
     case DFMEvent::OpenFileByApp:
@@ -117,10 +137,34 @@ QDebug operator<<(QDebug deg, const DFMEvent &info)
 }
 QT_END_NAMESPACE
 
-DFMOpenFileEvent::DFMOpenFileEvent(const DUrl &url, const QObject *sender)
-    : DFMEvent(OpenFile, sender)
+DFMUrlBaseEvent::DFMUrlBaseEvent(const DUrl &url, const QObject *sender)
+    : DFMUrlBaseEvent(DFMEvent::UnknowType, url, sender)
+{
+
+}
+
+DFMUrlBaseEvent::DFMUrlBaseEvent(DFMEvent::Type type, const DUrl &url, const QObject *sender)
+    : DFMEvent(type, sender)
 {
     setData(url);
+}
+
+DFMUrlListBaseEvent::DFMUrlListBaseEvent(const DUrlList &list, const QObject *sender)
+    : DFMUrlListBaseEvent(DFMEvent::UnknowType, list, sender)
+{
+
+}
+
+DFMUrlListBaseEvent::DFMUrlListBaseEvent(DFMEvent::Type type, const DUrlList &list, const QObject *sender)
+    : DFMEvent(type, sender)
+{
+    setData(list);
+}
+
+DFMOpenFileEvent::DFMOpenFileEvent(const DUrl &url, const QObject *sender)
+    : DFMUrlBaseEvent(OpenFile, url, sender)
+{
+
 }
 
 DFMOpenFileByAppEvent::DFMOpenFileByAppEvent(const QString &appName, const DUrl &url, const QObject *sender)
@@ -131,15 +175,15 @@ DFMOpenFileByAppEvent::DFMOpenFileByAppEvent(const QString &appName, const DUrl 
 }
 
 DFMCompressEvnet::DFMCompressEvnet(const DUrlList &list, const QObject *sender)
-    : DFMEvent(CompressFiles, sender)
+    : DFMUrlListBaseEvent(CompressFiles, list, sender)
 {
-    setData(list);
+
 }
 
 DFMDecompressEvnet::DFMDecompressEvnet(const DUrlList &list, const QObject *sender)
-    : DFMEvent(DecompressFile, sender)
+    : DFMUrlListBaseEvent(DecompressFile, list, sender)
 {
-    setData(list);
+
 }
 
 DFMDecompressHereEvnet::DFMDecompressHereEvnet(const DUrlList &list, const QObject *sender)
@@ -150,10 +194,10 @@ DFMDecompressHereEvnet::DFMDecompressHereEvnet(const DUrlList &list, const QObje
 
 DFMWriteUrlsToClipboardEvent::DFMWriteUrlsToClipboardEvent(DFMGlobal::ClipboardAction action,
                                                            const DUrlList &list, const QObject *sender)
-    : DFMEvent(WriteUrlsToClipboard, sender)
+    : DFMUrlListBaseEvent(WriteUrlsToClipboard, list, sender)
     , m_action(action)
 {
-    setData(list);
+
 }
 
 DFMRenameEvent::DFMRenameEvent(const DUrl &from, const DUrl &to, const QObject *sender)
@@ -170,9 +214,9 @@ DUrlList DFMRenameEvent::handleUrlList() const
 }
 
 DFMDeleteEvent::DFMDeleteEvent(const DUrlList &list, const QObject *sender)
-    : DFMEvent(DeleteFiles, sender)
+    : DFMUrlListBaseEvent(DeleteFiles, list, sender)
 {
-    setData(list);
+
 }
 
 DFMMoveToTrashEvent::DFMMoveToTrashEvent(const DUrlList &list, const QObject *sender)
@@ -183,7 +227,7 @@ DFMMoveToTrashEvent::DFMMoveToTrashEvent(const DUrlList &list, const QObject *se
 
 DFMPasteEvent::DFMPasteEvent(DFMGlobal::ClipboardAction action, const DUrl &targetUrl,
                              const DUrlList &list, const QObject *sender)
-    : DFMEvent(PasteFile, sender)
+    : DFMUrlListBaseEvent(PasteFile, list, sender)
     , m_action(action)
     , m_target(targetUrl)
 {
@@ -209,9 +253,9 @@ DFMNewFileEvent::DFMNewFileEvent(const DUrl &targetUrl, const QString &fileSuffi
 }
 
 DFMOpenFileLocation::DFMOpenFileLocation(const DUrl &url, const QObject *sender)
-    : DFMEvent(OpenFileLocation, sender)
+    : DFMUrlBaseEvent(OpenFileLocation, url, sender)
 {
-    setData(url);
+
 }
 
 DFMCreateSymlinkEvent::DFMCreateSymlinkEvent(const DUrl &fileUrl, const DUrl &toUrl, const QObject *sender)
@@ -225,42 +269,42 @@ DUrlList DFMCreateSymlinkEvent::handleUrlList() const
     return DUrlList() << fileUrl() << toUrl();
 }
 
-DFMFileShareEvnet::DFMFileShareEvnet(const DUrl &fileUrl, const QString &name, bool isWritable,
+DFMFileShareEvnet::DFMFileShareEvnet(const DUrl &url, const QString &name, bool isWritable,
                                                  bool allowGuest, const QObject *sender)
-    : DFMEvent(FileShare, sender)
+    : DFMUrlBaseEvent(FileShare, url, sender)
     , m_name(name)
     , m_writable(isWritable)
     , m_allowGuest(allowGuest)
 {
-    setData(fileUrl);
+
 }
 
-DFMCancelFileShareEvent::DFMCancelFileShareEvent(const DUrl &fileUrl, const QObject *sender)
-    : DFMEvent(CancelFileShare, sender)
+DFMCancelFileShareEvent::DFMCancelFileShareEvent(const DUrl &url, const QObject *sender)
+    : DFMUrlBaseEvent(CancelFileShare, url, sender)
 {
-    setData(fileUrl);
+
 }
 
-DFMOpenInTerminalEvent::DFMOpenInTerminalEvent(const DUrl &fileUrl, const QObject *sender)
-    : DFMEvent(OpenInTerminal, sender)
+DFMOpenInTerminalEvent::DFMOpenInTerminalEvent(const DUrl &url, const QObject *sender)
+    : DFMUrlBaseEvent(OpenInTerminal, url, sender)
 {
-    setData(fileUrl);
+
 }
 
-DFMGetChildrensEvent::DFMGetChildrensEvent(const DUrl &fileUrl, const QStringList &nameFilters,
+DFMGetChildrensEvent::DFMGetChildrensEvent(const DUrl &url, const QStringList &nameFilters,
                                            QDir::Filters filters, QDirIterator::IteratorFlags flags,
                                            const QObject *sender)
-    : DFMEvent(GetChildrens, sender)
+    : DFMUrlBaseEvent(GetChildrens, url, sender)
     , m_nameFilters(nameFilters)
     , m_filters(filters)
     , m_flags(flags)
 {
-    setData(fileUrl);
+
 }
 
-DFMGetChildrensEvent::DFMGetChildrensEvent(const DUrl &fileUrl, const QStringList &nameFilters,
+DFMGetChildrensEvent::DFMGetChildrensEvent(const DUrl &url, const QStringList &nameFilters,
                                            QDir::Filters filters, const QObject *sender)
-    : DFMGetChildrensEvent(fileUrl, nameFilters, filters, QDirIterator::NoIteratorFlags, sender)
+    : DFMGetChildrensEvent(url, nameFilters, filters, QDirIterator::NoIteratorFlags, sender)
 {
 
 }
@@ -295,14 +339,20 @@ DFMCreateGetChildrensJob::DFMCreateGetChildrensJob(const DUrl &fileUrl, const QS
     m_type = CreateGetChildrensJob;
 }
 
-DFMCreateFileInfoEvnet::DFMCreateFileInfoEvnet(const DUrl &fileUrl, const QObject *sender)
-    : DFMEvent(CreateFileInfo, sender)
+DFMCreateFileInfoEvnet::DFMCreateFileInfoEvnet(const DUrl &url, const QObject *sender)
+    : DFMUrlBaseEvent(CreateFileInfo, url, sender)
 {
-    setData(fileUrl);
+
 }
 
-DFMCreateFileWatcherEvent::DFMCreateFileWatcherEvent(const DUrl &fileUrl, const QObject *sender)
-    : DFMEvent(CreateFileWatcher, sender)
+DFMCreateFileWatcherEvent::DFMCreateFileWatcherEvent(const DUrl &url, const QObject *sender)
+    : DFMUrlBaseEvent(CreateFileWatcher, url, sender)
 {
-    setData(fileUrl);
+
+}
+
+DFMChangeCurrentUrlEvent::DFMChangeCurrentUrlEvent(const DUrl &url, const QObject *sender)
+    : DFMUrlBaseEvent(ChangeCurrentUrl, url, sender)
+{
+
 }

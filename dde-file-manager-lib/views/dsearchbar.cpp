@@ -392,12 +392,9 @@ void DSearchBar::clearText()
 {
     clear();
     m_searchStart = false;
-    DFMEvent event;
+    DFMEvent event(this);
 
-    event << WindowManager::getWindowId(this);
-    event << DFMEvent::SearchBar;
-    event << m_currentPath;
-
+    event.setData(m_currentPath);
 
     emit fileSignalManager->requestChangeCurrentUrl(event);
     emit focusedOut();

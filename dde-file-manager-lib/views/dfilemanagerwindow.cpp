@@ -142,7 +142,7 @@ void DFileManagerWindow::closeCurrentTab(const DFMEvent &event)
 {
     D_D(DFileManagerWindow);
 
-    if(event.windowId() != (int)winId())
+    if(event.eventId() != (int)winId())
         return;
 
     if(d->tabBar->count() == 1){
@@ -186,8 +186,8 @@ void DFileManagerWindow::onNewTabButtonClicked()
         url = currentUrl();
     else
         url = DUrl::fromUserInput(path);
-    event << url;
-    event << windowId();
+    event.setData(url);
+    event.setEventId(windowId());
     openNewTab(event);
 }
 
@@ -195,9 +195,8 @@ void DFileManagerWindow::requestEmptyTrashFiles()
 {
     D_D(DFileManagerWindow);
     DFMEvent event;
-    event << DFMEvent::Menu;
-    event << windowId();
-    event << DUrl::fromTrashFile("/");
+    event.setEventId(windowId());
+    event.setData(DUrl::fromTrashFile("/"));
     appController->actionClearTrash(event);
 }
 
@@ -337,67 +336,61 @@ void DFileManagerWindow::setListView()
     d->fileView->setViewModeToList();
 }
 
-void DFileManagerWindow::preHandleCd(const DUrl &fileUrl, int source)
+void DFileManagerWindow::preHandleCd(const DFMEvent &event)
 {
-    D_DC(DFileManagerWindow);
-    qDebug() << fileUrl << source << d->viewManager->supportSchemes() << d->viewManager->views() << d->viewManager->isSchemeRegistered(fileUrl.scheme());
-
-    if (d->viewStackLayout->currentWidget() == d->computerView && source == DFMEvent::FileView){
+    if (event.eventId() != windowId()) {
         return;
     }
 
-    DFMEvent event;
+    D_DC(DFileManagerWindow);
+    qDebug() << event << d->viewManager->supportSchemes() << d->viewManager->views() << d->viewManager->isSchemeRegistered(event.fileUrl().scheme());
 
-    event << fileUrl;
-    event << (DFMEvent::EventSource)(source);
-    event << this->windowId();
+    if (d->viewStackLayout->currentWidget() == d->computerView && event.sender() && event.sender()->inherits("DFileView")) {
+        return;
+    }
 
-    if (NetworkManager::SupportScheme.contains(event.fileUrl().scheme())) {
-        emit fileSignalManager->requestFetchNetworks(event);
-    }else if (d->viewManager->isSchemeRegistered(fileUrl.scheme())){
-        showPluginView(fileUrl);
+    DFMEvent e(event.sender());
 
-        QString viewId = fileUrl.scheme() + ":///";
-        event << DUrl(viewId);
-        emit fileSignalManager->currentUrlChanged(event);
+    e.setData(event.data());
+    e.setEventId(windowId());
 
-    } else if (event.fileUrl().isComputerFile()) {
-        event << DUrl::fromComputerFile("/");
-        d->tabBar->currentTab()->setCurrentUrl(event.fileUrl());
+    if (NetworkManager::SupportScheme.contains(e.fileUrl().scheme())) {
+        emit fileSignalManager->requestFetchNetworks(e);
+    }else if (d->viewManager->isSchemeRegistered(e.fileUrl().scheme())){
+        showPluginView(e.fileUrl());
+
+        QString viewId = e.fileUrl().scheme() + ":///";
+        e.setData(DUrl(viewId));
+        emit fileSignalManager->currentUrlChanged(e);
+
+    } else if (e.fileUrl().isComputerFile()) {
+        e.setData(DUrl::fromComputerFile("/"));
+        d->tabBar->currentTab()->setCurrentUrl(e.fileUrl());
         emit d->tabBar->currentChanged(d->tabBar->currentIndex());
-        d->toolbar->setCrumb(event.fileUrl());
+        d->toolbar->setCrumb(e.fileUrl());
         hideEmptyTrashButton();
-    } else if (!fileUrl.toString().isEmpty()) {
+    } else if (!e.fileUrl().toString().isEmpty()) {
 
-        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(event.fileUrl());
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(e.fileUrl());
         if(fileInfo){
             /* Call fileInfo->exists() twice. First result is false and the second one is true;
                Maybe this is a bug of fuse when smb://10.0.10.30/people is mounted and cd to mounted folder immediately.
             */
-            qDebug() << fileInfo->exists() << fileUrl.toString();
-            qDebug() << fileInfo->exists() << fileUrl.toString();
+            qDebug() << fileInfo->exists() << e.fileUrl().toString();
+            qDebug() << fileInfo->exists() << e.fileUrl().toString();
         }
         if (!fileInfo || !fileInfo->exists()) {
             if (!isCurrentUrlSupportSearch(currentUrl()))
                 return;
 
-            const_cast<DFMEvent&>(event) << DUrl::fromSearchFile(currentUrl(), event.fileUrl().toString());
+            e.setData(DUrl::fromSearchFile(currentUrl(), e.fileUrl().toString()));
 
-            const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(event.fileUrl());
+            const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(e.fileUrl());
             if (!fileInfo || !fileInfo->exists())
                 return;
         }
-        cd(event);
+        cd(e);
     }
-}
-
-void DFileManagerWindow::preHandleCd(const DFMEvent &event)
-{
-    if (event.windowId() != windowId()) {
-        return;
-    }
-
-    preHandleCd(event.fileUrl(), event.source());
 }
 
 void DFileManagerWindow::cd(const DFMEvent &event)
@@ -454,13 +447,13 @@ void DFileManagerWindow::openNewTab(const DFMEvent &event)
     if(!d->tabBar->tabAddable())
         return;
 
-    if (event.windowId() != windowId()){
+    if (event.eventId() != windowId()){
         return;
     }
     createNewView(event);
 
     if(d->viewManager->isSchemeRegistered(event.fileUrl().scheme())){
-        preHandleCd(event.fileUrl(), DFMEvent::Unknow);
+        preHandleCd(event);
     }
 }
 
@@ -626,8 +619,8 @@ void DFileManagerWindow::initTitleBar()
 
     DFileMenu* menu = fileMenuManger->createToolBarSettingsMenu();
 
-    DFMEvent event;
-    event << windowId();
+    DFMEvent event(this);
+    event.setEventId(windowId());
     menu->setEvent(event);
 
     bool isDXcbPlatform = false;
@@ -746,11 +739,11 @@ void DFileManagerWindow::initViewLayout()
 
 void DFileManagerWindow::initFileView(const DUrl &fileUrl)
 {
-    DFMEvent event;
-    event << fileUrl;
-    event << windowId();
+    DFMEvent event(this);
+    event.setData(fileUrl);
+    event.setEventId(windowId());
     createNewView(event);
-    preHandleCd(fileUrl, DFMEvent::Unknow);
+    preHandleCd(event);
 }
 
 void DFileManagerWindow::initComputerView()

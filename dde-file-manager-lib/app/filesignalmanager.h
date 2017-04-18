@@ -129,11 +129,6 @@ signals:
     /*request update mime cache*/
     void requestUpdateMimeAppsCache();
 
-    /*request clear recent*/
-    void requestClearRecent();
-    /*request remove recent file*/
-    void requestRecentFileRemove(const DUrlList &urlList);
-
     /*close last active window */
     void aboutToCloseLastActivedWindow(int winId);
 

@@ -68,17 +68,17 @@ bool FileController::findExecutable(const QString &executableName, const QString
 
 const DAbstractFileInfoPointer FileController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const
 {
-    if (event->fileUrl().toLocalFile().endsWith(QString(".") + DESKTOP_SURRIX)){
+    if (event->url().toLocalFile().endsWith(QString(".") + DESKTOP_SURRIX)){
 
-        return DAbstractFileInfoPointer(new DesktopFileInfo(event->fileUrl()));
+        return DAbstractFileInfoPointer(new DesktopFileInfo(event->url()));
     }
 
-    return DAbstractFileInfoPointer(new DFileInfo(event->fileUrl()));
+    return DAbstractFileInfoPointer(new DFileInfo(event->url()));
 }
 
 const DDirIteratorPointer FileController::createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const
 {
-    return DDirIteratorPointer(new FileDirIterator(event->fileUrl().toLocalFile(), event->nameFilters(),
+    return DDirIteratorPointer(new FileDirIterator(event->url().toLocalFile(), event->nameFilters(),
                                                    event->filters(), event->flags()));
 }
 
@@ -313,7 +313,7 @@ bool FileController::newFolder(const QSharedPointer<DFMNewFolderEvent> &event) c
 
     QString folderName = checkDuplicateName(dir.absolutePath() + "/" + tr("New Folder"));
 
-    AppController::selectionAndRenameFile = qMakePair(DUrl::fromLocalFile(folderName), event->windowId());
+    AppController::selectionAndRenameFile = qMakePair(DUrl::fromLocalFile(folderName), event->eventId());
     return dir.mkdir(folderName);
 }
 
@@ -337,7 +337,7 @@ bool FileController::newFile(const QSharedPointer<DFMNewFileEvent> &event) const
 bool FileController::shareFolder(const QSharedPointer<DFMFileShareEvnet> &event) const
 {
     ShareInfo info;
-    info.setPath(event->fileUrl().toLocalFile());
+    info.setPath(event->url().toLocalFile());
 
     info.setShareName(event->name());
     info.setIsGuestOk(event->allowGuest());
@@ -350,7 +350,7 @@ bool FileController::shareFolder(const QSharedPointer<DFMFileShareEvnet> &event)
 
 bool FileController::unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const
 {
-    userShareManager->deleteUserShareByPath(event->fileUrl().toLocalFile());
+    userShareManager->deleteUserShareByPath(event->url().toLocalFile());
 
     return true;
 }
@@ -359,7 +359,7 @@ bool FileController::openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent>
 {
     const QString &current_dir = QDir::currentPath();
 
-    QDir::setCurrent(event->fileUrl().toLocalFile());
+    QDir::setCurrent(event->url().toLocalFile());
 
     bool ok = QProcess::startDetached("x-terminal-emulator");
 
@@ -392,7 +392,7 @@ bool FileController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &
 
 DAbstractFileWatcher *FileController::createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const
 {
-    return new DFileWatcher(event->fileUrl().toLocalFile());
+    return new DFileWatcher(event->url().toLocalFile());
 }
 
 QString FileController::checkDuplicateName(const QString &name) const

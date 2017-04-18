@@ -240,9 +240,8 @@ void DToolBar::searchBarDeactivated()
         }
     }
 
-    DFMEvent event;
-    event << WindowManager::getWindowId(this);
-    event << DFMEvent::SearchBar;
+    DFMEvent event(this);
+
     emit fileSignalManager->requestFoucsOnFileView(event);
 }
 
@@ -271,36 +270,31 @@ void DToolBar::searchBarTextEntered()
 
     QDir::setCurrent(currentDir);
 
-    DFMEvent event;
+    DFMEvent event(this);
 
-    event << WindowManager::getWindowId(this);
-    event << DFMEvent::SearchBar;
-    event << inputUrl;
+    event.setData(inputUrl);
 
     emit fileSignalManager->requestChangeCurrentUrl(event);
 }
 
 void DToolBar::crumbSelected(const DFMEvent &e)
 {
-    if(e.windowId() != WindowManager::getWindowId(this))
+    if(e.eventId() != WindowManager::getWindowId(this))
         return;
 
-    DFMEvent event;
+    DFMEvent event(this);
 
-    event << WindowManager::getWindowId(this);
-    event << DFMEvent::CrumbButton;
-    event << e.fileUrl();
-
+    event.setData(e);
 
     emit fileSignalManager->requestChangeCurrentUrl(event);
 }
 
 void DToolBar::crumbChanged(const DFMEvent &event)
 {
-    if(event.windowId() != WindowManager::getWindowId(this))
+    if(event.eventId() != WindowManager::getWindowId(this))
         return;
 
-    if(event.source() == DFMEvent::CrumbButton)
+    if (event.sender() && event.sender()->inherits("DCrumbWidget"))
     {
         checkNavHistory(event.fileUrl());
         return;
@@ -321,7 +315,7 @@ void DToolBar::crumbChanged(const DFMEvent &event)
         setCrumb(event.fileUrl());
     }
 
-    if(event.source() == DFMEvent::BackAndForwardButton)
+    if (event.sender() == this)
         return;
 
     checkNavHistory(event.fileUrl());
@@ -346,10 +340,8 @@ void DToolBar::backButtonClicked()
 
     if(!url.isEmpty())
     {
-        DFMEvent event;
-        event << WindowManager::getWindowId(this);
-        event << DFMEvent::BackAndForwardButton;
-        event << url;
+        DFMEvent event(this);
+        event.setData(url);
         updateBackForwardButtonsState();
         emit fileSignalManager->requestChangeCurrentUrl(event);
     }
@@ -361,10 +353,8 @@ void DToolBar::forwardButtonClicked()
     qDebug() << url << *m_navStack;
     if(!url.isEmpty())
     {
-        DFMEvent event;
-        event << WindowManager::getWindowId(this);
-        event << DFMEvent::BackAndForwardButton;
-        event << url;
+        DFMEvent event(this);
+        event.setData(url);
         updateBackForwardButtonsState();
         emit fileSignalManager->requestChangeCurrentUrl(event);
     }
@@ -389,21 +379,21 @@ void DToolBar::checkViewModeButton(DFileView::ViewMode mode)
 
 void DToolBar::handleHotkeyBack(const DFMEvent &event)
 {
-    if (event.windowId() == WindowManager::getWindowId(this)) {
+    if (event.eventId() == WindowManager::getWindowId(this)) {
         backButtonClicked();
     }
 }
 
 void DToolBar::handleHotkeyForward(const DFMEvent &event)
 {
-    if (event.windowId() == WindowManager::getWindowId(this)) {
+    if (event.eventId() == WindowManager::getWindowId(this)) {
         forwardButtonClicked();
     }
 }
 
 void DToolBar::handleHotkeyCtrlF(const DFMEvent &event)
 {
-    if (event.windowId() == WindowManager::getWindowId(this)) {
+    if (event.eventId() == WindowManager::getWindowId(this)) {
         searchBarActivated();
         m_searchBar->setText("");
     }
@@ -411,28 +401,28 @@ void DToolBar::handleHotkeyCtrlF(const DFMEvent &event)
 
 void DToolBar::handleHotkeyCtrlL(const DFMEvent &event)
 {
-    if (event.windowId() == WindowManager::getWindowId(this)) {
+    if (event.eventId() == WindowManager::getWindowId(this)) {
         searchBarActivated();
     }
 }
 
 void DToolBar::handleChangeIconMode(const DFMEvent &event)
 {
-    if (event.windowId() == WindowManager::getWindowId(this)) {
+    if (event.eventId() == WindowManager::getWindowId(this)) {
         m_iconViewButton->click();
     }
 }
 
 void DToolBar::handleChangeListMode(const DFMEvent &event)
 {
-    if (event.windowId() == WindowManager::getWindowId(this)) {
+    if (event.eventId() == WindowManager::getWindowId(this)) {
         m_listViewButton->click();
     }
 }
 
 void DToolBar::handleChangeExtendMode(const DFMEvent &event)
 {
-    if (event.windowId() == WindowManager::getWindowId(this)) {
+    if (event.eventId() == WindowManager::getWindowId(this)) {
         m_extendButton->click();
     }
 }

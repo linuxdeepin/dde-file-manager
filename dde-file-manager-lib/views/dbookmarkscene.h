@@ -4,6 +4,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsWidget>
 #include <QGraphicsLinearLayout>
+
 #include "deviceinfo/udiskdeviceinfo.h"
 #include "dfmevent.h"
 
@@ -95,6 +96,7 @@ private:
     void updateSceneRect();
     void moveBefore(DBookmarkItem * from, DBookmarkItem* to);
     void moveAfter(DBookmarkItem * from, DBookmarkItem* to);
+
     int m_defaultCount = 0;
 
     QMap<QString, QString> m_smallIcons;

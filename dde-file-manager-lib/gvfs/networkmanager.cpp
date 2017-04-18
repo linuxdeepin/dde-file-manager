@@ -259,7 +259,7 @@ void NetworkManager::fetchNetworks(const DFMEvent &event)
     qDebug() << path << p1 << p2;
 
     if (p1){
-        *e << p1->getMountPointUrl();
+        e->setData(p1->getMountPointUrl());
         if (DUrl(path) != p1->getMountPointUrl()){
             emit fileSignalManager->requestChangeCurrentUrl(*e);
         }else{

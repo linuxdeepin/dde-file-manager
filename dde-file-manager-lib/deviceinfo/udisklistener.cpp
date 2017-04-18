@@ -369,7 +369,7 @@ void UDiskListener::forceUnmount(const QString &id)
 
 const QList<DAbstractFileInfoPointer> UDiskListener::getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const
 {
-   const QString &frav = event->fileUrl().fragment();
+   const QString &frav = event->url().fragment();
 
     if (!frav.isEmpty()) {
         const QList<DAbstractFileInfoPointer> &list = fileService->getChildren(DUrl::fromLocalFile(frav), event->nameFilters(),
@@ -391,10 +391,10 @@ const QList<DAbstractFileInfoPointer> UDiskListener::getChildren(const QSharedPo
 
 const DAbstractFileInfoPointer UDiskListener::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const
 {
-    const QString &path = event->fileUrl().fragment();
+    const QString &path = event->url().fragment();
 
     if(path.isEmpty())
-        return DAbstractFileInfoPointer(new UDiskDeviceInfo(event->fileUrl()));
+        return DAbstractFileInfoPointer(new UDiskDeviceInfo(event->url()));
 
 
     for (int i = 0; i < m_list.size(); i++)

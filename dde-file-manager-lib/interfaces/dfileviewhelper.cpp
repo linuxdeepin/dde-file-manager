@@ -103,11 +103,9 @@ void DFileViewHelperPrivate::init()
 
     QObject::connect(paste_action, &QAction::triggered,
             q, [q] {
-        DFMEvent event;
+        DFMEvent event(q);
 
-        event << q->currentUrl();
-        event << q->windowId();
-        event << DFMEvent::FileView;
+        event.setData(q->currentUrl());
         fileService->pasteFileByClipboard(event.fileUrl(), event.sender());
     });
 
@@ -127,7 +125,7 @@ void DFileViewHelperPrivate::_q_edit(const DFMEvent &event)
 {
     Q_Q(DFileViewHelper);
 
-    if (event.windowId() != q->windowId() || event.fileUrlList().isEmpty())
+    if (event.eventId() != q->windowId() || event.fileUrlList().isEmpty())
         return;
 
     DUrl fileUrl = event.fileUrlList().first();
@@ -145,7 +143,7 @@ void DFileViewHelperPrivate::_q_selectAndRename(const DFMEvent &event)
 {
     Q_Q(DFileViewHelper);
 
-    if (event.windowId() != q->windowId() || !q->parent()->isVisible()) {
+    if (event.eventId() != q->windowId() || !q->parent()->isVisible()) {
         return;
     }
 
@@ -459,10 +457,9 @@ void DFileViewHelper::handleCommitData(QWidget *editor) const
     QLineEdit *lineEdit = qobject_cast<QLineEdit*>(editor);
     FileIconItem *item = qobject_cast<FileIconItem*>(editor);
 
-    DFMEvent event;
-    event << fileInfo->fileUrl();
-    event << windowId();
-    event << DFMEvent::FileView;
+    DFMEvent event(this);
+    event.setData(fileInfo->fileUrl());
+    event.setEventId(windowId());
 
     QString new_file_name = lineEdit ? lineEdit->text() : item ? item->edit->toPlainText() : "";
 

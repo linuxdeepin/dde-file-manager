@@ -325,7 +325,7 @@ int DialogManager::showRunExcutableFileDialog(const DUrl &url)
 
 int DialogManager::showRenameNameSameErrorDialog(const QString &name, const DFMEvent &event)
 {
-    DDialog d(WindowManager::getWindowById(event.windowId()));
+    DDialog d(WindowManager::getWindowById(event.eventId()));
     QFontMetrics fm(d.font());
     d.setTitle(tr("\"%1\" already exists, please use another name.").arg(fm.elidedText(name, Qt::ElideMiddle, 150)));
     QStringList buttonTexts;
@@ -352,31 +352,37 @@ int DialogManager::showDeleteFilesClearTrashDialog(const DFMEvent &event)
     buttonTexts << tr("Cancel") << tr("Delete");
 
     qDebug() << event;
-    DDialog d(WindowManager::getWindowById(event.windowId()));
+    DDialog d(WindowManager::getWindowById(event.eventId()));
     QFontMetrics fm(d.font());
     d.setIcon(QIcon(":/images/dialogs/images/user-trash-full-opened.png"));
-    if (urlList.first() == DUrl::fromTrashFile("/") && event.source() == DFMEvent::Menu && urlList.size() == 1){
+    if (urlList.first() == DUrl::fromTrashFile("/")){
         buttonTexts[1]= tr("Empty");
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(urlList.first());
         if(fileInfo->filesCount() == 1)
             d.setTitle(ClearTrash.arg(fileInfo->filesCount()));
         else
             d.setTitle(ClearTrashMutliple.arg(fileInfo->filesCount()));
-    }else if (urlList.first().isLocalFile() && event.source() == DFMEvent::FileView && urlList.size() == 1){
-        DFileInfo f(urlList.first());
-        d.setTitle(DeleteFileName.arg(fm.elidedText(f.fileDisplayName(),Qt::ElideMiddle, maxFileNameWidth)));
-    }else if (urlList.first().isLocalFile() && event.source() == DFMEvent::FileView && urlList.size() > 1){
-        d.setTitle(DeleteFileItems.arg(urlList.size()));
-    }else if (urlList.first().isTrashFile() && event.source() == DFMEvent::Menu && urlList.size() == 1){
-        TrashFileInfo f(urlList.first());
-        d.setTitle(DeleteFileName.arg(fm.elidedText(f.fileDisplayName(),Qt::ElideMiddle, maxFileNameWidth)));
-    }else if (urlList.first().isTrashFile() && event.source() == DFMEvent::Menu && urlList.size() > 1){
-        d.setTitle(DeleteFileItems.arg(urlList.size()));
-    }else if (urlList.first().isTrashFile() && event.source() == DFMEvent::FileView && urlList.size() == 1 ){
-        TrashFileInfo f(urlList.first());
-        d.setTitle(DeleteFileName.arg(fm.elidedText(f.fileDisplayName(),Qt::ElideMiddle, maxFileNameWidth)));
-    }else if (urlList.first().isTrashFile() && event.source() == DFMEvent::FileView && urlList.size() > 1 ){
-        d.setTitle(DeleteFileItems.arg(urlList.size()));
+    }else if (urlList.first().isLocalFile()){
+        if (urlList.size() == 1) {
+            DFileInfo f(urlList.first());
+            d.setTitle(DeleteFileName.arg(fm.elidedText(f.fileDisplayName(),Qt::ElideMiddle, maxFileNameWidth)));
+        } else {
+            d.setTitle(DeleteFileItems.arg(urlList.size()));
+        }
+    }else if (urlList.first().isTrashFile()){
+        if (urlList.size() == 1) {
+            TrashFileInfo f(urlList.first());
+            d.setTitle(DeleteFileName.arg(fm.elidedText(f.fileDisplayName(),Qt::ElideMiddle, maxFileNameWidth)));
+        } else {
+            d.setTitle(DeleteFileItems.arg(urlList.size()));
+        }
+    }else if (urlList.first().isTrashFile()){
+        if (urlList.size() == 1) {
+            TrashFileInfo f(urlList.first());
+            d.setTitle(DeleteFileName.arg(fm.elidedText(f.fileDisplayName(),Qt::ElideMiddle, maxFileNameWidth)));
+        } else {
+            d.setTitle(DeleteFileItems.arg(urlList.size()));
+        }
     }else{
         d.setTitle(DeleteFileItems.arg(urlList.size()));
     }
@@ -390,7 +396,7 @@ int DialogManager::showDeleteFilesClearTrashDialog(const DFMEvent &event)
 
 int DialogManager::showRemoveBookMarkDialog(const DFMEvent &event)
 {
-    DDialog d(WindowManager::getWindowById(event.windowId()));
+    DDialog d(WindowManager::getWindowById(event.eventId()));
     d.setTitle(tr("Sorry, unable to locate your bookmark directory, remove it?"));
     QStringList buttonTexts;
     buttonTexts << tr("Cancel") << tr("Remove");
@@ -404,7 +410,7 @@ int DialogManager::showRemoveBookMarkDialog(const DFMEvent &event)
 
 void DialogManager::showOpenWithDialog(const DFMEvent &event)
 {
-    QWidget* w = WindowManager::getWindowById(event.windowId());
+    QWidget* w = WindowManager::getWindowById(event.eventId());
     if (w){
         OpenWithOtherDialog* d = new OpenWithOtherDialog(event.fileUrl(), w);
         d->setDisplayPostion(OpenWithOtherDialog::DisplayCenter);
@@ -500,7 +506,7 @@ void DialogManager::showComputerPropertyDialog(const DFMEvent &event)
 
 void DialogManager::showDevicePropertyDialog(const DFMEvent &event)
 {
-    QWidget* w = WindowManager::getWindowById(event.windowId());
+    QWidget* w = WindowManager::getWindowById(event.eventId());
     if (w){
         PropertyDialog* dialog = new PropertyDialog(event, event.fileUrl());
         dialog->show();
@@ -567,7 +573,7 @@ void DialogManager::showBreakSymlinkDialog(const QString &targetName, const DUrl
 
 void DialogManager::showAboutDialog(const DFMEvent &event)
 {
-    QWidget* w = WindowManager::getWindowById(event.windowId());
+    QWidget* w = WindowManager::getWindowById(event.eventId());
     if(!w || w->property("AboutDialogShown").toBool())
         return;
 
@@ -594,7 +600,7 @@ void DialogManager::showAboutDialog(const DFMEvent &event)
 
 void DialogManager::showUserSharePasswordSettingDialog(const DFMEvent &event)
 {
-    QWidget* w = WindowManager::getWindowById(event.windowId());
+    QWidget* w = WindowManager::getWindowById(event.eventId());
     if(!w || w->property("UserSharePwdSettingDialogShown").toBool())
         return;
 
@@ -610,7 +616,7 @@ void DialogManager::showUserSharePasswordSettingDialog(const DFMEvent &event)
 
 void DialogManager::showGlobalSettingsDialog(const DFMEvent& event)
 {
-    QWidget* w = WindowManager::getWindowById(event.windowId());
+    QWidget* w = WindowManager::getWindowById(event.eventId());
     if(!w)
         return;
     if(w->property("isSettingDialogShown").toBool())

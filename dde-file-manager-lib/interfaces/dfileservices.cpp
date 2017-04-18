@@ -207,9 +207,9 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
         const QSharedPointer<DFMCreateGetChildrensJob> &e = event.dynamicCast<DFMCreateGetChildrensJob>();
 
         if (event->isAccepted()) {
-            result = QVariant::fromValue(new JobController(e->fileUrl(), qvariant_cast<DDirIteratorPointer>(result)));
+            result = QVariant::fromValue(new JobController(e->url(), qvariant_cast<DDirIteratorPointer>(result)));
         } else {
-            result = QVariant::fromValue(new JobController(e->fileUrl(), e->nameFilters(), e->filters()));
+            result = QVariant::fromValue(new JobController(e->url(), e->nameFilters(), e->filters()));
         }
 
         break;
@@ -394,7 +394,7 @@ bool DFileService::renameFile(const DUrl &from, const DUrl &to, const QObject *s
     if (ok && event->isAccepted()) {
         DFMEvent e = *event.data();
 
-        e << (DUrlList() << to);
+        e.setData((DUrlList() << to));
 
         TIMER_SINGLESHOT(200, {
             emit fileSignalManager->requestSelectFile(e);
@@ -440,9 +440,9 @@ bool DFileService::deleteFiles(const DUrlList &list, const QObject *sender) cons
         return false;
     }
 
-    DFMEvent e;
+    DFMEvent e(this);
 
-    e << urlList;
+    e.setData(urlList);
 
     int result = dialogManager->showDeleteFilesClearTrashDialog(e);
 
@@ -556,7 +556,7 @@ void DFileService::pasteFile(DFMGlobal::ClipboardAction action, const DUrl &targ
     if (event->isAccepted()) {
         DFMEvent e = *event.data();
 
-        e << result;
+        e.setData(result);
 
         metaObject()->invokeMethod(const_cast<DFileService*>(this), "laterRequestSelectFiles",
                                    Qt::QueuedConnection, Q_ARG(DFMEvent, e));
@@ -837,7 +837,7 @@ void DFileService::openUrl(const DFMEvent &event, const bool &isOpenInNewWindow,
     if(event.fileUrlList().count() == 0){
         DUrlList urlList;
         urlList << event.fileUrl();
-        const_cast<DFMEvent&>(event) << urlList;
+        const_cast<DFMEvent&>(event).setData(urlList);
     }
 
     //sort urls by files and dirs`
@@ -872,7 +872,7 @@ void DFileService::openUrl(const DFMEvent &event, const bool &isOpenInNewWindow,
             dirList << url;
     }
 
-    dirsEvent << dirList;
+    dirsEvent.setData(dirList);
 
     if(!isOpenInCurrentWindow){
         if(dirList.count() > 0)
@@ -882,7 +882,7 @@ void DFileService::openUrl(const DFMEvent &event, const bool &isOpenInNewWindow,
         if(dirsEvent.fileUrlList().count() == 1){
             //replace dirsEvent's file url with dirsEvent file list's first url which is avfs file
             if(dirsEvent.fileUrlList().first().isAVFSFile())
-                dirsEvent << dirsEvent.fileUrlList().first();
+                dirsEvent.setData(dirsEvent.fileUrlList().first());
 
             openInCurrentWindow(dirsEvent);
         }

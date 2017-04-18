@@ -92,7 +92,7 @@ TrashManager::TrashManager(QObject *parent)
 
 const DAbstractFileInfoPointer TrashManager::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const
 {
-    return DAbstractFileInfoPointer(new TrashFileInfo(event->fileUrl()));
+    return DAbstractFileInfoPointer(new TrashFileInfo(event->url()));
 }
 
 bool TrashManager::openFile(const QSharedPointer<DFMOpenFileEvent> &event) const
@@ -176,7 +176,7 @@ bool TrashManager::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) cons
 
 const DDirIteratorPointer TrashManager::createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const
 {
-    return DDirIteratorPointer(new TrashDirIterator(event->fileUrl(), event->nameFilters(), event->filters(), event->flags()));
+    return DDirIteratorPointer(new TrashDirIterator(event->url(), event->nameFilters(), event->filters(), event->flags()));
 }
 
 namespace TrashManagerPrivate {
@@ -203,8 +203,8 @@ QString trashToLocal(const DUrl &url)
 
 DAbstractFileWatcher *TrashManager::createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const
 {
-    return new DFileProxyWatcher(event->fileUrl(),
-                                 new DFileWatcher(TrashManagerPrivate::trashToLocal(event->fileUrl())),
+    return new DFileProxyWatcher(event->url(),
+                                 new DFileWatcher(TrashManagerPrivate::trashToLocal(event->url())),
                                  TrashManagerPrivate::localToTrash);
 }
 
@@ -215,7 +215,7 @@ bool TrashManager::restoreTrashFile(const DUrlList &fileUrl, const DFMEvent &eve
     for(const DUrl &url : fileUrl) {
         TrashFileInfo info(url);
 
-        const_cast<DFMEvent &>(event) << url;
+        const_cast<DFMEvent &>(event).setData(url);
         info.restore(event);
     }
 

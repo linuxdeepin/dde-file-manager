@@ -755,12 +755,6 @@ bool DFileSystemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
 
     DUrlList urlList = DUrl::fromQUrlList(data->urls());
 
-    DFMEvent event;
-
-    event << this->parent()->windowId();
-    event << toUrl;
-    event << urlList;
-
     const DAbstractFileInfoPointer& info = fileService->createFileInfo(toUrl);
 
     if (info->isSymLink()) {
@@ -1534,9 +1528,9 @@ void DFileSystemModel::selectAndRenameFile(const DUrl &fileUrl) const
             return;
 
         AppController::selectionAndRenameFile = qMakePair(DUrl(), -1);
-        DFMEvent event;
-        event << windowId;
-        event << (DUrlList() << fileUrl);
+        DFMEvent event(this);
+        event.setEventId(windowId);
+        event.setData((DUrlList() << fileUrl));
 
         TIMER_SINGLESHOT_OBJECT(const_cast<DFileSystemModel*>(this), 100, {
                                     emit fileSignalManager->requestSelectRenameFile(event);

@@ -82,19 +82,19 @@ AVFSFileController::AVFSFileController(QObject *parent):
 
 const DAbstractFileInfoPointer AVFSFileController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const
 {
-    DAbstractFileInfoPointer info(new AVFSFileInfo(event->fileUrl()));
+    DAbstractFileInfoPointer info(new AVFSFileInfo(event->url()));
 
     return info;
 }
 
 const DDirIteratorPointer AVFSFileController::createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const
 {
-    return DDirIteratorPointer(new AVFSIterator(event->fileUrl(), event->nameFilters(), event->filters(), event->flags()));
+    return DDirIteratorPointer(new AVFSIterator(event->url(), event->nameFilters(), event->filters(), event->flags()));
 }
 
 DAbstractFileWatcher *AVFSFileController::createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const
 {
-    QString realPath = AVFSFileInfo::realDirUrl(event->fileUrl()).toLocalFile();
+    QString realPath = AVFSFileInfo::realDirUrl(event->url()).toLocalFile();
 
     return new DFileWatcher(realPath);
 }
@@ -127,7 +127,7 @@ bool AVFSFileController::writeFilesToClipboard(const QSharedPointer<DFMWriteUrls
 
 bool AVFSFileController::openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const
 {
-    return DFileService::instance()->openInTerminal(realUrl(event->fileUrl()), event->sender());
+    return DFileService::instance()->openInTerminal(realUrl(event->url()), event->sender());
 }
 
 DUrl AVFSFileController::realUrl(const DUrl &url)

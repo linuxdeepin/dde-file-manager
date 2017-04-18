@@ -587,11 +587,8 @@ void DCrumbWidget::buttonPressed()
 {
     DCrumbButton * button = static_cast<DCrumbButton*>(sender());
 
-    DFMEvent event;
-    event << WindowManager::getWindowId(this);
-    event << DFMEvent::CrumbButton;
-    DUrl url = button->url();
-    event << url;
+    DFMEvent event(this);
+    event.setData(button->url());
 
     m_listWidget->scrollToItem(button->getItem());
     emit crumbSelected(event);
