@@ -3,11 +3,11 @@
 #include <QDebug>
 
 DFMEvent::DFMEvent(int wId, DFMEvent::EventSource source, const DUrl &fileUrl)
-    : data(new FMEventData)
+    : _data(new FMEventData)
 {
-    data->windowId = wId;
-    data->source = source;
-    data->fileUrl = fileUrl;
+    _data->windowId = wId;
+    _data->source = source;
+    _data->fileUrl = fileUrl;
 }
 
 DFMEvent::DFMEvent(DFMEvent::Type type, const QObject *sender)
@@ -22,7 +22,7 @@ DFMEvent::DFMEvent(const DFMEvent &other)
     : DFMEvent((DFMEvent::Type)other.m_type, other.m_sender)
 {
     m_accept = other.m_accept;
-    data = other.data;
+    _data = other._data;
 }
 
 DFMEvent::~DFMEvent()
@@ -32,7 +32,7 @@ DFMEvent::~DFMEvent()
 
 DFMEvent &DFMEvent::operator =(const DFMEvent &other)
 {
-    data = other.data;
+    _data = other._data;
     m_type = other.m_type;
     m_sender = other.m_sender;
     m_accept = other.m_accept;
@@ -56,14 +56,63 @@ DUrlList DFMEvent::handleUrlList() const
 }
 
 QT_BEGIN_NAMESPACE
+QString fmeventType2String(DFMEvent::Type type)
+{
+    switch (type) {
+    case DFMEvent::OpenFile:
+        return QStringLiteral(QT_STRINGIFY(OpenFile));
+    case DFMEvent::OpenFileByApp:
+        return QStringLiteral(QT_STRINGIFY(OpenFileByApp));
+    case DFMEvent::CompressFiles:
+        return QStringLiteral(QT_STRINGIFY(CompressFiles));
+    case DFMEvent::DecompressFile:
+        return QStringLiteral(QT_STRINGIFY(DecompressFile));
+    case DFMEvent::DecompressFileHere:
+        return QStringLiteral(QT_STRINGIFY(DecompressFileHere));
+    case DFMEvent::WriteUrlsToClipboard:
+        return QStringLiteral(QT_STRINGIFY(WriteUrlsToClipboard));
+    case DFMEvent::RenameFile:
+        return QStringLiteral(QT_STRINGIFY(RenameFile));
+    case DFMEvent::DeleteFiles:
+        return QStringLiteral(QT_STRINGIFY(DeleteFiles));
+    case DFMEvent::MoveToTrash:
+        return QStringLiteral(QT_STRINGIFY(MoveToTrash));
+    case DFMEvent::PasteFile:
+        return QStringLiteral(QT_STRINGIFY(PasteFile));
+    case DFMEvent::NewFolder:
+        return QStringLiteral(QT_STRINGIFY(NewFolder));
+    case DFMEvent::NewFile:
+        return QStringLiteral(QT_STRINGIFY(NewFile));
+    case DFMEvent::OpenFileLocation:
+        return QStringLiteral(QT_STRINGIFY(OpenFileLocation));
+    case DFMEvent::CreateSymlink:
+        return QStringLiteral(QT_STRINGIFY(CreateSymlink));
+    case DFMEvent::FileShare:
+        return QStringLiteral(QT_STRINGIFY(FileShare));
+    case DFMEvent::CancelFileShare:
+        return QStringLiteral(QT_STRINGIFY(CancelFileShare));
+    case DFMEvent::OpenInTerminal:
+        return QStringLiteral(QT_STRINGIFY(OpenInTerminal));
+    case DFMEvent::GetChildrens:
+        return QStringLiteral(QT_STRINGIFY(GetChildrens));
+    case DFMEvent::CreateFileInfo:
+        return QStringLiteral(QT_STRINGIFY(CreateFileInfo));
+    case DFMEvent::CreateDiriterator:
+        return QStringLiteral(QT_STRINGIFY(CreateDiriterator));
+    case DFMEvent::CreateGetChildrensJob:
+        return QStringLiteral(QT_STRINGIFY(CreateGetChildrensJob));
+    case DFMEvent::CreateFileWatcher:
+        return QStringLiteral(QT_STRINGIFY(CreateFileWatcher));
+    default:
+        return QStringLiteral("Custom: %1").arg(type);
+    }
+}
+
 QDebug operator<<(QDebug deg, const DFMEvent &info)
 {
-    deg << "window id:" << info.windowId() << "source:" << info.source() << "url" << info.fileUrl();
-    deg << "urlList{";
-    foreach (DUrl url, info.fileUrlList()) {
-        deg << url;
-    }
-    deg << "}";
+    deg << "type:" << fmeventType2String(info.type()) << "sender:" << info.sender();
+    deg << "data:" << info.data();
+
     return deg;
 }
 QT_END_NAMESPACE

@@ -3,6 +3,7 @@
 
 #include "dabstractfilecontroller.h"
 #include "durl.h"
+#include "dfmabstracteventhandler.h"
 
 #include <QObject>
 #include <QString>
@@ -13,6 +14,8 @@
 
 #include <functional>
 
+DFM_USE_NAMESPACE
+
 typedef QPair<QString,QString> HandlerType;
 typedef QPair<QString, std::function<DAbstractFileController*()>> HandlerCreatorType;
 
@@ -20,7 +23,7 @@ class DAbstractFileInfo;
 class JobController;
 class DFMCreateGetChildrensJob;
 class DFileServicePrivate;
-class DFileService : public QObject
+class DFileService : public QObject, public DFMAbstractEventHandler
 {
     Q_OBJECT
 
@@ -127,9 +130,6 @@ public:
 
     bool isAvfsMounted() const;
 
-    QVariant processEventSync(const QSharedPointer<DFMEvent> &event) const;
-    void processEvent(const QSharedPointer<DFMEvent> &event) const;
-
 public slots:
     void openNewWindow(const DFMEvent& event, const bool &isNewWindow = true) const;
     void openInCurrentWindow(const DFMEvent& event) const;
@@ -144,6 +144,8 @@ private slots:
 private:
     explicit DFileService(QObject *parent = 0);
     ~DFileService();
+
+    bool fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resultData = 0) Q_DECL_OVERRIDE;
 
     static QString getSymlinkFileName(const DUrl &fileUrl, const QDir &targetDir = QDir());
     static void insertToCreatorHash(const HandlerType &type, const HandlerCreatorType &creator);
