@@ -87,40 +87,40 @@ public:
 
     inline DFMEvent &operator <<(EventSource source)
     {
-        data->parentSource = data->source;
-        data->source = source;
+        _data->parentSource = _data->source;
+        _data->source = source;
         return *this;
     }
 
     inline DFMEvent &operator <<(int wId)
-    {data->windowId = wId; return *this;}
+    {_data->windowId = wId; return *this;}
 
     inline DFMEvent &operator <<(const DUrl &fileUrl)
-    {data->fileUrl = fileUrl; return *this;}
+    {_data->fileUrl = fileUrl; return *this;}
 
     inline void operator <<(const DUrlList &list)
-    {data->fileUrlList = list; /*return *this;*/}
+    {_data->fileUrlList = list; /*return *this;*/}
 
     inline int windowId() const
-    {return data->windowId;}
+    {return _data->windowId;}
 
     inline EventSource source() const
-    {return data->source;}
+    {return _data->source;}
 
     inline EventSource parentSource() const
-    {return data->parentSource;}
+    {return _data->parentSource;}
 
     inline const DUrl &fileUrl() const
-    {return data->fileUrl;}
+    {return _data->fileUrl;}
 
     inline const DUrlList &fileUrlList() const
-    {return data->fileUrlList;}
+    {return _data->fileUrlList;}
 
     inline const int &bookmarkIndex() const
-    {return data->bookMarkIndex;}
+    {return _data->bookMarkIndex;}
 
     inline void setBookmarkIndex(const int& index)
-    {data->bookMarkIndex = index;}
+    {_data->bookMarkIndex = index;}
 
     //! 在DFileServices中通过此url列表来获取处理此事件的Controller
     virtual DUrlList handleUrlList() const;
@@ -130,6 +130,8 @@ public:
     {
         m_data = QVariant::fromValue(std::forward<T>(data));
     }
+    inline QVariant data() const
+    { return m_data;}
 
 protected:
     ushort m_type;
@@ -139,7 +141,7 @@ protected:
 private:
     ushort m_accept : 1;
 
-    QSharedDataPointer<FMEventData> data;
+    QSharedDataPointer<FMEventData> _data;
 };
 
 QT_BEGIN_NAMESPACE
