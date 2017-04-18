@@ -1098,7 +1098,7 @@ QSet<MenuAction> DAbstractFileInfo::disableMenuActionList() const
     }
 
     if (!canRename()) {
-        list << MenuAction::Cut << MenuAction::Rename << MenuAction::Remove << MenuAction::Delete;
+        list << MenuAction::Cut << MenuAction::Rename << MenuAction::Delete;
     }
 
     if (FileUtils::isGvfsMountFile(absoluteFilePath())){

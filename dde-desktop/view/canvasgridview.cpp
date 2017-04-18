@@ -464,7 +464,7 @@ void CanvasGridView::wheelEvent(QWheelEvent *event)
 
 void CanvasGridView::keyPressEvent(QKeyEvent *event)
 {
-    QMap<QString, DUrl> selectUrls;
+    QMap<QString, DUrl> selectUrlsMap;
     auto rootUrl = model()->rootUrl();
     bool canDeleted = true;
     for (const QModelIndex &index : selectionModel()->selectedIndexes()) {
@@ -473,15 +473,11 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
             canDeleted = false;
             continue;
         }
-        selectUrls.insert(url.toString(), url);
+        selectUrlsMap.insert(url.toString(), url);
     }
-    selectUrls.remove(rootUrl.toString());
+    selectUrlsMap.remove(rootUrl.toString());
 
-    DFMEvent fmevent;
-    fmevent << model()->rootUrl();
-    fmevent << selectUrls.values();
-    fmevent << DFMEvent::FileView;
-    fmevent << winId();
+    const DUrlList &selectUrls = selectUrlsMap.values();
 
     switch (event->modifiers()) {
     case Qt::NoModifier:
@@ -495,7 +491,7 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
         case Qt::Key_Return:
         case Qt::Key_Enter:
             if (!itemDelegate()->editingIndex().isValid()) {
-                for (auto const &value : selectUrls) {
+                for (auto const &value : selectUrlsMap) {
                     DFileService::instance()->openFile(value, this);
                 }
                 return;
@@ -508,8 +504,8 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
             model()->refresh();
             return;
         case Qt::Key_Delete:
-            if (canDeleted && !selectUrls.contains(rootUrl.toString())) {
-                DFileService::instance()->moveToTrash(fmevent.fileUrlList(), this);
+            if (canDeleted && !selectUrlsMap.contains(rootUrl.toString())) {
+                DFileService::instance()->moveToTrash(selectUrls, this);
             }
             break;
         default: break;
@@ -522,7 +518,7 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
                 return;
             }
 
-            DFileService::instance()->deleteFiles(fmevent.fileUrlList(), this);
+            DFileService::instance()->deleteFiles(selectUrls, this);
 
             return;
         } else if (event->key() == Qt::Key_T) {
@@ -1404,15 +1400,7 @@ void CanvasGridView::initConnection()
 
     connect(this, &CanvasGridView::doubleClicked,
     this, [this](const QModelIndex & index) {
-        DFMEvent event;
         DUrl url = model()->getUrlByIndex(index);
-
-        DUrlList urls;
-        urls << url;
-        event << url;
-        event << urls;
-        event << DFMEvent::FileView;
-        event << this->winId();
 
         QFileInfo info(url.toLocalFile());
         if (info.isDir()) {
@@ -1796,10 +1784,8 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     urls.append(model()->rootUrl());
 
     DFMEvent event;
-    event << model()->rootUrl();
-    event << urls;
-    event << winId();
-    event << DFMEvent::FileView;
+    event.setData(urls);
+    event.setEventId(winId());
     menu->setEvent(event);
 
     connect(menu, &DFileMenu::triggered, this, [ = ](QAction * action) {
@@ -1872,13 +1858,10 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
         menu->addAction(&property);
     }
 
-    DFMEvent event;
+    DFMEvent event(this);
 
-    event << info->fileUrl();
-    event << list;
-    event << winId();
-    event << DFMEvent::FileView;
-
+    event.setData(list);
+    event.setEventId(winId());
     menu->setEvent(event);
 
     connect(menu, &DFileMenu::triggered, this, [ = ](QAction * action) {

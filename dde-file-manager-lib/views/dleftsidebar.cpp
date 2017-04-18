@@ -170,18 +170,17 @@ void DLeftSideBar::resizeEvent(QResizeEvent *e)
 
 void DLeftSideBar::handleLocationChanged(const DFMEvent &e)
 {
-    if(e.windowId() != WindowManager::getWindowId(this))
+    if (e.eventId() != WindowManager::getWindowId(this))
         return;
-    DFMEvent event;
 
-    event << e.fileUrl();
-    event << DFMEvent::LeftSideBar;
-    event << WindowManager::getWindowId(this);
-    event.setBookmarkIndex(e.bookmarkIndex());
-
-    if (e.fileUrl().isNetWorkFile()){
+    if (e.fileUrl().isNetWorkFile()) {
         emit fileSignalManager->requestFetchNetworks(e);
-    }else{
+    } else {
+        DFMEvent event(this);
+
+        event.setData(e.data());
+        event.setProperty("bookmarkIndex", e.property("bookmarkIndex"));
+
         emit fileSignalManager->requestChangeCurrentUrl(event);
     }
 }

@@ -151,10 +151,10 @@ void ComputerViewItem::contextMenuEvent(QContextMenuEvent *event)
     DUrlList urls;
     urls.append(url);
 
-    DFMEvent fmEvent;
-    fmEvent << url;
-    fmEvent << urls;
-    fmEvent << windowId();
+    DFMEvent fmEvent(this);
+
+    fmEvent.setData(urls);
+    fmEvent.setEventId(windowId());
 
     menu->setEvent(fmEvent);
     menu->exec();
@@ -172,10 +172,10 @@ void ComputerViewItem::mousePressEvent(QMouseEvent *event)
 void ComputerViewItem::mouseDoubleClickEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton){
-        DFMEvent fevent;
-        fevent << windowId();
+        DFMEvent fevent(this);
+        fevent.setEventId(windowId());
         if (m_info){
-            fevent << m_info->fileUrl();
+            fevent.setData(m_info->fileUrl());
             emit fileSignalManager->requestChangeCurrentUrl(fevent);
         }else if (m_deviceInfo){
             DUrl url = m_deviceInfo->getMountPointUrl();
@@ -184,13 +184,12 @@ void ComputerViewItem::mouseDoubleClickEvent(QMouseEvent *event)
 
             if (diskInfo.can_mount() && !diskInfo.can_unmount()){
                 url.setQuery(m_deviceInfo->getId());
-                fevent << url;
                 DUrlList urls;
                 urls.append(url);
-                fevent << urls;
+                fevent.setData(urls);
                 appController->actionOpenDisk(fevent);
             }else{
-                fevent << url;
+                fevent.setData(url);
                 emit fileSignalManager->requestChangeCurrentUrl(fevent);
             }
 
@@ -429,8 +428,8 @@ void ComputerView::initUI()
         m_removableTitleLine->hide();
     }
 
-    DFMEvent event;
-    event << window()->winId();
+    DFMEvent event(this);
+    event.setEventId(window()->winId());
     const int number = m_systemItems.count() + m_nativeItems.count() + m_removableItems.count();
     m_statusBar->itemCounted(event, number);
 
@@ -545,16 +544,16 @@ void ComputerView::updateStatusBar()
     }
 
     if(checkedItem){
-        DFMEvent event;
+        DFMEvent event(this);
         DUrlList urlList;
         if(checkedItem->info())
             urlList << checkedItem->info()->fileUrl();
-        event << window()->winId();
-        event << urlList;
+        event.setEventId(window()->winId());
+        event.setData(urlList);
         m_statusBar->itemSelected(event, 1);
     }else{
-        DFMEvent event;
-        event << window()->winId();
+        DFMEvent event(this);
+        event.setEventId(window()->winId());
         const int number = m_systemItems.count() + m_nativeItems.count() + m_removableItems.count();
         m_statusBar->itemCounted(event, number);
     }
@@ -805,23 +804,14 @@ void ComputerView::showEvent(QShowEvent *event)
 
 void ComputerView::keyPressEvent(QKeyEvent *event)
 {
-
-    DFMEvent fmevent;
-    DUrlList urls;
-    urls << rootUrl();
-    fmevent << urls;
-    fmevent << DFMEvent::FileView;
-    fmevent << WindowManager::getWindowId(this);
-    fmevent << rootUrl();
-
     switch (event->modifiers()) {
         case Qt::ControlModifier:
             switch (event->key()) {
                 case Qt::Key_L:
-                    appController->actionctrlL(fmevent);
+                    appController->actionctrlL(DFMEvent(this));
                     return;
                 case Qt::Key_F:
-                    appController->actionctrlF(fmevent);
+                    appController->actionctrlF(DFMEvent(this));
                     return;
                 default: break;
             }
@@ -829,7 +819,7 @@ void ComputerView::keyPressEvent(QKeyEvent *event)
     case Qt::ControlModifier | Qt::ShiftModifier:
         switch (event->key()) {
         case Qt::Key_Question:
-            appController->actionShowHotkeyHelp(fmevent);
+            appController->actionShowHotkeyHelp(DFMEvent(this));
             return;
         default:
             break;

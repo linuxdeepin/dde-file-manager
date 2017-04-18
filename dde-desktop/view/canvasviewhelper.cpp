@@ -60,8 +60,8 @@ void CanvasViewHelper::select(const QList<DUrl> &list)
 
 void CanvasViewHelper::edit(const DFMEvent &event)
 {
-    qDebug() << event.windowId() << windowId();
-    if (event.windowId() != windowId() || event.fileUrlList().isEmpty()) {
+    qDebug() << event.eventId() << windowId();
+    if (event.eventId() != windowId() || event.fileUrlList().isEmpty()) {
         return;
     }
 

@@ -253,7 +253,7 @@ int DStatusBar::computerFolderContains(const DUrlList &urllist)
 
 void DStatusBar::itemSelected(const DFMEvent &event, int number)
 {
-    if (!m_label || event.windowId() != WindowManager::getWindowId(this))
+    if (!m_label || event.eventId() != WindowManager::getWindowId(this))
         return;
 
     if (number > 1) {
@@ -383,7 +383,7 @@ void DStatusBar::handdleComputerFileSizeFinished()
 
 void DStatusBar::itemCounted(const DFMEvent &event, int number)
 {
-    if (!m_label || event.windowId() != WindowManager::getWindowId(this))
+    if (!m_label || event.eventId() != WindowManager::getWindowId(this))
         return;
 
     if (number > 1) {
@@ -395,7 +395,7 @@ void DStatusBar::itemCounted(const DFMEvent &event, int number)
 
 void DStatusBar::setLoadingIncatorVisible(const DFMEvent &event, bool visible)
 {
-    if (event.windowId() != WindowManager::getWindowId(this))
+    if (event.eventId() != WindowManager::getWindowId(this))
         return;
 
     m_loadingIndicator->setVisible(visible);

@@ -124,7 +124,7 @@ void GvfsMountClient::ask_password_cb(GMountOperation *op, const char *message, 
     obj.insert("passwordSave", passwordSave);
 
 
-    AskPasswordDialog = new MountAskPasswordDialog(WindowManager::getWindowById(MountEvent.windowId()));
+    AskPasswordDialog = new MountAskPasswordDialog(WindowManager::getWindowById(MountEvent.eventId()));
     AskPasswordDialog->setLoginData(obj);
 
     if (MountEvent.fileUrl().isSMBFile()){

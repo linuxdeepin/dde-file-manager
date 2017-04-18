@@ -685,10 +685,8 @@ void TabBar::onMovePrevius(Tab* who)
 
 void TabBar::onRequestNewWindow(const DUrl url)
 {
-    DFMEvent event;
-    event << DFMEvent::FileView;
-    event << WindowManager::getWindowId(this);
-    event << url;
+    DFMEvent event(this);
+    event.setData(url);
     appController->actionNewWindow(event);
 }
 

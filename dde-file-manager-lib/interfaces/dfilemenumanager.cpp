@@ -111,8 +111,8 @@ DFileMenu *DFileMenuManager::createCustomBookMarkMenu(const DUrl &url, QSet<Menu
 
     actionKeys << MenuAction::OpenInNewWindow
                << MenuAction::OpenInNewTab
-               << MenuAction::Rename
-               << MenuAction::Remove
+               << MenuAction::BookmarkRename
+               << MenuAction::BookmarkRemove
                << MenuAction::Property;
 
     const DAbstractFileInfoPointer& info = fileService->createFileInfo(url);
@@ -120,12 +120,8 @@ DFileMenu *DFileMenuManager::createCustomBookMarkMenu(const DUrl &url, QSet<Menu
     if (!info->exists()){
         disableList << MenuAction::OpenInNewWindow
                     << MenuAction::OpenInNewTab
-                    << MenuAction::Rename
+                    << MenuAction::BookmarkRename
                     << MenuAction::Property;
-    }else{
-        if (!info->canRename()){
-            disableList << MenuAction::Rename;
-        }
     }
 
     return genereteMenuByKeys(actionKeys, disableList);
@@ -630,7 +626,8 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::Copy] = QObject::tr("Copy");
     actionKeys[MenuAction::Paste] = QObject::tr("Paste");
     actionKeys[MenuAction::Rename] = QObject::tr("Rename");
-    actionKeys[MenuAction::Remove] = QObject::tr("Remove");
+    actionKeys[MenuAction::BookmarkRename] = QObject::tr("Rename");
+    actionKeys[MenuAction::BookmarkRemove] = QObject::tr("Remove");
     actionKeys[MenuAction::CreateSymlink] = QObject::tr("Create link");
     actionKeys[MenuAction::SendToDesktop] = QObject::tr("Send to desktop");
     actionKeys[MenuAction::AddToBookMark] = QObject::tr("Add to bookmark");
@@ -794,7 +791,7 @@ void DFileMenuManager::actionTriggered(QAction *action)
     DFileMenu *menu = qobject_cast<DFileMenu *>(sender());
     qDebug() << menu << action;
     DFMEvent event = menu->event();
-    event << DFMEvent::Menu;
+
     if (action->data().isValid()){
         bool flag = false;
         int _type = action->data().toInt(&flag);

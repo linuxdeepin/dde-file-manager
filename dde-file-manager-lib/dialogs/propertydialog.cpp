@@ -401,7 +401,7 @@ void PropertyDialog::onChildrenRemoved(const DUrl &fileUrl)
 void PropertyDialog::flickFolderToLeftsidBar()
 {
 
-    DFileManagerWindow* window = qobject_cast<DFileManagerWindow*>(WindowManager::getWindowById(m_fmevent.windowId()));
+    DFileManagerWindow* window = qobject_cast<DFileManagerWindow*>(WindowManager::getWindowById(m_fmevent.eventId()));
     if(!window)
         return;
 

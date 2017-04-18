@@ -335,12 +335,12 @@ SearchController::SearchController(QObject *parent)
 
 const DAbstractFileInfoPointer SearchController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const
 {
-    DUrl url = event->fileUrl().searchTargetUrl();
+    DUrl url = event->url().searchTargetUrl();
 
     if (url.isSearchFile()) {
-        url.setSearchKeyword(event->fileUrl().searchKeyword());
+        url.setSearchKeyword(event->url().searchKeyword());
     } else {
-        url = event->fileUrl();
+        url = event->url();
     }
 
     return DAbstractFileInfoPointer(new SearchFileInfo(url));
@@ -398,17 +398,17 @@ bool SearchController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent>
 
 bool SearchController::unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const
 {
-    return DFileService::instance()->unShareFolder(realUrl(event->fileUrl()), event->sender());
+    return DFileService::instance()->unShareFolder(realUrl(event->url()), event->sender());
 }
 
 bool SearchController::openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const
 {
-    return DFileService::instance()->openInTerminal(realUrl(event->fileUrl()), event->sender());
+    return DFileService::instance()->openInTerminal(realUrl(event->url()), event->sender());
 }
 
 const DDirIteratorPointer SearchController::createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const
 {
-    SearchDiriterator *diriterator = new SearchDiriterator(event->fileUrl(), event->nameFilters(),
+    SearchDiriterator *diriterator = new SearchDiriterator(event->url(), event->nameFilters(),
                                                            event->filters(), event->flags(),
                                                            const_cast<SearchController*>(this));
 
@@ -417,10 +417,10 @@ const DDirIteratorPointer SearchController::createDirIterator(const QSharedPoint
 
 DAbstractFileWatcher *SearchController::createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const
 {
-    if (!event->fileUrl().searchedFileUrl().isValid())
+    if (!event->url().searchedFileUrl().isValid())
         return 0;
 
-    return new SearchFileWatcher(event->fileUrl());
+    return new SearchFileWatcher(event->url());
 }
 
 DUrl SearchController::realUrl(const DUrl &searchUrl)

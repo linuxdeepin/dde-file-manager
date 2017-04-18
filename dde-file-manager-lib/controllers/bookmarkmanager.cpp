@@ -132,7 +132,7 @@ void BookMarkManager::moveBookmark(int from, int to)
 
 const QList<DAbstractFileInfoPointer> BookMarkManager::getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const
 {
-    const QString &frav = event->fileUrl().fragment();
+    const QString &frav = event->url().fragment();
 
     if (!frav.isEmpty()) {
         const QList<DAbstractFileInfoPointer> &list = fileService->getChildren(DUrl::fromLocalFile(frav), event->nameFilters(),
@@ -153,5 +153,5 @@ const QList<DAbstractFileInfoPointer> BookMarkManager::getChildren(const QShared
 
 const DAbstractFileInfoPointer BookMarkManager::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const
 {
-    return DAbstractFileInfoPointer(new BookMark(event->fileUrl()));
+    return DAbstractFileInfoPointer(new BookMark(event->url()));
 }

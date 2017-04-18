@@ -185,7 +185,7 @@ void SingleApplication::readData()
         }
     }
 
-    DFMEvent event;
+    DFMEvent event(this);
     DUrlList urlList;
     foreach (QString path, paths) {
         if (!path.isEmpty()){
@@ -193,8 +193,7 @@ void SingleApplication::readData()
             urlList << url;
         }
     }
-    event << urlList;
-    event << urlList.first();
+    event.setData(urlList);
 
     qDebug() << event << isNewWindow;
     fileService->openUrl(event, isNewWindow);

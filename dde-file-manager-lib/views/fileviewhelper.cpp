@@ -19,7 +19,7 @@
 
 FileViewHelper::FileViewHelper(DFileView *parent)
     : DFileViewHelper(parent)
-    , lastEventSource(DFMEvent::FileView)
+    , lastEventSender(this)
 {
     connect(parent, &DFileView::triggerEdit, this, &DFileViewHelper::triggerEdit);
     connect(parent, &DFileView::rootUrlChanged, this, &FileViewHelper::onCurrentUrlChanged);
@@ -111,7 +111,7 @@ void FileViewHelper::select(const QList<DUrl> &list)
 
 void FileViewHelper::preHandleCd(const DFMEvent &event)
 {
-    if (event.windowId() != windowId())
+    if (event.eventId() != windowId())
         return;
 
     if (event.fileUrl().isNetWorkFile()) {
@@ -122,34 +122,34 @@ void FileViewHelper::preHandleCd(const DFMEvent &event)
         return;
     }
 
-    lastEventSource = event.source();
+    lastEventSender = event.sender();
     parent()->cd(event.fileUrl());
-    lastEventSource = DFMEvent::FileView;
+    lastEventSender = this;
 }
 
 void FileViewHelper::cd(const DFMEvent &event)
 {
-    if (event.windowId() != windowId())
+    if (event.eventId() != windowId())
         return;
 
-    lastEventSource = event.source();
+    lastEventSender = event.sender();
     parent()->cd(event.fileUrl());
-    lastEventSource = DFMEvent::FileView;
+    lastEventSender = this;
 }
 
 void FileViewHelper::cdUp(const DFMEvent &event)
 {
-    if (event.windowId() != windowId())
+    if (event.eventId() != windowId())
         return;
 
-    lastEventSource = event.source();
+    lastEventSender = event.sender();
     parent()->cdUp();
-    lastEventSource = DFMEvent::FileView;
+    lastEventSender = this;
 }
 
 void FileViewHelper::handleSelectEvent(const DFMEvent &event)
 {
-    if (event.windowId() != windowId()) {
+    if (event.eventId() != windowId()) {
         return;
     }
 
@@ -166,14 +166,14 @@ void FileViewHelper::selectAll(int windowId)
 
 void FileViewHelper::setFoucsOnFileView(const DFMEvent &event)
 {
-    if (event.windowId() == windowId()) {
+    if (event.eventId() == windowId()) {
         parent()->setFocus();
     }
 }
 
 void FileViewHelper::refreshFileView(const DFMEvent &event)
 {
-    if (event.windowId() != windowId()) {
+    if (event.eventId() != windowId()) {
         return;
     }
 
@@ -182,9 +182,8 @@ void FileViewHelper::refreshFileView(const DFMEvent &event)
 
 void FileViewHelper::onCurrentUrlChanged(const DUrl &url)
 {
-    DFMEvent e;
-    e << (DFMEvent::EventSource)lastEventSource;
-    e << windowId();
-    e << url;
+    DFMEvent e(lastEventSender);
+    e.setEventId(windowId());
+    e.setData(url);
     emit fileSignalManager->currentUrlChanged(e);
 }

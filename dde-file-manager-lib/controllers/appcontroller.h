@@ -46,7 +46,8 @@ public slots:
     void actionCopy(const DFMEvent& event);
     void actionPaste(const DFMEvent& event);
     void actionRename(const DFMEvent& event);
-    void actionRemove(const DFMEvent& event);
+    void actionBookmarkRename(const DFMEvent& event);
+    void actionBookmarkRemove(const DFMEvent& event);
     void actionDelete(const DFMEvent& event);
     void actionCompleteDeletion(const DFMEvent& event);
     void actionCreateSymlink(const DFMEvent& event);
