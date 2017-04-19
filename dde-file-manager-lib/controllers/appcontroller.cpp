@@ -114,9 +114,9 @@ void AppController::asycOpenDisk(const QString &path)
 
 void AppController::actionOpenInNewWindow(const DFMEvent &event)
 {
-    DUrlList urlList;
+    DUrlList urlList = event.fileUrlList();
 
-    if (event.fileUrlList().count() == 0) {
+    if (urlList.isEmpty()) {
         urlList << event.fileUrl();
     }
 
@@ -125,7 +125,12 @@ void AppController::actionOpenInNewWindow(const DFMEvent &event)
 
 void AppController::actionOpenInNewTab(const DFMEvent &event)
 {
-    emit fileSignalManager->requestOpenInNewTab(event);
+    DFMEvent e = event;
+
+    if (!e.fileUrl().isValid() && !e.fileUrlList().isEmpty())
+        e.setData(e.fileUrlList().first());
+
+    emit fileSignalManager->requestOpenInNewTab(e);
 }
 
 void AppController::actionOpenDiskInNewTab(const DFMEvent &event)
