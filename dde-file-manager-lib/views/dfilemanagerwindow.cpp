@@ -336,22 +336,14 @@ void DFileManagerWindow::setListView()
     d->fileView->setViewModeToList();
 }
 
-void DFileManagerWindow::preHandleCd(const DFMEvent &event)
+void DFileManagerWindow::preHandleCd(const DUrl &fileUrl, const QObject *requestor)
 {
-    if (event.eventId() != windowId()) {
-        return;
-    }
-
     D_DC(DFileManagerWindow);
-    qDebug() << event << d->viewManager->supportSchemes() << d->viewManager->views() << d->viewManager->isSchemeRegistered(event.fileUrl().scheme());
+    qDebug() << fileUrl << d->viewManager->supportSchemes() << d->viewManager->views() << d->viewManager->isSchemeRegistered(fileUrl.scheme());
 
-    if (d->viewStackLayout->currentWidget() == d->computerView && event.sender() && event.sender()->inherits("DFileView")) {
-        return;
-    }
+    DFMEvent e(requestor);
 
-    DFMEvent e(event.sender());
-
-    e.setData(event.data());
+    e.setData(fileUrl);
     e.setEventId(windowId());
 
     if (NetworkManager::SupportScheme.contains(e.fileUrl().scheme())) {
@@ -453,7 +445,7 @@ void DFileManagerWindow::openNewTab(const DFMEvent &event)
     createNewView(event);
 
     if(d->viewManager->isSchemeRegistered(event.fileUrl().scheme())){
-        preHandleCd(event);
+        preHandleCd(event.fileUrl(), event.sender());
     }
 }
 
@@ -743,7 +735,7 @@ void DFileManagerWindow::initFileView(const DUrl &fileUrl)
     event.setData(fileUrl);
     event.setEventId(windowId());
     createNewView(event);
-    preHandleCd(event);
+    preHandleCd(fileUrl, this);
 }
 
 void DFileManagerWindow::initComputerView()
@@ -796,8 +788,6 @@ void DFileManagerWindow::initConnect()
     connect(fileSignalManager, &FileSignalManager::requestOpenInNewTab, this, &DFileManagerWindow::openNewTab);
 
     connect(fileSignalManager, &FileSignalManager::fetchNetworksSuccessed, this, &DFileManagerWindow::cd);
-    connect(fileSignalManager, &FileSignalManager::requestChangeCurrentUrl,
-            this, static_cast<void (DFileManagerWindow::*)(const DFMEvent&)>(&DFileManagerWindow::preHandleCd));
     connect(fileSignalManager, &FileSignalManager::requestCloseCurrentTab, this, &DFileManagerWindow::closeCurrentTab);
 
     connect(d->tabBar, &TabBar::tabMoved, d->toolbar, &DToolBar::moveNavStacks);

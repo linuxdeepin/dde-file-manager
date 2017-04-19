@@ -41,7 +41,7 @@ public:
     bool isTrashFile();
     bool isUserShareFile();
     bool isPath();
-    void setCurrentPath(const DUrl &path);
+    void setCurrentUrl(const DUrl &path);
 private:
     void initData();
     void initUI();
@@ -63,7 +63,7 @@ private:
     QString m_text;
     bool m_disableCompletion = false;
     bool m_searchStart = false;
-    DUrl m_currentPath;
+    DUrl m_currentUrl;
     QScrollBar* m_listVerticalScrollBar = NULL;
 public slots:
     void doTextChanged(QString text);

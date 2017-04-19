@@ -25,29 +25,29 @@ public:
 
     void loadWindowState(DFileManagerWindow* window);
     void saveWindowState(DFileManagerWindow* window);
-    inline QHash<const QWidget*, int> getWindows(){return m_windows;}
+    inline QHash<const QWidget*, quint64> getWindows(){return m_windows;}
 
-    static DUrl getUrlByWindowId(int windowId);
+    static DUrl getUrlByWindowId(quint64 windowId);
 
-    static bool tabAddableByWinId(const int& winId);
+    static bool tabAddableByWinId(const quint64& winId);
 
 signals:
     void start(const QString &src);
 
 public slots:
     void showNewWindow(const DUrl &url, const bool &isNewWindow=false);
-    static int getWindowId(const QWidget *window);
-    static QWidget* getWindowById(int winId);
+    static quint64 getWindowId(const QWidget *window);
+    static QWidget* getWindowById(quint64 winId);
 
 private slots:
     void onWindowClosed();
-    void onLastActivedWindowClosed(int winId);
+    void onLastActivedWindowClosed(quint64 winId);
     void quit();
 
 private:
     bool fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resultData) Q_DECL_OVERRIDE;
 
-    static QHash<const QWidget*, int> m_windows;
+    static QHash<const QWidget*, quint64> m_windows;
     static int m_count;
 
     FMStateManager *m_fmStateManager = NULL;

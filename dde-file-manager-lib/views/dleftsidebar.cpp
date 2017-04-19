@@ -3,6 +3,7 @@
 #include "dhorizseparator.h"
 #include "windowmanager.h"
 #include "dfilemanagerwindow.h"
+#include "dfmeventdispatcher.h"
 
 #include "controllers/bookmarkmanager.h"
 
@@ -176,12 +177,7 @@ void DLeftSideBar::handleLocationChanged(const DFMEvent &e)
     if (e.fileUrl().isNetWorkFile()) {
         emit fileSignalManager->requestFetchNetworks(e);
     } else {
-        DFMEvent event(this);
-
-        event.setData(e.data());
-        event.setProperty("bookmarkIndex", e.property("bookmarkIndex"));
-
-        emit fileSignalManager->requestChangeCurrentUrl(event);
+        DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(e.fileUrl(), window(), this);
     }
 }
 

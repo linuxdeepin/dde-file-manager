@@ -21,9 +21,6 @@ public:
     explicit FileSignalManager(QObject *parent = 0);
 
 signals:
-    /* change currentUrl*/
-    void requestChangeCurrentUrl(const DFMEvent &event);
-
     /*change view mode*/
     void requestChangeIconViewMode(const DFMEvent &event);
 

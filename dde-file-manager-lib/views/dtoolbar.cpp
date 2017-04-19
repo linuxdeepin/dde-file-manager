@@ -9,6 +9,7 @@
 #include "dhoverbutton.h"
 #include "windowmanager.h"
 #include "dfileservices.h"
+#include "dfmeventdispatcher.h"
 
 #include "dfmevent.h"
 #include "app/define.h"
@@ -216,7 +217,7 @@ void DToolBar::searchBarActivated()
     m_searchBar->clear();
     m_searchBar->setActive(true);
     m_searchBar->setFocus();
-    m_searchBar->setCurrentPath(m_crumbWidget->getCurrentUrl());
+    m_searchBar->setCurrentUrl(m_crumbWidget->getCurrentUrl());
     m_searchButton->hide();
 }
 
@@ -270,31 +271,23 @@ void DToolBar::searchBarTextEntered()
 
     QDir::setCurrent(currentDir);
 
-    DFMEvent event(this);
-
-    event.setData(inputUrl);
-
-    emit fileSignalManager->requestChangeCurrentUrl(event);
+    DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(inputUrl, window(), this);
 }
 
 void DToolBar::crumbSelected(const DFMEvent &e)
 {
-    if(e.eventId() != WindowManager::getWindowId(this))
+    if (e.eventId() != WindowManager::getWindowId(this))
         return;
 
-    DFMEvent event(this);
-
-    event.setData(e.data());
-
-    emit fileSignalManager->requestChangeCurrentUrl(event);
+    DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(e.fileUrl(), window(), m_crumbWidget);
 }
 
 void DToolBar::crumbChanged(const DFMEvent &event)
 {
-    if(event.eventId() != WindowManager::getWindowId(this))
+    if (event.eventId() != WindowManager::getWindowId(this))
         return;
 
-    if (event.sender() && event.sender()->inherits("DCrumbWidget"))
+    if (event.sender() == m_crumbWidget)
     {
         checkNavHistory(event.fileUrl());
         return;
@@ -340,10 +333,8 @@ void DToolBar::backButtonClicked()
 
     if(!url.isEmpty())
     {
-        DFMEvent event(this);
-        event.setData(url);
         updateBackForwardButtonsState();
-        emit fileSignalManager->requestChangeCurrentUrl(event);
+        DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(url, window(), this);
     }
 }
 
@@ -353,10 +344,8 @@ void DToolBar::forwardButtonClicked()
     qDebug() << url << *m_navStack;
     if(!url.isEmpty())
     {
-        DFMEvent event(this);
-        event.setData(url);
         updateBackForwardButtonsState();
-        emit fileSignalManager->requestChangeCurrentUrl(event);
+        DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(url, window(), this);
     }
 }
 

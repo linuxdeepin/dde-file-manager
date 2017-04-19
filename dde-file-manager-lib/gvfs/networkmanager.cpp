@@ -1,10 +1,13 @@
 #include "networkmanager.h"
+#include "dfmeventdispatcher.h"
 
 #include "app/filesignalmanager.h"
 #include "app/define.h"
 
 #include "widgets/singleton.h"
 #include "deviceinfo/udisklistener.h"
+
+#include "views/windowmanager.h"
 
 #include <QProcess>
 
@@ -261,7 +264,7 @@ void NetworkManager::fetchNetworks(const DFMEvent &event)
     if (p1){
         e->setData(p1->getMountPointUrl());
         if (DUrl(path) != p1->getMountPointUrl()){
-            emit fileSignalManager->requestChangeCurrentUrl(*e);
+            DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(e->fileUrl(), WindowManager::getWindowById(e->eventId()), this);
         }else{
             qWarning() << p1->getMountPointUrl() << "can't get data";
         }
