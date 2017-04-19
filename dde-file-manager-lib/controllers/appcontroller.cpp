@@ -525,7 +525,9 @@ void AppController::actionShare(const DFMEvent &event)
 
 void AppController::actionUnShare(const DFMEvent &event)
 {
-    fileService->unShareFolder(event.fileUrl());
+    const DUrlList &list = event.fileUrlList();
+
+    fileService->unShareFolder(list.isEmpty() ? event.fileUrl() : list.first());
 }
 
 void AppController::actionSetUserSharePassword(const DFMEvent &event)

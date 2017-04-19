@@ -171,7 +171,7 @@ DFMOpenFileByAppEvent::DFMOpenFileByAppEvent(const QString &appName, const DUrl 
     : DFMOpenFileEvent(url, sender)
     , m_appName(appName)
 {
-
+    m_type = OpenFileByApp;
 }
 
 DFMCompressEvnet::DFMCompressEvnet(const DUrlList &list, const QObject *sender)
