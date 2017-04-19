@@ -356,3 +356,24 @@ DFMChangeCurrentUrlEvent::DFMChangeCurrentUrlEvent(const DUrl &url, const QObjec
 {
 
 }
+
+DFMOpenNewWindowEvent::DFMOpenNewWindowEvent(const DUrlList &list, bool force, const QObject *sender)
+    : DFMUrlListBaseEvent(OpenNewWindow, list, sender)
+    , m_force(force)
+{
+
+}
+
+DFMOpenInCurrentWindowEvent::DFMOpenInCurrentWindowEvent(const DUrl &url, QWidget *window, const QObject *sender)
+    : DFMUrlBaseEvent(OpenInCurrentWindow, url, sender)
+    , m_window(window)
+{
+
+}
+
+DFMOpenUrlEvent::DFMOpenUrlEvent(const DUrlList &list, DFMOpenUrlEvent::DirOpenMode mode, const QObject *sender)
+    : DFMUrlListBaseEvent(OpenUrl, list, sender)
+    , m_dirOpenModel(mode)
+{
+
+}

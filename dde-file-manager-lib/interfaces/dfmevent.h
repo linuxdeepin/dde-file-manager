@@ -44,6 +44,9 @@ public:
         CreateFileWatcher,
         // other
         ChangeCurrentUrl,
+        OpenNewWindow,
+        OpenInCurrentWindow,
+        OpenUrl,
         // user custom
         CustomBase = 1000                            // first user event id
     };
@@ -357,5 +360,47 @@ public:
     explicit DFMChangeCurrentUrlEvent(const DUrl &url, const QObject *sender = 0);
 };
 
-Q_DECLARE_METATYPE(DFMEvent)
+class DFMOpenNewWindowEvent : public DFMUrlListBaseEvent
+{
+public:
+    //! force为false时，如果当前已打开窗口中有currentUrl==url的窗口时时不会打开新的窗口，只会激活此窗口。
+    explicit DFMOpenNewWindowEvent(const DUrlList &list, bool force = true, const QObject *sender = 0);
+
+    inline bool force() const
+    { return m_force;}
+
+private:
+    bool m_force;
+};
+
+class DFMOpenInCurrentWindowEvent : public DFMUrlBaseEvent
+{
+public:
+    explicit DFMOpenInCurrentWindowEvent(const DUrl &url, QWidget *window, const QObject *sender = 0);
+
+    inline QWidget *window() const
+    { return m_window;}
+
+private:
+    QWidget *m_window;
+};
+
+class DFMOpenUrlEvent : public DFMUrlListBaseEvent
+{
+public:
+    enum DirOpenMode {
+        OpenInCurrentWindow,
+        OpenNewWindow,
+        ForceOpenNewWindow
+    };
+
+    explicit DFMOpenUrlEvent(const DUrlList &list, DirOpenMode mode, const QObject *sender = 0);
+
+    inline DirOpenMode dirOpenMode() const
+    { return m_dirOpenModel;}
+
+private:
+    DirOpenMode m_dirOpenModel;
+};
+
 #endif // FMEVENT_H

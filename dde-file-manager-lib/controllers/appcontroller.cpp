@@ -13,6 +13,7 @@
 #include "deviceinfo/udisklistener.h"
 #include "dfileservices.h"
 #include "fileoperations/filejob.h"
+#include "dfmeventdispatcher.h"
 
 #include "app/filesignalmanager.h"
 #include "dfmevent.h"
@@ -73,20 +74,14 @@ void AppController::registerUrlHandle()
 void AppController::actionOpen(const DFMEvent &event)
 {
     const DUrlList& urls = event.fileUrlList();
-    if (urls.size() == 0) {
 
-    }else if (urls.size() == 1) {
-        DFMEvent e = event;
+    if (urls.isEmpty())
+        return;
 
-        e.setData(urls.first());
-
-        if(globalSetting->isAllwayOpenOnNewWindow())
-            fileService->openUrl(e, true, false);
-        else
-            fileService->openUrl(e, false, true);
-    } else{
-        fileService->openUrl(event, true);
-    }
+    if (urls.size() > 1 || globalSetting->isAllwayOpenOnNewWindow())
+        DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(urls, DFMOpenUrlEvent::ForceOpenNewWindow, event.sender());
+     else
+        DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(urls, DFMOpenUrlEvent::OpenInCurrentWindow, event.sender());
 }
 
 void AppController::actionOpenDisk(const DFMEvent &event)
@@ -119,12 +114,13 @@ void AppController::asycOpenDisk(const QString &path)
 
 void AppController::actionOpenInNewWindow(const DFMEvent &event)
 {
-    if(event.fileUrlList().count() == 0){
-        DUrlList urlList;
+    DUrlList urlList;
+
+    if (event.fileUrlList().count() == 0) {
         urlList << event.fileUrl();
-        const_cast<DFMEvent&>(event).setData(urlList);
     }
-    fileService->openNewWindow(event, true);
+
+    DFMEventDispatcher::instance()->processEvent<DFMOpenNewWindowEvent>(urlList, true, event.sender());
 }
 
 void AppController::actionOpenInNewTab(const DFMEvent &event)
@@ -493,12 +489,7 @@ void AppController::actionProperty(const DFMEvent &event)
 
 void AppController::actionNewWindow(const DFMEvent &event)
 {
-    if(event.fileUrlList().count() == 0){
-        DUrlList urlList;
-        urlList << event.fileUrl();
-        const_cast<DFMEvent&>(event).setData(urlList);
-    }
-    fileService->openNewWindow(event, true);
+    return actionOpenInNewWindow(event);
 }
 
 void AppController::actionHelp(const DFMEvent &event)
