@@ -1,4 +1,5 @@
 #include "dfmevent.h"
+#include "views/windowmanager.h"
 
 #include <QDebug>
 #include <QWidget>
@@ -51,7 +52,7 @@ quint64 DFMEvent::eventId() const
 
     const QWidget *w = qobject_cast<const QWidget*>(m_sender.data());
 
-    return w ? w->window()->winId() : 0;
+    return w ? WindowManager::getWindowId(w) : 0;
 }
 
 void DFMEvent::setEventId(quint64 id)
@@ -351,8 +352,9 @@ DFMCreateFileWatcherEvent::DFMCreateFileWatcherEvent(const DUrl &url, const QObj
 
 }
 
-DFMChangeCurrentUrlEvent::DFMChangeCurrentUrlEvent(const DUrl &url, const QObject *sender)
+DFMChangeCurrentUrlEvent::DFMChangeCurrentUrlEvent(const DUrl &url, const QWidget *window, const QObject *sender)
     : DFMUrlBaseEvent(ChangeCurrentUrl, url, sender)
+    , m_window(window)
 {
 
 }
@@ -360,13 +362,6 @@ DFMChangeCurrentUrlEvent::DFMChangeCurrentUrlEvent(const DUrl &url, const QObjec
 DFMOpenNewWindowEvent::DFMOpenNewWindowEvent(const DUrlList &list, bool force, const QObject *sender)
     : DFMUrlListBaseEvent(OpenNewWindow, list, sender)
     , m_force(force)
-{
-
-}
-
-DFMOpenInCurrentWindowEvent::DFMOpenInCurrentWindowEvent(const DUrl &url, QWidget *window, const QObject *sender)
-    : DFMUrlBaseEvent(OpenInCurrentWindow, url, sender)
-    , m_window(window)
 {
 
 }

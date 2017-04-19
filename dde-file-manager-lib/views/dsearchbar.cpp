@@ -1,5 +1,5 @@
 #include "dsearchbar.h"
-
+#include "dfmeventdispatcher.h"
 #include "windowmanager.h"
 
 #include "controllers/searchhistroymanager.h"
@@ -384,7 +384,7 @@ void DSearchBar::currentUrlChanged(const DFMEvent &event)
     {
         return;
     }
-    if(event.fileUrl() != m_currentPath)
+    if(event.fileUrl() != m_currentUrl)
         emit focusedOut();
 }
 
@@ -392,11 +392,8 @@ void DSearchBar::clearText()
 {
     clear();
     m_searchStart = false;
-    DFMEvent event(this);
 
-    event.setData(m_currentPath);
-
-    emit fileSignalManager->requestChangeCurrentUrl(event);
+    DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(m_currentUrl, window(), this);
     emit focusedOut();
 }
 
@@ -848,9 +845,9 @@ bool DSearchBar::isPath()
             || text().startsWith("~") || text().startsWith("../");
 }
 
-void DSearchBar::setCurrentPath(const DUrl &path)
+void DSearchBar::setCurrentUrl(const DUrl &path)
 {
-    m_currentPath = path;
+    m_currentUrl = path;
     m_disableCompletion = true;
 
     if (path.isLocalFile()){

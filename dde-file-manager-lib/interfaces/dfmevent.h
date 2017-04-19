@@ -45,7 +45,6 @@ public:
         // other
         ChangeCurrentUrl,
         OpenNewWindow,
-        OpenInCurrentWindow,
         OpenUrl,
         // user custom
         CustomBase = 1000                            // first user event id
@@ -95,7 +94,7 @@ public:
     { return m_propertys.value(name, defaultValue);}
     template<typename T>
     T property(const QString &name, T&& defaultValue) const
-    { return qvariant_cast<T>(property(name, QVariant::fromValue(std::forward<T>(defaultValue))));}
+    { return qvariant_cast<T>(m_propertys.value(name, QVariant::fromValue(std::forward<T>(defaultValue))));}
     template<typename T>
     T property(const QString &name) const
     { return qvariant_cast<T>(property(name));}
@@ -357,7 +356,13 @@ public:
 class DFMChangeCurrentUrlEvent : public DFMUrlBaseEvent
 {
 public:
-    explicit DFMChangeCurrentUrlEvent(const DUrl &url, const QObject *sender = 0);
+    explicit DFMChangeCurrentUrlEvent(const DUrl &url, const QWidget *window, const QObject *sender = 0);
+
+    inline const QWidget *window() const
+    { return m_window;}
+
+private:
+    const QWidget *m_window;
 };
 
 class DFMOpenNewWindowEvent : public DFMUrlListBaseEvent
@@ -371,18 +376,6 @@ public:
 
 private:
     bool m_force;
-};
-
-class DFMOpenInCurrentWindowEvent : public DFMUrlBaseEvent
-{
-public:
-    explicit DFMOpenInCurrentWindowEvent(const DUrl &url, QWidget *window, const QObject *sender = 0);
-
-    inline QWidget *window() const
-    { return m_window;}
-
-private:
-    QWidget *m_window;
 };
 
 class DFMOpenUrlEvent : public DFMUrlListBaseEvent

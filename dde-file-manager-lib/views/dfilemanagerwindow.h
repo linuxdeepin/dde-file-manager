@@ -76,7 +76,7 @@ public slots:
     void setFileViewMode(int viewMode);
     void setIconView();
     void setListView();
-    void preHandleCd(const DFMEvent& event);
+    void preHandleCd(const DUrl &fileUrl, const QObject *requestor = 0);
     void cd(const DFMEvent& event);
 
     void showPluginView(const DUrl& fileUrl);

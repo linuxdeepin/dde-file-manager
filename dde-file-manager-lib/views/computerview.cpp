@@ -3,6 +3,7 @@
 #include "dfilemenu.h"
 #include "dfilemenumanager.h"
 #include "windowmanager.h"
+#include "dfmeventdispatcher.h"
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
@@ -172,11 +173,8 @@ void ComputerViewItem::mousePressEvent(QMouseEvent *event)
 void ComputerViewItem::mouseDoubleClickEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton){
-        DFMEvent fevent(this);
-        fevent.setEventId(windowId());
         if (m_info){
-            fevent.setData(m_info->fileUrl());
-            emit fileSignalManager->requestChangeCurrentUrl(fevent);
+            DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(m_info->fileUrl(), window(), this);
         }else if (m_deviceInfo){
             DUrl url = m_deviceInfo->getMountPointUrl();
 
@@ -186,11 +184,12 @@ void ComputerViewItem::mouseDoubleClickEvent(QMouseEvent *event)
                 url.setQuery(m_deviceInfo->getId());
                 DUrlList urls;
                 urls.append(url);
+                DFMEvent fevent(this);
+                fevent.setEventId(windowId());
                 fevent.setData(urls);
                 appController->actionOpenDisk(fevent);
             }else{
-                fevent.setData(url);
-                emit fileSignalManager->requestChangeCurrentUrl(fevent);
+                DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(url, window(), this);
             }
 
         }

@@ -1184,12 +1184,7 @@ void DFileView::onRootUrlDeleted(const DUrl &rootUrl)
     if (!fileInfo)
         return;
 
-    DFMEvent event(this);
-
-    event.setEventId(windowId());
-    event.setData(fileInfo->goToUrlWhenDeleted());
-
-    fileSignalManager->requestChangeCurrentUrl(event);
+    DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(fileInfo->goToUrlWhenDeleted(), window(), this);
 }
 
 void DFileView::freshView()

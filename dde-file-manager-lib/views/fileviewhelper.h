@@ -10,12 +10,12 @@
 #ifndef FILEVIEWHELPER_H
 #define FILEVIEWHELPER_H
 
+#include "dfmevent.h"
 #include "interfaces/dfileviewhelper.h"
 
 #include <QPointer>
 
 class DFileView;
-class DFMEvent;
 class FileViewHelper : public DFileViewHelper
 {
     Q_OBJECT
@@ -53,7 +53,7 @@ public slots:
 private:
     void onCurrentUrlChanged(const DUrl &url);
 
-    QPointer<const QObject> lastEventSender;
+    DFMEvent lastEvent;
 };
 
 #endif // FILEVIEWHELPER_H

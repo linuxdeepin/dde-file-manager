@@ -4,6 +4,7 @@
 #include "dbookmarkitemgroup.h"
 #include "dbookmarkline.h"
 #include "windowmanager.h"
+#include "dfmeventdispatcher.h"
 #include "dbusinterface/dbustype.h"
 
 #include "controllers/bookmarkmanager.h"
@@ -596,7 +597,7 @@ void DBookmarkScene::volumeChanged(UDiskDeviceInfoPointer device)
             DFMEvent event;
             event.setEventId(windowId());
             event.setData(device->getMountPointUrl());
-            emit fileSignalManager->requestChangeCurrentUrl(event);
+            DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(event.fileUrl(), views().at(0)->window(), this);
             emit fileSignalManager->requestFreshFileView(event);
         }
     }
@@ -649,10 +650,7 @@ void DBookmarkScene::handleVolumeMountRemove(UDiskDeviceInfoPointer device, DBoo
 
 void DBookmarkScene::backHome()
 {
-    DFMEvent event;
-    event.setEventId(windowId());
-    event.setData(DUrl::fromLocalFile(QDir::homePath()));
-    emit fileSignalManager->requestChangeCurrentUrl(event);
+    DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(DUrl::fromLocalFile(QDir::homePath()), views().at(0)->window(), this);
 }
 
 void DBookmarkScene::chooseMountedItem(const DFMEvent &event)

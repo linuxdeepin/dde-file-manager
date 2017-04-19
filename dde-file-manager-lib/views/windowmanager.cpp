@@ -47,7 +47,7 @@ enum NetWmState {
 
 Q_DECLARE_FLAGS(NetWmStates, NetWmState)
 
-QHash<const QWidget*, int> WindowManager::m_windows;
+QHash<const QWidget*, quint64> WindowManager::m_windows;
 int WindowManager::m_count = 0;
 
 WindowManager::WindowManager(QObject *parent) : QObject(parent)
@@ -111,7 +111,7 @@ void WindowManager::saveWindowState(DFileManagerWindow *window)
     m_fmStateManager->saveCache();
 }
 
-DUrl WindowManager::getUrlByWindowId(int windowId)
+DUrl WindowManager::getUrlByWindowId(quint64 windowId)
 {
     if (getWindowById(windowId)){
          DFileManagerWindow* window = qobject_cast<DFileManagerWindow*>(getWindowById(windowId));
@@ -120,7 +120,7 @@ DUrl WindowManager::getUrlByWindowId(int windowId)
     return DUrl::fromLocalFile(QDir::homePath());
 }
 
-bool WindowManager::tabAddableByWinId(const int &winId)
+bool WindowManager::tabAddableByWinId(const quint64 &winId)
 {
     DFileManagerWindow* window = qobject_cast<DFileManagerWindow*>(getWindowById(winId));
     if(window)
@@ -178,11 +178,11 @@ void WindowManager::showNewWindow(const DUrl &url, const bool& isNewWindow)
 
 
 
-int WindowManager::getWindowId(const QWidget *window)
+quint64 WindowManager::getWindowId(const QWidget *window)
 {
-    int winId = m_windows.value(window->topLevelWidget(), -1);
+    int winId = m_windows.value(window->topLevelWidget(), 0);
 
-    if (winId != -1)
+    if (winId != 0)
         return winId;
 
     while (window) {
@@ -193,10 +193,10 @@ int WindowManager::getWindowId(const QWidget *window)
         window = window->parentWidget();
     }
 
-    return -1;
+    return 0;
 }
 
-QWidget *WindowManager::getWindowById(int winId)
+QWidget *WindowManager::getWindowById(quint64 winId)
 {
     const QWidget *widget = m_windows.key(winId);
 
@@ -204,7 +204,7 @@ QWidget *WindowManager::getWindowById(int winId)
         return const_cast<QWidget*>(widget);
 
     for (QWidget *widget : qApp->topLevelWidgets()) {
-        if ((int)widget->winId() == winId)
+        if (widget->winId() == winId)
             return widget;
     }
 
@@ -221,10 +221,10 @@ void WindowManager::onWindowClosed()
     m_windows.remove(static_cast<const QWidget*>(sender()));
 }
 
-void WindowManager::onLastActivedWindowClosed(int winId)
+void WindowManager::onLastActivedWindowClosed(quint64 winId)
 {
-    QList<int> winIds = m_windows.values();
-    foreach (int id, winIds) {
+    QList<quint64> winIds = m_windows.values();
+    foreach (quint64 id, winIds) {
         if (id != winId){
             getWindowById(id)->close();
         }
@@ -290,11 +290,11 @@ bool WindowManager::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *res
 
         break;
     }
-    case DFMEvent::OpenInCurrentWindow: {
-        const QSharedPointer<DFMOpenInCurrentWindowEvent> &e = event.dynamicCast<DFMOpenInCurrentWindowEvent>();
+    case DFMEvent::ChangeCurrentUrl: {
+        const QSharedPointer<DFMChangeCurrentUrlEvent> &e = event.dynamicCast<DFMChangeCurrentUrlEvent>();
 
-        if (DFileManagerWindow *window = qobject_cast<DFileManagerWindow*>(e->window())) {
-            window->preHandleCd(*event.data());
+        if (DFileManagerWindow *window = const_cast<DFileManagerWindow*>(qobject_cast<const DFileManagerWindow*>(e->window()))) {
+            window->preHandleCd(e->fileUrl(), e->sender());
         }
 
         break;
@@ -339,7 +339,7 @@ bool WindowManager::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *res
         QVariant result;
 
         if (e->dirOpenMode() == DFMOpenUrlEvent::OpenInCurrentWindow) {
-            result = DFMEventDispatcher::instance()->processEvent<DFMOpenInCurrentWindowEvent>(dirList.first(), getWindowById(event->eventId()), event->sender());
+            result = DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(dirList.first(), getWindowById(event->eventId()), event->sender());
         } else {
             result = DFMEventDispatcher::instance()->processEvent<DFMOpenNewWindowEvent>(dirList, e->dirOpenMode() == DFMOpenUrlEvent::ForceOpenNewWindow, event->sender());
         }
