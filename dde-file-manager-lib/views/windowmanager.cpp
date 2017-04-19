@@ -4,6 +4,7 @@
 #include "dabstractfilewatcher.h"
 #include "dabstractfileinfo.h"
 #include "dfileservices.h"
+#include "dfmeventdispatcher.h"
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
@@ -21,12 +22,15 @@
 
 #include "widgets/singleton.h"
 
+#include "shutil/fileutils.h"
+
 #include <QThread>
 #include <QDebug>
 #include <QApplication>
 #include <QX11Info>
 #include <QScreen>
 #include <QWindow>
+#include <QProcess>
 
 DFM_USE_NAMESPACE
 
@@ -236,4 +240,118 @@ void WindowManager::quit()
             qApp->quit();
         }
     }
+}
+
+static bool isAvfsMounted()
+{
+    QProcess p;
+    QString cmd = "/bin/bash";
+    QStringList args;
+    args << "-c" << "ps -ax -o 'cmd'|grep '.avfs$'";
+    p.start(cmd, args);
+    p.waitForFinished();
+    QString avfsBase = qgetenv("AVFSBASE");
+    QString avfsdDir;
+    if(avfsBase.isEmpty()){
+        QString home = qgetenv("HOME");
+        avfsdDir = home + "/.avfs";
+    } else{
+        avfsdDir = avfsBase + "/.avfs";
+    }
+
+    while (!p.atEnd()) {
+        QString result = p.readLine().trimmed();
+        if(!result.isEmpty()){
+            QStringList datas = result.split(" ");
+
+            if(datas.count() == 2){
+                //compare current user's avfs path
+                if(datas.last() != avfsdDir)
+                    continue;
+
+                if(datas.first() == "avfsd" && QFile::exists(datas.last()))
+                    return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+bool WindowManager::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resultData)
+{
+    switch (event->type()) {
+    case DFMEvent::OpenNewWindow: {
+        const QSharedPointer<DFMOpenNewWindowEvent> &e = event.dynamicCast<DFMOpenNewWindowEvent>();
+
+        for (const DUrl &url : e->urlList()) {
+            showNewWindow(url, e->force());
+        }
+
+        break;
+    }
+    case DFMEvent::OpenInCurrentWindow: {
+        const QSharedPointer<DFMOpenInCurrentWindowEvent> &e = event.dynamicCast<DFMOpenInCurrentWindowEvent>();
+
+        if (DFileManagerWindow *window = qobject_cast<DFileManagerWindow*>(e->window())) {
+            window->preHandleCd(*event.data());
+        }
+
+        break;
+    }
+    case DFMEvent::OpenUrl: {
+        const QSharedPointer<DFMOpenUrlEvent> &e = event.dynamicCast<DFMOpenUrlEvent>();
+
+        //sort urls by files and dirs
+        DUrlList dirList;
+
+        foreach (DUrl url, e->urlList()) {
+            const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
+
+            if (globalSetting->isCompressFilePreview()
+                    && isAvfsMounted()
+                    && FileUtils::isArchive(url.toLocalFile())
+                    && fileInfo->mimeType().name() != "application/vnd.debian.binary-package") {
+                const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(DUrl::fromAVFSFile(url.path()));
+
+                if (info->exists()) {
+                    url.setScheme(AVFS_SCHEME);
+                    dirList << url;
+                    continue;
+                }
+            }
+
+            if (fileInfo) {
+                if (fileInfo->isDir())
+                    dirList << url;
+                else
+                    DFileService::instance()->openFile(url, event->sender());
+            }
+
+            //computer url is virtual dir
+            if (url == DUrl::fromComputerFile("/"))
+                dirList << url;
+        }
+
+        if (dirList.isEmpty())
+            break;
+
+        QVariant result;
+
+        if (e->dirOpenMode() == DFMOpenUrlEvent::OpenInCurrentWindow) {
+            result = DFMEventDispatcher::instance()->processEvent<DFMOpenInCurrentWindowEvent>(dirList.first(), getWindowById(event->eventId()), event->sender());
+        } else {
+            result = DFMEventDispatcher::instance()->processEvent<DFMOpenNewWindowEvent>(dirList, e->dirOpenMode() == DFMOpenUrlEvent::ForceOpenNewWindow, event->sender());
+        }
+
+        if (resultData)
+            *resultData = result;
+
+        break;
+    }
+    default:
+        return false;
+    }
+
+    return true;
 }

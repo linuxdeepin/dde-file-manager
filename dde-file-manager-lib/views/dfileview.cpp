@@ -8,6 +8,7 @@
 #include "dfilemanagerwindow.h"
 #include "dtoolbar.h"
 #include "dabstractfilewatcher.h"
+#include "dfmeventdispatcher.h"
 #include "app/define.h"
 #include "app/filesignalmanager.h"
 #include "widgets/commandlinemanager.h"
@@ -1729,16 +1730,10 @@ void DFileView::openIndex(const QModelIndex &index)
 {
     D_D(DFileView);
 
-    DFMEvent event;
-    DUrl url = model()->getUrlByIndex(index);
-    DUrlList urls;
-    urls << url;
-    event.setData(urls);
-    event.setEventId(windowId());
-    if(globalSetting->isAllwayOpenOnNewWindow())
-        DFileService::instance()->openUrl(event, true, false);
-    else
-        DFileService::instance()->openUrl(event, false, true);
+    const DUrl &url = model()->getUrlByIndex(index);
+
+    DFMOpenUrlEvent::DirOpenMode mode = globalSetting->isAllwayOpenOnNewWindow() ? DFMOpenUrlEvent::ForceOpenNewWindow : DFMOpenUrlEvent::OpenInCurrentWindow;
+    DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(DUrlList() << url, mode, this);
 }
 
 void DFileView::keyboardSearch(const QString &search)

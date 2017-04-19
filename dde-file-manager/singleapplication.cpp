@@ -2,6 +2,7 @@
 #include "app/define.h"
 #include "app/filesignalmanager.h"
 #include "durl.h"
+#include "dfmeventdispatcher.h"
 
 #include "widgets/commandlinemanager.h"
 #include "widgets/singleton.h"
@@ -185,7 +186,6 @@ void SingleApplication::readData()
         }
     }
 
-    DFMEvent event(this);
     DUrlList urlList;
     foreach (QString path, paths) {
         if (!path.isEmpty()){
@@ -193,10 +193,8 @@ void SingleApplication::readData()
             urlList << url;
         }
     }
-    event.setData(urlList);
 
-    qDebug() << event << isNewWindow;
-    fileService->openUrl(event, isNewWindow);
+    DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(urlList, isNewWindow ? DFMOpenUrlEvent::ForceOpenNewWindow : DFMOpenUrlEvent::OpenNewWindow, this);
 }
 
 void SingleApplication::closeServer()

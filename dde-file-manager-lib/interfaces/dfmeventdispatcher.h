@@ -10,6 +10,7 @@
 #define DFMEVENTDISPATCHER_H
 
 #include "dfmglobal.h"
+#include "dfmevent.h"
 
 class DFMEvent;
 DFM_BEGIN_NAMESPACE
@@ -21,6 +22,11 @@ public:
     static DFMEventDispatcher *instance();
 
     QVariant processEvent(const QSharedPointer<DFMEvent> &event);
+    template<class T, typename... Args>
+    QVariant processEvent(Args&&... args)
+    {
+        return processEvent(dMakeEventPointer<T>(std::forward<Args>(args)...));
+    }
 
     void installEventFilter(DFMAbstractEventHandler *handler);
     void removeEventFilter(DFMAbstractEventHandler *handler);

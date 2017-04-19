@@ -284,7 +284,7 @@ void DToolBar::crumbSelected(const DFMEvent &e)
 
     DFMEvent event(this);
 
-    event.setData(e);
+    event.setData(e.data());
 
     emit fileSignalManager->requestChangeCurrentUrl(event);
 }

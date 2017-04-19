@@ -38,7 +38,6 @@
 #include <QMimeData>
 #include <QTimer>
 #include <QStandardPaths>
-#include <QProcess>
 
 DWIDGET_USE_NAMESPACE
 
@@ -663,22 +662,6 @@ bool DFileService::openInTerminal(const DUrl &fileUrl, const QObject *sender) co
     return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMOpenInTerminalEvent>(fileUrl, sender)).toBool();
 }
 
-void DFileService::openNewWindow(const DFMEvent &event, const bool &isNewWindow) const
-{
-    foreach (const DUrl& url, event.fileUrlList()) {
-        emit fileSignalManager->requestOpenNewWindowByUrl(url, isNewWindow);
-    }
-}
-
-void DFileService::openInCurrentWindow(const DFMEvent &event) const
-{
-    const DAbstractFileInfoPointer &fileInfo = createFileInfo(event.fileUrl());
-
-    if (fileInfo && fileInfo->isDir()){
-        emit fileSignalManager->requestChangeCurrentUrl(event);
-    }
-}
-
 const DAbstractFileInfoPointer DFileService::createFileInfo(const DUrl &fileUrl, const QObject *sender) const
 {
     const DAbstractFileInfoPointer &info = DAbstractFileInfo::getFileInfo(fileUrl);
@@ -724,41 +707,6 @@ DAbstractFileWatcher *DFileService::createFileWatcher(const DUrl &fileUrl, QObje
         w->setParent(parent);
 
     return w;
-}
-
-bool DFileService::isAvfsMounted() const
-{
-    QProcess p;
-    QString cmd = "/bin/bash";
-    QStringList args;
-    args << "-c" << "ps -ax -o 'cmd'|grep '.avfs$'";
-    p.start(cmd, args);
-    p.waitForFinished();
-    QString avfsBase = qgetenv("AVFSBASE");
-    QString avfsdDir;
-    if(avfsBase.isEmpty()){
-        QString home = qgetenv("HOME");
-        avfsdDir = home + "/.avfs";
-    } else{
-        avfsdDir = avfsBase + "/.avfs";
-    }
-
-    while (!p.atEnd()) {
-        QString result = p.readLine().trimmed();
-        if(!result.isEmpty()){
-            QStringList datas = result.split(" ");
-
-            if(datas.count() == 2){
-                //compare current user's avfs path
-                if(datas.last() != avfsdDir)
-                    continue;
-
-                if(datas.first() == "avfsd" && QFile::exists(datas.last()))
-                    return true;
-            }
-        }
-    }
-    return false;
 }
 
 QList<DAbstractFileController*> DFileService::getHandlerTypeByUrl(const DUrl &fileUrl,
@@ -828,65 +776,6 @@ QString DFileService::getSymlinkFileName(const DUrl &fileUrl, const QDir &target
 void DFileService::insertToCreatorHash(const HandlerType &type, const HandlerCreatorType &creator)
 {
     DFileServicePrivate::controllerCreatorHash.insertMulti(type, creator);
-}
-
-void DFileService::openUrl(const DFMEvent &event, const bool &isOpenInNewWindow, const bool &isOpenInCurrentWindow) const
-{
-    FILTER_RETURN(OpenUrl)
-
-    if(event.fileUrlList().count() == 0){
-        DUrlList urlList;
-        urlList << event.fileUrl();
-        const_cast<DFMEvent&>(event).setData(urlList);
-    }
-
-    //sort urls by files and dirs`
-    DUrlList dirList;
-    DFMEvent dirsEvent(event);
-    foreach (const DUrl& url, event.fileUrlList()) {
-
-        const DAbstractFileInfoPointer &fileInfo = createFileInfo(url);
-
-        if(globalSetting->isCompressFilePreview()
-                && isAvfsMounted()
-                && FileUtils::isArchive(url.toLocalFile())
-                && fileInfo->mimeType().name() != "application/vnd.debian.binary-package"){
-            DAbstractFileInfoPointer info = createFileInfo(DUrl::fromAVFSFile(url.path()));
-            if(info->exists()){
-                const_cast<DUrl&>(url).setScheme(AVFS_SCHEME);
-                dirList << url;
-                continue;
-            }
-        }
-
-        if(fileInfo){
-            bool isDir = fileInfo->isDir();
-            if(isDir)
-                dirList << url;
-            else
-                openFile(url, event.sender());
-        }
-
-        //computer url is virtual dir
-        if(url == DUrl::fromComputerFile("/"))
-            dirList << url;
-    }
-
-    dirsEvent.setData(dirList);
-
-    if(!isOpenInCurrentWindow){
-        if(dirList.count() > 0)
-            openNewWindow(dirsEvent, isOpenInNewWindow);
-    } else{
-
-        if(dirsEvent.fileUrlList().count() == 1){
-            //replace dirsEvent's file url with dirsEvent file list's first url which is avfs file
-            if(dirsEvent.fileUrlList().first().isAVFSFile())
-                dirsEvent.setData(dirsEvent.fileUrlList().first());
-
-            openInCurrentWindow(dirsEvent);
-        }
-    }
 }
 
 void DFileService::laterRequestSelectFiles(const DFMEvent &event) const
