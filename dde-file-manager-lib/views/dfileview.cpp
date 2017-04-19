@@ -904,7 +904,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
                 else
                     url = rootUrl();
             }
-            emit fileSignalManager->requestOpenInNewTab(DFMUrlBaseEvent(url));
+            emit fileSignalManager->requestOpenInNewTab(DFMUrlBaseEvent(url, this));
             return;
         }
         case Qt::Key_W:
