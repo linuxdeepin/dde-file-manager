@@ -278,4 +278,6 @@ private:
     static void refreshPlugins();
 };
 
+Q_DECLARE_METATYPE(DFMGlobal::ClipboardAction)
+
 #endif // DFMGLOBAL_H

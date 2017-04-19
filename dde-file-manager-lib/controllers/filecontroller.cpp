@@ -309,7 +309,7 @@ bool FileController::restoreFile(const DUrl &srcUrl, const DUrl &tarUrl, const D
 bool FileController::newFolder(const QSharedPointer<DFMNewFolderEvent> &event) const
 {
     //Todo:: check if mkdir is ok
-    QDir dir(event->targetUrl().toLocalFile());
+    QDir dir(event->url().toLocalFile());
 
     QString folderName = checkDuplicateName(dir.absolutePath() + "/" + tr("New Folder"));
 
@@ -320,7 +320,7 @@ bool FileController::newFolder(const QSharedPointer<DFMNewFolderEvent> &event) c
 bool FileController::newFile(const QSharedPointer<DFMNewFileEvent> &event) const
 {
     //Todo:: check if mkdir is ok
-    QDir dir(event->targetUrl().toLocalFile());
+    QDir dir(event->url().toLocalFile());
     QString name = checkDuplicateName(dir.absolutePath() + "/" + tr("New File"));
 
     QFile file(name);

@@ -170,9 +170,14 @@ DFMOpenFileEvent::DFMOpenFileEvent(const DUrl &url, const QObject *sender)
 
 DFMOpenFileByAppEvent::DFMOpenFileByAppEvent(const QString &appName, const DUrl &url, const QObject *sender)
     : DFMOpenFileEvent(url, sender)
-    , m_appName(appName)
 {
     m_type = OpenFileByApp;
+    setProperty(QT_STRINGIFY(DFMOpenFileByAppEvent::appName), appName);
+}
+
+QString DFMOpenFileByAppEvent::appName() const
+{
+    return property(QT_STRINGIFY(DFMOpenFileByAppEvent::appName), QString());
 }
 
 DFMCompressEvnet::DFMCompressEvnet(const DUrlList &list, const QObject *sender)
@@ -196,9 +201,13 @@ DFMDecompressHereEvnet::DFMDecompressHereEvnet(const DUrlList &list, const QObje
 DFMWriteUrlsToClipboardEvent::DFMWriteUrlsToClipboardEvent(DFMGlobal::ClipboardAction action,
                                                            const DUrlList &list, const QObject *sender)
     : DFMUrlListBaseEvent(WriteUrlsToClipboard, list, sender)
-    , m_action(action)
 {
+    setProperty(QT_STRINGIFY(DFMWriteUrlsToClipboardEvent::action), action);
+}
 
+DFMGlobal::ClipboardAction DFMWriteUrlsToClipboardEvent::action() const
+{
+    return property(QT_STRINGIFY(DFMWriteUrlsToClipboardEvent::action), DFMGlobal::CutAction);
 }
 
 DFMRenameEvent::DFMRenameEvent(const DUrl &from, const DUrl &to, const QObject *sender)
@@ -229,10 +238,20 @@ DFMMoveToTrashEvent::DFMMoveToTrashEvent(const DUrlList &list, const QObject *se
 DFMPasteEvent::DFMPasteEvent(DFMGlobal::ClipboardAction action, const DUrl &targetUrl,
                              const DUrlList &list, const QObject *sender)
     : DFMUrlListBaseEvent(PasteFile, list, sender)
-    , m_action(action)
-    , m_target(targetUrl)
 {
     setData(list);
+    setProperty(QT_STRINGIFY(DFMPasteEvent::action), action);
+    setProperty(QT_STRINGIFY(DFMPasteEvent::targetUrl), targetUrl);
+}
+
+DFMGlobal::ClipboardAction DFMPasteEvent::action() const
+{
+    return property(QT_STRINGIFY(DFMPasteEvent::action), DFMGlobal::CutAction);
+}
+
+DUrl DFMPasteEvent::targetUrl() const
+{
+    return property(QT_STRINGIFY(DFMPasteEvent::targetUrl), DUrl());
 }
 
 DUrlList DFMPasteEvent::handleUrlList() const
@@ -240,17 +259,21 @@ DUrlList DFMPasteEvent::handleUrlList() const
     return DUrlList() << targetUrl() << urlList();
 }
 
-DFMNewFolderEvent::DFMNewFolderEvent(const DUrl &targetUrl, const QObject *sender)
-    : DFMEvent(NewFolder, sender)
+DFMNewFolderEvent::DFMNewFolderEvent(const DUrl &url, const QObject *sender)
+    : DFMUrlBaseEvent(NewFolder, url, sender)
 {
-    setData(targetUrl);
+
 }
 
-DFMNewFileEvent::DFMNewFileEvent(const DUrl &targetUrl, const QString &fileSuffix, const QObject *sender)
-    : DFMEvent(NewFile, sender)
-    , m_suffix(fileSuffix)
+DFMNewFileEvent::DFMNewFileEvent(const DUrl &url, const QString &fileSuffix, const QObject *sender)
+    : DFMUrlBaseEvent(NewFile, url, sender)
 {
-    setData(targetUrl);
+    setProperty(QT_STRINGIFY(DFMNewFileEvent::fileSuffix), fileSuffix);
+}
+
+QString DFMNewFileEvent::fileSuffix() const
+{
+    return property(QT_STRINGIFY(DFMNewFileEvent::fileSuffix), QString());
 }
 
 DFMOpenFileLocation::DFMOpenFileLocation(const DUrl &url, const QObject *sender)
@@ -273,11 +296,25 @@ DUrlList DFMCreateSymlinkEvent::handleUrlList() const
 DFMFileShareEvnet::DFMFileShareEvnet(const DUrl &url, const QString &name, bool isWritable,
                                                  bool allowGuest, const QObject *sender)
     : DFMUrlBaseEvent(FileShare, url, sender)
-    , m_name(name)
-    , m_writable(isWritable)
-    , m_allowGuest(allowGuest)
 {
+    setProperty(QT_STRINGIFY(DFMFileShareEvnet::name), name);
+    setProperty(QT_STRINGIFY(DFMFileShareEvnet::isWritable), isWritable);
+    setProperty(QT_STRINGIFY(DFMFileShareEvnet::allowGuest), allowGuest);
+}
 
+QString DFMFileShareEvnet::name() const
+{
+    return property(QT_STRINGIFY(DFMFileShareEvnet::name), QString());
+}
+
+bool DFMFileShareEvnet::isWritable() const
+{
+    return property(QT_STRINGIFY(DFMFileShareEvnet::isWritable), false);
+}
+
+bool DFMFileShareEvnet::allowGuest() const
+{
+    return property(QT_STRINGIFY(DFMFileShareEvnet::allowGuest), false);
 }
 
 DFMCancelFileShareEvent::DFMCancelFileShareEvent(const DUrl &url, const QObject *sender)
@@ -296,11 +333,10 @@ DFMGetChildrensEvent::DFMGetChildrensEvent(const DUrl &url, const QStringList &n
                                            QDir::Filters filters, QDirIterator::IteratorFlags flags,
                                            const QObject *sender)
     : DFMUrlBaseEvent(GetChildrens, url, sender)
-    , m_nameFilters(nameFilters)
-    , m_filters(filters)
-    , m_flags(flags)
 {
-
+    setProperty(QT_STRINGIFY(DFMGetChildrensEvent::nameFilters), nameFilters);
+    setProperty(QT_STRINGIFY(DFMGetChildrensEvent::filters), filters);
+    setProperty(QT_STRINGIFY(DFMGetChildrensEvent::flags), flags);
 }
 
 DFMGetChildrensEvent::DFMGetChildrensEvent(const DUrl &url, const QStringList &nameFilters,
@@ -308,6 +344,21 @@ DFMGetChildrensEvent::DFMGetChildrensEvent(const DUrl &url, const QStringList &n
     : DFMGetChildrensEvent(url, nameFilters, filters, QDirIterator::NoIteratorFlags, sender)
 {
 
+}
+
+QStringList DFMGetChildrensEvent::nameFilters() const
+{
+    return property(QT_STRINGIFY(DFMGetChildrensEvent::nameFilters), QStringList());
+}
+
+QDir::Filters DFMGetChildrensEvent::filters() const
+{
+    return property(QT_STRINGIFY(DFMGetChildrensEvent::filters), QDir::Filters());
+}
+
+QDirIterator::IteratorFlags DFMGetChildrensEvent::flags() const
+{
+    return property(QT_STRINGIFY(DFMGetChildrensEvent::flags), QDirIterator::IteratorFlags());
 }
 
 DFMCreateDiriterator::DFMCreateDiriterator(const DUrl &fileUrl, const QStringList &nameFilters,
@@ -354,21 +405,33 @@ DFMCreateFileWatcherEvent::DFMCreateFileWatcherEvent(const DUrl &url, const QObj
 
 DFMChangeCurrentUrlEvent::DFMChangeCurrentUrlEvent(const DUrl &url, const QWidget *window, const QObject *sender)
     : DFMUrlBaseEvent(ChangeCurrentUrl, url, sender)
-    , m_window(window)
 {
+    setProperty(QT_STRINGIFY(DFMChangeCurrentUrlEvent::window), (quintptr)window);
+}
 
+const QWidget *DFMChangeCurrentUrlEvent::window() const
+{
+    return (const QWidget*)(property<quintptr>(QT_STRINGIFY(DFMChangeCurrentUrlEvent::window)));
 }
 
 DFMOpenNewWindowEvent::DFMOpenNewWindowEvent(const DUrlList &list, bool force, const QObject *sender)
     : DFMUrlListBaseEvent(OpenNewWindow, list, sender)
-    , m_force(force)
 {
+    setProperty(QT_STRINGIFY(DFMOpenNewWindowEvent::force), force);
+}
 
+bool DFMOpenNewWindowEvent::force() const
+{
+    return property(QT_STRINGIFY(DFMOpenNewWindowEvent::force), false);
 }
 
 DFMOpenUrlEvent::DFMOpenUrlEvent(const DUrlList &list, DFMOpenUrlEvent::DirOpenMode mode, const QObject *sender)
     : DFMUrlListBaseEvent(OpenUrl, list, sender)
-    , m_dirOpenModel(mode)
 {
+    setProperty(QT_STRINGIFY(DFMOpenUrlEvent::dirOpenMode), mode);
+}
 
+DFMOpenUrlEvent::DirOpenMode DFMOpenUrlEvent::dirOpenMode() const
+{
+    return property(QT_STRINGIFY(DFMOpenUrlEvent::dirOpenMode), DirOpenMode::OpenNewWindow);
 }
