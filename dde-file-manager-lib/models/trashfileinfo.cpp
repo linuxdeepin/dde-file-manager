@@ -9,6 +9,8 @@
 #include "interfaces/dfmstandardpaths.h"
 #include "dfilesystemmodel.h"
 #include "widgets/singleton.h"
+#include "fileoperations/filejob.h"
+#include "dialogs/dialogmanager.h"
 
 #include <QMimeType>
 #include <QSettings>
@@ -343,7 +345,7 @@ DAbstractFileInfo::CompareFunction TrashFileInfo::compareFunByColumn(int columnR
         return DAbstractFileInfo::compareFunByColumn(columnRole);
 }
 
-bool TrashFileInfo::restore(const DFMEvent &event) const
+bool TrashFileInfo::restore() const
 {
     Q_D(const TrashFileInfo);
 
@@ -355,15 +357,18 @@ bool TrashFileInfo::restore(const DFMEvent &event) const
 
     QDir dir(d->originalFilePath.left(d->originalFilePath.lastIndexOf('/')));
 
-    if(dir.isAbsolute() && !dir.mkpath(dir.absolutePath())) {
+    if (dir.isAbsolute() && !dir.mkpath(dir.absolutePath())) {
         qDebug() << "mk" << dir.absolutePath() << "failed!";
 
         return false;
     }
 
-    DUrl srcUrl = DUrl::fromLocalFile(absoluteFilePath());
-    DUrl tarUrl = DUrl::fromLocalFile(d->originalFilePath);
-    fileService->restoreFile(srcUrl, tarUrl, event);
+    FileJob job(FileJob::Restore);
+
+    dialogManager->addJob(&job);
+
+    job.doTrashRestore(absoluteFilePath(), d->originalFilePath);
+    dialogManager->removeJob(job.getJobId());
 
     return true;
 }

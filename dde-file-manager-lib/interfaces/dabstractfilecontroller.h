@@ -17,6 +17,7 @@ class DFMWriteUrlsToClipboardEvent;
 class DFMRenameEvent;
 class DFMDeleteEvent;
 class DFMMoveToTrashEvent;
+class DFMRestoreFromTrashEvent;
 class DFMPasteEvent;
 class DFMNewFolderEvent;
 class DFMNewFileEvent;
@@ -49,7 +50,7 @@ public:
     virtual bool deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const;
     virtual DUrlList moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const;
     virtual DUrlList pasteFile(const QSharedPointer<DFMPasteEvent> &event) const;
-    virtual bool restoreFile(const DUrl &srcUrl, const DUrl &tarUrl, const DFMEvent &event, bool &accepted) const;
+    virtual bool restoreFile(const QSharedPointer<DFMRestoreFromTrashEvent> &event) const;
     virtual bool newFolder(const QSharedPointer<DFMNewFolderEvent> &event) const;
     virtual bool newFile(const QSharedPointer<DFMNewFileEvent> &event) const;
 

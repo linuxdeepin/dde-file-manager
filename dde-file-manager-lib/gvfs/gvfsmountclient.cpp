@@ -15,7 +15,7 @@
 
 bool GvfsMountClient::AskingPassword = false;
 QJsonObject GvfsMountClient::SMBLoginObj = {};
-DFMEvent GvfsMountClient::MountEvent = DFMEvent();
+DFMUrlBaseEvent GvfsMountClient::MountEvent = DFMUrlBaseEvent(DUrl());
 
 MountAskPasswordDialog* GvfsMountClient::AskPasswordDialog = NULL;
 
@@ -80,7 +80,7 @@ void GvfsMountClient::mount_done_cb(GObject *object, GAsyncResult *res, gpointer
     }else{
         qDebug() << "g_file_mount_enclosing_volume_finish" << succeeded << AskingPassword;
         if (AskingPassword){
-            SMBLoginObj.insert("id", MountEvent.fileUrl().toString());
+            SMBLoginObj.insert("id", MountEvent.url().toString());
             if (SMBLoginObj.value("passwordSave").toInt() == 2){
                 SMBLoginObj.remove("password");
                 emit fileSignalManager->requsetCacheLoginData(SMBLoginObj);
@@ -124,10 +124,10 @@ void GvfsMountClient::ask_password_cb(GMountOperation *op, const char *message, 
     obj.insert("passwordSave", passwordSave);
 
 
-    AskPasswordDialog = new MountAskPasswordDialog(WindowManager::getWindowById(MountEvent.eventId()));
+    AskPasswordDialog = new MountAskPasswordDialog(WindowManager::getWindowById(MountEvent.windowId()));
     AskPasswordDialog->setLoginData(obj);
 
-    if (MountEvent.fileUrl().isSMBFile()){
+    if (MountEvent.url().isSMBFile()){
         AskPasswordDialog->setDomainLineVisible(true);
     }else{
         AskPasswordDialog->setDomainLineVisible(false);
@@ -203,10 +203,10 @@ void GvfsMountClient::mountByPath(const QString &path)
     mount(file);
 }
 
-void GvfsMountClient::mountByEvent(const DFMEvent &event)
+void GvfsMountClient::mountByEvent(const DFMUrlBaseEvent &event)
 {
     qDebug() << event;
-    QString path = event.fileUrl().toString();
+    QString path = event.url().toString();
     MountEvent = event;
     mountByPath(path);
 }

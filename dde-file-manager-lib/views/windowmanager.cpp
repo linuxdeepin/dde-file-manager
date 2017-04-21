@@ -339,7 +339,7 @@ bool WindowManager::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *res
         QVariant result;
 
         if (e->dirOpenMode() == DFMOpenUrlEvent::OpenInCurrentWindow) {
-            result = DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(dirList.first(), getWindowById(event->eventId()), event->sender());
+            result = DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(dirList.first(), getWindowById(event->windowId()), event->sender());
         } else {
             result = DFMEventDispatcher::instance()->processEvent<DFMOpenNewWindowEvent>(dirList, e->dirOpenMode() == DFMOpenUrlEvent::ForceOpenNewWindow, event->sender());
         }

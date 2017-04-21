@@ -200,14 +200,14 @@ void FileManagerApp::showPropertyDialog(const QStringList paths)
                 dialogManager->showTrashPropertyDialog(event);
                 continue;
             } else if(df.getDeepinId() == "dde-computer"){
-                dialogManager->showComputerPropertyDialog(DFMEvent());
+                dialogManager->showComputerPropertyDialog();
                 continue;
             }
         }
 
         //trash:/// and computer:///
         if(url == DUrl::fromComputerFile("/")){
-            dialogManager->showComputerPropertyDialog(DFMEvent());
+            dialogManager->showComputerPropertyDialog();
             continue;
         }
         if(url == DUrl::fromTrashFile("/")){

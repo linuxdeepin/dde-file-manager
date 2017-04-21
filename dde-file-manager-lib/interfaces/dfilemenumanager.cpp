@@ -4,6 +4,7 @@
 #include "dfmevent.h"
 #include "dfilemenu.h"
 #include "dfileservices.h"
+#include "dfmeventdispatcher.h"
 #include "controllers/appcontroller.h"
 #include "controllers/trashmanager.h"
 #include "models/desktopfileinfo.h"
@@ -790,9 +791,8 @@ void DFileMenuManager::actionTriggered(QAction *action)
 {
     DFileMenu *menu = qobject_cast<DFileMenu *>(sender());
     qDebug() << menu << action;
-    DFMEvent event = menu->event();
 
-    if (action->data().isValid()){
+    if (action->data().isValid()) {
         bool flag = false;
         int _type = action->data().toInt(&flag);
         MenuAction type;
@@ -803,25 +803,7 @@ void DFileMenuManager::actionTriggered(QAction *action)
             return;
         }
 
-        QMetaEnum metaEnum = QMetaEnum::fromType<MenuAction>();
-        QString key = metaEnum.valueToKey(type);
-        QString methodKey = QString("action%1").arg(key);
-        QString methodSignature = QString("action%1(" QT_STRINGIFY(DFMEvent) ")").arg(key);
-
-        const QMetaObject* metaObject = appController->metaObject();
-//        QStringList methods;
-//        for(int i = metaObject->methodOffset(); i < metaObject->methodCount(); ++i){
-//            methods << QString::fromLatin1(metaObject->method(i).methodSignature());
-//        }
-//        qDebug() << methods;
-//        qDebug() << methodKey << methodName;
-        if (metaObject->indexOfSlot(methodSignature.toLocal8Bit().constData()) != -1){
-            QMetaObject::invokeMethod(appController,
-                                      methodKey.toLocal8Bit().constData(),
-                                      Qt::DirectConnection,
-                                      Q_ARG(DFMEvent, event));
-        }else{
-            qWarning() << "Appcontroller has no method:" << methodSignature;
-        }
+        const QSharedPointer<DFMMenuActionEvent> &event = menu->makeEvent(type);
+        DFMEventDispatcher::instance()->processEvent(event);
     }
 }

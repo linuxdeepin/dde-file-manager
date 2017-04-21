@@ -1,4 +1,5 @@
 #include "dfilemenu.h"
+#include "dfmevent.h"
 
 DFileMenu::DFileMenu(QWidget *parent)
     : QMenu(parent)
@@ -6,15 +7,21 @@ DFileMenu::DFileMenu(QWidget *parent)
 
 }
 
-
-DFMEvent DFileMenu::event() const
+const QSharedPointer<DFMMenuActionEvent> DFileMenu::makeEvent(DFMGlobal::MenuAction action) const
 {
-    return m_event;
+    DFMMenuActionEvent *event = new DFMMenuActionEvent(this, m_currentUrl, m_selectedUrls, action, m_sender);
+
+    event->setWindowId(m_eventId);
+
+    return QSharedPointer<DFMMenuActionEvent>(event);
 }
 
-void DFileMenu::setEvent(const DFMEvent &event)
+void DFileMenu::setEventData(const DUrl &currentUrl, const DUrlList &selectedUrls, quint64 eventId, const QObject *sender)
 {
-    m_event = event;
+    m_currentUrl = currentUrl;
+    m_selectedUrls = selectedUrls;
+    m_eventId = eventId;
+    m_sender = sender;
 }
 
 QAction *DFileMenu::actionAt(int index) const

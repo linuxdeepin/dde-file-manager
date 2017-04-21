@@ -40,8 +40,8 @@ public:
 
     void init();
 
-    void _q_edit(const DFMEvent &event);
-    void _q_selectAndRename(const DFMEvent &event);
+    void _q_edit(const DFMUrlBaseEvent &event);
+    void _q_selectAndRename(const DFMUrlBaseEvent &event);
 
     QByteArray keyboardSearchKeys;
     QTimer keyboardSearchTimer;
@@ -121,16 +121,16 @@ void DFileViewHelperPrivate::init()
                      }, q);
 }
 
-void DFileViewHelperPrivate::_q_edit(const DFMEvent &event)
+void DFileViewHelperPrivate::_q_edit(const DFMUrlBaseEvent &event)
 {
     Q_Q(DFileViewHelper);
 
-    if (event.eventId() != q->windowId() || event.fileUrlList().isEmpty())
+    if (event.windowId() != q->windowId())
         return;
 
-    DUrl fileUrl = event.fileUrlList().first();
+    DUrl fileUrl = event.url();
 
-    if (fileUrl.isEmpty())
+    if (fileUrl.isValid())
         return;
 
     const QModelIndex &index = q->model()->index(fileUrl);
@@ -139,15 +139,15 @@ void DFileViewHelperPrivate::_q_edit(const DFMEvent &event)
         q->parent()->edit(index, QAbstractItemView::EditKeyPressed, 0);
 }
 
-void DFileViewHelperPrivate::_q_selectAndRename(const DFMEvent &event)
+void DFileViewHelperPrivate::_q_selectAndRename(const DFMUrlBaseEvent &event)
 {
     Q_Q(DFileViewHelper);
 
-    if (event.eventId() != q->windowId() || !q->parent()->isVisible()) {
+    if (event.windowId() != q->windowId() || !q->parent()->isVisible()) {
         return;
     }
 
-    q->select(event.fileUrlList());
+    q->select(DUrlList() << event.url());
     _q_edit(event);
 }
 
@@ -174,7 +174,7 @@ QAbstractItemView *DFileViewHelper::parent() const
  * \brief Returns the window id of the top-level window in the parent widget.
  * \return
  */
-int DFileViewHelper::windowId() const
+quint64 DFileViewHelper::windowId() const
 {
     return WindowManager::getWindowId(parent());
 }
@@ -459,7 +459,7 @@ void DFileViewHelper::handleCommitData(QWidget *editor) const
 
     DFMEvent event(this);
     event.setData(fileInfo->fileUrl());
-    event.setEventId(windowId());
+    event.setWindowId(windowId());
 
     QString new_file_name = lineEdit ? lineEdit->text() : item ? item->edit->toPlainText() : "";
 

@@ -81,12 +81,9 @@ DUrlList DAbstractFileController::pasteFile(const QSharedPointer<DFMPasteEvent> 
     return DUrlList();
 }
 
-bool DAbstractFileController::restoreFile(const DUrl &srcUrl, const DUrl &tarUrl, const DFMEvent &event, bool &accepted) const
+bool DAbstractFileController::restoreFile(const QSharedPointer<DFMRestoreFromTrashEvent> &event) const
 {
-    Q_UNUSED(srcUrl)
-    Q_UNUSED(tarUrl)
-    Q_UNUSED(event)
-    accepted = false;
+    event->ignore();
 
     return false;
 }
@@ -112,9 +109,19 @@ bool DAbstractFileController::openFileLocation(const QSharedPointer<DFMOpenFileL
 
 const QList<DAbstractFileInfoPointer> DAbstractFileController::getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const
 {
-    event->ignore();
+    const DDirIteratorPointer &iterator = createDirIterator(dMakeEventPointer<DFMCreateDiriterator>(event->url(), event->nameFilters(),
+                                                                                                    event->filters(), event->flags(), event->sender()));
 
-    return QList<DAbstractFileInfoPointer>();
+    QList<DAbstractFileInfoPointer> list;
+
+    if (iterator) {
+        while (iterator->hasNext()) {
+            iterator->next();
+            list.append(iterator->fileInfo());
+        }
+    }
+
+    return list;
 }
 
 const DAbstractFileInfoPointer DAbstractFileController::createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const

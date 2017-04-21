@@ -368,12 +368,17 @@ bool SearchController::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsTo
 
 DUrlList SearchController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const
 {
-    return DFileService::instance()->moveToTrashSync(realUrlList(event->urlList()), event->sender());
+    return DFileService::instance()->moveToTrash(realUrlList(event->urlList()), event->sender());
+}
+
+bool SearchController::restoreFile(const QSharedPointer<DFMRestoreFromTrashEvent> &event) const
+{
+    return DFileService::instance()->restoreFile(realUrlList(event->urlList()), event->sender());
 }
 
 bool SearchController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const
 {
-    return DFileService::instance()->deleteFilesSync(realUrlList(event->urlList()), event->sender());
+    return DFileService::instance()->deleteFiles(realUrlList(event->urlList()), event->sender());
 }
 
 bool SearchController::renameFile(const QSharedPointer<DFMRenameEvent> &event) const

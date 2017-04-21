@@ -149,18 +149,9 @@ void ComputerViewItem::contextMenuEvent(QContextMenuEvent *event)
         }
     }
 
-    DUrlList urls;
-    urls.append(url);
-
-    DFMEvent fmEvent(this);
-
-    fmEvent.setData(urls);
-    fmEvent.setEventId(windowId());
-
-    menu->setEvent(fmEvent);
+    menu->setEventData(DUrl(), DUrlList() << url, windowId(), this);
     menu->exec();
     menu->deleteLater();
-
 }
 
 void ComputerViewItem::mousePressEvent(QMouseEvent *event)
@@ -182,12 +173,7 @@ void ComputerViewItem::mouseDoubleClickEvent(QMouseEvent *event)
 
             if (diskInfo.can_mount() && !diskInfo.can_unmount()){
                 url.setQuery(m_deviceInfo->getId());
-                DUrlList urls;
-                urls.append(url);
-                DFMEvent fevent(this);
-                fevent.setEventId(windowId());
-                fevent.setData(urls);
-                appController->actionOpenDisk(fevent);
+                appController->actionOpenDisk(dMakeEventPointer<DFMUrlBaseEvent>(url, this));
             }else{
                 DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(url, window(), this);
             }
@@ -428,7 +414,7 @@ void ComputerView::initUI()
     }
 
     DFMEvent event(this);
-    event.setEventId(window()->winId());
+    event.setWindowId(window()->winId());
     const int number = m_systemItems.count() + m_nativeItems.count() + m_removableItems.count();
     m_statusBar->itemCounted(event, number);
 
@@ -547,12 +533,12 @@ void ComputerView::updateStatusBar()
         DUrlList urlList;
         if(checkedItem->info())
             urlList << checkedItem->info()->fileUrl();
-        event.setEventId(window()->winId());
+        event.setWindowId(window()->winId());
         event.setData(urlList);
         m_statusBar->itemSelected(event, 1);
     }else{
         DFMEvent event(this);
-        event.setEventId(window()->winId());
+        event.setWindowId(window()->winId());
         const int number = m_systemItems.count() + m_nativeItems.count() + m_removableItems.count();
         m_statusBar->itemCounted(event, number);
     }
@@ -807,10 +793,10 @@ void ComputerView::keyPressEvent(QKeyEvent *event)
         case Qt::ControlModifier:
             switch (event->key()) {
                 case Qt::Key_L:
-                    appController->actionctrlL(DFMEvent(this));
+                    appController->actionctrlL(WindowManager::getWindowId(this));
                     return;
                 case Qt::Key_F:
-                    appController->actionctrlF(DFMEvent(this));
+                    appController->actionctrlF(WindowManager::getWindowId(this));
                     return;
                 default: break;
             }
@@ -818,7 +804,7 @@ void ComputerView::keyPressEvent(QKeyEvent *event)
     case Qt::ControlModifier | Qt::ShiftModifier:
         switch (event->key()) {
         case Qt::Key_Question:
-            appController->actionShowHotkeyHelp(DFMEvent(this));
+            appController->actionShowHotkeyHelp(WindowManager::getWindowId(this));
             return;
         default:
             break;

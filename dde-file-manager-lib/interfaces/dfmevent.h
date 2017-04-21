@@ -29,6 +29,7 @@ public:
         RenameFile,
         DeleteFiles,
         MoveToTrash,
+        RestoreFromTrash,
         PasteFile,
         NewFolder,
         NewFile,
@@ -46,6 +47,7 @@ public:
         ChangeCurrentUrl,
         OpenNewWindow,
         OpenUrl,
+        MenuAction,
         // user custom
         CustomBase = 1000                            // first user event id
     };
@@ -68,8 +70,8 @@ public:
     inline void accept() { m_accept = true; }
     inline void ignore() { m_accept = false; }
 
-    quint64 eventId() const;
-    void setEventId(quint64 id);
+    quint64 windowId() const;
+    void setWindowId(quint64 id);
 
     //! 在DFileServices中通过此url列表来获取处理此事件的Controller
     virtual DUrlList handleUrlList() const;
@@ -205,12 +207,16 @@ public:
     explicit DFMDeleteEvent(const DUrlList &list, const QObject *sender = 0);
 };
 
-class DFMMoveToTrashEvent : public DFMEvent
+class DFMMoveToTrashEvent : public DFMUrlListBaseEvent
 {
 public:
     explicit DFMMoveToTrashEvent(const DUrlList &list, const QObject *sender = 0);
+};
 
-    inline DUrlList urlList() const { return qvariant_cast<DUrlList>(m_data);}
+class DFMRestoreFromTrashEvent : public DFMUrlListBaseEvent
+{
+public:
+    explicit DFMRestoreFromTrashEvent(const DUrlList &list, const QObject *sender = 0);
 };
 
 class DFMPasteEvent : public DFMUrlListBaseEvent
@@ -361,5 +367,17 @@ public:
     DirOpenMode dirOpenMode() const;
 };
 Q_DECLARE_METATYPE(DFMOpenUrlEvent::DirOpenMode)
+
+class DFileMenu;
+class DFMMenuActionEvent : public DFMEvent
+{
+public:
+    explicit DFMMenuActionEvent(const DFileMenu *menu, const DUrl &currentUrl, const DUrlList &selectedUrls, DFMGlobal::MenuAction action, const QObject *sender = 0);
+
+    const DFileMenu *menu() const;
+    const DUrl currentUrl() const;
+    const DUrlList selectedUrls() const;
+    DFMGlobal::MenuAction action() const;
+};
 
 #endif // FMEVENT_H

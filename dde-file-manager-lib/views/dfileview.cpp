@@ -282,7 +282,7 @@ QList<int> DFileView::columnRoleList() const
     return d->columnRoles;
 }
 
-int DFileView::windowId() const
+quint64 DFileView::windowId() const
 {
     return WindowManager::getWindowId(this);
 }
@@ -732,17 +732,15 @@ void DFileView::dislpayAsActionTriggered(QAction *action)
     dAction->setChecked(true);
     MenuAction type = (MenuAction)dAction->data().toInt();
 
-    DFMEvent fmevent(this);
-
     switch(type){
         case MenuAction::IconView:
-            emit fileSignalManager->requestChangeIconViewMode(fmevent);
+            emit fileSignalManager->requestChangeIconViewMode(windowId());
             break;
         case MenuAction::ListView:
-            emit fileSignalManager->requestChangeListViewMode(fmevent);
+            emit fileSignalManager->requestChangeListViewMode(windowId());
             break;
     case MenuAction::ExtendView:
-            emit fileSignalManager->requestChangeExtendViewMode(fmevent);
+            emit fileSignalManager->requestChangeExtendViewMode(windowId());
             break;
         default:
             break;
@@ -805,7 +803,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
         case Qt::Key_Return:
         case Qt::Key_Enter:
             if (!itemDelegate()->editingIndex().isValid()) {
-                appController->actionOpen(DFMUrlListBaseEvent(urls, this));
+                appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(urls, this));
 
                 return;
             }
@@ -822,7 +820,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
         }
             return;
         case Qt::Key_F1:
-            appController->actionHelp(DFMEvent(this));
+            appController->actionHelp();
 
             return;
         case Qt::Key_F5:
@@ -844,15 +842,15 @@ void DFileView::keyPressEvent(QKeyEvent *event)
     case Qt::ControlModifier:
         switch (event->key()) {
         case Qt::Key_F:
-            appController->actionctrlF(DFMEvent(this));
+            appController->actionctrlF(windowId());
 
             return;
         case Qt::Key_L:
-            appController->actionctrlL(DFMEvent(this));
+            appController->actionctrlL(windowId());
 
             return;
         case Qt::Key_N:{
-            appController->actionNewWindow(DFMUrlListBaseEvent(urls, this));
+            appController->actionNewWindow(dMakeEventPointer<DFMUrlListBaseEvent>(urls, this));
             return;
         }
         case Qt::Key_H:
@@ -867,10 +865,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             if (rootUrl().isNetWorkFile())
                 return;
 
-            if (urls.isEmpty())
-                appController->actionProperty(DFMUrlListBaseEvent(DUrlList() << rootUrl(), this));
-            else
-                appController->actionProperty(DFMUrlListBaseEvent(urls, this));
+            appController->actionProperty(dMakeEventPointer<DFMUrlListBaseEvent>(urls, this));
 
             return;
         case Qt::Key_Up:
@@ -878,15 +873,15 @@ void DFileView::keyPressEvent(QKeyEvent *event)
 
             return;
         case Qt::Key_Down:
-            appController->actionOpen(DFMUrlListBaseEvent(urls, this));
+            appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(urls, this));
 
             return;
         case Qt::Key_Left:
-            appController->actionBack(DFMEvent(this));
+            appController->actionBack(windowId());
 
             return;
         case Qt::Key_Right:
-            appController->actionForward(DFMEvent(this));
+            appController->actionForward(windowId());
 
             return;
         case Qt::Key_T:{
@@ -908,7 +903,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             return;
         }
         case Qt::Key_W:
-            emit fileSignalManager->requestCloseCurrentTab(DFMEvent(this));
+            emit fileSignalManager->requestCloseCurrentTab(windowId());
             return;
         case Qt::Key_Tab:
             emit DFileView::requestActivateNextTab();
@@ -926,7 +921,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
 
             return;
         } else if (event->key() == Qt::Key_T) {
-            appController->actionOpenInTerminal(DFMUrlBaseEvent(rootUrl(), this));
+            appController->actionOpenInTerminal(dMakeEventPointer<DFMUrlListBaseEvent>(urls, this));
 
             return;
         }
@@ -941,11 +936,11 @@ void DFileView::keyPressEvent(QKeyEvent *event)
                 return;
 
             clearSelection();
-            appController->actionNewFolder(DFMUrlBaseEvent(rootUrl(), this));
+            appController->actionNewFolder(dMakeEventPointer<DFMUrlBaseEvent>(rootUrl(), this));
 
             return;
         } if (event->key() == Qt::Key_Question) {
-            appController->actionShowHotkeyHelp(DFMEvent(this));
+            appController->actionShowHotkeyHelp(windowId());
 
             return;
         }
@@ -959,15 +954,15 @@ void DFileView::keyPressEvent(QKeyEvent *event)
 
             return;
         case Qt::Key_Down:
-            appController->actionOpen(DFMUrlListBaseEvent(urls, this));
+            appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(urls, this));
 
             return;
         case Qt::Key_Left:
-            appController->actionBack(DFMEvent(this));
+            appController->actionBack(windowId());
 
             return;
         case Qt::Key_Right:
-            appController->actionForward(DFMEvent(this));
+            appController->actionForward(windowId());
 
             return;
         case Qt::Key_Home:
@@ -1020,17 +1015,11 @@ void DFileView::mousePressEvent(QMouseEvent *event)
 
     switch (event->button()) {
     case Qt::BackButton: {
-        DFMEvent event(this);
-
-        fileSignalManager->requestBack(event);
-
+        fileSignalManager->requestBack(windowId());
         break;
     }
     case Qt::ForwardButton: {
-        DFMEvent event(this);
-
-        fileSignalManager->requestForward(event);
-
+        fileSignalManager->requestForward(windowId());
         break;
     }
     case Qt::LeftButton: {
@@ -1154,7 +1143,7 @@ void DFileView::updateStatusBar()
         return;
 
     DFMEvent event(this);
-    event.setEventId(windowId());
+    event.setWindowId(windowId());
     event.setData(selectedUrls());
     int count = selectedIndexCount();
 
@@ -2083,13 +2072,7 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
         return;
     }
 
-    DUrlList urls;
-    urls.append(rootUrl());
-
-    DFMEvent event(this);
-    event.setData(urls);
-    event.setEventId(windowId());
-    menu->setEvent(event);
+    menu->setEventData(rootUrl(), selectedUrls(), windowId(), this);
     menu->exec();
     menu->deleteLater();
 }
@@ -2127,11 +2110,7 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
         return;
     }
 
-    DFMEvent event(this);
-    event.setData(list);
-    event.setEventId(windowId());
-
-    menu->setEvent(event);
+    menu->setEventData(rootUrl(), selectedUrls(), windowId(), this);
     menu->exec();
     menu->deleteLater();
 }
@@ -2266,7 +2245,7 @@ void DFileView::onModelStateChanged(int state)
 
     DFMEvent event(this);
 
-    event.setEventId(windowId());
+    event.setWindowId(windowId());
     event.setData(rootUrl());
 
     emit fileSignalManager->loadingIndicatorShowed(event, state == DFileSystemModel::Busy);

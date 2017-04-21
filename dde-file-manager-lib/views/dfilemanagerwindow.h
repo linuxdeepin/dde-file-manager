@@ -32,6 +32,7 @@ class QPushButton;
 
 class DStatusBar;
 class DFMEvent;
+class DFMUrlBaseEvent;
 class ComputerView;
 class TabBar;
 class ViewManager;
@@ -77,7 +78,7 @@ public slots:
     void setIconView();
     void setListView();
     void preHandleCd(const DUrl &fileUrl, const QObject *requestor = 0);
-    void cd(const DFMEvent& event);
+    void cd(const DFMUrlBaseEvent &event);
 
     void showPluginView(const DUrl& fileUrl);
     void openNewTab(const DFMEvent& event);
@@ -86,7 +87,7 @@ public slots:
     void onTabAddableChanged(bool addable);
     void onCurrentTabChanged(int tabIndex);
     void onRequestCloseTab(const int index, const bool& remainState);
-    void closeCurrentTab(const DFMEvent& event);
+    void closeCurrentTab(quint64 winId);
     void showNewTabButton();
     void hideNewTabButton();
     void showEmptyTrashButton();

@@ -55,13 +55,13 @@ public slots:
     void showPropertyDialog(const DFMEvent &event);
     void showShareOptionsInPropertyDialog(const DFMEvent &event);
     void showTrashPropertyDialog(const DFMEvent &event);
-    void showComputerPropertyDialog(const DFMEvent& event);
+    void showComputerPropertyDialog();
     void showDevicePropertyDialog(const DFMEvent &event);
     void showDiskErrorDialog(const QString &id, const QString &errorText);
     void showBreakSymlinkDialog(const QString &targetName, const DUrl& linkfile);
-    void showAboutDialog(const DFMEvent &event);
-    void showUserSharePasswordSettingDialog(const DFMEvent& event);
-    void showGlobalSettingsDialog(const DFMEvent &event);
+    void showAboutDialog(quint64 winId);
+    void showUserSharePasswordSettingDialog(quint64 winId);
+    void showGlobalSettingsDialog(quint64 winId);
     void showDiskSpaceOutOfUsedDialog();
     void showFailToCreateSymlinkDialog(const QString &errorString);
     void showMoveToTrashConflictDialog(const DUrlList& urls);

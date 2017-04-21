@@ -45,7 +45,7 @@ DFMEvent &DFMEvent::operator =(const DFMEvent &other)
     return *this;
 }
 
-quint64 DFMEvent::eventId() const
+quint64 DFMEvent::windowId() const
 {
     if (m_id > 0)
         return m_id;
@@ -55,7 +55,7 @@ quint64 DFMEvent::eventId() const
     return w ? WindowManager::getWindowId(w) : 0;
 }
 
-void DFMEvent::setEventId(quint64 id)
+void DFMEvent::setWindowId(quint64 id)
 {
     m_id = id;
 }
@@ -124,6 +124,14 @@ QString fmeventType2String(DFMEvent::Type type)
         return QStringLiteral(QT_STRINGIFY(CreateGetChildrensJob));
     case DFMEvent::CreateFileWatcher:
         return QStringLiteral(QT_STRINGIFY(CreateFileWatcher));
+    case DFMEvent::ChangeCurrentUrl:
+        return QStringLiteral(QT_STRINGIFY(ChangeCurrentUrl));
+    case DFMEvent::OpenNewWindow:
+        return QStringLiteral(QT_STRINGIFY(OpenNewWindow));
+    case DFMEvent::OpenUrl:
+        return QStringLiteral(QT_STRINGIFY(OpenUrl));
+    case DFMEvent::MenuAction:
+        return QStringLiteral(QT_STRINGIFY(MenuAction));
     default:
         return QStringLiteral("Custom: %1").arg(type);
     }
@@ -230,9 +238,15 @@ DFMDeleteEvent::DFMDeleteEvent(const DUrlList &list, const QObject *sender)
 }
 
 DFMMoveToTrashEvent::DFMMoveToTrashEvent(const DUrlList &list, const QObject *sender)
-    : DFMEvent(MoveToTrash, sender)
+    : DFMUrlListBaseEvent(MoveToTrash, list, sender)
 {
-    setData(list);
+
+}
+
+DFMRestoreFromTrashEvent::DFMRestoreFromTrashEvent(const DUrlList &list, const QObject *sender)
+    : DFMUrlListBaseEvent(RestoreFromTrash, list, sender)
+{
+
 }
 
 DFMPasteEvent::DFMPasteEvent(DFMGlobal::ClipboardAction action, const DUrl &targetUrl,
@@ -434,4 +448,34 @@ DFMOpenUrlEvent::DFMOpenUrlEvent(const DUrlList &list, DFMOpenUrlEvent::DirOpenM
 DFMOpenUrlEvent::DirOpenMode DFMOpenUrlEvent::dirOpenMode() const
 {
     return property(QT_STRINGIFY(DFMOpenUrlEvent::dirOpenMode), DirOpenMode::OpenNewWindow);
+}
+
+DFMMenuActionEvent::DFMMenuActionEvent(const DFileMenu *menu, const DUrl &currentUrl, const DUrlList &selectedUrls, DFMGlobal::MenuAction action, const QObject *sender)
+    : DFMEvent(MenuAction, sender)
+{
+    setProperty(QT_STRINGIFY(DFMMenuActionEvent::menu), (quintptr)menu);
+    setProperty(QT_STRINGIFY(DFMMenuActionEvent::currentUrl), currentUrl);
+    setProperty(QT_STRINGIFY(DFMMenuActionEvent::action), action);
+
+    setData(selectedUrls);
+}
+
+const DFileMenu *DFMMenuActionEvent::menu() const
+{
+    return (const DFileMenu*)property<quintptr>(QT_STRINGIFY(DFMMenuActionEvent::menu), 0);
+}
+
+const DUrl DFMMenuActionEvent::currentUrl() const
+{
+    return property(QT_STRINGIFY(DFMMenuActionEvent::currentUrl), DUrl());
+}
+
+const DUrlList DFMMenuActionEvent::selectedUrls() const
+{
+    return data<DUrlList>();
+}
+
+DFMGlobal::MenuAction DFMMenuActionEvent::action() const
+{
+    return property(QT_STRINGIFY(DFMMenuActionEvent::action), DFMGlobal::Unknow);
 }

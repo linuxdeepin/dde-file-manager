@@ -145,8 +145,7 @@ void DFMGlobal::clearClipboard()
 
 void DFMGlobal::clearTrash()
 {
-    DFMEvent event;
-    appController->actionClearTrash(event);
+    appController->actionClearTrash();
 }
 
 void DFMGlobal::addPluginLibraryPath(const QString &path)

@@ -43,7 +43,7 @@ public:
 
     DUrl goToUrlWhenDeleted() const Q_DECL_OVERRIDE;
 
-    bool restore(const DFMEvent &event) const;
+    bool restore() const;
     QDateTime deletionDate() const;
     QString sourceFilePath() const;
 

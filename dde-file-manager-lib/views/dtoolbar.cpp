@@ -241,9 +241,7 @@ void DToolBar::searchBarDeactivated()
         }
     }
 
-    DFMEvent event(this);
-
-    emit fileSignalManager->requestFoucsOnFileView(event);
+    emit fileSignalManager->requestFoucsOnFileView(winId);
 }
 
 /**
@@ -276,7 +274,7 @@ void DToolBar::searchBarTextEntered()
 
 void DToolBar::crumbSelected(const DFMEvent &e)
 {
-    if (e.eventId() != WindowManager::getWindowId(this))
+    if (e.windowId() != WindowManager::getWindowId(this))
         return;
 
     DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(e.fileUrl(), window(), m_crumbWidget);
@@ -284,7 +282,7 @@ void DToolBar::crumbSelected(const DFMEvent &e)
 
 void DToolBar::crumbChanged(const DFMEvent &event)
 {
-    if (event.eventId() != WindowManager::getWindowId(this))
+    if (event.windowId() != WindowManager::getWindowId(this))
         return;
 
     if (event.sender() == m_crumbWidget)
@@ -366,52 +364,52 @@ void DToolBar::checkViewModeButton(DFileView::ViewMode mode)
     }
 }
 
-void DToolBar::handleHotkeyBack(const DFMEvent &event)
+void DToolBar::handleHotkeyBack(quint64 winId)
 {
-    if (event.eventId() == WindowManager::getWindowId(this)) {
+    if (winId == WindowManager::getWindowId(this)) {
         backButtonClicked();
     }
 }
 
-void DToolBar::handleHotkeyForward(const DFMEvent &event)
+void DToolBar::handleHotkeyForward(quint64 winId)
 {
-    if (event.eventId() == WindowManager::getWindowId(this)) {
+    if (winId == WindowManager::getWindowId(this)) {
         forwardButtonClicked();
     }
 }
 
-void DToolBar::handleHotkeyCtrlF(const DFMEvent &event)
+void DToolBar::handleHotkeyCtrlF(quint64 winId)
 {
-    if (event.eventId() == WindowManager::getWindowId(this)) {
+    if (winId == WindowManager::getWindowId(this)) {
         searchBarActivated();
         m_searchBar->setText("");
     }
 }
 
-void DToolBar::handleHotkeyCtrlL(const DFMEvent &event)
+void DToolBar::handleHotkeyCtrlL(quint64 winId)
 {
-    if (event.eventId() == WindowManager::getWindowId(this)) {
+    if (winId == WindowManager::getWindowId(this)) {
         searchBarActivated();
     }
 }
 
-void DToolBar::handleChangeIconMode(const DFMEvent &event)
+void DToolBar::handleChangeIconMode(quint64 winId)
 {
-    if (event.eventId() == WindowManager::getWindowId(this)) {
+    if (winId == WindowManager::getWindowId(this)) {
         m_iconViewButton->click();
     }
 }
 
-void DToolBar::handleChangeListMode(const DFMEvent &event)
+void DToolBar::handleChangeListMode(quint64 winId)
 {
-    if (event.eventId() == WindowManager::getWindowId(this)) {
+    if (winId == WindowManager::getWindowId(this)) {
         m_listViewButton->click();
     }
 }
 
-void DToolBar::handleChangeExtendMode(const DFMEvent &event)
+void DToolBar::handleChangeExtendMode(quint64 winId)
 {
-    if (event.eventId() == WindowManager::getWindowId(this)) {
+    if (winId == WindowManager::getWindowId(this)) {
         m_extendButton->click();
     }
 }

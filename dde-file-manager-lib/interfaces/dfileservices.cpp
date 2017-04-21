@@ -134,6 +134,32 @@ QVariant eventProcess(DFileService *service, const QSharedPointer<DFMEvent> &eve
 
 bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resultData)
 {
+#ifdef DDE_COMPUTER_TRASH
+    switch (event->type()) {
+    case DFMEvent::WriteUrlsToClipboard:
+    case DFMEvent::DeleteFiles:
+    case DFMEvent::MoveToTrash: {
+    DUrlList urlList = event->fileUrlList();
+
+    if (urlList.contains(DesktopFileInfo::computerDesktopFileUrl())) {
+        DesktopFile df(DesktopFileInfo::computerDesktopFileUrl().toLocalFile());
+        if (df.getDeepinId() == "dde-computer")
+            urlList.removeOne(DesktopFileInfo::computerDesktopFileUrl());
+    }
+
+    if (urlList.contains(DesktopFileInfo::trashDesktopFileUrl())) {
+        DesktopFile df(DesktopFileInfo::trashDesktopFileUrl().toLocalFile());
+        if (df.getDeepinId() == "dde-trash")
+            urlList.removeOne(DesktopFileInfo::trashDesktopFileUrl());
+    }
+
+    event->setData(urlList);
+    break;
+    }
+    default: break;
+    }
+#endif
+
 #define CALL_CONTROLLER(Fun)\
     eventProcess(this, event, &DAbstractFileController::Fun);
 
@@ -158,18 +184,91 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
     case DFMEvent::WriteUrlsToClipboard:
         result = CALL_CONTROLLER(writeFilesToClipboard);
         break;
-    case DFMEvent::RenameFile:
-        result = CALL_CONTROLLER(renameFile);
+    case DFMEvent::RenameFile: {
+        const QSharedPointer<DFMRenameEvent> &e = event.dynamicCast<DFMRenameEvent>();
+        const DAbstractFileInfoPointer &f = createFileInfo(e->toUrl());
+
+        if (f->exists()) {
+            dialogManager->showRenameNameSameErrorDialog(f->fileDisplayName(), *event.data());
+            result = false;
+        } else {
+            result = CALL_CONTROLLER(renameFile);
+
+            if (result.toBool() && event->isAccepted()) {
+                DFMUrlListBaseEvent newEvent(DUrlList() << e->toUrl(), e->sender());
+
+                newEvent.setWindowId(e->windowId());
+
+                TIMER_SINGLESHOT(200, {
+                    emit fileSignalManager->requestSelectFile(newEvent);
+                }, newEvent);
+
+                result = true;
+            }
+        }
+
         break;
-    case DFMEvent::DeleteFiles:
-        result = CALL_CONTROLLER(deleteFiles);
+    }
+    case DFMEvent::DeleteFiles: {
+        foreach (const DUrl& url, event->fileUrlList()) {
+            if (systemPathManager->isSystemPath(url.toLocalFile())) {
+                dialogManager->showDeleteSystemPathWarnDialog();
+                result = false;
+                goto end;
+            }
+        }
+
+        if (dialogManager->showDeleteFilesClearTrashDialog(DFMUrlListBaseEvent(event->fileUrlList(), this)) == 1) {
+            result = CALL_CONTROLLER(deleteFiles);
+        } else {
+            result = false;
+        }
+
         break;
-    case DFMEvent::MoveToTrash:
+    }
+    case DFMEvent::MoveToTrash: {
+        //handle system files should not be able to move to trash
+        foreach (const DUrl& url, event->fileUrlList()) {
+            if(systemPathManager->isSystemPath(url.toLocalFile())){
+                dialogManager->showDeleteSystemPathWarnDialog();
+                result = QVariant::fromValue(event->fileUrlList());
+                goto end;
+            }
+        }
+
+        //handle files whom could not be moved to trash
+        DUrlList enableList;
+        foreach (const DUrl& url, event->fileUrlList()) {
+            const DAbstractFileInfoPointer& info = createFileInfo(url);
+            if(info->isDir() && !info->isWritable())
+                continue;
+
+            enableList << url;
+        }
+
+        event->setData(enableList);
         result = CALL_CONTROLLER(moveToTrash);
+
         break;
-    case DFMEvent::PasteFile:
+    }
+    case DFMEvent::RestoreFromTrash: {
+        result = CALL_CONTROLLER(restoreFile);
+        break;
+    }
+    case DFMEvent::PasteFile: {
         result = CALL_CONTROLLER(pasteFile);
+
+        if (event->isAccepted()) {
+            DFMUrlListBaseEvent e(qvariant_cast<DUrlList>(result), event->sender());
+
+            e.setWindowId(event->windowId());
+
+            metaObject()->invokeMethod(const_cast<DFileService*>(this), "laterRequestSelectFiles",
+                                       Qt::QueuedConnection, Q_ARG(DFMUrlListBaseEvent, e));
+        }
+
         break;
+    }
     case DFMEvent::NewFolder:
         result = CALL_CONTROLLER(newFolder);
         break;
@@ -220,6 +319,7 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
         return false;
     }
 
+end:
     if (resultData)
         *resultData = result;
 
@@ -354,180 +454,34 @@ bool DFileService::decompressFileHere(const DUrlList &list, const QObject *sende
 
 bool DFileService::writeFilesToClipboard(DFMGlobal::ClipboardAction action, const DUrlList &list, const QObject *sender) const
 {
-#ifdef DDE_COMPUTER_TRASH
-    DUrlList urlList = event->urlList();
-
-    if (urlList.contains(DesktopFileInfo::computerDesktopFileUrl())) {
-        DesktopFile df(DesktopFileInfo::computerDesktopFileUrl().toLocalFile());
-        if (df.getDeepinId() == "dde-computer")
-            urlList.removeOne(DesktopFileInfo::computerDesktopFileUrl());
-    }
-
-    if (urlList.contains(DesktopFileInfo::trashDesktopFileUrl())) {
-        DesktopFile df(DesktopFileInfo::trashDesktopFileUrl().toLocalFile());
-        if (df.getDeepinId() == "dde-trash")
-            urlList.removeOne(DesktopFileInfo::trashDesktopFileUrl());
-    }
-
-    event->setData(urlList);
-#endif
-
     return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMWriteUrlsToClipboardEvent>(action, list, sender)).toBool();
 }
 
 bool DFileService::renameFile(const DUrl &from, const DUrl &to, const QObject *sender) const
 {
-    FILTER_RETURN(RenameFile, false)
-
-    const DAbstractFileInfoPointer &f = createFileInfo(to);
-
-    const QSharedPointer<DFMRenameEvent> &event = dMakeEventPointer<DFMRenameEvent>(from, to, sender);
-
-    if (f->exists()) {
-        dialogManager->showRenameNameSameErrorDialog(f->fileDisplayName(), *event.data());
-        return false;
-    }
-
-    bool ok = DFMEventDispatcher::instance()->processEvent(event).toBool();
-
-    if (ok && event->isAccepted()) {
-        DFMEvent e = *event.data();
-
-        e.setData((DUrlList() << to));
-
-        TIMER_SINGLESHOT(200, {
-            emit fileSignalManager->requestSelectFile(e);
-        }, e);
-
-        return true;
-    }
-
-    return false;
+    return DFMEventDispatcher::instance()->processEvent<DFMRenameEvent>(from, to, sender).toBool();
 }
 
 bool DFileService::deleteFiles(const DUrlList &list, const QObject *sender) const
 {
-    FILTER_RETURN(DeleteFiles, false)
-
-    DUrlList urlList = list;
-#ifdef DDE_COMPUTER_TRASH
-    if(urlList.contains(DesktopFileInfo::computerDesktopFileUrl())){
-        DesktopFile df(DesktopFileInfo::computerDesktopFileUrl().toLocalFile());
-        if(df.getDeepinId() == "dde-computer")
-            urlList.removeOne(DesktopFileInfo::computerDesktopFileUrl());
-    }
-
-    if(urlList.contains(DesktopFileInfo::trashDesktopFileUrl())){
-        DesktopFile df(DesktopFileInfo::trashDesktopFileUrl().toLocalFile());
-        if(df.getDeepinId() == "dde-trash")
-            urlList.removeOne(DesktopFileInfo::trashDesktopFileUrl());
-    }
-#endif
-
-    if (urlList.isEmpty())
-        return true;
-
-    foreach (const DUrl& url, urlList) {
-        if(systemPathManager->isSystemPath(url.toLocalFile())){
-            dialogManager->showDeleteSystemPathWarnDialog();
-            return false;
-        }
-    }
-
-    if (QThreadPool::globalInstance()->activeThreadCount() >= MAX_THREAD_COUNT) {
-        qDebug() << "Beyond the maximum number of threads!";
-        return false;
-    }
-
-    DFMEvent e(this);
-
-    e.setData(urlList);
-
-    int result = dialogManager->showDeleteFilesClearTrashDialog(e);
-
-    if (result == 1) {
-        QtConcurrent::run(QThreadPool::globalInstance(), this, &DFileService::deleteFilesSync, urlList, sender);
-        return true;
-    }
-
-    return false;
-}
-
-bool DFileService::deleteFilesSync(const DUrlList &list, const QObject *sender) const
-{
     return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMDeleteEvent>(list, sender)).toBool();
 }
 
-void DFileService::moveToTrash(const DUrlList &list, const QObject *sender) const
+DUrlList DFileService::moveToTrash(const DUrlList &list, const QObject *sender) const
 {
-    FILTER_RETURN(MoveToTrash)
+    if (list.isEmpty())
+        return list;
 
-    DUrlList urlList = list;
-#ifdef DDE_COMPUTER_TRASH
-    if(urlList.contains(DesktopFileInfo::computerDesktopFileUrl())){
-        DesktopFile df(DesktopFileInfo::computerDesktopFileUrl().toLocalFile());
-        if(df.getDeepinId() == "dde-computer")
-            urlList.removeOne(DesktopFileInfo::computerDesktopFileUrl());
+    if (FileUtils::isGvfsMountFile(list.first().toLocalFile())) {
+        deleteFiles(list, sender);
+        return list;
     }
 
-    if(urlList.contains(DesktopFileInfo::trashDesktopFileUrl())){
-        DesktopFile df(DesktopFileInfo::trashDesktopFileUrl().toLocalFile());
-        if(df.getDeepinId() == "dde-trash")
-            urlList.removeOne(DesktopFileInfo::trashDesktopFileUrl());
-    }
-#endif
-
-    if (urlList.isEmpty())
-        return;
-
-    //handle system files should not be able to move to trash
-    foreach (const DUrl& url, urlList) {
-        if(systemPathManager->isSystemPath(url.toLocalFile())){
-            dialogManager->showDeleteSystemPathWarnDialog();
-            return;
-        }
-    }
-
-    if (FileUtils::isGvfsMountFile(urlList.first().toLocalFile())){
-        deleteFiles(urlList, sender);
-        return;
-    }
-
-    //handle files whom could not be moved to trash
-    DUrlList enableList;
-    foreach (const DUrl& url, urlList) {
-        const DAbstractFileInfoPointer& info = createFileInfo(url);
-        if(info->isDir() && !info->isWritable())
-            continue;
-
-        enableList << url;
-    }
-
-    urlList = enableList;
-
-    if (QThreadPool::globalInstance()->activeThreadCount() >= MAX_THREAD_COUNT) {
-        qDebug() << "Beyond the maximum number of threads!";
-        return;
-    }
-
-    if (QThread::currentThread() == qApp->thread()) {
-        QtConcurrent::run(QThreadPool::globalInstance(), this, &DFileService::moveToTrashSync, urlList, sender);
-
-        return;
-    }
-
-    moveToTrashSync(urlList, sender);
-}
-
-DUrlList DFileService::moveToTrashSync(const DUrlList &list, const QObject *sender) const
-{
     return qvariant_cast<DUrlList>(DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMMoveToTrashEvent>(list, sender)));
 }
 
 void DFileService::pasteFileByClipboard(const DUrl &targetUrl, const QObject *sender) const
 {
-    FILTER_RETURN(PasteFileByClipboard)
-
     DFMGlobal::ClipboardAction action = DFMGlobal::instance()->clipboardAction();
 
     if (action == DFMGlobal::UnknowAction)
@@ -536,52 +490,15 @@ void DFileService::pasteFileByClipboard(const DUrl &targetUrl, const QObject *se
     pasteFile(action, targetUrl, DUrl::fromQUrlList(DFMGlobal::instance()->clipboardFileUrlList()), sender);
 }
 
-void DFileService::pasteFile(DFMGlobal::ClipboardAction action, const DUrl &targetUrl, const DUrlList &list, const QObject *sender) const
+DUrlList DFileService::pasteFile(DFMGlobal::ClipboardAction action, const DUrl &targetUrl, const DUrlList &list, const QObject *sender) const
 {
-    if (QThreadPool::globalInstance()->activeThreadCount() >= MAX_THREAD_COUNT) {
-        qDebug() << "Beyond the maximum number of threads!";
-        return;
-    }
-
-    if (QThread::currentThread() == qApp->thread()) {
-        QtConcurrent::run(QThreadPool::globalInstance(), this, &DFileService::pasteFile, action, targetUrl, list, sender);
-
-        return;
-    }
-
     const QSharedPointer<DFMPasteEvent> &event = dMakeEventPointer<DFMPasteEvent>(action, targetUrl, list, sender);
-    const DUrlList &result = qvariant_cast<DUrlList>(DFMEventDispatcher::instance()->processEvent(event));
-
-    if (event->isAccepted()) {
-        DFMEvent e = *event.data();
-
-        e.setData(result);
-
-        metaObject()->invokeMethod(const_cast<DFileService*>(this), "laterRequestSelectFiles",
-                                   Qt::QueuedConnection, Q_ARG(DFMEvent, e));
-
-        return;
-    }
+    return qvariant_cast<DUrlList>(DFMEventDispatcher::instance()->processEvent(event));
 }
 
-void DFileService::restoreFile(const DUrl &srcUrl, const DUrl &tarUrl, const DFMEvent &event) const
+bool DFileService::restoreFile(const DUrlList &list, const QObject *sender) const
 {
-    if(QThreadPool::globalInstance()->activeThreadCount() >= MAX_THREAD_COUNT) {
-        qDebug() << "Beyond the maximum number of threads!";
-        return;
-    }
-
-    if(QThread::currentThread() == qApp->thread()) {
-        QtConcurrent::run(QThreadPool::globalInstance(), this, &DFileService::restoreFile, srcUrl, tarUrl, event);
-
-        return;
-    }
-    TRAVERSE(srcUrl, {
-                 controller->restoreFile(srcUrl, tarUrl, event, accepted);
-
-                 if(accepted)
-                 return;
-             })
+    return DFMEventDispatcher::instance()->processEvent<DFMRestoreFromTrashEvent>(list, sender).toBool();
 }
 
 bool DFileService::newFolder(const DUrl &targetUrl, const QObject *sender) const
@@ -778,7 +695,7 @@ void DFileService::insertToCreatorHash(const HandlerType &type, const HandlerCre
     DFileServicePrivate::controllerCreatorHash.insertMulti(type, creator);
 }
 
-void DFileService::laterRequestSelectFiles(const DFMEvent &event) const
+void DFileService::laterRequestSelectFiles(const DFMUrlListBaseEvent &event) const
 {
     FileSignalManager *manager = fileSignalManager;
 

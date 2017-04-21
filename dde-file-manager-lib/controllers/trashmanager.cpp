@@ -111,6 +111,11 @@ DUrlList TrashManager::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &ev
     return DUrlList();
 }
 
+bool TrashManager::restoreFile(const QSharedPointer<DFMRestoreFromTrashEvent> &event) const
+{
+    return restoreTrashFile(event->urlList());
+}
+
 bool TrashManager::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const
 {
     if (event->action() != DFMGlobal::CopyAction) {
@@ -146,7 +151,7 @@ DUrlList TrashManager::pasteFile(const QSharedPointer<DFMPasteEvent> &event) con
     if (event->urlList().isEmpty())
         return DUrlList();
 
-    return fileService->moveToTrashSync(event->urlList(), event->sender());
+    return fileService->moveToTrash(event->urlList(), event->sender());
 }
 
 
@@ -156,7 +161,7 @@ bool TrashManager::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) cons
 
     for(const DUrl &url : event->urlList()) {
         if (url.isTrashFile() && url.path() == "/") {
-            cleanTrash(event);
+            cleanTrash(event->sender());
             return true;
         }
 
@@ -169,7 +174,7 @@ bool TrashManager::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) cons
         }
     }
 
-    fileService->deleteFilesSync(localList, event->sender());
+    fileService->deleteFiles(localList, event->sender());
 
     return true;
 }
@@ -208,46 +213,26 @@ DAbstractFileWatcher *TrashManager::createFileWatcher(const QSharedPointer<DFMCr
                                  TrashManagerPrivate::localToTrash);
 }
 
-bool TrashManager::restoreTrashFile(const DUrlList &fileUrl, const DFMEvent &event)
+bool TrashManager::restoreTrashFile(const DUrlList &list)
 {
     bool ok = true;
 
-    for(const DUrl &url : fileUrl) {
+    for (const DUrl &url : list) {
         TrashFileInfo info(url);
 
-        const_cast<DFMEvent &>(event).setData(url);
-        info.restore(event);
+        ok = ok && info.restore();
     }
 
     return ok;
 }
 
-bool TrashManager::restoreAllTrashFile(const DFMEvent &event)
-{
-
-    DUrl fileUrl = event.fileUrlList().at(0);
-    const QString &path = fileUrl.path();
-
-    QDir dir(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath) + path);
-    DUrlList urlList;
-    if(dir.exists()) {
-        QStringList entryList = dir.entryList(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden);
-        for(const QString name : entryList) {
-            urlList << DUrl::fromTrashFile(QString("/%1").arg(name));
-        }
-
-        restoreTrashFile(urlList, event);
-    }
-    return true;
-}
-
-void TrashManager::cleanTrash(const QSharedPointer<DFMDeleteEvent> &event) const
+void TrashManager::cleanTrash(const QObject *sender) const
 {
     DUrlList list;
     list << DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashInfosPath))
          << DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath));
 
-    fileService->deleteFilesSync(list, event->sender());
+    fileService->deleteFiles(list, sender);
 }
 
 bool TrashManager::isEmpty()
