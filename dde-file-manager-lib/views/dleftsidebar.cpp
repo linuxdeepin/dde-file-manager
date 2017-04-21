@@ -171,11 +171,11 @@ void DLeftSideBar::resizeEvent(QResizeEvent *e)
 
 void DLeftSideBar::handleLocationChanged(const DFMEvent &e)
 {
-    if (e.eventId() != WindowManager::getWindowId(this))
+    if (e.windowId() != WindowManager::getWindowId(this))
         return;
 
     if (e.fileUrl().isNetWorkFile()) {
-        emit fileSignalManager->requestFetchNetworks(e);
+        emit fileSignalManager->requestFetchNetworks(DFMUrlBaseEvent(e.fileUrl(), e.sender()));
     } else {
         DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(e.fileUrl(), window(), this);
     }

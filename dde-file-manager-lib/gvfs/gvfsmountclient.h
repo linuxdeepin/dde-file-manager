@@ -30,7 +30,7 @@ public:
 
     static bool AskingPassword;
     static QJsonObject SMBLoginObj;
-    static DFMEvent MountEvent;
+    static DFMUrlBaseEvent MountEvent;
     static MountAskPasswordDialog* AskPasswordDialog;
 
     static void mount (GFile *file);
@@ -46,7 +46,7 @@ signals:
 
 public slots:
     void mountByPath(const QString& path);
-    void mountByEvent(const DFMEvent& event);
+    void mountByEvent(const DFMUrlBaseEvent &event);
 
 };
 

@@ -23,6 +23,7 @@ public:
 
     bool openFile(const QSharedPointer<DFMOpenFileEvent> &event) const Q_DECL_OVERRIDE;
     DUrlList moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const Q_DECL_OVERRIDE;
+    bool restoreFile(const QSharedPointer<DFMRestoreFromTrashEvent> &event) const Q_DECL_OVERRIDE;
     bool writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const Q_DECL_OVERRIDE;
     DUrlList pasteFile(const QSharedPointer<DFMPasteEvent> &event) const Q_DECL_OVERRIDE;
     bool deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const Q_DECL_OVERRIDE;
@@ -30,9 +31,8 @@ public:
 
     DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const Q_DECL_OVERRIDE;
 
-    static bool restoreTrashFile(const DUrlList &fileUrl, const DFMEvent &event);
-    static bool restoreAllTrashFile(const DFMEvent &event);
-    void cleanTrash(const QSharedPointer<DFMDeleteEvent> &event) const;
+    static bool restoreTrashFile(const DUrlList &list);
+    void cleanTrash(const QObject *sender = 0) const;
 
     static bool isEmpty();
 public slots:

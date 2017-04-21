@@ -1528,9 +1528,8 @@ void DFileSystemModel::selectAndRenameFile(const DUrl &fileUrl) const
             return;
 
         AppController::selectionAndRenameFile = qMakePair(DUrl(), -1);
-        DFMEvent event(this);
-        event.setEventId(windowId);
-        event.setData((DUrlList() << fileUrl));
+        DFMUrlBaseEvent event(fileUrl, this);
+        event.setWindowId(windowId);
 
         TIMER_SINGLESHOT_OBJECT(const_cast<DFileSystemModel*>(this), 100, {
                                     emit fileSignalManager->requestSelectRenameFile(event);

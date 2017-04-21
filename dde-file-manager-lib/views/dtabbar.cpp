@@ -685,9 +685,7 @@ void TabBar::onMovePrevius(Tab* who)
 
 void TabBar::onRequestNewWindow(const DUrl url)
 {
-    DFMEvent event(this);
-    event.setData(url);
-    appController->actionNewWindow(event);
+    appController->actionNewWindow(dMakeEventPointer<DFMUrlListBaseEvent>(DUrlList() << url, this));
 }
 
 void TabBar::onAboutToNewWindow(Tab* who)

@@ -3,6 +3,7 @@
 #include "fileoperations/filejob.h"
 #include "dfilewatcher.h"
 #include "dfileinfo.h"
+#include "trashmanager.h"
 #include "models/desktopfileinfo.h"
 
 #include "app/define.h"
@@ -288,24 +289,6 @@ DUrlList FileController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) c
     return list;
 }
 
-
-bool FileController::restoreFile(const DUrl &srcUrl, const DUrl &tarUrl, const DFMEvent &event, bool &accepted) const
-{
-    Q_UNUSED(event)
-
-    accepted = true;
-
-//    qDebug() << srcUrl << tarUrl << event;
-    FileJob job(FileJob::Restore);
-
-    dialogManager->addJob(&job);
-
-    job.doTrashRestore(srcUrl.path(), tarUrl.path());
-    dialogManager->removeJob(job.getJobId());
-
-    return true;
-}
-
 bool FileController::newFolder(const QSharedPointer<DFMNewFolderEvent> &event) const
 {
     //Todo:: check if mkdir is ok
@@ -313,7 +296,7 @@ bool FileController::newFolder(const QSharedPointer<DFMNewFolderEvent> &event) c
 
     QString folderName = checkDuplicateName(dir.absolutePath() + "/" + tr("New Folder"));
 
-    AppController::selectionAndRenameFile = qMakePair(DUrl::fromLocalFile(folderName), event->eventId());
+    AppController::selectionAndRenameFile = qMakePair(DUrl::fromLocalFile(folderName), event->windowId());
     return dir.mkdir(folderName);
 }
 

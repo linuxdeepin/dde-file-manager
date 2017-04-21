@@ -325,7 +325,7 @@ int DialogManager::showRunExcutableFileDialog(const DUrl &url)
 
 int DialogManager::showRenameNameSameErrorDialog(const QString &name, const DFMEvent &event)
 {
-    DDialog d(WindowManager::getWindowById(event.eventId()));
+    DDialog d(WindowManager::getWindowById(event.windowId()));
     QFontMetrics fm(d.font());
     d.setTitle(tr("\"%1\" already exists, please use another name.").arg(fm.elidedText(name, Qt::ElideMiddle, 150)));
     QStringList buttonTexts;
@@ -352,7 +352,7 @@ int DialogManager::showDeleteFilesClearTrashDialog(const DFMEvent &event)
     buttonTexts << tr("Cancel") << tr("Delete");
 
     qDebug() << event;
-    DDialog d(WindowManager::getWindowById(event.eventId()));
+    DDialog d(WindowManager::getWindowById(event.windowId()));
     QFontMetrics fm(d.font());
     d.setIcon(QIcon(":/images/dialogs/images/user-trash-full-opened.png"));
     if (urlList.first() == DUrl::fromTrashFile("/")){
@@ -396,7 +396,7 @@ int DialogManager::showDeleteFilesClearTrashDialog(const DFMEvent &event)
 
 int DialogManager::showRemoveBookMarkDialog(const DFMEvent &event)
 {
-    DDialog d(WindowManager::getWindowById(event.eventId()));
+    DDialog d(WindowManager::getWindowById(event.windowId()));
     d.setTitle(tr("Sorry, unable to locate your bookmark directory, remove it?"));
     QStringList buttonTexts;
     buttonTexts << tr("Cancel") << tr("Remove");
@@ -410,7 +410,7 @@ int DialogManager::showRemoveBookMarkDialog(const DFMEvent &event)
 
 void DialogManager::showOpenWithDialog(const DFMEvent &event)
 {
-    QWidget* w = WindowManager::getWindowById(event.eventId());
+    QWidget* w = WindowManager::getWindowById(event.windowId());
     if (w){
         OpenWithOtherDialog* d = new OpenWithOtherDialog(event.fileUrl(), w);
         d->setDisplayPostion(OpenWithOtherDialog::DisplayCenter);
@@ -426,7 +426,7 @@ void DialogManager::showPropertyDialog(const DFMEvent &event)
         int index = urlList.indexOf(url);
 
         if (url.isComputerFile()){
-            showComputerPropertyDialog(event);
+            showComputerPropertyDialog();
         }else{
 
             PropertyDialog *dialog;
@@ -456,7 +456,7 @@ void DialogManager::showPropertyDialog(const DFMEvent &event)
 
 void DialogManager::showShareOptionsInPropertyDialog(const DFMEvent &event)
 {
-    DUrl url = event.fileUrl();
+    DUrl url = event.fileUrlList().first();
     showPropertyDialog(event);
     PropertyDialog *dialog;
     if (m_propertyDialogs.contains(url)){
@@ -485,9 +485,8 @@ void DialogManager::showTrashPropertyDialog(const DFMEvent &event)
                      }, this)
 }
 
-void DialogManager::showComputerPropertyDialog(const DFMEvent &event)
+void DialogManager::showComputerPropertyDialog()
 {
-    Q_UNUSED(event)
     if (m_computerDialog){
         m_computerDialog->close();
     }
@@ -506,7 +505,7 @@ void DialogManager::showComputerPropertyDialog(const DFMEvent &event)
 
 void DialogManager::showDevicePropertyDialog(const DFMEvent &event)
 {
-    QWidget* w = WindowManager::getWindowById(event.eventId());
+    QWidget* w = WindowManager::getWindowById(event.windowId());
     if (w){
         PropertyDialog* dialog = new PropertyDialog(event, event.fileUrl());
         dialog->show();
@@ -571,9 +570,9 @@ void DialogManager::showBreakSymlinkDialog(const QString &targetName, const DUrl
     }
 }
 
-void DialogManager::showAboutDialog(const DFMEvent &event)
+void DialogManager::showAboutDialog(quint64 winId)
 {
-    QWidget* w = WindowManager::getWindowById(event.eventId());
+    QWidget* w = WindowManager::getWindowById(winId);
     if(!w || w->property("AboutDialogShown").toBool())
         return;
 
@@ -598,9 +597,9 @@ void DialogManager::showAboutDialog(const DFMEvent &event)
     });
 }
 
-void DialogManager::showUserSharePasswordSettingDialog(const DFMEvent &event)
+void DialogManager::showUserSharePasswordSettingDialog(quint64 winId)
 {
-    QWidget* w = WindowManager::getWindowById(event.eventId());
+    QWidget* w = WindowManager::getWindowById(winId);
     if(!w || w->property("UserSharePwdSettingDialogShown").toBool())
         return;
 
@@ -614,9 +613,9 @@ void DialogManager::showUserSharePasswordSettingDialog(const DFMEvent &event)
     });
 }
 
-void DialogManager::showGlobalSettingsDialog(const DFMEvent& event)
+void DialogManager::showGlobalSettingsDialog(quint64 winId)
 {
-    QWidget* w = WindowManager::getWindowById(event.eventId());
+    QWidget* w = WindowManager::getWindowById(winId);
     if(!w)
         return;
     if(w->property("isSettingDialogShown").toBool())
@@ -658,7 +657,7 @@ void DialogManager::showMoveToTrashConflictDialog(const DUrlList &urls)
     MoveToTrashConflictDialog d(0, urls);
     int code = d.exec();
     if (code == 1) {
-        fileService->deleteFilesSync(urls, this);
+        fileService->deleteFiles(urls, this);
     }
 }
 

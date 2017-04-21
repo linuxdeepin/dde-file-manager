@@ -5,6 +5,8 @@
 
 class DFileInfo;
 class DFMEvent;
+class DFMUrlBaseEvent;
+class DFMUrlListBaseEvent;
 class DAbstractFileInfo;
 class DeviceInfo;
 class DUrl;
@@ -22,38 +24,38 @@ public:
 
 signals:
     /*change view mode*/
-    void requestChangeIconViewMode(const DFMEvent &event);
+    void requestChangeIconViewMode(quint64 winId);
 
     /*change view mode*/
-    void requestChangeListViewMode(const DFMEvent &event);
+    void requestChangeListViewMode(quint64 winId);
 
     /*change view mode*/
-    void requestChangeExtendViewMode(const DFMEvent &event);
+    void requestChangeExtendViewMode(quint64 winId);
 
     /* emit usershare status changed*/
     void userShareCountChanged(const int count);
 
     /* request open in new tab*/
-    void requestOpenInNewTab(const DFMEvent &event);
+    void requestOpenInNewTab(const DFMUrlBaseEvent &event);
 
     /* request close current tab*/
-    void requestCloseCurrentTab(const DFMEvent &event);
+    void requestCloseCurrentTab(quint64 winId);
 
     /* request fetch network nodes*/
 
-    void requestFetchNetworks(const DFMEvent &event);
+    void requestFetchNetworks(const DFMUrlBaseEvent &event);
 
     /*request fetch network nodes successfully*/
-    void fetchNetworksSuccessed(const DFMEvent &event);
+    void fetchNetworksSuccessed(const DFMUrlBaseEvent &event);
 
     /*request mount smb*/
-    void requestSMBMount(const DFMEvent &event);
+    void requestSMBMount(const DFMUrlBaseEvent &event);
 
     /*request choose smb mounted file*/
-    void requestChooseSmbMountedFile(const DFMEvent &event);
+    void requestChooseSmbMountedFile(const DFMUrlBaseEvent &event);
 
     /* current display url changed*/
-    void currentUrlChanged(const DFMEvent &event);
+    void currentUrlChanged(const DFMUrlBaseEvent &event);
 
     /* file icon*/
     void requestIcon(const DUrl &url) const;
@@ -82,10 +84,10 @@ signals:
     void requestViewSelectAll(int windowId);
 
     /* bookmark remove */
-    void requestBookmarkRemove(const DFMEvent &event);
+    void requestBookmarkRemove(const DFMUrlBaseEvent &event);
 
     /* bookmark add */
-    void requestBookmarkAdd(const QString &name, const DFMEvent &event);
+    void requestBookmarkAdd(const QString &name, const DFMUrlBaseEvent &event);
 
     /* bookmark move */
     void requestBookmarkMove(int from, int to, const DFMEvent &event);
@@ -118,10 +120,10 @@ signals:
     void requestShowDevicePropertyDialog(const DFMEvent &event);
 
     /* request select file view item*/
-    void requestSelectFile(const DFMEvent &event);
+    void requestSelectFile(const DFMUrlListBaseEvent &event);
 
     /* request select file view item and rename*/
-    void requestSelectRenameFile(const DFMEvent &event);
+    void requestSelectRenameFile(const DFMUrlBaseEvent &event);
 
     /*request update mime cache*/
     void requestUpdateMimeAppsCache();
@@ -143,25 +145,25 @@ signals:
     void requestBookmarkRename(const DFMEvent &event);
 
     /*book mark rename*/
-    void bookmarkRenamed(const QString &newname, const DFMEvent &event);
+    void bookmarkRenamed(const QString &newname, const DFMUrlBaseEvent &event);
 
     /*focus back to DFileView*/
-    void requestFoucsOnFileView(const DFMEvent &event);
+    void requestFoucsOnFileView(quint64 winId);
 
     /*ctrl + F*/
-    void requestSearchCtrlF(const DFMEvent &event);
+    void requestSearchCtrlF(quint64 winId);
 
     /*ctrl + L*/
-    void requestSearchCtrlL(const DFMEvent &event);
+    void requestSearchCtrlL(quint64 winId);
 
     /*alt + left*/
-    void requestBack(const DFMEvent &event);
+    void requestBack(quint64 winId);
 
     /*alt + right*/
-    void requestForward(const DFMEvent &event);
+    void requestForward(quint64 winId);
 
     /* about dialog */
-    void showAboutDialog(const DFMEvent &event);
+    void showAboutDialog(quint64 winId);
 
     /*loading indcator show*/
     void loadingIndicatorShowed(const DFMEvent &event, bool loading);
@@ -173,7 +175,7 @@ signals:
     void requestQuitApplication();
 
     /*request fresh file view*/
-    void requestFreshFileView(const DFMEvent &event);
+    void requestFreshFileView(quint64 winId);
     void requestFreshAllFileView();
 
     /*request abort copy/move job*/

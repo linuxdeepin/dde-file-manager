@@ -19,6 +19,7 @@ DFM_USE_NAMESPACE
 typedef QPair<QString,QString> HandlerType;
 typedef QPair<QString, std::function<DAbstractFileController*()>> HandlerCreatorType;
 
+class DFMUrlListBaseEvent;
 class DAbstractFileInfo;
 class JobController;
 class DFMCreateGetChildrensJob;
@@ -97,13 +98,11 @@ public:
     bool writeFilesToClipboard(DFMGlobal::ClipboardAction action, const DUrlList &list, const QObject *sender = 0) const;
     bool renameFile(const DUrl &from, const DUrl &to, const QObject *sender = 0) const;
     bool deleteFiles(const DUrlList &list, const QObject *sender = 0) const;
-    bool deleteFilesSync(const DUrlList &list, const QObject *sender = 0) const;
-    void moveToTrash(const DUrlList &list, const QObject *sender = 0) const;
-    DUrlList moveToTrashSync(const DUrlList &list, const QObject *sender = 0) const;
+    DUrlList moveToTrash(const DUrlList &list, const QObject *sender = 0) const;
     void pasteFileByClipboard(const DUrl &targetUrl, const QObject *sender = 0) const;
-    void pasteFile(DFMGlobal::ClipboardAction action, const DUrl &targetUrl,
+    DUrlList pasteFile(DFMGlobal::ClipboardAction action, const DUrl &targetUrl,
                    const DUrlList &list, const QObject *sender = 0) const;
-    void restoreFile(const DUrl &srcUrl, const DUrl &tarUrl, const DFMEvent &event) const;
+    bool restoreFile(const DUrlList &list, const QObject *sender) const;
     bool newFolder(const DUrl &targetUrl, const QObject *sender = 0) const;
     bool newFile(const DUrl &targetUrl, const QString &fileSuffix, const QObject *sender = 0) const;
     bool openFileLocation(const DUrl &url, const QObject *sender = 0) const;
@@ -132,7 +131,7 @@ signals:
     void fileOpened(const DUrl &fileUrl) const;
 
 private slots:
-    void laterRequestSelectFiles(const DFMEvent &event) const;
+    void laterRequestSelectFiles(const DFMUrlListBaseEvent &event) const;
 
 private:
     explicit DFileService(QObject *parent = 0);

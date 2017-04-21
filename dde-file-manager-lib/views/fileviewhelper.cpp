@@ -19,7 +19,7 @@
 
 FileViewHelper::FileViewHelper(DFileView *parent)
     : DFileViewHelper(parent)
-    , lastEvent(this)
+    , lastEvent(DUrl(), this)
 {
     connect(parent, &DFileView::triggerEdit, this, &DFileViewHelper::triggerEdit);
     connect(parent, &DFileView::rootUrlChanged, this, &FileViewHelper::onCurrentUrlChanged);
@@ -39,7 +39,7 @@ DFileView *FileViewHelper::parent() const
     return qobject_cast<DFileView*>(DFileViewHelper::parent());
 }
 
-int FileViewHelper::windowId() const
+quint64 FileViewHelper::windowId() const
 {
     return parent()->windowId();
 }
@@ -109,9 +109,9 @@ void FileViewHelper::select(const QList<DUrl> &list)
     parent()->select(list);
 }
 
-void FileViewHelper::preHandleCd(const DFMEvent &event)
+void FileViewHelper::preHandleCd(const DFMUrlBaseEvent &event)
 {
-    if (event.eventId() != windowId())
+    if (event.windowId() != windowId())
         return;
 
     if (event.fileUrl().isNetWorkFile()) {
@@ -124,36 +124,36 @@ void FileViewHelper::preHandleCd(const DFMEvent &event)
 
     lastEvent = event;
     parent()->cd(event.fileUrl());
-    lastEvent = DFMEvent(this);
+    lastEvent = DFMUrlBaseEvent(DUrl(), this);
 }
 
-void FileViewHelper::cd(const DFMEvent &event)
+void FileViewHelper::cd(const DFMUrlBaseEvent &event)
 {
-    if (event.eventId() != windowId())
+    if (event.windowId() != windowId())
         return;
 
     lastEvent = event;
     parent()->cd(event.fileUrl());
-    lastEvent = DFMEvent(this);
+    lastEvent = DFMUrlBaseEvent(DUrl(), this);
 }
 
-void FileViewHelper::cdUp(const DFMEvent &event)
+void FileViewHelper::cdUp(const DFMUrlBaseEvent &event)
 {
-    if (event.eventId() != windowId())
+    if (event.windowId() != windowId())
         return;
 
     lastEvent = event;
     parent()->cdUp();
-    lastEvent = DFMEvent(this);
+    lastEvent = DFMUrlBaseEvent(DUrl(), this);
 }
 
-void FileViewHelper::handleSelectEvent(const DFMEvent &event)
+void FileViewHelper::handleSelectEvent(const DFMUrlListBaseEvent &event)
 {
-    if (event.eventId() != windowId()) {
+    if (event.windowId() != windowId()) {
         return;
     }
 
-    select(event.fileUrlList());
+    select(event.urlList());
 }
 
 void FileViewHelper::selectAll(int windowId)
@@ -164,16 +164,16 @@ void FileViewHelper::selectAll(int windowId)
     parent()->selectAll();
 }
 
-void FileViewHelper::setFoucsOnFileView(const DFMEvent &event)
+void FileViewHelper::setFoucsOnFileView(quint64 winId)
 {
-    if (event.eventId() == windowId()) {
+    if (winId == windowId()) {
         parent()->setFocus();
     }
 }
 
-void FileViewHelper::refreshFileView(const DFMEvent &event)
+void FileViewHelper::refreshFileView(quint64 winId)
 {
-    if (event.eventId() != windowId()) {
+    if (winId != windowId()) {
         return;
     }
 
@@ -182,8 +182,8 @@ void FileViewHelper::refreshFileView(const DFMEvent &event)
 
 void FileViewHelper::onCurrentUrlChanged(const DUrl &url)
 {
-    DFMEvent e(lastEvent);
-    e.setEventId(windowId());
+    DFMUrlBaseEvent e(lastEvent);
+    e.setWindowId(windowId());
     e.setData(url);
     emit fileSignalManager->currentUrlChanged(e);
 }

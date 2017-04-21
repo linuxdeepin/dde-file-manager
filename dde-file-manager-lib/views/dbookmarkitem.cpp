@@ -112,13 +112,9 @@ void DBookmarkItem::editFinished()
     if (!m_lineEdit)
         return;
 
-    DFMEvent event(this);
+    DFMUrlBaseEvent event(m_url, this);
 
-    event.setEventId(windowId());
-    event.setData(m_url);
-
-    if(m_group)
-        event.setProperty("bookmarkIndex", m_group->items().indexOf(this));
+    event.setWindowId(windowId());
 
     if (!m_lineEdit->text().isEmpty() && m_lineEdit->text() != m_textContent)
     {
@@ -130,12 +126,12 @@ void DBookmarkItem::editFinished()
     m_widget->deleteLater();
     m_lineEdit = Q_NULLPTR;
 
-    emit fileSignalManager->requestFoucsOnFileView(event);
+    emit fileSignalManager->requestFoucsOnFileView(windowId());
 }
 
 void DBookmarkItem::checkMountedItem(const DFMEvent &event)
 {
-    if (event.eventId() != windowId()){
+    if (event.windowId() != windowId()){
         return;
     }
 
@@ -151,9 +147,8 @@ void DBookmarkItem::checkMountedItem(const DFMEvent &event)
         update();
 
         DFMEvent e;
-        e.setEventId(windowId());
+        e.setWindowId(windowId());
         e.setData(m_url);
-        e.setProperty("bookmarkIndex", m_group->items().indexOf(this));
         qDebug() << m_isDisk << m_deviceInfo << m_url;
         m_group->url(e);
     }
@@ -654,11 +649,9 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
         if(!dir.exists() && !m_isDefault)
         {
-            DFMEvent event(this);
-            event.setData(m_url);
-            event.setEventId(windowId());
-            if(m_group)
-                event.setProperty("bookmarkIndex", m_group->items().indexOf(this));
+            DFMUrlBaseEvent event(m_url, this);
+            event.setWindowId(windowId());
+
             int result = dialogManager->showRemoveBookMarkDialog(event);
             if (result == DDialog::Accepted)
             {
@@ -668,7 +661,7 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         else
         {
             DFMEvent e(this);
-            e.setEventId(windowId());
+            e.setWindowId(windowId());
             if(m_url.isBookMarkFile())
                 e.setData(DUrl::fromLocalFile(m_url.path()));
             else
@@ -680,8 +673,7 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
                     qDebug() << info << m_url << m_isMounted;
                     if (!m_isMounted){
                         m_url.setQuery(info.id());
-                        e.setData(m_url);
-                        appController->actionOpenDisk(e);
+                        appController->actionOpenDisk(dMakeEventPointer<DFMUrlBaseEvent>(m_url, this));
                     }else{
                         qDebug() << e;
                         emit m_group->url(e);
@@ -854,16 +846,8 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     QPointer<DBookmarkItem> me = this;
 
     if (menu && !menu->actions().isEmpty()) {
-        DUrlList urls;
-        urls.append(m_url);
-
-        DFMEvent fmEvent(this);
-        fmEvent.setData(urls);
-        fmEvent.setEventId(windowId());
-        if(m_group)
-            fmEvent.setProperty("bookmarkIndex", m_group->items().indexOf(this));
-
-        menu->setEvent(fmEvent);
+        if (m_group)
+            menu->setProperty("bookmarkIndex", m_group->items().indexOf(this));
 
         menu->exec();
         menu->deleteLater();

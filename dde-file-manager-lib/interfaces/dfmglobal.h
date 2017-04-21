@@ -279,5 +279,6 @@ private:
 };
 
 Q_DECLARE_METATYPE(DFMGlobal::ClipboardAction)
+Q_DECLARE_METATYPE(DFMGlobal::MenuAction)
 
 #endif // DFMGLOBAL_H

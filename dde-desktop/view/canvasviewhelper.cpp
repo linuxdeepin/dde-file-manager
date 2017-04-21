@@ -26,7 +26,7 @@ CanvasGridView *CanvasViewHelper::parent() const
     return qobject_cast<CanvasGridView *>(DFileViewHelper::parent());
 }
 
-int CanvasViewHelper::windowId() const
+quint64 CanvasViewHelper::windowId() const
 {
     return parent()->winId();
 }
@@ -60,8 +60,8 @@ void CanvasViewHelper::select(const QList<DUrl> &list)
 
 void CanvasViewHelper::edit(const DFMEvent &event)
 {
-    qDebug() << event.eventId() << windowId();
-    if (event.eventId() != windowId() || event.fileUrlList().isEmpty()) {
+    qDebug() << event.windowId() << windowId();
+    if (event.windowId() != windowId() || event.fileUrlList().isEmpty()) {
         return;
     }
 

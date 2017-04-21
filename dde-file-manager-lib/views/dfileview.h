@@ -69,7 +69,7 @@ public:
 
     QList<int> columnRoleList() const;
 
-    int windowId() const;
+    quint64 windowId() const;
 
     using DListView::edit;
 

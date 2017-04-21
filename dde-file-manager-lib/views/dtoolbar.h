@@ -61,13 +61,13 @@ public slots:
     void forwardButtonClicked();
     void checkViewModeButton(DFileView::ViewMode mode);
 
-    void handleHotkeyBack(const DFMEvent &event);
-    void handleHotkeyForward(const DFMEvent &event);
-    void handleHotkeyCtrlF(const DFMEvent &event);
-    void handleHotkeyCtrlL(const DFMEvent &event);
-    void handleChangeIconMode(const DFMEvent &event);
-    void handleChangeListMode(const DFMEvent &event);
-    void handleChangeExtendMode(const DFMEvent &event);
+    void handleHotkeyBack(quint64 winId);
+    void handleHotkeyForward(quint64 winId);
+    void handleHotkeyCtrlF(quint64 winId);
+    void handleHotkeyCtrlL(quint64 winId);
+    void handleChangeIconMode(quint64 winId);
+    void handleChangeListMode(quint64 winId);
+    void handleChangeExtendMode(quint64 winId);
 
     void setViewModeButtonVisible(bool isVisible);
     void moveNavStacks(int from, int to);

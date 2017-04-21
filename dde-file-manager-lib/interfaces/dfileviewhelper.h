@@ -36,7 +36,7 @@ public:
 
     QAbstractItemView *parent() const;
 
-    virtual int windowId() const;
+    virtual quint64 windowId() const;
     virtual bool isCut(const QModelIndex &index) const;
     virtual bool isSelected(const QModelIndex &index) const;
     virtual bool isDropTarget(const QModelIndex &index) const;
@@ -79,8 +79,8 @@ signals:
 private:
     QScopedPointer<DFileViewHelperPrivate> d_ptr;
 
-    Q_PRIVATE_SLOT(d_func(), void _q_edit(const DFMEvent &event))
-    Q_PRIVATE_SLOT(d_func(), void _q_selectAndRename(const DFMEvent &event))
+    Q_PRIVATE_SLOT(d_func(), void _q_edit(const DFMUrlBaseEvent &event))
+    Q_PRIVATE_SLOT(d_func(), void _q_selectAndRename(const DFMUrlBaseEvent &event))
 
     Q_DECLARE_PRIVATE(DFileViewHelper)
     Q_DISABLE_COPY(DFileViewHelper)

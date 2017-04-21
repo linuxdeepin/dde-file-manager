@@ -3,14 +3,17 @@
 
 
 #include <QObject>
+
 #include "subscriber.h"
 #include "dfmevent.h"
+#include "dfmabstracteventhandler.h"
 
 class FileController;
 class FileMonitor;
 
+DFM_USE_NAMESPACE
 
-class AppController : public QObject, public Subscriber
+class AppController : public QObject, public Subscriber, public DFMAbstractEventHandler
 {
     Q_OBJECT
 
@@ -25,71 +28,71 @@ public:
     static void registerUrlHandle();
 
 public slots:
-    void actionOpen(const DFMEvent& event);
-    void actionOpenDisk(const DFMEvent& event);
+    void actionOpen(const QSharedPointer<DFMUrlListBaseEvent>& event);
+    void actionOpenDisk(const QSharedPointer<DFMUrlBaseEvent> &event);
     void asycOpenDisk(const QString& path);
 
-    void actionOpenInNewWindow(const DFMEvent& event);
-    void actionOpenInNewTab(const DFMEvent& event);
-    void actionOpenDiskInNewTab(const DFMEvent& event);
+    void actionOpenInNewWindow(const QSharedPointer<DFMUrlListBaseEvent> &event);
+    void actionOpenInNewTab(const QSharedPointer<DFMUrlBaseEvent> &event);
+    void actionOpenDiskInNewTab(const QSharedPointer<DFMUrlBaseEvent> &event);
     void asycOpenDiskInNewTab(const QString& path);
-    void actionOpenDiskInNewWindow(const DFMEvent& event);
+    void actionOpenDiskInNewWindow(const QSharedPointer<DFMUrlBaseEvent> &event);
     void asycOpenDiskInNewWindow(const QString& path);
-    void actionOpenAsAdmin(const DFMEvent& event);
+    void actionOpenAsAdmin(const QSharedPointer<DFMUrlBaseEvent> &event);
 
-    void actionOpenWithCustom(const DFMEvent& event);
-    void actionOpenFileLocation(const DFMEvent& event);
-    void actionCompress(const DFMEvent& event);
-    void actionDecompress(const DFMEvent& event);
-    void actionDecompressHere(const DFMEvent& event);
-    void actionCut(const DFMEvent& event);
-    void actionCopy(const DFMEvent& event);
-    void actionPaste(const DFMEvent& event);
-    void actionRename(const DFMEvent& event);
-    void actionBookmarkRename(const DFMEvent& event);
-    void actionBookmarkRemove(const DFMEvent& event);
-    void actionDelete(const DFMEvent& event);
-    void actionCompleteDeletion(const DFMEvent& event);
-    void actionCreateSymlink(const DFMEvent& event);
-    void actionSendToDesktop(const DFMEvent& event);
-    void actionAddToBookMark(const DFMEvent& event);
-    void actionNewFolder(const DFMEvent& event);
-    void actionNewFile(const DFMEvent& event);
-    void actionSelectAll(const DFMEvent& event);
-    void actionClearRecent(const DFMEvent& event);
-    void actionClearTrash(const DFMEvent& event);
-    void actionNewWord(const DFMEvent& event);
-    void actionNewExcel(const DFMEvent& event);
-    void actionNewPowerpoint(const DFMEvent& event);
-    void actionNewText(const DFMEvent& event);
-    void actionMount(const DFMEvent& event);
-    void actionUnmount(const DFMEvent& event);
-    void actionRestore(const DFMEvent& event);
-    void actionRestoreAll(const DFMEvent& event);
-    void actionEject(const DFMEvent& event);
-    void actionOpenInTerminal(const DFMEvent& event);
-    void actionProperty(const DFMEvent& event);
-    void actionNewWindow(const DFMEvent& event);
-    void actionHelp(const DFMEvent& event);
-    void actionAbout(const DFMEvent& event);
-    void actionExit(const DFMEvent& event);
-    void actionSetAsWallpaper(const DFMEvent& event);
-    void actionShare(const DFMEvent& event);
-    void actionUnShare(const DFMEvent& event);
-    void actionSetUserSharePassword(const DFMEvent& event);
-    void actionSettings(const DFMEvent& event);
-    void actionFormatDevice(const DFMEvent& event);
+    void actionOpenWithCustom(const QSharedPointer<DFMUrlBaseEvent> &event);
+    void actionOpenFileLocation(const QSharedPointer<DFMUrlListBaseEvent> &event);
+    void actionCompress(const QSharedPointer<DFMUrlListBaseEvent> &event);
+    void actionDecompress(const QSharedPointer<DFMUrlListBaseEvent> &event);
+    void actionDecompressHere(const QSharedPointer<DFMUrlListBaseEvent> &event);
+    void actionCut(const QSharedPointer<DFMUrlListBaseEvent> &event);
+    void actionCopy(const QSharedPointer<DFMUrlListBaseEvent> &event);
+    void actionPaste(const QSharedPointer<DFMUrlBaseEvent> &event);
+    void actionRename(const QSharedPointer<DFMUrlBaseEvent> &event);
+    void actionBookmarkRename(const QSharedPointer<DFMUrlBaseEvent> &event);
+    void actionBookmarkRemove(const QSharedPointer<DFMUrlBaseEvent> &event);
+    void actionDelete(const QSharedPointer<DFMUrlListBaseEvent> &event);
+    void actionCompleteDeletion(const QSharedPointer<DFMUrlListBaseEvent> &event);
+    void actionCreateSymlink(const QSharedPointer<DFMUrlBaseEvent> &event);
+    void actionSendToDesktop(const QSharedPointer<DFMUrlListBaseEvent> &event);
+    void actionAddToBookMark(const QSharedPointer<DFMUrlBaseEvent> &event);
+    void actionNewFolder(const QSharedPointer<DFMUrlBaseEvent> &event);
+    void actionNewFile(const QSharedPointer<DFMUrlBaseEvent> &event);
+    void actionSelectAll(quint64 winId);
+    void actionClearRecent(const QSharedPointer<DFMMenuActionEvent>& event);
+    void actionClearTrash(const QObject *sender = 0);
+    void actionNewWord(const QSharedPointer<DFMUrlBaseEvent> &event);
+    void actionNewExcel(const QSharedPointer<DFMUrlBaseEvent> &event);
+    void actionNewPowerpoint(const QSharedPointer<DFMUrlBaseEvent> &event);
+    void actionNewText(const QSharedPointer<DFMUrlBaseEvent> &event);
+    void actionMount(const QSharedPointer<DFMUrlBaseEvent> &event);
+    void actionUnmount(const QSharedPointer<DFMUrlBaseEvent> &event);
+    void actionRestore(const QSharedPointer<DFMUrlListBaseEvent> &event);
+    void actionRestoreAll(const QSharedPointer<DFMUrlBaseEvent> &event);
+    void actionEject(const QSharedPointer<DFMUrlBaseEvent> &event);
+    void actionOpenInTerminal(const QSharedPointer<DFMUrlListBaseEvent> &event);
+    void actionProperty(const QSharedPointer<DFMUrlListBaseEvent> &event);
+    void actionNewWindow(const QSharedPointer<DFMUrlListBaseEvent> &event);
+    void actionHelp();
+    void actionAbout(quint64 winId);
+    void actionExit(quint64 winId);
+    void actionSetAsWallpaper(const QSharedPointer<DFMUrlBaseEvent> &event);
+    void actionShare(const QSharedPointer<DFMUrlListBaseEvent> &event);
+    void actionUnShare(const QSharedPointer<DFMUrlBaseEvent> &event);
+    void actionSetUserSharePassword(quint64 winId);
+    void actionSettings(quint64 winId);
+    void actionFormatDevice(const QSharedPointer<DFMUrlBaseEvent> &event);
 
 
-    void actionctrlL(const DFMEvent& event);
-    void actionctrlF(const DFMEvent& event);
+    void actionctrlL(quint64 winId);
+    void actionctrlF(quint64 winId);
 
-    void actionExitCurrentWindow(const DFMEvent& event);
-    void actionShowHotkeyHelp(const DFMEvent& event);
-    void actionBack(const DFMEvent& event);
-    void actionForward(const DFMEvent& event);
+    void actionExitCurrentWindow(quint64 winId);
+    void actionShowHotkeyHelp(quint64 winId);
+    void actionBack(quint64 winId);
+    void actionForward(quint64 winId);
 
-    void actionForgetPassword(const DFMEvent& event);
+    void actionForgetPassword(const QSharedPointer<DFMUrlBaseEvent> &event);
 
     void actionOpenFileByApp();
 
@@ -104,8 +107,9 @@ private:
     void initConnect();
     void createGVfSManager();
     void createUserShareManager();
+    bool fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resultData) Q_DECL_OVERRIDE;
 
-    DFMEvent m_fmEvent;
+    QSharedPointer<DFMEvent> m_fmEvent;
     static QPair<DUrl, int> selectionAndRenameFile;
 
     friend class FileController;

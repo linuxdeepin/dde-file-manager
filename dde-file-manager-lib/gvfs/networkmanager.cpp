@@ -130,7 +130,7 @@ void NetworkManager::network_enumeration_finished(GObject *source_object, GAsync
 
     if (error)
     {
-        DFMEvent* event = static_cast<DFMEvent*>(user_data);
+        DFMUrlBaseEvent* event = static_cast<DFMUrlBaseEvent*>(user_data);
         if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED) &&
             !g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED)){
             qWarning ("Failed to fetch network locations: %s", error->message);
@@ -230,7 +230,7 @@ void NetworkManager::populate_networks(GFileEnumerator *enumerator, GList *detec
         g_clear_object (&activatable_file);
     }
 
-    DFMEvent* event = static_cast<DFMEvent*>(user_data);
+    DFMUrlBaseEvent* event = static_cast<DFMUrlBaseEvent*>(user_data);
     NetworkNodes.remove(event->fileUrl());
     NetworkNodes.insert(event->fileUrl(), nodeList);
     qDebug() << "request NetworkNodeList successfully";
@@ -264,7 +264,7 @@ void NetworkManager::fetchNetworks(const DFMEvent &event)
     if (p1){
         e->setData(p1->getMountPointUrl());
         if (DUrl(path) != p1->getMountPointUrl()){
-            DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(e->fileUrl(), WindowManager::getWindowById(e->eventId()), this);
+            DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(e->fileUrl(), WindowManager::getWindowById(e->windowId()), this);
         }else{
             qWarning() << p1->getMountPointUrl() << "can't get data";
         }

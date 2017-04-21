@@ -21,7 +21,7 @@ public:
 
     CanvasGridView *parent() const;
 
-    virtual int windowId() const Q_DECL_OVERRIDE;
+    virtual quint64 windowId() const Q_DECL_OVERRIDE;
     virtual const DAbstractFileInfoPointer fileInfo(const QModelIndex &index) const Q_DECL_OVERRIDE;
     virtual DStyledItemDelegate *itemDelegate() const Q_DECL_OVERRIDE;
     virtual DFileSystemModel *model() const Q_DECL_OVERRIDE;

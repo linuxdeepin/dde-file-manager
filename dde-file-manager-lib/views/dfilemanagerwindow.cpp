@@ -138,11 +138,11 @@ void DFileManagerWindow::onRequestCloseTab(const int index, const bool &remainSt
     d->tabBar->removeTab(index, remainState);
 }
 
-void DFileManagerWindow::closeCurrentTab(const DFMEvent &event)
+void DFileManagerWindow::closeCurrentTab(quint64 winId)
 {
     D_D(DFileManagerWindow);
 
-    if(event.eventId() != (int)winId())
+    if (winId != this->winId())
         return;
 
     if(d->tabBar->count() == 1){
@@ -187,17 +187,13 @@ void DFileManagerWindow::onNewTabButtonClicked()
     else
         url = DUrl::fromUserInput(path);
     event.setData(url);
-    event.setEventId(windowId());
+    event.setWindowId(windowId());
     openNewTab(event);
 }
 
 void DFileManagerWindow::requestEmptyTrashFiles()
 {
-    D_D(DFileManagerWindow);
-    DFMEvent event;
-    event.setEventId(windowId());
-    event.setData(DUrl::fromTrashFile("/"));
-    appController->actionClearTrash(event);
+    DFMGlobal::clearTrash();
 }
 
 void DFileManagerWindow::onTrashStateChanged()
@@ -341,10 +337,9 @@ void DFileManagerWindow::preHandleCd(const DUrl &fileUrl, const QObject *request
     D_DC(DFileManagerWindow);
     qDebug() << fileUrl << d->viewManager->supportSchemes() << d->viewManager->views() << d->viewManager->isSchemeRegistered(fileUrl.scheme());
 
-    DFMEvent e(requestor);
+    DFMUrlBaseEvent e(fileUrl, requestor);
 
-    e.setData(fileUrl);
-    e.setEventId(windowId());
+    e.setWindowId(windowId());
 
     if (NetworkManager::SupportScheme.contains(e.fileUrl().scheme())) {
         emit fileSignalManager->requestFetchNetworks(e);
@@ -385,7 +380,7 @@ void DFileManagerWindow::preHandleCd(const DUrl &fileUrl, const QObject *request
     }
 }
 
-void DFileManagerWindow::cd(const DFMEvent &event)
+void DFileManagerWindow::cd(const DFMUrlBaseEvent &event)
 {
     D_D(DFileManagerWindow);
 
@@ -439,7 +434,7 @@ void DFileManagerWindow::openNewTab(const DFMEvent &event)
     if(!d->tabBar->tabAddable())
         return;
 
-    if (event.eventId() != windowId()){
+    if (event.windowId() != windowId()){
         return;
     }
     createNewView(event);
@@ -611,9 +606,7 @@ void DFileManagerWindow::initTitleBar()
 
     DFileMenu* menu = fileMenuManger->createToolBarSettingsMenu();
 
-    DFMEvent event(this);
-    event.setEventId(windowId());
-    menu->setEvent(event);
+    menu->setProperty("DFileManagerWindow", (quintptr)this);
 
     bool isDXcbPlatform = false;
     SingleApplication* app = static_cast<SingleApplication*>(qApp);
@@ -733,7 +726,7 @@ void DFileManagerWindow::initFileView(const DUrl &fileUrl)
 {
     DFMEvent event(this);
     event.setData(fileUrl);
-    event.setEventId(windowId());
+    event.setWindowId(windowId());
     createNewView(event);
     preHandleCd(fileUrl, this);
 }

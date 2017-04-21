@@ -25,7 +25,7 @@ public:
 
     DFileView *parent() const;
 
-    int windowId() const Q_DECL_OVERRIDE;
+    quint64 windowId() const Q_DECL_OVERRIDE;
     bool isSelected(const QModelIndex &index) const Q_DECL_OVERRIDE;
     bool isDropTarget(const QModelIndex &index) const Q_DECL_OVERRIDE;
     int selectedIndexsCount() const Q_DECL_OVERRIDE;
@@ -42,18 +42,18 @@ public:
 
 public slots:
     // helper fm event
-    void preHandleCd(const DFMEvent &event);
-    void cd(const DFMEvent &event);
-    void cdUp(const DFMEvent &event);
-    void handleSelectEvent(const DFMEvent &event);
+    void preHandleCd(const DFMUrlBaseEvent &event);
+    void cd(const DFMUrlBaseEvent &event);
+    void cdUp(const DFMUrlBaseEvent &event);
+    void handleSelectEvent(const DFMUrlListBaseEvent &event);
     void selectAll(int windowId);
-    void setFoucsOnFileView(const DFMEvent& event);
-    void refreshFileView(const DFMEvent& event);
+    void setFoucsOnFileView(quint64 winId);
+    void refreshFileView(quint64 winId);
 
 private:
     void onCurrentUrlChanged(const DUrl &url);
 
-    DFMEvent lastEvent;
+    DFMUrlBaseEvent lastEvent;
 };
 
 #endif // FILEVIEWHELPER_H

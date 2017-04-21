@@ -3,16 +3,19 @@
 
 #include <QMenu>
 
-#include "dfmevent.h"
+#include "dfmglobal.h"
+#include "durl.h"
 
+class DFMMenuActionEvent;
 class DFileMenu : public QMenu
 {
     Q_OBJECT
 
 public:
     explicit DFileMenu(QWidget * parent = 0);
-    DFMEvent event() const;
-    void setEvent(const DFMEvent &event);
+
+    const QSharedPointer<DFMMenuActionEvent> makeEvent(DFMGlobal::MenuAction action) const;
+    void setEventData(const DUrl &currentUrl, const DUrlList &selectedUrls, quint64 eventId = 0, const QObject *sender = 0);
 
     QAction *actionAt(int index) const;
     QAction *actionAt(const QString &text) const;
@@ -21,7 +24,10 @@ public:
     using QMenu::exec;
 
 private:
-    DFMEvent m_event;
+    DUrl m_currentUrl;
+    DUrlList m_selectedUrls;
+    quint64 m_eventId = 0;
+    const QObject *m_sender = Q_NULLPTR;
 };
 
 #endif // DFILEMENU_H

@@ -1779,14 +1779,7 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     menu->addAction(&wallpaper);
 
     menu->removeAction(propertyAction);
-
-    DUrlList urls;
-    urls.append(model()->rootUrl());
-
-    DFMEvent event;
-    event.setData(urls);
-    event.setEventId(winId());
-    menu->setEvent(event);
+    menu->setEventData(model()->rootUrl(), selectedUrls(), winId(), this);
 
     connect(menu, &DFileMenu::triggered, this, [ = ](QAction * action) {
         qDebug() << action->data();
@@ -1858,11 +1851,7 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
         menu->addAction(&property);
     }
 
-    DFMEvent event(this);
-
-    event.setData(list);
-    event.setEventId(winId());
-    menu->setEvent(event);
+    menu->setEventData(model()->rootUrl(), selectedUrls(), winId(), this);
 
     connect(menu, &DFileMenu::triggered, this, [ = ](QAction * action) {
         if (!action->data().isValid()) {
