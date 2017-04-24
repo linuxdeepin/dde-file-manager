@@ -29,32 +29,6 @@ class DFileService : public QObject, public DFMAbstractEventHandler
     Q_OBJECT
 
 public:
-    enum FileOperatorType {
-        OpenFile = 0x00000001,
-        CompressFiles = 0x00000002,
-        DecompressFile = 0x00000004,
-        DecompressFileHere = 0x00000008,
-        CopyFilesToClipboard = 0x00000010,
-        RenameFile = 0x00000020,
-        DeleteFiles = 0x00000040,
-        MoveToTrash = 0x00000080,
-        CutFilesToClipboard = 0x00000100,
-        PasteFile = 0x00000200,
-        RestoreFile = 0x00000400,
-        NewFolder = 0x00000800,
-        NewDocument = 0x00001000,
-        OpenFileLocation = 0x00002000,
-        CreateSymlink = 0x00004000,
-        OpenInTerminal = 0x00008000,
-        OpenNewWindow = 0x00010000,
-        OpenUrl = 0x00020000,
-        PasteFileByClipboard = 0x00040000,
-        CreateFileWatcher = 0x00080000
-    };
-
-    Q_ENUMS(FileOperatorType)
-    Q_DECLARE_FLAGS(FileOperatorTypes, FileOperatorType)
-
     template <class T>
     static void dRegisterUrlHandler(const QString &scheme, const QString &host)
     {
@@ -84,11 +58,6 @@ public:
     static QList<DAbstractFileController*> getHandlerTypeByUrl(const DUrl &fileUrl,
                                                                bool ignoreHost = false,
                                                                bool ignoreScheme = false);
-
-    void setFileOperatorWhitelist(FileOperatorTypes list);
-    FileOperatorTypes fileOperatorWhitelist() const;
-    void setFileOperatorBlacklist(FileOperatorTypes list);
-    FileOperatorTypes fileOperatorBlacklist() const;
 
     bool openFile(const QObject *sender, const DUrl &url) const;
     bool openFileByApp(const QObject *sender, const QString &appName, const DUrl &url) const;
@@ -145,7 +114,5 @@ private:
     QScopedPointer<DFileServicePrivate> d_ptr;
     Q_DECLARE_PRIVATE(DFileService)
 };
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(DFileService::FileOperatorTypes)
 
 #endif // FILESERVICES_H

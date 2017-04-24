@@ -137,8 +137,6 @@ public slots:
 
     void setMenuActionWhitelist(const QSet<DFMGlobal::MenuAction> &actionList);
     void setMenuActionBlacklist(const QSet<DFMGlobal::MenuAction> &actionList);
-    void setFileOperatorWhitelist(int fileOperatorFlags);
-    void setFileOperatorBlacklist(int fileOperatorFlags);
 
     void delayUpdateStatusBar();
     void updateStatusBar();

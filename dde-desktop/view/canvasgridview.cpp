@@ -927,11 +927,6 @@ void CanvasGridView::focusInEvent(QFocusEvent *event)
     /// set menu actions filter
     DFileMenuManager::setActionWhitelist(QSet<MenuAction>());
     DFileMenuManager::setActionBlacklist(QSet<MenuAction>());
-
-    /// set file operator function filter
-    DFileService::FileOperatorTypes fileOperatorlist;
-    DFileService::instance()->setFileOperatorWhitelist(fileOperatorlist);
-    DFileService::instance()->setFileOperatorBlacklist(fileOperatorlist);
 }
 
 void CanvasGridView::contextMenuEvent(QContextMenuEvent *event)

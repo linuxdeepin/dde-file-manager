@@ -3,11 +3,14 @@
 
 #include "dfilemanagerwindow.h"
 #include "dfileview.h"
+#include "dfmabstracteventhandler.h"
 
 #include <QFileDialog>
 
+DFM_USE_NAMESPACE
+
 class DFileDialogPrivate;
-class DFileDialog : public DFileManagerWindow
+class DFileDialog : public DFileManagerWindow, public DFMAbstractEventHandler
 {
     Q_OBJECT
 
@@ -77,6 +80,8 @@ protected:
     void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
     bool eventFilter(QObject *watched, QEvent *event) Q_DECL_OVERRIDE;
     void adjustPosition(QWidget *w);
+
+    bool fmEventFilter(const QSharedPointer<DFMEvent> &event, QVariant *resultData) Q_DECL_OVERRIDE;
 
 private:
     void onAcceptButtonClicked();

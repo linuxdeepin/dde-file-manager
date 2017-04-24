@@ -1,6 +1,8 @@
 #include "dfiledialog.h"
 #include "dfilesystemmodel.h"
 #include "dfileservices.h"
+#include "dfmevent.h"
+#include "dfmeventdispatcher.h"
 #include "views/dstatusbar.h"
 #include "views/dleftsidebar.h"
 #include "views/dsearchbar.h"
@@ -65,11 +67,6 @@ DFileDialog::DFileDialog(QWidget *parent)
     getLeftSideBar()->setDisableUrlSchemes(QList<QString>() << "trash" << "network");
     getLeftSideBar()->setAcceptDrops(false);
 
-    DFileService::FileOperatorTypes fileServiceWhitelist = DFileService::OpenUrl/* | DFileService::OpenFile*/
-            | DFileService::RenameFile | DFileService::MoveToTrash | DFileService::NewFolder
-            | DFileService::NewDocument | DFileService::CreateFileWatcher;
-
-    getFileView()->setFileOperatorWhitelist(fileServiceWhitelist);
     getFileView()->setDragEnabled(false);
     getFileView()->setDragDropMode(QAbstractItemView::NoDragDrop);
     getFileView()->installEventFilter(this);
@@ -97,6 +94,8 @@ DFileDialog::DFileDialog(QWidget *parent)
         if (fileInfo->isFile())
             setCurrentInputName(fileInfo->fileName());
     });
+
+    DFMEventDispatcher::instance()->installEventFilter(this);
 }
 
 DFileDialog::~DFileDialog()
@@ -653,6 +652,39 @@ void DFileDialog::adjustPosition(QWidget *w)
         p.setY(desk.y());
 
     move(p);
+}
+
+bool DFileDialog::fmEventFilter(const QSharedPointer<DFMEvent> &event, QVariant *resultData)
+{
+    Q_UNUSED(resultData)
+
+    if (event->type() == DFMEvent::OpenFile) {
+        onAcceptButtonClicked();
+        return true;
+    }
+
+    if (!isActiveWindow())
+        return false;
+
+    switch (event->type()) {
+    case DFMEvent::OpenFile:
+    case DFMEvent::OpenFileByApp:
+    case DFMEvent::CompressFiles:
+    case DFMEvent::DecompressFile:
+    case DFMEvent::DecompressFileHere:
+    case DFMEvent::WriteUrlsToClipboard:
+    case DFMEvent::DeleteFiles:
+    case DFMEvent::RestoreFromTrash:
+    case DFMEvent::PasteFile:
+    case DFMEvent::OpenFileLocation:
+    case DFMEvent::CreateSymlink:
+    case DFMEvent::FileShare:
+    case DFMEvent::CancelFileShare:
+    case DFMEvent::OpenInTerminal:
+        return true;
+    }
+
+    return false;
 }
 
 void DFileDialog::onAcceptButtonClicked()
