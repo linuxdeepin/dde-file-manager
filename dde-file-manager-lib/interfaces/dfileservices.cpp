@@ -47,10 +47,6 @@ public:
     static QMultiHash<const HandlerType, DAbstractFileController*> controllerHash;
     static QHash<const DAbstractFileController*, HandlerType> handlerHash;
     static QMultiHash<const HandlerType, HandlerCreatorType> controllerCreatorHash;
-
-    DFileService::FileOperatorTypes whitelist;
-    DFileService::FileOperatorTypes blacklist;
-    QMetaEnum fileOperatorTypeEnum;
 };
 
 QMultiHash<const HandlerType, DAbstractFileController*> DFileServicePrivate::controllerHash;
@@ -61,8 +57,6 @@ DFileService::DFileService(QObject *parent)
     : QObject(parent)
     , d_ptr(new DFileServicePrivate())
 {
-    d_ptr->fileOperatorTypeEnum = metaObject()->enumerator(metaObject()->indexOfEnumerator(QT_STRINGIFY(FileOperatorType)));
-
     /// init url handler register
     AppController::registerUrlHandle();
 }
@@ -376,34 +370,6 @@ void DFileService::clearFileUrlHandler(const QString &scheme, const QString &hos
 
     DFileServicePrivate::controllerHash.remove(handler);
     DFileServicePrivate::controllerCreatorHash.remove(handler);
-}
-
-void DFileService::setFileOperatorWhitelist(FileOperatorTypes list)
-{
-    Q_D(DFileService);
-
-    d->whitelist = list;
-}
-
-DFileService::FileOperatorTypes DFileService::fileOperatorWhitelist() const
-{
-    Q_D(const DFileService);
-
-    return d->whitelist;
-}
-
-void DFileService::setFileOperatorBlacklist(FileOperatorTypes list)
-{
-    Q_D(DFileService);
-
-    d->blacklist = list;
-}
-
-DFileService::FileOperatorTypes DFileService::fileOperatorBlacklist() const
-{
-    Q_D(const DFileService);
-
-    return d->blacklist;
 }
 
 bool DFileService::openFile(const QObject *sender, const DUrl &url) const

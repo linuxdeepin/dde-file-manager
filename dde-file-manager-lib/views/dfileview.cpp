@@ -109,10 +109,6 @@ public:
     QSet<MenuAction> menuWhitelist;
     QSet<MenuAction> menuBlacklist;
 
-    /// file operator function filter
-    DFileService::FileOperatorTypes fileOperatorWhitelist;
-    DFileService::FileOperatorTypes fileOperatorBlacklist;
-
     QSet<DFileView::SelectionMode> enabledSelectionModes;
 
     FileViewHelper *fileViewHelper;
@@ -1231,10 +1227,6 @@ void DFileView::focusInEvent(QFocusEvent *event)
     /// set menu actions filter
     DFileMenuManager::setActionWhitelist(d->menuWhitelist);
     DFileMenuManager::setActionBlacklist(d->menuBlacklist);
-
-    /// set file operator function filter
-    DFileService::instance()->setFileOperatorWhitelist(d->fileOperatorWhitelist);
-    DFileService::instance()->setFileOperatorBlacklist(d->fileOperatorBlacklist);
 }
 
 void DFileView::resizeEvent(QResizeEvent *event)
@@ -1879,20 +1871,6 @@ void DFileView::setMenuActionBlacklist(const QSet<MenuAction> &actionList)
     Q_D(DFileView);
 
     d->menuBlacklist = actionList;
-}
-
-void DFileView::setFileOperatorWhitelist(int fileOperatorFlags)
-{
-    Q_D(DFileView);
-
-    d->fileOperatorWhitelist = (DFileService::FileOperatorTypes)fileOperatorFlags;
-}
-
-void DFileView::setFileOperatorBlacklist(int fileOperatorFlags)
-{
-    Q_D(DFileView);
-
-    d->fileOperatorBlacklist = (DFileService::FileOperatorTypes)fileOperatorFlags;
 }
 
 void DFileView::updateHorizontalOffset()
