@@ -3,6 +3,9 @@
 
 #include <QDebug>
 #include <QWidget>
+#include <QGraphicsWidget>
+#include <QGraphicsScene>
+#include <QGraphicsView>
 
 DFMEvent::DFMEvent(const QObject *sender)
     : DFMEvent(UnknowType, sender)
@@ -50,9 +53,17 @@ quint64 DFMEvent::windowId() const
     if (m_id > 0)
         return m_id;
 
+    if (!m_sender)
+        return 0;
+
     const QWidget *w = qobject_cast<const QWidget*>(m_sender.data());
 
-    return w ? WindowManager::getWindowId(w) : 0;
+    if (w)
+        return WindowManager::getWindowId(w);
+
+    const QGraphicsWidget *gw = qobject_cast<const QGraphicsWidget*>(m_sender.data());
+
+    return (gw && !gw->scene()->views().isEmpty()) ? WindowManager::getWindowId(gw->scene()->views().first()) : 0;
 }
 
 void DFMEvent::setWindowId(quint64 id)
@@ -157,6 +168,12 @@ DFMUrlBaseEvent::DFMUrlBaseEvent(DFMEvent::Type type, const QObject *sender, con
     : DFMEvent(type, sender)
 {
     setData(url);
+}
+
+DFMUrlListBaseEvent::DFMUrlListBaseEvent()
+    : DFMUrlListBaseEvent(0, DUrlList())
+{
+
 }
 
 DFMUrlListBaseEvent::DFMUrlListBaseEvent(const QObject *sender, const DUrlList &list)

@@ -103,10 +103,7 @@ void DFileViewHelperPrivate::init()
 
     QObject::connect(paste_action, &QAction::triggered,
             q, [q] {
-        DFMEvent event(q);
-
-        event.setData(q->currentUrl());
-        fileService->pasteFileByClipboard(event.sender(), event.fileUrl());
+        fileService->pasteFileByClipboard(q->parent(), q->currentUrl());
     });
 
     q->parent()->addAction(copy_action);

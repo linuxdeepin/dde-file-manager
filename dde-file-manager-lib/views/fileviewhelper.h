@@ -46,7 +46,7 @@ public slots:
     void cd(const DFMUrlBaseEvent &event);
     void cdUp(const DFMUrlBaseEvent &event);
     void handleSelectEvent(const DFMUrlListBaseEvent &event);
-    void selectAll(int windowId);
+    void selectAll(quint64 windowId);
     void setFoucsOnFileView(quint64 winId);
     void refreshFileView(quint64 winId);
 

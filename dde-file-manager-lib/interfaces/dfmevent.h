@@ -137,11 +137,13 @@ public:
 class DFMUrlListBaseEvent : public DFMEvent
 {
 public:
+    explicit DFMUrlListBaseEvent();
     explicit DFMUrlListBaseEvent(const QObject *sender, const DUrlList &list);
     explicit DFMUrlListBaseEvent(Type type, const QObject *sender, const DUrlList &list);
 
     inline DUrlList urlList() const { return qvariant_cast<DUrlList>(m_data);}
 };
+Q_DECLARE_METATYPE(DFMUrlListBaseEvent)
 
 template<class T, typename... Args>
 QSharedPointer<T> dMakeEventPointer(Args&&... args)
