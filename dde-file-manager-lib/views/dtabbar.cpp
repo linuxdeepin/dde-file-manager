@@ -189,7 +189,7 @@ QString Tab::getDisplayNameByUrl(const DUrl &url) const
     } else if (PluginManager::instance()->getViewInterfacesMap().keys().contains(url.scheme())){
         urlDisplayName = PluginManager::instance()->getViewInterfaceByScheme(url.scheme())->bookMarkText();
     } else{
-        const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
+        const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(this, url);
 
         if (fileInfo)
             urlDisplayName = fileInfo->fileDisplayName();
@@ -685,7 +685,7 @@ void TabBar::onMovePrevius(Tab* who)
 
 void TabBar::onRequestNewWindow(const DUrl url)
 {
-    appController->actionNewWindow(dMakeEventPointer<DFMUrlListBaseEvent>(DUrlList() << url, this));
+    appController->actionNewWindow(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << url));
 }
 
 void TabBar::onAboutToNewWindow(Tab* who)

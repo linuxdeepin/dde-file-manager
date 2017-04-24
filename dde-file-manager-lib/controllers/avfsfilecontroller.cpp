@@ -101,17 +101,17 @@ DAbstractFileWatcher *AVFSFileController::createFileWatcher(const QSharedPointer
 
 bool AVFSFileController::openFileLocation(const QSharedPointer<DFMOpenFileLocation> &event) const
 {
-    return DFileService::instance()->openFileLocation(realUrl(event->url()), event->sender());
+    return DFileService::instance()->openFileLocation(event->sender(), realUrl(event->url()));
 }
 
 bool AVFSFileController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) const
 {
-    return DFileService::instance()->openFile(realUrl(event->url()), event->sender());
+    return DFileService::instance()->openFile(event->sender(), realUrl(event->url()));
 }
 
 bool AVFSFileController::openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const
 {
-    return DFileService::instance()->openFileByApp(event->appName(), realUrl(event->url()), event->sender());
+    return DFileService::instance()->openFileByApp(event->sender(), event->appName(), realUrl(event->url()));
 }
 
 bool AVFSFileController::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const
@@ -122,12 +122,12 @@ bool AVFSFileController::writeFilesToClipboard(const QSharedPointer<DFMWriteUrls
         realUrlList << realUrl(url);
     }
 
-    return DFileService::instance()->writeFilesToClipboard(event->action(), realUrlList, event->sender());
+    return DFileService::instance()->writeFilesToClipboard(event->sender(), event->action(), realUrlList);
 }
 
 bool AVFSFileController::openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const
 {
-    return DFileService::instance()->openInTerminal(realUrl(event->url()), event->sender());
+    return DFileService::instance()->openInTerminal(event->sender(), realUrl(event->url()));
 }
 
 DUrl AVFSFileController::realUrl(const DUrl &url)

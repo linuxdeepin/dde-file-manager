@@ -304,11 +304,11 @@ private:
     std::function<void()> m_function;
 };
 
-template<typename ReturnType>
+template <typename ReturnType>
 class _TMP
 {
 public:
-    template<typename Fun, typename... Args>
+    template <typename Fun, typename... Args>
     static ReturnType runInMainThread(Fun fun, Args&&... args)
     {
         if (!QCoreApplication::instance() || QThread::currentThread() == QCoreApplication::instance()->thread())
@@ -329,11 +329,11 @@ public:
         return result;
     }
 };
-template<>
+template <>
 class _TMP<void>
 {
 public:
-    template<typename Fun, typename... Args>
+    template <typename Fun, typename... Args>
     static void runInMainThread(Fun fun, Args&&... args)
     {
         if (!QCoreApplication::instance() || QThread::currentThread() == QCoreApplication::instance()->thread())
@@ -352,12 +352,12 @@ public:
     }
 };
 
-template<typename Fun, typename... Args>
+template <typename Fun, typename... Args>
 auto runInMainThread(Fun fun, Args&&... args) -> decltype(fun(args...))
 {
     return _TMP<decltype(fun(args...))>::runInMainThread(fun, std::forward<Args>(args)...);
 }
-template<typename Fun, typename... Args>
+template <typename Fun, typename... Args>
 typename QtPrivate::FunctionPointer<Fun>::ReturnType runInMainThread(typename QtPrivate::FunctionPointer<Fun>::Object *obj, Fun fun, Args&&... args)
 {
     return _TMP<typename QtPrivate::FunctionPointer<Fun>::ReturnType>::runInMainThread([&] {

@@ -175,9 +175,9 @@ void DLeftSideBar::handleLocationChanged(const DFMEvent &e)
         return;
 
     if (e.fileUrl().isNetWorkFile()) {
-        emit fileSignalManager->requestFetchNetworks(DFMUrlBaseEvent(e.fileUrl(), e.sender()));
+        emit fileSignalManager->requestFetchNetworks(DFMUrlBaseEvent(e.sender(), e.fileUrl()));
     } else {
-        DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(e.fileUrl(), window(), this);
+        DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(this, e.fileUrl(), window());
     }
 }
 

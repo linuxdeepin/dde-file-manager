@@ -30,7 +30,7 @@ ShareFileInfo::ShareFileInfo(const DUrl &url):
     DAbstractFileInfo(url)
 {
     if (url.path() != "/")
-        setProxy(DFileService::instance()->createFileInfo(DUrl::fromLocalFile(url.path())));
+        setProxy(DFileService::instance()->createFileInfo(Q_NULLPTR, DUrl::fromLocalFile(url.path())));
 }
 
 ShareFileInfo::~ShareFileInfo()

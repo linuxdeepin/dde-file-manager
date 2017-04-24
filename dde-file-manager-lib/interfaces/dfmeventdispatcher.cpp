@@ -139,8 +139,9 @@ QVariant DFMEventDispatcher::processEventWithEventLoop(const QSharedPointer<DFME
 
 void DFMEventDispatcher::installEventFilter(DFMAbstractEventHandler *handler)
 {
-    if (!DFMEventDispatcherData::eventFilter.contains(handler))
+    if (!DFMEventDispatcherData::eventFilter.contains(handler)) {
         DFMEventDispatcherData::eventFilter.append(handler);
+    }
 }
 
 void DFMEventDispatcher::removeEventFilter(DFMAbstractEventHandler *handler)

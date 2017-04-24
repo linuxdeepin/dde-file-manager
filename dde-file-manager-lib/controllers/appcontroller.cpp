@@ -79,9 +79,9 @@ void AppController::actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event)
         return;
 
     if (urls.size() > 1 || globalSetting->isAllwayOpenOnNewWindow())
-        DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(urls, DFMOpenUrlEvent::ForceOpenNewWindow, event->sender());
+        DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(event->sender(), urls, DFMOpenUrlEvent::ForceOpenNewWindow);
      else
-        DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(urls, DFMOpenUrlEvent::OpenInCurrentWindow, event->sender());
+        DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(event->sender(), urls, DFMOpenUrlEvent::OpenInCurrentWindow);
 }
 
 void AppController::actionOpenDisk(const QSharedPointer<DFMUrlBaseEvent> &event)
@@ -98,7 +98,7 @@ void AppController::actionOpenDisk(const QSharedPointer<DFMUrlBaseEvent> &event)
             deviceListener->addSubscriber(this);
         }
         if (diskInfo.can_unmount()) {
-            const QSharedPointer<DFMUrlListBaseEvent> &e = dMakeEventPointer<DFMUrlListBaseEvent>(DUrlList() << event->url(), event->sender());
+            const QSharedPointer<DFMUrlListBaseEvent> &e = dMakeEventPointer<DFMUrlListBaseEvent>(event->sender(), DUrlList() << event->url());
             e->setWindowId(event->windowId());
 
             actionOpen(e);
@@ -117,7 +117,7 @@ void AppController::asycOpenDisk(const QString &path)
 
 void AppController::actionOpenInNewWindow(const QSharedPointer<DFMUrlListBaseEvent> &event)
 {
-    DFMEventDispatcher::instance()->processEvent<DFMOpenNewWindowEvent>(event->urlList(), true, event->sender());
+    DFMEventDispatcher::instance()->processEvent<DFMOpenNewWindowEvent>(event->sender(), event->urlList(), true);
 }
 
 void AppController::actionOpenInNewTab(const QSharedPointer<DFMUrlBaseEvent> &event)
@@ -139,7 +139,7 @@ void AppController::actionOpenDiskInNewTab(const QSharedPointer<DFMUrlBaseEvent>
 
         newUrl.setQuery(QString());
 
-        emit fileSignalManager->requestOpenInNewTab(DFMUrlBaseEvent(newUrl, event->sender()));
+        emit fileSignalManager->requestOpenInNewTab(DFMUrlBaseEvent(event->sender(), newUrl));
     }
 }
 
@@ -162,7 +162,7 @@ void AppController::actionOpenDiskInNewWindow(const QSharedPointer<DFMUrlBaseEve
         DUrl newUrl = fileUrl;
 
         newUrl.setQuery(QString());
-        const QSharedPointer<DFMUrlListBaseEvent> newEvent(new DFMUrlListBaseEvent(DUrlList() << newUrl, event->sender()));
+        const QSharedPointer<DFMUrlListBaseEvent> newEvent(new DFMUrlListBaseEvent(event->sender(), DUrlList() << newUrl));
 
         newEvent->setWindowId(event->windowId());
 
@@ -188,46 +188,46 @@ void AppController::actionOpenAsAdmin(const QSharedPointer<DFMUrlBaseEvent> &eve
 
 void AppController::actionOpenWithCustom(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    emit fileSignalManager->requestShowOpenWithDialog(DFMUrlBaseEvent(event->url(), event->sender()));
+    emit fileSignalManager->requestShowOpenWithDialog(DFMUrlBaseEvent(event->sender(), event->url()));
 }
 
 void AppController::actionOpenFileLocation(const QSharedPointer<DFMUrlListBaseEvent> &event)
 {
     const DUrlList& urls = event->urlList();
     foreach (const DUrl &url, urls) {
-        fileService->openFileLocation(url);
+        fileService->openFileLocation(event->sender(), url);
     }
 }
 
 void AppController::actionCompress(const QSharedPointer<DFMUrlListBaseEvent> &event)
 {
-    fileService->compressFiles(event->urlList(), event->sender());
+    fileService->compressFiles(event->sender(), event->urlList());
 }
 
 void AppController::actionDecompress(const QSharedPointer<DFMUrlListBaseEvent> &event)
 {
-    fileService->decompressFile(event->urlList(), event->sender());
+    fileService->decompressFile(event->sender(), event->urlList());
 }
 
 void AppController::actionDecompressHere(const QSharedPointer<DFMUrlListBaseEvent> &event)
 {
-    fileService->decompressFileHere(event->urlList(), event->sender());
+    fileService->decompressFileHere(event->sender(), event->urlList());
 }
 
 void AppController::actionCut(const QSharedPointer<DFMUrlListBaseEvent> &event)
 {
-    fileService->writeFilesToClipboard(DFMGlobal::CutAction, event->urlList(), event->sender());
+    fileService->writeFilesToClipboard(event->sender(), DFMGlobal::CutAction, event->urlList());
 
 }
 
 void AppController::actionCopy(const QSharedPointer<DFMUrlListBaseEvent> &event)
 {
-    fileService->writeFilesToClipboard(DFMGlobal::CopyAction, event->urlList(), event->sender());
+    fileService->writeFilesToClipboard(event->sender(), DFMGlobal::CopyAction, event->urlList());
 }
 
 void AppController::actionPaste(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    fileService->pasteFileByClipboard(event->url(), event->sender());
+    fileService->pasteFileByClipboard(event->sender(), event->url());
 }
 
 void AppController::actionRename(const QSharedPointer<DFMUrlBaseEvent> &event)
@@ -247,22 +247,22 @@ void AppController::actionBookmarkRemove(const QSharedPointer<DFMUrlBaseEvent> &
 
 void AppController::actionDelete(const QSharedPointer<DFMUrlListBaseEvent> &event)
 {
-    fileService->moveToTrash(event->urlList(), event->sender());
+    fileService->moveToTrash(event->sender(), event->urlList());
 }
 
 void AppController::actionCompleteDeletion(const QSharedPointer<DFMUrlListBaseEvent> &event)
 {
-    fileService->deleteFiles(event->urlList(), event->sender());
+    fileService->deleteFiles(event->sender(), event->urlList());
 }
 
 void AppController::actionCreateSymlink(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    fileService->createSymlink(event->url(), event->sender());
+    fileService->createSymlink(event->sender(), event->url());
 }
 
 void AppController::actionSendToDesktop(const QSharedPointer<DFMUrlListBaseEvent> &event)
 {
-    fileService->sendToDesktop(event->urlList());
+    fileService->sendToDesktop(event->sender(), event->urlList());
 }
 
 void AppController::actionAddToBookMark(const QSharedPointer<DFMUrlBaseEvent> &event)
@@ -270,17 +270,17 @@ void AppController::actionAddToBookMark(const QSharedPointer<DFMUrlBaseEvent> &e
     const DUrl& fileUrl = event->url();
     QString dirName = QDir(fileUrl.path()).dirName();
     bookmarkManager->writeIntoBookmark(0, dirName, fileUrl);
-    emit fileSignalManager->requestBookmarkAdd(dirName, DFMUrlBaseEvent(fileUrl, event->sender()));
+    emit fileSignalManager->requestBookmarkAdd(dirName, DFMUrlBaseEvent(event->sender(), fileUrl));
 }
 
 void AppController::actionNewFolder(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    fileService->newFolder(event->url(), event->sender());
+    fileService->newFolder(event->sender(), event->url());
 }
 
 void AppController::actionNewFile(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    fileService->newFile(event->url(), "txt", event->sender());
+    fileService->newFile(event->sender(), event->url(), "txt");
 }
 
 void AppController::actionSelectAll(quint64 winId)
@@ -298,7 +298,7 @@ void AppController::actionClearTrash(const QObject *sender)
     DUrlList list;
     list << DUrl::fromTrashFile("/");
 
-    bool ret = fileService->deleteFiles(list, sender);
+    bool ret = fileService->deleteFiles(sender, list);
 
     if(ret){
         //check if is sound effect enabled
@@ -385,12 +385,12 @@ void AppController::actionUnmount(const QSharedPointer<DFMUrlBaseEvent> &event)
 
 void AppController::actionRestore(const QSharedPointer<DFMUrlListBaseEvent> &event)
 {
-    DFileService::instance()->restoreFile(event->urlList(), event->sender());
+    DFileService::instance()->restoreFile(event->sender(), event->urlList());
 }
 
 void AppController::actionRestoreAll(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    DFileService::instance()->restoreFile(DUrlList() << event->url(), event->sender());
+    DFileService::instance()->restoreFile(event->sender(), DUrlList() << event->url());
 }
 
 void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
@@ -402,7 +402,7 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
 void AppController::actionOpenInTerminal(const QSharedPointer<DFMUrlListBaseEvent> &event)
 {
     for (const DUrl &url: event->urlList()) {
-        fileService->openInTerminal(url);
+        fileService->openInTerminal(event->sender(), url);
     }
 }
 
@@ -414,7 +414,7 @@ void AppController::actionProperty(const QSharedPointer<DFMUrlListBaseEvent> &ev
         DUrl realTargetUrl = url;
 
         //consider symlink file that links to trash/computer desktop files
-        const DAbstractFileInfoPointer& info = fileService->createFileInfo(url);
+        const DAbstractFileInfoPointer& info = fileService->createFileInfo(event->sender(), url);
         if(info && info->isSymLink()){
             realTargetUrl = info->rootSymLinkTarget();
         }
@@ -422,7 +422,7 @@ void AppController::actionProperty(const QSharedPointer<DFMUrlListBaseEvent> &ev
         if(realTargetUrl.toLocalFile().endsWith(QString(".") + DESKTOP_SURRIX)){
             DesktopFile df(realTargetUrl.toLocalFile());
             if(df.getDeepinId() == "dde-trash"){
-                dialogManager->showTrashPropertyDialog(DFMUrlBaseEvent(realTargetUrl, event->sender()));
+                dialogManager->showTrashPropertyDialog(DFMUrlBaseEvent(event->sender(), realTargetUrl));
                 urlList.removeOne(url);
             } else if(df.getDeepinId() == "dde-computer"){
                 dialogManager->showComputerPropertyDialog();
@@ -434,10 +434,10 @@ void AppController::actionProperty(const QSharedPointer<DFMUrlListBaseEvent> &ev
     if(urlList.isEmpty())
         return;
 
-    if (urlList.first() == DUrl::fromTrashFile("/")){
-        emit fileSignalManager->requestShowTrashPropertyDialog(DFMUrlBaseEvent(urlList.first(), event->sender()));
-    }else{
-        emit fileSignalManager->requestShowPropertyDialog(DFMUrlListBaseEvent(urlList, event->sender()));
+    if (urlList.first() == DUrl::fromTrashFile("/")) {
+        emit fileSignalManager->requestShowTrashPropertyDialog(DFMUrlBaseEvent(event->sender(), urlList.first()));
+    } else {
+        emit fileSignalManager->requestShowPropertyDialog(DFMUrlListBaseEvent(event->sender(), urlList));
     }
 }
 
@@ -478,7 +478,7 @@ void AppController::actionShare(const QSharedPointer<DFMUrlListBaseEvent> &event
 
 void AppController::actionUnShare(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    fileService->unShareFolder(event->url());
+    fileService->unShareFolder(event->sender(), event->url());
 }
 
 void AppController::actionSetUserSharePassword(quint64 winId)
@@ -640,7 +640,7 @@ void AppController::actionOpenFileByApp()
 
     QString app = action->property("app").toString();
     DUrl fileUrl(qvariant_cast<DUrl>(action->property("url")));
-    fileService->openFileByApp(app, fileUrl, this);
+    fileService->openFileByApp(this, app, fileUrl);
 }
 
 void AppController::doSubscriberAction(const QString &path)
@@ -698,79 +698,79 @@ bool AppController::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *res
 
     switch (e->action()) {
     case DFMGlobal::Open:
-        actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(e->selectedUrls(), e->sender()));
+        actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(e->sender(), e->selectedUrls()));
         break;
     case DFMGlobal::OpenDisk:
-        actionOpenDisk(dMakeEventPointer<DFMUrlBaseEvent>(e->selectedUrls().first(), e->sender()));
+        actionOpenDisk(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
         break;
     case DFMGlobal::OpenInNewWindow:
-        actionOpenInNewWindow(dMakeEventPointer<DFMUrlListBaseEvent>(e->selectedUrls(), e->sender()));
+        actionOpenInNewWindow(dMakeEventPointer<DFMUrlListBaseEvent>(e->sender(), e->selectedUrls()));
         break;
     case DFMGlobal::OpenInNewTab:
-        actionOpenDiskInNewTab(dMakeEventPointer<DFMUrlBaseEvent>(e->selectedUrls().first(), e->sender()));
+        actionOpenDiskInNewTab(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
         break;
     case DFMGlobal::OpenDiskInNewWindow:
-        actionOpenDiskInNewWindow(dMakeEventPointer<DFMUrlBaseEvent>(e->selectedUrls().first(), e->sender()));
+        actionOpenDiskInNewWindow(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
         break;
     case DFMGlobal::OpenDiskInNewTab:
-        actionOpenDiskInNewTab(dMakeEventPointer<DFMUrlBaseEvent>(e->selectedUrls().first(), e->sender()));
+        actionOpenDiskInNewTab(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
         break;
     case DFMGlobal::OpenAsAdmin:
-        actionOpenAsAdmin(dMakeEventPointer<DFMUrlBaseEvent>(e->selectedUrls().first(), e->sender()));
+        actionOpenAsAdmin(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
         break;
     case DFMGlobal::OpenWithCustom:
-        actionOpenWithCustom(dMakeEventPointer<DFMUrlBaseEvent>(e->selectedUrls().first(), e->sender()));
+        actionOpenWithCustom(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
         break;
     case DFMGlobal::OpenFileLocation:
-        actionOpenFileLocation(dMakeEventPointer<DFMUrlListBaseEvent>(e->selectedUrls(), e->sender()));
+        actionOpenFileLocation(dMakeEventPointer<DFMUrlListBaseEvent>(e->sender(), e->selectedUrls()));
         break;
     case DFMGlobal::Compress:
-        actionCompress(dMakeEventPointer<DFMUrlListBaseEvent>(e->selectedUrls(), e->sender()));
+        actionCompress(dMakeEventPointer<DFMUrlListBaseEvent>(e->sender(), e->selectedUrls()));
         break;
     case DFMGlobal::Decompress:
-        actionDecompress(dMakeEventPointer<DFMUrlListBaseEvent>(e->selectedUrls(), e->sender()));
+        actionDecompress(dMakeEventPointer<DFMUrlListBaseEvent>(e->sender(), e->selectedUrls()));
         break;
     case DFMGlobal::DecompressHere:
-        actionDecompressHere(dMakeEventPointer<DFMUrlListBaseEvent>(e->selectedUrls(), e->sender()));
+        actionDecompressHere(dMakeEventPointer<DFMUrlListBaseEvent>(e->sender(), e->selectedUrls()));
         break;
     case DFMGlobal::Cut:
-        actionCut(dMakeEventPointer<DFMUrlListBaseEvent>(e->selectedUrls(), e->sender()));
+        actionCut(dMakeEventPointer<DFMUrlListBaseEvent>(e->sender(), e->selectedUrls()));
         break;
     case DFMGlobal::Copy:
-        actionCopy(dMakeEventPointer<DFMUrlListBaseEvent>(e->selectedUrls(), e->sender()));
+        actionCopy(dMakeEventPointer<DFMUrlListBaseEvent>(e->sender(), e->selectedUrls()));
         break;
     case DFMGlobal::Paste:
-        actionPaste(dMakeEventPointer<DFMUrlBaseEvent>(e->selectedUrls().first(), e->sender()));
+        actionPaste(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
         break;
     case DFMGlobal::Rename:
-        actionRename(dMakeEventPointer<DFMUrlBaseEvent>(e->selectedUrls().first(), e->sender()));
+        actionRename(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
         break;
     case DFMGlobal::BookmarkRename:
-        actionBookmarkRename(dMakeEventPointer<DFMUrlBaseEvent>(e->selectedUrls().first(), e->sender()));
+        actionBookmarkRename(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
         break;
     case DFMGlobal::BookmarkRemove:
-        actionBookmarkRemove(dMakeEventPointer<DFMUrlBaseEvent>(e->selectedUrls().first(), e->sender()));
+        actionBookmarkRemove(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
         break;
     case DFMGlobal::CreateSymlink:
-        actionCreateSymlink(dMakeEventPointer<DFMUrlBaseEvent>(e->selectedUrls().first(), e->sender()));
+        actionCreateSymlink(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
         break;
     case DFMGlobal::SendToDesktop:
-        actionSendToDesktop(dMakeEventPointer<DFMUrlListBaseEvent>(e->selectedUrls(), e->sender()));
+        actionSendToDesktop(dMakeEventPointer<DFMUrlListBaseEvent>(e->sender(), e->selectedUrls()));
         break;
     case DFMGlobal::AddToBookMark:
-        actionAddToBookMark(dMakeEventPointer<DFMUrlBaseEvent>(e->selectedUrls().first(), e->sender()));
+        actionAddToBookMark(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
         break;
     case DFMGlobal::Delete:
-        actionDelete(dMakeEventPointer<DFMUrlListBaseEvent>(e->selectedUrls(), e->sender()));
+        actionDelete(dMakeEventPointer<DFMUrlListBaseEvent>(e->sender(), e->selectedUrls()));
         break;
     case DFMGlobal::Property:
-        actionProperty(dMakeEventPointer<DFMUrlListBaseEvent>(e->selectedUrls(), e->sender()));
+        actionProperty(dMakeEventPointer<DFMUrlListBaseEvent>(e->sender(), e->selectedUrls()));
         break;
     case DFMGlobal::NewFolder:
-        actionNewFolder(dMakeEventPointer<DFMUrlBaseEvent>(e->selectedUrls().first(), e->sender()));
+        actionNewFolder(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->currentUrl()));
         break;
     case DFMGlobal::NewWindow:
-        actionNewWindow(dMakeEventPointer<DFMUrlListBaseEvent>(e->selectedUrls(), e->sender()));
+        actionNewWindow(dMakeEventPointer<DFMUrlListBaseEvent>(e->sender(), e->selectedUrls()));
         break;
     case DFMGlobal::SelectAll:
         actionSelectAll(e->windowId());
@@ -782,40 +782,40 @@ bool AppController::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *res
         actionClearTrash(e->sender());
         break;
     case DFMGlobal::NewWord: /// sub menu
-        actionNewWord(dMakeEventPointer<DFMUrlBaseEvent>(e->selectedUrls().first(), e->sender()));
+        actionNewWord(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->currentUrl()));
         break;
     case DFMGlobal::NewExcel: /// sub menu
-        actionNewExcel(dMakeEventPointer<DFMUrlBaseEvent>(e->selectedUrls().first(), e->sender()));
+        actionNewExcel(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->currentUrl()));
         break;
     case DFMGlobal::NewPowerpoint: /// sub menu
-        actionNewPowerpoint(dMakeEventPointer<DFMUrlBaseEvent>(e->selectedUrls().first(), e->sender()));
+        actionNewPowerpoint(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->currentUrl()));
         break;
     case DFMGlobal::NewText: /// sub menu
-        actionNewText(dMakeEventPointer<DFMUrlBaseEvent>(e->selectedUrls().first(), e->sender()));
+        actionNewText(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->currentUrl()));
         break;
     case DFMGlobal::OpenInTerminal:
-        actionOpenInTerminal(dMakeEventPointer<DFMUrlListBaseEvent>(e->selectedUrls().isEmpty() ? DUrlList() << e->currentUrl() : e->selectedUrls(), e->sender()));
+        actionOpenInTerminal(dMakeEventPointer<DFMUrlListBaseEvent>(e->sender(), e->selectedUrls().isEmpty() ? DUrlList() << e->currentUrl() : e->selectedUrls()));
         break;
     case DFMGlobal::Restore:
-        actionRestore(dMakeEventPointer<DFMUrlListBaseEvent>(e->selectedUrls(), e->sender()));
+        actionRestore(dMakeEventPointer<DFMUrlListBaseEvent>(e->sender(), e->selectedUrls()));
         break;
     case DFMGlobal::RestoreAll:
-        actionRestoreAll(dMakeEventPointer<DFMUrlBaseEvent>(e->currentUrl(), e->sender()));
+        actionRestoreAll(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->currentUrl()));
         break;
     case DFMGlobal::CompleteDeletion:
-        actionCompleteDeletion(dMakeEventPointer<DFMUrlListBaseEvent>(e->selectedUrls(), e->sender()));
+        actionCompleteDeletion(dMakeEventPointer<DFMUrlListBaseEvent>(e->sender(), e->selectedUrls()));
         break;
     case DFMGlobal::Mount:
-        actionMount(dMakeEventPointer<DFMUrlBaseEvent>(e->selectedUrls().first(), e->sender()));
+        actionMount(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
         break;
     case DFMGlobal::Unmount:
-        actionUnmount(dMakeEventPointer<DFMUrlBaseEvent>(e->selectedUrls().first(), e->sender()));
+        actionUnmount(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
         break;
     case DFMGlobal::Eject:
-        actionEject(dMakeEventPointer<DFMUrlBaseEvent>(e->selectedUrls().first(), e->sender()));
+        actionEject(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
         break;
     case DFMGlobal::Settings:
-        actionEject(dMakeEventPointer<DFMUrlBaseEvent>(e->selectedUrls().first(), e->sender()));
+        actionEject(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
         break;
     case DFMGlobal::Help:
         actionHelp();
@@ -827,22 +827,22 @@ bool AppController::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *res
         actionExit(e->windowId());
         break;
     case DFMGlobal::SetAsWallpaper:
-        actionSetAsWallpaper(dMakeEventPointer<DFMUrlBaseEvent>(e->selectedUrls().first(), e->sender()));
+        actionSetAsWallpaper(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
         break;
     case DFMGlobal::ForgetPassword:
-        actionForgetPassword(dMakeEventPointer<DFMUrlBaseEvent>(e->selectedUrls().first(), e->sender()));
+        actionForgetPassword(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
         break;
     case DFMGlobal::Share:
-        actionShare(dMakeEventPointer<DFMUrlListBaseEvent>(e->selectedUrls(), e->sender()));
+        actionShare(dMakeEventPointer<DFMUrlListBaseEvent>(e->sender(), e->selectedUrls()));
         break;
     case DFMGlobal::UnShare:
-        actionUnShare(dMakeEventPointer<DFMUrlBaseEvent>(e->selectedUrls().first(), e->sender()));
+        actionUnShare(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
         break;
     case DFMGlobal::SetUserSharePassword:
         actionSetUserSharePassword(e->windowId());
         break;
     case DFMGlobal::FormatDevice:
-        actionFormatDevice(dMakeEventPointer<DFMUrlBaseEvent>(e->selectedUrls().first(), e->sender()));
+        actionFormatDevice(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
         break;
     }
 

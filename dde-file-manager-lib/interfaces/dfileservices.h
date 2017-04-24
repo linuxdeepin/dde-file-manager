@@ -90,42 +90,42 @@ public:
     void setFileOperatorBlacklist(FileOperatorTypes list);
     FileOperatorTypes fileOperatorBlacklist() const;
 
-    bool openFile(const DUrl &url, const QObject *sender = 0) const;
-    bool openFileByApp(const QString &appName, const DUrl &url, const QObject *sender = 0) const;
-    bool compressFiles(const DUrlList &list, const QObject *sender = 0) const;
-    bool decompressFile(const DUrlList &list, const QObject *sender = 0) const;
-    bool decompressFileHere(const DUrlList &list, const QObject *sender = 0) const;
-    bool writeFilesToClipboard(DFMGlobal::ClipboardAction action, const DUrlList &list, const QObject *sender = 0) const;
-    bool renameFile(const DUrl &from, const DUrl &to, const QObject *sender = 0) const;
-    bool deleteFiles(const DUrlList &list, const QObject *sender = 0) const;
-    DUrlList moveToTrash(const DUrlList &list, const QObject *sender = 0) const;
-    void pasteFileByClipboard(const DUrl &targetUrl, const QObject *sender = 0) const;
-    DUrlList pasteFile(DFMGlobal::ClipboardAction action, const DUrl &targetUrl,
-                   const DUrlList &list, const QObject *sender = 0) const;
-    bool restoreFile(const DUrlList &list, const QObject *sender) const;
-    bool newFolder(const DUrl &targetUrl, const QObject *sender = 0) const;
-    bool newFile(const DUrl &targetUrl, const QString &fileSuffix, const QObject *sender = 0) const;
-    bool openFileLocation(const DUrl &url, const QObject *sender = 0) const;
+    bool openFile(const QObject *sender, const DUrl &url) const;
+    bool openFileByApp(const QObject *sender, const QString &appName, const DUrl &url) const;
+    bool compressFiles(const QObject *sender, const DUrlList &list) const;
+    bool decompressFile(const QObject *sender, const DUrlList &list) const;
+    bool decompressFileHere(const QObject *sender, const DUrlList &list) const;
+    bool writeFilesToClipboard(const QObject *sender, DFMGlobal::ClipboardAction action, const DUrlList &list) const;
+    bool renameFile(const QObject *sender, const DUrl &from, const DUrl &to) const;
+    bool deleteFiles(const QObject *sender, const DUrlList &list) const;
+    DUrlList moveToTrash(const QObject *sender, const DUrlList &list) const;
+    void pasteFileByClipboard(const QObject *sender, const DUrl &targetUrl) const;
+    DUrlList pasteFile(const QObject *sender, DFMGlobal::ClipboardAction action,
+                       const DUrl &targetUrl, const DUrlList &list) const;
+    bool restoreFile(const QObject *sender, const DUrlList &list) const;
+    bool newFolder(const QObject *sender, const DUrl &targetUrl) const;
+    bool newFile(const QObject *sender, const DUrl &targetUrl, const QString &fileSuffix) const;
+    bool openFileLocation(const QObject *sender, const DUrl &url) const;
 
-    bool createSymlink(const DUrl &fileUrl, const QObject *sender = 0) const;
-    bool createSymlink(const DUrl &fileUrl, const DUrl &linkToUrl, const QObject *sender = 0) const;
-    bool sendToDesktop(const DUrlList &urlList, const QObject *sender = 0) const;
+    bool createSymlink(const QObject *sender, const DUrl &fileUrl) const;
+    bool createSymlink(const QObject *sender, const DUrl &fileUrl, const DUrl &linkToUrl) const;
+    bool sendToDesktop(const QObject *sender, const DUrlList &urlList) const;
 
-    bool shareFolder(const DUrl &fileUrl, const QString &name, bool isWritable = false, bool allowGuest = false, const QObject *sender = 0);
-    bool unShareFolder(const DUrl &fileUrl, const QObject *sender = 0) const;
-    bool openInTerminal(const DUrl &fileUrl, const QObject *sender = 0) const;
+    bool shareFolder(const QObject *sender, const DUrl &fileUrl, const QString &name, bool isWritable = false, bool allowGuest = false);
+    bool unShareFolder(const QObject *sender, const DUrl &fileUrl) const;
+    bool openInTerminal(const QObject *sender, const DUrl &fileUrl) const;
 
-    const DAbstractFileInfoPointer createFileInfo(const DUrl &fileUrl, const QObject *sender = 0) const;
-    const DDirIteratorPointer createDirIterator(const DUrl &fileUrl, const QStringList &nameFilters, QDir::Filters filters,
-                                                QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags, const QObject *sender = 0) const;
+    const DAbstractFileInfoPointer createFileInfo(const QObject *sender, const DUrl &fileUrl) const;
+    const DDirIteratorPointer createDirIterator(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters, QDir::Filters filters,
+                                                QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags) const;
 
-    const QList<DAbstractFileInfoPointer> getChildren(const DUrl &fileUrl, const QStringList &nameFilters, QDir::Filters filters,
-                                                     QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags, const QObject *sender = 0);
+    const QList<DAbstractFileInfoPointer> getChildren(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters, QDir::Filters filters,
+                                                      QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags);
 
-    JobController *getChildrenJob(const DUrl &fileUrl, const QStringList &nameFilters,
-                                  QDir::Filters filters, QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags, const QObject *sender = 0) const;
+    JobController *getChildrenJob(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
+                                  QDir::Filters filters, QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags) const;
 
-    DAbstractFileWatcher *createFileWatcher(const DUrl &fileUrl, QObject *parent = 0, const QObject *sender = 0) const;
+    DAbstractFileWatcher *createFileWatcher(const QObject *sender, const DUrl &fileUrl, QObject *parent = 0) const;
 
 signals:
     void fileOpened(const DUrl &fileUrl) const;

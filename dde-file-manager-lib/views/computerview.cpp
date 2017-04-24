@@ -165,7 +165,7 @@ void ComputerViewItem::mouseDoubleClickEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton){
         if (m_info){
-            DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(m_info->fileUrl(), window(), this);
+            DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(this, m_info->fileUrl(), window());
         }else if (m_deviceInfo){
             DUrl url = m_deviceInfo->getMountPointUrl();
 
@@ -173,9 +173,9 @@ void ComputerViewItem::mouseDoubleClickEvent(QMouseEvent *event)
 
             if (diskInfo.can_mount() && !diskInfo.can_unmount()){
                 url.setQuery(m_deviceInfo->getId());
-                appController->actionOpenDisk(dMakeEventPointer<DFMUrlBaseEvent>(url, this));
+                appController->actionOpenDisk(dMakeEventPointer<DFMUrlBaseEvent>(this, url));
             }else{
-                DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(url, window(), this);
+                DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(this, url, window());
             }
 
         }
@@ -449,7 +449,7 @@ void ComputerView::loadSystemItems()
     foreach (QString key, m_systemPathKeys) {
         QString path = systemPathManager->getSystemPath(key);
         DUrl url = DUrl::fromLocalFile(path);
-        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, url);
         ComputerViewItem* item = new ComputerViewItem;
         item->setInfo(fileInfo);
         item->setName(fileInfo->fileDisplayName());

@@ -356,7 +356,7 @@ QStringList MimesAppsManager::getRecommendedApps(const DUrl &url)
     QString gio_mimeType;
 
     //first find reommendApps from qio
-    const DAbstractFileInfoPointer& info = DFileService::instance()->createFileInfo(url);
+    const DAbstractFileInfoPointer& info = DFileService::instance()->createFileInfo(Q_NULLPTR, url);
     if(info)
         recommendedApps = getRecommendedAppsByQio(info->mimeType());
 
@@ -418,7 +418,7 @@ QStringList MimesAppsManager::getRecommendedAppsByGio(const QString &mimeType)
 
 QStringList MimesAppsManager::getrecommendedAppsFromMimeWhiteList(const DUrl &url)
 {
-    const DAbstractFileInfoPointer& info = fileService->createFileInfo(url);
+    const DAbstractFileInfoPointer& info = fileService->createFileInfo(Q_NULLPTR, url);
     QString aliasMimeType = info->mimeTypeName();
     QStringList recommendedApps;
     QString mimeAssociationsFile = QString("%1/%2/%3").arg(DFMStandardPaths::standardLocation(DFMStandardPaths::ApplicationSharePath),

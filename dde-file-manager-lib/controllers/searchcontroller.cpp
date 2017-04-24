@@ -84,7 +84,7 @@ void SearchFileWatcher::addWatcher(const DUrl &url)
     if (!url.isValid() || d->urlToWatcherMap.contains(url))
         return;
 
-    DAbstractFileWatcher *watcher = DFileService::instance()->createFileWatcher(url);
+    DAbstractFileWatcher *watcher = DFileService::instance()->createFileWatcher(this, url);
 
     if (!watcher)
         return;
@@ -235,7 +235,7 @@ DUrl SearchDiriterator::next()
     if (!childrens.isEmpty()) {
         const DUrl &url = childrens.dequeue();
 
-        currentFileInfo = DFileService::instance()->createFileInfo(url, parent);
+        currentFileInfo = DFileService::instance()->createFileInfo(parent, url);
 
         return url;
     }
@@ -258,7 +258,7 @@ bool SearchDiriterator::hasNext() const
 
             const DUrl &url = searchPathList.takeAt(0);
 
-            it = DFileService::instance()->createDirIterator(url, m_nameFilters, QDir::NoDotAndDotDot | m_filter, m_flags);
+            it = DFileService::instance()->createDirIterator(parent, url, m_nameFilters, QDir::NoDotAndDotDot | m_filter, m_flags);
 
             if (!it) {
                 continue;
@@ -348,67 +348,67 @@ const DAbstractFileInfoPointer SearchController::createFileInfo(const QSharedPoi
 
 bool SearchController::openFileLocation(const QSharedPointer<DFMOpenFileLocation> &event) const
 {
-    return DFileService::instance()->openFileLocation(realUrl(event->url()), event->sender());
+    return DFileService::instance()->openFileLocation(event->sender(), realUrl(event->url()));
 }
 
 bool SearchController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) const
 {
-    return DFileService::instance()->openFile(realUrl(event->url()), event->sender());
+    return DFileService::instance()->openFile(event->sender(), realUrl(event->url()));
 }
 
 bool SearchController::openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const
 {
-    return DFileService::instance()->openFileByApp(event->appName(), realUrl(event->url()), event->sender());
+    return DFileService::instance()->openFileByApp(event->sender(), event->appName(), realUrl(event->url()));
 }
 
 bool SearchController::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const
 {
-    return DFileService::instance()->writeFilesToClipboard(event->action(), realUrlList(event->urlList()), event->sender());
+    return DFileService::instance()->writeFilesToClipboard(event->sender(), event->action(), realUrlList(event->urlList()));
 }
 
 DUrlList SearchController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const
 {
-    return DFileService::instance()->moveToTrash(realUrlList(event->urlList()), event->sender());
+    return DFileService::instance()->moveToTrash(event->sender(), realUrlList(event->urlList()));
 }
 
 bool SearchController::restoreFile(const QSharedPointer<DFMRestoreFromTrashEvent> &event) const
 {
-    return DFileService::instance()->restoreFile(realUrlList(event->urlList()), event->sender());
+    return DFileService::instance()->restoreFile(event->sender(), realUrlList(event->urlList()));
 }
 
 bool SearchController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const
 {
-    return DFileService::instance()->deleteFiles(realUrlList(event->urlList()), event->sender());
+    return DFileService::instance()->deleteFiles(event->sender(), realUrlList(event->urlList()));
 }
 
 bool SearchController::renameFile(const QSharedPointer<DFMRenameEvent> &event) const
 {
-    return DFileService::instance()->renameFile(realUrl(event->fromUrl()), realUrl(event->toUrl()), event->sender());
+    return DFileService::instance()->renameFile(event->sender(), realUrl(event->fromUrl()), realUrl(event->toUrl()));
 }
 
 bool SearchController::compressFiles(const QSharedPointer<DFMCompressEvnet> &event) const
 {
-    return DFileService::instance()->compressFiles(realUrlList(event->urlList()), event->sender());
+    return DFileService::instance()->compressFiles(event->sender(), realUrlList(event->urlList()));
 }
 
 bool SearchController::decompressFile(const QSharedPointer<DFMDecompressEvnet> &event) const
 {
-    return DFileService::instance()->decompressFile(realUrlList(event->urlList()), event->sender());
+    return DFileService::instance()->decompressFile(event->sender(), realUrlList(event->urlList()));
 }
 
 bool SearchController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent> &event) const
 {
-    return DFileService::instance()->createSymlink(realUrl(event->fileUrl()), event->toUrl(), event->sender());
+    return DFileService::instance()->createSymlink(event->sender(), realUrl(event->fileUrl()), event->toUrl());
 }
 
 bool SearchController::unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const
 {
-    return DFileService::instance()->unShareFolder(realUrl(event->url()), event->sender());
+    return DFileService::instance()->unShareFolder(event->sender(), realUrl(event->url()));
 }
 
 bool SearchController::openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const
 {
-    return DFileService::instance()->openInTerminal(realUrl(event->url()), event->sender());
+    return DFileService::instance()->openInTerminal(event->sender(), realUrl(event->url()));
 }
 
 const DDirIteratorPointer SearchController::createDirIterator(const QSharedPointer<DFMCreateDiriterator> &event) const

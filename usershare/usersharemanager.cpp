@@ -144,7 +144,7 @@ void UserShareManager::updateFileAttributeInfo(const QString &filePath) const
 {
     const DUrl &fileUrl = DUrl::fromLocalFile(filePath);
     qDebug() << fileUrl;
-    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(fileUrl);
+    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, fileUrl);
 
     if (!fileInfo)
         return;
@@ -284,7 +284,7 @@ void UserShareManager::updateUserShareInfo()
             shareInfo.setComment(info.value("comment"));
             shareInfo.setGuest_ok(info.value("guest_ok"));
             shareInfo.setUsershare_acl(info.value("usershare_acl"));
-            const DAbstractFileInfoPointer& fileInfo = DFileService::instance()->createFileInfo(DUrl::fromLocalFile(sharePath));
+            const DAbstractFileInfoPointer& fileInfo = DFileService::instance()->createFileInfo(this, DUrl::fromLocalFile(sharePath));
             shareInfo.setIsWritable(fileInfo->isWritable());
             m_shareInfos.insert(shareInfo.shareName(), shareInfo);
 

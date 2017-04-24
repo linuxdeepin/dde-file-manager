@@ -116,7 +116,7 @@ DFileMenu *DFileMenuManager::createCustomBookMarkMenu(const DUrl &url, QSet<Menu
                << MenuAction::BookmarkRemove
                << MenuAction::Property;
 
-    const DAbstractFileInfoPointer& info = fileService->createFileInfo(url);
+    const DAbstractFileInfoPointer& info = fileService->createFileInfo(Q_NULLPTR, url);
     info->refresh();
     if (!info->exists()){
         disableList << MenuAction::OpenInNewWindow
@@ -244,7 +244,7 @@ DFileMenu *DFileMenuManager::createListViewHeaderMenu(const QSet<MenuAction> &di
 
 DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrlList &urlList, QSet<MenuAction> disableList, QSet<MenuAction> unusedList, int windowId)
 {
-    DAbstractFileInfoPointer info = fileService->createFileInfo(currentUrl);
+    DAbstractFileInfoPointer info = fileService->createFileInfo(Q_NULLPTR, currentUrl);
     DFileMenu *menu = NULL;
     if (urlList.length() == 1) {
         QVector<MenuAction> actions = info->menuActionList(DAbstractFileInfo::SingleFile);
@@ -296,7 +296,7 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
         bool isAllCompressedFiles = true;
 
         foreach (DUrl url, urlList) {
-            const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
+            const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(Q_NULLPTR, url);
 
             if(!FileUtils::isArchive(url.path()))
                 isAllCompressedFiles = false;
@@ -588,7 +588,7 @@ QSet<MenuAction> DFileMenuManager::getDisableActionList(const DUrlList &urlList)
     QSet<MenuAction> disableList;
 
     for (const DUrl &fileUrl : urlList) {
-        const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(fileUrl);
+        const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(Q_NULLPTR, fileUrl);
 
         if (fileInfo) {
             disableList += fileInfo->disableMenuActionList();

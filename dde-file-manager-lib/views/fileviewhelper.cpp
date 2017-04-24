@@ -19,7 +19,7 @@
 
 FileViewHelper::FileViewHelper(DFileView *parent)
     : DFileViewHelper(parent)
-    , lastEvent(DUrl(), this)
+    , lastEvent(this, DUrl())
 {
     connect(parent, &DFileView::triggerEdit, this, &DFileViewHelper::triggerEdit);
     connect(parent, &DFileView::rootUrlChanged, this, &FileViewHelper::onCurrentUrlChanged);
@@ -124,7 +124,7 @@ void FileViewHelper::preHandleCd(const DFMUrlBaseEvent &event)
 
     lastEvent = event;
     parent()->cd(event.fileUrl());
-    lastEvent = DFMUrlBaseEvent(DUrl(), this);
+    lastEvent = DFMUrlBaseEvent(this, DUrl());
 }
 
 void FileViewHelper::cd(const DFMUrlBaseEvent &event)
@@ -134,7 +134,7 @@ void FileViewHelper::cd(const DFMUrlBaseEvent &event)
 
     lastEvent = event;
     parent()->cd(event.fileUrl());
-    lastEvent = DFMUrlBaseEvent(DUrl(), this);
+    lastEvent = DFMUrlBaseEvent(this, DUrl());
 }
 
 void FileViewHelper::cdUp(const DFMUrlBaseEvent &event)
@@ -144,7 +144,7 @@ void FileViewHelper::cdUp(const DFMUrlBaseEvent &event)
 
     lastEvent = event;
     parent()->cdUp();
-    lastEvent = DFMUrlBaseEvent(DUrl(), this);
+    lastEvent = DFMUrlBaseEvent(this, DUrl());
 }
 
 void FileViewHelper::handleSelectEvent(const DFMUrlListBaseEvent &event)

@@ -269,7 +269,7 @@ void DToolBar::searchBarTextEntered()
 
     QDir::setCurrent(currentDir);
 
-    DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(inputUrl, window(), this);
+    DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(this, inputUrl, window());
 }
 
 void DToolBar::crumbSelected(const DFMEvent &e)
@@ -277,7 +277,7 @@ void DToolBar::crumbSelected(const DFMEvent &e)
     if (e.windowId() != WindowManager::getWindowId(this))
         return;
 
-    DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(e.fileUrl(), window(), m_crumbWidget);
+    DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(m_crumbWidget, e.fileUrl(), window());
 }
 
 void DToolBar::crumbChanged(const DFMEvent &event)
@@ -332,7 +332,7 @@ void DToolBar::backButtonClicked()
     if(!url.isEmpty())
     {
         updateBackForwardButtonsState();
-        DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(url, window(), this);
+        DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(this, url, window());
     }
 }
 
@@ -343,7 +343,7 @@ void DToolBar::forwardButtonClicked()
     if(!url.isEmpty())
     {
         updateBackForwardButtonsState();
-        DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(url, window(), this);
+        DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(this, url, window());
     }
 }
 

@@ -25,6 +25,7 @@
 
 DBookmarkScene::DBookmarkScene(QObject *parent)
     : QGraphicsScene(parent)
+    , m_delayCheckMountedEvent(this)
 {
     initData();
     initUI();
@@ -399,7 +400,7 @@ void DBookmarkScene::doDragFinished(const QPointF &point, const QPointF &scenePo
     QRect rect(topLeft, bottomRight);
     if(!rect.contains(p))
     {    
-        DFMUrlBaseEvent event(item->getUrl(), this);
+        DFMUrlBaseEvent event(this, item->getUrl());
 
         event.setWindowId(item->windowId());
 
@@ -591,7 +592,7 @@ void DBookmarkScene::volumeChanged(UDiskDeviceInfoPointer device)
         bool isChecked = item->isChecked();
         bool isHighlightDisk = item->isHighlightDisk();
         if(isChecked || isHighlightDisk){
-            DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(device->getMountPointUrl(), views().at(0)->window(), this);
+            DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(this, device->getMountPointUrl(), views().at(0)->window());
             emit fileSignalManager->requestFreshFileView(windowId());
         }
     }
@@ -644,7 +645,7 @@ void DBookmarkScene::handleVolumeMountRemove(UDiskDeviceInfoPointer device, DBoo
 
 void DBookmarkScene::backHome()
 {
-    DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(DUrl::fromLocalFile(QDir::homePath()), views().at(0)->window(), this);
+    DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(this, DUrl::fromLocalFile(QDir::homePath()), views().at(0)->window());
 }
 
 void DBookmarkScene::chooseMountedItem(const DFMEvent &event)
@@ -713,7 +714,7 @@ void DBookmarkScene::moveBefore(DBookmarkItem *from, DBookmarkItem *to)
     bookmarkManager->moveBookmark(indexFrom - getCustomBookmarkItemInsertIndex(), indexTo - getCustomBookmarkItemInsertIndex());
     m_itemGroup->items().move(indexFrom, indexTo);
 
-    DFMEvent event;
+    DFMEvent event(this);
     event.setWindowId(windowId());
     emit fileSignalManager->requestBookmarkMove(indexFrom, indexTo, event);
 }
@@ -730,7 +731,7 @@ void DBookmarkScene::moveAfter(DBookmarkItem *from, DBookmarkItem *to)
     bookmarkManager->moveBookmark(indexFrom - getCustomBookmarkItemInsertIndex(), indexTo - getCustomBookmarkItemInsertIndex());
     m_itemGroup->items().move(indexFrom, indexTo);
 
-    DFMEvent event;
+    DFMEvent event(this);
     event.setWindowId(windowId());
     emit fileSignalManager->requestBookmarkMove(indexFrom, indexTo, event);
 }

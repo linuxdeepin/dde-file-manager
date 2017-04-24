@@ -9,7 +9,7 @@ DFileMenu::DFileMenu(QWidget *parent)
 
 const QSharedPointer<DFMMenuActionEvent> DFileMenu::makeEvent(DFMGlobal::MenuAction action) const
 {
-    DFMMenuActionEvent *event = new DFMMenuActionEvent(this, m_currentUrl, m_selectedUrls, action, m_sender);
+    DFMMenuActionEvent *event = new DFMMenuActionEvent(m_sender, this, m_currentUrl, m_selectedUrls, action);
 
     event->setWindowId(m_eventId);
 

@@ -109,8 +109,8 @@ bool DAbstractFileController::openFileLocation(const QSharedPointer<DFMOpenFileL
 
 const QList<DAbstractFileInfoPointer> DAbstractFileController::getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const
 {
-    const DDirIteratorPointer &iterator = createDirIterator(dMakeEventPointer<DFMCreateDiriterator>(event->url(), event->nameFilters(),
-                                                                                                    event->filters(), event->flags(), event->sender()));
+    const DDirIteratorPointer &iterator = createDirIterator(dMakeEventPointer<DFMCreateDiriterator>(event->sender(), event->url(), event->nameFilters(),
+                                                                                                    event->filters(), event->flags()));
 
     QList<DAbstractFileInfoPointer> list;
 

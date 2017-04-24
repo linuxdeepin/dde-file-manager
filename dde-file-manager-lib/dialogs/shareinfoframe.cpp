@@ -120,11 +120,11 @@ void ShareInfoFrame::handShareInfoChanged()
 void ShareInfoFrame::doShareInfoSetting()
 {
     if (!m_shareCheckBox->isChecked()) {
-        DFileService::instance()->unShareFolder(m_fileinfo->fileUrl(), this);
+        DFileService::instance()->unShareFolder(this, m_fileinfo->fileUrl());
         return;
     }
 
-    DFileService::instance()->shareFolder(m_fileinfo->fileUrl(), m_shareNamelineEdit->text(),
+    DFileService::instance()->shareFolder(this, m_fileinfo->fileUrl(), m_shareNamelineEdit->text(),
                                           m_permissoComBox->currentIndex() == 0,
                                           m_anonymityCombox->currentIndex() != 0);
 }

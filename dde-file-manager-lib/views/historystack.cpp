@@ -55,7 +55,7 @@ DUrl HistoryStack::back()
         if (PluginManager::instance()->getViewInterfacesMap().keys().contains(url.scheme()))
             break;
 
-        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(Q_NULLPTR, url);
 
         if (!fileInfo || !fileInfo->exists() || currentUrl == url) {
             removeAt(m_index);
@@ -88,7 +88,7 @@ DUrl HistoryStack::forward()
         if (PluginManager::instance()->getViewInterfacesMap().keys().contains(url.scheme()))
             break;
 
-        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(Q_NULLPTR, url);
 
         if (!fileInfo || !fileInfo->exists() || currentUrl == url) {
             removeAt(m_index);

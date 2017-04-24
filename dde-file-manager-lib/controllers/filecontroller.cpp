@@ -87,10 +87,10 @@ bool FileController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) con
 {
     DUrl fileUrl = event->url();
 
-    const DAbstractFileInfoPointer pfile = createFileInfo(dMakeEventPointer<DFMCreateFileInfoEvnet>(fileUrl));
+    const DAbstractFileInfoPointer pfile = createFileInfo(dMakeEventPointer<DFMCreateFileInfoEvnet>(this, fileUrl));
 
     if (pfile->isSymLink()) {
-        const DAbstractFileInfoPointer &linkInfo = DFileService::instance()->createFileInfo(pfile->symLinkTarget());
+        const DAbstractFileInfoPointer &linkInfo = DFileService::instance()->createFileInfo(this, pfile->symLinkTarget());
 
         if (linkInfo && !linkInfo->exists()) {
             dialogManager->showBreakSymlinkDialog(linkInfo->fileName(), fileUrl);
@@ -186,8 +186,8 @@ bool FileController::renameFile(const QSharedPointer<DFMRenameEvent> &event) con
     QFile file(oldUrl.toLocalFile());
     const QString &newFilePath = newUrl.toLocalFile();
 
-    const DAbstractFileInfoPointer &oldfilePointer = DFileService::instance()->createFileInfo(oldUrl);
-    const DAbstractFileInfoPointer &newfilePointer = DFileService::instance()->createFileInfo(newUrl);
+    const DAbstractFileInfoPointer &oldfilePointer = DFileService::instance()->createFileInfo(this, oldUrl);
+    const DAbstractFileInfoPointer &newfilePointer = DFileService::instance()->createFileInfo(this, newUrl);
 
     bool result(false);
 
