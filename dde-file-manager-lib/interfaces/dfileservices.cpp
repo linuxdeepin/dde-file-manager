@@ -52,22 +52,6 @@ DWIDGET_USE_NAMESPACE
 #define FILTER_RETURN(type, value...)\
     if (!FILTER(type)) return value;
 
-#define TRAVERSE(url, Code)\
-    do {\
-        {const char *function_name = ({QByteArray name(__FUNCTION__); name[0] = name.at(0) & char(0xdf); name.data();});\
-        FileOperatorType type = (FileOperatorType)d_func()->fileOperatorTypeEnum.keyToValue(function_name);\
-        if (!FILTER(type)) break;}\
-        QList<DAbstractFileController*> &&list = getHandlerTypeByUrl(url);\
-        bool accepted = false;\
-        for(DAbstractFileController *controller : list) {\
-            Code\
-        }\
-        list = getHandlerTypeByUrl(url, true);\
-        for(DAbstractFileController *controller : list) {\
-            Code\
-        }\
-    } while(false);
-
 class DFileServicePrivate
 {
 public:

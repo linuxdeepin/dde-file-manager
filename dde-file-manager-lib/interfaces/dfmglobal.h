@@ -5,6 +5,11 @@
 #include <QFontMetrics>
 #include <QTextOption>
 #include <QTextLayout>
+#include <QCoreApplication>
+#include <QSemaphore>
+#include <QThread>
+
+#include <functional>
 
 class DUrl;
 
@@ -280,5 +285,86 @@ private:
 
 Q_DECLARE_METATYPE(DFMGlobal::ClipboardAction)
 Q_DECLARE_METATYPE(DFMGlobal::MenuAction)
+
+namespace DThreadUtil {
+class FunctionCallProxy : public QObject
+{
+    Q_OBJECT
+
+public:
+    explicit FunctionCallProxy(std::function<void()> function);
+
+public slots:
+    void call();
+
+signals:
+    void callBySignal();
+
+private:
+    std::function<void()> m_function;
+};
+
+template<typename ReturnType>
+class _TMP
+{
+public:
+    template<typename Fun, typename... Args>
+    static ReturnType runInMainThread(Fun fun, Args&&... args)
+    {
+        if (!QCoreApplication::instance() || QThread::currentThread() == QCoreApplication::instance()->thread())
+            return fun(std::forward<Args>(args)...);
+
+        ReturnType result;
+        QSemaphore semaphore;
+        auto proxyFun = [&] () {
+            result = fun(std::forward<Args>(args)...);
+            semaphore.release();
+        };
+
+        FunctionCallProxy proxy(proxyFun);
+        proxy.moveToThread(QCoreApplication::instance()->thread());
+        proxy.callBySignal();
+        semaphore.acquire();
+
+        return result;
+    }
+};
+template<>
+class _TMP<void>
+{
+public:
+    template<typename Fun, typename... Args>
+    static void runInMainThread(Fun fun, Args&&... args)
+    {
+        if (!QCoreApplication::instance() || QThread::currentThread() == QCoreApplication::instance()->thread())
+            return fun(std::forward<Args>(args)...);
+
+        QSemaphore semaphore;
+        auto proxyFun = [&] () {
+            fun(std::forward<Args>(args)...);
+            semaphore.release();
+        };
+
+        FunctionCallProxy proxy(proxyFun);
+        proxy.moveToThread(QCoreApplication::instance()->thread());
+        proxy.callBySignal();
+        semaphore.acquire();
+    }
+};
+
+template<typename Fun, typename... Args>
+auto runInMainThread(Fun fun, Args&&... args) -> decltype(fun(args...))
+{
+    return _TMP<decltype(fun(args...))>::runInMainThread(fun, std::forward<Args>(args)...);
+}
+template<typename Fun, typename... Args>
+typename QtPrivate::FunctionPointer<Fun>::ReturnType runInMainThread(typename QtPrivate::FunctionPointer<Fun>::Object *obj, Fun fun, Args&&... args)
+{
+    return _TMP<typename QtPrivate::FunctionPointer<Fun>::ReturnType>::runInMainThread([&] {
+        return (obj->*fun)(std::forward<Args>(args)...);
+    });
+}
+
+}
 
 #endif // DFMGLOBAL_H
