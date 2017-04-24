@@ -264,7 +264,7 @@ void NetworkManager::fetchNetworks(const DFMEvent &event)
     if (p1){
         e->setData(p1->getMountPointUrl());
         if (DUrl(path) != p1->getMountPointUrl()){
-            DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(e->fileUrl(), WindowManager::getWindowById(e->windowId()), this);
+            DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(this, e->fileUrl(), WindowManager::getWindowById(e->windowId()));
         }else{
             qWarning() << p1->getMountPointUrl() << "can't get data";
         }

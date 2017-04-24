@@ -67,7 +67,7 @@ QString TrashDirIterator::filePath() const
 
 const DAbstractFileInfoPointer TrashDirIterator::fileInfo() const
 {
-    return DFileService::instance()->createFileInfo(DUrl::fromTrashFile(filePath()));
+    return DFileService::instance()->createFileInfo(Q_NULLPTR, DUrl::fromTrashFile(filePath()));
 }
 
 QString TrashDirIterator::path() const
@@ -106,7 +106,7 @@ bool TrashManager::openFile(const QSharedPointer<DFMOpenFileEvent> &event) const
 
 DUrlList TrashManager::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const
 {
-    TIMER_SINGLESHOT_CONNECT_TYPE(this, 0, fileService->deleteFiles(event->urlList(), event->sender()), Qt::AutoConnection, event);
+    TIMER_SINGLESHOT_CONNECT_TYPE(this, 0, fileService->deleteFiles(event->sender(), event->urlList()), Qt::AutoConnection, event);
 
     return DUrlList();
 }
@@ -135,7 +135,7 @@ bool TrashManager::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClip
         }
     }
 
-    fileService->writeFilesToClipboard(event->action(), localList, event->sender());
+    fileService->writeFilesToClipboard(event->sender(), event->action(), localList);
 
     return true;
 }
@@ -151,7 +151,7 @@ DUrlList TrashManager::pasteFile(const QSharedPointer<DFMPasteEvent> &event) con
     if (event->urlList().isEmpty())
         return DUrlList();
 
-    return fileService->moveToTrash(event->urlList(), event->sender());
+    return fileService->moveToTrash(event->sender(), event->urlList());
 }
 
 
@@ -174,7 +174,7 @@ bool TrashManager::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) cons
         }
     }
 
-    fileService->deleteFiles(localList, event->sender());
+    fileService->deleteFiles(event->sender(), localList);
 
     return true;
 }
@@ -232,7 +232,7 @@ void TrashManager::cleanTrash(const QObject *sender) const
     list << DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashInfosPath))
          << DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath));
 
-    fileService->deleteFiles(list, sender);
+    fileService->deleteFiles(sender, list);
 }
 
 bool TrashManager::isEmpty()

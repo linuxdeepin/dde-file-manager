@@ -306,7 +306,7 @@ int DialogManager::showRunExcutableScriptDialog(const DUrl &url)
 int DialogManager::showRunExcutableFileDialog(const DUrl &url)
 {
     DDialog d;
-    const DAbstractFileInfoPointer& pfileInfo = fileService->createFileInfo(url);
+    const DAbstractFileInfoPointer& pfileInfo = fileService->createFileInfo(this, url);
     int maxDisplayNameLength = 200;
     QString _fileDisplayName = QFileInfo(url.path()).fileName();
     QString fileDisplayName = d.fontMetrics().elidedText(_fileDisplayName, Qt::ElideRight, maxDisplayNameLength);
@@ -357,7 +357,7 @@ int DialogManager::showDeleteFilesClearTrashDialog(const DFMEvent &event)
     d.setIcon(QIcon(":/images/dialogs/images/user-trash-full-opened.png"));
     if (urlList.first() == DUrl::fromTrashFile("/")){
         buttonTexts[1]= tr("Empty");
-        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(urlList.first());
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, urlList.first());
         if(fileInfo->filesCount() == 1)
             d.setTitle(ClearTrash.arg(fileInfo->filesCount()));
         else
@@ -548,7 +548,7 @@ void DialogManager::showDiskErrorDialog(const QString & id, const QString & erro
 
 void DialogManager::showBreakSymlinkDialog(const QString &targetName, const DUrl &linkfile)
 {
-    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(linkfile);
+    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, linkfile);
 
     DDialog d;
     QString warnText = tr("%1 that this shortcut refers to has been changed or moved");
@@ -566,7 +566,7 @@ void DialogManager::showBreakSymlinkDialog(const QString &targetName, const DUrl
     if (code == 1){
         DUrlList urls;
         urls << linkfile;
-        fileService->moveToTrash(urls, this);
+        fileService->moveToTrash(this, urls);
     }
 }
 
@@ -657,7 +657,7 @@ void DialogManager::showMoveToTrashConflictDialog(const DUrlList &urls)
     MoveToTrashConflictDialog d(0, urls);
     int code = d.exec();
     if (code == 1) {
-        fileService->deleteFiles(urls, this);
+        fileService->deleteFiles(this, urls);
     }
 }
 

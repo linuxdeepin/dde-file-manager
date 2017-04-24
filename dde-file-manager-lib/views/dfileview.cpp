@@ -761,7 +761,7 @@ void DFileView::openWithActionTriggered(QAction *action)
     QAction* dAction = static_cast<QAction*>(action);
     QString app = dAction->property("app").toString();
     DUrl fileUrl(dAction->property("url").toUrl());
-    fileService->openFileByApp(app, fileUrl, this);
+    fileService->openFileByApp(this, app, fileUrl);
 }
 
 void DFileView::onRowCountChanged()
@@ -803,7 +803,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
         case Qt::Key_Return:
         case Qt::Key_Enter:
             if (!itemDelegate()->editingIndex().isValid()) {
-                appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(urls, this));
+                appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
 
                 return;
             }
@@ -828,7 +828,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
 
             return;
         case Qt::Key_Delete:
-            fileService->moveToTrash(urls, this);
+            fileService->moveToTrash(this, urls);
             break;
         case Qt::Key_End:
             if (urls.isEmpty()) {
@@ -850,7 +850,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
 
             return;
         case Qt::Key_N:{
-            appController->actionNewWindow(dMakeEventPointer<DFMUrlListBaseEvent>(urls, this));
+            appController->actionNewWindow(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
             return;
         }
         case Qt::Key_H:
@@ -865,7 +865,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             if (rootUrl().isNetWorkFile())
                 return;
 
-            appController->actionProperty(dMakeEventPointer<DFMUrlListBaseEvent>(urls, this));
+            appController->actionProperty(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
 
             return;
         case Qt::Key_Up:
@@ -873,7 +873,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
 
             return;
         case Qt::Key_Down:
-            appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(urls, this));
+            appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
 
             return;
         case Qt::Key_Left:
@@ -899,7 +899,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
                 else
                     url = rootUrl();
             }
-            emit fileSignalManager->requestOpenInNewTab(DFMUrlBaseEvent(url, this));
+            emit fileSignalManager->requestOpenInNewTab(DFMUrlBaseEvent(this, url));
             return;
         }
         case Qt::Key_W:
@@ -917,11 +917,11 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             if (urls.isEmpty())
                 return;
 
-            fileService->deleteFiles(urls, this);
+            fileService->deleteFiles(this, urls);
 
             return;
         } else if (event->key() == Qt::Key_T) {
-            appController->actionOpenInTerminal(dMakeEventPointer<DFMUrlListBaseEvent>(urls, this));
+            appController->actionOpenInTerminal(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
 
             return;
         }
@@ -936,7 +936,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
                 return;
 
             clearSelection();
-            appController->actionNewFolder(dMakeEventPointer<DFMUrlBaseEvent>(rootUrl(), this));
+            appController->actionNewFolder(dMakeEventPointer<DFMUrlBaseEvent>(this, rootUrl()));
 
             return;
         } if (event->key() == Qt::Key_Question) {
@@ -954,7 +954,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
 
             return;
         case Qt::Key_Down:
-            appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(urls, this));
+            appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
 
             return;
         case Qt::Key_Left:
@@ -1168,12 +1168,12 @@ void DFileView::setIconSizeBySizeIndex(const int &sizeIndex)
 
 void DFileView::onRootUrlDeleted(const DUrl &rootUrl)
 {
-    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(rootUrl);
+    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, rootUrl);
 
     if (!fileInfo)
         return;
 
-    DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(fileInfo->goToUrlWhenDeleted(), window(), this);
+    DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(this, fileInfo->goToUrlWhenDeleted(), window());
 }
 
 void DFileView::freshView()
@@ -1297,7 +1297,7 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
 void DFileView::dragEnterEvent(QDragEnterEvent *event)
 {
     for (const DUrl &url : event->mimeData()->urls()) {
-        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, url);
 
         if (!fileInfo || !fileInfo->isWritable()) {
             event->ignore();
@@ -1717,7 +1717,7 @@ void DFileView::openIndex(const QModelIndex &index)
     const DUrl &url = model()->getUrlByIndex(index);
 
     DFMOpenUrlEvent::DirOpenMode mode = globalSetting->isAllwayOpenOnNewWindow() ? DFMOpenUrlEvent::ForceOpenNewWindow : DFMOpenUrlEvent::OpenInCurrentWindow;
-    DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(DUrlList() << url, mode, this);
+    DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(this, DUrlList() << url, mode);
 }
 
 void DFileView::keyboardSearch(const QString &search)
@@ -1736,7 +1736,7 @@ bool DFileView::setRootUrl(const DUrl &url)
 
     DUrl fileUrl = url;
 
-    const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(fileUrl);
+    const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, fileUrl);
 
     if (!info){
         qDebug() << "This scheme isn't support";
@@ -1769,7 +1769,7 @@ bool DFileView::setRootUrl(const DUrl &url)
 
         qq.removeQueryItem("selectUrl");
         fileUrl.setQuery(qq);
-    } else if (const DAbstractFileInfoPointer &current_file_info = DFileService::instance()->createFileInfo(rootUrl)) {
+    } else if (const DAbstractFileInfoPointer &current_file_info = DFileService::instance()->createFileInfo(this, rootUrl)) {
         QList<DUrl> ancestors;
 
         if (current_file_info->isAncestorsUrl(fileUrl, &ancestors)) {
@@ -2288,7 +2288,7 @@ void DFileView::updateContentLabel()
     const DUrl &currentUrl = this->rootUrl();
 
     if (count <= 0) {
-        const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(currentUrl);
+        const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(this, currentUrl);
 
         if (fileInfo)
             setContentLabel(fileInfo->subtitleForEmptyFloder());

@@ -492,7 +492,7 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
         case Qt::Key_Enter:
             if (!itemDelegate()->editingIndex().isValid()) {
                 for (auto const &value : selectUrlsMap) {
-                    DFileService::instance()->openFile(value, this);
+                    DFileService::instance()->openFile(this, value);
                 }
                 return;
             }
@@ -505,7 +505,7 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
             return;
         case Qt::Key_Delete:
             if (canDeleted && !selectUrlsMap.contains(rootUrl.toString())) {
-                DFileService::instance()->moveToTrash(selectUrls, this);
+                DFileService::instance()->moveToTrash(this, selectUrls);
             }
             break;
         default: break;
@@ -518,7 +518,7 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
                 return;
             }
 
-            DFileService::instance()->deleteFiles(selectUrls, this);
+            DFileService::instance()->deleteFiles(this, selectUrls);
 
             return;
         } else if (event->key() == Qt::Key_T) {
@@ -1010,7 +1010,7 @@ void CanvasGridView::setItemDelegate(DStyledItemDelegate *delegate)
 bool CanvasGridView::setCurrentUrl(const DUrl &url)
 {
     DUrl fileUrl = url;
-    const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(fileUrl);
+    const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, fileUrl);
     if (!info) {
         qDebug() << "This scheme isn't support";
         return false;
@@ -1406,7 +1406,7 @@ void CanvasGridView::initConnection()
         if (info.isDir()) {
             QProcess::startDetached("gvfs-open", QStringList() << url.toLocalFile());
         } else {
-            DFileService::instance()->openFile(url, this);
+            DFileService::instance()->openFile(this, url);
         }
     }, Qt::QueuedConnection);
 
@@ -1862,7 +1862,7 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
         case MenuAction::Open: {
             // TODO: Workaround
             for (auto &url : list) {
-                const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
+                const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, url);
                 if (fileInfo && fileInfo->isDir()) {
                     QProcess::startDetached("gvfs-open", QStringList() << url.toString());
                 }

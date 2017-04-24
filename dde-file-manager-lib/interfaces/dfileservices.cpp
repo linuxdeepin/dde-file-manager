@@ -170,16 +170,18 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
         break;
     case DFMEvent::RenameFile: {
         const QSharedPointer<DFMRenameEvent> &e = event.dynamicCast<DFMRenameEvent>();
-        const DAbstractFileInfoPointer &f = createFileInfo(e->toUrl());
+        const DAbstractFileInfoPointer &f = createFileInfo(this, e->toUrl());
 
         if (f->exists()) {
-            dialogManager->showRenameNameSameErrorDialog(f->fileDisplayName(), *event.data());
+            DThreadUtil::runInMainThread([&] {
+                dialogManager->showRenameNameSameErrorDialog(f->fileDisplayName(), *event.data());
+            });
             result = false;
         } else {
             result = CALL_CONTROLLER(renameFile);
 
             if (result.toBool() && event->isAccepted()) {
-                DFMUrlListBaseEvent newEvent(DUrlList() << e->toUrl(), e->sender());
+                DFMUrlListBaseEvent newEvent(e->sender(), DUrlList() << e->toUrl());
 
                 newEvent.setWindowId(e->windowId());
 
@@ -196,13 +198,17 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
     case DFMEvent::DeleteFiles: {
         foreach (const DUrl& url, event->fileUrlList()) {
             if (systemPathManager->isSystemPath(url.toLocalFile())) {
-                dialogManager->showDeleteSystemPathWarnDialog();
+                DThreadUtil::runInMainThread([&] {
+                    dialogManager->showDeleteSystemPathWarnDialog();
+                });
                 result = false;
                 goto end;
             }
         }
 
-        if (dialogManager->showDeleteFilesClearTrashDialog(DFMUrlListBaseEvent(event->fileUrlList(), this)) == 1) {
+        if (DThreadUtil::runInMainThread([&] {
+            return dialogManager->showDeleteFilesClearTrashDialog(DFMUrlListBaseEvent(this, event->fileUrlList()));
+        }) == 1) {
             result = CALL_CONTROLLER(deleteFiles);
         } else {
             result = false;
@@ -213,8 +219,10 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
     case DFMEvent::MoveToTrash: {
         //handle system files should not be able to move to trash
         foreach (const DUrl& url, event->fileUrlList()) {
-            if(systemPathManager->isSystemPath(url.toLocalFile())){
-                dialogManager->showDeleteSystemPathWarnDialog();
+            if (systemPathManager->isSystemPath(url.toLocalFile())){
+                DThreadUtil::runInMainThread([&] {
+                    dialogManager->showDeleteSystemPathWarnDialog();
+                });
                 result = QVariant::fromValue(event->fileUrlList());
                 goto end;
             }
@@ -223,7 +231,7 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
         //handle files whom could not be moved to trash
         DUrlList enableList;
         foreach (const DUrl& url, event->fileUrlList()) {
-            const DAbstractFileInfoPointer& info = createFileInfo(url);
+            const DAbstractFileInfoPointer& info = createFileInfo(this, url);
             if(info->isDir() && !info->isWritable())
                 continue;
 
@@ -243,7 +251,7 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
         result = CALL_CONTROLLER(pasteFile);
 
         if (event->isAccepted()) {
-            DFMUrlListBaseEvent e(qvariant_cast<DUrlList>(result), event->sender());
+            DFMUrlListBaseEvent e(event->sender(), qvariant_cast<DUrlList>(result));
 
             e.setWindowId(event->windowId());
 
@@ -411,96 +419,96 @@ DFileService::FileOperatorTypes DFileService::fileOperatorBlacklist() const
     return d->blacklist;
 }
 
-bool DFileService::openFile(const DUrl &url, const QObject *sender) const
+bool DFileService::openFile(const QObject *sender, const DUrl &url) const
 {
-    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMOpenFileEvent>(url, sender)).toBool();
+    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMOpenFileEvent>(sender, url)).toBool();
 }
 
-bool DFileService::openFileByApp(const QString &appName, const DUrl &url, const QObject *sender) const
+bool DFileService::openFileByApp(const QObject *sender, const QString &appName, const DUrl &url) const
 {
-    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMOpenFileByAppEvent>(appName, url, sender)).toBool();
+    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMOpenFileByAppEvent>(sender, appName, url)).toBool();
 }
 
-bool DFileService::compressFiles(const DUrlList &list, const QObject *sender) const
+bool DFileService::compressFiles(const QObject *sender, const DUrlList &list) const
 {
-    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMCompressEvnet>(list, sender)).toBool();
+    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMCompressEvnet>(sender, list)).toBool();
 }
 
-bool DFileService::decompressFile(const DUrlList &list, const QObject *sender) const
+bool DFileService::decompressFile(const QObject *sender, const DUrlList &list) const
 {
-    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMDecompressEvnet>(list, sender)).toBool();
+    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMDecompressEvnet>(sender, list)).toBool();
 }
 
-bool DFileService::decompressFileHere(const DUrlList &list, const QObject *sender) const
+bool DFileService::decompressFileHere(const QObject *sender, const DUrlList &list) const
 {
-    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMDecompressHereEvnet>(list, sender)).toBool();
+    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMDecompressHereEvnet>(sender, list)).toBool();
 }
 
-bool DFileService::writeFilesToClipboard(DFMGlobal::ClipboardAction action, const DUrlList &list, const QObject *sender) const
+bool DFileService::writeFilesToClipboard(const QObject *sender, DFMGlobal::ClipboardAction action, const DUrlList &list) const
 {
-    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMWriteUrlsToClipboardEvent>(action, list, sender)).toBool();
+    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMWriteUrlsToClipboardEvent>(sender, action, list)).toBool();
 }
 
-bool DFileService::renameFile(const DUrl &from, const DUrl &to, const QObject *sender) const
+bool DFileService::renameFile(const QObject *sender, const DUrl &from, const DUrl &to) const
 {
-    return DFMEventDispatcher::instance()->processEvent<DFMRenameEvent>(from, to, sender).toBool();
+    return DFMEventDispatcher::instance()->processEvent<DFMRenameEvent>(sender, from, to).toBool();
 }
 
-bool DFileService::deleteFiles(const DUrlList &list, const QObject *sender) const
+bool DFileService::deleteFiles(const QObject *sender, const DUrlList &list) const
 {
-    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMDeleteEvent>(list, sender)).toBool();
+    return DFMEventDispatcher::instance()->processEventWithEventLoop(dMakeEventPointer<DFMDeleteEvent>(sender, list)).toBool();
 }
 
-DUrlList DFileService::moveToTrash(const DUrlList &list, const QObject *sender) const
+DUrlList DFileService::moveToTrash(const QObject *sender, const DUrlList &list) const
 {
     if (list.isEmpty())
         return list;
 
     if (FileUtils::isGvfsMountFile(list.first().toLocalFile())) {
-        deleteFiles(list, sender);
+        deleteFiles(sender, list);
         return list;
     }
 
-    return qvariant_cast<DUrlList>(DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMMoveToTrashEvent>(list, sender)));
+    return qvariant_cast<DUrlList>(DFMEventDispatcher::instance()->processEventWithEventLoop(dMakeEventPointer<DFMMoveToTrashEvent>(sender, list)));
 }
 
-void DFileService::pasteFileByClipboard(const DUrl &targetUrl, const QObject *sender) const
+void DFileService::pasteFileByClipboard(const QObject *sender, const DUrl &targetUrl) const
 {
     DFMGlobal::ClipboardAction action = DFMGlobal::instance()->clipboardAction();
 
     if (action == DFMGlobal::UnknowAction)
         return;
 
-    pasteFile(action, targetUrl, DUrl::fromQUrlList(DFMGlobal::instance()->clipboardFileUrlList()), sender);
+    pasteFile(sender, action, targetUrl, DUrl::fromQUrlList(DFMGlobal::instance()->clipboardFileUrlList()));
 }
 
-DUrlList DFileService::pasteFile(DFMGlobal::ClipboardAction action, const DUrl &targetUrl, const DUrlList &list, const QObject *sender) const
+DUrlList DFileService::pasteFile(const QObject *sender, DFMGlobal::ClipboardAction action, const DUrl &targetUrl, const DUrlList &list) const
 {
-    const QSharedPointer<DFMPasteEvent> &event = dMakeEventPointer<DFMPasteEvent>(action, targetUrl, list, sender);
-    return qvariant_cast<DUrlList>(DFMEventDispatcher::instance()->processEvent(event));
+    const QSharedPointer<DFMPasteEvent> &event = dMakeEventPointer<DFMPasteEvent>(sender, action, targetUrl, list);
+    return qvariant_cast<DUrlList>(DFMEventDispatcher::instance()->processEventWithEventLoop(event));
 }
 
-bool DFileService::restoreFile(const DUrlList &list, const QObject *sender) const
+bool DFileService::restoreFile(const QObject *sender, const DUrlList &list) const
 {
-    return DFMEventDispatcher::instance()->processEvent<DFMRestoreFromTrashEvent>(list, sender).toBool();
+    return DFMEventDispatcher::instance()->processEvent<DFMRestoreFromTrashEvent>(sender, list).toBool();
 }
 
-bool DFileService::newFolder(const DUrl &targetUrl, const QObject *sender) const
+bool DFileService::newFolder(const QObject *sender, const DUrl &targetUrl) const
 {
-    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMNewFolderEvent>(targetUrl, sender)).toBool();
+    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMNewFolderEvent>(sender, targetUrl)).toBool();
 }
 
-bool DFileService::newFile(const DUrl &targetUrl, const QString &fileSuffix, const QObject *sender) const
+bool DFileService::newFile(const QObject *sender, const DUrl &targetUrl, const QString &fileSuffix) const
 {
-    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMNewFileEvent>(targetUrl, fileSuffix, sender)).toBool();
+    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMNewFileEvent>(sender, targetUrl, fileSuffix)).toBool();
 }
 
-bool DFileService::openFileLocation(const DUrl &url, const QObject *sender) const
+bool DFileService::openFileLocation(const QObject *sender, const DUrl &url) const
 {
-    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMOpenFileLocation>(url, sender)).toBool();
+    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMOpenFileLocation>(sender, url)).toBool();
 }
 
-bool DFileService::createSymlink(const DUrl &fileUrl, const QObject *sender) const
+bool DFileService::createSymlink(const QObject *sender, const DUrl &fileUrl) const
 {
     FILTER_RETURN(CreateSymlink, false)
 
@@ -521,15 +529,15 @@ bool DFileService::createSymlink(const DUrl &fileUrl, const QObject *sender) con
         ptr->blacklist &= (~CreateSymlink);
     }
 
-    return createSymlink(fileUrl, DUrl::fromLocalFile(linkPath), sender);
+    return createSymlink(sender, fileUrl, DUrl::fromLocalFile(linkPath));
 }
 
-bool DFileService::createSymlink(const DUrl &fileUrl, const DUrl &linkToUrl, const QObject *sender) const
+bool DFileService::createSymlink(const QObject *sender, const DUrl &fileUrl, const DUrl &linkToUrl) const
 {
-    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMCreateSymlinkEvent>(fileUrl, linkToUrl, sender)).toBool();
+    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMCreateSymlinkEvent>(sender, fileUrl, linkToUrl)).toBool();
 }
 
-bool DFileService::sendToDesktop(const DUrlList &urlList, const QObject *sender) const
+bool DFileService::sendToDesktop(const QObject *sender, const DUrlList &urlList) const
 {
     const QString &desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
 
@@ -542,67 +550,66 @@ bool DFileService::sendToDesktop(const DUrlList &urlList, const QObject *sender)
     for (const DUrl &url : urlList) {
         const QString &linkName = getSymlinkFileName(url, desktopDir);
 
-        ok = ok && createSymlink(url, DUrl::fromLocalFile(desktopDir.filePath(linkName)), sender);
+        ok = ok && createSymlink(sender, url, DUrl::fromLocalFile(desktopDir.filePath(linkName)));
     }
 
     return ok;
 }
 
-bool DFileService::shareFolder(const DUrl &fileUrl, const QString &name, bool isWritable, bool allowGuest, const QObject *sender)
+bool DFileService::shareFolder(const QObject *sender, const DUrl &fileUrl, const QString &name, bool isWritable, bool allowGuest)
 {
-    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMFileShareEvnet>(fileUrl, name, isWritable, allowGuest, sender)).toBool();
+    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMFileShareEvnet>(sender, fileUrl, name, isWritable, allowGuest)).toBool();
 }
 
-bool DFileService::unShareFolder(const DUrl &fileUrl, const QObject *sender) const
+bool DFileService::unShareFolder(const QObject *sender, const DUrl &fileUrl) const
 {
-    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMCancelFileShareEvent>(fileUrl, sender)).toBool();
+    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMCancelFileShareEvent>(sender, fileUrl)).toBool();
 }
 
-bool DFileService::openInTerminal(const DUrl &fileUrl, const QObject *sender) const
+bool DFileService::openInTerminal(const QObject *sender, const DUrl &fileUrl) const
 {
-    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMOpenInTerminalEvent>(fileUrl, sender)).toBool();
+    return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMOpenInTerminalEvent>(sender, fileUrl)).toBool();
 }
 
-const DAbstractFileInfoPointer DFileService::createFileInfo(const DUrl &fileUrl, const QObject *sender) const
+const DAbstractFileInfoPointer DFileService::createFileInfo(const QObject *sender, const DUrl &fileUrl) const
 {
     const DAbstractFileInfoPointer &info = DAbstractFileInfo::getFileInfo(fileUrl);
 
     if (info)
         return info;
 
-    const auto&& event = dMakeEventPointer<DFMCreateFileInfoEvnet>(fileUrl, sender);
+    const auto&& event = dMakeEventPointer<DFMCreateFileInfoEvnet>(sender, fileUrl);
 
     return qvariant_cast<DAbstractFileInfoPointer>(DFMEventDispatcher::instance()->processEvent(event));
 }
 
-const DDirIteratorPointer DFileService::createDirIterator(const DUrl &fileUrl, const QStringList &nameFilters,
-                                                          QDir::Filters filters, QDirIterator::IteratorFlags flags,
-                                                          const QObject *sender) const
+const DDirIteratorPointer DFileService::createDirIterator(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
+                                                          QDir::Filters filters, QDirIterator::IteratorFlags flags) const
 {
-    const auto&& event = dMakeEventPointer<DFMCreateDiriterator>(fileUrl, nameFilters, filters, flags, sender);
+    const auto&& event = dMakeEventPointer<DFMCreateDiriterator>(sender, fileUrl, nameFilters, filters, flags);
 
     return qvariant_cast<DDirIteratorPointer>(DFMEventDispatcher::instance()->processEvent(event));
 }
 
-const QList<DAbstractFileInfoPointer> DFileService::getChildren(const DUrl &fileUrl, const QStringList &nameFilters,
-                                                               QDir::Filters filters, QDirIterator::IteratorFlags flags, const QObject *sender)
+const QList<DAbstractFileInfoPointer> DFileService::getChildren(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
+                                                               QDir::Filters filters, QDirIterator::IteratorFlags flags)
 {
-    const auto&& event = dMakeEventPointer<DFMGetChildrensEvent>(fileUrl, nameFilters, filters, flags, sender);
+    const auto&& event = dMakeEventPointer<DFMGetChildrensEvent>(sender, fileUrl, nameFilters, filters, flags);
 
     return qvariant_cast<QList<DAbstractFileInfoPointer>>(DFMEventDispatcher::instance()->processEvent(event));
 }
 
-JobController *DFileService::getChildrenJob(const DUrl &fileUrl, const QStringList &nameFilters,
-                                            QDir::Filters filters, QDirIterator::IteratorFlags flags, const QObject *sender) const
+JobController *DFileService::getChildrenJob(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters,
+                                            QDir::Filters filters, QDirIterator::IteratorFlags flags) const
 {
-    const auto&& event = dMakeEventPointer<DFMCreateGetChildrensJob>(fileUrl, nameFilters, filters, flags, sender);
+    const auto&& event = dMakeEventPointer<DFMCreateGetChildrensJob>(sender, fileUrl, nameFilters, filters, flags);
 
     return qvariant_cast<JobController*>(DFMEventDispatcher::instance()->processEvent(event));
 }
 
-DAbstractFileWatcher *DFileService::createFileWatcher(const DUrl &fileUrl, QObject *parent, const QObject *sender) const
+DAbstractFileWatcher *DFileService::createFileWatcher(const QObject *sender, const DUrl &fileUrl, QObject *parent) const
 {
-    DAbstractFileWatcher *w = qvariant_cast<DAbstractFileWatcher*>(DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMCreateFileWatcherEvent>(fileUrl, sender)));
+    DAbstractFileWatcher *w = qvariant_cast<DAbstractFileWatcher*>(DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMCreateFileWatcherEvent>(sender, fileUrl)));
 
     if (w)
         w->setParent(parent);
@@ -610,8 +617,7 @@ DAbstractFileWatcher *DFileService::createFileWatcher(const DUrl &fileUrl, QObje
     return w;
 }
 
-QList<DAbstractFileController*> DFileService::getHandlerTypeByUrl(const DUrl &fileUrl,
-                                                                 bool ignoreHost, bool ignoreScheme)
+QList<DAbstractFileController*> DFileService::getHandlerTypeByUrl(const DUrl &fileUrl, bool ignoreHost, bool ignoreScheme)
 {
     HandlerType handlerType(ignoreScheme ? "" : fileUrl.scheme(), ignoreHost ? "" : fileUrl.path());
 
@@ -634,7 +640,7 @@ QList<DAbstractFileController*> DFileService::getHandlerTypeByUrl(const DUrl &fi
 
 QString DFileService::getSymlinkFileName(const DUrl &fileUrl, const QDir &targetDir)
 {
-    const DAbstractFileInfoPointer &pInfo =  instance()->createFileInfo(fileUrl);
+    const DAbstractFileInfoPointer &pInfo =  instance()->createFileInfo(Q_NULLPTR, fileUrl);
 
     if (pInfo->exists()) {
         QString baseName = pInfo->baseName();

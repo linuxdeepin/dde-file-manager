@@ -89,7 +89,7 @@ void JobController::stopAndDeleteLater()
 void JobController::run()
 {
     if (!m_iterator) {
-        emit childrenUpdated(DFileService::instance()->getChildren(m_fileUrl, m_nameFilters, m_filters));
+        emit childrenUpdated(DFileService::instance()->getChildren(this, m_fileUrl, m_nameFilters, m_filters));
 
         setState(Stoped);
 
@@ -105,7 +105,7 @@ void JobController::run()
 
     bool update_children = true;
 
-    const DAbstractFileInfoPointer &rootInfo = DFileService::instance()->createFileInfo(m_fileUrl);
+    const DAbstractFileInfoPointer &rootInfo = DFileService::instance()->createFileInfo(this, m_fileUrl);
 
     if (rootInfo && !rootInfo->hasOrderly() && fileInfoQueue.count() > 0) {
         update_children = false;

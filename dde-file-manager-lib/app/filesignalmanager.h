@@ -78,7 +78,7 @@ signals:
     void conflictDialogShowed(const QMap<QString, QString>& jobDetail);
 
     /*request rename to DFileView*/
-    void requestRename(const DFMEvent &event);
+    void requestRename(const DFMUrlBaseEvent &event);
 
     /* view select all */
     void requestViewSelectAll(int windowId);

@@ -112,7 +112,7 @@ void DBookmarkItem::editFinished()
     if (!m_lineEdit)
         return;
 
-    DFMUrlBaseEvent event(m_url, this);
+    DFMUrlBaseEvent event(this, m_url);
 
     event.setWindowId(windowId());
 
@@ -146,7 +146,7 @@ void DBookmarkItem::checkMountedItem(const DFMEvent &event)
         m_pressed = false;
         update();
 
-        DFMEvent e;
+        DFMEvent e(this);
         e.setWindowId(windowId());
         e.setData(m_url);
         qDebug() << m_isDisk << m_deviceInfo << m_url;
@@ -649,7 +649,7 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
         if(!dir.exists() && !m_isDefault)
         {
-            DFMUrlBaseEvent event(m_url, this);
+            DFMUrlBaseEvent event(this, m_url);
             event.setWindowId(windowId());
 
             int result = dialogManager->showRemoveBookMarkDialog(event);
@@ -673,7 +673,7 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
                     qDebug() << info << m_url << m_isMounted;
                     if (!m_isMounted){
                         m_url.setQuery(info.id());
-                        appController->actionOpenDisk(dMakeEventPointer<DFMUrlBaseEvent>(m_url, this));
+                        appController->actionOpenDisk(dMakeEventPointer<DFMUrlBaseEvent>(this, m_url));
                     }else{
                         qDebug() << e;
                         emit m_group->url(e);
@@ -748,9 +748,9 @@ void DBookmarkItem::dropEvent(QGraphicsSceneDragDropEvent *event)
 #endif
 
     if (m_url == DUrl::fromTrashFile("/")){
-        fileService->pasteFile(DFMGlobal::CutAction, m_url, urlList, this);
+        fileService->pasteFile(this, DFMGlobal::CutAction, m_url, urlList);
     }else{
-        fileService->pasteFile(DFMGlobal::CopyAction, m_url, urlList, this);
+        fileService->pasteFile(this, DFMGlobal::CopyAction, m_url, urlList);
     }
     QGraphicsItem::dropEvent(event);
 }
@@ -846,9 +846,7 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     QPointer<DBookmarkItem> me = this;
 
     if (menu && !menu->actions().isEmpty()) {
-        if (m_group)
-            menu->setProperty("bookmarkIndex", m_group->items().indexOf(this));
-
+        menu->setEventData(DUrl(), DUrlList() << m_url, windowId(), this);
         menu->exec();
         menu->deleteLater();
 

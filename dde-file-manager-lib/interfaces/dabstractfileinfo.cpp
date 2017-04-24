@@ -354,13 +354,13 @@ DUrl DAbstractFileInfo::symLinkTarget() const
 
 DUrl DAbstractFileInfo::rootSymLinkTarget() const
 {
-    DAbstractFileInfoPointer info = fileService->createFileInfo(fileUrl());
+    DAbstractFileInfoPointer info = fileService->createFileInfo(Q_NULLPTR, fileUrl());
     while (info->isSymLink()) {
         DUrl targetUrl = info->symLinkTarget();
         if (targetUrl == fileUrl()){
             break;
         }
-        info = fileService->createFileInfo(targetUrl);
+        info = fileService->createFileInfo(Q_NULLPTR, targetUrl);
         if (!info){
             return fileUrl();
         }
@@ -421,7 +421,7 @@ int DAbstractFileInfo::filesCount() const
 {
     CALL_PROXY(filesCount());
 
-    const DDirIteratorPointer &iterator = fileService->createDirIterator(fileUrl(), QStringList(),
+    const DDirIteratorPointer &iterator = fileService->createDirIterator(Q_NULLPTR, fileUrl(), QStringList(),
                                                                          QDir::AllEntries | QDir::System
                                                                          | QDir::NoDotAndDotDot | QDir::Hidden,
                                                                          QDirIterator::NoIteratorFlags);
@@ -609,7 +609,7 @@ bool DAbstractFileInfo::isAncestorsUrl(const DUrl &url, QList<DUrl> *ancestors) 
         if (parentUrl == url)
             return true;
 
-        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(parentUrl);
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(Q_NULLPTR, parentUrl);
 
         if (!fileInfo)
             break;
@@ -867,7 +867,7 @@ bool DAbstractFileInfo::isEmptyFloder(const QDir::Filters &filters) const
     if (!isDir())
         return false;
 
-    DDirIteratorPointer it = DFileService::instance()->createDirIterator(fileUrl(), QStringList(),
+    DDirIteratorPointer it = DFileService::instance()->createDirIterator(Q_NULLPTR, fileUrl(), QStringList(),
                                                                          filters,
                                                                          QDirIterator::NoIteratorFlags);
 
@@ -980,7 +980,7 @@ DUrl DAbstractFileInfo::goToUrlWhenDeleted() const
     foreach (const DUrl &url, parentUrlList()) {
         extistParentUrl = url;
 
-        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(Q_NULLPTR, url);
 
         if (fileInfo && fileInfo->exists()) {
             break;
@@ -1007,13 +1007,13 @@ bool DAbstractFileInfo::canDrop() const
         return true;
     }
 
-    DAbstractFileInfoPointer info = fileService->createFileInfo(fileUrl());
+    DAbstractFileInfoPointer info = fileService->createFileInfo(Q_NULLPTR, fileUrl());
     while (info->isSymLink()) {
         DUrl targetUrl = info->symLinkTarget();
         if (targetUrl == fileUrl()){
             break;
         }
-        info = fileService->createFileInfo(targetUrl);
+        info = fileService->createFileInfo(Q_NULLPTR, targetUrl);
         if (!info){
             return false;
         }

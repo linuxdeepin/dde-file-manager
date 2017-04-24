@@ -372,8 +372,8 @@ const QList<DAbstractFileInfoPointer> UDiskListener::getChildren(const QSharedPo
    const QString &frav = event->url().fragment();
 
     if (!frav.isEmpty()) {
-        const QList<DAbstractFileInfoPointer> &list = fileService->getChildren(DUrl::fromLocalFile(frav), event->nameFilters(),
-                                                                               event->filters(), event->flags(), event->sender());
+        const QList<DAbstractFileInfoPointer> &list = fileService->getChildren(event->sender(), DUrl::fromLocalFile(frav),
+                                                                               event->nameFilters(), event->filters(), event->flags());
 
         return list;
     }

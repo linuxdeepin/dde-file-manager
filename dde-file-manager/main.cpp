@@ -146,7 +146,7 @@ int main(int argc, char *argv[])
         DUrl url = DUrl::fromUserInput(path);
 
         if (CommandLineManager::instance()->isSet("show-item")) {
-            const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
+            const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(Q_NULLPTR, url);
             if (!fileInfo)
                 continue;
 

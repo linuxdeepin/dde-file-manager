@@ -94,7 +94,7 @@ const QList<DAbstractFileInfoPointer> ShareControler::getChildren(const QSharedP
 
     ShareInfoList sharelist = userShareManager->shareInfoList();
     foreach (ShareInfo shareInfo, sharelist) {
-        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(DUrl::fromUserShareFile(shareInfo.path()));
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, DUrl::fromUserShareFile(shareInfo.path()));
 
         if (fileInfo->exists())
             infolist << fileInfo;
@@ -113,7 +113,7 @@ DAbstractFileWatcher *ShareControler::createFileWatcher(const QSharedPointer<DFM
 
 bool ShareControler::unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const
 {
-    return DFileService::instance()->unShareFolder(realUrl(event->url()), event->sender());
+    return DFileService::instance()->unShareFolder(event->sender(), realUrl(event->url()));
 }
 
 DUrl ShareControler::realUrl(const DUrl &shareUrl)

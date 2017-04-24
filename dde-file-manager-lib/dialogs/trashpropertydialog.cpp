@@ -31,7 +31,7 @@ void TrashPropertyDialog::initUI()
     setFixedSize(320, 300);
     setTitle("");
 
-    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(m_url);
+    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, m_url);
     QString iconPath;
     if(fileInfo->filesCount()>0)
         iconPath = ":/images/images/trash_full.png";

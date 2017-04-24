@@ -135,8 +135,8 @@ const QList<DAbstractFileInfoPointer> BookMarkManager::getChildren(const QShared
     const QString &frav = event->url().fragment();
 
     if (!frav.isEmpty()) {
-        const QList<DAbstractFileInfoPointer> &list = fileService->getChildren(DUrl::fromLocalFile(frav), event->nameFilters(),
-                                                                               event->filters(), event->flags());
+        const QList<DAbstractFileInfoPointer> &list = fileService->getChildren(event->sender(), DUrl::fromLocalFile(frav),
+                                                                               event->nameFilters(), event->filters(), event->flags());
 
         return list;
     }

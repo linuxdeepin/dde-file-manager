@@ -23,7 +23,7 @@ SearchFileInfo::SearchFileInfo(const DUrl &url)
         m_parentUrl = url;
         m_parentUrl.setSearchedFileUrl(DUrl());
 
-        setProxy(DFileService::instance()->createFileInfo(url.searchedFileUrl()));
+        setProxy(DFileService::instance()->createFileInfo(Q_NULLPTR, url.searchedFileUrl()));
     }
 }
 
@@ -131,7 +131,7 @@ bool SearchFileInfo::canRedirectionFileUrl() const
     if (d->proxy)
         return true;
 
-    const DAbstractFileInfoPointer &targetFileInfo = DFileService::instance()->createFileInfo(fileUrl().searchTargetUrl());
+    const DAbstractFileInfoPointer &targetFileInfo = DFileService::instance()->createFileInfo(Q_NULLPTR, fileUrl().searchTargetUrl());
 
     return targetFileInfo && !targetFileInfo->canIteratorDir();
 }
@@ -195,7 +195,7 @@ bool SearchFileInfo::isEmptyFloder(const QDir::Filters &filters) const
     if (path().isEmpty())
         return false;
 
-    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(fileUrl().searchedFileUrl());
+    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(Q_NULLPTR, fileUrl().searchedFileUrl());
 
     return fileInfo && fileInfo->isEmptyFloder(filters);
 }
@@ -242,7 +242,7 @@ QString SearchFileInfo::fileDisplayName() const
     if (d->proxy)
         return d->proxy->fileDisplayName();
 
-    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(fileUrl().searchTargetUrl());
+    const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(Q_NULLPTR, fileUrl().searchTargetUrl());
 
     if (fileInfo)
         return fileInfo->fileDisplayName();

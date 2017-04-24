@@ -194,7 +194,7 @@ void SingleApplication::readData()
         }
     }
 
-    DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(urlList, isNewWindow ? DFMOpenUrlEvent::ForceOpenNewWindow : DFMOpenUrlEvent::OpenNewWindow, this);
+    DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(this, urlList, isNewWindow ? DFMOpenUrlEvent::ForceOpenNewWindow : DFMOpenUrlEvent::OpenNewWindow);
 }
 
 void SingleApplication::closeServer()

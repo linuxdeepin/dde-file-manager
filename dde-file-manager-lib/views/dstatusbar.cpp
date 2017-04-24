@@ -231,7 +231,7 @@ qint64 DStatusBar::computerSize(const DUrlList &urllist)
 {
     qint64 fileSize = 0;
     foreach (DUrl url, urllist) {
-        const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
+        const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(this, url);
         if (fileInfo->isFile()) {
             fileSize += fileInfo->size();
         }
@@ -243,7 +243,7 @@ int DStatusBar::computerFolderContains(const DUrlList &urllist)
 {
     int folderContains = 0;
     foreach (DUrl url, urllist) {
-        const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
+        const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(this, url);
         if (fileInfo->isDir()) {
             folderContains += fileInfo->filesCount();
         }
@@ -272,7 +272,7 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
         m_folderContains = 0;
 
         foreach (DUrl url, event.fileUrlList()) {
-            const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
+            const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(this, url);
             if (fileInfo->isFile()) {
                 if (!isInGVFs){
                     m_fileSize += fileInfo->size();
@@ -305,7 +305,7 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
         if (number == 1) {
             if (event.fileUrlList().count() == 1) {
                 DUrl url = event.fileUrlList().first();
-                const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(url);
+                const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(this, url);
 
                 //check network folder at first
                 if(event.fileUrlList().first().isSMBFile()){
@@ -407,7 +407,7 @@ void DStatusBar::setLoadingIncatorVisible(const DFMEvent &event, bool visible)
         return;
 
     if (visible) {
-        const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(event.fileUrl());
+        const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(this, event.fileUrl());
 
         if (fileInfo)
             m_label->setText(fileInfo->loadingTip());

@@ -60,7 +60,7 @@ OpenWithOtherDialog::~OpenWithOtherDialog()
 
 void OpenWithOtherDialog::initData()
 {
-    const DAbstractFileInfoPointer &info = fileService->createFileInfo(m_url);
+    const DAbstractFileInfoPointer &info = fileService->createFileInfo(this, m_url);
 
     QStringList recommendApps = mimeAppsManager->getRecommendedApps(info->fileUrl());
 
@@ -224,7 +224,7 @@ void OpenWithOtherDialog::appendPageItems()
 {
     for(int i = 0; i < 25; i ++){
         if(m_appQueue.count() > 0){
-            DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(m_url);
+            DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(this, m_url);
             QString defaultApp = mimeAppsManager->getDefaultAppByMimeType(info->mimeTypeName());
             const DesktopFile& desktopApp = m_appQueue.dequeue();
             QString iconName = desktopApp.getIcon();
@@ -234,7 +234,7 @@ void OpenWithOtherDialog::appendPageItems()
             if(icon.isNull())
                 icon = QIcon(iconName);
             if(icon.pixmap(16,16).isNull()){
-                const DAbstractFileInfoPointer& info = fileService->createFileInfo(DUrl::fromLocalFile(desktopApp.getFileName()));
+                const DAbstractFileInfoPointer& info = fileService->createFileInfo(this, DUrl::fromLocalFile(desktopApp.getFileName()));
                 icon = info->fileIcon();
             }
 

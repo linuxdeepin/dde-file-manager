@@ -84,7 +84,7 @@ void DFileViewHelperPrivate::init()
 
     QObject::connect(copy_action, &QAction::triggered,
             q, [q] {
-        fileService->writeFilesToClipboard(DFMGlobal::CopyAction, q->selectedUrls(), q);
+        fileService->writeFilesToClipboard(q, DFMGlobal::CopyAction, q->selectedUrls());
     });
 
     QAction *cut_action = new QAction(q->parent());
@@ -94,7 +94,7 @@ void DFileViewHelperPrivate::init()
 
     QObject::connect(cut_action, &QAction::triggered,
             q, [q] {
-        fileService->writeFilesToClipboard(DFMGlobal::CutAction, q->selectedUrls(), q);
+        fileService->writeFilesToClipboard(q, DFMGlobal::CutAction, q->selectedUrls());
     });
 
     QAction *paste_action = new QAction(q->parent());
@@ -106,15 +106,15 @@ void DFileViewHelperPrivate::init()
         DFMEvent event(q);
 
         event.setData(q->currentUrl());
-        fileService->pasteFileByClipboard(event.fileUrl(), event.sender());
+        fileService->pasteFileByClipboard(event.sender(), event.fileUrl());
     });
 
     q->parent()->addAction(copy_action);
     q->parent()->addAction(cut_action);
     q->parent()->addAction(paste_action);
 
-    q->connect(fileSignalManager, SIGNAL(requestRename(DFMEvent)), q, SLOT(_q_edit(DFMEvent)));
-    q->connect(fileSignalManager, SIGNAL(requestSelectRenameFile(DFMEvent)), q, SLOT(_q_selectAndRename(DFMEvent)));
+    q->connect(fileSignalManager, SIGNAL(requestRename(DFMUrlBaseEvent)), q, SLOT(_q_edit(DFMUrlBaseEvent)));
+    q->connect(fileSignalManager, SIGNAL(requestSelectRenameFile(DFMUrlBaseEvent)), q, SLOT(_q_selectAndRename(DFMUrlBaseEvent)));
     // call later
     TIMER_SINGLESHOT(0, {
                          q->connect(fileSignalManager, SIGNAL(trashStateChanged()), q->model(), SLOT(update()));
@@ -130,7 +130,7 @@ void DFileViewHelperPrivate::_q_edit(const DFMUrlBaseEvent &event)
 
     DUrl fileUrl = event.url();
 
-    if (fileUrl.isValid())
+    if (!fileUrl.isValid())
         return;
 
     const QModelIndex &index = q->model()->index(fileUrl);
@@ -473,7 +473,7 @@ void DFileViewHelper::handleCommitData(QWidget *editor) const
     DUrl old_url = fileInfo->fileUrl();
     DUrl new_url = fileInfo->getUrlByNewFileName(new_file_name);
 
-    const DAbstractFileInfoPointer &newFileInfo = DFileService::instance()->createFileInfo(new_url);
+    const DAbstractFileInfoPointer &newFileInfo = DFileService::instance()->createFileInfo(this, new_url);
 
     if (newFileInfo && newFileInfo->baseName().isEmpty() && newFileInfo->suffix() == fileInfo->suffix()) {
         return;
@@ -482,10 +482,10 @@ void DFileViewHelper::handleCommitData(QWidget *editor) const
     if (lineEdit) {
         /// later rename file.
         TIMER_SINGLESHOT(0, {
-                             fileService->renameFile(old_url, new_url, this);
+                             fileService->renameFile(this, old_url, new_url);
                          }, old_url, new_url, this)
     } else {
-        fileService->renameFile(old_url, new_url, this);
+        fileService->renameFile(this, old_url, new_url);
     }
 }
 

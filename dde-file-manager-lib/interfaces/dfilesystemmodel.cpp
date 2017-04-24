@@ -151,7 +151,7 @@ void DFileSystemModelPrivate::_q_onFileCreated(const DUrl &fileUrl)
 {
     Q_Q(DFileSystemModel);
 
-    const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(fileUrl);
+    const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(q, fileUrl);
 
     if (!info || !passFileFilters(info))
         return;
@@ -209,7 +209,7 @@ void DFileSystemModelPrivate::_q_processFileEvent()
         const QPair<EventType, DUrl> &event = fileEventQueue.dequeue();
         const DUrl &fileUrl = event.second;
 
-        const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(fileUrl);
+        const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(q, fileUrl);
 
         if (!info)
             continue;
@@ -649,7 +649,7 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
         }
     }
 
-    d->jobController = fileService->getChildrenJob(parentNode->fileInfo->fileUrl(), QStringList(), d->filters);
+    d->jobController = fileService->getChildrenJob(this, parentNode->fileInfo->fileUrl(), QStringList(), d->filters);
 
     if (!d->jobController)
         return;
@@ -755,7 +755,7 @@ bool DFileSystemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
 
     DUrlList urlList = DUrl::fromQUrlList(data->urls());
 
-    const DAbstractFileInfoPointer& info = fileService->createFileInfo(toUrl);
+    const DAbstractFileInfoPointer& info = fileService->createFileInfo(this, toUrl);
 
     if (info->isSymLink()) {
         toUrl = info->rootSymLinkTarget();
@@ -763,7 +763,7 @@ bool DFileSystemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
 
     if (DFMGlobal::isTrashDesktopFile(toUrl)) {
          toUrl = DUrl::fromTrashFile("/");
-         fileService->moveToTrash(urlList, this);
+         fileService->moveToTrash(this, urlList);
          return true;
     } else if(DFMGlobal::isComputerDesktopFile(toUrl)) {
          return true;
@@ -773,12 +773,12 @@ bool DFileSystemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
 
     switch (action) {
     case Qt::CopyAction:
-        fileService->pasteFile(DFMGlobal::CopyAction, toUrl, urlList, this);
+        fileService->pasteFile(this, DFMGlobal::CopyAction, toUrl, urlList);
         break;
     case Qt::LinkAction:
         break;
     case Qt::MoveAction:
-        fileService->pasteFile(DFMGlobal::CutAction, toUrl, urlList, this);
+        fileService->pasteFile(this, DFMGlobal::CutAction, toUrl, urlList);
         break;
     default:
         return false;
@@ -847,8 +847,8 @@ QModelIndex DFileSystemModel::setRootUrl(const DUrl &fileUrl)
 
 //    d->rootNode = d->urlToNode.value(fileUrl);
 
-    d->rootNode = createNode(Q_NULLPTR, fileService->createFileInfo(fileUrl));
-    d->watcher = DFileService::instance()->createFileWatcher(fileUrl, this);
+    d->rootNode = createNode(Q_NULLPTR, fileService->createFileInfo(this, fileUrl));
+    d->watcher = DFileService::instance()->createFileWatcher(this, fileUrl);
 
     if (d->watcher) {
         connect(d->watcher, SIGNAL(fileAttributeChanged(DUrl)),
@@ -1105,7 +1105,7 @@ const DAbstractFileInfoPointer DFileSystemModel::parentFileInfo(const DUrl &file
     if (fileUrl == rootUrl())
         return d->rootNode->fileInfo;
 
-    return fileService->createFileInfo(fileUrl.parentUrl(fileUrl));
+    return fileService->createFileInfo(this, fileUrl.parentUrl(fileUrl));
 }
 
 DFileSystemModel::State DFileSystemModel::state() const
@@ -1528,7 +1528,7 @@ void DFileSystemModel::selectAndRenameFile(const DUrl &fileUrl) const
             return;
 
         AppController::selectionAndRenameFile = qMakePair(DUrl(), -1);
-        DFMUrlBaseEvent event(fileUrl, this);
+        DFMUrlBaseEvent event(this, fileUrl);
         event.setWindowId(windowId);
 
         TIMER_SINGLESHOT_OBJECT(const_cast<DFileSystemModel*>(this), 100, {

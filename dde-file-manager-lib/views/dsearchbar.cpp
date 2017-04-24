@@ -393,7 +393,7 @@ void DSearchBar::clearText()
     clear();
     m_searchStart = false;
 
-    DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(m_currentUrl, window(), this);
+    DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(this, m_currentUrl, window());
     emit focusedOut();
 }
 

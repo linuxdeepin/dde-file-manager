@@ -70,10 +70,10 @@ void WindowManager::initConnect()
     connect(fileSignalManager, &FileSignalManager::requestQuitApplication, this, &WindowManager::quit);
 
     connect(DThumbnailProvider::instance(), &DThumbnailProvider::createThumbnailFinished,
-                     this, [] (const QString &filePath) {
+                     this, [this] (const QString &filePath) {
         const DUrl &fileUrl = DUrl::fromLocalFile(filePath);
 
-        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(fileUrl);
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, fileUrl);
 
         if (!fileInfo)
             return;
@@ -306,13 +306,13 @@ bool WindowManager::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *res
         DUrlList dirList;
 
         foreach (DUrl url, e->urlList()) {
-            const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(url);
+            const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, url);
 
             if (globalSetting->isCompressFilePreview()
                     && isAvfsMounted()
                     && FileUtils::isArchive(url.toLocalFile())
                     && fileInfo->mimeType().name() != "application/vnd.debian.binary-package") {
-                const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(DUrl::fromAVFSFile(url.path()));
+                const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, DUrl::fromAVFSFile(url.path()));
 
                 if (info->exists()) {
                     url.setScheme(AVFS_SCHEME);
@@ -325,7 +325,7 @@ bool WindowManager::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *res
                 if (fileInfo->isDir())
                     dirList << url;
                 else
-                    DFileService::instance()->openFile(url, event->sender());
+                    DFileService::instance()->openFile(event->sender(), url);
             }
 
             //computer url is virtual dir
@@ -339,9 +339,9 @@ bool WindowManager::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *res
         QVariant result;
 
         if (e->dirOpenMode() == DFMOpenUrlEvent::OpenInCurrentWindow) {
-            result = DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(dirList.first(), getWindowById(event->windowId()), event->sender());
+            result = DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(event->sender(), dirList.first(), getWindowById(event->windowId()));
         } else {
-            result = DFMEventDispatcher::instance()->processEvent<DFMOpenNewWindowEvent>(dirList, e->dirOpenMode() == DFMOpenUrlEvent::ForceOpenNewWindow, event->sender());
+            result = DFMEventDispatcher::instance()->processEvent<DFMOpenNewWindowEvent>(event->sender(), dirList, e->dirOpenMode() == DFMOpenUrlEvent::ForceOpenNewWindow);
         }
 
         if (resultData)
