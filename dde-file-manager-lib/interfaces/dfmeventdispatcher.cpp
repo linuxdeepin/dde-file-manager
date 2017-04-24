@@ -10,13 +10,86 @@
 #include "dfmabstracteventhandler.h"
 
 #include <QList>
+#include <QtConcurrentRun>
+#include <QFutureWatcher>
+#include <QCoreApplication>
+#include <QDebug>
 
 DFM_BEGIN_NAMESPACE
+
+DFMEventFuture::DFMEventFuture(const QFuture<QVariant> &future)
+    : m_future(future)
+{
+
+}
+
+DFMEventFuture::DFMEventFuture(const DFMEventFuture &other)
+    : m_future(other.m_future)
+{
+
+}
+
+void DFMEventFuture::cancel()
+{
+    m_future.cancel();
+}
+
+bool DFMEventFuture::isCanceled() const
+{
+    return m_future.isCanceled();
+}
+
+bool DFMEventFuture::isStarted() const
+{
+    return m_future.isStarted();
+}
+
+bool DFMEventFuture::isFinished() const
+{
+    return m_future.isFinished();
+}
+
+bool DFMEventFuture::isRunning() const
+{
+    return m_future.isRunning();
+}
+
+void DFMEventFuture::waitForFinished()
+{
+    m_future.waitForFinished();
+}
+
+int DFMEventFuture::waitForFinishedWithEventLoop(QEventLoop::ProcessEventsFlags flags) const
+{
+    auto fun = [flags, this]() {
+        QEventLoop loop;
+        QFutureWatcher<QVariant> watcher;
+
+        watcher.setFuture(m_future);
+        QObject::connect(&watcher, &QFutureWatcherBase::finished, &loop, &QEventLoop::quit);
+
+        return loop.exec(flags);
+    };
+    // Run in main thread
+    return DThreadUtil::runInMainThread(fun);
+}
+
+QVariant DFMEventFuture::result() const
+{
+    return m_future.result();
+}
+
+void DFMEventFuture::operator =(const DFMEventFuture &other)
+{
+    m_future = other.m_future;
+}
 
 namespace DFMEventDispatcherData
 {
     static QList<DFMAbstractEventHandler*> eventHandler;
     static QList<DFMAbstractEventHandler*> eventFilter;
+
+    Q_GLOBAL_STATIC(QThreadPool, threadPool)
 }
 
 class DFMEventDispatcher_ : public DFMEventDispatcher {};
@@ -42,6 +115,26 @@ QVariant DFMEventDispatcher::processEvent(const QSharedPointer<DFMEvent> &event)
     }
 
     return result;
+}
+
+DFMEventFuture DFMEventDispatcher::processEventAsync(const QSharedPointer<DFMEvent> &event)
+{
+    QThreadPool *pool = DFMEventDispatcherData::threadPool;
+
+    if (pool->maxThreadCount() <= pool->activeThreadCount()) {
+        pool->setMaxThreadCount(pool->maxThreadCount() + 2);
+    }
+
+    return DFMEventFuture(QtConcurrent::run(pool, this, static_cast<QVariant(DFMEventDispatcher::*)(const QSharedPointer<DFMEvent>&)>(&DFMEventDispatcher::processEvent), event));
+}
+
+QVariant DFMEventDispatcher::processEventWithEventLoop(const QSharedPointer<DFMEvent> &event)
+{
+    const DFMEventFuture &future = processEventAsync(event);
+
+    future.waitForFinishedWithEventLoop();
+
+    return future.result();
 }
 
 void DFMEventDispatcher::installEventFilter(DFMAbstractEventHandler *handler)

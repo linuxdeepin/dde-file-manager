@@ -537,3 +537,14 @@ bool DFMGlobal::isComputerDesktopFileUrl(const DUrl &url)
         return isComputerDesktopFile(url);
     return false;
 }
+
+DThreadUtil::FunctionCallProxy::FunctionCallProxy(std::function<void()> function)
+    : m_function(function)
+{
+    connect(this, &FunctionCallProxy::callBySignal, this, &FunctionCallProxy::call, Qt::QueuedConnection);
+}
+
+void DThreadUtil::FunctionCallProxy::call()
+{
+    m_function();
+}
