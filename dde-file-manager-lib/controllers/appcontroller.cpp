@@ -707,7 +707,7 @@ bool AppController::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *res
         actionOpenInNewWindow(dMakeEventPointer<DFMUrlListBaseEvent>(e->sender(), e->selectedUrls()));
         break;
     case DFMGlobal::OpenInNewTab:
-        actionOpenDiskInNewTab(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
+        actionOpenInNewTab(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
         break;
     case DFMGlobal::OpenDiskInNewWindow:
         actionOpenDiskInNewWindow(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
@@ -740,7 +740,7 @@ bool AppController::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *res
         actionCopy(dMakeEventPointer<DFMUrlListBaseEvent>(e->sender(), e->selectedUrls()));
         break;
     case DFMGlobal::Paste:
-        actionPaste(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
+        actionPaste(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->currentUrl()));
         break;
     case DFMGlobal::Rename:
         actionRename(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
@@ -769,9 +769,15 @@ bool AppController::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *res
     case DFMGlobal::NewFolder:
         actionNewFolder(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->currentUrl()));
         break;
-    case DFMGlobal::NewWindow:
-        actionNewWindow(dMakeEventPointer<DFMUrlListBaseEvent>(e->sender(), e->selectedUrls()));
+    case DFMGlobal::NewWindow: {
+        DUrlList urlList = e->selectedUrls();
+
+        if (urlList.isEmpty())
+            urlList << DUrl::fromComputerFile("/");
+
+        actionNewWindow(dMakeEventPointer<DFMUrlListBaseEvent>(e->sender(), urlList));
         break;
+    }
     case DFMGlobal::SelectAll:
         actionSelectAll(e->windowId());
         break;
@@ -815,7 +821,7 @@ bool AppController::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *res
         actionEject(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
         break;
     case DFMGlobal::Settings:
-        actionEject(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
+        actionSettings(e->windowId());
         break;
     case DFMGlobal::Help:
         actionHelp();

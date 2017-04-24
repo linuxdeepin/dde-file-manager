@@ -41,17 +41,6 @@
 
 DWIDGET_USE_NAMESPACE
 
-#define FILTER(type)\
-    ({bool ok = true;\
-    if (type >= OpenFile) {\
-        if (d_func()->whitelist >= OpenFile && !d_func()->whitelist.testFlag(type))\
-            ok = false;\
-        else if (d_func()->blacklist.testFlag(type)) \
-            ok = false;\
-    } ok;})
-#define FILTER_RETURN(type, value...)\
-    if (!FILTER(type)) return value;
-
 class DFileServicePrivate
 {
 public:
@@ -207,7 +196,7 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
         }
 
         if (DThreadUtil::runInMainThread([&] {
-            return dialogManager->showDeleteFilesClearTrashDialog(DFMUrlListBaseEvent(this, event->fileUrlList()));
+            return dialogManager->showDeleteFilesClearTrashDialog(DFMUrlListBaseEvent(event->sender(), event->fileUrlList()));
         }) == 1) {
             result = CALL_CONTROLLER(deleteFiles);
         } else {
@@ -254,9 +243,7 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
             DFMUrlListBaseEvent e(event->sender(), qvariant_cast<DUrlList>(result));
 
             e.setWindowId(event->windowId());
-
-            metaObject()->invokeMethod(const_cast<DFileService*>(this), "laterRequestSelectFiles",
-                                       Qt::QueuedConnection, Q_ARG(DFMUrlListBaseEvent, e));
+            laterRequestSelectFiles(e);
         }
 
         break;
@@ -510,24 +497,12 @@ bool DFileService::openFileLocation(const QObject *sender, const DUrl &url) cons
 
 bool DFileService::createSymlink(const QObject *sender, const DUrl &fileUrl) const
 {
-    FILTER_RETURN(CreateSymlink, false)
-
     QString linkName = getSymlinkFileName(fileUrl);
     QString linkPath = QFileDialog::getSaveFileName(qobject_cast<const QWidget*>(sender) ? qobject_cast<const QWidget*>(sender)->window() : Q_NULLPTR,
                                                     QObject::tr("Create symlink"), linkName);
     //handle for cancel select file
     if (linkPath.isEmpty())
         return false;
-
-    Q_D(const DFileService);
-
-    DFileServicePrivate *ptr = const_cast<DFileServicePrivate*>(d);
-
-    if (ptr->whitelist >= OpenFile) {
-        ptr->whitelist |= CreateSymlink;
-    } else {
-        ptr->blacklist &= (~CreateSymlink);
-    }
 
     return createSymlink(sender, fileUrl, DUrl::fromLocalFile(linkPath));
 }

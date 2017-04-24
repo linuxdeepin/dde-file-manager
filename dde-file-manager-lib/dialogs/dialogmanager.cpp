@@ -338,7 +338,7 @@ int DialogManager::showRenameNameSameErrorDialog(const QString &name, const DFME
 }
 
 
-int DialogManager::showDeleteFilesClearTrashDialog(const DFMEvent &event)
+int DialogManager::showDeleteFilesClearTrashDialog(const DFMUrlListBaseEvent &event)
 {
     QString ClearTrash = tr("Are you sure to empty %1 item?");
     QString ClearTrashMutliple = tr("Are you sure to empty %1 items?");
@@ -347,11 +347,10 @@ int DialogManager::showDeleteFilesClearTrashDialog(const DFMEvent &event)
 
     const int maxFileNameWidth = 250;
 
-    DUrlList urlList = event.fileUrlList();
+    DUrlList urlList = event.urlList();
     QStringList buttonTexts;
     buttonTexts << tr("Cancel") << tr("Delete");
 
-    qDebug() << event;
     DDialog d(WindowManager::getWindowById(event.windowId()));
     QFontMetrics fm(d.font());
     d.setIcon(QIcon(":/images/dialogs/images/user-trash-full-opened.png"));

@@ -156,7 +156,7 @@ void FileViewHelper::handleSelectEvent(const DFMUrlListBaseEvent &event)
     select(event.urlList());
 }
 
-void FileViewHelper::selectAll(int windowId)
+void FileViewHelper::selectAll(quint64 windowId)
 {
     if(windowId != this->windowId())
         return;

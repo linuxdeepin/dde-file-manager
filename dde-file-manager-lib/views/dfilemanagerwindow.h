@@ -59,7 +59,7 @@ public:
     DLeftSideBar *getLeftSideBar() const;
     ViewManager* getViewManager() const;
 
-    int windowId();
+    quint64 windowId();
 
     bool tabAddable() const;
 
@@ -81,8 +81,8 @@ public slots:
     void cd(const DFMUrlBaseEvent &event);
 
     void showPluginView(const DUrl& fileUrl);
-    void openNewTab(const DFMEvent& event);
-    void createNewView(const DFMEvent& event);
+    void openNewTab(const DFMUrlBaseEvent &event);
+    void createNewView(const DFMUrlBaseEvent &event);
     void switchToView(DFileView *view);
     void onTabAddableChanged(bool addable);
     void onCurrentTabChanged(int tabIndex);

@@ -11,6 +11,7 @@ class FileJob;
 class DAbstractFileInfo;
 class DUrl;
 class DFMEvent;
+class DFMUrlListBaseEvent;
 class PropertyDialog;
 class CloseAllDialogIndicator;
 class TrashPropertyDialog;
@@ -49,7 +50,7 @@ public slots:
     int showRunExcutableScriptDialog(const DUrl& url);
     int showRunExcutableFileDialog(const DUrl &url);
     int showRenameNameSameErrorDialog(const QString& name, const DFMEvent &event);
-    int showDeleteFilesClearTrashDialog(const DFMEvent &event);
+    int showDeleteFilesClearTrashDialog(const DFMUrlListBaseEvent &event);
     int showRemoveBookMarkDialog(const DFMEvent &event);
     void showOpenWithDialog(const DFMEvent &event);
     void showPropertyDialog(const DFMEvent &event);
