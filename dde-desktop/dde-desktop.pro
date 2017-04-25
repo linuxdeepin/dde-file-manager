@@ -7,14 +7,16 @@
 include($$PWD/dde-desktop-build.pri)
 include($$PWD/util/util.pri)
 
-QT       += core gui widgets svg dbus x11extras network
+include($$PWD/../dde-wallpaper-chooser/dde-wallpaper-chooser.pri)
+
+QT       += core gui widgets svg dbus x11extras network concurrent
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TEMPLATE    = app
 TARGET      = dde-desktop
 DESTDIR     = $$BUILD_DIST
 CONFIG      += c++11 link_pkgconfig
-PKGCONFIG   += xcb xcb-ewmh
+PKGCONFIG   += xcb xcb-ewmh gsettings-qt dframeworkdbus 
 
 INCLUDEPATH += $$PWD/../dde-file-manager-lib\
               $$PWD/../dde-file-manager-lib/interfaces

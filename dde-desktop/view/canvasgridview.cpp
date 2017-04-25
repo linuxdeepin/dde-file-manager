@@ -1654,7 +1654,7 @@ void CanvasGridView::handleContextMenuAction(int action)
         startProcessDetached("/usr/lib/deepin-daemon/dde-zone");
         break;
     case WallpaperSettings:
-        startProcessDetached("/usr/lib/deepin-daemon/dde-wallpaper-chooser");
+        Desktop::instance()->showWallpaperSettings();
         break;
     case MenuAction::SelectAll:
         this->selectAll();
