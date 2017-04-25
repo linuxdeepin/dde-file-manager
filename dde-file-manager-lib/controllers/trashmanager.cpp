@@ -160,7 +160,7 @@ bool TrashManager::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) cons
     DUrlList localList;
 
     for(const DUrl &url : event->urlList()) {
-        if (url.isTrashFile() && url.path() == "/") {
+        if (DUrl::fromTrashFile("/") == url) {
             cleanTrash(event->sender());
             return true;
         }
@@ -218,6 +218,19 @@ bool TrashManager::restoreTrashFile(const DUrlList &list)
     bool ok = true;
 
     for (const DUrl &url : list) {
+        if (url == DUrl::fromTrashFile("/")) {
+            // restore all
+            DUrlList list;
+
+            for (const DAbstractFileInfoPointer &info : DFileService::instance()->getChildren(Q_NULLPTR, DUrl::fromTrashFile("/"), QStringList(), QDir::AllEntries | QDir::NoDotAndDotDot))
+                list << info->fileUrl();
+
+            if (list.isEmpty())
+                return true;
+
+            return restoreTrashFile(list);
+        }
+
         TrashFileInfo info(url);
 
         ok = ok && info.restore();

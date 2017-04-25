@@ -126,9 +126,12 @@ void PathManager::loadSystemPaths()
 
     m_systemPathsSet.reserve(m_systemPathsMap.size());
 
-    foreach (QString key, m_systemPathsMap.keys()) {
-        QString path = m_systemPathsMap.value(key);
-        m_systemPathsSet << path;
+    foreach (const QString &key, m_systemPathsMap.keys()) {
+        const QString &path = m_systemPathsMap.value(key);
+
+        if (key != "Trash")
+            m_systemPathsSet << path;
+
         if(key == "Desktop" || key == "Videos" || key == "Music" ||
            key == "Pictures" || key == "Documents" || key == "Downloads" ||
            key == "Trash"){
