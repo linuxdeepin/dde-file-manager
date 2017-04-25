@@ -289,9 +289,11 @@ bool FileEventProcessor::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
         QVariant result;
 
         if (e->dirOpenMode() == DFMOpenUrlEvent::OpenInCurrentWindow) {
-            result = DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(event->sender(), dirList.first(), WindowManager::getWindowById(event->windowId()));
+            const QSharedPointer<DFMEvent> &newEvent = dMakeEventPointer<DFMChangeCurrentUrlEvent>(event->sender(), dirList.first(), WindowManager::getWindowById(event->windowId()));
+            result = DThreadUtil::runInMainThread(DFMEventDispatcher::instance(), static_cast<QVariant(DFMEventDispatcher::*)(const QSharedPointer<DFMEvent> &)>(&DFMEventDispatcher::processEvent), newEvent);
         } else {
-            result = DFMEventDispatcher::instance()->processEvent<DFMOpenNewWindowEvent>(event->sender(), dirList, e->dirOpenMode() == DFMOpenUrlEvent::ForceOpenNewWindow);
+            const QSharedPointer<DFMEvent> &newEvent = dMakeEventPointer<DFMOpenNewWindowEvent>(event->sender(), dirList, e->dirOpenMode() == DFMOpenUrlEvent::ForceOpenNewWindow);
+            result = DThreadUtil::runInMainThread(DFMEventDispatcher::instance(), static_cast<QVariant(DFMEventDispatcher::*)(const QSharedPointer<DFMEvent> &)>(&DFMEventDispatcher::processEvent), newEvent);
         }
 
         if (resultData)
