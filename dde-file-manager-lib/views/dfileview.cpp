@@ -1709,7 +1709,11 @@ void DFileView::openIndex(const QModelIndex &index)
     const DUrl &url = model()->getUrlByIndex(index);
 
     DFMOpenUrlEvent::DirOpenMode mode = globalSetting->isAllwayOpenOnNewWindow() ? DFMOpenUrlEvent::ForceOpenNewWindow : DFMOpenUrlEvent::OpenInCurrentWindow;
-    DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(this, DUrlList() << url, mode);
+
+    if (mode == DFMOpenUrlEvent::OpenInCurrentWindow)
+        DFMEventDispatcher::instance()->processEventAsync<DFMOpenUrlEvent>(this, DUrlList() << url, mode);
+    else
+        DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(this, DUrlList() << url, mode);
 }
 
 void DFileView::keyboardSearch(const QString &search)

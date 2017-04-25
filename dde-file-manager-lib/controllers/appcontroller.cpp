@@ -80,7 +80,7 @@ void AppController::actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event)
     if (urls.size() > 1 || globalSetting->isAllwayOpenOnNewWindow())
         DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(event->sender(), urls, DFMOpenUrlEvent::ForceOpenNewWindow);
      else
-        DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(event->sender(), urls, DFMOpenUrlEvent::OpenInCurrentWindow);
+        DFMEventDispatcher::instance()->processEventAsync<DFMOpenUrlEvent>(event->sender(), urls, DFMOpenUrlEvent::OpenInCurrentWindow);
 }
 
 void AppController::actionOpenDisk(const QSharedPointer<DFMUrlBaseEvent> &event)
