@@ -232,7 +232,7 @@ bool FileEventProcessor::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
 {
     switch (event->type()) {
     case DFMEvent::OpenNewWindow: {
-        const QSharedPointer<DFMOpenNewWindowEvent> &e = event.dynamicCast<DFMOpenNewWindowEvent>();
+        const QSharedPointer<DFMOpenNewWindowEvent> &e = event.staticCast<DFMOpenNewWindowEvent>();
 
         for (const DUrl &url : e->urlList()) {
             WindowManager::instance()->showNewWindow(url, e->force());
@@ -241,7 +241,7 @@ bool FileEventProcessor::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
         break;
     }
     case DFMEvent::ChangeCurrentUrl: {
-        const QSharedPointer<DFMChangeCurrentUrlEvent> &e = event.dynamicCast<DFMChangeCurrentUrlEvent>();
+        const QSharedPointer<DFMChangeCurrentUrlEvent> &e = event.staticCast<DFMChangeCurrentUrlEvent>();
 
         if (DFileManagerWindow *window = const_cast<DFileManagerWindow*>(qobject_cast<const DFileManagerWindow*>(e->window()))) {
             window->preHandleCd(e->fileUrl(), e->sender());
@@ -250,7 +250,7 @@ bool FileEventProcessor::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
         break;
     }
     case DFMEvent::OpenUrl: {
-        const QSharedPointer<DFMOpenUrlEvent> &e = event.dynamicCast<DFMOpenUrlEvent>();
+        const QSharedPointer<DFMOpenUrlEvent> &e = event.staticCast<DFMOpenUrlEvent>();
 
         //sort urls by files and dirs
         DUrlList dirList;
@@ -300,7 +300,7 @@ bool FileEventProcessor::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
         break;
     }
     case DFMEvent::MenuAction:
-        return processMenuEvent(event.dynamicCast<DFMMenuActionEvent>());
+        return processMenuEvent(event.staticCast<DFMMenuActionEvent>());
     default:
         return false;
     }

@@ -88,7 +88,7 @@ QVariant eventProcess(DFileService *service, const QSharedPointer<DFMEvent> &eve
 
             typedef typename std::remove_reference<typename QtPrivate::FunctionPointer<T>::Arguments::Car>::type::Type DFMEventType;
 
-            const QVariant result = QVariant::fromValue((controller->*function)(event.dynamicCast<DFMEventType>()));
+            const QVariant result = QVariant::fromValue((controller->*function)(event.staticCast<DFMEventType>()));
 
             if (event->isAccepted()) {
                 return result;
@@ -152,7 +152,7 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
         result = CALL_CONTROLLER(writeFilesToClipboard);
         break;
     case DFMEvent::RenameFile: {
-        const QSharedPointer<DFMRenameEvent> &e = event.dynamicCast<DFMRenameEvent>();
+        const QSharedPointer<DFMRenameEvent> &e = event.staticCast<DFMRenameEvent>();
         const DAbstractFileInfoPointer &f = createFileInfo(this, e->toUrl());
 
         if (f->exists()) {
@@ -267,7 +267,7 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
     case DFMEvent::CreateGetChildrensJob: {
         result = CALL_CONTROLLER(createDirIterator);
 
-        const QSharedPointer<DFMCreateGetChildrensJob> &e = event.dynamicCast<DFMCreateGetChildrensJob>();
+        const QSharedPointer<DFMCreateGetChildrensJob> &e = event.staticCast<DFMCreateGetChildrensJob>();
 
         if (event->isAccepted()) {
             result = QVariant::fromValue(new JobController(e->url(), qvariant_cast<DDirIteratorPointer>(result)));
