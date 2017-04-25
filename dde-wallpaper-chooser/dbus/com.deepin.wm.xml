@@ -1,0 +1,13 @@
+<interface name="com.deepin.wm">
+  <method name="PerformAction">
+    <arg type="i" name="type" direction="in"/>
+  </method>
+  <method name="ToggleDebug">
+  </method>
+  <method name="RequestHideWindows">
+  </method>
+  <method name="CancelHideWindows">
+  </method>
+  <signal name="BackgroundChanged">
+  </signal>
+</interface>

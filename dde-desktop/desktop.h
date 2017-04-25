@@ -29,6 +29,8 @@ public:
     void loadData();
     void loadView();
 
+    void showWallpaperSettings();
+
 public slots:
     void Show();
 
