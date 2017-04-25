@@ -4,22 +4,19 @@
 #include <QObject>
 #include <QHash>
 
-#include "dfmabstracteventhandler.h"
-
 class DFileManagerWindow;
 class DUrl;
 class DFMEvent;
 class FMStateManager;
 class FMState;
 
-DFM_USE_NAMESPACE
-
-class WindowManager : public QObject, public DFMAbstractEventHandler
+class WindowManager : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit WindowManager(QObject *parent = 0);
+    static WindowManager *instance();
+
     ~WindowManager();
     void initConnect();
 
@@ -44,9 +41,10 @@ private slots:
     void onLastActivedWindowClosed(quint64 winId);
     void quit();
 
-private:
-    bool fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resultData) Q_DECL_OVERRIDE;
+protected:
+    explicit WindowManager(QObject *parent = 0);
 
+private:
     static QHash<const QWidget*, quint64> m_windows;
     static int m_count;
 

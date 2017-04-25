@@ -134,7 +134,7 @@ void FileManagerApp::initApp()
 
 void FileManagerApp::initView()
 {
-    m_windowManager = new WindowManager;
+    m_windowManager = WindowManager::instance();
 }
 
 void FileManagerApp::initManager()

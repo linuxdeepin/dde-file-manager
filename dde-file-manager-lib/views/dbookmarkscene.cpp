@@ -23,6 +23,8 @@
 #include <QMimeData>
 #include <QDir>
 
+DFM_USE_NAMESPACE
+
 DBookmarkScene::DBookmarkScene(QObject *parent)
     : QGraphicsScene(parent)
     , m_delayCheckMountedEvent(this)

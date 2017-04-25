@@ -1522,12 +1522,12 @@ void DFileSystemModel::selectAndRenameFile(const DUrl &fileUrl) const
 {
     /// TODO: 暂时放在此处实现，后面将移动到DFileService中实现。
     if (AppController::selectionAndRenameFile.first == fileUrl) {
-        int windowId = AppController::selectionAndRenameFile.second;
+        quint64 windowId = AppController::selectionAndRenameFile.second;
 
         if (windowId != parent()->windowId())
             return;
 
-        AppController::selectionAndRenameFile = qMakePair(DUrl(), -1);
+        AppController::selectionAndRenameFile = qMakePair(DUrl(), 0);
         DFMUrlBaseEvent event(this, fileUrl);
         event.setWindowId(windowId);
 
