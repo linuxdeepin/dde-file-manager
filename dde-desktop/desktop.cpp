@@ -19,11 +19,16 @@
 #include "view/canvasgridview.h"
 #include "presenter/apppresenter.h"
 
+#include "../dde-wallpaper-chooser/frame.h"
+
+using WallpaperSettings=Frame;
+
 class DesktopPrivate
 {
 public:
     Presenter        presenter;
     CanvasGridView      screenFrame;
+    WallpaperSettings wallpaperSettings;
 };
 
 Desktop::Desktop()
@@ -47,6 +52,12 @@ void Desktop::loadView()
     auto desktopPath = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first();
     auto desktopUrl = DUrl::fromLocalFile(desktopPath);
     d->screenFrame.setRootUrl(desktopUrl);
+}
+
+void Desktop::showWallpaperSettings()
+{
+    d->wallpaperSettings.show();
+    d->wallpaperSettings.grabKeyboard();
 }
 
 void Desktop::Show()
