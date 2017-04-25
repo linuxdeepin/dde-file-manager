@@ -111,7 +111,7 @@ void AppController::asycOpenDisk(const QString &path)
     DUrlList urls;
     urls << DUrl(path);
     m_fmEvent->setData(urls);
-    actionOpen(m_fmEvent.dynamicCast<DFMUrlListBaseEvent>());
+    actionOpen(m_fmEvent.staticCast<DFMUrlListBaseEvent>());
 }
 
 void AppController::actionOpenInNewWindow(const QSharedPointer<DFMUrlListBaseEvent> &event)
@@ -145,7 +145,7 @@ void AppController::actionOpenDiskInNewTab(const QSharedPointer<DFMUrlBaseEvent>
 void AppController::asycOpenDiskInNewTab(const QString &path)
 {
     m_fmEvent->setData(DUrl(path));
-    actionOpenDiskInNewTab(m_fmEvent.dynamicCast<DFMUrlBaseEvent>());
+    actionOpenDiskInNewTab(m_fmEvent.staticCast<DFMUrlBaseEvent>());
 }
 
 void AppController::actionOpenDiskInNewWindow(const QSharedPointer<DFMUrlBaseEvent> &event)
@@ -174,7 +174,7 @@ void AppController::asycOpenDiskInNewWindow(const QString &path)
     DUrlList urls;
     urls << DUrl(path);
     m_fmEvent->setData(urls);
-    actionOpenInNewWindow(m_fmEvent.dynamicCast<DFMUrlListBaseEvent>());
+    actionOpenInNewWindow(m_fmEvent.staticCast<DFMUrlListBaseEvent>());
 }
 
 void AppController::actionOpenAsAdmin(const QSharedPointer<DFMUrlBaseEvent> &event)

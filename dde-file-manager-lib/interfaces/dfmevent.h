@@ -8,6 +8,8 @@
 #include <QPointer>
 #include <QDir>
 #include <QDirIterator>
+#include <QJsonObject>
+#include <QJsonDocument>
 
 #include <functional>
 
@@ -61,6 +63,7 @@ public:
 
     DFMEvent &operator =(const DFMEvent &other);
 
+    static Type nameToType(const QString &name);
     inline Type type() const { return static_cast<Type>(m_type);}
     inline QPointer<const QObject> sender() const {return m_sender;}
 
@@ -110,6 +113,9 @@ public:
         m_propertys[name] = QVariant::fromValue(std::forward<T>(value));
     }
 
+    static const QSharedPointer<DFMEvent> fromJson(Type type, const QJsonObject &json);
+    static const QSharedPointer<DFMEvent> fromJson(const QJsonObject &json);
+
 protected:
     ushort m_type;
     QVariant m_data;
@@ -132,6 +138,8 @@ public:
     explicit DFMUrlBaseEvent(Type type, const QObject *sender, const DUrl &url);
 
     inline DUrl url() const { return qvariant_cast<DUrl>(m_data);}
+
+    static QSharedPointer<DFMUrlBaseEvent> fromJson(Type type, const QJsonObject &json);
 };
 
 class DFMUrlListBaseEvent : public DFMEvent
@@ -142,6 +150,8 @@ public:
     explicit DFMUrlListBaseEvent(Type type, const QObject *sender, const DUrlList &list);
 
     inline DUrlList urlList() const { return qvariant_cast<DUrlList>(m_data);}
+
+    static QSharedPointer<DFMUrlListBaseEvent> fromJson(Type type, const QJsonObject &json);
 };
 Q_DECLARE_METATYPE(DFMUrlListBaseEvent)
 
@@ -155,6 +165,8 @@ class DFMOpenFileEvent : public DFMUrlBaseEvent
 {
 public:
     explicit DFMOpenFileEvent(const QObject *sender, const DUrl &url);
+
+    static QSharedPointer<DFMOpenFileEvent> fromJson(const QJsonObject &json);
 };
 
 class DFMOpenFileByAppEvent : public DFMOpenFileEvent
@@ -163,24 +175,32 @@ public:
     explicit DFMOpenFileByAppEvent(const QObject *sender, const QString &appName, const DUrl &url);
 
     QString appName() const;
+
+    static QSharedPointer<DFMOpenFileByAppEvent> fromJson(const QJsonObject &json);
 };
 
 class DFMCompressEvnet : public DFMUrlListBaseEvent
 {
 public:
     explicit DFMCompressEvnet(const QObject *sender, const DUrlList &list);
+
+    static QSharedPointer<DFMCompressEvnet> fromJson(const QJsonObject &json);
 };
 
 class DFMDecompressEvnet : public DFMUrlListBaseEvent
 {
 public:
     explicit DFMDecompressEvnet(const QObject *sender, const DUrlList &list);
+
+    static QSharedPointer<DFMDecompressEvnet> fromJson(const QJsonObject &json);
 };
 
 class DFMDecompressHereEvnet : public DFMDecompressEvnet
 {
 public:
     explicit DFMDecompressHereEvnet(const QObject *sender, const DUrlList &list);
+
+    static QSharedPointer<DFMDecompressHereEvnet> fromJson(const QJsonObject &json);
 };
 
 class DFMWriteUrlsToClipboardEvent : public DFMUrlListBaseEvent
@@ -189,6 +209,8 @@ public:
     explicit DFMWriteUrlsToClipboardEvent(const QObject *sender, DFMGlobal::ClipboardAction action, const DUrlList &list);
 
     DFMGlobal::ClipboardAction action() const;
+
+    static QSharedPointer<DFMWriteUrlsToClipboardEvent> fromJson(const QJsonObject &json);
 };
 
 class DFMRenameEvent : public DFMEvent
@@ -203,24 +225,32 @@ public:
 
     inline static QVariant makeData(const DUrl &from, const DUrl &to)
     { return QVariant::fromValue(QPair<DUrl, DUrl>(from, to));}
+
+    static QSharedPointer<DFMRenameEvent> fromJson(const QJsonObject &json);
 };
 
 class DFMDeleteEvent : public DFMUrlListBaseEvent
 {
 public:
     explicit DFMDeleteEvent(const QObject *sender, const DUrlList &list);
+
+    static QSharedPointer<DFMDeleteEvent> fromJson(const QJsonObject &json);
 };
 
 class DFMMoveToTrashEvent : public DFMUrlListBaseEvent
 {
 public:
     explicit DFMMoveToTrashEvent(const QObject *sender, const DUrlList &list);
+
+    static QSharedPointer<DFMMoveToTrashEvent> fromJson(const QJsonObject &json);
 };
 
 class DFMRestoreFromTrashEvent : public DFMUrlListBaseEvent
 {
 public:
     explicit DFMRestoreFromTrashEvent(const QObject *sender, const DUrlList &list);
+
+    static QSharedPointer<DFMRestoreFromTrashEvent> fromJson(const QJsonObject &json);
 };
 
 class DFMPasteEvent : public DFMUrlListBaseEvent
@@ -233,12 +263,16 @@ public:
     DUrl targetUrl() const;
 
     DUrlList handleUrlList() const Q_DECL_OVERRIDE;
+
+    static QSharedPointer<DFMPasteEvent> fromJson(const QJsonObject &json);
 };
 
 class DFMNewFolderEvent : public DFMUrlBaseEvent
 {
 public:
     explicit DFMNewFolderEvent(const QObject *sender, const DUrl &url);
+
+    static QSharedPointer<DFMNewFolderEvent> fromJson(const QJsonObject &json);
 };
 
 class DFMNewFileEvent : public DFMUrlBaseEvent
@@ -247,12 +281,16 @@ public:
     explicit DFMNewFileEvent(const QObject *sender, const DUrl &url, const QString &suffix);
 
     QString fileSuffix() const;
+
+    static QSharedPointer<DFMNewFileEvent> fromJson(const QJsonObject &json);
 };
 
 class DFMOpenFileLocation : public DFMUrlBaseEvent
 {
 public:
     explicit DFMOpenFileLocation(const QObject *sender, const DUrl &url);
+
+    static QSharedPointer<DFMOpenFileLocation> fromJson(const QJsonObject &json);
 };
 
 class DFMCreateSymlinkEvent : public DFMEvent
@@ -267,6 +305,8 @@ public:
 
     inline static QVariant makeData(const DUrl &url, const DUrl &to)
     { return QVariant::fromValue(QPair<DUrl, DUrl>(url, to));}
+
+    static QSharedPointer<DFMCreateSymlinkEvent> fromJson(const QJsonObject &json);
 };
 
 class DFMFileShareEvnet : public DFMUrlBaseEvent
@@ -277,18 +317,24 @@ public:
     QString name() const;
     bool isWritable() const;
     bool allowGuest() const;
+
+    static QSharedPointer<DFMFileShareEvnet> fromJson(const QJsonObject &json);
 };
 
 class DFMCancelFileShareEvent : public DFMUrlBaseEvent
 {
 public:
     explicit DFMCancelFileShareEvent(const QObject *sender, const DUrl &url);
+
+    static QSharedPointer<DFMCancelFileShareEvent> fromJson(const QJsonObject &json);
 };
 
 class DFMOpenInTerminalEvent : public DFMUrlBaseEvent
 {
 public:
     explicit DFMOpenInTerminalEvent(const QObject *sender, const DUrl &url);
+
+    static QSharedPointer<DFMOpenInTerminalEvent> fromJson(const QJsonObject &json);
 };
 
 class DFMGetChildrensEvent : public DFMUrlBaseEvent
@@ -302,6 +348,8 @@ public:
     QStringList nameFilters() const;
     QDir::Filters filters() const;
     QDirIterator::IteratorFlags flags() const;
+
+    static QSharedPointer<DFMGetChildrensEvent> fromJson(const QJsonObject &json);
 };
 
 Q_DECLARE_METATYPE(QDir::Filters)
@@ -314,6 +362,8 @@ public:
                                   QDir::Filters filters, QDirIterator::IteratorFlags flags);
     explicit DFMCreateDiriterator(const QObject *sender, const DUrl &url,
                                   const QStringList &nameFilters, QDir::Filters filters);
+
+    static QSharedPointer<DFMCreateDiriterator> fromJson(const QJsonObject &json);
 };
 
 class DFMCreateGetChildrensJob : public DFMCreateDiriterator
@@ -323,18 +373,24 @@ public:
                                       QDir::Filters filters, QDirIterator::IteratorFlags flags);
     explicit DFMCreateGetChildrensJob(const QObject *sender, const DUrl &url,
                                       const QStringList &nameFilters, QDir::Filters filters);
+
+    static QSharedPointer<DFMCreateGetChildrensJob> fromJson(const QJsonObject &json);
 };
 
 class DFMCreateFileInfoEvnet : public DFMUrlBaseEvent
 {
 public:
     explicit DFMCreateFileInfoEvnet(const QObject *sender, const DUrl &url);
+
+    static QSharedPointer<DFMCreateFileInfoEvnet> fromJson(const QJsonObject &json);
 };
 
 class DFMCreateFileWatcherEvent : public DFMUrlBaseEvent
 {
 public:
     explicit DFMCreateFileWatcherEvent(const QObject *sender, const DUrl &url);
+
+    static QSharedPointer<DFMCreateFileWatcherEvent> fromJson(const QJsonObject &json);
 };
 
 class DFMChangeCurrentUrlEvent : public DFMUrlBaseEvent
@@ -343,6 +399,8 @@ public:
     explicit DFMChangeCurrentUrlEvent(const QObject *sender, const DUrl &url, const QWidget *window);
 
     const QWidget *window() const;
+
+    static QSharedPointer<DFMChangeCurrentUrlEvent> fromJson(const QJsonObject &json);
 };
 
 class DFMOpenNewWindowEvent : public DFMUrlListBaseEvent
@@ -352,6 +410,8 @@ public:
     explicit DFMOpenNewWindowEvent(const QObject *sender, const DUrlList &list, bool force = true);
 
     bool force() const;
+
+    static QSharedPointer<DFMOpenNewWindowEvent> fromJson(const QJsonObject &json);
 };
 
 class DFMOpenUrlEvent : public DFMUrlListBaseEvent
@@ -366,11 +426,13 @@ public:
     explicit DFMOpenUrlEvent(const QObject *sender, const DUrlList &list, DirOpenMode mode);
 
     DirOpenMode dirOpenMode() const;
+
+    static QSharedPointer<DFMOpenUrlEvent> fromJson(const QJsonObject &json);
 };
 Q_DECLARE_METATYPE(DFMOpenUrlEvent::DirOpenMode)
 
 class DFileMenu;
-class DFMMenuActionEvent : public DFMEvent
+class DFMMenuActionEvent : public DFMUrlListBaseEvent
 {
 public:
     explicit DFMMenuActionEvent(const QObject *sender, const DFileMenu *menu, const DUrl &currentUrl,
@@ -380,6 +442,8 @@ public:
     const DUrl currentUrl() const;
     const DUrlList selectedUrls() const;
     DFMGlobal::MenuAction action() const;
+
+    static QSharedPointer<DFMMenuActionEvent> fromJson(const QJsonObject &json);
 };
 
 #endif // FMEVENT_H
