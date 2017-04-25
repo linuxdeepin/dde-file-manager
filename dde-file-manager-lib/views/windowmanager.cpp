@@ -58,6 +58,14 @@ WindowManager::WindowManager(QObject *parent) : QObject(parent)
     initConnect();
 }
 
+class WindowManager_ : public WindowManager {};
+Q_GLOBAL_STATIC(WindowManager_, wmGlobal)
+
+WindowManager *WindowManager::instance()
+{
+    return wmGlobal;
+}
+
 WindowManager::~WindowManager()
 {
 
@@ -185,15 +193,17 @@ quint64 WindowManager::getWindowId(const QWidget *window)
     if (winId != 0)
         return winId;
 
-    while (window) {
-        if (window->inherits("DFileManagerWindow")) {
-            return window->winId();
+    const QWidget *newW = window;
+
+    while (newW) {
+        if (newW->inherits("DFileManagerWindow")) {
+            return newW->winId();
         }
 
-        window = window->parentWidget();
+        newW = newW->parentWidget();
     }
 
-    return 0;
+    return window->window()->winId();
 }
 
 QWidget *WindowManager::getWindowById(quint64 winId)
@@ -240,118 +250,4 @@ void WindowManager::quit()
             qApp->quit();
         }
     }
-}
-
-static bool isAvfsMounted()
-{
-    QProcess p;
-    QString cmd = "/bin/bash";
-    QStringList args;
-    args << "-c" << "ps -ax -o 'cmd'|grep '.avfs$'";
-    p.start(cmd, args);
-    p.waitForFinished();
-    QString avfsBase = qgetenv("AVFSBASE");
-    QString avfsdDir;
-    if(avfsBase.isEmpty()){
-        QString home = qgetenv("HOME");
-        avfsdDir = home + "/.avfs";
-    } else{
-        avfsdDir = avfsBase + "/.avfs";
-    }
-
-    while (!p.atEnd()) {
-        QString result = p.readLine().trimmed();
-        if(!result.isEmpty()){
-            QStringList datas = result.split(" ");
-
-            if(datas.count() == 2){
-                //compare current user's avfs path
-                if(datas.last() != avfsdDir)
-                    continue;
-
-                if(datas.first() == "avfsd" && QFile::exists(datas.last()))
-                    return true;
-            }
-        }
-    }
-
-    return false;
-}
-
-bool WindowManager::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resultData)
-{
-    switch (event->type()) {
-    case DFMEvent::OpenNewWindow: {
-        const QSharedPointer<DFMOpenNewWindowEvent> &e = event.dynamicCast<DFMOpenNewWindowEvent>();
-
-        for (const DUrl &url : e->urlList()) {
-            showNewWindow(url, e->force());
-        }
-
-        break;
-    }
-    case DFMEvent::ChangeCurrentUrl: {
-        const QSharedPointer<DFMChangeCurrentUrlEvent> &e = event.dynamicCast<DFMChangeCurrentUrlEvent>();
-
-        if (DFileManagerWindow *window = const_cast<DFileManagerWindow*>(qobject_cast<const DFileManagerWindow*>(e->window()))) {
-            window->preHandleCd(e->fileUrl(), e->sender());
-        }
-
-        break;
-    }
-    case DFMEvent::OpenUrl: {
-        const QSharedPointer<DFMOpenUrlEvent> &e = event.dynamicCast<DFMOpenUrlEvent>();
-
-        //sort urls by files and dirs
-        DUrlList dirList;
-
-        foreach (DUrl url, e->urlList()) {
-            const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, url);
-
-            if (globalSetting->isCompressFilePreview()
-                    && isAvfsMounted()
-                    && FileUtils::isArchive(url.toLocalFile())
-                    && fileInfo->mimeType().name() != "application/vnd.debian.binary-package") {
-                const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, DUrl::fromAVFSFile(url.path()));
-
-                if (info->exists()) {
-                    url.setScheme(AVFS_SCHEME);
-                    dirList << url;
-                    continue;
-                }
-            }
-
-            if (fileInfo) {
-                if (fileInfo->isDir())
-                    dirList << url;
-                else
-                    DFileService::instance()->openFile(event->sender(), url);
-            }
-
-            //computer url is virtual dir
-            if (url == DUrl::fromComputerFile("/"))
-                dirList << url;
-        }
-
-        if (dirList.isEmpty())
-            break;
-
-        QVariant result;
-
-        if (e->dirOpenMode() == DFMOpenUrlEvent::OpenInCurrentWindow) {
-            result = DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(event->sender(), dirList.first(), getWindowById(event->windowId()));
-        } else {
-            result = DFMEventDispatcher::instance()->processEvent<DFMOpenNewWindowEvent>(event->sender(), dirList, e->dirOpenMode() == DFMOpenUrlEvent::ForceOpenNewWindow);
-        }
-
-        if (resultData)
-            *resultData = result;
-
-        break;
-    }
-    default:
-        return false;
-    }
-
-    return true;
 }

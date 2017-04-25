@@ -1,6 +1,7 @@
 #include "dsearchbar.h"
 #include "dfmeventdispatcher.h"
 #include "windowmanager.h"
+#include "dfmeventdispatcher.h"
 
 #include "controllers/searchhistroymanager.h"
 
@@ -17,6 +18,8 @@
 #include <QFocusEvent>
 #include <QPainter>
 #include <QScrollBar>
+
+DFM_USE_NAMESPACE
 
 DSearchBar::DSearchBar(QWidget *parent):QLineEdit(parent)
 {

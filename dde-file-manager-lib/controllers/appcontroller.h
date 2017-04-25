@@ -6,14 +6,11 @@
 
 #include "subscriber.h"
 #include "dfmevent.h"
-#include "dfmabstracteventhandler.h"
 
 class FileController;
 class FileMonitor;
 
-DFM_USE_NAMESPACE
-
-class AppController : public QObject, public Subscriber, public DFMAbstractEventHandler
+class AppController : public QObject, public Subscriber
 {
     Q_OBJECT
 
@@ -107,10 +104,9 @@ private:
     void initConnect();
     void createGVfSManager();
     void createUserShareManager();
-    bool fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resultData) Q_DECL_OVERRIDE;
 
     QSharedPointer<DFMEvent> m_fmEvent;
-    static QPair<DUrl, int> selectionAndRenameFile;
+    static QPair<DUrl, quint64> selectionAndRenameFile;
 
     friend class FileController;
     friend class DFileSystemModel;

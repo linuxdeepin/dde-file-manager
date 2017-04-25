@@ -11,6 +11,7 @@
 
 #include <QProcess>
 
+DFM_USE_NAMESPACE
 
 NetworkNode::NetworkNode()
 {

@@ -18,6 +18,7 @@
 #include "plugins/pluginmanager.h"
 #include "dde-file-manager-plugins/plugininterfaces/menu/menuinterface.h"
 #include "dfmstandardpaths.h"
+
 #include <QMetaObject>
 #include <QMetaEnum>
 #include <QMenu>
@@ -278,10 +279,10 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
                 //ignore no show apps
 //                if(df.getNoShow())
 //                    continue;
-                QAction* action = new QAction(mimeAppsManager->DesktopObjs.value(app).getLocalName(), 0);
+                QAction* action = new QAction(mimeAppsManager->DesktopObjs.value(app).getLocalName(), openWithMenu);
                 action->setIcon(FileUtils::searchAppIcon(mimeAppsManager->DesktopObjs.value(app)));
                 action->setProperty("app", app);
-                action->setProperty("url", info->fileUrl());
+                action->setProperty("url", QVariant::fromValue(info->fileUrl()));
                 openWithMenu->addAction(action);
                 connect(action, &QAction::triggered, appController, &AppController::actionOpenFileByApp);
             }
@@ -790,7 +791,6 @@ bool DFileMenuManager::isAvailableAction(MenuAction action)
 void DFileMenuManager::actionTriggered(QAction *action)
 {
     DFileMenu *menu = qobject_cast<DFileMenu *>(sender());
-    qDebug() << menu << action;
 
     if (action->data().isValid()) {
         bool flag = false;

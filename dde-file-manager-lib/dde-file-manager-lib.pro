@@ -187,7 +187,8 @@ HEADERS += \
     interfaces/dfmsetting.h \
     shutil/viewstatesmanager.h \
     interfaces/dfmeventdispatcher.h \
-    interfaces/dfmabstracteventhandler.h
+    interfaces/dfmabstracteventhandler.h \
+    controllers/fileeventprocessor.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -307,7 +308,8 @@ SOURCES += \
     configure/dfmconfigdict.cpp \
     shutil/viewstatesmanager.cpp \
     interfaces/dfmeventdispatcher.cpp \
-    interfaces/dfmabstracteventhandler.cpp
+    interfaces/dfmabstracteventhandler.cpp \
+    controllers/fileeventprocessor.cpp
 
 INCLUDEPATH += $$PWD/../ $$PWD/../utils/ $$PWD/interfaces/ $$PWD/../dde-file-manager-plugins/plugininterfaces/
 

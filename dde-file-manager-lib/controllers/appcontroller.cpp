@@ -48,11 +48,10 @@
 
 DWIDGET_USE_NAMESPACE
 
-QPair<DUrl, int> AppController::selectionAndRenameFile;
+QPair<DUrl, quint64> AppController::selectionAndRenameFile;
 
-
-class AppControllerPrivate : public AppController {};
-Q_GLOBAL_STATIC(AppControllerPrivate, acGlobal);
+class AppController_ : public AppController {};
+Q_GLOBAL_STATIC(AppController_, acGlobal)
 
 AppController *AppController::instance()
 {
@@ -639,7 +638,7 @@ void AppController::actionOpenFileByApp()
         return;
 
     QString app = action->property("app").toString();
-    DUrl fileUrl(qvariant_cast<DUrl>(action->property("url")));
+    DUrl fileUrl = qvariant_cast<DUrl>(action->property("url"));
     fileService->openFileByApp(this, app, fileUrl);
 }
 
@@ -685,172 +684,4 @@ void AppController::createGVfSManager()
 void AppController::createUserShareManager()
 {
     userShareManager;
-}
-
-bool AppController::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resultData)
-{
-    Q_UNUSED(resultData)
-
-    if (event->type() != DFMEvent::MenuAction)
-        return false;
-
-    const QSharedPointer<DFMMenuActionEvent> &e = event.dynamicCast<DFMMenuActionEvent>();
-
-    switch (e->action()) {
-    case DFMGlobal::Open:
-        actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(e->sender(), e->selectedUrls()));
-        break;
-    case DFMGlobal::OpenDisk:
-        actionOpenDisk(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
-        break;
-    case DFMGlobal::OpenInNewWindow:
-        actionOpenInNewWindow(dMakeEventPointer<DFMUrlListBaseEvent>(e->sender(), e->selectedUrls()));
-        break;
-    case DFMGlobal::OpenInNewTab:
-        actionOpenInNewTab(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
-        break;
-    case DFMGlobal::OpenDiskInNewWindow:
-        actionOpenDiskInNewWindow(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
-        break;
-    case DFMGlobal::OpenDiskInNewTab:
-        actionOpenDiskInNewTab(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
-        break;
-    case DFMGlobal::OpenAsAdmin:
-        actionOpenAsAdmin(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
-        break;
-    case DFMGlobal::OpenWithCustom:
-        actionOpenWithCustom(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
-        break;
-    case DFMGlobal::OpenFileLocation:
-        actionOpenFileLocation(dMakeEventPointer<DFMUrlListBaseEvent>(e->sender(), e->selectedUrls()));
-        break;
-    case DFMGlobal::Compress:
-        actionCompress(dMakeEventPointer<DFMUrlListBaseEvent>(e->sender(), e->selectedUrls()));
-        break;
-    case DFMGlobal::Decompress:
-        actionDecompress(dMakeEventPointer<DFMUrlListBaseEvent>(e->sender(), e->selectedUrls()));
-        break;
-    case DFMGlobal::DecompressHere:
-        actionDecompressHere(dMakeEventPointer<DFMUrlListBaseEvent>(e->sender(), e->selectedUrls()));
-        break;
-    case DFMGlobal::Cut:
-        actionCut(dMakeEventPointer<DFMUrlListBaseEvent>(e->sender(), e->selectedUrls()));
-        break;
-    case DFMGlobal::Copy:
-        actionCopy(dMakeEventPointer<DFMUrlListBaseEvent>(e->sender(), e->selectedUrls()));
-        break;
-    case DFMGlobal::Paste:
-        actionPaste(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->currentUrl()));
-        break;
-    case DFMGlobal::Rename:
-        actionRename(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
-        break;
-    case DFMGlobal::BookmarkRename:
-        actionBookmarkRename(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
-        break;
-    case DFMGlobal::BookmarkRemove:
-        actionBookmarkRemove(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
-        break;
-    case DFMGlobal::CreateSymlink:
-        actionCreateSymlink(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
-        break;
-    case DFMGlobal::SendToDesktop:
-        actionSendToDesktop(dMakeEventPointer<DFMUrlListBaseEvent>(e->sender(), e->selectedUrls()));
-        break;
-    case DFMGlobal::AddToBookMark:
-        actionAddToBookMark(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
-        break;
-    case DFMGlobal::Delete:
-        actionDelete(dMakeEventPointer<DFMUrlListBaseEvent>(e->sender(), e->selectedUrls()));
-        break;
-    case DFMGlobal::Property:
-        actionProperty(dMakeEventPointer<DFMUrlListBaseEvent>(e->sender(), e->selectedUrls()));
-        break;
-    case DFMGlobal::NewFolder:
-        actionNewFolder(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->currentUrl()));
-        break;
-    case DFMGlobal::NewWindow: {
-        DUrlList urlList = e->selectedUrls();
-
-        if (urlList.isEmpty())
-            urlList << DUrl::fromComputerFile("/");
-
-        actionNewWindow(dMakeEventPointer<DFMUrlListBaseEvent>(e->sender(), urlList));
-        break;
-    }
-    case DFMGlobal::SelectAll:
-        actionSelectAll(e->windowId());
-        break;
-    case DFMGlobal::ClearRecent:
-        actionClearRecent(e);
-        break;
-    case DFMGlobal::ClearTrash:
-        actionClearTrash(e->sender());
-        break;
-    case DFMGlobal::NewWord: /// sub menu
-        actionNewWord(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->currentUrl()));
-        break;
-    case DFMGlobal::NewExcel: /// sub menu
-        actionNewExcel(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->currentUrl()));
-        break;
-    case DFMGlobal::NewPowerpoint: /// sub menu
-        actionNewPowerpoint(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->currentUrl()));
-        break;
-    case DFMGlobal::NewText: /// sub menu
-        actionNewText(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->currentUrl()));
-        break;
-    case DFMGlobal::OpenInTerminal:
-        actionOpenInTerminal(dMakeEventPointer<DFMUrlListBaseEvent>(e->sender(), e->selectedUrls().isEmpty() ? DUrlList() << e->currentUrl() : e->selectedUrls()));
-        break;
-    case DFMGlobal::Restore:
-        actionRestore(dMakeEventPointer<DFMUrlListBaseEvent>(e->sender(), e->selectedUrls()));
-        break;
-    case DFMGlobal::RestoreAll:
-        actionRestoreAll(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->currentUrl()));
-        break;
-    case DFMGlobal::CompleteDeletion:
-        actionCompleteDeletion(dMakeEventPointer<DFMUrlListBaseEvent>(e->sender(), e->selectedUrls()));
-        break;
-    case DFMGlobal::Mount:
-        actionMount(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
-        break;
-    case DFMGlobal::Unmount:
-        actionUnmount(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
-        break;
-    case DFMGlobal::Eject:
-        actionEject(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
-        break;
-    case DFMGlobal::Settings:
-        actionSettings(e->windowId());
-        break;
-    case DFMGlobal::Help:
-        actionHelp();
-        break;
-    case DFMGlobal::About:
-        actionAbout(e->windowId());
-        break;
-    case DFMGlobal::Exit:
-        actionExit(e->windowId());
-        break;
-    case DFMGlobal::SetAsWallpaper:
-        actionSetAsWallpaper(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
-        break;
-    case DFMGlobal::ForgetPassword:
-        actionForgetPassword(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
-        break;
-    case DFMGlobal::Share:
-        actionShare(dMakeEventPointer<DFMUrlListBaseEvent>(e->sender(), e->selectedUrls()));
-        break;
-    case DFMGlobal::UnShare:
-        actionUnShare(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
-        break;
-    case DFMGlobal::SetUserSharePassword:
-        actionSetUserSharePassword(e->windowId());
-        break;
-    case DFMGlobal::FormatDevice:
-        actionFormatDevice(dMakeEventPointer<DFMUrlBaseEvent>(e->sender(), e->selectedUrls().first()));
-        break;
-    }
-
-    return true;
 }

@@ -156,9 +156,7 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
         const DAbstractFileInfoPointer &f = createFileInfo(this, e->toUrl());
 
         if (f->exists()) {
-            DThreadUtil::runInMainThread([&] {
-                dialogManager->showRenameNameSameErrorDialog(f->fileDisplayName(), *event.data());
-            });
+            DThreadUtil::runInMainThread(dialogManager, &DialogManager::showRenameNameSameErrorDialog, f->fileDisplayName(), *event.data());
             result = false;
         } else {
             result = CALL_CONTROLLER(renameFile);
@@ -181,17 +179,13 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
     case DFMEvent::DeleteFiles: {
         foreach (const DUrl& url, event->fileUrlList()) {
             if (systemPathManager->isSystemPath(url.toLocalFile())) {
-                DThreadUtil::runInMainThread([&] {
-                    dialogManager->showDeleteSystemPathWarnDialog();
-                });
+                DThreadUtil::runInMainThread(dialogManager, &DialogManager::showDeleteSystemPathWarnDialog);
                 result = false;
                 goto end;
             }
         }
 
-        if (DThreadUtil::runInMainThread([&] {
-            return dialogManager->showDeleteFilesClearTrashDialog(DFMUrlListBaseEvent(event->sender(), event->fileUrlList()));
-        }) == 1) {
+        if (DThreadUtil::runInMainThread(dialogManager, &DialogManager::showDeleteFilesClearTrashDialog, DFMUrlListBaseEvent(event->sender(), event->fileUrlList())) == 1) {
             result = CALL_CONTROLLER(deleteFiles);
         } else {
             result = false;
@@ -203,9 +197,7 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
         //handle system files should not be able to move to trash
         foreach (const DUrl& url, event->fileUrlList()) {
             if (systemPathManager->isSystemPath(url.toLocalFile())){
-                DThreadUtil::runInMainThread([&] {
-                    dialogManager->showDeleteSystemPathWarnDialog();
-                });
+                DThreadUtil::runInMainThread(dialogManager, &DialogManager::showDeleteSystemPathWarnDialog);
                 result = QVariant::fromValue(event->fileUrlList());
                 goto end;
             }

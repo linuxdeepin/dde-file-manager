@@ -29,7 +29,8 @@
 #include <QProcess>
 #include <QGuiApplication>
 #include <QUrlQuery>
-#include "unistd.h"
+
+#include <unistd.h>
 
 class FileDirIterator : public DDirIterator
 {
