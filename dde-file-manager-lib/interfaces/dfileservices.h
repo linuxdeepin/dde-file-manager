@@ -66,7 +66,7 @@ public:
     bool decompressFileHere(const QObject *sender, const DUrlList &list) const;
     bool writeFilesToClipboard(const QObject *sender, DFMGlobal::ClipboardAction action, const DUrlList &list) const;
     bool renameFile(const QObject *sender, const DUrl &from, const DUrl &to) const;
-    bool deleteFiles(const QObject *sender, const DUrlList &list) const;
+    bool deleteFiles(const QObject *sender, const DUrlList &list, bool slient = false) const;
     DUrlList moveToTrash(const QObject *sender, const DUrlList &list) const;
     void pasteFileByClipboard(const QObject *sender, const DUrl &targetUrl) const;
     DUrlList pasteFile(const QObject *sender, DFMGlobal::ClipboardAction action,

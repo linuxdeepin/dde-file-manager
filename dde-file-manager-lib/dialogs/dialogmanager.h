@@ -66,7 +66,7 @@ public slots:
     void showDiskSpaceOutOfUsedDialog();
     void showFailToCreateSymlinkDialog(const QString &errorString);
     void showMoveToTrashConflictDialog(const DUrlList& urls);
-    void showDeleteSystemPathWarnDialog();
+    void showDeleteSystemPathWarnDialog(quint64 winId);
 
     void removePropertyDialog(const DUrl& url);
     void closeAllPropertyDialog();

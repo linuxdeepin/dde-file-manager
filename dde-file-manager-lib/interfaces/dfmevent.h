@@ -232,7 +232,9 @@ public:
 class DFMDeleteEvent : public DFMUrlListBaseEvent
 {
 public:
-    explicit DFMDeleteEvent(const QObject *sender, const DUrlList &list);
+    explicit DFMDeleteEvent(const QObject *sender, const DUrlList &list, bool silent = false);
+
+    bool silent() const;
 
     static QSharedPointer<DFMDeleteEvent> fromJson(const QJsonObject &json);
 };

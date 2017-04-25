@@ -385,15 +385,24 @@ QSharedPointer<DFMRenameEvent> DFMRenameEvent::fromJson(const QJsonObject &json)
     return dMakeEventPointer<DFMRenameEvent>(Q_NULLPTR, DUrl::fromUserInput(json["from"].toString()), DUrl::fromUserInput(json["to"].toString()));
 }
 
-DFMDeleteEvent::DFMDeleteEvent(const QObject *sender, const DUrlList &list)
+DFMDeleteEvent::DFMDeleteEvent(const QObject *sender, const DUrlList &list, bool silent)
     : DFMUrlListBaseEvent(DeleteFiles, sender, list)
 {
+    setProperty(QT_STRINGIFY(DFMDeleteEvent::silent), silent);
+}
 
+bool DFMDeleteEvent::silent() const
+{
+    return property(QT_STRINGIFY(DFMDeleteEvent::silent), false);
 }
 
 QSharedPointer<DFMDeleteEvent> DFMDeleteEvent::fromJson(const QJsonObject &json)
 {
-    return DFMUrlListBaseEvent::fromJson(DeleteFiles, json).staticCast<DFMDeleteEvent>();
+    const QSharedPointer<DFMDeleteEvent> &event = DFMUrlListBaseEvent::fromJson(DeleteFiles, json).staticCast<DFMDeleteEvent>();
+
+    event->setProperty(QT_STRINGIFY(DFMDeleteEvent::silent), json["silent"].toBool());
+
+    return event;
 }
 
 DFMMoveToTrashEvent::DFMMoveToTrashEvent(const QObject *sender, const DUrlList &list)
