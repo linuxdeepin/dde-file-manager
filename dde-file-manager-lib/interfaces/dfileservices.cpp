@@ -177,15 +177,18 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
         break;
     }
     case DFMEvent::DeleteFiles: {
+        bool slient = event.staticCast<DFMDeleteEvent>()->silent();
+
         foreach (const DUrl& url, event->fileUrlList()) {
             if (systemPathManager->isSystemPath(url.toLocalFile())) {
-                DThreadUtil::runInMainThread(dialogManager, &DialogManager::showDeleteSystemPathWarnDialog);
+                if (!slient)
+                    DThreadUtil::runInMainThread(dialogManager, &DialogManager::showDeleteSystemPathWarnDialog, event->windowId());
                 result = false;
                 goto end;
             }
         }
 
-        if (DThreadUtil::runInMainThread(dialogManager, &DialogManager::showDeleteFilesClearTrashDialog, DFMUrlListBaseEvent(event->sender(), event->fileUrlList())) == 1) {
+        if (slient || DThreadUtil::runInMainThread(dialogManager, &DialogManager::showDeleteFilesClearTrashDialog, DFMUrlListBaseEvent(event->sender(), event->fileUrlList())) == 1) {
             result = CALL_CONTROLLER(deleteFiles);
         } else {
             result = false;
@@ -197,7 +200,7 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
         //handle system files should not be able to move to trash
         foreach (const DUrl& url, event->fileUrlList()) {
             if (systemPathManager->isSystemPath(url.toLocalFile())){
-                DThreadUtil::runInMainThread(dialogManager, &DialogManager::showDeleteSystemPathWarnDialog);
+                DThreadUtil::runInMainThread(dialogManager, &DialogManager::showDeleteSystemPathWarnDialog, event->windowId());
                 result = QVariant::fromValue(event->fileUrlList());
                 goto end;
             }
@@ -399,9 +402,9 @@ bool DFileService::renameFile(const QObject *sender, const DUrl &from, const DUr
     return DFMEventDispatcher::instance()->processEvent<DFMRenameEvent>(sender, from, to).toBool();
 }
 
-bool DFileService::deleteFiles(const QObject *sender, const DUrlList &list) const
+bool DFileService::deleteFiles(const QObject *sender, const DUrlList &list, bool slient) const
 {
-    return DFMEventDispatcher::instance()->processEventWithEventLoop(dMakeEventPointer<DFMDeleteEvent>(sender, list)).toBool();
+    return DFMEventDispatcher::instance()->processEventWithEventLoop(dMakeEventPointer<DFMDeleteEvent>(sender, list, slient)).toBool();
 }
 
 DUrlList DFileService::moveToTrash(const QObject *sender, const DUrlList &list) const

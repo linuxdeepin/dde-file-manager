@@ -106,7 +106,7 @@ bool TrashManager::openFile(const QSharedPointer<DFMOpenFileEvent> &event) const
 
 DUrlList TrashManager::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const
 {
-    TIMER_SINGLESHOT_CONNECT_TYPE(this, 0, fileService->deleteFiles(event->sender(), event->urlList()), Qt::AutoConnection, event);
+    fileService->deleteFiles(event->sender(), event->urlList());
 
     return DUrlList();
 }
@@ -174,7 +174,7 @@ bool TrashManager::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) cons
         }
     }
 
-    fileService->deleteFiles(event->sender(), localList);
+    fileService->deleteFiles(event->sender(), localList, true);
 
     return true;
 }
@@ -232,7 +232,7 @@ void TrashManager::cleanTrash(const QObject *sender) const
     list << DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashInfosPath))
          << DUrl::fromLocalFile(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath));
 
-    fileService->deleteFiles(sender, list);
+    fileService->deleteFiles(sender, list, true);
 }
 
 bool TrashManager::isEmpty()
