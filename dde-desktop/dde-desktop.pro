@@ -8,8 +8,9 @@ include($$PWD/dde-desktop-build.pri)
 include($$PWD/util/util.pri)
 
 include($$PWD/../dde-wallpaper-chooser/dde-wallpaper-chooser.pri)
+include($$PWD/../dde-zone/dde-zone.pri)
 
-QT       += core gui widgets svg dbus x11extras network concurrent
+QT       += core gui widgets svg dbus x11extras network concurrent multimediawidgets multimedia
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TEMPLATE    = app
@@ -80,3 +81,8 @@ TRANSLATIONS += $$PWD/translations/$${TARGET}.ts \
 
 
 include($$PWD/development.pri)
+
+isEqual(DISABLE_DEMO_VIDEO, YES){
+    DEFINES += DISABLE_DEMO_VIDEO
+}
+

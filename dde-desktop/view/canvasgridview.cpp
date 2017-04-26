@@ -1634,7 +1634,7 @@ void CanvasGridView::handleContextMenuAction(int action)
         break;
     }
     case CornerSettings:
-        startProcessDetached("/usr/lib/deepin-daemon/dde-zone");
+        Desktop::instance()->showZoneSettings();
         break;
     case WallpaperSettings:
         Desktop::instance()->showWallpaperSettings();
