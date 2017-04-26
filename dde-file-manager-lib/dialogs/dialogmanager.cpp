@@ -274,9 +274,9 @@ void DialogManager::showUrlWrongDialog(const DUrl &url)
     d.exec();
 }
 
-int DialogManager::showRunExcutableScriptDialog(const DUrl &url)
+int DialogManager::showRunExcutableScriptDialog(const DUrl &url, quint64 winId)
 {
-    DDialog d;
+    DDialog d(WindowManager::getWindowById(winId));
     int maxDisplayNameLength = 250;
     QString _fileDisplayName = QFileInfo(url.path()).fileName();
     QString fileDisplayName = d.fontMetrics().elidedText(_fileDisplayName,Qt::ElideRight, maxDisplayNameLength);
@@ -303,9 +303,9 @@ int DialogManager::showRunExcutableScriptDialog(const DUrl &url)
     return code;
 }
 
-int DialogManager::showRunExcutableFileDialog(const DUrl &url)
+int DialogManager::showRunExcutableFileDialog(const DUrl &url, quint64 winId)
 {
-    DDialog d;
+    DDialog d(WindowManager::getWindowById(winId));
     const DAbstractFileInfoPointer& pfileInfo = fileService->createFileInfo(this, url);
     int maxDisplayNameLength = 200;
     QString _fileDisplayName = QFileInfo(url.path()).fileName();

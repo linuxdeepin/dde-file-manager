@@ -101,12 +101,12 @@ bool FileController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) con
     }
 
     if (FileUtils::isExecutableScript(fileUrl.toLocalFile())) {
-        int code = dialogManager->showRunExcutableScriptDialog(fileUrl);
+        int code = dialogManager->showRunExcutableScriptDialog(fileUrl, event->windowId());
         return FileUtils::openExcutableScriptFile(fileUrl.toLocalFile(), code);
     }
 
     if(FileUtils::isFileRunnable(fileUrl.toLocalFile()) && !pfile->isDesktopFile()){
-        int code = dialogManager->showRunExcutableFileDialog(fileUrl);
+        int code = dialogManager->showRunExcutableFileDialog(fileUrl, event->windowId());
         return FileUtils::openExcutableFile(fileUrl.toLocalFile(), code);
     }
 
