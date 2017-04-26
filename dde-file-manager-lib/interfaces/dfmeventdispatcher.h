@@ -46,10 +46,23 @@ private:
 };
 
 class DFMAbstractEventHandler;
-class DFMEventDispatcher
+class DFMEventDispatcherPrivate;
+class DFMEventDispatcher : public QObject
 {
+    Q_OBJECT
+
+    Q_PROPERTY(State state READ state NOTIFY stateChanged)
+
 public:
+    enum State {
+        Normal,
+        Busy
+    };
+
+    Q_ENUM(State)
+
     static DFMEventDispatcher *instance();
+    ~DFMEventDispatcher();
 
     QVariant processEvent(const QSharedPointer<DFMEvent> &event);
     template<class T, typename... Args>
@@ -73,14 +86,23 @@ public:
     void installEventFilter(DFMAbstractEventHandler *handler);
     void removeEventFilter(DFMAbstractEventHandler *handler);
 
+    State state() const;
+
+signals:
+    void stateChanged(State state);
+
 protected:
     DFMEventDispatcher();
 
 private:
+    QScopedPointer<DFMEventDispatcherPrivate> d_ptr;
+
     void installEventHandler(DFMAbstractEventHandler *handler);
     void removeEventHandler(DFMAbstractEventHandler *handler);
 
     friend class DFMAbstractEventHandler;
+
+    Q_DECLARE_PRIVATE(DFMEventDispatcher)
 };
 
 DFM_END_NAMESPACE
