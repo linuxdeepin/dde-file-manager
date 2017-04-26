@@ -2,6 +2,7 @@
 #include "dfmglobal.h"
 #include "dabstractfileinfo.h"
 #include "dfileservices.h"
+#include "dfmeventdispatcher.h"
 
 #include "filemanagerapp.h"
 #include "logutil.h"
@@ -175,24 +176,31 @@ int main(int argc, char *argv[])
         DFMGlobal::installTranslator();
         DThemeManager::instance()->setTheme("light");
 
-        if (!isBackendRun && !isShowPropertyRequest){
-            foreach (DUrl url, commandlineUrlList) {
-                fileManagerApp->show(url);
-            }
-        }else{
-            fileManagerApp;
-#ifdef AUTO_RESTART_DEAMON
-            QWidget w;
-            w.setWindowFlags(Qt::FramelessWindowHint);
-            w.setAttribute(Qt::WA_TranslucentBackground);
-            w.resize(0, 0);
-            w.show();
-#endif
-        }
+        if (CommandLineManager::instance()->isSet("e")) {
+            const QSharedPointer<DFMEvent> &event = DFMEvent::fromJson(QJsonDocument::fromJson(CommandLineManager::instance()->positionalArguments().first().toLocal8Bit().constData()).object());
 
-        if(isShowPropertyRequest){
-            QStringList paths = CommandLineManager::instance()->positionalArguments();
-            fileManagerApp->showPropertyDialog(paths);
+            if (event)
+                DFMEventDispatcher::instance()->processEvent(event);
+        } else {
+            if (!isBackendRun && !isShowPropertyRequest){
+                foreach (DUrl url, commandlineUrlList) {
+                    fileManagerApp->show(url);
+                }
+            }else{
+                fileManagerApp;
+    #ifdef AUTO_RESTART_DEAMON
+                QWidget w;
+                w.setWindowFlags(Qt::FramelessWindowHint);
+                w.setAttribute(Qt::WA_TranslucentBackground);
+                w.resize(0, 0);
+                w.show();
+    #endif
+            }
+
+            if(isShowPropertyRequest){
+                QStringList paths = CommandLineManager::instance()->positionalArguments();
+                fileManagerApp->showPropertyDialog(paths);
+            }
         }
 
         FileUtils::setDefaultFileManager();
