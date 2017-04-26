@@ -20,8 +20,10 @@
 #include "presenter/apppresenter.h"
 
 #include "../dde-wallpaper-chooser/frame.h"
+#include "../dde-zone/mainwindow.h"
 
 using WallpaperSettings=Frame;
+using ZoneSettings=ZoneMainWindow;
 
 class DesktopPrivate
 {
@@ -29,6 +31,7 @@ public:
     Presenter        presenter;
     CanvasGridView      screenFrame;
     WallpaperSettings wallpaperSettings;
+    ZoneSettings zoneSettings;
 };
 
 Desktop::Desktop()
@@ -58,6 +61,12 @@ void Desktop::showWallpaperSettings()
 {
     d->wallpaperSettings.show();
     d->wallpaperSettings.grabKeyboard();
+}
+
+void Desktop::showZoneSettings()
+{
+    d->zoneSettings.show();
+    d->zoneSettings.grabKeyboard();
 }
 
 void Desktop::Show()
