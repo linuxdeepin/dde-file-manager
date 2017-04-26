@@ -275,7 +275,7 @@ bool FileEventProcessor::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
                 if (fileInfo->isDir())
                     dirList << url;
                 else
-                    DFileService::instance()->openFile(event->sender(), url);
+                    DThreadUtil::runInMainThread(DFileService::instance(), &DFileService::openFile, event->sender(), url);
             }
 
             //computer url is virtual dir
