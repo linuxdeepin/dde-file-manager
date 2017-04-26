@@ -538,13 +538,21 @@ bool DFMGlobal::isComputerDesktopFileUrl(const DUrl &url)
     return false;
 }
 
-DThreadUtil::FunctionCallProxy::FunctionCallProxy(std::function<void()> function)
-    : m_function(function)
+namespace DThreadUtil {
+class FunctionCallProxy_ : public FunctionCallProxy {};
+Q_GLOBAL_STATIC(FunctionCallProxy_, fcpGlobal)
+FunctionCallProxy *DThreadUtil::FunctionCallProxy::instance()
 {
-    connect(this, &FunctionCallProxy::callBySignal, this, &FunctionCallProxy::call, Qt::QueuedConnection);
+    return fcpGlobal;
 }
 
-void DThreadUtil::FunctionCallProxy::call()
+FunctionCallProxy::FunctionCallProxy()
 {
-    m_function();
+    // move to main thread
+    moveToThread(qApp->thread());
+
+    connect(this, &FunctionCallProxy::callInMainThread, this, [] (FunctionType *func) {
+        (*func)();
+    }, Qt::QueuedConnection);
 }
+} // end namespace DThreadUtil
