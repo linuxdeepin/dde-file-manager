@@ -287,21 +287,20 @@ Q_DECLARE_METATYPE(DFMGlobal::ClipboardAction)
 Q_DECLARE_METATYPE(DFMGlobal::MenuAction)
 
 namespace DThreadUtil {
+typedef std::function<void()> FunctionType;
+
 class FunctionCallProxy : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit FunctionCallProxy(std::function<void()> function);
-
-public slots:
-    void call();
+    static FunctionCallProxy *instance();
 
 signals:
-    void callBySignal();
+    void callInMainThread(FunctionType *func);
 
-private:
-    std::function<void()> m_function;
+protected:
+    explicit FunctionCallProxy();
 };
 
 template <typename ReturnType>
@@ -316,14 +315,12 @@ public:
 
         ReturnType result;
         QSemaphore semaphore;
-        auto proxyFun = [&] () {
+        FunctionType proxyFun = [&] () {
             result = fun(std::forward<Args>(args)...);
             semaphore.release();
         };
 
-        FunctionCallProxy proxy(proxyFun);
-        proxy.moveToThread(QCoreApplication::instance()->thread());
-        proxy.callBySignal();
+        FunctionCallProxy::instance()->callInMainThread(&proxyFun);
         semaphore.acquire();
 
         return result;
@@ -340,14 +337,12 @@ public:
             return fun(std::forward<Args>(args)...);
 
         QSemaphore semaphore;
-        auto proxyFun = [&] () {
+        FunctionType proxyFun = [&] () {
             fun(std::forward<Args>(args)...);
             semaphore.release();
         };
 
-        FunctionCallProxy proxy(proxyFun);
-        proxy.moveToThread(QCoreApplication::instance()->thread());
-        proxy.callBySignal();
+        FunctionCallProxy::instance()->callInMainThread(&proxyFun);
         semaphore.acquire();
     }
 };
