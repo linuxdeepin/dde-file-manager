@@ -17,6 +17,31 @@
 
 DFM_BEGIN_NAMESPACE
 
+class DFMEventDispatcherPrivate
+{
+public:
+    DFMEventDispatcherPrivate(DFMEventDispatcher *qq)
+        : q_ptr(qq) {}
+
+    DFMEventDispatcher *q_ptr;
+    DFMEventDispatcher::State state;
+
+    void setState(DFMEventDispatcher::State state);
+
+    Q_DECLARE_PUBLIC(DFMEventDispatcher)
+};
+
+void DFMEventDispatcherPrivate::setState(DFMEventDispatcher::State state)
+{
+    Q_Q(DFMEventDispatcher);
+
+    if (this->state == state)
+        return;
+
+    this->state = state;
+    emit q->stateChanged(state);
+}
+
 DFMEventFuture::DFMEventFuture(const QFuture<QVariant> &future)
     : m_future(future)
 {
@@ -100,8 +125,17 @@ DFMEventDispatcher *DFMEventDispatcher::instance()
     return fmedGlobal;
 }
 
+DFMEventDispatcher::~DFMEventDispatcher()
+{
+
+}
+
 QVariant DFMEventDispatcher::processEvent(const QSharedPointer<DFMEvent> &event)
 {
+    Q_D(DFMEventDispatcher);
+
+    d->setState(Busy);
+
     QVariant result;
 
     for (DFMAbstractEventHandler *handler : DFMEventDispatcherData::eventFilter) {
@@ -113,6 +147,8 @@ QVariant DFMEventDispatcher::processEvent(const QSharedPointer<DFMEvent> &event)
         if (handler->fmEvent(event, &result))
             return result;
     }
+
+    d->setState(Normal);
 
     return result;
 }
@@ -149,7 +185,15 @@ void DFMEventDispatcher::removeEventFilter(DFMAbstractEventHandler *handler)
     DFMEventDispatcherData::eventFilter.removeOne(handler);
 }
 
+DFMEventDispatcher::State DFMEventDispatcher::state() const
+{
+    Q_D(const DFMEventDispatcher);
+
+    return d->state;
+}
+
 DFMEventDispatcher::DFMEventDispatcher()
+    : d_ptr(new DFMEventDispatcherPrivate(this))
 {
 
 }
