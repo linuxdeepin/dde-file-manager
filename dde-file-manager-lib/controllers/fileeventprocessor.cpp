@@ -89,7 +89,7 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent> &event)
         AppController::instance()->actionOpenDiskInNewTab(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
         break;
     case DFMGlobal::OpenAsAdmin:
-        AppController::instance()->actionOpenAsAdmin(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
+        AppController::instance()->actionOpenAsAdmin(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().isEmpty() ? event->currentUrl() : event->selectedUrls().first()));
         break;
     case DFMGlobal::OpenWithCustom:
         AppController::instance()->actionOpenWithCustom(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
@@ -137,7 +137,7 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent> &event)
         AppController::instance()->actionDelete(dMakeEventPointer<DFMUrlListBaseEvent>(event->sender(), event->selectedUrls()));
         break;
     case DFMGlobal::Property:
-        AppController::instance()->actionProperty(dMakeEventPointer<DFMUrlListBaseEvent>(event->sender(), event->selectedUrls()));
+        AppController::instance()->actionProperty(dMakeEventPointer<DFMUrlListBaseEvent>(event->sender(), event->selectedUrls().isEmpty() ? DUrlList() << event->currentUrl() : event->selectedUrls()));
         break;
     case DFMGlobal::NewFolder:
         AppController::instance()->actionNewFolder(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->currentUrl()));
