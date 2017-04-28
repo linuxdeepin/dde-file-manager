@@ -9,7 +9,7 @@ QT       += widgets
 TARGET = dde-image-preview-plugin
 TEMPLATE = lib
 
-CONFIG += plugin
+CONFIG += plugin c++11
 
 include(../../plugininterfaces/plugininterfaces.pri)
 include(../../../common/common.pri)
