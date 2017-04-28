@@ -35,3 +35,7 @@ build*
 
 vendor/include/*
 vendor/lib/*
+
+dde-sharefiles/lib/*
+dde-sharefiles/tmp/*
+dde-sharefiles/log/*
