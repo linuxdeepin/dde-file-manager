@@ -1,0 +1,543 @@
+<!DOCTYPE html><html><head><title>文件管理器 -e/–exec 命令行参数详解</title><meta charset='utf-8'><link href='https://dn-maxiang.qbox.me/res-min/themes/marxico.css' rel='stylesheet'><style></style></head><body><div id='preview-contents' class='note-content'>
+                        
+                    
+
+<h2 id="文件管理器-eexec-命令行参数详解">文件管理器 -e/–exec 命令行参数详解</h2>
+
+<h4 id="用法示例">用法示例：</h4>
+
+<pre class="prettyprint hljs-dark"><code class="hljs applescript">dde-<span class="hljs-built_in">file</span>-manager -e '{<span class="hljs-string">"eventType"</span>:<span class="hljs-string">"OpenUrl"</span>, <span class="hljs-string">"urlList"</span>:[<span class="hljs-string">"file:///usr/bin"</span>], <span class="hljs-string">"mode"</span>:<span class="hljs-number">2</span>}'<br></code></pre>
+
+
+
+<h6 id="在-e-参数后跟json格式的数据数据中需要的参数">在 -e 参数后跟Json格式的数据，数据中需要的参数：</h6>
+
+<table>
+<thead>
+<tr>
+  <th>属性</th>
+  <th align="right">介绍</th>
+  <th align="center">备注</th>
+  <th align="center">可选值</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td>eventType</td>
+  <td align="right">要执行的事件的类型</td>
+  <td align="center">必选</td>
+  <td align="center">OpenFile, OpenFileByApp, CompressFiles, DecompressFile, DecompressFileHere, WriteUrlsToClipboard, RenameFile, DeleteFiles, MoveToTrash, RestoreFromTrash, PasteFile, NewFolder, NewFile, OpenFileLocation, CreateSymlink, FileShare, CancelFileShare, OpenInTerminal, OpenNewWindow</td>
+</tr>
+<tr>
+  <td>…</td>
+  <td align="right">此类型事件所需要的参数</td>
+  <td align="center">必选</td>
+  <td align="center">例如 url/urlList 等</td>
+</tr>
+</tbody></table>
+
+
+<h4 id="各类型事件所需要的参数">各类型事件所需要的参数：</h4>
+
+
+
+<h5 id="openfile打开一个文件">OpenFile：打开一个文件</h5>
+
+<table>
+<thead>
+<tr>
+  <th align="center">参数</th>
+  <th align="center">介绍</th>
+  <th align="center">备注</th>
+  <th align="center">数据类型</th>
+  <th align="center">可选值</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td align="center">url</td>
+  <td align="center">要打开的文件的url地址</td>
+  <td align="center">必选</td>
+  <td align="center">字符串</td>
+  <td align="center">任意文件，如：”file:///home/example.txt”</td>
+</tr>
+</tbody></table>
+
+
+<h5 id="openfilebyapp制定应用程序打开文件">OpenFileByApp：制定应用程序打开文件</h5>
+
+<table>
+<thead>
+<tr>
+  <th align="center">参数</th>
+  <th align="center">介绍</th>
+  <th align="center">备注</th>
+  <th align="center">数据类型</th>
+  <th>可选值</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td align="center">url</td>
+  <td align="center">要打开的文件的url地址</td>
+  <td align="center">必选</td>
+  <td align="center">字符串</td>
+  <td>任意文件，如：”file:///home/example.txt”</td>
+</tr>
+<tr>
+  <td align="center">appName</td>
+  <td align="center">制定被调用程序的名称</td>
+  <td align="center">必选</td>
+  <td align="center">字符串</td>
+  <td>如：”dde-file-manger”</td>
+</tr>
+</tbody></table>
+
+
+<h5 id="compressfiles压缩文件">CompressFiles：压缩文件</h5>
+
+<table>
+<thead>
+<tr>
+  <th align="center">参数</th>
+  <th align="center">介绍</th>
+  <th align="center">备注</th>
+  <th align="center">数据类型</th>
+  <th>可选值</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td align="center">urlList</td>
+  <td align="center">要压缩的文件的url地址的列表形式</td>
+  <td align="center">必选</td>
+  <td align="center">字符串列表</td>
+  <td>任意文件，如：[“file:///home/example1.png”, “file:///home/example2.jpg”]</td>
+</tr>
+</tbody></table>
+
+
+<h5 id="decompressfile解压文件">DecompressFile：解压文件</h5>
+
+<table>
+<thead>
+<tr>
+  <th align="center">参数</th>
+  <th align="center">介绍</th>
+  <th align="center">备注</th>
+  <th align="center">数据类型</th>
+  <th>可选值</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td align="center">urlList</td>
+  <td align="center">要解压的文件的url地址的列表形式</td>
+  <td align="center">必选</td>
+  <td align="center">字符串列表</td>
+  <td>任意文件，如：[“file:///home/example1.rar”, “file:///home/example2.zip”]</td>
+</tr>
+</tbody></table>
+
+
+<h5 id="decompressfilehere解压文件到此文件所在目录">DecompressFileHere：解压文件到此文件所在目录</h5>
+
+<table>
+<thead>
+<tr>
+  <th align="center">参数</th>
+  <th align="center">介绍</th>
+  <th align="center">备注</th>
+  <th align="center">数据类型</th>
+  <th>可选值</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td align="center">urlList</td>
+  <td align="center">要解压的文件的url地址的列表形式</td>
+  <td align="center">必选</td>
+  <td align="center">字符串列表</td>
+  <td>任意文件，如：[“file:///home/example1.rar”, “file:///home/example2.zip”]</td>
+</tr>
+</tbody></table>
+
+
+<h5 id="writeurlstoclipboard写系统剪切板">WriteUrlsToClipboard：写系统剪切板</h5>
+
+<table>
+<thead>
+<tr>
+  <th align="center">参数</th>
+  <th align="center">介绍</th>
+  <th align="center">备注</th>
+  <th align="center">数据类型</th>
+  <th>可选值</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td align="center">urlList</td>
+  <td align="center">要写入到剪切板文件url地址的列表形式</td>
+  <td align="center">必选</td>
+  <td align="center">字符串列表</td>
+  <td>任意文件，如：[“file:///home/example1.png”, “file:///home/example2.jpg”]</td>
+</tr>
+<tr>
+  <td align="center">action</td>
+  <td align="center">粘贴时要执行的动作</td>
+  <td align="center">必选</td>
+  <td align="center">整型</td>
+  <td>0(剪切)，1(复制)</td>
+</tr>
+</tbody></table>
+
+
+<h5 id="renamefile重命名文件">RenameFile：重命名文件</h5>
+
+<table>
+<thead>
+<tr>
+  <th align="center">参数</th>
+  <th align="center">介绍</th>
+  <th align="center">备注</th>
+  <th align="center">数据类型</th>
+  <th>可选值</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td align="center">from</td>
+  <td align="center">被改名文件的url</td>
+  <td align="center">必选</td>
+  <td align="center">字符串</td>
+  <td>任意文件，如：”file:///home/example.old”</td>
+</tr>
+<tr>
+  <td align="center">to</td>
+  <td align="center">改名后的url</td>
+  <td align="center">必选</td>
+  <td align="center">字符串</td>
+  <td>如：”file:///home/example.new”</td>
+</tr>
+</tbody></table>
+
+
+<h5 id="deletefiles彻底删除文件">DeleteFiles：彻底删除文件</h5>
+
+<table>
+<thead>
+<tr>
+  <th align="center">参数</th>
+  <th align="center">介绍</th>
+  <th align="center">备注</th>
+  <th align="center">数据类型</th>
+  <th>可选值</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td align="center">urlList</td>
+  <td align="center">被删除文件url地址的列表形式</td>
+  <td align="center">必选</td>
+  <td align="center">字符串列表</td>
+  <td>任意文件，如：[“file:///home/example1.png”, “file:///home/example2.jpg”]</td>
+</tr>
+<tr>
+  <td align="center">silent</td>
+  <td align="center">是否静默操作（不弹出任何确认对话框）</td>
+  <td align="center">可需（默认为false）</td>
+  <td align="center">布尔</td>
+  <td>false/true</td>
+</tr>
+</tbody></table>
+
+
+<h5 id="movetotrash将文件移动到回收站">MoveToTrash：将文件移动到回收站</h5>
+
+<table>
+<thead>
+<tr>
+  <th align="center">参数</th>
+  <th align="center">介绍</th>
+  <th align="center">备注</th>
+  <th align="center">数据类型</th>
+  <th>可选值</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td align="center">urlList</td>
+  <td align="center">要移动到回收站文件url地址的列表形式</td>
+  <td align="center">必选</td>
+  <td align="center">字符串列表</td>
+  <td>任意文件，如：[“file:///home/example1.png”, “file:///home/example2.jpg”]</td>
+</tr>
+</tbody></table>
+
+
+<h5 id="restorefromtrash还原回收站内的文件">RestoreFromTrash：还原回收站内的文件</h5>
+
+<table>
+<thead>
+<tr>
+  <th align="center">参数</th>
+  <th align="center">介绍</th>
+  <th align="center">备注</th>
+  <th align="center">数据类型</th>
+  <th>可选值</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td align="center">urlList</td>
+  <td align="center">从回收站恢复文件url地址的列表形式</td>
+  <td align="center">必选</td>
+  <td align="center">字符串列表</td>
+  <td>任意文件，如：[“trash:///example1.png”, “trash:///example2.jpg”]</td>
+</tr>
+</tbody></table>
+
+
+<h5 id="pastefile复制或剪切文件">PasteFile：复制或剪切文件</h5>
+
+<table>
+<thead>
+<tr>
+  <th align="center">参数</th>
+  <th align="center">介绍</th>
+  <th align="center">备注</th>
+  <th align="center">数据类型</th>
+  <th>可选值</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td align="center">urlList</td>
+  <td align="center">被操作文件url地址的列表形式</td>
+  <td align="center">必选</td>
+  <td align="center">字符串列表</td>
+  <td>任意文件，如：[“file:///home/example1.png”, “file:///home/example2.jpg”]</td>
+</tr>
+<tr>
+  <td align="center">action</td>
+  <td align="center">粘贴时要执行的动作</td>
+  <td align="center">必选</td>
+  <td align="center">整型</td>
+  <td>0(剪切)，1(复制)</td>
+</tr>
+<tr>
+  <td align="center">targetUrl</td>
+  <td align="center">要粘贴到的地方</td>
+  <td align="center">必选</td>
+  <td align="center">字符串</td>
+  <td>如：”file:///home”</td>
+</tr>
+</tbody></table>
+
+
+<h5 id="newfolder新建文件夹">NewFolder：新建文件夹</h5>
+
+<table>
+<thead>
+<tr>
+  <th align="center">参数</th>
+  <th align="center">介绍</th>
+  <th align="center">备注</th>
+  <th align="center">数据类型</th>
+  <th>可选值</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td align="center">url</td>
+  <td align="center">在哪个目录下新建</td>
+  <td align="center">必选</td>
+  <td align="center">字符串列表</td>
+  <td>如：”file:///home/”</td>
+</tr>
+</tbody></table>
+
+
+<h5 id="newfile新建文件">NewFile：新建文件</h5>
+
+<table>
+<thead>
+<tr>
+  <th align="center">参数</th>
+  <th align="center">介绍</th>
+  <th align="center">备注</th>
+  <th align="center">数据类型</th>
+  <th>可选值</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td align="center">url</td>
+  <td align="center">在哪个目录下新建</td>
+  <td align="center">必选</td>
+  <td align="center">字符串</td>
+  <td>如：”file:///home/”</td>
+</tr>
+<tr>
+  <td align="center">suffix</td>
+  <td align="center">新文件的后缀</td>
+  <td align="center">必选</td>
+  <td align="center">字符串</td>
+  <td>如：”txt”</td>
+</tr>
+</tbody></table>
+
+
+<h5 id="openfilelocation打开文件所在位置">OpenFileLocation：打开文件所在位置</h5>
+
+<table>
+<thead>
+<tr>
+  <th align="center">参数</th>
+  <th align="center">介绍</th>
+  <th align="center">备注</th>
+  <th align="center">数据类型</th>
+  <th>可选值</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td align="center">url</td>
+  <td align="center">操作对象</td>
+  <td align="center">必选</td>
+  <td align="center">字符串</td>
+  <td>如：”file:///home/example.txt”</td>
+</tr>
+</tbody></table>
+
+
+<h5 id="createsymlink创建软链接">CreateSymlink：创建软链接</h5>
+
+<table>
+<thead>
+<tr>
+  <th align="center">参数</th>
+  <th align="center">介绍</th>
+  <th align="center">备注</th>
+  <th align="center">数据类型</th>
+  <th>可选值</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td align="center">fileUrl</td>
+  <td align="center">操作对象</td>
+  <td align="center">必选</td>
+  <td align="center">字符串</td>
+  <td>如：”file:///home/example.txt”</td>
+</tr>
+<tr>
+  <td align="center">toUrl</td>
+  <td align="center">目标路径</td>
+  <td align="center">必选</td>
+  <td align="center">字符串</td>
+  <td>如：”file:///home/”</td>
+</tr>
+</tbody></table>
+
+
+<h5 id="fileshare共享文件夹">FileShare：共享文件夹</h5>
+
+<table>
+<thead>
+<tr>
+  <th align="center">参数</th>
+  <th align="center">介绍</th>
+  <th align="center">备注</th>
+  <th align="center">数据类型</th>
+  <th>可选值</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td align="center">url</td>
+  <td align="center">要共享的文件夹的url</td>
+  <td align="center">必选</td>
+  <td align="center">字符串</td>
+  <td>如：”file:///home/”</td>
+</tr>
+<tr>
+  <td align="center">name</td>
+  <td align="center">共享后显示的名称</td>
+  <td align="center">必选</td>
+  <td align="center">字符串</td>
+  <td>如：”zccrs的共享”</td>
+</tr>
+<tr>
+  <td align="center">isWritable</td>
+  <td align="center">目录是否可写</td>
+  <td align="center">可选（默认false）</td>
+  <td align="center">布尔</td>
+  <td>false/true</td>
+</tr>
+<tr>
+  <td align="center">allowGuest</td>
+  <td align="center">是否允许匿名访问</td>
+  <td align="center">可选（默认false）</td>
+  <td align="center">布尔</td>
+  <td>false/true</td>
+</tr>
+</tbody></table>
+
+
+<h5 id="cancelfileshare取消共享文件夹">CancelFileShare：取消共享文件夹</h5>
+
+<table>
+<thead>
+<tr>
+  <th align="center">参数</th>
+  <th align="center">介绍</th>
+  <th align="center">备注</th>
+  <th align="center">数据类型</th>
+  <th>可选值</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td align="center">url</td>
+  <td align="center">要取消共享的文件夹的url</td>
+  <td align="center">必选</td>
+  <td align="center">字符串</td>
+  <td>如：”file:///home/”</td>
+</tr>
+</tbody></table>
+
+
+<h5 id="openinterminal在指定路径下打开终端">OpenInTerminal：在指定路径下打开终端</h5>
+
+<table>
+<thead>
+<tr>
+  <th align="center">参数</th>
+  <th align="center">介绍</th>
+  <th align="center">备注</th>
+  <th align="center">数据类型</th>
+  <th>可选值</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td align="center">url</td>
+  <td align="center">目标url</td>
+  <td align="center">必选</td>
+  <td align="center">字符串</td>
+  <td>如：”file:///home/”</td>
+</tr>
+</tbody></table>
+
+
+<h5 id="opennewwindow在新窗口中打开文件夹">OpenNewWindow：在新窗口中打开文件夹</h5>
+
+<table>
+<thead>
+<tr>
+  <th align="center">参数</th>
+  <th align="center">介绍</th>
+  <th align="center">备注</th>
+  <th align="center">数据类型</th>
+  <th>可选值</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td align="center">urlList</td>
+  <td align="center">要打开的文件夹url地址的列表形式</td>
+  <td align="center">必选</td>
+  <td align="center">字符串列表</td>
+  <td>任意文件，如：[“file:///home/user1”, “file:///home/user2”]</td>
+</tr>
+<tr>
+  <td align="center">force</td>
+  <td align="center">是否强制在新窗口中打开，为false时，如果当前已打开窗口中有currentUrl==url的窗口时时不会打开新的窗口，只会激活此窗口。</td>
+  <td align="center">可选</td>
+  <td align="center">布尔（默认false）</td>
+  <td>false/true</td>
+</tr>
+</tbody></table>
+</div></body></html>
