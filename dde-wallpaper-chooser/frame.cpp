@@ -15,7 +15,7 @@
 #include <QScreen>
 
 Frame::Frame(QFrame *parent)
-    : QWidget(parent),
+    : DBlurEffectWidget(parent),
       m_wallpaperList(new WallpaperList(this)),
       m_closeButton(new DImageButton(":/images/close_normal.png",
                                  ":/images/close_hover.png",
@@ -33,6 +33,9 @@ Frame::Frame(QFrame *parent)
     setFocusPolicy(Qt::StrongFocus);
     setWindowFlags(Qt::BypassWindowManagerHint | Qt::WindowStaysOnTopHint);
     setAttribute(Qt::WA_TranslucentBackground);
+
+    setBlendMode(DBlurEffectWidget::BehindWindowBlend);
+    setMaskColor(DBlurEffectWidget::DarkColor);
 
     initSize();
 
@@ -80,16 +83,6 @@ void Frame::handleNeedCloseButton(QString path, QPoint pos)
     }
 }
 
-void Frame::paintEvent(QPaintEvent *)
-{
-    QPainter painter;
-    painter.begin(this);
-
-    painter.fillRect(rect(), QColor::fromRgbF(0, 0, 0, 0.6));
-
-    painter.end();
-}
-
 void Frame::showEvent(QShowEvent * event)
 {
     m_dbusDeepinWM->RequestHideWindows();
@@ -106,12 +99,12 @@ void Frame::showEvent(QShowEvent * event)
 
     activateWindow();
 
-    QWidget::showEvent(event);
+    DBlurEffectWidget::showEvent(event);
 }
 
 void Frame::hideEvent(QHideEvent *event)
 {
-    QWidget::hideEvent(event);
+    DBlurEffectWidget::hideEvent(event);
 
     m_dbusDeepinWM->CancelHideWindows();
     m_dbusMouseArea->UnregisterArea(m_mouseAreaKey);
@@ -124,7 +117,7 @@ void Frame::keyPressEvent(QKeyEvent * event)
         hide();
     }
 
-    QWidget::keyPressEvent(event);
+    DBlurEffectWidget::keyPressEvent(event);
 }
 
 void Frame::initSize()

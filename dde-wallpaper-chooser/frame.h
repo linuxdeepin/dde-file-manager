@@ -1,7 +1,7 @@
 #ifndef FRAME_H
 #define FRAME_H
 
-#include <QFrame>
+#include <dblureffectwidget.h>
 #include <dimagebutton.h>
 
 DWIDGET_USE_NAMESPACE
@@ -11,7 +11,7 @@ class WallpaperListView;
 class AppearanceDaemonInterface;
 class DeepinWM;
 class DBusXMouseArea;
-class Frame : public QWidget
+class Frame : public DBlurEffectWidget
 {
     Q_OBJECT
 
@@ -23,7 +23,6 @@ public slots:
     void handleNeedCloseButton(QString path, QPoint pos);
 
 protected:
-    void paintEvent(QPaintEvent *);
     void showEvent(QShowEvent *);
     void hideEvent(QHideEvent *);
     void keyPressEvent(QKeyEvent *);
