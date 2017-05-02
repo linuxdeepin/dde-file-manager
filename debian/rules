@@ -9,21 +9,3 @@ DEB_BUILD_ARCH ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
 
 override_dh_auto_configure:
 	dh_auto_configure -- DAPP_VERSION=$(VERSION) LIB_INSTALL_DIR=/usr/lib/$(DEB_HOST_MULTIARCH)
-
-ifeq ($(DEB_BUILD_ARCH), mipsel)
-override_dh_install:
-	sed -i '/dde-file-manager-xdg-autostart.desktop/d' debian/dde-file-manager.install
-	dh_install --
-endif
-
-ifeq ($(DEB_BUILD_ARCH), mips64el)
-override_dh_install:
-	sed -i '/dde-file-manager-xdg-autostart.desktop/d' debian/dde-file-manager.install
-	dh_install --
-endif
-
-ifeq ($(DEB_BUILD_ARCH), sw_64)
-override_dh_install:
-	sed -i '/dde-file-manager-xdg-autostart.desktop/d' debian/dde-file-manager.install
-	dh_install --
-endif
