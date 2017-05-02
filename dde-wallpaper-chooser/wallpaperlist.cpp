@@ -25,8 +25,6 @@ WallpaperList::WallpaperList(QWidget * parent)
                                   ":/images/next_hover.png",
                                   ":/images/next_press.png", this))
 {
-    recordOldValues();
-
     setViewMode(QListView::IconMode);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -150,12 +148,25 @@ void WallpaperList::resizeEvent(QResizeEvent *event)
 
     setGridSize(QSize(width() / screen_item_count, ItemHeight));
 
+    if (gridSize().width() * count() > width())
+        QTimer::singleShot(100, this, &WallpaperList::doItemsLayout);
+
     updateBothEndsItem();
 }
 
 void WallpaperList::wheelEvent(QWheelEvent *event)
 {
     Q_UNUSED(event);
+}
+
+QString WallpaperList::lockWallpaper() const
+{
+    return m_lockWallpaper;
+}
+
+QString WallpaperList::desktopWallpaper() const
+{
+    return m_desktopWallpaper;
 }
 
 void WallpaperList::wallpaperItemPressed()
@@ -174,9 +185,10 @@ void WallpaperList::wallpaperItemPressed()
                 wallpaper->slideUp();
 
                 const QString &path = wallpaper->getPath();
+                emit needPreviewWallpaper(path);
 
-                setWallpaper(path);
-                setLockScreen(path);
+                m_desktopWallpaper = path;
+                m_lockWallpaper = path;
             } else {
                 wallpaper->slideDown();
             }
@@ -198,9 +210,7 @@ void WallpaperList::wallpaperItemHoverOut()
 
 void WallpaperList::handleSetDesktop()
 {
-    WallpaperItem * item = qobject_cast<WallpaperItem*>(sender());
-    setWallpaper(item->getPath());
-    setLockScreen(m_oldLockPath);
+    m_lockWallpaper = "";
 
     qDebug() << "desktop item set, quit";
     if (parentWidget())
@@ -209,24 +219,11 @@ void WallpaperList::handleSetDesktop()
 
 void WallpaperList::handleSetLock()
 {
-    WallpaperItem * item = qobject_cast<WallpaperItem*>(sender());
-    setLockScreen(item->getPath());
-    setWallpaper(m_oldWallpaperPath);
-    qDebug() << m_oldWallpaperPath;
+    m_desktopWallpaper = "";
 
     qDebug() << "lock item set, quit";
     if (parentWidget())
         parentWidget()->hide();
-}
-
-void WallpaperList::setWallpaper(QString realPath)
-{
-    m_dbusAppearance->Set("background", realPath);
-}
-
-void WallpaperList::setLockScreen(QString realPath)
-{
-    m_dbusAppearance->Set("greeterbackground", realPath);
 }
 
 void WallpaperList::updateBothEndsItem()
@@ -239,15 +236,15 @@ void WallpaperList::updateBothEndsItem()
     if (nextItem)
         nextItem->setOpacity(1);
 
+    prevItem = static_cast<WallpaperItem*>(itemWidget(itemAt(ItemWidth / 2, ItemHeight / 2)));
+    nextItem = static_cast<WallpaperItem*>(itemWidget(itemAt(width() - ItemWidth / 2, ItemHeight / 2)));
+
     if (current_value == horizontalScrollBar()->minimum()) {
         prevItem = Q_NULLPTR;
-        nextItem = static_cast<WallpaperItem*>(itemWidget(item(width() / gridSize().width() - 1)));
-    } else if (current_value == horizontalScrollBar()->maximum()) {
-        prevItem = static_cast<WallpaperItem*>(itemWidget(item(count() - width() / gridSize().width())));
+    }
+
+    if (current_value == horizontalScrollBar()->maximum()) {
         nextItem = Q_NULLPTR;
-    } else {
-        prevItem = static_cast<WallpaperItem*>(itemWidget(itemAt(ItemWidth / 2, ItemHeight / 2)));
-        nextItem = static_cast<WallpaperItem*>(itemWidget(itemAt(width() - ItemWidth / 2, ItemHeight / 2)));
     }
 
     if (prevItem) {
@@ -272,28 +269,4 @@ void WallpaperList::showDeleteButtonForItem(const WallpaperItem *item) const
     } else {
         emit needCloseButton("", QPoint(0, 0));
     }
-}
-
-void WallpaperList::recordOldValues()
-{
-#ifdef Q_OS_WIN
-    const QString userName = qgetenv("USERNAME");
-#else
-    const QString userName = qgetenv("USER");
-#endif
-
-    QSettings setting("/var/lib/AccountsService/users/" + userName, QSettings::NativeFormat);
-    setting.beginGroup("User");
-    m_oldLockPath = setting.value("GreeterBackground").toUrl().toLocalFile();
-
-    QDBusPendingCall call = m_wmInter->GetCurrentWorkspaceBackground();
-    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
-    connect(watcher, &QDBusPendingCallWatcher::finished, this, [this, call] {
-        if (call.isError()) {
-            qWarning() << "failed to get current workspace background" << call.error().message();
-        } else {
-            QDBusReply<QString> reply = call.reply();
-            m_oldWallpaperPath = reply.value();
-        }
-    });
 }

@@ -15,7 +15,7 @@
 #include <QScreen>
 
 Frame::Frame(QFrame *parent)
-    : QWidget(parent),
+    : DBlurEffectWidget(parent),
       m_wallpaperList(new WallpaperList(this)),
       m_closeButton(new DImageButton(":/images/close_normal.png",
                                  ":/images/close_hover.png",
@@ -33,6 +33,9 @@ Frame::Frame(QFrame *parent)
     setFocusPolicy(Qt::StrongFocus);
     setWindowFlags(Qt::BypassWindowManagerHint | Qt::WindowStaysOnTopHint);
     setAttribute(Qt::WA_TranslucentBackground);
+
+    setBlendMode(DBlurEffectWidget::BehindWindowBlend);
+    setMaskColor(DBlurEffectWidget::DarkColor);
 
     initSize();
 
@@ -53,7 +56,10 @@ Frame::Frame(QFrame *parent)
     });
 
     m_closeButton->hide();
-    connect(m_wallpaperList, &WallpaperList::needCloseButton, this, &Frame::handleNeedCloseButton);
+    connect(m_wallpaperList, &WallpaperList::needCloseButton,
+            this, &Frame::handleNeedCloseButton);
+    connect(m_wallpaperList, &WallpaperList::needPreviewWallpaper,
+            m_dbusDeepinWM, &DeepinWM::SetTransientBackground);
 
     QTimer::singleShot(0, this, &Frame::initListView);
 }
@@ -61,6 +67,23 @@ Frame::Frame(QFrame *parent)
 Frame::~Frame()
 {
 
+}
+
+void Frame::show()
+{
+    m_dbusDeepinWM->RequestHideWindows();
+    QDBusPendingCall call = m_dbusMouseArea->RegisterFullScreen();
+    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
+    connect(watcher, &QDBusPendingCallWatcher::finished, this, [this, call] {
+         if (call.isError()) {
+             qWarning() << "failed to register full screen mousearea: " << call.error().message();
+         } else {
+             QDBusReply<QString> reply = call.reply();
+             m_mouseAreaKey = reply.value();
+         }
+    });
+
+    DBlurEffectWidget::show();
 }
 
 void Frame::handleNeedCloseButton(QString path, QPoint pos)
@@ -80,41 +103,31 @@ void Frame::handleNeedCloseButton(QString path, QPoint pos)
     }
 }
 
-void Frame::paintEvent(QPaintEvent *)
-{
-    QPainter painter;
-    painter.begin(this);
-
-    painter.fillRect(rect(), QColor::fromRgbF(0, 0, 0, 0.6));
-
-    painter.end();
-}
-
 void Frame::showEvent(QShowEvent * event)
 {
-    m_dbusDeepinWM->RequestHideWindows();
-    QDBusPendingCall call = m_dbusMouseArea->RegisterFullScreen();
-    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
-    connect(watcher, &QDBusPendingCallWatcher::finished, this, [this, call] {
-         if (call.isError()) {
-             qWarning() << "failed to register full screen mousearea: " << call.error().message();
-         } else {
-             QDBusReply<QString> reply = call.reply();
-             m_mouseAreaKey = reply.value();
-         }
-    });
-
     activateWindow();
 
-    QWidget::showEvent(event);
+    refreshList();
+
+    DBlurEffectWidget::showEvent(event);
 }
 
 void Frame::hideEvent(QHideEvent *event)
 {
-    QWidget::hideEvent(event);
+    DBlurEffectWidget::hideEvent(event);
 
     m_dbusDeepinWM->CancelHideWindows();
     m_dbusMouseArea->UnregisterArea(m_mouseAreaKey);
+
+    if (!m_wallpaperList->desktopWallpaper().isEmpty())
+        m_dbusAppearance->Set("background", m_wallpaperList->desktopWallpaper());
+    else
+        m_dbusDeepinWM->SetTransientBackground("");
+
+    if (!m_wallpaperList->lockWallpaper().isEmpty())
+        m_dbusAppearance->Set("greeterbackground", m_wallpaperList->lockWallpaper());
+
+    emit done();
 }
 
 void Frame::keyPressEvent(QKeyEvent * event)
@@ -124,7 +137,7 @@ void Frame::keyPressEvent(QKeyEvent * event)
         hide();
     }
 
-    QWidget::keyPressEvent(event);
+    DBlurEffectWidget::keyPressEvent(event);
 }
 
 void Frame::initSize()
@@ -143,6 +156,11 @@ void Frame::initSize()
 void Frame::initListView()
 {
     m_wallpaperList->setStyleSheet("QListWidget { background: transparent }");
+}
+
+void Frame::refreshList()
+{
+    m_wallpaperList->clear();
 
     QDBusPendingCall call = m_dbusAppearance->List("background");
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
@@ -158,6 +176,8 @@ void Frame::initListView()
                 WallpaperItem * item = m_wallpaperList->addWallpaper(path);
                 item->setDeletable(m_deletableInfo.value(path));
             }
+
+            m_wallpaperList->setFixedWidth(qMin(m_wallpaperList->gridSize().width() * m_wallpaperList->count(), width()));
         }
     });
 }
