@@ -14,6 +14,23 @@
 #include <QPaintEvent>
 #include <QResizeEvent>
 
+static QPixmap ThumbnailImage(const QString &path)
+{
+    QUrl url = QUrl::fromPercentEncoding(path.toUtf8());
+    QString realPath = url.toLocalFile();
+
+    ThumbnailManager * tnm = ThumbnailManager::instance();
+    QPixmap pix = QPixmap(realPath).scaled(QSize(ItemWidth, ItemHeight), Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+
+    if (pix.width() > ItemWidth || pix.height() > ItemHeight) {
+        pix = pix.copy((pix.width() - ItemWidth) / 2, (pix.height() - ItemHeight) / 2, ItemWidth, ItemHeight);
+    }
+
+    tnm->replace(QUrl::toPercentEncoding(path), pix);
+
+    return pix;
+}
+
 class WrapperWidget : public QWidget
 {
 public:
@@ -102,26 +119,9 @@ void WallpaperItem::initPixmap()
 
     if (!tnm->find(QUrl::toPercentEncoding(m_path), &m_wrapper->m_pixmap)
             || m_wrapper->m_pixmap.size() != QSize(ItemWidth, ItemHeight)) {
-        QFuture<QPixmap> f = QtConcurrent::run(this, &WallpaperItem::thumbnailImage);
+        QFuture<QPixmap> f = QtConcurrent::run(ThumbnailImage, m_path);
         m_thumbnailerWatcher->setFuture(f);
     }
-}
-
-QPixmap WallpaperItem::thumbnailImage()
-{
-    QUrl url = QUrl::fromPercentEncoding(m_path.toUtf8());
-    QString realPath = url.toLocalFile();
-
-    ThumbnailManager * tnm = ThumbnailManager::instance();
-    QPixmap pix = QPixmap(realPath).scaled(QSize(ItemWidth, ItemHeight), Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
-
-    if (pix.width() > ItemWidth || pix.height() > ItemHeight) {
-        pix = pix.copy((pix.width() - ItemWidth) / 2, (pix.height() - ItemHeight) / 2, ItemWidth, ItemHeight);
-    }
-
-    tnm->replace(QUrl::toPercentEncoding(m_path), pix);
-
-    return pix;
 }
 
 void WallpaperItem::slideUp()
