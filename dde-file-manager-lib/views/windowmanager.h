@@ -9,6 +9,8 @@ class DUrl;
 class DFMEvent;
 class FMStateManager;
 class FMState;
+class QTimer;
+
 
 class WindowManager : public QObject
 {
@@ -35,6 +37,7 @@ public slots:
     void showNewWindow(const DUrl &url, const bool &isNewWindow=false);
     static quint64 getWindowId(const QWidget *window);
     static QWidget* getWindowById(quint64 winId);
+    void reastartAppProcess();
 
 private slots:
     void onWindowClosed();
@@ -48,7 +51,10 @@ private:
     static QHash<const QWidget*, quint64> m_windows;
     static int m_count;
 
-    FMStateManager *m_fmStateManager = NULL;
+     FMStateManager *m_fmStateManager = NULL;
+
+     QTimer* m_restartProcessTimer = NULL;
+     bool m_isAppInDaemonStatus = true;
 };
 
 #endif // WINDOWMANAGER_H
