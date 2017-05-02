@@ -27,6 +27,9 @@
 #include <QX11Info>
 #include <QScreen>
 #include <QWindow>
+#include <QTimer>
+#include <QProcess>
+
 
 DFM_USE_NAMESPACE
 
@@ -51,6 +54,11 @@ WindowManager::WindowManager(QObject *parent) : QObject(parent)
     m_fmStateManager = new FMStateManager(this);
     m_fmStateManager->loadCache();
     qApp->setApplicationDisplayName(tr("Deepin File Manager"));
+#ifdef AUTO_RESTART_DEAMON
+    m_restartProcessTimer = new QTimer(this);
+    m_restartProcessTimer->setInterval(1000 * 60 * 5);
+    m_restartProcessTimer->start();
+#endif
     initConnect();
 }
 
@@ -76,6 +84,9 @@ void WindowManager::initConnect()
 
         DAbstractFileWatcher::ghostSignal(fileInfo->parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, fileUrl);
     });
+#ifdef AUTO_RESTART_DEAMON
+    connect(m_restartProcessTimer, &QTimer::timeout, this, &WindowManager::reastartAppProcess);
+#endif
 }
 
 void WindowManager::loadWindowState(DFileManagerWindow *window)
@@ -144,6 +155,7 @@ void WindowManager::showNewWindow(const DUrl &url, const bool& isNewWindow)
     loadWindowState(window);
     window->setAttribute(Qt::WA_DeleteOnClose);
     window->show();
+    m_isAppInDaemonStatus = false;
     qDebug() << "new window" << window->winId() << url;
 
     connect(window, &DFileManagerWindow::aboutToClose,
@@ -207,6 +219,17 @@ QWidget *WindowManager::getWindowById(int winId)
     return Q_NULLPTR;
 }
 
+void WindowManager::reastartAppProcess()
+{
+    if (m_windows.count() == 0){
+        if (dialogManager->isTaskDialogEmpty()){
+            if (m_isAppInDaemonStatus) {
+                qApp->quit();
+            }
+        }
+    }
+}
+
 void WindowManager::onWindowClosed()
 {
     if (m_windows.count() == 1){
@@ -233,7 +256,7 @@ void WindowManager::quit()
 {
     if (m_windows.count() == 0){
         if (dialogManager->isTaskDialogEmpty()){
-            qApp->quit();
+            m_isAppInDaemonStatus = true;
         }
     }
 }
