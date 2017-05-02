@@ -99,6 +99,8 @@ void Frame::showEvent(QShowEvent * event)
 
     activateWindow();
 
+    refreshList();
+
     DBlurEffectWidget::showEvent(event);
 }
 
@@ -136,6 +138,13 @@ void Frame::initSize()
 void Frame::initListView()
 {
     m_wallpaperList->setStyleSheet("QListWidget { background: transparent }");
+
+    refreshList();
+}
+
+void Frame::refreshList()
+{
+    m_wallpaperList->clear();
 
     QDBusPendingCall call = m_dbusAppearance->List("background");
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);

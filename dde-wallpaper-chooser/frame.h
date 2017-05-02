@@ -41,6 +41,7 @@ private:
 
     void initSize();
     void initListView();
+    void refreshList();
     QStringList processListReply(const QString &reply);
 };
 
