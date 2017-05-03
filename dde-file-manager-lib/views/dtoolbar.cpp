@@ -206,6 +206,7 @@ QPushButton *DToolBar::getSettingsButton()
 void DToolBar::searchBarClicked()
 {
     searchBarActivated();
+    m_searchBar->setText("");
 }
 
 void DToolBar::searchBarActivated()
@@ -381,8 +382,7 @@ void DToolBar::handleHotkeyForward(quint64 winId)
 void DToolBar::handleHotkeyCtrlF(quint64 winId)
 {
     if (winId == WindowManager::getWindowId(this)) {
-        searchBarActivated();
-        m_searchBar->setText("");
+        searchBarClicked();
     }
 }
 
