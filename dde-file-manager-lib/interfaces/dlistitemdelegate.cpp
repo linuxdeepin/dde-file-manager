@@ -227,6 +227,7 @@ QWidget *DListItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
 
     QLineEdit *edit = new QLineEdit(parent);
     edit->setFixedHeight(LIST_EDITER_HEIGHT);
+    edit->setObjectName("DListItemDelegate_Editor");
 
     connect(edit, &QLineEdit::destroyed, this, [this, d] {
         d->editingIndex = QModelIndex();
