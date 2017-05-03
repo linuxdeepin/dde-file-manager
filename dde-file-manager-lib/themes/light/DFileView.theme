@@ -77,3 +77,8 @@ DFileView QLabel#contentLabel {
     font-size: 20px;
     color: #D0D0D0;
 }
+
+QLineEdit#DListItemDelegate_Editor {
+    background: #0076F9;
+    border-radius: 4px;
+}
