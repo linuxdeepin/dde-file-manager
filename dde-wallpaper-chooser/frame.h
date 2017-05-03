@@ -19,6 +19,8 @@ public:
     Frame(QFrame *parent = 0);
     ~Frame();
 
+    void show();
+
 public slots:
     void handleNeedCloseButton(QString path, QPoint pos);
 

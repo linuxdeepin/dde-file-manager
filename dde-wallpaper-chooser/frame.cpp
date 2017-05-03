@@ -66,6 +66,23 @@ Frame::~Frame()
 
 }
 
+void Frame::show()
+{
+    m_dbusDeepinWM->RequestHideWindows();
+    QDBusPendingCall call = m_dbusMouseArea->RegisterFullScreen();
+    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
+    connect(watcher, &QDBusPendingCallWatcher::finished, this, [this, call] {
+         if (call.isError()) {
+             qWarning() << "failed to register full screen mousearea: " << call.error().message();
+         } else {
+             QDBusReply<QString> reply = call.reply();
+             m_mouseAreaKey = reply.value();
+         }
+    });
+
+    DBlurEffectWidget::show();
+}
+
 void Frame::handleNeedCloseButton(QString path, QPoint pos)
 {
     if (!path.isEmpty()) {
@@ -85,18 +102,6 @@ void Frame::handleNeedCloseButton(QString path, QPoint pos)
 
 void Frame::showEvent(QShowEvent * event)
 {
-    m_dbusDeepinWM->RequestHideWindows();
-    QDBusPendingCall call = m_dbusMouseArea->RegisterFullScreen();
-    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
-    connect(watcher, &QDBusPendingCallWatcher::finished, this, [this, call] {
-         if (call.isError()) {
-             qWarning() << "failed to register full screen mousearea: " << call.error().message();
-         } else {
-             QDBusReply<QString> reply = call.reply();
-             m_mouseAreaKey = reply.value();
-         }
-    });
-
     activateWindow();
 
     refreshList();
