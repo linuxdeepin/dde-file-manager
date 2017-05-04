@@ -62,5 +62,5 @@ QIcon PDFPreviewPlugin::pluginLogo() const
 
 QString PDFPreviewPlugin::pluginDescription() const
 {
-    return QString("Deepin offical pdf file preview plugin.");
+    return QString("Deepin official pdf file preview plugin.");
 }
