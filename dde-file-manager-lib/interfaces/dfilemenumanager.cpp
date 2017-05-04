@@ -204,11 +204,6 @@ DFileMenu *DFileMenuManager::createToolBarSettingsMenu(const QSet<MenuAction> &d
                << MenuAction::Separator
                << MenuAction::SetUserSharePassword
                << MenuAction::Settings;
-    #ifndef ARCH_MIPSEL
-        actionKeys  << MenuAction::Help;
-    #endif
-    actionKeys  << MenuAction::About
-                << MenuAction::Exit;
 
     return genereteMenuByKeys(actionKeys, disableList, false, subMenuKeys, false);
 }
