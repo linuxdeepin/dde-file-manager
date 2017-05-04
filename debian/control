@@ -7,6 +7,7 @@ Build-Depends: debhelper (>=9), pkg-config, qt5-qmake, qt5-default, qtbase5-dev,
  libpoppler-cpp-dev, libpolkit-agent-1-dev, libpolkit-qt5-1-dev, qtmultimedia5-dev, libffmpegthumbnailer-dev, libtag1-dev,libmpv-dev,
  libdtkbase-dev(>=0.2.4), libdtkutil-dev(>=0.2.4), libdtkwidget-dev(>=0.2.4), libxcb1-dev, x11proto-core-dev, libx11-dev, qttools5-dev-tools,
  libglib2.0-dev, libdtksettings-dev(>=0.1.2), libdtksettingsview-dev(>=0.1.2), dde-dock-dev(>=4.0.5), libxcb-ewmh-dev, libdframeworkdbus-dev,
+ libxcb-util0-dev
 Standards-Version: 3.9.6
 Homepage: http://www.deepin.org
 
