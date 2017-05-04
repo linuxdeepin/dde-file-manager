@@ -1228,7 +1228,8 @@ void DFileView::focusInEvent(QFocusEvent *event)
 {
     Q_D(const DFileView);
 
-    DListView::focusInEvent(event);
+    // 为了避免QAbstractItemView::focusInEvent会自动设置currentIndex
+    QAbstractScrollArea::focusInEvent(event);
     itemDelegate()->commitDataAndCloseActiveEditor();
 
     /// set menu actions filter
