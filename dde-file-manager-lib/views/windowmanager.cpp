@@ -53,7 +53,7 @@ WindowManager::WindowManager(QObject *parent) : QObject(parent)
 {
     m_fmStateManager = new FMStateManager(this);
     m_fmStateManager->loadCache();
-    qApp->setApplicationDisplayName(tr("Deepin File Manager"));
+
 #ifdef AUTO_RESTART_DEAMON
     m_restartProcessTimer = new QTimer(this);
     m_restartProcessTimer->setInterval(1000 * 60 * 5);
@@ -248,7 +248,10 @@ void WindowManager::onLastActivedWindowClosed(int winId)
             getWindowById(id)->close();
         }
     }
-    getWindowById(winId)->close();
+
+    if (QWidget *window = getWindowById(winId))
+        window->close();
+
     qApp->quit();
 }
 

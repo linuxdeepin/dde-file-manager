@@ -10,7 +10,7 @@ QT_BEGIN_NAMESPACE
 class QLocalServer;
 QT_END_NAMESPACE
 
-DWIDGET_USE_NAMESPACE;
+DWIDGET_USE_NAMESPACE
 
 class SingleApplication : public DApplication
 {
@@ -32,6 +32,8 @@ public slots:
     void closeServer();
 
 private:
+    void handleQuitAction() Q_DECL_OVERRIDE;
+
     static QString getUserID();
 
     static QString UserID;
