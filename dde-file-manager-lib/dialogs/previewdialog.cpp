@@ -32,7 +32,7 @@ public:
     PreviewDialogPrivate(PreviewDialog* qq):
         q_ptr(qq){}
 
-    //For further interfaces manager, store them as third party interfaces and dde offical interfaces
+    //For further interfaces manager, store them as third party interfaces and dde official interfaces
     QList<PreviewInterface*> previewInterfaces;
     QList<PreviewInterface*> ddePreviewInterfaces;
 
@@ -86,7 +86,7 @@ void PreviewDialog::initInterfaces()
 {
     Q_D(PreviewDialog);
 
-    //Load deepin offical plugins and third party plugins
+    //Load deepin official plugins and third party plugins
     foreach (PreviewInterface* iface, PluginManager::instance()->getPreviewInterfaces()) {
         if(iface->pluginName().contains("dde-")){
             d->ddePreviewInterfaces.append(iface);
@@ -280,7 +280,7 @@ void PreviewDialog::updatePreview(const DUrl &url)
 
     PreviewInterface* previewIface = NULL;
 
-    //Get offical iface by default, and use default setting in the future.
+    //Get official iface by default, and use default setting in the future.
     foreach (PreviewInterface* iface, d->ddePreviewInterfaces) {
         iface->init(url.toString());
         if(iface->canPreview()){
