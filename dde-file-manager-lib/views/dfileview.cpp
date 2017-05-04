@@ -797,6 +797,10 @@ void DFileView::wheelEvent(QWheelEvent *event)
 
 void DFileView::keyPressEvent(QKeyEvent *event)
 {
+    if (event->isAutoRepeat()) {
+        return DListView::keyPressEvent(event);
+    }
+
     D_D(DFileView);
 
     const DUrlList& urls = selectedUrls();

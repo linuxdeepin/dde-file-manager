@@ -805,6 +805,9 @@ void ComputerView::showEvent(QShowEvent *event)
 
 void ComputerView::keyPressEvent(QKeyEvent *event)
 {
+    if (event->isAutoRepeat()) {
+        return QFrame::keyPressEvent(event);
+    }
 
     DFMEvent fmevent;
     DUrlList urls;
