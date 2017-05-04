@@ -221,3 +221,8 @@ void SingleApplication::closeServer()
     }
 }
 
+void SingleApplication::handleQuitAction()
+{
+    fileSignalManager->aboutToCloseLastActivedWindow(0);
+}
+

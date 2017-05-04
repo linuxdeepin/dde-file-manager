@@ -54,7 +54,7 @@ WindowManager::WindowManager(QObject *parent) : QObject(parent)
 {
     m_fmStateManager = new FMStateManager(this);
     m_fmStateManager->loadCache();
-    qApp->setApplicationDisplayName(tr("Deepin File Manager"));
+
     initConnect();
 }
 
@@ -239,7 +239,10 @@ void WindowManager::onLastActivedWindowClosed(quint64 winId)
             getWindowById(id)->close();
         }
     }
-    getWindowById(winId)->close();
+
+    if (QWidget *window = getWindowById(winId))
+        window->close();
+
     qApp->quit();
 }
 
