@@ -9,7 +9,7 @@
 #include <QDebug>
 
 TextPreviewPlugin::TextPreviewPlugin(QObject *parent):
-    QObject(parent)
+    PreviewInterface(parent)
 {
     m_supportSuffixes << "go" << "html" << "txt"
                       << "java" << "json" << "qml"

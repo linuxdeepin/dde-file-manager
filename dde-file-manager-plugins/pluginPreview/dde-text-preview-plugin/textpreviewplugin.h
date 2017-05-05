@@ -5,7 +5,7 @@
 #include <QWidget>
 #include "../../plugininterfaces/preview/previewinterface.h"
 
-class TextPreviewPlugin : public QObject, public PreviewInterface
+class TextPreviewPlugin : public PreviewInterface
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID PreviewInterface_iid FILE "dde-text-preview-plugin.json")

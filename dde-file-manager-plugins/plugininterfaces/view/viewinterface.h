@@ -8,9 +8,12 @@
  * The view interface of dde-file-manager
  * 文件管理器的视图插件接口
 */
-class ViewInterface
+class ViewInterface : public QObject
 {
 public:
+    explicit ViewInterface(QObject *parent = 0)
+        : QObject(parent) {}
+
     virtual ~ViewInterface() {}
 
     /*!
@@ -172,6 +175,7 @@ public:
 };
 
 #define ViewInterface_iid "com.deepin.dde-file-manager.ViewInterface"
+
 Q_DECLARE_INTERFACE(ViewInterface,ViewInterface_iid)
 
 #endif // VIEWINTERFACE_H

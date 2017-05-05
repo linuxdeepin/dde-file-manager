@@ -16,7 +16,7 @@
 //#include "mpvproxywidget.h"
 
 VideoPreviewPlugin::VideoPreviewPlugin(QObject *parent) :
-    QObject(parent)
+    PreviewInterface(parent)
 {
     m_supportyMimeTypes << "application/vnd.adobe.flash.movie"
                         << "application/vnd.rn-realmedia"

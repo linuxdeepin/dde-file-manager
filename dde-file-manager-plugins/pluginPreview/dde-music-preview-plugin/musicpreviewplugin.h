@@ -3,7 +3,7 @@
 
 #include "../../plugininterfaces/preview/previewinterface.h"
 
-class MusicPreviewPlugin : public QObject, public PreviewInterface
+class MusicPreviewPlugin : public PreviewInterface
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID PreviewInterface_iid FILE "dde-music-preview-plugin.json")

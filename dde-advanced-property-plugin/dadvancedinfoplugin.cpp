@@ -1,6 +1,7 @@
 #include "dadvancedinfoplugin.h"
 #include "dadvancedinfowidget.h"
-DAdvancedInfoPlugin::DAdvancedInfoPlugin(QObject *parent) : QObject(parent)
+DAdvancedInfoPlugin::DAdvancedInfoPlugin(QObject *parent)
+    : PropertyDialogExpandInfoInterface(parent)
 {
 
 }
