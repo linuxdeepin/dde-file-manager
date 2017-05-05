@@ -185,10 +185,14 @@ int main(int argc, char *argv[])
         DThemeManager::instance()->setTheme("light");
 
         if (CommandLineManager::instance()->isSet("e")) {
+            // init
+            fileManagerApp;
             const QSharedPointer<DFMEvent> &event = DFMEvent::fromJson(QJsonDocument::fromJson(CommandLineManager::instance()->positionalArguments().first().toLocal8Bit().constData()).object());
 
             if (event)
                 DFMEventDispatcher::instance()->processEvent(event);
+
+            return 0;
         } else {
             if (!isBackendRun && !isShowPropertyRequest){
                 foreach (DUrl url, commandlineUrlList) {
