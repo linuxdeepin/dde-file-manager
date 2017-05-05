@@ -8,7 +8,6 @@
 
 class ImagePreviewPlugin : public PreviewInterface
 {
-    Q_OBJECT
     Q_PLUGIN_METADATA(IID PreviewInterface_iid FILE "dde-image-preview-plugin.json")
     Q_INTERFACES(PreviewInterface)
 public:
