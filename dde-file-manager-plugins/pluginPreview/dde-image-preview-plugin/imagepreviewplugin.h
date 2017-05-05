@@ -6,7 +6,7 @@
 
 #include "../../plugininterfaces/preview/previewinterface.h"
 
-class ImagePreviewPlugin : public QObject, public PreviewInterface
+class ImagePreviewPlugin : public PreviewInterface
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID PreviewInterface_iid FILE "dde-image-preview-plugin.json")

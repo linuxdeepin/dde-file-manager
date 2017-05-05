@@ -14,7 +14,8 @@
 
 #define MIN_SIZE QSize(400, 300)
 
-ImagePreviewPlugin::ImagePreviewPlugin(QObject *parent) : QObject(parent)
+ImagePreviewPlugin::ImagePreviewPlugin(QObject *parent)
+    : PreviewInterface(parent)
 {
 }
 

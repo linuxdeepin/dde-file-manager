@@ -13,9 +13,12 @@
  * The menu interface of dde-file-manager
  * 文件管理器的右键菜单插件接口
 */
-class MenuInterface
+class MenuInterface : public QObject
 {
 public:
+    explicit MenuInterface(QObject *parent = 0)
+        : QObject(parent) {}
+
     virtual ~MenuInterface() {}
 
     /*!
@@ -76,9 +79,11 @@ public:
  * The property dialog expand info interface of dde-file-manager
  * 文件管理器的属性对话框插件接口
 */
-class PropertyDialogExpandInfoInterface
+class PropertyDialogExpandInfoInterface : public QObject
 {
 public:
+    explicit PropertyDialogExpandInfoInterface(QObject *parent = 0)
+        : QObject(parent) {}
 
     virtual ~PropertyDialogExpandInfoInterface() {}
 
@@ -113,6 +118,7 @@ public:
 
 
 #define MenuInterface_iid "com.deepin.dde-file-manager.MenuInterface"
+
 Q_DECLARE_INTERFACE(MenuInterface, MenuInterface_iid)
 
 #define PropertyDialogExpandInfoInterface_iid "com.deepin.dde-file-manager.PropertyDialogExpandInfoInterface"

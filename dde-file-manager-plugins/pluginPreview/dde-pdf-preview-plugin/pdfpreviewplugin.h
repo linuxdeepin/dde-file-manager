@@ -5,7 +5,7 @@
 #include <QWidget>
 #include "../../plugininterfaces/preview/previewinterface.h"
 
-class PDFPreviewPlugin : public QObject, public PreviewInterface
+class PDFPreviewPlugin : public PreviewInterface
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID PreviewInterface_iid FILE "dde-pdf-preview-plugin.json")

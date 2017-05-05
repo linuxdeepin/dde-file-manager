@@ -31,7 +31,7 @@
 #include "taglib/mp4properties.h"
 
 MusicPreviewPlugin::MusicPreviewPlugin(QObject *parent) :
-    QObject(parent)
+    PreviewInterface(parent)
 {
     m_supportSuffixed << "mp3"
                       << "mpc"

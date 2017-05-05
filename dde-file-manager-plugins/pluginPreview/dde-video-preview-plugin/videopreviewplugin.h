@@ -21,7 +21,7 @@ class DVideoWidget;
 class QSlider;
 class QFrame;
 class MpvProxyWidget;
-class VideoPreviewPlugin : public QObject, public PreviewInterface
+class VideoPreviewPlugin : public PreviewInterface
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID PreviewInterface_iid FILE "dde-video-preview-plugin.json")

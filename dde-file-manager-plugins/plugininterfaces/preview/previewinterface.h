@@ -7,8 +7,11 @@
 
 #define DEFALT_PREVIEW_MIN_SIZE QSize(600, 300)
 
-class PreviewInterface{
+class PreviewInterface : public QObject
+{
 public:
+    explicit PreviewInterface(QObject *parent = 0)
+        : QObject(parent) {}
 
     virtual void init(const QString& uri){
         Q_UNUSED(uri)
@@ -44,6 +47,7 @@ public:
 };
 
 #define PreviewInterface_iid "com.deepin.dde-file-manager.PreviewInterface"
+
 Q_DECLARE_INTERFACE(PreviewInterface, PreviewInterface_iid)
 
 #endif // PREVIEWINTERFACE_H

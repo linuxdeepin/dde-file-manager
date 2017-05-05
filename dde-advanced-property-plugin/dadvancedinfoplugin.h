@@ -6,7 +6,7 @@
 
 class QWidget;
 
-class DAdvancedInfoPlugin : public QObject, PropertyDialogExpandInfoInterface
+class DAdvancedInfoPlugin : public PropertyDialogExpandInfoInterface
 {
     Q_OBJECT
     Q_INTERFACES(PropertyDialogExpandInfoInterface)

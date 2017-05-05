@@ -8,7 +8,7 @@
 #include "pdfwidget.h"
 
 PDFPreviewPlugin::PDFPreviewPlugin(QObject *parent) :
-    QObject(parent)
+    PreviewInterface(parent)
 {
 }
 

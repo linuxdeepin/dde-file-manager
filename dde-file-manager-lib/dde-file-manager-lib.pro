@@ -347,6 +347,15 @@ isEmpty(INCLUDE_INSTALL_DIR) {
 
 gvfs_includes.files += $$PWD/gvfs/*.h
 
+isEmpty(INCLUDE_INSTALL_DIR) {
+    plugin_includes.path = $$PREFIX/include/dde-file-manager/dde-file-manager-plugins
+} else {
+    plugin_includes.path = $$INCLUDE_INSTALL_DIR/dde-file-manager/dde-file-manager-plugins
+}
+
+plugin_includes.files += $$PWD/../dde-file-manager-plugins/plugininterfaces/menu/*.h
+plugin_includes.files += $$PWD/../dde-file-manager-plugins/plugininterfaces/preview/*.h
+plugin_includes.files += $$PWD/../dde-file-manager-plugins/plugininterfaces/view/*.h
 
 QMAKE_PKGCONFIG_LIBDIR = $$target.path
 QMAKE_PKGCONFIG_VERSION = $$VERSION
@@ -395,7 +404,7 @@ icon.files = skin/images/$${TARGET}.svg
 defaultConfig.path = $$APPSHAREDIR/config
 defaultConfig.files = configure/default-view-states.json
 
-INSTALLS += target templateFiles translations mimetypeFiles mimetypeAssociations help icon includes gvfs_includes defaultConfig
+INSTALLS += target templateFiles translations mimetypeFiles mimetypeAssociations help icon includes gvfs_includes plugin_includes defaultConfig
 
 DISTFILES += \
     mimetypeassociations/mimetypeassociations.json \
