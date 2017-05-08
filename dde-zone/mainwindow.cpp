@@ -81,25 +81,25 @@ ZoneMainWindow::~ZoneMainWindow()
 void ZoneMainWindow::mousePressEvent(QMouseEvent *e)
 {
     if (e->button() == Qt::LeftButton || e->button() == Qt::MiddleButton) {
-        hide();
         releaseKeyboard();
+        emit finished();
     }
 }
 
 void ZoneMainWindow::keyPressEvent(QKeyEvent *e)
 {
     if (e->key() == Qt::Key_Escape) {
-        hide();
         releaseKeyboard();
+        emit finished();
     }
 }
 
 #ifndef DISABLE_DEMO_VIDEO
 void ZoneMainWindow::onDemoVideo()
 {
-    QMediaPlayer *player = new QMediaPlayer;
+    QMediaPlayer *player = new QMediaPlayer(this);
 
-    QMediaPlaylist *list = new QMediaPlaylist;
+    QMediaPlaylist *list = new QMediaPlaylist(this);
 
     list->addMedia(QUrl("qrc:/images/Prompt.mov"));
     list->setPlaybackMode(QMediaPlaylist::Loop);
