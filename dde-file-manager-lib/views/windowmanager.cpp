@@ -212,7 +212,7 @@ QWidget *WindowManager::getWindowById(int winId)
         return const_cast<QWidget*>(widget);
 
     for (QWidget *widget : qApp->topLevelWidgets()) {
-        if ((int)widget->winId() == winId)
+        if (widget->internalWinId() == winId)
             return widget;
     }
 
