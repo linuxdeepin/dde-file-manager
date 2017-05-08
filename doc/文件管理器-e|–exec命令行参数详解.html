@@ -2,7 +2,11 @@
                         
                     
 
+
+
 <h2 id="文件管理器-eexec-命令行参数详解">文件管理器 -e/–exec 命令行参数详解</h2>
+
+
 
 <h4 id="用法示例">用法示例：</h4>
 
@@ -36,8 +40,39 @@
 </tbody></table>
 
 
+
+
 <h4 id="各类型事件所需要的参数">各类型事件所需要的参数：</h4>
 
+
+
+<h5 id="openurl打开一个url文件或者是路径">OpenUrl：打开一个url（文件或者是路径）</h5>
+
+<table>
+<thead>
+<tr>
+  <th align="center">参数</th>
+  <th align="center">介绍</th>
+  <th align="center">备注</th>
+  <th align="center">数据类型</th>
+  <th align="center">可选值</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td align="center">urlList</td>
+  <td align="center">要打开的url地址的列表形式</td>
+  <td align="center">必选</td>
+  <td align="center">字符串列表</td>
+  <td align="center">如：[“file:///home”, “file:///home/example2.jpg”]</td>
+</tr>
+<tr>
+  <td align="center">mode</td>
+  <td align="center">打开模式</td>
+  <td align="center">必选</td>
+  <td align="center">整型</td>
+  <td align="center">1(在新窗口中打开路径，如果已经有窗口对应的路径为此路径则激活此窗口)  <br> 2(强制在新的窗口中打开路径)</td>
+</tr>
+</tbody></table>
 
 
 <h5 id="openfile打开一个文件">OpenFile：打开一个文件</h5>
@@ -60,6 +95,8 @@
   <td align="center">任意文件，如：”file:///home/example.txt”</td>
 </tr>
 </tbody></table>
+
+
 
 
 <h5 id="openfilebyapp制定应用程序打开文件">OpenFileByApp：制定应用程序打开文件</h5>
@@ -113,6 +150,8 @@
 </tbody></table>
 
 
+
+
 <h5 id="decompressfile解压文件">DecompressFile：解压文件</h5>
 
 <table>
@@ -135,6 +174,8 @@
 </tbody></table>
 
 
+
+
 <h5 id="decompressfilehere解压文件到此文件所在目录">DecompressFileHere：解压文件到此文件所在目录</h5>
 
 <table>
@@ -155,6 +196,8 @@
   <td>任意文件，如：[“file:///home/example1.rar”, “file:///home/example2.zip”]</td>
 </tr>
 </tbody></table>
+
+
 
 
 <h5 id="writeurlstoclipboard写系统剪切板">WriteUrlsToClipboard：写系统剪切板</h5>
@@ -186,6 +229,8 @@
 </tbody></table>
 
 
+
+
 <h5 id="renamefile重命名文件">RenameFile：重命名文件</h5>
 
 <table>
@@ -213,6 +258,8 @@
   <td>如：”file:///home/example.new”</td>
 </tr>
 </tbody></table>
+
+
 
 
 <h5 id="deletefiles彻底删除文件">DeleteFiles：彻底删除文件</h5>
@@ -244,6 +291,8 @@
 </tbody></table>
 
 
+
+
 <h5 id="movetotrash将文件移动到回收站">MoveToTrash：将文件移动到回收站</h5>
 
 <table>
@@ -266,6 +315,8 @@
 </tbody></table>
 
 
+
+
 <h5 id="restorefromtrash还原回收站内的文件">RestoreFromTrash：还原回收站内的文件</h5>
 
 <table>
@@ -286,6 +337,8 @@
   <td>任意文件，如：[“trash:///example1.png”, “trash:///example2.jpg”]</td>
 </tr>
 </tbody></table>
+
+
 
 
 <h5 id="pastefile复制或剪切文件">PasteFile：复制或剪切文件</h5>
@@ -324,6 +377,8 @@
 </tbody></table>
 
 
+
+
 <h5 id="newfolder新建文件夹">NewFolder：新建文件夹</h5>
 
 <table>
@@ -344,6 +399,8 @@
   <td>如：”file:///home/”</td>
 </tr>
 </tbody></table>
+
+
 
 
 <h5 id="newfile新建文件">NewFile：新建文件</h5>
@@ -375,6 +432,8 @@
 </tbody></table>
 
 
+
+
 <h5 id="openfilelocation打开文件所在位置">OpenFileLocation：打开文件所在位置</h5>
 
 <table>
@@ -395,6 +454,8 @@
   <td>如：”file:///home/example.txt”</td>
 </tr>
 </tbody></table>
+
+
 
 
 <h5 id="createsymlink创建软链接">CreateSymlink：创建软链接</h5>
@@ -424,6 +485,8 @@
   <td>如：”file:///home/”</td>
 </tr>
 </tbody></table>
+
+
 
 
 <h5 id="fileshare共享文件夹">FileShare：共享文件夹</h5>
@@ -469,6 +532,8 @@
 </tbody></table>
 
 
+
+
 <h5 id="cancelfileshare取消共享文件夹">CancelFileShare：取消共享文件夹</h5>
 
 <table>
@@ -491,6 +556,8 @@
 </tbody></table>
 
 
+
+
 <h5 id="openinterminal在指定路径下打开终端">OpenInTerminal：在指定路径下打开终端</h5>
 
 <table>
@@ -511,6 +578,8 @@
   <td>如：”file:///home/”</td>
 </tr>
 </tbody></table>
+
+
 
 
 <h5 id="opennewwindow在新窗口中打开文件夹">OpenNewWindow：在新窗口中打开文件夹</h5>
