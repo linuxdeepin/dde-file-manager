@@ -30,6 +30,9 @@ public:
     void mousePressEvent(QMouseEvent *);
     void keyPressEvent(QKeyEvent *);
 
+signals:
+    void finished();
+
 private slots:
 #ifndef DISABLE_DEMO_VIDEO
     void onDemoVideo();
