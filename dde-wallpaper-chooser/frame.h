@@ -21,6 +21,9 @@ public:
 
     void show();
 
+signals:
+    void done();
+
 public slots:
     void handleNeedCloseButton(QString path, QPoint pos);
 

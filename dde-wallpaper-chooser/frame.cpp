@@ -115,6 +115,8 @@ void Frame::hideEvent(QHideEvent *event)
 
     m_dbusDeepinWM->CancelHideWindows();
     m_dbusMouseArea->UnregisterArea(m_mouseAreaKey);
+
+    emit done();
 }
 
 void Frame::keyPressEvent(QKeyEvent * event)
