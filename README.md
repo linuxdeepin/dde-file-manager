@@ -2,7 +2,7 @@
 
 Deepin File Manager is a file management tool independently  developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions.
 
-## Dependencies
+### Dependencies
 
 ### Build dependencies
 
