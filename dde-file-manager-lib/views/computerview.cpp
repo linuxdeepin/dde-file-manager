@@ -318,11 +318,6 @@ ComputerView::~ComputerView()
 {
 }
 
-DUrl ComputerView::rootUrl()
-{
-    return DUrl::fromComputerFile("/");
-}
-
 QString ComputerView::scheme()
 {
     return COMPUTER_SCHEME;
@@ -414,7 +409,7 @@ void ComputerView::initUI()
     }
 
     DFMEvent event(this);
-    event.setWindowId(window()->winId());
+    event.setWindowId(window()->internalWinId());
     const int number = m_systemItems.count() + m_nativeItems.count() + m_removableItems.count();
     m_statusBar->itemCounted(event, number);
 
@@ -533,12 +528,12 @@ void ComputerView::updateStatusBar()
         DUrlList urlList;
         if(checkedItem->info())
             urlList << checkedItem->info()->fileUrl();
-        event.setWindowId(window()->winId());
+        event.setWindowId(window()->internalWinId());
         event.setData(urlList);
         m_statusBar->itemSelected(event, 1);
     }else{
         DFMEvent event(this);
-        event.setWindowId(window()->winId());
+        event.setWindowId(window()->internalWinId());
         const int number = m_systemItems.count() + m_nativeItems.count() + m_removableItems.count();
         m_statusBar->itemCounted(event, number);
     }
@@ -577,6 +572,21 @@ void ComputerView::saveViewState()
     state.iconSize = m_currentIconSizeIndex;
 
     viewStatesManager->saveViewState(DUrl::fromComputerFile("/"), state);
+}
+
+QWidget *ComputerView::widget() const
+{
+    return const_cast<ComputerView*>(this );
+}
+
+DUrl ComputerView::rootUrl() const
+{
+    return DUrl::fromComputerFile("/");
+}
+
+bool ComputerView::setRootUrl(const DUrl &url)
+{
+    return DUrl::fromComputerFile("/") == url;
 }
 
 void ComputerView::volumeAdded(UDiskDeviceInfoPointer device)

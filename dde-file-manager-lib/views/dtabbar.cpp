@@ -24,12 +24,14 @@
 
 DWIDGET_USE_NAMESPACE
 
-Tab::Tab(QGraphicsObject *parent, DFileView *view):
+Tab::Tab(QGraphicsObject *parent, DFMBaseView *view):
     QGraphicsObject(parent)
 {
     m_fileView = view;
-    setCurrentUrl(view->rootUrl());
-    setTabText(getDisplayNameByUrl(view->rootUrl()));
+
+    if (view)
+        setCurrentUrl(view->rootUrl());
+
     initConnect();
     setAcceptHoverEvents(true);
     setFlags(ItemIsSelectable);
@@ -42,9 +44,7 @@ Tab::~Tab()
 
 void Tab::initConnect()
 {
-    connect(m_fileView, &DFileView::rootUrlChanged, this,&Tab::onFileRootUrlChanged);
-    connect(m_fileView, &DFileView::requestActivateNextTab, this, &Tab::requestActiveNextTab);
-    connect(m_fileView, &DFileView::requestActivatePreviousTab, this, &Tab::requestActivePreviousTab);
+
 }
 
 void Tab::setTabText(QString text)
@@ -58,7 +58,7 @@ QString Tab::tabText()
     return m_tabText;
 }
 
-DFileView *Tab::fileView()
+DFMBaseView *Tab::fileView()
 {
     return m_fileView;
 }
@@ -539,7 +539,7 @@ void TabBar::initConnections()
     });
 }
 
-int TabBar::createTab(DFileView *view)
+int TabBar::createTab(DFMBaseView *view)
 {
     Tab *tab = new Tab(0,view);
     m_tabs.append(tab);
@@ -610,8 +610,12 @@ void TabBar::removeTab(const int index, const bool &remainState)
 
 void TabBar::setCurrentIndex(const int index)
 {
-    if(index<0 || index >= m_tabs.count())
+    if (m_currentIndex == index)
         return;
+
+    if (index < 0 || index >= m_tabs.count())
+        return;
+
     m_currentIndex = index;
 
     int counter = 0;

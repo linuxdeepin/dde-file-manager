@@ -469,6 +469,11 @@ void DFileDialog::setCurrentInputName(const QString &name)
         getFileView()->statusBar()->lineEdit()->setSelection(0, name.length() - suffix.length() - 1);
 }
 
+DFileView *DFileDialog::getFileView() const
+{
+    return dynamic_cast<DFileView*>(DFileManagerWindow::getFileView());
+}
+
 void DFileDialog::accept()
 {
     done(QDialog::Accepted);

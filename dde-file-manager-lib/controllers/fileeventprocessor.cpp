@@ -244,7 +244,7 @@ bool FileEventProcessor::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
         const QSharedPointer<DFMChangeCurrentUrlEvent> &e = event.staticCast<DFMChangeCurrentUrlEvent>();
 
         if (DFileManagerWindow *window = const_cast<DFileManagerWindow*>(qobject_cast<const DFileManagerWindow*>(e->window()))) {
-            window->preHandleCd(e->fileUrl(), e->sender());
+            window->cd(e->fileUrl());
         }
 
         break;

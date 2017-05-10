@@ -251,7 +251,7 @@ void NetworkManager::restartGVFSD()
     }
 }
 
-void NetworkManager::fetchNetworks(const DFMEvent &event)
+void NetworkManager::fetchNetworks(const DFMUrlBaseEvent &event)
 {
     qDebug() << event;
     DFMEvent* e = new DFMEvent(event);

@@ -4,6 +4,7 @@
 #include "interfaces/dfmsetting.h"
 #include "dfmglobal.h"
 #include "durl.h"
+#include "dfmbaseview.h"
 
 #include <dlistview.h>
 
@@ -17,6 +18,7 @@ class QTimer;
 QT_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE
+DFM_USE_NAMESPACE
 
 class FileController;
 class DFileMenuManager;
@@ -26,7 +28,7 @@ class DAbstractFileInfo;
 class DStatusBar;
 class FileViewHelper;
 class DFileViewPrivate;
-class DFileView : public DListView
+class DFileView : public DListView, public DFMBaseView
 {
     Q_OBJECT
 public:
@@ -40,8 +42,6 @@ public:
 
     Q_DECLARE_FLAGS(ViewModes, ViewMode)
 
-    static int ViewInstanceCount;
-
     explicit DFileView(QWidget *parent = 0);
     ~DFileView();
 
@@ -51,7 +51,7 @@ public:
     DStatusBar *statusBar() const;
     FileViewHelper *fileViewHelper() const;
 
-    DUrl rootUrl() const;
+    DUrl rootUrl() const Q_DECL_OVERRIDE;
     QList<DUrl> selectedUrls() const;
 
     bool isIconViewMode() const;
@@ -109,8 +109,8 @@ public:
     void setEnabledSelectionModes(const QSet<SelectionMode> &list);
     QSet<SelectionMode> enabledSelectionModes() const;
 
-    QString viewId() const;
-    void setViewId(const QString viewId);
+    QWidget *widget() const Q_DECL_OVERRIDE;
+    QList<QAction*> toolBarActionList() const Q_DECL_OVERRIDE;
 
 public slots:
     bool cd(const DUrl &url);
@@ -147,13 +147,10 @@ public slots:
 signals:
     void rootUrlChanged(const DUrl &url);
     void viewModeChanged(ViewMode viewMode);
-    void requestActivateNextTab();
-    void requestActivatePreviousTab();
-    void requestActivateTabByIndex(const int& index);
     void viewStateChanged();
 
 private slots:
-    bool setRootUrl(const DUrl &url);
+    bool setRootUrl(const DUrl &url) Q_DECL_OVERRIDE;
     void dislpayAsActionTriggered(QAction * action);
     void sortByActionTriggered(QAction * action);
     void openWithActionTriggered(QAction * action);

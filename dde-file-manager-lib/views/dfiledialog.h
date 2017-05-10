@@ -60,6 +60,8 @@ public:
 
     void setCurrentInputName(const QString &name);
 
+    DFileView *getFileView() const;
+
 Q_SIGNALS:
     void finished(int result);
     void accepted();

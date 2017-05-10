@@ -353,7 +353,7 @@ bool DFileService::setFileUrlHandler(const QString &scheme, const QString &host,
 
 void DFileService::unsetFileUrlHandler(DAbstractFileController *controller)
 {
-    if(!DFileServicePrivate::handlerHash.contains(controller))
+    if (!DFileServicePrivate::handlerHash.contains(controller))
         return;
 
     DFileServicePrivate::controllerHash.remove(DFileServicePrivate::handlerHash.value(controller), controller);
