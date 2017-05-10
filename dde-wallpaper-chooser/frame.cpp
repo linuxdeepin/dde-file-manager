@@ -56,7 +56,10 @@ Frame::Frame(QFrame *parent)
     });
 
     m_closeButton->hide();
-    connect(m_wallpaperList, &WallpaperList::needCloseButton, this, &Frame::handleNeedCloseButton);
+    connect(m_wallpaperList, &WallpaperList::needCloseButton,
+            this, &Frame::handleNeedCloseButton);
+    connect(m_wallpaperList, &WallpaperList::needPreviewWallpaper,
+            m_dbusDeepinWM, &DeepinWM::SetTransientBackground);
 
     QTimer::singleShot(0, this, &Frame::initListView);
 }
@@ -115,6 +118,14 @@ void Frame::hideEvent(QHideEvent *event)
 
     m_dbusDeepinWM->CancelHideWindows();
     m_dbusMouseArea->UnregisterArea(m_mouseAreaKey);
+
+    if (!m_wallpaperList->desktopWallpaper().isEmpty())
+        m_dbusAppearance->Set("background", m_wallpaperList->desktopWallpaper());
+    else
+        m_dbusDeepinWM->SetTransientBackground("");
+
+    if (!m_wallpaperList->lockWallpaper().isEmpty())
+        m_dbusAppearance->Set("greeterbackground", m_wallpaperList->lockWallpaper());
 
     emit done();
 }

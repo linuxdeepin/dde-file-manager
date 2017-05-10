@@ -35,8 +35,11 @@ public:
     void prevPage();
     void nextPage();
 
+    QString desktopWallpaper() const;
+    QString lockWallpaper() const;
+
 signals:
-    void wallpaperSet(QString wallpaper);
+    void needPreviewWallpaper(QString path) const;
     void needCloseButton(QString path, QPoint pos) const;
 
 protected:
@@ -46,8 +49,9 @@ protected:
 private:
     AppearanceDaemonInterface * m_dbusAppearance;
     com::deepin::wm *m_wmInter;
-    QString m_oldWallpaperPath;
-    QString m_oldLockPath;
+
+    QString m_desktopWallpaper;
+    QString m_lockWallpaper;
 
     //It was handpicked item, Used for wallpaper page
     WallpaperItem *prevItem = Q_NULLPTR;
@@ -58,13 +62,8 @@ private:
 
     QPropertyAnimation scrollAnimation;
 
-    void setWallpaper(QString realPath);
-    void setLockScreen(QString realPath);
-
     void updateBothEndsItem();
     void showDeleteButtonForItem(const WallpaperItem *item) const;
-
-    void recordOldValues();
 
 private slots:
     void wallpaperItemPressed();

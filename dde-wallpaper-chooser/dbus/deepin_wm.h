@@ -82,6 +82,13 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("ToggleDebug"), argumentList);
     }
 
+    inline QDBusPendingReply<> SetTransientBackground(const QString &uri)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(uri);
+        return asyncCallWithArgumentList(QStringLiteral("SetTransientBackground"), argumentList);
+    }
+
 Q_SIGNALS: // SIGNALS
     void BackgroundChanged();
 // begin property changed signals
