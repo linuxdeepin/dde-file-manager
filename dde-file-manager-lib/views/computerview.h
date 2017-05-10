@@ -16,6 +16,9 @@
 #include "dabstractfileinfo.h"
 #include "deviceinfo/udiskdeviceinfo.h"
 #include "dstatusbar.h"
+#include "dfmbaseview.h"
+
+DFM_USE_NAMESPACE
 
 class FlowLayout;
 
@@ -109,7 +112,7 @@ private:
 };
 
 
-class ComputerView : public QFrame
+class ComputerView : public QFrame, public DFMBaseView
 {
     Q_OBJECT
 
@@ -119,7 +122,6 @@ public:
 
     static int ViewInstanceCount;
 
-    static DUrl rootUrl();
     static QString scheme();
     QString viewId() const;
 
@@ -139,7 +141,9 @@ public:
     void loadViewState();
     void saveViewState();
 
-signals:
+    QWidget *widget() const Q_DECL_OVERRIDE;
+    DUrl rootUrl() const Q_DECL_OVERRIDE;
+    bool setRootUrl(const DUrl &url) Q_DECL_OVERRIDE;
 
 public slots:
     void volumeAdded(UDiskDeviceInfoPointer device);

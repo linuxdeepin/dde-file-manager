@@ -20,12 +20,16 @@
 #include "widgets/singleton.h"
 #include "views/dfileview.h"
 #include "views/dfilemanagerwindow.h"
+#include "views/dfmactionbutton.h"
+
+#include <DGraphicsClipEffect>
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QDebug>
+#include <QToolButton>
 
-const int DToolBar::ButtonWidth = 26;
+const int DToolBar::ButtonWidth = 24;
 const int DToolBar::ButtonHeight = 24;
 
 DToolBar::DToolBar(QWidget *parent) : QFrame(parent)
@@ -60,6 +64,7 @@ void DToolBar::initUI()
 
     QHBoxLayout* mainLayout = new QHBoxLayout;
     mainLayout->addWidget(m_addressToolBar);
+    mainLayout->addSpacing(10);
     mainLayout->addWidget(m_contollerToolBar);
     mainLayout->addSpacing(10);
     mainLayout->addWidget(m_settingsButton);
@@ -130,47 +135,29 @@ void DToolBar::initContollerToolBar()
 {
     m_contollerToolBar = new QFrame;
     m_contollerToolBar->setObjectName("ContollerToolBar");
-    m_contollerToolBar->setFixedHeight(40);
-    m_iconViewButton = new QPushButton(this);
-    m_iconViewButton->setFixedWidth(ButtonWidth);
-    m_iconViewButton->setFixedHeight(ButtonHeight);
-    m_iconViewButton->setObjectName("iconViewButton");
-    m_iconViewButton->setCheckable(true);
-    m_iconViewButton->setChecked(true);
-    m_iconViewButton->setFocusPolicy(Qt::NoFocus);
+    m_contollerToolBar->setFrameShape(QFrame::NoFrame);
+    m_contollerToolBar->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    m_listViewButton = new QPushButton(this);
-    m_listViewButton->setFixedWidth(ButtonWidth);
-    m_listViewButton->setFixedHeight(ButtonHeight);
-    m_listViewButton->setObjectName("listViewButton");
-    m_listViewButton->setCheckable(true);
-    m_listViewButton->setFocusPolicy(Qt::NoFocus);
+    QWidget *content = new QWidget();
 
-//    m_extendButton = new QPushButton(this);
-//    m_extendButton->setFixedHeight(ButtonHeight);
-//    m_extendButton->setObjectName("hierarchicalButton");
-//    m_extendButton->setCheckable(true);
-//    m_extendButton->setFocusPolicy(Qt::NoFocus);
+    m_contollerToolBarClipMask = new DGraphicsClipEffect(content);
+    content->setGraphicsEffect(m_contollerToolBarClipMask);
 
-    m_viewButtonGroup = new QButtonGroup(this);
-    m_viewButtonGroup->addButton(m_iconViewButton, 0);
-    m_viewButtonGroup->addButton(m_listViewButton, 1);
-//    m_viewButtonGroup->addButton(m_extendButton, 2);
+    m_contollerToolBarContentLayout = new QHBoxLayout;
+    m_contollerToolBarContentLayout->setContentsMargins(1, 1, 1, 1);
+    m_contollerToolBarContentLayout->setSpacing(0);
 
-    QHBoxLayout* mainLayout = new QHBoxLayout;
-    mainLayout->addWidget(m_iconViewButton);
-    mainLayout->addWidget(m_listViewButton);
-//    mainLayout->addWidget(m_extendButton);
-    mainLayout->setContentsMargins(10, 0, 0, 0);
-    mainLayout->setSpacing(0);
-    m_contollerToolBar->setLayout(mainLayout);
+    content->setLayout(m_contollerToolBarContentLayout);
+    content->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+    QHBoxLayout *layout = new QHBoxLayout(m_contollerToolBar);
+
+    layout->addWidget(content);
+    layout->setContentsMargins(0, 0, 0, 0);
 }
 
 void DToolBar::initConnect()
 {
-    connect(m_iconViewButton, &DStateButton::clicked, this, &DToolBar::requestIconView);
-    connect(m_listViewButton, &DStateButton::clicked, this, &DToolBar::requestListView);
-//    connect(m_extendButton, &DStateButton::clicked, this, &DToolBar::requestExtendView);
     connect(m_backButton, &DStateButton::clicked,this, &DToolBar::backButtonClicked);
     connect(m_forwardButton, &DStateButton::clicked,this, &DToolBar::forwardButtonClicked);
     connect(m_searchBar, &DSearchBar::returnPressed, this, &DToolBar::searchBarTextEntered);
@@ -183,9 +170,6 @@ void DToolBar::initConnect()
     connect(fileSignalManager, &FileSignalManager::requestForward, this, &DToolBar::handleHotkeyForward);
     connect(fileSignalManager, &FileSignalManager::requestSearchCtrlF, this, &DToolBar::handleHotkeyCtrlF);
     connect(fileSignalManager, &FileSignalManager::requestSearchCtrlL, this, &DToolBar::handleHotkeyCtrlL);
-    connect(fileSignalManager, &FileSignalManager::requestChangeIconViewMode, this, &DToolBar::handleChangeIconMode);
-    connect(fileSignalManager, &FileSignalManager::requestChangeListViewMode, this, &DToolBar::handleChangeListMode);
-    connect(fileSignalManager, &FileSignalManager::requestChangeExtendViewMode, this, &DToolBar::handleChangeExtendMode);
 }
 
 DSearchBar *DToolBar::getSearchBar()
@@ -348,23 +332,6 @@ void DToolBar::forwardButtonClicked()
     }
 }
 
-void DToolBar::checkViewModeButton(DFileView::ViewMode mode)
-{
-    switch (mode) {
-    case DFileView::IconMode:
-        m_iconViewButton->setChecked(true);
-        break;
-    case DFileView::ListMode:
-        m_listViewButton->setChecked(true);
-        break;
-    case DFileView::ExtendMode:
-//        m_extendButton->setChecked(true);
-        break;
-    default:
-        break;
-    }
-}
-
 void DToolBar::handleHotkeyBack(quint64 winId)
 {
     if (winId == WindowManager::getWindowId(this)) {
@@ -391,33 +358,6 @@ void DToolBar::handleHotkeyCtrlL(quint64 winId)
     if (winId == WindowManager::getWindowId(this)) {
         searchBarActivated();
     }
-}
-
-void DToolBar::handleChangeIconMode(quint64 winId)
-{
-    if (winId == WindowManager::getWindowId(this)) {
-        m_iconViewButton->click();
-    }
-}
-
-void DToolBar::handleChangeListMode(quint64 winId)
-{
-    if (winId == WindowManager::getWindowId(this)) {
-        m_listViewButton->click();
-    }
-}
-
-void DToolBar::handleChangeExtendMode(quint64 winId)
-{
-    if (winId == WindowManager::getWindowId(this)) {
-        m_extendButton->click();
-    }
-}
-
-void DToolBar::setViewModeButtonVisible(bool isVisible)
-{
-    m_iconViewButton->setVisible(isVisible);
-    m_listViewButton->setVisible(isVisible);
 }
 
 void DToolBar::checkNavHistory(DUrl url)
@@ -495,12 +435,28 @@ void DToolBar::updateBackForwardButtonsState()
     }
 }
 
-void DToolBar::setListModeButtonEnabled(const bool &flag)
+void DToolBar::setCustomActionList(const QList<QAction *> &list)
 {
-    m_listViewButton->setEnabled(flag);
-}
+    for (DFMActionButton *button : m_contollerToolBar->findChild<QWidget*>()->findChildren<DFMActionButton*>()) {
+        m_contollerToolBarContentLayout->removeWidget(button);
+        button->deleteLater();
+    }
 
-void DToolBar::setIconModeButtonEnabled(const bool &flag)
-{
-    m_iconViewButton->setEnabled(flag);
+    for (int i = 0; i < list.count(); ++i) {
+        DFMActionButton *button = new DFMActionButton(this);
+        button->setFixedSize(ButtonWidth - 2, ButtonHeight - 2);
+        button->setFocusPolicy(Qt::NoFocus);
+        button->setAction(list.at(i));
+
+        m_contollerToolBarContentLayout->addWidget(button);
+    }
+
+    m_contollerToolBar->setHidden(list.isEmpty());
+
+    if (m_contollerToolBar->isVisible()) {
+        QPainterPath path;
+
+        path.addRoundedRect(QRectF(m_contollerToolBar->rect()).adjusted(0.5, 0.5, -0.5, -0.5), 4, 4);
+        m_contollerToolBarClipMask->setClipPath(path);
+    }
 }

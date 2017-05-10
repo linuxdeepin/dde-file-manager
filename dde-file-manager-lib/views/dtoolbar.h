@@ -16,6 +16,13 @@ class DFMEvent;
 class HistoryStack;
 class DHoverButton;
 
+QT_BEGIN_NAMESPACE
+class QHBoxLayout;
+QT_END_NAMESPACE
+
+DWIDGET_BEGIN_NAMESPACE
+class DGraphicsClipEffect;
+DWIDGET_END_NAMESPACE
 
 class DToolBar : public QFrame
 {
@@ -38,14 +45,10 @@ public:
     int navStackCount() const;
     void setCrumb(const DUrl& url);
     void updateBackForwardButtonsState();
-    void setListModeButtonEnabled(const bool& flag);
-    void setIconModeButtonEnabled(const bool& flag);
+
+    void setCustomActionList(const QList<QAction*> &list);
 
 signals:
-    void requestIconView();
-    void requestListView();
-    void requestExtendView();
-
     void requestSwitchLayout();
     void refreshButtonClicked();
 
@@ -59,17 +62,12 @@ public slots:
     void searchBarChanged(QString path);
     void backButtonClicked();
     void forwardButtonClicked();
-    void checkViewModeButton(DFileView::ViewMode mode);
 
     void handleHotkeyBack(quint64 winId);
     void handleHotkeyForward(quint64 winId);
     void handleHotkeyCtrlF(quint64 winId);
     void handleHotkeyCtrlL(quint64 winId);
-    void handleChangeIconMode(quint64 winId);
-    void handleChangeListMode(quint64 winId);
-    void handleChangeExtendMode(quint64 winId);
 
-    void setViewModeButtonVisible(bool isVisible);
     void moveNavStacks(int from, int to);
     void removeNavStackAt(int index);
     void switchHistoryStack(const int index , const DUrl &url);
@@ -85,6 +83,8 @@ private:
     DStateButton* m_refreshButton = NULL;
     DSearchBar * m_searchBar = NULL;
     QFrame* m_contollerToolBar;
+    DGraphicsClipEffect *m_contollerToolBarClipMask;
+    QHBoxLayout *m_contollerToolBarContentLayout;
     DIconTextButton* m_newFolderButton=NULL;
     DIconTextButton* m_deleteFileButton=NULL;
 
@@ -96,7 +96,6 @@ private:
 
     bool m_switchState = false;
     DCrumbWidget * m_crumbWidget = NULL;
-    QButtonGroup * m_viewButtonGroup = NULL;
     HistoryStack * m_navStack = NULL;
     QList<HistoryStack*> m_navStacks;
 

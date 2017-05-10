@@ -145,7 +145,6 @@ void DCrumbWidget::setCrumb(const DUrl &url)
 {
 
     DFileManagerWindow* w = qobject_cast<DFileManagerWindow*>(WindowManager::getWindowById(window()->winId()));
-    qDebug() << url << w->getViewManager()->getViewById(url.toString());
 
     if(!url.isValid())
         return;
@@ -176,9 +175,9 @@ void DCrumbWidget::setCrumb(const DUrl &url)
         addNetworkCrumb();
     }else if(url.isUserShareFile()){
         addUserShareCrumb();
-    }else if (w->getViewManager()->isSchemeRegistered(url.scheme())){
+    }/*else if (w->getViewManager()->isSchemeRegistered(url.scheme())){
         addPluginViewCrumb(url);
-    }
+    }*/
     else
     {
         addCrumbs(url);

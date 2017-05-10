@@ -26,12 +26,12 @@ class Tab:public QGraphicsObject{
     Q_PROPERTY(QRect geometry READ geometry WRITE setGeometry)
 
 public:
-    explicit Tab(QGraphicsObject *parent = 0,DFileView* view = NULL);
+    explicit Tab(QGraphicsObject *parent = 0, DFMBaseView* view = NULL);
     ~Tab();
     void initConnect();
     void setTabText(QString text);
     QString tabText();
-    DFileView *fileView();
+    DFMBaseView *fileView();
     DUrl currentUrl() const;
     void setCurrentUrl(const DUrl& url);
 
@@ -90,7 +90,7 @@ private:
     QDrag *m_dragObject = NULL;
     bool m_checked = false;
     bool m_borderLeft = false;
-    DFileView* m_fileView = NULL;
+    DFMBaseView* m_fileView = NULL;
     DUrl m_url;
 };
 
@@ -128,7 +128,7 @@ class TabBar:public QGraphicsView{
 public:
     explicit TabBar(QWidget *parent = 0);
     void initConnections();
-    int createTab(DFileView* view);
+    int createTab(DFMBaseView *view);
     void removeTab(const int index, const bool& remainState = false);
     void setTabText(const int& index, const QString&text);
     int count() const;

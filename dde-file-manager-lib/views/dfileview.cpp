@@ -62,8 +62,6 @@ public:
 
     int iconModeColumnCount(int itemWidth = 0) const;
 
-    QString viewId;
-
     DFileView *q_ptr;
 
     DFileMenuManager* fileMenuManager;
@@ -117,16 +115,16 @@ public:
 
     QScrollBar* verticalScrollBar = NULL;
 
+    QActionGroup *toolbarActionGroup;
+
     Q_DECLARE_PUBLIC(DFileView)
 };
-
-int DFileView::ViewInstanceCount = -1;
 
 DFileView::DFileView(QWidget *parent)
     : DListView(parent)
     , d_ptr(new DFileViewPrivate(this))
 {
-    if(CommandLineManager::instance()->isSet("r")){
+    if (CommandLineManager::instance()->isSet("r")) {
         D_THEME_INIT_WIDGET(DFileViewRoot)
     } else {
         D_THEME_INIT_WIDGET(DFileView);
@@ -143,9 +141,6 @@ DFileView::DFileView(QWidget *parent)
     initDelegate();
     initConnects();
 
-    ViewInstanceCount += 1;
-
-    d->viewId = QString("fileview%1").arg(QString::number(ViewInstanceCount));
     d->statusBar->scalingSlider()->setValue(globalSetting->iconSizeIndex());
     d->updateStatusBarTimer = new QTimer;
     d->updateStatusBarTimer->setInterval(100);
@@ -541,17 +536,6 @@ bool DFileView::isDropTarget(const QModelIndex &index) const
 
 bool DFileView::cd(const DUrl &url)
 {
-    if (url.isEmpty())
-        return false;
-
-    itemDelegate()->hideAllIIndexWidget();
-
-    clearSelection();
-
-    if (!url.isSearchFile()){
-        setFocus();
-    }
-
     return setRootUrl(url);
 }
 
@@ -703,18 +687,16 @@ QSet<QAbstractItemView::SelectionMode> DFileView::enabledSelectionModes() const
     return d->enabledSelectionModes;
 }
 
-QString DFileView::viewId() const
+QWidget *DFileView::widget() const
+{
+    return const_cast<DFileView*>(this);
+}
+
+QList<QAction *> DFileView::toolBarActionList() const
 {
     Q_D(const DFileView);
 
-    return d->viewId;
-}
-
-void DFileView::setViewId(const QString viewId)
-{
-    Q_D(DFileView);
-
-    d->viewId = viewId;
+    return d->toolbarActionGroup->actions();
 }
 
 void DFileView::setFilters(QDir::Filters filters)
@@ -889,7 +871,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             return;
         case Qt::Key_T:{
             //do not handle key press event of autoRepeat type
-            if(event->isAutoRepeat())
+            if (event->isAutoRepeat())
                 return;
 
             DUrl url;
@@ -907,9 +889,6 @@ void DFileView::keyPressEvent(QKeyEvent *event)
         }
         case Qt::Key_W:
             emit fileSignalManager->requestCloseCurrentTab(windowId());
-            return;
-        case Qt::Key_Tab:
-            emit DFileView::requestActivateNextTab();
             return;
         default: break;
         }
@@ -931,10 +910,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
 
         break;
     case Qt::ControlModifier | Qt::ShiftModifier:
-        if (event->key() == Qt::Key_Backtab){
-            emit DFileView::requestActivatePreviousTab();
-            return;
-        } if (event->key() == Qt::Key_N) {
+        if (event->key() == Qt::Key_N) {
             if (itemDelegate()->editingIndex().isValid())
                 return;
 
@@ -971,30 +947,6 @@ void DFileView::keyPressEvent(QKeyEvent *event)
         case Qt::Key_Home:
             cd(DUrl::fromLocalFile(QDir::homePath()));
 
-            return;
-        case Qt::Key_1:
-            emit requestActivateTabByIndex(0);
-            return;
-        case Qt::Key_2:
-            emit requestActivateTabByIndex(1);
-            return;
-        case Qt::Key_3:
-            emit requestActivateTabByIndex(2);
-            return;
-        case Qt::Key_4:
-            emit requestActivateTabByIndex(3);
-            return;
-        case Qt::Key_5:
-            emit requestActivateTabByIndex(4);
-            return;
-        case Qt::Key_6:
-            emit requestActivateTabByIndex(5);
-            return;
-        case Qt::Key_7:
-            emit requestActivateTabByIndex(6);
-            return;
-        case Qt::Key_8:
-            emit requestActivateTabByIndex(7);
             return;
         }
         break;
@@ -1635,6 +1587,27 @@ void DFileView::initUI()
 
     d->verticalScrollBar = verticalScrollBar();
     d->verticalScrollBar->setParent(this);
+
+    QAction *icon_view_mode_action = new QAction(this);
+    QIcon icon_view_mode_icon;
+    icon_view_mode_icon.addFile(":/icons/images/icons/icon_view_normal.png");
+    icon_view_mode_icon.addFile(":/icons/images/icons/icon_view_hover.png", QSize(), QIcon::Active);
+    icon_view_mode_icon.addFile(":/icons/images/icons/icon_view_checked.png", QSize(), QIcon::Normal, QIcon::On);
+    icon_view_mode_action->setIcon(icon_view_mode_icon);
+    icon_view_mode_action->setCheckable(true);
+    icon_view_mode_action->setChecked(true);
+
+    QAction *list_view_mode_action = new QAction(this);
+    QIcon list_view_mode_icon;
+    list_view_mode_icon.addFile(":/icons/images/icons/list_view_normal.png");
+    list_view_mode_icon.addFile(":/icons/images/icons/list_view_hover.png", QSize(), QIcon::Active);
+    list_view_mode_icon.addFile(":/icons/images/icons/list_view_checked.png", QSize(), QIcon::Normal, QIcon::On);
+    list_view_mode_action->setIcon(list_view_mode_icon);
+    list_view_mode_action->setCheckable(true);
+
+    d->toolbarActionGroup = new QActionGroup(this);
+    d->toolbarActionGroup->addAction(icon_view_mode_action);
+    d->toolbarActionGroup->addAction(list_view_mode_action);
 }
 
 void DFileView::initModel()
@@ -1680,6 +1653,15 @@ void DFileView::initConnects()
     connect(d->statusBar->scalingSlider(), &QSlider::valueChanged, this, &DFileView::viewStateChanged);
     connect(this, &DFileView::rootUrlChanged, this, &DFileView::loadViewState);
     connect(this, &DFileView::viewStateChanged, this, &DFileView::saveViewState);
+
+    connect(d->toolbarActionGroup, &QActionGroup::triggered, this, [this] {
+        Q_D(const DFileView);
+
+        if (d->toolbarActionGroup->actions().first()->isChecked())
+            setViewModeToIcon();
+        else
+            setViewModeToList();
+    });
 }
 
 void DFileView::increaseIcon()
@@ -1738,11 +1720,22 @@ bool DFileView::setRootUrl(const DUrl &url)
 {
     D_D(DFileView);
 
+    if (url.isEmpty())
+        return false;
+
+    itemDelegate()->hideAllIIndexWidget();
+
+    clearSelection();
+
+    if (!url.isSearchFile()){
+        setFocus();
+    }
+
     DUrl fileUrl = url;
 
     const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, fileUrl);
 
-    if (!info){
+    if (!info) {
         qDebug() << "This scheme isn't support";
         return false;
     }
@@ -1796,27 +1789,15 @@ bool DFileView::setRootUrl(const DUrl &url)
     if (info) {
         ViewModes modes = (ViewModes)info->supportViewMode();
 
-        DFileManagerWindow *fmWindow = qobject_cast<DFileManagerWindow*>(window());
-
         //view mode support handler
-        if (fmWindow) {
-            if (testViewMode(modes, ListMode))
-                fmWindow->getToolBar()->setListModeButtonEnabled(true);
-            else{
-                fmWindow->getToolBar()->setListModeButtonEnabled(false);
-            }
-
-            if(testViewMode(modes, IconMode))
-                fmWindow->getToolBar()->setIconModeButtonEnabled(true);
-            else
-                fmWindow->getToolBar()->setIconModeButtonEnabled(false);
-        }
+        toolBarActionList().first()->setVisible(testViewMode(modes, IconMode));
+        toolBarActionList().at(1)->setVisible(testViewMode(modes, ListMode));
     }
 
     emit rootUrlChanged(fileUrl);
 
     if (fileUrl.isSearchFile()) {
-        switchViewMode(ListMode);
+        setViewMode(ListMode);
     }
 
     const QList<DAbstractFileInfo::SelectionMode> &supportSelectionModes = info->supportSelectionModes();
@@ -1927,6 +1908,7 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
         setItemDelegate(new DIconItemDelegate(d->fileViewHelper));
         d->statusBar->scalingSlider()->show();
         itemDelegate()->setIconSizeByIconSizeLevel(d->statusBar->scalingSlider()->value());
+        d->toolbarActionGroup->actions().first()->setChecked(true);
         break;
     }
     case ListMode: {
@@ -1962,6 +1944,7 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
         setOrientation(QListView::TopToBottom, false);
         setSpacing(LIST_VIEW_SPACING);
         d->statusBar->scalingSlider()->hide();
+        d->toolbarActionGroup->actions().at(1)->setChecked(true);
         break;
     }
     case ExtendMode: {

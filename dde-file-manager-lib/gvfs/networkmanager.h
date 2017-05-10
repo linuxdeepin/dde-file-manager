@@ -79,7 +79,7 @@ public:
 signals:
 
 public slots:
-    void fetchNetworks(const DFMEvent& event);
+    void fetchNetworks(const DFMUrlBaseEvent &event);
 
 private:
 

@@ -104,7 +104,7 @@ void WindowManager::loadWindowState(DFileManagerWindow *window)
 
 void WindowManager::saveWindowState(DFileManagerWindow *window)
 {
-    m_fmStateManager->fmState()->setViewMode(window->getFileViewMode());
+//    m_fmStateManager->fmState()->setViewMode(window->getFileViewMode());
 
     /// The power by dxcb platform plugin
     NetWmStates states = (NetWmStates)window->window()->windowHandle()->property("_d_netWmStates").toInt();
@@ -203,7 +203,7 @@ quint64 WindowManager::getWindowId(const QWidget *window)
         newW = newW->parentWidget();
     }
 
-    return window->window()->winId();
+    return window->window()->internalWinId();
 }
 
 QWidget *WindowManager::getWindowById(quint64 winId)
