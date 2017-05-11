@@ -453,10 +453,8 @@ void DToolBar::setCustomActionList(const QList<QAction *> &list)
 
     m_contollerToolBar->setHidden(list.isEmpty());
 
-    if (m_contollerToolBar->isVisible()) {
-        QPainterPath path;
+    QPainterPath path;
 
-        path.addRoundedRect(QRectF(m_contollerToolBar->rect()).adjusted(0.5, 0.5, -0.5, -0.5), 4, 4);
-        m_contollerToolBarClipMask->setClipPath(path);
-    }
+    path.addRoundedRect(QRectF(QPointF(0, 0), m_contollerToolBar->sizeHint()).adjusted(0.5, 0.5, -0.5, -0.5), 4, 4);
+    m_contollerToolBarClipMask->setClipPath(path);
 }

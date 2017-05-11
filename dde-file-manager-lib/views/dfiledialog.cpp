@@ -264,9 +264,11 @@ QString DFileDialog::modelCurrentNameFilter() const
 
 QString DFileDialog::selectedNameFilter() const
 {
+    Q_D(const DFileDialog);
+
     const QComboBox *box = getFileView()->statusBar()->comboBox();
 
-    return box ? box->currentText() : QString();
+    return box ? d->nameFilters.value(box->currentIndex()) : QString();
 }
 
 void DFileDialog::selectNameFilterByIndex(int index)
