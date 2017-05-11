@@ -106,6 +106,11 @@ QString DFMViewManager::suitedViewTypeNameByUrl(const DUrl &fileUrl) const
     return QString();
 }
 
+bool DFMViewManager::isSuited(const DUrl &fileUrl, const DFMBaseView *view) const
+{
+    return suitedViewTypeNameByUrl(fileUrl) == typeid(*view).name();
+}
+
 DFMViewManager::DFMViewManager(QObject *parent)
     : QObject(parent)
     , d_ptr(new DFMViewManagerPrivate(this))

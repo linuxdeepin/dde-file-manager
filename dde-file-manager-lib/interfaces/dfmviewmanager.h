@@ -50,8 +50,7 @@ public:
 
     DFMBaseView *createViewByUrl(const DUrl &fileUrl) const;
     QString suitedViewTypeNameByUrl(const DUrl &fileUrl) const;
-    inline bool isSuited(const DUrl &fileUrl, const DFMBaseView *view) const
-    { return suitedViewTypeNameByUrl(fileUrl) == typeid(view).name();}
+    bool isSuited(const DUrl &fileUrl, const DFMBaseView *view) const;
     template <class T>
     inline bool isSuited(const DUrl &fileUrl) const
     { return suitedViewTypeNameByUrl(fileUrl) == typeid(T).name();}
