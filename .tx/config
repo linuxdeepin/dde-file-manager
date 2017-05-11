@@ -44,10 +44,3 @@ file_filter = usb-device-formatter/translations/usb-device-formatter-desktop/des
 source_file = usb-device-formatter/translations/usb-device-formatter-desktop/desktop.ts
 source_lang = en
 type = QT
-
-[deepin-file-manager.dde-zone]
-file_filter = dde-zone/translations/dde-zone_<lang>.ts
-source_file = dde-zone/translations/dde-zone.ts
-source_lang = en
-type = QT
-
