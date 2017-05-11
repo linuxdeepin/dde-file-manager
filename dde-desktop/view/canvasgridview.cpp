@@ -504,7 +504,7 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
             model()->refresh();
             return;
         case Qt::Key_Delete:
-            if (canDeleted && !selectUrlsMap.contains(rootUrl.toString())) {
+            if (canDeleted && !selectUrlsMap.contains(rootUrl.toString()) && !selectUrls.isEmpty()) {
                 DFileService::instance()->moveToTrash(this, selectUrls);
             }
             break;
@@ -514,7 +514,7 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
 
     case Qt::ShiftModifier:
         if (event->key() == Qt::Key_Delete) {
-            if (!canDeleted) {
+            if (!canDeleted || selectUrls.isEmpty()) {
                 return;
             }
 
