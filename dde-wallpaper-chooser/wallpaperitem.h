@@ -58,7 +58,6 @@ private:
     void initUI();
     void initAnimation();
     void initPixmap();
-    QPixmap thumbnailImage();
 };
 
 #endif // WALLPAPERITEM_H
