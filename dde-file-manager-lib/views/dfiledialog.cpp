@@ -206,8 +206,8 @@ QStringList qt_strip_filters(const QStringList &filters)
     const int numFilters = filters.count();
     strippedFilters.reserve(numFilters);
     for (int i = 0; i < numFilters; ++i) {
-        QString filterName;
-        int index = r.indexIn(filters[i]);
+        QString filterName = filters[i];
+        int index = r.indexIn(filterName);
         if (index >= 0)
             filterName = r.cap(1);
         strippedFilters.append(filterName.simplified());
