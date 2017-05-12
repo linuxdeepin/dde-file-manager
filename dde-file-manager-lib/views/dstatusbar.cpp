@@ -393,11 +393,8 @@ void DStatusBar::itemCounted(const DFMEvent &event, int number)
     }
 }
 
-void DStatusBar::setLoadingIncatorVisible(const DFMEvent &event, bool visible)
+void DStatusBar::setLoadingIncatorVisible(bool visible, const QString &tipText)
 {
-    if (event.windowId() != WindowManager::getWindowId(this))
-        return;
-
     m_loadingIndicator->setVisible(visible);
 
     if (visible)
@@ -407,12 +404,7 @@ void DStatusBar::setLoadingIncatorVisible(const DFMEvent &event, bool visible)
         return;
 
     if (visible) {
-        const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(this, event.fileUrl());
-
-        if (fileInfo)
-            m_label->setText(fileInfo->loadingTip());
-        else
-            m_label->setText(tr("Loading..."));
+        m_label->setText(tipText.isEmpty() ? tr("Loading...") : tipText);
     } else {
         m_label->setText(QString());
     }

@@ -56,7 +56,7 @@ public slots:
     void handdleComputerFileSizeFinished();
     void handdleComputerFolderContainsFinished();
     void itemCounted(const DFMEvent &event, int number);
-    void setLoadingIncatorVisible(const DFMEvent &event, bool visible);
+    void setLoadingIncatorVisible(bool visible, const QString &tipText = QString());
 
 protected:
     bool eventFilter(QObject *watched, QEvent *event) Q_DECL_OVERRIDE;

@@ -23,15 +23,6 @@ public:
     explicit FileSignalManager(QObject *parent = 0);
 
 signals:
-    /*change view mode*/
-    void requestChangeIconViewMode(quint64 winId);
-
-    /*change view mode*/
-    void requestChangeListViewMode(quint64 winId);
-
-    /*change view mode*/
-    void requestChangeExtendViewMode(quint64 winId);
-
     /* emit usershare status changed*/
     void userShareCountChanged(const int count);
 
@@ -164,9 +155,6 @@ signals:
 
     /* about dialog */
     void showAboutDialog(quint64 winId);
-
-    /*loading indcator show*/
-    void loadingIndicatorShowed(const DFMEvent &event, bool loading);
 
     /*request cache samba login data*/
     void requsetCacheLoginData(const QJsonObject& obj);
