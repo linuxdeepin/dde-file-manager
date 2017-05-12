@@ -37,7 +37,6 @@
 #include "widgets/singleton.h"
 #include "dfileservices.h"
 #include "controllers/appcontroller.h"
-#include "viewmanager.h"
 #include "view/viewinterface.h"
 #include "plugins/pluginmanager.h"
 #include "controllers/trashmanager.h"

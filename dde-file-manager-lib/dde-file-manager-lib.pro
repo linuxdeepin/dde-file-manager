@@ -64,7 +64,6 @@ RESOURCES += \
 
 HEADERS += \
     controllers/appcontroller.h \
-    views/dmovablemainwindow.h \
     views/dleftsidebar.h \
     views/dtoolbar.h \
     views/dfileview.h \
@@ -171,7 +170,6 @@ HEADERS += \
     plugins/pluginmanager.h \
     plugins/plugininterfaces/menu/menuinterface.h \
     interfaces/dthumbnailprovider.h \
-    views/viewmanager.h \
     views/progressline.h \
     controllers/avfsfilecontroller.h \
     models/avfsfileinfo.h \
@@ -195,7 +193,6 @@ HEADERS += \
     views/dfmactionbutton.h
 SOURCES += \
     controllers/appcontroller.cpp \
-    views/dmovablemainwindow.cpp \
     views/dleftsidebar.cpp \
     views/dtoolbar.cpp \
     views/dfileview.cpp \
@@ -294,7 +291,6 @@ SOURCES += \
     app/filesignalmanager.cpp \
     plugins/pluginmanager.cpp \
     interfaces/dthumbnailprovider.cpp \
-    views/viewmanager.cpp \
     views/progressline.cpp \
     controllers/avfsfilecontroller.cpp \
     models/avfsfileinfo.cpp \
