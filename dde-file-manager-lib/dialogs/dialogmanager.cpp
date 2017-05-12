@@ -358,6 +358,10 @@ int DialogManager::showDeleteFilesClearTrashDialog(const DFMUrlListBaseEvent &ev
     buttonTexts << tr("Cancel") << tr("Delete");
 
     DDialog d(WindowManager::getWindowById(event.windowId()));
+
+    if (!d.parentWidget())
+        d.setWindowFlags(d.windowFlags() | Qt::WindowStaysOnTopHint);
+
     QFontMetrics fm(d.font());
     d.setIcon(QIcon(":/images/dialogs/images/user-trash-full-opened.png"));
     if (urlList.first() == DUrl::fromTrashFile("/")){
