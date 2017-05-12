@@ -63,6 +63,14 @@ DFMBaseView *Tab::fileView()
     return m_fileView;
 }
 
+void Tab::setFileView(DFMBaseView *view)
+{
+    m_fileView = view;
+
+    if (view)
+        setCurrentUrl(view->rootUrl());
+}
+
 DUrl Tab::currentUrl() const
 {
     return m_url;
@@ -610,9 +618,6 @@ void TabBar::removeTab(const int index, const bool &remainState)
 
 void TabBar::setCurrentIndex(const int index)
 {
-    if (m_currentIndex == index)
-        return;
-
     if (index < 0 || index >= m_tabs.count())
         return;
 

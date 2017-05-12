@@ -91,6 +91,7 @@ void DFileManagerWindowPrivate::setCurrentView(DFMBaseView *view)
 {
     currentView = view;
     toolbar->setCustomActionList(view->toolBarActionList());
+    tabBar->currentTab()->setFileView(view);
 }
 
 DFileManagerWindow::DFileManagerWindow(QWidget *parent)
@@ -122,12 +123,13 @@ DFileManagerWindow::~DFileManagerWindow()
 
 void DFileManagerWindow::onRequestCloseTab(const int index, const bool &remainState)
 {
-
     D_D(DFileManagerWindow);
 
     Tab * tab = d->tabBar->tabAt(index);
-    if(!tab)
+
+    if (!tab)
         return;
+
     DFMBaseView *view = tab->fileView();
 
     d->viewStackLayout->removeWidget(view->widget());
@@ -294,6 +296,9 @@ bool DFileManagerWindow::cd(const DUrl &fileUrl, bool canFetchNetwork)
     }
 
     if (!d->currentView || !DFMViewManager::instance()->isSuited(fileUrl, d->currentView)) {
+        if (d->currentView)
+            d->currentView->deleteLater();
+
         DFMBaseView *view = DFMViewManager::instance()->createViewByUrl(fileUrl);
 
         if (view) {
@@ -674,6 +679,10 @@ void DFileManagerWindow::initConnect()
     connect(fileSignalManager, &FileSignalManager::trashStateChanged, this, &DFileManagerWindow::onTrashStateChanged);
     connect(fileSignalManager, &FileSignalManager::currentUrlChanged, this, &DFileManagerWindow::onTrashStateChanged);
     connect(d->tabBar, &TabBar::currentChanged, this, &DFileManagerWindow::onTrashStateChanged);
+
+    connect(this, &DFileManagerWindow::currentUrlChanged, this, [this] {
+        emit fileSignalManager->currentUrlChanged(DFMUrlBaseEvent(this, currentUrl()));
+    });
 }
 
 void DFileManagerWindow::moveCenterByRect(QRect rect)

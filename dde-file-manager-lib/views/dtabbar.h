@@ -32,6 +32,7 @@ public:
     void setTabText(QString text);
     QString tabText();
     DFMBaseView *fileView();
+    void setFileView(DFMBaseView *view);
     DUrl currentUrl() const;
     void setCurrentUrl(const DUrl& url);
 

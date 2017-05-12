@@ -712,13 +712,12 @@ void DFileView::dislpayAsActionTriggered(QAction *action)
 
     switch(type){
         case MenuAction::IconView:
-            emit fileSignalManager->requestChangeIconViewMode(windowId());
+            setViewModeToIcon();
             break;
         case MenuAction::ListView:
-            emit fileSignalManager->requestChangeListViewMode(windowId());
+            setViewModeToList();
             break;
     case MenuAction::ExtendView:
-            emit fileSignalManager->requestChangeExtendViewMode(windowId());
             break;
         default:
             break;
@@ -2221,15 +2220,23 @@ void DFileView::onModelStateChanged(int state)
     event.setWindowId(windowId());
     event.setData(rootUrl());
 
-    emit fileSignalManager->loadingIndicatorShowed(event, state == DFileSystemModel::Busy);
-
     if (state == DFileSystemModel::Busy) {
+        QString tipText;
+
+        if (const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(rootIndex())) {
+            tipText = fileInfo->loadingTip();
+        }
+
+        d->statusBar->setLoadingIncatorVisible(state == DFileSystemModel::Busy, tipText);
+
         setContentLabel(QString());
 
         if (d->headerView) {
             d->headerView->setAttribute(Qt::WA_TransparentForMouseEvents);
         }
     } else if (state == DFileSystemModel::Idle) {
+        d->statusBar->setLoadingIncatorVisible(state == DFileSystemModel::Busy);
+
         if (!d->preSelectionUrls.isEmpty()) {
             const QModelIndex &index = model()->index(d->preSelectionUrls.first());
 

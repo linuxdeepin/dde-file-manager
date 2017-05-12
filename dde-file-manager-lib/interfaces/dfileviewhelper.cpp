@@ -45,7 +45,6 @@ public:
 
     QByteArray keyboardSearchKeys;
     QTimer keyboardSearchTimer;
-    bool isActive = true;
 
     DFileViewHelper *q_ptr;
 
@@ -132,7 +131,7 @@ void DFileViewHelperPrivate::_q_edit(const DFMUrlBaseEvent &event)
 
     const QModelIndex &index = q->model()->index(fileUrl);
 
-    if (isActive)
+    if (q->parent()->isVisible())
         q->parent()->edit(index, QAbstractItemView::EditKeyPressed, 0);
 }
 
@@ -434,13 +433,6 @@ bool DFileViewHelper::isEmptyArea(const QPoint &pos) const
     return true;
 }
 
-bool DFileViewHelper::isActive() const
-{
-    Q_D(const DFileViewHelper);
-
-    return d->isActive;
-}
-
 void DFileViewHelper::handleCommitData(QWidget *editor) const
 {
     if (!editor)
@@ -484,17 +476,6 @@ void DFileViewHelper::handleCommitData(QWidget *editor) const
     } else {
         fileService->renameFile(this, old_url, new_url);
     }
-}
-
-void DFileViewHelper::setIsActive(bool isActive)
-{
-    Q_D(DFileViewHelper);
-
-    if (d->isActive == isActive)
-        return;
-
-    d->isActive = isActive;
-    emit isActiveChanged(isActive);
 }
 
 #include "moc_dfileviewhelper.cpp"
