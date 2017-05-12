@@ -21,7 +21,6 @@
 #include "controllers/avfsfilecontroller.h"
 
 #include "dfilemanagerwindow.h"
-#include "viewmanager.h"
 #include "view/viewinterface.h"
 #include "plugins/pluginmanager.h"
 
