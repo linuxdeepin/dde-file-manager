@@ -18,12 +18,13 @@ signals:
 
 public slots:
 protected:
-    void closeEvent(QCloseEvent *e);
+
 private:
     QString getComputerName();
     QString getVersion();
     QString getArch();
     QString getProcessor();
+    QString getSWProcessorHZ();
     QString getMemory();
     QString getDisk();
 };

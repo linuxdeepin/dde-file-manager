@@ -28,6 +28,10 @@ unix {
         DEFINES += DISABLE_COMPRESS_PREIVEW
     }
 
+    isEqual(ARCH, sw_64){
+        DEFINES += SW_CPUINFO
+    }
+
     isEmpty(LIB_INSTALL_DIR) {
         PLUGINDIR = $$[QT_INSTALL_LIBS]/$$ProjectName/plugins
     } else {
