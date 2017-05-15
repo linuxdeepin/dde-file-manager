@@ -19,7 +19,7 @@
 #include "qobjecthelper.h"
 #include "dfmsetting.h"
 
-#include "widgets/singleton.h"
+#include "singleton.h"
 
 #include <QThread>
 #include <QDebug>

@@ -5,7 +5,7 @@
 
 #include "interfaces/dfmstandardpaths.h"
 
-#include "widgets/singleton.h"
+#include "singleton.h"
 #include "shutil/fileutils.h"
 
 #include <QDebug>

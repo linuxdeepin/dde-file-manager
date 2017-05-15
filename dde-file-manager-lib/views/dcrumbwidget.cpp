@@ -17,7 +17,7 @@
 #include "deviceinfo/udiskdeviceinfo.h"
 #include "deviceinfo/udisklistener.h"
 
-#include "widgets/singleton.h"
+#include "singleton.h"
 #include "controllers/avfsfilecontroller.h"
 
 #include "dfilemanagerwindow.h"

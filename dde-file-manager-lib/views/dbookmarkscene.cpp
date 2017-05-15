@@ -14,7 +14,7 @@
 #include "app/filesignalmanager.h"
 #include "deviceinfo/udisklistener.h"
 
-#include "widgets/singleton.h"
+#include "singleton.h"
 
 #include <QDebug>
 #include <QGraphicsView>

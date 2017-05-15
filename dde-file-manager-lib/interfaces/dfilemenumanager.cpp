@@ -9,7 +9,7 @@
 #include "models/desktopfileinfo.h"
 #include "shutil/mimetypedisplaymanager.h"
 
-#include "widgets/singleton.h"
+#include "singleton.h"
 #include "views/windowmanager.h"
 #include "shutil/fileutils.h"
 #include "shutil/mimesappsmanager.h"

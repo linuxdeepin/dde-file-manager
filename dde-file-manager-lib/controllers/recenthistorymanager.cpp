@@ -7,7 +7,7 @@
 #include "models/recentfileinfo.h"
 #include "shutil/fileutils.h"
 
-#include "widgets/singleton.h"
+#include "singleton.h"
 
 #include <QDirIterator>
 #include <QJsonObject>

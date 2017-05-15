@@ -27,13 +27,12 @@
 #include "interfaces/dfmsetting.h"
 #include "gvfs/networkmanager.h"
 #include "dde-file-manager/singleapplication.h"
-#include "widgets/commandlinemanager.h"
 #include "shutil/viewstatesmanager.h"
 
 #include "xutil.h"
 #include "utils.h"
 
-#include "widgets/singleton.h"
+#include "singleton.h"
 #include "dfileservices.h"
 #include "controllers/appcontroller.h"
 #include "viewmanager.h"
@@ -583,9 +582,9 @@ void DFileManagerWindow::initUI()
     initCentralWidget();
     setCentralWidget(d->centralWidget);
 
-    if (CommandLineManager::instance()->isSet("r")){
+    if (DFMGlobal::isRootUser()) {
         setStyleSheet(getQssFromFile(":/qss/qss/filemanageradmin.qss"));
-    } else{
+    } else {
         setStyleSheet(getQssFromFile(":/qss/qss/filemanager.qss"));
     }
 

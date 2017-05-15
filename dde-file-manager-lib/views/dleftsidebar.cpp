@@ -13,7 +13,7 @@
 
 #include "deviceinfo/udisklistener.h"
 
-#include "widgets/singleton.h"
+#include "singleton.h"
 
 #include "dhoverbutton.h"
 #include "dbookmarkitem.h"
@@ -331,7 +331,7 @@ void DLeftSideBar::loadBookmark()
 
 void DLeftSideBar::addNetworkBookmarkItem()
 {
-    if (DFMGlobal::isStartedByPkexec()){
+    if (DFMGlobal::isRootUser()){
         m_scene->addSeparator();
         return;
     };

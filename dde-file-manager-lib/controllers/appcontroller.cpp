@@ -31,7 +31,7 @@
 #include "gvfs/secretmanager.h"
 #include "usershare/usersharemanager.h"
 #include "dialogs/dialogmanager.h"
-#include "widgets/singleton.h"
+#include "singleton.h"
 
 #include "../deviceinfo/udisklistener.h"
 

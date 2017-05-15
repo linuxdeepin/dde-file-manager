@@ -17,7 +17,7 @@
 #include "dabstractfileinfo.h"
 #include "dfilesystemmodel.h"
 #include "views/fileitem.h"
-#include "widgets/singleton.h"
+#include "singleton.h"
 #include "dfileservices.h"
 
 #include <QTimer>

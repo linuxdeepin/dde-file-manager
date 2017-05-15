@@ -26,7 +26,7 @@
 
 #include "utils.h"
 
-#include "widgets/singleton.h"
+#include "singleton.h"
 #include <QVBoxLayout>
 #include "../chinese2pinyin/chinese2pinyin.h"
 

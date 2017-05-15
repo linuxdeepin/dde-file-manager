@@ -3,7 +3,7 @@
 #include "app/filesignalmanager.h"
 #include "app/define.h"
 
-#include "widgets/singleton.h"
+#include "singleton.h"
 #include "deviceinfo/udisklistener.h"
 
 #include <QProcess>

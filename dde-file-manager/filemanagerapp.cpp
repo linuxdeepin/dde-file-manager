@@ -17,8 +17,8 @@
 #include "gvfs/gvfsmountmanager.h"
 #include "interfaces/dfileinfo.h"
 
-#include "widgets/singleton.h"
-#include "widgets/commandlinemanager.h"
+#include "singleton.h"
+#include "commandlinemanager.h"
 #include "interfaces/durl.h"
 #include "plugins/pluginmanager.h"
 #include "interfaces/dfmstandardpaths.h"

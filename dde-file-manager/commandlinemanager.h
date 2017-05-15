@@ -5,41 +5,38 @@
 #include <QJsonObject>
 #include <QMap>
 #include <QList>
+
+QT_BEGIN_NAMESPACE
 class QCommandLineParser;
 class QCoreApplication;
+QT_END_NAMESPACE
+
+class DUrl;
 
 class CommandLineManager
 {
-
 public:
+    static CommandLineManager* instance();
 
-    static CommandLineManager* instance(){
-        static CommandLineManager instance;
-        return &instance;
-    }
-
-    void initOptions();
-
-    void parserOptions();
-    bool isNameExisted(const QString& name) const;
     bool isSet(const QString& name) const;
     QString value(const QString& name) const;
-    QString description(const QString& name) const;
+
     void process();
+    void process(const QStringList &arguments);
 
     void addOption(const QCommandLineOption& option);
     void addOptions(const QList<QCommandLineOption> & options);
     QStringList positionalArguments() const;
     QStringList unknownOptionNames() const;
 
+    void processCommand();
+
 private:
     explicit CommandLineManager();
-   ~CommandLineManager();
-   CommandLineManager(const CommandLineManager &);
-   CommandLineManager & operator = (const CommandLineManager &);
+    void initOptions();
+
+    ~CommandLineManager();
     QCommandLineParser* m_commandParser;
-    QList<QCommandLineOption> m_options;
-    QMap<QString, QJsonObject> m_objs;
 };
 
 #endif // COMMANDLINEMANAGER_H

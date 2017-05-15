@@ -3,7 +3,7 @@
 
 #include "app/define.h"
 
-#include "widgets/singleton.h"
+#include "singleton.h"
 #include "desktopfile.h"
 #include "interfaces/dfmstandardpaths.h"
 #include "interfaces/dfmglobal.h"

@@ -1,7 +1,7 @@
 #include "usersharepasswordsettingdialog.h"
 #include "../dbusinterface/usershare_interface.h"
 #include "../app/define.h"
-#include "widgets/singleton.h"
+#include "singleton.h"
 #include "usershare/usersharemanager.h"
 #include <QDebug>
 #include <QProcess>

@@ -13,7 +13,7 @@
 
 #include "app/define.h"
 
-#include "widgets/singleton.h"
+#include "singleton.h"
 #include "plugins/pluginmanager.h"
 #include "dde-file-manager-plugins/plugininterfaces/menu/menuinterface.h"
 
