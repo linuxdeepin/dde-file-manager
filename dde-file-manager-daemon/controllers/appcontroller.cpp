@@ -20,10 +20,10 @@ AppController::~AppController()
 
 void AppController::initControllers()
 {
-    m_fileOperationController = new FileOperation(DaemonServicePath, this);
+//    m_fileOperationController = new FileOperation(DaemonServicePath, this);
     m_userShareManager = new UserShareManager(this);
     m_usbFormatter = new UsbFormatter(this);
-    m_commandManager = new CommandManager(this);
+//    m_commandManager = new CommandManager(this);
     m_deviceInfoManager = new DeviceInfoManager(this);
 }
 
