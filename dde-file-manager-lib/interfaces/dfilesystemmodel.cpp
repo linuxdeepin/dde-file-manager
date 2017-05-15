@@ -7,7 +7,7 @@
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
-#include "widgets/singleton.h"
+#include "singleton.h"
 
 #include "controllers/jobcontroller.h"
 #include "controllers/appcontroller.h"

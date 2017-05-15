@@ -4,7 +4,7 @@
 
 #include "deviceinfo/udisklistener.h"
 
-#include "widgets/singleton.h"
+#include "singleton.h"
 #include "app/filesignalmanager.h"
 #include "dfmevent.h"
 #include "windowmanager.h"

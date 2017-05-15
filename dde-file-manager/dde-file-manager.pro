@@ -50,7 +50,8 @@ SOURCES += \
     main.cpp \
     filemanagerapp.cpp \
     logutil.cpp \
-    singleapplication.cpp
+    singleapplication.cpp \
+    commandlinemanager.cpp
 
 INCLUDEPATH += $$PWD/../dde-file-manager-lib $$PWD/.. \
                $$PWD/../utils \
@@ -111,7 +112,8 @@ CONFIG(debug, debug|release) {
 HEADERS += \
     filemanagerapp.h \
     logutil.h \
-    singleapplication.h
+    singleapplication.h \
+    commandlinemanager.h
 
 DISTFILES += \
     mips/dde-file-manager-autostart.desktop \

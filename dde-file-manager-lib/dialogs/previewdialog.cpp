@@ -11,7 +11,7 @@
 #include <QGraphicsBlurEffect>
 
 #include "dfileservices.h"
-#include "widgets/singleton.h"
+#include "singleton.h"
 #include "app/define.h"
 #include "dfileinfo.h"
 #include "shutil/fileutils.h"

@@ -15,9 +15,8 @@
 #include "dabstractfileinfo.h"
 #include "interfaces/dfmstandardpaths.h"
 #include "gvfs/gvfsmountmanager.h"
-#include "widgets/singleton.h"
+#include "singleton.h"
 #include "../shutil/fileutils.h"
-#include "widgets/commandlinemanager.h"
 #include "dfmsetting.h"
 #include "shutil/viewstatesmanager.h"
 
@@ -413,7 +412,7 @@ void ComputerView::initUI()
     const int number = m_systemItems.count() + m_nativeItems.count() + m_removableItems.count();
     m_statusBar->itemCounted(event, number);
 
-    if(CommandLineManager::instance()->isSet("r")){
+    if (DFMGlobal::isRootUser()) {
         m_contentArea->setStyleSheet("QScrollArea{"
                                         "background: #f9f9fa;"
                                      "}");

@@ -9,7 +9,7 @@
 #include "interfaces/dfileservices.h"
 #include "interfaces/dfmstandardpaths.h"
 
-#include "widgets/singleton.h"
+#include "singleton.h"
 
 #include <QSettings>
 #include <QLocale>

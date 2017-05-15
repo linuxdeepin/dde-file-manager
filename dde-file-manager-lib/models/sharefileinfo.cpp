@@ -11,7 +11,7 @@
 #include "private/dabstractfileinfo_p.h"
 #include "usershare/usersharemanager.h"
 #include "dfileservices.h"
-#include "widgets/singleton.h"
+#include "singleton.h"
 
 #include "controllers/trashmanager.h"
 #include "dfileservices.h"
@@ -20,7 +20,7 @@
 #include "app/define.h"
 #include "interfaces/dfmstandardpaths.h"
 #include "dfilesystemmodel.h"
-#include "widgets/singleton.h"
+#include "singleton.h"
 
 #include <QMimeType>
 #include <QSettings>

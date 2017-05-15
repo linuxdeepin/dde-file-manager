@@ -25,7 +25,7 @@
 
 #include "deviceinfo/udisklistener.h"
 #include "interfaces/dfmglobal.h"
-#include "widgets/singleton.h"
+#include "singleton.h"
 
 #include <ddialog.h>
 

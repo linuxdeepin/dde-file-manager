@@ -18,7 +18,7 @@
 
 #include "utils.h"
 
-#include "widgets/singleton.h"
+#include "singleton.h"
 
 #include "shareinfoframe.h"
 #include "views/dfilemanagerwindow.h"

@@ -3,7 +3,7 @@
 #include "qvolume.h"
 #include "qmount.h"
 #include "qdiskinfo.h"
-#include "widgets/singleton.h"
+#include "singleton.h"
 #include "../app/define.h"
 #include "../partman/partition.h"
 #include "../partman/readusagemanager.h"
@@ -43,7 +43,7 @@ GvfsMountManager::GvfsMountManager(QObject *parent) : QObject(parent)
 
 void GvfsMountManager::initConnect()
 {
-    if (DFMGlobal::isStartedByPkexec()){
+    if (DFMGlobal::isRootUser()){
         g_signal_connect (m_gVolumeMonitor, "mount-added", (GCallback)&GvfsMountManager::monitor_mount_added_root, NULL);
         g_signal_connect (m_gVolumeMonitor, "mount-removed", (GCallback)&GvfsMountManager::monitor_mount_removed_root, NULL);
     }else{
@@ -680,7 +680,7 @@ bool GvfsMountManager::isIgnoreUnusedMounts(const QMount &mount)
 
 void GvfsMountManager::startMonitor()
 {
-    if (DFMGlobal::isStartedByPkexec()){
+    if (DFMGlobal::isRootUser()){
         listMountsBylsblk();
     }else{
         listDrives();

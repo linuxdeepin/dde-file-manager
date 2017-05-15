@@ -7,7 +7,7 @@
 
 #include "views/windowmanager.h"
 
-#include "widgets/singleton.h"
+#include "singleton.h"
 
 #include <QDebug>
 #include <QTimer>

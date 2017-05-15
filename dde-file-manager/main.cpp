@@ -11,16 +11,15 @@
 #include "app/define.h"
 #include "app/filesignalmanager.h"
 
-#include "widgets/commandlinemanager.h"
+#include "commandlinemanager.h"
 
 #include "dialogs/dialogmanager.h"
 #include "shutil/fileutils.h"
 #include "shutil/mimesappsmanager.h"
 #include "dialogs/openwithdialog.h"
 #include "controllers/appcontroller.h"
-#include "widgets/singleton.h"
+#include "singleton.h"
 #include "gvfs/gvfsmountmanager.h"
-#include "dfmsetting.h"
 
 // DBus
 #include "filedialogmanager_adaptor.h"
@@ -150,69 +149,22 @@ int main(int argc, char *argv[])
         return app.exec();
     }
 
-    DUrlList commandlineUrlList;
-    foreach (QString path, CommandLineManager::instance()->positionalArguments()) {
-        DUrl url = DUrl::fromUserInput(path);
-
-        if (CommandLineManager::instance()->isSet("show-item")) {
-            const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(Q_NULLPTR, url);
-            if (!fileInfo)
-                continue;
-
-            DUrl newUrl = fileInfo->parentUrl();
-
-            newUrl.setQuery("selectUrl=" + url.toString());
-            url = newUrl;
-        }
-
-        commandlineUrlList << url;
-    }
-
-    if (commandlineUrlList.isEmpty()){
-        commandlineUrlList << DUrl::fromUserInput(globalSetting->defaultWindowPath());
-    }
-
     QString uniqueKey = app.applicationName();
 
     bool isSingleInstance  = app.setSingleInstance(uniqueKey);
-    bool isBackendRun = CommandLineManager::instance()->isSet("d");
-    bool isShowPropertyRequest = CommandLineManager::instance()->isSet("p");
 
-    qDebug() << isSingleInstance << commandlineUrlList;
-
-    if (isSingleInstance){
-        DFMGlobal::installTranslator();
-        DThemeManager::instance()->setTheme("light");
-
-        if (CommandLineManager::instance()->isSet("e")) {
-            // init
+    if (isSingleInstance) {
+        if (CommandLineManager::instance()->isSet("d")) {
             fileManagerApp;
-            const QSharedPointer<DFMEvent> &event = DFMEvent::fromJson(QJsonDocument::fromJson(CommandLineManager::instance()->positionalArguments().first().toLocal8Bit().constData()).object());
-
-            if (event)
-                DFMEventDispatcher::instance()->processEvent(event);
-
-            return 0;
+#ifdef AUTO_RESTART_DEAMON
+            QWidget w;
+            w.setWindowFlags(Qt::FramelessWindowHint);
+            w.setAttribute(Qt::WA_TranslucentBackground);
+            w.resize(0, 0);
+            w.show();
+#endif
         } else {
-            if (!isBackendRun && !isShowPropertyRequest){
-                foreach (DUrl url, commandlineUrlList) {
-                    fileManagerApp->show(url);
-                }
-            }else{
-                fileManagerApp;
-    #ifdef AUTO_RESTART_DEAMON
-                QWidget w;
-                w.setWindowFlags(Qt::FramelessWindowHint);
-                w.setAttribute(Qt::WA_TranslucentBackground);
-                w.resize(0, 0);
-                w.show();
-    #endif
-            }
-
-            if(isShowPropertyRequest){
-                QStringList paths = CommandLineManager::instance()->positionalArguments();
-                fileManagerApp->showPropertyDialog(paths);
-            }
+            CommandLineManager::instance()->processCommand();
         }
 
         FileUtils::setDefaultFileManager();
@@ -230,17 +182,22 @@ int main(int argc, char *argv[])
 #endif
         return ret;
 #endif
-    }else{
-        if (isBackendRun){
-            return 0;
-        }
-        SingleApplication::newClientProcess(uniqueKey, commandlineUrlList);
+    } else {
+        QByteArray data;
+
+        for (const QString &arg : app.arguments())
+            data.append(arg.toLocal8Bit()).append('\0');
+
+        if (!data.isEmpty())
+            data.chop(1);
+
+        SingleApplication::newClientProcess(uniqueKey, data);
         QWidget w;
         w.setWindowFlags(Qt::FramelessWindowHint);
         w.setAttribute(Qt::WA_TranslucentBackground);
         w.resize(1, 1);
         w.show();
 
-        return 1;
+        return 0;
     }
 }

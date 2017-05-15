@@ -43,7 +43,6 @@ DEFINES += QT_MESSAGELOGCONTEXT
 
 LIBS += -lmagic -lffmpegthumbnailer
 
-include(../widgets/widgets.pri)
 include(../dialogs/dialogs.pri)
 include(../utils/utils.pri)
 include(../chinese2pinyin/chinese2pinyin.pri)

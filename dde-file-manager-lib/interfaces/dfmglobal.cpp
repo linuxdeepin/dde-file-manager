@@ -2,7 +2,7 @@
 #include "chinese2pinyin.h"
 #include "dfmstandardpaths.h"
 #include "dfileservices.h"
-#include "widgets/singleton.h"
+#include "singleton.h"
 #include "dialogs/dialogmanager.h"
 #include "app/define.h"
 #include "plugins/pluginmanager.h"
@@ -19,7 +19,6 @@
 #include "controllers/appcontroller.h"
 #include "../deviceinfo/udisklistener.h"
 #include "../usershare/usersharemanager.h"
-#include "widgets/commandlinemanager.h"
 #include "dfmsetting.h"
 #include "models/desktopfileinfo.h"
 #include "shutil/viewstatesmanager.h"
@@ -66,14 +65,11 @@ void onClipboardDataChanged()
 }
 
 class DFMGlobalPrivate : public DFMGlobal {};
-Q_GLOBAL_STATIC(DFMGlobalPrivate, dfmGlobal);
+Q_GLOBAL_STATIC(DFMGlobalPrivate, dfmGlobal)
 }
-
 
 QStringList DFMGlobal::PluginLibraryPaths;
 QStringList DFMGlobal::MenuExtensionPaths;
-QString DFMGlobal::USER = "";
-int DFMGlobal::USERID = -1;
 bool DFMGlobal::IsFileManagerDiloagProcess = false;
 
 DFMGlobal *DFMGlobal::instance()
@@ -288,27 +284,19 @@ void DFMGlobal::initViewStatesManager()
 
 QString DFMGlobal::getUser()
 {
-    if (USER.isEmpty()){
-        USER = getenv("USER");
-    }
-    return USER;
+    static QString user = QString::fromLocal8Bit(qgetenv("USER"));
+
+    return user;
 }
 
 int DFMGlobal::getUserId()
 {
-    if (USERID == -1){
-        QProcess userID;
-        userID.start("id", QStringList() << "-u");
-        userID.waitForFinished();
-        QByteArray id = userID.readAll();
-        USERID = QString(id).trimmed().toInt();
-    }
-    return USERID;
+    return getuid();
 }
 
-bool DFMGlobal::isStartedByPkexec()
+bool DFMGlobal::isRootUser()
 {
-    return CommandLineManager::instance()->isSet("r");
+    return getUserId() == 0;
 }
 
 QList<QUrl> DFMGlobal::clipboardFileUrlList() const
