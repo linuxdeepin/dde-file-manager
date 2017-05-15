@@ -9,7 +9,7 @@
 
 #include "dfileservices.h"
 
-#include "widgets/singleton.h"
+#include "singleton.h"
 #include <QComboBox>
 #include <dtextbutton.h>
 #include <dlineedit.h>

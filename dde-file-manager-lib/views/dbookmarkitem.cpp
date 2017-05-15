@@ -32,7 +32,7 @@
 #include "dfileservices.h"
 
 #include "dialogs/dialogmanager.h"
-#include "widgets/singleton.h"
+#include "singleton.h"
 
 #include "plugins/pluginmanager.h"
 #include "view/viewinterface.h"
@@ -609,7 +609,7 @@ void DBookmarkItem::updateMountIndicator()
     qDebug() << m_isMounted << m_mountBookmarkItem;
     if (m_isMounted && m_mountBookmarkItem){
         m_mountBookmarkItem->show();
-        if(DFMGlobal::isStartedByPkexec()){
+        if(DFMGlobal::isRootUser()){
             m_mountBookmarkItem->setEnabled(false);
         }
     }else{

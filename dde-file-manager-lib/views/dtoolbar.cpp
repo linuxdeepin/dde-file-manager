@@ -17,7 +17,7 @@
 
 #include "dfilemenumanager.h"
 
-#include "widgets/singleton.h"
+#include "singleton.h"
 #include "views/dfileview.h"
 #include "views/dfilemanagerwindow.h"
 #include "views/dfmactionbutton.h"

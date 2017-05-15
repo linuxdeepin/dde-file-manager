@@ -4,7 +4,7 @@
 #include "shutil/fileutils.h"
 #include "interfaces/dfmsetting.h"
 #include "app/define.h"
-#include "../widgets/singleton.h"
+#include "singleton.h"
 #include "shutil/mimetypedisplaymanager.h"
 #include "fileoperations/filejob.h"
 

@@ -3,7 +3,7 @@
 #include "views/windowmanager.h"
 
 #include "app/define.h"
-#include "widgets/singleton.h"
+#include "singleton.h"
 #include "mimetypedisplaymanager.h"
 #include "dfmstandardpaths.h"
 #include "dfileservices.h"

@@ -14,7 +14,7 @@
 
 #include "dialogs/dialogmanager.h"
 
-#include "widgets/singleton.h"
+#include "singleton.h"
 #include "interfaces/dfmglobal.h"
 
 #include "appcontroller.h"

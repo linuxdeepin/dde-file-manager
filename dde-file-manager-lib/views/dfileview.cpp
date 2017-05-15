@@ -11,7 +11,6 @@
 #include "dfmeventdispatcher.h"
 #include "app/define.h"
 #include "app/filesignalmanager.h"
-#include "widgets/commandlinemanager.h"
 
 #include "interfaces/dfmglobal.h"
 #include "interfaces/diconitemdelegate.h"
@@ -33,7 +32,7 @@
 #include "shutil/mimesappsmanager.h"
 #include "shutil/viewstatesmanager.h"
 
-#include "widgets/singleton.h"
+#include "singleton.h"
 #include "interfaces/dfilemenumanager.h"
 #include <dthememanager.h>
 #include <anchors.h>
@@ -124,7 +123,7 @@ DFileView::DFileView(QWidget *parent)
     : DListView(parent)
     , d_ptr(new DFileViewPrivate(this))
 {
-    if (CommandLineManager::instance()->isSet("r")) {
+    if (DFMGlobal::isRootUser()) {
         D_THEME_INIT_WIDGET(DFileViewRoot)
     } else {
         D_THEME_INIT_WIDGET(DFileView);
@@ -1578,7 +1577,7 @@ void DFileView::initUI()
 
     addFooterWidget(d->statusBar);
 
-    if(CommandLineManager::instance()->isSet("r")){
+    if (DFMGlobal::isRootUser()) {
         d->statusBar->setStyleSheet("DStatusBar{"
                                        "background: #f9f9fa;"
                                     "}");

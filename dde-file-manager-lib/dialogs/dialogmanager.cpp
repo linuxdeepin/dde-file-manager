@@ -38,7 +38,7 @@
 #include "deviceinfo/udisklistener.h"
 #include "deviceinfo/udiskdeviceinfo.h"
 
-#include "widgets/singleton.h"
+#include "singleton.h"
 
 #include <ddialog.h>
 #include <DAboutDialog>

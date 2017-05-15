@@ -14,7 +14,7 @@
 #include "dfilesystemwatcher.h"
 
 #include "app/define.h"
-#include "widgets/singleton.h"
+#include "singleton.h"
 #include "usershare/usersharemanager.h"
 
 #include <QDir>

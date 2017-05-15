@@ -2,7 +2,7 @@
 #include "propertydialog.h"
 #include "usershare/shareinfo.h"
 #include "usershare/usersharemanager.h"
-#include "widgets/singleton.h"
+#include "singleton.h"
 #include "app/define.h"
 #include "dfileservices.h"
 

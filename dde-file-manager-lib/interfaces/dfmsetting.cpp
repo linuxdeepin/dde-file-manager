@@ -7,7 +7,7 @@
 #include "dfmstandardpaths.h"
 #include <qsettingbackend.h>
 #include <settings.h>
-#include "../widgets/singleton.h"
+#include "singleton.h"
 #include "app/filesignalmanager.h"
 #include "interfaces/dfileservices.h"
 #include "interfaces/dabstractfilewatcher.h"

@@ -5,7 +5,7 @@
 #include "utils.h"
 #include "durl.h"
 #include "udisklistener.h"
-#include "../widgets/singleton.h"
+#include "singleton.h"
 
 #include <unistd.h>
 
@@ -312,7 +312,7 @@ QSet<MenuAction> UDiskDeviceInfo::disableMenuActionList() const
 {
     QSet<MenuAction> actionKeys = DAbstractFileInfo::disableMenuActionList();
 
-    if(DFMGlobal::isStartedByPkexec()){
+    if(DFMGlobal::isRootUser()){
         actionKeys << MenuAction::Unmount;
     }
 

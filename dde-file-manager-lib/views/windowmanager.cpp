@@ -20,7 +20,7 @@
 #include "qobjecthelper.h"
 #include "dfmsetting.h"
 
-#include "widgets/singleton.h"
+#include "singleton.h"
 
 #include "shutil/fileutils.h"
 

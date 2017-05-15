@@ -3,7 +3,7 @@
 #include "dfmstandardpaths.h"
 #include "filedialog_adaptor.h"
 #include "app/define.h"
-#include "widgets/singleton.h"
+#include "singleton.h"
 #include "interfaces/dfmsetting.h"
 #include "interfaces/dfmstandardpaths.h"
 

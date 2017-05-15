@@ -8,7 +8,7 @@
 #include "app/define.h"
 #include "interfaces/dfmstandardpaths.h"
 #include "dfilesystemmodel.h"
-#include "widgets/singleton.h"
+#include "singleton.h"
 #include "fileoperations/filejob.h"
 #include "dialogs/dialogmanager.h"
 

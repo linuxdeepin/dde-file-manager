@@ -14,7 +14,7 @@
 #include "app/filesignalmanager.h"
 #include "controllers/appcontroller.h"
 #include "dfilesystemmodel.h"
-#include "widgets/singleton.h"
+#include "singleton.h"
 #include "usershare/usersharemanager.h"
 
 FileViewHelper::FileViewHelper(DFileView *parent)

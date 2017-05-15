@@ -6,7 +6,7 @@
 
 #include "app/define.h"
 
-#include "widgets/singleton.h"
+#include "singleton.h"
 
 #include <QListWidget>
 #include <QListWidgetItem>

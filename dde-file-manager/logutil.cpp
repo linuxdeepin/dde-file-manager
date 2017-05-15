@@ -1,5 +1,5 @@
 #include "logutil.h"
-#include "widgets/commandlinemanager.h"
+#include "commandlinemanager.h"
 #include <DLog>
 
 DUTIL_USE_NAMESPACE

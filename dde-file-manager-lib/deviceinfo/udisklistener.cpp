@@ -7,7 +7,7 @@
 #include "app/filesignalmanager.h"
 
 #include "controllers/subscriber.h"
-#include "widgets/singleton.h"
+#include "singleton.h"
 
 #include "gvfs/gvfsmountmanager.h"
 
@@ -55,7 +55,7 @@ void UDiskListener::update()
 {
     QStringList keys;
 
-    if (DFMGlobal::isStartedByPkexec()){
+    if (DFMGlobal::isRootUser()){
         keys.append(GvfsMountManager::Lsblk_Keys);
     }else{
         keys.append(GvfsMountManager::Volumes_Drive_Keys);

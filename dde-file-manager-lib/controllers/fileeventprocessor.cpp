@@ -16,7 +16,7 @@
 #include "views/windowmanager.h"
 #include "views/dfilemanagerwindow.h"
 #include "shutil/fileutils.h"
-#include "widgets/singleton.h"
+#include "singleton.h"
 #include "dfmsetting.h"
 #include "app/define.h"
 

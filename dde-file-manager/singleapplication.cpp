@@ -4,8 +4,8 @@
 #include "durl.h"
 #include "dfmeventdispatcher.h"
 
-#include "widgets/commandlinemanager.h"
-#include "widgets/singleton.h"
+#include "commandlinemanager.h"
+#include "singleton.h"
 #include "filemanagerapp.h"
 #include "dfmevent.h"
 #include "interfaces/dfileservices.h"
@@ -46,51 +46,16 @@ void SingleApplication::initSources()
     Q_INIT_RESOURCE(dui_theme_light);
 }
 
-void SingleApplication::newClientProcess(const QString &key, const DUrlList& urllist)
+void SingleApplication::newClientProcess(const QString &key, const QByteArray &message)
 {
     qDebug() << "The dde-file-manager is running!";
     QLocalSocket *localSocket = new QLocalSocket;
     localSocket->connectToServer(userServerName(key));
     if (localSocket->waitForConnected(1000)){
         if (localSocket->state() == QLocalSocket::ConnectedState){
-            if (localSocket->isValid()){
-                if (CommandLineManager::instance()->isSet("e")) {
-                    localSocket->write(CommandLineManager::instance()->positionalArguments().first().toLocal8Bit().constData());
-                    localSocket->flush();
-                } else {
-                    qDebug() << "start write";
-                    bool isNewWindow = false;
-                    bool isShowPropertyDialogRequest = false;
-
-                    //Prehandle for none url arguments command on requesting opening new window
-                    QStringList paths;
-
-                    foreach (DUrl url, urllist) {
-                        paths << url.toString();
-                    }
-
-                    if (paths.size() > 0){
-                        isShowPropertyDialogRequest = CommandLineManager::instance()->isSet("p");
-                    }else{
-                        paths << QDir::homePath();
-                    }
-
-                    isNewWindow = CommandLineManager::instance()->isSet("n");
-
-                    QJsonArray jsPaths;
-                    foreach (QString path, paths) {
-                        jsPaths.append(QJsonValue(path));
-                    }
-
-                    QJsonObject message;
-                    message.insert("isNewWindow", isNewWindow);
-                    message.insert("isShowPropertyDialogRequest",isShowPropertyDialogRequest);
-                    message.insert("paths",jsPaths);
-
-                    QJsonDocument  obj(message);
-                    localSocket->write(obj.toJson().data());
-                    localSocket->flush();
-                }
+            if (localSocket->isValid()) {
+                localSocket->write(message);
+                localSocket->flush();
             }
         }
     }else{
@@ -107,7 +72,7 @@ QString SingleApplication::userServerName(const QString &key)
     }else{
         userKey = QString("%1/%2").arg(getenv("XDG_RUNTIME_DIR"), key);
     }
-    qDebug() << userKey;
+
     return userKey;
 }
 
@@ -118,12 +83,7 @@ QString SingleApplication::userId()
 
 QString SingleApplication::getUserID()
 {
-    QProcess userID;
-    userID.start("id", QStringList() << "-u");
-    userID.waitForFinished();
-    QByteArray id = userID.readAll();
-    UserID = QString(id).trimmed();
-    return UserID;
+    return QString::number(DFMGlobal::getUserId());
 }
 
 bool SingleApplication::setSingleInstance(const QString &key)
@@ -160,57 +120,13 @@ void SingleApplication::readData()
     if (!socket)
         return;
 
-    QJsonParseError error;
-    QJsonObject messageObj = QJsonDocument::fromJson(socket->readAll(), &error).object();
+    QStringList arguments;
 
-    if (error.error != QJsonParseError::NoError) {
-        qDebug() << messageObj << error.errorString();
-        return;
-    }
+    for (const QByteArray &data : socket->readAll().split('\0'))
+        arguments << QString::fromLocal8Bit(data);
 
-    if (messageObj.contains("paths")) {
-        DUrl url = DUrl::fromLocalFile(QDir::homePath());
-
-        bool isShowPropertyDialogRequest = false;
-        if(messageObj.contains("isShowPropertyDialogRequest"))
-            isShowPropertyDialogRequest = messageObj.value("isShowPropertyDialogRequest").toBool();
-
-        QJsonArray jsPaths;
-        if(messageObj.contains("paths"))
-            jsPaths = messageObj.value("paths").toArray();
-        QStringList paths;
-        foreach (QJsonValue val, jsPaths) {
-            paths << val.toString();
-        }
-
-        if(isShowPropertyDialogRequest){
-            fileManagerApp->showPropertyDialog(paths);
-            return;
-        }
-
-        bool isNewWindow = false;
-
-        if (messageObj.contains("isNewWindow")){
-            if (messageObj.value("isNewWindow").toBool()){
-                isNewWindow = true;
-            }
-        }
-
-        DUrlList urlList;
-        foreach (QString path, paths) {
-            if (!path.isEmpty()){
-                url = DUrl::fromUserInput(path);
-                urlList << url;
-            }
-        }
-
-        DFMEventDispatcher::instance()->processEvent<DFMOpenUrlEvent>(this, urlList, isNewWindow ? DFMOpenUrlEvent::ForceOpenNewWindow : DFMOpenUrlEvent::OpenNewWindow);
-    } else {
-        const QSharedPointer<DFMEvent> &event = DFMEvent::fromJson(messageObj);
-
-        if (event)
-            DFMEventDispatcher::instance()->processEvent(event);
-    }
+    CommandLineManager::instance()->process(arguments);
+    CommandLineManager::instance()->processCommand();
 }
 
 void SingleApplication::closeServer()

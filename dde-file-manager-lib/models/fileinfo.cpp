@@ -6,10 +6,10 @@
 
 #include "controllers/pathmanager.h"
 #include "deviceinfo/udisklistener.h"
-#include "widgets/singleton.h"
+#include "singleton.h"
 
 #include "app/define.h"
-#include "widgets/singleton.h"
+#include "singleton.h"
 #include "usershare/usersharemanager.h"
 #include "shutil/dmimedatabase.h"
 

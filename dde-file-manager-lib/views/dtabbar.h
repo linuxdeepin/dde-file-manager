@@ -1,10 +1,10 @@
 #ifndef DTABBAR_H
 #define DTABBAR_H
 
-#include "widgets/singleton.h"
+#include "singleton.h"
 #include "durl.h"
 #include <QDebug>
-#include "widgets/singleton.h"
+#include "singleton.h"
 #include <QFont>
 #include <QFontMetrics>
 #include <QJsonObject>

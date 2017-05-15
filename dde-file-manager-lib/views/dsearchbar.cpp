@@ -9,7 +9,7 @@
 #include "app/filesignalmanager.h"
 #include "dfmevent.h"
 
-#include "widgets/singleton.h"
+#include "singleton.h"
 
 #include <QDirModel>
 #include <QLabel>

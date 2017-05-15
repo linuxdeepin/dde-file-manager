@@ -21,7 +21,7 @@ public:
     void initConnect();
 
     static void initSources();
-    static void newClientProcess(const QString& key, const DUrlList& urllist);
+    static void newClientProcess(const QString& key, const QByteArray &message);
     static QString userServerName(const QString& key);
     static QString userId();
 

@@ -10,7 +10,7 @@
 #include "dfmevent.h"
 
 #include "interfaces/dfmstandardpaths.h"
-#include "widgets/singleton.h"
+#include "singleton.h"
 
 #include <QDebug>
 #include <QUrlQuery>
