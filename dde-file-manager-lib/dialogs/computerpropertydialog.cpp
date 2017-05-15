@@ -20,6 +20,7 @@ ComputerPropertyDialog::ComputerPropertyDialog(QWidget *parent) : QDialog(parent
 void ComputerPropertyDialog::initUI()
 {
     setWindowFlags(Qt::FramelessWindowHint);
+    setAttribute(Qt::WA_DeleteOnClose);
     DTitlebar* titleBar = new DTitlebar(this);
     titleBar->setWindowFlags(Qt::WindowCloseButtonHint);
     titleBar->setFixedHeight(30);
@@ -120,11 +121,6 @@ QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList& da
     return datas;
 }
 
-void ComputerPropertyDialog::closeEvent(QCloseEvent *e)
-{
-    emit closed();
-}
-
 QString ComputerPropertyDialog::getComputerName()
 {
     QString cmd = "hostname";
@@ -205,6 +201,12 @@ QString ComputerPropertyDialog::getProcessor()
     }
 
     QString modelName = msgMap.value("Model name");
+
+#ifdef SW_CPUINFO
+    QString hz = getSWProcessorHZ();
+    modelName = QString("%1 %2").arg(modelName, hz);
+#endif
+
     QString num;
     cmd = "nproc";
     QProcess nproc;
@@ -215,6 +217,28 @@ QString ComputerPropertyDialog::getProcessor()
     result = QString("%1 x %2").arg(modelName, num);
 
     return result.trimmed();
+}
+
+QString ComputerPropertyDialog::getSWProcessorHZ()
+{
+    QString cmd = "cat";
+    QStringList args;
+    args << "/proc/cpuinfo";
+    QProcess p;
+    p.start(cmd, args);
+    p.waitForFinished(-1);
+
+    QString result;
+    while (p.canReadLine()) {
+        QString str = p.readLine();
+        QStringList vals = str.split(":");
+        if (vals.first().startsWith("CPU frequency [MHz]")){
+            result = vals.last().trimmed();
+            break;
+        }
+    }
+    double hz = result.toDouble() / 1000.0;
+    return QString("%1 GHz").arg(QString::number(hz, 'f', 2));
 }
 
 QString ComputerPropertyDialog::getMemory()

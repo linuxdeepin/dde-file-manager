@@ -26,6 +26,10 @@ unix {
         DEFINES += DDE_COMPUTER_TRASH
     }
 
+    isEqual(ARCH, sw_64){
+        DEFINES += SW_CPUINFO
+    }
+
     isEmpty(LIB_INSTALL_DIR) {
         CONFIG(debug, debug|release) {
             PLUGINDIR = ../dde-file-manager-plugins
