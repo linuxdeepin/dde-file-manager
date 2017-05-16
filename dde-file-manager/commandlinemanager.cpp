@@ -76,8 +76,6 @@ QStringList CommandLineManager::unknownOptionNames() const
 
 void CommandLineManager::processCommand()
 {
-    qDebug() << positionalArguments();
-
     if (isSet("e")) {
         // init
         Q_UNUSED(FileManagerApp::instance());

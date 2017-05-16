@@ -122,8 +122,14 @@ void SingleApplication::readData()
 
     QStringList arguments;
 
-    for (const QByteArray &data : socket->readAll().split('\0'))
-        arguments << QString::fromLocal8Bit(data);
+    for (const QByteArray &arg_base64 : socket->read(1024).split(' ')) {
+        const QByteArray &arg = QByteArray::fromBase64(arg_base64.simplified());
+
+        if (arg.isEmpty())
+            continue;
+
+        arguments << QString::fromLocal8Bit(arg);
+    }
 
     CommandLineManager::instance()->process(arguments);
     CommandLineManager::instance()->processCommand();
