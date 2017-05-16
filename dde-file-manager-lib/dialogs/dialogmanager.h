@@ -76,6 +76,13 @@ public slots:
 
     void refreshPropertyDialogs(const DUrl& oldUrl, const DUrl& newUrl);
 
+    int showMessageDialog(int messageLevel, const QString& message);
+
+#ifdef SW_LABEL
+    void onJobFailed_SW(int nRet, const QString& jobType, const QString& srcfilename);
+    int showPrivilegeDialog_SW(int nRet, const QString& srcfilename);
+#endif
+
 private:
     DTaskDialog* m_taskDialog = NULL;
     CloseAllDialogIndicator* m_closeIndicatorDialog;

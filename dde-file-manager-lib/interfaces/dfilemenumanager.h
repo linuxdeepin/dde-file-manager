@@ -71,6 +71,11 @@ public:
 
     static QList<QMap<QString, QString>> ExtensionMenuItems;
 
+
+    static void setActionString(MenuAction type, QString actionString);
+    static void setActionID(MenuAction type, QString id);
+
+
 public slots:
     void actionTriggered(QAction * action);
 };

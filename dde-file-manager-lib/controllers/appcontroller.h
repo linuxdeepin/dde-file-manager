@@ -93,6 +93,14 @@ public slots:
 
     void actionOpenFileByApp();
 
+#ifdef SW_LABEL
+    void actionSetLabel(const DFMEvent& event);
+    void actionViewLabel(const DFMEvent& event);
+    void actionEditLabel(const DFMEvent& event);
+    void actionPrivateFileToPublic(const DFMEvent& event);
+    void actionByIds(const DFMEvent& event, QString actionId);
+#endif
+
     // Subscriber interface
 public:
     void doSubscriberAction(const QString &path);

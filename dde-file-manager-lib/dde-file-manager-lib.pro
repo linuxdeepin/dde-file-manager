@@ -53,6 +53,12 @@ include(dbusinterface/dbusinterface.pri)
 include(../usershare/usershare.pri)
 include(../dde-file-manager-plugins/plugininterfaces/plugininterfaces.pri)
 include(../partman/partman.pri)
+isEqual(ARCH, sw_64){
+#    isEqual(ENABLE_SW_LABLE, YES){
+        DEFINES += SW_LABEL
+        include(./sw_label/sw_label.pri)
+#    }
+}
 
 RESOURCES += \
     skin/skin.qrc \

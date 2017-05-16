@@ -81,6 +81,23 @@ protected:
     explicit DFileInfo(DFileInfoPrivate &dd);
 
     Q_DECLARE_PRIVATE(DFileInfo)
+
+#ifdef SW_LABEL
+public:
+    QString getLabelIcon();
+    void updateLabelMenuItems();
+
+protected:
+    struct LabelMenuItemData
+    {
+        QString id;
+        QString label;
+        QString tip;
+        QString icon;
+    };
+    QStringList m_labelMenuItemIds;
+    QMap<QString, LabelMenuItemData> m_labelMenuItemData;
+#endif
 };
 
 #endif // FILEINFO_H
