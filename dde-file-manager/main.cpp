@@ -186,7 +186,7 @@ int main(int argc, char *argv[])
         QByteArray data;
 
         for (const QString &arg : app.arguments())
-            data.append(arg.toLocal8Bit()).append('\0');
+            data.append(arg.toLocal8Bit().toBase64()).append(' ');
 
         if (!data.isEmpty())
             data.chop(1);
