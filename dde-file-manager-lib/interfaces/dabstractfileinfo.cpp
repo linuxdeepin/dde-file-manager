@@ -22,6 +22,16 @@
 #include <QApplication>
 #include <QCollator>
 #include <QWriteLocker>
+#include <QJsonParseError>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
+
+#ifdef SW_LABEL
+#include "sw_label/filemanagerlibrary.h"
+#include "dfilemenumanager.h"
+#endif
+
 
 namespace FileSortFunction {
 QCollator sortCollator;
@@ -581,6 +591,13 @@ QList<QIcon> DAbstractFileInfo::additionalIcon() const
         }
     }
 
+#ifdef SW_LABEL
+    QString labelIconPath = getLabelIcon();
+    if (!labelIconPath.isEmpty()){
+        icons << QIcon(labelIconPath);
+    }
+#endif
+
     return icons;
 }
 
@@ -732,6 +749,41 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
                                << MenuAction::Separator;
                 }
             }
+
+#ifdef SW_LABEL
+            qDebug() << m_labelMenuItemIds;
+//            if (m_labelMenuItemIds.length() == 1){
+//                foreach (QString id, m_labelMenuItemIds) {
+//                    if(id == "020100"){
+//                        fileMenuManger->setActionString(MenuAction::SetLabel, m_labelMenuItemData[id].label);
+//                    }
+//                }
+//                actionKeys << MenuAction::SetLabel;
+//            }else{
+//                foreach (QString id, m_labelMenuItemIds) {
+//                    if(id == "010101"){
+//                        actionKeys << MenuAction::ViewLabel;
+//                        fileMenuManger->setActionString(MenuAction::ViewLabel, m_labelMenuItemData[id].label);
+//                    }else if(id == "010201"){
+//                        actionKeys << MenuAction::EditLabel;
+//                        fileMenuManger->setActionString(MenuAction::EditLabel, m_labelMenuItemData[id].label);
+//                    }else if(id == "010501"){
+//                        actionKeys << MenuAction::PrivateFileToPublic;
+//                        fileMenuManger->setActionString(MenuAction::PrivateFileToPublic, m_labelMenuItemData[id].label);
+//                    }
+//                }
+//            }
+
+            foreach (QString id, m_labelMenuItemIds) {
+                int index = m_labelMenuItemIds.indexOf(id);
+                MenuAction actionType = MenuAction (MenuAction::Unknow + index + 1);
+                actionKeys << actionType;
+                fileMenuManger->setActionString(actionType, m_labelMenuItemData[id].label);
+                fileMenuManger->setActionID(actionType, id);
+            }
+
+            actionKeys << MenuAction::Separator;
+#endif
 
             actionKeys  << MenuAction::Property;
         }
@@ -1040,6 +1092,9 @@ bool DAbstractFileInfo::isActive() const
 void DAbstractFileInfo::refresh()
 {
     CALL_PROXY(refresh());
+#ifdef SW_LABEL
+    updateLabelMenuItems();
+#endif
 }
 
 DAbstractFileInfo::DAbstractFileInfo(DAbstractFileInfoPrivate &dd)
@@ -1150,3 +1205,55 @@ void DAbstractFileInfo::setUrl(const DUrl &url)
 
     d->setUrl(url, false);
 }
+
+#ifdef SW_LABEL
+QString DAbstractFileInfo::getLabelIcon() const
+{
+    if (FileManagerLibrary::instance()->isCompletion()){
+        std::string path = fileUrl().toLocalFile().toStdString();
+//        char* icon = auto_add_emblem(const_cast<char*>(path.c_str()));
+        char* icon = FileManagerLibrary::instance()->auto_add_emblem()(const_cast<char*>(path.c_str()));
+        if (QString::fromLocal8Bit(icon) == "No"){
+            return "";
+        }else{
+            return QString::fromLocal8Bit(icon);
+        }
+    }
+    return "";
+}
+
+void DAbstractFileInfo::updateLabelMenuItems()
+{
+    if (FileManagerLibrary::instance()->isCompletion()){
+        m_labelMenuItemIds.clear();
+        m_labelMenuItemData.clear();
+    //    QString menu = "{\"id\":[\"010101\",\"010201\",\"010501\"],\"label\":[\"查看标签\",\"编辑标签\",\"转换为公有\"],\"tip\":[\"\",\"\",\"\"],\"icon\":[\"viewlabel.svg\",\"editlabel.svg\",\"editlabel.svg\"],\"sub0\":\"\",\"sub1\":\"\",\"sub2\":\"\"}";
+    //    QString menu = "{\"id\":[\"020100\"],\"label\":[\"设置标签\"],\"tip\":[\"\"],\"icon\":[\"setlabel.svg\"],\"sub0\":\"\"}";
+        std::string path = fileUrl().toLocalFile().toStdString();
+//        QString menu = auto_add_rightmenu(const_cast<char*>(path.c_str()));
+        QString menu = FileManagerLibrary::instance()->auto_add_rightmenu()(const_cast<char*>(path.c_str()));
+        QJsonParseError error;
+        QJsonDocument doc=QJsonDocument::fromJson(menu.toLocal8Bit(),&error);
+        if (error.error == QJsonParseError::NoError){
+            QJsonObject obj = doc.object();
+            QJsonArray ids =  obj.value("id").toArray();
+            QJsonArray labels =  obj.value("label").toArray();
+            QJsonArray tips =  obj.value("tip").toArray();
+            QJsonArray icons =  obj.value("icon").toArray();
+
+            for(int i=0; i< ids.count(); i++){
+                LabelMenuItemData item;
+                item.id = ids.at(i).toString();
+                item.label = labels.at(i).toString();
+                item.tip = tips.at(i).toString();
+                item.icon = icons.at(i).toString();
+                m_labelMenuItemIds.append(item.id);
+                m_labelMenuItemData.insert(item.id, item);
+                qDebug() << item.id << item.icon << item.label;
+            }
+        }else{
+            qDebug() << "load menu fail: " << error.errorString();
+        }
+    }
+}
+#endif

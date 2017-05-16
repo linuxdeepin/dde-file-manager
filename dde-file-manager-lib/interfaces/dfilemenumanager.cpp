@@ -33,6 +33,7 @@
 namespace DFileMenuData {
 static QMap<MenuAction, QString> actionKeys;
 static QMap<MenuAction, QAction*> actions;
+static QMap<MenuAction, QString> actionIDs;
 static QVector<MenuAction> sortActionTypes;
 static QSet<MenuAction> whitelist;
 static QSet<MenuAction> blacklist;
@@ -783,6 +784,24 @@ bool DFileMenuManager::isAvailableAction(MenuAction action)
     return DFileMenuData::whitelist.contains(action) && !DFileMenuData::blacklist.contains(action);
 }
 
+void DFileMenuManager::setActionString(MenuAction type, QString actionString)
+{
+    if (!DFileMenuData::actionKeys.contains(type)){
+        DFileMenuData::actionKeys.insert(type, actionString);
+
+        QAction* action = new QAction(actionString, 0);
+        action->setData(type);
+        DFileMenuData::actions.insert(type, action);
+
+        qDebug() << type << actionString << action;
+    }
+}
+
+void DFileMenuManager::setActionID(MenuAction type, QString id)
+{
+    DFileMenuData::actionIDs.insert(type, id);
+}
+
 void DFileMenuManager::actionTriggered(QAction *action)
 {
     DFileMenu *menu = qobject_cast<DFileMenu *>(sender());
@@ -800,5 +819,34 @@ void DFileMenuManager::actionTriggered(QAction *action)
 
         const QSharedPointer<DFMMenuActionEvent> &event = menu->makeEvent(type);
         DFMEventDispatcher::instance()->processEvent(event);
+
+        QMetaEnum metaEnum = QMetaEnum::fromType<MenuAction>();
+        QString key = metaEnum.valueToKey(type);
+        QString methodKey = QString("action%1").arg(key);
+        QString methodSignature = QString("action%1(" QT_STRINGIFY(DFMEvent) ")").arg(key);
+
+        const QMetaObject* metaObject = appController->metaObject();
+//        QStringList methods;
+//        for(int i = metaObject->methodOffset(); i < metaObject->methodCount(); ++i){
+//            methods << QString::fromLatin1(metaObject->method(i).methodSignature());
+//        }
+//        qDebug() << methods;
+//        qDebug() << methodKey << methodName;
+        if (metaObject->indexOfSlot(methodSignature.toLocal8Bit().constData()) != -1){
+            QMetaObject::invokeMethod(appController,
+                                      methodKey.toLocal8Bit().constData(),
+                                      Qt::DirectConnection,
+                                      Q_ARG(DFMEvent, event));
+        }else{
+            qWarning() << "Appcontroller has no method:" << methodSignature;
+#ifdef SW_LABEL
+            if (DFileMenuData::actionIDs.contains(type)){
+                QMetaObject::invokeMethod(appController,
+                                          "actionByIds",
+                                          Qt::DirectConnection,
+                                          Q_ARG(DFMEvent, event), Q_ARG(QString, DFileMenuData::actionIDs.value(type)));
+            }
+ #endif
+        }
     }
 }

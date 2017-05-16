@@ -25,6 +25,8 @@
         <file>dialogs/images/dialog_warning_64.png</file>
         <file>dialogs/images/share_password.png</file>
         <file>dialogs/images/deepin_logo.png</file>
+        <file>dialogs/images/dialog_error_64.png</file>
+        <file>dialogs/images/dialog_info_64.png</file>
     </qresource>
     <qresource prefix="/qss">
         <file>dialogs/qss/dark.qss</file>

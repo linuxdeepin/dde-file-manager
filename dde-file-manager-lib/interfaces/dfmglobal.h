@@ -179,6 +179,12 @@ public:
         UnShare,
         SetUserSharePassword,
         FormatDevice,
+#ifdef SW_LABEL
+        SetLabel,
+        ViewLabel,
+        EditLabel,
+        PrivateFileToPublic,
+#endif
         Unknow
     };
 

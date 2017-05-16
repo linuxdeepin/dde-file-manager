@@ -176,6 +176,11 @@ signals:
 
     /*show file preview dialog*/
     void requestShowFilePreviewDialog(const QSharedPointer<DFMUrlListBaseEvent> &event);
+
+#ifdef SW_LABEL
+    /*copy/move/delete fail job show */
+    void jobFailed(int nRet, const QString &jobType, const QString& srcFileName);
+#endif
 };
 
 #endif // FILESIGNALMANAGER_H

@@ -47,6 +47,10 @@
 #include "shutil/shortcut.h"
 #include "models/desktopfileinfo.h"
 
+#ifdef SW_LABEL
+#include "sw_label/filemanagerlibrary.h"
+#endif
+
 DWIDGET_USE_NAMESPACE
 
 QPair<DUrl, quint64> AppController::selectionAndRenameFile;
@@ -642,6 +646,61 @@ void AppController::actionOpenFileByApp()
     DUrl fileUrl = qvariant_cast<DUrl>(action->property("url"));
     fileService->openFileByApp(this, app, fileUrl);
 }
+
+
+#ifdef SW_LABEL
+void AppController::actionSetLabel(const DFMEvent &event)
+{
+    if (FileManagerLibrary::instance()->isCompletion()){
+        std::string path = event.fileUrl().toLocalFile().toStdString();
+//        auto_operation(const_cast<char*>(path.c_str()), "020100");
+        FileManagerLibrary::instance()->auto_operation()(const_cast<char*>(path.c_str()), "020100");
+        qDebug() << "020100" << "set label";
+    }
+}
+
+void AppController::actionViewLabel(const DFMEvent &event)
+{
+    if (FileManagerLibrary::instance()->isCompletion()){
+        std::string path = event.fileUrl().toLocalFile().toStdString();
+//        auto_operation(const_cast<char*>(path.c_str()), "010101");
+        FileManagerLibrary::instance()->auto_operation()(const_cast<char*>(path.c_str()), "010101");
+        qDebug() << "010101" << "view label";
+    }
+}
+
+void AppController::actionEditLabel(const DFMEvent &event)
+{
+    if (FileManagerLibrary::instance()->isCompletion()){
+        std::string path = event.fileUrl().toLocalFile().toStdString();
+//        auto_operation(const_cast<char*>(path.c_str()), "010201");
+        FileManagerLibrary::instance()->auto_operation()(const_cast<char*>(path.c_str()), "010201");
+        qDebug() << "010201" << "edit label";
+    }
+}
+
+void AppController::actionPrivateFileToPublic(const DFMEvent &event)
+{
+    if (FileManagerLibrary::instance()->isCompletion()){
+        std::string path = event.fileUrl().toLocalFile().toStdString();
+//        auto_operation(const_cast<char*>(path.c_str()), "010501");
+        FileManagerLibrary::instance()->auto_operation()(const_cast<char*>(path.c_str()), "010501");
+        qDebug() << "010501" << "private file to public";
+    }
+}
+
+void AppController::actionByIds(const DFMEvent &event, QString actionId)
+{
+    if (FileManagerLibrary::instance()->isCompletion()){
+        std::string path = event.fileUrl().toLocalFile().toStdString();
+        std::string _actionId = actionId.toStdString();
+        FileManagerLibrary::instance()->auto_operation()(const_cast<char*>(path.c_str()), const_cast<char*>(_actionId.c_str()));
+        qDebug() << "action by" << actionId;
+    }
+}
+
+#endif
+
 
 void AppController::doSubscriberAction(const QString &path)
 {

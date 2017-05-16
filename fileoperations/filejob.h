@@ -202,6 +202,17 @@ private:
     QString getNotExistsTrashFileName(const QString &fileName);
     bool checkUseGvfsFileOperation(const DUrlList &files, const DUrl &destination);
     bool checkUseGvfsFileOperation(const QString& path);
+
+#ifdef SW_LABEL
+public:
+    static bool isLabelFile(const QString &srcFileName);
+    static int checkCopyJobPrivilege(const QString &srcFileName);
+    static int checkMoveJobPrivilege(const QString &srcFileName);
+    static int checkStoreInRemovableDiskPrivilege(const QString &srcFileName);
+    static int checkDeleteJobPrivilege(const QString &srcFileName);
+    static int checkRenamePrivilege(const QString &srcFileName);
+    static int checkReadPrivilege(const QString &srcFileName);
+#endif
 };
 
 #endif // FILEJOB_H

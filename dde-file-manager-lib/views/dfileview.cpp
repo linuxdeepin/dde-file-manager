@@ -31,6 +31,7 @@
 #include "shutil/fileutils.h"
 #include "shutil/mimesappsmanager.h"
 #include "shutil/viewstatesmanager.h"
+#include "fileoperations/filejob.h"
 
 #include "singleton.h"
 #include "interfaces/dfilemenumanager.h"
@@ -554,7 +555,9 @@ bool DFileView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger tr
 
     if (fileUrl.isEmpty() || selectedIndexCount() > 1 || (trigger == SelectedClicked && DFMGlobal::keyShiftIsPressed()))
         return false;
-
+#ifdef SW_LABEL
+    bool isCheckRenameAction = false;
+#endif
     if (trigger == SelectedClicked) {
         QStyleOptionViewItem option = viewOptions();
 
@@ -562,10 +565,26 @@ bool DFileView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger tr
 
         const QRect &file_name_rect = itemDelegate()->fileNameRect(option, index);
 
-        if (!file_name_rect.contains(static_cast<QMouseEvent*>(event)->pos()))
+        if (!file_name_rect.contains(static_cast<QMouseEvent*>(event)->pos())){
+            return false;
+        }else{
+#ifdef SW_LABEL
+            isCheckRenameAction = true;
+#endif
+        }
+    }
+#ifdef SW_LABEL
+    if (trigger == EditKeyPressed){
+        isCheckRenameAction = true;
+    }
+#endif
+#ifdef SW_LABEL
+    if (isCheckRenameAction){
+        bool isCanRename = checkRenamePrivilege_sw(fileUrl);
+        if (!isCanRename)
             return false;
     }
-
+#endif
     return DListView::edit(index, trigger, event);
 }
 
@@ -1079,6 +1098,22 @@ void DFileView::setIconSizeBySizeIndex(const int &sizeIndex)
 {
     statusBar()->scalingSlider()->setValue(sizeIndex);
 }
+
+
+#ifdef SW_LABEL
+bool DFileView::checkRenamePrivilege_sw(DUrl fileUrl)
+{
+    QString srcFileName = fileUrl.toLocalFile();
+    if (FileJob::isLabelFile(srcFileName)){
+        int nRet = FileJob::checkRenamePrivilege(srcFileName);
+        if (nRet != 0){
+            emit fileSignalManager->jobFailed(nRet, "rename", srcFileName);
+            return false;
+        }
+    }
+    return true;
+}
+#endif
 
 void DFileView::onRootUrlDeleted(const DUrl &rootUrl)
 {
@@ -2021,7 +2056,13 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
 
     DFileMenu* menu;
 
+#ifdef SW_LABEL
+    DAbstractFileInfoPointer info = model()->fileInfo(index);
+    info->updateLabelMenuItems();
+#else
     const DAbstractFileInfoPointer &info = model()->fileInfo(index);
+#endif
+
     QSet<MenuAction> disableList;
     QSet<MenuAction> unusedList;
 
