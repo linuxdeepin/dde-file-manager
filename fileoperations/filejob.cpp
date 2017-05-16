@@ -6,8 +6,13 @@
 #include "../deviceinfo/udisklistener.h"
 #include "../app/define.h"
 #include "singleton.h"
+#include "../app/filesignalmanager.h"
 #include "interfaces/dfmglobal.h"
 #include "dfmstandardpaths.h"
+
+#ifdef SW_LABEL
+#include "sw_label/llsdeepinlabellibrary.h"
+#endif
 
 #include <QFile>
 #include <QThread>
@@ -313,8 +318,10 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
                 if(m_isInSameDisk)
                 {
                     if (!moveFile(srcPath, tarDirPath, &targetPath)) {
+#ifndef SW_LABEL
                         if(copyFile(srcPath, tarDirPath, true, &targetPath))
                             deleteFile(srcPath);
+#endif
                     }
                 }
                 else
@@ -690,6 +697,32 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
 //    if (m_isGvfsFileOperationUsed){
 //        return copyFileByGio(srcFile, tarDir, isMoved, targetPath);
 //    }
+#ifdef SW_LABEL
+    if (LlsDeepinLabelLibrary::instance()->isCompletion()){
+        bool isLabelFileFlag = isLabelFile(srcFile);
+        if (isLabelFileFlag){
+            qDebug() << tarDir << deviceListener->isInRemovableDeviceFolder(tarDir);
+            int nRet = 0;
+            if (deviceListener->isInRemovableDeviceFolder(tarDir)){
+                nRet = checkStoreInRemovableDiskPrivilege(srcFile);
+                if (nRet != 0){
+                    emit fileSignalManager->jobFailed(nRet, QString(QMetaEnum::fromType<JobType>().valueToKey(m_jobType)), srcFile);
+                    return false;
+                }
+            }else{
+                nRet = checkCopyJobPrivilege(srcFile);
+                if (nRet != 0){
+                    emit fileSignalManager->jobFailed(nRet, QString(QMetaEnum::fromType<JobType>().valueToKey(m_jobType)), srcFile);
+                    return false;
+                }
+            }
+        }
+        qDebug() << "isLabelFile" << srcFile << isLabelFileFlag;
+    }
+#endif
+
+
+
     qDebug() << "copy file by qtio" << srcFile << tarDir << isMoved;
 
     if (m_isAborted)
@@ -1267,6 +1300,31 @@ bool FileJob::moveFile(const QString &srcFile, const QString &tarDir, QString *t
 //    }else{
 //        qDebug() << "move file by qtio" << srcFile << tarDir;
 //    }
+
+#ifdef SW_LABEL
+    if (LlsDeepinLabelLibrary::instance()->isCompletion()){
+        bool isLabelFileFlag = isLabelFile(srcFile);
+        if (isLabelFileFlag){
+            qDebug() << tarDir << deviceListener->isInRemovableDeviceFolder(tarDir);
+            int nRet = 0;
+            if (deviceListener->isInRemovableDeviceFolder(tarDir)){
+                nRet = checkStoreInRemovableDiskPrivilege(srcFile);
+                if (nRet != 0){
+                    emit fileSignalManager->jobFailed(nRet, QString(QMetaEnum::fromType<JobType>().valueToKey(m_jobType)), srcFile  );
+                    return false;
+                }
+            }else{
+                nRet = checkMoveJobPrivilege(srcFile);
+                if (nRet != 0){
+                    emit fileSignalManager->jobFailed(nRet, QString(QMetaEnum::fromType<JobType>().valueToKey(m_jobType)), srcFile);
+                    return false;
+                }
+            }
+        }
+        qDebug() << "isLabelFile" << srcFile << isLabelFileFlag;
+    }
+#endif
+
     qDebug() << "moveFile start:" << srcFile << tarDir << targetPath;
     bool ret = handleMoveJob(srcFile, tarDir, targetPath);
     qDebug() << "moveFile end:" << srcFile << tarDir << ret << targetPath;
@@ -1692,6 +1750,18 @@ bool FileJob::deleteFile(const QString &file)
 //        return deleteFileByGio(file);
 //    }
 
+#ifdef SW_LABEL
+    if (LlsDeepinLabelLibrary::instance()->isCompletion()){
+        if (isLabelFile(file)){
+            int nRet = checkDeleteJobPrivilege(file);
+            if (nRet != 0){
+                emit fileSignalManager->jobFailed(nRet, QString(QMetaEnum::fromType<JobType>().valueToKey(m_jobType)), file);
+                return false;
+            }
+        }
+    }
+#endif
+
     qDebug() << "delete file by qtio" << file;
 
     if(QFile::remove(file)){
@@ -1826,6 +1896,18 @@ QString FileJob::getNotExistsTrashFileName(const QString &fileName)
 
 bool FileJob::moveFileToTrash(const QString &file, QString *targetPath)
 {
+#ifdef SW_LABEL
+    if (LlsDeepinLabelLibrary::instance()->isCompletion()){
+        if (isLabelFile(file)){
+            int nRet = checkMoveJobPrivilege(file);
+            if (nRet != 0){
+                emit fileSignalManager->jobFailed(nRet, QString(QMetaEnum::fromType<JobType>().valueToKey(m_jobType)), file);
+                return false;
+            }
+        }
+    }
+#endif
+
     if(m_status == FileJob::Cancelled)
     {
         emit result("cancelled");
@@ -1957,3 +2039,93 @@ bool FileJob::checkUseGvfsFileOperation(const QString &path)
 {
     return FileUtils::isGvfsMountFile(path);
 }
+
+#ifdef SW_LABEL
+bool FileJob::isLabelFile(const QString &srcFileName)
+{
+    if (LlsDeepinLabelLibrary::instance()->isCompletion()){
+        std::string path = srcFileName.toStdString();
+//        int ret = lls_simplechecklabel(const_cast<char*>(path.c_str()));
+        int ret = LlsDeepinLabelLibrary::instance()->lls_simplechecklabel()(const_cast<char*>(path.c_str()));
+        qDebug() << ret << srcFileName;
+        if (ret == 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    return false;
+}
+
+int FileJob::checkCopyJobPrivilege(const QString &srcFileName)
+{
+    if (LlsDeepinLabelLibrary::instance()->isCompletion()){
+        std::string path = srcFileName.toStdString();
+//        int nRet =  lls_checkprivilege(const_cast<char*>(path.c_str()), NULL, E_FILE_PRI_COPY);
+        int nRet = LlsDeepinLabelLibrary::instance()->lls_checkprivilege()(const_cast<char*>(path.c_str()), NULL, E_FILE_PRI_COPY);
+        qDebug() << nRet << srcFileName;
+        return nRet;
+    }
+    return -1;
+}
+
+int FileJob::checkMoveJobPrivilege(const QString &srcFileName)
+{
+    if (LlsDeepinLabelLibrary::instance()->isCompletion()){
+        std::string path = srcFileName.toStdString();
+//        int nRet =  lls_checkprivilege(const_cast<char*>(path.c_str()), NULL, E_FILE_PRI_MOVE);
+        int nRet =   LlsDeepinLabelLibrary::instance()->lls_checkprivilege()(const_cast<char*>(path.c_str()), NULL, E_FILE_PRI_MOVE);
+        qDebug() << nRet << srcFileName;
+        return nRet;
+    }
+    return -1;
+}
+
+int FileJob::checkStoreInRemovableDiskPrivilege(const QString &srcFileName)
+{
+    if (LlsDeepinLabelLibrary::instance()->isCompletion()){
+        std::string path = srcFileName.toStdString();
+//        int nRet =  lls_checkprivilege(const_cast<char*>(path.c_str()), NULL, E_FILE_PRI_STORE);
+        int nRet =  LlsDeepinLabelLibrary::instance()->lls_checkprivilege()(const_cast<char*>(path.c_str()), NULL, E_FILE_PRI_STORE);
+        qDebug() << nRet << srcFileName;
+        return nRet;
+    }
+    return -1;
+}
+
+int FileJob::checkDeleteJobPrivilege(const QString &srcFileName)
+{
+    if (LlsDeepinLabelLibrary::instance()->isCompletion()){
+        std::string path = srcFileName.toStdString();
+//        int nRet =  lls_checkprivilege(const_cast<char*>(path.c_str()), NULL, E_FILE_PRI_DELETE);
+        int nRet =   LlsDeepinLabelLibrary::instance()->lls_checkprivilege()(const_cast<char*>(path.c_str()), NULL, E_FILE_PRI_DELETE);
+        qDebug() << nRet << srcFileName;
+        return nRet;
+    }
+    return -1;
+}
+
+int FileJob::checkRenamePrivilege(const QString &srcFileName)
+{
+    if (LlsDeepinLabelLibrary::instance()->isCompletion()){
+        std::string path = srcFileName.toStdString();
+//        int nRet =  lls_checkprivilege(const_cast<char*>(path.c_str()), NULL, E_FILE_PRI_RENAME);
+        int nRet =  LlsDeepinLabelLibrary::instance()->lls_checkprivilege()(const_cast<char*>(path.c_str()), NULL, E_FILE_PRI_RENAME);
+        qDebug() << nRet << srcFileName;
+        return nRet;
+    }
+    return -1;
+}
+
+int FileJob::checkReadPrivilege(const QString &srcFileName)
+{
+    if (LlsDeepinLabelLibrary::instance()->isCompletion()){
+        std::string path = srcFileName.toStdString();
+//        int nRet =  lls_checkprivilege(const_cast<char*>(path.c_str()), NULL, E_FILE_PRI_READ);
+        int nRet =  LlsDeepinLabelLibrary::instance()->lls_checkprivilege()(const_cast<char*>(path.c_str()), NULL, E_FILE_PRI_READ);
+        qDebug() << nRet << srcFileName;
+        return nRet;
+    }
+    return -1;
+}
+#endif

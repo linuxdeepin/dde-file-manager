@@ -200,6 +200,11 @@ signals:
 
     /*trash state changed when trash is empty or is filled*/
     void trashStateChanged();
+
+#ifdef SW_LABEL
+    /*copy/move/delete fail job show */
+    void jobFailed(int nRet, const QString &jobType, const QString& srcFileName);
+#endif
 };
 
 #endif // FILESIGNALMANAGER_H

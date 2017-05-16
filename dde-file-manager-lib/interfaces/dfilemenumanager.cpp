@@ -31,6 +31,7 @@
 namespace DFileMenuData {
 static QMap<MenuAction, QString> actionKeys;
 static QMap<MenuAction, QAction*> actions;
+static QMap<MenuAction, QString> actionIDs;
 static QVector<MenuAction> sortActionTypes;
 static QSet<MenuAction> whitelist;
 static QSet<MenuAction> blacklist;
@@ -784,6 +785,24 @@ bool DFileMenuManager::isAvailableAction(MenuAction action)
     return DFileMenuData::whitelist.contains(action) && !DFileMenuData::blacklist.contains(action);
 }
 
+void DFileMenuManager::setActionString(MenuAction type, QString actionString)
+{
+    if (!DFileMenuData::actionKeys.contains(type)){
+        DFileMenuData::actionKeys.insert(type, actionString);
+
+        QAction* action = new QAction(actionString, 0);
+        action->setData(type);
+        DFileMenuData::actions.insert(type, action);
+
+        qDebug() << type << actionString << action;
+    }
+}
+
+void DFileMenuManager::setActionID(MenuAction type, QString id)
+{
+    DFileMenuData::actionIDs.insert(type, id);
+}
+
 void DFileMenuManager::actionTriggered(QAction *action)
 {
     DFileMenu *menu = qobject_cast<DFileMenu *>(sender());
@@ -820,6 +839,14 @@ void DFileMenuManager::actionTriggered(QAction *action)
                                       Q_ARG(DFMEvent, event));
         }else{
             qWarning() << "Appcontroller has no method:" << methodSignature;
+#ifdef SW_LABEL
+            if (DFileMenuData::actionIDs.contains(type)){
+                QMetaObject::invokeMethod(appController,
+                                          "actionByIds",
+                                          Qt::DirectConnection,
+                                          Q_ARG(DFMEvent, event), Q_ARG(QString, DFileMenuData::actionIDs.value(type)));
+            }
+ #endif
         }
     }
 }

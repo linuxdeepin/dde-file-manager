@@ -30,6 +30,7 @@ unix {
 
     isEqual(ARCH, sw_64){
         DEFINES += SW_CPUINFO
+        QMAKE_CXXFLAGS += -mieee
     }
 
     isEmpty(LIB_INSTALL_DIR) {

@@ -146,6 +146,10 @@ public slots:
 
     void setIconSizeBySizeIndex(const int& sizeIndex);
 
+#ifdef SW_LABEL
+    bool checkRenamePrivilege_sw(DUrl fileUrl);
+#endif
+
 signals:
     void rootUrlChanged(const DUrl &url);
     void viewModeChanged(ViewMode viewMode);

@@ -131,6 +131,26 @@ bool UDiskListener::isInDeviceFolder(const QString &path) const
     return false;
 }
 
+bool UDiskListener::isInRemovableDeviceFolder(const QString &path) const
+{
+    QList<UDiskDeviceInfo::MediaType> mediaTypes = {UDiskDeviceInfo::removable,
+                                                    UDiskDeviceInfo::iphone,
+                                                   UDiskDeviceInfo::phone,
+                                                   UDiskDeviceInfo::camera};
+    for (int i = 0; i < m_list.size(); i++)
+    {
+        UDiskDeviceInfoPointer info = m_list.at(i);
+        if (mediaTypes.contains(info->getMediaType())){
+            if (!info->getMountPointUrl().isEmpty()){
+                if (path.startsWith(info->getMountPointUrl().toLocalFile())){
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
 UDiskDeviceInfoPointer UDiskListener::getDeviceByDevicePath(const QString &deveicePath)
 {
     for (int i = 0; i < m_list.size(); i++)
