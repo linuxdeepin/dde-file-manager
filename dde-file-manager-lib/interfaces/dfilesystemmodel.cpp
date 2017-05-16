@@ -1427,7 +1427,7 @@ void DFileSystemModel::addFile(const DAbstractFileInfoPointer &fileInfo)
     if (parentNode && parentNode->populatedChildren && !parentNode->children.contains(fileUrl)) {
         QPointer<DFileSystemModel> me = this;
 
-        int row = 0;
+        int row = -1;
 
         if (enabledSort()) {
             QFuture<void> result;
