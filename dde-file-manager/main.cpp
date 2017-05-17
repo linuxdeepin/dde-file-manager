@@ -108,16 +108,16 @@ int main(int argc, char *argv[])
 
     app.setOrganizationName(QMAKE_ORGANIZATION_NAME);
     app.setApplicationName(QMAKE_TARGET);
-    app.setApplicationDisplayName(QObject::tr("Deepin File Manager"));
+    app.loadTranslator();
+    app.setApplicationDisplayName(app.translate("Application", "Deepin File Manager"));
     app.setApplicationVersion(QMAKE_VERSION);
     QString icon(":/images/images/dde-file-manager_96.png");
     app.setProductIcon(QPixmap(icon));
     app.setApplicationAcknowledgementPage("https://www.deepin.org/acknowledgments/" + qApp->applicationName());
-    app.setApplicationDescription(QObject::tr("File Manager is a file management tool independently "
-                                              "developed by Deepin Technology, featured with searching, "
-                                              "copying, trash, compression/decompression, file property "
-                                              "and other file management functions."));
-    app.loadTranslator();
+    app.setApplicationDescription(app.translate("Application", "File Manager is a file management tool independently "
+                                                               "developed by Deepin Technology, featured with searching, "
+                                                               "copying, trash, compression/decompression, file property "
+                                                               "and other file management functions."));
     app.setQuitOnLastWindowClosed(false);
 
     DFMGlobal::installTranslator();
