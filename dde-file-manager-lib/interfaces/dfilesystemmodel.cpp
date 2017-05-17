@@ -1430,6 +1430,8 @@ void DFileSystemModel::addFile(const DAbstractFileInfoPointer &fileInfo)
         int row = -1;
 
         if (enabledSort()) {
+            row = 0;
+
             QFuture<void> result;
 
             if (fileInfo->hasOrderly()) {
