@@ -486,14 +486,14 @@ void DBookmarkScene::doBookmarkRemoved(const DFMEvent &event)
     DBookmarkItem * item = hasBookmarkItem(event.fileUrl());
     if(!item)
         return;
+    int item_index = indexOf(item);
     remove(item);
     bookmarkManager->removeBookmark(item->getBookmarkModel());
     if (bookmarkManager->getBookmarks().count() == 0){
-        DBookmarkLine* lineItem = static_cast<DBookmarkLine*>(m_itemGroup->items().at(indexOf(item) - 1));
-        if (lineItem){
-            if (lineItem->objectName() == "DBookmarkLine"){
-                remove(lineItem);
-            }
+        DBookmarkLine* lineItem = qobject_cast<DBookmarkLine*>(m_itemGroup->items().value(item_index - 1));
+
+        if (lineItem && lineItem->objectName() == "DBookmarkLine") {
+            remove(lineItem);
         }
     }
 }
