@@ -305,7 +305,7 @@ bool FileController::newFile(const QSharedPointer<DFMNewFileEvent> &event) const
 {
     //Todo:: check if mkdir is ok
     QDir dir(event->url().toLocalFile());
-    QString name = checkDuplicateName(dir.absolutePath() + "/" + tr("New File"));
+    QString name = checkDuplicateName(dir.absolutePath() + "/" + tr("New File") + event->fileSuffix());
 
     QFile file(name);
 
