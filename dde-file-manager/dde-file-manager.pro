@@ -130,3 +130,7 @@ translations.path = $$APPSHAREDIR/translations
 translations.files = translations/*.qm
 
 INSTALLS += translations
+
+CONFIG(release, debug|release) {
+    system($$PWD/generate_translations.sh)
+}
