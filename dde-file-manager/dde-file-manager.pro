@@ -122,3 +122,11 @@ DISTFILES += \
     mips/dde-trash.sh \
     mips/file-manager.sh \
     generate_translations.sh
+
+TRANSLATIONS += $$PWD/translations/$${TARGET}-app.ts \
+    $$PWD/translations/$${TARGET}-app_zh_CN.ts
+
+translations.path = $$APPSHAREDIR/translations
+translations.files = translations/*.qm
+
+INSTALLS += translations

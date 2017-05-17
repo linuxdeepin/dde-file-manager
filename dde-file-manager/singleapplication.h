@@ -25,6 +25,8 @@ public:
     static QString userServerName(const QString& key);
     static QString userId();
 
+    bool loadTranslator(QList<QLocale> localeFallback = QList<QLocale>() << QLocale::system());
+
 public slots:
     bool setSingleInstance(const QString& key);
     void handleConnection();
