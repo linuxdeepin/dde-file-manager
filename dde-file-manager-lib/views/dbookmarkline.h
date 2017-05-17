@@ -5,6 +5,8 @@
 
 class DBookmarkLine : public DBookmarkItem
 {
+    Q_OBJECT
+
 public:
     DBookmarkLine();
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
