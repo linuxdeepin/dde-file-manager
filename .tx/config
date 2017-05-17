@@ -4,8 +4,8 @@ minimum_perc = 80
 mode = developer
 
 [deepin-file-manager.dde-file-manager]
-file_filter = dde-file-manager/translations/dde-file-manager_<lang>.ts
-source_file = dde-file-manager/translations/dde-file-manager.ts
+file_filter = dde-file-manager/translations/dde-file-manager-app_<lang>.ts
+source_file = dde-file-manager/translations/dde-file-manager-app.ts
 source_lang = en
 type = QT
 
