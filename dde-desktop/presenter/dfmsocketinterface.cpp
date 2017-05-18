@@ -25,6 +25,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include "DDesktopServices"
+
+DUTIL_USE_NAMESPACE
 
 using namespace std;
 
@@ -116,28 +119,5 @@ void DFMSocketInterface::showProperty(const QStringList &paths)
 {
     Q_D(DFMSocketInterface);
 
-    if (-1 == getProcIdByName("dde-file-manager")) {
-        startProcessDetached("/usr/bin/dde-property-dialog",
-                             paths);
-        return;
-    }
-
-    QJsonObject dfmData;
-    auto pathArray = QJsonArray::fromStringList(paths);
-    dfmData.insert("isShowPropertyDialogRequest", true);
-    dfmData.insert("paths", pathArray);
-
-    qDebug() << QJsonDocument(dfmData).toJson();
-    if (!d->socket->isOpen()) {
-        d->socket->open();
-    }
-
-    if (d->socket->isValid() || !d->socket->isOpen()) {
-        startProcessDetached("/usr/bin/dde-property-dialog",
-                             paths);
-        return;
-    }
-
-    d->socket->write(QJsonDocument(dfmData).toJson());
-    d->socket->flush();
+    DDesktopServices::showFileItemProperties(paths);
 }
