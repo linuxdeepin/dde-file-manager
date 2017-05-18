@@ -9,6 +9,8 @@
 #include "dfmviewmanager.h"
 #include "dfmbaseview.h"
 
+#include "dfmviewfactory.h"
+
 #include "views/dfileview.h"
 #include "views/computerview.h"
 
@@ -78,7 +80,7 @@ DFMBaseView *DFMViewManager::createViewByUrl(const DUrl &fileUrl) const
         if (creatorList.isEmpty())
             continue;
 
-        return (creatorList.first().second)();
+        return (creatorList.first().second)(fileUrl);
     }
 
     return 0;
@@ -108,7 +110,13 @@ QString DFMViewManager::suitedViewTypeNameByUrl(const DUrl &fileUrl) const
 
 bool DFMViewManager::isSuited(const DUrl &fileUrl, const DFMBaseView *view) const
 {
-    return suitedViewTypeNameByUrl(fileUrl) == typeid(*view).name();
+    const QString &type_name = suitedViewTypeNameByUrl(fileUrl);
+
+    if (type_name == typeid(*view).name())
+        return true;
+
+    // plugin is suited
+    return DFMViewFactory::viewIsSuitedWithUrl(view, fileUrl);
 }
 
 DFMViewManager::DFMViewManager(QObject *parent)
@@ -124,6 +132,15 @@ DFMViewManager::DFMViewManager(QObject *parent)
     dRegisterUrlView<DFileView>("stp", QString());
     dRegisterUrlView<DFileView>("fstp", QString());
     dRegisterUrlView<ComputerView>("computer", "/");
+
+    // register plugins
+    for (const QString &key : DFMViewFactory::keys()) {
+        const DUrl url(key);
+
+        insertToCreatorHash(KeyType(url.scheme(), url.host()), ViewCreatorType(typeid(DFMViewFactory).name(), [] (const DUrl &url) {
+            return DFMViewFactory::create(url);
+        }));
+    }
 }
 
 DFMViewManager::~DFMViewManager()

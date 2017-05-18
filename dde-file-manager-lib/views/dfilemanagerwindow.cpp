@@ -294,9 +294,6 @@ bool DFileManagerWindow::cd(const DUrl &fileUrl, bool canFetchNetwork)
     }
 
     if (!d->currentView || !DFMViewManager::instance()->isSuited(fileUrl, d->currentView)) {
-        if (d->currentView)
-            d->currentView->deleteLater();
-
         DFMBaseView *view = DFMViewManager::instance()->createViewByUrl(fileUrl);
 
         if (view) {
@@ -328,19 +325,26 @@ bool DFileManagerWindow::cd(const DUrl &fileUrl, bool canFetchNetwork)
 
                 return cd(newUrl, canFetchNetwork);
             }
+
+            return false;
         }
+
+        if (d->currentView)
+            d->currentView->deleteLater();
 
         d->setCurrentView(view);
     }
 
-    emit currentUrlChanged();
-
     d->tabBar->currentTab()->setCurrentUrl(fileUrl);
 
-    if (d->currentView)
-       return d->currentView->setRootUrl(fileUrl);
+    bool ok = false;
 
-    return false;
+    if (d->currentView)
+       ok = d->currentView->setRootUrl(fileUrl);
+
+    emit currentUrlChanged();
+
+    return ok;
 }
 
 void DFileManagerWindow::openNewTab(const DFMUrlBaseEvent &event)
