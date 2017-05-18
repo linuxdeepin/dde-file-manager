@@ -6,10 +6,9 @@
 #include <QKeyEvent>
 #include "shutil/fileutils.h"
 
-CloseAllDialogIndicator::CloseAllDialogIndicator(QWidget *parent) : QDialog(parent)
+CloseAllDialogIndicator::CloseAllDialogIndicator(QWidget *parent) : DAbstractDialog(parent)
 {
-    setWindowFlags(Qt::FramelessWindowHint | Qt::Dialog | Qt::WindowStaysOnTopHint);
-    setAttribute(Qt::WA_TranslucentBackground);
+    setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
     setFocusPolicy(Qt::NoFocus);
     initUI();
     initConnect();
@@ -24,9 +23,6 @@ void CloseAllDialogIndicator::initUI()
 {
     resize(QSize(400, 50));
 
-    QFrame* contentFrame = new QFrame(this);
-    contentFrame->setObjectName("ContentFrame");
-
     m_messageLabel = new QLabel(this);
     m_closeButton = new QPushButton(tr("Close all"), this);
     m_closeButton->setObjectName("AllCloseButton");
@@ -36,17 +32,7 @@ void CloseAllDialogIndicator::initUI()
     mainLayout->addSpacing(50);
     mainLayout->addWidget(m_closeButton, Qt::AlignRight);
     mainLayout->setContentsMargins(25, 5, 25, 5);
-    contentFrame->setLayout(mainLayout);
-
-    QHBoxLayout* contentlayout = new QHBoxLayout;
-    contentlayout->addWidget(contentFrame);
-
-    contentlayout->setContentsMargins(5, 5, 5, 5);
-    setLayout(contentlayout);
-
-    QRect screenGeometry = qApp->desktop()->screenGeometry();
-
-    move((screenGeometry.width() - width()) / 2, screenGeometry.height() - height());
+    setLayout(mainLayout);
 
     setTotalMessage(0, 0);
 }
@@ -68,5 +54,16 @@ void CloseAllDialogIndicator::keyPressEvent(QKeyEvent *event)
         return;
     }
     QDialog::keyPressEvent(event);
+}
+
+void CloseAllDialogIndicator::showEvent(QShowEvent *event)
+{
+    Q_UNUSED(event)
+
+    QRect screenGeometry = qApp->desktop()->screenGeometry();
+
+    move((screenGeometry.width() - width()) / 2, screenGeometry.height() - height());
+
+    return DAbstractDialog::showEvent(event);
 }
 
