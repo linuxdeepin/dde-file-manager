@@ -154,6 +154,9 @@ int main(int argc, char *argv[])
     bool isSingleInstance  = app.setSingleInstance(uniqueKey);
 
     if (isSingleInstance) {
+        // init app
+        Q_UNUSED(FileManagerApp::instance())
+
         if (CommandLineManager::instance()->isSet("d")) {
             fileManagerApp;
 #ifdef AUTO_RESTART_DEAMON

@@ -239,9 +239,7 @@ void FileManagerApp::showPropertyDialog(const QStringList paths)
     }
     if(urlList.isEmpty())
         return;
-    DFMEvent event(this);
-    event.setData(urlList);
 
-    emit fileSignalManager->requestShowPropertyDialog(event);
+    emit fileSignalManager->requestShowPropertyDialog(DFMUrlListBaseEvent(this, urlList));
 }
 
