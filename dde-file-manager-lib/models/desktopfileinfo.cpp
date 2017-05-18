@@ -96,8 +96,12 @@ QIcon DesktopFileInfo::fileIcon() const
 {
     Q_D(const DesktopFileInfo);
 
-    if (Q_LIKELY(!d->icon.isNull()))
-        return d->icon;
+    if (Q_LIKELY(!d->icon.isNull())) {
+        if (Q_LIKELY(!d->icon.availableSizes().isEmpty()))
+            return d->icon;
+
+        d->icon = QIcon();
+    }
 
     const QString &iconName = this->iconName();
 
@@ -159,6 +163,11 @@ void DesktopFileInfo::refresh()
 QString DesktopFileInfo::iconName() const
 {
     return getIconName();
+}
+
+QString DesktopFileInfo::genericIconName() const
+{
+    return QStringLiteral("application-default-icon");
 }
 
 QString DesktopFileInfo::fileDisplayName() const
