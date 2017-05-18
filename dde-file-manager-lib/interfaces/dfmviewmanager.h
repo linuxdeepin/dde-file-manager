@@ -24,7 +24,7 @@ class DFMViewManager : public QObject
     Q_OBJECT
 
     typedef QPair<QString, QString> KeyType;
-    typedef QPair<QString, std::function<DFMBaseView*()>> ViewCreatorType;
+    typedef QPair<QString, std::function<DFMBaseView*(const DUrl &)>> ViewCreatorType;
 
 public:
     static DFMViewManager *instance();
@@ -35,7 +35,8 @@ public:
         if (isRegisted<T>(scheme, host))
             return;
 
-        insertToCreatorHash(KeyType(scheme, host), ViewCreatorType(typeid(T).name(), [=] {
+        insertToCreatorHash(KeyType(scheme, host), ViewCreatorType(typeid(T).name(), [=] (const DUrl &url) {
+            Q_UNUSED(url)
             return (DFMBaseView*)new T();
         }));
     }

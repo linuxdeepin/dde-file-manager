@@ -189,7 +189,10 @@ HEADERS += \
     dialogs/previewdialog.h \
     interfaces/dfmbaseview.h \
     interfaces/dfmviewmanager.h \
-    views/dfmactionbutton.h
+    views/dfmactionbutton.h \
+    interfaces/plugins/dfmviewplugin.h \
+    interfaces/plugins/dfmviewfactory.h \
+    interfaces/plugins/dfmfactoryloader.h
 SOURCES += \
     controllers/appcontroller.cpp \
     views/dleftsidebar.cpp \
@@ -311,9 +314,12 @@ SOURCES += \
     dialogs/previewdialog.cpp \
     interfaces/dfmbaseview.cpp \
     interfaces/dfmviewmanager.cpp \
-    views/dfmactionbutton.cpp
+    views/dfmactionbutton.cpp \
+    interfaces/plugins/dfmviewplugin.cpp \
+    interfaces/plugins/dfmviewfactory.cpp \
+    interfaces/plugins/dfmfactoryloader.cpp
 
-INCLUDEPATH += $$PWD/../ $$PWD/../utils/ $$PWD/interfaces/ $$PWD/../dde-file-manager-plugins/plugininterfaces/
+INCLUDEPATH += $$PWD/../ $$PWD/../utils/ $$PWD/interfaces/ $$PWD/interfaces/plugins $$PWD/../dde-file-manager-plugins/plugininterfaces/
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 HELPSHAREDIR = $$PREFIX/share/dman/$$TARGET
@@ -338,7 +344,7 @@ isEmpty(INCLUDE_INSTALL_DIR) {
     includes.path = $$INCLUDE_INSTALL_DIR/dde-file-manager
 }
 
-includes.files += $$PWD/interfaces/*.h
+includes.files += $$PWD/interfaces/*.h $$PWD/interfaces/plugins/*.h
 
 isEmpty(INCLUDE_INSTALL_DIR) {
     gvfs_includes.path = $$PREFIX/include/dde-file-manager/gvfs

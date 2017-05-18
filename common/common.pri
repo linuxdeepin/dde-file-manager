@@ -28,7 +28,7 @@ unix {
 
     isEmpty(LIB_INSTALL_DIR) {
         CONFIG(debug, debug|release) {
-            PLUGINDIR = ../dde-file-manager-plugins
+            PLUGINDIR = $$OUT_PWD/plugins
         }
     } else {
         PLUGINDIR = $$LIB_INSTALL_DIR/$$ProjectName/plugins
