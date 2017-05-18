@@ -9,6 +9,7 @@ Categories=Utility;
 OnlyShowIn=Deepin;
 Actions=new-window;
 MimeType=inode/directory;
+X-GNOME-Autostart-Delay=20;
 
 Name=Deepin File Manager
 Name[ar]=مدير الملفات
