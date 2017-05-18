@@ -1,11 +1,14 @@
 #ifndef CLOSEALLDIALOGINDICATOR_H
 #define CLOSEALLDIALOGINDICATOR_H
 
-#include <QDialog>
 #include <QLabel>
 #include <QPushButton>
 
-class CloseAllDialogIndicator : public QDialog
+#include <dabstractdialog.h>
+
+DWIDGET_USE_NAMESPACE
+
+class CloseAllDialogIndicator : public DAbstractDialog
 {
     Q_OBJECT
 public:
@@ -24,6 +27,7 @@ public slots:
 protected:
 //    void showEvent(QShowEvent* event);
     void keyPressEvent(QKeyEvent* event);
+    void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
 
 private:
     QLabel* m_messageLabel;

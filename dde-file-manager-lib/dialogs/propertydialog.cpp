@@ -409,16 +409,16 @@ void PropertyDialog::flickFolderToLeftsidBar()
     if(window->windowState() == Qt::WindowMinimized)
         return;
 
-    QPoint targetPos = window->getLeftSideBar()->getMyShareItemCenterPos();
+    QPoint targetPos = window->mapFromGlobal(window->getLeftSideBar()->getMyShareItemCenterPos());
 
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(m_url);
 
-    QLabel* aniLabel = new QLabel();
+    QLabel* aniLabel = new QLabel(window);
+    aniLabel->raise();
     aniLabel->setFixedSize(m_icon->size());
-    aniLabel->setWindowFlags(Qt::Popup | Qt::FramelessWindowHint);
     aniLabel->setAttribute(Qt::WA_TranslucentBackground);
     aniLabel->setPixmap(fileInfo->fileIcon().pixmap(160, 160));
-    aniLabel->move(m_icon->mapToGlobal(m_icon->pos()));
+    aniLabel->move(window->mapFromGlobal(m_icon->mapToGlobal(m_icon->pos())));
 
     int angle;
     if(targetPos.x() > aniLabel->x())
@@ -427,7 +427,7 @@ void PropertyDialog::flickFolderToLeftsidBar()
         angle = -45;
 
     QVariantAnimation* xani = new QVariantAnimation(this);
-    xani->setStartValue(QPoint(aniLabel->x(), 0));
+    xani->setStartValue(aniLabel->pos());
     xani->setEndValue(QPoint(targetPos.x(), angle));
     xani->setDuration(440);
 
