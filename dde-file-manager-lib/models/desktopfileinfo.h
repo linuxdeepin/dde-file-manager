@@ -28,6 +28,7 @@ public:
     void refresh() Q_DECL_OVERRIDE;
 
     QString iconName() const Q_DECL_OVERRIDE;
+    QString genericIconName() const Q_DECL_OVERRIDE;
 
     static QMap<QString, QVariant> getDesktopFileInfo(const DUrl &fileUrl);
 
