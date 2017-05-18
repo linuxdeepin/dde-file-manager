@@ -427,9 +427,9 @@ void DialogManager::showOpenWithDialog(const DFMEvent &event)
     }
 }
 
-void DialogManager::showPropertyDialog(const DFMEvent &event)
+void DialogManager::showPropertyDialog(const DFMUrlListBaseEvent &event)
 {
-    const DUrlList& urlList  = event.fileUrlList();
+    const DUrlList& urlList  = event.urlList();
     int count = urlList.count();
     foreach (const DUrl& url, urlList) {
         int index = urlList.indexOf(url);
@@ -463,7 +463,7 @@ void DialogManager::showPropertyDialog(const DFMEvent &event)
     }
 }
 
-void DialogManager::showShareOptionsInPropertyDialog(const DFMEvent &event)
+void DialogManager::showShareOptionsInPropertyDialog(const DFMUrlListBaseEvent &event)
 {
     DUrl url = event.fileUrlList().first();
     showPropertyDialog(event);

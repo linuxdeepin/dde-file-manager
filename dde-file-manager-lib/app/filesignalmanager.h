@@ -96,10 +96,10 @@ signals:
     void requestShowOpenWithDialog(const DFMEvent &event);
 
     /*request show PropertyDialog*/
-    void requestShowPropertyDialog(const DFMEvent &event);
+    void requestShowPropertyDialog(const DFMUrlListBaseEvent &event);
 
     /*request show PropertyDialog*/
-    void requestShowShareOptionsInPropertyDialog(const DFMEvent &event);
+    void requestShowShareOptionsInPropertyDialog(const DFMUrlListBaseEvent &event);
 
     /*request show TrashPropertyDialog*/
     void requestShowTrashPropertyDialog(const DFMEvent &event);
