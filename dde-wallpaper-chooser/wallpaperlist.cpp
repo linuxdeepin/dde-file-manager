@@ -147,7 +147,7 @@ void WallpaperList::resizeEvent(QResizeEvent *event)
         --screen_item_count;
 
     setGridSize(QSize(width() / screen_item_count, ItemHeight));
-
+    QTimer::singleShot(50, this, &WallpaperList::doItemsLayout);
     updateBothEndsItem();
 }
 
@@ -233,15 +233,15 @@ void WallpaperList::updateBothEndsItem()
     if (nextItem)
         nextItem->setOpacity(1);
 
+    prevItem = static_cast<WallpaperItem*>(itemWidget(itemAt(ItemWidth / 2, ItemHeight / 2)));
+    nextItem = static_cast<WallpaperItem*>(itemWidget(itemAt(width() - ItemWidth / 2, ItemHeight / 2)));
+
     if (current_value == horizontalScrollBar()->minimum()) {
         prevItem = Q_NULLPTR;
-        nextItem = static_cast<WallpaperItem*>(itemWidget(item(width() / gridSize().width() - 1)));
-    } else if (current_value == horizontalScrollBar()->maximum()) {
-        prevItem = static_cast<WallpaperItem*>(itemWidget(item(count() - width() / gridSize().width())));
+    }
+
+    if (current_value == horizontalScrollBar()->maximum()) {
         nextItem = Q_NULLPTR;
-    } else {
-        prevItem = static_cast<WallpaperItem*>(itemWidget(itemAt(ItemWidth / 2, ItemHeight / 2)));
-        nextItem = static_cast<WallpaperItem*>(itemWidget(itemAt(width() - ItemWidth / 2, ItemHeight / 2)));
     }
 
     if (prevItem) {

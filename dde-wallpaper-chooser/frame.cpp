@@ -156,8 +156,6 @@ void Frame::initSize()
 void Frame::initListView()
 {
     m_wallpaperList->setStyleSheet("QListWidget { background: transparent }");
-
-    refreshList();
 }
 
 void Frame::refreshList()
@@ -178,6 +176,8 @@ void Frame::refreshList()
                 WallpaperItem * item = m_wallpaperList->addWallpaper(path);
                 item->setDeletable(m_deletableInfo.value(path));
             }
+
+            m_wallpaperList->setFixedWidth(qMin(m_wallpaperList->gridSize().width() * m_wallpaperList->count(), width()));
         }
     });
 }
