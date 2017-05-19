@@ -154,6 +154,9 @@ int main(int argc, char *argv[])
     bool isSingleInstance  = app.setSingleInstance(uniqueKey);
 
     if (isSingleInstance) {
+        if (QT_PREPEND_NAMESPACE(qEnvironmentVariableIsEmpty)("DFM_PLUGIN_PATH"))
+            qputenv("DFM_PLUGIN_PATH", PLUGINDIR);
+
         // init app
         Q_UNUSED(FileManagerApp::instance())
 

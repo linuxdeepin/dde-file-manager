@@ -88,9 +88,13 @@ static bool dfm_debug_component()
 
 void DFMFactoryLoader::update()
 {
+    // Disable plugins on root user
+    if (DFMGlobal::isRootUser())
+        return;
+
 #ifdef QT_SHARED
     Q_D(DFMFactoryLoader);
-    QStringList paths = QStringList() << QStringLiteral(PLUGINDIR);
+    QStringList paths = QStringList() << QString::fromLocal8Bit(qgetenv("DFM_PLUGIN_PATH"));
     for (int i = 0; i < paths.count(); ++i) {
         const QString &pluginDir = paths.at(i);
         // Already loaded, skip it...
