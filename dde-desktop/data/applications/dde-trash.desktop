@@ -9,6 +9,7 @@ OnlyShowIn=Deepin;
 Terminal=false
 Type=Application
 X-AppStream-Ignore=true
+X-Deepin-AppID=dde-trash
 
 # Translations:
 # Do not manually modify!
