@@ -4,3 +4,9 @@ usr/share/polkit-1/actions/*
 etc/xdg/autostart/*
 etc/dbus-1/system.d/*
 usr/share/dbus-1/*
+usr/share/dde-file-manager/translations/*
+usr/share/dde-file-manager/templates/*
+usr/share/dde-file-manager/mimetypes/*
+usr/share/dde-file-manager/templates/*
+usr/share/dman/*
+usr/share/icons/*
