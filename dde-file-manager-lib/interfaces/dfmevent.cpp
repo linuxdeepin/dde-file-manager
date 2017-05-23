@@ -771,3 +771,29 @@ QSharedPointer<DFMMenuActionEvent> DFMMenuActionEvent::fromJson(const QJsonObjec
 
     return event;
 }
+
+DFMBackEvent::DFMBackEvent(const QObject *sender)
+    : DFMEvent(Back, sender)
+{
+
+}
+
+QSharedPointer<DFMBackEvent> DFMBackEvent::fromJson(const QJsonObject &json)
+{
+    Q_UNUSED(json)
+
+    return dMakeEventPointer<DFMBackEvent>(Q_NULLPTR);
+}
+
+DFMForwardEvent::DFMForwardEvent(const QObject *sender)
+    : DFMEvent(Forward, sender)
+{
+
+}
+
+QSharedPointer<DFMForwardEvent> DFMForwardEvent::fromJson(const QJsonObject &json)
+{
+    Q_UNUSED(json)
+
+    return dMakeEventPointer<DFMForwardEvent>(Q_NULLPTR);
+}

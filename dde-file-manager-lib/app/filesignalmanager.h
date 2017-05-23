@@ -147,12 +147,6 @@ signals:
     /*ctrl + L*/
     void requestSearchCtrlL(quint64 winId);
 
-    /*alt + left*/
-    void requestBack(quint64 winId);
-
-    /*alt + right*/
-    void requestForward(quint64 winId);
-
     /* about dialog */
     void showAboutDialog(quint64 winId);
 

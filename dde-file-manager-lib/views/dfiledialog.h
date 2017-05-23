@@ -10,7 +10,7 @@
 DFM_USE_NAMESPACE
 
 class DFileDialogPrivate;
-class DFileDialog : public DFileManagerWindow, public DFMAbstractEventHandler
+class DFileDialog : public DFileManagerWindow
 {
     Q_OBJECT
 
@@ -83,7 +83,7 @@ protected:
     bool eventFilter(QObject *watched, QEvent *event) Q_DECL_OVERRIDE;
     void adjustPosition(QWidget *w);
 
-    bool fmEventFilter(const QSharedPointer<DFMEvent> &event, QVariant *resultData) Q_DECL_OVERRIDE;
+    bool fmEventFilter(const QSharedPointer<DFMEvent> &event, DFMAbstractEventHandler *target = 0, QVariant *resultData = 0) Q_DECL_OVERRIDE;
 
 private:
     void onAcceptButtonClicked();

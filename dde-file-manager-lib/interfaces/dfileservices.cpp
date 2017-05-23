@@ -4,6 +4,8 @@
 #include "dabstractfilewatcher.h"
 #include "dfmeventdispatcher.h"
 
+#include "dfmfilecontrollerfactory.h"
+
 #include "app/filesignalmanager.h"
 #include "dfmevent.h"
 #include "app/define.h"
@@ -59,6 +61,15 @@ DFileService::DFileService(QObject *parent)
 {
     /// init url handler register
     AppController::registerUrlHandle();
+
+    // register plugins
+    for (const QString &key : DFMFileControllerFactory::keys()) {
+        const QUrl url(key);
+
+        insertToCreatorHash(HandlerType(url.scheme(), url.host()), HandlerCreatorType(typeid(DFMFileControllerFactory).name(), [key] {
+            return DFMFileControllerFactory::create(key);
+        }));
+    }
 }
 
 DFileService::~DFileService()
@@ -311,6 +322,13 @@ bool DFileService::isRegisted(const QString &scheme, const QString &host, const 
     return false;
 }
 
+bool DFileService::isRegisted(const QString &scheme, const QString &host)
+{
+    const HandlerType &type = HandlerType(scheme, host);
+
+    return !DFileServicePrivate::controllerCreatorHash.values(type).isEmpty() || !DFileServicePrivate::controllerHash.values(type).isEmpty();
+}
+
 void DFileService::initHandlersByCreators()
 {
     QMultiHash<const HandlerType, HandlerCreatorType>::const_iterator begin = DFileServicePrivate::controllerCreatorHash.constBegin();
@@ -555,7 +573,7 @@ DAbstractFileWatcher *DFileService::createFileWatcher(const QObject *sender, con
 
 QList<DAbstractFileController*> DFileService::getHandlerTypeByUrl(const DUrl &fileUrl, bool ignoreHost, bool ignoreScheme)
 {
-    HandlerType handlerType(ignoreScheme ? "" : fileUrl.scheme(), ignoreHost ? "" : fileUrl.path());
+    HandlerType handlerType(ignoreScheme ? "" : fileUrl.scheme(), ignoreHost ? "" : fileUrl.host());
 
     if (DFileServicePrivate::controllerCreatorHash.contains(handlerType)) {
         QList<DAbstractFileController*> list = DFileServicePrivate::controllerHash.values(handlerType);

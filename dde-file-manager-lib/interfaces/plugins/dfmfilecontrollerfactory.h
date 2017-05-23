@@ -6,22 +6,22 @@
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  **/
-#ifndef DFMVIEWFACTORY_H
-#define DFMVIEWFACTORY_H
+#ifndef DFMFILECONTROLLERFACTORY_H
+#define DFMFILECONTROLLERFACTORY_H
 
 #include "dfmglobal.h"
 
+class DAbstractFileController;
+
 DFM_BEGIN_NAMESPACE
 
-class DFMBaseView;
-class DFMViewFactory
+class DFMFileControllerFactory
 {
 public:
     static QStringList keys();
-    static DFMBaseView *create(const QString &key);
-    static bool viewIsSuitedWithUrl(const DFMBaseView *view, const DUrl &url);
+    static DAbstractFileController *create(const QString &key);
 };
 
 DFM_END_NAMESPACE
 
-#endif // DFMVIEWFACTORY_H
+#endif // DFMFILECONTROLLERFACTORY_H

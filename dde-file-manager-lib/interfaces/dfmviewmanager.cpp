@@ -10,6 +10,7 @@
 #include "dfmbaseview.h"
 
 #include "dfmviewfactory.h"
+#include "dfileservices.h"
 
 #include "views/dfileview.h"
 #include "views/computerview.h"
@@ -52,7 +53,7 @@ bool DFMViewManager::isRegisted(const QString &scheme, const QString &host, cons
             return true;
     }
 
-    return false;
+    return info == typeid(DFileView) && DFileService::instance()->isRegisted(scheme, host);
 }
 
 void DFMViewManager::clearUrlView(const QString &scheme, const QString &host)
@@ -70,17 +71,20 @@ DFMBaseView *DFMViewManager::createViewByUrl(const DUrl &fileUrl) const
 
     QList<KeyType> handlerTypeList;
 
-    handlerTypeList << KeyType(fileUrl.scheme(), fileUrl.path());
-    handlerTypeList << KeyType(QString(), fileUrl.path());
+    handlerTypeList << KeyType(fileUrl.scheme(), fileUrl.host());
+    handlerTypeList << KeyType(QString(), fileUrl.host());
     handlerTypeList << KeyType(fileUrl.scheme(), QString());
 
     for (const KeyType &handlerType : handlerTypeList) {
+        if (DFileService::instance()->isRegisted(handlerType.first, handlerType.second))
+            return new DFileView();
+
         const QList<ViewCreatorType> creatorList = d->controllerCreatorHash.values(handlerType);
 
         if (creatorList.isEmpty())
             continue;
 
-        return (creatorList.first().second)(fileUrl);
+        return (creatorList.first().second)();
     }
 
     return 0;
@@ -92,11 +96,14 @@ QString DFMViewManager::suitedViewTypeNameByUrl(const DUrl &fileUrl) const
 
     QList<KeyType> handlerTypeList;
 
-    handlerTypeList << KeyType(fileUrl.scheme(), fileUrl.path());
-    handlerTypeList << KeyType(QString(), fileUrl.path());
+    handlerTypeList << KeyType(fileUrl.scheme(), fileUrl.host());
+    handlerTypeList << KeyType(QString(), fileUrl.host());
     handlerTypeList << KeyType(fileUrl.scheme(), QString());
 
     for (const KeyType &handlerType : handlerTypeList) {
+        if (DFileService::instance()->isRegisted(handlerType.first, handlerType.second))
+            return typeid(DFileView).name();
+
         const QList<ViewCreatorType> creatorList = d->controllerCreatorHash.values(handlerType);
 
         if (creatorList.isEmpty())
@@ -123,22 +130,14 @@ DFMViewManager::DFMViewManager(QObject *parent)
     : QObject(parent)
     , d_ptr(new DFMViewManagerPrivate(this))
 {
-    dRegisterUrlView<DFileView>("file", QString());
-    dRegisterUrlView<DFileView>("trash", QString());
-    dRegisterUrlView<DFileView>("search", QString());
-    dRegisterUrlView<DFileView>("usershare", QString());
-    dRegisterUrlView<DFileView>("network", QString());
-    dRegisterUrlView<DFileView>("smb", QString());
-    dRegisterUrlView<DFileView>("stp", QString());
-    dRegisterUrlView<DFileView>("fstp", QString());
-    dRegisterUrlView<ComputerView>("computer", "/");
+    dRegisterUrlView<ComputerView>("computer", QString());
 
     // register plugins
     for (const QString &key : DFMViewFactory::keys()) {
         const DUrl url(key);
 
-        insertToCreatorHash(KeyType(url.scheme(), url.host()), ViewCreatorType(typeid(DFMViewFactory).name(), [] (const DUrl &url) {
-            return DFMViewFactory::create(url);
+        insertToCreatorHash(KeyType(url.scheme(), url.host()), ViewCreatorType(typeid(DFMViewFactory).name(), [key] {
+            return DFMViewFactory::create(key);
         }));
     }
 }

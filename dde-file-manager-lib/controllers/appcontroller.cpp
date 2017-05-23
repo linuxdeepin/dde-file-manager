@@ -23,6 +23,7 @@
 #include "interfaces/dfmsetting.h"
 #include "shutil/fileutils.h"
 #include "views/windowmanager.h"
+#include "views/dfilemanagerwindow.h"
 #include "dbusinterface/commandmanager_interface.h"
 
 #include "gvfs/networkmanager.h"
@@ -558,12 +559,12 @@ void AppController::actionShowHotkeyHelp(quint64 winId)
 
 void AppController::actionBack(quint64 winId)
 {
-    emit fileSignalManager->requestBack(winId);
+    DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMBackEvent>(this), qobject_cast<DFileManagerWindow*>(WindowManager::getWindowById(winId)));
 }
 
 void AppController::actionForward(quint64 winId)
 {
-    emit fileSignalManager->requestForward(winId);
+    DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMForwardEvent>(this), qobject_cast<DFileManagerWindow*>(WindowManager::getWindowById(winId)));
 }
 
 void AppController::actionForgetPassword(const QSharedPointer<DFMUrlBaseEvent> &event)

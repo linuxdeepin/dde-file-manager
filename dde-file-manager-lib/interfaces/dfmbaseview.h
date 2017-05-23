@@ -30,6 +30,9 @@ public:
     virtual DUrl rootUrl() const = 0;
     virtual bool setRootUrl(const DUrl &url) = 0;
     virtual QList<QAction*> toolBarActionList() const;
+
+protected:
+    void notifyUrlChanged();
 };
 
 DFM_END_NAMESPACE

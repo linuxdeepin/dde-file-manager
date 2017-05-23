@@ -44,29 +44,21 @@ QStringList DFMViewFactory::keys()
     return list;
 }
 
-DFMBaseView *DFMViewFactory::create(const DUrl &url)
+DFMBaseView *DFMViewFactory::create(const QString &key)
 {
-    QStringList key_list;
+    if (DFMBaseView *view = dLoadPlugin<DFMBaseView, DFMViewPlugin>(loader(), key)) {
+        DFMViewFactoryPrivate::viewToLoaderIndex[view] = loader()->indexOf(key);
 
-    key_list << url.scheme() + "://" + url.host();
-    key_list << "://" + url.host();
-    key_list << url.scheme() + "://";
+        QObject *object = dynamic_cast<QObject*>(view);
 
-    for (const QString &key : key_list) {
-        if (DFMBaseView *view = dLoadPlugin<DFMBaseView, DFMViewPlugin>(loader(), key, url)) {
-            DFMViewFactoryPrivate::viewToLoaderIndex[view] = loader()->indexOf(key);
+        if (!object)
+            object = view->widget();
 
-            QObject *object = dynamic_cast<QObject*>(view);
+        QObject::connect(object, &QObject::destroyed, object, [view] {
+            DFMViewFactoryPrivate::viewToLoaderIndex.remove(view);
+        });
 
-            if (!object)
-                object = view->widget();
-
-            QObject::connect(object, &QObject::destroyed, object, [view] {
-                DFMViewFactoryPrivate::viewToLoaderIndex.remove(view);
-            });
-
-            return view;
-        }
+        return view;
     }
 
     return Q_NULLPTR;

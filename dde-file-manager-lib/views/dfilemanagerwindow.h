@@ -3,6 +3,7 @@
 
 #include "durl.h"
 #include "dfmglobal.h"
+#include "dfmabstracteventhandler.h"
 
 #include <DMainWindow>
 
@@ -41,7 +42,7 @@ DWIDGET_USE_NAMESPACE
 DFM_USE_NAMESPACE
 
 class DFileManagerWindowPrivate;
-class DFileManagerWindow : public DMainWindow
+class DFileManagerWindow : public DMainWindow, public DFMAbstractEventHandler
 {
     Q_OBJECT
 public:
@@ -92,6 +93,9 @@ protected:
     void mouseDoubleClickEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void moveEvent(QMoveEvent *event) Q_DECL_OVERRIDE;
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
+
+    bool fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resultData = 0) Q_DECL_OVERRIDE;
+    QObject *object() const Q_DECL_OVERRIDE;
 
     void initData();
     void initUI();

@@ -89,7 +89,7 @@ FileIconItem::FileIconItem(QWidget *parent) :
         if (edit->isReadOnly() && edit->isVisible())
             edit->setFixedHeight(edit->document()->size().height());
     });
-//    connect(edit, &QTextEdit::customContextMenuRequested, this, &FileIconItem::popupEditContentMenu);
+    connect(edit, &QTextEdit::customContextMenuRequested, this, &FileIconItem::popupEditContentMenu);
 }
 
 void FileIconItem::setOpacity(qreal opacity)

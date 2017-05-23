@@ -968,11 +968,11 @@ void DFileView::mousePressEvent(QMouseEvent *event)
 
     switch (event->button()) {
     case Qt::BackButton: {
-        fileSignalManager->requestBack(windowId());
+        DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMBackEvent>(this), qobject_cast<DFileManagerWindow*>(window()));
         break;
     }
     case Qt::ForwardButton: {
-        fileSignalManager->requestForward(windowId());
+        DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMForwardEvent>(this), qobject_cast<DFileManagerWindow*>(window()));
         break;
     }
     case Qt::LeftButton: {
