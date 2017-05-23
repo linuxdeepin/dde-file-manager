@@ -820,6 +820,10 @@ void DFileManagerWindow::initConnect()
     connect(fileSignalManager, &FileSignalManager::trashStateChanged, this, &DFileManagerWindow::onTrashStateChanged);
     connect(fileSignalManager, &FileSignalManager::currentUrlChanged, this, &DFileManagerWindow::onTrashStateChanged);
     connect(d->tabBar, &TabBar::currentChanged, this, &DFileManagerWindow::onTrashStateChanged);
+
+    connect(fileSignalManager, &FileSignalManager::currentUrlChanged, this, [this] (const DFMEvent &event) {
+        setWindowTitle(QString("%1 - %2").arg(event.fileUrl().toString()).arg(qApp->applicationDisplayName()));
+    });
 }
 
 void DFileManagerWindow::moveCenterByRect(QRect rect)
