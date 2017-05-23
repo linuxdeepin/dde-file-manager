@@ -661,8 +661,9 @@ void DFileDialog::adjustPosition(QWidget *w)
     move(p);
 }
 
-bool DFileDialog::fmEventFilter(const QSharedPointer<DFMEvent> &event, QVariant *resultData)
+bool DFileDialog::fmEventFilter(const QSharedPointer<DFMEvent> &event, DFMAbstractEventHandler *target, QVariant *resultData)
 {
+    Q_UNUSED(target)
     Q_UNUSED(resultData)
 
     if (event->type() == DFMEvent::OpenFile) {

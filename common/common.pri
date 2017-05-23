@@ -27,9 +27,7 @@ unix {
     }
 
     isEmpty(LIB_INSTALL_DIR) {
-        CONFIG(debug, debug|release) {
-            PLUGINDIR = $$OUT_PWD/plugins
-        }
+        PLUGINDIR = $$[QT_INSTALL_LIBS]/$$ProjectName/plugins
     } else {
         PLUGINDIR = $$LIB_INSTALL_DIR/$$ProjectName/plugins
     }

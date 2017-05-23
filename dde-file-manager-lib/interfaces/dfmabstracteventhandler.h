@@ -16,12 +16,15 @@ DFM_BEGIN_NAMESPACE
 
 class DFMAbstractEventHandler
 {
+public:
+    virtual QObject *object() const;
+
 protected:
     DFMAbstractEventHandler();
     virtual ~DFMAbstractEventHandler();
 
     virtual bool fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resultData = 0);
-    virtual bool fmEventFilter(const QSharedPointer<DFMEvent> &event, QVariant *resultData = 0);
+    virtual bool fmEventFilter(const QSharedPointer<DFMEvent> &event, DFMAbstractEventHandler *target = 0, QVariant *resultData = 0);
 
     friend class DFMEventDispatcher;
 };

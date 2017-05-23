@@ -60,11 +60,10 @@ public slots:
     void crumbSelected(const DFMEvent &e);
     void crumbChanged(const DFMEvent &event);
     void searchBarChanged(QString path);
-    void backButtonClicked();
-    void forwardButtonClicked();
 
-    void handleHotkeyBack(quint64 winId);
-    void handleHotkeyForward(quint64 winId);
+    void back();
+    void forward();
+
     void handleHotkeyCtrlF(quint64 winId);
     void handleHotkeyCtrlL(quint64 winId);
 
@@ -74,6 +73,9 @@ public slots:
 
 private:
     void checkNavHistory(DUrl url);
+    void onBackButtonClicked();
+    void onForwardButtonClicked();
+
     bool m_searchState = false;
     QFrame* m_addressToolBar;
     QPushButton* m_backButton=NULL;

@@ -290,10 +290,10 @@ bool FileEventProcessor::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
 
         if (e->dirOpenMode() == DFMOpenUrlEvent::OpenInCurrentWindow) {
             const QSharedPointer<DFMEvent> &newEvent = dMakeEventPointer<DFMChangeCurrentUrlEvent>(event->sender(), dirList.first(), WindowManager::getWindowById(event->windowId()));
-            result = DThreadUtil::runInMainThread(DFMEventDispatcher::instance(), static_cast<QVariant(DFMEventDispatcher::*)(const QSharedPointer<DFMEvent> &)>(&DFMEventDispatcher::processEvent), newEvent);
+            result = DThreadUtil::runInMainThread(DFMEventDispatcher::instance(), static_cast<QVariant(DFMEventDispatcher::*)(const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *)>(&DFMEventDispatcher::processEvent), newEvent, Q_NULLPTR);
         } else {
             const QSharedPointer<DFMEvent> &newEvent = dMakeEventPointer<DFMOpenNewWindowEvent>(event->sender(), dirList, e->dirOpenMode() == DFMOpenUrlEvent::ForceOpenNewWindow);
-            result = DThreadUtil::runInMainThread(DFMEventDispatcher::instance(), static_cast<QVariant(DFMEventDispatcher::*)(const QSharedPointer<DFMEvent> &)>(&DFMEventDispatcher::processEvent), newEvent);
+            result = DThreadUtil::runInMainThread(DFMEventDispatcher::instance(), static_cast<QVariant(DFMEventDispatcher::*)(const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *)>(&DFMEventDispatcher::processEvent), newEvent, Q_NULLPTR);
         }
 
         if (resultData)

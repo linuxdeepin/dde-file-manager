@@ -465,6 +465,29 @@ void DFileManagerWindow::keyPressEvent(QKeyEvent *event)
     return DMainWindow::keyPressEvent(event);
 }
 
+bool DFileManagerWindow::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resultData)
+{
+    Q_UNUSED(resultData)
+    Q_D(DFileManagerWindow);
+
+    switch (event->type()) {
+    case DFMEvent::Back:
+        d->toolbar->back();
+        return true;
+    case DFMEvent::Forward:
+        d->toolbar->forward();
+        return true;
+    default: break;
+    }
+
+    return false;
+}
+
+QObject *DFileManagerWindow::object() const
+{
+    return const_cast<DFileManagerWindow*>(this);
+}
+
 void DFileManagerWindow::initData()
 {
 

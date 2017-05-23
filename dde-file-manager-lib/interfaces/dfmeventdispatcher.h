@@ -64,19 +64,19 @@ public:
     static DFMEventDispatcher *instance();
     ~DFMEventDispatcher();
 
-    QVariant processEvent(const QSharedPointer<DFMEvent> &event);
+    QVariant processEvent(const QSharedPointer<DFMEvent> &event, DFMAbstractEventHandler *target = 0);
     template<class T, typename... Args>
     QVariant processEvent(Args&&... args)
     {
         return processEvent(dMakeEventPointer<T>(std::forward<Args>(args)...));
     }
-    DFMEventFuture processEventAsync(const QSharedPointer<DFMEvent> &event);
+    DFMEventFuture processEventAsync(const QSharedPointer<DFMEvent> &event, DFMAbstractEventHandler *target = 0);
     template<class T, typename... Args>
     DFMEventFuture processEventAsync(Args&&... args)
     {
         return processEventAsync(dMakeEventPointer<T>(std::forward<Args>(args)...));
     }
-    QVariant processEventWithEventLoop(const QSharedPointer<DFMEvent> &event);
+    QVariant processEventWithEventLoop(const QSharedPointer<DFMEvent> &event, DFMAbstractEventHandler *target = 0);
     template<class T, typename... Args>
     QVariant processEventWithEventLoop(Args&&... args)
     {

@@ -6,26 +6,27 @@
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  **/
-#ifndef DFMVIEWPLUGIN_H
-#define DFMVIEWPLUGIN_H
+#ifndef DFMFILECONTROLLERPLUGIN_H
+#define DFMFILECONTROLLERPLUGIN_H
 
 #include <QObject>
 
 #include "dfmglobal.h"
 
-DFM_BEGIN_NAMESPACE
-#define DFMViewFactoryInterface_iid "com.deepin.filemanager.DFMViewFactoryInterface_iid"
+class DAbstractFileController;
 
-class DFMBaseView;
-class DFMViewPlugin : public QObject
+DFM_BEGIN_NAMESPACE
+#define DFMFileControllerFactoryInterface_iid "com.deepin.filemanager.DFMFileControllerFactoryInterface_iid"
+
+class DFMFileControllerPlugin : public QObject
 {
     Q_OBJECT
 public:
-    explicit DFMViewPlugin(QObject *parent = 0);
-    ~DFMViewPlugin();
+    explicit DFMFileControllerPlugin(QObject *parent = 0);
 
-    virtual DFMBaseView *create(const QString &key) = 0;
+    virtual DAbstractFileController *create(const QString &key) = 0;
 };
+
 DFM_END_NAMESPACE
 
-#endif // DFMVIEWPLUGIN_H
+#endif // DFMFILECONTROLLERPLUGIN_H

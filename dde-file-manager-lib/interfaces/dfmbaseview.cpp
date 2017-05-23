@@ -7,6 +7,7 @@
  * (at your option) any later version.
  **/
 #include "dfmbaseview.h"
+#include "views/dfilemanagerwindow.h"
 
 #include <QObject>
 
@@ -33,6 +34,13 @@ void DFMBaseView::deleteLater()
 QList<QAction *> DFMBaseView::toolBarActionList() const
 {
     return QList<QAction*>();
+}
+
+void DFMBaseView::notifyUrlChanged()
+{
+    if (DFileManagerWindow *w = qobject_cast<DFileManagerWindow*>(widget()->window())) {
+        w->currentUrlChanged();
+    }
 }
 
 DFM_END_NAMESPACE

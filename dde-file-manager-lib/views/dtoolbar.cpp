@@ -158,16 +158,14 @@ void DToolBar::initContollerToolBar()
 
 void DToolBar::initConnect()
 {
-    connect(m_backButton, &DStateButton::clicked,this, &DToolBar::backButtonClicked);
-    connect(m_forwardButton, &DStateButton::clicked,this, &DToolBar::forwardButtonClicked);
+    connect(m_backButton, &DStateButton::clicked,this, &DToolBar::onBackButtonClicked);
+    connect(m_forwardButton, &DStateButton::clicked,this, &DToolBar::onForwardButtonClicked);
     connect(m_searchBar, &DSearchBar::returnPressed, this, &DToolBar::searchBarTextEntered);
     connect(m_crumbWidget, &DCrumbWidget::crumbSelected, this, &DToolBar::crumbSelected);
     connect(m_crumbWidget, &DCrumbWidget::searchBarActivated, this, &DToolBar::searchBarActivated);
     connect(m_searchButton, &DStateButton::clicked, this, &DToolBar::searchBarClicked);
     connect(m_searchBar, &DSearchBar::focusedOut, this,  &DToolBar::searchBarDeactivated);
     connect(fileSignalManager, &FileSignalManager::currentUrlChanged, this, &DToolBar::crumbChanged);
-    connect(fileSignalManager, &FileSignalManager::requestBack, this, &DToolBar::handleHotkeyBack);
-    connect(fileSignalManager, &FileSignalManager::requestForward, this, &DToolBar::handleHotkeyForward);
     connect(fileSignalManager, &FileSignalManager::requestSearchCtrlF, this, &DToolBar::handleHotkeyCtrlF);
     connect(fileSignalManager, &FileSignalManager::requestSearchCtrlL, this, &DToolBar::handleHotkeyCtrlL);
 }
@@ -310,7 +308,7 @@ void DToolBar::searchBarChanged(QString path)
     m_searchBar->setText(path);
 }
 
-void DToolBar::backButtonClicked()
+void DToolBar::back()
 {
     DUrl url = m_navStack->back();
 
@@ -321,28 +319,14 @@ void DToolBar::backButtonClicked()
     }
 }
 
-void DToolBar::forwardButtonClicked()
+void DToolBar::forward()
 {
     DUrl url = m_navStack->forward();
-    qDebug() << url << *m_navStack;
+
     if(!url.isEmpty())
     {
         updateBackForwardButtonsState();
         DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(this, url, window());
-    }
-}
-
-void DToolBar::handleHotkeyBack(quint64 winId)
-{
-    if (winId == WindowManager::getWindowId(this)) {
-        backButtonClicked();
-    }
-}
-
-void DToolBar::handleHotkeyForward(quint64 winId)
-{
-    if (winId == WindowManager::getWindowId(this)) {
-        forwardButtonClicked();
     }
 }
 
@@ -457,4 +441,14 @@ void DToolBar::setCustomActionList(const QList<QAction *> &list)
 
     path.addRoundedRect(QRectF(QPointF(0, 0), m_contollerToolBar->sizeHint()).adjusted(0.5, 0.5, -0.5, -0.5), 4, 4);
     m_contollerToolBarClipMask->setClipPath(path);
+}
+
+void DToolBar::onBackButtonClicked()
+{
+    DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMBackEvent>(this), qobject_cast<DFileManagerWindow*>(window()));
+}
+
+void DToolBar::onForwardButtonClicked()
+{
+    DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMForwardEvent>(this), qobject_cast<DFileManagerWindow*>(window()));
 }

@@ -45,6 +45,7 @@ public:
     {
         return isRegisted(scheme, host, typeid(T));
     }
+    static bool isRegisted(const QString &scheme, const QString &host);
 
     static void initHandlersByCreators();
 

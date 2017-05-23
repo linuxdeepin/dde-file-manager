@@ -11,6 +11,11 @@
 
 DFM_BEGIN_NAMESPACE
 
+QObject *DFMAbstractEventHandler::object() const
+{
+    return Q_NULLPTR;
+}
+
 DFMAbstractEventHandler::DFMAbstractEventHandler()
 {
     DFMEventDispatcher::instance()->installEventHandler(this);
@@ -30,9 +35,10 @@ bool DFMAbstractEventHandler::fmEvent(const QSharedPointer<DFMEvent> &event, QVa
     return false;
 }
 
-bool DFMAbstractEventHandler::fmEventFilter(const QSharedPointer<DFMEvent> &event, QVariant *resultData)
+bool DFMAbstractEventHandler::fmEventFilter(const QSharedPointer<DFMEvent> &event, DFMAbstractEventHandler *target, QVariant *resultData)
 {
     Q_UNUSED(event)
+    Q_UNUSED(target)
     Q_UNUSED(resultData)
 
     return false;

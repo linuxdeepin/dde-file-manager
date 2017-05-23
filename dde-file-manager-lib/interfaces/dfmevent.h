@@ -50,6 +50,8 @@ public:
         OpenNewWindow,
         OpenUrl,
         MenuAction,
+        Back,
+        Forward,
         // user custom
         CustomBase = 1000                            // first user event id
     };
@@ -446,6 +448,22 @@ public:
     DFMGlobal::MenuAction action() const;
 
     static QSharedPointer<DFMMenuActionEvent> fromJson(const QJsonObject &json);
+};
+
+class DFMBackEvent : public DFMEvent
+{
+public:
+    explicit DFMBackEvent(const QObject *sender);
+
+    static QSharedPointer<DFMBackEvent> fromJson(const QJsonObject &json);
+};
+
+class DFMForwardEvent : public DFMEvent
+{
+public:
+    explicit DFMForwardEvent(const QObject *sender);
+
+    static QSharedPointer<DFMForwardEvent> fromJson(const QJsonObject &json);
 };
 
 #endif // FMEVENT_H

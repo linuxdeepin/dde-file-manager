@@ -130,7 +130,7 @@ DFMEventDispatcher::~DFMEventDispatcher()
 
 }
 
-QVariant DFMEventDispatcher::processEvent(const QSharedPointer<DFMEvent> &event)
+QVariant DFMEventDispatcher::processEvent(const QSharedPointer<DFMEvent> &event, DFMAbstractEventHandler *target)
 {
     Q_D(DFMEventDispatcher);
 
@@ -139,13 +139,17 @@ QVariant DFMEventDispatcher::processEvent(const QSharedPointer<DFMEvent> &event)
     QVariant result;
 
     for (DFMAbstractEventHandler *handler : DFMEventDispatcherData::eventFilter) {
-        if (handler->fmEventFilter(event, &result))
+        if (handler->fmEventFilter(event, target, &result))
             return result;
     }
 
-    for (DFMAbstractEventHandler *handler : DFMEventDispatcherData::eventHandler) {
-        if (handler->fmEvent(event, &result))
-            return result;
+    if (target) {
+        target->fmEvent(event, &result);
+    } else {
+        for (DFMAbstractEventHandler *handler : DFMEventDispatcherData::eventHandler) {
+            if (handler->fmEvent(event, &result))
+                return result;
+        }
     }
 
     d->setState(Normal);
@@ -153,7 +157,7 @@ QVariant DFMEventDispatcher::processEvent(const QSharedPointer<DFMEvent> &event)
     return result;
 }
 
-DFMEventFuture DFMEventDispatcher::processEventAsync(const QSharedPointer<DFMEvent> &event)
+DFMEventFuture DFMEventDispatcher::processEventAsync(const QSharedPointer<DFMEvent> &event, DFMAbstractEventHandler *target)
 {
     QThreadPool *pool = DFMEventDispatcherData::threadPool;
 
@@ -161,12 +165,12 @@ DFMEventFuture DFMEventDispatcher::processEventAsync(const QSharedPointer<DFMEve
         pool->setMaxThreadCount(pool->maxThreadCount() + 2);
     }
 
-    return DFMEventFuture(QtConcurrent::run(pool, this, static_cast<QVariant(DFMEventDispatcher::*)(const QSharedPointer<DFMEvent>&)>(&DFMEventDispatcher::processEvent), event));
+    return DFMEventFuture(QtConcurrent::run(pool, this, static_cast<QVariant(DFMEventDispatcher::*)(const QSharedPointer<DFMEvent>&, DFMAbstractEventHandler *)>(&DFMEventDispatcher::processEvent), event, target));
 }
 
-QVariant DFMEventDispatcher::processEventWithEventLoop(const QSharedPointer<DFMEvent> &event)
+QVariant DFMEventDispatcher::processEventWithEventLoop(const QSharedPointer<DFMEvent> &event, DFMAbstractEventHandler *target)
 {
-    const DFMEventFuture &future = processEventAsync(event);
+    const DFMEventFuture &future = processEventAsync(event, target);
 
     future.waitForFinishedWithEventLoop();
 
