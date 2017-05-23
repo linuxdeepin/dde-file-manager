@@ -147,7 +147,10 @@ void WallpaperList::resizeEvent(QResizeEvent *event)
         --screen_item_count;
 
     setGridSize(QSize(width() / screen_item_count, ItemHeight));
-    QTimer::singleShot(50, this, &WallpaperList::doItemsLayout);
+
+    if (gridSize().width() * count() > width())
+        QTimer::singleShot(100, this, &WallpaperList::doItemsLayout);
+
     updateBothEndsItem();
 }
 
