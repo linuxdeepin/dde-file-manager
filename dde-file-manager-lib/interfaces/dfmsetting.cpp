@@ -39,6 +39,10 @@ DFMSetting::DFMSetting(QObject *parent) : QObject(parent)
     //load temlate
     m_settings = Settings::fromJsonFile(":/configure/global-setting-template.json").data();
 
+#ifdef DISABLE_COMPRESS_PREIVEW
+    m_settings->setOption("preview.compress_file_preview.hide", true);
+#endif
+
     //load conf value
     auto backen = new QSettingBackend(getConfigFilePath());
     m_settings->setBackend(backen);
