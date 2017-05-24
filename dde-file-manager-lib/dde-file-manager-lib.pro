@@ -350,6 +350,9 @@ isEmpty(INCLUDE_INSTALL_DIR) {
 
 includes.files += $$PWD/interfaces/*.h $$PWD/interfaces/plugins/*.h
 
+includes_private.path = $${includes.path}/private
+includes_private.files += $$PWD/interfaces/private/*.h
+
 isEmpty(INCLUDE_INSTALL_DIR) {
     gvfs_includes.path = $$PREFIX/include/dde-file-manager/gvfs
 } else {
@@ -415,7 +418,7 @@ icon.files = skin/images/$${TARGET}.svg
 defaultConfig.path = $$APPSHAREDIR/config
 defaultConfig.files = configure/default-view-states.json
 
-INSTALLS += target templateFiles translations mimetypeFiles mimetypeAssociations help icon includes gvfs_includes plugin_includes defaultConfig
+INSTALLS += target templateFiles translations mimetypeFiles mimetypeAssociations help icon includes includes_private gvfs_includes plugin_includes defaultConfig
 
 DISTFILES += \
     mimetypeassociations/mimetypeassociations.json \
