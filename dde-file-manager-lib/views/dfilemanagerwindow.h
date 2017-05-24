@@ -97,6 +97,8 @@ protected:
     bool fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resultData = 0) Q_DECL_OVERRIDE;
     QObject *object() const Q_DECL_OVERRIDE;
 
+    virtual void handleNewView(DFMBaseView *view);
+
     void initData();
     void initUI();
 

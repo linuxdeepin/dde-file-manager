@@ -905,7 +905,7 @@ void DFileSystemModel::setNameFilters(const QStringList &nameFilters)
 
     d->nameFilters = nameFilters;
 
-    emitAllDateChanged();
+    emitAllDataChanged();
 }
 
 void DFileSystemModel::setFilters(QDir::Filters filters)
@@ -1059,7 +1059,7 @@ void DFileSystemModel::sort()
         node->visibleChildren[i] = list[i]->fileUrl();
     }
 
-    emitAllDateChanged();
+    emitAllDataChanged();
 }
 
 const DAbstractFileInfoPointer DFileSystemModel::fileInfo(const QModelIndex &index) const
@@ -1508,9 +1508,12 @@ void DFileSystemModel::addFile(const DAbstractFileInfoPointer &fileInfo)
     }
 }
 
-void DFileSystemModel::emitAllDateChanged()
+void DFileSystemModel::emitAllDataChanged()
 {
     Q_D(const DFileSystemModel);
+
+    if (!d->rootNode)
+        return;
 
     QModelIndex parentIndex = createIndex(d->rootNode, 0);
     QModelIndex topLeftIndex = index(0, 0, parentIndex);

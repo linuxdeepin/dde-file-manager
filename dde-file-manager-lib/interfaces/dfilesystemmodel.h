@@ -165,7 +165,7 @@ private:
     void onJobFinished();
     void addFile(const DAbstractFileInfoPointer &fileInfo);
 
-    void emitAllDateChanged();
+    void emitAllDataChanged();
     void selectAndRenameFile(const DUrl &fileUrl) const;
 
     friend class FileSystemNode;
