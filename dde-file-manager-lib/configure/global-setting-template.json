@@ -132,7 +132,7 @@
                             "key": "compress_file_preview",
                             "text": "Compress file preview",
                             "type": "checkbox",
-                            "default": true
+                            "default": false
                         },
                         {
                             "key": "text_file_preview",

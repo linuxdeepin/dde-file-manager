@@ -24,6 +24,8 @@ unix {
         DEFINES += LOAD_FILE_INTERVAL=150
 
         DEFINES += DDE_COMPUTER_TRASH
+
+        DEFINES += DISABLE_COMPRESS_PREIVEW
     }
 
     isEqual(ARCH, sw_64){
