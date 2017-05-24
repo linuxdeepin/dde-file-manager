@@ -34,66 +34,29 @@ public:
     QFileDialog::Options options;
     QEventLoop *eventLoop = Q_NULLPTR;
     QStringList nameFilters;
+
+    DFileView *view = Q_NULLPTR;
+    int currentNameFilterIndex = -1;
+    QDir::Filters filters = 0;
+    QString currentInputName;
 };
 
 DFileDialog::DFileDialog(QWidget *parent)
     : DFileManagerWindow(parent)
     , d_ptr(new DFileDialogPrivate())
 {
+    d_ptr->view = qobject_cast<DFileView*>(DFileManagerWindow::getFileView()->widget());
+
     setWindowFlags(windowFlags() | Qt::Dialog);
 
-    if (titleBar())
-        titleBar()->setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
+    if (titlebar())
+        titlebar()->setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
 
     setAcceptMode(QFileDialog::AcceptOpen);
+    handleNewView(DFileManagerWindow::getFileView());
 
-    DStatusBar *statusBar = getFileView()->statusBar();
-
-    statusBar->rejectButton()->setText(tr("Cancel"));
-
-    connect(statusBar->acceptButton(), &QPushButton::clicked, this, &DFileDialog::onAcceptButtonClicked);
-    connect(statusBar->rejectButton(), &QPushButton::clicked, this, &DFileDialog::onRejectButtonClicked);
-
-    QSet<DFMGlobal::MenuAction> whitelist;
-
-    whitelist << DFMGlobal::NewFolder << DFMGlobal::NewDocument << DFMGlobal::DisplayAs
-              << DFMGlobal::SortBy << DFMGlobal::Open << DFMGlobal::Rename << DFMGlobal::Delete
-              << DFMGlobal::ListView << DFMGlobal::IconView << DFMGlobal::ExtendView << DFMGlobal::NewWord
-              << DFMGlobal::NewExcel << DFMGlobal::NewPowerpoint << DFMGlobal::NewText << DFMGlobal::Name
-              << DFMGlobal::Size << DFMGlobal::Type << DFMGlobal::CreatedDate << DFMGlobal::LastModifiedDate
-              << DFMGlobal::DeletionDate << DFMGlobal::SourcePath <<DFMGlobal::AbsolutePath;
-
-    getFileView()->setMenuActionWhitelist(whitelist);
     getLeftSideBar()->setDisableUrlSchemes(QList<QString>() << "trash" << "network");
     getLeftSideBar()->setAcceptDrops(false);
-
-    getFileView()->setDragEnabled(false);
-    getFileView()->setDragDropMode(QAbstractItemView::NoDragDrop);
-    getFileView()->installEventFilter(this);
-
-    connect(getFileView()->selectionModel(), &QItemSelectionModel::selectionChanged,
-            this, &DFileDialog::selectionFilesChanged);
-    connect(getFileView(), &DFileView::rootUrlChanged,
-            this, &DFileDialog::currentUrlChanged);
-
-    connect(getFileView(), static_cast<void (DFileView::*)(const QModelIndex&)>(&DFileView::currentChanged),
-            this, [this] {
-        Q_D(const DFileDialog);
-
-        if (d->acceptMode != QFileDialog::AcceptSave) {
-            return;
-        }
-
-        const QModelIndex &index = getFileView()->currentIndex();
-
-        const DAbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(index);
-
-        if (!fileInfo)
-            return;
-
-        if (fileInfo->isFile())
-            setCurrentInputName(fileInfo->fileName());
-    });
 
     DFMEventDispatcher::instance()->installEventFilter(this);
 }
@@ -151,6 +114,13 @@ QStringList DFileDialog::selectedFiles() const
 void DFileDialog::selectUrl(const QUrl &url)
 {
     getFileView()->select(DUrlList() << url);
+
+    const DAbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(url);
+
+    if (fileInfo && fileInfo->exists())
+        return;
+
+    setCurrentInputName(QFileInfo(url.path()).fileName());
 }
 
 QList<QUrl> DFileDialog::selectedUrls() const
@@ -459,6 +429,9 @@ QFileDialog::Options DFileDialog::options() const
 
 void DFileDialog::setCurrentInputName(const QString &name)
 {
+    if (!getFileView()->statusBar()->lineEdit())
+        return;
+
     getFileView()->statusBar()->lineEdit()->setText(name);
 
     QMimeDatabase db;
@@ -473,7 +446,9 @@ void DFileDialog::setCurrentInputName(const QString &name)
 
 DFileView *DFileDialog::getFileView() const
 {
-    return dynamic_cast<DFileView*>(DFileManagerWindow::getFileView());
+    Q_D(const DFileDialog);
+
+    return d->view;
 }
 
 void DFileDialog::accept()
@@ -693,6 +668,82 @@ bool DFileDialog::fmEventFilter(const QSharedPointer<DFMEvent> &event, DFMAbstra
     }
 
     return false;
+}
+
+void DFileDialog::handleNewView(DFMBaseView *view)
+{
+    Q_D(DFileDialog);
+
+    DFileView *fileView = qobject_cast<DFileView*>(view->widget());
+
+    if (!fileView) {
+        // sava data
+        d->currentNameFilterIndex = selectedNameFilterIndex();
+        d->filters = filter();
+        d->currentInputName = getFileView()->statusBar()->lineEdit()->text();
+
+        return;
+    }
+
+    d->view = fileView;
+
+    setAcceptMode(d->acceptMode);
+
+    DStatusBar *statusBar = fileView->statusBar();
+
+    statusBar->rejectButton()->setText(tr("Cancel"));
+    connect(statusBar->acceptButton(), &QPushButton::clicked, this, &DFileDialog::onAcceptButtonClicked);
+    connect(statusBar->rejectButton(), &QPushButton::clicked, this, &DFileDialog::onRejectButtonClicked);
+
+    QSet<DFMGlobal::MenuAction> whitelist;
+
+    whitelist << DFMGlobal::NewFolder << DFMGlobal::NewDocument << DFMGlobal::DisplayAs
+              << DFMGlobal::SortBy << DFMGlobal::Open << DFMGlobal::Rename << DFMGlobal::Delete
+              << DFMGlobal::ListView << DFMGlobal::IconView << DFMGlobal::ExtendView << DFMGlobal::NewWord
+              << DFMGlobal::NewExcel << DFMGlobal::NewPowerpoint << DFMGlobal::NewText << DFMGlobal::Name
+              << DFMGlobal::Size << DFMGlobal::Type << DFMGlobal::CreatedDate << DFMGlobal::LastModifiedDate
+              << DFMGlobal::DeletionDate << DFMGlobal::SourcePath <<DFMGlobal::AbsolutePath;
+
+    fileView->setMenuActionWhitelist(whitelist);
+    fileView->setDragEnabled(false);
+    fileView->setDragDropMode(QAbstractItemView::NoDragDrop);
+    fileView->installEventFilter(this);
+
+    connect(fileView->selectionModel(), &QItemSelectionModel::selectionChanged,
+            this, &DFileDialog::selectionFilesChanged);
+    connect(fileView, &DFileView::rootUrlChanged,
+            this, &DFileDialog::currentUrlChanged);
+
+    connect(fileView, static_cast<void (DFileView::*)(const QModelIndex&)>(&DFileView::currentChanged),
+            this, [this, fileView] {
+        Q_D(const DFileDialog);
+
+        if (d->acceptMode != QFileDialog::AcceptSave) {
+            return;
+        }
+
+        const QModelIndex &index = fileView->currentIndex();
+
+        const DAbstractFileInfoPointer &fileInfo = fileView->model()->fileInfo(index);
+
+        if (!fileInfo)
+            return;
+
+        if (fileInfo->isFile())
+            setCurrentInputName(fileInfo->fileName());
+    });
+
+    if (!d->nameFilters.isEmpty())
+        setNameFilters(d->nameFilters);
+
+    if (d->filters != 0)
+        setFilter(d->filters);
+
+    if (d->currentNameFilterIndex >= 0)
+        selectNameFilterByIndex(d->currentNameFilterIndex);
+
+    if (!d->currentInputName.isEmpty())
+        setCurrentInputName(d->currentInputName);
 }
 
 void DFileDialog::onAcceptButtonClicked()

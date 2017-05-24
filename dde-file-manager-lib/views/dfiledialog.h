@@ -86,6 +86,8 @@ protected:
     bool fmEventFilter(const QSharedPointer<DFMEvent> &event, DFMAbstractEventHandler *target = 0, QVariant *resultData = 0) Q_DECL_OVERRIDE;
 
 private:
+    void handleNewView(DFMBaseView *view) Q_DECL_OVERRIDE;
+
     void onAcceptButtonClicked();
     void onRejectButtonClicked();
     void handleEnterPressed();

@@ -299,6 +299,8 @@ bool DFileManagerWindow::cd(const DUrl &fileUrl, bool canFetchNetwork)
         if (view) {
             d->viewStackLayout->addWidget(view->widget());
             d->viewStackLayout->setCurrentWidget(view->widget());
+
+            handleNewView(view);
         } else {
             qWarning() << "Not support url: " << fileUrl;
 
@@ -376,6 +378,8 @@ void DFileManagerWindow::openNewTab(const DFMUrlBaseEvent &event)
     d->viewStackLayout->addWidget(view->widget());
     d->viewStackLayout->setCurrentWidget(view->widget());
     d->tabBar->createTab(view);
+
+    handleNewView(view);
 }
 
 void DFileManagerWindow::switchToView(DFMBaseView *view)
@@ -486,6 +490,11 @@ bool DFileManagerWindow::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
 QObject *DFileManagerWindow::object() const
 {
     return const_cast<DFileManagerWindow*>(this);
+}
+
+void DFileManagerWindow::handleNewView(DFMBaseView *view)
+{
+    Q_UNUSED(view)
 }
 
 void DFileManagerWindow::initData()
