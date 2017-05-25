@@ -26,9 +26,6 @@ signals:
     /* emit usershare status changed*/
     void userShareCountChanged(const int count);
 
-    /* request open in new tab*/
-    void requestOpenInNewTab(const DFMUrlBaseEvent &event);
-
     /* request close current tab*/
     void requestCloseCurrentTab(quint64 winId);
 
