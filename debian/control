@@ -39,7 +39,7 @@ Description: Trash plugin of dde-dock which is created by libdde-file-manager
 
 Package: libdde-file-manager
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libdtkbase(>=0.2.4), libdtkutil(>=0.2.4), libdtkwidget(>=0.2.4), libpoppler-cpp0v5 (>= 0.48.0), libdtksettings(>=0.1.2), libdtksettingsview(>=0.1.2)
+Depends: ${shlibs:Depends}, ${misc:Depends}, libdtkbase(>=0.2.4), libdtkutil(>=0.2.4), libdtkwidget(>=0.2.4), libpoppler-cpp0v5 (>= 0.48.0), libdtksettings(>=0.1.2), libdtksettingsview(>=0.1.2), gvfs-backends(>=1.27.3)
 Breaks: dde-file-manager(<=1.2.3-3)
 Multi-Arch: same
 Description: DDE File Manager library
