@@ -40,7 +40,10 @@ DFMSetting::DFMSetting(QObject *parent) : QObject(parent)
 #ifdef DISABLE_COMPRESS_PREIVEW
     //load temlate
     m_settings = Settings::fromJsonFile(":/configure/global-setting-template-pro.json").data();
+#else
+    m_settings = Settings::fromJsonFile(":/configure/global-setting-template.json").data();
 #endif
+
     //load conf value
     auto backen = new QSettingBackend(getConfigFilePath());
     m_settings->setBackend(backen);
