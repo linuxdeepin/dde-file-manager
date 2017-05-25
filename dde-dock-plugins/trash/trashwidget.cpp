@@ -80,8 +80,18 @@ void TrashWidget::invokeMenuItem(const QString &menuId, const bool checked)
 
 void TrashWidget::dragEnterEvent(QDragEnterEvent *e)
 {
-    if (e->mimeData()->hasFormat("RequestDock"))
-        return e->accept();
+    if (e->mimeData()->hasFormat("RequestDock")) {
+        // accept prevent the event from being propgated to the dock main panel
+        // which also takes drag event;
+        e->accept();
+
+        if (!e->mimeData()->hasFormat("Removable")) {
+            // show the forbit dropping cursor.
+            e->setDropAction(Qt::IgnoreAction);
+        }
+
+        return;
+    }
 
     if (e->mimeData()->hasFormat("text/uri-list"))
         return e->accept();
