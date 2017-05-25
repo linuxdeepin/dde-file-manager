@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>configure/global-setting-template.json</file>
+        <file>configure/global-setting-template-pro.json</file>
     </qresource>
 </RCC>
