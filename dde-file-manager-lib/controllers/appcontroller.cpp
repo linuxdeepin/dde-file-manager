@@ -122,7 +122,7 @@ void AppController::actionOpenInNewWindow(const QSharedPointer<DFMUrlListBaseEve
 
 void AppController::actionOpenInNewTab(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    emit fileSignalManager->requestOpenInNewTab(*event.data());
+    DFMEventDispatcher::instance()->processEvent<DFMOpenNewTabEvent>(event->sender(), event->url());
 }
 
 void AppController::actionOpenDiskInNewTab(const QSharedPointer<DFMUrlBaseEvent> &event)
@@ -139,7 +139,7 @@ void AppController::actionOpenDiskInNewTab(const QSharedPointer<DFMUrlBaseEvent>
 
         newUrl.setQuery(QString());
 
-        emit fileSignalManager->requestOpenInNewTab(DFMUrlBaseEvent(event->sender(), newUrl));
+       actionOpenInNewTab(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), newUrl));
     }
 }
 

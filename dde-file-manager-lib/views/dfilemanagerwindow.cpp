@@ -481,6 +481,9 @@ bool DFileManagerWindow::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
     case DFMEvent::Forward:
         d->toolbar->forward();
         return true;
+    case DFMEvent::OpenNewTab:
+        openNewTab(*event.staticCast<DFMUrlBaseEvent>().data());
+        return true;
     default: break;
     }
 
@@ -688,8 +691,6 @@ void DFileManagerWindow::initConnect()
         connect(titleBar(), SIGNAL(restoreClicked()), parentWidget(), SLOT(showNormal()));
         connect(titleBar(), SIGNAL(closeClicked()), parentWidget(), SLOT(close()));
     }
-
-    connect(fileSignalManager, &FileSignalManager::requestOpenInNewTab, this, &DFileManagerWindow::openNewTab);
 
     connect(fileSignalManager, &FileSignalManager::fetchNetworksSuccessed, this, [this] (const DFMUrlBaseEvent &event) {
         if (event.windowId() != windowId())

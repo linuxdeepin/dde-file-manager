@@ -712,6 +712,17 @@ QSharedPointer<DFMOpenNewWindowEvent> DFMOpenNewWindowEvent::fromJson(const QJso
     return event;
 }
 
+DFMOpenNewTabEvent::DFMOpenNewTabEvent(const QObject *sender, const DUrl &url)
+    : DFMUrlBaseEvent(OpenNewTab, sender, url)
+{
+
+}
+
+QSharedPointer<DFMOpenNewTabEvent> DFMOpenNewTabEvent::fromJson(const QJsonObject &json)
+{
+    return DFMUrlBaseEvent::fromJson(OpenNewTab, json).staticCast<DFMOpenNewTabEvent>();
+}
+
 DFMOpenUrlEvent::DFMOpenUrlEvent(const QObject *sender, const DUrlList &list, DFMOpenUrlEvent::DirOpenMode mode)
     : DFMUrlListBaseEvent(OpenUrl, sender, list)
 {

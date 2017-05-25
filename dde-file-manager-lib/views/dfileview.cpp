@@ -882,7 +882,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
                 else
                     url = rootUrl();
             }
-            emit fileSignalManager->requestOpenInNewTab(DFMUrlBaseEvent(this, url));
+            DFMEventDispatcher::instance()->processEvent<DFMOpenNewTabEvent>(this, url);
             return;
         }
         case Qt::Key_W:

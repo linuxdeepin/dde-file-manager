@@ -48,6 +48,7 @@ public:
         // other
         ChangeCurrentUrl,
         OpenNewWindow,
+        OpenNewTab,
         OpenUrl,
         MenuAction,
         Back,
@@ -416,6 +417,14 @@ public:
     bool force() const;
 
     static QSharedPointer<DFMOpenNewWindowEvent> fromJson(const QJsonObject &json);
+};
+
+class DFMOpenNewTabEvent : public DFMUrlBaseEvent
+{
+public:
+    explicit DFMOpenNewTabEvent(const QObject *sender, const DUrl &url);
+
+    static QSharedPointer<DFMOpenNewTabEvent> fromJson(const QJsonObject &json);
 };
 
 class DFMOpenUrlEvent : public DFMUrlListBaseEvent
