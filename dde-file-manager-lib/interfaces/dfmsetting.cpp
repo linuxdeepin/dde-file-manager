@@ -36,13 +36,11 @@ DFMSetting::DFMSetting(QObject *parent) : QObject(parent)
     m_defaultWindowOptionPaths = m_newTabOptionPaths;
     m_defaultWindowOptionPaths.removeFirst();
 
-    //load temlate
-    m_settings = Settings::fromJsonFile(":/configure/global-setting-template.json").data();
 
 #ifdef DISABLE_COMPRESS_PREIVEW
-    m_settings->setOption("preview.compress_file_preview.hide", true);
+    //load temlate
+    m_settings = Settings::fromJsonFile(":/configure/global-setting-template-pro.json").data();
 #endif
-
     //load conf value
     auto backen = new QSettingBackend(getConfigFilePath());
     m_settings->setBackend(backen);
