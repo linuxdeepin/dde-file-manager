@@ -388,26 +388,19 @@ void UserShareManager::addUserShare(const ShareInfo &info)
     if (!info.shareName().isEmpty() && QFile(info.path()).exists()){
         QString cmd = "net";
         QStringList args;
-        args << "usershare" << "add"
-             << info.shareName() << info.path()
-             << info.comment() << info.usershare_acl()
-             << info.guest_ok();
-        bool ret = QProcess::startDetached(cmd, args);
-
-        if(info.isWritable()){
-            QString cmd = "chmod";
-            QStringList args;
-            args << "-R"<<"755"<<info.path();
-            ret = QProcess::startDetached(cmd, args);
+        ShareInfo _info = info;
+        if(_info.isWritable()){
+            _info.setUsershare_acl("Everyone:f");
         } else {
-            QString cmd = "chmod";
-            QStringList args;
-            args << "-R" << "555" <<info.path();
-            ret = QProcess::startDetached(cmd, args);
+            _info.setUsershare_acl("Everyone:R");
         }
-
+        args << "usershare" << "add"
+             << _info.shareName() << _info.path()
+             << _info.comment() << _info.usershare_acl()
+             << _info.guest_ok();
+        bool ret = QProcess::startDetached(cmd, args);
         if (ret){
-            qDebug() << info.path();
+            qDebug() << _info.path();
         }
     }
 }
