@@ -126,6 +126,7 @@ private:
     QScopedPointer<DFileManagerWindowPrivate> d_ptr;
 
     Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_ptr), DFileManagerWindow)
+    Q_PRIVATE_SLOT(d_ptr, void _q_onCurrentUrlChanged(DFMEvent))
 };
 
 #endif // DFILEMANAGERWINDOW_H

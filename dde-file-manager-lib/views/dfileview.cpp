@@ -824,15 +824,8 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             }
 
             break;
-        case Qt::Key_Backspace:{
-            DFileManagerWindow* w = qobject_cast<DFileManagerWindow*>(WindowManager::getWindowById(windowId()));
-            if(!w){
-                cdUp();
-            } else{
-                const DUrl& url = w->getToolBar()->getCrumWidget()->backUrl();
-                cd(url);
-            }
-        }
+        case Qt::Key_Backspace:
+            cdUp();
             return;
         case Qt::Key_F1:
             appController->actionHelp(fmevent);

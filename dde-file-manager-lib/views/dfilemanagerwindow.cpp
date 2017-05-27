@@ -88,8 +88,53 @@ public:
 
     DFileManagerWindow *q_ptr;
 
+    void _q_onCurrentUrlChanged(const DFMEvent&event);
+
     D_DECLARE_PUBLIC(DFileManagerWindow)
 };
+
+void DFileManagerWindowPrivate::_q_onCurrentUrlChanged(const DFMEvent &event)
+{
+    Q_Q(DFileManagerWindow);
+
+    if (event.windowId() != q->windowId())
+        return;
+
+    QString path;
+
+    if (Q_LIKELY(event.fileUrl().isLocalFile())) {
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(event.fileUrl());
+
+        path = fileInfo->absoluteFilePath();
+        const QString &home_path = QDir::homePath();
+
+        if (path.startsWith(home_path)) {
+            QString system_path = home_path;
+
+            if (systemPathManager->isSystemPath(path)) {
+                system_path = path;
+            } else {
+                for (const DUrl &url : fileInfo->parentUrlList()) {
+                    if (systemPathManager->isSystemPath(url.toLocalFile())) {
+                        system_path = url.toLocalFile();
+                        break;
+                    }
+                }
+            }
+
+            path.replace(0, system_path.length(), DFileService::instance()->createFileInfo(DUrl::fromLocalFile(system_path))->fileDisplayName());
+        } else {
+            path.prepend(DFileService::instance()->createFileInfo(DUrl::fromLocalFile("/"))->fileDisplayName());
+
+            if (path.endsWith(QDir::separator()))
+                path.chop(1);
+        }
+    } else {
+        path = event.fileUrl().toString();
+    }
+
+    q->setWindowTitle(QString("%1 - %2").arg(path).arg(qApp->applicationDisplayName()));
+}
 
 DFileManagerWindow::DFileManagerWindow(QWidget *parent)
     : DFileManagerWindow(DUrl(), parent)
@@ -821,9 +866,7 @@ void DFileManagerWindow::initConnect()
     connect(fileSignalManager, &FileSignalManager::currentUrlChanged, this, &DFileManagerWindow::onTrashStateChanged);
     connect(d->tabBar, &TabBar::currentChanged, this, &DFileManagerWindow::onTrashStateChanged);
 
-    connect(fileSignalManager, &FileSignalManager::currentUrlChanged, this, [this] (const DFMEvent &event) {
-        setWindowTitle(QString("%1 - %2").arg(event.fileUrl().toString()).arg(qApp->applicationDisplayName()));
-    });
+    connect(fileSignalManager, SIGNAL(currentUrlChanged(DFMEvent)), this, SLOT(_q_onCurrentUrlChanged(DFMEvent)));
 }
 
 void DFileManagerWindow::moveCenterByRect(QRect rect)
@@ -832,3 +875,5 @@ void DFileManagerWindow::moveCenterByRect(QRect rect)
     qr.moveCenter(rect.center());
     move(qr.topLeft());
 }
+
+#include "moc_dfilemanagerwindow.cpp"
