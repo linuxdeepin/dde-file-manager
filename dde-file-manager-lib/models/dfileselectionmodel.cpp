@@ -20,7 +20,7 @@ DFileSelectionModel::DFileSelectionModel(QAbstractItemModel *model, QObject *par
 
 bool DFileSelectionModel::isSelected(const QModelIndex &index) const
 {
-    if (m_currentCommand != QFlags<QItemSelectionModel::SelectionFlags>(Current|Rows|ClearAndSelect))
+    if (m_currentCommand != QItemSelectionModel::SelectionFlags(Current|Rows|ClearAndSelect))
         return QItemSelectionModel::isSelected(index);
 
     for (const QItemSelectionRange &range : m_selection) {
@@ -35,7 +35,7 @@ bool DFileSelectionModel::isSelected(const QModelIndex &index) const
 
 int DFileSelectionModel::selectedCount() const
 {
-    if (m_currentCommand != QFlags<QItemSelectionModel::SelectionFlags>(Current|Rows|ClearAndSelect))
+    if (m_currentCommand != QItemSelectionModel::SelectionFlags(Current|Rows|ClearAndSelect))
         return selectedIndexes().count();
 
     return m_lastSelectedIndex.row() - m_firstSelectedIndex.row() + 1;
@@ -44,7 +44,7 @@ int DFileSelectionModel::selectedCount() const
 QModelIndexList DFileSelectionModel::selectedIndexes() const
 {
     if (m_selectedList.isEmpty()) {
-        if (m_currentCommand != QFlags<QItemSelectionModel::SelectionFlags>(Current|Rows|ClearAndSelect)) {
+        if (m_currentCommand != QItemSelectionModel::SelectionFlags(Current|Rows|ClearAndSelect)) {
             m_selectedList = QItemSelectionModel::selectedIndexes();
         } else {
             for (const QItemSelectionRange &range : m_selection) {
@@ -61,7 +61,7 @@ void DFileSelectionModel::select(const QItemSelection &selection, QItemSelection
     if (!command.testFlag(NoUpdate))
         m_selectedList.clear();
 
-    if (command != QFlags<QItemSelectionModel::SelectionFlags>(Current|Rows|ClearAndSelect)) {
+    if (command != QItemSelectionModel::SelectionFlags(Current|Rows|ClearAndSelect)) {
         if (m_timer.isActive()) {
             m_timer.stop();
             updateSelecteds();
