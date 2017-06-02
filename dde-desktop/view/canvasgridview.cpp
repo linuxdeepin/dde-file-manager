@@ -1728,7 +1728,7 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
 
     auto *propertyAction = menu->actionAt(DFileMenuManager::getActionString(MenuAction::Property));
     QAction property(menu);
-    property.setText(tr("Property"));
+    property.setText(tr("Properties"));
     property.setData(FileManagerProperty);
     menu->insertAction(propertyAction, &property);
 
@@ -1841,7 +1841,7 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
 
     QAction property(menu);
     if (showProperty) {
-        property.setText(tr("Property"));
+        property.setText(tr("Properties"));
         property.setData(FileManagerProperty);
         menu->addAction(&property);
     }
