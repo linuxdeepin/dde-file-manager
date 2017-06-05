@@ -34,7 +34,7 @@ void ShareInfoFrame::initUI()
 
     SectionKeyLabel* shareNameLabel = new SectionKeyLabel(tr("Share name:"));
     shareNameLabel->setFixedWidth(labelWidth);
-    m_shareNamelineEdit = new DLineEdit(this);
+    m_shareNamelineEdit = new QLineEdit(this);
     m_shareNamelineEdit->setObjectName("ShareNameEdit");
     m_shareNamelineEdit->setText(m_fileinfo->fileDisplayName());
     m_shareNamelineEdit->setFixedWidth(fieldWidth);
