@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
         qDebug() << daemon;
         return a.exec();
     }else{
-        qDebug() << "dde-file-manager-daemon is runing";
+        qDebug() << "dde-file-manager-daemon is running";
         FileManagerClient* client = new FileManagerClient();
         qDebug() << client << QCoreApplication::applicationPid();
         return a.exec();
