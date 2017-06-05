@@ -26,6 +26,8 @@ unix {
         DEFINES += DDE_COMPUTER_TRASH
 
         DEFINES += DISABLE_COMPRESS_PREIVEW
+
+        DEFINES += DISABLE_QUIT_ON_LAST_WINDOW_CLOSED
     }
 
     isEqual(ARCH, sw_64){
