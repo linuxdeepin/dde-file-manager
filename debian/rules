@@ -3,34 +3,31 @@ include /usr/share/dpkg/default.mk
 
 VERSION=$(shell dpkg-parsechangelog -ldebian/changelog -SVersion | awk -F'-' '{print $$1}')
 DEB_BUILD_ARCH ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
-DEFAULT_BUILD=$(DAPP_VERSION=$(VERSION) LIB_INSTALL_DIR=/usr/lib/$(DEB_HOST_MULTIARCH))
 
 %:
 	dh $@ --parallel
 
+override_dh_shlibdeps:
+	dh_shlibdeps -l$(shell pwd)/debian/dde-sharefiles/usr/share/dde-file-manager/sharefiles/lib
+
+override_dh_auto_configure:
+	dh_auto_configure -- DAPP_VERSION=$(VERSION) LIB_INSTALL_DIR=/usr/lib/$(DEB_HOST_MULTIARCH)
+
 ifeq ($(DEB_BUILD_ARCH), mipsel)
-override_dh_auto_configure:
-	dh_auto_configure -- $(DEFAULT_BUILD) DISABLE_DEMO_VIDEO=YES
 override_dh_install:
 	sed -i '/dde-file-manager-xdg-autostart.desktop/d' debian/dde-file-manager.install
 	dh_install --
+endif
 
-else ifeq ($(DEB_BUILD_ARCH), mips64el)
-override_dh_auto_configure:
-	dh_auto_configure -- $(DEFAULT_BUILD) DISABLE_DEMO_VIDEO=YES
+ifeq ($(DEB_BUILD_ARCH), mips64el)
 override_dh_install:
 	sed -i '/dde-file-manager-xdg-autostart.desktop/d' debian/dde-file-manager.install
 	dh_install --
+endif
 
-else ifeq ($(DEB_BUILD_ARCH), sw_64)
-override_dh_auto_configure:
-	dh_auto_configure -- $(DEFAULT_BUILD) DISABLE_DEMO_VIDEO=YES
+ifeq ($(DEB_BUILD_ARCH), sw_64)
 override_dh_install:
 	sed -i '/dde-file-manager-xdg-autostart.desktop/d' debian/dde-file-manager.install
 	dh_install --
-
-else
-override_dh_auto_configure:
-	dh_auto_configure -- $(DEFAULT_BUILD)
 endif
 
