@@ -41,7 +41,7 @@ public slots:
 private:
     DAbstractFileInfoPointer m_fileinfo;
     QCheckBox* m_shareCheckBox = NULL;
-    DLineEdit* m_shareNamelineEdit = NULL;
+    QLineEdit* m_shareNamelineEdit = NULL;
     QComboBox* m_permissoComBox = NULL;
     QComboBox* m_anonymityCombox = NULL;
     QTimer* m_jobTimer;
