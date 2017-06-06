@@ -45,6 +45,7 @@ signals:
 protected:
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
     void wheelEvent(QWheelEvent *event) Q_DECL_OVERRIDE;
+    void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
 
 private:
     AppearanceDaemonInterface * m_dbusAppearance;

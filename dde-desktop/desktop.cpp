@@ -30,7 +30,7 @@ class DesktopPrivate
 public:
     Presenter        presenter;
     CanvasGridView      screenFrame;
-    WallpaperSettings wallpaperSettings;
+    WallpaperSettings *wallpaperSettings;
     ZoneSettings zoneSettings;
 };
 
@@ -59,8 +59,11 @@ void Desktop::loadView()
 
 void Desktop::showWallpaperSettings()
 {
-    d->wallpaperSettings.show();
-    d->wallpaperSettings.grabKeyboard();
+    d->wallpaperSettings = new WallpaperSettings;
+    connect(d->wallpaperSettings, &Frame::done, d->wallpaperSettings, &Frame::deleteLater);
+
+    d->wallpaperSettings->show();
+    d->wallpaperSettings->grabKeyboard();
 }
 
 void Desktop::showZoneSettings()

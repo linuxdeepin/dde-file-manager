@@ -147,16 +147,21 @@ void WallpaperList::resizeEvent(QResizeEvent *event)
         --screen_item_count;
 
     setGridSize(QSize(width() / screen_item_count, ItemHeight));
-
-    if (gridSize().width() * count() > width())
-        QTimer::singleShot(100, this, &WallpaperList::doItemsLayout);
-
-    updateBothEndsItem();
 }
 
 void WallpaperList::wheelEvent(QWheelEvent *event)
 {
     Q_UNUSED(event);
+}
+
+void WallpaperList::showEvent(QShowEvent *event)
+{
+    if (gridSize().width() * count() > width())
+        QTimer::singleShot(100, this, &WallpaperList::doItemsLayout);
+
+    updateBothEndsItem();
+
+    return QListWidget::showEvent(event);
 }
 
 QString WallpaperList::lockWallpaper() const

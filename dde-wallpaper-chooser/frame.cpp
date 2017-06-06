@@ -161,6 +161,7 @@ void Frame::initListView()
 void Frame::refreshList()
 {
     m_wallpaperList->clear();
+    m_wallpaperList->hide();
 
     QDBusPendingCall call = m_dbusAppearance->List("background");
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
@@ -178,6 +179,7 @@ void Frame::refreshList()
             }
 
             m_wallpaperList->setFixedWidth(qMin(m_wallpaperList->gridSize().width() * m_wallpaperList->count(), width()));
+            m_wallpaperList->show();
         }
     });
 }
