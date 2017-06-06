@@ -40,7 +40,7 @@ bool compareFileListBy##Name(const DAbstractFileInfoPointer &info1, const DAbstr
     if (isStrType)\
         return compareByString(value1, value2, order);\
     \
-    return ((order == Qt::DescendingOrder) ^ (value1 < value2)) == 0x01;\
+    return ((order == Qt::AscendingOrder) ^ (value1 < value2)) == 0x01;\
 }
 
 namespace FileSortFunction {
