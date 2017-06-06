@@ -198,7 +198,7 @@ public:
     DUrl fileUrl;
     DUrl targetUrl;
     QString keyword;
-    QRegularExpression regular;
+    QRegExp regular;
     QStringList m_nameFilters;
     QDir::Filters m_filter;
     QDirIterator::IteratorFlags m_flags;
@@ -221,7 +221,7 @@ SearchDiriterator::SearchDiriterator(const DUrl &url, const QStringList &nameFil
 {
     targetUrl = url.searchTargetUrl();
     keyword = url.searchKeyword();
-    regular = QRegularExpression(QRegularExpression::escape((keyword)), QRegularExpression::CaseInsensitiveOption);
+    regular = QRegExp(keyword, Qt::CaseInsensitive, QRegExp::Wildcard);
     searchPathList << targetUrl;
 }
 
@@ -284,7 +284,7 @@ bool SearchDiriterator::hasNext() const
                     searchPathList << url;
             }
 
-            if (fileInfo->fileDisplayName().indexOf(regular) >= 0) {
+            if (regular.exactMatch(fileInfo->fileDisplayName())) {
                 DUrl url = fileUrl;
                 const DUrl &realUrl = fileInfo->fileUrl();
 
