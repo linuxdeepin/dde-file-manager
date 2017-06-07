@@ -277,6 +277,25 @@ void ComputerViewItem::updateIconPixelWidth()
     setPixelWidth(pixelWidth);
 }
 
+DUrl ComputerViewItem::getUrl() const
+{
+    if (m_info) {
+        return m_info->fileUrl();
+    } else if (m_deviceInfo) {
+        DUrl url = m_deviceInfo->getMountPointUrl();
+
+        QDiskInfo diskInfo = m_deviceInfo->getDiskInfo();
+
+        if (diskInfo.can_mount() && !diskInfo.can_unmount()) {
+            url.setQuery(m_deviceInfo->getId());
+        }
+
+        return url;
+    }
+
+    return DUrl();
+}
+
 bool ComputerViewItem::getHasMemoryInfo() const
 {
     return m_hasMemoryInfo;
@@ -785,8 +804,6 @@ void ComputerView::mousePressEvent(QMouseEvent *event)
 
 void ComputerView::showEvent(QShowEvent *event)
 {
-    Q_UNUSED(event)
-
 //    deviceListener->refreshAsycGetAllDeviceUsage();
 
     foreach (ComputerViewItem* item, m_systemItems) {
@@ -798,32 +815,102 @@ void ComputerView::showEvent(QShowEvent *event)
     foreach (ComputerViewItem* item, m_removableItems) {
         item->setChecked(false);
     }
+
+    setFocus();
+
+    QFrame::showEvent(event);
 }
 
 void ComputerView::keyPressEvent(QKeyEvent *event)
 {
-    switch (event->modifiers()) {
-        case Qt::ControlModifier:
-            switch (event->key()) {
-                case Qt::Key_L:
-                    appController->actionctrlL(WindowManager::getWindowId(this));
-                    return;
-                case Qt::Key_F:
-                    appController->actionctrlF(WindowManager::getWindowId(this));
-                    return;
-                default: break;
-            }
+    DUrlList urls;
 
-    case Qt::ControlModifier | Qt::ShiftModifier:
+    foreach (const ComputerViewItem* item, m_systemItems) {
+        if (item->checked())
+            urls << item->getUrl();
+    }
+    foreach (const ComputerViewItem* item, m_nativeItems) {
+        if (item->checked())
+            urls << item->getUrl();
+    }
+    foreach (const ComputerViewItem* item, m_removableItems) {
+        if (item->checked())
+            urls << item->getUrl();
+    }
+
+    switch (event->modifiers()) {
+    case Qt::NoModifier:
+    case Qt::KeypadModifier:
         switch (event->key()) {
-        case Qt::Key_Question:
-            appController->actionShowHotkeyHelp(WindowManager::getWindowId(this));
+        case Qt::Key_Return:
+        case Qt::Key_Enter:
+            appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
+
             return;
-        default:
-            break;
+        default: break;
+        }
+
+        break;
+    case Qt::ControlModifier:
+        switch (event->key()) {
+        case Qt::Key_N:{
+            appController->actionNewWindow(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls.isEmpty() ? DUrlList() << DUrl() : urls));
+            return;
+        case Qt::Key_I:
+            appController->actionProperty(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
+
+            return;
+        case Qt::Key_Down:
+            appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
+
+            return;
+        case Qt::Key_T:{
+            //do not handle key press event of autoRepeat type
+            if (event->isAutoRepeat())
+                return;
+
+            DUrl url;
+            const QString& path = globalSetting->newTabPath();
+            if (urls.count() == 1) {
+                url = urls.first();
+            } else {
+                if(path != "Current Path")
+                    url = DUrl::fromUserInput(path);
+                else
+                    url = rootUrl();
+            }
+            DFMEventDispatcher::instance()->processEvent<DFMOpenNewTabEvent>(this, url);
+            return;
         }
         default: break;
+        }
+        }
+
+        break;
+    case Qt::ShiftModifier:
+        if (event->key() == Qt::Key_T) {
+            appController->actionOpenInTerminal(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
+
+            return;
+        }
+
+        break;
+    case Qt::AltModifier:
+    case Qt::AltModifier | Qt::KeypadModifier:
+        switch (event->key()) {
+        case Qt::Key_Home:
+            urls.clear();
+            urls << DUrl::fromLocalFile(QDir::homePath());
+        case Qt::Key_Down:
+            appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
+
+            return;
+        }
+        break;
+
+    default: break;
     }
+
     QFrame::keyPressEvent(event);
 }
 
