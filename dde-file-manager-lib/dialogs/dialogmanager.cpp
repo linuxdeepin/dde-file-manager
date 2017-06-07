@@ -696,7 +696,7 @@ void DialogManager::showFilePreviewDialog(const QSharedPointer<DFMUrlListBaseEve
     PreviewDialog* d = new PreviewDialog(urlList);
 
     w->setProperty("UserSharePwdSettingDialogShown", true);
-    connect(d, &PreviewDialog::finished, [=]{
+    connect(d, &PreviewDialog::finished, this, [=] {
         w->setProperty("UserSharePwdSettingDialogShown", false);
     });
 

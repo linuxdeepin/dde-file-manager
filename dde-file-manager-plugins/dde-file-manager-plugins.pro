@@ -14,5 +14,5 @@ isEqual(IS_TEST_VIEW_PLUGIN, True){
         pluginView
 }
 
-SUBDIRS += \
-    pluginPreview
+#SUBDIRS += \
+#    pluginPreview
