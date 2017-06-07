@@ -776,7 +776,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
     case Qt::NoModifier:
         switch (event->key()) {
         case Qt::Key_Space:
-            emit fileSignalManager->requestShowFilePreviewDialog(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
+//            emit fileSignalManager->requestShowFilePreviewDialog(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
             return;
         default:
             break;
