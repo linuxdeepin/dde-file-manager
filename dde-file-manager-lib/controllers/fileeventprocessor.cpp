@@ -144,10 +144,6 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent> &event)
         break;
     case DFMGlobal::NewWindow: {
         DUrlList urlList = event->selectedUrls();
-
-        if (urlList.isEmpty())
-            urlList << DUrl::fromComputerFile("/");
-
         AppController::instance()->actionNewWindow(dMakeEventPointer<DFMUrlListBaseEvent>(event->sender(), urlList));
         break;
     }
