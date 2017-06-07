@@ -72,8 +72,8 @@ RESOURCES += \
 # Automating generation .qm files from .ts files
 
 CONFIG(release, debug|release) {
-    system($$PWD/translate_generation.sh)
-    system($$PWD/translate_ts2desktop.sh)
+    !system($$PWD/translate_generation.sh): error("Failed to generate translation")
+    !system($$PWD/translate_ts2desktop.sh): error("Failed to generate translation")
 }
 
 TRANSLATIONS += $$PWD/translations/$${TARGET}.ts \

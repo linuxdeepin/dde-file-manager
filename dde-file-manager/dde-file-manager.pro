@@ -38,7 +38,7 @@ isEmpty(PREFIX){
 
 
 CONFIG(release, debug|release) {
-    system($$PWD/translate_ts2desktop.sh)
+    !system($$PWD/translate_ts2desktop.sh): error("Failed to generate translation")
 }
 
 CONFIG(debug, debug|release) {
@@ -132,5 +132,5 @@ translations.files = translations/*.qm
 INSTALLS += translations
 
 CONFIG(release, debug|release) {
-    system($$PWD/generate_translations.sh)
+    !system($$PWD/generate_translations.sh): error("Failed to generate translation")
 }
