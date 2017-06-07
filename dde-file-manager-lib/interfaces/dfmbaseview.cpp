@@ -36,6 +36,11 @@ QList<QAction *> DFMBaseView::toolBarActionList() const
     return QList<QAction*>();
 }
 
+void DFMBaseView::refresh()
+{
+
+}
+
 void DFMBaseView::notifyUrlChanged()
 {
     if (DFileManagerWindow *w = qobject_cast<DFileManagerWindow*>(widget()->window())) {

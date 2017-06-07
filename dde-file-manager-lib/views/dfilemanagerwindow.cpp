@@ -62,6 +62,7 @@ public:
         : q_ptr(qq) {}
 
     void setCurrentView(DFMBaseView *view);
+    bool processKeyPressEvent(QKeyEvent *event);
 
     QPushButton* logoButton = NULL;
     QFrame* centralWidget = NULL;
@@ -87,9 +88,92 @@ public:
 
 void DFileManagerWindowPrivate::setCurrentView(DFMBaseView *view)
 {
+    Q_Q(DFileManagerWindow);
+
+    if (currentView && currentView->widget())
+        currentView->widget()->removeEventFilter(q);
+
     currentView = view;
+
+    if (currentView && currentView->widget())
+        currentView->widget()->installEventFilter(q);
+
     toolbar->setCustomActionList(view->toolBarActionList());
     tabBar->currentTab()->setFileView(view);
+}
+
+bool DFileManagerWindowPrivate::processKeyPressEvent(QKeyEvent *event)
+{
+    Q_Q(DFileManagerWindow);
+
+    switch (event->modifiers()) {
+    case Qt::NoModifier: {
+        switch (event->key()) {
+        case Qt::Key_F1:
+            appController->actionHelp();
+            return true;
+        case Qt::Key_F5:
+            if (currentView)
+                currentView->refresh();
+            return true;
+        }
+        break;
+    }
+    case Qt::ControlModifier: {
+        switch (event->key()) {
+        case Qt::Key_Tab:
+            tabBar->activateNextTab();
+            return true;
+        case Qt::Key_Backtab:
+            tabBar->activatePreviousTab();
+            return true;
+        case Qt::Key_F:
+            appController->actionctrlF(q->windowId());
+            return true;
+        case Qt::Key_L:
+            appController->actionctrlL(q->windowId());
+            return true;
+        case Qt::Key_Left:
+            appController->actionBack(q->windowId());
+            return true;
+        case Qt::Key_Right:
+            appController->actionForward(q->windowId());
+            return true;
+        case Qt::Key_W:
+            emit fileSignalManager->requestCloseCurrentTab(q->windowId());
+            return true;
+        }
+        break;
+    }
+    case Qt::AltModifier:
+    case Qt::AltModifier | Qt::KeypadModifier:
+        if (event->key() >= Qt::Key_1 && event->key() <= Qt::Key_8) {
+            tabBar->setCurrentIndex(event->key() - Qt::Key_1);
+            return true;
+        }
+
+        switch (event->key()) {
+        case Qt::Key_Left:
+            appController->actionBack(q->windowId());
+            return true;
+        case Qt::Key_Right:
+            appController->actionForward(q->windowId());
+            return true;
+        }
+
+        break;
+    case Qt::ControlModifier | Qt::ShiftModifier:
+        if (event->key() == Qt::Key_Question) {
+            appController->actionShowHotkeyHelp(q->windowId());
+            return true;
+        } else if (event->key() == Qt::Key_Tab) {
+            tabBar->activatePreviousTab();
+            return true;
+        }
+        break;
+    }
+
+    return false;
 }
 
 DFileManagerWindow::DFileManagerWindow(QWidget *parent)
@@ -455,18 +539,21 @@ void DFileManagerWindow::keyPressEvent(QKeyEvent *event)
 {
     Q_D(DFileManagerWindow);
 
-    if (event->modifiers().testFlag(Qt::ControlModifier)) {
-        if (event->key() == Qt::Key_Tab)
-            d->tabBar->activateNextTab();
-        else if (event->key() == Qt::Key_Backtab)
-            d->tabBar->activatePreviousTab();
-    } else if (event->modifiers() == Qt::AltModifier || event->modifiers() == (Qt::AltModifier | Qt::KeypadModifier)) {
-        if (event->key() >= Qt::Key_1 && event->key() <= Qt::Key_8) {
-            d->tabBar->setCurrentIndex(event->key() - Qt::Key_1);
-        }
-    }
+    if (!d->processKeyPressEvent(event))
+        return DMainWindow::keyPressEvent(event);
+}
 
-    return DMainWindow::keyPressEvent(event);
+bool DFileManagerWindow::eventFilter(QObject *watched, QEvent *event)
+{
+    if (!getFileView() || watched != getFileView()->widget())
+        return false;
+
+    if (event->type() != QEvent::KeyPress)
+        return false;
+
+    Q_D(DFileManagerWindow);
+
+    return d->processKeyPressEvent(static_cast<QKeyEvent*>(event));
 }
 
 bool DFileManagerWindow::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resultData)

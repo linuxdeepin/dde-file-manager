@@ -802,14 +802,6 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             }
         }
             return;
-        case Qt::Key_F1:
-            appController->actionHelp();
-
-            return;
-        case Qt::Key_F5:
-            model()->refresh();
-
-            return;
         case Qt::Key_Delete:
             fileService->moveToTrash(this, urls);
             break;
@@ -824,18 +816,9 @@ void DFileView::keyPressEvent(QKeyEvent *event)
         break;
     case Qt::ControlModifier:
         switch (event->key()) {
-        case Qt::Key_F:
-            appController->actionctrlF(windowId());
-
-            return;
-        case Qt::Key_L:
-            appController->actionctrlL(windowId());
-
-            return;
         case Qt::Key_N:{
-            appController->actionNewWindow(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
+            appController->actionNewWindow(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls.isEmpty() ? DUrlList() << DUrl() : urls));
             return;
-        }
         case Qt::Key_H:
             d->preSelectionUrls = urls;
 
@@ -859,14 +842,6 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
 
             return;
-        case Qt::Key_Left:
-            appController->actionBack(windowId());
-
-            return;
-        case Qt::Key_Right:
-            appController->actionForward(windowId());
-
-            return;
         case Qt::Key_T:{
             //do not handle key press event of autoRepeat type
             if (event->isAutoRepeat())
@@ -885,10 +860,8 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             DFMEventDispatcher::instance()->processEvent<DFMOpenNewTabEvent>(this, url);
             return;
         }
-        case Qt::Key_W:
-            emit fileSignalManager->requestCloseCurrentTab(windowId());
-            return;
         default: break;
+        }
         }
 
         break;
@@ -916,10 +889,6 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             appController->actionNewFolder(dMakeEventPointer<DFMUrlBaseEvent>(this, rootUrl()));
 
             return;
-        } if (event->key() == Qt::Key_Question) {
-            appController->actionShowHotkeyHelp(windowId());
-
-            return;
         }
         break;
 
@@ -932,14 +901,6 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             return;
         case Qt::Key_Down:
             appController->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
-
-            return;
-        case Qt::Key_Left:
-            appController->actionBack(windowId());
-
-            return;
-        case Qt::Key_Right:
-            appController->actionForward(windowId());
 
             return;
         case Qt::Key_Home:
@@ -2301,6 +2262,11 @@ void DFileView::preproccessDropEvent(QDropEvent *event) const
             }
         }
     }
+}
+
+void DFileView::refresh()
+{
+    model()->refresh();
 }
 
 int DFileViewPrivate::iconModeColumnCount(int itemWidth) const

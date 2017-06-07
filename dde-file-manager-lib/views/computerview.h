@@ -87,6 +87,8 @@ public:
     void setPixelWidth(int pixelWidth);
     void updateIconPixelWidth();
 
+    DUrl getUrl() const;
+
 public slots:
     void updateStatus();
 
