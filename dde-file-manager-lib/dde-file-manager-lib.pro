@@ -402,7 +402,7 @@ TRANSLATIONS += $$PWD/translations/$${TARGET}.ts \
 
 # Automating generation .qm files from .ts files
 CONFIG(release, debug|release) {
-    system($$PWD/generate_translations.sh)
+    !system($$PWD/generate_translations.sh): error("Failed to generate translation")
 #    DEFINES += QT_NO_DEBUG_OUTPUT
 }
 
