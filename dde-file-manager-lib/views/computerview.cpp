@@ -33,6 +33,8 @@
 #include <QStorageInfo>
 #include <QSettings>
 
+#include <DApplication>
+
 DWIDGET_USE_NAMESPACE
 
 TitleLine::TitleLine(const QString &title, QWidget *parent):
@@ -78,6 +80,8 @@ ComputerViewItem::ComputerViewItem(QWidget *parent):
     progressLine->setFrameShape(QFrame::NoFrame);
     progressLine->setFixedSize(width(), 2);
     progressLine->hide();
+
+    connect(qApp, &DApplication::iconThemeChanged, this, &ComputerViewItem::updateStatus);
 }
 
 QIcon ComputerViewItem::getIcon(int size)
