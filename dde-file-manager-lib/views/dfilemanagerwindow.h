@@ -74,7 +74,7 @@ public slots:
 
     bool cd(const DUrl &fileUrl, bool canFetchNetwork = true);
 
-    void openNewTab(const DFMUrlBaseEvent &event);
+    bool openNewTab(DUrl fileUrl);
     void switchToView(DFMBaseView *view);
     void onTabAddableChanged(bool addable);
     void onCurrentTabChanged(int tabIndex);

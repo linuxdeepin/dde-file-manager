@@ -32,6 +32,7 @@
 #include <QFile>
 #include <QStorageInfo>
 #include <QSettings>
+#include <QUrlQuery>
 
 #include <DApplication>
 
@@ -282,15 +283,19 @@ DUrl ComputerViewItem::getUrl() const
     if (m_info) {
         return m_info->fileUrl();
     } else if (m_deviceInfo) {
-        DUrl url = m_deviceInfo->getMountPointUrl();
-
         QDiskInfo diskInfo = m_deviceInfo->getDiskInfo();
 
         if (diskInfo.can_mount() && !diskInfo.can_unmount()) {
-            url.setQuery(m_deviceInfo->getId());
-        }
+            DUrl url("mount:");
+            QUrlQuery query(url);
 
-        return url;
+            query.addQueryItem("id", m_deviceInfo->getId());
+            url.setQuery(query);
+
+            return url;
+        } else {
+            return m_deviceInfo->getMountPointUrl();
+        }
     }
 
     return DUrl();

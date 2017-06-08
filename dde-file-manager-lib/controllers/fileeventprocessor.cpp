@@ -275,7 +275,7 @@ bool FileEventProcessor::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
             }
 
             //computer url is virtual dir
-            if (url == DUrl::fromComputerFile("/"))
+            if (url == DUrl::fromComputerFile("/") || url.scheme() == "mount")
                 dirList << url;
         }
 

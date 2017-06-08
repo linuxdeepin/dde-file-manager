@@ -69,7 +69,7 @@ public slots:
 
     void moveNavStacks(int from, int to);
     void removeNavStackAt(int index);
-    void switchHistoryStack(const int index , const DUrl &url);
+    void switchHistoryStack(const int index );
 
 private:
     void checkNavHistory(DUrl url);

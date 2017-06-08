@@ -65,6 +65,9 @@ DFMBaseView *Tab::fileView()
 
 void Tab::setFileView(DFMBaseView *view)
 {
+    if (m_fileView == view)
+        return;
+
     m_fileView = view;
 
     if (view)
