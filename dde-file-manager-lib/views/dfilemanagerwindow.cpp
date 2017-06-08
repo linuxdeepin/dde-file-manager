@@ -99,7 +99,13 @@ void DFileManagerWindowPrivate::setCurrentView(DFMBaseView *view)
         currentView->widget()->installEventFilter(q);
 
     toolbar->setCustomActionList(view->toolBarActionList());
-    tabBar->currentTab()->setFileView(view);
+
+    if (!tabBar->currentTab()) {
+        toolbar->addHistoryStack();
+        tabBar->createTab(view);
+    } else {
+        tabBar->currentTab()->setFileView(view);
+    }
 }
 
 bool DFileManagerWindowPrivate::processKeyPressEvent(QKeyEvent *event)
@@ -195,7 +201,7 @@ DFileManagerWindow::DFileManagerWindow(const DUrl &fileUrl, QWidget *parent)
     initUI();
     initConnect();
 
-    openNewTab(DFMUrlBaseEvent(this, fileUrl));
+    openNewTab(fileUrl);
 }
 
 DFileManagerWindow::~DFileManagerWindow()
@@ -268,9 +274,8 @@ void DFileManagerWindow::onNewTabButtonClicked()
         url = currentUrl();
     else
         url = DUrl::fromUserInput(path);
-    DFMUrlBaseEvent event(this, url);
-    event.setWindowId(windowId());
-    openNewTab(event);
+
+    openNewTab(url);
 }
 
 void DFileManagerWindow::requestEmptyTrashFiles()
@@ -302,15 +307,21 @@ void DFileManagerWindow::onCurrentTabChanged(int tabIndex)
     Tab* tab = d->tabBar->tabAt(tabIndex);
 
     if (tab) {
-        d->toolbar->switchHistoryStack(tabIndex,tab->fileView()->rootUrl());
+        d->toolbar->switchHistoryStack(tabIndex);
+
+        if (!tab->fileView())
+            return;
+
+        d->toolbar->setCrumb(tab->fileView()->rootUrl());
         switchToView(tab->fileView());
-        if(currentUrl().isSearchFile()){
-            if(!d->toolbar->getSearchBar()->isVisible()){
+
+        if (currentUrl().isSearchFile()) {
+            if(!d->toolbar->getSearchBar()->isVisible()) {
                 d->toolbar->searchBarActivated();
                 d->toolbar->getSearchBar()->setText(tab->fileView()->rootUrl().searchKeyword());
             }
-        } else{
-            if(d->toolbar->getSearchBar()->isVisible()){
+        } else {
+            if(d->toolbar->getSearchBar()->isVisible()) {
                 d->toolbar->searchBarDeactivated();
             }
         }
@@ -372,14 +383,18 @@ bool DFileManagerWindow::cd(const DUrl &fileUrl, bool canFetchNetwork)
     if (currentUrl() == fileUrl)
         return true;
 
-    if (!d->tabBar->currentTab()) {
-        openNewTab(DFMUrlBaseEvent(this, fileUrl));
-
+    if (canFetchNetwork && NetworkManager::SupportScheme.contains(fileUrl.scheme())) {
+        emit fileSignalManager->requestFetchNetworks(DFMUrlBaseEvent(this, fileUrl));
         return true;
     }
 
-    if (canFetchNetwork && NetworkManager::SupportScheme.contains(fileUrl.scheme())) {
-        emit fileSignalManager->requestFetchNetworks(DFMUrlBaseEvent(this, fileUrl));
+    if (fileUrl.scheme() == "mount") {
+        DUrl newUrl;
+        QUrlQuery query(fileUrl);
+
+        newUrl.setQuery(query.queryItemValue("id"));
+
+        appController->actionOpenDisk(dMakeEventPointer<DFMUrlBaseEvent>(this, newUrl));
         return true;
     }
 
@@ -439,37 +454,20 @@ bool DFileManagerWindow::cd(const DUrl &fileUrl, bool canFetchNetwork)
     return ok;
 }
 
-void DFileManagerWindow::openNewTab(const DFMUrlBaseEvent &event)
+bool DFileManagerWindow::openNewTab(DUrl fileUrl)
 {
     D_D(DFileManagerWindow);
 
     if (!d->tabBar->tabAddable())
-        return;
+        return false;
 
-    if (event.windowId() != windowId()) {
-        return;
-    }
-
-    DUrl fileUrl;
-
-    if (event.url().isEmpty())
+    if (fileUrl.isEmpty())
         fileUrl = DUrl::fromLocalFile(QDir::homePath());
-    else
-        fileUrl = event.url();
-
-    DFMBaseView *view = DFMViewManager::instance()->createViewByUrl(fileUrl);
-
-    if (!view)
-        return;
-
-    view->setRootUrl(fileUrl);
 
     d->toolbar->addHistoryStack();
-    d->viewStackLayout->addWidget(view->widget());
-    d->viewStackLayout->setCurrentWidget(view->widget());
-    d->tabBar->createTab(view);
+    d->tabBar->createTab(Q_NULLPTR);
 
-    handleNewView(view);
+    return cd(fileUrl);
 }
 
 void DFileManagerWindow::switchToView(DFMBaseView *view)
@@ -575,7 +573,11 @@ bool DFileManagerWindow::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
         d->toolbar->forward();
         return true;
     case DFMEvent::OpenNewTab:
-        openNewTab(*event.staticCast<DFMUrlBaseEvent>().data());
+        if (event->windowId() != this->internalWinId())
+            return false;
+
+        openNewTab(event.staticCast<DFMUrlBaseEvent>()->url());
+
         return true;
     default: break;
     }

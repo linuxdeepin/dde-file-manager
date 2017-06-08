@@ -358,12 +358,11 @@ void DToolBar::addHistoryStack(){
     m_navStacks.append(new HistoryStack(65536));
 }
 
-void DToolBar::switchHistoryStack(const int index , const DUrl &url){
+void DToolBar::switchHistoryStack(const int index){
     m_navStack = m_navStacks.at(index);
     if(!m_navStack)
         return;
     updateBackForwardButtonsState();
-    setCrumb(url);
 }
 
 void DToolBar::removeNavStackAt(int index){
@@ -433,6 +432,7 @@ void DToolBar::setCustomActionList(const QList<QAction *> &list)
         button->setAction(list.at(i));
 
         m_contollerToolBarContentLayout->addWidget(button);
+        button->show();
     }
 
     m_contollerToolBar->setHidden(list.isEmpty());
