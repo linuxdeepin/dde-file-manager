@@ -221,6 +221,12 @@ SearchDiriterator::SearchDiriterator(const DUrl &url, const QStringList &nameFil
 {
     targetUrl = url.searchTargetUrl();
     keyword = url.searchKeyword();
+
+    if (!keyword.contains('*') && !keyword.contains('?')) {
+        keyword.prepend('*');
+        keyword.append('*');
+    }
+
     regular = QRegExp(keyword, Qt::CaseInsensitive, QRegExp::Wildcard);
     searchPathList << targetUrl;
 }

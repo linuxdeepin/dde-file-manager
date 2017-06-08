@@ -372,6 +372,12 @@ bool DFileManagerWindow::cd(const DUrl &fileUrl, bool canFetchNetwork)
     if (currentUrl() == fileUrl)
         return true;
 
+    if (!d->tabBar->currentTab()) {
+        openNewTab(DFMUrlBaseEvent(this, fileUrl));
+
+        return true;
+    }
+
     if (canFetchNetwork && NetworkManager::SupportScheme.contains(fileUrl.scheme())) {
         emit fileSignalManager->requestFetchNetworks(DFMUrlBaseEvent(this, fileUrl));
         return true;
