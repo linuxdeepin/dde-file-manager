@@ -45,7 +45,11 @@ DesktopFile::DesktopFile(const QString &fileName) {
     m_icon = desktop.value("Icon", settings.value("Icon")).toString();
     m_type = desktop.value("Type", settings.value("Type", "Application")).toString();
     m_categories = desktop.value("Categories", settings.value("Categories").toString()).toString().remove(" ").split(";");
-    m_mimeType = desktop.value("MimeType", settings.value("MimeType").toString()).toString().remove(" ").split(";");
+
+    const QString &mime_type = desktop.value("MimeType", settings.value("MimeType").toString()).toString().remove(" ");
+
+    if (!mime_type.isEmpty())
+        m_mimeType = mime_type.split(";");
     // Fix categories
     if (m_categories.first().compare("") == 0) {
         m_categories.removeFirst();

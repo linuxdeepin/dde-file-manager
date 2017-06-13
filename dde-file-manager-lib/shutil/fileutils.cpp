@@ -541,10 +541,7 @@ bool FileUtils::openFileByApp(const QString &filePath, const QString &app)
 
     qDebug() << filePath << app;
 
-    const auto stdAppPath = app.toStdString();
-    const char* cAppPath = stdAppPath.c_str();
-
-    GDesktopAppInfo* appInfo = g_desktop_app_info_new_from_filename(cAppPath);
+    GDesktopAppInfo* appInfo = g_desktop_app_info_new_from_filename(app.toLocal8Bit().constData());
     if (!appInfo) {
         qDebug() << "Failed to open desktop file with gio: g_desktop_app_info_new_from_filename returns NULL. Check PATH maybe?";
         return false;
