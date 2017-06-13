@@ -615,7 +615,7 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::OpenDiskInNewTab] = QObject::tr("Open in new tab");
     actionKeys[MenuAction::OpenAsAdmin] = QObject::tr("Open in new window as admin");
     actionKeys[MenuAction::OpenWith] = QObject::tr("Open with");
-    actionKeys[MenuAction::OpenWithCustom] = QObject::tr("Others");
+    actionKeys[MenuAction::OpenWithCustom] = QObject::tr("Select default program");
     actionKeys[MenuAction::OpenFileLocation] = QObject::tr("Open file loaction");
     actionKeys[MenuAction::Compress] = QObject::tr("Compress");
     actionKeys[MenuAction::Decompress] = QObject::tr("Extract");

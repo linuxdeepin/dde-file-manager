@@ -27,7 +27,6 @@
 #include "utils.h"
 
 #include "dialogs/dtaskdialog.h"
-#include "dialogs/messagewrongdialog.h"
 #include "dialogs/propertydialog.h"
 #include "dialogs/openwithdialog.h"
 #include "dialogs/diskspaceoutofusedtipdialog.h"
@@ -283,9 +282,7 @@ void DialogManager::showCopyMoveToSelfDialog(const QMap<QString, QString> &jobDe
 
 void DialogManager::showUrlWrongDialog(const DUrl &url)
 {
-    MessageWrongDialog d(url.toString());
-    qDebug() << url;
-    d.exec();
+    Q_UNUSED(url)
 }
 
 int DialogManager::showRunExcutableScriptDialog(const DUrl &url, quint64 winId)
@@ -429,8 +426,8 @@ void DialogManager::showOpenWithDialog(const DFMEvent &event)
 {
     QWidget* w = WindowManager::getWindowById(event.windowId());
     if (w){
-        OpenWithOtherDialog* d = new OpenWithOtherDialog(event.fileUrl(), w);
-        d->setDisplayPostion(OpenWithOtherDialog::DisplayCenter);
+        OpenWithDialog* d = new OpenWithDialog(event.fileUrl(), w);
+        d->setDisplayPostion(OpenWithDialog::DisplayCenter);
         d->exec();
     }
 }
