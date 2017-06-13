@@ -154,32 +154,28 @@ void WaterMaskFrame::initUI()
         maskLogoTextSpacing = 0;
     }
 
-    int maskWidth;
     if (m_configs.contains("maskWidth")) {
-        maskWidth = m_configs.value("maskWidth").toInt();
+        m_maskWidth = m_configs.value("maskWidth").toInt();
     } else {
-        maskWidth = 239;
+        m_maskWidth = 239;
     }
 
-    int maskHeight;
     if (m_configs.contains("maskHeight")) {
-        maskHeight = m_configs.value("maskHeight").toInt();
+        m_maskHeight = m_configs.value("maskHeight").toInt();
     } else {
-        maskHeight = 110;
+        m_maskHeight = 110;
     }
 
-    int xRightBottom;
     if (m_configs.contains("xRightBottom")) {
-        xRightBottom = m_configs.value("xRightBottom").toInt();
+        m_xRightBottom = m_configs.value("xRightBottom").toInt();
     } else {
-        xRightBottom = 50;
+        m_xRightBottom = 50;
     }
 
-    int yRightBottom;
     if (m_configs.contains("yRightBottom")) {
-        yRightBottom = m_configs.value("yRightBottom").toInt();
+        m_yRightBottom = m_configs.value("yRightBottom").toInt();
     } else {
-        yRightBottom = 98;
+        m_yRightBottom = 98;
     }
 
     m_logoLabel = new QLabel(this);
@@ -227,13 +223,16 @@ void WaterMaskFrame::initUI()
     mainLayout->setContentsMargins(0, 0, 0, 0);
     setLayout(mainLayout);
 
-
-    int x = static_cast<QWidget *>(parent())->width() - xRightBottom - maskWidth;
-    int y = static_cast<QWidget *>(parent())->height() - yRightBottom - maskHeight;
-    move(x, y);
-    setFixedSize(maskWidth, maskHeight);
+    setFixedSize(m_maskWidth, m_maskHeight);
     QString color(maskTextColor);
     QString fontsize(maskTextFontSize);
     QString style = QString("QLabel {color: %1; font-size: %2}").arg(color, fontsize);
     setStyleSheet(style);
+}
+
+void WaterMaskFrame::updatePosition()
+{
+    int x = static_cast<QWidget *>(parent())->width() - m_xRightBottom - m_maskWidth;
+    int y = static_cast<QWidget *>(parent())->height() - m_yRightBottom - m_maskHeight;
+    move(x, y);
 }

@@ -1227,6 +1227,7 @@ void CanvasGridView::initUI()
 
     d->waterMaskFrame = new WaterMaskFrame("/usr/share/deepin/dde-desktop-watermask.json", this);
     d->waterMaskFrame->lower();
+    d->waterMaskFrame->updatePosition();
 }
 
 static inline QRect getValidNewGeometry(const QRect &geometry, const QRect &oldGeometry)
@@ -1254,6 +1255,7 @@ void CanvasGridView::updateGeometry(const QRect &geometry)
     qDebug() << "set newGeometry" << newGeometry;
     setGeometry(qApp->primaryScreen()->geometry());
 
+    d->waterMaskFrame->updatePosition();
 
     d->canvasRect = newGeometry;
     updateCanvas();
