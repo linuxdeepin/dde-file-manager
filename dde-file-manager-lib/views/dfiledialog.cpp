@@ -152,6 +152,13 @@ QStringList DFileDialog::selectedFiles() const
 void DFileDialog::selectUrl(const QUrl &url)
 {
     getFileView()->select(DUrlList() << url);
+
+    const DAbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(url);
+
+    if (fileInfo && fileInfo->exists())
+        return;
+
+    setCurrentInputName(QFileInfo(url.path()).fileName());
 }
 
 QList<QUrl> DFileDialog::selectedUrls() const
