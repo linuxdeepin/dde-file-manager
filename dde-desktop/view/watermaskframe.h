@@ -24,9 +24,9 @@ public:
     bool checkConfigFile(const QString& fileName);
     void loadConfig(const QString& fileName);
     void initUI();
-signals:
 
 public slots:
+    void updatePosition();
 
 private:
     QString m_configFile;
@@ -34,6 +34,10 @@ private:
     QLabel* m_logoLabel = NULL;
     QLabel* m_textLabel = NULL;
     bool m_isMaskAlwaysOn = false;
+    int m_xRightBottom;
+    int m_yRightBottom;
+    int m_maskWidth;
+    int m_maskHeight;
 };
 
 #endif // WATERMASKFRAME_H
