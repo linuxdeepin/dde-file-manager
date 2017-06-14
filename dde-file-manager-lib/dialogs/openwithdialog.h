@@ -39,7 +39,7 @@ private:
     void initData();
     void checkItem(OpenWithDialogListItem *item);
     void useOtherApplication();
-    OpenWithDialogListItem *createItem(const QIcon &icon, const QString &name, const QString &filePath, const QString &appName);
+    OpenWithDialogListItem *createItem(const QIcon &icon, const QString &name, const QString &filePath);
 
     QScrollArea *m_scrollArea = NULL;
     DFlowLayout *m_recommandLayout = NULL;

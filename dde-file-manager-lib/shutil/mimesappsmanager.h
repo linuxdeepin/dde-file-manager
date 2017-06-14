@@ -64,7 +64,7 @@ public:
     static QString getDefaultAppDisplayNameByGio(const QString& mimeType);
     static QString getDefaultAppDesktopFileByMimeType(const QString& mimeType);
 
-    static void setDefautlAppForTypeByGio(const QString& mimeType,
+    static bool setDefautlAppForTypeByGio(const QString& mimeType,
                                      const QString& targetAppName);
 
     static QStringList getRecommendedApps(const DUrl& url);

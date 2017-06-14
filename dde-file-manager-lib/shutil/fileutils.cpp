@@ -904,13 +904,14 @@ QString FileUtils::getMimeTypeByGIO(const QString &uri)
         return "";
 
     fileInfo = g_file_query_info(file,
-                                            G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
-                                            G_FILE_QUERY_INFO_NONE,
-                                            NULL,
-                                            &error);
+                                 G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
+                                 G_FILE_QUERY_INFO_NONE,
+                                 NULL,
+                                 &error);
     if(error || !fileInfo){
         qDebug () << "read file " << uri     << " mime type error:" << (error?error->message:"unknown error");
         g_error_free(error);
+        g_object_unref(file);
         return "";
     }
 

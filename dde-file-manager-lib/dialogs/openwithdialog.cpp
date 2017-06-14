@@ -181,6 +181,7 @@ void OpenWithDialog::initUI()
     m_scrollArea = new QScrollArea(this);
     m_scrollArea->setStyleSheet("QScrollArea{background: transparent;} QWidget#contentWidget{background: transparent;}");
     m_scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_scrollArea->setFrameShape(QFrame::NoFrame);
 
     QWidget *content_widget = new QWidget;
 
@@ -194,11 +195,12 @@ void OpenWithDialog::initUI()
 
     m_openFileChooseButton = new DLinkButton(tr("Select other programs"));
     m_setToDefaultCheckBox = new QCheckBox(tr("Set as default"));
+    m_setToDefaultCheckBox->setChecked(true);
     m_cancelButton = new QPushButton(tr("Cancel"));
     m_chooseButton = new QPushButton(tr("Choose"));
 
     QVBoxLayout* content_layout = new QVBoxLayout;
-    content_layout->setContentsMargins(0, 0, 0, 0);
+    content_layout->setContentsMargins(10, 0, 10, 0);
     content_layout->addWidget(new OpenWithDialogListSparerItem(tr("Recommand Applications"), this));
     content_layout->addLayout(m_recommandLayout);
     content_layout->addWidget(new OpenWithDialogListSparerItem(tr("Other Applications"), this));
@@ -217,11 +219,16 @@ void OpenWithDialog::initUI()
     buttonLayout->setContentsMargins(10, 0, 10, 0);
 
     QVBoxLayout *main_layout= new QVBoxLayout(this);
+    QVBoxLayout *bottom_layout = new QVBoxLayout;
+
+    bottom_layout->addWidget(new DSeparatorHorizontal(this));
+    bottom_layout->addSpacing(5);
+    bottom_layout->addLayout(buttonLayout);
+    bottom_layout->setContentsMargins(10, 0, 10, 0);
+
     main_layout->addWidget(m_scrollArea);
-    main_layout->addWidget(new DSeparatorHorizontal(this));
-    main_layout->addSpacing(5);
-    main_layout->addLayout(buttonLayout);
-    main_layout->setContentsMargins(10, 35, 10, 10);
+    main_layout->addLayout(bottom_layout);
+    main_layout->setContentsMargins(0, 35, 0, 10);
 }
 
 void OpenWithDialog::initConnect()
@@ -238,23 +245,17 @@ void OpenWithDialog::initData()
     if (!file_info)
         return;
 
-    m_mimeType = file_info->mimeType();
-    const QString &default_app = mimeAppsManager->getDefaultAppByMimeType(m_mimeType);
+    QMimeDatabase db;
 
-    QStringList recommendApps = mimeAppsManager->getRecommendedAppsByQio(m_mimeType);
-    foreach (const QString &name, m_mimeType.aliases()) {
-        const QStringList &apps = mimeAppsManager->MimeApps.value(name);
-        foreach (const QString &app, apps) {
-            if (!recommendApps.contains(app)){
-                recommendApps.append(app);
-            }
-        }
-    }
+    m_mimeType = db.mimeTypeForName(FileUtils::getMimeTypeByGIO(m_url.toString()));
+
+    const QString &default_app = mimeAppsManager->getDefaultAppByMimeType(m_mimeType);
+    const QStringList &recommendApps = mimeAppsManager->getRecommendedAppsByQio(m_mimeType);
 
     for (int i = 0; i < recommendApps.count(); ++i) {
         const DesktopFile &desktop_info = mimeAppsManager->DesktopObjs.value(recommendApps.at(i));
 
-        OpenWithDialogListItem *item = createItem(QIcon::fromTheme(desktop_info.getIcon()), desktop_info.getLocalName(), recommendApps.at(i), desktop_info.getName());
+        OpenWithDialogListItem *item = createItem(QIcon::fromTheme(desktop_info.getIcon()), desktop_info.getLocalName(), recommendApps.at(i));
         m_recommandLayout->addWidget(item);
 
         if (recommendApps.at(i).endsWith(default_app))
@@ -294,7 +295,7 @@ void OpenWithDialog::initData()
 
         other_app_list << mimeAppsManager->DesktopObjs.value(f);
         QString iconName = other_app_list.last().getIcon();
-        OpenWithDialogListItem *item = createItem(QIcon::fromTheme(iconName), other_app_list.last().getLocalName(), f, other_app_list.last().getName());
+        OpenWithDialogListItem *item = createItem(QIcon::fromTheme(iconName), other_app_list.last().getLocalName(), f);
         m_otherLayout->addWidget(item);
 
         if (f.endsWith(default_app))
@@ -329,6 +330,11 @@ void OpenWithDialog::useOtherApplication()
                 return;
         }
 
+        Properties desktop(file_path, "Desktop Entry");
+
+        if (desktop.value("MimeType").toString().isEmpty())
+            return;
+
         if (!QFile::link(file_path, target_desktop_file_name))
             return;
     } else if (info.isExecutable()) {
@@ -358,7 +364,7 @@ void OpenWithDialog::useOtherApplication()
         }
     }
 
-    OpenWithDialogListItem *item = createItem(QIcon::fromTheme("application-x-desktop"), info.fileName(), target_desktop_file_name, info.fileName());
+    OpenWithDialogListItem *item = createItem(QIcon::fromTheme("application-x-desktop"), info.fileName(), target_desktop_file_name);
 
     int other_layout_sizeHint_height = m_otherLayout->sizeHint().height();
     m_otherLayout->addWidget(item);
@@ -367,12 +373,11 @@ void OpenWithDialog::useOtherApplication()
     checkItem(item);
 }
 
-OpenWithDialogListItem *OpenWithDialog::createItem(const QIcon &icon, const QString &name, const QString &filePath, const QString &appName)
+OpenWithDialogListItem *OpenWithDialog::createItem(const QIcon &icon, const QString &name, const QString &filePath)
 {
     OpenWithDialogListItem *item = new OpenWithDialogListItem(icon, name, this);
 
     item->setProperty("app", filePath);
-    item->setProperty("appName", appName);
     item->setFixedSize(220, 50);
     item->installEventFilter(this);
 
@@ -387,7 +392,7 @@ void OpenWithDialog::openFileByApp()
     const QString &app = m_checkedItem->property("app").toString();
 
     if (m_setToDefaultCheckBox->isChecked())
-        mimeAppsManager->setDefautlAppForTypeByGio(m_mimeType.name(), m_checkedItem->property("appName").toString());
+        mimeAppsManager->setDefautlAppForTypeByGio(m_mimeType.name(), m_checkedItem->text());
 
     if (DFileService::instance()->openFileByApp(this, app, m_url))
         close();
