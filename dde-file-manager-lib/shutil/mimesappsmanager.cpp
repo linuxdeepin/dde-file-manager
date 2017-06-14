@@ -260,7 +260,7 @@ QString MimesAppsManager::getDefaultAppByMimeType(const QMimeType &mimeType)
 
 QString MimesAppsManager::getDefaultAppByMimeType(const QString &mimeType)
 {
-    GAppInfo* defaultApp = g_app_info_get_default_for_type(mimeType.toStdString().c_str(), FALSE);
+    GAppInfo* defaultApp = g_app_info_get_default_for_type(mimeType.toLocal8Bit().constData(), FALSE);
     QString url = "";
     if(defaultApp){
         url = g_app_info_get_id(defaultApp);
@@ -312,66 +312,75 @@ QString MimesAppsManager::getDefaultAppDesktopFileByMimeType(const QString &mime
     return desktopFile;
 }
 
-void MimesAppsManager::setDefautlAppForTypeByGio(const QString &mimeType,
-                                            const QString &targetAppName)
+bool MimesAppsManager::setDefautlAppForTypeByGio(const QString &mimeType, const QString &targetAppName)
 {
     GAppInfo* app = NULL;
     GList* apps = NULL;
     apps = g_app_info_get_all();
 
     GList* iterator = apps;
-    while(iterator){
-        QString appName = g_app_info_get_name((GAppInfo*)iterator->data);
-        if(appName == targetAppName){
+
+    while (iterator) {
+        const QString &appName = QString::fromLocal8Bit(g_app_info_get_name((GAppInfo*)iterator->data));
+
+        if (appName == targetAppName) {
             app = (GAppInfo*)iterator->data;
             break;
         }
+
         iterator = iterator->next;
     }
 
-    if(!app){
-        qDebug () << "no app found name as:" << targetAppName;
-        return;
-    }
+    g_list_free(apps);
 
-    //avoid null convertion from QString to const char*
-    std::string std_mimeType = mimeType.toStdString();
-    const char* c_mimeType = std_mimeType.c_str();
+    if (!app) {
+        qWarning() << "no app found name as:" << targetAppName;
+        return false;
+    }
 
     GError* error = NULL;
-    gboolean ret = g_app_info_set_as_default_for_type(app,
-                                       c_mimeType,
+    g_app_info_set_as_default_for_type(app,
+                                       mimeType.toLocal8Bit().constData(),
                                        &error);
-    if(ret == FALSE){
+    if (error) {
         qDebug () << "fail to set default app for type:" << error->message;
+        g_free(error);
+        return false;
     }
 
-    g_list_free(apps);
+    return true;
 }
 
 QStringList MimesAppsManager::getRecommendedApps(const DUrl &url)
 {
     QStringList recommendedApps;
-    QStringList gio_recommendedApps;
     QString gio_mimeType;
 
-    //first find reommendApps from qio
-    const DAbstractFileInfoPointer& info = DFileService::instance()->createFileInfo(Q_NULLPTR, url);
-    if(info)
-        recommendedApps = getRecommendedAppsByQio(info->mimeType());
-
     gio_mimeType = FileUtils::getMimeTypeByGIO(url.toString());
-    gio_recommendedApps = getRecommendedAppsByGio(gio_mimeType);
 
-    //append new recommended apps from gio
-    foreach (const QString& app, gio_recommendedApps) {
-        if(!recommendedApps.contains(app))
-            recommendedApps << app;
-    }
+    QMimeDatabase db;
+
+    recommendedApps = getRecommendedAppsByQio(db.mimeTypeForName(gio_mimeType));
 
     //use mime white list to find apps first of all
-    if(recommendedApps.isEmpty() && info){
-        recommendedApps = getrecommendedAppsFromMimeWhiteList(info->fileUrl());
+//    if(recommendedApps.isEmpty() && info) {
+//        recommendedApps = getrecommendedAppsFromMimeWhiteList(info->fileUrl());
+//    }
+    QString default_app = getDefaultAppByMimeType(gio_mimeType);
+    GDesktopAppInfo* dekstopAppInfo = g_desktop_app_info_new(default_app.toLocal8Bit().constData());
+    default_app = QString::fromLocal8Bit(g_desktop_app_info_get_filename(dekstopAppInfo));
+    g_object_unref(dekstopAppInfo);
+
+    recommendedApps.removeOne(default_app);
+    recommendedApps.prepend(default_app);
+
+    QString custom_app("%1/%2-custom-open-%3.desktop");
+
+    custom_app = custom_app.arg(QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation)).arg(qApp->applicationName()).arg(gio_mimeType.replace("/", "-"));
+
+    if (QFile::exists(custom_app)) {
+        recommendedApps.removeOne(custom_app);
+        recommendedApps.append(custom_app);
     }
 
     return recommendedApps;
@@ -379,15 +388,44 @@ QStringList MimesAppsManager::getRecommendedApps(const DUrl &url)
 
 QStringList MimesAppsManager::getRecommendedAppsByQio(const QMimeType &mimeType)
 {
-    QStringList recommendApps = MimeApps.value(mimeType.name());
+    QStringList recommendApps;
+    QSet<QString> recommendAppsIsSet;
+    QList<QMimeType> mimeTypeList;
+    QMimeDatabase mimeDatabase;
 
-    foreach (QString name, mimeType.aliases()) {
-        QStringList apps = mimeAppsManager->MimeApps.value(name);
-        foreach (QString app, apps) {
-            if (!recommendApps.contains(app)){
-                recommendApps.append(app);
+    mimeTypeList.append(mimeType);
+
+    while (recommendApps.isEmpty()) {
+        for (const QMimeType &type : mimeTypeList) {
+            QStringList type_name_list;
+
+            type_name_list.append(type.name());
+            type_name_list.append(type.aliases());
+
+            foreach (const QString &name, type_name_list) {
+                foreach (const QString &app, mimeAppsManager->MimeApps.value(name)) {
+                    if (!recommendAppsIsSet.contains(app)) {
+                        recommendAppsIsSet << app;
+                        recommendApps.append(app);
+                    }
+                }
             }
         }
+
+        if (!recommendApps.isEmpty())
+            break;
+
+        QList<QMimeType> newMimeTypeList;
+
+        for (const QMimeType &type : mimeTypeList) {
+            for (const QString &name : type.parentMimeTypes())
+                newMimeTypeList.append(mimeDatabase.mimeTypeForName(name));
+        }
+
+        mimeTypeList = newMimeTypeList;
+
+        if (mimeTypeList.isEmpty())
+            break;
     }
 
     return recommendApps;
