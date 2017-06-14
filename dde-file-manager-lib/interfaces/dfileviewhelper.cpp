@@ -379,24 +379,19 @@ void DFileViewHelper::keyboardSearch(char key)
     d->keyboardSearchKeys.append(key);
     d->keyboardSearchTimer.start();
 
-    QModelIndexList matchModelIndexListCaseSensitive = parent()->model()->match(parent()->rootIndex(),
-                                                                                DFileSystemModel::FilePinyinName,
-                                                                                d->keyboardSearchKeys,
-                                                                                -1,
-                                                                                Qt::MatchFlags(Qt::MatchStartsWith|Qt::MatchWrap | Qt::MatchCaseSensitive));
-    for (const QModelIndex& index : matchModelIndexListCaseSensitive) {
-        parent()->setCurrentIndex(index);
-        parent()->scrollTo(index, QAbstractItemView::PositionAtTop);
-    }
+    int row_count = parent()->model()->rowCount(parent()->rootIndex());
+    bool reverse_order = qApp->keyboardModifiers() == Qt::ShiftModifier;
 
-    QModelIndexList matchModelIndexListNoCaseSensitive = parent()->model()->match(parent()->rootIndex(),
-                                                                                  DFileSystemModel::FilePinyinName,
-                                                                                  d->keyboardSearchKeys,
-                                                                                  -1,
-                                                                                  Qt::MatchFlags(Qt::MatchStartsWith|Qt::MatchWrap));
-    for (const QModelIndex& index : matchModelIndexListNoCaseSensitive) {
-        parent()->setCurrentIndex(index);
-        parent()->scrollTo(index, QAbstractItemView::PositionAtTop);
+    for (int i = 0; i < row_count; ++i) {
+        const QModelIndex &index = parent()->model()->index(reverse_order ? row_count - i - 1 : i, 0, parent()->rootIndex());
+        const QString &pinyin_name = parent()->model()->data(index, DFileSystemModel::FilePinyinName).toString();
+
+        if (pinyin_name.startsWith(d->keyboardSearchKeys, Qt::CaseInsensitive)) {
+            parent()->setCurrentIndex(index);
+            parent()->scrollTo(index, QAbstractItemView::PositionAtTop);
+
+            return;
+        }
     }
 }
 
