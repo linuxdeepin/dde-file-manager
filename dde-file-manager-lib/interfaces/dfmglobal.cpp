@@ -136,7 +136,7 @@ void DFMGlobal::setUrlsToClipboard(const QList<QUrl> &list, DFMGlobal::Clipboard
 
 void DFMGlobal::clearClipboard()
 {
-    qApp->clipboard()->clear();
+    qApp->clipboard()->setText(QString());
 }
 
 void DFMGlobal::clearTrash()
