@@ -696,8 +696,7 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
                 actionKeys << MenuAction::OpenInNewWindow
                            << MenuAction::OpenInNewTab;
             }else{
-                if (!isDesktopFile())
-                    actionKeys << MenuAction::OpenWith;
+                actionKeys << MenuAction::OpenWith;
             }
             actionKeys << MenuAction::Separator
                        << MenuAction::Cut

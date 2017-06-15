@@ -249,6 +249,9 @@ void OpenWithDialog::initData()
 
     m_mimeType = db.mimeTypeForName(FileUtils::getMimeTypeByGIO(m_url.toString()));
 
+    if (file_info->isDesktopFile())
+        m_setToDefaultCheckBox->hide();
+
     const QString &default_app = mimeAppsManager->getDefaultAppByMimeType(m_mimeType);
     const QStringList &recommendApps = mimeAppsManager->getRecommendedAppsByQio(m_mimeType);
 
