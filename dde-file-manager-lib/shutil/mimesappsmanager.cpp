@@ -367,12 +367,14 @@ QStringList MimesAppsManager::getRecommendedApps(const DUrl &url)
 //        recommendedApps = getrecommendedAppsFromMimeWhiteList(info->fileUrl());
 //    }
     QString default_app = getDefaultAppByMimeType(gio_mimeType);
-    GDesktopAppInfo* dekstopAppInfo = g_desktop_app_info_new(default_app.toLocal8Bit().constData());
-    default_app = QString::fromLocal8Bit(g_desktop_app_info_get_filename(dekstopAppInfo));
-    g_object_unref(dekstopAppInfo);
+    GDesktopAppInfo *desktopAppInfo = g_desktop_app_info_new(default_app.toLocal8Bit().constData());
 
-    recommendedApps.removeOne(default_app);
-    recommendedApps.prepend(default_app);
+    if (desktopAppInfo) {
+        default_app = QString::fromLocal8Bit(g_desktop_app_info_get_filename(desktopAppInfo));
+        g_object_unref(desktopAppInfo);
+        recommendedApps.removeOne(default_app);
+        recommendedApps.prepend(default_app);
+    }
 
     QString custom_app("%1/%2-custom-open-%3.desktop");
 
