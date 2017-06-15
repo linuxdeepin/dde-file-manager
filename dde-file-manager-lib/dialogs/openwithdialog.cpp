@@ -258,7 +258,7 @@ void OpenWithDialog::initData()
         OpenWithDialogListItem *item = createItem(QIcon::fromTheme(desktop_info.getIcon()), desktop_info.getLocalName(), recommendApps.at(i));
         m_recommandLayout->addWidget(item);
 
-        if (recommendApps.at(i).endsWith(default_app))
+        if (!default_app.isEmpty() && recommendApps.at(i).endsWith(default_app))
             checkItem(item);
     }
 
@@ -298,7 +298,7 @@ void OpenWithDialog::initData()
         OpenWithDialogListItem *item = createItem(QIcon::fromTheme(iconName), other_app_list.last().getLocalName(), f);
         m_otherLayout->addWidget(item);
 
-        if (f.endsWith(default_app))
+        if (!default_app.isEmpty() && f.endsWith(default_app))
             checkItem(item);
     }
 }
