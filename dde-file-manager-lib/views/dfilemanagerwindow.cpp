@@ -98,6 +98,9 @@ void DFileManagerWindowPrivate::setCurrentView(DFMBaseView *view)
     if (currentView && currentView->widget())
         currentView->widget()->installEventFilter(q);
 
+    if (!view)
+        return;
+
     toolbar->setCustomActionList(view->toolBarActionList());
 
     if (!tabBar->currentTab()) {
@@ -465,6 +468,7 @@ bool DFileManagerWindow::openNewTab(DUrl fileUrl)
         fileUrl = DUrl::fromLocalFile(QDir::homePath());
 
     d->toolbar->addHistoryStack();
+    d->setCurrentView(0);
     d->tabBar->createTab(Q_NULLPTR);
 
     return cd(fileUrl);
