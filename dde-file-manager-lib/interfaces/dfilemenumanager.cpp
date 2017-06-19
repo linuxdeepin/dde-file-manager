@@ -787,15 +787,13 @@ bool DFileMenuManager::isAvailableAction(MenuAction action)
 
 void DFileMenuManager::setActionString(MenuAction type, QString actionString)
 {
-    if (!DFileMenuData::actionKeys.contains(type)){
-        DFileMenuData::actionKeys.insert(type, actionString);
+    DFileMenuData::actionKeys.insert(type, actionString);
 
-        QAction* action = new QAction(actionString, 0);
-        action->setData(type);
-        DFileMenuData::actions.insert(type, action);
+    QAction* action = new QAction(actionString, 0);
+    action->setData(type);
+    DFileMenuData::actions.insert(type, action);
 
-        qDebug() << type << actionString << action;
-    }
+    qDebug() << type << actionString << action;
 }
 
 void DFileMenuManager::setActionID(MenuAction type, QString id)
