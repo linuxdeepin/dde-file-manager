@@ -350,6 +350,9 @@ void OpenWithDialog::useOtherApplication()
         desktop.set("MimeType", "*/*");
         desktop.set("X-DDE-File-Manager-Custom-Open", m_mimeType.name());
 
+        if (QFile::exists(target_desktop_file_name))
+            QFile(target_desktop_file_name).remove();
+
         if (!desktop.save(target_desktop_file_name, "Desktop Entry"))
             return;
     }
@@ -395,7 +398,7 @@ void OpenWithDialog::openFileByApp()
     const QString &app = m_checkedItem->property("app").toString();
 
     if (m_setToDefaultCheckBox->isChecked())
-        mimeAppsManager->setDefautlAppForTypeByGio(m_mimeType.name(), m_checkedItem->text());
+        mimeAppsManager->setDefautlAppForTypeByGio(m_mimeType.name(), app);
 
     if (DFileService::instance()->openFileByApp(this, app, m_url))
         close();

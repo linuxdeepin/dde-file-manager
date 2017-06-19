@@ -312,7 +312,7 @@ QString MimesAppsManager::getDefaultAppDesktopFileByMimeType(const QString &mime
     return desktopFile;
 }
 
-bool MimesAppsManager::setDefautlAppForTypeByGio(const QString &mimeType, const QString &targetAppName)
+bool MimesAppsManager::setDefautlAppForTypeByGio(const QString &mimeType, const QString &appPath)
 {
     GAppInfo* app = NULL;
     GList* apps = NULL;
@@ -321,9 +321,18 @@ bool MimesAppsManager::setDefautlAppForTypeByGio(const QString &mimeType, const 
     GList* iterator = apps;
 
     while (iterator) {
-        const QString &appName = QString::fromLocal8Bit(g_app_info_get_name((GAppInfo*)iterator->data));
+        const char* desktop_id = g_app_info_get_id((GAppInfo*)iterator->data);
+        GDesktopAppInfo* desktopAppInfo = g_desktop_app_info_new(desktop_id);
 
-        if (appName == targetAppName) {
+        if (desktopAppInfo) {
+            if (appPath == g_desktop_app_info_get_filename(desktopAppInfo)) {
+                app = (GAppInfo*)iterator->data;
+                g_object_unref(desktopAppInfo);
+                break;
+            }
+
+            g_object_unref(desktopAppInfo);
+        } else if (appPath.endsWith("/" + QString::fromLocal8Bit(desktop_id))) {
             app = (GAppInfo*)iterator->data;
             break;
         }
@@ -334,7 +343,7 @@ bool MimesAppsManager::setDefautlAppForTypeByGio(const QString &mimeType, const 
     g_list_free(apps);
 
     if (!app) {
-        qWarning() << "no app found name as:" << targetAppName;
+        qWarning() << "no app found name as:" << appPath;
         return false;
     }
 
@@ -366,7 +375,16 @@ QStringList MimesAppsManager::getRecommendedApps(const DUrl &url)
 //    if(recommendedApps.isEmpty() && info) {
 //        recommendedApps = getrecommendedAppsFromMimeWhiteList(info->fileUrl());
 //    }
+    QString custom_app("%1/%2-custom-open-%3.desktop");
     QString default_app = getDefaultAppByMimeType(gio_mimeType);
+
+    custom_app = custom_app.arg(QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation)).arg(qApp->applicationName()).arg(gio_mimeType.replace("/", "-"));
+
+    if (QFile::exists(custom_app)) {
+        recommendedApps.removeOne(custom_app);
+        recommendedApps.append(custom_app);
+    }
+
     GDesktopAppInfo *desktopAppInfo = g_desktop_app_info_new(default_app.toLocal8Bit().constData());
 
     if (desktopAppInfo) {
@@ -374,15 +392,6 @@ QStringList MimesAppsManager::getRecommendedApps(const DUrl &url)
         g_object_unref(desktopAppInfo);
         recommendedApps.removeOne(default_app);
         recommendedApps.prepend(default_app);
-    }
-
-    QString custom_app("%1/%2-custom-open-%3.desktop");
-
-    custom_app = custom_app.arg(QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation)).arg(qApp->applicationName()).arg(gio_mimeType.replace("/", "-"));
-
-    if (QFile::exists(custom_app)) {
-        recommendedApps.removeOne(custom_app);
-        recommendedApps.append(custom_app);
     }
 
     return recommendedApps;

@@ -108,9 +108,11 @@ bool DFileSystemModelPrivate::passNameFilters(const FileSystemNodePointer &node)
 
     // Check the name regularexpression filters
     if (!(node->fileInfo->isDir() && (filters & (QDir::AllDirs | QDir::Dirs)))) {
+        const Qt::CaseSensitivity caseSensitive = (filters & QDir::CaseSensitive) ? Qt::CaseSensitive : Qt::CaseInsensitive;
+
         for (int i = 0; i < nameFilters.size(); ++i) {
-            const Qt::CaseSensitivity caseSensitive = (filters & QDir::CaseSensitive) ? Qt::CaseSensitive : Qt::CaseInsensitive;
             QRegExp re(nameFilters.at(i), caseSensitive, QRegExp::Wildcard);
+
             if (re.exactMatch(node->fileInfo->fileDisplayName()))
                 return true;
         }
