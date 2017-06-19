@@ -471,7 +471,7 @@ void PropertyDialog::onOpenWithBntsChecked(QAbstractButton *w)
 {
     if(w){
         MimesAppsManager::setDefautlAppForTypeByGio(w->property("mimeTypeName").toString(),
-                                                 w->property("appName").toString());
+                                                 w->property("appPath").toString());
     }
 }
 
@@ -834,7 +834,7 @@ QListWidget *PropertyDialog::createOpenWithListWidget(const DAbstractFileInfoPoi
         itemBox->setObjectName("OpenWithItem");
         itemBox->setIcon(QIcon::fromTheme(df.getIcon()));
         itemBox->setIconSize(QSize(16, 16));
-        itemBox->setProperty("appName",df.getLocalName());
+        itemBox->setProperty("appPath", appFile);
         //for future we use our api for getting mimeType
 //        itemBox->setProperty("mimeTypeName",info->mimeTypeName());
         itemBox->setProperty("mimeTypeName", FileUtils::getMimeTypeByGIO(info->fileUrl().toString()));
