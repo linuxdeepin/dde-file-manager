@@ -141,6 +141,13 @@ int main(int argc, char *argv[])
         app.setQuitOnLastWindowClosed(false);
         fileManagerApp;
         gvfsMountManager->setAutoMountSwitch(false);
+
+        // initialize the QWidget public data
+        // Speed up the file choose dialog window pops up the speed
+        QWidget *w = new QWidget();
+        w->createWinId();
+        w->deleteLater();
+
         return app.exec();
     }
 
