@@ -32,6 +32,8 @@ static QString fmeventType2String(DFMEvent::Type type)
         return QStringLiteral(QT_STRINGIFY(DeleteFiles));
     case DFMEvent::MoveToTrash:
         return QStringLiteral(QT_STRINGIFY(MoveToTrash));
+    case DFMEvent::RestoreFromTrash:
+        return QStringLiteral(QT_STRINGIFY(RestoreFromTrash));
     case DFMEvent::PasteFile:
         return QStringLiteral(QT_STRINGIFY(PasteFile));
     case DFMEvent::NewFolder:
