@@ -632,7 +632,7 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::AddToBookMark] = QObject::tr("Add to bookmark");
     actionKeys[MenuAction::Delete] = QObject::tr("Throw to Trash");
     actionKeys[MenuAction::CompleteDeletion] = QObject::tr("Permanently delete");
-    actionKeys[MenuAction::Property] = QObject::tr("Property");
+    actionKeys[MenuAction::Property] = QObject::tr("Properties");
 
     actionKeys[MenuAction::NewFolder] = QObject::tr("New folder");
     actionKeys[MenuAction::NewWindow] = QObject::tr("New window");

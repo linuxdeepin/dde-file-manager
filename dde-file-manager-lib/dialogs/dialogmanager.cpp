@@ -785,7 +785,7 @@ int DialogManager::showMessageDialog(int messageLevel, const QString& message)
     d.moveToCenter();
     d.setTitle(message);
     QStringList buttonTexts;
-    buttonTexts << tr("确定");
+    buttonTexts << tr("Confirm");
     d.addButtons(buttonTexts);
     d.setDefaultButton(0);
     if (messageLevel == 1){
