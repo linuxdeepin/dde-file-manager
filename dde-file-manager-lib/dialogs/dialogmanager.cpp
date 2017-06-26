@@ -367,7 +367,7 @@ int DialogManager::showDeleteFilesClearTrashDialog(const DFMEvent &event)
 
     QFontMetrics fm(d.font());
     d.setIcon(QIcon(":/images/dialogs/images/user-trash-full-opened.png"));
-    if (urlList.first() == DUrl::fromTrashFile("/") && event.source() == DFMEvent::Menu && urlList.size() == 1){
+    if (urlList.first() == DUrl::fromTrashFile("/") && urlList.size() == 1){
         buttonTexts[1]= tr("Empty");
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(urlList.first());
         if(fileInfo->filesCount() == 1)
