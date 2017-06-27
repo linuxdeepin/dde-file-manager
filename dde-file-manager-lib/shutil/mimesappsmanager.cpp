@@ -365,7 +365,7 @@ QStringList MimesAppsManager::getRecommendedApps(const DUrl &url)
     QStringList recommendedApps;
     QString gio_mimeType;
 
-    gio_mimeType = FileUtils::getMimeTypeByGIO(url.toString());
+    gio_mimeType = FileUtils::getMimeTypeByGIO(url.isSearchFile() ? url.searchedFileUrl().toString() : url.toString());
 
     QMimeDatabase db;
 

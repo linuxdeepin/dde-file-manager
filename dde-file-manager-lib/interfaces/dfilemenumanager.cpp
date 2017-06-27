@@ -268,7 +268,7 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
         DFileMenu* openWithMenu = openWithAction ? qobject_cast<DFileMenu*>(openWithAction->menu()) : Q_NULLPTR;
 
         if (openWithMenu) {
-            QStringList recommendApps = mimeAppsManager->getRecommendedApps(info->fileUrl());
+            QStringList recommendApps = mimeAppsManager->getRecommendedApps(info->redirectedFileUrl());
 
             foreach (QString app, recommendApps) {
 //                const DesktopFile& df = mimeAppsManager->DesktopObjs.value(app);
@@ -278,7 +278,7 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
                 QAction* action = new QAction(mimeAppsManager->DesktopObjs.value(app).getLocalName(), openWithMenu);
                 action->setIcon(FileUtils::searchAppIcon(mimeAppsManager->DesktopObjs.value(app)));
                 action->setProperty("app", app);
-                action->setProperty("url", QVariant::fromValue(info->fileUrl()));
+                action->setProperty("url", QVariant::fromValue(info->redirectedFileUrl()));
                 openWithMenu->addAction(action);
                 connect(action, &QAction::triggered, appController, &AppController::actionOpenFileByApp);
             }
