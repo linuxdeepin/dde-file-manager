@@ -247,7 +247,7 @@ void OpenWithDialog::initData()
 
     QMimeDatabase db;
 
-    m_mimeType = db.mimeTypeForName(FileUtils::getMimeTypeByGIO(m_url.toString()));
+    m_mimeType = db.mimeTypeForName(FileUtils::getMimeTypeByGIO(file_info->redirectedFileUrl().toString()));
 
     if (file_info->isDesktopFile())
         m_setToDefaultCheckBox->hide();
