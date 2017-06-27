@@ -818,9 +818,9 @@ QListWidget *PropertyDialog::createOpenWithListWidget(const DAbstractFileInfoPoi
     m_OpenWithButtonGroup = new QButtonGroup(listWidget);
     listWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    QStringList recommendApps = mimeAppsManager->getRecommendedApps(info->fileUrl());
+    QStringList recommendApps = mimeAppsManager->getRecommendedApps(info->redirectedFileUrl());
 
-    QString gio_mimeType = FileUtils::getMimeTypeByGIO(info->fileUrl().toString());
+    QString gio_mimeType = FileUtils::getMimeTypeByGIO(info->redirectedFileUrl().toString());
     QString defaultApp = mimeAppsManager->getDefaultAppDisplayNameByGio(gio_mimeType);
 
     foreach (const QString& appFile, recommendApps){
@@ -837,7 +837,7 @@ QListWidget *PropertyDialog::createOpenWithListWidget(const DAbstractFileInfoPoi
         itemBox->setProperty("appName",df.getLocalName());
         //for future we use our api for getting mimeType
 //        itemBox->setProperty("mimeTypeName",info->mimeTypeName());
-        itemBox->setProperty("mimeTypeName", FileUtils::getMimeTypeByGIO(info->fileUrl().toString()));
+        itemBox->setProperty("mimeTypeName", FileUtils::getMimeTypeByGIO(info->redirectedFileUrl().toString()));
         m_OpenWithButtonGroup->addButton(itemBox);
         item->setData(Qt::UserRole, df.getName());
         listWidget->addItem(item);

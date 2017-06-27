@@ -67,7 +67,7 @@ public:
     static void setDefautlAppForTypeByGio(const QString& mimeType,
                                      const QString& targetAppName);
 
-    static QStringList getRecommendedApps(const DUrl& url);
+    static QStringList getRecommendedApps(DUrl url);
     static QStringList getRecommendedAppsByQio(const QMimeType& mimeType);
     static QStringList getRecommendedAppsByGio(const QString& mimeType);
     static QStringList getrecommendedAppsFromMimeWhiteList(const DUrl& url);

@@ -349,7 +349,7 @@ void MimesAppsManager::setDefautlAppForTypeByGio(const QString &mimeType,
     g_list_free(apps);
 }
 
-QStringList MimesAppsManager::getRecommendedApps(const DUrl &url)
+QStringList MimesAppsManager::getRecommendedApps(DUrl url)
 {
     QStringList recommendedApps;
     QStringList gio_recommendedApps;
@@ -357,8 +357,10 @@ QStringList MimesAppsManager::getRecommendedApps(const DUrl &url)
 
     //first find reommendApps from qio
     const DAbstractFileInfoPointer& info = DFileService::instance()->createFileInfo(url);
-    if(info)
+    if(info) {
         recommendedApps = getRecommendedAppsByQio(info->mimeType());
+        url = info->redirectedFileUrl();
+    }
 
     gio_mimeType = FileUtils::getMimeTypeByGIO(url.toString());
     gio_recommendedApps = getRecommendedAppsByGio(gio_mimeType);
