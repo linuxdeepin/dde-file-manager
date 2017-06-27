@@ -139,12 +139,6 @@ void ShareInfoFrame::doShareInfoSetting()
     if (m_shareCheckBox->isChecked()){
         userShareManager->addUserShare(info);
     }else{
-        if(info.isWritable()){
-            QString cmd = "chmod";
-            QStringList args;
-            args << "-R"<<"755"<<info.path();
-            QProcess::startDetached(cmd, args);
-        }
         userShareManager->deleteUserShareByPath(info.path());
     }
 }
