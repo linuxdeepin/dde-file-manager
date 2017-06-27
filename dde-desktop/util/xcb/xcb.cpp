@@ -54,39 +54,61 @@ void XcbMisc::set_window_type(xcb_window_t winId, WindowType winType)
     xcb_ewmh_set_wm_window_type(&m_ewmh_connection, winId, 1, atoms);
 }
 
-void XcbMisc::set_strut_partial(xcb_window_t winId, Orientation orientation, uint strut, uint start, uint end)
-{
-    // xcb_ewmh_wm_strut_partial_t strut_partial is very different from
-    // xcb_ewmh_wm_strut_partial_t strut_partial {};
-    // the latter one ensures all its member to be initialized to 0;
-    xcb_ewmh_wm_strut_partial_t strut_partial {};
 
-    switch (orientation) {
-    case OrientationLeft:
-        strut_partial.left = strut;
-        strut_partial.left_start_y = start;
-        strut_partial.left_end_y = end;
-        break;
-    case OrientationRight:
-        strut_partial.right = strut;
-        strut_partial.right_start_y = start;
-        strut_partial.right_end_y = end;
-        break;
-    case OrientationTop:
-        strut_partial.top = strut;
-        strut_partial.top_start_x = start;
-        strut_partial.top_end_x = end;
-        break;
-    case OrientationBottom:
-        strut_partial.bottom = strut;
-        strut_partial.bottom_start_x = start;
-        strut_partial.bottom_end_x = end;
-        break;
-    default:
-        break;
+xcb_ewmh_wm_strut_partial_t XcbMisc::get_strut_partial(xcb_window_t winId)
+{
+    xcb_get_property_cookie_t cookie = xcb_ewmh_get_wm_strut_partial(&m_ewmh_connection, winId);
+
+    xcb_ewmh_wm_strut_partial_t strut;
+    xcb_generic_error_t *e;
+
+    xcb_ewmh_get_wm_strut_partial_reply(
+        &m_ewmh_connection,
+        cookie,
+        &strut,
+        &e);
+    return strut;
+}
+
+bool XcbMisc::is_dock_window(xcb_window_t winId)
+{
+    bool is_dock = false;
+    xcb_ewmh_get_atoms_reply_t name;
+    xcb_generic_error_t *e;
+    xcb_get_property_cookie_t cookie = xcb_ewmh_get_wm_window_type(&m_ewmh_connection, winId);
+    if (1 == xcb_ewmh_get_wm_window_type_reply(&m_ewmh_connection,
+            cookie,
+            &name,
+            &e)) {
+
+        for (uint32_t i = 0; i < name.atoms_len; ++i) {
+            xcb_atom_t t = name.atoms[i];
+            if (t == m_ewmh_connection._NET_WM_WINDOW_TYPE_DOCK) {
+                is_dock = true;
+            }
+        }
+    }
+    return is_dock;
+}
+
+xcb_window_t XcbMisc::find_dock_window(int screen_nbr)
+{
+    QList<xcb_window_t> docks;
+    for (int i = 0; i < screen_nbr; ++i) {
+        xcb_ewmh_get_windows_reply_t clients;
+        xcb_generic_error_t *e;
+        xcb_get_property_cookie_t cookie = xcb_ewmh_get_client_list(&m_ewmh_connection, i);
+        if (1 == xcb_ewmh_get_client_list_reply(&m_ewmh_connection, cookie, &clients, &e)) {
+            for (uint32_t wi = 0; wi < clients.windows_len; ++wi) {
+                xcb_window_t winId = clients.windows[wi];
+                if (is_dock_window(winId)) {
+                    docks << winId;
+                }
+            }
+        }
     }
 
-    xcb_ewmh_set_wm_strut_partial(&m_ewmh_connection, winId, strut_partial);
+    return docks.length() > 0 ? docks.value(0) : 0;
 }
 
 }

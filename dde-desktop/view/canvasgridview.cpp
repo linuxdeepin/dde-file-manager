@@ -1183,6 +1183,71 @@ bool CanvasGridView::edit(const QModelIndex &index, QAbstractItemView::EditTrigg
     return tmp;
 }
 
+// TODO: should fix by qt;
+static inline QRect fix_available_geometry(QRect virtualGeometry, QRect primaryGeometry)
+{
+    xcb_window_t winId = Xcb::XcbMisc::instance().find_dock_window(qApp->screens().count());
+    xcb_ewmh_wm_strut_partial_t st = Xcb::XcbMisc::instance().get_strut_partial(winId);
+
+    QRect dockRect;
+    if (st.top > 0) {
+        dockRect = QRect(0, 0, virtualGeometry.width(), st.top);
+    }
+
+    if (st.bottom > 0) {
+        dockRect = QRect(0, virtualGeometry.height() - st.bottom,
+                         virtualGeometry.width(), st.bottom);
+    }
+
+    if (st.left > 0) {
+        dockRect = QRect(0, 0,
+                         st.left, virtualGeometry.height());
+    }
+    if (st.right > 0) {
+        dockRect = QRect(virtualGeometry.width() - st.right, 0,
+                         st.left, virtualGeometry.height());
+    }
+
+    qDebug() << "dockRect:" << dockRect
+             << "virtualGeometry:" << virtualGeometry
+             << "primaryGeometry:" << primaryGeometry;
+
+    QRegion virtualRegion = QRegion(virtualGeometry);
+    QRegion dockRegion = QRegion(dockRect);
+
+    QRegion availableRegion = virtualRegion.subtracted(dockRegion);
+    QRect availableRect = availableRegion.intersected(primaryGeometry).rects().first();
+
+//    availableRect.moveTo(availableRect.x() - primaryGeometry.x(),
+//                         availableRect.y() - primaryGeometry.y());
+    return availableRect;
+}
+
+static inline QRect getValidNewGeometry(const QRect &geometry, const QRect &oldGeometry)
+{
+    auto newGeometry = geometry;
+
+    if (qApp->screens().length() >= 2) {
+        auto virtualGeometry = qApp->screens().value(0)->virtualGeometry();
+        auto primaryGeometry = qApp->primaryScreen()->geometry();
+        newGeometry = fix_available_geometry(virtualGeometry, primaryGeometry);
+    }
+    bool geometryValid = (newGeometry.width() > 0) && (newGeometry.height() > 0);
+    if (geometryValid) {
+        return newGeometry;
+    }
+
+    auto primaryScreen = Display::instance()->primaryScreen();
+    newGeometry = primaryScreen->geometry();;
+    geometryValid = (newGeometry.width() > 0) && (newGeometry.height() > 0);
+    if (geometryValid) {
+        return newGeometry;
+    }
+
+    qCritical() << "new valid geometry";
+    return oldGeometry;
+}
+
 void CanvasGridView::initUI()
 {
     d->dbusDock = new DBusDock(this);
@@ -1197,7 +1262,8 @@ void CanvasGridView::initUI()
 
     auto primaryScreen = Display::instance()->primaryScreen();
     setGeometry(primaryScreen->geometry());
-    d->canvasRect = primaryScreen->availableGeometry();
+    auto newGeometry =  getValidNewGeometry(primaryScreen->availableGeometry(), this->geometry());
+    d->canvasRect = newGeometry;
 
     setSelectionMode(QAbstractItemView::ExtendedSelection);
     setAcceptDrops(true);
@@ -1239,34 +1305,14 @@ void CanvasGridView::initUI()
     d->waterMaskFrame->updatePosition();
 }
 
-static inline QRect getValidNewGeometry(const QRect &geometry, const QRect &oldGeometry)
-{
-    auto newGeometry = geometry;
-    bool geometryValid = (newGeometry.width() > 0) && (newGeometry.height() > 0);
-    if (geometryValid) {
-        return newGeometry;
-    }
-
-    auto primaryScreen = Display::instance()->primaryScreen();
-    newGeometry = primaryScreen->geometry();;
-    geometryValid = (newGeometry.width() > 0) && (newGeometry.height() > 0);
-    if (geometryValid) {
-        return newGeometry;
-    }
-
-    qCritical() << "new valid geometry";
-    return oldGeometry;
-}
-
 void CanvasGridView::updateGeometry(const QRect &geometry)
 {
     auto newGeometry =  getValidNewGeometry(geometry, this->geometry());
-    qDebug() << "set newGeometry" << newGeometry;
     setGeometry(qApp->primaryScreen()->geometry());
-
+    d->canvasRect = newGeometry;
+    qDebug() << "set newGeometry" << newGeometry << qApp->primaryScreen()->geometry();
     d->waterMaskFrame->updatePosition();
 
-    d->canvasRect = newGeometry;
     updateCanvas();
     repaint();
 }
@@ -1294,7 +1340,8 @@ void CanvasGridView::initConnection()
     connect(Display::instance(), &Display::primaryScreenChanged,
     this, [ = ](QScreen * screen) {
         qDebug() << "primaryScreenChanged to:" << screen;
-        qDebug() << "currend primaryScreen" << qApp->primaryScreen() << qApp->primaryScreen()->availableGeometry();
+        qDebug() << "currend primaryScreen" << qApp->primaryScreen()
+                 << qApp->primaryScreen()->availableGeometry();
 
         if (!screen) {
             return;
@@ -1435,7 +1482,7 @@ void CanvasGridView::initConnection()
 
     connect(d->dbusDock, &DBusDock::HideModeChanged,
     this, [ = ]() {
-        if (3 == d->dbusDock->hideMode() || 1 == d->dbusDock->hideMode() ) {
+        if (3 == d->dbusDock->hideMode() || 1 == d->dbusDock->hideMode()) {
             this->updateCanvas();
         }
     });
@@ -1453,11 +1500,11 @@ void CanvasGridView::initConnection()
     });
 }
 
-
 void CanvasGridView::updateCanvas()
 {
     auto outRect = qApp->primaryScreen()->geometry();
-    auto inRect = qApp->primaryScreen()->availableGeometry();
+    auto inRect = d->canvasRect;
+
     auto itemSize = itemDelegate()->sizeHint(QStyleOptionViewItem(), QModelIndex());
 
     QMargins geometryMargins;
