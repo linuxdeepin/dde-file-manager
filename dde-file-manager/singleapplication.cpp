@@ -3,6 +3,7 @@
 #include "app/filesignalmanager.h"
 #include "durl.h"
 #include "dfmeventdispatcher.h"
+#include "dfilewatcher.h"
 
 #include "commandlinemanager.h"
 #include "singleton.h"
@@ -44,9 +45,8 @@ void SingleApplication::initSources()
     Q_INIT_RESOURCE(dui_theme_light);
 }
 
-void SingleApplication::newClientProcess(const QString &key, const QByteArray &message)
+QLocalSocket *SingleApplication::newClientProcess(const QString &key, const QByteArray &message)
 {
-    qDebug() << "The dde-file-manager is running!";
     QLocalSocket *localSocket = new QLocalSocket;
     localSocket->connectToServer(userServerName(key));
     if (localSocket->waitForConnected(1000)){
@@ -59,7 +59,8 @@ void SingleApplication::newClientProcess(const QString &key, const QByteArray &m
     }else{
         qDebug() << localSocket->errorString();
     }
-    qDebug() << "The dde-file-manager is running end!";
+
+    return localSocket;
 }
 
 QString SingleApplication::userServerName(const QString &key)
@@ -177,6 +178,19 @@ void SingleApplication::readData()
     }
 
     CommandLineManager::instance()->process(arguments);
+
+    if (CommandLineManager::instance()->isSet("get-monitor-files")) {
+        const QStringList &list = DFileWatcher::getMonitorFiles();
+        QByteArray data;
+
+        for (const QString &i : list)
+            data.append(i.toLocal8Bit().toBase64()).append(' ');
+
+        socket->write(data);
+        socket->flush();
+        return;
+    }
+
     CommandLineManager::instance()->processCommand();
 }
 

@@ -11,4 +11,7 @@
         <arg type='as' name='URIs' direction='in'/>
         <arg type='s' name='StartupId' direction='in'/>
     </method>
+    <method name='GetMonitorFiles'>
+        <arg type='as' name='URIs' direction='out'/>
+    </method>
 </interface>

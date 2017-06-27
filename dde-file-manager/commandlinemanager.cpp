@@ -43,6 +43,8 @@ void CommandLineManager::initOptions()
     QCommandLineOption showFileItem(QStringList() << "show-item", "Show a file item in a new window");
     QCommandLineOption event(QStringList() << "e" << "event", "Process the event by json data");
 
+    QCommandLineOption get_monitor_files(QStringList() << "get-monitor-files", "Get all the files that have been monitored");
+
     addOption(newWindowOption);
     addOption(backendOption);
     addOption(openPropertyDialogOption);
@@ -50,6 +52,7 @@ void CommandLineManager::initOptions()
     addOption(rootOption);
     addOption(showFileItem);
     addOption(event);
+    addOption(get_monitor_files);
 }
 
 void CommandLineManager::addOption(const QCommandLineOption &option)

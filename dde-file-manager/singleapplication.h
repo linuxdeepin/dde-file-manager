@@ -8,6 +8,7 @@
 
 QT_BEGIN_NAMESPACE
 class QLocalServer;
+class QLocalSocket;
 QT_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE
@@ -21,7 +22,7 @@ public:
     void initConnect();
 
     static void initSources();
-    static void newClientProcess(const QString& key, const QByteArray &message);
+    static QLocalSocket *newClientProcess(const QString& key, const QByteArray &message);
     static QString userServerName(const QString& key);
     static QString userId();
 

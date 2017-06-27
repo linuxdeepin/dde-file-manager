@@ -13,6 +13,9 @@ public:
     void ShowFolders(const QStringList &URIs, const QString &StartupId);
     void ShowItemProperties(const QStringList &URIs, const QString &StartupId);
     void ShowItems(const QStringList &URIs, const QString &StartupId);
+
+    // debug function
+    QStringList GetMonitorFiles() const;
 };
 
 #endif // DBUSFILEMANAGER1_H
