@@ -233,7 +233,7 @@ void ComputerViewItem::updateStatus()
         setDisplayName(ds.remove('\n'));
     }
 
-    if(getHasMemoryInfo()){
+    if(getHasMemoryInfo() && m_deviceInfo->canUnmount()){
         updateIconPixelWidth();
         getProgressLine()->setFixedSize(getPixelWidth(), 2);
         const qlonglong total = m_deviceInfo->getTotal();
@@ -243,8 +243,10 @@ void ComputerViewItem::updateStatus()
         if(progressLine->isHidden())
             progressLine->show();
         progressLine->move((this->width() - progressLine->width())/2, getIconLabel()->y() + getIconLabel()->height() + 3);
-    } else
+    } else{
         getProgressLine()->setFixedHeight(0);
+        progressLine->hide();
+    }
 }
 
 int ComputerViewItem::iconSize() const
