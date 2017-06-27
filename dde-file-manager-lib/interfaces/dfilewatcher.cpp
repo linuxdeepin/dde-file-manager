@@ -13,6 +13,8 @@
 #include "dfileservices.h"
 #include "dfilesystemwatcher.h"
 
+#include "private/dfilesystemwatcher_p.h"
+
 #include "app/define.h"
 #include "singleton.h"
 #include "usershare/usersharemanager.h"
@@ -273,6 +275,25 @@ void DFileWatcher::onFileClosed(const QString &path, const QString &name)
         d_func()->_q_handleFileClose(path, QString());
     else
         d_func()->_q_handleFileClose(joinFilePath(path, name), path);
+}
+
+QStringList DFileWatcher::getMonitorFiles()
+{
+    QStringList list;
+
+    list << watcher_file_private->directories();
+    list << watcher_file_private->files();
+
+    list << "---------------------------";
+
+    QMap<QString, int>::const_iterator i = DFileWatcherPrivate::filePathToWatcherCount.constBegin();
+
+    while (i != DFileWatcherPrivate::filePathToWatcherCount.constEnd()) {
+        list << QString("%1, %2").arg(i.key()).arg(i.value());
+        ++i;
+    }
+
+    return list;
 }
 
 #include "moc_dfilewatcher.cpp"

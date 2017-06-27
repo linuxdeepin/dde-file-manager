@@ -36,6 +36,7 @@
 #include <QLibraryInfo>
 #include <QDir>
 #include <QProcess>
+#include <QLocalSocket>
 
 #ifdef ENABLE_PPROF
 #include <gperftools/profiler.h>
@@ -200,19 +201,31 @@ int main(int argc, char *argv[])
 #endif
     } else {
         QByteArray data;
+        bool is_set_get_monitor_files = false;
 
-        for (const QString &arg : app.arguments())
+        for (const QString &arg : app.arguments()) {
+            if (arg == "--get-monitor-files")
+                is_set_get_monitor_files = true;
+
             data.append(arg.toLocal8Bit().toBase64()).append(' ');
+        }
 
         if (!data.isEmpty())
             data.chop(1);
 
-        SingleApplication::newClientProcess(uniqueKey, data);
+        QLocalSocket *socket = SingleApplication::newClientProcess(uniqueKey, data);
         QWidget w;
         w.setWindowFlags(Qt::FramelessWindowHint);
         w.setAttribute(Qt::WA_TranslucentBackground);
         w.resize(1, 1);
         w.show();
+
+        if (is_set_get_monitor_files && socket->error() == QLocalSocket::UnknownSocketError) {
+            socket->waitForReadyRead();
+
+            for (const QByteArray &i : socket->readAll().split(' '))
+                qDebug() << QString::fromLocal8Bit(QByteArray::fromBase64(i));
+        }
 
         return 0;
     }

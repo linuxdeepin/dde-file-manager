@@ -1,4 +1,5 @@
 #include "dbusfilemanager1.h"
+#include "dfilewatcher.h"
 
 #include <QProcess>
 
@@ -36,4 +37,9 @@ void DBusFileManager1::ShowItems(const QStringList &URIs, const QString &Startup
         return;
 
     QProcess::startDetached("dde-file-manager", QStringList() << "--show-item" <<  URIs);
+}
+
+QStringList DBusFileManager1::GetMonitorFiles() const
+{
+    return DFileWatcher::getMonitorFiles();
 }

@@ -20,6 +20,9 @@ class DFileWatcher : public DAbstractFileWatcher
 public:
     explicit DFileWatcher(const QString &filePath, QObject *parent = 0);
 
+    //debug function
+    static QStringList getMonitorFiles();
+
 private slots:
     void onFileDeleted(const QString &path, const QString &name);
     void onFileAttributeChanged(const QString &path, const QString &name);
