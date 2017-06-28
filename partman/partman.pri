@@ -15,3 +15,5 @@ SOURCES += \
     $$PWD/string_util.cpp \
     $$PWD/structs.cpp \
     $$PWD/readusagemanager.cpp
+
+DEFINES += QT_MESSAGELOGCONTEXT

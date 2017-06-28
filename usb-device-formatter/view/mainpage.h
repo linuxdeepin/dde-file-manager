@@ -9,6 +9,7 @@
 #include "widgets/progressline.h"
 #include <QVariantAnimation>
 #include "dcombobox.h"
+#include "../partman/readusagemanager.h"
 
 DWIDGET_USE_NAMESPACE
 class MainPage : public QWidget
@@ -41,6 +42,8 @@ signals:
 
 public slots:
     void onCurrentSelectedTypeChanged(const QString& type);
+    void updateUI();
+    void handleFinished();
 protected:
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
 
@@ -58,6 +61,9 @@ private:
     QLabel* m_nameLabel = NULL;
     int m_maxLabelNameLength = 0;
     QVariantAnimation* animator;
+    qlonglong m_total = 0;
+    qlonglong m_free = 0;
+    PartMan::ReadUsageManager* m_readUsageManager = NULL;
 };
 
 #endif // MAINPAGE_H

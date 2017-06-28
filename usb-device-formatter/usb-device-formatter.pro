@@ -21,6 +21,7 @@ CONFIG(release, release|debug) {
 }
 
 CONFIG += c++11 link_pkgconfig
+DEFINES += QT_MESSAGELOGCONTEXT
 
 TRANSLATIONS += $$PWD/translations/$${TARGET}.ts \
     $$PWD/translations/$${TARGET}_zh_CN.ts

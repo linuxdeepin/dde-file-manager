@@ -13,6 +13,9 @@ public:
 
     static qlonglong ParseBtrfsUnit(const QString& value);
 
+    static qlonglong Total;
+    static qlonglong Free;
+
 signals:
 
 public slots:

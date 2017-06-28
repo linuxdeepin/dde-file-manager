@@ -10,6 +10,9 @@
 
 namespace PartMan {
 
+qlonglong ReadUsageManager::Total = 0;
+qlonglong ReadUsageManager::Free = 0;
+
 ReadUsageManager::ReadUsageManager(QObject *parent) : QObject(parent)
 {
 
@@ -41,6 +44,8 @@ bool ReadUsageManager::readUsage(const QString &path, qlonglong &freespace, qlon
     qDebug() << "Start read usage of " << path;
     freespace = 0;
     total = 0;
+    ReadUsageManager::Total = 0;
+    ReadUsageManager::Free = 0;
     Partition p = Partition::getPartitionByDevicePath(path);
     return readUsage(path, p.fs(), freespace, total);
 }
@@ -183,6 +188,8 @@ bool ReadUsageManager::readFat16Usage(const QString &path, qlonglong &freespace,
     total = total_clusters * cluster_size;
     freespace = total - start_byte - used_clusters * cluster_size;
 
+    ReadUsageManager::Total = total;
+    ReadUsageManager::Free = freespace;
     return true;
 }
 
@@ -306,6 +313,10 @@ bool ReadUsageManager::readNtfsUsage(const QString &path, qlonglong &freespace, 
     if (free_clusters > 0 && total_clusters > 0 && cluster_size > 0) {
         freespace = cluster_size * free_clusters;
         total = cluster_size * total_clusters;
+
+        ReadUsageManager::Total = total;
+        ReadUsageManager::Free = freespace;
+
         return true;
     } else {
         return false;

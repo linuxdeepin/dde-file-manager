@@ -8,6 +8,7 @@
 #include <QMetaEnum>
 #include <QDebug>
 #include <QProcess>
+#include <QtConcurrent>
 using namespace PartMan;
 
 QString sizeString(const QString &str)
@@ -38,6 +39,8 @@ MainPage::MainPage(const QString& defautFormat, QWidget *parent) : QWidget(paren
     initConnections();
 
     onCurrentSelectedTypeChanged(m_typeCombo->currentText());
+
+    m_readUsageManager = new PartMan::ReadUsageManager;
 }
 
 void MainPage::initUI()
@@ -159,6 +162,41 @@ void MainPage::onCurrentSelectedTypeChanged(const QString &type)
     m_labelLineEdit->setMaxLength(m_maxLabelNameLength);
 }
 
+void MainPage::updateUI()
+{
+    QString deviceName = Partition::getPartitionByDevicePath(getTargetPath()).label();
+    qDebug() << deviceName;
+    QFontMetrics fm(QFont("",10));
+    m_nameLabel->setText(fm.elidedText(deviceName, Qt::ElideRight, 100));
+
+    QFutureWatcher<bool>* watcher = new QFutureWatcher<bool>;
+    connect(watcher, SIGNAL(finished()), this, SLOT(handleFinished()));
+    // Start the computation.
+    typedef bool (PartMan::ReadUsageManager::*readUsage) (const QString &, qlonglong &, qlonglong &);
+
+    QFuture<bool> future = QtConcurrent::run(QThreadPool::globalInstance(), m_readUsageManager,
+                                                static_cast<readUsage>(&PartMan::ReadUsageManager::readUsage), getTargetPath(), m_free, m_total);
+    watcher->setFuture(future);
+}
+
+void MainPage::handleFinished()
+{
+    m_total = ReadUsageManager::Total;
+    m_free = ReadUsageManager::Free;
+    qDebug() << m_total << m_free;
+    m_storageProgressBar->setMax(m_total);
+    m_storageProgressBar->setValue(m_total - m_free);
+    m_remainLabel->setText(QString("%1/ %2").arg(formatSize(m_total - m_free), formatSize(m_total)));
+    qint64 max = 4;
+    max = max * 1024;
+    max = max * 1024;
+    max = max * 1024;
+
+    //If removable disk size is larger than 4GB,Just support fat32 and ntfs type
+    if(m_total > max)
+        m_typeCombo->removeItem(0);
+}
+
 void MainPage::resizeEvent(QResizeEvent *event)
 {
     m_warnLabel->setFixedWidth(this->width() -80);
@@ -182,25 +220,11 @@ QString MainPage::getTargetPath() const
 
 void MainPage::setTargetPath(const QString &targetPath)
 {
-    qlonglong total, free;
-    PartMan::ReadUsageManager readUsageManager;
-    readUsageManager.readUsage(targetPath, free, total);
-
-    m_storageProgressBar->setMax(total);
-    m_storageProgressBar->setValue(total - free);
-    m_remainLabel->setText(QString("%1/ %2").arg(formatSize(total - free), formatSize(total)));
-    QString deviceName = Partition::getPartitionByDevicePath(targetPath).label();
-    QFontMetrics fm(QFont("",10));
-    m_nameLabel->setText(fm.elidedText(deviceName, Qt::ElideRight, 100  ));
-
-    qint64 max = 4;
-    max = max * 1024;
-    max = max * 1024;
-    max = max * 1024;
-
-    //If removable disk size is larger than 4GB,Just support fat32 and ntfs type
-    if(total > max)
-        m_typeCombo->removeItem(0);
+    qDebug() << targetPath;
+    m_targetPath = targetPath;
+    if (!m_targetPath.isEmpty()){
+        updateUI();
+    }
 }
 
 QString MainPage::formatSize(const qint64 &num)
