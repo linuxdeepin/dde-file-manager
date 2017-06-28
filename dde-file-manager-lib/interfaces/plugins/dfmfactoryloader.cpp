@@ -44,9 +44,10 @@ public:
     mutable QMutex mutex;
     QByteArray iid;
     QList<QPluginLoader*> pluginLoaderList;
-    QMap<QString,QPluginLoader*> keyMap;
+    QMultiMap<QString,QPluginLoader*> keyMap;
     QString suffix;
     Qt::CaseSensitivity cs;
+    bool rki;
     QStringList loadedPaths;
 };
 
@@ -60,15 +61,16 @@ DFMFactoryLoaderPrivate::~DFMFactoryLoaderPrivate()
 
 DFMFactoryLoader::DFMFactoryLoader(const char *iid,
                                    const QString &suffix,
-                                   Qt::CaseSensitivity cs)
+                                   Qt::CaseSensitivity cs,
+                                   bool repetitiveKeyInsensitive)
     : QObject(*new DFMFactoryLoaderPrivate)
 {
     moveToThread(QCoreApplicationPrivate::mainThread());
     Q_D(DFMFactoryLoader);
     d->iid = iid;
-    d->cs = cs;
     d->suffix = suffix;
-
+    d->cs = cs;
+    d->rki = repetitiveKeyInsensitive;
 
     QMutexLocker locker(qt_factoryloader_mutex());
     update();
@@ -89,8 +91,11 @@ static bool dfm_debug_component()
 void DFMFactoryLoader::update()
 {
     // Disable plugins on root user
-    if (DFMGlobal::isRootUser())
+    if (DFMGlobal::isRootUser()) {
+        qWarning() << "Disable plugins for root user";
+
         return;
+    }
 
 #ifdef QT_SHARED
     Q_D(DFMFactoryLoader);
@@ -177,15 +182,21 @@ void DFMFactoryLoader::update()
                 // whereas the new one has a Qt version that fits
                 // better
                 const QString &key = keys.at(k);
-                QPluginLoader *previous = d->keyMap.value(key);
-                int prev_dfm_version = 0;
-                if (previous) {
-                    prev_dfm_version = (int)previous->metaData().value(versionKeyLiteral()).toDouble();
-                }
-                int dfm_version = (int)loader->metaData().value(versionKeyLiteral()).toDouble();
-                if (!previous || (prev_dfm_version > QString(QMAKE_VERSION).toDouble() && dfm_version <= QString(QMAKE_VERSION).toDouble())) {
-                    d->keyMap[key] = loader;
+
+                if (d->rki) {
+                    d->keyMap.insertMulti(key, loader);
                     ++keyUsageCount;
+                } else {
+                    QPluginLoader *previous = d->keyMap.value(key);
+                    int prev_dfm_version = 0;
+                    if (previous) {
+                        prev_dfm_version = (int)previous->metaData().value(versionKeyLiteral()).toDouble();
+                    }
+                    int dfm_version = (int)loader->metaData().value(versionKeyLiteral()).toDouble();
+                    if (!previous || (prev_dfm_version > QString(QMAKE_VERSION).toDouble() && dfm_version <= QString(QMAKE_VERSION).toDouble())) {
+                        d->keyMap.insertMulti(key, loader);
+                        ++keyUsageCount;
+                    }
                 }
             }
             if (keyUsageCount || keys.isEmpty())
@@ -248,6 +259,12 @@ QPluginLoader *DFMFactoryLoader::pluginLoader(const QString &key) const
     Q_D(const DFMFactoryLoader);
     return d->keyMap.value(d->cs ? key : key.toLower());
 }
+
+QList<QPluginLoader*> DFMFactoryLoader::pluginLoaderList(const QString &key) const
+{
+    Q_D(const DFMFactoryLoader);
+    return d->keyMap.values(d->cs ? key : key.toLower());
+}
 #endif
 
 void DFMFactoryLoader::refreshAll()
@@ -291,6 +308,25 @@ int DFMFactoryLoader::indexOf(const QString &needle) const
         }
     }
     return -1;
+}
+
+QList<int> DFMFactoryLoader::getAllIndexByKey(const QString &needle) const
+{
+    QList<int> list;
+
+    const QString metaDataKey = metaDataKeyLiteral();
+    const QString keysKey = keysKeyLiteral();
+    const QList<QJsonObject> metaDataList = metaData();
+    for (int i = 0; i < metaDataList.size(); ++i) {
+        const QJsonObject metaData = metaDataList.at(i).value(metaDataKey).toObject();
+        const QJsonArray keys = metaData.value(keysKey).toArray();
+        const int keyCount = keys.size();
+        for (int k = 0; k < keyCount; ++k) {
+            if (!keys.at(k).toString().compare(needle, Qt::CaseInsensitive))
+                list << i;
+        }
+    }
+    return list;
 }
 
 DFM_END_NAMESPACE
