@@ -145,6 +145,7 @@ signals:
     void rootUrlDeleted(const DUrl &rootUrl);
     void stateChanged(State state);
     void enabledSortChanged(bool enabledSort);
+    void newFileByInternal(const DUrl &url);
 
 private:
     inline const FileSystemNodePointer getNodeByIndex(const QModelIndex &index) const;
@@ -165,8 +166,8 @@ private:
     void onJobFinished();
     void addFile(const DAbstractFileInfoPointer &fileInfo);
 
-    void emitAllDateChanged();
-    void selectAndRenameFile(const DUrl &fileUrl) const;
+    void emitAllDataChanged();
+    void selectAndRenameFile(const DUrl &fileUrl);
 
     friend class FileSystemNode;
 

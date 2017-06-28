@@ -911,7 +911,7 @@ void DFileSystemModel::setNameFilters(const QStringList &nameFilters)
 
     d->nameFilters = nameFilters;
 
-    emitAllDateChanged();
+    emitAllDataChanged();
 }
 
 void DFileSystemModel::setFilters(QDir::Filters filters)
@@ -1065,7 +1065,7 @@ void DFileSystemModel::sort()
         node->visibleChildren[i] = list[i]->fileUrl();
     }
 
-    emitAllDateChanged();
+    emitAllDataChanged();
 }
 
 const DAbstractFileInfoPointer DFileSystemModel::fileInfo(const QModelIndex &index) const
@@ -1514,7 +1514,7 @@ void DFileSystemModel::addFile(const DAbstractFileInfoPointer &fileInfo)
     }
 }
 
-void DFileSystemModel::emitAllDateChanged()
+void DFileSystemModel::emitAllDataChanged()
 {
     Q_D(const DFileSystemModel);
 
@@ -1526,7 +1526,7 @@ void DFileSystemModel::emitAllDateChanged()
                               Q_ARG(QModelIndex, topLeftIndex), Q_ARG(QModelIndex, rightBottomIndex));
 }
 
-void DFileSystemModel::selectAndRenameFile(const DUrl &fileUrl) const
+void DFileSystemModel::selectAndRenameFile(const DUrl &fileUrl)
 {
     /// TODO: 暂时放在此处实现，后面将移动到DFileService中实现。
     if (AppController::selectionAndRenameFile.first == fileUrl) {
@@ -1543,6 +1543,8 @@ void DFileSystemModel::selectAndRenameFile(const DUrl &fileUrl) const
         TIMER_SINGLESHOT_OBJECT(const_cast<DFileSystemModel*>(this), 100, {
                                     emit fileSignalManager->requestSelectRenameFile(event);
                                 }, event)
+
+        emit newFileByInternal(fileUrl);
     }
 }
 
