@@ -19,6 +19,7 @@
 #include "views/fileitem.h"
 #include "singleton.h"
 #include "dfileservices.h"
+#include "dfmgenericfactory.h"
 
 #include <QTimer>
 #include <QAction>
@@ -46,10 +47,15 @@ public:
     QByteArray keyboardSearchKeys;
     QTimer keyboardSearchTimer;
 
+    static QObjectList pluginObjectList;
+    static QList<QIcon> getAdditionalIconByPlugins(const DAbstractFileInfoPointer &fileInfo);
+
     DFileViewHelper *q_ptr;
 
     Q_DECLARE_PUBLIC(DFileViewHelper)
 };
+
+QObjectList DFileViewHelperPrivate::pluginObjectList;
 
 void DFileViewHelperPrivate::init()
 {
@@ -115,6 +121,15 @@ void DFileViewHelperPrivate::init()
     TIMER_SINGLESHOT(0, {
                          q->connect(fileSignalManager, SIGNAL(trashStateChanged()), q->model(), SLOT(update()));
                      }, q);
+
+    // init plugin objects
+    static bool initialized = false;
+
+    if (!initialized) {
+        initialized = true;
+
+        pluginObjectList = DFMGenericFactory::createAll(QStringLiteral("fileinfo/additionalIcon"));
+    }
 }
 
 void DFileViewHelperPrivate::_q_edit(const DFMUrlBaseEvent &event)
@@ -145,6 +160,26 @@ void DFileViewHelperPrivate::_q_selectAndRename(const DFMUrlBaseEvent &event)
 
     q->select(DUrlList() << event.url());
     _q_edit(event);
+}
+
+QList<QIcon> DFileViewHelperPrivate::getAdditionalIconByPlugins(const DAbstractFileInfoPointer &fileInfo)
+{
+    QList<QIcon> list;
+
+    for (QObject *object : pluginObjectList) {
+        QList<QIcon> plugin_list;
+
+        bool ok = object->metaObject()->invokeMethod(object, "fileAdditionalIcon",
+                                                     Q_RETURN_ARG(QList<QIcon>, plugin_list),
+                                                     Q_ARG(const DAbstractFileInfoPointer&, fileInfo));
+
+        if (ok)
+            list << plugin_list;
+        else
+            qWarning() << "call the fileAdditionalIcon slot failed";
+    }
+
+    return list;
 }
 
 DFileViewHelper::DFileViewHelper(QAbstractItemView *parent)
@@ -250,12 +285,16 @@ int DFileViewHelper::indexOfRow(const QModelIndex &index) const
  */
 QList<QIcon> DFileViewHelper::additionalIcon(const QModelIndex &index) const
 {
+    QList<QIcon> list;
     const DAbstractFileInfoPointer &fileInfo = this->fileInfo(index);
 
     if (!fileInfo)
-        return QList<QIcon>();
+        return list;
 
-    return fileInfo->additionalIcon();
+    list << fileInfo->additionalIcon();
+    list << DFileViewHelperPrivate::getAdditionalIconByPlugins(fileInfo);
+
+    return list;
 }
 
 /*!

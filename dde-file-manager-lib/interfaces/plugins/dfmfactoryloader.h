@@ -24,7 +24,8 @@ class DFMFactoryLoader : public QObject
 public:
     explicit DFMFactoryLoader(const char *iid,
                               const QString &suffix = QString(),
-                              Qt::CaseSensitivity = Qt::CaseSensitive);
+                              Qt::CaseSensitivity = Qt::CaseSensitive,
+                              bool repetitiveKeyInsensitive  = false);
     ~DFMFactoryLoader();
 
     QList<QJsonObject> metaData() const;
@@ -32,10 +33,12 @@ public:
 
 #if defined(Q_OS_UNIX) && !defined (Q_OS_MAC)
     QPluginLoader *pluginLoader(const QString &key) const;
+    QList<QPluginLoader*> pluginLoaderList(const QString &key) const;
 #endif
 
     QMultiMap<int, QString> keyMap() const;
     int indexOf(const QString &needle) const;
+    QList<int> getAllIndexByKey(const QString &needle) const;
 
     void update();
 
@@ -53,6 +56,23 @@ template <class PluginInterface, class FactoryInterface>
                 return result;
     }
     return 0;
+}
+
+template <class PluginInterface, class FactoryInterface>
+    QList<PluginInterface*> dLoadPluginList(const DFMFactoryLoader *loader, const QString &key)
+{
+    QList<PluginInterface*> list;
+
+    for (int index : loader->getAllIndexByKey(key)) {
+        if (index != -1) {
+            QObject *factoryObject = loader->instance(index);
+            if (FactoryInterface *factory = qobject_cast<FactoryInterface *>(factoryObject))
+                if (PluginInterface *result = factory->create(key))
+                    list << result;
+        }
+    }
+
+    return list;
 }
 
 template <class PluginInterface, class FactoryInterface, class Parameter1>
