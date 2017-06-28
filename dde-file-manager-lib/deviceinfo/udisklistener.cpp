@@ -277,6 +277,10 @@ void UDiskListener::addMountDiskInfo(const QDiskInfo &diskInfo)
 {
     qDebug() << diskInfo;
     UDiskDeviceInfoPointer device;
+
+    if (diskInfo.id_filesystem() == "burn:" && !diskInfo.can_eject())
+        return;
+
     if(m_map.value(diskInfo.id())){
         device = m_map.value(diskInfo.id());
         device->setDiskInfo(diskInfo);

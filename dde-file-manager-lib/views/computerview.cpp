@@ -136,8 +136,11 @@ void ComputerViewItem::contextMenuEvent(QContextMenuEvent *event)
         }else if (m_deviceInfo->getDiskInfo().isNativeCustom()){
             menu = DFileMenuManager::createDefaultBookMarkMenu(disableList);
             url = m_deviceInfo->getMountPointUrl();
-        }
-        else{
+        }else if (m_deviceInfo->getMountPointUrl().isBurnFile()){
+            menu = DFileMenuManager::createBurnMarkMenu(disableList);
+            url = m_deviceInfo->getMountPointUrl();
+            url.setQuery(m_deviceInfo->getId());
+        }else{
             disableList |= m_deviceInfo->disableMenuActionList();
             menu = DFileMenuManager::genereteMenuByKeys(
                         m_deviceInfo->menuActionList(DAbstractFileInfo::SingleFile),

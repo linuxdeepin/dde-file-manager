@@ -79,6 +79,19 @@ DFileMenu *DFileMenuManager::createNetworkMarkMenu(const QSet<MenuAction> &disab
     return genereteMenuByKeys(actionKeys, disableList);
 }
 
+DFileMenu *DFileMenuManager::createBurnMarkMenu(const QSet<MenuAction> &disableList)
+{
+    QVector<MenuAction> actionKeys;
+
+    actionKeys.reserve(6);
+
+    actionKeys << MenuAction::Open << MenuAction::OpenInNewWindow
+               << MenuAction::Separator
+               << MenuAction::Eject;
+
+    return genereteMenuByKeys(actionKeys, disableList);
+}
+
 DFileMenu *DFileMenuManager::createPluginBookMarkMenu(const QSet<MenuAction> &disableList)
 {
     QVector<MenuAction> actionKeys;;
@@ -804,7 +817,7 @@ void DFileMenuManager::setActionID(MenuAction type, QString id)
 void DFileMenuManager::actionTriggered(QAction *action)
 {
     DFileMenu *menu = qobject_cast<DFileMenu *>(sender());
-    qDebug() << menu << action;
+
     DFMEvent event = menu->event();
     event << DFMEvent::Menu;
     if (action->data().isValid()){
@@ -829,7 +842,6 @@ void DFileMenuManager::actionTriggered(QAction *action)
 //            methods << QString::fromLatin1(metaObject->method(i).methodSignature());
 //        }
 //        qDebug() << methods;
-//        qDebug() << methodKey << methodName;
         if (metaObject->indexOfSlot(methodSignature.toLocal8Bit().constData()) != -1){
             QMetaObject::invokeMethod(appController,
                                       methodKey.toLocal8Bit().constData(),

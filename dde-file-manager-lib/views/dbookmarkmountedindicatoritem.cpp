@@ -61,7 +61,11 @@ void DBookmarkMountedIndicatorItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *
 
     setPress(false);
     setHovered(false);
-    deviceListener->unmount(m_parentItem->getDeviceID());
+    if (!m_parentItem->getUrl().isBurnFile()){
+        deviceListener->unmount(m_parentItem->getDeviceID());
+    }else{
+        deviceListener->eject(m_parentItem->getDeviceID());
+    }
     update();
 }
 

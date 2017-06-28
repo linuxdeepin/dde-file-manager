@@ -113,7 +113,9 @@ void DCrumbWidget::addCrumb(const QStringList &list)
                     button->setUrl(DUrl::fromLocalFile(path));
             } else if(m_url.isTrashFile()){
                 button->setUrl(DUrl::fromTrashFile(path));
-            }else{
+            } else if(m_url.isBurnFile()){
+                button->setUrl(DUrl::fromBurnFile(path));
+            } else{
                 button->setUrl(DUrl::fromLocalFile(path));
             }
 
@@ -174,6 +176,9 @@ void DCrumbWidget::setCrumb(const DUrl &url)
         addSmbCrumb();
     }else if(url.isNetWorkFile()){
         addNetworkCrumb();
+    }else if(url.isBurnFile()){
+        addBurnCrumb();
+        addCrumbs(url);
     }else if(url.isUserShareFile()){
         addUserShareCrumb();
     }else if (w->getViewManager()->isSchemeRegistered(url.scheme())){
@@ -300,6 +305,23 @@ void DCrumbWidget::addNetworkCrumb()
     button->setFocusPolicy(Qt::NoFocus);
     button->adjustSize();
     button->setUrl(DUrl::fromNetworkFile("/"));
+    m_group.addButton(button, button->getIndex());
+    button->setChecked(true);
+    connect(button, &DCrumbButton::clicked, this, &DCrumbWidget::buttonPressed);
+}
+
+void DCrumbWidget::addBurnCrumb()
+{
+    QString text = BURN_ROOT;
+    DCrumbButton * button = new DCrumbIconButton(
+                m_group.buttons().size(),
+                QIcon(":/leftsidebar/images/leftsidebar/dvd_normal_16px.svg"),
+                QIcon(":/icons/images/icons/dvd_hover_16px.svg"),
+                QIcon(":/icons/images/icons/dvd_checked_16px.svg"),
+                text, this);
+    button->setFocusPolicy(Qt::NoFocus);
+    button->adjustSize();
+    button->setUrl(DUrl::fromBurnFile("/"));
     m_group.addButton(button, button->getIndex());
     button->setChecked(true);
     connect(button, &DCrumbButton::clicked, this, &DCrumbWidget::buttonPressed);

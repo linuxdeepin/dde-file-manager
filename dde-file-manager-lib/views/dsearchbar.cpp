@@ -803,6 +803,7 @@ bool DSearchBar::hasScheme()
             url.isTrashFile() ||
             url.isSearchFile() ||
             url.isNetWorkFile() ||
+            url.isBurnFile() ||
             url.isSMBFile() ||
             url.isUserShareFile() ||
             url.isFTPFile() ||

@@ -192,7 +192,10 @@ HEADERS += \
     gvfs/gvfsmountmanager.h \
     gvfs/qdiskinfo.h \
     interfaces/dfmsetting.h \
-    shutil/viewstatesmanager.h
+    shutil/viewstatesmanager.h \
+    models/burnfileinfo.h \
+    controllers/burncontroller.h \
+    gvfs/qgvfsinfo.h
 
 SOURCES += \
     controllers/appcontroller.cpp \
@@ -312,7 +315,10 @@ SOURCES += \
     gvfs/qdiskinfo.cpp \
     interfaces/dfmsetting.cpp \
     configure/dfmconfigdict.cpp \
-    shutil/viewstatesmanager.cpp
+    shutil/viewstatesmanager.cpp \
+    models/burnfileinfo.cpp \
+    controllers/burncontroller.cpp \
+    gvfs/qgvfsinfo.cpp
 
 INCLUDEPATH += $$PWD/../ $$PWD/../utils/ $$PWD/interfaces/ $$PWD/../dde-file-manager-plugins/plugininterfaces/
 

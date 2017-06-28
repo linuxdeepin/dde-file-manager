@@ -11,6 +11,7 @@
 #define COMPUTER_SCHEME "computer"
 #define SEARCH_SCHEME "search"
 #define NETWORK_SCHEME "network"
+#define BURN_SCHEME "burn"
 #define SMB_SCHEME "smb"
 #define AFC_SCHEME "afc"
 #define MTP_SCHEME "mtp"
@@ -26,6 +27,7 @@
 #define FILE_ROOT  "file:///"
 #define COMPUTER_ROOT "computer:///"
 #define NETWORK_ROOT "network:///"
+#define BURN_ROOT "burn:///"
 #define SMB_ROOT "smb:///"
 #define USERSHARE_ROOT "usershare:///"
 #define AVFS_ROOT "avfs:///"
@@ -66,6 +68,7 @@ public:
     bool isAVFSFile() const;
     bool isFTPFile() const;
     bool isSFTPFile() const;
+    bool isBurnFile() const;
 
     QString toString(FormattingOptions options = FormattingOptions( PrettyDecoded )) const;
 
@@ -87,6 +90,7 @@ public:
     static DUrl fromSearchFile(const DUrl &targetUrl, const QString &keyword, const DUrl &searchedFileUrl = DUrl());
     static DUrl fromComputerFile(const QString &filePath);
     static DUrl fromNetworkFile(const QString &filePath);
+    static DUrl fromBurnFile(const QString &filePath);
     static DUrl fromSMBFile(const QString &filePath);
     static DUrl fromAFCFile(const QString &filePath);
     static DUrl fromMTPFile(const QString &filePath);

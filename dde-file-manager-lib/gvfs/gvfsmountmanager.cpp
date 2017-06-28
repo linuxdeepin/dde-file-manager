@@ -497,19 +497,18 @@ void GvfsMountManager::monitor_mount_changed(GVolumeMonitor *volume_monitor, GMo
     GVolume *volume = g_mount_get_volume(mount);
     if (volume != NULL){
         qDebug() << "==============================changed removed==============================" ;
-
         QVolume qVolume = gVolumeToqVolume(volume);
         QDiskInfo diskInfo = qVolumeToqDiskInfo(qVolume);
-
+        qDebug() << diskInfo;
         bool isDVDChanged = isDVD(qVolume);
         if (isDVDChanged){
             diskInfo.setType("dvd");
-            qDebug() << diskInfo;
             if (diskInfo.can_unmount()){
                 diskInfo.updateGvfsFileSystemInfo();
                 emit gvfsMountManager->volume_changed(diskInfo);
             }
         }
+
     }else{
         qDebug() << "==============================changed volume empty==============================" ;
 
@@ -1117,6 +1116,9 @@ void GvfsMountManager::eject(const QString &path)
             eject_mounted(diskInfo.mounted_root_uri());
             return;
         }else if (!path.isEmpty() && diskInfo.can_eject() && path == diskInfo.unix_device()){
+            eject_device(diskInfo.unix_device());
+            return;
+        }else if (!path.isEmpty() && path == diskInfo.unix_device()){
             eject_device(diskInfo.unix_device());
             return;
         }

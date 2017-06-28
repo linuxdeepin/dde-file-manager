@@ -839,19 +839,21 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
         menu = DFileMenuManager::createTrashLeftBarMenu(disableList);
     }else if (m_url.isComputerFile()){
         menu = DFileMenuManager::createComputerLeftBarMenu(disableList);
-    }else if(m_isDisk && m_deviceInfo)
+    }else if(m_isDisk && m_deviceInfo && !m_url.isBurnFile())
     {
         if(!tabAddable)
             disableList << MenuAction::OpenDiskInNewTab;
 
         disableList |= m_deviceInfo->disableMenuActionList() ;
         m_url.setQuery(m_deviceID);
-
         menu = DFileMenuManager::genereteMenuByKeys(
                     m_deviceInfo->menuActionList(DAbstractFileInfo::SingleFile),
                     disableList);
     }else if (m_url.isNetWorkFile()){
         menu = DFileMenuManager::createNetworkMarkMenu(disableList);
+    }else if (m_url.isBurnFile()){
+        m_url.setQuery(m_deviceID);
+        menu = DFileMenuManager::createBurnMarkMenu(disableList);
     }else if(m_url.isUserShareFile()){
         menu = DFileMenuManager::createUserShareMarkMenu(disableList);
     }else if(PluginManager::instance()->getViewInterfaceByScheme(m_url.scheme())){

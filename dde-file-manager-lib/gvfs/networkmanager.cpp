@@ -5,6 +5,7 @@
 
 #include "singleton.h"
 #include "deviceinfo/udisklistener.h"
+#include "gvfsmountmanager.h"
 
 #include <QProcess>
 
@@ -63,7 +64,8 @@ QStringList NetworkManager::SupportScheme = {
     "network",
     "smb",
     "ftp",
-    "sftp"
+    "sftp",
+    "burn"
 };
 QMap<DUrl, NetworkNodeList> NetworkManager::NetworkNodes = {};
 GCancellable* NetworkManager::m_networks_fetching_cancellable = NULL;
@@ -136,6 +138,9 @@ void NetworkManager::network_enumeration_finished(GObject *source_object, GAsync
             }
         }
         qDebug() << error->message;
+        if (event->fileUrl().isBurnFile()){
+            return;
+        }
         emit fileSignalManager->requestSMBMount(*event);
         g_clear_error (&error);
     }
@@ -258,7 +263,7 @@ void NetworkManager::fetchNetworks(const DFMEvent &event)
 
     qDebug() << path << p1 << p2;
 
-    if (p1){
+    if (p1 && !DUrl(path).isBurnFile()){
         *e << p1->getMountPointUrl();
         if (DUrl(path) != p1->getMountPointUrl()){
             emit fileSignalManager->requestChangeCurrentUrl(*e);
@@ -266,6 +271,13 @@ void NetworkManager::fetchNetworks(const DFMEvent &event)
             qWarning() << p1->getMountPointUrl() << "can't get data";
         }
     }else{
+
+        QDiskInfo info = GvfsMountManager::DiskInfos.value(path);
+        qDebug() << info;
+        if (info.id_filesystem() == "burn:" && !info.can_eject()){
+            return;
+        }
+
         std::string stdPath = path.toStdString();
         gchar *url = const_cast<gchar*>(stdPath.c_str());
         fetch_networks(url, e);

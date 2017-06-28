@@ -14,6 +14,7 @@ QSet<QString> schemeList = QSet<QString>() << QString(TRASH_SCHEME)
                                            << QString(COMPUTER_SCHEME )
                                            << QString(SEARCH_SCHEME)
                                            << QString(NETWORK_SCHEME)
+                                           << QString(BURN_SCHEME)
                                            << QString(SMB_SCHEME)
                                            << QString(AFC_SCHEME)
                                            << QString(MTP_SCHEME)
@@ -133,6 +134,11 @@ bool DUrl::isFTPFile() const
 bool DUrl::isSFTPFile() const
 {
     return scheme() == SFTP_SCHEME;
+}
+
+bool DUrl::isBurnFile() const
+{
+    return scheme() == BURN_SCHEME;
 }
 
 QString DUrl::toString(QUrl::FormattingOptions options) const
@@ -291,6 +297,16 @@ DUrl DUrl::fromNetworkFile(const QString &filePath)
     DUrl url;
 
     url.setScheme(NETWORK_SCHEME, false);
+    url.setPath(filePath);
+
+    return url;
+}
+
+DUrl DUrl::fromBurnFile(const QString &filePath)
+{
+    DUrl url;
+
+    url.setScheme(BURN_SCHEME, false);
     url.setPath(filePath);
 
     return url;

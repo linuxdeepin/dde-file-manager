@@ -11,6 +11,7 @@
 #include "avfsfilecontroller.h"
 #include "bookmarkmanager.h"
 #include "networkcontroller.h"
+#include "burncontroller.h"
 #include "deviceinfo/udisklistener.h"
 #include "dfileservices.h"
 #include "fileoperations/filejob.h"
@@ -70,6 +71,7 @@ void AppController::registerUrlHandle()
     DFileService::setFileUrlHandler(TRASH_SCHEME, "", new TrashManager());
     DFileService::dRegisterUrlHandler<SearchController>(SEARCH_SCHEME, "");
     DFileService::dRegisterUrlHandler<NetworkController>(NETWORK_SCHEME, "");
+    DFileService::dRegisterUrlHandler<BurnController>(BURN_SCHEME, "");
     DFileService::dRegisterUrlHandler<NetworkController>(SMB_SCHEME, "");
     DFileService::dRegisterUrlHandler<ShareControler>(USERSHARE_SCHEME, "");
     DFileService::dRegisterUrlHandler<AVFSFileController>(AVFS_SCHEME, "");
