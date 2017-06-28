@@ -1525,7 +1525,7 @@ void DFileSystemModel::emitAllDataChanged()
                               Q_ARG(QModelIndex, topLeftIndex), Q_ARG(QModelIndex, rightBottomIndex));
 }
 
-void DFileSystemModel::selectAndRenameFile(const DUrl &fileUrl) const
+void DFileSystemModel::selectAndRenameFile(const DUrl &fileUrl)
 {
     /// TODO: 暂时放在此处实现，后面将移动到DFileService中实现。
     if (AppController::selectionAndRenameFile.first == fileUrl) {
@@ -1541,6 +1541,8 @@ void DFileSystemModel::selectAndRenameFile(const DUrl &fileUrl) const
         TIMER_SINGLESHOT_OBJECT(const_cast<DFileSystemModel*>(this), 100, {
                                     emit fileSignalManager->requestSelectRenameFile(event);
                                 }, event)
+
+        emit newFileByInternal(fileUrl);
     }
 }
 
