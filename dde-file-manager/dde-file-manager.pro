@@ -92,7 +92,7 @@ isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) {
                          $$PWD/mips/file-manager.sh
 
     dde-file-manager-autostart.path = /etc/xdg/autostart
-    dde-file-manager-autostart.files = $$PWD/mips/dde-file-manager-autostart.desktop dde-file-manager-dialog-autostart.desktop
+    dde-file-manager-autostart.files = dde-file-manager-dialog-autostart.desktop
     INSTALLS += dde-mips-shs dde-file-manager-autostart
 }else{
     autostart.path = /etc/xdg/autostart
