@@ -971,10 +971,7 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
             case FileJob::Cancelled:
                 from.close();
                 to.close();
-                if (m_isSkip)
-                    return true;
-                else
-                    return false;
+                return false;
             default:
                 from.close();
                 to.close();
@@ -1586,10 +1583,7 @@ bool FileJob::handleMoveJob(const QString &srcPath, const QString &tarDir, QStri
                 QThread::msleep(100);
                 break;
             case FileJob::Cancelled:
-                if (m_isSkip)
-                    return true;
-                else
-                    return false;
+                return false;
             default:
                 return false;
          }
