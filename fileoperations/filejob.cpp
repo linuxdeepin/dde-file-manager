@@ -289,7 +289,8 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
                 else
                 {
                     if(copyDir(srcPath, tarDirPath, true, &targetPath))
-                        deleteDir(srcPath);
+                        if (!m_isSkip)
+                            deleteDir(srcPath);
                 }
             }else if (m_jobType == Trash){
                 bool canTrash = moveDirToTrash(srcPath, &targetPath);
@@ -307,7 +308,8 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
                 else
                 {
                     if(copyDir(srcPath, tarDirPath, true, &targetPath))
-                        deleteDir(srcPath);
+                        if (!m_isSkip)
+                            deleteDir(srcPath);
                 }
             }
         }else{
@@ -326,8 +328,10 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
                 }
                 else
                 {
-                    if(copyFile(srcPath, tarDirPath, true, &targetPath))
-                        deleteFile(srcPath);
+                    if(copyFile(srcPath, tarDirPath, true, &targetPath)){
+                        if (!m_isSkip)
+                            deleteFile(srcPath);
+                    }
                 }
             }else if (m_jobType == Trash){
                 bool canTrash = moveFileToTrash(srcPath, &targetPath);
@@ -347,7 +351,8 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
                 else
                 {
                     if(copyFile(srcPath, tarDirPath, true, &targetPath))
-                        deleteFile(srcPath);
+                        if (!m_isSkip)
+                            deleteFile(srcPath);
                 }
             }
         }
@@ -971,7 +976,10 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
             case FileJob::Cancelled:
                 from.close();
                 to.close();
-                return false;
+                if (m_isSkip)
+                    return true;
+                else
+                    return false;
             default:
                 from.close();
                 to.close();
@@ -1170,11 +1178,7 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
     if(srcDirInfo.absolutePath() != targetInfo.absolutePath()){
         if(isTargetExists && !m_applyToAll)
         {
-            if (!isMoved){
-                jobConflicted();
-            }else{
-                m_isReplaced = true;
-            }
+            jobConflicted();
         }else if (isTargetExists && m_skipandApplyToAll){
             return false;
         }
@@ -1583,6 +1587,9 @@ bool FileJob::handleMoveJob(const QString &srcPath, const QString &tarDir, QStri
                 QThread::msleep(100);
                 break;
             case FileJob::Cancelled:
+            if (m_isSkip)
+                return true;
+            else
                 return false;
             default:
                 return false;
