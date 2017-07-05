@@ -121,6 +121,9 @@ public:
     QModelIndex         dragMoveHoverIndex;
     QModelIndex         currentCursorIndex;
 
+    QPoint              lastMenuPos;
+    QString             lastMenuNewFilepath;
+
     QPoint              lastPos;
 
     QItemSelection      beforeMoveSelection;

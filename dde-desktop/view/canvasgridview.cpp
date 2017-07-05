@@ -940,7 +940,6 @@ void CanvasGridView::focusInEvent(QFocusEvent *event)
 
 void CanvasGridView::contextMenuEvent(QContextMenuEvent *event)
 {
-
     const QModelIndex &index = indexAt(event->pos());
     bool indexIsSelected = selectionModel()->isSelected(index);
     bool isEmptyArea = d->fileViewHelper->isEmptyArea(event->pos()) && !indexIsSelected;
@@ -964,6 +963,7 @@ void CanvasGridView::contextMenuEvent(QContextMenuEvent *event)
     if (isEmptyArea) {
         itemDelegate()->hideNotEditingIndexWidget();
         clearSelection();
+        d->lastMenuPos = event->pos();
         showEmptyAreaMenu(flags);
     } else {
         if (!selectionModel()->isSelected(index)) {
@@ -1365,6 +1365,22 @@ void CanvasGridView::initConnection()
         updateGeometry(screen->availableGeometry());
     });
 
+    connect(this->model(), &DFileSystemModel::newFileByInternal,
+    this, [ = ](const DUrl & fileUrl) {
+        qDebug() << "rrrrrrr" << fileUrl;
+        auto localFile = fileUrl.toLocalFile();
+        auto gridPos = gridAt(d->lastMenuPos);
+
+        if (d->lastMenuNewFilepath == localFile) {
+            if (gridPos == GridManager::instance()->position(localFile)) {
+                return;
+            }
+        }
+
+        gridPos = GridManager::instance()->forwardFindEmpty(gridPos);
+        GridManager::instance()->move(QStringList() << localFile, localFile, gridPos.x(), gridPos.y());
+    });
+
     connect(this->model(), &QAbstractItemModel::rowsInserted,
     this, [ = ](const QModelIndex & parent, int first, int last) {
 //        qDebug() << parent << first << last;
@@ -1400,6 +1416,7 @@ void CanvasGridView::initConnection()
             auto index = model()->index(i, 0, parent);
             auto localFile = model()->getUrlByIndex(index).toLocalFile();
             qDebug() << "add" << localFile;
+            d->lastMenuNewFilepath = localFile;
             GridManager::instance()->add(localFile);
         }
         d->quickSync();

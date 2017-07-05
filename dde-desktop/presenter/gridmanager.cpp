@@ -682,6 +682,30 @@ void GridManager:: reAlign()
     emit Presenter::instance()->setConfigList(d->positionProfile, keyList, valueList);
 }
 
+QPoint GridManager::forwardFindEmpty(QPoint start) const
+{
+    auto size = gridSize();
+    for (int j = start.y(); j < size.height(); ++j) {
+        if (GridManager::instance()->isEmpty(start.x(), j)) {
+            return QPoint(start.x(), j);
+        }
+    }
+
+    for (int i = start.x() + 1; i < size.width(); ++i) {
+        for (int j = 0; j < size.height(); ++j) {
+            if (GridManager::instance()->isEmpty(i, j)) {
+                return QPoint(i, j);
+            }
+        }
+    }
+    return d->emptyPos();
+}
+
+QSize GridManager::gridSize() const
+{
+    return QSize(d->coordWidth, d->coordHeight);
+}
+
 void GridManager::updateGridSize(int w, int h)
 {
     if (d->updateGridProfile(w, h)) {

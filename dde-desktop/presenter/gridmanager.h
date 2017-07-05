@@ -40,11 +40,13 @@ public:
     QString itemId(QPoint pos);
     bool isEmpty(int x, int y);
 
-    const QStringList& overlapItems() const;
+    const QStringList &overlapItems() const;
     bool autoAlign();
     void toggleAlign();
     void reAlign();
 
+    QPoint forwardFindEmpty(QPoint start) const;
+    QSize gridSize() const;
     void updateGridSize(int w, int h);
 
 protected:
@@ -52,7 +54,7 @@ protected:
     bool remove(QPoint pos, const QString &itemId);
     bool add(QPoint pos, const QString &itemId);
 
-    friend Singleton<GridManager>;
+    friend class Singleton<GridManager>;
 
     GridManager();
     ~GridManager();
