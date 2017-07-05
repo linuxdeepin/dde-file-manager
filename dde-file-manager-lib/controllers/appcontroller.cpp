@@ -343,36 +343,36 @@ void AppController::actionNewWord(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     const DUrl& fileUrl = event->url();
     int windowId = event->windowId();
-    QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("newDoc"), "doc");
+    QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("Document"), "doc");
     AppController::selectionAndRenameFile = qMakePair(DUrl::fromLocalFile(targetFile), windowId);
-    FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("newDoc"), "doc");
+    FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("Document"), "doc");
 }
 
 void AppController::actionNewExcel(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     const DUrl& fileUrl = event->url();
     int windowId = event->windowId();
-    QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("newExcel"), "xls");
+    QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("Spreadsheet"), "xls");
     AppController::selectionAndRenameFile = qMakePair(DUrl::fromLocalFile(targetFile), windowId);
-    FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("newExcel"), "xls");
+    FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("Spreadsheet"), "xls");
 }
 
 void AppController::actionNewPowerpoint(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     const DUrl& fileUrl = event->url();
     int windowId = event->windowId();
-    QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("newPowerPoint"), "ppt");
+    QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("Presentation"), "ppt");
     AppController::selectionAndRenameFile = qMakePair(DUrl::fromLocalFile(targetFile), windowId);
-    FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("newPowerPoint"), "ppt");
+    FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("Presentation"), "ppt");
 }
 
 void AppController::actionNewText(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     const DUrl& fileUrl = event->url();
     int windowId = event->windowId();
-    QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("newText"), "txt");
+    QString targetFile = FileUtils::newDocmentName(fileUrl.toLocalFile(), QObject::tr("Text"), "txt");
     AppController::selectionAndRenameFile = qMakePair(DUrl::fromLocalFile(targetFile), windowId);
-    FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("newText"), "txt");
+    FileUtils::cpTemplateFileToTargetDir(fileUrl.toLocalFile(), QObject::tr("Text"), "txt");
 }
 
 void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
