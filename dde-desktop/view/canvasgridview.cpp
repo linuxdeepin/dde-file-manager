@@ -1331,10 +1331,13 @@ void CanvasGridView::initConnection()
     d->syncTimer->start();
 
     connect(Display::instance()->primaryScreen(), &QScreen::availableGeometryChanged,
-    this, [ = ](const QRect & geometry) {
-        qDebug() << "Init primaryScreen availableGeometryChanged changed to:" << geometry;
-        qDebug() << "Init primaryScreen:" << qApp->primaryScreen() << qApp->primaryScreen()->geometry();
-        updateGeometry(geometry);
+    this, [ = ](const QRect & /*geometry*/) {
+        QTimer::singleShot(400, this, [ = ]() {
+            auto geometry = Display::instance()->primaryScreen()->availableGeometry();
+            qDebug() << "Init primaryScreen availableGeometryChanged changed to:" << geometry;
+            qDebug() << "Init primaryScreen:" << qApp->primaryScreen() << qApp->primaryScreen()->geometry();
+            updateGeometry(geometry);
+        });
     });
 
     connect(Display::instance(), &Display::primaryScreenChanged,
