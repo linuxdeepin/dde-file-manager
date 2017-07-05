@@ -4,28 +4,32 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="1740"/>
+        <location filename="../view/canvasgridview.cpp" line="1772"/>
         <source>Auto arrange</source>
         <translation>自动排列</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="1748"/>
-        <location filename="../view/canvasgridview.cpp" line="1870"/>
         <source>Property</source>
+        <translation type="vanished">属性</translation>
+    </message>
+    <message>
+        <location filename="../view/canvasgridview.cpp" line="1780"/>
+        <location filename="../view/canvasgridview.cpp" line="1893"/>
+        <source>Properties</source>
         <translation>属性</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="1779"/>
+        <location filename="../view/canvasgridview.cpp" line="1811"/>
         <source>Display Settings</source>
         <translation>显示设置</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="1784"/>
+        <location filename="../view/canvasgridview.cpp" line="1816"/>
         <source>Corner Settings</source>
         <translation>热区设置</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="1789"/>
+        <location filename="../view/canvasgridview.cpp" line="1821"/>
         <source>Set Wallpaper</source>
         <translation>设置壁纸</translation>
     </message>
@@ -33,12 +37,12 @@
 <context>
     <name>WallpaperItem</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="73"/>
+        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="90"/>
         <source>Only desktop</source>
         <translation>仅设置桌面</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="76"/>
+        <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="93"/>
         <source>Only lock screen</source>
         <translation>仅设置锁屏</translation>
     </message>
