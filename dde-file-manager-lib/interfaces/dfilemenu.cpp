@@ -44,3 +44,8 @@ QAction *DFileMenu::exec()
 {
     return QMenu::exec(QCursor::pos());
 }
+
+quint64 DFileMenu::eventId() const
+{
+    return m_eventId;
+}

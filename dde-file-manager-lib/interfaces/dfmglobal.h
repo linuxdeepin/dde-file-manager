@@ -185,7 +185,8 @@ public:
         EditLabel,
         PrivateFileToPublic,
 #endif
-        Unknow
+        Unknow,
+        UserMenuAction = Unknow + 2000
     };
 
     Q_ENUM(MenuAction)

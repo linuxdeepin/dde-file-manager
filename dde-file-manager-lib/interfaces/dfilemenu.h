@@ -23,6 +23,8 @@ public:
     QAction *exec();
     using QMenu::exec;
 
+    quint64 eventId() const;
+
 private:
     DUrl m_currentUrl;
     DUrlList m_selectedUrls;
