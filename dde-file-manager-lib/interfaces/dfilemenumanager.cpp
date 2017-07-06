@@ -28,18 +28,45 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QQueue>
 #include <QDebug>
 
 namespace DFileMenuData {
 static QMap<MenuAction, QString> actionKeys;
 static QMap<MenuAction, QAction*> actions;
+static QMap<const QAction*, MenuAction> actionToMenuAction;
 static QMap<MenuAction, QString> actionIDs;
 static QVector<MenuAction> sortActionTypes;
 static QSet<MenuAction> whitelist;
 static QSet<MenuAction> blacklist;
+static QQueue<MenuAction> availableUserActionQueue;
 
 void initData();
 void initActions();
+
+MenuAction takeAvailableUserActionType()
+{
+    if (availableUserActionQueue.isEmpty()) {
+        availableUserActionQueue.append(MenuAction(MenuAction::UserMenuAction + 1));
+
+        return MenuAction::UserMenuAction;
+    }
+
+    MenuAction type = availableUserActionQueue.dequeue();
+
+    if (availableUserActionQueue.isEmpty())
+        availableUserActionQueue.append(MenuAction(type + 1));
+
+    return type;
+}
+void recycleUserActionType(MenuAction type)
+{
+    availableUserActionQueue.prepend(type);
+    QAction *action = actions.take(type);
+
+    if (action)
+        actionToMenuAction.remove(action);
+}
 }
 
 DFileMenu *DFileMenuManager::createRecentLeftBarMenu(const QSet<MenuAction> &disableList)
@@ -685,6 +712,7 @@ void DFileMenuData::initActions()
         QAction* action = new QAction(actionKeys.value(key), 0);
         action->setData(key);
         actions.insert(key, action);
+        actionToMenuAction.insert(action, key);
     }
 }
 
@@ -700,7 +728,10 @@ DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
 
     if (!isUseCachedAction){
         foreach (MenuAction actionKey, keys) {
-            DFileMenuData::actions.remove(actionKey);
+            QAction *action = DFileMenuData::actions.take(actionKey);
+
+            if (action)
+                DFileMenuData::actionToMenuAction.remove(action);
         }
     }
 
@@ -722,9 +753,12 @@ DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
             if(!action){
                 action = new QAction(DFileMenuData::actionKeys.value(key), 0);
                 action->setData(key);
+                DFileMenuData::actions[key] = action;
+                DFileMenuData::actionToMenuAction[action] = key;
             }
 
             action->setDisabled(disableList.contains(key));
+            action->setProperty("_dfm_menu", QVariant::fromValue(menu));
 
             menu->addAction(action);
 
@@ -791,13 +825,32 @@ void DFileMenuManager::setActionString(MenuAction type, QString actionString)
     QAction* action = new QAction(actionString, 0);
     action->setData(type);
     DFileMenuData::actions.insert(type, action);
-
-    qDebug() << type << actionString << action;
+    DFileMenuData::actionToMenuAction[action] = type;
 }
 
 void DFileMenuManager::setActionID(MenuAction type, QString id)
 {
     DFileMenuData::actionIDs.insert(type, id);
+}
+
+MenuAction DFileMenuManager::registerMenuActionType(QAction *action)
+{
+    Q_ASSERT(action);
+
+    MenuAction type = DFileMenuData::actionToMenuAction.value(action, MenuAction::Unknow);
+
+    if (type >= MenuAction::UserMenuAction)
+        return type;
+
+    type = DFileMenuData::takeAvailableUserActionType();
+    DFileMenuData::actions[type] = action;
+    DFileMenuData::actionToMenuAction[action] = type;
+
+    QObject::connect(action, &QAction::destroyed, action, [type] {
+        DFileMenuData::recycleUserActionType(type);
+    });
+
+    return type;
 }
 
 void DFileMenuManager::actionTriggered(QAction *action)
@@ -814,6 +867,12 @@ void DFileMenuManager::actionTriggered(QAction *action)
             qDebug() << action->data().toString();;
             return;
         }
+
+        if (type >= MenuAction::UserMenuAction)
+            return;
+
+        if (DFileMenuData::actions.value(type) != action)
+            return;
 
         const QSharedPointer<DFMMenuActionEvent> &event = menu->makeEvent(type);
         DFMEventDispatcher::instance()->processEvent(event);

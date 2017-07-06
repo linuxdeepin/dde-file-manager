@@ -105,6 +105,8 @@ public slots:
 public:
     void doSubscriberAction(const QString &path);
 
+    static QString createFile(const QString &sourceFile, const QString &targetDir, const QString &baseFileName, WId windowId);
+
 protected:
     explicit AppController(QObject *parent = 0);
 
