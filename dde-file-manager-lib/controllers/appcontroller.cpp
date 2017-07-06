@@ -782,6 +782,22 @@ void AppController::doSubscriberAction(const QString &path)
     deviceListener->removeSubscriber(this);
 }
 
+QString AppController::createFile(const QString &sourceFile, const QString &targetDir, const QString &baseFileName, WId windowId)
+{
+    QFileInfo info(sourceFile);
+
+    if (!info.exists())
+        return QString();
+
+    const QString &targetFile = FileUtils::newDocmentName(targetDir, baseFileName, info.suffix());
+    AppController::selectionAndRenameFile = qMakePair(DUrl::fromLocalFile(targetFile), windowId);
+
+    if (QFile::copy(sourceFile, targetFile))
+        return targetFile;
+
+    return QString();
+}
+
 AppController::AppController(QObject *parent) : QObject(parent)
 {
     createGVfSManager();

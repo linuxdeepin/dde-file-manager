@@ -20,6 +20,8 @@ public:
     QAction *exec();
     using QMenu::exec;
 
+    quint64 eventId() const;
+
 private:
     DFMEvent m_event;
 };

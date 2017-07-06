@@ -1,8 +1,10 @@
 #include "dabstractfileinfo.h"
 #include "private/dabstractfileinfo_p.h"
 #include "views/dfileview.h"
+#include "dfilemenu.h"
 
 #include "dfilesystemmodel.h"
+#include "dfilemenumanager.h"
 
 #include "shutil/fileutils.h"
 #include "shutil/mimetypedisplaymanager.h"
@@ -12,6 +14,7 @@
 #include "dmimedatabase.h"
 
 #include "app/define.h"
+#include "controllers/appcontroller.h"
 
 #include "singleton.h"
 #include "plugins/pluginmanager.h"
@@ -26,6 +29,8 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QStandardPaths>
+#include <QLocale>
 
 #ifdef SW_LABEL
 #include "sw_label/filemanagerlibrary.h"
@@ -1082,6 +1087,122 @@ DAbstractFileInfo::DAbstractFileInfo(DAbstractFileInfoPrivate &dd)
 
 }
 
+static void onActionTriggered(QAction *action)
+{
+    const QString &target_dir = action->property("_fileinfo_path").toString();
+
+    if (target_dir.isEmpty())
+        return;
+
+    const DFileMenu *menu = qvariant_cast<DFileMenu*>(action->property("_dfm_menu"));
+    const QPair<QString, QString> &data = qvariant_cast<QPair<QString, QString>>(action->data());
+
+    const QWidget *w = menu;
+
+    while (w->parentWidget())
+        w = w->parentWidget();
+
+    menu = qobject_cast<const DFileMenu*>(w);
+
+    AppController::createFile(data.first, target_dir, data.second, menu ? menu->eventId() : -1);
+}
+
+static QList<QAction*> getTemplateFileList()
+{
+    QList<QAction*> result;
+
+    const QString &path = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
+    QDir template_dir(path + "/templates");
+    const QString &old_current_path = QDir::currentPath();
+
+    // set current path
+    QDir::setCurrent(template_dir.absolutePath());
+
+    const QStringList & config_list = template_dir.entryList(QStringList(QStringLiteral("*.template")), QDir::Files | QDir::Readable | QDir::NoSymLinks);
+
+    result.reserve(config_list.size());
+
+    for (const QString &file : config_list) {
+        Properties settings(template_dir.absoluteFilePath(file), "DFM Template Entry");
+
+        const QString &text = settings.value(QString("Text[%1]").arg(QLocale::system().name()), settings.value("Text")).toString();
+        if (text.isEmpty()) {
+            qWarning() << "Invalid template config file(The \"Text\" section is empty):" << file;
+            continue;
+        }
+
+        QString source = settings.value("Source").toString();
+
+        if (source.isEmpty()) {
+            qWarning() << "Invalid template config file(The \"Source\" section is empty):" << file;
+            continue;
+        }
+
+        if (source.contains("/")) {
+            qWarning() << "Invalid template config file(The \"Source\" section is invalid, Can't contains the '/' character'):" << file;
+            continue;
+        }
+
+        source = template_dir.absoluteFilePath(source);
+
+        if (!QFile::exists(source)) {
+            qWarning() << QString("Invalid template config file(The \"%1\" file is't exists):").arg(source) << file;
+            continue;
+        }
+
+        const QString &new_file_base_name = settings.value(QString("BaseName[%1]").arg(QLocale::system().name()), settings.value("BaseName")).toString();
+
+        if (new_file_base_name.isEmpty()) {
+            qWarning() << "Invalid template config file(The \"BaseName\" section is empty):" << file;
+            continue;
+        }
+
+        if (new_file_base_name.contains("/")) {
+            qWarning() << "Invalid template config file(The \"BaseName\" section is invalid, Can't contains the '/' character'):" << file;
+            continue;
+        }
+
+        const QString &icon_name = settings.value("Icon").toString();
+
+        QAction *action = new QAction(text, Q_NULLPTR);
+
+        if (!icon_name.isEmpty()) {
+            QIcon icon = QIcon::fromTheme(icon_name);
+
+            if (icon.isNull())
+                icon = QIcon(icon_name);
+
+            if (!icon.isNull())
+                action->setIcon(icon);
+        }
+
+        action->setData(QVariant::fromValue(qMakePair(source, new_file_base_name)));
+        QObject::connect(action, &QAction::triggered, action, [action] {
+            onActionTriggered(action);
+        });
+
+        result << action;
+    }
+
+    // restore current path
+    QDir::setCurrent(old_current_path);
+
+    return result;
+}
+
+static QVector<MenuAction> getMenuActionTypeListByAction(const QList<QAction*> &list)
+{
+    QVector<MenuAction> type_list;
+
+    type_list.reserve(type_list.size());
+
+    for (QAction *action : list) {
+        type_list.append(DFileMenuManager::registerMenuActionType(action));
+    }
+
+    return type_list;
+}
+
 QMap<MenuAction, QVector<MenuAction> > DAbstractFileInfo::subMenuActionList() const
 {
     QMap<MenuAction, QVector<MenuAction> > actions;
@@ -1095,6 +1216,15 @@ QMap<MenuAction, QVector<MenuAction> > DAbstractFileInfo::subMenuActionList() co
                           << MenuAction::NewExcel
                           << MenuAction::NewPowerpoint
                           << MenuAction::NewText;
+
+    static const QList<QAction*> template_file_list = getTemplateFileList();
+    static const QVector<MenuAction> action_type_list = getMenuActionTypeListByAction(template_file_list);
+
+    for (QAction *action : template_file_list) {
+        action->setProperty("_fileinfo_path", fileUrl().toLocalFile());
+    }
+
+    docmentMenuActionKeys << action_type_list;
     actions.insert(MenuAction::NewDocument, docmentMenuActionKeys);
 
     QVector<MenuAction> displayAsMenuActionKeys;

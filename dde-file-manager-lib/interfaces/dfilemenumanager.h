@@ -76,6 +76,7 @@ public:
     static void setActionString(MenuAction type, QString actionString);
     static void setActionID(MenuAction type, QString id);
 
+    static MenuAction registerMenuActionType(QAction *action);
 
 public slots:
     void actionTriggered(QAction * action);
