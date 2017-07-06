@@ -50,7 +50,7 @@ bool compareByString(const QString &str1, const QString &str2, Qt::SortOrder ord
         return order != Qt::AscendingOrder;
     }
 
-    return ((order == Qt::AscendingOrder) ^ (sortCollator.compare(str1, str2) < 0)) == 0x01;
+    return ((order == Qt::DescendingOrder) ^ (sortCollator.compare(str1, str2) < 0)) == 0x01;
 }
 
 COMPARE_FUN_DEFINE(fileDisplayName, DisplayName, DAbstractFileInfo)
