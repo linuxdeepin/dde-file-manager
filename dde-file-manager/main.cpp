@@ -164,7 +164,7 @@ int main(int argc, char *argv[])
             fileManagerApp;
 #ifdef AUTO_RESTART_DEAMON
             QWidget w;
-            w.setWindowFlags(Qt::FramelessWindowHint);
+            w.setWindowFlags(Qt::FramelessWindowHint | Qt::X11BypassWindowManagerHint);
             w.setAttribute(Qt::WA_TranslucentBackground);
             w.resize(0, 0);
             w.show();
@@ -199,7 +199,7 @@ int main(int argc, char *argv[])
 
         SingleApplication::newClientProcess(uniqueKey, data);
         QWidget w;
-        w.setWindowFlags(Qt::FramelessWindowHint);
+        w.setWindowFlags(Qt::FramelessWindowHint | Qt::X11BypassWindowManagerHint);
         w.setAttribute(Qt::WA_TranslucentBackground);
         w.resize(1, 1);
         w.show();
