@@ -15,6 +15,7 @@
 #include <diconitemdelegate.h>
 
 #include "canvasgridview.h"
+#include "desktopitemdelegate.h"
 
 CanvasViewHelper::CanvasViewHelper(CanvasGridView *parent): DFileViewHelper(parent)
 {
@@ -38,7 +39,7 @@ const DAbstractFileInfoPointer CanvasViewHelper::fileInfo(const QModelIndex &ind
 
 DStyledItemDelegate *CanvasViewHelper::itemDelegate() const
 {
-    return parent()->itemDelegate();
+    return qobject_cast<DStyledItemDelegate *>(parent()->itemDelegate());
 }
 
 DFileSystemModel *CanvasViewHelper::model() const
