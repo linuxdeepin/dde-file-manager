@@ -1623,7 +1623,7 @@ bool FileJob::handleSymlinkFile(const QString &srcFile, const QString &tarDir, Q
                     m_tarPath = checkDuplicateName(m_tarPath + "/" + m_srcFileName);
                 }else{
                     bool canTrash = moveFileToTrash(srcFile, targetPath);
-                    if (canTrash){
+                    if (canTrash && targetPath){
                         m_tarPath = *targetPath;
                     }
                 }
