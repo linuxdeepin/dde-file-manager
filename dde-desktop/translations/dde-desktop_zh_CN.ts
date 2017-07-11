@@ -4,34 +4,63 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="1772"/>
+        <location filename="../view/canvasgridview.cpp" line="1831"/>
         <source>Auto arrange</source>
         <translation>自动排列</translation>
     </message>
     <message>
-        <source>Property</source>
-        <translation type="vanished">属性</translation>
+        <location filename="../view/canvasgridview.cpp" line="1825"/>
+        <source>Icon size</source>
+        <translation>图标大小</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="1780"/>
-        <location filename="../view/canvasgridview.cpp" line="1893"/>
+        <location filename="../view/canvasgridview.cpp" line="1839"/>
+        <location filename="../view/canvasgridview.cpp" line="1952"/>
         <source>Properties</source>
         <translation>属性</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="1811"/>
+        <location filename="../view/canvasgridview.cpp" line="1870"/>
         <source>Display Settings</source>
         <translation>显示设置</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="1816"/>
+        <location filename="../view/canvasgridview.cpp" line="1875"/>
         <source>Corner Settings</source>
         <translation>热区设置</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="1821"/>
+        <location filename="../view/canvasgridview.cpp" line="1880"/>
         <source>Set Wallpaper</source>
         <translation>设置壁纸</translation>
+    </message>
+</context>
+<context>
+    <name>DesktopItemDelegate</name>
+    <message>
+        <location filename="../view/desktopitemdelegate.cpp" line="12"/>
+        <source>Tiny</source>
+        <translation>极小</translation>
+    </message>
+    <message>
+        <location filename="../view/desktopitemdelegate.cpp" line="13"/>
+        <source>Small</source>
+        <translation>小</translation>
+    </message>
+    <message>
+        <location filename="../view/desktopitemdelegate.cpp" line="14"/>
+        <source>Medium</source>
+        <translation>中</translation>
+    </message>
+    <message>
+        <location filename="../view/desktopitemdelegate.cpp" line="15"/>
+        <source>Large</source>
+        <translation>大</translation>
+    </message>
+    <message>
+        <location filename="../view/desktopitemdelegate.cpp" line="16"/>
+        <source>Super large</source>
+        <translation>极大</translation>
     </message>
 </context>
 <context>

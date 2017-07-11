@@ -22,13 +22,12 @@
 #include "../dde-wallpaper-chooser/frame.h"
 #include "../dde-zone/mainwindow.h"
 
-using WallpaperSettings=Frame;
-using ZoneSettings=ZoneMainWindow;
+using WallpaperSettings = Frame;
+using ZoneSettings = ZoneMainWindow;
 
 class DesktopPrivate
 {
 public:
-    Presenter        presenter;
     CanvasGridView      screenFrame;
     WallpaperSettings *wallpaperSettings = nullptr;
     ZoneSettings *zoneSettings = nullptr;
@@ -47,7 +46,7 @@ Desktop::~Desktop()
 
 void Desktop::loadData()
 {
-    d->presenter.init();
+    Presenter::instance()->init();
 }
 
 void Desktop::loadView()
@@ -65,7 +64,7 @@ void Desktop::showWallpaperSettings()
     }
 
     d->wallpaperSettings = new WallpaperSettings;
-    connect(d->wallpaperSettings, &Frame::done, this, [=]{
+    connect(d->wallpaperSettings, &Frame::done, this, [ = ] {
         d->wallpaperSettings->deleteLater();
         d->wallpaperSettings = nullptr;
     });
@@ -82,7 +81,7 @@ void Desktop::showZoneSettings()
     }
 
     d->zoneSettings = new ZoneSettings;
-    connect(d->zoneSettings, &ZoneMainWindow::finished, this, [=]{
+    connect(d->zoneSettings, &ZoneMainWindow::finished, this, [ = ] {
         d->zoneSettings->deleteLater();
         d->zoneSettings = nullptr;
     });

@@ -14,7 +14,7 @@
 
 class QScreen;
 class DBusDisplay;
-class Display : public QObject, public Singleton<Display>
+class Display: public QObject, public Singleton<Display>
 {
     Q_OBJECT
 

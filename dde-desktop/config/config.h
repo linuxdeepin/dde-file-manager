@@ -34,9 +34,9 @@ public slots:
     void removeConfigList(const QString &group, const QStringList &keys);
 
 private:
-    Q_DISABLE_COPY(Config)
     explicit Config();
-    friend Singleton<Config>;
+    Q_DISABLE_COPY(Config)
+    friend class Singleton<Config>;
 
     QSettings   *m_settings = nullptr;
     bool        needSync    = false;

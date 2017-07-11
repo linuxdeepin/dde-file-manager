@@ -15,7 +15,7 @@
 #include <dfilemenumanager.h>
 
 class DUrl;
-class DStyledItemDelegate;
+class DesktopItemDelegate;
 class DFileSystemModel;
 class DFileSelectionModel;
 class CanvasViewPrivate;
@@ -34,6 +34,13 @@ public:
         FileManagerProperty,
 
         AutoSort,
+
+        IconSize,
+        IconSize0 = IconSize,
+        IconSize1 = IconSize+1,
+        IconSize2 = IconSize+2,
+        IconSize3 = IconSize+3,
+        IconSize4 = IconSize+4,
     };
     Q_ENUM(ContextMenuAction)
 
@@ -80,8 +87,8 @@ public:
 
     DFileSystemModel *model() const;
     DFileSelectionModel *selectionModel() const;
-    DStyledItemDelegate *itemDelegate() const;
-    void setItemDelegate(DStyledItemDelegate *delegate);
+    DesktopItemDelegate *itemDelegate() const;
+    void setItemDelegate(DesktopItemDelegate *delegate);
 
 signals:
     void sortRoleChanged(int role, Qt::SortOrder order);
@@ -99,6 +106,7 @@ private:
     void updateGeometry(const QRect &geometry);
     void updateCanvas();
 
+    void setIconByLevel(int level);
     void increaseIcon();
     void decreaseIcon();
 
