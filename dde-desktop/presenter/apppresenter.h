@@ -15,9 +15,7 @@
 class Presenter : public QObject, public Singleton<Presenter>
 {
     Q_OBJECT
-    friend Singleton<Presenter>;
 public:
-    explicit Presenter(QObject *parent = 0);
 
     void init();
 
@@ -32,5 +30,9 @@ public slots:
     void onAutoAlignToggled();
     void OnIconLevelChanged(int iconLevel);
 
+private:
+    Q_DISABLE_COPY(Presenter)
+    explicit Presenter(QObject *parent = 0);
+    friend class Singleton<Presenter>;
 };
 

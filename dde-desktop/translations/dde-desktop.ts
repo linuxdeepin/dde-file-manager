@@ -4,29 +4,62 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="1742"/>
+        <location filename="../view/canvasgridview.cpp" line="1825"/>
+        <source>Icon size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../view/canvasgridview.cpp" line="1831"/>
         <source>Auto arrange</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="1750"/>
-        <location filename="../view/canvasgridview.cpp" line="1872"/>
-        <source>Property</source>
+        <location filename="../view/canvasgridview.cpp" line="1839"/>
+        <location filename="../view/canvasgridview.cpp" line="1952"/>
+        <source>Properties</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="1781"/>
+        <location filename="../view/canvasgridview.cpp" line="1870"/>
         <source>Display Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="1786"/>
+        <location filename="../view/canvasgridview.cpp" line="1875"/>
         <source>Corner Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="1791"/>
+        <location filename="../view/canvasgridview.cpp" line="1880"/>
         <source>Set Wallpaper</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DesktopItemDelegate</name>
+    <message>
+        <location filename="../view/desktopitemdelegate.cpp" line="12"/>
+        <source>Tiny</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../view/desktopitemdelegate.cpp" line="13"/>
+        <source>Small</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../view/desktopitemdelegate.cpp" line="14"/>
+        <source>Medium</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../view/desktopitemdelegate.cpp" line="15"/>
+        <source>Large</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../view/desktopitemdelegate.cpp" line="16"/>
+        <source>Super large</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -54,10 +54,11 @@
 #include "../dbus/dbusdock.h"
 #include "../config/config.h"
 
-#include "canvasviewhelper.h"
 #include "util/xcb/xcb.h"
 #include "private/canvasviewprivate.h"
+#include "canvasviewhelper.h"
 #include "watermaskframe.h"
+#include "desktopitemdelegate.h"
 
 //#define SHOW_GRID 1
 
@@ -995,12 +996,12 @@ DFileSelectionModel *CanvasGridView::selectionModel() const
     return static_cast<DFileSelectionModel *>(QAbstractItemView::selectionModel());
 }
 
-DStyledItemDelegate *CanvasGridView::itemDelegate() const
+DesktopItemDelegate *CanvasGridView::itemDelegate() const
 {
-    return qobject_cast<DStyledItemDelegate *>(QAbstractItemView::itemDelegate());
+    return qobject_cast<DesktopItemDelegate *>(QAbstractItemView::itemDelegate());
 }
 
-void CanvasGridView::setItemDelegate(DStyledItemDelegate *delegate)
+void CanvasGridView::setItemDelegate(DesktopItemDelegate *delegate)
 {
     QAbstractItemDelegate *dg = QAbstractItemView::itemDelegate();
 
@@ -1282,7 +1283,7 @@ void CanvasGridView::initUI()
     model()->setEnabledSort(false);
 
     setSelectionModel(new DFileSelectionModel(model(), this));
-    auto delegate = new DIconItemDelegate(d->fileViewHelper);
+    auto delegate = new DesktopItemDelegate(d->fileViewHelper);
     delegate->setEnabledTextShadow(true);
     delegate->setFocusTextBackgroundBorderColor(Qt::white);
     setItemDelegate(delegate);
@@ -1294,9 +1295,10 @@ void CanvasGridView::initUI()
         itemDelegate()->setIconSizeByIconSizeLevel(iconSizeLevel);
         qDebug() << "current icon size level" << itemDelegate()->iconSizeLevel();
     } else {
-        itemDelegate()->setIconSizeByIconSizeLevel(0);
+        itemDelegate()->setIconSizeByIconSizeLevel(1);
     }
     settings->endGroup();
+    itemDelegate()->updateItemSizeHint();
 
     DFMSocketInterface::instance();
 
@@ -1526,6 +1528,7 @@ void CanvasGridView::updateCanvas()
     auto inRect = d->canvasRect;
 
     auto itemSize = itemDelegate()->sizeHint(QStyleOptionViewItem(), QModelIndex());
+    qDebug() << itemSize;
 
     QMargins geometryMargins;
     geometryMargins.setLeft(inRect.left() - outRect.left());
@@ -1570,10 +1573,20 @@ void CanvasGridView::updateCanvas()
     update();
 }
 
+void CanvasGridView::setIconByLevel(int level)
+{
+    if (itemDelegate()->iconSizeLevel() == level) {
+        return;
+    }
+    itemDelegate()->setIconSizeByIconSizeLevel(level);
+    emit this->changeIconLevel(itemDelegate()->iconSizeLevel());
+    updateCanvas();
+}
+
 void CanvasGridView::increaseIcon()
 {
     // TODO: 3 is 128*128, 0,1,2,3
-    if (itemDelegate()->iconSizeLevel() >= 3) {
+    if (itemDelegate()->iconSizeLevel() >= 4) {
         return;
     }
     itemDelegate()->increaseIcon();
@@ -1739,6 +1752,14 @@ void CanvasGridView::handleContextMenuAction(int action)
         emit autoAlignToggled();
         break;
 
+    case IconSize0:
+    case IconSize1:
+    case IconSize2:
+    case IconSize3:
+    case IconSize4:
+        setIconByLevel(action - IconSize0);
+        break;
+
     case MenuAction::Name:
     case MenuAction::Size:
     case MenuAction::Type:
@@ -1805,6 +1826,24 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     }
 
     auto *pasteAction = menu->actionAt(DFileMenuManager::getActionString(MenuAction::Paste));
+
+    QMenu iconSizeMenu;
+
+    for (int i = itemDelegate()->minimumIconSizeLevel(); i <= itemDelegate()->maximumIconSizeLevel(); ++i) {
+        auto iconSize = new QAction(&iconSizeMenu);
+        iconSize->setText(itemDelegate()->iconSizeLevelDescription(i));
+        iconSize->setData(IconSize + i);
+        iconSize->setCheckable(true);
+        iconSize->setChecked(i == itemDelegate()->iconSizeLevel());
+        iconSizeMenu.addAction(iconSize);
+    }
+
+    QAction iconSizeAction(menu);
+    iconSizeAction.setText(tr("Icon size"));
+    iconSizeAction.setData(IconSize);
+    iconSizeAction.setMenu(&iconSizeMenu);
+    menu->insertAction(pasteAction, &iconSizeAction);
+
     QAction autoSort(menu);
     autoSort.setText(tr("Auto arrange"));
     autoSort.setData(AutoSort);
@@ -1836,7 +1875,7 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
 //}
 
     QList<QAction *>  pluginActions  = DFileMenuManager::loadEmptyAreaPluginMenu(menu, model()->rootUrl());
-    QList<QAction *>  extensionActions = DFileMenuManager::loadEmptyAreaExtensionMenu(menu, model()->rootUrl());
+    /*QList<QAction *>  extensionActions = */DFileMenuManager::loadEmptyAreaExtensionMenu(menu, model()->rootUrl());
 
     if (pluginActions.count() > 0) {
         QAction *separator = new QAction(menu);
@@ -1872,7 +1911,7 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     menu->setEvent(event);
 
     connect(menu, &DFileMenu::triggered, this, [ = ](QAction * action) {
-        qDebug() << action->data();
+        qDebug() << "trigger action" << action->data();
         if (!action->data().isValid()) {
             return;
         }

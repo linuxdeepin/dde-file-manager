@@ -47,7 +47,7 @@ private:
 public:
     CanvasViewPrivate()
     {
-        cellMargins = QMargins(5, 5, 5, 5);
+        cellMargins = QMargins(2, 2, 2, 2);
         selectRect = QRect(-1, -1, 1, 1);
         mousePressed = false;
         resortCount = 0;
@@ -55,15 +55,18 @@ public:
 
     void updateCanvasSize(const QSize &szSceeen, const QSize &szCanvas, const QMargins &geometryMargins, const QSize &szItem)
     {
-        QMargins miniMargin(4, 4, 4, 4);
+        QMargins miniMargin = QMargins(2, 2, 2, 2);
         auto miniCellWidth = szItem.width() + miniMargin.left() + miniMargin.right();
         colCount = (szSceeen.width() - dockReserveArea.width()) / miniCellWidth;
         cellWidth = szCanvas.width() / colCount;
 
         auto miniCellHeigh = szItem.height() + miniMargin.top() + miniMargin.bottom();
+//        qDebug() << szItem.height() << miniCellHeigh;
         rowCount = (szSceeen.height() - dockReserveArea.height()) / miniCellHeigh;
-        cellHeight = szCanvas.height() / rowCount;
 
+        cellHeight = szCanvas.height() / rowCount;
+//        qDebug() << szSceeen.height() << dockReserveArea.height()
+//                 << rowCount << cellHeight;
         updateCellMargins(szItem, QSize(cellWidth, cellHeight));
 
         auto horizontalMargin = (szCanvas.width() - cellWidth * colCount);
