@@ -97,6 +97,8 @@ DFileDialog::DFileDialog(QWidget *parent)
         if (fileInfo->isFile())
             setCurrentInputName(fileInfo->fileName());
     });
+
+    QPlatformFileDialogHelper::filterRegExp = "^(.*)\\(([^()]*)\\)$";
 }
 
 DFileDialog::~DFileDialog()
