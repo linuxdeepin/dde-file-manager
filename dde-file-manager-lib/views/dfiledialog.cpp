@@ -361,6 +361,9 @@ void DFileDialog::setFileMode(QFileDialog::FileMode mode)
     case QFileDialog::ExistingFiles:
         getFileView()->setEnabledSelectionModes(QSet<DFileView::SelectionMode>() << QAbstractItemView::ExtendedSelection);
         break;
+    case QFileDialog::DirectoryOnly:
+    case QFileDialog::Directory:
+        getFileView()->setNameFilters(QStringList("/"));
     default:
         getFileView()->setEnabledSelectionModes(QSet<DFileView::SelectionMode>() << QAbstractItemView::SingleSelection);
         break;
@@ -384,10 +387,17 @@ void DFileDialog::setAcceptMode(QFileDialog::AcceptMode mode)
         connect(getFileView()->statusBar()->comboBox(),
                 static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::activated),
                 this, &DFileDialog::selectedNameFilterChanged);
+
+        disconnect(getFileView()->statusBar()->lineEdit(), &QLineEdit::textChanged,
+                   this, &DFileDialog::onCurrentInputNameChanged);
     } else {
         getFileView()->statusBar()->setMode(DStatusBar::DialogSave);
         getFileView()->statusBar()->acceptButton()->setText(tr("Save"));
+        getFileView()->statusBar()->acceptButton()->setDisabled(getFileView()->statusBar()->lineEdit()->text().isEmpty());
         getFileView()->setSelectionMode(QAbstractItemView::SingleSelection);
+
+        connect(getFileView()->statusBar()->lineEdit(), &QLineEdit::textChanged,
+                this, &DFileDialog::onCurrentInputNameChanged);
     }
 }
 
@@ -433,6 +443,9 @@ void DFileDialog::setOptions(QFileDialog::Options options)
     d->options = options;
 
     getFileView()->model()->setReadOnly(options.testFlag(QFileDialog::ReadOnly));
+
+    if (options.testFlag(QFileDialog::ShowDirsOnly))
+        getFileView()->setFilters(getFileView()->filters() & ~QDir::Dirs);
 }
 
 void DFileDialog::setOption(QFileDialog::Option option, bool on)
@@ -712,6 +725,13 @@ void DFileDialog::onAcceptButtonClicked()
 void DFileDialog::onRejectButtonClicked()
 {
     reject();
+}
+
+void DFileDialog::onCurrentInputNameChanged()
+{
+    Q_D(DFileDialog);
+
+    getFileView()->statusBar()->acceptButton()->setDisabled(getFileView()->statusBar()->lineEdit()->text().isEmpty());
 }
 
 void DFileDialog::handleEnterPressed()
