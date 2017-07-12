@@ -420,14 +420,23 @@ void DFileViewHelper::keyboardSearch(char key)
 
     int row_count = parent()->model()->rowCount(parent()->rootIndex());
     bool reverse_order = qApp->keyboardModifiers() == Qt::ShiftModifier;
+    const QModelIndex &current_index = parent()->currentIndex();
 
-    for (int i = 0; i < row_count; ++i) {
-        const QModelIndex &index = parent()->model()->index(reverse_order ? row_count - i - 1 : i, 0, parent()->rootIndex());
+    for (int i = 1; i < row_count; ++i) {
+        int row = reverse_order ? row_count + current_index.row() - i : current_index.row() + i;
+
+        row = row % row_count;
+
+        const QModelIndex &index = parent()->model()->index(row, 0, parent()->rootIndex());
+
+        if (index == current_index)
+            continue;
+
         const QString &pinyin_name = parent()->model()->data(index, DFileSystemModel::FilePinyinName).toString();
 
         if (pinyin_name.startsWith(d->keyboardSearchKeys, Qt::CaseInsensitive)) {
             parent()->setCurrentIndex(index);
-            parent()->scrollTo(index, QAbstractItemView::PositionAtTop);
+            parent()->scrollTo(index, reverse_order ? QAbstractItemView::PositionAtBottom : QAbstractItemView::PositionAtTop);
 
             return;
         }
