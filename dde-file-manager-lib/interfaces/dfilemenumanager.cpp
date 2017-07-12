@@ -310,10 +310,11 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
                 connect(action, &QAction::triggered, appController, &AppController::actionOpenFileByApp);
             }
 
-            QAction* action = new QAction(fileMenuManger->getActionString(MenuAction::OpenWithCustom), 0);
+            QAction* action = new QAction(fileMenuManger->getActionString(MenuAction::OpenWithCustom), openWithMenu);
             action->setData((int)MenuAction::OpenWithCustom);
             openWithMenu->addAction(action);
-
+            DFileMenuData::actions[MenuAction::OpenWithCustom] = action;
+            DFileMenuData::actionToMenuAction[action] = MenuAction::OpenWithCustom;
         }
     } else {
         bool isSystemPathIncluded = false;
@@ -871,11 +872,10 @@ void DFileMenuManager::actionTriggered(QAction *action)
         if (type >= MenuAction::UserMenuAction)
             return;
 
-        if (DFileMenuData::actions.value(type) != action)
-            return;
-
-        const QSharedPointer<DFMMenuActionEvent> &event = menu->makeEvent(type);
-        DFMEventDispatcher::instance()->processEvent(event);
+        if (DFileMenuData::actions.value(type) == action) {
+            const QSharedPointer<DFMMenuActionEvent> &event = menu->makeEvent(type);
+            DFMEventDispatcher::instance()->processEvent(event);
+        }
 
 #ifdef SW_LABEL
         if (DFileMenuData::actionIDs.contains(type)){
