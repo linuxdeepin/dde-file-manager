@@ -59,6 +59,8 @@ DFileDialog::DFileDialog(QWidget *parent)
     getLeftSideBar()->setAcceptDrops(false);
 
     DFMEventDispatcher::instance()->installEventFilter(this);
+
+    QPlatformFileDialogHelper::filterRegExp = "^(.*)\\(([^()]*)\\)$";
 }
 
 DFileDialog::~DFileDialog()
