@@ -40,3 +40,13 @@ QString BookMark::getName()
 {
     return m_name;
 }
+
+QString BookMark::getDevcieId() const
+{
+    return m_devcieId;
+}
+
+void BookMark::setDevcieId(const QString &devcieId)
+{
+    m_devcieId = devcieId;
+}
