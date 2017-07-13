@@ -6,6 +6,7 @@
 #include "views/dstatusbar.h"
 #include "views/dleftsidebar.h"
 #include "views/dsearchbar.h"
+#include "views/filedialogstatusbar.h"
 
 #include <DTitlebar>
 
@@ -39,6 +40,8 @@ public:
     int currentNameFilterIndex = -1;
     QDir::Filters filters = 0;
     QString currentInputName;
+
+    FileDialogStatusBar *statusBar;
 };
 
 DFileDialog::DFileDialog(QWidget *parent)
@@ -52,6 +55,9 @@ DFileDialog::DFileDialog(QWidget *parent)
     if (titlebar())
         titlebar()->setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
 
+    d_ptr->statusBar = new FileDialogStatusBar(this);
+    centralWidget()->layout()->addWidget(d_ptr->statusBar);
+
     setAcceptMode(QFileDialog::AcceptOpen);
     handleNewView(DFileManagerWindow::getFileView());
 
@@ -61,6 +67,15 @@ DFileDialog::DFileDialog(QWidget *parent)
     DFMEventDispatcher::instance()->installEventFilter(this);
 
     QPlatformFileDialogHelper::filterRegExp = "^(.*)\\(([^()]*)\\)$";
+
+    connect(statusBar()->acceptButton(), &QPushButton::clicked, this, &DFileDialog::onAcceptButtonClicked);
+    connect(statusBar()->rejectButton(), &QPushButton::clicked, this, &DFileDialog::onRejectButtonClicked);
+    connect(statusBar()->comboBox(),
+            static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::activated),
+            this, &DFileDialog::selectNameFilter);
+    connect(statusBar()->comboBox(),
+            static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::activated),
+            this, &DFileDialog::selectedNameFilterChanged);
 }
 
 DFileDialog::~DFileDialog()
@@ -152,9 +167,9 @@ QList<QUrl> DFileDialog::selectedUrls() const
         DUrl fileUrl;
 
         if (list.isEmpty()) {
-            fileUrl = fileInfo->getUrlByChildFileName(getFileView()->statusBar()->lineEdit()->text());
+            fileUrl = fileInfo->getUrlByChildFileName(statusBar()->lineEdit()->text());
         } else {
-            fileUrl = fileInfo->getUrlByNewFileName(getFileView()->statusBar()->lineEdit()->text());
+            fileUrl = fileInfo->getUrlByNewFileName(statusBar()->lineEdit()->text());
         }
 
         return QList<QUrl>() << fileUrl;
@@ -194,9 +209,9 @@ void DFileDialog::setNameFilters(const QStringList &filters)
     d->nameFilters = filters;
 
     if (testOption(QFileDialog::HideNameFilterDetails))
-        getFileView()->statusBar()->setComBoxItems(qt_strip_filters(filters));
+        statusBar()->setComBoxItems(qt_strip_filters(filters));
     else
-        getFileView()->statusBar()->setComBoxItems(filters);
+        statusBar()->setComBoxItems(filters);
 
     if (modelCurrentNameFilter().isEmpty())
         selectNameFilter(filters.isEmpty() ? QString() : filters.first());
@@ -219,7 +234,7 @@ void DFileDialog::selectNameFilter(const QString &filter)
         key = filter;
     }
 
-    int index = getFileView()->statusBar()->comboBox()->findText(key);
+    int index = statusBar()->comboBox()->findText(key);
 
     selectNameFilterByIndex(index);
 }
@@ -238,7 +253,7 @@ QString DFileDialog::selectedNameFilter() const
 {
     Q_D(const DFileDialog);
 
-    const QComboBox *box = getFileView()->statusBar()->comboBox();
+    const QComboBox *box = statusBar()->comboBox();
 
     return box ? d->nameFilters.value(box->currentIndex()) : QString();
 }
@@ -247,15 +262,15 @@ void DFileDialog::selectNameFilterByIndex(int index)
 {
     D_D(DFileDialog);
 
-    if (index < 0 || index >= getFileView()->statusBar()->comboBox()->count())
+    if (index < 0 || index >= statusBar()->comboBox()->count())
         return;
 
-    getFileView()->statusBar()->comboBox()->setCurrentIndex(index);
+    statusBar()->comboBox()->setCurrentIndex(index);
 
     QStringList nameFilters = d->nameFilters;
 
     if (index == nameFilters.size()) {
-        QAbstractItemModel *comboModel = getFileView()->statusBar()->comboBox()->model();
+        QAbstractItemModel *comboModel = statusBar()->comboBox()->model();
         nameFilters.append(comboModel->index(comboModel->rowCount() - 1, 0).data().toString());
         setNameFilters(nameFilters);
     }
@@ -265,7 +280,7 @@ void DFileDialog::selectNameFilterByIndex(int index)
     if (d->acceptMode == QFileDialog::AcceptSave && !newNameFilters.isEmpty()) {
         QString newNameFilterExtension;
         QMimeDatabase db;
-        QString fileName = getFileView()->statusBar()->lineEdit()->text();
+        QString fileName = statusBar()->lineEdit()->text();
         const QString fileNameExtension = db.suffixForFileName(fileName);
 
         for (const QString &filter : newNameFilters) {
@@ -292,7 +307,7 @@ void DFileDialog::selectNameFilterByIndex(int index)
 
 int DFileDialog::selectedNameFilterIndex() const
 {
-    const QComboBox *box = getFileView()->statusBar()->comboBox();
+    const QComboBox *box = statusBar()->comboBox();
 
     return box ? box->currentIndex() : -1;
 }
@@ -343,26 +358,17 @@ void DFileDialog::setAcceptMode(QFileDialog::AcceptMode mode)
     d->acceptMode = mode;
 
     if (mode == QFileDialog::AcceptOpen) {
-        getFileView()->statusBar()->setMode(DStatusBar::DialogOpen);
-        getFileView()->statusBar()->acceptButton()->setText(tr("Open"));
+        statusBar()->setMode(FileDialogStatusBar::Open);
         setFileMode(d->fileMode);
 
-        connect(getFileView()->statusBar()->comboBox(),
-                static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::activated),
-                this, &DFileDialog::selectNameFilter);
-        connect(getFileView()->statusBar()->comboBox(),
-                static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::activated),
-                this, &DFileDialog::selectedNameFilterChanged);
-
-        disconnect(getFileView()->statusBar()->lineEdit(), &QLineEdit::textChanged,
+        disconnect(statusBar()->lineEdit(), &QLineEdit::textChanged,
                    this, &DFileDialog::onCurrentInputNameChanged);
     } else {
-        getFileView()->statusBar()->setMode(DStatusBar::DialogSave);
-        getFileView()->statusBar()->acceptButton()->setText(tr("Save"));
-        getFileView()->statusBar()->acceptButton()->setDisabled(getFileView()->statusBar()->lineEdit()->text().isEmpty());
+        statusBar()->setMode(FileDialogStatusBar::Save);
+        statusBar()->acceptButton()->setDisabled(statusBar()->lineEdit()->text().isEmpty());
         getFileView()->setSelectionMode(QAbstractItemView::SingleSelection);
 
-        connect(getFileView()->statusBar()->lineEdit(), &QLineEdit::textChanged,
+        connect(statusBar()->lineEdit(), &QLineEdit::textChanged,
                 this, &DFileDialog::onCurrentInputNameChanged);
     }
 }
@@ -378,10 +384,10 @@ void DFileDialog::setLabelText(QFileDialog::DialogLabel label, const QString &te
 {
     switch (static_cast<int>(label)) {
     case QFileDialog::Accept:
-        getFileView()->statusBar()->acceptButton()->setText(text);
+        statusBar()->acceptButton()->setText(text);
         break;
     case QFileDialog::Reject:
-        getFileView()->statusBar()->rejectButton()->setText(text);
+        statusBar()->rejectButton()->setText(text);
         break;
     default:
         break;
@@ -392,9 +398,9 @@ QString DFileDialog::labelText(QFileDialog::DialogLabel label) const
 {
     switch (static_cast<int>(label)) {
     case QFileDialog::Accept:
-        return getFileView()->statusBar()->acceptButton()->text();
+        return statusBar()->acceptButton()->text();
     case QFileDialog::Reject:
-        return getFileView()->statusBar()->rejectButton()->text();
+        return statusBar()->rejectButton()->text();
     default:
         break;
     }
@@ -444,19 +450,19 @@ QFileDialog::Options DFileDialog::options() const
 
 void DFileDialog::setCurrentInputName(const QString &name)
 {
-    if (!getFileView()->statusBar()->lineEdit())
+    if (!statusBar()->lineEdit())
         return;
 
-    getFileView()->statusBar()->lineEdit()->setText(name);
+    statusBar()->lineEdit()->setText(name);
 
     QMimeDatabase db;
 
     const QString &suffix = db.suffixForFileName(name);
 
     if (suffix.isEmpty())
-        getFileView()->statusBar()->lineEdit()->selectAll();
+        statusBar()->lineEdit()->selectAll();
     else
-        getFileView()->statusBar()->lineEdit()->setSelection(0, name.length() - suffix.length() - 1);
+        statusBar()->lineEdit()->setSelection(0, name.length() - suffix.length() - 1);
 }
 
 DFileView *DFileDialog::getFileView() const
@@ -542,6 +548,8 @@ void DFileDialog::showEvent(QShowEvent *event)
     }
 
     activateWindow();
+
+    windowHandle()->installEventFilter(this);
 }
 
 void DFileDialog::closeEvent(QCloseEvent *event)
@@ -562,14 +570,14 @@ void DFileDialog::closeEvent(QCloseEvent *event)
 
 bool DFileDialog::eventFilter(QObject *watched, QEvent *event)
 {
-    if (watched == getFileView() && event->type() == QEvent::KeyPress) {
+    if (watched == windowHandle() && event->type() == QEvent::KeyPress) {
         QKeyEvent *e = static_cast<QKeyEvent*>(event);
 
         if (e->modifiers() == Qt::ControlModifier
                 && (e->key() == Qt::Key_T
                     || e->key() == Qt::Key_W)) {
             return true;
-        } else if (e->modifiers() == Qt::NoModifier) {
+        } else if (e->modifiers() == Qt::NoModifier || e->modifiers() == Qt::KeypadModifier) {
             if (e == QKeySequence::Cancel)
                 close();
             else if (e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return)
@@ -656,13 +664,14 @@ bool DFileDialog::fmEventFilter(const QSharedPointer<DFMEvent> &event, DFMAbstra
     Q_UNUSED(target)
     Q_UNUSED(resultData)
 
-    if (event->type() == DFMEvent::OpenFile) {
-        onAcceptButtonClicked();
-        return true;
-    }
-
     if (!isActiveWindow())
         return false;
+
+    if (event->type() == DFMEvent::OpenFile) {
+        onAcceptButtonClicked();
+
+        return true;
+    }
 
     switch (event->type()) {
     case DFMEvent::OpenFile:
@@ -695,20 +704,12 @@ void DFileDialog::handleNewView(DFMBaseView *view)
         // sava data
         d->currentNameFilterIndex = selectedNameFilterIndex();
         d->filters = filter();
-        d->currentInputName = getFileView()->statusBar()->lineEdit()->text();
+        d->currentInputName = statusBar()->lineEdit()->text();
 
         return;
     }
 
     d->view = fileView;
-
-    setAcceptMode(d->acceptMode);
-
-    DStatusBar *statusBar = fileView->statusBar();
-
-    statusBar->rejectButton()->setText(tr("Cancel"));
-    connect(statusBar->acceptButton(), &QPushButton::clicked, this, &DFileDialog::onAcceptButtonClicked);
-    connect(statusBar->rejectButton(), &QPushButton::clicked, this, &DFileDialog::onRejectButtonClicked);
 
     QSet<DFMGlobal::MenuAction> whitelist;
 
@@ -722,7 +723,6 @@ void DFileDialog::handleNewView(DFMBaseView *view)
     fileView->setMenuActionWhitelist(whitelist);
     fileView->setDragEnabled(false);
     fileView->setDragDropMode(QAbstractItemView::NoDragDrop);
-    fileView->installEventFilter(this);
 
     connect(fileView->selectionModel(), &QItemSelectionModel::selectionChanged,
             this, &DFileDialog::selectionFilesChanged);
@@ -761,12 +761,19 @@ void DFileDialog::handleNewView(DFMBaseView *view)
         setCurrentInputName(d->currentInputName);
 }
 
+FileDialogStatusBar *DFileDialog::statusBar() const
+{
+    D_DC(DFileDialog);
+
+    return d->statusBar;
+}
+
 void DFileDialog::onAcceptButtonClicked()
 {
     D_DC(DFileDialog);
 
     if (d->acceptMode == QFileDialog::AcceptSave) {
-        if (!getFileView()->statusBar()->lineEdit()->text().isEmpty())
+        if (!statusBar()->lineEdit()->text().isEmpty())
             accept();
         return;
     }
@@ -817,8 +824,8 @@ void DFileDialog::onCurrentInputNameChanged()
 {
     Q_D(DFileDialog);
 
-    d->currentInputName = getFileView()->statusBar()->lineEdit()->text();
-    getFileView()->statusBar()->acceptButton()->setDisabled(d->currentInputName.isEmpty());
+    d->currentInputName = statusBar()->lineEdit()->text();
+    statusBar()->acceptButton()->setDisabled(d->currentInputName.isEmpty());
 }
 
 void DFileDialog::handleEnterPressed()
@@ -831,6 +838,6 @@ void DFileDialog::handleEnterPressed()
                 return;
         }
 
-        getFileView()->statusBar()->acceptButton()->animateClick();
+        statusBar()->acceptButton()->animateClick();
     }
 }

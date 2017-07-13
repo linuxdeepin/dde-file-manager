@@ -61,6 +61,34 @@ QFrame#LeftSideDiskBar{
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
+FileDialogStatusBar {
+    background-color: #f9f9fa;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+QLabel#FileDialogStatusBarContentLabel {
+    color: #797979;
+}
+
+QPushButton#FileDialogStatusBarAcceptButton {
+    color: #2ca7f8;
+    border: 1px solid #2ca7f8;
+    border-radius: 4px;
+    background: qlineargradient(x1: 0, y1: 0 x2: 0, y2: 1, stop:0 rgba(255, 255, 255, 0.4), stop:1 rgba(253, 253, 253, 0.4));
+}
+
+QPushButton#FileDialogStatusBarAcceptButton:hover {
+    background: qlineargradient(x1: 0, y1: 0 x2: 0, y2: 1, stop:0 "#8ccfff", stop:1 "#4bb8ff");
+    color: "#fff";
+    border: 1px solid rgba(0, 117, 243, 0.2);
+}
+
+QPushButton#FileDialogStatusBarAcceptButton:pressed {
+    background: qlineargradient(x1: 0, y1: 0 x2: 0, y2: 1, stop:0 "#0b8cff", stop:1 "#0aa1ff");
+    color: "#fff";
+    border: 1px solid rgba(29, 129, 255, 0.3);
+}
+
 QFrame#ToolBar{
     background-color: transparent;
 }
