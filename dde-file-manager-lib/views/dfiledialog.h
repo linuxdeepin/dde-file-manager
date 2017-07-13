@@ -10,6 +10,7 @@
 DFM_USE_NAMESPACE
 
 class DFileDialogPrivate;
+class FileDialogStatusBar;
 class DFileDialog : public DFileManagerWindow
 {
     Q_OBJECT
@@ -87,6 +88,7 @@ protected:
 
 private:
     void handleNewView(DFMBaseView *view) Q_DECL_OVERRIDE;
+    FileDialogStatusBar *statusBar() const;
 
     void onAcceptButtonClicked();
     void onRejectButtonClicked();

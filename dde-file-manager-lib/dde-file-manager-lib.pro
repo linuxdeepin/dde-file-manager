@@ -202,7 +202,8 @@ HEADERS += \
     interfaces/plugins/dfmfilecontrollerplugin.h \
     interfaces/plugins/dfmfilecontrollerfactory.h \
     interfaces/plugins/dfmgenericplugin.h \
-    interfaces/plugins/dfmgenericfactory.h
+    interfaces/plugins/dfmgenericfactory.h \
+    views/filedialogstatusbar.h
 SOURCES += \
     controllers/appcontroller.cpp \
     views/dleftsidebar.cpp \
@@ -331,7 +332,8 @@ SOURCES += \
     interfaces/plugins/dfmfilecontrollerplugin.cpp \
     interfaces/plugins/dfmfilecontrollerfactory.cpp \
     interfaces/plugins/dfmgenericplugin.cpp \
-    interfaces/plugins/dfmgenericfactory.cpp
+    interfaces/plugins/dfmgenericfactory.cpp \
+    views/filedialogstatusbar.cpp
 
 INCLUDEPATH += $$PWD/../ $$PWD/../utils/ $$PWD/interfaces/ $$PWD/interfaces/plugins $$PWD/../dde-file-manager-plugins/plugininterfaces/
 
