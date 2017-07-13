@@ -22,14 +22,15 @@ public:
     void setDateTime(QDateTime time);
     void setName(const QString &name);
     QString getName();
+    QString getDevcieId() const;
+    void setDevcieId(const QString &devcieId);
 
 private:
     QDateTime m_time;
     QString m_name;
+    QString m_devcieId;
 
     // AbstractFileInfo interface
-public:
-
 };
 
 #endif // BOOKMARK_H

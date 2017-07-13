@@ -15,14 +15,17 @@
 #include "dfmevent.h"
 #include "app/filesignalmanager.h"
 #include "deviceinfo/udisklistener.h"
+#include "dialogs/dialogmanager.h"
 
 #include "singleton.h"
+#include <ddialog.h>
 
 #include <QDebug>
 #include <QGraphicsView>
 #include <QMimeData>
 #include <QDir>
 
+DWIDGET_USE_NAMESPACE
 DFM_USE_NAMESPACE
 
 DBookmarkScene::DBookmarkScene(QObject *parent)
@@ -450,12 +453,12 @@ void DBookmarkScene::setCurrentUrl(DUrl url)
         {
             item->setChecked(true);
             return;
-        }else if (DUrl::childrenList(url).contains(itemUrl)){
-            if (item->isDiskItem()){
+        }/*else if (DUrl::childrenList(url).contains(itemUrl)){
+            if (item->isDiskItem() && ){
                 item->setHighlightDisk(true);
                 return;
             }
-        }
+        }*/
     }
 }
 
@@ -519,6 +522,7 @@ void DBookmarkScene::doBookmarkRenamed(const QString &newname,const DFMEvent &ev
 void DBookmarkScene::doBookmarkAdded(const QString &name, const DFMEvent &event)
 {
     DBookmarkItem * item = createCustomBookmark(name, event.fileUrl());
+    item->setIsCustomBookmark(true);
     item->setBookmarkModel(bookmarkManager->getBookmarks().at(0));
 
     int insertIndex  = getCustomBookmarkItemInsertIndex();
@@ -613,10 +617,22 @@ void DBookmarkScene::mountAdded(UDiskDeviceInfoPointer device)
         item = m_diskItems.value(device->getDiskInfo().id());
     }
     qDebug() << m_delayCheckMountedItem << m_delayCheckMountedEvent;
-    if (m_delayCheckMountedItem){
+    if (m_delayCheckMountedItem && !item->getMountBookmark()){
         item->checkMountedItem(m_delayCheckMountedEvent);
+        m_delayCheckMountedItem = false;
+        return;
     }
-    m_delayCheckMountedItem = false;
+
+    for(int i = 0; i < m_itemGroup->items().size(); i++)
+    {
+        DBookmarkItem* item = m_itemGroup->items().at(i);
+        if (item->getIsCustomBookmark() && item->getMountBookmark()){
+             DUrlList urls;
+             urls << item->getUrl();
+             DFMEventDispatcher::instance()->processEventAsync<DFMOpenUrlEvent>(item, urls, DFMOpenUrlEvent::OpenInCurrentWindow);
+             item->setMountBookmark(false);
+        }
+    }
 }
 
 void DBookmarkScene::mountRemoved(UDiskDeviceInfoPointer device)

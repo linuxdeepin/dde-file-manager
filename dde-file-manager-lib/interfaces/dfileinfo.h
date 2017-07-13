@@ -2,6 +2,7 @@
 #define FILEINFO_H
 
 #include "dabstractfileinfo.h"
+#include "gvfs/qdiskinfo.h"
 
 class DFileInfoPrivate;
 class DFileInfo : public DAbstractFileInfo
@@ -76,6 +77,8 @@ public:
     QString iconName() const Q_DECL_OVERRIDE;
 
     QFileInfo toQFileInfo() const;
+
+    QDiskInfo getDiskinfo();
 
 protected:
     explicit DFileInfo(DFileInfoPrivate &dd);

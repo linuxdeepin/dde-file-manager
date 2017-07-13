@@ -29,6 +29,7 @@
 
 #include "controllers/bookmarkmanager.h"
 #include "controllers/appcontroller.h"
+#include "deviceinfo/udisklistener.h"
 #include "dfileservices.h"
 
 #include "dialogs/dialogmanager.h"
@@ -95,6 +96,26 @@ void DBookmarkItem::init()
     setTextCheckedColor(QColor("#2ca7f8"));
     setAcceptDrops(true);
     m_checkable = true;
+}
+
+bool DBookmarkItem::getIsCustomBookmark() const
+{
+    return m_isCustomBookmark;
+}
+
+void DBookmarkItem::setIsCustomBookmark(bool isCustomBookmark)
+{
+    m_isCustomBookmark = isCustomBookmark;
+}
+
+bool DBookmarkItem::getMountBookmark() const
+{
+    return m_mountBookmark;
+}
+
+void DBookmarkItem::setMountBookmark(bool mountBookmark)
+{
+    m_mountBookmark = mountBookmark;
 }
 bool DBookmarkItem::isMountedIndicator() const
 {
@@ -649,14 +670,24 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
         if(!dir.exists() && !m_isDefault)
         {
-            DFMUrlBaseEvent event(this, m_url);
-            event.setWindowId(windowId());
+            qDebug() << this << m_bookmarkModel->getDevcieId();
+            deviceListener->mount(m_bookmarkModel->getDevcieId());
+            setMountBookmark(true);
 
-            int result = dialogManager->showRemoveBookMarkDialog(event);
-            if (result == DDialog::Accepted)
-            {
-                fileSignalManager->requestBookmarkRemove(event);
-            }
+            TIMER_SINGLESHOT(500, {
+
+                                 QDir dir(this->m_url.path());
+                                 if(!dir.exists()){
+                                     DFMUrlBaseEvent event(this, this->m_url);
+                                     event.setWindowId(windowId());
+
+                                     int result = dialogManager->showRemoveBookMarkDialog(event);
+                                     if (result == DDialog::Accepted)
+                                     {
+                                         emit fileSignalManager->requestBookmarkRemove(event);
+                                     }
+                                 }
+                             }, this)
         }
         else
         {

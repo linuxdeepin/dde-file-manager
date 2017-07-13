@@ -127,6 +127,12 @@ public:
     bool isMountedIndicator() const;
     void setIsMountedIndicator(bool isMountedIndicator);
 
+    bool getMountBookmark() const;
+    void setMountBookmark(bool mountBookmark);
+
+    bool getIsCustomBookmark() const;
+    void setIsCustomBookmark(bool isCustomBookmark);
+
 signals:
 
     void clicked();
@@ -220,6 +226,9 @@ private:
     bool m_isMounted = false;
     QString m_deviceLabel;
     QString m_deviceID;
+
+    bool m_isCustomBookmark = false;
+    bool m_mountBookmark = false;
 
     /*bookmark model map */
     BookMarkPointer m_bookmarkModel;

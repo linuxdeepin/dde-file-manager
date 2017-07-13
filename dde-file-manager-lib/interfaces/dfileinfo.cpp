@@ -506,6 +506,20 @@ QFileInfo DFileInfo::toQFileInfo() const
     return d->fileInfo;
 }
 
+QDiskInfo DFileInfo::getDiskinfo()
+{
+    QDiskInfo info;
+    qDebug() << this->filePath();
+    UDiskDeviceInfoPointer uDiskDeviceInfoPointer = deviceListener->getDeviceByPath(this->filePath());
+    if(!uDiskDeviceInfoPointer){
+        uDiskDeviceInfoPointer = deviceListener->getDeviceByFilePath(this->filePath());
+    }
+    if (uDiskDeviceInfoPointer){
+        info = uDiskDeviceInfoPointer->getDiskInfo();
+    }
+    return info;
+}
+
 DFileInfo::DFileInfo(DFileInfoPrivate &dd)
     : DAbstractFileInfo(dd)
 {

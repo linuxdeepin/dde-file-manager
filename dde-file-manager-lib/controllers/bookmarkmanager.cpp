@@ -15,6 +15,7 @@
 #include <stdlib.h>
 
 #include "shutil/fileutils.h"
+#include "deviceinfo/udisklistener.h"
 
 
 BookMarkManager::BookMarkManager(QObject *parent)
@@ -85,7 +86,14 @@ void BookMarkManager::loadJson(const QJsonObject &json)
         QString time = object["t"].toString();
         QString name = object["n"].toString();
         QString url = object["u"].toString();
+
+        QString deviceID = object["deviceID"].toString();
+        if (deviceID.isEmpty()){
+            DFileInfo info(url);
+            deviceID = info.getDiskinfo().id();
+        }
         BookMarkPointer bm(new BookMark(QDateTime::fromString(time), name, DUrl(url)));
+        bm->setDevcieId(deviceID);
         m_bookmarks.append(bm);
     }
 }
@@ -99,6 +107,13 @@ void BookMarkManager::writeJson(QJsonObject &json)
         object["t"] = m_bookmarks.at(i)->getDateTime().toString();
         object["n"] = m_bookmarks.at(i)->getName();
         object["u"] = m_bookmarks.at(i)->getUrl().toString();
+
+        QString deviceID = m_bookmarks.at(i)->getDiskinfo().id();
+        if (deviceID.isEmpty()){
+            DFileInfo info(m_bookmarks.at(i)->getUrl());
+            deviceID = info.getDiskinfo().id();
+        }
+        object["deviceID"] = deviceID;
         localArray.append(object);
     }
     json["Bookmark"] = localArray;
