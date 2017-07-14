@@ -769,6 +769,8 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
             jobConflicted();
         }else if (isTargetExists && m_skipandApplyToAll){
             return false;
+        }else{
+            m_isSkip = false;
         }
     }
 
@@ -1037,6 +1039,8 @@ bool FileJob::copyFileByGio(const QString &srcFile, const QString &tarDir, bool 
             }
         }else if (isTargetExists && m_skipandApplyToAll){
             return false;
+        }else{
+            m_isSkip = false;
         }
     }
 
@@ -1181,6 +1185,8 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
             jobConflicted();
         }else if (isTargetExists && m_skipandApplyToAll){
             return false;
+        }else{
+            m_isSkip = false;
         }
     }
 
@@ -1377,6 +1383,8 @@ bool FileJob::moveFileByGio(const QString &srcFile, const QString &tarDir, QStri
             jobConflicted();
         }else if (isTargetExists && m_skipandApplyToAll){
             return false;
+        }else{
+            m_isSkip = false;
         }
     }
 
@@ -1395,30 +1403,33 @@ bool FileJob::moveFileByGio(const QString &srcFile, const QString &tarDir, QStri
         {
             case FileJob::Started:
             {
-                if (m_isSkip){
+                if (isTargetExists){
 
-                    if(!m_applyToAll)
-                        m_isSkip = false;
+                    if (m_isSkip){
 
-                    return true;
-                }
+                        if(!m_applyToAll)
+                            m_isSkip = false;
 
-                if(m_isCoExisted && !m_isReplaced)
-                {
-                    m_tarPath = checkDuplicateName(m_tarPath + "/" + m_srcFileName);
+                        return true;
+                    }
 
-                    if(!m_applyToAll)
-                        m_isCoExisted = true;
-                }
+                    if(m_isCoExisted && !m_isReplaced)
+                    {
+                        m_tarPath = checkDuplicateName(m_tarPath + "/" + m_srcFileName);
 
-                if (m_isReplaced){
+                        if(!m_applyToAll)
+                            m_isCoExisted = true;
+                    }
 
-                    m_tarPath = m_tarPath + "/" + m_srcFileName;
+                    if (m_isReplaced){
 
-                    flags = static_cast<GFileCopyFlags>(flags | G_FILE_COPY_OVERWRITE);
+                        m_tarPath = m_tarPath + "/" + m_srcFileName;
 
-                    if(!m_applyToAll)
-                        m_isReplaced = false;
+                        flags = static_cast<GFileCopyFlags>(flags | G_FILE_COPY_OVERWRITE);
+
+                        if(!m_applyToAll)
+                            m_isReplaced = false;
+                    }
                 }
 
                 std::string std_srcPath = m_srcPath.toStdString();
