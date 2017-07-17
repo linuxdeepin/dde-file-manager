@@ -1058,19 +1058,22 @@ DUrl DAbstractFileInfo::toLocalFile() const
 
 bool DAbstractFileInfo::canDrop() const
 {
-
-    if (isDir()){
+    if (isDir()) {
         return true;
     }
 
-    DAbstractFileInfoPointer info = fileService->createFileInfo(Q_NULLPTR, fileUrl());
+    DAbstractFileInfoPointer info(const_cast<DAbstractFileInfo*>(this));
+
     while (info->isSymLink()) {
-        DUrl targetUrl = info->symLinkTarget();
-        if (targetUrl == fileUrl()){
+        const DUrl &targetUrl = info->symLinkTarget();
+
+        if (targetUrl == fileUrl()) {
             break;
         }
+
         info = fileService->createFileInfo(Q_NULLPTR, targetUrl);
-        if (!info){
+
+        if (!info) {
             return false;
         }
     }

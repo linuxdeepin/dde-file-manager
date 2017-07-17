@@ -456,7 +456,7 @@ DUrlList DFileService::pasteFile(const QObject *sender, DFMGlobal::ClipboardActi
 
 bool DFileService::restoreFile(const QObject *sender, const DUrlList &list) const
 {
-    return DFMEventDispatcher::instance()->processEvent<DFMRestoreFromTrashEvent>(sender, list).toBool();
+    return DFMEventDispatcher::instance()->processEventWithEventLoop<DFMRestoreFromTrashEvent>(sender, list).toBool();
 }
 
 bool DFileService::newFolder(const QObject *sender, const DUrl &targetUrl) const
