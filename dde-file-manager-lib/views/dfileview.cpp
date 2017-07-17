@@ -1377,7 +1377,7 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
 {
     D_D(DFileView);
 
-    d->dragMoveHoverIndex = indexAt(event->pos());
+    d->dragMoveHoverIndex = d->fileViewHelper->isEmptyArea(event->pos()) ? QModelIndex() : indexAt(event->pos());
 
     if (d->dragMoveHoverIndex.isValid()) {
         const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(d->dragMoveHoverIndex);
@@ -1433,7 +1433,7 @@ void DFileView::dropEvent(QDropEvent *event)
 
         event->accept(); // yeah! we've done with XDS so stop Qt from further event propagation.
     } else {
-        QModelIndex index = indexAt(event->pos());
+        QModelIndex index = d->fileViewHelper->isEmptyArea(event->pos()) ? QModelIndex() : indexAt(event->pos());
 
         if (!index.isValid())
             index = rootIndex();
