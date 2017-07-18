@@ -9,6 +9,7 @@
 #include "../app/filesignalmanager.h"
 #include "interfaces/dfmglobal.h"
 #include "dfmstandardpaths.h"
+#include "partman/partition.h"
 
 #ifdef SW_LABEL
 #include "sw_label/llsdeepinlabellibrary.h"
@@ -729,6 +730,33 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
 
 
     qDebug() << "copy file by qtio" << srcFile << tarDir << isMoved;
+    QFileInfo srcFileInfo(srcFile);
+
+    qint64 threshold = srcFileInfo.size() / 1024;
+    threshold = threshold / 1024;
+    threshold = threshold / 1024;
+
+    if (threshold >= 4 ){
+        UDiskDeviceInfoPointer pDesDevice;
+        UDiskDeviceInfoPointer pDesDevice1 = deviceListener->getDeviceByPath(tarDir);
+        UDiskDeviceInfoPointer pDesDevice2 = deviceListener->getDeviceByFilePath(tarDir);
+        if (pDesDevice1 || pDesDevice2){
+            if (pDesDevice1){
+                pDesDevice = pDesDevice1;
+            }
+            if (pDesDevice2){
+                pDesDevice = pDesDevice2;
+            }
+            if (pDesDevice){
+                QString devicePath = pDesDevice->getDiskInfo().unix_device();
+                QString fstype = PartMan::Partition::getPartitionByDevicePath(devicePath).fs();
+                if (fstype == "vfat" ){
+                    emit fileSignalManager->show4GFat32Dialog();
+                    return false;
+                }
+            }
+        }
+    }
 
     if (m_isAborted)
         return false;
@@ -738,7 +766,6 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
         m_status = Started;
     }
 
-    QFileInfo srcFileInfo(srcFile);
     QFileInfo tarDirInfo(tarDir);
     m_srcFileName = srcFileInfo.fileName();
     m_tarDirName = tarDirInfo.fileName();

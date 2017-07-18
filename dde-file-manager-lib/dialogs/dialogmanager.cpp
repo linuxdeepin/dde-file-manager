@@ -114,6 +114,8 @@ void DialogManager::initConnect()
             this, &DialogManager::showDiskErrorDialog);
     connect(fileSignalManager, &FileSignalManager::showAboutDialog,
             this, &DialogManager::showAboutDialog);
+    connect(fileSignalManager, &FileSignalManager::show4GFat32Dialog,
+            this, &DialogManager::show4gFat32Dialog);
 
     connect(fileSignalManager, &FileSignalManager::requestShowFilePreviewDialog, this, &DialogManager::showFilePreviewDialog);
 
@@ -652,6 +654,15 @@ void DialogManager::showDiskSpaceOutOfUsedDialog()
         d.move(rect.x(), rect.y());
         d.exec();
     });
+}
+
+void DialogManager::show4gFat32Dialog()
+{
+    DDialog d;
+    d.setTitle(tr("Failed, file size must be less than 4GB."));
+    d.setIcon(QIcon(":/images/dialogs/images/dialog_warning_64.png"));
+    d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
+    d.exec();
 }
 
 void DialogManager::showFailToCreateSymlinkDialog(const QString& errorString)

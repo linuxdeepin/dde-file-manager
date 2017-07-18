@@ -177,6 +177,9 @@ signals:
     /*show file preview dialog*/
     void requestShowFilePreviewDialog(const QSharedPointer<DFMUrlListBaseEvent> &event);
 
+    /*show 4G warning dialog if file copy to removal devicve which type is fat32*/
+    void show4GFat32Dialog();
+
 #ifdef SW_LABEL
     /*copy/move/delete fail job show */
     void jobFailed(int nRet, const QString &jobType, const QString& srcFileName);
