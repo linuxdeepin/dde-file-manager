@@ -1721,6 +1721,9 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
                             if (!result) {
                                 result = QProcess::execute("rm -r \"" + tarFile.toUtf8() + "\"") == 0;
                             }
+
+                            if (!result)
+                                return false;
                         }else if (toInfo.isFile()){
                             to.remove();
 //                            qDebug() << to.error() << to.errorString();

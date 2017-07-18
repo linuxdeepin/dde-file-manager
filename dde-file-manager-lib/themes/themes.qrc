@@ -7,5 +7,6 @@
         <file>light/PreviewDialogDefault.theme</file>
         <file>light/MusicPreviewDialog.theme</file>
         <file>light/DocPreviewDialog.theme</file>
+        <file>light/FilePreviewDialog.theme</file>
     </qresource>
 </RCC>

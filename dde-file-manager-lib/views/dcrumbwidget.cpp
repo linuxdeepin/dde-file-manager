@@ -142,9 +142,6 @@ void DCrumbWidget::addCrumb(const QStringList &list)
 
 void DCrumbWidget::setCrumb(const DUrl &url)
 {
-
-    DFileManagerWindow* w = qobject_cast<DFileManagerWindow*>(WindowManager::getWindowById(window()->winId()));
-
     if(!url.isValid())
         return;
     m_url = url;
