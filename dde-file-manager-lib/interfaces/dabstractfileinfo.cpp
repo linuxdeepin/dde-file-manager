@@ -31,6 +31,7 @@
 #include <QJsonObject>
 #include <QStandardPaths>
 #include <QLocale>
+#include <QThread>
 
 #ifdef SW_LABEL
 #include "sw_label/filemanagerlibrary.h"
@@ -72,7 +73,8 @@ DAbstractFileInfoPrivate::DAbstractFileInfoPrivate(const DUrl &url, DAbstractFil
     : q_ptr(qq)
     , fileUrl(url)
 {
-    if (hasCache) {
+    //###(zccrs): 只在主线程中开启缓存，防止不同线程中持有同一对象时的竞争问题
+    if (hasCache && QThread::currentThread() == qApp->thread()) {
         QWriteLocker locker(urlToFileInfoMapLock);
         Q_UNUSED(locker)
 
@@ -114,6 +116,10 @@ void DAbstractFileInfoPrivate::setUrl(const DUrl &url, bool hasCache)
 
 DAbstractFileInfo *DAbstractFileInfoPrivate::getFileInfo(const DUrl &fileUrl)
 {
+    //###(zccrs): 只在主线程中开启缓存，防止不同线程中持有同一对象时的竞争问题
+    if (QThread::currentThread() != qApp->thread())
+        return 0;
+
     return urlToFileInfoMap.value(fileUrl);
 }
 

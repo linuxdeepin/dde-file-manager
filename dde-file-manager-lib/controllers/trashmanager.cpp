@@ -248,10 +248,13 @@ bool TrashManager::restoreTrashFile(const DUrlList &fileUrl, const DFMEvent &eve
     bool ok = true;
 
     for(const DUrl &url : fileUrl) {
-        TrashFileInfo info(url);
+        //###(zccrs): 必须通过 DAbstractFileInfoPointer 使用
+        //            因为对象会被缓存，所以有可能在其它线程中被使用
+        //            如果直接定义一个TrashFileInfo对象，就可能存在对象被重复释放
+        QExplicitlySharedDataPointer<TrashFileInfo> info(new TrashFileInfo(url));
 
         const_cast<DFMEvent &>(event) << url;
-        info.restore(event);
+        info->restore(event);
     }
 
     return ok;
@@ -259,7 +262,6 @@ bool TrashManager::restoreTrashFile(const DUrlList &fileUrl, const DFMEvent &eve
 
 bool TrashManager::restoreAllTrashFile(const DFMEvent &event)
 {
-
     DUrl fileUrl = event.fileUrlList().at(0);
     const QString &path = fileUrl.path();
 
