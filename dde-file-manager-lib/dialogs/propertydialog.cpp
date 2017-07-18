@@ -697,7 +697,6 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
 {
     QFrame *widget = new QFrame(this);
     SectionKeyLabel* sizeSectionLabel = new SectionKeyLabel(QObject::tr("Size"));
-    SectionKeyLabel* fileAmountSectionLabel = new SectionKeyLabel(QObject::tr("Contains"));
     SectionKeyLabel* typeSectionLabel = new SectionKeyLabel(QObject::tr("Type"));
     SectionKeyLabel* TimeCreatedSectionLabel = new SectionKeyLabel(QObject::tr("Time read"));
     SectionKeyLabel* TimeModifiedSectionLabel = new SectionKeyLabel(QObject::tr("Time modified"));
@@ -707,7 +706,6 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
     SectionValueLabel* typeLabel = new SectionValueLabel(info->mimeTypeDisplayName());
     SectionValueLabel* timeCreatedLabel = new SectionValueLabel(info->lastReadDisplayName());
     SectionValueLabel* timeModifiedLabel = new SectionValueLabel(info->lastModifiedDisplayName());
-    SectionValueLabel* executableLabel = new SectionValueLabel(tr("Allow to execute as program"));
 
 
     QFormLayout *layout = new QFormLayout;
@@ -717,6 +715,7 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
     if (info->isFile()){
         layout->addRow(sizeSectionLabel, sizeLabel);
     }else{
+        SectionKeyLabel* fileAmountSectionLabel = new SectionKeyLabel(QObject::tr("Contains"));
         layout->addRow(sizeSectionLabel, m_folderSizeLabel);
         layout->addRow(fileAmountSectionLabel, sizeLabel);
     }
@@ -734,6 +733,7 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
         if(info->permission(QFile::ExeUser) || info->permission(QFile::ExeGroup) || info->permission(QFile::ExeOther)){
             m_executableCheckBox->setChecked(true);
         }
+        SectionValueLabel* executableLabel = new SectionValueLabel(tr("Allow to execute as program"));
         layout->addRow(m_executableCheckBox, executableLabel);
     }
     layout->setContentsMargins(0, 0, 40, 0);

@@ -76,8 +76,12 @@ bool DFMViewFactory::viewIsSuitedWithUrl(const DFMBaseView *view, const DUrl &ur
         key_list << url.scheme() + "://";
 
         for (const QString &key : key_list) {
-            if (loader()->indexOf(key) == index)
-                return true;
+            int i = loader()->indexOf(key);
+
+            if (i < 0)
+                continue;
+
+            return i == index;
         }
     }
 

@@ -20,6 +20,7 @@
 #include "singleton.h"
 #include "dfileservices.h"
 #include "dfmgenericfactory.h"
+#include "dialogs/filepreviewdialog.h"
 
 #include <QTimer>
 #include <QAction>
@@ -474,6 +475,27 @@ bool DFileViewHelper::isEmptyArea(const QPoint &pos) const
     }
 
     return true;
+}
+
+void DFileViewHelper::showPreviewFileDialog()
+{
+    DUrlList list;
+
+    for (const DUrl &url : selectedUrls()) {
+        const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, url);
+
+        if (info && info->isFile())
+            list << url;
+    }
+
+    if (list.isEmpty())
+        return;
+
+    FilePreviewDialog *dialog = new FilePreviewDialog(list, parent());
+
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    dialog->setModal(true);
+    dialog->show();
 }
 
 void DFileViewHelper::handleCommitData(QWidget *editor) const

@@ -63,6 +63,8 @@ public:
     void keyboardSearch(char key);
     bool isEmptyArea(const QPoint &pos) const;
 
+    void showPreviewFileDialog();
+
 public slots:
     void handleCommitData(QWidget *editor) const;
 
