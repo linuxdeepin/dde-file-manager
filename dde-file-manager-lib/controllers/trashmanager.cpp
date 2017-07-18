@@ -231,9 +231,12 @@ bool TrashManager::restoreTrashFile(const DUrlList &list)
             return restoreTrashFile(list);
         }
 
-        TrashFileInfo info(url);
+        //###(zccrs): 必须通过 DAbstractFileInfoPointer 使用
+        //            因为对象会被缓存，所以有可能在其它线程中被使用
+        //            如果直接定义一个TrashFileInfo对象，就可能存在对象被重复释放
+        QExplicitlySharedDataPointer<TrashFileInfo> info(new TrashFileInfo(url));
 
-        ok = ok && info.restore();
+        ok = ok && info->restore();
     }
 
     return ok;
