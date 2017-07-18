@@ -133,6 +133,10 @@ void FileIconItem::setBorderColor(QColor borderColor)
 void FileIconItem::popupEditContentMenu()
 {
     QMenu *menu = edit->createStandardContextMenu();
+
+    if (!menu)
+        return;
+
     QAction *undo_action = menu->findChild<QAction*>(QStringLiteral("edit-undo"));
     QAction *redo_action = menu->findChild<QAction*>(QStringLiteral("edit-redo"));
 
