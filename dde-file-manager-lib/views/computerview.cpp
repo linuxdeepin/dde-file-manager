@@ -73,14 +73,19 @@ ComputerViewItem::ComputerViewItem(QWidget *parent):
     FileIconItem(parent)
 {
     getTextEdit()->setReadOnly(true);
+    getTextEdit()->setAttribute(Qt::WA_TransparentForMouseEvents);
     getTextEdit()->setTextInteractionFlags(Qt::NoTextInteraction);
     getTextEdit()->setStyleSheet("border:1px solid red");
 
-    progressLine = new ProgressLine(this);
-    progressLine->setAlignment(Qt::AlignHCenter);
-    progressLine->setFrameShape(QFrame::NoFrame);
-    progressLine->setFixedSize(width(), 2);
-    progressLine->hide();
+
+    m_sizeLabel = new QLabel(this);
+    m_sizeLabel->hide();
+
+    m_progressLine = new ProgressLine(this);
+    m_progressLine->setAlignment(Qt::AlignHCenter);
+    m_progressLine->setFrameShape(QFrame::NoFrame);
+    m_progressLine->setFixedSize(width(), 2);
+    m_progressLine->hide();
 
     connect(qApp, &DApplication::iconThemeChanged, this, &ComputerViewItem::updateStatus);
 }
@@ -188,6 +193,25 @@ void ComputerViewItem::mouseDoubleClickEvent(QMouseEvent *event)
 
 }
 
+bool ComputerViewItem::event(QEvent *event)
+{
+    if(event->type() == QEvent::Resize) {
+        updateEditorGeometry();
+        resize(width(), getIconLabel()->height() + getTextEdit()->height() + ICON_MODE_ICON_SPACING + 50);
+        adjustPosition();
+        return true;
+    }
+    return FileIconItem::event(event);
+}
+
+void ComputerViewItem::adjustPosition()
+{
+    m_sizeLabel->setFixedWidth(this->width());
+    m_sizeLabel->setAlignment(Qt::AlignCenter);
+    m_sizeLabel->move(0, getTextEdit()->y() + getTextEdit()->height());
+    m_progressLine->move((this->width() - m_progressLine->width())/2, m_sizeLabel->y() + m_sizeLabel->height() + 3);
+}
+
 bool ComputerViewItem::checked() const
 {
     return m_checked;
@@ -224,16 +248,20 @@ void ComputerViewItem::updateStatus()
 
     if(getHasMemoryInfo()){
         updateIconPixelWidth();
-        getProgressLine()->setFixedSize(getPixelWidth(), 2);
+        m_progressLine->setFixedSize(getPixelWidth(), 2);
         const qlonglong total = m_deviceInfo->getTotal();
         const qlonglong used = total - m_deviceInfo->getFree();
-        getProgressLine()->setMax(total);
-        getProgressLine()->setValue(used);
-        if(progressLine->isHidden())
-            progressLine->show();
-        progressLine->move((this->width() - progressLine->width())/2, getIconLabel()->y() + getIconLabel()->height() + 3);
+        m_progressLine->setMax(total);
+        m_progressLine->setValue(used);
+        if(m_progressLine->isHidden())
+            m_progressLine->show();
+
+        m_sizeLabel->setText(QString("%1/%2").arg(FileUtils::formatSizeToGB(used), FileUtils::formatSizeToGB(total, true)));
+
+        m_sizeLabel->show();
+        adjustPosition();
     } else
-        getProgressLine()->setFixedHeight(0);
+        m_progressLine->setFixedHeight(0);
 }
 
 int ComputerViewItem::iconSize() const

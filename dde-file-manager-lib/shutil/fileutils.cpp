@@ -364,25 +364,40 @@ qreal dRound64(qreal num, int count = 1)
 
 QString FileUtils::formatSize( qint64 num )
 {
-    QString total;
+    QString ret;
     const qint64 kb = 1024;
     const qint64 mb = 1024 * kb;
     const qint64 gb = 1024 * mb;
     const qint64 tb = 1024 * gb;
 
     if ( num >= tb ) {
-        total = QString( "%1 TB" ).arg( sizeString(QString::number( dRound64(qreal( num ) / tb), 'f', 1 )) );
+        ret = QString( "%1 TB" ).arg( sizeString(QString::number( dRound64(qreal( num ) / tb), 'f', 1 )) );
     } else if( num >= gb ) {
-        total = QString( "%1 GB" ).arg( sizeString(QString::number( dRound64(qreal( num ) / gb), 'f', 1 )) );
+        ret = QString( "%1 GB" ).arg( sizeString(QString::number( dRound64(qreal( num ) / gb), 'f', 1 )) );
     } else if( num >= mb ) {
-        total = QString( "%1 MB" ).arg( sizeString(QString::number( dRound64(qreal( num ) / mb), 'f', 1 )) );
+        ret = QString( "%1 MB" ).arg( sizeString(QString::number( dRound64(qreal( num ) / mb), 'f', 1 )) );
     } else if( num >= kb ) {
-        total = QString( "%1 KB" ).arg( sizeString(QString::number( dRound64(qreal( num ) / kb),'f',1 )) );
+        ret = QString( "%1 KB" ).arg( sizeString(QString::number( dRound64(qreal( num ) / kb),'f',1 )) );
     } else {
-        total = QString( "%1 B" ).arg( num );
+        ret = QString( "%1 B" ).arg( num );
     }
 
-    return total;
+    return ret;
+}
+
+QString FileUtils::formatSizeToGB(qint64 num, bool isUnitVisible)
+{
+    QString ret;
+    const qint64 kb = 1024;
+    const qint64 mb = 1024 * kb;
+    const qint64 gb = 1024 * mb;
+    if (isUnitVisible){
+        ret = QString( "%1G" ).arg( sizeString(QString::number(dRound64(qreal( num ) / gb), 'f', 0 )) );
+    }else{
+        ret = QString( "%1" ).arg( sizeString(QString::number(dRound64(qreal( num ) / gb), 'f', 0 )) );
+    }
+
+    return ret;
 }
 
 QString FileUtils::newDocmentName(QString targetdir, const QString &baseName, const QString &suffix)
