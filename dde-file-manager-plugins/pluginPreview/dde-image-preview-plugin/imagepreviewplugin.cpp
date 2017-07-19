@@ -6,69 +6,88 @@
 #include <QMimeType>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QFileInfo>
+
+#include <anchors.h>
 
 #include "imageview.h"
-#include "messagetoobar.h"
 
-#include "../../../utils/utils.h"
+DWIDGET_USE_NAMESPACE
 
-#define MIN_SIZE QSize(400, 300)
+DFM_BEGIN_NAMESPACE
 
-ImagePreviewPlugin::ImagePreviewPlugin(QObject *parent)
-    : PreviewInterface(parent)
+ImagePreview::ImagePreview(QObject *parent)
+    : DFMFilePreview(parent)
 {
 }
 
-ImagePreviewPlugin::~ImagePreviewPlugin()
+ImagePreview::~ImagePreview()
 {
-    qDebug () << "delete plugin";
+    if (m_imageView)
+        m_imageView->deleteLater();
+
+    if (m_messageStatusBar)
+        m_messageStatusBar->deleteLater();
 }
 
-void ImagePreviewPlugin::init(const QString &uri)
+bool ImagePreview::canPreview(const QUrl &url) const
 {
-    m_uri = uri;
+    const QByteArray &format = QImageReader::imageFormat(url.toLocalFile());
+
+    return QImageReader::supportedImageFormats().contains(format);
 }
 
-QWidget *ImagePreviewPlugin::previewWidget()
+void ImagePreview::initialize(QWidget *window, QWidget *statusBar)
 {
-    return new ImageView(m_uri, 0);
+    Q_UNUSED(window)
+
+    m_messageStatusBar = new QLabel(statusBar);
+    m_messageStatusBar->setStyleSheet("QLabel{font-family: Helvetica;\
+                                   font-size: 12px;\
+                                   font-weight: 300;\
+                                   color: #545454;}");
+
+    AnchorsBase(m_messageStatusBar).setCenterIn(statusBar);
 }
 
-QSize ImagePreviewPlugin::previewWidgetMinSize() const
+bool ImagePreview::setFileUrl(const DUrl &url)
 {
-    return QSize(600, 400);
-}
-
-bool ImagePreviewPlugin::canPreview() const
-{
-    QUrl url(m_uri);
-
-    //check support mimetype
-    QMimeDatabase mdatabase;
-    QString mimetypeName = mdatabase.mimeTypeForFile(url.path()).name();
-    if(QImageReader::supportedMimeTypes().contains(QByteArray(mimetypeName.toLocal8Bit().data()))){
+    if (m_url == url)
         return true;
-    }
 
-    return false;
+    if (!url.isLocalFile())
+        return false;
+
+    if (!canPreview(url))
+        return false;
+
+    m_url = url;
+
+    if (!m_imageView)
+        m_imageView = new ImageView(url.toLocalFile());
+    else
+        m_imageView->setFile(url.toLocalFile());
+
+    const QSize &image_size = m_imageView->sourceSize();
+
+    m_messageStatusBar->setText(QString("%1x%2").arg(image_size.width()).arg(image_size.height()));
+    m_messageStatusBar->adjustSize();
+
+    m_title = QFileInfo(url.toLocalFile()).fileName();
+
+    Q_EMIT titleChanged();
+
+    return true;
 }
 
-QWidget *ImagePreviewPlugin::toolBarItem()
+QWidget *ImagePreview::contentWidget() const
 {
-    return new MessageTooBar(QUrl(m_uri).path());
+    return m_imageView;
 }
 
-QString ImagePreviewPlugin::pluginName() const
+QString ImagePreview::title() const
 {
-    return QString("dde-image-preview-plugin");
+    return m_title;
 }
 
-QIcon ImagePreviewPlugin::pluginLogo() const
-{
-    return QIcon();
-}
-
-QString ImagePreviewPlugin::pluginDescription() const
-{
-    return QString("Deepin image preview plugin");
-}
+DFM_END_NAMESPACE

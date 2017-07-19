@@ -16,14 +16,20 @@ DFMFilePreview::DFMFilePreview(QObject *parent)
 
 }
 
-void DFMFilePreview::initialize(QWidget *parentWidget)
+void DFMFilePreview::initialize(QWidget *window, QWidget *statusBar)
 {
-    Q_UNUSED(parentWidget)
+    Q_UNUSED(window)
+    Q_UNUSED(statusBar)
 }
 
 QWidget *DFMFilePreview::statusBarWidget() const
 {
     return 0;
+}
+
+Qt::Alignment DFMFilePreview::statusBarWidgetAlignment() const
+{
+    return Qt::AlignCenter;
 }
 
 QString DFMFilePreview::title() const

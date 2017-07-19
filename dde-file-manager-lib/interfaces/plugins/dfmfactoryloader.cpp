@@ -39,7 +39,7 @@ class DFMFactoryLoaderPrivate : public QObjectPrivate
 {
     Q_DECLARE_PUBLIC(DFMFactoryLoader)
 public:
-    DFMFactoryLoaderPrivate(){}
+    DFMFactoryLoaderPrivate();
     ~DFMFactoryLoaderPrivate();
     mutable QMutex mutex;
     QByteArray iid;
@@ -49,7 +49,21 @@ public:
     Qt::CaseSensitivity cs;
     bool rki;
     QStringList loadedPaths;
+
+    static QStringList pluginPaths;
 };
+
+QStringList DFMFactoryLoaderPrivate::pluginPaths;
+
+DFMFactoryLoaderPrivate::DFMFactoryLoaderPrivate()
+{
+    if (pluginPaths.isEmpty()) {
+        if (QT_PREPEND_NAMESPACE(qEnvironmentVariableIsEmpty)("DFM_PLUGIN_PATH"))
+            pluginPaths.append(QString::fromLocal8Bit(PLUGINDIR).split(':'));
+        else
+            pluginPaths = QString::fromLocal8Bit(qgetenv("DFM_PLUGIN_PATH")).split(':');
+    }
+}
 
 DFMFactoryLoaderPrivate::~DFMFactoryLoaderPrivate()
 {
@@ -99,7 +113,8 @@ void DFMFactoryLoader::update()
 
 #ifdef QT_SHARED
     Q_D(DFMFactoryLoader);
-    QStringList paths = QStringList() << QString::fromLocal8Bit(qgetenv("DFM_PLUGIN_PATH"));
+
+    const QStringList &paths = d->pluginPaths;
     for (int i = 0; i < paths.count(); ++i) {
         const QString &pluginDir = paths.at(i);
         // Already loaded, skip it...

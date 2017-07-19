@@ -1,21 +1,19 @@
 #ifndef IMAGEVIEW_H
 #define IMAGEVIEW_H
 
-#include <QFrame>
-#include <QImage>
+#include <QLabel>
 
-#define MIN_SIZE QSize(400, 300)
-
-class ImageView : public QFrame
+class ImageView : public QLabel
 {
     Q_OBJECT
 public:
-    explicit ImageView(const QString& file, QWidget *parent = 0);
+    explicit ImageView(const QString &fileName, QWidget *parent = 0);
 
-protected:
-    void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
+    void setFile(const QString &fileName);
+    QSize sourceSize() const;
+
 private:
-    QImage m_img;
+    QSize m_sourceSize;
 };
 
 #endif // IMAGEVIEW_H

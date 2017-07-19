@@ -343,8 +343,6 @@ SOURCES += \
     interfaces/dfmfilepreview.cpp \
     dialogs/filepreviewdialog.cpp
 
-INCLUDEPATH += $$PWD/../ $$PWD/../utils/ $$PWD/interfaces/ $$PWD/interfaces/plugins $$PWD/../dde-file-manager-plugins/plugininterfaces/
-
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 HELPSHAREDIR = $$PREFIX/share/dman/$$TARGET
 ICONDIR = $$PREFIX/share/icons/hicolor/scalable/apps

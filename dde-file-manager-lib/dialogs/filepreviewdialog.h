@@ -29,6 +29,7 @@ class FilePreviewDialog : public DAbstractDialog
 {
 public:
     explicit FilePreviewDialog(const DUrlList &list, QWidget *parent = 0);
+    ~FilePreviewDialog();
 
 private:
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
@@ -40,6 +41,8 @@ private:
     void switchToPage(int index);
     void previousPage();
     void nextPage();
+
+    void updateTitle();
 
     DUrlList m_fileList;
 

@@ -3,38 +3,44 @@
 
 #include <QWidget>
 #include <QImage>
+#include <QPointer>
 
-#include "../../plugininterfaces/preview/previewinterface.h"
+#include "dfmfilepreview.h"
+#include "durl.h"
 
-class ImagePreviewPlugin : public PreviewInterface
+QT_BEGIN_NAMESPACE
+class QLabel;
+QT_END_NAMESPACE
+
+class ImageView;
+
+DFM_BEGIN_NAMESPACE
+
+class ImagePreview : public DFMFilePreview
 {
     Q_PLUGIN_METADATA(IID PreviewInterface_iid FILE "dde-image-preview-plugin.json")
     Q_INTERFACES(PreviewInterface)
 public:
-    explicit ImagePreviewPlugin(QObject *parent = 0);
-    ~ImagePreviewPlugin();
+    explicit ImagePreview(QObject *parent = 0);
+    ~ImagePreview();
 
-    void init(const QString &uri);
+    bool canPreview(const QUrl &url) const;
 
-    QWidget* previewWidget();
+    void initialize(QWidget *window, QWidget *statusBar) Q_DECL_OVERRIDE;
 
-    QSize previewWidgetMinSize() const;
+    bool setFileUrl(const DUrl &url) Q_DECL_OVERRIDE;
 
-    bool canPreview() const;
+    QWidget *contentWidget() const Q_DECL_OVERRIDE;
 
-    QWidget* toolBarItem();
+    QString title() const Q_DECL_OVERRIDE;
 
-    QString pluginName() const;
-
-    QIcon pluginLogo() const;
-
-    QString pluginDescription() const;
-
-signals:
-
-public slots:
 private:
-    QString m_uri;
+    DUrl m_url;
+    QPointer<QLabel> m_messageStatusBar;
+    QPointer<ImageView> m_imageView;
+    QString m_title;
 };
+
+DFM_END_NAMESPACE
 
 #endif // IMAGEPREVIEWPLUGIN_H

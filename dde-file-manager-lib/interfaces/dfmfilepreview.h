@@ -24,14 +24,18 @@ class DFMFilePreview : public QObject
 public:
     explicit DFMFilePreview(QObject *parent = 0);
 
-    virtual void initialize(QWidget *parentWidget);
-    virtual void setFileUrl(const DUrl &url) = 0;
+    virtual void initialize(QWidget *window, QWidget *statusBar);
+    virtual bool setFileUrl(const DUrl &url) = 0;
 
     virtual QWidget *contentWidget() const = 0;
     virtual QWidget *statusBarWidget() const;
+    virtual Qt::Alignment statusBarWidgetAlignment() const;
 
     virtual QString title() const;
     virtual bool showStatusBarSeparator() const;
+
+signals:
+    void titleChanged();
 };
 
 DFM_END_NAMESPACE
