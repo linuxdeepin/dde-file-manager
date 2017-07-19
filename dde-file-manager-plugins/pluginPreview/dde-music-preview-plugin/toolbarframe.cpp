@@ -40,6 +40,7 @@ void ToolBarFrame::initUI()
 
     m_progressSlider = new QSlider(this);
     m_progressSlider->setOrientation(Qt::Horizontal);
+    m_progressSlider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     m_durationLabel = new QLabel(this);
 

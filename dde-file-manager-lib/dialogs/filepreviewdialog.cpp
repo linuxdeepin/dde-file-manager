@@ -343,7 +343,7 @@ void FilePreviewDialog::switchToPage(int index)
         static_cast<QHBoxLayout*>(m_statusBar->layout())->removeWidget(m_preview->statusBarWidget());
 
     if (QWidget * w = preview->statusBarWidget())
-        static_cast<QHBoxLayout*>(m_statusBar->layout())->insertWidget(3, w, 1, preview->statusBarWidgetAlignment());
+        static_cast<QHBoxLayout*>(m_statusBar->layout())->insertWidget(3, w, 0, preview->statusBarWidgetAlignment());
 
     m_separator->setVisible(preview->showStatusBarSeparator());
     m_preview = preview;
