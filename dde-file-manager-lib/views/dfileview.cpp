@@ -2067,14 +2067,14 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
     QSet<MenuAction> unusedList;
 
     if(list.size() == 1){
-        if(!info->isReadable())
+        if (!info->isReadable() && !info->isSymLink())
             disableList << MenuAction::Copy;
 
-        if(!info->isWritable() && !info->isFile())
+        if (!info->isWritable() && !info->isFile() && !info->isSymLink())
             disableList << MenuAction::Delete;
 
         if (!indexFlags.testFlag(Qt::ItemIsEditable))
-                disableList << MenuAction::Rename ;
+            disableList << MenuAction::Rename ;
     }
 
     menu = DFileMenuManager::createNormalMenu(info->fileUrl(), list, disableList, unusedList, windowId());
