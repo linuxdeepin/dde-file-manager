@@ -60,8 +60,10 @@ PdfWidget::PdfWidget(const QString &file, QWidget *parent) :
 
     d->thumbButtonGroup = new QButtonGroup(this);
 
+
     initDoc(file);
     initUI();
+
     if(d->isBadDoc){
         return;
     }
@@ -81,7 +83,7 @@ PdfWidget::~PdfWidget()
 void PdfWidget::initDoc(const QString& file)
 {
     Q_D(PdfWidget);
-    d->doc = QSharedPointer<poppler::document>(poppler::document::load_from_file(QUrl(file).path().toStdString()));
+    d->doc = QSharedPointer<poppler::document>(poppler::document::load_from_file(file.toStdString()));
 
     if (!d->doc || d->doc->is_locked()) {
         qDebug () << "Cannot read this pdf file: " << file;
@@ -544,7 +546,6 @@ QImage PdfInitWorker::getRenderedPageImage(const int &index) const
     QSharedPointer<poppler::page> page = QSharedPointer<poppler::page>(m_doc->create_page(index));
 
     if (!page) {
-        qDebug () << "Cannot get this page at index 0";
         return img;
     }
 
