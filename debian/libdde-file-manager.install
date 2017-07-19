@@ -7,4 +7,4 @@ usr/share/dde-file-manager/config/*.json
 usr/share/dman/*
 usr/share/icons/*
 
-#usr/lib/*/dde-file-manager/plugins/preview/*.so
+usr/lib/*/dde-file-manager/plugins/*

@@ -11,7 +11,7 @@ override_dh_shlibdeps:
 	dh_shlibdeps -l$(shell pwd)/debian/dde-sharefiles/usr/share/dde-file-manager/sharefiles/lib
 
 override_dh_auto_configure:
-	qmake -makefile "QMAKE_CFLAGS_RELEASE=-g -O2 " "QMAKE_CFLAGS_DEBUG=-g -O2 " "QMAKE_CXXFLAGS_RELEASE=-g -O2 " "QMAKE_CXXFLAGS_DEBUG=-g -O2 " QMAKE_STRIP=: PREFIX=/usr DAPP_VERSION=$(VERSION) LIB_INSTALL_DIR=/usr/lib/$(DEB_HOST_MULTIARCH)
+	qmake -makefile PREFIX=/usr DAPP_VERSION=$(VERSION) LIB_INSTALL_DIR=/usr/lib/$(DEB_HOST_MULTIARCH)
 
 ifeq ($(DEB_BUILD_ARCH), mipsel)
 override_dh_install:
