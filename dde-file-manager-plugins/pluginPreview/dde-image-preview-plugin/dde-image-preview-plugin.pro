@@ -15,13 +15,13 @@ PKGCONFIG += dtkwidget
 include(../../../common/common.pri)
 
 SOURCES += \
-    imagepreviewplugin.cpp \
     imageview.cpp \
-    main.cpp
+    main.cpp \
+    imagepreview.cpp
 
 HEADERS += \
-    imagepreviewplugin.h \
-    imageview.h
+    imageview.h \
+    imagepreview.h
 DISTFILES += dde-image-preview-plugin.json
 
 PLUGIN_INSTALL_DIR = $$PLUGINDIR/previews

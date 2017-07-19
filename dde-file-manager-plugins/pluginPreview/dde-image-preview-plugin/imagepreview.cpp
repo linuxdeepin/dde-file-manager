@@ -1,4 +1,4 @@
-#include "imagepreviewplugin.h"
+#include "imagepreview.h"
 
 #include <QImageReader>
 #include <QProcess>
