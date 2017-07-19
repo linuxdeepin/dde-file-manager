@@ -6,24 +6,23 @@
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  **/
-
 #include "dfmfilepreviewplugin.h"
 
-#include "imagepreview.h"
+#include "textpreview.h"
 
 DFM_BEGIN_NAMESPACE
 
-class ImagePreviewPlugin : public DFMFilePreviewPlugin
+class TextPreviewPlugin : public DFMFilePreviewPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID DFMFilePreviewFactoryInterface_iid FILE "dde-image-preview-plugin.json")
+    Q_PLUGIN_METADATA(IID DFMFilePreviewFactoryInterface_iid FILE "dde-text-preview-plugin.json")
 
 public:
     DFMFilePreview *create(const QString &key) Q_DECL_OVERRIDE
     {
         Q_UNUSED(key)
 
-        return new ImagePreview();
+        return new TextPreview();
     }
 };
 
