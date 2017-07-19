@@ -509,6 +509,9 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
                 DFileService::instance()->moveToTrash(this, selectUrls);
             }
             break;
+        case Qt::Key_Space:
+            d->fileViewHelper->showPreviewFileDialog();
+            break;
         default: break;
         }
         break;
