@@ -41,10 +41,16 @@ unix {
         PLUGINDIR = $$LIB_INSTALL_DIR/$$ProjectName/plugins
     }
 
-    DEFINES += PLUGINDIR=\\\"$$PLUGINDIR\\\"
+    DEFINES += PLUGINDIR=\\\"$$PLUGINDIR:$$top_srcdir/plugins\\\"
 
     isEmpty(VERSION) {
         VERSION = 1.4
     }
 
 }
+
+INCLUDEPATH += $$top_srcdir\
+               $$top_srcdir/utils\
+               $$top_srcdir/dde-file-manager-lib/interfaces\
+               $$top_srcdir/dde-file-manager-lib/interfaces/plugins\
+               $$top_srcdir/dde-file-manager-plugins/plugininterfaces

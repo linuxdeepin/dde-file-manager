@@ -50,6 +50,8 @@ FilePreviewDialogStatusBar::FilePreviewDialogStatusBar(QWidget *parent)
     m_nextButton->setShortcut(QKeySequence::Forward);
 
     m_title = new QLabel(this);
+    m_title->setObjectName("TitleLabel");
+    m_title->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_title->hide();
 
     m_openButton = new QPushButton(tr("Open"), this);
@@ -74,7 +76,7 @@ public:
     explicit UnknowFilePreview(QObject *parent = 0);
     ~UnknowFilePreview();
 
-    void setFileUrl(const DUrl &url) Q_DECL_OVERRIDE;
+    bool setFileUrl(const DUrl &url) Q_DECL_OVERRIDE;
     void setFileInfo(const DAbstractFileInfoPointer &info);
 
     QWidget *contentWidget() const Q_DECL_OVERRIDE;
@@ -128,12 +130,14 @@ UnknowFilePreview::~UnknowFilePreview()
         m_contentWidget->deleteLater();
 }
 
-void UnknowFilePreview::setFileUrl(const DUrl &url)
+bool UnknowFilePreview::setFileUrl(const DUrl &url)
 {
     const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, url);
 
     if (info)
         setFileInfo(info);
+
+    return true;
 }
 
 void UnknowFilePreview::setFileInfo(const DAbstractFileInfoPointer &info)
@@ -165,6 +169,12 @@ FilePreviewDialog::FilePreviewDialog(const DUrlList &list, QWidget *parent)
     }
 
     switchToPage(0);
+}
+
+FilePreviewDialog::~FilePreviewDialog()
+{
+    if (m_preview)
+        m_preview->deleteLater();
 }
 
 void FilePreviewDialog::resizeEvent(QResizeEvent *event)
@@ -242,6 +252,16 @@ void FilePreviewDialog::initUI()
     });
 }
 
+static QString generalKey(const QString &key)
+{
+    const QStringList &_tmp = key.split('/');
+
+    if (_tmp.size() > 1)
+        return _tmp.first() + "/*";
+
+    return key;
+}
+
 void FilePreviewDialog::switchToPage(int index)
 {
     m_currentPageIndex = index;
@@ -268,16 +288,30 @@ void FilePreviewDialog::switchToPage(int index)
     key_list.append(mime_type.allAncestors());
 
     for (const QString &key : key_list) {
-        if (m_preview && DFMFilePreviewFactory::isSuitedWithKey(m_preview, key)) {
-            m_preview->setFileUrl(m_fileList.at(index));
+        const QString &general_key = generalKey(key);
 
-            return;
+        if (m_preview && (DFMFilePreviewFactory::isSuitedWithKey(m_preview, key)
+                          || DFMFilePreviewFactory::isSuitedWithKey(m_preview, general_key))) {
+            if (m_preview->setFileUrl(m_fileList.at(index))) {
+                adjustSize();
+                return;
+            }
         }
 
         preview = DFMFilePreviewFactory::create(key);
 
-        if (!preview)
-            break;
+        if (!preview && general_key != key) {
+            preview = DFMFilePreviewFactory::create(general_key);
+        }
+
+        if (preview) {
+            preview->initialize(this, m_statusBar);
+
+            if (preview->setFileUrl(m_fileList.at(index)))
+                break;
+            else
+                preview->deleteLater();
+        }
     }
 
     if (!preview) {
@@ -287,24 +321,35 @@ void FilePreviewDialog::switchToPage(int index)
             return;
         } else {
             preview = new UnknowFilePreview(this);
+            preview->initialize(this, m_statusBar);
+            preview->setFileUrl(m_fileList.at(index));
         }
     }
 
-    preview->initialize(this);
+    if (m_preview)
+        disconnect(m_preview, &DFMFilePreview::titleChanged, this, &FilePreviewDialog::updateTitle);
 
-    m_preview->deleteLater();
+    connect(preview, &DFMFilePreview::titleChanged, this, &FilePreviewDialog::updateTitle);
+
+    if (m_preview)
+        m_preview->deleteLater();
+
+    if (m_preview)
+        static_cast<QVBoxLayout*>(layout())->removeWidget(m_preview->contentWidget());
+
+    static_cast<QVBoxLayout*>(layout())->insertWidget(0, preview->contentWidget());
+
+    if (m_preview)
+        static_cast<QHBoxLayout*>(m_statusBar->layout())->removeWidget(m_preview->statusBarWidget());
+
+    if (QWidget * w = preview->statusBarWidget())
+        static_cast<QHBoxLayout*>(m_statusBar->layout())->insertWidget(3, w, 1, preview->statusBarWidgetAlignment());
+
+    m_separator->setVisible(preview->showStatusBarSeparator());
     m_preview = preview;
-    m_preview->setFileUrl(m_fileList.at(index));
 
-    m_statusBar->m_title->setText(m_preview->title());
-    m_statusBar->m_title->setHidden(m_statusBar->m_title->text().isEmpty());
-
-    static_cast<QVBoxLayout*>(layout())->insertWidget(0, m_preview->contentWidget());
-
-    if (QWidget * w = m_preview->statusBarWidget())
-        static_cast<QHBoxLayout*>(m_statusBar->layout())->insertWidget(2, w);
-
-    m_separator->setVisible(m_preview->showStatusBarSeparator());
+    updateTitle();
+    adjustSize();
 }
 
 void FilePreviewDialog::previousPage()
@@ -321,6 +366,12 @@ void FilePreviewDialog::nextPage()
         return;
 
     switchToPage(m_currentPageIndex + 1);
+}
+
+void FilePreviewDialog::updateTitle()
+{
+    m_statusBar->m_title->setText(m_preview->title());
+    m_statusBar->m_title->setHidden(m_statusBar->m_title->text().isEmpty());
 }
 
 DFM_END_NAMESPACE

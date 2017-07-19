@@ -1,7 +1,5 @@
 TEMPLATE  = subdirs
 
-include(common/common.pri)
-
 SUBDIRS  += \
     dde-file-manager \
     dde-file-manager-daemon \
