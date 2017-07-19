@@ -64,7 +64,7 @@ public:
     void setDeviceInfo(UDiskDeviceInfoPointer deviceInfo);
 
     inline ProgressLine* getProgressLine()
-    { return progressLine; }
+    { return m_progressLine; }
 
     int windowId();
 
@@ -99,10 +99,13 @@ protected:
     void contextMenuEvent(QContextMenuEvent* event);
     void mousePressEvent(QMouseEvent* event);
     void mouseDoubleClickEvent(QMouseEvent* event);
+    bool event(QEvent *event);
 
 private:
+    void adjustPosition();
     void setIconSizeState(int iconSize, QIcon::Mode mode = QIcon::Normal);
-    ProgressLine* progressLine;
+    ProgressLine* m_progressLine;
+    QLabel* m_sizeLabel;
     DAbstractFileInfoPointer m_info;
     UDiskDeviceInfoPointer m_deviceInfo;
     int m_iconSize = 64;

@@ -39,6 +39,7 @@ public:
     static QIcon searchAppIcon(const DesktopFile &app,
       const QIcon &defaultIcon = QIcon::fromTheme("application-x-executable"));
     static QString formatSize( qint64 num );
+    static QString formatSizeToGB( qint64 num, bool isUnitVisible = false);
     static QString newDocmentName(QString targetdir, const QString& baseName, const QString& suffix);
     static bool cpTemplateFileToTargetDir(const QString& targetdir, const QString& baseName, const QString& suffix);
 

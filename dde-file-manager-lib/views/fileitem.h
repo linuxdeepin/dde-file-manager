@@ -42,11 +42,11 @@ private slots:
     void editRedo();
 
 protected:
+    void updateEditorGeometry();
     bool event(QEvent *ee) Q_DECL_OVERRIDE;
     bool eventFilter(QObject *obj, QEvent *ee) Q_DECL_OVERRIDE;
 
 private:
-    void updateEditorGeometry();
     void updateStyleSheet();
 
     QString editTextStackCurrentItem() const;
