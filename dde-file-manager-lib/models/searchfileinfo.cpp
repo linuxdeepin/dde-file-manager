@@ -252,5 +252,20 @@ QString SearchFileInfo::fileDisplayName() const
 
 DUrl SearchFileInfo::mimeDataUrl() const
 {
+    const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(Q_NULLPTR, fileUrl().searchedFileUrl());
+
+    if (info)
+        return info->mimeDataUrl();
+
     return fileUrl().searchedFileUrl();
+}
+
+QString SearchFileInfo::toLocalFile() const
+{
+    const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(Q_NULLPTR, fileUrl().searchedFileUrl());
+
+    if (info)
+        return info->toLocalFile();
+
+    return fileUrl().searchedFileUrl().toLocalFile();
 }
