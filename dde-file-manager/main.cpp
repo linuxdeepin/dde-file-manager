@@ -191,8 +191,14 @@ int main(int argc, char *argv[])
     } else {
         QByteArray data;
 
-        for (const QString &arg : app.arguments())
-            data.append(arg.toLocal8Bit().toBase64()).append(' ');
+        for (const QString &arg : app.arguments()) {
+            if (!arg.startsWith("-") && QFile::exists(arg))
+                data.append(QDir(arg).absolutePath().toLocal8Bit().toBase64());
+            else
+                data.append(arg.toLocal8Bit().toBase64());
+
+            data.append(' ');
+        }
 
         if (!data.isEmpty())
             data.chop(1);
