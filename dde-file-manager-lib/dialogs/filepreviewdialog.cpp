@@ -26,6 +26,7 @@ DFM_BEGIN_NAMESPACE
 
 class FilePreviewDialogStatusBar : public QFrame
 {
+    Q_OBJECT
 public:
     explicit FilePreviewDialogStatusBar(QWidget *parent = 0);
 
@@ -54,7 +55,7 @@ FilePreviewDialogStatusBar::FilePreviewDialogStatusBar(QWidget *parent)
     m_title->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_title->hide();
 
-    m_openButton = new QPushButton(tr("Open"), this);
+    m_openButton = new QPushButton(QObject::tr("Open"), this);
     m_openButton->setObjectName("OpenButton");
     m_openButton->setFixedHeight(24);
     m_openButton->setShortcut(QKeySequence::Open);
@@ -146,8 +147,8 @@ void UnknowFilePreview::setFileInfo(const DAbstractFileInfoPointer &info)
 
     m_iconLabel->setPixmap(icon.pixmap(150));
     m_nameLabel->setText(info->fileName());
-    m_sizeLabel->setText(QString(tr("Size: %1")).arg(info->sizeDisplayName()));
-    m_typeLabel->setText(QString(tr("Type: %1").arg(info->mimeTypeDisplayName())));
+    m_sizeLabel->setText(QString(QObject::tr("Size: %1")).arg(info->sizeDisplayName()));
+    m_typeLabel->setText(QString(QObject::tr("Type: %1").arg(info->mimeTypeDisplayName())));
 }
 
 QWidget *UnknowFilePreview::contentWidget() const

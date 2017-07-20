@@ -129,7 +129,7 @@ void PreviewDialog::initUI()
 
     d->openButton =  new QPushButton(this);
     d->openButton->setFixedSize(70, 20);
-    d->openButton->setText(tr("Open"));
+    d->openButton->setText(QObject::tr("Open"));
     d->openButton->setObjectName("OpenButton");
 
     d->currentToolBarItem = new QWidget(this);

@@ -27,6 +27,7 @@ class FilePreviewDialogStatusBar;
 class DFMFilePreview;
 class FilePreviewDialog : public DAbstractDialog
 {
+    Q_OBJECT
 public:
     explicit FilePreviewDialog(const DUrlList &list, QWidget *parent = 0);
     ~FilePreviewDialog();
