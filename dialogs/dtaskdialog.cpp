@@ -9,6 +9,11 @@
 #include <QCloseEvent>
 
 #include "xutil.h"
+#include "dfmglobal.h"
+#include "app/define.h"
+#include "interfaces/dfileservices.h"
+#include "dabstractfileinfo.h"
+#include "shutil/fileutils.h"
 
 MoveCopyTaskWidget::MoveCopyTaskWidget(const QMap<QString, QString> &jobDetail, QWidget *parent):
     QFrame(parent),
@@ -68,8 +73,9 @@ void MoveCopyTaskWidget::initUI(){
     msgGridLayout->addWidget(m_remainLabel, 1, 1,Qt::AlignRight|Qt::AlignVCenter);
     msgGridLayout->setColumnMinimumWidth(0, 300);
 
+    initConflictDetailFrame();
     initButtonFrame();
-    m_buttonFrame->hide();
+
     m_buttonFrame->setAttribute(Qt::WA_AlwaysStackOnTop);
 
     m_lineLabel = new QFrame;
@@ -80,9 +86,13 @@ void MoveCopyTaskWidget::initUI(){
     QVBoxLayout* rightLayout = new QVBoxLayout;
     rightLayout->addStretch(1);
     rightLayout->addLayout(msgGridLayout);
-    if ((m_buttonFrame)){
-        rightLayout->addWidget(m_buttonFrame);
-    }
+
+    rightLayout->addSpacing(5);
+    rightLayout->addWidget(m_conflictFrame);
+    rightLayout->addSpacing(5);
+
+    rightLayout->addWidget(m_buttonFrame);
+
     rightLayout->addStretch(1);
     rightLayout->addWidget(m_lineLabel, 0, Qt::AlignBottom);
     rightLayout->setSpacing(0);
@@ -99,7 +109,75 @@ void MoveCopyTaskWidget::initUI(){
     mainLayout->addSpacing(24);
     setLayout(mainLayout);
     setFixedHeight(80);
+
+    m_conflictFrame->hide();
+    m_buttonFrame->hide();
+    m_conflictFrame->hide();
 }
+
+
+void MoveCopyTaskWidget::initConflictDetailFrame()
+{
+
+    m_conflictFrame = new QFrame(this);
+
+    m_originIconLabel = new QLabel(this);
+//    m_originIconLabel->setStyleSheet("background-color: green");
+    m_originIconLabel->setFixedSize(48, 48);
+    m_originIconLabel->setScaledContents(true);
+
+    m_originTitleLabel = new QLabel(this);
+//    m_originTitleLabel->setStyleSheet("background-color: yellow");
+    m_originTitleLabel->setFixedHeight(20);
+
+    m_originTimeLabel = new QLabel(this);
+//    m_originTimeLabel->setStyleSheet("background-color: gray");
+    m_originTimeLabel->setFixedHeight(20);
+
+    m_originSizeLabel = new QLabel(this);
+//    m_originSizeLabel->setStyleSheet("background-color: green");
+    m_originSizeLabel->setFixedSize(90, 20);
+
+    m_targetIconLabel = new QLabel(this);
+//    m_targetIconLabel->setStyleSheet("background-color: red");
+    m_targetIconLabel->setFixedSize(48, 48);
+    m_targetIconLabel->setScaledContents(true);
+
+    m_targetTitleLabel = new QLabel(this);
+//    m_targetTitleLabel->setStyleSheet("background-color: yellow");
+    m_targetTitleLabel->setFixedHeight(20);
+
+    m_targetTimeLabel = new QLabel(this);
+//    m_targetTimeLabel->setStyleSheet("background-color: gray");
+    m_targetTimeLabel->setFixedHeight(20);
+
+    m_targetSizeLabel = new QLabel(this);
+//    m_targetSizeLabel->setStyleSheet("background-color: green");
+    m_targetSizeLabel->setFixedSize(90, 20);
+
+    QGridLayout* conflictMainLayout = new QGridLayout(this);
+
+    conflictMainLayout->addWidget(m_originIconLabel, 0, 0, 2, 1, Qt::AlignVCenter);
+    conflictMainLayout->addWidget(m_originTitleLabel, 0, 1, 1, 2, Qt::AlignVCenter);
+    conflictMainLayout->addWidget(m_originTimeLabel, 1, 1, 1, 1,Qt::AlignVCenter);
+    conflictMainLayout->addWidget(m_originSizeLabel, 1, 2, 1, 1, Qt::AlignVCenter);
+
+
+    conflictMainLayout->addWidget(m_targetIconLabel, 2, 0, 2, 1, Qt::AlignVCenter);
+    conflictMainLayout->addWidget(m_targetTitleLabel, 2, 1, 1, 2, Qt::AlignVCenter);
+    conflictMainLayout->addWidget(m_targetTimeLabel, 3, 1, Qt::AlignVCenter);
+    conflictMainLayout->addWidget(m_targetSizeLabel, 3, 2, Qt::AlignVCenter);
+
+    conflictMainLayout->setHorizontalSpacing(4);
+    conflictMainLayout->setVerticalSpacing(4);
+    conflictMainLayout->setContentsMargins(0, 0, 0, 0);
+
+    m_conflictFrame->setLayout(conflictMainLayout);
+    m_conflictFrame->setFixedHeight(120);
+
+}
+
+
 
 void MoveCopyTaskWidget::initButtonFrame(){
     m_buttonFrame = new QFrame;
@@ -110,9 +188,9 @@ void MoveCopyTaskWidget::initButtonFrame(){
     m_keepBothButton = new QPushButton(tr("Keep both"));
     m_skipButton = new QPushButton(tr("Skip"));
     m_replaceButton = new QPushButton(tr("Replace"));
-    m_keepBothButton->setFixedSize(80, 25);
-    m_skipButton->setFixedSize(80, 25);
-    m_replaceButton->setFixedSize(80, 25);
+    m_keepBothButton->setFixedSize(70, 25);
+    m_skipButton->setFixedSize(70, 25);
+    m_replaceButton->setFixedSize(70, 25);
 
     m_keepBothButton->setProperty("code", 0);
     m_replaceButton->setProperty("code", 1);
@@ -132,14 +210,15 @@ void MoveCopyTaskWidget::initButtonFrame(){
     buttonLayout->setContentsMargins(0, 0, 0, 0);
 
     m_checkBox = new QCheckBox(tr("Do not ask again"));
-    QVBoxLayout* mainLayout = new QVBoxLayout;
-    mainLayout->addSpacing(8);
+    QHBoxLayout* mainLayout = new QHBoxLayout;
+    mainLayout->addSpacing(0);
     mainLayout->addWidget(m_checkBox);
-    mainLayout->addSpacing(5);
+    mainLayout->addSpacing(0);
     mainLayout->addLayout(buttonLayout);
 
     mainLayout->setContentsMargins(0, 0, 0, 0);
     m_buttonFrame->setLayout(mainLayout);
+    m_buttonFrame->setFixedHeight(30);
 }
 
 void MoveCopyTaskWidget::initConnect(){
@@ -209,6 +288,7 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data){
             m_animatePad->stopAnimation();
             msg1 = QString(tr("File named %1 already exists in target folder")).arg(file);
             msg2 = QString(tr("Original path %1 target path %2")).arg(srcPath, targetPath);
+            updateConflictDetailFrame(srcPath, targetPath);
         } else{
             m_animatePad->stopAnimation();
         }
@@ -249,7 +329,9 @@ void MoveCopyTaskWidget::handleLineDisplay(const int &row, const bool& hover, co
 }
 
 void MoveCopyTaskWidget::showConflict(){
-    setFixedHeight(130);
+    qDebug() << m_buttonFrame->height() << m_conflictFrame->height();
+    setFixedHeight(100 + m_buttonFrame->height() + m_conflictFrame->height());
+    m_conflictFrame->show();
     m_buttonFrame->show();
     emit heightChanged();
     emit conflictShowed(m_jobDetail);
@@ -257,9 +339,40 @@ void MoveCopyTaskWidget::showConflict(){
 
 void MoveCopyTaskWidget::hideConflict(){
     setFixedHeight(100);
+    m_conflictFrame->hide();
     m_buttonFrame->hide();
     emit heightChanged();
     emit conflictHided(m_jobDetail);
+}
+
+void MoveCopyTaskWidget::updateConflictDetailFrame(const QString &originFilePath, const QString &targetFilePath)
+{
+    qDebug() << originFilePath << targetFilePath << m_originIconLabel << m_targetIconLabel;
+    DAbstractFileInfoPointer originInfo = fileService->createFileInfo(NULL, DUrl::fromLocalFile(originFilePath));
+    DAbstractFileInfoPointer targetInfo = fileService->createFileInfo(NULL, DUrl::fromLocalFile(targetFilePath));
+    if (originInfo && targetInfo){
+        m_originIconLabel->setPixmap(originInfo->fileIcon().pixmap(48, 48));
+        m_originTimeLabel->setText(QString(tr("Time modified:%1")).arg(originInfo->lastModifiedDisplayName()));
+        if (originInfo->isDir()){
+            m_originTitleLabel->setText(tr("Original folder"));
+            m_originSizeLabel->setText(QString(tr("Contains:%1")).arg(originInfo->sizeDisplayName()));
+        }else{
+            m_originTitleLabel->setText(tr("Original file"));
+            m_originSizeLabel->setText(QString(tr("Size:%1")).arg(originInfo->sizeDisplayName()));
+        }
+
+        m_targetIconLabel->setPixmap(targetInfo->fileIcon().pixmap(48, 48));
+        m_targetTimeLabel->setText(QString(tr("Time modified:%1")).arg(targetInfo->lastModifiedDisplayName()));
+
+        if (originInfo->isDir()){
+            m_targetTitleLabel->setText(tr("Target folder"));
+            m_targetSizeLabel->setText(QString(tr("Contains:%1")).arg(targetInfo->sizeDisplayName()));
+        }else{
+            m_targetTitleLabel->setText(tr("Target file"));
+            m_targetSizeLabel->setText(QString(tr("Size:%1")).arg(targetInfo->sizeDisplayName()));
+        }
+    }
+
 }
 
 bool MoveCopyTaskWidget::event(QEvent *e)
@@ -421,9 +534,9 @@ void DTaskDialog::setTitle(QString title){
 void DTaskDialog::setTitle(int taskCount){
     QString title;
     if (taskCount == 1){
-        title = tr("1 task in progress");
+        title = QObject::tr("1 task in progress");
     }else{
-        title = tr("%1 tasks in progress").arg(QString::number(taskCount));
+        title = QObject::tr("%1 tasks in progress").arg(QString::number(taskCount));
     }
     setTitle(title);
 }

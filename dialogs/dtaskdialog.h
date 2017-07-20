@@ -32,6 +32,7 @@ public:
     QString getMessage();
     QString getTipMessage();
 
+    void initConflictDetailFrame();
     void initButtonFrame();
 
 signals:
@@ -59,6 +60,8 @@ public slots:
 
     void showConflict();
     void hideConflict();
+
+    void updateConflictDetailFrame(const QString& originFilePath, const QString& targetFilePath);
 protected:
     bool event(QEvent *e) Q_DECL_OVERRIDE;
 
@@ -89,6 +92,16 @@ private:
     QMap<QString, QVariant> m_response;
     QButtonGroup* m_buttonGroup;
     QFrame* m_buttonFrame=NULL;
+    QFrame* m_conflictFrame=NULL;
+    QLabel* m_originIconLabel = NULL;
+    QLabel* m_originTitleLabel = NULL;
+    QLabel* m_originTimeLabel = NULL;
+    QLabel* m_originSizeLabel = NULL;
+    QLabel* m_targetIconLabel = NULL;
+    QLabel* m_targetTitleLabel = NULL;
+    QLabel* m_targetTimeLabel = NULL;
+    QLabel* m_targetSizeLabel = NULL;
+
     QCheckBox* m_checkBox=NULL;
     QPushButton* m_enterButton=NULL;
     CircleProgressAnimatePad* m_animatePad;
@@ -140,7 +153,7 @@ protected:
 
 
 private:
-    int m_defaultWidth = 490;
+    int m_defaultWidth = 525;
     int m_defaultHeight = 120;
     QLabel* m_titleLabel=NULL;
     QPushButton* m_titleBarMinimizeButton;
