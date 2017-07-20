@@ -439,6 +439,7 @@ void ComputerView::initUI()
     contentLayout->addSpacing(20);
     contentLayout->addWidget(m_removableTitleLine);
     contentLayout->addLayout(m_removableFlowLayout);
+    contentLayout->addSpacing(20);
     contentLayout->addStretch();
     contentLayout->setContentsMargins(20, 20, 20, 20);
     contentFrame->setLayout(contentLayout);
