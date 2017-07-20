@@ -204,7 +204,12 @@ int main(int argc, char *argv[])
             if (arg == "--get-monitor-files")
                 is_set_get_monitor_files = true;
 
-            data.append(arg.toLocal8Bit().toBase64()).append(' ');
+            if (!arg.startsWith("-") && QFile::exists(arg))
+                data.append(QDir(arg).absolutePath().toLocal8Bit().toBase64());
+            else
+                data.append(arg.toLocal8Bit().toBase64());
+
+            data.append(' ');
         }
 
         if (!data.isEmpty())
