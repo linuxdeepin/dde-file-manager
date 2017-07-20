@@ -272,6 +272,8 @@ public:
     static bool startWithHanzi(T)
     { return false;}
 
+    static QString toUnicode(const QByteArray &ba);
+
     static bool keyShiftIsPressed();
     static bool keyCtrlIsPressed();
     static bool fileNameCorrection(const QString &filePath);

@@ -36,6 +36,8 @@
 #include <QTimer>
 #include <QThread>
 #include <QtConcurrent>
+#include <QTextCodec>
+#include <QLocale>
 
 #include <cstdio>
 
@@ -444,6 +446,51 @@ bool DFMGlobal::startWithHanzi(const QString &text)
     const QVector<uint> list = text.toUcs4();
 
     return !list.isEmpty() && list.first() >= 0x4e00 && list.first() <= 0x9fbf;
+}
+
+static QString textDecoder(const QByteArray &ba, const QByteArray &codecName)
+{
+    QTextDecoder decoder(QTextCodec::codecForName(codecName));
+
+    const QString &text = decoder.toUnicode(ba);
+
+    return decoder.hasFailure() ? QString() : text;
+}
+
+QString DFMGlobal::toUnicode(const QByteArray &ba)
+{
+    if (ba.isEmpty())
+        return QString();
+
+    QList<QByteArray> codecList;
+
+    codecList << "utf-8";
+
+    switch (QLocale::system().script()) {
+    case QLocale::SimplifiedChineseScript:
+        codecList << "gbk";
+        break;
+    case QLocale::TraditionalChineseScript:
+        codecList << "big5" << "gbk";
+        break;
+    case QLocale::JapaneseScript:
+        codecList << "shift_jis" << "euc_jp" << "gbk";
+        break;
+    case QLocale::KoreanScript:
+        codecList << "euc_kr";
+        break;
+    default:
+        break;
+    }
+
+    for (const QByteArray &codec : codecList) {
+        const QString &text = textDecoder(ba, codec);
+
+        if (!text.isEmpty())
+            return text;
+    }
+
+    return QString::fromLocal8Bit(ba);
 }
 
 bool DFMGlobal::keyShiftIsPressed()
