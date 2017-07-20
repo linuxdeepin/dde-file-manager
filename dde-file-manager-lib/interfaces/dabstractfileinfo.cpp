@@ -1051,14 +1051,9 @@ DUrl DAbstractFileInfo::goToUrlWhenDeleted() const
     return extistParentUrl.isValid() ? extistParentUrl : DUrl::fromLocalFile(QDir::homePath());
 }
 
-DUrl DAbstractFileInfo::toLocalFile() const
+QString DAbstractFileInfo::toLocalFile() const
 {
-    const QString &filePath = fileUrl().toLocalFile();
-
-    if (!filePath.isEmpty())
-        return DUrl::fromLocalFile(filePath);
-
-    return DUrl();
+    return fileUrl().isLocalFile() ? fileUrl().toLocalFile() : QString();
 }
 
 bool DAbstractFileInfo::canDrop() const

@@ -516,7 +516,7 @@ QString DUrl::toLocalFile() const
         return DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath) + path();
     } else if (isSearchFile()) {
         return DUrl(fragment()).toLocalFile();
-    } else if(isAVFSFile()){
+    } else if(isAVFSFile()) {
         return path();
     } else {
         return QUrl::toLocalFile();

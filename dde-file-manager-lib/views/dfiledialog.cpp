@@ -151,8 +151,8 @@ QList<QUrl> DFileDialog::selectedUrls() const
     while (begin != list.end()) {
         const DAbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(*begin);
 
-        if (fileInfo) {
-            DUrl newUrl = fileInfo->toLocalFile();
+        if (fileInfo && !fileInfo->toLocalFile().isEmpty()) {
+            DUrl newUrl = DUrl::fromLocalFile(fileInfo->toLocalFile());
 
             if (newUrl.isValid()) {
                 *begin = newUrl;

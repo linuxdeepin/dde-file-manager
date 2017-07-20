@@ -46,6 +46,8 @@ public:
 
     DUrl mimeDataUrl() const Q_DECL_OVERRIDE;
 
+    QString toLocalFile() const Q_DECL_OVERRIDE;
+
 private:
     DUrl m_parentUrl;
 };

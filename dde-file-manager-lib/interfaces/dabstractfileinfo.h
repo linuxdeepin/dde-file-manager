@@ -231,7 +231,7 @@ public:
     virtual void refresh();
 
     virtual DUrl goToUrlWhenDeleted() const;
-    virtual DUrl toLocalFile() const;
+    virtual QString toLocalFile() const;
 
     virtual bool canDrop() const;
 
