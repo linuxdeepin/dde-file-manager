@@ -16,6 +16,7 @@ class BookMarkManager : public DAbstractFileController, public BaseManager
 public:
     explicit BookMarkManager(QObject *parent = 0);
     ~BookMarkManager();
+
     void load();
     void save();
     QList<BookMarkPointer> getBookmarks();
@@ -31,6 +32,9 @@ public slots:
     void renameBookmark(BookMarkPointer bookmark, const QString &newname);
     void moveBookmark(int from, int to);
     // AbstractFileController interface
+
+    void reLoad();
+
 public:
     const QList<DAbstractFileInfoPointer> getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const Q_DECL_OVERRIDE;
     const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvnet> &event) const Q_DECL_OVERRIDE;
