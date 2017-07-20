@@ -41,7 +41,7 @@ unix {
         PLUGINDIR = $$LIB_INSTALL_DIR/$$ProjectName/plugins
     }
 
-    DEFINES += PLUGINDIR=\\\"$$PLUGINDIR:$$top_srcdir/plugins\\\"
+    DEFINES += PLUGINDIR=\\\"$$top_srcdir/plugins:$$PLUGINDIR\\\"
 
     isEmpty(VERSION) {
         VERSION = 1.4

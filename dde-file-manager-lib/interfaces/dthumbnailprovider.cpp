@@ -298,7 +298,7 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
             goto _return;
         }
 
-        QString text = QString::fromLocal8Bit(file.readAll());
+        QString text = DFMGlobal::toUnicode(file.readAll());
         file.close();
 
         image->fill(Qt::white);

@@ -47,7 +47,9 @@ bool TextPreview::setFileUrl(const DUrl &url)
         return false;
     }
 
-    m_textBrowser->setPlainText(QString::fromLocal8Bit(file.readAll()));
+    const QByteArray &text = file.readAll();
+
+    m_textBrowser->setPlainText(DFMGlobal::toUnicode(text));
 
     file.close();
 
