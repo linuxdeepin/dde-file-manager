@@ -39,6 +39,7 @@
 #include "view/viewinterface.h"
 #include "shutil/fileutils.h"
 
+#include "gvfs/networkmanager.h"
 #include "dfmglobal.h"
 
 DWIDGET_USE_NAMESPACE
@@ -671,6 +672,16 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         if(!dir.exists() && !m_isDefault)
         {
             qDebug() << this << m_bookmarkModel->getDevcieId();
+
+            DUrl deviceUrl(m_bookmarkModel->getDevcieId());
+
+            qDebug() << deviceUrl << NetworkManager::SupportScheme.contains(deviceUrl.scheme());
+
+            if (NetworkManager::SupportScheme.contains(deviceUrl.scheme())) {
+                emit fileSignalManager->requestFetchNetworks(DFMUrlBaseEvent(this, deviceUrl));
+                return;
+            }
+
             deviceListener->mount(m_bookmarkModel->getDevcieId());
             setMountBookmark(true);
 
