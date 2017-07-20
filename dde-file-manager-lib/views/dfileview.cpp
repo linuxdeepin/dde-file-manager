@@ -939,6 +939,12 @@ void DFileView::showEvent(QShowEvent *event)
 {
     DListView::showEvent(event);
 
+    Q_D(DFileView);
+
+    /// set menu actions filter
+    DFileMenuManager::setActionWhitelist(d->menuWhitelist);
+    DFileMenuManager::setActionBlacklist(d->menuBlacklist);
+
     setFocus();
 }
 

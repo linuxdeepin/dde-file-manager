@@ -1,6 +1,7 @@
 #include "bookmarkmanager.h"
 #include "dfileservices.h"
 #include "dfmevent.h"
+#include "dabstractfilewatcher.h"
 
 #include "app/define.h"
 
@@ -24,6 +25,13 @@ BookMarkManager::BookMarkManager(QObject *parent)
 {
     load();
     fileService->setFileUrlHandler(BOOKMARK_SCHEME, "", this);
+
+    DAbstractFileWatcher *bookmark_watcher = DFileService::instance()->createFileWatcher(this, DUrl::fromLocalFile(cachePath()), this);
+
+    connect(bookmark_watcher, &DAbstractFileWatcher::fileAttributeChanged, this, &BookMarkManager::reLoad);
+    connect(bookmark_watcher, &DAbstractFileWatcher::fileModified, this, &BookMarkManager::reLoad);
+
+    bookmark_watcher->startWatcher();
 }
 
 BookMarkManager::~BookMarkManager()
@@ -143,6 +151,12 @@ void BookMarkManager::moveBookmark(int from, int to)
 {
     m_bookmarks.move(from, to);
     save();
+}
+
+void BookMarkManager::reLoad()
+{
+    m_bookmarks.clear();
+    load();
 }
 
 const QList<DAbstractFileInfoPointer> BookMarkManager::getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const

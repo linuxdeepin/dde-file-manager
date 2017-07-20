@@ -489,7 +489,7 @@ void DBookmarkItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         update();
     }
 
-    if(m_pressed && !m_isDefault)
+    if(m_pressed && !m_isDefault && scene()->views().first()->window()->windowType() == Qt::Window)
     {
         if (QLineF(event->screenPos(), event->buttonDownScreenPos(Qt::LeftButton))
                 .length() < QApplication::startDragDistance()) {
