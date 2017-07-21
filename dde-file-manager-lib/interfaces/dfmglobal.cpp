@@ -443,9 +443,10 @@ QString DFMGlobal::toPinyin(const QString &text)
 
 bool DFMGlobal::startWithHanzi(const QString &text)
 {
-    const QVector<uint> list = text.toUcs4();
+    if (text.isEmpty())
+        return false;
 
-    return !list.isEmpty() && list.first() >= 0x4e00 && list.first() <= 0x9fbf;
+    return text.at(0).script() == QChar::Script_Han;
 }
 
 static QString textDecoder(const QByteArray &ba, const QByteArray &codecName)
