@@ -143,8 +143,6 @@ bool TrashManager::writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClip
 DUrlList TrashManager::pasteFile(const QSharedPointer<DFMPasteEvent> &event) const
 {
     if (event->action() != DFMGlobal::CutAction || event->targetUrl() != DUrl::fromTrashFile("/")) {
-        event->ignore();
-
         return DUrlList();
     }
 
