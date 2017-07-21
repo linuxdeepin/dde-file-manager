@@ -44,7 +44,7 @@ unix {
     DEFINES += PLUGINDIR=\\\"$$top_srcdir/plugins:$$PLUGINDIR\\\"
 
     isEmpty(VERSION) {
-        VERSION = 1.4
+        VERSION = 1.5
     }
 
 }

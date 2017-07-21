@@ -856,6 +856,7 @@ MenuAction DFileMenuManager::registerMenuActionType(QAction *action)
 
 void DFileMenuManager::actionTriggered(QAction *action)
 {
+    qDebug() << action << action->data().isValid();
     DFileMenu *menu = qobject_cast<DFileMenu *>(sender());
 
     if (action->data().isValid()) {
@@ -872,7 +873,8 @@ void DFileMenuManager::actionTriggered(QAction *action)
         if (type >= MenuAction::UserMenuAction)
             return;
 
-        if (DFileMenuData::actions.value(type) == action) {
+        qDebug() << type << DFileMenuData::actions.value(type);
+        if (DFileMenuData::actions.value(type)->text() == action->text()) {
             const QSharedPointer<DFMMenuActionEvent> &event = menu->makeEvent(type);
             DFMEventDispatcher::instance()->processEvent(event);
         }
