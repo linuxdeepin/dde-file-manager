@@ -873,10 +873,14 @@ void DFileMenuManager::actionTriggered(QAction *action)
         if (type >= MenuAction::UserMenuAction)
             return;
 
-        qDebug() << type << DFileMenuData::actions.value(type);
-        if (DFileMenuData::actions.value(type)->text() == action->text()) {
-            const QSharedPointer<DFMMenuActionEvent> &event = menu->makeEvent(type);
-            DFMEventDispatcher::instance()->processEvent(event);
+        QAction* typeAction = DFileMenuData::actions.value(type);
+        qDebug() << typeAction << action;
+        if (typeAction){
+            qDebug() << typeAction->text() << action->text();
+            if (typeAction->text() == action->text()) {
+                const QSharedPointer<DFMMenuActionEvent> &event = menu->makeEvent(type);
+                DFMEventDispatcher::instance()->processEvent(event);
+            }
         }
 
 #ifdef SW_LABEL
