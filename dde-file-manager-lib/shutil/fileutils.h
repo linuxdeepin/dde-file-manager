@@ -19,6 +19,7 @@ class FileUtils {
 public:
 
     static QString WallpaperKey;
+    static QString XDG_RUNTIME_DIR;
 
     static bool removeRecurse(const QString &path, const QString &name);
     static void recurseFolder(const QString &path, const QString &parent,

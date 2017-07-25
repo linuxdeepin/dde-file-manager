@@ -37,6 +37,7 @@ extern "C" {
 DFM_USE_NAMESPACE
 
 QString FileUtils::WallpaperKey = "pictureUri";
+QString FileUtils::XDG_RUNTIME_DIR = "";
 
 /**
  * @brief Recursive removes file or directory
@@ -887,9 +888,14 @@ DFMGlobal::MenuExtension FileUtils::getMenuExtension(const DUrlList &urlList)
 
 bool FileUtils::isGvfsMountFile(const QString &filePath)
 {
-    static const QString xdg_runtime = QString::fromLocal8Bit(qgetenv("XDG_RUNTIME_DIR"));
-    QString gvfsDir = QString("%1/gvfs").arg(xdg_runtime);
+    if (XDG_RUNTIME_DIR.isEmpty()){
+        QStringList runtimes = QStandardPaths::standardLocations(QStandardPaths::RuntimeLocation);
+        if (runtimes.count() >=1){
+            XDG_RUNTIME_DIR = runtimes.at(0);
+        }
+    }
 
+    QString gvfsDir = QString("%1/gvfs").arg(XDG_RUNTIME_DIR);
     if (filePath.startsWith(gvfsDir) && DUrl(filePath) != DUrl(gvfsDir)) {
         return true;
     }
