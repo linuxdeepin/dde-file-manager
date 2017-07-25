@@ -482,7 +482,7 @@ void PropertyDialog::onExpandChanged(const bool &e)
         if(e)
             expand->setSeparatorVisible(false);
         else{
-            QTimer::singleShot(200, [=]{
+            QTimer::singleShot(200, expand, [=] {
                 expand->setSeparatorVisible(true);
             });
         }
