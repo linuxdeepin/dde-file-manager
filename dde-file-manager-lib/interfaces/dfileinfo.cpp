@@ -432,7 +432,7 @@ QIcon DFileInfo::fileIcon() const
         return d->icon;
 
     const DUrl &fileUrl = this->fileUrl();
-    bool has_thumbnail = DThumbnailProvider::instance()->hasThumbnail(d->fileInfo);
+    bool has_thumbnail = FileUtils::isGvfsMountFile(absoluteFilePath()) || DThumbnailProvider::instance()->hasThumbnail(d->fileInfo);
 
     if (has_thumbnail) {
         const QIcon icon(DThumbnailProvider::instance()->thumbnailFilePath(d->fileInfo, DThumbnailProvider::Large));
@@ -463,7 +463,7 @@ QIcon DFileInfo::fileIcon() const
                 DThumbnailProvider::instance()->appendToProduceQueue(me->d_func()->fileInfo, DThumbnailProvider::Large,
                                                                      [me] (const QString &path) {
                     if (path.isEmpty())
-                        me->d_func()->icon = me->DAbstractFileInfo::fileIcon();
+                        me->d_func()->icon = DFileIconProvider::globalProvider()->icon(*me.constData());
                 });
                 me->d_func()->requestingThumbnail = true;
                 timer->deleteLater();
