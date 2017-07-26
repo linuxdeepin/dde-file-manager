@@ -25,7 +25,7 @@
 // ffmpeg
 #include "libffmpegthumbnailer/videothumbnailer.h"
 
-#include "dutility.h"
+#include "DWidgetUtil"
 
 DWIDGET_USE_NAMESPACE
 

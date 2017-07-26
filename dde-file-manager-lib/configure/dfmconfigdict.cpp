@@ -1,4 +1,4 @@
-#include <settings.h>
+#include <QObject>
 
 void GenerateSettingTranslate()
 {

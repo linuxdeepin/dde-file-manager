@@ -18,9 +18,9 @@ TEMPLATE = app
 CONFIG += c++11 link_pkgconfig
 PKGCONFIG += gio-unix-2.0
 CONFIG(release, release|debug) {
-    PKGCONFIG += dtkbase dtkwidget dtkutil
+    PKGCONFIG += dtkwidget
 } else {
-    PKGCONFIG += dtkbase dtkwidget dtkutil
+    PKGCONFIG += dtkwidget
 }
 
 DEFINES += QMAKE_TARGET=\\\"$$TARGET\\\" QMAKE_VERSION=\\\"$$VERSION\\\"

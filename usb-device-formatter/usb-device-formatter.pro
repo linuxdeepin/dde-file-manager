@@ -15,9 +15,9 @@ include(../partman/partman.pri)
 
 PKGCONFIG += x11
 CONFIG(release, release|debug) {
-    PKGCONFIG += dtkbase dtkwidget dtkutil
+    PKGCONFIG += dtkwidget
 } else {
-    PKGCONFIG += dtkbase dtkwidget dtkutil
+    PKGCONFIG += dtkwidget
 }
 
 CONFIG += c++11 link_pkgconfig

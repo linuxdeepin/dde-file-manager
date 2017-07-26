@@ -520,15 +520,15 @@ void DTaskDialog::initUI(){
     m_taskListWidget = new QListWidget;
     m_taskListWidget->setSelectionMode(QListWidget::NoSelection);
 
-    m_titleBar = new DTitlebar;
-    m_titleBar->setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
-    m_titleBar->setFixedHeight(27);
-    m_titleBar->layout()->setContentsMargins(0, 0, 0, 0);
+    m_titlebar = new DTitlebar;
+    m_titlebar->setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
+    m_titlebar->setFixedHeight(27);
+    m_titlebar->layout()->setContentsMargins(0, 0, 0, 0);
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setSpacing(0);
-    mainLayout->addWidget(m_titleBar);
+    mainLayout->addWidget(m_titlebar);
     mainLayout->addSpacing(3);
     mainLayout->addWidget(m_taskListWidget);
     mainLayout->addStretch(1);
@@ -545,7 +545,7 @@ QListWidget *DTaskDialog::getTaskListWidget()
 }
 
 void DTaskDialog::setTitle(QString title){
-    m_titleBar->setTitle(title);
+    m_titlebar->setTitle(title);
 }
 
 void DTaskDialog::setTitle(int taskCount){

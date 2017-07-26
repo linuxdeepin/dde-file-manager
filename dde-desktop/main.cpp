@@ -22,7 +22,7 @@
 #include "config/config.h"
 #include "desktop.h"
 
-using namespace Dtk::Util;
+using namespace Dtk::Core;
 using namespace Dtk::Widget;
 
 int main(int argc, char *argv[])

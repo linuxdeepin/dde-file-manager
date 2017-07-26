@@ -2,7 +2,7 @@ PREFIX = /usr
 QT              += core widgets concurrent
 TEMPLATE         = lib
 CONFIG          += plugin c++11 link_pkgconfig
-PKGCONFIG       += dtkbase dtkwidget gio-unix-2.0
+PKGCONFIG       += dtkwidget gio-unix-2.0
 
 INCLUDEPATH += /usr/include/dde-dock
 INCLUDEPATH += $$PWD/../../dde-file-manager-lib/interfaces \

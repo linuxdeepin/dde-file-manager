@@ -11,7 +11,6 @@
 #include <ddialog.h>
 #include <dpasswordedit.h>
 #include <dpasswordedit.h>
-#include <dcheckbox.h>
 
 DWIDGET_USE_NAMESPACE
 

@@ -7,7 +7,7 @@ isEmpty(PREFIX)
 QT              += widgets svg dbus
 TEMPLATE         = lib
 CONFIG          += plugin c++11 link_pkgconfig
-PKGCONFIG       += dtkbase dtkwidget
+PKGCONFIG       += dtkwidget
 
 INCLUDEPATH += /usr/include/dde-dock
 INCLUDEPATH += $$PWD/../../dde-file-manager-lib/interfaces

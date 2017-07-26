@@ -15,11 +15,9 @@ Deepin File Manager is a file management tool independently  developed by Deepin
 * xext 
 * libsecret-1 
 * gio-unix-2.0
-* dtkbase 
-* dtkutil 
-* dtkwidget
 * libpoppler-cpp0v5
 * libffmpegthumbnailer4v5
+* dtkwidget
 
 
 ## Installation

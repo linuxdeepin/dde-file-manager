@@ -25,9 +25,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
-#include "DDesktopServices"
 
-DUTIL_USE_NAMESPACE
+#include <DDesktopServices>
+
+DWIDGET_USE_NAMESPACE
 
 using namespace std;
 

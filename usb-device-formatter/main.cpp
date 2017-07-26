@@ -15,7 +15,7 @@
 #include <QProcessEnvironment>
 #include <QX11Info>
 #include <X11/Xlib.h>
-DUTIL_USE_NAMESPACE
+DCORE_USE_NAMESPACE
 //DWIDGET_BEGIN_NAMESPACE
 
 int main(int argc, char *argv[])

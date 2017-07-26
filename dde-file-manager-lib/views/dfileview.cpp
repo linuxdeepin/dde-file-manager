@@ -16,7 +16,6 @@
 #include "interfaces/diconitemdelegate.h"
 #include "interfaces/dlistitemdelegate.h"
 #include "interfaces/dfmsetting.h"
-#include "settings.h"
 #include "dcrumbwidget.h"
 #include "controllers/fmstatemanager.h"
 

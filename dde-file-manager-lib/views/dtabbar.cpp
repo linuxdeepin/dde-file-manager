@@ -5,7 +5,7 @@
 #include "dfmevent.h"
 #include "controllers/appcontroller.h"
 
-#include <dutility.h>
+#include <DWidgetUtil>
 
 #include <QPropertyAnimation>
 #include <QDebug>
@@ -327,7 +327,7 @@ void Tab::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             int radius = 20;
 
             const QPixmap &pixmap = toPixmap(true);
-            QImage image = DUtility::dropShadow(pixmap, radius,QColor(0,0,0,0.2*255));
+            QImage image = Dtk::Widget::dropShadow(pixmap, radius,QColor(0,0,0,0.2*255));
             QPainter pa(&image);
 
             pa.drawPixmap(radius, radius, pixmap);

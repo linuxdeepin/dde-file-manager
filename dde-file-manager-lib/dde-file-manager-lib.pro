@@ -32,11 +32,10 @@ isEmpty(PREFIX){
 
 PKGCONFIG += gtk+-2.0 gsettings-qt libsecret-1 gio-unix-2.0 poppler-cpp
 CONFIG(release, release|debug) {
-    PKGCONFIG += dtkbase dtkwidget dtkutil
+    PKGCONFIG += dtkwidget
 } else {
-    PKGCONFIG += dtkbase dtkwidget dtkutil
+    PKGCONFIG += dtkwidget
 }
-PKGCONFIG += dtksettings dtksettingsview
 CONFIG += c++11 link_pkgconfig
 #DEFINES += QT_NO_DEBUG_OUTPUT
 DEFINES += QT_MESSAGELOGCONTEXT
