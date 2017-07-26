@@ -27,6 +27,8 @@ public:
 
     void setOpacity(qreal opacity);
 
+    QRect conentImageGeometry() const;
+
 signals:
     void pressed();
     void hoverIn();

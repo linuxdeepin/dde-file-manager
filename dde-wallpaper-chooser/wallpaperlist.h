@@ -1,14 +1,17 @@
 #ifndef WALLPAPERLIST_H
 #define WALLPAPERLIST_H
 
-#include <QListWidget>
-#include <QGraphicsOpacityEffect>
+#include <QScrollArea>
 #include <QPropertyAnimation>
 
 #include <dwidget_global.h>
 #include <anchors.h>
 
 #include <com_deepin_wm.h>
+
+QT_BEGIN_NAMESPACE
+class QHBoxLayout;
+QT_END_NAMESPACE
 
 DWIDGET_BEGIN_NAMESPACE
 class DImageButton;
@@ -19,7 +22,7 @@ DWIDGET_USE_NAMESPACE
 class WallpaperItem;
 class AppearanceDaemonInterface;
 class QGSettings;
-class WallpaperList : public QListWidget
+class WallpaperList : public QScrollArea
 {
     Q_OBJECT
 
@@ -28,6 +31,7 @@ public:
     ~WallpaperList();
 
     WallpaperItem * addWallpaper(const QString &path);
+    WallpaperItem * getWallpaperByPath(const QString &path) const;
     void removeWallpaper(const QString &path);
 
     void scrollList(int step, int duration = 100);
@@ -37,6 +41,19 @@ public:
 
     QString desktopWallpaper() const;
     QString lockWallpaper() const;
+
+    QSize gridSize() const;
+    void setGridSize(const QSize &size);
+
+    void addItem(QWidget *item);
+    QWidget *item(int index) const;
+    QWidget *itemAt(const QPoint &pos) const;
+    QWidget *itemAt(int x, int y) const;
+    void removeItem(QWidget *item);
+    void removeItem(int index);
+    int count() const;
+
+    void clear();
 
 signals:
     void needPreviewWallpaper(QString path) const;
@@ -48,6 +65,9 @@ protected:
     void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
 
 private:
+    QWidget *m_contentWidget;
+    QHBoxLayout *m_contentLayout;
+
     AppearanceDaemonInterface * m_dbusAppearance;
     com::deepin::wm *m_wmInter;
 
@@ -62,6 +82,8 @@ private:
     Anchors<DImageButton> nextButton;
 
     QPropertyAnimation scrollAnimation;
+
+    QSize m_gridSize;
 
     void updateBothEndsItem();
     void showDeleteButtonForItem(const WallpaperItem *item) const;
