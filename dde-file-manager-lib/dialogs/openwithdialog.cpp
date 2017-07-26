@@ -193,7 +193,7 @@ void OpenWithDialog::initUI()
     m_recommandLayout = new DFlowLayout;
     m_otherLayout = new DFlowLayout;
 
-    m_openFileChooseButton = new DLinkButton(tr("Select other programs"));
+    m_openFileChooseButton = new DLinkButton(tr("Add other programs"));
     m_setToDefaultCheckBox = new QCheckBox(tr("Set as default"));
     m_setToDefaultCheckBox->setChecked(true);
     m_cancelButton = new QPushButton(tr("Cancel"));
