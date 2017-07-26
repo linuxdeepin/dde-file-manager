@@ -21,6 +21,7 @@
 #include <QLabel>
 #include <QAction>
 #include <QWindow>
+#include <QTimer>
 
 DFM_BEGIN_NAMESPACE
 
@@ -294,7 +295,7 @@ void FilePreviewDialog::switchToPage(int index)
         if (m_preview && (DFMFilePreviewFactory::isSuitedWithKey(m_preview, key)
                           || DFMFilePreviewFactory::isSuitedWithKey(m_preview, general_key))) {
             if (m_preview->setFileUrl(m_fileList.at(index))) {
-                adjustSize();
+                resize(sizeHint());
                 return;
             }
         }
@@ -335,8 +336,9 @@ void FilePreviewDialog::switchToPage(int index)
     if (m_preview)
         m_preview->deleteLater();
 
-    if (m_preview)
+    if (m_preview) {
         static_cast<QVBoxLayout*>(layout())->removeWidget(m_preview->contentWidget());
+    }
 
     static_cast<QVBoxLayout*>(layout())->insertWidget(0, preview->contentWidget());
 
@@ -350,7 +352,10 @@ void FilePreviewDialog::switchToPage(int index)
     m_preview = preview;
 
     updateTitle();
-    adjustSize();
+
+    QTimer::singleShot(0, this, [preview, this] {
+        resize(sizeHint());
+    });
 }
 
 void FilePreviewDialog::previousPage()
