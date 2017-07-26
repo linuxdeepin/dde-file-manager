@@ -7,12 +7,13 @@
 #include <QScrollBar>
 #include <QToolButton>
 #include <QGSettings>
+#include <QHBoxLayout>
 
 #include <anchors.h>
 #include <dimagebutton.h>
 
 WallpaperList::WallpaperList(QWidget * parent)
-    : QListWidget(parent)
+    : QScrollArea(parent)
     , m_dbusAppearance(new AppearanceDaemonInterface(AppearanceServ,
                                                    AppearancePath,
                                                    QDBusConnection::sessionBus(),
@@ -25,20 +26,27 @@ WallpaperList::WallpaperList(QWidget * parent)
                                   ":/images/next_hover.png",
                                   ":/images/next_press.png", this))
 {
-    setViewMode(QListView::IconMode);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setWrapping(false);
-    setSelectionRectVisible(false);
-    setEditTriggers(QListView::NoEditTriggers);
     setAttribute(Qt::WA_TranslucentBackground);
+    setStyleSheet("WallpaperList{background: transparent;}");
     setFrameShape(QFrame::NoFrame);
     horizontalScrollBar()->setEnabled(false);
 
     connect(&scrollAnimation, &QAbstractAnimation::finished, [this] {
-        showDeleteButtonForItem(static_cast<WallpaperItem*>(itemWidget(itemAt(mapFromGlobal(QCursor::pos())))));
+        showDeleteButtonForItem(static_cast<WallpaperItem*>(itemAt(mapFromGlobal(QCursor::pos()))));
         updateBothEndsItem();
     });
+
+    m_contentWidget = new QWidget(this);
+
+    m_contentWidget->setAttribute(Qt::WA_TranslucentBackground);
+    m_contentLayout = new QHBoxLayout(m_contentWidget);
+    m_contentLayout->setContentsMargins(0, 0, 0, 0);
+    m_contentLayout->setSpacing(0);
+
+    setWidget(m_contentWidget);
+    m_contentWidget->setAutoFillBackground(false);
 
     prevButton->hide();
     prevButton.setAnchor(Qt::AnchorVerticalCenter, this, Qt::AnchorVerticalCenter);
@@ -62,13 +70,9 @@ WallpaperList::~WallpaperList()
 
 WallpaperItem * WallpaperList::addWallpaper(const QString &path)
 {
-    QListWidgetItem * item = new QListWidgetItem(this);
-    item->setSizeHint(QSize(ItemCellWidth, ItemCellHeight));
-    addItem(item);
-
     WallpaperItem * wallpaper = new WallpaperItem(this, path);
-    wallpaper->setFixedSize(item->sizeHint());
-    setItemWidget(item, wallpaper);
+    wallpaper->setFixedSize(QSize(ItemWidth, ItemHeight));
+    addItem(wallpaper);
 
     connect(wallpaper, &WallpaperItem::pressed, this, &WallpaperList::wallpaperItemPressed);
     connect(wallpaper, &WallpaperItem::hoverIn, this, &WallpaperList::wallpaperItemHoverIn);
@@ -79,16 +83,30 @@ WallpaperItem * WallpaperList::addWallpaper(const QString &path)
     return wallpaper;
 }
 
-void WallpaperList::removeWallpaper(const QString &path)
+WallpaperItem *WallpaperList::getWallpaperByPath(const QString &path) const
 {
     for (int i = 0; i < count(); i++) {
-        QListWidgetItem * ii = this->item(i);
-        WallpaperItem * wallpaper = qobject_cast<WallpaperItem*>(itemWidget(ii));
+        WallpaperItem * wallpaper = qobject_cast<WallpaperItem*>(this->item(i));
 
         if (wallpaper) {
             if (wallpaper->getPath() == path) {
-                removeItemWidget(ii);
-                takeItem(i);
+                return wallpaper;
+            }
+        }
+    }
+
+    return 0;
+}
+
+void WallpaperList::removeWallpaper(const QString &path)
+{
+    for (int i = 0; i < count(); i++) {
+        WallpaperItem * wallpaper = qobject_cast<WallpaperItem*>(this->item(i));
+
+        if (wallpaper) {
+            if (wallpaper->getPath() == path) {
+                removeItem(wallpaper);
+                break;
             }
         }
     }
@@ -129,12 +147,16 @@ void WallpaperList::scrollList(int step, int duration)
 
 void WallpaperList::prevPage()
 {
-    scrollList(-gridSize().width() * (width() / gridSize().width() - 2), 500);
+    int c = width() / gridSize().width();
+
+    scrollList(-c * (m_contentLayout->spacing() + ItemWidth), 500);
 }
 
 void WallpaperList::nextPage()
 {
-    scrollList(gridSize().width() * (width() / gridSize().width() - 2), 500);
+    int c = width() / gridSize().width();
+
+    scrollList(c * (m_contentLayout->spacing() + ItemWidth), 500);
 }
 
 void WallpaperList::resizeEvent(QResizeEvent *event)
@@ -148,9 +170,8 @@ void WallpaperList::resizeEvent(QResizeEvent *event)
 
     setGridSize(QSize(width() / screen_item_count, ItemHeight));
 
-    if (gridSize().width() * count() > width())
-        QTimer::singleShot(100, this, &WallpaperList::doItemsLayout);
-
+void WallpaperList::showEvent(QShowEvent *event)
+{
     updateBothEndsItem();
 }
 
@@ -162,6 +183,90 @@ void WallpaperList::wheelEvent(QWheelEvent *event)
 QString WallpaperList::lockWallpaper() const
 {
     return m_lockWallpaper;
+}
+
+QSize WallpaperList::gridSize() const
+{
+    return m_gridSize;
+}
+
+void WallpaperList::setGridSize(const QSize &size)
+{
+    if (m_gridSize == size)
+        return;
+
+    int c = width() / size.width();
+
+    m_gridSize = size;
+    m_contentLayout->setSpacing((width() - c * ItemWidth) / (c + 1));
+    m_contentLayout->setContentsMargins(m_contentLayout->spacing(), 0,
+                                        m_contentLayout->spacing(), 0);
+    m_contentWidget->adjustSize();
+}
+
+void WallpaperList::addItem(QWidget *item)
+{
+    m_contentLayout->addWidget(item);
+    m_contentWidget->adjustSize();
+}
+
+QWidget *WallpaperList::item(int index) const
+{
+    if (index >= m_contentLayout->count())
+        return 0;
+
+    return m_contentLayout->itemAt(index)->widget();
+}
+
+QWidget *WallpaperList::itemAt(const QPoint &pos) const
+{
+    return itemAt(pos.x(), pos.y());
+}
+
+QWidget *WallpaperList::itemAt(int x, int y) const
+{
+    Q_UNUSED(y)
+
+    return item((horizontalScrollBar()->value() + x) / gridSize().width());
+}
+
+void WallpaperList::removeItem(QWidget *item)
+{
+    for (int i = 0; i < m_contentLayout->count(); ++i) {
+        if (m_contentLayout->itemAt(i)->widget() == item) {
+            removeItem(i);
+            break;
+        }
+    }
+}
+
+void WallpaperList::removeItem(int index)
+{
+    QLayoutItem *item = m_contentLayout->takeAt(index);
+    QWidget *w = item->widget();
+
+    if (w) {
+        w->hide();
+        w->deleteLater();
+    }
+
+    m_contentWidget->adjustSize();
+}
+
+int WallpaperList::count() const
+{
+    return m_contentLayout->count();
+}
+
+void WallpaperList::clear()
+{
+    while (m_contentLayout->count() > 0) {
+        QLayoutItem *item = m_contentLayout->takeAt(0);
+        QWidget *w = item->widget();
+
+        if (w)
+            w->deleteLater();
+    }
 }
 
 QString WallpaperList::desktopWallpaper() const
@@ -177,8 +282,7 @@ void WallpaperList::wallpaperItemPressed()
         return;
 
     for (int i = 0; i < count(); i++) {
-        QListWidgetItem * ii = this->item(i);
-        WallpaperItem * wallpaper = qobject_cast<WallpaperItem*>(itemWidget(ii));
+        WallpaperItem * wallpaper = qobject_cast<WallpaperItem*>(this->item(i));
 
         if (wallpaper) {
             if (wallpaper == item) {
@@ -198,9 +302,10 @@ void WallpaperList::wallpaperItemPressed()
 
 void WallpaperList::wallpaperItemHoverIn()
 {
-    WallpaperItem * item = qobject_cast<WallpaperItem*>(sender());
+    WallpaperItem *item = qobject_cast<WallpaperItem*>(sender());
 
-    showDeleteButtonForItem(item);
+    if (item->isVisible())
+        showDeleteButtonForItem(item);
 }
 
 void WallpaperList::wallpaperItemHoverOut()
@@ -236,8 +341,8 @@ void WallpaperList::updateBothEndsItem()
     if (nextItem)
         nextItem->setOpacity(1);
 
-    prevItem = static_cast<WallpaperItem*>(itemWidget(itemAt(ItemWidth / 2, ItemHeight / 2)));
-    nextItem = static_cast<WallpaperItem*>(itemWidget(itemAt(width() - ItemWidth / 2, ItemHeight / 2)));
+    prevItem = qobject_cast<WallpaperItem*>(itemAt(ItemWidth / 2, ItemHeight / 2));
+    nextItem = qobject_cast<WallpaperItem*>(itemAt(width() - ItemWidth / 2, ItemHeight / 2));
 
     if (current_value == horizontalScrollBar()->minimum()) {
         prevItem = Q_NULLPTR;
@@ -265,7 +370,7 @@ void WallpaperList::updateBothEndsItem()
 void WallpaperList::showDeleteButtonForItem(const WallpaperItem *item) const
 {
     if (item && item->getDeletable()) {
-        emit needCloseButton(item->getPath(), mapToParent(item->geometry().topRight()));
+        emit needCloseButton(item->getPath(), item->mapTo(parentWidget(), item->conentImageGeometry().topRight()));
     } else {
         emit needCloseButton("", QPoint(0, 0));
     }

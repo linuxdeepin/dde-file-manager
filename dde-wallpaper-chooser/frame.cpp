@@ -93,10 +93,10 @@ void Frame::handleNeedCloseButton(QString path, QPoint pos)
         m_closeButton->show();
         m_closeButton->disconnect();
 
-        connect(m_closeButton, &DImageButton::clicked, [this, path] {
-            m_closeButton->hide();
+        connect(m_closeButton, &DImageButton::clicked, m_wallpaperList->getWallpaperByPath(path), [this, path] {
             m_dbusAppearance->Delete("background", path);
             m_wallpaperList->removeWallpaper(path);
+            m_closeButton->hide();
         });
     } else {
         m_closeButton->hide();
@@ -155,7 +155,7 @@ void Frame::initSize()
 
 void Frame::initListView()
 {
-    m_wallpaperList->setStyleSheet("QListWidget { background: transparent }");
+
 }
 
 void Frame::refreshList()
@@ -177,7 +177,8 @@ void Frame::refreshList()
                 item->setDeletable(m_deletableInfo.value(path));
             }
 
-            m_wallpaperList->setFixedWidth(qMin(m_wallpaperList->gridSize().width() * m_wallpaperList->count(), width()));
+            m_wallpaperList->setFixedWidth(width());
+            m_wallpaperList->show();
         }
     });
 }

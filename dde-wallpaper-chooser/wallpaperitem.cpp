@@ -73,6 +73,7 @@ WallpaperItem::~WallpaperItem()
 void WallpaperItem::initUI()
 {
     setAttribute(Qt::WA_TranslucentBackground);
+    setFrameShape(QFrame::NoFrame);
 
     m_wrapper = new WrapperWidget(this);
     m_wrapper->setFixedSize(ItemWidth, ItemHeight * 2);
@@ -175,6 +176,7 @@ void WallpaperItem::resizeEvent(QResizeEvent *event)
 {
     const QPoint &offset = QPoint((event->size().width() - ItemWidth) / 2, (event->size().height() - ItemHeight) / 2);
 
+    m_wrapper->setFixedWidth(width());
     m_wrapper->m_pixmapBoxGeometry = QRect(offset, QSize(ItemWidth, ItemHeight));
 
     QFrame::resizeEvent(event);
@@ -197,6 +199,11 @@ void WallpaperItem::setOpacity(qreal opacity)
 
     m_wrapper->m_opacity = opacity;
     m_wrapper->update();
+}
+
+QRect WallpaperItem::conentImageGeometry() const
+{
+    return m_wrapper->m_pixmapBoxGeometry;
 }
 
 void WallpaperItem::setPath(const QString &path)
