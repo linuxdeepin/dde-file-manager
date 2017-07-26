@@ -1,19 +1,21 @@
 #include "dfmsetting.h"
+
 #include <QJsonDocument>
 #include <QFile>
 #include <QTextStream>
 #include <QDebug>
 #include <QProcess>
-#include "dfmstandardpaths.h"
+
+#include <DSettings>
 #include <qsettingbackend.h>
-#include <settings.h>
+
+#include "dfmstandardpaths.h"
 #include "singleton.h"
 #include "app/filesignalmanager.h"
 #include "interfaces/dfileservices.h"
 #include "interfaces/dabstractfilewatcher.h"
 #include "app/define.h"
 #include "shutil/fileutils.h"
-
 
 DFMSetting *DFMSetting::instance()
 {
@@ -39,13 +41,13 @@ DFMSetting::DFMSetting(QObject *parent) : QObject(parent)
 
 #ifdef DISABLE_COMPRESS_PREIVEW
     //load temlate
-    m_settings = Settings::fromJsonFile(":/configure/global-setting-template-pro.json").data();
+    m_settings = Dtk::Core::DSettings::fromJsonFile(":/configure/global-setting-template-pro.json").data();
 #else
-    m_settings = Settings::fromJsonFile(":/configure/global-setting-template.json").data();
+    m_settings = Dtk::Core::DSettings::fromJsonFile(":/configure/global-setting-template.json").data();
 #endif
 
     //load conf value
-    auto backen = new QSettingBackend(getConfigFilePath());
+    auto backen = new DTK_CORE_NAMESPACE::QSettingBackend(getConfigFilePath());
     m_settings->setBackend(backen);
 
     m_fileSystemWathcer = fileService->createFileWatcher(this, DUrl::fromLocalFile(getConfigFilePath()).parentUrl(), this);
@@ -56,7 +58,7 @@ DFMSetting::DFMSetting(QObject *parent) : QObject(parent)
 
 void DFMSetting::initConnections()
 {
-    connect(m_settings, &Dtk::Settings::valueChanged, this, &DFMSetting::onValueChanged);
+    connect(m_settings, &Dtk::Core::DSettings::valueChanged, this, &DFMSetting::onValueChanged);
     connect(m_fileSystemWathcer, &DAbstractFileWatcher::fileMoved, this, &DFMSetting::onConfigFileChanged);
 }
 
@@ -108,7 +110,7 @@ QString DFMSetting::getConfigFilePath()
     return QString("%1/%2").arg(DFMStandardPaths::getConfigPath(), "dde-file-manager.conf");
 }
 
-QPointer<Settings> DFMSetting::settings()
+QPointer<Dtk::Core::DSettings> DFMSetting::settings()
 {
     return m_settings;
 }
@@ -141,7 +143,7 @@ void DFMSetting::onConfigFileChanged(const DUrl &fromUrl, const DUrl &toUrl)
 {
     Q_UNUSED(fromUrl)
     if (toUrl == DUrl::fromLocalFile(getConfigFilePath())){
-        auto backen = new QSettingBackend(getConfigFilePath());
+        auto backen = new DTK_CORE_NAMESPACE::QSettingBackend(getConfigFilePath());
         m_settings->setBackend(backen);
         qDebug() << toUrl;
     }

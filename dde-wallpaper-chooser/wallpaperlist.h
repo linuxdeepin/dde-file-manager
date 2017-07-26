@@ -4,7 +4,7 @@
 #include <QScrollArea>
 #include <QPropertyAnimation>
 
-#include <dwidget_global.h>
+#include <dtkwidget_global.h>
 #include <anchors.h>
 
 #include <com_deepin_wm.h>

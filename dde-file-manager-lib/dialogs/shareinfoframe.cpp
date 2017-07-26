@@ -9,6 +9,8 @@
 #include <QFormLayout>
 #include <QProcess>
 #include <QComboBox>
+#include <QCheckBox>
+#include <QLineEdit>
 
 ShareInfoFrame::ShareInfoFrame(const DAbstractFileInfoPointer &info, QWidget *parent) :
     QFrame(parent),
@@ -71,7 +73,7 @@ void ShareInfoFrame::initUI()
 void ShareInfoFrame::initConnect()
 {
     connect(m_shareCheckBox, &QCheckBox::clicked, this, &ShareInfoFrame::handleCheckBoxChanged);
-    connect(m_shareNamelineEdit, &DLineEdit::textChanged, this, &ShareInfoFrame::handleShareNameChanged);
+    connect(m_shareNamelineEdit, &QLineEdit::textChanged, this, &ShareInfoFrame::handleShareNameChanged);
     connect(m_permissoComBox, SIGNAL(currentIndexChanged(int)), this, SLOT(handlePermissionComboxChanged(int)));
     connect(m_anonymityCombox, SIGNAL(currentIndexChanged(int)), this, SLOT(handleAnonymityComboxChanged(int)));
     connect(m_jobTimer, &QTimer::timeout, this, &ShareInfoFrame::doShareInfoSetting);
@@ -136,11 +138,11 @@ void ShareInfoFrame::updateShareInfo(const QString &filePath)
 
     if (!m_fileinfo->fileSharedName().isEmpty()) {
         m_shareCheckBox->setChecked(true);
-        disconnect(m_shareNamelineEdit, &DLineEdit::textChanged, this, &ShareInfoFrame::handleShareNameChanged);
+        disconnect(m_shareNamelineEdit, &QLineEdit::textChanged, this, &ShareInfoFrame::handleShareNameChanged);
         int cursorPos = m_shareNamelineEdit->cursorPosition();
         m_shareNamelineEdit->setText(m_fileinfo->fileSharedName());
         m_shareNamelineEdit->setCursorPosition(cursorPos);
-        connect(m_shareNamelineEdit, &DLineEdit::textChanged, this, &ShareInfoFrame::handleShareNameChanged);
+        connect(m_shareNamelineEdit, &QLineEdit::textChanged, this, &ShareInfoFrame::handleShareNameChanged);
 
         if (m_fileinfo->isWritableShared()) {
             m_permissoComBox->setCurrentIndex(0);

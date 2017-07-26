@@ -11,8 +11,6 @@
 #include <QJsonObject>
 #include <ddialog.h>
 #include <dpasswordedit.h>
-#include <dlineedit.h>
-#include <dcheckbox.h>
 
 DWIDGET_USE_NAMESPACE
 

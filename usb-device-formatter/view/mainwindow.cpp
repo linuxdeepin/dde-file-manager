@@ -54,11 +54,11 @@ void MainWindow::initUI()
     mainLayout->setContentsMargins(0, 2, 0, 0);
 
     QString title = tr("Format");
-    DTitlebar* titleBar = new DTitlebar(this);
-    titleBar->setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint | Qt::FramelessWindowHint);
-    titleBar->setTitle(title);
-    titleBar->setFixedHeight(20);
-    titleBar->layout()->setContentsMargins(0, 0, 0, 0);
+    DTitlebar* titlebar = new DTitlebar(this);
+    titlebar->setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint | Qt::FramelessWindowHint);
+    titlebar->setTitle(title);
+    titlebar->setFixedHeight(20);
+    titlebar->layout()->setContentsMargins(0, 0, 0, 0);
 
     m_pageStack = new QStackedWidget(this);
     m_pageStack->setFixedSize(width(), 340);
@@ -79,13 +79,13 @@ void MainWindow::initUI()
     m_comfirmButton->setFixedSize(160, 36);
     m_comfirmButton->setObjectName("ComfirmButton");
 
-    mainLayout->addWidget(titleBar);
+    mainLayout->addWidget(titlebar);
     mainLayout->addWidget(m_pageStack);
     mainLayout->addSpacing(10);
     mainLayout->addStretch(1);
     mainLayout->addWidget(m_comfirmButton, 0, Qt::AlignHCenter);
     mainLayout->addSpacing(34);
-    setFixedHeight(titleBar->height() + m_pageStack->height() + 10 + m_comfirmButton->height() + 34);
+    setFixedHeight(titlebar->height() + m_pageStack->height() + 10 + m_comfirmButton->height() + 34);
     setLayout(mainLayout);
 }
 

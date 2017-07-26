@@ -46,7 +46,6 @@
 #include <ddialog.h>
 #include <DAboutDialog>
 #include <dexpandgroup.h>
-#include <settings.h>
 #include <dsettingsdialog.h>
 
 #include <QTimer>

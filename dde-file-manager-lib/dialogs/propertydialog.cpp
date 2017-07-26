@@ -36,7 +36,6 @@
 #include <dcombobox.h>
 #include <dbaseexpand.h>
 #include <dexpandgroup.h>
-#include <dcheckbox.h>
 
 #include <QTextEdit>
 #include <QFormLayout>

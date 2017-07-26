@@ -4,14 +4,13 @@
 #include <QFrame>
 #include <QTimer>
 
-#include <dcheckbox.h>
-#include <dlineedit.h>
-
 #include "dabstractfileinfo.h"
 
+QT_BEGIN_NAMESPACE
 class QComboBox;
-
-DWIDGET_USE_NAMESPACE
+class QCheckBox;
+class QLineEdit;
+QT_END_NAMESPACE
 
 class ShareInfoFrame : public QFrame
 {

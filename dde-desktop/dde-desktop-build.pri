@@ -13,7 +13,7 @@ isEqual(EDITION, RACCOON) {
 DEFINES += DDE_DBUS_DISPLAY
 
 CONFIG(release, release|debug) {
-    PKGCONFIG += dtkbase dtkwidget dtkutil
+    PKGCONFIG += dtkwidget
 } else {
-    PKGCONFIG += dtkbase dtkwidget dtkutil
+    PKGCONFIG += dtkwidget
 }

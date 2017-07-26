@@ -13,7 +13,6 @@
 #include <ddialog.h>
 #include <dplatformwindowhandle.h>
 #include <DTitlebar>
-#include "dcheckbox.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -160,11 +159,11 @@ private:
     int m_defaultWidth = 525;
     int m_defaultHeight = 120;
     QLabel* m_titleLabel=NULL;
-    QPushButton* m_titleBarMinimizeButton;
-    QPushButton* m_titleBarCloseButton;
+    QPushButton* m_titlebarMinimizeButton;
+    QPushButton* m_titlebarCloseButton;
     QListWidget* m_taskListWidget=NULL;
     QMap<QString, QListWidgetItem*> m_jobIdItems;
-    DTitlebar* m_titleBar;
+    DTitlebar* m_titlebar;
 };
 
 #endif // DTASKDIALOG_H

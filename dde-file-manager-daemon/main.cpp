@@ -11,8 +11,8 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
     QDBusConnection connection = QDBusConnection::systemBus();
-    DTK_UTIL_NAMESPACE::DLogManager::registerConsoleAppender();
-    DTK_UTIL_NAMESPACE::DLogManager::registerFileAppender();
+    DTK_CORE_NAMESPACE::DLogManager::registerConsoleAppender();
+    DTK_CORE_NAMESPACE::DLogManager::registerFileAppender();
     if (!connection.interface()->isServiceRegistered(DaemonServicePath)){
         qDebug() << connection.registerService(DaemonServicePath) << "register" << DaemonServicePath << "success";
         FileManagerDaemon* daemon = new FileManagerDaemon();

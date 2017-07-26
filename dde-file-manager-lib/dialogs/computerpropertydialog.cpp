@@ -21,11 +21,11 @@ void ComputerPropertyDialog::initUI()
 {
     setWindowFlags(Qt::FramelessWindowHint);
     setAttribute(Qt::WA_DeleteOnClose);
-    DTitlebar* titleBar = new DTitlebar(this);
-    titleBar->setWindowFlags(Qt::WindowCloseButtonHint);
-    titleBar->setFixedHeight(30);
-    titleBar->setContentsMargins(0, 0, 0, 0);
-    titleBar->layout()->setContentsMargins(0, 6, 6, 0);
+    DTitlebar* titlebar = new DTitlebar(this);
+    titlebar->setWindowFlags(Qt::WindowCloseButtonHint);
+    titlebar->setFixedHeight(30);
+    titlebar->setContentsMargins(0, 0, 0, 0);
+    titlebar->layout()->setContentsMargins(0, 6, 6, 0);
 
     QLabel* iconLabel = new QLabel(this);
     iconLabel->setPixmap(QPixmap(":/images/dialogs/images/deepin_logo.png"));
@@ -77,7 +77,7 @@ void ComputerPropertyDialog::initUI()
     QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->setSpacing(0);
     mainLayout->setContentsMargins(0, 0, 0, 0);
-    mainLayout->addWidget(titleBar);
+    mainLayout->addWidget(titlebar);
     mainLayout->addSpacing(80);
     mainLayout->addWidget(iconLabel, 0, Qt::AlignHCenter);
     mainLayout->addSpacing(60);

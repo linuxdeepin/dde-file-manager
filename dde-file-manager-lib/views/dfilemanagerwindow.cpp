@@ -642,7 +642,7 @@ void DFileManagerWindow::initTitleFrame()
     titleLayout->addWidget(d->logoButton);
     titleLayout->addSpacing(12);
     titleLayout->addWidget(d->toolbar);
-    titleLayout->addWidget(titleBar());
+    titleLayout->addWidget(titlebar());
     titleLayout->setSpacing(0);
     titleLayout->setContentsMargins(0, 0, 0, 0);
 
@@ -667,13 +667,13 @@ void DFileManagerWindow::initTitleBar()
 
     if (isDXcbPlatform){
         d->toolbar->getSettingsButton()->hide();
-        titleBar()->setMenu(menu);
-        titleBar()->setContentsMargins(0, 1, -1, 0);
+        titlebar()->setMenu(menu);
+        titlebar()->setContentsMargins(0, 1, -1, 0);
 
         QWidget *widget = new QWidget();
 
         widget->setFixedSize(35, 0);
-        titleBar()->setCustomWidget(widget, false);
+        titlebar()->setCustomWidget(widget, false);
     }else{
        d->toolbar->getSettingsButton()->setMenu(menu);
     }
@@ -784,11 +784,11 @@ void DFileManagerWindow::initConnect()
 {
     D_D(DFileManagerWindow);
 
-    if (titleBar()) {
-        connect(titleBar(), SIGNAL(minimumClicked()), parentWidget(), SLOT(showMinimized()));
-        connect(titleBar(), SIGNAL(maximumClicked()), parentWidget(), SLOT(showMaximized()));
-        connect(titleBar(), SIGNAL(restoreClicked()), parentWidget(), SLOT(showNormal()));
-        connect(titleBar(), SIGNAL(closeClicked()), parentWidget(), SLOT(close()));
+    if (titlebar()) {
+        connect(titlebar(), SIGNAL(minimumClicked()), parentWidget(), SLOT(showMinimized()));
+        connect(titlebar(), SIGNAL(maximumClicked()), parentWidget(), SLOT(showMaximized()));
+        connect(titlebar(), SIGNAL(restoreClicked()), parentWidget(), SLOT(showNormal()));
+        connect(titlebar(), SIGNAL(closeClicked()), parentWidget(), SLOT(close()));
     }
 
     connect(fileSignalManager, &FileSignalManager::fetchNetworksSuccessed, this, [this] (const DFMUrlBaseEvent &event) {

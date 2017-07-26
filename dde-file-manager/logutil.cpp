@@ -2,7 +2,7 @@
 #include "commandlinemanager.h"
 #include <DLog>
 
-DUTIL_USE_NAMESPACE
+DCORE_USE_NAMESPACE
 
 LogUtil::LogUtil()
 {

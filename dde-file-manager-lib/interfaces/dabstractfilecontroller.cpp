@@ -3,7 +3,7 @@
 
 #include <DDesktopServices>
 
-DUTIL_USE_NAMESPACE
+DWIDGET_USE_NAMESPACE
 
 DAbstractFileController::DAbstractFileController(QObject *parent)
     : QObject(parent)

@@ -2,7 +2,7 @@
 #define DFMSETTING_H
 
 #include <QObject>
-#include "dtk_global.h"
+#include <dtkcore_global.h>
 #include "durl.h"
 #include <QJsonObject>
 #include <QDir>
@@ -10,11 +10,11 @@
 
 class DAbstractFileWatcher;
 
-DTK_BEGIN_NAMESPACE
+DCORE_BEGIN_NAMESPACE
 
-class Settings;
+class DSettings;
 
-DTK_END_NAMESPACE
+DCORE_END_NAMESPACE
 
 DTK_USE_NAMESPACE
 class DFMSetting : public QObject
@@ -46,7 +46,7 @@ public:
     bool isShowedHiddenOnSearch();
     bool isShowedHiddenOnView();
 
-    QPointer<Settings> settings();
+    QPointer<DTK_CORE_NAMESPACE::DSettings> settings();
 
 signals:
 
@@ -55,7 +55,7 @@ public slots:
     void onConfigFileChanged(const DUrl &fromUrl, const DUrl &toUrl);
 
 private:
-    Settings* m_settings;
+    DTK_CORE_NAMESPACE::DSettings* m_settings;
     QStringList m_newTabOptionPaths;
     QStringList m_defaultWindowOptionPaths;
     DAbstractFileWatcher* m_fileSystemWathcer;
