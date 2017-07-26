@@ -24,6 +24,7 @@ public:
 
     QFileInfo fileInfo;
     mutable QMimeType mimeType;
+    mutable QMimeDatabase::MatchMode mimeTypeMode;
     mutable QIcon icon;
     mutable QPointer<QTimer> getIconTimer;
     bool requestingThumbnail = false;

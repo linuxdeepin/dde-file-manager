@@ -350,8 +350,10 @@ QMimeType DFileInfo::mimeType(QMimeDatabase::MatchMode mode) const
 {
     Q_D(const DFileInfo);
 
-    if (!d->mimeType.isValid())
+    if (!d->mimeType.isValid() || d->mimeTypeMode != mode) {
         d->mimeType = mimeType(absoluteFilePath(), mode);
+        d->mimeTypeMode = mode;
+    }
 
     return d->mimeType;
 }

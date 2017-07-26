@@ -281,7 +281,7 @@ void FilePreviewDialog::switchToPage(int index)
     }
 
     DFMFilePreview *preview = 0;
-    const QMimeType &mime_type = info->mimeType(QMimeDatabase::MatchContent);
+    const QMimeType &mime_type = info->mimeType();
 
     QStringList key_list(mime_type.name());
 
