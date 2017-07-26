@@ -778,9 +778,13 @@
         <translation>打开方式</translation>
     </message>
     <message>
-        <location filename="../dialogs/openwithdialog.cpp" line="196"/>
         <source>Select other programs</source>
-        <translation>选择其它程序</translation>
+        <translation type="vanished">选择其它程序</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/openwithdialog.cpp" line="196"/>
+        <source>Add other programs</source>
+        <translation>添加其他程序</translation>
     </message>
     <message>
         <location filename="../dialogs/openwithdialog.cpp" line="197"/>
@@ -1338,8 +1342,8 @@
         <translation>从默认窗口打开:</translation>
     </message>
     <message>
-        <location filename="../configure/dfmconfigdict.cpp" line="25"/>
-        <location filename="../configure/dfmconfigdict.cpp" line="35"/>
+        <location filename="../configure/dfmconfigdict.cpp" line="23"/>
+        <location filename="../configure/dfmconfigdict.cpp" line="33"/>
         <source>Computer</source>
         <translation>计算机</translation>
     </message>
@@ -1354,14 +1358,14 @@
         <translation>当前目录</translation>
     </message>
     <message>
-        <location filename="../configure/dfmconfigdict.cpp" line="23"/>
-        <location filename="../configure/dfmconfigdict.cpp" line="33"/>
+        <location filename="../configure/dfmconfigdict.cpp" line="24"/>
+        <location filename="../configure/dfmconfigdict.cpp" line="34"/>
         <source>Home</source>
         <translation>主目录</translation>
     </message>
     <message>
-        <location filename="../configure/dfmconfigdict.cpp" line="24"/>
-        <location filename="../configure/dfmconfigdict.cpp" line="34"/>
+        <location filename="../configure/dfmconfigdict.cpp" line="25"/>
+        <location filename="../configure/dfmconfigdict.cpp" line="35"/>
         <source>Desktop</source>
         <translation>桌面</translation>
     </message>
@@ -1416,6 +1420,16 @@
         <translation>双击</translation>
     </message>
     <message>
+        <location filename="../configure/dfmconfigdict.cpp" line="45"/>
+        <source>Advanced</source>
+        <translation>高级设置</translation>
+    </message>
+    <message>
+        <location filename="../configure/dfmconfigdict.cpp" line="49"/>
+        <source>Basic</source>
+        <translation>基本设置</translation>
+    </message>
+    <message>
         <location filename="../configure/dfmconfigdict.cpp" line="54"/>
         <source>Restore to default</source>
         <translation>恢复默认</translation>
@@ -1426,9 +1440,8 @@
         <translation>搜索结果显示隐藏文件</translation>
     </message>
     <message>
-        <location filename="../configure/dfmconfigdict.cpp" line="45"/>
         <source>Advanced settings</source>
-        <translation>高级设置</translation>
+        <translation type="vanished">高级设置</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="46"/>
@@ -1447,9 +1460,8 @@
         <translation>预览</translation>
     </message>
     <message>
-        <location filename="../configure/dfmconfigdict.cpp" line="49"/>
         <source>Basic settings</source>
-        <translation>基本设置</translation>
+        <translation type="vanished">基本设置</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="50"/>
@@ -1621,17 +1633,17 @@
         <translation>正在加载...</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="367"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="369"/>
         <source>File has been moved or deleted</source>
         <translation>文件已被移动或删除</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="369"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="371"/>
         <source>You do not have permission to access this folder</source>
         <translation>您没有权限读取此文件夹</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="372"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="374"/>
         <source>Folder is empty</source>
         <translation>文件夹为空</translation>
     </message>

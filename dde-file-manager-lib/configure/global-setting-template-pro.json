@@ -2,7 +2,7 @@
     "groups": [
         {
             "key": "base",
-            "name": "Basic settings",
+            "name": "Basic",
             "groups": [
                 {
                     "key": "open_action",
@@ -102,7 +102,7 @@
         },
         {
             "key": "advance",
-            "name": "Advanced settings",
+            "name": "Advanced",
             "groups": [
                 {
                     "key": "search",
