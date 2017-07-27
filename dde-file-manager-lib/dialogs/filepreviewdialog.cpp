@@ -179,13 +179,6 @@ FilePreviewDialog::~FilePreviewDialog()
         m_preview->deleteLater();
 }
 
-void FilePreviewDialog::resizeEvent(QResizeEvent *event)
-{
-    m_separator->setFixedWidth(event->size().width() - 20);
-
-    return DAbstractDialog::resizeEvent(event);
-}
-
 void FilePreviewDialog::childEvent(QChildEvent *event)
 {
     if (m_closeButton && event->added()) {
@@ -243,7 +236,14 @@ void FilePreviewDialog::initUI()
 
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(0);
-    layout->addWidget(m_separator, 1, Qt::AlignBottom | Qt::AlignHCenter);
+
+    QHBoxLayout *separator_layout = new QHBoxLayout();
+
+    separator_layout->addSpacing(10);
+    separator_layout->addWidget(m_separator);
+    separator_layout->addSpacing(10);
+
+    layout->addLayout(separator_layout, 1);
     layout->addWidget(m_statusBar, 0, Qt::AlignBottom);
 
     connect(m_closeButton, &QPushButton::clicked, this, &FilePreviewDialog::close);
