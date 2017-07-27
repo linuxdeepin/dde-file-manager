@@ -635,104 +635,110 @@
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="190"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="266"/>
         <source>Replace</source>
         <translation>替换</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="212"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="213"/>
         <source>Do not ask again</source>
         <translation>不再询问</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="265"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="264"/>
+        <source>merge</source>
+        <translation>合并</translation>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="274"/>
         <source>Copying %1</source>
         <translation>正在复制%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="266"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="275"/>
         <source>Copy to %2</source>
         <translation>复制到%2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="269"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="278"/>
         <source>Moving %1</source>
         <translation>正在移动%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="270"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="279"/>
         <source>Move to %2</source>
         <translation>移动到%2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="272"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="281"/>
         <source>Restoring %1</source>
         <translation>正在恢复%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="273"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="282"/>
         <source>Restore to %2</source>
         <translation>恢复到%2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="275"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="284"/>
         <source>Deleting %1</source>
         <translation>正在删除%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="278"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="287"/>
         <source>Trashing %1</source>
         <translation>正在移动 %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="285"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="294"/>
         <source>Calculating space, please wait</source>
         <translation>正在计算大小，请稍后</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="289"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="298"/>
         <source>File named %1 already exists in target folder</source>
         <translation>目标文件夹中已存在名为%1的文件</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="290"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="299"/>
         <source>Original path %1 target path %2</source>
         <translation>原路径%1 目标路径%2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="357"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="366"/>
         <source>Original folder</source>
         <translation>原始目录</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="360"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="369"/>
         <source>Original file</source>
         <translation>原始文件</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="355"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="365"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="364"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="374"/>
         <source>Time modified:%1</source>
         <translation>修改时间:%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="368"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="377"/>
         <source>Target folder</source>
         <translation>目标目录</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="358"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="369"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="367"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="378"/>
         <source>Contains:%1</source>
         <translation>个数：%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="371"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="380"/>
         <source>Target file</source>
         <translation>目标文件</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="361"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="372"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="370"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="381"/>
         <source>Size:%1</source>
         <translation>大小：%1</translation>
     </message>
@@ -1694,12 +1700,12 @@
         <translation>新建文本</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="537"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="546"/>
         <source>1 task in progress</source>
         <translation>有1个任务正在进行</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="539"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="548"/>
         <source>%1 tasks in progress</source>
         <translation>有%1个任务正在进行</translation>
     </message>

@@ -282,10 +282,8 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
             }else if (m_jobType == Move){
                 if(m_isInSameDisk)
                 {
-                    if (!moveDir(srcPath, tarDirPath, &targetPath)) {
-                        if(copyDir(srcPath, tarDirPath, true, &targetPath))
-                            deleteDir(srcPath);
-                    }
+                    if(copyDir(srcPath, tarDirPath, true, &targetPath))
+                        deleteDir(srcPath);
                 }
                 else
                 {
@@ -1248,9 +1246,9 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
                     }else if (!targetInfo.isSymLink() && targetInfo.isFile()){
                         QFile(m_tarPath).remove();
                     }else if (!targetInfo.isSymLink() && targetInfo.isDir()){
-                        if (!deleteDir(m_tarPath)) {
-                            QProcess::execute("rm -r \"" + m_tarPath.toUtf8() + "\"");
-                        }
+//                        if (!deleteDir(m_tarPath)) {
+//                            QProcess::execute("rm -r \"" + m_tarPath.toUtf8() + "\"");
+//                        }
                     }
 
                     targetDir.mkdir(m_tarPath);

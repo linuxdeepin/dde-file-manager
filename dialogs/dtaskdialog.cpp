@@ -188,6 +188,7 @@ void MoveCopyTaskWidget::initButtonFrame(){
     m_keepBothButton = new QPushButton(tr("Keep both"));
     m_skipButton = new QPushButton(tr("Skip"));
     m_replaceButton = new QPushButton(tr("Replace"));
+
     m_keepBothButton->setFixedSize(70, 25);
     m_skipButton->setFixedSize(70, 25);
     m_replaceButton->setFixedSize(70, 25);
@@ -256,6 +257,14 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data){
 
     if(data.contains("status"))
         status = data.value("status");
+
+    qDebug() << data;
+    if (QFileInfo(srcPath).isDir() &&
+            QFileInfo(targetPath).isDir()){
+        m_replaceButton->setText(tr("merge"));
+    }else{
+        m_replaceButton->setText(tr("Replace"));
+    }
 
     QString speedStr = "%1";
     QString remainStr = "%1";
