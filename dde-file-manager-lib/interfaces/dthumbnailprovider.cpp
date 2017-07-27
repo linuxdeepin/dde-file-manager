@@ -29,6 +29,8 @@
 // ffmpeg
 #include <libffmpegthumbnailer/videothumbnailer.h>
 
+#include <DThumbnailProvider>
+
 DFM_BEGIN_NAMESPACE
 
 #define FORMAT ".png"
@@ -185,6 +187,9 @@ bool DThumbnailProvider::hasThumbnail(const QMimeType &mimeType) const
 
         return true;
     }
+
+    if (DTK_WIDGET_NAMESPACE::DThumbnailProvider::instance()->hasThumbnail(mimeType))
+        return true;
 
     return false;
 }
@@ -372,7 +377,7 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
         }
 
         *image = img.scaled(QSize(size,size), Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    } else {
+    } else if (mime.name().startsWith("video/")) {
         //video
         //FIXME(zccrs): This should be done using the image plugin?
         try {
@@ -386,6 +391,18 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
             d->errorString = e.what();
             goto _return;
         }
+    } else {
+        thumbnail = DTK_WIDGET_NAMESPACE::DThumbnailProvider::instance()->createThumbnail(info, (DTK_WIDGET_NAMESPACE::DThumbnailProvider::Size)size);
+        d->errorString = DTK_WIDGET_NAMESPACE::DThumbnailProvider::instance()->errorString();
+
+        if (d->errorString.isEmpty()) {
+            emit createThumbnailFinished(absoluteFilePath, thumbnail);
+            emit thumbnailChanged(absoluteFilePath, thumbnail);
+        } else {
+            emit createThumbnailFailed(absoluteFilePath);
+        }
+
+        return thumbnail;
     }
 
 _return:
