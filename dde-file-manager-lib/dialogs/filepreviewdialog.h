@@ -33,7 +33,6 @@ public:
     ~FilePreviewDialog();
 
 private:
-    void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
     void childEvent(QChildEvent *event) Q_DECL_OVERRIDE;
     void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
     bool eventFilter(QObject *obj, QEvent *event) Q_DECL_OVERRIDE;
