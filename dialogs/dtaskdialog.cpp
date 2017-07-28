@@ -28,6 +28,7 @@ MoveCopyTaskWidget::MoveCopyTaskWidget(const QMap<QString, QString> &jobDetail, 
     if (m_jobDetail.contains("destination")){
         setDestinationObj(m_jobDetail.value("destination"));
     }
+//    this->setStyleSheet("border:1px solid green");
 }
 
 void MoveCopyTaskWidget::initUI(){
@@ -72,6 +73,7 @@ void MoveCopyTaskWidget::initUI(){
     msgGridLayout->addWidget(m_msg2Label, 1, 0, Qt::AlignVCenter);
     msgGridLayout->addWidget(m_remainLabel, 1, 1,Qt::AlignRight|Qt::AlignVCenter);
     msgGridLayout->setColumnMinimumWidth(0, 300);
+    msgGridLayout->setHorizontalSpacing(5);
 
     initConflictDetailFrame();
     initButtonFrame();
@@ -86,10 +88,8 @@ void MoveCopyTaskWidget::initUI(){
     QVBoxLayout* rightLayout = new QVBoxLayout;
     rightLayout->addStretch(1);
     rightLayout->addLayout(msgGridLayout);
-
-    rightLayout->addSpacing(5);
     rightLayout->addWidget(m_conflictFrame);
-    rightLayout->addSpacing(5);
+    rightLayout->addSpacing(20);
 
     rightLayout->addWidget(m_buttonFrame);
 
@@ -304,7 +304,7 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data){
 
         QFontMetrics fm(m_msg1Label->font());
         msg1 = fm.elidedText(msg1, Qt::ElideRight, m_msg1Label->width());
-        msg2 = fm.elidedText(msg2, Qt::ElideRight, m_msg2Label->width());
+//        msg2 = fm.elidedText(msg2, Qt::ElideRight, m_msg2Label->width());
 
         speedStr = speedStr.arg(speed);
         remainStr = remainStr.arg(remainTime);
@@ -360,26 +360,32 @@ void MoveCopyTaskWidget::updateConflictDetailFrame(const QString &originFilePath
     DAbstractFileInfoPointer originInfo = fileService->createFileInfo(NULL, DUrl::fromLocalFile(originFilePath));
     DAbstractFileInfoPointer targetInfo = fileService->createFileInfo(NULL, DUrl::fromLocalFile(targetFilePath));
     if (originInfo && targetInfo){
+        QFontMetrics fm(m_originTitleLabel->font());
+
         m_originIconLabel->setPixmap(originInfo->fileIcon().pixmap(48, 48));
         m_originTimeLabel->setText(QString(tr("Time modified:%1")).arg(originInfo->lastModifiedDisplayName()));
         if (originInfo->isDir()){
-            m_originTitleLabel->setText(tr("Original folder"));
+            m_originTitleLabel->setText(tr("Original folder:%1").arg(originFilePath));
             m_originSizeLabel->setText(QString(tr("Contains:%1")).arg(originInfo->sizeDisplayName()));
         }else{
-            m_originTitleLabel->setText(tr("Original file"));
+            m_originTitleLabel->setText(tr("Original file:%1").arg(originFilePath));
             m_originSizeLabel->setText(QString(tr("Size:%1")).arg(originInfo->sizeDisplayName()));
         }
+        QString originMsg = fm.elidedText(m_originTitleLabel->text(), Qt::ElideRight, 300);
+        m_originTitleLabel->setText(originMsg);
 
         m_targetIconLabel->setPixmap(targetInfo->fileIcon().pixmap(48, 48));
         m_targetTimeLabel->setText(QString(tr("Time modified:%1")).arg(targetInfo->lastModifiedDisplayName()));
 
         if (originInfo->isDir()){
-            m_targetTitleLabel->setText(tr("Target folder"));
+            m_targetTitleLabel->setText(tr("Target folder:%1").arg(targetFilePath));
             m_targetSizeLabel->setText(QString(tr("Contains:%1")).arg(targetInfo->sizeDisplayName()));
         }else{
-            m_targetTitleLabel->setText(tr("Target file"));
+            m_targetTitleLabel->setText(tr("Target file:%1").arg(targetFilePath));
             m_targetSizeLabel->setText(QString(tr("Size:%1")).arg(targetInfo->sizeDisplayName()));
         }
+        QString targetMsg = fm.elidedText(m_targetTitleLabel->text(), Qt::ElideRight, 300);
+        m_targetTitleLabel->setText(targetMsg);
     }
 
 }
@@ -477,7 +483,7 @@ void MoveCopyTaskWidget::setMessage(const QString& operateStr, const QString& de
     m_operateMessage = operateStr;
     m_destinationMessage = destinateStr;
     m_msg1Label->setText(m_operateMessage);
-    m_msg2Label->setText(m_destinationMessage);
+    m_msg2Label->setText("");
 }
 
 void MoveCopyTaskWidget::setTipMessage(const QString& speedStr, const QString& remainStr){
@@ -487,6 +493,8 @@ void MoveCopyTaskWidget::setTipMessage(const QString& speedStr, const QString& r
     m_remainLabel->setText(m_remainMessage);
 }
 
+
+int DTaskDialog::MaxHeight = 0;
 
 DTaskDialog::DTaskDialog(QWidget *parent) :
     QDialog(parent)
@@ -611,31 +619,36 @@ void DTaskDialog::addConflictTask(const QMap<QString, QString> &jobDetail){
 
 void DTaskDialog::adjustSize(){
     int listHeight = 2;
-    int maxHeight = 0;
     for(int i=0; i < m_taskListWidget->count(); i++){
         QListWidgetItem* item = m_taskListWidget->item(i);
         int h = m_taskListWidget->itemWidget(item)->height();
         item->setSizeHint(QSize(item->sizeHint().width(), h));
         listHeight += h;
-        if (i == 5){
-            maxHeight = listHeight;
-        }
     }
-    if (m_taskListWidget->count() >= 6){
-        m_taskListWidget->setFixedHeight(maxHeight);
-        setFixedSize(width(), maxHeight + 37);
-    }else{
+
+    if (listHeight < qApp->desktop()->availableGeometry().height() - 60){
         m_taskListWidget->setFixedHeight(listHeight);
-        setFixedSize(width(), listHeight + 37);
+        setFixedHeight(listHeight + 60);
+        MaxHeight = height();
+    }else{
+        setFixedHeight(MaxHeight);
     }
-//    if (listHeight < qApp->desktop()->availableGeometry().height() - 40){
-//        m_taskListWidget->setFixedHeight(listHeight);
-//        setFixedHeight(listHeight + 60);
-//    }else{
-//        setFixedHeight(qApp->desktop()->availableGeometry().height());
-//    }
 
     layout()->setSizeConstraint(QLayout::SetNoConstraint);
+    moveYCenter();
+}
+
+void DTaskDialog::moveYCenter()
+{
+    QRect qr = frameGeometry();
+    QPoint cp;
+    if (parent()){
+        cp = static_cast<QWidget*>(parent())->geometry().center();
+    }else{
+        cp = qApp->desktop()->availableGeometry().center();
+    }
+    qr.moveCenter(cp);
+    move(x(), qr.y());
 }
 
 void DTaskDialog::removeTaskByPath(QString jobId){
