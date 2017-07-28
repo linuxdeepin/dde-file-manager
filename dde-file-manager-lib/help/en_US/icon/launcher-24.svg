@@ -1,32 +1,21 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: Sketch 3.8.1 (29687) - http://www.bohemiancoding.com/sketch -->
-    <title>启动器－2</title>
+    <!-- Generator: Sketch 42 (36781) - http://www.bohemiancoding.com/sketch -->
+    <title>deepin-launcher</title>
     <desc>Created with Sketch.</desc>
     <defs>
-        <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-1">
-            <feOffset dx="0" dy="1" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
-            <feGaussianBlur stdDeviation="0.5" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
-            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.2 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
-            <feMerge>
-                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
-                <feMergeNode in="SourceGraphic"></feMergeNode>
-            </feMerge>
-        </filter>
-        <linearGradient x1="50%" y1="-18.2510762%" x2="50%" y2="100%" id="linearGradient-2">
-            <stop stop-color="#9228C8" offset="0%"></stop>
-            <stop stop-color="#5418F3" offset="100%"></stop>
+        <linearGradient x1="50%" y1="4.64019449%" x2="50%" y2="97.1779337%" id="linearGradient-1">
+            <stop stop-color="#2CCAFF" offset="0%"></stop>
+            <stop stop-color="#218AFF" offset="100%"></stop>
         </linearGradient>
     </defs>
     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="启动器－2">
-            <g id="Group" transform="translate(-5.000000, -5.000000)">
-                <g id="Group-15" filter="url(#filter-1)" transform="translate(29.000000, 29.000000) scale(-1, 1) rotate(-30.000000) translate(-29.000000, -29.000000) translate(8.000000, 8.000000)">
-                    <circle id="Oval-183" fill="#FFFFFF" cx="21" cy="21" r="21"></circle>
-                    <circle id="Oval-183" fill="url(#linearGradient-2)" cx="21" cy="21" r="19"></circle>
-                    <path d="M15.0625,17.4593749 C15.0625,15.521012 15.3552166,13.6790681 15.8176079,12.0166666 L26.1823921,12.0166666 C26.6447834,13.6790681 26.9375,15.521012 26.9375,17.4593749 C26.9375,18.4981514 26.8848072,19.5698654 26.7851075,20.63171 C27.9087322,20.9388521 30.8379795,21.9595633 30.4679022,24.180029 C29.9632047,27.2082161 27.3990389,29.7643285 27.3990389,29.7643285 C27.3990389,29.7643285 27.2951153,29.9701242 26.9987819,30.0165957 C26.6195534,30.0757532 26.7528692,29.865345 26.7528692,29.865345 C26.7528692,29.865345 27.2360367,28.5912924 27.6406524,26.6992068 C27.8283617,25.82135 26.8498584,25.4194259 26.0288113,25.2379613 C25.6793289,26.6631499 25.008142,28.0748273 24.5,29.0000002 L17.5,29.0000002 C16.991858,28.0748273 16.3206711,26.6631499 15.9711887,25.2379613 C15.1501416,25.4194259 14.1716383,25.82135 14.3593476,26.6992068 C14.7639633,28.5912924 15.2471308,29.865345 15.2471308,29.865345 C15.2471308,29.865345 15.3804466,30.0757532 15.0012181,30.0165957 C14.7048847,29.9701242 14.6009611,29.7643285 14.6009611,29.7643285 C14.6009611,29.7643285 12.0367953,27.2082161 11.5320978,24.180029 C11.1620205,21.9595633 14.0912678,20.9388521 15.2148925,20.63171 C15.1151928,19.5698654 15.0625,18.4981514 15.0625,17.4593749 Z M25.8808247,11.0270832 C24.5108909,6.89792186 22.1602708,4.0999999 21,4.0999999 C19.8397292,4.0999999 17.4891091,6.89792186 16.1191753,11.0270832 L25.8808247,11.0270832 L25.8808247,11.0270832 L25.8808247,11.0270832 Z" id="Combined-Shape" fill="#FFFFFF"></path>
-                    <path d="M22.9999995,31 L23.9999995,31 C23.9999993,34.6670449 25.4999995,37 28.9999995,37 C30.9999995,37 33.4999995,35.5 34.9999995,34 C35.0816082,33.5480843 32.0023463,41 21.0011732,41 C10.0000001,41 6.92073764,33.5480843 7.00234631,34 C8.50234631,35.5 11.0023463,37 13.0023463,37 C16.5023463,37 18.0023465,34.6670449 18.0023463,31 L19.0023463,31 C19.0023463,31.0001717 19.0023463,33.9436169 21.0011729,35.4991443 C22.9999995,33.9436169 22.9999995,31.0001717 22.9999995,31 Z" id="Combined-Shape" fill="#FFFFFF"></path>
-                </g>
+        <g id="deepin-launcher">
+            <image id="Bitmap" x="1" y="2" width="46" height="46" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC4AAAAuCAYAAABXuSs3AAAABGdBTUEAA1teXP8meAAABEBJREFUaAXNmb1S20AQx21k8xGwwQ4MM5Dw0dAANQUNlDBDySvwHPBk1NQ8AAwlTMaEkABxsPP/HbeKLARGMca3M8utpLvb363WK+koFnqXop/CWg6TNsdt/ngx21o7n6uNcvX+1xkwdMhrtLq6Gi0sLBT39vaGpIXj4+PC4eFhoShZWVlx/er1enR1dYWN2OKsfTrbp78GzILLgh0WXKndbkd5lDGMZQ4pc9m8Mt9fmDwGzgP6Wt+MBbwbOcDcXhel1yB6ueYXUPK+8NmTGPTw/v7+cC9gbxmLD9GiBOq/4RlIaoz8Tx6/BTSrD77w6X2/CP/SBc679NDkf2R/uKgYsQB8t6TPSqeVpiQY0Gjp4OCAQQMR7xt44+nKwWI+JKezUiV5LpXzHeCsJiku0ktLS9HZ2VkzeWFQ9vLycvn8/PxR/kmbOGWS4Ngu2lr170GBZvlVvlNpYIrzPZ3jkaIdryprkkGc80xUuFgs4hbtEUX7Ib4akKGoUyJhc1FPRjyam5sLCLUTxbPFUTdwIl7a3NwcSM3uRMw+8mxWHuMayQLGlCZ32cPCOKt0GRMJjC2LeDQ7OxvcjzIdLs/o0gVw0iSSBA/uGQEvWsSHFhcXgwf3jI7ZwItTU1MDey9Jp8RLx57RlXBLlaGNjQ0eq0GLZ3TMccSDJu6EiyPuTp+cnMTFvbNfOEdJRot4+/LyMnhwz+iKCOAYrYuLC1tEOCFOkXjGjneVdrPZ5HEatHhGF3ESnUjz5jWuR34jZHI98mvi+yl9sFRxpXB3dzfYqCfYYG0TcYv6hAp8sdFo/NC54KRWq1Wur69Jk1tpy9VEGUR+VDqhdPmmNjhRmnwWFND30vjtkJXwLv6oHdUJtUGJZ+r4YE6WQC48KFU+hUR9dHRE+sLEZ5v7LcJnqWI2276VarXa/i7h5KBlUnJzcwMnvz22TFw5TEYcRlZ0r44ja2trfG0MVGCARRDkdRztLChWRtQnpfM7Ozt89efatH+v/viGwbPAlMwOHT4X7gIbMHXp/Efu1Nqi/Y4t0DDYtrPM14WVWXmclv1la2tr1Cbtd4svfErxjQ1L12irjxM68rZInjPBgv5jQI3va9rgA1/eJ77d96XaXGLwrJpb9rVSqUz3I3WYk7nx4X3h81XobreA6yjvMERgXFqmQunxeyO7Z9FrRlWVt6qJKHW8QLFvYjuzrvTp+Jmky2G6AwPtqfpLNrX9Vo7G9QieV72vbW9v84vPJYxhLHMwlwbfSpkbH12h1eftSe/7slBuIb90yhW3FJuX+zvdiebMzMyjtLm+vg5A4fT0tKR/ypalkSBZJHeOedg2pj7zRMSmTruPBLVdpVuqpCew/rYAUggYUxaFct36cscAAgwlJUxZnAHLfHoqYnQTm7xbv/R1G0eLpoGzwNMLsDRkbuxcYgC5BqU62xzWcjlpc5wEM9tarueWv5TSKqyPZxRtAAAAAElFTkSuQmCC"></image>
+            <circle id="Oval-37" fill="url(#linearGradient-1)" cx="24" cy="24" r="21"></circle>
+            <g id="Group" transform="translate(15.000000, 15.000000)">
+                <path d="M18,-7.81597009e-14 L18,8 L10,8 L10,3.23296945e-13 L18,-7.81597009e-14 Z M8,10 L8,18 L1.27897692e-13,18 L1.46160861e-13,10 L8,10 Z" id="Combined-Shape" fill="#FFFFFF" fill-rule="nonzero"></path>
+                <path d="M0.5,0.5 L7.5,0.5 L7.5,7.5 L0.5,7.5 L0.5,0.5 Z M10.5,10.5 L17.5,10.5 L17.5,17.5 L10.5,17.5 L10.5,10.5 Z" id="Combined-Shape" stroke="#FFFFFF"></path>
             </g>
         </g>
     </g>

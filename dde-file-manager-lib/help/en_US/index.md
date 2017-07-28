@@ -23,13 +23,13 @@ You can run, close and create a shortcut for Deepin File Manager by the followin
 
 ### Exit Deepin File Manager
 
-- In Deepin File Manager interface, click on ![close](icon/close_icon.svg) to exit Deepin File Manager.
-- Right click on ![File Manager](icon/deepin-file-manager.svg) on dock, select **Close all** to exit Deepin File Manager.
+- On Deepin File Manager interface, click on ![close](icon/close_icon.svg) to exit.
+- Right click on ![File Manager](icon/deepin-file-manager.svg) on Dock, select **Close All** to exit Deepin File Manager.
 - Click on ![Settings](icon/icon_menu.svg) and select **Exit** to exit Deepin File Manager.
 
 ## Main Interface|../common/icon_maininterface.svg|
 
-In Deepin File Manager main interface, user can execute many operations with all the functional bars in it. It is designed to be easy-to-use, user-friendly and efficient improving.
+On Deepin File Manager interface, users can execute many operations with the functional bars. It is designed to be easy-to-use, user-friendly and efficient improving.
 
 ![1|maininterface](png/main-interface.png)
 
@@ -72,30 +72,30 @@ Deepin File Manager is featured with the basic functions as a file manager, user
 
 #### New Folder
 
-1. In Deepin File Manager interface, right click and select ** New folder**.
+1. On Deepin File Manager interface, right click and select **New folder**.
 2. Input a name for the new folder, and press ![enter](icon/Enter.svg), or click on blank area.
 
 ![0|newfolder](png/newfolder.png)
 
 #### New Document
 
-1. In Deepin File Manager interface, right click and select ** New document**.
-2. In the popup menu, select the document format you wish to create.
+1. On Deepin File Manager interface, right click and select **New document**.
+2. In the popup menu, select the document format you want to create.
 3. Input a name for the new document, and press ![enter](icon/Enter.svg), or click on blank area.
 
 ![0|newdoc](png/newdoc.png)
 
 ### Rename File/Folder
 
-1. Select the file/folder to be renamed, right click and select ** Rename**.
+1. Select the file/folder to be renamed, right click and select **Rename**.
 2. Input a new name for the file/folder, and press ![enter](icon/Enter.svg), or click on blank area.
 
 ![0|rename](png/rename.png)
 
 ### Copy File/Folder
 
-1. Select the files/folders to be copied, right click and select ** Copy**.
-2. Enter the directory to which the files/folders will be pasted, right click and select ** Paste**.
+1. Select the files/folders to be copied, right click and select **Copy**.
+2. Enter the directory to which the files/folders will be pasted, right click and select **Paste**.
 
 ![0|copy](png/copy.png) ![0|paste](png/paste.png)
 
@@ -103,41 +103,52 @@ Deepin File Manager is featured with the basic functions as a file manager, user
 
 ### Compress File/Folder
 
-1. Select the files/folders to be compressed, right click and select ** Compress**.
+1. Select the files/folders to be compressed, right click and select **Compress**.
 2. Input a file name and select a file format for the to be compressed file.
 3. Select a location to store the to be compressed file.
-4. Select ** Create** to generate the compressed file.
+4. Select **Create** to generate the compressed file.
 
 ![0|compress](png/compress.png)
 
-> ![tips](icon/tips.svg): In ** Other Options**, user can choose to encrypt the compressed file and the file list, and also to split the to be compressed file into several parts to reduce individual file sizes of the compressed file.
+> ![tips](icon/tips.svg): In **Other Options**, user can choose to encrypt the compressed file and the file list, and also to split the to be compressed file into several parts to reduce individual file sizes of the compressed file.
 
 ### Delete File/Folder
 
-Select the files/folders to be deleted, right click and select ** Throw to Trash**.
-- To permanently delete the files/folders, enter Trash, click on ** Empty** > ** Empty Trash**.
-- To restore deleted files/folders, enter Trash, select the files/folders to restore, click on ** Restore**, the files/folders will be moved to their original directory.
+Select the files/folders to be deleted, right click and select **Throw to Trash**.
+- To permanently delete the files/folders, enter Trash, click on **Empty** > ** Empty Trash**.
+- To restore deleted files/folders, enter Trash, select the files/folders to restore, click on **Restore**, the files/folders will be moved to their original directory.
 
-![0|png](png/delete.png)
+![0|delete](png/delete.png)
 
 > ![notes](icon/notes.svg): Permanently deleted files/folders can not be restored.
 
-> ![tips](icon/tips.svg): To permanently and selectively delete some files/folders from Trash, select the targeted files/folders, right click and select ** Delete from Trash**.
+> ![tips](icon/tips.svg): To permanently and selectively delete some files/folders from Trash, select the targeted files/folders, right click and select **Permanently delete**.
 
 ### Options to Open a File
 
-User can select to open a file with different applications.
-1. In Deepin File Manager, right click on the file to open.
-2. In the context menu, select ** Open with**.
-3. Select an application to open the file.
+Users can select to open a file with different applications.
 
-> ![notes](icon/notes.svg)：It will use the default application to open the file when you double clicked on it. User can right click on the file, select ** Property ** and choose a default application in ** Open with ** list. User can also set the options in the [Default Applcation Settings](dman:///dde-control-center#Default Applcation Settings) of the Control Center to change the global default applications of the specified file types.
+1. On Deepin File Manager, right click on the file to open.
+2. In the context menu, select **Open with**.
+3. Click on **Select default program** to open the application list.
+4. Select the application you want to open the file.
+5. Click on **Choose** to open the file by this application
+6. You can also check **Set as default** to set the application as the default one.
+
+
+If the application you want to open the file is not in the list, you can:
+
+1. Click on **Select other programs**.
+2. Select an application you want to open.
+3. Click on **Open** to open the file by this applicaiton.
+
+> ![notes](icon/notes.svg)：It will use the default application to open the file when you double clicked on it. Users can right click on the file, select **Properties** and choose a default application in **Open with ** list. Users can also set the options in the [Default Applcation Settings](dman:///dde-control-center#Default Applcation Settings) of the Control Center to change the global default applications of the specified file types.
 
 ![0|openwith](png/openwith.png)
 
 ### Display Modes
 
-Click on ![icon](icon/icon_view_normal.svg) or ![list](icon/list_view_normal.svg) in Deepin File Manager interface to switch between icon display and list display.
+Click on ![icon](icon/icon_view_normal.svg) or ![list](icon/list_view_normal.svg) on Deepin File Manager interface to switch between icon display and list display.
 
 ![0|display](png/display.png)
 
@@ -149,24 +160,25 @@ Click on ![icon](icon/icon_view_normal.svg) or ![list](icon/list_view_normal.svg
 
 ![1|list-view](png/list-view.png)
 
-> ![tips](icon/tips.svg): User can right click in blank area in Deepin File Manager interface, select ** Display as** in the context menu, then choose between ** Icon** and ** List**.
+> ![tips](icon/tips.svg): Users can right click in blank area on Deepin File Manager interface, select **Display as** in the context menu, then choose between **Icon** and **List**.
 
 ### Sorting
 
-1. Right click in the blank area in Deepin File Manager, select ** Sort by**.
-2. Choose among the sorting options, which include ** Name**, ** Size**, ** Type** and ** Time modified**.
+1. Right click in the blank area on Deepin File Manager, select **Sort by**.
+2. Choose among the sorting options, which include **Name**, **Time modified**, **Size** and **Type**.
 
 ![0|sort](png/sort.png)
 
-> ![tips](icon/tips.svg)：User can click on the head of the columns in the list view to change the sort order.
+> ![tips](icon/tips.svg)：Uses can click on the head of the columns in the list view to change the sort order.
 
 ### File/Folder Properties
 
-User can view the information about a file/folder.
-1. In Deepin File Manager interface, right click on a file/folder and select ** Property**.
+Users can view the information about a file/folder.
+
+1. On Deepin File Manager interface, right click on a file/folder and select **Properties**.
 2. In the popup window, user can view the information about the file/folder.
 
-![0|property](png/property.png)
+![0|properties](png/properties.png)
 
 ## Common Operations|../common/icon_commoncoperat.svg|
 
@@ -177,6 +189,7 @@ Deepin File Manager is featured with many useful functions, such as breadcrumb b
 There are three sections in address bar, namely the breadcrumb bar, search bar and directory bar.
 
 By default, breadcrumb bar is displayed in the address bar. By clicking on the blank area in the address bar or click on ![search](icon/search-noamal.svg), it will switch to directory/search bar, which can be used to access directory and search for target items.
+
 By inputting a directory/keywords in the directory/search bar and pressing ![enter](icon/Enter.svg), user can access the target directory/search for target items.
 
 ![0|addressbar1](png/addressbar1.png)
@@ -185,7 +198,7 @@ By inputting a directory/keywords in the directory/search bar and pressing ![ent
 
 ### Search Items
 
-User can search for targeted item by the searching function integrated in Deepin File Manager.
+Users can search for targeted item by the searching function integrated in Deepin File Manager.
 
 1. In the address bar of Deepin File Manager, switch to search.
 2. Input keywords in the search bar and press ![enter](icon/Enter.svg), the search results will popup in the window.
@@ -198,8 +211,8 @@ User can search for targeted item by the searching function integrated in Deepin
 
 Deepin File Manager supports multi-tab view.
 
-1. In Deepin File Manager, right click on the folder to open in new tab.
-2. In the popup context menu, select ** Open in new tab **.
+1. On Deepin File Manager, right click on the folder to open in new tab.
+2. In the popup context menu, select **Open in new tab**.
 3. When the window has multi-tabs, user can:
  - Click on + in tab bar to add a new tab.
  - Click on × on the right tab of the tab bar to close an existing tab.
@@ -211,27 +224,27 @@ Deepin File Manager supports multi-tab view.
 
 #### Add Bookmarks
 
-User can add folders to bookmarks in Deepin File Manager.
-1. In Deepin File Manager, right click on the folder to add as bookmark.
-2. In the popup context menu, select ** Add to bookmark**.
+Users can add folders to bookmarks in Deepin File Manager.
+1. On Deepin File Manager, right click on the folder to add as bookmark.
+2. In the popup context menu, select **Add to bookmark**.
 
 ![0|addbookmark](png/addbookmark.png)
 
 #### Move Bookmarks
 
-User can move bookmarks within the bookmark area. In Deepin File Manager, drag and drop the bookmark to the designated location.
+Users can move bookmarks within the bookmark area. In Deepin File Manager, drag and drop the bookmark to the designated location.
 
 #### Delete Bookmarks
 
-User can remove bookmarks by right clicking on the bookmark and select ** Remove **, or drag and drop the bookmark out of the navigation bar to remove it.
+Users can remove bookmarks by right clicking on the bookmark and select **Remove**, or drag and drop the bookmark out of the navigation bar to remove it.
 
 ### Computers in LAN
 
-User can visit computers in LAN to access files and folders.
-1. In Deepin File Manager interface, click on ![network](icon/network_server.svg).
+Users can visit computers in LAN to access files and folders.
+1. On Deepin File Manager interface, click on ![network](icon/network_server.svg).
 2. Double click on the computer icon to access.
-3. Select to connect as ** Anonymous ** or ** Registered user**. For ** Registered user**, user needs to input username and password to connect.
-4. Click on ** Connect** to establish connection.
+3. Select to connect as **Anonymous ** or **Registered user**. For **Registered user**, user needs to input username and password to connect.
+4. Click on **Connect** to establish connection.
 
 ![0|network](png/network.png)
 
@@ -239,73 +252,73 @@ User can visit computers in LAN to access files and folders.
 
 #### Share folders
 
-User can share folders in Deepin File Manager, if there are some folders shared, the share icon will show on the navigation bar, if not, the share icon will be hidden.
-1. In Deepin File Manager interface, right click on a folder, select ** Property **.
-2. In the popup window, click ** Share manager **.
-3. To share this folder, click ** Share this folder **.
-4. To change share options, input ** Share name **, and select to choose ** Permission ** and ** Anonymity **.
-5. To set share password, click ![menu](icon/icon_menu.svg) and select ** Set share password **.
+Users can share folders in Deepin File Manager, if there are some folders shared, the share icon will show on the navigation bar, if not, the share icon will be hidden.
+1. On Deepin File Manager interface, right click on a folder, select **Properties**.
+2. In the popup window, click **Share manager**.
+3. To share this folder, click **Share this folder **.
+4. To change share options, input **Share name**, and select to choose **Permission** and **Anonymity **.
+5. To set share password, click ![menu](icon/icon_menu.svg) and select **Set share password**.
 
 ![0|share](png/share.png)
 
 #### Manage share
 
-User can manage shared folders if it has shared some folders in Deepin File Manager.
-1. In Deepin File Manager interface, click ![share](icon/icon_share.svg) on the navigation bar.
+Users can manage shared folders if it has shared some folders in Deepin File Manager.
+1. On Deepin File Manager interface, click ![share](icon/icon_share.svg) on the navigation bar.
 2. All shared folders will show on the interface.
-3. User can cancel sharing by right click the folder and select ** Cancel sharing **.
+3. Users can cancel sharing by right click the folder and select **Cancel sharing**.
 
 ![1|viewshare](png/viewshare.png)
 
 ### Open in Terminal
 
-User can open folders in terminal to execute operations.
-1. In Deepin File Manager, enter the folder.
-2. Click on blank area in the folder, and select ** Open in terminal**.
+Users can open folders in terminal to execute operations.
+1. On Deepin File Manager, enter the folder.
+2. Click on blank area in the folder, and select **Open in terminal**.
 
 ![0|openinterminal](png/openinterminal.png)
 
 ### Create Link
 
-User can create links for items, and put the links in easy-to-reach folders (such as Desktop) to access the items faster.
-1. In Deepin File Manager, select the item to create a link for.
-2. Right click and select ** Create link**.
+Users can create links for items, and put the links in easy-to-reach folders (such as Desktop) to access the items faster.
+1. On Deepin File Manager, select the item to create a link for.
+2. Right click and select **Create link**.
 3. In the popup window, select a folder to store the link.
-4. Click on ** Save** to finish creating the link.
+4. Click on **Save** to finish creating the link.
 
 ![0|createlink](png/create-link.png)
 
->![tips](icon/tips.svg): By selecting ** Send to desktop** for an item, user can create a link on desktop with one click.
+>![tips](icon/tips.svg): By selecting **Send to desktop** for an item, user can create a link on desktop with one click.
 
 ## Disk Management|../common/icon_diskmanagement.svg|
 
-In Deepin File Manager, mounted disks are displayed in disk management area in the navigation bar.
+On Deepin File Manager, mounted disks are displayed in disk management area in the navigation bar.
 
 ### Display Disks
 
 Mounted disks are displayed in the left navigation bar of Deepin File Manager. Including:
-1. Local disk, which includes all the partitions in local disk;
-2. External disk, which includes mobile hard disk, light disk and USB flash disk;
-3. Mobile device, which includes mobile phone storage, storage card, SD card and so on.
+- Local disk, which includes all the partitions in local disk.
+- External disk, which includes mobile hard disk, light disk and USB flash disk
+- Mobile device, which includes mobile phone storage, storage card, SD card and so on.
 
 ### Unmount/Eject Disks
 
-User can choose to unmount/eject disks.
+Users can choose to unmount/eject disks.
 1. In the navigation bar of Deepin File Manager, right click on the disk to remove.
-2. Select ** Unmount** to unmount the disk. The disk will be still in the disk list.
-3. Select ** Eject** to eject the removable disk/device, the disk will be removed from the disk list and can be safely removed from PC.
+2. Select **Unmount** to unmount the disk. The disk will be still in the disk list.
+3. Select **Eject** to eject the removable disk/device, the disk will be removed from the disk list and can be safely removed from PC.
 
 ![0|unmountdisk](png/unmountdisk.png)
 
-> ![tips](icon/tips.svg): User can click on ![unmount](icon/unmount_normal.svg) in the navigation bar to eject the disks.
+> ![tips](icon/tips.svg): Users can click on ![unmount](icon/unmount_normal.svg) in the navigation bar to eject the disks.
 
 ### Format Disks
 
-User can format disks in Deepin File Manager.
+Users can format disks in Deepin File Manager.
 1. In the navigation bar of Deepin File Manager, right click on the disk to format.
-2. Select ** Format **.
+2. Select **Format**.
 3. In the popup window, choose the type and volume label for the disk.
-4. Click on ** Format **.
+4. Click on **Format**.
 
 > ![notes](icon/notes.svg): Fast format can be finished in a few seconds, but the data could be restored by file recovery tools. If you don't want these data to be restored, you can uncheck this option box and format the disk.
 
@@ -313,42 +326,54 @@ User can format disks in Deepin File Manager.
 
 ## Main Menu|../common/icon_optionsetting.svg|
 
-In ** Main Menu **, user can create new window, read manual, view information on Deepin File Manager and Exit the application.
+Users can create new window, set share password, view manual and about information, exit the application.
 
-In Deepin File Manager interface, click on ![menu](icon/icon_menu.svg) to enter ** Main Menu **.
 
 ### New Window
 
-In ** Main Menu **, click on ** New window ** to create a new window.
+1. On Deepin File Manager interface, click on ![menu](icon/icon_menu.svg).
+2. Select **New window** to open a new window.
 
-![0|newwindow](png/newwindow.png)
 
 ### Settings
 
-1. In ** Main Menu **, click on ** Settings **  to enter ** Settings **.
-2. Adjust the settings to let the File Manager more suitable for your needs:
- - In ** Open behavior **, user can set whether to open folder in current folder or new window, one click or double click to open it.
- - In ** New window and tab **, user can set the default path to open in a new window/tab.
- - In ** View **, user can set the icon size of the files.
- - In ** Hidden files **, user can set whether to show the hidden files or not.
- - In ** Preview **, user can set whether to show the preview image of the specified file types.
- - In ** Mount **, user can set the auto mount function.
- - In ** Dialog **, user can set whether to use the file chooser dialog of the Deepin File Manager or not.
+1. On Deepin File Manager interface, click on ![menu](icon/icon_menu.svg).
+2. Select **Settings** to enter the detailed settings interface.
+3. Adjust the settings according to your needs:
+ - In **Open behavior**, users can set whether to open folder in current folder or new window, one click or double click to open it.
+ - In **New window and tab**, users can set the default path to open in a new window/tab.
+ - In **View**, users can set the icon size of the files.
+ - In **Hidden files**, users can set whether to show the hidden file.
+ - In **Preview**, users can set whether to show the preview image of the specified file types.
+ - In **Mount**, users can set the auto mount function.
+ - In **Dialog**, users can set whether to use the file chooser dialog of the Deepin File Manager or not.
+ - Users can click on **Restore Defaults** to restore all settings.
 
 ![1|setting](png/setting.png)
 
 ### Help
 
-In ** Main Menu **, click on ** Help ** to view this manual.
+You can click to view the manual, which will help you further know and use Deepin File Manager.
+
+1. On Deepin File Manager interface, click on ![menu](icon/icon_menu.svg).
+2. Select **Help**.
+3. View the manual.
 
 ![1|help](png/help.png)
 
 ### About
 
-In ** Main Menu **, click on ** About ** to view the version and introduction of Deepin File Manager.
+You can click to view the version description.
+
+1. On Deepin File Manager interface, click on ![menu](icon/icon_menu.svg).
+2. Select **About**.
+3. View the version description.
 
 ![0|about](png/about.png)
 
 ### Exit
 
-In ** Main Menu **, click on ** Exit ** to exit Deepin File Manager.
+You can click to exit Deepin File Manager.
+
+1. On Deepin File Manager interface, click on ![menu](icon/icon_menu.svg).
+2. Click on **Exit** to exit.
