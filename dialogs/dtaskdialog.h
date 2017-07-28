@@ -117,7 +117,7 @@ public:
     explicit DTaskDialog(QWidget *parent = 0);
     void initUI();
     void initConnect();
-
+    static int MaxHeight;
     QListWidget* getTaskListWidget();
 
 signals:
@@ -141,12 +141,16 @@ public slots:
     void handleUpdateTaskWidget(const QMap<QString, QString>& jobDetail,
                                 const QMap<QString, QString>& data);
     void adjustSize();
+    void moveYCenter();
 
     void showConflictDiloagByJob(const QMap<QString, QString>& jobDetail);
     void handleConflictResponse(const QMap<QString, QString>& jobDetail, const QMap<QString, QVariant>& response);
 
     void handleMinimizeButtonClick();
     void onItemHovered(const bool &hover);
+
+
+
 protected:
     void closeEvent(QCloseEvent* event);
     void keyPressEvent(QKeyEvent *event);
