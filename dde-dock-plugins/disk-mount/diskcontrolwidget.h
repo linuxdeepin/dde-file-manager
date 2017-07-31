@@ -31,7 +31,6 @@ private slots:
     void onVolume_removed(const QDiskInfo &diskInfo);
     void onVolume_changed(const QDiskInfo &diskInfo);
     void unmountDisk(const QString &diskId) const;
-    void addMountDiskInfo(const QDiskInfo &diskInfo);
 
 private:
     QVBoxLayout *m_centralLayout;
