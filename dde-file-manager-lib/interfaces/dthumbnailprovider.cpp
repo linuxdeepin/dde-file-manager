@@ -269,7 +269,7 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
 
     const QMimeType &mime = d->mimeDatabase.mimeTypeForFile(info);
 
-    QScopedPointer<QImage> image(new QImage(QSize(size, size), QImage::Format_ARGB32_Premultiplied));
+    QScopedPointer<QImage> image(new QImage());
 
     if (mime.name().startsWith("image/")) {
         QImageReader reader(absoluteFilePath);
@@ -306,7 +306,6 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
         QString text = DFMGlobal::toUnicode(file.readAll());
         file.close();
 
-        image->fill(Qt::white);
 
         QFont font;
         font.setPixelSize(12);
@@ -314,10 +313,14 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
         QPen pen;
         pen.setColor(Qt::black);
 
+        *image = QImage(0.70707070 * size, size, QImage::Format_ARGB32_Premultiplied);
+        image->fill(Qt::white);
+
         QPainter painter(image.data());
         painter.setFont(font);
         painter.setPen(pen);
-        painter.drawText(image->rect(), DFMGlobal::wordWrapText(text, size, QTextOption::WrapAtWordBoundaryOrAnywhere,
+
+        painter.drawText(image->rect(), DFMGlobal::wordWrapText(text, image->width(), QTextOption::WrapAtWordBoundaryOrAnywhere,
                                                                 font, painter.fontMetrics().height()));
     } else if (mime.name() == "application/pdf") {
         //FIXME(zccrs): This should be done using the image plugin?
