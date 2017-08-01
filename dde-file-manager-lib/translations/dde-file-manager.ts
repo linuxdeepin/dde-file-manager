@@ -431,22 +431,22 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="568"/>
+        <location filename="../../fileoperations/filejob.cpp" line="570"/>
         <source>%1 s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="572"/>
+        <location filename="../../fileoperations/filejob.cpp" line="574"/>
         <source>%1 m %2 s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="578"/>
+        <location filename="../../fileoperations/filejob.cpp" line="580"/>
         <source>%1 h %2 m %3 s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="587"/>
+        <location filename="../../fileoperations/filejob.cpp" line="589"/>
         <source>%1 d %2 h %3 m %4 s</source>
         <translation type="unfinished"></translation>
     </message>
@@ -731,7 +731,7 @@
     </message>
     <message>
         <location filename="../dialogs/openwithdialog.cpp" line="204"/>
-        <source>Recommand Applications</source>
+        <source>Recommended Applications</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

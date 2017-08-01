@@ -282,8 +282,12 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
             }else if (m_jobType == Move){
                 if(m_isInSameDisk)
                 {
-                    if(copyDir(srcPath, tarDirPath, true, &targetPath))
-                        deleteDir(srcPath);
+                    if (!moveDir(srcPath, tarDirPath, &targetPath)) {
+                        if(copyDir(srcPath, tarDirPath, true, &targetPath))
+                            deleteDir(srcPath);
+                    }else{
+                        deleteEmptyDir(srcPath);
+                    }
                 }
                 else
                 {
@@ -522,6 +526,11 @@ void FileJob::handleJobFinished()
 
 void FileJob::jobUpdated()
 {
+
+    if (m_status == FileJob::Paused){
+        return;
+    }
+
     if (m_isCheckingDisk){
         emit requestJobDataUpdated(m_jobDetail, m_checkDiskJobDataDetail);
     }
@@ -1515,6 +1524,10 @@ bool FileJob::moveDir(const QString &srcDir, const QString &tarDir, QString *tar
 
 bool FileJob::handleMoveJob(const QString &srcPath, const QString &tarDir, QString *targetPath)
 {
+    qDebug() << srcPath << tarDir;
+
+    m_isSkip = false;
+
     QFileInfo scrFileInfo(srcPath);
 
     if (scrFileInfo.isDir() && scrFileInfo.exists()){
@@ -1540,7 +1553,7 @@ bool FileJob::handleMoveJob(const QString &srcPath, const QString &tarDir, QStri
     m_srcFileName = scrFileInfo.fileName();
     m_tarDirName = to.dirName();
     m_srcPath = srcPath;
-    m_tarPath = tarDir;
+    m_tarPath = tarDir + "/" + m_srcFileName;;
     m_status = Started;
 
     bool isTargetExists = to.exists(m_srcFileName);
@@ -1555,6 +1568,8 @@ bool FileJob::handleMoveJob(const QString &srcPath, const QString &tarDir, QStri
             jobConflicted();
         }else if (isTargetExists && m_skipandApplyToAll){
             return false;
+        }else{
+            m_isSkip = false;
         }
 
     }
@@ -1575,7 +1590,7 @@ bool FileJob::handleMoveJob(const QString &srcPath, const QString &tarDir, QStri
                 }
 
                 if(m_isCoExisted && !m_isReplaced){
-                    m_tarPath = checkDuplicateName(m_tarPath + "/" + m_srcFileName);
+                    m_tarPath = checkDuplicateName(m_tarPath);
 
                     if(!m_applyToAll)
                         m_isCoExisted = true;
@@ -1583,13 +1598,15 @@ bool FileJob::handleMoveJob(const QString &srcPath, const QString &tarDir, QStri
                 }
 
                 if (m_isReplaced){
-                    m_tarPath = m_tarPath + "/" + m_srcFileName;
 
                     QFileInfo tarInfo(m_tarPath);
                     if (tarInfo.isDir()){
                         QDir tarDir(m_tarPath);
-                        if(tarDir.exists())
-                            tarDir.removeRecursively();
+                        if(tarDir.exists()){
+
+                        }else{
+                            return false;
+                        }
                     }else{
                         QFile tarFile(m_tarPath);
                         if(tarFile.exists()){
@@ -1608,7 +1625,47 @@ bool FileJob::handleMoveJob(const QString &srcPath, const QString &tarDir, QStri
             {
                 bool ok(false);
                 if (scrFileInfo.isDir()){
-                    ok = QDir(srcPath).rename(srcPath, m_tarPath);
+                    if (!QDir(m_tarPath).exists()){
+                        qDebug() << srcPath << m_tarPath;
+                        ok = QDir(srcPath).rename(srcPath, m_tarPath);
+                    }else{
+                        QDirIterator tmp_iterator(scrFileInfo.absoluteFilePath(),
+                                                  QDir::AllEntries | QDir::System
+                                                  | QDir::NoDotAndDotDot
+                                                  | QDir::Hidden);
+
+                        while (tmp_iterator.hasNext()) {
+
+                            if (m_isAborted)
+                                break;
+
+                            tmp_iterator.next();
+                            const QFileInfo fileInfo = tmp_iterator.fileInfo();
+                            QString srcFilePath = fileInfo.filePath();
+                            QString _targetDir = QFileInfo(m_tarPath).absoluteFilePath();
+                            if (fileInfo.isSymLink()){
+                                handleSymlinkFile(srcFilePath, _targetDir);
+                            }else if(!fileInfo.isSymLink() && fileInfo.isDir()){
+                                qDebug() << srcFilePath << _targetDir;
+                                if(!moveDir(srcFilePath, _targetDir)){
+                                    qDebug() << "move dir" << srcFilePath << _targetDir << "failed";
+                                }else{
+                                    m_tarPath = _targetDir;
+                                }
+                            }else
+                            {
+                                if(!moveFile(srcFilePath, _targetDir))
+                                {
+                                    qDebug() << "move file" << srcFilePath << _targetDir << "failed";
+                                }else{
+                                    m_tarPath = _targetDir;
+                                }
+                            }
+                        }
+                        ok = true;
+                    }
+
+
                 }else{
                     QFile srcFile(srcPath);
                     ok = srcFile.rename(m_tarPath);
@@ -1878,6 +1935,34 @@ bool FileJob::deleteDir(const QString &dir)
     }
 
     return true;
+}
+
+void FileJob::deleteEmptyDir(const QString &srcPath)
+{
+    QFlags<QDir::Filter> f = QDir::AllEntries | QDir::System
+            | QDir::NoDotAndDotDot
+            | QDir::Hidden;
+    QDirIterator tmp_iterator(srcPath, f);
+
+    while (tmp_iterator.hasNext()) {
+        tmp_iterator.next();
+        const QFileInfo fileInfo = tmp_iterator.fileInfo();
+        if (fileInfo.isDir()){
+            QString _srcPath = fileInfo.absoluteFilePath();
+            QDir _srcDir(_srcPath);
+            _srcDir.setFilter(f);
+            if (_srcDir.count() == 0){
+                deleteDir(_srcPath);
+            }else{
+                deleteEmptyDir(_srcPath);
+            }
+        }
+    }
+    QDir srcDir(srcPath);
+    srcDir.setFilter(f);
+    if (srcDir.count() == 0){
+        deleteDir(srcPath);
+    }
 }
 
 bool FileJob::moveDirToTrash(const QString &dir, QString *targetPath)
