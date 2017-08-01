@@ -491,22 +491,22 @@
         <translation>副本</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="568"/>
+        <location filename="../../fileoperations/filejob.cpp" line="570"/>
         <source>%1 s</source>
         <translation>%1 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="572"/>
+        <location filename="../../fileoperations/filejob.cpp" line="574"/>
         <source>%1 m %2 s</source>
         <translation>%1 分 %2 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="578"/>
+        <location filename="../../fileoperations/filejob.cpp" line="580"/>
         <source>%1 h %2 m %3 s</source>
         <translation>%1 时 %2 分 %3 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="587"/>
+        <location filename="../../fileoperations/filejob.cpp" line="589"/>
         <source>%1 d %2 h %3 m %4 s</source>
         <translation>%1 天 %2 时 %3 分 %4 秒</translation>
     </message>
@@ -825,8 +825,12 @@
     </message>
     <message>
         <location filename="../dialogs/openwithdialog.cpp" line="204"/>
-        <source>Recommand Applications</source>
+        <source>Recommended Applications</source>
         <translation>推荐应用</translation>
+    </message>
+    <message>
+        <source>Recommand Applications</source>
+        <translation type="vanished">推荐应用</translation>
     </message>
     <message>
         <location filename="../dialogs/openwithdialog.cpp" line="206"/>

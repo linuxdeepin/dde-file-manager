@@ -201,7 +201,7 @@ void OpenWithDialog::initUI()
 
     QVBoxLayout* content_layout = new QVBoxLayout;
     content_layout->setContentsMargins(10, 0, 10, 0);
-    content_layout->addWidget(new OpenWithDialogListSparerItem(tr("Recommand Applications"), this));
+    content_layout->addWidget(new OpenWithDialogListSparerItem(tr("Recommended Applications"), this));
     content_layout->addLayout(m_recommandLayout);
     content_layout->addWidget(new OpenWithDialogListSparerItem(tr("Other Applications"), this));
     content_layout->addLayout(m_otherLayout);

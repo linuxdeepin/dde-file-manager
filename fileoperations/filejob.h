@@ -189,6 +189,7 @@ private:
     bool deleteFile(const QString &file);
     bool deleteFileByGio(const QString &srcFile);
     bool deleteDir(const QString &dir);
+    void deleteEmptyDir(const QString &srcPath);
     bool moveDirToTrash(const QString &dir, QString *targetPath = 0);
     bool moveFileToTrash(const QString &file, QString *targetPath = 0);
     bool writeTrashInfo(const QString &fileBaseName, const QString &path, const QString &time);
