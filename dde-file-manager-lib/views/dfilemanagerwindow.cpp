@@ -609,7 +609,7 @@ void DFileManagerWindow::initUI()
     D_DC(DFileManagerWindow);
 
     resize(DEFAULT_WINDOWS_WIDTH, DEFAULT_WINDOWS_HEIGHT);
-    setMinimumSize(800, 420);
+    setMinimumSize(650, 420);
     initCentralWidget();
     setCentralWidget(d->centralWidget);
 
