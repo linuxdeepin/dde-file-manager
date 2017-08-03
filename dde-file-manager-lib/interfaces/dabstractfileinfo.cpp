@@ -741,34 +741,13 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
             }
 
 #ifdef SW_LABEL
-            qDebug() << m_labelMenuItemIds;
-//            if (m_labelMenuItemIds.length() == 1){
-//                foreach (QString id, m_labelMenuItemIds) {
-//                    if(id == "020100"){
-//                        fileMenuManger->setActionString(MenuAction::SetLabel, m_labelMenuItemData[id].label);
-//                    }
-//                }
-//                actionKeys << MenuAction::SetLabel;
-//            }else{
-//                foreach (QString id, m_labelMenuItemIds) {
-//                    if(id == "010101"){
-//                        actionKeys << MenuAction::ViewLabel;
-//                        fileMenuManger->setActionString(MenuAction::ViewLabel, m_labelMenuItemData[id].label);
-//                    }else if(id == "010201"){
-//                        actionKeys << MenuAction::EditLabel;
-//                        fileMenuManger->setActionString(MenuAction::EditLabel, m_labelMenuItemData[id].label);
-//                    }else if(id == "010501"){
-//                        actionKeys << MenuAction::PrivateFileToPublic;
-//                        fileMenuManger->setActionString(MenuAction::PrivateFileToPublic, m_labelMenuItemData[id].label);
-//                    }
-//                }
-//            }
+            qDebug() << LabelMenuItemIds;
 
-            foreach (QString id, m_labelMenuItemIds) {
-                int index = m_labelMenuItemIds.indexOf(id);
+            foreach (QString id, LabelMenuItemIds) {
+                int index = LabelMenuItemIds.indexOf(id);
                 MenuAction actionType = MenuAction (MenuAction::Unknow + index + 1);
                 actionKeys << actionType;
-                fileMenuManger->setActionString(actionType, m_labelMenuItemData[id].label);
+                fileMenuManger->setActionString(actionType, LabelMenuItemDatas[id].label);
                 fileMenuManger->setActionID(actionType, id);
             }
 
@@ -1340,13 +1319,14 @@ QString DAbstractFileInfo::getLabelIcon() const
 void DAbstractFileInfo::updateLabelMenuItems()
 {
     if (FileManagerLibrary::instance()->isCompletion()){
-        m_labelMenuItemIds.clear();
-        m_labelMenuItemData.clear();
+        LabelMenuItemIds.clear();
+        LabelMenuItemDatas.clear();
     //    QString menu = "{\"id\":[\"010101\",\"010201\",\"010501\"],\"label\":[\"查看标签\",\"编辑标签\",\"转换为公有\"],\"tip\":[\"\",\"\",\"\"],\"icon\":[\"viewlabel.svg\",\"editlabel.svg\",\"editlabel.svg\"],\"sub0\":\"\",\"sub1\":\"\",\"sub2\":\"\"}";
     //    QString menu = "{\"id\":[\"020100\"],\"label\":[\"设置标签\"],\"tip\":[\"\"],\"icon\":[\"setlabel.svg\"],\"sub0\":\"\"}";
         std::string path = fileUrl().toLocalFile().toStdString();
 //        QString menu = auto_add_rightmenu(const_cast<char*>(path.c_str()));
         QString menu = FileManagerLibrary::instance()->auto_add_rightmenu()(const_cast<char*>(path.c_str()));
+        qDebug() << menu;
         QJsonParseError error;
         QJsonDocument doc=QJsonDocument::fromJson(menu.toLocal8Bit(),&error);
         if (error.error == QJsonParseError::NoError){
@@ -1362,8 +1342,8 @@ void DAbstractFileInfo::updateLabelMenuItems()
                 item.label = labels.at(i).toString();
                 item.tip = tips.at(i).toString();
                 item.icon = icons.at(i).toString();
-                m_labelMenuItemIds.append(item.id);
-                m_labelMenuItemData.insert(item.id, item);
+                LabelMenuItemIds.append(item.id);
+                LabelMenuItemDatas.insert(item.id, item);
                 qDebug() << item.id << item.icon << item.label;
             }
         }else{

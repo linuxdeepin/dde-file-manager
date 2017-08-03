@@ -206,9 +206,9 @@ private:
 #ifdef SW_LABEL
 public:
     static bool isLabelFile(const QString &srcFileName);
-    static int checkCopyJobPrivilege(const QString &srcFileName);
-    static int checkMoveJobPrivilege(const QString &srcFileName);
-    static int checkStoreInRemovableDiskPrivilege(const QString &srcFileName);
+    static int checkCopyJobPrivilege(const QString &srcFileName, const QString &dstFileName);
+    static int checkMoveJobPrivilege(const QString &srcFileName, const QString &dstFileName);
+    static int checkStoreInRemovableDiskPrivilege(const QString &srcFileName, const QString &dstFileName);
     static int checkDeleteJobPrivilege(const QString &srcFileName);
     static int checkRenamePrivilege(const QString &srcFileName);
     static int checkReadPrivilege(const QString &srcFileName);

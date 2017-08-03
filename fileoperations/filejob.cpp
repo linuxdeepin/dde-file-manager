@@ -704,25 +704,28 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
 //    }
 #ifdef SW_LABEL
     if (LlsDeepinLabelLibrary::instance()->isCompletion()){
-        bool isLabelFileFlag = isLabelFile(srcFile);
-        if (isLabelFileFlag){
-            qDebug() << tarDir << deviceListener->isInRemovableDeviceFolder(tarDir);
-            int nRet = 0;
-            if (deviceListener->isInRemovableDeviceFolder(tarDir)){
-                nRet = checkStoreInRemovableDiskPrivilege(srcFile);
-                if (nRet != 0){
-                    emit fileSignalManager->jobFailed(nRet, QString(QMetaEnum::fromType<JobType>().valueToKey(m_jobType)), srcFile);
-                    return false;
-                }
-            }else{
-                nRet = checkCopyJobPrivilege(srcFile);
-                if (nRet != 0){
-                    emit fileSignalManager->jobFailed(nRet, QString(QMetaEnum::fromType<JobType>().valueToKey(m_jobType)), srcFile);
-                    return false;
-                }
+        QString tarFile = tarDir + "/" + QFileInfo(srcFile).fileName();
+        bool isSrcLabelFileFlag = isLabelFile(srcFile);
+        bool isDstLabelFileFlag = isLabelFile(srcFile);
+        qDebug() << "srcFile: " << srcFile;
+        qDebug() << "tarFile: "<< tarFile;
+        qDebug() << "isSrcLabelFileFlag: " << isSrcLabelFileFlag;
+        qDebug() << "isDstLabelFileFlag: " << isDstLabelFileFlag;
+        qDebug() << tarDir << deviceListener->isInRemovableDeviceFolder(tarDir);
+        int nRet = 0;
+        if (deviceListener->isInRemovableDeviceFolder(tarDir)){
+            nRet = checkStoreInRemovableDiskPrivilege(srcFile, tarFile);
+            if (nRet != 0){
+                emit fileSignalManager->jobFailed(nRet, QString(QMetaEnum::fromType<JobType>().valueToKey(m_jobType)), srcFile);
+                return false;
+            }
+        }else{
+            nRet = checkCopyJobPrivilege(srcFile, tarFile);
+            if (nRet != 0){
+                emit fileSignalManager->jobFailed(nRet, QString(QMetaEnum::fromType<JobType>().valueToKey(m_jobType)), srcFile);
+                return false;
             }
         }
-        qDebug() << "isLabelFile" << srcFile << isLabelFileFlag;
     }
 #endif
 
@@ -1304,25 +1307,28 @@ bool FileJob::moveFile(const QString &srcFile, const QString &tarDir, QString *t
 
 #ifdef SW_LABEL
     if (LlsDeepinLabelLibrary::instance()->isCompletion()){
-        bool isLabelFileFlag = isLabelFile(srcFile);
-        if (isLabelFileFlag){
-            qDebug() << tarDir << deviceListener->isInRemovableDeviceFolder(tarDir);
-            int nRet = 0;
-            if (deviceListener->isInRemovableDeviceFolder(tarDir)){
-                nRet = checkStoreInRemovableDiskPrivilege(srcFile);
-                if (nRet != 0){
-                    emit fileSignalManager->jobFailed(nRet, QString(QMetaEnum::fromType<JobType>().valueToKey(m_jobType)), srcFile  );
-                    return false;
-                }
-            }else{
-                nRet = checkMoveJobPrivilege(srcFile);
-                if (nRet != 0){
-                    emit fileSignalManager->jobFailed(nRet, QString(QMetaEnum::fromType<JobType>().valueToKey(m_jobType)), srcFile);
-                    return false;
-                }
+        QString tarFile = tarDir + "/" + QFileInfo(srcFile).fileName();
+        bool isSrcLabelFileFlag = isLabelFile(srcFile);
+        bool isDstLabelFileFlag = isLabelFile(tarFile);
+        qDebug() << "srcFile: " << srcFile;
+        qDebug() << "tarFile: "<< tarFile;
+        qDebug() << "isSrcLabelFileFlag: " << isSrcLabelFileFlag;
+        qDebug() << "isDstLabelFileFlag: " << isDstLabelFileFlag;
+        qDebug() << tarDir << deviceListener->isInRemovableDeviceFolder(tarDir);
+        int nRet = 0;
+        if (deviceListener->isInRemovableDeviceFolder(tarDir)){
+            nRet = checkStoreInRemovableDiskPrivilege(srcFile, tarFile);
+            if (nRet != 0){
+                emit fileSignalManager->jobFailed(nRet, QString(QMetaEnum::fromType<JobType>().valueToKey(m_jobType)), srcFile  );
+                return false;
+            }
+        }else{
+            nRet = checkMoveJobPrivilege(srcFile, tarFile);
+            if (nRet != 0){
+                emit fileSignalManager->jobFailed(nRet, QString(QMetaEnum::fromType<JobType>().valueToKey(m_jobType)), srcFile);
+                return false;
             }
         }
-        qDebug() << "isLabelFile" << srcFile << isLabelFileFlag;
     }
 #endif
 
@@ -1900,7 +1906,7 @@ bool FileJob::moveFileToTrash(const QString &file, QString *targetPath)
 #ifdef SW_LABEL
     if (LlsDeepinLabelLibrary::instance()->isCompletion()){
         if (isLabelFile(file)){
-            int nRet = checkMoveJobPrivilege(file);
+            int nRet = checkMoveJobPrivilege(file, "");
             if (nRet != 0){
                 emit fileSignalManager->jobFailed(nRet, QString(QMetaEnum::fromType<JobType>().valueToKey(m_jobType)), file);
                 return false;
@@ -2058,36 +2064,39 @@ bool FileJob::isLabelFile(const QString &srcFileName)
     return false;
 }
 
-int FileJob::checkCopyJobPrivilege(const QString &srcFileName)
+int FileJob::checkCopyJobPrivilege(const QString &srcFileName, const QString &dstFileName)
 {
     if (LlsDeepinLabelLibrary::instance()->isCompletion()){
         std::string path = srcFileName.toStdString();
+        std::string dstpath = dstFileName.toStdString();
 //        int nRet =  lls_checkprivilege(const_cast<char*>(path.c_str()), NULL, E_FILE_PRI_COPY);
-        int nRet = LlsDeepinLabelLibrary::instance()->lls_checkprivilege()(const_cast<char*>(path.c_str()), NULL, E_FILE_PRI_COPY);
+        int nRet = LlsDeepinLabelLibrary::instance()->lls_checkprivilege()(const_cast<char*>(path.c_str()), const_cast<char*>(dstpath.c_str()), E_FILE_PRI_COPY);
         qDebug() << nRet << srcFileName;
         return nRet;
     }
     return -1;
 }
 
-int FileJob::checkMoveJobPrivilege(const QString &srcFileName)
+int FileJob::checkMoveJobPrivilege(const QString &srcFileName, const QString &dstFileName)
 {
     if (LlsDeepinLabelLibrary::instance()->isCompletion()){
         std::string path = srcFileName.toStdString();
+        std::string dstpath = dstFileName.toStdString();
 //        int nRet =  lls_checkprivilege(const_cast<char*>(path.c_str()), NULL, E_FILE_PRI_MOVE);
-        int nRet =   LlsDeepinLabelLibrary::instance()->lls_checkprivilege()(const_cast<char*>(path.c_str()), NULL, E_FILE_PRI_MOVE);
+        int nRet =   LlsDeepinLabelLibrary::instance()->lls_checkprivilege()(const_cast<char*>(path.c_str()), const_cast<char*>(dstpath.c_str()), E_FILE_PRI_MOVE);
         qDebug() << nRet << srcFileName;
         return nRet;
     }
     return -1;
 }
 
-int FileJob::checkStoreInRemovableDiskPrivilege(const QString &srcFileName)
+int FileJob::checkStoreInRemovableDiskPrivilege(const QString &srcFileName, const QString &dstFileName)
 {
     if (LlsDeepinLabelLibrary::instance()->isCompletion()){
         std::string path = srcFileName.toStdString();
+        std::string dstpath = dstFileName.toStdString();
 //        int nRet =  lls_checkprivilege(const_cast<char*>(path.c_str()), NULL, E_FILE_PRI_STORE);
-        int nRet =  LlsDeepinLabelLibrary::instance()->lls_checkprivilege()(const_cast<char*>(path.c_str()), NULL, E_FILE_PRI_STORE);
+        int nRet =  LlsDeepinLabelLibrary::instance()->lls_checkprivilege()(const_cast<char*>(path.c_str()), const_cast<char*>(dstpath.c_str()), E_FILE_PRI_STORE);
         qDebug() << nRet << srcFileName;
         return nRet;
     }

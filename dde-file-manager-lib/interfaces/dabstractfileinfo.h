@@ -60,6 +60,20 @@ typedef QExplicitlySharedDataPointer<DAbstractFileInfo> DAbstractFileInfoPointer
 typedef std::function<const DAbstractFileInfoPointer(int)> getFileInfoFun;
 typedef DFMGlobal::MenuAction MenuAction;
 class DAbstractFileInfoPrivate;
+
+#ifdef SW_LABEL
+
+struct LabelMenuItemData
+{
+    QString id;
+    QString label;
+    QString tip;
+    QString icon;
+};
+static QStringList LabelMenuItemIds;
+static QMap<QString, LabelMenuItemData> LabelMenuItemDatas;
+#endif
+
 class DAbstractFileInfo : public QSharedData
 {
 public:
@@ -247,17 +261,6 @@ private:
 public:
     QString getLabelIcon() const;
     void updateLabelMenuItems();
-
-protected:
-    struct LabelMenuItemData
-    {
-        QString id;
-        QString label;
-        QString tip;
-        QString icon;
-    };
-    QStringList m_labelMenuItemIds;
-    QMap<QString, LabelMenuItemData> m_labelMenuItemData;
 #endif
 };
 
