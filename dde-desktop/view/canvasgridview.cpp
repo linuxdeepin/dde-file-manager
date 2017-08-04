@@ -1727,13 +1727,13 @@ void CanvasGridView::handleContextMenuAction(int action)
     case MenuAction::SelectAll:
         this->selectAll();
         break;
-    case FileManagerProperty: {
-        QStringList localFiles;
-        localFiles << currentUrl().toLocalFile();
-        qDebug() << localFiles;
-        DFMSocketInterface::instance()->showProperty(localFiles);
-        break;
-    }
+//    case FileManagerProperty: {
+//        QStringList localFiles;
+//        localFiles << currentUrl().toLocalFile();
+//        qDebug() << localFiles;
+//        DFMSocketInterface::instance()->showProperty(localFiles);
+//        break;
+//    }
     case AutoSort:
         emit autoAlignToggled();
         break;
@@ -1838,10 +1838,10 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     menu->insertAction(pasteAction, &autoSort);
 
     auto *propertyAction = menu->actionAt(DFileMenuManager::getActionString(MenuAction::Property));
-    QAction property(menu);
-    property.setText(tr("Properties"));
-    property.setData(FileManagerProperty);
-    menu->insertAction(propertyAction, &property);
+//    QAction property(menu);
+//    property.setText(tr("Properties"));
+//    property.setData(FileManagerProperty);
+//    menu->insertAction(propertyAction, &property);
 
 //    QAction *sortByAction = menu->actionAt(DFileMenuManager::getActionString(MenuAction::SortBy));
 //    DFileMenu *sortBySubMenu = static_cast<DFileMenu *>(sortByAction ? sortByAction->menu() : Q_NULLPTR);
