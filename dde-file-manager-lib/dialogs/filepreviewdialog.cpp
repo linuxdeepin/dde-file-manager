@@ -22,6 +22,8 @@
 #include <QAction>
 #include <QWindow>
 #include <QTimer>
+#include <QMediaPlayer>
+#include <QMultimedia>
 
 DFM_BEGIN_NAMESPACE
 
@@ -31,11 +33,18 @@ class FilePreviewDialogStatusBar : public QFrame
 public:
     explicit FilePreviewDialogStatusBar(QWidget *parent = 0);
 
+    QLabel *title() const;
+    QPushButton *preButton() const;
+    QPushButton *nextButton() const;
+    QPushButton *openButton() const;
+
+private:
     QLabel *m_title;
 
     QPushButton *m_preButton;
     QPushButton *m_nextButton;
     QPushButton *m_openButton;
+
 };
 
 FilePreviewDialogStatusBar::FilePreviewDialogStatusBar(QWidget *parent)
@@ -45,11 +54,13 @@ FilePreviewDialogStatusBar::FilePreviewDialogStatusBar(QWidget *parent)
     m_preButton->setObjectName("PreButton");
     m_preButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_preButton->setShortcut(QKeySequence::Back);
+    m_preButton->setFocusPolicy(Qt::NoFocus);
 
     m_nextButton = new QPushButton(this);
     m_nextButton->setObjectName("NextButton");
     m_nextButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_nextButton->setShortcut(QKeySequence::Forward);
+    m_nextButton->setFocusPolicy(Qt::NoFocus);
 
     m_title = new QLabel(this);
     m_title->setObjectName("TitleLabel");
@@ -68,6 +79,26 @@ FilePreviewDialogStatusBar::FilePreviewDialogStatusBar(QWidget *parent)
     layout->addWidget(m_nextButton);
     layout->addWidget(m_title);
     layout->addWidget(m_openButton, 0, Qt::AlignRight);
+}
+
+QPushButton *FilePreviewDialogStatusBar::openButton() const
+{
+    return m_openButton;
+}
+
+QPushButton *FilePreviewDialogStatusBar::nextButton() const
+{
+return m_nextButton;
+}
+
+QPushButton *FilePreviewDialogStatusBar::preButton() const
+{
+return m_preButton;
+}
+
+QLabel *FilePreviewDialogStatusBar::title() const
+{
+return m_title;
 }
 
 class UnknowFilePreview : public DFMFilePreview
@@ -166,8 +197,8 @@ FilePreviewDialog::FilePreviewDialog(const DUrlList &list, QWidget *parent)
     initUI();
 
     if (list.count() < 2) {
-        m_statusBar->m_preButton->hide();
-        m_statusBar->m_nextButton->hide();
+        m_statusBar->preButton()->hide();
+        m_statusBar->nextButton()->hide();
     }
 
     switchToPage(0);
@@ -177,6 +208,13 @@ FilePreviewDialog::~FilePreviewDialog()
 {
     if (m_preview)
         m_preview->deleteLater();
+}
+
+bool FilePreviewDialog::isCurrentMusicPreview()
+{
+    const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, m_fileList.at(m_currentPageIndex));
+    bool ret = (QMediaPlayer::hasSupport(info->mimeTypeName(QMimeDatabase::MatchContent)) != QMultimedia::NotSupported);
+    return ret;
 }
 
 void FilePreviewDialog::childEvent(QChildEvent *event)
@@ -199,7 +237,6 @@ bool FilePreviewDialog::eventFilter(QObject *obj, QEvent *event)
 {
     if (event->type() == QEvent::KeyPress) {
         const QKeyEvent *e = static_cast<QKeyEvent*>(event);
-
         switch (e->key()) {
         case Qt::Key_Left:
         case Qt::Key_Up:
@@ -209,6 +246,14 @@ bool FilePreviewDialog::eventFilter(QObject *obj, QEvent *event)
         case Qt::Key_Down:
             nextPage();
             break;
+        case Qt::Key_Space:{
+            if (isCurrentMusicPreview()){
+                QPushButton* playButton = m_statusBar->children().last()->findChild<QPushButton*>();
+                if (playButton)
+                    playButton->click();
+            }
+            return true;
+        }
         default:
             break;
         }
@@ -221,7 +266,7 @@ void FilePreviewDialog::initUI()
 {
     m_closeButton = new QPushButton(this);
     m_closeButton->setObjectName("CloseButton");
-    m_closeButton->setShortcut(Qt::Key_Space);
+    m_closeButton->setFocusPolicy(Qt::NoFocus);
 
     m_separator = new DSeparatorHorizontal(this);
     m_separator->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -229,6 +274,7 @@ void FilePreviewDialog::initUI()
     m_statusBar = new FilePreviewDialogStatusBar(this);
     m_statusBar->setObjectName("StatusBar");
     m_statusBar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    m_statusBar->openButton()->setFocus();
 
     AnchorsBase::setAnchor(m_closeButton, Qt::AnchorRight, this, Qt::AnchorRight);
 
@@ -247,9 +293,9 @@ void FilePreviewDialog::initUI()
     layout->addWidget(m_statusBar, 0, Qt::AlignBottom);
 
     connect(m_closeButton, &QPushButton::clicked, this, &FilePreviewDialog::close);
-    connect(m_statusBar->m_preButton, &QPushButton::clicked, this, &FilePreviewDialog::previousPage);
-    connect(m_statusBar->m_nextButton, &QPushButton::clicked, this, &FilePreviewDialog::nextPage);
-    connect(m_statusBar->m_openButton, &QPushButton::clicked, this, [this] {
+    connect(m_statusBar->preButton(), &QPushButton::clicked, this, &FilePreviewDialog::previousPage);
+    connect(m_statusBar->nextButton(), &QPushButton::clicked, this, &FilePreviewDialog::nextPage);
+    connect(m_statusBar->openButton(), &QPushButton::clicked, this, [this] {
         DFileService::instance()->openFile(this, m_fileList.at(m_currentPageIndex));
     });
 }
@@ -267,8 +313,8 @@ static QString generalKey(const QString &key)
 void FilePreviewDialog::switchToPage(int index)
 {
     m_currentPageIndex = index;
-    m_statusBar->m_preButton->setEnabled(index > 0);
-    m_statusBar->m_nextButton->setEnabled(index < m_fileList.count() - 1);
+    m_statusBar->preButton()->setEnabled(index > 0);
+    m_statusBar->nextButton()->setEnabled(index < m_fileList.count() - 1);
 
     const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, m_fileList.at(index));
 
@@ -296,6 +342,7 @@ void FilePreviewDialog::switchToPage(int index)
                           || DFMFilePreviewFactory::isSuitedWithKey(m_preview, general_key))) {
             if (m_preview->setFileUrl(m_fileList.at(index))) {
                 resize(sizeHint());
+                m_statusBar->openButton()->setFocus();
                 return;
             }
         }
@@ -315,13 +362,13 @@ void FilePreviewDialog::switchToPage(int index)
                 preview->deleteLater();
         }
     }
-
     if (!preview) {
         if (qobject_cast<UnknowFilePreview*>(m_preview)) {
             m_preview->setFileUrl(m_fileList.at(index));
-
+            m_statusBar->openButton()->setFocus();
             return;
         } else {
+
             preview = new UnknowFilePreview(this);
             preview->initialize(this, m_statusBar);
             preview->setFileUrl(m_fileList.at(index));
@@ -355,6 +402,7 @@ void FilePreviewDialog::switchToPage(int index)
 
     QTimer::singleShot(0, this, [preview, this] {
         resize(sizeHint());
+        m_statusBar->openButton()->setFocus();
     });
 }
 
@@ -376,8 +424,8 @@ void FilePreviewDialog::nextPage()
 
 void FilePreviewDialog::updateTitle()
 {
-    m_statusBar->m_title->setText(m_preview->title());
-    m_statusBar->m_title->setHidden(m_statusBar->m_title->text().isEmpty());
+    m_statusBar->title()->setText(m_preview->title());
+    m_statusBar->title()->setHidden(m_statusBar->title()->text().isEmpty());
 }
 
 DFM_END_NAMESPACE
