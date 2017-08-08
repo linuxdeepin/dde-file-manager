@@ -39,6 +39,7 @@ bool TextPreview::setFileUrl(const DUrl &url)
         m_textBrowser->setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::TextSelectableByKeyboard);
         m_textBrowser->setWordWrapMode(QTextOption::NoWrap);
         m_textBrowser->setFixedSize(800, 500);
+        m_textBrowser->setFocusPolicy(Qt::NoFocus);
     }
 
     QFile file(url.toLocalFile());

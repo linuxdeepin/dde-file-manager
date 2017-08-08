@@ -31,6 +31,7 @@ class FilePreviewDialog : public DAbstractDialog
 public:
     explicit FilePreviewDialog(const DUrlList &list, QWidget *parent = 0);
     ~FilePreviewDialog();
+    bool isCurrentMusicPreview();
 
 private:
     void childEvent(QChildEvent *event) Q_DECL_OVERRIDE;
