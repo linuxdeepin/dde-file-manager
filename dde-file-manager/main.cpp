@@ -103,6 +103,10 @@ int main(int argc, char *argv[])
 #ifdef ENABLE_PPROF
     ProfilerStart("pprof.prof");
 #endif
+
+    // Fixed the locale codec to utf-8
+    QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
+
     SingleApplication::loadDXcbPlugin();
     SingleApplication::initSources();
     SingleApplication app(argc, argv);
