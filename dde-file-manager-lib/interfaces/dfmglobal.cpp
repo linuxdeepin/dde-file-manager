@@ -515,7 +515,7 @@ bool DFMGlobal::fileNameCorrection(const QString &filePath)
     const QByteArray &request = ls.readAllStandardOutput();
 
     for (const QByteArray &name : request.split('\n')) {
-        const QString str_fileName = QString::fromLocal8Bit(name);
+        const QString str_fileName = DFMGlobal::toUnicode(name);
 
         if (str_fileName == info.fileName() && str_fileName.toLocal8Bit() != name) {
             const QByteArray &path = info.absolutePath().toLocal8Bit() + QDir::separator().toLatin1() + name;

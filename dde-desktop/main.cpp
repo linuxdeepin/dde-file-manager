@@ -27,6 +27,9 @@ using namespace Dtk::Widget;
 
 int main(int argc, char *argv[])
 {
+    // Fixed the locale codec to utf-8
+    QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
+
     DApplication::loadDXcbPlugin();
 
     DApplication app(argc, argv);
