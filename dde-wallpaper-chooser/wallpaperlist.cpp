@@ -149,14 +149,14 @@ void WallpaperList::prevPage()
 {
     int c = width() / gridSize().width();
 
-    scrollList(-c * (m_contentLayout->spacing() + ItemWidth), 500);
+    scrollList((2 - c) * (m_contentLayout->spacing() + ItemWidth), 500);
 }
 
 void WallpaperList::nextPage()
 {
     int c = width() / gridSize().width();
 
-    scrollList(c * (m_contentLayout->spacing() + ItemWidth), 500);
+    scrollList((c - 2) * (m_contentLayout->spacing() + ItemWidth), 500);
 }
 
 void WallpaperList::resizeEvent(QResizeEvent *event)
@@ -169,10 +169,6 @@ void WallpaperList::resizeEvent(QResizeEvent *event)
         --screen_item_count;
 
     setGridSize(QSize(width() / screen_item_count, ItemHeight));
-
-void WallpaperList::showEvent(QShowEvent *event)
-{
-    updateBothEndsItem();
 }
 
 void WallpaperList::wheelEvent(QWheelEvent *event)
