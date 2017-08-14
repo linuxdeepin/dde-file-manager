@@ -47,37 +47,37 @@
         <translation>Formatar</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="164"/>
+        <location filename="../view/mainwindow.cpp" line="165"/>
         <source>Continue</source>
         <translation>Continuar</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="169"/>
+        <location filename="../view/mainwindow.cpp" line="170"/>
         <source>Formatting...</source>
         <translation>A formatar...</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="193"/>
+        <location filename="../view/mainwindow.cpp" line="194"/>
         <source>Done</source>
         <translation>Concluído</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="204"/>
+        <location filename="../view/mainwindow.cpp" line="205"/>
         <source>Failed to format</source>
         <translation>Falha ao formatar</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="200"/>
+        <location filename="../view/mainwindow.cpp" line="201"/>
         <source>Quit</source>
         <translation>Sair</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="201"/>
+        <location filename="../view/mainwindow.cpp" line="202"/>
         <source>Your disk is removed when formatting</source>
         <translation>O disco foi removido enquanto formatava</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="205"/>
+        <location filename="../view/mainwindow.cpp" line="206"/>
         <source>Reformat</source>
         <translation>Reformatar</translation>
     </message>

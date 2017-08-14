@@ -47,37 +47,37 @@
         <translation>Formatér</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="164"/>
+        <location filename="../view/mainwindow.cpp" line="165"/>
         <source>Continue</source>
         <translation>Fortsæt</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="169"/>
+        <location filename="../view/mainwindow.cpp" line="170"/>
         <source>Formatting...</source>
         <translation>Formaterer...</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="193"/>
+        <location filename="../view/mainwindow.cpp" line="194"/>
         <source>Done</source>
         <translation>Færdig</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="204"/>
+        <location filename="../view/mainwindow.cpp" line="205"/>
         <source>Failed to format</source>
         <translation>Formatering mislykkedes</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="200"/>
+        <location filename="../view/mainwindow.cpp" line="201"/>
         <source>Quit</source>
         <translation>Afslut</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="201"/>
+        <location filename="../view/mainwindow.cpp" line="202"/>
         <source>Your disk is removed when formatting</source>
         <translation>Din disk fjernes ved formatering</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="205"/>
+        <location filename="../view/mainwindow.cpp" line="206"/>
         <source>Reformat</source>
         <translation>Formatér igen</translation>
     </message>

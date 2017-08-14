@@ -47,37 +47,37 @@
         <translation>Format</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="164"/>
+        <location filename="../view/mainwindow.cpp" line="165"/>
         <source>Continue</source>
         <translation>Teruskan</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="169"/>
+        <location filename="../view/mainwindow.cpp" line="170"/>
         <source>Formatting...</source>
         <translation>Memformat....</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="193"/>
+        <location filename="../view/mainwindow.cpp" line="194"/>
         <source>Done</source>
         <translation>Selesai</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="204"/>
+        <location filename="../view/mainwindow.cpp" line="205"/>
         <source>Failed to format</source>
         <translation>Gagal diformatkan</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="200"/>
+        <location filename="../view/mainwindow.cpp" line="201"/>
         <source>Quit</source>
         <translation>Keluar</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="201"/>
+        <location filename="../view/mainwindow.cpp" line="202"/>
         <source>Your disk is removed when formatting</source>
         <translation>Cakera anda telah ditanggalkan ketika memformat</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="205"/>
+        <location filename="../view/mainwindow.cpp" line="206"/>
         <source>Reformat</source>
         <translation>Format Semula</translation>
     </message>

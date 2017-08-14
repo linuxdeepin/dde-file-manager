@@ -5,12 +5,12 @@
             <location filename="Desktop Entry]GenericName" line="0"/>
             <location filename="Desktop Entry]Name" line="0"/>
             <source>Computer</source>
-            <translation>Ordenador</translation>
+            <translation>Computadora</translation>
         </message>
         <message>
             <location filename="Desktop Entry]Comment" line="0"/>
             <source>Show basic info of the computer.</source>
-            <translation>Mostrar información básica del ordenador. </translation>
+            <translation>Mostrar información básica de la computadora. </translation>
         </message>
     </context>
 </TS>

@@ -14,7 +14,7 @@
         <message>
             <location filename="Desktop Entry]Name" line="0"/>
             <source>Trash</source>
-            <translation>Papelera de reciclaje</translation>
+            <translation>Papelera</translation>
         </message>
     </context>
 </TS>
