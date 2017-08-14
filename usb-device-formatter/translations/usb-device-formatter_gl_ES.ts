@@ -12,7 +12,7 @@
     <message>
         <location filename="../view/formatingpage.cpp" line="19"/>
         <source>Formating, please wait for a minute...</source>
-        <translation>Formatado, por favor agarda...</translation>
+        <translation>Formatando, por favor agarda...</translation>
     </message>
 </context>
 <context>
@@ -47,37 +47,37 @@
         <translation>Formatar</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="164"/>
+        <location filename="../view/mainwindow.cpp" line="165"/>
         <source>Continue</source>
         <translation>Continuar</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="169"/>
+        <location filename="../view/mainwindow.cpp" line="170"/>
         <source>Formatting...</source>
         <translation>Formatando...</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="193"/>
+        <location filename="../view/mainwindow.cpp" line="194"/>
         <source>Done</source>
         <translation>Feito</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="204"/>
+        <location filename="../view/mainwindow.cpp" line="205"/>
         <source>Failed to format</source>
         <translation>Produciuse un erro formatando</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="200"/>
+        <location filename="../view/mainwindow.cpp" line="201"/>
         <source>Quit</source>
         <translation>Saír</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="201"/>
+        <location filename="../view/mainwindow.cpp" line="202"/>
         <source>Your disk is removed when formatting</source>
-        <translation>O disco foi expulsado durante o formatado</translation>
+        <translation>Disco expulsado durante o formatado</translation>
     </message>
     <message>
-        <location filename="../view/mainwindow.cpp" line="205"/>
+        <location filename="../view/mainwindow.cpp" line="206"/>
         <source>Reformat</source>
         <translation>Volver formatar</translation>
     </message>

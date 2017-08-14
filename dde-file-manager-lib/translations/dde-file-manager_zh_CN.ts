@@ -1,25 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
-<context>
-    <name>ClearTrashDialog</name>
-    <message>
-        <source>Are you sure to empty trash?</source>
-        <translation type="vanished">您确定要清空回收站？</translation>
-    </message>
-    <message>
-        <source>This action cannot be restored</source>
-        <translation type="vanished">此操作不可以恢复</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="vanished">取消</translation>
-    </message>
-    <message>
-        <source>Empty</source>
-        <translation type="vanished">清空</translation>
-    </message>
-</context>
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>CloseAllDialogIndicator</name>
     <message>
@@ -102,36 +81,6 @@
         <location filename="../views/computerview.cpp" line="518"/>
         <source>System Disk</source>
         <translation>系统盘</translation>
-    </message>
-</context>
-<context>
-    <name>ConfirmDeleteDialog</name>
-    <message>
-        <source>This action cannot be restored</source>
-        <translation type="vanished">此操作不可以恢复</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="vanished">取消</translation>
-    </message>
-    <message>
-        <source>Delete</source>
-        <translation type="vanished">删除</translation>
-    </message>
-</context>
-<context>
-    <name>DFileDialog</name>
-    <message>
-        <source>Cancel</source>
-        <translation type="vanished">取消</translation>
-    </message>
-    <message>
-        <source>Open</source>
-        <translation type="vanished">打开</translation>
-    </message>
-    <message>
-        <source>Save</source>
-        <translation type="vanished">保存</translation>
     </message>
 </context>
 <context>
@@ -223,17 +172,6 @@
         <location filename="../views/dstatusbar.cpp" line="407"/>
         <source>Loading...</source>
         <translation>正在加载......</translation>
-    </message>
-</context>
-<context>
-    <name>DTaskDialog</name>
-    <message>
-        <source>1 task in progress</source>
-        <translation type="vanished">有1个任务正在进行</translation>
-    </message>
-    <message>
-        <source>%1 tasks in progress</source>
-        <translation type="vanished">有%1个任务正在进行</translation>
     </message>
 </context>
 <context>
@@ -491,38 +429,24 @@
         <translation>副本</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="570"/>
+        <location filename="../../fileoperations/filejob.cpp" line="568"/>
         <source>%1 s</source>
         <translation>%1 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="574"/>
+        <location filename="../../fileoperations/filejob.cpp" line="572"/>
         <source>%1 m %2 s</source>
         <translation>%1 分 %2 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="580"/>
+        <location filename="../../fileoperations/filejob.cpp" line="578"/>
         <source>%1 h %2 m %3 s</source>
         <translation>%1 时 %2 分 %3 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="589"/>
+        <location filename="../../fileoperations/filejob.cpp" line="587"/>
         <source>%1 d %2 h %3 m %4 s</source>
         <translation>%1 天 %2 时 %3 分 %4 秒</translation>
-    </message>
-</context>
-<context>
-    <name>FilePreviewDialogStatusBar</name>
-    <message>
-        <source>Open</source>
-        <translation type="vanished">打开</translation>
-    </message>
-</context>
-<context>
-    <name>MessageWrongDialog</name>
-    <message>
-        <source>Confirm</source>
-        <translation type="vanished">确定</translation>
     </message>
 </context>
 <context>
@@ -705,14 +629,32 @@
         <translation>原路径%1 目标路径%2</translation>
     </message>
     <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="366"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="378"/>
+        <source>Time modified:%1</source>
+        <translation>修改时间:%1</translation>
+    </message>
+    <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="368"/>
         <source>Original folder:%1</source>
         <translation>原始目录：%1</translation>
     </message>
     <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="369"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="382"/>
+        <source>Contains:%1</source>
+        <translation>个数：%1</translation>
+    </message>
+    <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="371"/>
         <source>Original file:%1</source>
         <translation>原始文件：%1</translation>
+    </message>
+    <message>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="372"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="385"/>
+        <source>Size:%1</source>
+        <translation>大小：%1</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="381"/>
@@ -723,40 +665,6 @@
         <location filename="../../dialogs/dtaskdialog.cpp" line="384"/>
         <source>Target file:%1</source>
         <translation>目标文件：%1</translation>
-    </message>
-    <message>
-        <source>Original folder</source>
-        <translation type="vanished">原始目录</translation>
-    </message>
-    <message>
-        <source>Original file</source>
-        <translation type="vanished">原始文件</translation>
-    </message>
-    <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="366"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="378"/>
-        <source>Time modified:%1</source>
-        <translation>修改时间:%1</translation>
-    </message>
-    <message>
-        <source>Target folder</source>
-        <translation type="vanished">目标目录</translation>
-    </message>
-    <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="369"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="382"/>
-        <source>Contains:%1</source>
-        <translation>个数：%1</translation>
-    </message>
-    <message>
-        <source>Target file</source>
-        <translation type="vanished">目标文件</translation>
-    </message>
-    <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="372"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="385"/>
-        <source>Size:%1</source>
-        <translation>大小：%1</translation>
     </message>
 </context>
 <context>
@@ -800,10 +708,6 @@
         <translation>打开方式</translation>
     </message>
     <message>
-        <source>Select other programs</source>
-        <translation type="vanished">选择其它程序</translation>
-    </message>
-    <message>
         <location filename="../dialogs/openwithdialog.cpp" line="196"/>
         <source>Add other programs</source>
         <translation>添加其他程序</translation>
@@ -825,12 +729,8 @@
     </message>
     <message>
         <location filename="../dialogs/openwithdialog.cpp" line="204"/>
-        <source>Recommended Applications</source>
-        <translation>推荐应用</translation>
-    </message>
-    <message>
         <source>Recommand Applications</source>
-        <translation type="vanished">推荐应用</translation>
+        <translation>推荐应用</translation>
     </message>
     <message>
         <location filename="../dialogs/openwithdialog.cpp" line="206"/>
@@ -927,17 +827,6 @@
         <location filename="../controllers/pathmanager.cpp" line="35"/>
         <source>Computer</source>
         <translation>计算机</translation>
-    </message>
-</context>
-<context>
-    <name>PreviewDialog</name>
-    <message>
-        <source>Open</source>
-        <translation type="vanished">打开</translation>
-    </message>
-    <message>
-        <source>Type</source>
-        <translation type="vanished">类型</translation>
     </message>
 </context>
 <context>
@@ -1062,6 +951,16 @@
         <translation>打开</translation>
     </message>
     <message>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="151"/>
+        <source>Size: %1</source>
+        <translation>大小：%1</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="152"/>
+        <source>Type: %1</source>
+        <translation>类型：%1</translation>
+    </message>
+    <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="639"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="642"/>
         <source>Open in new window</source>
@@ -1077,10 +976,6 @@
         <location filename="../interfaces/dfilemenumanager.cpp" line="645"/>
         <source>Open with</source>
         <translation>打开方式</translation>
-    </message>
-    <message>
-        <source>Others</source>
-        <translation type="vanished">其它</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="647"/>
@@ -1252,10 +1147,6 @@
         <location filename="../interfaces/dfilemenumanager.cpp" line="702"/>
         <source>Format</source>
         <translation>格式化</translation>
-    </message>
-    <message>
-        <source>Property</source>
-        <translation type="vanished">属性</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="644"/>
@@ -1466,10 +1357,6 @@
         <translation>搜索结果显示隐藏文件</translation>
     </message>
     <message>
-        <source>Advanced settings</source>
-        <translation type="vanished">高级设置</translation>
-    </message>
-    <message>
         <location filename="../configure/dfmconfigdict.cpp" line="46"/>
         <source>Dialog</source>
         <translation>对话框</translation>
@@ -1484,10 +1371,6 @@
         <location filename="../configure/dfmconfigdict.cpp" line="48"/>
         <source>Preview</source>
         <translation>预览</translation>
-    </message>
-    <message>
-        <source>Basic settings</source>
-        <translation type="vanished">基本设置</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="50"/>
@@ -1563,22 +1446,6 @@
         <location filename="../interfaces/dfilemenumanager.cpp" line="694"/>
         <source>Set as wallpaper</source>
         <translation>设置壁纸</translation>
-    </message>
-    <message>
-        <source>newDoc</source>
-        <translation type="vanished">新建word文档</translation>
-    </message>
-    <message>
-        <source>newExcel</source>
-        <translation type="vanished">新建Excel文档</translation>
-    </message>
-    <message>
-        <source>newPowerPoint</source>
-        <translation type="vanished">新建PowerPoint文档</translation>
-    </message>
-    <message>
-        <source>newText</source>
-        <translation type="vanished">新建文本</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="192"/>
@@ -1728,16 +1595,6 @@
         <location filename="../../dialogs/dtaskdialog.cpp" line="556"/>
         <source>%1 tasks in progress</source>
         <translation>有%1个任务正在进行</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="151"/>
-        <source>Size: %1</source>
-        <translation>大小：%1</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="152"/>
-        <source>Type: %1</source>
-        <translation>类型：%1</translation>
     </message>
 </context>
 <context>
@@ -2162,17 +2019,6 @@
         <location filename="../dialogs/trashpropertydialog.cpp" line="54"/>
         <source>Contains %1 %2</source>
         <translation>包含%1个%2</translation>
-    </message>
-</context>
-<context>
-    <name>UnknowFilePreview</name>
-    <message>
-        <source>Size: %1</source>
-        <translation type="vanished">大小：%1</translation>
-    </message>
-    <message>
-        <source>Type: %1</source>
-        <translation type="vanished">类型：%1</translation>
     </message>
 </context>
 <context>

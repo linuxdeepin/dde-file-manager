@@ -1,17 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>CanvasGridView</name>
-    <message>
-        <location filename="../view/canvasgridview.cpp" line="1831"/>
-        <source>Auto arrange</source>
-        <translation>自动排列</translation>
-    </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="1825"/>
         <source>Icon size</source>
         <translation>图标大小</translation>
+    </message>
+    <message>
+        <location filename="../view/canvasgridview.cpp" line="1831"/>
+        <source>Auto arrange</source>
+        <translation>自动排列</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="1839"/>

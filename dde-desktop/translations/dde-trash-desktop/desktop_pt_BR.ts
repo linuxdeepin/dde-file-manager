@@ -4,7 +4,7 @@
         <message>
             <location filename="Desktop Entry]GenericName" line="0"/>
             <source>Open Trash.</source>
-            <translation>Abrir Lixeira</translation>
+            <translation>Abrir lixeira</translation>
         </message>
         <message>
             <location filename="Desktop Entry]Comment" line="0"/>

@@ -9,7 +9,7 @@
         <message>
             <location filename="Desktop Entry]Name" line="0"/>
             <source>Deepin File Manager</source>
-            <translation>Файловый менеджер Deepin</translation>
+            <translation>Файловый Менеджер Deepin</translation>
         </message>
         <message>
             <location filename="Desktop Action new-window]Name" line="0"/>

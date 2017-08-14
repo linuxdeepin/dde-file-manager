@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="id">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="id" version="2.1">
     <context>
         <name>desktop</name>
         <message>
@@ -16,7 +14,7 @@
         <message>
             <location filename="Desktop Action new-window]Name" line="0"/>
             <source>New Window</source>
-            <translation type="unfinished"/>
+            <translation>Jendela Baru</translation>
         </message>
     </context>
 </TS>
