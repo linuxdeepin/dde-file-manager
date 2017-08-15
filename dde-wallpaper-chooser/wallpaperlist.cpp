@@ -203,6 +203,7 @@ void WallpaperList::setGridSize(const QSize &size)
 void WallpaperList::addItem(QWidget *item)
 {
     m_contentLayout->addWidget(item);
+    item->show();
     m_contentWidget->adjustSize();
 }
 

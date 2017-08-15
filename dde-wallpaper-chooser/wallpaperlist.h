@@ -87,6 +87,8 @@ private:
     void updateBothEndsItem();
     void showDeleteButtonForItem(const WallpaperItem *item) const;
 
+    friend class Frame;
+
 private slots:
     void wallpaperItemPressed();
     void wallpaperItemHoverIn();

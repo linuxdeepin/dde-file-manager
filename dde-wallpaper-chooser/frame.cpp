@@ -179,6 +179,7 @@ void Frame::refreshList()
 
             m_wallpaperList->setFixedWidth(width());
             m_wallpaperList->show();
+            m_wallpaperList->updateBothEndsItem();
         }
     });
 }
