@@ -618,7 +618,7 @@ void GvfsMountManager::ask_password_cb(GMountOperation *op, const char *message,
     {
         s = "";
         g_mount_operation_set_password (op, s);
-        g_free (s);
+//        g_free (s);
     }
 
     g_mount_operation_reply (op, G_MOUNT_OPERATION_HANDLED);
@@ -688,6 +688,7 @@ void GvfsMountManager::startMonitor()
         listMounts();
         updateDiskInfos();
     }
+    autoMountAllDisks();
     initConnect();
     emit loadDiskInfoFinished();
 }
@@ -934,6 +935,16 @@ bool GvfsMountManager::getAutoMountSwitch() const
 void GvfsMountManager::setAutoMountSwitch(bool autoMountSwitch)
 {
     m_autoMountSwitch = autoMountSwitch;
+}
+
+void GvfsMountManager::autoMountAllDisks()
+{
+    if (DFMSetting::instance()->isAutoMount() || DFMSetting::instance()->isAutoMountAndOpen()){
+        foreach (const QDiskInfo& diskInfo, DiskInfos.values()) {
+            if (diskInfo.can_mount())
+                mount(diskInfo);
+        }
+    }
 }
 
 void GvfsMountManager::mount(const QString &path)

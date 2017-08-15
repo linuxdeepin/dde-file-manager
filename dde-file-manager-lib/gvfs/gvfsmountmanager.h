@@ -93,6 +93,8 @@ public:
     bool getAutoMountSwitch() const;
     void setAutoMountSwitch(bool autoMountSwitch);
 
+    void autoMountAllDisks();
+
 signals:
     void loadDiskInfoFinished();
     void mount_added(const QDiskInfo& diskInfo);
