@@ -41,6 +41,8 @@
 
 #include "gvfs/networkmanager.h"
 #include "dfmglobal.h"
+#include "dbookmarkscene.h"
+#include "dutil.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -886,7 +888,6 @@ void DBookmarkItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
         menu = DFileMenuManager::createCustomBookMarkMenu(m_url, disableList);
 
     QPointer<DBookmarkItem> me = this;
-
     if (menu && !menu->actions().isEmpty()) {
         menu->setEventData(DUrl(), DUrlList() << m_url, windowId(), this);
         menu->exec();

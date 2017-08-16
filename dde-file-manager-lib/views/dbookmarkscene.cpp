@@ -573,12 +573,12 @@ void DBookmarkScene::volumeAdded(UDiskDeviceInfoPointer device)
 
     item->setTightMode(m_isTightMode);
     m_diskItems.insert(device->getDiskInfo().id(), item);
-
+    m_uuid_diskItems.insert(device->getDiskInfo().uuid(), item);
 }
 
 void DBookmarkScene::volumeRemoved(UDiskDeviceInfoPointer device)
 {
-    DBookmarkItem * item = m_diskItems.value(device->getDiskInfo().id());
+    DBookmarkItem * item = getItemByDevice(device);
     if(item)
     {
         handleVolumeMountRemove(device, item);
@@ -590,7 +590,7 @@ void DBookmarkScene::volumeRemoved(UDiskDeviceInfoPointer device)
 
 void DBookmarkScene::volumeChanged(UDiskDeviceInfoPointer device)
 {
-    DBookmarkItem * item = m_diskItems.value(device->getDiskInfo().id());
+    DBookmarkItem * item = getItemByDevice(device);
     if(item)
     {
         item->setDeviceInfo(device);
@@ -606,7 +606,8 @@ void DBookmarkScene::volumeChanged(UDiskDeviceInfoPointer device)
 
 void DBookmarkScene::mountAdded(UDiskDeviceInfoPointer device)
 {
-    DBookmarkItem * item = m_diskItems.value(device->getDiskInfo().id());
+    DBookmarkItem * item = getItemByDevice(device);
+
     if(item)
     {
         item->setDeviceInfo(device);
@@ -637,9 +638,11 @@ void DBookmarkScene::mountAdded(UDiskDeviceInfoPointer device)
 
 void DBookmarkScene::mountRemoved(UDiskDeviceInfoPointer device)
 {
-    DBookmarkItem * item = m_diskItems.value(device->getDiskInfo().id());
+    DBookmarkItem * item = getItemByDevice(device);
+    qDebug() << item;
     if(item)
     {
+        qDebug() << device->getDiskInfo() << device->getDiskInfo().has_volume();
         if (device->getDiskInfo().has_volume()){
             item->setDeviceInfo(device);
             item->setMounted(false);
@@ -776,6 +779,15 @@ DBookmarkItem *DBookmarkScene::itemAt(const QPointF & point)
     }
     else
         return (DBookmarkItem *)QGraphicsScene::itemAt(point + QPointF(0, BOOKMARK_ITEM_SPACE*2), QTransform());
+}
+
+DBookmarkItem *DBookmarkScene::getItemByDevice(UDiskDeviceInfoPointer device)
+{
+    DBookmarkItem * item = m_diskItems.value(device->getDiskInfo().id());
+    if (!item){
+        item = m_uuid_diskItems.value(device->getDiskInfo().uuid());
+    }
+    return item;
 }
 
 int DBookmarkScene::indexOf(DBookmarkItem *item)

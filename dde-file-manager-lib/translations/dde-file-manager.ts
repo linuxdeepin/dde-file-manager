@@ -431,22 +431,22 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="570"/>
+        <location filename="../../fileoperations/filejob.cpp" line="577"/>
         <source>%1 s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="574"/>
+        <location filename="../../fileoperations/filejob.cpp" line="581"/>
         <source>%1 m %2 s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="580"/>
+        <location filename="../../fileoperations/filejob.cpp" line="587"/>
         <source>%1 h %2 m %3 s</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="589"/>
+        <location filename="../../fileoperations/filejob.cpp" line="596"/>
         <source>%1 d %2 h %3 m %4 s</source>
         <translation type="unfinished"></translation>
     </message>
@@ -544,6 +544,29 @@
     <message>
         <location filename="../gvfs/mountaskpassworddialog.cpp" line="90"/>
         <source>Remember password</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>MountSecretDiskAskPasswordDialog</name>
+    <message>
+        <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="23"/>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="23"/>
+        <source>Connect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="27"/>
+        <source>Please input password to decrypt the disk</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="30"/>
+        <source>Password</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -945,7 +968,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="59"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="70"/>
         <location filename="../dialogs/previewdialog.cpp" line="132"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="638"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="641"/>
@@ -953,12 +976,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="151"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="182"/>
         <source>Size: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="152"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="183"/>
         <source>Type: %1</source>
         <translation type="unfinished"></translation>
     </message>

@@ -429,22 +429,22 @@
         <translation>副本</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="568"/>
+        <location filename="../../fileoperations/filejob.cpp" line="577"/>
         <source>%1 s</source>
         <translation>%1 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="572"/>
+        <location filename="../../fileoperations/filejob.cpp" line="581"/>
         <source>%1 m %2 s</source>
         <translation>%1 分 %2 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="578"/>
+        <location filename="../../fileoperations/filejob.cpp" line="587"/>
         <source>%1 h %2 m %3 s</source>
         <translation>%1 时 %2 分 %3 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="587"/>
+        <location filename="../../fileoperations/filejob.cpp" line="596"/>
         <source>%1 d %2 h %3 m %4 s</source>
         <translation>%1 天 %2 时 %3 分 %4 秒</translation>
     </message>
@@ -543,6 +543,29 @@
         <location filename="../gvfs/mountaskpassworddialog.cpp" line="90"/>
         <source>Remember password</source>
         <translation>记住密码</translation>
+    </message>
+</context>
+<context>
+    <name>MountSecretDiskAskPasswordDialog</name>
+    <message>
+        <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="23"/>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="23"/>
+        <source>Connect</source>
+        <translation>连接</translation>
+    </message>
+    <message>
+        <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="27"/>
+        <source>Please input password to decrypt the disk</source>
+        <translation>输入密码来解锁此磁盘</translation>
+    </message>
+    <message>
+        <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="30"/>
+        <source>Password</source>
+        <translation>密码</translation>
     </message>
 </context>
 <context>
@@ -943,7 +966,7 @@
         <translation>其他</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="59"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="70"/>
         <location filename="../dialogs/previewdialog.cpp" line="132"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="638"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="641"/>
@@ -1596,6 +1619,17 @@
         <source>%1 tasks in progress</source>
         <translation>有%1个任务正在进行</translation>
     </message>
+    <message>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="182"/>
+        <source>Size: %1</source>
+        <translation>大小：%1</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="183"/>
+        <source>Type: %1</source>
+        <translation>类型：%1</translation>
+    </message>
+>>>>>>> Add screct disk support
 </context>
 <context>
     <name>ShareInfoFrame</name>

@@ -11,6 +11,7 @@
 #include "../interfaces/dfileservices.h"
 #include "../interfaces/dfmevent.h"
 #include "partman/command.h"
+#include "mountsecretdiskaskpassworddialog.h"
 
 #include <QThread>
 #include <QApplication>
@@ -52,8 +53,8 @@ void GvfsMountManager::initConnect()
         g_signal_connect (m_gVolumeMonitor, "mount-changed", (GCallback)&GvfsMountManager::monitor_mount_changed, NULL);
         g_signal_connect (m_gVolumeMonitor, "volume-added", (GCallback)&GvfsMountManager::monitor_volume_added, NULL);
         g_signal_connect (m_gVolumeMonitor, "volume-removed", (GCallback)&GvfsMountManager::monitor_volume_removed, NULL);
-    }
-    //    g_signal_connect (m_gVolumeMonitor, "volume-changed", (GCallback)&GvfsMountManager::monitor_volume_changed, NULL);
+        g_signal_connect (m_gVolumeMonitor, "volume-changed", (GCallback)&GvfsMountManager::monitor_volume_changed, NULL);
+    }   
 }
 
 GvfsMountManager *GvfsMountManager::instance()
@@ -460,6 +461,7 @@ void GvfsMountManager::monitor_mount_removed(GVolumeMonitor *volume_monitor, GMo
     qDebug() << "===================" << qMount.mounted_root_uri() << "=======================";
 
     QVolume volume = getVolumeByMountedRootUri(qMount.mounted_root_uri());
+    qDebug() << volume.isValid() << volume;
     if (volume.isValid()){
         volume.setIsMounted(false);
         volume.setMounted_root_uri("");
@@ -563,20 +565,39 @@ void GvfsMountManager::monitor_volume_removed(GVolumeMonitor *volume_monitor, GV
     }
 
     bool removed = Volumes.remove(qVolume.unix_device());
+
+    qDebug() << removed << qVolume << qVolumeToqDiskInfo(qVolume);
     if (removed){
         QDiskInfo diskInfo = qVolumeToqDiskInfo(qVolume);
+        qDebug() << diskInfo;
         bool diskInfoRemoved = DiskInfos.remove(diskInfo.id());
         if (diskInfoRemoved){
             emit gvfsMountManager->volume_removed(diskInfo);
         }
+    }else{
+        QDiskInfo diskInfo = qVolumeToqDiskInfo(qVolume);
+        emit gvfsMountManager->volume_removed(diskInfo);
     }
 }
 
 void GvfsMountManager::monitor_volume_changed(GVolumeMonitor *volume_monitor, GVolume *volume)
 {
     Q_UNUSED(volume_monitor)
-    Q_UNUSED(volume)
     qDebug() << "==============================monitor_volume_changed==============================" ;
+
+    if (volume != NULL){
+        qDebug() << "==============================volume changed==============================" ;
+
+        QVolume qVolume = gVolumeToqVolume(volume);
+        QDiskInfo diskInfo = qVolumeToqDiskInfo(qVolume);
+        Volumes.insert(qVolume.unix_device(), qVolume);
+        DiskInfos.insert(diskInfo.id(), diskInfo);
+        qDebug() << diskInfo;
+        emit gvfsMountManager->volume_changed(diskInfo);
+    }else{
+        qDebug() << "==============================changed volume empty==============================" ;
+
+    }
 }
 
 GMountOperation *GvfsMountManager::new_mount_op()
@@ -600,25 +621,39 @@ void GvfsMountManager::ask_password_cb(GMountOperation *op, const char *message,
     char *s;
     g_print ("%s\n", message);
 
+    bool anonymous = g_mount_operation_get_anonymous(op);
+    GPasswordSave passwordSave = g_mount_operation_get_password_save(op);
+
+    const char* default_password = g_mount_operation_get_password(op);
+
+    qDebug() << "anonymous" << anonymous;
+    qDebug() << "message" << message;
+    qDebug() << "username" << default_user;
+    qDebug() << "domain" << default_domain;
+    qDebug() << "password" << default_password;
+    qDebug() << "GAskPasswordFlags" << flags;
+    qDebug() << "passwordSave" << passwordSave;
+
     if (flags & G_ASK_PASSWORD_NEED_USERNAME)
     {
         s = "default_user";
         g_mount_operation_set_username (op, s);
-        g_free (s);
     }
 
     if (flags & G_ASK_PASSWORD_NEED_DOMAIN)
     {
         s = "default_domain";
         g_mount_operation_set_domain (op, s);
-        g_free (s);
     }
 
     if (flags & G_ASK_PASSWORD_NEED_PASSWORD)
     {
-        s = "";
-        g_mount_operation_set_password (op, s);
-//        g_free (s);
+        MountSecretDiskAskPasswordDialog dialog;
+        int code = dialog.exec();
+        if (code){
+            qDebug() << "=============" << dialog.password();
+            g_mount_operation_set_password (op, dialog.password().toStdString().c_str());
+        }
     }
 
     g_mount_operation_reply (op, G_MOUNT_OPERATION_HANDLED);
