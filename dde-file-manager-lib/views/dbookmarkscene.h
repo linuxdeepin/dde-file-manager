@@ -51,6 +51,8 @@ public:
     DBookmarkItem * hasBookmarkItem(const DUrl &url);
     DBookmarkItem * itemAt(const QPointF &point);
 
+    DBookmarkItem* getItemByDevice(UDiskDeviceInfoPointer device);
+
     int indexOf(DBookmarkItem * item);
     void setTightMode(bool v);
 
@@ -112,6 +114,7 @@ private:
     DBookmarkItemGroup * m_itemGroup;
     QList<DBookmarkItem *> m_customItems;
     QMap<QString, DBookmarkItem *> m_diskItems;
+    QMap<QString, DBookmarkItem *> m_uuid_diskItems;
     double m_totalHeight = 0;
     bool m_acceptDrop;
     bool m_isTightMode = false;

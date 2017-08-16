@@ -648,7 +648,16 @@ bool ComputerView::setRootUrl(const DUrl &url)
 void ComputerView::volumeAdded(UDiskDeviceInfoPointer device)
 {
     qDebug() << "===========volumeAdded=============" << device->getId() << m_nativeItems.contains(device->getId()) << m_removableItems.contains(device->getId());
-    ComputerViewItem* item = new ComputerViewItem;
+
+    ComputerViewItem* item = NULL;
+    QString id = device->getId();
+    if (m_nativeItems.contains(id)){
+        item = m_nativeItems.value(id);
+    }else if (m_removableItems.contains(id)){
+        item = m_nativeItems.value(id);
+    }else{
+        item = new ComputerViewItem;
+    }
     item->setHasMemoryInfo(true);
     item->setDeviceInfo(device);
     item->setName(device->fileDisplayName());
@@ -671,16 +680,25 @@ void ComputerView::volumeAdded(UDiskDeviceInfoPointer device)
 void ComputerView::volumeRemoved(UDiskDeviceInfoPointer device)
 {
     qDebug() << "===========volumeRemoved=============" << device->getId() << m_nativeItems.contains(device->getId()) << m_removableItems.contains(device->getId());
+    QString id = device->getId();
+//    qDebug() << device->getDiskInfo();
+    foreach (UDiskDeviceInfoPointer d, deviceListener->getDeviceList()) {
+//        qDebug() << d->getDiskInfo().id() << id << d->getDiskInfo().uuid() << device->getDiskInfo().uuid();
+        if (d->getDiskInfo().id() != id && d->getDiskInfo().uuid() == device->getDiskInfo().uuid()){
+            id = d->getDiskInfo().id();
+        }
+    }
 
-    if (m_nativeItems.contains(device->getId())){
-        ComputerViewItem* item = m_nativeItems.value(device->getId());
+
+    if (m_nativeItems.contains(id)){
+        ComputerViewItem* item = m_nativeItems.value(id);
         m_nativeFlowLayout->removeWidget(item);
-        m_nativeItems.remove(device->getId());
+        m_nativeItems.remove(id);
         item->deleteLater();
-    }else if (m_removableItems.contains(device->getId())){
-        ComputerViewItem* item = m_removableItems.value(device->getId());
+    }else if (m_removableItems.contains(id)){
+        ComputerViewItem* item = m_removableItems.value(id);
         m_removableFlowLayout->removeWidget(item);
-        m_removableItems.remove(device->getId());
+        m_removableItems.remove(id);
         item->setParent(NULL);
         delete item;
         if (m_removableItems.count() == 0){

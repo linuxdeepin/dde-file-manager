@@ -306,7 +306,7 @@ void UDiskListener::removeMountDiskInfo(const QDiskInfo &diskInfo)
     qDebug() << m_map;
     if (m_map.value(diskInfo.id())){
         device = m_map.value(diskInfo.id());
-        qDebug() << device->getMediaType();
+        qDebug() << diskInfo.has_volume();
         if (diskInfo.has_volume()){
             device->setDiskInfo(diskInfo);
         }else{
@@ -336,6 +336,20 @@ void UDiskListener::removeVolumeDiskInfo(const QDiskInfo &diskInfo)
     qDebug() << diskInfo << m_map.contains(diskInfo.id()) << m_map;
     if (m_map.value(diskInfo.id())){
         device = m_map.value(diskInfo.id());
+//        removeDevice(device);
+//        emit volumeRemoved(device);
+    }else{
+        foreach (UDiskDeviceInfoPointer d, getDeviceList()) {
+            qDebug() << d->getDiskInfo().uuid() << diskInfo.uuid();
+            qDebug() << d->getDiskInfo().id() << diskInfo.id();
+            if (d->getDiskInfo().uuid() == diskInfo.uuid() || d->getDiskInfo().id() == diskInfo.id()){
+                device = d;
+                break;
+            }
+        }
+    }
+    if (device){
+        qDebug() << device;
         removeDevice(device);
         emit volumeRemoved(device);
     }
@@ -348,6 +362,16 @@ void UDiskListener::changeVolumeDiskInfo(const QDiskInfo &diskInfo)
     qDebug() << m_map.value(diskInfo.id());
     if(m_map.value(diskInfo.id())){
         device = m_map.value(diskInfo.id());
+    }else{
+        foreach (UDiskDeviceInfoPointer d, getDeviceList()) {
+            qDebug() << d->getDiskInfo().uuid() << diskInfo.uuid();
+            if (d->getDiskInfo().uuid() == diskInfo.uuid()){
+                device = d;
+                break;
+            }
+        }
+    }
+    if (device){
         device->setDiskInfo(diskInfo);
         emit volumeChanged(device);
     }
