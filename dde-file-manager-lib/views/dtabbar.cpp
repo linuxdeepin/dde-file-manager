@@ -517,6 +517,7 @@ TabBar::TabBar(QWidget *parent):QGraphicsView(parent){
     m_scene->setSceneRect(0,0,width(),height());
     setContentsMargins(0,0,0,0);
     setScene(m_scene);
+    m_scene->installEventFilter(this);
 
     m_TabCloseButton = new TabCloseButton;
     m_TabCloseButton->setZValue(4);
@@ -842,6 +843,37 @@ void TabBar::mouseMoveEvent(QMouseEvent *event)
 
     QGraphicsView::mouseMoveEvent(event);
 }
+
+bool TabBar::eventFilter(QObject *obj, QEvent *event)
+{
+    if (event->type() == QEvent::GraphicsSceneMouseRelease){
+        QGraphicsSceneMouseEvent* e = static_cast<QGraphicsSceneMouseEvent *>(event);
+        if (e->button() == Qt::MiddleButton){
+            if (QGraphicsItem *item = itemAt(mapFromGlobal(QCursor::pos()))) {
+                Tab* t = static_cast<Tab *>(item);
+                if (m_tabs.contains(t)){
+                    qDebug() << m_tabs.indexOf(t);
+                    emit tabCloseRequested(m_tabs.indexOf(t));
+                }
+            } else {
+                qDebug("You didn't click on an item.");
+            }
+        }
+    }
+    return QGraphicsView::eventFilter(obj, event);
+}
+
+void TabBar::wheelEvent(QWheelEvent *event)
+{
+    if (event->angleDelta().y() > 0) {
+        activateNextTab();
+    } else {
+        activatePreviousTab();
+    }
+
+    QGraphicsView::wheelEvent(event);
+}
+
 
 QSize TabBar::tabSizeHint(const int &index)
 {
