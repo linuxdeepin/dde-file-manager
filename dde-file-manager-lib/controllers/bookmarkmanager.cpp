@@ -137,7 +137,12 @@ BookMarkPointer BookMarkManager::writeIntoBookmark(int index, const QString &nam
 
 void BookMarkManager::removeBookmark(BookMarkPointer bookmark)
 {
-    m_bookmarks.removeOne(bookmark);
+    foreach (BookMarkPointer p, m_bookmarks) {
+        if (p->getDateTime() == bookmark->getDateTime() && p->getName() == bookmark->getName()){
+            m_bookmarks.removeOne(p);
+            break;
+        }
+    }
     save();
 }
 
