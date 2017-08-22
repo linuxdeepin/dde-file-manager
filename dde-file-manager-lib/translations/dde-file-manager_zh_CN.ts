@@ -1629,7 +1629,6 @@
         <source>Type: %1</source>
         <translation>类型：%1</translation>
     </message>
->>>>>>> Add screct disk support
 </context>
 <context>
     <name>ShareInfoFrame</name>
