@@ -214,7 +214,6 @@ UDiskDeviceInfoPointer UDiskListener::getDeviceByFilePath(const QString &path)
         UDiskDeviceInfoPointer info = m_list.at(i);
         if (info && !info->getMountPointUrl().isEmpty()){
             bool flag = (DUrl::fromLocalFile(path) == info->getMountPointUrl());
-
             if (!flag && path.startsWith(QString("%1/").arg(info->getMountPointUrl().toLocalFile()))){
                 return info;
             }
@@ -272,6 +271,43 @@ void UDiskListener::loadCustomVolumeLetters()
 QMap<QString, QString> UDiskListener::getVolumeLetters()
 {
     return m_volumeLetters;
+}
+
+QMap<QString, UDiskDeviceInfoPointer> UDiskListener::getMountedRemovableDiskDeviceInfos()
+{
+    QMap<QString, UDiskDeviceInfoPointer> infos;
+    for (int i = 0; i < m_list.size(); i++)
+    {
+       UDiskDeviceInfoPointer info = m_list.at(i);
+       if (info->getDiskInfo().is_removable() && info->getDiskInfo().can_unmount()){
+           infos.insert(info->getDiskInfo().id(), info);
+       }
+    }
+    return infos;
+}
+
+QMap<QString, UDiskDeviceInfoPointer> UDiskListener::getCanSendDisksByUrl(QString filepath)
+{
+    QMap<QString, UDiskDeviceInfoPointer> infos;
+    foreach (UDiskDeviceInfoPointer info, getMountedRemovableDiskDeviceInfos().values()) {
+        if (getDeviceByFilePath(filepath) == info){
+            continue;
+        }
+        infos.insert(info->getDiskInfo().id(), info);
+    }
+    return infos;
+}
+
+bool UDiskListener::isMountedRemovableDiskExits()
+{
+    for (int i = 0; i < m_list.size(); i++)
+    {
+       UDiskDeviceInfoPointer info = m_list.at(i);
+       if (info->getDiskInfo().is_removable() && info->getDiskInfo().can_unmount()){
+           return true;
+       }
+    }
+    return false;
 }
 
 void UDiskListener::addMountDiskInfo(const QDiskInfo &diskInfo)

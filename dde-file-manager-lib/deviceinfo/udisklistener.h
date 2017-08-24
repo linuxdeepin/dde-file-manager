@@ -61,6 +61,12 @@ public:
     void loadCustomVolumeLetters();
     QMap<QString, QString> getVolumeLetters();
 
+    QMap<QString, UDiskDeviceInfoPointer> getMountedRemovableDiskDeviceInfos();
+
+    QMap<QString, UDiskDeviceInfoPointer> getCanSendDisksByUrl(QString filepath);
+
+    bool isMountedRemovableDiskExits();
+
 signals:
     void volumeAdded(UDiskDeviceInfoPointer device);
     void volumeRemoved(UDiskDeviceInfoPointer device);

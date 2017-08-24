@@ -652,6 +652,18 @@ void AppController::actionOpenFileByApp()
     fileService->openFileByApp(this, app, fileUrl);
 }
 
+void AppController::actionSendToRemovableDisk()
+{
+    const QAction *action = qobject_cast<QAction*>(sender());
+
+    if (!action)
+        return;
+
+    DUrl targetUrl = DUrl(action->property("mounted_root_uri").toString());
+    DUrlList urlList = DUrl::fromStringList(action->property("urlList").toStringList());
+
+    fileService->pasteFile(action, DFMGlobal::CopyAction, targetUrl, urlList);
+}
 
 #ifdef SW_LABEL
 void AppController::actionSetLabel(const DFMEvent &event)

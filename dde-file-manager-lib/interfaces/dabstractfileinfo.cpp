@@ -20,6 +20,8 @@
 #include "plugins/pluginmanager.h"
 #include "dde-file-manager-plugins/plugininterfaces/menu/menuinterface.h"
 
+#include "deviceinfo/udisklistener.h"
+
 #include <QDateTime>
 #include <QDebug>
 #include <QApplication>
@@ -746,6 +748,10 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
             actionKeys << MenuAction::CreateSymlink
                        << MenuAction::SendToDesktop;
 
+            if (deviceListener->getCanSendDisksByUrl(absoluteFilePath()).count() > 0){
+                actionKeys << MenuAction::SendToRemovableDisk;
+            }
+
             if (isDir()) {
                 actionKeys << MenuAction::AddToBookMark
                            << MenuAction::Separator
@@ -802,8 +808,13 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
                    << MenuAction::Cut
                    << MenuAction::Copy
                    << MenuAction::Compress
-                   << MenuAction::SendToDesktop
-                   << MenuAction::Delete
+                   << MenuAction::SendToDesktop;
+
+        if (deviceListener->getCanSendDisksByUrl(absoluteFilePath()).count() > 0){
+            actionKeys << MenuAction::SendToRemovableDisk;
+        }
+
+        actionKeys << MenuAction::Delete
                    << MenuAction::Separator
                    << MenuAction::Property;
     } else if (type == MultiFilesSystemPathIncluded) {
@@ -1270,6 +1281,11 @@ QMap<MenuAction, QVector<MenuAction> > DAbstractFileInfo::subMenuActionList() co
     }
 
     actions.insert(MenuAction::SortBy, sortByMenuActionKeys);
+
+    if (deviceListener->isMountedRemovableDiskExits()){
+        QVector<MenuAction> diskMenuActionKeys;
+        actions.insert(MenuAction::SendToRemovableDisk, diskMenuActionKeys);
+    }
 
     return actions;
 }

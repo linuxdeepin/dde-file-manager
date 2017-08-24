@@ -18,6 +18,7 @@
 #include "plugins/pluginmanager.h"
 #include "dde-file-manager-plugins/plugininterfaces/menu/menuinterface.h"
 #include "dfmstandardpaths.h"
+#include "deviceinfo/udisklistener.h"
 
 #include <QMetaObject>
 #include <QMetaEnum>
@@ -347,7 +348,7 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
             actions.insert(index + 2, MenuAction::DecompressHere);
         }
 
-        const QMap<MenuAction, QVector<MenuAction> > subActions;
+        const QMap<MenuAction, QVector<MenuAction> >& subActions  = info->subMenuActionList();
         disableList += DFileMenuManager::getDisableActionList(urlList);
         const bool& tabAddable = WindowManager::tabAddableByWinId(windowId);
         if(!tabAddable)
@@ -358,9 +359,25 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
                 actions.remove(actions.indexOf(action));
             }
         }
-
         menu = DFileMenuManager::genereteMenuByKeys(actions, disableList, true, subActions);
     }
+
+    if (deviceListener->isMountedRemovableDiskExits()){
+        QAction *sendToMountedRemovableDiskAction = menu->actionAt(DFileMenuManager::getActionString(DFMGlobal::SendToRemovableDisk));
+
+        DFileMenu* sendToMountedRemovableDiskMenu = sendToMountedRemovableDiskAction ? qobject_cast<DFileMenu*>(sendToMountedRemovableDiskAction->menu()) : Q_NULLPTR;
+        if (sendToMountedRemovableDiskMenu){
+            foreach (UDiskDeviceInfoPointer pDeviceinfo, deviceListener->getCanSendDisksByUrl(currentUrl.toLocalFile()).values()) {
+                QAction* action = new QAction(pDeviceinfo->getDiskInfo().name(), sendToMountedRemovableDiskMenu);
+                action->setProperty("mounted_root_uri", pDeviceinfo->getDiskInfo().mounted_root_uri());
+                action->setProperty("urlList", DUrl::toStringList(urlList));
+                sendToMountedRemovableDiskMenu->addAction(action);
+                connect(action, &QAction::triggered, appController, &AppController::actionSendToRemovableDisk);
+            }
+        }
+    }
+
+
     if(currentUrl == DesktopFileInfo::computerDesktopFileUrl() ||
             currentUrl == DesktopFileInfo::trashDesktopFileUrl())
         return menu;
@@ -656,6 +673,7 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::BookmarkRemove] = QObject::tr("Remove");
     actionKeys[MenuAction::CreateSymlink] = QObject::tr("Create link");
     actionKeys[MenuAction::SendToDesktop] = QObject::tr("Send to desktop");
+    actionKeys[MenuAction::SendToRemovableDisk] = QObject::tr("Send to");
     actionKeys[MenuAction::AddToBookMark] = QObject::tr("Add to bookmark");
     actionKeys[MenuAction::Delete] = QObject::tr("Throw to Trash");
     actionKeys[MenuAction::CompleteDeletion] = QObject::tr("Permanently delete");
