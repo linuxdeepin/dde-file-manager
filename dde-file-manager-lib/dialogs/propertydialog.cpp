@@ -719,6 +719,15 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
         layout->addRow(fileAmountSectionLabel, sizeLabel);
     }
     layout->addRow(typeSectionLabel, typeLabel);
+    if (info->isSymLink()){
+        SectionKeyLabel* linkPathSectionLabel = new SectionKeyLabel(QObject::tr("Link path"));
+
+        SectionValueLabel* linkPathLabel = new SectionValueLabel(info->redirectedFileUrl().toLocalFile());
+        linkPathLabel->setWordWrap(false);
+        QString t = linkPathLabel->fontMetrics().elidedText(info->redirectedFileUrl().toLocalFile(), Qt::ElideMiddle, 150);
+        linkPathLabel->setText(t);
+        layout->addRow(linkPathSectionLabel, linkPathLabel);
+    }
     layout->addRow(TimeCreatedSectionLabel, timeCreatedLabel);
     layout->addRow(TimeModifiedSectionLabel, timeModifiedLabel);
 
@@ -738,6 +747,9 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
     layout->setContentsMargins(0, 0, 40, 0);
     widget->setLayout(layout);
     widget->setFixedSize(width(), EXTEND_FRAME_MAXHEIGHT);
+    if (info->isSymLink()){
+        widget->setFixedSize(width(), EXTEND_FRAME_MAXHEIGHT + 30);
+    }
 
     return widget;
 }
