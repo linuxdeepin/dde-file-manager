@@ -135,6 +135,7 @@ public:
         BookmarkRemove,
         CreateSymlink,
         SendToDesktop,
+        SendToRemovableDisk,
         AddToBookMark,
         Delete,
         Property,

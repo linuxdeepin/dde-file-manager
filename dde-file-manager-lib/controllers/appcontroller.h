@@ -92,6 +92,7 @@ public slots:
     void actionForgetPassword(const QSharedPointer<DFMUrlBaseEvent> &event);
 
     void actionOpenFileByApp();
+    void actionSendToRemovableDisk();
 
 #ifdef SW_LABEL
     void actionSetLabel(const DFMEvent& event);
