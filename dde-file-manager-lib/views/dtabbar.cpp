@@ -768,6 +768,11 @@ void TabBar::activatePreviousTab()
         setCurrentIndex(currentIndex() - 1);
 }
 
+void TabBar::onCurrentUrlChanged(const DFMUrlBaseEvent &event)
+{
+    currentTab()->onFileRootUrlChanged(event.url());
+}
+
 void TabBar::onTabCloseButtonUnHovered(int closingIndex)
 {
     if(closingIndex<0 || closingIndex >= count())
