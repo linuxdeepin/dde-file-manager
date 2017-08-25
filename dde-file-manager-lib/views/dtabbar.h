@@ -16,6 +16,7 @@
 #include <QCursor>
 #include "ddragwidget.h"
 #include "dfileview.h"
+#include "dfmevent.h"
 
 #define TAB_CLOSE_BUTTON_WIDTH 18
 #define TAB_CLOSE_BUTTON_HEIGHT 24
@@ -159,6 +160,7 @@ public slots:
     void onTabDragStarted();
     void activateNextTab();
     void activatePreviousTab();
+    void onCurrentUrlChanged(const DFMUrlBaseEvent &event);
 
 protected:
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;

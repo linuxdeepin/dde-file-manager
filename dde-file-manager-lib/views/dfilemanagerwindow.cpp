@@ -445,8 +445,6 @@ bool DFileManagerWindow::cd(const DUrl &fileUrl, bool canFetchNetwork)
         d->setCurrentView(view);
     }
 
-    d->tabBar->currentTab()->setCurrentUrl(fileUrl);
-
     bool ok = false;
 
     if (d->currentView)
@@ -812,6 +810,7 @@ void DFileManagerWindow::initConnect()
 
     connect(fileSignalManager, &FileSignalManager::trashStateChanged, this, &DFileManagerWindow::onTrashStateChanged);
     connect(fileSignalManager, &FileSignalManager::currentUrlChanged, this, &DFileManagerWindow::onTrashStateChanged);
+    connect(fileSignalManager, &FileSignalManager::currentUrlChanged, d->tabBar, &TabBar::onCurrentUrlChanged);
     connect(d->tabBar, &TabBar::currentChanged, this, &DFileManagerWindow::onTrashStateChanged);
 
     connect(this, &DFileManagerWindow::currentUrlChanged, this, [this] {
