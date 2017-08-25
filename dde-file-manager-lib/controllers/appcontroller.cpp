@@ -54,6 +54,7 @@
 DWIDGET_USE_NAMESPACE
 
 QPair<DUrl, quint64> AppController::selectionAndRenameFile;
+QPair<DUrl, quint64> AppController::selectionFile;
 
 class AppController_ : public AppController {};
 Q_GLOBAL_STATIC(AppController_, acGlobal)

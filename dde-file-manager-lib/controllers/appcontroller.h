@@ -118,9 +118,11 @@ private:
 
     QSharedPointer<DFMEvent> m_fmEvent;
     static QPair<DUrl, quint64> selectionAndRenameFile;
+    static QPair<DUrl, quint64> selectionFile;
 
     friend class FileController;
     friend class DFileSystemModel;
+    friend class DFileViewHelper;
 };
 
 #endif // APPCONTROLLER_H
