@@ -171,18 +171,6 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
             result = false;
         } else {
             result = CALL_CONTROLLER(renameFile);
-
-            if (result.toBool() && event->isAccepted()) {
-                DFMUrlListBaseEvent newEvent(e->sender(), DUrlList() << e->toUrl());
-
-                newEvent.setWindowId(e->windowId());
-
-                TIMER_SINGLESHOT(200, {
-                    emit fileSignalManager->requestSelectFile(newEvent);
-                }, newEvent);
-
-                result = true;
-            }
         }
 
         break;

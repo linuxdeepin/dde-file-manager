@@ -21,6 +21,7 @@
 #include "dfileservices.h"
 #include "dfmgenericfactory.h"
 #include "dialogs/filepreviewdialog.h"
+#include "controllers/appcontroller.h"
 
 #include <QTimer>
 #include <QAction>
@@ -532,7 +533,7 @@ void DFileViewHelper::handleCommitData(QWidget *editor) const
     if (newFileInfo && newFileInfo->baseName().isEmpty() && newFileInfo->suffix() == fileInfo->suffix()) {
         return;
     }
-
+    AppController::selectionFile = qMakePair(new_url, windowId());
     if (lineEdit) {
         /// later rename file.
         TIMER_SINGLESHOT(0, {
