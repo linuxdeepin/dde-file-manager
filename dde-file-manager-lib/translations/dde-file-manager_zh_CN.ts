@@ -1090,14 +1090,12 @@
         <translation>添加书签</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="678"/>
         <source>Throw to Trash</source>
-        <translation>丢到回收站</translation>
+        <translation type="vanished">丢到回收站</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="679"/>
         <source>Permanently delete</source>
-        <translation>彻底删除</translation>
+        <translation type="vanished">彻底删除</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="680"/>
@@ -1212,6 +1210,16 @@
         <location filename="../interfaces/dfilemenumanager.cpp" line="663"/>
         <source>Select default program</source>
         <translation>选择默认程序</translation>
+    </message>
+    <message>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="678"/>
+        <source>Detele</source>
+        <translation>删除</translation>
+    </message>
+    <message>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="679"/>
+        <source>Delete</source>
+        <translation>删除</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="694"/>
@@ -1581,7 +1589,7 @@
         <translation>删除时间</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1003"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1008"/>
         <source>Loading...</source>
         <translation>正在加载...</translation>
     </message>
