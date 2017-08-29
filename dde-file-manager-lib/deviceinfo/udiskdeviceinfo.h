@@ -44,6 +44,7 @@ public:
     static DUrl getMountPointUrl(QDiskInfo &info);
     QString getIcon() const;
     bool canEject() const;
+    bool canStop() const;
     bool canUnmount() const;
     qulonglong getFree();
     qulonglong getTotal();

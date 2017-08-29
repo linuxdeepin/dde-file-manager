@@ -170,6 +170,16 @@ void QVolume::setDrive(const QDrive &drive)
     m_drive = drive;
 }
 
+QString QVolume::drive_unix_device() const
+{
+    return m_drive_unix_device;
+}
+
+void QVolume::setDrive_unix_device(const QString &drive_unix_device)
+{
+    m_drive_unix_device = drive_unix_device;
+}
+
 QDebug operator<<(QDebug dbg, const QVolume &volume)
 {
     dbg << "QVolume: {"

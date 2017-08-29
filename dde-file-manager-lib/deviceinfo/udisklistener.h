@@ -84,6 +84,7 @@ public slots:
     void mount(const QString &path);
     void unmount(const QString &path);
     void eject(const QString &path);
+    void stopDrive(const QString &path);
     void forceUnmount(const QString &id);
 
 private:

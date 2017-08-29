@@ -430,6 +430,11 @@ void UDiskListener::eject(const QString &path)
     GvfsMountManager::eject(path);
 }
 
+void UDiskListener::stopDrive(const QString &path)
+{
+    GvfsMountManager::stop_device(path);
+}
+
 void UDiskListener::forceUnmount(const QString &id)
 {
     qDebug() << id;

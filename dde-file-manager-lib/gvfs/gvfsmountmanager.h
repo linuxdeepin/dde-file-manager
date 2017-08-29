@@ -77,18 +77,22 @@ public:
     static void eject(const QDiskInfo& diskInfo);
     static void eject_device(const QString&  unix_device);
     static void eject_mounted(const QString&  mounted_root_uri);
+    static void stop_device(const QString& drive_unix_device);
 
     static void mount_with_mounted_uri_done(GObject *object, GAsyncResult *res, gpointer user_data);
     static void mount_with_device_file_cb (GObject *object, GAsyncResult *res, gpointer user_data);
     static void unmount_done_cb(GObject *object, GAsyncResult *res, gpointer user_data);
     static void eject_with_device_file_cb(GObject *object, GAsyncResult *res, gpointer user_data);
     static void eject_with_mounted_file_cb(GObject *object, GAsyncResult *res, gpointer user_data);
+    static void stop_with_device_file_cb(GObject *object, GAsyncResult *res, gpointer user_data);
 
     static void printVolumeMounts();
 
     static QDiskInfo getDiskInfo(const QString& path);
     static bool isDVD(const QVolume& volume);
     static bool isIgnoreUnusedMounts(const QMount& mount);
+
+    static QString getDriveUnixDevice(const QString& unix_device);
 
     bool getAutoMountSwitch() const;
     void setAutoMountSwitch(bool autoMountSwitch);

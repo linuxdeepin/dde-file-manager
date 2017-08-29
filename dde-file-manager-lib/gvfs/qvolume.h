@@ -66,8 +66,12 @@ public:
     QDrive drive() const;
     void setDrive(const QDrive &drive);
 
+    QString drive_unix_device() const;
+    void setDrive_unix_device(const QString &drive_unix_device);
+
 private:
     QString m_name;
+    QString m_drive_unix_device;
     QString m_unix_device;
     QString m_lable;
     QString m_uuid;

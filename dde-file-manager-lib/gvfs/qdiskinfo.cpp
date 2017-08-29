@@ -271,6 +271,16 @@ void QDiskInfo::setDefault_location(const QString &default_location)
     m_default_location = default_location;
 }
 
+QString QDiskInfo::drive_unix_device() const
+{
+    return m_drive_unix_device;
+}
+
+void QDiskInfo::setDrive_unix_device(const QString &drive_unix_device)
+{
+    m_drive_unix_device = drive_unix_device;
+}
+
 
 QDebug operator<<(QDebug dbg, const QDiskInfo &info)
 {
@@ -278,6 +288,7 @@ QDebug operator<<(QDebug dbg, const QDiskInfo &info)
     dbg.nospace() << "id: " << info.id() << ",";
     dbg.nospace() << "name: " << info.name() << ",";
     dbg.nospace() << "type: " << info.type() << ",";
+    dbg.nospace() << "drive_unix_device: " << info.drive_unix_device() << ",";
     dbg.nospace() << "unix_device: " << info.unix_device() << ",";
     dbg.nospace() << "uuid: " << info.uuid() << ",";
     dbg.nospace() << "activation_root_uri: " << info.activation_root_uri() << ",";
