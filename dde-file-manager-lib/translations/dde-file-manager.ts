@@ -1149,11 +1149,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="700"/>
-        <source>Safely Remove Drive</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="704"/>
         <source>Time created</source>
         <translation type="unfinished"></translation>
@@ -1443,6 +1438,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="700"/>
+        <source>Safely Remove</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="701"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
@@ -1540,12 +1540,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="601"/>
+        <location filename="../interfaces/dfileservices.cpp" line="589"/>
         <source>Shortcut</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="481"/>
+        <location filename="../interfaces/dfileservices.cpp" line="469"/>
         <source>Create symlink</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1603,26 +1603,26 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="351"/>
-        <location filename="../controllers/appcontroller.cpp" line="353"/>
+        <location filename="../controllers/appcontroller.cpp" line="352"/>
+        <location filename="../controllers/appcontroller.cpp" line="354"/>
         <source>Document</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="360"/>
-        <location filename="../controllers/appcontroller.cpp" line="362"/>
+        <location filename="../controllers/appcontroller.cpp" line="361"/>
+        <location filename="../controllers/appcontroller.cpp" line="363"/>
         <source>Spreadsheet</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="369"/>
-        <location filename="../controllers/appcontroller.cpp" line="371"/>
+        <location filename="../controllers/appcontroller.cpp" line="370"/>
+        <location filename="../controllers/appcontroller.cpp" line="372"/>
         <source>Presentation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="378"/>
-        <location filename="../controllers/appcontroller.cpp" line="380"/>
+        <location filename="../controllers/appcontroller.cpp" line="379"/>
+        <location filename="../controllers/appcontroller.cpp" line="381"/>
         <source>Text</source>
         <translation type="unfinished"></translation>
     </message>
