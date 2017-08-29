@@ -214,7 +214,7 @@ DAbstractFileWatcher *TrashManager::createFileWatcher(const QSharedPointer<DFMCr
 bool TrashManager::restoreTrashFile(const DUrlList &list)
 {
     bool ok = true;
-
+    DUrlList restoreFailedList;
     for (const DUrl &url : list) {
         if (url == DUrl::fromTrashFile("/")) {
             // restore all
@@ -234,7 +234,15 @@ bool TrashManager::restoreTrashFile(const DUrlList &list)
         //            如果直接定义一个TrashFileInfo对象，就可能存在对象被重复释放
         QExplicitlySharedDataPointer<TrashFileInfo> info(new TrashFileInfo(url));
 
-        ok = ok && info->restore();
+        bool ret = info->restore();
+        if (!ret){
+            restoreFailedList << info->fileUrl();
+        }
+        ok = ok && ret;
+    }
+
+    if (!ok && restoreFailedList.count() > 0){
+        emit fileSignalManager->showRestoreFailedDialog(restoreFailedList);
     }
 
     return ok;

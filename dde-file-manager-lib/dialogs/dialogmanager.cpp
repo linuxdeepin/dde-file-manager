@@ -115,6 +115,8 @@ void DialogManager::initConnect()
             this, &DialogManager::showAboutDialog);
     connect(fileSignalManager, &FileSignalManager::show4GFat32Dialog,
             this, &DialogManager::show4gFat32Dialog);
+    connect(fileSignalManager, &FileSignalManager::showRestoreFailedDialog,
+            this, &DialogManager::showRestoreFailedDialog);
 
     connect(fileSignalManager, &FileSignalManager::requestShowFilePreviewDialog, this, &DialogManager::showFilePreviewDialog);
 
@@ -716,6 +718,20 @@ void DialogManager::showFilePreviewDialog(const QSharedPointer<DFMUrlListBaseEve
     });
 
     d->show();
+}
+
+void DialogManager::showRestoreFailedDialog(const DUrlList &urlList)
+{
+    DDialog d;
+    d.setTitle(tr("Operation failed!"));
+    if (urlList.count() == 1){
+        d.setMessage(tr("Target file removed or location changed"));
+    }else if (urlList.count() > 1){
+        d.setMessage(tr("%1 files failed to restore, target file removed or location changed").arg(QString::number(urlList.count())));
+    }
+    d.setIcon(QIcon(":/images/dialogs/images/dialog_warning_64.png"));
+    d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
+    d.exec();
 }
 
 void DialogManager::removePropertyDialog(const DUrl &url)
