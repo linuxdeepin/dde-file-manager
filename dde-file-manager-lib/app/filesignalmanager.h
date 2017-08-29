@@ -180,8 +180,11 @@ signals:
     /*show 4G warning dialog if file copy to removal devicve which type is fat32*/
     void show4GFat32Dialog();
 
-    /*show 4G warning dialog if file copy to removal devicve which type is fat32*/
+    /*show restore failed dialog for tagart removed*/
     void showRestoreFailedDialog(const DUrlList& urlList);
+
+    /*show retore failed dialog for permission*/
+    void showRestoreFailedPerssionDialog(const QString& srcPath, const QString& targetPath);
 
 #ifdef SW_LABEL
     /*copy/move/delete fail job show */
