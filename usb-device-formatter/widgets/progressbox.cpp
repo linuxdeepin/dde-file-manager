@@ -36,7 +36,7 @@ void ProgressBox::initConnections()
 
 void ProgressBox::initUI()
 {
-    m_textLabel->setText("0");
+    m_textLabel->setText("0%");
     m_textLabel->setObjectName("Progress");
     m_textLabel->setAlignment(Qt::AlignCenter);
 
@@ -124,7 +124,7 @@ void ProgressBox::taskTimeOut()
     m_taskAni->setEasingCurve(QEasingCurve::OutCirc);
     connect(m_taskAni, &QVariantAnimation::valueChanged, this, [=] (const QVariant& val){
             setValue(val.toReal());
-            m_textLabel->setText(QString::number(val.toInt()));
+            m_textLabel->setText(QString("%1%").arg(QString::number(val.toInt())));
     });
     m_taskAni->start();
 }
@@ -143,7 +143,7 @@ void ProgressBox::finishedTask(const bool result)
     ani->setEndValue(qreal(100));
     connect(ani, &QVariantAnimation::valueChanged, this, [=] (const QVariant& val){
             setValue(val.toReal());
-            m_textLabel->setText(QString::number(val.toInt()));
+            m_textLabel->setText(QString("%1%").arg(QString::number(val.toInt())));
     });
     connect(ani, &QVariantAnimation::finished, [=]{
         ani->deleteLater();
