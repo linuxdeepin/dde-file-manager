@@ -70,6 +70,7 @@ public slots:
     void showDeleteSystemPathWarnDialog(quint64 winId);
     void showFilePreviewDialog(const QSharedPointer<DFMUrlListBaseEvent> &event);
     void showRestoreFailedDialog(const DUrlList& urlList);
+    void showRestoreFailedPerssionDialog(const QString& srcPath, const QString& targetPath);
     void removePropertyDialog(const DUrl& url);
     void closeAllPropertyDialog();
     void updateCloseIndicator();

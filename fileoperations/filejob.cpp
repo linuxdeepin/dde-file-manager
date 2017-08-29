@@ -1790,11 +1790,11 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
 
                 if(m_isCoExisted && !m_isReplaced)
                 {
-                    m_srcPath = checkDuplicateName(m_tarPath + "/" + toInfo.fileName());
+                    m_tarPath = checkDuplicateName(m_tarPath + "/" + toInfo.fileName());
                 }
 
                 if (m_isReplaced){
-                    m_srcPath = m_tarPath + "/" + toInfo.fileName();
+                    m_tarPath = m_tarPath + "/" + toInfo.fileName();
 
                     if(to.exists()){
                         if (toInfo.isDir()){
@@ -1818,11 +1818,14 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
             }
             case FileJob::Run:
             {
-                bool result = from.rename(m_srcPath);
+                bool result = from.rename(m_tarPath);
 
                 if (!result) {
-                    qDebug() << m_srcPath << from.error() << from.errorString();
+                    qDebug() << m_tarPath << from.error() << from.errorString();
                     result = (QProcess::execute("mv -T \"" + from.fileName().toUtf8() + "\" \"" + m_srcPath.toUtf8() + "\"") == 0);
+                    if (!result){
+                        emit fileSignalManager->showRestoreFailedPerssionDialog(srcFile, m_tarPath);
+                    }
                 }
 
                 return result;

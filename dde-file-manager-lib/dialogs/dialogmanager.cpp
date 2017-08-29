@@ -117,6 +117,8 @@ void DialogManager::initConnect()
             this, &DialogManager::show4gFat32Dialog);
     connect(fileSignalManager, &FileSignalManager::showRestoreFailedDialog,
             this, &DialogManager::showRestoreFailedDialog);
+    connect(fileSignalManager, &FileSignalManager::showRestoreFailedPerssionDialog,
+            this, &DialogManager::showRestoreFailedPerssionDialog);
 
     connect(fileSignalManager, &FileSignalManager::requestShowFilePreviewDialog, this, &DialogManager::showFilePreviewDialog);
 
@@ -729,6 +731,17 @@ void DialogManager::showRestoreFailedDialog(const DUrlList &urlList)
     }else if (urlList.count() > 1){
         d.setMessage(tr("%1 files failed to restore, target file removed or location changed").arg(QString::number(urlList.count())));
     }
+    d.setIcon(QIcon(":/images/dialogs/images/dialog_warning_64.png"));
+    d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
+    d.exec();
+}
+
+void DialogManager::showRestoreFailedPerssionDialog(const QString &srcPath, const QString &targetPath)
+{
+    qDebug() << srcPath << "restore to" << targetPath;
+    DDialog d;
+    d.setTitle(tr("Operation failed!"));
+    d.setMessage(tr("You do not have permission to operate file/folder!"));
     d.setIcon(QIcon(":/images/dialogs/images/dialog_warning_64.png"));
     d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
     d.exec();
