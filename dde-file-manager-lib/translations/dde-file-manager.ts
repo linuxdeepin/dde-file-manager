@@ -1086,16 +1086,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="678"/>
-        <source>Throw to Trash</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="679"/>
-        <source>Permanently delete</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="680"/>
         <source>Properties</source>
         <translation type="unfinished"></translation>
@@ -1203,6 +1193,16 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="663"/>
         <source>Select default program</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="678"/>
+        <source>Detele</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="679"/>
+        <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1573,7 +1573,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1003"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1008"/>
         <source>Loading...</source>
         <translation type="unfinished"></translation>
     </message>

@@ -31,6 +31,7 @@
 #include "shutil/mimesappsmanager.h"
 #include "shutil/viewstatesmanager.h"
 #include "fileoperations/filejob.h"
+#include "deviceinfo/udisklistener.h"
 
 #include "singleton.h"
 #include "interfaces/dfilemenumanager.h"
@@ -820,9 +821,15 @@ void DFileView::keyPressEvent(QKeyEvent *event)
             }
         }
             return;
-        case Qt::Key_Delete:
-            fileService->moveToTrash(this, urls);
+        case Qt::Key_Delete:{
+            QString rootPath = rootUrl().toLocalFile();
+            if (FileUtils::isGvfsMountFile(rootPath) || deviceListener->isInRemovableDeviceFolder(rootPath)){
+                appController->actionCompleteDeletion(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
+            }else{
+                appController->actionDelete(dMakeEventPointer<DFMUrlListBaseEvent>(this, urls));
+            }
             break;
+        }
         case Qt::Key_End:
             if (urls.isEmpty()) {
                 setCurrentIndex(model()->index(count() - 1, 0));

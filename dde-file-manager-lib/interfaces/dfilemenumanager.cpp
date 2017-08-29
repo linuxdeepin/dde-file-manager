@@ -675,8 +675,8 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::SendToDesktop] = QObject::tr("Send to desktop");
     actionKeys[MenuAction::SendToRemovableDisk] = QObject::tr("Send to");
     actionKeys[MenuAction::AddToBookMark] = QObject::tr("Add to bookmark");
-    actionKeys[MenuAction::Delete] = QObject::tr("Throw to Trash");
-    actionKeys[MenuAction::CompleteDeletion] = QObject::tr("Permanently delete");
+    actionKeys[MenuAction::Delete] = QObject::tr("Detele");
+    actionKeys[MenuAction::CompleteDeletion] = QObject::tr("Delete");
     actionKeys[MenuAction::Property] = QObject::tr("Properties");
 
     actionKeys[MenuAction::NewFolder] = QObject::tr("New folder");

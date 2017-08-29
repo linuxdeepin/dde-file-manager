@@ -713,9 +713,14 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
             actionKeys << MenuAction::Separator
                        << MenuAction::Cut
                        << MenuAction::Copy
-                       << MenuAction::Rename
-                       << MenuAction::Delete
-                       << MenuAction::Separator;
+                       << MenuAction::Rename;
+
+            if (FileUtils::isGvfsMountFile(absoluteFilePath()) || deviceListener->isInRemovableDeviceFolder(absoluteFilePath())){
+                actionKeys << MenuAction::CompleteDeletion;
+            }else{
+                actionKeys << MenuAction::Delete;
+            }
+            actionKeys << MenuAction::Separator;
 
             if (isDir()) {
                 actionKeys << MenuAction::Compress;
@@ -1302,10 +1307,6 @@ QSet<MenuAction> DAbstractFileInfo::disableMenuActionList() const
 
     if (!canRename()) {
         list << MenuAction::Cut << MenuAction::Rename << MenuAction::Delete;
-    }
-
-    if (FileUtils::isGvfsMountFile(absoluteFilePath())){
-        list << MenuAction::Delete;
     }
 
     return list;
