@@ -67,6 +67,7 @@ public slots:
     void actionRestore(const QSharedPointer<DFMUrlListBaseEvent> &event);
     void actionRestoreAll(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionEject(const QSharedPointer<DFMUrlBaseEvent> &event);
+    void actionSafelyRemoveDrive(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionOpenInTerminal(const QSharedPointer<DFMUrlListBaseEvent> &event);
     void actionProperty(const QSharedPointer<DFMUrlListBaseEvent> &event);
     void actionNewWindow(const QSharedPointer<DFMUrlListBaseEvent> &event);

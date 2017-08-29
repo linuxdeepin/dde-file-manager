@@ -159,6 +159,7 @@ public:
         Mount,
         Unmount,
         Eject,
+        SafelyRemoveDrive,
         Name,
         Size,
         Type,

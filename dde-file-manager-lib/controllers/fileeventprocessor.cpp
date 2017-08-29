@@ -189,6 +189,9 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent> &event)
     case DFMGlobal::Eject:
         AppController::instance()->actionEject(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
         break;
+    case DFMGlobal::SafelyRemoveDrive:
+        AppController::instance()->actionSafelyRemoveDrive(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
+        break;
     case DFMGlobal::Settings:
         AppController::instance()->actionSettings(event->windowId());
         break;

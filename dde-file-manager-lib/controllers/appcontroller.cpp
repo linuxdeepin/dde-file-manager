@@ -409,6 +409,16 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
     deviceListener->eject(fileUrl.query(DUrl::FullyEncoded));
 }
 
+void AppController::actionSafelyRemoveDrive(const QSharedPointer<DFMUrlBaseEvent> &event)
+{
+    const DUrl& fileUrl = event->url();
+    QString unix_device = fileUrl.query(DUrl::FullyEncoded);
+    QString drive_unix_device = gvfsMountManager->getDriveUnixDevice(unix_device);
+    if (!drive_unix_device.isEmpty()){
+        gvfsMountManager->stop_device(drive_unix_device);
+    }
+}
+
 void AppController::actionOpenInTerminal(const QSharedPointer<DFMUrlListBaseEvent> &event)
 {
     for (const DUrl &url: event->urlList()) {

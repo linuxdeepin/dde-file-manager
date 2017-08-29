@@ -78,10 +78,14 @@ public:
     QString default_location() const;
     void setDefault_location(const QString &default_location);
 
+    QString drive_unix_device() const;
+    void setDrive_unix_device(const QString &drive_unix_device);
+
 private:
     QString m_id;
     QString m_name;
     QString m_type;
+    QString m_drive_unix_device;
     QString m_unix_device;
     QString m_uuid;
     QString m_activation_root_uri;

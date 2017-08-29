@@ -107,6 +107,8 @@ QDrive GvfsMountManager::gDriveToqDrive(GDrive *drive)
     qDrive.setCan_start_degraded(g_drive_can_start_degraded(drive));
     qDrive.setCan_poll_for_media(g_drive_can_poll_for_media (drive));
     qDrive.setCan_stop(g_drive_can_stop (drive));
+    qDrive.setIs_removable(g_drive_is_removable (drive));
+    qDrive.setStart_stop_type(g_drive_get_start_stop_type (drive));
     qDrive.setHas_media(g_drive_has_media (drive));
     qDrive.setIs_media_check_automatic(g_drive_is_media_check_automatic(drive));
     qDrive.setIs_media_removable(g_drive_is_media_removable(drive));
@@ -222,6 +224,7 @@ QVolume GvfsMountManager::gVolumeToqVolume(GVolume *volume)
     GDrive *gDrive = g_volume_get_drive(volume);
     if (gDrive){
         QDrive qDrive = gDriveToqDrive(gDrive);
+        qVolume.setDrive_unix_device(QString(g_drive_get_identifier(gDrive, "unix-device")));
         qVolume.setDrive(qDrive);
     }
 
@@ -289,6 +292,7 @@ QDiskInfo GvfsMountManager::qVolumeToqDiskInfo(const QVolume &volume)
 
     diskInfo.setName(volume.name());
 
+    diskInfo.setDrive_unix_device(volume.drive_unix_device());
     diskInfo.setUnix_device(volume.unix_device());
     diskInfo.setUuid(volume.uuid());
     diskInfo.setActivation_root_uri(volume.activation_root_uri());
@@ -526,8 +530,6 @@ void GvfsMountManager::monitor_volume_added(GVolumeMonitor *volume_monitor, GVol
 
     qDebug() << "===================" << qVolume.unix_device() << "=======================";
 
-    Volumes.insert(qVolume.unix_device(), qVolume);
-
     GDrive *drive = g_volume_get_drive(volume);
     if (drive){
         QDrive qDrive = gDriveToqDrive(drive);
@@ -535,7 +537,11 @@ void GvfsMountManager::monitor_volume_added(GVolumeMonitor *volume_monitor, GVol
         if (!Volumes_Drive_Keys.contains(qDrive.unix_device())){
             Volumes_Drive_Keys.append(qDrive.unix_device());
         }
+        if (drive != NULL){
+            qVolume.setDrive_unix_device(QString(g_drive_get_identifier(drive, "unix-device")));
+        }
     }
+    Volumes.insert(qVolume.unix_device(), qVolume);
 
     QDiskInfo diskInfo = qVolumeToqDiskInfo(qVolume);
 
@@ -618,7 +624,6 @@ GMountOperation *GvfsMountManager::new_mount_op()
 
 void GvfsMountManager::ask_password_cb(GMountOperation *op, const char *message, const char *default_user, const char *default_domain, GAskPasswordFlags flags)
 {
-    char *s;
     g_print ("%s\n", message);
 
     bool anonymous = g_mount_operation_get_anonymous(op);
@@ -636,14 +641,12 @@ void GvfsMountManager::ask_password_cb(GMountOperation *op, const char *message,
 
     if (flags & G_ASK_PASSWORD_NEED_USERNAME)
     {
-        s = "default_user";
-        g_mount_operation_set_username (op, s);
+        g_mount_operation_set_username (op, default_user);
     }
 
     if (flags & G_ASK_PASSWORD_NEED_DOMAIN)
     {
-        s = "default_domain";
-        g_mount_operation_set_domain (op, s);
+        g_mount_operation_set_domain (op, default_domain);
     }
 
     if (flags & G_ASK_PASSWORD_NEED_PASSWORD)
@@ -713,6 +716,15 @@ bool GvfsMountManager::isIgnoreUnusedMounts(const QMount &mount)
     return false;
 }
 
+QString GvfsMountManager::getDriveUnixDevice(const QString &unix_device)
+{
+    QString drive_unix_device;
+    if (gvfsMountManager->DiskInfos.contains(unix_device)){
+        drive_unix_device = gvfsMountManager->DiskInfos.value(unix_device).drive_unix_device();
+    }
+    return drive_unix_device;
+}
+
 void GvfsMountManager::startMonitor()
 {
     if (DFMGlobal::isRootUser()){
@@ -746,7 +758,6 @@ void GvfsMountManager::getDrives(GList *drives)
     for (c = 0, d = drives; d != NULL; d = d->next, c++){
         drive = (GDrive *) d->data;
         QDrive qDrive = gDriveToqDrive(drive);
-
 
         Drives.insert(qDrive.unix_device(), qDrive);
         Drives_Keys.append(qDrive.unix_device());
@@ -789,17 +800,15 @@ void GvfsMountManager::getVolumes(GList *volumes)
     for (int c = 0; v != NULL; v = v->next, c++){
         volume = (GVolume *) v->data;
         QVolume qVolume = gVolumeToqVolume(volume);
-
-        Volumes.insert(qVolume.unix_device(), qVolume);
-
         GDrive *drive = g_volume_get_drive(volume);
         if (drive != NULL){
-            continue;
+            qVolume.setDrive_unix_device(QString(g_drive_get_identifier(drive, "unix-device")));
         }else{
             if (!Volumes_No_Drive_Keys.contains(qVolume.unix_device())){
                 Volumes_No_Drive_Keys.append(qVolume.unix_device());
             }
         }
+        Volumes.insert(qVolume.unix_device(), qVolume);
     }
 }
 
@@ -1015,6 +1024,7 @@ void GvfsMountManager::mount_mounted(const QString &mounted_root_uri)
 
 void GvfsMountManager::mount_with_mounted_uri_done(GObject *object, GAsyncResult *res, gpointer user_data)
 {
+    Q_UNUSED(user_data)
     gboolean succeeded;
     GError *error = NULL;
 
@@ -1290,5 +1300,60 @@ void GvfsMountManager::eject_with_mounted_file_cb(GObject *object, GAsyncResult 
         qDebug() << "Error ejecting mount:" << error->message;
     }else{
         qDebug() << "eject" << g_mount_get_name (mount)  << "succeeded";
+    }
+}
+
+void GvfsMountManager::stop_device(const QString &drive_unix_device)
+{
+    if (drive_unix_device.isEmpty())
+        return;
+    std::string file_uri = drive_unix_device.toStdString();
+    const char *device_file = file_uri.data();
+
+    GVolumeMonitor *volume_monitor;
+    GList *drives, *d;
+    int i;
+    volume_monitor = g_volume_monitor_get();
+
+    drives = g_volume_monitor_get_connected_drives( volume_monitor);
+    GDrive *drive;
+    for (i = 0, d = drives; d != NULL; d = d->next, i++){
+        drive = (GDrive *) d->data;
+
+        if (g_strcmp0 (g_drive_get_identifier(drive, "unix-device"), device_file) == 0)
+        {
+            GMountOperation *op;
+
+            op = new_mount_op ();
+
+            g_drive_stop (drive,
+                          G_MOUNT_UNMOUNT_NONE,
+                          op,
+                          NULL,
+                          &GvfsMountManager::stop_with_device_file_cb,
+                          op);
+        }
+
+    }
+    g_list_free_full (drives, g_object_unref);
+    g_object_unref (volume_monitor);
+}
+
+void GvfsMountManager::stop_with_device_file_cb(GObject *object, GAsyncResult *res, gpointer user_data)
+{
+    Q_UNUSED(user_data)
+    GDrive *drive;
+    gboolean succeeded;
+    GError *error = NULL;
+
+    drive = G_DRIVE (object);
+
+    succeeded = g_drive_stop_finish (drive, res, &error);
+
+    if (!succeeded)
+    {
+        qDebug() << "Error remove disk:" << g_drive_get_identifier (drive, "unix-device") << error->message;
+    }else{
+        qDebug() << "Safely remove disk" <<  g_drive_get_identifier (drive, "unix-device") << "succeeded";
     }
 }

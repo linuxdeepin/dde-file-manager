@@ -6,7 +6,8 @@
 #include "durl.h"
 #include "udisklistener.h"
 #include "singleton.h"
-
+#include "gvfs/gvfsmountmanager.h"
+#include "gvfs/qdrive.h"
 #include <unistd.h>
 
 UDiskDeviceInfo::UDiskDeviceInfo()
@@ -122,6 +123,18 @@ QString UDiskDeviceInfo::getIcon() const
 bool UDiskDeviceInfo::canEject() const
 {
     return m_diskInfo.can_eject();
+}
+
+bool UDiskDeviceInfo::canStop() const
+{
+    qDebug() << gvfsMountManager->Drives.contains(getDiskInfo().drive_unix_device()) << getDiskInfo().drive_unix_device();
+    if (gvfsMountManager->Drives.contains(getDiskInfo().drive_unix_device())){
+        const QDrive& drive = gvfsMountManager->Drives.value(getDiskInfo().drive_unix_device());
+        if (drive.start_stop_type() == G_DRIVE_START_STOP_TYPE_SHUTDOWN && drive.is_removable() &&  drive.can_stop()){
+            return true;
+        }
+    }
+    return false;
 }
 
 bool UDiskDeviceInfo::canUnmount() const
@@ -288,6 +301,10 @@ QVector<MenuAction> UDiskDeviceInfo::menuActionList(DAbstractFileInfo::MenuType 
 
     if(canEject()){
         actionKeys << MenuAction::Eject;
+    }
+
+    if (canStop()){
+        actionKeys << MenuAction::SafelyRemoveDrive;
     }
 
     if (canUnmount()){

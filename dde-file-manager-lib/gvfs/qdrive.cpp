@@ -175,7 +175,10 @@ QDebug operator<<(QDebug dbg, const QDrive &drive)
     dbg << "QDrive: {"
         << "name:" << drive.name() << ","
         << "unix_device:" << drive.unix_device() << ","
-        << "icons:" << drive.icons()
+        << "icons:" << drive.icons() << ","
+        << "is_removable" << drive.is_removable() << ","
+        << "start_stop_type" << drive.start_stop_type() << ","
+        << "can_stop:" << drive.can_stop()
         << "}";
     return dbg;
 }
