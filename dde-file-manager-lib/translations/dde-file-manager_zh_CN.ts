@@ -1153,9 +1153,8 @@
         <translation>文本文档</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="700"/>
         <source>Safely Remove Drive</source>
-        <translation>安全移除驱动器</translation>
+        <translation type="vanished">安全移除驱动器</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="704"/>
@@ -1447,6 +1446,11 @@
         <translation>弹出</translation>
     </message>
     <message>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="700"/>
+        <source>Safely Remove</source>
+        <translation>安全移除</translation>
+    </message>
+    <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="701"/>
         <source>Name</source>
         <translation>名称</translation>
@@ -1544,12 +1548,12 @@
         <translation>%1 项</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="601"/>
+        <location filename="../interfaces/dfileservices.cpp" line="589"/>
         <source>Shortcut</source>
         <translation>快捷方式</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="481"/>
+        <location filename="../interfaces/dfileservices.cpp" line="469"/>
         <source>Create symlink</source>
         <translation>创建链接</translation>
     </message>
@@ -1607,26 +1611,26 @@
         <translation>原位置</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="351"/>
-        <location filename="../controllers/appcontroller.cpp" line="353"/>
+        <location filename="../controllers/appcontroller.cpp" line="352"/>
+        <location filename="../controllers/appcontroller.cpp" line="354"/>
         <source>Document</source>
         <translation>新建word文档</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="360"/>
-        <location filename="../controllers/appcontroller.cpp" line="362"/>
+        <location filename="../controllers/appcontroller.cpp" line="361"/>
+        <location filename="../controllers/appcontroller.cpp" line="363"/>
         <source>Spreadsheet</source>
         <translation>新建Excel文档</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="369"/>
-        <location filename="../controllers/appcontroller.cpp" line="371"/>
+        <location filename="../controllers/appcontroller.cpp" line="370"/>
+        <location filename="../controllers/appcontroller.cpp" line="372"/>
         <source>Presentation</source>
         <translation>新建PowerPoint文档</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="378"/>
-        <location filename="../controllers/appcontroller.cpp" line="380"/>
+        <location filename="../controllers/appcontroller.cpp" line="379"/>
+        <location filename="../controllers/appcontroller.cpp" line="381"/>
         <source>Text</source>
         <translation>新建文本</translation>
     </message>
