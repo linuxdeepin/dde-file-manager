@@ -33,4 +33,5 @@ public:
 
 public slots:
     void edit(const DFMEvent &event);
+    void onRequestSelectFiles(const QList<DUrl> &urls);
 };
