@@ -4,6 +4,7 @@
 #include <QUrl>
 #include <QMetaType>
 
+
 #define TRASH_SCHEME "trash"
 #define RECENT_SCHEME "recent"
 #define BOOKMARK_SCHEME "bookmark"
@@ -43,6 +44,14 @@ class DUrl : public QUrl
 public:
     DUrl();
     DUrl(const QUrl &copy);
+
+    virtual ~DUrl()=default;
+    DUrl(const DUrl& other);
+    DUrl(DUrl&& other);
+    DUrl& operator=(const DUrl& other);
+    DUrl& operator=(DUrl&& other);
+
+
 #ifdef QT_NO_URL_CAST_FROM_STRING
     explicit DUrl(const QString &url, ParsingMode mode = TolerantMode);
 #else

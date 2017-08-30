@@ -33,6 +33,7 @@
 #include "xutil.h"
 #include "utils.h"
 
+#include "drenamebar.h"
 #include "singleton.h"
 #include "dfileservices.h"
 #include "controllers/appcontroller.h"
@@ -52,8 +53,13 @@
 #include <QDesktopWidget>
 #include <QStackedLayout>
 #include <QTabBar>
+#include <QPair>
+
 
 DWIDGET_USE_NAMESPACE
+
+std::unique_ptr<RecordRenameBarState>  DFileManagerWindow::renameBarState{ nullptr };
+std::atomic<bool> DFileManagerWindow::flagForNewWindowFromTab{ false };
 
 class DFileManagerWindowPrivate
 {
@@ -64,24 +70,25 @@ public:
     void setCurrentView(DFMBaseView *view);
     bool processKeyPressEvent(QKeyEvent *event);
 
-    QPushButton* logoButton = NULL;
-    QFrame* centralWidget = NULL;
-    DLeftSideBar* leftSideBar = NULL;
-    QFrame* rightView = NULL;
-    DToolBar* toolbar = NULL;
-    TabBar* tabBar = NULL;
+    QPushButton* logoButton{ nullptr };
+    QFrame* centralWidget{ nullptr };
+    DLeftSideBar* leftSideBar{ nullptr };
+    QFrame* rightView { nullptr };
+    DToolBar* toolbar{ nullptr };
+    TabBar* tabBar { nullptr };
     QPushButton *newTabButton;
-    DFMBaseView *currentView = NULL;
-    DStatusBar* statusBar = NULL;
-    QVBoxLayout* mainLayout = NULL;
-    DSplitter* splitter = NULL;
-    QFrame * titleFrame = NULL;
-    QStackedLayout* viewStackLayout = NULL;
-    QPushButton* emptyTrashButton = NULL;
+    DFMBaseView *currentView { nullptr };
+    DStatusBar* statusBar { nullptr };
+    QVBoxLayout* mainLayout { nullptr };
+    DSplitter* splitter { nullptr };
+    QFrame * titleFrame { nullptr };
+    QStackedLayout* viewStackLayout { nullptr };
+    QPushButton* emptyTrashButton { nullptr };
+    DRenameBar* renameBar{ nullptr };
 
     QMap<DUrl, QWidget*> views;
 
-    DFileManagerWindow *q_ptr;
+    DFileManagerWindow *q_ptr{ nullptr };
 
     D_DECLARE_PUBLIC(DFileManagerWindow)
 };
@@ -188,7 +195,6 @@ bool DFileManagerWindowPrivate::processKeyPressEvent(QKeyEvent *event)
 DFileManagerWindow::DFileManagerWindow(QWidget *parent)
     : DFileManagerWindow(DUrl(), parent)
 {
-
 }
 
 DFileManagerWindow::DFileManagerWindow(const DUrl &fileUrl, QWidget *parent)
@@ -209,7 +215,7 @@ DFileManagerWindow::DFileManagerWindow(const DUrl &fileUrl, QWidget *parent)
 
 DFileManagerWindow::~DFileManagerWindow()
 {
-
+    m_currentTab = nullptr;
 }
 
 void DFileManagerWindow::onRequestCloseTab(const int index, const bool &remainState)
@@ -689,7 +695,7 @@ void DFileManagerWindow::initSplitter()
     d->splitter->addWidget(d->rightView);
     d->splitter->setChildrenCollapsible(false);
 
-    connect(d->leftSideBar, &DLeftSideBar::moveSplitter, d->splitter, &DSplitter::moveSplitter);
+    QObject::connect(d->leftSideBar, &DLeftSideBar::moveSplitter, d->splitter, &DSplitter::moveSplitter);
 }
 
 void DFileManagerWindow::initLeftSideBar()
@@ -707,10 +713,12 @@ void DFileManagerWindow::initRightView()
 
     initTabBar();
     initViewLayout();
-
     d->rightView = new QFrame;
+    d->renameBar = new DRenameBar;
 
-    d->emptyTrashButton = new QPushButton(this);
+    this->initRenameBarState();
+
+    d->emptyTrashButton = new QPushButton{ this };
     d->emptyTrashButton->setFixedHeight(25);
     d->emptyTrashButton->hide();
     d->emptyTrashButton->setContentsMargins(0,0,0,0);
@@ -722,10 +730,10 @@ void DFileManagerWindow::initRightView()
     tabBarLayout->addWidget(d->tabBar);
     tabBarLayout->addWidget(d->newTabButton);
 
-
     QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->addLayout(tabBarLayout);
     mainLayout->addWidget(d->emptyTrashButton);
+    mainLayout->addWidget(d->renameBar);
     mainLayout->addLayout(d->viewStackLayout);
     mainLayout->setSpacing(0);
     mainLayout->setContentsMargins(0, 0, 0, 0);
@@ -783,39 +791,45 @@ void DFileManagerWindow::initConnect()
     D_D(DFileManagerWindow);
 
     if (titlebar()) {
-        connect(titlebar(), SIGNAL(minimumClicked()), parentWidget(), SLOT(showMinimized()));
-        connect(titlebar(), SIGNAL(maximumClicked()), parentWidget(), SLOT(showMaximized()));
-        connect(titlebar(), SIGNAL(restoreClicked()), parentWidget(), SLOT(showNormal()));
-        connect(titlebar(), SIGNAL(closeClicked()), parentWidget(), SLOT(close()));
+        QObject::connect(titlebar(), SIGNAL(minimumClicked()), parentWidget(), SLOT(showMinimized()));
+        QObject::connect(titlebar(), SIGNAL(maximumClicked()), parentWidget(), SLOT(showMaximized()));
+        QObject::connect(titlebar(), SIGNAL(restoreClicked()), parentWidget(), SLOT(showNormal()));
+        QObject::connect(titlebar(), SIGNAL(closeClicked()), parentWidget(), SLOT(close()));
     }
 
-    connect(fileSignalManager, &FileSignalManager::fetchNetworksSuccessed, this, [this] (const DFMUrlBaseEvent &event) {
+    QObject::connect(fileSignalManager, &FileSignalManager::fetchNetworksSuccessed, this, [this] (const DFMUrlBaseEvent &event) {
         if (event.windowId() != windowId())
             return;
 
         cd(event.fileUrl(), false);
     });
-    connect(fileSignalManager, &FileSignalManager::requestCloseCurrentTab, this, &DFileManagerWindow::closeCurrentTab);
+    QObject::connect(fileSignalManager, &FileSignalManager::requestCloseCurrentTab, this, &DFileManagerWindow::closeCurrentTab);
 
-    connect(d->tabBar, &TabBar::tabMoved, d->toolbar, &DToolBar::moveNavStacks);
-    connect(d->tabBar, &TabBar::currentChanged,this, &DFileManagerWindow::onCurrentTabChanged);
-    connect(d->tabBar, &TabBar::tabCloseRequested, this,&DFileManagerWindow::onRequestCloseTab);
-    connect(d->tabBar, &TabBar::tabAddableChanged, this, &DFileManagerWindow::onTabAddableChanged);
+    QObject::connect(d->tabBar, &TabBar::tabMoved, d->toolbar, &DToolBar::moveNavStacks);
+    QObject::connect(d->tabBar, &TabBar::currentChanged,this, &DFileManagerWindow::onCurrentTabChanged);
+    QObject::connect(d->tabBar, &TabBar::tabCloseRequested, this,&DFileManagerWindow::onRequestCloseTab);
+    QObject::connect(d->tabBar, &TabBar::tabAddableChanged, this, &DFileManagerWindow::onTabAddableChanged);
 
-    connect(d->tabBar, &TabBar::tabBarShown, this, &DFileManagerWindow::showNewTabButton);
-    connect(d->tabBar, &TabBar::tabBarHidden, this, &DFileManagerWindow::hideNewTabButton);
-    connect(d->newTabButton, &QPushButton::clicked, this, &DFileManagerWindow::onNewTabButtonClicked);
+    QObject::connect(d->tabBar, &TabBar::tabBarShown, this, &DFileManagerWindow::showNewTabButton);
+    QObject::connect(d->tabBar, &TabBar::tabBarHidden, this, &DFileManagerWindow::hideNewTabButton);
+    QObject::connect(d->newTabButton, &QPushButton::clicked, this, &DFileManagerWindow::onNewTabButtonClicked);
 
-    connect(d->emptyTrashButton, &QPushButton::clicked, this, &DFileManagerWindow::requestEmptyTrashFiles);
+    QObject::connect(d->emptyTrashButton, &QPushButton::clicked, this, &DFileManagerWindow::requestEmptyTrashFiles);
 
-    connect(fileSignalManager, &FileSignalManager::trashStateChanged, this, &DFileManagerWindow::onTrashStateChanged);
-    connect(fileSignalManager, &FileSignalManager::currentUrlChanged, this, &DFileManagerWindow::onTrashStateChanged);
-    connect(fileSignalManager, &FileSignalManager::currentUrlChanged, d->tabBar, &TabBar::onCurrentUrlChanged);
-    connect(d->tabBar, &TabBar::currentChanged, this, &DFileManagerWindow::onTrashStateChanged);
+    QObject::connect(fileSignalManager, &FileSignalManager::trashStateChanged, this, &DFileManagerWindow::onTrashStateChanged);
+    QObject::connect(fileSignalManager, &FileSignalManager::currentUrlChanged, this, &DFileManagerWindow::onTrashStateChanged);
+    QObject::connect(fileSignalManager, &FileSignalManager::currentUrlChanged, d->tabBar, &TabBar::onCurrentUrlChanged);
+    QObject::connect(d->tabBar, &TabBar::currentChanged, this, &DFileManagerWindow::onTrashStateChanged);
 
-    connect(this, &DFileManagerWindow::currentUrlChanged, this, [this] {
+    QObject::connect(this, &DFileManagerWindow::currentUrlChanged, this, [this] {
         emit fileSignalManager->currentUrlChanged(DFMUrlBaseEvent(this, currentUrl()));
     });
+
+    QObject::connect(d->renameBar, &DRenameBar::onClickCancelButton, this, &DFileManagerWindow::hideRenameBar);
+    QObject::connect(fileSignalManager, &FileSignalManager::requestMultiFilesRename, this, &DFileManagerWindow::onShowRenameBar);
+    QObject::connect(d->tabBar, &TabBar::currentChanged, this, &DFileManagerWindow::onTabBarCurrentIndexChange);
+//    QObject::connect(d->tabBar, &TabBar::requestCacheRenameBarState, this, &DFileManagerWindow::onReuqestCacheRenameBarState);
+
 }
 
 void DFileManagerWindow::moveCenterByRect(QRect rect)
@@ -824,3 +838,91 @@ void DFileManagerWindow::moveCenterByRect(QRect rect)
     qr.moveCenter(rect.center());
     move(qr.topLeft());
 }
+
+
+void DFileManagerWindow::onShowRenameBar(const DFMUrlListBaseEvent& event) noexcept
+{
+   DFileManagerWindowPrivate* const d { d_func() };
+
+   if(event.windowId() == this->windowId()){
+       d->renameBar->storeUrlList(event.urlList()); //### get the urls of selection.
+
+       m_currentTab = d->tabBar->currentTab();
+       d->renameBar->setVisible(true);
+   }
+}
+
+void DFileManagerWindow::onTabBarCurrentIndexChange(const int &index)noexcept
+{
+    DFileManagerWindowPrivate* const d{ d_func() };
+
+    if(m_currentTab != d->tabBar->tabAt(index)){
+
+        if(d->renameBar->isVisible() == true){
+            if(d->renameBar->isVisible() == true){
+                this->onReuqestCacheRenameBarState();//###: invoke this function before setVisible.
+            }
+
+            d->renameBar->setVisible(false);
+            d->renameBar->restoreRenameBar(); //###: when after hiding RenameBar, Must restore RenameBar.
+        }
+
+     }
+}
+
+
+void DFileManagerWindow::hideRenameBar() noexcept
+{
+    DFileManagerWindowPrivate* const d{ d_func() };
+    d->renameBar->setVisible(false);
+    d->renameBar->restoreRenameBar();
+
+//    this->onReuqestCacheRenameBarState();//###: if hide RenameBar from button, do not cache the state of RenameBar.
+}
+
+
+void DFileManagerWindow::onReuqestCacheRenameBarState()const
+{
+    const DFileManagerWindowPrivate* const d{ d_func() };
+    DFileManagerWindow::renameBarState = d->renameBar->getCurrentState();//###: record current state, when a new window is created from a already has tab.
+}
+
+void DFileManagerWindow::initRenameBarState()
+{
+    DFileManagerWindowPrivate* const d{ d_func() };
+
+    bool expected{ true };
+    ///###: CAS, when we drag a tab to leave TabBar for creating a new window.
+    if(DFileManagerWindow::flagForNewWindowFromTab.compare_exchange_strong(expected, false, std::memory_order_seq_cst)){
+//  DFileManagerWindow::flagForNewWindowFromTab.store(false, std::memory_order_seq_cst);
+
+        if(static_cast<bool>(DFileManagerWindow::renameBarState) == true){ //###: when we drag a tab to create a new window, but the RenameBar is showing.
+             d->renameBar->loadState(DFileManagerWindow::renameBarState);
+
+        }else{  //###: when we drag a tab to create a new window, but the RenameBar is hiding.
+             d->renameBar->setVisible(false);
+        }
+
+    }else{ //###: when open a new window from right click menu.
+         d->renameBar->setVisible(false);
+    }
+}
+
+
+void DFileManagerWindow::requestToSelectUrls()
+{
+    DFileManagerWindowPrivate* const d{ d_func() };
+    if(static_cast<bool>(DFileManagerWindow::renameBarState) == true){
+        d->renameBar->loadState(DFileManagerWindow::renameBarState);
+
+        QList<DUrl> selectedUrls{ DFileManagerWindow::renameBarState->getSelectedUrl() };
+        quint64 winId{ this->windowId() };
+        DFMUrlListBaseEvent event{ nullptr,  selectedUrls};
+        event.setWindowId(winId);
+
+        QTimer::singleShot(100, [=]{ emit fileSignalManager->requestSelectFile(event); });
+
+        DFileManagerWindow::renameBarState.reset(nullptr);
+    }
+}
+

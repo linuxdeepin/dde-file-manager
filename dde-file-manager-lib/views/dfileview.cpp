@@ -593,14 +593,14 @@ void DFileView::select(const QList<DUrl> &list)
     QModelIndex firstIndex;
     QModelIndex lastIndex;
     const QModelIndex &root = rootIndex();
-
     clearSelection();
 
     for (const DUrl &url : list) {
         const QModelIndex &index = model()->index(url);
 
-        if (index == root || !index.isValid())
+        if (index == root || !index.isValid()){
             continue;
+        }
 
         selectionModel()->select(index, QItemSelectionModel::Select);
 
@@ -819,6 +819,8 @@ void DFileView::keyPressEvent(QKeyEvent *event)
                 const DUrl& url = w->getToolBar()->getCrumWidget()->backUrl();
                 cd(url);
             }
+
+            w->hideRenameBar();
         }
             return;
         case Qt::Key_Delete:{

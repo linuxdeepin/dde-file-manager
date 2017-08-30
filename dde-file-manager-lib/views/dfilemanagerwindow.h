@@ -4,8 +4,13 @@
 #include "durl.h"
 #include "dfmglobal.h"
 #include "dfmabstracteventhandler.h"
+#include "shutil/filebatchprocess.h"
+
 
 #include <DMainWindow>
+#include <atomic>
+#include <tuple>
+#include <array>
 
 #define DEFAULT_WINDOWS_WIDTH 960
 #define DEFAULT_WINDOWS_HEIGHT 540
@@ -33,6 +38,11 @@ class DStatusBar;
 class DFMEvent;
 class DFMUrlBaseEvent;
 class TabBar;
+class Tab;
+class RecordRenameBarState;
+
+
+class DFMUrlListBaseEvent;
 
 DFM_BEGIN_NAMESPACE
 class DFMBaseView;
@@ -48,7 +58,7 @@ class DFileManagerWindow : public DMainWindow, public DFMAbstractEventHandler
 public:
     explicit DFileManagerWindow(QWidget *parent = 0);
     explicit DFileManagerWindow(const DUrl &fileUrl, QWidget *parent = 0);
-    ~DFileManagerWindow();
+    virtual ~DFileManagerWindow();
 
     DUrl currentUrl() const;
     bool isCurrentUrlSupportSearch(const DUrl& currentUrl);
@@ -60,6 +70,8 @@ public:
     quint64 windowId();
 
     bool tabAddable() const;
+    void hideRenameBar() noexcept;
+    void requestToSelectUrls();
 
 signals:
     void aboutToClose();
@@ -88,6 +100,10 @@ public slots:
     void requestEmptyTrashFiles();
     void onTrashStateChanged();
 
+    void onShowRenameBar(const DFMUrlListBaseEvent& event)noexcept;
+    void onTabBarCurrentIndexChange(const int& index)noexcept;
+    void onReuqestCacheRenameBarState() const;
+
 protected:
     void closeEvent(QCloseEvent* event)  Q_DECL_OVERRIDE;
     void mouseDoubleClickEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
@@ -110,6 +126,9 @@ protected:
     void initLeftSideBar();
 
     void initRightView();
+
+    void initRenameBarState();
+
     void initToolBar();
     void initTabBar();
     void initViewLayout();
@@ -118,9 +137,16 @@ protected:
     void initConnect();
 
 private:
-    QScopedPointer<DFileManagerWindowPrivate> d_ptr;
+    Tab* m_currentTab{ nullptr };
+    std::atomic<bool> m_tabBarIndexChangeFlag{ false };//###: when the index of tabbar changed hide RenameBar through the value.
 
+    QScopedPointer<DFileManagerWindowPrivate> d_ptr;
     Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_ptr), DFileManagerWindow)
+
+public:
+    static std::unique_ptr<RecordRenameBarState>  renameBarState;//###: record pattern of RenameBar and the string of QLineEdit's content.
+    static std::atomic<bool> flagForNewWindowFromTab;           //###: open a new window form a already has tab, this will be true.
+                                                               //and after opening new window this will be back to false.
 };
 
 #endif // DFILEMANAGERWINDOW_H

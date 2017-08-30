@@ -34,6 +34,10 @@
 #include "dialogs/dialogmanager.h"
 #include "singleton.h"
 
+
+#include "views/drenamebar.h"
+#include "shutil/filebatchprocess.h"
+
 #include "../deviceinfo/udisklistener.h"
 
 #include <QProcess>
@@ -55,6 +59,9 @@ DWIDGET_USE_NAMESPACE
 
 QPair<DUrl, quint64> AppController::selectionAndRenameFile;
 QPair<DUrl, quint64> AppController::selectionFile;
+QPair<QSharedPointer<QList<DUrl>>, quint64> AppController::multiSelectionFilesCache;
+std::atomic<quint64> AppController::multiSelectionFilesCacheCounter{ 0 };
+
 
 class AppController_ : public AppController {};
 Q_GLOBAL_STATIC(AppController_, acGlobal)
@@ -235,9 +242,16 @@ void AppController::actionPaste(const QSharedPointer<DFMUrlBaseEvent> &event)
     fileService->pasteFileByClipboard(event->sender(), event->url());
 }
 
-void AppController::actionRename(const QSharedPointer<DFMUrlBaseEvent> &event)
+void AppController::actionRename(const QSharedPointer<DFMUrlListBaseEvent> &event)
 {
-    emit fileSignalManager->requestRename(*event.data());
+    DUrlList urlList{ event->urlList() };
+    if(urlList.size() == 1){ //###: for one file.
+        QSharedPointer<DFMUrlBaseEvent> singleFileEvent{ dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), urlList.first()) };
+        emit fileSignalManager->requestRename(*singleFileEvent);
+
+    }else{ //###: for more than one file.
+        emit fileSignalManager->requestMultiFilesRename(*event);
+    }
 }
 
 void AppController::actionBookmarkRename(const QSharedPointer<DFMUrlBaseEvent> &event)

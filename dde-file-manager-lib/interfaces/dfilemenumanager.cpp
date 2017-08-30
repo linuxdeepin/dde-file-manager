@@ -273,6 +273,7 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
     DFileMenu *menu = Q_NULLPTR;
     if (!info)
         return menu;
+
     if (urlList.length() == 1) {
         QVector<MenuAction> actions = info->menuActionList(DAbstractFileInfo::SingleFile);
 
@@ -721,6 +722,7 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::UnShare] = QObject::tr("Cancel sharing");
     actionKeys[MenuAction::SetUserSharePassword] = QObject::tr("Set share password");
     actionKeys[MenuAction::FormatDevice] = QObject::tr("Format");
+
 }
 
 void DFileMenuData::initActions()

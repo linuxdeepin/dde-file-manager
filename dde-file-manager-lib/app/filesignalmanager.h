@@ -68,6 +68,9 @@ signals:
     /*request rename to DFileView*/
     void requestRename(const DFMUrlBaseEvent &event);
 
+    /*request to rename multi files */
+    void requestMultiFilesRename(const DFMUrlListBaseEvent& event);
+
     /* view select all */
     void requestViewSelectAll(int windowId);
 

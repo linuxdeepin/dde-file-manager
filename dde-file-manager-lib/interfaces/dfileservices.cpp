@@ -22,6 +22,7 @@
 #include "models/avfsfileinfo.h"
 
 #include "shutil/fileutils.h"
+#include "shutil/filebatchprocess.h"
 
 #include "dialogs/dialogmanager.h"
 
@@ -635,3 +636,47 @@ void DFileService::laterRequestSelectFiles(const DFMUrlListBaseEvent &event) con
                                 manager->requestSelectFile(event);
                             }, event, manager)
 }
+
+
+bool DFileService::multiFilesReplaceName(const QList<DUrl>& urls, const QPair<QString, QString>& pair)const
+{
+    auto alteredAndUnAlteredUrls = FileBatchProcess::instance()->replaceText(urls, pair);
+    AppController::multiSelectionFilesCache.first = FileBatchProcess::batchProcessFile(alteredAndUnAlteredUrls);
+
+    return DFileService::checkMultiSelectionFilesCache();
+}
+
+
+bool DFileService::multiFilesAddStrToName(const QList<DUrl>& urls, const QPair<QString, DFileService::AddTextFlags>& pair)const
+{
+    auto alteredAndUnAlteredUrls = FileBatchProcess::instance()->addText(urls, pair);
+    AppController::multiSelectionFilesCache.first = FileBatchProcess::batchProcessFile(alteredAndUnAlteredUrls);
+
+    return DFileService::checkMultiSelectionFilesCache();
+}
+
+
+
+bool DFileService::multiFilesCustomName(const QList<DUrl>& urls, const QPair<QString, std::size_t>& pair)const
+{
+    auto alteredAndUnAlteredUrls = FileBatchProcess::instance()->customText(urls, pair);
+    AppController::multiSelectionFilesCache.first = FileBatchProcess::batchProcessFile(alteredAndUnAlteredUrls);
+
+    return DFileService::checkMultiSelectionFilesCache();
+}
+
+bool DFileService::checkMultiSelectionFilesCache()
+{
+    if(static_cast<bool>(AppController::multiSelectionFilesCache.first) == true){
+
+        if(AppController::multiSelectionFilesCache.first->isEmpty() == true){
+
+            return false;
+        }
+
+        return true;
+    }
+
+    return false;
+}
+

@@ -1,6 +1,8 @@
 #include "durl.h"
 #include "interfaces/dfmstandardpaths.h"
 
+#include <utility>
+
 #include <QFileInfo>
 #include <QSet>
 #include <QDir>
@@ -33,6 +35,44 @@ DUrl::DUrl(const QUrl &copy)
 {
     updateVirtualPath();
 }
+
+
+DUrl::DUrl(const DUrl &other)
+    :QUrl{other},
+     m_virtualPath{other.m_virtualPath}
+
+{
+    //###copy constructor
+}
+
+
+DUrl::DUrl(DUrl &&other)
+    :QUrl{ std::move(other) },
+     m_virtualPath{ std::move(other.m_virtualPath) }
+{
+    //###move constructor
+}
+
+
+//###copy operator=
+DUrl& DUrl::operator=(const DUrl& other)
+{
+    QUrl::operator=(other);
+    m_virtualPath = other.m_virtualPath;
+
+    return *this;
+}
+
+
+//###move operator=
+DUrl& DUrl::operator=(DUrl&& other)
+{
+    QUrl::operator=(std::move(other));
+    m_virtualPath = std::move(other.m_virtualPath);
+
+    return *this;
+}
+
 
 DUrl::DUrl(const QString &url, QUrl::ParsingMode mode)
     : QUrl(url, mode)

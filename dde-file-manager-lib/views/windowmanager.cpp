@@ -174,6 +174,8 @@ void WindowManager::showNewWindow(const DUrl &url, const bool& isNewWindow)
             this, &WindowManager::onWindowClosed);
 
     m_windows.insert(window, window->winId());
+    window->requestToSelectUrls(); //###: here, when selected files and then drag a tab to create a new window.
+                                   //     will select these files again in new window.
 
     if (m_windows.count() == 1){
         QPoint pos = QCursor::pos();
