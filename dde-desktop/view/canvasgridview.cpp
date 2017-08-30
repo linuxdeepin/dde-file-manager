@@ -1108,6 +1108,7 @@ bool CanvasGridView::isSelected(const QModelIndex &index) const
 
 void CanvasGridView::select(const QList<DUrl> &list)
 {
+    QModelIndex lastIndex;
     QItemSelection selection;
     for (auto &url : list) {
         auto index = model()->index(url);
@@ -1117,7 +1118,10 @@ void CanvasGridView::select(const QList<DUrl> &list)
         }
         auto selectModel = static_cast<DFileSelectionModel *>(selectionModel());
         selectModel->select(selection, QItemSelectionModel::Select);
+        lastIndex = index;
     }
+    if (lastIndex.isValid())
+        selectionModel()->setCurrentIndex(lastIndex, QItemSelectionModel::Select);
 }
 
 int CanvasGridView::selectedIndexCount() const
@@ -1441,6 +1445,9 @@ void CanvasGridView::initConnection()
         }
         d->quickSync();
     });
+
+    connect(this->model(), &DFileSystemModel::requestSelectFiles, d->fileViewHelper, &CanvasViewHelper::onRequestSelectFiles);
+
     connect(this->model(), &QAbstractItemModel::dataChanged,
             this, [ = ](const QModelIndex & topLeft,
                         const QModelIndex & bottomRight,

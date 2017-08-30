@@ -18,6 +18,7 @@ class DAbstractFileInfo;
 class DFMEvent;
 class JobController;
 class DFileViewHelper;
+class DFMUrlListBaseEvent;
 
 typedef QExplicitlySharedDataPointer<FileSystemNode> FileSystemNodePointer;
 class DFileSystemModelPrivate;
@@ -146,6 +147,7 @@ signals:
     void stateChanged(State state);
     void enabledSortChanged(bool enabledSort);
     void newFileByInternal(const DUrl &url);
+    void requestSelectFiles(const QList<DUrl>& urls);
 
 private:
     inline const FileSystemNodePointer getNodeByIndex(const QModelIndex &index) const;

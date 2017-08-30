@@ -878,7 +878,6 @@ DUrl DFileSystemModel::rootUrl() const
 DUrl DFileSystemModel::getUrlByIndex(const QModelIndex &index) const
 {
     const FileSystemNodePointer &node = getNodeByIndex(index);
-
     if(!node)
         return DUrl();
 
@@ -1555,7 +1554,8 @@ void DFileSystemModel::selectAndRenameFile(const DUrl &fileUrl)
 
         TIMER_SINGLESHOT_OBJECT(const_cast<DFileSystemModel*>(this), 100, {
                                     emit fileSignalManager->requestSelectFile(event);
-                                }, event)
+                                    emit this->requestSelectFiles(event.urlList());
+                                }, event, this)
     }
 
 }
