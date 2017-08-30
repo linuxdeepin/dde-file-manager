@@ -66,7 +66,7 @@ void ShareInfoFrame::initUI()
     mainLayoyt->addRow(permissionLabel, m_permissoComBox);
     mainLayoyt->addRow(anonymityLabel, m_anonymityCombox);
     mainLayoyt->setLabelAlignment(Qt::AlignVCenter | Qt::AlignRight);
-    mainLayoyt->setContentsMargins(10, 10, 60, 10);
+    mainLayoyt->setContentsMargins(10, 10, 10, 10);
     setLayout(mainLayoyt);
 }
 
