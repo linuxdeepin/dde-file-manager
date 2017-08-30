@@ -21,6 +21,7 @@
 #include "plugins/pluginmanager.h"
 #include "view/viewinterface.h"
 #include "interfaces/dfmstandardpaths.h"
+#include "views/dfilemanagerwindow.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -317,6 +318,7 @@ void Tab::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     }
 
     if(event->pos().y()<-m_height || event->pos().y() > m_height*2){
+
         if(!m_dragOutSide){
             m_dragOutSide = true;
             update();
@@ -339,6 +341,7 @@ void Tab::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             m_dragObject->deleteLater();
             m_pressed = false;
 
+            DFileManagerWindow::flagForNewWindowFromTab.store(true, std::memory_order_seq_cst);
             emit requestNewWindow(currentUrl());
         }
     }
@@ -531,9 +534,9 @@ TabBar::TabBar(QWidget *parent):QGraphicsView(parent){
 
 void TabBar::initConnections()
 {
-    connect(m_TabCloseButton, &TabCloseButton::hovered, this, &TabBar::onTabCloseButtonHovered);
-    connect(m_TabCloseButton, &TabCloseButton::unHovered, this, &TabBar::onTabCloseButtonUnHovered);
-    connect(m_TabCloseButton, &TabCloseButton::clicked, this, [=]{
+    QObject::connect(m_TabCloseButton, &TabCloseButton::hovered, this, &TabBar::onTabCloseButtonHovered);
+    QObject::connect(m_TabCloseButton, &TabCloseButton::unHovered, this, &TabBar::onTabCloseButtonUnHovered);
+    QObject::connect(m_TabCloseButton, &TabCloseButton::clicked, this, [=]{
         int closingIndex = m_TabCloseButton->closingIndex();
 
         //effect handler
@@ -564,15 +567,17 @@ int TabBar::createTab(DFMBaseView *view)
 
     int index = count() - 1;
 
-    connect(tab, &Tab::clicked, this, &TabBar::onTabClicked);
-    connect(tab, &Tab::moveNext, this, &TabBar::onMoveNext);
-    connect(tab, &Tab::movePrevius, this, &TabBar::onMovePrevius);
-    connect(tab, &Tab::requestNewWindow, this, &TabBar::onRequestNewWindow);
-    connect(tab, &Tab::aboutToNewWindow, this, &TabBar::onAboutToNewWindow);
-    connect(tab, &Tab::draggingFinished, this, &TabBar::onTabDragFinished);
-    connect(tab, &Tab::draggingStarted, this, &TabBar::onTabDragStarted);
-    connect(tab, &Tab::requestActiveNextTab, this, &TabBar::activateNextTab);
-    connect(tab, &Tab::requestActivePreviousTab, this, &TabBar::activatePreviousTab);
+    QObject::connect(tab, &Tab::clicked, this, &TabBar::onTabClicked);
+    QObject::connect(tab, &Tab::moveNext, this, &TabBar::onMoveNext);
+    QObject::connect(tab, &Tab::movePrevius, this, &TabBar::onMovePrevius);
+    QObject::connect(tab, &Tab::requestNewWindow, this, &TabBar::onRequestNewWindow);
+    QObject::connect(tab, &Tab::aboutToNewWindow, this, &TabBar::onAboutToNewWindow);
+    QObject::connect(tab, &Tab::draggingFinished, this, &TabBar::onTabDragFinished);
+    QObject::connect(tab, &Tab::draggingStarted, this, &TabBar::onTabDragStarted);
+    QObject::connect(tab, &Tab::requestActiveNextTab, this, &TabBar::activateNextTab);
+    QObject::connect(tab, &Tab::requestActivePreviousTab, this, &TabBar::activatePreviousTab);
+
+//    QObject::connect(tab, &Tab::draggingFinished, this, &TabBar::requestCacheRenameBarState);//###: forward the signal Tab::requestNewWindow;
 
     m_lastAddTabState = true;
     setCurrentIndex(index);

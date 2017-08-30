@@ -27,7 +27,7 @@ class Tab:public QGraphicsObject{
     Q_PROPERTY(QRect geometry READ geometry WRITE setGeometry)
 
 public:
-    explicit Tab(QGraphicsObject *parent = 0, DFMBaseView* view = NULL);
+    explicit Tab(QGraphicsObject *parent = 0, DFMBaseView* view = nullptr);
     ~Tab();
     void initConnect();
     void setTabText(QString text);
@@ -82,18 +82,18 @@ private:
     QVariant m_tabData;
     QString m_tabText;
 
-    bool m_hovered = false;
-    bool m_pressed = false;
-    int m_width;
-    int m_height;
-    bool m_isDragging = false;
+    bool m_hovered{ false };
+    bool m_pressed{ false };
+    int m_width{ 0 };
+    int m_height{ 0 };
+    bool m_isDragging{ false };
     QPointF m_originPos;
-    bool m_dragOutSide = false;
-    QDrag *m_dragObject = NULL;
-    bool m_checked = false;
-    bool m_borderLeft = false;
-    DFMBaseView* m_fileView = NULL;
-    DUrl m_url;
+    bool m_dragOutSide{ false };
+    QDrag *m_dragObject{ nullptr };
+    bool m_checked{ false };
+    bool m_borderLeft{ false };
+    DFMBaseView* m_fileView{ nullptr };
+    DUrl m_url{};
 };
 
 class TabCloseButton:public QGraphicsObject{
@@ -118,10 +118,10 @@ protected:
     void hoverLeaveEvent(QGraphicsSceneHoverEvent * event) Q_DECL_OVERRIDE;
 
 private:
-    bool m_mouseHovered = false;
-    bool m_mousePressed = false;
-    int m_closingIndex;
-    bool m_activeWidthTab = false;
+    bool m_mouseHovered{ false };
+    bool m_mousePressed{ false };
+    int m_closingIndex{ 0 };
+    bool m_activeWidthTab{ false };
 };
 
 class TabBar:public QGraphicsView{
@@ -146,6 +146,9 @@ signals:
     void tabMoved(const int &from, const int &to);
     void tabBarShown();
     void tabBarHidden();
+    void requestNewWindow(const DUrl& url);//###: this signal will connect to Tab::requestNewWindow;
+
+//    void requestCacheRenameBarState();
 
 public slots:
     void setCurrentIndex(const int index);
@@ -169,19 +172,19 @@ protected:
     bool eventFilter(QObject *obj, QEvent *event) Q_DECL_OVERRIDE;
     void wheelEvent(QWheelEvent *event) Q_DECL_OVERRIDE;
 private:
-    QGraphicsScene *m_scene = NULL;
-    int m_currentIndex = -1;
-    QList<Tab*> m_tabs;
-    bool m_barHovered = false;
-    bool m_lastStateOndelete = false;
-    int m_lastDeletedAverageWidth = 0;
-    QPoint m_tabLastMouseDragPos;
-    bool m_tabDragging = false;
-    TabCloseButton *m_TabCloseButton;
-    int m_trackingIndex = 0;
-    bool m_lastDeleteState = false;
-    bool m_lastAddTabState = false;
-    int m_historyWidth = 0;
+    QGraphicsScene *m_scene{ nullptr };
+    int m_currentIndex{ -1 };
+    QList<Tab*> m_tabs{};
+    bool m_barHovered{ false };
+    bool m_lastStateOndelete{ false };
+    int m_lastDeletedAverageWidth{ 0 };
+    QPoint m_tabLastMouseDragPos{};
+    bool m_tabDragging{ false };
+    TabCloseButton *m_TabCloseButton{ nullptr };
+    int m_trackingIndex{ 0 };
+    bool m_lastDeleteState{ false };
+    bool m_lastAddTabState{ false };
+    int m_historyWidth{ 0 };
 
     QSize tabSizeHint(const int &index);
     void updateScreen();

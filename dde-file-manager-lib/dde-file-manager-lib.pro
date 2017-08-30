@@ -212,7 +212,9 @@ HEADERS += \
     interfaces/plugins/dfmfilepreviewfactory.h \
     interfaces/dfmfilepreview.h \
     dialogs/filepreviewdialog.h \
-    gvfs/mountsecretdiskaskpassworddialog.h
+    gvfs/mountsecretdiskaskpassworddialog.h \
+    views/drenamebar.h \
+    shutil/filebatchprocess.h
 SOURCES += \
     controllers/appcontroller.cpp \
     views/dleftsidebar.cpp \
@@ -347,7 +349,9 @@ SOURCES += \
     interfaces/dfmfilepreview.cpp \
     dialogs/filepreviewdialog.cpp \
     dialogs/usersharepasswordsettingdialog.cpp\
-    gvfs/mountsecretdiskaskpassworddialog.cpp
+    gvfs/mountsecretdiskaskpassworddialog.cpp \
+    views/drenamebar.cpp \
+    shutil/filebatchprocess.cpp
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 HELPSHAREDIR = $$PREFIX/share/dman/$$TARGET

@@ -116,7 +116,7 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent> &event)
         AppController::instance()->actionPaste(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->currentUrl()));
         break;
     case DFMGlobal::Rename:
-        AppController::instance()->actionRename(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
+        AppController::instance()->actionRename(dMakeEventPointer<DFMUrlListBaseEvent>(event->sender(), event->selectedUrls()));
         break;
     case DFMGlobal::BookmarkRename:
         AppController::instance()->actionBookmarkRename(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));

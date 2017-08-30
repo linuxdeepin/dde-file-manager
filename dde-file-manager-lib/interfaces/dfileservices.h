@@ -29,6 +29,12 @@ class DFileService : public QObject, public DFMAbstractEventHandler
     Q_OBJECT
 
 public:
+    enum class AddTextFlags : std::size_t
+    {
+        Before = 0,
+        After  = 1
+    };
+
     template <class T>
     static void dRegisterUrlHandler(const QString &scheme, const QString &host)
     {
@@ -67,6 +73,9 @@ public:
     bool decompressFileHere(const QObject *sender, const DUrlList &list) const;
     bool writeFilesToClipboard(const QObject *sender, DFMGlobal::ClipboardAction action, const DUrlList &list) const;
     bool renameFile(const QObject *sender, const DUrl &from, const DUrl &to) const;
+    bool multiFilesReplaceName(const QList<DUrl>& urls, const QPair<QString, QString>& pair)const;
+    bool multiFilesAddStrToName(const QList<DUrl>& urls, const QPair<QString, DFileService::AddTextFlags>& pair)const;
+    bool multiFilesCustomName(const QList<DUrl>& urls, const QPair<QString, std::size_t>& pair)const;
     bool deleteFiles(const QObject *sender, const DUrlList &list, bool slient = false) const;
     DUrlList moveToTrash(const QObject *sender, const DUrlList &list) const;
     void pasteFileByClipboard(const QObject *sender, const DUrl &targetUrl) const;
@@ -111,6 +120,7 @@ private:
 
     static QString getSymlinkFileName(const DUrl &fileUrl, const QDir &targetDir = QDir());
     static void insertToCreatorHash(const HandlerType &type, const HandlerCreatorType &creator);
+    static bool checkMultiSelectionFilesCache();
 
     QScopedPointer<DFileServicePrivate> d_ptr;
     Q_DECLARE_PRIVATE(DFileService)

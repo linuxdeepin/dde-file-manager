@@ -812,6 +812,7 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
                    << MenuAction::Separator
                    << MenuAction::Cut
                    << MenuAction::Copy
+                   << MenuAction::Rename
                    << MenuAction::Compress
                    << MenuAction::SendToDesktop;
 

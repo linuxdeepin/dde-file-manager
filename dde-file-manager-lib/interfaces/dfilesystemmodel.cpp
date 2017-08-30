@@ -13,15 +13,19 @@
 #include "controllers/appcontroller.h"
 #include "shutil/desktopfile.h"
 
+#include "interfaces/durl.h"
 #include "interfaces/dfileviewhelper.h"
 #include "interfaces/dfmsetting.h"
 #include "shutil/fileutils.h"
 #include "deviceinfo/udisklistener.h"
 
+
+#include <QList>
 #include <QDebug>
 #include <QMimeData>
-#include <QtConcurrent/QtConcurrent>
+#include <QSharedPointer>
 #include <QAbstractItemView>
+#include <QtConcurrent/QtConcurrent>
 
 #define fileService DFileService::instance()
 #define DEFAULT_COLUMN_COUNT 1
@@ -1563,7 +1567,42 @@ void DFileSystemModel::selectAndRenameFile(const DUrl &fileUrl)
         TIMER_SINGLESHOT_OBJECT(const_cast<DFileSystemModel*>(this), 100, {
                                     emit fileSignalManager->requestSelectFile(event);
                                     emit this->requestSelectFiles(event.urlList());
-                                }, event, this)
+                                 }, event, this)
+
+
+    }else if(AppController::multiSelectionFilesCache.second != 0){
+
+        quint64 winId{ AppController::multiSelectionFilesCache.second };
+        if(winId == parent()->windowId()){
+
+            if(AppController::multiSelectionFilesCache.first){
+
+                if(AppController::multiSelectionFilesCache.first->contains(fileUrl) == true){
+
+                    ++AppController::multiSelectionFilesCacheCounter;
+                    if(AppController::multiSelectionFilesCacheCounter.load(std::memory_order_seq_cst) ==
+                                                    AppController::multiSelectionFilesCache.first->size()){
+
+
+                        DFMUrlListBaseEvent event{ this,  *(AppController::multiSelectionFilesCache.first)};
+                        event.setWindowId(winId);
+
+                        ////###: clean cache!
+                        AppController::multiSelectionFilesCache.first.reset(nullptr);
+                        AppController::multiSelectionFilesCache.second = 0;
+
+                        ///###: make ref-counter be 0(zero).
+                        AppController::multiSelectionFilesCacheCounter.store(0, std::memory_order_seq_cst);
+
+                        ///###:request to select files which was renamed successfully.
+                        QTimer::singleShot(100, [=]{
+                            emit fileSignalManager->requestSelectFile(event);
+                            emit this->requestSelectFiles(event.urlList());
+                                                    });
+                    }
+                }
+            }
+        }
     }
 
 }

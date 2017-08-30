@@ -1,14 +1,17 @@
 #ifndef APPCONTROLLER_H
 #define APPCONTROLLER_H
 
-
+#include <atomic>
 #include <QObject>
 
 #include "subscriber.h"
 #include "dfmevent.h"
 
+
 class FileController;
 class FileMonitor;
+class DRenameBar;
+class FileBatchProcess;
 
 class AppController : public QObject, public Subscriber
 {
@@ -45,7 +48,7 @@ public slots:
     void actionCut(const QSharedPointer<DFMUrlListBaseEvent> &event);
     void actionCopy(const QSharedPointer<DFMUrlListBaseEvent> &event);
     void actionPaste(const QSharedPointer<DFMUrlBaseEvent> &event);
-    void actionRename(const QSharedPointer<DFMUrlBaseEvent> &event);
+    void actionRename(const QSharedPointer<DFMUrlListBaseEvent> &event);
     void actionBookmarkRename(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionBookmarkRemove(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionDelete(const QSharedPointer<DFMUrlListBaseEvent> &event);
@@ -118,12 +121,19 @@ private:
     void createUserShareManager();
 
     QSharedPointer<DFMEvent> m_fmEvent;
-    static QPair<DUrl, quint64> selectionAndRenameFile;
-    static QPair<DUrl, quint64> selectionFile;
+    static QPair<DUrl, quint64> selectionAndRenameFile;        //###: for creating new file.
+    static QPair<DUrl, quint64> selectionFile;                //###: rename a file which must be existance.
 
     friend class FileController;
     friend class DFileSystemModel;
     friend class DFileViewHelper;
+    friend class DRenameBar;
+    friend class FileBatchProcess;
+
+public:
+    static QPair<QSharedPointer<QList<DUrl>>, quint64> multiSelectionFilesCache;  //###: for multi selection.
+    static std::atomic<quint64> multiSelectionFilesCacheCounter;
+
 };
 
 #endif // APPCONTROLLER_H
