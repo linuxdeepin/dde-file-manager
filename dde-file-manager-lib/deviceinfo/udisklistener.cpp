@@ -10,9 +10,11 @@
 #include "singleton.h"
 
 #include "gvfs/gvfsmountmanager.h"
+#include "shutil/fileutils.h"
 
 #include <QSettings>
 #include <QProcess>
+#include <QStorageInfo>
 
 UDiskListener::UDiskListener(QObject *parent):
     DAbstractFileController(parent)
@@ -308,6 +310,26 @@ bool UDiskListener::isMountedRemovableDiskExits()
        }
     }
     return false;
+}
+
+bool UDiskListener::isInSameDevice(const QString &srcPath, const QString &targetPath)
+{
+    bool result = true;
+    QStorageInfo srcStorageInfo(srcPath);
+    QStorageInfo tarStorageInfo(targetPath);
+    if (srcStorageInfo.rootPath() != tarStorageInfo.rootPath()){
+        result = false;
+    }else if (FileUtils::isGvfsMountFile(targetPath)){
+        UDiskDeviceInfoPointer pSrc = getDeviceByFilePath(srcPath);
+        UDiskDeviceInfoPointer pTar = getDeviceByFilePath(targetPath);
+        if (pSrc && pTar){
+            qDebug() << pSrc->getMountPointUrl() << pTar->getMountPointUrl();
+            if (pSrc->getMountPointUrl() != pTar->getMountPointUrl()){
+                result = false;
+            }
+        }
+    }
+    return result;
 }
 
 void UDiskListener::addMountDiskInfo(const QDiskInfo &diskInfo)

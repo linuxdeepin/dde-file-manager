@@ -67,6 +67,8 @@ public:
 
     bool isMountedRemovableDiskExits();
 
+    bool isInSameDevice(const QString& srcPath, const QString &targetPath);
+
 signals:
     void volumeAdded(UDiskDeviceInfoPointer device);
     void volumeRemoved(UDiskDeviceInfoPointer device);
