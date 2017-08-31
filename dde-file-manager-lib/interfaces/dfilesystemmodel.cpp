@@ -16,6 +16,7 @@
 #include "interfaces/dfileviewhelper.h"
 #include "interfaces/dfmsetting.h"
 #include "shutil/fileutils.h"
+#include "deviceinfo/udisklistener.h"
 
 #include <QDebug>
 #include <QMimeData>
@@ -775,7 +776,14 @@ bool DFileSystemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
 
     switch (action) {
     case Qt::CopyAction:
-        fileService->pasteFile(this, DFMGlobal::CopyAction, toUrl, urlList);
+        if (urlList.count() > 0){
+            bool isInSameDevice = deviceListener->isInSameDevice(urlList.at(0).toLocalFile(), toUrl.toLocalFile());
+            if (isInSameDevice){
+                fileService->pasteFile(this, DFMGlobal::CutAction, toUrl, urlList);
+            }else{
+                fileService->pasteFile(this, DFMGlobal::CopyAction, toUrl, urlList);
+            }
+        }
         break;
     case Qt::LinkAction:
         break;
