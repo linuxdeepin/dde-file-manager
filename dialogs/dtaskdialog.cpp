@@ -260,7 +260,6 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data){
     if(data.contains("status"))
         status = data.value("status");
 
-    qDebug() << data;
     if (QFileInfo(srcPath).isDir() &&
             QFileInfo(targetPath).isDir()){
         m_replaceButton->setText(tr("merge"));
