@@ -224,7 +224,7 @@ bool FileController::renameFile(const QSharedPointer<DFMRenameEvent> &event) con
 bool FileController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const
 {
     FileJob job(FileJob::Delete);
-
+    job.setWindowId(event->windowId());
     dialogManager->addJob(&job);
 
     job.doDelete(event->urlList());
@@ -242,7 +242,7 @@ bool FileController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) co
 DUrlList FileController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const
 {
     FileJob job(FileJob::Trash);
-
+    job.setWindowId(event->windowId());
     dialogManager->addJob(&job);
 
     DUrlList list = job.doMoveToTrash(event->urlList());
@@ -269,7 +269,7 @@ DUrlList FileController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) c
 
         if (parentUrl != event->targetUrl()) {
             FileJob job(FileJob::Move);
-
+            job.setWindowId(event->windowId());
             dialogManager->addJob(&job);
 
             list = job.doMove(urlList, event->targetUrl());
@@ -280,7 +280,7 @@ DUrlList FileController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) c
     } else {
 
         FileJob job(FileJob::Copy);
-
+        job.setWindowId(event->windowId());
         dialogManager->addJob(&job);
 
         list = job.doCopy(urlList, event->targetUrl());

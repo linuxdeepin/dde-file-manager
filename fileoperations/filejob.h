@@ -59,8 +59,6 @@ public:
     void setApplyToAll(bool v);
     void setReplace(bool v);
 
-    int getWindowId();
-
     QString getTargetDir();
 
     inline QMap<QString, QString> jobDetail(){ return m_jobDetail; }
@@ -78,6 +76,13 @@ public:
 
     bool getIsCoExisted() const;
     void setIsCoExisted(bool isCoExisted);
+
+    int getWindowId();
+    void setWindowId(int windowId);
+
+    bool getIsGvfsFileOperationUsed() const;
+
+    bool getIsFinished() const;
 
 signals:
 

@@ -174,11 +174,6 @@ void FileJob::setReplace(bool v)
     m_isReplaced = v;
 }
 
-int FileJob::getWindowId()
-{
-    return m_windowId;
-}
-
 QString FileJob::getTargetDir()
 {
     return m_tarPath;
@@ -676,6 +671,26 @@ void FileJob::jobConflicted()
     m_status = Paused;
 }
 
+bool FileJob::getIsFinished() const
+{
+    return m_isFinished;
+}
+
+bool FileJob::getIsGvfsFileOperationUsed() const
+{
+    return m_isGvfsFileOperationUsed;
+}
+
+int FileJob::getWindowId()
+{
+    return m_windowId;
+}
+
+void FileJob::setWindowId(int windowId)
+{
+    m_windowId = windowId;
+}
+
 bool FileJob::getIsCoExisted() const
 {
     return m_isCoExisted;
@@ -707,9 +722,9 @@ void FileJob::setIsAborted(bool isAborted)
 
 bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMoved, QString *targetPath)
 {
-//    if (m_isGvfsFileOperationUsed){
-//        return copyFileByGio(srcFile, tarDir, isMoved, targetPath);
-//    }
+    if (m_isGvfsFileOperationUsed){
+        return copyFileByGio(srcFile, tarDir, isMoved, targetPath);
+    }
 #ifdef SW_LABEL
     if (LlsDeepinLabelLibrary::instance()->isCompletion()){
         bool isLabelFileFlag = isLabelFile(srcFile);

@@ -209,6 +209,12 @@ void DialogManager::removeJob(const QString &jobId)
         job->setApplyToAll(true);
         job->cancelled();
         m_jobs.remove(jobId);
+
+        if (job->getIsGvfsFileOperationUsed()){
+            if (job->getIsFinished()){
+                emit fileSignalManager->requestFreshFileView(job->getWindowId());
+            }
+        }
     }
     if (m_jobs.count() == 0){
         emit fileSignalManager->requestStopUpdateJobTimer();
@@ -233,6 +239,12 @@ void DialogManager::updateJob()
                     job->jobUpdated();
                 }else{
                     job->jobUpdated();
+                }
+            }
+
+            if (job->getIsGvfsFileOperationUsed()){
+                if (job->getIsFinished()){
+                    emit fileSignalManager->requestFreshFileView(job->getWindowId());
                 }
             }
         }
