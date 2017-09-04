@@ -43,7 +43,11 @@ DFMSetting::DFMSetting(QObject *parent) : QObject(parent)
     //load temlate
     m_settings = Dtk::Core::DSettings::fromJsonFile(":/configure/global-setting-template-pro.json").data();
 #else
+#ifndef SUPPORT_FFMEPG
+    m_settings = Dtk::Core::DSettings::fromJsonFile(":/configure/global-setting-template-fedora.json").data();
+#else
     m_settings = Dtk::Core::DSettings::fromJsonFile(":/configure/global-setting-template.json").data();
+#endif
 #endif
 
     //load conf value

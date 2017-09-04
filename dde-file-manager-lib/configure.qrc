@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>configure/global-setting-template.json</file>
         <file>configure/global-setting-template-pro.json</file>
+        <file>configure/global-setting-template-fedora.json</file>
     </qresource>
 </RCC>

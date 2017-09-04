@@ -23,13 +23,16 @@
 #include <poppler-page-renderer.h>
 
 // ffmpeg
+
+#ifdef SUPPORT_FFMEPG
 #include "libffmpegthumbnailer/videothumbnailer.h"
+using namespace ffmpegthumbnailer;
+#endif
 
 #include "DWidgetUtil"
 
 DWIDGET_USE_NAMESPACE
 
-using namespace ffmpegthumbnailer;
 
 ThumbnailGenerator::ThumbnailGenerator(QObject *parent) : QObject(parent)
 {
@@ -48,8 +51,10 @@ QPixmap ThumbnailGenerator::generateThumbnail(const QUrl& fileUrl, ThumbnailGene
             pixmap = getTextplainThumbnail(fPath, size);
         if(isPDFFile(fPath))
             pixmap = getPDFThumbnail(fPath, size);
+#ifdef SUPPORT_FFMEPG
         if(isVideoFile(fPath))
             pixmap = getVideoThumbnail(fPath, size);
+#endif
     }
     else{
         //TODO
