@@ -27,7 +27,9 @@
 #include <poppler-page-renderer.h>
 
 // ffmpeg
+#ifdef SUPPORT_FFMEPG
 #include <libffmpegthumbnailer/videothumbnailer.h>
+#endif
 
 #include <DThumbnailProvider>
 
@@ -380,7 +382,9 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
         }
 
         *image = img.scaled(QSize(size,size), Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    } else if (mime.name().startsWith("video/")) {
+    }
+#ifdef SUPPORT_FFMEPG
+    else if (mime.name().startsWith("video/")) {
         //video
         //FIXME(zccrs): This should be done using the image plugin?
         try {
@@ -394,7 +398,9 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
             d->errorString = e.what();
             goto _return;
         }
-    } else {
+    }
+#endif
+    else {
         thumbnail = DTK_WIDGET_NAMESPACE::DThumbnailProvider::instance()->createThumbnail(info, (DTK_WIDGET_NAMESPACE::DThumbnailProvider::Size)size);
         d->errorString = DTK_WIDGET_NAMESPACE::DThumbnailProvider::instance()->errorString();
 
