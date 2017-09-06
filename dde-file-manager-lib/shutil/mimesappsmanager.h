@@ -48,6 +48,7 @@ public:
 
     static QStringList DesktopFiles;
     static QMap<QString, QStringList> MimeApps;
+    static QMap<QString, QStringList> DDE_MimeTypes;
     //specially cache for video, image, text and audio
     static QMap<QString, DesktopFile> VideoMimeApps;
     static QMap<QString, DesktopFile> ImageMimeApps;
@@ -80,8 +81,10 @@ public:
     static QString getDesktopFilesCacheFile();
     static QString getDesktopIconsCacheFile();
     static QStringList getDesktopFiles();
+    static QString getDDEMimeTypeFile();
     static QMap<QString, DesktopFile> getDesktopObjs();
     static void initMimeTypeApps();
+    static void loadDDEMimeTypes();
     static bool lessByDateTime(const QFileInfo& f1,  const QFileInfo& f2);
 
 signals:
