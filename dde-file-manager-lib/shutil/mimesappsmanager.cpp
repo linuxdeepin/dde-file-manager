@@ -40,6 +40,7 @@ DFM_USE_NAMESPACE
 
 QStringList MimesAppsManager::DesktopFiles = {};
 QMap<QString, QStringList> MimesAppsManager::MimeApps = {};
+QMap<QString, QStringList> MimesAppsManager::DDE_MimeTypes = {};
 QMap<QString, DesktopFile> MimesAppsManager::VideoMimeApps = {};
 QMap<QString, DesktopFile> MimesAppsManager::ImageMimeApps = {};
 QMap<QString, DesktopFile> MimesAppsManager::TextMimeApps = {};
@@ -553,6 +554,11 @@ QStringList MimesAppsManager::getDesktopFiles()
       return desktopFiles;
 }
 
+QString MimesAppsManager::getDDEMimeTypeFile()
+{
+    return QString("%1/%2/%3").arg(getMimeInfoCacheFileRootPath(), "deepin", "dde-mimetype.list");
+}
+
 QMap<QString, DesktopFile> MimesAppsManager::getDesktopObjs()
 {
     QMap<QString, DesktopFile> desktopObjs;
@@ -567,9 +573,10 @@ void MimesAppsManager::initMimeTypeApps()
     qDebug() << "getMimeTypeApps in" << QThread::currentThread() << qApp->thread();
     DesktopFiles.clear();
     DesktopObjs.clear();
+    DDE_MimeTypes.clear();
 
     QMap<QString, QSet<QString>> mimeAppsSet;
-
+    loadDDEMimeTypes();
     foreach (QString desktopFolder, getApplicationsFolders()) {
         QDirIterator it(desktopFolder, QStringList("*.desktop"),
                         QDir::Files | QDir::NoDotAndDotDot,
@@ -581,6 +588,11 @@ void MimesAppsManager::initMimeTypeApps()
           DesktopFiles.append(filePath);
           DesktopObjs.insert(filePath, desktopFile);
           QStringList mimeTypes = desktopFile.getMimeType();
+          QString fileName = QFileInfo(filePath).fileName();
+          if (DDE_MimeTypes.contains(fileName)){
+              mimeTypes.append(DDE_MimeTypes.value(fileName));
+          }
+
           foreach (QString mimeType, mimeTypes) {
               if (!mimeType.isEmpty()){
                   QSet<QString> apps;
@@ -690,6 +702,51 @@ void MimesAppsManager::initMimeTypeApps()
     }
 
     return;
+}
+
+void MimesAppsManager::loadDDEMimeTypes()
+{
+    QSettings settings(getDDEMimeTypeFile(), QSettings::IniFormat);
+    qDebug() << settings.childGroups();
+
+    QFile file(getDDEMimeTypeFile());
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return;
+    }
+
+    // Read propeties
+    QTextStream in(&file);
+    QString desktopKey;
+    while (!in.atEnd()) {
+
+      // Read new line
+      QString line = in.readLine();
+
+      // Skip empty line or line with invalid format
+      if (line.trimmed().isEmpty()) {
+        continue;
+      }
+
+      // Read group
+      // NOTE: symbols '[' and ']' can be found not only in group names, but
+      // only group can start with '['
+
+      if (line.trimmed().startsWith("[") && line.trimmed().endsWith("]")) {
+            QString tmp = line.trimmed().replace("[", "").replace("]", "");
+            desktopKey = tmp;
+            continue;
+      }
+
+      // If we are in correct group and line contains assignment then read data
+      int first_equal = line.indexOf('=');
+      if (!desktopKey.isEmpty() && first_equal >= 0) {
+            QString value = line.mid(first_equal + 1);
+            QStringList mimetypes = value.split(";");
+            DDE_MimeTypes.insert(desktopKey, mimetypes);
+            desktopKey.clear();
+        }
+    }
+    file.close();
 }
 
 bool MimesAppsManager::lessByDateTime(const QFileInfo &f1, const QFileInfo &f2)
