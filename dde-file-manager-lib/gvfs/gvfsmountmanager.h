@@ -8,6 +8,7 @@ class QDrive;
 class QVolume;
 class QMount;
 class QDiskInfo;
+class MountSecretDiskAskPasswordDialog;
 
 #undef signals
 extern "C" {
@@ -23,6 +24,7 @@ public:
     void initConnect();
 
     static GvfsMountManager* instance();
+    static MountSecretDiskAskPasswordDialog* mountSecretDiskAskPasswordDialog;
 
     static QMap<QString, QDrive> Drives;
     static QMap<QString, QVolume> Volumes;

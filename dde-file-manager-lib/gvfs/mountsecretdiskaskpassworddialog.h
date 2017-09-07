@@ -20,7 +20,7 @@ class MountSecretDiskAskPasswordDialog : public DDialog
 {
     Q_OBJECT
 public:
-    explicit MountSecretDiskAskPasswordDialog(QWidget *parent = 0);
+    explicit MountSecretDiskAskPasswordDialog(const QString& tipMessage, QWidget *parent = 0);
     ~MountSecretDiskAskPasswordDialog();
 
     void initUI();
@@ -38,16 +38,16 @@ protected:
     void showEvent(QShowEvent* event);
 
 private:
-    QLabel* m_titleLabel = NULL;
-    QLabel* m_descriptionLabel = NULL;
-    QLabel* m_passwordLabel = NULL;
-    DPasswordEdit* m_passwordLineEdit = NULL;
+    QString m_descriptionMessage = "";
+    QLabel* m_titleLabel = nullptr;
+    QLabel* m_descriptionLabel = nullptr;
+    DPasswordEdit* m_passwordLineEdit = nullptr;
 
-    QRadioButton* m_neverRadioCheckBox = NULL;
-    QRadioButton* m_sessionRadioCheckBox = NULL;
-    QRadioButton* m_forerverRadioCheckBox = NULL;
+    QRadioButton* m_neverRadioCheckBox = nullptr;
+    QRadioButton* m_sessionRadioCheckBox = nullptr;
+    QRadioButton* m_forerverRadioCheckBox = nullptr;
 
-    QButtonGroup* m_passwordButtonGroup = NULL;
+    QButtonGroup* m_passwordButtonGroup = nullptr;
 
 
     QString m_password = "";

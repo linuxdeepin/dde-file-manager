@@ -17,7 +17,7 @@ bool GvfsMountClient::AskingPassword = false;
 QJsonObject GvfsMountClient::SMBLoginObj = {};
 DFMUrlBaseEvent GvfsMountClient::MountEvent = DFMUrlBaseEvent(Q_NULLPTR, DUrl());
 
-MountAskPasswordDialog* GvfsMountClient::AskPasswordDialog = NULL;
+MountAskPasswordDialog* GvfsMountClient::AskPasswordDialog = nullptr;
 
 GvfsMountClient::GvfsMountClient(QObject *parent) : QObject(parent)
 {

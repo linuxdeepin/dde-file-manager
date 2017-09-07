@@ -30,6 +30,8 @@ QStringList GvfsMountManager::Volumes_No_Drive_Keys = {}; // key is unix-device 
 QStringList GvfsMountManager::NoVolumes_Mounts_Keys = {}; // key is mount point root uri
 QStringList GvfsMountManager::Lsblk_Keys = {}; // key is got by lsblk
 
+MountSecretDiskAskPasswordDialog* GvfsMountManager::mountSecretDiskAskPasswordDialog = nullptr;
+
 GvfsMountManager::GvfsMountManager(QObject *parent) : QObject(parent)
 {
     m_gVolumeMonitor = g_volume_monitor_get();
@@ -624,6 +626,10 @@ GMountOperation *GvfsMountManager::new_mount_op()
 
 void GvfsMountManager::ask_password_cb(GMountOperation *op, const char *message, const char *default_user, const char *default_domain, GAskPasswordFlags flags)
 {
+    if (mountSecretDiskAskPasswordDialog){
+        return;
+    }
+
     g_print ("%s\n", message);
 
     bool anonymous = g_mount_operation_get_anonymous(op);
@@ -651,12 +657,23 @@ void GvfsMountManager::ask_password_cb(GMountOperation *op, const char *message,
 
     if (flags & G_ASK_PASSWORD_NEED_PASSWORD)
     {
-        MountSecretDiskAskPasswordDialog dialog;
-        int code = dialog.exec();
-        if (code){
-            qDebug() << "=============" << dialog.password();
-            g_mount_operation_set_password (op, dialog.password().toStdString().c_str());
+        QString tipMessage;
+        QString m(message);
+        QStringList messageList = m.split("\n");
+        if (messageList.count() >= 2){
+            tipMessage = messageList.at(1);
         }
+        mountSecretDiskAskPasswordDialog = new MountSecretDiskAskPasswordDialog(tipMessage);
+        int code = mountSecretDiskAskPasswordDialog->exec();
+        QString p = mountSecretDiskAskPasswordDialog->password();
+        if (code == 0){
+            p.clear();
+        }
+        qDebug() << "password is:" << p;
+        std::string pstd = p.toStdString();
+        g_mount_operation_set_password (op, pstd.c_str());
+        mountSecretDiskAskPasswordDialog->deleteLater();
+        mountSecretDiskAskPasswordDialog = nullptr;
     }
 
     g_mount_operation_reply (op, G_MOUNT_OPERATION_HANDLED);
@@ -735,7 +752,11 @@ void GvfsMountManager::startMonitor()
         listMounts();
         updateDiskInfos();
     }
-    autoMountAllDisks();
+    if (qApp->applicationName() == QMAKE_TARGET){
+        TIMER_SINGLESHOT_OBJECT(this, 1000, {
+                                    this->autoMountAllDisks();
+                                }, this)
+    }
     initConnect();
     emit loadDiskInfoFinished();
 }
@@ -985,8 +1006,9 @@ void GvfsMountManager::autoMountAllDisks()
 {
     if (DFMSetting::instance()->isAutoMount() || DFMSetting::instance()->isAutoMountAndOpen()){
         foreach (const QDiskInfo& diskInfo, DiskInfos.values()) {
-            if (diskInfo.can_mount())
+            if (diskInfo.can_mount()){
                 mount(diskInfo);
+            }
         }
     }
 }
