@@ -3,8 +3,9 @@
 #include <QHBoxLayout>
 
 
-MountSecretDiskAskPasswordDialog::MountSecretDiskAskPasswordDialog(QWidget *parent):
-    DDialog(parent)
+MountSecretDiskAskPasswordDialog::MountSecretDiskAskPasswordDialog(const QString &tipMessage, QWidget *parent):
+    DDialog(parent),
+    m_descriptionMessage(tipMessage)
 {
     setModal(true);
     initUI();
@@ -20,21 +21,21 @@ void MountSecretDiskAskPasswordDialog::initUI()
 {
 
     QStringList buttonTexts;
-    buttonTexts << tr("Cancel") << tr("Connect");
+    buttonTexts << tr("Cancel") << tr("unLock");
 
     QFrame* content = new QFrame;
 
     m_titleLabel = new QLabel(tr("Please input password to decrypt the disk"));
-    m_descriptionLabel = new QLabel(tr(""));
+    QFont titlefont;
+    titlefont.setPointSize(10);
+    m_titleLabel->setFont(titlefont);
+    m_descriptionLabel = new QLabel(m_descriptionMessage);
+    QFont tipfont;
+    tipfont.setPointSize(8);
+    m_descriptionLabel->setFont(tipfont);
 
-    m_passwordLabel = new QLabel(tr("Password"));
+//    m_passwordLabel = new QLabel(tr("Password"));
     m_passwordLineEdit = new DPasswordEdit;
-
-    QHBoxLayout* passwordLayout = new QHBoxLayout;
-    passwordLayout->addWidget(m_passwordLabel);
-    passwordLayout->addWidget(m_passwordLineEdit);
-    passwordLayout->setSpacing(5);
-    passwordLayout->setContentsMargins(0, 0, 0, 0);
 
 
 //    m_neverRadioCheckBox = new QRadioButton(tr("never"));
@@ -50,7 +51,7 @@ void MountSecretDiskAskPasswordDialog::initUI()
     mainLayout->addWidget(m_titleLabel);
     mainLayout->addWidget(m_descriptionLabel);
     mainLayout->addSpacing(10);
-    mainLayout->addLayout(passwordLayout);
+    mainLayout->addWidget(m_passwordLineEdit);
     mainLayout->addSpacing(10);
 //    mainLayout->addWidget(m_neverRadioCheckBox, 0);
 //    mainLayout->addWidget(m_sessionRadioCheckBox, 1);
@@ -63,6 +64,8 @@ void MountSecretDiskAskPasswordDialog::initUI()
     addButtons(buttonTexts);
     setSpacing(10);
     setDefaultButton(1);
+
+    setIcon(QIcon(":/images/dialogs/images/dialog_warning_64.png"));
 }
 
 void MountSecretDiskAskPasswordDialog::initConnect()
