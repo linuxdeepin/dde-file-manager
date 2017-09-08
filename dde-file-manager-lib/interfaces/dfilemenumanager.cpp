@@ -270,7 +270,9 @@ DFileMenu *DFileMenuManager::createListViewHeaderMenu(const QSet<MenuAction> &di
 DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrlList &urlList, QSet<MenuAction> disableList, QSet<MenuAction> unusedList, int windowId)
 {
     DAbstractFileInfoPointer info = fileService->createFileInfo(Q_NULLPTR, currentUrl);
-    DFileMenu *menu = NULL;
+    DFileMenu *menu = Q_NULLPTR;
+    if (!info)
+        return menu;
     if (urlList.length() == 1) {
         QVector<MenuAction> actions = info->menuActionList(DAbstractFileInfo::SingleFile);
 
