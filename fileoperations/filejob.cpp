@@ -1818,7 +1818,16 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
             }
             case FileJob::Run:
             {
-                bool result = from.rename(m_tarPath);
+                bool result(false);
+                QFileInfo srcFileinfo(srcFile);
+                if (srcFileinfo.isSymLink()){
+                    result =  QFile(srcFileinfo.symLinkTarget()).link(m_tarPath);
+                    if (result){
+                        from.remove();
+                    }
+                }else{
+                    result = from.rename(m_tarPath);
+                }
 
                 if (!result) {
                     qDebug() << m_tarPath << from.error() << from.errorString();
