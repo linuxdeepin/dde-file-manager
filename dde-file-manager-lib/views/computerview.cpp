@@ -648,7 +648,7 @@ bool ComputerView::setRootUrl(const DUrl &url)
 void ComputerView::volumeAdded(UDiskDeviceInfoPointer device)
 {
     qDebug() << "===========volumeAdded=============" << device->getId() << m_nativeItems.contains(device->getId()) << m_removableItems.contains(device->getId());
-
+    qDebug() << device->getDiskInfo();
     ComputerViewItem* item = NULL;
     QString id = device->getId();
     if (m_nativeItems.contains(id)){
@@ -694,7 +694,8 @@ void ComputerView::volumeRemoved(UDiskDeviceInfoPointer device)
         ComputerViewItem* item = m_nativeItems.value(id);
         m_nativeFlowLayout->removeWidget(item);
         m_nativeItems.remove(id);
-        item->deleteLater();
+        item->setParent(NULL);
+        delete item;
     }else if (m_removableItems.contains(id)){
         ComputerViewItem* item = m_removableItems.value(id);
         m_removableFlowLayout->removeWidget(item);
