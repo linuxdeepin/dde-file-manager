@@ -682,7 +682,7 @@ void DialogManager::showMoveToTrashConflictDialog(const DUrlList &urls)
     MoveToTrashConflictDialog d(0, urls);
     int code = d.exec();
     if (code == 1) {
-        fileService->deleteFiles(this, urls);
+        fileService->deleteFiles(this, urls, true);
     }
 }
 
