@@ -24,6 +24,8 @@
 #include "view/viewinterface.h"
 #include "plugins/pluginmanager.h"
 
+#include "interfaces/dfileservices.h"
+
 #include <QApplication>
 
 DWIDGET_USE_NAMESPACE
@@ -111,6 +113,10 @@ void DCrumbWidget::addCrumb(const QStringList &list)
                 else
                     button->setUrl(DUrl::fromLocalFile(path));
             } else if(m_url.isTrashFile()){
+                const DAbstractFileInfoPointer& info = fileService->createFileInfo(Q_NULLPTR, m_url);
+                if(info){
+                    button->setText(info->fileDisplayName());
+                }
                 button->setUrl(DUrl::fromTrashFile(path));
             }else{
                 button->setUrl(DUrl::fromLocalFile(path));
