@@ -311,6 +311,8 @@ void DStatusBar::itemSelected(const DFMEvent &event, int number)
                 if(event.fileUrlList().first().isSMBFile()){
                     m_label->setText(m_selectedNetworkOnlyOneFolder.arg(QString::number(number)));
                 } else{
+                    if (!fileInfo)
+                        return;
                     if (fileInfo->isFile()) {
                         m_label->setText(m_selectOnlyOneFile.arg(QString::number(number), FileUtils::formatSize(fileInfo->size())));
                     }else if (fileInfo->isDir()) {
