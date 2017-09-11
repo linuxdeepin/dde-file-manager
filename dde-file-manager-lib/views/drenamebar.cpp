@@ -189,7 +189,7 @@ void DRenameBarPrivate::initUi()
     m_stackWidget = new QStackedWidget;
 
 
-    QRegExp regx{ "[0-9]{1,8}" }; //limit the value for SN, make value of QLineEdit be number.
+    QRegExp regx{ "[0-9]{1,255}" }; //limit the value for SN, make value of QLineEdit be number.
     m_validator = new QRegExpValidator{regx, q_ptr};
 
     m_lineEditStyleSheets = QPair<QString, QString>{ QString{""}, QString{"border: 1px solid blue; border-radius: 3px;"} };
@@ -337,7 +337,10 @@ DRenameBar::DRenameBar(QWidget *parent)
           d_ptr{ new DRenameBarPrivate{this} }
 {
     this->initConnect();
-    this->setVisible(false);
+    this->hide();
+
+
+    this->setStyleSheet(QString{"border-bottom: 1px solid rgba(0, 0, 0, 0.1);"});
 }
 
 
@@ -407,7 +410,6 @@ void DRenameBar::eventDispatcher()
     }else if(d->m_currentPattern == 1){ //###: add
         QString forAddingStr{ std::get<1>(d->m_addOperatorItems)->text() };
 
-
         QPair<QString, DFileService::AddTextFlags> pair{ forAddingStr, d->m_flag };
 
         value = DFileService::instance()->multiFilesAddStrToName(d->m_urlList, pair);
@@ -429,7 +431,7 @@ void DRenameBar::eventDispatcher()
         }
     }
 
-    this->hide();
+    this->setVisible(false);
     this->restoreRenameBar();
 }
 
@@ -452,23 +454,23 @@ void DRenameBar::onCustomOperatorFileNameAndSNChanged()noexcept
 {
     DRenameBarPrivate* const d{ d_func() };
 
-    QLineEdit* lineEdit1{ std::get<1>(d->m_customOPeratorItems) };
-    QLineEdit* lineEdit2{ std::get<3>(d->m_customOPeratorItems) };
+    QLineEdit* lineEditForFileName{ std::get<1>(d->m_customOPeratorItems) };
+    QLineEdit* lineEditForSNNumber{ std::get<3>(d->m_customOPeratorItems) };
 
-    if(lineEdit1->text().isEmpty() == false  &&  lineEdit2->text().isEmpty() == false){ //###: must be input filename and SN in thrid pattern.
+    if(lineEditForFileName->text().isEmpty() == false  &&  lineEditForSNNumber->text().isEmpty() == false){ //###: must be input filename and SN in thrid pattern.
         std::get<1>(d->m_buttonsArea)->setEnabled(true);
         d->m_renameButtonStates[2] = true;
 
-        lineEdit1->setStyleSheet(d->m_lineEditStyleSheets.first);
-        lineEdit2->setStyleSheet(d->m_lineEditStyleSheets.first);
+        lineEditForFileName->setStyleSheet(d->m_lineEditStyleSheets.first);
+        lineEditForFileName->setStyleSheet(d->m_lineEditStyleSheets.first);
 
 
     }else{
         std::get<1>(d->m_buttonsArea)->setEnabled(false);
         d->m_renameButtonStates[2] = false;
 
-        lineEdit1->setStyleSheet(d->m_lineEditStyleSheets.second);
-        lineEdit2->setStyleSheet(d->m_lineEditStyleSheets.second);
+        lineEditForSNNumber->setStyleSheet(d->m_lineEditStyleSheets.second);
+        lineEditForSNNumber->setStyleSheet(d->m_lineEditStyleSheets.second);
     }
 
 }
@@ -587,6 +589,7 @@ void DRenameBar::loadState(std::unique_ptr<RecordRenameBarState>& state)
         this->setVisible(state->getVisibleValue());
     }
 }
+
 
 
 

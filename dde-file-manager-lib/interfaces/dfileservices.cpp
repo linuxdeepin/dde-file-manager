@@ -637,7 +637,7 @@ void DFileService::laterRequestSelectFiles(const DFMUrlListBaseEvent &event) con
                             }, event, manager)
 }
 
-
+///###: replace
 bool DFileService::multiFilesReplaceName(const QList<DUrl>& urls, const QPair<QString, QString>& pair)const
 {
     auto alteredAndUnAlteredUrls = FileBatchProcess::instance()->replaceText(urls, pair);
@@ -647,6 +647,7 @@ bool DFileService::multiFilesReplaceName(const QList<DUrl>& urls, const QPair<QS
 }
 
 
+///###: add
 bool DFileService::multiFilesAddStrToName(const QList<DUrl>& urls, const QPair<QString, DFileService::AddTextFlags>& pair)const
 {
     auto alteredAndUnAlteredUrls = FileBatchProcess::instance()->addText(urls, pair);
@@ -655,8 +656,7 @@ bool DFileService::multiFilesAddStrToName(const QList<DUrl>& urls, const QPair<Q
     return DFileService::checkMultiSelectionFilesCache();
 }
 
-
-
+///###: custom
 bool DFileService::multiFilesCustomName(const QList<DUrl>& urls, const QPair<QString, std::size_t>& pair)const
 {
     auto alteredAndUnAlteredUrls = FileBatchProcess::instance()->customText(urls, pair);
@@ -665,6 +665,7 @@ bool DFileService::multiFilesCustomName(const QList<DUrl>& urls, const QPair<QSt
     return DFileService::checkMultiSelectionFilesCache();
 }
 
+///###: helper function.
 bool DFileService::checkMultiSelectionFilesCache()
 {
     if(static_cast<bool>(AppController::multiSelectionFilesCache.first) == true){

@@ -29,8 +29,8 @@ class DesktopPrivate
 {
 public:
     CanvasGridView      screenFrame;
-    WallpaperSettings *wallpaperSettings = nullptr;
-    ZoneSettings *zoneSettings = nullptr;
+    WallpaperSettings *wallpaperSettings{ nullptr };
+    ZoneSettings *zoneSettings{ nullptr };
 };
 
 Desktop::Desktop()
