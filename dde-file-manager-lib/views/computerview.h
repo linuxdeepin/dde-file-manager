@@ -71,6 +71,8 @@ public:
     int iconSize() const;
     void setIconSize(int size);
 
+    void setIconIndex(int index);
+
     bool checked() const;
     void setChecked(bool checked);
 
@@ -109,11 +111,14 @@ private:
     DAbstractFileInfoPointer m_info;
     UDiskDeviceInfoPointer m_deviceInfo;
     int m_iconSize = 64;
+    int m_iconIndex = 1;
     bool m_checked = false;
     QString m_name;
     QString m_displayName;
     bool m_hasMemoryInfo = false;
     int m_pixelWidth;
+    bool m_isLocked = false;
+    QLabel* m_lockedLabel = Q_NULLPTR;
 };
 
 

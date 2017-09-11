@@ -19,6 +19,7 @@
 #include "../shutil/fileutils.h"
 #include "dfmsetting.h"
 #include "shutil/viewstatesmanager.h"
+#include "partman/partition.h"
 
 #include <dslider.h>
 
@@ -120,6 +121,12 @@ UDiskDeviceInfoPointer ComputerViewItem::deviceInfo() const
 void ComputerViewItem::setDeviceInfo(UDiskDeviceInfoPointer deviceInfo)
 {
     m_deviceInfo = deviceInfo;
+
+    QString fstype = PartMan::Partition::getPartitionByDevicePath(m_deviceInfo->getDiskInfo().unix_device()).fs();
+
+    if (fstype == "crypto_LUKS" ){
+        m_isLocked = true;
+    }
 }
 
 int ComputerViewItem::windowId()
@@ -262,6 +269,17 @@ void ComputerViewItem::updateStatus()
         adjustPosition();
     } else
         m_progressLine->setFixedHeight(0);
+
+    if (m_isLocked){
+        if (m_lockedLabel){
+            m_lockedLabel->deleteLater();
+        }
+        m_lockedLabel = new QLabel(getIconLabel());
+        m_lockedLabel->setPixmap(QIcon::fromTheme("emblem-encrypted-locked").pixmap(m_iconSize / 3, m_iconSize / 3));
+        m_lockedLabel->move(m_iconSize * 2 / 3, m_iconSize * 2 / 3);
+        m_lockedLabel->raise();
+        m_lockedLabel->show();
+    }
 }
 
 int ComputerViewItem::iconSize() const
@@ -272,6 +290,11 @@ int ComputerViewItem::iconSize() const
 void ComputerViewItem::setIconSize(int size)
 {
     m_iconSize = size;
+}
+
+void ComputerViewItem::setIconIndex(int index)
+{
+    m_iconIndex = index;
 }
 
 void ComputerViewItem::setIconSizeState(int iconSize, QIcon::Mode mode)
@@ -804,6 +827,7 @@ void ComputerView::updateItemBySizeIndex(const int &index, ComputerViewItem *ite
 {
     int size = m_iconSizes.at(index);
     item->setFixedWidth(size+30);
+    item->setIconIndex(index);
     item->setIconSize(size);
     item->updateStatus();
 }

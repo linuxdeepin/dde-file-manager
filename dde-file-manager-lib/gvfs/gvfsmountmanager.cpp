@@ -752,7 +752,7 @@ void GvfsMountManager::startMonitor()
         listMounts();
         updateDiskInfos();
     }
-    if (qApp->applicationName() == QMAKE_TARGET){
+    if (qApp->applicationName() == QMAKE_TARGET && !DFMGlobal::IsFileManagerDiloagProcess){
         TIMER_SINGLESHOT_OBJECT(this, 1000, {
                                     this->autoMountAllDisks();
                                 }, this)
@@ -1007,6 +1007,10 @@ void GvfsMountManager::autoMountAllDisks()
     if (DFMSetting::instance()->isAutoMount() || DFMSetting::instance()->isAutoMountAndOpen()){
         foreach (const QDiskInfo& diskInfo, DiskInfos.values()) {
             if (diskInfo.can_mount()){
+                QString fstype = PartMan::Partition::getPartitionByDevicePath(diskInfo.unix_device()).fs();
+                if (fstype == "crypto_LUKS" ){
+                    return;
+                }
                 mount(diskInfo);
             }
         }
