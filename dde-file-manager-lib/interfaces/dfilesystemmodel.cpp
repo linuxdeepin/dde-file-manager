@@ -1573,7 +1573,7 @@ void DFileSystemModel::selectAndRenameFile(const DUrl &fileUrl)
     }else if(AppController::multiSelectionFilesCache.second != 0){
 
         quint64 winId{ AppController::multiSelectionFilesCache.second };
-        if(winId == parent()->windowId()){
+        if(winId == parent()->windowId() || AppController::flagForDDesktopRenameBar){ //###: flagForDDesktopRenameBar is false usually.
 
             if(AppController::multiSelectionFilesCache.first){
 
@@ -1582,7 +1582,6 @@ void DFileSystemModel::selectAndRenameFile(const DUrl &fileUrl)
                     ++AppController::multiSelectionFilesCacheCounter;
                     if(AppController::multiSelectionFilesCacheCounter.load(std::memory_order_seq_cst) ==
                                                     AppController::multiSelectionFilesCache.first->size()){
-
 
                         DFMUrlListBaseEvent event{ this,  *(AppController::multiSelectionFilesCache.first)};
                         event.setWindowId(winId);
@@ -1595,10 +1594,10 @@ void DFileSystemModel::selectAndRenameFile(const DUrl &fileUrl)
                         AppController::multiSelectionFilesCacheCounter.store(0, std::memory_order_seq_cst);
 
                         ///###:request to select files which was renamed successfully.
-                        QTimer::singleShot(100, [=]{
+                        QTimer::singleShot(100, [event, this]{
                             emit fileSignalManager->requestSelectFile(event);
                             emit this->requestSelectFiles(event.urlList());
-                                                    });
+                                                               });
                     }
                 }
             }

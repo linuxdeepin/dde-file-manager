@@ -281,6 +281,8 @@ public:
     static bool fileNameCorrection(const QString &filePath);
     static bool fileNameCorrection(const QByteArray &filePath);
 
+
+    static void showMultiFilesRenameDialog(const QList<DUrl>& selectedFiles);
 signals:
     void clipboardDataChanged();
 

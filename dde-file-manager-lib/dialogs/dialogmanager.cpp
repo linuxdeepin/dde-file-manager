@@ -25,7 +25,7 @@
 
 #include "xutil.h"
 #include "utils.h"
-
+#include "dialogs/ddesktoprenamedialog.h"
 #include "dialogs/dtaskdialog.h"
 #include "dialogs/propertydialog.h"
 #include "dialogs/openwithdialog.h"
@@ -884,6 +884,45 @@ int DialogManager::showMessageDialog(int messageLevel, const QString& message)
     qDebug() << code;
     return code;
 }
+
+
+void DialogManager::showMultiFilesRenameDialog(const QList<DUrl> &selectedUrls)
+{
+    DDesktopRenameDialog renameDialog;
+    renameDialog.moveToCenter();
+    renameDialog.setDialogTitle(QObject::tr("Rename %0 File(s)").arg( QString::fromStdString( std::to_string(selectedUrls.size()) )) );
+
+    std::size_t code{ renameDialog.exec() };
+    std::size_t modeIndex{ renameDialog.getCurrentModeIndex() };
+
+    AppController::flagForDDesktopRenameBar.store(true, std::memory_order_seq_cst);
+
+    if(code == 1){ //###: yes!
+
+        if(modeIndex == 0){
+            QPair<QString, QString> replaceModeValue{ renameDialog.getModeOneContent() };
+            DFileService::instance()->multiFilesReplaceName(selectedUrls, replaceModeValue);
+
+        }else if(modeIndex == 1){
+            QPair<QString, DFileService::AddTextFlags> addModeValue{ renameDialog.getModeTwoContent() };
+            DFileService::instance()->multiFilesAddStrToName(selectedUrls, addModeValue);
+
+        }else{
+            QPair<QString, std::size_t> customModeValue{ renameDialog.getModeThreeContent() };
+            DFileService::instance()->multiFilesCustomName(selectedUrls, customModeValue);
+        }
+
+
+        AppController::multiSelectionFilesCache.second = 1; //###: give a number must be bigger than 0.
+                                                            // We modified files will invoke dfilesystemmodel::selectAndRenameFile() in background.
+
+    }
+
+}
+
+
+
+
 
 #ifdef SW_LABEL
 

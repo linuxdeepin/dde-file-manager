@@ -71,6 +71,7 @@ public slots:
     void showFilePreviewDialog(const QSharedPointer<DFMUrlListBaseEvent> &event);
     void showRestoreFailedDialog(const DUrlList& urlList);
     void showRestoreFailedPerssionDialog(const QString& srcPath, const QString& targetPath);
+    void showMultiFilesRenameDialog(const QList<DUrl>& selectedUrls);
     void removePropertyDialog(const DUrl& url);
     void closeAllPropertyDialog();
     void updateCloseIndicator();

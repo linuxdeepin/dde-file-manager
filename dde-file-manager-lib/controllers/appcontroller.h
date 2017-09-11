@@ -133,6 +133,7 @@ private:
 public:
     static QPair<QSharedPointer<QList<DUrl>>, quint64> multiSelectionFilesCache;  //###: for multi selection.
     static std::atomic<quint64> multiSelectionFilesCacheCounter;
+    static std::atomic<bool> flagForDDesktopRenameBar;
 
 };
 

@@ -1991,7 +1991,13 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
         }
         break;
         case MenuAction::Rename: {
-            QAbstractItemView::edit(index);
+            if(list.size() == 1){
+                QAbstractItemView::edit(index); //###: select one file on desktop.
+
+            }else{ //###: select more than one files.
+                QList<DUrl> selectedFiles{ this->selectedUrls() };
+                DFMGlobal::showMultiFilesRenameDialog(selectedFiles);
+            }
             break;
         }
         }

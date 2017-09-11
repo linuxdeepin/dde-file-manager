@@ -61,6 +61,7 @@ QPair<DUrl, quint64> AppController::selectionAndRenameFile;
 QPair<DUrl, quint64> AppController::selectionFile;
 QPair<QSharedPointer<QList<DUrl>>, quint64> AppController::multiSelectionFilesCache;
 std::atomic<quint64> AppController::multiSelectionFilesCacheCounter{ 0 };
+std::atomic<bool> AppController::flagForDDesktopRenameBar{ false };
 
 
 class AppController_ : public AppController {};

@@ -574,6 +574,11 @@ bool DFMGlobal::isComputerDesktopFileUrl(const DUrl &url)
     return false;
 }
 
+void DFMGlobal::showMultiFilesRenameDialog(const QList<DUrl> &selectedFiles)
+{
+    dialogManager->showMultiFilesRenameDialog( selectedFiles );
+}
+
 namespace DThreadUtil {
 class FunctionCallProxy_ : public FunctionCallProxy {};
 Q_GLOBAL_STATIC(FunctionCallProxy_, fcpGlobal)
