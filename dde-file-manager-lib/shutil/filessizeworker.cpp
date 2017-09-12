@@ -43,6 +43,9 @@ void FilesSizeWorker::coumpueteSize()
                         if (stopped()){
                             return;
                         }
+                        if (file.fileName() == ".avfs"){
+                            continue;
+                        }
                         QDirIterator it(file.absoluteFilePath(), QDir::AllEntries | QDir::System
                                       | QDir::NoDotAndDotDot | QDir::NoSymLinks
                                       | QDir::Hidden, QDirIterator::Subdirectories);
