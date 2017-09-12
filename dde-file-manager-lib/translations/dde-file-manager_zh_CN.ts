@@ -65,22 +65,22 @@
 <context>
     <name>ComputerView</name>
     <message>
-        <location filename="../views/computerview.cpp" line="415"/>
+        <location filename="../views/computerview.cpp" line="438"/>
         <source>My Directories</source>
         <translation>我的目录</translation>
     </message>
     <message>
-        <location filename="../views/computerview.cpp" line="421"/>
+        <location filename="../views/computerview.cpp" line="444"/>
         <source>Internal Disk</source>
         <translation>内置磁盘</translation>
     </message>
     <message>
-        <location filename="../views/computerview.cpp" line="427"/>
+        <location filename="../views/computerview.cpp" line="450"/>
         <source>External Disk</source>
         <translation>外置磁盘</translation>
     </message>
     <message>
-        <location filename="../views/computerview.cpp" line="518"/>
+        <location filename="../views/computerview.cpp" line="541"/>
         <source>System Disk</source>
         <translation>系统盘</translation>
     </message>
@@ -1227,11 +1227,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="681"/>
         <source>Detele</source>
-        <translation>删除</translation>
+        <translation type="vanished">删除</translation>
     </message>
     <message>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="681"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="682"/>
         <source>Delete</source>
         <translation>删除</translation>

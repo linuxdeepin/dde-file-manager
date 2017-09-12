@@ -65,22 +65,22 @@
 <context>
     <name>ComputerView</name>
     <message>
-        <location filename="../views/computerview.cpp" line="415"/>
+        <location filename="../views/computerview.cpp" line="438"/>
         <source>My Directories</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/computerview.cpp" line="421"/>
+        <location filename="../views/computerview.cpp" line="444"/>
         <source>Internal Disk</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/computerview.cpp" line="427"/>
+        <location filename="../views/computerview.cpp" line="450"/>
         <source>External Disk</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../views/computerview.cpp" line="518"/>
+        <location filename="../views/computerview.cpp" line="541"/>
         <source>System Disk</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1200,10 +1200,6 @@
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="681"/>
-        <source>Detele</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="682"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
