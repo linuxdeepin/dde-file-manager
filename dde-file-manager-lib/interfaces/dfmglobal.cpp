@@ -465,7 +465,7 @@ QString DFMGlobal::toUnicode(const QByteArray &ba)
 
     QList<QByteArray> codecList;
 
-    codecList << "utf-8";
+    codecList << "utf-8" << "utf-16";
 
     switch (QLocale::system().script()) {
     case QLocale::SimplifiedChineseScript:
