@@ -24,6 +24,8 @@
 #include <QTimer>
 #include <QMediaPlayer>
 #include <QMultimedia>
+#include <QGuiApplication>
+#include <QCursor>
 
 DFM_BEGIN_NAMESPACE
 
@@ -206,8 +208,10 @@ FilePreviewDialog::FilePreviewDialog(const DUrlList &list, QWidget *parent)
 
 FilePreviewDialog::~FilePreviewDialog()
 {
-    if (m_preview)
+    if (m_preview){
         m_preview->deleteLater();
+        QGuiApplication::changeOverrideCursor(QCursor(Qt::ArrowCursor));
+    }
 }
 
 bool FilePreviewDialog::isCurrentMusicPreview()
