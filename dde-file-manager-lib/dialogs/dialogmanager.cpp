@@ -379,7 +379,7 @@ int DialogManager::showDeleteFilesClearTrashDialog(const DFMUrlListBaseEvent &ev
     QStringList buttonTexts;
     buttonTexts << tr("Cancel") << tr("Delete");
 
-    DDialog d(WindowManager::getWindowById(event.windowId()));
+    DDialog d;
 
     if (!d.parentWidget())
         d.setWindowFlags(d.windowFlags() | Qt::WindowStaysOnTopHint);
@@ -421,6 +421,7 @@ int DialogManager::showDeleteFilesClearTrashDialog(const DFMUrlListBaseEvent &ev
     d.addButton(buttonTexts[0], true, DDialog::ButtonNormal);
     d.addButton(buttonTexts[1], false, DDialog::ButtonWarning);
     d.setDefaultButton(1);
+    d.moveToCenter();
     int code = d.exec();
     return code;
 }
