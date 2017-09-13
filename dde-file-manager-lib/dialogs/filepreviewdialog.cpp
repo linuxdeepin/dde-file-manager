@@ -228,6 +228,22 @@ bool FilePreviewDialog::isCurrentMusicPreview()
     return ret;
 }
 
+void FilePreviewDialog::updatePreviewList(const DUrlList &list)
+{
+    m_fileList = list;
+    m_currentPageIndex = -1;
+
+    if (list.count() < 2) {
+        m_statusBar->preButton()->hide();
+        m_statusBar->nextButton()->hide();
+    }else{
+        m_statusBar->preButton()->show();
+        m_statusBar->nextButton()->show();
+    }
+
+    switchToPage(0);
+}
+
 void FilePreviewDialog::childEvent(QChildEvent *event)
 {
     if (m_closeButton && event->added()) {
@@ -263,7 +279,7 @@ bool FilePreviewDialog::eventFilter(QObject *obj, QEvent *event)
                 if (playButton)
                     playButton->click();
             }else{
-                close();
+                hide();
             }
             return true;
         }

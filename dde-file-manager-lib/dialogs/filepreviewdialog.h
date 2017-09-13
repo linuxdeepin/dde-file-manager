@@ -33,6 +33,8 @@ public:
     ~FilePreviewDialog();
     bool isCurrentMusicPreview();
 
+    void updatePreviewList(const DUrlList &list);
+
 private:
     void childEvent(QChildEvent *event) Q_DECL_OVERRIDE;
     void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
