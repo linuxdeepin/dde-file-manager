@@ -195,6 +195,8 @@ private:
 
     GCancellable* m_abortGCancellable = NULL;
 
+    DUrlList m_noPermissonUrls;
+
     bool copyFile(const QString &srcFile, const QString &tarDir, bool isMoved=false, QString *targetPath = 0);
     static void showProgress(goffset current_num_bytes, goffset total_num_bytes, gpointer user_data);
     bool copyFileByGio(const QString &srcFile, const QString &tarDir, bool isMoved=false, QString *targetPath = 0);
