@@ -21,6 +21,7 @@
 
 #include "durl.h"
 #include "dfmglobal.h"
+#include "dtkwidget_global.h"
 
 class DTaskDialog;
 class FileJob;
@@ -37,6 +38,10 @@ class QTimer;
 DFM_BEGIN_NAMESPACE
 class FilePreviewDialog;
 DFM_END_NAMESPACE
+
+DWIDGET_BEGIN_NAMESPACE
+class DDialog;
+DWIDGET_END_NAMESPACE
 
 class DialogManager : public QObject
 {
@@ -93,6 +98,7 @@ public slots:
     void showRestoreFailedPerssionDialog(const QString& srcPath, const QString& targetPath);
     void showMultiFilesRenameDialog(const QList<DUrl>& selectedUrls);
     void showAddUserShareFailedDialog(const QString& sharePath);
+    void showNoPermissionDialog(const DFMUrlListBaseEvent &event);
     void removePropertyDialog(const DUrl& url);
     void closeAllPropertyDialog();
     void updateCloseIndicator();
@@ -118,6 +124,7 @@ private:
     QTimer* m_closeIndicatorTimer = NULL;
     QTimer* m_updateJobTaskTimer = NULL;
     dde_file_manager::FilePreviewDialog* m_filePreviewDialog = Q_NULLPTR;
+    Dtk::Widget::DDialog* m_noPemesrsionDialog = Q_NULLPTR;
 };
 
 #endif // DIALOGMANAGER_H

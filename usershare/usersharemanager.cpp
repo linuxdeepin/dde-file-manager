@@ -427,7 +427,7 @@ bool UserShareManager::addUserShare(const ShareInfo &info)
         process.waitForFinished(-1);
         QString err = process.readAllStandardError();
         if (!err.isEmpty() && err.contains("is already a valid system user name")){
-            emit fileSignalManager->showAddUserShareFailedDialog(_info.path());
+            emit fileSignalManager->requestShowAddUserShareFailedDialog(_info.path());
             return false;
         }
         return true;

@@ -257,7 +257,7 @@ bool TrashManager::restoreTrashFile(const DUrlList &list)
     }
 
     if (!ok && restoreFailedList.count() > 0){
-        emit fileSignalManager->showRestoreFailedDialog(restoreFailedList);
+        emit fileSignalManager->requestShowRestoreFailedDialog(restoreFailedList);
     }
 
     return ok;

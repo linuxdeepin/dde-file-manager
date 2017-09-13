@@ -196,16 +196,19 @@ signals:
     void requestShowFilePreviewDialog(const DUrlList &selectUrls, const DUrlList& entryUrls);
 
     /*show 4G warning dialog if file copy to removal devicve which type is fat32*/
-    void show4GFat32Dialog();
+    void requestShow4GFat32Dialog();
 
     /*show restore failed dialog for tagart removed*/
-    void showRestoreFailedDialog(const DUrlList& urlList);
+    void requestShowRestoreFailedDialog(const DUrlList& urlList);
 
     /*show retore failed dialog for permission*/
-    void showRestoreFailedPerssionDialog(const QString& srcPath, const QString& targetPath);
+    void requestShowRestoreFailedPerssionDialog(const QString& srcPath, const QString& targetPath);
+
+    /*show dialog for no permission operation*/
+    void requestShowNoPermissionDialog(const DFMUrlListBaseEvent& event);
 
     /*show add user share failed dialog for share name same as system uername*/
-    void showAddUserShareFailedDialog(const QString& sharePath);
+    void requestShowAddUserShareFailedDialog(const QString& sharePath);
 
 #ifdef SW_LABEL
     /*copy/move/delete fail job show */

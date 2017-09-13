@@ -279,6 +279,18 @@ DUrlList FileController::pasteFile(const QSharedPointer<DFMPasteEvent> &event) c
     if(!dir.exists())
         return list;
 
+    if (!QFileInfo(event->targetUrl().toLocalFile()).isWritable()){
+        qDebug() << event->targetUrl() << "is not writable";
+        DUrlList urls;
+        urls << event->targetUrl();
+
+        DFMUrlListBaseEvent noPermissionEvent{event->sender(), urls};
+        noPermissionEvent.setWindowId(event->windowId());
+
+        emit fileSignalManager->requestShowNoPermissionDialog(noPermissionEvent);
+        return list;
+    }
+
     if (event->action() == DFMGlobal::CutAction) {
         DUrl parentUrl = DUrl::parentUrl(urlList.first());
 

@@ -131,14 +131,16 @@ void DialogManager::initConnect()
             this, &DialogManager::showDiskErrorDialog);
     connect(fileSignalManager, &FileSignalManager::showAboutDialog,
             this, &DialogManager::showAboutDialog);
-    connect(fileSignalManager, &FileSignalManager::show4GFat32Dialog,
+    connect(fileSignalManager, &FileSignalManager::requestShow4GFat32Dialog,
             this, &DialogManager::show4gFat32Dialog);
-    connect(fileSignalManager, &FileSignalManager::showRestoreFailedDialog,
+    connect(fileSignalManager, &FileSignalManager::requestShowRestoreFailedDialog,
             this, &DialogManager::showRestoreFailedDialog);
-    connect(fileSignalManager, &FileSignalManager::showRestoreFailedPerssionDialog,
+    connect(fileSignalManager, &FileSignalManager::requestShowRestoreFailedPerssionDialog,
             this, &DialogManager::showRestoreFailedPerssionDialog);
+    connect(fileSignalManager, &FileSignalManager::requestShowNoPermissionDialog,
+            this, &DialogManager::showNoPermissionDialog);
 
-    connect(fileSignalManager, &FileSignalManager::showAddUserShareFailedDialog,
+    connect(fileSignalManager, &FileSignalManager::requestShowAddUserShareFailedDialog,
             this, &DialogManager::showAddUserShareFailedDialog);
 
     connect(fileSignalManager, &FileSignalManager::requestShowFilePreviewDialog, this, &DialogManager::showFilePreviewDialog);
@@ -783,6 +785,87 @@ void DialogManager::showRestoreFailedPerssionDialog(const QString &srcPath, cons
     d.setIcon(QIcon(":/images/dialogs/images/dialog_warning_64.png"));
     d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
     d.exec();
+}
+
+void DialogManager::showNoPermissionDialog(const DFMUrlListBaseEvent &event)
+{
+    DUrlList urls = event.urlList();
+    qDebug() << urls << "no perssion";
+    if (urls.isEmpty())
+        return;
+
+    int ret = 0;
+    QFont f;
+    f.setPixelSize(16);
+    QFontMetrics fm(f);
+    int maxWith = qApp->primaryScreen()->size().width() * 3 / 4;
+
+    if (urls.count() == 1){
+        DDialog d;
+        d.setTitle(tr("You do not have permission to operate file/folder!"));
+        QString message = urls.at(0).toLocalFile();
+
+        if (fm.width(message) > maxWith){
+            message = fm.elidedText(message, Qt::ElideMiddle, maxWith - 10);
+        }
+
+        d.setMessage(message);
+        d.setIcon(QIcon(":/images/dialogs/images/dialog_warning_64.png"));
+        d.addButton(tr("Confirm"), true, DDialog::ButtonRecommend);
+        ret = d.exec();
+    }else{
+
+        DDialog d;
+//        d.setIcon(QIcon(":/images/dialogs/images/dialog_warning_64.png"));
+        QFrame* contentFrame = new QFrame;
+
+        QIcon icon;
+        icon.addFile(":/images/dialogs/images/dialog_warning_64.png");
+        QLabel* iconLabel = new QLabel;
+        iconLabel->setPixmap(icon.pixmap(64, 64));
+
+        QLabel* titleLabel = new QLabel;
+        titleLabel->setText(tr("Sorry, you don't have permission to operate the following %1 file/floder(s)!").arg(QString::number(urls.count())));
+
+        QLabel* messageLabel = new QLabel;
+        messageLabel->setScaledContents(true);
+
+        QString message;
+        for(int i=0; i < urls.count(); i++){
+            if (i >= 10){
+                break;
+            }
+            QString s = QString("%1.%2").arg(QString::number(i+1), urls.at(i).toLocalFile());
+            if (fm.width(s) > maxWith){
+                s = fm.elidedText(s, Qt::ElideMiddle, maxWith - 10);
+            }
+            message += s + "\n";
+        }
+        messageLabel->setText(message);
+
+        QVBoxLayout* contentLayout = new QVBoxLayout;
+        contentLayout->addWidget(iconLabel, 0, Qt::AlignCenter);
+        contentLayout->addWidget(titleLabel, 0, Qt::AlignCenter);
+        contentLayout->addWidget(messageLabel, 0, Qt::AlignCenter);
+        contentLayout->setContentsMargins(0, 0, 0, 0);
+        contentLayout->setSpacing(10);
+        contentFrame->setLayout(contentLayout);
+
+        d.addContent(contentFrame, Qt::AlignCenter);
+        d.addButton(tr("Cancel"), false, DDialog::ButtonNormal);
+        d.addButton(tr("Check"), true, DDialog::ButtonRecommend);
+        ret = d.exec();
+    }
+    if (ret){
+        QWidget* window = WindowManager::getWindowById(event.windowId());
+        if (window){
+            DFileManagerWindow* w = static_cast<DFileManagerWindow*>(window);
+            DUrl parentUrl = event.urlList().at(0).parentUrl();
+            w->cd(parentUrl);
+            window->raise();
+            QTimer::singleShot(1000, [=]{ emit fileSignalManager->requestSelectFile(event); });
+        }
+    }
 }
 
 void DialogManager::removePropertyDialog(const DUrl &url)

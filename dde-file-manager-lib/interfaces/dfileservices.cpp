@@ -223,13 +223,18 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
 
         //handle files whom could not be moved to trash
         DUrlList enableList;
+        DUrlList disableList;
         foreach (const DUrl& url, event->fileUrlList()) {
             const DAbstractFileInfoPointer& info = createFileInfo(this, url);
-            if(info->isDir() && !info->isWritable())
+            if(info->isDir() && !info->isWritable()){
+                disableList << url;
                 continue;
-
+            }
             enableList << url;
         }
+        DFMUrlListBaseEvent noPermissionEvent{event->sender(), disableList};
+        noPermissionEvent.setWindowId(event->windowId());
+        emit fileSignalManager->requestShowNoPermissionDialog(noPermissionEvent);
 
         event->setData(enableList);
         result = CALL_CONTROLLER(moveToTrash);

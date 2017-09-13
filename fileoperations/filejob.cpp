@@ -25,6 +25,7 @@
 #include "interfaces/dfmglobal.h"
 #include "dfmstandardpaths.h"
 #include "partman/partition.h"
+#include "dfmevent.h"
 
 #ifdef SW_LABEL
 #include "sw_label/llsdeepinlabellibrary.h"
@@ -208,12 +209,28 @@ void FileJob::adjustSymlinkPath(QString &scrPath, QString &tarDirPath)
 
 DUrlList FileJob::doCopy(const DUrlList &files, const DUrl &destination)
 {
-    return doMoveCopyJob(files, destination);
+    m_noPermissonUrls.clear();
+    DUrlList result = doMoveCopyJob(files, destination);
+    if (!m_noPermissonUrls.isEmpty()){
+        DFMUrlListBaseEvent noPermissionEvent(nullptr, m_noPermissonUrls);
+        noPermissionEvent.setWindowId(getWindowId());
+        emit fileSignalManager->requestShowNoPermissionDialog(noPermissionEvent);
+    }
+    m_noPermissonUrls.clear();
+    return result;
 }
 
 DUrlList FileJob::doMove(const DUrlList &files, const DUrl &destination)
 {
-    return doMoveCopyJob(files, destination);
+    m_noPermissonUrls.clear();
+    DUrlList result = doMoveCopyJob(files, destination);
+    if (!m_noPermissonUrls.isEmpty()){
+        DFMUrlListBaseEvent noPermissionEvent(nullptr, m_noPermissonUrls);
+        noPermissionEvent.setWindowId(getWindowId());
+        emit fileSignalManager->requestShowNoPermissionDialog(noPermissionEvent);
+    }
+    m_noPermissonUrls.clear();
+    return result;
 }
 
 DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
@@ -276,6 +293,7 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
         }
         QFileInfo srcInfo(srcPath);
         if (!srcInfo.exists() && !srcInfo.isSymLink()){
+            m_noPermissonUrls << DUrl::fromLocalFile(srcPath);
             continue;
         }
         QString targetPath;
@@ -357,6 +375,8 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
                             if (QProcess::execute("mv -T \"" + srcPath.toUtf8() + "\" \"" + targetPath.toUtf8() + "\"") != 0) {
                                 //Todo: find reason
                                 qDebug() << "Unable to trash file:" << localFile.fileName();
+//                                emit fileSignalManager->requestShowNoPermissionDialog(DUrl::fromLocalFile(srcPath));
+                                m_noPermissonUrls << DUrl::fromLocalFile(srcPath);
                             }
                         }
                     }
@@ -384,6 +404,7 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
 void FileJob::doDelete(const DUrlList &files)
 {
     qDebug() << "Do delete is started";
+    m_noPermissonUrls.clear();
     for(int i = 0; i < files.size(); i++)
     {
         QUrl url = files.at(i);
@@ -400,6 +421,12 @@ void FileJob::doDelete(const DUrlList &files)
         jobRemoved();
     emit finished();
     qDebug() << "Do delete is done!";
+    if (!m_noPermissonUrls.isEmpty()){
+        DFMUrlListBaseEvent noPermissionEvent(nullptr, m_noPermissonUrls);
+        noPermissionEvent.setWindowId(getWindowId());
+        emit fileSignalManager->requestShowNoPermissionDialog(noPermissionEvent);
+    }
+    m_noPermissonUrls.clear();
 }
 
 DUrlList FileJob::doMoveToTrash(const DUrlList &files)
@@ -460,7 +487,6 @@ DUrlList FileJob::doMoveToTrash(const DUrlList &files)
 
 
     qDebug() << "Move to Trash is done!";
-
     return list;
 }
 
@@ -794,7 +820,7 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
                 QString devicePath = pDesDevice->getDiskInfo().unix_device();
                 QString fstype = PartMan::Partition::getPartitionByDevicePath(devicePath).fs();
                 if (fstype == "vfat" ){
-                    emit fileSignalManager->show4GFat32Dialog();
+                    emit fileSignalManager->requestShow4GFat32Dialog();
                     return false;
                 }
             }
@@ -1174,6 +1200,8 @@ bool FileJob::copyFileByGio(const QString &srcFile, const QString &tarDir, bool 
                 if (!g_file_copy (source, target, flags, m_abortGCancellable, progress_callback, this, &error)){
                     if (error){
                         qDebug() << error->message;
+//                        emit fileSignalManager->requestShowNoPermissionDialog(DUrl::fromLocalFile(srcFile));
+                        m_noPermissonUrls << DUrl::fromLocalFile(srcFile);
                         g_error_free (error);
                         cancelled();
                     }
@@ -1896,7 +1924,7 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
                         qDebug() << m_tarPath << from.error() << from.errorString();
                         result = (QProcess::execute("mv -T \"" + from.fileName().toUtf8() + "\" \"" + m_srcPath.toUtf8() + "\"") == 0);
                         if (!result){
-                            emit fileSignalManager->showRestoreFailedPerssionDialog(srcFile, m_tarPath);
+                            emit fileSignalManager->requestShowRestoreFailedPerssionDialog(srcFile, m_tarPath);
                         }
                     }
                 }
@@ -1944,6 +1972,8 @@ bool FileJob::deleteFile(const QString &file)
     else
     {
         qDebug() << "unable to delete file:" << file;
+//        emit fileSignalManager->requestShowNoPermissionDialog(DUrl::fromLocalFile(file));
+        m_noPermissonUrls << DUrl::fromLocalFile(file);
         return false;
     }
 }
@@ -2006,7 +2036,8 @@ bool FileJob::deleteDir(const QString &dir)
     if (!sourceDir.rmdir(QDir::toNativeSeparators(sourceDir.path()))) {
         qDebug() << "Unable to remove dir:" << sourceDir.path();
         emit("Unable to remove dir: " + sourceDir.path());
-
+//        emit fileSignalManager->requestShowNoPermissionDialog(DUrl::fromLocalFile(dir));
+        m_noPermissonUrls << DUrl::fromLocalFile(dir);
         return false;
     }
 
