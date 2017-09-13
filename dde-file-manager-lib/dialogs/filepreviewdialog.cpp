@@ -224,7 +224,7 @@ FilePreviewDialog::~FilePreviewDialog()
 bool FilePreviewDialog::isCurrentMusicPreview()
 {
     const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, m_fileList.at(m_currentPageIndex));
-    bool ret = (QMediaPlayer::hasSupport(info->mimeTypeName(QMimeDatabase::MatchContent)) != QMultimedia::NotSupported);
+    bool ret = info->mimeTypeName(QMimeDatabase::MatchContent).startsWith("audio/");
     return ret;
 }
 
