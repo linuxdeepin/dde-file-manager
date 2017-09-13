@@ -81,6 +81,8 @@ FilePreviewDialogStatusBar::FilePreviewDialogStatusBar(QWidget *parent)
     layout->addWidget(m_nextButton);
     layout->addWidget(m_title);
     layout->addWidget(m_openButton, 0, Qt::AlignRight);
+
+    setLayout(layout);
 }
 
 QPushButton *FilePreviewDialogStatusBar::openButton() const
@@ -255,6 +257,8 @@ bool FilePreviewDialog::eventFilter(QObject *obj, QEvent *event)
                 QPushButton* playButton = m_statusBar->children().last()->findChild<QPushButton*>();
                 if (playButton)
                     playButton->click();
+            }else{
+                close();
             }
             return true;
         }
@@ -346,6 +350,7 @@ void FilePreviewDialog::switchToPage(int index)
                           || DFMFilePreviewFactory::isSuitedWithKey(m_preview, general_key))) {
             if (m_preview->setFileUrl(m_fileList.at(index))) {
                 resize(sizeHint());
+                updateTitle();
                 m_statusBar->openButton()->setFocus();
                 return;
             }
@@ -402,10 +407,9 @@ void FilePreviewDialog::switchToPage(int index)
     m_separator->setVisible(preview->showStatusBarSeparator());
     m_preview = preview;
 
-    updateTitle();
-
     QTimer::singleShot(0, this, [preview, this] {
         resize(sizeHint());
+        updateTitle();
         m_statusBar->openButton()->setFocus();
     });
 }
@@ -428,7 +432,17 @@ void FilePreviewDialog::nextPage()
 
 void FilePreviewDialog::updateTitle()
 {
-    m_statusBar->title()->setText(m_preview->title());
+    QFont font = m_statusBar->title()->font();
+    QFontMetrics fm(font);
+    QString elidedText;
+    if (!m_statusBar->preButton()->isVisible()){
+        elidedText = fm.elidedText(m_preview->title(), Qt::ElideMiddle, width() / 2 -
+                                   m_statusBar->contentsMargins().left() - m_statusBar->layout()->spacing() -30);
+    }else{
+        elidedText = fm.elidedText(m_preview->title(), Qt::ElideMiddle, width() / 2 - m_statusBar->preButton()->width() -
+                                   m_statusBar->nextButton()->width() - m_statusBar->contentsMargins().left() - m_statusBar->layout()->spacing() * 3 - 30);
+    }
+    m_statusBar->title()->setText(elidedText);
     m_statusBar->title()->setHidden(m_statusBar->title()->text().isEmpty());
 }
 
