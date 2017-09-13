@@ -46,6 +46,8 @@ public:
     void _q_edit(const DFMUrlBaseEvent &event);
     void _q_selectAndRename(const DFMUrlBaseEvent &event);
 
+    FilePreviewDialog* filePreviewDialog = Q_NULLPTR;
+
     QByteArray keyboardSearchKeys;
     QTimer keyboardSearchTimer;
 
@@ -480,6 +482,7 @@ bool DFileViewHelper::isEmptyArea(const QPoint &pos) const
 
 void DFileViewHelper::showPreviewFileDialog()
 {
+    Q_D(DFileViewHelper);
     DUrlList list;
 
     for (const DUrl &url : selectedUrls()) {
@@ -492,11 +495,12 @@ void DFileViewHelper::showPreviewFileDialog()
     if (list.isEmpty())
         return;
 
-    FilePreviewDialog *dialog = new FilePreviewDialog(list, parent());
-
-    dialog->setAttribute(Qt::WA_DeleteOnClose);
-    dialog->setModal(true);
-    dialog->show();
+    if (!d->filePreviewDialog){
+        d->filePreviewDialog = new FilePreviewDialog(list, parent());
+    }else{
+        d->filePreviewDialog->updatePreviewList(list);
+    }
+    d->filePreviewDialog->show();
 }
 
 void DFileViewHelper::handleCommitData(QWidget *editor) const
