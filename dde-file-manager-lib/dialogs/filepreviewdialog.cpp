@@ -182,7 +182,12 @@ void UnknowFilePreview::setFileInfo(const DAbstractFileInfoPointer &info)
     const QIcon &icon = info->fileIcon();
 
     m_iconLabel->setPixmap(icon.pixmap(150));
-    m_nameLabel->setText(info->fileName());
+
+    QFont font = m_nameLabel->font();
+    QFontMetrics fm(font);
+    QString elidedText = fm.elidedText(info->fileName(), Qt::ElideMiddle, 300);
+
+    m_nameLabel->setText(elidedText);
     m_sizeLabel->setText(QString(QObject::tr("Size: %1")).arg(info->sizeDisplayName()));
     m_typeLabel->setText(QString(QObject::tr("Type: %1").arg(info->mimeTypeDisplayName())));
 }
