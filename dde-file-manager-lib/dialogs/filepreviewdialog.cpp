@@ -11,6 +11,8 @@
 #include "dabstractfileinfo.h"
 #include "dfmfilepreview.h"
 #include "dfmfilepreviewfactory.h"
+#include "shutil/filessizeworker.h"
+#include "shutil/fileutils.h"
 
 #include <anchors.h>
 #include <dthememanager.h>
@@ -119,12 +121,21 @@ public:
 
     QWidget *contentWidget() const Q_DECL_OVERRIDE;
 
+signals:
+    void requestStartFolderSize();
+
+public slots:
+    void startFolderSize(const DUrl& url);
+    void updateFolderSize(qint64 size);
+
 private:
     QPointer<QWidget> m_contentWidget;
     QLabel *m_iconLabel;
     QLabel *m_nameLabel;
     QLabel *m_sizeLabel;
     QLabel *m_typeLabel;
+    FilesSizeWorker* m_sizeWorker;
+    QThread* m_sizeThread;
 };
 
 UnknowFilePreview::UnknowFilePreview(QObject *parent)
@@ -160,12 +171,24 @@ UnknowFilePreview::UnknowFilePreview(QObject *parent)
     hlayout->addSpacing(30);
     hlayout->addLayout(vlayout);
     hlayout->addStretch();
+
+    m_sizeWorker = new FilesSizeWorker;
+    m_sizeThread = new QThread;
+    m_sizeWorker->moveToThread(m_sizeThread);
+    connect(this, &UnknowFilePreview::requestStartFolderSize, m_sizeWorker, &FilesSizeWorker::coumpueteSize);
+    connect(m_sizeWorker, &FilesSizeWorker::sizeUpdated, this, &UnknowFilePreview::updateFolderSize);
+    m_sizeThread->start();
 }
 
 UnknowFilePreview::~UnknowFilePreview()
 {
-    if (m_contentWidget)
+    if (m_contentWidget){
+        m_sizeWorker->stop();
+        m_sizeWorker->deleteLater();
+        m_sizeThread->quit();
+        m_sizeThread->deleteLater();
         m_contentWidget->deleteLater();
+    }
 }
 
 bool UnknowFilePreview::setFileUrl(const DUrl &url)
@@ -189,9 +212,37 @@ void UnknowFilePreview::setFileInfo(const DAbstractFileInfoPointer &info)
     QString elidedText = fm.elidedText(info->fileName(), Qt::ElideMiddle, 300);
 
     m_nameLabel->setText(elidedText);
-    m_sizeLabel->setText(QString(QObject::tr("Size: %1")).arg(info->sizeDisplayName()));
-    m_typeLabel->setText(QString(QObject::tr("Type: %1").arg(info->mimeTypeDisplayName())));
+
+    if (info->isFile() || info->isSymLink()){
+        m_sizeLabel->setText(tr("Size: %1").arg(info->sizeDisplayName()));
+        m_typeLabel->setText(tr("Type: %1").arg(info->mimeTypeDisplayName()));
+    }else if (info->isDir()){
+        m_sizeWorker->stop();
+        startFolderSize(info->fileUrl());
+        m_sizeLabel->setText(tr("Size: 0"));
+        m_typeLabel->setText(tr("Items: %1").arg(info->sizeDisplayName()));
+    }
 }
+
+
+void UnknowFilePreview::startFolderSize(const DUrl &url)
+{
+    DUrl validUrl = url;
+    if (url.isUserShareFile()){
+        validUrl.setScheme(FILE_SCHEME);
+    }
+    DUrlList urls;
+    urls << validUrl;
+    m_sizeWorker->setUrls(urls);
+    m_sizeWorker->setStopped(false);
+    emit requestStartFolderSize();
+}
+
+void UnknowFilePreview::updateFolderSize(qint64 size)
+{
+    m_sizeLabel->setText(tr("Size: %1").arg(FileUtils::formatSize(size)));
+}
+
 
 QWidget *UnknowFilePreview::contentWidget() const
 {
@@ -355,7 +406,7 @@ void FilePreviewDialog::switchToPage(int index)
 
     const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, m_fileList.at(index));
 
-    if (!info || !info->isFile()) {
+    if (!info) {
         m_fileList.removeAt(index);
 
         if (m_fileList.isEmpty())
