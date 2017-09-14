@@ -488,7 +488,7 @@ void DFileViewHelper::showPreviewFileDialog()
     for (const DUrl &url : selectedUrls()) {
         const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, url);
 
-        if (info && info->isFile() && !info->toLocalFile().isEmpty())
+        if (info && !info->toLocalFile().isEmpty())
             list << DUrl::fromLocalFile(info->toLocalFile());
     }
 
