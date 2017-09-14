@@ -60,7 +60,10 @@ public:
     QSharedMap<DUrl, DUrl> customText(const QList<DUrl>& originUrls, const QPair<QString, std::size_t> &pair)const;
 
 
+
+
     static QSharedPointer<QList<DUrl>> batchProcessFile(const QSharedMap<DUrl, DUrl> &map);
+    static QByteArray cutString(const QByteArray& text);
 
     ////###: this is thread safe.
     inline static QSharedPointer<FileBatchProcess> instance()

@@ -472,6 +472,7 @@ bool DFileManagerWindow::cd(const DUrl &fileUrl, bool canFetchNetwork)
        ok = d->currentView->setRootUrl(fileUrl);
 
     emit currentUrlChanged();
+    this->hideRenameBar();
 
     return ok;
 }
@@ -843,8 +844,6 @@ void DFileManagerWindow::initConnect()
     QObject::connect(d->renameBar, &DRenameBar::onClickCancelButton, this, &DFileManagerWindow::hideRenameBar);
     QObject::connect(fileSignalManager, &FileSignalManager::requestMultiFilesRename, this, &DFileManagerWindow::onShowRenameBar);
     QObject::connect(d->tabBar, &TabBar::currentChanged, this, &DFileManagerWindow::onTabBarCurrentIndexChange);
-//    QObject::connect(d->tabBar, &TabBar::requestCacheRenameBarState, this, &DFileManagerWindow::onReuqestCacheRenameBarState);
-
 }
 
 void DFileManagerWindow::moveCenterByRect(QRect rect)
@@ -876,23 +875,20 @@ void DFileManagerWindow::onTabBarCurrentIndexChange(const int &index)noexcept
         if(d->renameBar->isVisible() == true){
             if(d->renameBar->isVisible() == true){
                 this->onReuqestCacheRenameBarState();//###: invoke this function before setVisible.
-            }
 
-            d->renameBar->setVisible(false);
-            d->renameBar->restoreRenameBar(); //###: when after hiding RenameBar, Must restore RenameBar.
+                d->renameBar->setVisible(false);
+                d->renameBar->restoreRenameBar(); //###: when after hiding RenameBar, Must restore RenameBar.
+            }
         }
 
      }
 }
 
-
-void DFileManagerWindow::hideRenameBar() noexcept
+void DFileManagerWindow::hideRenameBar() noexcept //###: Hide renamebar and then clear history.
 {
     DFileManagerWindowPrivate* const d{ d_func() };
     d->renameBar->setVisible(false);
     d->renameBar->restoreRenameBar();
-
-//    this->onReuqestCacheRenameBarState();//###: if hide RenameBar from button, do not cache the state of RenameBar.
 }
 
 
@@ -907,11 +903,10 @@ void DFileManagerWindow::initRenameBarState()
     DFileManagerWindowPrivate* const d{ d_func() };
 
     bool expected{ true };
-    ///###: CAS, when we drag a tab to leave TabBar for creating a new window.
+    ///###: CAS, when we draged a tab to leave TabBar for creating a new window.
     if(DFileManagerWindow::flagForNewWindowFromTab.compare_exchange_strong(expected, false, std::memory_order_seq_cst)){
-//  DFileManagerWindow::flagForNewWindowFromTab.store(false, std::memory_order_seq_cst);
 
-        if(static_cast<bool>(DFileManagerWindow::renameBarState) == true){ //###: when we drag a tab to create a new window, but the RenameBar is showing.
+        if(static_cast<bool>(DFileManagerWindow::renameBarState) == true){ //###: when we drag a tab to create a new window, but the RenameBar is showing in last window.
              d->renameBar->loadState(DFileManagerWindow::renameBarState);
 
         }else{  //###: when we drag a tab to create a new window, but the RenameBar is hiding.

@@ -620,3 +620,10 @@ QPushButton#NewTabButton:disabled {
     border: none;
     image: url(:/icons/images/icons/new_tab_disabled.png);
 }
+
+
+/*DRenameBar*/
+QFrame#DRenameBar{
+    border: 1px;
+    border-bottom:1px solid rgba(0, 0, 0, 0.2);
+}

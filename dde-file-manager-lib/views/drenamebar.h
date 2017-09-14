@@ -155,17 +155,17 @@ signals:
 private slots:
     void onRenamePatternChanged(const int& index)noexcept;
 
-
     void onReplaceOperatorFileNameChanged(const QString& text)noexcept;
     void onAddOperatorAddedContentChanged(const QString& text)noexcept;
     void onAddTextPatternChanged(const int& index)noexcept;
-    void onCustomOperatorFileNameAndSNChanged()noexcept;
+    void onCustomOperatorFileNameChanged()noexcept;
+    void onLineEditForReplacingChanged(const QString& text)noexcept;
 
     void eventDispatcher();
 
 
 private:
-    //###: just connect signals and slots(through d pointer).
+    ///###: just connect signals and slots(through d pointer).
     void initConnect();
 
 

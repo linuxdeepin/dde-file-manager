@@ -141,29 +141,29 @@ protected:
     void resizeEvent(QResizeEvent* event) Q_DECL_OVERRIDE;
 
 private:
-    DFMEvent m_fmevent;
-    DUrl m_url;
-    QString m_absolutePath;
-    qint64 m_size = 0;
-    bool m_editDisbaled = false;
-    int m_fileCount = 0;
-    QLabel *m_icon = NULL;
-    NameTextEdit *m_edit = NULL;
-    QStackedWidget *m_editStackWidget = NULL;
-    QFrame* m_textShowFrame = NULL;
-    QPushButton* m_editButton = NULL;
-    QCheckBox * m_executableCheckBox = NULL;
-    SectionValueLabel* m_folderSizeLabel = NULL;
-    QFrame *m_basicInfoFrame = NULL;
-    ShareInfoFrame* m_shareinfoFrame = NULL;
-    QFrame *m_localDeviceInfoFrame = NULL;
-    QFrame *m_deviceInfoFrame = NULL;
-    QFrame *m_OpenWithFrame = NULL;
-    QListWidget* m_OpenWithListWidget = NULL;
-    QButtonGroup* m_OpenWithButtonGroup = NULL;
-    DExpandGroup* m_expandGroup = NULL;
-    FilesSizeWorker* m_sizeWorker = NULL;
-    QVBoxLayout* m_mainLayout = NULL;
+    DFMEvent m_fmevent{};
+    DUrl m_url{};
+    QString m_absolutePath{};
+    qint64 m_size{ 0 };
+    bool m_editDisbaled{ false };
+    int m_fileCount{ 0 };
+    QLabel *m_icon{ nullptr };
+    NameTextEdit *m_edit{ nullptr };
+    QStackedWidget *m_editStackWidget{ nullptr };
+    QFrame* m_textShowFrame{ nullptr };
+    QPushButton* m_editButton{ nullptr };
+    QCheckBox * m_executableCheckBox{ nullptr };
+    SectionValueLabel* m_folderSizeLabel{ nullptr };
+    QFrame *m_basicInfoFrame{ nullptr };
+    ShareInfoFrame* m_shareinfoFrame{ nullptr };
+    QFrame *m_localDeviceInfoFrame{ nullptr };
+    QFrame *m_deviceInfoFrame{ nullptr };
+    QFrame *m_OpenWithFrame{ nullptr };
+    QListWidget* m_OpenWithListWidget{ nullptr };
+    QButtonGroup* m_OpenWithButtonGroup{ nullptr };
+    DExpandGroup* m_expandGroup{ nullptr };
+    FilesSizeWorker* m_sizeWorker{ nullptr };
+    QVBoxLayout* m_mainLayout{ nullptr };
 
     DExpandGroup *addExpandWidget(const QStringList &titleList);
 

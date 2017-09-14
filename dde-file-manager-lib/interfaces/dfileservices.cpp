@@ -671,7 +671,7 @@ bool DFileService::multiFilesAddStrToName(const QList<DUrl>& urls, const QPair<Q
     return DFileService::checkMultiSelectionFilesCache();
 }
 
-///###: custom
+///###: customize
 bool DFileService::multiFilesCustomName(const QList<DUrl>& urls, const QPair<QString, std::size_t>& pair)const
 {
     auto alteredAndUnAlteredUrls = FileBatchProcess::instance()->customText(urls, pair);
