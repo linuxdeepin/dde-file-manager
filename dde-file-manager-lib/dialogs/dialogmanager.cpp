@@ -909,7 +909,7 @@ void DialogManager::showMultiFilesRenameDialog(const QList<DUrl> &selectedUrls)
 {
     DDesktopRenameDialog renameDialog;
     renameDialog.moveToCenter();
-    renameDialog.setDialogTitle(QObject::tr("Rename %0 File(s)").arg( QString::fromStdString( std::to_string(selectedUrls.size()) )) );
+    renameDialog.setDialogTitle(QObject::tr("Rename %1 Files").arg( QString::fromStdString( std::to_string(selectedUrls.size()) )) );
 
     std::size_t code{ renameDialog.exec() };
     std::size_t modeIndex{ renameDialog.getCurrentModeIndex() };
@@ -933,8 +933,7 @@ void DialogManager::showMultiFilesRenameDialog(const QList<DUrl> &selectedUrls)
 
 
         AppController::multiSelectionFilesCache.second = 1; //###: give a number must be bigger than 0.
-                                                            // We modified files will invoke dfilesystemmodel::selectAndRenameFile() in background.
-
+                                                            // We modified files will invoke dfilesystemmodel::selectAndRenameFile() at background.
     }
 
 }
