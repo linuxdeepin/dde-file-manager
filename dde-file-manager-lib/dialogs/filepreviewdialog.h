@@ -35,9 +35,12 @@ public:
 
     void updatePreviewList(const DUrlList &list);
 
+    void adjsutPostion();
+
 private:
     void childEvent(QChildEvent *event) Q_DECL_OVERRIDE;
     void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
+    void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     bool eventFilter(QObject *obj, QEvent *event) Q_DECL_OVERRIDE;
 
     void initUI();
@@ -55,6 +58,10 @@ private:
 
     int m_currentPageIndex = -1;
     DFMFilePreview *m_preview = 0;
+
+    int m_lastPosX = -1;
+    int m_lastPosY = -1;
+
 };
 
 DFM_END_NAMESPACE
