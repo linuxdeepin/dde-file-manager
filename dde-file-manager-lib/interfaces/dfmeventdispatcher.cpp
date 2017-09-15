@@ -210,7 +210,7 @@ void DFMEventDispatcher::installEventHandler(DFMAbstractEventHandler *handler)
 
 void DFMEventDispatcher::removeEventHandler(DFMAbstractEventHandler *handler)
 {
-    DFMEventDispatcherData::eventFilter.removeOne(handler);
+    DFMEventDispatcherData::eventHandler.removeOne(handler);
 }
 
 DFM_END_NAMESPACE
