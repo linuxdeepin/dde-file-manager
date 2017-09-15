@@ -795,7 +795,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
     case Qt::NoModifier:
         switch (event->key()) {
         case Qt::Key_Space:
-            d->fileViewHelper->showPreviewFileDialog();
+            emit fileSignalManager->requestShowFilePreviewDialog(selectedUrls(), model()->sortedUrls());
             return;
         default:
             break;

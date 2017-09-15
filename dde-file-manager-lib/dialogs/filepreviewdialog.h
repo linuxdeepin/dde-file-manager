@@ -29,13 +29,15 @@ class FilePreviewDialog : public DAbstractDialog
 {
     Q_OBJECT
 public:
-    explicit FilePreviewDialog(const DUrlList &list, QWidget *parent = 0);
+    explicit FilePreviewDialog(const DUrlList &previewUrllist, QWidget *parent = 0);
     ~FilePreviewDialog();
     bool isCurrentMusicPreview();
 
-    void updatePreviewList(const DUrlList &list);
+    void updatePreviewList(const DUrlList &previewUrllist);
 
     void adjsutPostion();
+
+    void setEntryUrlList(const DUrlList &entryUrlList);
 
 private:
     void childEvent(QChildEvent *event) Q_DECL_OVERRIDE;
@@ -51,6 +53,7 @@ private:
     void updateTitle();
 
     DUrlList m_fileList;
+    DUrlList m_entryUrlList;
 
     QPushButton *m_closeButton = 0;
     DSeparatorHorizontal *m_separator;

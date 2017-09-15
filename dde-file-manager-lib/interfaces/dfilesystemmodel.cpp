@@ -887,6 +887,12 @@ DUrl DFileSystemModel::rootUrl() const
     return d->rootNode ? d->rootNode->fileInfo->fileUrl() : DUrl();
 }
 
+DUrlList DFileSystemModel::sortedUrls()
+{
+    Q_D(const DFileSystemModel);
+    return d->rootNode->visibleChildren;
+}
+
 DUrl DFileSystemModel::getUrlByIndex(const QModelIndex &index) const
 {
     const FileSystemNodePointer &node = getNodeByIndex(index);

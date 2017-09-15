@@ -579,6 +579,11 @@ void DFMGlobal::showMultiFilesRenameDialog(const QList<DUrl> &selectedFiles)
     dialogManager->showMultiFilesRenameDialog( selectedFiles );
 }
 
+void DFMGlobal::showFilePreviewDialog(const DUrlList &selectUrls, const DUrlList &entryUrls)
+{
+    emit fileSignalManager->requestShowFilePreviewDialog(selectUrls, entryUrls);
+}
+
 namespace DThreadUtil {
 class FunctionCallProxy_ : public FunctionCallProxy {};
 Q_GLOBAL_STATIC(FunctionCallProxy_, fcpGlobal)

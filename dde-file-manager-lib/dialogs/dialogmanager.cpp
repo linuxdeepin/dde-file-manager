@@ -9,6 +9,7 @@
 #include "interfaces/dstyleditemdelegate.h"
 #include "shutil/mimetypedisplaymanager.h"
 #include "previewdialog.h"
+#include "filepreviewdialog.h"
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
@@ -56,6 +57,8 @@
 
 DTK_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
+
+DFM_USE_NAMESPACE
 
 DialogManager::DialogManager(QObject *parent) : QObject(parent)
 {
@@ -708,31 +711,32 @@ void DialogManager::showDeleteSystemPathWarnDialog(quint64 winId)
     d.exec();
 }
 
-void DialogManager::showFilePreviewDialog(const QSharedPointer<DFMUrlListBaseEvent> &event)
+void DialogManager::showFilePreviewDialog(const DUrlList &selectUrls, const DUrlList &entryUrls)
 {
-    //Filter out all folders
-    DUrlList urlList;
-    foreach (const DUrl& url, event->fileUrlList()) {
-        const DAbstractFileInfoPointer& info = fileService->createFileInfo(this, url);
-        if(info->isFile())
-            urlList << url;
+    DUrlList canPreivewlist;
+
+    for (const DUrl &url : selectUrls) {
+        const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, url);
+
+        if (info && !info->toLocalFile().isEmpty())
+            canPreivewlist << DUrl::fromLocalFile(info->toLocalFile());
     }
 
-    if(urlList.count() <= 0)
+    if (canPreivewlist.isEmpty())
         return;
 
-    QWidget* w = WindowManager::getWindowById(event->windowId());
-    if(!w || w->property("AboutDialogShown").toBool())
-        return;
+    if (!m_filePreviewDialog){
+        m_filePreviewDialog = new FilePreviewDialog(canPreivewlist, NULL);
+    }else{
+        m_filePreviewDialog->updatePreviewList(canPreivewlist);
+    }
 
-    PreviewDialog* d = new PreviewDialog(urlList);
+    if (canPreivewlist.count() == 1){
+        m_filePreviewDialog->setEntryUrlList(entryUrls);
+    }
 
-    w->setProperty("UserSharePwdSettingDialogShown", true);
-    connect(d, &PreviewDialog::finished, this, [=] {
-        w->setProperty("UserSharePwdSettingDialogShown", false);
-    });
-
-    d->show();
+    m_filePreviewDialog->show();
+    m_filePreviewDialog->raise();
 }
 
 void DialogManager::showRestoreFailedDialog(const DUrlList &urlList)

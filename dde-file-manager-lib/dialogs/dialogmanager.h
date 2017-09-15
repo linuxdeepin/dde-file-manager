@@ -5,6 +5,7 @@
 #include <QMap>
 
 #include "durl.h"
+#include "dfmglobal.h"
 
 class DTaskDialog;
 class FileJob;
@@ -17,6 +18,10 @@ class CloseAllDialogIndicator;
 class TrashPropertyDialog;
 class ComputerPropertyDialog;
 class QTimer;
+
+DFM_BEGIN_NAMESPACE
+class FilePreviewDialog;
+DFM_END_NAMESPACE
 
 class DialogManager : public QObject
 {
@@ -68,7 +73,7 @@ public slots:
     void showFailToCreateSymlinkDialog(const QString &errorString);
     void showMoveToTrashConflictDialog(const DUrlList& urls);
     void showDeleteSystemPathWarnDialog(quint64 winId);
-    void showFilePreviewDialog(const QSharedPointer<DFMUrlListBaseEvent> &event);
+    void showFilePreviewDialog(const DUrlList& selectUrls, const DUrlList& entryUrls);
     void showRestoreFailedDialog(const DUrlList& urlList);
     void showRestoreFailedPerssionDialog(const QString& srcPath, const QString& targetPath);
     void showMultiFilesRenameDialog(const QList<DUrl>& selectedUrls);
@@ -96,6 +101,7 @@ private:
     QMap<DUrl, PropertyDialog*> m_propertyDialogs;
     QTimer* m_closeIndicatorTimer = NULL;
     QTimer* m_updateJobTaskTimer = NULL;
+    dde_file_manager::FilePreviewDialog* m_filePreviewDialog = Q_NULLPTR;
 };
 
 #endif // DIALOGMANAGER_H

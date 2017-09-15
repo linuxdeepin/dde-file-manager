@@ -249,15 +249,15 @@ QWidget *UnknowFilePreview::contentWidget() const
     return m_contentWidget;
 }
 
-FilePreviewDialog::FilePreviewDialog(const DUrlList &list, QWidget *parent)
+FilePreviewDialog::FilePreviewDialog(const DUrlList &previewUrllist, QWidget *parent)
     : DAbstractDialog(parent)
-    , m_fileList(list)
+    , m_fileList(previewUrllist)
 {
     D_THEME_INIT_WIDGET(FilePreviewDialog);
 
     initUI();
 
-    if (list.count() < 2) {
+    if (previewUrllist.count() < 2) {
         m_statusBar->preButton()->hide();
         m_statusBar->nextButton()->hide();
     }
@@ -280,12 +280,12 @@ bool FilePreviewDialog::isCurrentMusicPreview()
     return ret;
 }
 
-void FilePreviewDialog::updatePreviewList(const DUrlList &list)
+void FilePreviewDialog::updatePreviewList(const DUrlList &previewUrllist)
 {
-    m_fileList = list;
+    m_fileList = previewUrllist;
     m_currentPageIndex = -1;
 
-    if (list.count() < 2) {
+    if (previewUrllist.count() < 2) {
         m_statusBar->preButton()->hide();
         m_statusBar->nextButton()->hide();
     }else{
@@ -513,6 +513,18 @@ void FilePreviewDialog::adjsutPostion()
         m_lastPosY = height();
     }else{
         m_lastPosY = y() + height();
+    }
+}
+
+void FilePreviewDialog::setEntryUrlList(const DUrlList &entryUrlList)
+{
+    if (entryUrlList.isEmpty())
+        return;
+    DUrl currentUrl = m_fileList.at(m_currentPageIndex);
+    if (entryUrlList.contains(currentUrl)){
+        m_entryUrlList = entryUrlList;
+        m_fileList = m_entryUrlList;
+        m_currentPageIndex = m_entryUrlList.indexOf(currentUrl);
     }
 }
 

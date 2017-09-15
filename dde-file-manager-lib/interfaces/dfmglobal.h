@@ -11,7 +11,7 @@
 
 #include <functional>
 
-class DUrl;
+#include "durl.h"
 
 // begin file item global define
 #define TEXT_LINE_HEIGHT 18
@@ -283,6 +283,10 @@ public:
 
 
     static void showMultiFilesRenameDialog(const QList<DUrl>& selectedFiles);
+
+    static void showFilePreviewDialog(const DUrlList &selectUrls, const DUrlList& entryUrls);
+
+
 signals:
     void clipboardDataChanged();
 
