@@ -616,6 +616,18 @@ QString GridManager::lastItemId()
     return "";
 }
 
+QStringList GridManager::itemIds()
+{
+    QStringList ids;
+    for (int i = 0; i < d->m_cellStatus.length(); ++i) {
+        if (d->m_cellStatus.value(i)) {
+            auto pos = d->gridPosAt(i);
+            ids.append(itemId(pos));
+        }
+    }
+    return ids;
+}
+
 bool GridManager::contains(const QString &id)
 {
     return d->m_itemGrids.contains(id);

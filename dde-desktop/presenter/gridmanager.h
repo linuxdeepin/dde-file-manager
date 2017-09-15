@@ -33,6 +33,7 @@ public:
 
     QString firstItemId();
     QString lastItemId();
+    QStringList itemIds();
 
     bool contains(const QString &itemId);
     QPoint position(const QString &itemId);

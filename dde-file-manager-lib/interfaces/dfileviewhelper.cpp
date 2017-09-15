@@ -46,8 +46,6 @@ public:
     void _q_edit(const DFMUrlBaseEvent &event);
     void _q_selectAndRename(const DFMUrlBaseEvent &event);
 
-    FilePreviewDialog* filePreviewDialog = Q_NULLPTR;
-
     QByteArray keyboardSearchKeys;
     QTimer keyboardSearchTimer;
 
@@ -482,25 +480,41 @@ bool DFileViewHelper::isEmptyArea(const QPoint &pos) const
 
 void DFileViewHelper::showPreviewFileDialog()
 {
-    Q_D(DFileViewHelper);
-    DUrlList list;
+//    Q_D(DFileViewHelper);
+//    DUrlList canPreivewlist, entryUrlList;
 
-    for (const DUrl &url : selectedUrls()) {
-        const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, url);
+//    for (const DUrl &url : selectedUrls()) {
+//        const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, url);
 
-        if (info && !info->toLocalFile().isEmpty())
-            list << DUrl::fromLocalFile(info->toLocalFile());
-    }
+//        if (info && !info->toLocalFile().isEmpty())
+//            canPreivewlist << DUrl::fromLocalFile(info->toLocalFile());
+//    }
 
-    if (list.isEmpty())
-        return;
+//    if (canPreivewlist.count() == 1){
+////        qDebug() << rowCount() << model()->columnCount();
+////        for (int i = 0; i < rowCount(); ++i) {
+////            for (int j=0; j < model()->columnCount(); j++){
+////                const QModelIndex &index = parent()->model()->index(i, j, parent()->rootIndex());
+////                entryUrlList << model()->getUrlByIndex(index);
+////            }
+////        }
+//    }
 
-    if (!d->filePreviewDialog){
-        d->filePreviewDialog = new FilePreviewDialog(list, parent());
-    }else{
-        d->filePreviewDialog->updatePreviewList(list);
-    }
-    d->filePreviewDialog->show();
+//    if (canPreivewlist.isEmpty())
+//        return;
+
+//    if (!d->filePreviewDialog){
+//        d->filePreviewDialog = new FilePreviewDialog(canPreivewlist, parent());
+//    }else{
+//        d->filePreviewDialog->updatePreviewList(canPreivewlist);
+//    }
+
+//    if (canPreivewlist.count() == 1){
+//        qDebug() << entryUrlList.count();
+//        d->filePreviewDialog->setEntryUrlList(entryUrlList);
+//    }
+
+//    d->filePreviewDialog->show();
 }
 
 void DFileViewHelper::handleCommitData(QWidget *editor) const

@@ -509,8 +509,14 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
                 DFileService::instance()->moveToTrash(this, selectUrls);
             }
             break;
-        case Qt::Key_Space:
-            d->fileViewHelper->showPreviewFileDialog();
+        case Qt::Key_Space:{
+            QStringList urls = GridManager::instance()->itemIds();
+            DUrlList entryUrls;
+            foreach (QString url, urls) {
+                entryUrls << DUrl::fromLocalFile(url);
+            }
+            DFMGlobal::showFilePreviewDialog(selectUrls, entryUrls);
+        }
             break;
         default: break;
         }
