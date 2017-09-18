@@ -201,7 +201,7 @@ UDiskDeviceInfoPointer UDiskListener::getDeviceByMountPointFilePath(const QStrin
         UDiskDeviceInfoPointer info = m_list.at(i);
         if (info && !info->getMountPoint().isEmpty()){
             bool flag = DUrl(info->getMountPoint()) == DUrl(filePath);
-            if (!flag && filePath.startsWith(QString("%1/").arg(info->getMountPointUrl().toLocalFile())))
+            if (!flag && filePath.startsWith(QString("%1").arg(info->getMountPointUrl().toLocalFile())))
                 return info;
         }
     }
@@ -231,7 +231,7 @@ UDiskDeviceInfoPointer UDiskListener::getDeviceByFilePath(const QString &path)
         UDiskDeviceInfoPointer info = m_list.at(i);
         if (info && !info->getMountPointUrl().isEmpty()){
             bool flag = (DUrl::fromLocalFile(path) == info->getMountPointUrl());
-            if (!flag && path.startsWith(QString("%1/").arg(info->getMountPointUrl().toLocalFile()))){
+            if (!flag && path.startsWith(QString("%1").arg(info->getMountPointUrl().toLocalFile()))){
                 return info;
             }
         }
