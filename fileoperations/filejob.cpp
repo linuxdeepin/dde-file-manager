@@ -289,7 +289,7 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
             adjustSymlinkPath(srcPath, tarDirPath);
             if (m_jobType == Copy){
                 copyDir(srcPath, tarDirPath, false,  &targetPath);
-            }else if (m_jobType == Move){
+            }else if (m_jobType == Move || m_jobType == Restore){
                 if(m_isInSameDisk)
                 {
                     if (!moveDir(srcPath, tarDirPath, &targetPath)) {
@@ -329,7 +329,7 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
             adjustSymlinkPath(srcPath, tarDirPath);
             if (m_jobType == Copy){
                 copyFile(srcPath, tarDirPath, false,  &targetPath);
-            }else if (m_jobType == Move){
+            }else if (m_jobType == Move || m_jobType == Restore){
                 if(m_isInSameDisk)
                 {
                     if (!moveFile(srcPath, tarDirPath, &targetPath)) {
@@ -1805,6 +1805,7 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
 
     QFileInfo toInfo(tarFile);
     m_srcFileName = toInfo.fileName();
+    m_srcPath = srcFile;
     m_tarPath = toInfo.absoluteDir().path();
     m_tarDirName = toInfo.absoluteDir().dirName();
     m_status = Started;
@@ -1834,14 +1835,14 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
 
                     if(to.exists()){
                         if (toInfo.isDir()){
-                            bool result = QDir(tarFile).removeRecursively();
+//                            bool result = QDir(tarFile).removeRecursively();
 
-                            if (!result) {
-                                result = QProcess::execute("rm -r \"" + tarFile.toUtf8() + "\"") == 0;
-                            }
+//                            if (!result) {
+//                                result = QProcess::execute("rm -r \"" + tarFile.toUtf8() + "\"") == 0;
+//                            }
 
-                            if (!result)
-                                return false;
+//                            if (!result)
+//                                return false;
                         }else if (toInfo.isFile()){
                             to.remove();
 //                            qDebug() << to.error() << to.errorString();
@@ -1861,15 +1862,42 @@ bool FileJob::restoreTrashFile(const QString &srcFile, const QString &tarFile)
                     if (result){
                         from.remove();
                     }
+                }else if (srcFileinfo.isDir() && m_isReplaced){
+                    QDir srcDir(srcFile);
+                    QFileInfoList infos = srcDir.entryInfoList(QDir::AllEntries | QDir::System
+                                     | QDir::NoDotAndDotDot
+                                     | QDir::Hidden);
+                    DUrlList urls, resultUrls;
+                    foreach (const QFileInfo& info, infos) {
+                        urls << DUrl::fromLocalFile(info.absoluteFilePath());
+                    }
+                    qDebug() << urls;
+                    m_isReplaced = false;
+                    resultUrls = doMove(urls, DUrl::fromLocalFile(tarFile));
+                    m_isReplaced = true;
+                    qDebug() << resultUrls;
+                    if (resultUrls.count() == urls.count()){
+                       result = QDir(srcFile).removeRecursively();
+                        if (!result) {
+                            result = QProcess::execute("rm -r \"" + srcFile.toUtf8() + "\"") == 0;
+                        }
+                        if (!result)
+                            return false;
+                    }
+
                 }else{
                     result = from.rename(m_tarPath);
                 }
 
                 if (!result) {
-                    qDebug() << m_tarPath << from.error() << from.errorString();
-                    result = (QProcess::execute("mv -T \"" + from.fileName().toUtf8() + "\" \"" + m_srcPath.toUtf8() + "\"") == 0);
-                    if (!result){
-                        emit fileSignalManager->showRestoreFailedPerssionDialog(srcFile, m_tarPath);
+                    if (srcFileinfo.isDir() && m_isReplaced){
+                        return result;
+                    }else{
+                        qDebug() << m_tarPath << from.error() << from.errorString();
+                        result = (QProcess::execute("mv -T \"" + from.fileName().toUtf8() + "\" \"" + m_srcPath.toUtf8() + "\"") == 0);
+                        if (!result){
+                            emit fileSignalManager->showRestoreFailedPerssionDialog(srcFile, m_tarPath);
+                        }
                     }
                 }
 
