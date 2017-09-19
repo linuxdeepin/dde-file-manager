@@ -47,7 +47,7 @@ public slots:
     void handlePermissionComboxChanged(const int& index);
     void handleAnonymityComboxChanged(const int& index);
     void handShareInfoChanged();
-    void doShareInfoSetting();
+    bool doShareInfoSetting();
     void updateShareInfo(const QString& filePath);
     void activateWidgets();
     void disactivateWidgets();

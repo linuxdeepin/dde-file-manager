@@ -204,6 +204,9 @@ signals:
     /*show retore failed dialog for permission*/
     void showRestoreFailedPerssionDialog(const QString& srcPath, const QString& targetPath);
 
+    /*show add user share failed dialog for share name same as system uername*/
+    void showAddUserShareFailedDialog(const QString& sharePath);
+
 #ifdef SW_LABEL
     /*copy/move/delete fail job show */
     void jobFailed(int nRet, const QString &jobType, const QString& srcFileName);

@@ -74,7 +74,7 @@ public slots:
     void addCurrentUserToSambashareGroup();
     void restartSambaService();
 
-    void addUserShare(const ShareInfo& info);
+    bool addUserShare(const ShareInfo& info);
 
     void deleteUserShareByPath(const QString& path);
     void onFileDeleted(const QString& filePath);

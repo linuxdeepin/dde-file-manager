@@ -138,6 +138,9 @@ void DialogManager::initConnect()
     connect(fileSignalManager, &FileSignalManager::showRestoreFailedPerssionDialog,
             this, &DialogManager::showRestoreFailedPerssionDialog);
 
+    connect(fileSignalManager, &FileSignalManager::showAddUserShareFailedDialog,
+            this, &DialogManager::showAddUserShareFailedDialog);
+
     connect(fileSignalManager, &FileSignalManager::requestShowFilePreviewDialog, this, &DialogManager::showFilePreviewDialog);
 
 #ifdef SW_LABEL
@@ -941,8 +944,16 @@ void DialogManager::showMultiFilesRenameDialog(const QList<DUrl> &selectedUrls)
 
 }
 
+void DialogManager::showAddUserShareFailedDialog(const QString &sharePath)
+{
+    qDebug() << sharePath;
 
-
+    DDialog d;
+    d.setTitle(tr("Share folder cann't be named after the current username"));
+    d.setIcon(QIcon(":/images/dialogs/images/dialog_warning_64.png"));
+    d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
+    d.exec();
+}
 
 
 #ifdef SW_LABEL

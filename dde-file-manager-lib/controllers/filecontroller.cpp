@@ -342,9 +342,9 @@ bool FileController::shareFolder(const QSharedPointer<DFMFileShareEvnet> &event)
     info.setIsGuestOk(event->allowGuest());
     info.setIsWritable(event->isWritable());
 
-    userShareManager->addUserShare(info);
+    bool ret = userShareManager->addUserShare(info);
 
-    return true;
+    return ret;
 }
 
 bool FileController::unShareFolder(const QSharedPointer<DFMCancelFileShareEvent> &event) const

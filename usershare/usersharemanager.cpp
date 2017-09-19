@@ -33,6 +33,10 @@
 #include "dabstractfileinfo.h"
 #include "dfileservices.h"
 #include "dabstractfilewatcher.h"
+#include "utils/singleton.h"
+#include "app/define.h"
+#include "app/filesignalmanager.h"
+
 
 QString UserShareManager::CurrentUser = "";
 
@@ -392,7 +396,7 @@ void UserShareManager::restartSambaService()
     }
 }
 
-void UserShareManager::addUserShare(const ShareInfo &info)
+bool UserShareManager::addUserShare(const ShareInfo &info)
 {
     //handle old info
     ShareInfo oldInfo = getOldShareInfoByNewInfo(info);
@@ -413,10 +417,20 @@ void UserShareManager::addUserShare(const ShareInfo &info)
              << _info.shareName() << _info.path()
              << _info.comment() << _info.usershare_acl()
              << _info.guest_ok();
-        bool ret = QProcess::startDetached(cmd, args);
-        if (ret){
-            qDebug() << _info.path();
+
+
+        QProcess process;
+        process.setProgram(cmd);
+        process.setArguments(args);
+        process.start();
+        // Wait for process to finish without timeout.
+        process.waitForFinished(-1);
+        QString err = process.readAllStandardError();
+        if (!err.isEmpty() && err.contains("is already a valid system user name")){
+            emit fileSignalManager->showAddUserShareFailedDialog(_info.path());
+            return false;
         }
+        return true;
     }
 }
 
