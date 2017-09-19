@@ -98,14 +98,16 @@ void ShareInfoFrame::initConnect()
 
 void ShareInfoFrame::handleCheckBoxChanged(const bool& checked)
 {
-    if(checked){
-        emit folderShared(m_fileinfo->absoluteFilePath());
-        activateWidgets();
-        m_permissoComBox->setCurrentIndex(1);
-    } else{
+    bool ret = doShareInfoSetting();
+    if (ret) {
+        if(checked){
+            emit folderShared(m_fileinfo->absoluteFilePath());
+            activateWidgets();
+        }
+    }else{
+        m_shareCheckBox->setChecked(false);
         disactivateWidgets();
     }
-    doShareInfoSetting();
 }
 
 void ShareInfoFrame::handleShareNameChanged(const QString &name)
@@ -134,16 +136,16 @@ void ShareInfoFrame::handShareInfoChanged()
     m_jobTimer->start();
 }
 
-void ShareInfoFrame::doShareInfoSetting()
+bool ShareInfoFrame::doShareInfoSetting()
 {
     if (!m_shareCheckBox->isChecked()) {
-        DFileService::instance()->unShareFolder(this, m_fileinfo->fileUrl());
-        return;
+        return DFileService::instance()->unShareFolder(this, m_fileinfo->fileUrl());
     }
 
-    DFileService::instance()->shareFolder(this, m_fileinfo->fileUrl(), m_shareNamelineEdit->text(),
+    bool ret = DFileService::instance()->shareFolder(this, m_fileinfo->fileUrl(), m_shareNamelineEdit->text(),
                                           m_permissoComBox->currentIndex() == 0,
                                           m_anonymityCombox->currentIndex() != 0);
+    return ret;
 }
 
 void ShareInfoFrame::updateShareInfo(const QString &filePath)

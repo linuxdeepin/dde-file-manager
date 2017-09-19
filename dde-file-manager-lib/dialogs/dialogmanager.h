@@ -92,6 +92,7 @@ public slots:
     void showRestoreFailedDialog(const DUrlList& urlList);
     void showRestoreFailedPerssionDialog(const QString& srcPath, const QString& targetPath);
     void showMultiFilesRenameDialog(const QList<DUrl>& selectedUrls);
+    void showAddUserShareFailedDialog(const QString& sharePath);
     void removePropertyDialog(const DUrl& url);
     void closeAllPropertyDialog();
     void updateCloseIndicator();
