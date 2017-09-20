@@ -299,6 +299,20 @@ QPushButton#listViewButton:unchecked{
     icon-size: 16px 16px;
 }
 
+DFMActionButton {
+    background-color: #f9f9fa;
+}
+
+DFMActionButton:hover {
+    background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                    stop: 0 #B1B1B1,
+                    stop: 1  #9D9D9D);
+}
+
+DFMActionButton:checked {
+    background-color: #6a6a6a;
+}
+
 QPushButton#settingsButton{
     background-color:white;
     image: url(:/images/images/setting_normal.png);
