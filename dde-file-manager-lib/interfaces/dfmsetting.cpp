@@ -165,6 +165,7 @@ void DFMSetting::onConfigFileChanged(const DUrl &fromUrl, const DUrl &toUrl)
         auto backen = new DTK_CORE_NAMESPACE::QSettingBackend(getConfigFilePath());
         m_settings->setBackend(backen);
         qDebug() << toUrl;
+        emit showHiddenChanged(isShowedHiddenOnView());
     }
 }
 

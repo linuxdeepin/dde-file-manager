@@ -44,6 +44,7 @@
 #include <dfileinfo.h>
 #include <dfilemenu.h>
 #include <dfilemenumanager.h>
+#include <dfmsetting.h>
 
 #include "../model/dfileselectionmodel.h"
 #include "../presenter/gridmanager.h"
@@ -540,6 +541,14 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
     case Qt::ControlModifier:
         if (event->key() == Qt::Key_Minus) {
             decreaseIcon();
+            return;
+        }else if (event->key() == Qt::Key_Equal) {
+            increaseIcon();
+            return;
+        }else if(event->key() ==  Qt::Key_H){
+            itemDelegate()->hideAllIIndexWidget();
+            clearSelection();
+            model()->toggleHiddenFiles(rootUrl);
             return;
         }
         break;
@@ -1041,7 +1050,7 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
 
     QAbstractItemView::setCurrentIndex(QModelIndex());
 
-    model()->setFilters(model()->filters() & ~QDir::Hidden);
+    model()->setFilters(model()->filters());
 
     if (d->filesystemWatcher) {
         d->filesystemWatcher->deleteLater();
@@ -1421,7 +1430,7 @@ void CanvasGridView::initConnection()
         for (int i = first; i <= last; ++i) {
             auto index = model()->index(i, 0, parent);
             auto localFile = model()->getUrlByIndex(index).toLocalFile();
-            qDebug() << "add" << localFile;
+//            qDebug() << "add" << localFile;
             d->lastMenuNewFilepath = localFile;
             GridManager::instance()->add(localFile);
         }
@@ -1440,7 +1449,7 @@ void CanvasGridView::initConnection()
             }
 
             auto localFile = model()->getUrlByIndex(index).toLocalFile();
-            qDebug() << "rowsAboutToBeRemoved" << localFile;
+//            qDebug() << "rowsAboutToBeRemoved" << localFile;
             GridManager::instance()->remove(localFile);
         }
     });
@@ -1519,6 +1528,17 @@ void CanvasGridView::initConnection()
             this->updateCanvas();
         }
     });
+
+    connect(DFMSetting::instance(), &DFMSetting::showHiddenChanged, [=](bool isShowedHiddenFile){
+        QDir::Filters filters;
+        if (isShowedHiddenFile)
+            filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden;
+        else
+            filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System;
+        model()->setFilters(filters);
+    });
+
+
 }
 
 void CanvasGridView::updateCanvas()
