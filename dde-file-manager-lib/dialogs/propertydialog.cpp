@@ -44,12 +44,10 @@
 #include "plugins/pluginmanager.h"
 #include "../plugininterfaces/menu/menuinterface.h"
 
-#include <dexpandgroup.h>
 #include <dseparatorhorizontal.h>
 #include <darrowlineexpand.h>
 #include <dthememanager.h>
 #include <dcombobox.h>
-#include <dbaseexpand.h>
 #include <dexpandgroup.h>
 
 #include <QTextEdit>
