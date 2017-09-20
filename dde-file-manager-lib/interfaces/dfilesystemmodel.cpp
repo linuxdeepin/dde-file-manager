@@ -127,7 +127,7 @@ bool DFileSystemModelPrivate::passNameFilters(const FileSystemNodePointer &node)
         return true;
 
     // Check the name regularexpression filters
-    if (!(node->fileInfo->isDir() && (filters & (QDir::AllDirs | QDir::Dirs)))) {
+    if (!(node->fileInfo->isDir() && (filters & QDir::Dirs))) {
         const Qt::CaseSensitivity caseSensitive = (filters & QDir::CaseSensitive) ? Qt::CaseSensitive : Qt::CaseInsensitive;
 
         for (int i = 0; i < nameFilters.size(); ++i) {
@@ -145,7 +145,7 @@ bool DFileSystemModelPrivate::passNameFilters(const FileSystemNodePointer &node)
 
 bool DFileSystemModelPrivate::passFileFilters(const DAbstractFileInfoPointer &info) const
 {
-    if (!(filters & QDir::Dirs) && info->isDir())
+    if (!(filters & (QDir::Dirs | QDir::AllDirs)) && info->isDir())
         return false;
 
     if (!(filters & QDir::Files) && info->isFile())

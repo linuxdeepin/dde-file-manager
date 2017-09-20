@@ -432,7 +432,7 @@ void DFileDialog::setOptions(QFileDialog::Options options)
     getFileView()->model()->setReadOnly(options.testFlag(QFileDialog::ReadOnly));
 
     if (options.testFlag(QFileDialog::ShowDirsOnly))
-        getFileView()->setFilters(getFileView()->filters() & ~QDir::Dirs);
+        getFileView()->setFilters(getFileView()->filters() & ~QDir::Files & ~QDir::Drives);
 }
 
 void DFileDialog::setOption(QFileDialog::Option option, bool on)
