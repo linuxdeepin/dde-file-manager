@@ -64,7 +64,7 @@ public:
     QPointer<DTK_CORE_NAMESPACE::DSettings> settings();
 
 signals:
-
+    void showHiddenChanged(bool isShowedHiddenFile);
 public slots:
     void onValueChanged(const QString& key, const QVariant& value);
     void onConfigFileChanged(const DUrl &fromUrl, const DUrl &toUrl);
