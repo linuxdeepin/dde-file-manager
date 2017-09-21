@@ -66,12 +66,12 @@
     <message>
         <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="90"/>
         <source>Only desktop</source>
-        <translation type="unfinished"/>
+        <translation>Tik darbalaukiui</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="93"/>
         <source>Only lock screen</source>
-        <translation type="unfinished"/>
+        <translation>Tik užrakto ekranui</translation>
     </message>
 </context>
 <context>
@@ -79,7 +79,7 @@
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
         <source>Fast Screen Off</source>
-        <translation type="unfinished"/>
+        <translation>Greitas ekrano išjungimas</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>

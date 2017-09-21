@@ -79,7 +79,7 @@
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
         <source>Fast Screen Off</source>
-        <translation type="unfinished"/>
+        <translation>Extinction d&apos;écran rapide</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>

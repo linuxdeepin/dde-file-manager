@@ -25,7 +25,7 @@
     <message>
         <location filename="../view/mainpage.cpp" line="104"/>
         <source>Label</source>
-        <translation type="unfinished"/>
+        <translation>التسمية</translation>
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="113"/>
@@ -35,7 +35,7 @@
     <message>
         <location filename="../view/mainpage.cpp" line="130"/>
         <source>This operation will clear all data from your device.</source>
-        <translation type="unfinished"/>
+        <translation>ستؤدي هذه العملية إلى مسح كافة البيانات من جهازك.</translation>
     </message>
 </context>
 <context>
@@ -74,7 +74,7 @@
     <message>
         <location filename="../view/mainwindow.cpp" line="202"/>
         <source>Your disk is removed when formatting</source>
-        <translation>قرصك أخرج أثناء التهيئة</translation>
+        <translation>القرص أخرج أثناء التهيئة</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="206"/>
@@ -108,7 +108,7 @@
     <message>
         <location filename="../view/warnpage.cpp" line="19"/>
         <source>Formating operation will clear all data from your disk, are you sure to continue? This option can not be restored.</source>
-        <translation type="unfinished"/>
+        <translation>ستؤدي عملية التهيئة إلى مسح كافة البيانات من جهازك.، هل أنت متأكد من الاستمرار؟ لا يمكن استعادة هذا الخيار.</translation>
     </message>
 </context>
 </TS>

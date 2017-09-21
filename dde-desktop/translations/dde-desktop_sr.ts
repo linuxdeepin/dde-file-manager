@@ -4,7 +4,7 @@
     <message>
         <location filename="../view/canvasgridview.cpp" line="1825"/>
         <source>Icon size</source>
-        <translation type="unfinished"/>
+        <translation>Величина иконице</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="1831"/>
@@ -15,7 +15,7 @@
         <location filename="../view/canvasgridview.cpp" line="1839"/>
         <location filename="../view/canvasgridview.cpp" line="1952"/>
         <source>Properties</source>
-        <translation type="unfinished"/>
+        <translation>Својства</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="1870"/>
@@ -38,27 +38,27 @@
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="12"/>
         <source>Tiny</source>
-        <translation type="unfinished"/>
+        <translation>Сићушно</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="13"/>
         <source>Small</source>
-        <translation type="unfinished"/>
+        <translation>Мало</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="14"/>
         <source>Medium</source>
-        <translation type="unfinished"/>
+        <translation>Средње</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="15"/>
         <source>Large</source>
-        <translation type="unfinished"/>
+        <translation>Велико</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="16"/>
         <source>Super large</source>
-        <translation type="unfinished"/>
+        <translation>Веома велико</translation>
     </message>
 </context>
 <context>
@@ -66,12 +66,12 @@
     <message>
         <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="90"/>
         <source>Only desktop</source>
-        <translation type="unfinished"/>
+        <translation>Само радна површ</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="93"/>
         <source>Only lock screen</source>
-        <translation type="unfinished"/>
+        <translation>Само закључани екран</translation>
     </message>
 </context>
 <context>
@@ -79,37 +79,37 @@
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
         <source>Fast Screen Off</source>
-        <translation type="unfinished"/>
+        <translation>Брзо гашење екрана</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
         <source>Control Center</source>
-        <translation type="unfinished"/>
+        <translation>Контролни центар</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
         <source>All Windows</source>
-        <translation type="unfinished"/>
+        <translation>Сви прозори</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
         <source>Launcher</source>
-        <translation type="unfinished"/>
+        <translation>Покретач</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
         <source>Desktop</source>
-        <translation type="unfinished"/>
+        <translation>Радна површина </translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
         <source>None</source>
-        <translation type="unfinished"/>
+        <translation>Ништа</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="57"/>
         <source>Close Window</source>
-        <translation type="unfinished"/>
+        <translation>Затвори прозор</translation>
     </message>
 </context>
 </TS>

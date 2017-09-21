@@ -30,7 +30,7 @@
     <message>
         <location filename="../view/canvasgridview.cpp" line="1880"/>
         <source>Set Wallpaper</source>
-        <translation>Duvar Kağıdı Ayarla</translation>
+        <translation>Duvar Kağıdını Ayarla</translation>
     </message>
 </context>
 <context>

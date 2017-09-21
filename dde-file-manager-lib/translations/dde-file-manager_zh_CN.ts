@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>CloseAllDialogIndicator</name>
     <message>
@@ -365,7 +363,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="742"/>
         <source>Target file removed or location changed</source>
-        <translation>目标文件位置已被更改或移除]</translation>
+        <translation>目标文件位置已被更改或移除</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="744"/>
@@ -576,20 +574,12 @@
     <message>
         <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="24"/>
         <source>UnLock</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Connect</source>
-        <translation type="vanished">连接</translation>
+        <translation>解锁</translation>
     </message>
     <message>
         <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="28"/>
         <source>Please input password to decrypt the disk</source>
         <translation>输入密码来解锁此磁盘</translation>
-    </message>
-    <message>
-        <source>Password</source>
-        <translation type="vanished">密码</translation>
     </message>
 </context>
 <context>
@@ -778,10 +768,6 @@
         <location filename="../dialogs/openwithdialog.cpp" line="204"/>
         <source>Recommended Applications</source>
         <translation>推荐应用</translation>
-    </message>
-    <message>
-        <source>Recommand Applications</source>
-        <translation type="vanished">推荐应用</translation>
     </message>
     <message>
         <location filename="../dialogs/openwithdialog.cpp" line="206"/>
@@ -1034,10 +1020,6 @@
         <translation>打开方式</translation>
     </message>
     <message>
-        <source>Open file loaction</source>
-        <translation type="vanished">打开文件所在位置</translation>
-    </message>
-    <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="668"/>
         <source>Compress</source>
         <translation>压缩</translation>
@@ -1098,14 +1080,6 @@
         <location filename="../interfaces/dfilemenumanager.cpp" line="680"/>
         <source>Add to bookmark</source>
         <translation>添加书签</translation>
-    </message>
-    <message>
-        <source>Throw to Trash</source>
-        <translation type="vanished">丢到回收站</translation>
-    </message>
-    <message>
-        <source>Permanently delete</source>
-        <translation type="vanished">彻底删除</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="683"/>
@@ -1173,10 +1147,6 @@
         <translation>文本文档</translation>
     </message>
     <message>
-        <source>Safely Remove Drive</source>
-        <translation type="vanished">安全移除驱动器</translation>
-    </message>
-    <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="707"/>
         <source>Time created</source>
         <translation>创建时间</translation>
@@ -1224,11 +1194,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="667"/>
         <source>Open file location</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Detele</source>
-        <translation type="vanished">删除</translation>
+        <translation>打开文件所在位置</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="681"/>
@@ -1682,22 +1648,22 @@
     <message>
         <location filename="../views/drenamebar.cpp" line="214"/>
         <source>Replace Text</source>
-        <translation type="unfinished"></translation>
+        <translation>替换文本</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="214"/>
         <source>Add Text</source>
-        <translation type="unfinished"></translation>
+        <translation>添加文本</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="214"/>
         <source>Custom Text</source>
-        <translation type="unfinished"></translation>
+        <translation>自定义文本</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="220"/>
         <source>Find</source>
-        <translation type="unfinished"></translation>
+        <translation>查找</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="221"/>
@@ -1706,52 +1672,52 @@
         <location filename="../views/drenamebar.cpp" line="249"/>
         <location filename="../views/drenamebar.cpp" line="257"/>
         <source>Required</source>
-        <translation type="unfinished"></translation>
+        <translation>必填</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="227"/>
         <source>Replace</source>
-        <translation type="unfinished">替换</translation>
+        <translation>替换</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="234"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>添加</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="242"/>
         <source>Location</source>
-        <translation type="unfinished"></translation>
+        <translation>位置</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="243"/>
         <source>Before file name</source>
-        <translation type="unfinished"></translation>
+        <translation>名称之前</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="243"/>
         <source>After file name</source>
-        <translation type="unfinished"></translation>
+        <translation>名称之后</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="248"/>
         <source>File name</source>
-        <translation type="unfinished"></translation>
+        <translation>文件名</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="256"/>
         <source>SN</source>
-        <translation type="unfinished"></translation>
+        <translation>序列</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="262"/>
         <source>Tips: Sort by selected file order</source>
-        <translation type="unfinished"></translation>
+        <translation>提示：根据选择文件的顺序先后排序</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="266"/>
         <source>Cancel</source>
-        <translation type="unfinished">取消</translation>
+        <translation>取消</translation>
     </message>
 </context>
 <context>

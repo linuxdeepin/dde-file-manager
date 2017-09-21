@@ -12,7 +12,7 @@
     <message>
         <location filename="../view/formatingpage.cpp" line="19"/>
         <source>Formating, please wait for a minute...</source>
-        <translation>Biçimlendiriliyor, lütfen bir dakika bekleyin...</translation>
+        <translation>Biçimlendiriliyor, lütfen bir dakika bekleyiniz...</translation>
     </message>
 </context>
 <context>

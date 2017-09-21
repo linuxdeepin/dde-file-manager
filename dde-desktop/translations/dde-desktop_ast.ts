@@ -79,7 +79,7 @@
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
         <source>Fast Screen Off</source>
-        <translation type="unfinished"/>
+        <translation>Pantalla rápida desactivada</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
@@ -104,7 +104,7 @@
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
         <source>None</source>
-        <translation type="unfinished"/>
+        <translation>Dengún</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="57"/>

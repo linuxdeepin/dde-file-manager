@@ -30,7 +30,7 @@
     <message>
         <location filename="../view/mainpage.cpp" line="113"/>
         <source>Fast format</source>
-        <translation>Брзи формат</translation>
+        <translation>Брзо форматирање</translation>
     </message>
     <message>
         <location filename="../view/mainpage.cpp" line="130"/>
@@ -74,7 +74,7 @@
     <message>
         <location filename="../view/mainwindow.cpp" line="202"/>
         <source>Your disk is removed when formatting</source>
-        <translation>Ваш диск ће се уклонити при форматирању</translation>
+        <translation>Ваш диск је уклоњен током форматирања</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="206"/>
