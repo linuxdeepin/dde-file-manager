@@ -4,12 +4,12 @@
         <message>
             <location filename="Desktop Entry]Comment" line="0"/>
             <source>Browse the file system</source>
-            <translation>Прегледај фајл систем</translation>
+            <translation>Претражуј систем података</translation>
         </message>
         <message>
             <location filename="Desktop Entry]Name" line="0"/>
             <source>Deepin File Manager</source>
-            <translation>Deepin фајл менаџер</translation>
+            <translation>Дипин управник података</translation>
         </message>
         <message>
             <location filename="Desktop Action new-window]Name" line="0"/>

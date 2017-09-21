@@ -20,7 +20,7 @@
     <message>
         <location filename="../view/canvasgridview.cpp" line="1870"/>
         <source>Display Settings</source>
-        <translation>Ajustes de la pantalla </translation>
+        <translation>Mostrar configuración </translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="1875"/>
@@ -38,7 +38,7 @@
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="12"/>
         <source>Tiny</source>
-        <translation>Minúsculo</translation>
+        <translation>Muy pequeño</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="13"/>
@@ -58,7 +58,7 @@
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="16"/>
         <source>Super large</source>
-        <translation>Gigantesco</translation>
+        <translation>Muy grande</translation>
     </message>
 </context>
 <context>
@@ -79,37 +79,37 @@
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
         <source>Fast Screen Off</source>
-        <translation type="unfinished"/>
+        <translation>Apagado rápido de pantalla</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
         <source>Control Center</source>
-        <translation type="unfinished"/>
+        <translation>Centro de control</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
         <source>All Windows</source>
-        <translation type="unfinished"/>
+        <translation>Todas las ventanas</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
         <source>Launcher</source>
-        <translation type="unfinished"/>
+        <translation>Lanzador</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
         <source>Desktop</source>
-        <translation type="unfinished"/>
+        <translation>Escritorio</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
         <source>None</source>
-        <translation type="unfinished"/>
+        <translation>Ninguno</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="57"/>
         <source>Close Window</source>
-        <translation type="unfinished"/>
+        <translation>Cerrar ventana</translation>
     </message>
 </context>
 </TS>

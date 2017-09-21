@@ -108,7 +108,7 @@
     <message>
         <location filename="../view/warnpage.cpp" line="19"/>
         <source>Formating operation will clear all data from your disk, are you sure to continue? This option can not be restored.</source>
-        <translation type="unfinished"/>
+        <translation>Operasi pemformatan akan menghapus semua data Anda dari diska, apakah Anda yakin untuk melanjutkan? Opsi ini tidak dapat dikembalikan.</translation>
     </message>
 </context>
 </TS>

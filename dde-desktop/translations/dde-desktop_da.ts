@@ -38,7 +38,7 @@
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="12"/>
         <source>Tiny</source>
-        <translation>Lille bitte</translation>
+        <translation>Meget lille</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="13"/>
@@ -66,12 +66,12 @@
     <message>
         <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="90"/>
         <source>Only desktop</source>
-        <translation>Kun desktop</translation>
+        <translation>Kun skrivebord</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="93"/>
         <source>Only lock screen</source>
-        <translation>Kun lås af skærm</translation>
+        <translation>Kun låseskærm</translation>
     </message>
 </context>
 <context>
@@ -94,12 +94,12 @@
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
         <source>Launcher</source>
-        <translation>Launcher</translation>
+        <translation>Starter</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
         <source>Desktop</source>
-        <translation>Desktop</translation>
+        <translation>Skrivebord</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
@@ -109,7 +109,7 @@
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="57"/>
         <source>Close Window</source>
-        <translation>Luk vinduet</translation>
+        <translation>Luk vindue</translation>
     </message>
 </context>
 </TS>
