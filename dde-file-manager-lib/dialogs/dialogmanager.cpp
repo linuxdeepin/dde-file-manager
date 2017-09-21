@@ -538,7 +538,9 @@ void DialogManager::showTrashPropertyDialog(const DFMEvent &event)
 void DialogManager::showComputerPropertyDialog()
 {
     if (m_computerDialog){
-        m_computerDialog->close();
+        m_computerDialog->show();
+        m_computerDialog->raise();
+        return;
     }
     m_computerDialog = new ComputerPropertyDialog;
     QPoint pos = getPerportyPos(m_computerDialog->size().width(), m_computerDialog->size().height(), 1, 0);
