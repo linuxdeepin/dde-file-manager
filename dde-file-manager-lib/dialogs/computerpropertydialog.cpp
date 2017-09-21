@@ -35,7 +35,6 @@ ComputerPropertyDialog::ComputerPropertyDialog(QWidget *parent) : QDialog(parent
 void ComputerPropertyDialog::initUI()
 {
     setWindowFlags(Qt::FramelessWindowHint);
-    setAttribute(Qt::WA_DeleteOnClose);
     DTitlebar* titlebar = new DTitlebar(this);
     titlebar->setWindowFlags(Qt::WindowCloseButtonHint);
     titlebar->setFixedHeight(30);
