@@ -598,6 +598,7 @@ void DBookmarkScene::volumeRemoved(UDiskDeviceInfoPointer device)
     {
         handleVolumeMountRemove(device, item);
         m_diskItems.remove(device->getDiskInfo().id());
+        m_uuid_diskItems.remove(device->getDiskInfo().uuid());
         remove(item);
         item->deleteLater();
     }
