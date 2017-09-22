@@ -439,6 +439,7 @@ int DialogManager::showDeleteFilesClearTrashDialog(const DFMUrlListBaseEvent &ev
     d.addButton(buttonTexts[0], true, DDialog::ButtonNormal);
     d.addButton(buttonTexts[1], false, DDialog::ButtonWarning);
     d.setDefaultButton(1);
+    d.getButton(1)->setFocus();
     d.moveToCenter();
     int code = d.exec();
     return code;
