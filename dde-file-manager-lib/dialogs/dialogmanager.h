@@ -20,6 +20,7 @@
 
 #include <QObject>
 #include <QMap>
+#include <QIcon>
 
 #include "durl.h"
 #include "dfmglobal.h"
@@ -53,6 +54,7 @@ class DialogManager : public QObject
 public:
     explicit DialogManager(QObject *parent = 0);
     ~DialogManager();
+    void initData();
     void initTaskDialog();
     void initCloseIndicatorDialog();
     void initConnect();
@@ -118,6 +120,11 @@ public slots:
 #endif
 
 private:
+    QIcon m_dialogInfoIcon;
+    QIcon m_dialogWarningIcon;
+    QIcon m_dialogErrorIcon;
+    QIcon m_dialogSharePasswordIcon;
+    QIcon m_dialogTrashFullIcon;
     DTaskDialog* m_taskDialog{ nullptr };
     CloseAllDialogIndicator* m_closeIndicatorDialog{ nullptr };
     TrashPropertyDialog* m_trashDialog{ nullptr };

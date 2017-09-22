@@ -22,6 +22,19 @@
         <file>images/dde-file-manager-admin.png</file>
         <file>images/multiple_files.png</file>
         <file>images/multiple_files@2x.png</file>
+        <file>images/setting_press@2x.png</file>
+        <file>images/setting_normal@2x.png</file>
+        <file>images/setting_hover@2x.png</file>
+        <file>images/trash_full@2x.png</file>
+        <file>images/trash@2x.png</file>
+        <file>images/dde-file-manager_96@2x.png</file>
+        <file>images/textMask@2x.png</file>
+        <file>images/dde-file-manager@2x.png</file>
+        <file>images/share@2x.png</file>
+        <file>images/link@2x.png</file>
+        <file>images/unreadable@2x.png</file>
+        <file>images/lock@2x.png</file>
+        <file>images/dde-file-manager-admin@2x.png</file>
     </qresource>
     <qresource prefix="/devices">
         <file>images/device/drive-harddisk-deepin-256px.svg</file>

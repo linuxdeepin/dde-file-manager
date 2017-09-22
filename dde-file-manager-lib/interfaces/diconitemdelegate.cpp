@@ -363,8 +363,9 @@ void DIconItemDelegate::paint(QPainter *painter,
         painter->fillRect(label_rect, Qt::transparent);
     }
 
-    QImage text_image(label_rect.size(), QImage::Format_ARGB32_Premultiplied);
+    QImage text_image(label_rect.size()*qApp->devicePixelRatio(), QImage::Format_ARGB32_Premultiplied);
     text_image.fill(Qt::transparent);
+    text_image.setDevicePixelRatio(qApp->devicePixelRatio());
 
     if (isSelected)
         painter->setPen(opt.palette.color(QPalette::BrightText));
@@ -380,8 +381,8 @@ void DIconItemDelegate::paint(QPainter *painter,
     }
 
     if (!isSelected && d->enabledTextShadow) {
-        const QPixmap &text_pixmap = QPixmap::fromImage(text_image);
-
+        QPixmap text_pixmap = QPixmap::fromImage(text_image);
+        text_pixmap.setDevicePixelRatio(qApp->devicePixelRatio());
         qt_blurImage(text_image, 3, false);
         QPainter tmpPainter(&text_image);
         tmpPainter.setCompositionMode(QPainter::CompositionMode_SourceIn);

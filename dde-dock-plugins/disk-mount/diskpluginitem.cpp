@@ -20,6 +20,7 @@
 #include <QMouseEvent>
 #include <QIcon>
 #include <QtMath>
+#include <QApplication>
 
 DiskPluginItem::DiskPluginItem(QWidget *parent)
     : QWidget(parent),
@@ -40,7 +41,7 @@ void DiskPluginItem::paintEvent(QPaintEvent *e)
     QWidget::paintEvent(e);
 
     QPainter painter(this);
-    painter.drawPixmap(rect().center() - m_icon.rect().center(), m_icon);
+    painter.drawPixmap(rect().center() - m_icon.rect().center() / qApp->devicePixelRatio(), m_icon);
 }
 
 void DiskPluginItem::resizeEvent(QResizeEvent *e)
@@ -74,10 +75,10 @@ void DiskPluginItem::updateIcon()
 {
     if (m_displayMode == Dock::Efficient)
 //        m_icon = ImageUtil::loadSvg(":/icons/resources/icon-small.svg", 16);
-        m_icon = QIcon::fromTheme("drive-removable-dock-symbolic").pixmap(16, 16);
+        m_icon = QIcon::fromTheme("drive-removable-dock-symbolic").pixmap(16 * qApp->devicePixelRatio(), 16 * qApp->devicePixelRatio());
     else
 //        m_icon = ImageUtil::loadSvg(":/icons/resources/icon.svg", std::min(width(), height()) * 0.8);
-        m_icon = QIcon::fromTheme("drive-removable-dock").pixmap(std::min(width(), height()) * 0.8, std::min(width(), height()) * 0.8);
-
+        m_icon = QIcon::fromTheme("drive-removable-dock").pixmap(std::min(width(), height()) * 0.8 * qApp->devicePixelRatio(), std::min(width(), height()) * 0.8 * qApp->devicePixelRatio());
+    m_icon.setDevicePixelRatio(qApp->devicePixelRatio());
     update();
 }

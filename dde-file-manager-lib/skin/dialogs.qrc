@@ -22,11 +22,17 @@
         <file>dialogs/images/light/window_min_normal.png</file>
         <file>dialogs/images/light/window_min_press.png</file>
         <file>dialogs/images/user-trash-full-opened.png</file>
-        <file>dialogs/images/dialog_warning_64.png</file>
         <file>dialogs/images/share_password.png</file>
         <file>dialogs/images/deepin_logo.png</file>
-        <file>dialogs/images/dialog_error_64.png</file>
-        <file>dialogs/images/dialog_info_64.png</file>
+        <file>dialogs/images/user-trash-full-opened@2x.png</file>
+        <file>dialogs/images/share_password@2x.png</file>
+        <file>dialogs/images/dialog_info@2x.png</file>
+        <file>dialogs/images/dialog_error@2x.png</file>
+        <file>dialogs/images/dialog_warning@2x.png</file>
+        <file>dialogs/images/deepin_logo@2x.png</file>
+        <file>dialogs/images/dialog_info.png</file>
+        <file>dialogs/images/dialog_error.png</file>
+        <file>dialogs/images/dialog_warning.png</file>
     </qresource>
     <qresource prefix="/qss">
         <file>dialogs/qss/dark.qss</file>

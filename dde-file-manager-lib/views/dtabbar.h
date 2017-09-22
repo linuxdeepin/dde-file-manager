@@ -137,6 +137,12 @@ private:
     bool m_mousePressed{ false };
     int m_closingIndex{ 0 };
     bool m_activeWidthTab{ false };
+    QIcon m_active_normalIcon;
+    QIcon m_active_hoverIcon;
+    QIcon m_active_pressIcon;
+    QIcon m_normalIcon;
+    QIcon m_hoverIcon;
+    QIcon m_pressIcon;
 };
 
 class TabBar:public QGraphicsView{

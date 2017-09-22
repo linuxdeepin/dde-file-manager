@@ -57,5 +57,7 @@ QString joinPath(const QString &path, const QString& fileName);
 QByteArray joinPath(const QByteArray &path, const QByteArray& fileName);
 
 QPixmap svgToPixmap(const QString& path, int w, int h);
+QPixmap svgToHDPIPixmap(const QString& path);
+QPixmap svgToHDPIPixmap(const QString& path, int w, int h);
 #endif // UTILS_H
 

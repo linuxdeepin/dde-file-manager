@@ -58,8 +58,13 @@
 #include "dfmglobal.h"
 #include "dbookmarkscene.h"
 #include "dutil.h"
+#include "utils/utils.h"
 
 DWIDGET_USE_NAMESPACE
+
+
+int DBookmarkItem::DEFAULT_ICON_SIZE = 16;
+
 
 DBookmarkItem::DBookmarkItem()
 {
@@ -247,11 +252,14 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
 //    double w = m_width;
     QColor textColor;
     double leftPadding = 13;
-    double dy;
+    double dy = (m_height - DEFAULT_ICON_SIZE)/2;
     QPixmap press;
     QPixmap checked;
     QPixmap release;
     QPixmap hover;
+
+    QRect iconRect(leftPadding, dy, DEFAULT_ICON_SIZE, DEFAULT_ICON_SIZE);
+
     if(m_isTightMode)
     {
         press = m_pressImageBig;
@@ -285,7 +293,7 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
             painter->drawRect(m_x_axis, m_y_axis, m_width, m_height);
             textColor = m_textHoverColor;
         }
-        painter->drawPixmap(leftPadding, dy,  hover.width(), hover.height(), hover);
+        painter->drawPixmap(iconRect, hover);
     }
     else if(m_pressed)
     {
@@ -296,7 +304,7 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
             painter->drawRect(m_x_axis, m_y_axis, m_width, m_height);
             textColor = m_textPressColor;
         }
-        painter->drawPixmap(leftPadding, dy, press.width(), press.height(), press);
+        painter->drawPixmap(iconRect, press);
     }else if(!m_hovered && (m_checked && m_checkable))
     {
         if(m_pressBackgroundEnabled)
@@ -306,7 +314,7 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
             painter->drawRect(m_x_axis, m_y_axis, m_width, m_height);
             textColor = m_textCheckedColor;
         }
-        painter->drawPixmap(leftPadding, dy, checked.width(), checked.height(), checked);
+        painter->drawPixmap(iconRect, checked);
         if (!m_isMountedIndicator){
             painter->setPen(QColor(43,167,248,25));
             painter->drawLine(0, 0, m_width-3, 0);
@@ -322,7 +330,7 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
             painter->drawRect(m_x_axis, m_y_axis, m_width, m_height);
             textColor = m_textCheckedColor;
         }
-        painter->drawPixmap(leftPadding, dy, release.width(), release.height(), checked);
+        painter->drawPixmap(iconRect, checked);
 
         if (!m_isMountedIndicator){
             painter->setPen(QColor(0,0,0,25));
@@ -341,7 +349,7 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
             painter->drawRect(m_x_axis, m_y_axis, m_width, m_height);
         }
 
-        painter->drawPixmap(leftPadding, dy, release.width(), release.height(), release);
+        painter->drawPixmap(iconRect, release);
         textColor = m_textColor;
     }
 
@@ -394,22 +402,26 @@ void DBookmarkItem::paint(QPainter *painter,const QStyleOptionGraphicsItem *opti
 
 void DBookmarkItem::boundImageToPress(QString imagePath)
 {
-    m_pressImage.load(imagePath);
+    m_pressImage = svgToHDPIPixmap(imagePath);
+//    m_pressImage.load(imagePath);
 }
 
 void DBookmarkItem::boundImageToRelease(QString imagePath)
 {
-    m_releaseImage.load(imagePath);
+    m_releaseImage = svgToHDPIPixmap(imagePath);
+//    m_releaseImage.load(imagePath);
 }
 
 void DBookmarkItem::boundImageToHover(QString imagePath)
 {
-    m_hoverImage.load(imagePath);
+    m_hoverImage = svgToHDPIPixmap(imagePath);
+//    m_hoverImage.load(imagePath);
 }
 
 void DBookmarkItem::boundImageToChecked(QString imagePath)
 {
-    m_checkedImage.load(imagePath);
+    m_checkedImage = svgToHDPIPixmap(imagePath);
+//    m_checkedImage.load(imagePath);
 }
 
 void DBookmarkItem::setPressedIcon(const QString &iconPath)
@@ -419,7 +431,7 @@ void DBookmarkItem::setPressedIcon(const QString &iconPath)
 
 void DBookmarkItem::setPressedIcon(const QIcon &icon)
 {
-    m_pressImage = icon.pixmap(16, 16);
+    m_pressImage = icon.pixmap(DEFAULT_ICON_SIZE, DEFAULT_ICON_SIZE);
 }
 
 void DBookmarkItem::setHoverIcon(const QString &iconPath)
@@ -429,7 +441,7 @@ void DBookmarkItem::setHoverIcon(const QString &iconPath)
 
 void DBookmarkItem::setHoverIcon(const QIcon &icon)
 {
-    m_hoverImage = icon.pixmap(16, 16);
+    m_hoverImage = icon.pixmap(DEFAULT_ICON_SIZE, DEFAULT_ICON_SIZE);
 }
 
 void DBookmarkItem::setReleaseIcon(const QString &iconPath)
@@ -439,7 +451,7 @@ void DBookmarkItem::setReleaseIcon(const QString &iconPath)
 
 void DBookmarkItem::setReleaseIcon(const QIcon &icon)
 {
-    m_releaseImage = icon.pixmap(16, 16);
+    m_releaseImage = icon.pixmap(DEFAULT_ICON_SIZE, DEFAULT_ICON_SIZE);
 }
 
 void DBookmarkItem::setCheckedIcon(const QString &iconPath)
@@ -449,7 +461,7 @@ void DBookmarkItem::setCheckedIcon(const QString &iconPath)
 
 void DBookmarkItem::setCheckedIcon(const QIcon &icon)
 {
-    m_checkedImage = icon.pixmap(16, 16);
+    m_checkedImage = icon.pixmap(DEFAULT_ICON_SIZE, DEFAULT_ICON_SIZE);
 }
 
 QPixmap DBookmarkItem::getCheckedPixmap()
@@ -601,18 +613,6 @@ BookMarkPointer DBookmarkItem::getBookmarkModel()
 void DBookmarkItem::setBookmarkModel(BookMarkPointer bookmark)
 {
     m_bookmarkModel = bookmark;
-}
-
-DBookmarkItem *DBookmarkItem::makeBookmark(const QString &name, const DUrl &url)
-{
-    DBookmarkItem * item = new DBookmarkItem;
-    item->setDefaultItem(false);
-    item->setText(name);
-    item->setUrl(url);
-    item->boundImageToHover(":/icons/images/icons/bookmarks_normal_16px.svg");
-    item->boundImageToPress(":/icons/images/icons/bookmarks_checked_16px.svg");
-    item->boundImageToRelease(":/icons/images/icons/bookmarks_normal_16px.svg");
-    return item;
 }
 
 DBookmarkMountedIndicatorItem *DBookmarkItem::makeMountBookmark(DBookmarkItem *parentItem)

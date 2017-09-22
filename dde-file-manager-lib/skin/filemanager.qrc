@@ -5,14 +5,10 @@
         <file>qss/filemanageradmin.qss</file>
     </qresource>
     <qresource prefix="/images">
-        <file>images/light/checkbox-checked.png</file>
-        <file>images/light/checkbox-unchecked.png</file>
-        <file>images/light/checkbox-unchecked-transparent.png</file>
         <file>images/light/pencil_hover.svg</file>
         <file>images/light/pencil_normal.svg</file>
         <file>images/light/pencil_press.svg</file>
         <file>images/light/select_deactive.png</file>
-        <file>images/light/select.png</file>
         <file>images/Spinner/Spinner01.png</file>
         <file>images/Spinner/Spinner02.png</file>
         <file>images/Spinner/Spinner03.png</file>
@@ -110,6 +106,9 @@
         <file>images/application-x-shellscript.svg</file>
         <file>images/share_large.png</file>
         <file>images/share_small.png</file>
+        <file>images/light/select.png</file>
+        <file>images/light/space16.png</file>
+        <file>images/light/select@2x.png</file>
     </qresource>
     <qresource prefix="/icons">
         <file>images/icons/desktop_checked_16px.svg</file>
@@ -259,8 +258,6 @@
         <file>images/icons/downloads_hover_22px.svg</file>
         <file>images/icons/downloads_normal_16px.svg</file>
         <file>images/icons/downloads_normal_22px.svg</file>
-        <file>images/light/space.png</file>
-        <file>images/light/space16.png</file>
         <file>images/icons/search_hover.png</file>
         <file>images/icons/search_normal.png</file>
         <file>images/icons/search_pressed.png</file>
@@ -317,7 +314,38 @@
         <file>images/icons/preview-dialog-close_round_press.png</file>
         <file>images/icons/preview_dialog_close_round_hover.png</file>
         <file>images/icons/preview-dialog-close_round_normal.png</file>
-        <file>images/light/select.png</file>
+        <file>images/icons/tab_close_hover@2x.png</file>
+        <file>images/icons/tab_close_normal@2x.png</file>
+        <file>images/icons/active_tab_close_normal@2x.png</file>
+        <file>images/icons/active_tab_close_hover@2x.png</file>
+        <file>images/icons/tab_close_press@2x.png</file>
+        <file>images/icons/active_tab_close_press@2x.png</file>
+        <file>images/icons/stop_hover@2x.png</file>
+        <file>images/icons/empty_trash_hover@2x.png</file>
+        <file>images/icons/empty_trash_normal@2x.png</file>
+        <file>images/icons/stop_press@2x.png</file>
+        <file>images/icons/empty_trash_press@2x.png</file>
+        <file>images/icons/stop_normal@2x.png</file>
+        <file>images/icons/search_normal@2x.png</file>
+        <file>images/icons/search_pressed@2x.png</file>
+        <file>images/icons/search_hover@2x.png</file>
+        <file>images/icons/backward_disabled@2x.png</file>
+        <file>images/icons/forward_disabled@2x.png</file>
+        <file>images/icons/backward_normal@2x.png</file>
+        <file>images/icons/forward_normal@2x.png</file>
+        <file>images/icons/icon_view_normal@2x.png</file>
+        <file>images/icons/icon_view_hover@2x.png</file>
+        <file>images/icons/icon_view_checked@2x.png</file>
+        <file>images/icons/backward_press@2x.png</file>
+        <file>images/icons/backward_hover@2x.png</file>
+        <file>images/icons/forward_press@2x.png</file>
+        <file>images/icons/forward_hover@2x.png</file>
+        <file>images/icons/list_view_normal@2x.png</file>
+        <file>images/icons/list_view_hover@2x.png</file>
+        <file>images/icons/list_view_checked@2x.png</file>
+        <file>images/icons/preview_dialog_close_round_hover@2x.png</file>
+        <file>images/icons/preview-dialog-close_round_normal@2x.png</file>
+        <file>images/icons/preview-dialog-close_round_press@2x.png</file>
     </qresource>
     <qresource prefix="/leftsidebar">
         <file>images/leftsidebar/android_active_16px.svg</file>
@@ -350,10 +378,6 @@
         <file>images/leftsidebar/recent_normal_16px.svg</file>
         <file>images/leftsidebar/trash_active_16px.svg</file>
         <file>images/leftsidebar/trash_normal_16px.svg</file>
-        <file>images/leftsidebar/unmount_active_16px.png</file>
-        <file>images/leftsidebar/unmount_hover_16px.png</file>
-        <file>images/leftsidebar/unmount_normal_16px.png</file>
-        <file>images/leftsidebar/unmount_press_16px.png</file>
         <file>images/leftsidebar/usb_active_16px.svg</file>
         <file>images/leftsidebar/usb_normal_16px.svg</file>
         <file>images/leftsidebar/usershare_active_16px.svg</file>
@@ -362,5 +386,9 @@
         <file>images/leftsidebar/videos_normal_16px.svg</file>
         <file>images/leftsidebar/computer_active_16px.svg</file>
         <file>images/leftsidebar/computer_normal_16px.svg</file>
+        <file>images/leftsidebar/unmount_hover_16px.svg</file>
+        <file>images/leftsidebar/unmount_normal_16px.svg</file>
+        <file>images/leftsidebar/unmount_press_16px.svg</file>
+        <file>images/leftsidebar/unmount_active_16px.svg</file>
     </qresource>
 </RCC>

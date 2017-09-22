@@ -431,6 +431,20 @@ TabCloseButton::TabCloseButton(QGraphicsItem *parent):
 {
     setFlag(QGraphicsItem::ItemIsSelectable);
     setAcceptHoverEvents(true);
+
+    m_active_normalIcon.addFile(":/icons/images/icons/active_tab_close_normal.png");
+    m_active_normalIcon.addFile(":/icons/images/icons/active_tab_close_normal@2x.png");
+    m_active_hoverIcon.addFile(":/icons/images/icons/active_tab_close_hover.png");
+    m_active_hoverIcon.addFile(":/icons/images/icons/active_tab_close_hover@2x.png");
+    m_active_pressIcon.addFile(":/icons/images/icons/active_tab_close_press.png");
+    m_active_pressIcon.addFile(":/icons/images/icons/active_tab_close_press@2x.png");
+
+    m_normalIcon.addFile(":/icons/images/icons/tab_close_normal.png");
+    m_normalIcon.addFile(":/icons/images/icons/tab_close_normal@2x.png");
+    m_hoverIcon.addFile(":/icons/images/icons/tab_close_hover.png");
+    m_hoverIcon.addFile(":/icons/images/icons/tab_close_hover@2x.png");
+    m_pressIcon.addFile(":/icons/images/icons/tab_close_press.png");
+    m_pressIcon.addFile(":/icons/images/icons/tab_close_press@2x.png");
 }
 
 QRectF TabCloseButton::boundingRect() const
@@ -443,32 +457,28 @@ void TabCloseButton::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 {
     Q_UNUSED(option);
     Q_UNUSED(widget);
-
-    QString imgSrc;
+    QPixmap pixmap;
+    pixmap.setDevicePixelRatio(qApp->devicePixelRatio());
+    QSize size = boundingRect().size().toSize();
     if(m_mousePressed){
         if(m_activeWidthTab)
-            imgSrc = ":/icons/images/icons/active_tab_close_press.png";
+            pixmap = m_active_pressIcon.pixmap(size);
         else
-            imgSrc = ":/icons/images/icons/tab_close_press.png";
-        QPixmap pixmap(imgSrc);
-        painter->drawPixmap(boundingRect().toRect(),pixmap);
+            pixmap = m_pressIcon.pixmap(size);
     }
     else if(m_mouseHovered){
         if(m_activeWidthTab)
-            imgSrc = ":/icons/images/icons/active_tab_close_hover.png";
+            pixmap = m_active_hoverIcon.pixmap(size);
         else
-            imgSrc = ":/icons/images/icons/tab_close_hover.png";
-        QPixmap pixmap(imgSrc);
-        painter->drawPixmap(boundingRect().toRect(),pixmap);
+            pixmap = m_hoverIcon.pixmap(size);
     }
     else{
         if(m_activeWidthTab)
-            imgSrc = ":/icons/images/icons/active_tab_close_normal.png";
+            pixmap = m_active_normalIcon.pixmap(size);
         else
-            imgSrc = ":/icons/images/icons/tab_close_normal.png";
-        QPixmap pixmap(imgSrc);
-        painter->drawPixmap(boundingRect().toRect(),pixmap);
+            pixmap = m_normalIcon.pixmap(size);
     }
+    painter->drawPixmap(boundingRect().toRect(),pixmap);
 }
 
 int TabCloseButton::closingIndex()

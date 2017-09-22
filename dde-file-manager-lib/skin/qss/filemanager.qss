@@ -9,13 +9,13 @@ QMainWindow{
 
 QPushButton#LogoButton{
    border: none;
-   image: url(:/images/images/dde-file-manager.svg);
+   image: url(:/images/images/dde-file-manager.png);
 }
 QPushButton#LogoButton:hover{
-   image: url(:/images/images/dde-file-manager.svg);
+   image: url(:/images/images/dde-file-manager.png);
 }
 QPushButton#LogoButton:press{
-   image: url(:/images/images/dde-file-manager.svg);
+   image: url(:/images/images/dde-file-manager.png);
 }
 
 QFrame#TitleBar{
@@ -179,6 +179,7 @@ QPushButton#backButton{
     border-bottom-left-radius: 4px;
     image: url(:/icons/images/icons/backward_normal.png);
     icon-size: 16px 16px;
+    padding: 3px, 3px, 4px, 3px;
 }
 
 QPushButton#backButton:hover{
@@ -189,11 +190,13 @@ QPushButton#backButton:hover{
     color: white;
     image: url(:/icons/images/icons/backward_hover.png);
     icon-size: 16px 16px;
+    padding: 3px, 3px, 3px, 3px;
 }
 
 QPushButton#backButton:checked{
     border: 1px solid #2794ff;
     background-color:#2ca7f8;
+    padding: 3px, 3px, 3px, 3px;
 }
 
 QPushButton#backButton:disabled{
@@ -202,6 +205,7 @@ QPushButton#backButton:disabled{
     border-top: 1px solid rgba(0, 0, 0, 0.1);
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     image: url(:/icons/images/icons/backward_disabled.png);
+    padding: 3px, 3px, 4px, 3px;
 }
 
 
@@ -215,6 +219,7 @@ QPushButton#forwardButton{
     border-bottom-right-radius: 4px;
     image: url(:/icons/images/icons/forward_normal.png);
     icon-size: 16px 16px;
+    padding: 4px, 3px, 3px, 3px;
 }
 
 QPushButton#forwardButton:hover{
@@ -225,6 +230,7 @@ QPushButton#forwardButton:hover{
     color: white;
     image: url(:/icons/images/icons/forward_hover.png);
     icon-size: 16px 16px;
+    padding: 3px, 3px, 3px, 3px;
 }
 
 QPushButton#forwardButton:disabled{
@@ -233,6 +239,7 @@ QPushButton#forwardButton:disabled{
     border-right: 1px solid rgba(0, 0, 0, 0.1);
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     image: url(:/icons/images/icons/forward_disabled.png);
+    padding: 4px, 3px, 3px, 3px;
 }
 
 QPushButton#leftArrow:hover{
@@ -307,34 +314,13 @@ QPushButton#settingsButton::menu-indicator {
      image: url();
  }
 
-QPushButton#hierarchicalButton{
-    background-color:white;
-    border: 1px;
-    color: black;
-    border-radius: 2px;
-    icon-size: 16px 16px;
-    image: url(:/icons/images/icons/hierarchical_view_normal.svg);
-
-}
-
-QPushButton#hierarchicalButton:checked{
-    background-color:#2ca7f8;
-    image: url(:/icons/images/icons/hierarchical_view_hover.svg);
-    icon-size: 16px 16px;
-}
-
-QPushButton#hierarchicalButton:unchecked{
-    background-color:white;
-    image: url(:/icons/images/icons/hierarchical_view_normal.svg);
-    icon-size: 16px 16px;
-}
-
 QPushButton#searchButton{
     background-color:white;
     image: url(:/icons/images/icons/search_normal.png);
     border: 1px solid rgba(0, 0, 0, 0.1);
     color: black;
     border-radius: 4px;
+    padding: 3px, 3px, 3px, 3px;
 }
 
 QPushButton#searchButton:pressed{
@@ -342,6 +328,7 @@ QPushButton#searchButton:pressed{
     image: url(:/icons/images/icons/search_pressed.png);
     border: 1px solid #1088ff;
     color: white;
+    padding: 3px, 3px, 3px, 3px;
 }
 
 
@@ -352,6 +339,7 @@ QPushButton#searchButton:hover{
     image: url(:/icons/images/icons/search_hover.png);
     border: 1px solid #3caafd;
     color: white;
+    padding: 3px, 3px, 3px, 3px;
 }
 
 /* ******************DCrumbButton****************** */
@@ -412,20 +400,6 @@ QLineEdit#DSearchBar{
     border-radius: 4px;
 }
 
-
-QPushButton#InputClearButton{
-    /*border-image: url(:/icons/images/icons/input_normalclear_normal.png);*/
-}
-
-QPushButton#InputClearButton:hover{
-    /*border-image: url(:/icons/images/icons/input_normalclear_hover.png);*/
-    border: 1px solid red;
-}
-
-QPushButton#InputClearButton:pressed{
-    /*border-image: url(:/icons/images/icons/input_normalclear_press.png);*/
-}
-
 QListWidget#SearchList{
     background-color: white;
     border:1px solid rgba(0, 0, 0, 50);
@@ -450,47 +424,6 @@ QListWidget#SearchList::item:hover{
 
 /******************End of Menu*************************/
 
-/******************Left Side Bar************************/
-QLabel#FileLabel{
-    background: transparent;
-    color: black;
-    text-align: left;
-    font-size: 14px;
-}
-
-QPushButton#TightFileButton{
-    border: none;
-    color: white;
-    image: url(:/icons/images/icons/file_normal_22px.svg);
-    text-align: left;
-}
-
-QPushButton#TightFileButton:hover{
-    image: url(:/icons/images/icons/file_hover_22px.svg);
-}
-
-QPushButton#TightFileButton:press{
-    image: url(:/icons/images/icons/file_hover_22px.svg);
-}
-
-QPushButton#FileButton{
-    border: none;
-    color: white;
-    image: url(:/icons/images/icons/file_normal_16px.svg);
-    text-align: left;
-}
-
-QPushButton#FileButton:hover{
-    /*image: url(:/icons/images/icons/file_hover_16px.svg);*/
-}
-
-QPushButton#FileButton:press{
-    /*image: url(:/icons/images/icons/file_hover_16px.svg);*/
-}
-
-
-
-/******************End of Left Side Bar ****************/
 QPushButton#DCheckableButton{
     background-color:transparent;
     border: none;

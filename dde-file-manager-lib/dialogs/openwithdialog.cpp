@@ -58,6 +58,7 @@ protected:
 
 private:
     QIcon m_icon;
+    QIcon m_checkedIcon;
     QLabel *m_checkLabel;
     QLabel *m_iconLabel;
     QLabel *m_label;
@@ -69,6 +70,10 @@ OpenWithDialogListItem::OpenWithDialogListItem(const QIcon &icon, const QString 
 {
     if (m_icon.isNull())
         m_icon = QIcon::fromTheme("application-x-desktop");
+
+    m_checkedIcon = QIcon();
+    m_checkedIcon.addFile(":/images/images/light/select.png");
+    m_checkedIcon.addFile(":/images/images/light/select@2x.png");
 
     m_checkLabel = new QLabel(this);
     m_checkLabel->setFixedSize(10, 10);
@@ -93,7 +98,9 @@ OpenWithDialogListItem::OpenWithDialogListItem(const QIcon &icon, const QString 
 void OpenWithDialogListItem::setChecked(bool checked)
 {
     if (checked) {
-        m_checkLabel->setPixmap(QPixmap(":/icons/images/light/select.png"));
+        QPixmap p =m_checkedIcon.pixmap(12, 10);
+        p.setDevicePixelRatio(qApp->devicePixelRatio());
+        m_checkLabel->setPixmap(p);
     } else {
         m_checkLabel->setPixmap(QPixmap());
     }

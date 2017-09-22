@@ -49,6 +49,8 @@ public:
     DBookmarkItem(UDiskDeviceInfoPointer deviceInfo);
 
     DBookmarkItem(BookMark * bookmark);
+
+    static int DEFAULT_ICON_SIZE;
     void setDeviceInfo(UDiskDeviceInfoPointer deviceInfo);
     QRectF boundingRect() const;
     void setTightMode(bool v);
@@ -134,7 +136,7 @@ public:
     int windowId();
     BookMarkPointer getBookmarkModel();
     void setBookmarkModel(BookMarkPointer bookmark);
-    static DBookmarkItem* makeBookmark(const QString &name, const DUrl &url);
+
     static DBookmarkMountedIndicatorItem* makeMountBookmark(DBookmarkItem* parentItem);
     void editMode();
     void updateMountIndicator();

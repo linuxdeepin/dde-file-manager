@@ -151,6 +151,7 @@ QPushButton#backButton{
     border-bottom-left-radius: 4px;
     image: url(:/icons/images/icons/backward_normal.png);
     icon-size: 16px 16px;
+    padding: 3px, 3px, 4px, 3px;
 }
 
 QPushButton#backButton:hover{
@@ -161,11 +162,13 @@ QPushButton#backButton:hover{
     color: white;
     image: url(:/icons/images/icons/backward_hover.png);
     icon-size: 16px 16px;
+    padding: 3px, 3px, 3px, 3px;
 }
 
 QPushButton#backButton:checked{
     border: 1px solid #2794ff;
     background-color:#2ca7f8;
+    padding: 3px, 3px, 3px, 3px;
 }
 
 QPushButton#backButton:disabled{
@@ -174,6 +177,7 @@ QPushButton#backButton:disabled{
     border-top: 1px solid rgba(0, 0, 0, 0.1);
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     image: url(:/icons/images/icons/backward_disabled.png);
+    padding: 3px, 3px, 4px, 3px;
 }
 
 QPushButton#forwardButton{
@@ -186,6 +190,7 @@ QPushButton#forwardButton{
     border-bottom-right-radius: 4px;
     image: url(:/icons/images/icons/forward_normal.png);
     icon-size: 16px 16px;
+    padding: 4px, 3px, 3px, 3px;
 }
 
 QPushButton#forwardButton:hover{
@@ -196,6 +201,7 @@ QPushButton#forwardButton:hover{
     color: white;
     image: url(:/icons/images/icons/forward_hover.png);
     icon-size: 16px 16px;
+    padding: 3px, 3px, 3px, 3px;
 }
 
 QPushButton#forwardButton:disabled{
@@ -204,6 +210,7 @@ QPushButton#forwardButton:disabled{
     border-right: 1px solid rgba(0, 0, 0, 0.1);
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     image: url(:/icons/images/icons/forward_disabled.png);
+    padding: 4px, 3px, 3px, 3px;
 }
 
 QPushButton#leftArrow:hover{
