@@ -46,6 +46,7 @@ ZoneMainWindow::ZoneMainWindow(QWidget *parent)
 
 #ifndef DISABLE_DEMO_VIDEO
     m_videoWidget = new DVideoWidget(this);
+    m_videoWidget->setSourceVideoPixelRatio(devicePixelRatioF());
     QTimer::singleShot(1000, this, &ZoneMainWindow::onDemoVideo);
 #endif
 
@@ -104,9 +105,11 @@ void ZoneMainWindow::onDemoVideo()
     list->addMedia(QUrl("qrc:/images/Prompt.mov"));
     list->setPlaybackMode(QMediaPlaylist::Loop);
 
-    int x = (this->rect().right() - 450) / 2;
-    int y = (this->rect().bottom() - 348) / 2;
-    m_videoWidget->setGeometry(x, y, 450, 348);
+    const qreal ratio = devicePixelRatioF();
+
+    int x = (rect().right() - 450 * ratio) / 2;
+    int y = (rect().bottom() - 348 * ratio) / 2;
+    m_videoWidget->setGeometry(x, y, 450 * ratio, 348 * ratio);
 
     m_videoWidget->setSource(player);
     player->setPlaylist(list);
