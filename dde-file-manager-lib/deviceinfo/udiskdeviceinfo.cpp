@@ -271,21 +271,21 @@ QIcon UDiskDeviceInfo::fileIcon() const
 QIcon UDiskDeviceInfo::fileIcon(int width, int height) const
 {
     if(getType() == "native")
-        return QIcon(svgToPixmap(":/devices/images/device/drive-harddisk-256px.svg", width, height));
+        return QIcon(svgToHDPIPixmap(":/devices/images/device/drive-harddisk-256px.svg", width, height));
     else if(getType() == "removable")
-        return QIcon(svgToPixmap(":/devices/images/device/drive-removable-media-usb-256px.svg", width, height));
+        return QIcon(svgToHDPIPixmap(":/devices/images/device/drive-removable-media-usb-256px.svg", width, height));
     else if(getType() == "network")
-        return QIcon(svgToPixmap(":/devices/images/device/drive-network-256px.svg", width, height));
+        return QIcon(svgToHDPIPixmap(":/devices/images/device/drive-network-256px.svg", width, height));
     else if(getType() == "phone")
-        return QIcon(svgToPixmap(":/devices/images/device/android-device-256px.svg", width, height));
+        return QIcon(svgToHDPIPixmap(":/devices/images/device/android-device-256px.svg", width, height));
     else if(getType() == "iphone")
-        return QIcon(svgToPixmap(":/devices/images/device/ios-device-256px.svg", width, height));
+        return QIcon(svgToHDPIPixmap(":/devices/images/device/ios-device-256px.svg", width, height));
     else if(getType() == "camera")
-        return QIcon(svgToPixmap(":/devices/images/device/camera-256px.svg", width, height));
+        return QIcon(svgToHDPIPixmap(":/devices/images/device/camera-256px.svg", width, height));
     else if(getType() == "dvd")
-        return QIcon(svgToPixmap(":/devices/images/device/media-dvd-256px.svg", width, height));
+        return QIcon(svgToHDPIPixmap(":/devices/images/device/media-dvd-256px.svg", width, height));
     else
-        return QIcon(svgToPixmap(":/devices/images/device/drive-harddisk-256px.svg", width, height));
+        return QIcon(svgToHDPIPixmap(":/devices/images/device/drive-harddisk-256px.svg", width, height));
 }
 
 bool UDiskDeviceInfo::isDir() const

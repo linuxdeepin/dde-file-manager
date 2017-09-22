@@ -17,6 +17,7 @@
 #include <QSvgRenderer>
 #include <QPainter>
 #include <QProcess>
+#include <QGuiApplication>
 #include "utils.h"
 #include "utils.h"
 #include "dmimedatabase.h"
@@ -209,6 +210,19 @@ QPixmap svgToPixmap(const QString &path, int w, int h)
     painter.end();
 
     return pixmap;
+}
+
+QPixmap svgToHDPIPixmap(const QString &path, int w, int h)
+{
+    qreal ratio = qApp->devicePixelRatio();
+    return svgToPixmap(path, w * ratio, h * ratio);
+}
+
+QPixmap svgToHDPIPixmap(const QString &path)
+{
+    QPixmap p(path);
+    qreal ratio = qApp->devicePixelRatio();
+    return svgToPixmap(path, p.width() * ratio, p.height() * ratio);
 }
 
 QString joinPath(const QString &path, const QString &fileName)

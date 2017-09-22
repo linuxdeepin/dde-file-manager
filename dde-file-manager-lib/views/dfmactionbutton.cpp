@@ -12,6 +12,7 @@
 #include <QDebug>
 #include <QStyleOptionButton>
 #include <QStylePainter>
+#include <QApplication>
 
 DFMActionButton::DFMActionButton(QWidget *parent)
     : QAbstractButton(parent)
@@ -60,6 +61,6 @@ void DFMActionButton::paintEvent(QPaintEvent *)
     if (option.state.testFlag(QStyle::State_MouseOver)) {
         pixmap = icon().pixmap(size(), QIcon::Active, option.state.testFlag(QStyle::State_On) ? QIcon::On : QIcon::Off);
     }
-
+    pixmap.setDevicePixelRatio(qApp->devicePixelRatio());
     p.drawItemPixmap(option.rect, Qt::AlignCenter, pixmap);
 }

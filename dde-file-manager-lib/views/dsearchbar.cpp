@@ -303,7 +303,7 @@ void DSearchBar::setCompleter(const QString &text)
         foreach (QString itemText, sl) {
             QListWidgetItem* item = new QListWidgetItem(itemText);
             item->setTextAlignment(Qt::AlignVCenter);
-            QPixmap p(":/icons/images/light/space16.png");
+            QPixmap p(":/images/images/light/space16.png");
             item->setIcon(QIcon(p));
             m_list->addItem(item);
         }
@@ -324,7 +324,7 @@ void DSearchBar::setCompleter(const QString &text)
         foreach (QString itemText, m_stringListMode->stringList()) {
             QListWidgetItem* item = new QListWidgetItem(itemText);
             item->setTextAlignment(Qt::AlignVCenter);
-            QPixmap p(":/icons/images/light/space16.png");
+            QPixmap p(":/images/images/light/space16.png");
             item->setIcon(QIcon(p));
             m_list->addItem(item);
         }

@@ -78,6 +78,7 @@ DFM_USE_NAMESPACE
 
 DialogManager::DialogManager(QObject *parent) : QObject(parent)
 {
+    initData();
     initTaskDialog();
     initCloseIndicatorDialog();
     initConnect();
@@ -86,6 +87,29 @@ DialogManager::DialogManager(QObject *parent) : QObject(parent)
 DialogManager::~DialogManager()
 {
 
+}
+
+void DialogManager::initData()
+{
+    m_dialogInfoIcon = QIcon();
+    m_dialogInfoIcon.addFile(":/images/dialogs/images/dialog_info.png");
+    m_dialogInfoIcon.addFile(":/images/dialogs/images/dialog_info@2x.png");
+
+    m_dialogWarningIcon = QIcon();
+    m_dialogWarningIcon.addFile(":/images/dialogs/images/dialog_warning.png");
+    m_dialogWarningIcon.addFile(":/images/dialogs/images/dialog_warning@2x.png");
+
+    m_dialogErrorIcon = QIcon();
+    m_dialogErrorIcon.addFile(":/images/dialogs/images/dialog_error.png");
+    m_dialogErrorIcon.addFile(":/images/dialogs/images/dialog_error@2x.png");
+
+    m_dialogSharePasswordIcon = QIcon();
+    m_dialogSharePasswordIcon.addFile(":/images/dialogs/images/share_password.png");
+    m_dialogSharePasswordIcon.addFile(":/images/dialogs/images/share_password@2x.png");
+
+    m_dialogTrashFullIcon = QIcon();
+    m_dialogTrashFullIcon.addFile(":/images/dialogs/images/user-trash-full-opened.png");
+    m_dialogTrashFullIcon.addFile(":/images/dialogs/images/user-trash-full-opened@2x.png");
 }
 
 void DialogManager::initTaskDialog()
@@ -312,7 +336,7 @@ void DialogManager::showCopyMoveToSelfDialog(const QMap<QString, QString> &jobDe
     buttonTexts << tr("OK");
     d.addButton(buttonTexts[0], true, DDialog::ButtonRecommend);
     d.setDefaultButton(0);
-    d.setIcon(QIcon(":/images/dialogs/images/dialog_warning_64.png"));
+    d.setIcon(m_dialogWarningIcon);
     QTimer::singleShot(200, &d, &DDialog::raise);
     int code = d.exec();
     qDebug() << code;
@@ -384,7 +408,7 @@ int DialogManager::showRenameNameSameErrorDialog(const QString &name, const DFME
     buttonTexts << tr("Confirm");
     d.addButton(buttonTexts[0], true, DDialog::ButtonRecommend);
     d.setDefaultButton(0);
-    d.setIcon(QIcon(":/images/dialogs/images/dialog_warning_64.png"));
+    d.setIcon(m_dialogWarningIcon);
     int code = d.exec();
     return code;
 }
@@ -409,7 +433,7 @@ int DialogManager::showDeleteFilesClearTrashDialog(const DFMUrlListBaseEvent &ev
         d.setWindowFlags(d.windowFlags() | Qt::WindowStaysOnTopHint);
 
     QFontMetrics fm(d.font());
-    d.setIcon(QIcon(":/images/dialogs/images/user-trash-full-opened.png"));
+    d.setIcon(m_dialogTrashFullIcon);
     if (urlList.first() == DUrl::fromTrashFile("/")){
         buttonTexts[1]= tr("Empty");
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, urlList.first());
@@ -642,11 +666,13 @@ void DialogManager::showAboutDialog(quint64 winId)
     if(!w || w->property("AboutDialogShown").toBool())
         return;
 
-    QString icon(":/images/images/dde-file-manager_96.png");
+    QIcon productIcon;
+    productIcon.addFile(":/images/images/dde-file-manager_96.png", QSize(96, 96));
+    productIcon.addFile(":/images/images/dde-file-manager_96@2x.png",QSize(192, 192));
     DAboutDialog *dialog = new DAboutDialog(w);
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     dialog->setWindowTitle("");
-    dialog->setProductIcon(QIcon(icon));
+    dialog->setProductIcon(productIcon);
     dialog->setProductName(qApp->applicationDisplayName());
     dialog->setVersion(tr("Version:") + " V" + qApp->applicationVersion());
     dialog->setAcknowledgementLink("https://www.deepin.org/acknowledgments/" + qApp->applicationName());
@@ -713,7 +739,7 @@ void DialogManager::show4gFat32Dialog()
 {
     DDialog d;
     d.setTitle(tr("Failed, file size must be less than 4GB."));
-    d.setIcon(QIcon(":/images/dialogs/images/dialog_warning_64.png"));
+    d.setIcon(m_dialogWarningIcon);
     d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
     d.exec();
 }
@@ -722,7 +748,7 @@ void DialogManager::showFailToCreateSymlinkDialog(const QString& errorString)
 {
     DDialog d;
     d.setTitle(tr("Fail to create symlink, cause:") + errorString);
-    d.setIcon(QIcon(":/images/dialogs/images/dialog_warning_64.png"));
+    d.setIcon(m_dialogWarningIcon);
     d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
     d.exec();
 }
@@ -740,7 +766,7 @@ void DialogManager::showDeleteSystemPathWarnDialog(quint64 winId)
 {
     DDialog d(WindowManager::getWindowById(winId));
     d.setTitle(tr("The selected files contain system file/directory, and it cannot be deleted"));
-    d.setIcon(QIcon(":/images/dialogs/images/dialog_warning_64.png"));
+    d.setIcon(m_dialogWarningIcon);
     d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
     d.exec();
 }
@@ -782,7 +808,7 @@ void DialogManager::showRestoreFailedDialog(const DUrlList &urlList)
     }else if (urlList.count() > 1){
         d.setMessage(tr("%1 files failed to restore, target file removed or location changed").arg(QString::number(urlList.count())));
     }
-    d.setIcon(QIcon(":/images/dialogs/images/dialog_warning_64.png"));
+    d.setIcon(m_dialogWarningIcon);
     d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
     d.exec();
 }
@@ -793,7 +819,7 @@ void DialogManager::showRestoreFailedPerssionDialog(const QString &srcPath, cons
     DDialog d;
     d.setTitle(tr("Operation failed!"));
     d.setMessage(tr("You do not have permission to operate file/folder!"));
-    d.setIcon(QIcon(":/images/dialogs/images/dialog_warning_64.png"));
+    d.setIcon(m_dialogWarningIcon);
     d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
     d.exec();
 }
@@ -991,13 +1017,13 @@ int DialogManager::showMessageDialog(int messageLevel, const QString& message)
     d.addButtons(buttonTexts);
     d.setDefaultButton(0);
     if (messageLevel == 1){
-        d.setIcon(QIcon(":/images/dialogs/images/dialog_info_64.png"));
+        d.setIcon(m_dialogInfoIcon);
     }else if (messageLevel == 2){
-        d.setIcon(QIcon(":/images/dialogs/images/dialog_warning_64.png"));
+        d.setIcon(m_dialogWarningIcon);
     }else if (messageLevel == 3){
-        d.setIcon(QIcon(":/images/dialogs/images/dialog_error_64.png"));
+        d.setIcon(m_dialogErrorIcon);
     }else{
-        d.setIcon(QIcon(":/images/dialogs/images/dialog_info_64.png"));
+        d.setIcon(m_dialogInfoIcon);
     }
     int code = d.exec();
     qDebug() << code;
