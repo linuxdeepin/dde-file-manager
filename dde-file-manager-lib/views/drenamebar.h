@@ -159,7 +159,6 @@ private slots:
     void onAddOperatorAddedContentChanged(const QString& text)noexcept;
     void onAddTextPatternChanged(const int& index)noexcept;
     void onCustomOperatorFileNameChanged()noexcept;
-    void onLineEditForReplacingChanged(const QString& text)noexcept;
 
     void eventDispatcher();
 
