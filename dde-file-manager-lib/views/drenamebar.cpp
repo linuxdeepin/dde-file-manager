@@ -18,6 +18,7 @@
 #include "controllers/appcontroller.h"
 #include "views/dfilemanagerwindow.h"
 #include "interfaces/dfileservices.h"
+#include "dcombobox.h"
 
 #include <QStackedWidget>
 #include <QHBoxLayout>
@@ -36,7 +37,7 @@
 #include <QObject>
 
 
-
+using namespace Dtk::Widget;
 
 
 template<typename Type, typename ...Types>
@@ -154,6 +155,7 @@ public:
     void initUi();
     void setUiParameters();
     void layoutItems()noexcept;
+    void setRenameBtnStatus(const bool& value)noexcept;
 
 
     DRenameBar* q_ptr{ nullptr };
@@ -162,10 +164,6 @@ public:
     QFrame* m_frame{ nullptr };
     QStackedWidget* m_stackWidget{ nullptr };
     QArray<3> m_renameButtonStates{false};  //###: this is a array for recording the state of rename button in current pattern.
-    QPair<QString, QString> m_styleSheetForFinding{};
-    QPair<QString, QString> m_styleSheetForAdding{};
-    QPair<QString, QString> m_styleSheetForCustomizing{};
-    QPair<QString, QString> m_styleSheetForReplacing{};
     std::size_t m_currentPattern{0};               //###: this number record current pattern.
     QList<DUrl> m_urlList{};                      //###: this list stores the url of file which is waiting to be modified!
     DFileService::AddTextFlags m_flag{ DFileService::AddTextFlags::Before }; //###: the loacation of text should be added.
@@ -205,11 +203,6 @@ void DRenameBarPrivate::initUi()
     m_frame = new QFrame;
     m_stackWidget = new QStackedWidget;
 
-    m_styleSheetForFinding = QPair<QString, QString>{ QString{""}, QString{"QLineEdit#DRenameBarLineEditForFinding { border: 1px solid blue; border-radius: 3px; }" } };
-    m_styleSheetForAdding = QPair<QString, QString>{ QString{""}, QString{"QLineEdit#DRenameBarLineEditForAdding { border: 1px solid blue; border-radius: 3px; }" } };
-    m_styleSheetForCustomizing = QPair<QString, QString>{ QString{""}, QString{"QLineEdit#DRenameBarLineEditForCustomizing { border: 1px solid blue; border-radius: 3px; }" } };
-    m_styleSheetForReplacing = QPair<QString, QString>{ QString{""}, QString{"QLineEdit#DRenameBarLineEditForReplacing { border: 1px solid blue; border-radius: 3px; }" } };
-
     m_replaceOperatorItems = std::make_tuple(new QLabel, new QLineEdit, new QLabel, new QLineEdit);
     m_frameForLayoutReplaceArea = QPair<QHBoxLayout*, QFrame*>{ new QHBoxLayout, new QFrame };
 
@@ -226,68 +219,84 @@ void DRenameBarPrivate::initUi()
 void DRenameBarPrivate::setUiParameters()
 {
     q_ptr->setFixedHeight(40);
-
     m_comboBox->addItems(QList<QString>{ QObject::tr("Replace Text"), QObject::tr("Add Text"), QObject::tr("Custom Text") });
-    m_comboBox->setFixedWidth(100);
+    m_comboBox->setFixedWidth(107);
 
     QComboBox* comboBox{ nullptr };
     QLabel* label{ std::get<0>(m_replaceOperatorItems) };
     QLineEdit* lineEdit{ std::get<1>(m_replaceOperatorItems) };
 
-    label->setText(QObject::tr("Find:"));
+    label->setText(QObject::tr("Find"));
+    label->setObjectName(QString{"DRenameBarLabel"});
     lineEdit->setPlaceholderText(QObject::tr("Required"));
     lineEdit->setObjectName(QString{"DRenameBarLineEditForFinding"});
-    lineEdit->setStyleSheet(m_styleSheetForFinding.second);
     label->setBuddy(lineEdit);
 
     label = std::get<2>(m_replaceOperatorItems);
+    label->setObjectName(QString{"DRenameBarLabel"});
     lineEdit = std::get<3>(m_replaceOperatorItems);
-    label->setText(QObject::tr("Replace:"));
-    lineEdit->setPlaceholderText(QObject::tr("Required"));
+    label->setText(QObject::tr("Replace"));
+    lineEdit->setPlaceholderText(QObject::tr("Optional"));
     lineEdit->setObjectName(QString{"DRenameBarLineEditForReplacing"});
-    lineEdit->setStyleSheet(m_styleSheetForReplacing.second);
     label->setBuddy(lineEdit);
 
 
     label = std::get<0>(m_addOperatorItems);
+    label->setObjectName(QString{"DRenameBarLabel"});
     lineEdit = std::get<1>(m_addOperatorItems);
-    label->setText(QObject::tr("Add:"));
+    label->setText(QObject::tr("Add"));
     lineEdit->setPlaceholderText(QObject::tr("Required"));
     lineEdit->setObjectName(QString{"DRenameBarLineEditForAdding"});
-    lineEdit->setStyleSheet(m_styleSheetForAdding.second);
     label->setBuddy(lineEdit);
 
 
     label = std::get<2>(m_addOperatorItems);
+    label->setObjectName(QString{"DRenameBarLabel"});
     comboBox = std::get<3>(m_addOperatorItems);
-    label->setText(QObject::tr("Location:"));
+    label->setText(QObject::tr("Location"));
     comboBox->addItems(QList<QString>{ QObject::tr("Before file name"), QObject::tr("After file name") });
     label->setBuddy(comboBox);
 
     label = std::get<0>(m_customOPeratorItems);
+    label->setObjectName(QString{"DRenameBarLabel"});
     lineEdit = std::get<1>(m_customOPeratorItems);
-    label->setText(QObject::tr("File name:"));
+    label->setText(QObject::tr("File name"));
     lineEdit->setPlaceholderText(QObject::tr("Required"));
     lineEdit->setObjectName(QString{"DRenameBarLineEditForCustomizing"});
-    lineEdit->setStyleSheet(m_styleSheetForCustomizing.second);
     label->setBuddy(lineEdit);
 
 
     label = std::get<2>(m_customOPeratorItems);
+    label->setObjectName(QString{"DRenameBarLabel"});
     lineEdit = std::get<3>(m_customOPeratorItems);
-    label->setText(QObject::tr("+SN:"));
+    label->setText(QObject::tr("+SN"));
     lineEdit->setPlaceholderText(QObject::tr("Required"));
     lineEdit->setText(QString{"1"});
     lineEdit->setEnabled(false);
     label->setBuddy(lineEdit);
     label = std::get<4>(m_customOPeratorItems);
+    label->setObjectName(QString{"DRenameBarLabel"});
     label->setText(QObject::tr("Tips: Sort by selected file order"));
 
 
     QPushButton* button{ std::get<0>(m_buttonsArea) };
+    button->setFixedSize(QSize{70, 21});
     button->setText(QObject::tr("Cancel"));
     button = std::get<1>(m_buttonsArea);
+    button->setFixedSize(QSize{70, 20});
     button->setText(QObject::tr("Rename"));
+    button->setObjectName(QString{"DRenameBarRenameBtn"});
+    button->setStyleSheet(QString{
+                              "QPushButton#DRenameBarRenameBtn:pressed"
+                              "{"
+                                  "background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
+                                                                  "stop: 0 #0b8cff,"
+                                                                  "stop: 1 #0aa1ff);"
+                                  "border: 1px solid rgba(29, 129, 255, 0.3);"
+                                  "color: white;"
+                              "}"
+                          });
+
     button->setEnabled(false);
 
 }
@@ -304,9 +313,9 @@ void DRenameBarPrivate::layoutItems()noexcept
     hBoxLayout->addWidget(std::get<0>(m_replaceOperatorItems));
     hBoxLayout->setSpacing(5);
     hBoxLayout->addWidget(std::get<1>(m_replaceOperatorItems));
-    hBoxLayout->addSpacing(25);
+    hBoxLayout->addSpacing(32);
     hBoxLayout->addWidget(std::get<2>(m_replaceOperatorItems));
-    hBoxLayout->setSpacing(5);
+    hBoxLayout->setSpacing(13);
     hBoxLayout->addWidget(std::get<3>(m_replaceOperatorItems));
     hBoxLayout->addStretch(0);
     frame->setLayout(hBoxLayout);
@@ -320,7 +329,7 @@ void DRenameBarPrivate::layoutItems()noexcept
     hBoxLayout->addWidget(std::get<0>(m_addOperatorItems));
     hBoxLayout->setSpacing(5);
     hBoxLayout->addWidget(std::get<1>(m_addOperatorItems));
-    hBoxLayout->addSpacing(25);
+    hBoxLayout->addSpacing(32);
     hBoxLayout->addWidget(std::get<2>(m_addOperatorItems));
     hBoxLayout->setSpacing(5);
     hBoxLayout->addWidget(std::get<3>(m_addOperatorItems));
@@ -336,25 +345,30 @@ void DRenameBarPrivate::layoutItems()noexcept
     hBoxLayout->addWidget(std::get<0>(m_customOPeratorItems));
     hBoxLayout->setSpacing(5);
     hBoxLayout->addWidget(std::get<1>(m_customOPeratorItems));
-    hBoxLayout->addSpacing(25);
+    hBoxLayout->addSpacing(32);
     hBoxLayout->addWidget(std::get<2>(m_customOPeratorItems));
     hBoxLayout->setSpacing(5);
     hBoxLayout->addWidget(std::get<3>(m_customOPeratorItems));
     hBoxLayout->setSpacing(5);
     hBoxLayout->addWidget(std::get<4>(m_customOPeratorItems));
-    hBoxLayout->addStretch();
+    hBoxLayout->addStretch(0);
     frame->setLayout(hBoxLayout);
     m_stackWidget->addWidget(frame);
 
 
     hBoxLayout = std::get<2>(m_buttonsArea);
+    hBoxLayout->setSpacing(0);
+    hBoxLayout->setMargin(0);
     frame = std::get<3>(m_buttonsArea); //###: !!!
     hBoxLayout->addWidget(std::get<0>(m_buttonsArea));
+    hBoxLayout->addSpacing(10);
     hBoxLayout->addWidget(std::get<1>(m_buttonsArea));
     hBoxLayout->setContentsMargins(0, 0, 0, 0);
     frame->setLayout(hBoxLayout);
 
+
     m_mainLayout->addWidget(m_comboBox);
+    m_mainLayout->addSpacing(32);
     m_mainLayout->addWidget(m_stackWidget);
     m_mainLayout->addStretch(0);
     m_mainLayout->addWidget(frame);//###: !!!
@@ -365,6 +379,15 @@ void DRenameBarPrivate::layoutItems()noexcept
 
     q_ptr->setLayout(m_mainLayout);
 }
+
+
+void DRenameBarPrivate::setRenameBtnStatus(const bool &value)noexcept
+{
+    QPushButton* button{ std::get<1>(m_buttonsArea) };
+
+    button->setEnabled(value);
+}
+
 
 
 DRenameBar::DRenameBar(QWidget *parent)
@@ -393,16 +416,16 @@ void DRenameBar::onReplaceOperatorFileNameChanged(const QString &text)noexcept
 {
     DRenameBarPrivate* const d{ d_func() };
 
-    if(text.isEmpty()){
-         std::get<1>(d->m_buttonsArea)->setEnabled(false);
+    if(text.isEmpty() == true){
          d->m_renameButtonStates[0] = false; //###: record the states of rename button
-         std::get<1>(d->m_replaceOperatorItems)->setStyleSheet(d->m_styleSheetForFinding.second);//###: highlight
+
+         d->setRenameBtnStatus(false);
          return;
     }
 
-    std::get<1>(d->m_buttonsArea)->setEnabled(true);
     d->m_renameButtonStates[0] = true;   //###: record the states of rename button
-    std::get<1>(d->m_replaceOperatorItems)->setStyleSheet(d->m_styleSheetForFinding.first);//###: normal
+
+    d->setRenameBtnStatus(true);
     return;
 }
 
@@ -411,16 +434,16 @@ void DRenameBar::onAddOperatorAddedContentChanged(const QString &text)noexcept
 {
     DRenameBarPrivate* const d{ d_func() };
 
-    if(text.isEmpty()){
-        std::get<1>(d->m_buttonsArea)->setEnabled(false);
+    if(text.isEmpty() == true){
         d->m_renameButtonStates[1] = false;
-        std::get<1>(d->m_addOperatorItems)->setStyleSheet(d->m_styleSheetForAdding.second);
+
+        d->setRenameBtnStatus(false);
         return;
     }
 
-    std::get<1>(d->m_buttonsArea)->setEnabled(true);
     d->m_renameButtonStates[1] = true;
-    std::get<1>(d->m_addOperatorItems)->setStyleSheet(d->m_styleSheetForAdding.first);
+
+    d->setRenameBtnStatus(true);
     return;
 }
 
@@ -428,7 +451,6 @@ void DRenameBar::onAddOperatorAddedContentChanged(const QString &text)noexcept
 void DRenameBar::eventDispatcher()
 {
     DRenameBarPrivate* const d { d_func() };
-//    QSharedMap<DUrl, DUrl> pendingUrls{ nullptr };
 
     bool value{ false };
 
@@ -485,17 +507,13 @@ void DRenameBar::onCustomOperatorFileNameChanged()noexcept
     DRenameBarPrivate* const d{ d_func() };
 
     QLineEdit* lineEditForFileName{ std::get<1>(d->m_customOPeratorItems) };
-    if(lineEditForFileName->text().isEmpty() == false){ //###: must be input filename.
-        std::get<1>(d->m_buttonsArea)->setEnabled(true);
-        d->m_renameButtonStates[2] = true;
-
-        lineEditForFileName->setStyleSheet(d->m_styleSheetForCustomizing.first);
+    if(lineEditForFileName->text().isEmpty() == true){ //###: must be input filename.
+        d->m_renameButtonStates[2] = false;
+        d->setRenameBtnStatus(true);
 
     }else{
-        std::get<1>(d->m_buttonsArea)->setEnabled(false);
-        d->m_renameButtonStates[2] = false;
-
-        lineEditForFileName->setStyleSheet(d->m_styleSheetForCustomizing.second);
+        d->m_renameButtonStates[2] = true;
+        d->setRenameBtnStatus(true);
     }
 
 }
@@ -528,7 +546,6 @@ void DRenameBar::initConnect()
 
 
     QObject::connect(std::get<1>(d->m_customOPeratorItems), &QLineEdit::textChanged, this, &DRenameBar::onCustomOperatorFileNameChanged);
-    QObject::connect(std::get<3>(d->m_replaceOperatorItems), &QLineEdit::textChanged, this, &DRenameBar::onLineEditForReplacingChanged);
 }
 
 
@@ -610,19 +627,6 @@ void DRenameBar::loadState(std::unique_ptr<RecordRenameBarState>& state)
 
         d->m_urlList = state->getSelectedUrl();
         this->setVisible(state->getVisibleValue());
-    }
-}
-
-
-void DRenameBar::onLineEditForReplacingChanged(const QString &text)noexcept
-{
-    DRenameBarPrivate* const d{ d_func() };
-
-    if(text.isEmpty() == false){
-        std::get<3>(d->m_replaceOperatorItems)->setStyleSheet(d->m_styleSheetForReplacing.first);
-
-    }else{
-        std::get<3>(d->m_replaceOperatorItems)->setStyleSheet(d->m_styleSheetForReplacing.second);
     }
 }
 

@@ -93,7 +93,6 @@ NameTextEdit::NameTextEdit(const QString &text, QWidget *parent):
         int cursor_pos = this->textCursor().position() - text_length + text.length();
 
         while (text.toUtf8().size() > MAX_FILE_NAME_CHAR_COUNT) {
-            qDebug() << text.toUtf8().size() << "=======================" << cursor_pos;
             list.removeAt(--cursor_pos);
 
             text = QString::fromUcs4(list.data(), list.size());

@@ -622,8 +622,103 @@ QPushButton#NewTabButton:disabled {
 }
 
 
-/*DRenameBar*/
+/*DRenameBar ===================== DRenameBar*/
 QFrame#DRenameBar{
     border: 1px;
     border-bottom:1px solid rgba(0, 0, 0, 0.2);
 }
+
+
+QPushButton#DRenameBarRenameBtn:enabled{
+    background-color: white;
+    border-radius: 2px;
+    color: #0087ff;
+    border:1px solid rgba(0, 132, 255, 0.4);
+    border-radius: 2px;
+}
+
+
+
+QPushButton#DRenameBarRenameBtn:hover{
+    background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                        stop: 0 #8ccfff,
+                        stop: 1  #4bb8ff);
+    border: 1px solid rgba(0, 117, 243, 0.2);
+    color: white;
+}
+
+
+QPushButton#DRenameBarRenameBtn:disabled{
+    background-color: white;
+    color: rgba(0, 132, 255, 0.4);
+    border: 1px solid rgba(0, 132, 255, 0.4);
+    border-radius: 2px;
+}
+
+
+
+
+
+
+QLineEdit#DRenameBarLineEditForFinding:focus
+{
+    border: 1px solid #2ca7f8;
+    border-radius: 2px;
+}
+
+QLineEdit#DRenameBarLineEditForFinding
+{
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 2px;
+    padding-top: 1px;
+}
+
+
+QLineEdit#DRenameBarLineEditForReplacing:focus
+{
+    border: 1px solid #2ca7f8;
+    border-radius: 2px;
+}
+
+QLineEdit#DRenameBarLineEditForReplacing
+{
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 2px;
+    padding-top: 1px;
+}
+
+QLineEdit#DRenameBarLineEditForAdding:focus
+{
+    border: 1px solid #2ca7f8;
+    border-radius: 2px;
+}
+
+QLineEdit#DRenameBarLineEditForAdding
+{
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 2px;
+    padding-top: 1px;
+}
+
+QLineEdit#DRenameBarLineEditForCustomizing:focus
+{
+    border: 1px solid #2ca7f8;
+    border-radius: 2px;
+}
+
+QLineEdit#DRenameBarLineEditForCustomizing
+{
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 2px;
+    padding-top: 1px;
+}
+
+QLabel#DRenameBarLabel
+{
+    color: #606060;
+    font-family: SourceHanSansSC;
+    font-size: 11px;
+}
+
+
+/*DRenameBar ======================== DRenameBar*/

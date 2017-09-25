@@ -914,6 +914,7 @@ int DialogManager::showMessageDialog(int messageLevel, const QString& message)
 void DialogManager::showMultiFilesRenameDialog(const QList<DUrl> &selectedUrls)
 {
     DDesktopRenameDialog renameDialog;
+
     renameDialog.moveToCenter();
     renameDialog.setDialogTitle(QObject::tr("Rename %1 Files").arg( QString::fromStdString( std::to_string(selectedUrls.size()) )) );
 

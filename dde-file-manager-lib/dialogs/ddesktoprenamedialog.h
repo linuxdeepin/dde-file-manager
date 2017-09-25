@@ -49,13 +49,11 @@ public:
 
     void setDialogTitle(const QString& tile)noexcept;
 
-
 private slots:
     void onCurrentModeChanged(const std::size_t& index)noexcept;
     void onCurrentAddModeChanged(const std::size_t& index)noexcept;
 
     void onContentChangedForFinding(const QString& content);
-    void onContentChangedForReplacing(const QString& content)noexcept;
     void onContentChangedForAdding(const QString& content);
     void onContentChangedForCustomizing(const QString& content);
 
@@ -63,6 +61,7 @@ private:
     using DDialog::setWindowTitle;
 
     void initUi();
+    void initUiParameters();
     void initConnect()noexcept;
     void setRenameButtonStatus(const bool& enabled);
 
