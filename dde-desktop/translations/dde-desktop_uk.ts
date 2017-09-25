@@ -4,7 +4,7 @@
     <message>
         <location filename="../view/canvasgridview.cpp" line="1825"/>
         <source>Icon size</source>
-        <translation type="unfinished"/>
+        <translation>Розмір іконки</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="1831"/>
@@ -15,7 +15,7 @@
         <location filename="../view/canvasgridview.cpp" line="1839"/>
         <location filename="../view/canvasgridview.cpp" line="1952"/>
         <source>Properties</source>
-        <translation type="unfinished"/>
+        <translation>Властивості</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="1870"/>
@@ -109,7 +109,7 @@
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="57"/>
         <source>Close Window</source>
-        <translation type="unfinished"/>
+        <translation>Закрити вікно</translation>
     </message>
 </context>
 </TS>
