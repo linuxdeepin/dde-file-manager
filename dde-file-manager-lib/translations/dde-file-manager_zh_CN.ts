@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>CloseAllDialogIndicator</name>
     <message>
@@ -381,7 +379,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="952"/>
         <source>Share folder cann&apos;t be named after the current username</source>
-        <translation type="unfinished"></translation>
+        <translation>共享文件夹不能和当前用户名重名</translation>
     </message>
 </context>
 <context>
@@ -1001,14 +999,6 @@
         <translation>打开</translation>
     </message>
     <message>
-        <source>Size: %1</source>
-        <translation type="vanished">大小：%1</translation>
-    </message>
-    <message>
-        <source>Type: %1</source>
-        <translation type="vanished">类型：%1</translation>
-    </message>
-    <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="674"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="677"/>
         <source>Open in new window</source>
@@ -1328,7 +1318,7 @@
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="54"/>
         <source>Restore Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>恢复默认</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="24"/>
@@ -1401,10 +1391,6 @@
         <location filename="../configure/dfmconfigdict.cpp" line="49"/>
         <source>Basic</source>
         <translation>基本设置</translation>
-    </message>
-    <message>
-        <source>Restore to default</source>
-        <translation type="vanished">恢复默认</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="14"/>
@@ -1659,7 +1645,7 @@
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="121"/>
         <source>Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>方式：</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="122"/>
@@ -1683,46 +1669,42 @@
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="127"/>
         <location filename="../views/drenamebar.cpp" line="237"/>
         <source>Find:</source>
-        <translation type="unfinished"></translation>
+        <translation>查找：</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="132"/>
         <location filename="../views/drenamebar.cpp" line="245"/>
         <source>Replace:</source>
-        <translation type="unfinished"></translation>
+        <translation>替换：</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="140"/>
         <location filename="../views/drenamebar.cpp" line="254"/>
         <source>Add:</source>
-        <translation type="unfinished"></translation>
+        <translation>添加：</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="141"/>
         <source>Required:</source>
-        <translation type="unfinished"></translation>
+        <translation>必填</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="146"/>
         <location filename="../views/drenamebar.cpp" line="263"/>
         <source>Location:</source>
-        <translation type="unfinished"></translation>
+        <translation>位置：</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="151"/>
         <location filename="../views/drenamebar.cpp" line="269"/>
         <source>File name:</source>
-        <translation type="unfinished"></translation>
+        <translation>文件名：</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="156"/>
         <location filename="../views/drenamebar.cpp" line="278"/>
         <source>+SN:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Find</source>
-        <translation type="vanished">查找</translation>
+        <translation>+序列：</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="128"/>
@@ -1737,18 +1719,6 @@
         <translation>必填</translation>
     </message>
     <message>
-        <source>Replace</source>
-        <translation type="vanished">替换</translation>
-    </message>
-    <message>
-        <source>Add</source>
-        <translation type="vanished">添加</translation>
-    </message>
-    <message>
-        <source>Location</source>
-        <translation type="vanished">位置</translation>
-    </message>
-    <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="147"/>
         <location filename="../views/drenamebar.cpp" line="264"/>
         <source>Before file name</source>
@@ -1759,14 +1729,6 @@
         <location filename="../views/drenamebar.cpp" line="264"/>
         <source>After file name</source>
         <translation>名称之后</translation>
-    </message>
-    <message>
-        <source>File name</source>
-        <translation type="vanished">文件名</translation>
-    </message>
-    <message>
-        <source>SN</source>
-        <translation type="vanished">序列</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="284"/>
@@ -1782,7 +1744,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="918"/>
         <source>Rename %1 Files</source>
-        <translation type="unfinished"></translation>
+        <translation>给%1个文件重命名</translation>
     </message>
 </context>
 <context>
@@ -2215,22 +2177,22 @@
         <location filename="../dialogs/filepreviewdialog.cpp" line="217"/>
         <location filename="../dialogs/filepreviewdialog.cpp" line="243"/>
         <source>Size: %1</source>
-        <translation type="unfinished">大小：%1</translation>
+        <translation>大小：%1</translation>
     </message>
     <message>
         <location filename="../dialogs/filepreviewdialog.cpp" line="218"/>
         <source>Type: %1</source>
-        <translation type="unfinished">类型：%1</translation>
+        <translation>类型：%1</translation>
     </message>
     <message>
         <location filename="../dialogs/filepreviewdialog.cpp" line="222"/>
         <source>Size: 0</source>
-        <translation type="unfinished"></translation>
+        <translation>大小：0</translation>
     </message>
     <message>
         <location filename="../dialogs/filepreviewdialog.cpp" line="223"/>
         <source>Items: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>文件数量：%1</translation>
     </message>
 </context>
 <context>
