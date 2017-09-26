@@ -585,6 +585,7 @@ void DFileDialog::closeEvent(QCloseEvent *event)
 
 bool DFileDialog::eventFilter(QObject *watched, QEvent *event)
 {
+    Q_D(DFileDialog);
     if (watched == windowHandle() && event->type() == QEvent::KeyPress) {
         QKeyEvent *e = static_cast<QKeyEvent*>(event);
 
@@ -593,8 +594,16 @@ bool DFileDialog::eventFilter(QObject *watched, QEvent *event)
                     || e->key() == Qt::Key_W)) {
             return true;
         } else if (e->modifiers() == Qt::NoModifier || e->modifiers() == Qt::KeypadModifier) {
-            if (e == QKeySequence::Cancel)
+            if (e == QKeySequence::Cancel){
+                DFileView *fileView = d->view;
+                if (fileView){
+                    if (fileView->state() == 3){
+                        fileView->closePersistentEditor(fileView->currentIndex());
+                        return true;
+                    }
+                }
                 close();
+            }
             else if (e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return)
                 handleEnterPressed();
         }
