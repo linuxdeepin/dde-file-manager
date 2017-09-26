@@ -402,6 +402,7 @@ void CanvasGridView::mousePressEvent(QMouseEvent *event)
             itemDelegate()->hideNotEditingIndexWidget();
             QAbstractItemView::setCurrentIndex(QModelIndex());
             clearSelection();
+            update();
         }
     }
 
