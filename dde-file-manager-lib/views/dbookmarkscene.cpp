@@ -588,7 +588,9 @@ void DBookmarkScene::volumeAdded(UDiskDeviceInfoPointer device)
 
     item->setTightMode(m_isTightMode);
     m_diskItems.insert(device->getDiskInfo().id(), item);
-    m_uuid_diskItems.insert(device->getDiskInfo().uuid(), item);
+
+    if (!device->getDiskInfo().uuid().isEmpty())
+        m_uuid_diskItems.insert(device->getDiskInfo().uuid(), item);
 }
 
 void DBookmarkScene::volumeRemoved(UDiskDeviceInfoPointer device)
