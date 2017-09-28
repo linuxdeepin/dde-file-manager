@@ -215,7 +215,8 @@ HEADERS += \
     gvfs/mountsecretdiskaskpassworddialog.h \
     views/drenamebar.h \
     shutil/filebatchprocess.h \
-    dialogs/ddesktoprenamedialog.h
+    dialogs/ddesktoprenamedialog.h \
+    dialogs/dmultifilepropertydialog.h
 SOURCES += \
     controllers/appcontroller.cpp \
     views/dleftsidebar.cpp \
@@ -353,7 +354,8 @@ SOURCES += \
     gvfs/mountsecretdiskaskpassworddialog.cpp \
     views/drenamebar.cpp \
     shutil/filebatchprocess.cpp \
-    dialogs/ddesktoprenamedialog.cpp
+    dialogs/ddesktoprenamedialog.cpp \
+    dialogs/dmultifilepropertydialog.cpp
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 HELPSHAREDIR = $$PREFIX/share/dman/$$TARGET

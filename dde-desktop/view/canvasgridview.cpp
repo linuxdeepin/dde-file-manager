@@ -60,6 +60,7 @@
 #include "canvasviewhelper.h"
 #include "watermaskframe.h"
 #include "desktopitemdelegate.h"
+#include "dfmevent.h"
 
 //#define SHOW_GRID 1
 
@@ -1668,6 +1669,7 @@ void CanvasGridView::setSelection(const QRect &rect, QItemSelectionModel::Select
     bool ctrlShiftPress = DFMGlobal::keyShiftIsPressed() || DFMGlobal::keyCtrlIsPressed();
     if (ctrlShiftPress) {
         oldSelection = selectionModel()->selection();
+        oldSelection.clear();//###: here, I clear the file is selected.
     }
 
     // select by  key board, so mouse not pressed
@@ -2010,23 +2012,23 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
         }
         break;
         case FileManagerProperty: {
-            QStringList localFiles;
-            for (auto url : this->selectedUrls()) {
-                localFiles << url.toLocalFile();
-            }
-            DFMSocketInterface::instance()->showProperty(localFiles);
+
+            DFMGlobal::showPropertyDialog(this, this->selectedUrls());
+            break;
         }
-        break;
         case MenuAction::Rename: {
             if(list.size() == 1){
                 QAbstractItemView::edit(index); //###: select one file on desktop.
 
             }else{ //###: select more than one files.
-                QList<DUrl> selectedFiles{ this->selectedUrls() };
-                DFMGlobal::showMultiFilesRenameDialog(selectedFiles);
+
+                QList<DUrl> selectedUrls{ this->selectedUrls() };
+                DFMGlobal::showMultiFilesRenameDialog(selectedUrls);
             }
             break;
         }
+        default:
+            break;
         }
     });
 

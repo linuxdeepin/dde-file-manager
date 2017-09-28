@@ -214,7 +214,6 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget* p
         diskInfo = deviceListener->getDeviceByPath(m_url.path());
     }
     if (diskInfo){
-        qDebug() << diskInfo->getDiskInfo();
         QString name = diskInfo->getName();
         m_icon->setPixmap(diskInfo->fileIcon().pixmap(128, 128));
         m_edit->setPlainText(name);

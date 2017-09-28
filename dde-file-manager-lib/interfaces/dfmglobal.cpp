@@ -599,6 +599,12 @@ void DFMGlobal::showFilePreviewDialog(const DUrlList &selectUrls, const DUrlList
     emit fileSignalManager->requestShowFilePreviewDialog(selectUrls, entryUrls);
 }
 
+void DFMGlobal::showPropertyDialog(QObject * const sender, const QList<DUrl>& selectedFiles)
+{
+    dialogManager->showPropertyDialog(DFMUrlListBaseEvent{sender, selectedFiles});
+}
+
+
 namespace DThreadUtil {
 class FunctionCallProxy_ : public FunctionCallProxy {};
 Q_GLOBAL_STATIC(FunctionCallProxy_, fcpGlobal)
