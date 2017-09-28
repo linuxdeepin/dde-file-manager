@@ -301,6 +301,9 @@ public:
 
     static void showFilePreviewDialog(const DUrlList &selectUrls, const DUrlList& entryUrls);
 
+    ///###: this function is special, if select files is more than 16 show a dialog for multiple files.
+    static void showPropertyDialog(QObject* const sender, const QList<DUrl>& selectedFiles);
+
 
 signals:
     void clipboardDataChanged();

@@ -52,4 +52,7 @@
 #define LIST_MODE_RIGHT_MARGIN 20
 // end
 
+
+#define MAX_PROPERTY_DIALOG_NUMBER 16
+
 #endif // GLOBAL_H

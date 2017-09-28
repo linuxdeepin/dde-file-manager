@@ -46,6 +46,7 @@
 #include "dialogs/propertydialog.h"
 #include "dialogs/openwithdialog.h"
 #include "dialogs/diskspaceoutofusedtipdialog.h"
+#include "dialogs/dmultifilepropertydialog.h"
 #include "interfaces/dfmsetting.h"
 #include "plugins/pluginmanager.h"
 #include "preview/previewinterface.h"
@@ -478,35 +479,44 @@ void DialogManager::showPropertyDialog(const DFMUrlListBaseEvent &event)
 {
     const DUrlList& urlList  = event.urlList();
     int count = urlList.count();
-    foreach (const DUrl& url, urlList) {
-        int index = urlList.indexOf(url);
 
-        if (url.isComputerFile()){
-            showComputerPropertyDialog();
-        }else{
+    if(count <= MAX_PROPERTY_DIALOG_NUMBER){
 
-            PropertyDialog *dialog;
-            if (m_propertyDialogs.contains(url)){
-                dialog = m_propertyDialogs.value(url);
-                dialog->raise();
+        foreach (const DUrl& url, urlList) {
+            int index = urlList.indexOf(url);
+
+            if (url.isComputerFile()){
+                showComputerPropertyDialog();
             }else{
-                dialog = new PropertyDialog(event, url);
-                m_propertyDialogs.insert(url, dialog);
-                QPoint pos = getPerportyPos(dialog->size().width(), dialog->size().height(), count, index);
 
-                dialog->show();
-                dialog->move(pos);
+                PropertyDialog *dialog;
+                if (m_propertyDialogs.contains(url)){
+                    dialog = m_propertyDialogs.value(url);
+                    dialog->raise();
+                }else{
+                    dialog = new PropertyDialog(event, url);
+                    m_propertyDialogs.insert(url, dialog);
+                    QPoint pos = getPerportyPos(dialog->size().width(), dialog->size().height(), count, index);
 
-                connect(dialog, &PropertyDialog::closed, this, &DialogManager::removePropertyDialog);
-    //                connect(dialog, &PropertyDialog::raised, this, &DialogManager::raiseAllPropertyDialog);
-                QTimer::singleShot(100, dialog, &PropertyDialog::raise);
-            }
+                    dialog->show();
+                    dialog->move(pos);
 
-            if (urlList.count() >= 2){
-                m_closeIndicatorDialog->show();
-                m_closeIndicatorTimer->start();
+                    connect(dialog, &PropertyDialog::closed, this, &DialogManager::removePropertyDialog);
+        //                connect(dialog, &PropertyDialog::raised, this, &DialogManager::raiseAllPropertyDialog);
+                    QTimer::singleShot(100, dialog, &PropertyDialog::raise);
+                }
+
+                if (urlList.count() >= 2){
+                    m_closeIndicatorDialog->show();
+                    m_closeIndicatorTimer->start();
+                }
             }
         }
+
+    }else{
+
+        DMultiFilePropertyDialog dialog{ urlList };
+        std::size_t result{ dialog.exec() };
     }
 }
 
