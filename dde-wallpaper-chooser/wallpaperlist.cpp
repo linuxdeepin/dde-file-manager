@@ -34,12 +34,12 @@ WallpaperList::WallpaperList(QWidget * parent)
                                                    QDBusConnection::sessionBus(),
                                                    this))
     , m_wmInter(new com::deepin::wm("com.deepin.wm", "/com/deepin/wm", QDBusConnection::sessionBus(), this))
-    , prevButton(new DImageButton(":/images/previous_normal.png",
-                                  ":/images/previous_hover.png",
-                                  ":/images/previous_press.png", this))
-    , nextButton(new DImageButton(":/images/next_normal.png",
-                                  ":/images/next_hover.png",
-                                  ":/images/next_press.png", this))
+    , prevButton(new DImageButton(":/images/previous_normal.svg",
+                                  ":/images/previous_hover.svg",
+                                  ":/images/previous_press.svg", this))
+    , nextButton(new DImageButton(":/images/next_normal.svg",
+                                  ":/images/next_hover.svg",
+                                  ":/images/next_press.svg", this))
 {
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -388,7 +388,9 @@ void WallpaperList::updateBothEndsItem()
 void WallpaperList::showDeleteButtonForItem(const WallpaperItem *item) const
 {
     if (item && item->getDeletable()) {
-        emit needCloseButton(item->getPath(), item->mapTo(parentWidget(), item->conentImageGeometry().topRight()));
+        emit needCloseButton(item->getPath(),
+                             item->mapTo(parentWidget(),
+                                         item->conentImageGeometry().topRight() / devicePixelRatioF()));
     } else {
         emit needCloseButton("", QPoint(0, 0));
     }
