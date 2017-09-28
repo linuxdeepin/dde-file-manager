@@ -76,6 +76,8 @@ int main(int argc, char *argv[])
     DFMGlobal::initPluginManager();
     DFMGlobal::initMimesAppsManager();
     DFMGlobal::initDialogManager();
+    DFMGlobal::initGvfsMountManager();
+    DFMGlobal::initDeviceListener();
 
     // Notify dde-desktop start up
     Dde::Session::RegisterDdeSession();
