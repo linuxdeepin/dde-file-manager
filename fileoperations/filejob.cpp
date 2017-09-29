@@ -313,8 +313,6 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
                     if (!moveDir(srcPath, tarDirPath, &targetPath)) {
                         if(copyDir(srcPath, tarDirPath, true, &targetPath))
                             deleteDir(srcPath);
-                    }else{
-                        deleteEmptyDir(srcPath);
                     }
                 }
                 else
