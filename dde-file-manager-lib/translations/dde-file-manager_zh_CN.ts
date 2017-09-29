@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="zh_CN">
 <context>
     <name>CloseAllDialogIndicator</name>
     <message>
@@ -382,12 +384,12 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="828"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/floder(s)!</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="856"/>
-        <source>Check</source>
-        <translation type="unfinished"/>
+        <source>View</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1036"/>
@@ -467,22 +469,22 @@
         <translation>副本</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="618"/>
+        <location filename="../../fileoperations/filejob.cpp" line="616"/>
         <source>%1 s</source>
         <translation>%1 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="622"/>
+        <location filename="../../fileoperations/filejob.cpp" line="620"/>
         <source>%1 m %2 s</source>
         <translation>%1 分 %2 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="628"/>
+        <location filename="../../fileoperations/filejob.cpp" line="626"/>
         <source>%1 h %2 m %3 s</source>
         <translation>%1 时 %2 分 %3 秒</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="637"/>
+        <location filename="../../fileoperations/filejob.cpp" line="635"/>
         <source>%1 d %2 h %3 m %4 s</source>
         <translation>%1 天 %2 时 %3 分 %4 秒</translation>
     </message>
@@ -1692,7 +1694,7 @@
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="147"/>
         <location filename="../views/drenamebar.cpp" line="239"/>
         <source>Optional</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="163"/>
@@ -1744,32 +1746,32 @@
     <message>
         <location filename="../views/drenamebar.cpp" line="229"/>
         <source>Find</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="238"/>
         <source>Replace</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">替换</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="247"/>
         <source>Add</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="256"/>
         <source>Location</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="263"/>
         <source>File name</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="272"/>
         <source>+SN</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="279"/>
