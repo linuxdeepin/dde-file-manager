@@ -386,7 +386,7 @@
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="856"/>
-        <source>Check</source>
+        <source>View</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -467,22 +467,22 @@
         <translation>Kopírovat</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="618"/>
+        <location filename="../../fileoperations/filejob.cpp" line="616"/>
         <source>%1 s</source>
         <translation>%1 s</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="622"/>
+        <location filename="../../fileoperations/filejob.cpp" line="620"/>
         <source>%1 m %2 s</source>
         <translation>%1 m %2 s</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="628"/>
+        <location filename="../../fileoperations/filejob.cpp" line="626"/>
         <source>%1 h %2 m %3 s</source>
         <translation>%1 h %2 m %3 s</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="637"/>
+        <location filename="../../fileoperations/filejob.cpp" line="635"/>
         <source>%1 d %2 h %3 m %4 s</source>
         <translation>%1 d %2 h %3 m %4 s</translation>
     </message>

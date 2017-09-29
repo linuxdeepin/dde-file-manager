@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>CloseAllDialogIndicator</name>
     <message>
@@ -384,12 +382,12 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="828"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/floder(s)!</source>
-        <translation type="unfinished"></translation>
+        <translation>抱歉，您没有权限操作以下%1个文件/文件夹</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="856"/>
         <source>View</source>
-        <translation type="unfinished"></translation>
+        <translation>查看</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1036"/>
@@ -1694,7 +1692,7 @@
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="147"/>
         <location filename="../views/drenamebar.cpp" line="239"/>
         <source>Optional</source>
-        <translation type="unfinished"></translation>
+        <translation>选填</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="163"/>
@@ -1746,32 +1744,32 @@
     <message>
         <location filename="../views/drenamebar.cpp" line="229"/>
         <source>Find</source>
-        <translation type="unfinished"></translation>
+        <translation>查找</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="238"/>
         <source>Replace</source>
-        <translation type="unfinished">替换</translation>
+        <translation>替换</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="247"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>添加</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="256"/>
         <source>Location</source>
-        <translation type="unfinished"></translation>
+        <translation>位置</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="263"/>
         <source>File name</source>
-        <translation type="unfinished"></translation>
+        <translation>文件名</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="272"/>
         <source>+SN</source>
-        <translation type="unfinished"></translation>
+        <translation>+序列</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="279"/>
