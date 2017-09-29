@@ -9,7 +9,7 @@
     <message>
         <location filename="../main.cpp" line="118"/>
         <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions.</source>
-        <translation type="unfinished"/>
+        <translation>Upravitelj datotekama je alat za upravljanje datotekama koji je nezavisno razvio Deepin Technology, koji sadrži traženja, smeće, kompresija/dekompresija, svojstva datoteka i ostale funkcije upravljanja datotekama.</translation>
     </message>
 </context>
 </TS>
