@@ -50,7 +50,7 @@ inline constexpr bool isLittleEndian()noexcept{ return (test.array[0] == 0x01); 
 
 QSharedMap<DUrl, DUrl> FileBatchProcess::replaceText(const QList<DUrl>& originUrls, const QPair<QString, QString> &pair) const
 {
-    if(originUrls.isEmpty()){ //###: here, jundge whether there are fileUrls in originUrls.
+    if(originUrls.isEmpty() == true){ //###: here, jundge whether there are fileUrls in originUrls.
         return QSharedMap<DUrl, DUrl>{ nullptr };
     }
 
@@ -457,11 +457,11 @@ QByteArray FileBatchProcess::cutString(const QByteArray &text)
 
     if(isLittleEndian() == true){
         std::bitset<8> bits{ static_cast<unsigned long>(*crbegin) };
-        if(bits.test(7) == false){ //###: I junde the last byte of u8Str. If it is 0xxx xxxx means it is a ASCII, so we return text directly.
+        if(bits.test(7) == false){ //###: I jundge the last byte of u8Str. If it is 0xxx xxxx means it is a ASCII, so we return text directly.
             return text;
         }
 
-        for(; crbegin != crend; ++crbegin, ++counter){  //###: 0xc0(11000000), I find the flag of byte of utf8 through 0xc0.
+        for(; crbegin != crend; ++crbegin, ++counter){  //###: 0xc0(11000000), I find the byte of flag of utf8 through 0xc0.
             if((static_cast<unsigned char>(*crbegin) & 0xc0) == 0xc0){
                 ++counter;
                 break;
@@ -483,8 +483,6 @@ QByteArray FileBatchProcess::cutString(const QByteArray &text)
                std::basic_string<char> beCutedString{ u8Str.erase(u8Str.size()-counter, counter) };
                return QByteArray::fromStdString(beCutedString);
            }
-
-           throw std::runtime_error{ "Some errors occured!" };
        }
 
     }else{
@@ -517,9 +515,6 @@ QByteArray FileBatchProcess::cutString(const QByteArray &text)
                 std::basic_string<char> beCutedString{ u8Str.erase(u8Str.size()-counter, counter) };
                 return QByteArray::fromStdString(beCutedString);
             }
-
-            throw std::runtime_error{ "Some errors occur when regular expression is matching!" };
-
         }
     }
 
