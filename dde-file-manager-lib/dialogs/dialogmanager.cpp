@@ -853,7 +853,7 @@ void DialogManager::showNoPermissionDialog(const DFMUrlListBaseEvent &event)
 
         d.addContent(contentFrame, Qt::AlignCenter);
         d.addButton(tr("Cancel"), false, DDialog::ButtonNormal);
-        d.addButton(tr("Check"), true, DDialog::ButtonRecommend);
+        d.addButton(tr("View"), true, DDialog::ButtonRecommend);
         ret = d.exec();
     }
     if (ret){
