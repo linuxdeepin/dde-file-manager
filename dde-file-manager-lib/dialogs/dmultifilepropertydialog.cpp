@@ -63,7 +63,7 @@ public:
     QFrame* m_mainFrame{ nullptr };
 
 
-    std::unique_ptr<FilesSizeWorker> m_filesSizeWorker{ nullptr };
+    std::shared_ptr<FilesSizeWorker> m_filesSizeWorker{ nullptr };
     DMultiFilePropertyDialog* q_ptr{ nullptr };
 
 };
@@ -192,7 +192,7 @@ void DMultiFilePropertyDialogPrivate::initUiParameter()noexcept
         }
     }
 
-    m_filesSizeWorker =  std::unique_ptr<FilesSizeWorker>{ new FilesSizeWorker{ m_urlList } };
+    m_filesSizeWorker =  std::shared_ptr<FilesSizeWorker>{ new FilesSizeWorker{ m_urlList } };
 
 
     nameLabel = nullptr;
@@ -257,7 +257,6 @@ void DMultiFilePropertyDialog::initConnect()
 {
     DMultiFilePropertyDialogPrivate* const d{ d_func() };
 
-    QObject::connect(this, &DMultiFilePropertyDialog::requestToComputeFlodersSize, d->m_filesSizeWorker.get(), &FilesSizeWorker::coumpueteSize);
     QObject::connect(d->m_filesSizeWorker.get(), &FilesSizeWorker::sizeUpdated, this, &DMultiFilePropertyDialog::updateFolderSizeLabel);
 }
 
@@ -265,8 +264,8 @@ void DMultiFilePropertyDialog::startComputingFolderSize()
 {
     DMultiFilePropertyDialogPrivate* const d{ d_func() };
 
-    std::function<void(FilesSizeWorker* const worker)> func{ &FilesSizeWorker::coumpueteSize }; //###: here! creat a pointer point to FilesSizeWork::compueteSize.
-    std::thread treadForComputing{func, d->m_filesSizeWorker.get()};  //###: I invoke func which points to FilesSizeWork::compueteSize
+    std::function<void(std::shared_ptr<FilesSizeWorker> worker)> func{ &FilesSizeWorker::coumpueteSize }; //###: here! creat a pointer point to FilesSizeWork::compueteSize.
+    std::thread treadForComputing{func, d->m_filesSizeWorker};  //###: I invoke func which points to FilesSizeWork::compueteSize
     treadForComputing.detach(); //##: I detach the thread from main thread.
 }
 
