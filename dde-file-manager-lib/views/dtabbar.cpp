@@ -212,7 +212,8 @@ QString Tab::getDisplayNameByUrl(const DUrl &url) const
     if(url.isComputerFile()){
         if(systemPathManager->isSystemPath(url.toString()))
             urlDisplayName = systemPathManager->getSystemPathDisplayNameByPath(url.toString());
-    } else if(url == DUrl::fromTrashFile("/")){        urlDisplayName = systemPathManager->getSystemPathDisplayNameByPath(DFMStandardPaths::standardLocation(DFMStandardPaths::TrashFilesPath));
+    } else if(url == DUrl::fromTrashFile("/")){
+        urlDisplayName = systemPathManager->getSystemPathDisplayName("Trash");
     } else if (PluginManager::instance()->getViewInterfacesMap().keys().contains(url.scheme())){
         urlDisplayName = PluginManager::instance()->getViewInterfaceByScheme(url.scheme())->bookMarkText();
     } else{
