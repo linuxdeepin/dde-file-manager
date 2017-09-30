@@ -1016,7 +1016,7 @@ void DialogManager::showMultiFilesRenameDialog(const QList<DUrl> &selectedUrls)
 
     AppController::flagForDDesktopRenameBar.store(true, std::memory_order_seq_cst);
 
-    if(code == 1){ //###: yes!
+    if(static_cast<bool>(code) == true){ //###: yes!
 
         if(modeIndex == 0){
             QPair<QString, QString> replaceModeValue{ renameDialog.getModeOneContent() };

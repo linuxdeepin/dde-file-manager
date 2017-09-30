@@ -298,7 +298,7 @@ QSharedMap<DUrl, DUrl> FileBatchProcess::addText(const QList<DUrl> &originUrls, 
 
 QSharedMap<DUrl, DUrl> FileBatchProcess::customText(const QList<DUrl> &originUrls, const QPair<QString, std::size_t> &pair) const
 {
-    if(originUrls.isEmpty()){  //###: here, jundge whether there are fileUrls in originUrls.
+    if(originUrls.isEmpty() == true){  //###: here, jundge whether there are fileUrls in originUrls.
         return QSharedMap<DUrl, DUrl>{ nullptr };
     }
 
@@ -382,8 +382,9 @@ QSharedMap<DUrl, DUrl> FileBatchProcess::customText(const QList<DUrl> &originUrl
 
                 if(sizeOfBaseName + sizeOfIndexStr <= MAX_FILE_NAME_CHAR_COUNT){
 
-                    QByteArray fileBaseName{ fileBaseName + indexStr };
-                    DUrl beModifiedUrl{ DUrl::fromLocalFile( info.path() + QString{"/"} + QString::fromUtf8(fileBaseName)) };
+                    QByteArray newFileBaseName{ fileBaseName + indexStr };
+
+                    DUrl beModifiedUrl{ DUrl::fromLocalFile( info.path() + QString{"/"} + QString::fromUtf8(newFileBaseName)) };
                     result->insert(url, beModifiedUrl);
 
                 }else{

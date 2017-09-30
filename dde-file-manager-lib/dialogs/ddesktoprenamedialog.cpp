@@ -119,18 +119,26 @@ void DDesktopRenameDialogPrivate::initUiParamenters()
                                         "}"
                                         });
 
-    std::get<0>(m_itemsForSelecting)->setText(QObject::tr("Mode:"));
-    std::get<1>(m_itemsForSelecting)->addItems(QList<QString>{ QObject::tr("Replace Text"), QObject::tr("Add Text"), QObject::tr("Custom Text") });
-    std::get<1>(m_itemsForSelecting)->setFixedSize(QSize{275, 25});
+    QLabel* tagLabel{ nullptr };
+    QComboBox* modeChoseBox{ nullptr };
+    QLineEdit* contentLineEdit{ nullptr };
+
+    tagLabel = std::get<0>(m_itemsForSelecting);
+    tagLabel->setText(QObject::tr("Mode:"));
+    modeChoseBox = std::get<1>(m_itemsForSelecting);
+    modeChoseBox->addItems(QList<QString>{ QObject::tr("Replace Text"), QObject::tr("Add Text"), QObject::tr("Custom Text") });
+    modeChoseBox->setFixedSize(QSize{275, 25});
 
 
     ///###: mode 1
-    std::get<0>(m_modeOneItemsForFinding)->setText(QObject::tr("Find:"));
-    std::get<1>(m_modeOneItemsForFinding)->setPlaceholderText(QObject::tr("Required"));
-    std::get<1>(m_modeOneItemsForFinding)->setFixedSize(QSize{275, 25});
-    std::get<1>(m_modeOneItemsForFinding)->setObjectName( QString{"DRenameDialogLineEditForFinding"} );
-    std::get<1>(m_modeOneItemsForFinding)->setFocusPolicy(Qt::StrongFocus);
-    std::get<1>(m_modeOneItemsForFinding)->setStyleSheet("QLineEdit#DRenameDialogLineEditForFinding:focus"
+    tagLabel = std::get<0>(m_modeOneItemsForFinding);
+    tagLabel->setText(QObject::tr("Find:"));
+    contentLineEdit = std::get<1>(m_modeOneItemsForFinding);
+    contentLineEdit->setPlaceholderText(QObject::tr("Required"));
+    contentLineEdit->setFixedSize(QSize{275, 25});
+    contentLineEdit->setObjectName( QString{"DRenameDialogLineEditForFinding"} );
+    contentLineEdit->setFocusPolicy(Qt::StrongFocus);
+    contentLineEdit->setStyleSheet("QLineEdit#DRenameDialogLineEditForFinding:focus"
                                                          "{"
                                                                 "border: 1px solid #2ca7f8;"
                                                                 "border-radius: 2px;"
@@ -143,11 +151,13 @@ void DDesktopRenameDialogPrivate::initUiParamenters()
 
                                                         );
 
-    std::get<0>(m_modeOneItemsForReplacing)->setText(QObject::tr("Replace:"));
-    std::get<1>(m_modeOneItemsForReplacing)->setPlaceholderText(QObject::tr("Optional"));
-    std::get<1>(m_modeOneItemsForReplacing)->setFixedSize(QSize{275, 25});
-    std::get<1>(m_modeOneItemsForReplacing)->setObjectName( QString{ "DRenameDialogLineEditForReplacing" } );
-    std::get<1>(m_modeOneItemsForReplacing)->setStyleSheet("QLineEdit#DRenameDialogLineEditForReplacing:focus"
+    tagLabel = std::get<0>(m_modeOneItemsForReplacing);
+    tagLabel->setText(QObject::tr("Replace:"));
+    contentLineEdit = std::get<1>(m_modeOneItemsForReplacing);
+    contentLineEdit->setPlaceholderText(QObject::tr("Optional"));
+    contentLineEdit->setFixedSize(QSize{275, 25});
+    contentLineEdit->setObjectName( QString{ "DRenameDialogLineEditForReplacing" } );
+    contentLineEdit->setStyleSheet("QLineEdit#DRenameDialogLineEditForReplacing:focus"
                                                            "{"
                                                                  "border: 1px solid #2ca7f8;"
                                                                  "border-radius: 2px;"
@@ -160,12 +170,14 @@ void DDesktopRenameDialogPrivate::initUiParamenters()
                                                            );
 
     ///###: mode 2
-    std::get<0>(m_modeTwoItemsForAdding)->setText(QObject::tr("Add:"));
-    std::get<1>(m_modeTwoItemsForAdding)->setPlaceholderText(QObject::tr("Required:"));
-    std::get<1>(m_modeTwoItemsForAdding)->setFixedSize(QSize{275, 25});
-    std::get<1>(m_modeTwoItemsForAdding)->setMaxLength(300);
-    std::get<1>(m_modeTwoItemsForAdding)->setObjectName(QString{"DRenameDialogLineEditForAdding"});
-    std::get<1>(m_modeTwoItemsForAdding)->setStyleSheet("QLineEdit#DRenameDialogLineEditForAdding:focus"
+    tagLabel = std::get<0>(m_modeTwoItemsForAdding);
+    tagLabel->setText(QObject::tr("Add:"));
+    contentLineEdit = std::get<1>(m_modeTwoItemsForAdding);
+    contentLineEdit->setPlaceholderText(QObject::tr("Required:"));
+    contentLineEdit->setFixedSize(QSize{275, 25});
+    contentLineEdit->setMaxLength(300);
+    contentLineEdit->setObjectName(QString{"DRenameDialogLineEditForAdding"});
+    contentLineEdit->setStyleSheet("QLineEdit#DRenameDialogLineEditForAdding:focus"
                                                         "{"
                                                               "border: 1px solid #2ca7f8;"
                                                               "border-radius: 2px;"
@@ -177,16 +189,20 @@ void DDesktopRenameDialogPrivate::initUiParamenters()
                                                         "}"
                                                         );
 
-    std::get<0>(m_modeTwoItemsForLocating)->setText(QObject::tr("Location:"));
-    std::get<1>(m_modeTwoItemsForLocating)->addItems(QList<QString>{ QObject::tr("Before file name"), QObject::tr("After file name") });
-    std::get<1>(m_modeTwoItemsForLocating)->setFixedSize( QSize{275, 25} );
+    tagLabel = std::get<0>(m_modeTwoItemsForLocating);
+    tagLabel->setText(QObject::tr("Location:"));
+    modeChoseBox = std::get<1>(m_modeTwoItemsForLocating);
+    modeChoseBox->addItems(QList<QString>{ QObject::tr("Before file name"), QObject::tr("After file name") });
+    modeChoseBox->setFixedSize( QSize{275, 25} );
 
     ///###: mode3
-    std::get<0>(m_modeThreeItemsForFileName)->setText(QObject::tr("File name:"));
-    std::get<1>(m_modeThreeItemsForFileName)->setPlaceholderText(QObject::tr("Required"));
-    std::get<1>(m_modeThreeItemsForFileName)->setFixedSize(QSize{275, 25});
-    std::get<1>(m_modeThreeItemsForFileName)->setObjectName( QString{ "DRenameDialogLineEditForCustomizing" } );
-    std::get<1>(m_modeThreeItemsForFileName)->setStyleSheet("QLineEdit#DRenameDialogLineEditForCustomizing:focus"
+    tagLabel = std::get<0>(m_modeThreeItemsForFileName);
+    tagLabel->setText(QObject::tr("File name:"));
+    contentLineEdit = std::get<1>(m_modeThreeItemsForFileName);
+    contentLineEdit->setPlaceholderText(QObject::tr("Required"));
+    contentLineEdit->setFixedSize(QSize{275, 25});
+    contentLineEdit->setObjectName( QString{ "DRenameDialogLineEditForCustomizing" } );
+    contentLineEdit->setStyleSheet("QLineEdit#DRenameDialogLineEditForCustomizing:focus"
                                                             "{"
                                                                     "border: 1px solid rgba(0, 132, 255, 0.4);"
                                                                     "border-radius: 2px;"
@@ -197,33 +213,54 @@ void DDesktopRenameDialogPrivate::initUiParamenters()
                                                                    "border-radius: 2px;"
                                                             "}"
                                                             );
-    std::get<0>(m_modeThreeItemsForSNNumber)->setText(QObject::tr("+SN:"));
-    std::get<1>(m_modeThreeItemsForSNNumber)->setFixedSize(QSize{275, 25});
-    std::get<1>(m_modeThreeItemsForSNNumber)->setEnabled(false);
-    std::get<1>(m_modeThreeItemsForSNNumber)->setText(QString{"1"});
+    tagLabel = std::get<0>(m_modeThreeItemsForSNNumber);
+    tagLabel->setText(QObject::tr("+SN:"));
+    contentLineEdit = std::get<1>(m_modeThreeItemsForSNNumber);
+    contentLineEdit->setFixedSize(QSize{275, 25});
+    contentLineEdit->setEnabled(false);
+    contentLineEdit->setText(QString{"1"});
+
+    tagLabel = nullptr;
+    modeChoseBox = nullptr;
+    contentLineEdit = nullptr;
 }
 
 void DDesktopRenameDialogPrivate::initUiLayout()
 {
-    std::get<0>(m_itemsForSelecting)->setBuddy(std::get<1>(m_itemsForSelecting));
-    std::get<2>(m_itemsForSelecting)->addWidget(std::get<0>(m_itemsForSelecting));
-    std::get<2>(m_itemsForSelecting)->addSpacing(30);
-    std::get<2>(m_itemsForSelecting)->addWidget(std::get<1>(m_itemsForSelecting));
-    std::get<2>(m_itemsForSelecting)->setMargin(0);
+    QLabel* tagLabel{ nullptr };
+    QComboBox* modeChoseBox{ nullptr };
+    QLineEdit* contentLineEdit{ nullptr };
+    QHBoxLayout* hLayout{ nullptr };
+
+
+    tagLabel = std::get<0>(m_itemsForSelecting);
+    modeChoseBox = std::get<1>(m_itemsForSelecting);
+    tagLabel->setBuddy(modeChoseBox);
+    hLayout = std::get<2>(m_itemsForSelecting);
+    hLayout->addWidget(tagLabel);
+    hLayout->addSpacing(30);
+    hLayout->addWidget(modeChoseBox);
+    hLayout->setMargin(0);
 
 
     ///###: mode 1
-    std::get<0>(m_modeOneItemsForFinding)->setBuddy(std::get<1>(m_modeOneItemsForFinding));
-    std::get<2>(m_modeOneItemsForFinding)->addWidget(std::get<0>(m_modeOneItemsForFinding));
-    std::get<2>(m_modeOneItemsForFinding)->addSpacing(30);
-    std::get<2>(m_modeOneItemsForFinding)->addWidget(std::get<1>(m_modeOneItemsForFinding));
-    std::get<2>(m_modeOneItemsForFinding)->setMargin(0);
+    tagLabel = std::get<0>(m_modeOneItemsForFinding);
+    contentLineEdit = std::get<1>(m_modeOneItemsForFinding);
+    tagLabel->setBuddy(contentLineEdit);
+    hLayout = std::get<2>(m_modeOneItemsForFinding);
+    hLayout->addWidget(tagLabel);
+    hLayout->addSpacing(30);
+    hLayout->addWidget(contentLineEdit);
+    hLayout->setMargin(0);
 
 
-    std::get<0>(m_modeOneItemsForReplacing)->setBuddy(std::get<1>(m_modeOneItemsForReplacing));
-    std::get<2>(m_modeOneItemsForReplacing)->addWidget(std::get<0>(m_modeOneItemsForReplacing));
-    std::get<2>(m_modeOneItemsForReplacing)->addSpacing(30);
-    std::get<2>(m_modeOneItemsForReplacing)->addWidget(std::get<1>(m_modeOneItemsForReplacing));
+    tagLabel = std::get<0>(m_modeOneItemsForReplacing);
+    contentLineEdit = std::get<1>(m_modeOneItemsForReplacing);
+    tagLabel->setBuddy(contentLineEdit);
+    hLayout = std::get<2>(m_modeOneItemsForReplacing);
+    hLayout->addWidget(tagLabel);
+    hLayout->addSpacing(30);
+    hLayout->addWidget(contentLineEdit);
 
 
     m_modeOneLayout.first->addLayout(std::get<2>(m_modeOneItemsForFinding));
@@ -237,18 +274,24 @@ void DDesktopRenameDialogPrivate::initUiLayout()
 
 
     ///###: mode 2
-    std::get<2>(m_modeTwoItemsForAdding)->setSpacing(0);
-    std::get<2>(m_modeTwoItemsForAdding)->setMargin(0);
-    std::get<0>(m_modeTwoItemsForAdding)->setBuddy(std::get<1>(m_modeTwoItemsForAdding));
-    std::get<2>(m_modeTwoItemsForAdding)->addWidget(std::get<0>(m_modeTwoItemsForAdding));
-    std::get<2>(m_modeTwoItemsForAdding)->addSpacing(30);
-    std::get<2>(m_modeTwoItemsForAdding)->addWidget(std::get<1>(m_modeTwoItemsForAdding));
-    std::get<2>(m_modeTwoItemsForAdding)->setMargin(0);
+    hLayout = std::get<2>(m_modeTwoItemsForAdding);
+    hLayout->setSpacing(0);
+    hLayout->setMargin(0);
+    tagLabel = std::get<0>(m_modeTwoItemsForAdding);
+    contentLineEdit = std::get<1>(m_modeTwoItemsForAdding);
+    tagLabel->setBuddy(contentLineEdit);
+    hLayout->addWidget(tagLabel);
+    hLayout->addSpacing(30);
+    hLayout->addWidget(contentLineEdit);
+    hLayout->setMargin(0);
 
 
-    std::get<0>(m_modeTwoItemsForLocating)->setBuddy(std::get<1>(m_modeTwoItemsForLocating));
-    std::get<2>(m_modeTwoItemsForLocating)->addWidget(std::get<0>(m_modeTwoItemsForLocating));
-    std::get<2>(m_modeTwoItemsForLocating)->addWidget(std::get<1>(m_modeTwoItemsForLocating));
+    tagLabel = std::get<0>(m_modeTwoItemsForLocating);
+    modeChoseBox = std::get<1>(m_modeTwoItemsForLocating);
+    tagLabel->setBuddy(modeChoseBox);
+    hLayout = std::get<2>(m_modeTwoItemsForLocating);
+    hLayout->addWidget(tagLabel);
+    hLayout->addWidget(modeChoseBox);
 
 
     m_modeTwoLayout.first->addLayout(std::get<2>(m_modeTwoItemsForAdding));
@@ -260,13 +303,19 @@ void DDesktopRenameDialogPrivate::initUiLayout()
 
 
     ///###: mode 3
-    std::get<0>(m_modeThreeItemsForFileName)->setBuddy(std::get<1>(m_modeThreeItemsForFileName));
-    std::get<2>(m_modeThreeItemsForFileName)->addWidget(std::get<0>(m_modeThreeItemsForFileName));
-    std::get<2>(m_modeThreeItemsForFileName)->addWidget(std::get<1>(m_modeThreeItemsForFileName));
+    tagLabel = std::get<0>(m_modeThreeItemsForFileName);
+    contentLineEdit = std::get<1>(m_modeThreeItemsForFileName);
+    tagLabel->setBuddy(contentLineEdit);
+    hLayout = std::get<2>(m_modeThreeItemsForFileName);
+    hLayout->addWidget(tagLabel);
+    hLayout->addWidget(contentLineEdit);
 
-    std::get<0>(m_modeThreeItemsForSNNumber)->setBuddy(std::get<1>(m_modeThreeItemsForSNNumber));
-    std::get<2>(m_modeThreeItemsForSNNumber)->addWidget(std::get<0>(m_modeThreeItemsForSNNumber));
-    std::get<2>(m_modeThreeItemsForSNNumber)->addWidget(std::get<1>(m_modeThreeItemsForSNNumber));
+    tagLabel = std::get<0>(m_modeThreeItemsForSNNumber);
+    contentLineEdit = std::get<1>(m_modeThreeItemsForSNNumber);
+    tagLabel->setBuddy(contentLineEdit);
+    hLayout = std::get<2>(m_modeThreeItemsForSNNumber);
+    hLayout->addWidget(tagLabel);
+    hLayout->addWidget(contentLineEdit);
 
 
     m_modeThreeLayout.first->addLayout(std::get<2>(m_modeThreeItemsForFileName));
