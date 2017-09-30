@@ -1197,9 +1197,10 @@ bool FileJob::copyFileByGio(const QString &srcFile, const QString &tarDir, bool 
                 GFileProgressCallback progress_callback = FileJob::showProgress;
                 if (!g_file_copy (source, target, flags, m_abortGCancellable, progress_callback, this, &error)){
                     if (error){
-                        qDebug() << error->message;
-//                        emit fileSignalManager->requestShowNoPermissionDialog(DUrl::fromLocalFile(srcFile));
-                        m_noPermissonUrls << DUrl::fromLocalFile(srcFile);
+                        qDebug() << error->message << g_file_error_from_errno(error->domain);
+                        if (g_error_matches(error, G_IO_ERROR, G_IO_ERROR_PERMISSION_DENIED)){
+                            m_noPermissonUrls << DUrl::fromLocalFile(srcFile);
+                        }
                         g_error_free (error);
                         cancelled();
                     }
