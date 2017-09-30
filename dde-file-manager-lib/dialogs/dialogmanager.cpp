@@ -514,9 +514,10 @@ void DialogManager::showPropertyDialog(const DFMUrlListBaseEvent &event)
         }
 
     }else{
-
-        DMultiFilePropertyDialog dialog{ urlList };
-        std::size_t result{ dialog.exec() };
+            m_multiFilesPropertyDialog = std::unique_ptr<DMultiFilePropertyDialog>{ new DMultiFilePropertyDialog{ std::move(urlList) } };
+            m_multiFilesPropertyDialog->show();
+            m_multiFilesPropertyDialog->moveToCenter();
+            m_multiFilesPropertyDialog->raise();
     }
 }
 

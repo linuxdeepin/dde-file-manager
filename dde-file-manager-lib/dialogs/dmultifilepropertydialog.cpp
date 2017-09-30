@@ -147,8 +147,8 @@ void DMultiFilePropertyDialogPrivate::initUiParameter()noexcept
                                     .arg( QString::fromStdString(std::to_string(quantityOfFilesAndFolders.second))));
 
 
-    coupleLabelContent.emplace_back(QObject::tr("Access time"), QString{"- -"});
-    coupleLabelContent.emplace_back(QObject::tr("Modify time"), QString{"- -"});
+    coupleLabelContent.emplace_back(QObject::tr("Access time"), QString{"-"});
+    coupleLabelContent.emplace_back(QObject::tr("Modify time"), QString{"-"});
 
 
     m_gridLayout->setColumnMinimumWidth(0, 100);
@@ -235,6 +235,12 @@ DMultiFilePropertyDialog::DMultiFilePropertyDialog(const QList<DUrl> &urlList, Q
 {
     this->initConnect();
     this->startComputingFolderSize();
+}
+
+DMultiFilePropertyDialog::~DMultiFilePropertyDialog()
+{
+    DMultiFilePropertyDialogPrivate* const d{ d_func() };
+    d->m_filesSizeWorker->stop();
 }
 
 std::size_t DMultiFilePropertyDialog::getRandomNumber(const std::pair<std::size_t, std::size_t> &scope)
