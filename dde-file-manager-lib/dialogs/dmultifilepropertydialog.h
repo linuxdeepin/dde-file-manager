@@ -30,7 +30,7 @@ class DMultiFilePropertyDialog : public DDialog
 public:
 
     explicit DMultiFilePropertyDialog(const QList<DUrl>& urlList, QWidget* const parent = nullptr);
-    virtual ~DMultiFilePropertyDialog()=default;
+    virtual ~DMultiFilePropertyDialog();
 
 
     DMultiFilePropertyDialog(const DMultiFilePropertyDialog&)=delete;

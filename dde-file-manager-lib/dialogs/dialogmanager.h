@@ -16,6 +16,8 @@
 #ifndef DIALOGMANAGER_H
 #define DIALOGMANAGER_H
 
+#include <memory>
+
 #include <QObject>
 #include <QMap>
 
@@ -34,6 +36,7 @@ class CloseAllDialogIndicator;
 class TrashPropertyDialog;
 class ComputerPropertyDialog;
 class QTimer;
+class DMultiFilePropertyDialog;
 
 DFM_BEGIN_NAMESPACE
 class FilePreviewDialog;
@@ -115,16 +118,18 @@ public slots:
 #endif
 
 private:
-    DTaskDialog* m_taskDialog = NULL;
-    CloseAllDialogIndicator* m_closeIndicatorDialog;
-    TrashPropertyDialog* m_trashDialog;
-    ComputerPropertyDialog* m_computerDialog;
-    QMap<QString, FileJob*> m_jobs;
-    QMap<DUrl, PropertyDialog*> m_propertyDialogs;
-    QTimer* m_closeIndicatorTimer = NULL;
-    QTimer* m_updateJobTaskTimer = NULL;
-    dde_file_manager::FilePreviewDialog* m_filePreviewDialog = Q_NULLPTR;
-    Dtk::Widget::DDialog* m_noPemesrsionDialog = Q_NULLPTR;
+    DTaskDialog* m_taskDialog{ nullptr };
+    CloseAllDialogIndicator* m_closeIndicatorDialog{ nullptr };
+    TrashPropertyDialog* m_trashDialog{ nullptr };
+    ComputerPropertyDialog* m_computerDialog{ nullptr };
+    QMap<QString, FileJob*> m_jobs{};
+    QMap<DUrl, PropertyDialog*> m_propertyDialogs{};
+    QTimer* m_closeIndicatorTimer{ nullptr };
+    QTimer* m_updateJobTaskTimer{ nullptr };
+    dde_file_manager::FilePreviewDialog* m_filePreviewDialog{ nullptr };
+    Dtk::Widget::DDialog* m_noPemesrsionDialog{ nullptr };
+
+    std::unique_ptr<DMultiFilePropertyDialog> m_multiFilesPropertyDialog;
 };
 
 #endif // DIALOGMANAGER_H
