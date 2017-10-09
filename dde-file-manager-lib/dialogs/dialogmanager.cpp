@@ -847,19 +847,16 @@ void DialogManager::showNoPermissionDialog(const DFMUrlListBaseEvent &event)
         }
 
         d.setMessage(message);
-        d.setIcon(QIcon(":/images/dialogs/images/dialog_warning_64.png"));
+        d.setIcon(m_dialogWarningIcon);
         d.addButton(tr("Confirm"), true, DDialog::ButtonRecommend);
         ret = d.exec();
     }else{
 
         DDialog d;
-//        d.setIcon(QIcon(":/images/dialogs/images/dialog_warning_64.png"));
         QFrame* contentFrame = new QFrame;
 
-        QIcon icon;
-        icon.addFile(":/images/dialogs/images/dialog_warning_64.png");
         QLabel* iconLabel = new QLabel;
-        iconLabel->setPixmap(icon.pixmap(64, 64));
+        iconLabel->setPixmap(m_dialogWarningIcon.pixmap(64, 64));
 
         QLabel* titleLabel = new QLabel;
         titleLabel->setText(tr("Sorry, you don't have permission to operate the following %1 file/floder(s)!").arg(QString::number(urls.count())));
