@@ -736,7 +736,10 @@ DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
                                                bool checkable,
                                                const QMap<MenuAction, QVector<MenuAction> > &subMenuList, bool isUseCachedAction, bool isRecursiveCall)
 {
-    if(DFileMenuData::actions.isEmpty()) {
+    static bool actions_initialized = false;
+
+    if (!actions_initialized) {
+        actions_initialized = true;
         DFileMenuData::initData();
         DFileMenuData::initActions();
     }
