@@ -210,6 +210,9 @@ signals:
     /*show add user share failed dialog for share name same as system uername*/
     void requestShowAddUserShareFailedDialog(const QString& sharePath);
 
+    /*default view mode changed*/
+    void defaultViewModeChanged(const int& viewMode);
+
 #ifdef SW_LABEL
     /*copy/move/delete fail job show */
     void jobFailed(int nRet, const QString &jobType, const QString& srcFileName);

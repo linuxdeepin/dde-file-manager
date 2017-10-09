@@ -81,6 +81,16 @@
                                 "Extra large"
                             ],
                             "default": 1
+                        },
+                        {
+                            "key": "view_mode",
+                            "name": "Default view:",
+                            "type": "combobox",
+                            "items": [
+                                "Icon",
+                                "List"
+                            ],
+                            "default": 0
                         }
                     ]
                 },

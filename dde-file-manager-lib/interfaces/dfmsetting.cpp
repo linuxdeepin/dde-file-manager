@@ -99,6 +99,11 @@ int DFMSetting::iconSizeIndex()
     return getValueByKey("base.default_view.icon_size").toInt();
 }
 
+int DFMSetting::viewMode()
+{
+    return getValueByKey("base.default_view.view_mode").toInt() + 1;
+}
+
 int DFMSetting::openFileAction()
 {
     if (DFMGlobal::IsFileManagerDiloagProcess){
@@ -155,6 +160,8 @@ void DFMSetting::onValueChanged(const QString &key, const QVariant &value)
         }else{
             FileUtils::umountAVFS();
         }
+    }else if (key == "base.default_view.view_mode"){
+        emit fileSignalManager->defaultViewModeChanged(viewMode());
     }
 }
 
