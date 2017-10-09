@@ -89,7 +89,7 @@ public:
 
     QList<int> columnRoles;
 
-    const DFileView::ViewMode defaultViewMode = DFileView::IconMode;
+    DFileView::ViewMode defaultViewMode = DFileView::IconMode;
     DFileView::ViewMode currentViewMode = DFileView::IconMode;
 
     int horizontalOffset = 0;
@@ -150,6 +150,8 @@ DFileView::DFileView(QWidget *parent)
     d_ptr->enabledSelectionModes << NoSelection << SingleSelection
                                  << MultiSelection << ExtendedSelection
                                  << ContiguousSelection;
+
+    d_ptr->defaultViewMode = static_cast<ViewMode>(DFMSetting::instance()->viewMode());
 
     initUI();
     initModel();
@@ -630,6 +632,12 @@ void DFileView::select(const QList<DUrl> &list)
 
     if (firstIndex.isValid())
         scrollTo(firstIndex, PositionAtTop);
+}
+
+void DFileView::setDefaultViewMode(DFileView::ViewMode mode)
+{
+    Q_D(DFileView);
+    d->defaultViewMode = mode;
 }
 
 void DFileView::setViewMode(DFileView::ViewMode mode)
@@ -1672,6 +1680,10 @@ void DFileView::initConnects()
     connect(fileSignalManager, &FileSignalManager::requestChangeIconSizeBySizeIndex, this, &DFileView::setIconSizeBySizeIndex);
     connect(fileSignalManager, &FileSignalManager::showHiddenOnViewChanged, this, &DFileView::onShowHiddenFileChanged);
     connect(fileSignalManager, &FileSignalManager::requestFreshAllFileView, this, &DFileView::freshView);
+    connect(fileSignalManager, &FileSignalManager::defaultViewModeChanged, this, [this](const int& viewMode){
+        Q_D(const DFileView);
+        setDefaultViewMode(static_cast<ViewMode>(viewMode));
+    });
 
     connect(d->statusBar->scalingSlider(), &QSlider::valueChanged, this, &DFileView::viewStateChanged);
     connect(this, &DFileView::rootUrlChanged, this, &DFileView::loadViewState);

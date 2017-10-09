@@ -45,6 +45,7 @@ public:
     QVariant getValueByKey(const QString& key);
     bool isAllwayOpenOnNewWindow();
     int iconSizeIndex();
+    int viewMode();
     int openFileAction();
     QString defaultWindowPath();
     QString newTabPath();

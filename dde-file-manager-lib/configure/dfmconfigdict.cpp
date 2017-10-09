@@ -18,6 +18,9 @@ void GenerateSettingTranslate()
     auto base_default_view_icon_sizeText2 = QObject::tr("Medium");
     auto base_default_view_icon_sizeText3 = QObject::tr("Large");
     auto base_default_view_icon_sizeText4 = QObject::tr("Extra large");
+    auto base_default_view_view_modeName = QObject::tr("Default view:");
+    auto base_default_view_view_modeText0 = QObject::tr("Icon");
+    auto base_default_view_view_modeText1 = QObject::tr("List");
     auto base_hidden_files_show_hiddenText = QObject::tr("Show hidden files");
     auto base_new_tab_windows_default_window_pathName = QObject::tr("Open from default window:");
     auto base_new_tab_windows_default_window_pathText0 = QObject::tr("Computer");
