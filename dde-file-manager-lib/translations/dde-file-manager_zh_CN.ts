@@ -1810,7 +1810,7 @@
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="145"/>
         <source>%1 file(s), %2 folder(s)</source>
-        <translation>1%个文件，1%个文件夹</translation>
+        <translation>%1个文件，%2个文件夹</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="150"/>

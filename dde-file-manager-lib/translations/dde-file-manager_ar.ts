@@ -1790,37 +1790,37 @@
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="127"/>
         <source>Multiple Files</source>
-        <translation type="unfinished"/>
+        <translation>ملفات متعددة</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="136"/>
         <source>Basic info</source>
-        <translation type="unfinished"/>
+        <translation>المعلومات الأساسية</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="144"/>
         <source>Total size</source>
-        <translation type="unfinished"/>
+        <translation>الحجم اﻹجمالي</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="145"/>
         <source>Number of files</source>
-        <translation type="unfinished"/>
+        <translation>عدد الملفات</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="145"/>
         <source>%1 file(s), %2 folder(s)</source>
-        <translation type="unfinished"/>
+        <translation>%1 من الملفات %2 من المجلدات</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="150"/>
         <source>Access time</source>
-        <translation type="unfinished"/>
+        <translation>وقت الوصول</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="151"/>
         <source>Modify time</source>
-        <translation type="unfinished"/>
+        <translation>وقت التعديل</translation>
     </message>
 </context>
 <context>

@@ -20,7 +20,7 @@
     <message>
         <location filename="../view/canvasgridview.cpp" line="1870"/>
         <source>Display Settings</source>
-        <translation>Görüntü Ayarları</translation>
+        <translation>Ekran Ayarları</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="1875"/>

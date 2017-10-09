@@ -346,7 +346,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="652"/>
         <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions.</source>
-        <translation>Dosya Yöneticisi, bağımsız olarak arama, kopyalama, çöp, sıkıştırma/açma, dosya tercihi ve diğer dosya yönetimi işlevleriyle Deepin Teknoloji tarafından geliştirilmiş bir dosya yönetim aracıdır.</translation>
+        <translation>Dosya Yönetici bağımsız olarak arama, kopyalama, çöp, sıkıştırma/açma, dosya tercihi ve diğer dosya yönetimi işlevleriyle Deepin Teknoloji tarafından geliştirilmiş bir dosya yönetim aracıdır.</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="714"/>
@@ -1230,7 +1230,7 @@
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="5"/>
         <source>Use the file chooser dialog of Deepin File Manager</source>
-        <translation>Deepin Dosya Yöneticisinin dosya seçici iletişim kutusunu kullanın</translation>
+        <translation>Deepin Dosya Yönetici&apos;sinin dosya seçici iletişim kutusunu kullan</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="6"/>
@@ -1484,7 +1484,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="727"/>
         <source>Exit</source>
-        <translation>Çıkış</translation>
+        <translation>Çık</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="728"/>
@@ -2302,7 +2302,7 @@
     <message>
         <location filename="../views/windowmanager.cpp" line="75"/>
         <source>Deepin File Manager</source>
-        <translation>Deepin Dosya Yöneticisi</translation>
+        <translation>Deepin Dosya Yönetici</translation>
     </message>
 </context>
 </TS>

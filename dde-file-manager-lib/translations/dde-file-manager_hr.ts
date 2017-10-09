@@ -1712,7 +1712,7 @@
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="185"/>
         <source>File name:</source>
-        <translation type="unfinished"/>
+        <translation>Ime datoteke:</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="200"/>
@@ -1744,27 +1744,27 @@
     <message>
         <location filename="../views/drenamebar.cpp" line="229"/>
         <source>Find</source>
-        <translation type="unfinished"/>
+        <translation>Nađi</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="238"/>
         <source>Replace</source>
-        <translation type="unfinished"/>
+        <translation>Zamijeni</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="247"/>
         <source>Add</source>
-        <translation type="unfinished"/>
+        <translation>Dodaj</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="256"/>
         <source>Location</source>
-        <translation type="unfinished"/>
+        <translation>Lokacija</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="263"/>
         <source>File name</source>
-        <translation type="unfinished"/>
+        <translation>Ime datoteke</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="272"/>
@@ -1790,22 +1790,22 @@
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="127"/>
         <source>Multiple Files</source>
-        <translation type="unfinished"/>
+        <translation>Višestruke datoteke</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="136"/>
         <source>Basic info</source>
-        <translation type="unfinished"/>
+        <translation>Osnovne informacije</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="144"/>
         <source>Total size</source>
-        <translation type="unfinished"/>
+        <translation>Ukupna veličina</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="145"/>
         <source>Number of files</source>
-        <translation type="unfinished"/>
+        <translation>Broj datoteka</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="145"/>
@@ -1815,12 +1815,12 @@
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="150"/>
         <source>Access time</source>
-        <translation type="unfinished"/>
+        <translation>Vrijeme pristupa</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="151"/>
         <source>Modify time</source>
-        <translation type="unfinished"/>
+        <translation>Vrijeme izmjene</translation>
     </message>
 </context>
 <context>
@@ -1876,7 +1876,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="26"/>
         <source>Select to the first item</source>
-        <translation type="unfinished"/>
+        <translation>Odaberi prvu stavku</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="26"/>
@@ -1886,7 +1886,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="27"/>
         <source>Select to the last item</source>
-        <translation type="unfinished"/>
+        <translation>Odaberi zadnju stavku</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="27"/>
@@ -1916,7 +1916,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="30"/>
         <source>Select to upper row</source>
-        <translation type="unfinished"/>
+        <translation>Odaberi gornji redak</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="30"/>
@@ -1926,7 +1926,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="31"/>
         <source>Select to lower row</source>
-        <translation type="unfinished"/>
+        <translation>Odaberi donji redak</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="31"/>
