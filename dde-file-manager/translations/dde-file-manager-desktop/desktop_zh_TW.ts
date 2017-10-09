@@ -4,7 +4,7 @@
         <message>
             <location filename="Desktop Entry]Comment" line="0"/>
             <source>Browse the file system</source>
-            <translation>瀏覽檔案系統</translation>
+            <translation>瀏覽與管理檔案系統</translation>
         </message>
         <message>
             <location filename="Desktop Entry]Name" line="0"/>

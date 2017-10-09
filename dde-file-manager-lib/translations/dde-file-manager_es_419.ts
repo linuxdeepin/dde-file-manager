@@ -382,12 +382,12 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="838"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/floder(s)!</source>
-        <translation type="unfinished"/>
+        <translation>Lo sentimos, no tiene permiso para operar el siguiente %1 archivo/carpetas)!</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="866"/>
         <source>View</source>
-        <translation type="unfinished"/>
+        <translation>Ver</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1046"/>
@@ -1331,7 +1331,7 @@
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="54"/>
         <source>Restore Defaults</source>
-        <translation>Restaurar valores predeterminados</translation>
+        <translation>Restaurar valores por defecto</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="24"/>
@@ -1681,7 +1681,7 @@
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="128"/>
         <source>Find:</source>
-        <translation>Encontrar:</translation>
+        <translation>Buscar:</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="146"/>
@@ -1692,22 +1692,22 @@
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="147"/>
         <location filename="../views/drenamebar.cpp" line="239"/>
         <source>Optional</source>
-        <translation type="unfinished"/>
+        <translation>Opcional</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="163"/>
         <source>Add:</source>
-        <translation>Añadir:</translation>
+        <translation>Agregar:</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="164"/>
         <source>Required:</source>
-        <translation>Requerido:</translation>
+        <translation>Necesario:</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="180"/>
         <source>Location:</source>
-        <translation>Ubicación:</translation>
+        <translation>Ubicación: </translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="185"/>
@@ -1744,32 +1744,32 @@
     <message>
         <location filename="../views/drenamebar.cpp" line="229"/>
         <source>Find</source>
-        <translation type="unfinished"/>
+        <translation>Encontrar</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="238"/>
         <source>Replace</source>
-        <translation type="unfinished"/>
+        <translation>Reemplazar</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="247"/>
         <source>Add</source>
-        <translation type="unfinished"/>
+        <translation>Añadir</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="256"/>
         <source>Location</source>
-        <translation type="unfinished"/>
+        <translation>Localización</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="263"/>
         <source>File name</source>
-        <translation type="unfinished"/>
+        <translation>Nombre del archivo</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="272"/>
         <source>+SN</source>
-        <translation type="unfinished"/>
+        <translation>+SN</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="279"/>
@@ -1785,42 +1785,42 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1012"/>
         <source>Rename %1 Files</source>
-        <translation>Renombrar  %1 Archivos</translation>
+        <translation>Renombrar %1 Archivos</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="127"/>
         <source>Multiple Files</source>
-        <translation type="unfinished"/>
+        <translation>Múltiples Archivos</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="136"/>
         <source>Basic info</source>
-        <translation type="unfinished"/>
+        <translation>Información básica</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="144"/>
         <source>Total size</source>
-        <translation type="unfinished"/>
+        <translation>Tamaño total</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="145"/>
         <source>Number of files</source>
-        <translation type="unfinished"/>
+        <translation>Número de archivos</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="145"/>
         <source>%1 file(s), %2 folder(s)</source>
-        <translation type="unfinished"/>
+        <translation>%1 archivo(s), %2 carpeta(s)</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="150"/>
         <source>Access time</source>
-        <translation type="unfinished"/>
+        <translation>Tiempo de acceso</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="151"/>
         <source>Modify time</source>
-        <translation type="unfinished"/>
+        <translation>Modificar el tiempo</translation>
     </message>
 </context>
 <context>
@@ -2253,12 +2253,12 @@
         <location filename="../dialogs/filepreviewdialog.cpp" line="217"/>
         <location filename="../dialogs/filepreviewdialog.cpp" line="243"/>
         <source>Size: %1</source>
-        <translation>Tamaño: %1</translation>
+        <translation>Tamaño:%1 </translation>
     </message>
     <message>
         <location filename="../dialogs/filepreviewdialog.cpp" line="218"/>
         <source>Type: %1</source>
-        <translation>Tipo %1</translation>
+        <translation>Tipo: %1</translation>
     </message>
     <message>
         <location filename="../dialogs/filepreviewdialog.cpp" line="222"/>
@@ -2268,7 +2268,7 @@
     <message>
         <location filename="../dialogs/filepreviewdialog.cpp" line="223"/>
         <source>Items: %1</source>
-        <translation>Ítemes: %1</translation>
+        <translation>Items: %1</translation>
     </message>
 </context>
 <context>
