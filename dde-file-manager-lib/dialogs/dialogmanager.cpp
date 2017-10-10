@@ -1054,7 +1054,7 @@ void DialogManager::showMultiFilesRenameDialog(const QList<DUrl> &selectedUrls)
             DFileService::instance()->multiFilesAddStrToName(selectedUrls, addModeValue);
 
         }else{
-            QPair<QString, std::size_t> customModeValue{ renameDialog.getModeThreeContent() };
+            QPair<QString, QString> customModeValue{ renameDialog.getModeThreeContent() };
             DFileService::instance()->multiFilesCustomName(selectedUrls, customModeValue);
         }
 
@@ -1067,7 +1067,7 @@ void DialogManager::showMultiFilesRenameDialog(const QList<DUrl> &selectedUrls)
 
 void DialogManager::showAddUserShareFailedDialog(const QString &sharePath)
 {
-    qDebug() << sharePath;
+    (void)sharePath;
 
     DDialog d;
     d.setTitle(tr("Share folder cann't be named after the current username"));

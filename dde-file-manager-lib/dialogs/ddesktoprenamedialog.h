@@ -44,7 +44,7 @@ public:
 
     QPair<QString, QString> getModeOneContent()const noexcept;
     QPair<QString, DFileService::AddTextFlags> getModeTwoContent()const noexcept;
-    QPair<QString, std::size_t> getModeThreeContent()const noexcept;
+    QPair<QString, QString> getModeThreeContent()const noexcept;
 
 
     void setDialogTitle(const QString& tile)noexcept;
@@ -55,7 +55,7 @@ private slots:
 
     void onContentChangedForFinding(const QString& content);
     void onContentChangedForAdding(const QString& content);
-    void onContentChangedForCustomizing(const QString& content);
+    void onContentChangedForCustomzedSN(const QString& content);
 
 private:
     using DDialog::setWindowTitle;

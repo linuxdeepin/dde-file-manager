@@ -90,7 +90,7 @@ public:
     bool renameFile(const QObject *sender, const DUrl &from, const DUrl &to) const;
     bool multiFilesReplaceName(const QList<DUrl>& urls, const QPair<QString, QString>& pair)const;
     bool multiFilesAddStrToName(const QList<DUrl>& urls, const QPair<QString, DFileService::AddTextFlags>& pair)const;
-    bool multiFilesCustomName(const QList<DUrl>& urls, const QPair<QString, std::size_t>& pair)const;
+    bool multiFilesCustomName(const QList<DUrl>& urls, const QPair<QString, QString> &pair)const;
     bool deleteFiles(const QObject *sender, const DUrlList &list, bool slient = false) const;
     DUrlList moveToTrash(const QObject *sender, const DUrlList &list) const;
     void pasteFileByClipboard(const QObject *sender, const DUrl &targetUrl) const;

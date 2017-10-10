@@ -646,6 +646,20 @@ QLineEdit#DRenameBarLineEditForCustomizing
     padding-top: 1px;
 }
 
+
+QLineEdit#DRenameBarLineEditSN:focus
+{
+    border: 1px solid #2ca7f8;
+    border-radius: 2px;
+}
+
+QLineEdit#DRenameBarLineEditSN
+{
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 2px;
+    padding-top: 1px;
+}
+
 QLabel#DRenameBarLabel
 {
     color: #606060;

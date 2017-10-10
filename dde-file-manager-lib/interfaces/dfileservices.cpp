@@ -679,7 +679,7 @@ bool DFileService::multiFilesAddStrToName(const QList<DUrl>& urls, const QPair<Q
 }
 
 ///###: customize
-bool DFileService::multiFilesCustomName(const QList<DUrl>& urls, const QPair<QString, std::size_t>& pair)const
+bool DFileService::multiFilesCustomName(const QList<DUrl>& urls, const QPair<QString, QString>& pair)const
 {
     auto alteredAndUnAlteredUrls = FileBatchProcess::instance()->customText(urls, pair);
     AppController::multiSelectionFilesCache.first = FileBatchProcess::batchProcessFile(alteredAndUnAlteredUrls);

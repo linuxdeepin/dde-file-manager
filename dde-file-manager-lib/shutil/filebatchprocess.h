@@ -57,7 +57,7 @@ public:
 
     QSharedMap<DUrl, DUrl> replaceText(const QList<DUrl>& originUrls, const QPair<QString, QString> &pair)const;
     QSharedMap<DUrl, DUrl> addText(const QList<DUrl>& originUrls, const QPair<QString, DFileService::AddTextFlags>& pair)const;
-    QSharedMap<DUrl, DUrl> customText(const QList<DUrl>& originUrls, const QPair<QString, std::size_t> &pair)const;
+    QSharedMap<DUrl, DUrl> customText(const QList<DUrl>& originUrls, const QPair<QString, QString> &pair)const;
 
 
 

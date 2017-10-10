@@ -177,6 +177,7 @@ public:
 
     QTuple<QLabel*, QLineEdit*, QLabel*, QLineEdit*, QLabel*> m_customOPeratorItems{};
     QPair<QHBoxLayout*, QFrame*> m_frameForLayoutCustomArea{};
+    QRegExpValidator* m_validator{ nullptr };
 
 
     QTuple<QPushButton*, QPushButton*, QHBoxLayout*, QFrame*> m_buttonsArea{};
@@ -211,6 +212,9 @@ void DRenameBarPrivate::initUi()
 
     m_customOPeratorItems = std::make_tuple(new QLabel, new QLineEdit, new QLabel, new QLineEdit, new QLabel);
     m_frameForLayoutCustomArea = QPair<QHBoxLayout*, QFrame*>{ new QHBoxLayout, new QFrame };
+
+    QRegExp regStr{ QString{"[0-9]+"} };
+    m_validator = new QRegExpValidator{ regStr };
 
     m_buttonsArea = std::make_tuple(new QPushButton, new QPushButton, new QHBoxLayout, new QFrame);
 }
@@ -270,9 +274,10 @@ void DRenameBarPrivate::setUiParameters()
     label->setObjectName(QString{"DRenameBarLabel"});
     lineEdit = std::get<3>(m_customOPeratorItems);
     label->setText(QObject::tr("+SN"));
+    lineEdit->setObjectName(QString{"DRenameBarLineEditSN"});
     lineEdit->setPlaceholderText(QObject::tr("Required"));
     lineEdit->setText(QString{"1"});
-    lineEdit->setEnabled(false);
+    lineEdit->setValidator(m_validator);
     label->setBuddy(lineEdit);
     label = std::get<4>(m_customOPeratorItems);
     label->setObjectName(QString{"DRenameBarLabel"});
@@ -471,9 +476,9 @@ void DRenameBar::eventDispatcher()
 
     }else if(d->m_currentPattern == 2){ //###:  custom
         QString forCustomStr{ std::get<1>(d->m_customOPeratorItems)->text() };
-        std::size_t number{ std::get<3>(d->m_customOPeratorItems)->text().toInt() };
+        QString numberStr{ std::get<3>(d->m_customOPeratorItems)->text() };
 
-        QPair<QString, std::size_t> pair{ forCustomStr, number};
+        QPair<QString, QString> pair{ forCustomStr, numberStr};
 
         value = DFileService::instance()->multiFilesCustomName(d->m_urlList, pair);
     }
@@ -509,12 +514,63 @@ void DRenameBar::onCustomOperatorFileNameChanged()noexcept
     QLineEdit* lineEditForFileName{ std::get<1>(d->m_customOPeratorItems) };
     if(lineEditForFileName->text().isEmpty() == true){ //###: must be input filename.
         d->m_renameButtonStates[2] = false;
-        d->setRenameBtnStatus(true);
+        d->setRenameBtnStatus(false);
 
     }else{
-        d->m_renameButtonStates[2] = true;
-        d->setRenameBtnStatus(true);
+
+        QLineEdit* lineEditForSNNumber{ std::get<3>(d->m_customOPeratorItems) };
+
+        if(lineEditForSNNumber->text().isEmpty() == true){
+            d->m_renameButtonStates[2] = false;
+            d->setRenameBtnStatus(false);
+
+        }else{
+            d->m_renameButtonStates[2] = true;
+            d->setRenameBtnStatus(true);
+
+        }
+
     }
+}
+
+void DRenameBar::onCustomOperatorSNNumberChanged()
+{
+    DRenameBarPrivate* const d{ d_func() };
+
+    QLineEdit* lineEditForSNNumber{ std::get<3>(d->m_customOPeratorItems) };
+    if(lineEditForSNNumber->text().isEmpty() == true){ //###: must be input filename.
+        d->m_renameButtonStates[2] = false;
+        d->setRenameBtnStatus(false);
+
+    }else{
+
+        QLineEdit* lineEditForFileName{ std::get<3>(d->m_customOPeratorItems) };
+
+        if(lineEditForFileName->text().isEmpty() == true){
+            d->m_renameButtonStates[2] = false;
+            d->setRenameBtnStatus(false);
+
+        }else{
+            d->m_renameButtonStates[2] = true;
+            d->setRenameBtnStatus(true);
+
+        }
+
+        ///###: renew from exception.
+        std::string content{ lineEditForSNNumber->text().toStdString() };
+        try{
+            std::stoull(content);
+
+        }catch(const std::out_of_range& err){
+            (void)err;
+            lineEditForSNNumber->setText(QString{"1"});
+
+        }catch(...){
+            lineEditForSNNumber->setText(QString{"1"});
+        }
+
+    }
+
 
 }
 
@@ -546,6 +602,7 @@ void DRenameBar::initConnect()
 
 
     QObject::connect(std::get<1>(d->m_customOPeratorItems), &QLineEdit::textChanged, this, &DRenameBar::onCustomOperatorFileNameChanged);
+    QObject::connect(std::get<3>(d->m_customOPeratorItems), &QLineEdit::textChanged, this, &DRenameBar::onCustomOperatorSNNumberChanged);
 }
 
 
@@ -566,6 +623,8 @@ void DRenameBar::restoreRenameBar()noexcept
     ///custom
     lineEdit = std::get<1>(d->m_customOPeratorItems);
     lineEdit->clear();
+    lineEdit = std::get<3>(d->m_customOPeratorItems);
+    lineEdit->setText(QString{"1"});
 
     d->m_flag = DFileService::AddTextFlags::Before;
     d->m_currentPattern = 0;
@@ -596,7 +655,7 @@ std::unique_ptr<RecordRenameBarState> DRenameBar::getCurrentState()const
 
     std::unique_ptr<RecordRenameBarState> state{
                                                   new RecordRenameBarState{ patternOneContent, patternTwoContent, patternThreeContent,
-                                                                            buttonsState, currentPattern, selectedUrls, visibleValue}
+                                                                            buttonsState, currentPattern, selectedUrls, visibleValue }
                                                };
     return state;
 }
