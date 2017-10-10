@@ -45,7 +45,6 @@
 #include "dialogs/dtaskdialog.h"
 #include "dialogs/propertydialog.h"
 #include "dialogs/openwithdialog.h"
-#include "dialogs/diskspaceoutofusedtipdialog.h"
 #include "dialogs/dmultifilepropertydialog.h"
 #include "interfaces/dfmsetting.h"
 #include "plugins/pluginmanager.h"
@@ -727,7 +726,11 @@ void DialogManager::showGlobalSettingsDialog(quint64 winId)
 void DialogManager::showDiskSpaceOutOfUsedDialog()
 {
     QTimer::singleShot(200,[=]{
-        DiskSpaceOutOfUsedTipDialog d;
+        DDialog d;
+        d.setIcon(m_dialogWarningIcon);
+        d.setTitle(tr("Target disk doesn't have enough space, unable to copy!"));
+        d.addButton(tr("OK"));
+
         QRect rect = d.geometry();
         rect.moveCenter(qApp->desktop()->geometry().center());
         d.move(rect.x(), rect.y());
@@ -1068,7 +1071,7 @@ void DialogManager::showAddUserShareFailedDialog(const QString &sharePath)
 
     DDialog d;
     d.setTitle(tr("Share folder cann't be named after the current username"));
-    d.setIcon(QIcon(":/images/dialogs/images/dialog_warning_64.png"));
+    d.setIcon(m_dialogWarningIcon);
     d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
     d.exec();
 }
