@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>CloseAllDialogIndicator</name>
     <message>
@@ -354,7 +352,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="732"/>
         <source>Target disk doesn&apos;t have enough space, unable to copy!</source>
-        <translation type="unfinished">目标磁盘剩余空间不足，无法进行复制！</translation>
+        <translation>目标磁盘剩余空间不足，无法进行复制！</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="745"/>
@@ -401,17 +399,6 @@
         <location filename="../dialogs/dialogmanager.cpp" line="1074"/>
         <source>Share folder cann&apos;t be named after the current username</source>
         <translation>共享文件夹不能和当前用户名重名</translation>
-    </message>
-</context>
-<context>
-    <name>DiskSpaceOutOfUsedTipDialog</name>
-    <message>
-        <source>Target disk doesn&apos;t have enough space, unable to copy!</source>
-        <translation type="vanished">目标磁盘剩余空间不足，无法进行复制！</translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation type="vanished">确定</translation>
     </message>
 </context>
 <context>
@@ -1311,7 +1298,7 @@
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="21"/>
         <source>Default view:</source>
-        <translation type="unfinished"></translation>
+        <translation>默认视图：</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="24"/>
