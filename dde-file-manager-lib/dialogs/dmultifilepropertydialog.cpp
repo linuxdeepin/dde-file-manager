@@ -129,7 +129,7 @@ void DMultiFilePropertyDialogPrivate::initUiParameter()noexcept
     nameLabel->setStyleSheet(QString{"QLabel#NameLabel{ font-size: 12px;}"});
 
     QLabel* lineLabel{ std::get<1>(m_nameLabelAndLineLabel) };
-    lineLabel->setFixedSize( QSize{260, 2} );
+    lineLabel->setFixedSize( QSize{260, 1} );
     lineLabel->setObjectName( QString{"LabelAsLine"} );
     lineLabel->setStyleSheet(QString{"QLabel#LabelAsLine{ border: none; background-color: #f0f0f0;}"});
 
@@ -141,7 +141,7 @@ void DMultiFilePropertyDialogPrivate::initUiParameter()noexcept
                                          DMultiFilePropertyDialog::getTheQuantityOfFilesAndFolders(m_urlList)
                                                                  };
     std::list<std::pair<QString, QString>> coupleLabelContent;
-    coupleLabelContent.emplace_back(QObject::tr("Total size"), /*totalSizeStr*/QString{""});
+    coupleLabelContent.emplace_back(QObject::tr("Total size"), QString{""});
     coupleLabelContent.emplace_back(QObject::tr("Number of files"), QObject::tr("%1 file(s), %2 folder(s)")
                                     .arg( QString::fromStdString(std::to_string(quantityOfFilesAndFolders.first)))
                                     .arg( QString::fromStdString(std::to_string(quantityOfFilesAndFolders.second))));
