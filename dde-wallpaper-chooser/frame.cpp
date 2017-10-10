@@ -43,7 +43,7 @@ Frame::Frame(QFrame *parent)
                                   DeepinWMPath,
                                   QDBusConnection::sessionBus(),
                                   this)),
-      m_mouseArea(new DRegionMonitor(this))
+      m_dbusMouseArea(new DBusXMouseArea(this))
 {
     setFocusPolicy(Qt::StrongFocus);
     setWindowFlags(Qt::BypassWindowManagerHint | Qt::WindowStaysOnTopHint);
@@ -54,7 +54,9 @@ Frame::Frame(QFrame *parent)
 
     initSize();
 
-    connect(m_mouseArea, &DRegionMonitor::buttonPress, [this](const QPoint &p, const int button){
+    connect(m_dbusMouseArea, &DBusXMouseArea::ButtonPress, [this](int button, int x, int y, const QString &id){
+        if (id != m_mouseAreaKey) return;
+
         if (button == 4) {
             m_wallpaperList->prevPage();
         } else if (button == 5) {
@@ -62,7 +64,7 @@ Frame::Frame(QFrame *parent)
         } else {
             qDebug() << "button pressed on blank area, quit.";
 
-            if (!rect().contains(p.x() - this->x(), p.y() - this->y())) {
+            if (!rect().contains(x - this->x(), y - this->y())) {
                 hide();
             }
         }
@@ -85,8 +87,16 @@ Frame::~Frame()
 void Frame::show()
 {
     m_dbusDeepinWM->RequestHideWindows();
-
-    m_mouseArea->registerRegion();
+    QDBusPendingCall call = m_dbusMouseArea->RegisterFullScreen();
+    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
+    connect(watcher, &QDBusPendingCallWatcher::finished, this, [this, call] {
+         if (call.isError()) {
+             qWarning() << "failed to register full screen mousearea: " << call.error().message();
+         } else {
+             QDBusReply<QString> reply = call.reply();
+             m_mouseAreaKey = reply.value();
+         }
+    });
 
     DBlurEffectWidget::show();
 }
@@ -122,8 +132,7 @@ void Frame::hideEvent(QHideEvent *event)
     DBlurEffectWidget::hideEvent(event);
 
     m_dbusDeepinWM->CancelHideWindows();
-
-    m_mouseArea->unregisterRegion();
+    m_dbusMouseArea->UnregisterArea(m_mouseAreaKey);
 
     if (!m_wallpaperList->desktopWallpaper().isEmpty())
         m_dbusAppearance->Set("background", m_wallpaperList->desktopWallpaper());
