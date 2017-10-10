@@ -39,7 +39,7 @@ public:
 
 
     void initUi();
-    void initUiParamenters();
+    void initUiParameters();
     void initUiLayout();
 
     DDesktopRenameDialog* q_ptr{ nullptr };
@@ -62,6 +62,7 @@ public:
     std::tuple<QLabel*, QLineEdit*, QHBoxLayout*> m_modeThreeItemsForFileName{};
     std::tuple<QLabel*, QLineEdit*, QHBoxLayout*> m_modeThreeItemsForSNNumber{};
     QPair<QVBoxLayout*, QFrame*> m_modeThreeLayout{};
+    QRegExpValidator* m_validator{ nullptr };
 
     QVBoxLayout* m_mainLayout{ nullptr };
     QFrame* m_mainFrame{ nullptr };
@@ -76,7 +77,7 @@ DDesktopRenameDialogPrivate::DDesktopRenameDialogPrivate(DDesktopRenameDialog * 
 {
     this->initUi();
     this->initUiLayout();
-    this->initUiParamenters();
+    this->initUiParameters();
 
 }
 
@@ -102,12 +103,15 @@ void DDesktopRenameDialogPrivate::initUi()
     m_modeThreeItemsForSNNumber = std::make_tuple(new QLabel{}, new QLineEdit{}, new QHBoxLayout{});
     m_modeThreeLayout = QPair<QVBoxLayout*, QFrame*>{new QVBoxLayout{}, new QFrame{}};
 
+    QRegExp regStr{ QString{"[0-9]+"} };
+    m_validator = new QRegExpValidator{ regStr };
+
     m_mainLayout = new QVBoxLayout{};
     m_mainFrame = new QFrame{};
 }
 
 
-void DDesktopRenameDialogPrivate::initUiParamenters()
+void DDesktopRenameDialogPrivate::initUiParameters()
 {
     m_titleLabel->setAlignment(Qt::AlignCenter);
     m_titleLabel->setObjectName(QString{"DRenameDialogTitleLabel"});
@@ -217,7 +221,7 @@ void DDesktopRenameDialogPrivate::initUiParamenters()
     tagLabel->setText(QObject::tr("+SN:"));
     contentLineEdit = std::get<1>(m_modeThreeItemsForSNNumber);
     contentLineEdit->setFixedSize(QSize{275, 25});
-    contentLineEdit->setEnabled(false);
+    contentLineEdit->setValidator(m_validator);
     contentLineEdit->setText(QString{"1"});
 
     tagLabel = nullptr;
@@ -406,6 +410,7 @@ void DDesktopRenameDialog::initConnect()noexcept
 
     QObject::connect(std::get<1>(d->m_itemsForSelecting), static_cast<funcType>(&QComboBox::currentIndexChanged), this, &DDesktopRenameDialog::onCurrentModeChanged);
     QObject::connect(std::get<1>(d->m_modeTwoItemsForLocating), static_cast<funcType>(&QComboBox::currentIndexChanged), this, &DDesktopRenameDialog::onCurrentAddModeChanged);
+    QObject::connect(std::get<1>(d->m_modeThreeItemsForSNNumber), &QLineEdit::textChanged, this, &DDesktopRenameDialog::onContentChangedForCustomzedSN);
 }
 
 
@@ -465,14 +470,14 @@ QPair<QString, DFileService::AddTextFlags> DDesktopRenameDialog::getModeTwoConte
 }
 
 
-QPair<QString, std::size_t> DDesktopRenameDialog::getModeThreeContent()const noexcept
+QPair<QString, QString> DDesktopRenameDialog::getModeThreeContent()const noexcept
 {
     const DDesktopRenameDialogPrivate* const d{ d_func() };
 
     QString fileName{ std::get<1>(d->m_modeThreeItemsForFileName)->text() };
-    std::size_t sn{ std::stoul( std::get<1>(d->m_modeThreeItemsForSNNumber)->text().toStdString() ) };
+    QString numberStr{ std::get<1>(d->m_modeThreeItemsForSNNumber)->text() };
 
-    return QPair<QString, std::size_t>{ fileName, sn };
+    return QPair<QString, QString>{ fileName, numberStr};
 }
 
 
@@ -516,27 +521,32 @@ void DDesktopRenameDialog::onContentChangedForAdding(const QString &content)
     }
 }
 
-
-void DDesktopRenameDialog::onContentChangedForCustomizing(const QString &content)
+void DDesktopRenameDialog::onContentChangedForCustomzedSN(const QString &content)
 {
-    DDesktopRenameDialogPrivate* const d{ d_func() };
+    DDesktopRenameDialogPrivate* d{ d_func() };
 
-    if(content.isEmpty() == false){
-        d->m_currentEnabled[2] = true;
-        this->setRenameButtonStatus(true);
+    QLineEdit* lineEditForSNNumber{ std::get<1>(d->m_modeThreeItemsForSNNumber) };
 
-    }else{
-        d->m_currentEnabled[2] = false;
-        this->setRenameButtonStatus(false);
+    std::string numberStr{ content.toStdString() };
+    try{
+        std::stoull(numberStr);
+
+    }catch(const std::out_of_range& err){
+        (void)err;
+        lineEditForSNNumber->setText(QString{"1"});
+
+    }catch(...){
+        lineEditForSNNumber->setText(QString{"1"});
     }
 }
-
 
 void DDesktopRenameDialog::setDialogTitle(const QString &tile)noexcept
 {
     DDesktopRenameDialogPrivate* const d{ d_func() };
     d->m_titleLabel->setText(tile);
 }
+
+
 
 
 

@@ -296,15 +296,19 @@ QSharedMap<DUrl, DUrl> FileBatchProcess::addText(const QList<DUrl> &originUrls, 
     return result;
 }
 
-QSharedMap<DUrl, DUrl> FileBatchProcess::customText(const QList<DUrl> &originUrls, const QPair<QString, std::size_t> &pair) const
+QSharedMap<DUrl, DUrl> FileBatchProcess::customText(const QList<DUrl> &originUrls, const QPair<QString, QString> &pair) const
 {
-    if(originUrls.isEmpty() == true){  //###: here, jundge whether there are fileUrls in originUrls.
+    if(originUrls.isEmpty() == true || pair.first.isEmpty() == true || pair.second.isEmpty() == true){  //###: here, jundge whether there are fileUrls in originUrls.
         return QSharedMap<DUrl, DUrl>{ nullptr };
     }
 
+    unsigned long long SNNumber{ std::stoull(pair.second.toStdString()) };
+    unsigned long long index{ 0 };
+    if(SNNumber == 0xffffffffffffffff){  //##: Maybe, this value will be equal to the max value of the type of unsigned long long
+        index = SNNumber - originUrls.size();
+    }
 
-
-    std::size_t index{ pair.second };
+    index = SNNumber;
     QSharedMap<DUrl, DUrl> result{new QMap<DUrl, DUrl>{}};
     for(auto url : originUrls){
         QFileInfo info{url.toLocalFile()};
@@ -364,15 +368,15 @@ QSharedMap<DUrl, DUrl> FileBatchProcess::customText(const QList<DUrl> &originUrl
 
         if(info.isDir()){  //###: aim at dir
             QByteArray indexStr{ QByteArray::fromStdString( std::to_string(index) ) };
-            QByteArray fileBaseName{ pair.first.toUtf8() };
+            QByteArray basenameOfFile{ pair.first.toUtf8() };
             std::size_t sizeOfIndexStr{ indexStr.size() };
-            std::size_t sizeOfBaseName{ fileBaseName.size() };
+            std::size_t sizeOfBaseName{ basenameOfFile.size() };
 
 
             if(sizeOfBaseName >= MAX_FILE_NAME_CHAR_COUNT){
 
-                fileBaseName.resize(MAX_FILE_NAME_CHAR_COUNT - sizeOfIndexStr);
-                QByteArray fileBaseName{ FileBatchProcess::cutString(fileBaseName) };
+                basenameOfFile.resize(MAX_FILE_NAME_CHAR_COUNT - sizeOfIndexStr);
+                QByteArray fileBaseName{ FileBatchProcess::cutString(basenameOfFile) };
                 fileBaseName += indexStr;
 
                 DUrl beModifiedUrl{ DUrl::fromLocalFile( info.path() + QString{"/"} + QString::fromUtf8(fileBaseName) ) };
@@ -382,7 +386,7 @@ QSharedMap<DUrl, DUrl> FileBatchProcess::customText(const QList<DUrl> &originUrl
 
                 if(sizeOfBaseName + sizeOfIndexStr <= MAX_FILE_NAME_CHAR_COUNT){
 
-                    QByteArray newFileBaseName{ fileBaseName + indexStr };
+                    QByteArray newFileBaseName{ basenameOfFile + indexStr };
 
                     DUrl beModifiedUrl{ DUrl::fromLocalFile( info.path() + QString{"/"} + QString::fromUtf8(newFileBaseName)) };
                     result->insert(url, beModifiedUrl);
@@ -390,8 +394,8 @@ QSharedMap<DUrl, DUrl> FileBatchProcess::customText(const QList<DUrl> &originUrl
                 }else{
 
                     std::size_t n{ sizeOfBaseName + sizeOfIndexStr - MAX_FILE_NAME_CHAR_COUNT };
-                    fileBaseName.resize(fileBaseName.size() - n);
-                    QByteArray fileBaseName{ FileBatchProcess::cutString(fileBaseName) };
+                    basenameOfFile.resize(basenameOfFile.size() - n);
+                    QByteArray fileBaseName{ FileBatchProcess::cutString(basenameOfFile) };
                     fileBaseName += indexStr;
 
                     DUrl beModifiedUrl{ DUrl::fromLocalFile( info.path() + QString{"/"} + QString::fromUtf8(fileBaseName) ) };
