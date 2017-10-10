@@ -28,7 +28,6 @@
 #include <QPainter>
 #include <QPaintEvent>
 #include <QResizeEvent>
-#include <QApplication>
 
 static QPixmap ThumbnailImage(const QString &path)
 {
@@ -36,19 +35,11 @@ static QPixmap ThumbnailImage(const QString &path)
     QString realPath = url.toLocalFile();
 
     ThumbnailManager * tnm = ThumbnailManager::instance();
+    QPixmap pix = QPixmap(realPath).scaled(QSize(ItemWidth, ItemHeight), Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
 
-    const qreal ratio = qApp->devicePixelRatio();
-
-    QPixmap pix = QPixmap(realPath).scaled(QSize(ItemWidth * ratio, ItemHeight * ratio),
-                                           Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
-
-    const QRect r(0, 0, ItemWidth * ratio, ItemHeight * ratio);
-    const QSize size(ItemWidth * ratio, ItemHeight * ratio);
-
-    if (pix.width() > ItemWidth * ratio || pix.height() > ItemHeight * ratio)
-        pix = pix.copy(QRect(pix.rect().center() - r.center(), size));
-
-    pix.setDevicePixelRatio(ratio);
+    if (pix.width() > ItemWidth || pix.height() > ItemHeight) {
+        pix = pix.copy((pix.width() - ItemWidth) / 2, (pix.height() - ItemHeight) / 2, ItemWidth, ItemHeight);
+    }
 
     tnm->replace(QUrl::toPercentEncoding(path), pix);
 
@@ -198,13 +189,10 @@ void WallpaperItem::leaveEvent(QEvent *event)
 
 void WallpaperItem::resizeEvent(QResizeEvent *event)
 {
-    const qreal ratio = devicePixelRatioF();
-
-    const QPoint &offset = QPoint((event->size().width() - ItemWidth) / 2,
-                                  (event->size().height() - ItemHeight) / 2);
+    const QPoint &offset = QPoint((event->size().width() - ItemWidth) / 2, (event->size().height() - ItemHeight) / 2);
 
     m_wrapper->setFixedWidth(width());
-    m_wrapper->m_pixmapBoxGeometry = QRect(offset * ratio, QSize(ItemWidth * ratio, ItemHeight * ratio));
+    m_wrapper->m_pixmapBoxGeometry = QRect(offset, QSize(ItemWidth, ItemHeight));
 
     QFrame::resizeEvent(event);
 }

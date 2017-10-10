@@ -18,7 +18,6 @@
 
 #include <dblureffectwidget.h>
 #include <dimagebutton.h>
-#include <dregionmonitor.h>
 
 DWIDGET_USE_NAMESPACE
 
@@ -54,9 +53,10 @@ private:
 
     AppearanceDaemonInterface * m_dbusAppearance = NULL;
     DeepinWM * m_dbusDeepinWM = NULL;
-    DRegionMonitor * m_mouseArea = NULL;
+    DBusXMouseArea * m_dbusMouseArea = NULL;
 
     QString m_formerWallpaper;
+    QString m_mouseAreaKey;
     QMap<QString, bool> m_deletableInfo;
 
     void initSize();
