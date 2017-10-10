@@ -797,33 +797,9 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
 
 
     qDebug() << "copy file by qtio" << srcFile << tarDir << isMoved;
-    QFileInfo srcFileInfo(srcFile);
 
-    qint64 threshold = srcFileInfo.size() / 1024;
-    threshold = threshold / 1024;
-    threshold = threshold / 1024;
-
-    if (threshold >= 4 ){
-        UDiskDeviceInfoPointer pDesDevice;
-        UDiskDeviceInfoPointer pDesDevice1 = deviceListener->getDeviceByPath(tarDir);
-        UDiskDeviceInfoPointer pDesDevice2 = deviceListener->getDeviceByFilePath(tarDir);
-        if (pDesDevice1 || pDesDevice2){
-            if (pDesDevice1){
-                pDesDevice = pDesDevice1;
-            }
-            if (pDesDevice2){
-                pDesDevice = pDesDevice2;
-            }
-            if (pDesDevice){
-                QString devicePath = pDesDevice->getDiskInfo().unix_device();
-                QString fstype = PartMan::Partition::getPartitionByDevicePath(devicePath).fs();
-                if (fstype == "vfat" ){
-                    emit fileSignalManager->requestShow4GFat32Dialog();
-                    return false;
-                }
-            }
-        }
-    }
+    if (checkFat32FileOutof4G(srcFile, tarDir))
+        return false;
 
     if (m_isAborted)
         return false;
@@ -832,7 +808,7 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
     }else if(!m_applyToAll && m_status == FileJob::Cancelled){
         m_status = Started;
     }
-
+    QFileInfo srcFileInfo(srcFile);
     QFileInfo tarDirInfo(tarDir);
     m_srcFileName = srcFileInfo.fileName();
     m_tarDirName = tarDirInfo.fileName();
@@ -1101,6 +1077,10 @@ void FileJob::showProgress(goffset current_num_bytes, goffset total_num_bytes, g
 bool FileJob::copyFileByGio(const QString &srcFile, const QString &tarDir, bool isMoved, QString *targetPath)
 {
     qDebug() << "copy file by gvfs" << srcFile << tarDir;
+
+    if (checkFat32FileOutof4G(srcFile, tarDir))
+        return false;
+
     if (m_isAborted)
         return false;
     if(m_applyToAll && m_status == FileJob::Cancelled){
@@ -2251,6 +2231,38 @@ bool FileJob::checkTrashFileOutOf1GB(const DUrl &url)
     m_checkDiskJobDataDetail = jobDataDetail;
 
     return isInLimit;
+}
+
+bool FileJob::checkFat32FileOutof4G(const QString &srcFile, const QString &tarDir)
+{
+    QFileInfo srcFileInfo(srcFile);
+
+    qint64 threshold = srcFileInfo.size() / 1024;
+    threshold = threshold / 1024;
+    threshold = threshold / 1024;
+
+    if (threshold >= 4 ){
+        UDiskDeviceInfoPointer pDesDevice;
+        UDiskDeviceInfoPointer pDesDevice1 = deviceListener->getDeviceByPath(tarDir);
+        UDiskDeviceInfoPointer pDesDevice2 = deviceListener->getDeviceByFilePath(tarDir);
+        if (pDesDevice1 || pDesDevice2){
+            if (pDesDevice1){
+                pDesDevice = pDesDevice1;
+            }
+            if (pDesDevice2){
+                pDesDevice = pDesDevice2;
+            }
+            if (pDesDevice){
+                QString devicePath = pDesDevice->getDiskInfo().unix_device();
+                QString fstype = PartMan::Partition::getPartitionByDevicePath(devicePath).fs();
+                if (fstype == "vfat" ){
+                    emit fileSignalManager->requestShow4GFat32Dialog();
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
 }
 
 bool FileJob::checkUseGvfsFileOperation(const DUrlList &files, const DUrl &destination)

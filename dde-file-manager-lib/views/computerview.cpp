@@ -753,6 +753,7 @@ void ComputerView::mountAdded(UDiskDeviceInfoPointer device)
     qDebug() << "===========mountAdded=============" << device->getId() << m_nativeItems.contains(device->getId()) << m_removableItems.contains(device->getId());
     if (m_nativeItems.contains(device->getId())){
         m_nativeItems.value(device->getId())->setDeviceInfo(device);
+        m_nativeItems.value(device->getId())->updateStatus();
         return;
     }else if (m_removableItems.contains(device->getId())){
         m_removableItems.value(device->getId())->setDeviceInfo(device);

@@ -127,7 +127,7 @@ void DiskControlWidget::onVolume_added(const QDiskInfo &diskInfo)
             gvfsMountManager->mount(diskInfo);
         }else if (globalSetting->isAutoMountAndOpen()){
             gvfsMountManager->mount(diskInfo);
-            QProcess::startDetached("gvfs-open", {"computer:///"});
+            QProcess::startDetached("dde-file-manager", {"computer:///"});
         }
     }
 }

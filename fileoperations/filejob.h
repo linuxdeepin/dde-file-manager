@@ -222,6 +222,8 @@ private:
     //check if is moving to trash file out of size range of 1GB;
     bool checkTrashFileOutOf1GB(const DUrl& url);
 
+    bool checkFat32FileOutof4G(const QString &srcFile, const QString &tarDir);
+
     QString getNotExistsTrashFileName(const QString &fileName);
     bool checkUseGvfsFileOperation(const DUrlList &files, const DUrl &destination);
     bool checkUseGvfsFileOperation(const QString& path);
