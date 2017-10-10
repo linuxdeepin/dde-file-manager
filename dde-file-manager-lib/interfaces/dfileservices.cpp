@@ -538,8 +538,10 @@ const DAbstractFileInfoPointer DFileService::createFileInfo(const QObject *sende
 {
     const DAbstractFileInfoPointer &info = DAbstractFileInfo::getFileInfo(fileUrl);
 
-    if (info)
+    if (info){
+        info->refresh();
         return info;
+    }
 
     const auto&& event = dMakeEventPointer<DFMCreateFileInfoEvnet>(sender, fileUrl);
 
