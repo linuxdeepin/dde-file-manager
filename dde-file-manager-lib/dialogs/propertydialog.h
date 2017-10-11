@@ -97,6 +97,22 @@ public:
     explicit SectionValueLabel(const QString &text="", QWidget *parent=0, Qt::WindowFlags f=0);
 };
 
+class LinkSectionValueLabel: public SectionValueLabel
+{
+    Q_OBJECT
+
+public:
+    explicit LinkSectionValueLabel(const QString &text="", QWidget *parent=0, Qt::WindowFlags f=0);
+
+    DUrl linkTargetUrl() const;
+    void setLinkTargetUrl(const DUrl &linkTargetUrl);
+
+protected:
+    void mouseReleaseEvent(QMouseEvent* event) Q_DECL_OVERRIDE;
+
+private:
+    DUrl m_linkTargetUrl;
+};
 
 class PropertyDialog : public DDialog
 {
