@@ -358,7 +358,15 @@ void PropertyDialog::renameFile()
     const DAbstractFileInfoPointer pfile = fileService->createFileInfo(this, m_url);
     int endPos = -1;
     if(pfile->isFile()){
-        endPos = m_edit->toPlainText().length() - pfile->suffix().length()-1;
+
+        QString suffixStr{ pfile->suffix() };
+        if(suffixStr.isEmpty() == true){
+            endPos = m_edit->toPlainText().length() - pfile->suffix().length();
+
+        }else{
+            endPos = m_edit->toPlainText().length() - pfile->suffix().length()-1;
+        }
+
     }
     if(endPos == -1) {
         m_edit->selectAll();
@@ -896,9 +904,9 @@ QFrame *PropertyDialog::createAuthorityManagermentWidget(const DAbstractFileInfo
     QFrame *widget = new QFrame;
     QFormLayout *layout = new QFormLayout;
 
-    DComboBox *ownerBox = new DComboBox;
-    DComboBox *groupBox = new DComboBox;
-    DComboBox *otherBox = new DComboBox;
+    QComboBox *ownerBox = new QComboBox;
+    QComboBox *groupBox = new QComboBox;
+    QComboBox *otherBox = new QComboBox;
 
     QStringList authorityList;
 
