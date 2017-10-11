@@ -9,7 +9,6 @@
 #include "filepreviewdialog.h"
 #include "dfileservices.h"
 #include "dabstractfileinfo.h"
-#include "dfmfilepreview.h"
 #include "dfmfilepreviewfactory.h"
 #include "shutil/filessizeworker.h"
 #include "shutil/fileutils.h"
@@ -108,36 +107,6 @@ QLabel *FilePreviewDialogStatusBar::title() const
 return m_title;
 }
 
-class UnknowFilePreview : public DFMFilePreview
-{
-    Q_OBJECT
-
-public:
-    explicit UnknowFilePreview(QObject *parent = 0);
-    ~UnknowFilePreview();
-
-    bool setFileUrl(const DUrl &url) Q_DECL_OVERRIDE;
-    void setFileInfo(const DAbstractFileInfoPointer &info);
-
-    QWidget *contentWidget() const Q_DECL_OVERRIDE;
-
-signals:
-    void requestStartFolderSize();
-
-public slots:
-    void startFolderSize(const DUrl& url);
-    void updateFolderSize(qint64 size);
-
-private:
-    QPointer<QWidget> m_contentWidget;
-    QLabel *m_iconLabel;
-    QLabel *m_nameLabel;
-    QLabel *m_sizeLabel;
-    QLabel *m_typeLabel;
-    FilesSizeWorker* m_sizeWorker;
-    QThread* m_sizeThread;
-};
-
 UnknowFilePreview::UnknowFilePreview(QObject *parent)
     : DFMFilePreview(parent)
 {
@@ -214,13 +183,13 @@ void UnknowFilePreview::setFileInfo(const DAbstractFileInfoPointer &info)
     m_nameLabel->setText(elidedText);
 
     if (info->isFile() || info->isSymLink()){
-        m_sizeLabel->setText(tr("Size: %1").arg(info->sizeDisplayName()));
-        m_typeLabel->setText(tr("Type: %1").arg(info->mimeTypeDisplayName()));
+        m_sizeLabel->setText(QObject::tr("Size: %1").arg(info->sizeDisplayName()));
+        m_typeLabel->setText(QObject::tr("Type: %1").arg(info->mimeTypeDisplayName()));
     }else if (info->isDir()){
         m_sizeWorker->stop();
         startFolderSize(info->fileUrl());
-        m_sizeLabel->setText(tr("Size: 0"));
-        m_typeLabel->setText(tr("Items: %1").arg(info->sizeDisplayName()));
+        m_sizeLabel->setText(QObject::tr("Size: 0"));
+        m_typeLabel->setText(QObject::tr("Items: %1").arg(info->sizeDisplayName()));
     }
 }
 
@@ -240,7 +209,7 @@ void UnknowFilePreview::startFolderSize(const DUrl &url)
 
 void UnknowFilePreview::updateFolderSize(qint64 size)
 {
-    m_sizeLabel->setText(tr("Size: %1").arg(FileUtils::formatSize(size)));
+    m_sizeLabel->setText(QObject::tr("Size: %1").arg(FileUtils::formatSize(size)));
 }
 
 

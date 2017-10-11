@@ -11,12 +11,15 @@
 
 #include "dfmglobal.h"
 #include "durl.h"
-
+#include "dfmfilepreview.h"
+#include "dabstractfileinfo.h"
+#include "shutil/filessizeworker.h"
 #include <dabstractdialog.h>
 #include <dseparatorhorizontal.h>
-
+#include <QPointer>
 QT_BEGIN_NAMESPACE
 class QPushButton;
+class QLabel;
 QT_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE
@@ -24,7 +27,38 @@ DWIDGET_USE_NAMESPACE
 DFM_BEGIN_NAMESPACE
 
 class FilePreviewDialogStatusBar;
-class DFMFilePreview;
+
+
+class UnknowFilePreview : public DFMFilePreview
+{
+    Q_OBJECT
+public:
+    explicit UnknowFilePreview(QObject *parent = 0);
+    ~UnknowFilePreview();
+
+    bool setFileUrl(const DUrl &url) Q_DECL_OVERRIDE;
+    void setFileInfo(const DAbstractFileInfoPointer &info);
+
+    QWidget *contentWidget() const Q_DECL_OVERRIDE;
+
+signals:
+    void requestStartFolderSize();
+
+public slots:
+    void startFolderSize(const DUrl& url);
+    void updateFolderSize(qint64 size);
+
+private:
+    QPointer<QWidget> m_contentWidget;
+    QLabel *m_iconLabel;
+    QLabel *m_nameLabel;
+    QLabel *m_sizeLabel;
+    QLabel *m_typeLabel;
+    FilesSizeWorker* m_sizeWorker;
+    QThread* m_sizeThread;
+};
+
+
 class FilePreviewDialog : public DAbstractDialog
 {
     Q_OBJECT

@@ -177,7 +177,7 @@ void DDesktopRenameDialogPrivate::initUiParameters()
     tagLabel = std::get<0>(m_modeTwoItemsForAdding);
     tagLabel->setText(QObject::tr("Add:"));
     contentLineEdit = std::get<1>(m_modeTwoItemsForAdding);
-    contentLineEdit->setPlaceholderText(QObject::tr("Required:"));
+    contentLineEdit->setPlaceholderText(QObject::tr("Required"));
     contentLineEdit->setFixedSize(QSize{275, 25});
     contentLineEdit->setMaxLength(300);
     contentLineEdit->setObjectName(QString{"DRenameDialogLineEditForAdding"});

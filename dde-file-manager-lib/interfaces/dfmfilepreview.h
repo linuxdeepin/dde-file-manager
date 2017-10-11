@@ -20,7 +20,6 @@ DFM_BEGIN_NAMESPACE
 class DFMFilePreview : public QObject
 {
     Q_OBJECT
-
 public:
     explicit DFMFilePreview(QObject *parent = 0);
 
