@@ -43,6 +43,7 @@
 
 #include "plugins/pluginmanager.h"
 #include "../plugininterfaces/menu/menuinterface.h"
+#include "dfmeventdispatcher.h"
 
 #include <dseparatorhorizontal.h>
 #include <darrowlineexpand.h>
@@ -187,6 +188,28 @@ SectionValueLabel::SectionValueLabel(const QString &text, QWidget *parent, Qt::W
     setFixedWidth(150);
     setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
     setWordWrap(true);
+}
+
+LinkSectionValueLabel::LinkSectionValueLabel(const QString &text, QWidget *parent, Qt::WindowFlags f):
+    SectionValueLabel(text, parent, f)
+{
+
+}
+
+void LinkSectionValueLabel::mouseReleaseEvent(QMouseEvent *event)
+{
+    DFMEventDispatcher::instance()->processEvent<DFMOpenFileLocation>(Q_NULLPTR, linkTargetUrl());
+    SectionValueLabel::mouseReleaseEvent(event);
+}
+
+DUrl LinkSectionValueLabel::linkTargetUrl() const
+{
+    return m_linkTargetUrl;
+}
+
+void LinkSectionValueLabel::setLinkTargetUrl(const DUrl &linkTargetUrl)
+{
+    m_linkTargetUrl = linkTargetUrl;
 }
 
 
@@ -743,7 +766,10 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
     if (info->isSymLink()){
         SectionKeyLabel* linkPathSectionLabel = new SectionKeyLabel(QObject::tr("Link path"));
 
-        SectionValueLabel* linkPathLabel = new SectionValueLabel(info->redirectedFileUrl().toLocalFile());
+        LinkSectionValueLabel* linkPathLabel = new LinkSectionValueLabel(info->redirectedFileUrl().toLocalFile());
+        linkPathLabel->setToolTip(info->redirectedFileUrl().toLocalFile());
+        linkPathLabel->setLinkTargetUrl(info->redirectedFileUrl());
+        linkPathLabel->setOpenExternalLinks(true);
         linkPathLabel->setWordWrap(false);
         QString t = linkPathLabel->fontMetrics().elidedText(info->redirectedFileUrl().toLocalFile(), Qt::ElideMiddle, 150);
         linkPathLabel->setText(t);
