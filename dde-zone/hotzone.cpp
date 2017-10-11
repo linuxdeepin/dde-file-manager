@@ -10,6 +10,7 @@
 #include "hotzone.h"
 
 #include <QFontMetrics>
+#include <QImageReader>
 
 HotZone::HotZone(QWidget *parent, bool isRight, bool isBottom): QWidget(parent)
 {
@@ -84,10 +85,6 @@ void HotZone::initImageAndTextAtCorrectCorner()
 {
     // prepare the grayBlurImg.png source
     m_imageLabel = new QLabel(m_mainItem);
-    m_pixmap.load(":/images/normal.png");
-
-    // matrix is used to arrange rotation of blurImg
-    m_matrix = new QMatrix;
 
     // initial m_selectedActionTextLabel and arrange it's alignment
     m_selectedActionTextLabel = new QLabel(m_mainItem);
@@ -99,27 +96,23 @@ void HotZone::initImageAndTextAtCorrectCorner()
     case TopLeft:
         m_imageLabel->move(0, 0);
         m_selectedActionTextLabel->move(TEXT_LEFT_OR_RIGHT_MARGIN, TEXT_TOP_MARGIN);
-        m_matrix->rotate(0);
         break;
     case TopRight:
         m_imageLabel->move(WRAPPER_SIZE - IMAGE_SIZE, 0);
         m_selectedActionTextLabel->move(WRAPPER_SIZE - TEXT_LEFT_OR_RIGHT_MARGIN - SELECTED_LABEL_FIXED_WIDTH, TEXT_TOP_MARGIN);
-        m_matrix->rotate(90);
         break;
     case BottomLeft:
         m_imageLabel->move(0, WRAPPER_SIZE - IMAGE_SIZE);
         m_selectedActionTextLabel->move(TEXT_LEFT_OR_RIGHT_MARGIN, WRAPPER_SIZE - TEXT_BOTTOM_DISTANCE);
-        m_matrix->rotate(270);
         break;
     case BottomRight:
         m_imageLabel->move(WRAPPER_SIZE - IMAGE_SIZE, WRAPPER_SIZE - IMAGE_SIZE);
         m_selectedActionTextLabel->move(WRAPPER_SIZE - TEXT_LEFT_OR_RIGHT_MARGIN - SELECTED_LABEL_FIXED_WIDTH, WRAPPER_SIZE - TEXT_BOTTOM_DISTANCE);
-        m_matrix->rotate(180);
         break;
     }
 
-    // with rotation,show grayBlurImg.png
-    m_imageLabel->setPixmap(m_pixmap.transformed(*m_matrix));
+
+    updateLeavePic();
 }
 
 void HotZone::initButtonColumnAtCorrectCorner()
@@ -182,6 +175,64 @@ void HotZone::reSetAnimation()
     m_animation->setEndValue(m_endPoint);
 }
 
+QPixmap HotZone::getPixmap(const QString &file)
+{
+    const qreal devicePixelRatio = devicePixelRatioF();
+
+    QPixmap pixmap;
+    QImageReader reader;
+    reader.setFileName(file);
+    if (reader.canRead()) {
+        reader.setScaledSize(reader.size() * devicePixelRatio);
+        pixmap = QPixmap::fromImage(reader.read());
+        pixmap.setDevicePixelRatio(devicePixelRatio);
+    } else {
+        pixmap.load(file);
+    }
+
+    return pixmap;
+}
+
+void HotZone::updateEnterPic()
+{
+    switch (corner) {
+    case TopLeft:
+        m_pixmap = getPixmap(":/images/leftup_corner_hover.svg");
+        break;
+    case TopRight:
+        m_pixmap = getPixmap(":/images/rightup_corner_hover.svg");
+        break;
+    case BottomLeft:
+        m_pixmap = getPixmap(":/images/leftdown_corner_hover.svg");
+        break;
+    case BottomRight:
+        m_pixmap = getPixmap(":/images/rightdown_corner_hover.svg");
+        break;
+    }
+
+    m_imageLabel->setPixmap(m_pixmap);
+}
+
+void HotZone::updateLeavePic()
+{
+    switch (corner) {
+    case TopLeft:
+        m_pixmap = getPixmap(":/images/leftup_corner_normal.svg");
+        break;
+    case TopRight:
+        m_pixmap = getPixmap(":/images/rightup_corner_normal.svg");
+        break;
+    case BottomLeft:
+        m_pixmap = getPixmap(":/images/leftdown_corner_normal.svg");
+        break;
+    case BottomRight:
+        m_pixmap = getPixmap(":/images/rightdown_corner_normal.svg");
+        break;
+    }
+
+    m_imageLabel->setPixmap(m_pixmap);
+}
+
 void HotZone::rePositionButtonColumn(int BottomOffset, int RightOffset)
 {
     switch (corner) {
@@ -225,8 +276,8 @@ void HotZone::initConnects()
 
 void HotZone::onMouseHasEntered()
 {
-    m_pixmap.load(":/images/hover.png");
-    m_imageLabel->setPixmap(m_pixmap.transformed(*m_matrix));
+    updateEnterPic();
+
     if (!m_mouseIsEnterFromButtonColumnAfterButtonClick) {
         if (m_hasAnimationRun) {
             m_ButtonColumnItem->setHidden(false);
@@ -244,21 +295,20 @@ void HotZone::onMouseHasLeaved()
     QPoint p = m_ButtonColumnItem->mapFromGlobal(QCursor::pos());
     if (m_ButtonColumnItem->rect().contains(p)) {
         if (m_pushButtonList->buttonClickStatus()) {
-            m_pixmap.load(":/images/normal.png");
-            m_imageLabel->setPixmap(m_pixmap.transformed(*m_matrix));
             m_pushButtonList->setButtonClickStatus(false);
+            updateLeavePic();
         } else {
             m_hasAnimationRun = false;
-            m_pixmap.load(":/images/hover.png");
-            m_imageLabel->setPixmap(m_pixmap.transformed(*m_matrix));
+            updateEnterPic();
         }
     } else {
         m_ButtonColumnItem->setHidden(true);
         m_hasAnimationRun = true;
         m_pushButtonList->setButtonClickStatus(false);
-        m_pixmap.load(":/images/normal.png");
-        m_imageLabel->setPixmap(m_pixmap.transformed(*m_matrix));
+
+        updateLeavePic();
     }
+
     m_mouseIsEnterFromButtonColumnAfterButtonClick = false;
 }
 
@@ -268,15 +318,16 @@ void HotZone::onMouseHasLeavedTheColumnItem()
     if (m_hoverItem->rect().contains(p)) {
         m_hasAnimationRun = false;
         m_mouseIsEnterFromButtonColumnAfterButtonClick = true;
-        m_pixmap.load(":/images/hover.png");
-        m_imageLabel->setPixmap(m_pixmap.transformed(*m_matrix));
+
+        updateEnterPic();
+
     } else {
         m_ButtonColumnItem->setVisible(false);
         m_hasAnimationRun = true;
         m_pushButtonList->setButtonClickStatus(false);
         m_mouseIsEnterFromButtonColumnAfterButtonClick = false;
-        m_pixmap.load(":/images/normal.png");
-        m_imageLabel->setPixmap(m_pixmap.transformed(*m_matrix));
+
+        updateLeavePic();
     }
 }
 
