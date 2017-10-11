@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="110px" height="110px" viewBox="0 0 110 110" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 46.2 (44496) - http://www.bohemiancoding.com/sketch -->
+    <title>rightup_corner_normal</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="120" height="120"></rect>
+        <radialGradient cx="50%" cy="50%" fx="50%" fy="50%" r="50%" id="radialGradient-3">
+            <stop stop-color="#FFFFFF" stop-opacity="0.4" offset="0%"></stop>
+            <stop stop-color="#FFFFFF" stop-opacity="0" offset="100%"></stop>
+        </radialGradient>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Artboard-2" transform="translate(-166.000000, -17.000000)">
+            <g id="rightup_corner_normal" transform="translate(216.000000, 77.000000) scale(-1, 1) translate(-216.000000, -77.000000) translate(156.000000, 17.000000)">
+                <mask id="mask-2" fill="white">
+                    <use xlink:href="#path-1"></use>
+                </mask>
+                <g id="Mask"></g>
+                <circle id="Oval-38" fill="url(#radialGradient-3)" mask="url(#mask-2)" cx="0" cy="0" r="110"></circle>
+                <path d="M23,16.942 L23,15.058 L21.981,14.695 C21.593,14.557 21.28,14.26 21.122,13.88 L21.122,13.879 C20.964,13.497 20.975,13.066 21.152,12.693 L21.616,11.717 L20.283,10.384 L19.307,10.848 C18.934,11.025 18.502,11.036 18.121,10.878 L18.12,10.878 C17.74,10.719 17.443,10.408 17.304,10.019 L16.942,9 L15.057,9 L14.695,10.019 C14.557,10.407 14.26,10.72 13.88,10.878 L13.879,10.878 C13.497,11.036 13.066,11.025 12.693,10.848 L11.717,10.384 L10.383,11.717 L10.847,12.693 C11.025,13.066 11.036,13.497 10.878,13.879 L10.878,13.88 C10.719,14.26 10.407,14.557 10.019,14.695 L9,15.058 L9,16.942 L10.019,17.305 C10.407,17.443 10.719,17.74 10.878,18.12 L10.878,18.121 C11.036,18.503 11.025,18.934 10.847,19.307 L10.383,20.283 L11.717,21.616 L12.693,21.152 C13.066,20.975 13.497,20.964 13.879,21.122 L13.88,21.122 C14.26,21.28 14.557,21.593 14.695,21.981 L15.057,23 L16.942,23 L17.302,21.988 C17.442,21.596 17.742,21.28 18.125,21.12 C18.504,20.963 18.931,20.974 19.301,21.15 L20.283,21.616 L21.616,20.283 L21.152,19.307 C20.975,18.934 20.964,18.503 21.122,18.121 C21.28,17.74 21.593,17.443 21.981,17.304 L23,16.942 L23,16.942 Z M16,19 C14.343,19 13,17.658 13,16 C13,14.343 14.343,13 16,13 C17.656,13 19,14.343 19,16 C19,17.658 17.656,19 16,19 L16,19 Z" id="set_normal" fill="#FFFFFF" opacity="0.5" mask="url(#mask-2)"></path>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -47,6 +47,11 @@ private:
     void rePositionButtonColumn(int BottomOffset, int RightOffset);
     void reSetAnimation();
 
+    QPixmap getPixmap(const QString &file);
+
+    void updateEnterPic();
+    void updateLeavePic();
+
     QWidget *m_mainItem;
     QLabel *m_selectedActionTextLabel;
     QLabel *m_imageLabel;
