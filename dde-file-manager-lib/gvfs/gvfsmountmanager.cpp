@@ -345,6 +345,16 @@ QDiskInfo GvfsMountManager::qVolumeToqDiskInfo(const QVolume &volume)
     diskInfo.setHas_volume(true);
 
     diskInfo.updateGvfsFileSystemInfo();
+
+
+    if (Drives.contains(volume.drive_unix_device())){
+        const QDrive& drive = Drives.value(volume.drive_unix_device());
+        if (drive.is_removable()){
+            diskInfo.setType("removable");
+            diskInfo.setIs_removable(true);
+        }
+    }
+
     return diskInfo;
 }
 
