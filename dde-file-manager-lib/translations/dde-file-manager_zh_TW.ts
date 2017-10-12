@@ -185,218 +185,218 @@
 <context>
     <name>DialogManager</name>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="333"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="809"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="824"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="332"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="808"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="823"/>
         <source>Operation failed!</source>
         <translation>作業失敗！</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="334"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="333"/>
         <source>Target folder is inside the source folder!</source>
         <translation>目標資料夾於來源資料夾中！</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="336"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="733"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="747"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="756"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="774"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="816"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="827"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1076"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="335"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="732"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="746"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="755"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="773"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="815"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="826"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1075"/>
         <source>OK</source>
         <translation>確定</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="359"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="358"/>
         <source>Do you want to run %1 or display its content?</source>
         <translation>執行 %1 或顯示內容？</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="360"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="359"/>
         <source>It is an executable text file.</source>
         <translation>此為文字執行檔案。</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="363"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="391"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="428"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="483"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="621"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="650"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="893"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="362"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="390"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="427"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="482"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="620"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="649"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="892"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="363"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="393"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="362"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="392"/>
         <source>Run</source>
         <translation>執行</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="363"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="392"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="362"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="391"/>
         <source>Run in terminal</source>
         <translation>終端機執行</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="363"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="362"/>
         <source>Display</source>
         <translation>顯示</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="389"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="388"/>
         <source>Do you sure to run %1?</source>
         <translation>確定執行 %1？</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="390"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="389"/>
         <source>It is an executable file.</source>
         <translation>此為執行檔案。</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="406"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="405"/>
         <source>&quot;%1&quot; already exists, please use another name.</source>
         <translation>「%1」已存在，請使用其他檔案名稱。</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="408"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="650"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="855"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1017"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="407"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="649"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="854"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1016"/>
         <source>Confirm</source>
         <translation>確定</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="419"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="418"/>
         <source>Are you sure to empty %1 item?</source>
         <translation>確定清除 %1 個項目？</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="420"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="419"/>
         <source>Are you sure to empty %1 items?</source>
         <translation>確定清除 %1 個項目？</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="421"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="420"/>
         <source>Permanently delete %1?</source>
         <translation>完全刪除 %1？</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="422"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="421"/>
         <source>Permanently delete %1 items?</source>
         <translation>完全刪除 %1 個項目？</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="428"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="427"/>
         <source>Delete</source>
         <translation>刪除</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="438"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="437"/>
         <source>Empty</source>
         <translation>清除</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="468"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="467"/>
         <source>This action cannot be restored</source>
         <translation>這個動作無法復原</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="481"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="480"/>
         <source>Sorry, unable to locate your bookmark directory, remove it?</source>
         <translation>抱歉，找不到書籤位置，是否移除？</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="483"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="482"/>
         <source>Remove</source>
         <translation>移除</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="618"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="617"/>
         <source>Disk file is being used, can not unmount now</source>
         <translation>磁碟機正在使用，無法退出</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="619"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="618"/>
         <source>Name: </source>
         <translation>名稱：</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="621"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="620"/>
         <source>Force unmount</source>
         <translation>強制退出</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="644"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="643"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
         <translation>%1 捷徑連結的檔案或資料夾已更改或移除</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="648"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="647"/>
         <source>Do you want to delete this shortcut？</source>
         <translation>確定刪除快速鍵？</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="677"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="676"/>
         <source>Version:</source>
         <translation>版本：</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="679"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="678"/>
         <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions.</source>
         <translation>Deepin 檔案是由武漢深之度科技有限公司獨立開發的檔案管理工具，具備搜尋、複製、回收桶、壓縮／解壓縮、檢視檔案內容等功能。</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="732"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="731"/>
         <source>Target disk doesn&apos;t have enough space, unable to copy!</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="745"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="744"/>
         <source>Failed, file size must be less than 4GB.</source>
         <translation>失敗，檔案大小至少要小於 4GB。</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="754"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="753"/>
         <source>Fail to create symlink, cause:</source>
         <translation>建立連結失敗，由於：</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="772"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="771"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
         <translation>已選取的檔案中包含系統檔案╱資料夾，無法刪除</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="811"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="810"/>
         <source>Target file removed or location changed</source>
         <translation>選定的檔案已被移除或更動</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="813"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="812"/>
         <source>%1 files failed to restore, target file removed or location changed</source>
         <translation>無法回復 %1 個檔案，選定的檔案以被移除或更動</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="825"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="846"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="824"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="845"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>你無權對檔案或資料夾進行操作！</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="866"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="865"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/floder(s)!</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="894"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="893"/>
         <source>View</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1074"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1073"/>
         <source>Share folder cann&apos;t be named after the current username</source>
         <translation type="unfinished"/>
     </message>
@@ -997,12 +997,33 @@
         <translation>其他</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="75"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="74"/>
         <location filename="../dialogs/previewdialog.cpp" line="147"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="673"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="676"/>
         <source>Open</source>
         <translation>開啟</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="186"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="212"/>
+        <source>Size: %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="187"/>
+        <source>Type: %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="191"/>
+        <source>Size: 0</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="192"/>
+        <source>Items: %1</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="674"/>
@@ -1559,7 +1580,7 @@
         <translation>%1 個項目</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="610"/>
+        <location filename="../interfaces/dfileservices.cpp" line="612"/>
         <source>Shortcut</source>
         <translation>快速鍵</translation>
     </message>
@@ -1700,11 +1721,6 @@
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="176"/>
-        <source>Required:</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="193"/>
         <source>Location:</source>
         <translation type="unfinished"/>
@@ -1721,6 +1737,7 @@
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="137"/>
+        <location filename="../dialogs/ddesktoprenamedialog.cpp" line="176"/>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="202"/>
         <location filename="../views/drenamebar.cpp" line="231"/>
         <location filename="../views/drenamebar.cpp" line="248"/>
@@ -1783,7 +1800,7 @@
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1040"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1039"/>
         <source>Rename %1 Files</source>
         <translation type="unfinished"/>
     </message>
@@ -2245,30 +2262,6 @@
         <location filename="../dialogs/trashpropertydialog.cpp" line="72"/>
         <source>Contains %1 %2</source>
         <translation>包含 %1 %2</translation>
-    </message>
-</context>
-<context>
-    <name>UnknowFilePreview</name>
-    <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="217"/>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="243"/>
-        <source>Size: %1</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="218"/>
-        <source>Type: %1</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="222"/>
-        <source>Size: 0</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="223"/>
-        <source>Items: %1</source>
-        <translation type="unfinished"/>
     </message>
 </context>
 <context>
