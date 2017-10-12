@@ -1323,8 +1323,8 @@ bool FileJob::copyDir(const QString &srcDir, const QString &tarDir, bool isMoved
             if (!FileUtils::isGvfsMountFile(targetDir.path())){
                 bool isSetPermissionsSuccess = setDirPermissions(srcDir, targetDir.path());
                 if (!isSetPermissionsSuccess){
-                    qDebug() << "Set Permissions of "<< m_tarPath << "same as" <<  srcDir << "failed";
-                    return false;
+                    qWarning() << "Set Permissions of "<< m_tarPath << "same as" <<  srcDir << "failed";
+//                    return false;
                 }
             }
             m_status = Run;
