@@ -587,14 +587,26 @@ bool FileUtils::openFileByApp(const QString &filePath, const QString &app)
     files.prev = files.next = NULL;
 
     GError* gError = nullptr;
-    const auto ok = g_app_info_launch(reinterpret_cast<GAppInfo*>(appInfo), &files, NULL, &gError);
-    if (gError) {
-        qWarning() << "Error when trying to open desktop file with gio:" << gError->message;
-        g_error_free(gError);
-    }
+    bool ok = false;
 
-    if (!ok) {
-        qWarning() << "Failed to open desktop file with gio: g_app_info_launch_uris returns false";
+    QString terminalFlag = QString(g_desktop_app_info_get_string(appInfo, "Terminal"));
+    if (terminalFlag == "true"){
+        QString exec = QString(g_desktop_app_info_get_string(appInfo, "Exec"));
+        QStringList args;
+        args << "-e" << exec.split(" ").at(0) << filePath;
+        qDebug() << "/usr/bin/x-terminal-emulator" << args;
+        ok = QProcess::startDetached("/usr/bin/x-terminal-emulator", args);
+    }else{
+        ok = g_app_info_launch(reinterpret_cast<GAppInfo*>(appInfo), &files, NULL, &gError);
+
+        if (gError) {
+            qWarning() << "Error when trying to open desktop file with gio:" << gError->message;
+            g_error_free(gError);
+        }
+
+        if (!ok) {
+            qWarning() << "Failed to open desktop file with gio: g_app_info_launch_uris returns false";
+        }
     }
     g_object_unref(appInfo);
     g_object_unref(file);
