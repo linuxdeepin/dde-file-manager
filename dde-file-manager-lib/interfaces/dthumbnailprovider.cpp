@@ -274,15 +274,15 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
     // the file is in fail path
     QString thumbnail = DFMStandardPaths::standardLocation(DFMStandardPaths::ThumbnailFailPath) + QDir::separator() + thumbnailName;
 
-    if (QFile::exists(thumbnail)) {
-        QImage image(thumbnail);
+//    if (QFile::exists(thumbnail)) {
+//        QImage image(thumbnail);
 
-        if (image.text(QT_STRINGIFY(Thumb::MTime)).toInt() != (int)info.lastModified().toTime_t()) {
-            QFile::remove(thumbnail);
-        } else {
-            return QString();
-        }
-    }// end
+//        if (image.text(QT_STRINGIFY(Thumb::MTime)).toInt() != (int)info.lastModified().toTime_t()) {
+//            QFile::remove(thumbnail);
+//        } else {
+//            return QString();
+//        }
+//    }// end
 
     const QMimeType &mime = d->mimeDatabase.mimeTypeForFile(info);
 
