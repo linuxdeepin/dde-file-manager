@@ -30,7 +30,7 @@ isEmpty(PREFIX){
     PREFIX = /usr
 }
 
-PKGCONFIG += gtk+-2.0 gsettings-qt libsecret-1 gio-unix-2.0 poppler-cpp
+PKGCONFIG += gtk+-2.0 gsettings-qt libsecret-1 gio-unix-2.0 poppler-cpp uchardet
 CONFIG(release, release|debug) {
     PKGCONFIG += dtkwidget
 } else {

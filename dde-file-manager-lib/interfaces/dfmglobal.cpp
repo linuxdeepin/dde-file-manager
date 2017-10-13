@@ -57,7 +57,23 @@
 #include <QDBusObjectPath>
 #include <QGSettings>
 
+
 #include <cstdio>
+#include <locale>
+#include <sstream>
+#include <fstream>
+#include <uchardet/uchardet.h>
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif __cplusplus
+
+#include <iconv.h>
+
+#ifdef __cplusplus
+}
+#endif __cplusplus
 
 namespace GlobalData {
 static QList<QUrl> clipboardFileUrls;
@@ -476,40 +492,115 @@ static QString textDecoder(const QByteArray &ba, const QByteArray &codecName)
     return decoder.hasFailure() ? QString() : text;
 }
 
-QString DFMGlobal::toUnicode(const QByteArray &ba)
+
+QSharedPointer<QString> DFMGlobal::convertFileToUtf8(const DUrl& url)
 {
-    if (ba.isEmpty())
-        return QString();
+    QSharedPointer<QString> convertedStr{ nullptr };
+    QFileInfo info{ url.toLocalFile() };
+    std::basic_ostringstream<char> fileContentStream;
 
-    QList<QByteArray> codecList;
+    if(info.isFile() == true){
 
-    codecList << "utf-8" << "utf-16";
+        std::string fileName{ url.toLocalFile().toStdString() };
+        std::basic_ifstream<char> fstream{ fileName, std::ios_base::in | std::ios_base::out };
 
-    switch (QLocale::system().script()) {
-    case QLocale::SimplifiedChineseScript:
-        codecList << "gbk";
-        break;
-    case QLocale::TraditionalChineseScript:
-        codecList << "big5" << "gbk";
-        break;
-    case QLocale::JapaneseScript:
-        codecList << "shift_jis" << "euc_jp" << "gbk";
-        break;
-    case QLocale::KoreanScript:
-        codecList << "euc_kr";
-        break;
-    default:
-        break;
+        if(fstream.is_open() == true){
+
+            std::istream_iterator<char> istream_itr{ fstream };
+            std::copy(istream_itr, std::istream_iterator<char>{},
+                      std::ostream_iterator<char>{fileContentStream});
+
+            std::string fileContent{ fileContentStream.str() };
+            QByteArray qFileContent{ QByteArray::fromStdString(fileContent) };
+
+            if(fileContent.empty() == false){
+                QByteArray charsetName{ DFMGlobal::detectCharset(qFileContent) };
+
+                if(charsetName.isEmpty() == false){
+
+                    convertedStr = DFMGlobal::convertAnyCharsetToUtf8(charsetName, qFileContent);
+                }
+            }
+
+        }
     }
 
-    for (const QByteArray &codec : codecList) {
-        const QString &text = textDecoder(ba, codec);
+    return convertedStr;
+}
 
-        if (!text.isEmpty())
-            return text;
+
+QSharedPointer<QString> DFMGlobal::convertStrToUtf8(const QByteArray &str)
+{
+    QByteArray charsetName;
+    QSharedPointer<QString> convertedStr{ nullptr };
+
+    if(str.isEmpty() == false){
+        charsetName = DFMGlobal::detectCharset(str);
+
+        if(charsetName.isEmpty() == false){
+            convertedStr = DFMGlobal::convertAnyCharsetToUtf8(charsetName, str);
+        }
     }
 
-    return QString::fromLocal8Bit(ba);
+    return convertedStr;
+}
+
+
+QSharedPointer<QString> DFMGlobal::convertAnyCharsetToUtf8(const QByteArray& charsetName, QByteArray content)
+{
+    QSharedPointer<QString> convertedStr{ nullptr };
+
+
+    if(charsetName != QByteArray{"utf-8"}){
+
+        std::size_t inputBufSize{ content.size() };
+        std::size_t outputBufSize{ inputBufSize * 4 };
+        char* inputBuff{ content.data() };
+        char* outputBuff{ new char[outputBufSize] };
+        char* backupPtr{ outputBuff };
+        std::string toCode{ "utf-8" };
+
+        iconv_t code{ iconv_open(toCode.c_str(), charsetName.constData())};
+        std::size_t retVal{ iconv(code, &inputBuff, &inputBufSize, &outputBuff, &outputBufSize) };//###: do conversion by code.
+
+        std::size_t actuallyUsed{ outputBuff - backupPtr };
+
+        convertedStr = QSharedPointer<QString>{ new QString{ QString::fromUtf8(QByteArray{backupPtr, actuallyUsed}) } };
+        iconv_close(code);
+
+
+        delete[] backupPtr;
+        return convertedStr;
+    }
+
+    return QSharedPointer<QString>{ new QString{ QString::fromUtf8(content) } };
+
+}
+
+
+QByteArray DFMGlobal::detectCharset(const QByteArray& str)
+{
+    uchardet_t handle{ uchardet_new() };
+    std::string charsetName;
+    int returnedVal{ 0 };
+
+    returnedVal = uchardet_handle_data(handle, str.constData(), str.size()); //start detecting.
+    if(returnedVal != 0){ //if less than 0, it show the recognization failed.
+        uchardet_data_end(handle);
+        uchardet_delete(handle);
+
+        return QByteArray::fromStdString(charsetName);
+    }
+
+    uchardet_data_end(handle);
+    charsetName = std::string{ uchardet_get_charset(handle) };
+    uchardet_delete(handle);
+
+    //This function promise that When is converting the target charset is ASCII.
+    const auto& facet = std::use_facet<std::ctype<char>>(std::locale{"C"});
+    facet.tolower(&charsetName[0], &charsetName[charsetName.size()]);
+
+    return QByteArray::fromStdString(charsetName);
 }
 
 bool DFMGlobal::keyShiftIsPressed()
@@ -533,9 +624,13 @@ bool DFMGlobal::fileNameCorrection(const QString &filePath)
     const QByteArray &request = ls.readAllStandardOutput();
 
     for (const QByteArray &name : request.split('\n')) {
-        const QString str_fileName = DFMGlobal::toUnicode(name);
+        QSharedPointer<QString> str_fileName{ DFMGlobal::convertStrToUtf8(name) };
+        QString strFileName{ "" };
+        if(static_cast<bool>(str_fileName) == true){
+            strFileName = *str_fileName;
+        }
 
-        if (str_fileName == info.fileName() && str_fileName.toLocal8Bit() != name) {
+        if (strFileName == info.fileName() && strFileName.toLocal8Bit() != name) {
             const QByteArray &path = info.absolutePath().toLocal8Bit() + QDir::separator().toLatin1() + name;
 
             return fileNameCorrection(path);
