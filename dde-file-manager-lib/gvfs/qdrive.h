@@ -99,6 +99,8 @@ private:
     QString m_sort_key;
 };
 
+Q_DECLARE_METATYPE(QDrive)
+
 QDebug operator<<(QDebug dbg, const QDrive& drive);
 
 #endif // QDRIVE_H

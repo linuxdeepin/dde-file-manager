@@ -64,6 +64,9 @@ public:
     static QVolume getVolumeByMountedRootUri(const QString& mounted_root_uri);
     static QVolume getVolumeByUnixDevice(const QString& unix_device);
 
+    static void monitor_drive_connected(GVolumeMonitor *volume_monitor, GDrive *drive);
+    static void monitor_drive_disconnected(GVolumeMonitor *volume_monitor, GDrive *drive);
+
     static void monitor_mount_added_root(GVolumeMonitor *volume_monitor, GMount *mount);
     static void monitor_mount_removed_root(GVolumeMonitor *volume_monitor, GMount *mount);
 
@@ -118,6 +121,8 @@ public:
 
 signals:
     void loadDiskInfoFinished();
+    void drive_connected(const QDrive& drive);
+    void drive_disconnected(const QDrive& drive);
     void mount_added(const QDiskInfo& diskInfo);
     void mount_removed(const QDiskInfo& diskInfo);
     void volume_added(const QDiskInfo& diskInfo);
