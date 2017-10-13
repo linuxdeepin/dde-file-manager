@@ -290,8 +290,6 @@ public:
     static bool startWithHanzi(T)
     { return false;}
 
-    static QString toUnicode(const QByteArray &ba);
-
     static bool keyShiftIsPressed();
     static bool keyCtrlIsPressed();
     static bool fileNameCorrection(const QString &filePath);
@@ -305,6 +303,9 @@ public:
     ///###: this function is special, if select files is more than 16 show a dialog for multiple files.
     static void showPropertyDialog(QObject* const sender, const QList<DUrl>& selectedFiles);
 
+    ///###: convert the charset of given file or str to utf8.
+    static QSharedPointer<QString> convertFileToUtf8(const DUrl &url);
+    static QSharedPointer<QString> convertStrToUtf8(const QByteArray& str);
 
     static void playSound(const QUrl& soundUrl);
 
@@ -318,6 +319,12 @@ protected:
 private:
     void onClipboardDataChanged();
     static void refreshPlugins();
+
+    ///###: this function is a help function. It do conversion.
+    static QSharedPointer<QString> convertAnyCharsetToUtf8(const QByteArray& charsetName, QByteArray content);
+    ///###: this function detect what the charset of str is.
+    static QByteArray detectCharset(const QByteArray& str);
+
 };
 
 Q_DECLARE_METATYPE(DFMGlobal::ClipboardAction)

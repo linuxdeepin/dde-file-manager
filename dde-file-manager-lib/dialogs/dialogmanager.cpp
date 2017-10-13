@@ -789,7 +789,7 @@ void DialogManager::showFilePreviewDialog(const DUrlList &selectUrls, const DUrl
         return;
 
     if (!m_filePreviewDialog){
-        m_filePreviewDialog = new FilePreviewDialog(canPreivewlist, NULL);
+        m_filePreviewDialog = new FilePreviewDialog(canPreivewlist, nullptr);
     }else{
         m_filePreviewDialog->updatePreviewList(canPreivewlist);
     }

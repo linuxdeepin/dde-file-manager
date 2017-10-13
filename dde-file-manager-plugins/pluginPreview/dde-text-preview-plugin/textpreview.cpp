@@ -64,8 +64,13 @@ bool TextPreview::setFileUrl(const DUrl &url)
     }
 
     const QByteArray &text = file.readAll();
+    QSharedPointer<QString> convertedStr{ DFMGlobal::convertStrToUtf8(text) };
+    if( static_cast<bool>(convertedStr) == true ){
+        m_textBrowser->setPlainText(*convertedStr);
 
-    m_textBrowser->setPlainText(DFMGlobal::toUnicode(text));
+    }else{
+        m_textBrowser->setPlainText(QString{" "});
+    }
 
     file.close();
 
