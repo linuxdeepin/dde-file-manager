@@ -84,10 +84,12 @@ void MoveCopyTaskWidget::initUI(){
 
     QGridLayout* msgGridLayout = new QGridLayout;
     msgGridLayout->addWidget(m_msg1Label, 0, 0, Qt::AlignVCenter);
+
     msgGridLayout->addWidget(m_speedLabel, 0, 1,Qt::AlignRight|Qt::AlignVCenter);
     msgGridLayout->addWidget(m_msg2Label, 1, 0, Qt::AlignVCenter);
     msgGridLayout->addWidget(m_remainLabel, 1, 1,Qt::AlignRight|Qt::AlignVCenter);
     msgGridLayout->setColumnMinimumWidth(0, 300);
+    msgGridLayout->setColumnStretch(0, 1);
     msgGridLayout->setHorizontalSpacing(5);
 
     initConflictDetailFrame();
@@ -121,7 +123,7 @@ void MoveCopyTaskWidget::initUI(){
     mainLayout->addSpacing(5);
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->addWidget(m_closeButton, 0, Qt::AlignCenter);
-    mainLayout->addSpacing(24);
+    mainLayout->addSpacing(20);
     setLayout(mainLayout);
     setFixedHeight(80);
 
