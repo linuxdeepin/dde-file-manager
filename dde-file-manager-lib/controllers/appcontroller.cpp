@@ -60,9 +60,8 @@
 #include <QAction>
 #include <DAboutDialog>
 #include <qprocess.h>
-#include <QMediaPlayer>
-#include <QDBusObjectPath>
-#include <QGSettings>
+
+
 #include "shutil/shortcut.h"
 #include "models/desktopfileinfo.h"
 
@@ -341,37 +340,7 @@ void AppController::actionClearTrash(const QObject *sender)
     bool ret = fileService->deleteFiles(sender, list);
 
     if(ret){
-        //check if is sound effect enabled
-        QGSettings settings("com.deepin.dde.sound-effect", "/com/deepin/dde/sound-effect/");
-        if(!settings.get("enabled").toBool())
-            return;
-
-        //check if is global sound off
-        QDBusInterface audioIface("com.deepin.daemon.Audio",
-                                  "/com/deepin/daemon/Audio",
-                                  "com.deepin.daemon.Audio",
-                                  QDBusConnection::sessionBus());
-
-        QString defaultSink = qvariant_cast<QDBusObjectPath>(audioIface.property("DefaultSink")).path();
-
-        QDBusInterface audioSinkIface("com.deepin.daemon.Audio",
-                                      defaultSink,
-                                      "com.deepin.daemon.Audio.Sink",
-                                      QDBusConnection::sessionBus());
-        bool isGlobalSoundDisabled = audioSinkIface.property("Mute").toBool();
-
-        if(isGlobalSoundDisabled)
-            return;
-
-        QMediaPlayer* player = new QMediaPlayer;
-        player->setMedia(QUrl::fromLocalFile("/usr/share/sounds/deepin/stereo/trash-empty.ogg"));
-        player->setVolume(100);
-        player->play();
-        connect(player, &QMediaPlayer::positionChanged, [=](const qint64& position){
-            if(position >= player->duration()){
-                player->deleteLater();
-            }
-        });
+        DFMGlobal::playSound(QUrl::fromLocalFile("/usr/share/sounds/deepin/stereo/trash-empty.ogg"));
     }
 }
 

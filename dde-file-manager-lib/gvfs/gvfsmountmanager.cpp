@@ -50,6 +50,7 @@ MountSecretDiskAskPasswordDialog* GvfsMountManager::mountSecretDiskAskPasswordDi
 GvfsMountManager::GvfsMountManager(QObject *parent) : QObject(parent)
 {
     m_gVolumeMonitor = g_volume_monitor_get();
+    qRegisterMetaType<QDrive>("QDrive");
 
 //    mount_mounted("smb://10.0.10.30/people");
 //    unmount("smb://10.0.10.30/people");
@@ -65,6 +66,8 @@ void GvfsMountManager::initConnect()
         g_signal_connect (m_gVolumeMonitor, "mount-added", (GCallback)&GvfsMountManager::monitor_mount_added_root, NULL);
         g_signal_connect (m_gVolumeMonitor, "mount-removed", (GCallback)&GvfsMountManager::monitor_mount_removed_root, NULL);
     }else{
+        g_signal_connect (m_gVolumeMonitor, "drive-connected", (GCallback)&GvfsMountManager::monitor_drive_connected, NULL);
+        g_signal_connect (m_gVolumeMonitor, "drive-disconnected", (GCallback)&GvfsMountManager::monitor_drive_disconnected, NULL);
         g_signal_connect (m_gVolumeMonitor, "mount-added", (GCallback)&GvfsMountManager::monitor_mount_added, NULL);
         g_signal_connect (m_gVolumeMonitor, "mount-removed", (GCallback)&GvfsMountManager::monitor_mount_removed, NULL);
         g_signal_connect (m_gVolumeMonitor, "mount-changed", (GCallback)&GvfsMountManager::monitor_mount_changed, NULL);
@@ -405,6 +408,24 @@ QVolume GvfsMountManager::getVolumeByUnixDevice(const QString &unix_device)
         }
     }
     return QVolume();
+}
+
+void GvfsMountManager::monitor_drive_connected(GVolumeMonitor *volume_monitor, GDrive *drive)
+{
+    Q_UNUSED(volume_monitor)
+    qDebug() << "==============================monitor_drive_connected==============================";
+    QDrive qDrive = gDriveToqDrive(drive);
+    qDebug() << qDrive;
+    emit gvfsMountManager->drive_connected(qDrive);
+}
+
+void GvfsMountManager::monitor_drive_disconnected(GVolumeMonitor *volume_monitor, GDrive *drive)
+{
+    Q_UNUSED(volume_monitor)
+    qDebug() << "==============================monitor_drive_disconnected==============================";
+    QDrive qDrive = gDriveToqDrive(drive);
+    qDebug() << qDrive;
+    emit gvfsMountManager->drive_disconnected(qDrive);
 }
 
 void GvfsMountManager::monitor_mount_added_root(GVolumeMonitor *volume_monitor, GMount *mount)

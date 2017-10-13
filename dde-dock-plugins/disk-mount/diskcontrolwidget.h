@@ -22,6 +22,7 @@
 class DFMSetting;
 class GvfsMountManager;
 class QDiskInfo;
+class QDrive;
 
 
 class DiskControlWidget : public QScrollArea
@@ -40,6 +41,8 @@ signals:
 
 private slots:
     void onDiskListChanged();
+    void onDrive_connected(const QDrive& drive);
+    void onDrive_disconnected(const QDrive& drive);
     void onMount_added(const QDiskInfo &diskInfo);
     void onMount_removed(const QDiskInfo &diskInfo);
     void onVolume_added(const QDiskInfo &diskInfo);

@@ -23,6 +23,7 @@
 #include <QCoreApplication>
 #include <QSemaphore>
 #include <QThread>
+#include <QUrl>
 
 #include <functional>
 
@@ -303,6 +304,9 @@ public:
 
     ///###: this function is special, if select files is more than 16 show a dialog for multiple files.
     static void showPropertyDialog(QObject* const sender, const QList<DUrl>& selectedFiles);
+
+
+    static void playSound(const QUrl& soundUrl);
 
 
 signals:

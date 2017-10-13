@@ -16,11 +16,14 @@
 #include "diskcontrolwidget.h"
 #include "diskcontrolitem.h"
 #include "gvfsmountmanager.h"
+#include "qdrive.h"
 #include "dfmsetting.h"
+#include "dfmglobal.h"
 #include <QDebug>
 #include <QProcess>
 #include <QThreadPool>
 #include <QtConcurrent>
+#include <QDebug>
 
 #define WIDTH           300
 
@@ -48,6 +51,8 @@ DiskControlWidget::DiskControlWidget(QWidget *parent)
 void DiskControlWidget::initConnect()
 {
     connect(m_gvfsMountManager, &GvfsMountManager::loadDiskInfoFinished, this, &DiskControlWidget::onDiskListChanged);
+    connect(m_gvfsMountManager, &GvfsMountManager::drive_connected, this,  &DiskControlWidget::onDrive_connected);
+    connect(m_gvfsMountManager, &GvfsMountManager::drive_disconnected, this,  &DiskControlWidget::onDrive_disconnected);
     connect(m_gvfsMountManager, &GvfsMountManager::mount_added, this,  &DiskControlWidget::onMount_added);
     connect(m_gvfsMountManager, &GvfsMountManager::mount_removed, this, &DiskControlWidget::onMount_removed);
     connect(m_gvfsMountManager, &GvfsMountManager::volume_added, this, &DiskControlWidget::onVolume_added);
@@ -99,6 +104,20 @@ void DiskControlWidget::onDiskListChanged()
 
     m_centralWidget->setFixedHeight(contentHeight);
     setFixedHeight(maxHeight);
+}
+
+void DiskControlWidget::onDrive_connected(const QDrive &drive)
+{
+    qDebug() << drive;
+    if (drive.is_removable())
+        DFMGlobal::playSound(QUrl::fromLocalFile("/usr/share/sounds/deepin/stereo/device-added.ogg"));
+}
+
+void DiskControlWidget::onDrive_disconnected(const QDrive &drive)
+{
+    qDebug() << drive;
+    if (drive.is_removable())
+        DFMGlobal::playSound(QUrl::fromLocalFile("/usr/share/sounds/deepin/stereo/device-removed.ogg"));
 }
 
 void DiskControlWidget::onMount_added(const QDiskInfo &diskInfo)
