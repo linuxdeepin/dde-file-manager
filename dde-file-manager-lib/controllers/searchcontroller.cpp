@@ -443,7 +443,7 @@ const DDirIteratorPointer SearchController::createDirIterator(const QSharedPoint
 
 DAbstractFileWatcher *SearchController::createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const
 {
-    if (!event->url().searchedFileUrl().isValid())
+    if (event->url().searchedFileUrl().isValid())
         return 0;
 
     return new SearchFileWatcher(event->url());
