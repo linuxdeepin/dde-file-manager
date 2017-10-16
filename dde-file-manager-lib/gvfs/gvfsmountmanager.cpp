@@ -788,6 +788,17 @@ QString GvfsMountManager::getDriveUnixDevice(const QString &unix_device)
     return drive_unix_device;
 }
 
+bool GvfsMountManager::isDeviceCrypto_LUKS(const QDiskInfo &diskInfo)
+{
+    if (diskInfo.can_mount()){
+        QString fstype = PartMan::Partition::getPartitionByDevicePath(diskInfo.unix_device()).fs();
+        if (fstype == "crypto_LUKS" ){
+            return true;
+        }
+    }
+    return false;
+}
+
 void GvfsMountManager::startMonitor()
 {
     if (DFMGlobal::isRootUser()){
@@ -1053,10 +1064,8 @@ void GvfsMountManager::autoMountAllDisks()
     if (DFMSetting::instance()->isAutoMount() || DFMSetting::instance()->isAutoMountAndOpen()){
         foreach (const QDiskInfo& diskInfo, DiskInfos.values()) {
             if (diskInfo.can_mount()){
-                QString fstype = PartMan::Partition::getPartitionByDevicePath(diskInfo.unix_device()).fs();
-                if (fstype == "crypto_LUKS" ){
-                    return;
-                }
+                if (isDeviceCrypto_LUKS(diskInfo))
+                    continue;
                 mount(diskInfo);
             }
         }

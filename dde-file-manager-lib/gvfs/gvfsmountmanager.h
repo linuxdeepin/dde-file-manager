@@ -113,6 +113,7 @@ public:
     static bool isIgnoreUnusedMounts(const QMount& mount);
 
     static QString getDriveUnixDevice(const QString& unix_device);
+    static bool isDeviceCrypto_LUKS(const QDiskInfo& diskInfo);
 
     bool getAutoMountSwitch() const;
     void setAutoMountSwitch(bool autoMountSwitch);
