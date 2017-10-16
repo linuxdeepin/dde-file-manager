@@ -25,7 +25,7 @@ ThumbnailManager::ThumbnailManager() :
     QObject(NULL)
 {
     const QString cacheDir = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
-    m_cacheDir = cacheDir + QDir::separator() + qApp->applicationVersion();
+    m_cacheDir = cacheDir + QDir::separator() + qApp->applicationVersion() + QDir::separator() + QString::number(qApp->devicePixelRatio());
 
     QDir::root().mkpath(m_cacheDir);
 }
