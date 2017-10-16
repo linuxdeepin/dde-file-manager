@@ -414,6 +414,9 @@ void DRenameBar::onRenamePatternChanged(const int &index)noexcept
     bool state{ d->m_renameButtonStates[index] }; //###: we get the value of state of button in current mode.
     d->m_stackWidget->setCurrentIndex(index);
     std::get<1>(d->m_buttonsArea)->setEnabled(state);
+
+    ///###: here, call a slot, this function will set focus of QLineEdit in current mode.
+    this->onVisibleChanged(true);
 }
 
 
@@ -504,6 +507,8 @@ void DRenameBar::onAddTextPatternChanged(const int &index)noexcept
         d->m_flag = DFileService::AddTextFlags::After;
     }
 
+    ///###: here, call a slot, this function will set focus of QLineEdit in current mode.
+    this->onVisibleChanged(true);
 }
 
 
@@ -603,6 +608,9 @@ void DRenameBar::initConnect()
 
     QObject::connect(std::get<1>(d->m_customOPeratorItems), &QLineEdit::textChanged, this, &DRenameBar::onCustomOperatorFileNameChanged);
     QObject::connect(std::get<3>(d->m_customOPeratorItems), &QLineEdit::textChanged, this, &DRenameBar::onCustomOperatorSNNumberChanged);
+
+
+    QObject::connect(this, &DRenameBar::visibleChanged, this, &DRenameBar::onVisibleChanged);
 }
 
 
@@ -686,6 +694,48 @@ void DRenameBar::loadState(std::unique_ptr<RecordRenameBarState>& state)
 
         d->m_urlList = state->getSelectedUrl();
         this->setVisible(state->getVisibleValue());
+    }
+}
+
+
+void DRenameBar::setVisible(bool value)
+{
+    this->QFrame::setVisible(value);
+    emit visibleChanged(value);
+}
+
+void DRenameBar::onVisibleChanged(bool value)noexcept
+{
+    DRenameBarPrivate* const d{ d_func() };
+
+    if(value == true){
+
+        switch (d->m_currentPattern)
+        {
+        case 0:
+        {
+            QLineEdit* lineEdit{ std::get<1>(d->m_replaceOperatorItems) };
+            lineEdit->setFocus();
+            break;
+        }
+        case 1:
+        {
+            QLineEdit* lineEdit{ std::get<1>(d->m_addOperatorItems) };
+            lineEdit->setFocus();
+            break;
+        }
+        case 2:
+        {
+            QLineEdit* lineEdit{ std::get<1>(d->m_customOPeratorItems) };
+            lineEdit->setFocus();
+            break;
+        }
+        default:
+        {
+            break;
+        }
+        }
+
     }
 }
 

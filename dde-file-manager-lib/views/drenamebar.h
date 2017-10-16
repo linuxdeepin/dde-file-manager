@@ -147,12 +147,17 @@ public:
     std::unique_ptr<RecordRenameBarState> getCurrentState()const;// return state and parameters by this function.
     void loadState(std::unique_ptr<RecordRenameBarState>& state);
 
+    virtual void setVisible(bool value) override;
+
 signals:
     void requestReplaceOperator();
     void onClickCancelButton();
 
+    void visibleChanged(bool value);
+
 
 private slots:
+    void onVisibleChanged(bool value)noexcept;
     void onRenamePatternChanged(const int& index)noexcept;
 
     void onReplaceOperatorFileNameChanged(const QString& text)noexcept;

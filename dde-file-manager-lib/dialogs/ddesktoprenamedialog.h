@@ -23,8 +23,7 @@
 #include "interfaces/dfileservices.h"
 
 
-DTK_USE_NAMESPACE
-DWIDGET_USE_NAMESPACE
+using namespace Dtk::Widget;
 
 class DDesktopRenameDialogPrivate;
 class DDesktopRenameDialog : public DDialog
@@ -46,8 +45,12 @@ public:
     QPair<QString, DFileService::AddTextFlags> getModeTwoContent()const noexcept;
     QPair<QString, QString> getModeThreeContent()const noexcept;
 
-
+    ///###: when is invoking DDesktopRenameDialog::show invoke this function actually.
+    virtual void setVisible(bool visible) override;
     void setDialogTitle(const QString& tile)noexcept;
+
+signals:
+    void visibleChanged(bool visible);
 
 private slots:
     void onCurrentModeChanged(const std::size_t& index)noexcept;
@@ -56,6 +59,7 @@ private slots:
     void onContentChangedForFinding(const QString& content);
     void onContentChangedForAdding(const QString& content);
     void onContentChangedForCustomzedSN(const QString& content);
+    void onVisibleChanged(bool visible)noexcept;
 
 private:
     using DDialog::setWindowTitle;
