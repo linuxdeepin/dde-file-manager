@@ -38,6 +38,7 @@ class TrashPropertyDialog;
 class ComputerPropertyDialog;
 class QTimer;
 class DMultiFilePropertyDialog;
+class QDiskInfo;
 
 DFM_BEGIN_NAMESPACE
 class FilePreviewDialog;
@@ -104,6 +105,7 @@ public slots:
     void showMultiFilesRenameDialog(const QList<DUrl>& selectedUrls);
     void showAddUserShareFailedDialog(const QString& sharePath);
     void showNoPermissionDialog(const DFMUrlListBaseEvent &event);
+    void showNtfsWarningDialog(const QDiskInfo& diskInfo);
     void removePropertyDialog(const DUrl& url);
     void closeAllPropertyDialog();
     void updateCloseIndicator();
