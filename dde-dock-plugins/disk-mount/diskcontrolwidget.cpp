@@ -136,6 +136,9 @@ void DiskControlWidget::onVolume_added(const QDiskInfo &diskInfo)
 {
     onDiskListChanged();
 
+    if (GvfsMountManager::isDeviceCrypto_LUKS(diskInfo))
+        return;
+
     GvfsMountManager* gvfsMountManager = GvfsMountManager::instance();
     DFMSetting* globalSetting = DFMSetting::instance();
     qDebug() << "AutoMountSwitch:" << m_gvfsMountManager->getAutoMountSwitch();
