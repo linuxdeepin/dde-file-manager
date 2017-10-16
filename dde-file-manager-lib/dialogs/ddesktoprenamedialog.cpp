@@ -138,10 +138,11 @@ void DDesktopRenameDialogPrivate::initUiParameters()
     tagLabel = std::get<0>(m_modeOneItemsForFinding);
     tagLabel->setText(QObject::tr("Find:"));
     contentLineEdit = std::get<1>(m_modeOneItemsForFinding);
+    contentLineEdit->setFocus();
     contentLineEdit->setPlaceholderText(QObject::tr("Required"));
     contentLineEdit->setFixedSize(QSize{275, 25});
     contentLineEdit->setObjectName( QString{"DRenameDialogLineEditForFinding"} );
-    contentLineEdit->setFocusPolicy(Qt::StrongFocus);
+//    contentLineEdit->setFocusPolicy(Qt::StrongFocus);
     contentLineEdit->setStyleSheet("QLineEdit#DRenameDialogLineEditForFinding:focus"
                                                          "{"
                                                                 "border: 1px solid #2ca7f8;"
@@ -411,6 +412,7 @@ void DDesktopRenameDialog::initConnect()noexcept
     QObject::connect(std::get<1>(d->m_itemsForSelecting), static_cast<funcType>(&QComboBox::currentIndexChanged), this, &DDesktopRenameDialog::onCurrentModeChanged);
     QObject::connect(std::get<1>(d->m_modeTwoItemsForLocating), static_cast<funcType>(&QComboBox::currentIndexChanged), this, &DDesktopRenameDialog::onCurrentAddModeChanged);
     QObject::connect(std::get<1>(d->m_modeThreeItemsForSNNumber), &QLineEdit::textChanged, this, &DDesktopRenameDialog::onContentChangedForCustomzedSN);
+    QObject::connect(this, &DDesktopRenameDialog::visibleChanged, this, &DDesktopRenameDialog::onVisibleChanged);
 }
 
 
@@ -420,6 +422,9 @@ void DDesktopRenameDialog::onCurrentModeChanged(const std::size_t &index)noexcep
 
     d->m_currentmode = index;
     d->m_stackedLayout->setCurrentIndex(index);
+
+    ///###: here, make lineEdit has focus immediately, after change mode.
+    this->onVisibleChanged(true);
 }
 
 void DDesktopRenameDialog::onCurrentAddModeChanged(const std::size_t &index)noexcept
@@ -432,6 +437,9 @@ void DDesktopRenameDialog::onCurrentAddModeChanged(const std::size_t &index)noex
     }else{
         d->m_flagForAdding = DFileService::AddTextFlags::After;
     }
+
+    ///###: here, make lineEdit has focus immediately, after change mode.
+    this->onVisibleChanged(true);
 }
 
 std::size_t DDesktopRenameDialog::getCurrentModeIndex()const noexcept
@@ -546,6 +554,46 @@ void DDesktopRenameDialog::setDialogTitle(const QString &tile)noexcept
     d->m_titleLabel->setText(tile);
 }
 
+
+void DDesktopRenameDialog::setVisible(bool visible)
+{
+    this->DDialog::setVisible(visible);
+    emit visibleChanged(visible);
+}
+
+
+void DDesktopRenameDialog::onVisibleChanged(bool visible)noexcept
+{
+    DDesktopRenameDialogPrivate* const d{ d_func() };
+
+    if(visible == true){
+
+        switch(d->m_currentmode)
+        {
+             case 0:
+             {
+                QLineEdit* lineEdit{ std::get<1>(d->m_modeOneItemsForFinding) };
+                lineEdit->setFocus();
+                break;
+             }
+             case 1:
+            {
+                QLineEdit* lineEdit{ std::get<1>(d->m_modeTwoItemsForAdding) };
+                lineEdit->setFocus();
+                break;
+            }
+            case 2:
+            {
+                QLineEdit* lineEdit{ std::get<1>(d->m_modeThreeItemsForFileName) };
+                lineEdit->setFocus();
+                break;
+            }
+            default:
+                break;
+
+        }
+    }
+}
 
 
 
