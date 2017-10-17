@@ -136,6 +136,9 @@ void BookMarkManager::writeJson(QJsonObject &json)
             DFileInfo info(m_bookmarks.at(i)->getUrl());
             deviceID = info.getDiskinfo().id();
         }
+        if (deviceID.isEmpty()){
+            deviceID = m_bookmarks.at(i)->getDevcieId();
+        }
         m_bookmarks.at(i)->setDevcieId(deviceID);
         object["deviceID"] = deviceID;
         localArray.append(object);

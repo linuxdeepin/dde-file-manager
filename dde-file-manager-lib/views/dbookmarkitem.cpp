@@ -695,6 +695,7 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             qDebug() << deviceUrl << NetworkManager::SupportScheme.contains(deviceUrl.scheme());
 
             if (NetworkManager::SupportScheme.contains(deviceUrl.scheme())) {
+                setMountBookmark(true);
                 emit fileSignalManager->requestFetchNetworks(DFMUrlBaseEvent(this, deviceUrl));
                 return;
             }
@@ -702,7 +703,7 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             deviceListener->mount(m_bookmarkModel->getDevcieId());
             setMountBookmark(true);
 
-            TIMER_SINGLESHOT(500, {
+            TIMER_SINGLESHOT(1000, {
 
                                  QDir dir(this->m_url.path());
                                  if(!dir.exists()){
