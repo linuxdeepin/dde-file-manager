@@ -396,6 +396,10 @@ DUrlList FileJob::doMoveCopyJob(const DUrlList &files, const DUrl &destination)
     emit finished();
     qDebug() << "Do file operation is done" << m_jobDetail;
 
+    foreach (DUrl url, list) {
+        CopyingFiles.removeOne(url);
+    }
+
     return list;
 }
 
@@ -1008,7 +1012,6 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
                         from.close();
                         if (targetPath){
                             *targetPath = m_tarPath;
-                            CopyingFiles.removeOne(DUrl::fromLocalFile(m_tarPath));
                         }
                         return true;
                     }else{
