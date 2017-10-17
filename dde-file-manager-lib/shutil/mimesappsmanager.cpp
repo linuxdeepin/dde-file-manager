@@ -524,6 +524,8 @@ QStringList MimesAppsManager::getApplicationsFolders()
     desktopFolders << QString("/usr/share/applications/")
                    << QString("/usr/local/share/applications/)")
                    << QString("/usr/share/gnome/applications/")
+                   << QString("/var/lib/flatpak/exports/share/applications")
+                   << QDir::homePath() + QString("/.local/share/flatpak/exports/share/applications")
                    << QDir::homePath() + QString( "/.local/share/applications" );
     return desktopFolders;
 }
