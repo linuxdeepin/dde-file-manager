@@ -646,10 +646,10 @@ void DBookmarkScene::mountAdded(UDiskDeviceInfoPointer device)
     {
         DBookmarkItem* item = m_itemGroup->items().at(i);
         if (item->getIsCustomBookmark() && item->getMountBookmark()){
-             DUrlList urls;
-             urls << item->getUrl();
-             DFMEventDispatcher::instance()->processEventAsync<DFMOpenUrlEvent>(item, urls, DFMOpenUrlEvent::OpenInCurrentWindow);
-             item->setMountBookmark(false);
+             TIMER_SINGLESHOT(100, {
+                                  DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(item, item->getUrl(), views().at(0)->window());
+                                  item->setMountBookmark(false);
+                              }, item, this);
         }
     }
 }
