@@ -18,6 +18,7 @@
 
 #include <QPair>
 #include <QLabel>
+#include <QWindow>
 #include <QComboBox>
 #include <QLineEdit>
 #include <QValidator>
@@ -76,8 +77,8 @@ DDesktopRenameDialogPrivate::DDesktopRenameDialogPrivate(DDesktopRenameDialog * 
                         :q_ptr{ qPtr}
 {
     this->initUi();
-    this->initUiLayout();
     this->initUiParameters();
+    this->initUiLayout();
 
 }
 
@@ -357,6 +358,8 @@ DDesktopRenameDialog::DDesktopRenameDialog(QWidget* const parent)
     this->initUi();
     this->initUiParameters();
     this->initConnect();
+
+    this->installEventFilter(this);
 }
 
 
@@ -366,8 +369,8 @@ void DDesktopRenameDialog::initUi()
 {
     DDesktopRenameDialogPrivate* const d{ d_func() };
     this->addContent(d->m_mainFrame, Qt::AlignCenter);
-    this->addButton(QObject::tr("Cancel"), DDialog::ButtonNormal);
-    this->addButton(QObject::tr("Rename"), DDialog::ButtonNormal);
+    this->addButton(QObject::tr("Cancel"));
+    this->addButton(QObject::tr("Rename"), true);
 }
 
 void DDesktopRenameDialog::initUiParameters()
@@ -403,7 +406,7 @@ void DDesktopRenameDialog::initUiParameters()
 }
 
 
-void DDesktopRenameDialog::initConnect()noexcept
+void DDesktopRenameDialog::initConnect()
 {
     DDesktopRenameDialogPrivate* const d{ d_func() };
     using funcType = void (QComboBox::*)(int index);
@@ -413,6 +416,24 @@ void DDesktopRenameDialog::initConnect()noexcept
     QObject::connect(std::get<1>(d->m_modeTwoItemsForLocating), static_cast<funcType>(&QComboBox::currentIndexChanged), this, &DDesktopRenameDialog::onCurrentAddModeChanged);
     QObject::connect(std::get<1>(d->m_modeThreeItemsForSNNumber), &QLineEdit::textChanged, this, &DDesktopRenameDialog::onContentChangedForCustomzedSN);
     QObject::connect(this, &DDesktopRenameDialog::visibleChanged, this, &DDesktopRenameDialog::onVisibleChanged);
+
+
+    try{
+
+        if(QPushButton* cancelButton = dynamic_cast<QPushButton*>(this->getButton(0))){
+            QObject::connect(this, &DDesktopRenameDialog::clickCancelButton, cancelButton, &QPushButton::click);
+        }
+
+        if(QPushButton* renameButton = dynamic_cast<QPushButton*>(this->getButton(1))){
+            QObject::connect(this, &DDesktopRenameDialog::clickRenameButton, renameButton, &QPushButton::click);
+        }
+
+    }catch(const std::bad_cast& error){
+        (void)error;
+
+        throw std::runtime_error{ "badly dynamic cast in DDesktopRenameDialog" };
+    }
+
 }
 
 
@@ -594,7 +615,5 @@ void DDesktopRenameDialog::onVisibleChanged(bool visible)noexcept
         }
     }
 }
-
-
 
 

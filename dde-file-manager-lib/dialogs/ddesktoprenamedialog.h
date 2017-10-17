@@ -51,6 +51,8 @@ public:
 
 signals:
     void visibleChanged(bool visible);
+    void clickCancelButton();
+    void clickRenameButton();
 
 private slots:
     void onCurrentModeChanged(const std::size_t& index)noexcept;
@@ -66,7 +68,7 @@ private:
 
     void initUi();
     void initUiParameters();
-    void initConnect()noexcept;
+    void initConnect();
     void setRenameButtonStatus(const bool& enabled);
 
     QSharedPointer<DDesktopRenameDialogPrivate> d_ptr{ nullptr };
