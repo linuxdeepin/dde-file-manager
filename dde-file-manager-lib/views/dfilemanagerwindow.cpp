@@ -841,7 +841,7 @@ void DFileManagerWindow::initConnect()
         emit fileSignalManager->currentUrlChanged(DFMUrlBaseEvent(this, currentUrl()));
     });
 
-    QObject::connect(d->renameBar, &DRenameBar::onClickCancelButton, this, &DFileManagerWindow::hideRenameBar);
+    QObject::connect(d->renameBar, &DRenameBar::clickCancelButton, this, &DFileManagerWindow::hideRenameBar);
     QObject::connect(fileSignalManager, &FileSignalManager::requestMultiFilesRename, this, &DFileManagerWindow::onShowRenameBar);
     QObject::connect(d->tabBar, &TabBar::currentChanged, this, &DFileManagerWindow::onTabBarCurrentIndexChange);
 }

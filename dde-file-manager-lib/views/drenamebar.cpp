@@ -598,7 +598,7 @@ void DRenameBar::initConnect()
 
     QObject::connect(d->m_comboBox, static_cast<funcType>(&QComboBox::activated), this, &DRenameBar::onRenamePatternChanged);
 
-    QObject::connect(std::get<0>(d->m_buttonsArea), &QPushButton::clicked, this, &DRenameBar::onClickCancelButton);
+    QObject::connect(std::get<0>(d->m_buttonsArea), &QPushButton::clicked, this, &DRenameBar::clickCancelButton);
     QObject::connect(std::get<1>(d->m_replaceOperatorItems), &QLineEdit::textChanged, this, &DRenameBar::onReplaceOperatorFileNameChanged);
     QObject::connect(std::get<1>(d->m_addOperatorItems), &QLineEdit::textChanged, this, &DRenameBar::onAddOperatorAddedContentChanged);
 
@@ -609,8 +609,8 @@ void DRenameBar::initConnect()
     QObject::connect(std::get<1>(d->m_customOPeratorItems), &QLineEdit::textChanged, this, &DRenameBar::onCustomOperatorFileNameChanged);
     QObject::connect(std::get<3>(d->m_customOPeratorItems), &QLineEdit::textChanged, this, &DRenameBar::onCustomOperatorSNNumberChanged);
 
-
     QObject::connect(this, &DRenameBar::visibleChanged, this, &DRenameBar::onVisibleChanged);
+    QObject::connect(this, &DRenameBar::clickRenameButton, this, &DRenameBar::eventDispatcher);
 }
 
 
@@ -697,6 +697,25 @@ void DRenameBar::loadState(std::unique_ptr<RecordRenameBarState>& state)
     }
 }
 
+void DRenameBar::keyPressEvent(QKeyEvent* event)
+{
+    switch(event->key())
+    {
+    case Qt::Key_Return:
+    case Qt::Key_Enter:
+    {
+        emit this->clickRenameButton();
+        break;
+    }
+    case Qt::Key_Escape:
+    {
+        emit this->clickCancelButton();
+        break;
+    }
+    default:
+        break;
+    }
+}
 
 void DRenameBar::setVisible(bool value)
 {
@@ -738,6 +757,3 @@ void DRenameBar::onVisibleChanged(bool value)noexcept
 
     }
 }
-
-
-

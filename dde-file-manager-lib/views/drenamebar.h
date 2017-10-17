@@ -149,9 +149,13 @@ public:
 
     virtual void setVisible(bool value) override;
 
+protected:
+    virtual void keyPressEvent(QKeyEvent* event)override;
+
 signals:
     void requestReplaceOperator();
-    void onClickCancelButton();
+    void clickCancelButton();
+    void clickRenameButton();
 
     void visibleChanged(bool value);
 
