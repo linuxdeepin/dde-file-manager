@@ -9,7 +9,7 @@
     <message>
         <location filename="../main.cpp" line="118"/>
         <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions.</source>
-        <translation>El Gestor de archivos Deepin es una herramienta para manejar archivos desarrollado de manera independiente por Deepin Technology, con características como búsqueda, copiado, papelera de reciclaje, compresión/descompresión, propiedades de archivo y otras funciones referidas al manejo de archivos.</translation>
+        <translation>El Gestor de archivos Deepin es una herramienta, desarrollada de manera independiente por Deepin Technology, con características como búsqueda, copiado, papelera de reciclaje, compresión/descompresión, propiedades de archivo y otras funciones referidas al manejo de estos.</translation>
     </message>
 </context>
 </TS>
