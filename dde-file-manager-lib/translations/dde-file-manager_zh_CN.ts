@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="zh_CN">
 <context>
     <name>CloseAllDialogIndicator</name>
     <message>
@@ -413,23 +415,23 @@
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="943"/>
-        <source>1. Restart to enter Windows</source>
-        <translation>1.重启电脑进入Windows系统</translation>
+        <source>1. Reboot to enter Windows</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="944"/>
-        <source>2. Select Restart</source>
-        <translation>2.选择重启系统</translation>
+        <source>2. Select Reboot</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="945"/>
-        <source>3. Restart and enter deepin</source>
-        <translation>3.重启时选择深度操作系统</translation>
+        <source>3. Reboot and enter deepin</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="962"/>
-        <source>Restart</source>
-        <translation>重启</translation>
+        <source>Reboot</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1142"/>

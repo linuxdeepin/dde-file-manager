@@ -940,9 +940,9 @@ void DialogManager::showNtfsWarningDialog(const QDiskInfo &diskInfo)
                 QLabel* messageLabel = new QLabel;
                 messageLabel->setScaledContents(true);
 
-                QString message1 = tr("1. Restart to enter Windows");
-                QString message2 = tr("2. Select Restart");
-                QString message3 = tr("3. Restart and enter deepin");
+                QString message1 = tr("1. Reboot to enter Windows");
+                QString message2 = tr("2. Select Reboot");
+                QString message3 = tr("3. Reboot and enter deepin");
 
                 messageLabel->setText(QString("%1\n%2\n%3").arg(message1, message2, message3));
 
@@ -959,7 +959,7 @@ void DialogManager::showNtfsWarningDialog(const QDiskInfo &diskInfo)
 
                 d.addContent(contentFrame, Qt::AlignCenter);
                 d.addButton(tr("Cancel"), false, DDialog::ButtonNormal);
-                d.addButton(tr("Restart"), true, DDialog::ButtonRecommend);
+                d.addButton(tr("Reboot"), true, DDialog::ButtonRecommend);
                 int ret = d.exec();
                 if (ret == 1){
                     qDebug() << "===================Reboot system=====================";

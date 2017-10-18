@@ -415,22 +415,22 @@
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="943"/>
-        <source>1. Restart to enter Windows</source>
+        <source>1. Reboot to enter Windows</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="944"/>
-        <source>2. Select Restart</source>
+        <source>2. Select Reboot</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="945"/>
-        <source>3. Restart and enter deepin</source>
+        <source>3. Reboot and enter deepin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="962"/>
-        <source>Restart</source>
+        <source>Reboot</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
