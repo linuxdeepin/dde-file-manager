@@ -399,37 +399,37 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="929"/>
         <source>Sorry, failed to mount %1 partition</source>
-        <translation type="unfinished"/>
+        <translation>Извините, монтирование %1 раздела не удалось</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="933"/>
         <source>Enabling fast sleep in Windows will cause other systems to fail to normally access Windows disk</source>
-        <translation type="unfinished"/>
+        <translation>Включение быстрого сна в Windows приведет к тому, что другие системы не смогут нормально обращаться к диску Windows</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="937"/>
         <source>Please restore by the following steps to nornally access Windows disk</source>
-        <translation type="unfinished"/>
+        <translation>Для восстановления доступа к дискам Windows выполните следующие действия</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="943"/>
-        <source>1. Restart to enter Windows</source>
-        <translation type="unfinished"/>
+        <source>1. Reboot to enter Windows</source>
+        <translation>1. Перезагрузитесь, чтобы войти в Windows</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="944"/>
-        <source>2. Select Restart</source>
-        <translation type="unfinished"/>
+        <source>2. Select Reboot</source>
+        <translation>2. Выберите Перезагрузка</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="945"/>
-        <source>3. Restart and enter deepin</source>
-        <translation type="unfinished"/>
+        <source>3. Reboot and enter deepin</source>
+        <translation>3. Перезагрузитесь и войдите в Deepin</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="962"/>
-        <source>Restart</source>
-        <translation type="unfinished"/>
+        <source>Reboot</source>
+        <translation>Перезагрузить</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1142"/>

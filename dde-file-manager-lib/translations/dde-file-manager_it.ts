@@ -399,37 +399,37 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="929"/>
         <source>Sorry, failed to mount %1 partition</source>
-        <translation type="unfinished"/>
+        <translation>Ops, montaggio della partizione %1 fallito</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="933"/>
         <source>Enabling fast sleep in Windows will cause other systems to fail to normally access Windows disk</source>
-        <translation type="unfinished"/>
+        <translation>Abilitare la sospensione in Windows non permette ad altri sistemi di accedere facilmente al disco di Windows</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="937"/>
         <source>Please restore by the following steps to nornally access Windows disk</source>
-        <translation type="unfinished"/>
+        <translation>Per cortesia ripristina la situazione ottimale seguendo questi passaggi</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="943"/>
-        <source>1. Restart to enter Windows</source>
-        <translation type="unfinished"/>
+        <source>1. Reboot to enter Windows</source>
+        <translation>1. Riavvia ed entra in Windows</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="944"/>
-        <source>2. Select Restart</source>
-        <translation type="unfinished"/>
+        <source>2. Select Reboot</source>
+        <translation>2. Seleziona Riavvia</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="945"/>
-        <source>3. Restart and enter deepin</source>
-        <translation type="unfinished"/>
+        <source>3. Reboot and enter deepin</source>
+        <translation>3. Al boot entra in Deepin</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="962"/>
-        <source>Restart</source>
-        <translation type="unfinished"/>
+        <source>Reboot</source>
+        <translation>Riavvia</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1142"/>

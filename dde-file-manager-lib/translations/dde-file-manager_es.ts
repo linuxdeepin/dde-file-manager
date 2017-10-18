@@ -413,23 +413,23 @@
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="943"/>
-        <source>1. Restart to enter Windows</source>
-        <translation>1. Reiniciar para ingresar a Windows</translation>
+        <source>1. Reboot to enter Windows</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="944"/>
-        <source>2. Select Restart</source>
-        <translation>2. Seleccione reiniciar</translation>
+        <source>2. Select Reboot</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="945"/>
-        <source>3. Restart and enter deepin</source>
-        <translation>3. Reinicie e ingrese deepin</translation>
+        <source>3. Reboot and enter deepin</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="962"/>
-        <source>Restart</source>
-        <translation>Reiniciar</translation>
+        <source>Reboot</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1142"/>
