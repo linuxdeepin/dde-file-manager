@@ -223,9 +223,13 @@ bool DFileViewHelper::isCut(const QModelIndex &index) const
 
     if (!fileInfo)
         return false;
+    DUrl fileUrl = fileInfo->fileUrl();
+    if (fileInfo->fileUrl().isSearchFile()){
+        fileUrl = fileInfo->fileUrl().searchedFileUrl();
+    }
 
     return DFMGlobal::instance()->clipboardAction() == DFMGlobal::CutAction
-            && DFMGlobal::instance()->clipboardFileUrlList().contains(fileInfo->fileUrl());
+            && DFMGlobal::instance()->clipboardFileUrlList().contains(fileUrl);
 }
 
 /*!

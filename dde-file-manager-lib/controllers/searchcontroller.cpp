@@ -28,6 +28,16 @@
 #include <QDebug>
 #include <QRegularExpression>
 #include <QQueue>
+#include <QRegExp>
+
+QString searchKeywordPattern(const QString& keyword){
+    QString keywordPattern = keyword;
+    if (!keyword.contains('*') && !keyword.contains('?')) {
+        keywordPattern.prepend('*');
+        keywordPattern.append('*');
+    }
+    return keywordPattern;
+}
 
 class SearchFileWatcherPrivate;
 class SearchFileWatcher : public DAbstractFileWatcher
@@ -150,14 +160,25 @@ void SearchFileWatcher::onFileAttributeChanged(const DUrl &url)
 
 void SearchFileWatcher::onFileMoved(const DUrl &fromUrl, const DUrl &toUrl)
 {
+    Q_D(SearchFileWatcher);
+
     DUrl newFromUrl = fileUrl();
     newFromUrl.setSearchedFileUrl(fromUrl);
 
-    DUrl newToUrl = fileUrl();
-    newToUrl.setSearchedFileUrl(toUrl);
+    DUrl newToUrl = toUrl;
+    if (fileUrl().searchTargetUrl().scheme() == toUrl.scheme() && toUrl.path().startsWith(fileUrl().searchTargetUrl().path())){
+         QString keywordPattern = searchKeywordPattern(fileUrl().searchKeyword());
+         const DAbstractFileInfoPointer& info = DFileService::instance()->createFileInfo(this, toUrl);
+         QRegExp regular = QRegExp(keywordPattern, Qt::CaseInsensitive, QRegExp::Wildcard);
+         if (regular.exactMatch(info->fileDisplayName())){
+             newToUrl = fileUrl();
+             newToUrl.setSearchedFileUrl(toUrl);
+
+             addWatcher(toUrl);
+         }
+    }
 
     removeWatcher(fromUrl);
-    addWatcher(toUrl);
 
     emit fileMoved(newFromUrl, newToUrl);
 }
@@ -235,12 +256,7 @@ SearchDiriterator::SearchDiriterator(const DUrl &url, const QStringList &nameFil
     , m_flags(flags)
 {
     targetUrl = url.searchTargetUrl();
-    keyword = url.searchKeyword();
-
-    if (!keyword.contains('*') && !keyword.contains('?')) {
-        keyword.prepend('*');
-        keyword.append('*');
-    }
+    keyword = searchKeywordPattern(url.searchKeyword());
 
     regular = QRegExp(keyword, Qt::CaseInsensitive, QRegExp::Wildcard);
     searchPathList << targetUrl;
