@@ -399,7 +399,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="929"/>
         <source>Sorry, failed to mount %1 partition</source>
-        <translation type="unfinished"/>
+        <translation>Atleiskite, nepavyko prijungti %1 skaidinio</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="933"/>
@@ -413,22 +413,22 @@
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="943"/>
-        <source>1. Restart to enter Windows</source>
+        <source>1. Reboot to enter Windows</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="944"/>
-        <source>2. Select Restart</source>
+        <source>2. Select Reboot</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="945"/>
-        <source>3. Restart and enter deepin</source>
+        <source>3. Reboot and enter deepin</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="962"/>
-        <source>Restart</source>
+        <source>Reboot</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -1044,17 +1044,17 @@
         <location filename="../dialogs/filepreviewdialog.cpp" line="186"/>
         <location filename="../dialogs/filepreviewdialog.cpp" line="212"/>
         <source>Size: %1</source>
-        <translation type="unfinished"/>
+        <translation>Dydis: %1</translation>
     </message>
     <message>
         <location filename="../dialogs/filepreviewdialog.cpp" line="187"/>
         <source>Type: %1</source>
-        <translation type="unfinished"/>
+        <translation>Tipas: %1</translation>
     </message>
     <message>
         <location filename="../dialogs/filepreviewdialog.cpp" line="191"/>
         <source>Size: 0</source>
-        <translation type="unfinished"/>
+        <translation>Dydis: 0</translation>
     </message>
     <message>
         <location filename="../dialogs/filepreviewdialog.cpp" line="192"/>
@@ -1254,7 +1254,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="682"/>
         <source>Open file location</source>
-        <translation type="unfinished"/>
+        <translation>Atverti failo vietą</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="696"/>

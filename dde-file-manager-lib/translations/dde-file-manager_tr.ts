@@ -399,37 +399,37 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="929"/>
         <source>Sorry, failed to mount %1 partition</source>
-        <translation type="unfinished"/>
+        <translation>Maalesef %1 bölümü bağlama başarısız</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="933"/>
         <source>Enabling fast sleep in Windows will cause other systems to fail to normally access Windows disk</source>
-        <translation type="unfinished"/>
+        <translation>Windows&apos;da hızlı uyku modunun etkinleştirilmesi diğer sistemlerin normalde Windows diskine erişememesine neden olur.</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="937"/>
         <source>Please restore by the following steps to nornally access Windows disk</source>
-        <translation type="unfinished"/>
+        <translation>Windows diskine erişmek için lütfen aşağıdaki adımları izleyerek geri yükleyiniz.</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="943"/>
-        <source>1. Restart to enter Windows</source>
-        <translation type="unfinished"/>
+        <source>1. Reboot to enter Windows</source>
+        <translation>1. Windows&apos;a girmek için yeniden başlat</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="944"/>
-        <source>2. Select Restart</source>
-        <translation type="unfinished"/>
+        <source>2. Select Reboot</source>
+        <translation>2. Yeniden Başlat&apos;ı Seçiniz</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="945"/>
-        <source>3. Restart and enter deepin</source>
-        <translation type="unfinished"/>
+        <source>3. Reboot and enter deepin</source>
+        <translation>3. Yeniden başlat ve Deepin&apos;e gir</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="962"/>
-        <source>Restart</source>
-        <translation type="unfinished"/>
+        <source>Reboot</source>
+        <translation>Yeniden başlat</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1142"/>
