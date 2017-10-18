@@ -30,7 +30,7 @@
     <message>
         <location filename="../view/canvasgridview.cpp" line="1880"/>
         <source>Set Wallpaper</source>
-        <translation>Establecer como fondo</translation>
+        <translation>Establecer fondo de pantalla</translation>
     </message>
 </context>
 <context>

@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>CloseAllDialogIndicator</name>
     <message>
@@ -401,37 +399,37 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="929"/>
         <source>Sorry, failed to mount %1 partition</source>
-        <translation type="unfinished"></translation>
+        <translation>抱歉，挂载分区%1失败</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="933"/>
         <source>Enabling fast sleep in Windows will cause other systems to fail to normally access Windows disk</source>
-        <translation type="unfinished"></translation>
+        <translation>Windows系统快速睡眠时会导致其他系统无法正常访问Windows磁盘</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="937"/>
         <source>Please restore by the following steps to nornally access Windows disk</source>
-        <translation type="unfinished"></translation>
+        <translation>请按照以下方式进行修复即可正常访问Windows磁盘</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="943"/>
         <source>1. Restart to enter Windows</source>
-        <translation type="unfinished"></translation>
+        <translation>1.重启电脑进入Windows系统</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="944"/>
         <source>2. Select Restart</source>
-        <translation type="unfinished"></translation>
+        <translation>2.选择重启系统</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="945"/>
         <source>3. Restart and enter deepin</source>
-        <translation type="unfinished"></translation>
+        <translation>3.重启时选择深度操作系统</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="962"/>
         <source>Restart</source>
-        <translation type="unfinished"></translation>
+        <translation>重启</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1142"/>
