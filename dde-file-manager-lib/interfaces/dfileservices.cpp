@@ -232,9 +232,11 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
             }
             enableList << url;
         }
-        DFMUrlListBaseEvent noPermissionEvent{event->sender(), disableList};
-        noPermissionEvent.setWindowId(event->windowId());
-        emit fileSignalManager->requestShowNoPermissionDialog(noPermissionEvent);
+        if (!disableList.isEmpty()){
+            DFMUrlListBaseEvent noPermissionEvent{event->sender(), disableList};
+            noPermissionEvent.setWindowId(event->windowId());
+            emit fileSignalManager->requestShowNoPermissionDialog(noPermissionEvent);
+        }
 
         event->setData(enableList);
         result = CALL_CONTROLLER(moveToTrash);

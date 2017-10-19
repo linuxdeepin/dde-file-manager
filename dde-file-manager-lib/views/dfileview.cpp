@@ -1001,6 +1001,7 @@ void DFileView::mousePressEvent(QMouseEvent *event)
             if (!DFMGlobal::keyCtrlIsPressed()) {
                 itemDelegate()->hideNotEditingIndexWidget();
                 clearSelection();
+                update();
                 setDragDropMode(DropOnly);
             }
         } else if (DFMGlobal::keyCtrlIsPressed()) {
