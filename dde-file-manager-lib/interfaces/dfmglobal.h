@@ -307,6 +307,8 @@ public:
     static QSharedPointer<QString> convertFileToUtf8(const DUrl &url);
     static QSharedPointer<QString> convertStrToUtf8(const QByteArray& str);
 
+    static QString toUnicode(const QByteArray &ba);
+
     static void playSound(const QUrl& soundUrl);
 
 

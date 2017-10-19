@@ -737,6 +737,43 @@ void DFMGlobal::playSound(const QUrl &soundUrl)
 }
 
 
+
+QString DFMGlobal::toUnicode(const QByteArray &ba)
+{
+    if (ba.isEmpty())
+        return QString();
+
+    QList<QByteArray> codecList;
+
+    codecList << "utf-8" << "utf-16";
+
+    switch (QLocale::system().script()) {
+    case QLocale::SimplifiedChineseScript:
+        codecList << "gbk";
+        break;
+    case QLocale::TraditionalChineseScript:
+        codecList << "big5" << "gbk";
+        break;
+    case QLocale::JapaneseScript:
+        codecList << "shift_jis" << "euc_jp" << "gbk";
+        break;
+    case QLocale::KoreanScript:
+        codecList << "euc_kr";
+        break;
+    default:
+        break;
+    }
+
+    for (const QByteArray &codec : codecList) {
+        const QString &text = textDecoder(ba, codec);
+
+        if (!text.isEmpty())
+            return text;
+    }
+
+    return QString::fromLocal8Bit(ba);
+}
+
 namespace DThreadUtil {
 class FunctionCallProxy_ : public FunctionCallProxy {};
 Q_GLOBAL_STATIC(FunctionCallProxy_, fcpGlobal)
