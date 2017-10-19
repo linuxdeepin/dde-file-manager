@@ -303,8 +303,11 @@ void UserShareManager::updateUserShareInfo()
             shareInfo.setComment(info.value("comment"));
             shareInfo.setGuest_ok(info.value("guest_ok"));
             shareInfo.setUsershare_acl(info.value("usershare_acl"));
-            const DAbstractFileInfoPointer& fileInfo = DFileService::instance()->createFileInfo(this, DUrl::fromLocalFile(sharePath));
-            shareInfo.setIsWritable(fileInfo->isWritable());
+            if (share_acl.contains("r") || share_acl.contains("R")){
+                shareInfo.setIsWritable(false);
+            }else if (share_acl.contains("f") || share_acl.contains("F")){
+                shareInfo.setIsWritable(true);
+            }
             m_shareInfos.insert(shareInfo.shareName(), shareInfo);
 
             if (m_sharePathToNames.contains(shareInfo.path())) {
