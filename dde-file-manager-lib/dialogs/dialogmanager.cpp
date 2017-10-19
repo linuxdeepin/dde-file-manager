@@ -910,68 +910,70 @@ void DialogManager::showNoPermissionDialog(const DFMUrlListBaseEvent &event)
 
 void DialogManager::showNtfsWarningDialog(const QDiskInfo &diskInfo)
 {
-    if (qApp->applicationName() == QMAKE_TARGET && !DFMGlobal::IsFileManagerDiloagProcess){
-        QString fstype = PartMan::Partition::getPartitionByDevicePath(diskInfo.unix_device()).fs();
-        if (fstype == "ntfs"){
-            bool isReadOnly = false;
-            DUrl mountUrl = DUrl(diskInfo.mounted_root_uri());
-            QFileInfo mountFileInfo(mountUrl.toLocalFile());
-            isReadOnly = mountFileInfo.isReadable() && !QFileInfo(DUrl(diskInfo.mounted_root_uri()).toLocalFile()).isWritable();
-            qDebug() << DUrl(diskInfo.mounted_root_uri()).toLocalFile() << fstype << "isReadOnly:" << isReadOnly;
-            if (isReadOnly){
-                DDialog d;
-                QFrame* contentFrame = new QFrame;
+    TIMER_SINGLESHOT(1000, {
+        if (qApp->applicationName() == QMAKE_TARGET && !DFMGlobal::IsFileManagerDiloagProcess){
+            QString fstype = PartMan::Partition::getPartitionByDevicePath(diskInfo.unix_device()).fs();
+            if (fstype == "ntfs"){
+                bool isReadOnly = false;
+                DUrl mountUrl = DUrl(diskInfo.mounted_root_uri());
+                QFileInfo mountFileInfo(mountUrl.toLocalFile());
+                isReadOnly = mountFileInfo.isReadable() && !QFileInfo(DUrl(diskInfo.mounted_root_uri()).toLocalFile()).isWritable();
+                qDebug() << DUrl(diskInfo.mounted_root_uri()).toLocalFile() << fstype << "isReadOnly:" << isReadOnly;
+                if (isReadOnly){
+                    DDialog d;
+                    QFrame* contentFrame = new QFrame;
 
-                QLabel* iconLabel = new QLabel;
-                iconLabel->setPixmap(m_dialogWarningIcon.pixmap(64, 64));
+                    QLabel* iconLabel = new QLabel;
+                    iconLabel->setPixmap(m_dialogWarningIcon.pixmap(64, 64));
 
-                QLabel* titleLabel = new QLabel;
-                titleLabel->setText(tr("Sorry, failed to mount %1 partition").arg(diskInfo.unix_device()));
+                    QLabel* titleLabel = new QLabel;
+                    titleLabel->setText(tr("Mount partition%1 to be read only").arg(diskInfo.unix_device()));
 
-                QLabel* discriptionLabel = new QLabel;
-                discriptionLabel->setScaledContents(true);
-                discriptionLabel->setText(tr("Enabling fast sleep in Windows will cause other systems to fail to normally access Windows disk"));
+                    QLabel* discriptionLabel = new QLabel;
+                    discriptionLabel->setScaledContents(true);
+                    discriptionLabel->setText(tr("Disks in Windows will be unable to read and write normally if check \"Turn on fast startup (recommended)\" in Shutdown settings"));
 
-                QLabel* messageTitleLabel = new QLabel;
-                messageTitleLabel->setScaledContents(true);
-                QString messageTitleMessage = tr("Please restore by the following steps to nornally access Windows disk");
-                messageTitleLabel->setText(messageTitleMessage);
+                    QLabel* messageTitleLabel = new QLabel;
+                    messageTitleLabel->setScaledContents(true);
+                    QString messageTitleMessage = tr("Please restore by the following steps to nornally access Windows disk");
+                    messageTitleLabel->setText(messageTitleMessage);
 
-                QLabel* messageLabel = new QLabel;
-                messageLabel->setScaledContents(true);
+                    QLabel* messageLabel = new QLabel;
+                    messageLabel->setScaledContents(true);
 
-                QString message1 = tr("1. Reboot to enter Windows");
-                QString message2 = tr("2. Select Reboot");
-                QString message3 = tr("3. Reboot and enter deepin");
+                    QString message1 = tr("1. Reboot to enter Windows");
+                    QString message2 = tr("2. Select Reboot");
+                    QString message3 = tr("3. Reboot and enter deepin");
 
-                messageLabel->setText(QString("%1\n%2\n%3").arg(message1, message2, message3));
+                    messageLabel->setText(QString("%1\n%2\n%3").arg(message1, message2, message3));
 
-                QVBoxLayout* contentLayout = new QVBoxLayout;
-                contentLayout->addWidget(iconLabel, 0, Qt::AlignCenter);
-                contentLayout->addWidget(titleLabel, 0, Qt::AlignCenter);
-                contentLayout->addWidget(discriptionLabel, 0, Qt::AlignLeft);
-                contentLayout->addSpacing(10);
-                contentLayout->addWidget(messageTitleLabel, 0, Qt::AlignLeft);
-                contentLayout->addWidget(messageLabel, 0, Qt::AlignLeft);
-                contentLayout->setContentsMargins(100, 0, 100, 0);
-                contentLayout->setSpacing(10);
-                contentFrame->setLayout(contentLayout);
+                    QVBoxLayout* contentLayout = new QVBoxLayout;
+                    contentLayout->addWidget(iconLabel, 0, Qt::AlignCenter);
+                    contentLayout->addWidget(titleLabel, 0, Qt::AlignCenter);
+                    contentLayout->addWidget(discriptionLabel, 0, Qt::AlignLeft);
+                    contentLayout->addSpacing(10);
+                    contentLayout->addWidget(messageTitleLabel, 0, Qt::AlignLeft);
+                    contentLayout->addWidget(messageLabel, 0, Qt::AlignLeft);
+                    contentLayout->setContentsMargins(100, 0, 100, 0);
+                    contentLayout->setSpacing(10);
+                    contentFrame->setLayout(contentLayout);
 
-                d.addContent(contentFrame, Qt::AlignCenter);
-                d.addButton(tr("Cancel"), false, DDialog::ButtonNormal);
-                d.addButton(tr("Reboot"), true, DDialog::ButtonRecommend);
-                int ret = d.exec();
-                if (ret == 1){
-                    qDebug() << "===================Reboot system=====================";
-                    QDBusInterface sessionManagerIface("com.deepin.SessionManager",
-                                              "/com/deepin/SessionManager",
-                                              "com.deepin.SessionManager",
-                                              QDBusConnection::sessionBus());
-                    sessionManagerIface.asyncCall("Reboot" );
+                    d.addContent(contentFrame, Qt::AlignCenter);
+                    d.addButton(tr("Cancel"), false, DDialog::ButtonNormal);
+                    d.addButton(tr("Reboot"), true, DDialog::ButtonRecommend);
+                    int ret = d.exec();
+                    if (ret == 1){
+                        qDebug() << "===================Reboot system=====================";
+                        QDBusInterface sessionManagerIface("com.deepin.SessionManager",
+                                                  "/com/deepin/SessionManager",
+                                                  "com.deepin.SessionManager",
+                                                  QDBusConnection::sessionBus());
+                        sessionManagerIface.asyncCall("Reboot" );
+                    }
                 }
             }
         }
-    }
+    }, this, diskInfo);
 }
 
 void DialogManager::removePropertyDialog(const DUrl &url)

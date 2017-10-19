@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="zh_CN">
 <context>
     <name>CloseAllDialogIndicator</name>
     <message>
@@ -204,7 +206,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="776"/>
         <location filename="../dialogs/dialogmanager.cpp" line="818"/>
         <location filename="../dialogs/dialogmanager.cpp" line="829"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1144"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1146"/>
         <source>OK</source>
         <translation>确定</translation>
     </message>
@@ -226,7 +228,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="623"/>
         <location filename="../dialogs/dialogmanager.cpp" line="652"/>
         <location filename="../dialogs/dialogmanager.cpp" line="895"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="961"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="962"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
@@ -266,7 +268,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="410"/>
         <location filename="../dialogs/dialogmanager.cpp" line="652"/>
         <location filename="../dialogs/dialogmanager.cpp" line="857"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1085"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1087"/>
         <source>Confirm</source>
         <translation>确定</translation>
     </message>
@@ -397,42 +399,42 @@
         <translation>查看</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="929"/>
-        <source>Sorry, failed to mount %1 partition</source>
-        <translation>抱歉，挂载分区%1失败</translation>
+        <location filename="../dialogs/dialogmanager.cpp" line="930"/>
+        <source>Mount partition%1 to be read only</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="933"/>
-        <source>Enabling fast sleep in Windows will cause other systems to fail to normally access Windows disk</source>
-        <translation>Windows系统快速睡眠时会导致其他系统无法正常访问Windows磁盘</translation>
+        <location filename="../dialogs/dialogmanager.cpp" line="934"/>
+        <source>Disks in Windows will be unable to read and write normally if check &quot;Turn on fast startup (recommended)&quot; in Shutdown settings</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="937"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="938"/>
         <source>Please restore by the following steps to nornally access Windows disk</source>
         <translation>请按照以下方式进行修复即可正常访问Windows磁盘</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="943"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="944"/>
         <source>1. Reboot to enter Windows</source>
         <translation>1.重启电脑进入Windows系统</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="944"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="945"/>
         <source>2. Select Reboot</source>
         <translation>2.选择重启系统</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="945"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="946"/>
         <source>3. Reboot and enter deepin</source>
         <translation>3.重启时选择深度操作系统</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="962"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="963"/>
         <source>Reboot</source>
         <translation>重启</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1142"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1144"/>
         <source>Share folder cann&apos;t be named after the current username</source>
         <translation>共享文件夹不能和当前用户名重名</translation>
     </message>
@@ -1836,7 +1838,7 @@
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1108"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1110"/>
         <source>Rename %1 Files</source>
         <translation>给%1个文件重命名</translation>
     </message>
