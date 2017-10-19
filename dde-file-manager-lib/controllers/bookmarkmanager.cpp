@@ -41,12 +41,10 @@ BookMarkManager::BookMarkManager(QObject *parent)
     load();
     fileService->setFileUrlHandler(BOOKMARK_SCHEME, "", this);
 
-    DAbstractFileWatcher *bookmark_watcher = DFileService::instance()->createFileWatcher(this, DUrl::fromLocalFile(cachePath()), this);
-
-    connect(bookmark_watcher, &DAbstractFileWatcher::fileAttributeChanged, this, &BookMarkManager::reLoad);
-    connect(bookmark_watcher, &DAbstractFileWatcher::fileModified, this, &BookMarkManager::reLoad);
-
-    bookmark_watcher->startWatcher();
+//    DAbstractFileWatcher *bookmark_watcher = DFileService::instance()->createFileWatcher(this, DUrl::fromLocalFile(cachePath()), this);
+//    connect(bookmark_watcher, &DAbstractFileWatcher::fileAttributeChanged, this, &BookMarkManager::reLoad);
+//    connect(bookmark_watcher, &DAbstractFileWatcher::fileModified, this, &BookMarkManager::reLoad);
+//    bookmark_watcher->startWatcher();
 }
 
 BookMarkManager::~BookMarkManager()
