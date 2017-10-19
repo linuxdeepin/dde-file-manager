@@ -204,7 +204,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="776"/>
         <location filename="../dialogs/dialogmanager.cpp" line="818"/>
         <location filename="../dialogs/dialogmanager.cpp" line="829"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1144"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1146"/>
         <source>OK</source>
         <translation>Rendben</translation>
     </message>
@@ -226,7 +226,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="623"/>
         <location filename="../dialogs/dialogmanager.cpp" line="652"/>
         <location filename="../dialogs/dialogmanager.cpp" line="895"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="961"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="962"/>
         <source>Cancel</source>
         <translation>Mégse</translation>
     </message>
@@ -266,7 +266,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="410"/>
         <location filename="../dialogs/dialogmanager.cpp" line="652"/>
         <location filename="../dialogs/dialogmanager.cpp" line="857"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1085"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1087"/>
         <source>Confirm</source>
         <translation>Megerősítés</translation>
     </message>
@@ -397,42 +397,42 @@
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="929"/>
-        <source>Sorry, failed to mount %1 partition</source>
+        <location filename="../dialogs/dialogmanager.cpp" line="930"/>
+        <source>Mount partition%1 to be read only</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="933"/>
-        <source>Enabling fast sleep in Windows will cause other systems to fail to normally access Windows disk</source>
+        <location filename="../dialogs/dialogmanager.cpp" line="934"/>
+        <source>Disks in Windows will be unable to read and write normally if check &quot;Turn on fast startup (recommended)&quot; in Shutdown settings</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="937"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="938"/>
         <source>Please restore by the following steps to nornally access Windows disk</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="943"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="944"/>
         <source>1. Reboot to enter Windows</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="944"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="945"/>
         <source>2. Select Reboot</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="945"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="946"/>
         <source>3. Reboot and enter deepin</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="962"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="963"/>
         <source>Reboot</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1142"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1144"/>
         <source>Share folder cann&apos;t be named after the current username</source>
         <translation type="unfinished"/>
     </message>
@@ -1836,7 +1836,7 @@
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1108"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1110"/>
         <source>Rename %1 Files</source>
         <translation type="unfinished"/>
     </message>

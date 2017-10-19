@@ -204,7 +204,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="776"/>
         <location filename="../dialogs/dialogmanager.cpp" line="818"/>
         <location filename="../dialogs/dialogmanager.cpp" line="829"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1144"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1146"/>
         <source>OK</source>
         <translation>ОК</translation>
     </message>
@@ -226,7 +226,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="623"/>
         <location filename="../dialogs/dialogmanager.cpp" line="652"/>
         <location filename="../dialogs/dialogmanager.cpp" line="895"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="961"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="962"/>
         <source>Cancel</source>
         <translation>Отмена</translation>
     </message>
@@ -266,7 +266,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="410"/>
         <location filename="../dialogs/dialogmanager.cpp" line="652"/>
         <location filename="../dialogs/dialogmanager.cpp" line="857"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1085"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1087"/>
         <source>Confirm</source>
         <translation>Подтвердить</translation>
     </message>
@@ -397,42 +397,42 @@
         <translation>Вид</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="929"/>
-        <source>Sorry, failed to mount %1 partition</source>
-        <translation>Извините, монтирование %1 раздела не удалось</translation>
+        <location filename="../dialogs/dialogmanager.cpp" line="930"/>
+        <source>Mount partition%1 to be read only</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="933"/>
-        <source>Enabling fast sleep in Windows will cause other systems to fail to normally access Windows disk</source>
-        <translation>Включение быстрого сна в Windows приведет к тому, что другие системы не смогут нормально обращаться к диску Windows</translation>
+        <location filename="../dialogs/dialogmanager.cpp" line="934"/>
+        <source>Disks in Windows will be unable to read and write normally if check &quot;Turn on fast startup (recommended)&quot; in Shutdown settings</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="937"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="938"/>
         <source>Please restore by the following steps to nornally access Windows disk</source>
         <translation>Для восстановления доступа к дискам Windows выполните следующие действия</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="943"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="944"/>
         <source>1. Reboot to enter Windows</source>
         <translation>1. Перезагрузитесь, чтобы войти в Windows</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="944"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="945"/>
         <source>2. Select Reboot</source>
         <translation>2. Выберите Перезагрузка</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="945"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="946"/>
         <source>3. Reboot and enter deepin</source>
         <translation>3. Перезагрузитесь и войдите в Deepin</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="962"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="963"/>
         <source>Reboot</source>
         <translation>Перезагрузить</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1142"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1144"/>
         <source>Share folder cann&apos;t be named after the current username</source>
         <translation>Общедоступная папка не может быть названа именем текущего пользователя</translation>
     </message>
@@ -1836,7 +1836,7 @@
         <translation>Отмена</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1108"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1110"/>
         <source>Rename %1 Files</source>
         <translation>Переименовать %1 Файлов</translation>
     </message>
