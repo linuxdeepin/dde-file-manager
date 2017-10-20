@@ -935,7 +935,7 @@ void DialogManager::showNtfsWarningDialog(const QDiskInfo &diskInfo)
 
                     QLabel* messageTitleLabel = new QLabel;
                     messageTitleLabel->setScaledContents(true);
-                    QString messageTitleMessage = tr("Please restore by the following steps to nornally access Windows disk");
+                    QString messageTitleMessage = tr("Please restore by the following steps to normally access Windows disk");
                     messageTitleLabel->setText(messageTitleMessage);
 
                     QLabel* messageLabel = new QLabel;
