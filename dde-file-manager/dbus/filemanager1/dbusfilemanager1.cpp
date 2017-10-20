@@ -15,8 +15,10 @@
 
 #include "dbusfilemanager1.h"
 #include "dfilewatcher.h"
+#include "dfileservices.h"
 
 #include <QProcess>
+#include <QDebug>
 
 DBusFileManager1::DBusFileManager1(QObject *parent)
     : QObject(parent)
@@ -52,6 +54,17 @@ void DBusFileManager1::ShowItems(const QStringList &URIs, const QString &Startup
         return;
 
     QProcess::startDetached("dde-file-manager", QStringList() << "--show-item" <<  URIs);
+}
+
+void DBusFileManager1::Trash(const QStringList &URIs)
+{
+    DUrlList urls;
+    foreach (const QString& path, URIs) {
+        DUrl url = DUrl::fromUserInput(path);
+        urls << url;
+    }
+   DFileService::instance()->moveToTrash(this, urls);
+
 }
 
 QStringList DBusFileManager1::GetMonitorFiles() const

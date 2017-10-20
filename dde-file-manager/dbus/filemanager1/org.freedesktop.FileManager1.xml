@@ -14,4 +14,7 @@
     <method name='GetMonitorFiles'>
         <arg type='as' name='URIs' direction='out'/>
     </method>
+    <method name='Trash'>
+        <arg type='as' name='URIs' direction='in'/>
+    </method>
 </interface>
