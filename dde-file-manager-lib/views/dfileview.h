@@ -142,6 +142,7 @@ public slots:
     void setViewMode(ViewMode mode);
     void sortByColumn(int column);
     void sort(int column, Qt::SortOrder order);
+    void sortByRole(int role, Qt::SortOrder order);
 
     void setNameFilters(const QStringList &nameFilters);
     void setFilters(QDir::Filters filters);
@@ -181,6 +182,7 @@ private slots:
     void freshView();
     void loadViewState(const DUrl &url);
     void saveViewState();
+    void onSortIndicatorChanged(int logicalIndex, Qt::SortOrder order);
 
 protected:
     void wheelEvent(QWheelEvent * event) Q_DECL_OVERRIDE;

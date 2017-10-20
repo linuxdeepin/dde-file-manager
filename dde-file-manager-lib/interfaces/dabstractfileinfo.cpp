@@ -865,7 +865,8 @@ QList<DAbstractFileInfo::SelectionMode> DAbstractFileInfo::supportSelectionModes
 
 QList<int> DAbstractFileInfo::userColumnRoles() const
 {
-    static QList<int> userColumnRoles = QList<int>() << DFileSystemModel::FileLastModifiedRole
+    static QList<int> userColumnRoles = QList<int>() << DFileSystemModel::FileDisplayNameRole
+                                                     << DFileSystemModel::FileLastModifiedRole
                                                      << DFileSystemModel::FileSizeRole
                                                      << DFileSystemModel::FileMimeTypeRole;
 
@@ -895,6 +896,13 @@ QVariant DAbstractFileInfo::userColumnData(int userColumnRole) const
     return QVariant();
 }
 
+QList<int> DAbstractFileInfo::userColumnChildRoles(int column) const
+{
+    Q_UNUSED(column)
+    QList<int> userColumnRoles{};
+    return userColumnRoles;
+}
+
 int DAbstractFileInfo::userColumnWidth(int userColumnRole) const
 {
     return userColumnWidth(userColumnRole, qApp->fontMetrics());
@@ -903,6 +911,9 @@ int DAbstractFileInfo::userColumnWidth(int userColumnRole) const
 int DAbstractFileInfo::userColumnWidth(int userColumnRole, const QFontMetrics &fontMetrics) const
 {
     switch (userColumnRole) {
+    case DFileSystemModel::FileNameRole:
+    case DFileSystemModel::FileDisplayNameRole:
+        return -1;
     case DFileSystemModel::FileSizeRole:
         return 80;
     case DFileSystemModel::FileMimeTypeRole:
@@ -910,6 +921,16 @@ int DAbstractFileInfo::userColumnWidth(int userColumnRole, const QFontMetrics &f
     default:
         return fontMetrics.width("0000/00/00 00:00:00");
     }
+}
+
+int DAbstractFileInfo::userRowHeight() const
+{
+    return userRowHeight(qApp->fontMetrics());
+}
+
+int DAbstractFileInfo::userRowHeight(const QFontMetrics &fontMetrics) const
+{
+    return fontMetrics.height();
 }
 
 bool DAbstractFileInfo::columnDefaultVisibleForRole(int role) const
@@ -1297,9 +1318,9 @@ QMap<MenuAction, QVector<MenuAction> > DAbstractFileInfo::subMenuActionList() co
     actions.insert(MenuAction::DisplayAs, displayAsMenuActionKeys);
 
     QVector<MenuAction> sortByMenuActionKeys;
-    sortByMenuActionKeys << MenuAction::Name;
+//    sortByMenuActionKeys << MenuAction::Name;
 
-    for (int role : userColumnRoles()) {
+    for (int role : sortSubMenuActionUserColumnRoles()) {
         sortByMenuActionKeys << menuActionByColumnRole(role);
     }
 
@@ -1347,6 +1368,11 @@ MenuAction DAbstractFileInfo::menuActionByColumnRole(int role) const
     default:
         return MenuAction::Unknow;
     }
+}
+
+QList<int> DAbstractFileInfo::sortSubMenuActionUserColumnRoles() const
+{
+    return userColumnRoles();
 }
 
 QT_BEGIN_NAMESPACE

@@ -541,7 +541,7 @@ QSize DFileView::itemSizeHint() const
 {
     D_DC(DFileView);
 
-    return itemDelegate()->sizeHint(QStyleOptionViewItem(), QModelIndex());
+    return itemDelegate()->sizeHint(viewOptions(), rootIndex());
 }
 
 bool DFileView::isDropTarget(const QModelIndex &index) const
@@ -659,7 +659,22 @@ void DFileView::sortByColumn(int column)
     if (d->headerView) {
         QSignalBlocker blocker(d->headerView);
         Q_UNUSED(blocker)
-        d->headerView->setSortIndicator(column, order);
+        int indicatorColumn = column;
+        /*always indicator in 0/1 column if view is in search or trash mode*/
+        if (rootUrl().isSearchFile() || rootUrl().isTrashFile()){
+            if (column == 0 || column == 1){
+                indicatorColumn = 0;
+            }else{
+                indicatorColumn = 1;
+            }
+        }
+
+        d->headerView->setSortIndicator(indicatorColumn, order);
+    }
+
+    /*contextmenu sort column to real sort column of search or trash*/
+    if (rootUrl().isSearchFile() || rootUrl().isTrashFile()){
+        column += 2;
     }
 
     sort(column, order);
@@ -672,6 +687,22 @@ void DFileView::sort(int column, Qt::SortOrder order)
     D_D(DFileView);
 
     model()->setSortColumn(column, order);
+
+    d->oldSelectedUrls = this->selectedUrls();
+
+    if (!d->oldSelectedUrls.isEmpty())
+        d->oldCurrentUrl = model()->getUrlByIndex(currentIndex());
+
+    clearSelection();
+    model()->sort();
+    emit viewStateChanged();
+}
+
+void DFileView::sortByRole(int role, Qt::SortOrder order)
+{
+    D_D(DFileView);
+
+    model()->setSortRole(role, order);
 
     d->oldSelectedUrls = this->selectedUrls();
 
@@ -1206,6 +1237,29 @@ void DFileView::saveViewState()
     viewState.sortOrder = roles.second;
 
     viewStatesManager->saveViewState(url, viewState);
+}
+
+void DFileView::onSortIndicatorChanged(int logicalIndex, Qt::SortOrder order)
+{
+    Q_D(const DFileView);
+    if (rootUrl().isSearchFile() || rootUrl().isTrashFile()){
+//        qDebug() << logicalIndex << model()->sortRole() << order;
+        const QVariant role_data = model()->headerData(logicalIndex, d->headerView->orientation(), Qt::DisplayRole);
+        const DAbstractFileInfoPointer &file_info = model()->fileInfo(rootIndex());
+
+        QList<int> searchRealRoles = file_info->userColumnRoles();
+        searchRealRoles.removeOne(DFileSystemModel::FileUserRole + 1);
+        searchRealRoles.removeOne(DFileSystemModel::FileUserRole + 2);
+        for (int role : searchRealRoles) {
+            if (file_info->userColumnDisplayName(role) == role_data) {
+//                model()->cacheUserColumnCurrentRoles(logicalIndex, role);
+                sortByRole(role, order);
+                break;
+            }
+        }
+    }else{
+        sort(logicalIndex, order);
+    }
 }
 
 void DFileView::focusInEvent(QFocusEvent *event)
@@ -1822,6 +1876,7 @@ bool DFileView::setRootUrl(const DUrl &url)
 
     model()->setSortRole(sort_config.first, (Qt::SortOrder)sort_config.second);
 
+
     if (info) {
         ViewModes modes = (ViewModes)info->supportViewMode();
 
@@ -1967,8 +2022,9 @@ void DFileView::switchViewMode(DFileView::ViewMode mode)
 
             connect(d->headerView, &QHeaderView::sectionResized,
                     this, static_cast<void (DFileView::*)()>(&DFileView::update));
+
             connect(d->headerView, &QHeaderView::sortIndicatorChanged,
-                    this, &DFileView::sort);
+                    this, &DFileView::onSortIndicatorChanged);
             connect(d->headerView, &QHeaderView::customContextMenuRequested,
                     this, &DFileView::popupHeaderViewContextMenu);
 
@@ -2142,7 +2198,19 @@ void DFileView::updateListHeaderViewProperty()
     d->headerView->setSectionResizeMode(QHeaderView::Fixed);
     d->headerView->setDefaultSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
     d->headerView->setMinimumSectionSize(DEFAULT_HEADER_SECTION_WIDTH);
-    d->headerView->setSortIndicator(model()->sortColumn(), model()->sortOrder());
+
+    const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(rootIndex());
+    if (rootUrl().isSearchFile() || rootUrl().isTrashFile()){
+        int indicatorColumn = 0;
+        if (fileInfo->userColumnChildRoles(0).contains(model()->sortRole())){
+            indicatorColumn = 0;
+        }else if (fileInfo->userColumnChildRoles(1).contains(model()->sortRole())){
+            indicatorColumn = 1;
+        }
+        d->headerView->setSortIndicator(indicatorColumn, model()->sortOrder());
+    }else{
+        d->headerView->setSortIndicator(model()->sortColumn(), model()->sortOrder());
+    }
 
     d->columnRoles.clear();
 
@@ -2157,12 +2225,17 @@ void DFileView::updateListHeaderViewProperty()
             d->headerView->setSectionResizeMode(i, QHeaderView::Stretch);
         }
 
-        const QString &column_name = model()->headerData(i, Qt::Horizontal, Qt::DisplayRole).toString();
-
-        if (!d->columnForRoleHiddenMap.contains(column_name)) {
+        /*don't use columnForRoleHiddenMap cache to hide section for search/trash view in list mode*/
+        if (rootUrl().isSearchFile() || rootUrl().isTrashFile()){
             d->headerView->setSectionHidden(i, !model()->columnDefaultVisibleForRole(model()->columnToRole(i)));
-        } else {
-            d->headerView->setSectionHidden(i, d->columnForRoleHiddenMap.value(column_name));
+        }else{
+            const QString &column_name = model()->headerData(i, Qt::Horizontal, Qt::DisplayRole).toString();
+
+            if (!d->columnForRoleHiddenMap.contains(column_name)) {
+                d->headerView->setSectionHidden(i, !model()->columnDefaultVisibleForRole(model()->columnToRole(i)));
+            } else {
+                d->headerView->setSectionHidden(i, d->columnForRoleHiddenMap.value(column_name));
+            }
         }
     }
 
@@ -2226,28 +2299,72 @@ void DFileView::updateColumnWidth()
     }
 }
 
-void DFileView::popupHeaderViewContextMenu(const QPoint &/*pos*/)
+void DFileView::popupHeaderViewContextMenu(const QPoint &pos)
 {
     D_D(DFileView);
-
+    const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(rootIndex());
     QMenu *menu = new QMenu();
 
-    for (int i = 1; i < d->headerView->count(); ++i) {
-        QAction *action = new QAction(menu);
+    if (rootUrl().isSearchFile() || rootUrl().isTrashFile()){
+        /*contextmenu of headview for sort function*/
+        int column = d->headerView->logicalIndexAt(pos.x());
 
-        action->setText(model()->columnNameByRole(model()->columnToRole(i)).toString());
-        action->setCheckable(true);
-        action->setChecked(!d->headerView->isSectionHidden(i));
+        QList<int> childRoles = fileInfo->userColumnChildRoles(column);
+        for(int i=0; i< childRoles.count() * 2 ; i++){
+            int childRole = childRoles.at(i / 2);
+            QAction *action = new QAction(menu);
+            if (i % 2 == 0)
+                action->setText(fileInfo->userColumnDisplayName(childRole).toString());
+            else if(i % 2 == 1){
+                action->setText(fileInfo->userColumnDisplayName(childRole).toString() + tr("(Reverse)"));
+            }
+            action->setCheckable(true);
 
-        connect(action, &QAction::triggered, this, [this, action, i, d] {
-            action->setChecked(!action->isChecked());
-            d->columnForRoleHiddenMap[action->text()] = action->isChecked();
+            if (!d->headerView->isSectionHidden(d->headerView->sortIndicatorSection())
+                    && model()->sortRole() == childRole){
+                if (i % 2 == 1 && model()->sortOrder() == Qt::DescendingOrder){
+                    action->setChecked(true);
+                }if (i % 2 == 0 && model()->sortOrder() == Qt::AscendingOrder){
+                    action->setChecked(true);
+                }
+            }
 
-            d->headerView->setSectionHidden(i, action->isChecked());
-            updateColumnWidth();
-        });
+            connect(action, &QAction::triggered, this, [this, action, column, i, d, childRoles] {
+                if (i % 2 == 0){
+                    sortByRole(childRoles.at(i / 2), Qt::AscendingOrder);
+                }else if (i % 2 == 1){
+                    sortByRole(childRoles.at(i / 2), Qt::DescendingOrder);
+                }
 
-        menu->addAction(action);
+                /*setSortIndicator but don't emit signal when sorted by menu action*/
+                QSignalBlocker blocker(d->headerView);
+                Q_UNUSED(blocker)
+                model()->cacheUserColumnCurrentRoles(column, childRoles.at(i / 2));
+                d->headerView->setSortIndicator(column, model()->sortOrder());
+
+                d->headerView->update();
+            });
+
+            menu->addAction(action);
+        }
+    }else{
+        for (int i = 1; i < d->headerView->count(); ++i) {
+            QAction *action = new QAction(menu);
+
+            action->setText(model()->columnNameByRole(model()->columnToRole(i)).toString());
+            action->setCheckable(true);
+            action->setChecked(!d->headerView->isSectionHidden(i));
+
+            connect(action, &QAction::triggered, this, [this, action, i, d] {
+                action->setChecked(!action->isChecked());
+                d->columnForRoleHiddenMap[action->text()] = action->isChecked();
+
+                d->headerView->setSectionHidden(i, action->isChecked());
+                updateColumnWidth();
+            });
+
+            menu->addAction(action);
+        }
     }
 
     menu->exec(QCursor::pos());

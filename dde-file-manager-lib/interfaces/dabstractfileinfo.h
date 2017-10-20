@@ -194,6 +194,7 @@ public:
     virtual QMap<MenuAction, QVector<MenuAction> > subMenuActionList() const;
     virtual QSet<MenuAction> disableMenuActionList() const;
     virtual MenuAction menuActionByColumnRole(int role) const;
+    virtual QList<int> sortSubMenuActionUserColumnRoles() const; /*sortby submenu contains column roles*/
 
     /// return DFileView::ViewMode flags
     virtual quint8 supportViewMode() const;
@@ -201,12 +202,17 @@ public:
     virtual QList<SelectionMode> supportSelectionModes() const;
 
     virtual QList<int> userColumnRoles() const;
+
     virtual QVariant userColumnDisplayName(int userColumnRole) const;
     /// get custom column data
     virtual QVariant userColumnData(int userColumnRole) const;
+    virtual QList<int> userColumnChildRoles(int column) const;
     /// get custom column width
     int userColumnWidth(int userColumnRole) const;
     virtual int userColumnWidth(int userColumnRole, const QFontMetrics &fontMetrics) const;
+    /// get custom row height
+    int userRowHeight() const;
+    virtual int userRowHeight(const QFontMetrics &fontMetrics) const;
 
     /// user column default visible for role
     virtual bool columnDefaultVisibleForRole(int role) const;

@@ -240,10 +240,12 @@ QSet<MenuAction> TrashFileInfo::disableMenuActionList() const
 QList<int> TrashFileInfo::userColumnRoles() const
 {
     static QList<int> userColumnRoles = QList<int>() << DFileSystemModel::FileUserRole + 1
-                                                     << DFileSystemModel::FileLastModifiedRole
+                                                     << DFileSystemModel::FileUserRole + 2
+                                                     << DFileSystemModel::FileDisplayNameRole
+                                                     << DFileSystemModel::FileUserRole + 3 /*Source Path*/
+                                                     << DFileSystemModel::FileUserRole + 4 /*Time Deleted*/
                                                      << DFileSystemModel::FileSizeRole
-                                                     << DFileSystemModel::FileMimeTypeRole
-                                                     << DFileSystemModel::FileUserRole + 2;
+                                                     << DFileSystemModel::FileMimeTypeRole;
 
     return userColumnRoles;
 }
@@ -251,16 +253,25 @@ QList<int> TrashFileInfo::userColumnRoles() const
 QVariant TrashFileInfo::userColumnData(int userColumnRole) const
 {
     Q_D(const TrashFileInfo);
+    if (userColumnRole == DFileSystemModel::FileUserRole + 1){
+        QString sourcePath;
+        if (d->originalFilePath.isEmpty())
+            sourcePath = d->originalFilePath;
+        else
+            sourcePath = QFileInfo(d->originalFilePath).absolutePath();
+        return QVariant::fromValue(QPair<QString, QString>(fileDisplayName(), sourcePath));
+    }
+    if (userColumnRole == DFileSystemModel::FileUserRole + 2)
+        return QVariant::fromValue(qMakePair(d->displayDeletionDate, qMakePair(sizeDisplayName(), mimeTypeDisplayName())));
 
-    if (userColumnRole == DFileSystemModel::FileUserRole + 1)
-        return d->displayDeletionDate;
-
-    if (userColumnRole == DFileSystemModel::FileUserRole + 2) {
+    if (userColumnRole == DFileSystemModel::FileUserRole + 3)
         if (d->originalFilePath.isEmpty())
             return d->originalFilePath;
 
         return QFileInfo(d->originalFilePath).absolutePath();
-    }
+
+    if (userColumnRole == DFileSystemModel::FileUserRole + 4)
+        return d->displayDeletionDate;
 
     return DAbstractFileInfo::userColumnData(userColumnRole);
 }
@@ -268,39 +279,74 @@ QVariant TrashFileInfo::userColumnData(int userColumnRole) const
 QVariant TrashFileInfo::userColumnDisplayName(int userColumnRole) const
 {
     if (userColumnRole == DFileSystemModel::FileUserRole + 1)
-        return QObject::tr("Time deleted");
+        return qApp->translate("DFileSystemModel",  "Name");
 
     if (userColumnRole == DFileSystemModel::FileUserRole + 2)
+        return QObject::tr("Time deleted");
+
+    if (userColumnRole == DFileSystemModel::FileUserRole + 3)
         return QObject::tr("Source Path", "TrashFileInfo");
+
+    if (userColumnRole == DFileSystemModel::FileUserRole + 4)
+        return QObject::tr("Time deleted");
 
     return DAbstractFileInfo::userColumnDisplayName(userColumnRole);
 }
 
+QList<int> TrashFileInfo::userColumnChildRoles(int column) const
+{
+    QList<int> userColumnRoles{};
+    if (column == 0){
+        userColumnRoles << DFileSystemModel::FileDisplayNameRole
+                        << DFileSystemModel::FileUserRole + 3;
+    }else if (column == 1){
+        userColumnRoles << DFileSystemModel::FileUserRole + 4
+                        << DFileSystemModel::FileSizeRole
+                        << DFileSystemModel::FileMimeTypeRole;
+    }
+    return userColumnRoles;
+}
+
 int TrashFileInfo::userColumnWidth(int userColumnRole, const QFontMetrics &fontMetrics) const
 {
-    if (userColumnRole == DFileSystemModel::FileUserRole + 2)
+    if (userColumnRole == DFileSystemModel::FileUserRole + 1)
         return -1;
 
     return DAbstractFileInfo::userColumnWidth(userColumnRole, fontMetrics);
 }
 
+int TrashFileInfo::userRowHeight(const QFontMetrics &fontMetrics) const
+{
+    return fontMetrics.height() * 2 + 10;
+}
+
 bool TrashFileInfo::columnDefaultVisibleForRole(int userColumnRole) const
 {
-    if (userColumnRole == DFileSystemModel::FileLastModifiedRole)
-        return false;
-
-    return DAbstractFileInfo::columnDefaultVisibleForRole(userColumnRole);
+    return (userColumnRole == DFileSystemModel::FileUserRole + 1 ||
+            userColumnRole == DFileSystemModel::FileUserRole + 2);
 }
 
 MenuAction TrashFileInfo::menuActionByColumnRole(int userColumnRole) const
 {
-    if (userColumnRole == DFileSystemModel::FileUserRole + 1)
-        return MenuAction::DeletionDate;
-
-    if (userColumnRole == DFileSystemModel::FileUserRole + 2)
+    if (userColumnRole == DFileSystemModel::FileUserRole + 3)
         return MenuAction::SourcePath;
 
+    if (userColumnRole == DFileSystemModel::FileUserRole + 4)
+        return MenuAction::DeletionDate;
+
+
     return DAbstractFileInfo::menuActionByColumnRole(userColumnRole);
+}
+
+QList<int> TrashFileInfo::sortSubMenuActionUserColumnRoles() const
+{
+    QList<int> roles;
+    roles << DFileSystemModel::FileDisplayNameRole
+          << DFileSystemModel::FileUserRole + 3 /*Source Path*/
+          << DFileSystemModel::FileUserRole + 4 /*Time Deleted*/
+          << DFileSystemModel::FileSizeRole
+          << DFileSystemModel::FileMimeTypeRole;
+    return roles;
 }
 
 bool TrashFileInfo::canIteratorDir() const
@@ -352,9 +398,9 @@ DUrl TrashFileInfo::goToUrlWhenDeleted() const
 
 DAbstractFileInfo::CompareFunction TrashFileInfo::compareFunByColumn(int columnRole) const
 {
-    if (columnRole == DFileSystemModel::FileUserRole + 1)
+    if (columnRole == DFileSystemModel::FileUserRole + 3)
         return FileSortFunction::compareFileListByDeletionDate;
-    else if (columnRole == DFileSystemModel::FileUserRole + 2)
+    else if (columnRole == DFileSystemModel::FileUserRole + 4)
         return FileSortFunction::compareFileListBySourceFilePath;
     else
         return DAbstractFileInfo::compareFunByColumn(columnRole);

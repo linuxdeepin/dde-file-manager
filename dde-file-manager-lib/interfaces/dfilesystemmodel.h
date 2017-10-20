@@ -148,6 +148,9 @@ public:
 
     bool enabledSort() const;
 
+    void cacheUserColumnCurrentRoles(int column, int role);
+    int getUserColumnCurrentRole(int column) const;
+
 public slots:
     void updateChildren(QList<DAbstractFileInfoPointer> list);
     void updateChildrenOnNewThread(QList<DAbstractFileInfoPointer> list);
