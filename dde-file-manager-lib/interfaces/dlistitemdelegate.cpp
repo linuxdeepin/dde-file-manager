@@ -158,13 +158,18 @@ void DListItemDelegate::paint(QPainter *painter,
 
     if (index != d->editingIndex || (role != DFileSystemModel::FileNameRole && role != DFileSystemModel::FileDisplayNameRole)) {
         /// draw file name label
-        const QString &file_name = DFMGlobal::elideText(index.data(role).toString().remove('\n'),
-                                                        rect.size(), QTextOption::NoWrap,
-                                                        opt.font, Qt::ElideRight,
-                                                        d->textLineHeight);
-
+        const QVariant &data = index.data(role);
         painter->setPen(opt.palette.color(drawBackground ? QPalette::BrightText : QPalette::Text));
-        painter->drawText(rect, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()), file_name);
+        if (data.canConvert<QString>()) {
+            const QString &file_name = DFMGlobal::elideText(index.data(role).toString().remove('\n'),
+                                                            rect.size(), QTextOption::NoWrap,
+                                                            opt.font, Qt::ElideRight,
+                                                            d->textLineHeight);
+
+            painter->drawText(rect, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()), file_name);
+        } else {
+            drawNotStringData(opt, d->textLineHeight, rect, data, drawBackground, painter, index);
+        }
     }
 
     if(isDragMode)
@@ -194,11 +199,17 @@ void DListItemDelegate::paint(QPainter *painter,
 
         QModelIndex tmp_index = model->createIndex(index.row(), model->roleToColumn(role), index.internalId());
 
-        const QString &text = DFMGlobal::elideText(index.data(role).toString(), rect.size(),
-                                                   QTextOption::NoWrap, opt.font,
-                                                   Qt::ElideRight, d->textLineHeight);
+        const QVariant &data = index.data(role);
 
-        painter->drawText(rect, Qt::Alignment(tmp_index.data(Qt::TextAlignmentRole).toInt()), text);
+        if (data.canConvert<QString>()) {
+            const QString &text = DFMGlobal::elideText(index.data(role).toString(), rect.size(),
+                                                       QTextOption::NoWrap, opt.font,
+                                                       Qt::ElideRight, d->textLineHeight);
+
+            painter->drawText(rect, Qt::Alignment(tmp_index.data(Qt::TextAlignmentRole).toInt()), text);
+        } else {
+            drawNotStringData(opt, d->textLineHeight, rect, data, drawBackground, painter, index);
+        }
     }
 
     if (isDropTarget && !drawBackground) {
@@ -219,14 +230,138 @@ void DListItemDelegate::paint(QPainter *painter,
     painter->setOpacity(1);
 }
 
-QWidget *DListItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &, const QModelIndex &index) const
+
+void DListItemDelegate::drawNotStringData(const QStyleOptionViewItem &opt, int lineHeight, const QRect &rect, const QVariant &data,
+                                          bool drawBackground, QPainter *painter, const QModelIndex &index) const
+{
+    Q_D(const DListItemDelegate);
+
+    /*draw highlight text in sort role by ColorGroup and ColorRole in search and trash view*/
+
+    QPalette::ColorGroup nameColorGroup = QPalette::Inactive;
+    QPalette::ColorRole nameColorRole = QPalette::Text;
+    QPalette::ColorGroup pathColorGroup = QPalette::Inactive;
+    QPalette::ColorRole pathColorRole = QPalette::Text;
+    QPalette::ColorGroup timeColorGroup = QPalette::Inactive;
+    QPalette::ColorRole  timeColorRole = QPalette::Text;
+    QPalette::ColorGroup sizeColorGroup = QPalette::Inactive;
+    QPalette::ColorRole sizeColorRole = QPalette::Text;
+    QPalette::ColorGroup typeColorGroup = QPalette::Inactive;
+    QPalette::ColorRole typeColorRole = QPalette::Text;
+
+    const DFileSystemModel *model = parent()->model();
+    const DAbstractFileInfoPointer &fileInfo = model->fileInfo(model->rootUrl());
+
+    int sortRole = model->sortRole();
+    if (sortRole == fileInfo->sortSubMenuActionUserColumnRoles().at(0)){
+        nameColorGroup = QPalette::Active;
+        if (drawBackground){
+            nameColorRole = QPalette::BrightText;
+        }
+    }
+    if (sortRole == fileInfo->sortSubMenuActionUserColumnRoles().at(1)){
+        pathColorGroup = QPalette::Active;
+        if (drawBackground){
+            pathColorRole = QPalette::BrightText;
+        }
+    }
+    if (sortRole == fileInfo->sortSubMenuActionUserColumnRoles().at(2)){
+        timeColorGroup = QPalette::Active;
+        if (drawBackground){
+            timeColorRole = QPalette::BrightText;
+        }
+    }
+    if (sortRole == fileInfo->sortSubMenuActionUserColumnRoles().at(3)){
+        sizeColorGroup = QPalette::Active;
+        if (drawBackground){
+            sizeColorRole = QPalette::BrightText;
+        }
+    }
+    if (sortRole == fileInfo->sortSubMenuActionUserColumnRoles().at(4)){
+        typeColorGroup = QPalette::Active;
+        if (drawBackground){
+            typeColorRole = QPalette::BrightText;
+        }
+    }
+
+
+    if (data.canConvert<QPair<QString, QString>>()) {
+        //name
+        //path
+        QPair<QString, QString> name_path = qvariant_cast<QPair<QString, QString>>(data);
+
+        const QString &file_name = DFMGlobal::elideText(name_path.first.remove('\n'),
+                                                        QSize(rect.width(), rect.height() / 2), QTextOption::NoWrap,
+                                                        opt.font, Qt::ElideRight,
+                                                        lineHeight);
+        painter->setPen(opt.palette.color(nameColorGroup, nameColorRole));
+        painter->drawText(rect.adjusted(0, 0, 0, -rect.height() / 2), Qt::AlignBottom, file_name);
+
+        const QString &file_path = DFMGlobal::elideText(name_path.second.remove('\n'),
+                                                        QSize(rect.width(), rect.height() / 2), QTextOption::NoWrap,
+                                                        opt.font, Qt::ElideRight,
+                                                        lineHeight);
+
+        painter->setPen(opt.palette.color(pathColorGroup, pathColorRole));
+        painter->drawText(rect.adjusted(0, rect.height() / 2, 0, 0), Qt::AlignTop, file_path);
+    } else if (data.canConvert<QPair<QString, QPair<QString, QString>>>()) {
+        //----time----
+        //size----type
+        QRect new_rect = rect;
+
+        const QPair<QString, QPair<QString, QString>> &dst = qvariant_cast<QPair<QString, QPair<QString, QString>>>(data);
+
+        const QString &date = DFMGlobal::elideText(dst.first, QSize(rect.width(), rect.height() / 2),
+                                                   QTextOption::NoWrap, opt.font,
+                                                   Qt::ElideRight, lineHeight);
+
+        painter->setPen(opt.palette.color(timeColorGroup, timeColorRole));
+        painter->drawText(new_rect.adjusted(0, 0, 0, -new_rect.height() / 2), Qt::AlignBottom, date, &new_rect);
+
+        new_rect = QRect(rect.left(), rect.top(), new_rect.width(), rect.height());
+
+        const QString &size = DFMGlobal::elideText(dst.second.first, QSize(new_rect.width() / 2, new_rect.height() / 2),
+                                                   QTextOption::NoWrap, opt.font,
+                                                   Qt::ElideRight, lineHeight);
+
+        painter->setPen(opt.palette.color(sizeColorGroup, sizeColorRole));
+        painter->drawText(new_rect.adjusted(0, new_rect.height() / 2, 0, 0), Qt::AlignTop | Qt::AlignLeft, size);
+
+        const QString &type = DFMGlobal::elideText(dst.second.second, QSize(new_rect.width() / 2, new_rect.height() / 2),
+                                                   QTextOption::NoWrap, opt.font,
+                                                   Qt::ElideLeft, lineHeight);
+        painter->setPen(opt.palette.color(typeColorGroup, typeColorRole));
+        painter->drawText(new_rect.adjusted(0, new_rect.height() / 2, 0, 0), Qt::AlignTop | Qt::AlignRight, type);
+    }
+}
+
+
+QSize DListItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    const DAbstractFileInfoPointer &file_info = parent()->fileInfo(index);
+
+    if (!file_info)
+        return DStyledItemDelegate::sizeHint(option, index);
+
+    Q_D(const DListItemDelegate);
+
+    return QSize(d->itemSizeHint.width(), qMax(file_info->userRowHeight(option.fontMetrics), d->itemSizeHint.height()));
+}
+
+QWidget *DListItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     Q_D(const DListItemDelegate);
 
     d->editingIndex = index;
 
     QLineEdit *edit = new QLineEdit(parent);
-    edit->setFixedHeight(LIST_EDITER_HEIGHT);
+
+    const DAbstractFileInfoPointer &file_info = this->parent()->fileInfo(index);
+    if (file_info->fileUrl().isSearchFile()){
+        edit->setFixedHeight(LIST_EDITER_HEIGHT * 2 - 10);
+    }else{
+        edit->setFixedHeight(LIST_EDITER_HEIGHT);
+    }
     edit->setObjectName("DListItemDelegate_Editor");
 
     connect(edit, &QLineEdit::destroyed, this, [this, d] {
@@ -267,7 +402,7 @@ QWidget *DListItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
     return edit;
 }
 
-void DListItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &) const
+void DListItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     const QSize &icon_size = parent()->parent()->iconSize();
     int column_x = 0;
@@ -289,7 +424,7 @@ void DListItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
     column_x = parent()->columnWidth(0) - 1 - parent()->fileViewViewportMargins().left();
 
     rect.setRight(qMin(column_x, opt_rect.right()));
-    rect.setTop(opt_rect.y() + (opt_rect.height() - LIST_EDITER_HEIGHT) / 2);
+    rect.setTop(opt_rect.y() + (opt_rect.height() - editor->height()) / 2);
 
     editor->setGeometry(rect);
 }
@@ -304,6 +439,29 @@ void DListItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
     const QString &text = index.data(DFileSystemModel::FileNameRole).toString();
 
     edit->setText(text);
+}
+
+static int dataWidth(const QStyleOptionViewItem &option ,const QModelIndex &index, int role)
+{
+    const QVariant &data = index.data(role);
+    Qt::Alignment alignment = Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt());
+
+    if (data.canConvert<QString>())
+        return option.fontMetrics.width(data.toString(), -1, alignment);
+
+    if (data.canConvert<QPair<QString, QString>>()) {
+        const QPair<QString, QString> &string_string = qvariant_cast<QPair<QString, QString>>(data);
+
+        return qMax(option.fontMetrics.width(string_string.first, -1, alignment), option.fontMetrics.width(string_string.second, -1, alignment));
+    }
+
+    if (data.canConvert<QPair<QString, QPair<QString, QString>>>()) {
+        const QPair<QString, QPair<QString, QString>> &string_p_string = qvariant_cast<QPair<QString, QPair<QString, QString>>>(data);
+
+        return option.fontMetrics.width(string_p_string.first, -1, alignment);
+    }
+
+    return -1;
 }
 
 QList<QRect> DListItemDelegate::paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -336,7 +494,7 @@ QList<QRect> DListItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
 
     /// draw file name label
 
-    rect.setWidth(qMin(rect.width(), option.fontMetrics.width(index.data(role).toString(), -1, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()))));
+    rect.setWidth(qMin(rect.width(), dataWidth(option, index, role)));
     geomertys << rect;
 
     for(int i = 1; i < columnRoleList.count(); ++i) {
@@ -355,7 +513,7 @@ QList<QRect> DListItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
 
         /// draw file name label
 
-        rect.setWidth(qMin(rect.width(), option.fontMetrics.width(index.data(role).toString(), -1, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()))));
+        rect.setWidth(qMin(rect.width(), dataWidth(option, index, role)));
         geomertys << rect;
     }
 

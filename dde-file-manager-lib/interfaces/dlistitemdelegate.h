@@ -22,9 +22,13 @@ public:
                const QStyleOptionViewItem &option,
                const QModelIndex &index) const Q_DECL_OVERRIDE;
 
-    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &, const QModelIndex &index) const Q_DECL_OVERRIDE;
+    void drawNotStringData(const QStyleOptionViewItem &opt, int lineHeight, const QRect &rect, const QVariant &data,
+                           bool drawBackground, QPainter *painter, const QModelIndex &index) const;
 
-    void updateEditorGeometry(QWidget * editor, const QStyleOptionViewItem & option, const QModelIndex &) const Q_DECL_OVERRIDE;
+    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &) const Q_DECL_OVERRIDE;
+    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const Q_DECL_OVERRIDE;
+
+    void updateEditorGeometry(QWidget * editor, const QStyleOptionViewItem & option, const QModelIndex &index) const Q_DECL_OVERRIDE;
     void setEditorData(QWidget * editor, const QModelIndex & index) const Q_DECL_OVERRIDE;
 
     QList<QRect> paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index) const Q_DECL_OVERRIDE;

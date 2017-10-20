@@ -35,6 +35,8 @@ public:
     QVariant userColumnDisplayName(int userColumnRole) const Q_DECL_OVERRIDE;
     /// get custom column data
     QVariant userColumnData(int userColumnRole) const Q_DECL_OVERRIDE;
+    QList<int> userColumnChildRoles(int column) const Q_DECL_OVERRIDE;
+    bool columnDefaultVisibleForRole(int role) const Q_DECL_OVERRIDE;
 
     bool canRedirectionFileUrl() const Q_DECL_OVERRIDE;
     DUrl redirectedFileUrl() const Q_DECL_OVERRIDE;
@@ -44,8 +46,10 @@ public:
     QVector<MenuAction> menuActionList(MenuType type = SingleFile) const Q_DECL_OVERRIDE;
     QSet<MenuAction> disableMenuActionList() const Q_DECL_OVERRIDE;
     int userColumnWidth(int userColumnRole, const QFontMetrics &fontMetrics) const Q_DECL_OVERRIDE;
+    int userRowHeight(const QFontMetrics &fontMetrics) const Q_DECL_OVERRIDE;
 
     MenuAction menuActionByColumnRole(int userColumnRole) const Q_DECL_OVERRIDE;
+    QList<int> sortSubMenuActionUserColumnRoles() const Q_DECL_OVERRIDE;
 
     bool isEmptyFloder(const QDir::Filters &filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System) const Q_DECL_OVERRIDE;
 

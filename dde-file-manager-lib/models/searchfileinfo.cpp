@@ -87,6 +87,9 @@ DUrl SearchFileInfo::parentUrl() const
 QList<int> SearchFileInfo::userColumnRoles() const
 {
     static QList<int> userColumnRoles = QList<int>() << DFileSystemModel::FileUserRole + 1
+                                                     << DFileSystemModel::FileUserRole + 2
+                                                     << DFileSystemModel::FileDisplayNameRole
+                                                     << DFileSystemModel::FilePathRole
                                                      << DFileSystemModel::FileLastModifiedRole
                                                      << DFileSystemModel::FileSizeRole
                                                      << DFileSystemModel::FileMimeTypeRole;
@@ -97,7 +100,13 @@ QList<int> SearchFileInfo::userColumnRoles() const
 QVariant SearchFileInfo::userColumnDisplayName(int userColumnRole) const
 {
     if (userColumnRole == DFileSystemModel::FileUserRole + 1)
-        return QObject::tr("Path", "SearchFileInfo");
+        return qApp->translate("DFileSystemModel",  "Name");
+    if (userColumnRole == DFileSystemModel::FileUserRole + 2)
+        return qApp->translate("DFileSystemModel",  "Time modified");
+
+    if (userColumnRole == DFileSystemModel::FilePathRole){
+        return QObject::tr("Path", "SearchFileInfo");;
+    }
 
     return DAbstractFileInfo::userColumnDisplayName(userColumnRole);
 }
@@ -106,21 +115,44 @@ QVariant SearchFileInfo::userColumnData(int userColumnRole) const
 {
     Q_D(const DAbstractFileInfo);
 
-    if (userColumnRole == DFileSystemModel::FileUserRole + 1) {
-        const DUrl &fileUrl = d->proxy->fileUrl();
-
-        if (fileUrl.isLocalFile()) {
-            return absolutePath();
-        } else {
-            DUrl newUrl = fileUrl;
-
-            newUrl.setPath(QFileInfo(newUrl.path()).path());
-
-            return newUrl.toString();
-        }
+    if (userColumnRole == DFileSystemModel::FileUserRole + 2) {
+        return QVariant::fromValue(qMakePair(lastModifiedDisplayName(), qMakePair(sizeDisplayName(), mimeTypeDisplayName())));
     }
 
-    return DAbstractFileInfo::userColumnData(userColumnRole);
+    QString file_path;
+
+    const DUrl &fileUrl = d->proxy->fileUrl();
+
+    if (fileUrl.isLocalFile()) {
+        file_path = absolutePath();
+    } else {
+        DUrl newUrl = fileUrl;
+
+        newUrl.setPath(QFileInfo(newUrl.path()).path());
+
+        file_path = newUrl.toString();
+    }
+
+    return QVariant::fromValue(QPair<QString, QString>(fileDisplayName(), file_path));
+}
+
+QList<int> SearchFileInfo::userColumnChildRoles(int column) const
+{
+    QList<int> userColumnRoles{};
+    if (column == 0){
+        userColumnRoles << DFileSystemModel::FileDisplayNameRole
+                        << DFileSystemModel::FilePathRole;
+    }else if (column == 1){
+        userColumnRoles << DFileSystemModel::FileLastModifiedRole
+                        << DFileSystemModel::FileSizeRole
+                        << DFileSystemModel::FileMimeTypeRole;
+    }
+    return userColumnRoles;
+}
+
+bool SearchFileInfo::columnDefaultVisibleForRole(int role) const
+{
+    return (role == DFileSystemModel::FileUserRole + 1 || role == DFileSystemModel::FileUserRole + 2);
 }
 
 int SearchFileInfo::userColumnWidth(int userColumnRole, const QFontMetrics &fontMetrics) const
@@ -128,15 +160,31 @@ int SearchFileInfo::userColumnWidth(int userColumnRole, const QFontMetrics &font
     if (userColumnRole == DFileSystemModel::FileUserRole + 1)
         return -1;
 
-    return DAbstractFileInfo::userColumnWidth(userColumnRole, fontMetrics);
+    return fontMetrics.width("0000/00/00 00:00:00");;
+}
+
+int SearchFileInfo::userRowHeight(const QFontMetrics &fontMetrics) const
+{
+    return fontMetrics.height() * 2 + 10;
 }
 
 MenuAction SearchFileInfo::menuActionByColumnRole(int userColumnRole) const
 {
-    if (userColumnRole == DFileSystemModel::FileUserRole + 1)
+    if (userColumnRole == DFileSystemModel::FilePathRole) {
         return MenuAction::AbsolutePath;
-
+    }
     return DAbstractFileInfo::menuActionByColumnRole(userColumnRole);
+}
+
+QList<int> SearchFileInfo::sortSubMenuActionUserColumnRoles() const
+{
+    QList<int> roles;
+    roles << DFileSystemModel::FileDisplayNameRole
+          << DFileSystemModel::FilePathRole
+          << DFileSystemModel::FileLastModifiedRole
+          << DFileSystemModel::FileSizeRole
+          << DFileSystemModel::FileMimeTypeRole;
+    return roles;
 }
 
 bool SearchFileInfo::canRedirectionFileUrl() const
@@ -217,7 +265,7 @@ bool SearchFileInfo::isEmptyFloder(const QDir::Filters &filters) const
 
 DAbstractFileInfo::CompareFunction SearchFileInfo::compareFunByColumn(int columnRole) const
 {
-    if (columnRole == DFileSystemModel::FileUserRole + 1)
+    if (columnRole == DFileSystemModel::FilePathRole)
         return FileSortFunction::compareFileListByFilePath;
 
     return DAbstractFileInfo::compareFunByColumn(columnRole);
