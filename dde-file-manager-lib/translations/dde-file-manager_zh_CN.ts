@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="zh_CN">
 <context>
     <name>CloseAllDialogIndicator</name>
     <message>
@@ -408,8 +410,8 @@
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="938"/>
-        <source>Please restore by the following steps to nornally access Windows disk</source>
-        <translation>请按照以下方式进行修复即可正常访问Windows磁盘</translation>
+        <source>Please restore by the following steps to normally access Windows disk</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="944"/>
@@ -1616,12 +1618,12 @@
         <translation>%1 项</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="612"/>
+        <location filename="../interfaces/dfileservices.cpp" line="614"/>
         <source>Shortcut</source>
         <translation>快捷方式</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="490"/>
+        <location filename="../interfaces/dfileservices.cpp" line="492"/>
         <source>Create symlink</source>
         <translation>创建链接</translation>
     </message>
