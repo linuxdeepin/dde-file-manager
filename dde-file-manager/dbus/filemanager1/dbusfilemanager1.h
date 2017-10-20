@@ -28,6 +28,7 @@ public:
     void ShowFolders(const QStringList &URIs, const QString &StartupId);
     void ShowItemProperties(const QStringList &URIs, const QString &StartupId);
     void ShowItems(const QStringList &URIs, const QString &StartupId);
+    void Trash(const QStringList &URIs);
 
     // debug function
     QStringList GetMonitorFiles() const;
