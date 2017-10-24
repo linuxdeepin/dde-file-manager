@@ -399,17 +399,17 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="930"/>
         <source>Mount partition%1 to be read only</source>
-        <translation type="unfinished"/>
+        <translation>%1 Bölümünü salt okunur şekilde bağlayın</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="934"/>
         <source>Disks in Windows will be unable to read and write normally if check &quot;Turn on fast startup (recommended)&quot; in Shutdown settings</source>
-        <translation type="unfinished"/>
+        <translation>Kapatma ayarlarında &quot;Hızlı başlatmayı aç (önerilir)&quot; onay kutusunu tıklarsanız, Windows&apos;daki diskler normal okuma ve yazma yapamayacak</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="938"/>
-        <source>Please restore by the following steps to nornally access Windows disk</source>
-        <translation>Windows diskine erişmek için lütfen aşağıdaki adımları izleyerek geri yükleyiniz.</translation>
+        <source>Please restore by the following steps to normally access Windows disk</source>
+        <translation>Windows diskine erişmek için lütfen aşağıdaki adımları izleyerek geri yükleyiniz</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="944"/>
@@ -1616,12 +1616,12 @@
         <translation>%1 öğeler</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="612"/>
+        <location filename="../interfaces/dfileservices.cpp" line="614"/>
         <source>Shortcut</source>
         <translation>Kısayol</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="490"/>
+        <location filename="../interfaces/dfileservices.cpp" line="492"/>
         <source>Create symlink</source>
         <translation>Sembolik bağ oluştur</translation>
     </message>

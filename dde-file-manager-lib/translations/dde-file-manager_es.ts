@@ -399,17 +399,17 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="930"/>
         <source>Mount partition%1 to be read only</source>
-        <translation type="unfinished"/>
+        <translation>Monte la partición% 1 para solo leerla</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="934"/>
         <source>Disks in Windows will be unable to read and write normally if check &quot;Turn on fast startup (recommended)&quot; in Shutdown settings</source>
-        <translation type="unfinished"/>
+        <translation>Los discos de Windows no se podrán leer ni escribir normalmente si marca &quot;Activar inicio rápido (recomendado)&quot; en la configuración de apagado</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="938"/>
-        <source>Please restore by the following steps to nornally access Windows disk</source>
-        <translation>Por favor, restaure por los siguientes pasos para acceder de manera normal al disco de Windows</translation>
+        <source>Please restore by the following steps to normally access Windows disk</source>
+        <translation>Restaure los siguientes pasos para acceder normalmente al disco de Windows</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="944"/>
@@ -1616,12 +1616,12 @@
         <translation>%1 elementos</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="612"/>
+        <location filename="../interfaces/dfileservices.cpp" line="614"/>
         <source>Shortcut</source>
         <translation>Atajo</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="490"/>
+        <location filename="../interfaces/dfileservices.cpp" line="492"/>
         <source>Create symlink</source>
         <translation>Crear enlace simbólico</translation>
     </message>

@@ -44,7 +44,7 @@
         <location filename="../view/mainwindow.cpp" line="56"/>
         <location filename="../view/mainwindow.cpp" line="78"/>
         <source>Format</source>
-        <translation>Формат</translation>
+        <translation>Форматировать</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="165"/>

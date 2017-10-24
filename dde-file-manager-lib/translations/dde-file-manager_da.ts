@@ -399,37 +399,37 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="930"/>
         <source>Mount partition%1 to be read only</source>
-        <translation type="unfinished"/>
+        <translation>Monter partition %1 til at være skrivebeskyttet</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="934"/>
         <source>Disks in Windows will be unable to read and write normally if check &quot;Turn on fast startup (recommended)&quot; in Shutdown settings</source>
-        <translation type="unfinished"/>
+        <translation>Diske i Windows vil ikke kunne læse og skrive normalt hvis &quot;Aktivér hurtig start (anbefales)&quot; er valgt til i lukkeindstillinger</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="938"/>
-        <source>Please restore by the following steps to nornally access Windows disk</source>
-        <translation type="unfinished"/>
+        <source>Please restore by the following steps to normally access Windows disk</source>
+        <translation>Gendan venligst med følgende trin for at få normal adgang til Windows-disken</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="944"/>
         <source>1. Reboot to enter Windows</source>
-        <translation type="unfinished"/>
+        <translation>1. Genstart for at komme ind i Windows</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="945"/>
         <source>2. Select Reboot</source>
-        <translation type="unfinished"/>
+        <translation>2. Vælg Genstart</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="946"/>
         <source>3. Reboot and enter deepin</source>
-        <translation type="unfinished"/>
+        <translation>3. Genstart og kom ind i deepin</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="963"/>
         <source>Reboot</source>
-        <translation type="unfinished"/>
+        <translation>Genstart</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1144"/>
@@ -1616,12 +1616,12 @@
         <translation>%1 elementer</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="612"/>
+        <location filename="../interfaces/dfileservices.cpp" line="614"/>
         <source>Shortcut</source>
         <translation>Genvej</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="490"/>
+        <location filename="../interfaces/dfileservices.cpp" line="492"/>
         <source>Create symlink</source>
         <translation>Opret symlink</translation>
     </message>

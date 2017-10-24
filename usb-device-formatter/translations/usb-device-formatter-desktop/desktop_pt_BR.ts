@@ -4,7 +4,7 @@
         <message>
             <location filename="Desktop Entry]Name" line="0"/>
             <source>USB Device Formatter</source>
-            <translation>Formatação de dispositivos USB</translation>
+            <translation>Formatação do dispositivo USB</translation>
         </message>
     </context>
 </TS>

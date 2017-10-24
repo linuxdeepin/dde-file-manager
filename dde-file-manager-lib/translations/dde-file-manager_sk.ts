@@ -399,17 +399,17 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="930"/>
         <source>Mount partition%1 to be read only</source>
-        <translation type="unfinished"/>
+        <translation>Pripojiť oddiel %1 iba na čítanie</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="934"/>
         <source>Disks in Windows will be unable to read and write normally if check &quot;Turn on fast startup (recommended)&quot; in Shutdown settings</source>
-        <translation type="unfinished"/>
+        <translation>Disky v systéme Windows nebudú schopné čítať a zapisovať, ak v nastaveniach vypínania zvolíte možnosť &quot;Zapnúť rýchle spustenie (odporúčané)&quot;</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="938"/>
-        <source>Please restore by the following steps to nornally access Windows disk</source>
-        <translation>Obnovte pomocou nasledujúcich krokov normálny prístup k disku Windows</translation>
+        <source>Please restore by the following steps to normally access Windows disk</source>
+        <translation>Prosím obnovte pomocou nasledujúcich krokov normálny prístup k disku Windows</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="944"/>
@@ -1616,12 +1616,12 @@
         <translation>%1 vybraných položiek</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="612"/>
+        <location filename="../interfaces/dfileservices.cpp" line="614"/>
         <source>Shortcut</source>
         <translation>Odkaz</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="490"/>
+        <location filename="../interfaces/dfileservices.cpp" line="492"/>
         <source>Create symlink</source>
         <translation>Vytvoriť symlink</translation>
     </message>
