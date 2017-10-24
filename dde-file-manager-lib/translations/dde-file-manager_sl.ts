@@ -399,37 +399,37 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="930"/>
         <source>Mount partition%1 to be read only</source>
-        <translation type="unfinished"/>
+        <translation>Nastavi particijo %1 samo za branje</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="934"/>
         <source>Disks in Windows will be unable to read and write normally if check &quot;Turn on fast startup (recommended)&quot; in Shutdown settings</source>
-        <translation type="unfinished"/>
+        <translation>Diski v sistemu Windows ne bodo zmožni normalnega branja in zapisovanja, če odkljukate &quot;Vklopi hitri zagon (priporočeno)&quot; v nastavitvah za odklop.</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="938"/>
-        <source>Please restore by the following steps to nornally access Windows disk</source>
+        <source>Please restore by the following steps to normally access Windows disk</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="944"/>
         <source>1. Reboot to enter Windows</source>
-        <translation type="unfinished"/>
+        <translation>1. Ponovno zaženite, da dostopate do Windowsov</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="945"/>
         <source>2. Select Reboot</source>
-        <translation type="unfinished"/>
+        <translation>2. Izberite Ponovni zagon</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="946"/>
         <source>3. Reboot and enter deepin</source>
-        <translation type="unfinished"/>
+        <translation>3. Ponovno zaženite v deepin</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="963"/>
         <source>Reboot</source>
-        <translation type="unfinished"/>
+        <translation>Ponovno zaženi</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1144"/>
@@ -1616,12 +1616,12 @@
         <translation>%1 elementov</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="612"/>
+        <location filename="../interfaces/dfileservices.cpp" line="614"/>
         <source>Shortcut</source>
         <translation>Bližnjica</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="490"/>
+        <location filename="../interfaces/dfileservices.cpp" line="492"/>
         <source>Create symlink</source>
         <translation>Ustvari simbolno povezavo</translation>
     </message>

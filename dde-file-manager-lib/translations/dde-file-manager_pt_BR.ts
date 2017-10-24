@@ -399,17 +399,17 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="930"/>
         <source>Mount partition%1 to be read only</source>
-        <translation type="unfinished"/>
+        <translation>Monte a partição  %1 para ser somente lida</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="934"/>
         <source>Disks in Windows will be unable to read and write normally if check &quot;Turn on fast startup (recommended)&quot; in Shutdown settings</source>
-        <translation type="unfinished"/>
+        <translation>Os discos do Windows não serão capazes de ler e escrever normalmente verifique &quot;Ativar a inicialização rápida (recomendada)&quot; em Configurações de desligamento</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="938"/>
-        <source>Please restore by the following steps to nornally access Windows disk</source>
-        <translation>Restaure as seguintes etapas para acessar normalmente o disco do Windows</translation>
+        <source>Please restore by the following steps to normally access Windows disk</source>
+        <translation>Restaure as etapas para acessar normalmente o disco do Windows</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="944"/>
@@ -1616,12 +1616,12 @@
         <translation>%1 itens</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="612"/>
+        <location filename="../interfaces/dfileservices.cpp" line="614"/>
         <source>Shortcut</source>
         <translation>Atalho</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="490"/>
+        <location filename="../interfaces/dfileservices.cpp" line="492"/>
         <source>Create symlink</source>
         <translation>Criação de atalho</translation>
     </message>

@@ -9,7 +9,7 @@
     <message>
         <location filename="../dialogs/closealldialogindicator.cpp" line="62"/>
         <source>Total size is %1, contains %2 files</source>
-        <translation>Dimensione totale %1, contiene %2 files</translation>
+        <translation>Dimensione totale %1, contiene %2 file</translation>
     </message>
 </context>
 <context>
@@ -136,7 +136,7 @@
     <message>
         <location filename="../views/dstatusbar.cpp" line="54"/>
         <source>%1 folder selected (contains %2)</source>
-        <translation>Selezionata %1 (contiene %2 file)</translation>
+        <translation>Selezionata %1 cartella (contiene %2 file)</translation>
     </message>
     <message>
         <location filename="../views/dstatusbar.cpp" line="55"/>
@@ -156,7 +156,7 @@
     <message>
         <location filename="../views/dstatusbar.cpp" line="58"/>
         <source>%1 folder selected</source>
-        <translation>%1 cartelle selezionate</translation>
+        <translation>%1 cartella/e selezionata/e</translation>
     </message>
     <message>
         <location filename="../views/dstatusbar.cpp" line="151"/>
@@ -228,7 +228,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="895"/>
         <location filename="../dialogs/dialogmanager.cpp" line="962"/>
         <source>Cancel</source>
-        <translation>Cancella</translation>
+        <translation>Annulla</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="365"/>
@@ -389,7 +389,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="868"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/floder(s)!</source>
-        <translation>Scusa, non hai i permessi per gestire l&apos;operazione sul file/cartella(e) %1 !</translation>
+        <translation>Scusa, non hai i permessi per gestire l&apos;operazione su %1 file/cartella(e)!</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="896"/>
@@ -399,17 +399,17 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="930"/>
         <source>Mount partition%1 to be read only</source>
-        <translation type="unfinished"/>
+        <translation>Monta la partizione %1 per la sola lettura</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="934"/>
         <source>Disks in Windows will be unable to read and write normally if check &quot;Turn on fast startup (recommended)&quot; in Shutdown settings</source>
-        <translation type="unfinished"/>
+        <translation>I dischi in Windows non saranno disponibili alla lettura e scrittura se si imposta &quot;Avvio rapido (raccomandato)&quot; nelle impostazioni di spegnimento</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="938"/>
-        <source>Please restore by the following steps to nornally access Windows disk</source>
-        <translation>Per cortesia ripristina la situazione ottimale seguendo questi passaggi</translation>
+        <source>Please restore by the following steps to normally access Windows disk</source>
+        <translation>Per cortesia ripristina l&apos;accesso ai dischi di Windows seguendo questi passaggi</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="944"/>
@@ -569,7 +569,7 @@
     <message>
         <location filename="../gvfs/mountaskpassworddialog.cpp" line="39"/>
         <source>Cancel</source>
-        <translation>Cancella</translation>
+        <translation>Annulla</translation>
     </message>
     <message>
         <location filename="../gvfs/mountaskpassworddialog.cpp" line="39"/>
@@ -579,7 +579,7 @@
     <message>
         <location filename="../gvfs/mountaskpassworddialog.cpp" line="45"/>
         <source>Log in as</source>
-        <translation>Log in come</translation>
+        <translation>Login come</translation>
     </message>
     <message>
         <location filename="../gvfs/mountaskpassworddialog.cpp" line="52"/>
@@ -772,7 +772,7 @@
     <message>
         <location filename="../../dialogs/movetotrashconflictdialog.cpp" line="33"/>
         <source>Are you sure to completely delete %1 files</source>
-        <translation>Sicuro di voler eliminare completamente %1 files?</translation>
+        <translation>Sicuro di voler eliminare definitivamente %1 files?</translation>
     </message>
     <message>
         <location filename="../../dialogs/movetotrashconflictdialog.cpp" line="53"/>
@@ -805,7 +805,7 @@
     <message>
         <location filename="../dialogs/openwithdialog.cpp" line="221"/>
         <source>Cancel</source>
-        <translation>Cancella</translation>
+        <translation>Annulla</translation>
     </message>
     <message>
         <location filename="../dialogs/openwithdialog.cpp" line="222"/>
@@ -843,7 +843,7 @@
     <message>
         <location filename="../dialogs/openwithotherdialog.cpp" line="159"/>
         <source>Cancel</source>
-        <translation>Cancella</translation>
+        <translation>Annulla</translation>
     </message>
     <message>
         <location filename="../dialogs/openwithotherdialog.cpp" line="160"/>
@@ -1325,7 +1325,7 @@
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="15"/>
         <source>Default size:</source>
-        <translation>Dimensione di default:</translation>
+        <translation>Dimensione:</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="16"/>
@@ -1438,7 +1438,7 @@
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="45"/>
         <source>Open file:</source>
-        <translation>Aprertura file:</translation>
+        <translation>Apri file:</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="46"/>
@@ -1616,12 +1616,12 @@
         <translation>%1 oggetti</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="612"/>
+        <location filename="../interfaces/dfileservices.cpp" line="614"/>
         <source>Shortcut</source>
         <translation>Scorciatoia</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="490"/>
+        <location filename="../interfaces/dfileservices.cpp" line="492"/>
         <source>Create symlink</source>
         <translation>Crea symlink</translation>
     </message>
@@ -1827,7 +1827,7 @@
     <message>
         <location filename="../views/drenamebar.cpp" line="284"/>
         <source>Tips: Sort by selected file order</source>
-        <translation>Suggerimento: Ordina selezionando l&apos;ordinamento che preferisci</translation>
+        <translation>Suggerimento: ordina selezionando l&apos;ordinamento che preferisci</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="372"/>
@@ -1838,7 +1838,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1110"/>
         <source>Rename %1 Files</source>
-        <translation>Rinomina %1 files</translation>
+        <translation>Rinomina %1 file</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="127"/>
@@ -2318,7 +2318,7 @@
     <message>
         <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="36"/>
         <source>Cancel</source>
-        <translation>Cancella</translation>
+        <translation>Annulla</translation>
     </message>
     <message>
         <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="36"/>

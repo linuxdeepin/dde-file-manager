@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>CloseAllDialogIndicator</name>
     <message>
@@ -411,7 +409,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="938"/>
         <source>Please restore by the following steps to normally access Windows disk</source>
-        <translation type="unfinished"></translation>
+        <translation>请按照以下方式进行修复即可正常访问Windows磁盘</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="944"/>
