@@ -22,6 +22,8 @@ class CanvasViewPrivate;
 class CanvasGridView: public QAbstractItemView
 {
     Q_OBJECT
+
+    Q_PROPERTY(double dodgeDuration READ dodgeDuration WRITE setDodgeDuration NOTIFY dodgeDurationChanged)
 public:
     explicit CanvasGridView(QWidget *parent = nullptr);
     ~CanvasGridView();
@@ -37,10 +39,10 @@ public:
 
         IconSize,
         IconSize0 = IconSize,
-        IconSize1 = IconSize+1,
-        IconSize2 = IconSize+2,
-        IconSize3 = IconSize+3,
-        IconSize4 = IconSize+4,
+        IconSize1 = IconSize + 1,
+        IconSize2 = IconSize + 2,
+        IconSize3 = IconSize + 3,
+        IconSize4 = IconSize + 4,
     };
     Q_ENUM(ContextMenuAction)
 
@@ -90,13 +92,18 @@ public:
     DesktopItemDelegate *itemDelegate() const;
     void setItemDelegate(DesktopItemDelegate *delegate);
 
+    double dodgeDuration() const;
+
 signals:
     void sortRoleChanged(int role, Qt::SortOrder order);
     void autoAlignToggled();
     void changeIconLevel(int iconLevel);
+    void dodgeDurationChanged(double dodgeDuration);
 
 public slots:
     bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event) Q_DECL_OVERRIDE;
+
+    void setDodgeDuration(double dragMoveTime);
 
 private:
     Q_DISABLE_COPY(CanvasGridView)
@@ -113,6 +120,7 @@ private:
     inline QPoint gridAt(const QPoint &pos) const;
     inline QRect gridRectAt(const QPoint &pos) const;
     inline QList<QRect> itemPaintGeomertys(const QModelIndex &index) const;
+    inline QRect itemIconGeomerty(const QModelIndex &index) const;
 
     inline QModelIndex firstIndex();
     inline QModelIndex lastIndex();
@@ -129,6 +137,7 @@ private:
     QModelIndex moveCursorGrid(CursorAction cursorAction, Qt::KeyboardModifiers modifiers);
 
     QScopedPointer<CanvasViewPrivate> d;
+    double m_dragMoveTime;
 };
 
 

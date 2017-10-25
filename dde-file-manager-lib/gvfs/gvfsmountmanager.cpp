@@ -74,7 +74,7 @@ void GvfsMountManager::initConnect()
         g_signal_connect (m_gVolumeMonitor, "volume-added", (GCallback)&GvfsMountManager::monitor_volume_added, NULL);
         g_signal_connect (m_gVolumeMonitor, "volume-removed", (GCallback)&GvfsMountManager::monitor_volume_removed, NULL);
         g_signal_connect (m_gVolumeMonitor, "volume-changed", (GCallback)&GvfsMountManager::monitor_volume_changed, NULL);
-    }   
+    }
 }
 
 GvfsMountManager *GvfsMountManager::instance()
@@ -547,10 +547,10 @@ void GvfsMountManager::monitor_mount_changed(GVolumeMonitor *volume_monitor, GMo
 {
     Q_UNUSED(volume_monitor)
     Q_UNUSED(mount)
-    qDebug() << "==============================monitor_mount_changed==============================" ;
+//    qDebug() << "==============================monitor_mount_changed==============================" ;
     GVolume *volume = g_mount_get_volume(mount);
     if (volume != NULL){
-        qDebug() << "==============================changed removed==============================" ;
+//        qDebug() << "==============================changed removed==============================" ;
 
         QVolume qVolume = gVolumeToqVolume(volume);
         QDiskInfo diskInfo = qVolumeToqDiskInfo(qVolume);
@@ -565,8 +565,7 @@ void GvfsMountManager::monitor_mount_changed(GVolumeMonitor *volume_monitor, GMo
             }
         }
     }else{
-        qDebug() << "==============================changed volume empty==============================" ;
-
+//        qDebug() << "==============================changed volume empty==============================" ;
     }
 }
 
