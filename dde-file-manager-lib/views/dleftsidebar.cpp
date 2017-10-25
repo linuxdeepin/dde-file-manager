@@ -48,6 +48,7 @@
 #include <QDebug>
 #include <QListWidgetItem>
 #include <QLabel>
+#include <QTimer>
 
 
 DLeftSideBar::DLeftSideBar(QWidget *parent) : QFrame(parent)
@@ -180,7 +181,9 @@ void DLeftSideBar::resizeEvent(QResizeEvent *e)
         toTightNav();
     else if(rect.width() > 70 && m_isTight)
         toNormalNav();
-    updateVerticalScrollBar();
+    TIMER_SINGLESHOT(100, {
+                         updateVerticalScrollBar();
+                     }, this)
     QFrame::resizeEvent(e);
 }
 
