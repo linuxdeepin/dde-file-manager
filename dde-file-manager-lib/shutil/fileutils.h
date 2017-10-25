@@ -71,6 +71,9 @@ public:
 
     static bool isFileExecutable(const QString& path);
     static bool isFileRunnable(const QString& path);
+    static bool isFileWindowsUrlShortcut(const QString& path); /*check file is windows url shortcut*/
+    static QString getInternetShortcutUrl(const QString& path);/*get InternetShortcut url of windows url shortcut*/
+
     static QString getFileMimetype(const QString& path);
     static bool isExecutableScript(const QString& path);
     static bool openExcutableScriptFile(const QString& path, int flag);
