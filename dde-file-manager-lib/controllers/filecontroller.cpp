@@ -125,6 +125,12 @@ bool FileController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) con
         return FileUtils::openExcutableFile(fileUrl.toLocalFile(), code);
     }
 
+    if (FileUtils::isFileWindowsUrlShortcut(fileUrl.toLocalFile())){
+        QString url = FileUtils::getInternetShortcutUrl(fileUrl.toLocalFile());
+        return FileUtils::openFile(url);
+    }
+
+
     return FileUtils::openFile(fileUrl.toLocalFile());
 }
 

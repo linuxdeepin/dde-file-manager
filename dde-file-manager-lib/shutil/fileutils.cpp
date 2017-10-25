@@ -39,6 +39,7 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QJsonArray>
+#include <QSettings>
 
 #include <sys/vfs.h>
 
@@ -682,6 +683,26 @@ bool FileUtils::isFileRunnable(const QString &path)
 
     return false;
 }
+
+
+bool FileUtils::isFileWindowsUrlShortcut(const QString &path)
+{
+    QString mimetype = getFileMimetype(path);
+    qDebug() << mimetype;
+    if (mimetype == "application/x-mswinurl")
+        return true;
+    return false;
+}
+
+QString FileUtils::getInternetShortcutUrl(const QString &path)
+{
+    QSettings settings(path, QSettings::IniFormat);
+    settings.beginGroup("InternetShortcut");
+    QString url = settings.value("URL").toString();
+    settings.endGroup();
+    return url;
+}
+
 
 QString FileUtils::getFileMimetype(const QString &path)
 {
