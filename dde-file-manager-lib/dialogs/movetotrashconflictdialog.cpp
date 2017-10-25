@@ -33,7 +33,11 @@ MoveToTrashConflictDialog::MoveToTrashConflictDialog(QWidget *parent, const DUrl
         tip = tr("Are you sure to completely delete %1 files").arg(QString::number(urls.size()));
     }
 
-    setIcon(QIcon(":/images/dialogs/images/dialog_warning_64.png"));
+    QIcon dialogWarningIcon;
+    dialogWarningIcon.addFile(":/images/dialogs/images/dialog_warning.png");
+    dialogWarningIcon.addFile(":/images/dialogs/images/dialog_warning@2x.png");
+
+    setIcon(dialogWarningIcon);
     setTitle(title);
 
     QLabel* label = new QLabel(this);

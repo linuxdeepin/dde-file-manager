@@ -19,7 +19,7 @@
 #include "trashpropertydialog.h"
 #include "computerpropertydialog.h"
 #include "usersharepasswordsettingdialog.h"
-#include "dialogs/movetotrashconflictdialog.h"
+#include "movetotrashconflictdialog.h"
 #include "views/dfilemanagerwindow.h"
 #include "interfaces/dstyleditemdelegate.h"
 #include "shutil/mimetypedisplaymanager.h"
