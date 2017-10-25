@@ -1,0 +1,4 @@
+[clog]
+repository = "."
+changelog = "CHANGLOG.md"
+from-latest-tag = true
