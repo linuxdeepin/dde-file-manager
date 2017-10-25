@@ -765,8 +765,7 @@ QStringList DFileSystemModel::mimeTypes() const
 
 bool DFileSystemModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent)
 {
-    qDebug() << "drop mime data";
-
+//    qDebug() << "drop mime data";
     Q_UNUSED(row);
     Q_UNUSED(column);
     if (!parent.isValid())

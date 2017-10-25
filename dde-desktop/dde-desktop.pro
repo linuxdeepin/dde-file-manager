@@ -47,7 +47,8 @@ SOURCES += \
     view/watermaskframe.cpp \
     dbus/dbusdock.cpp \
     config/profile.cpp \
-    view/desktopitemdelegate.cpp
+    view/desktopitemdelegate.cpp \
+    presenter/gridcore.cpp
 
 
 
@@ -68,7 +69,8 @@ HEADERS += \
     view/watermaskframe.h \
     dbus/dbusdock.h \
     config/profile.h \
-    view/desktopitemdelegate.h
+    view/desktopitemdelegate.h \
+    presenter/gridcore.h
 
 RESOURCES += \
     resource/theme/theme.qrc

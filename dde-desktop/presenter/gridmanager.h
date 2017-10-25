@@ -11,12 +11,16 @@
 
 #include <QObject>
 #include <QMap>
+#include <QVector>
 #include <QSettings>
 #include <QScopedPointer>
+
+#include "gridcore.h"
 
 #include "../global/coorinate.h"
 #include "../global/singleton.h"
 
+class GridCore;
 class GridManagerPrivate;
 class GridManager: public QObject, public Singleton<GridManager>
 {
@@ -25,6 +29,7 @@ public:
     bool isInited() const;
     void initProfile(const QStringList &items);
 
+    bool add(QPoint pos, const QString &itemId);
     bool add(const QString &itemId);
     bool move(const QStringList &selectedIds, const QString &itemId, int x, int y);
     bool remove(const QString &itemId);
@@ -50,10 +55,10 @@ public:
     QSize gridSize() const;
     void updateGridSize(int w, int h);
 
+    GridCore *core();
 protected:
     bool remove(int x, int y, const QString &itemId);
     bool remove(QPoint pos, const QString &itemId);
-    bool add(QPoint pos, const QString &itemId);
 
     friend class Singleton<GridManager>;
 

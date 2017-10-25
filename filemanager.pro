@@ -9,7 +9,6 @@ SUBDIRS  += \
     dde-desktop\
     usb-device-formatter \
 #    dde-advanced-property-plugin \
-    usb-device-formatter
 #    dde-sharefiles
 
 dde-file-manager.depends = dde-file-manager-lib

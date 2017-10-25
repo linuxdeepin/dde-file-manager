@@ -17,22 +17,6 @@
 
 #include "apppresenter.h"
 
-inline QString positionKey(QPoint pos)
-{
-    return QString("%1_%2").arg(pos.x()).arg(pos.y());
-}
-
-inline bool qQPointLessThanKey(const QPoint &key1, const QPoint &key2)
-{
-    return (key1.x() < key2.x()) ||
-           ((key1.x() ==  key2.x()) && (key1.y() < key2.y()));
-}
-
-template <> inline bool qMapLessThanKey(const QPoint &key1, const QPoint &key2)
-{
-    return qQPointLessThanKey(key1, key2);
-}
-
 class GridManagerPrivate
 {
 public:
@@ -422,7 +406,6 @@ public:
 
             return this->autoArrang;
         }
-        return false;
     }
 
 public:
@@ -727,5 +710,17 @@ void GridManager::updateGridSize(int w, int h)
     emit Presenter::instance()->setConfig(Config::groupGeneral,
                                           Config::keyProfile,
                                           d->positionProfile);
+}
+
+GridCore *GridManager::core()
+{
+    auto core = new GridCore;
+    core->overlapItems = d->m_overlapItems;
+    core->gridItems = d->m_gridItems;
+    core->itemGrids = d->m_itemGrids;
+    core->gridStatus = d->m_cellStatus;
+    core->coordWidth = d->coordWidth;
+    core->coordHeight = d->coordHeight;
+    return core;
 }
 

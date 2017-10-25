@@ -28,6 +28,7 @@ class QFrame;
 class CanvasViewHelper;
 class WaterMaskFrame;
 class DbusDock;
+class GridCore;
 
 class CanvasViewPrivate
 {
@@ -51,6 +52,7 @@ public:
         selectRect = QRect(-1, -1, 1, 1);
         mousePressed = false;
         resortCount = 0;
+        dodgeDelayTimer.setInterval(200);
     }
 
     void updateCanvasSize(const QSize &szSceeen, const QSize &szCanvas, const QMargins &geometryMargins, const QSize &szItem)
@@ -121,7 +123,15 @@ public:
     int cellWidth;
     int cellHeight;
 
-    QModelIndex         dragMoveHoverIndex;
+    QTimer              dodgeDelayTimer;
+    QStringList         dodgeItems;
+    bool                dodgeAnimationing   = false;
+    double              dodgeDuration       = 0;
+    GridCore            *dodgeTargetGrid;
+    bool                dragIn            = false;
+    QPoint              dragTargetGrid   = QPoint(-1, -1);
+
+    // currentCursorIndex is not the mouse, it's the position move by keybord
     QModelIndex         currentCursorIndex;
 
     QPoint              lastMenuPos;
