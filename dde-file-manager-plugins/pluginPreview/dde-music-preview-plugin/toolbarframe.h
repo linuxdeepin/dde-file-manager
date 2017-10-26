@@ -42,6 +42,9 @@ public slots:
     void onPlayControlButtonClicked();
     void updateProgress();
     void seekPosition(const int& pos);
+    void play();
+    void pause();
+    void stop();
 
 private:
     QMediaPlayer* m_player;

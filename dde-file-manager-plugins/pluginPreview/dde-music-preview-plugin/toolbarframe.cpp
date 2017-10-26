@@ -131,15 +131,12 @@ void ToolBarFrame::onPlayStatusChanged(const QMediaPlayer::MediaStatus &status)
 void ToolBarFrame::onPlayControlButtonClicked()
 {
     if(m_player->state() == QMediaPlayer::PlayingState){
-        m_player->pause();
-        m_updateProgressTimer->stop();
+        pause();
     } else if (m_player->state() == QMediaPlayer::StoppedState){
         m_progressSlider->setValue(0);
-        m_player->play();
-        m_updateProgressTimer->start();
+        play();
     } else {
-        m_player->play();
-        m_updateProgressTimer->start();
+        play();
     }
 }
 
@@ -153,5 +150,24 @@ void ToolBarFrame::seekPosition(const int &pos)
     if(qAbs(pos - m_player->position()) > 3){
         m_player->setPosition(pos);
     }
+}
+
+void ToolBarFrame::play()
+{
+    m_player->play();
+    m_updateProgressTimer->start();
+}
+
+void ToolBarFrame::pause()
+{
+    m_player->pause();
+    m_updateProgressTimer->stop();
+}
+
+void ToolBarFrame::stop()
+{
+    m_progressSlider->setValue(0);
+    m_player->stop();
+    m_updateProgressTimer->stop();
 }
 

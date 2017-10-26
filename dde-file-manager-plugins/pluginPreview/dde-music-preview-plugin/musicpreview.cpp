@@ -105,6 +105,21 @@ Qt::Alignment MusicPreview::statusBarWidgetAlignment() const
     return Qt::Alignment();
 }
 
+void MusicPreview::play()
+{
+    m_statusBarFrame->play();
+}
+
+void MusicPreview::pause()
+{
+    m_statusBarFrame->pause();
+}
+
+void MusicPreview::stop()
+{
+    m_statusBarFrame->stop();
+}
+
 bool MusicPreview::canPreview(const DUrl &url) const
 {
     const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, url);
