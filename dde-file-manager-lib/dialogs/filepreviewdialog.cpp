@@ -242,13 +242,6 @@ FilePreviewDialog::~FilePreviewDialog()
     }
 }
 
-bool FilePreviewDialog::isCurrentMusicPreview()
-{
-    const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, m_fileList.at(m_currentPageIndex));
-    bool ret = info->mimeTypeName(QMimeDatabase::MatchContent).startsWith("audio/");
-    return ret;
-}
-
 void FilePreviewDialog::updatePreviewList(const DUrlList &previewUrllist)
 {
     m_fileList = previewUrllist;
@@ -281,6 +274,12 @@ void FilePreviewDialog::showEvent(QShowEvent *event)
     return DAbstractDialog::showEvent(event);
 }
 
+void FilePreviewDialog::hideEvent(QHideEvent *event)
+{
+    m_preview->stop();
+    return DAbstractDialog::hideEvent(event);
+}
+
 void FilePreviewDialog::mouseReleaseEvent(QMouseEvent *event)
 {
     m_lastPosX = geometry().bottomLeft().x();
@@ -302,13 +301,8 @@ bool FilePreviewDialog::eventFilter(QObject *obj, QEvent *event)
             nextPage();
             break;
         case Qt::Key_Space:{
-            if (isCurrentMusicPreview()){
-                QPushButton* playButton = m_statusBar->children().last()->findChild<QPushButton*>();
-                if (playButton)
-                    playButton->click();
-            }else{
-                hide();
-            }
+            m_preview->stop();
+            hide();
             return true;
         }
         default:
@@ -402,6 +396,7 @@ void FilePreviewDialog::switchToPage(int index)
                 updateTitle();
                 m_statusBar->openButton()->setFocus();
                 adjsutPostion();
+                playCurrentPreviewFile();
                 return;
             }
         }
@@ -462,6 +457,7 @@ void FilePreviewDialog::switchToPage(int index)
         updateTitle();
         m_statusBar->openButton()->setFocus();
         adjsutPostion();
+        playCurrentPreviewFile();
     });
 }
 
@@ -496,6 +492,15 @@ void FilePreviewDialog::setEntryUrlList(const DUrlList &entryUrlList)
         m_currentPageIndex = m_entryUrlList.indexOf(currentUrl);
     }
 }
+
+void FilePreviewDialog::playCurrentPreviewFile()
+{
+    bool ret = m_preview->canPreview(m_fileList.at(m_currentPageIndex));
+    if (ret){
+        m_preview->play();
+    }
+}
+
 
 void FilePreviewDialog::previousPage()
 {

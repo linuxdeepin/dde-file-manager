@@ -65,7 +65,6 @@ class FilePreviewDialog : public DAbstractDialog
 public:
     explicit FilePreviewDialog(const DUrlList &previewUrllist, QWidget *parent = 0);
     ~FilePreviewDialog();
-    bool isCurrentMusicPreview();
 
     void updatePreviewList(const DUrlList &previewUrllist);
 
@@ -73,9 +72,13 @@ public:
 
     void setEntryUrlList(const DUrlList &entryUrlList);
 
+public slots:
+    void playCurrentPreviewFile();
+
 private:
     void childEvent(QChildEvent *event) Q_DECL_OVERRIDE;
     void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
+    void hideEvent(QHideEvent *event) Q_DECL_OVERRIDE;
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     bool eventFilter(QObject *obj, QEvent *event) Q_DECL_OVERRIDE;
 

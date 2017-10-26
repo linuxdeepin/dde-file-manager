@@ -40,7 +40,11 @@ public:
     QWidget *statusBarWidget() const Q_DECL_OVERRIDE;
     Qt::Alignment statusBarWidgetAlignment() const Q_DECL_OVERRIDE;
 
-    bool canPreview(const DUrl &url) const;
+    void play() Q_DECL_OVERRIDE;
+    void pause() Q_DECL_OVERRIDE;
+    void stop() Q_DECL_OVERRIDE;
+
+    bool canPreview(const DUrl &url) const Q_DECL_OVERRIDE;
 
 private:
     DUrl m_url;

@@ -33,6 +33,11 @@ public:
     virtual QString title() const;
     virtual bool showStatusBarSeparator() const;
 
+    virtual bool canPreview(const DUrl &url) const; /*check file which can be previewed or not*/
+    virtual void play(); /*play media if file is music or video*/
+    virtual void pause(); /*pause playing if file is music or video*/
+    virtual void stop(); /*stop playing if file is music or video*/
+
 signals:
     void titleChanged();
 };
