@@ -1158,10 +1158,12 @@ bool CanvasGridView::setRootUrl(const DUrl &url)
     auto dfw = new DFileWatcher(url.toLocalFile(), this);
     connect(dfw, &DFileWatcher::fileMoved,
     this, [ = ](const DUrl & fromUrl, const DUrl & toUrl) {
-        auto oldLocalFile = fromUrl.toLocalFile();
-        auto oldPos = GridManager::instance()->position(oldLocalFile);
-        GridManager::instance()->remove(oldLocalFile);
-        GridManager::instance()->add(oldPos, toUrl.toLocalFile());
+        if (!GridManager::instance()->autoAlign()) {
+            auto oldLocalFile = fromUrl.toLocalFile();
+            auto oldPos = GridManager::instance()->position(oldLocalFile);
+            GridManager::instance()->remove(oldLocalFile);
+            GridManager::instance()->add(oldPos, toUrl.toLocalFile());
+        }
     });
     dfw->startWatcher();
 
@@ -1558,7 +1560,6 @@ void CanvasGridView::initConnection()
                     continue;
                 }
                 auto localFile = model()->getUrlByIndex(index).toLocalFile();
-
                 files << localFile;
             }
             d->filesystemWatcher->addPaths(files);
@@ -1601,8 +1602,10 @@ void CanvasGridView::initConnection()
             GridManager::instance()->remove(localFile);
         }
     });
+
     connect(this->model(), &QAbstractItemModel::rowsRemoved,
     this, [ = ](const QModelIndex & /*parent*/, int /*first*/, int /*last*/) {
+//        qDebug() << "rowsRemoved"<< GridManager::instance()->autoAlign();
         if (GridManager::instance()->autoAlign()) {
             GridManager::instance()->reAlign();
         }
