@@ -348,6 +348,7 @@ void FilePreviewDialog::initUI()
     connect(m_statusBar->nextButton(), &QPushButton::clicked, this, &FilePreviewDialog::nextPage);
     connect(m_statusBar->openButton(), &QPushButton::clicked, this, [this] {
         DFileService::instance()->openFile(this, m_fileList.at(m_currentPageIndex));
+        close();
     });
 }
 
