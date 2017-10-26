@@ -40,7 +40,6 @@ Description: Trash plugin of dde-dock which is created by libdde-file-manager
 Package: libdde-file-manager
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, libpoppler-cpp0v5 (>= 0.48.0), gvfs-backends(>=1.27.3)
-Recommends: dde-file-manager-integration
 Breaks: dde-file-manager(<=1.2.3-3)
 Multi-Arch: same
 Description: DDE File Manager library
