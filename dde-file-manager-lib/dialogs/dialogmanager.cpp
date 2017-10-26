@@ -510,9 +510,12 @@ void DialogManager::showPropertyDialog(const DFMUrlListBaseEvent &event)
 
         foreach (const DUrl& url, urlList) {
             int index = urlList.indexOf(url);
-
-            if (url.isComputerFile()){
+            if (DFMGlobal::isComputerDesktopFile(url)){
                 showComputerPropertyDialog();
+            }else if (DFMGlobal::isTrashDesktopFile(url)){
+                DFMEvent event(this);
+                event.setData(url);
+                showTrashPropertyDialog(event);
             }else{
 
                 PropertyDialog *dialog;
