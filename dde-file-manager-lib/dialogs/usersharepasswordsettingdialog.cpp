@@ -26,7 +26,10 @@
 UserSharePasswordSettingDialog::UserSharePasswordSettingDialog(QWidget *parent) : DDialog(parent)
 {
     setTitle(tr("Please enter share password"));
-    setIcon(QIcon(":/images/dialogs/images/share_password.png"));
+    QIcon share_password;
+    share_password.addFile(":/images/dialogs/images/share_password.png");
+    share_password.addFile(":/images/dialogs/images/share_password@2x.png");
+    setIcon(share_password);
     initUI();
 }
 
@@ -34,16 +37,14 @@ void UserSharePasswordSettingDialog::initUI()
 {
     QStringList buttonTexts;
     buttonTexts << tr("Cancel") << tr("Confirm");
-    addButton(buttonTexts[0], true);
+    addButton(buttonTexts[0], false);
     addButton(buttonTexts[1], false, DDialog::ButtonRecommend);
     setDefaultButton(1);
-    m_passwordEdit = new DPasswordEdit();
-    m_passwordEdit->setParent(this);
+    m_passwordEdit = new DPasswordEdit(this);
     m_passwordEdit->setFixedSize(240,24);
     m_passwordEdit->setFocus();
     addContent(m_passwordEdit);
     setContentsMargins(0,0,0,0);
-//    QVBoxLayout *mainLayout = qobject_cast<QVBoxLayout*>(this->layout());
 }
 
 void UserSharePasswordSettingDialog::onButtonClicked(const int &index)
