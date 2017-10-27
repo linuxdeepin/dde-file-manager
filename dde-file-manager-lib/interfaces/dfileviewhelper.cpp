@@ -294,7 +294,7 @@ QList<QIcon> DFileViewHelper::additionalIcon(const QModelIndex &index) const
     QList<QIcon> list;
     const DAbstractFileInfoPointer &fileInfo = this->fileInfo(index);
 
-    if (!fileInfo)
+    if (!fileInfo || !fileInfo->exists())
         return list;
 
     list << fileInfo->additionalIcon();
