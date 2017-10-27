@@ -786,37 +786,14 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
             }
 
 #ifdef SW_LABEL
-            qDebug() << m_labelMenuItemIds;
-//            if (m_labelMenuItemIds.length() == 1){
-//                foreach (QString id, m_labelMenuItemIds) {
-//                    if(id == "020100"){
-//                        fileMenuManger->setActionString(MenuAction::SetLabel, m_labelMenuItemData[id].label);
-//                    }
-//                }
-//                actionKeys << MenuAction::SetLabel;
-//            }else{
-//                foreach (QString id, m_labelMenuItemIds) {
-//                    if(id == "010101"){
-//                        actionKeys << MenuAction::ViewLabel;
-//                        fileMenuManger->setActionString(MenuAction::ViewLabel, m_labelMenuItemData[id].label);
-//                    }else if(id == "010201"){
-//                        actionKeys << MenuAction::EditLabel;
-//                        fileMenuManger->setActionString(MenuAction::EditLabel, m_labelMenuItemData[id].label);
-//                    }else if(id == "010501"){
-//                        actionKeys << MenuAction::PrivateFileToPublic;
-//                        fileMenuManger->setActionString(MenuAction::PrivateFileToPublic, m_labelMenuItemData[id].label);
-//                    }
-//                }
-//            }
-
-            foreach (QString id, m_labelMenuItemIds) {
-                int index = m_labelMenuItemIds.indexOf(id);
+            qDebug() << LabelMenuItemIds;
+            foreach (QString id, LabelMenuItemIds) {
+                int index = LabelMenuItemIds.indexOf(id);
                 MenuAction actionType = MenuAction (MenuAction::Unknow + index + 1);
                 actionKeys << actionType;
-                fileMenuManger->setActionString(actionType, m_labelMenuItemData[id].label);
+                fileMenuManger->setActionString(actionType, LabelMenuItemDatas[id].label);
                 fileMenuManger->setActionID(actionType, id);
             }
-
             actionKeys << MenuAction::Separator;
 #endif
 
