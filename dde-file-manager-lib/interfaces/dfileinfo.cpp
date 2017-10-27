@@ -447,8 +447,12 @@ QIcon DFileInfo::fileIcon() const
         return d->icon;
 
     const DUrl &fileUrl = this->fileUrl();
-    bool has_thumbnail = FileUtils::isGvfsMountFile(absoluteFilePath()) || DThumbnailProvider::instance()->hasThumbnail(d->fileInfo);
 
+#ifdef DFM_MINIMUM
+    bool has_thumbnail = false;
+#else
+    bool has_thumbnail = FileUtils::isGvfsMountFile(absoluteFilePath()) || DThumbnailProvider::instance()->hasThumbnail(d->fileInfo);
+#endif
     if (has_thumbnail) {
         const QIcon icon(DThumbnailProvider::instance()->thumbnailFilePath(d->fileInfo, DThumbnailProvider::Large));
 

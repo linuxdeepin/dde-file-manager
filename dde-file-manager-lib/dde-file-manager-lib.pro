@@ -40,11 +40,16 @@ CONFIG += c++11 link_pkgconfig
 #DEFINES += QT_NO_DEBUG_OUTPUT
 DEFINES += QT_MESSAGELOGCONTEXT
 
-isEqual(IS_PLATFORM_FEDORA, YES){
+isEqual(IS_PLATFORM_FEDORA, YES) | isEqual(BUILD_MINIMUM, YES) {
 
 }else{
     DEFINES += SUPPORT_FFMEPG
     LIBS += -lffmpegthumbnailer
+}
+
+# BUILD_MINIMUM for live system
+isEqual(BUILD_MINIMUM, YES){
+    DEFINES += DFM_MINIMUM
 }
 
 include(../dialogs/dialogs.pri)
@@ -415,10 +420,15 @@ QMAKE_PKGCONFIG_DESCRIPTION = DDE File Manager Header Files
 QMAKE_PKGCONFIG_INCDIR = $$includes.path
 
 templateFiles.path = $$APPSHAREDIR/templates
-templateFiles.files = skin/templates/newDoc.doc \
-    skin/templates/newExcel.xls \
-    skin/templates/newPowerPoint.ppt \
-    skin/templates/newTxt.txt
+
+isEqual(BUILD_MINIMUM, YES){
+    templateFiles.files = skin/templates/newTxt.txt
+}else{
+    templateFiles.files = skin/templates/newDoc.doc \
+        skin/templates/newExcel.xls \
+        skin/templates/newPowerPoint.ppt \
+        skin/templates/newTxt.txt
+}
 
 mimetypeFiles.path = $$APPSHAREDIR/mimetypes
 mimetypeFiles.files += \
