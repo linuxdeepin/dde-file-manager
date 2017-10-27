@@ -1688,7 +1688,7 @@
         <location filename="../models/trashfileinfo.cpp" line="288"/>
         <source>Source Path</source>
         <comment>TrashFileInfo</comment>
-        <translation>原位置</translation>
+        <translation>原始路径</translation>
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="351"/>
