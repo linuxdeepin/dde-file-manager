@@ -25,6 +25,7 @@
 #include "shutil/mimetypedisplaymanager.h"
 #include "previewdialog.h"
 #include "filepreviewdialog.h"
+#include "dfmsettingdialog.h"
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
@@ -65,7 +66,8 @@
 #include <DAboutDialog>
 #include <dexpandgroup.h>
 #include <dsettingsdialog.h>
-
+#include <DSettingsWidgetFactory>
+#include <DSettingsOption>
 #include <QTimer>
 #include <QDesktopWidget>
 #include <QApplication>
@@ -720,7 +722,7 @@ void DialogManager::showGlobalSettingsDialog(quint64 winId)
 
     w->setProperty("isSettingDialogShown", true);
 
-    DSettingsDialog* dsd = new DSettingsDialog(w);
+    DSettingsDialog* dsd = new DFMSettingDialog(w);
     dsd->updateSettings(globalSetting->settings());
     dsd->show();
 

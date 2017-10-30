@@ -4,7 +4,7 @@ void GenerateSettingTranslate()
 {
     auto advance_dialog_default_chooser_dialogText = QObject::tr("Use the file chooser dialog of Deepin File Manager");
     auto advance_mount_auto_mountText = QObject::tr("Auto mount");
-    auto advance_mount_auto_mount_and_openText = QObject::tr("Auto mount and open");
+    auto advance_mount_auto_mount_and_openText = QObject::tr("Open after auto mount");
     auto advance_preview_compress_file_previewText = QObject::tr("Compress file preview");
     auto advance_preview_document_file_previewText = QObject::tr("Document preview");
     auto advance_preview_image_file_previewText = QObject::tr("Image preview");
