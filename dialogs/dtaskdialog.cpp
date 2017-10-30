@@ -88,7 +88,7 @@ void MoveCopyTaskWidget::initUI(){
     msgGridLayout->addWidget(m_speedLabel, 0, 1,Qt::AlignRight|Qt::AlignVCenter);
     msgGridLayout->addWidget(m_msg2Label, 1, 0, Qt::AlignVCenter);
     msgGridLayout->addWidget(m_remainLabel, 1, 1,Qt::AlignRight|Qt::AlignVCenter);
-    msgGridLayout->setColumnMinimumWidth(0, 300);
+    msgGridLayout->setColumnMinimumWidth(0, 385);
     msgGridLayout->setColumnStretch(0, 1);
     msgGridLayout->setHorizontalSpacing(5);
 
@@ -230,7 +230,7 @@ void MoveCopyTaskWidget::initButtonFrame(){
     buttonLayout->setContentsMargins(0, 0, 0, 0);
 
     m_checkBox = new QCheckBox(tr("Do not ask again"));
-    QHBoxLayout* mainLayout = new QHBoxLayout;
+    QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->addSpacing(0);
     mainLayout->addWidget(m_checkBox);
     mainLayout->addSpacing(0);
@@ -238,7 +238,7 @@ void MoveCopyTaskWidget::initButtonFrame(){
 
     mainLayout->setContentsMargins(0, 0, 0, 0);
     m_buttonFrame->setLayout(mainLayout);
-    m_buttonFrame->setFixedHeight(30);
+    m_buttonFrame->setFixedHeight(60);
 }
 
 void MoveCopyTaskWidget::initConnect(){
@@ -322,7 +322,7 @@ void MoveCopyTaskWidget::updateMessage(const QMap<QString, QString> &data){
 
         QFontMetrics fm(m_msg1Label->font());
         msg1 = fm.elidedText(msg1, Qt::ElideRight, m_msg1Label->width());
-//        msg2 = fm.elidedText(msg2, Qt::ElideRight, m_msg2Label->width());
+        msg2 = fm.elidedText(msg2, Qt::ElideRight, m_msg2Label->width());
 
         speedStr = speedStr.arg(speed);
         remainStr = remainStr.arg(remainTime);
@@ -501,7 +501,7 @@ void MoveCopyTaskWidget::setMessage(const QString& operateStr, const QString& de
     m_operateMessage = operateStr;
     m_destinationMessage = destinateStr;
     m_msg1Label->setText(m_operateMessage);
-    m_msg2Label->setText("");
+    m_msg2Label->setText(m_destinationMessage);
 }
 
 void MoveCopyTaskWidget::setTipMessage(const QString& speedStr, const QString& remainStr){
