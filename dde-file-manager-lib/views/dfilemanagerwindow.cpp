@@ -218,6 +218,7 @@ DFileManagerWindow::DFileManagerWindow(const DUrl &fileUrl, QWidget *parent)
 {
     /// init global AppController
 //    Q_UNUSED(AppController::instance());
+    setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
 
     setWindowIcon(QIcon(":/images/images/dde-file-manager.svg"));
 
