@@ -1054,9 +1054,6 @@ bool FileJob::copyFile(const QString &srcFile, const QString &tarDir, bool isMov
             case FileJob::Cancelled:
                 from.close();
                 to.close();
-                if (to.size() < from.size()){
-                    to.remove();
-                }
                 if (m_isSkip)
                     return true;
                 else
@@ -1212,7 +1209,6 @@ bool FileJob::copyFileByGio(const QString &srcFile, const QString &tarDir, bool 
                 m_lastMsec = m_timer.elapsed();
                 break;
             case FileJob::Cancelled:
-                deleteFileByGio(m_tarPath);
                 goto unref;
             default:
                 goto unref;
