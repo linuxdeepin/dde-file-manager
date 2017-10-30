@@ -495,7 +495,6 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
             startProcessDetached("dman", QStringList() << "dde");
             break;
         }
-        break;
     case Qt::KeypadModifier:
         switch (event->key()) {
         case Qt::Key_Return:
