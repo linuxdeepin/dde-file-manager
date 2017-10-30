@@ -1,5 +1,5 @@
 Source: dde-file-manager
-Section: devel
+Section: x11
 Priority: optional
 Maintainer: Deepin Packages Builder <packages@linuxdeepin.com>
 Build-Depends: debhelper (>=9), pkg-config, qt5-qmake, qt5-default, qtbase5-dev, qtbase5-private-dev,
