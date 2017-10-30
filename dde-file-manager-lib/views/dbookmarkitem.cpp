@@ -692,12 +692,25 @@ void DBookmarkItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
             DUrl deviceUrl(m_bookmarkModel->getDevcieId());
 
-            qDebug() << deviceUrl << NetworkManager::SupportScheme.contains(deviceUrl.scheme());
+            qDebug() << m_bookmarkModel->getDevcieId() << deviceUrl << NetworkManager::SupportScheme.contains(deviceUrl.scheme());
 
             if (NetworkManager::SupportScheme.contains(deviceUrl.scheme())) {
                 setMountBookmark(true);
                 emit fileSignalManager->requestFetchNetworks(DFMUrlBaseEvent(this, deviceUrl));
                 return;
+            }
+
+            /*handle bookmark of luks device when device is unmounted*/
+            if (m_bookmarkModel->getDevcieId().startsWith("/dev/dm")){
+                QString uuid = m_bookmarkModel->getUuid();
+                UDiskDeviceInfoPointer pDevice = deviceListener->getDeviceByUUID(uuid);
+                qDebug() << "uuid:" << uuid;
+                qDebug() << "device" << pDevice;
+                if (pDevice){
+                    setMountBookmark(true);
+                    deviceListener->mount(pDevice->getDiskInfo().id());
+                    return;
+                }
             }
 
             deviceListener->mount(m_bookmarkModel->getDevcieId());
