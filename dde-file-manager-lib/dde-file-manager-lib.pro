@@ -217,7 +217,8 @@ HEADERS += \
     shutil/filebatchprocess.h \
     dialogs/ddesktoprenamedialog.h \
     dialogs/dmultifilepropertydialog.h \
-    dialogs/movetotrashconflictdialog.h
+    dialogs/movetotrashconflictdialog.h \
+    dialogs/dfmsettingdialog.h
 SOURCES += \
     controllers/appcontroller.cpp \
     views/dleftsidebar.cpp \
@@ -357,7 +358,8 @@ SOURCES += \
     shutil/filebatchprocess.cpp \
     dialogs/ddesktoprenamedialog.cpp \
     dialogs/dmultifilepropertydialog.cpp \
-    dialogs/movetotrashconflictdialog.cpp
+    dialogs/movetotrashconflictdialog.cpp \
+    dialogs/dfmsettingdialog.cpp
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 HELPSHAREDIR = $$PREFIX/share/dman/$$TARGET

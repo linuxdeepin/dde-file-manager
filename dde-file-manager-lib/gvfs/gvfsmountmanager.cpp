@@ -1060,7 +1060,7 @@ void GvfsMountManager::setAutoMountSwitch(bool autoMountSwitch)
 
 void GvfsMountManager::autoMountAllDisks()
 {
-    if (DFMSetting::instance()->isAutoMount() || DFMSetting::instance()->isAutoMountAndOpen()){
+    if (DFMSetting::instance()->isAutoMount()){
         foreach (const QDiskInfo& diskInfo, DiskInfos.values()) {
             if (diskInfo.can_mount()){
                 if (isDeviceCrypto_LUKS(diskInfo))
