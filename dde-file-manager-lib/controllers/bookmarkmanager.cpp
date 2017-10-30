@@ -113,8 +113,10 @@ void BookMarkManager::loadJson(const QJsonObject &json)
             DFileInfo info(url);
             deviceID = info.getDiskinfo().id();
         }
+        QString uuid = object["uuid"].toString();
         BookMarkPointer bm(new BookMark(QDateTime::fromString(time), name, DUrl(url)));
         bm->setDevcieId(deviceID);
+        bm->setUuid(uuid);
         m_bookmarks.append(bm);
     }
 }
@@ -137,8 +139,13 @@ void BookMarkManager::writeJson(QJsonObject &json)
         if (deviceID.isEmpty()){
             deviceID = m_bookmarks.at(i)->getDevcieId();
         }
+
         m_bookmarks.at(i)->setDevcieId(deviceID);
         object["deviceID"] = deviceID;
+
+        QString uuid = m_bookmarks.at(i)->getDiskinfo().uuid();
+        object["uuid"] = uuid;
+
         localArray.append(object);
     }
     json["Bookmark"] = localArray;

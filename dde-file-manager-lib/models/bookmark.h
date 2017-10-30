@@ -40,10 +40,14 @@ public:
     QString getDevcieId() const;
     void setDevcieId(const QString &devcieId);
 
+    QString getUuid() const;
+    void setUuid(const QString &uuid);
+
 private:
     QDateTime m_time;
     QString m_name;
     QString m_devcieId;
+    QString m_uuid;
 
     // AbstractFileInfo interface
 };

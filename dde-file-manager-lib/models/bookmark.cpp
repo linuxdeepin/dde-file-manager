@@ -65,3 +65,13 @@ void BookMark::setDevcieId(const QString &devcieId)
 {
     m_devcieId = devcieId;
 }
+
+QString BookMark::getUuid() const
+{
+    return m_uuid;
+}
+
+void BookMark::setUuid(const QString &uuid)
+{
+    m_uuid = uuid;
+}

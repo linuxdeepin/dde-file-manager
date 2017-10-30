@@ -69,6 +69,7 @@ public:
     UDiskDeviceInfoPointer getDeviceByPath(const QString &path);
     UDiskDeviceInfoPointer getDeviceByFilePath(const QString &path);
     UDiskDeviceInfoPointer getDeviceByDeviceID(const QString &deviceID);
+    UDiskDeviceInfoPointer getDeviceByUUID(const QString &uuid);
     UDiskDeviceInfo::MediaType getDeviceMediaType(const QString &path);
 
     QString getVolumeConfPath();
