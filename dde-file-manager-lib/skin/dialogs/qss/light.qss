@@ -169,7 +169,12 @@ QPushButton#OptionButton{
     border-radius: 4px;
     background: white;
     font-size: 12px;
+    padding-left: 20px;
+    padding-top: 5px;
+    padding-right: 20px;
+    padding-bottom: 5px;
 }
+
 QPushButton#OptionButton:checked{
     border: 1px solid rgba(0, 131, 255, 0.4);
     background: white;
