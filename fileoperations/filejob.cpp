@@ -1112,11 +1112,7 @@ bool FileJob::copyFileByGio(const QString &srcFile, const QString &tarDir, bool 
     if(srcFileInfo.absolutePath() != targetInfo.absolutePath()){
         if(isTargetExists && !m_applyToAll)
         {
-            if (!isMoved){
-                jobConflicted();
-            }else{
-                m_isReplaced = true;
-            }
+            jobConflicted();
         }else if (isTargetExists && m_skipandApplyToAll){
             return false;
         }else{
