@@ -64,7 +64,7 @@
     <message>
         <location filename="../view/mainwindow.cpp" line="205"/>
         <source>Failed to format</source>
-        <translation>Error al formatear</translation>
+        <translation>Fallo al formatear</translation>
     </message>
     <message>
         <location filename="../view/mainwindow.cpp" line="201"/>
