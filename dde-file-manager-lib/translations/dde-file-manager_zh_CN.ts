@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>CloseAllDialogIndicator</name>
     <message>
@@ -1407,7 +1405,7 @@
         <location filename="../configure/dfmconfigdict.cpp" line="7"/>
         <location filename="../dialogs/dfmsettingdialog.cpp" line="66"/>
         <source>Open after auto mount</source>
-        <translation type="unfinished"></translation>
+        <translation>自动挂载后打开</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="28"/>

@@ -196,254 +196,254 @@
 <context>
     <name>DialogManager</name>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="335"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="814"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="829"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="337"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="817"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="832"/>
         <source>Operation failed!</source>
         <translation>Operasi gagal!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="336"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="338"/>
         <source>Target folder is inside the source folder!</source>
         <translation>Folder target berada di dalam folder sumber!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="338"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="738"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="752"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="761"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="779"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="821"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="832"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1149"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="340"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="741"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="755"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="764"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="782"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="824"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="835"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1152"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="361"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="363"/>
         <source>Do you want to run %1 or display its content?</source>
         <translation>Apakah Anda ingin menjalankan %1 atau menampilkan kontennya?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="362"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="364"/>
         <source>It is an executable text file.</source>
         <translation>Ini merupakan berkas teks bisa dieksekusi.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="365"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="393"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="430"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="485"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="626"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="655"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="898"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="965"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="367"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="395"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="432"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="487"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="628"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="657"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="901"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="968"/>
         <source>Cancel</source>
         <translation>Batal</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="365"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="395"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="367"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="397"/>
         <source>Run</source>
         <translation>Jalankan</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="365"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="394"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="367"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="396"/>
         <source>Run in terminal</source>
         <translation>Jalankan di terminal</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="365"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="367"/>
         <source>Display</source>
         <translation>Tampilkan</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="391"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="393"/>
         <source>Do you sure to run %1?</source>
         <translation>Apakah Anda yakin menjalankan %1?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="392"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="394"/>
         <source>It is an executable file.</source>
         <translation>Ini merupakan berkas yang bisa dieksekusi.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="408"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="410"/>
         <source>&quot;%1&quot; already exists, please use another name.</source>
         <translation>&quot;%1&quot; sudah ada, silakan gunakan nama lain.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="410"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="655"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="860"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1090"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="412"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="657"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="863"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1093"/>
         <source>Confirm</source>
         <translation>Konfirmasi.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="421"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="423"/>
         <source>Are you sure to empty %1 item?</source>
         <translation>Apakah Anda yakin untuk mengosongkan %1 item?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="422"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="424"/>
         <source>Are you sure to empty %1 items?</source>
         <translation>Apakah Anda yakin untuk mengosongkan %1 item?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="423"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="425"/>
         <source>Permanently delete %1?</source>
         <translation>Menghapus permanen %1 item?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="424"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="426"/>
         <source>Permanently delete %1 items?</source>
         <translation>Menghapus permanen %1 item?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="430"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="432"/>
         <source>Delete</source>
         <translation>Hapus</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="440"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="442"/>
         <source>Empty</source>
         <translation>Kosong</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="470"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="472"/>
         <source>This action cannot be restored</source>
         <translation>Aksi ini tidak dapat dikembalikan</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="483"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="485"/>
         <source>Sorry, unable to locate your bookmark directory, remove it?</source>
         <translation>Maaf, tidak bisa menemukan direktori marka buku Anda, hapus?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="485"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="487"/>
         <source>Remove</source>
         <translation>Hapus</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="623"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="625"/>
         <source>Disk file is being used, can not unmount now</source>
         <translation>Berkas diska sedang digunakan, tidak dapat melepaskan sekarang.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="624"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="626"/>
         <source>Name: </source>
         <translation>Nama:</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="626"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="628"/>
         <source>Force unmount</source>
         <translation>Paksa lepaskan</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="649"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="651"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="653"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="655"/>
         <source>Do you want to delete this shortcut？</source>
         <translation>Apakah Anda yakin untuk menghapus jalan pintas ini?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="682"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="684"/>
         <source>Version:</source>
         <translation>Versi:</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="684"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="686"/>
         <source>File Manager is a file management tool independently developed by Deepin Technology, featured with searching, copying, trash, compression/decompression, file property and other file management functions.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="737"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="740"/>
         <source>Target disk doesn&apos;t have enough space, unable to copy!</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="750"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="753"/>
         <source>Failed, file size must be less than 4GB.</source>
         <translation>Gagal, ukuran berkas harus kurang dari 4GB.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="759"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="762"/>
         <source>Fail to create symlink, cause:</source>
         <translation>Gagal membuat symlink, karena:</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="777"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="780"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="816"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="819"/>
         <source>Target file removed or location changed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="818"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="821"/>
         <source>%1 files failed to restore, target file removed or location changed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="830"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="851"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="833"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="854"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="871"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="874"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/floder(s)!</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="899"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="902"/>
         <source>View</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="933"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="936"/>
         <source>Mount partition%1 to be read only</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="937"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="940"/>
         <source>Disks in Windows will be unable to read and write normally if check &quot;Turn on fast startup (recommended)&quot; in Shutdown settings</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="941"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="944"/>
         <source>Please restore by the following steps to normally access Windows disk</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="947"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="950"/>
         <source>1. Reboot to enter Windows</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="948"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="951"/>
         <source>2. Select Reboot</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="949"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="952"/>
         <source>3. Reboot and enter deepin</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="966"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="969"/>
         <source>Reboot</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1147"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1150"/>
         <source>Share folder cann&apos;t be named after the current username</source>
         <translation type="unfinished"/>
     </message>
@@ -644,121 +644,121 @@
 <context>
     <name>MoveCopyTaskWidget</name>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="204"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="206"/>
         <source>Skip</source>
         <translation>Lewati</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="203"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="205"/>
         <source>Keep both</source>
         <translation>Simpan keduanya</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="205"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="282"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="207"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="284"/>
         <source>Replace</source>
         <translation>Timpa</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="230"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="232"/>
         <source>Do not ask again</source>
         <translation>Jangan tanya lagi</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="280"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="282"/>
         <source>merge</source>
         <translation>gabung</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="290"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="292"/>
         <source>Copying %1</source>
         <translation>Menyalin %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="291"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="293"/>
         <source>Copy to %2</source>
         <translation>Salin ke %2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="294"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="296"/>
         <source>Moving %1</source>
         <translation>Memindahkan %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="295"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="297"/>
         <source>Move to %2</source>
         <translation>Pindah ke %2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="297"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="299"/>
         <source>Restoring %1</source>
         <translation>Mengembalikan %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="298"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="300"/>
         <source>Restore to %2</source>
         <translation>Kembalikan ke %2</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="300"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="302"/>
         <source>Deleting %1</source>
         <translation>Menghapus %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="303"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="305"/>
         <source>Trashing %1</source>
         <translation>Membuang ke tong sampah %1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="310"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="312"/>
         <source>Calculating space, please wait</source>
         <translation>Menghitung ruang, mohon menunggu</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="314"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="316"/>
         <source>File named %1 already exists in target folder</source>
         <translation>Berkas dengan nama %1 sudah ada dalam folder target</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="315"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="317"/>
         <source>Original path %1 target path %2</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="382"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="394"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="384"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="396"/>
         <source>Time modified:%1</source>
         <translation>Tanggal dimodifikasi:%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="384"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="386"/>
         <source>Original folder:%1</source>
         <translation>Folder orisinal:%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="385"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="398"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="387"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="400"/>
         <source>Contains:%1</source>
         <translation>Mengandung:%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="387"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="389"/>
         <source>Original file:%1</source>
         <translation>Berkas orisinal:%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="388"/>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="401"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="390"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="403"/>
         <source>Size:%1</source>
         <translation>Ukuran:%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="397"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="399"/>
         <source>Target folder:%1</source>
         <translation>Folder target:%1</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="400"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="402"/>
         <source>Target file:%1</source>
         <translation>Berkas target:%1</translation>
     </message>
@@ -1295,13 +1295,9 @@
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="6"/>
+        <location filename="../dialogs/dfmsettingdialog.cpp" line="31"/>
         <source>Auto mount</source>
         <translation>Pasang otomatis</translation>
-    </message>
-    <message>
-        <location filename="../configure/dfmconfigdict.cpp" line="7"/>
-        <source>Auto mount and open</source>
-        <translation>Pasang otomatis dan buka</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="8"/>
@@ -1404,6 +1400,12 @@
         <location filename="../configure/dfmconfigdict.cpp" line="37"/>
         <source>Home</source>
         <translation>Rumah</translation>
+    </message>
+    <message>
+        <location filename="../configure/dfmconfigdict.cpp" line="7"/>
+        <location filename="../dialogs/dfmsettingdialog.cpp" line="66"/>
+        <source>Open after auto mount</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="28"/>
@@ -1649,7 +1651,7 @@
         <translation>Waktu dihapus</translation>
     </message>
     <message>
-        <location filename="../interfaces/dabstractfileinfo.cpp" line="1045"/>
+        <location filename="../interfaces/dabstractfileinfo.cpp" line="1022"/>
         <source>Loading...</source>
         <translation>Memuat...</translation>
     </message>
@@ -1715,12 +1717,12 @@
         <translation>teks</translation>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="570"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="572"/>
         <source>1 task in progress</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../dialogs/dtaskdialog.cpp" line="572"/>
+        <location filename="../../dialogs/dtaskdialog.cpp" line="574"/>
         <source>%1 tasks in progress</source>
         <translation type="unfinished"/>
     </message>
@@ -1848,7 +1850,7 @@
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1113"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1116"/>
         <source>Rename %1 Files</source>
         <translation type="unfinished"/>
     </message>

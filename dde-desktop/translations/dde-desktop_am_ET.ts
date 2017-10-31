@@ -1,36 +1,36 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="es" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="am_ET" version="2.1">
 <context>
     <name>CanvasGridView</name>
     <message>
         <location filename="../view/canvasgridview.cpp" line="1825"/>
         <source>Icon size</source>
-        <translation>Tamaño de icono</translation>
+        <translation>የ ምልክት መጠን</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="1831"/>
         <source>Auto arrange</source>
-        <translation>Organizar automáticamente </translation>
+        <translation>በራሱ ማስተካከያ</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="1839"/>
         <location filename="../view/canvasgridview.cpp" line="1952"/>
         <source>Properties</source>
-        <translation>Propiedades</translation>
+        <translation>ባህሪዎች</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="1870"/>
         <source>Display Settings</source>
-        <translation>Mostrar configuración </translation>
+        <translation>ማሰናጃ ማሳያ</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="1875"/>
         <source>Corner Settings</source>
-        <translation>Configuración de esquinas</translation>
+        <translation>ጠርዝ ማሰናጃ</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="1880"/>
         <source>Set Wallpaper</source>
-        <translation>Establecer fondo de pantalla</translation>
+        <translation>የ ግድግዳ ወረቀት ማሰናጃ</translation>
     </message>
 </context>
 <context>
@@ -38,27 +38,27 @@
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="12"/>
         <source>Tiny</source>
-        <translation>Minúsculo</translation>
+        <translation>በጣም ትንሽ</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="13"/>
         <source>Small</source>
-        <translation>Pequeño</translation>
+        <translation>ትንሽ</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="14"/>
         <source>Medium</source>
-        <translation>Mediano</translation>
+        <translation>መካከለኛ</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="15"/>
         <source>Large</source>
-        <translation>Grande</translation>
+        <translation>ትልቅ</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="16"/>
         <source>Super large</source>
-        <translation>Enorme</translation>
+        <translation>በጣም ትልቅ</translation>
     </message>
 </context>
 <context>
@@ -66,12 +66,12 @@
     <message>
         <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="90"/>
         <source>Only desktop</source>
-        <translation>Solo escritorio</translation>
+        <translation>ዴስክቶፕ ብቻ</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/wallpaperitem.cpp" line="93"/>
         <source>Only lock screen</source>
-        <translation>Solo pantalla de bloqueo</translation>
+        <translation>መመልከቻ ብቻ መቆለፊያ</translation>
     </message>
 </context>
 <context>
@@ -79,37 +79,37 @@
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
         <source>Fast Screen Off</source>
-        <translation>Apagado rápido de pantalla</translation>
+        <translation>በፍጥነት መመልከቻ ማጥፊያ</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
         <source>Control Center</source>
-        <translation>Centro de control</translation>
+        <translation>መቆጣጠሪያ ማእከል</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
         <source>All Windows</source>
-        <translation>Todas las ventanas</translation>
+        <translation>ሁሉንም መስኮቶች</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
         <source>Launcher</source>
-        <translation>Lanzador</translation>
+        <translation>ማስጀመሪያ</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
         <source>Desktop</source>
-        <translation>Escritorio</translation>
+        <translation>ዴስክቶፕ</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="53"/>
         <source>None</source>
-        <translation>Ninguno</translation>
+        <translation>ምንም</translation>
     </message>
     <message>
         <location filename="../../dde-zone/mainwindow.cpp" line="57"/>
         <source>Close Window</source>
-        <translation>Cerrar ventana</translation>
+        <translation>መስኮት መዝጊያ</translation>
     </message>
 </context>
 </TS>
