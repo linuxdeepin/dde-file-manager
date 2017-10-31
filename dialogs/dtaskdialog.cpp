@@ -208,10 +208,6 @@ void MoveCopyTaskWidget::initButtonFrame(){
     m_skipButton->setFocusPolicy(Qt::NoFocus);
     m_replaceButton->setFocusPolicy(Qt::NoFocus);
 
-    m_keepBothButton->setFixedSize(70, 25);
-    m_skipButton->setFixedSize(70, 25);
-    m_replaceButton->setFixedSize(70, 25);
-
     m_keepBothButton->setProperty("code", 0);
     m_replaceButton->setProperty("code", 1);
     m_skipButton->setProperty("code", 2);
