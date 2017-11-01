@@ -25,24 +25,19 @@
 #include <QDebug>
 DWIDGET_USE_NAMESPACE
 
-ComputerPropertyDialog::ComputerPropertyDialog(QWidget *parent) : QDialog(parent)
+ComputerPropertyDialog::ComputerPropertyDialog(QWidget *parent) : DDialog(parent)
 {
-    DPlatformWindowHandle handle(this);
-    Q_UNUSED(handle);
     initUI();
 }
 
 void ComputerPropertyDialog::initUI()
 {
-    setWindowFlags(Qt::FramelessWindowHint);
-    DTitlebar* titlebar = new DTitlebar(this);
-    titlebar->setWindowFlags(Qt::WindowCloseButtonHint);
-    titlebar->setFixedHeight(30);
-    titlebar->setContentsMargins(0, 0, 0, 0);
-    titlebar->layout()->setContentsMargins(0, 6, 6, 0);
-
     QLabel* iconLabel = new QLabel(this);
-    iconLabel->setPixmap(QPixmap(":/images/dialogs/images/deepin_logo.png"));
+    QIcon logoIcon;
+    logoIcon.addFile(":/images/dialogs/images/deepin_logo.png");
+    logoIcon.addFile(":/images/dialogs/images/deepin_logo@2x.png");
+
+    iconLabel->setPixmap(logoIcon.pixmap(152, 39));
     QLabel* nameLabel = new QLabel(tr("Computer"), this);
     nameLabel->setObjectName("NameLabel");
 
@@ -88,11 +83,10 @@ void ComputerPropertyDialog::initUI()
         row ++;
     }
 
+    QFrame* contentFrame = new QFrame;
     QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->setSpacing(0);
     mainLayout->setContentsMargins(0, 0, 0, 0);
-    mainLayout->addWidget(titlebar);
-    mainLayout->addSpacing(80);
     mainLayout->addWidget(iconLabel, 0, Qt::AlignHCenter);
     mainLayout->addSpacing(60);
     mainLayout->addWidget(nameLabel, 0, Qt::AlignHCenter);
@@ -109,7 +103,9 @@ void ComputerPropertyDialog::initUI()
     mainLayout->addStretch(1);
 
     setFixedSize(320, 460);
-    setLayout(mainLayout);
+    contentFrame->setLayout(mainLayout);
+
+    addContent(contentFrame);
 
     setStyleSheet("QLabel#NameLabel{"
                     "font-size: 12px;"

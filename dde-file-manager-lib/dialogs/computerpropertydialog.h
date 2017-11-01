@@ -18,9 +18,11 @@
 
 #include <QWidget>
 #include <QMap>
-#include <QDialog>
+#include <ddialog.h>
 
-class ComputerPropertyDialog : public QDialog
+DWIDGET_USE_NAMESPACE
+
+class ComputerPropertyDialog : public DDialog
 {
     Q_OBJECT
 public:
