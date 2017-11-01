@@ -390,7 +390,7 @@ Users can create new window, set share password, view manual and about informati
  - In **View**, users can set file icon size and default view.
  - In **Hidden files**, users can set whether to show the hidden file.
  - In **Preview**, users can set whether to show the preview image of the specified file types.
- - In **Mount**, users can set to auto mount or auto mount and open.
+ - In **Mount**, users can set to auto mount or open after auto mount.
  - In **Dialog**, users can set whether to use the file chooser dialog of the Deepin File Manager or not.
  - Users can click on **Restore Defaults** to restore all settings.
 
@@ -402,7 +402,7 @@ Users can create new window, set share password, view manual and about informati
 2. Select **Help**.
 3. View the manual.
 
-![0|help](png/help.png)
+![1|help](png/help.png)
 
 ### About
 
