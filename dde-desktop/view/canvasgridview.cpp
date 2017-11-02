@@ -128,6 +128,10 @@ QModelIndex CanvasGridView::indexAt(const QPoint &point) const
 
     for (QModelIndex &index : itemDelegate()->hasWidgetIndexs()) {
         if (index == itemDelegate()->editingIndex()) {
+            QWidget *widget = itemDelegate()->editingIndexWidget();
+            if (widget && widget->isVisible() && widget->geometry().contains(point)) {
+                return index;
+            }
             continue;
         }
 
