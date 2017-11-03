@@ -218,7 +218,8 @@ HEADERS += \
     dialogs/ddesktoprenamedialog.h \
     dialogs/dmultifilepropertydialog.h \
     dialogs/movetotrashconflictdialog.h \
-    dialogs/dfmsettingdialog.h
+    dialogs/dfmsettingdialog.h \
+    configure/dfmplaformmanager.h
 SOURCES += \
     controllers/appcontroller.cpp \
     views/dleftsidebar.cpp \
@@ -359,7 +360,8 @@ SOURCES += \
     dialogs/ddesktoprenamedialog.cpp \
     dialogs/dmultifilepropertydialog.cpp \
     dialogs/movetotrashconflictdialog.cpp \
-    dialogs/dfmsettingdialog.cpp
+    dialogs/dfmsettingdialog.cpp \
+    configure/dfmplaformmanager.cpp
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 HELPSHAREDIR = $$PREFIX/share/dman/$$TARGET

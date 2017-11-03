@@ -23,6 +23,7 @@ Package: dde-desktop
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, libdde-file-manager( =${binary:Version})
 Conflicts: dde-workspace (<< 2.90.5)
+Recommends: qt5dxcb-plugin
 Description: deepin desktop-environment - desktop module
  Deepin desktop environment 2015 - desktop module.
 

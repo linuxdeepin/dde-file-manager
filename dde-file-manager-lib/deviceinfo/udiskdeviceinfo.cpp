@@ -23,6 +23,8 @@
 #include "singleton.h"
 #include "gvfs/gvfsmountmanager.h"
 #include "gvfs/qdrive.h"
+#include "configure/dfmplaformmanager.h"
+#include "app/define.h"
 #include <unistd.h>
 
 UDiskDeviceInfo::UDiskDeviceInfo()
@@ -346,6 +348,13 @@ QSet<MenuAction> UDiskDeviceInfo::disableMenuActionList() const
 
     if(DFMGlobal::isRootUser()){
         actionKeys << MenuAction::Unmount;
+    }
+
+    /*Disable unmount of native disk in x86 pro*/
+    if (getMediaType() == native){
+        if (dfmPlatformSetting->isDisableUnMount()){
+            actionKeys << MenuAction::Unmount;
+        }
     }
 
     if (!canUnmount()){
