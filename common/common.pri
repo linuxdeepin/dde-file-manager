@@ -2,6 +2,7 @@ unix {
     ProjectName = dde-file-manager
     PREFIX = /usr
     APPSHAREDIR = $$PREFIX/share/$$ProjectName
+	top_srcdir = $$PWD/../
 
     CONFIG(release, debug|release) {
         LIB_INSTALL_DIR = $$[QT_INSTALL_LIBS]
@@ -49,8 +50,8 @@ unix {
 
 }
 
-INCLUDEPATH += $$top_srcdir\
-               $$top_srcdir/utils\
-               $$top_srcdir/dde-file-manager-lib/interfaces\
-               $$top_srcdir/dde-file-manager-lib/interfaces/plugins\
+INCLUDEPATH += $$top_srcdir \
+               $$top_srcdir/utils \
+               $$top_srcdir/dde-file-manager-lib/interfaces \
+               $$top_srcdir/dde-file-manager-lib/interfaces/plugins \
                $$top_srcdir/dde-file-manager-plugins/plugininterfaces
