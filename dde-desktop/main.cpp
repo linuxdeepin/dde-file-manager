@@ -30,6 +30,10 @@ int main(int argc, char *argv[])
     // Fixed the locale codec to utf-8
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
 
+    if (QFile("/usr/lib/dde-desktop/plugins/platform/libdxcb.so").exists()){
+        qputenv("QT_QPA_PLATFORM_PLUGIN_PATH", "/usr/lib/dde-desktop/plugins/platform");
+    }
+
     DApplication::loadDXcbPlugin();
 
     DApplication app(argc, argv);

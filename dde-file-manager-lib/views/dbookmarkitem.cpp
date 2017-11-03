@@ -60,6 +60,8 @@
 #include "dutil.h"
 #include "utils/utils.h"
 
+#include "configure/dfmplaformmanager.h"
+
 DWIDGET_USE_NAMESPACE
 
 
@@ -651,6 +653,15 @@ void DBookmarkItem::updateMountIndicator()
         if(DFMGlobal::isRootUser()){
             m_mountBookmarkItem->setEnabled(false);
         }
+
+        /*Disable unmount of native disk in x86 pro*/
+        if (m_deviceInfo->getMediaType() == UDiskDeviceInfo::native){
+            if (dfmPlatformSetting->isDisableUnMount()){
+                m_mountBookmarkItem->setEnabled(false);
+                m_mountBookmarkItem->setOpacity(0.3);
+            }
+        }
+
     }else{
         m_mountBookmarkItem->hide();
     }
