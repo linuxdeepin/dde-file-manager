@@ -65,7 +65,7 @@ void DStatusBar::initUI()
 
     m_loadingIndicator = new DPictureSequenceView(this);
     m_loadingIndicator->setFixedSize(18, 18);
-    m_loadingIndicator->setPictureSequence(seq, DPictureSequenceView::AutoScaleMode);
+    m_loadingIndicator->setPictureSequence(seq, true);
     m_loadingIndicator->setSpeed(20);
     m_loadingIndicator->hide();
 
