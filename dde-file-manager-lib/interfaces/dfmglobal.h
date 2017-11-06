@@ -28,6 +28,7 @@
 #include <functional>
 
 #include "durl.h"
+#include "../gvfs/qdiskinfo.h"
 
 // begin file item global define
 #define TEXT_LINE_HEIGHT 18
@@ -268,6 +269,9 @@ public:
     //check the unique trash/computer dekstop file on desktop
     static bool isTrashDesktopFileUrl(const DUrl& url);
     static bool isComputerDesktopFileUrl(const DUrl& url);
+
+    // disbale native disk ummount function
+    static bool isDisableUnmount(const QDiskInfo& diskInfo);
 
     QList<QUrl> clipboardFileUrlList() const;
     ClipboardAction clipboardAction() const;

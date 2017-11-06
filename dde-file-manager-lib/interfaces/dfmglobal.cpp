@@ -37,6 +37,7 @@
 #include "dfmsetting.h"
 #include "models/desktopfileinfo.h"
 #include "shutil/viewstatesmanager.h"
+#include "dfmplaformmanager.h"
 #include <dfmstandardpaths.h>
 
 #include <QGuiApplication>
@@ -691,6 +692,16 @@ bool DFMGlobal::isComputerDesktopFileUrl(const DUrl &url)
 {
     if (DesktopFileInfo::computerDesktopFileUrl() == url)
         return isComputerDesktopFile(url);
+    return false;
+}
+
+bool DFMGlobal::isDisableUnmount(const QDiskInfo &diskInfo)
+{
+    if (diskInfo.type() == "native"){
+        if (dfmPlatformManager->isDisableUnMount()){
+            return true;
+        }
+    }
     return false;
 }
 

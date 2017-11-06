@@ -15,8 +15,10 @@
 
 #include "diskcontrolitem.h"
 #include "qdiskinfo.h"
+
 #include "dfileservices.h"
 #include "gvfsmountmanager.h"
+#include "dfmglobal.h"
 
 #include <QVBoxLayout>
 #include <QIcon>
@@ -88,6 +90,10 @@ DiskControlItem::DiskControlItem(const QDiskInfo &info, QWidget *parent)
                   "}");
 
     connect(m_unmountButton, &DImageButton::clicked, this, [this] { emit requestUnmount(m_info.id()); });
+
+    if (DFMGlobal::isDisableUnmount(info)){
+        m_unmountButton->hide();
+    }
 
     updateInfo(info);
 }
