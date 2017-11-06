@@ -455,7 +455,10 @@ void AppController::actionProperty(const QSharedPointer<DFMUrlListBaseEvent> &ev
 
     if (urlList.first() == DUrl::fromTrashFile("/")) {
         emit fileSignalManager->requestShowTrashPropertyDialog(DFMUrlBaseEvent(event->sender(), urlList.first()));
-    } else {
+    }else if (urlList.first() == DUrl::fromComputerFile("/")) {
+        emit fileSignalManager->requestShowComputerPropertyDialog(DFMUrlBaseEvent(event->sender(), urlList.first()));
+    }
+    else {
         emit fileSignalManager->requestShowPropertyDialog(DFMUrlListBaseEvent(event->sender(), urlList));
     }
 }
