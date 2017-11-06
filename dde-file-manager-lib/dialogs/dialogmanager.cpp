@@ -870,7 +870,7 @@ void DialogManager::showNoPermissionDialog(const DFMUrlListBaseEvent &event)
         iconLabel->setPixmap(m_dialogWarningIcon.pixmap(64, 64));
 
         QLabel* titleLabel = new QLabel;
-        titleLabel->setText(tr("Sorry, you don't have permission to operate the following %1 file/floder(s)!").arg(QString::number(urls.count())));
+        titleLabel->setText(tr("Sorry, you don't have permission to operate the following %1 file/folder(s)!").arg(QString::number(urls.count())));
 
         QLabel* messageLabel = new QLabel;
         messageLabel->setScaledContents(true);
@@ -1146,7 +1146,7 @@ void DialogManager::showAddUserShareFailedDialog(const QString &sharePath)
     (void)sharePath;
 
     DDialog d;
-    d.setTitle(tr("Share folder cann't be named after the current username"));
+    d.setTitle(tr("Share folder can't be named after the current username"));
     d.setIcon(m_dialogWarningIcon);
     d.addButton(tr("OK"), true, DDialog::ButtonRecommend);
     d.exec();
