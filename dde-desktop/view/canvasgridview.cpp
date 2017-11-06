@@ -482,7 +482,7 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
     bool canDeleted = true;
     for (const QModelIndex &index : selectionModel()->selectedIndexes()) {
         auto url = model()->getUrlByIndex(index);
-        if (isPersistFile(url)) {
+        if (isPersistFile(url) || url.isEmpty()) {
             canDeleted = false;
             continue;
         }
