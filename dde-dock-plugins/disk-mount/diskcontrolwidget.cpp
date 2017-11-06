@@ -70,6 +70,11 @@ void DiskControlWidget::startMonitor()
 void DiskControlWidget::unmountAll()
 {
     foreach (const QDiskInfo& info, GvfsMountManager::DiskInfos) {
+        qDebug() << "unmount " << info.id() << "DFMGlobal::isDisableUnmount" << DFMGlobal::isDisableUnmount(info);
+        if (DFMGlobal::isDisableUnmount(info)){
+            qDebug() << "disable unmount native disk" << info;
+            continue;
+        }
         unmountDisk(info.id());
     }
 }

@@ -23,7 +23,7 @@
 #include "singleton.h"
 #include "gvfs/gvfsmountmanager.h"
 #include "gvfs/qdrive.h"
-#include "configure/dfmplaformmanager.h"
+#include "interfaces/dfmplaformmanager.h"
 #include "app/define.h"
 #include <unistd.h>
 
@@ -351,10 +351,8 @@ QSet<MenuAction> UDiskDeviceInfo::disableMenuActionList() const
     }
 
     /*Disable unmount of native disk in x86 pro*/
-    if (getMediaType() == native){
-        if (dfmPlatformSetting->isDisableUnMount()){
+    if (DFMGlobal::isDisableUnmount(getDiskInfo())){
             actionKeys << MenuAction::Unmount;
-        }
     }
 
     if (!canUnmount()){
