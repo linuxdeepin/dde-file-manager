@@ -25,14 +25,9 @@
 #include <QPainter>
 DWIDGET_USE_NAMESPACE
 
-TrashPropertyDialog::TrashPropertyDialog(const DUrl& url, QWidget *parent) : BaseDialog(parent)
+TrashPropertyDialog::TrashPropertyDialog(const DUrl& url, QWidget *parent) : DDialog(parent)
 {
     m_url = url;
-    setAttribute(Qt::WA_DeleteOnClose);
-    setWindowFlags(windowFlags()
-                           &~ Qt::WindowMaximizeButtonHint
-                           &~ Qt::WindowMinimizeButtonHint
-                           &~ Qt::WindowSystemMenuHint);
     initUI();
 }
 
@@ -78,13 +73,17 @@ void TrashPropertyDialog::initUI()
     infoLayout->addWidget(m_sizeLabel);
     infoLayout->setContentsMargins(10, 0, 0, 0);
 
+    QFrame* contenFrame = new QFrame;
+
     QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->addWidget(m_iconLabel, 0, Qt::AlignHCenter);
     mainLayout->addWidget(m_nameLable, 0, Qt::AlignHCenter);
     mainLayout->addWidget(hLine);
     mainLayout->addLayout(infoLayout);
     mainLayout->setContentsMargins(10, 10, 10, 10);
-    setLayout(mainLayout);
+    contenFrame->setLayout(mainLayout);
+
+    addContent(contenFrame);
 
     startComputerFolderSize(m_url);
 }
