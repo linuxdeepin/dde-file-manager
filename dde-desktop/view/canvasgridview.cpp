@@ -604,7 +604,11 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
 
 void CanvasGridView::dragEnterEvent(QDragEnterEvent *event)
 {
-    d->dragIn = true;
+    if (event->source()) {
+        d->startDodge = true;
+        itemDelegate()->hideNotEditingIndexWidget();
+    }
+
     if (event->source() == this && !DFMGlobal::keyCtrlIsPressed()) {
         event->setDropAction(Qt::MoveAction);
     } else {
@@ -685,7 +689,7 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
 void CanvasGridView::dragLeaveEvent(QDragLeaveEvent *event)
 {
     d->dodgeDelayTimer.stop();
-    d->dragIn = false;
+    d->startDodge = false;
     d->dragTargetGrid = QPoint(-1, -1);
     QAbstractItemView::dragLeaveEvent(event);
     update();
@@ -694,7 +698,7 @@ void CanvasGridView::dragLeaveEvent(QDragLeaveEvent *event)
 void CanvasGridView::dropEvent(QDropEvent *event)
 {
     d->dodgeDelayTimer.stop();
-    d->dragIn = false;
+    d->startDodge = false;
     d->dragTargetGrid = QPoint(-1, -1);
 
     QModelIndex targetIndex = indexAt(event->pos());
@@ -850,12 +854,12 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
 #endif
 
     DUrlList selecteds;
-    if (d->dodgeAnimationing || d->dragIn) {
+    if (d->dodgeAnimationing || d->startDodge) {
         selecteds = selectedUrls();
     }
 
 //    qDebug() << d->dragIn << d->dodgeAnimationing;
-    if (d->dragIn) {
+    if (d->startDodge) {
         auto currentMousePos = mapFromGlobal(QCursor::pos());
         auto hoverIndex = indexAt(currentMousePos);
         auto url = model()->getUrlByIndex(hoverIndex);
@@ -896,7 +900,7 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
     for (auto &localFile : repaintLocalFiles) {
         auto url = DUrl::fromLocalFile(localFile);
         // hide selected if draw animation
-        if ((d->dodgeAnimationing || d->dragIn) && selecteds.contains(url)) {
+        if ((d->dodgeAnimationing || d->startDodge) && selecteds.contains(url)) {
 //            qDebug() << "skip drag select";
             continue;
         }
@@ -1004,6 +1008,12 @@ void CanvasGridView::focusInEvent(QFocusEvent *event)
     /// set menu actions filter
     DFileMenuManager::setActionWhitelist(QSet<MenuAction>());
     DFileMenuManager::setActionBlacklist(QSet<MenuAction>());
+}
+
+void CanvasGridView::focusOutEvent(QFocusEvent *event)
+{
+    QAbstractItemView::focusOutEvent(event);
+    d->startDodge = false;
 }
 
 void CanvasGridView::contextMenuEvent(QContextMenuEvent *event)
