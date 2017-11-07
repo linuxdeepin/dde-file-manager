@@ -346,6 +346,14 @@
         <file>images/icons/preview_dialog_close_round_hover@2x.png</file>
         <file>images/icons/preview-dialog-close_round_normal@2x.png</file>
         <file>images/icons/preview-dialog-close_round_press@2x.png</file>
+        <file>images/icons/next_disabled.svg</file>
+        <file>images/icons/next_hover.svg</file>
+        <file>images/icons/next_normal.svg</file>
+        <file>images/icons/next_press.svg</file>
+        <file>images/icons/previous_disabled.svg</file>
+        <file>images/icons/previous_hover.svg</file>
+        <file>images/icons/previous_normal.svg</file>
+        <file>images/icons/previous_press.svg</file>
     </qresource>
     <qresource prefix="/leftsidebar">
         <file>images/leftsidebar/android_active_16px.svg</file>
