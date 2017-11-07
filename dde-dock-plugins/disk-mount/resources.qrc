@@ -6,5 +6,8 @@
         <file>resources/unmount-normal.png</file>
         <file>resources/unmount-hover.png</file>
         <file>resources/unknown.svg</file>
+        <file>resources/unmount-hover.svg</file>
+        <file>resources/unmount-normal.svg</file>
+        <file>resources/unmount-press.svg</file>
     </qresource>
 </RCC>

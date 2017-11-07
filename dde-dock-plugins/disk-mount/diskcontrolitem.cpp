@@ -18,6 +18,7 @@
 #include <QVBoxLayout>
 #include <QIcon>
 #include <QtMath>
+#include <QApplication>
 
 DWIDGET_USE_NAMESPACE
 
@@ -49,9 +50,9 @@ DiskControlItem::DiskControlItem(const QDiskInfo &info, QWidget *parent)
                                       "background-color:rgba(255, 255, 255, .8);"
                                       "}");
 
-    m_unmountButton->setNormalPic(":/icons/resources/unmount-normal.png");
-    m_unmountButton->setHoverPic(":/icons/resources/unmount-hover.png");
-    m_unmountButton->setPressPic(":/icons/resources/unmount-press.png");
+    m_unmountButton->setNormalPic(":/icons/resources/unmount-normal.svg");
+    m_unmountButton->setHoverPic(":/icons/resources/unmount-hover.svg");
+    m_unmountButton->setPressPic(":/icons/resources/unmount-press.svg");
     m_unmountButton->setStyleSheet("margin-top:12px;");
 
     QVBoxLayout *infoLayout = new QVBoxLayout;
@@ -93,8 +94,10 @@ DiskControlItem::DiskControlItem(const QDiskInfo &info, QWidget *parent)
 void DiskControlItem::updateInfo(const QDiskInfo &info)
 {
     m_info = info;
-
-    m_diskIcon->setPixmap(QIcon::fromTheme(info.iconName(), m_unknowIcon).pixmap(48, 48));
+    qreal devicePixelRatio = qApp->devicePixelRatio();
+    QPixmap diskIconPixmap = QIcon::fromTheme(info.iconName(), m_unknowIcon).pixmap(48 * devicePixelRatio , 48 * devicePixelRatio);
+    diskIconPixmap.setDevicePixelRatio(devicePixelRatio);
+    m_diskIcon->setPixmap(diskIconPixmap);
     if (!info.name().isEmpty())
         m_diskName->setText(info.name());
     else
