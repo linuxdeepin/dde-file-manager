@@ -16,12 +16,14 @@
 #ifndef TRASHPROPERTYDIALOG_H
 #define TRASHPROPERTYDIALOG_H
 
-#include "basedialog.h"
 #include "durl.h"
-#include <QLabel>
 #include "propertydialog.h"
+#include <QLabel>
+#include <ddialog.h>
 
-class TrashPropertyDialog : public BaseDialog
+DWIDGET_USE_NAMESPACE
+
+class TrashPropertyDialog : public DDialog
 {
     Q_OBJECT
 public:
