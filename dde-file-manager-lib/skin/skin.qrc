@@ -35,6 +35,7 @@
         <file>images/unreadable@2x.png</file>
         <file>images/lock@2x.png</file>
         <file>images/dde-file-manager-admin@2x.png</file>
+        <file>images/dde-file-manager_96.svg</file>
     </qresource>
     <qresource prefix="/devices">
         <file>images/device/drive-harddisk-deepin-256px.svg</file>

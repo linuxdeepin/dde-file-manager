@@ -15,45 +15,39 @@ QPushButton#CloseButton::pressed{
 }
 
 QPushButton#NextButton{
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 4px;
-    background: white;
-    image: url(:/icons/images/icons/forward_normal.png);
+    border-image: url(:/icons/images/icons/next_normal.svg);
+    height: 26px;
+    width: 27px;
 }
 
 QPushButton#NextButton::hover{
-    background-color: #2ca7f8;
-    border: 1px solid rgba(0, 128, 255, 0.22);
-    image: url(:/icons/images/icons/forward_hover.png);
+    border-image: url(:/icons/images/icons/next_hover.svg);
 }
 
 QPushButton#NextButton::pressed{
-    image: url(:/icons/images/icons/forward_press.png);
+    border-image: url(:/icons/images/icons/next_press.svg);
 }
 
 QPushButton#NextButton::disabled{
-    image: url(:/icons/images/icons/forward_disabled.png);
+    border-image: url(:/icons/images/icons/next_disabled.svg);
 }
 
 QPushButton#PreButton{
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 4px;
-    background: white;
-    image: url(:/icons/images/icons/backward_normal.png);
+    border-image: url(:/icons/images/icons/previous_normal.svg);
+    height: 26px;
+    width: 27px;
 }
 
 QPushButton#PreButton::hover{
-    background-color: #2ca7f8;
-    border: 1px solid rgba(0, 128, 255, 0.22);
-    image: url(:/icons/images/icons/backward_hover.png);
+    border-image: url(:/icons/images/icons/previous_hover.svg);
 }
 
 QPushButton#PreButton::pressed{
-    image: url(:/icons/images/icons/backward_press.png);
+    border-image: url(:/icons/images/icons/previous_press.svg);
 }
 
 QPushButton#PreButton::disabled{
-    image: url(:/icons/images/icons/backward_disabled.png);
+    border-image: url(:/icons/images/icons/previous_disabled.svg);
 }
 
 QFrame#StatusBar{
