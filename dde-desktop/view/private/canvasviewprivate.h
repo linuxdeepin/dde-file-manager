@@ -128,7 +128,7 @@ public:
     bool                dodgeAnimationing   = false;
     double              dodgeDuration       = 0;
     GridCore            *dodgeTargetGrid;
-    bool                dragIn            = false;
+    bool                startDodge            = false;
     QPoint              dragTargetGrid   = QPoint(-1, -1);
 
     // currentCursorIndex is not the mouse, it's the position move by keybord
