@@ -77,7 +77,7 @@ QString UDiskDeviceInfo::getId() const
 
 QString UDiskDeviceInfo::getName() const
 {
-    QString letter = deviceListener->getVolumeLetters().value(getId().toLower());
+    QString letter = deviceListener->getVolumeLetters().value(m_diskInfo.uuid());
     if (!letter.isEmpty())
         return QString("%1 (%2:)").arg(m_diskInfo.name(), letter);
     return m_diskInfo.name();
