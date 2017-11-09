@@ -319,6 +319,13 @@ void DFMGlobal::initViewStatesManager()
     viewStatesManager;
 }
 
+void DFMGlobal::autoMountAllDisks()
+{
+    TIMER_SINGLESHOT(1000, {
+        gvfsMountManager->autoMountAllDisks();
+    })
+}
+
 QString DFMGlobal::getUser()
 {
     static QString user = QString::fromLocal8Bit(qgetenv("USER"));

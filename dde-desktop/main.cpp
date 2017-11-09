@@ -84,6 +84,7 @@ int main(int argc, char *argv[])
     DFMGlobal::initDialogManager();
     DFMGlobal::initGvfsMountManager();
     DFMGlobal::initDeviceListener();
+    DFMGlobal::autoMountAllDisks();
 
     // Notify dde-desktop start up
     Dde::Session::RegisterDdeSession();

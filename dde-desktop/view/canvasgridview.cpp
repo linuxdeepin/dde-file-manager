@@ -514,7 +514,8 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
 //TODO:            appController->actionHelp(fmevent);
             return;
         case Qt::Key_F5:
-            model()->refresh();
+            model()->update();
+            update();
             return;
         case Qt::Key_Delete:
             if (canDeleted && !selectUrlsMap.contains(rootUrl.toString()) && !selectUrls.isEmpty()) {
@@ -1690,6 +1691,13 @@ void CanvasGridView::initConnection()
             filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System;
         }
         model()->setFilters(filters);
+    });
+
+    /*update model and view when mount added*/
+    connect(d->fileViewHelper, &CanvasViewHelper::mount_added, this , [=](const QDiskInfo& diskInfo){
+        Q_UNUSED(diskInfo)
+        model()->update();
+        update();
     });
 }
 

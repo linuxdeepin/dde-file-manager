@@ -118,8 +118,6 @@ public:
     bool getAutoMountSwitch() const;
     void setAutoMountSwitch(bool autoMountSwitch);
 
-    void autoMountAllDisks();
-
 signals:
     void loadDiskInfoFinished();
     void drive_connected(const QDrive& drive);
@@ -141,6 +139,7 @@ public slots:
     void getMounts(GList *mounts);
 
     void listMountsBylsblk();
+    void autoMountAllDisks();
 
 private:
     GVolumeMonitor* m_gVolumeMonitor = NULL;
