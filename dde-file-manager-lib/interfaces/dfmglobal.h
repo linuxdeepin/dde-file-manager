@@ -254,6 +254,8 @@ public:
     static void initGlobalSettings();
     static void initViewStatesManager();
 
+    static void autoMountAllDisks();
+
     static QString getUser();
     static int getUserId();
     static bool isRootUser();
