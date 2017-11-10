@@ -314,12 +314,12 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="472"/>
         <source>This action cannot be restored</source>
-        <translation>Esta acción no se puede restaurar</translation>
+        <translation>Esta acción no se puede deshacer</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="485"/>
         <source>Sorry, unable to locate your bookmark directory, remove it?</source>
-        <translation>Los sentimos, no se pudo localizar tu directorio favorito ¿desea quitarlo?</translation>
+        <translation>Los sentimos, no se pudo localizar tu directorio del marcador ¿desea quitarlo?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="487"/>
@@ -329,7 +329,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="625"/>
         <source>Disk file is being used, can not unmount now</source>
-        <translation>Archivo de disco esta siendo usado, no puede desmontar ahora</translation>
+        <translation>Se está usando el disco, no puede ser desmontado ahora</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="626"/>
@@ -400,7 +400,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="874"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/floder(s)!</source>
-        <translation>Lo sentimos, no tiene permiso para operar en lo siguiente %1 archivo/carpeta(s)!</translation>
+        <translation>Lo sentimos, ¡no tienes permiso para operar en lo siguiente %1 archivo/carpeta(s)!</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="902"/>
@@ -410,7 +410,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="936"/>
         <source>Mount partition%1 to be read only</source>
-        <translation>Monte la partición% 1 para solo leerla</translation>
+        <translation>Monte la partición %1 para solo lectura</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="940"/>
@@ -425,17 +425,17 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="950"/>
         <source>1. Reboot to enter Windows</source>
-        <translation>1. Reiniciar para ingresar a Windows</translation>
+        <translation>1. Reinicie para ingresar a Windows</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="951"/>
         <source>2. Select Reboot</source>
-        <translation>2. Seleccione reiniciar</translation>
+        <translation>2. Seleccione Reiniciar</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="952"/>
         <source>3. Reboot and enter deepin</source>
-        <translation>3. Reiniciar e ingresar a deepin</translation>
+        <translation>3. Reinicie e ingrese a deepin</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="969"/>
@@ -514,17 +514,17 @@
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="624"/>
         <source>%1 m %2 s</source>
-        <translation>%1 minutos %2 segundos</translation>
+        <translation>%1 m %2 s</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="630"/>
         <source>%1 h %2 m %3 s</source>
-        <translation>%1 horas %2 minutos %3 segundos</translation>
+        <translation>%1 h %2 m %3 s</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="639"/>
         <source>%1 d %2 h %3 m %4 s</source>
-        <translation>%1 días %2 horas %3 minutos %4 segundos</translation>
+        <translation>%1 d %2 h %3 m %4 s</translation>
     </message>
 </context>
 <context>
@@ -1112,7 +1112,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="687"/>
         <source>Copy</source>
-        <translation>Copiar</translation>
+        <translation>Copia</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="688"/>
@@ -1405,7 +1405,7 @@
         <location filename="../configure/dfmconfigdict.cpp" line="7"/>
         <location filename="../dialogs/dfmsettingdialog.cpp" line="66"/>
         <source>Open after auto mount</source>
-        <translation type="unfinished"/>
+        <translation>Abrir después de montar automáticamente</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="28"/>

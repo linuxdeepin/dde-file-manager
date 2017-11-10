@@ -1405,7 +1405,7 @@
         <location filename="../configure/dfmconfigdict.cpp" line="7"/>
         <location filename="../dialogs/dfmsettingdialog.cpp" line="66"/>
         <source>Open after auto mount</source>
-        <translation type="unfinished"/>
+        <translation>Odpri po samodejni priklopitvi</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="28"/>

@@ -119,7 +119,7 @@
     <message>
         <location filename="../views/dfileview.cpp" line="2319"/>
         <source>(Reverse)</source>
-        <translation type="unfinished"/>
+        <translation>(Reverzné)</translation>
     </message>
 </context>
 <context>
@@ -1230,7 +1230,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="734"/>
         <source>Source path</source>
-        <translation type="unfinished"/>
+        <translation>Zdrojová cesta</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="736"/>
@@ -1405,7 +1405,7 @@
         <location filename="../configure/dfmconfigdict.cpp" line="7"/>
         <location filename="../dialogs/dfmsettingdialog.cpp" line="66"/>
         <source>Open after auto mount</source>
-        <translation type="unfinished"/>
+        <translation>Otvoriť po automatickom pripojení</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="28"/>
