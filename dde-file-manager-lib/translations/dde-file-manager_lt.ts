@@ -349,7 +349,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="655"/>
         <source>Do you want to delete this shortcut？</source>
-        <translation>Ar norite ištrinti šią trumpinį?</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="684"/>
@@ -384,7 +384,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="819"/>
         <source>Target file removed or location changed</source>
-        <translation type="unfinished"/>
+        <translation>Paskirties failas pašalintas arba pakeista vieta</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="821"/>
@@ -395,12 +395,12 @@
         <location filename="../dialogs/dialogmanager.cpp" line="833"/>
         <location filename="../dialogs/dialogmanager.cpp" line="854"/>
         <source>You do not have permission to operate file/folder!</source>
-        <translation type="unfinished"/>
+        <translation>Jūs neturite leidimo dirbti su failu/aplanku!</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="874"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/floder(s)!</source>
-        <translation type="unfinished"/>
+        <translation>Atleiskite, jūs neturite leidimo dirbti su šiuo %1 failu/aplanku(-ais)!</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="902"/>
@@ -410,7 +410,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="936"/>
         <source>Mount partition%1 to be read only</source>
-        <translation type="unfinished"/>
+        <translation>Prijungti skaidinį %1 kaip skirtą tik skaitymui</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="940"/>
@@ -1070,7 +1070,7 @@
     <message>
         <location filename="../dialogs/filepreviewdialog.cpp" line="192"/>
         <source>Items: %1</source>
-        <translation type="unfinished"/>
+        <translation>Elementai: %1</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="674"/>
@@ -1362,7 +1362,7 @@
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="21"/>
         <source>Default view:</source>
-        <translation type="unfinished"/>
+        <translation>Numatytasis rodinys:</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="24"/>
@@ -1393,7 +1393,7 @@
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="57"/>
         <source>Restore Defaults</source>
-        <translation type="unfinished"/>
+        <translation>Atkurti numatytuosius</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="27"/>
@@ -1405,7 +1405,7 @@
         <location filename="../configure/dfmconfigdict.cpp" line="7"/>
         <location filename="../dialogs/dfmsettingdialog.cpp" line="66"/>
         <source>Open after auto mount</source>
-        <translation type="unfinished"/>
+        <translation>Automatiškai prijungus, atverti</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="28"/>
@@ -1558,13 +1558,13 @@
         <location filename="../configure/dfmconfigdict.cpp" line="22"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="728"/>
         <source>Icon</source>
-        <translation>Piktogramas</translation>
+        <translation>Piktogramos</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="23"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="729"/>
         <source>List</source>
-        <translation>Sąrašą</translation>
+        <translation>Sąrašas</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="730"/>
@@ -1631,7 +1631,7 @@
     <message>
         <location filename="../interfaces/dfileservices.cpp" line="614"/>
         <source>Shortcut</source>
-        <translation>Trumpinys</translation>
+        <translation>Šaukinys</translation>
     </message>
     <message>
         <location filename="../interfaces/dfileservices.cpp" line="492"/>
@@ -1735,7 +1735,7 @@
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="134"/>
         <location filename="../views/drenamebar.cpp" line="226"/>
         <source>Replace Text</source>
-        <translation type="unfinished"/>
+        <translation>Pakeisti tekstą</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="134"/>
@@ -1747,7 +1747,7 @@
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="134"/>
         <location filename="../views/drenamebar.cpp" line="226"/>
         <source>Custom Text</source>
-        <translation type="unfinished"/>
+        <translation>Tinkintas tekstas</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="140"/>
@@ -1763,7 +1763,7 @@
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="163"/>
         <location filename="../views/drenamebar.cpp" line="243"/>
         <source>Optional</source>
-        <translation type="unfinished"/>
+        <translation>Nebūtina</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="180"/>
@@ -1794,7 +1794,7 @@
         <location filename="../views/drenamebar.cpp" line="268"/>
         <location filename="../views/drenamebar.cpp" line="278"/>
         <source>Required</source>
-        <translation type="unfinished"/>
+        <translation>Būtina</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="201"/>
@@ -1841,7 +1841,7 @@
     <message>
         <location filename="../views/drenamebar.cpp" line="284"/>
         <source>Tips: Sort by selected file order</source>
-        <translation type="unfinished"/>
+        <translation>Patarimai: Rikiuoti pagal pasirinktą failų tvarką</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="372"/>
@@ -1852,12 +1852,12 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1116"/>
         <source>Rename %1 Files</source>
-        <translation type="unfinished"/>
+        <translation>Pervadinti %1 failų(-us)</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="127"/>
         <source>Multiple Files</source>
-        <translation type="unfinished"/>
+        <translation>Keli failai</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="136"/>
@@ -1867,7 +1867,7 @@
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="144"/>
         <source>Total size</source>
-        <translation type="unfinished"/>
+        <translation>Bendras dydis</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="145"/>
@@ -1877,17 +1877,17 @@
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="145"/>
         <source>%1 file(s), %2 folder(s)</source>
-        <translation type="unfinished"/>
+        <translation>%1 failų(-ai), %2 aplankų(-ai)</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="150"/>
         <source>Access time</source>
-        <translation type="unfinished"/>
+        <translation>Prieigos laikas</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="151"/>
         <source>Modify time</source>
-        <translation type="unfinished"/>
+        <translation>Modifikavimo laikas</translation>
     </message>
 </context>
 <context>

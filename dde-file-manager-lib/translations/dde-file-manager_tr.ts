@@ -1180,7 +1180,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="704"/>
         <source>Empty Trash</source>
-        <translation>Çöp Kutusunu Boşalt</translation>
+        <translation>Çöp kutusunu boşalt</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="705"/>
@@ -1405,7 +1405,7 @@
         <location filename="../configure/dfmconfigdict.cpp" line="7"/>
         <location filename="../dialogs/dfmsettingdialog.cpp" line="66"/>
         <source>Open after auto mount</source>
-        <translation type="unfinished"/>
+        <translation>Otomatik bağladıktan sonra aç</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="28"/>
