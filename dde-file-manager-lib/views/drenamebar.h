@@ -35,7 +35,7 @@ private:
     QPair<QString, QString> m_patternFirst{};
     QPair<QString, DFileService::AddTextFlags> m_patternSecond{};
     QPair<QString, QString> m_patternThird{};
-    std::array<bool, 3> m_buttonStateInThreePattern{false};
+    std::array<bool, 3> m_buttonStateInThreePattern{{false}};
     std::size_t m_currentPattern{ 0 };
     QList<DUrl> m_selectedUrls{};
     std::atomic<bool> m_visible{ false };
