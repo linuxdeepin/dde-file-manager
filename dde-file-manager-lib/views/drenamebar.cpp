@@ -163,7 +163,7 @@ public:
     QComboBox* m_comboBox{ nullptr };
     QFrame* m_frame{ nullptr };
     QStackedWidget* m_stackWidget{ nullptr };
-    QArray<3> m_renameButtonStates{false};  //###: this is a array for recording the state of rename button in current pattern.
+    QArray<3> m_renameButtonStates{{false}};  //###: this is a array for recording the state of rename button in current pattern.
     std::size_t m_currentPattern{0};               //###: this number record current pattern.
     QList<DUrl> m_urlList{};                      //###: this list stores the url of file which is waiting to be modified!
     DFileService::AddTextFlags m_flag{ DFileService::AddTextFlags::Before }; //###: the loacation of text should be added.

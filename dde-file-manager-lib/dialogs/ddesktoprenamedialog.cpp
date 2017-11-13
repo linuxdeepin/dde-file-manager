@@ -68,7 +68,7 @@ public:
     QVBoxLayout* m_mainLayout{ nullptr };
     QFrame* m_mainFrame{ nullptr };
     std::size_t m_currentmode{ 0 };      //###: reocord current mode.
-    std::array<bool, 3>  m_currentEnabled{ false }; //###: this array record current status of renamebutton at current mode.
+    std::array<bool, 3>  m_currentEnabled{{ false }}; //###: this array record current status of renamebutton at current mode.
     DFileService::AddTextFlags m_flagForAdding{ DFileService::AddTextFlags::Before }; //###: this flag is useful in mode 2. It record what to append str to name.
 };
 
