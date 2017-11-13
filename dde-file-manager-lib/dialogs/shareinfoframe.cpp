@@ -142,6 +142,14 @@ bool ShareInfoFrame::doShareInfoSetting()
         return DFileService::instance()->unShareFolder(this, m_fileinfo->fileUrl());
     }
 
+    if (m_permissoComBox->currentIndex() == 0 && m_anonymityCombox->currentIndex() != 0){
+        QString cmd = "chmod";
+        QStringList args;
+        args << "777" << m_fileinfo->fileUrl().toLocalFile();
+        QProcess::startDetached(cmd, args);
+        qDebug() << cmd << args;
+    }
+
     bool ret = DFileService::instance()->shareFolder(this, m_fileinfo->fileUrl(), m_shareNamelineEdit->text(),
                                           m_permissoComBox->currentIndex() == 0,
                                           m_anonymityCombox->currentIndex() != 0);
