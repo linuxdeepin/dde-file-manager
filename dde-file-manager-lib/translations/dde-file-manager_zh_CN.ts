@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>CloseAllDialogIndicator</name>
     <message>
@@ -402,12 +400,12 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="873"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
-        <translation type="unfinished"></translation>
+        <translation>抱歉，您没有权限操作以下%1个文件/文件夹</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1149"/>
         <source>Share folder can&apos;t be named after the current username</source>
-        <translation type="unfinished"></translation>
+        <translation>共享文件夹不能和当前用户名重名</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="901"/>

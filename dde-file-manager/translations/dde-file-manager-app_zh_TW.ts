@@ -4,7 +4,7 @@
     <message>
         <location filename="../main.cpp" line="113"/>
         <source>Deepin File Manager</source>
-        <translation>Deepin 檔案</translation>
+        <translation>深度檔案</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="118"/>
