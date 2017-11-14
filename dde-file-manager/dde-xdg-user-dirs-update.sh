@@ -1,29 +1,33 @@
 #!/bin/bash
 
-DIRS=(DESKTOP DOWNLOAD TEMPLATES PUBLICSHARE DOCUMENTS PICTURES MUSIC VIDEOS)
-dirnames=(Desktop Downloads Templates Public Documents Pictures Music videos)
+declare -A XDG_USER_DIRS_TABLE=(
+    ["DESKTOP"]="Desktop"
+    ["DOCUMENTS"]="Documents"
+    ["DOWNLOAD"]="Downloads"
+    ["MUSIC"]="Music"
+    ["PICTURES"]="Pictures"
+    ["VIDEOS"]="Videos"
+    ["PUBLICSHARE"]=".Public"
+    ["TEMPLATES"]=".Templates"
+)
 
-i=0
-for item in "${DIRS[@]}"; do
-    dir=$(xdg-user-dir $item)
-    # echo $item
-    # echo ~/${dirnames[i]}
-    if [[ $dir == $HOME/ ]]; then
-        xdg-user-dirs-update --set $item  ~/${dirnames[i]}
-        mkdir -p ~/${dirnames[i]}
-    fi
-
-    if [[ "$item" = "TEMPLATES" ]]; then
-        # echo $dir, $HOME/.${dirnames[i]}
-        mv $dir $HOME/.${dirnames[i]}
-        xdg-user-dirs-update --set $item  ~/.${dirnames[i]}
-    fi
-
-    if [[ "$item" = "PUBLICSHARE" ]]; then
-        # echo $dir, $HOME/.${dirnames[i]}
-        mv $dir $HOME/.${dirnames[i]}
-        xdg-user-dirs-update --set $item  ~/.${dirnames[i]}
-    fi
-
-    i=$i+1
+for item in ${!XDG_USER_DIRS_TABLE[@]}; do
+    xdg_dir_old=$(xdg-user-dir $item)
+    xdg_dir_new="$HOME/${XDG_USER_DIRS_TABLE[$item]}"
+    case $item in
+        TEMPLATES | PUBLICSHARE )
+            if [[ "$xdg_dir_old" != "$HOME" ]] &&\
+            [[ "$xdg_dir_old" != "$xdg_dir_new" ]] &&\
+            [[ -d "$xdg_dir_old" ]]; then
+                mv "$xdg_dir_old" "$xdg_dir_new"
+                xdg-user-dirs-update --set $item "$xdg_dir_new"
+            fi
+        ;;
+        * )
+            if [[  "$xdg_dir_old" = "$HOME" ]]; then
+                [[ -d "$xdg_dir_new" ]] || mkdir -p "$xdg_dir_new"
+                xdg-user-dirs-update --set $item "$xdg_dir_new"
+            fi
+        ;;
+    esac
 done
