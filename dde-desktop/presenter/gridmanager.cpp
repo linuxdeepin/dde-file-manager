@@ -197,6 +197,33 @@ public:
         return true;
     }
 
+    inline void syncProfile()
+    {
+        QStringList keyList;
+        QVariantList valueList;
+        for (auto pos : m_gridItems.keys()) {
+            keyList << positionKey(pos);
+            valueList << m_gridItems.value(pos);
+        }
+
+        if (m_gridItems.size() != m_itemGrids.size()) {
+            qCritical() << "data sync failed";
+            qCritical() << "-----------------------------";
+            qCritical() << m_gridItems << m_itemGrids << keyList;
+            qCritical() << "-----------------------------";
+        }
+
+        if (keyList.size() != m_gridItems.size()) {
+            qCritical() << "data sync failed";
+            qCritical() << "-----------------------------";
+            qCritical() << m_gridItems << m_itemGrids << keyList;
+            qCritical() << "-----------------------------";
+        }
+
+        emit Presenter::instance()->removeConfig(positionProfile, "");
+        emit Presenter::instance()->setConfigList(positionProfile, keyList, valueList);
+    }
+
     inline bool remove(QPoint pos, const QString &id)
     {
         if (!m_itemGrids.contains(id)) {
@@ -399,7 +426,8 @@ public:
                 valueList << m_gridItems.value(pos);
             }
 
-//            qDebug() << keyList;
+            qDebug() << "updateGridProfile:" << keyList.size()
+                     << m_gridItems.size() << m_itemGrids.size();
 
             emit Presenter::instance()->removeConfig(positionProfile, "");
             emit Presenter::instance()->setConfigList(positionProfile, keyList, valueList);
@@ -456,7 +484,7 @@ bool GridManager::add(QPoint pos, const QString &id)
 {
     auto ret = d->add(pos, id);
     if (ret) {
-        emit Presenter::instance()->setConfig(d->positionProfile, positionKey(pos), id);
+        d->syncProfile();
     }
     return ret;
 }
@@ -557,12 +585,7 @@ bool GridManager::remove(QPoint pos, const QString &id)
 {
     auto ret = d->remove(pos, id);
     if (ret) {
-        auto newItemId = d->m_gridItems.value(pos);
-        if (newItemId.isEmpty()) {
-            emit Presenter::instance()->removeConfig(d->positionProfile, positionKey(pos));
-        } else {
-            emit Presenter::instance()->setConfig(d->positionProfile, positionKey(pos), newItemId);
-        }
+        d->syncProfile();
     }
     return ret;
 }
