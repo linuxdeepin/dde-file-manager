@@ -1184,9 +1184,17 @@ bool CanvasGridView::setRootUrl(const DUrl &url)
     this, [ = ](const DUrl & fromUrl, const DUrl & toUrl) {
         if (!GridManager::instance()->autoAlign()) {
             auto oldLocalFile = fromUrl.toLocalFile();
-            auto oldPos = GridManager::instance()->position(oldLocalFile);
-            GridManager::instance()->remove(oldLocalFile);
-            GridManager::instance()->add(oldPos, toUrl.toLocalFile());
+            auto newLoaclFile = toUrl.toLocalFile();
+
+            QPoint oldPos;
+            if (GridManager::instance()->contains(oldLocalFile)) {
+                oldPos = GridManager::instance()->position(oldLocalFile);
+                GridManager::instance()->remove(oldLocalFile);
+            }
+
+            if (!GridManager::instance()->contains(newLoaclFile)) {
+                GridManager::instance()->add(oldPos, newLoaclFile);
+            }
         }
     });
     dfw->startWatcher();
