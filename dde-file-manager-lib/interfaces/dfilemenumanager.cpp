@@ -926,6 +926,10 @@ void DFileMenuManager::actionTriggered(QAction *action)
 
 #ifdef SW_LABEL
         if (DFileMenuData::actionIDs.contains(type)){
+            const QSharedPointer<DFMMenuActionEvent> &menuActionEvent = menu->makeEvent(type);
+            DFMEvent event;
+            event.setWindowId(menuActionEvent->windowId());
+            event.setData(menuActionEvent->fileUrl());
             QMetaObject::invokeMethod(appController,
                                       "actionByIds",
                                       Qt::DirectConnection,
