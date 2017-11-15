@@ -410,7 +410,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="901"/>
         <source>View</source>
-        <translation type="unfinished"/>
+        <translation>Nézet</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="935"/>
