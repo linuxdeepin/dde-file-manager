@@ -119,7 +119,7 @@
     <message>
         <location filename="../views/dfileview.cpp" line="2319"/>
         <source>(Reverse)</source>
-        <translation type="unfinished"/>
+        <translation>(Inverse)</translation>
     </message>
 </context>
 <context>
@@ -400,12 +400,12 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="873"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
-        <translation type="unfinished"/>
+        <translation>Désolé, vous n&apos;êtes pas autorisé à utiliser le fichier(s)/dossier(s) suivant!</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1149"/>
         <source>Share folder can&apos;t be named after the current username</source>
-        <translation type="unfinished"/>
+        <translation>Le dossier partagé ne peut pas être nommé après le nom d&apos;utilisateur actuel.</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="901"/>
@@ -415,32 +415,32 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="935"/>
         <source>Mount partition%1 to be read only</source>
-        <translation type="unfinished"/>
+        <translation>Monter la partition%1 en mode lecture seule</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="939"/>
         <source>Disks in Windows will be unable to read and write normally if check &quot;Turn on fast startup (recommended)&quot; in Shutdown settings</source>
-        <translation type="unfinished"/>
+        <translation>Les disques dans Windows ne pourront pas être lus et écrits normalement si vous avez coché &quot;Activer le démarrage rapide (recommandé)&quot; dans les paramètres d&apos;arrêt.</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="943"/>
         <source>Please restore by the following steps to normally access Windows disk</source>
-        <translation type="unfinished"/>
+        <translation>Veuillez restaurer selon les étapes suivantes afin d&apos;accéder normalement aux disques dans Windows.</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="949"/>
         <source>1. Reboot to enter Windows</source>
-        <translation type="unfinished"/>
+        <translation>1. Redémarrez dans Windows</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="950"/>
         <source>2. Select Reboot</source>
-        <translation type="unfinished"/>
+        <translation>2. Sélectionnez &quot;Redémarrer&quot; dans les options d&apos;alimentation.</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="951"/>
         <source>3. Reboot and enter deepin</source>
-        <translation type="unfinished"/>
+        <translation>1. Redémarrez dans deepin</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="968"/>
@@ -1405,7 +1405,7 @@
         <location filename="../configure/dfmconfigdict.cpp" line="7"/>
         <location filename="../dialogs/dfmsettingdialog.cpp" line="66"/>
         <source>Open after auto mount</source>
-        <translation type="unfinished"/>
+        <translation>Ouvrir après monter automatiquement</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="28"/>

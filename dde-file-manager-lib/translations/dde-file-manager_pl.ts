@@ -119,7 +119,7 @@
     <message>
         <location filename="../views/dfileview.cpp" line="2319"/>
         <source>(Reverse)</source>
-        <translation type="unfinished"/>
+        <translation>(Odwróć)</translation>
     </message>
 </context>
 <context>
@@ -410,12 +410,12 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="901"/>
         <source>View</source>
-        <translation type="unfinished"/>
+        <translation>Podgląd</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="935"/>
         <source>Mount partition%1 to be read only</source>
-        <translation type="unfinished"/>
+        <translation>Zamontuj partycję %1 jako tylko do odczytu</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="939"/>
@@ -430,22 +430,22 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="949"/>
         <source>1. Reboot to enter Windows</source>
-        <translation type="unfinished"/>
+        <translation>1. Uruchom komputer, aby wejść do Windowsa</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="950"/>
         <source>2. Select Reboot</source>
-        <translation type="unfinished"/>
+        <translation>2. Wybierz rozruch</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="951"/>
         <source>3. Reboot and enter deepin</source>
-        <translation type="unfinished"/>
+        <translation>3. Uruchom komputer i wejść do Deepin</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="968"/>
         <source>Reboot</source>
-        <translation type="unfinished"/>
+        <translation>Uruchomienie</translation>
     </message>
 </context>
 <context>
@@ -1055,22 +1055,22 @@
         <location filename="../dialogs/filepreviewdialog.cpp" line="186"/>
         <location filename="../dialogs/filepreviewdialog.cpp" line="212"/>
         <source>Size: %1</source>
-        <translation type="unfinished"/>
+        <translation>Rozmiar: %1</translation>
     </message>
     <message>
         <location filename="../dialogs/filepreviewdialog.cpp" line="187"/>
         <source>Type: %1</source>
-        <translation type="unfinished"/>
+        <translation>Rodzaj: %1</translation>
     </message>
     <message>
         <location filename="../dialogs/filepreviewdialog.cpp" line="191"/>
         <source>Size: 0</source>
-        <translation type="unfinished"/>
+        <translation>Rozmiar: 0</translation>
     </message>
     <message>
         <location filename="../dialogs/filepreviewdialog.cpp" line="192"/>
         <source>Items: %1</source>
-        <translation type="unfinished"/>
+        <translation>Elementy: %1</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="674"/>
@@ -1230,7 +1230,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="734"/>
         <source>Source path</source>
-        <translation type="unfinished"/>
+        <translation>Ścieżka źródłowa</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="736"/>
@@ -1362,7 +1362,7 @@
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="21"/>
         <source>Default view:</source>
-        <translation type="unfinished"/>
+        <translation>Domyślny widok:</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="24"/>
@@ -1405,7 +1405,7 @@
         <location filename="../configure/dfmconfigdict.cpp" line="7"/>
         <location filename="../dialogs/dfmsettingdialog.cpp" line="66"/>
         <source>Open after auto mount</source>
-        <translation type="unfinished"/>
+        <translation>Otwórz po automatycznym zamontowaniu</translation>
     </message>
     <message>
         <location filename="../configure/dfmconfigdict.cpp" line="28"/>
@@ -1763,7 +1763,7 @@
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="163"/>
         <location filename="../views/drenamebar.cpp" line="243"/>
         <source>Optional</source>
-        <translation type="unfinished"/>
+        <translation>Opcjonalne</translation>
     </message>
     <message>
         <location filename="../dialogs/ddesktoprenamedialog.cpp" line="180"/>
@@ -1811,27 +1811,27 @@
     <message>
         <location filename="../views/drenamebar.cpp" line="233"/>
         <source>Find</source>
-        <translation type="unfinished"/>
+        <translation>Znajdź</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="242"/>
         <source>Replace</source>
-        <translation type="unfinished"/>
+        <translation>Zastąp</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="251"/>
         <source>Add</source>
-        <translation type="unfinished"/>
+        <translation>Dodaj</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="260"/>
         <source>Location</source>
-        <translation type="unfinished"/>
+        <translation>Położenie</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="267"/>
         <source>File name</source>
-        <translation type="unfinished"/>
+        <translation>Nazwa pliku</translation>
     </message>
     <message>
         <location filename="../views/drenamebar.cpp" line="276"/>
@@ -1862,32 +1862,32 @@
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="136"/>
         <source>Basic info</source>
-        <translation type="unfinished"/>
+        <translation>Podstawowe informacje</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="144"/>
         <source>Total size</source>
-        <translation type="unfinished"/>
+        <translation>Całkowity rozmiar</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="145"/>
         <source>Number of files</source>
-        <translation type="unfinished"/>
+        <translation>Liczba plików</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="145"/>
         <source>%1 file(s), %2 folder(s)</source>
-        <translation type="unfinished"/>
+        <translation>%1 plik(ów), %2 katalog(ów)</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="150"/>
         <source>Access time</source>
-        <translation type="unfinished"/>
+        <translation>Czas dostępu</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="151"/>
         <source>Modify time</source>
-        <translation type="unfinished"/>
+        <translation>Czas modyfikacji</translation>
     </message>
 </context>
 <context>
