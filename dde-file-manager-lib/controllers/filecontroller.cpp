@@ -136,7 +136,7 @@ bool FileController::openFile(const QSharedPointer<DFMOpenFileEvent> &event) con
 
 bool FileController::openFileByApp(const QSharedPointer<DFMOpenFileByAppEvent> &event) const
 {
-    return FileUtils::openFileByApp(event->url().toLocalFile(), event->appName());
+    return FileUtils::openFileByApp(event->appName(), event->url().toString());
 }
 
 bool FileController::compressFiles(const QSharedPointer<DFMCompressEvnet> &event) const

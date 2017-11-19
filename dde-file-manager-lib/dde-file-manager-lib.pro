@@ -134,7 +134,6 @@ HEADERS += \
     gvfs/secretmanager.h \
     models/networkfileinfo.h \
     controllers/networkcontroller.h \
-    dialogs/openwithotherdialog.h \
     dialogs/trashpropertydialog.h \
     views/dbookmarkmountedindicatoritem.h \
     controllers/jobcontroller.h \
@@ -282,7 +281,6 @@ SOURCES += \
     gvfs/secretmanager.cpp \
     models/networkfileinfo.cpp \
     controllers/networkcontroller.cpp \
-    dialogs/openwithotherdialog.cpp \
     dialogs/trashpropertydialog.cpp \
     views/dbookmarkmountedindicatoritem.cpp \
     controllers/jobcontroller.cpp \

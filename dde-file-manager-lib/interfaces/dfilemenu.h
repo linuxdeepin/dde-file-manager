@@ -40,11 +40,15 @@ public:
 
     quint64 eventId() const;
 
+    QSet<DFMGlobal::MenuAction> ignoreMenuActions() const;
+    void setIgnoreMenuActions(const QSet<DFMGlobal::MenuAction> &ignoreMenuActions);
+
 private:
     DUrl m_currentUrl;
     DUrlList m_selectedUrls;
     quint64 m_eventId = 0;
     const QObject *m_sender = Q_NULLPTR;
+    QSet<DFMGlobal::MenuAction> m_ignoreMenuActions; //Don't handle MenuAction list in libdde-file-manager in m_ignoreMenuActions;
 };
 
 #endif // DFILEMENU_H
