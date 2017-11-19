@@ -914,6 +914,10 @@ void DFileMenuManager::actionTriggered(QAction *action)
         if (type >= MenuAction::UserMenuAction)
             return;
 
+        if (menu->ignoreMenuActions().contains(type)){
+            return;
+        }
+
         QAction* typeAction = DFileMenuData::actions.value(type);
         qDebug() << typeAction << action;
         if (typeAction){

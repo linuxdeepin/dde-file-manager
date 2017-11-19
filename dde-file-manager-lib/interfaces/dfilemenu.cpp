@@ -64,3 +64,13 @@ quint64 DFileMenu::eventId() const
 {
     return m_eventId;
 }
+
+QSet<DFMGlobal::MenuAction> DFileMenu::ignoreMenuActions() const
+{
+    return m_ignoreMenuActions;
+}
+
+void DFileMenu::setIgnoreMenuActions(const QSet<DFMGlobal::MenuAction> &ignoreMenuActions)
+{
+    m_ignoreMenuActions = ignoreMenuActions;
+}

@@ -797,7 +797,7 @@ bool DFileSystemModel::dropMimeData(const QMimeData *data, Qt::DropAction action
     } else if(DFMGlobal::isComputerDesktopFile(toUrl)) {
          return true;
     } else if (DFMGlobal::isDesktopFile(toUrl)) {
-         return FileUtils::openDesktopFileWithParams(toUrl.path(), urlList);
+         return FileUtils::launchApp(toUrl.toLocalFile(), DUrl::toStringList(urlList));
     }
 
     switch (action) {

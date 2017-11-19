@@ -504,8 +504,8 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
         case Qt::Key_Return:
         case Qt::Key_Enter:
             if (!itemDelegate()->editingIndex().isValid()) {
-                for (auto const &value : selectUrlsMap) {
-                    DFileService::instance()->openFile(this, value);
+                for (const DUrl& url : selectUrlsMap) {
+                    openUrl(url);
                 }
                 return;
             }
@@ -1089,6 +1089,11 @@ double CanvasGridView::dodgeDuration() const
     return d->dodgeDuration;
 }
 
+void CanvasGridView::openUrl(const DUrl &url)
+{
+    DFileService::instance()->openFile(this, url);
+}
+
 bool CanvasGridView::setCurrentUrl(const DUrl &url)
 {
     DUrl fileUrl = url;
@@ -1664,13 +1669,7 @@ void CanvasGridView::initConnection()
     connect(this, &CanvasGridView::doubleClicked,
     this, [this](const QModelIndex & index) {
         DUrl url = model()->getUrlByIndex(index);
-
-        QFileInfo info(url.toLocalFile());
-        if (info.isDir()) {
-            QProcess::startDetached("gvfs-open", QStringList() << url.toLocalFile());
-        } else {
-            DFileService::instance()->openFile(this, url);
-        }
+        openUrl(url);
     }, Qt::QueuedConnection);
 
 
@@ -2166,6 +2165,10 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
     //totally use dde file manager libs for menu actions
     auto *menu = DFileMenuManager::createNormalMenu(info->fileUrl(), list, disableList, unusedList, winId());
 
+    QSet<MenuAction> ignoreActions;
+    ignoreActions  << MenuAction::Open;
+    menu->setIgnoreMenuActions(ignoreActions);
+
     if (!menu) {
         return;
     }
@@ -2193,10 +2196,7 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
         case MenuAction::Open: {
             // TODO: Workaround
             for (auto &url : list) {
-                const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, url);
-                if (fileInfo && fileInfo->isDir()) {
-                    QProcess::startDetached("gvfs-open", QStringList() << url.toString());
-                }
+                openUrl(url);
             }
         }
         break;

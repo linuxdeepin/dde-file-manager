@@ -60,9 +60,12 @@ public:
     static bool cpTemplateFileToTargetDir(const QString& targetdir, const QString& baseName, const QString& suffix);
 
     static bool openFile(const QString& filePath);
-    static bool openDesktopFile(const QString& filePath);
-    static bool openDesktopFileWithParams(const QString& filePath, const DUrlList &urlList);
-    static bool openFileByApp(const QString& filePath, const QString& app);
+    static bool launchApp(const QString& desktopFile, const QStringList& filePaths = {}); // open filePaths by desktopFile
+    static bool launchAppByDBus(const QString& desktopFile, const QStringList& filePaths = {});
+    static bool launchAppByGio(const QString& desktopFile, const QStringList& filePaths = {});
+
+    static bool openFileByApp(const QString& desktopFile, const QString& filePath);
+    static bool isFileManagerSelf(const QString& desktopFile);
 
     static bool setBackground(const QString& pictureFilePath);
 
@@ -78,6 +81,7 @@ public:
     static bool isExecutableScript(const QString& path);
     static bool openExcutableScriptFile(const QString& path, int flag);
     static bool openExcutableFile(const QString& path, int flag);
+    static bool runCommand(const QString& cmd, const QStringList& args);
 
     static QByteArray imageFormatName(QImage::Format f);
 
