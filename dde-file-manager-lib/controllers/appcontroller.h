@@ -21,6 +21,8 @@
 
 #include "subscriber.h"
 #include "dfmevent.h"
+#include "dbusinterface/startmanager_interface.h"
+#include "dbusinterface/introspectable_interface.h"
 
 
 class FileController;
@@ -134,10 +136,15 @@ private:
     void initConnect();
     void createGVfSManager();
     void createUserShareManager();
+    void createDBusInterface();
 
     QSharedPointer<DFMEvent> m_fmEvent;
     static QPair<DUrl, quint64> selectionAndRenameFile;        //###: for creating new file.
     static QPair<DUrl, quint64> selectionFile;                //###: rename a file which must be existance.
+
+    StartManagerInterface* m_startManagerInterface;
+    IntrospectableInterface* m_introspectableInterface;
+    bool m_hasLaunchAppInterface = false;
 
     friend class FileController;
     friend class DFileSystemModel;
@@ -150,6 +157,9 @@ public:
     static std::atomic<quint64> multiSelectionFilesCacheCounter;
     static std::atomic<bool> flagForDDesktopRenameBar;
 
+    StartManagerInterface *startManagerInterface() const;
+    bool hasLaunchAppInterface() const;
+    void setHasLaunchAppInterface(bool hasLaunchAppInterface);
 };
 
 #endif // APPCONTROLLER_H

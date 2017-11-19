@@ -94,6 +94,8 @@ public:
 
     double dodgeDuration() const;
 
+    void openUrl(const DUrl& url);
+
 signals:
     void sortRoleChanged(int role, Qt::SortOrder order);
     void autoAlignToggled();

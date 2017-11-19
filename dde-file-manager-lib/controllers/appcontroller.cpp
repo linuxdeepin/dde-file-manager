@@ -60,6 +60,7 @@
 #include <QAction>
 #include <DAboutDialog>
 #include <qprocess.h>
+#include <QtConcurrent>
 
 
 #include "shutil/shortcut.h"
@@ -770,6 +771,7 @@ AppController::AppController(QObject *parent) : QObject(parent)
 {
     createGVfSManager();
     createUserShareManager();
+    createDBusInterface();
     initConnect();
     registerUrlHandle();
 }
@@ -790,4 +792,45 @@ void AppController::createGVfSManager()
 void AppController::createUserShareManager()
 {
     userShareManager;
+}
+
+void AppController::createDBusInterface()
+{
+    m_startManagerInterface = new StartManagerInterface("com.deepin.SessionManager",
+                                                                                "/com/deepin/StartManager",
+                                                                                QDBusConnection::sessionBus(),
+                                                                                this);
+    m_introspectableInterface = new IntrospectableInterface("com.deepin.SessionManager",
+                                                                                "/com/deepin/StartManager",
+                                                                                QDBusConnection::sessionBus(),
+                                                                                this);
+
+    QtConcurrent::run(QThreadPool::globalInstance(), [&] {
+        QDBusPendingReply<QString> reply = m_introspectableInterface->Introspect();
+        reply.waitForFinished();
+        if (reply.isFinished()){
+            QString xmlCode = reply.argumentAt(0).toString();
+            if (xmlCode.contains("LaunchApp")){
+                qDebug() << "com.deepin.SessionManager : StartManager has LaunchApp interface";
+                setHasLaunchAppInterface(true);
+            }else{
+                qDebug() << "com.deepin.SessionManager : StartManager doesn't have LaunchApp interface";
+            }
+        }
+    });
+}
+
+void AppController::setHasLaunchAppInterface(bool hasLaunchAppInterface)
+{
+    m_hasLaunchAppInterface = hasLaunchAppInterface;
+}
+
+bool AppController::hasLaunchAppInterface() const
+{
+    return m_hasLaunchAppInterface;
+}
+
+StartManagerInterface *AppController::startManagerInterface() const
+{
+    return m_startManagerInterface;
 }

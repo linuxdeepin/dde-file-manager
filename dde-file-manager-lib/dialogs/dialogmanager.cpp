@@ -15,7 +15,6 @@
 
 #include "dialogmanager.h"
 #include "closealldialogindicator.h"
-#include "openwithotherdialog.h"
 #include "trashpropertydialog.h"
 #include "computerpropertydialog.h"
 #include "usersharepasswordsettingdialog.h"

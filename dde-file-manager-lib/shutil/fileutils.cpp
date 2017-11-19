@@ -26,6 +26,8 @@
 #include "dmimedatabase.h"
 #include "mimesappsmanager.h"
 #include "interfaces/dfmstandardpaths.h"
+#include "controllers/appcontroller.h"
+#include "dbusinterface/startmanager_interface.h"
 
 #include <QDirIterator>
 #include <QUrl>
@@ -40,6 +42,7 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QSettings>
+#include <QX11Info>
 
 #include <sys/vfs.h>
 
@@ -465,10 +468,30 @@ bool FileUtils::cpTemplateFileToTargetDir(const QString& targetdir, const QStrin
 
 bool FileUtils::openFile(const QString &filePath)
 {
+    bool result = false;
     if (QFileInfo(filePath).suffix() == "desktop"){
-        return FileUtils::openDesktopFile(filePath);
+        result = FileUtils::launchApp(filePath);
+        return result;
     }
-    qDebug() << mimeAppsManager->getDefaultAppByFileName(filePath);
+
+    QString mimetype = getFileMimetype(filePath);
+    QString defaultDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(mimetype);
+    if (isFileManagerSelf(defaultDesktopFile) && mimetype != "inode/directory"){
+        QStringList recommendApps = mimeAppsManager->getRecommendedApps(DUrl::fromLocalFile(filePath));
+        recommendApps.removeOne(defaultDesktopFile);
+        if (recommendApps.count() > 0){
+            defaultDesktopFile = recommendApps.first();
+        }else{
+            qDebug() << "no default application for" << filePath;
+            return false;
+        }
+    }
+
+    result = launchApp(defaultDesktopFile, QStringList() << DUrl::fromLocalFile(filePath).toString());
+    if (result){
+        return result;
+    }
+
     if (mimeAppsManager->getDefaultAppByFileName(filePath) == "org.gnome.font-viewer.desktop"){
         QProcess::startDetached("gvfs-open", QStringList() << filePath);
         QTimer::singleShot(200, [=]{
@@ -477,73 +500,62 @@ bool FileUtils::openFile(const QString &filePath)
         return true;
     }
 
-    bool result = QProcess::startDetached("gvfs-open", QStringList() << filePath);
+    result = QProcess::startDetached("gvfs-open", QStringList() << filePath);
 
     if (!result)
         return QDesktopServices::openUrl(QUrl::fromLocalFile(filePath));
     return result;
 }
 
-bool FileUtils::openDesktopFile(const QString &filePath)
+bool FileUtils::launchApp(const QString &desktopFile, const QStringList &filePaths)
 {
-
-    if (filePath.isEmpty()) {
-        qDebug() << "Failed to open desktop file with gio: desktop file path is empty";
-        return false;
+    if (isFileManagerSelf(desktopFile) && filePaths.count() > 1){
+        foreach(const QString& filePath, filePaths){
+            openFile(DUrl(filePath).toLocalFile());
+        }
+        return true;
     }
 
-    const auto stdPath = filePath.toStdString();
-    const char* cPath = stdPath.c_str();
-
-    GDesktopAppInfo* appInfo = g_desktop_app_info_new_from_filename(cPath);
-    if (!appInfo) {
-        qDebug() << "Failed to open desktop file with gio: g_desktop_app_info_new_from_filename returns NULL. Check PATH maybe?";
-        return false;
+    bool ok = launchAppByDBus(desktopFile, filePaths);
+    if (!ok){
+        ok = launchAppByGio(desktopFile, filePaths);
     }
-    GError* gError = nullptr;
-    const auto ok = g_app_info_launch_uris(reinterpret_cast<GAppInfo*>(appInfo), NULL, NULL, &gError);
-
-    if (gError) {
-        qWarning() << "Error when trying to open desktop file with gio:" << gError->message;
-        g_error_free(gError);
-    }
-
-    if (!ok) {
-        qWarning() << "Failed to open desktop file with gio: g_app_info_launch_uris returns false";
-    }
-    g_object_unref(appInfo);
-
     return ok;
 }
 
-bool FileUtils::openDesktopFileWithParams(const QString &filePath, const DUrlList& urlList)
+bool FileUtils::launchAppByDBus(const QString &desktopFile, const QStringList &filePaths)
 {
-    if (filePath.isEmpty()) {
-        qDebug() << "Failed to open desktop file with gio: desktop file path is empty";
-        return false;
+    if (appController->hasLaunchAppInterface()){
+        qDebug() << "launchApp by dbus:" << desktopFile << filePaths;
+        appController->startManagerInterface()->LaunchApp(desktopFile, QX11Info::getTimestamp(), filePaths);
+        return true;
     }
+    return false;
+}
 
-    std::string stdFilePath = filePath.toStdString();
+bool FileUtils::launchAppByGio(const QString &desktopFile, const QStringList &filePaths)
+{
+    qDebug() << "launchApp by gio:" << desktopFile << filePaths;
 
-    const char* cPath = stdFilePath.data();
+    std::string stdDesktopFilePath = desktopFile.toStdString();
+    const char* cDesktopPath = stdDesktopFilePath.data();
 
-    GDesktopAppInfo* appInfo = g_desktop_app_info_new_from_filename(cPath);
+    GDesktopAppInfo* appInfo = g_desktop_app_info_new_from_filename(cDesktopPath);
     if (!appInfo) {
         qDebug() << "Failed to open desktop file with gio: g_desktop_app_info_new_from_filename returns NULL. Check PATH maybe?";
         return false;
     }
 
-    GList* g_files = NULL;
-    GList* result_g_files = g_list_prepend(g_files, const_cast<char*>(cPath));
-    Q_UNUSED(result_g_files)
-    foreach (const DUrl& url, urlList) {
-        GFile* f = g_file_new_for_uri(url.toString().toUtf8());
+    GList* g_files = nullptr;
+    foreach (const QString& filePath, filePaths) {
+        std::string stdFilePath = filePath.toStdString();
+        const char* cFilePath = stdFilePath.data();
+        GFile* f = g_file_new_for_uri(cFilePath);
         g_files = g_list_append(g_files, f);
     }
 
     GError* gError = nullptr;
-
-    const auto ok = g_app_info_launch(reinterpret_cast<GAppInfo*>(appInfo), g_files, NULL, &gError);
+    gboolean ok = g_app_info_launch(reinterpret_cast<GAppInfo*>(appInfo), g_files, nullptr, &gError);
 
     if (gError) {
         qWarning() << "Error when trying to open desktop file with gio:" << gError->message;
@@ -554,41 +566,33 @@ bool FileUtils::openDesktopFileWithParams(const QString &filePath, const DUrlLis
         qWarning() << "Failed to open desktop file with gio: g_app_info_launch returns false";
     }
     g_object_unref(appInfo);
-
     g_list_free(g_files);
 
     return ok;
 }
 
-bool FileUtils::openFileByApp(const QString &filePath, const QString &app)
+bool FileUtils::openFileByApp(const QString& desktopFile, const QString& filePath)
 {
+    bool ok = false;
+
+    if (desktopFile.isEmpty()) {
+        qDebug() << "Failed to open desktop file with gio: app file path is empty";
+        return ok;
+    }
+
     if (filePath.isEmpty()) {
         qDebug() << "Failed to open desktop file with gio: file path is empty";
-        return false;
-    }
-    if (app.isEmpty()) {
-        qDebug() << "Failed to open desktop file with gio: app file path is empty";
-        return false;
+        return ok;
     }
 
-    qDebug() << filePath << app;
 
-    GDesktopAppInfo* appInfo = g_desktop_app_info_new_from_filename(app.toLocal8Bit().constData());
+    qDebug() << desktopFile << filePath;
+
+    GDesktopAppInfo* appInfo = g_desktop_app_info_new_from_filename(desktopFile.toLocal8Bit().constData());
     if (!appInfo) {
         qDebug() << "Failed to open desktop file with gio: g_desktop_app_info_new_from_filename returns NULL. Check PATH maybe?";
         return false;
     }
-
-    const auto stdFilePath = filePath.toStdString();
-    const char* cFilePath = stdFilePath.c_str();
-
-    GList files;
-    GFile* file = g_file_new_for_commandline_arg((gchar *)cFilePath);
-    files.data = file;
-    files.prev = files.next = NULL;
-
-    GError* gError = nullptr;
-    bool ok = false;
 
     QString terminalFlag = QString(g_desktop_app_info_get_string(appInfo, "Terminal"));
     if (terminalFlag == "true"){
@@ -598,20 +602,22 @@ bool FileUtils::openFileByApp(const QString &filePath, const QString &app)
         qDebug() << "/usr/bin/x-terminal-emulator" << args;
         ok = QProcess::startDetached("/usr/bin/x-terminal-emulator", args);
     }else{
-        ok = g_app_info_launch(reinterpret_cast<GAppInfo*>(appInfo), &files, NULL, &gError);
-
-        if (gError) {
-            qWarning() << "Error when trying to open desktop file with gio:" << gError->message;
-            g_error_free(gError);
-        }
-
-        if (!ok) {
-            qWarning() << "Failed to open desktop file with gio: g_app_info_launch_uris returns false";
-        }
+        QStringList filePaths;
+        filePaths << filePath;
+        ok = launchApp(desktopFile, filePaths);
     }
     g_object_unref(appInfo);
-    g_object_unref(file);
+
     return ok;
+}
+
+bool FileUtils::isFileManagerSelf(const QString &desktopFile)
+{
+    /*
+     *  return true if exec field contains dde-file-manager/file-manager.sh of dde-file-manager desktopFile
+    */
+    DesktopFile d(desktopFile);
+    return d.getExec().contains("dde-file-manager") || d.getExec().contains("file-manager.sh");
 }
 
 bool FileUtils::setBackground(const QString &pictureFilePath)
@@ -746,13 +752,12 @@ bool FileUtils::openExcutableScriptFile(const QString &path, int flag)
 
         break;
     case 1:
-        result = QProcess::startDetached(path, QStringList());
+        result = runCommand(path, QStringList());
         break;
     case 2:{
         QStringList args;
         args << "-e" << path;
-        result = QProcess::startDetached("x-terminal-emulator", args);
-        qDebug() << result;
+        result = runCommand("x-terminal-emulator", args);
         break;
     }
     case 3:
@@ -774,16 +779,30 @@ bool FileUtils::openExcutableFile(const QString &path, int flag)
     case 1:{
         QStringList args;
         args << "-e" << path;
-        result = QProcess::startDetached("x-terminal-emulator", args);
+        result = runCommand("x-terminal-emulator", args);
         break;
     }
     case 2:
-        result = QProcess::startDetached(path,QStringList());
+        result = runCommand(path, QStringList());
         break;
     default:
         break;
     }
 
+    return result;
+}
+
+bool FileUtils::runCommand(const QString &cmd, const QStringList &args)
+{
+    bool result = false;
+    if (appController->hasLaunchAppInterface()){
+        qDebug() << "luanch cmd by dbus:" << cmd << args;
+        appController->startManagerInterface()->RunCommand(cmd, args);
+        result = true;
+    }else{
+        qDebug() << "luanch cmd by qt:" << cmd << args;
+        result = QProcess::startDetached(cmd, args);
+    }
     return result;
 }
 
