@@ -1,4 +1,11 @@
 <a name=""></a>
+## 4.4.4 (2017-11-20)
+
+#### Bug Fixes
+
+*   update translations ([1e18fc14](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/4b31cc5a1418de87b56c26c8b69c27b48794958d))
+
+<a name=""></a>
 ## 4.4.3 (2017-11-16)
 
 
@@ -28,8 +35,8 @@
 
 
 
-<a name="">4.4.1</a>
-##  (2017-11-07)
+<a name=""></a>
+## 4.4.1 (2017-11-07)
 
 
 #### Bug Fixes
