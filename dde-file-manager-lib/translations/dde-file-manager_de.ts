@@ -471,7 +471,7 @@
     <message>
         <location filename="../views/filedialogstatusbar.cpp" line="31"/>
         <source>Format</source>
-        <translation>Format</translation>
+        <translation>Formatieren</translation>
     </message>
     <message>
         <location filename="../views/filedialogstatusbar.cpp" line="47"/>
