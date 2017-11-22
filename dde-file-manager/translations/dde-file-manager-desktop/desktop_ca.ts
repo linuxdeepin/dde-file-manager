@@ -4,12 +4,12 @@
         <message>
             <location filename="Desktop Entry]Comment" line="0"/>
             <source>Browse the file system</source>
-            <translation>Navega el sistema de fitxers</translation>
+            <translation>Navegueu pel sistema de fitxers</translation>
         </message>
         <message>
             <location filename="Desktop Entry]Name" line="0"/>
             <source>Deepin File Manager</source>
-            <translation>Gestor de fitxers</translation>
+            <translation>Gestor de fitxers del Deepin</translation>
         </message>
         <message>
             <location filename="Desktop Action new-window]Name" line="0"/>
