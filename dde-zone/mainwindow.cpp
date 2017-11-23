@@ -105,11 +105,9 @@ void ZoneMainWindow::onDemoVideo()
     list->addMedia(QUrl("qrc:/images/Prompt.mov"));
     list->setPlaybackMode(QMediaPlaylist::Loop);
 
-    const qreal ratio = devicePixelRatioF();
-
-    int x = (rect().right() - 450 * ratio) / 2;
-    int y = (rect().bottom() - 348 * ratio) / 2;
-    m_videoWidget->setGeometry(x, y, 450 * ratio, 348 * ratio);
+    int x = (rect().right() - 450) / 2;
+    int y = (rect().bottom() - 348) / 2;
+    m_videoWidget->setGeometry(x, y, 450, 348);
 
     m_videoWidget->setSource(player);
     player->setPlaylist(list);
