@@ -53,6 +53,8 @@ public:
 
     QRect conentImageGeometry() const;
 
+    void initPixmap();
+
 signals:
     void pressed();
     void hoverIn();
@@ -69,6 +71,7 @@ protected:
     void enterEvent(QEvent *event) Q_DECL_OVERRIDE;
     void leaveEvent(QEvent *event) Q_DECL_OVERRIDE;
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
+    void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
 
 private:
     QString m_path;
@@ -84,7 +87,6 @@ private:
 
     void initUI();
     void initAnimation();
-    void initPixmap();
 };
 
 #endif // WALLPAPERITEM_H
