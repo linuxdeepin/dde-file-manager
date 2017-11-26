@@ -46,7 +46,6 @@ public:
     ~WallpaperList();
 
     WallpaperItem * addWallpaper(const QString &path);
-    WallpaperItem * getWallpaperByPath(const QString &path) const;
     void removeWallpaper(const QString &path);
 
     void scrollList(int step, int duration = 100);
@@ -60,15 +59,15 @@ public:
     QSize gridSize() const;
     void setGridSize(const QSize &size);
 
-    void addItem(QWidget *item);
+    void addItem(WallpaperItem *item);
     QWidget *item(int index) const;
     QWidget *itemAt(const QPoint &pos) const;
     QWidget *itemAt(int x, int y) const;
-    void removeItem(QWidget *item);
-    void removeItem(int index);
     int count() const;
 
     void clear();
+
+    void updateItemThumb();
 
 signals:
     void needPreviewWallpaper(QString path) const;
@@ -99,6 +98,10 @@ private:
     QPropertyAnimation scrollAnimation;
 
     QSize m_gridSize;
+
+    QList<WallpaperItem*> m_items;
+
+    QTimer *m_updateTimer;
 
     void updateBothEndsItem();
     void showDeleteButtonForItem(const WallpaperItem *item) const;

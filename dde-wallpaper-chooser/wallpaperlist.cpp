@@ -40,6 +40,7 @@ WallpaperList::WallpaperList(QWidget * parent)
     , nextButton(new DImageButton(":/images/next_normal.svg",
                                   ":/images/next_hover.svg",
                                   ":/images/next_press.svg", this))
+    , m_updateTimer(new QTimer(this))
 {
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -48,10 +49,11 @@ WallpaperList::WallpaperList(QWidget * parent)
     setFrameShape(QFrame::NoFrame);
     horizontalScrollBar()->setEnabled(false);
 
-    connect(&scrollAnimation, &QAbstractAnimation::finished, [this] {
-        showDeleteButtonForItem(static_cast<WallpaperItem*>(itemAt(mapFromGlobal(QCursor::pos()))));
-        updateBothEndsItem();
-    });
+    m_updateTimer->setInterval(100);
+    m_updateTimer->setSingleShot(true);
+
+    connect(m_updateTimer, &QTimer::timeout, this, &WallpaperList::updateItemThumb);
+    connect(&scrollAnimation, &QAbstractAnimation::finished, m_updateTimer, static_cast<void (QTimer::*)()>(&QTimer::start));
 
     m_contentWidget = new QWidget(this);
 
@@ -98,35 +100,20 @@ WallpaperItem * WallpaperList::addWallpaper(const QString &path)
     return wallpaper;
 }
 
-WallpaperItem *WallpaperList::getWallpaperByPath(const QString &path) const
-{
-    for (int i = 0; i < count(); i++) {
-        WallpaperItem * wallpaper = qobject_cast<WallpaperItem*>(this->item(i));
-
-        if (wallpaper) {
-            if (wallpaper->getPath() == path) {
-                return wallpaper;
-            }
-        }
-    }
-
-    return 0;
-}
-
 void WallpaperList::removeWallpaper(const QString &path)
 {
-    for (int i = 0; i < count(); i++) {
-        WallpaperItem * wallpaper = qobject_cast<WallpaperItem*>(this->item(i));
+    for (int i(0); i < m_items.count(); ++i) {
+        WallpaperItem *item = m_items[i];
 
-        if (wallpaper) {
-            if (wallpaper->getPath() == path) {
-                removeItem(wallpaper);
-                break;
-            }
+        if (item->getPath() == path) {
+            m_items.removeOne(item);
+            m_contentLayout->removeWidget(item);
+            item->deleteLater();
+            break;
         }
     }
 
-    updateBothEndsItem();
+    m_updateTimer->start();
 }
 
 void WallpaperList::scrollList(int step, int duration)
@@ -222,8 +209,10 @@ void WallpaperList::setGridSize(const QSize &size)
     m_contentWidget->adjustSize();
 }
 
-void WallpaperList::addItem(QWidget *item)
+void WallpaperList::addItem(WallpaperItem *item)
 {
+    m_items << item;
+
     m_contentLayout->addWidget(item);
     m_contentWidget->adjustSize();
 }
@@ -248,43 +237,28 @@ QWidget *WallpaperList::itemAt(int x, int y) const
     return item((horizontalScrollBar()->value() + x) / gridSize().width());
 }
 
-void WallpaperList::removeItem(QWidget *item)
-{
-    for (int i = 0; i < m_contentLayout->count(); ++i) {
-        if (m_contentLayout->itemAt(i)->widget() == item) {
-            removeItem(i);
-            break;
-        }
-    }
-}
-
-void WallpaperList::removeItem(int index)
-{
-    QLayoutItem *item = m_contentLayout->takeAt(index);
-    QWidget *w = item->widget();
-
-    if (w) {
-        w->hide();
-        w->deleteLater();
-    }
-
-    m_contentWidget->adjustSize();
-}
-
 int WallpaperList::count() const
 {
-    return m_contentLayout->count();
+    return m_items.size();
 }
 
 void WallpaperList::clear()
 {
-    while (m_contentLayout->count() > 0) {
-        QLayoutItem *item = m_contentLayout->takeAt(0);
-        QWidget *w = item->widget();
-
-        if (w)
-            w->deleteLater();
+    for (WallpaperItem * item : m_items) {
+        m_contentLayout->removeWidget(item);
+        item->deleteLater();
     }
+
+    m_items.clear();
+}
+
+void WallpaperList::updateItemThumb()
+{
+    m_contentWidget->adjustSize();
+
+    showDeleteButtonForItem(static_cast<WallpaperItem*>(itemAt(mapFromGlobal(QCursor::pos()))));
+
+    updateBothEndsItem();
 }
 
 QString WallpaperList::desktopWallpaper() const
@@ -385,7 +359,7 @@ void WallpaperList::updateBothEndsItem()
     nextButton->setVisible(nextItem);
 }
 
-void WallpaperList::showDeleteButtonForItem(const WallpaperItem *item) const
+void WallpaperList::showDeleteButtonForItem(WallpaperItem const *item) const
 {
     if (item && item->getDeletable()) {
         emit needCloseButton(item->getPath(),

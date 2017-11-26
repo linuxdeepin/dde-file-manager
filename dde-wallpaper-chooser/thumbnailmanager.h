@@ -32,6 +32,8 @@ public:
     void remove(const QString & key);
     bool replace(const QString & key, const QPixmap & pixmap);
 
+    void stop();
+
     static ThumbnailManager * instance();
 
 signals:

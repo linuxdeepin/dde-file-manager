@@ -19,6 +19,7 @@
 #include "wallpaperitem.h"
 #include "dbus/appearancedaemon_interface.h"
 #include "dbus/deepin_wm.h"
+#include "thumbnailmanager.h"
 
 #include <QApplication>
 #include <QDesktopWidget>
@@ -97,11 +98,11 @@ void Frame::handleNeedCloseButton(QString path, QPoint pos)
         m_closeButton->show();
         m_closeButton->disconnect();
 
-        connect(m_closeButton, &DImageButton::clicked, m_wallpaperList->getWallpaperByPath(path), [this, path] {
+        connect(m_closeButton, &DImageButton::clicked, this, [this, path] {
             m_dbusAppearance->Delete("background", path);
             m_wallpaperList->removeWallpaper(path);
             m_closeButton->hide();
-        });
+        }, Qt::UniqueConnection);
     } else {
         m_closeButton->hide();
     }
@@ -131,6 +132,9 @@ void Frame::hideEvent(QHideEvent *event)
 
     if (!m_wallpaperList->lockWallpaper().isEmpty())
         m_dbusAppearance->Set("greeterbackground", m_wallpaperList->lockWallpaper());
+
+    ThumbnailManager *manager = ThumbnailManager::instance();
+    manager->stop();
 
     emit done();
 }
@@ -184,6 +188,7 @@ void Frame::refreshList()
             }
 
             m_wallpaperList->setFixedWidth(width());
+            m_wallpaperList->updateItemThumb();
             m_wallpaperList->show();
         }
     });
