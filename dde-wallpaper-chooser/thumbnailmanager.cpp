@@ -64,7 +64,7 @@ ThumbnailManager::ThumbnailManager() :
     const QString cacheDir = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
     m_cacheDir = cacheDir + QDir::separator() + qApp->applicationVersion() + QDir::separator() + QString::number(qApp->devicePixelRatio());
 
-    connect(&m_futureWatcher, &QFutureWatcher<QPixmap>::finished, this, &ThumbnailManager::onProcessFinished);
+    connect(&m_futureWatcher, &QFutureWatcher<QPixmap>::finished, this, &ThumbnailManager::onProcessFinished, Qt::QueuedConnection);
 
     QDir::root().mkpath(m_cacheDir);
 }
@@ -113,6 +113,12 @@ bool ThumbnailManager::replace(const QString &key, const QPixmap &pixmap)
     return true;
 }
 
+void ThumbnailManager::stop()
+{
+    m_futureWatcher.cancel();
+    m_queuedRequests.clear();
+}
+
 ThumbnailManager *ThumbnailManager::instance()
 {
     return ThumbnailManagerInstance;
@@ -130,6 +136,8 @@ void ThumbnailManager::processNextReq()
 
 void ThumbnailManager::onProcessFinished()
 {
+    if (m_futureWatcher.isCanceled()) return;
+
     emit thumbnailFounded(m_queuedRequests.front(), m_futureWatcher.result());
 
     m_queuedRequests.pop_front();

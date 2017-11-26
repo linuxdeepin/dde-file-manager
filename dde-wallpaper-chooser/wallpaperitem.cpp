@@ -92,7 +92,6 @@ WallpaperItem::WallpaperItem(QFrame *parent, const QString &path) :
     m_thumbnailerWatcher(new QFutureWatcher<QPixmap>(this))
 {
     initUI();
-    initPixmap();
     initAnimation();
 
 //    connect(m_thumbnailerWatcher, &QFutureWatcher<QPixmap>::finished, this, &WallpaperItem::thumbnailFinished);
@@ -220,6 +219,15 @@ void WallpaperItem::resizeEvent(QResizeEvent *event)
     m_wrapper->m_pixmapBoxGeometry = QRect(offset * ratio, QSize(ItemWidth * ratio, ItemHeight * ratio));
 
     QFrame::resizeEvent(event);
+}
+
+void WallpaperItem::paintEvent(QPaintEvent *event)
+{
+    QFrame::paintEvent(event);
+
+    if (m_wrapper->m_pixmap.isNull()) {
+        initPixmap();
+    }
 }
 
 bool WallpaperItem::getDeletable() const
