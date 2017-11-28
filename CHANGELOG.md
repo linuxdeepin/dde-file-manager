@@ -1,4 +1,18 @@
 <a name=""></a>
+## 4.4.5 (2017-11-28)
+
+
+#### Bug Fixes
+
+* **zone:**  video size error ([aac90e55](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/aac90e556d450d865ca787b34f26d5f7c091e085))
+
+#### Features
+
+*   add desktop geometry debug info ([5037a497](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/5037a497c1603b49a36c96154656e75767703e1c))
+
+
+
+<a name=""></a>
 ## 4.4.4 (2017-11-20)
 
 #### Bug Fixes
