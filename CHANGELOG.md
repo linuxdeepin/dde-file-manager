@@ -1,4 +1,14 @@
 <a name=""></a>
+## 4.4.7 (2017-11-29)
+
+
+#### Bug Fixes
+
+*   don't disconnect menu connection of ToolBarSettingsMenu ([f9a7fefc](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/f9a7fefcf318c5e834e647e60a7f1ae7b5ec2820))
+
+
+
+<a name=""></a>
 ## 4.4.6 (2017-11-29)
 
 
