@@ -1,4 +1,14 @@
 <a name=""></a>
+## 4.4.6 (2017-11-29)
+
+
+#### Bug Fixes
+
+*   copy large files in different window error by disconnect menu triggered connection when action is triggered ([72079c2e](https://github.com/linuxdeepin/dde-file-manager/tree/develop2.0/commit/72079c2e5827f441990cdb6f98953cc846b761fb))
+
+
+
+<a name=""></a>
 ## 4.4.5 (2017-11-28)
 
 
