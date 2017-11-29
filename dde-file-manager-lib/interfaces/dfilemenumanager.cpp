@@ -899,7 +899,8 @@ void DFileMenuManager::actionTriggered(QAction *action)
 {
     qDebug() << action << action->data().isValid();
     DFileMenu *menu = qobject_cast<DFileMenu *>(sender());
-    disconnect(menu, &DFileMenu::triggered, fileMenuManger, &DFileMenuManager::actionTriggered);
+    if (!(menu->property("ToolBarSettingsMenu").isValid() && menu->property("ToolBarSettingsMenu").toBool()))
+        disconnect(menu, &DFileMenu::triggered, fileMenuManger, &DFileMenuManager::actionTriggered);
     if (action->data().isValid()) {
         bool flag = false;
         int _type = action->data().toInt(&flag);
