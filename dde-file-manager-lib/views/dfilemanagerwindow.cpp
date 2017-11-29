@@ -679,6 +679,7 @@ void DFileManagerWindow::initTitleBar()
     DFileMenu* menu = fileMenuManger->createToolBarSettingsMenu();
 
     menu->setProperty("DFileManagerWindow", (quintptr)this);
+    menu->setProperty("ToolBarSettingsMenu", true);
     menu->setEventData(DUrl(), DUrlList() << DUrl(), winId(), this);
 
     bool isDXcbPlatform = false;
