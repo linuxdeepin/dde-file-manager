@@ -161,7 +161,17 @@ void DBusFileDialogHandle::makeHeartbeat()
     m_heartbeatTimer.start();
 }
 
+quint32 DBusFileDialogHandle::windowFlags() const
+{
+    return widget()->windowFlags();
+}
+
 void DBusFileDialogHandle::setHeartbeatInterval(int heartbeatInterval)
 {
     m_heartbeatTimer.setInterval(heartbeatInterval);
+}
+
+void DBusFileDialogHandle::setWindowFlags(quint32 windowFlags)
+{
+    widget()->setWindowFlags(static_cast<Qt::WindowFlags>(windowFlags));
 }
