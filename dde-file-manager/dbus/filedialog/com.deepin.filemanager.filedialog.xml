@@ -12,6 +12,7 @@
     <property name="acceptMode" type="i" access="readwrite"></property>
     <property name="windowActive" type="b" access="read"></property>
     <property name="heartbeatInterval" type="i" access="readwrite"></property>
+    <property name="windowFlags" type="u" access="readwrite"></property>
     <method name="selectFile">
         <arg name="filename" type="s" direction="in"/>
     </method>

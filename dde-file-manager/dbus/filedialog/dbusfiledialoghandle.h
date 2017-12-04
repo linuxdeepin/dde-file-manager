@@ -32,6 +32,7 @@ class DBusFileDialogHandle : public DFileDialogHandle
     Q_PROPERTY(int acceptMode READ acceptMode WRITE setAcceptMode)
     Q_PROPERTY(bool windowActive READ windowActive NOTIFY windowActiveChanged)
     Q_PROPERTY(int heartbeatInterval READ heartbeatInterval WRITE setHeartbeatInterval)
+    Q_PROPERTY(quint32 windowFlags READ windowFlags WRITE setWindowFlags)
 
 public:
     explicit DBusFileDialogHandle(QWidget *parent = 0);
@@ -72,8 +73,11 @@ public:
     int heartbeatInterval() const;
     void makeHeartbeat();
 
+    quint32 windowFlags() const;
+
 public slots:
     void setHeartbeatInterval(int heartbeatInterval);
+    void setWindowFlags(quint32 windowFlags);
 
 signals:
     void windowActiveChanged();
