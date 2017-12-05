@@ -21,6 +21,7 @@
 #include "singleton.h"
 #include "interfaces/dfmsetting.h"
 #include "interfaces/dfmstandardpaths.h"
+#include "dfilewatcher.h"
 
 #include <QDBusConnection>
 
@@ -105,6 +106,11 @@ QStringList DBusFileDialogManager::globPatternsForMime(const QString &mimeType) 
         }
     }
     return QStringList();
+}
+
+QStringList DBusFileDialogManager::monitorFiles() const
+{
+    return DFileWatcher::getMonitorFiles();
 }
 
 void DBusFileDialogManager::onDialogDestroy()

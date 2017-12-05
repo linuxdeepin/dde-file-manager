@@ -27,5 +27,8 @@
         <arg name="mime" type="s" direction="in"/>
         <arg name="patterns" type="as" direction="out"/>
     </method>
+    <method name="monitorFiles">
+        <arg name="files" type="as" direction="out"/>
+    </method>
   </interface>
 </node>

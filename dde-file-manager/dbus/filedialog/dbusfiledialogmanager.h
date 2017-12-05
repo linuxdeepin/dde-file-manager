@@ -33,6 +33,7 @@ public:
     bool canUseFileChooserDialog(const QString &group, const QString &executableFileName) const;
 
     QStringList globPatternsForMime(const QString &mimeType) const;
+    QStringList monitorFiles() const;
 
 private:
     void onDialogDestroy();
