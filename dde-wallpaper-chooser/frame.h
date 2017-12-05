@@ -26,7 +26,6 @@ class WallpaperList;
 class WallpaperListView;
 class AppearanceDaemonInterface;
 class DeepinWM;
-class DBusXMouseArea;
 class Frame : public DBlurEffectWidget
 {
     Q_OBJECT

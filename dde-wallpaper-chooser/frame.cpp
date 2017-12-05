@@ -19,7 +19,6 @@
 #include "wallpaperitem.h"
 #include "dbus/appearancedaemon_interface.h"
 #include "dbus/deepin_wm.h"
-#include "dbus/dbusxmousearea.h"
 
 #include <QApplication>
 #include <QDesktopWidget>
