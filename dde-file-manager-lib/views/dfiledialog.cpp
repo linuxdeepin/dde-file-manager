@@ -703,10 +703,8 @@ bool DFileDialog::fmEventFilter(const QSharedPointer<DFMEvent> &event, DFMAbstra
     case DFMEvent::CompressFiles:
     case DFMEvent::DecompressFile:
     case DFMEvent::DecompressFileHere:
-    case DFMEvent::WriteUrlsToClipboard:
     case DFMEvent::DeleteFiles:
     case DFMEvent::RestoreFromTrash:
-    case DFMEvent::PasteFile:
     case DFMEvent::OpenFileLocation:
     case DFMEvent::CreateSymlink:
     case DFMEvent::FileShare:
@@ -742,7 +740,8 @@ void DFileDialog::handleNewView(DFMBaseView *view)
               << DFMGlobal::ListView << DFMGlobal::IconView << DFMGlobal::ExtendView << DFMGlobal::NewWord
               << DFMGlobal::NewExcel << DFMGlobal::NewPowerpoint << DFMGlobal::NewText << DFMGlobal::Name
               << DFMGlobal::Size << DFMGlobal::Type << DFMGlobal::CreatedDate << DFMGlobal::LastModifiedDate
-              << DFMGlobal::DeletionDate << DFMGlobal::SourcePath <<DFMGlobal::AbsolutePath;
+              << DFMGlobal::DeletionDate << DFMGlobal::SourcePath <<DFMGlobal::AbsolutePath << DFMGlobal::Copy
+              << DFMGlobal::Paste << DFMGlobal::Cut;
 
     fileView->setMenuActionWhitelist(whitelist);
     fileView->setDragEnabled(false);
