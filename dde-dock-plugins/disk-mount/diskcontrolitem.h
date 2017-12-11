@@ -33,12 +33,16 @@ public:
 
 signals:
     void requestUnmount(const QString &diskId) const;
+//    void requestOpenDrive(const QString &uri) const;
 
 private slots:
     void updateInfo(const QDiskInfo &info);
     static QString sizeString(const QString &str);
     static qreal dRound64(qreal num, int count = 1);
     const QString formatDiskSize(const quint64 num) const;
+
+private:
+    void mouseReleaseEvent(QMouseEvent *e);
 
 private:
     QDiskInfo m_info;

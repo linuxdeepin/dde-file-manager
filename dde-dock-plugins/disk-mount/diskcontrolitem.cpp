@@ -15,6 +15,8 @@
 
 #include "diskcontrolitem.h"
 #include "qdiskinfo.h"
+#include "dfileservices.h"
+
 #include <QVBoxLayout>
 #include <QIcon>
 #include <QtMath>
@@ -33,8 +35,6 @@ DiskControlItem::DiskControlItem(const QDiskInfo &info, QWidget *parent)
       m_capacityValueBar(new QProgressBar),
       m_unmountButton(new DImageButton)
 {
-//    QIcon::setThemeName("deepin");
-
     m_diskName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     m_diskName->setStyleSheet("color:white;");
 
@@ -86,7 +86,7 @@ DiskControlItem::DiskControlItem(const QDiskInfo &info, QWidget *parent)
                   "border-radius:4px;"
                   "}");
 
-    connect(m_unmountButton, &DImageButton::clicked, [this] {emit requestUnmount(m_info.id());});
+    connect(m_unmountButton, &DImageButton::clicked, this, [this] { emit requestUnmount(m_info.id()); });
 
     updateInfo(info);
 }
@@ -164,4 +164,12 @@ const QString DiskControlItem::formatDiskSize(const quint64 num) const
     }
 
     return total;
+}
+
+void DiskControlItem::mouseReleaseEvent(QMouseEvent *e)
+{
+    QWidget::mouseReleaseEvent(e);
+
+//    emit requestOpenDrive(m_info.id());
+    DFileService::instance()->openFile(this, DUrl(m_info.mounted_root_uri()));
 }
