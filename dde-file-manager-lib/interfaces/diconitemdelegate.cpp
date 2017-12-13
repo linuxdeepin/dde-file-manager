@@ -292,7 +292,6 @@ void DIconItemDelegate::paint(QPainter *painter,
         }
     } else {
         /// init file name text
-
         if(d->elideMap.contains(str)) {
             str = d->elideMap.value(str);
         } else {
@@ -487,7 +486,9 @@ void DIconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
     }
 
     item->icon->setPixmap(pixmap);
-    item->edit->setPlainText(index.data(DFileSystemModel::FileNameRole).toString());
+    item->edit->setPlainText(index.data(item->edit->isReadOnly()
+                                        ? DFileSystemModel::FileDisplayNameRole
+                                        : DFileSystemModel::FileNameRole).toString());
     item->edit->setAlignment(Qt::AlignHCenter);
     item->edit->document()->setTextWidth(d->itemSizeHint.width());
     item->setOpacity(parent()->isCut(index) ? 0.3 : 1);
