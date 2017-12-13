@@ -53,7 +53,7 @@ QString DFMStandardPaths::standardLocation(DFMStandardPaths::StandardLocation ty
     case PluginsPath:{
         QString path = PLUGINDIR;
         if (!QDir(path).exists()){
-            path = qApp->applicationDirPath() + QDir::separator() + "plugins";
+            path = QString::fromLocal8Bit(PLUGINDIR).split(':').last();
         }
         return path;
     }
