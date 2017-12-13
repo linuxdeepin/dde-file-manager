@@ -56,6 +56,7 @@ public:
 
     DBookmarkItem * createBookmarkByKey(const QString& key);
     DBookmarkItem * createCustomBookmark(const QString &name, const DUrl &url, const QString &key = QString());
+    DBookmarkItem* createTagBookmark(const QString& tagName, const QString& key = QString{});
 
     DUrl getStandardPathByKey(const QString& key);
 
@@ -117,6 +118,11 @@ public slots:
     void backHome();
 
     void chooseMountedItem(const DFMEvent &event);
+
+    ///###: tag protocol.
+    void onAddOrDecreaseBookmarkOfTags(const QPair<QList<QString>, QList<QString>>& increasedAndDecreased);
+    void onRequestRenameTag(const DUrl& url);
+
 private:
     bool isBelowLastItem(const QPointF &point);
     void updateSceneRect();

@@ -19,12 +19,29 @@
 #include "singleton.h"
 #include "dfmsetting.h"
 #include "app/define.h"
+#include "tag/tagmanager.h"
+#include "interfaces/dfilemenu.h"
+#include "views/dtagactionwidget.h"
+#include "views/dtagedit.h"
+#include "views/dfileview.h"
+#include "shutil/danythingmonitor.h"
+#include "shutil/dsqlitehandle.h"
+#include "controllers/tagmanagerdaemoncontroller.h"
 
+#include "dcrumbedit.h"
+#include "../app/filesignalmanager.h"
+
+#include <memory>
+
+#include <QObject>
 #include <QProcess>
+#include <QWidgetAction>
+
 
 DFM_BEGIN_NAMESPACE
 
 static FileEventProcessor *eventProcessor = new FileEventProcessor();
+static std::unique_ptr<DTagEdit> tagEdit{ nullptr };
 
 FileEventProcessor::FileEventProcessor()
 {
@@ -67,9 +84,100 @@ static bool isAvfsMounted()
     return false;
 }
 
-static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent> &event)
+static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent>& event)
 {
-    switch ((int)event->action()) {
+    switch (static_cast<int>(event->action())) {
+    case DFMGlobal::RenameTag:
+    {
+        QList<DUrl> selectedUrl{ event->urlList() };
+
+        if(!selectedUrl.isEmpty()){
+            DUrl url{ selectedUrl.first() };
+            emit fileSignalManager->requestRenameTag(url);
+        }
+        break;
+    }
+    case DFMGlobal::ChangeTagColor:
+    {
+        QAction* action{ event->menu()->actionAt("Change color of present tag") };
+
+        if(QWidgetAction* widgetAction = dynamic_cast<QWidgetAction*>(action)){
+
+            if(DTagActionWidget* tagWidget = dynamic_cast<DTagActionWidget*>(widgetAction->defaultWidget())){
+
+                QSharedPointer<DFMChangeTagColorEvent> tagEvent{
+                                                                    dMakeEventPointer<DFMChangeTagColorEvent>(event->sender(),
+                                                                                                               tagWidget->selectedColor(), event->selectedUrls()[0])
+                                                                };
+
+                AppController::instance()->actionChangeTagColor(tagEvent);
+            }
+        }
+
+        break;
+    }
+    case DFMGlobal::TagInfo:
+    {
+        tagEdit = std::unique_ptr<DTagEdit>{ new DTagEdit };
+        tagEdit->setBaseSize(160, 98);
+        tagEdit->setFilesForTagging(event->fileUrlList());
+
+        ///###: Here, Used the position which was stored in DFileView.
+        tagEdit->setFocusOutSelfClosing(true);
+
+        QSharedPointer<DFMGetTagsThroughFileEvent> getTagEvent{ new DFMGetTagsThroughFileEvent{ nullptr, event->selectedUrls() } };
+        QList<QString> sameTagsInDiffFiles{ AppController::instance()->actionGetTagsThroughFiles(getTagEvent) };
+        tagEdit->show(DFileView::ClickedPosition.x(), DFileView::ClickedPosition.y());
+
+        for(const QString& tag : sameTagsInDiffFiles){
+            tagEdit->appendCrumb(tag);
+        }
+
+        break;
+    }
+    case DFMGlobal::TagFilesUseColor:
+    {
+        QAction* action{ event->menu()->actionAt("Add color tags") };
+
+        if(QWidgetAction* widgetAction = dynamic_cast<QWidgetAction*>(action)){
+
+            if(DTagActionWidget* tagWidget = dynamic_cast<DTagActionWidget*>(widgetAction->defaultWidget())){
+
+                QSharedPointer<DFMMakeFilesTagsEvent> tagEvent{
+                    dMakeEventPointer<DFMMakeFilesTagsEvent>(event->sender(),
+                                                             QList<QString>{ tagWidget->selectedColor().name() }, event->selectedUrls())
+                                                              };
+                AppController::instance()->actionMakeFilesTagsThroughColor(tagEvent);
+                break;
+            }
+        }
+
+        qFatal("Some errors occured was chosing DFMGlobal::TagColor.");
+        break;
+    }
+    case DFMGlobal::DeleteTags:
+    {
+        QList<DUrl> selectedUrls{ event->selectedUrls() };
+        QList<QString> tagNames{};
+
+        for(const DUrl& url : selectedUrls){
+            QString path{ url.path()};
+            path = path.remove(0, 1);
+            tagNames.push_back(path);
+        }
+
+        QSharedPointer<DFMDeleteTagsEvent> event{ new DFMDeleteTagsEvent{ nullptr, tagNames } };
+        bool result{ AppController::instance()->actionDeleteTags(event) };
+
+        qDebug()<< result;
+
+        if(result){
+            QPair<QList<QString>, QList<QString>> increasedAndDecreased{QList<QString>{}, tagNames };
+            emit fileSignalManager->requestAddOrDecreaseBookmarkOfTag(increasedAndDecreased);
+        }
+
+        break;
+    }
     case DFMGlobal::Open:
         AppController::instance()->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(event->sender(), event->selectedUrls()));
         break;
@@ -247,6 +355,7 @@ bool FileEventProcessor::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
             DUrlList urls;
             fmEvent(dMakeEventPointer<DFMOpenUrlEvent>(event->sender(), urls << event->fileUrl(), DFMOpenUrlEvent::OpenNewWindow), resultData);
         }else{
+
             if (DFileManagerWindow *window = const_cast<DFileManagerWindow*>(qobject_cast<const DFileManagerWindow*>(e->window()))) {
                 window->cd(e->fileUrl());
             }

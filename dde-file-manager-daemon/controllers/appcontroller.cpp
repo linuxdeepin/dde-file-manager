@@ -28,6 +28,7 @@
 #include "usbformatter/usbformatter.h"
 #include "commandmanager/commandmanager.h"
 #include "deviceinfo/deviceinfomanager.h"
+#include "tag/tagmanagerdaemon.h"
 #include "app/global.h"
 
 
@@ -49,10 +50,10 @@ void AppController::initControllers()
     m_usbFormatter = new UsbFormatter(this);
 //    m_commandManager = new CommandManager(this);
     m_deviceInfoManager = new DeviceInfoManager(this);
+    m_tagManagerDaemon = new TagManagerDaemon{this};
 }
 
 void AppController::initConnect()
 {
-
 }
 

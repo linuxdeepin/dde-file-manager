@@ -35,6 +35,7 @@
 #include "dfmevent.h"
 #include "app/filesignalmanager.h"
 #include "usershare/usersharemanager.h"
+#include "tag/tagmanager.h"
 
 #include "deviceinfo/udisklistener.h"
 #include "interfaces/dfmplaformmanager.h"
@@ -61,6 +62,33 @@
 #include <QTimer>
 
 
+///###: Why has a faker name?
+///###: pair.second represent the faker name,
+///###: and them are used in translation.
+static const QMap<QString, QString> ActualAndFakerName{
+    {"Orange", QObject::tr("Orange")},
+    {"Red", QObject::tr("Red")},
+    {"Purple", QObject::tr("Purple")},
+    {"Navy-blue", QObject::tr("Navy-blue")},
+    {"Azure", QObject::tr("Azure")},
+    {"Grass-green", QObject::tr("Grass green")},
+    {"Yellow", QObject::tr("Yellow")},
+    {"Gray", QObject::tr("Gray")}
+};
+
+///###:---------><color, color-name>
+static const QMap<QString, QString> colorToKey{
+    {"#ffa503", "Orange"},
+    {"#ff1c49", "Red"},
+    {"#9023fc", "Purple"},
+    {"#3468ff", "Navy-blue"},
+    {"#00b5ff", "Azure"},
+    {"#58df0a", "Grass-green"},
+    {"#fef144", "Yellow"},
+    {"#cccccc", "Gray"}
+};
+
+
 DLeftSideBar::DLeftSideBar(QWidget *parent) : QFrame(parent)
 {
     initData();
@@ -70,7 +98,6 @@ DLeftSideBar::DLeftSideBar(QWidget *parent) : QFrame(parent)
 
 DLeftSideBar::~DLeftSideBar()
 {
-
 }
 
 void DLeftSideBar::initData()
@@ -106,6 +133,7 @@ void DLeftSideBar::initUI()
     addUserShareBookmarkItem();
     loadDevices();
     loadPluginBookmarks();
+    loadTagBookMarkItem(); //###: tag items.
 
     m_view->centerOn(0,0);
 }
@@ -356,6 +384,27 @@ void DLeftSideBar::loadBookmark()
         DBookmarkItem * item = m_scene->createCustomBookmark(bm->getName(), bm->getUrl());
         item->setIsCustomBookmark(true);
         item->setBookmarkModel(bm);
+        m_scene->addItem(item);
+    }
+}
+
+void DLeftSideBar::loadTagBookMarkItem()
+{
+    QMap<QString, QString> tagNameAndColor{ TagManager::instance()->getAllTags() };
+    QMap<QString, QString>::const_iterator cbeg{ tagNameAndColor.cbegin() };
+    QMap<QString, QString>::const_iterator cend{ tagNameAndColor.cend() };
+    bookmarkManager->clearTagBookmark();
+
+    for(; cbeg != cend; ++cbeg){
+        DBookmarkItem* item{ m_scene->createTagBookmark(cbeg.key(), cbeg.value()) };
+        ///###: it is redundant, copy-on-write.
+        QExplicitlySharedDataPointer<BookMark> bookmarkPointer{ new BookMark{
+                DUrl::fromUserTagedFile( QString{"/"} + cbeg.key())
+            } };
+        bookmarkManager->appendTagBookmark(bookmarkPointer);
+
+        item->setBookmarkModel(bookmarkPointer);
+        item->setIsCustomBookmark(true);
         m_scene->addItem(item);
     }
 }

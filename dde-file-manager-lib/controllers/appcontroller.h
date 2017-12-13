@@ -123,6 +123,17 @@ public slots:
     void actionOpenFileByApp();
     void actionSendToRemovableDisk();
 
+
+    ///###: tag protocol
+    QList<QString> actionGetTagsThroughFiles(const QSharedPointer<DFMGetTagsThroughFileEvent>& event);
+    void actionMakeFilesTagsThroughColor(const QSharedPointer<DFMMakeFilesTagsEvent>& event);
+    QList<QString> actionGetFilesThroughTag(const QSharedPointer<DFMGetFilesThroughTag>& event);
+    bool actionMakeFilesTags(const QSharedPointer<DFMMakeFilesTagsEvent> &event);
+    bool actionRemoveTagsOfFiles(const QSharedPointer<DFMRemoveTagsOfFilesEvent>& event);
+    void actionChangeTagColor(const QSharedPointer<DFMChangeTagColorEvent>& event);
+    bool actionDeleteTags(const QSharedPointer<DFMDeleteTagsEvent>& event);
+    bool actionRenameTag(const QSharedPointer<DFMRenameTagEvent> &event);
+
 #ifdef SW_LABEL
     void actionSetLabel(const DFMEvent& event);
     void actionViewLabel(const DFMEvent& event);

@@ -30,6 +30,8 @@
 
 #include "models/bookmark.h"
 
+#include <deque>
+
 #include <QDir>
 
 class DAbstractFileInfo;
@@ -44,11 +46,19 @@ public:
     void load();
     void save();
     QList<BookMarkPointer> getBookmarks();
+
+    ///###: tag protocol.
+    void appendTagBookmark(QExplicitlySharedDataPointer<BookMark> bookmark) noexcept;
+    void clearTagBookmark();
+
+
     static QString cachePath();
 private:
     void loadJson(const QJsonObject &json);
     void writeJson(QJsonObject &json);
     QList<BookMarkPointer> m_bookmarks;
+
+    std::deque<QExplicitlySharedDataPointer<BookMark>> m_tagBookmarks{};
 
 public slots:
     BookMarkPointer writeIntoBookmark(int index, const QString &name, const DUrl &url);

@@ -296,6 +296,22 @@
         <file>images/icons/previous_hover.svg</file>
         <file>images/icons/previous_normal.svg</file>
         <file>images/icons/previous_press.svg</file>
+        <file>images/icons/tag_deepblue_active.svg</file>
+        <file>images/icons/tag_deepblue_normal.svg</file>
+        <file>images/icons/tag_gray_active.svg</file>
+        <file>images/icons/tag_gray_normal.svg</file>
+        <file>images/icons/tag_green_active.svg</file>
+        <file>images/icons/tag_green_normal.svg</file>
+        <file>images/icons/tag_lightblue_active.svg</file>
+        <file>images/icons/tag_lightblue_normal.svg</file>
+        <file>images/icons/tag_orange_active.svg</file>
+        <file>images/icons/tag_orange_normal.svg</file>
+        <file>images/icons/tag_purple_active.svg</file>
+        <file>images/icons/tag_purple_normal.svg</file>
+        <file>images/icons/tag_red_active.svg</file>
+        <file>images/icons/tag_red_normal.svg</file>
+        <file>images/icons/tag_yellow_active.svg</file>
+        <file>images/icons/tag_yellow_normal.svg</file>
     </qresource>
     <qresource prefix="/leftsidebar">
         <file>images/leftsidebar/android_active_16px.svg</file>

@@ -118,6 +118,10 @@ public:
     bool unShareFolder(const QObject *sender, const DUrl &fileUrl) const;
     bool openInTerminal(const QObject *sender, const DUrl &fileUrl) const;
 
+    ///###: for tag protocol.
+    bool makeFilesTags(const QObject* sender, QList<QString>& tags, const QList<DUrl>& files)const;
+    bool removeTagsOfFiles(const QObject* sender, const QList<QString>& tags,  const QList<DUrl>& files)const;
+
     const DAbstractFileInfoPointer createFileInfo(const QObject *sender, const DUrl &fileUrl) const;
     const DDirIteratorPointer createDirIterator(const QObject *sender, const DUrl &fileUrl, const QStringList &nameFilters, QDir::Filters filters,
                                                 QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags) const;

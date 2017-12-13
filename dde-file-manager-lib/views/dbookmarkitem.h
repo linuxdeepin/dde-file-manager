@@ -135,6 +135,7 @@ public:
     bool getIsCustomBookmark() const;
     void setIsCustomBookmark(bool isCustomBookmark);
 
+    void changeIconThroughColor(const QColor& color)noexcept;
 signals:
 
     void clicked();
@@ -159,7 +160,7 @@ protected:
     void dragLeaveEvent(QGraphicsSceneDragDropEvent *event) Q_DECL_OVERRIDE;
     void dragMoveEvent(QGraphicsSceneDragDropEvent *event) Q_DECL_OVERRIDE;
     void dropEvent(QGraphicsSceneDragDropEvent *event) Q_DECL_OVERRIDE;
-    bool eventFilter(QObject *obj, QEvent *e) Q_DECL_OVERRIDE;
+    bool eventFilter(QObject* obj, QEvent* event) Q_DECL_OVERRIDE;
 private:
     void init();
     QPixmap getPixmap(const QString &key, ThemeConfig::State state = ThemeConfig::Normal) const;
@@ -238,6 +239,10 @@ private:
 
     /*bookmark model map */
     BookMarkPointer m_bookmarkModel;
+
+public:
+    static std::atomic<DBookmarkItem*> ClickedItem;
+
 public slots:
     void editFinished();
     void checkMountedItem(const DFMEvent& event);

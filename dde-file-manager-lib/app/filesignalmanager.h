@@ -222,6 +222,13 @@ signals:
     /*default view mode changed*/
     void defaultViewModeChanged(const int& viewMode);
 
+    ///###: tag protocol.
+    /*add new tags*/
+    void requestAddOrDecreaseBookmarkOfTag(const QPair<QList<QString>, QList<QString>>& tags);
+
+    /*rename a tag*/
+    void requestRenameTag(const DUrl& oldTagUrl);
+
 #ifdef SW_LABEL
     /*copy/move/delete fail job show */
     void jobFailed(int nRet, const QString &jobType, const QString& srcFileName);

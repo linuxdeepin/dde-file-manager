@@ -44,10 +44,31 @@
 #include "singleton.h"
 #include <ddialog.h>
 
-#include <QDebug>
-#include <QGraphicsView>
-#include <QMimeData>
 #include <QDir>
+#include <QDebug>
+#include <QMimeData>
+#include <QGraphicsView>
+
+#include "../controllers/appcontroller.h"
+
+
+#include "tag/tagmanager.h"
+
+
+///###: Why has a faker name?
+///###: pair.second represent the faker name,
+///###: and them are used in translation.
+static const QMap<QString, QString> ActualAndFakerName{
+    {"Orange", QObject::tr("Orange")},
+    {"Red", QObject::tr("Red")},
+    {"Purple", QObject::tr("Purple")},
+    {"Navy-blue", QObject::tr("Navy-blue")},
+    {"Azure", QObject::tr("Azure")},
+    {"Grass-green", QObject::tr("Grass green")},
+    {"Yellow", QObject::tr("Yellow")},
+    {"Gray", QObject::tr("Gray")}
+};
+
 
 DWIDGET_USE_NAMESPACE
 DFM_USE_NAMESPACE
@@ -149,6 +170,11 @@ void DBookmarkScene::initConnect()
     connect(deviceListener, &UDiskListener::mountRemoved, this, &DBookmarkScene::mountRemoved);
 
     connect(fileSignalManager, &FileSignalManager::requestChooseSmbMountedFile, this, &DBookmarkScene::chooseMountedItem);
+
+
+    ///###: tag protocol.
+    QObject::connect(fileSignalManager, &FileSignalManager::requestAddOrDecreaseBookmarkOfTag, this, &DBookmarkScene::onAddOrDecreaseBookmarkOfTags);
+    QObject::connect(fileSignalManager, &FileSignalManager::requestRenameTag, this, &DBookmarkScene::onRequestRenameTag);
 }
 
 DBookmarkItem *DBookmarkScene::createBookmarkByKey(const QString &key)
@@ -171,6 +197,25 @@ DBookmarkItem *DBookmarkScene::createCustomBookmark(const QString &name, const D
 //    item->boundImageToRelease(m_smallIcons.value(key));
     item->setText(name);
     item->setUrl(url);
+    item->setDefaultItem(false);
+    return item;
+}
+
+DBookmarkItem* DBookmarkScene::createTagBookmark(const QString& tagName, const QString& key)
+{
+    DBookmarkItem* item{ new DBookmarkItem{ key.isEmpty() ? QString{"BookMarks"} : key } };
+    item->setDefaultItem(false);
+
+    QMap<QString, QString>::const_iterator pos{ ActualAndFakerName.find(tagName) };
+
+    if(pos == ActualAndFakerName.cend()){
+        item->setText(tagName);
+
+    }else{
+        item->setText(*pos);
+    }
+
+    item->setUrl( DUrl::fromUserTagedFile( QString{"/"} + tagName) );
     item->setDefaultItem(false);
     return item;
 }
@@ -509,7 +554,19 @@ void DBookmarkScene::setNetworkDiskItem(DBookmarkItem *item)
  */
 void DBookmarkScene::doBookmarkRemoved(const DFMEvent &event)
 {
-    DBookmarkItem * item = hasBookmarkItem(event.fileUrl());
+    DUrl url{ event.fileUrl() };
+
+    if(url.isTagedFile()){
+        QString thePath{ url.path() };
+        thePath = thePath.remove(0, 1);
+
+        if(!thePath.isEmpty()){
+            QSharedPointer<DFMDeleteTagsEvent> event{ new DFMDeleteTagsEvent{ nullptr, QList<QString>{ thePath } } };
+            AppController::instance()->actionDeleteTags( event );
+        }
+    }
+
+    DBookmarkItem * item = hasBookmarkItem(url);
     if(!item)
         return;
     int item_index = indexOf(item);
@@ -723,6 +780,93 @@ void DBookmarkScene::chooseMountedItem(const DFMEvent &event)
     }
 }
 
+
+void DBookmarkScene::onAddOrDecreaseBookmarkOfTags(const QPair<QList<QString>, QList<QString>>& increasedAndDecreased)
+{
+    if(!increasedAndDecreased.first.isEmpty() && increasedAndDecreased.second.isEmpty()){
+        QMap<QString, QString> tagAndColor{ TagManager::instance()->getTagColor(increasedAndDecreased.first) };
+
+        if(!tagAndColor.isEmpty()){
+            QMap<QString, QString>::const_iterator cbeg{ tagAndColor.cbegin() };
+
+            for(; cbeg != tagAndColor.cend(); ++cbeg){
+                DBookmarkItem* item{ this->createTagBookmark(cbeg.key(), cbeg.value()) };
+                ///###: it is redundant, copy-on-write.
+                QExplicitlySharedDataPointer<BookMark> bookmarkPointer{ new BookMark{
+                        DUrl::fromUserTagedFile( QString{"/"} + cbeg.key())
+                    } };
+                bookmarkManager->appendTagBookmark(bookmarkPointer);
+
+                item->setBookmarkModel(bookmarkPointer);
+                this->addItem(item);
+            }
+        }
+
+        return;
+    }
+
+
+    if(increasedAndDecreased.first.isEmpty() && !increasedAndDecreased.second.isEmpty()){
+        DBookmarkItemGroup* group{ this->getGroup() };
+        QList<DBookmarkItem*> allItem{ group->items() };
+        std::list<DBookmarkItem*> backUpList{};
+
+
+        for(DBookmarkItem* const item : allItem){
+            DUrl url{ item->getUrl() };
+            QString path{ url.path() };
+            path = path.remove(0, 1);
+            QList<QString>::const_iterator pos{ std::find(increasedAndDecreased.second.cbegin(),
+                                                          increasedAndDecreased.second.cend(), path) };
+
+            if(pos != increasedAndDecreased.second.cend()){
+                backUpList.push_back(item);
+            }
+        }
+
+        for(DBookmarkItem* const item : backUpList){
+            this->remove(item);
+        }
+
+        return;
+    }
+
+}
+
+void DBookmarkScene::onRequestRenameTag(const DUrl& url)
+{
+    QString path{ url.path() };
+    path = path.remove(0, 1);
+
+    if(!path.isEmpty()){
+        DBookmarkItemGroup* group{ this->getGroup() };
+        QList<DBookmarkItem*> allItem{ group->items() };
+
+        if(!allItem.isEmpty()){
+            QList<DBookmarkItem*>::const_iterator cbeg{ allItem.cbegin() };
+            QList<DBookmarkItem*>::const_iterator cend{ allItem.cend() };
+
+            QList<DBookmarkItem*>::const_iterator pos{ std::find_if(cbeg, cend,
+                [&path](DBookmarkItem* const item)->bool
+                {
+                    DUrl url{ item->getUrl() };
+                    QString pathStr{ url.path() };
+                    pathStr = pathStr.remove(0,1);
+
+                    if(pathStr == path){
+                        return true;
+                    }
+                    return false;
+                }
+                            ) };
+
+            if(pos != allItem.cend()){
+                (*pos)->editMode();
+            }
+        }
+    }
+}
+
 bool DBookmarkScene::isBelowLastItem(const QPointF &point)
 {
     DBookmarkItem *item = m_itemGroup->items().last();
@@ -782,6 +926,7 @@ void DBookmarkScene::moveAfter(DBookmarkItem *from, DBookmarkItem *to)
     event.setWindowId(windowId());
     emit fileSignalManager->requestBookmarkMove(indexFrom, indexTo, event);
 }
+
 
 DBookmarkItem *DBookmarkScene::hasBookmarkItem(const DUrl &url)
 {

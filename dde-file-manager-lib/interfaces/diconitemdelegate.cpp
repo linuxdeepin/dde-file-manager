@@ -28,6 +28,7 @@
 #include "private/dstyleditemdelegate_p.h"
 
 #include "dfilesystemmodel.h"
+#include "tag/tagmanager.h"
 #include "app/define.h"
 
 #include <QLabel>
@@ -339,6 +340,8 @@ void DIconItemDelegate::paint(QPainter *painter,
     } else {
         paintIcon(painter, opt.icon, icon_rect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled);
     }
+
+
 
     /// draw file additional icon
 

@@ -342,6 +342,13 @@ bool DAbstractFileInfo::isShared() const
     return false;
 }
 
+bool DAbstractFileInfo::isTaged() const
+{
+    CALL_PROXY(isTaged());
+
+    return false;
+}
+
 bool DAbstractFileInfo::isWritableShared() const
 {
     CALL_PROXY(isWritableShared());
@@ -597,9 +604,9 @@ QIcon DAbstractFileInfo::fileIcon() const
 
     QIcon icon = QIcon::fromTheme(iconName());
 
-    if (icon.isNull())
+    if (icon.isNull()){
         icon = QIcon::fromTheme("application-default-icon");
-
+    }
     return icon;
 }
 
@@ -806,8 +813,13 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
             actionKeys << MenuAction::Separator;
 #endif
 
+            ///###: tag protocol
+            actionKeys << MenuAction::TagInfo;
+            actionKeys << MenuAction::TagFilesUseColor;
             actionKeys  << MenuAction::Property;
+
         }
+
     } else if (type == MultiFiles) {
         actionKeys << MenuAction::Open
                    << MenuAction::Separator
@@ -824,6 +836,12 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
         actionKeys << MenuAction::Delete
                    << MenuAction::Separator
                    << MenuAction::Property;
+
+        ///###: tag protocol.
+        actionKeys << MenuAction::TagInfo;
+        actionKeys << MenuAction::TagFilesUseColor;
+        actionKeys  << MenuAction::Property;
+
     } else if (type == MultiFilesSystemPathIncluded) {
         actionKeys << MenuAction::Open
                    << MenuAction::Separator
@@ -832,6 +850,11 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
                    << MenuAction::SendToDesktop
                    << MenuAction::Separator
                    << MenuAction::Property;
+
+        ///###: tag protocol
+        actionKeys << MenuAction::TagInfo;
+        actionKeys << MenuAction::TagFilesUseColor;
+        actionKeys  << MenuAction::Property;
     }
 
     return actionKeys;

@@ -527,8 +527,6 @@ void GvfsMountManager::monitor_mount_removed(GVolumeMonitor *volume_monitor, GMo
         volume.setIsMounted(false);
         volume.setMounted_root_uri("");
         Volumes.insert(volume.unix_device(), volume);
-
-
     }else{
         NoVolumes_Mounts_Keys.removeOne(qMount.mounted_root_uri());
     }
@@ -652,7 +650,7 @@ void GvfsMountManager::monitor_volume_changed(GVolumeMonitor *volume_monitor, GV
 
         QVolume qVolume = gVolumeToqVolume(volume);
         QDiskInfo diskInfo = qVolumeToqDiskInfo(qVolume);
-        Volumes.insert(qVolume.unix_device(), qVolume);
+//        Volumes.insert(qVolume.unix_device(), qVolume);
         DiskInfos.insert(diskInfo.id(), diskInfo);
         qDebug() << diskInfo;
         emit gvfsMountManager->volume_changed(diskInfo);

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.1 (47250) - http://www.bohemiancoding.com/sketch -->
+    <title>tag_yellow_active</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <circle id="path-1" cx="59" cy="50" r="4"></circle>
+    </defs>
+    <g id="Artboard" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(-51.000000, -42.000000)">
+        <g id="tag_yellow_active">
+            <use fill="#FEF144" fill-rule="evenodd" xlink:href="#path-1"></use>
+            <circle stroke="#CBBB00" stroke-width="1" cx="59" cy="50" r="3.5"></circle>
+        </g>
+    </g>
+</svg>

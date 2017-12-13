@@ -82,6 +82,12 @@ public:
         // Ctrl+Z
         CleanSaveOperator,
         Revocation,
+
+        ///###: tag protocol.
+        Tag,
+        Untag,
+        ChangeTagColor,
+
         // user custom
         CustomBase = 1000                            // first user event id
     };
@@ -124,6 +130,12 @@ public:
     template<typename T>
     inline T data() const
     { return qvariant_cast<T>(m_data);}
+
+//    template<typename T>
+//    inline T data()const
+//    {
+//        return m_data.value<T>();
+//    }
 
     inline DUrl fileUrl() const
     { return data<DUrl>();}
@@ -532,6 +544,7 @@ public:
     static QSharedPointer<DFMForwardEvent> fromJson(const QJsonObject &json);
 };
 
+
 class DFMSaveOperatorEvent : public DFMEvent
 {
 public:
@@ -553,5 +566,104 @@ class DFMRevocationEvent : public DFMEvent
 public:
     explicit DFMRevocationEvent(const QObject *sender);
 };
+
+class DFMMakeFilesTagsEvent : public DFMEvent
+{
+public:
+    explicit DFMMakeFilesTagsEvent(const QObject* sender, const QList<QString>& tags, const QList<DUrl>& files);
+    DFMMakeFilesTagsEvent(const DFMMakeFilesTagsEvent& other)=delete;
+    DFMMakeFilesTagsEvent& operator=(const DFMMakeFilesTagsEvent& other)=delete;
+
+    static QSharedPointer<DFMMakeFilesTagsEvent> fromJson(const QJsonObject& json);
+
+    QList<QString> m_tags{};
+    QList<DUrl> m_files{};
+};
+
+class DFMRemoveTagsOfFilesEvent : public DFMEvent
+{
+public:
+    explicit DFMRemoveTagsOfFilesEvent(const QObject* sender, const QList<QString>& tags, const QList<DUrl>& files);
+    DFMRemoveTagsOfFilesEvent(const DFMRemoveTagsOfFilesEvent& other)=delete;
+    DFMRemoveTagsOfFilesEvent& operator=(const DFMRemoveTagsOfFilesEvent& other)=delete;
+
+    static QSharedPointer<DFMRemoveTagsOfFilesEvent> fromJson(const QJsonObject& json);
+
+    QList<DUrl> m_files;
+    QList<QString> m_tags;
+};
+
+
+class DFMChangeTagColorEvent : public DFMEvent
+{
+public:
+    explicit DFMChangeTagColorEvent(const QObject* sender, const QColor& color, const DUrl& tagUrl);
+    DFMChangeTagColorEvent(const DFMChangeTagColorEvent& other)=delete;
+    DFMChangeTagColorEvent& operator=(const DFMChangeTagColorEvent& other)=delete;
+
+    static QSharedPointer<DFMChangeTagColorEvent> fromJson(const QJsonObject& json);
+
+    QColor m_newColorForTag{""};
+    DUrl m_tagUrl{""};
+};
+
+
+class DFMGetFilesThroughTag final : public DFMEvent
+{
+public:
+    explicit DFMGetFilesThroughTag(const QObject* sender, const QString& tagName);
+    DFMGetFilesThroughTag(const DFMGetFilesThroughTag& other)=delete;
+    DFMGetFilesThroughTag& operator=(const DFMGetFilesThroughTag& other)=delete;
+
+    static QSharedPointer<DFMGetFilesThroughTag> fromJson(const QJsonObject& json);
+
+    QString m_tagName{};
+};
+
+
+class DFMGetTagsThroughFileEvent final : public DFMEvent
+{
+public:
+public:
+    explicit DFMGetTagsThroughFileEvent(const QObject* sender, const QList<DUrl>& files);
+    DFMGetTagsThroughFileEvent(const DFMGetTagsThroughFileEvent& other)=delete;
+    DFMGetTagsThroughFileEvent& operator=(const DFMGetTagsThroughFileEvent& other)=delete;
+
+    static QSharedPointer<DFMGetTagsThroughFileEvent> fromJson(const QJsonObject& json);
+
+    QList<DUrl> m_files{};
+};
+
+
+class DFMDeleteTagsEvent final : public DFMEvent
+{
+public:
+public:
+    explicit DFMDeleteTagsEvent(const QObject* sender, const QList<QString>& tags);
+    DFMDeleteTagsEvent(const DFMGetTagsThroughFileEvent& other)=delete;
+    DFMDeleteTagsEvent& operator=(const DFMDeleteTagsEvent& other)=delete;
+
+    static QSharedPointer<DFMDeleteTagsEvent> fromJson(const QJsonObject& json);
+
+    QList<QString> m_tagsForDeleting{};
+};
+
+
+class DFMRenameTagEvent final : public DFMEvent
+{
+public:
+public:
+    explicit DFMRenameTagEvent(const QObject* sender, const QPair<QString, QString>& oldAndNewName);
+    DFMRenameTagEvent(const DFMRenameTagEvent& other)=delete;
+    DFMRenameTagEvent& operator=(const DFMRenameTagEvent& other)=delete;
+
+    static QSharedPointer<DFMRenameTagEvent> fromJson(const QJsonObject& json);
+
+    QPair<QString, QString> m_oldAndNewName{};
+};
+
+
+
+
 
 #endif // FMEVENT_H
