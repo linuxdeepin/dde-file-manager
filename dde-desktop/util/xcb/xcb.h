@@ -40,7 +40,7 @@ public:
     void set_window_type(xcb_window_t winId, WindowType winType);
     void set_strut_partial(xcb_window_t winId, Orientation orientation, uint strut, uint start, uint end);
 
-    DockInfo find_dock_window(int screen_nbr);
+    DockInfo find_dock_window(int);
     xcb_ewmh_wm_strut_partial_t get_strut_partial(xcb_window_t winId);
 private:
     XcbMisc();
